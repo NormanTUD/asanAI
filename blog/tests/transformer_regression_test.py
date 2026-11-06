@@ -130,6 +130,20 @@ def test_static(results):
         "tenminutes attention web redraws on reveal",
         "_attnWebDraw" in tm_js and "ResizeObserver" in tm_js,
     )
+    main_js = text("blog/transformer.js")
+    results.check(
+        "token picker inserts word separators",
+        "needsSpace" in main_js and "needsSpace" in tm_js,
+    )
+    results.check(
+        "h_last is rendered one component per row",
+        "\\\\begin{bmatrix} ${hLastRows}" in main_js
+        and "\\\\begin{bmatrix} ${hLastRows}" in tm_js,
+    )
+    results.check(
+        "residual 3D chart is wired",
+        "transformer-residual-stream-3d" in river and "_themeriver_render_residual_3d" in river,
+    )
 
 
 def test_page(driver, base, label, results):

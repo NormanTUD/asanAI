@@ -155,6 +155,14 @@
 	color: var(--mn-text);
 	font-size: .9rem;
 }
+.themeriver-residual-block {
+	padding: 0 0 14px;
+	background: var(--mn-surface);
+}
+.themeriver-residual-block > #transformer-residual-contrib-plot,
+.themeriver-residual-block > #transformer-residual-stream-3d {
+	width: 100%;
+}
 
 /* The final projection stacks very wide logit/probability matrices. Give
    the whole panel one horizontal scroller instead of a scrollbar per

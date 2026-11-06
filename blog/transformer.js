@@ -1322,6 +1322,10 @@ function run_transformer_demo(activeId = null) {
 		const tokenIdx = tokenSel ? (parseInt(tokenSel.value) || 0) : 0;
 		_themeriver_render_residual_contrib(tokenIdx, getTransformerConfig().d_model);
 	}
+	if (typeof _themeriver_render_residual_3d === 'function' &&
+		document.getElementById('transformer-residual-stream-3d')) {
+		_themeriver_render_residual_3d();
+	}
 }
 
 /* ── TransformerRun: one shareable snapshot of the current experiment ──
@@ -2494,13 +2498,15 @@ function buildLogitDetailsHtml(h_last, logits) {
 }
 
 function buildHLastDisplayLatex(h_last) {
+	// One component per matrix row, so long residual vectors stay readable
+	// without a very wide single-line equation.
 	return h_last.map((v, dim) =>
 		`\\underbrace{${v.toFixed(nr_fixed)}}_{\\substack{h_{${dim}} \\\\ \\text{hidden dim ${dim}}}}`
-	).join(', ');
+	).join(' \\\\ ');
 }
 
 function buildHLastSection(h_last) {
-	const hLastLatex = buildHLastDisplayLatex(h_last);
+	const hLastRows = buildHLastDisplayLatex(h_last);
 	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
 	const head = isDe ? 'Aktuell' : 'Current';
 	const note = isDe
@@ -2508,7 +2514,7 @@ function buildHLastSection(h_last) {
 		: "(the last layers' output matrix last line of the inference-data)";
 	return `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; text-align: center;">
     <span class="md">
-    <p class="logit_calc" style="text-align: center; margin-left: auto; margin-right: auto;">${head} $h_\\text{last} = [${hLastLatex}]$ ${note}</p>\n`;
+    <p class="logit_calc" style="text-align: center; margin-left: auto; margin-right: auto;">${head} $h_\\text{last} = \\begin{bmatrix} ${hLastRows} \\end{bmatrix}$ ${note}</p>\n`;
 }
 
 function buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logits) {
@@ -3211,7 +3217,15 @@ function render_token_picker() {
 			if (!chip) return;
 			var token = chip.getAttribute('data-token');
 			if (token == null || token === TM_EOS_TOKEN) return;
-			input.value += token;
+			// Keep words as separate tokens: a non-space token appended after
+			// another word needs a separating space, or "the" + "king" becomes
+			// the single token "theking".
+			if (token.indexOf('##') === 0) {
+				input.value += token.slice(2);
+			} else {
+				var needsSpace = input.value && !/\s$/.test(input.value) && !/^\s/.test(token);
+				input.value += (needsSpace ? ' ' : '') + token;
+			}
 			input.dispatchEvent(new Event('input', { bubbles: true }));
 			render_token_picker_chips();
 		});

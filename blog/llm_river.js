@@ -98,6 +98,7 @@ function _execute_themeriver_render(d_model) {
 
 	_themeriver_wire_resize(container);
 	_themeriver_render_residual_contrib(tokenIdx, d_model);
+	_themeriver_render_residual_3d();
 }
 
 /* Bar chart: how much each layer writes into the residual stream for the
@@ -359,6 +360,7 @@ function tlab_render_themeriver(d_model) {
 	const containerId = 'transformer-themeriver-plot';
 	_themeriver_ensure_dom(containerId);
 	_themeriver_populate_token_selector();
+	_themeriver_populate_stage_selector();
 
 	registerLazyRenderable(
 		containerId,
@@ -379,19 +381,18 @@ function tlab_render_themeriver(d_model) {
  * doesn't already exist.
  */
 function _themeriver_ensure_dom(containerId) {
-	if (document.getElementById(containerId)) return;
-
 	const parent = document.getElementById('transformer-migration-plots-container');
 	if (!parent) return;
 
-	const wrapper = document.createElement('div');
-	wrapper.id = 'themeriver-wrapper';
-	wrapper.className = 'themeriver-wrapper';
-	wrapper.style.cssText = `
+	if (!document.getElementById(containerId)) {
+		const wrapper = document.createElement('div');
+		wrapper.id = 'themeriver-wrapper';
+		wrapper.className = 'themeriver-wrapper';
+		wrapper.style.cssText = `
 	border: 2px solid ${themeColor('#c4b5fd')}; border-radius: 12px;
 	background: ${themeColor('#faf5ff')}; margin-top: 24px; overflow: hidden;
     `;
-	wrapper.innerHTML = `
+		wrapper.innerHTML = `
 	<div class="themeriver-header" style="display:flex; align-items:center; gap:12px; padding:12px 16px;
 		    background:${themeColor('#ede9fe')}; border-bottom:1px solid ${themeColor('#c4b5fd')}; flex-wrap:wrap;">
 	    <span style="font-weight:700; color:${themeColor('#5b21b6')}; font-size:0.95rem;">
@@ -419,11 +420,114 @@ function _themeriver_ensure_dom(containerId) {
 	    <span style="color:${themeColor('#7c3aed')}; font-size:0.8rem;">words</span>
 	</div>
 	<div id="${containerId}" style="width:100%; height:520px;"></div>
-	<div class="themeriver-residual-head">Residual stream writes per layer</div>
-	<div id="transformer-residual-contrib-plot" style="width:100%; height:240px;"></div>
     `;
-	//                                              ↑ 520px statt 420px
-	parent.appendChild(wrapper);
+		parent.appendChild(wrapper);
+	}
+
+	_themeriver_ensure_residual_block(parent);
+}
+
+/* The residual-write charts live in their own full-width block below the
+   Probability Flow wrapper and before the following optional sections. */
+function _themeriver_ensure_residual_block(parent) {
+	if (document.getElementById('themeriver-residual-block')) return;
+	const block = document.createElement('div');
+	block.id = 'themeriver-residual-block';
+	block.className = 'themeriver-residual-block';
+	block.innerHTML = `
+	<div class="themeriver-residual-head">Residual stream writes per layer</div>
+	<div id="transformer-residual-contrib-plot" style="width:100%; height:280px;"></div>
+	<div class="themeriver-residual-head" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+		<span>Residual stream development (3D) — all tokens, all dimensions</span>
+		<label style="font-weight:400; font-size:.78rem; color:var(--mn-text-muted); margin-left:auto;">Stage
+			<select id="residual-3d-stage" class="themeriver-select" onchange="window._themeriver_render_residual_3d_from_select()"></select>
+		</label>
+	</div>
+	<div id="transformer-residual-stream-3d" style="width:100%; height:480px;"></div>
+	`;
+	parent.appendChild(block);
+}
+
+function _themeriver_populate_stage_selector() {
+	const select = document.getElementById('residual-3d-stage');
+	const collector = window.tlab_trajectory_collector;
+	if (!select || !collector || !collector.steps) return;
+	const keys = Object.keys(collector.steps).sort();
+	const prev = select.value;
+	select.innerHTML = '';
+	keys.forEach((key) => {
+		const opt = document.createElement('option');
+		opt.value = key;
+		opt.textContent = collector.steps[key].name || key;
+		select.appendChild(opt);
+	});
+	if (prev && keys.indexOf(prev) !== -1) select.value = prev;
+	else if (keys.length) select.value = keys[keys.length - 1];
+}
+
+window._themeriver_render_residual_3d_from_select = function () {
+	_themeriver_render_residual_3d();
+};
+
+function _themeriver_render_residual_3d() {
+	const container = document.getElementById('transformer-residual-stream-3d');
+	if (!container) return;
+	const collector = window.tlab_trajectory_collector;
+	if (!collector || !collector.steps) {
+		if (window.PlotState) PlotState.empty(container, 'Residual stream', 'Run the demo to see the residual stream by token and dimension.');
+		return;
+	}
+	const select = document.getElementById('residual-3d-stage');
+	const keys = Object.keys(collector.steps).sort();
+	const key = (select && select.value) || keys[keys.length - 1];
+	const step = collector.steps[key];
+	const data = step && step.data;
+	if (!Array.isArray(data) || !data.length || !data[0] || !data[0].length) {
+		if (window.PlotState) PlotState.empty(container, 'Residual stream', 'No residual stream recorded for this stage yet.');
+		return;
+	}
+
+	const d_model = data[0].length;
+	const labels = (collector.displayTokens || collector.tokens || []).map((t) => String(t).replace(/ /g, '␣'));
+	const dims = Array.from({ length: d_model }, (_, i) => 'd' + i);
+	const bars = [];
+	data.forEach((vec, ti) => {
+		vec.forEach((v, di) => {
+			if (Number.isFinite(v)) bars.push([di, ti, +v.toFixed(4)]);
+		});
+	});
+
+	let chart = echarts.getInstanceByDom(container);
+	if (!chart) chart = echarts.init(container);
+	chart.setOption({
+		tooltip: {
+			formatter: (p) => `dim ${p.value[0]} · token ${labels[p.value[1]] || p.value[1]}<br>value ${p.value[2]}`
+		},
+		xAxis3D: { type: 'category', data: dims, name: 'dimension' },
+		yAxis3D: { type: 'category', data: labels, name: 'token' },
+		zAxis3D: { type: 'value', name: 'value' },
+		grid3D: {
+			boxWidth: 220,
+			boxDepth: Math.max(80, Math.min(240, 26 * labels.length)),
+			boxHeight: 90,
+			viewControl: { projection: 'perspective', autoRotate: false, distance: 220 }
+		},
+		series: [{
+			type: 'bar3D',
+			data: bars,
+			shading: 'lambert',
+			itemStyle: { color: themeColor('#3b82f6'), opacity: 0.92 },
+			emphasis: { itemStyle: { color: themeColor('#f59e0b') } }
+		}]
+	}, true);
+
+	if (!container._ecResidual3dResize) {
+		container._ecResidual3dResize = () => {
+			const c = echarts.getInstanceByDom(container);
+			if (c) c.resize();
+		};
+		window.addEventListener('resize', container._ecResidual3dResize);
+	}
 }
 
 /**
