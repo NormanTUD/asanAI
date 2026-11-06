@@ -5336,12 +5336,16 @@ html[data-theme="light"] .step-pane .aw-money { color: #004b6f; }
 }
 .attn-matrix .am-bar {
 	display: block;
-	height: 5px;
-	background: var(--tm-line);
+	height: 10px;
+	margin-top: 3px;
+	background: var(--tm-line-strong);
+	border: 1px solid var(--tm-line);
+	overflow: hidden;
 }
 .attn-matrix .am-bar i {
 	display: block;
 	height: 100%;
+	min-width: 0;
 }
 .attn-sum { margin-top: 10px; font-size: 0.82em; }
 
@@ -6741,6 +6745,7 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	margin: 0 auto 14px;
 	text-align: center;
 	display: grid;
+	transition: min-height 0.2s ease;
 }
 .ism-scene {
 	grid-area: 1 / 1;
@@ -7176,9 +7181,6 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 
 .oned-twod-grid {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: 1fr;
 	gap: 18px;
-}
-@media (max-width: 640px) {
-	.oned-twod-grid { grid-template-columns: 1fr; }
 }

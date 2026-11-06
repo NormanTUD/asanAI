@@ -127,16 +127,12 @@
 	function fitCopyHeight() {
 		const copy = copyEl("ism-copy");
 		if (!copy) return;
+		const active = copy.querySelector(".ism-scene.is-active");
+		if (!active) return;
 		const previous = copy.style.minHeight;
 		copy.style.minHeight = "0px";
-		let max = 0;
-		copy.querySelectorAll(".ism-scene").forEach(function (el) {
-			const active = el.classList.contains("is-active");
-			if (!active) el.style.display = "block";
-			max = Math.max(max, el.getBoundingClientRect().height);
-			if (!active) el.style.display = "";
-		});
-		copy.style.minHeight = max ? (Math.ceil(max) + 1) + "px" : previous;
+		const height = active.getBoundingClientRect().height;
+		copy.style.minHeight = height ? (Math.ceil(height) + 1) + "px" : previous;
 	}
 
 	function renderCopy() {

@@ -488,7 +488,7 @@
 				if (navigator.clipboard) {
 					navigator.clipboard.writeText(text).then(function () {
 						var old = btn.textContent;
-						btn.textContent = "Copied";
+						btn.textContent = TM.lang() === "de" ? "Kopiert" : "Copied";
 						setTimeout(function () { btn.textContent = old; }, 1400);
 					});
 				}

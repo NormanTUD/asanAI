@@ -1942,6 +1942,7 @@
 		var keptEl = $("[data-filter-kept]", root);
 		var droppedEl = $("[data-filter-dropped]", root);
 		var qualityEl = $("[data-filter-quality]", root);
+		var sizeEl = $("[data-filter-size]", root);
 		if (!stream || !range) return;
 		var docs = [
 			{ name: "news", q: 3 }, { name: "blog", q: 2 }, { name: "spam", q: 0 },
@@ -1963,6 +1964,10 @@
 			if (keptEl) keptEl.textContent = kept + " / " + docs.length;
 			if (droppedEl) droppedEl.textContent = (docs.length - kept) + "";
 			if (qualityEl) qualityEl.textContent = kept ? (sum / kept).toFixed(1) : "—";
+			if (sizeEl) {
+				var pb = kept / docs.length * 100;
+				sizeEl.textContent = kept ? "≈ " + (pb >= 1 ? pb.toFixed(1) + " PB" : (pb * 1000).toFixed(0) + " GB") : "0 PB";
+			}
 		}
 		range.addEventListener("input", render);
 		render();
