@@ -6,7 +6,7 @@
 	<meta name="description" content="How CLIP and multimodal LLMs align pixels with language, and what that alignment can and cannot do.">
 	<meta name="theme-color" content="#ffffff">
 	<title>Connecting Images and Words | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
 <body data-lesson="multimodal" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -125,7 +125,7 @@
 		</div>
 	</main>
 
-	<script src="assets/site.js"></script>
-	<script src="assets/demos.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
+	<script src="assets/demos.js?v=<?php echo filemtime(__DIR__.'/assets/demos.js'); ?>"></script>
 </body>
 </html>
