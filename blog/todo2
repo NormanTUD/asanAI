@@ -1,0 +1,23 @@
+history.php:
+
+"im Glanz der Sonne" löschen, das ist zu sehr prosa, eher "hinter der sonne".
+
+"verrauschten Positionen als Ganzes" als *ein* ganzes
+
+in ../statistics_i ist der interaktive plot "Ceres: Truth vs. Noisy Observation Errors". kopier den mit hier hin, damit man das wirklich vor sich sieht, inkl dem Slider. usw. schreib unter beide dann in kursiv dass das nicht die realen daten sind als disclaimer, es ist nur zum zeigen
+
+"Seine Methode der kleinsten Quadrate minimierte den quadrierten Abstand zwischen Beobachtungen und Bahn und sagte voraus, wo Ceres wieder auftauchen würde" webe die demo an der stelle in den text ein, verbesser sie vllt noch ein wenig. schreib darüber wie man diese methode heute mit nutzt, um den fehler in KI zu berechnen, dass das also ein sehr unerwarter erfolg ist, den man aus der astronomischen beobachtung nicht hätte sehen können dass es dafür relevant ist. wir wollen auch diese pfade hier zeigen, mit denen man nicht so wirklich rechnet, aber aber sinn machen, wenn man sie weiß.
+
+"das Rad und Herons von Alexandria programmierbaren" da sind noch einige fahcbegriffe und namen die man fett drucken könnte, mach das.
+
+"Die Behauptung ist nicht, dass KI unvermeidlich war. Sie ist, dass sich dieselbe Bewegung auf jeder Ebene wiederholt: eine Aufgabe an einen Mechanismus übergeben und den Mechanismus dann als neuen Baustein behandeln. " mach eher sowas wie: "Die Behauptung ist nicht, dass all diese Schritte zwangsweise zur KI wie wir sie heute haben führen mussten, sondern viel mehr, dass die modernen KI-Systeme ein Node in einem eng gewebtem Netzwerk ist aus Ereignissen ist, die sich hier und an vielen anderen Stellen getroffen haben, und die selbst wieder Startpunkt von Nodes im Netzwerk von Allem ist.
+
+zitiere process and reality von whitehead, "The universe is a process of reaching out into the multi-colored world, and drawing it together into a single, new unity."; alles ist ein Prozess und alles ist mit allem verbunden.
+
+wir schauen hier auf die abstraktion nicht der rein physischen leistung, sondern der fähigkeiten des geistes. wir erlauben mit KI die enorme rechenleistung die moderne computer haben auf eine weise anzusprechen, die für uns natürlich wirkt, weil sie sich deckt mit dem, wie wir denken.
+
+schreib da sowas rein. dann kommt " Wir können jedes Problem lösen, indem wir eine zusätzliche Ebene der Indirektion [Abstraktion] einführen. ". webe das abre alles schön in den text und die demo ein.
+
+bei: "minimalneuron" schreib auch ein kapitel über den loss. erkläre, wie MSE (von gauß, siehe ceres in history) benutzt wird für einfache daten und dass das erlaubt, am anfang schnell in die richtige richtung ricthung zu gehen bis man in der nähe ist und dann man feiner arbeiten muss dmait man sich verbessert, weil man dann damit detailarbeit mcahen kann. dann erläuter auch categorical crossentropy kurz, ohne dass es zu mathematisch wird: da geht es darum, dass man kategorien hat und man will dass dinge in die kategorien richtig mit hoher wahrscheinlichkeit eingeordnet werden. daher bewertet man da erstmal ob es in der richtigen kategorie ist oder nicht, und dann wie gut es da ist, so dass es wenn es gut in der richtigen kategorie viel besser ist als wenn es unsicher aber in der richtigen kategorie ist und noch viel viel schlechter wenn man sicher und in der falschen kategorie ist. das braucht man. die ergebnisse des neuronalen netzes werden anhand dieser funktion bewertet, so dass man mit backpropagation und optimizern (lese dazu das backproplab in .. und optimizerlab aber halte dich da extrem kurz, das ist was für details, ncith für die tenminutes version) dann versucht bessere werte zu finden. dadurch bewegt man sich in einer hochdimensionalen loss-landschaft, wo jedes gewicht eine richtung ist, und die höhe der "berge" der loss, so dass man quasi versucht mit der kugel den berg runter. kopier dafür loss_landscape_resnet56_noskip.png hierher und zeige das. das ist ne (durch dimensionsreduktion auf 3d) runterreduzierte loss landscape, zitier sie richtig. man startet da irgendwo und schaut in welche richtung man sich bewegen muss, damit die kugel "runterrollt" und richtung lossminimierung geht. der loss ist der fehler, also wie falsch er liegt.
+
+

@@ -390,6 +390,12 @@ While the cross-lingual alignment story is compelling, the isomorphism between l
 ## The Manifold Hypothesis
 
 The deeper theoretical reason the path-finding framing works is the **\cite[Manifold Hypothesis]{bengio2013representation}**: the idea that high-dimensional data, like language, actually lies on or near a much lower-dimensional manifold embedded in the high-dimensional space. If sentences trace paths on a manifold, then translation is literally a mapping between two manifolds that share the same topology. The Transformer's attention layers can be seen as learning the **local coordinate charts** of these manifolds, the rules for how to navigate the surface at each point.
+
+**Relations are what carry meaning.** A word is a point, but its meaning comes from where it sits relative to the other points. The direction “man → woman” is also the direction “king → queen”, and that reusable relation is what a translation can carry across languages: the two manifolds have the same internal geometry, so one can be rotated, sheared, and shifted onto the other. The alignment is a geometric operation, not a dictionary lookup.
+
+**Tokens can be shared.** Tokens are not always whole words; they can be pieces of words. The same piece, for example `en`, occurs in ten languages, so ten different manifolds can all pass through that one point while extending in different directions with different other words. That is why the ten surfaces below meet at `en` and still look different.
+
+**The structure lies obliquely in space.** Aligning two manifolds is not just a rotation: the same structure can be sheared, stretched, and tilted. The realistic case is even messier, because languages are not as clean in the data as this theoretical picture, but the principle is the same.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -438,6 +444,42 @@ The deeper theoretical reason the path-finding framing works is the **\cite[Mani
         Use the <b>sliders</b> to rotate and separate the surfaces manually, or click <b>Align</b> to watch the Japanese manifold smoothly merge into the English one, proving the internal geometry is preserved.
     </div>
 </section>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-language-manifolds" style="height: 620px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 12px;"></div>
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6;">
+        <b>Ten languages, one shared token.</b>
+        Each surface is a language manifold. They all pass through the token <code>en</code>, which appears as a piece of words in all ten languages, but the rest of each surface carries different words and therefore has a different shape, orientation, and skew. The colours only separate the languages; the point is the shared intersection and the different directions that leave it.
+    </div>
+</section>
+
+<script src="manifold_scenes.js?v=<?php echo filemtime(__DIR__.'/manifold_scenes.js'); ?>"></script>
+<script>
+(function () {
+    var host = document.getElementById('plot-language-manifolds');
+    if (!host) return;
+    var drawn = false;
+    function draw() {
+        if (drawn || !window.ManifoldScenes) return;
+        drawn = true;
+        ManifoldScenes.renderLanguages('plot-language-manifolds');
+    }
+    if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+            if (entries.some(function (e) { return e.isIntersecting; })) {
+                io.disconnect();
+                draw();
+            }
+        }, { rootMargin: '500px 0px' });
+        io.observe(host);
+    } else {
+        draw();
+    }
+    if (window.__MN_DARK && __MN_DARK.onChange) {
+        __MN_DARK.onChange(function () { drawn = false; draw(); });
+    }
+})();
+</script>
 
 <div class="md" data-mathlevel="55">
 This works because the real world structures the language first, and thus, “dog” has similar relations to cat, pet, horse, mouse, ..., as “Hund” (german for dog) has to “Katze” (cat), “Haustier” (pet), “Pferd” (horse), mouse (“Maus”) and so on. The language model the real world, and the models the language, and thus, it's an abstracted model of the real world. It's all about the relations to each other.

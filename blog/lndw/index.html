@@ -6,6 +6,7 @@
 	<title>Wie funktionieren Large Language Modelle (LLM)?</title>
 	<script src="jquery.min.js"></script>
 	<script src="plotly.min.js"></script>
+	<script src="../manifold_scenes.js"></script>
 	<script src="temml.min.js"></script>
 	<link rel="stylesheet" href="index.css">
 </head>
@@ -871,6 +872,17 @@
         <p class="fragment">
 		Das bekommt man "for free" — allein aus der Struktur der Embeddings. Genau dafür wurde die Transformer-Architektur erfunden: für Übersetzungen.
 	</p>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: Zehn Sprachen, ein Token ==================== -->
+<div class="slide" id="slide-zehn-sprachen" data-title="Zehn Sprachen, ein Token">
+    <div class="slide-content">
+        <h2>Zehn Sprachen, ein Token</h2>
+        <p style="margin-bottom:12px;">
+		Tokens sind oft Wortteile. Das Stück <code>en</code> kommt in zehn Sprachen vor, also können zehn verschiedene Mannigfaltigkeiten alle durch diesen einen Punkt laufen. Die übrigen Wörter sind andere, deshalb sieht jede Fläche anders aus und liegt in einem anderen Winkel; die Struktur ist nicht nur gedreht, sondern auch geschert und gekippt. Bei echten Embeddings ist das unordentlicher, aber das Prinzip ist dasselbe.
+        </p>
+        <div id="plot-language-manifolds" style="height:520px; border-radius:8px; width:100%;"></div>
     </div>
 </div>
 
@@ -2334,6 +2346,25 @@ let resizeRaf;
   } catch (err) {
     console.warn('[sparkle] disabled:', err);
   }
+})();
+</script>
+
+<script>
+(function () {
+  var host = document.getElementById('plot-language-manifolds');
+  if (!host || !window.ManifoldScenes) return;
+  var drawn = false;
+  function draw() {
+    if (drawn) return;
+    drawn = true;
+    ManifoldScenes.renderLanguages('plot-language-manifolds');
+  }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      if (entries.some(function (e) { return e.isIntersecting; })) { io.disconnect(); draw(); }
+    }, { rootMargin: '600px 0px' });
+    io.observe(host);
+  } else { draw(); }
 })();
 </script>
 

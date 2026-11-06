@@ -560,6 +560,41 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="manifold">
+						<div class="section-kicker"><span class="sk-num">·</span> <?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Geometrie der Bedeutung' : 'Geometry of meaning'; ?></div>
+						<h2 class="section-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Wörter sind Punkte. Ihre Beziehungen sind die Bedeutung.' : 'Words are points. Their relations are the meaning.'; ?></h2>
+						<div class="prose">
+							<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
+							<p>
+								Wenn Wörter Punkte im Raum sind, dann steckt die Bedeutung nicht im einzelnen Punkt, sondern in seiner Lage zu den anderen. Die Richtung von „Mann“ zu „Frau“ ist dieselbe wie von „König“ zu „Königin“. Solche wiederverwendbaren Richtungen lassen sich zwischen Sprachen übertragen: Die beiden Mannigfaltigkeiten haben dieselbe innere Geometrie, also kann man die eine durch Drehung, Scherung und Verschiebung auf die andere legen. Genau das ist die geometrische Seite einer Übersetzung.
+							</p>
+							<p>
+								Die Struktur liegt dabei schief im Raum, nicht nur gedreht: Eine Scherung kippt und verzerrt sie zusätzlich. Und Tokens sind nicht immer ganze Wörter, sondern können Wortteile sein. Dasselbe Stück wie <code>en</code> kommt in zehn Sprachen vor, deshalb können zehn verschiedene Mannigfaltigkeiten alle durch diesen einen Punkt laufen und trotzdem in unterschiedliche Richtungen mit anderen Wörtern weitergehen. Bei echten Embeddings ist das viel unordentlicher als in diesem theoretischen Bild, aber das Prinzip ist dasselbe.
+							</p>
+							<?php else: ?>
+							<p>
+								If words are points in space, meaning lives not in the point alone but in its position relative to the others. The direction from “man” to “woman” is the same as from “king” to “queen”. Those reusable directions can cross languages: two manifolds share the same internal geometry, so one can be rotated, sheared, and shifted onto the other. That is the geometric side of a translation.
+							</p>
+							<p>
+								The structure lies obliquely in space, not only rotated: a shear tilts and distorts it as well. And tokens are not always whole words; they can be pieces of words. The same piece such as <code>en</code> occurs in ten languages, so ten different manifolds can all pass through that one point and still leave it in different directions with different other words. Real embeddings are much messier than this theoretical picture, but the principle is the same.
+							</p>
+							<?php endif; ?>
+						</div>
+						<div class="demo demo--paper" id="tm-dual-manifold-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Zwei Mannigfaltigkeiten, eine Bedeutung' : 'Two manifolds, one meaning'; ?> <span>· demo</span></p>
+									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Drehe und schere die zweite Mannigfaltigkeit. Die Beschriftungen zeigen dieselben Wörter in beiden Sprachen; die gestrichelten Linien verbinden sie.' : 'Rotate and shear the second manifold. The labels show the same words in both languages; the dashed lines connect them.'; ?></p>
+								</div>
+								<span class="demo-badge">live</span>
+							</div>
+							<div class="demo-body">
+								<div id="tm-dual-manifolds" style="width:100%;height:480px;"></div>
+								<div id="tm-dual-controls" style="max-width:520px;margin:8px auto 0;"></div>
+							</div>
+						</div>
+					</section>
+
 					<section class="section-block" id="meadow">
 						<div class="section-kicker"><span class="sk-num">04</span> The last step</div>
 						<h2 class="section-title">The final vector picks a word.</h2>
@@ -684,6 +719,28 @@
 	<script src="assets/demos.js?v=20261104c"></script>
 	<script src="assets/space-morph.js?v=20261104"></script>
 	<script src="assets/word-meadow.js?v=20261105c"></script>
+	<script src="../plotly-2.24.1.min.js"></script>
+	<script src="../manifold_scenes.js?v=<?php echo filemtime(__DIR__.'/../manifold_scenes.js'); ?>"></script>
+	<script>
+	(function () {
+		var host = document.getElementById('tm-dual-manifolds');
+		var controls = document.getElementById('tm-dual-controls');
+		if (!host || !window.ManifoldScenes) return;
+		var drawn = false;
+		function draw() {
+			if (drawn) return;
+			drawn = true;
+			ManifoldScenes.renderDual('tm-dual-manifolds', 'tm-dual-controls');
+		}
+		if ('IntersectionObserver' in window) {
+			var io = new IntersectionObserver(function (entries) {
+				if (entries.some(function (e) { return e.isIntersecting; })) { io.disconnect(); draw(); }
+			}, { rootMargin: '400px 0px' });
+			io.observe(host);
+		} else { draw(); }
+		window.addEventListener('tm:theme', function () { drawn = false; draw(); });
+	})();
+	</script>
 	<script>
 	(function () {
 		"use strict";

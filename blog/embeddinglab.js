@@ -67,6 +67,7 @@ const evoSpaces = {
 const dualManifoldState = {
 	rotationDeg: 55,
 	separation: 5,
+	skew: 0.35,
 	showCorrespondence: true,
 	showPaths: true,
 	aligned: false,
@@ -86,9 +87,12 @@ function getDualEnPos(u, v) {
 
 function getDualJpPos(u, v) {
 	const st = dualManifoldState;
-	const x = u, y = v, z = dualManifoldZ(u, v);
+	const z = dualManifoldZ(u, v);
+	// Shear first: the aligned structure lies obliquely in space, it is not
+	// merely a rotated copy. Then rotate around Z and lift it.
+	const x = u + st.skew * v;
+	const y = v + st.skew * 0.45 * z;
 	const rad = st.rotationDeg * Math.PI / 180;
-	// Rotate the (x, y) plane around the Z axis, then offset vertically
 	return [
 		x * Math.cos(rad) - y * Math.sin(rad),
 		x * Math.sin(rad) + y * Math.cos(rad),

@@ -72,9 +72,12 @@ function getDualEnPos(u, v) {
 
 function getDualJpPos(u, v) {
 	const st = dualManifoldState;
-	const x = u, y = v, z = dualManifoldZ(u, v);
+	const z = dualManifoldZ(u, v);
+	// Shear: the structure lies obliquely in space, not only rotated.
+	const skew = 0.35;
+	const x = u + skew * v;
+	const y = v + skew * 0.45 * z;
 	const rad = st.rotationDeg * Math.PI / 180;
-	// Rotate the (x, y) plane around the Z axis, then offset vertically
 	return [
 		x * Math.cos(rad) - y * Math.sin(rad),
 		x * Math.sin(rad) + y * Math.cos(rad),
