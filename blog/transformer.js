@@ -2427,20 +2427,18 @@ function showEmptyInputMessage() {
 }
 
 function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature) {
-	const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
-	if (knownMasterTokens.length === 0) {
-		const out = document.getElementById('transformer-output-projection');
-		if (out) {
-			if (window.PlotState) {
-				PlotState.empty(out, 'Final projection', 'Enter at least one prompt token in <b>Input (Inference)</b> to see the logits and probabilities.');
-			} else {
-				out.innerHTML = '<div style="padding:20px;color:var(--mn-text-muted);">Enter at least one prompt token to see the final projection.</div>';
-			}
-		}
-		return;
+	let finalTokens = masterTokens.filter(token => vocabulary.includes(token));
+	// Unknown prompt tokens still have a zero embedding, so run them through
+	// instead of blanking the panel. With no prompt at all (e.g. after Clear)
+	// fall back to the last real training token so the projection stays filled.
+	if (finalTokens.length === 0 && masterTokens.length > 0) finalTokens = masterTokens.slice();
+	if (finalTokens.length === 0) {
+		const real = vocabulary.filter(token => token !== TM_EOS_TOKEN);
+		if (real.length) finalTokens = [real[real.length - 1]];
 	}
+	if (finalTokens.length === 0) return;
 
-	const h_final = runSimpleForwardPass(knownMasterTokens, weights, d_model, n_heads, n_layers, true);
+	const h_final = runSimpleForwardPass(finalTokens, weights, d_model, n_heads, n_layers, true);
 
 	// *** NEU: Cache für Temperature-only Re-Rendering ***
 	window._cachedFinalProjection = {
