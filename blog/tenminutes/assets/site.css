@@ -5043,6 +5043,12 @@ html[data-theme="light"] .step-input {
 .pos-legend .pl-zero { background: #e2e8f0; }
 .pos-legend .pl-pos { background: var(--tm-green); }
 .pos-note { opacity: 0.65; }
+.pos-formula {
+	margin: 18px 0 22px;
+	padding: 12px 4px 16px;
+	line-height: 1.55;
+	overflow-x: auto;
+}
 html[data-theme="dark"] .pos-legend .pl-zero { background: #1e3a4a; }
 .pos-bridge {
 	margin: 18px 0;

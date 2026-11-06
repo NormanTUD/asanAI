@@ -2574,6 +2574,20 @@
 					if (posApi) posApi.redraw();
 				});
 			}
+			var posDModel = document.getElementById("ipe-d-model");
+			var posDModelOut = document.getElementById("ipe-d-model-out");
+			if (posDModel) {
+				posDModel.addEventListener("input", function () {
+					var d = TM.clamp(parseInt(posDModel.value, 10) || 64, 8, 256);
+					POS_D_MODEL = d;
+					HEAT_D_MODEL = d;
+					if (posDModelOut) posDModelOut.textContent = String(d);
+					posRenderOut();
+					if (posApi) posApi.redraw();
+					if (heatApi) heatApi.redraw();
+				});
+				if (posDModelOut) posDModelOut.textContent = String(POS_D_MODEL);
+			}
 			var posAutoBtn = document.getElementById("ipe-autorotate");
 			if (posAutoBtn) {
 				posAutoBtn.classList.toggle("is-on", posAuto);

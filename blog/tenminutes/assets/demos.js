@@ -4300,6 +4300,7 @@
 			else if (type === "folds") initFolds(root);
 			else if (type === "headbudget") initHeadBudget(root);
 			else if (type === "optimizer") initOptimizer(root);
+			root.setAttribute("data-demo-ready", "1");
 		});
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

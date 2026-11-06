@@ -51,6 +51,8 @@ return [
 		'Step' => 'Schritt',
 		'Context length' => 'Kontextlänge',
 		'Dimensions' => 'Dimensionen',
+		'Visible dimensions' => 'Sichtbare Dimensionen',
+		'Model dimension d' => 'Modell-Dimension d',
 		'Auto-rotate view' => 'Ansicht automatisch drehen',
 		'7 words' => '7 Wörter',
 		'Top choice' => 'Top-Wahl',
