@@ -5,7 +5,7 @@ return [
 	'texts' => [
 		'Chopping text' => 'Text zerlegen',
 		'into tokens.' => 'in Tokens.',
-		'A modern LLM never sees words. It sees' => 'Ein modernes LLM sieht Wörter niemals. Es sieht',
+		'An LLM never sees words. It sees' => 'Ein LLM sieht niemals Worte. Es sieht',
 		'tokens' => 'Tokens',
 		'(chunks of text) and turns each one into a vector. That single decision explains why models struggle to count letters, why some languages cost more, and why a vocabulary entry is not the same thing as a learned concept.' => '(Textstücke) und wandelt jedes in einen Vektor um. Diese eine Entscheidung erklärt, warum Modelle Schwierigkeiten haben, Buchstaben zu zählen, warum manche Sprachen mehr kosten und warum ein Vokabulareintrag nicht dasselbe ist wie ein gelerntes Konzept.',
 		'The first cut' => 'Der erste Schnitt',

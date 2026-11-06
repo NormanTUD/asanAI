@@ -32,12 +32,12 @@
 						<h2 class="section-title">Computers need numbers. Text is not numbers.</h2>
 						<div class="prose">
 							<p>
-								The next-token loop spoke of words. A modern LLM does not see words; it sees tokens. The very
+								The next-token loop spoke of words. An LLM does not see words; it sees tokens. The very
 								first thing it does is <strong>chop the input into small pieces called
 								tokens</strong>. We can first think of these as words, but
 								they do not have to be. A token can be a whole word, a subword, a number, a
 								punctuation mark, or a single byte. Humans think in words; the model thinks
-								in tokens. The token's ID is only an index into a table: token 1024 is not
+								in “tokens”. The token's ID is only an index into a table: token 1024 is not
 								“more” than token 64, and the ordering carries no meaning. It is a slot number,
 								not a quantity.
 							</p>
