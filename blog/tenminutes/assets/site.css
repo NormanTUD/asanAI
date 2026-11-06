@@ -2691,6 +2691,19 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	line-height: 1.5;
 	color: var(--tm-ink-soft);
 }
+.ceres-plot {
+	width: 100%;
+	min-height: 500px;
+}
+.ceres-controls { justify-content: space-between; }
+.ceres-slider {
+	flex: 1 1 340px;
+	gap: 12px;
+}
+.ceres-slider input[type="range"] {
+	flex: 1 1 160px;
+	width: auto;
+}
 .gate-layout {
 	display: grid;
 	grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
@@ -6731,7 +6744,7 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	text-align: center;
 }
 .conv-kernel-grid .conv-kernel-input:focus { outline: 2px solid var(--tm-green); outline-offset: 1px; }
-#conv-formula { min-height: 128px; }
+#conv-formula { height: 160px; }
 
 /* Loading placeholder for the manifold demo. */
 .tm-manifold-loading {

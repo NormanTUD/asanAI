@@ -48,8 +48,24 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="loss">
+						<div class="section-kicker"><span class="sk-num">03</span> The loss</div>
+						<h2 class="section-title">How wrong is the model?</h2>
+						<div class="prose">
+							<p>To learn, a model needs a number that says how wrong it is. That number is the <strong>loss</strong>. For a line through noisy points, the usual choice is the <strong>mean squared error</strong> (MSE): the average of the squared vertical distances between the points and the line. Gauß used the same idea for Ceres in 1801, as the history chapter tells it. Squaring punishes a large miss much more than a small one, and it makes the slope smooth.</p>
+							<p>MSE has a useful shape for learning. Far from the best line the error surface is steep, so a gradient step can move a long way and quickly reach the right region. Close to the bottom the surface flattens, so the same step size would overshoot; the learning rate has to become smaller, or the optimizer has to adapt it, to do the fine work. Early progress is coarse, late progress is detailed.</p>
+							<p>Not every task is a curve. A classifier chooses among categories, and there the usual loss is <strong>categorical cross-entropy</strong>. It asks two questions: was the right category chosen, and how confident was the model? A confident correct answer is rewarded; an uncertain correct answer is rewarded less; a confident wrong answer is punished much more. The model’s outputs are treated as probabilities over the categories, and the loss measures how much probability the correct category received.</p>
+							<p>The network’s output is scored with that function, and <strong>backpropagation</strong> computes how each weight contributed to the loss. An <strong>optimizer</strong> then changes the weights a little. The details belong to the backpropagation and optimizer chapters; here the shape is enough: the loss defines a landscape, every weight is one direction, and the height is the error.</p>
+							<p>In a large network that landscape lives in millions of dimensions. The image below is a real loss landscape reduced to three dimensions so that it can be drawn. You start somewhere on the surface and look for the direction in which the ball rolls downhill. That direction is the negative gradient, and the loss is the error: the height tells you how wrong the model is.</p>
+						</div>
+						<figure>
+							<img src="loss_landscape_resnet56_noskip.png" alt="A three-dimensional loss landscape of ResNet-56 without skip connections, reduced from many dimensions for plotting" loading="lazy">
+							<figcaption>Loss landscape of ResNet-56 without skip connections, reduced to three dimensions for plotting. The vertical axis is the loss; the two horizontal axes are directions in weight space. Figure: Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer and Tom Goldstein, <a href="https://arxiv.org/abs/1712.09913" rel="noopener">Visualizing the Loss Landscape of Neural Nets</a> (2018), from the <a href="https://github.com/tomgoldstein/loss-landscape" rel="noopener">loss-landscape repository</a>, MIT licence.</figcaption>
+						</figure>
+					</section>
+
 					<section class="section-block" id="extra">
-						<div class="section-kicker"><span class="sk-num">03</span> The learning loop</div>
+						<div class="section-kicker"><span class="sk-num">04</span> The learning loop</div>
 						<h2 class="section-title">Gradient descent in miniature.</h2>
 						<div class="prose">
 							<p>The error is a number. For a line, the mean squared error is the average of the squared vertical distances between the points and the line. Why squared? Because it punishes large misses much more than small ones, and because its slope is smooth and easy to compute. Absolute error is also a valid choice; the squared version is simply the default that makes the gradient a clean linear function. That number defines a surface: every choice of a and b gives a point on the surface, and the height is the error.</p>
@@ -131,7 +147,7 @@
 
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">05</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

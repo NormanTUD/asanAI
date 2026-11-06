@@ -2,57 +2,57 @@ was ich hier sage gilt für deutsch und englisch sofern es da zutrifft, prüfe d
 
 history.php:
 
-"im Glanz der Sonne" löschen, das ist zu sehr prosa, eher "hinter der sonne".
+DONE "im Glanz der Sonne" löschen, das ist zu sehr prosa, eher "hinter der sonne".
 
-"verrauschten Positionen als Ganzes" als *ein* ganzes
+DONE "verrauschten Positionen als Ganzes" als *ein* ganzes
 
-in ../statistics_i ist der interaktive plot "Ceres: Truth vs. Noisy Observation Errors". kopier den mit hier hin, damit man das wirklich vor sich sieht, inkl dem Slider. usw. schreib unter beide dann in kursiv dass das nicht die realen daten sind als disclaimer, es ist nur zum zeigen
+DONE in ../statistics_i ist der interaktive plot "Ceres: Truth vs. Noisy Observation Errors". kopier den mit hier hin, damit man das wirklich vor sich sieht, inkl dem Slider. usw. schreib unter beide dann in kursiv dass das nicht die realen daten sind als disclaimer, es ist nur zum zeigen
 
-"Seine Methode der kleinsten Quadrate minimierte den quadrierten Abstand zwischen Beobachtungen und Bahn und sagte voraus, wo Ceres wieder auftauchen würde" webe die demo an der stelle in den text ein, verbesser sie vllt noch ein wenig. schreib darüber wie man diese methode heute mit nutzt, um den fehler in KI zu berechnen, dass das also ein sehr unerwarter erfolg ist, den man aus der astronomischen beobachtung nicht hätte sehen können dass es dafür relevant ist. wir wollen auch diese pfade hier zeigen, mit denen man nicht so wirklich rechnet, aber aber sinn machen, wenn man sie weiß.
+DONE "Seine Methode der kleinsten Quadrate minimierte den quadrierten Abstand zwischen Beobachtungen und Bahn und sagte voraus, wo Ceres wieder auftauchen würde" webe die demo an der stelle in den text ein, verbesser sie vllt noch ein wenig. schreib darüber wie man diese methode heute mit nutzt, um den fehler in KI zu berechnen, dass das also ein sehr unerwarter erfolg ist, den man aus der astronomischen beobachtung nicht hätte sehen können dass es dafür relevant ist. wir wollen auch diese pfade hier zeigen, mit denen man nicht so wirklich rechnet, aber aber sinn machen, wenn man sie weiß.
 
-"das Rad und Herons von Alexandria programmierbaren" da sind noch einige fahcbegriffe und namen die man fett drucken könnte, mach das.
+DONE "das Rad und Herons von Alexandria programmierbaren" da sind noch einige fahcbegriffe und namen die man fett drucken könnte, mach das.
 
-"Die Behauptung ist nicht, dass KI unvermeidlich war. Sie ist, dass sich dieselbe Bewegung auf jeder Ebene wiederholt: eine Aufgabe an einen Mechanismus übergeben und den Mechanismus dann als neuen Baustein behandeln. " mach eher sowas wie: "Die Behauptung ist nicht, dass all diese Schritte zwangsweise zur KI wie wir sie heute haben führen mussten, sondern viel mehr, dass die modernen KI-Systeme ein Node in einem eng gewebtem Netzwerk ist aus Ereignissen ist, die sich hier und an vielen anderen Stellen getroffen haben, und die selbst wieder Startpunkt von Nodes im Netzwerk von Allem ist.
+DONE "Die Behauptung ist nicht, dass KI unvermeidlich war. Sie ist, dass sich dieselbe Bewegung auf jeder Ebene wiederholt: eine Aufgabe an einen Mechanismus übergeben und den Mechanismus dann als neuen Baustein behandeln. " mach eher sowas wie: "Die Behauptung ist nicht, dass all diese Schritte zwangsweise zur KI wie wir sie heute haben führen mussten, sondern viel mehr, dass die modernen KI-Systeme ein Node in einem eng gewebtem Netzwerk ist aus Ereignissen ist, die sich hier und an vielen anderen Stellen getroffen haben, und die selbst wieder Startpunkt von Nodes im Netzwerk von Allem ist.
 
-zitiere process and reality von whitehead, "The universe is a process of reaching out into the multi-colored world, and drawing it together into a single, new unity."; alles ist ein Prozess und alles ist mit allem verbunden.
+DONE zitiere process and reality von whitehead, "The universe is a process of reaching out into the multi-colored world, and drawing it together into a single, new unity."; alles ist ein Prozess und alles ist mit allem verbunden.
 
-wir schauen hier auf die abstraktion nicht der rein physischen leistung, sondern der fähigkeiten des geistes. wir erlauben mit KI die enorme rechenleistung die moderne computer haben auf eine weise anzusprechen, die für uns natürlich wirkt, weil sie sich deckt mit dem, wie wir denken.
+DONE wir schauen hier auf die abstraktion nicht der rein physischen leistung, sondern der fähigkeiten des geistes. wir erlauben mit KI die enorme rechenleistung die moderne computer haben auf eine weise anzusprechen, die für uns natürlich wirkt, weil sie sich deckt mit dem, wie wir denken.
 
-schreib da sowas rein. dann kommt " Wir können jedes Problem lösen, indem wir eine zusätzliche Ebene der Indirektion [Abstraktion] einführen. ". webe das abre alles schön in den text und die demo ein.
+DONE schreib da sowas rein. dann kommt " Wir können jedes Problem lösen, indem wir eine zusätzliche Ebene der Indirektion [Abstraktion] einführen. ". webe das abre alles schön in den text und die demo ein.
 
-bei: "minimalneuron" schreib auch ein kapitel über den loss. erkläre, wie MSE (von gauß, siehe ceres in history) benutzt wird für einfache daten und dass das erlaubt, am anfang schnell in die richtige richtung ricthung zu gehen bis man in der nähe ist und dann man feiner arbeiten muss dmait man sich verbessert, weil man dann damit detailarbeit mcahen kann. dann erläuter auch categorical crossentropy kurz, ohne dass es zu mathematisch wird: da geht es darum, dass man kategorien hat und man will dass dinge in die kategorien richtig mit hoher wahrscheinlichkeit eingeordnet werden. daher bewertet man da erstmal ob es in der richtigen kategorie ist oder nicht, und dann wie gut es da ist, so dass es wenn es gut in der richtigen kategorie viel besser ist als wenn es unsicher aber in der richtigen kategorie ist und noch viel viel schlechter wenn man sicher und in der falschen kategorie ist. das braucht man. die ergebnisse des neuronalen netzes werden anhand dieser funktion bewertet, so dass man mit backpropagation und optimizern (lese dazu das backproplab in .. und optimizerlab aber halte dich da extrem kurz, das ist was für details, ncith für die tenminutes version) dann versucht bessere werte zu finden. dadurch bewegt man sich in einer hochdimensionalen loss-landschaft, wo jedes gewicht eine richtung ist, und die höhe der "berge" der loss, so dass man quasi versucht mit der kugel den berg runter. kopier dafür loss_landscape_resnet56_noskip.png hierher und zeige das. das ist ne (durch dimensionsreduktion auf 3d) runterreduzierte loss landscape, zitier sie richtig. man startet da irgendwo und schaut in welche richtung man sich bewegen muss, damit die kugel "runterrollt" und richtung lossminimierung geht. der loss ist der fehler, also wie falsch er liegt.
+DONE bei: "minimalneuron" schreib auch ein kapitel über den loss. erkläre, wie MSE (von gauß, siehe ceres in history) benutzt wird für einfache daten und dass das erlaubt, am anfang schnell in die richtige richtung ricthung zu gehen bis man in der nähe ist und dann man feiner arbeiten muss dmait man sich verbessert, weil man dann damit detailarbeit mcahen kann. dann erläuter auch categorical crossentropy kurz, ohne dass es zu mathematisch wird: da geht es darum, dass man kategorien hat und man will dass dinge in die kategorien richtig mit hoher wahrscheinlichkeit eingeordnet werden. daher bewertet man da erstmal ob es in der richtigen kategorie ist oder nicht, und dann wie gut es da ist, so dass es wenn es gut in der richtigen kategorie viel besser ist als wenn es unsicher aber in der richtigen kategorie ist und noch viel viel schlechter wenn man sicher und in der falschen kategorie ist. das braucht man. die ergebnisse des neuronalen netzes werden anhand dieser funktion bewertet, so dass man mit backpropagation und optimizern (lese dazu das backproplab in .. und optimizerlab aber halte dich da extrem kurz, das ist was für details, ncith für die tenminutes version) dann versucht bessere werte zu finden. dadurch bewegt man sich in einer hochdimensionalen loss-landschaft, wo jedes gewicht eine richtung ist, und die höhe der "berge" der loss, so dass man quasi versucht mit der kugel den berg runter. kopier dafür loss_landscape_resnet56_noskip.png hierher und zeige das. das ist ne (durch dimensionsreduktion auf 3d) runterreduzierte loss landscape, zitier sie richtig. man startet da irgendwo und schaut in welche richtung man sich bewegen muss, damit die kugel "runterrollt" und richtung lossminimierung geht. der loss ist der fehler, also wie falsch er liegt.
 
-"aber absichtlich: Jemand wählte einen": zeige da das lomewki tool bild aus ..
+DONE "aber absichtlich: Jemand wählte einen": zeige da das lomewki tool bild aus ..
 
-"Ob sie überhaupt eine Bedeutung hat, weiß niemand." -> "Ob dieser Stein irgendeine Bedeutung hatte ist unbekannt"
+DONE "Ob sie überhaupt eine Bedeutung hat, weiß niemand." -> "Ob dieser Stein irgendeine Bedeutung hatte ist unbekannt"
 
-"Gedächtnis kann im Regal liegen.": nicht nur im Regal, im Außen
+DONE "Gedächtnis kann im Regal liegen.": nicht nur im Regal, im Außen
 
-"Datenbanken wiederholen dieselbe Bewegung" den selben gedanken
+DONE "Datenbanken wiederholen dieselbe Bewegung" den selben gedanken
 
-"die die moderne Maschine speisen" nicht speisen sondern auf denen moderne maschinen basieren
+DONE "die die moderne Maschine speisen" nicht speisen sondern auf denen moderne maschinen basieren
 
-"Sanskrit-Prosodie" sowas könnte fett gedruckt sein
+DONE "Sanskrit-Prosodie" sowas könnte fett gedruckt sein
 
-"Fibonaccis Liber Abaci" und "Null" auch fett
+DONE "Fibonaccis Liber Abaci" und "Null" auch fett
 
-"Speicher, Mühle und Lochkarteneingabe" mit Mühle ist quasi der cpu gemeint oder? schreib das, "Recheneinheit (er nannte sie Mühle)" oder so
+DONE "Speicher, Mühle und Lochkarteneingabe" mit Mühle ist quasi der cpu gemeint oder? schreib das, "Recheneinheit (er nannte sie Mühle)" oder so
 
-" Maschinen waren in schwächeren Sinnen programmierbar. " programmierbarkeit geht zurück auf Ismail al-Jazari usw zurück, also sehr weit zurück
+DONE " Maschinen waren in schwächeren Sinnen programmierbar. " programmierbarkeit geht zurück auf Ismail al-Jazari usw zurück, also sehr weit zurück
 
-"Die Lernregel war nicht Backpropagation:" entfenre diesen teilsatz
+DONE "Die Lernregel war nicht Backpropagation:" entfenre diesen teilsatz
 
-entferne die überschrift "Das Perceptron war eine physische Maschine." und mach lieber "das perzeptron" aber vor "Das Perceptron aktualisierte seine Gewichte direkt aus dem Fehler, Schicht für Schicht, weshalb". schreib davor aber kurz was über frank rosenblatt, verschiebe das von später hierhin, und verschiebe auch das bild von ihm hierher.
+DONE entferne die überschrift "Das Perceptron war eine physische Maschine." und mach lieber "das perzeptron" aber vor "Das Perceptron aktualisierte seine Gewichte direkt aus dem Fehler, Schicht für Schicht, weshalb". schreib davor aber kurz was über frank rosenblatt, verschiebe das von später hierhin, und verschiebe auch das bild von ihm hierher.
 
-bei "Eine Faltung ist eine gleitende gewichtete Summe ": die merkmalskarte ist hier direkt ausgefüllt. der soll die beim schritt für shritt durchgehen erst ausfüllen. und er soll einen automatisch durchgehen button haben. wenn ich zwischen vertikale kanten und weichzeichnen hin und her schalte ist weil die formeln ganz leicht unterschiedlich hoch sind ide höhe anders worauf der rest der seite springt.  fixe das. das element mit der formel unter Position (0, 0): Die neun Produkte aus Bildausschnitt und Kernel ergeben 0.00. Die übrigen Zellen der Feature Map füllen sich, sobald der Kernel sie erreicht. muss die finale höhe von anfang an haben die es haben wird
+DONE bei "Eine Faltung ist eine gleitende gewichtete Summe ": die merkmalskarte ist hier direkt ausgefüllt. der soll die beim schritt für shritt durchgehen erst ausfüllen. und er soll einen automatisch durchgehen button haben. wenn ich zwischen vertikale kanten und weichzeichnen hin und her schalte ist weil die formeln ganz leicht unterschiedlich hoch sind ide höhe anders worauf der rest der seite springt.  fixe das. das element mit der formel unter Position (0, 0): Die neun Produkte aus Bildausschnitt und Kernel ergeben 0.00. Die übrigen Zellen der Feature Map füllen sich, sobald der Kernel sie erreicht. muss die finale höhe von anfang an haben die es haben wird
 
-"Das hilft langreichweitigen Abhängigkeiten und füllt eine GPU viel besser als eine Schleife über die Sequenz. " du meinst long dependencies, das ist dem user aber nicht klar, schreibe darüber dass man vorher das problem hatte dass man wenn man das zehnte wort gelesen hat das erste schon wieder vergessen hat. mit attn passiert das nicht weil man alles parallel sieht. sage dass ein wort am anfang eines textes die bedeutung des letzten wortes beeinflussen kann, das ist eine long term dependency
+DONE "Das hilft langreichweitigen Abhängigkeiten und füllt eine GPU viel besser als eine Schleife über die Sequenz. " du meinst long dependencies, das ist dem user aber nicht klar, schreibe darüber dass man vorher das problem hatte dass man wenn man das zehnte wort gelesen hat das erste schon wieder vergessen hat. mit attn passiert das nicht weil man alles parallel sieht. sage dass ein wort am anfang eines textes die bedeutung des letzten wortes beeinflussen kann, das ist eine long term dependency
 
-"jeder in seinem eigenen Unterraum, und ihre Ausgaben werden kombiniert." und jeder achtet auf seinen eigenen kram. worauf er achtet bringt sich der computer selbst bei, um einen möglichst geringen fehler zu haben
+DONE "jeder in seinem eigenen Unterraum, und ihre Ausgaben werden kombiniert." und jeder achtet auf seinen eigenen kram. worauf er achtet bringt sich der computer selbst bei, um einen möglichst geringen fehler zu haben
 
-benenne "Drei verschiedene Hebel " um: nenne es attention
+DONE benenne "Drei verschiedene Hebel " um: nenne es attention
 
-entferne den plot von "Strategie · Skalierung"
+DONE entferne den plot von "Strategie · Skalierung"
 
 language: 
 
