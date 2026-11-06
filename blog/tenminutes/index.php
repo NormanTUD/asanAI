@@ -125,7 +125,7 @@ $simDateLabel = $today->format('j F Y');
 	<meta name="description" content="An end-of-year AI calendar from ScaDS.AI Dresden/Leipzig: one short article, roughly ten minutes, with an interactive demo for every day.">
 	<meta name="theme-color" content="#ffffff">
 	<title>End-of-Year AI Calendar | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
 <body data-page="calendar">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -155,7 +155,7 @@ $simDateLabel = $today->format('j F Y');
 		</div>
 	</main>
 
-	<script src="assets/site.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
 	<script>
 	(function () {
 		"use strict";
