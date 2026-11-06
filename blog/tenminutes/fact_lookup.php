@@ -6,7 +6,7 @@
 	<meta name="description" content="How an LLM turns 'The capital of France is' into 'Paris': residual streams, attention, MLP memory, and the limits of the explanation.">
 	<meta name="theme-color" content="#ffffff">
 	<title>Where a Fact Lives | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
 <body data-lesson="fact_lookup" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -114,7 +114,7 @@
 		</div>
 	</main>
 
-	<script src="assets/site.js"></script>
-	<script src="assets/demos.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
+	<script src="assets/demos.js?v=<?php echo filemtime(__DIR__.'/assets/demos.js'); ?>"></script>
 </body>
 </html>
