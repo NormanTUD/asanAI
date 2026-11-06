@@ -83,6 +83,15 @@
 	gap: 8px;
 	margin-left: auto;
 }
+#tda-toggle-training-windows {
+	padding: 4px 12px;
+	border-radius: 6px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface, #fff);
+	color: var(--mn-text, #0f172a);
+	cursor: pointer;
+	font-weight: 600;
+}
 .transformer-train-status {
 	min-height: 20px;
 	margin-top: 10px;

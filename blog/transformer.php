@@ -171,6 +171,7 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 		</div>
 		<div class="transformer-train-actions">
 			<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
+			<button class="btn" id="tda-toggle-training-windows" onclick="toggleTrainingWindows()" type="button">Show training windows</button>
 			<button class="btn" type="button" onclick="TransformerRun.share(this)">Share run</button>
 		</div>
 	</div>
@@ -184,6 +185,10 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	if (typeof drawTrainingPlaceholder === 'function') drawTrainingPlaceholder();
 })();
 </script>
+
+<div id="show_training_sentences" style="display: none">
+	<p>Current Training Windows: <span id="current_training_sentence"></span></p><br>
+</div>
 
 <div class="md">
 ## The six steps, live
