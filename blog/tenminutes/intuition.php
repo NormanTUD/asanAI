@@ -412,6 +412,7 @@
 									</div>
 									<p class="step-note"><b>This step is an intuition, not a real attention head.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result: context changes the representation. It shows one simplified attention head, not the many heads and layers of a real model.</p>
 									<p class="step-note">The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database. The same word can end up in a different place depending on the context, because the values it collects are different.</p>
+									<p class="step-note">Training data is full of typos, misspellings, and irregular spacing. Attention and the feed-forward network see both clean and noisy text, so they learn to route around the noise and still produce something useful from a misspelled token.</p>
 								</div>
 
 								<div class="step-pane layer-pane" id="layer-detail">
