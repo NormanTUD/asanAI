@@ -7010,3 +7010,44 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	animation: tm-manifold-spin .7s linear infinite;
 }
 @keyframes tm-manifold-spin { to { transform: rotate(360deg); } }
+
+/* ── Global slider contract ─────────────────────────────────
+   Every range input must have a visible track and thumb,
+   independent of the demo shell or page section. */
+input[type="range"] {
+	--range-track: var(--tm-line-strong) !important;
+	--range-thumb: var(--tm-green) !important;
+	--range-thumb-border: var(--tm-card) !important;
+	height: 6px !important;
+	background: var(--range-track) !important;
+}
+.demo:not(.demo--paper) input[type="range"] {
+	--range-track: rgba(238, 247, 244, 0.28) !important;
+	--range-thumb: var(--tm-lime) !important;
+	--range-thumb-border: #06384a !important;
+}
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	width: 18px !important;
+	height: 18px !important;
+	border-radius: 50%;
+	background: var(--range-thumb) !important;
+	border: 3px solid var(--range-thumb-border) !important;
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--range-thumb) 24%, transparent) !important;
+}
+input[type="range"]::-moz-range-track {
+	height: 6px;
+	border-radius: 4px;
+	background: var(--range-track) !important;
+}
+input[type="range"]::-moz-range-thumb {
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: var(--range-thumb) !important;
+	border: 3px solid var(--range-thumb-border) !important;
+}
+input[type="range"]:focus-visible {
+	outline: 2px solid var(--tm-blue) !important;
+	outline-offset: 4px;
+}

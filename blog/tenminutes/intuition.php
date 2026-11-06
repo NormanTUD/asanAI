@@ -3210,5 +3210,124 @@
 		update();
 	})();
 	</script>
+	<script>
+	(function () {
+		"use strict";
+		function sleep(ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); }
+		function setMin(selector, height) {
+			var el = document.querySelector(selector);
+			if (el && height > 0) el.style.minHeight = Math.ceil(height) + "px";
+		}
+		function clearMin() {
+			["#itok-out", "#itok-stats", "#iemb-out", "#iemb-formula", "#ipe-heat-out", "#ipe-out", "#iatt-sentence", "#iatt-out", "#iatt-sum", "#softmax-logit-matrix"].forEach(function (selector) {
+				var el = document.querySelector(selector);
+				if (el) el.style.minHeight = "";
+			});
+		}
+		async function reserve() {
+			clearMin();
+			var dualControls = document.getElementById("tm-dual-controls");
+			if (dualControls) dualControls.style.minHeight = "210px";
+			var tokChips = Array.prototype.slice.call(document.querySelectorAll("[data-tok]"));
+			if (tokChips.length) {
+				var activeTok = tokChips.filter(function (c) { return c.classList.contains("is-on"); })[0] || tokChips[0];
+				var maxTokOut = 0, maxTokStats = 0;
+				for (var t = 0; t < tokChips.length; t++) {
+					tokChips[t].click();
+					await sleep(30);
+					var tokOut = document.getElementById("itok-out");
+					var tokStats = document.getElementById("itok-stats");
+					if (tokOut) maxTokOut = Math.max(maxTokOut, tokOut.offsetHeight);
+					if (tokStats) maxTokStats = Math.max(maxTokStats, tokStats.offsetHeight);
+				}
+				if (activeTok) activeTok.click();
+				setMin("#itok-out", maxTokOut);
+				setMin("#itok-stats", maxTokStats);
+			}
+			var embChips = Array.prototype.slice.call(document.querySelectorAll("[data-emb]"));
+			if (embChips.length) {
+				var activeEmb = embChips.filter(function (c) { return c.classList.contains("is-on"); })[0] || embChips[0];
+				var maxEmbOut = 0, maxEmbFormula = 0;
+				for (var e = 0; e < embChips.length; e++) {
+					embChips[e].click();
+					await sleep(30);
+					var embOut = document.getElementById("iemb-out");
+					var embFormula = document.getElementById("iemb-formula");
+					if (embOut) maxEmbOut = Math.max(maxEmbOut, embOut.offsetHeight);
+					if (embFormula) maxEmbFormula = Math.max(maxEmbFormula, embFormula.offsetHeight);
+				}
+				if (activeEmb) activeEmb.click();
+				setMin("#iemb-out", maxEmbOut);
+				setMin("#iemb-formula", maxEmbFormula);
+			}
+			var posSliders = ["#ipe-heat-context", "#ipe-heat-dims", "#ipe-pos"];
+			var maxHeatOut = 0, maxPosOut = 0;
+			for (var ps = 0; ps < posSliders.length; ps++) {
+				var slider = document.querySelector(posSliders[ps]);
+				if (!slider) continue;
+				var original = slider.value;
+				var states = [slider.min, original, slider.max];
+				for (var st = 0; st < states.length; st++) {
+					slider.value = states[st];
+					slider.dispatchEvent(new Event("input", { bubbles: true }));
+					await sleep(30);
+					var heatOut = document.getElementById("ipe-heat-out");
+					var posOut = document.getElementById("ipe-out");
+					if (heatOut) maxHeatOut = Math.max(maxHeatOut, heatOut.offsetHeight);
+					if (posOut) maxPosOut = Math.max(maxPosOut, posOut.offsetHeight);
+				}
+				slider.value = original;
+				slider.dispatchEvent(new Event("input", { bubbles: true }));
+			}
+			setMin("#ipe-heat-out", maxHeatOut);
+			setMin("#ipe-out", maxPosOut);
+			var attChips = Array.prototype.slice.call(document.querySelectorAll("[data-att]"));
+			if (attChips.length) {
+				var activeAtt = attChips.filter(function (c) { return c.classList.contains("is-on"); })[0] || attChips[0];
+				var maxSent = 0, maxOut = 0, maxSum = 0;
+				for (var i = 0; i < attChips.length; i++) {
+					attChips[i].click();
+					await sleep(30);
+					var sent = document.getElementById("iatt-sentence");
+					var out = document.getElementById("iatt-out");
+					var sum = document.getElementById("iatt-sum");
+					if (sent) maxSent = Math.max(maxSent, sent.offsetHeight);
+					if (out) maxOut = Math.max(maxOut, out.offsetHeight);
+					if (sum) maxSum = Math.max(maxSum, sum.offsetHeight);
+				}
+				if (activeAtt) activeAtt.click();
+				setMin("#iatt-sentence", maxSent);
+				setMin("#iatt-out", maxOut);
+				setMin("#iatt-sum", maxSum);
+			}
+			var softChips = Array.prototype.slice.call(document.querySelectorAll("[data-softmax-prompt]"));
+			if (softChips.length) {
+				var activeSoft = softChips.filter(function (c) { return c.classList.contains("is-on"); })[0] || softChips[0];
+				var maxMatrix = 0;
+				for (var j = 0; j < softChips.length; j++) {
+					softChips[j].click();
+					await sleep(40);
+					var matrix = document.getElementById("softmax-logit-matrix");
+					if (matrix) maxMatrix = Math.max(maxMatrix, matrix.offsetHeight);
+				}
+				if (activeSoft) activeSoft.click();
+				setMin("#softmax-logit-matrix", maxMatrix);
+			}
+		}
+		function start() {
+			if (document.fonts && document.fonts.ready) document.fonts.ready.then(reserve);
+			else reserve();
+		}
+		window.addEventListener("load", start);
+		var timer = null;
+		window.addEventListener("resize", function () {
+			clearTimeout(timer);
+			timer = setTimeout(function () {
+				if (document.fonts && document.fonts.ready) document.fonts.ready.then(reserve);
+				else reserve();
+			}, 220);
+		});
+	})();
+	</script>
 </body>
 </html>
