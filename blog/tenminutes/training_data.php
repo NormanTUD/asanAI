@@ -6,7 +6,7 @@
 	<meta name="description" content="The text diet behind a frontier model: web, code, books, papers, filtering, deduplication, and contamination.">
 	<meta name="theme-color" content="#ffffff">
 	<title>What a Model Reads | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
 <body data-lesson="training_data" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -111,11 +111,13 @@
 							<div class="demo-controls">
 								<label>Minimum quality <input type="range" data-filter-strength min="0" max="3" step="1" value="1"><output data-filter-strength-out>1</output></label>
 							</div>
-							<div class="demo-readout">
+							<div class="demo-readout demo-readout--4">
 								<div><b>Kept</b><span data-filter-kept>...</span></div>
 								<div><b>Dropped</b><span data-filter-dropped>...</span></div>
 								<div><b>Avg quality</b><span data-filter-quality>...</span></div>
+								<div><b>Web left (rough)</b><span data-filter-size>...</span></div>
 							</div>
+							<p class="demo-hint">Rough estimate: 100 PB of raw web text before deduplication. The rest of the pipeline shrinks it further.</p>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>Quality and quantity pull in different directions. The useful recipe is the one that keeps enough scale without teaching the model noise.</span></div>
 					</div>
@@ -139,7 +141,7 @@
 		</div>
 	</main>
 
-	<script src="assets/site.js"></script>
-	<script src="assets/demos.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
+	<script src="assets/demos.js?v=<?php echo filemtime(__DIR__.'/assets/demos.js'); ?>"></script>
 </body>
 </html>
