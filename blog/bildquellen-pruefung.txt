@@ -1710,3 +1710,12 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand November 202
    Lokal: silicon_wafer_dicing.png (671x663)
    Genutzt in: untold_history_ii.php § "From Sand to Single Crystal"
    Status: OK - Lizenz klar (CC BY-SA 4.0)
+
+=== TEN MINUTES: Rosenblatt's Perceptron (tenminutes/minimalneuron.php) ===
+Rosenblattperceptron.png
+    URL: https://commons.wikimedia.org/wiki/File:Rosenblattperceptron.png
+    Lizenz: CC BY-SA 3.0 (via Commons API extmetadata)
+    Autor: Mitchell, Machine Learning, p. 87; Commons-Upload
+    Lokal: rosenblatt_perceptron_cc.png (600x285)
+    Genutzt in: tenminutes/minimalneuron.php § The perceptron
+    Status: OK - CC BY-SA 3.0, Quelle im Caption verlinkt
