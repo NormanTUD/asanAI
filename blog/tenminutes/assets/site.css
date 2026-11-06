@@ -6988,7 +6988,7 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	text-align: center;
 }
 .conv-kernel-grid .conv-kernel-input:focus { outline: 2px solid var(--tm-green); outline-offset: 1px; }
-#conv-formula { height: 160px; }
+#conv-formula { height: auto; min-height: 160px; overflow-y: visible; overflow-x: auto; }
 
 /* Loading placeholder for the manifold demo. */
 .tm-manifold-loading {

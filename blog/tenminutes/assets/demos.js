@@ -823,19 +823,31 @@
 			var sy = Math.floor(scanCell / ow);
 			if (sx < 0 || sy < 0 || sy >= gh - 2) return;
 			var k = kernels[current];
-			var rows = [];
-			var total = 0;
-			for (var i = 0; i < 3; i++) {
-				var cells = [];
-				for (var j = 0; j < 3; j++) {
-					var p = Math.round(input[sy + i][sx + j] * 255);
-					var kv = k[i][j];
-					total += p * kv;
-					cells.push(p + "\\cdot(" + kernelValue(kv) + ")");
+			var dark = !!(window.TM && TM.colors && TM.colors().dark);
+			var channelColors = dark
+				? ["#ff7b72", "#7ee787", "#79c0ff"]
+				: ["#a93226", "#1e8449", "#1f618d"];
+			var channels = [
+				{ key: "R", color: channelColors[0], idx: 0 },
+				{ key: "G", color: channelColors[1], idx: 1 },
+				{ key: "B", color: channelColors[2], idx: 2 }
+			];
+			var channelRows = channels.map(function (ch) {
+				var rows = [];
+				var total = 0;
+				for (var i = 0; i < 3; i++) {
+					var cells = [];
+					for (var j = 0; j < 3; j++) {
+						var p = inputRGB[sy + i][sx + j][ch.idx];
+						var kv = k[i][j];
+						total += p * kv;
+						cells.push("\\textcolor{" + ch.color + "}{" + p + "}\\cdot(" + kernelValue(kv) + ")");
+					}
+					rows.push(cells.join(" & "));
 				}
-				rows.push(cells.join(" & "));
-			}
-			var tex = "\\underbrace{\\underbrace{\\begin{matrix}" + rows.join(" \\\\ ") + "\\end{matrix}}_{\\text{" + (DEMO_DE ? "neun Produkte" : "nine products") + "}} = " + Math.round(total) + "}_{\\text{" + (DEMO_DE ? "Ausgabe an " : "output at ") + "(" + sx + "," + sy + ")}}";
+				return "\\textcolor{" + ch.color + "}{\\text{" + ch.key + "}} &: \\begin{matrix}" + rows.join(" \\\\ ") + "\\end{matrix} = \\textcolor{" + ch.color + "}{" + Math.round(total) + "}";
+			});
+			var tex = "\\underbrace{\\underbrace{\\begin{aligned}" + channelRows.join(" \\\\[4pt] ") + "\\end{aligned}}_{\\text{" + (DEMO_DE ? "drei Farbkanäle" : "three colour channels") + "}}}_{\\text{" + (DEMO_DE ? "Ausgabe an " : "output at ") + "(" + sx + "," + sy + ")" + "}}";
 			formulaEl.setAttribute("data-tex", tex);
 			formulaEl.removeAttribute("data-tex-rendered");
 			if (window.TM && TM.typesetMath) TM.typesetMath(formulaEl.parentNode);
@@ -1052,6 +1064,10 @@
 			updateFormula();
 			api.redraw();
 		}
+		window.addEventListener("tm:theme", function () {
+			updateFormula();
+			api.redraw();
+		});
 		canvas.addEventListener(window.PointerEvent ? "pointermove" : "mousemove", handlePointerMove);
 		if (scanBtn) scanBtn.addEventListener("click", function () {
 			if (scanTimer) {
