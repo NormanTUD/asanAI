@@ -36,8 +36,8 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
 - [x] Layer untereinander, nicht als Tabs.
 - [x] Jede Layer-Karte enthält nacheinander gruppierte Unterboxen:
       Layer 1 → Attention → FFN/MLP → Layer 2 → Attention → FFN/MLP → …
-- [x] Layer 1 hat keine „Wohin die Punkte wandern“-Box; Attention + FFN/MLP.
-- [x] Ab Layer 2: „Wohin die Punkte wandern“ → Attention → FFN/MLP.
+- [x] Jede Layer-Karte (auch Layer 1) hat „Feature-Migration“ mit zwei
+      Input-/Output-Plots; Attention und FFN folgen direkt darunter.
 - [x] Die Unterboxen sind nativ einklappbar; keine tiefen Accordion-Kaskaden.
 - [x] Pro Layer ein Signal-Übersichtsbild (Balken pro Token: Eingabe,
       Attention-Update, FFN-Update), sichtbar wenn alle Layer eingeklappt sind.
@@ -61,8 +61,17 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
 - [x] „4 · Attend“ zeigt einen echten Head aus Layer 1; eine Kopf-Auswahl
       erlaubt jeden Head.
 - [x] „7 · Unembedding“ erlaubt direkt in der Box Token-Klicks und Temperatur.
-- [x] Die riesige Logit-Lens-Matrix ist eine kompakte Token-vorher/nachher-
-      Ansicht; die vollständige Matrix + Erklärung liegen in einem Detail.
+- [x] Die Logit-Linse ist eine kompakte Token-vorher/nachher-Ansicht; die
+      vollständige Logit-Lens-Matrix wird nicht mehr angezeigt. h_after steht
+      direkt davor; die Erklärung nennt die Winkel und die Zwischenreadouts.
+- [x] Pro Layer zwei Feature-Migrations-Plots (Input/Output), alle Tokens
+      auswählbar, letztes Token als Default; roh bis 3D, darüber PCA → 3D
+      und immer als PCA beschriftet.
+- [x] Attention-/FFN-Übersichten erscheinen nur noch in den Layern; die
+      früheren Top-Level-Übersichten sind entfernt, der Hintergrundtext
+      bleibt als Kontext-Detail erreichbar.
+- [x] Layer-Intro erklärt beim Aufklappen Attention (mischt Kontext) und FFN
+      (verschiebt den Punkt mit der Kontextinformation).
 - [x] Die Visualisierungen aus intuition.php werden mit den echten Daten
       dieses Modells wiederverwendet (Tokenize, Embed, Position, Attention,
       FFN, Residual, Unembed).
@@ -149,3 +158,13 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
       tokenisierter Satz, Temperature + Top-k + Sample in der Box.
 - DONE „Das Problem war die Warteschlange“ in den Attend-Detailblock verschoben.
 - DONE Duplikate (Token-Builder, alter Temperaturblock) ausgeblendet.
+- DONE „4 · Transformer“-Box: Token Trajectory oben, Layer-Karten darunter,
+      Attention/FFN nur in den Layern, Residual-Überblick bleibt.
+- DONE Feature-Migration: hässliche Migration-Canvas entfernt, zwei
+      Input-/Output-Plots, Token-Auswahl, roh 1/2/3D bzw. PCA → 3D.
+- DONE Logit-Linse: h_after direkt davor, kompakte Tabelle, keine sichtbare
+      vollständige Logit-Lens-Matrix; Erklärung der Winkel-Readouts.
+- DONE Automatische URL-Parameter (`?d=…&train=…`) entfernt; „Share run“
+      baut die URL nur noch auf Klick.
+- DONE Trainingsfenster auf der Elternseite wiederhergestellt (Button,
+      Fensterliste, Vorhersagen, Toggle).

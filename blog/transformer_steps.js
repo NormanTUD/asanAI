@@ -1504,11 +1504,11 @@
 		var rows = labels.map(function (label, i) {
 			var before = featureTopWords(trace.h_in[i], 3);
 			var after = featureTopWords(trace.h_out[i], 3);
-			return "<div class='tm-logit-row'><span class='tm-logit-token'>" + featureEsc(label) + "</span><div class='tm-logit-side'>" + before.map(function (w) { return logitChip(w, "var(--tm-blue)"); }).join("") + "</div><span class='tm-logit-arrow'>→</span><div class='tm-logit-side'>" + after.map(function (w) { return logitChip(w, "var(--tm-green)"); }).join("") + "</div></div>";
+			return "<div class='tm-logit-row'><span class='tm-logit-token'>" + label + "</span><div class='tm-logit-side'>" + before.map(function (w) { return logitChip(w, "var(--tm-blue)"); }).join("") + "</div><span class='tm-logit-arrow'>→</span><div class='tm-logit-side'>" + after.map(function (w) { return logitChip(w, "var(--tm-green)"); }).join("") + "</div></div>";
 		}).join("");
 		var matrixHead = "<tr><th>" + (DE() ? "Token" : "token") + "</th>" + Array.from({ length: d }, function (_, i) { return "<th>" + i + "</th>"; }).join("") + "</tr>";
 		var matrixRows = labels.map(function (label, i) {
-			return "<tr><th>" + featureEsc(label) + "</th>" + trace.h_out[i].map(function (v) { return "<td>" + (Number(v) || 0).toFixed(2) + "</td>"; }).join("") + "</tr>";
+			return "<tr><th>" + label + "</th>" + trace.h_out[i].map(function (v) { return "<td>" + (Number(v) || 0).toFixed(2) + "</td>"; }).join("") + "</tr>";
 		}).join("");
 		var title = DE() ? "Logit-Linse · Schicht " + (layerIdx + 1) : "Logit lens · layer " + (layerIdx + 1);
 		var note = DE()
