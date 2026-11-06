@@ -595,18 +595,73 @@
 						<h2 class="section-title">The final vector picks a word.</h2>
 						<div class="prose">
 							<p>
-								At the end of the pipeline, the last token carries the whole context.
-								Attention has repeatedly mixed information between tokens, and the MLP
-								has shifted it at every layer, so the vector now holds the meaning built
-								up so far. To score the next word, the model multiplies that vector with
-								the vocabulary matrix and compares the angle to every word's vector.
-								Angles are more reliable than distances in high dimensions: distances
-								bunch together, while directions stay distinct. It selects by angle:
-								the words with the smallest angles go into a probability distribution,
-								and from that it draws the next token with the same mechanism as the
-								opening loop (greedy, sampling, or top-p). Then it appends the token
-								and starts again.
+								At the end of the pipeline, the last token carries the whole context,
+								and therefore the meaning of everything written so far. Attention has
+								repeatedly mixed it with all the other tokens, and the feed-forward
+								network has decided what should be active and what should not, so what
+								is relevant here and what is not. The result is one vector,
+								<strong>h</strong>.
 							</p>
+							<p>
+								To choose the next token, the model takes the dot product of
+								<strong>h</strong> with every token’s embedding
+								<strong>w<sub>i</sub></strong>. A large positive value means the two
+								directions agree; a small or negative value means they do not. These
+								scores are called <strong>logits</strong>: unbounded numbers, one per
+								vocabulary entry.
+							</p>
+							<div class="prose-math" data-tex="\underbrace{\text{logit}_i = \underbrace{h}_{\text{context vector}} \cdot \underbrace{w_i}_{\text{token direction}}}_{\text{how much the context points toward token }i}" data-tex-de="\underbrace{\text{logit}_i = \underbrace{h}_{\text{Kontextvektor}} \cdot \underbrace{w_i}_{\text{Token-Richtung}}}_{\text{wie stark der Kontext auf Token }i\text{ zeigt}}" data-tex-display="true"></div>
+							<p>
+								The logits are not probabilities. The model turns them into a
+								distribution with the <strong>softmax</strong>: exponentiate every
+								logit, then divide by the sum. The order stays the same, but
+								differences are exaggerated: the largest score gets the most
+								probability, and the long tail shrinks.
+							</p>
+							<div class="prose-math" data-tex="\underbrace{p_i = \frac{\exp(\underbrace{\text{logit}_i}_{\text{score}})}{\underbrace{\sum_j \exp(\text{logit}_j)}_{\text{normalizer}}}}_{\text{softmax: scores become probabilities}}" data-tex-de="\underbrace{p_i = \frac{\exp(\underbrace{\text{logit}_i}_{\text{Score}})}{\underbrace{\sum_j \exp(\text{logit}_j)}_{\text{Normalisierer}}}}_{\text{Softmax: Scores werden zu Wahrscheinlichkeiten}}" data-tex-display="true"></div>
+						</div>
+
+						<div class="demo demo--paper softmax-demo" id="softmax-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">From logits to a probability distribution <span>· demo 08</span></p>
+									<p class="demo-sub">Real GPT-2 small scores for one prompt. The left side is the raw logit from each dot product; the right side is what softmax makes of it.</p>
+								</div>
+								<span class="demo-badge">real GPT-2</span>
+							</div>
+							<div class="demo-body">
+								<p class="softmax-context"><span class="softmax-context-label">context</span> “As the spaceship was approaching <b>the</b>”</p>
+								<div class="softmax-stage" id="softmax-stage">
+									<div class="softmax-col softmax-col--logits">
+										<div class="softmax-col-head"><span>token</span><span>logit</span></div>
+										<div id="softmax-logits"></div>
+									</div>
+									<svg class="softmax-ribbons" id="softmax-ribbons" aria-hidden="true">
+										<defs>
+											<linearGradient id="softmax-ribbon-grad" x1="0" y1="0" x2="1" y2="0">
+												<stop offset="0%" style="stop-color:var(--tm-green)"></stop>
+												<stop offset="100%" style="stop-color:var(--tm-petrol-mid)"></stop>
+											</linearGradient>
+										</defs>
+									</svg>
+									<div class="softmax-col softmax-col--probs">
+										<div class="softmax-col-head"><span>probability</span><span>softmax</span></div>
+										<div id="softmax-probs"></div>
+									</div>
+								</div>
+								<div class="demo-controls">
+									<label>Temperature <input type="range" id="softmax-temp" min="0.2" max="2" step="0.05" value="1"><output id="softmax-temp-out">1.00</output></label>
+								</div>
+								<div class="demo-readout demo-readout--4">
+									<div><b>Hovered token</b><span id="softmax-token">—</span></div>
+									<div><b>Logit</b><span id="softmax-logit">—</span></div>
+									<div><b>exp(logit − max)</b><span id="softmax-exp">—</span></div>
+									<div><b>Probability</b><span id="softmax-prob">—</span></div>
+								</div>
+								<p class="demo-hint">Hover a token. The ribbon shows how its score becomes probability. The temperature slider changes only the softmax, not the logits.</p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Softmax does not create the ranking; the dot products do. It turns scores into a distribution that sums to one, and temperature decides how sharply the winner is favoured.</span></div>
+							<div class="demo-foot">Real GPT-2 small logits for “As the spaceship was approaching the”, from the <a href="https://poloclub.github.io/transformer-explainer/" rel="noopener">Transformer Explainer</a> (Polo Club, Georgia Tech). The absolute logit offset is arbitrary; softmax depends only on differences.</div>
 						</div>
 						<div class="prose" style="margin-top:22px">
 							<p><strong>The meadow of words.</strong> The meadow shows how the model divides the space into cells. After all the layers, the model has a vector for each token, and every token in the vocabulary owns the region of that space closest to it. The image is two-dimensional, while a real model works in thousands of dimensions, but the principle is the same: the vocabulary forms bubbles, and every thought falls into one of them or near its border. The closer the thought is to a word's centre, the more likely that word is; near the edges the estimate becomes less precise. Inside the model, the thought is a precise vector; the vocabulary can only answer with whole cells, so the model can represent a distinction more finely than it can express it in one token. Temperature and top-k change how large the candidate set is. Move the pointer and the thought lands in a cell, or on a seam where two words are almost equally near.</p>
@@ -615,7 +670,7 @@
 						<div class="demo demo--paper" id="meadow-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">The meadow of words <span>· demo 08</span></p>
+									<p class="demo-title">The meadow of words <span>· demo 09</span></p>
 									<p class="demo-sub">Every word owns a cell. Move the pointer; the thought falls into the nearest cell. The golden seams are where two words are equally near.</p>
 								</div>
 								<span class="demo-badge">move me</span>

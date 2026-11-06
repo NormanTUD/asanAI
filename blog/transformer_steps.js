@@ -530,6 +530,87 @@
 	}
 
 	var layerCanvasRegistry = {};
+	var migrationCanvasRegistry = {};
+
+	function drawArrow(ctx, x1, y1, x2, y2, color, width) {
+		ctx.save();
+		ctx.strokeStyle = color;
+		ctx.fillStyle = color;
+		ctx.lineWidth = width || 1.6;
+		ctx.beginPath();
+		ctx.moveTo(x1, y1);
+		ctx.lineTo(x2, y2);
+		ctx.stroke();
+		var angle = Math.atan2(y2 - y1, x2 - x1);
+		ctx.beginPath();
+		ctx.moveTo(x2, y2);
+		ctx.lineTo(x2 - 7 * Math.cos(angle - 0.4), y2 - 7 * Math.sin(angle - 0.4));
+		ctx.lineTo(x2 - 7 * Math.cos(angle + 0.4), y2 - 7 * Math.sin(angle + 0.4));
+		ctx.closePath();
+		ctx.fill();
+		ctx.restore();
+	}
+
+	function drawMigrationArrows(ctx, w, h, layerIdx) {
+		var c = palette();
+		var trace = (window.__tmLayerTrace || [])[layerIdx];
+		var tokens = tokenList();
+		ctx.clearRect(0, 0, w, h);
+		if (!trace || !tokens.length) {
+			return drawPlaceholder(ctx, w, h, DE() ? "Öffne eine Schicht, um die Bewegung der Punkte zu sehen." : "Open a layer to see the points move.");
+		}
+		var n = tokens.length;
+		var all = [];
+		for (var i = 0; i < n; i++) {
+			all.push(trace.h_in[i]);
+			all.push(trace.h_out[i]);
+		}
+		var coords = pca2(all);
+		var start = coords.slice(0, n);
+		var end = coords.slice(n);
+		var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+		coords.forEach(function (p) {
+			minX = Math.min(minX, p[0]); maxX = Math.max(maxX, p[0]);
+			minY = Math.min(minY, p[1]); maxY = Math.max(maxY, p[1]);
+		});
+		var spanX = maxX - minX || 1, spanY = maxY - minY || 1;
+		var pad = 30;
+		function map(p) {
+			return {
+				x: pad + (p[0] - minX) / spanX * (w - pad * 2),
+				y: h - pad - (p[1] - minY) / spanY * (h - pad * 2)
+			};
+		}
+		ctx.strokeStyle = c.line;
+		ctx.lineWidth = 1;
+		ctx.beginPath(); ctx.moveTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.stroke();
+		ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, h - pad); ctx.stroke();
+		for (var t = 0; t < n; t++) {
+			var a = map(start[t]);
+			var b = map(end[t]);
+			var col = mix(hex(c.blue), hex(c.lilac), t / Math.max(1, n - 1));
+			ctx.beginPath();
+			ctx.arc(a.x, a.y, 3.2, 0, Math.PI * 2);
+			ctx.fillStyle = c.muted;
+			ctx.fill();
+			drawArrow(ctx, a.x, a.y, b.x, b.y, rgb(col), 1.8);
+			ctx.beginPath();
+			ctx.arc(b.x, b.y, 4.4, 0, Math.PI * 2);
+			ctx.fillStyle = rgb(col);
+			ctx.fill();
+			ctx.strokeStyle = c.paper;
+			ctx.lineWidth = 1.3;
+			ctx.stroke();
+			ctx.font = "700 9px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "center";
+			ctx.fillStyle = c.ink;
+			ctx.fillText(fitText(ctx, display(tokens[t]), 64), b.x, b.y - 9);
+		}
+		ctx.textAlign = "left";
+		ctx.fillStyle = c.muted;
+		ctx.font = "600 9px Barlow, system-ui, sans-serif";
+		ctx.fillText(DE() ? "grau = vor dieser Schicht · Farbe = danach · Pfeil = Bewegung" : "grey = before this layer · colour = after · arrow = movement", pad, 16);
+	}
 
 	function drawLayerResidual(ctx, w, h, layerIdx) {
 		var c = palette();
@@ -611,9 +692,24 @@
 		Object.keys(layerCanvasRegistry).forEach(function (key) {
 			layerCanvasRegistry[key].api.redraw();
 		});
+		Object.keys(migrationCanvasRegistry).forEach(function (key) {
+			migrationCanvasRegistry[key].api.redraw();
+		});
+	}
+	function renderLayerPreviews() {
+		document.querySelectorAll('.layer-residual-canvas[data-layer-idx]').forEach(function (canvas) {
+			var idx = parseInt(canvas.getAttribute('data-layer-idx'), 10);
+			if (isNaN(idx)) return;
+			if (window.TransformerSteps && window.TransformerSteps.renderLayerResidual) {
+				window.TransformerSteps.renderLayerResidual(canvas.id, idx);
+			}
+		});
 	}
 	window.addEventListener('tm:theme', redrawLayerCanvases);
-	window.addEventListener('tm:transformer-data', redrawLayerCanvases);
+	window.addEventListener('tm:transformer-data', function () {
+		redrawLayerCanvases();
+		renderLayerPreviews();
+	});
 
 	window.TransformerSteps = {
 		init: function (hostId) {
@@ -654,6 +750,7 @@
 				});
 			}
 			host.setAttribute("data-demo-ready", "1");
+			renderLayerPreviews();
 			window.addEventListener("tm:theme", redraw);
 			if (window.__MN_DARK && window.__MN_DARK.onChange) window.__MN_DARK.onChange(redraw);
 			window.addEventListener("tm:transformer-data", redraw);
@@ -664,6 +761,7 @@
 				if ((window.__tmLayerTrace && window.__tmLayerTrace.length) || tries > 80) {
 					clearInterval(poll);
 					redraw();
+					renderLayerPreviews();
 				}
 			}, 500);
 			redraw();
@@ -684,6 +782,22 @@
 				entry.api.redraw();
 			}
 			canvas.setAttribute('data-layer-residual-ready', '1');
+		},
+		renderLayerMigration: function (canvasId, layerIdx) {
+			var canvas = document.getElementById(canvasId);
+			if (!canvas) return;
+			var entry = migrationCanvasRegistry[canvasId];
+			if (!entry) {
+				entry = { layerIdx: layerIdx, api: null };
+				entry.api = initCanvas(canvas, function (ctx, w, h) {
+					drawMigrationArrows(ctx, w, h, entry.layerIdx);
+				});
+				migrationCanvasRegistry[canvasId] = entry;
+			} else {
+				entry.layerIdx = layerIdx;
+				entry.api.redraw();
+			}
+			canvas.setAttribute('data-layer-migration-ready', '1');
 		}
 	};
 })();

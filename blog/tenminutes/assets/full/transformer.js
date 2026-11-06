@@ -7329,16 +7329,19 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	<button type="button" class="tm-level-step" data-level="2" role="tab" aria-selected="false">${isDe ? 'Formeln' : 'Formulas'}</button>
     </div>
     <div class="tm-level-pane" data-level="0">
+	<p class="tm-level-text">${isDe ? 'Diese Schicht liest den laufenden Vektor und schreibt ein Update. Die Pfeile zeigen die Token-Vektoren vor dieser Schicht (grau) und danach (farbig), auf zwei Hauptkomponenten projiziert. Der Residual-Stream addiert das Update zum alten Vektor; nichts wird überschrieben. Unten stehen dieselben Vektoren als parallele Koordinaten, damit du alle Dimensionen auf einmal siehst.' : 'This layer reads the running vector and writes an update. The arrows show the token vectors before this layer (grey) and after it (coloured), projected onto two principal components. The residual stream adds the update to the old vector; nothing is overwritten. Below, the same vectors appear as parallel coordinates, so you can see every dimension at once.'}</p>
 	<canvas id="${prefix}-migration-canvas" data-layer-idx="${layerIndex}" class="tm-migration-canvas" aria-label="${isDe ? 'Pfeile zeigen, wohin sich die Token-Vektoren in dieser Schicht bewegen' : 'Arrows show where the token vectors move in this layer'}"></canvas>
 	<div id="${prefix}-migration-container" class="tm-migration-detail">
 	    <p class="migration-parallel-note">${isDe ? 'Parallele Koordinaten: Jede Linie ist ein Token, jede senkrechte Achse eine Dimension. Der Weg der Linie zeigt, wie sich der Vektor des Tokens von Schicht zu Schicht verändert; so siehst du alle Dimensionen auf einmal, ohne sie auf zwei Achsen zu projizieren.' : 'Parallel coordinates: each line is one token, each vertical axis is one dimension. The path shows how the token vector changes from layer to layer, so you can see all dimensions at once without projecting them onto two axes.'}</p>
 	</div>
     </div>
     <div class="tm-level-pane" data-level="1" hidden>
+	<p class="tm-level-text">${isDe ? 'Attention lässt jedes Token die anderen lesen. Die Query fragt, was es sucht; der Key sagt, was ein anderes Token anbietet; der Value ist der Inhalt, der bei einem guten Match weitergegeben wird. Die Köpfe laufen parallel, jeder mit einer eigenen Frage. Die Bögen unten sind Attention-Gewichte: Eine dickere Linie trägt mehr Information. Die Tabs zeigen einen Kopf nach dem anderen.' : 'Attention lets every token read the others. The query asks what it is looking for; the key says what another token offers; the value is the content that travels when the match is good. The heads run in parallel, each with its own question. The arcs below are attention weights: a thicker line carries more information. The tabs show one head at a time.'}</p>
 	<p class="unified-layer-hint">${isDe ? 'Klicke auf ein Wort, um zu sehen, worauf es seine Attention richtet.' : 'Click a word to see where it focuses its attention.'}</p>
 	<div id="${prefix}-attention-heads"></div>
     </div>
     <div class="tm-level-pane" data-level="2" hidden>
+	<p class="tm-level-text">${isDe ? 'Hier stehen die exakten Matrizen, die diese Schicht gerechnet hat: Pre-LayerNorm, Query-, Key- und Value-Projektionen, die Softmax-Gewichte, der gewichtete Value-Mix, die Ausgabeprojektion, der Residual-Schritt, dann die FFN-Expansion, GELU und die Kompression. Jede Zeile ist eine Token-Position; jede Spalte eine Dimension. Die Formeln sind dieselben wie im Prosa-Teil, nur mit den echten Zahlen dieser Schicht.' : 'Here are the exact matrices this layer computed: pre-LayerNorm, the query, key and value projections, the softmax weights, the weighted value mix, the output projection, the residual add, then the FFN expansion, GELU and compression. Each row is a token position; each column is a dimension. These are the same equations as in the prose, with the real numbers of this layer.'}</p>
 	<div id="${prefix}-formula-body">
 	    <div id="${prefix}-layernorm-viz" class="tm-formula-block"></div>
 	    <div id="${prefix}-concat-viz" class="tm-formula-block"></div>
@@ -7347,6 +7350,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	    <div id="${prefix}-step-1" class="math_transformer"></div>
 	    <div id="${prefix}-step-2" class="math_transformer"></div>
 	    <div id="${prefix}-step-3" class="math_transformer"></div>
+	    <div id="${prefix}-hlast" class="tm-hlast"></div>
 	</div>
     </div>
     `;
@@ -7447,6 +7451,14 @@ function renderLayerFormulas(layerIdx) {
 	const ffn = trace.ffn || (window.__tmFFNTrace || [])[layerIdx];
 	if (ffn) {
 		render_ffn(ffn.h1, ffn.normed_h1, ffn.W1, ffn.b1, ffn.out_L1, ffn.W2, ffn.b2, ffn.out_FFN, ffn.h2, ffn.gamma2, ffn.beta2, layerIdx, tokens);
+	}
+	const hlast = document.getElementById(`${prefix}-hlast`);
+	if (hlast && layerIdx === (window.__tmLayerTrace || []).length - 1 && window._cachedFinalProjection && window._cachedFinalProjection.h_final) {
+		const hFinal = window._cachedFinalProjection.h_final;
+		const hLast = hFinal[hFinal.length - 1];
+		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+		const rows = buildHLastDisplayLatex(hLast);
+		hlast.innerHTML = `<p>${isDe ? 'Aktuell' : 'Current'}</p>$$h_\\text{last} = \\begin{bmatrix} ${rows} \\end{bmatrix}$$<p>${isDe ? '(die letzte Zeile der Ausgabematrix der letzten Schicht der Inferenzdaten)' : "(the last layers' output matrix last line of the inference-data)"}</p>`;
 	}
 	body.dataset.formulasRendered = 'true';
 	_renderTemmlOnElements([body]);
