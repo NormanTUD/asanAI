@@ -184,7 +184,7 @@ return [
 		'Early alphabetic script' => 'Frühe alphabetische Schrift',
 		'The Wadi el-Hol inscriptions in Upper Egypt, from about 1850 BCE, are among the oldest surviving alphabetic texts. Proto-Sinaitic writers borrowed a handful of Egyptian signs and used their first sounds; whether Wadi el-Hol already carried a full script or only a few signs is not settled.' => 'Die Wadi-el-Hol-Inschriften in Oberägypten, aus der Zeit um 1850 v. Chr., gehören zu den ältesten erhaltenen alphabetischen Texten. Protosinaitische Schreiber entlehnten einige ägyptische Zeichen und nutzten ihre ersten Laute; ob Wadi el-Hol bereits eine vollständige Schrift oder nur wenige Zeichen trug, ist nicht geklärt.',
 		'c. 1050 BCE · Alphabet' => 'ca. 1050 v. Chr. · Alphabet',
-		'Claude Shannon' => 'Claude Shannon',
+		'Claude Shannon' => 'Porträt von Claude Shannon',
 		'Claude Shannon separated the message from its meaning and measured information in bits in 1948. A bit is one yes/no answer, and the information in a message is the uncertainty it removes. That made language measurable and, in principle, computable.' => 'Claude Shannon trennte 1948 die Nachricht von ihrer Bedeutung und maß Information in Bits. Ein Bit ist eine Ja/Nein-Antwort, und die Information einer Nachricht ist die Unsicherheit, die sie beseitigt. Das machte Sprache messbar und im Prinzip berechenbar.',
 		'Claude Shannon, c. 1930. Image: UM Bentley Historical Library, public domain, via Wikimedia Commons.' => 'Claude Shannon, ca. 1930. Bild: UM Bentley Historical Library, gemeinfrei, via Wikimedia Commons.',
 		'1957 · Distributional meaning' => '1957 · Distributionelle Bedeutung',
