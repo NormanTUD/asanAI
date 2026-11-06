@@ -106,7 +106,7 @@
 							</p>
 						</div>
 
-						<div class="demo" id="embedding-map-demo">
+						<div class="demo demo--canvas" id="embedding-map-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The semantic map <span>· demo 01</span></p>
@@ -158,7 +158,7 @@
 						<div class="prose">
 							<p>Meaning also survives a rotation. If you rotate every vector in the space, the distances and angles between words stay the same, so “king” stays near “queen”. That is why two languages can have different-looking embedding spaces and still share the same relative geometry. Align the spaces with a rotation and a shift, and the words line up.</p>
 						</div>
-						<div class="demo demo--paper" id="crosslingual-demo">
+						<div class="demo demo--paper demo--canvas" id="crosslingual-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The same geometry in two languages <span>· demo 01b</span></p>
@@ -177,7 +177,7 @@
 							<div class="demo-insight"><b>Takeaway</b><span>Different languages can share one geometric structure. The labels differ; the relations between the concepts do not.</span></div>
 						</div>
 
-						<div class="demo demo--paper" id="tm-dual-manifold-demo" style="margin-top:22px">
+						<div class="demo demo--paper demo--canvas" id="tm-dual-manifold-demo" style="margin-top:22px">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Zwei Mannigfaltigkeiten, eine Geometrie' : 'Two manifolds, one geometry'; ?> <span>· demo 01c</span></p>
@@ -210,7 +210,7 @@
 							<p>A sentence is such a manifold too. Every possible context is one.</p>
 							<?php endif; ?>
 						</div>
-						<div class="demo demo--paper" id="tm-language-manifold-demo">
+						<div class="demo demo--paper demo--canvas" id="tm-language-manifold-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz ist eine Mannigfaltigkeit' : 'A sentence is a manifold'; ?> <span>· demo 01d</span></p>
@@ -255,7 +255,7 @@
 							</p>
 						</div>
 
-						<div class="demo" id="cosine-demo">
+						<div class="demo demo--canvas" id="cosine-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Angle vs distance <span>· demo 02</span></p>
@@ -291,7 +291,7 @@
 							</div>
 						</div>
 
-						<div class="demo demo--paper" id="magnitude-demo">
+						<div class="demo demo--paper demo--canvas" id="magnitude-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Magnitude can change <span>· demo 03</span></p>
@@ -373,53 +373,47 @@
 					</section>
 
 					<section class="section-block" id="sentence-manifold">
-						<div class="section-kicker"><span class="sk-num">05</span> <?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Vom Satz zur Form' : 'From a sentence to a shape'; ?></div>
-						<h2 class="section-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Eine Folge von Punkten ist schon eine Mannigfaltigkeit.' : 'A sequence of points is already a manifold.'; ?></h2>
-						<div class="prose">
-							<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
-							<p>
-								Zerlege einen Satz in Tokens, und jedes Token wird zu einem Vektor. Addiere den Positionsvektor, und der Satz wird zu einem kurzen Weg durch den Embedding-Raum: ein Punkt pro Token, in Leserichtung. Dieser Weg ist eine eindimensionale Mannigfaltigkeit. Seine Form hält fest, welche Tokens das Modell nahe beieinander platziert; seine Richtung hält die Reihenfolge des Satzes fest.
-							</p>
-							<p>
-								Die Demo nutzt die echte Embedding-Tabelle von GPT-2. Der deutsche Alice-Satz zerfällt in 27 Byte-Level-Tokens; jedes Token hat 768 Dimensionen, und jede Position addiert einen eigenen 768-dimensionalen Vektor. Eine Projektion auf die ersten drei Hauptkomponenten macht die Punkte sichtbar. Diese Projektion ist ein Schatten: Abstände und Löcher gelten für den Schatten, nicht für den vollen 768-dimensionalen Raum.
-							</p>
-							<p>
-								Aus den Punkten wird eine Form über den Vietoris-Rips-Komplex. Wähle ein Epsilon, verbinde jedes Paar von Punkten, das näher als Epsilon liegt, und fülle jedes Dreieck, dessen drei Kanten vorhanden sind. Wächst Epsilon, verschmelzen Komponenten, und Schleifen entstehen und verschwinden. Die Schleifen sind die Löcher; die Zahl der Komponenten und die erste Betti-Zahl fassen die Form zusammen.
-							</p>
-							<p>
-								Bei echten GPT-2-Embeddings ist der Satz eine dünne Kurve. Der gefüllte Komplex schließt sich deshalb schnell. Bei kleinem Epsilon siehst du im 1-Skelett trotzdem Schleifen; die goldene Linie ist eine davon. Schalte die Dreiecke aus, um den Graphen zu sehen, und wieder ein, um zu sehen, was der Komplex füllt. Das ist ein Werkzeug zum Untersuchen, kein Beweis über die Bedeutung des Satzes.
-							</p>
-							<?php else: ?>
-							<p>
-								Tokenize a sentence and each token becomes a vector. Add the position vector, and the sentence becomes a short path through the embedding space: one point per token, in reading order. That path is a one-dimensional manifold. Its shape records which tokens the model places near each other; its direction records the order of the sentence.
-							</p>
-							<p>
-								The demo uses a real GPT-2 embedding table. The German Alice sentence splits into 27 byte-level tokens; each token has 768 dimensions, and each position adds its own 768-dimensional vector. A projection onto the first three principal components makes the points visible. The projection is a shadow: distances and holes are those of the shadow, not of the full 768-dimensional space.
-							</p>
-							<p>
-								The points become a shape through the Vietoris-Rips complex. Choose an epsilon, connect every pair of points closer than epsilon, and fill every triangle whose three edges are present. As epsilon grows, components merge, and loops appear and disappear. The loops are the holes; the number of components and the first Betti number summarize the shape.
-							</p>
-							<p>
-								With real GPT-2 embeddings the sentence is a thin curve, so the filled complex closes quickly. At a small epsilon the 1-skeleton still shows loops; the gold line is one of them. Turn the triangles off to see the graph, and on again to see what the complex fills. This is a tool for inspection, not a proof about the meaning of the sentence.
-							</p>
-							<?php endif; ?>
-						</div>
+						<div class="section-kicker"><span class="sk-num">05</span> <?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Vom Satz zur Linie' : 'From a sentence to a line'; ?></div>
+						<h2 class="section-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz ist eine Linie durch den Bedeutungsraum.' : 'A sentence is a line through meaning space.'; ?></h2>
 						<div class="big-quote">
 							<p>“Wer in aller Welt bin ich? Ah, das ist das große Rätsel!”</p>
 							<cite>Lewis Carroll, <em>Alice’s Abenteuer im Wunderland</em>, trans. Antonie Zimmermann (1869), ch. II, spelling modernized. English: “Who in the world am I? Ah, that’s the great puzzle!”, <em>Alice’s Adventures in Wonderland</em> (1865), ch. II.</cite>
 						</div>
-						<div class="demo demo--paper" id="tm-sentence-manifold-demo">
+						<div class="prose">
+							<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
+							<p>
+								Ein Satz ist ein Weg: Zerlege ihn in Tokens, mache jedes Token zu einem Vektor, addiere seinen Positionsvektor, und du bekommst einen Punkt pro Token in Leserichtung. Die Kurve durch diese Punkte ist eine eindimensionale Mannigfaltigkeit mit Rand: lokal sieht sie aus wie ein Liniensegment, und sie ist in den 768-dimensionalen Embedding-Raum eingebettet. Die Tokens sind Stichproben; die Kurve ist das Objekt.
+							</p>
+							<p>
+								Die Demo nutzt die echte Embedding-Tabelle von GPT-2. Der deutsche Alice-Satz zerfällt in 27 Byte-Level-Tokens; jedes Token hat 768 Dimensionen, und jede Position addiert einen eigenen 768-dimensionalen Vektor. Eine Projektion auf die ersten drei Hauptkomponenten macht die Punkte sichtbar. Die Projektion ist ein Schatten: Abstände und scheinbare Kreuzungen gehören zum Schatten, nicht zum vollen 768-dimensionalen Raum.
+							</p>
+							<p>
+								Ist das wirklich eine eindimensionale Mannigfaltigkeit? Die endliche Menge der Token-Punkte ist nulldimensional. Die stetige Interpolation durch sie, parametrisiert durch eine Koordinate entlang des Satzes, ist eine eindimensionale Mannigfaltigkeit. Sie ist in den hochdimensionalen Raum eingebettet, und ihre Form hält fest, welche Tokens das Modell nahe beieinander platziert; ihre Richtung hält die Reihenfolge fest. Die 3D-Ansicht ist nicht die Mannigfaltigkeit selbst, sondern eine Projektion von ihr.
+							</p>
+							<?php else: ?>
+							<p>
+								A sentence is a path: tokenize it, turn each token into a vector, add its position vector, and you get one point per token in reading order. The curve through those points is a one-dimensional manifold with boundary: locally it looks like a line segment, and it is embedded in the 768-dimensional embedding space. The tokens are samples; the curve is the object.
+							</p>
+							<p>
+								The demo uses the real GPT-2 embedding table. The German Alice sentence splits into 27 byte-level tokens; each token has 768 dimensions, and each position adds its own 768-dimensional vector. A projection onto the first three principal components makes the points visible. The projection is a shadow: distances and apparent crossings belong to the shadow, not to the full 768-dimensional space.
+							</p>
+							<p>
+								Is it really a one-dimensional manifold? The finite set of token points is zero-dimensional. The continuous interpolation through them, parameterised by one coordinate along the sentence, is a one-dimensional manifold. It is embedded in the high-dimensional space, and its shape records which tokens the model places near each other; its direction records the order. The 3D view is not the manifold itself; it is a projection of it.
+							</p>
+							<?php endif; ?>
+						</div>
+						<div class="demo demo--paper demo--canvas" id="tm-sentence-manifold-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz als Vietoris-Rips-Komplex' : 'A sentence as a Vietoris-Rips complex'; ?> <span>· demo 05</span></p>
-									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Echte GPT-2-Embeddings, auf drei Dimensionen projiziert. Bewege Epsilon und sieh, wie Kanten, Dreiecke und Schleifen entstehen.' : 'Real GPT-2 embeddings projected to three dimensions. Move epsilon and watch edges, triangles and loops appear.'; ?></p>
+									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz als Linie' : 'A sentence as a line'; ?> <span>· demo 05</span></p>
+									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Echte GPT-2-Embeddings, auf drei Dimensionen projiziert. Die Linie folgt der Satzreihenfolge; die Punkte sind Tokens.' : 'Real GPT-2 embeddings projected to three dimensions. The line follows the sentence order; the points are tokens.'; ?></p>
 								</div>
-								<span class="demo-badge">3D · Rips</span>
+								<span class="demo-badge">3D · line</span>
 							</div>
 							<div class="demo-body">
 								<div id="tm-sentence-manifold"></div>
 							</div>
-							<div class="demo-insight"><b><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Fazit' : 'Takeaway'; ?></b><span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz ist eine Kurve durch den Embedding-Raum. Der Rips-Komplex macht aus der Kurve eine Form, deren Komponenten, Kanten und Schleifen du mit einem einzigen Parameter steuerst.' : 'A sentence is a curve through embedding space. The Rips complex turns that curve into a shape whose components, edges and loops you control with one parameter.'; ?></span></div>
+							<div class="demo-insight"><b><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Fazit' : 'Takeaway'; ?></b><span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz ist ein 1D-Pfad durch den 768-dimensionalen Embedding-Raum. Die 3D-Ansicht ist ein Schatten dieses Pfades: Sie zeigt Reihenfolge und Nachbarschaften, aber keinen Beweis über die Bedeutung.' : 'A sentence is a 1D path through the 768-dimensional embedding space. The 3D view is a shadow of that path: it shows order and neighbourhoods, not a proof about meaning.'; ?></span></div>
 						</div>
 						<details class="em-code">
 							<summary><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Das Skript, das die Daten erzeugt hat' : 'The script that made the data'; ?></summary>
@@ -481,24 +475,24 @@
 			ManifoldScenes.renderDualPlotly('tm-dual-manifolds', 'tm-dual-controls');
 		}
 
-		var ripsHost = document.getElementById('tm-sentence-manifold');
-		var ripsReady = false;
-		function drawRips() {
-			if (ripsReady || !ripsHost || !window.EmbeddingManifold) return;
-			ripsReady = true;
-			window.EmbeddingManifold.render('tm-sentence-manifold', { mode: 'combined' });
+		var sentenceHost = document.getElementById('tm-sentence-manifold');
+		var sentenceReady = false;
+		function drawSentenceLine() {
+			if (sentenceReady || !sentenceHost || !window.EmbeddingManifold) return;
+			sentenceReady = true;
+			window.EmbeddingManifold.renderLine('tm-sentence-manifold', { mode: 'combined' });
 		}
-		if (ripsHost) {
+		if (sentenceHost) {
 			if ('IntersectionObserver' in window) {
-				var ripsIo = new IntersectionObserver(function (entries) {
+				var sentenceIo = new IntersectionObserver(function (entries) {
 					if (entries.some(function (e) { return e.isIntersecting; })) {
-						ripsIo.disconnect();
-						drawRips();
+						sentenceIo.disconnect();
+						drawSentenceLine();
 					}
 				}, { rootMargin: '500px 0px' });
-				ripsIo.observe(ripsHost);
+				sentenceIo.observe(sentenceHost);
 			} else {
-				drawRips();
+				drawSentenceLine();
 			}
 		}
 	})();
