@@ -177,7 +177,7 @@ return [
 		'Feature: orchard / fruit' => 'Merkmal: Obstgarten / Frucht',
 		'Next-token pull in W₂' => 'Nächste-Token-Hinweis in W₂',
 		'Written back' => 'Zurückgeschrieben',
-		'richer vector' => 'reicherer Vektor',
+		'richer or more specific vector' => 'reicherer oder spezifischerer Vektor',
 		'The context is' => 'Der Kontext ist',
 		'What is simplified:' => 'Was vereinfacht ist:',
 		'Step 6 · Residual' => 'Schritt 6 · Residual',

@@ -540,7 +540,7 @@
 																	</div>
 																	<div class="ffn-col">
 																		<div class="ffn-col-head">Written back</div>
-																		<div class="ffn-pill is-fire">richer vector</div>
+																		<div class="ffn-pill is-fire">richer or more specific vector</div>
 																	</div>
 																</div>
 																<div class="step-out" id="iffn-out"></div>
