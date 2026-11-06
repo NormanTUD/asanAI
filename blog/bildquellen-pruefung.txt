@@ -1737,3 +1737,12 @@ A Biologically-Inspired Neural Network Architecture for Image Processing (IA abi
     Lokal: neocognitron_lazofson.png (1370x1740, aus Seite 45 / Figure 18 ausgeschnitten)
     Genutzt in: tenminutes/computer_vision.php § A filter that slides
     Status: OK - gemeinfrei, Quelle und Ausschnitt im Caption genannt
+
+=== TEN MINUTES: Santa sleigh pixel sprite (tenminutes/index.php) ===
+Sprite_Sheet.png, sleigh frame (64,29)-(112,48)
+    URL: https://opengameart.org/content/holiday-expansion-set
+    Lizenz: CC0 1.0 (Public Domain Dedication)
+    Autor: ZomBCool (Holiday Expansion Set, 2019)
+    Lokal: santa_sleigh_pixel.png (48x19, aus dem Sprite-Sheet ausgeschnitten)
+    Genutzt in: tenminutes/index.php, saisonaler Overlay am 24. Dezember
+    Status: OK - CC0, Quelle und Autor im Seiten-Credit genannt
