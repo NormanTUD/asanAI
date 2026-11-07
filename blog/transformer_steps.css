@@ -984,3 +984,68 @@
 @keyframes tmPositionSpin {
 	to { transform: rotate(360deg); }
 }
+
+/* Residual-stream heatmaps and the two signal plots at the top of a layer. */
+.tm-residual-panel {
+	padding: 2px 0 12px;
+	margin-bottom: 10px;
+	border-bottom: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+}
+.tm-residual-panel-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 10px;
+	font: 700 0.9rem/1.2 "Barlow", "Open Sans", system-ui, sans-serif;
+	color: var(--tm-petrol, var(--mn-accent, #004b6f));
+}
+.tm-residual-panel-sub {
+	font: 600 0.7rem/1.2 "Open Sans", system-ui, sans-serif;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+}
+.tm-residual-panel-note {
+	margin: 6px 0 10px;
+	color: var(--tm-ink-soft, var(--mn-text-secondary, #2c464d));
+	font-size: 0.82rem;
+	line-height: 1.5;
+}
+.tm-residual-heatmaps {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+.tm-residual-heatmap {
+	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	background: var(--tm-card, var(--mn-surface, #ffffff));
+}
+.tm-residual-heatmap-label {
+	padding: 7px 10px 0;
+	font: 700 0.72rem/1.2 "Barlow", "Open Sans", system-ui, sans-serif;
+	color: var(--tm-petrol, var(--mn-accent, #004b6f));
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+.tm-residual-heatmap-canvas {
+	display: block;
+	width: 100%;
+	height: 190px;
+}
+.tm-residual-legend {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 8px;
+	font: 600 0.68rem/1.2 "Open Sans", system-ui, sans-serif;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+}
+.tm-residual-legend-bar {
+	width: 120px;
+	height: 8px;
+	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	background: linear-gradient(90deg, var(--tm-blue, #1275ac), var(--tm-paper, #ffffff), var(--tm-gold, #9f9700));
+}
+@media (max-width: 800px) {
+	.tm-residual-heatmaps {
+		grid-template-columns: 1fr;
+	}
+}

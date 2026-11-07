@@ -1117,6 +1117,7 @@
 	}
 
 	var signalCanvasRegistry = {};
+	var residualHeatmapRegistry = {};
 
 	function drawLayerSignal(ctx, w, h, layerIdx, mode) {
 		var c = palette();
@@ -1233,8 +1234,8 @@
 		ctx.font = "600 9px Barlow, system-ui, sans-serif";
 		ctx.textAlign = "left";
 		var title = mode === "ffn"
-			? ((DE() ? "Layer " : "Layer ") + (layerIdx + 1) + (DE() ? " · FFN-Schritt · Start h_in (grau) → Ende h_out (gelb); rot = Abnahme" : " · FFN write · start h_in (grey) → final h_out (gold); red = decrease"))
-			: ((DE() ? "Layer " : "Layer ") + (layerIdx + 1) + (DE() ? " · Attention-Schritt · Start h_in (grau) → h_attn; rot = Abnahme" : " · attention write · start h_in (grey) → h_attn; red = decrease"));
+			? ((DE() ? "FFN-Signal · Schicht " : "FFN signal · layer ") + (layerIdx + 1))
+			: ((DE() ? "Attention-Signal · Schicht " : "Attention signal · layer ") + (layerIdx + 1));
 		ctx.fillText(title, padL, 14);
 		ctx.fillStyle = c.muted;
 		ctx.fillRect(padL, h - 12, 10, 5);
@@ -1247,6 +1248,52 @@
 		ctx.fillText(DE() ? "Start" : "start", padL + 14, h - 7);
 		ctx.fillText(DE() ? "Zunahme" : "increase", padL + 96, h - 7);
 		ctx.fillText(DE() ? "Abnahme" : "decrease", padL + 178, h - 7);
+	}
+
+	function drawResidualHeatmap(ctx, w, h, layerIdx, which) {
+		var c = palette();
+		var trace = (window.__tmLayerTrace || [])[layerIdx];
+		var tokens = tokenList();
+		ctx.clearRect(0, 0, w, h);
+		if (!trace || !tokens.length) {
+			return drawPlaceholder(ctx, w, h, DE() ? "Öffne eine Schicht, um den Residual-Stream zu sehen." : "Open a layer to see the residual stream.");
+		}
+		var rows = tokens.length;
+		var d = trace.h_in[0].length;
+		var max = 0.0001;
+		tokens.forEach(function (_, i) {
+			(trace.h_in[i] || []).forEach(function (v) { max = Math.max(max, Math.abs(v)); });
+			(trace.h_out[i] || []).forEach(function (v) { max = Math.max(max, Math.abs(v)); });
+		});
+		var left = 74, top = 24, right = 10, bottom = 8;
+		var cw = (w - left - right) / Math.max(1, d);
+		var ch = (h - top - bottom) / Math.max(1, rows);
+		function cellColor(v) {
+			var t = Math.max(-1, Math.min(1, v / max));
+			return t < 0 ? rgb(mix(hex(c.paper), hex(c.blue), -t)) : rgb(mix(hex(c.paper), hex(c.gold), t));
+		}
+		var source = which === "in" ? trace.h_in : trace.h_out;
+		for (var i = 0; i < rows; i++) {
+			for (var j = 0; j < d; j++) {
+				ctx.fillStyle = cellColor((source[i] && source[i][j]) || 0);
+				ctx.fillRect(left + j * cw, top + i * ch, Math.ceil(cw) + 0.5, Math.ceil(ch) + 0.5);
+			}
+			ctx.fillStyle = c.ink;
+			ctx.font = "600 8px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "right";
+			ctx.textBaseline = "middle";
+			ctx.fillText(fitText(ctx, display(tokens[i]), 64), left - 7, top + i * ch + ch / 2);
+		}
+		ctx.textBaseline = "alphabetic";
+		ctx.fillStyle = c.muted;
+		ctx.font = "600 8px Barlow, system-ui, sans-serif";
+		ctx.textAlign = "center";
+		var step = Math.max(1, Math.ceil(d / 8));
+		for (var k = 0; k < d; k += step) {
+			ctx.fillText(String(k), left + k * cw + cw / 2, top - 7);
+		}
+		ctx.textAlign = "left";
+		ctx.fillText(DE() ? "Dimension →" : "dimension →", left, 12);
 	}
 
 	function drawLayerResidual(ctx, w, h, layerIdx) {
@@ -1343,6 +1390,13 @@
 			if (isNaN(idx)) return;
 			if (window.TransformerSteps && window.TransformerSteps.renderLayerSignal) {
 				window.TransformerSteps.renderLayerSignal(canvas.id, idx);
+			}
+		});
+		document.querySelectorAll('.tm-residual-heatmap-canvas[data-layer-idx]').forEach(function (canvas) {
+			var idx = parseInt(canvas.getAttribute('data-layer-idx'), 10);
+			if (isNaN(idx)) return;
+			if (window.TransformerSteps && window.TransformerSteps.renderLayerResidualHeatmap) {
+				window.TransformerSteps.renderLayerResidualHeatmap(canvas.id, idx, canvas.getAttribute('data-which') || 'in');
 			}
 		});
 	}
@@ -1727,17 +1781,21 @@
 			var body = card.querySelector(".tm-layer-body");
 			if (!body) return;
 			var isDe = DE();
-			if (!body.querySelector(".tm-layer-intro")) {
-				var intro = document.createElement("p");
-				intro.className = "tm-layer-intro";
-				intro.textContent = isDe
-					? "Attention verteilt Aufmerksamkeit anhand des Kontexts: Sie mischt die Tokens je nachdem, in welchem Kontext sie stehen. Das FFN verschiebt den Punkt danach im Raum mit der Information aus dem bisherigen Kontext. Die Vorschau oben zeigt, wie viel diese Schicht pro Token und Dimension schreibt."
-					: "Attention distributes attention based on context: it mixes the tokens depending on the context they are in. The FFN then shifts the point in space with the information from the previous context. The preview above shows how much this layer writes per token and dimension.";
-				body.insertBefore(intro, body.firstChild);
-			}
 			var prefix = "unified-layer-" + idx;
 			var preview = card.querySelector(".tm-layer-preview");
 			if (preview) {
+				if (!preview.querySelector(".tm-residual-panel")) {
+					var panel = document.createElement("div");
+					panel.className = "tm-residual-panel";
+					panel.innerHTML = "<div class='tm-residual-panel-head'><span>" + (isDe ? "Residual-Stream pro Token" : "Residual stream per token") + "</span><span class='tm-residual-panel-sub'>" + (isDe ? "Zeile = Token · Spalte = Dimension" : "row = token · column = dimension") + "</span></div>" +
+						"<p class='tm-residual-panel-note'>" + (isDe
+							? "Links steht der Vektor, der in den Block hineingeht; rechts der Vektor nach Attention und FFN. Die beiden Signal-Plots darunter zeigen die Norm am Start, nach Attention und nach dem FFN. Rot markiert einen Schritt, der den Vektor kleiner gemacht hat; Gelb markiert die Endhöhe."
+							: "The left heatmap is the vector entering the block; the right is the vector after attention and the FFN. The two signal plots below show the norm at the start, after attention, and after the FFN. Red marks a step that made the vector smaller; gold marks the final height.") + "</p>" +
+						"<div class='tm-residual-heatmaps'><div class='tm-residual-heatmap'><div class='tm-residual-heatmap-label'>" + (isDe ? "Eingang" : "input") + "</div><canvas id='" + prefix + "-residual-in' class='tm-residual-heatmap-canvas' data-layer-idx='" + idx + "' data-which='in' aria-label='" + (isDe ? "Residual-Stream beim Eintritt in die Schicht" : "residual stream entering the layer") + "'></canvas></div>" +
+						"<div class='tm-residual-heatmap'><div class='tm-residual-heatmap-label'>" + (isDe ? "Ausgang" : "output") + "</div><canvas id='" + prefix + "-residual-out' class='tm-residual-heatmap-canvas' data-layer-idx='" + idx + "' data-which='out' aria-label='" + (isDe ? "Residual-Stream nach Attention und FFN" : "residual stream after attention and FFN") + "'></canvas></div></div>" +
+						"<div class='tm-residual-legend'><span>" + (isDe ? "negativ" : "negative") + "</span><span class='tm-residual-legend-bar'></span><span>" + (isDe ? "positiv" : "positive") + "</span></div>";
+					preview.insertBefore(panel, preview.firstChild);
+				}
 				var firstSignal = preview.querySelector(".layer-signal-canvas");
 				if (firstSignal) firstSignal.setAttribute("data-signal-mode", "attention");
 				if (!document.getElementById(prefix + "-signal-canvas-ffn")) {
@@ -1748,6 +1806,12 @@
 					secondSignal.setAttribute("data-signal-mode", "ffn");
 					secondSignal.setAttribute("aria-label", isDe ? "FFN-Schritt: Start, Zunahme, Abnahme und Endhöhe pro Token" : "FFN write: start, increase, decrease and final height per token");
 					preview.appendChild(secondSignal);
+				}
+				if (window.TransformerSteps && window.TransformerSteps.renderLayerResidualHeatmap) {
+					["in", "out"].forEach(function (which) {
+						var c = document.getElementById(prefix + "-residual-" + which);
+						if (c) window.TransformerSteps.renderLayerResidualHeatmap(c.id, idx, which);
+					});
 				}
 				if (window.TransformerSteps && window.TransformerSteps.renderLayerSignal) {
 					[firstSignal, document.getElementById(prefix + "-signal-canvas-ffn")].forEach(function (c) {
@@ -1789,6 +1853,18 @@
 					"<div class='tm-feature-plot'><div class='tm-feature-plot-title'>" + (isDe ? "Ausgabe" : "Output") + "</div><div id='unified-layer-" + idx + "-feature-output' class='tm-feature-chart'></div></div></div></div></details>" +
 					"<div id='unified-layer-" + idx + "-logit-lens' class='tm-logit-lens-host'></div>";
 				sb.insertBefore(wrap, oldDetail || null);
+			}
+			var attentionLead = card.querySelector('.tm-layer-subbox[data-sub="attention"] .tm-level-text');
+			if (attentionLead) {
+				attentionLead.textContent = isDe
+					? "Attention verteilt Aufmerksamkeit anhand des Kontexts: Sie mischt die Tokens je nachdem, in welchem Kontext sie stehen. Die Query fragt, was ein Token sucht; der Key sagt, was ein anderes anbietet; der Value ist der Inhalt, der bei einem guten Match weitergegeben wird."
+					: "Attention distributes attention based on context: it mixes the tokens depending on the context they are in. The query asks what a token looks for; the key says what another offers; the value is the content that travels on a good match.";
+			}
+			var ffnLead = card.querySelector('.tm-layer-subbox[data-sub="ffn"] .tm-level-text');
+			if (ffnLead) {
+				ffnLead.textContent = isDe
+					? "Das FFN verschiebt den Punkt danach im Raum mit der Information aus dem bisherigen Kontext. Es expandiert auf d_ff, wendet GELU an und komprimiert wieder zurück."
+					: "The FFN then shifts the point in space with the information from the previous context. It expands to d_ff, applies GELU, and compresses back.";
 			}
 			if (!sub._tmFeatureBound) {
 				sub._tmFeatureBound = true;
@@ -2341,6 +2417,25 @@
 				entry.api.redraw();
 			}
 			canvas.setAttribute("data-layer-signal-ready", "1");
+		},
+		renderLayerResidualHeatmap: function (canvasId, layerIdx, which) {
+			var canvas = document.getElementById(canvasId);
+			if (!canvas) return;
+			which = which || "in";
+			var entry = residualHeatmapRegistry[canvasId];
+			if (entry && entry.canvas !== canvas) { delete residualHeatmapRegistry[canvasId]; entry = null; }
+			if (!entry) {
+				entry = { canvas: canvas, layerIdx: layerIdx, which: which, api: null };
+				entry.api = initCanvas(canvas, function (ctx, w, h) {
+					drawResidualHeatmap(ctx, w, h, entry.layerIdx, entry.which);
+				});
+				residualHeatmapRegistry[canvasId] = entry;
+			} else {
+				entry.layerIdx = layerIdx;
+				entry.which = which;
+				entry.api.redraw();
+			}
+			canvas.setAttribute("data-residual-heatmap-ready", "1");
 		},
 		enhanceLayerCards: enhanceLayerCards,
 		renderLayerFeaturePlots: renderLayerFeaturePlots,

@@ -191,7 +191,10 @@
 						</div>
 						<div class="jocax-box">
 							<h3>Why is there anything at all?</h3>
-							<p>One proposal comes from João Carlos Holland de Barcellos (“Jocax”). Imagine a “Jocaxian nothingness”: not empty space governed by laws, but the absence of all rules. If no rule forbids something, something can appear. It is a metaphysical proposal, not an established result; its value is that it makes the question thinkable without pretending it is solved.</p>
+							<p>You start with a simple question: where does AI come from? The answer leads to computers, then to mathematics and writing, then to life and the universe. If you keep asking, you end at the Big Bang and before it: why is there something rather than nothing? That is not a detour; it is the bottom of the dependency chain.</p>
+							<p>If you really want to understand AI, you have to start at the Big Bang and even before: matter, energy, chemistry, life, brains, writing, mathematics, machines. Each step is a precondition for the next. The history is not decoration; it is the stack on which the model rests.</p>
+							<p>With a wink: one proposal comes from João Carlos Holland de Barcellos (“Jocax”). Imagine a “Jocaxian nothingness”: not empty space governed by laws, but the absence of all rules. If no rule forbids something, something can appear. Nobody knows whether that is true. It is a possibility, not an answer, and not an established result; its value is that it makes the question thinkable without pretending it is solved.</p>
+							<p>The untold history linked below asks exactly these questions: what had to be possible, what had to happen, for us to have AI systems today? It is the long chain of preconditions, from the first particles to the first perceptron.</p>
 						</div>
 						<div class="map-links">
 							<a href="../untold_history.php">The untold history</a>
