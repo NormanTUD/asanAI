@@ -413,7 +413,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					</section>
 
 					<section class="section-block" id="step-position-section">
-						<div class="section-kicker">Step 3 · Position</div>
+						<div class="section-kicker">Step 3 · Positional embedding</div>
 						<h2 class="section-title">Every slot gets its own fingerprint</h2>
 						<div class="prose">
 							<p>Attention, explained in the next step, compares tokens with each other but has no built-in sense of order. Without a position signal, “man bites dog” and “dog bites man” contain exactly the same vectors and look identical. A positional encoding adds a distinct fingerprint to every slot, so order becomes part of the representation.</p>
@@ -441,13 +441,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								</div>
 								<div class="step-out" id="ipe-heat-out">Each row is one position; each column is one dimension.</div>
 							</div>
-							<div class="pos-bridge">
-								<span class="pos-bridge-kicker">Same pattern, one dimension higher</span>
-								<h3 class="pos-bridge-title">From the flat slice to the 3D curve</h3>
+							<div class="prose">
+								<p class="pos-bridge-kicker">Same pattern, one dimension higher</p>
+								<h3>From the flat slice to the 3D curve</h3>
 								<p>The heatmap above shows the pattern as a flat slice: position across, dimension up. Below, the same sinusoidal fingerprint is drawn as a real 3D curve. Here d = 3, so the curve is exactly three-dimensional. The shape does not change; only the number of dimensions does. In a real model this curve becomes a surface in thousands of dimensions.</p>
-								<div class="pos-bridge-flow" aria-hidden="true">
-									<span>position × dimension</span><i>→</i><span>3D curve</span><i>→</i><span>N dimensions</span>
-								</div>
+								<p class="pos-bridge-flow" aria-hidden="true"><span>position × dimension</span><i>→</i><span>3D curve</span><i>→</i><span>N dimensions</span></p>
 							</div>
 							<div class="step-stage">
 								<div class="step-toolbar">
@@ -655,7 +653,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 															<p class="step-note">The addition is the point. Nothing is overwritten, so the original signal survives, and gradients have a short path back through the sum. That is a large part of why very deep networks train at all. The numbers under the bars are the same sum written out one coordinate at a time.</p>
 														</div>
 					</section>
-					<section class="section-block" id="meadow">
+					<section class="section-block" id="last-step">
 						<div class="section-kicker"><span class="sk-num">04</span> The last step</div>
 						<h2 class="section-title">The final vector picks a word.</h2>
 						<div class="prose">
@@ -696,11 +694,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<span class="demo-badge">real GPT-2</span>
 							</div>
 							<div class="demo-body">
-								<p class="softmax-context"><span class="softmax-context-label">context</span> <span id="softmax-context-text">“As the spaceship was approaching <b>the</b>”</span></p>
 								<div class="chip-row softmax-prompts" id="softmax-prompts">
 									<button class="chip is-on" type="button" data-softmax-prompt="spaceship">spaceship</button>
 									<button class="chip" type="button" data-softmax-prompt="planet">deserted planet</button>
 								</div>
+								<p class="softmax-context"><span class="softmax-context-label">context</span> <span id="softmax-context-text">“As the spaceship was approaching <b>the</b>”</span></p>
 								<div class="prose-math softmax-logit-matrix" id="softmax-logit-matrix" data-tex-display="true"></div>
 								<div class="softmax-stage" id="softmax-stage">
 									<div class="softmax-col softmax-col--logits">
@@ -734,8 +732,15 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<div class="demo-insight"><b>Takeaway</b><span>Softmax does not create the ranking; the dot products do. It turns scores into a distribution that sums to one, and temperature decides how sharply the winner is favoured.</span></div>
 							<div class="demo-foot">Real GPT-2 small logits for “As the spaceship was approaching the”, from the <a href="https://poloclub.github.io/transformer-explainer/" rel="noopener">Transformer Explainer</a> (Polo Club, Georgia Tech). The absolute logit offset is arbitrary; softmax depends only on differences.</div>
 						</div>
-						<div class="prose" style="margin-top:22px">
+					</section>
+
+					<section class="section-block" id="meadow">
+						<div class="section-kicker"><span class="sk-num">05</span> The meadow</div>
+						<h2 class="section-title">The same step, seen as geometry.</h2>
+						<div class="prose">
+							<p>The demo above reads the final step as a distribution: logits in, probabilities out, one token drawn. The meadow looks at the same computation from the other side. Instead of asking how the scores become probabilities, it asks what those probabilities mean geometrically: every token owns a region of the thought space, and the next word is the region the thought falls into. Both views are correct, and they are two angles on one step.</p>
 							<p><strong>The meadow of words.</strong> The meadow shows how the model divides the space into cells. After all the layers, the model has a vector for each token, and every token in the vocabulary owns the region of that space closest to it. The image is two-dimensional, while a real model works in thousands of dimensions, but the principle is the same: the vocabulary forms bubbles, and every thought falls into one of them or near its border. The closer the thought is to a word's centre, the more likely that word is; near the edges the estimate becomes less precise. Inside the model, the thought is a precise vector; the vocabulary can only answer with whole cells, so the model can represent a distinction more finely than it can express it in one token. Temperature and top-k change how large the candidate set is. Move the pointer and the thought lands in a cell, or on a seam where two words are almost equally near.</p>
+							<p>The picture has a formal version. <a href="https://arxiv.org/abs/2603.22301" rel="noopener">Mabrok (2026)</a> models the hidden states as a low-dimensional semantic manifold, gives each token a Voronoi region, and calls the band around a seam the <strong>expressibility gap</strong>. The winner's lead over the runner-up is the <strong>Voronoi margin</strong>; the area of a token's cell is its <strong>semantic volume</strong>, so broad or polysemous words own large cells and precise words small ones. More tokens make the cells smaller, but the average distortion of a finite vocabulary falls only as a power of its size, set by the intrinsic dimension. That is why the seams shrink but never close.</p>
 						</div>
 
 						<div class="demo demo--paper demo--canvas" id="meadow-demo">
@@ -767,7 +772,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					</section>
 
 					<section class="section-block" id="whole">
-						<div class="section-kicker"><span class="sk-num">05</span> The whole loop</div>
+						<div class="section-kicker"><span class="sk-num">06</span> The whole loop</div>
 						<h2 class="section-title">Text in, geometry, one word out.</h2>
 						<div class="prose">
 							<p>
@@ -2419,6 +2424,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		var pos = 7;
 		var posShown = 7;
 		var POS_D_MODEL = 3;
+		var POS_CURVE_STEP = 0.75;
 		var POS_COLORS = ["green", "blue", "gold"];
 		var POS_LABELS = ["d0", "d1", "d2"];
 		var posReduce = TM.prefersReduced();
@@ -2530,7 +2536,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			});
 
 			var primitives = [];
-			function addLine(ax, ay, az, bx, by, bz, color, width, dash) {
+			function addLine(ax, ay, az, bx, by, bz, color, width, dash, cap) {
 				primitives.push({
 					z: (az + bz) / 2,
 					draw: function (ctx) {
@@ -2541,7 +2547,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						ctx.lineTo(bx, by);
 						ctx.strokeStyle = color;
 						ctx.lineWidth = width;
-						ctx.lineCap = "round";
+						ctx.lineCap = cap || "round";
 						ctx.stroke();
 						ctx.restore();
 					}
@@ -2560,12 +2566,12 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 
 			if (posShown > 0.01) {
-				var steps = Math.max(2, Math.min(240, Math.floor(posShown)));
+				var steps = Math.max(2, Math.min(1600, Math.ceil(posShown / POS_CURVE_STEP)));
 				var prev = project(posVector(0));
 				for (var i = 1; i <= steps; i++) {
 					var t = posShown * i / steps;
 					var q = project(posVector(t));
-					addLine(prev.x, prev.y, prev.z, q.x, q.y, q.z, posRgba(c.sky, 0.42), 1.6);
+					addLine(prev.x, prev.y, prev.z, q.x, q.y, q.z, posRgba(c.sky, 0.42), 1.6, null, "butt");
 					prev = q;
 				}
 			}
