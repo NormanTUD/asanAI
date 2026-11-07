@@ -1,9 +1,9 @@
 # Deep fact audit
 
 - lessons: 99
-- claims: 7358
-- statements: 17273
-- relations: 52311
+- claims: 7363
+- statements: 17281
+- relations: 52332
 - uncovered years: 57
 - uncovered quantities: 6
 - uncited specific claims: 307
@@ -107,7 +107,7 @@
 | training_infrastructure | 32 | 55 | 239 | 0 | 0 |
 | trainingdynamics | 23 | 29 | 140 | 0 | 0 |
 | traininglab | 15 | 7 | 67 | 0 | 0 |
-| transformer | 32 | 291 | 930 | 0 | 0 |
+| transformer | 37 | 299 | 951 | 0 | 0 |
 | unexpected_capabilities | 40 | 274 | 578 | 4 | 1 |
 | untold_history_i | 520 | 458 | 1503 | 3 | 0 |
 | untold_history_ii | 672 | 643 | 2012 | 6 | 0 |

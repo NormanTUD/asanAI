@@ -198,3 +198,70 @@
 }
 .tm-model-size-slot #nr_params { color: var(--tm-ink, #000000); }
 .tm-model-size-slot #nr_params b { color: var(--tm-petrol, #004b6f); }
+
+/* Readability pass (main blog): the controls become a calm grid of cards,
+   the corpus and training card get room to breathe, and the shared step
+   cards get the blog's corner radius. */
+#transformer_config {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 14px 18px;
+	align-items: stretch;
+}
+#transformer_config > .transformer-config-field {
+	margin-bottom: 0;
+	padding: 14px 16px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 12px;
+	background: var(--mn-surface, #fff);
+}
+#transformer_config > #param-breakdown-toggle,
+#transformer_config > #param-breakdown-chart,
+#transformer_config > div[style*="display: none"] {
+	grid-column: 1 / -1;
+}
+.transformer-slider-label {
+	font-size: 0.95rem;
+}
+.transformer-slider-value {
+	font-size: 1.05rem;
+}
+.transformer-slider-note {
+	font-size: 0.85rem;
+	line-height: 1.5;
+}
+.transformer_corpus {
+	padding: 16px 18px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 12px;
+	background: var(--mn-surface, #fff);
+}
+.transformer_corpus label {
+	font-size: 0.95rem;
+}
+.transformer_corpus p {
+	font-size: 0.85rem;
+	line-height: 1.5;
+}
+#transformer-train-card {
+	border-radius: 12px;
+	padding: 18px 20px;
+}
+.transformer-train-label {
+	font-size: 0.85rem;
+}
+.transformer-train-actions .train-btn {
+	background: var(--mn-emerald, #10b981);
+	border-color: var(--mn-emerald, #10b981);
+	color: #ffffff;
+	font-weight: 700;
+}
+.transformer-train-actions .train-btn:hover {
+	filter: brightness(1.06);
+}
+.tm-step {
+	border-radius: 12px;
+}
+.tm-capacity-note {
+	border-radius: 0 12px 12px 0;
+}

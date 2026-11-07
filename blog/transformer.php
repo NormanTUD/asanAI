@@ -73,7 +73,8 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 		<span id="dim-val" class="transformer-slider-value">3</span>
 		<p class="transformer-slider-note">
             <b>Dependency:</b> Must be a multiple of Heads.<br>
-            <b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = \frac{d_{\text{model}}}{h}$) of the vector to perform dot products.
+            <b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = \frac{d_{\text{model}}}{h}$) of the vector to perform dot products.<br>
+            <b>3D view:</b> up to 3 dimensions are shown raw; above that the plot uses PCA.
         </p>
 		<input type="range" id="transformer-dimension-model" min="2" max="16" step="1" value="3"
 			oninput="syncTransformerSettings('dim')">
@@ -243,6 +244,20 @@ with the full formulas one level deeper.
 					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
 				</div>
 				<p>The plot shows the semantic vector h0 = token embedding + position. Up to three dimensions are shown raw; above that a PCA reduces it to three and the label says so.</p>
+				<div class="tm-capacity-note">
+					<b>3D is a window, not a capacity promise.</b> Up to <code>d_model = 3</code> the plot shows every coordinate raw; above that it is a PCA projection. The picture always looks three-dimensional, but three dimensions are not automatically enough. Test runs on the default sentence (21 next-token positions):
+					<table>
+						<thead><tr><th><code>d_model</code></th><th>correct next tokens</th><th>verdict</th></tr></thead>
+						<tbody>
+							<tr><td>2</td><td>11 / 21</td><td>fails</td></tr>
+							<tr><td>3</td><td>17-21 / 21</td><td>borderline</td></tr>
+							<tr><td>6</td><td>21 / 21</td><td>reliable</td></tr>
+							<tr><td>8-16</td><td>21 / 21</td><td>reliable</td></tr>
+						</tbody>
+					</table>
+					<p>Sweep with one attention head so every width is selectable; the default three-head model was borderline at 3 and reliable at 6.</p>
+					<p>Treat 8 dimensions as a safe rule of thumb: from there the model reliably memorizes the short training sentence. This is memorization, not generalization.</p>
+				</div>
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-position" aria-label="Semantic vectors: token embedding plus position"></canvas>
 				<div class="tm-step-modes" data-step-modes="position"></div>
 				<p class="tm-step-more">Without a position signal, the same tokens in a different order would look identical. The position vector gives every slot a unique fingerprint.</p>

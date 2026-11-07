@@ -1347,3 +1347,89 @@
 	font: 700 0.72rem/1.2 "Barlow", "Open Sans", system-ui, sans-serif;
 	color: var(--tm-muted, var(--mn-text-muted, #627476));
 }
+
+/* Readability pass: the step cards are the main reading surface. Keep the
+   surfaces square here (the Ten Minutes theme requires it); the main-blog
+   stylesheet adds its own corner radius. */
+.tm-step h3 {
+	font-size: 1.05rem;
+}
+.tm-step p {
+	font-size: 0.92rem;
+	line-height: 1.55;
+}
+.tm-step-more {
+	font-size: 0.88rem;
+	line-height: 1.55;
+}
+.tm-step-detail-body {
+	font-size: 0.9rem;
+	line-height: 1.6;
+}
+.tm-step-detail-body p {
+	margin: 0 0 10px;
+}
+.tm-step-formula {
+	border-radius: 8px;
+}
+
+/* Capacity callout: the 3D plot is a projection, not a promise. */
+.tm-capacity-note {
+	margin: 16px 0;
+	padding: 14px 16px 14px 18px;
+	border-left: 3px solid var(--tm-gold, var(--mn-coral, #9f9700));
+	background: var(--tm-paper-2, var(--mn-bg-subtle, #f8fafc));
+	color: var(--tm-ink-soft, var(--mn-text-secondary, #2c464d));
+	font: 400 0.92rem/1.6 "Open Sans", system-ui, sans-serif;
+}
+.tm-capacity-note b {
+	color: var(--tm-petrol, var(--mn-accent, #004b6f));
+}
+.tm-capacity-note table {
+	width: 100%;
+	table-layout: fixed;
+	margin: 10px 0 8px;
+	border-collapse: collapse;
+	font-size: 0.85rem;
+}
+.tm-capacity-note th,
+.tm-capacity-note td {
+	padding: 4px 6px;
+	overflow-wrap: break-word;
+	border-bottom: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	text-align: left;
+}
+.tm-capacity-note th {
+	font-weight: 700;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+}
+.tm-capacity-note p {
+	margin: 6px 0 0;
+}
+.tm-capacity-note code {
+	font-size: 0.85em;
+}
+
+/* Mobile: keep the step grid inside the viewport. The step grid carries
+   .lg-widescroll on the main blog, where style.css lets it span the full
+   page; the Ten Minutes theme has no such fallback, so without this rule
+   the wide formulas push the document sideways on a phone. */
+@media (max-width: 820px) {
+	.tm-step-grid.lg-widescroll {
+		width: 100%;
+		max-width: 100%;
+		overflow-x: auto;
+	}
+	.tm-step,
+	.tm-step-body,
+	.tm-transformer-box,
+	.tm-transformer-body,
+	.tm-transformer-formulas,
+	.tm-transformer-formulas > div {
+		min-width: 0;
+		max-width: 100%;
+	}
+	.tm-transformer-formulas > div {
+		overflow-x: auto;
+	}
+}
