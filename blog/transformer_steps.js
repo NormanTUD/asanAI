@@ -1260,17 +1260,19 @@
 		}
 		var rows = tokens.length;
 		var d = trace.h_in[0].length;
-		var max = 0.0001;
+		var minAll = Infinity, maxAll = -Infinity;
 		tokens.forEach(function (_, i) {
-			(trace.h_in[i] || []).forEach(function (v) { max = Math.max(max, Math.abs(v)); });
-			(trace.h_out[i] || []).forEach(function (v) { max = Math.max(max, Math.abs(v)); });
+			(trace.h_in[i] || []).forEach(function (v) { minAll = Math.min(minAll, v); maxAll = Math.max(maxAll, v); });
+			(trace.h_out[i] || []).forEach(function (v) { minAll = Math.min(minAll, v); maxAll = Math.max(maxAll, v); });
 		});
+		if (!isFinite(minAll) || !isFinite(maxAll)) { minAll = -1; maxAll = 1; }
+		ctx.canvas._tmResidualRange = { min: minAll, max: maxAll };
 		var left = 74, top = 24, right = 10, bottom = 8;
 		var cw = (w - left - right) / Math.max(1, d);
 		var ch = (h - top - bottom) / Math.max(1, rows);
 		function cellColor(v) {
-			var t = Math.max(-1, Math.min(1, v / max));
-			return t < 0 ? rgb(mix(hex(c.paper), hex(c.blue), -t)) : rgb(mix(hex(c.paper), hex(c.gold), t));
+			if (v < 0) return rgb(mix(hex(c.paper), hex(c.blue), Math.min(1, v / (minAll || -1))));
+			return rgb(mix(hex(c.paper), hex(c.gold), Math.min(1, v / (maxAll || 1))));
 		}
 		var source = which === "in" ? trace.h_in : trace.h_out;
 		for (var i = 0; i < rows; i++) {
@@ -1789,10 +1791,12 @@
 					panel.className = "tm-residual-panel";
 					panel.innerHTML = "<div class='tm-residual-panel-head'><span>" + (isDe ? "Residual-Stream pro Token" : "Residual stream per token") + "</span><span class='tm-residual-panel-sub'>" + (isDe ? "Zeile = Token · Spalte = Dimension" : "row = token · column = dimension") + "</span></div>" +
 						"<p class='tm-residual-panel-note'>" + (isDe
-							? "Links steht der Vektor, der in den Block hineingeht; rechts der Vektor nach Attention und FFN. Die beiden Signal-Plots darunter zeigen die Norm am Start, nach Attention und nach dem FFN. Rot markiert einen Schritt, der den Vektor kleiner gemacht hat; Gelb markiert die Endhöhe."
-							: "The left heatmap is the vector entering the block; the right is the vector after attention and the FFN. The two signal plots below show the norm at the start, after attention, and after the FFN. Red marks a step that made the vector smaller; gold marks the final height.") + "</p>" +
-						"<div class='tm-residual-heatmaps'><div class='tm-residual-heatmap'><div class='tm-residual-heatmap-label'>" + (isDe ? "Eingang" : "input") + "</div><canvas id='" + prefix + "-residual-in' class='tm-residual-heatmap-canvas' data-layer-idx='" + idx + "' data-which='in' aria-label='" + (isDe ? "Residual-Stream beim Eintritt in die Schicht" : "residual stream entering the layer") + "'></canvas></div>" +
-						"<div class='tm-residual-heatmap'><div class='tm-residual-heatmap-label'>" + (isDe ? "Ausgang" : "output") + "</div><canvas id='" + prefix + "-residual-out' class='tm-residual-heatmap-canvas' data-layer-idx='" + idx + "' data-which='out' aria-label='" + (isDe ? "Residual-Stream nach Attention und FFN" : "residual stream after attention and FFN") + "'></canvas></div></div>" +
+							? "Ziehe den Regler, um Eingang und Ausgang pixelgenau übereinander zu blenden. Die Farben sind auf das gemeinsame Minimum und Maximum beider Matrizen normiert. Die Signal-Plots darunter zeigen die Norm am Start, nach Attention und nach dem FFN; Rot markiert eine Abnahme, Gelb die Endhöhe. Fahre über eine Zelle für die exakten Werte."
+							: "Drag the slider to blend input and output pixel-exactly. Colours are normalized to the shared minimum and maximum of both matrices. The signal plots below show the norm at the start, after attention, and after the FFN; red marks a decrease, gold the final height. Hover a cell for the exact values.") + "</p>" +
+						"<div class='tm-residual-overlay'><canvas id='" + prefix + "-residual-in' class='tm-residual-heatmap-canvas tm-residual-overlay-in' data-layer-idx='" + idx + "' data-which='in' aria-label='" + (isDe ? "Residual-Stream beim Eintritt in die Schicht" : "residual stream entering the layer") + "'></canvas>" +
+						"<canvas id='" + prefix + "-residual-out' class='tm-residual-heatmap-canvas tm-residual-overlay-out' data-layer-idx='" + idx + "' data-which='out' aria-label='" + (isDe ? "Residual-Stream nach Attention und FFN" : "residual stream after attention and FFN") + "'></canvas>" +
+						"<div class='tm-residual-tooltip' id='" + prefix + "-residual-tooltip' hidden></div></div>" +
+						"<div class='tm-residual-blend'><label>" + (isDe ? "Eingang" : "Input") + " <input type='range' id='" + prefix + "-residual-blend' min='0' max='1' step='0.01' value='0.5'> " + (isDe ? "Ausgang" : "Output") + "</label><output id='" + prefix + "-residual-blend-out'>50%</output><span class='tm-residual-range' id='" + prefix + "-residual-range'></span></div>" +
 						"<div class='tm-residual-legend'><span>" + (isDe ? "negativ" : "negative") + "</span><span class='tm-residual-legend-bar'></span><span>" + (isDe ? "positiv" : "positive") + "</span></div>";
 					preview.insertBefore(panel, preview.firstChild);
 				}
@@ -1812,6 +1816,53 @@
 						var c = document.getElementById(prefix + "-residual-" + which);
 						if (c) window.TransformerSteps.renderLayerResidualHeatmap(c.id, idx, which);
 					});
+				}
+				var blendEl = document.getElementById(prefix + "-residual-blend");
+				var blendOut = document.getElementById(prefix + "-residual-blend-out");
+				var rangeEl = document.getElementById(prefix + "-residual-range");
+				var outHeat = document.getElementById(prefix + "-residual-out");
+				var inHeat = document.getElementById(prefix + "-residual-in");
+				var tip = document.getElementById(prefix + "-residual-tooltip");
+				var layerTrace = (window.__tmLayerTrace || [])[idx];
+				if (rangeEl && layerTrace) {
+					var rMin = Infinity, rMax = -Infinity;
+					layerTrace.h_in.forEach(function (row) { row.forEach(function (v) { rMin = Math.min(rMin, v); rMax = Math.max(rMax, v); }); });
+					layerTrace.h_out.forEach(function (row) { row.forEach(function (v) { rMin = Math.min(rMin, v); rMax = Math.max(rMax, v); }); });
+					rangeEl.textContent = (isDe ? "min " : "min ") + rMin.toFixed(2) + " · max " + rMax.toFixed(2);
+				}
+				function updateBlend() {
+					if (!blendEl) return;
+					var t = Math.max(0, Math.min(1, parseFloat(blendEl.value) || 0));
+					if (outHeat) outHeat.style.opacity = String(t);
+					if (blendOut) blendOut.textContent = Math.round(t * 100) + "%";
+				}
+				if (blendEl && !blendEl._tmResidualBound) {
+					blendEl._tmResidualBound = true;
+					blendEl.addEventListener("input", updateBlend);
+				}
+				updateBlend();
+				if (inHeat && tip && !inHeat._tmHoverBound && layerTrace) {
+					inHeat._tmHoverBound = true;
+					inHeat.addEventListener("mousemove", function (event) {
+						var rect = inHeat.getBoundingClientRect();
+						var x = event.clientX - rect.left, y = event.clientY - rect.top;
+						var left = 74, top = 24, right = 10, bottom = 8;
+						var rows = layerTrace.h_in.length;
+						var d = layerTrace.h_in[0].length;
+						var cw = (rect.width - left - right) / Math.max(1, d);
+						var ch = (rect.height - top - bottom) / Math.max(1, rows);
+						var col = Math.floor((x - left) / cw);
+						var row = Math.floor((y - top) / ch);
+						if (x < left || y < top || col < 0 || row < 0 || col >= d || row >= rows) { tip.hidden = true; return; }
+						var vi = (layerTrace.h_in[row] && layerTrace.h_in[row][col]) || 0;
+						var vo = (layerTrace.h_out[row] && layerTrace.h_out[row][col]) || 0;
+						var token = (layerTrace.tokenStrings && layerTrace.tokenStrings[row]) || tokenList()[row] || "";
+						tip.textContent = display(token) + " · dim " + col + " · " + (isDe ? "Eingang " : "input ") + vi.toFixed(3) + " · " + (isDe ? "Ausgang " : "output ") + vo.toFixed(3);
+						tip.hidden = false;
+						tip.style.left = Math.min(rect.width - 190, x + 12) + "px";
+						tip.style.top = Math.max(0, y + 12) + "px";
+					});
+					inHeat.addEventListener("mouseleave", function () { tip.hidden = true; });
 				}
 				if (window.TransformerSteps && window.TransformerSteps.renderLayerSignal) {
 					[firstSignal, document.getElementById(prefix + "-signal-canvas-ffn")].forEach(function (c) {

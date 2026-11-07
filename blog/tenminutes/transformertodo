@@ -206,5 +206,8 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
       den jeweiligen Unterboxen, nicht mehr im Layer-Intro.
 - DONE Feature-Migration, Attention und FFN sind direkt darunter sichtbar
       und aufklappbar.
+- DONE Residual-Heatmaps liegen pixelgenau übereinander; ein Slider blendet
+      Eingang/Ausgang, Farben sind auf das gemeinsame Min/Max normiert,
+      Min/Max stehen im Panel und Hover zeigt die exakten Zellwerte.
 - DONE Position zeigt nur noch den semantischen Vektor; Heatmap/Kurve-Modi
       sind entfernt.

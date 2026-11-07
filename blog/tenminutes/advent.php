@@ -52,7 +52,7 @@
 						</div>
 						<div class="keypoint">
 							<b>If you want the big picture</b>
-							<span>Days 28-31 zoom out to society, AI for science, philosophy, and the people behind the machine.</span>
+							<span>Days 28-31 zoom out to society, AI for science, the people behind the machine, and philosophy.</span>
 						</div>
 					</div>
 				</div>
@@ -64,7 +64,7 @@
 						<p class="kicker">How to use it</p>
 						<h2>Read one door a day, or follow the thread.</h2>
 					</div>
-					<p>The arc is deliberate: text becomes tokens (<a href="https://arxiv.org/abs/1508.07909" rel="noopener">Sennrich et al., 2016</a>) and vectors (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>), networks learn (<a href="https://doi.org/10.1038/323533a0" rel="noopener">Rumelhart et al., 1986</a>), and the transformer arrives around Day 20 (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>). Then the calendar turns outward: assistants (<a href="https://arxiv.org/abs/2203.02155" rel="noopener">Ouyang et al., 2022</a>), society, AI for science, philosophy, people. Every door opens a self-contained ten-minute version, so you can enter out of order; the page restates what it needs instead of assuming you read yesterday’s door.</p>
+					<p>The arc is deliberate: text becomes tokens (<a href="https://arxiv.org/abs/1508.07909" rel="noopener">Sennrich et al., 2016</a>) and vectors (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>), networks learn (<a href="https://doi.org/10.1038/323533a0" rel="noopener">Rumelhart et al., 1986</a>), and the transformer arrives around Day 20 (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>). Then the calendar turns outward: assistants (<a href="https://arxiv.org/abs/2203.02155" rel="noopener">Ouyang et al., 2022</a>), society, AI for science, people, philosophy. Every door opens a self-contained ten-minute version, so you can enter out of order; the page restates what it needs instead of assuming you read yesterday’s door.</p>
 					<p>The six sections here are a reading route; the library groups the same lessons by course part, which is a different cut. The two extra compact lessons outside the calendar are the orientation and the agents page: 33 lessons in total, 31 doors.</p>
 				</div>
 
@@ -295,18 +295,18 @@
 						<p>AlphaFold, materials, weather, and mathematics: how prediction becomes discovery, and why verification is the bottleneck.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-30" href="philosophy" data-day="30" data-slug="philosophy">
+					<a class="day-card is-available" id="day-30" href="people_of_ai" data-day="30" data-slug="people_of_ai">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">30</span><span class="dc-part">Big Questions</span></div>
-						<h3>Minds, Meaning, and Machines</h3>
-						<p>Turing, grounding, Mary's Room, sentience: what it would mean for a model to think.</p>
+						<h3>The People and the Map</h3>
+						<p>Ideas arrive through people and institutions. Meet the recurring cast behind the machine before the final question.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-31" href="people_of_ai" data-day="31" data-slug="people_of_ai">
+					<a class="day-card is-available" id="day-31" href="philosophy" data-day="31" data-slug="philosophy">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">31</span><span class="dc-part">Big Questions</span></div>
-						<h3>The People and the Map</h3>
-						<p>Ideas arrive through people and institutions. Close the year by zooming out.</p>
+						<h3>Minds, Meaning, and Machines</h3>
+						<p>Turing, grounding, Mary's Room, sentience: what it would mean for a model to think.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
 				</div>
@@ -328,10 +328,10 @@
 					</div>
 					<div class="feature-second">
 						<div>
-							<h3>The people and the map</h3>
-							<p>The People of AI page closes the year with the recurring cast and the institutions behind the machine.</p>
+							<h3>Minds, meaning, and the map</h3>
+							<p>The philosophy page closes the year with consciousness, qualia, and the open question of what it would mean for a model to think.</p>
 						</div>
-						<a class="btn btn--ghost" href="people_of_ai">Open People of AI</a>
+						<a class="btn btn--ghost" href="philosophy">Open Philosophy</a>
 					</div>
 				</div>
 			</section>

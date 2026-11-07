@@ -421,13 +421,13 @@ space-curvature demo uses it for its step buttons.
   5. From Model to Assistant (21–27): sampling, fine-tuning, RAG, prompt,
      reasoning, running locally, evaluation
   6. The Larger Questions (28–31): society (28), AI for science (29),
-     philosophy (30), people (31)
+     people (30), philosophy (31)
 - Deliberate merges / omissions:
   - `minimalneuron.php` represents the old “smallest network” and
     “watch it learn” pair. Do not re-add `traininglab.php` as a separate door
     unless the calendar gets a different structure.
-  - `people_of_ai.php` is the final “People and the Map” door. The Atlas is not
-    linked from this directory.
+  - `philosophy.php` is the final door; `people_of_ai.php` comes before it.
+    The Atlas is not linked from this directory.
   - `agents.php` exists but is intentionally not in the calendar.
 - If the compact-door count changes, update the “x of 31 doors” and
   “compact lessons open” pills in `index.php`.

@@ -242,11 +242,7 @@
 					<p>The global AI ecosystem, the displaced prerequisites, and the open problems at the frontier of AI.</p>
 				</div>
 				<div class="shelf-grid">
-				<a class="shelf-card is-compact" href="philosophy" data-compact="1" data-search="philosophical and societal implications, ethical usage of ai the turing test, the vector grounding problem, mary&#x27;s room, sentience, and what it means to think. philosophy, ethics, language interested-layman bigger questions" style="--part-color:#92a19a">
-					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128218;</span><span class="sc-title">Philosophical and societal implications, ethical usage of AI</span></span>
-					<span class="sc-desc">The Turing Test, the Vector Grounding Problem, Mary&#x27;s Room, sentience, and what it means to think.</span>
-					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interested-layman</span></span>
-				</a>
+
 				<a class="shelf-card is-compact" href="ai_and_society" data-compact="1" data-search="ai and society: the cultural impact of machines that create a survey of how ai has reshaped art, science, labor, cognition, and truth ,  from the dartmouth conference to the flood of synthetic media. the good, the bad, the terrible, and the great. society, culture, ethics, history interested-layman bigger questions" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#9883;</span><span class="sc-title">AI and Society: The Cultural Impact of Machines That Create</span></span>
 					<span class="sc-desc">A survey of how AI has reshaped art, science, labor, cognition, and truth, from the Dartmouth Conference to the flood of synthetic media. The good, the bad, the terrible, and the great.</span>
@@ -260,6 +256,11 @@
 				<a class="shelf-card is-compact" href="people_of_ai" data-compact="1" data-search="people of ai the recurring cast behind the machine ,  from mcculloch and pitts to the builders of the modern llm stack, with their primary works. history, society, philosophy, frontier interested-layman bigger questions" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128101;</span><span class="sc-title">People of AI</span></span>
 					<span class="sc-desc">The recurring cast behind the machine, from McCulloch and Pitts to the builders of the modern LLM stack, with their primary works.</span>
+					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interested-layman</span></span>
+				</a>
+				<a class="shelf-card is-compact" href="philosophy" data-compact="1" data-search="philosophical and societal implications, ethical usage of ai the turing test, the vector grounding problem, mary&#x27;s room, sentience, and what it means to think. philosophy, ethics, language interested-layman bigger questions" style="--part-color:#92a19a">
+					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128218;</span><span class="sc-title">Philosophical and societal implications, ethical usage of AI</span></span>
+					<span class="sc-desc">The Turing Test, the Vector Grounding Problem, Mary&#x27;s Room, sentience, and what it means to think.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interested-layman</span></span>
 				</a>
 				</div>
