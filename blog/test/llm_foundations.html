@@ -357,15 +357,15 @@ rule("pairing","P2","The Pairing (Dot Product)","⟨·,·⟩ : V × V → ℝ,  
    P3 · THE LINEAR MAP
    ============================================================ */
 rule("linear","P3","The Linear Map (Matrix)","W : ℝⁿ → ℝᵐ,   (Wu)ᵢ = ⟨rowᵢ(W), u⟩",
-  "A stack of pairings. Each row is a direction that measures the input; each column is the image of a basis vector. The unit square becomes a parallelogram.",
+  "A stack of pairings. Each row is a direction that measures the input; each column is the image of a basis vector. Feed a vector u in and the output components are the pairings of u with the rows.",
   "Without linear maps there is no learned parameter. Attention projections, MLPs, embeddings and unembeddings are all linear maps.",
   ["neuron","attention","MLP","embedding","unembedding"],
   (stage,controls)=>{
-    const canvas=canvasStage(stage,300); let a=1.1,b=.5,c=-.4,d=1.3;
-    const sDet=stat(controls,"det W","—"), sMap=stat(controls,"W(1,1)","—");
+    const canvas=canvasStage(stage,300); let a=1.1,b=.5,c=-.4,d=1.3,ux=.8,uy=.6;
+    const sDet=stat(controls,"det W","—"), sOut=stat(controls,"W u","—");
     const draw=(ctx,w,h,now)=>{
-      const det=a*d-b*c, mx=a+b, my=c+d;
-      sDet.set(det.toFixed(2)); sMap.set(`(${mx.toFixed(2)}, ${my.toFixed(2)})`);
+      const det=a*d-b*c, outX=a*ux+b*uy, outY=c*ux+d*uy;
+      sDet.set(det.toFixed(2)); sOut.set(`(${outX.toFixed(2)}, ${outY.toFixed(2)})`);
       ctx.clearRect(0,0,w,h);
       const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(52,211,153,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
       ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
@@ -381,7 +381,7 @@ rule("linear","P3","The Linear Map (Matrix)","W : ℝⁿ → ℝᵐ,   (Wu)ᵢ =
       ctx.fillStyle="rgba(52,211,153,.10)"; ctx.strokeStyle=rgba(C.emerald,.75); ctx.lineWidth=2;
       ctx.beginPath(); ctx.moveTo(X(p00[0]),Y(p00[1])); ctx.lineTo(X(p10[0]),Y(p10[1])); ctx.lineTo(X(p11[0]),Y(p11[1])); ctx.lineTo(X(p01[0]),Y(p01[1])); ctx.closePath(); ctx.fill(); ctx.stroke();
       // columns as images of basis
-      const arrow=(x2,y2,color,label)=>{ ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=2; glow(ctx,color,8); ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(x2),Y(y2)); ctx.stroke(); noGlow(ctx); mono(ctx,label,X(x2)+8,Y(y2)-8,9,color); };
+      const arrow=(x2,y2,color,label,width=2)=>{ ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=width; glow(ctx,color,8); ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(x2),Y(y2)); ctx.stroke(); noGlow(ctx); mono(ctx,label,X(x2)+8,Y(y2)-8,9,color); };
       arrow(a,c,C.cyan,"W e₁");
       arrow(b,d,C.violet,"W e₂");
       // rows as measurement directions
@@ -389,21 +389,30 @@ rule("linear","P3","The Linear Map (Matrix)","W : ℝⁿ → ℝᵐ,   (Wu)ᵢ =
       ctx.beginPath(); ctx.moveTo(X(-a),Y(-c)); ctx.lineTo(X(a),Y(c)); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(X(-b),Y(-d)); ctx.lineTo(X(b),Y(d)); ctx.stroke(); ctx.setLineDash([]);
       mono(ctx,"rows = measurement directions",24,h-20,9,C.rose);
-      // matrix display
-      const bx=w-180, by=70;
+      // input and output vector: the two pairings made visible
+      arrow(ux,uy,C.amber,"u",2.6);
+      arrow(outX,outY,C.emerald,"Wu",2.8);
+      // matrix display and pairing readout
+      const bx=w-190, by=64;
       mono(ctx,"W =",bx,by,12,C.ink);
       ctx.fillStyle="rgba(15,23,42,.5)"; ctx.strokeStyle="rgba(148,163,184,.2)"; roundRect(ctx,bx+36,by-20,120,52,10); ctx.fill(); ctx.stroke();
       mono(ctx,a.toFixed(1),bx+70,by-4,11,C.cyan,"center"); mono(ctx,b.toFixed(1),bx+120,by-4,11,C.violet,"center");
       mono(ctx,c.toFixed(1),bx+70,by+18,11,C.cyan,"center"); mono(ctx,d.toFixed(1),bx+120,by+18,11,C.violet,"center");
-      mono(ctx,"area × "+det.toFixed(2),bx+96,by+48,9,C.emerald,"center");
+      mono(ctx,"det = "+det.toFixed(2),bx+96,by+48,9,C.emerald,"center");
+      const yy=by+82;
+      mono(ctx,"u = ("+ux.toFixed(1)+", "+uy.toFixed(1)+")",bx,yy,9,C.amber);
+      mono(ctx,"row₁·u = "+outX.toFixed(2),bx,yy+16,9,C.cyan);
+      mono(ctx,"row₂·u = "+outY.toFixed(2),bx,yy+32,9,C.violet);
+      mono(ctx,"Wu = ("+outX.toFixed(2)+", "+outY.toFixed(2)+")",bx,yy+52,10,C.emerald);
     };
     const api=register(canvas,draw);
     slider(controls,{label:"a",min:-2,max:2,step:.1,value:a,fmt:v=>v.toFixed(1),onInput:v=>{a=v;api.redraw();}});
     slider(controls,{label:"b",min:-2,max:2,step:.1,value:b,fmt:v=>v.toFixed(1),onInput:v=>{b=v;api.redraw();}});
     slider(controls,{label:"c",min:-2,max:2,step:.1,value:c,fmt:v=>v.toFixed(1),onInput:v=>{c=v;api.redraw();}});
     slider(controls,{label:"d",min:-2,max:2,step:.1,value:d,fmt:v=>v.toFixed(1),onInput:v=>{d=v;api.redraw();}});
+    slider(controls,{label:"u₀",min:-2,max:2,step:.1,value:ux,fmt:v=>v.toFixed(1),onInput:v=>{ux=v;api.redraw();}});
+    slider(controls,{label:"u₁",min:-2,max:2,step:.1,value:uy,fmt:v=>v.toFixed(1),onInput:v=>{uy=v;api.redraw();}});
   });
-
 
 /* ============================================================
    P4 · POINTWISE NONLINEARITY
@@ -726,12 +735,12 @@ rule("gradient","P10","Gradient: Reverse Composition","∇θL = (∂L/∂y)(∂y
   "Without the gradient there is no direction to move the parameters. Backprop is composition of local derivatives, nothing more.",
   ["update","training"],
   (stage,controls)=>{
-    const canvas=canvasStage(stage,300); let x=1.2, w=.8, b=.3, t=2;
-    const sG=stat(controls,"dL/dw","—");
+    const canvas=canvasStage(stage,300); let x=1.2, w=.8, b=.3, t=2, back=false;
+    const sG=stat(controls,"dL/dw","—"), sChain=stat(controls,"chain","—");
     const draw=(ctx,wid,hei,now)=>{
       const y=w*x+b, e=y-t, L=.5*e*e;
       const dLdy=e, dydw=x, dydb=1, dLdw=dLdy*dydw, dLdb=dLdy*dydb;
-      sG.set(dLdw.toFixed(2));
+      sG.set(dLdw.toFixed(2)); sChain.set(`(${e.toFixed(2)})·(${x.toFixed(2)})`);
       ctx.clearRect(0,0,wid,hei);
       const g=ctx.createRadialGradient(wid*.3,hei*.2,10,wid*.3,hei*.2,wid*.9); g.addColorStop(0,"rgba(96,165,250,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
       ctx.fillStyle=g; ctx.fillRect(0,0,wid,hei);
@@ -742,6 +751,13 @@ rule("gradient","P10","Gradient: Reverse Composition","∇θL = (∂L/∂y)(∂y
       // backward arrows
       const back=(a,b,label,color)=>{ ctx.strokeStyle=rgba(color,.65); ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(b.x-42,b.y+16); ctx.lineTo(a.x+42,a.y+16); ctx.stroke(); ctx.setLineDash([]); mono(ctx,label,(a.x+b.x)/2,a.y+34,8,color,"center"); };
       back(nodes[0],nodes[1],"dL/dw",C.cyan); back(nodes[1],nodes[2],"dL/dy",C.rose);
+      if(back){
+        const t=(now*.55)%1;
+        const px=lerp(nodes[3].x-42,nodes[0].x+42,t), py=nodes[0].y+16;
+        ctx.fillStyle="rgba(251,113,133,.95)"; glow(ctx,C.rose,18);
+        ctx.beginPath(); ctx.arc(px,py,6,0,TAU); ctx.fill(); noGlow(ctx);
+        mono(ctx,"backward",px,py-16,8,C.rose,"center");
+      }
       // values
       const vals=[["y",y.toFixed(2)],["L",L.toFixed(2)],["dL/dw",dLdw.toFixed(2)],["dL/db",dLdb.toFixed(2)]];
       vals.forEach(([k,v],i)=>{ const yy=hei-58+i*15; mono(ctx,k,24,yy,9,C.dim); mono(ctx,v,86,yy,9,C.ink); });
@@ -752,6 +768,7 @@ rule("gradient","P10","Gradient: Reverse Composition","∇θL = (∂L/∂y)(∂y
     slider(controls,{label:"w",min:-2,max:2,step:.1,value:w,fmt:v=>v.toFixed(1),onInput:v=>{w=v;api.redraw();}});
     slider(controls,{label:"b",min:-2,max:2,step:.1,value:b,fmt:v=>v.toFixed(1),onInput:v=>{b=v;api.redraw();}});
     slider(controls,{label:"target",min:-2,max:2,step:.1,value:t,fmt:v=>v.toFixed(1),onInput:v=>{t=v;api.redraw();}});
+    button(controls,"Run backward",()=>{back=!back;api.redraw();},"primary");
   });
 
 /* ============================================================
@@ -804,7 +821,7 @@ rule("update","P11","Gradient Descent Update","θ ← θ − η ∇θL",
    ============================================================ */
 rule("bridge","P12","The Discrete/Continuous Bridge","Token → E → ℝᵈ → transformer → ℝᵈ → U → ℝ|V| → softmax → Token",
   "The model lives in continuous space, but language is discrete. Two matrices and a softmax connect the two worlds: an embedding table and an unembedding table.",
-  "Without the bridge there is no token-to-vector map and no way back. The discrete symbol is never inside the transformer; only its vector is.",
+  "Without the bridge there is no token-to-vector map and no way back. The discrete symbol is never inside the transformer; only its vector is. Position is just another vector added to the embedding (P1 + P7), not a new primitive.",
   ["embedding","unembedding","next-token prediction"],
   (stage,controls)=>{
     const canvas=canvasStage(stage,300);
@@ -865,7 +882,7 @@ rule("bridge","P12","The Discrete/Continuous Bridge","Token → E → ℝᵈ →
 /* ============================================================
    P13 · DERIVATION
    ============================================================ */
-rule("derivation","P13","Derivation: Type Rules for a Transformer","Γ ⊢ x : V      Γ ⊢ W : V → V      Γ ⊢ σ : ℝ → ℝ      Γ ⊢ ∘",
+rule("derivation","P13","Derivation: Type Rules for a Transformer","Γ ⊢ X : ℝⁿˣᵈ      Γ ⊢ W : ℝᵈ → ℝᵈ      Γ ⊢ σ : ℝ → ℝ      Γ ⊢ ∘",
   "A derivation is a chain of typed judgments. Start with a vector and the primitive operations; every line below is licensed by one of the previous rules. Nothing new appears.",
   "The transformer is not a new primitive. It is a term in the typed algebra of the previous cards. The derivation is the proof that the term is well-typed.",
   ["P14 assembly"],
@@ -873,17 +890,18 @@ rule("derivation","P13","Derivation: Type Rules for a Transformer","Γ ⊢ x : V
     const wrap=document.createElement("div"); wrap.className="derivation"; stage.appendChild(wrap);
     let step=99, active="";
     const lines=[
-      {p:"P1",eq:"x ∈ ℝᵈ : the residual stream is a vector."},
-      {p:"P3",eq:"W_Q, W_K, W_V, W_O : ℝᵈ → ℝᵈ are linear maps (learned parameters)."},
-      {p:"P3",eq:"Q = W_Q x,   K = W_K x,   V = W_V x   :   ℝᵈ."},
-      {p:"P2",eq:"S = Q Kᵀ / √d   :   ℝⁿˣⁿ. Every entry is a pairing of a query with a key."},
-      {p:"P5",eq:"A = softmax_rows(S)   :   Δⁿ. Each row is a distribution over source positions."},
-      {p:"P6",eq:"Attn(x) = A V   :   ℝᵈ. Each output is a convex combination of value vectors."},
-      {p:"P7",eq:"x₁ = x + Attn(x)   :   ℝᵈ. The residual adds the update to the identity path."},
-      {p:"P3",eq:"MLP(x₁) = W₂ σ(W₁ x₁)   :   ℝᵈ. Two linear maps with one pointwise nonlinearity."},
-      {p:"P7",eq:"x₂ = x₁ + MLP(x₁)   :   ℝᵈ. The second residual closes the block."},
-      {p:"P8",eq:"Transformer = (x ↦ x₂) ∘ … ∘ (x ↦ x₂)   :   ℝᵈ → ℝᵈ. Repeat L times."},
-      {p:"P12",eq:"logits = U x_L   where U : ℝᵈ → ℝ|V| is the unembedding."},
+      {p:"P1",eq:"X ∈ ℝⁿˣᵈ : the residual stream is a matrix, one row per token."},
+      {p:"P0+1",eq:"X̂ = LN_rows(X) = γ ⊙ (X − μ)/√(σ² + ε) + β   :   ℝⁿˣᵈ. Mean and variance are computed per row."},
+      {p:"P3",eq:"W_Q, W_K, W_V, W_O, W_1, W_2, U : learned linear maps (the parameters)."},
+      {p:"P3",eq:"Q = X̂ W_Qᵀ,   K = X̂ W_Kᵀ,   V = X̂ W_Vᵀ   :   ℝⁿˣᵈ."},
+      {p:"P2",eq:"S = Q Kᵀ / √d   :   ℝⁿˣⁿ. Every entry is a pairing of one query with one key."},
+      {p:"P5",eq:"A = softmax_rows(S)   :   (Δⁿ)ⁿ. Each row is a distribution over source positions."},
+      {p:"P6",eq:"Attn(X̂) = A V   :   ℝⁿˣᵈ. Each output row is a convex combination of value rows."},
+      {p:"P7",eq:"X₁ = X̂ + Attn(X̂)   :   ℝⁿˣᵈ. The residual adds the update to the identity path."},
+      {p:"P3",eq:"MLP(X₁) = σ(X₁ W₁ᵀ) W₂ᵀ   :   ℝⁿˣᵈ. Two linear maps with one pointwise nonlinearity."},
+      {p:"P7",eq:"X₂ = X₁ + MLP(X₁)   :   ℝⁿˣᵈ. The second residual closes the block."},
+      {p:"P8",eq:"Transformer = (X ↦ X₂) ∘ … ∘ (X ↦ X₂)   :   ℝⁿˣᵈ → ℝⁿˣᵈ. Repeat L times."},
+      {p:"P12",eq:"x_L = last row of X_L;   logits = U x_L   :   ℝ|V|."},
       {p:"P9",eq:"L = −log softmax(logits)[y]   :   ℝ. The loss is one scalar."},
       {p:"P10",eq:"∇θL   :   Θ. Reverse-mode differentiation of the whole composition."},
       {p:"P11",eq:"θ ← θ − η∇θL   :   Θ. One step of learning."}
@@ -900,7 +918,7 @@ rule("derivation","P13","Derivation: Type Rules for a Transformer","Γ ⊢ x : V
     };
     render();
     slider(controls,{label:"Reveal",min:0,max:lines.length,step:1,value:lines.length,fmt:v=>v+"/"+lines.length,onInput:v=>{step=v;render();}});
-    button(controls,"Check derivation",()=>{ step=lines.length; active=""; render(); const c=document.createElement("div"); c.className="deriv-check"; c.innerHTML='<strong>✓</strong> all judgments type-check'; wrap.prepend(c); },"primary");
+    button(controls,"Check derivation",()=>{ step=lines.length; active=""; render(); if(!wrap.querySelector(".deriv-check")){ const c=document.createElement("div"); c.className="deriv-check"; c.innerHTML='<strong>✓</strong> all judgments type-check'; wrap.prepend(c); } },"primary");
     button(controls,"Reset",()=>{step=0;active="";render();},"rose");
   });
 
@@ -926,7 +944,7 @@ rule("assembly","P14","Assembly: The Whole Transformer","x ← x + Attn(x);   x 
     });
     wrap.append(formula,legend,hint);
     const explain=document.createElement("div"); explain.className="why"; explain.style.margin="0";
-    explain.innerHTML="<div><b>Assembly.</b> Attention = <code>P3</code> projections, <code>P2</code> pairings, <code>P5</code> softmax, <code>P6</code> convex combination. MLP = <code>P3</code> + <code>P4</code> + <code>P3</code>. Both are wrapped in <code>P7</code> residuals and repeated by <code>P8</code>. The loop is trained by <code>P9</code>, <code>P10</code> and <code>P11</code>, and connected to text by <code>P12</code>.</div>";
+    explain.innerHTML="<div><b>Assembly.</b> Attention = <code>P3</code> projections, <code>P2</code> pairings, <code>P5</code> softmax, <code>P6</code> convex combination. MLP = <code>P3</code> + <code>P4</code> + <code>P3</code>. Both are wrapped in <code>P7</code> residuals and repeated by <code>P8</code>. The loop is trained by <code>P9</code>, <code>P10</code> and <code>P11</code>, and connected to text by <code>P12</code>. Position is a vector added to the embedding (<code>P1</code>+<code>P7</code>), and <code>LN</code> is P0/P1 mean and variance plus learned scale and shift: both are derived, not new primitives.</div>";
     wrap.appendChild(explain);
   });
 
@@ -936,9 +954,9 @@ rule("assembly","P14","Assembly: The Whole Transformer","x ← x + Attn(x);   x 
 /* ============================================================
    P15 · MINIMALITY
    ============================================================ */
-rule("minimality","P15","Minimality: What Is Actually Irreducible?","core = { scalar field, tuple, pointwise nonlinearity, composition }",
-  "Most of the fourteen rules are derived. If you allow tuples as a type former, the whole transformer is a term in a tiny algebra: a scalar field, a tuple constructor, a pointwise nonlinearity and composition.",
-  "This is the deepest reduction: softmax, residual, attention, convex combination, loss and even the gradient are definitions or consequences, not new primitives.",
+rule("minimality","P15","Minimality: What Is Actually Irreducible?","core = { scalar field, tuple, pointwise function, composition }",
+  "Most of the rules are derived. If you allow tuples as a type former, the whole transformer is a term in a tiny algebra: a scalar field, a tuple constructor, pointwise scalar functions (including exp, log and σ) and composition.",
+  "This is the deepest reduction: softmax, residual, attention, convex combination, loss and even the gradient are definitions or consequences, not new primitives. exp and log are pointwise scalar functions, so softmax and the loss stay inside P0 + P1 + pointwise maps.",
   ["the whole page"],
   (stage,controls)=>{
     const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
@@ -983,11 +1001,11 @@ rule("minimality","P15","Minimality: What Is Actually Irreducible?","core = { sc
       });
     });
     const note=document.createElement("div"); note.className="valign";
-    note.innerHTML='<span class="tag"><b>core</b> P0 scalar</span><span class="tag"><b>core</b> P1 tuple</span><span class="tag"><b>core</b> P4 pointwise σ</span><span class="tag"><b>core</b> P8 composition</span><span class="tag">everything else is <b>derived</b></span>';
+    note.innerHTML='<span class="tag"><b>core</b> P0 scalar</span><span class="tag"><b>core</b> P1 tuple</span><span class="tag"><b>core</b> P4 pointwise f</span><span class="tag"><b>core</b> P8 composition</span><span class="tag">everything else is <b>derived</b></span>';
     stage.appendChild(note);
     let collapsed=false;
     const b=button(controls,"Collapse to core",()=>{collapsed=!collapsed;svg.classList.toggle("core-only",collapsed);b.textContent=collapsed?"Show all rules":"Collapse to core";},"primary");
-    const s=stat(controls,"14 rules","4 core primitives");
+    const s=stat(controls,"P0–P14","4 core primitives");
   });
 
 /* ============================================================
