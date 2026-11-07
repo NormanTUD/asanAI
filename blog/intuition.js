@@ -2662,9 +2662,9 @@ const WordMeadowViz = (() => {
 		'Every point of the meadow is a possible <b>in-between thought</b>. The words sit in the field like pins &mdash; and <b>the nearest pin wins</b>.',
 		'A clear thought sits deep inside one cell, far from every seam. The next word wins here <b>with a wide lead</b> &mdash; the winning chance is high.',
 		'Now the thought lies on a <b>golden seam</b>: two words are almost equally close. It still falls into a cell, but barely &mdash; <b>no word fits exactly</b>.',
-		'More words &rarr; smaller cells and thinner bands. But the <b>share</b> of the ambiguous zone never reaches zero: between any two words there is always a seam.',
+		'More words &rarr; smaller cells and thinner bands. Each cell\'s area is that word\'s semantic breadth. But the <b>share</b> of the ambiguous zone never reaches zero: between any two words there is always a seam.',
 		'<b>Temperature</b> sets how open the draw is: <b>low</b> &rarr; almost always the same word &middot; <b>high</b> &rarr; many words get a real chance (the circle shows the reach).',
-		'These seams are the <b>expressibility gap</b>: the loss has a lower bound that no larger dictionary removes.'
+		'These seams are the <b>expressibility gap</b>: the average distortion falls only as a power of the dictionary size, so no finite dictionary removes it.'
 	];
 
 	let cv, sN, sT, rN, rT, rWord, rCell, rProb, rRunner, rEdge, rGap, captionEl, prevBtn, nextBtn;
@@ -2791,7 +2791,7 @@ const WordMeadowViz = (() => {
 		return col;
 	}
 
-	function computeRows(a, imgData, y0, y1, pal, scale) {
+	function computeRows(a, imgData, y0, y1, pal, scale, counts) {
 		let cnt = 0;
 		const eps = 0.32 * scale;
 		for (let y = y0; y < y1; y++) {
@@ -2803,6 +2803,7 @@ const WordMeadowViz = (() => {
 				imgData.data[p + 1] = col[1];
 				imgData.data[p + 2] = col[2];
 				imgData.data[p + 3] = 255;
+				if (counts) counts[n2.i1]++;
 				if (n2.m < eps) cnt++;
 			}
 		}
@@ -2816,9 +2817,10 @@ const WordMeadowViz = (() => {
 		c.width = CW; c.height = CH;
 		const cctx = c.getContext('2d');
 		const imgData = cctx.createImageData(CW, CH);
-		const cnt = computeRows(a, imgData, 0, CH, pal, scale);
+		const counts = new Array(a.length).fill(0);
+		const cnt = computeRows(a, imgData, 0, CH, pal, scale, counts);
 		cctx.putImageData(imgData, 0, 0);
-		return { canvas: c, gapFrac: cnt / (CW * CH) };
+		return { canvas: c, gapFrac: cnt / (CW * CH), counts: counts };
 	}
 
 	function fieldKey(n, pal) {
@@ -2847,11 +2849,11 @@ const WordMeadowViz = (() => {
 		if (precomp && precomp.dark !== pal.dark) { precomp = null; precompQueue = []; fieldCache = {}; }
 		if (precomp) {
 			const endRow = Math.min(CH, precomp.row + ROWS_PER_FRAME);
-			precomp.cnt += computeRows(precomp.anchors, precomp.imgData, precomp.row, endRow, pal, precomp.scale);
+			precomp.cnt += computeRows(precomp.anchors, precomp.imgData, precomp.row, endRow, pal, precomp.scale, precomp.counts);
 			precomp.row = endRow;
 			if (precomp.row >= CH) {
 				precomp.ctx.putImageData(precomp.imgData, 0, 0);
-				fieldCache[fieldKey(precomp.N, pal)] = { canvas: precomp.canvas, gapFrac: precomp.cnt / (CW * CH) };
+				fieldCache[fieldKey(precomp.N, pal)] = { canvas: precomp.canvas, gapFrac: precomp.cnt / (CW * CH), counts: precomp.counts };
 				if (precomp.N === currentN) gapFrac = fieldCache[fieldKey(precomp.N, pal)].gapFrac;
 				precomp = null;
 			}
@@ -2867,7 +2869,8 @@ const WordMeadowViz = (() => {
 			const imgData = cctx.createImageData(CW, CH);
 			precomp = {
 				N: n, canvas: c, ctx: cctx, imgData: imgData,
-				anchors: a, scale: scaleFor(a), dark: pal.dark, row: 0, cnt: 0
+				anchors: a, scale: scaleFor(a), dark: pal.dark, row: 0, cnt: 0,
+				counts: new Array(a.length).fill(0)
 			};
 		}
 	}
@@ -3170,8 +3173,10 @@ const WordMeadowViz = (() => {
 		const runner = scores[1];
 		const seamGap = near.length > 1 ? near[1].d - near[0].d : 0;
 		if (winner) {
+			const field = ensureField(currentN, palette());
+			const cellShare = field.counts ? field.counts[winner.i] / (CW * CH) : 0;
 			if (rWord) rWord.textContent = anchors[winner.i].w;
-			if (rCell) rCell.textContent = 'cell ' + (winner.i + 1) + ' of ' + anchors.length + ' - nearest pin wins';
+			if (rCell) rCell.textContent = 'cell ' + (winner.i + 1) + ' of ' + anchors.length + ' - covers ' + (cellShare * 100).toFixed(1) + '% of the field';
 			if (rProb) rProb.textContent = Math.round(winner.s / sum * 100) + '%';
 			if (rRunner) rRunner.textContent = runner ? 'runner-up: ' + anchors[runner.i].w + ' - ' + Math.round(runner.s / sum * 100) + '%' : 'runner-up: -';
 			if (rEdge) rEdge.textContent = (seamGap / scale).toFixed(2);

@@ -93,9 +93,16 @@
 	font-weight: 600;
 }
 .transformer-train-status {
-	min-height: 20px;
+	height: 32px;
+	min-height: 32px;
 	margin-top: 10px;
+	display: flex;
+	align-items: center;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 	font-size: 0.85rem;
+	line-height: 1.3;
 	color: var(--mn-emerald, #047857);
 }
 #training-loss-plot {

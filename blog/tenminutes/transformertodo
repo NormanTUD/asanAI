@@ -267,3 +267,11 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
 - DONE Old `unified-layer-*-attention-lines` canvases removed; the richer
   `attn-web-container-unified-attention-engine-*` stays.
 - DONE Logit lens moved after Attention and FFN/MLP inside the layer body.
+- DONE Training height: `#training-status` reserves a fixed 32px line, so the
+  TensorFlow loading message and epoch/ETA updates no longer move the train
+  card or the loss plot.
+- DONE Training speed: tenminutes now throttles heavy visual rebuilds like the
+  parent; the interval scales with context size (roughly 120ms + 4ms/token,
+  capped at 1.2s) and yields a frame between epochs.
+- DONE Transformer core formulas are stacked vertically so the residual
+  equation fits without horizontal scrolling.

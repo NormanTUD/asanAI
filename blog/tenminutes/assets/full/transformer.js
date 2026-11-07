@@ -1696,10 +1696,19 @@ async function train_transformer() {
 	const allVars    = collectTrainableVars(weightVars);
 	const startTime  = performance.now();
 	let completedAll = true;
+	// Heavy visual rebuilds are throttled; the interval grows with context so
+	// long sequences do not pay a full DOM/Plotly rebuild every epoch.
+	const ctx = getContextSize();
+	const VISUAL_INTERVAL_MS = Math.max(180, Math.min(1200, 120 + ctx * 4));
+	let lastVisualSync = 0;
 
 	for (let i = 0; i < epochs; i++) {
 		if (!window.isTraining) { completedAll = false; break; }
-		await runSingleEpoch(i, epochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime);
+		const isLast = (i === epochs - 1);
+		const doVisualSync = isLast || (performance.now() - lastVisualSync >= VISUAL_INTERVAL_MS);
+		await runSingleEpoch(i, epochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime, doVisualSync);
+		if (doVisualSync) lastVisualSync = performance.now();
+		await tf.nextFrame();
 	}
 
 	// Sync final weights back to JS arrays BEFORE disposing
@@ -1726,13 +1735,13 @@ function ensureWeightsAndEmbeddings(tokens, n_layers, d_model) {
 	get_or_init_embeddings(tokens, d_model);
 }
 
-async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime) {
+async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime, doVisualSync = true) {
 	const clipValue = 1.0;
 	const thisContextSize = Math.min(getContextSize(), tokens.length - 1);
 
 	// TDA live: snapshot the weights BEFORE the gradient step so we can
 	// compute the weight deltas (W_new - W_prev) for this epoch.
-	const tdaPrevWeights = (window.TDALive && window.currentWeights)
+	const tdaPrevWeights = (doVisualSync && window.TDALive && window.currentWeights)
 		? JSON.parse(JSON.stringify(window.currentWeights))
 		: null;
 
@@ -1749,11 +1758,12 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 	// Progress & ETA
 	updateEpochProgress(epochIdx, totalEpochs, lossValue[0], startTime, status);
 
-	// Sync state
-	await syncTrainingState(weightVars);
+	if (doVisualSync) {
+		// Sync state
+		await syncTrainingState(weightVars);
 
-	// TDA live: capture residual stream + weight deltas for this epoch
-	if (window.TDALive) {
+		// TDA live: capture residual stream + weight deltas for this epoch
+		if (window.TDALive) {
 		window.TDALive.captureEpoch({
 			epoch: epochIdx,
 			tokens,
@@ -1762,6 +1772,7 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 			prevWeights: tdaPrevWeights,
 			loss: lossValue[0]
 		});
+		}
 	}
 
 	dispose(cost);

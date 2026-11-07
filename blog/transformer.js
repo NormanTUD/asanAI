@@ -1742,8 +1742,10 @@ async function train_transformer() {
 	let completedAll = true;
 
 	// Training is CPU-heavy; the expensive visual rebuild is throttled so the
-	// page keeps responding to hover/scroll/slider input while it runs.
-	const VISUAL_INTERVAL_MS = 150;
+	// page keeps responding to hover/scroll/slider input while it runs. Longer
+	// contexts make the rebuild more expensive, so the interval scales with it.
+	const _ctx = getContextSize();
+	const VISUAL_INTERVAL_MS = Math.max(180, Math.min(1200, 120 + _ctx * 4));
 	let lastVisualSync = 0;
 
 	for (let i = 0; i < epochs; i++) {

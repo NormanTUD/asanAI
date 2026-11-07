@@ -1,14 +1,14 @@
 # Deep fact audit
 
 - lessons: 99
-- claims: 7352
-- statements: 17256
-- relations: 52261
+- claims: 7358
+- statements: 17265
+- relations: 52283
 - uncovered years: 56
 - uncovered quantities: 6
 - uncited specific claims: 307
 - citation keys not found in lesson: 0
-- relation grounding issues: 86
+- relation grounding issues: 87
 - numeric range issues: 0
 - normalised year conflicts: 0
 
@@ -59,7 +59,7 @@
 | inference_vs_training | 19 | 14 | 47 | 0 | 0 |
 | information_market | 27 | 63 | 159 | 0 | 0 |
 | intro | 17 | 40 | 121 | 0 | 0 |
-| intuition | 26 | 252 | 723 | 1 | 0 |
+| intuition | 32 | 261 | 745 | 1 | 0 |
 | knowledge_map | 15 | 0 | 14 | 0 | 0 |
 | language | 77 | 330 | 803 | 0 | 0 |
 | law_regulation | 28 | 61 | 236 | 0 | 0 |
@@ -237,12 +237,12 @@
 - history.php: rel-history-weizenbaum-eliza: endpoint not near quote: joseph-weizenbaum
 - history.php: rel-history-schmidhuber-nplm: endpoint not near quote: jurgen-schmidhuber
 - history.php: rel-history-mccarthy-lisp: endpoint not near quote: john-mccarthy
+- intuition.php: intuition-expressibility-gap-related-finite-vocabulary: endpoint not near quote: expressibility-gap
 - language.php: rel-language-chomsky-hierarchy-syntactic: no quote
 - people_of_ai.php: rel-people-amodei-instructgpt: no quote
 - people_of_ai.php: rel-people-vapnik-svm: endpoint not near quote: vladimir-vapnik
 - philosophy.php: rel-phil-hard-problem-mary: endpoint not near quote: phil-hard-problem
 - philosophy.php: rel-phil-hard-problem-mary: endpoint not near quote: phil-mary-room
-- philosophy.php: rel-phil-sheaf-gluing: endpoint not near quote: phil-sheaf-gluing
 
 ## Range issues
 

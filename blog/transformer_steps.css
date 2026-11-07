@@ -1215,8 +1215,8 @@
 
 /* The block's three core equations, once at the top of the Transformer box. */
 .tm-transformer-formulas {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
+	display: flex;
+	flex-direction: column;
 	gap: 10px;
 	padding: 8px 0 12px;
 	margin-bottom: 6px;
@@ -1224,12 +1224,9 @@
 }
 .tm-transformer-formulas > div {
 	min-width: 0;
-	overflow-x: auto;
-	text-align: center;
+	overflow: visible;
+	text-align: left;
 	color: var(--tm-ink-soft, var(--mn-text-secondary, #2c464d));
-}
-@media (max-width: 900px) {
-	.tm-transformer-formulas { grid-template-columns: 1fr; }
 }
 
 /* Logit lens is a single collapsible block, including the big h_after matrix. */

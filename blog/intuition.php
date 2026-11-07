@@ -1338,7 +1338,7 @@ A model thinks in a continuous space, yet it must speak in a **finite** vocabula
 
 <div id="word-meadow-wrap" class="mn-demo-panel">
 	<div class="mn-demo-title">The geometry of choosing a word</div>
-	<div class="mn-demo-sub">Words are pins; each one owns the region of thoughts closest to it. The line between two regions is a seam where the thought could tip either way.</div>
+	<div class="mn-demo-sub">Words are pins; each one owns the region of thoughts closest to it. The line between two regions is a seam where the thought could tip either way. A cell's area is how broad that word's meaning is.</div>
 
 	<div class="wm-tour" role="group" aria-label="Guided tour">
 		<button type="button" class="wm-step is-active" data-wstep="0">1 · The meadow</button>
@@ -1398,6 +1398,14 @@ A model thinks in a continuous space, yet it must speak in a **finite** vocabula
 	<div class="mn-aha-kicker">The aha</div>
 	<p class="mn-aha-big">The vocabulary tiles the space of thoughts.</p>
 	<p class="mn-aha-sub">Every word owns a cell; every thought falls into exactly one. Choosing a word is not a lookup but a <b>partition</b> — and the seams, where two cells meet, are where the model is genuinely unsure. Grow the dictionary and the cells shrink; the seams never vanish.</p>
+</div>
+
+<div class="md">
+### Two ideas behind the meadow
+
+The geometry has a formal version. \cite[Mabrok (2026)]{mabrok2026latent} calls the lead of the winning token over the runner-up the **Voronoi margin**, and the band where that lead is smaller than a threshold the **expressibility gap**. In the demo, "Margin to the nearest seam" is the margin, and the amber band is a slice of the gap.
+
+Cell size carries meaning as well. The **semantic volume** of a token is the area of its Voronoi region, so a broad or polysemous word owns a large cell and a precise word a small one. More tokens make the cells smaller, but the average distortion of a finite vocabulary falls only as a power law set by the intrinsic dimension of the semantic manifold. With an intrinsic dimension of about 50, halving that distortion demands a vocabulary about $2^{25}\approx 3\times10^{7}$ times larger. That is why the seams shrink but never close.
 </div>
 
 <div class="mn-thread">
