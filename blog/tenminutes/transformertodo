@@ -260,3 +260,10 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
   `-step-1/2/3`, `-formula-body`, `-content` and last-layer `-hlast` are all
   present in both engines. PHP `data-tex` formulas missing vs `559cfa15c`: 0
   on both pages.
+- DONE Glossary popups normalised to font-weight 400 even when RMSProp is the
+  checked optimizer.
+- DONE Attention tab order: LayerNorm -> attention web/heads -> Attention
+  output + residual. Opening Attention alone now fills both formula steps.
+- DONE Old `unified-layer-*-attention-lines` canvases removed; the richer
+  `attn-web-container-unified-attention-engine-*` stays.
+- DONE Logit lens moved after Attention and FFN/MLP inside the layer body.

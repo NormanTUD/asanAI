@@ -1985,12 +1985,17 @@
 			var hlastStep = hlastViz ? hlastViz.closest(".tm-formula-step") : null;
 			if (hlastStep && idx !== layerCount - 1) hlastStep.remove();
 			if (attentionBody && formulaBody) {
-				["layernorm-viz", "concat-viz", "h1-final-viz"].forEach(function (kind) {
-					var viz = document.getElementById(prefix + "-" + kind);
-					var step = viz ? viz.closest(".tm-formula-step") : null;
-					if (step && step.parentNode !== attentionBody) attentionBody.appendChild(step);
-				});
+				Array.prototype.slice.call(attentionBody.querySelectorAll(".tm-layer-attention-lines")).forEach(function (el) { el.remove(); });
+				var normViz = document.getElementById(prefix + "-layernorm-viz");
+				var normStep = normViz ? normViz.closest(".tm-formula-step") : null;
+				var outViz = document.getElementById(prefix + "-concat-viz");
+				var outStep = outViz ? outViz.closest(".tm-formula-step") : null;
+				var headsHost = attentionBody.querySelector('[id$="-attention-heads"]') || attentionBody.firstChild;
+				if (normStep && normStep.parentNode !== attentionBody) attentionBody.insertBefore(normStep, headsHost);
+				if (outStep && outStep.parentNode !== attentionBody) attentionBody.appendChild(outStep);
 			}
+			var logitHost = sb.querySelector(".tm-logit-lens-host");
+			if (logitHost && logitHost.parentNode !== stack) stack.appendChild(logitHost);
 			var attentionLead = card.querySelector('.tm-layer-subbox[data-sub="attention"] .tm-level-text');
 			if (attentionLead) {
 				attentionLead.textContent = isDe

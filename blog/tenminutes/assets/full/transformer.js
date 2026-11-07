@@ -7471,7 +7471,6 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 		<summary>Attention</summary>
 		<div class="tm-layer-subbox-body">
 			<p class="tm-level-text">${isDe ? 'Attention lässt jedes Token die anderen lesen. Die Query fragt, was es sucht; der Key sagt, was ein anderes Token anbietet; der Value ist der Inhalt, der bei einem guten Match weitergegeben wird. Die Köpfe laufen parallel, jeder mit einer eigenen Frage. Die Bögen unten sind Attention-Gewichte: Eine dickere Linie trägt mehr Information.' : 'Attention lets every token read the others. The query asks what it is looking for; the key says what another token offers; the value is the content that travels when the match is good. The heads run in parallel, each with its own question. The arcs below are attention weights: a thicker line carries more information.'}</p>
-			<canvas id="${prefix}-attention-lines" class="tm-layer-attention-lines" aria-label="${isDe ? 'Attention-Linien dieses Layers' : 'Attention lines for this layer'}"></canvas>
 			<p class="unified-layer-hint">${isDe ? 'Klicke auf ein Wort, um zu sehen, worauf es seine Attention richtet.' : 'Click a word to see where it focuses its attention.'}</p>
 			<div id="${prefix}-attention-heads"></div>
 		</div>
@@ -7507,6 +7506,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 				renderLayerMigrationPlot(layerIndex);
 			} else if (kind === 'attention') {
 				renderLayerAttentionLines(layerIndex);
+				renderLayerFormulas(layerIndex);
 				renderLayerAttention(layerIndex);
 			} else if (kind === 'ffn') {
 				renderLayerFFNHeatmap(layerIndex);

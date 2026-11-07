@@ -7903,3 +7903,8 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 .code-demo--console .code-demo-cmd { color: #eef7f4; }
 .code-demo--console .code-demo-dollar { color: #63a44b; }
 .code-demo--console .code-demo-output { color: #eef7f4; border-top-color: rgba(238, 247, 244, 0.2); }
+
+/* Keep glossary popups visually identical regardless of the checked option. */
+.glossary-tooltip {
+	font-weight: 400;
+}
