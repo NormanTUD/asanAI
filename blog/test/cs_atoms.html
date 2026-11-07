@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Atoms of Computer Science — 20 Visual Foundations</title>
+<style>
+:root{
+  --bg:#050812;--panel:rgba(12,19,38,.78);--line:rgba(148,163,184,.16);--line2:rgba(148,163,184,.3);
+  --ink:#eaf1ff;--muted:#8fa3c4;--dim:#5f7190;
+  --cyan:#67e8f9;--violet:#a78bfa;--rose:#fb7185;--amber:#fbbf24;--emerald:#34d399;--blue:#60a5fa;
+  --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:-20%;z-index:-2;pointer-events:none;background:
+  radial-gradient(36% 28% at 14% 6%,rgba(103,232,249,.14),transparent 70%),
+  radial-gradient(32% 26% at 86% 10%,rgba(167,139,250,.16),transparent 70%),
+  radial-gradient(44% 34% at 50% 92%,rgba(251,113,133,.08),transparent 70%),
+  linear-gradient(180deg,#050812,#070c19 46%,#050812);filter:blur(10px);animation:aurora 24s ease-in-out infinite alternate}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.18;background-image:
+  linear-gradient(rgba(148,163,184,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.05) 1px,transparent 1px);
+  background-size:56px 56px;mask-image:radial-gradient(circle at 50% 18%,#000,transparent 76%)}
+@keyframes aurora{from{transform:translate3d(-2%,-1%,0) scale(1)}to{transform:translate3d(2%,2%,0) scale(1.05)}}
+.wrap{width:min(1180px,calc(100% - 32px));margin:0 auto}
+.hero{padding:clamp(46px,7vw,92px) 0 22px}
+.kicker{display:inline-flex;align-items:center;gap:9px;padding:7px 13px;border:1px solid var(--line);border-radius:999px;
+  background:rgba(103,232,249,.06);color:var(--cyan);font:700 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.kicker i{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 14px var(--cyan)}
+h1{margin:20px 0 14px;font-size:clamp(38px,6.6vw,82px);line-height:.97;letter-spacing:-.045em;font-weight:800;max-width:15ch;text-wrap:balance}
+h1 span{background:linear-gradient(100deg,var(--cyan),var(--violet) 52%,var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{max-width:70ch;color:var(--muted);font-size:clamp(15px,1.7vw,19px);margin:0 0 22px}
+.rail{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 26px}
+.rail code{border:1px solid var(--line);background:rgba(15,23,42,.55);border-radius:9px;padding:6px 9px;
+  color:var(--muted);font:700 11px/1 var(--mono)}
+.rail code.hot{color:var(--cyan);border-color:rgba(103,232,249,.35);background:rgba(103,232,249,.07)}
+.nav{position:sticky;top:0;z-index:50;padding:10px 0;background:linear-gradient(180deg,rgba(5,8,18,.95),rgba(5,8,18,.7),transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:thin}
+.chips::-webkit-scrollbar{height:6px}.chips::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
+.chip{flex:0 0 auto;text-decoration:none;color:var(--muted);border:1px solid var(--line);background:rgba(15,23,42,.6);
+  padding:7px 10px;border-radius:999px;font:700 10.5px/1 var(--mono);transition:.18s ease}
+.chip:hover{color:var(--ink);border-color:var(--line2);background:rgba(30,41,59,.7);transform:translateY(-1px)}
+main{padding:6px 0 80px;display:grid;gap:24px}
+.ruleCard{border:1px solid var(--line);border-radius:26px;overflow:hidden;
+  background:linear-gradient(160deg,rgba(15,23,42,.78),rgba(2,6,23,.93));
+  box-shadow:0 28px 76px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.04);
+  opacity:0;transform:translateY(22px) scale(.995);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.ruleCard.in{opacity:1;transform:none}
+.ruleCard:hover{border-color:rgba(148,163,184,.26)}
+.ruleHead{display:grid;grid-template-columns:74px 1fr;gap:14px;padding:20px 24px 12px;align-items:start}
+.ruleTag{font:800 11px/1 var(--mono);letter-spacing:.12em;color:#04121a;background:linear-gradient(135deg,var(--cyan),var(--violet));
+  border-radius:12px;padding:10px 0;text-align:center;box-shadow:0 8px 24px rgba(103,232,249,.22)}
+.ruleHead h2{margin:0 0 3px;font-size:clamp(18px,2.1vw,24px);letter-spacing:-.025em;line-height:1.12}
+.signature{font:700 11.5px/1.35 var(--mono);color:var(--cyan);margin:0 0 5px;overflow-wrap:anywhere}
+.ruleHead p{margin:0;color:var(--muted);font-size:13.8px;max-width:84ch}
+.stage{position:relative;margin:4px 16px 0;border-radius:18px;overflow:hidden;border:1px solid var(--line);
+  background:radial-gradient(120% 90% at 18% 0%,rgba(103,232,249,.06),transparent 58%),
+    radial-gradient(100% 90% at 90% 10%,rgba(167,139,250,.07),transparent 55%),rgba(3,7,16,.72)}
+.stage::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 90px rgba(0,0,0,.35)}
+.demo-canvas{display:block;width:100%;height:300px}
+.controls{display:flex;flex-wrap:wrap;gap:11px 17px;align-items:center;padding:15px 24px 2px}
+.ctl{display:flex;align-items:center;gap:9px;flex-wrap:wrap;color:var(--muted);font-size:12.4px;font-weight:600}
+.ctl>span{min-width:58px}
+.ctl input[type=range]{-webkit-appearance:none;appearance:none;width:124px;height:4px;border-radius:99px;
+  background:linear-gradient(90deg,var(--cyan),var(--violet));outline:none;cursor:pointer;opacity:.9}
+.ctl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:#eaf1ff;
+  border:2px solid #0b1224;box-shadow:0 0 0 3px rgba(103,232,249,.18);cursor:grab}
+.ctl input[type=range]::-moz-range-thumb{width:13px;height:13px;border:2px solid #0b1224;border-radius:50%;background:#eaf1ff}
+.ctl b{color:var(--ink);font-family:var(--mono);font-weight:700;min-width:42px;text-align:right}
+.btn{appearance:none;border:1px solid var(--line2);background:rgba(30,41,59,.6);color:var(--ink);padding:7px 11px;
+  border-radius:10px;font:700 11.5px/1 var(--sans);cursor:pointer;transition:.16s ease}
+.btn:hover{background:rgba(51,65,85,.75);transform:translateY(-1px)}
+.btn.primary{border-color:transparent;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#04121a}
+.btn.rose{border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.12);color:var(--rose)}
+.btn.is-on{border-color:rgba(103,232,249,.55);background:rgba(103,232,249,.14);color:var(--cyan);box-shadow:0 0 0 3px rgba(103,232,249,.08)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:rgba(2,6,23,.5)}
+.seg button{appearance:none;border:0;background:transparent;color:var(--muted);padding:7px 10px;font:700 11px/1 var(--mono);cursor:pointer;transition:.16s ease}
+.seg button.is-on{background:linear-gradient(135deg,rgba(103,232,249,.22),rgba(167,139,250,.22));color:var(--ink)}
+.stat{display:inline-flex;align-items:baseline;gap:6px;color:var(--dim);font:600 10.5px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase}
+.stat b{color:var(--ink);font-size:12.5px;letter-spacing:0;text-transform:none}
+.why{display:grid;gap:8px;margin:14px 24px 20px;padding:12px 15px;border-left:3px solid var(--violet);border-radius:0 13px 13px 0;
+  background:linear-gradient(90deg,rgba(167,139,250,.08),rgba(167,139,250,.012));color:var(--muted);font-size:13.2px}
+.why b{color:var(--violet);font:800 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;margin-right:7px}
+.why .used{color:var(--dim);font:600 10.5px/1.5 var(--mono)}
+.why .used code{color:var(--cyan);background:rgba(103,232,249,.07);border:1px solid rgba(103,232,249,.18);border-radius:5px;padding:1px 4px}
+
+
+/* derivation */
+.derivation{display:grid;gap:6px;padding:14px 18px 18px}
+.deriv-line{display:grid;grid-template-columns:48px 1fr;gap:10px;align-items:start;padding:7px 9px;border-radius:9px;
+  border:1px solid transparent;opacity:.16;transform:translateY(4px);transition:.25s ease;cursor:pointer}
+.deriv-line.on{opacity:1;transform:none;border-color:var(--line);background:rgba(15,23,42,.38)}
+.deriv-line:hover{background:rgba(103,232,249,.06)}
+.deriv-line.is-active{border-color:rgba(103,232,249,.5);background:rgba(103,232,249,.08)}
+.deriv-p{font:800 10px/1 var(--mono);color:var(--cyan);padding-top:2px}
+.deriv-eq{font:600 12px/1.5 var(--mono);color:var(--muted);overflow-wrap:anywhere}
+.deriv-eq b{color:var(--ink)}
+.deriv-check{display:flex;align-items:center;gap:8px;margin-left:18px;color:var(--dim);font:700 10.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.deriv-check strong{color:var(--emerald);font-size:15px}
+/* minimality */
+.minimal{display:block;width:100%;height:360px}
+.minimal text{font-family:var(--mono)}
+.minimal .node{transition:opacity .35s ease}
+.minimal.core-only .derived{opacity:.12}
+.minimal.core-only .derived-edge{opacity:.08}
+.minimal .core-node{filter:drop-shadow(0 0 10px rgba(103,232,249,.35))}
+.valign{display:flex;flex-wrap:wrap;gap:8px;margin:0 18px 16px}
+.valign .tag{border:1px solid var(--line);border-radius:999px;padding:5px 9px;color:var(--dim);font:700 10px/1 var(--mono)}
+.valign .tag b{color:var(--cyan)}
+/* sources */
+.sources{display:grid;gap:9px;padding:16px 20px 20px}
+.sources a{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(103,232,249,.25)}
+.sources a:hover{border-bottom-color:var(--cyan)}
+.sources p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+.sources b{color:var(--ink)}
+
+/* assembly */
+.assembly{display:grid;gap:14px;padding:18px 20px 20px}
+.formula{border:1px solid var(--line);border-radius:14px;background:rgba(2,6,23,.55);padding:15px 16px;
+  font:600 12px/1.8 var(--mono);color:var(--muted);overflow-x:auto}
+.formula .p{color:var(--cyan);border-bottom:1px dashed rgba(103,232,249,.4);cursor:pointer}
+.formula .p:hover{color:var(--ink);background:rgba(103,232,249,.08)}
+.formula .op{color:var(--violet)}
+.legend{display:flex;flex-wrap:wrap;gap:7px}
+.legend button{appearance:none;border:1px solid var(--line);background:rgba(15,23,42,.55);color:var(--muted);
+  border-radius:999px;padding:5px 9px;font:700 10px/1 var(--mono);cursor:pointer}
+.legend button.is-on{border-color:rgba(103,232,249,.5);color:var(--cyan);background:rgba(103,232,249,.08)}
+.assemblyHint{color:var(--dim);font-size:12.5px}
+
+@media(max-width:720px){
+  .wrap{width:calc(100% - 18px)}.hero{padding-top:38px}
+  .ruleHead{grid-template-columns:58px 1fr;padding:16px 16px 10px}.ruleTag{font-size:10px;padding:9px 0}
+  .stage{margin:0 8px}.controls{padding:13px 16px 0;gap:9px 13px}.ctl input[type=range]{width:98px}
+  .why{margin:12px 16px 16px}.formula{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}html{scroll-behavior:auto}}
+
+/* CS atom DOM widgets */
+.lcalc{display:grid;gap:12px;padding:18px}
+.lterm{font:700 18px/1.6 var(--mono);color:var(--ink);letter-spacing:.01em}
+.lterm .redex{color:var(--amber);border-bottom:2px solid var(--amber);padding-bottom:1px}
+.lterm .arg{color:var(--cyan)}
+.lsteps{display:grid;gap:6px}
+.lstep{border:1px solid var(--line);border-radius:10px;padding:8px 11px;background:rgba(15,23,42,.45);
+  font:600 12px/1.5 var(--mono);color:var(--muted);opacity:.35;transition:.25s}
+.lstep.on{opacity:1;border-color:rgba(103,232,249,.35);color:var(--ink)}
+.gatewrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px}
+.gatebox{border:1px solid var(--line);border-radius:14px;background:rgba(15,23,42,.45);padding:13px}
+.gatebox h4{margin:0 0 8px;font:800 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.gate-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0}
+.gate{display:inline-grid;place-items:center;min-width:52px;height:32px;padding:0 8px;border-radius:8px;
+  border:1px solid var(--line2);background:rgba(30,41,59,.6);font:800 11px/1 var(--mono);color:var(--ink)}
+.gate.on{border-color:var(--cyan);background:rgba(103,232,249,.14);color:var(--cyan)}
+.gate-row .val{font:800 13px/1 var(--mono);color:var(--emerald);min-width:18px;text-align:center}
+.truth{width:100%;border-collapse:collapse;font:600 11px/1.4 var(--mono);color:var(--muted)}
+.truth th,.truth td{border-bottom:1px solid var(--line);padding:5px 7px;text-align:center}
+.truth th{color:var(--dim);font-weight:700}
+.truth .hi{color:var(--cyan)}
+.diagwrap{padding:18px;overflow-x:auto}
+.diagtable{border-collapse:collapse;font:700 11px/1.4 var(--mono);color:var(--muted);min-width:420px}
+.diagtable th,.diagtable td{border:1px solid var(--line);padding:7px 9px;text-align:center}
+.diagtable th{color:var(--dim)}
+.diagtable td.h{color:var(--cyan)}
+.diagtable td.loop{color:var(--rose)}
+.diagtable td.halt{color:var(--emerald)}
+.diagtable tr.is-target td{background:rgba(251,113,133,.08)}
+.diag-verdict{margin:12px 0 0;padding:10px 13px;border-radius:11px;border-left:3px solid var(--rose);
+  background:rgba(251,113,133,.08);color:var(--muted);font-size:13px}
+.diag-verdict b{color:var(--rose)}
+.bitrow{display:flex;gap:5px;flex-wrap:wrap;align-items:center;padding:16px}
+.bit{width:32px;height:38px;border:1px solid var(--line);border-radius:7px;background:rgba(15,23,42,.55);
+  color:var(--muted);font:800 13px/1 var(--mono);cursor:pointer;transition:.15s}
+.bit.on{border-color:var(--cyan);background:rgba(103,232,249,.16);color:var(--cyan);box-shadow:0 0 12px rgba(103,232,249,.18)}
+.bitlabel{font:700 9px/1 var(--mono);color:var(--dim);text-align:center;margin-top:3px}
+.bitwrap{display:grid;place-items:center}
+.float-wrap{display:grid;gap:12px;padding:18px}
+.float-bits{display:flex;gap:4px;flex-wrap:wrap}
+.float-seg{display:grid;place-items:center;min-width:28px;height:34px;border:1px solid var(--line);border-radius:6px;
+  background:rgba(15,23,42,.55);font:800 12px/1 var(--mono);color:var(--muted);cursor:pointer}
+.float-seg.sign{border-color:rgba(251,113,133,.4);color:var(--rose)}
+.float-seg.exp{border-color:rgba(167,139,250,.4);color:var(--violet)}
+.float-seg.man{border-color:rgba(103,232,249,.35);color:var(--cyan)}
+.float-seg.on{background:rgba(103,232,249,.12)}
+.float-read{display:flex;gap:18px;flex-wrap:wrap;font:700 12px/1.5 var(--mono);color:var(--muted)}
+.float-read b{color:var(--ink)}
+.dp-wrap{display:grid;gap:10px;padding:18px;overflow-x:auto}
+.dp-grid{display:grid;gap:4px}
+.dp-cell{width:34px;height:30px;display:grid;place-items:center;border:1px solid var(--line);border-radius:5px;
+  background:rgba(15,23,42,.45);font:700 10px/1 var(--mono);color:var(--dim);transition:.2s}
+.dp-cell.on{border-color:var(--cyan);background:rgba(103,232,249,.14);color:var(--ink)}
+.dp-cell.path{background:rgba(52,211,153,.18);border-color:var(--emerald);color:var(--emerald)}
+.thread-wrap{display:grid;gap:12px;padding:18px}
+.thread-row{display:grid;grid-template-columns:54px 1fr 54px;gap:10px;align-items:center}
+.thread-line{height:12px;border-radius:6px;background:rgba(148,163,184,.12);overflow:hidden;position:relative}
+.thread-fill{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--violet));transition:width .2s}
+.thread-fill.b{background:linear-gradient(90deg,var(--rose),var(--amber))}
+.counter-box{display:flex;align-items:baseline;gap:10px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(15,23,42,.45);width:max-content}
+.counter-box b{font:800 26px/1 var(--mono);color:var(--ink)}
+.counter-box span{font:700 10px/1 var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.1em}
+.sql-wrap{display:grid;gap:12px;padding:18px;overflow-x:auto}
+.sql-tables{display:flex;gap:16px;flex-wrap:wrap}
+.sql-table{border-collapse:collapse;font:600 11px/1.4 var(--mono);color:var(--muted);min-width:150px}
+.sql-table th,.sql-table td{border:1px solid var(--line);padding:5px 8px;text-align:left}
+.sql-table th{color:var(--cyan);font-weight:800}
+.sql-table tr.join td{background:rgba(52,211,153,.08)}
+.sql-result{font:700 11px/1.5 var(--mono);color:var(--muted)}
+.sql-result b{color:var(--emerald)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="kicker"><i></i> 20 visual atoms</span>
+    <h1>The <span>atoms</span> of computer science.</h1>
+    <p class="lede">Twenty foundations from theoretical and practical computer science, each one visual, interactive and reducible to a single idea: a state, a bit, a rewrite, a comparison, a hash, a path, a table, a lock. The goal is the same as in the LLM atoms page: not a tour of topics, but the smallest set of objects from which the rest is built.</p>
+    <div class="rail">
+      <code class="hot">state</code><code>bit</code><code>λ</code><code>NAND</code><code>O(n)</code><code>entropy</code><code>code</code><code>0x</code><code>float</code><code>sort</code><code>hash</code><code>BFS</code><code>Dijkstra</code><code>DP</code><code>stack</code><code>race</code><code>SQL</code>
+    </div>
+  </header>
+  <nav class="nav" aria-label="Primitive navigation"><div class="chips" id="nav"></div></nav>
+  <main id="gallery"></main>
+
+  <footer style="padding:10px 0 44px;color:var(--dim);font-size:12px;line-height:1.7">
+    <p style="margin:0 0 6px;color:var(--muted)"><b>Sources &amp; further reading.</b> The selection is opinionated: ten theory atoms and ten practice atoms, chosen for visualisability and conceptual weight.</p>
+    <p style="margin:0">Primary works: <a href="https://plato.stanford.edu/entries/turing-machine/" target="_blank" rel="noopener">Turing machines (SEP)</a> · <a href="https://plato.stanford.edu/entries/lambda-calculus/" target="_blank" rel="noopener">Lambda calculus (SEP)</a> · <a href="https://doi.org/10.1109/JRPROC.1952.273898" target="_blank" rel="noopener">Huffman 1952</a> · <a href="https://doi.org/10.1002/j.1538-7305.1950.tb00463.x" target="_blank" rel="noopener">Hamming 1950</a> · <a href="https://doi.org/10.1007/BF01386390" target="_blank" rel="noopener">Dijkstra 1959</a> · <a href="https://doi.org/10.1145/800157.805047" target="_blank" rel="noopener">Cook 1971</a> · <a href="https://doi.org/10.1145/362384.362685" target="_blank" rel="noopener">Codd 1970</a> · <a href="https://doi.org/10.1109/IEEESTD.2019.8766229" target="_blank" rel="noopener">IEEE 754-2019</a>. Textbooks: CLRS, <i>Introduction to Algorithms</i>; Aho et al., <i>Compilers</i>; Arpaci-Dusseau, <i>Operating Systems: Three Easy Pieces</i>.</p>
+  </footer>
+</div>
+<script>
+(() => {
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => t * t * (3 - 2 * t);
+const sigmoid = x => 1 / (1 + Math.exp(-x));
+const TAU = Math.PI * 2;
+const C = { cyan:"#67e8f9", violet:"#a78bfa", rose:"#fb7185", amber:"#fbbf24", emerald:"#34d399", blue:"#60a5fa", ink:"#eaf1ff", muted:"#8fa3c4", dim:"#5f7190" };
+const hex = h => { const n = parseInt(h.slice(1), 16); return [(n>>16)&255,(n>>8)&255,n&255]; };
+const rgba = (h,a) => { const [r,g,b]=hex(h); return `rgba(${r},${g},${b},${a})`; };
+const roundRect = (ctx,x,y,w,h,r) => { r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); };
+const glow = (ctx,color,blur) => { ctx.shadowColor=color; ctx.shadowBlur=blur; };
+const noGlow = ctx => { ctx.shadowBlur=0; ctx.shadowColor="transparent"; };
+const text = (ctx,s,x,y,size=12,color=C.muted,weight=600,align="left") => { ctx.font=`${weight} ${size}px Inter, system-ui, sans-serif`; ctx.fillStyle=color; ctx.textAlign=align; ctx.textBaseline="middle"; ctx.fillText(s,x,y); };
+const mono = (ctx,s,x,y,size=10,color=C.dim,align="left") => { ctx.font=`700 ${size}px ui-monospace, monospace`; ctx.fillStyle=color; ctx.textAlign=align; ctx.textBaseline="middle"; ctx.fillText(s,x,y); };
+function canvasStage(stage,height=300){ const c=document.createElement("canvas"); c.className="demo-canvas"; c.style.height=height+"px"; stage.appendChild(c); return c; }
+function register(canvas,draw){
+  const ctx=canvas.getContext("2d"); let w=0,h=0,dpr=1,raf=0,visible=false,destroyed=false;
+  const size=()=>{ const r=canvas.getBoundingClientRect(); dpr=Math.min(2,window.devicePixelRatio||1); w=Math.max(1,r.width); h=Math.max(1,r.height); canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr); ctx.setTransform(dpr,0,0,dpr,0,0); };
+  const paint=now=>{ if(destroyed||!w||!h) return; draw(ctx,w,h,now); };
+  const frame=now=>{ if(!visible||destroyed){raf=0;return;} paint(now); raf=requestAnimationFrame(frame); };
+  const start=()=>{ if(!raf&&visible&&!destroyed) raf=requestAnimationFrame(frame); };
+  const stop=()=>{ if(raf) cancelAnimationFrame(raf); raf=0; };
+  new ResizeObserver(()=>{size();paint(performance.now());}).observe(canvas);
+  new IntersectionObserver(es=>{visible=es[0].isIntersecting;if(visible)start();else stop();},{rootMargin:"150px"}).observe(canvas);
+  requestAnimationFrame(()=>{size();paint(performance.now());visible=true;start();});
+  return {redraw:()=>paint(performance.now()),destroy:()=>{destroyed=true;stop();}};
+}
+function slider(controls,{label,min,max,step=1,value,fmt=v=>v,onInput}){
+  const el=document.createElement("label"); el.className="ctl";
+  const span=document.createElement("span"); span.textContent=label;
+  const input=document.createElement("input"); input.type="range"; input.min=min; input.max=max; input.step=step; input.value=value;
+  const out=document.createElement("b"); out.textContent=fmt(Number(value));
+  input.addEventListener("input",()=>{const v=Number(input.value);out.textContent=fmt(v);onInput&&onInput(v);});
+  el.append(span,input,out); controls.appendChild(el); return {el,input,out};
+}
+function button(controls,label,onClick,kind=""){const b=document.createElement("button");b.type="button";b.className="btn "+kind;b.textContent=label;b.addEventListener("click",onClick);controls.appendChild(b);return b;}
+function toggle(controls,label,on,onChange){let state=on;const b=button(controls,label,()=>{state=!state;b.classList.toggle("is-on",state);onChange&&onChange(state);},on?"is-on":"");return b;}
+function stat(controls,label,value){const el=document.createElement("span");el.className="stat";el.innerHTML=`<span>${label}</span><b>${value}</b>`;controls.appendChild(el);return {el,set:v=>{el.querySelector("b").textContent=v;}};}
+function seg(controls,items,value,onChange){const bar=document.createElement("div");bar.className="seg";const buttons=items.map(item=>{const b=document.createElement("button");b.type="button";b.textContent=item;b.className=item===value?"is-on":"";b.addEventListener("click",()=>{buttons.forEach(x=>x.classList.toggle("is-on",x===b));onChange(item);});bar.appendChild(b);return b;});controls.appendChild(bar);return bar;}
+
+const RULES=[];
+const rule=(id,num,title,signature,blurb,why,used,build)=>RULES.push({id,num,title,signature,blurb,why,used,build});
+
+
+
+
+/* ============================================================
+   01 · TURING MACHINE
+   ============================================================ */
+rule("turing","01","Turing Machine","M = (Q, Σ, δ, q₀, H)",
+  "A finite state, an infinite tape and a local rewrite rule. That is the whole machine. The head reads one symbol, writes one symbol, moves one square, and changes state.",
+  "Computation is local. Universality comes from letting the tape hold both the program and its data.",
+  ["computability","halting problem","universal machine"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300);
+    let tape, head, state, timer=null;
+    const sState=stat(controls,"state","q0");
+    const reset=()=>{
+      tape=Array(19).fill(0); tape[8]=1; tape[9]=0; tape[10]=1; tape[11]=1; head=11; state="q0";
+      sState.set(state);
+      if(state==="halt"&&timer){ clearInterval(timer); timer=null; }
+      api.redraw();
+    };
+    const step=()=>{
+      if(state==="halt") return;
+      if(state==="q0"){
+        if(tape[head]===1){ tape[head]=0; head=Math.max(0,head-1); }
+        else { tape[head]=1; state="halt"; }
+      }
+      sState.set(state); api.redraw();
+    };
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(103,232,249,.07)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const n=tape.length, cw=Math.min(38,(w-50)/n), x0=(w-cw*n)/2, y=h*.52;
+      for(let i=0;i<n;i++){
+        const x=x0+i*cw, on=i===head;
+        ctx.fillStyle=on?"rgba(103,232,249,.18)":"rgba(15,23,42,.55)";
+        ctx.strokeStyle=on?C.cyan:"rgba(148,163,184,.22)"; if(on) glow(ctx,C.cyan,14);
+        roundRect(ctx,x,y-21,cw-3,42,7); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,String(tape[i]),x+(cw-3)/2,y,12,tape[i]?C.ink:C.dim,"center");
+      }
+      const hx=x0+head*cw+(cw-3)/2;
+      ctx.fillStyle=C.amber; glow(ctx,C.amber,12); ctx.beginPath(); ctx.moveTo(hx,y-31); ctx.lineTo(hx-8,y-45); ctx.lineTo(hx+8,y-45); ctx.closePath(); ctx.fill(); noGlow(ctx);
+      mono(ctx,"head",hx,y-56,9,C.amber,"center");
+      text(ctx,"state = "+state,24,24,13,state==="halt"?C.emerald:C.cyan,800);
+      mono(ctx,state==="halt"?"halted":"q0: if 1 → write 0, move L; if 0 → write 1, halt",24,44,9,C.dim);
+      mono(ctx,"tape →",24,h-20,9,C.dim);
+    };
+    const api=register(canvas,draw);
+    reset();
+    button(controls,"Step",step,"primary");
+    button(controls,"Run",()=>{ if(timer){clearInterval(timer);timer=null;return;} timer=setInterval(step,260); },"");
+    button(controls,"Reset",()=>{ if(timer){clearInterval(timer);timer=null;} reset(); },"rose");
+  });
+
+/* ============================================================
+   02 · FINITE AUTOMATON
+   ============================================================ */
+rule("dfa","02","Finite Automaton / Regular Language","M = (Q, Σ, δ, q₀, F)",
+  "A finite set of states and a transition for every symbol. No tape, no stack, no unbounded memory. This is exactly the power of a regular expression.",
+  "Regular languages are the ones a finite machine can recognise. The moment you need to count without bound, you need more than a DFA.",
+  ["regex","lexing","protocol states"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300);
+    const states=["q0","q1","q2"]; let input=[1,1,0,1], idx=0, cur=0, timer=null;
+    const sOut=stat(controls,"verdict","—");
+    const delta=(q,b)=>{
+      if(q===0) return b===0?1:0;
+      if(q===1) return b===0?1:2;
+      return b===0?1:0;
+    };
+    const reset=()=>{ idx=0; cur=0; sOut.set("—"); api.redraw(); };
+    const step=()=>{
+      if(idx>=input.length){ sOut.set(cur===2?"accept":"reject"); api.redraw(); return; }
+      cur=delta(cur,input[idx]); idx++; sOut.set(idx>=input.length?(cur===2?"accept":"reject"):"reading"); api.redraw();
+    };
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(167,139,250,.07)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const pos=[[w*.22,h*.52],[w*.5,h*.52],[w*.78,h*.52]];
+      const R=42;
+      // edges
+      const edge=(a,b,label,curve=0)=>{
+        const A=pos[a],B=pos[b]; const mx=(A[0]+B[0])/2, my=(A[1]+B[1])/2+curve;
+        ctx.strokeStyle="rgba(148,163,184,.28)"; ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.quadraticCurveTo(mx,my,B[0],B[1]); ctx.stroke();
+        mono(ctx,label,mx,my-8,9,C.dim,"center");
+      };
+      edge(0,0,"1",-52); edge(0,1,"0",0); edge(1,1,"0",-52); edge(1,2,"1",0); edge(2,1,"0",30); edge(2,0,"1",-30);
+      states.forEach((q,i)=>{
+        const on=i===cur;
+        ctx.fillStyle=on?"rgba(103,232,249,.18)":"rgba(15,23,42,.6)";
+        ctx.strokeStyle=on?C.cyan:"rgba(148,163,184,.28)"; if(on) glow(ctx,C.cyan,16);
+        ctx.beginPath(); ctx.arc(pos[i][0],pos[i][1],R,0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,q,pos[i][0],pos[i][1],13,on?C.ink:C.muted,"center");
+        if(i===2){ ctx.beginPath(); ctx.arc(pos[i][0],pos[i][1],R-7,0,TAU); ctx.strokeStyle=rgba(C.emerald,.5); ctx.stroke(); }
+      });
+      // input
+      const bx=w*.5-((input.length*30)/2), by=h*.86;
+      input.forEach((b,i)=>{
+        const x=bx+i*30, on=i===idx;
+        ctx.fillStyle=on?"rgba(251,191,36,.18)":"rgba(15,23,42,.55)"; ctx.strokeStyle=on?C.amber:"rgba(148,163,184,.22)";
+        roundRect(ctx,x,by-13,26,26,6); ctx.fill(); ctx.stroke();
+        mono(ctx,String(b),x+13,by,11,on?C.amber:C.muted,"center");
+      });
+      mono(ctx,"input →",24,h-20,9,C.dim);
+      mono(ctx,"accept if the string ends in 01",w-24,h-20,9,C.emerald,"right");
+    };
+    const api=register(canvas,draw);
+    reset();
+    button(controls,"Step",step,"primary");
+    button(controls,"Run",()=>{ if(timer){clearInterval(timer);timer=null;return;} timer=setInterval(()=>{ if(idx>=input.length){clearInterval(timer);timer=null;return;} step(); },320); },"");
+    button(controls,"New input",()=>{ input=Array.from({length:6},()=>Math.random()<.5?1:0); if(timer){clearInterval(timer);timer=null;} reset(); },"");
+    button(controls,"Reset",()=>{ if(timer){clearInterval(timer);timer=null;} reset(); },"rose");
+  });
+
+/* ============================================================
+   03 · LAMBDA CALCULUS
+   ============================================================ */
+rule("lambda","03","Lambda Calculus","e ::= x | λx.e | e e",
+  "Three productions: a variable, an abstraction, an application. Computation is one rewrite rule: (λx.M) N → M[x := N]. Functions are rules, not sets of pairs.",
+  "Substitution is the atom of functional computation. Every interpreter, type checker and proof assistant is built from it.",
+  ["functional programming","type theory","compilers"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="lcalc"; stage.appendChild(wrap);
+    const examples=[
+      {term:"(λx. x) y",steps:["(λx. x) y","y"]},
+      {term:"(λx. λy. x) a b",steps:["(λx. λy. x) a b","(λy. a) b","a"]},
+      {term:"(λx. x x)(λx. x)",steps:["(λx. x x)(λx. x)","(λx. x)(λx. x)","(λx. x)"]}
+    ];
+    let ex=0, step=0;
+    const render=()=>{
+      const e=examples[ex];
+      const term=document.createElement("div"); term.className="lterm";
+      term.innerHTML=e.steps[step].replace("λ","<span class='arg'>λ</span>");
+      const steps=document.createElement("div"); steps.className="lsteps";
+      e.steps.forEach((s,i)=>{ const d=document.createElement("div"); d.className="lstep"+(i<=step?" on":""); d.textContent=s; steps.appendChild(d); });
+      wrap.innerHTML=""; wrap.append(term,steps);
+    };
+    render();
+    seg(controls,["Identity","K","Self-apply"],"Identity",v=>{ex=["Identity","K","Self-apply"].indexOf(v);step=0;render();});
+    button(controls,"β-reduce",()=>{step=Math.min(examples[ex].steps.length-1,step+1);render();},"primary");
+    button(controls,"Reset",()=>{step=0;render();},"rose");
+  });
+
+/* ============================================================
+   04 · BOOLEAN LOGIC / NAND
+   ============================================================ */
+rule("nand","04","Boolean Logic / NAND Universality","¬(A ∧ B) is enough for every Boolean function",
+  "One gate computes NAND. Tie both inputs together and you get NOT. NAND a signal with itself, combine with NAND, and you get AND and OR. The whole logic layer is one operation.",
+  "Universality is compression: a single primitives generates every truth table. This is why hardware can be built from one gate type.",
+  ["CPU","circuits","SAT"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="gatewrap"; stage.appendChild(wrap);
+    let A=1,B=0;
+    const render=()=>{
+      const nand=(x,y)=>1-(x&y), not=x=>nand(x,x), and=(x,y)=>not(nand(x,y)), or=(x,y)=>nand(not(x),not(y));
+      const n=nand(A,B), na=not(A), nb=not(B), a=and(A,B), o=or(A,B);
+      wrap.innerHTML=`
+        <div class="gatebox">
+          <h4>NAND</h4>
+          <div class="gate-row">
+            <button class="gate ${A?'on':''}" data-a="1">A = ${A}</button>
+            <button class="gate ${B?'on':''}" data-b="1">B = ${B}</button>
+            <span class="val">${n}</span>
+          </div>
+          <table class="truth"><tr><th>A</th><th>B</th><th>NAND</th></tr>
+            ${[[0,0],[0,1],[1,0],[1,1]].map(([a,b])=>`<tr class="${a===A&&b===B?'hi':''}"><td>${a}</td><td>${b}</td><td>${nand(a,b)}</td></tr>`).join("")}
+          </table>
+        </div>
+        <div class="gatebox">
+          <h4>Everything else</h4>
+          <div class="gate-row"><span class="gate on">NOT</span><span class="val">${na}</span><span style="color:var(--dim);font:600 10px var(--mono)">= NAND(A,A)</span></div>
+          <div class="gate-row"><span class="gate on">AND</span><span class="val">${a}</span><span style="color:var(--dim);font:600 10px var(--mono)">= NOT(NAND(A,B))</span></div>
+          <div class="gate-row"><span class="gate on">OR</span><span class="val">${o}</span><span style="color:var(--dim);font:600 10px var(--mono)">= NAND(NOT A, NOT B)</span></div>
+          <div class="gate-row"><span class="gate on">XOR</span><span class="val">${nand(nand(A,nand(A,B)),nand(B,nand(A,B)))}</span><span style="color:var(--dim);font:600 10px var(--mono)">four NANDs</span></div>
+        </div>`;
+      wrap.querySelectorAll("[data-a]").forEach(b=>b.addEventListener("click",()=>{A=A?0:1;render();}));
+      wrap.querySelectorAll("[data-b]").forEach(b=>b.addEventListener("click",()=>{B=B?0:1;render();}));
+    };
+    render();
+    button(controls,"Toggle A",()=>{A=A?0:1;render();},"primary");
+    button(controls,"Toggle B",()=>{B=B?0:1;render();},"primary");
+    button(controls,"Reset",()=>{A=1;B=0;render();},"rose");
+  });
+
+/* ============================================================
+   05 · HALTING PROBLEM
+   ============================================================ */
+rule("halting","05","The Halting Problem","H(P, x) → {halts, loops}?",
+  "Suppose a perfect halting decider H exists. Build D(x): if H(x,x) says halts, loop forever; if it says loops, halt. Now ask H(D,D). Either answer contradicts the construction.",
+  "No finite procedure can decide halting for every program. This is the first great limit result of computer science.",
+  ["undecidability","compilers","program analysis"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="diagwrap"; stage.appendChild(wrap);
+    let says="halts";
+    const render=()=>{
+      const rows=[1,2,3,4];
+      const cell=(i,j)=>{
+        if(i===4&&j===4) return `<td class="h ${says==='halts'?'halt':'loop'}">${says==='halts'?'halts':'loops'}</td>`;
+        return `<td class="h ${((i+j)%3===0)?'halt':'loop'}">${((i+j)%3===0)?'halts':'loops'}</td>`;
+      };
+      wrap.innerHTML=`
+        <table class="diagtable">
+          <tr><th>H(P,x)</th>${rows.map(r=>`<th>P${r}</th>`).join("")}<th>D</th></tr>
+          ${rows.map(i=>`<tr><th>P${i}</th>${rows.map(j=>cell(i,j)).join("")}<td>?</td></tr>`).join("")}
+          <tr class="is-target"><th>D</th>${rows.map(j=>`<td>?</td>`).join("")}${cell(4,4)}</tr>
+        </table>
+        <div class="diag-verdict">
+          ${says==="halts"
+            ? "<b>Contradiction.</b> H says D(D) halts. But D was defined to loop whenever H says halts. So D(D) loops, and H was wrong."
+            : "<b>Contradiction.</b> H says D(D) loops. But D was defined to halt whenever H says loops. So D(D) halts, and H was wrong."}
+        </div>`;
+    };
+    render();
+    seg(controls,["H says halts","H says loops"],"H says halts",v=>{says=v==="H says halts"?"halts":"loops";render();});
+    button(controls,"Reset",()=>{says="halts";render();},"rose");
+  });
+
+
+/* ============================================================
+   06 · P vs NP / SAT
+   ============================================================ */
+rule("sat","06","P vs NP / SAT","SAT = { φ : φ is a satisfiable Boolean formula }",
+  "Checking one assignment is fast: walk the clauses and evaluate. Finding an assignment may require searching an exponential space. P vs NP asks whether every fast verifier hides a fast finder.",
+  "Verification can be polynomial while search is exponential. That gap is the most famous open problem in computer science.",
+  ["complexity","cryptography","optimisation"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="satwrap"; stage.appendChild(wrap);
+    const canvas=canvasStage(stage,260);
+    let bits=[1,0,1,0], current=0, scanning=false, timer=null;
+    const clauses=[[1,-2,3],[-1,2,4],[2,3,-4]];
+    const sSat=stat(controls,"satisfied","—");
+    const evalClause=(c,assign)=>c.some(l=>l>0?assign[l-1]===1:assign[-l-1]===0);
+    const satCount=(assign)=>clauses.filter(c=>evalClause(c,assign)).length;
+    const satisf=(assign)=>clauses.every(c=>evalClause(c,assign));
+    const update=()=>{
+      const n=satCount(bits);
+      sSat.set(n+"/3");
+      wrap.innerHTML=`<div class="lterm" style="font-size:15px;margin-bottom:8px">(x₁∨¬x₂∨x₃) ∧ (¬x₁∨x₂∨x₄) ∧ (x₂∨x₃∨¬x₄)</div>
+        <div class="bitrow">${bits.map((b,i)=>`<button class="bit ${b?'on':''}" data-i="${i}">x${i+1}=${b}</button>`).join("")}</div>
+        <div class="gate-row">${clauses.map((c,i)=>`<span class="gate ${evalClause(c,bits)?'on':''}">C${i+1}</span>`).join("")}<span class="val">${n}/3</span></div>`;
+      wrap.querySelectorAll('[data-i]').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i;bits[i]=bits[i]?0:1;update();api.redraw();}));
+    };
+    const api=register(canvas,(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(52,211,153,.05)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      mono(ctx,"2⁴ = 16 assignments · verifier checks 3 clauses",20,20,10,C.dim);
+      const cols=8, cw=(w-40)/cols, ch=(h-70)/2;
+      for(let a=0;a<16;a++){
+        const assign=[(a>>3)&1,(a>>2)&1,(a>>1)&1,a&1];
+        const sat=satisf(assign);
+        const isCur=assign.every((v,i)=>v===bits[i]);
+        const isScan=scanning&&a===current;
+        const col=cols, row=Math.floor(a/cols), x=20+(a%cols)*cw, y=48+row*ch;
+        ctx.fillStyle=isScan?"rgba(251,191,36,.22)":sat?"rgba(52,211,153,.16)":isCur?"rgba(103,232,249,.14)":"rgba(15,23,42,.5)";
+        ctx.strokeStyle=isScan?C.amber:sat?C.emerald:isCur?C.cyan:"rgba(148,163,184,.18)";
+        if(isScan||isCur) glow(ctx,isScan?C.amber:C.cyan,10);
+        roundRect(ctx,x+3,y+2,cw-6,ch-6,7); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,assign.join(""),x+cw/2,y+ch/2,9,isScan?C.amber:sat?C.emerald:isCur?C.cyan:C.dim,"center");
+        mono(ctx,String(a),x+cw/2,y+ch-12,7,C.dim,"center");
+      }
+      mono(ctx,"green = satisfies all clauses",w-20,h-16,9,C.emerald,"right");
+    });
+    update();
+    button(controls,"Verify current",()=>{ sSat.set(satisf(bits)?"SAT":"not SAT"); },"primary");
+    button(controls,"Brute force",()=>{
+      if(timer){clearInterval(timer);timer=null;scanning=false;api.redraw();return;}
+      scanning=true; current=0;
+      timer=setInterval(()=>{
+        const assign=[(current>>3)&1,(current>>2)&1,(current>>1)&1,current&1];
+        if(satisf(assign)){ bits=assign; update(); sSat.set("found at "+current); clearInterval(timer); timer=null; scanning=false; api.redraw(); return; }
+        current++;
+        if(current>=16){ clearInterval(timer); timer=null; scanning=false; sSat.set("UNSAT"); }
+        api.redraw();
+      },90);
+    },"");
+    button(controls,"Reset",()=>{ if(timer){clearInterval(timer);timer=null;scanning=false;} bits=[1,0,1,0];current=0;update();api.redraw(); },"rose");
+  });
+
+/* ============================================================
+   07 · BIG-O
+   ============================================================ */
+rule("bigo","07","Big-O / Asymptotic Growth","f(n) = O(g(n))  ⇔  ∃c,n₀ : f(n) ≤ c·g(n) for all n ≥ n₀",
+  "Big-O throws away constants and lower-order terms. What survives is the shape of growth: constant, logarithmic, linear, linearithmic, quadratic, exponential.",
+  "Asymptotics is the art of ignoring what does not scale. The shape decides what is feasible.",
+  ["algorithms","data structures","systems"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let n=32, focus="n log n";
+    const sOps=stat(controls,"ops","—");
+    const fns={
+      "1":{f:n=>1,c:C.dim,label:"O(1)"},
+      "log n":{f:n=>Math.log2(n),c:C.cyan,label:"O(log n)"},
+      "n":{f:n=>n,c:C.blue,label:"O(n)"},
+      "n log n":{f:n=>n*Math.log2(n),c:C.emerald,label:"O(n log n)"},
+      "n²":{f:n=>n*n,c:C.amber,label:"O(n²)"},
+      "2ⁿ":{f:n=>Math.pow(2,n),c:C.rose,label:"O(2ⁿ)"}
+    };
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(103,232,249,.05)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const left=54, top=36, pw=w-84, ph=h-76;
+      const X=x=>left+pw*x/64, Y=y=>top+ph*(1-clamp(y,0,1));
+      for(let i=0;i<=4;i++){ ctx.strokeStyle="rgba(148,163,184,.08)"; ctx.beginPath(); ctx.moveTo(left,top+ph*i/4); ctx.lineTo(left+pw,top+ph*i/4); ctx.stroke(); }
+      const maxOp=fns[focus].f(64);
+      Object.entries(fns).forEach(([key,v])=>{
+        const active=key===focus;
+        ctx.strokeStyle=active?v.c:"rgba(148,163,184,.14)"; ctx.lineWidth=active?2.8:1.2;
+        if(active) glow(ctx,v.c,14);
+        ctx.beginPath();
+        for(let i=0;i<=64;i++){
+          const val=v.f(i), y=val/maxOp;
+          if(i===0) ctx.moveTo(X(i),Y(y)); else ctx.lineTo(X(i),Y(y));
+        }
+        ctx.stroke(); noGlow(ctx);
+        if(active) mono(ctx,v.label,w-24,Y(fns[focus].f(64)/maxOp)-16,13,v.c,"right");
+      });
+      const mx=X(n), my=Y(fns[focus].f(n)/maxOp);
+      ctx.strokeStyle=rgba(C.ink,.35); ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(mx,top); ctx.lineTo(mx,top+ph); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=C.ink; glow(ctx,C.ink,10); ctx.beginPath(); ctx.arc(mx,my,6,0,TAU); ctx.fill(); noGlow(ctx);
+      sOps.set(fns[focus].f(n).toFixed(0));
+      mono(ctx,"n →",left,h-18,9,C.dim); mono(ctx,"work",18,top+ph/2,9,C.dim);
+      text(ctx,"focus: "+fns[focus].label,24,20,12,fns[focus].c,800);
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"n",min:1,max:64,step:1,value:n,fmt:v=>v,onInput:v=>{n=v;api.redraw();}});
+    seg(controls,["log n","n","n log n","n²","2ⁿ"],"n log n",v=>{focus=v;api.redraw();});
+  });
+
+/* ============================================================
+   08 · ENTROPY & HUFFMAN
+   ============================================================ */
+rule("huffman","08","Entropy & Huffman Coding","H = −Σ pᵢ log₂ pᵢ  ·  L = Σ pᵢ ℓᵢ",
+  "Entropy is the average surprise of a source. Huffman coding assigns shorter bit strings to more frequent symbols, reaching the entropy limit for prefix codes.",
+  "Compression is prediction: the better you know the distribution, the fewer bits you need.",
+  ["compression","information theory","file formats"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,320); let skew=.2;
+    const sH=stat(controls,"H","—"), sL=stat(controls,"L","—");
+    const build=()=>{
+      const w=[.4+.3*skew,.3-.1*skew,.2-.1*skew,Math.max(.01,.1-.1*skew)];
+      const sum=w.reduce((a,b)=>a+b,0); const weights=w.map(x=>x/sum);
+      const syms=["A","B","C","D"];
+      let nodes=weights.map((p,i)=>({p,label:syms[i],left:null,right:null}));
+      while(nodes.length>1){
+        nodes.sort((a,b)=>a.p-b.p);
+        const a=nodes.shift(), b=nodes.shift();
+        nodes.push({p:a.p+b.p,label:"",left:a,right:b});
+      }
+      const root=nodes[0]; const codes={};
+      (function walk(node,code){ if(!node.left&&!node.right){codes[node.label]=code||"0";return;} walk(node.left,code+"0"); walk(node.right,code+"1"); })(root,"");
+      const H=-weights.reduce((a,p)=>a+(p>0?p*Math.log2(p):0),0);
+      const L=weights.reduce((a,p,i)=>a+p*codes[syms[i]].length,0);
+      sH.set(H.toFixed(2)); sL.set(L.toFixed(2));
+      return {root,codes,H,L,weights,syms};
+    };
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const data=build();
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(52,211,153,.05)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const left=w*.08, top=46, treeW=w*.55, treeH=h-86;
+      const drawNode=(node,x,y,dx,depth)=>{
+        if(node.left||node.right){
+          const nx=x+dx, ny=y+treeH/Math.max(4,6);
+          if(node.left){ ctx.strokeStyle="rgba(103,232,249,.3)"; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x-dx/2,ny); ctx.stroke(); drawNode(node.left,x-dx/2,ny,dx/2,depth+1); }
+          if(node.right){ ctx.strokeStyle="rgba(167,139,250,.3)"; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+dx/2,ny); ctx.stroke(); drawNode(node.right,x+dx/2,ny,dx/2,depth+1); }
+          ctx.fillStyle="rgba(15,23,42,.8)"; ctx.strokeStyle="rgba(148,163,184,.3)"; ctx.beginPath(); ctx.arc(x,y,10,0,TAU); ctx.fill(); ctx.stroke();
+          mono(ctx,node.p.toFixed(2),x,y,7,C.dim,"center");
+        } else {
+          ctx.fillStyle="rgba(52,211,153,.18)"; ctx.strokeStyle=C.emerald; glow(ctx,C.emerald,12);
+          ctx.beginPath(); ctx.arc(x,y,13,0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+          mono(ctx,node.label,x,y,10,C.ink,"center");
+          mono(ctx,node.p.toFixed(2),x,y+22,7,C.dim,"center");
+        }
+      };
+      drawNode(data.root,left+treeW/2,top+18,treeW*.45,0);
+      // codes + bars
+      const bx=w*.7, by=58;
+      mono(ctx,"symbol  p     code   len",bx,by-10,9,C.dim);
+      data.syms.forEach((s,i)=>{
+        const y=by+i*28, code=data.codes[s];
+        mono(ctx,s,bx,y,10,C.ink); mono(ctx,data.weights[i].toFixed(2),bx+38,y,9,C.muted);
+        mono(ctx,code,bx+78,y,10,C.cyan); mono(ctx,code.length+"",bx+132,y,9,C.amber);
+      });
+      // H/L bars
+      const barX=w*.7, barY=by+130, barW=Math.min(150,w*.2);
+      [["H",data.H,C.cyan],["L",data.L,C.emerald]].forEach(([lab,val,col],i)=>{
+        const y=barY+i*34;
+        mono(ctx,lab,barX,y+5,9,col);
+        ctx.fillStyle="rgba(148,163,184,.12)"; roundRect(ctx,barX+20,y,barW,10,9); ctx.fill();
+        ctx.fillStyle=rgba(col,.8); roundRect(ctx,barX+20,y,barW*clamp(val/2.2,0,1),10,9); ctx.fill();
+        mono(ctx,val.toFixed(2),barX+24+barW,y+5,9,col);
+      });
+      mono(ctx,"entropy limit vs Huffman length",barX,barY+78,9,C.dim);
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Skew",min:0,max:1,step:.02,value:skew,fmt:v=>v.toFixed(2),onInput:v=>{skew=v;api.redraw();}});
+    button(controls,"Uniform",()=>{skew=0;api.redraw();},"primary");
+    button(controls,"Skewed",()=>{skew=1;api.redraw();},"rose");
+  });
+
+/* ============================================================
+   09 · HAMMING(7,4)
+   ============================================================ */
+rule("hamming","09","Hamming(7,4) Error Correction","[7,4,3]₂  ·  4 data bits + 3 parity bits",
+  "Four data bits, three overlapping parity bits. A single flipped bit changes a unique pattern of parities, so the receiver can locate and correct it.",
+  "Redundancy is not waste: a few parity bits turn an unreliable channel into a reliable one.",
+  ["networking","storage","ECC memory"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="hammingwrap"; stage.appendChild(wrap);
+    let d=[1,0,1,1], flipped=-1;
+    const parity=()=>{
+      const p1=d[0]^d[1]^d[3], p2=d[0]^d[2]^d[3], p3=d[1]^d[2]^d[3];
+      return [p1,p2,d[0],p3,d[1],d[2],d[3]];
+    };
+    const render=()=>{
+      const bits=parity();
+      const received=bits.slice(); if(flipped>=0) received[flipped]^=1;
+      const p1=received[0]^received[2]^received[4]^received[6];
+      const p2=received[1]^received[2]^received[5]^received[6];
+      const p3=received[3]^received[4]^received[5]^received[6];
+      const syndrome=p1*1+p2*2+p3*4;
+      const labels=["p1","p2","d1","p3","d2","d3","d4"];
+      const corrected=received.slice();
+      if(syndrome) corrected[syndrome-1]^=1;
+      const correctedData=[2,4,5,6].map(i=>corrected[i]).join("");
+      wrap.innerHTML=`
+        <div class="bitrow">${received.map((b,i)=>`<div class="bitwrap"><button class="bit ${b?'on':''}" data-i="${i}">${b}</button><div class="bitlabel">${labels[i]}${flipped===i?' ⇐ flip':''}</div></div>`).join("")}</div>
+        <div class="float-read"><span>syndrome <b>${syndrome||"0"}</b></span><span>${syndrome?'error in bit '+syndrome:'no error'}</span><span>${syndrome?'corrected data: '+correctedData:'data: '+d.join("")}</span></div>`;
+      wrap.querySelectorAll('[data-i]').forEach(b=>b.addEventListener('click',()=>{
+        const i=+b.dataset.i;
+        if(i===2) d[0]^=1; else if(i===4) d[1]^=1; else if(i===5) d[2]^=1; else if(i===6) d[3]^=1;
+        flipped=-1; render();
+      }));
+    };
+    render();
+    button(controls,"Flip a random bit",()=>{flipped=Math.floor(Math.random()*7);render();},"primary");
+    button(controls,"Reset",()=>{d=[1,0,1,1];flipped=-1;render();},"rose");
+  });
+
+/* ============================================================
+   10 · CONTEXT-FREE GRAMMAR / PARSING
+   ============================================================ */
+rule("grammar","10","Context-Free Grammar / Parsing","E → E + T | T    T → T * F | F    F → (E) | number",
+  "A grammar generates strings by recursive substitution. Parsing reverses the process: it recovers the tree that explains the string. Precedence is a property of the tree, not the characters.",
+  "Syntax is a tree. The grammar decides which tree, and therefore which meaning.",
+  ["compilers","interpreters","natural language"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,320); let precedence=true;
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(167,139,250,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const node=(x,y,label,color)=>{ ctx.fillStyle="rgba(15,23,42,.8)"; ctx.strokeStyle=color; glow(ctx,color,8); roundRect(ctx,x-24,y-12,48,24,7); ctx.fill(); ctx.stroke(); noGlow(ctx); mono(ctx,label,x,y,10,C.ink,"center"); };
+      const edge=(a,b)=>{ ctx.strokeStyle="rgba(148,163,184,.25)"; ctx.beginPath(); ctx.moveTo(a[0],a[1]+12); ctx.lineTo(b[0],b[1]-12); ctx.stroke(); };
+      const cx=w*.5, top=46;
+      if(precedence){
+        const root=[cx,top], plus=[cx-80,top+64], one=[cx-140,top+128], mul=[cx+30,top+128], two=[cx-10,top+192], three=[cx+80,top+192];
+        [[root,plus],[root,mul],[plus,one],[mul,two],[mul,three]].forEach(([a,b])=>edge(a,b));
+        node(root[0],root[1],"E",C.violet); node(plus[0],plus[1],"+",C.amber); node(one[0],one[1],"1",C.cyan); node(mul[0],mul[1],"*",C.amber); node(two[0],two[1],"2",C.cyan); node(three[0],three[1],"3",C.cyan);
+        mono(ctx,"1 + (2 * 3)",cx,top+236,13,C.emerald,"center");
+      } else {
+        const root=[cx,top], mul=[cx+80,top+64], plus=[cx-40,top+128], one=[cx-100,top+192], two=[cx+20,top+192], three=[cx+120,top+192];
+        [[root,mul],[root,plus],[plus,one],[plus,two],[mul,three]].forEach(([a,b])=>edge(a,b));
+        node(root[0],root[1],"E",C.violet); node(mul[0],mul[1],"*",C.amber); node(plus[0],plus[1],"+",C.amber); node(one[0],one[1],"1",C.cyan); node(two[0],two[1],"2",C.cyan); node(three[0],three[1],"3",C.cyan);
+        mono(ctx,"(1 + 2) * 3",cx,top+236,13,C.rose,"center");
+      }
+      mono(ctx,"parse tree for 1 + 2 * 3",24,20,10,C.dim);
+    };
+    const api=register(canvas,draw);
+    toggle(controls,"Precedence",true,on=>{precedence=on;api.redraw();});
+    button(controls,"Correct parse",()=>{precedence=true;api.redraw();},"primary");
+    button(controls,"Wrong parse",()=>{precedence=false;api.redraw();},"rose");
+  });
+
+
+/* ============================================================
+   11 · BINARY & TWO'S COMPLEMENT
+   ============================================================ */
+rule("binary","11","Binary & Two's Complement","n = Σ bᵢ 2ⁱ  ·  −x = ~x + 1",
+  "Eight bits are just eight switches. Unsigned, they count 0..255. Under two's complement, the same bits are reinterpreted: the top bit is negative, so 11111111 is −1, not 255.",
+  "Signed integers are a convention on top of bits. Addition does not care; overflow is where the convention breaks.",
+  ["CPU","overflow","bit tricks"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="bitrow"; stage.appendChild(wrap);
+    let bits=[0,0,0,0,0,0,1,1];
+    const render=()=>{
+      const unsigned=bits.reduce((a,b,i)=>a+b*Math.pow(2,7-i),0);
+      const signed=bits[0]?unsigned-256:unsigned;
+      wrap.innerHTML=bits.map((b,i)=>`<div class="bitwrap"><button class="bit ${b?'on':''}" data-i="${i}">${b}</button><div class="bitlabel">2^${7-i}</div></div>`).join("");
+      const info=document.createElement("div"); info.className="float-read"; info.style.width="100%";
+      info.innerHTML=`<span>unsigned <b>${unsigned}</b></span><span>two's complement <b>${signed}</b></span><span>hex <b>0x${unsigned.toString(16).padStart(2,"0").toUpperCase()}</b></span>`;
+      wrap.appendChild(info);
+      wrap.querySelectorAll('[data-i]').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i;bits[i]=bits[i]?0:1;render();}));
+    };
+    render();
+    button(controls,"Add 1",()=>{ let i=7; while(i>=0&&bits[i]===1){bits[i]=0;i--;} if(i>=0)bits[i]=1; render(); },"primary");
+    button(controls,"Set −1",()=>{bits=[1,1,1,1,1,1,1,1];render();},"");
+    button(controls,"Reset",()=>{bits=[0,0,0,0,0,0,1,1];render();},"rose");
+  });
+
+/* ============================================================
+   12 · IEEE 754 FLOATING POINT
+   ============================================================ */
+rule("float","12","IEEE 754 Floating Point","(−1)ˢ · 2^(E−127) · (1.M)",
+  "A float is not a real number. It is a sign, an exponent and a mantissa: a finite grid of values with gaps that grow as the magnitude grows. 0.1 is not on the grid.",
+  "Floating point is scientific notation with finite precision. Most decimal fractions cannot be represented exactly.",
+  ["numerics","graphics","ML training"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="float-wrap"; stage.appendChild(wrap);
+    let bits=Array(32).fill(0);
+    const setFloat=v=>{ const b=new ArrayBuffer(4); new Float32Array(b)[0]=v; const u=new Uint32Array(b)[0]; bits=Array.from({length:32},(_,i)=>(u>>> (31-i))&1); };
+    const read=()=>{
+      const s=bits[0], E=parseInt(bits.slice(1,9).join(""),2), M=parseInt(bits.slice(9).join(""),2);
+      let v;
+      if(E===255) v=M?NaN:(s?-Infinity:Infinity);
+      else if(E===0) v=(s?-1:1)*Math.pow(2,-126)*(M/Math.pow(2,23));
+      else v=(s?-1:1)*Math.pow(2,E-127)*(1+M/Math.pow(2,23));
+      const ulp=E>0&&E<255?Math.pow(2,E-127-23):Math.pow(2,-149);
+      return {s,E,M,v,ulp,hex:(parseInt(bits.join(""),2)>>>0).toString(16).padStart(8,"0").toUpperCase()};
+    };
+    const render=()=>{
+      const r=read();
+      wrap.innerHTML=`
+        <div class="float-bits">
+          ${bits.map((b,i)=>{
+            const cls=i===0?"sign":i<9?"exp":"man";
+            return `<button class="float-seg ${cls} ${b?'on':''}" data-i="${i}">${b}</button>`;
+          }).join("")}
+        </div>
+        <div class="float-read">
+          <span>sign <b>${r.s}</b></span>
+          <span>exponent <b>${r.E}</b> (${r.E-127})</span>
+          <span>mantissa <b>${r.M}</b></span>
+          <span>value <b>${Number.isNaN(r.v)?"NaN":r.v}</b></span>
+          <span>ULP <b>${r.ulp.toExponential(2)}</b></span>
+          <span>hex <b>0x${r.hex}</b></span>
+        </div>`;
+      wrap.querySelectorAll('[data-i]').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i;bits[i]=bits[i]?0:1;render();}));
+    };
+    setFloat(.1); render();
+    button(controls,"0.1",()=>{setFloat(.1);render();},"primary");
+    button(controls,"1.0",()=>{setFloat(1);render();},"");
+    button(controls,"+∞",()=>{bits=Array(32).fill(0);bits[0]=0;for(let i=1;i<9;i++)bits[i]=1;render();},"");
+    button(controls,"NaN",()=>{bits=Array(32).fill(0);for(let i=1;i<9;i++)bits[i]=1;bits[9]=1;render();},"rose");
+  });
+
+/* ============================================================
+   13 · SORTING ALGORITHMS
+   ============================================================ */
+rule("sorting","13","Sorting Algorithms","sort : list → sorted list",
+  "Sorting is a sequence of comparisons and swaps. Different algorithms keep different invariants: bubble grows a sorted suffix, quicksort partitions around a pivot, merge sort merges sorted halves.",
+  "An algorithm is not a result; it is a trajectory through states. The invariants tell you why it is correct.",
+  ["databases","search","scheduling"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300);
+    let arr=[], i=0, j=0, sorted=0, timer=null, comparisons=0, swaps=0;
+    const sCmp=stat(controls,"comparisons","0"), sSwp=stat(controls,"swaps","0");
+    const reset=()=>{ arr=Array.from({length:18},()=>10+Math.floor(Math.random()*90)); i=0;j=0;sorted=0;comparisons=0;swaps=0;sCmp.set("0");sSwp.set("0");if(timer){clearInterval(timer);timer=null;} api.redraw(); };
+    const step=()=>{
+      if(sorted>=arr.length-1) return;
+      if(i>=arr.length-1-sorted){ i=0; sorted++; }
+      if(arr[i]>arr[i+1]){ [arr[i],arr[i+1]]=[arr[i+1],arr[i]]; swaps++; sSwp.set(String(swaps)); }
+      comparisons++; sCmp.set(String(comparisons)); i++;
+    };
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(103,232,249,.05)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const bw=(w-50)/arr.length, base=h-42;
+      arr.forEach((v,k)=>{
+        const x=25+k*bw, bh=v/100*(h-90), y=base-bh;
+        const inSorted=k>=arr.length-sorted;
+        const active=k===i||k===i+1;
+        ctx.fillStyle=active?"rgba(251,191,36,.8)":inSorted?"rgba(52,211,153,.7)":"rgba(103,232,249,.55)";
+        if(active) glow(ctx,C.amber,10); else if(inSorted) glow(ctx,C.emerald,6);
+        roundRect(ctx,x+1,y,bw-3,bh,4); ctx.fill(); noGlow(ctx);
+      });
+      mono(ctx,"comparisons: "+comparisons+" · swaps: "+swaps,24,20,9,C.dim);
+      mono(ctx,sorted>=arr.length-1?"sorted":"bubble sort · sorted suffix →",w-24,20,9,sorted>=arr.length-1?C.emerald:C.dim,"right");
+    };
+    const api=register(canvas,draw); reset();
+    button(controls,"Step",step,"primary");
+    button(controls,"Auto",()=>{ if(timer){clearInterval(timer);timer=null;return;} timer=setInterval(step,110); },"");
+    button(controls,"Shuffle",reset,"rose");
+  });
+
+/* ============================================================
+   14 · HASH TABLES
+   ============================================================ */
+rule("hash","14","Hash Tables","h(k) = k mod m",
+  "A hash function maps a key to a bucket. Insertion and lookup become arithmetic plus a short walk. Collisions are not a bug: they are the price of turning an unbounded key space into a finite table.",
+  "Hashing trades order for speed. The load factor decides how often collisions become a problem.",
+  ["databases","caches","sets"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let m=7, buckets=Array.from({length:m},()=>[]), keys=[], timer=null;
+    const sLoad=stat(controls,"load","0.00"), sLong=stat(controls,"longest","0");
+    const hash=k=>{ let h=0; for(const c of k) h=(h*31+c.charCodeAt(0))%m; return h; };
+    const reset=()=>{ buckets=Array.from({length:m},()=>[]); keys=[]; updateStats(); api.redraw(); };
+    const updateStats=()=>{ const load=keys.length/m; const longest=Math.max(0,...buckets.map(b=>b.length)); sLoad.set(load.toFixed(2)); sLong.set(String(longest)); };
+    const insert=()=>{
+      const pool=["cat","dog","fox","owl","bee","ant","elk","ram","yak","cod","emu","bat"];
+      const k=pool[Math.floor(Math.random()*pool.length)]+Math.floor(Math.random()*9);
+      const b=hash(k); buckets[b].push(k); keys.push(k); updateStats(); api.redraw();
+    };
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(167,139,250,.05)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const top=44, rowH=(h-80)/m;
+      for(let b=0;b<m;b++){
+        const y=top+b*rowH;
+        mono(ctx,"["+b+"]",18,y,9,C.dim);
+        ctx.strokeStyle="rgba(148,163,184,.14)"; ctx.beginPath(); ctx.moveTo(48,y); ctx.lineTo(w-24,y); ctx.stroke();
+        buckets[b].forEach((k,idx)=>{
+          const x=56+idx*58;
+          ctx.fillStyle="rgba(103,232,249,.14)"; ctx.strokeStyle=C.cyan; glow(ctx,C.cyan,8);
+          roundRect(ctx,x,y-13,52,26,7); ctx.fill(); ctx.stroke(); noGlow(ctx);
+          mono(ctx,k,x+26,y,9,C.ink,"center");
+          if(idx<buckets[b].length-1){ ctx.strokeStyle="rgba(148,163,184,.35)"; ctx.beginPath(); ctx.moveTo(x+54,y); ctx.lineTo(x+56,y); ctx.stroke(); }
+        });
+      }
+      mono(ctx,"table size m = "+m+" · keys = "+keys.length,w-24,20,9,C.violet,"right");
+    };
+    const api=register(canvas,draw);
+    button(controls,"Insert key",insert,"primary");
+    slider(controls,{label:"Table size",min:3,max:12,step:1,value:m,fmt:v=>v,onInput:v=>{m=v;reset();}});
+    button(controls,"Clear",reset,"rose");
+  });
+
+/* ============================================================
+   15 · GRAPH TRAVERSAL (BFS / DFS)
+   ============================================================ */
+rule("traversal","15","Graph Traversal: BFS / DFS","queue → breadth   ·   stack → depth",
+  "BFS explores the frontier level by level with a queue. DFS follows one path to the end with a stack. The data structure is the algorithm.",
+  "BFS gives shortest paths in unweighted graphs; DFS gives reachability and structure. Choose the container, choose the behaviour.",
+  ["search","compilers","networks"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,320);
+    const nodes=[{x:.18,y:.28},{x:.42,y:.18},{x:.72,y:.22},{x:.28,y:.55},{x:.55,y:.48},{x:.82,y:.52},{x:.38,y:.82},{x:.68,y:.78}];
+    const edges=[[0,1],[1,2],[0,3],[1,4],[2,5],[3,4],[4,5],[3,6],[4,6],[5,7],[6,7]];
+    let mode="BFS", visited=new Set(), frontier=[], current=-1, order=[], timer=null;
+    const sOrder=stat(controls,"order","—");
+    const reset=()=>{ visited=new Set(); frontier=[0]; current=-1; order=[]; sOrder.set("—"); if(timer){clearInterval(timer);timer=null;} api.redraw(); };
+    const step=()=>{
+      if(!frontier.length) return;
+      const n=mode==="BFS"?frontier.shift():frontier.pop();
+      if(visited.has(n)) return;
+      visited.add(n); current=n; order.push(n); sOrder.set(order.join(" → "));
+      for(const [a,b] of edges){ const nb=a===n?b:b===n?a:null; if(nb!==null&&!visited.has(nb)&&!frontier.includes(nb)) frontier.push(nb); }
+      api.redraw();
+    };
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(52,211,153,.05)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const X=n=>60+n.x*(w-120), Y=n=>40+n.y*(h-90);
+      edges.forEach(([a,b])=>{ ctx.strokeStyle="rgba(148,163,184,.2)"; ctx.beginPath(); ctx.moveTo(X(nodes[a]),Y(nodes[a])); ctx.lineTo(X(nodes[b]),Y(nodes[b])); ctx.stroke(); });
+      nodes.forEach((n,i)=>{
+        const x=X(n),y=Y(n), isCur=i===current, isVis=visited.has(i), isFront=frontier.includes(i);
+        ctx.fillStyle=isCur?"rgba(251,191,36,.9)":isVis?"rgba(52,211,153,.8)":isFront?"rgba(103,232,249,.65)":"rgba(15,23,42,.7)";
+        ctx.strokeStyle=isCur?C.amber:isVis?C.emerald:isFront?C.cyan:"rgba(148,163,184,.3)";
+        if(isCur||isFront) glow(ctx,isCur?C.amber:C.cyan,12);
+        ctx.beginPath(); ctx.arc(x,y,13,0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,String(i),x,y,9,C.ink,"center");
+      });
+      mono(ctx,mode==="BFS"?"queue: ["+frontier.join(", ")+"]":"stack: ["+frontier.join(", ")+"]",24,20,9,C.dim);
+      mono(ctx,mode,mode==="BFS"?C.cyan:C.violet,24,38,11,mode==="BFS"?C.cyan:C.violet,800);
+    };
+    const api=register(canvas,draw); reset();
+    seg(controls,["BFS","DFS"],"BFS",v=>{mode=v;reset();});
+    button(controls,"Step",step,"primary");
+    button(controls,"Run",()=>{ if(timer){clearInterval(timer);timer=null;return;} timer=setInterval(step,280); },"");
+    button(controls,"Reset",reset,"rose");
+  });
+
+
+/* ============================================================
+   16 · DIJKSTRA
+   ============================================================ */
+rule("dijkstra","16","Dijkstra's Shortest Path","relax(u,v): d[v] = min(d[v], d[u]+w(u,v))",
+  "Keep the frontier in a priority queue. Repeatedly finalise the closest unvisited node and relax its edges. Nonnegative weights make the greedy choice safe.",
+  "Shortest paths are dynamic programming on a graph: a locally optimal frontier yields a globally optimal distance.",
+  ["routing","maps","networks"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,320);
+    const nodes=[{x:.12,y:.5},{x:.32,y:.22},{x:.32,y:.78},{x:.56,y:.42},{x:.56,y:.84},{x:.82,y:.5}];
+    const edges=[[0,1,4],[0,2,2],[1,2,1],[1,3,5],[2,3,8],[2,4,10],[3,4,2],[3,5,6],[4,5,3]];
+    let dist=[], visited=[], current=-1, timer=null;
+    const sDist=stat(controls,"settled","—");
+    const reset=()=>{ dist=Array(nodes.length).fill(Infinity); dist[0]=0; visited=[]; current=-1; if(timer){clearInterval(timer);timer=null;} sDist.set("0"); api.redraw(); };
+    const step=()=>{
+      let u=-1,best=Infinity;
+      for(let i=0;i<nodes.length;i++) if(!visited.includes(i)&&dist[i]<best){best=dist[i];u=i;}
+      if(u<0) return;
+      visited.push(u); current=u;
+      for(const [a,b,w] of edges){ if(a===u&&dist[b]>dist[u]+w) dist[b]=dist[u]+w; if(b===u&&dist[a]>dist[u]+w) dist[a]=dist[u]+w; }
+      sDist.set(visited.length+" / "+nodes.length+" settled"); api.redraw();
+    };
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(52,211,153,.05)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const X=i=>50+nodes[i].x*(w-100), Y=i=>30+nodes[i].y*(h-70);
+      edges.forEach(([a,b,w])=>{
+        ctx.strokeStyle=visited.includes(a)&&visited.includes(b)?"rgba(52,211,153,.4)":"rgba(148,163,184,.2)";
+        ctx.beginPath(); ctx.moveTo(X(a),Y(a)); ctx.lineTo(X(b),Y(b)); ctx.stroke();
+        mono(ctx,String(w),(X(a)+X(b))/2,(Y(a)+Y(b))/2-8,9,C.dim,"center");
+      });
+      nodes.forEach((n,i)=>{
+        const on=i===current, seen=visited.includes(i);
+        ctx.fillStyle=on?"rgba(251,191,36,.9)":seen?"rgba(52,211,153,.8)":"rgba(15,23,42,.7)";
+        ctx.strokeStyle=on?C.amber:seen?C.emerald:"rgba(148,163,184,.3)"; if(on) glow(ctx,C.amber,12);
+        ctx.beginPath(); ctx.arc(X(i),Y(i),15,0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,String(i),X(i),Y(i)-2,10,C.ink,"center");
+        mono(ctx,dist[i]===Infinity?"∞":dist[i].toString(),X(i),Y(i)+26,9,seen?C.emerald:C.cyan,"center");
+      });
+      mono(ctx,"start 0 · edge weights · node label = distance",24,20,9,C.dim);
+    };
+    const api=register(canvas,draw); reset();
+    button(controls,"Step",step,"primary");
+    button(controls,"Run",()=>{ if(timer){clearInterval(timer);timer=null;return;} timer=setInterval(step,380); },"");
+    button(controls,"Reset",reset,"rose");
+  });
+
+/* ============================================================
+   17 · DYNAMIC PROGRAMMING
+   ============================================================ */
+rule("dp","17","Dynamic Programming","dp[i][j] = dp[i−1][j] + dp[i][j−1]",
+  "A recursive problem with overlapping subproblems. Store each answer once in a table. Exponential recursion becomes a polynomial scan.",
+  "DP is recursion plus memory. The table is the proof that you never solve the same subproblem twice.",
+  ["algorithms","bioinformatics","RL"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="dp-wrap"; stage.appendChild(wrap);
+    const N=6; let obstacles=new Set(["1,2","2,2","3,4"]), dp=Array.from({length:N},()=>Array(N).fill(null)), stepIdx=0, timer=null;
+    const sPaths=stat(controls,"paths","—");
+    const reset=()=>{ obstacles=new Set(["1,2","2,2","3,4"]); dp=Array.from({length:N},()=>Array(N).fill(null)); stepIdx=0; sPaths.set("—"); if(timer){clearInterval(timer);timer=null;} render(); };
+    const fillStep=()=>{
+      const i=Math.floor(stepIdx/N), j=stepIdx%N;
+      if(i>=N) return;
+      if(obstacles.has(i+","+j)) dp[i][j]=0;
+      else if(i===0&&j===0) dp[i][j]=1;
+      else dp[i][j]=(i>0?dp[i-1][j]??0:0)+(j>0?dp[i][j-1]??0:0);
+      stepIdx++;
+      sPaths.set(String(dp[N-1][N-1]??"—"));
+      render();
+    };
+    const render=()=>{
+      wrap.innerHTML="";
+      const grid=document.createElement("div"); grid.className="dp-grid"; grid.style.gridTemplateColumns=`repeat(${N},34px)`;
+      for(let i=0;i<N;i++) for(let j=0;j<N;j++){
+        const c=document.createElement("button"); c.type="button";
+        const obs=obstacles.has(i+","+j), filled=dp[i][j]!==null;
+        c.className="dp-cell"+(filled?" on":"")+(i===N-1&&j===N-1&&filled?" path":"");
+        c.textContent=obs?"×":(filled?dp[i][j]:"");
+        c.title=`(${i},${j})`;
+        c.addEventListener("click",()=>{ if(timer){clearInterval(timer);timer=null;} const k=i+","+j; if(obstacles.has(k))obstacles.delete(k);else obstacles.add(k); dp=Array.from({length:N},()=>Array(N).fill(null)); stepIdx=0; sPaths.set("—"); render(); });
+        grid.appendChild(c);
+      }
+      const info=document.createElement("div"); info.className="float-read";
+      info.innerHTML=`<span>start top-left → end bottom-right</span><span>click a cell to toggle an obstacle</span><span>paths <b>${dp[N-1][N-1]??"—"}</b></span>`;
+      wrap.append(grid,info);
+    };
+    render();
+    button(controls,"Step",fillStep,"primary");
+    button(controls,"Fill table",()=>{ if(timer){clearInterval(timer);timer=null;return;} timer=setInterval(()=>{ if(stepIdx>=N*N){clearInterval(timer);timer=null;return;} fillStep(); },90); },"");
+    button(controls,"Reset",reset,"rose");
+  });
+
+/* ============================================================
+   18 · RECURSION & CALL STACK
+   ============================================================ */
+rule("recursion","18","Recursion & the Call Stack","fact(n) = n · fact(n−1)   ·   fact(0) = 1",
+  "A recursive call does not disappear. It leaves a frame on the stack with its pending work. The stack unwinds in reverse order, multiplying the results back up.",
+  "Recursion is a stack of promises. The base case is what lets the stack finish.",
+  ["parsing","trees","divide and conquer"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="lcalc"; stage.appendChild(wrap);
+    let n=5, step=0, steps=[];
+    const build=()=>{
+      steps=[];
+      for(let k=n;k>=0;k--) steps.push({kind:"push",k,stack:Array.from({length:n-k+1},(_,i)=>n-i)});
+      for(let k=1;k<=n;k++){
+        const value=Array.from({length:k},(_,i)=>i+1).reduce((a,b)=>a*b,1);
+        steps.push({kind:"pop",k,value,stack:Array.from({length:n-k+1},(_,i)=>n-i)});
+      }
+    };
+    const render=()=>{
+      const s=steps[Math.min(step,steps.length-1)];
+      const term=document.createElement("div"); term.className="lterm";
+      term.innerHTML=s.kind==="push"?`calling fact(${s.k})`:`returning fact(${s.k}) = <span class="arg">${s.value}</span>`;
+      const stack=document.createElement("div"); stack.className="lsteps";
+      s.stack.forEach((k,i)=>{
+        const d=document.createElement("div"); d.className="lstep on";
+        d.textContent=k===0?`frame ${i+1}: fact(0) = 1  · base case`:`frame ${i+1}: fact(${k})  · waiting for fact(${k-1})`;
+        stack.appendChild(d);
+      });
+      wrap.innerHTML=""; wrap.append(term,stack);
+    };
+    build(); render();
+    slider(controls,{label:"n",min:3,max:7,step:1,value:n,fmt:v=>v,onInput:v=>{n=v;build();step=0;render();}});
+    button(controls,"Step",()=>{step=Math.min(steps.length-1,step+1);render();},"primary");
+    button(controls,"Reset",()=>{step=0;render();},"rose");
+  });
+
+/* ============================================================
+   19 · CONCURRENCY & RACE CONDITIONS
+   ============================================================ */
+rule("race","19","Concurrency & Race Conditions","read · modify · write is not atomic",
+  "Two threads increment the same counter. Interleave their read-modify-write steps and one update can be lost. A lock turns the three steps into one atomic action.",
+  "Concurrency bugs are not about wrong instructions; they are about the order of correct instructions.",
+  ["OS","databases","distributed systems"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="thread-wrap"; stage.appendChild(wrap);
+    let counter=0, lock=true, A={pc:0,local:0,done:false}, B={pc:0,local:0,done:false}, log=[], timer=null;
+    const sCounter=stat(controls,"counter","0"), sExpected=stat(controls,"expected","2");
+    const reset=()=>{ counter=0;A={pc:0,local:0,done:false};B={pc:0,local:0,done:false};log=[];sCounter.set("0");sExpected.set("2");if(timer){clearInterval(timer);timer=null;} render(); };
+    const stepThread=(t)=>{
+      const th=t==="A"?A:B;
+      if(th.done) return;
+      if(lock){
+        th.local=counter; th.local++; counter=th.local; th.done=true;
+        log.push(`thread ${t}: atomic read–inc–write → ${counter}`);
+      } else {
+        if(th.pc===0){ th.local=counter; log.push(`thread ${t}: read ${th.local}`); th.pc=1; }
+        else if(th.pc===1){ th.local++; log.push(`thread ${t}: local = ${th.local}`); th.pc=2; }
+        else { counter=th.local; log.push(`thread ${t}: write ${counter}`); th.done=true; }
+      }
+      sCounter.set(String(counter)); render();
+    };
+    const render=()=>{
+      const bar=(t,th)=>{
+        const total=lock?1:3, p=lock?(th.done?1:0):th.pc/3;
+        return `<div class="thread-row"><span style="font:800 10px var(--mono);color:${t==='A'?C.cyan:C.rose}">T${t}</span><div class="thread-line"><div class="thread-fill ${t==='B'?'b':''}" style="width:${Math.round(p*100)}%"></div></div><span style="font:700 10px var(--mono);color:var(--dim)">${th.done?'done':(lock?'ready':'step '+th.pc)}</span></div>`;
+      };
+      wrap.innerHTML=`<div class="counter-box"><b>${counter}</b><span>shared counter</span></div>
+        <div class="thread-row"><span style="font:800 10px var(--mono);color:var(--dim)">A</span><div class="thread-line"><div class="thread-fill" style="width:${lock?(A.done?100:0):A.pc/3*100}%"></div></div></div>
+        <div class="thread-row"><span style="font:800 10px var(--mono);color:var(--dim)">B</span><div class="thread-line"><div class="thread-fill b" style="width:${lock?(B.done?100:0):B.pc/3*100}%"></div></div></div>
+        <div class="lsteps" style="max-height:120px;overflow:auto">${log.slice(-6).map(x=>`<div class="lstep on">${x}</div>`).join("")}</div>
+        <div class="float-read"><span>expected final <b>2</b></span><span>actual <b style="color:${counter===2?'var(--emerald)':'var(--rose)'}">${counter}</b></span><span>${counter===2?'no lost update':'lost update!'}</span></div>`;
+    };
+    render();
+    toggle(controls,"Lock",true,on=>{lock=on;reset();});
+    button(controls,"Thread A",()=>stepThread("A"),"primary");
+    button(controls,"Thread B",()=>stepThread("B"),"primary");
+    button(controls,"Auto interleave",()=>{ if(timer){clearInterval(timer);timer=null;return;} timer=setInterval(()=>{ if(A.done&&B.done){clearInterval(timer);timer=null;return;} stepThread(Math.random()<.5?"A":"B"); },350); },"");
+    button(controls,"Reset",reset,"rose");
+  });
+
+/* ============================================================
+   20 · RELATIONAL ALGEBRA / SQL JOIN
+   ============================================================ */
+rule("sql","20","Relational Algebra / SQL Join","R ⋈ S = { (r,s) ∈ R×S : θ(r,s) }",
+  "A relation is a set of tuples. Selection filters rows, projection keeps columns, and join combines two relations on a predicate. SQL is a syntax for this algebra.",
+  "A join is not a loop; it is a set operation. The predicate decides which pairs survive.",
+  ["databases","query planners","data pipelines"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="sql-wrap"; stage.appendChild(wrap);
+    let mode="inner";
+    const employees=[[1,"Ada",10],[2,"Bob",20],[3,"Cy",10],[4,"Dee",null]];
+    const departments=[[10,"Eng"],[20,"Sales"],[30,"HR"]];
+    const render=()=>{
+      const rows=[];
+      for(const e of employees){
+        const d=departments.find(x=>x[0]===e[2]);
+        if(mode==="inner"&&!d) continue;
+        rows.push([e[0],e[1],e[2],d?d[1]:"NULL"]);
+      }
+      wrap.innerHTML=`
+        <div class="sql-tables">
+          <table class="sql-table"><tr><th>id</th><th>name</th><th>dept_id</th></tr>${employees.map(e=>`<tr><td>${e[0]}</td><td>${e[1]}</td><td>${e[2]??"NULL"}</td></tr>`).join("")}</table>
+          <table class="sql-table"><tr><th>id</th><th>dept</th></tr>${departments.map(d=>`<tr><td>${d[0]}</td><td>${d[1]}</td></tr>`).join("")}</table>
+        </div>
+        <div class="sql-result">
+          <div style="color:var(--cyan);font-weight:800;margin-bottom:6px">${mode==="inner"?"INNER JOIN":"LEFT JOIN"} employees ⋈ departments ON dept_id = id</div>
+          <table class="sql-table"><tr><th>id</th><th>name</th><th>dept_id</th><th>dept</th></tr>${rows.map(r=>`<tr class="join"><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]??"NULL"}</td><td>${r[3]}</td></tr>`).join("")}</table>
+          <div style="margin-top:8px">rows: <b>${rows.length}</b> · predicate: employees.dept_id = departments.id</div>
+        </div>`;
+    };
+    render();
+    seg(controls,["Inner","Left"],"Inner",v=>{mode=v.toLowerCase();render();});
+    button(controls,"Inner join",()=>{mode="inner";render();},"primary");
+    button(controls,"Left join",()=>{mode="left";render();},"rose");
+  });
+
+
+
+const gallery=$("#gallery"), nav=$("#nav");
+RULES.forEach(d=>{
+  const card=document.createElement("section");
+  card.className="ruleCard"; card.id="r-"+d.id;
+  card.innerHTML=`<div class="ruleHead"><div class="ruleTag">${d.num}</div><div><h2>${d.title}</h2><p class="signature">${d.signature}</p><p>${d.blurb}</p></div></div><div class="stage" id="stage-${d.id}"></div><div class="controls" id="ctrl-${d.id}"></div><div class="why"><div><b>Atom.</b> ${d.why}</div><div class="used">Used by: ${d.used.map(u=>`<code>${u}</code>`).join(" ")}</div></div>`;
+  gallery.appendChild(card);
+  const chip=document.createElement("a"); chip.href="#r-"+d.id; chip.className="chip"; chip.textContent=d.num+" · "+d.title; nav.appendChild(chip);
+  d.build($("#stage-"+d.id),$("#ctrl-"+d.id),card);
+});
+document.querySelectorAll(".ruleCard").forEach(c=>new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add("in");}),{rootMargin:"40px"}).observe(c));
+})();
+</script>
+</body>
+</html>

@@ -68,6 +68,8 @@ canvas{display:block;width:100%}
 .rule:hover{opacity:.8;background:rgba(103,232,249,.04)}
 .rule.is-on{opacity:1;border-color:rgba(103,232,249,.45);background:rgba(103,232,249,.07)}
 .rule.is-past{opacity:.68}
+body.core-mode .rule{opacity:.10}
+body.core-mode .rule.is-core{opacity:1;border-color:rgba(103,232,249,.5);background:rgba(103,232,249,.08)}
 .rule .p{font:800 9.5px/1 var(--mono);color:var(--cyan);padding-top:2px}
 .rule .title{font:700 11.5px/1.3 var(--sans);color:var(--ink)}
 .rule .sig{font:600 9.5px/1.35 var(--mono);color:var(--dim);margin-top:2px;overflow-wrap:anywhere}
@@ -78,7 +80,8 @@ canvas{display:block;width:100%}
 .legend i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:0}
 @media(max-width:1080px){
   main{grid-template-columns:1fr 1fr}
-  .rulebook{grid-column:1/-1;max-height:none;flex-direction:row;overflow-x:auto}
+  main > .panel:first-child{grid-column:1/-1}
+  .rulebook{max-height:none;flex-direction:row;overflow-x:auto}
   .rule{flex:0 0 190px}
 }
 @media(max-width:720px){
@@ -105,6 +108,7 @@ canvas{display:block;width:100%}
       <button class="btn primary" id="next" type="button">Add rule →</button>
       <button class="btn" id="auto" type="button">Auto build</button>
       <button class="btn" id="reset" type="button">Reset</button>
+      <button class="btn" id="core" type="button">Irreducible core</button>
       <span class="spacer"></span>
       <span class="legend"><span><i style="background:var(--cyan)"></i>current rule</span><span><i style="background:var(--violet)"></i>derived term</span><span><i style="background:var(--emerald)"></i>geometry</span></span>
     </div>
@@ -161,7 +165,8 @@ const STAGES = [
 ];
 const N = STAGES.length - 1;
 
-const state = {t:0, target:0, auto:false, autoTimer:0};
+const state = {t:0, target:0, auto:false, autoTimer:0, core:false};
+const CORE = new Set([0,1,4,8]);
 const termCanvas = $("#term-canvas");
 const geoCanvas = $("#geo-canvas");
 const tctx = termCanvas.getContext("2d");
@@ -189,7 +194,7 @@ function buildRulebook(){
   STAGES.forEach((s,i)=>{
     if(i===0) return;
     const row=document.createElement("div");
-    row.className="rule"; row.dataset.i=i;
+    row.className="rule"; row.dataset.i=i; row.dataset.core=CORE.has(i-1)? "1":"0"; row.classList.toggle("is-core",CORE.has(i-1));
     row.innerHTML=`<span class="p">${s.p}</span><span><span class="title">${s.title}</span><span class="sig">${s.sig}</span></span>`;
     row.addEventListener("click",()=>setStage(i));
     book.appendChild(row);
@@ -205,10 +210,14 @@ function buildRulebook(){
 }
 buildRulebook();
 
-function setStage(i){
-  state.target=clamp(i,0,N);
-  state.auto=false; $("#auto").classList.remove("is-on");
+function stopAuto(){
+  state.auto=false;
   clearInterval(state.autoTimer);
+  $("#auto").classList.remove("is-on");
+}
+function setStage(i,keepAuto=false){
+  state.target=clamp(i,0,N);
+  if(!keepAuto) stopAuto();
   updateHud();
 }
 function updateHud(){
@@ -223,19 +232,33 @@ function updateHud(){
   $$(".rule").forEach(r=>{ const i=+r.dataset.i; r.classList.toggle("is-on",i===state.target); r.classList.toggle("is-past",i<state.target); });
   $$(".pdot").forEach((b,i)=>{ b.classList.toggle("is-on",i===state.target); b.classList.toggle("is-past",i<state.target); });
   const row=$(`.rule[data-i="${state.target}"]`); if(row) row.scrollIntoView({block:"nearest",inline:"nearest"});
+  if(state.core){
+    $("#judgment-rule").textContent="core = P0 · P1 · P4 · P8";
+    $("#caption").innerHTML="<b>The irreducible core.</b> A scalar field, a tuple constructor, pointwise functions and composition. Softmax, residual, attention, loss, gradient and update are derived.";
+  }
 }
 updateHud();
 
 $("#next").addEventListener("click",()=>setStage(state.target+1));
 $("#prev").addEventListener("click",()=>setStage(state.target-1));
 $("#reset").addEventListener("click",()=>setStage(0));
+$("#core").addEventListener("click",()=>{
+  state.core=!state.core;
+  document.body.classList.toggle("core-mode",state.core);
+  $("#core").classList.toggle("is-on",state.core);
+  $("#core").textContent=state.core?"Show all rules":"Irreducible core";
+  if(state.core){
+    $("#judgment-rule").textContent="core = P0 · P1 · P4 · P8";
+    $("#caption").innerHTML="<b>The irreducible core.</b> A scalar field, a tuple constructor, pointwise functions and composition. Softmax, residual, attention, loss, gradient and update are derived.";
+  } else updateHud();
+});
 $("#auto").addEventListener("click",()=>{
-  if(state.auto){ state.auto=false; clearInterval(state.autoTimer); $("#auto").classList.remove("is-on"); return; }
+  if(state.auto){ stopAuto(); return; }
+  if(state.target>=N) setStage(0, true);
   state.auto=true; $("#auto").classList.add("is-on");
-  if(state.target>=N) setStage(0);
   state.autoTimer=setInterval(()=>{
-    if(state.target>=N){ clearInterval(state.autoTimer); state.auto=false; $("#auto").classList.remove("is-on"); return; }
-    setStage(state.target+1); state.auto=true; $("#auto").classList.add("is-on");
+    if(state.target>=N){ stopAuto(); return; }
+    setStage(state.target+1, true);
   },1700);
 });
 window.addEventListener("keydown",e=>{
@@ -243,7 +266,238 @@ window.addEventListener("keydown",e=>{
   if(e.key==="ArrowLeft"){ e.preventDefault(); setStage(state.target-1); }
 });
 
-/*__DRAW__*/
+
+const PALETTE=[C.cyan,C.violet,C.rose,C.amber,C.emerald,C.blue];
+const mixHex=(a,b,t)=>{ const A=hex(a),B=hex(b); return "#"+[0,1,2].map(i=>Math.round(lerp(A[i],B[i],t)).toString(16).padStart(2,"0")).join(""); };
+const NODES=[
+  {x:70,y:62,label:"P0 · ℝ"},{x:230,y:62,label:"P1 · ℝⁿ"},{x:390,y:62,label:"P2 · ⟨·,·⟩"},{x:550,y:62,label:"P3 · W"},{x:710,y:62,label:"P4 · σ"},{x:870,y:62,label:"P5 · softmax"},
+  {x:150,y:178,label:"P6 · Σ pᵢvᵢ"},{x:320,y:178,label:"P7 · x+f(x)"},{x:490,y:178,label:"P8 · ∘"},{x:660,y:178,label:"P9 · L"},{x:830,y:178,label:"P10 · ∇L"},
+  {x:280,y:300,label:"P11 · θ′"},{x:520,y:300,label:"P12 · token↔vec"},{x:760,y:300,label:"P13 · transformer"}
+];
+const EDGES=[[0,1],[1,2],[2,3],[3,4],[0,5],[2,5],[3,6],[4,6],[1,7],[7,8],[8,9],[0,10],[10,11],[11,12],[3,12],[5,12],[12,13],[6,13],[9,13]];
+
+function drawTerm(ctx,w,h,now){
+  ctx.clearRect(0,0,w,h);
+  const bg=ctx.createRadialGradient(w*.4,h*.1,10,w*.4,h*.1,w*.9);
+  bg.addColorStop(0,"rgba(103,232,249,.05)"); bg.addColorStop(1,"rgba(2,6,23,0)");
+  ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+  const px=x=>24+x/1000*(w-48), py=y=>26+y/400*(h-52);
+  const t=state.t, cur=Math.floor(t), coreMode=state.core;
+  const appear=i=>clamp(t-i,0,1);
+  // edges
+  EDGES.forEach(([a,b])=>{
+    const A=NODES[a],B=NODES[b], al=Math.min(appear(a),appear(b));
+    if(al<=0.01) return;
+    ctx.strokeStyle=rgba(a<6?C.cyan:C.violet,coreMode&&!(CORE.has(a)&&CORE.has(b))?.04:(.08+.33*al));
+    ctx.lineWidth=1.1;
+    ctx.beginPath(); ctx.moveTo(px(A.x),py(A.y)+17); ctx.lineTo(px(B.x),py(B.y)-17); ctx.stroke();
+  });
+  // nodes
+  NODES.forEach((n,i)=>{
+    const al=appear(i), x=px(n.x), y=py(n.y);
+    const on=i===cur-1;
+    const pulse=on?1+.035*Math.sin(now*4):1;
+    ctx.save();
+    ctx.globalAlpha=coreMode&&!CORE.has(i)?.08:(.12+.88*al);
+    ctx.translate(x,y); ctx.scale(pulse,pulse);
+    if(on){ glow(ctx,C.cyan,22); }
+    ctx.fillStyle=on?"rgba(103,232,249,.16)":"rgba(15,23,42,.62)";
+    ctx.strokeStyle=on?C.cyan:"rgba(148,163,184,.24)";
+    ctx.lineWidth=on?1.8:1;
+    roundRect(ctx,-58,-17,116,34,9); ctx.fill(); ctx.stroke();
+    noGlow(ctx);
+    mono(ctx,n.label,0,0,9.5,on?C.ink:C.muted,"center");
+    ctx.restore();
+  });
+  // current marker
+  if(cur>=1&&cur<=NODES.length){
+    const n=NODES[cur-1], x=px(n.x), y=py(n.y);
+    const r=24+4*Math.sin(now*4);
+    ctx.strokeStyle=rgba(C.cyan,.22); ctx.setLineDash([3,5]);
+    ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+  }
+  mono(ctx,"term graph · reveal by derivation",20,16,9,C.dim);
+}
+
+const PTS=[];
+for(let i=0;i<30;i++) for(let j=0;j<20;j++){
+  PTS.push({x:-1+2*i/29,y:-1+2*j/19,seed:(i*37+j*17)%97});
+}
+for(let i=0;i<220;i++){
+  const a=i/220*TAU, r=.92+.13*Math.sin(i*3.3);
+  PTS.push({x:Math.cos(a)*r,y:Math.sin(a)*r,seed:i});
+}
+const M=p=>[ .88*p[0]-.34*p[1]+.06, .26*p[0]+.90*p[1]-.04 ];
+const tanhV=p=>[Math.tanh(1.5*p[0]),Math.tanh(1.5*p[1])];
+const ATTRACT=[[-.72,.55],[.72,.42],[0,-.82]];
+const ACOL=[C.cyan,C.violet,C.rose];
+function mixAttractors(p,blend=.35,k=1){
+  const scores=ATTRACT.map(a=>-( (p[0]-a[0])**2+(p[1]-a[1])**2 )*k);
+  const mx=Math.max(...scores), ex=scores.map(s=>Math.exp(s-mx)), sum=ex.reduce((a,b)=>a+b,0), w=ex.map(e=>e/sum);
+  const q=[0,0]; ATTRACT.forEach((a,i)=>{q[0]+=w[i]*a[0];q[1]+=w[i]*a[1];});
+  return [lerp(p[0],q[0],blend),lerp(p[1],q[1],blend)];
+}
+function block(p){
+  const q=M(p), s=tanhV(q);
+  return [p[0]+.55*(s[0]-p[0]), p[1]+.55*(s[1]-p[1])];
+}
+function baseStage(p){ return [p[0],p[1]]; }
+function pointAt(stage,p){
+  if(stage<=0) return [p[0]*.15,p[1]*.15];
+  if(stage===1) return [p[0],0];
+  if(stage===2||stage===3) return [p[0],p[1]];
+  if(stage===4) return M(p);
+  if(stage===5||stage===6) return tanhV(M(p));
+  if(stage===7) return mixAttractors(tanhV(M(p)),.38,1.2);
+  if(stage===8){
+    const q=mixAttractors(tanhV(M(p)),.38,1.2);
+    return [q[0]+.16*Math.sin(2*q[1]+1.2), q[1]+.16*Math.cos(2*q[0]+.8)];
+  }
+  if(stage===9||stage===10||stage===11||stage===12||stage===13){
+    const q=mixAttractors(tanhV(M(p)),.38,1.2);
+    const r=[q[0]+.16*Math.sin(2*q[1]+1.2),q[1]+.16*Math.cos(2*q[0]+.8)];
+    return block(r);
+  }
+  const q=mixAttractors(tanhV(M(p)),.38,1.2);
+  const r=[q[0]+.16*Math.sin(2*q[1]+1.2),q[1]+.16*Math.cos(2*q[0]+.8)];
+  let z=block(r); z=block(z); z=block(z); return z;
+}
+function colorAt(stage,p,q){
+  const r=clamp(Math.hypot(q[0],q[1]),0,1.4)/1.4;
+  if(stage<=0) return C.dim;
+  if(stage===1) return mixHex(C.blue,C.rose,(p[0]+1)/2);
+  if(stage===2) return mixHex(C.cyan,C.violet,r);
+  if(stage===3){ const d=(p[0]*.7+p[1]*.7+1.4)/2.8; return mixHex(C.rose,C.cyan,clamp(d,0,1)); }
+  if(stage===4) return mixHex(C.cyan,C.emerald,r);
+  if(stage===5) return mixHex(C.amber,C.violet,r);
+  if(stage===6){
+    const scores=[q[0]*1.4,q[1]*1.4,(-q[0]-q[1])*1.4];
+    const mx=Math.max(...scores), ex=scores.map(v=>Math.exp(v-mx)), sum=ex.reduce((a,b)=>a+b,0), w=ex.map(v=>v/sum);
+    const c12=mixHex(ACOL[1],ACOL[2],w[2]/Math.max(.001,w[1]+w[2]));
+    return mixHex(ACOL[0],c12,w[0]);
+  }
+  if(stage===7){
+    let best=0,bd=1e9; ATTRACT.forEach((a,i)=>{const d=(q[0]-a[0])**2+(q[1]-a[1])**2;if(d<bd){bd=d;best=i;}});
+    return ACOL[best];
+  }
+  if(stage===8){
+    const d=Math.hypot(q[0]-p[0],q[1]-p[1]);
+    return mixHex(C.violet,C.cyan,clamp(d,0,1));
+  }
+  if(stage===9) return mixHex(C.cyan,C.rose,(p.seed%7)/6);
+  if(stage===10){ const d=Math.hypot(q[0]-.2,q[1]-.1); return mixHex(C.emerald,C.rose,clamp(d,0,1.2)/1.2); }
+  if(stage===11){ const g=Math.hypot(q[0]-p[0],q[1]-p[1]); return mixHex(C.emerald,C.amber,clamp(g,0,1)); }
+  if(stage===12) return PALETTE[p.seed%PALETTE.length];
+  return mixHex(C.cyan,C.violet,r);
+}
+function drawGeo(ctx,w,h,now){
+  ctx.clearRect(0,0,w,h);
+  const bg=ctx.createRadialGradient(w*.5,h*.45,20,w*.5,h*.45,w*.8);
+  bg.addColorStop(0,"rgba(103,232,249,.05)"); bg.addColorStop(1,"rgba(2,6,23,0)");
+  ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+  const S=Math.min(w,h)*.36, cx=w*.5, cy=h*.52;
+  const t=state.t, s0=Math.floor(t), s1=Math.min(N,s0+1), f=ease(t-s0);
+  // axes
+  ctx.strokeStyle="rgba(148,163,184,.10)"; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(cx-S,cy); ctx.lineTo(cx+S,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,cy-S); ctx.lineTo(cx,cy+S); ctx.stroke();
+  // point cloud
+  const alpha=clamp(t*2,0,.9);
+  PTS.forEach((p,idx)=>{
+    const a=pointAt(s0,p), b=pointAt(s1,p);
+    const q=[lerp(a[0],b[0],f),lerp(a[1],b[1],f)];
+    const col=mixHex(colorAt(s0,p,a),colorAt(s1,p,b),f);
+    const x=cx+q[0]*S, y=cy-q[1]*S;
+    if(x<-8||x>w+8||y<-8||y>h+8) return;
+    ctx.globalAlpha=alpha*(.38+.5*(p.seed%11)/10);
+    ctx.fillStyle=col;
+    ctx.beginPath(); ctx.arc(x,y,1.5,0,TAU); ctx.fill();
+    if(idx%41===0){ ctx.globalAlpha=alpha*.35; glow(ctx,col,8); ctx.beginPath(); ctx.arc(x,y,2.2,0,TAU); ctx.fill(); noGlow(ctx); }
+  });
+  ctx.globalAlpha=1;
+  // stage overlays fade with proximity to that stage
+  for(let s=1;s<=N;s++){
+    const oa=clamp(1-Math.abs(t-s),0,1); if(oa<.02) continue;
+    drawOverlay(ctx,w,h,cx,cy,S,s,oa,now);
+  }
+  // a soft vignette label
+  mono(ctx,"geometry of the current term",16,16,9,C.dim);
+  if(t<.15){ text(ctx,"∅",cx,cy,38,C.dim,800,"center"); }
+}
+
+function drawOverlay(ctx,w,h,cx,cy,S,s,oa,now){
+  ctx.save(); ctx.globalAlpha=oa;
+  if(s===3){
+    const d=[.72,.69];
+    ctx.strokeStyle=rgba(C.rose,.7); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(cx-d[0]*S*.8,cy+d[1]*S*.8); ctx.lineTo(cx+d[0]*S*.8,cy-d[1]*S*.8); ctx.stroke();
+    mono(ctx,"⟨·,·⟩ direction",cx+d[0]*S*.8+8,cy-d[1]*S*.8-8,9,C.rose);
+  }
+  if(s===4){
+    ctx.strokeStyle=rgba(C.emerald,.7); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.rect(cx-S,cy-S,S,S); ctx.stroke();
+    const A=M([0,0]),B=M([1,0]),C2=M([1,1]),D=M([0,1]);
+    ctx.strokeStyle="rgba(103,232,249,.8)"; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(cx+A[0]*S,cy-A[1]*S); ctx.lineTo(cx+B[0]*S,cy-B[1]*S); ctx.lineTo(cx+C2[0]*S,cy-C2[1]*S); ctx.lineTo(cx+D[0]*S,cy-D[1]*S); ctx.closePath(); ctx.stroke();
+    mono(ctx,"W",cx+C2[0]*S+8,cy-C2[1]*S-8,10,C.cyan);
+  }
+  if(s===5){
+    ctx.strokeStyle=rgba(C.amber,.65); ctx.lineWidth=1.6;
+    ctx.beginPath();
+    for(let i=0;i<=100;i++){ const x=-1.3+2.6*i/100, y=Math.tanh(2*x); const X=cx+x*S*.8,Y=cy-y*S*.8; if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); }
+    ctx.stroke(); mono(ctx,"σ",cx+1.3*S*.8+8,cy-Math.tanh(2.6)*S*.8-8,11,C.amber);
+  }
+  if(s===6){
+    const tx=cx+S*1.02, ty=cy+S*.55, R=S*.36;
+    const V=[0,1,2].map(i=>{const a=-Math.PI/2+i*TAU/3;return [tx+Math.cos(a)*R,ty+Math.sin(a)*R];});
+    ctx.strokeStyle="rgba(148,163,184,.35)"; ctx.beginPath(); ctx.moveTo(V[0][0],V[0][1]); ctx.lineTo(V[1][0],V[1][1]); ctx.lineTo(V[2][0],V[2][1]); ctx.closePath(); ctx.stroke();
+    ctx.fillStyle=rgba(C.violet,.85); glow(ctx,C.violet,10); ctx.beginPath(); ctx.arc((V[0][0]+V[1][0]+V[2][0])/3,(V[0][1]+V[1][1]+V[2][1])/3,5,0,TAU); ctx.fill(); noGlow(ctx);
+    mono(ctx,"Δ",tx,ty-R-8,10,C.violet,"center");
+  }
+  if(s===7){
+    ATTRACT.forEach((a,i)=>{ const x=cx+a[0]*S, y=cy-a[1]*S; ctx.fillStyle=ACOL[i]; glow(ctx,ACOL[i],12); ctx.beginPath(); ctx.arc(x,y,6,0,TAU); ctx.fill(); noGlow(ctx); mono(ctx,"v"+(i+1),x+10,y-8,9,ACOL[i]); });
+  }
+  if(s===8){
+    for(let i=0;i<PTS.length;i+=47){
+      const p=PTS[i], q=mixAttractors(tanhV(M(p)),.38,1.2);
+      const r=[q[0]+.16*Math.sin(2*q[1]+1.2),q[1]+.16*Math.cos(2*q[0]+.8)];
+      const x1=cx+q[0]*S,y1=cy-q[1]*S,x2=cx+r[0]*S,y2=cy-r[1]*S;
+      ctx.strokeStyle=rgba(C.violet,.4); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    }
+  }
+  if(s===9){
+    mono(ctx,"g ∘ f",cx,cy-S-14,12,C.cyan,"center");
+    ctx.strokeStyle=rgba(C.violet,.4); ctx.setLineDash([4,5]); ctx.beginPath(); ctx.arc(cx,cy,S*1.08,-.8,.8); ctx.stroke(); ctx.setLineDash([]);
+  }
+  if(s===10){
+    const tx=.2,ty=.1; const x=cx+tx*S,y=cy-ty*S;
+    ctx.strokeStyle=rgba(C.rose,.45); ctx.setLineDash([4,5]);
+    for(let r=12;r<=S*.9;r+=22){ ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.stroke(); }
+    ctx.setLineDash([]); ctx.fillStyle=C.rose; glow(ctx,C.rose,14); ctx.beginPath(); ctx.arc(x,y,5,0,TAU); ctx.fill(); noGlow(ctx);
+    mono(ctx,"L",x+10,y-8,10,C.rose);
+  }
+  if(s===11){
+    for(let i=0;i<PTS.length;i+=53){
+      const p=PTS[i]; const a=pointAt(9,p); const b=pointAt(9,{x:p.x+.06,y:p.y+.04});
+      const x1=cx+a[0]*S,y1=cy-a[1]*S,x2=cx+b[0]*S,y2=cy-b[1]*S;
+      ctx.strokeStyle=rgba(C.emerald,.42); ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    }
+  }
+  if(s===12){
+    for(let i=0;i<4;i++){
+      const p=PTS[i*37%PTS.length]; const q=pointAt(9,p); const x=cx+q[0]*S,y=cy-q[1]*S;
+      const wd=42, ht=18; ctx.fillStyle="rgba(15,23,42,.85)"; ctx.strokeStyle=PALETTE[i]; roundRect(ctx,x-21,y-9,wd,ht,6); ctx.fill(); ctx.stroke();
+      mono(ctx,["cat","dog","mat","sat"][i],x,y,8,PALETTE[i],"center");
+    }
+  }
+  if(s===13||s===14){
+    ctx.strokeStyle=rgba(C.cyan,.35); ctx.lineWidth=1.5; ctx.setLineDash([6,6]);
+    ctx.beginPath(); ctx.arc(cx,cy,S*1.12,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+    mono(ctx,"Transformer",cx,cy-S*1.12-10,11,C.cyan,"center");
+  }
+  ctx.restore();
+}
+
 
 function draw(now){
   state.t += (state.target - state.t) * .09;
