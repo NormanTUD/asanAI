@@ -220,14 +220,26 @@
 			});
 			ops.forEach(function (op, i) {
 				var y = 20 + i * 26;
-				var x1 = X(op.from), x2 = X(op.to);
-				var dir = x2 >= x1 ? 1 : -1;
-				ctx.strokeStyle = op.color || c.blue;
+				var lo = Math.min(op.from, op.to), hi = Math.max(op.from, op.to);
+				var x1 = X(lo), x2 = X(hi);
+				var color = op.color || c.blue;
+				var guideTop = y + 4, guideBottom = axisY - 30;
+				if (guideBottom > guideTop) {
+					ctx.save();
+					ctx.globalAlpha = 0.45;
+					ctx.setLineDash([3, 4]);
+					ctx.strokeStyle = color;
+					ctx.lineWidth = 1;
+					ctx.beginPath(); ctx.moveTo(x1, guideTop); ctx.lineTo(x1, guideBottom); ctx.stroke();
+					ctx.beginPath(); ctx.moveTo(x2, guideTop); ctx.lineTo(x2, guideBottom); ctx.stroke();
+					ctx.restore();
+				}
+				ctx.strokeStyle = color;
 				ctx.lineWidth = 1.6;
 				ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x2, y); ctx.stroke();
-				ctx.fillStyle = op.color || c.blue;
+				ctx.fillStyle = color;
 				ctx.beginPath();
-				ctx.moveTo(x2, y); ctx.lineTo(x2 - dir * 8, y - 4); ctx.lineTo(x2 - dir * 8, y + 4); ctx.fill();
+				ctx.moveTo(x2, y); ctx.lineTo(x2 - 8, y - 4); ctx.lineTo(x2 - 8, y + 4); ctx.fill();
 				ctx.font = "600 10px Barlow, system-ui, sans-serif";
 				ctx.textAlign = "center";
 				ctx.fillText(op.label, (x1 + x2) / 2, y - 6);

@@ -14,6 +14,13 @@ DONE 1D line: stop showing "Cold + 25 = Lukewarm" / "Kalt + 25 = Lauwarm".
      "Heiß − Lauwarm = 70", "Lauwarm − Kalt = 25"). Update the
      embeddinglab demo and the intuition 1D line.
 
+DONE embeddinglab 1D line: the relation arrows were detached from the points and
+     the plain canvas labels left their direction ambiguous. Each arrow now runs
+     between its two named points with dashed guides down to the axis, and the
+     two differences are shown as Temml display formulas with two-level
+     underbraces that name the words (Heiß/Lauwarm/Kalt · Hot/Lukewarm/Cold) and
+     the result. The caption no longer repeats the arithmetic.
+
 DONE Remove the "What the coordinate means" fieldnotes (temperature neuron /
      embedding is literal) and replace it with an aha block: words can be
      given numbers in a meaningful way, and then you can calculate with them.

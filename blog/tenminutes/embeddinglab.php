@@ -1,3 +1,12 @@
+<?php
+$oned_tex = (function_exists('tm_lang') && tm_lang() === 'de') ? [
+	"\\underbrace{\\underbrace{100}_{\\text{Heiß}} - \\underbrace{30}_{\\text{Lauwarm}}}_{\\text{Temperaturunterschied}} = \\underbrace{70}_{\\text{Abstand auf der Achse}}",
+	"\\underbrace{\\underbrace{30}_{\\text{Lauwarm}} - \\underbrace{5}_{\\text{Kalt}}}_{\\text{Temperaturunterschied}} = \\underbrace{25}_{\\text{Abstand auf der Achse}}"
+] : [
+	"\\underbrace{\\underbrace{100}_{\\text{Hot}} - \\underbrace{30}_{\\text{Lukewarm}}}_{\\text{temperature difference}} = \\underbrace{70}_{\\text{distance on the axis}}",
+	"\\underbrace{\\underbrace{30}_{\\text{Lukewarm}} - \\underbrace{5}_{\\text{Cold}}}_{\\text{temperature difference}} = \\underbrace{25}_{\\text{distance on the axis}}"
+];
+?>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -69,7 +78,11 @@
 							</div>
 							<div class="demo-body">
 								<canvas class="demo-canvas" id="oned-canvas" style="height:150px" aria-label="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Eine Temperaturlinie mit Gefrierpunkt bei -30, Kalt bei 5, Lauwarm bei 30 und Heiß bei 100' : 'A temperature line with Freezing at -30, Cold at 5, Lukewarm at 30, and Hot at 100'; ?>"></canvas>
-								<p class="meadow-caption" style="color:var(--tm-muted)"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Heiß − Lauwarm = 70; Lauwarm − Kalt = 25. Dieselbe Achse kann Wörter ordnen, aber sie trägt nur eine Relation.' : 'Hot − Lukewarm = 70; Lukewarm − Cold = 25. The same axis can order words, but it can only carry one relation.'; ?></p>
+								<div class="emb-formula" id="oned-equation" aria-live="polite">
+									<div class="emb-equation" data-tex="<?php echo htmlspecialchars($oned_tex[0], ENT_QUOTES, 'UTF-8'); ?>"></div>
+									<div class="emb-equation" data-tex="<?php echo htmlspecialchars($oned_tex[1], ENT_QUOTES, 'UTF-8'); ?>"></div>
+								</div>
+								<p class="meadow-caption" style="color:var(--tm-muted)"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Dieselbe Achse kann Wörter ordnen, aber sie trägt nur eine Relation.' : 'The same axis can order words, but it can only carry one relation.'; ?></p>
 							</div>
 						</div>
 
