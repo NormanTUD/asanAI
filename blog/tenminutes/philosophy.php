@@ -108,7 +108,7 @@
 					</div>
 
 										<h4 class="layer-subhead">Inside the room</h4>
-					<div class="prose"><p>Searle’s room tests the difference between following rules and understanding. You are the rule-follower; the rulebook is the program.</p></div>
+					<div class="prose"><p><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Searles Zimmer prüft den Unterschied zwischen Regeln befolgen und verstehen. Du bist der Regelbefolger; das Regelbuch ist das Programm. Die Schrift ist Inuktitut; <a href="https://de.wikipedia.org/wiki/Inuktitut" rel="noopener">lies über Inuktitut</a>.' : 'Searle’s room tests the difference between following rules and understanding. You are the rule-follower; the rulebook is the program. The script is Inuktitut; <a href="https://en.wikipedia.org/wiki/Inuktitut" rel="noopener">read about Inuktitut</a>.'; ?></p></div>
 
 <div class="demo demo--paper demo--interactive cr-sim" id="cr-sim">
 						<div class="demo-head">
@@ -119,9 +119,11 @@
 							<span class="demo-badge">interactive</span>
 						</div>
 						<div class="demo-body">
-							<p class="cr-link"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Die Schrift ist Inuktitut. <a href="https://de.wikipedia.org/wiki/Inuktitut" rel="noopener">Lies über Inuktitut</a>.' : 'The script is Inuktitut. <a href="https://en.wikipedia.org/wiki/Inuktitut" rel="noopener">Read about Inuktitut</a>.'; ?></p>
 							<div class="cr-room" id="cr-room">
-								<div class="cr-round">Round <span id="cr-round-num">1</span> of <span id="cr-total-rounds">6</span></div>
+								<div class="cr-status">
+									<div class="cr-round">Round <span id="cr-round-num">1</span> of <span id="cr-total-rounds">6</span></div>
+									<div class="cr-timer">⏱ <span id="cr-timer-val">0.0</span>s</div>
+								</div>
 								<div class="cr-label">A note slides under the door:</div>
 								<div class="cr-incoming" id="cr-incoming-msg"></div>
 								<div class="cr-rulebook">
@@ -134,7 +136,6 @@
 								<div class="cr-label">Choose your response:</div>
 								<div class="cr-options" id="cr-options"></div>
 								<div class="cr-feedback" id="cr-feedback" aria-live="polite"></div>
-								<div class="cr-timer">⏱ <span id="cr-timer-val">0.0</span>s</div>
 							</div>
 							<div class="cr-reveal" id="cr-reveal" hidden>
 								<div class="cr-outside">“Incredible! You speak perfect Inuktitut!”</div>

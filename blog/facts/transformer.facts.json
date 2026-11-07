@@ -9918,7 +9918,7 @@
     },
     {
       "id": "transformer-stmt-22",
-      "quote": "FFN hidden size (d_ff): 12 Effect: Width of the expanded hidden layer inside the feed-forward network.",
+      "quote": "FFN hidden size ( ): 12 Effect: Width of the expanded hidden layer inside the feed-forward network.",
       "block_id": "transformer-block-16",
       "section": "Hyperparameters for this demo",
       "kind": "statement"
@@ -11900,7 +11900,7 @@
     },
     {
       "id": "transformer-block-16",
-      "quote": "FFN hidden size (d_ff): 12 Effect: Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.",
+      "quote": "FFN hidden size ( ): 12 Effect: Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.",
       "kind": "paragraph",
       "section": "Hyperparameters for this demo"
     },

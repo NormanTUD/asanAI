@@ -7546,18 +7546,6 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 	font-size: 0.68rem;
 	color: var(--tm-faint);
 }
-.cr-link {
-	margin: 0 0 12px;
-	padding: 10px 12px;
-	border: 1px solid var(--tm-line);
-	border-left: 3px solid var(--tm-sky);
-	background: var(--tm-paper-2);
-	font-family: var(--tm-ui);
-	font-size: 0.76rem;
-	line-height: 1.45;
-	color: var(--tm-muted);
-}
-.cr-link a { color: var(--tm-petrol); }
 .cr-reveal { display: grid; gap: 12px; }
 .cr-outside {
 	padding: 14px;
@@ -7600,4 +7588,23 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 	border: 1px solid var(--tm-line);
 	background: var(--tm-paper-2);
 	overflow-x: auto;
+}
+
+.cr-status {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 6px;
+}
+.cr-status .cr-round { margin-bottom: 0; }
+.cr-status .cr-timer { margin-top: 0; }
+.cr-reveal[hidden] { display: none; }
+.cr-confetti {
+	position: fixed;
+	inset: 0;
+	width: 100vw;
+	height: 100vh;
+	pointer-events: none;
+	z-index: 90;
 }

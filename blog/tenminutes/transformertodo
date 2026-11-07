@@ -183,3 +183,15 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
 - DONE Attention-Prosa („Letting Tokens Talk“, Masked Self-Attention,
       Concatenation Definition, Single-/Multi-Head) in ein Detail direkt
       vor den Layern verschoben.
+- DONE Feature-Migration pro Layer als ECharts-Pfeilplot für alle Tokens;
+      bis 3D roh, darüber standardmäßig PCA mit sichtbarem PCA-Label.
+      Tiefes Untermenü zeigt die echten Input-/Output-Plots pro Token;
+      „Alle Dimensionen“ schaltet dort auf Parallelkoordinaten und zurück.
+- DONE h_after ist jetzt als Temml-Matrix gerendert; d_ff im
+      Hyperparameter-Label ist ebenfalls Temml.
+- DONE FFN-Hyperparameter d_ff (Expansion/Kompression) mit Messanzeige
+      h_in → FFN-Hidden → h_out; Attention bleibt bei d_model.
+- DONE Tokenizer-Erklärung (Kompression, Vokabulargröße als Hyperparameter)
+      und deutsches Vector-Math-Beispiel inkl. Analogie-Hinweis.
+- DONE Position zeigt nur noch den semantischen Vektor; Heatmap/Kurve-Modi
+      sind entfernt.

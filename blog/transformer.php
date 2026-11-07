@@ -109,7 +109,7 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	</div>
 
 	<div class="transformer-config-field">
-	    <label class="transformer-slider-label">FFN hidden size (d_ff): </label>
+	    <label class="transformer-slider-label">FFN hidden size (<span class="tm-inline-math" data-tex="d_{\text{ff}}" data-tex-display="false"></span>): </label>
 	    <span id="ffn-val" class="transformer-slider-value">12</span>
 	    <p class="transformer-slider-note"><b>Effect:</b> Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.</p>
 	    <input type="range" id="transformer-ffn-size" min="1" max="64" step="1" value="12"

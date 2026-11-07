@@ -91,7 +91,7 @@
 <input id="transformer-context-size" max="256" min="2" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();" step="1" style="width: 100%;" type="range" value="32"/>
 </div>
 <div style="margin-bottom: 15px;">
-<label style="font-weight: bold;">FFN hidden size (d_ff): </label>
+<label style="font-weight: bold;"><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "FFN-Hidden-Größe (" : "FFN hidden size ("; ?><span class="tm-inline-math" data-tex="d_{\text{ff}}" data-tex-display="false"></span>): </label>
 <span id="ffn-val" style="font-weight: bold; color: #3b82f6;">12</span>
 <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.</p>
 <input id="transformer-ffn-size" max="64" min="1" oninput="syncTransformerSettings('ffn')" step="1" style="width: 100%;" type="range" value="12"/>

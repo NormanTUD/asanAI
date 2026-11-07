@@ -942,3 +942,12 @@
 	color: var(--tm-ink-soft, var(--mn-text-secondary, #2c464d));
 	font: 600 0.8rem/1.45 "Open Sans", system-ui, sans-serif;
 }
+
+.tm-inline-math math {
+	font-size: 1em;
+	vertical-align: middle;
+}
+.tm-hafter-math {
+	padding: 8px 4px;
+	overflow-x: auto;
+}

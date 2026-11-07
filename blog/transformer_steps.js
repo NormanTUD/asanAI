@@ -1493,6 +1493,30 @@
 		chart.resize();
 	}
 
+	function renderFeatureParallel(el, vec, label, color, title) {
+		if (!el || !window.echarts || !vec || !vec.length) return;
+		var c = palette();
+		var chart = echarts.getInstanceByDom(el) || echarts.init(el);
+		var axes = vec.map(function (_, i) {
+			return { dim: i, name: "Dim " + i, nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted }, axisLine: { lineStyle: { color: c.line } } };
+		});
+		chart.setOption({
+			backgroundColor: "transparent",
+			title: {
+				text: title,
+				subtext: (DE() ? "alle Dimensionen · " : "all dimensions · ") + label,
+				left: "center",
+				textStyle: { fontSize: 13, color: c.ink, fontFamily: "Barlow, Open Sans, sans-serif" },
+				subtextStyle: { fontSize: 10, color: c.muted, fontFamily: "Open Sans, sans-serif" }
+			},
+			tooltip: { trigger: "item", confine: true },
+			parallelAxis: axes,
+			parallel: { left: 44, right: 44, bottom: 26, top: 60 },
+			series: [{ type: "parallel", data: [vec], lineStyle: { width: 3, color: color }, emphasis: { lineStyle: { width: 5 } } }]
+		}, true);
+		chart.resize();
+	}
+
 	function renderLayerFeaturePlots(layerIdx) {
 		var data = featureData(layerIdx);
 		var prefix = "unified-layer-" + layerIdx;
@@ -1505,8 +1529,8 @@
 			if (outputEl) outputEl.innerHTML = "";
 			return;
 		}
+		var labels = data.tokens.map(function (t) { return display(t); });
 		if (select) {
-			var labels = data.tokens.map(function (t) { return display(t); });
 			if (select.options.length !== data.n) {
 				select.innerHTML = "";
 				labels.forEach(function (label, i) {
@@ -1522,17 +1546,39 @@
 				select.addEventListener("change", function () {
 					var idx = parseInt(select.value, 10);
 					if (isNaN(idx)) return;
-					featureState[layerIdx] = { selected: idx };
+					featureState[layerIdx].selected = idx;
 					renderLayerFeaturePlots(layerIdx);
 				});
 			}
 		}
-		var labels = data.tokens.map(function (t) { return display(t); });
 		var proj = featureProjection(data);
-		if (note) note.textContent = proj.label;
+		if (note) {
+			note.textContent = proj.label || "";
+			note.style.display = proj.label ? "block" : "none";
+		}
+		var d = data.trace.h_in[0].length;
+		var allDimsBtn = document.getElementById(prefix + "-feature-all-dims");
+		if (allDimsBtn) {
+			allDimsBtn.hidden = d <= 3;
+			allDimsBtn.setAttribute("aria-pressed", String(!!featureState[layerIdx].allDims));
+			allDimsBtn.textContent = featureState[layerIdx].allDims ? "PCA (3D)" : (DE() ? "Alle Dimensionen" : "All dimensions");
+			if (!allDimsBtn._tmFeatureBound) {
+				allDimsBtn._tmFeatureBound = true;
+				allDimsBtn.addEventListener("click", function () {
+					featureState[layerIdx].allDims = !featureState[layerIdx].allDims;
+					renderLayerFeaturePlots(layerIdx);
+				});
+			}
+		}
 		renderFeatureArrows(document.getElementById(prefix + "-feature-arrows"), layerIdx, data, proj);
-		renderFeatureChart(inputEl, proj.in, labels, data.selected, palette().blue, DE() ? "Eingabe in Schicht " + (layerIdx + 1) : "Input to layer " + (layerIdx + 1), proj);
-		renderFeatureChart(outputEl, proj.out, labels, data.selected, palette().green, DE() ? "Ausgabe von Schicht " + (layerIdx + 1) : "Output of layer " + (layerIdx + 1), proj);
+		var useAllDims = d > 3 && !!featureState[layerIdx].allDims;
+		if (useAllDims) {
+			renderFeatureParallel(inputEl, data.trace.h_in[data.selected], labels[data.selected], palette().blue, DE() ? "Eingabe in Schicht " + (layerIdx + 1) : "Input to layer " + (layerIdx + 1));
+			renderFeatureParallel(outputEl, data.trace.h_out[data.selected], labels[data.selected], palette().green, DE() ? "Ausgabe von Schicht " + (layerIdx + 1) : "Output of layer " + (layerIdx + 1));
+		} else {
+			renderFeatureChart(inputEl, proj.in, labels, data.selected, palette().blue, DE() ? "Eingabe in Schicht " + (layerIdx + 1) : "Input to layer " + (layerIdx + 1), proj);
+			renderFeatureChart(outputEl, proj.out, labels, data.selected, palette().green, DE() ? "Ausgabe von Schicht " + (layerIdx + 1) : "Output of layer " + (layerIdx + 1), proj);
+		}
 	}
 
 	function featureTopWords(vec, count) {
@@ -1584,17 +1630,18 @@
 			var after = featureTopWords(trace.h_out[i], 3);
 			return "<div class='tm-logit-row'><span class='tm-logit-token'>" + label + "</span><div class='tm-logit-side'>" + before.map(function (w) { return logitChip(w, "var(--tm-blue)"); }).join("") + "</div><span class='tm-logit-arrow'>→</span><div class='tm-logit-side'>" + after.map(function (w) { return logitChip(w, "var(--tm-green)"); }).join("") + "</div></div>";
 		}).join("");
-		var matrixHead = "<tr><th>" + (DE() ? "Token" : "token") + "</th>" + Array.from({ length: d }, function (_, i) { return "<th>" + i + "</th>"; }).join("") + "</tr>";
-		var matrixRows = labels.map(function (label, i) {
-			return "<tr><th>" + label + "</th>" + trace.h_out[i].map(function (v) { return "<td>" + (Number(v) || 0).toFixed(2) + "</td>"; }).join("") + "</tr>";
-		}).join("");
+		var texRows = trace.h_out.map(function (row) {
+			return row.map(function (v) { return (Number(v) || 0).toFixed(2); }).join(" & ");
+		}).join(" \\\\ ");
+		var hafterTex = "h_{\\text{after}} = \\begin{pmatrix} " + texRows + " \\end{pmatrix}";
 		var title = DE() ? "Logit-Linse · Schicht " + (layerIdx + 1) : "Logit lens · layer " + (layerIdx + 1);
 		var note = DE()
 			? "Die Logit-Linse projiziert den Vektor nach dieser Schicht auf das Vokabular und vergleicht die Winkel. Sie zeigt, welches Wort das Modell erzeugen würde, wenn es hier aufhören würde; über die Schichten hinweg siehst du, wie sich die Repräsentation bewegt und ihre Meinung ein wenig ändert."
 			: "The logit lens projects the vector after this layer onto the vocabulary and compares the angles. It shows which word the model would produce if it stopped here; across layers you can watch the representation move and change its guess, at least a little.";
 		host.innerHTML = "<div class='tm-logit-wrap'><div class='tm-logit-title'>" + title + "</div>" +
-			"<details class='tm-layer-hafter' open><summary>" + (DE() ? "h_after · Hidden State nach Schicht " : "h_after · hidden state after layer ") + (layerIdx + 1) + "</summary><div class='tm-hafter-scroll'><table class='tm-hafter-table'><thead>" + matrixHead + "</thead><tbody>" + matrixRows + "</tbody></table></div></details>" +
+			"<details class='tm-layer-hafter' open><summary>" + (DE() ? "h_after · Hidden State nach Schicht " : "h_after · hidden state after layer ") + (layerIdx + 1) + "</summary><div class='tm-hafter-scroll'><div class='tm-hafter-math' data-tex='" + hafterTex + "' data-tex-display='true'></div></div></details>" +
 			"<p class='tm-logit-note'>" + note + "</p><div class='tm-logit-lens'>" + head + rows + "</div></div>";
+		if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(host);
 	}
 
 	function updateDimensionReadout() {
@@ -1718,6 +1765,14 @@
 		}, 350);
 	});
 	setInterval(enhanceLayerCards, 1200);
+
+	function typesetConfigMath() {
+		var cfg = document.getElementById("transformer_config");
+		if (!cfg || !window.TM || typeof TM.typesetMath !== "function") return;
+		if (cfg.querySelector('[data-tex]:not([data-tex-rendered="1"])')) TM.typesetMath(cfg);
+	}
+	setTimeout(typesetConfigMath, 700);
+	setInterval(typesetConfigMath, 1800);
 
 	function kvStatus(mode, reused) {
 		var el = document.getElementById("tm-kv-cache-status");
