@@ -7478,7 +7478,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	</details>
 	<details class="tm-layer-subbox" data-sub="ffn">
 		<summary>${isDe ? 'FFN / MLP' : 'FFN / MLP'}</summary>
-		<div class="tm-layer-subbox-body">
+		<div class="tm-layer-subbox-body" id="${prefix}-content">
 			<p class="tm-level-text">${isDe ? 'Hier stehen die exakten Matrizen dieser Schicht: Pre-LayerNorm, Query-, Key- und Value-Projektionen, die Softmax-Gewichte, der gewichtete Value-Mix, die Ausgabeprojektion, der Residual-Schritt, dann die FFN-Expansion, GELU und die Kompression. Jede Zeile ist eine Token-Position; jede Spalte eine Dimension.' : 'Here are the exact matrices of this layer: pre-LayerNorm, the query, key and value projections, the softmax weights, the weighted value mix, the output projection, the residual add, then the FFN expansion, GELU and compression. Each row is a token position; each column is a dimension.'}</p>
 			<canvas id="${prefix}-ffn-heatmap" class="tm-layer-ffn-heatmap" aria-label="${isDe ? 'FFN-Aktivierungen für alle Tokens in dieser Schicht' : 'FFN activations for all tokens in this layer'}"></canvas>
 			<div id="${prefix}-formula-body">
@@ -7603,7 +7603,7 @@ function renderLayerFormulas(layerIdx) {
 	if (!trace) return;
 	const prefix = `unified-layer-${layerIdx}`;
 	const body = document.getElementById(`${prefix}-formula-body`);
-	if (!body || body.dataset.formulasRendered === 'true') return;
+	if (!body) return;
 	const tokens = trace.tokenStrings || [];
 	if (trace.headData && trace.concat) {
 		updateConcatenationDisplayForLayer(trace.headData, tokens, layerIdx, tokens);
@@ -7623,7 +7623,6 @@ function renderLayerFormulas(layerIdx) {
 		const rows = buildHLastDisplayLatex(hLast);
 		hlast.innerHTML = `<p>${isDe ? 'Aktuell' : 'Current'}</p>$$h_\\text{last} = \\begin{bmatrix} ${rows} \\end{bmatrix}$$<p>${isDe ? '(die letzte Zeile der Ausgabematrix der letzten Schicht der Inferenzdaten)' : "(the last layers' output matrix last line of the inference-data)"}</p>`;
 	}
-	body.dataset.formulasRendered = 'true';
 	_renderTemmlOnElements([body]);
 }
 

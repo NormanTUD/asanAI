@@ -146,7 +146,7 @@
 							<div class="demo-body">
 								<div class="code-demo-grid">
 									<div class="code-demo-window">
-										<div class="code-demo-bar"><span class="code-demo-dot is-green"></span><span class="code-demo-dot is-gold"></span><span class="code-demo-dot is-sky"></span><span class="code-demo-name">himmel.py</span></div>
+										<div class="code-demo-bar"><span class="code-demo-dot is-green"></span><span class="code-demo-dot is-gold"></span><span class="code-demo-dot is-sky"></span><span class="code-demo-name" data-en="sky.py" data-de="himmel.py">sky.py</span></div>
 										<div class="code-demo-chat">
 											<div class="code-demo-msg is-user">Write a Python program that calculates how strongly blue and red light are scattered in the atmosphere.</div>
 											<div class="code-demo-msg is-ai">Sure. The program computes the Rayleigh scattering ratio for 450 nm and 650 nm.</div>
@@ -165,7 +165,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 									<div class="code-demo-terminal" aria-live="polite">
 										<div class="code-demo-bar"><span class="code-demo-dot is-green"></span><span class="code-demo-dot is-gold"></span><span class="code-demo-dot is-sky"></span><span class="code-demo-name">Terminal</span></div>
 										<div class="code-demo-term-body">
-											<div class="code-demo-cmd"><span class="code-demo-dollar">$</span> python3 himmel.py</div>
+											<div class="code-demo-cmd"><span class="code-demo-dollar">$</span> python3 <span data-en="sky.py" data-de="himmel.py">sky.py</span></div>
 											<div class="code-demo-output" id="code-demo-output" data-en="Blue is 4.35× more strongly scattered than red." data-de="Blau wird 4,35× stärker gestreut als Rot." hidden>Blue is 4.35× more strongly scattered than red.</div>
 										</div>
 										<button type="button" class="code-demo-run" id="code-demo-run" aria-controls="code-demo-output" aria-expanded="false">Run program</button>

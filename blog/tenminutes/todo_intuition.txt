@@ -25,3 +25,4 @@ Nachtrag (November 2026):
 - Handy-Schatten: Bühnenhöhe auf 780 px (mobil 690 px) erhöht, damit der vorhandene Schatten oben und unten vollständig sichtbar bleibt.
 - Wahrscheinlichkeits-Satz neu: Das Modell weist jedem möglichen nächsten Token einen Wert zu; die Werte summieren sich zu eins, und die ganze Verteilung ist die Ausgabe.
 - Autoregressive Schleife: Beim Abschluss wird der Cursor nicht mehr aus dem DOM entfernt, sondern nur unsichtbar; dadurch bleibt die Zeilenbox stabil und der Halb-Pixel-Sprung verschwindet.
+- Code-Demo: englischer Dateiname sky.py (deutsch himmel.py) in Fenstertitel und Terminalbefehl; das Konsolenfenster hat jetzt unabhängig vom Theme einen schwarzen Hintergrund mit heller Schrift.
