@@ -7848,3 +7848,58 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 	.pixel-demo { grid-template-columns: 1fr; }
 	.pixel-grid { max-width: none; }
 }
+
+/* intuition: white console variant for the generated-code demo */
+.code-demo--console .code-demo-window,
+.code-demo--console .code-demo-terminal {
+	background: #ffffff;
+	color: #111111;
+	border-color: #cbd5e1;
+}
+.code-demo--console .code-demo-bar {
+	background: #ffffff;
+	border-bottom-color: #e2e8f0;
+	color: #475569;
+}
+.code-demo--console .code-demo-chat {
+	background: #ffffff;
+	font-family: var(--tm-mono);
+}
+.code-demo--console .code-demo-msg {
+	padding: 2px 0;
+	border: 0;
+	background: transparent;
+	color: #111111;
+	font-family: var(--tm-mono);
+	font-size: 0.78rem;
+	line-height: 1.55;
+}
+.code-demo--console .code-demo-msg.is-user { margin-left: 0; }
+.code-demo--console .code-demo-msg.is-ai { background: transparent; border-left: 0; }
+.code-demo--console .code-demo-msg.is-user::before {
+	content: "> ";
+	color: #2f6f3e;
+	font-weight: 700;
+}
+.code-demo--console .code-demo-msg.is-ai::before {
+	content: "# ";
+	color: #64748b;
+	font-weight: 700;
+}
+.code-demo--console .code-demo-code {
+	background: #ffffff;
+	color: #111111;
+	border-top-color: #e2e8f0;
+}
+.code-demo--console .cd-com { color: #64748b; }
+.code-demo--console .cd-kw { color: #004b6f; }
+.code-demo--console .cd-fn { color: #2f6f3e; }
+.code-demo--console .cd-num { color: #1275ac; }
+.code-demo--console .cd-str { color: #004b6f; }
+.code-demo--console .code-demo-term-body {
+	background: #ffffff;
+	color: #111111;
+}
+.code-demo--console .code-demo-cmd { color: #111111; }
+.code-demo--console .code-demo-dollar { color: #2f6f3e; }
+.code-demo--console .code-demo-output { color: #111111; border-top-color: #e2e8f0; }

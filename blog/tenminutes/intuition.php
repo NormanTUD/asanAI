@@ -136,7 +136,7 @@
 							<p>That difference matters. The model does not calculate the scattering ratio in its head. It writes a program that calculates it; the program does the arithmetic. A language model can produce code because code is a sequence of tokens with strong regularities, the same way a sentence is.</p>
 						</div>
 
-						<div class="demo demo--paper demo--interactive" id="code-demo">
+						<div class="demo demo--paper demo--interactive code-demo--console" id="code-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">From a request to a program <span>· demo 01a · code</span></p>
@@ -166,7 +166,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 										<div class="code-demo-bar"><span class="code-demo-dot is-green"></span><span class="code-demo-dot is-gold"></span><span class="code-demo-dot is-sky"></span><span class="code-demo-name">Terminal</span></div>
 										<div class="code-demo-term-body">
 											<div class="code-demo-cmd"><span class="code-demo-dollar">$</span> python3 himmel.py</div>
-											<div class="code-demo-output" id="code-demo-output" hidden>Blue is 4.35× more strongly scattered than red.</div>
+											<div class="code-demo-output" id="code-demo-output" data-en="Blue is 4.35× more strongly scattered than red." data-de="Blau wird 4,35× stärker gestreut als Rot." hidden>Blue is 4.35× more strongly scattered than red.</div>
 										</div>
 										<button type="button" class="code-demo-run" id="code-demo-run" aria-controls="code-demo-output" aria-expanded="false">Run program</button>
 									</div>
