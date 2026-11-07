@@ -204,9 +204,9 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 </div>
 
 <div class="md">
-## The six steps, live
+## The steps, live
 
-These are the six steps from the intuition chapter, now driven by the real numbers
+These are the steps from the intuition chapter, now driven by the real numbers
 of the tiny model above. Read the heading, then look at the picture. The layer
 cards below repeat the attention, feed-forward and residual steps for every layer,
 with the full formulas one level deeper.
@@ -281,7 +281,7 @@ with the full formulas one level deeper.
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
 				<p class="tm-step-more">The residual stream is the running vector. Every layer reads it and writes an update; nothing is overwritten, so late layers can still use the original token.</p>
 				<div class="tm-step-formula" data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)"></div>
-				<details class="tm-step-detail" id="tm-detail-residual"><summary>The residual stream in detail</summary><div class="tm-step-detail-body"><p>Each sublayer computes an update and adds it to the running vector: x_{n+1} = x_n + layer_{n+1}(x_n). Nothing is overwritten, so the original token stays available and gradients have a short path back.</p><p>The per-layer residual preview above shows how much attention and the FFN write for each token. The last layer's level 2 also shows the final h_last vector.</p><p>The block input and output keep the same d_model width; the FFN expands to d_ff inside and compresses back. That is the width where it has room to work.</p><p class="tm-dim-readout" id="tm-dim-readout"></p></div></details></div>
+				<details class="tm-step-detail" id="tm-detail-residual"><summary>The residual stream in detail</summary><div class="tm-step-detail-body"><p>Each sublayer computes an update and adds it to the running vector: <span data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)" data-tex-display="false"></span>. Nothing is overwritten, so the original token stays available and gradients have a short path back.</p><p>The per-layer residual preview above shows how much attention and the FFN write for each token; the last layer has a separate h_last step.</p><p>The block input and output keep the same d_model width; the FFN expands to d_ff inside and compresses back. That is the width where it has room to work.</p><p class="tm-dim-readout" id="tm-dim-readout"></p></div></details></div>
 			</section>
 	<section class="tm-step">
 				<div class="tm-step-head">
@@ -854,7 +854,7 @@ $$
 \underbrace{y = z + \mathrm{FFN}(\mathrm{Norm}(z))}_{\text{the same pattern for the feed-forward branch}}
 $$
 
-\citeauthor{xiong2020} showed that this arrangement keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up (\cite[Xiong et al., 2020]{xiong2020}). The price is that the residual stream is no longer normalized; a final normalization before the output projection carries that burden.
+\citeauthor{xiong2020} showed that this arrangement keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up (\cite[Xiong et al., 2020]{xiong2020}). The price is that the residual stream is no longer normalized. Production pre-norm models add a final LayerNorm before the output projection; this compact demo reads h_last directly, so its unembedding is the simplified version.
 
 Layer normalization is younger than the Transformer. \cite[Ba et al. (2016)]{ba2016layernorm} introduced it in 2016 as a batch-independent alternative to BatchNorm for recurrent networks, normalizing each example's features rather than a batch statistic (\cite[Ba et al., 2016]{ba2016layernorm}). The residual connection is older still, imported from ResNet's identity shortcuts (\cite[He et al., 2015]{he2015resnet}); it gives gradients a path that bypasses the sublayer. The 2017 Transformer used both, but placed the normalization after each residual add — the post-LN arrangement that later deep stacks reversed.
 
@@ -1078,7 +1078,7 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 <div id="transformer-output-projection" style="background: var(--mn-surface, white); padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
 
 <div>
-	<input type="hidden" id="transformer-master-token-input" value="the">
+	<input type="hidden" id="transformer-master-token-input" value="the king rules the land">
 <div class="tm-token-builder" id="transformer-token-builder">
 	<div class="tm-token-builder-head">
 		<span class="tm-token-builder-label">Token-only input</span>
@@ -1094,11 +1094,11 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 <div class="md" id="step-machine">
 ## The Whole Machine
 
-Zoom out: the full pipeline, how the model knows when to stop, and how the two operating modes differ.
+Zoom out: the full route, how the model knows when to stop, and how the two operating modes differ.
 
 ### How Does the Model Know When to Stop?
 
-Step 6 of the pipeline says generation runs "until the model emits an end-of-sequence token." That sentence hides a genuinely interesting question: **how does the model *know* it is done?** There is no separate "stop detector"; stopping is just next-token prediction pointed at a special token.
+The sampling step says generation runs "until the model emits an end-of-sequence token." That sentence hides a genuinely interesting question: **how does the model *know* it is done?** There is no separate "stop detector"; stopping is just next-token prediction pointed at a special token.
 
 **The basic mechanism.** The end-of-sequence (EOS) token — the special *end* marker each tokenizer puts in its vocabulary, such as GPT-2's `<|endoftext|>` — is an ordinary member of the vocabulary. At every step the model produces a full distribution over *all* tokens, and one of those logits is for EOS. "Stopping" simply means that, at a natural boundary, the distribution puts **enough mass on EOS** that sampling picks it. The model learns this from the sheer fact that sequences in its training data *end*: after a complete sentence, an answer, or a list, the next token is the end marker. So the model internalizes the statistics of "when a thought is over" in the same way it learns everything else.
 

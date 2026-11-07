@@ -123,7 +123,7 @@
 </div>
 </div>
 <div class="transformer_corpus">
-<label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
+<label style="font-weight: bold; display: block; margin-bottom: 8px;"><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "Trainingsdaten (Korpus):" : "Training Data (Corpus):"; ?></label>
     <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 8px;">The token <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
 <textarea id="transformer-training-data" oninput="debounced_run_transformer_demo('transformer-training-data')" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);"><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "der könig herrscht über das land und die königin herrscht über das meer" : "the king rules the land and the queen rules the sea"; ?></textarea>
 </div>
@@ -338,11 +338,11 @@
 						</div>
 					</section>
 					<section class="section-block" id="six-steps">
-						<div class="section-kicker"><span class="sk-num">02</span> The six steps</div>
+						<div class="section-kicker"><span class="sk-num">02</span> The steps</div>
 						<h2 class="section-title">The whole route, visible at once.</h2>
 						<div class="prose">
 							<p>
-								These are the six steps from the intuition chapter, now driven by the real
+								These are the steps from the intuition chapter, now driven by the real
 								numbers of the tiny model above. Read the heading, then look at the picture.
 								The layer cards below repeat the attention, feed-forward and residual steps
 								for every layer, with the full formulas one level deeper.
@@ -401,7 +401,7 @@
 <div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: var(--mn-surface, white); border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
 <em style="color: #94a3b8;">Enter an equation and press Enter...</em>
 </div>
-<p class="tm-vector-note" style="font-size: 0.82rem; color: #64748b; margin-top: 10px;">The classic analogy “king − man + woman = queen” will not look clean here: the tiny German corpus has no “mann” or “frau”, and a model trained on one sentence has not learned such relations. Real transformers trained on large corpora get much closer.</p>
+<p class="tm-vector-note" style="font-size: 0.82rem; color: #64748b; margin-top: 10px;">The classic analogy “king − man + woman = queen” will not look clean here: the tiny demo corpus has no “mann” or “frau”, and a model trained on one sentence has not learned such relations. Real transformers trained on large corpora get much closer.</p>
 </div>
 					</div>
 				</details></div>
@@ -459,7 +459,7 @@
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
 				<p class="tm-step-more">The residual stream is the running vector. Every layer reads it and writes an update; nothing is overwritten, so late layers can still use the original token.</p>
 				<div class="tm-step-formula" data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)"></div>
-				<details class="tm-step-detail"><summary>Residual stream in detail</summary><div class="tm-step-detail-body"><p>Each sublayer computes an update and adds it to the running vector: x_{n+1} = x_n + layer_{n+1}(x_n). Nothing is overwritten, so the original token stays available and gradients have a short path back.</p><p>The per-layer residual preview above shows how much attention and the FFN write for each token. The last layer's level 2 also shows the final h_last vector.</p><p>The block input and output keep the same d_model width; the FFN expands to d_ff inside and compresses back. That is the width where it has room to work.</p><p class="tm-dim-readout" id="tm-dim-readout"></p></div></details></div>
+				<details class="tm-step-detail"><summary>Residual stream in detail</summary><div class="tm-step-detail-body"><p>Each sublayer computes an update and adds it to the running vector: <span data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)" data-tex-display="false"></span>. Nothing is overwritten, so the original token stays available and gradients have a short path back.</p><p>The per-layer residual preview above shows how much attention and the FFN write for each token; the last layer has a separate h_last step.</p><p>The block input and output keep the same d_model width; the FFN expands to d_ff inside and compresses back. That is the width where it has room to work.</p><p class="tm-dim-readout" id="tm-dim-readout"></p></div></details></div>
 			</section>
 							<section class="tm-step">
 				<div class="tm-step-head">
@@ -584,7 +584,7 @@
 						</section>
 
 					<section class="section-block" id="block">
-						<div class="section-kicker"><span class="sk-num">06</span> Inside the block</div>
+						<div class="section-kicker"><span class="sk-num">03</span> Inside the block</div>
 						<h2 class="section-title">Two sublayers, one residual stream.</h2>
 						<div class="prose">
 							<p>
@@ -743,7 +743,7 @@
 </div>
 <div id="transformer-output-projection" style="background: var(--mn-surface, white); padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
 <div>
-<input id="transformer-master-token-input" type="hidden" value="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'der' : 'the'; ?>"/>
+<input id="transformer-master-token-input" type="hidden" value="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'der könig herrscht über das land' : 'the king rules the land'; ?>"/>
 <div class="tm-token-builder" id="transformer-token-builder">
 	<div class="tm-token-builder-head">
 		<span class="tm-token-builder-label">Token-only input</span>
@@ -770,7 +770,7 @@
 					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">08</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

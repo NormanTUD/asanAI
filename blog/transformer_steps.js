@@ -527,7 +527,7 @@
 		var cw = (w - pad * 2) / cols, ch = (h - top - pad) / rows;
 		var negative = hex(c.blue), zero = hex(c.paper), positive = hex(c.gold);
 		function value(pos, i) {
-			var angle = pos / Math.pow(10000, (2 * i) / d);
+			var angle = pos / Math.pow(10000, (2 * Math.floor(i / 2)) / d);
 			return i % 2 === 0 ? Math.sin(angle) : Math.cos(angle);
 		}
 		for (var r = 0; r < rows; r++) {
@@ -1017,12 +1017,13 @@
 			for (var i = 0; i < vec.length; i++) dot += vec[i] * (space[word][i] || 0);
 			return { word: word, logit: dot };
 		});
-		var maxLogit = Math.max.apply(null, logits.map(function (x) { return x.logit / temperature; }));
-		var exps = logits.map(function (x) { return Math.exp(x.logit / temperature - maxLogit); });
+		var ranked = logits.slice().sort(function (a, b) { return (b.logit / temperature) - (a.logit / temperature); }).slice(0, topk);
+		var maxLogit = Math.max.apply(null, ranked.map(function (x) { return x.logit / temperature; }));
+		var exps = ranked.map(function (x) { return Math.exp(x.logit / temperature - maxLogit); });
 		var sum = exps.reduce(function (a, b) { return a + b; }, 0) || 1;
-		var scores = logits.map(function (x, i) {
+		var scores = ranked.map(function (x, i) {
 			return { word: x.word, score: x.logit, prob: exps[i] / sum };
-		}).sort(function (a, b) { return b.prob - a.prob; }).slice(0, topk);
+		});
 		window.__tmUnembedTop = scores.map(function (item) { return item.word; });
 		window.__tmUnembedProbs = scores.map(function (item) { return item.prob; });
 		var max = scores[0].prob || 1;
@@ -2812,6 +2813,10 @@
 			}
 			codeBody.querySelectorAll('.md').forEach(function (m) { m.classList.add('no-markdown'); });
 		}
+		if (codeBody && !codeBody.textContent.trim() && codeBody.parentNode) {
+			var emptyCode = codeBody.closest("#tm-detail-code");
+			if (emptyCode) emptyCode.remove();
+		}
 		var attendDetail = detailBySummary(/Attention in detail|Attention im Detail/i);
 		var ffnDetail = detailBySummary(/Feed-forward in detail|Feed-Forward im Detail/i);
 		Array.prototype.slice.call(document.querySelectorAll(".optional")).forEach(function (opt) {
@@ -2904,6 +2909,7 @@
 							while (backgroundBody.firstChild) contextBody.appendChild(backgroundBody.firstChild);
 						}
 					}
+					card.querySelectorAll(".optional").forEach(function (el) { contextBody.appendChild(el); });
 					card.remove();
 				});
 				boxBody.appendChild(context);
@@ -2981,12 +2987,15 @@
 			}
 			if (!moved.pipeline) {
 				var pipeline = document.getElementById("pipeline");
-				var pipelineFirst = pipeline ? pipeline.querySelector(".prose p") : null;
-				if (pipelineFirst && boxNowBody) {
+				var pipelineProse = pipeline ? pipeline.querySelector(".prose") : null;
+				if (pipelineProse && boxNowBody) {
 					var pipeDetail = document.createElement("details");
 					pipeDetail.className = "tm-step-detail tm-pipeline-prose";
 					pipeDetail.innerHTML = "<summary>" + (isDe ? "Vom Text zur Verteilung" : "From text to a distribution") + "</summary><div class='tm-step-detail-body'></div>";
-					pipeDetail.querySelector(".tm-step-detail-body").appendChild(pipelineFirst);
+					var pipeBody = pipeDetail.querySelector(".tm-step-detail-body");
+					pipeBody.appendChild(pipelineProse);
+					var pipelineAha = pipeline.querySelector(".aha");
+					if (pipelineAha) pipeBody.appendChild(pipelineAha);
 					boxNowBody.insertBefore(pipeDetail, layerContainer || null);
 					pipeline.remove();
 					moved.pipeline = true;

@@ -5,7 +5,7 @@ If you see stuff jumping around, try setting "overflow-anchor: none" to that ele
 */
 
 window._trajectoryVfEnabled = false;
-window.tlabVisualizationMode = 'train';
+window.tlabVisualizationMode = 'inference';
 window._cachedFinalProjection = null;
 window._activeUnifiedLayerIdx = 0;
 window.isTraining = false;

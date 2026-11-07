@@ -7528,9 +7528,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-65-part_of-transformer-block-49",
+      "id": "struct-transformer-stmt-65-part_of-transformer-block-53",
       "from": "transformer-stmt-65",
-      "to": "transformer-block-49",
+      "to": "transformer-block-53",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7568,9 +7568,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-69-part_of-transformer-block-53",
+      "id": "struct-transformer-stmt-69-part_of-transformer-block-55",
       "from": "transformer-stmt-69",
-      "to": "transformer-block-53",
+      "to": "transformer-block-55",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7588,9 +7588,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-71-part_of-transformer-block-55",
+      "id": "struct-transformer-stmt-71-part_of-transformer-block-57",
       "from": "transformer-stmt-71",
-      "to": "transformer-block-55",
+      "to": "transformer-block-57",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7648,9 +7648,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-77-part_of-transformer-block-57",
+      "id": "struct-transformer-stmt-77-part_of-transformer-block-59",
       "from": "transformer-stmt-77",
-      "to": "transformer-block-57",
+      "to": "transformer-block-59",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7668,9 +7668,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-79-part_of-transformer-block-59",
+      "id": "struct-transformer-stmt-79-part_of-transformer-block-60",
       "from": "transformer-stmt-79",
-      "to": "transformer-block-59",
+      "to": "transformer-block-60",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7678,9 +7678,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-80-part_of-transformer-block-60",
+      "id": "struct-transformer-stmt-80-part_of-transformer-block-61",
       "from": "transformer-stmt-80",
-      "to": "transformer-block-60",
+      "to": "transformer-block-61",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7708,18 +7708,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-83-part_of-transformer-block-61",
+      "id": "struct-transformer-stmt-83-part_of-transformer-block-62",
       "from": "transformer-stmt-83",
-      "to": "transformer-block-61",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-84-part_of-transformer-block-62",
-      "from": "transformer-stmt-84",
       "to": "transformer-block-62",
       "kind": "part_of",
       "qualifiers": {},
@@ -7728,8 +7718,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-85-part_of-transformer-block-63",
-      "from": "transformer-stmt-85",
+      "id": "struct-transformer-stmt-84-part_of-transformer-block-63",
+      "from": "transformer-stmt-84",
       "to": "transformer-block-63",
       "kind": "part_of",
       "qualifiers": {},
@@ -7738,9 +7728,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-86-part_of-transformer-block-64",
-      "from": "transformer-stmt-86",
+      "id": "struct-transformer-stmt-85-part_of-transformer-block-64",
+      "from": "transformer-stmt-85",
       "to": "transformer-block-64",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-86-part_of-transformer-block-65",
+      "from": "transformer-stmt-86",
+      "to": "transformer-block-65",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7758,18 +7758,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-88-part_of-transformer-block-65",
+      "id": "struct-transformer-stmt-88-part_of-transformer-block-66",
       "from": "transformer-stmt-88",
-      "to": "transformer-block-65",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-89-part_of-transformer-block-66",
-      "from": "transformer-stmt-89",
       "to": "transformer-block-66",
       "kind": "part_of",
       "qualifiers": {},
@@ -7778,8 +7768,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-90-part_of-transformer-block-67",
-      "from": "transformer-stmt-90",
+      "id": "struct-transformer-stmt-89-part_of-transformer-block-67",
+      "from": "transformer-stmt-89",
       "to": "transformer-block-67",
       "kind": "part_of",
       "qualifiers": {},
@@ -7788,8 +7778,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-91-part_of-transformer-block-68",
-      "from": "transformer-stmt-91",
+      "id": "struct-transformer-stmt-90-part_of-transformer-block-68",
+      "from": "transformer-stmt-90",
       "to": "transformer-block-68",
       "kind": "part_of",
       "qualifiers": {},
@@ -7798,8 +7788,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-92-part_of-transformer-block-70",
-      "from": "transformer-stmt-92",
+      "id": "struct-transformer-stmt-91-part_of-transformer-block-70",
+      "from": "transformer-stmt-91",
       "to": "transformer-block-70",
       "kind": "part_of",
       "qualifiers": {},
@@ -7808,9 +7798,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-93-part_of-transformer-block-72",
-      "from": "transformer-stmt-93",
+      "id": "struct-transformer-stmt-92-part_of-transformer-block-72",
+      "from": "transformer-stmt-92",
       "to": "transformer-block-72",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-93-part_of-transformer-block-73",
+      "from": "transformer-stmt-93",
+      "to": "transformer-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7848,9 +7848,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-97-part_of-transformer-block-73",
+      "id": "struct-transformer-stmt-97-part_of-transformer-block-74",
       "from": "transformer-stmt-97",
-      "to": "transformer-block-73",
+      "to": "transformer-block-74",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7868,9 +7868,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-99-part_of-transformer-block-74",
+      "id": "struct-transformer-stmt-99-part_of-transformer-block-75",
       "from": "transformer-stmt-99",
-      "to": "transformer-block-74",
+      "to": "transformer-block-75",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7878,9 +7878,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-100-part_of-transformer-block-75",
+      "id": "struct-transformer-stmt-100-part_of-transformer-block-76",
       "from": "transformer-stmt-100",
-      "to": "transformer-block-75",
+      "to": "transformer-block-76",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7898,9 +7898,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-102-part_of-transformer-block-76",
+      "id": "struct-transformer-stmt-102-part_of-transformer-block-77",
       "from": "transformer-stmt-102",
-      "to": "transformer-block-76",
+      "to": "transformer-block-77",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7918,9 +7918,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-104-part_of-transformer-block-77",
+      "id": "struct-transformer-stmt-104-part_of-transformer-block-78",
       "from": "transformer-stmt-104",
-      "to": "transformer-block-77",
+      "to": "transformer-block-78",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7938,9 +7938,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-106-part_of-transformer-block-78",
+      "id": "struct-transformer-stmt-106-part_of-transformer-block-79",
       "from": "transformer-stmt-106",
-      "to": "transformer-block-78",
+      "to": "transformer-block-79",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7958,9 +7958,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-108-part_of-transformer-block-79",
+      "id": "struct-transformer-stmt-108-part_of-transformer-block-80",
       "from": "transformer-stmt-108",
-      "to": "transformer-block-79",
+      "to": "transformer-block-80",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7988,9 +7988,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-111-part_of-transformer-block-80",
+      "id": "struct-transformer-stmt-111-part_of-transformer-block-81",
       "from": "transformer-stmt-111",
-      "to": "transformer-block-80",
+      "to": "transformer-block-81",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8008,9 +8008,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-113-part_of-transformer-block-81",
+      "id": "struct-transformer-stmt-113-part_of-transformer-block-82",
       "from": "transformer-stmt-113",
-      "to": "transformer-block-81",
+      "to": "transformer-block-82",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8018,9 +8018,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-114-part_of-transformer-block-82",
+      "id": "struct-transformer-stmt-114-part_of-transformer-block-83",
       "from": "transformer-stmt-114",
-      "to": "transformer-block-82",
+      "to": "transformer-block-83",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8038,18 +8038,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-116-part_of-transformer-block-83",
+      "id": "struct-transformer-stmt-116-part_of-transformer-block-85",
       "from": "transformer-stmt-116",
-      "to": "transformer-block-83",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-117-part_of-transformer-block-85",
-      "from": "transformer-stmt-117",
       "to": "transformer-block-85",
       "kind": "part_of",
       "qualifiers": {},
@@ -8058,8 +8048,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-118-part_of-transformer-block-86",
-      "from": "transformer-stmt-118",
+      "id": "struct-transformer-stmt-117-part_of-transformer-block-86",
+      "from": "transformer-stmt-117",
       "to": "transformer-block-86",
       "kind": "part_of",
       "qualifiers": {},
@@ -8068,9 +8058,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-119-part_of-transformer-block-87",
-      "from": "transformer-stmt-119",
+      "id": "struct-transformer-stmt-118-part_of-transformer-block-87",
+      "from": "transformer-stmt-118",
       "to": "transformer-block-87",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-119-part_of-transformer-block-89",
+      "from": "transformer-stmt-119",
+      "to": "transformer-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8088,9 +8088,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-121-part_of-transformer-block-89",
+      "id": "struct-transformer-stmt-121-part_of-transformer-block-90",
       "from": "transformer-stmt-121",
-      "to": "transformer-block-89",
+      "to": "transformer-block-90",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8128,9 +8128,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-125-part_of-transformer-block-90",
+      "id": "struct-transformer-stmt-125-part_of-transformer-block-92",
       "from": "transformer-stmt-125",
-      "to": "transformer-block-90",
+      "to": "transformer-block-92",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8138,9 +8138,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-126-part_of-transformer-block-92",
+      "id": "struct-transformer-stmt-126-part_of-transformer-block-93",
       "from": "transformer-stmt-126",
-      "to": "transformer-block-92",
+      "to": "transformer-block-93",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8178,18 +8178,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-130-part_of-transformer-block-93",
+      "id": "struct-transformer-stmt-130-part_of-transformer-block-94",
       "from": "transformer-stmt-130",
-      "to": "transformer-block-93",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-131-part_of-transformer-block-94",
-      "from": "transformer-stmt-131",
       "to": "transformer-block-94",
       "kind": "part_of",
       "qualifiers": {},
@@ -8198,9 +8188,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-132-part_of-transformer-block-97",
-      "from": "transformer-stmt-132",
+      "id": "struct-transformer-stmt-131-part_of-transformer-block-97",
+      "from": "transformer-stmt-131",
       "to": "transformer-block-97",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-132-part_of-transformer-block-99",
+      "from": "transformer-stmt-132",
+      "to": "transformer-block-99",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8238,18 +8238,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-136-part_of-transformer-block-99",
+      "id": "struct-transformer-stmt-136-part_of-transformer-block-100",
       "from": "transformer-stmt-136",
-      "to": "transformer-block-99",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-137-part_of-transformer-block-100",
-      "from": "transformer-stmt-137",
       "to": "transformer-block-100",
       "kind": "part_of",
       "qualifiers": {},
@@ -8258,9 +8248,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-138-part_of-transformer-block-101",
-      "from": "transformer-stmt-138",
+      "id": "struct-transformer-stmt-137-part_of-transformer-block-101",
+      "from": "transformer-stmt-137",
       "to": "transformer-block-101",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-138-part_of-transformer-block-102",
+      "from": "transformer-stmt-138",
+      "to": "transformer-block-102",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8278,9 +8278,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-140-part_of-transformer-block-102",
+      "id": "struct-transformer-stmt-140-part_of-transformer-block-103",
       "from": "transformer-stmt-140",
-      "to": "transformer-block-102",
+      "to": "transformer-block-103",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8288,9 +8288,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-141-part_of-transformer-block-103",
+      "id": "struct-transformer-stmt-141-part_of-transformer-block-104",
       "from": "transformer-stmt-141",
-      "to": "transformer-block-103",
+      "to": "transformer-block-104",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8308,9 +8308,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-143-part_of-transformer-block-104",
+      "id": "struct-transformer-stmt-143-part_of-transformer-block-105",
       "from": "transformer-stmt-143",
-      "to": "transformer-block-104",
+      "to": "transformer-block-105",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8328,9 +8328,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-145-part_of-transformer-block-105",
+      "id": "struct-transformer-stmt-145-part_of-transformer-block-106",
       "from": "transformer-stmt-145",
-      "to": "transformer-block-105",
+      "to": "transformer-block-106",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8368,18 +8368,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-149-part_of-transformer-block-106",
+      "id": "struct-transformer-stmt-149-part_of-transformer-block-107",
       "from": "transformer-stmt-149",
-      "to": "transformer-block-106",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-150-part_of-transformer-block-107",
-      "from": "transformer-stmt-150",
       "to": "transformer-block-107",
       "kind": "part_of",
       "qualifiers": {},
@@ -8388,8 +8378,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-151-part_of-transformer-block-108",
-      "from": "transformer-stmt-151",
+      "id": "struct-transformer-stmt-150-part_of-transformer-block-108",
+      "from": "transformer-stmt-150",
       "to": "transformer-block-108",
       "kind": "part_of",
       "qualifiers": {},
@@ -8398,9 +8388,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-152-part_of-transformer-block-109",
-      "from": "transformer-stmt-152",
+      "id": "struct-transformer-stmt-151-part_of-transformer-block-109",
+      "from": "transformer-stmt-151",
       "to": "transformer-block-109",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-152-part_of-transformer-block-110",
+      "from": "transformer-stmt-152",
+      "to": "transformer-block-110",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8418,9 +8418,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-154-part_of-transformer-block-110",
+      "id": "struct-transformer-stmt-154-part_of-transformer-block-111",
       "from": "transformer-stmt-154",
-      "to": "transformer-block-110",
+      "to": "transformer-block-111",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8438,18 +8438,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-156-part_of-transformer-block-111",
+      "id": "struct-transformer-stmt-156-part_of-transformer-block-112",
       "from": "transformer-stmt-156",
-      "to": "transformer-block-111",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-157-part_of-transformer-block-112",
-      "from": "transformer-stmt-157",
       "to": "transformer-block-112",
       "kind": "part_of",
       "qualifiers": {},
@@ -8458,8 +8448,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-158-part_of-transformer-block-113",
-      "from": "transformer-stmt-158",
+      "id": "struct-transformer-stmt-157-part_of-transformer-block-113",
+      "from": "transformer-stmt-157",
       "to": "transformer-block-113",
       "kind": "part_of",
       "qualifiers": {},
@@ -8468,9 +8458,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-159-part_of-transformer-block-114",
-      "from": "transformer-stmt-159",
+      "id": "struct-transformer-stmt-158-part_of-transformer-block-114",
+      "from": "transformer-stmt-158",
       "to": "transformer-block-114",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-159-part_of-transformer-block-115",
+      "from": "transformer-stmt-159",
+      "to": "transformer-block-115",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8488,18 +8488,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-161-part_of-transformer-block-115",
+      "id": "struct-transformer-stmt-161-part_of-transformer-block-116",
       "from": "transformer-stmt-161",
-      "to": "transformer-block-115",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-162-part_of-transformer-block-116",
-      "from": "transformer-stmt-162",
       "to": "transformer-block-116",
       "kind": "part_of",
       "qualifiers": {},
@@ -8508,9 +8498,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-163-part_of-transformer-block-117",
-      "from": "transformer-stmt-163",
+      "id": "struct-transformer-stmt-162-part_of-transformer-block-117",
+      "from": "transformer-stmt-162",
       "to": "transformer-block-117",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-163-part_of-transformer-block-118",
+      "from": "transformer-stmt-163",
+      "to": "transformer-block-118",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8548,9 +8548,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-167-part_of-transformer-block-118",
+      "id": "struct-transformer-stmt-167-part_of-transformer-block-119",
       "from": "transformer-stmt-167",
-      "to": "transformer-block-118",
+      "to": "transformer-block-119",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8558,9 +8558,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-168-part_of-transformer-block-119",
+      "id": "struct-transformer-stmt-168-part_of-transformer-block-120",
       "from": "transformer-stmt-168",
-      "to": "transformer-block-119",
+      "to": "transformer-block-120",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8578,9 +8578,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-170-part_of-transformer-block-120",
+      "id": "struct-transformer-stmt-170-part_of-transformer-block-121",
       "from": "transformer-stmt-170",
-      "to": "transformer-block-120",
+      "to": "transformer-block-121",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8598,9 +8598,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-172-part_of-transformer-block-121",
+      "id": "struct-transformer-stmt-172-part_of-transformer-block-122",
       "from": "transformer-stmt-172",
-      "to": "transformer-block-121",
+      "to": "transformer-block-122",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8618,9 +8618,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-174-part_of-transformer-block-122",
+      "id": "struct-transformer-stmt-174-part_of-transformer-block-123",
       "from": "transformer-stmt-174",
-      "to": "transformer-block-122",
+      "to": "transformer-block-123",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8628,9 +8628,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-175-part_of-transformer-block-123",
+      "id": "struct-transformer-stmt-175-part_of-transformer-block-124",
       "from": "transformer-stmt-175",
-      "to": "transformer-block-123",
+      "to": "transformer-block-124",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8658,9 +8658,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-178-part_of-transformer-block-124",
+      "id": "struct-transformer-stmt-178-part_of-transformer-block-125",
       "from": "transformer-stmt-178",
-      "to": "transformer-block-124",
+      "to": "transformer-block-125",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8678,9 +8678,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-180-part_of-transformer-block-125",
+      "id": "struct-transformer-stmt-180-part_of-transformer-block-126",
       "from": "transformer-stmt-180",
-      "to": "transformer-block-125",
+      "to": "transformer-block-126",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8698,18 +8698,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-182-part_of-transformer-block-126",
+      "id": "struct-transformer-stmt-182-part_of-transformer-block-127",
       "from": "transformer-stmt-182",
-      "to": "transformer-block-126",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-183-part_of-transformer-block-127",
-      "from": "transformer-stmt-183",
       "to": "transformer-block-127",
       "kind": "part_of",
       "qualifiers": {},
@@ -8718,9 +8708,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-184-part_of-transformer-block-128",
-      "from": "transformer-stmt-184",
+      "id": "struct-transformer-stmt-183-part_of-transformer-block-128",
+      "from": "transformer-stmt-183",
       "to": "transformer-block-128",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-184-part_of-transformer-block-130",
+      "from": "transformer-stmt-184",
+      "to": "transformer-block-130",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8768,9 +8768,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-189-part_of-transformer-block-130",
+      "id": "struct-transformer-stmt-189-part_of-transformer-block-132",
       "from": "transformer-stmt-189",
-      "to": "transformer-block-130",
+      "to": "transformer-block-132",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8788,18 +8788,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-191-part_of-transformer-block-132",
+      "id": "struct-transformer-stmt-191-part_of-transformer-block-133",
       "from": "transformer-stmt-191",
-      "to": "transformer-block-132",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-192-part_of-transformer-block-133",
-      "from": "transformer-stmt-192",
       "to": "transformer-block-133",
       "kind": "part_of",
       "qualifiers": {},
@@ -8808,8 +8798,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-193-part_of-transformer-block-134",
-      "from": "transformer-stmt-193",
+      "id": "struct-transformer-stmt-192-part_of-transformer-block-134",
+      "from": "transformer-stmt-192",
       "to": "transformer-block-134",
       "kind": "part_of",
       "qualifiers": {},
@@ -8818,8 +8808,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-194-part_of-transformer-block-136",
-      "from": "transformer-stmt-194",
+      "id": "struct-transformer-stmt-193-part_of-transformer-block-136",
+      "from": "transformer-stmt-193",
       "to": "transformer-block-136",
       "kind": "part_of",
       "qualifiers": {},
@@ -8828,9 +8818,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-195-part_of-transformer-block-137",
-      "from": "transformer-stmt-195",
+      "id": "struct-transformer-stmt-194-part_of-transformer-block-137",
+      "from": "transformer-stmt-194",
       "to": "transformer-block-137",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-195-part_of-transformer-block-138",
+      "from": "transformer-stmt-195",
+      "to": "transformer-block-138",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8858,9 +8858,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-198-part_of-transformer-block-138",
+      "id": "struct-transformer-stmt-198-part_of-transformer-block-139",
       "from": "transformer-stmt-198",
-      "to": "transformer-block-138",
+      "to": "transformer-block-139",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8908,9 +8908,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-203-part_of-transformer-block-139",
+      "id": "struct-transformer-stmt-203-part_of-transformer-block-140",
       "from": "transformer-stmt-203",
-      "to": "transformer-block-139",
+      "to": "transformer-block-140",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10025,1211 +10025,1211 @@
     },
     {
       "id": "transformer-stmt-33",
-      "quote": "These are the six steps from the intuition chapter, now driven by the real numbers of the tiny model above.",
+      "quote": "These are the steps from the intuition chapter, now driven by the real numbers of the tiny model above.",
       "block_id": "transformer-block-31",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-34",
       "quote": "Read the heading, then look at the picture.",
       "block_id": "transformer-block-31",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-35",
       "quote": "The layer cards below repeat the attention, feed-forward and residual steps for every layer, with the full formulas one level deeper.",
       "block_id": "transformer-block-31",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-36",
       "quote": "Each token becomes a point in the learned embedding space.",
       "block_id": "transformer-block-35",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-37",
       "quote": "The line follows the sentence; the faint cloud is the rest of the vocabulary.",
       "block_id": "transformer-block-35",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-38",
       "quote": "The embedding table is a learned matrix; each row is a token's starting vector.",
       "block_id": "transformer-block-36",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-39",
       "quote": "The positions are added in the next step.",
       "block_id": "transformer-block-36",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-40",
       "quote": "The plot shows the semantic vector h0 = token embedding + position.",
       "block_id": "transformer-block-39",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-41",
       "quote": "Up to three dimensions are shown raw; above that a PCA reduces it to three and the label says so.",
       "block_id": "transformer-block-39",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-42",
       "quote": "Without a position signal, the same tokens in a different order would look identical.",
       "block_id": "transformer-block-40",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-43",
       "quote": "The position vector gives every slot a unique fingerprint.",
       "block_id": "transformer-block-40",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-44",
       "quote": "Positional encoding in detail",
       "block_id": "transformer-block-41",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-45",
       "quote": "Attention lets every token read the others.",
       "block_id": "transformer-block-43",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-46",
       "quote": "Each arc is a weighted connection; a thicker line carries more information.",
       "block_id": "transformer-block-43",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-47",
       "quote": "Attention is the only step where information moves between tokens.",
       "block_id": "transformer-block-44",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-48",
       "quote": "Everything else in the block works on one token at a time.",
       "block_id": "transformer-block-44",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-49",
       "quote": "Attention in detail Attention is the only operation in the block that moves information between tokens.",
       "block_id": "transformer-block-45",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-50",
       "quote": "Each token projects its vector into a query, a key and a value.",
       "block_id": "transformer-block-45",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-51",
       "quote": "The dot product of a query and a key is a score; softmax turns the row of scores into weights that sum to one; the output is the weighted sum of the value vectors.",
       "block_id": "transformer-block-45",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-52",
       "quote": "A layer runs several heads in parallel, each in its own subspace.",
       "block_id": "transformer-block-45",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-53",
       "quote": "Every head has one unit of attention to spend: if it puts 80% on one word, only 20% remains for the others.",
       "block_id": "transformer-block-45",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-54",
       "quote": "The layer cards below show the real weights and the attention web for each head.",
       "block_id": "transformer-block-45",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-55",
       "quote": "Feed-forward in detail The FFN works on one token at a time.",
       "block_id": "transformer-block-47",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-56",
       "quote": "It expands the vector to a wider hidden layer, applies GELU, and contracts it back.",
       "block_id": "transformer-block-47",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-57",
       "quote": "Attention decides what to look at; the FFN decides what to do with it.",
       "block_id": "transformer-block-47",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-58",
       "quote": "Most of the model's parameters and much of its factual recall live in these matrices, but knowledge is distributed.",
       "block_id": "transformer-block-47",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-59",
       "quote": "The layer cards below show the real expansion, activation and compression for every layer.",
       "block_id": "transformer-block-47",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-60",
-      "quote": "The residual stream in detail Each sublayer computes an update and adds it to the running vector: x_{n+1} = x_n + layer_{n+1}(x_n).",
+      "quote": "The residual stream in detail Each sublayer computes an update and adds it to the running vector: .",
       "block_id": "transformer-block-49",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-61",
       "quote": "Nothing is overwritten, so the original token stays available and gradients have a short path back.",
       "block_id": "transformer-block-49",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-62",
-      "quote": "The per-layer residual preview above shows how much attention and the FFN write for each token.",
+      "quote": "The per-layer residual preview above shows how much attention and the FFN write for each token; the last layer has a separate h_last step.",
       "block_id": "transformer-block-49",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-63",
-      "quote": "The last layer's level 2 also shows the final h_last vector.",
+      "quote": "The block input and output keep the same d_model width; the FFN expands to d_ff inside and compresses back.",
       "block_id": "transformer-block-49",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-64",
-      "quote": "The block input and output keep the same d_model width; the FFN expands to d_ff inside and compresses back.",
+      "quote": "That is the width where it has room to work.",
       "block_id": "transformer-block-49",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-65",
-      "quote": "That is the width where it has room to work.",
-      "block_id": "transformer-block-49",
-      "section": "The six steps, live",
+      "quote": "From vectors to words The final vector is multiplied by the unembedding matrix, producing one logit per vocabulary entry.",
+      "block_id": "transformer-block-53",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-66",
-      "quote": "From vectors to words The final vector is multiplied by the unembedding matrix, producing one logit per vocabulary entry.",
+      "quote": "Softmax turns the logits into probabilities; temperature sharpens or flattens the distribution.",
       "block_id": "transformer-block-53",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-67",
-      "quote": "Softmax turns the logits into probabilities; temperature sharpens or flattens the distribution.",
+      "quote": "The output section below lets you change the temperature and click tokens to append them.",
       "block_id": "transformer-block-53",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-68",
-      "quote": "The output section below lets you change the temperature and click tokens to append them.",
+      "quote": "The layer cards show the logit lens for every layer.",
       "block_id": "transformer-block-53",
-      "section": "The six steps, live",
+      "section": "The steps, live",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-69",
-      "quote": "The layer cards show the logit lens for every layer.",
-      "block_id": "transformer-block-53",
-      "section": "The six steps, live",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-70",
       "quote": "A transformer never sees text — only a stream of vectors it can move around.",
       "block_id": "transformer-block-55",
       "section": "Preparing the Input",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-71",
+      "id": "transformer-stmt-70",
       "quote": "This part turns a raw sentence into that stream: chop it into tokens, look each one up as a vector, tag each vector with its position, and see where the whole stream flows.",
       "block_id": "transformer-block-55",
       "section": "Preparing the Input",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-72",
+      "id": "transformer-stmt-71",
       "quote": "The journey of a sentence begins with **Tokenization**, which decomposes raw text into **tokens**.",
       "block_id": "transformer-block-57",
       "section": "Tokenization",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-73",
+      "id": "transformer-stmt-72",
       "quote": "Real LLMs would use **Byte-Pair Encoding** (**BPE**), as this approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments.",
       "block_id": "transformer-block-57",
       "section": "Tokenization",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-74",
+      "id": "transformer-stmt-73",
       "quote": "In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language.",
       "block_id": "transformer-block-57",
       "section": "Tokenization",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-75",
+      "id": "transformer-stmt-74",
       "quote": "BPE is, at heart, a **data-compression** algorithm from \\citeyear{gage1994bpe} \\cite{gage1994bpe}: it repeatedly fuses the most frequent adjacent pair into one new symbol, so frequent (often long) patterns collapse into a single **short ID** while rare material stays a **long** run of symbols — which is why the token stream is usually much shorter than the raw text it losslessly encodes, and why the same rules pointed at a file literally compress it.",
       "block_id": "transformer-block-57",
       "section": "Tokenization",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-76",
+      "id": "transformer-stmt-75",
       "quote": "But since our embedding space and the amount of data browsers can process is too small for **BPE**, we stick with word-wise tokenization.",
       "block_id": "transformer-block-57",
       "section": "Tokenization",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-77",
+      "id": "transformer-stmt-76",
       "quote": "How many tokens the vocabulary has is another hyperparameter in BPE; this demo does not expose it because it tokenizes word by word and the model is too small for real BPE.",
       "block_id": "transformer-block-57",
       "section": "Tokenization",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-78",
+      "id": "transformer-stmt-77",
       "quote": "Once tokenized, these units are converted into vectors.",
       "block_id": "transformer-block-59",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-79",
+      "id": "transformer-stmt-78",
       "quote": "It is crucial to distinguish between the **Embedding Space** and the **Feature Space**:",
       "block_id": "transformer-block-59",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-80",
+      "id": "transformer-stmt-79",
       "quote": "Enter an equation and press Enter...",
       "block_id": "transformer-block-60",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-81",
+      "id": "transformer-stmt-80",
       "quote": "The batch size \"2\" passes through the multiplication untouched.",
       "block_id": "transformer-block-61",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-82",
+      "id": "transformer-stmt-81",
       "quote": "Each neuron sees 784 inputs, not 1568.",
       "block_id": "transformer-block-61",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-83",
+      "id": "transformer-stmt-82",
       "quote": "The two images are processed by the same neurons, independently — neither image \"knows about\" the other.",
       "block_id": "transformer-block-61",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-84",
+      "id": "transformer-stmt-83",
       "quote": "| Dimension | Meaning | Variable?",
       "block_id": "transformer-block-62",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-85",
+      "id": "transformer-stmt-84",
       "quote": "Here is the computation in four steps:",
       "block_id": "transformer-block-63",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-86",
+      "id": "transformer-stmt-85",
       "quote": "All three are linear projections of the same token vectors; they are three different \"views\" of the same content.",
       "block_id": "transformer-block-64",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-87",
+      "id": "transformer-stmt-86",
       "quote": "This is the **only** place in the network where one token's content enters another token's vector.",
       "block_id": "transformer-block-65",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-88",
+      "id": "transformer-stmt-87",
       "quote": "Every other operation — Linear, LayerNorm, GELU, residual add, FFN — is strictly per-row.",
       "block_id": "transformer-block-65",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-89",
+      "id": "transformer-stmt-88",
       "quote": "| token IDs | $(1, 2)$ | 2 integers to look up |",
       "block_id": "transformer-block-66",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-90",
+      "id": "transformer-stmt-89",
       "quote": "| embedding + position | $(1, 2, 768)$ | 2 rows stacked |",
       "block_id": "transformer-block-67",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-91",
+      "id": "transformer-stmt-90",
       "quote": "| split into heads | $(1, 12, 2, 64)$ | reshape |",
       "block_id": "transformer-block-68",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-92",
+      "id": "transformer-stmt-91",
       "quote": "| last row → unembed | $(1, 1, 50{,}257)$ | one logit per vocab entry |",
       "block_id": "transformer-block-70",
       "section": "Embedding & The Feature Space",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-93",
+      "id": "transformer-stmt-92",
       "quote": "The positional encoding is calculated using sine and cosine functions, which provide smooth, periodic patterns for each position.",
       "block_id": "transformer-block-72",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-94",
+      "id": "transformer-stmt-93",
       "quote": "These functions were chosen because they create unique, continuous patterns for each position, enabling the model to infer both absolute and relative positions.",
       "block_id": "transformer-block-73",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-95",
+      "id": "transformer-stmt-94",
       "quote": "Because the formula is defined for any position, the encoding can be *computed* beyond the training length; whether the trained model actually generalizes there is a separate empirical question, and in practice it often does not.",
       "block_id": "transformer-block-73",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-96",
+      "id": "transformer-stmt-95",
       "quote": "Additionally, their multi-frequency nature allows the model to capture both local and global positional relationships.",
       "block_id": "transformer-block-73",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-97",
+      "id": "transformer-stmt-96",
       "quote": "The network's layers learn to interpret these fixed “geometric fingerprints” by adjusting their weights, enabling the model to apply position-specific logic and reason about sequence structure effectively.",
       "block_id": "transformer-block-73",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-98",
+      "id": "transformer-stmt-97",
       "quote": "This is required because the network looks at all words simultaneously instead of one after another.",
       "block_id": "transformer-block-74",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-99",
+      "id": "transformer-stmt-98",
       "quote": "Since the matrix can be permuted and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.",
       "block_id": "transformer-block-74",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-100",
+      "id": "transformer-stmt-99",
       "quote": "In this example, we're using a scaling factor of 0.1 because of the low dimensionality of our space.",
       "block_id": "transformer-block-75",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-101",
+      "id": "transformer-stmt-100",
       "quote": "When you add “random” values to a vector, you change its location in the multidimensional embedding space.",
       "block_id": "transformer-block-76",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-102",
+      "id": "transformer-stmt-101",
       "quote": "However, this doesn't “break” the word:",
       "block_id": "transformer-block-76",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-103",
+      "id": "transformer-stmt-102",
       "quote": "- **High-Dimensional Space:** In real models, the embedding space is massive.",
       "block_id": "transformer-block-77",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-104",
+      "id": "transformer-stmt-103",
       "quote": "Adding a positional vector moves the word “King” to a new location, but it remains in a “neighborhood” that the model still recognizes as “King.”",
       "block_id": "transformer-block-77",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-105",
+      "id": "transformer-stmt-104",
       "quote": "- **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network's layers.",
       "block_id": "transformer-block-78",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-106",
+      "id": "transformer-stmt-105",
       "quote": "Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.",
       "block_id": "transformer-block-78",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-107",
+      "id": "transformer-stmt-106",
       "quote": "- **The Risk of Overlapping**: During training, the model learns to set the “scale” of the embeddings much larger than the “scale” of the positional encodings.",
       "block_id": "transformer-block-79",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-108",
+      "id": "transformer-stmt-107",
       "quote": "This ensures the position “nudges” the meaning without overwriting it.",
       "block_id": "transformer-block-79",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-109",
+      "id": "transformer-stmt-108",
       "quote": "Here, we do **not** use the original Encoder-Decoder architecture from Vaswani et al. (\\citeyear{vaswani2017attention}).",
       "block_id": "transformer-block-80",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-110",
+      "id": "transformer-stmt-109",
       "quote": "Instead, this example implements a **Decoder-only** Transformer with **Pre-Layer Normalization**, the same structural family that powers today's leading LLMs (GPT, Claude, Gemini and so on).",
       "block_id": "transformer-block-80",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-111",
+      "id": "transformer-stmt-110",
       "quote": "The entire model is a stack of identical Decoder (with different weights) blocks, each containing:",
       "block_id": "transformer-block-80",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-112",
+      "id": "transformer-stmt-111",
       "quote": "**Pre-LN**: Layer Normalization is applied *before* each sublayer (attention and FFN), rather than after.",
       "block_id": "transformer-block-81",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-113",
+      "id": "transformer-stmt-112",
       "quote": "The arrangement was used in deep Transformers by \\cite[Wang et al. (2019)]{wang2019preln} and analyzed by \\cite[Xiong et al. (2020)]{xiong2020}, who showed that it keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up.",
       "block_id": "transformer-block-81",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-114",
+      "id": "transformer-stmt-113",
       "quote": "**A Feed-Forward Network (FFN)** with GELU activation and its own Pre-LN and residual connection.",
       "block_id": "transformer-block-82",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-115",
+      "id": "transformer-stmt-114",
       "quote": "This is the architecture you are interacting with in every visualization here.",
       "block_id": "transformer-block-83",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-116",
+      "id": "transformer-stmt-115",
       "quote": "When you see the attention heatmaps, the causal mask is the reason the upper-right triangle is always zero.",
       "block_id": "transformer-block-83",
       "section": "Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-117",
+      "id": "transformer-stmt-116",
       "quote": "You cannot step twice into the same rivers; for fresh waters are ever flowing in upon you.",
       "block_id": "transformer-block-85",
       "section": "The Residual Stream",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-118",
+      "id": "transformer-stmt-117",
       "quote": "It allows very deep networks without the **Vanishing Gradient**-problem.",
       "block_id": "transformer-block-86",
       "section": "The Residual Stream",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-119",
+      "id": "transformer-stmt-118",
       "quote": "It serves as a shared notebook where, at each layer, the “experts” at that layer write down their results in the original stream, so it becomes a \\cite[communication bus]{elhage2021mathematical} for all **Attention Heads** and **Feed-Forward-Networks**, where they perform “collaborative editing” by adding insights rather than overwriting the signal.",
       "block_id": "transformer-block-87",
       "section": "The Residual Stream",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-120",
+      "id": "transformer-stmt-119",
       "quote": "Attention is the heart of the transformer — the one place where one token's information can flow into another.",
       "block_id": "transformer-block-89",
       "section": "Attention: Letting Tokens Talk",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-121",
+      "id": "transformer-stmt-120",
       "quote": "This part builds it up from a single head to the full multi-head mechanism.",
       "block_id": "transformer-block-89",
       "section": "Attention: Letting Tokens Talk",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-122",
+      "id": "transformer-stmt-121",
       "quote": "Attention was not invented for translation alone.",
       "block_id": "transformer-block-90",
       "section": "Attention: Letting Tokens Talk",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-123",
+      "id": "transformer-stmt-122",
       "quote": "In 2014 \\cite[Graves et al. (2014)]{graves2014ntm} gave a recurrent network a differentiable read/write head over an external memory — the Neural Turing Machine — so that where to look became a learned, end-to-end operation (\\cite[Graves et al., 2014]{graves2014ntm}).",
       "block_id": "transformer-block-90",
       "section": "Attention: Letting Tokens Talk",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-124",
+      "id": "transformer-stmt-123",
       "quote": "Memory networks made the same move for question answering: a query retrieves relevant stored facts by similarity, and a controller reasons over them (\\cite[Weston et al., 2015]{weston2015memnn}; \\cite[Sukhbaatar et al., 2015]{sukhbaatar2015memnn}).",
       "block_id": "transformer-block-90",
       "section": "Attention: Letting Tokens Talk",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-125",
+      "id": "transformer-stmt-124",
       "quote": "By 2015, soft attention over a set of vectors was a general computational primitive.",
       "block_id": "transformer-block-90",
       "section": "Attention: Letting Tokens Talk",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-126",
+      "id": "transformer-stmt-125",
       "quote": "The modified attention calculation then is:",
       "block_id": "transformer-block-92",
       "section": "Masked Self-Attention",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-127",
+      "id": "transformer-stmt-126",
       "quote": "The causal mask creates an **information gradient** across the sequence.",
       "block_id": "transformer-block-93",
       "section": "Masked Self-Attention",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-128",
+      "id": "transformer-stmt-127",
       "quote": "Because later tokens attend to more preceding context, their representations are richer than those of earlier, “impoverished” tokens.",
       "block_id": "transformer-block-93",
       "section": "Masked Self-Attention",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-129",
+      "id": "transformer-stmt-128",
       "quote": "This **information funnel** makes the last token uniquely privileged: it is the only position that has “seen” the entire context, so at inference its hidden state is the one used for the next-token prediction.",
       "block_id": "transformer-block-93",
       "section": "Masked Self-Attention",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-130",
+      "id": "transformer-stmt-129",
       "quote": "During training, by contrast, every position predicts its own next token in parallel.",
       "block_id": "transformer-block-93",
       "section": "Masked Self-Attention",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-131",
+      "id": "transformer-stmt-130",
       "quote": "This is also important for **prompt engineering**:",
       "block_id": "transformer-block-94",
       "section": "Masked Self-Attention",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-132",
+      "id": "transformer-stmt-131",
       "quote": "The output width is simply the sum of the input widths.",
       "block_id": "transformer-block-97",
       "section": "Concatenation Definition",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-133",
+      "id": "transformer-stmt-132",
       "quote": "LayerNorm normalizes the features of **one token**: it subtracts that token's feature mean, divides by its feature standard deviation, then applies a learned scale $\\gamma$ and shift $\\beta$ (\\cite[Ba et al., 2016]{ba2016layernorm}).",
       "block_id": "transformer-block-99",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-134",
+      "id": "transformer-stmt-133",
       "quote": "This keeps each sublayer's input at a controlled scale, which makes the optimization landscape better behaved and allows higher learning rates.",
       "block_id": "transformer-block-99",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-135",
+      "id": "transformer-stmt-134",
       "quote": "It does **not** guarantee that the residual stream stays at mean zero and variance one: the affine transform can rescale and re-center the normalized output, and the residual stream is a running sum whose norm can grow or shrink across layers.",
       "block_id": "transformer-block-99",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-136",
+      "id": "transformer-stmt-135",
       "quote": "The stability of a pre-norm Transformer comes from the combination of per-token normalization, the identity path of the residual connection, and careful initialization -- not from a global invariant enforced by LayerNorm alone (\\cite[Xiong et al., 2020]{xiong2020}).",
       "block_id": "transformer-block-99",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-137",
+      "id": "transformer-stmt-136",
       "quote": "For a single head, we say:",
       "block_id": "transformer-block-100",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-138",
+      "id": "transformer-stmt-137",
       "quote": "Which transforms the input in the shape of $(B, T, h \\cdot d_v)$ to $(B, T, d_{\\text{model}})$.",
       "block_id": "transformer-block-101",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-139",
+      "id": "transformer-stmt-138",
       "quote": "The *Query* and *Key* rows still correspond to token positions in every layer; what changes is the content of those rows.",
       "block_id": "transformer-block-102",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-140",
+      "id": "transformer-stmt-139",
       "quote": "In the first layer they are projected from the concrete token embeddings; in later layers they are projected from contextual, abstract features, so a head's query and key no longer mean “this word” so much as “this position's current role in the sentence”.",
       "block_id": "transformer-block-102",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-141",
+      "id": "transformer-stmt-140",
       "quote": "In this stage, it is already abstracted away from the concrete Embedding Space (for example, by positional encoding).",
       "block_id": "transformer-block-103",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-142",
+      "id": "transformer-stmt-141",
       "quote": "Layer Normalization keeps activations stable, but during backpropagation, gradients can still explode.",
       "block_id": "transformer-block-104",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-143",
+      "id": "transformer-stmt-142",
       "quote": "A single pathological training example can produce a gradient so large that it destroys all learned weights in one step, the **exploding gradient** problem.",
       "block_id": "transformer-block-104",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-144",
+      "id": "transformer-stmt-143",
       "quote": "Gradient clipping is the complementary defense: it caps the magnitude of gradients so that no single update can change the model by more than a fixed amount.",
       "block_id": "transformer-block-105",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-145",
+      "id": "transformer-stmt-144",
       "quote": "Mathematically, if the gradient vector $\\mathbf{g}$ has elements larger than a threshold $\\tau$, each element is rescaled:",
       "block_id": "transformer-block-105",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-146",
+      "id": "transformer-stmt-145",
       "quote": "In this implementation, gradients are clipped to the range $[-1, 1]$.",
       "block_id": "transformer-block-106",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-147",
+      "id": "transformer-stmt-146",
       "quote": "This is the numerical equivalent of an immune system: the body allows gradual adaptation (learning) but violently rejects sudden massive changes.",
       "block_id": "transformer-block-106",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-148",
+      "id": "transformer-stmt-147",
       "quote": "Without clipping, one bad sentence in the training data could corrupt the entire model.",
       "block_id": "transformer-block-106",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-149",
+      "id": "transformer-stmt-148",
       "quote": "With it, the damage is bounded.",
       "block_id": "transformer-block-106",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-150",
+      "id": "transformer-stmt-149",
       "quote": "However, like an immune system, it is imperfect, it can also suppress legitimate large updates that the model actually needs, slowing learning on genuinely novel patterns.",
       "block_id": "transformer-block-107",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-151",
+      "id": "transformer-stmt-150",
       "quote": "In the paper \\citealternativetitle{analyzingmultiheads}, the study identified that the most “important” heads in encoder models often perform three specific, interpretable functions:",
       "block_id": "transformer-block-108",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-152",
+      "id": "transformer-stmt-151",
       "quote": "However, research into larger Decoder-only models from (\\cite[Elhage et al., 2021]{elhage2021mathematical}) and (\\cite[Olsson et al., 2022]{incontextlearninghead}) and recent discoveries in mechanistic interpretability have revealed even more specialized mechanisms:",
       "block_id": "transformer-block-109",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-153",
+      "id": "transformer-stmt-152",
       "quote": "Induction heads represent a specialized evolutionary step beyond the “Positional Heads” described in Voita et al. (\\citeyear{analyzingmultiheads}).",
       "block_id": "transformer-block-110",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-154",
+      "id": "transformer-stmt-153",
       "quote": "While a standard positional head might only look at the token immediately before it, the Induction Head circuit uses that information to perform algorithmic copying.",
       "block_id": "transformer-block-110",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-155",
+      "id": "transformer-stmt-154",
       "quote": "In a sequence like “Harry Potter ...",
       "block_id": "transformer-block-111",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-156",
+      "id": "transformer-stmt-155",
       "quote": "Harry”, the process unfolds as follows:",
       "block_id": "transformer-block-111",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-157",
+      "id": "transformer-stmt-156",
       "quote": "- **Step 1: The Previous Token Head (Early Layer):** This functions like the",
       "block_id": "transformer-block-112",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-158",
+      "id": "transformer-stmt-157",
       "quote": "At the first instance of [Potter], it looks back at [Harry] and encodes that “Harry preceded me.”",
       "block_id": "transformer-block-113",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-159",
+      "id": "transformer-stmt-158",
       "quote": "- **Step 2: The Induction Head (Later Layer):** When the model sees [Harry]",
       "block_id": "transformer-block-114",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-160",
+      "id": "transformer-stmt-159",
       "quote": "a second time, this head searches the entire context for previous [Harry] tokens.",
       "block_id": "transformer-block-115",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-161",
+      "id": "transformer-stmt-160",
       "quote": "It ignores the current position and instead “attends” to the [Potter] token because [Potter] carries the signal that it follows [Harry].",
       "block_id": "transformer-block-115",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-162",
+      "id": "transformer-stmt-161",
       "quote": "- **The Result:** The model copies [Potter] into its current prediction.",
       "block_id": "transformer-block-116",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-163",
+      "id": "transformer-stmt-162",
       "quote": "This discovery is significant because it shows that models don't just learn static “Syntactic” rules; they learn to build dynamic “search engines” that allow them to learn new patterns in real-time during a single prompt.",
       "block_id": "transformer-block-117",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-164",
+      "id": "transformer-stmt-163",
       "quote": "The progression of data through the layers of a Transformer follows a systematic evolution that mirrors the hierarchical structure of Convolutional Neural Networks.",
       "block_id": "transformer-block-118",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-165",
+      "id": "transformer-stmt-164",
       "quote": "In a CNN, the initial layers focus on raw pixels while subsequent layers analyze the output of those earlier stages to form abstract concepts.",
       "block_id": "transformer-block-118",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-166",
+      "id": "transformer-stmt-165",
       "quote": "Similarly, Transformer attention heads in the first layer look at the concrete sentence data itself.",
       "block_id": "transformer-block-118",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-167",
+      "id": "transformer-stmt-166",
       "quote": "As information moves deeper, each layer processes the results of the previous one, gradually abstracting away from the specific training and inference data toward higher-level representations.",
       "block_id": "transformer-block-118",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-168",
+      "id": "transformer-stmt-167",
       "quote": "This systematic change in attention patterns can be categorized as follows:",
       "block_id": "transformer-block-119",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-169",
+      "id": "transformer-stmt-168",
       "quote": "- **Early Layers:** Local and positional patterns dominate.",
       "block_id": "transformer-block-120",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-170",
+      "id": "transformer-stmt-169",
       "quote": "The model focuses on the actual data tokens, looking at diagonal or adjacent positions similar to how a CNN identifies basic edges or pixels.",
       "block_id": "transformer-block-120",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-171",
+      "id": "transformer-stmt-170",
       "quote": "- **Middle Layers:** Semantic and syntactic patterns emerge.",
       "block_id": "transformer-block-121",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-172",
+      "id": "transformer-stmt-171",
       "quote": "Here, the model begins to identify dependency arcs and coreference resolution, focusing on the structural relationships between tokens.",
       "block_id": "transformer-block-121",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-173",
+      "id": "transformer-stmt-172",
       "quote": "- **Late Layers:** Focus becomes diffuse or highly task-specific.",
       "block_id": "transformer-block-122",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-174",
+      "id": "transformer-stmt-173",
       "quote": "These layers concentrate on tokens relevant to the final prediction, representing a high level of abstraction that is far removed from the concrete input values.",
       "block_id": "transformer-block-122",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-175",
+      "id": "transformer-stmt-174",
       "quote": "By switching between layers in a visualization, you can observe this transition from raw data processing to complex, abstracted analysis.",
       "block_id": "transformer-block-123",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-176",
+      "id": "transformer-stmt-175",
       "quote": "The layer-depth progression above says the **middle layers** \"begin to identify dependency arcs.\" That is a strong claim, and it deserves to be examined: does the model actually construct a *parse* — a syntactic structure it then manipulates — or does it only track shallow word co-occurrence?",
       "block_id": "transformer-block-124",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-177",
+      "id": "transformer-stmt-176",
       "quote": "The honest answer is a **distributed, hierarchical syntactic representation**, built the way a CNN builds edges-then-objects: bottom-up, across depth, spread over many specialist heads.",
       "block_id": "transformer-block-124",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-178",
+      "id": "transformer-stmt-177",
       "quote": "There is no single parse object sitting in one place.",
       "block_id": "transformer-block-124",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-179",
+      "id": "transformer-stmt-178",
       "quote": "The limit is the same one the fact-retrieval chapter meets: this distributed syntax is **fragile to the nesting and distractors** that break long-distance binding, because each dependency link costs attention and depth.",
       "block_id": "transformer-block-125",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-180",
+      "id": "transformer-stmt-179",
       "quote": "The model builds syntax the way it does everything else — by distributed, depth-staged, head-parallel computation — not by manipulating a parse it can inspect.",
       "block_id": "transformer-block-125",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-181",
+      "id": "transformer-stmt-180",
       "quote": "The **KV-Cache** (**Key-Value-Cache**) is an optimization that prevents $\\mathcal{O}(T^2)$ redundancy during generation.",
       "block_id": "transformer-block-126",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-182",
+      "id": "transformer-stmt-181",
       "quote": "This would happen because every token needs to look at every other tokens, but it can be prevented:",
       "block_id": "transformer-block-126",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-183",
+      "id": "transformer-stmt-182",
       "quote": "The result is used to weigh the cached Values, producing the next",
       "block_id": "transformer-block-127",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-184",
+      "id": "transformer-stmt-183",
       "quote": "hidden state without re-calculating the past.",
       "block_id": "transformer-block-128",
       "section": "Multi-Head Attention: Lateral Parallelism",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-185",
+      "id": "transformer-stmt-184",
       "quote": "The other route to parallelism was convolution.",
       "block_id": "transformer-block-130",
       "section": "The Transformer Block",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-186",
+      "id": "transformer-stmt-185",
       "quote": "\\cite[Gehring et al. (2017)]{gehring2017convs2s} replaced the recurrent encoder–decoder with stacked convolutions and attention, so every position could be computed in parallel (\\cite[Gehring et al., 2017]{gehring2017convs2s}).",
       "block_id": "transformer-block-130",
       "section": "The Transformer Block",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-187",
+      "id": "transformer-stmt-186",
       "quote": "ByteNet went further, using dilated convolutions to shorten the path between distant tokens (\\cite[van den Oord et al., 2016]{bytnet2016}).",
       "block_id": "transformer-block-130",
       "section": "The Transformer Block",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-188",
+      "id": "transformer-stmt-187",
       "quote": "Both still needed depth proportional to distance.",
       "block_id": "transformer-block-130",
       "section": "The Transformer Block",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-189",
+      "id": "transformer-stmt-188",
       "quote": "The Transformer made that path length one: every token attends to every other in a single layer, a computation that fills a GPU instead of serializing along the sequence (\\cite[Vaswani et al., 2017]{vaswani2017attention}).",
       "block_id": "transformer-block-130",
       "section": "The Transformer Block",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-190",
+      "id": "transformer-stmt-189",
       "quote": "While self-attention enables information exchange across the sequence, the Feed-Forward Network (FFN) applies a learned, non-linear transformation independently to each token's representation.",
       "block_id": "transformer-block-132",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-191",
+      "id": "transformer-stmt-190",
       "quote": "In this sense, it functions as the model's primary per-token computational stage, complementing attention's role in information routing and aggregation.",
       "block_id": "transformer-block-132",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-192",
+      "id": "transformer-stmt-191",
       "quote": "\\cite[Empirical studies]{keyvalmem} suggest that FFN layers are a major locus of memorized associations and factual patterns, although such knowledge is distributed across the network rather than localized to a single component.",
       "block_id": "transformer-block-133",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-193",
+      "id": "transformer-stmt-192",
       "quote": "To calculate the transformation of a contextual vector through the FFN, you apply two linear transformations with a non-linear activation and biases:",
       "block_id": "transformer-block-134",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-194",
+      "id": "transformer-stmt-193",
       "quote": "- $\\sigma$ is the activation function (like GELU, which the nanoGPT architecture uses, replacing the original ReLU).",
       "block_id": "transformer-block-136",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-195",
+      "id": "transformer-stmt-194",
       "quote": "While attention decides *what to look at*, the FFN decides *what to do with it*.",
       "block_id": "transformer-block-137",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-196",
+      "id": "transformer-stmt-195",
       "quote": "The equations above describe the 2017 Transformer.",
       "block_id": "transformer-block-138",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-197",
+      "id": "transformer-stmt-196",
       "quote": "Open a 2025 open-weight model, however, and the same two sublayers are wired slightly differently.",
       "block_id": "transformer-block-138",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-198",
+      "id": "transformer-stmt-197",
       "quote": "None of these changes alters the big picture — attention mixes, the FFN computes, residuals carry — but together they define the “LLaMA-style” block that most open models now share.",
       "block_id": "transformer-block-138",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-199",
+      "id": "transformer-stmt-198",
       "quote": "The years after 2017 split the family in two.",
       "block_id": "transformer-block-139",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-200",
+      "id": "transformer-stmt-199",
       "quote": "\\cite[Devlin et al. (2019)]{bert} kept the encoder and trained it bidirectionally with a masked-token objective, making fine-tuning on downstream tasks the default (\\cite[Devlin et al., 2019]{bert}).",
       "block_id": "transformer-block-139",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-201",
+      "id": "transformer-stmt-200",
       "quote": "\\cite[Radford et al. (2019)]{gpt2} kept the decoder, scaled it, and showed that one autoregressive model could perform tasks zero-shot from its prompt (\\cite[Radford et al., 2019]{gpt2}).",
       "block_id": "transformer-block-139",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-202",
+      "id": "transformer-stmt-201",
       "quote": "Its largest variant — 48 layers, a model width of 1600, 1.5 billion parameters — also moved layer normalization to the input of each sub-block and scaled residual weights by the inverse square root of the layer count at initialization, the pre-norm arrangement described below.",
       "block_id": "transformer-block-139",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-203",
+      "id": "transformer-stmt-202",
       "quote": "The split matters for this chapter: the causal mask you see here is the GPT branch, while BERT's bidirectional attention is the encoder branch.",
       "block_id": "transformer-block-139",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
-      "id": "transformer-stmt-204",
+      "id": "transformer-stmt-203",
       "quote": "\\citeauthor{xiong2020} showed that this arrangement keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up (\\cite[Xiong et al., 2020]{xiong2020}).",
       "block_id": "transformer-block-140",
       "section": "The Feed-Forward Network",
       "kind": "statement"
     },
     {
+      "id": "transformer-stmt-204",
+      "quote": "The price is that the residual stream is no longer normalized.",
+      "block_id": "transformer-block-140",
+      "section": "The Feed-Forward Network",
+      "kind": "statement"
+    },
+    {
       "id": "transformer-stmt-205",
-      "quote": "The price is that the residual stream is no longer normalized; a final normalization before the output projection carries that burden.",
+      "quote": "Production pre-norm models add a final LayerNorm before the output projection; this compact demo reads h_last directly, so its unembedding is the simplified version.",
       "block_id": "transformer-block-140",
       "section": "The Feed-Forward Network",
       "kind": "statement"
@@ -11453,14 +11453,14 @@
     },
     {
       "id": "transformer-stmt-237",
-      "quote": "Zoom out: the full pipeline, how the model knows when to stop, and how the two operating modes differ.",
+      "quote": "Zoom out: the full route, how the model knows when to stop, and how the two operating modes differ.",
       "block_id": "transformer-block-165",
       "section": "The Whole Machine",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-238",
-      "quote": "Step 6 of the pipeline says generation runs \"until the model emits an end-of-sequence token.\" That sentence hides a genuinely interesting question: **how does the model *know* it is done?** There is no separate \"stop detector\"; stopping is just next-token prediction pointed at a special token.",
+      "quote": "The sampling step says generation runs \"until the model emits an end-of-sequence token.\" That sentence hides a genuinely interesting question: **how does the model *know* it is done?** There is no separate \"stop detector\"; stopping is just next-token prediction pointed at a special token.",
       "block_id": "transformer-block-167",
       "section": "How Does the Model Know When to Stop?",
       "kind": "statement"
@@ -12014,147 +12014,147 @@
     },
     {
       "id": "transformer-block-30",
-      "quote": "The six steps, live",
+      "quote": "The steps, live",
       "kind": "heading",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-31",
-      "quote": "These are the six steps from the intuition chapter, now driven by the real numbers of the tiny model above. Read the heading, then look at the picture. The layer cards below repeat the attention, feed-forward and residual steps for every layer, with the full formulas one level deeper.",
+      "quote": "These are the steps from the intuition chapter, now driven by the real numbers of the tiny model above. Read the heading, then look at the picture. The layer cards below repeat the attention, feed-forward and residual steps for every layer, with the full formulas one level deeper.",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-32",
       "quote": "1 · Tokenize −",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-33",
       "quote": "Tokenizer in detail",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-34",
       "quote": "2 · Embed −",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-35",
       "quote": "Each token becomes a point in the learned embedding space. The line follows the sentence; the faint cloud is the rest of the vocabulary.",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-36",
       "quote": "The embedding table is a learned matrix; each row is a token's starting vector. The positions are added in the next step.",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-37",
       "quote": "Embedding in detail",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-38",
       "quote": "3 · Position −",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-39",
       "quote": "The plot shows the semantic vector h0 = token embedding + position. Up to three dimensions are shown raw; above that a PCA reduces it to three and the label says so.",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-40",
       "quote": "Without a position signal, the same tokens in a different order would look identical. The position vector gives every slot a unique fingerprint.",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-41",
       "quote": "Positional encoding in detail",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-42",
       "quote": "4 · Attend −",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-43",
       "quote": "Attention lets every token read the others. Each arc is a weighted connection; a thicker line carries more information.",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-44",
       "quote": "Attention is the only step where information moves between tokens. Everything else in the block works on one token at a time.",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-45",
       "quote": "Attention in detail Attention is the only operation in the block that moves information between tokens. Each token projects its vector into a query, a key and a value. The dot product of a query and a key is a score; softmax turns the row of scores into weights that sum to one; the output is the weighted sum of the value vectors. A layer runs several heads in parallel, each in its own subspace. Every head has one unit of attention to spend: if it puts 80% on one word, only 20% remains for the others. The layer cards below show the real weights and the attention web for each head.",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-46",
       "quote": "5 · Feed-forward −",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-47",
       "quote": "Feed-forward in detail The FFN works on one token at a time. It expands the vector to a wider hidden layer, applies GELU, and contracts it back. Attention decides what to look at; the FFN decides what to do with it. Most of the model's parameters and much of its factual recall live in these matrices, but knowledge is distributed. The layer cards below show the real expansion, activation and compression for every layer.",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-48",
       "quote": "6 · Residual −",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-49",
-      "quote": "The residual stream in detail Each sublayer computes an update and adds it to the running vector: x_{n+1} = x_n + layer_{n+1}(x_n). Nothing is overwritten, so the original token stays available and gradients have a short path back. The per-layer residual preview above shows how much attention and the FFN write for each token. The last layer's level 2 also shows the final h_last vector. The block input and output keep the same d_model width; the FFN expands to d_ff inside and compresses back. That is the width where it has room to work.",
+      "quote": "The residual stream in detail Each sublayer computes an update and adds it to the running vector: . Nothing is overwritten, so the original token stays available and gradients have a short path back. The per-layer residual preview above shows how much attention and the FFN write for each token; the last layer has a separate h_last step. The block input and output keep the same d_model width; the FFN expands to d_ff inside and compresses back. That is the width where it has room to work.",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-50",
       "quote": "7 · Unembed −",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-51",
       "quote": "Sample",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-52",
       "quote": "Tokenized input",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-53",
       "quote": "From vectors to words The final vector is multiplied by the unembedding matrix, producing one logit per vocabulary entry. Softmax turns the logits into probabilities; temperature sharpens or flattens the distribution. The output section below lets you change the temperature and click tokens to append them. The layer cards show the logit lens for every layer.",
       "kind": "paragraph",
-      "section": "The six steps, live"
+      "section": "The steps, live"
     },
     {
       "id": "transformer-block-54",
@@ -12674,7 +12674,7 @@
     },
     {
       "id": "transformer-block-140",
-      "quote": "\\citeauthor{xiong2020} showed that this arrangement keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up (\\cite[Xiong et al., 2020]{xiong2020}). The price is that the residual stream is no longer normalized; a final normalization before the output projection carries that burden.",
+      "quote": "\\citeauthor{xiong2020} showed that this arrangement keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up (\\cite[Xiong et al., 2020]{xiong2020}). The price is that the residual stream is no longer normalized. Production pre-norm models add a final LayerNorm before the output projection; this compact demo reads h_last directly, so its unembedding is the simplified version.",
       "kind": "paragraph",
       "section": "The Feed-Forward Network"
     },
@@ -12824,7 +12824,7 @@
     },
     {
       "id": "transformer-block-165",
-      "quote": "Zoom out: the full pipeline, how the model knows when to stop, and how the two operating modes differ.",
+      "quote": "Zoom out: the full route, how the model knows when to stop, and how the two operating modes differ.",
       "kind": "paragraph",
       "section": "The Whole Machine"
     },
@@ -12836,7 +12836,7 @@
     },
     {
       "id": "transformer-block-167",
-      "quote": "Step 6 of the pipeline says generation runs \"until the model emits an end-of-sequence token.\" That sentence hides a genuinely interesting question: **how does the model *know* it is done?** There is no separate \"stop detector\"; stopping is just next-token prediction pointed at a special token.",
+      "quote": "The sampling step says generation runs \"until the model emits an end-of-sequence token.\" That sentence hides a genuinely interesting question: **how does the model *know* it is done?** There is no separate \"stop detector\"; stopping is just next-token prediction pointed at a special token.",
       "kind": "paragraph",
       "section": "How Does the Model Know When to Stop?"
     },
