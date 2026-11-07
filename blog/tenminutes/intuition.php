@@ -2661,8 +2661,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				posOut.innerHTML = (DE ? 'Ein Token an Position ' : 'One token at position ') + '<b>' + pos + '</b>' +
 					' · d0 <b>' + posFormat(posPE(pos, 0)) + '</b>' +
 					' · d1 <b>' + posFormat(posPE(pos, 1)) + '</b>' +
-					' · d2 <b>' + posFormat(posPE(pos, 2)) + '</b>' +
-					' · d3 <b>' + posFormat(posPE(pos, 3)) + '</b>.';
+					' · d2 <b>' + posFormat(posPE(pos, 2)) + '</b>.';
 			}
 			function posTick(now) {
 				if (posApi && posVisible && !document.hidden) {

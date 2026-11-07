@@ -1140,6 +1140,39 @@
 		}
 		mode = mode || "attention";
 		var n = tokens.length;
+		if (mode === "block") {
+			var bPad = 16, bLeft = 90, bTop = 18, bBottom = 32;
+			var cell = (w - bLeft - bPad) / Math.max(1, n);
+			var bMax = 0.0001;
+			tokens.forEach(function (_, i) {
+				bMax = Math.max(bMax, norm(trace.h_in[i] || []), norm(trace.h_out[i] || []));
+			});
+			var bScale = (h - bTop - bBottom) / bMax;
+			var bBase = h - bBottom;
+			tokens.forEach(function (token, i) {
+				var n0 = norm(trace.h_in[i] || []);
+				var n2 = norm(trace.h_out[i] || []);
+				var x = bLeft + i * cell + cell * 0.1;
+				var bw = Math.max(1, cell * 0.34);
+				ctx.fillStyle = c.lime;
+				ctx.globalAlpha = 0.75;
+				ctx.fillRect(x, bBase - n0 * bScale, bw, n0 * bScale);
+				ctx.globalAlpha = 1;
+				ctx.fillStyle = c.green;
+				ctx.fillRect(x + bw + 1, bBase - n2 * bScale, bw, n2 * bScale);
+				if (n <= 18 || i % Math.ceil(n / 18) === 0) {
+					ctx.save();
+					ctx.translate(x + bw, bBase + 8);
+					ctx.rotate(-0.6);
+					ctx.fillStyle = c.ink;
+					ctx.font = "600 8px Barlow, system-ui, sans-serif";
+					ctx.textAlign = "left";
+					ctx.fillText(fitText(ctx, display(token), 64), 0, 0);
+					ctx.restore();
+				}
+			});
+			return;
+		}
 		var padL = 90, padR = 18, padT = 30, padB = 30;
 		var bw = (w - padL - padR) / Math.max(1, n);
 		var max = 0.0001;
@@ -1271,11 +1304,23 @@
 		}
 		var rows = tokens.length;
 		var d = trace.h_in[0].length;
+		var source;
+		if (which === "delta") {
+			source = trace.h_in.map(function (row, i) {
+				return row.map(function (v, j) { return (trace.h_out[i][j] || 0) - v; });
+			});
+		} else {
+			source = which === "in" ? trace.h_in : trace.h_out;
+		}
 		var minAll = Infinity, maxAll = -Infinity;
-		tokens.forEach(function (_, i) {
-			(trace.h_in[i] || []).forEach(function (v) { minAll = Math.min(minAll, v); maxAll = Math.max(maxAll, v); });
-			(trace.h_out[i] || []).forEach(function (v) { minAll = Math.min(minAll, v); maxAll = Math.max(maxAll, v); });
-		});
+		if (which === "delta") {
+			source.forEach(function (row) { row.forEach(function (v) { minAll = Math.min(minAll, v); maxAll = Math.max(maxAll, v); }); });
+		} else {
+			tokens.forEach(function (_, i) {
+				(trace.h_in[i] || []).forEach(function (v) { minAll = Math.min(minAll, v); maxAll = Math.max(maxAll, v); });
+				(trace.h_out[i] || []).forEach(function (v) { minAll = Math.min(minAll, v); maxAll = Math.max(maxAll, v); });
+			});
+		}
 		if (!isFinite(minAll) || !isFinite(maxAll)) { minAll = -1; maxAll = 1; }
 		ctx.canvas._tmResidualRange = { min: minAll, max: maxAll };
 		var left = 74, top = 24, right = 10, bottom = 8;
@@ -1285,7 +1330,6 @@
 			if (v < 0) return rgb(mix(hex(c.paper), hex(c.blue), Math.min(1, v / (minAll || -1))));
 			return rgb(mix(hex(c.paper), hex(c.gold), Math.min(1, v / (maxAll || 1))));
 		}
-		var source = which === "in" ? trace.h_in : trace.h_out;
 		for (var i = 0; i < rows; i++) {
 			for (var j = 0; j < d; j++) {
 				ctx.fillStyle = cellColor((source[i] && source[i][j]) || 0);
@@ -1770,6 +1814,66 @@
 		if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(host);
 	}
 
+	function renderLayerTripleResiduals(layerIdx) {
+		var prefix = "unified-layer-" + layerIdx;
+		var trace = (window.__tmLayerTrace || [])[layerIdx];
+		var inEl = document.getElementById(prefix + "-residual-in");
+		var deltaEl = document.getElementById(prefix + "-residual-delta");
+		var outEl = document.getElementById(prefix + "-residual-out");
+		var triple = inEl ? inEl.closest(".tm-residual-triple") : null;
+		if (!trace || !inEl || !deltaEl || !outEl) return;
+		["in", "delta", "out"].forEach(function (which) {
+			var el = document.getElementById(prefix + "-residual-" + which);
+			if (el && window.TransformerSteps && window.TransformerSteps.renderLayerResidualHeatmap) {
+				window.TransformerSteps.renderLayerResidualHeatmap(el.id, layerIdx, which);
+			}
+		});
+		var minIn = Infinity, maxIn = -Infinity, minDelta = Infinity, maxDelta = -Infinity;
+		trace.h_in.forEach(function (row) { row.forEach(function (v) { minIn = Math.min(minIn, v); maxIn = Math.max(maxIn, v); }); });
+		trace.h_out.forEach(function (row) { row.forEach(function (v) { minIn = Math.min(minIn, v); maxIn = Math.max(maxIn, v); }); });
+		trace.h_in.forEach(function (row, i) { row.forEach(function (v, j) {
+			var d = (trace.h_out[i][j] || 0) - v;
+			minDelta = Math.min(minDelta, d); maxDelta = Math.max(maxDelta, d);
+		}); });
+		function rangeText(min, max) { return "min " + min.toFixed(2) + " · max " + max.toFixed(2); }
+		var ri = document.getElementById(prefix + "-range-in");
+		var rd = document.getElementById(prefix + "-range-delta");
+		var ro = document.getElementById(prefix + "-range-out");
+		if (ri) ri.textContent = rangeText(minIn, maxIn);
+		if (ro) ro.textContent = rangeText(minIn, maxIn);
+		if (rd) rd.textContent = rangeText(minDelta, maxDelta);
+		if (triple && !triple._tmTripleBound) {
+			triple._tmTripleBound = true;
+			var tip = document.getElementById(prefix + "-residual-tooltip");
+			var ids = [prefix + "-residual-in", prefix + "-residual-delta", prefix + "-residual-out"];
+			ids.forEach(function (id) {
+				var canvas = document.getElementById(id);
+				if (!canvas) return;
+				canvas.addEventListener("mousemove", function (event) {
+					var rect = canvas.getBoundingClientRect();
+					var left = 74, top = 24, right = 10, bottom = 8;
+					var rows = trace.h_in.length, d = trace.h_in[0].length;
+					var cw = (rect.width - left - right) / Math.max(1, d);
+					var ch = (rect.height - top - bottom) / Math.max(1, rows);
+					var x = event.clientX - rect.left, y = event.clientY - rect.top;
+					var col = Math.floor((x - left) / cw), row = Math.floor((y - top) / ch);
+					if (x < left || y < top || col < 0 || row < 0 || col >= d || row >= rows) { if (tip) tip.hidden = true; return; }
+					var vi = (trace.h_in[row] && trace.h_in[row][col]) || 0;
+					var vo = (trace.h_out[row] && trace.h_out[row][col]) || 0;
+					var token = (trace.tokenStrings && trace.tokenStrings[row]) || tokenList()[row] || "";
+					if (tip) {
+						tip.textContent = display(token) + " · dim " + col + " · " + (DE() ? "Eingang " : "input ") + vi.toFixed(3) + " · Δ " + (vo - vi).toFixed(3) + " · " + (DE() ? "Ausgang " : "output ") + vo.toFixed(3);
+						tip.hidden = false;
+						var tr = triple.getBoundingClientRect();
+						tip.style.left = Math.min(tr.width - 200, event.clientX - tr.left + 12) + "px";
+						tip.style.top = Math.max(0, event.clientY - tr.top + 12) + "px";
+					}
+				});
+				canvas.addEventListener("mouseleave", function () { if (tip) tip.hidden = true; });
+			});
+		}
+	}
+
 	function updateDimensionReadout() {
 		var el = document.getElementById("tm-dim-readout");
 		if (!el) return;
@@ -1797,88 +1901,14 @@
 			var prefix = "unified-layer-" + idx;
 			var preview = card.querySelector(".tm-layer-preview");
 			if (preview) {
-				if (!preview.querySelector(".tm-residual-panel")) {
-					var panel = document.createElement("div");
-					panel.className = "tm-residual-panel";
-					panel.innerHTML = "<div class='tm-residual-panel-head'><span>" + (isDe ? "Residual-Stream pro Token" : "Residual stream per token") + "</span><span class='tm-residual-panel-sub'>" + (isDe ? "Zeile = Token · Spalte = Dimension" : "row = token · column = dimension") + "</span></div>" +
-						"<p class='tm-residual-panel-note'>" + (isDe
-							? "Schalte zwischen Eingang und Ausgang um; beide liegen pixelgenau übereinander. Die Farben sind auf das gemeinsame Minimum und Maximum beider Matrizen normiert. Die Signal-Plots darunter zeigen die Norm am Start, nach Attention und nach dem FFN; Rot markiert eine Abnahme, Gelb die Endhöhe. Fahre über eine Zelle für die exakten Werte."
-							: "Switch between input and output; both sit pixel-exactly on top of each other. Colours are normalized to the shared minimum and maximum of both matrices. The signal plots below show the norm at the start, after attention, and after the FFN; red marks a decrease, gold the final height. Hover a cell for the exact values.") + "</p>" +
-						"<div class='tm-residual-overlay'><canvas id='" + prefix + "-residual-in' class='tm-residual-heatmap-canvas tm-residual-overlay-in' data-layer-idx='" + idx + "' data-which='in' aria-label='" + (isDe ? "Residual-Stream beim Eintritt in die Schicht" : "residual stream entering the layer") + "'></canvas>" +
-						"<canvas id='" + prefix + "-residual-out' class='tm-residual-heatmap-canvas tm-residual-overlay-out' data-layer-idx='" + idx + "' data-which='out' aria-label='" + (isDe ? "Residual-Stream nach Attention und FFN" : "residual stream after attention and FFN") + "'></canvas>" +
-						"<div class='tm-residual-tooltip' id='" + prefix + "-residual-tooltip' hidden></div></div>" +
-						"<div class='tm-residual-blend'><label class='tm-residual-switch'><span>" + (isDe ? "Eingang" : "Input") + "</span><input type='checkbox' id='" + prefix + "-residual-blend'><span class='tm-residual-switch-track' aria-hidden='true'></span><span>" + (isDe ? "Ausgang" : "Output") + "</span></label><span class='tm-residual-range' id='" + prefix + "-residual-range'></span></div>" +
-						"<div class='tm-residual-legend'><span>" + (isDe ? "negativ" : "negative") + "</span><span class='tm-residual-legend-bar'></span><span>" + (isDe ? "positiv" : "positive") + "</span></div>";
-					preview.insertBefore(panel, preview.firstChild);
-				}
 				var firstSignal = preview.querySelector(".layer-signal-canvas");
-				if (firstSignal) firstSignal.setAttribute("data-signal-mode", "attention");
-				if (!document.getElementById(prefix + "-signal-canvas-ffn")) {
-					var secondSignal = document.createElement("canvas");
-					secondSignal.id = prefix + "-signal-canvas-ffn";
-					secondSignal.className = "layer-signal-canvas layer-signal-canvas--ffn";
-					secondSignal.setAttribute("data-layer-idx", String(idx));
-					secondSignal.setAttribute("data-signal-mode", "ffn");
-					secondSignal.setAttribute("aria-label", isDe ? "FFN-Schritt: Start, Zunahme, Abnahme und Endhöhe pro Token" : "FFN write: start, increase, decrease and final height per token");
-					preview.appendChild(secondSignal);
+				if (firstSignal) {
+					firstSignal.setAttribute("data-signal-mode", "block");
+					if (window.TransformerSteps && window.TransformerSteps.renderLayerSignal) {
+						window.TransformerSteps.renderLayerSignal(firstSignal.id, idx);
+					}
 				}
-				if (window.TransformerSteps && window.TransformerSteps.renderLayerResidualHeatmap) {
-					["in", "out"].forEach(function (which) {
-						var c = document.getElementById(prefix + "-residual-" + which);
-						if (c) window.TransformerSteps.renderLayerResidualHeatmap(c.id, idx, which);
-					});
-				}
-				var blendEl = document.getElementById(prefix + "-residual-blend");
-				var rangeEl = document.getElementById(prefix + "-residual-range");
-				var outHeat = document.getElementById(prefix + "-residual-out");
-				var inHeat = document.getElementById(prefix + "-residual-in");
-				var tip = document.getElementById(prefix + "-residual-tooltip");
-				var layerTrace = (window.__tmLayerTrace || [])[idx];
-				if (rangeEl && layerTrace) {
-					var rMin = Infinity, rMax = -Infinity;
-					layerTrace.h_in.forEach(function (row) { row.forEach(function (v) { rMin = Math.min(rMin, v); rMax = Math.max(rMax, v); }); });
-					layerTrace.h_out.forEach(function (row) { row.forEach(function (v) { rMin = Math.min(rMin, v); rMax = Math.max(rMax, v); }); });
-					rangeEl.textContent = (isDe ? "min " : "min ") + rMin.toFixed(2) + " · max " + rMax.toFixed(2);
-				}
-				function updateBlend() {
-					if (!blendEl) return;
-					var showOutput = !!blendEl.checked;
-					if (outHeat) outHeat.style.opacity = showOutput ? "1" : "0";
-					if (inHeat) inHeat.style.opacity = showOutput ? "0" : "1";
-				}
-				if (blendEl && !blendEl._tmResidualBound) {
-					blendEl._tmResidualBound = true;
-					blendEl.addEventListener("change", updateBlend);
-				}
-				updateBlend();
-				if (inHeat && tip && !inHeat._tmHoverBound && layerTrace) {
-					inHeat._tmHoverBound = true;
-					inHeat.addEventListener("mousemove", function (event) {
-						var rect = inHeat.getBoundingClientRect();
-						var x = event.clientX - rect.left, y = event.clientY - rect.top;
-						var left = 74, top = 24, right = 10, bottom = 8;
-						var rows = layerTrace.h_in.length;
-						var d = layerTrace.h_in[0].length;
-						var cw = (rect.width - left - right) / Math.max(1, d);
-						var ch = (rect.height - top - bottom) / Math.max(1, rows);
-						var col = Math.floor((x - left) / cw);
-						var row = Math.floor((y - top) / ch);
-						if (x < left || y < top || col < 0 || row < 0 || col >= d || row >= rows) { tip.hidden = true; return; }
-						var vi = (layerTrace.h_in[row] && layerTrace.h_in[row][col]) || 0;
-						var vo = (layerTrace.h_out[row] && layerTrace.h_out[row][col]) || 0;
-						var token = (layerTrace.tokenStrings && layerTrace.tokenStrings[row]) || tokenList()[row] || "";
-						tip.textContent = display(token) + " · dim " + col + " · " + (isDe ? "Eingang " : "input ") + vi.toFixed(3) + " · " + (isDe ? "Ausgang " : "output ") + vo.toFixed(3);
-						tip.hidden = false;
-						tip.style.left = Math.min(rect.width - 190, x + 12) + "px";
-						tip.style.top = Math.max(0, y + 12) + "px";
-					});
-					inHeat.addEventListener("mouseleave", function () { tip.hidden = true; });
-				}
-				if (window.TransformerSteps && window.TransformerSteps.renderLayerSignal) {
-					[firstSignal, document.getElementById(prefix + "-signal-canvas-ffn")].forEach(function (c) {
-						if (c) window.TransformerSteps.renderLayerSignal(c.id, idx);
-					});
-				}
+				Array.prototype.slice.call(preview.querySelectorAll(".layer-signal-canvas--ffn")).forEach(function (el) { el.remove(); });
 			}
 			var stack = body.querySelector(".tm-layer-subbox-stack") || body;
 			var sub = card.querySelector('.tm-layer-subbox[data-sub="migration"]');
@@ -1903,8 +1933,20 @@
 				sb.insertBefore(lead, sb.firstChild);
 			}
 			lead.textContent = isDe
-				? "Diese Schicht liest den laufenden Vektor und schreibt ein Update. Jeder Pfeil läuft von der Eingabe zur Ausgabe; das tiefe Untermenü zeigt die Bewegung eines einzelnen Tokens."
-				: "This layer reads the running vector and writes an update. Each arrow runs from the input to the output; the deep submenu shows one token's movement.";
+				? "Diese Schicht liest den laufenden Vektor und schreibt ein Update. Die drei Heatmaps zeigen Eingang, die relative Änderung und Ausgang; darunter stehen die echten Min/Max-Werte."
+				: "This layer reads the running vector and writes an update. The three heatmaps show input, the relative change, and output; the real min/max values are shown below.";
+			if (!sb.querySelector(".tm-residual-triple")) {
+				var triple = document.createElement("div");
+				triple.className = "tm-residual-triple";
+				triple.innerHTML = "<div class='tm-triple-cell'><div class='tm-triple-label'>" + (isDe ? "Eingang" : "input") + "</div><canvas id='" + prefix + "-residual-in' class='tm-residual-heatmap-canvas' data-layer-idx='" + idx + "' data-which='in'></canvas><div class='tm-triple-range' id='" + prefix + "-range-in'></div></div>" +
+					"<span class='tm-triple-op'>+</span>" +
+					"<div class='tm-triple-cell'><div class='tm-triple-label'>" + (isDe ? "Änderung" : "change") + "</div><canvas id='" + prefix + "-residual-delta' class='tm-residual-heatmap-canvas' data-layer-idx='" + idx + "' data-which='delta'></canvas><div class='tm-triple-range' id='" + prefix + "-range-delta'></div></div>" +
+					"<span class='tm-triple-op'>=</span>" +
+					"<div class='tm-triple-cell'><div class='tm-triple-label'>" + (isDe ? "Ausgang" : "output") + "</div><canvas id='" + prefix + "-residual-out' class='tm-residual-heatmap-canvas' data-layer-idx='" + idx + "' data-which='out'></canvas><div class='tm-triple-range' id='" + prefix + "-range-out'></div></div>" +
+					"<div class='tm-residual-tooltip' id='" + prefix + "-residual-tooltip' hidden></div>";
+				sb.insertBefore(triple, sb.querySelector(".tm-feature-wrap") || null);
+			}
+			renderLayerTripleResiduals(idx);
 			if (!sb.querySelector(".tm-feature-wrap")) {
 				var wrap = document.createElement("div");
 				wrap.className = "tm-feature-wrap";
@@ -1932,6 +1974,7 @@
 				sub.addEventListener("toggle", function () {
 					if (!sub.open) return;
 					setTimeout(function () {
+						renderLayerTripleResiduals(idx);
 						renderLayerFeaturePlots(idx);
 						renderLayerLogitLens(idx);
 					}, 60);
@@ -1943,6 +1986,10 @@
 				realBox.addEventListener("toggle", function () {
 					if (realBox.open) setTimeout(function () { renderLayerFeaturePlots(idx); }, 60);
 				});
+			}
+			if (preview && sub.parentNode !== preview) {
+				preview.appendChild(sub);
+				setTimeout(function () { renderLayerTripleResiduals(idx); }, 80);
 			}
 			card.setAttribute("data-tm-enhanced", "1");
 			if (sub.open) {
@@ -1974,6 +2021,7 @@
 				if (!card) return;
 				var idx = parseInt(card.getAttribute("data-layer-idx"), 10);
 				if (!isNaN(idx)) {
+					renderLayerTripleResiduals(idx);
 					renderLayerFeaturePlots(idx);
 					renderLayerLogitLens(idx);
 				}
@@ -1989,6 +2037,22 @@
 	}
 	setTimeout(typesetConfigMath, 700);
 	setInterval(typesetConfigMath, 1800);
+
+	function equalizeHyperCards() {
+		var config = document.getElementById("transformer_config");
+		if (!config) return;
+		var cards = Array.prototype.slice.call(config.querySelectorAll(":scope > div")).filter(function (el) {
+			return el.offsetParent !== null && el.id !== "param-breakdown-toggle" && el.id !== "param-breakdown-chart" && el.id !== "arch-validity-message";
+		});
+		if (!cards.length) return;
+		cards.forEach(function (el) { el.style.minHeight = "0px"; });
+		var max = Math.max.apply(null, cards.map(function (el) { return el.offsetHeight; }));
+		if (!isFinite(max) || max <= 0) return;
+		cards.forEach(function (el) { el.style.minHeight = max + "px"; });
+	}
+	setTimeout(equalizeHyperCards, 900);
+	window.addEventListener("resize", equalizeHyperCards);
+	window.addEventListener("tm:transformer-data", function () { setTimeout(equalizeHyperCards, 250); });
 
 	function kvStatus(mode, reused) {
 		var el = document.getElementById("tm-kv-cache-status");
@@ -2768,7 +2832,8 @@
 				var contextBody = context.querySelector(".tm-step-detail-body");
 				[attendCard, ffnCard].forEach(function (card) {
 					if (!card) return;
-					card.querySelectorAll(".tm-step-detail, .optional").forEach(function (el) { contextBody.appendChild(el); });
+					var background = card.querySelector("#tm-detail-attention-background");
+					if (background) contextBody.appendChild(background);
 					card.remove();
 				});
 				boxBody.appendChild(context);

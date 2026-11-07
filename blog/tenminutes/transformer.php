@@ -56,6 +56,7 @@
 					<section class="section-block" id="realmodel">
 						<div class="section-kicker"><span class="sk-num">01</span> The real model</div>
 						<h2 class="section-title">Train a tiny transformer.</h2>
+<div class="tm-model-size-slot"><span class="tm-model-size-label"><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "Modellgröße" : "Model size"; ?></span><div id="nr_params" style="display:none"></div></div>
 <div id="transformer_config">
 <div style="margin-bottom: 15px;">
 <label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
@@ -107,7 +108,6 @@
 <option value="bpe">Byte-Pair Encoding (BPE)</option>
 </select>
 </div>
-<div id="nr_params" style="display: none"></div>
 <div id="param-breakdown-toggle" style="display: none; margin-top: 8px;">
 <button id="param-breakdown-btn" onclick="toggleParamBreakdown()" style="background: none; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 16px;
 		       cursor: pointer; font-size: 0.85rem; color: #3b82f6; font-weight: 600;
@@ -299,6 +299,20 @@
 #transformer_config label {
 	font-size: 0.82rem;
 }
+
+.tm-model-size-slot {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 30px;
+	margin: 4px 0 10px;
+	font: 600 0.8rem/1.3 "Open Sans", system-ui, sans-serif;
+	color: var(--tm-muted, #627476);
+}
+.tm-model-size-slot #nr_params { color: var(--tm-ink, #000000); }
+.tm-model-size-slot #nr_params b { color: var(--tm-petrol, #004b6f); }
+#transformer_config { align-items: stretch; }
+#transformer_config > div { height: 100%; box-sizing: border-box; }
 </style>
 
 						<div class="prose">
