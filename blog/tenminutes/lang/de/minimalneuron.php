@@ -89,6 +89,16 @@ return [
 		'MSE has a useful shape for learning. Far from the best line the error surface is steep, so a gradient step can move a long way and quickly reach the right region. Close to the bottom the surface flattens, so the same step size would overshoot; the learning rate has to become smaller, or the optimizer has to adapt it, to do the fine work. Early progress is coarse, late progress is detailed.' => 'MSE hat eine nützliche Form für das Lernen. Weit entfernt von der besten Linie ist die Fehlerfläche steil, sodass ein Gradientenschritt weit gehen kann und schnell in die richtige Region kommt. Nahe am Boden flacht die Fläche ab, sodass dieselbe Schrittweite überschießen würde; die Lernrate muss kleiner werden, oder der Optimizer muss sie anpassen, um die Feinarbeit zu machen. Der frühe Fortschritt ist grob, der späte detailliert.',
 		'In a large network that landscape lives in millions of dimensions. The image below is a real loss landscape reduced to three dimensions so that it can be drawn. You start somewhere on the surface and look for the direction in which the ball rolls downhill. That direction is the negative gradient, and the loss is the error: the height tells you how wrong the model is.' => 'In einem großen Netz lebt diese Landschaft in Millionen von Dimensionen. Das Bild unten ist eine echte Loss-Landschaft, auf drei Dimensionen reduziert, damit man sie zeichnen kann. Du startest irgendwo auf der Oberfläche und suchst die Richtung, in der die Kugel bergab rollt. Diese Richtung ist der negative Gradient, und der Loss ist der Fehler: Die Höhe sagt, wie falsch das Modell liegt.',
 		'The model only sees points of a sine wave between -10 and 10. It can fit them perfectly and still know nothing about what happens outside. It starts training as soon as it is in view; watch the curve leave the sine behind.' => 'Das Modell sieht nur Punkte einer Sinuswelle zwischen -10 und 10. Es kann sie perfekt fitten und weiß trotzdem nichts darüber, was außerhalb passiert. Es beginnt zu trainieren, sobald es im Blickfeld ist; sieh zu, wie die Kurve den Sinus hinter sich lässt.',
+		'Loss: surprise as a scalar' => 'Loss: Überraschung als Skalar',
+		'Pick the true class and move the probability it receives. The curve on the right is the cross-entropy loss for one example.' => 'Wähle die richtige Klasse und verschiebe die Wahrscheinlichkeit, die sie erhält. Die Kurve rechts ist die Cross-Entropy für ein Beispiel.',
+		'cross-entropy' => 'Cross-Entropy',
+		'cat' => 'Katze',
+		'dog' => 'Hund',
+		'mat' => 'Matte',
+		'p(true)' => 'p(richtig)',
+		'True class' => 'Richtige Klasse',
+		'Surprise' => 'Überraschung',
+		'Categorical cross-entropy is one scalar: the negative log-probability of the true class. Confident mistakes are expensive.' => 'Kategorische Cross-Entropy ist ein Skalar: der negative Logarithmus der Wahrscheinlichkeit der richtigen Klasse. Sichere Fehler sind teuer.',
 		'Noise (optional)' => 'Rauschen (optional)',
 	],
 	'blocks' => [
@@ -106,5 +116,6 @@ return [
 		'A three-dimensional loss landscape of ResNet-56 without skip connections, reduced from many dimensions for plotting' => 'Eine dreidimensionale Loss-Landschaft von ResNet-56 ohne Skip-Connections, aus vielen Dimensionen zum Zeichnen reduziert',
 		"Rosenblatt's perceptron: inputs, weights, a summing unit, and a threshold output" => 'Rosenblatts Perzeptron: Eingaben, Gewichte, Summeneinheit und Schwellenwert-Ausgabe',
 		'A dense neural network fitted to sine points inside a narrow band, and its behaviour outside the band' => 'Ein dichtes neuronales Netz, an Sinus-Punkte in einem schmalen Band gefittet, und sein Verhalten außerhalb des Bands',
+		'Class probabilities and the cross-entropy loss curve' => 'Klassenwahrscheinlichkeiten und die Cross-Entropy-Loss-Kurve',
 	],
 ];

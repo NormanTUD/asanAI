@@ -295,6 +295,30 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<p class="aha-big">A good predictor compresses.</p>
 							<p class="aha-sub">To predict the next word well, a model has to capture regularities in the data, and a compact description of those regularities is a form of compression. Whether that description amounts to understanding the world is a live question, not a settled fact.</p>
 						</div>
+						<div class="demo demo--paper" data-demo="compression">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Prediction = compression <span>· demo</span></p>
+									<p class="demo-sub">A better next-character predictor needs fewer bits to encode the same sentence. The bars compare a uniform code with the model's code.</p>
+								</div>
+								<span class="demo-badge">information theory</span>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas demo-canvas--md" data-compression-canvas aria-label="A sentence encoded with a uniform code and with a model-based code, showing the bit counts and compression ratio"></canvas>
+								<div class="demo-controls">
+									<label>Model quality <input type="range" data-compression-quality min="0.05" max="0.99" step="0.01" value="0.82"><output data-compression-quality-out>82 %</output></label>
+									<button class="btn-demo btn-demo--green" type="button" data-compression-run>Run</button>
+									<button class="btn-demo" type="button" data-compression-reset>Restart</button>
+								</div>
+								<div class="demo-readout demo-readout--3">
+									<div><b>Uniform code</b><span data-compression-uniform>0 bits</span></div>
+									<div><b>Model code</b><span data-compression-model>0 bits</span></div>
+									<div><b>Compression</b><span data-compression-ratio>—</span></div>
+								</div>
+								<p class="demo-hint" data-compression-note></p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Prediction and compression are two views of the same objective. Lower cross-entropy means a shorter code.</span></div>
+						</div>
 					</section>
 
 					<section class="section-block" id="inside">

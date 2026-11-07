@@ -46,6 +46,44 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="refusal">
+						<div class="section-kicker"><span class="sk-num">03</span> The refusal direction</div>
+						<h2 class="section-title">One axis can flip a refusal.</h2>
+						<div class="prose">
+							<p>Refusal is learned during post-training, and it leaves a surprisingly simple trace in the weights. <a href="https://arxiv.org/abs/2406.11717" rel="noopener">Arditi et al. (2024)</a> studied 13 open-source chat models up to 72B parameters and found that refusal is mediated by a <strong>one-dimensional subspace</strong>. They estimate a single direction from the difference in mean activations between harmful and harmless instructions, and it is both necessary and sufficient: erase that direction from the residual stream and the model stops refusing harmful requests; add it and the model refuses even harmless ones.</p>
+							<p>The projection of the current activation onto that direction behaves like a scalar “how much the model wants to refuse right now.” The direction is not a moral module and the threshold is not a universal constant. The paper shows that a rank-one weight edit can remove the behaviour while benchmark accuracy barely moves, which is why the result matters for both safety and interpretability.</p>
+							<p>The demo below is a schematic, not a measurement on a real model. Move the request along the refusal axis and set the threshold. The point is the shape of the mechanism: one projection, one comparison, one answer.</p>
+						</div>
+						<div class="demo demo--paper" data-demo="refusal">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Where refusal crosses the line <span>· demo</span></p>
+									<p class="demo-sub">Click the plane or drag the sliders. Move the request along the refusal direction and set the threshold; nothing else in the model changes, only the projection onto one axis decides the answer.</p>
+								</div>
+								<span class="demo-badge">schematic</span>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas demo-canvas--md" data-refusal-canvas aria-label="A request vector projected onto the refusal direction, with a threshold that flips the answer"></canvas>
+								<div class="demo-controls">
+									<label>Projection r·h <input type="range" data-refusal-proj min="-1" max="1" step="0.01" value="0.32"><output data-refusal-proj-out>0.32</output></label>
+									<label>Threshold θ <input type="range" data-refusal-threshold min="-0.5" max="0.8" step="0.01" value="0.45"><output data-refusal-threshold-out>0.45</output></label>
+								</div>
+								<div class="demo-readout demo-readout--3">
+									<div><b>Projection</b><span data-refusal-value>...</span></div>
+									<div><b>Threshold</b><span data-refusal-threshold-value>...</span></div>
+									<div><b>Answer</b><span data-refusal-status>...</span></div>
+								</div>
+								<p class="demo-hint" data-refusal-note></p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Refusal is not a separate module bolted on top. In these models it is a direction in the residual stream, and its projection is a single number.</span></div>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>One direction</b><span>Refusal is mediated by a one-dimensional subspace across 13 chat models.</span></div>
+							<div class="keypoint"><b>Necessary and sufficient</b><span>Erasing it stops refusal; adding it causes refusal of harmless prompts.</span></div>
+							<div class="keypoint"><b>Brittle</b><span>A rank-one weight edit can remove the behaviour with little benchmark change.</span></div>
+							<div class="keypoint"><b>Schematic</b><span>The demo shows the projection and threshold, not a measurement.</span></div>
+						</div>
+					</section>
 
 					<div class="demo demo--paper timeline-shell" data-demo="timeline" data-arrow-nav>
 						<div class="demo-head">
@@ -102,7 +140,7 @@
 
 
 					<section class="section-block" id="lora">
-						<div class="section-kicker"><span class="sk-num">03</span> Making it affordable</div>
+						<div class="section-kicker"><span class="sk-num">04</span> Making it affordable</div>
 						<h2 class="section-title">LoRA, QLoRA, and when to fine-tune.</h2>
 						<div class="prose">
 							<p>Full fine-tuning updates every weight and needs memory for gradients, optimizer state, and activations. <strong>LoRA</strong> (<a href="https://arxiv.org/abs/2106.09685" rel="noopener">Hu et al., 2021</a>) freezes the base model and trains two small low-rank matrices per layer. The update is a low-rank product, so the adapter is tiny and can be swapped at inference. <strong>QLoRA</strong> (<a href="https://arxiv.org/abs/2305.14314" rel="noopener">Dettmers et al., 2023</a>) quantizes the frozen base to 4-bit and trains the adapters on top, which is how a single consumer GPU can fine-tune a 7B model.</p>
@@ -117,7 +155,7 @@
 					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">05</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

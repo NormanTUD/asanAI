@@ -455,7 +455,7 @@
 		align: "compare", preference: "compare", logitlens: "plot",
 		residual: "plot", mary: "interactive", chinese: "interactive",
 		ambiguity: "compare", verify: "calculator", citecheck: "compare",
-		myths: "interactive", folds: "plot", negation: "compare"
+		myths: "interactive", folds: "plot", negation: "compare", surprise: "canvas", refusal: "canvas", compression: "canvas", moe: "canvas"
 	};
 	var DEMO_TYPE_CLASS = /demo--(interactive|canvas|plot|stepper|timeline|calculator|compare|generative)/;
 

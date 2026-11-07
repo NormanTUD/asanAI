@@ -77,6 +77,35 @@
 							<p>The network’s output is scored with that function, and <strong>backpropagation</strong> computes how each weight contributed to the loss. An <strong>optimizer</strong> then changes the weights a little. The details belong to the backpropagation and optimizer chapters; here the shape is enough: the loss defines a landscape, every weight is one direction, and the height is the error.</p>
 							<p>In a large network that landscape lives in millions of dimensions. The image below is a real loss landscape reduced to three dimensions so that it can be drawn. You start somewhere on the surface and look for the direction in which the ball rolls downhill. That direction is the negative gradient, and the loss is the error: the height tells you how wrong the model is.</p>
 						</div>
+						<div class="demo demo--paper" data-demo="surprise">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Loss: surprise as a scalar <span>· demo</span></p>
+									<p class="demo-sub">Pick the true class and move the probability it receives. The curve on the right is the cross-entropy loss for one example.</p>
+								</div>
+								<span class="demo-badge">cross-entropy</span>
+							</div>
+							<div class="demo-body">
+								<div class="seg" data-surprise-target>
+									<button class="is-on" type="button" data-surprise-class="0">cat</button>
+									<button type="button" data-surprise-class="1">dog</button>
+									<button type="button" data-surprise-class="2">mat</button>
+								</div>
+								<canvas class="demo-canvas demo-canvas--md" data-surprise-canvas aria-label="Class probabilities and the cross-entropy loss curve"></canvas>
+								<div class="demo-controls">
+									<label>p(true) <input type="range" data-surprise-p min="0.001" max="1" step="0.001" value="0.72"><output data-surprise-p-out>72.0 %</output></label>
+								</div>
+								<div class="demo-readout demo-readout--4">
+									<div><b>True class</b><span data-surprise-true>...</span></div>
+									<div><b>p(true)</b><span data-surprise-pt>...</span></div>
+									<div><b>Loss −ln p</b><span data-surprise-loss>...</span></div>
+									<div><b>Surprise</b><span data-surprise-bits>...</span></div>
+								</div>
+								<p class="demo-hint" data-surprise-note></p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Categorical cross-entropy is one scalar: the negative log-probability of the true class. Confident mistakes are expensive.</span></div>
+						</div>
+
 						<figure>
 							<img src="loss_landscape_resnet56_noskip.png" alt="A three-dimensional loss landscape of ResNet-56 without skip connections, reduced from many dimensions for plotting" loading="lazy">
 							<figcaption>Loss landscape of ResNet-56 without skip connections, reduced to three dimensions for plotting. The vertical axis is the loss; the two horizontal axes are directions in weight space. Figure: Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer and Tom Goldstein, <a href="https://arxiv.org/abs/1712.09913" rel="noopener">Visualizing the Loss Landscape of Neural Nets</a> (2018), from the <a href="https://github.com/tomgoldstein/loss-landscape" rel="noopener">loss-landscape repository</a>, MIT licence.</figcaption>

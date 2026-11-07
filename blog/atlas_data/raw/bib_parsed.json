@@ -9174,6 +9174,12 @@
    "year": "2021",
    "url": "https://arxiv.org/abs/2112.00114"
   },
+  "gurnee2026jspace": {
+   "title": "Verbalizable Representations Form a Global Workspace in Language Models",
+   "author": "Wes Gurnee, Nicholas Sofroniew, Adam Pearce, Mateusz Piotrowski, Isaac Kauvar, Runjin Chen, Anna Soligo, Paul Bogdan, Euan Ong, Rowan Wang, T. Ben Thompson, David Abrahams, Subhash Kantamneni, Emmanuel Ameisen, Joshua Batson, Jack Lindsey",
+   "year": "2026",
+   "url": "https://transformer-circuits.pub/2026/workspace/index.html"
+  },
   "mckenzie2023inverse": {
    "title": "Inverse scaling can become U-shaped",
    "author": "Jason Wei, Najoung Kim, Yi Tay, Quoc V. Le",
@@ -24313,7 +24319,8 @@
   ],
   "baars": [
    "mirror_in_machine",
-   "philosophy"
+   "philosophy",
+   "reasoning"
   ],
   "dehaene": [
    "mirror_in_machine",
@@ -30325,6 +30332,9 @@
   ],
   "wales2003energy": [
    "loss_landscape"
+  ],
+  "gurnee2026jspace": [
+   "reasoning"
   ],
   "snell2024testtime": [
    "reasoning"
@@ -37101,15 +37111,16 @@
    ]
   },
   "Joshua Batson": {
-   "count": 5,
+   "count": 6,
    "minyear": 2023,
-   "maxyear": 2024,
+   "maxyear": 2026,
    "keys": [
     "bricken2023monosemanticity",
     "templeton2024scaling",
     "goldengateclaude",
     "monosemanticity",
-    "anthropic2023sparse"
+    "anthropic2023sparse",
+    "gurnee2026jspace"
    ]
   },
   "Brian Chen": {
@@ -37215,15 +37226,16 @@
    ]
   },
   "Jack Lindsey": {
-   "count": 6,
+   "count": 7,
    "minyear": 2023,
-   "maxyear": 2025,
+   "maxyear": 2026,
    "keys": [
     "bricken2023monosemanticity",
     "templeton2024scaling",
     "lindsey2025biology",
     "ameisen2025circuit",
     "goldengateclaude",
+    "gurnee2026jspace",
     "chen2025persona"
    ]
   },
@@ -37247,14 +37259,15 @@
    ]
   },
   "Adam Pearce": {
-   "count": 4,
+   "count": 5,
    "minyear": 2024,
-   "maxyear": 2025,
+   "maxyear": 2026,
    "keys": [
     "templeton2024scaling",
     "lindsey2025biology",
     "ameisen2025circuit",
-    "goldengateclaude"
+    "goldengateclaude",
+    "gurnee2026jspace"
    ]
   },
   "Craig Citro": {
@@ -37269,14 +37282,15 @@
    ]
   },
   "Emmanuel Ameisen": {
-   "count": 4,
+   "count": 5,
    "minyear": 2024,
-   "maxyear": 2025,
+   "maxyear": 2026,
    "keys": [
     "templeton2024scaling",
     "lindsey2025biology",
     "ameisen2025circuit",
-    "goldengateclaude"
+    "goldengateclaude",
+    "gurnee2026jspace"
    ]
   },
   "Nicholas L. Turner": {
@@ -37349,24 +37363,26 @@
    ]
   },
   "Wes Gurnee": {
-   "count": 5,
+   "count": 6,
    "minyear": 2023,
-   "maxyear": 2025,
+   "maxyear": 2026,
    "keys": [
     "lindsey2025biology",
     "ameisen2025circuit",
     "arditi2024refusal",
     "gurnee2023spacetime",
+    "gurnee2026jspace",
     "engels2024multidim"
    ]
   },
   "David Abrahams": {
-   "count": 2,
+   "count": 3,
    "minyear": 2025,
-   "maxyear": 2025,
+   "maxyear": 2026,
    "keys": [
     "lindsey2025biology",
-    "ameisen2025circuit"
+    "ameisen2025circuit",
+    "gurnee2026jspace"
    ]
   },
   "Bastian Hossel": {
@@ -41931,11 +41947,12 @@
    ]
   },
   "Euan Ong": {
-   "count": 1,
+   "count": 2,
    "minyear": 2023,
-   "maxyear": 2023,
+   "maxyear": 2026,
    "keys": [
-    "successorheads"
+    "successorheads",
+    "gurnee2026jspace"
    ]
   },
   "George Ogden": {
@@ -53759,6 +53776,79 @@
    "maxyear": 2021,
    "keys": [
     "nye2021scratchpad"
+   ]
+  },
+  "Nicholas Sofroniew": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "gurnee2026jspace"
+   ]
+  },
+  "Mateusz Piotrowski": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "gurnee2026jspace"
+   ]
+  },
+  "Isaac Kauvar": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "gurnee2026jspace"
+   ]
+  },
+  "Runjin Chen": {
+   "count": 2,
+   "minyear": 2025,
+   "maxyear": 2026,
+   "keys": [
+    "gurnee2026jspace",
+    "chen2025persona"
+   ]
+  },
+  "Anna Soligo": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "gurnee2026jspace"
+   ]
+  },
+  "Paul Bogdan": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "gurnee2026jspace"
+   ]
+  },
+  "Rowan Wang": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "gurnee2026jspace"
+   ]
+  },
+  "T. Ben Thompson": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "gurnee2026jspace"
+   ]
+  },
+  "Subhash Kantamneni": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "gurnee2026jspace"
    ]
   },
   "Najoung Kim": {
@@ -67301,14 +67391,6 @@
    "maxyear": 2023,
    "keys": [
     "rimsky2023caa"
-   ]
-  },
-  "Runjin Chen": {
-   "count": 1,
-   "minyear": 2025,
-   "maxyear": 2025,
-   "keys": [
-    "chen2025persona"
    ]
   },
   "Henry Sleight": {

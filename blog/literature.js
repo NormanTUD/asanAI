@@ -10837,6 +10837,13 @@ window.bibData = {
 		year: 2021,
 		alternativetitle: "Scratchpads"
 	},
+	"gurnee2026jspace": {
+		url: "https://transformer-circuits.pub/2026/workspace/index.html",
+		title: "Verbalizable Representations Form a Global Workspace in Language Models",
+		author: "Wes Gurnee, Nicholas Sofroniew, Adam Pearce, Mateusz Piotrowski, Isaac Kauvar, Runjin Chen, Anna Soligo, Paul Bogdan, Euan Ong, Rowan Wang, T. Ben Thompson, David Abrahams, Subhash Kantamneni, Emmanuel Ameisen, Joshua Batson, Jack Lindsey",
+		year: 2026,
+		alternativetitle: "Gurnee et al., 2026"
+	},
 	"mckenzie2023inverse": {
 		url: "https://arxiv.org/abs/2211.02011",
 		title: "Inverse scaling can become U-shaped",

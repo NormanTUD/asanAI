@@ -608,18 +608,20 @@
   "city": "San Francisco, United States",
   "year": 2024.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "templeton2024scaling",
    "lindsey2025biology",
    "ameisen2025circuit",
-   "goldengateclaude"
+   "goldengateclaude",
+   "gurnee2026jspace"
   ],
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
    "math_iii",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "reasoning"
   ]
  },
  {
@@ -7318,7 +7320,8 @@
   ],
   "cited_in": [
    "mirror_in_machine",
-   "philosophy"
+   "philosophy",
+   "reasoning"
   ]
  },
  {
@@ -21351,11 +21354,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "gurnee2026jspace",
    "chen2025persona"
   ],
-  "cited_in": []
+  "cited_in": [
+   "reasoning"
+  ]
  },
  {
   "name": "Henry Sleight",
@@ -29472,14 +29478,16 @@
   "city": "San Francisco, USA",
   "year": 2025.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "lindsey2025biology",
-   "ameisen2025circuit"
+   "ameisen2025circuit",
+   "gurnee2026jspace"
   ],
   "cited_in": [
    "fact_lookup",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "reasoning"
   ]
  },
  {
@@ -33036,19 +33044,21 @@
   "city": "San Francisco, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "templeton2024scaling",
    "lindsey2025biology",
    "ameisen2025circuit",
    "goldengateclaude",
+   "gurnee2026jspace",
    "ameisen2025circuittracing"
   ],
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
    "math_iii",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "reasoning"
   ]
  },
  {
@@ -33848,11 +33858,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "successorheads"
+   "successorheads",
+   "gurnee2026jspace"
   ],
   "cited_in": [
+   "reasoning",
    "transformer"
   ]
  },
@@ -42043,13 +42055,14 @@
   "city": "San Francisco, United States",
   "year": 2024.0,
   "conf": 1,
-  "works": 7,
+  "works": 8,
   "keys": [
    "bricken2023monosemanticity",
    "templeton2024scaling",
    "lindsey2025biology",
    "ameisen2025circuit",
    "goldengateclaude",
+   "gurnee2026jspace",
    "chen2025persona",
    "anthropic2025biology"
   ],
@@ -42061,7 +42074,8 @@
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
-   "promptengineering"
+   "promptengineering",
+   "reasoning"
   ]
  },
  {
@@ -47053,13 +47067,14 @@
   "city": "San Francisco, United States",
   "year": 2024.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "bricken2023monosemanticity",
    "templeton2024scaling",
    "goldengateclaude",
    "monosemanticity",
-   "anthropic2023sparse"
+   "anthropic2023sparse",
+   "gurnee2026jspace"
   ],
   "cited_in": [
    "embeddinglab",
@@ -47069,6 +47084,7 @@
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
+   "reasoning",
    "unexpected_capabilities"
   ]
  },
@@ -73720,18 +73736,20 @@
   "city": "San Francisco, USA",
   "year": 2025.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "lindsey2025biology",
    "ameisen2025circuit",
    "arditi2024refusal",
    "gurnee2023spacetime",
+   "gurnee2026jspace",
    "engels2024multidim"
   ],
   "cited_in": [
    "algorithms",
    "fact_lookup",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "reasoning"
   ]
  },
  {
@@ -81953,6 +81971,142 @@
   ],
   "cited_in": [
    "unexpected_capabilities"
+  ]
+ },
+ {
+  "name": "Nicholas Sofroniew",
+  "canon": "Nicholas Sofroniew",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gurnee2026jspace"
+  ],
+  "cited_in": [
+   "reasoning"
+  ]
+ },
+ {
+  "name": "Mateusz Piotrowski",
+  "canon": "Mateusz Piotrowski",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gurnee2026jspace"
+  ],
+  "cited_in": [
+   "reasoning"
+  ]
+ },
+ {
+  "name": "Isaac Kauvar",
+  "canon": "Isaac Kauvar",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gurnee2026jspace"
+  ],
+  "cited_in": [
+   "reasoning"
+  ]
+ },
+ {
+  "name": "Anna Soligo",
+  "canon": "Anna Soligo",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gurnee2026jspace"
+  ],
+  "cited_in": [
+   "reasoning"
+  ]
+ },
+ {
+  "name": "Paul Bogdan",
+  "canon": "Paul Bogdan",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gurnee2026jspace"
+  ],
+  "cited_in": [
+   "reasoning"
+  ]
+ },
+ {
+  "name": "Rowan Wang",
+  "canon": "Rowan Wang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gurnee2026jspace"
+  ],
+  "cited_in": [
+   "reasoning"
+  ]
+ },
+ {
+  "name": "T. Ben Thompson",
+  "canon": "T. Ben Thompson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gurnee2026jspace"
+  ],
+  "cited_in": [
+   "reasoning"
+  ]
+ },
+ {
+  "name": "Subhash Kantamneni",
+  "canon": "Subhash Kantamneni",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gurnee2026jspace"
+  ],
+  "cited_in": [
+   "reasoning"
   ]
  },
  {

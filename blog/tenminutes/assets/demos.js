@@ -3571,6 +3571,744 @@
 		});
 		if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureHeights);
 	}
+	/* ── mixture-of-experts routing galaxy ──────────────────── */
+
+	function initMoeGalaxy(root) {
+		var canvas = $("[data-moe-canvas]", root);
+		if (!canvas) return;
+		var expertsInput = $("[data-moe-experts]", root);
+		var expertsOut = $("[data-moe-experts-out]", root);
+		var topkInput = $("[data-moe-topk]", root);
+		var topkOut = $("[data-moe-topk-out]", root);
+		var nextBtn = $("[data-moe-next]", root);
+		var autoBtn = $("[data-moe-auto]", root);
+		var resetBtn = $("[data-moe-reset]", root);
+		var activeEl = $("[data-moe-active]", root);
+		var routedEl = $("[data-moe-routed]", root);
+		var lastEl = $("[data-moe-last]", root);
+		var noteEl = $("[data-moe-note]", root);
+		var count = 8;
+		var state = { experts: 4, topk: 2, queue: [], routed: 0, loads: [], current: 0, phase: 0, t: 0, target: 0, auto: true, last: "—" };
+		var timer = null;
+		var api;
+		var visible = true;
+
+		if ("IntersectionObserver" in window) {
+			new IntersectionObserver(function (entries) {
+				visible = entries[0].isIntersecting;
+			}, { threshold: 0.05 }).observe(root);
+		}
+
+		function num(v, d) { return DEMO_DE ? v.toFixed(d).replace(".", ",") : v.toFixed(d); }
+
+		function reset() {
+			state.experts = Math.max(3, Math.min(6, parseInt(expertsInput.value, 10) || 4));
+			state.topk = Math.max(1, Math.min(state.experts, parseInt(topkInput.value, 10) || 2));
+			if (expertsOut) expertsOut.textContent = state.experts;
+			if (topkOut) topkOut.textContent = state.topk;
+			state.queue = [];
+			for (var i = 0; i < count; i++) state.queue.push({ id: i, routed: false });
+			state.loads = new Array(state.experts).fill(0);
+			state.routed = 0;
+			state.current = 0;
+			state.phase = 0;
+			state.t = 0;
+			state.last = "—";
+			update();
+		}
+
+		function chooseExpert(token) {
+			var scores = [];
+			for (var i = 0; i < state.experts; i++) {
+				var s = 0.5 + 0.5 * Math.sin((token.id + 1) * 1.7 + (i + 1) * 2.1);
+				if (state.loads[i] === Math.min.apply(null, state.loads)) s += 0.20;
+				scores.push([s, i]);
+			}
+			scores.sort(function (a, b) { return b[0] - a[0]; });
+			return scores[0][1];
+		}
+
+		function beginToken() {
+			if (state.current >= state.queue.length) {
+				state.last = "—";
+				if (state.auto) {
+					state.current = 0;
+					state.phase = 0;
+					state.t = 0;
+					state.queue.forEach(function (q) { q.routed = false; });
+					state.loads = new Array(state.experts).fill(0);
+					state.routed = 0;
+				}
+				update();
+				return;
+			}
+			var token = state.queue[state.current];
+			if (token.routed) { state.current++; beginToken(); return; }
+			state.phase = 1;
+			state.t = 0;
+			state.target = chooseExpert(token);
+			update();
+		}
+
+		function advance() {
+			if (!visible) return;
+			if (state.phase === 0) { beginToken(); return; }
+			state.t += 0.035;
+			if (state.t < 1) { if (api) api.redraw(); return; }
+			if (state.phase === 1) {
+				state.phase = 2;
+				state.t = 0;
+				state.loads[state.target]++;
+				state.routed++;
+				state.last = "t" + (state.current + 1) + " → E" + (state.target + 1);
+				state.queue[state.current].routed = true;
+				update();
+				return;
+			}
+			state.current++;
+			state.phase = 0;
+			state.t = 0;
+			update();
+		}
+
+		function start() {
+			if (timer) clearInterval(timer);
+			timer = setInterval(advance, 36);
+		}
+
+		function update() {
+			if (activeEl) activeEl.textContent = state.topk + " / " + state.experts;
+			if (routedEl) routedEl.textContent = state.routed + " / " + state.queue.length;
+			if (lastEl) lastEl.textContent = state.last;
+			if (noteEl) {
+				noteEl.textContent = DEMO_DE
+					? "Die Tokens warten links auf einer Linie. Jedes geht einzeln durch den Router; der Router wählt einen Experten, und nur dieser läuft. Das ist sparsames Rechnen, nicht Attention."
+					: "The tokens wait on a line at the left. Each one goes through the router separately; the router picks an expert and only that expert runs. This is sparse computation, not attention.";
+			}
+			if (api) api.redraw();
+		}
+
+		function draw(ctx, w, h) {
+			var c = TM.colors();
+			var n = state.experts;
+			var queueX = 46;
+			var top = 42, bottom = h - 42;
+			var gap = (bottom - top) / Math.max(1, count - 1);
+			var expertX = w - 74;
+			var expertYs = [];
+			for (var e = 0; e < n; e++) expertYs.push(top + (bottom - top) * (e + 0.5) / n);
+			var routerX = w * 0.48, routerY = h * 0.5;
+
+			ctx.clearRect(0, 0, w, h);
+			var bg = ctx.createLinearGradient(0, 0, 0, h);
+			bg.addColorStop(0, c.paper2);
+			bg.addColorStop(1, c.paper);
+			ctx.fillStyle = bg;
+			ctx.fillRect(0, 0, w, h);
+
+			ctx.strokeStyle = c.line;
+			ctx.lineWidth = 1;
+			ctx.setLineDash([4, 5]);
+			ctx.beginPath(); ctx.moveTo(queueX, top - 8); ctx.lineTo(queueX, bottom + 8); ctx.stroke();
+			ctx.setLineDash([]);
+
+			state.queue.forEach(function (token, i) {
+				var y = top + i * gap;
+				var done = token.routed;
+				var current = i === state.current && !done;
+				ctx.fillStyle = current ? c.gold : (done ? c.green : c.sky);
+				ctx.globalAlpha = current ? 1 : (done ? 0.55 : 0.75);
+				ctx.beginPath();
+				if (ctx.roundRect) { ctx.roundRect(queueX - 13, y - 9, 26, 18, 5); ctx.fill(); }
+				else ctx.fillRect(queueX - 13, y - 9, 26, 18);
+				ctx.globalAlpha = 1;
+				ctx.fillStyle = c.ink;
+				ctx.font = "700 9px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "center";
+				ctx.fillText("t" + (i + 1), queueX, y + 3);
+			});
+
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "left";
+			ctx.fillText(DEMO_DE ? "Tokens" : "tokens", 14, top - 22);
+
+			ctx.fillStyle = c.paper;
+			ctx.strokeStyle = c.petrol;
+			ctx.lineWidth = 1.5;
+			ctx.beginPath();
+			if (ctx.roundRect) { ctx.roundRect(routerX - 32, routerY - 17, 64, 34, 8); ctx.fill(); ctx.stroke(); }
+			else { ctx.fillRect(routerX - 32, routerY - 17, 64, 34); ctx.strokeRect(routerX - 32, routerY - 17, 64, 34); }
+			ctx.fillStyle = c.petrol;
+			ctx.font = "700 10px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "center";
+			ctx.fillText(DEMO_DE ? "Router" : "router", routerX, routerY + 3);
+
+			expertYs.forEach(function (y, i) {
+				var load = state.loads[i] || 0;
+				var lit = load > 0;
+				ctx.strokeStyle = lit ? c.green : c.lineStrong;
+				ctx.fillStyle = lit ? "rgba(99,164,75,.10)" : c.paper;
+				ctx.lineWidth = lit ? 1.6 : 1;
+				ctx.beginPath(); ctx.arc(expertX, y, 24, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+				ctx.strokeStyle = c.line;
+				ctx.setLineDash([3, 4]);
+				ctx.beginPath(); ctx.arc(expertX, y, 31, 0, Math.PI * 2); ctx.stroke();
+				ctx.setLineDash([]);
+				ctx.fillStyle = lit ? c.green : c.muted;
+				ctx.font = "700 10px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "center";
+				ctx.fillText("E" + (i + 1), expertX, y + 3);
+			});
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "right";
+			ctx.fillText(DEMO_DE ? "Experten" : "experts", w - 14, top - 22);
+
+			if (state.phase > 0) {
+				var token = state.queue[state.current];
+				var sy = top + state.current * gap;
+				var tx, ty;
+				if (state.phase === 1) {
+					tx = routerX - 32;
+					ty = routerY;
+				} else {
+					tx = expertX - 31;
+					ty = expertYs[state.target];
+				}
+				var x = state.phase === 1 ? queueX + (tx - queueX) * state.t : routerX + (tx - routerX) * state.t;
+				var y = state.phase === 1 ? sy + (ty - sy) * state.t : routerY + (ty - routerY) * state.t;
+				ctx.strokeStyle = state.phase === 1 ? c.gold : c.green;
+				ctx.lineWidth = 1.5;
+				ctx.beginPath(); ctx.moveTo(queueX + 14, sy); ctx.lineTo(routerX - 34, routerY); ctx.stroke();
+				if (state.phase === 2) {
+					ctx.beginPath(); ctx.moveTo(routerX + 34, routerY); ctx.lineTo(expertX - 34, expertYs[state.target]); ctx.stroke();
+				}
+				ctx.fillStyle = c.gold;
+				ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill();
+				ctx.fillStyle = c.ink;
+				ctx.font = "700 9px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "left";
+				ctx.fillText("t" + (token.id + 1), x + 8, y - 8);
+			}
+
+			ctx.textAlign = "left";
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 9px Barlow, system-ui, sans-serif";
+			ctx.fillText((DEMO_DE ? "top-" : "top-") + state.topk + (DEMO_DE ? " von " : " of ") + state.experts + (DEMO_DE ? " Experten aktiv" : " experts active"), 14, h - 14);
+		}
+
+		api = TM.initCanvas(canvas, draw);
+		if (expertsInput) expertsInput.addEventListener("input", reset);
+		if (topkInput) topkInput.addEventListener("input", reset);
+		if (nextBtn) nextBtn.addEventListener("click", function () {
+			if (state.phase === 0) beginToken();
+			if (state.phase === 1) { state.t = 1; advance(); }
+			if (state.phase === 2) { state.t = 1; advance(); }
+		});
+		if (autoBtn) autoBtn.addEventListener("click", function () {
+			state.auto = !state.auto;
+			autoBtn.textContent = state.auto ? (DEMO_DE ? "Auto: an" : "Auto: on") : (DEMO_DE ? "Auto: aus" : "Auto: off");
+			update();
+		});
+		if (resetBtn) resetBtn.addEventListener("click", reset);
+		if (autoBtn) autoBtn.textContent = DEMO_DE ? "Auto: an" : "Auto: on";
+		reset();
+		start();
+	}
+
+	/* ── prediction = compression ───────────────────────────── */
+
+	function initCompression(root) {
+		var canvas = $("[data-compression-canvas]", root);
+		if (!canvas) return;
+		var qualityInput = $("[data-compression-quality]", root);
+		var qualityOut = $("[data-compression-quality-out]", root);
+		var runBtn = $("[data-compression-run]", root);
+		var resetBtn = $("[data-compression-reset]", root);
+		var uniformEl = $("[data-compression-uniform]", root);
+		var modelEl = $("[data-compression-model]", root);
+		var ratioEl = $("[data-compression-ratio]", root);
+		var noteEl = $("[data-compression-note]", root);
+		var sentence = DEMO_DE ? "der kater sass auf der matte und der hund schlief" : "the cat sat on the mat and the dog slept";
+		var uniformBitsPerChar = Math.log2(26);
+		var state = { index: 0, bits: 0, uniform: 0, running: false };
+		var timer = null;
+		var api;
+
+		function num(v, d) { return DEMO_DE ? v.toFixed(d).replace(".", ",") : v.toFixed(d); }
+
+		function quality() {
+			return Math.max(0.05, Math.min(0.99, parseFloat(qualityInput.value) || 0.82));
+		}
+
+		function pCorrect() {
+			return Math.max(0.05, Math.min(0.97, 0.04 + 0.93 * quality()));
+		}
+
+		function reset() {
+			state.index = 0;
+			state.bits = 0;
+			state.uniform = 0;
+			if (timer) { clearInterval(timer); timer = null; }
+			state.running = false;
+			if (runBtn) runBtn.textContent = DEMO_DE ? "Start" : "Run";
+			update();
+		}
+
+		function advance() {
+			if (state.index >= sentence.length) {
+				if (timer) { clearInterval(timer); timer = null; }
+				state.running = false;
+				if (runBtn) runBtn.textContent = DEMO_DE ? "Start" : "Run";
+				update();
+				return;
+			}
+			state.bits += -Math.log2(pCorrect());
+			state.uniform += uniformBitsPerChar;
+			state.index++;
+			update();
+		}
+
+		function start() {
+			if (timer) { clearInterval(timer); timer = null; }
+			state.running = true;
+			if (runBtn) runBtn.textContent = DEMO_DE ? "Pause" : "Pause";
+			timer = setInterval(advance, 520);
+		}
+
+		function toggle() {
+			if (state.running) {
+				if (timer) { clearInterval(timer); timer = null; }
+				state.running = false;
+				if (runBtn) runBtn.textContent = DEMO_DE ? "Start" : "Run";
+				update();
+			} else {
+				if (state.index >= sentence.length) reset();
+				start();
+			}
+		}
+
+		function update() {
+			if (qualityOut) qualityOut.textContent = num(quality() * 100, 0) + " %";
+			if (uniformEl) uniformEl.textContent = num(state.uniform, 1) + (DEMO_DE ? " Bit" : " bits");
+			if (modelEl) modelEl.textContent = num(state.bits, 1) + (DEMO_DE ? " Bit" : " bits");
+			if (ratioEl) ratioEl.textContent = state.bits > 0 ? num(state.uniform / state.bits, 2) + "×" : "—";
+			if (noteEl) {
+				if (state.index === 0) {
+					noteEl.textContent = DEMO_DE
+						? "Drücke Start. Jedes Zeichen kostet im gleichmäßigen Code log₂(26) ≈ 4,7 Bit; ein besseres Modell braucht weniger."
+						: "Press Run. Each character costs log₂(26) ≈ 4.7 bits in a uniform code; a better model needs fewer.";
+				} else if (state.index >= sentence.length) {
+					noteEl.textContent = DEMO_DE
+						? "Fertig: Das Modell hat dieselbe Zeichenfolge mit " + num(state.bits, 1) + " statt " + num(state.uniform, 1) + " Bit kodiert. Gute Vorhersage ist kurze Kodierung."
+						: "Done: the model encoded the same string with " + num(state.bits, 1) + " bits instead of " + num(state.uniform, 1) + ". Good prediction is a short code.";
+				} else {
+					noteEl.textContent = DEMO_DE
+						? "Das Modell sagt das nächste Zeichen mit " + num(pCorrect() * 100, 0) + " % Sicherheit voraus; daraus folgt der Preis pro Zeichen."
+						: "The model predicts the next character with " + num(pCorrect() * 100, 0) + " % confidence; that sets the price per character.";
+				}
+			}
+			if (api) api.redraw();
+		}
+
+		function draw(ctx, w, h) {
+			var c = TM.colors();
+			var p = pCorrect();
+			var pOther = (1 - p) / 3;
+			var typed = sentence.slice(0, state.index);
+			var rest = sentence.slice(state.index);
+
+			ctx.clearRect(0, 0, w, h);
+			var bg = ctx.createLinearGradient(0, 0, 0, h);
+			bg.addColorStop(0, c.paper2);
+			bg.addColorStop(1, c.paper);
+			ctx.fillStyle = bg;
+			ctx.fillRect(0, 0, w, h);
+
+			ctx.textBaseline = "middle";
+			ctx.textAlign = "left";
+			ctx.font = "700 18px Barlow, system-ui, sans-serif";
+			ctx.fillStyle = c.ink;
+			ctx.fillText(typed, 26, 44);
+			var tw = ctx.measureText(typed).width;
+			ctx.fillStyle = c.green;
+			ctx.fillText("▌", 26 + tw + 2, 44);
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 18px Barlow, system-ui, sans-serif";
+			ctx.fillText(rest, 26 + tw + 16, 44);
+
+			var bx = 26, by = 104, bw = Math.max(90, Math.min(w * 0.34, 250));
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 11px Barlow, system-ui, sans-serif";
+			ctx.fillText(DEMO_DE ? "nächste Zeichenverteilung" : "next-character distribution", bx, by - 18);
+			var rows = [
+				[DEMO_DE ? "richtig" : "actual", p, c.green],
+				[DEMO_DE ? "Alternative 1" : "alternative 1", pOther, c.blue],
+				[DEMO_DE ? "Alternative 2" : "alternative 2", pOther, c.sky],
+				[DEMO_DE ? "Alternative 3" : "alternative 3", pOther, c.gold]
+			];
+			rows.forEach(function (row, i) {
+				var y = by + i * 34;
+				ctx.fillStyle = i === 0 ? c.green : c.muted;
+				ctx.font = "600 10px Barlow, system-ui, sans-serif";
+				ctx.fillText(row[0], bx, y + 5);
+				ctx.fillStyle = "rgba(0,75,111,.10)";
+				ctx.beginPath();
+				if (ctx.roundRect) { ctx.roundRect(bx + 78, y, bw, 9, 4); ctx.fill(); }
+				else ctx.fillRect(bx + 78, y, bw, 9);
+				ctx.fillStyle = row[2];
+				ctx.globalAlpha = i === 0 ? 0.9 : 0.55;
+				ctx.beginPath();
+				if (ctx.roundRect) { ctx.roundRect(bx + 78, y, Math.max(3, bw * row[1]), 9, 4); ctx.fill(); }
+				else ctx.fillRect(bx + 78, y, Math.max(3, bw * row[1]), 9);
+				ctx.globalAlpha = 1;
+				ctx.fillStyle = row[2];
+				ctx.font = "700 9px Barlow, system-ui, sans-serif";
+				ctx.fillText(num(row[1] * 100, 0) + " %", bx + 84 + bw, y + 5);
+			});
+
+			var rx = w * 0.57, ry = 96, rw = Math.max(80, w - rx - 30);
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 11px Barlow, system-ui, sans-serif";
+			ctx.fillText(DEMO_DE ? "Bitstrom" : "bitstream", rx, ry - 18);
+			var maxBits = Math.max(1, uniformBitsPerChar * sentence.length);
+			ctx.fillStyle = "rgba(0,75,111,.10)";
+			ctx.beginPath();
+			if (ctx.roundRect) { ctx.roundRect(rx, ry, rw, 12, 6); ctx.fill(); }
+			else ctx.fillRect(rx, ry, rw, 12);
+			ctx.fillStyle = c.coral;
+			ctx.globalAlpha = 0.6;
+			ctx.beginPath();
+			if (ctx.roundRect) { ctx.roundRect(rx, ry, rw * Math.min(1, state.uniform / maxBits), 12, 6); ctx.fill(); }
+			else ctx.fillRect(rx, ry, rw * Math.min(1, state.uniform / maxBits), 12);
+			ctx.globalAlpha = 1;
+			ctx.fillStyle = c.green;
+			ctx.beginPath();
+			if (ctx.roundRect) { ctx.roundRect(rx, ry + 22, rw * Math.min(1, state.bits / maxBits), 12, 6); ctx.fill(); }
+			else ctx.fillRect(rx, ry + 22, rw * Math.min(1, state.bits / maxBits), 12);
+			ctx.fillStyle = c.coral;
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.fillText((DEMO_DE ? "gleichmäßig " : "uniform ") + num(state.uniform, 0) + (DEMO_DE ? " Bit" : " bits"), rx, ry + 50);
+			ctx.fillStyle = c.green;
+			ctx.fillText((DEMO_DE ? "Modell " : "model ") + num(state.bits, 0) + (DEMO_DE ? " Bit" : " bits"), rx, ry + 64);
+			ctx.fillStyle = c.ink;
+			ctx.font = "700 22px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "right";
+			ctx.fillText(state.bits > 0 ? num(state.uniform / state.bits, 2) + "×" : "—", rx + rw, ry + 88);
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 9px Barlow, system-ui, sans-serif";
+			ctx.fillText(DEMO_DE ? "Kompressionsfaktor" : "compression ratio", rx + rw, ry + 104);
+			ctx.textAlign = "left";
+		}
+
+		api = TM.initCanvas(canvas, draw);
+		if (qualityInput) qualityInput.addEventListener("input", function () {
+			state.index = 0;
+			state.bits = 0;
+			state.uniform = 0;
+			update();
+		});
+		if (runBtn) runBtn.addEventListener("click", toggle);
+		if (resetBtn) resetBtn.addEventListener("click", reset);
+		update();
+	}
+
+	/* ── refusal direction ──────────────────────────────────── */
+
+	function initRefusal(root) {
+		var canvas = $("[data-refusal-canvas]", root);
+		if (!canvas) return;
+		var projInput = $("[data-refusal-proj]", root);
+		var projOut = $("[data-refusal-proj-out]", root);
+		var thrInput = $("[data-refusal-threshold]", root);
+		var thrOut = $("[data-refusal-threshold-out]", root);
+		var valueEl = $("[data-refusal-value]", root);
+		var thrValueEl = $("[data-refusal-threshold-value]", root);
+		var statusEl = $("[data-refusal-status]", root);
+		var noteEl = $("[data-refusal-note]", root);
+		var api;
+
+		function num(v, d) { return DEMO_DE ? v.toFixed(d).replace(".", ",") : v.toFixed(d); }
+
+		function state() {
+			return {
+				proj: parseFloat(projInput.value) || 0,
+				thr: parseFloat(thrInput.value) || 0
+			};
+		}
+
+		function update() {
+			var s = state();
+			var refused = s.proj > s.thr;
+			if (projOut) projOut.textContent = (s.proj >= 0 ? "+" : "") + num(s.proj, 2);
+			if (thrOut) thrOut.textContent = num(s.thr, 2);
+			if (valueEl) valueEl.textContent = (s.proj >= 0 ? "+" : "") + num(s.proj, 2);
+			if (thrValueEl) thrValueEl.textContent = num(s.thr, 2);
+			if (statusEl) {
+				statusEl.textContent = refused ? (DEMO_DE ? "abgewiesen" : "refused") : (DEMO_DE ? "beantwortet" : "answered");
+				statusEl.style.color = refused ? "var(--tm-coral)" : "var(--tm-green)";
+			}
+			if (noteEl) {
+				if (refused) {
+					noteEl.textContent = DEMO_DE
+						? "Die Projektion liegt über der Schwelle. Die Anfrage wird abgewiesen, obwohl der Rest des Vektors unverändert bleibt."
+						: "The projection sits above the threshold. The request is refused, even though the rest of the vector is unchanged.";
+				} else {
+					noteEl.textContent = DEMO_DE
+						? "Die Projektion liegt unter der Schwelle. Die Anfrage wird beantwortet; die Richtung ist noch da, aber sie gewinnt nicht."
+						: "The projection sits below the threshold. The request is answered; the direction is still there, but it does not win.";
+				}
+			}
+			if (api) api.redraw();
+		}
+
+		function draw(ctx, w, h) {
+			var c = TM.colors();
+			var s = state();
+			var refused = s.proj > s.thr;
+			var orth = 0.52;
+			var ox = w * 0.24, oy = h * 0.58;
+			var sx = Math.min(w * 0.30, 210);
+			var sy = Math.min(h * 0.34, 120);
+			function X(v) { return ox + v * sx; }
+			function Y(v) { return oy - v * sy; }
+
+			ctx.clearRect(0, 0, w, h);
+			var bg = ctx.createLinearGradient(0, 0, 0, h);
+			bg.addColorStop(0, c.paper2);
+			bg.addColorStop(1, c.paper);
+			ctx.fillStyle = bg;
+			ctx.fillRect(0, 0, w, h);
+
+			ctx.fillStyle = "rgba(145,133,190,.10)";
+			ctx.fillRect(X(s.thr), 0, w - X(s.thr), h);
+			ctx.fillStyle = "rgba(99,164,75,.06)";
+			ctx.fillRect(0, 0, X(s.thr), h);
+
+			ctx.strokeStyle = c.line;
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(X(-1.05), Y(0)); ctx.lineTo(X(1.05), Y(0));
+			ctx.moveTo(X(0), Y(-0.65)); ctx.lineTo(X(0), Y(0.85));
+			ctx.stroke();
+
+			ctx.strokeStyle = c.coral;
+			ctx.lineWidth = 2;
+			ctx.setLineDash([5, 4]);
+			ctx.beginPath(); ctx.moveTo(X(s.thr), Y(-0.65)); ctx.lineTo(X(s.thr), Y(0.85)); ctx.stroke();
+			ctx.setLineDash([]);
+			ctx.fillStyle = c.coral;
+			ctx.font = "700 10px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "center";
+			ctx.fillText("θ", X(s.thr), Y(0.85) - 10);
+
+			ctx.strokeStyle = c.petrol;
+			ctx.lineWidth = 2.4;
+			ctx.beginPath();
+			ctx.moveTo(X(0), Y(0));
+			ctx.lineTo(X(1.0), Y(0));
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(X(1.0), Y(0));
+			ctx.lineTo(X(0.94), Y(-0.05));
+			ctx.lineTo(X(0.94), Y(0.05));
+			ctx.closePath();
+			ctx.fillStyle = c.petrol;
+			ctx.fill();
+			ctx.textAlign = "left";
+			ctx.font = "700 11px Barlow, system-ui, sans-serif";
+			ctx.fillText("r", X(1.0) + 8, Y(0) + 3);
+
+			ctx.strokeStyle = "rgba(0,75,111,.25)";
+			ctx.setLineDash([3, 4]);
+			ctx.beginPath(); ctx.moveTo(X(s.proj), Y(orth)); ctx.lineTo(X(s.proj), Y(0)); ctx.stroke();
+			ctx.beginPath(); ctx.moveTo(X(s.proj), Y(orth)); ctx.lineTo(X(0), Y(orth)); ctx.stroke();
+			ctx.setLineDash([]);
+
+			ctx.strokeStyle = c.blue;
+			ctx.lineWidth = 2.6;
+			ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(s.proj), Y(orth)); ctx.stroke();
+			ctx.fillStyle = c.blue;
+			ctx.beginPath(); ctx.arc(X(s.proj), Y(orth), 7, 0, Math.PI * 2); ctx.fill();
+			ctx.fillStyle = c.paper;
+			ctx.beginPath(); ctx.arc(X(s.proj), Y(orth), 2.5, 0, Math.PI * 2); ctx.fill();
+
+			ctx.fillStyle = refused ? c.coral : c.green;
+			ctx.font = "700 11px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "left";
+			ctx.fillText(refused ? (DEMO_DE ? "abgewiesen" : "refused") : (DEMO_DE ? "beantwortet" : "answered"), X(s.proj) + 12, Y(orth) - 10);
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.fillText("h", X(s.proj) + 12, Y(orth) + 6);
+
+			ctx.textAlign = "left";
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 9px Barlow, system-ui, sans-serif";
+			ctx.fillText(DEMO_DE ? "Projektion auf r" : "projection onto r", X(-1.05), h - 16);
+		}
+
+		api = TM.initCanvas(canvas, draw);
+		if (projInput) projInput.addEventListener("input", update);
+		if (thrInput) thrInput.addEventListener("input", update);
+		canvas.addEventListener("click", function (e) {
+			var rect = canvas.getBoundingClientRect();
+			if (!rect.width) return;
+			var w = rect.width;
+			var ox = w * 0.24;
+			var sx = Math.min(w * 0.30, 210);
+			var v = (e.clientX - rect.left - ox) / sx;
+			v = Math.max(-1, Math.min(1, v));
+			if (projInput) projInput.value = v.toFixed(2);
+			update();
+		});
+		update();
+	}
+
+	/* ── loss: surprise as a scalar ─────────────────────────── */
+
+	function initLossSurprise(root) {
+		var canvas = $("[data-surprise-canvas]", root);
+		if (!canvas) return;
+		var pInput = $("[data-surprise-p]", root);
+		var pOut = $("[data-surprise-p-out]", root);
+		var trueEl = $("[data-surprise-true]", root);
+		var ptEl = $("[data-surprise-pt]", root);
+		var lossEl = $("[data-surprise-loss]", root);
+		var bitsEl = $("[data-surprise-bits]", root);
+		var noteEl = $("[data-surprise-note]", root);
+		var classes = DEMO_DE ? ["Katze", "Hund", "Matte"] : ["cat", "dog", "mat"];
+		var emoji = ["🐱", "🐶", "🧶"];
+		var target = 2;
+		var api;
+
+		function num(v, d) { return DEMO_DE ? v.toFixed(d).replace(".", ",") : v.toFixed(d); }
+		function pct(v, d) { return num(v * 100, d) + " %"; }
+
+		function update() {
+			var p = Math.max(0.001, Math.min(1, parseFloat(pInput.value) || 0.001));
+			var L = -Math.log(p);
+			if (pOut) pOut.textContent = pct(p, 1);
+			if (trueEl) trueEl.textContent = emoji[target] + " " + classes[target];
+			if (ptEl) ptEl.textContent = pct(p, 1);
+			if (lossEl) lossEl.textContent = num(L, 2);
+			if (bitsEl) bitsEl.textContent = num(L / Math.LN2, 2) + (DEMO_DE ? " Bit" : " bits");
+			if (noteEl) {
+				if (p < 0.05) {
+					noteEl.textContent = DEMO_DE
+						? "Überzeugt und falsch: Die richtige Klasse bekommt nur " + pct(p, 1) + ", der Loss ist −ln p = " + num(L, 2) + ". Die Kurve wird zur Wand, je näher p an null rückt."
+						: "Confident and wrong: the true class gets only " + pct(p, 1) + ", so the loss is −ln p = " + num(L, 2) + ". The curve becomes a wall as p approaches zero.";
+				} else if (p < 0.5) {
+					noteEl.textContent = DEMO_DE
+						? "Unsicher: Die richtige Klasse bekommt " + pct(p, 1) + " und kostet " + num(L, 2) + " Nats. Cross-Entropy ist mit einer richtigen, aber zaghaften Antwort nicht zufrieden."
+						: "Uncertain: the true class gets " + pct(p, 1) + " and costs " + num(L, 2) + " nats. Cross-entropy is not satisfied with a correct but timid answer.";
+				} else {
+					noteEl.textContent = DEMO_DE
+						? "Richtig und einigermaßen sicher: Bei " + pct(p, 1) + " beträgt der Loss " + num(L, 2) + " Nats (" + num(L / Math.LN2, 2) + " Bit). Je näher p an eins rückt, desto flacher wird die Kurve."
+						: "Right and reasonably sure: at " + pct(p, 1) + " the loss is " + num(L, 2) + " nats (" + num(L / Math.LN2, 2) + " bits). As p moves toward one the curve flattens.";
+				}
+			}
+			if (api) api.redraw();
+		}
+
+		function draw(ctx, w, h) {
+			var c = TM.colors();
+			var p = Math.max(0.001, Math.min(1, parseFloat(pInput.value) || 0.001));
+			var L = -Math.log(p);
+			var probs = classes.map(function (_, i) { return i === target ? p : (1 - p) / 2; });
+			var colors = [c.blue, c.sky, c.green];
+			var bx = 26, by = 54, bw = Math.max(90, Math.min(w * 0.34, 250));
+
+			ctx.clearRect(0, 0, w, h);
+			var bg = ctx.createLinearGradient(0, 0, 0, h);
+			bg.addColorStop(0, c.paper2);
+			bg.addColorStop(1, c.paper);
+			ctx.fillStyle = bg;
+			ctx.fillRect(0, 0, w, h);
+
+			ctx.textBaseline = "middle";
+			ctx.textAlign = "left";
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 11px Barlow, system-ui, sans-serif";
+			ctx.fillText(DEMO_DE ? "Modellverteilung" : "model distribution", bx, by - 26);
+			classes.forEach(function (name, i) {
+				var y = by + i * 50;
+				var col = i === target ? c.green : colors[i];
+				ctx.fillStyle = col;
+				ctx.font = "700 11px Barlow, system-ui, sans-serif";
+				ctx.fillText(emoji[i] + " " + name, bx, y - 9);
+				ctx.fillStyle = "rgba(0,75,111,.10)";
+				ctx.beginPath();
+				if (ctx.roundRect) { ctx.roundRect(bx, y, bw, 13, 6); ctx.fill(); }
+				else ctx.fillRect(bx, y, bw, 13);
+				ctx.fillStyle = i === target ? c.green : col;
+				ctx.globalAlpha = i === target ? 0.9 : 0.5;
+				ctx.beginPath();
+				if (ctx.roundRect) { ctx.roundRect(bx, y, Math.max(3, bw * probs[i]), 13, 6); ctx.fill(); }
+				else ctx.fillRect(bx, y, Math.max(3, bw * probs[i]), 13);
+				ctx.globalAlpha = 1;
+				ctx.fillStyle = col;
+				ctx.font = "700 10px Barlow, system-ui, sans-serif";
+				ctx.fillText(pct(probs[i], 1), bx + bw + 9, y + 7);
+			});
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.fillText((DEMO_DE ? "richtige Klasse: " : "true class: ") + emoji[target] + " " + classes[target], bx, by + 3 * 50 + 10);
+
+			var lx = w * 0.57, ly = 46, lw = Math.max(70, w - lx - 30), lh = h - 88;
+			function X(v) { return lx + lw * v; }
+			function Y(v) { return ly + lh * (1 - Math.min(1, Math.max(0, v / 5))); }
+			ctx.strokeStyle = c.line;
+			ctx.lineWidth = 1;
+			ctx.font = "600 9px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "right";
+			for (var i = 0; i <= 5; i++) {
+				ctx.beginPath(); ctx.moveTo(lx, Y(i)); ctx.lineTo(lx + lw, Y(i)); ctx.stroke();
+				ctx.fillStyle = c.muted; ctx.fillText(String(i), lx - 7, Y(i));
+			}
+			ctx.textAlign = "center";
+			ctx.fillText("0 %", lx, ly + lh + 15);
+			ctx.fillText("100 %", lx + lw, ly + lh + 15);
+			ctx.textAlign = "left";
+			ctx.fillStyle = c.muted;
+			ctx.fillText(DEMO_DE ? "Loss" : "loss", lx, ly - 9);
+			ctx.fillText(DEMO_DE ? "p(richtig)" : "p(true)", lx + lw / 2 - 18, ly + lh + 15);
+
+			ctx.beginPath();
+			for (var k = 0; k <= 160; k++) {
+				var q = Math.max(0.001, k / 160);
+				var v = -Math.log(q);
+				if (k === 0) ctx.moveTo(X(q), Y(v)); else ctx.lineTo(X(q), Y(v));
+			}
+			ctx.strokeStyle = c.petrol;
+			ctx.lineWidth = 2.6;
+			ctx.stroke();
+
+			ctx.strokeStyle = c.coral;
+			ctx.setLineDash([4, 4]);
+			ctx.beginPath(); ctx.moveTo(X(p), Y(0)); ctx.lineTo(X(p), Y(L)); ctx.stroke();
+			ctx.setLineDash([]);
+			ctx.fillStyle = p < 0.2 ? c.coral : c.green;
+			ctx.beginPath(); ctx.arc(X(p), Y(L), 7, 0, Math.PI * 2); ctx.fill();
+			ctx.fillStyle = c.ink;
+			ctx.font = "700 11px Barlow, system-ui, sans-serif";
+			ctx.textAlign = p > 0.8 ? "right" : "left";
+			ctx.fillText(num(L, 2), X(p) + (p > 0.8 ? -10 : 10), Y(L) - 8);
+			ctx.textAlign = "left";
+		}
+
+		api = TM.initCanvas(canvas, draw);
+		$$("[data-surprise-class]", root).forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				target = parseInt(btn.getAttribute("data-surprise-class"), 10) || 0;
+				$$("[data-surprise-class]", root).forEach(function (x) { x.classList.toggle("is-on", x === btn); });
+				update();
+			});
+		});
+		if (pInput) pInput.addEventListener("input", update);
+		update();
+	}
+
 	/* ── prompt builder ─────────────────────────────────────── */
 
 	function initPrompt(root) {
@@ -4445,6 +5183,10 @@
 			else if (type === "receptive") initReceptive(root);
 			else if (type === "citecheck") initCitecheck(root);
 			else if (type === "reasoning") initReasoning(root);
+			else if (type === "surprise") initLossSurprise(root);
+			else if (type === "refusal") initRefusal(root);
+			else if (type === "compression") initCompression(root);
+			else if (type === "moe") initMoeGalaxy(root);
 			else if (type === "prompt") initPrompt(root);
 			else if (type === "trajectory") initTrajectory(root);
 			else if (type === "folds") initFolds(root);

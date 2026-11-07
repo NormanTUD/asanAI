@@ -362,6 +362,58 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="moe-routing">
+						<div class="section-kicker"><span class="sk-num">07</span> Coda: another router</div>
+						<h2 class="section-title">Attention routes information; a mixture of experts routes computation.</h2>
+						<div class="prose">
+							<p>
+								Attention and a mixture-of-experts (MoE) layer both begin with scores and a
+								selection, which is why they are often drawn the same way. They route
+								different things. Attention computes a score between a query and every key,
+								turns the row into weights with softmax, and returns a weighted sum of the
+								value vectors (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>). It moves information between token positions, and the softmax is dense: every position gets some weight.
+							</p>
+							<p>
+								An MoE layer routes a token to a small set of expert feed-forward networks. A
+								little router scores the experts, keeps the top-k, and runs only those
+								(<a href="https://arxiv.org/abs/1701.06538" rel="noopener">Shazeer et al., 2017</a>; <a href="https://arxiv.org/abs/2101.03961" rel="noopener">Fedus et al., 2022</a>). It does not mix information between positions; it chooses which parameters process this token. The selection is sparse and per token, and the experts are the FFN blocks, not the other tokens.
+							</p>
+							<p>
+								So the galaxy below is not a picture of attention. It is a picture of the
+								neighbouring idea: a learned, sparse switch over computation. The analogy is
+								useful because both operations are content-based routing, but the difference
+								matters: attention moves meaning across the sequence, while MoE moves a token
+								through a different subset of the weights.
+							</p>
+						</div>
+						<div class="demo demo--paper" data-demo="moe">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Mixture-of-Experts Routing Galaxy <span>· demo</span></p>
+									<p class="demo-sub">Tokens wait on a line at the left. Each one goes through the router separately and lands on one expert island. The other experts stay idle for that token.</p>
+								</div>
+								<span class="demo-badge">sparse compute</span>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas demo-canvas--lg" data-moe-canvas aria-label="Tokens entering from the left, a router in the middle, and expert islands on the right"></canvas>
+								<div class="demo-controls">
+									<label>Experts <input type="range" data-moe-experts min="3" max="6" step="1" value="4"><output data-moe-experts-out>4</output></label>
+									<label>Top-k <input type="range" data-moe-topk min="1" max="3" step="1" value="2"><output data-moe-topk-out>2</output></label>
+									<button class="btn-demo btn-demo--green" type="button" data-moe-next>Route next →</button>
+									<button class="btn-demo" type="button" data-moe-auto>Auto: on</button>
+									<button class="btn-demo" type="button" data-moe-reset>Reset</button>
+								</div>
+								<div class="demo-readout demo-readout--3">
+									<div><b>Active</b><span data-moe-active>...</span></div>
+									<div><b>Routed</b><span data-moe-routed>...</span></div>
+									<div><b>Last token</b><span data-moe-last>—</span></div>
+								</div>
+								<p class="demo-hint" data-moe-note></p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Attention answers “which positions matter?”; MoE answers “which parameters should process this token?” Both are learned routing, but they route different objects.</span></div>
+						</div>
+					</section>
+
 
 				</article>
 			</div>

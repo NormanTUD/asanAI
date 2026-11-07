@@ -129,6 +129,10 @@ At inference, beam search guided by the PRM dramatically improves accuracy on ma
 The Math-Shepherd method (\cite[Zhang et al., 2024]{zhang2024mathshepherd}) auto-labels step correctness by checking whether later steps can reach the correct final answer from this point, eliminating the need for human step labels.
 </div>
 
+<div class="optional md" data-headline="Foreshadowing: a silent workspace">
+The written scratchpad is one place a model can think. A 2026 study by \cite[Gurnee et al. (2026)]{gurnee2026jspace} found a second, silent workspace inside the model: a small set of internal representations, the J-space, that the model can report, hold in mind, and use for multi-step reasoning even when they never appear in the output. The authors connect it to the global workspace theory of conscious access \cite{baars}, while noting that a transformer has no recurrent loops and that the finding says nothing about whether the model feels anything. The <a href="philosophy">Philosophy chapter</a> takes up that question.
+</div>
+
 <div class="md" data-mathlevel="50">
 ### Inference-Time Scaling Laws
 

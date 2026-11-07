@@ -2,9 +2,9 @@
 
 - lessons: 99
 - claims: 7358
-- statements: 17265
-- relations: 52283
-- uncovered years: 56
+- statements: 17273
+- relations: 52311
+- uncovered years: 57
 - uncovered quantities: 6
 - uncited specific claims: 307
 - citation keys not found in lesson: 0
@@ -64,7 +64,7 @@
 | language | 77 | 330 | 803 | 0 | 0 |
 | law_regulation | 28 | 61 | 236 | 0 | 0 |
 | loss_landscape | 25 | 98 | 262 | 0 | 0 |
-| losslab | 23 | 66 | 210 | 0 | 0 |
+| losslab | 23 | 70 | 231 | 0 | 0 |
 | math_i | 43 | 134 | 389 | 0 | 0 |
 | math_ii | 41 | 138 | 514 | 0 | 0 |
 | math_iii | 53 | 242 | 799 | 0 | 0 |
@@ -87,7 +87,7 @@
 | production_serving | 36 | 122 | 399 | 0 | 0 |
 | promptengineering | 18 | 225 | 711 | 0 | 0 |
 | rag | 26 | 136 | 437 | 0 | 0 |
-| reasoning | 21 | 63 | 244 | 0 | 0 |
+| reasoning | 21 | 67 | 251 | 1 | 0 |
 | recurrent_networks | 24 | 73 | 193 | 1 | 0 |
 | reinforcement_learning | 25 | 46 | 219 | 1 | 0 |
 | reliability | 21 | 26 | 81 | 4 | 0 |
@@ -132,6 +132,7 @@
 - human_mind.php: 2013
 - intuition.php: 2016
 - overandunderfittinglab.php: 2017
+- reasoning.php: 2026
 - recurrent_networks.php: 2015
 - reinforcement_learning.php: 2025
 - reliability.php: 2021
@@ -152,8 +153,7 @@
 - statistics_ii.php: 2006
 - statistics_ii.php: 2007
 - tokenizerlab.php: 1234
-- tokenizerlab.php: 1235
-- … and 21 more
+- … and 22 more
 
 ## Uncovered quantities
 

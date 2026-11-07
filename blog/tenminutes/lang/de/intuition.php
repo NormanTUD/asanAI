@@ -368,6 +368,16 @@ return [
 		'Real GPT-2 small logits for “As the spaceship was approaching the”, from the Transformer Explainer (Polo Club, Georgia Tech). The absolute logit offset is arbitrary; softmax depends only on differences.' => 'Echte GPT-2-small-Logits für „As the spaceship was approaching the“, aus dem Transformer Explainer (Polo Club, Georgia Tech). Der absolute Logit-Offset ist willkürlich; Softmax hängt nur von Unterschieden ab.',
 		'Real GPT-2 small logits for “As the spaceship was approaching the”, from the' => 'Echte GPT-2-small-Logits für „As the spaceship was approaching the“, aus dem',
 		'(Polo Club, Georgia Tech). The absolute logit offset is arbitrary; softmax depends only on differences.' => '(Polo Club, Georgia Tech). Der absolute Logit-Offset ist willkürlich; Softmax hängt nur von Unterschieden ab.',
+		'Prediction = compression' => 'Vorhersage = Kompression',
+		"A better next-character predictor needs fewer bits to encode the same sentence. The bars compare a uniform code with the model's code." => 'Ein besserer Vorhersager für das nächste Zeichen braucht weniger Bits, um denselben Satz zu kodieren. Die Balken vergleichen einen gleichmäßigen Code mit dem Code des Modells.',
+		'information theory' => 'Informationstheorie',
+		'Model quality' => 'Modellqualität',
+		'Run' => 'Start',
+		'Restart' => 'Neu starten',
+		'Uniform code' => 'Gleichmäßiger Code',
+		'Model code' => 'Modell-Code',
+		'Compression' => 'Kompression',
+		'Prediction and compression are two views of the same objective. Lower cross-entropy means a shorter code.' => 'Vorhersage und Kompression sind zwei Sichten auf dasselbe Ziel. Kleinere Cross-Entropy bedeutet einen kürzeren Code.',
 	],
 	'blocks' => [
 		'A token is not a word. Before the model can read anything, text is encoded as numbers. Every character has a Unicode code point, and an encoding turns that number into bytes. A byte-level tokenizer starts from all 256 possible bytes, so every piece of text is representable, including characters it never saw in training. Rare words split into <strong>subwords</strong>: pieces the vocabulary already knows. The tokenizer does not care about syllables or meaning. It might split “unbelievable” into “un”, “believ”, and “able”, and the same piece reappears in other words: the “un” in “unhappy” and in “unmarried” has the same id. New emoji still work because related emoji share their first bytes: most characters in the main emoji block begin with <code>F0 9F</code>. A space is a byte too, and it can be a token of its own.' => 'Ein Token ist kein Wort. Bevor das Modell irgendetwas lesen kann, wird Text als Zahlen kodiert. Jedes Zeichen hat einen Unicode-Codepoint, und eine Kodierung verwandelt diese Zahl in Bytes. Ein Byte-Level-Tokenizer beginnt mit allen 256 möglichen Bytes, sodass jedes Textstück darstellbar ist, auch Zeichen, die es im Training nie gesehen hat. Seltene Wörter zerfallen in <strong>Teilwörter</strong>: Stücke, die das Vokabular bereits kennt. Den Tokenizer interessieren weder Silben noch Bedeutung. Er könnte „unbelievable“ in „un“, „believ“ und „able“ zerlegen, und dasselbe Stück taucht in anderen Wörtern wieder auf: Das „un“ in „unhappy“ und in „unmarried“ hat dieselbe ID. Neue Emoji funktionieren trotzdem, weil verwandte Emoji ihre ersten Bytes teilen: Die meisten Zeichen im Haupt-Emoji-Block beginnen mit <code>F0 9F</code>. Ein Leerzeichen ist auch ein Byte und kann ein eigenes Token sein.',
@@ -402,5 +412,6 @@ return [
 		'A path through embedding space wrapped in a glowing probability isosurface' => 'Ein Pfad durch den Embedding-Raum, umhüllt von einer leuchtenden Wahrscheinlichkeits-Isosurface',
 		'An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.' => 'Eine animierte Punktwolke zeigt einen Korallenkern in einem blauen Ring, der zu einer gekrümmten Schale gebogen wird, bis eine flache Ebene sie trennt.',
 		'A temperature line with Freezing at -30, Cold at 5, Lukewarm at 30, and Hot at 100' => 'Eine Temperaturlinie mit Gefrierpunkt bei -30, Kalt bei 5, Lauwarm bei 30 und Heiß bei 100',
+		'A sentence encoded with a uniform code and with a model-based code, showing the bit counts and compression ratio' => 'Ein Satz, kodiert mit einem gleichmäßigen Code und mit einem modellbasierten Code, mit Bitanzahl und Kompressionsfaktor',
 	],
 ];
