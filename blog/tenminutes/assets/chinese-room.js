@@ -218,12 +218,12 @@
 		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 		var palette = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#1275ac"];
 		var parts = [];
-		for (var i = 0; i < 54; i++) {
+		for (var i = 0; i < 90; i++) {
 			parts.push({
 				x: 12 + Math.random() * 30,
 				y: h + 8,
 				vx: 2 + Math.random() * 5,
-				vy: -(6 + Math.random() * 7),
+				vy: -(7 + Math.random() * 9),
 				size: 3 + Math.random() * 4,
 				color: palette[i % palette.length],
 				life: 1,
@@ -239,7 +239,7 @@
 				p.y += p.vy * dt;
 				p.vy += 0.18 * dt;
 				p.vx *= 0.995;
-				p.life -= 0.018 * dt;
+				p.life -= 0.006 * dt;
 				p.spin += 0.14 * dt;
 				if (p.life <= 0) return;
 				ctx.save();
@@ -250,7 +250,7 @@
 				ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
 				ctx.restore();
 			});
-			if (now - start < 2200) {
+			if (now - start < 4800) {
 				requestAnimationFrame(frame);
 			} else {
 				canvas.remove();
@@ -262,8 +262,17 @@
 	function showReveal() {
 		timerEnabled = false;
 		stopTimer();
-		$("cr-room").hidden = true;
-		$("cr-reveal").hidden = false;
+		var room = $("cr-room");
+		var reveal = $("cr-reveal");
+		var roomHeight = room ? room.offsetHeight : 0;
+		if (reveal && roomHeight) {
+			reveal.style.height = roomHeight + "px";
+			reveal.style.minHeight = roomHeight + "px";
+			reveal.style.maxHeight = roomHeight + "px";
+			reveal.style.overflowY = "auto";
+		}
+		if (room) room.hidden = true;
+		if (reveal) reveal.hidden = false;
 		$("cr-translations").hidden = true;
 		if (score === rounds.length - 1) celebrate();
 		$("cr-reveal-translations").hidden = false;
@@ -292,6 +301,14 @@
 	function start() {
 		currentRound = 0;
 		score = 0;
+		var reveal = $("cr-reveal");
+		if (reveal) {
+			reveal.hidden = true;
+			reveal.style.height = "";
+			reveal.style.minHeight = "";
+			reveal.style.maxHeight = "";
+			reveal.style.overflowY = "";
+		}
 		renderRound();
 	}
 

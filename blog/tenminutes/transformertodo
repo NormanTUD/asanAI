@@ -193,5 +193,12 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
       h_in → FFN-Hidden → h_out; Attention bleibt bei d_model.
 - DONE Tokenizer-Erklärung (Kompression, Vokabulargröße als Hyperparameter)
       und deutsches Vector-Math-Beispiel inkl. Analogie-Hinweis.
+- DONE Unembedding: Token-Chips entfernt; nur der Klick auf den Top-Logit
+      hängt an. Hinweis „Klicke auf das Top-Token.“; EOS wird im
+      tokenisierten Satz nicht mehr als leerer Chip gezeigt.
+- DONE Zwei Signalplots pro Layer: Attention-Schritt und FFN-Schritt mit
+      roten Abnahmen, gelber Endhöhe und grauer Anfangshöhe; stale Canvas-
+      Registrierungen werden bei Tiefenänderung neu gebunden.
+- DONE Positionsplot zeigt während des Ladens Spinner + Text.
 - DONE Position zeigt nur noch den semantischen Vektor; Heatmap/Kurve-Modi
       sind entfernt.

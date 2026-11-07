@@ -2024,6 +2024,25 @@
 				unembed: drawUnembed
 			};
 			var stepModes = { embed: "pca", position: "pca", attend: "0" };
+			if (canvases.position) {
+				var posCanvas = canvases.position;
+				var posParent = posCanvas.parentNode;
+				if (posParent && !posParent.querySelector(".tm-position-loading")) {
+					if (getComputedStyle(posParent).position === "static") posParent.style.position = "relative";
+					var loading = document.createElement("div");
+					loading.className = "tm-position-loading";
+					loading.innerHTML = "<span class='tm-position-spinner' aria-hidden='true'></span><span>" + (DE() ? "Positionsvektoren werden geladen …" : "Position vectors are loading…") + "</span>";
+					posParent.appendChild(loading);
+					var loadingTries = 0;
+					var loadingPoll = setInterval(function () {
+						loadingTries++;
+						if ((window.__tmLayerTrace && window.__tmLayerTrace.length) || loadingTries > 80) {
+							clearInterval(loadingPoll);
+							loading.remove();
+						}
+					}, 250);
+				}
+			}
 			var apis = {};
 			Object.keys(canvases).forEach(function (key) {
 				var canvas = canvases[key];
@@ -2309,8 +2328,9 @@
 			if (!canvas) return;
 			var mode = canvas.getAttribute("data-signal-mode") || "attention";
 			var entry = signalCanvasRegistry[canvasId];
+			if (entry && entry.canvas !== canvas) { delete signalCanvasRegistry[canvasId]; entry = null; }
 			if (!entry) {
-				entry = { layerIdx: layerIdx, mode: mode, api: null };
+				entry = { canvas: canvas, layerIdx: layerIdx, mode: mode, api: null };
 				entry.api = initCanvas(canvas, function (ctx, w, h) {
 					drawLayerSignal(ctx, w, h, entry.layerIdx, entry.mode);
 				});
