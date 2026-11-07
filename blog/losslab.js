@@ -56,6 +56,29 @@ const LossLabUtil = {
 		el._mnW = w;
 	},
 
+	canvas: function (el, draw) {
+		if (!el) return null;
+		const ctx = el.getContext("2d");
+		let raf = 0;
+		const paint = function () {
+			raf = 0;
+			const r = el.getBoundingClientRect();
+			if (!r.width || !r.height) return;
+			const dpr = Math.min(2, window.devicePixelRatio || 1);
+			if (el.width !== Math.round(r.width * dpr) || el.height !== Math.round(r.height * dpr)) {
+				el.width = Math.round(r.width * dpr);
+				el.height = Math.round(r.height * dpr);
+			}
+			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+			draw(ctx, r.width, r.height);
+		};
+		const request = function () { if (!raf) raf = requestAnimationFrame(paint); };
+		if (window.ResizeObserver) new ResizeObserver(request).observe(el);
+		else window.addEventListener("resize", request);
+		request();
+		return { redraw: request, ctx: ctx };
+	},
+
 	watchSize: function (el, redraw) {
 		if (!window.ResizeObserver || !el) return;
 		let raf = 0;
@@ -307,12 +330,145 @@ const CrossEntropyLab = {
 	}
 };
 
+const SurpriseLossLab = {
+	classes: ["cat", "dog", "mat"],
+	emoji: ["🐱", "🐶", "🧶"],
+	target: 2,
+
+	init: function () {
+		this.root = document.getElementById("surprise-lab");
+		if (!this.root) return false;
+		this.el = {};
+		this.root.querySelectorAll("[data-sl]").forEach((n) => { this.el[n.dataset.sl] = n; });
+		this.el.p.addEventListener("input", () => this.update());
+		this.root.querySelectorAll("[data-sl-target]").forEach((b) => b.addEventListener("click", () => {
+			this.target = parseInt(b.dataset.slTarget, 10);
+			this.root.querySelectorAll("[data-sl-target]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+			this.update();
+		}));
+		this.api = LossLabUtil.canvas(this.el.canvas, (ctx, w, h) => this.draw(ctx, w, h));
+		this.update();
+		return true;
+	},
+
+	update: function () {
+		if (!this.el) return;
+		LossLabUtil.fill(this.el.p);
+		const p = parseFloat(this.el.p.value);
+		const L = -Math.log(Math.max(0.001, p));
+		this.el.pv.textContent = (p * 100).toFixed(1) + " %";
+		this.el.pt.textContent = (p * 100).toFixed(1) + " %";
+		this.el.loss.textContent = L.toFixed(2);
+		this.el.bits.innerHTML = (L / Math.LN2).toFixed(2) + " <small>bits</small>";
+		this.el.true.textContent = this.emoji[this.target] + " " + this.classes[this.target];
+
+		const note = this.el.note;
+		if (p < 0.05) {
+			note.dataset.tone = "bad";
+			note.innerHTML = "<b>Confident and wrong.</b> The true class gets only " + (p * 100).toFixed(1) + " %, so the loss is −ln(" + p.toFixed(3) + ") = <b>" + L.toFixed(2) + "</b>. The curve is a wall: as p approaches zero the penalty grows without bound.";
+		} else if (p < 0.5) {
+			note.dataset.tone = "warn";
+			note.innerHTML = "<b>Uncertain.</b> The model gives the right class " + (p * 100).toFixed(1) + " %, costing " + L.toFixed(2) + " nats. Cross-entropy is not satisfied with a correct guess; it wants the probability mass on the truth.";
+		} else {
+			note.dataset.tone = "good";
+			note.innerHTML = "<b>Right and reasonably sure.</b> At " + (p * 100).toFixed(1) + " % the loss is " + L.toFixed(2) + " nats (" + (L / Math.LN2).toFixed(2) + " bits). Let p rise toward one and the curve flattens: the remaining surprise shrinks.";
+		}
+		if (this.api) this.api.redraw();
+	},
+
+	draw: function (ctx, w, h) {
+		const C = LossLabUtil.colors();
+		const p = parseFloat(this.el.p.value);
+		const L = -Math.log(Math.max(0.001, p));
+		const probs = this.classes.map((_, i) => i === this.target ? p : (1 - p) / 2);
+		const colors = [C.coral, C.sky, C.good];
+
+		ctx.clearRect(0, 0, w, h);
+		const bg = ctx.createRadialGradient(w * 0.2, h * 0.1, 10, w * 0.2, h * 0.1, w * 0.9);
+		bg.addColorStop(0, LossLabUtil.alpha(C.accent, 0.06));
+		bg.addColorStop(1, LossLabUtil.alpha(C.surface, 0));
+		ctx.fillStyle = bg;
+		ctx.fillRect(0, 0, w, h);
+
+		const bx = 30, by = 54, bw = Math.max(90, w * 0.33);
+		ctx.font = "700 11px " + "system-ui, sans-serif";
+		ctx.textBaseline = "middle";
+		ctx.textAlign = "left";
+		ctx.fillStyle = C.muted;
+		ctx.fillText("model distribution", bx, by - 28);
+		this.classes.forEach((name, i) => {
+			const y = by + i * 52;
+			const col = i === this.target ? C.good : colors[i];
+			ctx.fillStyle = col;
+			ctx.font = "700 11px system-ui, sans-serif";
+			ctx.fillText(this.emoji[i] + " " + name, bx, y - 10);
+			ctx.fillStyle = LossLabUtil.alpha(C.text, 0.13);
+			ctx.beginPath();
+			if (ctx.roundRect) { ctx.roundRect(bx, y, bw, 14, 7); ctx.fill(); }
+			else ctx.fillRect(bx, y, bw, 14);
+			ctx.fillStyle = LossLabUtil.alpha(col, i === this.target ? 0.9 : 0.45);
+			ctx.beginPath();
+			if (ctx.roundRect) { ctx.roundRect(bx, y, Math.max(3, bw * probs[i]), 14, 7); ctx.fill(); }
+			else ctx.fillRect(bx, y, Math.max(3, bw * probs[i]), 14);
+			ctx.fillStyle = col;
+			ctx.font = "700 10px ui-monospace, monospace";
+			ctx.fillText((probs[i] * 100).toFixed(1) + " %", bx + bw + 10, y + 7);
+		});
+		ctx.fillStyle = C.muted;
+		ctx.font = "600 10px system-ui, sans-serif";
+		ctx.fillText("true class: " + this.emoji[this.target] + " " + this.classes[this.target], bx, by + 3 * 52 + 12);
+
+		const lx = w * 0.58, ly = 48, lw = Math.max(70, w - lx - 34), lh = h - 92;
+		const X = (v) => lx + lw * v;
+		const Y = (v) => ly + lh * (1 - Math.min(1, Math.max(0, v / 5)));
+		ctx.strokeStyle = LossLabUtil.alpha(C.grid, 0.7);
+		ctx.lineWidth = 1;
+		ctx.font = "600 9px ui-monospace, monospace";
+		ctx.textAlign = "right";
+		for (let i = 0; i <= 5; i++) {
+			ctx.beginPath(); ctx.moveTo(lx, Y(i)); ctx.lineTo(lx + lw, Y(i)); ctx.stroke();
+			ctx.fillStyle = C.muted; ctx.fillText(String(i), lx - 7, Y(i));
+		}
+		ctx.textAlign = "center";
+		ctx.fillText("0 %", lx, ly + lh + 16);
+		ctx.fillText("100 %", lx + lw, ly + lh + 16);
+		ctx.textAlign = "left";
+		ctx.fillStyle = C.muted;
+		ctx.fillText("loss", lx, ly - 10);
+		ctx.fillText("p(true)", lx + lw / 2, ly + lh + 16);
+
+		ctx.beginPath();
+		for (let i = 0; i <= 160; i++) {
+			const q = Math.max(0.001, i / 160);
+			const v = -Math.log(q);
+			if (i === 0) ctx.moveTo(X(q), Y(v)); else ctx.lineTo(X(q), Y(v));
+		}
+		ctx.strokeStyle = C.coral;
+		ctx.lineWidth = 2.6;
+		ctx.stroke();
+
+		ctx.strokeStyle = LossLabUtil.alpha(C.rose, 0.5);
+		ctx.setLineDash([4, 4]);
+		ctx.beginPath(); ctx.moveTo(X(p), Y(0)); ctx.lineTo(X(p), Y(L)); ctx.stroke();
+		ctx.setLineDash([]);
+		ctx.fillStyle = p < 0.2 ? C.rose : C.good;
+		ctx.beginPath(); ctx.arc(X(p), Y(L), 7, 0, Math.PI * 2); ctx.fill();
+		ctx.fillStyle = C.ink;
+		ctx.font = "700 11px ui-monospace, monospace";
+		ctx.textAlign = p > 0.8 ? "right" : "left";
+		ctx.fillText(L.toFixed(2), X(p) + (p > 0.8 ? -10 : 10), Y(L) - 8);
+		ctx.textAlign = "left";
+	}
+};
+
 function initLossLab() {
 	RegressionLossLab.init();
+	SurpriseLossLab.init();
 	CrossEntropyLab.init();
 	if (window.__MN_DARK && window.__MN_DARK.onChange) {
 		window.__MN_DARK.onChange(() => {
 			if (RegressionLossLab.root) RegressionLossLab.update();
+			if (SurpriseLossLab.root) SurpriseLossLab.update();
 			if (CrossEntropyLab.root) CrossEntropyLab.update();
 		});
 	}

@@ -34,9 +34,10 @@ In the plot below, the loss creates a “bowl” shape. To train the AI, we calc
 </div>
 
 <style>
-#mse-lab, #ce-lab { --lab-accent: var(--mn-accent); --lab-accent-2: var(--mn-rose); }
-#ce-lab { --lab-accent: var(--mn-coral); --lab-accent-2: var(--mn-rose); }
+#mse-lab, #ce-lab, #surprise-lab { --lab-accent: var(--mn-accent); --lab-accent-2: var(--mn-rose); }
+#ce-lab, #surprise-lab { --lab-accent: var(--mn-coral); --lab-accent-2: var(--mn-rose); }
 .ll-plot { width: 100%; height: 320px; }
+#surprise-lab .sl-canvas { display: block; width: 100%; height: 320px; }
 #mse-lab .mnlab-stat[data-tone="bad"] .v, #ce-lab .mnlab-stat[data-tone="bad"] .v { color: var(--mn-rose); }
 #ce-lab .mnlab-stat[data-tone="good"] .v { color: var(--mn-emerald); }
 #ce-lab .ce-table { display: grid; gap: 8px; }
@@ -66,6 +67,7 @@ In the plot below, the loss creates a “bowl” shape. To train the AI, we calc
 #ce-lab .ce-logits { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 18px; }
 @container mnlab (max-width: 620px) {
 	.ll-plot { height: 260px; }
+	#surprise-lab .sl-canvas { height: 260px; }
 	#ce-lab .ce-logits { grid-template-columns: minmax(0, 1fr); }
 	#ce-lab .ce-head, #ce-lab .ce-row { grid-template-columns: 6ch minmax(0, 1fr) 2ch minmax(0, .8fr) 5ch; gap: 6px; }
 }
@@ -136,6 +138,47 @@ The math uses a *logarithm* ($-\ln(P)$), which creates a steep “wall” as con
 </div>
 
 <div class="mn-predict" data-predict="ce-confident-wrong"><script type="application/json">{"q": "The model gives the true class only 1 % probability. Roughly how big is the cross-entropy loss?", "options": ["About 0.01", "About 1", "About 4.6", "Infinite"], "answer": 2, "try": "Push the logit of the true class far below the others and watch the loss value.", "explain": "−ln(0.01) ≈ 4.6. Cross-entropy punishes confident mistakes hard and grows without bound as the probability of the truth goes to 0 — but it only becomes infinite at exactly 0."}</script></div>
+
+<div class="md">
+### Loss: Surprise as a Scalar
+
+For a classifier the loss collapses to one number: the negative log-probability the model assigned to the true class.
+
+<div>$$\underbrace{-\log \underbrace{p(y)}_{\text{probability of the true class}}}_{\text{loss: the surprise of the true class}}$$</div>
+
+That is **categorical cross-entropy** for a single example: the model spreads a probability over $C$ classes, and the loss looks only at the entry for the class that actually occurred. A confident correct answer costs almost nothing; a confident wrong answer costs a lot. The demo below makes that trade-off visible. Pick the true class and move the probability it receives; the right-hand curve is the loss itself.
+</div>
+
+<div class="mnlab" id="surprise-lab" data-interactive>
+	<div class="mnlab-head">
+		<div>
+			<div class="mnlab-kicker">Interactive lab</div>
+			<div class="mnlab-title">Surprise as a Scalar</div>
+			<p class="mnlab-sub">One true class, one probability, one loss. The other classes split whatever probability is left, so the bars always sum to one.</p>
+		</div>
+		<div class="mnlab-chips" role="group" aria-label="True class">
+			<button type="button" class="mnlab-chip" data-sl-target="0" aria-pressed="true">🐱 cat</button>
+			<button type="button" class="mnlab-chip" data-sl-target="1" aria-pressed="false">🐶 dog</button>
+			<button type="button" class="mnlab-chip" data-sl-target="2" aria-pressed="false">🧶 mat</button>
+		</div>
+	</div>
+	<div class="mnlab-well" style="padding: 6px 4px 2px;">
+		<canvas class="sl-canvas" data-sl="canvas" aria-label="Class probabilities and the cross-entropy loss curve"></canvas>
+	</div>
+	<div class="mnlab-grid" style="margin-top: 14px; gap: 6px 22px;">
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">p(true class)</span><span class="mnlab-val" data-sl="pv">72.0%</span></span>
+			<input type="range" data-sl="p" min="0.001" max="1" step="0.001" value="0.72" aria-label="Probability assigned to the true class">
+		</label>
+	</div>
+	<div class="mnlab-grid mnlab-grid--4" style="margin-top: 14px;">
+		<div class="mnlab-stat"><span class="k">True class</span><span class="v" data-sl="true">mat</span></div>
+		<div class="mnlab-stat"><span class="k">p(true)</span><span class="v" data-sl="pt">72.0%</span></div>
+		<div class="mnlab-stat"><span class="k">Loss −ln p</span><span class="v" data-sl="loss">0.33</span></div>
+		<div class="mnlab-stat"><span class="k">Surprise</span><span class="v" data-sl="bits">0.47 bits</span></div>
+	</div>
+	<div class="mnlab-note" data-sl="note" aria-live="polite"></div>
+</div>
 
 <div class="mnlab" id="ce-lab" data-interactive>
 	<div class="mnlab-head">
