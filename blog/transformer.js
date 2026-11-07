@@ -2573,10 +2573,19 @@ function buildLogitDetailsHtml(h_last, logits) {
 	const vocabWords = logits.map(l => l.word);
 	const W_vocab = logits.map(l => l.w_row);
 
-	let html = buildHLastSection(h_last);
+	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+	const intro = isDe
+		? 'Lies das von links nach rechts: Der Hidden-Vektor h_last des letzten Tokens wird mit jeder Vokabularzeile in W_vocab multipliziert; das ergibt einen rohen Logit pro Wort. Softmax macht daraus Wahrscheinlichkeiten; die Temperatur ändert ihre Schärfe, nicht ihre Reihenfolge. Die Tabelle am Ende vergleicht dieselben Logits vor und nach der Temperatur-Skalierung.'
+		: "Read this from left to right: the last token's hidden vector h_last is dotted with every vocabulary row in W_vocab, giving one raw logit per word. Softmax turns those logits into probabilities; temperature changes their sharpness, not their order. The table at the end compares the same logits before and after temperature scaling.";
+	const outro = isDe
+		? 'Die höchste Wahrscheinlichkeit ist die beste Vermutung des Modells; die Decoding-Regel wählt daraus mit der eingestellten Temperatur und Top-k ein Token.'
+		: "The highest probability is the model's best guess; the decoding rule chooses a token from these probabilities with the selected temperature and top-k.";
+	let html = `<p class="logit-explainer" style="margin:0 0 12px; color:var(--mn-text-muted); font-size:.9rem; line-height:1.5;">${intro}</p>`;
+	html += buildHLastSection(h_last);
 	html += buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logits);
 	html += buildSoftmaxSection(logits, logitValues);
 	html += buildTemperatureSection(logits, logitValues, temperature);
+	html += `<p class="logit-explainer" style="margin:12px 0 0; color:var(--mn-text-muted); font-size:.9rem; line-height:1.5;">${outro}</p>`;
 	html += `</span></div>`;
 	return html;
 }

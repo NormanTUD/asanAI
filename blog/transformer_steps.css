@@ -1100,3 +1100,45 @@
 	color: var(--tm-muted, var(--mn-text-muted, #627476));
 	font-size: 0.68rem;
 }
+
+/* Two-state switch for the residual overlay (input left, output right). */
+.tm-residual-switch {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+}
+.tm-residual-switch input {
+	position: absolute;
+	opacity: 0;
+	width: 1px;
+	height: 1px;
+}
+.tm-residual-switch-track {
+	position: relative;
+	display: inline-block;
+	width: 42px;
+	height: 22px;
+	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	background: var(--tm-paper-2, var(--mn-bg-subtle, #f8fafc));
+	transition: background 0.16s ease, border-color 0.16s ease;
+}
+.tm-residual-switch-track::after {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 16px;
+	height: 16px;
+	background: var(--tm-muted, var(--mn-text-muted, #627476));
+	transition: left 0.16s ease, background 0.16s ease;
+}
+.tm-residual-switch input:checked + .tm-residual-switch-track {
+	border-color: var(--tm-green, var(--mn-emerald, #63a44b));
+	background: var(--tm-green, var(--mn-emerald, #63a44b));
+}
+.tm-residual-switch input:checked + .tm-residual-switch-track::after {
+	left: 22px;
+	background: #ffffff;
+}

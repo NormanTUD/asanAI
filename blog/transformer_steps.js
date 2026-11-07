@@ -988,18 +988,29 @@
 		}
 		var vec = cached.h_final[cached.h_final.length - 1];
 		var words = Object.keys(space);
-		var scores = words.map(function (word) {
+		var tempEl = document.getElementById("tm-unembed-temp") || document.getElementById("transformer-temperature");
+		var temperature = Math.max(0.05, parseFloat(tempEl ? tempEl.value : 1) || 1);
+		var topkEl = document.getElementById("tm-unembed-topk");
+		var topk = Math.max(1, parseInt(topkEl ? topkEl.value : "8", 10) || 8);
+		var logits = words.map(function (word) {
 			var dot = 0;
 			for (var i = 0; i < vec.length; i++) dot += vec[i] * (space[word][i] || 0);
-			return { word: word, score: dot };
-		}).sort(function (a, b) { return b.score - a.score; }).slice(0, 8);
+			return { word: word, logit: dot };
+		});
+		var maxLogit = Math.max.apply(null, logits.map(function (x) { return x.logit / temperature; }));
+		var exps = logits.map(function (x) { return Math.exp(x.logit / temperature - maxLogit); });
+		var sum = exps.reduce(function (a, b) { return a + b; }, 0) || 1;
+		var scores = logits.map(function (x, i) {
+			return { word: x.word, score: x.logit, prob: exps[i] / sum };
+		}).sort(function (a, b) { return b.prob - a.prob; }).slice(0, topk);
 		window.__tmUnembedTop = scores.map(function (item) { return item.word; });
-		var max = scores[0].score || 1;
+		window.__tmUnembedProbs = scores.map(function (item) { return item.prob; });
+		var max = scores[0].prob || 1;
 		var pad = 16, left = 84, top = 18;
 		var rowH = (h - top - pad) / Math.max(1, scores.length);
 		scores.forEach(function (item, i) {
 			var y = top + i * rowH;
-			var bw = Math.max(2, (item.score / max) * (w - left - pad));
+			var bw = Math.max(2, (item.prob / max) * (w - left - pad));
 			ctx.fillStyle = i === 0 ? c.gold : c.blue;
 			ctx.fillRect(left, y + rowH * 0.18, bw, Math.max(4, rowH * 0.58));
 			ctx.fillStyle = c.ink;
@@ -1009,13 +1020,13 @@
 			ctx.fillText(fitText(ctx, display(item.word), 74), left - 6, y + rowH / 2);
 			ctx.textAlign = "left";
 			ctx.fillStyle = c.muted;
-			ctx.fillText(item.score.toFixed(2), left + bw + 6, y + rowH / 2);
+			ctx.fillText((item.prob * 100).toFixed(1) + "%", left + bw + 6, y + rowH / 2);
 		});
 		ctx.textBaseline = "alphabetic";
 		ctx.textAlign = "left";
 		ctx.fillStyle = c.muted;
 		ctx.font = "600 9px Barlow, system-ui, sans-serif";
-		ctx.fillText(DE() ? "Top-Logits des letzten Tokens" : "top logits of the last token", pad, 12);
+		ctx.fillText((DE() ? "Nächste-Token-Wahrscheinlichkeiten · T=" : "next-token probabilities · T=") + temperature.toFixed(1) + (DE() ? " · Top-k=" : " · top-k=") + topk, pad, 12);
 	}
 
 	var layerCanvasRegistry = {};
@@ -1791,12 +1802,12 @@
 					panel.className = "tm-residual-panel";
 					panel.innerHTML = "<div class='tm-residual-panel-head'><span>" + (isDe ? "Residual-Stream pro Token" : "Residual stream per token") + "</span><span class='tm-residual-panel-sub'>" + (isDe ? "Zeile = Token · Spalte = Dimension" : "row = token · column = dimension") + "</span></div>" +
 						"<p class='tm-residual-panel-note'>" + (isDe
-							? "Ziehe den Regler, um Eingang und Ausgang pixelgenau übereinander zu blenden. Die Farben sind auf das gemeinsame Minimum und Maximum beider Matrizen normiert. Die Signal-Plots darunter zeigen die Norm am Start, nach Attention und nach dem FFN; Rot markiert eine Abnahme, Gelb die Endhöhe. Fahre über eine Zelle für die exakten Werte."
-							: "Drag the slider to blend input and output pixel-exactly. Colours are normalized to the shared minimum and maximum of both matrices. The signal plots below show the norm at the start, after attention, and after the FFN; red marks a decrease, gold the final height. Hover a cell for the exact values.") + "</p>" +
+							? "Schalte zwischen Eingang und Ausgang um; beide liegen pixelgenau übereinander. Die Farben sind auf das gemeinsame Minimum und Maximum beider Matrizen normiert. Die Signal-Plots darunter zeigen die Norm am Start, nach Attention und nach dem FFN; Rot markiert eine Abnahme, Gelb die Endhöhe. Fahre über eine Zelle für die exakten Werte."
+							: "Switch between input and output; both sit pixel-exactly on top of each other. Colours are normalized to the shared minimum and maximum of both matrices. The signal plots below show the norm at the start, after attention, and after the FFN; red marks a decrease, gold the final height. Hover a cell for the exact values.") + "</p>" +
 						"<div class='tm-residual-overlay'><canvas id='" + prefix + "-residual-in' class='tm-residual-heatmap-canvas tm-residual-overlay-in' data-layer-idx='" + idx + "' data-which='in' aria-label='" + (isDe ? "Residual-Stream beim Eintritt in die Schicht" : "residual stream entering the layer") + "'></canvas>" +
 						"<canvas id='" + prefix + "-residual-out' class='tm-residual-heatmap-canvas tm-residual-overlay-out' data-layer-idx='" + idx + "' data-which='out' aria-label='" + (isDe ? "Residual-Stream nach Attention und FFN" : "residual stream after attention and FFN") + "'></canvas>" +
 						"<div class='tm-residual-tooltip' id='" + prefix + "-residual-tooltip' hidden></div></div>" +
-						"<div class='tm-residual-blend'><label>" + (isDe ? "Eingang" : "Input") + " <input type='range' id='" + prefix + "-residual-blend' min='0' max='1' step='0.01' value='0.5'> " + (isDe ? "Ausgang" : "Output") + "</label><output id='" + prefix + "-residual-blend-out'>50%</output><span class='tm-residual-range' id='" + prefix + "-residual-range'></span></div>" +
+						"<div class='tm-residual-blend'><label class='tm-residual-switch'><span>" + (isDe ? "Eingang" : "Input") + "</span><input type='checkbox' id='" + prefix + "-residual-blend'><span class='tm-residual-switch-track' aria-hidden='true'></span><span>" + (isDe ? "Ausgang" : "Output") + "</span></label><span class='tm-residual-range' id='" + prefix + "-residual-range'></span></div>" +
 						"<div class='tm-residual-legend'><span>" + (isDe ? "negativ" : "negative") + "</span><span class='tm-residual-legend-bar'></span><span>" + (isDe ? "positiv" : "positive") + "</span></div>";
 					preview.insertBefore(panel, preview.firstChild);
 				}
@@ -1818,7 +1829,6 @@
 					});
 				}
 				var blendEl = document.getElementById(prefix + "-residual-blend");
-				var blendOut = document.getElementById(prefix + "-residual-blend-out");
 				var rangeEl = document.getElementById(prefix + "-residual-range");
 				var outHeat = document.getElementById(prefix + "-residual-out");
 				var inHeat = document.getElementById(prefix + "-residual-in");
@@ -1832,13 +1842,13 @@
 				}
 				function updateBlend() {
 					if (!blendEl) return;
-					var t = Math.max(0, Math.min(1, parseFloat(blendEl.value) || 0));
-					if (outHeat) outHeat.style.opacity = String(t);
-					if (blendOut) blendOut.textContent = Math.round(t * 100) + "%";
+					var showOutput = !!blendEl.checked;
+					if (outHeat) outHeat.style.opacity = showOutput ? "1" : "0";
+					if (inHeat) inHeat.style.opacity = showOutput ? "0" : "1";
 				}
 				if (blendEl && !blendEl._tmResidualBound) {
 					blendEl._tmResidualBound = true;
-					blendEl.addEventListener("input", updateBlend);
+					blendEl.addEventListener("change", updateBlend);
 				}
 				updateBlend();
 				if (inHeat && tip && !inHeat._tmHoverBound && layerTrace) {
@@ -2331,6 +2341,7 @@
 			if (unembedTopk) {
 				unembedTopk.addEventListener("input", function () {
 					if (unembedTopkOut) unembedTopkOut.textContent = unembedTopk.value;
+					if (apis.unembed) apis.unembed.redraw();
 				});
 				if (unembedTopkOut) unembedTopkOut.textContent = unembedTopk.value;
 			}
@@ -2349,12 +2360,14 @@
 				unembedTemp.addEventListener("input", function () {
 					if (unembedTempOut) unembedTempOut.textContent = parseFloat(unembedTemp.value).toFixed(1);
 					syncUnembedTemp();
+					if (apis.unembed) apis.unembed.redraw();
 				});
 				var mainTemp = document.getElementById("transformer-temperature");
 				if (mainTemp) {
 					mainTemp.addEventListener("input", function () {
 						unembedTemp.value = mainTemp.value;
 						if (unembedTempOut) unembedTempOut.textContent = parseFloat(mainTemp.value).toFixed(1);
+						if (apis.unembed) apis.unembed.redraw();
 					});
 				}
 			}

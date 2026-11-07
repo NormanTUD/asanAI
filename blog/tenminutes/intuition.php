@@ -128,6 +128,54 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="code">
+						<div class="section-kicker">Next step · code</div>
+						<h2 class="section-title">It also writes code.</h2>
+						<div class="prose">
+							<p>The same loop that completes a sentence can complete a program. Ask for a small Python script, and the model predicts tokens that form code, a file name, and a terminal command. The code is text the model produced; the model does not run it. Python runs it, and the result is what you see in the terminal.</p>
+							<p>That difference matters. The model does not calculate the scattering ratio in its head. It writes a program that calculates it; the program does the arithmetic. A language model can produce code because code is a sequence of tokens with strong regularities, the same way a sentence is.</p>
+						</div>
+
+						<div class="demo demo--paper demo--interactive" id="code-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">From a request to a program <span>· demo 01a · code</span></p>
+									<p class="demo-sub">The model writes the code; Python runs it.</p>
+								</div>
+							</div>
+							<div class="demo-body">
+								<div class="code-demo-grid">
+									<div class="code-demo-window">
+										<div class="code-demo-bar"><span class="code-demo-dot is-green"></span><span class="code-demo-dot is-gold"></span><span class="code-demo-dot is-sky"></span><span class="code-demo-name">himmel.py</span></div>
+										<div class="code-demo-chat">
+											<div class="code-demo-msg is-user">Write a Python program that calculates how strongly blue and red light are scattered in the atmosphere.</div>
+											<div class="code-demo-msg is-ai">Sure. The program computes the Rayleigh scattering ratio for 450 nm and 650 nm.</div>
+										</div>
+										<pre class="code-demo-code" aria-label="Generated Python program"><code><span class="cd-com" data-en="# Rayleigh scattering in air" data-de="# Rayleigh-Streuung in Luft"># Rayleigh scattering in air</span>
+k_B = <span class="cd-num">1.380649e-23</span>   <span class="cd-com" data-en="# J/K" data-de="# J/K"># J/K</span>
+
+<span class="cd-kw">def</span> <span class="cd-fn">scattering</span>(wavelength, pressure, temperature):
+    density = pressure / (k_B * temperature)
+    <span class="cd-kw">return</span> density / wavelength ** <span class="cd-num">4</span>
+
+blue = <span class="cd-fn">scattering</span>(<span class="cd-num">450e-9</span>, <span class="cd-num">1e5</span>, <span class="cd-num">293</span>)
+red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>, <span class="cd-num">1e5</span>, <span class="cd-num">293</span>)
+<span class="cd-fn">print</span>(f<span class="cd-str" data-en="&quot;Blue is {blue / red:.2f}x more strongly scattered than red&quot;" data-de="&quot;Blau wird {blue / red:.2f}× stärker gestreut als Rot&quot;">"Blue is {blue / red:.2f}x more strongly scattered than red"</span>)</code></pre>
+									</div>
+									<div class="code-demo-terminal" aria-live="polite">
+										<div class="code-demo-bar"><span class="code-demo-dot is-green"></span><span class="code-demo-dot is-gold"></span><span class="code-demo-dot is-sky"></span><span class="code-demo-name">Terminal</span></div>
+										<div class="code-demo-term-body">
+											<div class="code-demo-cmd"><span class="code-demo-dollar">$</span> python3 himmel.py</div>
+											<div class="code-demo-output" id="code-demo-output" hidden>Blue is 4.35× more strongly scattered than red.</div>
+										</div>
+										<button type="button" class="code-demo-run" id="code-demo-run" aria-controls="code-demo-output" aria-expanded="false">Run program</button>
+									</div>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>The model wrote the program; the program computed the ratio. Code is another sequence the loop can predict, one token at a time.</span></div>
+						</div>
+					</section>
+
 					<section class="section-block" id="loop">
 						<div class="section-kicker"><span class="sk-num">02</span> Play the loop</div>
 						<h2 class="section-title">Write a sentence, one word at a time.</h2>
@@ -3367,6 +3415,25 @@
 				]
 			});
 		}
+	})();
+	</script>
+	<script>
+	(function () {
+		"use strict";
+		var demo = document.getElementById("code-demo");
+		if (!demo) return;
+		var de = TM.lang() === "de";
+		demo.querySelectorAll("[data-en][data-de]").forEach(function (el) {
+			el.textContent = de ? el.getAttribute("data-de") : el.getAttribute("data-en");
+		});
+		var out = document.getElementById("code-demo-output");
+		var btn = document.getElementById("code-demo-run");
+		if (!out || !btn) return;
+		btn.addEventListener("click", function () {
+			out.hidden = false;
+			btn.setAttribute("aria-expanded", "true");
+			btn.textContent = de ? "Erneut ausführen" : "Run again";
+		});
 	})();
 	</script>
 </body>
