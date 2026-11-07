@@ -1893,6 +1893,13 @@
 			if (isNaN(idx)) return;
 			var body = card.querySelector(".tm-layer-body");
 			if (!body) return;
+			if (!card.getAttribute("data-tm-opened-default")) {
+				card.setAttribute("data-tm-opened-default", "1");
+				body.hidden = false;
+				var headBtn = card.querySelector(".tm-layer-head");
+				if (headBtn) headBtn.setAttribute("aria-expanded", "true");
+				card.classList.add("is-open");
+			}
 			var isDe = DE();
 			var prefix = "unified-layer-" + idx;
 			var preview = card.querySelector(".tm-layer-preview");

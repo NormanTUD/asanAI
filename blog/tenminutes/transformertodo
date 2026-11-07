@@ -252,3 +252,11 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
   `tlab-final-results` and `buildPredictionChipsHtml` are absent; replaced by
   the top-logit click. Missing PHP `data-tex` formulas vs `559cfa15c`: 0 on
   both `transformer.php` and `tenminutes/transformer.php`.
+- DONE Layer bodies open by default, so Attention and FFN/MLP are visible
+  without clicking the layer headline. The subboxes themselves stay
+  collapsible; opening them reveals the restored mathematics.
+- DEEP AUDIT: layer math containers `-layernorm-viz`, `-concat-viz`,
+  `-h1-final-viz`, `-attention-heads`, `-attention-lines`, `-ffn-heatmap`,
+  `-step-1/2/3`, `-formula-body`, `-content` and last-layer `-hlast` are all
+  present in both engines. PHP `data-tex` formulas missing vs `559cfa15c`: 0
+  on both pages.

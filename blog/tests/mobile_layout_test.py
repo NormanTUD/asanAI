@@ -255,7 +255,7 @@ return (function () {
     }
 
     var PRUNE = {
-        svg: 1, canvas: 1, script: 1, style: 1, noscript: 1,
+        svg: 1, canvas: 1, math: 1, script: 1, style: 1, noscript: 1,
         template: 1, object: 1, embed: 1, iframe: 1
     };
 
@@ -374,11 +374,11 @@ return (function () {
         }
     });
 
-    var prose_selector = '#contents p, #contents li, .prose p, .prose li, .lesson-main p';
+    var prose_selector = '#contents .md p, #contents .md li, .prose p, .prose li';
     Array.prototype.forEach.call(document.querySelectorAll(prose_selector), function (el) {
         if (!visible(el)) return;
         if (closestAny(el, '.sideimage, .sidenote, .cl-block, .optional, table, '
-                + 'figcaption, .mnq-panel, .mnp-overlay')) {
+                + 'figcaption, .toggleable-quote, .mnq-panel, .mnp-overlay')) {
             return;
         }
         var t = textOf(el);
@@ -497,7 +497,7 @@ html,body{margin:0;font-family:sans-serif}
 <div id="contents">
   <div class="block">wide block</div>
   <button style="width:20px;height:20px">tiny</button>
-  <p style="font-size:10px">This deliberately long fixture paragraph exists only to make the audit report a prose font size below the mobile floor, so the self test proves the detector is alive.</p>
+  <div class="md"><p style="font-size:10px">This deliberately long fixture paragraph exists only to make the audit report a prose font size below the mobile floor, so the self test proves the detector is alive.</p></div>
 </div>
 </body></html>"""
 
@@ -781,7 +781,11 @@ def filter_pages(pages: list[str], wanted: list[str] | None) -> list[str]:
             if not item:
                 continue
             item_stem = item[:-4] if item.endswith(".php") else item
-            if norm == item or stem == item_stem or item in page:
+            if "/" in item:
+                if norm == item or norm == item_stem + ".php":
+                    selected.append(page)
+                    break
+            elif page.count("/") == 1 and stem == item_stem:
                 selected.append(page)
                 break
     return selected
@@ -839,6 +843,31 @@ def capture_screenshots(
     return paths[0] if paths else ""
 
 
+def load_page(driver: webdriver.Chrome, url: str) -> None:
+    """Start a navigation and wait until the new document is the active one.
+
+    pageLoadStrategy=none returns from driver.get() as soon as the navigation
+    is accepted. Without this check the first execute_script can still run
+    against the previous document, which produces occasional false
+    not_ready results on heavy pages.
+    """
+    try:
+        driver.get(url)
+    except Exception:
+        return
+    target = url.split("#", 1)[0]
+    deadline = time.time() + 5
+    while time.time() < deadline:
+        try:
+            href = driver.execute_script("return location.href;") or ""
+        except Exception:
+            time.sleep(0.1)
+            continue
+        if href.split("#", 1)[0] == target:
+            return
+        time.sleep(0.1)
+
+
 def run_page(
     driver: webdriver.Chrome,
     base: str,
@@ -855,21 +884,30 @@ def run_page(
         url += ("&" if "?" in url else "?") + "lang=" + lang
     run = Run(page=page, url=url, width=width, height=height, lang=lang)
 
+    try:
+        driver.get("about:blank")
+    except Exception:
+        pass
     drain_logs(driver)
     try:
         driver.set_window_rect(0, 0, width, height)
     except Exception:
         pass
     try:
-        driver.get(url)
+        load_page(driver, url)
     except Exception as exc:
         run.error = f"navigation failed: {exc}"
         run.findings.append(Finding("load_error", "hard", message=run.error))
         run.duration = time.time() - started
         return run
 
-    ready, state = wait_ready(driver, is_blog, args.timeout)
     apply_viewport(driver, width, height)
+    ready, state = wait_ready(driver, is_blog, args.timeout)
+    if not ready:
+        # A single reload clears the occasional race after a heavy page.
+        load_page(driver, url)
+        apply_viewport(driver, width, height)
+        ready, state = wait_ready(driver, is_blog, max(8, args.timeout // 2))
     if not ready:
         if (is_blog and not state.get("contents")) or (not is_blog and not state.get("body")):
             run.error = f"page did not become measurable: {state}"
@@ -881,6 +919,7 @@ def run_page(
             value=str(state),
         ))
 
+    apply_viewport(driver, width, height)
     wait_fonts(driver)
     scroll_through(driver, args.settle)
 
