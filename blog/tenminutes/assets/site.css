@@ -7408,26 +7408,6 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 	}
 }
 
-.jocax-box {
-	margin: 22px 0;
-	padding: 18px 20px;
-	border: 1px solid var(--tm-line);
-	border-left: 3px solid var(--tm-green);
-	background: var(--tm-paper-2);
-}
-.jocax-box h3 {
-	margin: 0 0 6px;
-	font-family: var(--tm-display);
-	font-size: 1.05rem;
-	line-height: 1.25;
-	color: var(--tm-petrol);
-}
-.jocax-box p {
-	margin: 0;
-	font-size: 0.84rem;
-	line-height: 1.55;
-	color: var(--tm-muted);
-}
 .map-links {
 	display: flex;
 	flex-wrap: wrap;

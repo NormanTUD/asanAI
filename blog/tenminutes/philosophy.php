@@ -189,12 +189,21 @@
 							<div class="keypoint"><b>J-space</b><span>A readable internal workspace in Claude looks like access, not proof of experience.</span></div>
 							<div class="keypoint"><b>Qualia</b><span>The felt properties of experience; no test decides whether a machine has them.</span></div>
 						</div>
-						<div class="jocax-box">
-							<h3>Why is there anything at all?</h3>
+					</section>
+
+					<section class="section-block" id="origin">
+						<div class="section-kicker"><span class="sk-num">05</span> The long chain</div>
+						<h2 class="section-title">Why is there anything at all?</h2>
+						<div class="prose">
 							<p>You start with a simple question: where does AI come from? The answer leads to computers, then to mathematics and writing, then to life and the universe. If you keep asking, you end at the Big Bang and before it: why is there something rather than nothing? That is not a detour; it is the bottom of the dependency chain.</p>
 							<p>If you really want to understand AI, you have to start at the Big Bang and even before: matter, energy, chemistry, life, brains, writing, mathematics, machines. Each step is a precondition for the next. The history is not decoration; it is the stack on which the model rests.</p>
-							<p>With a wink: one proposal comes from João Carlos Holland de Barcellos (“Jocax”). Imagine a “Jocaxian nothingness”: not empty space governed by laws, but the absence of all rules. If no rule forbids something, something can appear. Nobody knows whether that is true. It is a possibility, not an answer, and not an established result; its value is that it makes the question thinkable without pretending it is solved.</p>
-							<p>The untold history linked below asks exactly these questions: what had to be possible, what had to happen, for us to have AI systems today? It is the long chain of preconditions, from the first particles to the first perceptron.</p>
+							<p>The chain begins with a planet. A fragment of a molecular cloud collapsed about 4.57 billion years ago, dust stuck together into planetesimals, and Earth grew from collisions. A Mars-sized body struck it and the Moon formed from the debris. The Moon stabilizes the tilt, the magnetic field shields the atmosphere, and plate tectonics and the carbon cycle keep the climate habitable for billions of years. None of this was designed; each is a precondition for a long-lived civilization that could build a lab.</p>
+							<p>Then life. Photosynthesis split water, released oxygen, and built the atmosphere we breathe; the first cells, the first nervous systems, and the first brains followed. Ancient photosynthesis also stored sunlight as coal and oil, the energy that later powered the industrial revolution and the grid that runs data centers. Without early life there is no oxygen, no fossil fuel, and no brain.</p>
+							<p>Buildings look even less relevant, but they are part of the chain. A wall, a granary, a shared ditch made permanent settlement possible; Göbekli Tepe, Stonehenge, the pyramids, the Pantheon, and the steel-frame skyscraper each required new organization, materials, and geometry. The newest building type is the data center: a hall organized around power, cooling, and racks, a building whose main product is computation. A windbreak and a hearth became a machine for keeping other machines alive.</p>
+							<p>The chain is contingent, not directed. Sixty-six million years ago an asteroid ended the age of dinosaurs; the small mammals that survived radiated into the empty niches, and one branch led to primates and humans. The impact did not aim at us. No asteroid, no mammals; no mammals, no primates; no primates, no brain; no brain, no silicon; no silicon, no LLM. The endpoint is one outcome among many.</p>
+							<p>Metals, writing, and war add more links. Bronze required long-distance trade in copper and tin; iron democratized tools; silicon purification and rare-earth magnets depend on mining and chemistry. Writing and printing turned memory into a copyable external store; states and armies funded ENIAC, ARPA, and the space program, which in turn pushed miniaturization and image processing. None of these was “AI research”; all of them are in the stack.</p>
+							<p>Why is there anything at all? Science can describe how the universe evolved, not why there is something rather than nothing. A proposal by João Carlos Holland de Barcellos (“Jocax”) imagines a “Jocaxian nothingness”: not an empty space governed by rules, but the absence of all rules. If no rule forbids something, something can appear. Nobody knows whether that is true; it is a possibility, not an answer, and not an established result. Its value is that it makes the question thinkable without pretending it is solved.</p>
+							<p>The untold history linked below traces exactly this chain: what had to be possible, what had to happen, for us to have AI systems today? It runs from the first particles and planets through life, brains, cities, metals, writing, war, and the web. The knowledge map is the same idea as a graph: every lesson is a node, shared citations and concepts are edges, and the map is never finished because each new lesson adds nodes and edges. The whole blog is the long version.</p>
 						</div>
 						<div class="map-links">
 							<a href="../untold_history.php">The untold history</a>
@@ -205,7 +214,7 @@
 					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">05</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">06</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
