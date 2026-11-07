@@ -2866,7 +2866,7 @@
 					outputDetail.className = "tm-step-detail tm-output-words-prose";
 					outputDetail.innerHTML = "<summary>" + (isDe ? "Logits, Softmax und das Stop-Token" : "Logits, softmax, and the stop token") + "</summary><div class='tm-step-detail-body'></div>";
 					var outputBody = outputDetail.querySelector(".tm-step-detail-body");
-					Array.prototype.slice.call(outputSection.querySelectorAll(":scope > .prose, :scope > .aha, :scope > .formula, :scope > .myth-grid")).forEach(function (el) {
+					Array.prototype.slice.call(outputSection.querySelectorAll(":scope > .prose, :scope > .aha, :scope > .formula, :scope > .myth-grid, :scope > .optional")).forEach(function (el) {
 						outputBody.appendChild(el);
 					});
 					unembedDetail.querySelector(".tm-step-detail-body").appendChild(outputDetail);
