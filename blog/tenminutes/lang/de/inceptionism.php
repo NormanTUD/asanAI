@@ -49,6 +49,13 @@ return [
 		'The aha' => 'Der Aha-Moment',
 		'Freeze the weights. Optimize the pixels. See what the network responds to.' => 'Friere die Gewichte ein. Optimiere die Pixel. Sieh, worauf das Netz reagiert.',
 		'Inceptionism runs a classifier backwards: gradient ascent on the input, layer by layer. The images are not stored pictures; they are a readable projection of learned features.' => 'Inceptionism lässt einen Klassifikator rückwärts laufen: Gradientenaufstieg auf der Eingabe, Schicht für Schicht. Die Bilder sind keine gespeicherten Fotos; sie sind eine lesbare Projektion gelernter Merkmale.',
+		'More dreams, public domain' => 'Mehr Träume, gemeinfrei',
+		'Not every useful example comes from the original essay. The images below are CC0: their authors dedicated them to the public domain. They were made with the same loop: start from a photograph or from white noise, freeze a trained network, and optimize the input until a layer\'s preferred pattern fills the frame.' => 'Nicht jedes nützliche Beispiel stammt aus dem Originalessay. Die Bilder unten sind CC0: Ihre Autoren haben sie der Gemeinfreiheit gewidmet. Sie entstanden mit derselben Schleife: Starte mit einem Foto oder mit weißem Rauschen, friere ein trainiertes Netz ein und optimiere die Eingabe, bis das bevorzugte Muster einer Schicht das Bild füllt.',
+		'Mona Lisa through a VGG16 network trained on ImageNet. The model was not asked to copy the painting; it was asked to amplify what it already detected. Image: P.J. Finlay,' => 'Mona Lisa durch ein auf ImageNet trainiertes VGG16-Netz. Das Modell sollte das Gemälde nicht kopieren; es sollte verstärken, was es bereits erkannt hatte. Bild: P.J. Finlay,',
+		'A DeepDream run that started from white noise. No photograph tells the network what to see; the chosen layer supplies the pattern. Image: Martin Thoma,' => 'Ein DeepDream-Lauf, der mit weißem Rauschen begann. Kein Foto sagt dem Netz, was es sehen soll; die gewählte Schicht liefert das Muster. Bild: Martin Thoma,',
+		'Another run from white noise. Different seeds and layers grow different textures; the loop is the same. Image: Martin Thoma,' => 'Ein weiterer Lauf mit weißem Rauschen. Andere Seeds und Schichten lassen andere Texturen wachsen; die Schleife bleibt dieselbe. Bild: Martin Thoma,',
+		'A third run from white noise. The result is a picture of the layer\'s preferences, not a stored image. Image: Martin Thoma,' => 'Ein dritter Lauf mit weißem Rauschen. Das Ergebnis ist ein Bild der Präferenzen dieser Schicht, kein gespeichertes Bild. Bild: Martin Thoma,',
+		', via Wikimedia Commons.' => ', via Wikimedia Commons.',
 	],
 	'attrs' => [
 		'Random noise gradually turning into a banana' => 'Zufallsrauschen, das sich allmählich in eine Banane verwandelt',
@@ -59,5 +66,7 @@ return [
 		"A deep-dream dumbbell held by a weightlifter's arm" => 'Eine Deep-Dream-Hantel, gehalten von einem Gewichtheberarm',
 		'A transformed photograph with the object labels the network assigns to different regions' => 'Ein transformiertes Foto mit den Objektlabels, die das Netz verschiedenen Regionen zuweist',
 		'A grid of denoising steps, from noisy colour fields to a detailed castle' => 'Ein Raster von Denoising-Schritten, von verrauschten Farbfeldern bis zu einem detaillierten Schloss',
+		'Mona Lisa with a DeepDream effect' => 'Mona Lisa mit einem DeepDream-Effekt',
+		'A DeepDream image generated from white noise' => 'Ein aus weißem Rauschen erzeugtes DeepDream-Bild',
 	],
 ];

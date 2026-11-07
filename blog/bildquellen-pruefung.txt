@@ -215,6 +215,19 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
             verwendet. ibis.png ist ein Composite: Originalfoto von Zachi Evenor,
             Verarbeitung von Günther Noack — beide im Caption genannt.
 
+18b. inceptionism_mona_lisa_deepdream / white_noise_0036 / 0040 / 0012
+    URL: https://commons.wikimedia.org/wiki/File:%22Mona_Lisa%22_with_DeepDream_effect_using_VGG16_network_trained_on_ImageNet.jpg
+         https://commons.wikimedia.org/wiki/File:Deep-dream-white-noise-0036.jpg
+         https://commons.wikimedia.org/wiki/File:Deep-dream-white-noise-0040.jpg
+         https://commons.wikimedia.org/wiki/File:Deep-dream-white-noise-0012.jpg
+    Lizenz: CC0 (P.J. Finlay; Martin Thoma; jeweils eigene Arbeit)
+    Lokal: inceptionism_mona_lisa_deepdream.jpg (687x1024),
+           inceptionism_white_noise_0036.jpg (960x720),
+           inceptionism_white_noise_0040.jpg (960x720),
+           inceptionism_white_noise_0012.jpg (960x720)
+    Genutzt in: inceptionism.php § More dreams, public domain
+    Status: OK - CC0, Autor, Lizenz und Dateiseite im Caption verlinkt.
+
 19. deconv_style_artifacts / style_clean / deepdream_jitter
     URL: https://distill.pub/2016/deconv-checkerboard/
     Lizenz: CC BY 2.0 (eigene Abbildungen der Distill-Autoren; "figures reused

@@ -87,6 +87,33 @@
 						<figcaption>Start from a real photo and the network edits where it already sees something: towers here, animals there. Image: Mordvintsev, Olah &amp; Tyka, <a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">Inceptionism</a>, CC BY 4.0.</figcaption>
 					</figure>
 
+					<div class="prose">
+						<h3>More dreams, public domain</h3>
+						<p>Not every useful example comes from the original essay. The images below are CC0: their authors dedicated them to the public domain. They were made with the same loop: start from a photograph or from white noise, freeze a trained network, and optimize the input until a layer's preferred pattern fills the frame.</p>
+					</div>
+
+					<div class="split-figure">
+						<figure>
+							<img src="../inceptionism_mona_lisa_deepdream.jpg" alt="Mona Lisa with a DeepDream effect" loading="lazy">
+							<figcaption>Mona Lisa through a VGG16 network trained on ImageNet. The model was not asked to copy the painting; it was asked to amplify what it already detected. Image: P.J. Finlay, <a href="https://commons.wikimedia.org/wiki/File:%22Mona_Lisa%22_with_DeepDream_effect_using_VGG16_network_trained_on_ImageNet.jpg" rel="noopener">CC0</a>, via Wikimedia Commons.</figcaption>
+						</figure>
+						<figure>
+							<img src="../inceptionism_white_noise_0036.jpg" alt="A DeepDream image generated from white noise" loading="lazy">
+							<figcaption>A DeepDream run that started from white noise. No photograph tells the network what to see; the chosen layer supplies the pattern. Image: Martin Thoma, <a href="https://commons.wikimedia.org/wiki/File:Deep-dream-white-noise-0036.jpg" rel="noopener">CC0</a>, via Wikimedia Commons.</figcaption>
+						</figure>
+					</div>
+
+					<div class="split-figure">
+						<figure>
+							<img src="../inceptionism_white_noise_0040.jpg" alt="A DeepDream image generated from white noise" loading="lazy">
+							<figcaption>Another run from white noise. Different seeds and layers grow different textures; the loop is the same. Image: Martin Thoma, <a href="https://commons.wikimedia.org/wiki/File:Deep-dream-white-noise-0040.jpg" rel="noopener">CC0</a>, via Wikimedia Commons.</figcaption>
+						</figure>
+						<figure>
+							<img src="../inceptionism_white_noise_0012.jpg" alt="A DeepDream image generated from white noise" loading="lazy">
+							<figcaption>A third run from white noise. The result is a picture of the layer's preferences, not a stored image. Image: Martin Thoma, <a href="https://commons.wikimedia.org/wiki/File:Deep-dream-white-noise-0012.jpg" rel="noopener">CC0</a>, via Wikimedia Commons.</figcaption>
+						</figure>
+					</div>
+
 					<section class="section-block" id="takeaway">
 						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
