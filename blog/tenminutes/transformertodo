@@ -200,5 +200,11 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
       roten Abnahmen, gelber Endhöhe und grauer Anfangshöhe; stale Canvas-
       Registrierungen werden bei Tiefenänderung neu gebunden.
 - DONE Positionsplot zeigt während des Ladens Spinner + Text.
+- DONE Residual-Stream-Panel pro Layer: zwei Heatmaps (Eingang/Ausgang) über
+      je einen Token × Dimension; darunter die beiden Signalplots mit roten
+      Abnahmen und gelber Endhöhe. Die Attention-/FFN-Sätze stehen jetzt in
+      den jeweiligen Unterboxen, nicht mehr im Layer-Intro.
+- DONE Feature-Migration, Attention und FFN sind direkt darunter sichtbar
+      und aufklappbar.
 - DONE Position zeigt nur noch den semantischen Vektor; Heatmap/Kurve-Modi
       sind entfernt.
