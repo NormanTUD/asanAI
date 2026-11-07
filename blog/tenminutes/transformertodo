@@ -241,3 +241,14 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
   click interaction in Unembedding. Training-window functions and UI are
   restored. All PHP `data-tex` formulas from the baseline are still present;
   JS formula diffs are the localized FFN output strings, not removed formulas.
+- DONE Layer tabs: restored the missing math by giving the FFN body its
+  `${prefix}-content` container again; FFN/MLP and h_last now render. LayerNorm,
+  concat and h1-visualisations moved into the Attention tab; h_last is hidden
+  on non-final layers and shown on the last.
+- DONE Audit follow-up: baseline layer math (LayerNorm, attention output +
+  residual, Q/K/V/heads, dense expansion/compression, h_last) is reachable in
+  the collapsible tabs again.
+- AUDIT (rerun after tab restore): only `tlab-final-chips`,
+  `tlab-final-results` and `buildPredictionChipsHtml` are absent; replaced by
+  the top-logit click. Missing PHP `data-tex` formulas vs `559cfa15c`: 0 on
+  both `transformer.php` and `tenminutes/transformer.php`.

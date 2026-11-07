@@ -1973,6 +1973,10 @@
 			}
 			var attentionBody = card.querySelector('.tm-layer-subbox[data-sub="attention"] .tm-layer-subbox-body');
 			var formulaBody = card.querySelector('[id$="-formula-body"]');
+			var layerCount = (window.__tmLayerTrace || []).length;
+			var hlastViz = document.getElementById(prefix + "-hlast");
+			var hlastStep = hlastViz ? hlastViz.closest(".tm-formula-step") : null;
+			if (hlastStep && idx !== layerCount - 1) hlastStep.remove();
 			if (attentionBody && formulaBody) {
 				["layernorm-viz", "concat-viz", "h1-final-viz"].forEach(function (kind) {
 					var viz = document.getElementById(prefix + "-" + kind);
