@@ -1173,7 +1173,7 @@
 				var bw = Math.max(1, pCell * 0.55);
 				ctx.fillStyle = c.lime;
 				ctx.fillRect(x, pBase - v * pScale, bw, v * pScale);
-				if (n <= 18 || i % Math.ceil(n / 18) === 0) {
+				if (n <= 40 || i % Math.ceil(n / 40) === 0) {
 					ctx.save();
 					ctx.translate(x + bw / 2, pBase + 8);
 					ctx.rotate(-0.6);
@@ -1206,7 +1206,7 @@
 				ctx.globalAlpha = 1;
 				ctx.fillStyle = c.green;
 				ctx.fillRect(x + bw + 1, bBase - n2 * bScale, bw, n2 * bScale);
-				if (n <= 18 || i % Math.ceil(n / 18) === 0) {
+				if (n <= 40 || i % Math.ceil(n / 40) === 0) {
 					ctx.save();
 					ctx.translate(x + bw, bBase + 8);
 					ctx.rotate(-0.6);
@@ -1289,7 +1289,7 @@
 				}
 			}
 
-			if (n <= 18 || i % Math.ceil(n / 18) === 0) {
+			if (n <= 40 || i % Math.ceil(n / 40) === 0) {
 				ctx.save();
 				ctx.translate(x + width / 2, baseY + 8);
 				ctx.rotate(-0.6);
@@ -1915,14 +1915,14 @@
 				if (firstCard) {
 					var preWrap = document.createElement("div");
 					preWrap.className = "tm-layer-signal-between tm-layer-signal-before";
-					preWrap.innerHTML = "<div class='tm-signal-between-label'>" + (isDe ? "Residual-Stream vor Schicht 1" : "Residual stream before layer 1") + "</div><canvas id='tm-pre-layer-signal' class='layer-signal-canvas' data-layer-idx='0' data-signal-mode='pre'></canvas>";
+					preWrap.innerHTML = "<div class='tm-signal-between-label'>" + (isDe ? "Residual-Stream vor Schicht 1" : "Residual stream before layer 1") + " · " + ((window.__tmLayerTrace && window.__tmLayerTrace[0] && window.__tmLayerTrace[0].tokenStrings) ? window.__tmLayerTrace[0].tokenStrings.length : 0) + (isDe ? " Tokens" : " tokens") + "</div><canvas id='tm-pre-layer-signal' class='layer-signal-canvas' data-layer-idx='0' data-signal-mode='pre'></canvas>";
 					layerStack.insertBefore(preWrap, firstCard);
 				}
 			}
 			if (firstSignal && firstSignal.parentNode && !firstSignal.closest(".tm-layer-signal-between")) {
 				var sigWrap = document.createElement("div");
 				sigWrap.className = "tm-layer-signal-between tm-layer-signal-after";
-				sigWrap.innerHTML = "<div class='tm-signal-between-label'>" + (isDe ? "Residual-Stream nach Schicht " : "Residual stream after layer ") + (idx + 1) + "</div>";
+				sigWrap.innerHTML = "<div class='tm-signal-between-label'>" + (isDe ? "Residual-Stream nach Schicht " : "Residual stream after layer ") + (idx + 1) + " · " + ((window.__tmLayerTrace && window.__tmLayerTrace[idx] && window.__tmLayerTrace[idx].tokenStrings) ? window.__tmLayerTrace[idx].tokenStrings.length : 0) + (isDe ? " Tokens" : " tokens") + "</div>";
 				sigWrap.appendChild(firstSignal);
 				card.parentNode.insertBefore(sigWrap, card.nextSibling);
 			}
@@ -2019,12 +2019,15 @@
 					}, 60);
 				});
 			}
-			if (preview && sub.parentNode !== preview) {
-				preview.appendChild(sub);
-				if (!sub.dataset.tmOpenedOnce) {
-					sub.dataset.tmOpenedOnce = "1";
-					sub.open = true;
+			if (preview) {
+				var migrationDefault = preview.querySelector(".tm-migration-default");
+				if (!migrationDefault) {
+					migrationDefault = document.createElement("div");
+					migrationDefault.className = "tm-migration-default";
+					preview.appendChild(migrationDefault);
 				}
+				while (sb.firstChild) migrationDefault.appendChild(sb.firstChild);
+				if (sub.parentNode) sub.remove();
 				setTimeout(function () {
 					renderLayerTripleResiduals(idx);
 					renderLayerFeaturePlots(idx);
@@ -2895,7 +2898,12 @@
 				[attendCard, ffnCard].forEach(function (card) {
 					if (!card) return;
 					var background = card.querySelector("#tm-detail-attention-background");
-					if (background) contextBody.appendChild(background);
+					if (background) {
+						var backgroundBody = background.querySelector(".tm-step-detail-body");
+						if (backgroundBody) {
+							while (backgroundBody.firstChild) contextBody.appendChild(backgroundBody.firstChild);
+						}
+					}
 					card.remove();
 				});
 				boxBody.appendChild(context);

@@ -1247,3 +1247,36 @@
 .tm-logit-collapse .tm-logit-wrap {
 	padding: 0 12px 12px;
 }
+
+/* Flatten layer accordions: expanding shows content, without nested boxes. */
+.tm-migration-default {
+	border: 0;
+	background: transparent;
+	padding: 0;
+	margin: 0 0 10px;
+}
+.tm-layer-subbox {
+	border: 0;
+	border-top: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	background: transparent;
+	margin: 6px 0;
+}
+.tm-layer-subbox > summary {
+	padding: 7px 0;
+}
+.tm-layer-subbox-body {
+	padding: 6px 0 10px;
+}
+.tm-formula-step {
+	border: 0;
+	border-top: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	background: transparent;
+	margin: 6px 0;
+	padding: 0;
+}
+.tm-formula-step > summary {
+	padding: 6px 0;
+}
+.tm-formula-step .tm-formula-block {
+	padding: 0;
+}
