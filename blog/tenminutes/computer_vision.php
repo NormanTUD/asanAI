@@ -28,6 +28,35 @@
 						<h2 class="section-title">Local patterns, shared weights.</h2>
 						<div class="prose">
 							<p>Training data was text. Now the data is a grid of pixels. A convolution (<a href="https://galileo-unbound.blog/wp-content/uploads/2025/02/lecun.neco_.1989.1.4.541.pdf" rel="noopener">LeCun et al., 1989</a>) applies a small kernel to every local patch of the image. The kernel is a set of learned weights; it responds strongly to a particular pattern, such as a vertical edge or a patch of colour. An image itself is just a grid of numbers: each pixel is a brightness or a set of colour values, usually red, green, and blue. There is no cat in the pixels; there are only numbers that a trained hierarchy can interpret.</p>
+							<h3 class="matrix-subtitle">An image is a matrix</h3>
+							<p>A grayscale image is a two-dimensional matrix. Its rows and columns are pixel positions, and each entry is one brightness value, usually 0 for black and 255 for white. A 1920 × 1080 photo has 2,073,600 entries. The network receives this table, not a picture.</p>
+							<p>A colour image is three such matrices, one for red, one for green, one for blue. Each pixel is a vector of three numbers, and the image has shape height × width × 3. A batch adds a fourth dimension: batch × height × width × 3. Inside the network, a feature map is again a stack of matrices, with channels instead of colours.</p>
+							<p>A convolution is matrix arithmetic on a small window. The kernel is a 3 × 3 matrix. At each position, multiply the nine entries of the image patch by the nine kernel weights, add the products, and write the result into the feature map. For an RGB image the kernel has three channels, and the products for all channels are summed into one output value per position. Pooling is another matrix operation: replace each 2 × 2 block with its maximum or its mean.</p>
+							<figure class="matrix-figure">
+								<div class="matrix-visual">
+									<div class="matrix-card">
+										<p class="matrix-label">Grayscale · one matrix</p>
+										<div class="matrix-grid" style="--cols:4" aria-label="A 4 by 4 grayscale matrix">
+											<span style="background:rgb(0,0,0);color:#fff">0</span><span style="background:rgb(32,32,32);color:#fff">32</span><span style="background:rgb(64,64,64);color:#fff">64</span><span style="background:rgb(96,96,96);color:#fff">96</span>
+											<span style="background:rgb(128,128,128);color:#000">128</span><span style="background:rgb(160,160,160);color:#000">160</span><span style="background:rgb(192,192,192);color:#000">192</span><span style="background:rgb(224,224,224);color:#000">224</span>
+											<span style="background:rgb(255,255,255);color:#000">255</span><span style="background:rgb(220,220,220);color:#000">220</span><span style="background:rgb(180,180,180);color:#000">180</span><span style="background:rgb(140,140,140);color:#000">140</span>
+											<span style="background:rgb(100,100,100);color:#fff">100</span><span style="background:rgb(60,60,60);color:#fff">60</span><span style="background:rgb(20,20,20);color:#fff">20</span><span style="background:rgb(0,0,0);color:#fff">0</span>
+										</div>
+										<p class="matrix-note">Each entry is brightness, 0–255.</p>
+									</div>
+									<div class="matrix-card">
+										<p class="matrix-label">RGB · three matrices</p>
+										<div class="matrix-rgb">
+											<div class="matrix-channel"><span class="matrix-ch is-r">R</span><div class="matrix-grid matrix-grid--sm" style="--cols:3" aria-label="Red channel matrix"><span>255</span><span>128</span><span>0</span><span>64</span><span>200</span><span>32</span><span>16</span><span>90</span><span>240</span></div></div>
+											<div class="matrix-channel"><span class="matrix-ch is-g">G</span><div class="matrix-grid matrix-grid--sm" style="--cols:3" aria-label="Green channel matrix"><span>0</span><span>160</span><span>255</span><span>128</span><span>64</span><span>200</span><span>32</span><span>240</span><span>90</span></div></div>
+											<div class="matrix-channel"><span class="matrix-ch is-b">B</span><div class="matrix-grid matrix-grid--sm" style="--cols:3" aria-label="Blue channel matrix"><span>0</span><span>32</span><span>128</span><span>255</span><span>64</span><span>160</span><span>200</span><span>16</span><span>90</span></div></div>
+										</div>
+										<p class="matrix-note">Same height and width; each pixel is a vector of three values.</p>
+									</div>
+								</div>
+								<figcaption>A grayscale image is one matrix. A colour image is three matrices stacked into a tensor. Original diagram: Ten Minutes, <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener">CC BY-SA 4.0</a>.</figcaption>
+							</figure>
+
 							<p>Why not connect every pixel to every neuron? Because that would need an enormous number of weights and would have to relearn the same edge detector at every location. A convolution shares one small kernel across the whole image, so it learns a pattern once and applies it everywhere. That is the built-in assumption: nearby pixels belong together, and a pattern is the same pattern wherever it appears.</p>
 							<p>The design has two ancestors. David Hubel and Torsten Wiesel recorded from the cat’s visual cortex and found neurons tuned to oriented edges and moving bars, with simple cells feeding complex cells in a hierarchy (<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1359523/" rel="noopener">Hubel &amp; Wiesel, 1962</a>). Kunihiko Fukushima’s <strong>Neocognitron</strong> (1980) turned that into a layered network of convolution-like and pooling-like stages that tolerated small shifts (<a href="https://doi.org/10.1007/BF00344251" rel="noopener">Fukushima, 1980</a>). Modern CNNs keep the same ingredients: local filters, shared weights, and depth.</p>
 							<p>Stack convolutions and the hierarchy grows. Early layers detect edges and textures; middle layers combine them into parts; later layers respond to whole objects. That is the feature hierarchy behind modern vision: the 2012 AlexNet result made it hard to ignore (<a href="https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" rel="noopener">Krizhevsky et al., 2012</a>); its ReLU activations and dropout were as important as its depth. Pooling between stages lowers the resolution, so later layers see a larger region of the image (their receptive field grows) and the representation becomes less sensitive to small shifts.</p>
@@ -56,6 +85,7 @@
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Pixels</b><span>An image is a grid of numbers, not a picture of a cat.</span></div>
+							<div class="keypoint"><b>Matrix</b><span>A grayscale image is one table; an RGB image is three.</span></div>
 							<div class="keypoint"><b>Convolution</b><span>A small learned filter slides over the image and detects local patterns.</span></div>
 							<div class="keypoint"><b>Hierarchy</b><span>Edges become parts; parts become objects.</span></div>
 							<div class="keypoint"><b>Task stack</b><span>Classification, detection, segmentation, and 3D ask progressively harder questions.</span></div>

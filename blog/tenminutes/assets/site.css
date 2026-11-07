@@ -7693,3 +7693,86 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 @media (max-width: 760px) {
 	.code-demo-grid { grid-template-columns: 1fr; }
 }
+
+/* computer vision: image matrices */
+.matrix-subtitle {
+	margin: 1.6em 0 0.7em;
+	font-family: var(--tm-display);
+	font-size: 1.15rem;
+	line-height: 1.3;
+	color: var(--tm-petrol);
+}
+.matrix-figure { margin: 18px 0 22px; }
+.matrix-visual {
+	display: grid;
+	grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+	gap: 14px;
+	align-items: start;
+}
+.matrix-card {
+	padding: 14px;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-paper);
+}
+.matrix-label {
+	margin: 0 0 10px;
+	font-family: var(--tm-ui);
+	font-size: 0.7rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--tm-muted);
+}
+.matrix-grid {
+	display: grid;
+	grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+	gap: 3px;
+	max-width: 300px;
+}
+.matrix-grid span {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 1;
+	border: 1px solid var(--tm-line);
+	font-family: var(--tm-mono);
+	font-size: 0.64rem;
+	line-height: 1;
+	color: var(--tm-ink);
+}
+.matrix-grid--sm { max-width: 210px; }
+.matrix-grid--sm span { font-size: 0.56rem; }
+.matrix-rgb {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px;
+}
+.matrix-channel { min-width: 0; }
+.matrix-ch {
+	display: block;
+	margin-bottom: 6px;
+	font-family: var(--tm-mono);
+	font-size: 0.72rem;
+	font-weight: 700;
+}
+.matrix-ch.is-r { color: #a33a3a; }
+.matrix-ch.is-g { color: #3f7d32; }
+.matrix-ch.is-b { color: #1d5f9e; }
+.matrix-note {
+	margin: 8px 0 0;
+	font-family: var(--tm-ui);
+	font-size: 0.72rem;
+	line-height: 1.4;
+	color: var(--tm-muted);
+}
+.matrix-figure figcaption {
+	margin-top: 8px;
+	font-family: var(--tm-ui);
+	font-size: 0.72rem;
+	line-height: 1.45;
+	color: var(--tm-muted);
+}
+@media (max-width: 700px) {
+	.matrix-visual { grid-template-columns: 1fr; }
+	.matrix-grid { max-width: none; }
+}
