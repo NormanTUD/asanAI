@@ -1359,11 +1359,32 @@ function run_transformer_demo(activeId = null, inputOnly = false) {
 	window.__tmBlockRendered = true;
 	if (!window.__tmSkipFinalProjection) window.__tmOutputRendered = true;
 
-	// 3. Run the network
-	run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
+	// 3. Run the network. During inference the busy overlay follows the
+	// actual stage; normal runs stay synchronous.
+	if (window.__tmBusyInference) {
+		var progress = function (kind, layer) {
+			var el = document.getElementById("tm-inference-busy-text");
+			var de = _tmParamDe();
+			var msg = "";
+			if (kind === "prepare") msg = de ? "Bereite Eingabe und Positionen vor…" : "Preparing input and positions…";
+			else if (kind === "layer") msg = de ? "Berechne Layer " + layer + ": Attention + FFN…" : "Computing layer " + layer + ": attention + FFN…";
+			else if (kind === "attention") msg = de ? "Berechne Attention · Layer " + layer + "…" : "Computing attention · layer " + layer + "…";
+			else if (kind === "ffn") msg = de ? "Berechne FFN · Layer " + layer + "…" : "Computing FFN · layer " + layer + "…";
+			else if (kind === "output") msg = de ? "Berechne nächste Token-Verteilung…" : "Computing next-token distribution…";
+			if (el && msg) el.textContent = msg;
+			return new Promise(function (resolve) { requestAnimationFrame(function () { setTimeout(resolve, 0); }); });
+		};
+		run_and_visualize_network(vizTokens, trainingTokens, masterTokens, progress).then(function () {
+			show_nr_of_params();
+			if (window.__tmBusyInference && typeof window.tmHideInferenceBusy === "function") window.tmHideInferenceBusy();
+		}).catch(function () {
+			if (window.__tmBusyInference && typeof window.tmHideInferenceBusy === "function") window.tmHideInferenceBusy();
+		});
+		return;
+	}
 
+	run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
 	show_nr_of_params();
-	if (window.__tmBusyInference && typeof window.tmHideInferenceBusy === 'function') window.tmHideInferenceBusy();
 }
 
 function render_transformer_block() {
@@ -2315,7 +2336,7 @@ function pruneOrphanedMigrationPlots() {
 	});
 }
 
-function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
+async function run_and_visualize_network(inputTokens, trainingTokens, masterTokens, progress) {
 	window.__tmLayerTrace = [];
 	window.__tmFFNTrace = [];
 	const config = getTransformerConfig();
@@ -2331,6 +2352,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	const weights = window.currentWeights;
 
 	// 2. Pre-attention visualizations
+	if (progress) await progress("prepare");
 	const h0 = renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature);
 	const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
 
@@ -2348,7 +2370,8 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	// 4. Core forward pass + visualization
 	window.__tmCollectLayerTrace = true;
 	try {
-		renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
+		if (progress) await renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers, progress);
+		else renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
 	} finally {
 		window.__tmCollectLayerTrace = false;
 	}
@@ -2372,7 +2395,7 @@ function validateModelDimensions(d_model, n_heads) {
 	return true;
 }
 
-function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers) {
+async function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers, progress) {
 	if (tokensWithPositional.length === 0) {
 		showEmptyInputMessage();
 		return;
@@ -2383,9 +2406,11 @@ function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, w
 		ensureUnifiedLayerContainer(l, n_layers, 'mha-calculation-details');
 	}
 
+	if (progress) await progress("layer", 1);
 	const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
 	create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
-	run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
+	if (progress) await run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens, progress);
+	else run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
 
 	renderAttentionDetails();
 	renderTrajectoryPlot(d_model);
@@ -3707,10 +3732,11 @@ function _renderTemmlOnElements(elements) {
     });
 }
 
-function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights, startLayer = 0, tokenStrings = null) {
+async function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights, startLayer = 0, tokenStrings = null, progress) {
 	let h_current = h_initial;
 	for (let n = startLayer; n < total_depth; n++) {
 		const layer = this_weights[n];
+		if (progress) await progress("attention", n + 1);
 		const h_before_layer = h_current.map(row => row.slice());
 		const normH = calculateLayerNorm(h_current, layer.gamma, layer.beta);
 		const headData = causalMultiHeadAttention(normH, layer.attention, d_model, n_heads);
@@ -3722,6 +3748,7 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 		const concat = h_current.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
 		const projected = matMul(concat, layer.attention.output);
 		const h_attn = matAdd(h_current, projected);
+		if (progress) await progress("ffn", n + 1);
 		const h_out = run_ffn_block(h_attn, layer, true, n, tokenStrings);
 		if (window.Prov) {
 			window.Prov.recordLayer(n, {

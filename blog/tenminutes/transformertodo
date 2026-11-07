@@ -275,3 +275,7 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
   capped at 1.2s) and yields a frame between epochs.
 - DONE Transformer core formulas are stacked vertically so the residual
   equation fits without horizontal scrolling.
+- DONE Inference busy overlay now reports real stages: preparing input,
+  layer 1 attention+FFN, then attention/FFN for each later layer. The work
+  yields between stages so the text is visible; normal (non-inference) runs
+  stay synchronous.
