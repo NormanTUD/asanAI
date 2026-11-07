@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>From Nothing to a Transformer — One Derivation</title>
+<style>
+:root{
+  --bg:#040611;--panel:rgba(10,16,32,.8);--line:rgba(148,163,184,.16);--line2:rgba(148,163,184,.3);
+  --ink:#eaf1ff;--muted:#8fa3c4;--dim:#5f7190;
+  --cyan:#67e8f9;--violet:#a78bfa;--rose:#fb7185;--amber:#fbbf24;--emerald:#34d399;--blue:#60a5fa;
+  --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:-18%;z-index:-2;pointer-events:none;background:
+  radial-gradient(36% 28% at 12% 4%,rgba(103,232,249,.13),transparent 70%),
+  radial-gradient(32% 26% at 88% 8%,rgba(167,139,250,.16),transparent 70%),
+  radial-gradient(42% 34% at 50% 92%,rgba(251,113,133,.07),transparent 70%),
+  linear-gradient(180deg,#040611,#060b18 48%,#040611);filter:blur(10px);animation:aurora 24s ease-in-out infinite alternate}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.17;background-image:
+  linear-gradient(rgba(148,163,184,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.05) 1px,transparent 1px);
+  background-size:56px 56px;mask-image:radial-gradient(circle at 50% 12%,#000,transparent 78%)}
+@keyframes aurora{from{transform:translate3d(-2%,-1%,0) scale(1)}to{transform:translate3d(2%,2%,0) scale(1.05)}}
+.wrap{width:min(1400px,calc(100% - 28px));margin:0 auto}
+.hero{padding:clamp(34px,5vw,64px) 0 14px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 11px;border:1px solid var(--line);border-radius:999px;
+  background:rgba(103,232,249,.06);color:var(--cyan);font:700 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.kicker i{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+h1{margin:14px 0 8px;font-size:clamp(32px,5vw,62px);line-height:.98;letter-spacing:-.045em;font-weight:800;max-width:18ch;text-wrap:balance}
+h1 span{background:linear-gradient(100deg,var(--cyan),var(--violet) 52%,var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{max-width:78ch;color:var(--muted);font-size:clamp(14px,1.4vw,17px);margin:0}
+.hud{position:sticky;top:0;z-index:40;margin:14px 0 16px;padding:10px 0;background:linear-gradient(180deg,rgba(4,6,17,.96),rgba(4,6,17,.74),transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.judgment{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--line);border-radius:14px;
+  background:rgba(10,16,32,.72);overflow-x:auto;white-space:nowrap;font:600 12px/1.4 var(--mono);color:var(--muted)}
+.judgment .g{color:var(--cyan)}.judgment .t{color:var(--violet)}
+.judgment code{color:var(--ink);background:rgba(103,232,249,.07);border:1px solid rgba(103,232,249,.18);border-radius:6px;padding:3px 7px}
+.hud-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.btn{appearance:none;border:1px solid var(--line2);background:rgba(30,41,59,.55);color:var(--ink);padding:8px 12px;
+  border-radius:10px;font:700 11.5px/1 var(--sans);cursor:pointer;transition:.16s ease}
+.btn:hover{background:rgba(51,65,85,.75);transform:translateY(-1px)}
+.btn.primary{border-color:transparent;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#04121a}
+.btn.is-on{border-color:rgba(103,232,249,.55);background:rgba(103,232,249,.14);color:var(--cyan)}
+.spacer{flex:1}
+.progress{display:flex;gap:5px;align-items:center;margin-top:10px;overflow-x:auto;padding-bottom:4px}
+.pdot{flex:0 0 auto;width:26px;height:26px;border-radius:9px;border:1px solid var(--line);background:rgba(15,23,42,.5);
+  color:var(--dim);font:700 9px/1 var(--mono);cursor:pointer;transition:.16s ease}
+.pdot:hover{border-color:var(--line2);color:var(--ink)}
+.pdot.is-on{border-color:transparent;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#04121a;box-shadow:0 0 14px rgba(103,232,249,.3)}
+.pdot.is-past{border-color:rgba(103,232,249,.28);color:var(--cyan)}
+main{display:grid;grid-template-columns:260px minmax(0,1fr) minmax(0,1fr);gap:14px;padding-bottom:34px}
+.panel{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:linear-gradient(160deg,rgba(15,23,42,.72),rgba(2,6,23,.92));
+  box-shadow:0 22px 60px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.04);min-width:0}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);
+  font:700 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.panel-head b{color:var(--cyan);font-weight:700}
+canvas{display:block;width:100%}
+#term-canvas{height:420px}
+#geo-canvas{height:420px}
+.caption{padding:10px 14px 13px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;min-height:52px}
+.caption b{color:var(--ink)}
+.rulebook{padding:8px;display:flex;flex-direction:column;gap:5px;max-height:540px;overflow:auto}
+.rule{display:grid;grid-template-columns:32px 1fr;gap:8px;align-items:start;padding:7px 8px;border-radius:10px;
+  border:1px solid transparent;cursor:pointer;transition:.16s ease;opacity:.38}
+.rule:hover{opacity:.8;background:rgba(103,232,249,.04)}
+.rule.is-on{opacity:1;border-color:rgba(103,232,249,.45);background:rgba(103,232,249,.07)}
+.rule.is-past{opacity:.68}
+.rule .p{font:800 9.5px/1 var(--mono);color:var(--cyan);padding-top:2px}
+.rule .title{font:700 11.5px/1.3 var(--sans);color:var(--ink)}
+.rule .sig{font:600 9.5px/1.35 var(--mono);color:var(--dim);margin-top:2px;overflow-wrap:anywhere}
+.foot{padding:0 0 46px;color:var(--dim);font-size:12px}
+.foot a{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(103,232,249,.25)}
+.foot a:hover{border-bottom-color:var(--cyan)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font:600 10px/1 var(--mono);color:var(--dim)}
+.legend i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:0}
+@media(max-width:1080px){
+  main{grid-template-columns:1fr 1fr}
+  .rulebook{grid-column:1/-1;max-height:none;flex-direction:row;overflow-x:auto}
+  .rule{flex:0 0 190px}
+}
+@media(max-width:720px){
+  .wrap{width:calc(100% - 14px)}main{grid-template-columns:1fr}.hero{padding-top:26px}
+  #term-canvas,#geo-canvas{height:340px}.judgment{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <span class="kicker"><i></i> one continuous derivation</span>
+      <h1>From <span>nothing</span> to a transformer.</h1>
+      <p class="lede">Not a gallery of topics. One typed construction, one rule at a time. Start with the void, add a scalar field, tuples, pairings, a linear map, a pointwise nonlinearity, softmax, a convex combination, a residual, composition, a loss, a gradient and an update. The transformer is what remains when the derivation closes.</p>
+    </div>
+  </header>
+
+  <div class="hud">
+    <div class="judgment"><span class="g">Γ ⊢</span><code id="judgment-term">?</code><span class="t">:</span><span id="judgment-type">Type</span><span class="spacer"></span><span id="judgment-rule" style="color:var(--dim)">∅</span></div>
+    <div class="hud-row">
+      <button class="btn" id="prev" type="button">← Previous</button>
+      <button class="btn primary" id="next" type="button">Add rule →</button>
+      <button class="btn" id="auto" type="button">Auto build</button>
+      <button class="btn" id="reset" type="button">Reset</button>
+      <span class="spacer"></span>
+      <span class="legend"><span><i style="background:var(--cyan)"></i>current rule</span><span><i style="background:var(--violet)"></i>derived term</span><span><i style="background:var(--emerald)"></i>geometry</span></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <main>
+    <aside class="panel"><div class="panel-head">Rule book <b id="rule-count">0 / 14</b></div><div class="rulebook" id="rulebook"></div></aside>
+    <section class="panel"><div class="panel-head">Term graph <b id="term-label">void</b></div><canvas id="term-canvas"></canvas></section>
+    <section class="panel"><div class="panel-head">Geometry of the term <b id="geo-label">∅</b></div><canvas id="geo-canvas"></canvas><div class="caption" id="caption">Nothing yet. Only the question.</div></section>
+  </main>
+
+  <footer class="foot">
+    <p>Sources for the formal objects: <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Vaswani et al. 2017</a> (attention), <a href="https://transformer-circuits.pub/2021/framework/index.html" target="_blank" rel="noopener">Elhage et al. 2021</a> (residual stream and QK/OV circuits), <a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Ba et al. 2016</a> (LayerNorm), <a href="https://www.nature.com/articles/323533a0" target="_blank" rel="noopener">Rumelhart et al. 1986</a> (backprop), <a href="https://arxiv.org/abs/1412.6980" target="_blank" rel="noopener">Kingma &amp; Ba 2014</a> (Adam), <a href="https://www.deeplearningbook.org/" target="_blank" rel="noopener">Goodfellow et al. 2016</a> (softmax and cross-entropy).</p>
+  </footer>
+</div>
+
+<script>
+(() => {
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => t * t * (3 - 2 * t);
+const sigmoid = x => 1 / (1 + Math.exp(-x));
+const TAU = Math.PI * 2;
+const C = { cyan:"#67e8f9", violet:"#a78bfa", rose:"#fb7185", amber:"#fbbf24", emerald:"#34d399", blue:"#60a5fa", ink:"#eaf1ff", muted:"#8fa3c4", dim:"#5f7190" };
+const hex = h => { const n = parseInt(h.slice(1), 16); return [(n>>16)&255,(n>>8)&255,n&255]; };
+const rgba = (h,a) => { const [r,g,b]=hex(h); return `rgba(${r},${g},${b},${a})`; };
+const mix = (a,b,t) => { const A=hex(a),B=hex(b); return `rgb(${Math.round(lerp(A[0],B[0],t))},${Math.round(lerp(A[1],B[1],t))},${Math.round(lerp(A[2],B[2],t))})`; };
+const roundRect = (ctx,x,y,w,h,r) => { r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); };
+const glow = (ctx,color,blur) => { ctx.shadowColor=color; ctx.shadowBlur=blur; };
+const noGlow = ctx => { ctx.shadowBlur=0; ctx.shadowColor="transparent"; };
+const text = (ctx,s,x,y,size=12,color=C.muted,weight=600,align="left") => { ctx.font=`${weight} ${size}px Inter, system-ui, sans-serif`; ctx.fillStyle=color; ctx.textAlign=align; ctx.textBaseline="middle"; ctx.fillText(s,x,y); };
+const mono = (ctx,s,x,y,size=10,color=C.dim,align="left") => { ctx.font=`700 ${size}px ui-monospace, monospace`; ctx.fillStyle=color; ctx.textAlign=align; ctx.textBaseline="middle"; ctx.fillText(s,x,y); };
+
+const STAGES = [
+  {p:"∅", title:"The void", sig:"? : Type", term:"?", type:"Type", caption:"Nothing yet. Only the question.", label:"void"},
+  {p:"P0", title:"Scalar field", sig:"ℝ with +, ×", term:"ℝ", type:"Type", caption:"A number. The base type. Addition and multiplication are the only bottom-level operations.", label:"ℝ"},
+  {p:"P1", title:"Tuple / vector space", sig:"ℝⁿ", term:"ℝⁿ", type:"Type", caption:"A tuple of scalars. Points in a space; every hidden state, embedding and residual stream has this type.", label:"ℝⁿ"},
+  {p:"P2", title:"The pairing", sig:"⟨·,·⟩ : ℝⁿ × ℝⁿ → ℝ", term:"⟨·,·⟩", type:"ℝⁿ × ℝⁿ → ℝ", caption:"The only primitive that turns two vectors into a scalar. A neuron is a pairing followed by a nonlinearity.", label:"⟨·,·⟩"},
+  {p:"P3", title:"The linear map", sig:"W : ℝⁿ → ℝⁿ", term:"W", type:"ℝⁿ → ℝⁿ", caption:"A stack of pairings. The space is rotated, scaled and sheared; the unit square becomes a parallelogram.", label:"W"},
+  {p:"P4", title:"Pointwise nonlinearity", sig:"σ : ℝ → ℝ", term:"σ", type:"ℝ → ℝ", caption:"One scalar function applied coordinatewise. It bends the space. Without it, depth collapses to one matrix.", label:"σ"},
+  {p:"P5", title:"Softmax", sig:"softmax : ℝⁿ → Δⁿ⁻¹", term:"softmax", type:"ℝⁿ → Δⁿ⁻¹", caption:"Scores become a distribution on the simplex. This is the type of a choice.", label:"softmax"},
+  {p:"P6", title:"Convex combination", sig:"Σ pᵢvᵢ", term:"Σ pᵢvᵢ", type:"Δⁿ × (ℝᵈ)ⁿ → ℝᵈ", caption:"Attention's value mixing: a weighted average that cannot leave the convex hull of the values.", label:"Σ pᵢvᵢ"},
+  {p:"P7", title:"Residual addition", sig:"x ↦ x + f(x)", term:"x + f(x)", type:"ℝᵈ → ℝᵈ", caption:"The identity path survives. A layer adds an update instead of replacing the state.", label:"x+f(x)"},
+  {p:"P8", title:"Composition", sig:"(g ∘ f)(x) = g(f(x))", term:"g ∘ f", type:"A → C", caption:"Depth is repeated composition. The only glue that turns primitives into an architecture.", label:"g∘f"},
+  {p:"P9", title:"Loss", sig:"L = −log p(y)", term:"L", type:"ℝ", caption:"One scalar. Cross-entropy is surprise: confident and wrong is expensive.", label:"L"},
+  {p:"P10", title:"Gradient", sig:"∇θL", term:"∇θL", type:"Θ", caption:"Reverse-mode chain rule: local derivatives multiplied in reverse order.", label:"∇L"},
+  {p:"P11", title:"Update", sig:"θ ← θ − η∇θL", term:"θ′", type:"Θ", caption:"Learning is one local step against the gradient, repeated.", label:"θ′"},
+  {p:"P12", title:"Token bridge", sig:"Token ↔ ℝᵈ", term:"token → token", type:"Token → Token", caption:"Discrete symbols enter as vectors and leave as a distribution. The transformer never sees the symbol.", label:"token↔vec"},
+  {p:"P13", title:"The transformer", sig:"the whole term", term:"Transformer", type:"Token → Token", caption:"Everything above is the previous rules composed. Nothing new appears at the top.", label:"Transformer"}
+];
+const N = STAGES.length - 1;
+
+const state = {t:0, target:0, auto:false, autoTimer:0};
+const termCanvas = $("#term-canvas");
+const geoCanvas = $("#geo-canvas");
+const tctx = termCanvas.getContext("2d");
+const gctx = geoCanvas.getContext("2d");
+
+function fit(canvas, ctx){
+  const r=canvas.getBoundingClientRect();
+  const dpr=Math.min(2, window.devicePixelRatio||1);
+  canvas.width=Math.max(1,Math.round(r.width*dpr));
+  canvas.height=Math.max(1,Math.round(r.height*dpr));
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {w:r.width,h:r.height};
+}
+let termSize={w:0,h:0}, geoSize={w:0,h:0};
+function resize(){
+  termSize=fit(termCanvas,tctx);
+  geoSize=fit(geoCanvas,gctx);
+  draw(performance.now()/1000);
+}
+new ResizeObserver(resize).observe(termCanvas);
+new ResizeObserver(resize).observe(geoCanvas);
+
+function buildRulebook(){
+  const book=$("#rulebook");
+  STAGES.forEach((s,i)=>{
+    if(i===0) return;
+    const row=document.createElement("div");
+    row.className="rule"; row.dataset.i=i;
+    row.innerHTML=`<span class="p">${s.p}</span><span><span class="title">${s.title}</span><span class="sig">${s.sig}</span></span>`;
+    row.addEventListener("click",()=>setStage(i));
+    book.appendChild(row);
+  });
+  const prog=$("#progress");
+  for(let i=0;i<=N;i++){
+    const b=document.createElement("button");
+    b.className="pdot"; b.type="button"; b.textContent=i===0?"∅":STAGES[i].p;
+    b.title=STAGES[i].title;
+    b.addEventListener("click",()=>setStage(i));
+    prog.appendChild(b);
+  }
+}
+buildRulebook();
+
+function setStage(i){
+  state.target=clamp(i,0,N);
+  state.auto=false; $("#auto").classList.remove("is-on");
+  clearInterval(state.autoTimer);
+  updateHud();
+}
+function updateHud(){
+  const s=STAGES[state.target];
+  $("#judgment-term").textContent=s.term;
+  $("#judgment-type").textContent=s.type;
+  $("#judgment-rule").textContent=s.p==="∅"?"∅":s.p+" · "+s.title;
+  $("#term-label").textContent=s.label;
+  $("#geo-label").textContent=s.p;
+  $("#caption").innerHTML="<b>"+s.title+".</b> "+s.caption;
+  $("#rule-count").textContent=state.target+" / "+N;
+  $$(".rule").forEach(r=>{ const i=+r.dataset.i; r.classList.toggle("is-on",i===state.target); r.classList.toggle("is-past",i<state.target); });
+  $$(".pdot").forEach((b,i)=>{ b.classList.toggle("is-on",i===state.target); b.classList.toggle("is-past",i<state.target); });
+  const row=$(`.rule[data-i="${state.target}"]`); if(row) row.scrollIntoView({block:"nearest",inline:"nearest"});
+}
+updateHud();
+
+$("#next").addEventListener("click",()=>setStage(state.target+1));
+$("#prev").addEventListener("click",()=>setStage(state.target-1));
+$("#reset").addEventListener("click",()=>setStage(0));
+$("#auto").addEventListener("click",()=>{
+  if(state.auto){ state.auto=false; clearInterval(state.autoTimer); $("#auto").classList.remove("is-on"); return; }
+  state.auto=true; $("#auto").classList.add("is-on");
+  if(state.target>=N) setStage(0);
+  state.autoTimer=setInterval(()=>{
+    if(state.target>=N){ clearInterval(state.autoTimer); state.auto=false; $("#auto").classList.remove("is-on"); return; }
+    setStage(state.target+1); state.auto=true; $("#auto").classList.add("is-on");
+  },1700);
+});
+window.addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight"){ e.preventDefault(); setStage(state.target+1); }
+  if(e.key==="ArrowLeft"){ e.preventDefault(); setStage(state.target-1); }
+});
+
+/*__DRAW__*/
+
+function draw(now){
+  state.t += (state.target - state.t) * .09;
+  if(Math.abs(state.target-state.t)<.001) state.t=state.target;
+  drawTerm(tctx,termSize.w,termSize.h,now);
+  drawGeo(gctx,geoSize.w,geoSize.h,now);
+  requestAnimationFrame(draw);
+}
+resize();
+requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>
