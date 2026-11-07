@@ -1777,3 +1777,11 @@ Symbolics 3620 (1).jpg
     Lokal: symbolics_lisp_machine.jpg (960x640)
     Genutzt in: tenminutes/ai_and_society.php, Timeline 1980s Expert Systems
     Status: OK - Autor und Lizenz im Timeline-Caption verlinkt
+
+=== TEN MINUTES: Sunflower matrix (tenminutes/computer_vision.php) ===
+sunflower_pixels.jpg
+    URL: https://commons.wikimedia.org/wiki/File:Sunflower_head_2015_G1.jpg
+    Lizenz: Public domain (George Chernilevsky)
+    Lokal: sunflower_pixels.jpg (1280x893)
+    Genutzt in: tenminutes/computer_vision.php § Local patterns, shared weights
+    Status: OK - public domain, Autor, Lizenz und Dateiseite im Caption.

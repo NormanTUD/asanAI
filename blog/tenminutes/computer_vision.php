@@ -26,8 +26,40 @@
 					<section class="section-block" id="idea">
 						<div class="section-kicker"><span class="sk-num">01</span> A filter that slides</div>
 						<h2 class="section-title">Local patterns, shared weights.</h2>
+						<div class="demo demo--paper" id="sunflower-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">A sunflower is a matrix <span>· demo 01</span></p>
+									<p class="demo-sub">The photo is millions of numbers. The 4×4 grid is a real crop from the flower centre; each cell shows its R, G, B values.</p>
+								</div>
+								<span class="demo-badge">RGB · 0–255</span>
+							</div>
+							<div class="demo-body">
+								<div class="pixel-demo">
+									<figure class="pixel-photo">
+										<div class="pixel-photo-frame">
+											<img src="../sunflower_pixels.jpg" alt="A sunflower head" loading="lazy">
+											<span class="pixel-crop-marker" aria-hidden="true"></span>
+										</div>
+										<figcaption>Photo: George Chernilevsky, <a href="https://commons.wikimedia.org/wiki/File:Sunflower_head_2015_G1.jpg" rel="noopener">public domain</a>, via Wikimedia Commons.</figcaption>
+									</figure>
+									<div class="pixel-grid-wrap">
+										<p class="pixel-grid-label">4 × 4 pixels from the centre</p>
+										<div class="pixel-grid" role="img" aria-label="A 4 by 4 grid of RGB values from the sunflower">
+											<span style="background:rgb(134,147,75);color:#000" title="R 134, G 147, B 75" aria-label="R 134, G 147, B 75">134<br>147<br>75</span><span style="background:rgb(178,191,121);color:#000" title="R 178, G 191, B 121" aria-label="R 178, G 191, B 121">178<br>191<br>121</span><span style="background:rgb(241,252,186);color:#000" title="R 241, G 252, B 186" aria-label="R 241, G 252, B 186">241<br>252<br>186</span><span style="background:rgb(95,102,48);color:#fff" title="R 95, G 102, B 48" aria-label="R 95, G 102, B 48">95<br>102<br>48</span>
+										<span style="background:rgb(149,161,95);color:#000" title="R 149, G 161, B 95" aria-label="R 149, G 161, B 95">149<br>161<br>95</span><span style="background:rgb(244,255,192);color:#000" title="R 244, G 255, B 192" aria-label="R 244, G 255, B 192">244<br>255<br>192</span><span style="background:rgb(101,110,55);color:#000" title="R 101, G 110, B 55" aria-label="R 101, G 110, B 55">101<br>110<br>55</span><span style="background:rgb(3,11,0);color:#fff" title="R 3, G 11, B 0" aria-label="R 3, G 11, B 0">3<br>11<br>0</span>
+										<span style="background:rgb(226,240,181);color:#000" title="R 226, G 240, B 181" aria-label="R 226, G 240, B 181">226<br>240<br>181</span><span style="background:rgb(77,90,37);color:#fff" title="R 77, G 90, B 37" aria-label="R 77, G 90, B 37">77<br>90<br>37</span><span style="background:rgb(21,30,0);color:#fff" title="R 21, G 30, B 0" aria-label="R 21, G 30, B 0">21<br>30<br>0</span><span style="background:rgb(21,29,0);color:#fff" title="R 21, G 29, B 0" aria-label="R 21, G 29, B 0">21<br>29<br>0</span>
+										<span style="background:rgb(105,117,67);color:#000" title="R 105, G 117, B 67" aria-label="R 105, G 117, B 67">105<br>117<br>67</span><span style="background:rgb(0,11,0);color:#fff" title="R 0, G 11, B 0" aria-label="R 0, G 11, B 0">0<br>11<br>0</span><span style="background:rgb(32,39,5);color:#fff" title="R 32, G 39, B 5" aria-label="R 32, G 39, B 5">32<br>39<br>5</span><span style="background:rgb(37,44,10);color:#fff" title="R 37, G 44, B 10" aria-label="R 37, G 44, B 10">37<br>44<br>10</span>
+										</div>
+										<p class="pixel-note">Each cell lists R, G, B from top to bottom; the background is the resulting colour. A 1000 × 1000 image has one million such vectors.</p>
+									</div>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>The network never receives a picture. It receives this table of numbers.</span></div>
+						</div>
+
 						<div class="prose">
-							<p>Training data was text. Now the data is a grid of pixels. A convolution (<a href="https://galileo-unbound.blog/wp-content/uploads/2025/02/lecun.neco_.1989.1.4.541.pdf" rel="noopener">LeCun et al., 1989</a>) applies a small kernel to every local patch of the image. The kernel is a set of learned weights; it responds strongly to a particular pattern, such as a vertical edge or a patch of colour. An image itself is just a grid of numbers: each pixel is a brightness or a set of colour values, usually red, green, and blue. There is no cat in the pixels; there are only numbers that a trained hierarchy can interpret.</p>
+							<p>Start with the sunflower. The photo is a grid of pixels; the 4×4 sample shows how each pixel becomes three numbers. A convolution (<a href="https://galileo-unbound.blog/wp-content/uploads/2025/02/lecun.neco_.1989.1.4.541.pdf" rel="noopener">LeCun et al., 1989</a>) applies a small kernel to every local patch of the image. The kernel is a set of learned weights; it responds strongly to a particular pattern, such as a vertical edge or a patch of colour. There is no flower in the numbers; there is only structure that a trained hierarchy can interpret.</p>
 							<h3 class="matrix-subtitle">An image is a matrix</h3>
 							<p>A grayscale image is a two-dimensional matrix. Its rows and columns are pixel positions, and each entry is one brightness value, usually 0 for black and 255 for white. A 1920 × 1080 photo has 2,073,600 entries. The network receives this table, not a picture.</p>
 							<p>A colour image is three such matrices, one for red, one for green, one for blue. Each pixel is a vector of three numbers, and the image has shape height × width × 3. A batch adds a fourth dimension: batch × height × width × 3. Inside the network, a feature map is again a stack of matrices, with channels instead of colours.</p>
@@ -72,31 +104,6 @@
 								<figcaption>A biologically motivated convolutional architecture, after Hubel and Wiesel and Fukushima’s Neocognitron. Diagram: Laurence E. Lazofson, U.S. Navy thesis, p. 45, <a href="https://commons.wikimedia.org/wiki/File:A_Biologically-Inspired_Neural_Network_Architecture_for_Image_Processing_(IA_abiologicallyins1094530625).pdf" rel="noopener">public domain</a>, via Wikimedia Commons.</figcaption>
 							</figure>
 						</div>
-</section>
-
-					<section class="section-block" id="detail">
-						<div class="section-kicker"><span class="sk-num">02</span> From classification to space</div>
-						<h2 class="section-title">The task stack.</h2>
-						<div class="prose">
-							<p>The basic task is classification: what is in the image? Detection asks where; segmentation asks which pixels belong to which object; 3D understanding adds depth and geometry. Each task needs a different output, but the feature extractor is often shared.</p>
-							<p>For practical work, one family covers much of this stack. <strong>YOLO</strong> (“You Only Look Once”) detects objects and their boxes in a single forward pass (<a href="https://arxiv.org/abs/1506.02640" rel="noopener">Redmon et al., 2016</a>). Modern Ultralytics releases add instance segmentation, pose estimation, tracking, and oriented boxes, so one model family can handle detection and several related tasks in real time (<a href="https://docs.ultralytics.com/" rel="noopener">Ultralytics, 2026</a>). It is not a general solution to every vision problem, but it is the default when latency matters.</p>
-							<p>Vision Transformers (<a href="https://arxiv.org/abs/2010.11929" rel="noopener">Dosovitskiy et al., 2020</a>) replace the sliding kernel with attention over image patches, but the idea is similar: turn the image into tokens and let the model learn relationships between them. A convolution brings a strong assumption that nearby pixels belong together; a ViT has less built-in locality, needs more data, but can connect distant regions.</p>
-							<p>Both approaches need data, augmentation, and careful evaluation. A model can be excellent at recognising a pattern and still fail on a new viewpoint, a rare object, or a misleading context. The sharpest version is the adversarial example: a small, often invisible change to the pixels can flip a confident classification. The decision boundary is geometric, and a point near it can be pushed across without changing what a human sees. Seeing is not the same as understanding.</p>
-						</div>
-						<div class="keypoints">
-							<div class="keypoint"><b>Pixels</b><span>An image is a grid of numbers, not a picture of a cat.</span></div>
-							<div class="keypoint"><b>Matrix</b><span>A grayscale image is one table; an RGB image is three.</span></div>
-							<div class="keypoint"><b>Convolution</b><span>A small learned filter slides over the image and detects local patterns.</span></div>
-							<div class="keypoint"><b>Hierarchy</b><span>Edges become parts; parts become objects.</span></div>
-							<div class="keypoint"><b>Task stack</b><span>Classification, detection, segmentation, and 3D ask progressively harder questions.</span></div>
-						</div>
-					</section>
-
-
-					<figure>
-						<img src="../image.php?f=sam_demo.png&amp;w=900&amp;q=82&amp;fmt=jpg" alt="Segment Anything Model segmentation examples" loading="lazy">
-						<figcaption>One image, several prompts: SAM segments whatever you point at, zero-shot. Image: Alexander Kirillov et al. (Meta AI), <a href="https://github.com/facebookresearch/segment-anything" rel="noopener">Apache-2.0</a>.</figcaption>
-					</figure>
 
 					<div class="demo demo--paper demo--canvas" data-demo="convolution">
 						<div class="demo-head">
@@ -134,12 +141,40 @@
 						<div class="demo-insight"><b>Takeaway</b><span>A convolution shares one small filter across the whole image. Depth stacks those filters into a hierarchy: edges, parts, objects.</span></div>
 						<div class="demo-foot">Source image: a stop sign in Victoria, Australia. Photo: Matthew Paul Argall, <a href="https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg" rel="noopener">CC0</a>.</div>
 					</div>
+</section>
+
+
+					
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> From one label to a scene</div>
+						<h2 class="section-title">The task stack.</h2>
+						<div class="prose">
+							<p>The sunflower demo asks the simplest question: what is in the image? A classifier reduces the whole matrix to a short vector of class scores, for example five numbers for five categories. The information is already in the pixels; the network learns which differences matter.</p>
+							<p>Detection asks where. The output is a list of boxes with class scores. Segmentation asks which pixels belong to the object; the output is a mask with the same height and width as the image. Depth adds a distance per pixel, and generation asks for a new matrix altogether. The questions change, but the input is always a tensor.</p>
+							<p>That is why the task stack shares a backbone. Early layers learn edges and textures that are useful for every task; a small head turns those features into labels, boxes, masks, or depth. <strong>YOLO</strong> is the real-time detection default and now covers segmentation, pose, and tracking in one family (<a href="https://arxiv.org/abs/1506.02640" rel="noopener">Redmon et al., 2016</a>; <a href="https://docs.ultralytics.com/" rel="noopener">Ultralytics, 2026</a>). <strong>SAM</strong> takes a prompt and returns a mask for the object you point at (<a href="https://arxiv.org/abs/2304.02643" rel="noopener">Kirillov et al., 2023</a>).</p>
+							<p>The shared backbone also explains the failure mode. A small change to the input can move a point across the decision boundary without changing what a human sees. The model is not reading the scene; it is separating feature vectors. Seeing is not the same as understanding.</p>
+						</div>
+						<figure>
+							<img src="../image.php?f=sam_demo.png&amp;w=900&amp;q=82&amp;fmt=jpg" alt="Segment Anything Model segmentation examples" loading="lazy">
+							<figcaption>One image, several prompts: SAM segments whatever you point at, zero-shot. Image: Alexander Kirillov et al. (Meta AI), <a href="https://github.com/facebookresearch/segment-anything" rel="noopener">Apache-2.0</a>.</figcaption>
+						</figure>
+						<div class="keypoints">
+							<div class="keypoint"><b>One input</b><span>Every task starts from the same tensor of pixels.</span></div>
+							<div class="keypoint"><b>Backbone</b><span>Early layers learn features that many tasks can share.</span></div>
+							<div class="keypoint"><b>Heads</b><span>A label, a box, a mask, or a depth map is a different output shape.</span></div>
+							<div class="keypoint"><b>Task stack</b><span>Classification, detection, segmentation, and 3D ask progressively harder questions.</span></div>
+							<div class="keypoint"><b>Adversarial</b><span>A tiny pixel change can flip a confident label.</span></div>
+						</div>
+					</section>
 
 					<section class="section-block" id="pooling">
 						<div class="section-kicker"><span class="sk-num">03</span> Pooling</div>
 						<h2 class="section-title">Shrink the map, keep the signal.</h2>
 						<div class="prose">
 							<p>Pooling compresses the map. A 2×2 window with stride 2 replaces each block with one number: max pooling keeps the strongest activation, average pooling keeps the mean. The map shrinks, the receptive field grows, and small shifts inside a window matter less. The price is exact position.</p>
+							<p>Why do this? A 1000×1000 image has one million pixels. If the task is classification into five categories, the network must end with five scores. The information that decides the class is already in the image; the job is to distill it, not to preserve every pixel. Convolution learns features; pooling is a fixed compression step between them.</p>
+							<p>Max pooling keeps the strongest activation in each window and discards the weaker ones. It does not know which pixel is semantically important; it applies the same rule everywhere. That is the point: no weights to learn, no extra parameters, and a smaller map for the next layer. Average pooling keeps the mean instead, which is smoother. Two different patches with the same maximum become indistinguishable after pooling.</p>
+							<p>The reduction compounds. Four 2×2 poolings shrink a 1000×1000 map to about 62×62; the receptive field grows, and the final dense layers see a compact summary instead of a million numbers. Convolution learns; pooling only selects.</p>
 						</div>
 						<div class="demo demo--paper" data-demo="pooling">
 							<div class="demo-head">
@@ -175,9 +210,12 @@
 						<div class="section-kicker"><span class="sk-num">04</span> Patches as tokens</div>
 						<h2 class="section-title">The image becomes a sequence.</h2>
 						<div class="prose">
-							<p>A Vision Transformer (ViT) does not slide a kernel. It cuts the image into fixed patches, for example 16×16 pixels, flattens each patch into a vector, adds a position embedding, and treats the patches as tokens (<a href="https://arxiv.org/abs/2010.11929" rel="noopener">Dosovitskiy et al., 2020</a>). Self-attention lets every patch look at every other patch; the feed-forward network transforms each patch vector. A class token or a task head then reads the result.</p>
-							<p>Convolution is one inductive bias: locality and shared weights. A ViT has less built-in locality, so it usually needs more data or strong augmentation, but it can connect distant regions from the first layer. Modern systems often combine both: a convolutional stem before a transformer, or transformer blocks over patch tokens. The choice is a design trade-off, not a replacement.</p>
-						</div>
+							<p>A Vision Transformer starts in the same place as the text models from the previous chapters: it turns the input into a sequence of tokens. It cuts the image into fixed patches, for example 16×16 pixels. A 224×224 image becomes 14×14 = 196 patches. Each patch is flattened into a vector (16×16×3 = 768 numbers) and projected to the model width with a learned matrix, just as a token id is mapped to an embedding vector (<a href="https://arxiv.org/abs/2010.11929" rel="noopener">Dosovitskiy et al., 2020</a>).</p>
+							<p>The patches are now tokens, but they have lost their order. The model adds a position embedding to each patch vector, just as a text transformer adds a position vector to each token embedding. In the earlier dense layers, the position embedding told the network where a token sat; here it tells the network where a patch came from. A special class token is prepended, and its final vector is used for classification.</p>
+							<p>The rest is the transformer block from the previous chapters: multi-head self-attention lets every patch read every other patch; a residual connection adds the update; layer normalization stabilizes it; the feed-forward network transforms each patch. Stack the blocks and the representation becomes contextual: a patch of petal can be interpreted together with the seeds, the stem, and the background.</p>
+							<p>The trade-off is inductive bias. A convolution assumes locality and shared weights; a ViT assumes less and must learn those regularities from data. That is why ViTs often need more data or strong augmentation, and why hybrid models put a convolutional stem before the transformer. Hierarchical ViTs such as <strong>Swin</strong> add local windows and patch merging to recover some of the convolutional prior (<a href="https://arxiv.org/abs/2103.14030" rel="noopener">Liu et al., 2021</a>). The sequence view is the same idea as text; the difference is what a token is.</p>
+							<p>Patch size is a design choice. Smaller patches preserve detail but make the sequence longer and the attention cost grow; larger patches are cheaper but coarser. At high resolution, window attention and token merging keep the sequence manageable.</p>
+							</div>
 						<figure class="vit-figure">
 							<svg viewBox="0 0 340 210" role="img" aria-label="An image split into a 4 by 4 grid of patches; the selected patch attends to the other patches">
 								<g><rect x="20" y="20" width="36" height="36" fill="#63a44b" opacity="0.82"/><rect x="66" y="20" width="36" height="36" fill="#5c9baf" opacity="0.82"/><rect x="112" y="20" width="36" height="36" fill="#009299" opacity="0.82"/><rect x="158" y="20" width="36" height="36" fill="#9f9700" opacity="0.82"/><rect x="20" y="66" width="36" height="36" fill="#869b55" opacity="0.82"/><rect x="66" y="66" width="36" height="36" fill="#1275ac" opacity="0.82"/><rect x="112" y="66" width="36" height="36" fill="#9185be" opacity="0.82"/><rect x="158" y="66" width="36" height="36" fill="#92a19a" opacity="0.82"/><rect x="20" y="112" width="36" height="36" fill="#63a44b" opacity="0.82"/><rect x="66" y="112" width="36" height="36" fill="#5c9baf" opacity="0.82"/><rect x="112" y="112" width="36" height="36" fill="#009299" opacity="0.82"/><rect x="158" y="112" width="36" height="36" fill="#9f9700" opacity="0.82"/><rect x="20" y="158" width="36" height="36" fill="#869b55" opacity="0.82"/><rect x="66" y="158" width="36" height="36" fill="#1275ac" opacity="0.82"/><rect x="112" y="158" width="36" height="36" fill="#9185be" opacity="0.82"/><rect x="158" y="158" width="36" height="36" fill="#92a19a" opacity="0.82"/></g>
@@ -186,7 +224,7 @@
 								<text x="20" y="202" font-family="Barlow, system-ui, sans-serif" font-size="11" fill="#627476">4 × 4 patches</text>
 								<text x="240" y="202" font-family="Barlow, system-ui, sans-serif" font-size="11" fill="#627476">one token each</text>
 							</svg>
-							<figcaption>An image is cut into patches. Each patch becomes a token, and self-attention lets every token read every other token before the feed-forward network transforms it. Diagram: Ten Minutes, <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener">CC BY-SA 4.0</a>.</figcaption>
+							<figcaption>An image is cut into patches. Each patch is flattened, projected to a token vector, and given a position embedding; a class token is added. Self-attention lets every token read every other token. Diagram: Ten Minutes, <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener">CC BY-SA 4.0</a>.</figcaption>
 						</figure>
 					</section>
 
