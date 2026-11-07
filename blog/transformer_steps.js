@@ -1971,6 +1971,15 @@
 			if (triple && featureWrap && triple.parentNode !== featureWrap) {
 				featureWrap.insertBefore(triple, featureWrap.querySelector(".tm-logit-lens-host"));
 			}
+			var attentionBody = card.querySelector('.tm-layer-subbox[data-sub="attention"] .tm-layer-subbox-body');
+			var formulaBody = card.querySelector('[id$="-formula-body"]');
+			if (attentionBody && formulaBody) {
+				["layernorm-viz", "concat-viz", "h1-final-viz"].forEach(function (kind) {
+					var viz = document.getElementById(prefix + "-" + kind);
+					var step = viz ? viz.closest(".tm-formula-step") : null;
+					if (step && step.parentNode !== attentionBody) attentionBody.appendChild(step);
+				});
+			}
 			var attentionLead = card.querySelector('.tm-layer-subbox[data-sub="attention"] .tm-level-text');
 			if (attentionLead) {
 				attentionLead.textContent = isDe
