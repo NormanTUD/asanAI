@@ -951,3 +951,11 @@
 	padding: 8px 4px;
 	overflow-x: auto;
 }
+
+/* Two signal plots per layer: attention write and FFN write. */
+.tm-layer-preview .layer-signal-canvas {
+	height: 180px;
+}
+.tm-layer-preview .layer-signal-canvas + .layer-signal-canvas {
+	margin-top: 6px;
+}

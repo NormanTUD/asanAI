@@ -1118,7 +1118,7 @@
 
 	var signalCanvasRegistry = {};
 
-	function drawLayerSignal(ctx, w, h, layerIdx) {
+	function drawLayerSignal(ctx, w, h, layerIdx, mode) {
 		var c = palette();
 		var trace = (window.__tmLayerTrace || [])[layerIdx];
 		var tokens = tokenList();
@@ -1126,8 +1126,9 @@
 		if (!trace || !tokens.length) {
 			return drawPlaceholder(ctx, w, h, DE() ? "Öffne eine Schicht, um ihr Signal zu sehen." : "Open a layer to see its signal.");
 		}
+		mode = mode || "attention";
 		var n = tokens.length;
-		var padL = 90, padR = 18, padT = 28, padB = 30;
+		var padL = 90, padR = 18, padT = 30, padB = 30;
 		var bw = (w - padL - padR) / Math.max(1, n);
 		var max = 0.0001;
 		tokens.forEach(function (_, i) {
@@ -1135,33 +1136,68 @@
 		});
 		var scale = (h - padT - padB) / max;
 		var baseY = h - padB;
+		var decrease = "#b23a48";
 		ctx.strokeStyle = c.line;
 		ctx.lineWidth = 1;
 		ctx.beginPath();
 		ctx.moveTo(padL, baseY);
 		ctx.lineTo(w - padR, baseY);
 		ctx.stroke();
+
+		var initialLine = [], finalLine = [];
 		tokens.forEach(function (token, i) {
 			var n0 = norm(trace.h_in[i] || []);
 			var n1 = norm(trace.h_attn[i] || []);
 			var n2 = norm(trace.h_out[i] || []);
+			var baseN = mode === "ffn" ? n1 : n0;
+			var afterN = mode === "ffn" ? n2 : n1;
 			var x = padL + i * bw + Math.max(1, bw * 0.12);
 			var width = Math.max(1, bw * 0.76);
 			var y0 = baseY - n0 * scale;
 			var y1 = baseY - n1 * scale;
 			var y2 = baseY - n2 * scale;
+			var yBase = baseY - baseN * scale;
+			var yAfter = baseY - afterN * scale;
+			initialLine.push([x + width / 2, y0]);
+			finalLine.push([x + width / 2, y2]);
+
 			ctx.fillStyle = c.muted;
-			ctx.fillRect(x, y0, width, n0 * scale);
-			ctx.fillStyle = c.blue;
+			ctx.globalAlpha = 0.35;
+			ctx.fillRect(x, yBase, width, baseN * scale);
+			ctx.globalAlpha = 1;
+			ctx.fillStyle = afterN >= baseN ? (mode === "ffn" ? c.green : c.blue) : decrease;
 			ctx.globalAlpha = 0.9;
-			ctx.fillRect(x, Math.min(y0, y1), width, Math.abs(y1 - y0));
-			ctx.fillStyle = c.green;
-			ctx.fillRect(x, Math.min(y1, y2), width, Math.abs(y2 - y1));
+			ctx.fillRect(x, Math.min(yBase, yAfter), width, Math.abs(yAfter - yBase));
 			ctx.globalAlpha = 1;
 			ctx.beginPath();
-			ctx.arc(x + width / 2, y2, 2.4, 0, Math.PI * 2);
+			ctx.arc(x + width / 2, yAfter, 2.6, 0, Math.PI * 2);
 			ctx.fillStyle = c.gold;
 			ctx.fill();
+
+			if (mode === "ffn") {
+				ctx.strokeStyle = c.muted;
+				ctx.globalAlpha = 0.55;
+				ctx.setLineDash([3, 3]);
+				ctx.beginPath();
+				ctx.moveTo(x - 2, y0);
+				ctx.lineTo(x + width + 2, y0);
+				ctx.stroke();
+				ctx.setLineDash([]);
+				ctx.strokeStyle = c.gold;
+				ctx.globalAlpha = 0.9;
+				ctx.beginPath();
+				ctx.moveTo(x - 2, y2);
+				ctx.lineTo(x + width + 2, y2);
+				ctx.stroke();
+				ctx.globalAlpha = 1;
+				if (n2 < n0) {
+					ctx.fillStyle = decrease;
+					ctx.font = "700 8px Barlow, system-ui, sans-serif";
+					ctx.textAlign = "right";
+					ctx.fillText("↓", x - 3, Math.max(y0, y2) - 2);
+				}
+			}
+
 			if (n <= 18 || i % Math.ceil(n / 18) === 0) {
 				ctx.save();
 				ctx.translate(x + width / 2, baseY + 8);
@@ -1173,21 +1209,44 @@
 				ctx.restore();
 			}
 		});
+
+		if (mode === "ffn") {
+			ctx.strokeStyle = c.muted;
+			ctx.globalAlpha = 0.35;
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			initialLine.forEach(function (p, i) {
+				if (i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+			});
+			ctx.stroke();
+			ctx.strokeStyle = c.gold;
+			ctx.globalAlpha = 0.85;
+			ctx.beginPath();
+			finalLine.forEach(function (p, i) {
+				if (i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+			});
+			ctx.stroke();
+			ctx.globalAlpha = 1;
+		}
+
 		ctx.fillStyle = c.muted;
 		ctx.font = "600 9px Barlow, system-ui, sans-serif";
 		ctx.textAlign = "left";
-		ctx.fillText((DE() ? "Layer " : "Layer ") + (layerIdx + 1) + (DE() ? " · Signal pro Token: h0, Attention-Schritt, FFN-Schritt; Punkt = Ausgabe" : " · signal per token: h0, attention step, FFN step; dot = output"), padL, 14);
+		var title = mode === "ffn"
+			? ((DE() ? "Layer " : "Layer ") + (layerIdx + 1) + (DE() ? " · FFN-Schritt · Start h_in (grau) → Ende h_out (gelb); rot = Abnahme" : " · FFN write · start h_in (grey) → final h_out (gold); red = decrease"))
+			: ((DE() ? "Layer " : "Layer ") + (layerIdx + 1) + (DE() ? " · Attention-Schritt · Start h_in (grau) → h_attn; rot = Abnahme" : " · attention write · start h_in (grey) → h_attn; red = decrease"));
+		ctx.fillText(title, padL, 14);
 		ctx.fillStyle = c.muted;
 		ctx.fillRect(padL, h - 12, 10, 5);
-		ctx.fillStyle = c.blue;
-		ctx.fillRect(padL + 76, h - 12, 10, 5);
-		ctx.fillStyle = c.green;
-		ctx.fillRect(padL + 152, h - 12, 10, 5);
+		ctx.fillStyle = mode === "ffn" ? c.green : c.blue;
+		ctx.fillRect(padL + 82, h - 12, 10, 5);
+		ctx.fillStyle = decrease;
+		ctx.fillRect(padL + 164, h - 12, 10, 5);
 		ctx.fillStyle = c.muted;
 		ctx.font = "600 8px Barlow, system-ui, sans-serif";
-		ctx.fillText(DE() ? "Eingabe" : "input", padL + 14, h - 7);
-		ctx.fillText("Attention", padL + 90, h - 7);
-		ctx.fillText("FFN", padL + 166, h - 7);
+		ctx.fillText(DE() ? "Start" : "start", padL + 14, h - 7);
+		ctx.fillText(DE() ? "Zunahme" : "increase", padL + 96, h - 7);
+		ctx.fillText(DE() ? "Abnahme" : "decrease", padL + 178, h - 7);
 	}
 
 	function drawLayerResidual(ctx, w, h, layerIdx) {
@@ -1675,6 +1734,26 @@
 					? "Attention verteilt Aufmerksamkeit anhand des Kontexts: Sie mischt die Tokens je nachdem, in welchem Kontext sie stehen. Das FFN verschiebt den Punkt danach im Raum mit der Information aus dem bisherigen Kontext. Die Vorschau oben zeigt, wie viel diese Schicht pro Token und Dimension schreibt."
 					: "Attention distributes attention based on context: it mixes the tokens depending on the context they are in. The FFN then shifts the point in space with the information from the previous context. The preview above shows how much this layer writes per token and dimension.";
 				body.insertBefore(intro, body.firstChild);
+			}
+			var prefix = "unified-layer-" + idx;
+			var preview = card.querySelector(".tm-layer-preview");
+			if (preview) {
+				var firstSignal = preview.querySelector(".layer-signal-canvas");
+				if (firstSignal) firstSignal.setAttribute("data-signal-mode", "attention");
+				if (!document.getElementById(prefix + "-signal-canvas-ffn")) {
+					var secondSignal = document.createElement("canvas");
+					secondSignal.id = prefix + "-signal-canvas-ffn";
+					secondSignal.className = "layer-signal-canvas layer-signal-canvas--ffn";
+					secondSignal.setAttribute("data-layer-idx", String(idx));
+					secondSignal.setAttribute("data-signal-mode", "ffn");
+					secondSignal.setAttribute("aria-label", isDe ? "FFN-Schritt: Start, Zunahme, Abnahme und Endhöhe pro Token" : "FFN write: start, increase, decrease and final height per token");
+					preview.appendChild(secondSignal);
+				}
+				if (window.TransformerSteps && window.TransformerSteps.renderLayerSignal) {
+					[firstSignal, document.getElementById(prefix + "-signal-canvas-ffn")].forEach(function (c) {
+						if (c) window.TransformerSteps.renderLayerSignal(c.id, idx);
+					});
+				}
 			}
 			var stack = body.querySelector(".tm-layer-subbox-stack") || body;
 			var sub = card.querySelector('.tm-layer-subbox[data-sub="migration"]');
@@ -2228,15 +2307,17 @@
 		renderLayerSignal: function (canvasId, layerIdx) {
 			var canvas = document.getElementById(canvasId);
 			if (!canvas) return;
+			var mode = canvas.getAttribute("data-signal-mode") || "attention";
 			var entry = signalCanvasRegistry[canvasId];
 			if (!entry) {
-				entry = { layerIdx: layerIdx, api: null };
+				entry = { layerIdx: layerIdx, mode: mode, api: null };
 				entry.api = initCanvas(canvas, function (ctx, w, h) {
-					drawLayerSignal(ctx, w, h, entry.layerIdx);
+					drawLayerSignal(ctx, w, h, entry.layerIdx, entry.mode);
 				});
 				signalCanvasRegistry[canvasId] = entry;
 			} else {
 				entry.layerIdx = layerIdx;
+				entry.mode = mode;
 				entry.api.redraw();
 			}
 			canvas.setAttribute("data-layer-signal-ready", "1");
