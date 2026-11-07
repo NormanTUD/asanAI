@@ -179,3 +179,15 @@
 		width: 100%;
 	}
 }
+
+.tm-model-size-slot {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 30px;
+	margin: 4px 0 10px;
+	font: 600 0.8rem/1.3 "Open Sans", system-ui, sans-serif;
+	color: var(--tm-muted, #627476);
+}
+.tm-model-size-slot #nr_params { color: var(--tm-ink, #000000); }
+.tm-model-size-slot #nr_params b { color: var(--tm-petrol, #004b6f); }

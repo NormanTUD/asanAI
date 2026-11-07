@@ -379,7 +379,8 @@
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-embed" aria-label="The embedding space with the sentence path"></canvas>
 				<div class="tm-step-modes" data-step-modes="embed"></div>
 				<p class="tm-step-more">The embedding table is a learned matrix; each row is a token's starting vector. The positions are added in the next step.</p>
-				<div class="tm-step-formula" data-tex="h_0 = E[t] + p_i"></div>
+				<div class="tm-step-formula" data-tex="h_0 = E[t] + p_i,\qquad p_i = \left(PE_{(i,0)}, PE_{(i,1)}, \dots\right)"></div>
+				<div class="tm-step-formula" data-tex="PE_{(i,2k)} = \sin\left(\frac{i}{10000^{2k/d}}\right),\quad PE_{(i,2k+1)} = \cos\left(\frac{i}{10000^{2k/d}}\right)"></div>
 				<details class="tm-step-detail">
 					<summary>Embedding in detail</summary>
 					<div class="tm-step-detail-body">

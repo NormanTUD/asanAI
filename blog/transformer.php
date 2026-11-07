@@ -66,6 +66,7 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 Each slider below carries a short note on why its constraint exists. What hyperparameters are in general, and how practitioners find good values instead of guessing, is the subject of the [Hyperparameters](hyperparameters.php) chapter.
 </div>
 
+<div class="tm-model-size-slot"><span class="tm-model-size-label">Model size</span><div id="nr_params" style="display:none"></div></div>
 <div id="transformer_config">
 	<div class="transformer-config-field">
 		<label class="transformer-slider-label">Model Dimension ($d_{\text{model}}$): </label>
@@ -128,7 +129,6 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 		<option value="bpe">Byte-Pair Encoding (BPE)</option>
 	    </select>
 	</div>
-	<div id="nr_params" style="display: none"></div>
 
 	<div id="param-breakdown-toggle" style="display: none; margin-top: 8px;">
 	    <button id="param-breakdown-btn" onclick="toggleParamBreakdown()"
@@ -233,7 +233,8 @@ with the full formulas one level deeper.
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-embed" aria-label="The embedding space with the sentence path"></canvas>
 				<div class="tm-step-modes" data-step-modes="embed"></div>
 				<p class="tm-step-more">The embedding table is a learned matrix; each row is a token's starting vector. The positions are added in the next step.</p>
-				<div class="tm-step-formula" data-tex="h_0 = E[t] + p_i"></div>
+				<div class="tm-step-formula" data-tex="h_0 = E[t] + p_i,\qquad p_i = \left(PE_{(i,0)}, PE_{(i,1)}, \dots\right)"></div>
+				<div class="tm-step-formula" data-tex="PE_{(i,2k)} = \sin\left(\frac{i}{10000^{2k/d}}\right),\quad PE_{(i,2k+1)} = \cos\left(\frac{i}{10000^{2k/d}}\right)"></div>
 				<details class="tm-step-detail" id="tm-detail-embed"><summary>Embedding in detail</summary><div class="tm-step-detail-body"></div></details></div>
 			</section>
 	<section class="tm-step">

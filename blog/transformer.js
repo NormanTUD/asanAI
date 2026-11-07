@@ -713,7 +713,10 @@ function show_nr_of_params() {
 	}
 
 	if (nrDiv) {
-		nrDiv.innerHTML = `The current network has <b>${nr_params.toLocaleString()}</b> parameters.`;
+		const inSlot = !!nrDiv.closest('.tm-model-size-slot');
+		nrDiv.innerHTML = inSlot
+			? `<b>${nr_params.toLocaleString()}</b> parameters`
+			: `The current network has <b>${nr_params.toLocaleString()}</b> parameters.`;
 		nrDiv.style.display = 'block';
 	}
 
@@ -6112,8 +6115,15 @@ function updateArchitectureValidityUI() {
 
 	msgDiv.style.cssText = `
 	display: block;
-	margin-top: 10px;
+	position: fixed;
+	top: 12px;
+	right: 12px;
+	left: auto;
+	z-index: 1000;
+	max-width: min(480px, calc(100vw - 24px));
+	margin: 0;
 	padding: 12px 16px;
+	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
 	background: ${themeColor('#fef2f2')};
 	border: 2px solid ${themeColor('#ef4444')};
 	border-radius: 8px;

@@ -11,6 +11,26 @@
 		return !!(window.TM && window.TM.lang && window.TM.lang() === "de");
 	}
 
+	function typesetMathIn(root) {
+		if (!root) return;
+		if (window.TM && typeof TM.typesetMath === "function") {
+			TM.typesetMath(root);
+			return;
+		}
+		if (!window.temml || typeof temml.renderToString !== "function") return;
+		root.querySelectorAll("[data-tex]").forEach(function (el) {
+			if (el.getAttribute("data-tex-rendered") === "1") return;
+			var tex = el.getAttribute("data-tex");
+			var display = el.getAttribute("data-tex-display") !== "false";
+			try {
+				el.innerHTML = temml.renderToString(tex, { displayMode: display });
+				el.setAttribute("data-tex-rendered", "1");
+			} catch (e) {
+				el.textContent = tex;
+			}
+		});
+	}
+
 	function css(name, fallback) {
 		var value = getComputedStyle(document.documentElement).getPropertyValue(name);
 		return value ? value.trim() : fallback;
@@ -1140,6 +1160,32 @@
 		}
 		mode = mode || "attention";
 		var n = tokens.length;
+		if (mode === "pre") {
+			var pPad = 16, pLeft = 90, pTop = 18, pBottom = 32;
+			var pCell = (w - pLeft - pPad) / Math.max(1, n);
+			var pMax = 0.0001;
+			tokens.forEach(function (_, i) { pMax = Math.max(pMax, norm(trace.h_in[i] || [])); });
+			var pScale = (h - pTop - pBottom) / pMax;
+			var pBase = h - pBottom;
+			tokens.forEach(function (token, i) {
+				var v = norm(trace.h_in[i] || []);
+				var x = pLeft + i * pCell + pCell * 0.2;
+				var bw = Math.max(1, pCell * 0.55);
+				ctx.fillStyle = c.lime;
+				ctx.fillRect(x, pBase - v * pScale, bw, v * pScale);
+				if (n <= 18 || i % Math.ceil(n / 18) === 0) {
+					ctx.save();
+					ctx.translate(x + bw / 2, pBase + 8);
+					ctx.rotate(-0.6);
+					ctx.fillStyle = c.ink;
+					ctx.font = "600 8px Barlow, system-ui, sans-serif";
+					ctx.textAlign = "left";
+					ctx.fillText(fitText(ctx, display(token), 64), 0, 0);
+					ctx.restore();
+				}
+			});
+			return;
+		}
 		if (mode === "block") {
 			var bPad = 16, bLeft = 90, bTop = 18, bBottom = 32;
 			var cell = (w - bLeft - bPad) / Math.max(1, n);
@@ -1690,65 +1736,15 @@
 	function renderLayerFeaturePlots(layerIdx) {
 		var data = featureData(layerIdx);
 		var prefix = "unified-layer-" + layerIdx;
-		var inputEl = document.getElementById(prefix + "-feature-input");
-		var outputEl = document.getElementById(prefix + "-feature-output");
-		var select = document.getElementById(prefix + "-feature-token");
+		var arrowsEl = document.getElementById(prefix + "-feature-arrows");
 		var note = document.getElementById(prefix + "-feature-projection");
-		if (!data || !inputEl || !outputEl) {
-			if (inputEl) inputEl.innerHTML = "<p class='tm-feature-empty'>" + (DE() ? "Noch keine Layer-Daten." : "No layer data yet.") + "</p>";
-			if (outputEl) outputEl.innerHTML = "";
-			return;
-		}
-		var labels = data.tokens.map(function (t) { return display(t); });
-		if (select) {
-			if (select.options.length !== data.n) {
-				select.innerHTML = "";
-				labels.forEach(function (label, i) {
-					var opt = document.createElement("option");
-					opt.value = String(i);
-					opt.textContent = label;
-					select.appendChild(opt);
-				});
-			}
-			select.value = String(data.selected);
-			if (!select._tmFeatureBound) {
-				select._tmFeatureBound = true;
-				select.addEventListener("change", function () {
-					var idx = parseInt(select.value, 10);
-					if (isNaN(idx)) return;
-					featureState[layerIdx].selected = idx;
-					renderLayerFeaturePlots(layerIdx);
-				});
-			}
-		}
+		if (!data || !arrowsEl) return;
 		var proj = featureProjection(data);
 		if (note) {
 			note.textContent = proj.label || "";
 			note.style.display = proj.label ? "block" : "none";
 		}
-		var d = data.trace.h_in[0].length;
-		var allDimsBtn = document.getElementById(prefix + "-feature-all-dims");
-		if (allDimsBtn) {
-			allDimsBtn.hidden = d <= 3;
-			allDimsBtn.setAttribute("aria-pressed", String(!!featureState[layerIdx].allDims));
-			allDimsBtn.textContent = featureState[layerIdx].allDims ? "PCA (3D)" : (DE() ? "Alle Dimensionen" : "All dimensions");
-			if (!allDimsBtn._tmFeatureBound) {
-				allDimsBtn._tmFeatureBound = true;
-				allDimsBtn.addEventListener("click", function () {
-					featureState[layerIdx].allDims = !featureState[layerIdx].allDims;
-					renderLayerFeaturePlots(layerIdx);
-				});
-			}
-		}
-		renderFeatureArrows(document.getElementById(prefix + "-feature-arrows"), layerIdx, data, proj);
-		var useAllDims = d > 3 && !!featureState[layerIdx].allDims;
-		if (useAllDims) {
-			renderFeatureParallel(inputEl, data.trace.h_in[data.selected], labels[data.selected], palette().blue, DE() ? "Eingabe in Schicht " + (layerIdx + 1) : "Input to layer " + (layerIdx + 1));
-			renderFeatureParallel(outputEl, data.trace.h_out[data.selected], labels[data.selected], palette().green, DE() ? "Ausgabe von Schicht " + (layerIdx + 1) : "Output of layer " + (layerIdx + 1));
-		} else {
-			renderFeatureChart(inputEl, proj.in, labels, data.selected, palette().blue, DE() ? "Eingabe in Schicht " + (layerIdx + 1) : "Input to layer " + (layerIdx + 1), proj);
-			renderFeatureChart(outputEl, proj.out, labels, data.selected, palette().green, DE() ? "Ausgabe von Schicht " + (layerIdx + 1) : "Output of layer " + (layerIdx + 1), proj);
-		}
+		renderFeatureArrows(arrowsEl, layerIdx, data, proj);
 	}
 
 	function featureTopWords(vec, count) {
@@ -1808,10 +1804,10 @@
 		var note = DE()
 			? "Die Logit-Linse projiziert den Vektor nach dieser Schicht auf das Vokabular und vergleicht die Winkel. Sie zeigt, welches Wort das Modell erzeugen würde, wenn es hier aufhören würde; über die Schichten hinweg siehst du, wie sich die Repräsentation bewegt und ihre Meinung ein wenig ändert."
 			: "The logit lens projects the vector after this layer onto the vocabulary and compares the angles. It shows which word the model would produce if it stopped here; across layers you can watch the representation move and change its guess, at least a little.";
-		host.innerHTML = "<div class='tm-logit-wrap'><div class='tm-logit-title'>" + title + "</div>" +
-			"<details class='tm-layer-hafter' open><summary>" + (DE() ? "h_after · Hidden State nach Schicht " : "h_after · hidden state after layer ") + (layerIdx + 1) + "</summary><div class='tm-hafter-scroll'><div class='tm-hafter-math' data-tex='" + hafterTex + "' data-tex-display='true'></div></div></details>" +
-			"<p class='tm-logit-note'>" + note + "</p><div class='tm-logit-lens'>" + head + rows + "</div></div>";
-		if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(host);
+		host.innerHTML = "<details class='tm-logit-collapse'><summary>" + title + "</summary><div class='tm-logit-wrap'>" +
+			"<details class='tm-layer-hafter'><summary>" + (DE() ? "h_after · Hidden State nach Schicht " : "h_after · hidden state after layer ") + (layerIdx + 1) + "</summary><div class='tm-hafter-scroll'><div class='tm-hafter-math' data-tex='" + hafterTex + "' data-tex-display='true'></div></div></details>" +
+			"<p class='tm-logit-note'>" + note + "</p><div class='tm-logit-lens'>" + head + rows + "</div></div></details>";
+		typesetMathIn(host);
 	}
 
 	function renderLayerTripleResiduals(layerIdx) {
@@ -1900,17 +1896,35 @@
 			var isDe = DE();
 			var prefix = "unified-layer-" + idx;
 			var preview = card.querySelector(".tm-layer-preview");
+			var firstSignal = preview ? preview.querySelector(".layer-signal-canvas") : null;
+			if (firstSignal) firstSignal.setAttribute("data-signal-mode", "block");
 			if (preview) {
-				var firstSignal = preview.querySelector(".layer-signal-canvas");
-				if (firstSignal) {
-					firstSignal.setAttribute("data-signal-mode", "block");
-					if (window.TransformerSteps && window.TransformerSteps.renderLayerSignal) {
-						window.TransformerSteps.renderLayerSignal(firstSignal.id, idx);
-					}
-				}
 				Array.prototype.slice.call(preview.querySelectorAll(".layer-signal-canvas--ffn")).forEach(function (el) { el.remove(); });
 			}
 			var stack = body.querySelector(".tm-layer-subbox-stack") || body;
+			if (!document.getElementById("tm-pre-layer-signal")) {
+				var layerStack = card.parentNode;
+				var firstCard = layerStack ? layerStack.querySelector(":scope > .tm-layer-card") : null;
+				if (firstCard) {
+					var preWrap = document.createElement("div");
+					preWrap.className = "tm-layer-signal-between tm-layer-signal-before";
+					preWrap.innerHTML = "<div class='tm-signal-between-label'>" + (isDe ? "Residual-Stream vor Schicht 1" : "Residual stream before layer 1") + "</div><canvas id='tm-pre-layer-signal' class='layer-signal-canvas' data-layer-idx='0' data-signal-mode='pre'></canvas>";
+					layerStack.insertBefore(preWrap, firstCard);
+				}
+			}
+			if (firstSignal && firstSignal.parentNode && !firstSignal.closest(".tm-layer-signal-between")) {
+				var sigWrap = document.createElement("div");
+				sigWrap.className = "tm-layer-signal-between tm-layer-signal-after";
+				sigWrap.innerHTML = "<div class='tm-signal-between-label'>" + (isDe ? "Residual-Stream nach Schicht " : "Residual stream after layer ") + (idx + 1) + "</div>";
+				sigWrap.appendChild(firstSignal);
+				card.parentNode.insertBefore(sigWrap, card.nextSibling);
+			}
+			if (window.TransformerSteps && window.TransformerSteps.renderLayerSignal) {
+				Array.prototype.slice.call(document.querySelectorAll(".layer-signal-canvas")).forEach(function (c) {
+					var si = parseInt(c.getAttribute("data-layer-idx"), 10);
+					if (!isNaN(si)) window.TransformerSteps.renderLayerSignal(c.id, si);
+				});
+			}
 			var sub = card.querySelector('.tm-layer-subbox[data-sub="migration"]');
 			if (!sub) {
 				sub = document.createElement("details");
@@ -1944,18 +1958,18 @@
 					"<span class='tm-triple-op'>=</span>" +
 					"<div class='tm-triple-cell'><div class='tm-triple-label'>" + (isDe ? "Ausgang" : "output") + "</div><canvas id='" + prefix + "-residual-out' class='tm-residual-heatmap-canvas' data-layer-idx='" + idx + "' data-which='out'></canvas><div class='tm-triple-range' id='" + prefix + "-range-out'></div></div>" +
 					"<div class='tm-residual-tooltip' id='" + prefix + "-residual-tooltip' hidden></div>";
-				sb.insertBefore(triple, sb.querySelector(".tm-feature-wrap") || null);
 			}
 			renderLayerTripleResiduals(idx);
 			if (!sb.querySelector(".tm-feature-wrap")) {
 				var wrap = document.createElement("div");
 				wrap.className = "tm-feature-wrap";
 				wrap.innerHTML = "<div class='tm-feature-primary'><span class='tm-feature-note' id='unified-layer-" + idx + "-feature-projection'></span><div id='unified-layer-" + idx + "-feature-arrows' class='tm-feature-arrows'></div></div>" +
-					"<details class='tm-feature-real'><summary>" + (isDe ? "Echte Layer-Bewegungen (ausgewähltes Token)" : "Real layer movements (selected token)") + "</summary><div class='tm-feature-real-body'><div class='tm-feature-controls'><label>" + (isDe ? "Token" : "Token") + " <select id='unified-layer-" + idx + "-feature-token'></select></label><button type='button' class='tm-feature-all-dims' id='unified-layer-" + idx + "-feature-all-dims' hidden>" + (isDe ? "Alle Dimensionen" : "All dimensions") + "</button></div>" +
-					"<div class='tm-feature-plots'><div class='tm-feature-plot'><div class='tm-feature-plot-title'>" + (isDe ? "Eingabe" : "Input") + "</div><div id='unified-layer-" + idx + "-feature-input' class='tm-feature-chart'></div></div>" +
-					"<div class='tm-feature-plot'><div class='tm-feature-plot-title'>" + (isDe ? "Ausgabe" : "Output") + "</div><div id='unified-layer-" + idx + "-feature-output' class='tm-feature-chart'></div></div></div></div></details>" +
 					"<div id='unified-layer-" + idx + "-logit-lens' class='tm-logit-lens-host'></div>";
 				sb.insertBefore(wrap, oldDetail || null);
+			}
+			var featureWrap = sb.querySelector(".tm-feature-wrap");
+			if (triple && featureWrap && triple.parentNode !== featureWrap) {
+				featureWrap.insertBefore(triple, featureWrap.querySelector(".tm-logit-lens-host"));
 			}
 			var attentionLead = card.querySelector('.tm-layer-subbox[data-sub="attention"] .tm-level-text');
 			if (attentionLead) {
@@ -1980,16 +1994,17 @@
 					}, 60);
 				});
 			}
-			var realBox = sb.querySelector(".tm-feature-real");
-			if (realBox && !realBox._tmFeatureBound) {
-				realBox._tmFeatureBound = true;
-				realBox.addEventListener("toggle", function () {
-					if (realBox.open) setTimeout(function () { renderLayerFeaturePlots(idx); }, 60);
-				});
-			}
 			if (preview && sub.parentNode !== preview) {
 				preview.appendChild(sub);
-				setTimeout(function () { renderLayerTripleResiduals(idx); }, 80);
+				if (!sub.dataset.tmOpenedOnce) {
+					sub.dataset.tmOpenedOnce = "1";
+					sub.open = true;
+				}
+				setTimeout(function () {
+					renderLayerTripleResiduals(idx);
+					renderLayerFeaturePlots(idx);
+					renderLayerLogitLens(idx);
+				}, 80);
 			}
 			card.setAttribute("data-tm-enhanced", "1");
 			if (sub.open) {
@@ -2032,8 +2047,8 @@
 
 	function typesetConfigMath() {
 		var cfg = document.getElementById("transformer_config");
-		if (!cfg || !window.TM || typeof TM.typesetMath !== "function") return;
-		if (cfg.querySelector('[data-tex]:not([data-tex-rendered="1"])')) TM.typesetMath(cfg);
+		if (!cfg) return;
+		typesetMathIn(cfg);
 	}
 	setTimeout(typesetConfigMath, 700);
 	setInterval(typesetConfigMath, 1800);
@@ -2648,6 +2663,21 @@
 			return s && re.test(s.textContent);
 		})[0] || null;
 	}
+	function typesetMathInOrg(root) {
+		if (!root) return;
+		if (window.TM && typeof TM.typesetMath === "function") { TM.typesetMath(root); return; }
+		if (!window.temml || typeof temml.renderToString !== "function") return;
+		root.querySelectorAll("[data-tex]").forEach(function (el) {
+			if (el.getAttribute("data-tex-rendered") === "1") return;
+			var tex = el.getAttribute("data-tex");
+			var display = el.getAttribute("data-tex-display") !== "false";
+			try {
+				el.innerHTML = temml.renderToString(tex, { displayMode: display });
+				el.setAttribute("data-tex-rendered", "1");
+			} catch (e) { el.textContent = tex; }
+		});
+	}
+
 	function resizeCharts() {
 		if (window.Plotly && Plotly.Plots) {
 			document.querySelectorAll(".js-plotly-plot").forEach(function (el) { Plotly.Plots.resize(el); });
@@ -2793,6 +2823,13 @@
 					box.className = "tm-step tm-transformer-box";
 					box.id = "tm-transformer-box";
 					box.innerHTML = '<div class="tm-step-head"><h3>4 · Transformer</h3><button class="tm-step-toggle" type="button" aria-expanded="true" aria-label="' + (isDe ? "Schritt einklappen" : "Collapse step") + '">−</button></div><p>' + (isDe ? "Jede Schicht liest den laufenden Vektor, lässt Attention Information zwischen den Tokens austauschen, addiert das Ergebnis zum Vektor, und das FFN transformiert jeden Token einzeln, bevor es wieder addiert wird. Die Token Trajectory zeigt die Vektoren Schicht für Schicht; darunter stehen die Layer mit ihren Attention- und FFN-Schritten. Ein Transformer ist ein Stapel kleiner, wiederverwendbarer Änderungen an einem gemeinsamen Vektor, in dem der gesamte Kontext mit beachtet wird." : "Each layer reads the running vector, lets attention exchange information between tokens, adds the result back, and the FFN transforms each token on its own before adding it back. The token trajectory shows the vectors layer by layer; below are the layers with their attention and FFN steps. A transformer is a stack of small, reusable edits to one shared vector, with the whole context taken into account.") + '</p><div class="tm-step-body" id="tm-transformer-body"></div>';
+				var formulaStrip = document.createElement("div");
+				formulaStrip.className = "tm-transformer-formulas";
+				formulaStrip.innerHTML = "<div data-tex='\\operatorname{Attention}(Q,K,V)=\\operatorname{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)V'></div>" +
+					"<div data-tex='z=x+\\operatorname{Attention}(\\operatorname{Norm}(x)),\\quad y=z+\\operatorname{FFN}(\\operatorname{Norm}(z))'></div>" +
+					"<div data-tex='\\operatorname{FFN}(x)=W_2\\operatorname{GELU}(W_1x+b_1)+b_2'></div>";
+				box.querySelector(".tm-step-body").appendChild(formulaStrip);
+				typesetMathInOrg(formulaStrip);
 					posCard.parentNode.insertBefore(box, posCard.nextSibling);
 					var toggle = box.querySelector(".tm-step-toggle");
 					toggle.addEventListener("click", function () {
@@ -2942,7 +2979,8 @@
 			// Token Trajectory is the opening picture of the block.
 			var traj = document.getElementById("transformer-trajectory-full-path-wrapper") || document.getElementById("transformer-trajectory-full-path");
 			if (traj && boxNowBody && traj.parentNode !== boxNowBody) {
-				boxNowBody.insertBefore(traj, boxNowBody.firstChild);
+				var formulaStripNow = boxNowBody.querySelector(".tm-transformer-formulas");
+				boxNowBody.insertBefore(traj, formulaStripNow ? formulaStripNow.nextSibling : boxNowBody.firstChild);
 				traj.style.width = "100%";
 			}
 		}

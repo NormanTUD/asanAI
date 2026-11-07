@@ -215,3 +215,29 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
       Sampling; ein kurzer Erklärtext rahmt die große Logit-Rechnung ein.
 - DONE Position zeigt nur noch den semantischen Vektor; Heatmap/Kurve-Modi
       sind entfernt.
+
+## Review 2026-11-07 (current pass)
+
+- DONE Position: classic sinusoidal formula checked against the standard
+  `sin/cos(10000^(2k/d))` definition; the bug was showing `d3` while
+  `d_model = 3`. Output now shows only d0–d2.
+- DONE Hyperparameters: equal-height cards, fixed invalid-config overlay,
+  reserved model-size slot; no layout jump.
+- DONE Layer rails: one green residual signal before layer 1 and after each
+  layer, between the layer cards; no signal inside the cards.
+- DONE Layer top: feature-migration arrow plot is open by default and replaces
+  the old residual preview; three heatmaps (input + change = output) with real
+  min/max and hover values; no Eingang/Ausgang switch; no real-token submenu.
+- DONE Logit lens and h_after are one collapsible block; h_after is Temml and
+  no longer vertically scrolls.
+- DONE No left indent rail in expanded layer boxes; background detail contains
+  only the actual background.
+- DONE Core formulas at the start of the Transformer box; embedding step shows
+  `h0 = E[t] + p_i` plus the PE definition.
+- DONE Parent page shares the layer/feature/signal/logit changes; parent
+  invalid-config overlay is fixed.
+- AUDIT vs `559cfa15c`: only `tlab-final-chips` / `tlab-final-results` and
+  `buildPredictionChipsHtml` are absent; they were replaced by the top-logit
+  click interaction in Unembedding. Training-window functions and UI are
+  restored. All PHP `data-tex` formulas from the baseline are still present;
+  JS formula diffs are the localized FFN output strings, not removed formulas.
