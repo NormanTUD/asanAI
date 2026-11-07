@@ -30,7 +30,7 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">A sunflower is a matrix <span>· demo 01</span></p>
-									<p class="demo-sub">The photo is millions of numbers. The 4×4 grid is a real crop from the flower centre; each cell shows its R, G, B values.</p>
+									<p class="demo-sub">The photo is millions of numbers. The 4×4 grid is a real crop from a petal edge; each cell shows its R, G, B values.</p>
 								</div>
 								<span class="demo-badge">RGB · 0–255</span>
 							</div>
@@ -38,18 +38,18 @@
 								<div class="pixel-demo">
 									<figure class="pixel-photo">
 										<div class="pixel-photo-frame">
-											<img src="../sunflower_pixels.jpg" alt="A sunflower head" loading="lazy">
+											<img src="../sunflower_pixels.jpg" alt="A sunflower against a blue sky" loading="lazy">
 											<span class="pixel-crop-marker" aria-hidden="true"></span>
 										</div>
-										<figcaption>Photo: George Chernilevsky, <a href="https://commons.wikimedia.org/wiki/File:Sunflower_head_2015_G1.jpg" rel="noopener">public domain</a>, via Wikimedia Commons.</figcaption>
+										<figcaption>Photo: Jonson22, <a href="https://commons.wikimedia.org/wiki/File:Son%C4%8Dnica_na_modrem_nebu_-_Sunflower_in_blue_sky_-_Helianthus_annuus.JPG" rel="noopener">CC0</a>, via Wikimedia Commons.</figcaption>
 									</figure>
 									<div class="pixel-grid-wrap">
-										<p class="pixel-grid-label">4 × 4 pixels from the centre</p>
+										<p class="pixel-grid-label">4 × 4 pixels from a petal edge</p>
 										<div class="pixel-grid" role="img" aria-label="A 4 by 4 grid of RGB values from the sunflower">
-											<span style="background:rgb(134,147,75);color:#000" title="R 134, G 147, B 75" aria-label="R 134, G 147, B 75">134<br>147<br>75</span><span style="background:rgb(178,191,121);color:#000" title="R 178, G 191, B 121" aria-label="R 178, G 191, B 121">178<br>191<br>121</span><span style="background:rgb(241,252,186);color:#000" title="R 241, G 252, B 186" aria-label="R 241, G 252, B 186">241<br>252<br>186</span><span style="background:rgb(95,102,48);color:#fff" title="R 95, G 102, B 48" aria-label="R 95, G 102, B 48">95<br>102<br>48</span>
-										<span style="background:rgb(149,161,95);color:#000" title="R 149, G 161, B 95" aria-label="R 149, G 161, B 95">149<br>161<br>95</span><span style="background:rgb(244,255,192);color:#000" title="R 244, G 255, B 192" aria-label="R 244, G 255, B 192">244<br>255<br>192</span><span style="background:rgb(101,110,55);color:#000" title="R 101, G 110, B 55" aria-label="R 101, G 110, B 55">101<br>110<br>55</span><span style="background:rgb(3,11,0);color:#fff" title="R 3, G 11, B 0" aria-label="R 3, G 11, B 0">3<br>11<br>0</span>
-										<span style="background:rgb(226,240,181);color:#000" title="R 226, G 240, B 181" aria-label="R 226, G 240, B 181">226<br>240<br>181</span><span style="background:rgb(77,90,37);color:#fff" title="R 77, G 90, B 37" aria-label="R 77, G 90, B 37">77<br>90<br>37</span><span style="background:rgb(21,30,0);color:#fff" title="R 21, G 30, B 0" aria-label="R 21, G 30, B 0">21<br>30<br>0</span><span style="background:rgb(21,29,0);color:#fff" title="R 21, G 29, B 0" aria-label="R 21, G 29, B 0">21<br>29<br>0</span>
-										<span style="background:rgb(105,117,67);color:#000" title="R 105, G 117, B 67" aria-label="R 105, G 117, B 67">105<br>117<br>67</span><span style="background:rgb(0,11,0);color:#fff" title="R 0, G 11, B 0" aria-label="R 0, G 11, B 0">0<br>11<br>0</span><span style="background:rgb(32,39,5);color:#fff" title="R 32, G 39, B 5" aria-label="R 32, G 39, B 5">32<br>39<br>5</span><span style="background:rgb(37,44,10);color:#fff" title="R 37, G 44, B 10" aria-label="R 37, G 44, B 10">37<br>44<br>10</span>
+											<span style="background:rgb(94,144,197);color:#000" title="R 94, G 144, B 197" aria-label="R 94, G 144, B 197">94<br>144<br>197</span><span style="background:rgb(97,144,200);color:#000" title="R 97, G 144, B 200" aria-label="R 97, G 144, B 200">97<br>144<br>200</span><span style="background:rgb(97,144,200);color:#000" title="R 97, G 144, B 200" aria-label="R 97, G 144, B 200">97<br>144<br>200</span><span style="background:rgb(99,144,199);color:#000" title="R 99, G 144, B 199" aria-label="R 99, G 144, B 199">99<br>144<br>199</span>
+										<span style="background:rgb(116,143,164);color:#000" title="R 116, G 143, B 164" aria-label="R 116, G 143, B 164">116<br>143<br>164</span><span style="background:rgb(117,144,165);color:#000" title="R 117, G 144, B 165" aria-label="R 117, G 144, B 165">117<br>144<br>165</span><span style="background:rgb(120,145,167);color:#000" title="R 120, G 145, B 167" aria-label="R 120, G 145, B 167">120<br>145<br>167</span><span style="background:rgb(125,147,170);color:#000" title="R 125, G 147, B 170" aria-label="R 125, G 147, B 170">125<br>147<br>170</span>
+										<span style="background:rgb(211,189,150);color:#000" title="R 211, G 189, B 150" aria-label="R 211, G 189, B 150">211<br>189<br>150</span><span style="background:rgb(211,190,145);color:#000" title="R 211, G 190, B 145" aria-label="R 211, G 190, B 145">211<br>190<br>145</span><span style="background:rgb(213,190,146);color:#000" title="R 213, G 190, B 146" aria-label="R 213, G 190, B 146">213<br>190<br>146</span><span style="background:rgb(216,193,149);color:#000" title="R 216, G 193, B 149" aria-label="R 216, G 193, B 149">216<br>193<br>149</span>
+										<span style="background:rgb(255,216,120);color:#000" title="R 255, G 216, B 120" aria-label="R 255, G 216, B 120">255<br>216<br>120</span><span style="background:rgb(254,215,112);color:#000" title="R 254, G 215, B 112" aria-label="R 254, G 215, B 112">254<br>215<br>112</span><span style="background:rgb(252,213,110);color:#000" title="R 252, G 213, B 110" aria-label="R 252, G 213, B 110">252<br>213<br>110</span><span style="background:rgb(252,210,108);color:#000" title="R 252, G 210, B 108" aria-label="R 252, G 210, B 108">252<br>210<br>108</span>
 										</div>
 										<p class="pixel-note">Each cell lists R, G, B from top to bottom; the background is the resulting colour. A 1000 × 1000 image has one million such vectors.</p>
 									</div>

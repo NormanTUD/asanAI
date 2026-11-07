@@ -1780,8 +1780,8 @@ Symbolics 3620 (1).jpg
 
 === TEN MINUTES: Sunflower matrix (tenminutes/computer_vision.php) ===
 sunflower_pixels.jpg
-    URL: https://commons.wikimedia.org/wiki/File:Sunflower_head_2015_G1.jpg
-    Lizenz: Public domain (George Chernilevsky)
-    Lokal: sunflower_pixels.jpg (1280x893)
+    URL: https://commons.wikimedia.org/wiki/File:Son%C4%8Dnica_na_modrem_nebu_-_Sunflower_in_blue_sky_-_Helianthus_annuus.JPG
+    Lizenz: CC0 (Jonson22)
+    Lokal: sunflower_pixels.jpg (1280x960)
     Genutzt in: tenminutes/computer_vision.php § Local patterns, shared weights
-    Status: OK - public domain, Autor, Lizenz und Dateiseite im Caption.
+    Status: OK - CC0, Autor, Lizenz und Dateiseite im Caption.

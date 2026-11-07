@@ -2728,7 +2728,7 @@
 					box = document.createElement("section");
 					box.className = "tm-step tm-transformer-box";
 					box.id = "tm-transformer-box";
-					box.innerHTML = '<div class="tm-step-head"><h3>4 · Transformer</h3><button class="tm-step-toggle" type="button" aria-expanded="true" aria-label="' + (isDe ? "Schritt einklappen" : "Collapse step") + '">−</button></div><p>' + (isDe ? "Jede Schicht liest den laufenden Vektor, lässt Attention Information zwischen den Tokens austauschen, addiert das Ergebnis zum Vektor, und das FFN transformiert jeden Token einzeln, bevor es wieder addiert wird. Die Token Trajectory zeigt die Vektoren Schicht für Schicht; darunter stehen die Layer mit ihren Attention- und FFN-Schritten." : "Each layer reads the running vector, lets attention exchange information between tokens, adds the result back, and the FFN transforms each token on its own before adding it back. The token trajectory shows the vectors layer by layer; below are the layers with their attention and FFN steps.") + '</p><div class="tm-step-body" id="tm-transformer-body"></div>';
+					box.innerHTML = '<div class="tm-step-head"><h3>4 · Transformer</h3><button class="tm-step-toggle" type="button" aria-expanded="true" aria-label="' + (isDe ? "Schritt einklappen" : "Collapse step") + '">−</button></div><p>' + (isDe ? "Jede Schicht liest den laufenden Vektor, lässt Attention Information zwischen den Tokens austauschen, addiert das Ergebnis zum Vektor, und das FFN transformiert jeden Token einzeln, bevor es wieder addiert wird. Die Token Trajectory zeigt die Vektoren Schicht für Schicht; darunter stehen die Layer mit ihren Attention- und FFN-Schritten. Ein Transformer ist ein Stapel kleiner, wiederverwendbarer Änderungen an einem gemeinsamen Vektor, in dem der gesamte Kontext mit beachtet wird." : "Each layer reads the running vector, lets attention exchange information between tokens, adds the result back, and the FFN transforms each token on its own before adding it back. The token trajectory shows the vectors layer by layer; below are the layers with their attention and FFN steps. A transformer is a stack of small, reusable edits to one shared vector, with the whole context taken into account.") + '</p><div class="tm-step-body" id="tm-transformer-body"></div>';
 					posCard.parentNode.insertBefore(box, posCard.nextSibling);
 					var toggle = box.querySelector(".tm-step-toggle");
 					toggle.addEventListener("click", function () {
@@ -2821,6 +2821,58 @@
 			}
 			if (attnProse && layerContainer && attnProse.parentNode === boxNowBody && attnProse.nextElementSibling !== layerContainer) {
 				boxNowBody.insertBefore(attnProse, layerContainer);
+			}
+			// The three mechanism cards belong before the step boxes, not after them.
+			var stepHost = document.getElementById("transformer-step-visuals");
+			var formulaGrid = document.querySelector(".formula-grid");
+			if (stepHost && formulaGrid && formulaGrid.nextElementSibling !== stepHost) {
+				stepHost.parentNode.insertBefore(formulaGrid, stepHost);
+				if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(formulaGrid);
+			}
+			// Move the layer-lens and pipeline prose into the Transformer box,
+			// where the layers begin. Remove the now-redundant top sections.
+			if (!moved.layerlens) {
+				var layerlens = document.getElementById("layerlens");
+				var layerProse = layerlens ? layerlens.querySelector(".prose") : null;
+				if (layerProse && boxNowBody) {
+					var lensDetail = document.createElement("details");
+					lensDetail.className = "tm-step-detail tm-layerlens-prose";
+					lensDetail.innerHTML = "<summary>" + (isDe ? "Ein Wort ändert mit der Tiefe seine Bedeutung" : "A word changes its meaning with depth") + "</summary><div class='tm-step-detail-body'></div>";
+					lensDetail.querySelector(".tm-step-detail-body").appendChild(layerProse);
+					boxNowBody.insertBefore(lensDetail, layerContainer || null);
+					layerlens.remove();
+					moved.layerlens = true;
+				}
+			}
+			if (!moved.pipeline) {
+				var pipeline = document.getElementById("pipeline");
+				var pipelineFirst = pipeline ? pipeline.querySelector(".prose p") : null;
+				if (pipelineFirst && boxNowBody) {
+					var pipeDetail = document.createElement("details");
+					pipeDetail.className = "tm-step-detail tm-pipeline-prose";
+					pipeDetail.innerHTML = "<summary>" + (isDe ? "Vom Text zur Verteilung" : "From text to a distribution") + "</summary><div class='tm-step-detail-body'></div>";
+					pipeDetail.querySelector(".tm-step-detail-body").appendChild(pipelineFirst);
+					boxNowBody.insertBefore(pipeDetail, layerContainer || null);
+					pipeline.remove();
+					moved.pipeline = true;
+				}
+			}
+			// The logits/softmax/stop-token prose belongs in the Unembed detail.
+			if (!moved.outputProse) {
+				var outputSection = document.getElementById("output");
+				var unembedDetail = detailBySummary(/From vectors to words|Von Vektoren zu Wörtern/i);
+				if (outputSection && unembedDetail) {
+					var outputDetail = document.createElement("details");
+					outputDetail.className = "tm-step-detail tm-output-words-prose";
+					outputDetail.innerHTML = "<summary>" + (isDe ? "Logits, Softmax und das Stop-Token" : "Logits, softmax, and the stop token") + "</summary><div class='tm-step-detail-body'></div>";
+					var outputBody = outputDetail.querySelector(".tm-step-detail-body");
+					Array.prototype.slice.call(outputSection.querySelectorAll(":scope > .prose, :scope > .aha, :scope > .formula, :scope > .myth-grid")).forEach(function (el) {
+						outputBody.appendChild(el);
+					});
+					unembedDetail.querySelector(".tm-step-detail-body").appendChild(outputDetail);
+					outputSection.style.display = "none";
+					moved.outputProse = true;
+				}
 			}
 			// Token Trajectory is the opening picture of the block.
 			var traj = document.getElementById("transformer-trajectory-full-path-wrapper") || document.getElementById("transformer-trajectory-full-path");

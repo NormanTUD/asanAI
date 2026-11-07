@@ -7794,8 +7794,8 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 .pixel-photo img { display: block; width: 100%; height: auto; }
 .pixel-crop-marker {
 	position: absolute;
-	left: 46.72%;
-	top: 43.9%;
+	left: 86.25%;
+	top: 31.25%;
 	width: 10px;
 	height: 10px;
 	transform: translate(-50%, -50%);

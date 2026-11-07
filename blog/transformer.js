@@ -2581,9 +2581,14 @@ function buildLogitDetailsHtml(h_last, logits) {
 		? 'Die höchste Wahrscheinlichkeit ist die beste Vermutung des Modells; die Decoding-Regel wählt daraus mit der eingestellten Temperatur und Top-k ein Token.'
 		: "The highest probability is the model's best guess; the decoding rule chooses a token from these probabilities with the selected temperature and top-k.";
 	let html = `<p class="logit-explainer" style="margin:0 0 12px; color:var(--mn-text-muted); font-size:.9rem; line-height:1.5;">${intro}</p>`;
+	const step = (n, en, de) => `<p class="logit-step-title" style="margin:18px 0 4px; font:700 .85rem/1.3 Barlow, Open Sans, sans-serif; color:var(--mn-accent);">${n} · ${isDe ? de : en}</p>`;
+	html += step(1, "The last token's vector", "Der Vektor des letzten Tokens");
 	html += buildHLastSection(h_last);
+	html += step(2, "Compare with every word in the vocabulary", "Mit jedem Wort im Vokabular vergleichen");
 	html += buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logits);
+	html += step(3, "Softmax: logits become probabilities", "Softmax: Logits werden Wahrscheinlichkeiten");
 	html += buildSoftmaxSection(logits, logitValues);
+	html += step(4, "Temperature changes the sharpness", "Temperatur ändert die Schärfe");
 	html += buildTemperatureSection(logits, logitValues, temperature);
 	html += `<p class="logit-explainer" style="margin:12px 0 0; color:var(--mn-text-muted); font-size:.9rem; line-height:1.5;">${outro}</p>`;
 	html += `</span></div>`;

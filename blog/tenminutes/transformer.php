@@ -271,6 +271,34 @@
 		width: 100%;
 	}
 }
+
+/* Compact hyperparameter cards: sliders stay inside a grid, not full-page. */
+#transformer_config {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+	gap: 12px 16px;
+	align-items: start;
+}
+#transformer_config > div {
+	margin-bottom: 0 !important;
+	padding: 10px 12px;
+	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	background: var(--tm-card, var(--mn-surface, #ffffff));
+}
+#transformer_config > #param-breakdown-toggle,
+#transformer_config > #param-breakdown-chart {
+	grid-column: 1 / -1;
+}
+#transformer_config input[type="range"] {
+	width: 100%;
+}
+#transformer_config p {
+	font-size: 0.72rem !important;
+	line-height: 1.4;
+}
+#transformer_config label {
+	font-size: 0.82rem;
+}
 </style>
 
 						<div class="prose">
@@ -617,10 +645,7 @@
 							<h4>Why the block works at all</h4>
 							<p>The block is a division of labour. Attention supplies content-based routing; the FFN supplies per-token computation; the residual stream supplies a shared, additive workspace; normalization keeps the scale stable. The causal mask turns the same machinery into an autoregressive predictor. These pieces work because they compose, and because the whole stack is trained end-to-end on next-token prediction.</p>
 						</div>
-						<div class="fieldnotes">
-							<h4>Decoder only, or encoder too?</h4>
-							<p>BERT kept the encoder and trained bidirectionally with masked tokens; GPT kept the decoder and trained autoregressively with a causal mask. The same block, two contracts with the data.</p>
-						</div>
+						
 						<div class="keypoints">
 							<div class="keypoint"><b>Multi-head</b><span>Several attention heads run in parallel, each in a lower-dimensional subspace, then concatenate.</span></div>
 							<div class="keypoint"><b>Causal mask</b><span>In a decoder, token i may only attend to tokens ≤ i. The future is not available.</span></div>
@@ -696,7 +721,6 @@
 </div>
 <div id="transformer-output-projection" style="background: var(--mn-surface, white); padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
 <div>
-<label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
 <input id="transformer-master-token-input" type="hidden" value="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'der' : 'the'; ?>"/>
 <div class="tm-token-builder" id="transformer-token-builder">
 	<div class="tm-token-builder-head">
@@ -712,7 +736,7 @@
 </div>
 						
 
-<div class="prose">
+<div class="optional md" data-headline="<?php echo function_exists("tm_lang") && tm_lang() === "de" ? "In-Context-Learning als Optimizer" : "In-context learning as an optimizer"; ?>">
 							<p>
 								One last surprise from recent research: in a simplified setting, a linear
 								attention layer can implement a step of gradient descent on the examples in the
