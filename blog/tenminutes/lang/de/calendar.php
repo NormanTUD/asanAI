@@ -77,7 +77,7 @@ return [
 		'What AI Can Discover' => 'Was KI entdecken kann',
 		'AlphaFold, materials, weather, and mathematics: how prediction becomes discovery, and why verification is the bottleneck.' => 'AlphaFold, Materialien, Wetter und Mathematik: wie Vorhersage zu Entdeckung wird und warum Verifikation der Engpass ist.',
 		'The People and the Map' => 'Die Menschen und die Karte',
-		'Ideas arrive through people and institutions. Close the year by zooming out.' => 'Ideen kommen durch Menschen und Institutionen. Schließe das Jahr mit einem Schritt zurück.',
+		'Ideas arrive through people and institutions. Meet the recurring cast behind the machine before the final question.' => 'Ideen kommen durch Menschen und Institutionen. Triff die wiederkehrende Besetzung hinter der Maschine vor der letzten Frage.',
 	],
 	'attrs' => [],
 ];

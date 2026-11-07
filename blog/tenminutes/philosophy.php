@@ -218,8 +218,8 @@
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">We can measure behaviour; we cannot yet measure experience.</p>
-							<p class="aha-sub">The hard question is not whether a model can answer, but what, if anything, is happening inside.</p>
+							<p class="aha-big">The chain reaches back to the Big Bang; experience is still the open question.</p>
+							<p class="aha-sub">We can describe the preconditions and measure behaviour. We cannot yet explain why anything exists or what, if anything, is happening inside.</p>
 						</div>
 					</section>
 				</article>
