@@ -2051,6 +2051,7 @@
 				} else if (text) {
 					tokens = text.split(/\s+/);
 				}
+				tokens = tokens.filter(function (token) { return String(token) !== "<|endoftext|>"; });
 				unembedSentence.innerHTML = tokens.map(function (token, i) {
 					return '<span class="tm-unembed-sent-token">' + featureEsc(display(token)) + '<button type="button" class="tm-unembed-sent-remove" data-index="' + i + '" aria-label="' + (DE() ? "Token entfernen" : "Remove token") + '" title="' + (DE() ? "Token entfernen" : "Remove token") + '">×</button></span>';
 				}).join('') + '<span class="tm-unembed-sent-cursor" aria-hidden="true">▍</span>';

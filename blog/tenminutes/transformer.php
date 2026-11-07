@@ -418,11 +418,10 @@
 				</div>
 				<p>The final vector is compared with every vocabulary embedding. The bars are the model's shortlist for the next token.</p>
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-unembed" aria-label="Top next-token logits"></canvas>
-				<p class="tm-step-more">The final vector is compared with every vocabulary embedding. Softmax turns the scores into probabilities; a decoding rule chooses one token.</p>
+				<p class="tm-step-more">The final vector is compared with every vocabulary embedding. Softmax turns the scores into probabilities; a decoding rule chooses one token. Click the top token.</p>
 				<div class="tm-step-formula" data-tex="p = \operatorname{softmax}(h_L W_U^\top)"></div>
 				<div class="tm-unembed-controls">
 					<label class="tm-unembed-temp">Temperature <input type="range" id="tm-unembed-temp" min="0.1" max="2" step="0.1" value="1"><output id="tm-unembed-temp-out">1.0</output></label>
-					<div class="tm-unembed-tokens" id="tm-unembed-tokens" role="group" aria-label="Append a token"></div>
 				</div>
 				<div class="tm-unembed-topk-row">
 					<label class="tm-unembed-topk">Top-k <input type="range" id="tm-unembed-topk" min="1" max="20" step="1" value="5"><output id="tm-unembed-topk-out">5</output></label>
