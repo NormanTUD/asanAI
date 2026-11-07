@@ -491,6 +491,75 @@ Read every sentence on its own, then in its paragraph, and fix it in this order:
    write one line saying what was wrong and what it is now. Add a self-critique
    when the new sentence is still a simplification or a judgement call.
 
+## Engagement pass (text only)
+
+Ten Minutes pages are short, but length is not the same as retention. A page
+holds a reader when it asks a question the reader wants answered, gives them
+something concrete to picture, and delivers a payoff. This pass changes prose
+only. It adds no demos, popups, gamification, emojis, or fake urgency.
+
+### The eight moves
+
+1. **Hook first.** The first sentence is a concrete scene, a surprising fact,
+   or a real question. Do not open with a recap of the previous page, a
+   definition, or "This page ...".
+2. **Question and promise.** State the one question the page answers and what
+   the reader will be able to see or answer by the end, inside the first 100
+   words.
+3. **Put the reader in the sentence.** Use informal *du* / *you*, imperatives,
+   and thought experiments. At least three reader-address moments per page,
+   one in the first 100 words.
+4. **Anchor every abstraction.** Within two sentences, give every abstract
+   claim a number, a name, a mini-scene, or a concrete comparison. Replace
+   vague quantifiers with numbers or conditions.
+5. **Give every section a payoff.** Open with a claim or question, not a
+   topic label. End with a one-sentence consequence and a bridge to the next
+   section. No section ends on a bare fact.
+6. **One idea per paragraph, one spine per page.** Three to six sentences,
+   usually at most 120 words. Use one recurring image or phrase and return
+   to it at the end.
+7. **Use load-bearing contrast only.** "Not X but Y" is allowed when the
+   reader actually holds X or when the surprise is the point. Otherwise
+   state the claim positively.
+8. **Close with a door.** The last passage answers the opening question in
+   one memorable sentence and opens the next question. The "short version"
+   synthesises; it does not repeat the page.
+
+### Page template
+
+- Hero deck: hook, question, promise.
+- Section: heading as claim or question; first paragraph with a concrete
+  anchor; mechanism in two or three short paragraphs; final sentence with
+  the consequence and bridge.
+- Closing: callback to the opening question, one-sentence answer, next door.
+
+### Sentence surgery
+
+- Read the first sentence alone. If it is a recap or throat-clearing, cut it
+  and start with the claim.
+- Replace nominalisations with verbs, vague quantifiers with numbers, and
+  passive constructions with an actor where possible.
+- Split sentences over 35 words and paragraphs over 120 words.
+- Cut "It is worth", "Notice that", "In this section", "As we have seen".
+- Remove a metaphor that only decorates; keep one that explains.
+- Read the paragraph aloud. If you run out of breath, split it.
+
+### Bilingual parity
+
+Apply the same moves to `lang/de/<slug>.php`; do not translate the English
+syntax. German uses informal *du*, shorter sentences, and the same questions,
+anchors, and payoffs. A German page that is correct but flatter than the
+English page is not finished.
+
+### Advisory audit
+
+Run `python3 blog/tools/tenminutes_engagement_audit.py` before and after a
+pass. It reports the first-sentence type, questions, reader address, concrete
+anchors, long paragraphs and sentences, the closing callback, and bilingual
+parity. It is advisory, not a hard gate. The manual cold-read test still
+decides: read the first 100 and the last 100 words; can you state the question
+and the answer?
+
 ## Prose style: no filler contrasts
 
 State the claim positively. Most “X is not Y” sentences do real work: they name

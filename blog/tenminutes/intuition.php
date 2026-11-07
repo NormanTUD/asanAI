@@ -33,15 +33,8 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
 						<h2 class="section-title">A first intuition: predict the next word.</h2>
 						<div class="prose">
-							<p>
-								A <strong>large language model</strong> (<strong>L</strong>arge <strong>L</strong>anguage <strong>M</strong>odel, <strong>LLM</strong>) is a program
-								trained on a very large body of text: Wikipedia, books, web pages, code, and
-								conversation. It learns one skill, <strong>predicting the next token</strong>,
-								and that skill carries chat, translation, and much of what looks like
-								reasoning. You may already use one on your phone: you type a question, and the
-								answer appears one word at a time.
-							</p>
-							<p>If you use a search engine’s AI summary, the answer may appear all at once instead of word by word: those answers are often cached. The advantage is that you no longer have to click through every possible website, because an automatic summary has already read them for you.</p>
+							<p>Ask your phone a question. The answer appears one word at a time. Under the hood, the model is doing one thing: predicting the next token.</p>
+							<p>A large language model is a program trained on text. It returns a probability for every possible next token. Pick one, append it, and run again. That is the autoregressive loop. How does a pile of numbers become a sentence? Follow one token through the machine.</p>
 						</div>
 
 						<div class="demo demo--paper demo--interactive" id="phone-demo">
@@ -86,41 +79,6 @@
 							<div class="demo-insight"><b>Takeaway</b><span>The search engine does not look up a stored answer. The summary is written one token at a time, and the same loop runs in the data centre behind it.</span></div>
 						</div>
 
-						<div class="prose">
-							<p>
-								Here is the core idea. A language model reads a sequence of
-								tokens and returns a <strong>probability for every possible next
-								token</strong>. One is chosen, appended to the input, and the whole thing
-								runs again. That is the <strong>autoregressive loop</strong>.
-							</p>
-							<p>
-								Two words in that description are doing quiet work. “Probability” means the
-								model assigns a score to every possible next token, and the scores sum to
-								one. It does not first choose an answer and then attach a confidence; the
-								whole distribution is the output. The other word is “token”. The demo below calls
-								its tokens words because that is easiest to follow, but a token can be a
-								whole word, a word fragment, a single character, a group of characters, a
-								space, a punctuation mark, or an emoji. When “unbelievable” is not in the
-								vocabulary, the tokenizer splits it into several pieces such as “un”,
-								“believ”, and “able”. The loop does not care what the pieces are; it
-								predicts the next one.
-							</p>
-							<p>
-								This page builds a technical intuition, not the complete picture. A real
-								model adds a tokenizer, layers of attention, a feed-forward network, position
-								information, training data, and post-training. The loop comes first and last because
-								every other part exists to make this one prediction possible. Each part
-								supplies something the loop needs; none of them is an optional upgrade.
-							</p>
-							<p>
-								A conversation, a poem, a Python function: in an LLM, all of it is generated
-								by this loop. That sounds like a small mechanism until you see what the
-								context can contain: a question, a worked example, a program's output, or
-								the model's own earlier reasoning. Each new token refers to everything before
-								it. The loop is a slow, step-by-step approach to a plausible answer, not the
-								whole solution in one shot.
-							</p>
-						</div>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">At its heart, it is a loop: one word after another.</p>
@@ -132,8 +90,7 @@
 						<div class="section-kicker">Next step · code</div>
 						<h2 class="section-title">It also writes code.</h2>
 						<div class="prose">
-							<p>The same loop that completes a sentence can complete a program. Ask for a small Python script, and the model predicts tokens that form code, a file name, and a terminal command. The code is text the model produced; the model does not run it. Python runs it, and the result is what you see in the terminal.</p>
-							<p>That difference matters. The model does not calculate the scattering ratio in its head. It writes a program that calculates it; the program does the arithmetic. A language model can produce code because code is a sequence of tokens with strong regularities, the same way a sentence is.</p>
+							<p>The same loop writes code. The model predicts the tokens; Python runs the program. Code is just another sequence with strong regularities.</p>
 						</div>
 
 						<div class="demo demo--paper demo--interactive code-demo--console" id="code-demo">
@@ -180,21 +137,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="section-kicker"><span class="sk-num">02</span> Play the loop</div>
 						<h2 class="section-title">Write a sentence, one word at a time.</h2>
 						<div class="prose">
-							<p>
-								The demo below shows the idea, not a trained model. The next token is chosen
-								from a probability distribution, appended to the context, and the whole thing
-								runs again. A real model computes that distribution with learned weights.
-								Prediction here means nothing mystical: the model states how likely each
-								candidate is.
-							</p>
-							<p>
-								Temperature is why the text is not identical every time you ask. People do
-								not repeat the same sentence word for word either, and a little randomness
-								keeps generated text from sounding mechanical. Higher temperatures widen the
-								field of plausible continuations. That is welcome in a story and unwelcome in
-								a balance sheet, so the setting depends on the task. Temperature decides how
-								far the model may drift from the most probable path.
-							</p>
+							<p>The demo shows the idea, not a trained model. The next token is drawn from a distribution, appended, and the loop repeats. Temperature controls how far the model drifts from the most likely path.</p>
+							<p>Why not always take the top token? Greedy does. Top-p keeps the smallest set whose cumulative probability reaches p, then samples. Low temperature sharpens the distribution; high temperature flattens it.</p>
 						</div>
 
 						<div class="demo demo--generative" id="next-token-demo">
@@ -245,16 +189,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<div class="demo-insight"><b>Takeaway</b><span>The distribution is the model; the choice is how you draw from it. Greedy, sampling, and top-p all read the same probabilities differently.</span></div>
 						</div>
 
-						<div class="prose">
-							<p>
-								Sampling is one way to choose. Greedy takes the most likely token every
-								time, which makes the text deterministic and often repetitive. Top-p sorts
-								the tokens by probability and keeps the smallest set whose cumulative
-								probability reaches the threshold p, then samples from that set. Temperature
-								shapes the distribution before any of these choices: low values concentrate
-								it, high values flatten it.
-							</p>
-							<div class="demo demo--paper demo--canvas" id="truth-tunnel-demo">
+						<div class="demo demo--paper demo--canvas" id="truth-tunnel-demo">
 								<div class="demo-head">
 									<div>
 										<p class="demo-title">The truth tunnel <span>· demo 01b</span></p>
@@ -282,18 +217,10 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								</div>
 								<div class="demo-insight"><b>Takeaway</b><span>The model never decides that something is right. It builds a distribution from its training data and draws from it; the tunnel shows how context narrows that distribution.</span></div>
 							</div>
-							<p>
-								The formula puts <span data-tex="T" data-tex-display="false"></span> in the
-								denominator, so an exact temperature of zero would mean dividing by zero. In
-								practice greedy decoding is treated as the limit
-								<span data-tex="T \to 0" data-tex-display="false"></span>, and
-								implementations special-case zero by taking the top token directly.
-							</p>
-						</div>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">A good predictor compresses.</p>
-							<p class="aha-sub">To predict the next word well, a model has to capture regularities in the data, and a compact description of those regularities is a form of compression. Whether that description amounts to understanding the world is a live question, not a settled fact.</p>
+							<p class="aha-sub">A compact description of regularities is a form of compression. Whether that is understanding is still open.</p>
 						</div>
 						<div class="demo demo--paper" data-demo="compression">
 							<div class="demo-head">
@@ -325,30 +252,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="section-kicker"><span class="sk-num">03</span> Inside the model</div>
 						<h2 class="section-title">Six steps, one running vector.</h2>
 						<div class="prose">
-							<p>
-								The loop is the outside view. Inside, one token passes through a fixed
-								pipeline, and each step changes its representation. The steps below
-								correspond to what <a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a> described as a transformer: text becomes ids, ids become
-								vectors, position adds where each token sits, attention adds context, the
-								feed-forward network computes, and the residual stream carries the result to
-								the next layer, where attention and the feed-forward network work again; at
-								the end, a token is chosen.
-							</p>
-							<p>
-								A transformer is a stack of layers. Each layer reads the running vector,
-								computes an update, and adds that update back to the vector. Written out,
-								the first steps look like this:
-							</p>
+							<p>Inside, one token passes through six steps: tokenize, embed, position, attention, feed-forward, residual. Each step changes its vector; the residual stream carries it to the next layer.</p>
 							<div class="prose-math" data-tex="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{token vector}})}_{\text{what layer 1 adds}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{running vector}})}_{\text{what layer 2 adds}} \end{aligned}" data-tex-de="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{Token-Vektor}})}_{\text{was Schicht 1 hinzufügt}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{laufender Vektor}})}_{\text{was Schicht 2 hinzufügt}} \end{aligned}" data-tex-display="true"></div>
-							<p>
-								The original signal stays in the sum. Later layers read it together with
-								everything the earlier layers have added.
-							</p>
-							<p>
-								The six steps below are a technical intuition, not a complete circuit
-								diagram. Each step isolates one job and shows a small, simplified version of
-								it.
-							</p>
+							<p>The new state is the old state plus what the layer adds. The demos are simplified; the order is the real architecture.</p>
 						</div>
 					</section>
 
@@ -357,7 +263,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="section-kicker">Step 1 · Tokenize</div>
 						<h2 class="section-title">Text becomes a sequence of ids</h2>
 						<div class="prose">
-							<p>A token is not a word. Before the model can read anything, text is encoded as numbers. Every character has a Unicode code point, and an encoding turns that number into bytes. A byte-level tokenizer starts from all 256 possible bytes, so every piece of text is representable, including characters it never saw in training. Rare words split into <strong>subwords</strong>: pieces the vocabulary already knows. The tokenizer does not care about syllables or meaning. It might split “unbelievable” into “un”, “believ”, and “able”, and the same piece reappears in other words: the “un” in “unhappy” and in “unmarried” has the same id. New emoji still work because related emoji share their first bytes: most characters in the main emoji block begin with <code>F0 9F</code>. A space is a byte too, and it can be a token of its own.</p>
+							<p>A token is not a word. Text is encoded as numbers: every character has a code point, and a byte-level tokenizer starts from 256 bytes, so every string is representable. Rare words split into subwords: “unbelievable” becomes “un”, “believ”, “able”, and the same “un” appears in “unhappy” and “unmarried”. A space can be a token too.</p>
 						</div>
 						<div class="step-pane" id="step-tokenize">
 															<div class="step-stage">
@@ -371,7 +277,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																<div class="token-chips" id="itok-out" aria-live="polite"></div>
 																<div class="demo-readout demo-readout--4" id="itok-stats"></div>
 															</div>
-															<p class="step-note">The demo shows the pieces and their ids. A real tokenizer learns its merge table from text, so frequent pieces become single tokens and rare ones split. That is how a fixed vocabulary can cover an open-ended set of strings. The ids carry no meaning on their own; they are addresses into an embedding table.</p>
+															<p class="step-note">A real tokenizer learns its merge table from text. IDs are addresses into an embedding table.</p>
 														</div>
 					</section>
 
@@ -380,10 +286,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<h2 class="section-title">Ids become points in meaning space</h2>
 						<h4 class="layer-subhead">Meaning becomes geometry</h4>
 						<div class="prose">
-							<p>Each token id points to a vector of learned parameters. A real model uses thousands of dimensions, often around ten thousand; this demo uses two so the picture can be represented, but the principle is the same. The vector is the token's starting representation. The model learns these points from its training data (Wikipedia, books, web pages, code) and chooses the rules itself. Words become points in a space: similar words sit close together, and a <b>direction</b> can carry a relationship, such as the arrow from man to woman being the same arrow as king to queen. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>)</p>
-						</div>
-						<div class="prose">
-							<p>Start with one axis. Temperature can order words from cold to hot, but it cannot separate “lukewarm” from “bright”: on a single line they would have to share a coordinate. A second, independent axis adds a relation that the first does not contain. Embeddings use hundreds of axes for exactly this reason: each one can carry a distinction the others cannot.</p>
+							<p>Each token ID points to a learned vector. A real model uses thousands of dimensions; the demo uses two so you can see it. Similar words sit close, and a direction can carry a relationship: man → woman is the same arrow as king → queen. The axes here are labelled for humans; a real model's axes are unlabelled.</p>
 						</div>
 						<div class="demo demo--paper demo--plot" id="oned-twod-demo">
 							<div class="demo-head">
@@ -420,8 +323,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						</div>
 						<h4 class="layer-subhead">From relations to translation</h4>
 						<div class="prose">
-							<p>Words and whole sentences are points in a high-dimensional space, and the points form a <b>manifold</b>: near each point it looks flat like a plane, but as a whole it can be curved, much like the Earth's surface from where you stand. The relations between the points are similar enough that they can be used for translation: the path from one word or sentence to another can be transformed into the corresponding path in another language. In a transformer, the feed-forward networks help learn such transformations.</p>
-							<p>The words (tokens) and their positions relative to each other are enough to derive translations, from those relations alone. In real models this is more complex not only because the space is high-dimensional, but also because they are tokens, not whole words.</p>
+							<p>The points form a manifold: locally flat, globally curved. The relations are similar enough to translate: the path from one word to another can be transformed into the corresponding path in another language. Feed-forward networks learn such transformations.</p>
 						</div>
 						<div class="demo demo--paper demo--canvas" id="tm-dual-manifold-demo">
 							<div class="demo-body">
@@ -440,8 +342,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="section-kicker">Step 3 · Positional embedding</div>
 						<h2 class="section-title">Every slot gets its own fingerprint</h2>
 						<div class="prose">
-							<p>Attention, explained in the next step, compares tokens with each other but has no built-in sense of order. Without a position signal, “man bites dog” and “dog bites man” contain exactly the same vectors and look identical. A positional encoding adds a distinct fingerprint to every slot, so order becomes part of the representation.</p>
-							<p>The classic sinusoidal encoding comes from <strong>Vaswani et al. (2017)</strong> in <a href="https://arxiv.org/abs/1706.03762" rel="noopener">Attention Is All You Need</a>. Here <strong>pos</strong> is the token’s position, <strong>i</strong> indexes a pair of dimensions (0, 1, 2, …), and <strong>d</strong> is the model dimension, the width of the vector. Each pair of dimensions oscillates at a different frequency: low dimensions change slowly, high dimensions quickly.</p>
+							<p>Attention has no sense of order. Without a position signal, “man bites dog” and “dog bites man” are the same bag of vectors. A sinusoidal encoding adds a fingerprint to every slot: each pair of dimensions oscillates at a different frequency.</p>
 						</div>
 						<div class="prose-math pos-formula" data-tex="\underbrace{\begin{aligned} PE_{(\text{pos},2i)} &amp;= \sin\left(\frac{\underbrace{\text{pos}}_{\text{position}}}{\underbrace{10000^{2i/d}}_{\text{frequency}}}\right) \\ PE_{(\text{pos},2i+1)} &amp;= \cos\left(\frac{\text{pos}}{10000^{2i/d}}\right) \end{aligned}}_{\text{each dimension gets its own wave}}" data-tex-de="\underbrace{\begin{aligned} PE_{(\text{pos},2i)} &amp;= \sin\left(\frac{\underbrace{\text{pos}}_{\text{Position}}}{\underbrace{10000^{2i/d}}_{\text{Frequenz}}}\right) \\ PE_{(\text{pos},2i+1)} &amp;= \cos\left(\frac{\text{pos}}{10000^{2i/d}}\right) \end{aligned}}_{\text{jede Dimension bekommt ihre eigene Welle}}" data-tex-display="true"></div>
 						<div class="step-pane" id="step-position">
@@ -456,7 +357,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 										<output id="ipe-heat-dims-out">24</output>
 									</label>
 								</div>
-								<p class="step-note">The heatmap below shows the classic sinusoidal encoding: each position gets a fingerprint built from slow and fast waves.</p>
+								<p class="step-note">Each position gets a fingerprint built from slow and fast waves.</p>
 								<canvas class="step-canvas" id="ipe-heatmap" style="height:220px" aria-label="A heatmap of classic sinusoidal positional encodings for a long context"></canvas>
 								<div class="pos-legend" aria-hidden="true">
 									<span><i class="pl-neg"></i>−1</span>
@@ -468,7 +369,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<div class="prose">
 								<p class="pos-bridge-kicker">Same pattern, one dimension higher</p>
 								<h3>From the flat slice to the 3D curve</h3>
-								<p>The heatmap above shows the pattern as a flat slice: position across, dimension up. Below, the same sinusoidal fingerprint is drawn as a real 3D curve. Here d = 3, so the curve is exactly three-dimensional. The shape does not change; only the number of dimensions does. In a real model this curve becomes a surface in thousands of dimensions.</p>
+								<p>The 3D curve is the same fingerprint with d = 3; a real model uses thousands of dimensions.</p>
 								<p class="pos-bridge-flow" aria-hidden="true"><span>position × dimension</span><i>→</i><span>3D curve</span><i>→</i><span>N dimensions</span></p>
 							</div>
 							<div class="step-stage">
@@ -483,7 +384,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A single sinusoidal positional-encoding vector for one token: three dimensions as axes, one point on the curve"></canvas>
 								<div class="step-out" id="ipe-out">One token at position <b>7</b>.</div>
 							</div>
-							<p class="step-note">The plot shows the sinusoidal encoding as one vector for the selected position. The three axes are the first three dimensions; the blue sphere is the original word, and the arrow is its position vector. Move the slider and the point follows the curve. Drag the plot to rotate it. The curve uses d = 3 here; a real model uses thousands of dimensions.</p>
+							<p class="step-note">The three axes are the first three dimensions; the blue sphere is the word, the arrow its position. Drag to rotate. A real model uses thousands of dimensions.</p>
 						</div>
 					</section>
 
@@ -491,7 +392,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="section-kicker">Step 4 · Attend</div>
 						<h2 class="section-title">Context pulls the word into place</h2>
 						<div class="prose">
-							<p>Attention lets each token look at the other tokens in the context, decide which ones matter for it, and pull their information into its own vector. That is how “bank” moves toward the river reading or the money reading. The demo shows one simplified attention head. A real layer runs many heads in parallel, each attending to something different: one to the previous word, another to the subject, another to a clue far back in the context. Their results are concatenated and projected back.</p>
+							<p>How does a word know which neighbours matter? Attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the river or money reading. A real layer has many heads; the demo shows one.</p>
 						</div>
 						<div class="step-pane" id="step-attention">
 															<div class="step-stage">
@@ -509,10 +410,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																<div class="attn-matrix" id="iatt-matrix" aria-live="polite"></div>
 																<div class="prose-math attn-sum" id="iatt-sum" data-tex-display="true"></div>
 															</div>
-															<p class="step-note"><b>This step is an intuition, not a real attention head.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result: context changes the representation. It shows one simplified attention head, not the many heads and layers of a real model.</p>
-															<p class="step-note">The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database. The same word can end up in a different place depending on the context, because the values it collects are different.</p>
-															<p class="step-note">Training data is full of typos, misspellings, and irregular spacing. Attention and the feed-forward network see both clean and noisy text, so they learn to route around the noise and still produce something useful from a misspelled token. The first layers are there to combine such evidence: if “york” follows, a layer can push “new” toward the city meaning, even when “new” is misspelled.</p>
-															<p class="step-note">A real model does not have one head; it has hundreds, and each can attend to something different across the whole context. Every head has exactly one unit of attention to spend. If it puts 80% on one word, only 20% remains for all the others. That is the useful tension: the budget forces the head to commit, but the weights are learned, so the commitment can shift with the context.</p>
+															<p class="step-note"><b>This is an intuition, not a real head.</b> A real head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the value vectors.</p>
+															<p class="step-note">Each head has one unit of attention. If it puts 80% on one word, only 20% remains for the others. Many heads can attend to different things.</p>
 														</div>
 					</section>
 
@@ -520,27 +419,25 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="section-kicker">The layer in detail · the MLP</div>
 						<h2 class="section-title">A projection, a bias, a bend</h2>
 						<div class="prose">
-							<p>After attention, each token passes through a small network of its own: the feed-forward network, usually a multilayer perceptron (MLP). It first computes an affine projection, <span data-tex="Wx + b" data-tex-display="false"></span>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
+							<p>After attention, each token passes through its own small network, the MLP. It projects the vector, applies a nonlinearity, and projects back. The bend is what lets a straight cut separate what was inseparable.</p>
 						</div>
 						<div class="step-pane layer-pane" id="layer-detail">
 															<div class="layer-formula" data-tex="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{weight}\\\text{matrix}}}\,x + \underbrace{b}_{\text{bias}}\right)" data-tex-de="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{Gewichts-}\\\text{Matrix}}}\,x + \underbrace{b}_{\text{Bias}}\right)"></div>
 															<div class="collapse-card">
 																<div class="cc-label">Worked example · 2 inputs, 2 outputs</div>
 																<div class="collapse-math" data-tex="\begin{aligned} W &amp;= \begin{pmatrix} 1 &amp; 2 \\ 0 &amp; -1 \end{pmatrix}, \quad x = \begin{pmatrix} 3 \\ 1 \end{pmatrix}, \quad b = \begin{pmatrix} 0 \\ -2 \end{pmatrix} \\[6pt] Wx &amp;= \begin{pmatrix} 1\cdot 3 + 2\cdot 1 \\ 0\cdot 3 + (-1)\cdot 1 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \end{pmatrix} \\[6pt] z = Wx + b &amp;= \begin{pmatrix} 5 \\ -1 \end{pmatrix} + \begin{pmatrix} 0 \\ -2 \end{pmatrix} = \begin{pmatrix} 5 \\ -3 \end{pmatrix} \\[6pt] \operatorname{ReLU}(z) &amp;= \begin{pmatrix} 5 \\ 0 \end{pmatrix} \end{aligned}"></div>
-																<p>Read <span data-tex="W" data-tex-display="false"></span> row by row: the first output mixes the inputs as <span data-tex="1\cdot 3 + 2\cdot 1" data-tex-display="false"></span>, the second as <span data-tex="0\cdot 3 + (-1)\cdot 1" data-tex-display="false"></span>. The bias adds <span data-tex="0" data-tex-display="false"></span> and <span data-tex="-2" data-tex-display="false"></span>, so <span data-tex="z = (5, -3)" data-tex-display="false"></span>. ReLU, the activation introduced below, sends the negative entry to zero and leaves the other unchanged. A real layer can be much larger, but the rule is the same: each output is a dot product plus a bias, then the activation.</p>
+																<p>Each output is a dot product plus a bias, then the activation. The matrix above shows the arithmetic.</p>
 															</div>
 															<h4 class="layer-subhead">Depth without a nonlinearity</h4>
 															<div class="collapse-card">
 																<div class="cc-label">two dense layers without a nonlinearity</div>
 																<div class="collapse-math" id="collapse-math" data-tex="\begin{aligned} \operatorname{dense}_2(\operatorname{dense}_1(x)) &amp;= W_2(W_1 x + b_1) + b_2 \\ &amp;= (W_2 W_1)x + (W_2 b_1 + b_2) \\ &amp;= Wx + b \\[4pt] W &amp;= W_2 W_1, \qquad b = W_2 b_1 + b_2 \end{aligned}"></div>
-																<p>Stack two projections, one after the other. The product <span data-tex="W_2 W_1" data-tex-display="false"></span> is itself a new single weight matrix: every row of <span data-tex="W_1" data-tex-display="false"></span> is mixed with the columns of <span data-tex="W_2" data-tex-display="false"></span>, and the result is a new matrix. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <span data-tex="W" data-tex-display="false"></span> maps d inputs directly to k outputs: the hidden layer has disappeared. The biases also merge into <span data-tex="W_2 b_1 + b_2" data-tex-display="false"></span>. Without a nonlinearity, two layers are exactly one layer with a combined <span data-tex="W" data-tex-display="false"></span>; depth without a nonlinearity adds no expressive power. That is why a nonlinear activation is needed.</p>
+																<p>Without a nonlinearity, two layers collapse into one. Depth adds no expressive power.</p>
 															</div>
 															<h4 class="layer-subhead">Nonlinear activation functions</h4>
 															<div class="activation-card">
 																<div class="activation-copy">
-																	<p>A <b>nonlinear activation function</b> is applied to each coordinate after the projection. It adds the nonlinearity that a stack of linear layers otherwise lacks.</p>
-																	<p><span data-tex="\operatorname{ReLU}(z) = \max(0, z)" data-tex-display="false"></span> passes positive values unchanged and sends the entire negative half-space to zero. The graph is flat, then a straight rise: a hard fold at <span data-tex="z = 0" data-tex-display="false"></span>. Because many inputs become the same output, ReLU is not injective; it can change the topology of the representation.</p>
-																	<p><b>Sigmoid</b> squashes every value into (0, 1); <b>tanh</b> squashes it into (-1, 1). Both are strictly increasing, so they bend smoothly without mapping distinct inputs to the same output. <b>GELU</b> is smooth but not monotonic: it dips slightly below zero, so it is also many-to-one. Other choices include SiLU/Swish, ELU, and gated variants such as SwiGLU.</p>
+																	<p>A nonlinearity is applied to each coordinate after the projection. ReLU folds at zero; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic.</p>
 																</div>
 																<div class="activation-plots" id="activation-plots">
 																	<figure class="ap ap-relu">
@@ -578,7 +475,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																</div>
 															</div>
 															<h4 class="layer-subhead">Where the bend happens</h4>
-															<p class="step-note curve-intro">After attention has placed each token in context, the MLP works on that token on its own. It projects the vector, adds a bias, and applies a nonlinearity. A smooth activation bends the surrounding space instead of only stretching it; ReLU folds it along a crease at <span data-tex="z = 0" data-tex-display="false"></span>. This moves the token toward a region where the next token is easier to separate.</p>
+															<p class="step-note curve-intro">After attention, the MLP moves the token toward a region where the next token is easier to separate.</p>
 															<div class="demo demo--paper demo--canvas ism-panel" data-arrow-nav style="margin-top:14px">
 																<div class="demo-head">
 																	<div>
@@ -603,8 +500,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																</div>
 																<div class="demo-insight"><b>Takeaway</b><span>The layers in an MLP lift the points into a higher-dimensional space where a straight line can separate what was inseparable before. They change the space in which the cut is made.</span></div>
 															</div>
-															<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into one that a straight line can separate, which in higher dimensions means a plane or hyperplane.</p>
-															<p class="step-note">An MLP also translates the representation. Its affine step can move a feature into a region where the next layer can use it; separation and translation are two descriptions of the same learned transformation.</p>
+															<p class="step-note">Real models do this in thousands of dimensions. Separation and translation are two views of the same learned transformation.</p>
 															<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>).</p>
 														</div>
 					</section>
@@ -613,7 +509,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="section-kicker">Step 5 · Feed-forward</div>
 						<h2 class="section-title">A pattern matches, a value is written</h2>
 						<div class="prose">
-							<p>A feed-forward network works on each token separately. It expands the vector into a wider hidden layer, applies an activation, and projects back to the original width. Attention mixes information across tokens; the feed-forward part does the per-token computation. The patterns below are a strongly simplified picture of which regions the network activates for a given context; they are not stored rules.</p>
+							<p>The feed-forward network works on each token separately. It expands the vector, applies an activation, and projects back. Attention mixes tokens; the FFN computes within a token.</p>
 						</div>
 						<div class="step-pane" id="step-ffn">
 															<div class="step-stage">
@@ -642,7 +538,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																	</div>
 																</div>
 																<div class="step-out" id="iffn-out"></div>
-																<p class="step-note ffn-caveat"><b>What is simplified:</b> a real FFN has no labelled keys or values. The “patterns” are learned directions in W₁; the “pull” is a learned direction in W₂ that changes the next-token distribution. The labels are a simplified picture, not stored rules.</p>
+																<p class="step-note ffn-caveat"><b>What is simplified:</b> a real FFN has no labelled keys or values. The patterns are learned directions in W₁; the pull is a learned direction in W₂.</p>
 															</div>
 														</div>
 					</section>
@@ -651,7 +547,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="section-kicker">Step 6 · Residual</div>
 						<h2 class="section-title">Every layer adds to the same stream</h2>
 						<div class="prose">
-							<p>Every layer reads the same running vector, the residual stream, computes an update, and adds it back. Think of the stream as a shared notebook that any layer can write to. Earlier notes stay in place; later layers read the original entry plus everything written since. The rule is <span data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)" data-tex-display="false"></span>: the new state is the old state plus a change. Each attention block contains many heads, and each MLP contains several layers; the diagram folds them into one step at a time.</p>
+							<p>Every layer reads the same running vector, computes an update, and adds it back. Think of a shared notebook: earlier notes stay, later layers read them and add more. The new state is the old state plus a change.</p>
 						</div>
 						<div class="step-pane" id="step-residual">
 															<div class="step-stage">
@@ -674,38 +570,16 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																	</div>
 																</div>
 															</div>
-															<p class="step-note">The addition is the point. Nothing is overwritten, so the original signal survives, and gradients have a short path back through the sum. That is a large part of why very deep networks train at all. The numbers under the bars are the same sum written out one coordinate at a time.</p>
+															<p class="step-note">Nothing is overwritten, so the original signal survives and gradients have a short path back. That is why deep networks train.</p>
 														</div>
 					</section>
 					<section class="section-block" id="last-step">
 						<div class="section-kicker"><span class="sk-num">04</span> The last step</div>
 						<h2 class="section-title">The final vector picks a word.</h2>
 						<div class="prose">
-							<p>
-								At the end of the pipeline, the last token carries the whole context,
-								and therefore the meaning of everything written so far. Attention has
-								repeatedly mixed it with all the other tokens, and the feed-forward
-								network has decided what should be active and what should not, so what
-								is relevant here and what is not. The result is one vector,
-								<strong>h</strong>.
-							</p>
-							<p>
-								To choose the next token, the model takes the dot product of
-								<strong>h</strong> with every token’s embedding
-								<strong>w<sub>i</sub></strong>. A large positive value means the two
-								directions agree; a small or negative value means they do not. These
-								scores are called <strong>logits</strong>: unbounded numbers, one per
-								vocabulary entry.
-							</p>
+							<p>How does the final vector become a probability? The last token carries the whole context. The model takes the dot product of its final vector h with every token embedding, producing logits: one raw score per vocabulary entry.</p>
 							<div class="prose-math" data-tex="\underbrace{\text{logit}_i = \underbrace{h}_{\text{context vector}} \cdot \underbrace{w_i}_{\text{token direction}}}_{\text{how much the context points toward token }i}" data-tex-de="\underbrace{\text{logit}_i = \underbrace{h}_{\text{Kontextvektor}} \cdot \underbrace{w_i}_{\text{Token-Richtung}}}_{\text{wie stark der Kontext auf Token }i\text{ zeigt}}" data-tex-display="true"></div>
-							<p>
-								The logits are not probabilities. A logit is a raw score: larger
-								means the model finds that token more plausible, but the values
-								are unbounded and do not sum to one. The softmax turns the
-								scores into a distribution. It exponentiates every logit and
-								divides each by the normalizer Z, the sum of all exponentiated
-								logits. Z makes the probabilities add up to one.
-							</p>
+							<p>Softmax turns the logits into a distribution: exponentiate, divide by the sum. The largest score becomes the most likely next token, but the alternatives stay alive.</p>
 							<div class="prose-math" data-tex="p_i = \frac{\exp(\text{logit}_i)}{Z}" data-tex-de="p_i = \frac{\exp(\text{Logit}_i)}{Z}" data-tex-display="true"></div>
 						</div>
 
@@ -762,9 +636,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="section-kicker"><span class="sk-num">05</span> The meadow</div>
 						<h2 class="section-title">The same step, seen as geometry.</h2>
 						<div class="prose">
-							<p>The demo above reads the final step as a distribution: logits in, probabilities out, one token drawn. The meadow looks at the same computation from the other side. Instead of asking how the scores become probabilities, it asks what those probabilities mean geometrically: every token owns a region of the thought space, and the next word is the region the thought falls into. Both views are correct, and they are two angles on one step.</p>
-							<p><strong>The meadow of words.</strong> The meadow shows how the model divides the space into cells. After all the layers, the model has a vector for each token, and every token in the vocabulary owns the region of that space closest to it. The image is two-dimensional, while a real model works in thousands of dimensions, but the principle is the same: the vocabulary forms bubbles, and every thought falls into one of them or near its border. The closer the thought is to a word's centre, the more likely that word is; near the edges the estimate becomes less precise. Inside the model, the thought is a precise vector; the vocabulary can only answer with whole cells, so the model can represent a distinction more finely than it can express it in one token. Temperature and top-k change how large the candidate set is. Move the pointer and the thought lands in a cell, or on a seam where two words are almost equally near.</p>
-							<p>The picture has a formal version. <a href="https://arxiv.org/abs/2603.22301" rel="noopener">Mabrok (2026)</a> models the hidden states as a low-dimensional semantic manifold, gives each token a Voronoi region, and calls the band around a seam the <strong>expressibility gap</strong>. The winner's lead over the runner-up is the <strong>Voronoi margin</strong>; the area of a token's cell is its <strong>semantic volume</strong>, so broad or polysemous words own large cells and precise words small ones. More tokens make the cells smaller, but the average distortion of a finite vocabulary falls only as a power of its size, set by the intrinsic dimension. That is why the seams shrink but never close.</p>
+							<p>The meadow looks at the same step geometrically. Every token owns a region of the thought space; the next word is the region the thought falls into. Near a seam, two words are almost equally likely.</p>
+							<p>More tokens make the cells smaller, but the seams never close. The model can represent a distinction more finely than it can express it in one token. <a href="https://arxiv.org/abs/2603.22301" rel="noopener">Mabrok (2026)</a> calls the band around a seam the expressibility gap.</p>
 						</div>
 
 						<div class="demo demo--paper demo--canvas" id="meadow-demo">
@@ -799,62 +672,14 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="section-kicker"><span class="sk-num">06</span> The whole loop</div>
 						<h2 class="section-title">Text in, geometry, one word out.</h2>
 						<div class="prose">
-							<p>
-								The pieces fit together in a fixed order. The real model is much
-								larger, and the remaining pages fill in the details. Text is cut into
-								<strong>tokens</strong>. Each token becomes a <strong>vector</strong>. A
-								<strong>position signal</strong> is added. Layer after layer,
-								<strong>attention</strong> lets every vector look at its neighbours while a
-								<strong>residual stream</strong> keeps earlier results and enriches them with new ones. The
-								final vector is scored against the vocabulary and turned into a
-								distribution; one token is drawn. It is appended, and the next pass begins;
-								the loop ends when the model emits the special token <strong>&lt;|endoftext|&gt;</strong>.
-							</p>
-							<p><strong>Two players, one context.</strong> At the start, the user adds tokens one at a time; then the LLM takes a turn, then the user, then the LLM, and so on until the user stops. Both play the same game: each turn adds tokens to the shared context. The loop does not mean the model takes over; it is a back-and-forth in which either side can stop adding tokens.</p>
-							<p>
-								No step has a tidy fact database, and no step “understands” in the human
-								sense. Knowledge is distributed across the weights; meaning lives in the
-								<strong>geometry</strong> (directions, distances, regions) and at each
-								step the model places the next thought somewhere in that space. The embedding plot
-								is that last step, seen up close.
-							</p>
-							<p>
-								So where is a fact, if not in a table? Mostly in the feed-forward weights,
-								where features can share directions instead of each owning a private
-								neuron. The usual reading is that they are <strong>superposed</strong>
-								(<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>),
-								but that reading is contested: a
-								<a href="https://already-clean.goodfire.com/" rel="noopener">2026 Goodfire essay</a>
-								argues that much of what looked like superposition is ordinary
-								generalization. Where features do share a direction, one direction can
-								carry parts of several facts at once. That is why a fact can be partly
-								present, why the model may know something without being able to say it
-								reliably, and why editing one fact can disturb another: both are written
-								along the same direction.
-							</p>
+							<p>The pieces fit in a fixed order: text → tokens → vectors → position → attention + residual → FFN → distribution → draw → append. The loop ends when the model emits the special token &lt;|endoftext|&gt;.</p>
+							<p>No step has a tidy fact database. Knowledge is distributed across the weights, and meaning lives in the geometry. Whether fluent prediction amounts to understanding is still contested. A pile of numbers becomes a sentence one token at a time.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>What it is</b><span>A next-token predictor: one distribution, one draw, one append, repeated.</span></div>
 							<div class="keypoint"><b>Why it scales</b><span>Better prediction usually means better compression, and compression needs more of the world’s structure.</span></div>
 							<div class="keypoint"><b>Its limits</b><span>It predicts plausible text. It can be fluent and wrong, and it offers no guarantee of truth.</span></div>
 							<div class="keypoint"><b>The contested part</b><span>Whether fluent prediction is genuine world knowledge or “stochastic parroting” is not settled.</span></div>
-						</div>
-						<div class="prose">
-							<p>
-								A good compressor has to capture regularities
-								in its data; a good predictor has to capture the same regularities. Solomonoff
-								made this precise by scoring each possible explanation with the length of the
-								shortest program that produces it. A short program that reproduces the data
-								is better than a long one, so simple explanations are favoured. His convergence theorem
-								says that a predictor built this way learns, in the limit, any pattern that a
-								finite program can generate
-								(<a href="https://doi.org/10.1109/TIT.1978.1055913" rel="noopener">Solomonoff, 1978</a>).
-								That score cannot be computed in practice, so the theorem describes an ideal
-								predictor rather than a particular model. It also does not settle whether a
-								model grasps the world. The honest position is that the evidence is still
-								catching up to the argument, and one should be both in awe and have scepticism in
-								response to the fact: a loop this simple gets this far.
-							</p>
 						</div>
 					</section>
 
