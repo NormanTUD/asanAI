@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Atoms of an LLM — A Minimal Generative Grammar</title>
+<style>
+:root{
+  --bg:#050812;--panel:rgba(12,19,38,.78);--line:rgba(148,163,184,.16);--line2:rgba(148,163,184,.3);
+  --ink:#eaf1ff;--muted:#8fa3c4;--dim:#5f7190;
+  --cyan:#67e8f9;--violet:#a78bfa;--rose:#fb7185;--amber:#fbbf24;--emerald:#34d399;--blue:#60a5fa;
+  --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:-20%;z-index:-2;pointer-events:none;background:
+  radial-gradient(36% 28% at 14% 6%,rgba(103,232,249,.14),transparent 70%),
+  radial-gradient(32% 26% at 86% 10%,rgba(167,139,250,.16),transparent 70%),
+  radial-gradient(44% 34% at 50% 92%,rgba(251,113,133,.08),transparent 70%),
+  linear-gradient(180deg,#050812,#070c19 46%,#050812);filter:blur(10px);animation:aurora 24s ease-in-out infinite alternate}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.18;background-image:
+  linear-gradient(rgba(148,163,184,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.05) 1px,transparent 1px);
+  background-size:56px 56px;mask-image:radial-gradient(circle at 50% 18%,#000,transparent 76%)}
+@keyframes aurora{from{transform:translate3d(-2%,-1%,0) scale(1)}to{transform:translate3d(2%,2%,0) scale(1.05)}}
+.wrap{width:min(1180px,calc(100% - 32px));margin:0 auto}
+.hero{padding:clamp(46px,7vw,92px) 0 22px}
+.kicker{display:inline-flex;align-items:center;gap:9px;padding:7px 13px;border:1px solid var(--line);border-radius:999px;
+  background:rgba(103,232,249,.06);color:var(--cyan);font:700 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.kicker i{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 14px var(--cyan)}
+h1{margin:20px 0 14px;font-size:clamp(38px,6.6vw,82px);line-height:.97;letter-spacing:-.045em;font-weight:800;max-width:15ch;text-wrap:balance}
+h1 span{background:linear-gradient(100deg,var(--cyan),var(--violet) 52%,var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{max-width:70ch;color:var(--muted);font-size:clamp(15px,1.7vw,19px);margin:0 0 22px}
+.rail{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 26px}
+.rail code{border:1px solid var(--line);background:rgba(15,23,42,.55);border-radius:9px;padding:6px 9px;
+  color:var(--muted);font:700 11px/1 var(--mono)}
+.rail code.hot{color:var(--cyan);border-color:rgba(103,232,249,.35);background:rgba(103,232,249,.07)}
+.nav{position:sticky;top:0;z-index:50;padding:10px 0;background:linear-gradient(180deg,rgba(5,8,18,.95),rgba(5,8,18,.7),transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:thin}
+.chips::-webkit-scrollbar{height:6px}.chips::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
+.chip{flex:0 0 auto;text-decoration:none;color:var(--muted);border:1px solid var(--line);background:rgba(15,23,42,.6);
+  padding:7px 10px;border-radius:999px;font:700 10.5px/1 var(--mono);transition:.18s ease}
+.chip:hover{color:var(--ink);border-color:var(--line2);background:rgba(30,41,59,.7);transform:translateY(-1px)}
+main{padding:6px 0 80px;display:grid;gap:24px}
+.ruleCard{border:1px solid var(--line);border-radius:26px;overflow:hidden;
+  background:linear-gradient(160deg,rgba(15,23,42,.78),rgba(2,6,23,.93));
+  box-shadow:0 28px 76px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.04);
+  opacity:0;transform:translateY(22px) scale(.995);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.ruleCard.in{opacity:1;transform:none}
+.ruleCard:hover{border-color:rgba(148,163,184,.26)}
+.ruleHead{display:grid;grid-template-columns:74px 1fr;gap:14px;padding:20px 24px 12px;align-items:start}
+.ruleTag{font:800 11px/1 var(--mono);letter-spacing:.12em;color:#04121a;background:linear-gradient(135deg,var(--cyan),var(--violet));
+  border-radius:12px;padding:10px 0;text-align:center;box-shadow:0 8px 24px rgba(103,232,249,.22)}
+.ruleHead h2{margin:0 0 3px;font-size:clamp(18px,2.1vw,24px);letter-spacing:-.025em;line-height:1.12}
+.signature{font:700 11.5px/1.35 var(--mono);color:var(--cyan);margin:0 0 5px;overflow-wrap:anywhere}
+.ruleHead p{margin:0;color:var(--muted);font-size:13.8px;max-width:84ch}
+.stage{position:relative;margin:4px 16px 0;border-radius:18px;overflow:hidden;border:1px solid var(--line);
+  background:radial-gradient(120% 90% at 18% 0%,rgba(103,232,249,.06),transparent 58%),
+    radial-gradient(100% 90% at 90% 10%,rgba(167,139,250,.07),transparent 55%),rgba(3,7,16,.72)}
+.stage::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 90px rgba(0,0,0,.35)}
+.demo-canvas{display:block;width:100%;height:300px}
+.controls{display:flex;flex-wrap:wrap;gap:11px 17px;align-items:center;padding:15px 24px 2px}
+.ctl{display:flex;align-items:center;gap:9px;flex-wrap:wrap;color:var(--muted);font-size:12.4px;font-weight:600}
+.ctl>span{min-width:58px}
+.ctl input[type=range]{-webkit-appearance:none;appearance:none;width:124px;height:4px;border-radius:99px;
+  background:linear-gradient(90deg,var(--cyan),var(--violet));outline:none;cursor:pointer;opacity:.9}
+.ctl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:#eaf1ff;
+  border:2px solid #0b1224;box-shadow:0 0 0 3px rgba(103,232,249,.18);cursor:grab}
+.ctl input[type=range]::-moz-range-thumb{width:13px;height:13px;border:2px solid #0b1224;border-radius:50%;background:#eaf1ff}
+.ctl b{color:var(--ink);font-family:var(--mono);font-weight:700;min-width:42px;text-align:right}
+.btn{appearance:none;border:1px solid var(--line2);background:rgba(30,41,59,.6);color:var(--ink);padding:7px 11px;
+  border-radius:10px;font:700 11.5px/1 var(--sans);cursor:pointer;transition:.16s ease}
+.btn:hover{background:rgba(51,65,85,.75);transform:translateY(-1px)}
+.btn.primary{border-color:transparent;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#04121a}
+.btn.rose{border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.12);color:var(--rose)}
+.btn.is-on{border-color:rgba(103,232,249,.55);background:rgba(103,232,249,.14);color:var(--cyan);box-shadow:0 0 0 3px rgba(103,232,249,.08)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:rgba(2,6,23,.5)}
+.seg button{appearance:none;border:0;background:transparent;color:var(--muted);padding:7px 10px;font:700 11px/1 var(--mono);cursor:pointer;transition:.16s ease}
+.seg button.is-on{background:linear-gradient(135deg,rgba(103,232,249,.22),rgba(167,139,250,.22));color:var(--ink)}
+.stat{display:inline-flex;align-items:baseline;gap:6px;color:var(--dim);font:600 10.5px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase}
+.stat b{color:var(--ink);font-size:12.5px;letter-spacing:0;text-transform:none}
+.why{display:grid;gap:8px;margin:14px 24px 20px;padding:12px 15px;border-left:3px solid var(--violet);border-radius:0 13px 13px 0;
+  background:linear-gradient(90deg,rgba(167,139,250,.08),rgba(167,139,250,.012));color:var(--muted);font-size:13.2px}
+.why b{color:var(--violet);font:800 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;margin-right:7px}
+.why .used{color:var(--dim);font:600 10.5px/1.5 var(--mono)}
+.why .used code{color:var(--cyan);background:rgba(103,232,249,.07);border:1px solid rgba(103,232,249,.18);border-radius:5px;padding:1px 4px}
+
+
+/* derivation */
+.derivation{display:grid;gap:6px;padding:14px 18px 18px}
+.deriv-line{display:grid;grid-template-columns:48px 1fr;gap:10px;align-items:start;padding:7px 9px;border-radius:9px;
+  border:1px solid transparent;opacity:.16;transform:translateY(4px);transition:.25s ease;cursor:pointer}
+.deriv-line.on{opacity:1;transform:none;border-color:var(--line);background:rgba(15,23,42,.38)}
+.deriv-line:hover{background:rgba(103,232,249,.06)}
+.deriv-line.is-active{border-color:rgba(103,232,249,.5);background:rgba(103,232,249,.08)}
+.deriv-p{font:800 10px/1 var(--mono);color:var(--cyan);padding-top:2px}
+.deriv-eq{font:600 12px/1.5 var(--mono);color:var(--muted);overflow-wrap:anywhere}
+.deriv-eq b{color:var(--ink)}
+.deriv-check{display:flex;align-items:center;gap:8px;margin-left:18px;color:var(--dim);font:700 10.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.deriv-check strong{color:var(--emerald);font-size:15px}
+/* minimality */
+.minimal{display:block;width:100%;height:360px}
+.minimal text{font-family:var(--mono)}
+.minimal .node{transition:opacity .35s ease}
+.minimal.core-only .derived{opacity:.12}
+.minimal.core-only .derived-edge{opacity:.08}
+.minimal .core-node{filter:drop-shadow(0 0 10px rgba(103,232,249,.35))}
+.valign{display:flex;flex-wrap:wrap;gap:8px;margin:0 18px 16px}
+.valign .tag{border:1px solid var(--line);border-radius:999px;padding:5px 9px;color:var(--dim);font:700 10px/1 var(--mono)}
+.valign .tag b{color:var(--cyan)}
+/* sources */
+.sources{display:grid;gap:9px;padding:16px 20px 20px}
+.sources a{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(103,232,249,.25)}
+.sources a:hover{border-bottom-color:var(--cyan)}
+.sources p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+.sources b{color:var(--ink)}
+
+/* assembly */
+.assembly{display:grid;gap:14px;padding:18px 20px 20px}
+.formula{border:1px solid var(--line);border-radius:14px;background:rgba(2,6,23,.55);padding:15px 16px;
+  font:600 12px/1.8 var(--mono);color:var(--muted);overflow-x:auto}
+.formula .p{color:var(--cyan);border-bottom:1px dashed rgba(103,232,249,.4);cursor:pointer}
+.formula .p:hover{color:var(--ink);background:rgba(103,232,249,.08)}
+.formula .op{color:var(--violet)}
+.legend{display:flex;flex-wrap:wrap;gap:7px}
+.legend button{appearance:none;border:1px solid var(--line);background:rgba(15,23,42,.55);color:var(--muted);
+  border-radius:999px;padding:5px 9px;font:700 10px/1 var(--mono);cursor:pointer}
+.legend button.is-on{border-color:rgba(103,232,249,.5);color:var(--cyan);background:rgba(103,232,249,.08)}
+.assemblyHint{color:var(--dim);font-size:12.5px}
+
+@media(max-width:720px){
+  .wrap{width:calc(100% - 18px)}.hero{padding-top:38px}
+  .ruleHead{grid-template-columns:58px 1fr;padding:16px 16px 10px}.ruleTag{font-size:10px;padding:9px 0}
+  .stage{margin:0 8px}.controls{padding:13px 16px 0;gap:9px 13px}.ctl input[type=range]{width:98px}
+  .why{margin:12px 16px 16px}.formula{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="kicker"><i></i> minimal generative grammar</span>
+    <h1>The <span>atoms</span> of an LLM.</h1>
+    <p class="lede">Everything a transformer does is built from a handful of typed operations. Not layers, not attention, not “reasoning”: just scalars, vectors, pairings, linear maps, one nonlinearity, softmax, addition, composition, a loss, a gradient and an update. This page builds the whole thing from those primitives, one rule at a time.</p>
+    <div class="rail">
+      <code class="hot">ℝ</code><code>ℝⁿ</code><code>⟨·,·⟩</code><code>W</code><code>σ</code><code>softmax</code><code>Σ pᵢvᵢ</code><code>x+f(x)</code><code>∘</code><code>L</code><code>∇L</code><code>θ←θ−η∇L</code><code>token↔vector</code>
+    </div>
+  </header>
+  <nav class="nav" aria-label="Primitive navigation"><div class="chips" id="nav"></div></nav>
+  <main id="gallery"></main>
+</div>
+<script>
+(() => {
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => t * t * (3 - 2 * t);
+const sigmoid = x => 1 / (1 + Math.exp(-x));
+const TAU = Math.PI * 2;
+const C = { cyan:"#67e8f9", violet:"#a78bfa", rose:"#fb7185", amber:"#fbbf24", emerald:"#34d399", blue:"#60a5fa", ink:"#eaf1ff", muted:"#8fa3c4", dim:"#5f7190" };
+const hex = h => { const n = parseInt(h.slice(1), 16); return [(n>>16)&255,(n>>8)&255,n&255]; };
+const rgba = (h,a) => { const [r,g,b]=hex(h); return `rgba(${r},${g},${b},${a})`; };
+const roundRect = (ctx,x,y,w,h,r) => { r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); };
+const glow = (ctx,color,blur) => { ctx.shadowColor=color; ctx.shadowBlur=blur; };
+const noGlow = ctx => { ctx.shadowBlur=0; ctx.shadowColor="transparent"; };
+const text = (ctx,s,x,y,size=12,color=C.muted,weight=600,align="left") => { ctx.font=`${weight} ${size}px Inter, system-ui, sans-serif`; ctx.fillStyle=color; ctx.textAlign=align; ctx.textBaseline="middle"; ctx.fillText(s,x,y); };
+const mono = (ctx,s,x,y,size=10,color=C.dim,align="left") => { ctx.font=`700 ${size}px ui-monospace, monospace`; ctx.fillStyle=color; ctx.textAlign=align; ctx.textBaseline="middle"; ctx.fillText(s,x,y); };
+function canvasStage(stage,height=300){ const c=document.createElement("canvas"); c.className="demo-canvas"; c.style.height=height+"px"; stage.appendChild(c); return c; }
+function register(canvas,draw){
+  const ctx=canvas.getContext("2d"); let w=0,h=0,dpr=1,raf=0,visible=false,destroyed=false;
+  const size=()=>{ const r=canvas.getBoundingClientRect(); dpr=Math.min(2,window.devicePixelRatio||1); w=Math.max(1,r.width); h=Math.max(1,r.height); canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr); ctx.setTransform(dpr,0,0,dpr,0,0); };
+  const paint=now=>{ if(destroyed||!w||!h) return; draw(ctx,w,h,now); };
+  const frame=now=>{ if(!visible||destroyed){raf=0;return;} paint(now); raf=requestAnimationFrame(frame); };
+  const start=()=>{ if(!raf&&visible&&!destroyed) raf=requestAnimationFrame(frame); };
+  const stop=()=>{ if(raf) cancelAnimationFrame(raf); raf=0; };
+  new ResizeObserver(()=>{size();paint(performance.now());}).observe(canvas);
+  new IntersectionObserver(es=>{visible=es[0].isIntersecting;if(visible)start();else stop();},{rootMargin:"150px"}).observe(canvas);
+  requestAnimationFrame(()=>{size();paint(performance.now());visible=true;start();});
+  return {redraw:()=>paint(performance.now()),destroy:()=>{destroyed=true;stop();}};
+}
+function slider(controls,{label,min,max,step=1,value,fmt=v=>v,onInput}){
+  const el=document.createElement("label"); el.className="ctl";
+  const span=document.createElement("span"); span.textContent=label;
+  const input=document.createElement("input"); input.type="range"; input.min=min; input.max=max; input.step=step; input.value=value;
+  const out=document.createElement("b"); out.textContent=fmt(Number(value));
+  input.addEventListener("input",()=>{const v=Number(input.value);out.textContent=fmt(v);onInput&&onInput(v);});
+  el.append(span,input,out); controls.appendChild(el); return {el,input,out};
+}
+function button(controls,label,onClick,kind=""){const b=document.createElement("button");b.type="button";b.className="btn "+kind;b.textContent=label;b.addEventListener("click",onClick);controls.appendChild(b);return b;}
+function toggle(controls,label,on,onChange){let state=on;const b=button(controls,label,()=>{state=!state;b.classList.toggle("is-on",state);onChange&&onChange(state);},on?"is-on":"");return b;}
+function stat(controls,label,value){const el=document.createElement("span");el.className="stat";el.innerHTML=`<span>${label}</span><b>${value}</b>`;controls.appendChild(el);return {el,set:v=>{el.querySelector("b").textContent=v;}};}
+function seg(controls,items,value,onChange){const bar=document.createElement("div");bar.className="seg";const buttons=items.map(item=>{const b=document.createElement("button");b.type="button";b.textContent=item;b.className=item===value?"is-on":"";b.addEventListener("click",()=>{buttons.forEach(x=>x.classList.toggle("is-on",x===b));onChange(item);});bar.appendChild(b);return b;});controls.appendChild(bar);return bar;}
+
+const RULES=[];
+const rule=(id,num,title,signature,blurb,why,used,build)=>RULES.push({id,num,title,signature,blurb,why,used,build});
+
+
+/* ============================================================
+   P0 · SCALAR FIELD
+   ============================================================ */
+rule("scalar","P0","The Scalar Field","ℝ  with  + : ℝ×ℝ→ℝ  and  × : ℝ×ℝ→ℝ",
+  "One number. The base type. A scalar can be added, multiplied, ordered and compared. Every other structure in an LLM is a tuple, map or sum of scalars.",
+  "Without scalars there is no quantity to store, compare or optimise. Addition and multiplication are the only two operations the whole stack is allowed to use at the bottom.",
+  ["vector","pairing","linear map","loss","gradient","update"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let a=2.4, b=1.7;
+    const sSum=stat(controls,"a+b","—"), sProd=stat(controls,"a×b","—");
+    const draw=(ctx,w,h,now)=>{
+      sSum.set((a+b).toFixed(2)); sProd.set((a*b).toFixed(2));
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.25,h*.2,10,w*.25,h*.2,w*.9); g.addColorStop(0,"rgba(103,232,249,.07)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const left=58,right=w-32,mid=(left+right)/2,scale=(right-left)/12;
+      const X=v=>mid+v*scale;
+      ctx.strokeStyle="rgba(148,163,184,.16)"; ctx.beginPath(); ctx.moveTo(left,h*.56); ctx.lineTo(right,h*.56); ctx.stroke();
+      [-5,-4,-3,-2,-1,0,1,2,3,4,5].forEach(v=>{
+        const x=X(v); ctx.strokeStyle="rgba(148,163,184,.12)"; ctx.beginPath(); ctx.moveTo(x,h*.56-5); ctx.lineTo(x,h*.56+5); ctx.stroke();
+        mono(ctx,String(v),x,h*.56+18,8,C.dim,"center");
+      });
+      // points
+      const pts=[[a,C.cyan,"a"],[b,C.violet,"b"],[a+b,C.emerald,"a+b"]];
+      pts.forEach(([v,col,label],i)=>{
+        const x=X(clamp(v,-5.8,5.8));
+        ctx.fillStyle=rgba(col,.2); ctx.strokeStyle=col; glow(ctx,col,16);
+        ctx.beginPath(); ctx.arc(x,h*.56,8,0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,label,x,h*.56-22,10,col,"center");
+      });
+      // product rectangle
+      const rx=left+24, ry=h*.72, rw=Math.max(4,Math.abs(a)*scale*.7), rh=Math.max(4,Math.abs(b)*14);
+      ctx.fillStyle="rgba(251,191,36,.10)"; ctx.strokeStyle=rgba(C.amber,.65);
+      roundRect(ctx,rx,ry,Math.min(rw,220),Math.min(rh,70),8); ctx.fill(); ctx.stroke();
+      mono(ctx,"area = a × b",rx+8,ry-12,9,C.amber);
+      text(ctx,"a × b = "+ (a*b).toFixed(2), rx+8, ry+Math.min(rh,70)+18, 12, C.ink, 700);
+      // sum bracket
+      const xa=X(clamp(a,-5.8,5.8)), xb=X(clamp(b,-5.8,5.8)), xs=X(clamp(a+b,-5.8,5.8));
+      ctx.strokeStyle=rgba(C.emerald,.25); ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.moveTo(xa,h*.56); ctx.lineTo(xa,h*.56-44); ctx.lineTo(xs,h*.56-44); ctx.lineTo(xs,h*.56); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(xb,h*.56); ctx.lineTo(xb,h*.56-60); ctx.lineTo(xs,h*.56-60); ctx.lineTo(xs,h*.56); ctx.stroke();
+      ctx.setLineDash([]);
+      mono(ctx,"addition is concatenating directed lengths",left,h*.56-76,9,C.dim);
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"a",min:-5,max:5,step:.1,value:a,fmt:v=>v.toFixed(1),onInput:v=>{a=v;api.redraw();}});
+    slider(controls,{label:"b",min:-5,max:5,step:.1,value:b,fmt:v=>v.toFixed(1),onInput:v=>{b=v;api.redraw();}});
+  });
+
+/* ============================================================
+   P1 · VECTOR SPACE
+   ============================================================ */
+rule("vector","P1","The Vector Space","V = ℝⁿ  with  (u+v)ᵢ = uᵢ+vᵢ  and  (αu)ᵢ = αuᵢ",
+  "An ordered tuple of scalars. Addition and scaling happen component by component, so the space is closed under both. This is the type of every hidden state, embedding and residual stream.",
+  "A vector is not a list of numbers with no structure: it is an element of a space where addition and scaling are defined. Every layer is a map between such spaces.",
+  ["pairing","linear map","embedding","residual","attention"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let ux=2.2,uy=1.3,vx=-1.1,vy=1.9,alpha=1.4;
+    const sLen=stat(controls,"‖u‖","—"), sSum=stat(controls,"u+v","—");
+    const draw=(ctx,w,h,now)=>{
+      const len=Math.hypot(ux,uy); sLen.set(len.toFixed(2)); sSum.set(`(${(ux+vx).toFixed(1)}, ${(uy+vy).toFixed(1)})`);
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(103,232,249,.07)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const cx=w*.46, cy=h*.55, S=Math.min(w,h)*.11;
+      const X=v=>cx+v*S, Y=v=>cy-v*S;
+      // grid
+      for(let i=-4;i<=4;i++){
+        ctx.strokeStyle=i===0?"rgba(148,163,184,.22)":"rgba(148,163,184,.07)";
+        ctx.beginPath(); ctx.moveTo(X(-4),Y(i)); ctx.lineTo(X(4),Y(i)); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(X(i),Y(-4)); ctx.lineTo(X(i),Y(4)); ctx.stroke();
+      }
+      const arrow=(x1,y1,x2,y2,color,label,width=2.4)=>{
+        ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=width; glow(ctx,color,10);
+        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+        const ang=Math.atan2(y2-y1,x2-x1), size=8;
+        ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-Math.cos(ang-.4)*size,y2-Math.sin(ang-.4)*size); ctx.lineTo(x2-Math.cos(ang+.4)*size,y2-Math.sin(ang+.4)*size); ctx.closePath(); ctx.fill();
+        noGlow(ctx); mono(ctx,label,x2+8,y2-8,10,color);
+      };
+      // parallelogram for u+v
+      const sx=X(ux), sy=Y(uy), vx2=X(vx), vy2=Y(vy), tx=X(ux+vx), ty=Y(uy+vy);
+      ctx.strokeStyle="rgba(52,211,153,.25)"; ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(tx,ty); ctx.lineTo(vx2,vy2); ctx.stroke(); ctx.setLineDash([]);
+      arrow(X(0),Y(0),sx,sy,C.cyan,"u");
+      arrow(X(0),Y(0),vx2,vy2,C.violet,"v");
+      arrow(X(0),Y(0),tx,ty,C.emerald,"u+v");
+      // scaled vector
+      arrow(X(0),Y(0),X(alpha*ux),Y(alpha*uy),C.amber,"αu",1.8);
+      text(ctx,"αu is the same direction, different length",24,h-20,10,C.muted,600);
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"uₓ",min:-4,max:4,step:.1,value:ux,fmt:v=>v.toFixed(1),onInput:v=>{ux=v;api.redraw();}});
+    slider(controls,{label:"uᵧ",min:-4,max:4,step:.1,value:uy,fmt:v=>v.toFixed(1),onInput:v=>{uy=v;api.redraw();}});
+    slider(controls,{label:"vₓ",min:-4,max:4,step:.1,value:vx,fmt:v=>v.toFixed(1),onInput:v=>{vx=v;api.redraw();}});
+    slider(controls,{label:"vᵧ",min:-4,max:4,step:.1,value:vy,fmt:v=>v.toFixed(1),onInput:v=>{vy=v;api.redraw();}});
+    slider(controls,{label:"α",min:-2,max:2,step:.1,value:alpha,fmt:v=>v.toFixed(1),onInput:v=>{alpha=v;api.redraw();}});
+  });
+
+
+/* ============================================================
+   P2 · THE PAIRING
+   ============================================================ */
+rule("pairing","P2","The Pairing (Dot Product)","⟨·,·⟩ : V × V → ℝ,   ⟨u,v⟩ = Σᵢ uᵢvᵢ = ‖u‖‖v‖cosθ",
+  "The only primitive that turns two vectors into one scalar. It measures alignment, projects one vector onto another, and is the operation every neuron performs.",
+  "Without the pairing there is no way for two vectors to interact. A linear map is a stack of pairings; a neuron is a pairing followed by a nonlinearity.",
+  ["linear map","neuron","attention","unembedding","loss"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let ux=2.5,uy=.8,vx=.6,vy=2.2;
+    const sDot=stat(controls,"⟨u,v⟩","—"), sAngle=stat(controls,"angle","—");
+    const draw=(ctx,w,h,now)=>{
+      const dot=ux*vx+uy*vy, lu=Math.hypot(ux,uy), lv=Math.hypot(vx,vy);
+      const cos=lu&&lv?clamp(dot/(lu*lv),-1,1):0, ang=Math.acos(cos)*180/Math.PI;
+      sDot.set(dot.toFixed(2)); sAngle.set(ang.toFixed(0)+"°");
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(167,139,250,.07)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const cx=w*.46, cy=h*.55, S=Math.min(w,h)*.11;
+      const X=v=>cx+v*S, Y=v=>cy-v*S;
+      for(let i=-4;i<=4;i++){ ctx.strokeStyle=i===0?"rgba(148,163,184,.22)":"rgba(148,163,184,.07)"; ctx.beginPath(); ctx.moveTo(X(-4),Y(i)); ctx.lineTo(X(4),Y(i)); ctx.stroke(); ctx.beginPath(); ctx.moveTo(X(i),Y(-4)); ctx.lineTo(X(i),Y(4)); ctx.stroke(); }
+      const arrow=(x1,y1,x2,y2,color,label,width=2.6)=>{
+        ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=width; glow(ctx,color,10);
+        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+        const a=Math.atan2(y2-y1,x2-x1), s=8;
+        ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-Math.cos(a-.4)*s,y2-Math.sin(a-.4)*s); ctx.lineTo(x2-Math.cos(a+.4)*s,y2-Math.sin(a+.4)*s); ctx.closePath(); ctx.fill();
+        noGlow(ctx); mono(ctx,label,x2+8,y2-8,10,color);
+      };
+      const uX=X(ux), uY=Y(uy), vX=X(vx), vY=Y(vy);
+      // projection of u onto v
+      const vv=vx*vx+vy*vy;
+      if(vv>0.001){
+        const t=dot/vv, pX=X(t*vx), pY=Y(t*vy);
+        ctx.strokeStyle=rgba(C.amber,.55); ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(uX,uY); ctx.lineTo(pX,pY); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle=rgba(C.amber,.2); ctx.strokeStyle=C.amber; glow(ctx,C.amber,10);
+        ctx.beginPath(); ctx.arc(pX,pY,6,0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,"projection",pX+10,pY+14,9,C.amber);
+      }
+      arrow(X(0),Y(0),uX,uY,C.cyan,"u");
+      arrow(X(0),Y(0),vX,vY,C.violet,"v");
+      // scalar bar
+      const bx=w-170, by=h-64, bw=130, bv=clamp((dot+8)/16,0,1);
+      mono(ctx,"scalar output",bx,by-12,9,C.dim);
+      ctx.fillStyle="rgba(148,163,184,.12)"; roundRect(ctx,bx,by,bw,10,9); ctx.fill();
+      ctx.fillStyle=rgba(dot>=0?C.emerald:C.rose,.75); glow(ctx,dot>=0?C.emerald:C.rose,10);
+      roundRect(ctx,bx,by,Math.max(3,bw*bv),10,9); ctx.fill(); noGlow(ctx);
+      mono(ctx,dot.toFixed(2),bx+bw+8,by+5,10,dot>=0?C.emerald:C.rose);
+      text(ctx,`‖u‖·‖v‖·cosθ = ${dot.toFixed(2)}`,24,h-20,11,C.muted,700);
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"uₓ",min:-4,max:4,step:.1,value:ux,fmt:v=>v.toFixed(1),onInput:v=>{ux=v;api.redraw();}});
+    slider(controls,{label:"uᵧ",min:-4,max:4,step:.1,value:uy,fmt:v=>v.toFixed(1),onInput:v=>{uy=v;api.redraw();}});
+    slider(controls,{label:"vₓ",min:-4,max:4,step:.1,value:vx,fmt:v=>v.toFixed(1),onInput:v=>{vx=v;api.redraw();}});
+    slider(controls,{label:"vᵧ",min:-4,max:4,step:.1,value:vy,fmt:v=>v.toFixed(1),onInput:v=>{vy=v;api.redraw();}});
+  });
+
+/* ============================================================
+   P3 · THE LINEAR MAP
+   ============================================================ */
+rule("linear","P3","The Linear Map (Matrix)","W : ℝⁿ → ℝᵐ,   (Wu)ᵢ = ⟨rowᵢ(W), u⟩",
+  "A stack of pairings. Each row is a direction that measures the input; each column is the image of a basis vector. The unit square becomes a parallelogram.",
+  "Without linear maps there is no learned parameter. Attention projections, MLPs, embeddings and unembeddings are all linear maps.",
+  ["neuron","attention","MLP","embedding","unembedding"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let a=1.1,b=.5,c=-.4,d=1.3;
+    const sDet=stat(controls,"det W","—"), sMap=stat(controls,"W(1,1)","—");
+    const draw=(ctx,w,h,now)=>{
+      const det=a*d-b*c, mx=a+b, my=c+d;
+      sDet.set(det.toFixed(2)); sMap.set(`(${mx.toFixed(2)}, ${my.toFixed(2)})`);
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(52,211,153,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const cx=w*.42, cy=h*.55, S=Math.min(w,h)*.115;
+      const X=v=>cx+v*S, Y=v=>cy-v*S;
+      for(let i=-4;i<=4;i++){ ctx.strokeStyle=i===0?"rgba(148,163,184,.22)":"rgba(148,163,184,.07)"; ctx.beginPath(); ctx.moveTo(X(-4),Y(i)); ctx.lineTo(X(4),Y(i)); ctx.stroke(); ctx.beginPath(); ctx.moveTo(X(i),Y(-4)); ctx.lineTo(X(i),Y(4)); ctx.stroke(); }
+      // original unit square
+      ctx.strokeStyle="rgba(148,163,184,.35)"; ctx.setLineDash([4,4]);
+      ctx.strokeRect(X(0),Y(1),S,S); ctx.setLineDash([]);
+      mono(ctx,"unit square",X(0),Y(1)-10,9,C.dim);
+      // transformed square
+      const p00=[0,0],p10=[a,c],p11=[a+b,c+d],p01=[b,d];
+      ctx.fillStyle="rgba(52,211,153,.10)"; ctx.strokeStyle=rgba(C.emerald,.75); ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(X(p00[0]),Y(p00[1])); ctx.lineTo(X(p10[0]),Y(p10[1])); ctx.lineTo(X(p11[0]),Y(p11[1])); ctx.lineTo(X(p01[0]),Y(p01[1])); ctx.closePath(); ctx.fill(); ctx.stroke();
+      // columns as images of basis
+      const arrow=(x2,y2,color,label)=>{ ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=2; glow(ctx,color,8); ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(x2),Y(y2)); ctx.stroke(); noGlow(ctx); mono(ctx,label,X(x2)+8,Y(y2)-8,9,color); };
+      arrow(a,c,C.cyan,"W e₁");
+      arrow(b,d,C.violet,"W e₂");
+      // rows as measurement directions
+      ctx.strokeStyle=rgba(C.rose,.55); ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(X(-a),Y(-c)); ctx.lineTo(X(a),Y(c)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(X(-b),Y(-d)); ctx.lineTo(X(b),Y(d)); ctx.stroke(); ctx.setLineDash([]);
+      mono(ctx,"rows = measurement directions",24,h-20,9,C.rose);
+      // matrix display
+      const bx=w-180, by=70;
+      mono(ctx,"W =",bx,by,12,C.ink);
+      ctx.fillStyle="rgba(15,23,42,.5)"; ctx.strokeStyle="rgba(148,163,184,.2)"; roundRect(ctx,bx+36,by-20,120,52,10); ctx.fill(); ctx.stroke();
+      mono(ctx,a.toFixed(1),bx+70,by-4,11,C.cyan,"center"); mono(ctx,b.toFixed(1),bx+120,by-4,11,C.violet,"center");
+      mono(ctx,c.toFixed(1),bx+70,by+18,11,C.cyan,"center"); mono(ctx,d.toFixed(1),bx+120,by+18,11,C.violet,"center");
+      mono(ctx,"area × "+det.toFixed(2),bx+96,by+48,9,C.emerald,"center");
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"a",min:-2,max:2,step:.1,value:a,fmt:v=>v.toFixed(1),onInput:v=>{a=v;api.redraw();}});
+    slider(controls,{label:"b",min:-2,max:2,step:.1,value:b,fmt:v=>v.toFixed(1),onInput:v=>{b=v;api.redraw();}});
+    slider(controls,{label:"c",min:-2,max:2,step:.1,value:c,fmt:v=>v.toFixed(1),onInput:v=>{c=v;api.redraw();}});
+    slider(controls,{label:"d",min:-2,max:2,step:.1,value:d,fmt:v=>v.toFixed(1),onInput:v=>{d=v;api.redraw();}});
+  });
+
+
+/* ============================================================
+   P4 · POINTWISE NONLINEARITY
+   ============================================================ */
+rule("nonlinearity","P4","Pointwise Nonlinearity","σ : ℝ → ℝ  applied coordinatewise:  (σ(x))ᵢ = σ(xᵢ)",
+  "One scalar function, applied independently to every coordinate. It bends the space. Without it, any stack of linear maps collapses into a single linear map.",
+  "Depth only buys something because σ is nonlinear. Remove it and a 100-layer transformer is one matrix.",
+  ["MLP","transformer block","depth"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let mode="ReLU", bend=1;
+    const sRank=stat(controls,"composition","nonlinear");
+    const fn=(v)=>{
+      if(mode==="ReLU") return Math.max(0,v);
+      if(mode==="Tanh") return Math.tanh(v*1.4);
+      if(mode==="GELU") return .5*v*(1+Math.tanh(Math.sqrt(2/Math.PI)*(v+.044715*v*v*v)));
+      return v;
+    };
+    const draw=(ctx,w,h,now)=>{
+      sRank.set(mode==="Identity"?"linear":"nonlinear");
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(251,191,36,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const left=54, top=40, pw=w*.42, ph=h-80;
+      const X=v=>left+pw*(v+2.5)/5, Y=v=>top+ph*(1-(v+2.5)/5);
+      for(let i=-2;i<=2;i++){
+        ctx.strokeStyle=i===0?"rgba(148,163,184,.22)":"rgba(148,163,184,.07)";
+        ctx.beginPath(); ctx.moveTo(X(-2.5),Y(i)); ctx.lineTo(X(2.5),Y(i)); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(X(i),Y(-2.5)); ctx.lineTo(X(i),Y(2.5)); ctx.stroke();
+      }
+      // deformed grid
+      const N=10, pts=[];
+      for(let i=0;i<=N;i++) for(let j=0;j<=N;j++){
+        const x=-2.5+5*i/N, y=-2.5+5*j/N;
+        const nx=x+bend*.35*Math.sin(y*1.2), ny=y+bend*.35*Math.sin(x*1.1);
+        pts.push([fn(nx),fn(ny)]);
+      }
+      for(let j=0;j<=N;j++){
+        ctx.strokeStyle=rgba(C.cyan,.22); ctx.beginPath();
+        for(let i=0;i<=N;i++){ const p=pts[j*(N+1)+i]; if(i===0) ctx.moveTo(X(p[0]),Y(p[1])); else ctx.lineTo(X(p[0]),Y(p[1])); }
+        ctx.stroke();
+      }
+      for(let i=0;i<=N;i++){
+        ctx.strokeStyle=rgba(C.violet,.22); ctx.beginPath();
+        for(let j=0;j<=N;j++){ const p=pts[j*(N+1)+i]; if(j===0) ctx.moveTo(X(p[0]),Y(p[1])); else ctx.lineTo(X(p[0]),Y(p[1])); }
+        ctx.stroke();
+      }
+      // function curve
+      const rx=w*.56, ry=top, rw=w-rx-36, rh=ph;
+      const FX=v=>rx+rw*(v+2.5)/5, FY=v=>ry+rh*(1-(v+2.5)/5);
+      ctx.strokeStyle="rgba(148,163,184,.14)"; ctx.beginPath(); ctx.moveTo(FX(-2.5),FY(0)); ctx.lineTo(FX(2.5),FY(0)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(FX(0),FY(-2.5)); ctx.lineTo(FX(0),FY(2.5)); ctx.stroke();
+      ctx.strokeStyle=C.amber; ctx.lineWidth=2.6; glow(ctx,C.amber,14);
+      ctx.beginPath();
+      for(let i=0;i<=120;i++){ const x=-2.5+5*i/120, y=fn(x); if(i===0) ctx.moveTo(FX(x),FY(y)); else ctx.lineTo(FX(x),FY(y)); }
+      ctx.stroke(); noGlow(ctx);
+      mono(ctx,"σ(x)",FX(2.1),FY(fn(2.1))-14,10,C.amber);
+      mono(ctx,"input plane → σ applied coordinatewise",24,h-18,9,C.dim);
+      text(ctx,mode==="Identity"?"identity: the grid stays straight":"the grid bends: nonlinearity",w*.27,24,11,mode==="Identity"?C.rose:C.emerald,700);
+    };
+    const api=register(canvas,draw);
+    seg(controls,["ReLU","Tanh","GELU","Identity"],"ReLU",v=>{mode=v;api.redraw();});
+    slider(controls,{label:"Bend",min:0,max:1.4,step:.05,value:bend,fmt:v=>v.toFixed(2),onInput:v=>{bend=v;api.redraw();}});
+  });
+
+/* ============================================================
+   P5 · SOFTMAX
+   ============================================================ */
+rule("softmax","P5","Softmax: Scores → Simplex","softmax : ℝⁿ → Δⁿ⁻¹,   pᵢ = e^{zᵢ/T} / Σⱼ e^{zⱼ/T}",
+  "A normalized exponential. It turns arbitrary real scores into a point on the probability simplex: positive entries that sum to one.",
+  "Without softmax there is no distribution to sample from and no attention weights. It is the canonical bridge from scores to a choice.",
+  ["attention","next-token distribution","loss","sampling"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let z=[1.2,.2,-.5], temp=1;
+    const sP=stat(controls,"Σp","—");
+    const draw=(ctx,w,h,now)=>{
+      const e=z.map(v=>Math.exp(v/temp)), sum=e.reduce((a,b)=>a+b,0), p=e.map(v=>v/sum);
+      sP.set(p.reduce((a,b)=>a+b,0).toFixed(3));
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.25,h*.2,10,w*.25,h*.2,w*.9); g.addColorStop(0,"rgba(103,232,249,.07)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      // bars
+      const bx=44, by=54, bw=w*.36, rowH=52;
+      const colors=[C.cyan,C.violet,C.rose];
+      z.forEach((v,i)=>{
+        const y=by+i*rowH;
+        mono(ctx,"z"+(i+1)+" = "+v.toFixed(2),bx,y-10,9,C.dim);
+        ctx.fillStyle="rgba(148,163,184,.10)"; roundRect(ctx,bx,y,bw,14,9); ctx.fill();
+        ctx.fillStyle=rgba(colors[i],.75); glow(ctx,colors[i],10);
+        roundRect(ctx,bx,y,Math.max(3,bw*clamp((v+2)/4,0,1)),14,9); ctx.fill(); noGlow(ctx);
+        const py=y+28;
+        ctx.fillStyle="rgba(148,163,184,.10)"; roundRect(ctx,bx,py,bw,14,9); ctx.fill();
+        ctx.fillStyle=rgba(colors[i],.9); glow(ctx,colors[i],12);
+        roundRect(ctx,bx,py,Math.max(3,bw*p[i]),14,9); ctx.fill(); noGlow(ctx);
+        mono(ctx,(p[i]*100).toFixed(1)+"%",bx+bw+10,py+7,9,colors[i]);
+      });
+      mono(ctx,"logits",bx,by-28,10,C.muted); mono(ctx,"probabilities",bx,by+rowH*3-6,10,C.muted);
+      // simplex triangle
+      const cx=w*.76, cy=h*.58, R=Math.min(w,h)*.28;
+      const verts=[0,1,2].map(i=>{ const a=-Math.PI/2+i*TAU/3; return [cx+Math.cos(a)*R,cy+Math.sin(a)*R]; });
+      ctx.strokeStyle="rgba(148,163,184,.25)"; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(verts[0][0],verts[0][1]); ctx.lineTo(verts[1][0],verts[1][1]); ctx.lineTo(verts[2][0],verts[2][1]); ctx.closePath(); ctx.stroke();
+      const px=p[0]*verts[0][0]+p[1]*verts[1][0]+p[2]*verts[2][0];
+      const py=p[0]*verts[0][1]+p[1]*verts[1][1]+p[2]*verts[2][1];
+      ctx.fillStyle="rgba(103,232,249,.85)"; glow(ctx,C.cyan,18); ctx.beginPath(); ctx.arc(px,py,8,0,TAU); ctx.fill(); noGlow(ctx);
+      mono(ctx,"probability simplex",cx,cy+R+22,9,C.dim,"center");
+      text(ctx,"temperature T = "+temp.toFixed(2),w*.76,24,11,C.muted,700,"center");
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"z₁",min:-2,max:2,step:.1,value:z[0],fmt:v=>v.toFixed(1),onInput:v=>{z[0]=v;api.redraw();}});
+    slider(controls,{label:"z₂",min:-2,max:2,step:.1,value:z[1],fmt:v=>v.toFixed(1),onInput:v=>{z[1]=v;api.redraw();}});
+    slider(controls,{label:"z₃",min:-2,max:2,step:.1,value:z[2],fmt:v=>v.toFixed(1),onInput:v=>{z[2]=v;api.redraw();}});
+    slider(controls,{label:"Temp",min:.2,max:2.5,step:.05,value:temp,fmt:v=>v.toFixed(2),onInput:v=>{temp=v;api.redraw();}});
+  });
+
+/* ============================================================
+   P6 · CONVEX COMBINATION
+   ============================================================ */
+rule("convex","P6","Convex Combination","Σᵢ pᵢ vᵢ,   p ∈ Δⁿ⁻¹",
+  "A weighted average of vectors, with weights from the simplex. The output always lies inside the convex hull of the values. This is attention's value mixing, stripped of everything else.",
+  "Attention is a convex combination: softmax weights decide how much of each value vector to mix. The result cannot leave the convex hull.",
+  ["attention","value mixing","residual readout"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let scores=[1,.4,-.2];
+    const sOut=stat(controls,"output","—");
+    const draw=(ctx,w,h,now)=>{
+      const e=scores.map(v=>Math.exp(v)), sum=e.reduce((a,b)=>a+b,0), p=e.map(v=>v/sum);
+      const verts=[0,1,2].map(i=>{ const a=-Math.PI/2+i*TAU/3; return [w*.42+Math.cos(a)*Math.min(w,h)*.3,h*.58+Math.sin(a)*Math.min(w,h)*.3]; });
+      const px=p[0]*verts[0][0]+p[1]*verts[1][0]+p[2]*verts[2][0];
+      const py=p[0]*verts[0][1]+p[1]*verts[1][1]+p[2]*verts[2][1];
+      sOut.set(`(${px.toFixed(0)}, ${py.toFixed(0)})`);
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(52,211,153,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      ctx.fillStyle="rgba(52,211,153,.06)"; ctx.strokeStyle="rgba(148,163,184,.25)"; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(verts[0][0],verts[0][1]); ctx.lineTo(verts[1][0],verts[1][1]); ctx.lineTo(verts[2][0],verts[2][1]); ctx.closePath(); ctx.fill(); ctx.stroke();
+      const colors=[C.cyan,C.violet,C.rose];
+      verts.forEach((v,i)=>{
+        ctx.fillStyle=rgba(colors[i],.25); ctx.strokeStyle=colors[i]; glow(ctx,colors[i],12);
+        ctx.beginPath(); ctx.arc(v[0],v[1],10,0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,"v"+(i+1),v[0]+14,v[1]-10,10,colors[i]);
+        // weight ray
+        ctx.strokeStyle=rgba(colors[i],.18); ctx.beginPath(); ctx.moveTo(v[0],v[1]); ctx.lineTo(px,py); ctx.stroke();
+      });
+      ctx.fillStyle="rgba(103,232,249,.9)"; glow(ctx,C.cyan,20); ctx.beginPath(); ctx.arc(px,py,9,0,TAU); ctx.fill(); noGlow(ctx);
+      mono(ctx,"output",px+14,py+16,9,C.cyan);
+      // weight bars
+      const bx=w-170, by=64;
+      p.forEach((wgt,i)=>{
+        const y=by+i*38;
+        mono(ctx,"p"+(i+1)+" = "+wgt.toFixed(2),bx,y-8,9,colors[i]);
+        ctx.fillStyle="rgba(148,163,184,.12)"; roundRect(ctx,bx,y,110,10,9); ctx.fill();
+        ctx.fillStyle=rgba(colors[i],.75); roundRect(ctx,bx,y,Math.max(3,110*wgt),10,9); ctx.fill();
+      });
+      text(ctx,"the output is trapped inside the hull",24,h-18,10,C.muted,700);
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"score₁",min:-2,max:2,step:.1,value:scores[0],fmt:v=>v.toFixed(1),onInput:v=>{scores[0]=v;api.redraw();}});
+    slider(controls,{label:"score₂",min:-2,max:2,step:.1,value:scores[1],fmt:v=>v.toFixed(1),onInput:v=>{scores[1]=v;api.redraw();}});
+    slider(controls,{label:"score₃",min:-2,max:2,step:.1,value:scores[2],fmt:v=>v.toFixed(1),onInput:v=>{scores[2]=v;api.redraw();}});
+  });
+
+/* ============================================================
+   P7 · RESIDUAL ADDITION
+   ============================================================ */
+rule("residual","P7","Residual Addition","x ↦ x + f(x)",
+  "The universal wiring. A layer does not replace the state; it adds a learned update to it. The identity path survives, so signals and gradients can travel through depth.",
+  "Remove the residual and deep models lose the signal. Addition is the only operation that lets a layer say “change this” without destroying what was there.",
+  ["transformer block","residual stream","depth"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let depth=10, residual=true, strength=.28;
+    const sMag=stat(controls,"signal","—");
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(167,139,250,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const left=54, top=46, right=w-40, bottom=h-46;
+      const X=i=>left+(right-left)*i/depth;
+      const Y=v=>bottom-(bottom-top)*clamp(v,0,1.2);
+      // baseline
+      ctx.strokeStyle="rgba(148,163,184,.12)"; ctx.beginPath(); ctx.moveTo(left,Y(0)); ctx.lineTo(right,Y(0)); ctx.stroke();
+      // signal path
+      let x=1;
+      const values=[];
+      for(let i=0;i<=depth;i++){
+        values.push(x);
+        const update=strength*Math.sin(i*.6+1.4)*(1+(i/depth)*.4);
+        x=residual?x+update:update*.9;
+        x=clamp(x,0,1.2);
+      }
+      ctx.strokeStyle=residual?C.cyan:C.rose; ctx.lineWidth=2.6; glow(ctx,residual?C.cyan:C.rose,14);
+      ctx.beginPath();
+      values.forEach((v,i)=>{ if(i===0) ctx.moveTo(X(i),Y(v)); else ctx.lineTo(X(i),Y(v)); });
+      ctx.stroke(); noGlow(ctx);
+      values.forEach((v,i)=>{
+        if(i%Math.max(1,Math.floor(depth/10))!==0&&i!==depth) return;
+        ctx.fillStyle=rgba(residual?C.cyan:C.rose,.8); ctx.beginPath(); ctx.arc(X(i),Y(v),3.5,0,TAU); ctx.fill();
+      });
+      sMag.set(values[values.length-1].toFixed(2));
+      mono(ctx,"layer 0",left,bottom+18,9,C.dim,"center"); mono(ctx,"layer "+depth,right,bottom+18,9,C.dim,"center");
+      mono(ctx,"signal magnitude",left,top-16,9,C.dim);
+      text(ctx,residual?"x ← x + f(x)":"x ← f(x)",24,24,13,residual?C.cyan:C.rose,800);
+      text(ctx,residual?"identity path survives":"identity path destroyed",w-24,24,11,residual?C.emerald:C.rose,700,"right");
+      // layer boxes
+      for(let i=1;i<=depth;i++){
+        const cx=X(i-.5);
+        ctx.fillStyle="rgba(15,23,42,.5)"; ctx.strokeStyle="rgba(148,163,184,.14)";
+        roundRect(ctx,cx-9,top,18,bottom-top,5); ctx.fill(); ctx.stroke();
+      }
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Depth",min:4,max:24,step:1,value:depth,fmt:v=>v,onInput:v=>{depth=v;api.redraw();}});
+    slider(controls,{label:"Update strength",min:0,max:1,step:.02,value:strength,fmt:v=>v.toFixed(2),onInput:v=>{strength=v;api.redraw();}});
+    toggle(controls,"Residual",true,on=>{residual=on;api.redraw();});
+  });
+
+
+/* ============================================================
+   P8 · COMPOSITION
+   ============================================================ */
+rule("composition","P8","Composition (Depth)","(g ∘ f)(x) = g(f(x))",
+  "Functions compose. A deep network is just a long composition. Without a nonlinearity between them, two linear maps compose into one linear map: depth collapses.",
+  "Depth is repeated composition. The only thing that makes a stack more than one matrix is a nonlinearity in between.",
+  ["transformer block","MLP","depth"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let layers=3, nonlinear=true;
+    const sEq=stat(controls,"composite","—");
+    const draw=(ctx,w,h,now)=>{
+      sEq.set(nonlinear?"nonlinear composition":"one linear map");
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(103,232,249,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const top=78, boxH=80, left=54, right=w-40, gap=(right-left)/layers;
+      // input point
+      const p0={x:left-16,y:h*.55};
+      ctx.fillStyle="rgba(103,232,249,.85)"; glow(ctx,C.cyan,12); ctx.beginPath(); ctx.arc(p0.x,p0.y,7,0,TAU); ctx.fill(); noGlow(ctx);
+      mono(ctx,"x",p0.x,p0.y-18,9,C.cyan,"center");
+      let px=p0.x;
+      for(let i=0;i<layers;i++){
+        const x=left+i*gap+gap*.18, wBox=gap*.64;
+        ctx.fillStyle="rgba(15,23,42,.8)"; ctx.strokeStyle=nonlinear?C.violet:C.rose; glow(ctx,nonlinear?C.violet:C.rose,10);
+        roundRect(ctx,x,top,wBox,boxH,12); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,nonlinear?"σ ∘ W":"W",x+wBox/2,top+boxH/2-7,12,nonlinear?C.violet:C.rose,"center");
+        mono(ctx,"layer "+(i+1),x+wBox/2,top+boxH/2+14,8,C.dim,"center");
+        // arrow
+        ctx.strokeStyle="rgba(148,163,184,.25)"; ctx.beginPath(); ctx.moveTo(px, h*.55); ctx.lineTo(x, h*.55); ctx.stroke();
+        px=x+wBox;
+      }
+      ctx.strokeStyle="rgba(148,163,184,.25)"; ctx.beginPath(); ctx.moveTo(px,h*.55); ctx.lineTo(right-6,h*.55); ctx.stroke();
+      ctx.fillStyle="rgba(52,211,153,.85)"; glow(ctx,C.emerald,12); ctx.beginPath(); ctx.arc(right-6,h*.55,7,0,TAU); ctx.fill(); noGlow(ctx);
+      mono(ctx,"y",right-6,h*.55-18,9,C.emerald,"center");
+      // equivalence
+      if(!nonlinear){
+        ctx.fillStyle="rgba(251,113,133,.10)"; ctx.strokeStyle="rgba(251,113,133,.45)"; ctx.setLineDash([5,5]);
+        roundRect(ctx,left,h*.72,right-left,46,12); ctx.fill(); ctx.stroke(); ctx.setLineDash([]);
+        mono(ctx,"= one matrix W_layerN ··· W_layer1",w/2,h*.72+23,11,C.rose,"center");
+      } else {
+        ctx.fillStyle="rgba(52,211,153,.08)"; ctx.strokeStyle="rgba(52,211,153,.35)"; ctx.setLineDash([5,5]);
+        roundRect(ctx,left,h*.72,right-left,46,12); ctx.fill(); ctx.stroke(); ctx.setLineDash([]);
+        mono(ctx,"≠ one linear map: the nonlinearities prevent collapse",w/2,h*.72+23,11,C.emerald,"center");
+      }
+      text(ctx,"a stack of layers is a composition of functions",24,h-18,10,C.muted,700);
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Layers",min:1,max:6,step:1,value:layers,fmt:v=>v,onInput:v=>{layers=v;api.redraw();}});
+    toggle(controls,"Nonlinearity",true,on=>{nonlinear=on;api.redraw();});
+  });
+
+/* ============================================================
+   P9 · LOSS
+   ============================================================ */
+rule("loss","P9","Loss: Surprise as a Scalar","L = −log p(y)",
+  "The training signal is one scalar. Cross-entropy is the surprise of the true token under the model's distribution: confident and wrong is expensive, uncertain is cheaper.",
+  "Without a scalar loss there is nothing to minimise. It is the only place where the objective enters the system.",
+  ["training","gradient"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let p=.72, target=1;
+    const sLoss=stat(controls,"−log p","—");
+    const draw=(ctx,w,h,now)=>{
+      const loss=-Math.log(clamp(p,.001,1)); sLoss.set(loss.toFixed(2));
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(251,113,133,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      // class bars
+      const classes=["cat","dog","mat"];
+      const bx=48, by=62, bw=w*.34, colors=[C.cyan,C.violet,C.rose];
+      const probs=classes.map((_,i)=>i===target?p:(1-p)/2);
+      classes.forEach((c,i)=>{
+        const y=by+i*52;
+        mono(ctx,c,bx,y-9,10,colors[i]);
+        ctx.fillStyle="rgba(148,163,184,.10)"; roundRect(ctx,bx,y,bw,14,9); ctx.fill();
+        ctx.fillStyle=rgba(colors[i],i===target?.85:.35); glow(ctx,colors[i],i===target?12:0);
+        roundRect(ctx,bx,y,Math.max(3,bw*probs[i]),14,9); ctx.fill(); noGlow(ctx);
+        mono(ctx,(probs[i]*100).toFixed(1)+"%",bx+bw+10,y+7,9,colors[i]);
+      });
+      mono(ctx,"model distribution",bx,by-28,10,C.muted);
+      mono(ctx,"true token: "+classes[target],bx,by+classes.length*52+8,10,C.emerald);
+      // loss curve
+      const lx=w*.58, ly=52, lw=w-lx-42, lh=h-96;
+      const X=v=>lx+lw*v, Y=v=>ly+lh*(1-clamp(v/5,0,1));
+      for(let i=0;i<=4;i++){ ctx.strokeStyle="rgba(148,163,184,.08)"; ctx.beginPath(); ctx.moveTo(lx,Y(i)); ctx.lineTo(lx+lw,Y(i)); ctx.stroke(); mono(ctx,String(i),lx-8,Y(i),8,C.dim,"right"); }
+      ctx.strokeStyle=C.rose; ctx.lineWidth=2.4; glow(ctx,C.rose,12);
+      ctx.beginPath();
+      for(let i=0;i<=120;i++){ const prob=Math.max(.001,i/120), l=-Math.log(prob); if(i===0) ctx.moveTo(X(prob),Y(l)); else ctx.lineTo(X(prob),Y(l)); }
+      ctx.stroke(); noGlow(ctx);
+      const mx=X(clamp(p,.001,1)), my=Y(loss);
+      ctx.fillStyle="rgba(251,113,133,.85)"; glow(ctx,C.rose,16); ctx.beginPath(); ctx.arc(mx,my,7,0,TAU); ctx.fill(); noGlow(ctx);
+      mono(ctx,"p(true)",X(.5),ly+lh+16,9,C.dim,"center"); mono(ctx,"loss",lx-8,ly-12,9,C.dim);
+      text(ctx,"confident and wrong = huge surprise",24,h-18,10,C.muted,700);
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"p(true)",min:.001,max:1,step:.001,value:p,fmt:v=>(v*100).toFixed(1)+"%",onInput:v=>{p=v;api.redraw();}});
+    seg(controls,["cat","dog","mat"],"dog",v=>{target=["cat","dog","mat"].indexOf(v);api.redraw();});
+  });
+
+/* ============================================================
+   P10 · GRADIENT
+   ============================================================ */
+rule("gradient","P10","Gradient: Reverse Composition","∇θL = (∂L/∂y)(∂y/∂θ)",
+  "The chain rule, read backwards. Each primitive knows its local derivative; backprop multiplies them in reverse order to get the gradient of the scalar loss.",
+  "Without the gradient there is no direction to move the parameters. Backprop is composition of local derivatives, nothing more.",
+  ["update","training"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let x=1.2, w=.8, b=.3, t=2;
+    const sG=stat(controls,"dL/dw","—");
+    const draw=(ctx,wid,hei,now)=>{
+      const y=w*x+b, e=y-t, L=.5*e*e;
+      const dLdy=e, dydw=x, dydb=1, dLdw=dLdy*dydw, dLdb=dLdy*dydb;
+      sG.set(dLdw.toFixed(2));
+      ctx.clearRect(0,0,wid,hei);
+      const g=ctx.createRadialGradient(wid*.3,hei*.2,10,wid*.3,hei*.2,wid*.9); g.addColorStop(0,"rgba(96,165,250,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,wid,hei);
+      const nodes=[{x:wid*.16,y:hei*.55,label:"x",color:C.cyan},{x:wid*.4,y:hei*.55,label:"w·x+b",color:C.violet},{x:wid*.64,y:hei*.55,label:"L=½(y−t)²",color:C.rose},{x:wid*.86,y:hei*.55,label:"L",color:C.amber}];
+      nodes.forEach(n=>{ ctx.fillStyle="rgba(15,23,42,.8)"; ctx.strokeStyle=rgba(n.color,.65); glow(ctx,n.color,12); roundRect(ctx,n.x-42,n.y-22,84,44,11); ctx.fill(); ctx.stroke(); noGlow(ctx); mono(ctx,n.label,n.x,n.y,10,n.color,"center"); });
+      const edge=(a,b,label,color)=> { ctx.strokeStyle=rgba(color,.25); ctx.beginPath(); ctx.moveTo(a.x+42,a.y); ctx.lineTo(b.x-42,b.y); ctx.stroke(); mono(ctx,label,(a.x+42+b.x-42)/2,b.y-14,8,color,"center"); };
+      edge(nodes[0],nodes[1],"∂y/∂x = w",C.cyan); edge(nodes[1],nodes[2],"∂L/∂y = y−t",C.rose); edge(nodes[2],nodes[3],"",C.amber);
+      // backward arrows
+      const back=(a,b,label,color)=>{ ctx.strokeStyle=rgba(color,.65); ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(b.x-42,b.y+16); ctx.lineTo(a.x+42,a.y+16); ctx.stroke(); ctx.setLineDash([]); mono(ctx,label,(a.x+b.x)/2,a.y+34,8,color,"center"); };
+      back(nodes[0],nodes[1],"dL/dw",C.cyan); back(nodes[1],nodes[2],"dL/dy",C.rose);
+      // values
+      const vals=[["y",y.toFixed(2)],["L",L.toFixed(2)],["dL/dw",dLdw.toFixed(2)],["dL/db",dLdb.toFixed(2)]];
+      vals.forEach(([k,v],i)=>{ const yy=hei-58+i*15; mono(ctx,k,24,yy,9,C.dim); mono(ctx,v,86,yy,9,C.ink); });
+      text(ctx,"forward: values →   backward: local derivatives multiply",wid/2,24,10,C.muted,700,"center");
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"x",min:-2,max:2,step:.1,value:x,fmt:v=>v.toFixed(1),onInput:v=>{x=v;api.redraw();}});
+    slider(controls,{label:"w",min:-2,max:2,step:.1,value:w,fmt:v=>v.toFixed(1),onInput:v=>{w=v;api.redraw();}});
+    slider(controls,{label:"b",min:-2,max:2,step:.1,value:b,fmt:v=>v.toFixed(1),onInput:v=>{b=v;api.redraw();}});
+    slider(controls,{label:"target",min:-2,max:2,step:.1,value:t,fmt:v=>v.toFixed(1),onInput:v=>{t=v;api.redraw();}});
+  });
+
+/* ============================================================
+   P11 · UPDATE
+   ============================================================ */
+rule("update","P11","Gradient Descent Update","θ ← θ − η ∇θL",
+  "A single rule: move the parameters a little against the gradient. Repeat. That is learning. The step size η decides whether you converge, crawl or explode.",
+  "Without the update there is no learning. Everything trainable is this line applied many times.",
+  ["training","fine-tuning","RLHF"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300); let lr=.18, w=2.6, steps=[w], timer=0;
+    const sLoss=stat(controls,"loss","—"), sStep=stat(controls,"w","—");
+    const loss=v=>.5*(v-1.2)**2+.35*Math.sin(2.2*v)+.5;
+    const grad=v=>(v-1.2)+.35*2.2*Math.cos(2.2*v);
+    const reset=()=>{w=2.6;steps=[w];};
+    const draw=(ctx,wid,hei,now)=>{
+      if(now-timer>.35){
+        timer=now;
+        w-=lr*grad(w);
+        if(w>4.5||w<-2.5||!isFinite(w)) reset();
+        steps.push(w); if(steps.length>120) steps.shift();
+        sLoss.set(loss(w).toFixed(2)); sStep.set(w.toFixed(2));
+      }
+      ctx.clearRect(0,0,wid,hei);
+      const g=ctx.createRadialGradient(wid*.3,hei*.2,10,wid*.3,hei*.2,wid*.9); g.addColorStop(0,"rgba(52,211,153,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,wid,hei);
+      const left=48, top=48, pw=wid-84, ph=hei-92;
+      const X=v=>left+pw*(v+2.5)/7, Y=v=>top+ph*(1-clamp(v/5,0,1));
+      for(let i=0;i<=5;i++){ ctx.strokeStyle="rgba(148,163,184,.08)"; ctx.beginPath(); ctx.moveTo(left,Y(i)); ctx.lineTo(left+pw,Y(i)); ctx.stroke(); mono(ctx,String(i),left-8,Y(i),8,C.dim,"right"); }
+      ctx.strokeStyle=C.cyan; ctx.lineWidth=2.2; glow(ctx,C.cyan,10);
+      ctx.beginPath();
+      for(let i=0;i<=180;i++){ const v=-2.5+7*i/180; if(i===0) ctx.moveTo(X(v),Y(loss(v))); else ctx.lineTo(X(v),Y(loss(v))); }
+      ctx.stroke(); noGlow(ctx);
+      // trajectory
+      steps.forEach((v,i)=>{ const a=.12+.5*i/steps.length; ctx.fillStyle=rgba(C.rose,a); ctx.beginPath(); ctx.arc(X(v),Y(loss(v)),i===steps.length-1?7:2.2,0,TAU); ctx.fill(); });
+      const mx=X(w), my=Y(loss(w));
+      ctx.fillStyle="rgba(251,113,133,.9)"; glow(ctx,C.rose,18); ctx.beginPath(); ctx.arc(mx,my,8,0,TAU); ctx.fill(); noGlow(ctx);
+      mono(ctx,"w",left+pw/2,top+ph+22,9,C.dim,"center"); mono(ctx,"loss",left-8,top-12,9,C.dim);
+      text(ctx,"η = "+lr.toFixed(2),24,24,12,C.muted,700);
+      text(ctx,lr>.5?"step size too large: overshoot":"step size works",wid-24,24,10,lr>.5?C.rose:C.emerald,700,"right");
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Learning rate",min:.01,max:.9,step:.01,value:lr,fmt:v=>v.toFixed(2),onInput:v=>{lr=v;api.redraw();}});
+    button(controls,"Restart",()=>{reset();api.redraw();},"rose");
+  });
+
+
+/* ============================================================
+   P12 · THE TOKEN BRIDGE
+   ============================================================ */
+rule("bridge","P12","The Discrete/Continuous Bridge","Token → E → ℝᵈ → transformer → ℝᵈ → U → ℝ|V| → softmax → Token",
+  "The model lives in continuous space, but language is discrete. Two matrices and a softmax connect the two worlds: an embedding table and an unembedding table.",
+  "Without the bridge there is no token-to-vector map and no way back. The discrete symbol is never inside the transformer; only its vector is.",
+  ["embedding","unembedding","next-token prediction"],
+  (stage,controls)=>{
+    const canvas=canvasStage(stage,300);
+    const vocab=["cat","dog","mat","sat"];
+    const emb={cat:[1.4,.7],dog:[1.2,-.5],mat:[-.8,1.1],sat:[-.6,-.9]};
+    let chosen="cat", temp=.8;
+    const sTop=stat(controls,"top token","—");
+    const draw=(ctx,w,h,now)=>{
+      const v=emb[chosen];
+      const logits=vocab.map(t=>emb[t][0]*v[0]+emb[t][1]*v[1]);
+      const exps=logits.map(z=>Math.exp(z/temp)), sum=exps.reduce((a,b)=>a+b,0), probs=exps.map(e=>e/sum);
+      const best=probs.indexOf(Math.max(...probs)); sTop.set(vocab[best]+" "+(probs[best]*100).toFixed(0)+"%");
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.2,10,w*.3,h*.2,w*.9); g.addColorStop(0,"rgba(167,139,250,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      // left token column
+      const tx=34, ty=58;
+      mono(ctx,"discrete vocabulary",tx,ty-22,9,C.dim);
+      vocab.forEach((t,i)=>{
+        const y=ty+i*38, on=t===chosen;
+        ctx.fillStyle=on?"rgba(167,139,250,.18)":"rgba(15,23,42,.55)"; ctx.strokeStyle=on?C.violet:"rgba(148,163,184,.2)";
+        if(on) glow(ctx,C.violet,10);
+        roundRect(ctx,tx,y-13,74,26,8); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,t,tx+37,y,10,on?C.ink:C.dim,"center");
+      });
+      // embedding space
+      const cx=w*.58, cy=h*.55, S=Math.min(w,h)*.16;
+      const X=x=>cx+x*S, Y=y=>cy-y*S;
+      for(let i=-2;i<=2;i++){ ctx.strokeStyle=i===0?"rgba(148,163,184,.22)":"rgba(148,163,184,.07)"; ctx.beginPath(); ctx.moveTo(X(-2),Y(i)); ctx.lineTo(X(2),Y(i)); ctx.stroke(); ctx.beginPath(); ctx.moveTo(X(i),Y(-2)); ctx.lineTo(X(i),Y(2)); ctx.stroke(); }
+      vocab.forEach(t=>{
+        const p=emb[t], on=t===chosen;
+        ctx.fillStyle=on?rgba(C.cyan,.25):"rgba(148,163,184,.15)"; ctx.strokeStyle=on?C.cyan:"rgba(148,163,184,.35)";
+        if(on) glow(ctx,C.cyan,14);
+        ctx.beginPath(); ctx.arc(X(p[0]),Y(p[1]),on?9:6,0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,t,X(p[0])+12,Y(p[1])-8,9,on?C.cyan:C.dim);
+      });
+      // selected vector
+      ctx.strokeStyle=C.cyan; ctx.lineWidth=2.4; glow(ctx,C.cyan,12); ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(v[0]),Y(v[1])); ctx.stroke(); noGlow(ctx);
+      mono(ctx,"embedding",X(v[0])+12,Y(v[1])+12,9,C.cyan);
+      // unembedding bars
+      const bx=w-180, by=64;
+      mono(ctx,"unembed → softmax",bx,by-14,9,C.dim);
+      vocab.forEach((t,i)=>{
+        const y=by+i*34;
+        mono(ctx,t,bx,y+4,9,i===best?C.emerald:C.dim);
+        ctx.fillStyle="rgba(148,163,184,.10)"; roundRect(ctx,bx+34,y,110,9,9); ctx.fill();
+        ctx.fillStyle=rgba(i===best?C.emerald:C.violet,.7); roundRect(ctx,bx+34,y,Math.max(3,110*probs[i]),9,9); ctx.fill();
+        mono(ctx,(probs[i]*100).toFixed(0)+"%",bx+150,y+4,8,i===best?C.emerald:C.dim);
+      });
+      mono(ctx,"argmax → discrete token",bx,by+vocab.length*34+8,9,C.dim);
+      text(ctx,"the transformer only ever sees the vector",w/2,h-18,10,C.muted,700,"center");
+    };
+    const api=register(canvas,draw);
+    seg(controls,vocab,"cat",v=>{chosen=v;api.redraw();});
+    slider(controls,{label:"Unembed temp",min:.2,max:2.5,step:.05,value:temp,fmt:v=>v.toFixed(2),onInput:v=>{temp=v;api.redraw();}});
+  });
+
+/* ============================================================
+   P13 · DERIVATION
+   ============================================================ */
+rule("derivation","P13","Derivation: Type Rules for a Transformer","Γ ⊢ x : V      Γ ⊢ W : V → V      Γ ⊢ σ : ℝ → ℝ      Γ ⊢ ∘",
+  "A derivation is a chain of typed judgments. Start with a vector and the primitive operations; every line below is licensed by one of the previous rules. Nothing new appears.",
+  "The transformer is not a new primitive. It is a term in the typed algebra of the previous cards. The derivation is the proof that the term is well-typed.",
+  ["P14 assembly"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="derivation"; stage.appendChild(wrap);
+    let step=99, active="";
+    const lines=[
+      {p:"P1",eq:"x ∈ ℝᵈ : the residual stream is a vector."},
+      {p:"P3",eq:"W_Q, W_K, W_V, W_O : ℝᵈ → ℝᵈ are linear maps (learned parameters)."},
+      {p:"P3",eq:"Q = W_Q x,   K = W_K x,   V = W_V x   :   ℝᵈ."},
+      {p:"P2",eq:"S = Q Kᵀ / √d   :   ℝⁿˣⁿ. Every entry is a pairing of a query with a key."},
+      {p:"P5",eq:"A = softmax_rows(S)   :   Δⁿ. Each row is a distribution over source positions."},
+      {p:"P6",eq:"Attn(x) = A V   :   ℝᵈ. Each output is a convex combination of value vectors."},
+      {p:"P7",eq:"x₁ = x + Attn(x)   :   ℝᵈ. The residual adds the update to the identity path."},
+      {p:"P3",eq:"MLP(x₁) = W₂ σ(W₁ x₁)   :   ℝᵈ. Two linear maps with one pointwise nonlinearity."},
+      {p:"P7",eq:"x₂ = x₁ + MLP(x₁)   :   ℝᵈ. The second residual closes the block."},
+      {p:"P8",eq:"Transformer = (x ↦ x₂) ∘ … ∘ (x ↦ x₂)   :   ℝᵈ → ℝᵈ. Repeat L times."},
+      {p:"P12",eq:"logits = U x_L   where U : ℝᵈ → ℝ|V| is the unembedding."},
+      {p:"P9",eq:"L = −log softmax(logits)[y]   :   ℝ. The loss is one scalar."},
+      {p:"P10",eq:"∇θL   :   Θ. Reverse-mode differentiation of the whole composition."},
+      {p:"P11",eq:"θ ← θ − η∇θL   :   Θ. One step of learning."}
+    ];
+    const render=()=>{
+      wrap.innerHTML="";
+      lines.forEach((l,i)=>{
+        const d=document.createElement("div");
+        d.className="deriv-line"+(i<step?" on":"")+(active&&active===l.p?" is-active":"");
+        d.innerHTML=`<span class="deriv-p">${l.p}</span><span class="deriv-eq">${l.eq}</span>`;
+        d.addEventListener("click",()=>{ active=active===l.p?"":l.p; render(); });
+        wrap.appendChild(d);
+      });
+    };
+    render();
+    slider(controls,{label:"Reveal",min:0,max:lines.length,step:1,value:lines.length,fmt:v=>v+"/"+lines.length,onInput:v=>{step=v;render();}});
+    button(controls,"Check derivation",()=>{ step=lines.length; active=""; render(); const c=document.createElement("div"); c.className="deriv-check"; c.innerHTML='<strong>✓</strong> all judgments type-check'; wrap.prepend(c); },"primary");
+    button(controls,"Reset",()=>{step=0;active="";render();},"rose");
+  });
+
+/* ============================================================
+   P14 · ASSEMBLY
+   ============================================================ */
+rule("assembly","P14","Assembly: The Whole Transformer","x ← x + Attn(x);   x ← x + MLP(x);   repeat L times;   unembed; softmax",
+  "Everything above is enough. A transformer is a loop of two residual blocks, each built from linear maps, pairings, softmax, a convex combination and a pointwise nonlinearity, wrapped in the token bridge.",
+  "Nothing new is needed at the top. The whole architecture is a composition of the previous primitives.",
+  ["the entire LLM"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="assembly"; stage.appendChild(wrap);
+    const formula=document.createElement("div"); formula.className="formula";
+    formula.innerHTML='token <span class="op">→</span> <span class="p" data-p="P12">embed</span> <span class="op">→</span> [ <span class="p" data-p="P7">x ← x +</span> <span class="p" data-p="P5">softmax</span>(<span class="p" data-p="P3">W_Q x</span> · <span class="p" data-p="P3">W_K x</span><sup>T</sup>/√d) <span class="p" data-p="P3">W_V x</span> <span class="op">+</span> <span class="p" data-p="P7">x ← x +</span> <span class="p" data-p="P3">W_2</span> <span class="p" data-p="P4">σ</span>(<span class="p" data-p="P3">W_1 x</span>) ]<sup>L</sup> <span class="op">→</span> <span class="p" data-p="P12">unembed</span> <span class="op">→</span> <span class="p" data-p="P5">softmax</span> <span class="op">→</span> token';
+    const legend=document.createElement("div"); legend.className="legend";
+    const hint=document.createElement("div"); hint.className="assemblyHint";
+    hint.textContent="Click a primitive to highlight where it appears. Click another to compare.";
+    const names={P0:"scalar",P1:"vector",P2:"pairing",P3:"linear map",P4:"nonlinearity",P5:"softmax",P6:"convex mix",P7:"residual",P8:"composition",P9:"loss",P10:"gradient",P11:"update",P12:"token bridge"};
+    Object.entries(names).forEach(([pid,name])=>{
+      const b=document.createElement("button"); b.type="button"; b.textContent=pid+" · "+name; b.dataset.pid=pid;
+      b.addEventListener("click",()=>{ legend.querySelectorAll("button").forEach(x=>x.classList.toggle("is-on",x===b)); formula.querySelectorAll(".p").forEach(m=>{ const on=m.dataset.p===pid; m.style.color=on?"#04121a":""; m.style.background=on?"linear-gradient(135deg,var(--cyan),var(--violet))":""; m.style.borderRadius="5px"; m.style.padding=on?"1px 4px":""; }); });
+      legend.appendChild(b);
+    });
+    wrap.append(formula,legend,hint);
+    const explain=document.createElement("div"); explain.className="why"; explain.style.margin="0";
+    explain.innerHTML="<div><b>Assembly.</b> Attention = <code>P3</code> projections, <code>P2</code> pairings, <code>P5</code> softmax, <code>P6</code> convex combination. MLP = <code>P3</code> + <code>P4</code> + <code>P3</code>. Both are wrapped in <code>P7</code> residuals and repeated by <code>P8</code>. The loop is trained by <code>P9</code>, <code>P10</code> and <code>P11</code>, and connected to text by <code>P12</code>.</div>";
+    wrap.appendChild(explain);
+  });
+
+
+
+
+/* ============================================================
+   P15 · MINIMALITY
+   ============================================================ */
+rule("minimality","P15","Minimality: What Is Actually Irreducible?","core = { scalar field, tuple, pointwise nonlinearity, composition }",
+  "Most of the fourteen rules are derived. If you allow tuples as a type former, the whole transformer is a term in a tiny algebra: a scalar field, a tuple constructor, a pointwise nonlinearity and composition.",
+  "This is the deepest reduction: softmax, residual, attention, convex combination, loss and even the gradient are definitions or consequences, not new primitives.",
+  ["the whole page"],
+  (stage,controls)=>{
+    const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+    svg.setAttribute("viewBox","0 0 1000 400"); svg.setAttribute("class","minimal"); stage.appendChild(svg);
+    const NS="http://www.w3.org/2000/svg";
+    const el=(tag,attrs)=>{const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;};
+    const defs=el("defs",{}); const marker=el("marker",{id:"arrow",viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"5",markerHeight:"5",orient:"auto-start-reverse"});
+    const path=el("path",{d:"M 0 0 L 10 5 L 0 10 z",fill:"rgba(148,163,184,.45)"}); marker.appendChild(path); defs.appendChild(marker); svg.appendChild(defs);
+    const nodes=[
+      {id:"P0",label:"P0 · scalar ℝ",x:90,y:60,core:true},
+      {id:"P1",label:"P1 · tuple ℝⁿ",x:330,y:60,core:true},
+      {id:"P4",label:"P4 · σ pointwise",x:570,y:60,core:true},
+      {id:"P8",label:"P8 · ∘ composition",x:810,y:60,core:true},
+      {id:"P2",label:"P2 · pairing",x:120,y:185,core:false},
+      {id:"P3",label:"P3 · linear map",x:330,y:185,core:false},
+      {id:"P5",label:"P5 · softmax",x:540,y:185,core:false},
+      {id:"P6",label:"P6 · convex mix",x:750,y:185,core:false},
+      {id:"P7",label:"P7 · residual",x:910,y:185,core:false},
+      {id:"P9",label:"P9 · loss",x:120,y:310,core:false},
+      {id:"P10",label:"P10 · gradient",x:330,y:310,core:false},
+      {id:"P11",label:"P11 · update",x:540,y:310,core:false},
+      {id:"P12",label:"P12 · token bridge",x:750,y:310,core:false},
+      {id:"P14",label:"P14 · transformer",x:930,y:310,core:false}
+    ];
+    const edges=[["P0","P1"],["P1","P2"],["P0","P2"],["P2","P3"],["P0","P5"],["P1","P5"],["P1","P6"],["P0","P6"],["P1","P7"],["P0","P9"],["P8","P10"],["P0","P10"],["P10","P11"],["P0","P11"],["P3","P12"],["P5","P12"],["P3","P14"],["P4","P14"],["P7","P14"],["P8","P14"]];
+    const byId=Object.fromEntries(nodes.map(n=>[n.id,n]));
+    edges.forEach(([a,b])=>{
+      const A=byId[a],B=byId[b];
+      const line=el("line",{x1:A.x,y1:A.y+22,x2:B.x,y2:B.y-22,stroke:"rgba(148,163,184,.28)","stroke-width":"1.2","marker-end":"url(#arrow)",class:"derived-edge"});
+      svg.appendChild(line);
+    });
+    const groups={};
+    nodes.forEach(n=>{
+      const g=el("g",{class:"node "+(n.core?"core-node":"derived"),"data-p":n.id});
+      const r=el("rect",{x:n.x-64,y:n.y-22,width:128,height:44,rx:11,fill:n.core?"rgba(103,232,249,.10)":"rgba(15,23,42,.55)",stroke:n.core?"rgba(103,232,249,.55)":"rgba(148,163,184,.22)","stroke-width":n.core?1.6:1});
+      const t=el("text",{x:n.x,y:n.y+4,"text-anchor":"middle",fill:n.core?"#eaf1ff":"#8fa3c4","font-size":"11","font-weight":n.core?"700":"600"});
+      t.textContent=n.label;
+      g.append(r,t); svg.appendChild(g); groups[n.id]=g;
+      g.addEventListener("click",()=>{
+        Object.values(groups).forEach(x=>x.querySelector("rect").setAttribute("stroke","rgba(148,163,184,.22)"));
+        r.setAttribute("stroke","#67e8f9"); r.setAttribute("stroke-width","2.4");
+      });
+    });
+    const note=document.createElement("div"); note.className="valign";
+    note.innerHTML='<span class="tag"><b>core</b> P0 scalar</span><span class="tag"><b>core</b> P1 tuple</span><span class="tag"><b>core</b> P4 pointwise σ</span><span class="tag"><b>core</b> P8 composition</span><span class="tag">everything else is <b>derived</b></span>';
+    stage.appendChild(note);
+    let collapsed=false;
+    const b=button(controls,"Collapse to core",()=>{collapsed=!collapsed;svg.classList.toggle("core-only",collapsed);b.textContent=collapsed?"Show all rules":"Collapse to core";},"primary");
+    const s=stat(controls,"14 rules","4 core primitives");
+  });
+
+/* ============================================================
+   P16 · SOURCES
+   ============================================================ */
+rule("sources","P16","Sources & Further Reading","—",
+  "The primitive decomposition is a pedagogical synthesis, not a claim of historical derivation. These are the primary sources for the formulas and the circuit view used above.",
+  "Read these if you want the formal versions: attention, the residual stream, layer normalisation, backpropagation, the update rule and the loss.",
+  ["the whole page"],
+  (stage,controls)=>{
+    const wrap=document.createElement("div"); wrap.className="sources"; stage.appendChild(wrap);
+    const items=[
+      ["Vaswani et al. (2017), <b>Attention Is All You Need</b>","https://arxiv.org/abs/1706.03762","The original transformer: scaled dot-product attention, multi-head attention, residual blocks, layer normalisation and positional encodings."],
+      ["Elhage et al. (2021), <b>A Mathematical Framework for Transformer Circuits</b>","https://transformer-circuits.pub/2021/framework/index.html","The residual stream as a communication channel; heads as independent additive readers/writers; QK and OV circuits; path expansion."],
+      ["Ba, Kiros & Hinton (2016), <b>Layer Normalization</b>","https://arxiv.org/abs/1607.06450","The normalisation used inside a transformer block; derived from scalar mean and variance."],
+      ["Rumelhart, Hinton & Williams (1986), <b>Learning representations by back-propagating errors</b>","https://www.nature.com/articles/323533a0","The backpropagation paper: reverse-mode chain rule as the learning signal."],
+      ["Kingma & Ba (2014), <b>Adam: A Method for Stochastic Optimization</b>","https://arxiv.org/abs/1412.6980","The adaptive update rule used by most transformers; a refinement of θ ← θ − η∇L."],
+      ["Goodfellow, Bengio & Courville (2016), <b>Deep Learning</b>","https://www.deeplearningbook.org/","Softmax, cross-entropy, backpropagation and the linear-algebra view, written out at textbook depth."],
+      ["Cover & Thomas (2006), <b>Elements of Information Theory</b>","https://onlinelibrary.wiley.com/doi/book/10.1002/047174882X","Cross-entropy and KL divergence: why −log p(y) is the canonical surprise."],
+      ["Roberts & Yaida (2021), <b>The Principles of Deep Learning Theory</b>","https://arxiv.org/abs/2106.10165","A deeper account of composition, signal propagation and why depth can be trained."]
+    ];
+    items.forEach(([title,url,note])=>{
+      const p=document.createElement("p");
+      p.innerHTML=`<a href="${url}" target="_blank" rel="noopener">${title}</a><br>${note}`;
+      wrap.appendChild(p);
+    });
+    const note=document.createElement("p"); note.style.marginTop="8px"; note.style.color="var(--dim)";
+    note.textContent="The decomposition into P0–P14 is a teaching device. The formal objects are standard; the claim is that the transformer is a term in their typed algebra.";
+    wrap.appendChild(note);
+  });
+
+const gallery=$("#gallery"), nav=$("#nav");
+RULES.forEach(d=>{
+  const card=document.createElement("section");
+  card.className="ruleCard"; card.id="r-"+d.id;
+  card.innerHTML=`<div class="ruleHead"><div class="ruleTag">${d.num}</div><div><h2>${d.title}</h2><p class="signature">${d.signature}</p><p>${d.blurb}</p></div></div><div class="stage" id="stage-${d.id}"></div><div class="controls" id="ctrl-${d.id}"></div><div class="why"><div><b>Primitive.</b> ${d.why}</div><div class="used">Used by: ${d.used.map(u=>`<code>${u}</code>`).join(" ")}</div></div>`;
+  gallery.appendChild(card);
+  const chip=document.createElement("a"); chip.href="#r-"+d.id; chip.className="chip"; chip.textContent=d.num+" · "+d.title; nav.appendChild(chip);
+  d.build($("#stage-"+d.id),$("#ctrl-"+d.id),card);
+});
+document.querySelectorAll(".ruleCard").forEach(c=>new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add("in");}),{rootMargin:"40px"}).observe(c));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>20 Visual Aha Moments About LLMs</title>
+<style>
+:root{
+  --bg:#050812;--panel:rgba(12,19,38,.76);--line:rgba(148,163,184,.16);--line2:rgba(148,163,184,.28);
+  --ink:#eaf1ff;--muted:#8fa3c4;--dim:#5f7190;
+  --cyan:#67e8f9;--violet:#a78bfa;--rose:#fb7185;--amber:#fbbf24;--emerald:#34d399;--blue:#60a5fa;--pink:#f472b6;
+  --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:-20%;z-index:-2;pointer-events:none;background:
+  radial-gradient(38% 30% at 18% 8%,rgba(103,232,249,.16),transparent 70%),
+  radial-gradient(34% 28% at 82% 12%,rgba(167,139,250,.18),transparent 70%),
+  radial-gradient(42% 34% at 50% 88%,rgba(251,113,133,.10),transparent 70%),
+  linear-gradient(180deg,#050812,#070c19 45%,#050812);filter:blur(10px);animation:aurora 22s ease-in-out infinite alternate}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.2;background-image:
+  linear-gradient(rgba(148,163,184,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.05) 1px,transparent 1px);
+  background-size:64px 64px;mask-image:radial-gradient(circle at 50% 20%,#000,transparent 78%)}
+@keyframes aurora{from{transform:translate3d(-2%,-1%,0) scale(1)}to{transform:translate3d(2%,2%,0) scale(1.06)}}
+.wrap{width:min(1180px,calc(100% - 32px));margin:0 auto}
+.hero{padding:clamp(48px,8vw,104px) 0 24px}
+.kicker{display:inline-flex;align-items:center;gap:9px;padding:7px 13px;border:1px solid var(--line);border-radius:999px;
+  background:rgba(103,232,249,.06);color:var(--cyan);font:700 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.kicker i{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 14px var(--cyan)}
+h1{margin:20px 0 14px;font-size:clamp(40px,7vw,88px);line-height:.96;letter-spacing:-.045em;font-weight:800;max-width:14ch;text-wrap:balance}
+h1 span{background:linear-gradient(100deg,var(--cyan),var(--violet) 48%,var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{max-width:64ch;color:var(--muted);font-size:clamp(15px,1.7vw,19px);margin:0 0 24px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;
+  color:var(--muted);font:600 11.5px/1 var(--mono);background:rgba(15,23,42,.5)}
+.pill b{color:var(--ink)}
+.nav{position:sticky;top:0;z-index:50;padding:10px 0;background:linear-gradient(180deg,rgba(5,8,18,.94),rgba(5,8,18,.68),transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:thin}
+.chips::-webkit-scrollbar{height:6px}.chips::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
+.chip{flex:0 0 auto;text-decoration:none;color:var(--muted);border:1px solid var(--line);background:rgba(15,23,42,.6);
+  padding:7px 11px;border-radius:999px;font:600 11px/1 var(--mono);transition:.18s ease}
+.chip:hover{color:var(--ink);border-color:var(--line2);background:rgba(30,41,59,.7);transform:translateY(-1px)}
+main{padding:6px 0 80px;display:grid;gap:26px}
+.demo-card{border:1px solid var(--line);border-radius:28px;overflow:hidden;
+  background:linear-gradient(160deg,rgba(15,23,42,.78),rgba(2,6,23,.92));
+  box-shadow:0 30px 80px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.045);
+  opacity:0;transform:translateY(24px) scale(.99);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.demo-card.in{opacity:1;transform:none}
+.demo-card:hover{border-color:rgba(148,163,184,.26)}
+.demo-head{display:flex;gap:16px;padding:22px 24px 14px;align-items:flex-start}
+.demo-num{flex:0 0 auto;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font:800 13px/1 var(--mono);
+  color:#04121a;background:linear-gradient(135deg,var(--cyan),var(--violet));box-shadow:0 8px 26px rgba(103,232,249,.25)}
+.demo-head h2{margin:0 0 4px;font-size:clamp(18px,2.2vw,25px);letter-spacing:-.025em;line-height:1.12}
+.demo-head p{margin:0;color:var(--muted);font-size:14px;max-width:78ch}
+.stage{position:relative;margin:4px 16px 0;border-radius:20px;overflow:hidden;border:1px solid var(--line);
+  background:radial-gradient(120% 90% at 20% 0%,rgba(103,232,249,.07),transparent 58%),
+    radial-gradient(100% 90% at 90% 10%,rgba(167,139,250,.08),transparent 55%),rgba(3,7,16,.72)}
+.stage::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 90px rgba(0,0,0,.35)}
+.demo-canvas{display:block;width:100%;height:320px}
+.controls{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;padding:16px 24px 4px}
+.ctl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12.5px;font-weight:600}
+.ctl>span{min-width:66px}
+.ctl input[type=range]{-webkit-appearance:none;appearance:none;width:132px;height:4px;border-radius:99px;
+  background:linear-gradient(90deg,var(--cyan),var(--violet));outline:none;cursor:pointer;opacity:.9}
+.ctl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#eaf1ff;
+  border:2px solid #0b1224;box-shadow:0 0 0 3px rgba(103,232,249,.2);cursor:grab}
+.ctl input[type=range]::-moz-range-thumb{width:14px;height:14px;border:2px solid #0b1224;border-radius:50%;background:#eaf1ff}
+.ctl b{color:var(--ink);font-family:var(--mono);font-weight:700;min-width:44px;text-align:right}
+.btn{appearance:none;border:1px solid var(--line2);background:rgba(30,41,59,.6);color:var(--ink);padding:8px 12px;
+  border-radius:11px;font:700 12px/1 var(--sans);cursor:pointer;transition:.16s ease}
+.btn:hover{background:rgba(51,65,85,.75);transform:translateY(-1px)}
+.btn.primary{border-color:transparent;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#04121a}
+.btn.rose{border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.12);color:var(--rose)}
+.btn.is-on{border-color:rgba(103,232,249,.55);background:rgba(103,232,249,.14);color:var(--cyan);box-shadow:0 0 0 3px rgba(103,232,249,.08)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:rgba(2,6,23,.5)}
+.seg button{appearance:none;border:0;background:transparent;color:var(--muted);padding:8px 11px;font:700 11.5px/1 var(--mono);cursor:pointer;transition:.16s ease}
+.seg button.is-on{background:linear-gradient(135deg,rgba(103,232,249,.22),rgba(167,139,250,.22));color:var(--ink)}
+.stat{display:inline-flex;align-items:baseline;gap:7px;color:var(--dim);font:600 11px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase}
+.stat b{color:var(--ink);font-size:13px;letter-spacing:0;text-transform:none}
+.aha{margin:14px 24px 22px;padding:13px 16px;border-left:3px solid var(--cyan);
+  background:linear-gradient(90deg,rgba(103,232,249,.09),rgba(103,232,249,.015));border-radius:0 14px 14px 0;color:var(--muted);font-size:13.5px}
+.aha b{color:var(--cyan);font:800 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;margin-right:7px}
+
+/* logit lens */
+.lens{padding:18px 20px 20px;display:grid;gap:7px}
+.lens-row{display:grid;grid-template-columns:58px 1fr;gap:12px;align-items:center;padding:5px 8px;border-radius:12px;transition:.2s ease;cursor:pointer}
+.lens-row:hover,.lens-row.is-active{background:rgba(103,232,249,.07);box-shadow:inset 0 0 0 1px rgba(103,232,249,.18)}
+.lens-layer{font:700 10px/1 var(--mono);color:var(--dim);text-align:right}
+.lens-row.is-active .lens-layer{color:var(--cyan)}
+.lens-chips{display:flex;gap:6px;min-width:0}
+.lens-chip{flex:1 1 0;min-width:0;position:relative;overflow:hidden;border:1px solid var(--line);border-radius:9px;padding:5px 8px;background:rgba(15,23,42,.55)}
+.lens-chip i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,rgba(103,232,249,.22),rgba(167,139,250,.18));pointer-events:none}
+.lens-chip span{position:relative;display:flex;justify-content:space-between;gap:6px;font:700 11px/1.2 var(--mono);color:var(--muted)}
+.lens-chip.top{border-color:rgba(103,232,249,.45);box-shadow:0 0 18px rgba(103,232,249,.12)}
+.lens-chip.top span{color:var(--ink)}
+.lens-final{display:flex;align-items:center;gap:10px;margin-top:8px;padding:10px 14px;border:1px solid rgba(103,232,249,.3);border-radius:14px;background:rgba(103,232,249,.06)}
+.lens-final span{font:800 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.lens-final b{font-size:20px;letter-spacing:-.02em}
+
+/* patching */
+.patch-wrap{display:grid;gap:14px;padding:18px}
+.prompt-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.prompt{border:1px solid var(--line);border-radius:13px;padding:10px 13px;background:rgba(15,23,42,.55);font-size:13px;color:var(--muted)}
+.prompt b{color:var(--ink)}.prompt.clean{border-color:rgba(52,211,153,.35)}.prompt.corrupt{border-color:rgba(251,113,133,.35)}
+.patch-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
+.patch-cell{aspect-ratio:1;border:1px solid var(--line);border-radius:7px;background:rgba(15,23,42,.5);cursor:pointer;position:relative;transition:.15s ease}
+.patch-cell:hover{transform:scale(1.06);border-color:var(--line2)}
+.patch-cell.is-patched{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(103,232,249,.22),0 0 18px rgba(103,232,249,.2)}
+.patch-cell.is-patched::after{content:"";position:absolute;inset:30%;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+.patch-out{display:flex;align-items:center;gap:14px}
+.patch-bar{flex:1;height:10px;border-radius:99px;background:rgba(148,163,184,.14);overflow:hidden}
+.patch-bar i{display:block;height:100%;width:50%;border-radius:inherit;background:linear-gradient(90deg,var(--rose),var(--emerald));transition:width .35s ease}
+.patch-answer{font:800 17px/1 var(--sans);min-width:70px;text-align:right}
+
+/* chain of thought */
+.cot{display:grid;gap:12px;padding:20px}
+.cot-problem{font:800 clamp(24px,4vw,40px)/1 var(--sans);letter-spacing:-.03em}
+.cot-tape{display:flex;flex-wrap:wrap;gap:7px;min-height:40px}
+.cot-step{border:1px solid rgba(167,139,250,.35);background:rgba(167,139,250,.1);color:var(--ink);padding:7px 10px;
+  border-radius:10px;font:700 12px/1 var(--mono);opacity:0;transform:translateY(6px);transition:.35s ease}
+.cot-step.in{opacity:1;transform:none}
+.cot-answer{display:flex;align-items:center;gap:10px;font:800 16px/1 var(--sans)}
+.cot-answer b{font-size:26px;letter-spacing:-.03em}
+.cot-memory{height:8px;border-radius:99px;background:rgba(148,163,184,.14);overflow:hidden}
+.cot-memory i{display:block;height:100%;width:20%;background:linear-gradient(90deg,var(--amber),var(--rose));transition:width .35s ease}
+.tape-label{display:flex;gap:10px;align-items:center;color:var(--dim);font:700 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase}
+
+@media(max-width:720px){
+  .wrap{width:calc(100% - 18px)}.hero{padding-top:40px}.demo-head{padding:18px 16px 12px}.stage{margin:0 8px}
+  .controls{padding:14px 16px 2px;gap:10px 14px}.aha{margin:12px 16px 18px}.ctl input[type=range]{width:104px}
+  .prompt-pair{grid-template-columns:1fr}.patch-grid{grid-template-columns:repeat(6,1fr)}
+  .lens-row{grid-template-columns:46px 1fr}.lens-chips{flex-wrap:wrap}.lens-chip{flex:1 1 42%}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="kicker"><i></i> visual aha gallery</span>
+    <h1>How LLMs <span>actually</span> think.</h1>
+    <p class="lede">Twenty interactive scenes that turn the invisible machinery of large language models into something you can see, touch and break. No maths required. Every card is a separate aha.</p>
+    <div class="hero-meta">
+      <span class="pill"><b>20</b> demos</span>
+      <span class="pill"><b>0</b> dependencies</span>
+      <span class="pill">canvas + vanilla JS</span>
+      <span class="pill">dark, because light is for screenshots</span>
+    </div>
+  </header>
+  <nav class="nav" aria-label="Demo navigation"><div class="chips" id="nav"></div></nav>
+  <main id="gallery"></main>
+</div>
+<script>
+(() => {
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => t * t * (3 - 2 * t);
+const sigmoid = x => 1 / (1 + Math.exp(-x));
+const TAU = Math.PI * 2;
+const C = { cyan:"#67e8f9", violet:"#a78bfa", rose:"#fb7185", amber:"#fbbf24", emerald:"#34d399", blue:"#60a5fa", pink:"#f472b6", ink:"#eaf1ff", muted:"#8fa3c4", dim:"#5f7190" };
+const hex = h => { const n = parseInt(h.slice(1), 16); return [(n>>16)&255,(n>>8)&255,n&255]; };
+const rgba = (h,a) => { const [r,g,b]=hex(h); return `rgba(${r},${g},${b},${a})`; };
+const roundRect = (ctx,x,y,w,h,r) => { r = Math.min(r, Math.abs(w)/2, Math.abs(h)/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); };
+const glow = (ctx,color,blur) => { ctx.shadowColor=color; ctx.shadowBlur=blur; };
+const noGlow = ctx => { ctx.shadowBlur=0; ctx.shadowColor="transparent"; };
+const text = (ctx,s,x,y,size=12,color=C.muted,weight=600,align="left") => { ctx.font=`${weight} ${size}px Inter, system-ui, sans-serif`; ctx.fillStyle=color; ctx.textAlign=align; ctx.textBaseline="middle"; ctx.fillText(s,x,y); };
+const mono = (ctx,s,x,y,size=10,color=C.dim,align="left") => { ctx.font=`700 ${size}px ui-monospace, monospace`; ctx.fillStyle=color; ctx.textAlign=align; ctx.textBaseline="middle"; ctx.fillText(s,x,y); };
+
+function canvasStage(stage, height = 320) { const c=document.createElement("canvas"); c.className="demo-canvas"; c.style.height=height+"px"; stage.appendChild(c); return c; }
+function register(canvas, draw) {
+  const ctx = canvas.getContext("2d");
+  let w=0,h=0,dpr=1,raf=0,visible=false,destroyed=false;
+  const size=()=>{ const r=canvas.getBoundingClientRect(); dpr=Math.min(2,window.devicePixelRatio||1); w=Math.max(1,r.width); h=Math.max(1,r.height); canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr); ctx.setTransform(dpr,0,0,dpr,0,0); };
+  const paint=now=>{ if(destroyed||!w||!h) return; draw(ctx,w,h,now); };
+  const frame=now=>{ if(!visible||destroyed){raf=0;return;} paint(now); raf=requestAnimationFrame(frame); };
+  const start=()=>{ if(!raf&&visible&&!destroyed) raf=requestAnimationFrame(frame); };
+  const stop=()=>{ if(raf) cancelAnimationFrame(raf); raf=0; };
+  new ResizeObserver(()=>{ size(); paint(performance.now()); }).observe(canvas);
+  new IntersectionObserver(es=>{ visible=es[0].isIntersecting; if(visible) start(); else stop(); },{rootMargin:"160px"}).observe(canvas);
+  requestAnimationFrame(()=>{ size(); paint(performance.now()); visible=true; start(); });
+  return { redraw:()=>paint(performance.now()), destroy:()=>{destroyed=true;stop();} };
+}
+function slider(controls, { label, min, max, step = 1, value, fmt = v => v, onInput }) {
+  const el=document.createElement("label"); el.className="ctl";
+  const span=document.createElement("span"); span.textContent=label;
+  const input=document.createElement("input"); input.type="range"; input.min=min; input.max=max; input.step=step; input.value=value;
+  const out=document.createElement("b"); out.textContent=fmt(Number(value));
+  input.addEventListener("input",()=>{ const v=Number(input.value); out.textContent=fmt(v); onInput&&onInput(v); });
+  el.append(span,input,out); controls.appendChild(el); return {el,input,out};
+}
+function button(controls,label,onClick,kind=""){ const b=document.createElement("button"); b.type="button"; b.className="btn "+kind; b.textContent=label; b.addEventListener("click",onClick); controls.appendChild(b); return b; }
+function toggle(controls,label,on,onChange){ let state=on; const b=button(controls,label,()=>{ state=!state; b.classList.toggle("is-on",state); onChange&&onChange(state); },on?"is-on":""); return b; }
+function stat(controls,label,value){ const el=document.createElement("span"); el.className="stat"; el.innerHTML=`<span>${label}</span><b>${value}</b>`; controls.appendChild(el); return {el,set:v=>{el.querySelector("b").textContent=v;}}; }
+function seg(controls,items,value,onChange){ const bar=document.createElement("div"); bar.className="seg"; const buttons=items.map(item=>{ const b=document.createElement("button"); b.type="button"; b.textContent=item; b.className=item===value?"is-on":""; b.addEventListener("click",()=>{ buttons.forEach(x=>x.classList.toggle("is-on",x===b)); onChange(item); }); bar.appendChild(b); return b; }); controls.appendChild(bar); return bar; }
+
+const DEMOS=[];
+const demo=(id,num,title,short,blurb,aha,build)=>DEMOS.push({id,num,title,short,blurb,aha,build});
+
+/* ============================================================
+   01 · KV-CACHE MEMORY PALACE
+   ============================================================ */
+demo("kv","01","KV-Cache Memory Palace","KV-cache",
+  "Every token you generate leaves two vectors behind for every layer. Watch the cache grow, then switch the attention geometry and watch memory collapse.",
+  "Long context is a memory problem, not a compute problem. GQA and MQA buy long context by storing fewer K/V heads.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,340);
+    let mode="MHA", tokens=64, layers=24;
+    const sHeads=stat(controls,"KV heads","8"), sMem=stat(controls,"Cache","relative");
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const kv=mode==="MHA"?8:mode==="GQA"?2:1;
+      const memory=tokens*layers*kv, frac=clamp(memory/(256*48*8),0,1);
+      sHeads.set(String(kv)); sMem.set((memory/1000).toFixed(1)+"k units");
+      const g=ctx.createRadialGradient(w*.25,h*.2,20,w*.25,h*.2,w*.95);
+      g.addColorStop(0,"rgba(103,232,249,.08)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const bx=28,by=30,bw=w-56,bh=11;
+      ctx.fillStyle="rgba(148,163,184,.14)"; roundRect(ctx,bx,by,bw,bh,99); ctx.fill();
+      const grad=ctx.createLinearGradient(bx,0,bx+bw,0); grad.addColorStop(0,C.cyan); grad.addColorStop(.6,C.violet); grad.addColorStop(1,C.rose);
+      ctx.fillStyle=grad; glow(ctx,C.cyan,18); roundRect(ctx,bx,by,Math.max(3,bw*frac),bh,99); ctx.fill(); noGlow(ctx);
+      text(ctx,"KV cache",bx,by-12,11,C.ink,700); mono(ctx,mode+" · "+kv+" KV heads",w-28,by-12,10,C.dim,"right");
+      const cols=Math.min(tokens,52), top=92, bottom=h-34, shown=Math.min(layers,14);
+      const cellW=Math.max(4,(w-72)/cols-4), cellH=Math.max(3,(bottom-top)/shown-2);
+      for(let i=0;i<cols;i++){
+        const x=36+i*((w-72)/cols), age=i/Math.max(1,cols-1);
+        for(let l=0;l<shown;l++){
+          const sh=.45+.55*Math.sin(now*2.2+i*.34+l*.2), a=(.14+.55*age)*(.55+.45*sh);
+          ctx.fillStyle=l%2?rgba(C.violet,a):rgba(C.cyan,a);
+          ctx.fillRect(x,top+l*(cellH+2),cellW,cellH);
+        }
+      }
+      const scanX=((now*.08)%1)*(w+180)-90;
+      const beam=ctx.createLinearGradient(scanX-70,0,scanX+70,0);
+      beam.addColorStop(0,"rgba(103,232,249,0)"); beam.addColorStop(.5,"rgba(103,232,249,.09)"); beam.addColorStop(1,"rgba(103,232,249,0)");
+      ctx.fillStyle=beam; ctx.fillRect(scanX-70,top-8,140,bottom-top+16);
+      text(ctx,"tokens →",36,h-18,10,C.dim,700); mono(ctx,tokens+" tokens × "+layers+" layers",w-36,h-18,10,C.dim,"right");
+      text(ctx,mode==="MHA"?"one K/V pair per head":mode==="GQA"?"heads share K/V groups":"all heads share one K/V",36,70,12,C.muted,600);
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Context",min:8,max:256,step:8,value:tokens,fmt:v=>v+" tok",onInput:v=>{tokens=v;api.redraw();}});
+    slider(controls,{label:"Layers",min:4,max:48,step:2,value:layers,fmt:v=>v,onInput:v=>{layers=v;api.redraw();}});
+    seg(controls,["MHA","GQA","MQA"],mode,v=>{mode=v;api.redraw();});
+    button(controls,"Clear cache",()=>{tokens=8;api.redraw();},"rose");
+  });
+
+/* ============================================================
+   02 · SPECULATIVE DECODING RACE
+   ============================================================ */
+demo("spec","02","Speculative Decoding Race","Speculative decoding",
+  "A tiny draft model sprints ahead and guesses several tokens. The big model verifies them all at once. Guesses that survive are free speed.",
+  "Speculation never changes the output. Accepted guesses are pure speed; rejected guesses only waste cheap draft compute.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,330);
+    let acceptRate=.72, k=5, pattern=[], lastCycle=-1;
+    const sSpeed=stat(controls,"Speedup","×1.0");
+    const make=()=>{ pattern=[]; let broke=false; for(let i=0;i<k;i++){ const ok=i===0?true:Math.random()<acceptRate; pattern.push(!broke&&ok); if(!ok) broke=true; } if(!pattern.some(Boolean)) pattern[0]=true; };
+    make();
+    const draw=(ctx,w,h,now)=>{
+      const cycle=3.4, local=now%cycle;
+      if(local<lastCycle-.5){ make(); lastCycle=local; } lastCycle=local;
+      const accepted=pattern.filter(Boolean).length, speed=accepted+1;
+      sSpeed.set("×"+speed.toFixed(1));
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.5,h*.1,10,w*.5,h*.1,w*.9); g.addColorStop(0,"rgba(167,139,250,.09)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const lanes=[{y:78,label:"DRAFT",color:C.violet,sub:"small model, k guesses"},{y:168,label:"TARGET",color:C.cyan,sub:"big model, one parallel pass"},{y:258,label:"OUTPUT",color:C.emerald,sub:"accepted tokens are free speed"}];
+      lanes.forEach(l=>{ mono(ctx,l.label,28,l.y-24,10,l.color); mono(ctx,l.sub,28,l.y-10,9,C.dim); ctx.strokeStyle="rgba(148,163,184,.12)"; ctx.beginPath(); ctx.moveTo(28,l.y+18); ctx.lineTo(w-28,l.y+18); ctx.stroke(); });
+      const startX=150, gap=Math.min(74,(w-startX-60)/k);
+      for(let i=0;i<k;i++){
+        const appear=clamp((local-.08-i*.07)/.18,0,1); if(appear<=0) continue;
+        const x=startX+i*gap, y=lanes[0].y+18;
+        ctx.globalAlpha=appear; ctx.fillStyle="rgba(167,139,250,.13)"; ctx.strokeStyle=rgba(C.violet,.55); glow(ctx,C.violet,12);
+        roundRect(ctx,x-26,y-16,52,32,10); ctx.fill(); ctx.stroke(); noGlow(ctx); mono(ctx,"tok "+(i+1),x,y,9,C.ink,"center"); ctx.globalAlpha=1;
+      }
+      if(local>.95){
+        const reveal=clamp((local-.95)/.5,0,1);
+        for(let i=0;i<k;i++){
+          const x=startX+i*gap, y=lanes[1].y+18, ok=pattern[i];
+          ctx.globalAlpha=reveal; ctx.fillStyle=ok?"rgba(52,211,153,.16)":"rgba(251,113,133,.14)"; ctx.strokeStyle=ok?C.emerald:C.rose; glow(ctx,ok?C.emerald:C.rose,16);
+          roundRect(ctx,x-26,y-16,52,32,10); ctx.fill(); ctx.stroke(); noGlow(ctx); mono(ctx,ok?"✓":"✕",x,y,14,ok?C.emerald:C.rose,"center"); ctx.globalAlpha=1;
+        }
+      }
+      if(local>1.55){
+        const fly=clamp((local-1.55)/.6,0,1);
+        for(let i=0;i<accepted;i++){
+          const x=startX+i*gap, y=lerp(lanes[1].y+18,lanes[2].y+18,ease(fly));
+          ctx.fillStyle="rgba(52,211,153,.18)"; ctx.strokeStyle=C.emerald; glow(ctx,C.emerald,14);
+          roundRect(ctx,x-24,y-14,48,28,9); ctx.fill(); ctx.stroke(); noGlow(ctx); mono(ctx,"✓",x,y,12,C.ink,"center");
+        }
+        const ex=startX+accepted*gap;
+        if(fly>.5){ ctx.fillStyle="rgba(103,232,249,.16)"; ctx.strokeStyle=C.cyan; glow(ctx,C.cyan,16); roundRect(ctx,ex-24,lanes[2].y+4,48,28,9); ctx.fill(); ctx.stroke(); noGlow(ctx); mono(ctx,"+1",ex,lanes[2].y+18,11,C.ink,"center"); }
+      }
+      ctx.fillStyle="rgba(103,232,249,.06)"; roundRect(ctx,w-150,28,122,52,14); ctx.fill();
+      mono(ctx,"TARGET STEPS",w-140,46,8,C.dim); text(ctx,speed.toFixed(1)+"×",w-140,66,24,C.cyan,800);
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Accept rate",min:.3,max:.96,step:.02,value:acceptRate,fmt:v=>Math.round(v*100)+"%",onInput:v=>{acceptRate=v;make();api.redraw();}});
+    slider(controls,{label:"Draft length",min:1,max:8,step:1,value:k,fmt:v=>"k="+v,onInput:v=>{k=v;make();api.redraw();}});
+    button(controls,"New race",()=>{make();api.redraw();},"primary");
+  });
+
+/* ============================================================
+   03 · ATTENTION SINKS & STREAMING EVICTION
+   ============================================================ */
+demo("sinks","03","Attention Sinks & Streaming Eviction","Attention sinks",
+  "A tiny KV budget cannot keep a whole conversation. Streaming models pin the first token as an anchor and keep only a recent window. The middle is deliberately forgotten.",
+  "You can stream forever if you keep the sink and the recent window. That is why the first token matters more than the middle of a long prompt.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,320);
+    let budget=12, sinks=2, speed=1;
+    const tokens=[]; let nextId=0,lastSpawn=0,seen=0;
+    const sKeep=stat(controls,"Kept","0 / 0");
+    const draw=(ctx,w,h,now)=>{
+      if(now-lastSpawn>.42/speed){ lastSpawn=now; tokens.push({id:nextId++,born:now}); seen++; if(tokens.length>120) tokens.shift(); }
+      const windowSlots=Math.max(1,budget-sinks), active=tokens.slice(-windowSlots), all=tokens;
+      sKeep.set(`${Math.min(budget,all.length)} / ${seen}`);
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.5,h*.2,10,w*.5,h*.2,w*.9); g.addColorStop(0,"rgba(251,113,133,.07)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const baseY=h*.68;
+      ctx.strokeStyle="rgba(148,163,184,.14)"; ctx.beginPath(); ctx.moveTo(24,baseY+26); ctx.lineTo(w-24,baseY+26); ctx.stroke();
+      mono(ctx,"incoming conversation →",26,baseY+44,9,C.dim);
+      all.forEach((tok,i)=>{
+        const age=(now-tok.born)*78*speed, x=w-40-age; if(x<-40) return;
+        const isSink=i===0, inWindow=i>=all.length-windowSlots, kept=isSink||inWindow, y=baseY-(isSink?26:0);
+        ctx.globalAlpha=kept?1:.18;
+        ctx.fillStyle=isSink?"rgba(251,191,36,.18)":kept?"rgba(103,232,249,.14)":"rgba(148,163,184,.08)";
+        ctx.strokeStyle=isSink?C.amber:kept?C.cyan:"rgba(148,163,184,.3)";
+        if(isSink) glow(ctx,C.amber,14); else if(kept) glow(ctx,C.cyan,8);
+        roundRect(ctx,x-21,y-13,42,26,8); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,"#"+tok.id,x,y,8,kept?C.ink:C.dim,"center"); ctx.globalAlpha=1;
+      });
+      const trayX=28,trayY=32,trayW=w-56,trayH=86;
+      ctx.fillStyle="rgba(2,6,23,.55)"; ctx.strokeStyle="rgba(103,232,249,.24)"; roundRect(ctx,trayX,trayY,trayW,trayH,14); ctx.fill(); ctx.stroke();
+      mono(ctx,"KV CACHE",trayX+12,trayY-10,9,C.cyan);
+      const slotW=Math.min(54,(trayW-24)/Math.max(1,budget));
+      for(let i=0;i<budget;i++){
+        const x=trayX+12+i*slotW, isSinkSlot=i<sinks, tok=isSinkSlot?all[0]:active[Math.max(0,i-sinks)], filled=isSinkSlot?!!all[0]:!!tok;
+        ctx.fillStyle=filled?(isSinkSlot?"rgba(251,191,36,.14)":"rgba(103,232,249,.12)"):"rgba(148,163,184,.05)";
+        ctx.strokeStyle=filled?(isSinkSlot?"rgba(251,191,36,.45)":"rgba(103,232,249,.35)"):"rgba(148,163,184,.14)";
+        roundRect(ctx,x,trayY+20,slotW-6,46,8); ctx.fill(); ctx.stroke();
+        if(filled) mono(ctx,"#"+tok.id,x+(slotW-6)/2,trayY+43,8,isSinkSlot?C.amber:C.cyan,"center");
+      }
+      mono(ctx,sinks+" sink · "+windowSlots+" recent",trayX+12,trayY+trayH-12,9,C.dim);
+      const evicted=Math.max(0,seen-budget);
+      mono(ctx,evicted+" evicted",trayX+trayW-12,trayY+trayH-12,9,C.rose,"right");
+      for(let i=0;i<Math.min(evicted,18);i++){
+        const x=trayX+24+(i*67+now*20)%(trayW-48), y=trayY+76+((now*34+i*21)%74), a=clamp(1-(y-trayY-74)/74,0,1)*.4;
+        ctx.fillStyle=rgba(C.rose,a); ctx.beginPath(); ctx.arc(x,y,1.8,0,TAU); ctx.fill();
+      }
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"KV budget",min:4,max:24,step:1,value:budget,fmt:v=>v+" slots",onInput:v=>{budget=v;api.redraw();}});
+    slider(controls,{label:"Sink slots",min:0,max:4,step:1,value:sinks,fmt:v=>v,onInput:v=>{sinks=v;api.redraw();}});
+    slider(controls,{label:"Stream speed",min:.3,max:2.4,step:.1,value:speed,fmt:v=>v.toFixed(1)+"×",onInput:v=>{speed=v;api.redraw();}});
+  });
+
+/* ============================================================
+   04 · CONTINUOUS BATCHING
+   ============================================================ */
+demo("batch","04","Continuous Batching","Continuous batching",
+  "The GPU is a parking garage. Static batching waits for a full batch and leaves slots empty. Continuous batching fills every free slot the moment a request arrives.",
+  "Same GPU, same model: better scheduling can double throughput without changing a single weight.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,330);
+    let mode="continuous", slots=8, rate=.7, sim=null;
+    const mulberry32=a=>()=>{ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; };
+    const rebuild=()=>{
+      const rng=mulberry32(1337+Math.round(rate*10)*100+slots), reqs=[], colors=[C.cyan,C.violet,C.emerald,C.amber,C.rose,C.blue,C.pink];
+      let t=0,id=0;
+      while(t<60){ t+=1+Math.floor(rng()*(10/Math.max(.25,rate))); reqs.push({id:id++,start:t,len:2+Math.floor(rng()*5),color:colors[id%colors.length]}); }
+      const occ=Array.from({length:64},()=>Array(slots).fill(null)), free=Array(slots).fill(0);
+      for(const r of reqs){
+        let start=mode==="static"?Math.ceil(r.start/6)*6:r.start, slot=-1;
+        for(let s=0;s<slots;s++) if(free[s]<=start){slot=s;break;}
+        if(slot<0){ let best=0; for(let s=1;s<slots;s++) if(free[s]<free[best]) best=s; slot=best; start=Math.max(start,free[slot]); }
+        free[slot]=start+r.len;
+        for(let x=start;x<start+r.len&&x<64;x++) occ[x][slot]=r;
+      }
+      sim={reqs,occ};
+    };
+    rebuild();
+    const draw=(ctx,w,h,now)=>{
+      const playhead=6+(now*5)%48, windowSize=28, t0=Math.max(0,playhead-windowSize), t1=t0+windowSize;
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.5,h*.1,10,w*.5,h*.1,w*.8); g.addColorStop(0,"rgba(96,165,250,.08)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const left=58,top=54,gridW=w-left-24,gridH=h-top-42,stepW=gridW/windowSize,slotH=gridH/slots;
+      mono(ctx,"GPU SLOTS",left,top-18,9,C.dim);
+      for(let s=0;s<slots;s++){ ctx.strokeStyle="rgba(148,163,184,.08)"; ctx.beginPath(); ctx.moveTo(left,top+s*slotH); ctx.lineTo(left+gridW,top+s*slotH); ctx.stroke(); mono(ctx,"s"+s,left-8,top+s*slotH+slotH/2,8,C.dim,"right"); }
+      let occupied=0,total=0;
+      for(let x=Math.floor(t0);x<Math.ceil(t1);x++) for(let s=0;s<slots;s++){
+        const r=sim.occ[x]&&sim.occ[x][s], px=left+(x-t0)*stepW;
+        if(r){ occupied++; ctx.fillStyle=rgba(r.color,.55); ctx.strokeStyle=rgba(r.color,.9); roundRect(ctx,px+1,top+s*slotH+2,Math.max(1,stepW-2),Math.max(1,slotH-4),3); ctx.fill(); ctx.stroke(); }
+        total+=slots;
+      }
+      const util=occupied/Math.max(1,total), px=left+(playhead-t0)*stepW;
+      const beam=ctx.createLinearGradient(px-20,0,px+20,0); beam.addColorStop(0,"rgba(103,232,249,0)"); beam.addColorStop(.5,"rgba(103,232,249,.18)"); beam.addColorStop(1,"rgba(103,232,249,0)");
+      ctx.fillStyle=beam; ctx.fillRect(px-20,top,40,gridH);
+      mono(ctx,"time →",left,h-20,9,C.dim);
+      text(ctx,Math.round(util*100)+"%",w-26,top+26,26,mode==="continuous"?C.emerald:C.rose,800,"right");
+      mono(ctx,"GPU utilisation",w-26,top+46,9,C.dim,"right");
+      mono(ctx,mode==="continuous"?"fills every free slot":"waits for batch boundaries",left,top-34,10,mode==="continuous"?C.emerald:C.rose);
+    };
+    const api=register(canvas,draw);
+    seg(controls,["Continuous","Static"],"Continuous",v=>{mode=v.toLowerCase();rebuild();api.redraw();});
+    slider(controls,{label:"GPU slots",min:4,max:12,step:1,value:slots,fmt:v=>v,onInput:v=>{slots=v;rebuild();api.redraw();}});
+    slider(controls,{label:"Arrival rate",min:.25,max:1.4,step:.05,value:rate,fmt:v=>v.toFixed(2),onInput:v=>{rate=v;rebuild();api.redraw();}});
+  });
+
+/* ============================================================
+   05 · PROMPT CACHING
+   ============================================================ */
+demo("cache","05","Prompt Caching / Prefix Reuse","Prompt caching",
+  "Two questions share the same long system prompt. The first has to compute all of it. The second recognises the prefix and only computes the new suffix.",
+  "Repeated prompts are almost free after the first pass. Prompt caching is a prefix-matching problem, not a new model.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,300);
+    let prefix=12, cacheOn=true;
+    const sLat=stat(controls,"Latency","—");
+    const draw=(ctx,w,h,now)=>{
+      const local=(now%3.6)/3.6, q=4, total=prefix+q, latA=total, latB=cacheOn?q:total;
+      sLat.set(cacheOn?latA+" → "+latB:latA+" → "+latA);
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.5,h*.1,10,w*.5,h*.1,w*.9); g.addColorStop(0,"rgba(52,211,153,.07)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const laneY=[82,190], labels=["request A · cold","request B · warm"], blockW=Math.min(30,(w-130)/total);
+      laneY.forEach((y,lane)=>{
+        mono(ctx,labels[lane],26,y-22,9,lane===0?C.rose:C.emerald);
+        const pulse=clamp(local*1.5-lane*.18,0,1.25);
+        for(let i=0;i<total;i++){
+          const x=70+i*blockW, isPrefix=i<prefix, cached=lane===1&&isPrefix&&cacheOn, computed=!cached&&(pulse>i/total);
+          ctx.fillStyle=cached?"rgba(52,211,153,.10)":computed?(isPrefix?"rgba(167,139,250,.16)":"rgba(103,232,249,.20)"):"rgba(148,163,184,.07)";
+          ctx.strokeStyle=cached?"rgba(52,211,153,.35)":computed?(isPrefix?C.violet:C.cyan):"rgba(148,163,184,.18)";
+          if(computed) glow(ctx,isPrefix?C.violet:C.cyan,8);
+          roundRect(ctx,x,y-13,blockW-3,26,7); ctx.fill(); ctx.stroke(); noGlow(ctx);
+          if(cached) mono(ctx,"✓",x+(blockW-3)/2,y,8,C.emerald,"center");
+        }
+        const barX=w-50, value=lane===0?latA:latB, barH=Math.max(10,value*8);
+        ctx.fillStyle=lane===0?"rgba(251,113,133,.18)":"rgba(52,211,153,.18)";
+        ctx.strokeStyle=lane===0?C.rose:C.emerald;
+        roundRect(ctx,barX,y+18-barH,16,barH,5); ctx.fill(); ctx.stroke();
+        mono(ctx,value+"u",barX+24,y+18-barH/2,8,lane===0?C.rose:C.emerald);
+      });
+      if(cacheOn){
+        ctx.fillStyle="rgba(52,211,153,.06)"; roundRect(ctx,70,132,prefix*blockW-3,94,12); ctx.fill();
+        mono(ctx,"shared prefix · cache hit",76,146,9,C.emerald);
+      }
+      text(ctx,cacheOn?"prefix reused":"prefix recomputed",w-26,34,13,cacheOn?C.emerald:C.rose,700,"right");
+      mono(ctx,prefix+" cached blocks + "+q+" new",w-26,50,9,C.dim,"right");
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Prefix",min:4,max:24,step:1,value:prefix,fmt:v=>v+" blocks",onInput:v=>{prefix=v;api.redraw();}});
+    toggle(controls,"Cache on",true,on=>{cacheOn=on;api.redraw();});
+    button(controls,"Reset",()=>{prefix=12;api.redraw();},"rose");
+  });
+
+/* ============================================================
+   06 · LOGIT LENS
+   ============================================================ */
+demo("lens","06","Logit Lens","Logit lens",
+  "Read the residual stream at every layer. Early layers are vague; middle layers already lean toward the answer; the final layer sharpens it.",
+  "The answer is forming long before the last layer. The logit lens turns the hidden state into a prediction at any depth.",
+  (stage, controls) => {
+    const wrap=document.createElement("div"); wrap.className="lens"; stage.appendChild(wrap);
+    const prompts={
+      capital:{q:"The capital of France is",right:"Paris",others:["Lyon","Berlin","Rome"]},
+      cold:{q:"The opposite of hot is",right:"cold",others:["warm","ice","heat"]},
+      math:{q:"17 + 25 =",right:"42",others:["41","43","32"]}
+    };
+    let key="capital", active=8, playing=false, timer=0;
+    const layers=12;
+    const render=()=>{
+      wrap.innerHTML=""; const p=prompts[key];
+      for(let l=0;l<layers;l++){
+        const progress=sigmoid((l-4.2)/1.7), rightP=clamp(.03+.9*progress,.03,.96), rest=(1-rightP)/p.others.length;
+        const probs=[[p.right,rightP],...p.others.map(t=>[t,rest])].sort((a,b)=>b[1]-a[1]);
+        const r=document.createElement("div"); r.className="lens-row"+(l===active?" is-active":"");
+        const layer=document.createElement("div"); layer.className="lens-layer"; layer.textContent="L"+(l+1);
+        const chips=document.createElement("div"); chips.className="lens-chips";
+        probs.slice(0,4).forEach(([tok,prob],i)=>{
+          const c=document.createElement("div"); c.className="lens-chip"+(i===0?" top":"");
+          c.innerHTML=`<i style="width:${Math.round(prob*100)}%"></i><span><em style="font-style:normal">${tok}</em><em style="font-style:normal;color:var(--dim)">${(prob*100).toFixed(0)}%</em></span>`;
+          chips.appendChild(c);
+        });
+        r.append(layer,chips); r.addEventListener("click",()=>{active=l;render();}); wrap.appendChild(r);
+      }
+      const final=document.createElement("div"); final.className="lens-final";
+      final.innerHTML=`<span>residual stream · L${active+1}</span><b>${p.q} → ${p.right}</b>`;
+      wrap.appendChild(final);
+    };
+    render();
+    const s=slider(controls,{label:"Layer",min:1,max:layers,step:1,value:active+1,fmt:v=>"L"+v,onInput:v=>{active=v-1;render();}});
+    seg(controls,["Capital","Opposite","Math"],"Capital",v=>{key=v==="Opposite"?"cold":v.toLowerCase();active=8;render();});
+    const play=button(controls,"Sweep layers",()=>{
+      playing=!playing; play.classList.toggle("is-on",playing);
+      if(playing){ clearInterval(timer); timer=setInterval(()=>{active=(active+1)%layers;render();},380); } else clearInterval(timer);
+    },"primary");
+    s.input.addEventListener("input",()=>{playing=false;play.classList.remove("is-on");clearInterval(timer);});
+  });
+
+/* ============================================================
+   07 · INDUCTION HEAD COPY CIRCUIT
+   ============================================================ */
+demo("induction","07","Induction Head Copy Circuit","Induction heads",
+  "A previous-token head marks what came before. An induction head finds where that pattern appeared earlier and copies what followed. That is in-context copying.",
+  "Copying is a two-head circuit: find the previous token, then find where that token appeared before. No fine-tuning required.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,310);
+    let step=5, showPrev=true, showInd=true;
+    const seq=["C","A","B","D","E","A"];
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.5,h*.1,10,w*.5,h*.1,w*.9); g.addColorStop(0,"rgba(167,139,250,.08)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const n=seq.length, gap=Math.min(78,(w-100)/(n+1)), x0=(w-gap*(n-1))/2, y=96;
+      seq.forEach((tok,i)=>{
+        const x=x0+i*gap, isNow=i===step;
+        ctx.fillStyle=isNow?"rgba(103,232,249,.18)":"rgba(15,23,42,.6)"; ctx.strokeStyle=isNow?C.cyan:"rgba(148,163,184,.3)";
+        if(isNow) glow(ctx,C.cyan,18);
+        roundRect(ctx,x-22,y-20,44,40,10); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        text(ctx,tok,x,y+1,16,isNow?C.ink:C.muted,800,"center"); mono(ctx,"#"+i,x,y+32,8,C.dim,"center");
+      });
+      if(showPrev){
+        ctx.strokeStyle=rgba(C.blue,.55); ctx.lineWidth=1.6;
+        for(let i=1;i<=Math.min(step,n-1);i++){
+          const x1=x0+(i-1)*gap, x2=x0+i*gap;
+          ctx.beginPath(); ctx.moveTo(x1,y+26); ctx.quadraticCurveTo((x1+x2)/2,y+62,x2,y+26); ctx.stroke();
+        }
+        mono(ctx,"previous-token head",x0,y+74,9,C.blue);
+      }
+      if(showInd&&step===5){
+        const x1=x0+5*gap, x2=x0+2*gap;
+        ctx.strokeStyle=rgba(C.violet,.8); ctx.lineWidth=2.4; glow(ctx,C.violet,16);
+        ctx.beginPath(); ctx.moveTo(x1,y-22); ctx.quadraticCurveTo((x1+x2)/2,y-88,x2,y-22); ctx.stroke(); noGlow(ctx);
+        mono(ctx,"induction head: copy B",(x1+x2)/2,y-92,10,C.violet,"center");
+        const px=x0+6*gap;
+        ctx.fillStyle="rgba(52,211,153,.14)"; ctx.strokeStyle=C.emerald; glow(ctx,C.emerald,18);
+        roundRect(ctx,px-24,y-21,48,42,11); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        text(ctx,"B",px,y+1,17,C.emerald,800,"center"); mono(ctx,"predicted",px,y+34,8,C.emerald,"center");
+      }
+      const cx=x0+step*gap;
+      ctx.strokeStyle=rgba(C.cyan,.35); ctx.setLineDash([3,4]);
+      ctx.beginPath(); ctx.moveTo(cx,y-22); ctx.lineTo(cx,h-24); ctx.stroke(); ctx.setLineDash([]);
+      mono(ctx,"current position",cx,h-14,9,C.cyan,"center");
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Position",min:0,max:seq.length-1,step:1,value:step,fmt:v=>"#"+v+" "+seq[v],onInput:v=>{step=v;api.redraw();}});
+    toggle(controls,"Previous-token head",true,on=>{showPrev=on;api.redraw();});
+    toggle(controls,"Induction head",true,on=>{showInd=on;api.redraw();});
+    button(controls,"Jump to copy",()=>{step=5;api.redraw();},"primary");
+  });
+
+/* ============================================================
+   08 · SPARSE-AUTOENCODER DISENTANGLER
+   ============================================================ */
+demo("sae","08","Sparse-Autoencoder Disentangler","Sparse autoencoders",
+  "One neuron fires for royalty, fish, Python and law at the same time. Turn up sparsity and the tangle separates into clean, readable features.",
+  "Polysemantic neurons can be decomposed into sparse features. Interpretability is something you engineer, not just observe.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,330);
+    let sparsity=.2;
+    const feats=[
+      {label:"royal",color:C.amber,ang:-1.35,phase:.2},{label:"fish",color:C.cyan,ang:-.7,phase:1.7},
+      {label:"Python",color:C.emerald,ang:.1,phase:2.9},{label:"legal",color:C.violet,ang:.85,phase:4.2},
+      {label:"music",color:C.rose,ang:1.5,phase:5.1},{label:"math",color:C.blue,ang:2.2,phase:3.3}
+    ];
+    const sInt=stat(controls,"Interpretability","20%"), sRec=stat(controls,"Reconstruction","98%");
+    const draw=(ctx,w,h,now)=>{
+      sInt.set(Math.round(sparsity*100)+"%"); sRec.set(Math.round((.99-.18*sparsity)*100)+"%");
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.36,h*.5,10,w*.36,h*.5,w*.8); g.addColorStop(0,"rgba(167,139,250,.08)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const cx=w*.34, cy=h*.5, spread=lerp(30,Math.min(w,h)*.34,ease(sparsity));
+      ctx.fillStyle="rgba(15,23,42,.8)"; ctx.strokeStyle="rgba(167,139,250,.5)"; glow(ctx,C.violet,18);
+      ctx.beginPath(); ctx.arc(cx,cy,26,0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+      text(ctx,"neuron",cx,cy+1,10,C.ink,700,"center");
+      feats.forEach(f=>{
+        const wobble=(1-sparsity)*12;
+        const px=cx+Math.cos(f.ang)*spread+Math.sin(now*.7+f.phase)*wobble;
+        const py=cy+Math.sin(f.ang)*spread*.82+Math.cos(now*.6+f.phase)*wobble;
+        const act=.35+.65*(.5+.5*Math.sin(now*1.3+f.phase));
+        ctx.strokeStyle=rgba(f.color,.12+.38*(1-sparsity)+.2*act); ctx.lineWidth=lerp(2.4,.9,sparsity);
+        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py); ctx.stroke();
+        const r=6+4*act;
+        ctx.fillStyle=rgba(f.color,.22+.55*act); ctx.strokeStyle=f.color; glow(ctx,f.color,12);
+        ctx.beginPath(); ctx.arc(px,py,r,0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,f.label,px+(Math.cos(f.ang)>0?12:-12),py-10,10,f.color,Math.cos(f.ang)>0?"left":"right");
+      });
+      const bx=w-150, by=80, bw=108;
+      const bars=[{label:"interpretability",v:sparsity,color:C.emerald},{label:"reconstruction",v:.99-.18*sparsity,color:C.rose}];
+      bars.forEach((b,i)=>{
+        const y=by+i*46;
+        mono(ctx,b.label,bx,y-8,8,C.dim);
+        ctx.fillStyle="rgba(148,163,184,.12)"; roundRect(ctx,bx,y,bw,9,9); ctx.fill();
+        ctx.fillStyle=rgba(b.color,.75); glow(ctx,b.color,10); roundRect(ctx,bx,y,Math.max(4,bw*b.v),9,9); ctx.fill(); noGlow(ctx);
+        mono(ctx,Math.round(b.v*100)+"%",bx+bw+8,y+4,9,b.color);
+      });
+      mono(ctx,sparsity<.45?"tangled: many features share one neuron":"sparse: features separate",24,h-20,9,sparsity<.45?C.rose:C.emerald);
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Sparsity",min:0,max:1,step:.02,value:sparsity,fmt:v=>Math.round(v*100)+"%",onInput:v=>{sparsity=v;api.redraw();}});
+    button(controls,"Disentangle",()=>{sparsity=1;api.redraw();},"primary");
+    button(controls,"Tangle again",()=>{sparsity=0;api.redraw();},"rose");
+  });
+
+/* ============================================================
+   09 · ACTIVATION PATCHING
+   ============================================================ */
+demo("patch","09","Activation Patching / Causal Surgery","Activation patching",
+  "Two prompts differ by one fact. Patch an activation from the clean run into the corrupted run and watch the answer flip. Causality, not correlation.",
+  "If swapping one activation flips the answer, that activation is doing causal work. Attention maps alone cannot tell you that.",
+  (stage, controls) => {
+    const wrap=document.createElement("div"); wrap.className="patch-wrap"; stage.appendChild(wrap);
+    const pair=document.createElement("div"); pair.className="prompt-pair";
+    pair.innerHTML='<div class="prompt clean">clean · The capital of France is <b>Paris</b></div><div class="prompt corrupt">corrupt · The capital of Germany is <b>Berlin</b></div>';
+    const grid=document.createElement("div"); grid.className="patch-grid";
+    const out=document.createElement("div"); out.className="patch-out";
+    out.innerHTML='<div class="patch-bar"><i></i></div><div class="patch-answer">Paris</div>';
+    wrap.append(pair,grid,out);
+    const layers=6, heads=8, weights=[];
+    for(let i=0;i<layers*heads;i++) weights.push(Math.pow(Math.random(),2));
+    const patched=new Set(), cells=[];
+    const bar=out.querySelector(".patch-bar i"), answer=out.querySelector(".patch-answer");
+    const sP=stat(controls,"P(Paris)","—");
+    const update=()=>{
+      const sum=[...patched].reduce((a,i)=>a+weights[i],0);
+      const p=clamp(.18+sum*1.5,0,1);
+      bar.style.width=Math.round(p*100)+"%";
+      answer.textContent=p>.5?"Paris":"Berlin"; answer.style.color=p>.5?"var(--emerald)":"var(--rose)";
+      sP.set(Math.round(p*100)+"%");
+    };
+    for(let i=0;i<layers*heads;i++){
+      const cell=document.createElement("button"); cell.type="button"; cell.className="patch-cell";
+      cell.title=`L${Math.floor(i/heads)+1} H${i%heads+1}`; cell.style.background=`rgba(167,139,250,${.06+weights[i]*.38})`;
+      cell.addEventListener("click",()=>{ if(patched.has(i)) patched.delete(i); else patched.add(i); cell.classList.toggle("is-patched",patched.has(i)); update(); });
+      grid.appendChild(cell); cells.push(cell);
+    }
+    update();
+    button(controls,"Patch all",()=>{ for(let i=0;i<weights.length;i++){patched.add(i);cells[i].classList.add("is-patched");} update(); },"primary");
+    button(controls,"Reset",()=>{ patched.clear(); cells.forEach(c=>c.classList.remove("is-patched")); update(); },"rose");
+  });
+
+/* ============================================================
+   10 · ATTENTION IS NOT EXPLANATION
+   ============================================================ */
+demo("attention","10","Attention Is Not Explanation","Attention ≠ explanation",
+  "Attention maps look like explanations. Permute the weights and the map changes completely while the prediction stays exactly the same.",
+  "Many different attention maps are consistent with one prediction. A pretty heatmap is not a reason.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,330);
+    let permuted=false, mixT=0, target=0;
+    const tokens=["The","cat","sat","on","the","mat"], n=tokens.length, base=[];
+    for(let i=0;i<n;i++){ const row=[]; let sum=0; for(let j=0;j<n;j++){const v=Math.pow(Math.random(),2)+.02;row.push(v);sum+=v;} base.push(row.map(v=>v/sum)); }
+    const perm=base.map(row=>{ const c=row.slice(); for(let i=c.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[c[i],c[j]]=[c[j],c[i]];} return c; });
+    const sFaith=stat(controls,"Faithfulness","0%"), sPred=stat(controls,"Prediction","mat 61%");
+    const draw=(ctx,w,h,now)=>{
+      mixT+=(target-mixT)*.08; sFaith.set(Math.round((1-mixT)*0)+"%");
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.35,h*.3,10,w*.35,h*.3,w*.8); g.addColorStop(0,"rgba(251,113,133,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const size=Math.min(w-160,h-100), x0=54, y0=54, cw=size/n, ch=size/n;
+      tokens.forEach((t,i)=>{ mono(ctx,t,x0-8,y0+i*ch+ch/2,9,C.dim,"right"); mono(ctx,t,x0+i*cw+cw/2,y0-12,9,C.dim,"center"); });
+      for(let i=0;i<n;i++) for(let j=0;j<n;j++){
+        const v=lerp(base[i][j],perm[i][j],mixT), x=x0+j*cw, y=y0+i*ch;
+        ctx.fillStyle=rgba(C.cyan,.04+v*.72); ctx.strokeStyle="rgba(148,163,184,.08)";
+        roundRect(ctx,x+1,y+1,cw-2,ch-2,3); ctx.fill(); ctx.stroke();
+        if(v>.35) mono(ctx,(v*100).toFixed(0),x+cw/2,y+ch/2,8,"rgba(3,10,20,.8)","center");
+      }
+      const ox=x0+size+46, oy=y0+10;
+      mono(ctx,"next token",ox,oy-8,9,C.dim);
+      [["mat",.61],["floor",.17],["dog",.12],["the",.10]].forEach(([tok,p],i)=>{
+        const y=oy+18+i*30;
+        mono(ctx,tok,ox,y+5,9,i===0?C.ink:C.dim);
+        ctx.fillStyle="rgba(148,163,184,.12)"; roundRect(ctx,ox+44,y,78,9,9); ctx.fill();
+        ctx.fillStyle=i===0?C.emerald:"rgba(148,163,184,.45)"; roundRect(ctx,ox+44,y,Math.max(3,78*p),9,9); ctx.fill();
+        mono(ctx,Math.round(p*100)+"%",ox+128,y+5,8,i===0?C.emerald:C.dim);
+      });
+      ctx.strokeStyle="rgba(52,211,153,.35)"; ctx.setLineDash([4,4]); roundRect(ctx,ox-8,oy,156,140,12); ctx.stroke(); ctx.setLineDash([]);
+      mono(ctx,"locked",ox+140,oy+136,8,C.emerald,"right");
+      mono(ctx,permuted?"attention permuted":"original attention",x0,y0+size+22,10,permuted?C.rose:C.cyan);
+    };
+    const api=register(canvas,draw);
+    button(controls,"Permute attention",()=>{permuted=!permuted;target=permuted?1:0;api.redraw();},"primary");
+    button(controls,"Reset",()=>{permuted=false;target=0;mixT=0;api.redraw();},"rose");
+    sPred.set("mat 61%");
+  });
+
+/* ============================================================
+   11 · REFUSAL DIRECTION
+   ============================================================ */
+demo("refusal","11","Refusal Direction","Refusal direction",
+  "A hidden state can be moved along a single refusal direction. Remove it and the model complies; add it and the model refuses, while capability stays intact.",
+  "Safety behaviour can be a direction in activation space. Removing it flips the behaviour without destroying the model.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,300);
+    let alpha=.7;
+    const sOut=stat(controls,"Output","REFUSE"), sCap=stat(controls,"Capability","94%");
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.5,h*.5,10,w*.5,h*.5,w*.8); g.addColorStop(0,"rgba(251,113,133,.07)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const cx=w*.5, cy=h*.52, R=Math.min(w,h)*.3, ang=-.55, vx=Math.cos(ang), vy=Math.sin(ang);
+      ctx.strokeStyle="rgba(148,163,184,.12)"; ctx.beginPath(); ctx.moveTo(30,cy); ctx.lineTo(w-30,cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx,26); ctx.lineTo(cx,h-26); ctx.stroke();
+      ctx.strokeStyle="rgba(251,113,133,.28)"; ctx.setLineDash([5,5]);
+      ctx.beginPath();
+      ctx.moveTo(cx+vx*R*.18-vy*R,cy+vy*R*.18+vx*R);
+      ctx.lineTo(cx+vx*R*.18+vy*R,cy+vy*R*.18-vx*R);
+      ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle=C.rose; ctx.lineWidth=3; glow(ctx,C.rose,18);
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+vx*R*1.18,cy+vy*R*1.18); ctx.stroke(); noGlow(ctx);
+      mono(ctx,"refusal",cx+vx*R*1.24,cy+vy*R*1.24,10,C.rose,"center");
+      const px=cx+vx*R*alpha, py=cy+vy*R*alpha;
+      ctx.fillStyle=rgba(C.cyan,.18); ctx.strokeStyle=C.cyan; glow(ctx,C.cyan,20);
+      ctx.beginPath(); ctx.arc(px,py,9,0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+      mono(ctx,"state",px+14,py-14,9,C.cyan);
+      const refuse=alpha>.12;
+      sOut.set(refuse?"REFUSE":"COMPLY"); sCap.set("94%");
+      ctx.fillStyle=refuse?"rgba(251,113,133,.12)":"rgba(52,211,153,.12)";
+      ctx.strokeStyle=refuse?C.rose:C.emerald;
+      roundRect(ctx,w-190,26,158,52,14); ctx.fill(); ctx.stroke();
+      mono(ctx,refuse?"I can't help with that.":"Sure — here is how.",w-111,52,10,refuse?C.rose:C.emerald,"center");
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Refusal strength",min:-1,max:1,step:.02,value:alpha,fmt:v=>v.toFixed(2),onInput:v=>{alpha=v;api.redraw();}});
+    button(controls,"Ablate",()=>{alpha=-.8;api.redraw();},"primary");
+    button(controls,"Add direction",()=>{alpha=.9;api.redraw();},"rose");
+  });
+
+/* ============================================================
+   12 · EMERGENCE MIRAGE
+   ============================================================ */
+demo("emergence","12","Emergence Mirage","Emergence mirage",
+  "The same model can look like it suddenly emerges or like it improves smoothly. The difference is the metric, not the capability.",
+  "A cliff can live in the measurement. Before you celebrate emergence, check what the metric rewards.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,320);
+    let metric="exact", scale=62;
+    const sVal=stat(controls,"Score","—");
+    const curves={ exact:x=>Math.pow(sigmoid((x-56)/5.2),7), token:x=>.15+.78*sigmoid((x-46)/13), ll:x=>.08+.82*sigmoid((x-48)/16) };
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.5,h*.1,10,w*.5,h*.1,w*.9); g.addColorStop(0,"rgba(251,191,36,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const left=52, top=42, pw=w-left-30, ph=h-top-38;
+      for(let i=0;i<=5;i++){
+        const y=top+ph*i/5; ctx.strokeStyle="rgba(148,163,184,.08)"; ctx.beginPath(); ctx.moveTo(left,y); ctx.lineTo(left+pw,y); ctx.stroke();
+        mono(ctx,(100-i*20)+"%",left-8,y,8,C.dim,"right");
+      }
+      const mapX=x=>left+pw*x/100, mapY=y=>top+ph*(1-y);
+      Object.entries(curves).forEach(([k,fn])=>{
+        const active=k===metric, color=k==="exact"?C.rose:k==="token"?C.cyan:C.violet;
+        ctx.strokeStyle=active?color:"rgba(148,163,184,.18)"; ctx.lineWidth=active?2.8:1.2;
+        if(active) glow(ctx,color,14);
+        ctx.beginPath();
+        for(let i=0;i<=100;i++){ const x=mapX(i),y=mapY(fn(i)); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+        ctx.stroke(); noGlow(ctx);
+      });
+      const fn=curves[metric], color=metric==="exact"?C.rose:metric==="token"?C.cyan:C.violet;
+      sVal.set(Math.round(fn(scale)*100)+"%");
+      for(let i=0;i<=10;i++){ const x=i*10,y=fn(x); ctx.fillStyle=rgba(color,.28); ctx.beginPath(); ctx.arc(mapX(x),mapY(y),2.2,0,TAU); ctx.fill(); }
+      const mx=mapX(scale), my=mapY(fn(scale));
+      ctx.strokeStyle=rgba(color,.45); ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(mx,top); ctx.lineTo(mx,top+ph); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=color; glow(ctx,color,18); ctx.beginPath(); ctx.arc(mx,my,7,0,TAU); ctx.fill(); noGlow(ctx);
+      mono(ctx,"model scale →",left,h-18,9,C.dim); mono(ctx,"score",14,top+ph/2,8,C.dim);
+      text(ctx,metric==="exact"?"Exact match":metric==="token"?"Token overlap":"Log-likelihood",left,24,12,color,700);
+    };
+    const api=register(canvas,draw);
+    seg(controls,["Exact","Token","LL"],"Exact",v=>{metric=v.toLowerCase();api.redraw();});
+    slider(controls,{label:"Model scale",min:0,max:100,step:1,value:scale,fmt:v=>v,onInput:v=>{scale=v;api.redraw();}});
+  });
+
+/* ============================================================
+   13 · PREDICTION = COMPRESSION
+   ============================================================ */
+demo("compression","13","Prediction = Compression","Prediction = compression",
+  "A model that predicts the next character well can encode text in fewer bits. Better prediction literally means shorter codes.",
+  "Next-token prediction and compression are the same objective viewed from two sides.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,320);
+    let quality=.82, idx=0, bits=0, uniform=0, last=0, paused=false;
+    const sentence="the cat sat on the mat and the dog slept", alphabet=26, uniformBits=Math.log2(alphabet);
+    const sBits=stat(controls,"Bits","0"), sRatio=stat(controls,"Ratio","—");
+    const reset=()=>{idx=0;bits=0;uniform=0;};
+    const draw=(ctx,w,h,now)=>{
+      if(!paused&&now-last>.55){
+        last=now;
+        if(idx>=sentence.length) reset();
+        const pCorrect=clamp(.04+.93*quality,.05,.97);
+        bits+=-Math.log2(pCorrect); uniform+=uniformBits; idx++;
+      }
+      sBits.set(bits.toFixed(1)); sRatio.set(uniform>0?(uniform/Math.max(.1,bits)).toFixed(2)+"×":"—");
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.4,h*.1,10,w*.4,h*.1,w*.9); g.addColorStop(0,"rgba(52,211,153,.07)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const shown=sentence.slice(0,idx);
+      text(ctx,shown,28,54,16,C.ink,700);
+      const tw=ctx.measureText(shown).width;
+      mono(ctx,"▌",28+tw+2,54,16,C.cyan);
+      text(ctx,sentence.slice(idx),28+tw+14,54,16,C.dim,600);
+      const pCorrect=clamp(.04+.93*quality,.05,.97), pOther=(1-pCorrect)/3;
+      const bx=28,by=104,bw=Math.min(260,w*.36);
+      mono(ctx,"next-character distribution",bx,by-12,9,C.dim);
+      [[ "actual",pCorrect,C.emerald],["alt 1",pOther,C.violet],["alt 2",pOther,C.blue],["alt 3",pOther,C.rose]].forEach(([label,p,color],i)=>{
+        const y=by+i*34;
+        mono(ctx,label,bx,y+5,9,i===0?C.emerald:C.dim);
+        ctx.fillStyle="rgba(148,163,184,.10)"; roundRect(ctx,bx+46,y,bw,9,9); ctx.fill();
+        ctx.fillStyle=rgba(color,.8); roundRect(ctx,bx+46,y,Math.max(3,bw*p),9,9); ctx.fill();
+        mono(ctx,(p*100).toFixed(0)+"%",bx+52+bw,y+5,8,color);
+      });
+      const rx=w*.55, ry=104, rw=w-rx-28;
+      mono(ctx,"arithmetic-coded bitstream",rx,ry-12,9,C.dim);
+      ctx.fillStyle="rgba(148,163,184,.10)"; roundRect(ctx,rx,ry,rw,12,9); ctx.fill();
+      ctx.fillStyle="rgba(251,113,133,.4)"; roundRect(ctx,rx,ry,rw*clamp(uniform/260,0,1),12,9); ctx.fill();
+      ctx.fillStyle=rgba(C.emerald,.85); glow(ctx,C.emerald,12); roundRect(ctx,rx,ry+20,rw*clamp(bits/260,0,1),12,9); ctx.fill(); noGlow(ctx);
+      mono(ctx,"uniform "+uniform.toFixed(0)+" bits",rx,ry+48,9,C.rose);
+      mono(ctx,"model "+bits.toFixed(0)+" bits",rx,ry+62,9,C.emerald);
+      text(ctx,(uniform/Math.max(1,bits)).toFixed(2)+"×",rx+rw,ry+84,24,C.emerald,800,"right");
+      mono(ctx,"compression",rx+rw,ry+104,9,C.dim,"right");
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Model quality",min:.05,max:.99,step:.01,value:quality,fmt:v=>Math.round(v*100)+"%",onInput:v=>{quality=v;reset();api.redraw();}});
+    toggle(controls,"Run",true,on=>{paused=!on;});
+    button(controls,"Restart",()=>{reset();api.redraw();},"primary");
+  });
+
+/* ============================================================
+   14 · IN-CONTEXT LEARNING AS GRADIENT DESCENT
+   ============================================================ */
+demo("icl","14","In-Context Learning as Gradient Descent","ICL ≈ gradient descent",
+  "Examples in the prompt move a tiny model's fit. On the right, explicit gradient descent walks to the same solution.",
+  "The forward pass can implement a learning step. In-context learning is not magic; it is optimisation in disguise.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,320);
+    let n=8;
+    const data=[];
+    for(let i=0;i<24;i++){ const x=i/23; data.push({x,y:.72*x+.16+Math.sin(i*12.7)*.06}); }
+    const fit=k=>{
+      const pts=data.slice(0,k); if(pts.length<2) return {m:0,b:.5};
+      const mx=pts.reduce((a,p)=>a+p.x,0)/pts.length, my=pts.reduce((a,p)=>a+p.y,0)/pts.length;
+      let num=0,den=0; pts.forEach(p=>{num+=(p.x-mx)*(p.y-my);den+=(p.x-mx)**2;});
+      const m=den?num/den:0; return {m,b:my-m*mx};
+    };
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.3,h*.1,10,w*.3,h*.1,w*.9); g.addColorStop(0,"rgba(103,232,249,.07)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const lx=24, ty=34, pw=(w-72)/2, ph=h-74, rx=lx+pw+24;
+      ctx.strokeStyle="rgba(148,163,184,.14)"; roundRect(ctx,lx,ty,pw,ph,14); ctx.stroke(); roundRect(ctx,rx,ty,pw,ph,14); ctx.stroke();
+      mono(ctx,"in-context examples",lx+14,ty+16,9,C.cyan); mono(ctx,"explicit gradient descent",rx+14,ty+16,9,C.violet);
+      const px=x=>lx+18+x*(pw-36), py=y=>ty+ph-18-y*(ph-40);
+      for(let i=0;i<5;i++){ ctx.strokeStyle="rgba(148,163,184,.07)"; ctx.beginPath(); ctx.moveTo(lx+12,ty+24+i*(ph-40)/4); ctx.lineTo(lx+pw-12,ty+24+i*(ph-40)/4); ctx.stroke(); }
+      data.forEach((p,i)=>{ if(i>=n) return; ctx.fillStyle=rgba(C.cyan,.7); glow(ctx,C.cyan,8); ctx.beginPath(); ctx.arc(px(p.x),py(p.y),3.5,0,TAU); ctx.fill(); noGlow(ctx); });
+      const f=fit(n);
+      ctx.strokeStyle=C.amber; ctx.lineWidth=2.4; glow(ctx,C.amber,12); ctx.beginPath();
+      for(let i=0;i<=20;i++){ const x=i/20,y=f.m*x+f.b; if(i===0) ctx.moveTo(px(x),py(y)); else ctx.lineTo(px(x),py(y)); }
+      ctx.stroke(); noGlow(ctx);
+      const rTop=ty+28, rW=pw-24, rH=ph-40;
+      let m=.05,b=.55; const path=[], pts=data.slice(0,n), lr=.35;
+      const mx=pts.reduce((a,p)=>a+p.x,0)/pts.length, my=pts.reduce((a,p)=>a+p.y,0)/pts.length;
+      for(let i=0;i<Math.min(120,18+n*6);i++){
+        path.push({m,b});
+        let gm=0,gb=0;
+        pts.forEach(p=>{const pred=m*p.x+b;gm+=(pred-p.y)*p.x;gb+=(pred-p.y);});
+        gm/=pts.length; gb/=pts.length; m-=lr*gm*.3; b-=lr*gb*.3;
+      }
+      const wm=v=>rx+20+(v+.2)/1.6*(rW-40), wb=v=>rTop+rH-20-v*(rH-40);
+      for(let i=1;i<path.length;i++){ ctx.strokeStyle=rgba(C.violet,.18+.5*i/path.length); ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(wm(path[i-1].m),wb(path[i-1].b)); ctx.lineTo(wm(path[i].m),wb(path[i].b)); ctx.stroke(); }
+      path.forEach((p,i)=>{ if(i%5!==0&&i!==path.length-1) return; ctx.fillStyle=rgba(C.violet,.4+.5*i/path.length); ctx.beginPath(); ctx.arc(wm(p.m),wb(p.b),i===path.length-1?5:2,0,TAU); ctx.fill(); });
+      ctx.fillStyle="rgba(251,191,36,.7)"; glow(ctx,C.amber,12); ctx.beginPath(); ctx.arc(wm(f.m),wb(f.b),5,0,TAU); ctx.fill(); noGlow(ctx);
+      mono(ctx,"slope →",rx+rW-22,rTop+rH-8,8,C.dim,"right"); mono(ctx,"bias",rx+10,rTop+12,8,C.dim);
+      text(ctx,n+" examples",lx+14,ty+ph-10,10,C.muted,700);
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Examples",min:1,max:20,step:1,value:n,fmt:v=>v,onInput:v=>{n=v;api.redraw();}});
+    button(controls,"More examples",()=>{n=Math.min(20,n+1);api.redraw();},"primary");
+    button(controls,"Reset",()=>{n=1;api.redraw();},"rose");
+  });
+
+/* ============================================================
+   15 · TEST-TIME COMPUTE TREE
+   ============================================================ */
+demo("ttc","15","Test-Time Compute Tree","Test-time compute",
+  "Sample many reasoning paths, then vote. A bigger inference budget can beat a bigger model, even when each single path is unreliable.",
+  "Compute at inference time is a real scaling axis: sample, verify, vote, repeat.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,340);
+    let budget=8;
+    const sAcc=stat(controls,"Leaf accuracy","—"), sVote=stat(controls,"Vote","—");
+    const build=()=>{
+      let a=1234+Math.floor(Math.random()*1e6);
+      const rand=()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
+      const leaves=[]; for(let i=0;i<16;i++) leaves.push({correct:rand()<.38,answer:rand()<.5?"A":"B"}); return leaves;
+    };
+    let leaves=build(), sampled=[];
+    const sample=()=>{
+      sampled=[]; const used=new Set();
+      for(let i=0;i<budget;i++){ let idx=Math.floor(Math.random()*leaves.length), guard=0; while(used.has(idx)&&guard++<20) idx=Math.floor(Math.random()*leaves.length); used.add(idx); sampled.push(idx); }
+      const votesA=sampled.filter(i=>leaves[i].answer==="A").length, votesB=sampled.length-votesA;
+      const winner=votesA>=votesB?"A":"B";
+      const acc=sampled.filter(i=>leaves[i].correct).length/Math.max(1,sampled.length);
+      sAcc.set(Math.round(acc*100)+"%"); sVote.set(`A ${votesA} · B ${votesB}`);
+    };
+    sample();
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.5,h*.1,10,w*.5,h*.1,w*.9); g.addColorStop(0,"rgba(167,139,250,.07)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const levels=4, rootX=w/2, rootY=48, nodeY=l=>rootY+l*((h-100)/levels);
+      const nodeX=(l,i)=>{ const count=Math.pow(2,l), spread=(w-80)*(l/levels); return rootX+(i-(count-1)/2)*(spread/Math.max(1,count-1||1)); };
+      for(let l=0;l<levels;l++) for(let i=0;i<Math.pow(2,l);i++){
+        const x=nodeX(l,i), y=nodeY(l);
+        [i*2,i*2+1].forEach(ci=>{ const cx=nodeX(l+1,ci), cy=nodeY(l+1); ctx.strokeStyle="rgba(148,163,184,.10)"; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(cx,cy); ctx.stroke(); });
+      }
+      leaves.forEach((leaf,i)=>{
+        const x=nodeX(levels,i), y=nodeY(levels), isSampled=sampled.includes(i);
+        ctx.fillStyle=leaf.correct?(isSampled?"rgba(52,211,153,.85)":"rgba(52,211,153,.18)"):(isSampled?"rgba(251,113,133,.8)":"rgba(251,113,133,.15)");
+        if(isSampled) glow(ctx,leaf.correct?C.emerald:C.rose,12);
+        ctx.beginPath(); ctx.arc(x,y,isSampled?6:3.5,0,TAU); ctx.fill(); noGlow(ctx);
+        if(isSampled) mono(ctx,leaf.answer,x,y-12,8,leaf.correct?C.emerald:C.rose,"center");
+      });
+      ctx.fillStyle="rgba(103,232,249,.9)"; glow(ctx,C.cyan,18); ctx.beginPath(); ctx.arc(rootX,rootY,8,0,TAU); ctx.fill(); noGlow(ctx);
+      mono(ctx,"question",rootX,rootY-18,9,C.cyan,"center");
+      text(ctx,"sampled "+budget+" leaves",24,h-18,10,C.muted,700);
+      text(ctx,"majority vote",w-24,h-18,10,C.violet,700,"right");
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Samples",min:1,max:16,step:1,value:budget,fmt:v=>v,onInput:v=>{budget=v;sample();api.redraw();}});
+    button(controls,"Resample",()=>{sample();api.redraw();},"primary");
+    button(controls,"New tree",()=>{leaves=build();sample();api.redraw();},"rose");
+  });
+
+/* ============================================================
+   16 · CHAIN-OF-THOUGHT SCRATCHPAD
+   ============================================================ */
+demo("cot","16","Chain-of-Thought as Scratchpad","CoT scratchpad",
+  "Hide the intermediate tokens and the model loses the thread. A chain of thought is working memory, not decoration.",
+  "Tokens are the model's scratchpad. Give it space to write the steps and accuracy jumps.",
+  (stage, controls) => {
+    const wrap=document.createElement("div"); wrap.className="cot"; stage.appendChild(wrap);
+    let show=true, problem=null;
+    const problemEl=document.createElement("div"); problemEl.className="cot-problem";
+    const tapeEl=document.createElement("div"); tapeEl.className="cot-tape";
+    const answerEl=document.createElement("div"); answerEl.className="cot-answer";
+    const memLabel=document.createElement("div"); memLabel.className="tape-label"; memLabel.textContent="working memory";
+    const mem=document.createElement("div"); mem.className="cot-memory"; mem.innerHTML="<i></i>";
+    wrap.append(problemEl,tapeEl,answerEl,memLabel,mem);
+    const make=()=>{ const a=11+Math.floor(Math.random()*9), b=12+Math.floor(Math.random()*12); const p1=a*Math.floor(b/10)*10, p2=a*(b%10); problem={a,b,p1,p2,answer:a*b,wrong:a*b+7}; };
+    make();
+    const render=()=>{
+      problemEl.textContent=`${problem.a} × ${problem.b} = ?`;
+      tapeEl.innerHTML="";
+      [`${problem.a} × ${problem.b}`,`= ${problem.a} × ${Math.floor(problem.b/10)}0 + ${problem.a} × ${problem.b%10}`,`= ${problem.p1} + ${problem.p2}`,`= ${problem.answer}`].forEach((s,i)=>{
+        const d=document.createElement("div"); d.className="cot-step"+(show?" in":""); d.textContent=s; d.style.transitionDelay=(i*60)+"ms"; tapeEl.appendChild(d);
+      });
+      answerEl.innerHTML=`answer <b style="color:${show?"var(--emerald)":"var(--rose)"}">${show?problem.answer:problem.wrong}</b> <span style="color:var(--dim);font-size:12px">${show?"correct":"lost the thread"}</span>`;
+      mem.querySelector("i").style.width=show?"28%":"92%";
+    };
+    render();
+    toggle(controls,"Show scratchpad",true,on=>{show=on;render();});
+    button(controls,"New problem",()=>{make();render();},"primary");
+    button(controls,"Hide it",()=>{show=false;render();},"rose");
+  });
+
+/* ============================================================
+   17 · MIXTURE-OF-EXPERTS ROUTING GALAXY
+   ============================================================ */
+demo("moe","17","Mixture-of-Experts Routing Galaxy","MoE routing",
+  "Token particles fly through a router to a few expert planets. Huge total parameter count, tiny active path per token.",
+  "Sparse compute is the trick: the model has many experts, but each token only visits a few.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,340);
+    let experts=6, topk=2, temp=.8, balance=false;
+    const sActive=stat(controls,"Active params","33%");
+    const particles=[]; let last=0, tokenId=0;
+    const draw=(ctx,w,h,now)=>{
+      if(now-last>.38){ last=now; particles.push({id:tokenId++,x:26,y:h*.5+(Math.random()-.5)*40,target:null}); if(particles.length>60) particles.shift(); }
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.2,h*.5,10,w*.2,h*.5,w*.9); g.addColorStop(0,"rgba(103,232,249,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const ex=[], cx=w*.76, cy=h*.5;
+      for(let i=0;i<experts;i++){ const a=-Math.PI/2+i/experts*TAU; ex.push({x:cx+Math.cos(a)*Math.min(w,h)*.27,y:cy+Math.sin(a)*Math.min(w,h)*.27,load:0}); }
+      ctx.strokeStyle="rgba(167,139,250,.25)"; ctx.setLineDash([4,5]); ctx.beginPath(); ctx.moveTo(64,h*.5); ctx.lineTo(cx-30,cy); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle="rgba(167,139,250,.15)"; ctx.strokeStyle=C.violet; glow(ctx,C.violet,14); ctx.beginPath(); ctx.arc(64,h*.5,15,0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+      mono(ctx,"router",64,h*.5+28,9,C.violet,"center");
+      ex.forEach((e,i)=>{
+        const active=particles.filter(p=>p.target===i).length; e.load=active;
+        ctx.fillStyle=active?"rgba(52,211,153,.16)":"rgba(15,23,42,.7)"; ctx.strokeStyle=active?C.emerald:"rgba(148,163,184,.25)";
+        if(active) glow(ctx,C.emerald,16);
+        ctx.beginPath(); ctx.arc(e.x,e.y,18+Math.min(8,active),0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,"E"+(i+1),e.x,e.y,9,active?C.emerald:C.dim,"center");
+        ctx.fillStyle="rgba(148,163,184,.10)"; roundRect(ctx,e.x+28,e.y-16,8,32,4); ctx.fill();
+        ctx.fillStyle=rgba(C.emerald,.7); roundRect(ctx,e.x+28,e.y+16-32*clamp(active/7,0,1),8,32*clamp(active/7,0,1),4); ctx.fill();
+      });
+      particles.forEach(p=>{
+        if(p.target===null){
+          const scores=ex.map((_,i)=>Math.sin(p.id*1.7+i*2.1)*.5+.5);
+          if(balance){ const min=Math.min(...ex.map(e=>e.load)); for(let i=0;i<scores.length;i++) if(ex[i].load===min) scores[i]+=.9; }
+          const order=scores.map((s,i)=>[s,i]).sort((a,b)=>b[0]-a[0]).slice(0,Math.min(topk,experts));
+          const weights=order.map(([s])=>Math.pow(Math.max(.05,s),1/Math.max(.2,temp)));
+          const total=weights.reduce((a,b)=>a+b,0); let r=Math.random()*total, pick=order[0][1];
+          for(let j=0;j<order.length;j++){ r-=weights[j]; if(r<=0){ pick=order[j][1]; break; } }
+          p.target=pick;
+        }
+        const e=ex[p.target]; p.x=lerp(p.x,e.x,.045); p.y=lerp(p.y,e.y,.045);
+        ctx.fillStyle=rgba(C.cyan,.65); ctx.beginPath(); ctx.arc(p.x,p.y,3.2,0,TAU); ctx.fill();
+      });
+      sActive.set(Math.round(topk/experts*100)+"%");
+      text(ctx,"tokens",24,28,10,C.muted,700); text(ctx,"experts",w-24,28,10,C.emerald,700,"right");
+      mono(ctx,topk+" of "+experts+" experts active",w/2,h-16,9,C.dim,"center");
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Experts",min:3,max:8,step:1,value:experts,fmt:v=>v,onInput:v=>{experts=v;particles.forEach(p=>p.target=null);api.redraw();}});
+    slider(controls,{label:"Top-k",min:1,max:4,step:1,value:topk,fmt:v=>v,onInput:v=>{topk=Math.min(v,experts);particles.forEach(p=>p.target=null);api.redraw();}});
+    slider(controls,{label:"Router temp",min:.2,max:1.6,step:.05,value:temp,fmt:v=>v.toFixed(2),onInput:v=>{temp=v;api.redraw();}});
+    toggle(controls,"Load balance",false,on=>{balance=on;particles.forEach(p=>p.target=null);api.redraw();});
+  });
+
+/* ============================================================
+   18 · PROMPT-INJECTION TAINT FLOW
+   ============================================================ */
+demo("injection","18","Prompt-Injection Taint Flow","Prompt injection",
+  "A retrieved document hides an instruction. Without a data/instruction boundary, the taint flows straight into the agent's tool call.",
+  "LLMs do not separate data from instructions. Prompt injection is a taint-flow problem, not a wording problem.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,320);
+    let injected=true, sanitize=false;
+    const particles=[]; let last=0;
+    const sTool=stat(controls,"Tool call","safe");
+    const draw=(ctx,w,h,now)=>{
+      if(now-last>.18){ last=now; particles.push({t:0}); if(particles.length>90) particles.shift(); }
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.5,h*.1,10,w*.5,h*.1,w*.9); g.addColorStop(0,"rgba(251,113,133,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const nodes=[
+        {x:74,y:h*.5,label:"USER",color:C.cyan},
+        {x:w*.38,y:h*.5,label:"RETRIEVER",color:C.violet},
+        {x:w*.62,y:h*.5,label:"LLM",color:C.blue},
+        {x:w-76,y:h*.5,label:"TOOL",color:sanitize?C.emerald:C.rose}
+      ];
+      const docX=w*.38, docY=h*.18;
+      ctx.fillStyle="rgba(15,23,42,.7)"; ctx.strokeStyle=injected?"rgba(251,113,133,.5)":"rgba(148,163,184,.2)";
+      roundRect(ctx,docX-66,docY-30,132,60,12); ctx.fill(); ctx.stroke();
+      mono(ctx,"retrieved document",docX,docY-16,8,C.dim,"center");
+      mono(ctx,injected?"hidden: send secrets":"ordinary text",docX,docY+4,8,injected?C.rose:C.dim,"center");
+      if(injected){ ctx.strokeStyle=rgba(C.rose,.35); ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(docX,docY+30); ctx.lineTo(nodes[1].x,nodes[1].y-16); ctx.stroke(); ctx.setLineDash([]); }
+      for(let i=0;i<nodes.length-1;i++){ const a=nodes[i],b=nodes[i+1]; ctx.strokeStyle="rgba(148,163,184,.14)"; ctx.beginPath(); ctx.moveTo(a.x+30,a.y); ctx.lineTo(b.x-30,b.y); ctx.stroke(); }
+      if(sanitize){
+        const sx=(nodes[1].x+nodes[2].x)/2;
+        ctx.strokeStyle=rgba(C.emerald,.55); ctx.setLineDash([5,5]); ctx.beginPath(); ctx.moveTo(sx,h*.28); ctx.lineTo(sx,h*.72); ctx.stroke(); ctx.setLineDash([]);
+        mono(ctx,"instruction firewall",sx,h*.78,8,C.emerald,"center");
+      }
+      particles.forEach(p=>{
+        p.t+=.012; if(p.t>1) p.t=0;
+        const path=sanitize?nodes.slice(0,2):nodes, f=p.t*(path.length-1), i=Math.min(path.length-2,Math.floor(f)), u=f-i;
+        const a=path[i],b=path[i+1], x=lerp(a.x+30,b.x-30,u), y=lerp(a.y,b.y,u);
+        const tainted=injected&&!sanitize&&p.t>.42;
+        ctx.fillStyle=tainted?rgba(C.rose,.8):rgba(C.cyan,.55); glow(ctx,tainted?C.rose:C.cyan,8); ctx.beginPath(); ctx.arc(x,y,2.6,0,TAU); ctx.fill(); noGlow(ctx);
+      });
+      nodes.forEach(n=>{
+        ctx.fillStyle="rgba(15,23,42,.8)"; ctx.strokeStyle=rgba(n.color,.65); glow(ctx,n.color,12);
+        roundRect(ctx,n.x-30,n.y-20,60,40,11); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,n.label,n.x,n.y,9,n.color,"center");
+      });
+      const tainted=injected&&!sanitize;
+      sTool.set(tainted?"HIJACKED":"safe");
+      text(ctx,tainted?"taint reaches the tool":sanitize?"firewall blocks the taint":"no hidden instruction",w/2,h-18,11,tainted?C.rose:C.emerald,700,"center");
+    };
+    const api=register(canvas,draw);
+    toggle(controls,"Inject instruction",true,on=>{injected=on;api.redraw();});
+    toggle(controls,"Instruction firewall",false,on=>{sanitize=on;api.redraw();});
+    button(controls,"Reset",()=>{injected=true;sanitize=false;api.redraw();},"rose");
+  });
+
+/* ============================================================
+   19 · AGENT LOOP CONTROL FLOW
+   ============================================================ */
+demo("agent","19","Agent Loop Control Flow","Agent loop",
+  "An agent is a loop with tools, retries and stopping conditions. Inject a tool failure and watch the control flow decide what happens next.",
+  "Agents are control flow plus failure handling. The magic is in the loop, not in the model alone.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,320);
+    let maxSteps=6, reliability=.7, step=0, retries=0, cost=0, stopped=false, failNext=false, lastStep=0;
+    const sStep=stat(controls,"Step","0 / 6"), sRetry=stat(controls,"Retries","0"), sCost=stat(controls,"Cost","$0.00");
+    const draw=(ctx,w,h,now)=>{
+      if(!stopped&&now-lastStep>.9){
+        lastStep=now; step++; cost+=.012;
+        if(failNext||Math.random()>reliability){ retries++; failNext=false; if(retries>2||step>=maxSteps) stopped=true; }
+        if(step>=maxSteps) stopped=true;
+        sStep.set(step+" / "+maxSteps); sRetry.set(String(retries)); sCost.set("$"+cost.toFixed(2));
+      }
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.5,h*.2,10,w*.5,h*.2,w*.9); g.addColorStop(0,"rgba(96,165,250,.07)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const cx=w*.5, cy=h*.5, R=Math.min(w,h)*.28;
+      const nodes=[{a:-Math.PI/2,label:"PERCEIVE",color:C.cyan},{a:0,label:"REASON",color:C.violet},{a:Math.PI/2,label:"ACT",color:retries?C.rose:C.emerald},{a:Math.PI,label:"OBSERVE",color:C.blue}];
+      nodes.forEach((n,i)=>{
+        const x=cx+Math.cos(n.a)*R, y=cy+Math.sin(n.a)*R;
+        ctx.fillStyle="rgba(15,23,42,.75)"; ctx.strokeStyle=rgba(n.color,.65); glow(ctx,n.color,12);
+        roundRect(ctx,x-38,y-20,76,40,11); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        mono(ctx,n.label,x,y,8,n.color,"center");
+        const next=nodes[(i+1)%nodes.length];
+        const nx=cx+Math.cos(next.a)*R, ny=cy+Math.sin(next.a)*R;
+        const mx=cx+Math.cos(n.a+Math.PI/2)*R*.2, my=cy+Math.sin(n.a+Math.PI/2)*R*.2;
+        ctx.strokeStyle="rgba(148,163,184,.14)"; ctx.beginPath(); ctx.moveTo(x,y); ctx.quadraticCurveTo(mx,my,nx,ny); ctx.stroke();
+      });
+      const pulse=nodes[(step%4)];
+      const px=cx+Math.cos(pulse.a)*R, py=cy+Math.sin(pulse.a)*R;
+      ctx.fillStyle=rgba(pulse.color,.8); glow(ctx,pulse.color,18); ctx.beginPath(); ctx.arc(px,py,6,0,TAU); ctx.fill(); noGlow(ctx);
+      text(ctx,stopped?"stopped: max steps or retry limit":"loop running",w/2,h-18,11,stopped?C.rose:C.emerald,700,"center");
+      if(retries){ text(ctx,"tool failure → retry",w/2,26,11,C.rose,700,"center"); }
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Max steps",min:2,max:12,step:1,value:maxSteps,fmt:v=>v,onInput:v=>{maxSteps=v;sStep.set(Math.min(step,maxSteps)+" / "+maxSteps);api.redraw();}});
+    slider(controls,{label:"Tool reliability",min:.2,max:1,step:.05,value:reliability,fmt:v=>Math.round(v*100)+"%",onInput:v=>{reliability=v;api.redraw();}});
+    button(controls,"Inject failure",()=>{failNext=true;api.redraw();},"rose");
+    button(controls,"Restart loop",()=>{step=0;retries=0;cost=0;stopped=false;lastStep=performance.now()/1000;api.redraw();},"primary");
+  });
+
+/* ============================================================
+   20 · BEAM SEARCH TREE
+   ============================================================ */
+demo("beam","20","Beam Search Tree","Beam search",
+  "A token tree grows. Beams keep the best paths and prune the rest. Compare greedy, sampling and beam search on the same tree.",
+  "Generation is search. Beam search can be safely boring; sampling explores; greedy never looks back.",
+  (stage, controls) => {
+    const canvas=canvasStage(stage,330);
+    let width=3, mode="beam", step=2;
+    const sChoice=stat(controls,"Choice","—");
+    const tokens=[["A","B","C"],["x","y","z"],["1","2","3"]];
+    const probs=[ [.55,.3,.15],[.6,.25,.15],[.7,.2,.1] ];
+    const draw=(ctx,w,h,now)=>{
+      ctx.clearRect(0,0,w,h);
+      const g=ctx.createRadialGradient(w*.5,h*.1,10,w*.5,h*.1,w*.9); g.addColorStop(0,"rgba(52,211,153,.06)"); g.addColorStop(1,"rgba(2,6,23,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      const levels=3, rootX=w/2, rootY=44, nodeY=l=>rootY+l*((h-100)/levels);
+      const nodeX=(l,i)=>{ const count=Math.pow(3,l), spread=(w-80)*(l/levels); return rootX+(i-(count-1)/2)*(spread/Math.max(1,count-1||1)); };
+      for(let l=0;l<levels;l++) for(let i=0;i<Math.pow(3,l);i++){
+        const x=nodeX(l,i), y=nodeY(l);
+        for(let k=0;k<3;k++){ const ci=i*3+k, cx=nodeX(l+1,ci), cy=nodeY(l+1); ctx.strokeStyle="rgba(148,163,184,.08)"; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(cx,cy); ctx.stroke(); }
+      }
+      // choose paths
+      let beams=[{l:0,i:0,score:0,txt:""}];
+      for(let l=0;l<Math.min(step,levels);l++){
+        const next=[];
+        beams.forEach(b=>{ for(let k=0;k<3;k++){ next.push({l:l+1,i:b.i*3+k,score:b.score+Math.log(probs[l][(b.i*3+k)%3]),txt:b.txt+tokens[l][k]}); } });
+        next.sort((a,b)=>b.score-a.score);
+        beams=next.slice(0,mode==="greedy"?1:width);
+      }
+      const chosen=new Set(beams.filter(b=>b.l===Math.min(step,levels)).map(b=>b.l+":"+b.i));
+      // draw nodes
+      for(let l=0;l<=levels;l++) for(let i=0;i<Math.pow(3,l);i++){
+        const x=nodeX(l,i), y=nodeY(l), isLeaf=l===levels;
+        const selected=beams.some(b=>b.l===l&&b.i===i);
+        const color=selected?C.emerald:isLeaf?"rgba(148,163,184,.35)":"rgba(148,163,184,.18)";
+        ctx.fillStyle=selected?"rgba(52,211,153,.22)":"rgba(15,23,42,.5)"; ctx.strokeStyle=color;
+        if(selected) glow(ctx,C.emerald,10);
+        ctx.beginPath(); ctx.arc(x,y,l===0?7:l===levels?3.5:4.5,0,TAU); ctx.fill(); ctx.stroke(); noGlow(ctx);
+        if(l>0&&l<=levels) mono(ctx,tokens[l-1][i%3],x,y-11,8,selected?C.emerald:C.dim,"center");
+      }
+      sChoice.set(beams.length?beams[0].txt:"—");
+      mono(ctx,"depth 0",24,h-18,9,C.dim); mono(ctx,"beam width "+width,w-24,h-18,9,C.violet,"right");
+      text(ctx,mode==="beam"?"beam":mode==="greedy"?"greedy":"sampling",24,24,10,C.muted,700);
+    };
+    const api=register(canvas,draw);
+    slider(controls,{label:"Beam width",min:1,max:4,step:1,value:width,fmt:v=>v,onInput:v=>{width=v;api.redraw();}});
+    slider(controls,{label:"Depth",min:0,max:3,step:1,value:step,fmt:v=>v,onInput:v=>{step=v;api.redraw();}});
+    seg(controls,["Beam","Greedy"],"Beam",v=>{mode=v.toLowerCase();api.redraw();});
+    button(controls,"Deeper",()=>{step=Math.min(3,step+1);api.redraw();},"primary");
+    button(controls,"Reset",()=>{step=0;api.redraw();},"rose");
+  });
+
+
+
+const gallery=$("#gallery"), nav=$("#nav");
+DEMOS.forEach(d=>{
+  const card=document.createElement("section");
+  card.className="demo-card"; card.id="d-"+d.id;
+  card.innerHTML=`<div class="demo-head"><span class="demo-num">${d.num}</span><div><h2>${d.title}</h2><p>${d.blurb}</p></div></div><div class="stage" id="stage-${d.id}"></div><div class="controls" id="ctrl-${d.id}"></div><div class="aha"><b>Aha.</b> ${d.aha}</div>`;
+  gallery.appendChild(card);
+  const chip=document.createElement("a"); chip.href="#d-"+d.id; chip.className="chip"; chip.textContent=d.num+" · "+d.short; nav.appendChild(chip);
+  d.build($("#stage-"+d.id), $("#ctrl-"+d.id), card);
+});
+const io=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add("in"); }); },{rootMargin:"40px"});
+document.querySelectorAll(".demo-card").forEach(c=>io.observe(c));
+})();
+</script>
+</body>
+</html>

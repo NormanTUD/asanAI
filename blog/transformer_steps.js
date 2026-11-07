@@ -2943,7 +2943,7 @@
 			if (moveLiveView("transformer-viz-bpe", 1, "#tm-step-tokenize")) {
 				moved.tokenize = true;
 				var tokDetail = detailBySummary(/Tokenizer in detail|Tokenizer im Detail/i);
-				if (tokDetail) tokDetail.remove();
+				if (tokDetail && !document.getElementById("tm-prep-source")) tokDetail.remove();
 			}
 		}
 		// 2 · Embed: the real embedding plot replaces the toy canvas.
