@@ -1481,6 +1481,194 @@
 			migrationCanvasRegistry[key].api.redraw();
 		});
 	}
+	function headTypeLabels() {
+		var de = DE();
+		return {
+			induction: de ? "Induction" : "Induction",
+			previous: de ? "Vorheriges Token" : "Previous token",
+			self: de ? "Selbst" : "Self",
+			first: de ? "Erstes Token / Sink" : "First token / sink",
+			local: de ? "Lokaler Kontext" : "Local context",
+			duplicate: de ? "Duplicate-Token" : "Duplicate token",
+			positional: de ? "Positions-Offset" : "Positional offset",
+			rare: de ? "Seltene Tokens" : "Rare tokens",
+			broad: de ? "Breite Mischung" : "Broad mixing",
+			content: de ? "Kontext-Mischung" : "Context mixing"
+		};
+	}
+
+	function analyzeHead(head, tokens) {
+		var W = head && head.weights;
+		if (!W || !W.length || !tokens || !tokens.length) return null;
+		var n = W.length;
+		var self = 0, prev = 0, first = 0, local = 0, ind = 0, indRows = 0;
+		var dup = 0, dupRows = 0, rare = 0, entropy = 0, maxMean = 0;
+		var offSum = [], offRows = [];
+		var freq = {};
+		tokens.forEach(function (t) { freq[t] = (freq[t] || 0) + 1; });
+		for (var i = 0; i < n; i++) {
+			var row = W[i] || [];
+			self += row[i] || 0;
+			maxMean += Math.max.apply(null, row.map(function (v) { return v || 0; }));
+			if (i > 0) {
+				prev += row[i - 1] || 0;
+				first += row[0] || 0;
+				var bestLocal = 0;
+				for (var k = 1; k <= 3; k++) if (i - k >= 0) bestLocal = Math.max(bestLocal, row[i - k] || 0);
+				local += bestLocal;
+				var prevTok = tokens[i - 1];
+				for (var p = 0; p < i - 1; p++) {
+					if (tokens[p] === prevTok) { ind += row[p + 1] || 0; indRows++; break; }
+				}
+			}
+			for (var d = 1; d < n; d++) {
+				offSum[d] = offSum[d] || 0; offRows[d] = offRows[d] || 0;
+				if (i - d >= 0) { offSum[d] += row[i - d] || 0; offRows[d]++; }
+			}
+			for (var p2 = i - 1; p2 >= 0; p2--) {
+				if (tokens[p2] === tokens[i]) { dup += row[p2] || 0; dupRows++; break; }
+			}
+			var rareMass = 0;
+			for (var j = 0; j <= i; j++) if ((freq[tokens[j]] || 0) <= 2) rareMass += row[j] || 0;
+			rare += rareMass;
+			var e = 0;
+			row.forEach(function (p3) { if (p3 > 1e-12) e -= p3 * Math.log(p3); });
+			entropy += e / Math.log(Math.max(2, n));
+		}
+		var rows = Math.max(1, n - 1);
+		var bestOffset = 0, bestOffsetK = 0;
+		for (var d2 = 1; d2 < n; d2++) {
+			var avg = offRows[d2] ? offSum[d2] / offRows[d2] : 0;
+			if (avg > bestOffset) { bestOffset = avg; bestOffsetK = d2; }
+		}
+		return {
+			self: self / n,
+			prev: prev / rows,
+			first: first / rows,
+			local: local / rows,
+			induction: indRows ? ind / indRows : 0,
+			duplicate: dupRows ? dup / dupRows : 0,
+			rare: rare / n,
+			bestOffset: bestOffset,
+			bestOffsetK: bestOffsetK,
+			entropy: entropy / n,
+			max: maxMean / n
+		};
+	}
+
+	function classifyHead(f, de) {
+		var type = "content", score = f.max, threshold = 0.35, reason = "";
+		if (f.induction >= 0.25 && f.induction >= f.prev * 0.8) {
+			type = "induction"; score = f.induction; threshold = 0.25;
+			reason = de ? "Ein früheres Vorkommen des vorherigen Tokens wird kopiert (Schwelle 25 %)."
+				: "It copies the token after an earlier occurrence of the previous token (threshold 25%).";
+		} else if (f.duplicate >= 0.30 && f.duplicate >= f.prev * 0.9) {
+			type = "duplicate"; score = f.duplicate; threshold = 0.30;
+			reason = de ? "Aufmerksamkeit liegt auf einem früheren Vorkommen desselben Tokens (Schwelle 30 %)."
+				: "Attention sits on an earlier occurrence of the same token (threshold 30%).";
+		} else if (f.prev >= 0.45) {
+			type = "previous"; score = f.prev; threshold = 0.45;
+			reason = de ? "Aufmerksamkeit liegt auf dem unmittelbar vorherigen Token (Schwelle 45 %)."
+				: "Attention sits on the immediately previous token (threshold 45%).";
+		} else if (f.self >= 0.5) {
+			type = "self"; score = f.self; threshold = 0.5;
+			reason = de ? "Aufmerksamkeit liegt auf dem Query-Token selbst (Schwelle 50 %)."
+				: "Attention sits on the query token itself (threshold 50%).";
+		} else if (f.first >= 0.4) {
+			type = "first"; score = f.first; threshold = 0.4;
+			reason = de ? "Aufmerksamkeit sammelt sich auf Position 0 (Schwelle 40 %)."
+				: "Attention collects on position 0 (threshold 40%).";
+		} else if (f.bestOffset >= 0.35 && f.bestOffsetK > 3) {
+			type = "positional"; score = f.bestOffset; threshold = 0.35;
+			reason = de ? "Ein fester Positions-Offset von " + f.bestOffsetK + " dominiert (Schwelle 35 %)."
+				: "A fixed positional offset of " + f.bestOffsetK + " dominates (threshold 35%).";
+		} else if (f.local >= 0.45) {
+			type = "local"; score = f.local; threshold = 0.45;
+			reason = de ? "Aufmerksamkeit bleibt in den letzten drei Positionen (Schwelle 45 %)."
+				: "Attention stays within the previous three positions (threshold 45%).";
+		} else if (f.rare >= 0.50) {
+			type = "rare"; score = f.rare; threshold = 0.50;
+			reason = de ? "Aufmerksamkeit sammelt sich auf seltene Tokens (Schwelle 50 %)."
+				: "Attention collects on rare tokens (threshold 50%).";
+		} else if (f.entropy >= 0.72) {
+			type = "broad"; score = f.entropy; threshold = 0.72;
+			reason = de ? "Die normalisierte Attention-Entropie ist hoch (Schwelle 0,72)."
+				: "Normalized attention entropy is high (threshold 0.72).";
+		} else {
+			reason = de ? "Die stärkste mittlere Zeilengewichtung liegt über 35 %."
+				: "The strongest mean row weight is above 35%.";
+		}
+		var confidence = Math.max(0.5, Math.min(0.95, 0.5 + 0.45 * Math.min(1, score / Math.max(0.001, threshold * 2))));
+		return { type: type, score: score, threshold: threshold, confidence: confidence, reason: reason };
+	}
+
+	function classifyAttentionHeads() {
+		var traces = window.__tmLayerTrace || [];
+		Array.prototype.slice.call(document.querySelectorAll(".tm-layer-card")).forEach(function (card) {
+			var idx = parseInt(card.getAttribute("data-layer-idx"), 10);
+			var trace = traces[idx];
+			if (isNaN(idx) || !trace || !trace.headData) return;
+			var buttons = card.querySelectorAll(".head-tab-list .mha-head-tab-btn");
+			var contents = card.querySelectorAll(".head-tab-in-layer");
+			var labels = headTypeLabels();
+			var de = DE();
+			Array.prototype.slice.call(buttons).forEach(function (btn, h) {
+				var result = analyzeHead(trace.headData[h], trace.tokenStrings || []);
+				if (!result) return;
+				var c = classifyHead(result, de);
+				btn.dataset.headType = c.type;
+				btn.title = (de ? "Geschätzt: " : "Estimated: ") + labels[c.type] + " · ~" + Math.round(c.confidence * 100) + "%\n" + c.reason;
+				btn.textContent = (de ? "Head " : "Head ") + (h + 1) + " · " + labels[c.type] + " · ~" + Math.round(c.confidence * 100) + "%";
+				var content = contents[h];
+				if (content) {
+					var note = content.querySelector(".tm-head-estimate");
+					if (!note) {
+						note = document.createElement("p");
+						note.className = "tm-head-estimate";
+						content.insertBefore(note, content.firstChild);
+					}
+					note.textContent = (de ? "Schätzung: " : "Estimate: ") + labels[c.type] + " · ~" + Math.round(c.confidence * 100) + "%. " + c.reason;
+				}
+			});
+			var attnBody = card.querySelector('.tm-layer-subbox[data-sub="attention"] .tm-layer-subbox-body');
+			if (attnBody && !attnBody.querySelector(".tm-head-method")) {
+				var method = document.createElement("p");
+				method.className = "tm-head-method";
+				var links = {
+					voita: '<a href="https://arxiv.org/abs/1905.09418" target="_blank" rel="noopener">Voita et al. (2019)</a>',
+					clark: '<a href="https://arxiv.org/abs/1906.04341" target="_blank" rel="noopener">Clark et al. (2019)</a>',
+					olsson: '<a href="https://arxiv.org/abs/2209.11895" target="_blank" rel="noopener">Olsson et al. (2022)</a>',
+					wang: '<a href="https://arxiv.org/abs/2211.00593" target="_blank" rel="noopener">Wang et al. (2022)</a>',
+					zheng: '<a href="https://arxiv.org/abs/2409.03752" target="_blank" rel="noopener">Zheng et al. (2024)</a>',
+					jain: '<a href="https://arxiv.org/abs/1902.10186" target="_blank" rel="noopener">Jain &amp; Wallace (2019)</a>',
+					wiegreffe: '<a href="https://arxiv.org/abs/1908.04626" target="_blank" rel="noopener">Wiegreffe &amp; Pinter (2019)</a>'
+				};
+				method.innerHTML = de
+					? "Head-Typen sind heuristische <b>Schätzungen</b> aus dem Attention-Muster; die Schwelle steht jeweils dabei. Grundlage: " + links.voita + ", " + links.clark + ", " + links.olsson + ", " + links.wang + ", " + links.zheng + ". Attention-Gewichte sind keine vollständige Erklärung (" + links.jain + "; " + links.wiegreffe + ")."
+					: "Head types are heuristic <b>estimates</b> from the attention pattern; the threshold is stated in each label. Basis: " + links.voita + ", " + links.clark + ", " + links.olsson + ", " + links.wang + ", " + links.zheng + ". Attention weights are not a complete explanation (" + links.jain + "; " + links.wiegreffe + ").";
+				attnBody.appendChild(method);
+			}
+		});
+	}
+
+	function updateSignalRailLabels() {
+		var traces = window.__tmLayerTrace || [];
+		document.querySelectorAll(".tm-layer-signal-between").forEach(function (wrap) {
+			var canvas = wrap.querySelector(".layer-signal-canvas");
+			if (!canvas) return;
+			var idx = parseInt(canvas.getAttribute("data-layer-idx"), 10);
+			var trace = traces[idx];
+			var n = trace && trace.tokenStrings ? trace.tokenStrings.length : 0;
+			var label = wrap.querySelector(".tm-signal-between-label");
+			if (!label) return;
+			if (wrap.classList.contains("tm-layer-signal-before")) {
+				label.textContent = (DE() ? "Residual-Stream vor Schicht 1" : "Residual stream before layer 1") + " · " + n + (DE() ? " Tokens" : " tokens");
+			} else {
+				label.textContent = (DE() ? "Residual-Stream nach Schicht " : "Residual stream after layer ") + (idx + 1) + " · " + n + (DE() ? " Tokens" : " tokens");
+			}
+		});
+	}
+
 	function renderLayerPreviews() {
 		document.querySelectorAll('.layer-residual-canvas[data-layer-idx]').forEach(function (canvas) {
 			var idx = parseInt(canvas.getAttribute('data-layer-idx'), 10);
@@ -1508,6 +1696,7 @@
 	window.addEventListener('tm:transformer-data', function () {
 		redrawLayerCanvases();
 		renderLayerPreviews();
+		updateSignalRailLabels();
 	});
 
 	var featureState = {};
@@ -1696,8 +1885,9 @@
 			option.yAxis3D = { type: "value", name: projection.axes[1], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } };
 			option.zAxis3D = { type: "value", name: projection.axes[2], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } };
 			option.grid3D = {
-				boxWidth: 100, boxDepth: 100, boxHeight: 75,
-				viewControl: { alpha: 22, beta: 35, distance: 190 },
+				boxWidth: 130, boxDepth: 130, boxHeight: 90,
+				width: "100%", height: "100%", left: 0, right: 0, top: 0, bottom: 0,
+				viewControl: { alpha: 20, beta: 30, distance: 105 },
 				axisLine: { lineStyle: { color: c.line } },
 				splitLine: { lineStyle: { color: c.line } }
 			};
@@ -1805,9 +1995,21 @@
 		var note = DE()
 			? "Die Logit-Linse projiziert den Vektor nach dieser Schicht auf das Vokabular und vergleicht die Winkel. Sie zeigt, welches Wort das Modell erzeugen würde, wenn es hier aufhören würde; über die Schichten hinweg siehst du, wie sich die Repräsentation bewegt und ihre Meinung ein wenig ändert."
 			: "The logit lens projects the vector after this layer onto the vocabulary and compares the angles. It shows which word the model would produce if it stopped here; across layers you can watch the representation move and change its guess, at least a little.";
+		var traces = window.__tmLayerTrace || [];
+		var lastTokenIdx = data.tokens.length - 1;
+		var sweep = "";
+		if (traces.length > 1) {
+			sweep = "<div class='tm-lens-sweep'><div class='tm-lens-sweep-title'>" + (DE() ? "Logit-Linse über die Tiefe · letztes Token" : "Logit lens across depth · last token") + "</div>";
+			traces.forEach(function (tr, l) {
+				if (!tr || !tr.h_out || !tr.h_out[lastTokenIdx]) return;
+				var words = featureTopWords(tr.h_out[lastTokenIdx], 3);
+				sweep += "<div class='tm-lens-sweep-row" + (l === layerIdx ? " is-current" : "") + "'><span class='tm-lens-sweep-layer'>L" + (l + 1) + "</span><div class='tm-logit-side'>" + words.map(function (w) { return logitChip(w, "var(--tm-green)"); }).join("") + "</div></div>";
+			});
+			sweep += "</div>";
+		}
 		host.innerHTML = "<details class='tm-logit-collapse'><summary>" + title + "</summary><div class='tm-logit-wrap'>" +
 			"<details class='tm-layer-hafter'><summary>" + (DE() ? "h_after · Hidden State nach Schicht " : "h_after · hidden state after layer ") + (layerIdx + 1) + "</summary><div class='tm-hafter-scroll'><div class='tm-hafter-math' data-tex='" + hafterTex + "' data-tex-display='true'></div></div></details>" +
-			"<p class='tm-logit-note'>" + note + "</p><div class='tm-logit-lens'>" + head + rows + "</div></div></details>";
+			"<p class='tm-logit-note'>" + note + "</p><div class='tm-logit-lens'>" + head + rows + "</div>" + sweep + "</div></details>";
 		typesetMathIn(host);
 	}
 
@@ -2073,6 +2275,7 @@
 		}, 350);
 	});
 	setInterval(enhanceLayerCards, 1200);
+	setInterval(classifyAttentionHeads, 1800);
 
 	function typesetConfigMath() {
 		var cfg = document.getElementById("transformer_config");
@@ -2863,6 +3066,16 @@
 					"<div data-tex='\\operatorname{FFN}(x)=W_2\\operatorname{GELU}(W_1x+b_1)+b_2'></div>";
 				box.querySelector(".tm-step-body").appendChild(formulaStrip);
 				typesetMathInOrg(formulaStrip);
+				var vizSwitch = document.createElement("div");
+				vizSwitch.className = "tm-viz-switch";
+				vizSwitch.innerHTML = "<label>" + (isDe ? "Layer-Ansicht" : "Layer view") + " <select id='tm-viz-mode'><option value='train'>" + (isDe ? "Trainingssatz" : "Training data") + "</option><option value='inference'>" + (isDe ? "Predict-Prompt" : "Prediction prompt") + "</option></select></label>";
+				box.querySelector(".tm-step-body").appendChild(vizSwitch);
+				var vizSelect = vizSwitch.querySelector("select");
+				vizSelect.value = window.tlabVisualizationMode || "train";
+				vizSelect.addEventListener("change", function () {
+					window.tlabVisualizationMode = vizSelect.value;
+					if (typeof window.run_transformer_demo === "function") window.run_transformer_demo();
+				});
 					posCard.parentNode.insertBefore(box, posCard.nextSibling);
 					var toggle = box.querySelector(".tm-step-toggle");
 					toggle.addEventListener("click", function () {

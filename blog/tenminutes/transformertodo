@@ -279,3 +279,28 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
   layer 1 attention+FFN, then attention/FFN for each later layer. The work
   yields between stages so the text is visible; normal (non-inference) runs
   stay synchronous.
+- DONE Layer-view switch: Training data / Prediction prompt controls
+  `tlabVisualizationMode`; default is the training sentence, so the residual
+  rails show all corpus tokens. h_last in a layer now follows the selected
+  layer view.
+- DONE Attention-head estimates: per-head labels from attention statistics
+  (induction, duplicate-token, previous-token, self, first/sink, positional
+  offset, local, rare-token, broad, context mixing), with confidence, the
+  threshold, a reason, and a method note. Based on Voita et al. (2019),
+  Clark et al. (2019), Olsson et al. (2022), Wang et al. (2022), Zheng et al.
+  (2024); caveat links to Jain & Wallace (2019) and Wiegreffe & Pinter (2019).
+- DONE Logit lens includes a gallery-style layer sweep for the last token.
+- DONE Parent positional detail fixed by removing the early `movePrep` return
+  that was caused by the removed tokenizer detail; Position/Embedding/Residual
+  prep content now moves into the right details.
+- DONE Attention-head taxonomy based on Voita/Clark/Olsson/Wang/Zheng: detections
+  for induction, duplicate-token, previous-token, self, first/sink, fixed
+  positional offset, local context, rare-token, broad mixing and context
+  mixing. Each head shows an estimate, threshold and reason; Jain/Wallace and
+  Wiegreffe/Pinter are linked as the "attention is not explanation" caveat.
+- DONE Logit lens now also has the gallery-style layer sweep for the last
+  token. The training/prediction layer-view switch defaults to the training
+  sentence so all tokens are visible.
+- DONE Parent positional-prep details fixed; inline math inside paragraphs is
+  forced inline; Probability Flow is de-boxed; feature-arrow 3D framing fills
+  the chart; top-k display renormalizes over retained tokens.

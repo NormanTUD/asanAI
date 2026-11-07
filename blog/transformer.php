@@ -319,7 +319,6 @@ with the full formulas one level deeper.
 			position: document.getElementById('tm-detail-position'),
 			residual: document.getElementById('tm-detail-residual')
 		};
-		if (!targets.tokenize) return;
 		function body(key) {
 			var target = targets[key];
 			return target ? target.querySelector('.tm-step-detail-body') : null;

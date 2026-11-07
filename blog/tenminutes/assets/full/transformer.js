@@ -5,7 +5,7 @@ If you see stuff jumping around, try setting "overflow-anchor: none" to that ele
 */
 
 window._trajectoryVfEnabled = false;
-window.tlabVisualizationMode = 'inference';
+window.tlabVisualizationMode = 'train';
 window._cachedFinalProjection = null;
 window._activeUnifiedLayerIdx = 0;
 window.isTraining = false;
@@ -7654,12 +7654,11 @@ function renderLayerFormulas(layerIdx) {
 		render_ffn(ffn.h1, ffn.normed_h1, ffn.W1, ffn.b1, ffn.out_L1, ffn.W2, ffn.b2, ffn.out_FFN, ffn.h2, ffn.gamma2, ffn.beta2, layerIdx, tokens);
 	}
 	const hlast = document.getElementById(`${prefix}-hlast`);
-	if (hlast && layerIdx === (window.__tmLayerTrace || []).length - 1 && window._cachedFinalProjection && window._cachedFinalProjection.h_final) {
-		const hFinal = window._cachedFinalProjection.h_final;
-		const hLast = hFinal[hFinal.length - 1];
+	if (hlast && layerIdx === (window.__tmLayerTrace || []).length - 1) {
+		const hLast = trace.h_out[trace.h_out.length - 1];
 		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
 		const rows = buildHLastDisplayLatex(hLast);
-		hlast.innerHTML = `<p>${isDe ? 'Aktuell' : 'Current'}</p>$$h_\\text{last} = \\begin{bmatrix} ${rows} \\end{bmatrix}$$<p>${isDe ? '(die letzte Zeile der Ausgabematrix der letzten Schicht der Inferenzdaten)' : "(the last layers' output matrix last line of the inference-data)"}</p>`;
+		hlast.innerHTML = `<p>${isDe ? 'Aktuell' : 'Current'}</p>$$h_\\text{last} = \\begin{bmatrix} ${rows} \\end{bmatrix}$$<p>${isDe ? '(die letzte Zeile der Ausgabematrix der aktuellen Layer-Ansicht)' : "(the output matrix last line of the current layer view)"}</p>`;
 	}
 	_renderTemmlOnElements([body]);
 }

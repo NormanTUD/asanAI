@@ -1277,3 +1277,73 @@
 .tm-formula-step .tm-formula-block {
 	padding: 0;
 }
+
+.tm-viz-switch {
+	margin: 4px 0 2px;
+	font: 600 0.78rem/1.3 "Open Sans", system-ui, sans-serif;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+}
+.tm-viz-switch select {
+	margin-left: 6px;
+	padding: 3px 7px;
+	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	background: var(--tm-card, var(--mn-surface, #ffffff));
+	color: var(--tm-ink, var(--mn-text, #000000));
+	font: 600 0.76rem/1.2 "Open Sans", system-ui, sans-serif;
+}
+
+/* Inline math inside normal paragraphs must flow with the text, not start a
+   display block. Display equations live outside <p> and are unaffected. */
+.md p .cl-eq {
+	display: inline !important;
+}
+.md p math.tml-display {
+	display: inline-block !important;
+	vertical-align: middle;
+	margin: 0 0.12em;
+}
+
+/* Heuristic attention-head labels and method note. */
+.tm-head-estimate {
+	margin: 0 0 12px;
+	padding: 7px 9px;
+	border-left: 3px solid var(--tm-green, var(--mn-emerald, #63a44b));
+	background: var(--tm-paper-2, var(--mn-bg-subtle, #f8fafc));
+	color: var(--tm-ink-soft, var(--mn-text-secondary, #2c464d));
+	font: 600 0.76rem/1.45 "Open Sans", system-ui, sans-serif;
+}
+.tm-head-method {
+	margin: 8px 0 0;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+	font: 400 0.7rem/1.5 "Open Sans", system-ui, sans-serif;
+}
+.tm-head-method a {
+	color: var(--tm-petrol, var(--mn-accent, #004b6f));
+}
+
+/* Logit-lens layer sweep (gallery-style). */
+.tm-lens-sweep {
+	margin-top: 14px;
+	border-top: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	padding-top: 8px;
+}
+.tm-lens-sweep-title {
+	margin-bottom: 6px;
+	font: 700 0.78rem/1.3 "Barlow", "Open Sans", system-ui, sans-serif;
+	color: var(--tm-petrol, var(--mn-accent, #004b6f));
+}
+.tm-lens-sweep-row {
+	display: grid;
+	grid-template-columns: 42px minmax(0, 1fr);
+	gap: 8px;
+	align-items: center;
+	padding: 4px 6px;
+	border-bottom: 1px solid var(--tm-line, var(--mn-border, #e2e8f0));
+}
+.tm-lens-sweep-row.is-current {
+	background: var(--tm-paper-2, var(--mn-bg-subtle, #f8fafc));
+}
+.tm-lens-sweep-layer {
+	font: 700 0.72rem/1.2 "Barlow", "Open Sans", system-ui, sans-serif;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+}
