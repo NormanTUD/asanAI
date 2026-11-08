@@ -1875,8 +1875,12 @@
 		distanceLabel: metricDistanceLabel,
 		slerpPoints: slerpPoints,
 		normalize: normalizeVector,
-		rerenderWithOverlay: rerenderWithOverlay
+		rerenderWithOverlay: rerenderWithOverlay,
+		sphereEnabled: function () { return window.tmMetricSphere !== false; },
+		setSphere: function (v) { window.tmMetricSphere = !!v; },
+		showSphere: function () { return featureMetric() === "angular" && window.tmMetricSphere !== false; }
 	};
+	if (window.tmMetricSphere === undefined) window.tmMetricSphere = true;
 	window.addEventListener("tm:metricchange", function () {
 		Object.keys(featureState).forEach(function (key) {
 			var idx = parseInt(key, 10);
@@ -1931,6 +1935,7 @@
 		}
 	}
 	function ensureGlobalMetricControl() {
+		if (window.__tmMetricInStickyBar) return;
 		var cfg = document.getElementById("transformer_config");
 		if (!cfg || document.getElementById("tm-global-metric")) return;
 		var de = DE();
@@ -1940,11 +1945,23 @@
 		var wrap = document.createElement("div");
 		wrap.id = "tm-global-metric";
 		wrap.className = "tm-global-metric";
-		wrap.innerHTML = "<label>" + (de ? "Distanzmetrik (alle Plots)" : "Distance metric (all plots)") + " <select>" + options + "</select></label><span class='tm-global-metric-note'>" + (de ? "Gilt global für Feature-Migration, Token-Trajectory, Embedding und Position." : "Applies globally to feature migration, token trajectory, embedding, and position.") + "</span>";
+		wrap.innerHTML = "<label>" + (de ? "Distanzmetrik (alle Plots)" : "Distance metric (all plots)") + " <select>" + options + "</select></label><label class='tm-global-sphere'><input type='checkbox' " + (window.tmMetricSphere !== false ? "checked" : "") + "> " + (de ? "Kugel zeigen" : "Show sphere") + "</label><span class='tm-global-metric-note'>" + (de ? "Gilt global für Feature-Migration, Token-Trajectory, Embedding und Position." : "Applies globally to feature migration, token trajectory, embedding, and position.") + "</span>";
 		var select = wrap.querySelector("select");
+		var sphere = wrap.querySelector("input[type=checkbox]");
+		var syncSphere = function () {
+			var angular = select.value === "angular";
+			sphere.parentElement.style.display = angular ? "inline-flex" : "none";
+			sphere.checked = window.tmMetricSphere !== false;
+		};
 		select.value = featureMetric();
+		syncSphere();
 		select.addEventListener("change", function () {
 			window.tmFeatureMetric = select.value;
+			syncSphere();
+			window.dispatchEvent(new CustomEvent("tm:metricchange", { detail: { metric: select.value } }));
+		});
+		sphere.addEventListener("change", function () {
+			window.tmMetricSphere = sphere.checked;
 			window.dispatchEvent(new CustomEvent("tm:metricchange", { detail: { metric: select.value } }));
 		});
 		cfg.insertBefore(wrap, cfg.firstChild);
@@ -2560,8 +2577,8 @@
 				sb.insertBefore(lead, sb.firstChild);
 			}
 			lead.textContent = isDe
-				? "Diese Schicht liest den laufenden Vektor und schreibt ein Update. Die drei Heatmaps zeigen Eingang, die relative Änderung und Ausgang; darunter stehen die echten Min/Max-Werte."
-				: "This layer reads the running vector and writes an update. The three heatmaps show input, the relative change, and output; the real min/max values are shown below.";
+				? "Diese Schicht liest den laufenden Vektor und schreibt ein Update. Die drei Heatmaps zeigen Eingang, die relative Änderung und Ausgang; darunter stehen die echten Min/Max-Werte. Die Heatmaps bleiben roh — die Distanzmetrik gilt für die Pfeil- und Trajektorien-Plots."
+				: "This layer reads the running vector and writes an update. The three heatmaps show input, the relative change, and output; the real min/max values are shown below. The heatmaps stay raw; the distance metric applies to the arrow and trajectory plots.";
 			if (!sb.querySelector(".tm-residual-triple")) {
 				var triple = document.createElement("div");
 				triple.className = "tm-residual-triple";

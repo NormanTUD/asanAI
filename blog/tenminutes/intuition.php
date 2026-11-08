@@ -17,9 +17,12 @@
 		.traj-quote span { font-style: normal; color: var(--tm-faint); }
 		.traj-angle-list { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 6px; font: 600 0.72rem/1.4 var(--tm-ui); color: var(--tm-muted); }
 		.traj-angle-list .is-chosen { color: var(--tm-green); font-weight: 700; }
+		.iso-note { width: 100%; max-width: none; margin: 0 0 8px; font: 400 0.84rem/1.55 var(--tm-prose); color: var(--tm-ink-soft); }
+		.iso-source { width: 100%; margin: 0 0 12px; font: 400 0.74rem/1.4 var(--tm-ui); color: var(--tm-muted); }
+		.iso-source a { color: var(--tm-petrol); text-decoration: underline; text-underline-offset: 2px; }
 		.iso-main { min-width: 0; }
 		.tt-plot-wrap { position: relative; min-width: 0; }
-		.tt-echarts-host { width: 100%; height: 380px; min-height: 320px; background: radial-gradient(circle at 50% 42%, var(--tm-wash), transparent 66%); }
+		.tt-echarts-host { width: 100%; height: 520px; min-height: 420px; background: radial-gradient(circle at 50% 42%, var(--tm-wash), transparent 66%); }
 		.tt-echarts-host canvas { display: block; }
 		.tt-ball {
 			position: absolute;
@@ -91,13 +94,16 @@
 		@media (prefers-reduced-motion: reduce) {
 			.tt-ball::after { animation: none; }
 		}
-		.tt-fallback { display: flex; align-items: center; justify-content: center; height: 100%; padding: 24px; text-align: center; color: var(--tm-muted); font: 0.86rem/1.5 var(--tm-ui); }
+		.tt-fallback { display: flex; align-items: center; justify-content: center; gap: 10px; height: 100%; padding: 24px; text-align: center; color: var(--tm-muted); font: 0.86rem/1.5 var(--tm-ui); }
+		.tt-loader-spinner { width: 16px; height: 16px; border: 2px solid var(--tm-line-strong); border-top-color: var(--tm-green); border-radius: 50%; flex: 0 0 auto; animation: ttLoaderSpin 0.8s linear infinite; }
+		@keyframes ttLoaderSpin { to { transform: rotate(360deg); } }
 		.tt-legend { display: flex; flex-wrap: wrap; gap: 5px 14px; margin-top: 8px; font: 600 0.7rem/1.35 var(--tm-ui); color: var(--tm-muted); }
 		.tt-legend-item { display: inline-flex; align-items: center; gap: 5px; }
 		.tt-swatch { width: 10px; height: 10px; border-radius: 2px; border: 1px solid var(--tm-line-strong); flex: 0 0 auto; }
 		.tt-swatch--deep { background: var(--tm-blue); }
 		.tt-swatch--side { background: var(--tm-gold); }
 		.tt-swatch--base { background: var(--tm-paper-2); }
+		.tt-swatch--filler { width: 7px; height: 7px; border-radius: 50%; background: var(--tm-gold); opacity: 0.65; }
 		.tt-token-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
 		.tt-token { appearance: none; border: 1px solid var(--tm-line-strong); background: var(--tm-paper-2); color: var(--tm-muted); font: 600 0.72rem/1.2 var(--tm-mono); padding: 0.32em 0.55em; cursor: pointer; }
 		.tt-token:hover { border-color: var(--tm-blue); color: var(--tm-ink); }
@@ -105,7 +111,7 @@
 		@media (max-width: 720px) {
 			.traj-demo-grid { grid-template-columns: 1fr; }
 			.traj-panel canvas { height: 260px; }
-			.tt-echarts-host { height: 320px; min-height: 280px; }
+			.tt-echarts-host { height: 380px; min-height: 340px; }
 		}
 	</style>
 </head>
@@ -219,11 +225,11 @@ blue = <span class="cd-fn">scattering</span>(<span class="cd-num">450e-9</span>,
 red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>, <span class="cd-num">1e5</span>, <span class="cd-num">293</span>)
 <span class="cd-fn">print</span>(f<span class="cd-str" data-en="&quot;Blue is {blue / red:.2f}x more strongly scattered than red&quot;" data-de="&quot;Blau wird {blue / red:.2f}× stärker gestreut als Rot&quot;">"Blue is {blue / red:.2f}x more strongly scattered than red"</span>)</code></pre>
 									</div>
-									<div class="code-demo-terminal" id="code-demo-terminal" aria-live="polite" hidden>
+									<div class="code-demo-terminal" id="code-demo-terminal" aria-live="polite">
 										<div class="code-demo-bar"><span class="code-demo-dot is-green"></span><span class="code-demo-dot is-gold"></span><span class="code-demo-dot is-sky"></span><span class="code-demo-name">Terminal</span></div>
 										<div class="code-demo-term-body" id="code-demo-term">
 											<div class="code-demo-cmd"><span class="code-demo-dollar">$</span> <span id="code-demo-command" data-en="python3 sky.py" data-de="python3 himmel.py">python3 sky.py</span></div>
-											<div class="code-demo-output" id="code-demo-output" hidden data-en="Blue is 4.35× more strongly scattered than red." data-de="Blau wird 4,35× stärker gestreut als Rot.">Blue is 4.35× more strongly scattered than red.</div>
+											<div class="code-demo-output" id="code-demo-output" data-en="Blue is 4.35× more strongly scattered than red." data-de="Blau wird 4,35× stärker gestreut als Rot.">Blue is 4.35× more strongly scattered than red.</div>
 										</div>
 									</div>
 								</div>
@@ -297,6 +303,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 									<span class="demo-badge">live</span>
 								</div>
 								<div class="demo-body">
+									<p class="iso-note">For the sentence “The capital of France is”, this is the continuation the network finds plausible here. But instead of “France” it could also have chosen “Italy” or “Germany”, and then the paths would run through other parts of the landscape. The energy-landscape view follows the energy-based learning framework of LeCun et al. (2006).</p>
+									<p class="iso-source"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Quelle: ' : 'Source: '; ?><a href="http://yann.lecun.com/exdb/publis/pdf/lecun-06.pdf" target="_blank" rel="noopener">LeCun et al., A Tutorial on Energy-Based Learning (2006)</a></p>
 									<div class="iso-grid">
 										<div class="iso-main">
 											<div class="tt-plot-wrap">
@@ -308,6 +316,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--deep"></i><span>deep blue = likely path</span></span>
 												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--side"></i><span>gold = possible exits</span></span>
 												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--base"></i><span>pale plane = all other tokens</span></span>
+												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--filler"></i><span>small dots = other plausible tokens</span></span>
 											</div>
 											<div class="tt-token-row" id="tt-token-row" aria-label="Jump to a token"></div>
 										</div>
@@ -1741,6 +1750,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		var isoTemp = 0.8;
 		var isoChart = null;
 		var isoLoaded = false;
+		var isoBackward = false;
 		var isoLoading = false;
 		var isoDrawn = false;
 		var isoBallPos = null;
@@ -1829,6 +1839,20 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			if (token === ".") return DE ? "Punkt" : "full stop";
 			return token;
 		}
+		var isoAltSequences = DE ? [
+			{ branchStep: 2, altIndex: 0, tokens: ["ist", "Berlin"], color: "green" },
+			{ branchStep: 2, altIndex: 1, tokens: ["ist", "Rom"], color: "coral" }
+		] : [
+			{ branchStep: 2, altIndex: 0, tokens: ["is", "Berlin"], color: "green" },
+			{ branchStep: 2, altIndex: 1, tokens: ["is", "Rome"], color: "coral" }
+		];
+		var isoFillerLabels = DE
+			? ["der", "jetzt", "eine", "in", "auch", "nicht", "und", "war"]
+			: ["the", "now", "a", "in", "also", "not", "and", "was"];
+		var isoFillerPositions = [
+			[1.1, 0.72], [1.9, -0.68], [2.7, 0.86], [3.4, -0.52],
+			[4.4, 0.62], [5.2, -0.84], [6.0, 0.76], [6.9, -0.58]
+		];
 		function parseColor(value) {
 			var s = String(value || "").trim();
 			if (s.charAt(0) === "#") {
@@ -1888,9 +1912,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function isoAltEndGeometry(branch, alt) {
 			var bx = branch.atStep + 0.52;
 			var startY = isoCenter(bx);
-			var endY = isoAltEndY(alt) * 0.97;
+			var endY = isoAltEndY(alt) * 0.97
+				+ 0.03 * Math.sin(branch.atStep * 2.3 + alt.entropy * 10);
 			var slope = isoAltSlope(branch, alt);
-			var stepX = bx + slope * (endY - startY);
+			var stepX = bx + slope * (endY - startY)
+				+ 0.04 * Math.sin(branch.atStep * 1.4 + alt.entropy * 20);
 			return { bx: bx, startY: startY, endY: endY, y: endY, slope: slope, stepX: stepX, x: stepX * isoStepGap };
 		}
 		function isoAltEndKind(branch, alt) {
@@ -1900,6 +1926,52 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function isoAltEndPoint(branch, alt) {
 			var g = isoAltEndGeometry(branch, alt);
 			return [g.x, g.y, isoSurfaceHeight(g.stepX, g.y) + 0.06];
+		}
+		function isoSequenceData(seq) {
+			var branch = null;
+			for (var i = 0; i < isoBranches.length; i++) {
+				if (isoBranches[i].atStep === seq.branchStep) { branch = isoBranches[i]; break; }
+			}
+			if (!branch) return null;
+			var alt = branch.alternatives[seq.altIndex];
+			if (!alt) return null;
+			var g = isoAltEndGeometry(branch, alt);
+			var dir = g.y >= 0 ? 1 : -1;
+			var offsets = [1.5, 2.8];
+			var points = [];
+			for (var p = 0; p < seq.tokens.length; p++) {
+				var stepX = branch.atStep + offsets[p];
+				var y = dir * (0.92 - p * 0.20)
+					+ 0.03 * Math.sin(branch.atStep * 1.3 + p * 2.1);
+				points.push({
+					name: seq.tokens[p],
+					stepX: stepX,
+					y: y,
+					point: [stepX * isoStepGap, y, isoSurfaceHeight(stepX, y) + 0.06]
+				});
+			}
+			return {
+				branch: branch,
+				alt: alt,
+				start: { stepX: g.stepX, y: g.y, point: isoAltEndPoint(branch, alt) },
+				points: points
+			};
+		}
+		function isoSurfaceLine(points, offset) {
+			var out = [];
+			for (var i = 0; i < points.length - 1; i++) {
+				var a = points[i];
+				var b = points[i + 1];
+				for (var j = 0; j < 8; j++) {
+					var t = j / 8;
+					var stepX = isoLerp(a.stepX, b.stepX, t);
+					var y = isoLerp(a.y, b.y, t);
+					out.push([stepX * isoStepGap, y, isoSurfaceHeight(stepX, y) + offset]);
+				}
+			}
+			var last = points[points.length - 1];
+			out.push([last.stepX * isoStepGap, last.y, isoSurfaceHeight(last.stepX, last.y) + offset]);
+			return out;
 		}
 		function isoAltDepth(alt, mainDepth) {
 			return mainDepth * (0.42 + 0.42 * (1 - alt.entropy) + 0.12 * isoTemp);
@@ -1967,9 +2039,12 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			return z;
 		}
 		function isoTokenPoint(index) {
-			var x = index * isoStepGap;
-			var y = isoCenter(index);
-			return [x, y, isoSurfaceHeight(index, y) + 0.06];
+			var jx = 0.05 * Math.sin(index * 2.1 + 0.7);
+			var jy = 0.05 * Math.sin(index * 1.7 + 1.9);
+			var stepX = index + jx / isoStepGap;
+			var x = stepX * isoStepGap;
+			var y = isoCenter(index) + jy;
+			return [x, y, isoSurfaceHeight(stepX, y) + 0.06];
 		}
 		function isoStopBall() {
 			if (isoBallRaf) {
@@ -2024,6 +2099,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			});
 			var altCount = 0;
 			isoBranches.forEach(function (branch) { altCount += branch.alternatives.length; });
+			isoAltSequences.forEach(function (seq) { altCount += seq.tokens.length; });
 			for (var a = 0; a < altCount; a++) {
 				var alt = document.createElement("span");
 				alt.className = "tt-point-label tt-point-label--alt";
@@ -2122,6 +2198,24 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					el.style.left = screen[0] + "px";
 					el.style.top = screen[1] + "px";
 					el.classList.toggle("is-current", branch.atStep === step);
+					entries.push({ el: el, screen: screen, mode: mode });
+				});
+			});
+			isoAltSequences.forEach(function (seq) {
+				var data = isoSequenceData(seq);
+				if (!data) return;
+				data.points.forEach(function (p) {
+					var el = altEls[altIndex];
+					var mode = altIndex % 2 === 0 ? "below" : "above";
+					altIndex++;
+					if (!el) return;
+					var screen = isoProjectPoint(p.point);
+					if (!screen) return;
+					el.style.display = "";
+					el.textContent = p.name;
+					el.style.left = screen[0] + "px";
+					el.style.top = screen[1] + "px";
+					el.classList.toggle("is-current", seq.branchStep === step);
 					entries.push({ el: el, screen: screen, mode: mode });
 				});
 			});
@@ -2262,7 +2356,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					name: token,
 					tokenIndex: i,
 					value: isoTokenPoint(i),
-					symbolSize: current ? 13 : 7,
+					symbolSize: current ? 14 : 7.5,
 					itemStyle: {
 						color: current ? c.green : c.blue,
 						borderColor: c.paper,
@@ -2287,7 +2381,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				name: "path-glow",
 				type: "line3D",
 				data: hasTrail ? trail : [],
-				lineStyle: { width: 12, color: c.blue, opacity: 0.16 },
+				lineStyle: { width: 16, color: c.blue, opacity: 0.18 },
 				silent: true
 			});
 			series.push({
@@ -2295,13 +2389,64 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				name: "path",
 				type: "line3D",
 				data: hasTrail ? trail : [],
-				lineStyle: { width: 3.5, color: c.blue, opacity: 0.95 },
+				lineStyle: { width: 4.5, color: c.blue, opacity: 0.98 },
 				silent: true
 			});
 			var detours = isoPossibleDetours();
 			for (var di = 0; di < 4; di++) {
 				series.push(isoDetourSeries(c, di, detours[di]));
 			}
+			var seqColors = { green: c.green, coral: c.coral };
+			var seqTokens = [];
+			isoAltSequences.forEach(function (seq, si) {
+				var data = isoSequenceData(seq);
+				var color = seqColors[seq.color] || c.green;
+				series.push({
+					id: "alt-seq-" + si,
+					name: "alt-sequence",
+					type: "line3D",
+					data: data ? isoSurfaceLine([data.start].concat(data.points), 0.14) : [],
+					lineStyle: { width: 2.5, color: color, opacity: 0.82 },
+					silent: true
+				});
+				if (data) {
+					data.points.forEach(function (p) {
+						seqTokens.push({
+							name: p.name,
+							value: p.point,
+							itemStyle: { color: color, borderColor: c.paper, borderWidth: 1 }
+						});
+					});
+				}
+			});
+			series.push({
+				id: "alt-seq-tokens",
+				name: "alt-seq-tokens",
+				type: "scatter3D",
+				data: seqTokens,
+				symbol: "circle",
+				symbolSize: 7,
+				tooltip: { formatter: function (p) { return p.name; } }
+			});
+			var filler = [];
+			isoFillerPositions.forEach(function (pos, fi) {
+				var stepX = pos[0] + 0.04 * Math.sin(fi * 1.9 + 0.3);
+				var y = pos[1] + 0.04 * Math.sin(fi * 2.3 + 1.1);
+				filler.push({
+					name: isoFillerLabels[fi],
+					value: [stepX * isoStepGap, y, isoSurfaceHeight(stepX, y) + 0.05],
+					itemStyle: { color: mixRgb(c.gold, c.paper, 0.35), opacity: 0.62 }
+				});
+			});
+			series.push({
+				id: "filler-tokens",
+				name: "filler-tokens",
+				type: "scatter3D",
+				data: filler,
+				symbol: "circle",
+				symbolSize: 4,
+				tooltip: { formatter: function (p) { return p.name; } }
+			});
 			var altPoints = [];
 			isoBranches.forEach(function (branch) {
 				var currentBranch = branch.atStep === step;
@@ -2327,7 +2472,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				symbol: "diamond",
 				tooltip: { formatter: function (p) { return p.name; } }
 			});
-			var hasMomentum = step < isoTokens.length - 1;
+			var hasMomentum = step < isoTokens.length - 1 && !isoBackward;
 			var arrowTo = null;
 			if (hasMomentum) {
 				var arrowStepX = Math.min(isoTokens.length - 1, step + 0.52);
@@ -2390,6 +2535,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			zMin -= 0.03;
 			var deepSurface = mixRgb(c.blue, c.ink, c.dark ? 0.28 : 0.52);
 			var baseSurface = mixRgb(c.paper2, c.gold, c.dark ? 0.16 : 0.22);
+			var surfacePalette = [
+				deepSurface, c.blue, c.sky, c.sky, c.gold, baseSurface
+			];
 			if (!isoChart) {
 				isoHost.innerHTML = "";
 				try {
@@ -2439,9 +2587,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				visualMap: {
 					show: false,
 					dimension: 2,
-					min: zMin,
-					max: 0.03,
-					inRange: { color: [deepSurface, c.blue, c.sky, c.green, c.gold, baseSurface] }
+					min: -0.55,
+					max: 0.02,
+					inRange: { color: surfacePalette }
 				},
 				xAxis3D: {
 					type: "value", name: isoLabels.axisStep,
@@ -2480,7 +2628,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				grid3D: {
 					viewControl: {
 						projection: "perspective",
-						alpha: 34, beta: 42, distance: 205,
+						alpha: 34, beta: 42, distance: 210,
 						autoRotate: false, damping: 0.9,
 						rotateSensitivity: 1.2, zoomSensitivity: 1.2
 					},
@@ -2489,7 +2637,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						ambient: { intensity: 0.52 }
 					},
 					environment: c.paper2,
-					boxWidth: 125, boxHeight: 28, boxDepth: 105,
+					boxWidth: 135, boxHeight: 30, boxDepth: 112,
 					axisLine: { lineStyle: { color: c.lineStrong } },
 					splitLine: { lineStyle: { color: c.line } },
 					axisPointer: { show: false }
@@ -2520,7 +2668,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			updateIsoSide();
 		}
 		function isoSetStep(index) {
+			var previous = isoStep;
 			var next = Math.max(0, Math.min(isoTokens.length - 1, index));
+			isoBackward = next < previous;
 			isoStep = next;
 			if (isoLoaded) {
 				isoUpdateStepSeries();
@@ -2587,7 +2737,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function startIso() {
 			if (isoLoaded || isoLoading) return;
 			isoLoading = true;
-			if (isoHost) isoHost.innerHTML = '<div class="tt-fallback">' + isoLabels.loading + '</div>';
+			if (isoHost) isoHost.innerHTML = '<div class="tt-fallback"><span class="tt-loader-spinner" aria-hidden="true"></span><span>' + isoLabels.loading + '</span></div>';
 			ensureIsoLibs(function () {
 				isoLoading = false;
 				isoLoaded = true;
@@ -4373,20 +4523,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 
 		var timers = [];
 		var started = false;
+		var terminalRevealed = false;
 		function showTerminal() {
-			if (!terminal.hidden && terminal.classList.contains("is-revealed")) return;
-			terminal.hidden = false;
-			requestAnimationFrame(function () {
-				terminal.classList.add("is-revealed");
-			});
-			if (output) {
-				timers.push(setTimeout(function () {
-					output.hidden = false;
-					requestAnimationFrame(function () {
-						output.classList.add("is-visible");
-					});
-				}, 180));
-			}
+			if (terminalRevealed || !output) return;
+			terminalRevealed = true;
+			timers.push(setTimeout(function () {
+				output.classList.add("is-visible");
+			}, 180));
 		}
 		function revealAll() {
 			timers.forEach(clearTimeout);
@@ -4443,7 +4586,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			if (!started) revealAll();
 		}, 9000));
 		timers.push(setTimeout(function () {
-			if (terminal.hidden) revealAll();
+			if (output && !output.classList.contains("is-visible")) revealAll();
 		}, 15000));
 	})();
 	</script>

@@ -116,10 +116,10 @@ def main() -> None:
                 };
             }""")
             check("triple heatmaps have no box", bool(triple) and triple["border"] == "0px" and triple["bg"] == "rgba(0, 0, 0, 0)", str(triple))
-            check("triple heatmaps span the full row",
-                  bool(triple) and len(triple["grid"].split()) == 1
-                  and abs(triple["cellWidth"] - triple["rowWidth"]) < 2
-                  and abs(triple["canvasWidth"] - triple["rowWidth"]) < 2, str(triple))
+            check("triple heatmaps fit in one full-width row",
+                  bool(triple) and len(triple["grid"].split()) == 5
+                  and abs(triple["canvasWidth"] - triple["cellWidth"]) < 2
+                  and triple["cellWidth"] * 3 <= triple["rowWidth"] + 2, str(triple))
             page.locator(".tm-residual-triple").first.click()
             page.wait_for_timeout(400)
             math_panel = page.evaluate("""() => {

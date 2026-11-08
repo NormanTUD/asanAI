@@ -2736,7 +2736,7 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 }
 .iso-grid {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) 190px;
+	grid-template-columns: minmax(0, 1fr) 260px;
 	gap: 14px;
 	align-items: start;
 }
@@ -2756,9 +2756,10 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 }
 .iso-next {
 	margin: .5em 0 .15em;
-	font: 700 clamp(1.35rem, 1rem + 1.2vw, 1.9rem)/1.1 var(--tm-display);
+	font: 700 clamp(1.25rem, 0.9rem + 1.1vw, 1.6rem)/1.15 var(--tm-display);
 	color: var(--tm-ink);
-	word-break: break-word;
+	word-break: normal;
+	overflow-wrap: break-word;
 }
 .iso-next.is-end { font-size: 1.15rem; color: var(--tm-muted); }
 .iso-alt {
@@ -7910,12 +7911,15 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 	padding-top: 8px;
 	border-top: 1px dashed rgba(125, 255, 154, 0.28);
 	opacity: 0;
+	visibility: hidden;
 	transform: translateY(4px);
-	transition: opacity 0.35s ease, transform 0.35s ease;
+	transition: opacity 0.35s ease, transform 0.35s ease, visibility 0s linear 0.35s;
 }
 .code-demo--console .code-demo-terminal .code-demo-output.is-visible {
 	opacity: 1;
+	visibility: visible;
 	transform: none;
+	transition: opacity 0.35s ease, transform 0.35s ease;
 }
 .code-demo--console .code-demo-terminal.is-revealed {
 	animation: codeTerminalIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
