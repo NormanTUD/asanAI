@@ -611,17 +611,19 @@
 
   const BASIN_GLSL = `
     uniform vec3 uBasinPos[32];
-    vec3 mnBasin(vec3 p, float seed, float tq) {
-      float best = 1e9;
-      vec3 bc = vec3(0.0);
+    uniform float uBasinKind[32];
+    vec3 mnSpaceField(vec3 p, float st, float phase, float seed) {
+      vec3 disp = vec3(0.0);
       for (int i = 0; i < 32; i++) {
-        float d = length(p - uBasinPos[i]);
-        if (d < best) { best = d; bc = uBasinPos[i]; }
+        vec3 toC = uBasinPos[i] - p;
+        float d2 = dot(toC, toC);
+        float w = exp(-d2 / 30.0);
+        vec3 dir = toC * inversesqrt(max(d2, 0.0001));
+        vec3 tang = normalize(cross(dir, vec3(0.0, 1.0, 0.0)) + vec3(0.001));
+        float sw = sin(st * 0.55 + seed * 6.2831 + phase * 3.0 + float(i) * 1.7);
+        disp += (dir * uBasinKind[i] * 0.12 + tang * 0.18 * sw) * w;
       }
-      float infl = smoothstep(6.0, 0.0, best);
-      vec3 toC = bc - p;
-      vec3 tang = normalize(cross(toC, vec3(0.0, 1.0, 0.0)) + vec3(0.001));
-      return p + toC * infl * 0.20 + tang * infl * 0.45 * sin(tq * 0.55 + seed * 6.2831);
+      return disp;
     }
   `;
 
@@ -969,11 +971,9 @@
   `;
 
   const SPACE_VERT = QUANT_GLSL + BASIN_GLSL + `
+    attribute vec3 aBase;
     attribute float aPhase;
     attribute float aSpeed;
-    attribute float aMode;
-    attribute float aRadius;
-    attribute float aY;
     attribute float aSeed;
     attribute float aSize;
     attribute float aHue;
@@ -982,29 +982,16 @@
     uniform float uPixelRatio;
     varying vec3 vColor;
     varying float vAlpha;
-    vec3 mnSpacePos(float tt, float phase, float speed, float mode, float radius, float y, float seed) {
-      float t = tt * speed;
-      if (mode < 0.34) {
-        float cyc = fract(phase + t * 0.045);
-        float r = radius + (cyc - 0.35) * 17.0;
-        float ang = phase * 6.2831 + r * 0.095 + seed * 2.0;
-        return vec3(cos(ang) * r, y + 1.6 * sin(ang * 0.9 + t * 0.7 + seed * 6.0), sin(ang) * r);
-      } else if (mode < 0.67) {
-        float ang = phase * 6.2831 + t * 0.55;
-        float r = radius + 1.4 * sin(t * 0.8 + seed * 6.2831);
-        return vec3(cos(ang) * r, y + 2.2 * sin(ang * 0.8 + t * 0.45 + seed * 4.0), sin(ang) * r);
-      }
-      float u = phase * 6.2831 + t * 0.25;
-      return vec3(
-        cos(u) * radius + 2.2 * sin(t * 0.33 + seed * 5.0),
-        y + 2.9 * sin(u * 1.3 + t * 0.5 + seed * 6.0),
-        sin(u) * radius + 2.2 * cos(t * 0.27 + seed * 4.0)
-      );
-    }
     void main() {
       float tq = mnQTime(uTime);
-      vec3 p = mnSpacePos(tq, aPhase, aSpeed, aMode, aRadius, aY, aSeed);
-      p = mnBasin(p, aSeed, tq);
+      float st = tq * (0.55 + aSpeed);
+      vec3 p = aBase;
+      p += 0.38 * vec3(
+        sin(st * 0.23 + aPhase * 6.2831),
+        cos(st * 0.19 + aSeed * 6.2831),
+        sin(st * 0.27 + aPhase * 4.0)
+      );
+      p += mnSpaceField(p, st, aPhase, aSeed);
       vec4 mv = viewMatrix * modelMatrix * vec4(p, 1.0);
       gl_Position = projectionMatrix * mv;
       float d = length(p);
@@ -1016,44 +1003,29 @@
   `;
 
   const SPACE_TRAIL_VERT = QUANT_GLSL + BASIN_GLSL + `
+    attribute vec3 aBase;
     attribute float aAge;
     attribute float aPhase;
     attribute float aSpeed;
-    attribute float aMode;
-    attribute float aRadius;
-    attribute float aY;
     attribute float aSeed;
     attribute float aHue;
     uniform float uTime;
     uniform float uOpacity;
     varying vec3 vColor;
     varying float vAlpha;
-    vec3 mnSpacePos(float tt, float phase, float speed, float mode, float radius, float y, float seed) {
-      float t = tt * speed;
-      if (mode < 0.34) {
-        float cyc = fract(phase + t * 0.045);
-        float r = radius + (cyc - 0.35) * 17.0;
-        float ang = phase * 6.2831 + r * 0.095 + seed * 2.0;
-        return vec3(cos(ang) * r, y + 1.6 * sin(ang * 0.9 + t * 0.7 + seed * 6.0), sin(ang) * r);
-      } else if (mode < 0.67) {
-        float ang = phase * 6.2831 + t * 0.55;
-        float r = radius + 1.4 * sin(t * 0.8 + seed * 6.2831);
-        return vec3(cos(ang) * r, y + 2.2 * sin(ang * 0.8 + t * 0.45 + seed * 4.0), sin(ang) * r);
-      }
-      float u = phase * 6.2831 + t * 0.25;
-      return vec3(
-        cos(u) * radius + 2.2 * sin(t * 0.33 + seed * 5.0),
-        y + 2.9 * sin(u * 1.3 + t * 0.5 + seed * 6.0),
-        sin(u) * radius + 2.2 * cos(t * 0.27 + seed * 4.0)
-      );
-    }
     void main() {
       float tq = mnQTime(uTime - aAge * 0.30);
-      vec3 p = mnSpacePos(tq, aPhase, aSpeed, aMode, aRadius, aY, aSeed);
-      p = mnBasin(p, aSeed, tq);
+      float st = tq * (0.55 + aSpeed);
+      vec3 p = aBase;
+      p += 0.38 * vec3(
+        sin(st * 0.23 + aPhase * 6.2831),
+        cos(st * 0.19 + aSeed * 6.2831),
+        sin(st * 0.27 + aPhase * 4.0)
+      );
+      p += mnSpaceField(p, st, aPhase, aSeed);
       vec4 mv = viewMatrix * modelMatrix * vec4(p, 1.0);
       gl_Position = projectionMatrix * mv;
-      vColor = mix(mix(vec3(0.26,0.64,1.0), vec3(0.62,0.32,1.0), aHue), vec3(1.0,0.62,0.24), smoothstep(0.80,1.0,aHue) * 0.5);
+      vColor = mix(mix(vec3(0.30,0.74,1.0), vec3(0.72,0.40,1.0), aHue), vec3(1.0,0.72,0.30), smoothstep(0.80,1.0,aHue) * 0.5);
       vAlpha = pow(1.0 - aAge, 3.0) * uOpacity * 0.34;
     }
   `;
@@ -2386,6 +2358,7 @@
     const sd = new Float32Array(n);
     const size = new Float32Array(n);
     const hue = new Float32Array(n);
+    const base = new Float32Array(n * 3);
     for (let i = 0; i < n; i++) {
       phase[i] = rand();
       speed[i] = 0.38 + rand() * 0.95;
@@ -2395,10 +2368,17 @@
       sd[i] = rand();
       size[i] = 0.55 + Math.pow(rand(), 2) * 2.6;
       hue[i] = rand();
+      const rr = 4.0 + Math.cbrt(rand()) * 16.0;
+      const th = rand() * Math.PI * 2;
+      const ph = Math.acos(2 * rand() - 1);
+      base[i*3] = rr * Math.sin(ph) * Math.cos(th);
+      base[i*3+1] = rr * Math.cos(ph) * 0.55;
+      base[i*3+2] = rr * Math.sin(ph) * Math.sin(th);
     }
 
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+    g.setAttribute("aBase", new THREE.BufferAttribute(base, 3));
     g.setAttribute("aPhase", new THREE.BufferAttribute(phase, 1));
     g.setAttribute("aSpeed", new THREE.BufferAttribute(speed, 1));
     g.setAttribute("aMode", new THREE.BufferAttribute(mode, 1));
@@ -2410,6 +2390,9 @@
     const basinPositions = islands.map(i => i.mapPos.clone());
     basinPositions.push(new THREE.Vector3(0, 0, 0));
     while (basinPositions.length < 32) basinPositions.push(new THREE.Vector3(1000, 1000, 1000));
+    const basinKind = islands.map(i => i.repel ? -1 : 1);
+    basinKind.push(1);
+    while (basinKind.length < 32) basinKind.push(0);
 
     spaceFlowMat = regMat(new THREE.ShaderMaterial({
       uniforms: {
@@ -2418,7 +2401,8 @@
         uPixelRatio: { value: DPR },
         uQuant: { value: 0 },
         uStep: { value: 0.22 },
-        uBasinPos: { value: basinPositions }
+        uBasinPos: { value: basinPositions },
+        uBasinKind: { value: basinKind }
       },
       vertexShader: SPACE_VERT,
       fragmentShader: SPACE_FRAG,
@@ -2444,11 +2428,15 @@
     const tyy = new Float32Array(verts);
     const tsd = new Float32Array(verts);
     const thue = new Float32Array(verts);
+    const tbase = new Float32Array(verts * 3);
     for (let i = 0; i < n; i++) {
       for (let j = 0; j < segs; j++) {
         for (let e = 0; e < 2; e++) {
           const idx = (i * segs + j) * 2 + e;
           age[idx] = (j + e) / segs;
+          tbase[idx*3] = base[i*3];
+          tbase[idx*3+1] = base[i*3+1];
+          tbase[idx*3+2] = base[i*3+2];
           tphase[idx] = phase[i];
           tspeed[idx] = speed[i];
           tmode[idx] = mode[i];
@@ -2460,6 +2448,7 @@
       }
     }
     tg.setAttribute("position", new THREE.BufferAttribute(tpos, 3));
+    tg.setAttribute("aBase", new THREE.BufferAttribute(tbase, 3));
     tg.setAttribute("aAge", new THREE.BufferAttribute(age, 1));
     tg.setAttribute("aPhase", new THREE.BufferAttribute(tphase, 1));
     tg.setAttribute("aSpeed", new THREE.BufferAttribute(tspeed, 1));
@@ -2474,7 +2463,8 @@
         uOpacity: { value: 0 },
         uQuant: { value: 0 },
         uStep: { value: 0.22 },
-        uBasinPos: { value: basinPositions }
+        uBasinPos: { value: basinPositions },
+        uBasinKind: { value: basinKind }
       },
       vertexShader: SPACE_TRAIL_VERT,
       fragmentShader: TRAIL_FRAG,

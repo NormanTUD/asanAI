@@ -62,6 +62,28 @@
 			text-transform: uppercase;
 			white-space: nowrap;
 		}
+		.tt-labels { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+		.tt-point-label {
+			position: absolute;
+			left: 0;
+			top: 0;
+			transform: translate(-50%, calc(-100% - 8px));
+			padding: 2px 5px;
+			border: 1px solid var(--tm-line-strong);
+			background: var(--tm-paper);
+			box-shadow: var(--tm-shadow);
+			color: var(--tm-ink);
+			font: 700 0.66rem/1.1 var(--tm-ui);
+			white-space: nowrap;
+		}
+		.tt-point-label.is-current { border-color: var(--tm-green); color: var(--tm-green-deep); }
+		.tt-point-label.is-future { color: var(--tm-muted); }
+		.tt-point-label--alt {
+			transform: translate(-50%, 8px);
+			border-color: var(--tm-gold);
+			color: var(--tm-ink);
+			font-weight: 600;
+		}
 		@keyframes ttBallPulse {
 			0%, 100% { opacity: 0.35; transform: scale(0.92); }
 			50% { opacity: 0.9; transform: scale(1.12); }
@@ -205,7 +227,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 										</div>
 									</div>
 								</div>
-								<p class="demo-hint" id="code-demo-hint"></p>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>The model wrote the program; the program computed the ratio. Code is another sequence the loop can predict, one token at a time.</span></div>
 						</div>
@@ -281,10 +302,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 											<div class="tt-plot-wrap">
 												<div id="tt-3d" class="tt-echarts-host" role="img" aria-label="A three-dimensional landscape of plausible continuations, with the most likely path carved as a deep blue valley"></div>
 												<div id="tt-ball" class="tt-ball" aria-hidden="true"><span class="tt-ball-label" id="tt-ball-label">context</span></div>
+												<div id="tt-labels" class="tt-labels" aria-hidden="true"></div>
 											</div>
 											<div class="tt-legend">
 												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--deep"></i><span>deep blue = likely path</span></span>
-												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--side"></i><span>gold = other possible paths</span></span>
+												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--side"></i><span>gold = possible detours</span></span>
 												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--base"></i><span>pale plane = all other tokens</span></span>
 											</div>
 											<div class="tt-token-row" id="tt-token-row" aria-label="Jump to a token"></div>
@@ -1816,10 +1838,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 			return [100, 116, 139];
 		}
-		function rgba(value, alpha) {
-			var c = parseColor(value);
-			return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + alpha + ")";
-		}
 		function mixRgb(a, b, t) {
 			var A = parseColor(a), B = parseColor(b);
 			var r = Math.round(A[0] + (B[0] - A[0]) * t);
@@ -1841,11 +1859,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			return isoLerp(isoEntropy[lo], isoEntropy[hi], x - lo);
 		}
 		function isoMainDepth() {
-			return 0.42 + 0.48 * (2.0 - isoTemp) / 1.95;
+			return 0.30 + 0.36 * (2.0 - isoTemp) / 1.95;
 		}
 		function isoMainDepthAt(x) {
 			var entropy = isoEntropyAt(x);
-			return isoMainDepth() * (0.70 + 0.30 * (1 - entropy));
+			return isoMainDepth() * (0.78 + 0.22 * (1 - entropy));
 		}
 		function isoMainWidth(x) {
 			var entropy = isoEntropyAt(x);
@@ -1855,7 +1873,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			return (alt.path.y - 0.4) * 2.2;
 		}
 		function isoAltDepth(alt, mainDepth) {
-			return mainDepth * (0.34 + 0.42 * (1 - alt.entropy) + 0.14 * isoTemp);
+			return mainDepth * (0.42 + 0.42 * (1 - alt.entropy) + 0.12 * isoTemp);
 		}
 		function isoAltWidth(alt) {
 			return 0.18 + 0.24 * (0.40 + alt.entropy) * (0.45 + isoTemp / 2);
@@ -1885,7 +1903,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			for (var si = 0; si < sideOffsets.length; si++) {
 				var sy = centre + sideOffsets[si] + 0.05 * Math.sin(x * 1.25 + si * 1.7);
 				var sw = 0.06 + 0.12 * (0.5 + 0.5 * Math.sin(x * 0.95 + si * 2.1)) * (0.5 + isoTemp / 1.8);
-				var sd = mainDepth * (0.10 + 0.15 * (0.5 + 0.5 * Math.sin(x * 1.6 + si * 2.3))) * (0.55 + 0.45 * isoTemp);
+				var sd = mainDepth * (0.14 + 0.18 * (0.5 + 0.5 * Math.sin(x * 1.6 + si * 2.3))) * (0.60 + 0.40 * isoTemp);
 				var ds = sd * Math.exp(-Math.pow((y - sy) / sw, 2));
 				if (ds > depth) depth = ds;
 			}
@@ -1932,12 +1950,75 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				(1 - (ndcY * 0.5 + 0.5)) * viewport.height * scale
 			];
 		}
+		function isoInsideHost(screen) {
+			return !!screen && isFinite(screen[0]) && isFinite(screen[1])
+				&& screen[0] >= -24 && screen[0] <= isoHost.clientWidth + 24
+				&& screen[1] >= -24 && screen[1] <= isoHost.clientHeight + 24;
+		}
+		function isoEnsureOverlayLabels() {
+			var container = document.getElementById("tt-labels");
+			if (!container || container.dataset.ready === "1") return container;
+			isoTokens.forEach(function (token, i) {
+				var el = document.createElement("span");
+				el.className = "tt-point-label";
+				el.setAttribute("data-token-index", i);
+				el.textContent = token;
+				container.appendChild(el);
+			});
+			for (var a = 0; a < 2; a++) {
+				var alt = document.createElement("span");
+				alt.className = "tt-point-label tt-point-label--alt";
+				alt.setAttribute("data-alt-index", a);
+				alt.style.display = "none";
+				container.appendChild(alt);
+			}
+			container.dataset.ready = "1";
+			return container;
+		}
+		function isoUpdateOverlayLabels() {
+			if (!isoChart || !isoHost) return;
+			var container = isoEnsureOverlayLabels();
+			if (!container) return;
+			var step = Math.min(isoStep, isoTokens.length - 1);
+			container.querySelectorAll("[data-token-index]").forEach(function (el) {
+				var i = Number(el.getAttribute("data-token-index"));
+				var screen = isoProjectPoint(isoTokenPoint(i));
+				if (!isoInsideHost(screen)) {
+					el.style.display = "none";
+					return;
+				}
+				el.style.display = "";
+				el.style.left = screen[0] + "px";
+				el.style.top = screen[1] + "px";
+				el.classList.toggle("is-current", i === step);
+				el.classList.toggle("is-future", i > step);
+			});
+			var altEls = container.querySelectorAll("[data-alt-index]");
+			altEls.forEach(function (el) { el.style.display = "none"; });
+			var branch = null;
+			for (var bi = 0; bi < isoBranches.length; bi++) {
+				if (isoBranches[bi].atStep === step) { branch = isoBranches[bi]; break; }
+			}
+			if (!branch) return;
+			var altStepX = branch.atStep + 0.52;
+			var altX = altStepX * isoStepGap;
+			branch.alternatives.forEach(function (alt, j) {
+				var el = altEls[j];
+				if (!el) return;
+				var y = isoAltY(alt);
+				var screen = isoProjectPoint([altX, y, -isoValleyDepth(altStepX, y) + 0.05]);
+				if (!isoInsideHost(screen)) return;
+				el.style.display = "";
+				el.textContent = isoAltLabel(alt.token);
+				el.style.left = screen[0] + "px";
+				el.style.top = screen[1] + "px";
+			});
+		}
 		function isoUpdateBallOverlay() {
+			isoUpdateOverlayLabels();
 			if (!isoBallEl || !isoBallPos) return;
 			var screen = isoProjectPoint(isoBallPos);
-			if (!screen || !isFinite(screen[0]) || !isFinite(screen[1])
-				|| screen[0] < -24 || screen[0] > isoHost.clientWidth + 24
-				|| screen[1] < -24 || screen[1] > isoHost.clientHeight + 24) {
+			if (!isoInsideHost(screen)) {
 				isoBallEl.classList.remove("is-visible");
 				return;
 			}
@@ -2018,6 +2099,54 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				}
 			];
 		}
+		function isoPossibleDetours() {
+			var candidates = [];
+			isoBranches.forEach(function (branch) {
+				branch.alternatives.forEach(function (alt) {
+					var score = (1 - alt.entropy) * (0.75 + 0.25 * isoTemp);
+					if (score >= 0.35) {
+						candidates.push({ branch: branch, alt: alt, score: score });
+					}
+				});
+			});
+			candidates.sort(function (a, b) { return b.score - a.score; });
+			return candidates.slice(0, isoTemp >= 1.2 ? 4 : 3);
+		}
+		function isoDetourSeries(c, index, detour) {
+			if (!detour) {
+				return {
+					id: "detour-" + index,
+					name: "possible-path",
+					type: "line3D",
+					data: [],
+					lineStyle: { width: 2, color: c.gold, opacity: 0 },
+					silent: true
+				};
+			}
+			var branch = detour.branch;
+			var alt = detour.alt;
+			var startStep = branch.atStep;
+			var endStep = startStep + 1;
+			var startY = isoCenter(startStep);
+			var endY = isoCenter(endStep);
+			var midY = isoAltY(alt);
+			var points = [];
+			for (var t = 0; t <= 1.0001; t += 0.1) {
+				var stepX = isoLerp(startStep, endStep, t);
+				var y = isoLerp(startY, endY, t)
+					+ (midY - isoLerp(startY, endY, 0.5)) * Math.sin(Math.PI * t);
+				var x = stepX * isoStepGap;
+				points.push([x, y, -isoValleyDepth(stepX, y) + 0.14]);
+			}
+			return {
+				id: "detour-" + index,
+				name: "possible-path",
+				type: "line3D",
+				data: points,
+				lineStyle: { width: 2, color: c.gold, opacity: 0.62, type: "dashed" },
+				silent: true
+			};
+		}
 		function isoBuildDynamicSeries(c, step) {
 			var series = [];
 			var tokens = isoTokens.map(function (token, i) {
@@ -2033,22 +2162,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						borderColor: c.paper,
 						borderWidth: current ? 2 : 1,
 						opacity: visited ? 1 : 0.55
-					},
-					label: {
-						show: true,
-						position: "top",
-						distance: 6,
-						formatter: token,
-						textStyle: {
-							color: c.ink,
-							fontSize: current ? 13 : 11,
-							fontWeight: current ? 800 : 600,
-							backgroundColor: rgba(c.dark ? "#0f172a" : "#ffffff", 0.92),
-							borderColor: current ? c.green : c.lineStrong,
-							borderWidth: 1,
-							padding: [3, 5],
-							borderRadius: 3
-						}
 					}
 				};
 			});
@@ -2079,6 +2192,10 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				lineStyle: { width: 3.5, color: c.blue, opacity: 0.95 },
 				silent: true
 			});
+			var detours = isoPossibleDetours();
+			for (var di = 0; di < 4; di++) {
+				series.push(isoDetourSeries(c, di, detours[di]));
+			}
 			var branch = null;
 			for (var bi = 0; bi < isoBranches.length; bi++) {
 				if (isoBranches[bi].atStep === step) { branch = isoBranches[bi]; break; }
@@ -2092,23 +2209,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					return {
 						name: isoAltLabel(alt.token),
 						value: [altX, y, -isoValleyDepth(altStepX, y) + 0.05],
-						itemStyle: { color: c.gold, borderColor: c.paper, borderWidth: 1 },
-						label: {
-							show: true,
-							position: "bottom",
-							distance: 4,
-							formatter: isoAltLabel(alt.token),
-							textStyle: {
-								color: c.ink,
-								fontSize: 10,
-								fontWeight: 600,
-								backgroundColor: rgba(c.dark ? "#0f172a" : "#ffffff", 0.92),
-								borderColor: c.gold,
-								borderWidth: 1,
-								padding: [2, 4],
-								borderRadius: 3
-							}
-						}
+						itemStyle: { color: c.gold, borderColor: c.paper, borderWidth: 1 }
 					};
 				});
 			}
@@ -2162,7 +2263,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					var depth = isoValleyDepth(x / isoStepGap, y);
 					var ripple = 0.022 * Math.sin(x * 1.8 + y * 3.1) * Math.cos(y * 2.2 - x * 1.25)
 						+ 0.010 * Math.sin(x * 3.1 - y * 2.6) * Math.cos(y * 3.4 + x * 1.1);
-					var edgeDrop = 0.09 * Math.pow(Math.abs(y) / yMax, 2);
+					var edgeDrop = 0.12 * Math.pow(Math.abs(y) / yMax, 2);
 					var z = -depth + (ripple - edgeDrop) * (1 - Math.min(1, depth));
 					data.push([Number(x.toFixed(3)), Number(y.toFixed(3)), Number(z.toFixed(4))]);
 				}
@@ -2277,7 +2378,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				grid3D: {
 					viewControl: {
 						projection: "perspective",
-						alpha: 32, beta: 42, distance: 205,
+						alpha: 34, beta: 42, distance: 205,
 						autoRotate: false, damping: 0.9,
 						rotateSensitivity: 1.2, zoomSensitivity: 1.2
 					},
@@ -2286,7 +2387,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						ambient: { intensity: 0.52 }
 					},
 					environment: c.paper2,
-					boxWidth: 125, boxHeight: 42, boxDepth: 100,
+					boxWidth: 125, boxHeight: 34, boxDepth: 100,
 					axisLine: { lineStyle: { color: c.lineStrong } },
 					splitLine: { lineStyle: { color: c.line } },
 					axisPointer: { show: false }

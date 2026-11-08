@@ -25,7 +25,7 @@ return [
 		'The aha' => 'Der Aha-Moment',
 		'The probability tunnel' => 'Der Wahrscheinlichkeitstunnel',
 		'deep blue = likely path' => 'tiefes Blau = wahrscheinlicher Pfad',
-		'gold = other possible paths' => 'Gold = andere mögliche Pfade',
+		'gold = possible detours' => 'Gold = mögliche Umwege',
 		'pale plane = all other tokens' => 'helle Fläche = alle anderen Tokens',
 		'Training is the process that shapes this landscape. The model moves its coarse points, the token and context representations, into relations with one another so that meaning can be stored in compressed form inside the network. Attention and dense layers are trained together. In the high-dimensional space behind the projection, the loss makes the ball move faster along paths that continue the training text and slower along paths that do not. The landscape is therefore learned, not given: what counts as plausible is defined entirely by the training data.' => 'Das Training formt diese Landschaft. Das Modell verschiebt seine groben Punkte, die Token- und Kontextrepräsentationen, so zueinander, dass Bedeutung komprimiert im Netzwerk gespeichert werden kann. Attention und Dense-Schichten werden gemeinsam trainiert. Im hochdimensionalen Raum hinter der Projektion macht die Loss die Kugel auf Pfaden schneller, die den Trainingstext fortsetzen, und auf unplausiblen Pfaden langsamer. Die Landschaft ist also gelernt, nicht vorgegeben: Was als plausibel gilt, legen allein die Trainingsdaten fest.',
 		'· demo 01b' => '· Demo 01b',
