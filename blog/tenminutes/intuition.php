@@ -3843,24 +3843,14 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					html += '<div class="am-cell"><b>' + attLabel(word) + "</b><span>" + pct + (DE ? " %" : "%") + '</span><span class="am-bar"><i style="width:' + pct + "%;background:" + attColors[word] + '"></i></span></div>';
 				});
 				html += "</div>";
-				html += '<div style="margin-top:8px;font-size:0.68rem;color:var(--tm-muted);display:flex;flex-wrap:wrap;gap:6px 14px;">';
-				cols.forEach(function (word) {
-					var p = attPos[word];
-					html += '<span><b>v<sub>' + attLabel(word) + "</sub></b> = (" + p[0].toFixed(2) + ", " + p[1].toFixed(2) + ")</span>";
-				});
-				html += "</div>";
 				attMatrix.innerHTML = html;
 			}
 			if (attSum) {
-				function vec(word) {
-					var p = attPos[word];
-					return "\\begin{pmatrix}" + p[0].toFixed(2) + "\\\\" + p[1].toFixed(2) + "\\end{pmatrix}";
-				}
 				var words = ["bank", "river", "money"].filter(function (word) {
 					return ex.weights[word] > 0;
 				});
-				var weighted = words.map(function (word) {
-					return "\\underbrace{" + Math.round(ex.weights[word] * 100) + "\\%}_{\\text{" + (DE ? "Aufmerksamkeit" : "attention") + "}}\\," + "\\underbrace{" + vec(word) + "}_{v_{\\text{" + attLabel(word) + "}}}";
+				var firstTerms = words.map(function (word) {
+					return ex.weights[word].toFixed(2) + "\\,v_{\\text{" + attLabel(word) + "}}";
 				});
 				var xTerms = [], yTerms = [];
 				words.forEach(function (word) {
@@ -3871,7 +3861,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				});
 				var arithmetic = "\\begin{pmatrix}" + xTerms.join(" + ") + "\\\\" + yTerms.join(" + ") + "\\end{pmatrix}";
 				var outTex = "\\begin{pmatrix}" + outv[0].toFixed(2) + "\\\\" + outv[1].toFixed(2) + "\\end{pmatrix}";
-				var tex = "\\underbrace{\\begin{aligned} \\text{out}_{\\text{" + attLabel("bank") + "}} &= " + weighted.join(" \\\\ &\\quad + ") + " \\\\ &= " + arithmetic + " = \\underbrace{" + outTex + "}_{\\text{" + (DE ? "gewichtete Summe" : "weighted sum") + "}} \\end{aligned}}_{\\text{" + (DE ? "was Bank aus dem Kontext mitnimmt" : "what bank takes from the context") + "}}";
+				var tex = "\\underbrace{\\begin{aligned} \\text{out}_{\\text{" + attLabel("bank") + "}} &= " + firstTerms.join(" + ") + " & \\\\ & = \\underbrace{" + arithmetic + "}_{\\text{" + (DE ? "Aufmerksamkeitsgewichte mal die Vektoren der sichtbaren Tokens" : "attention weights times the visible token vectors") + "}} = \\underbrace{" + outTex + "}_{\\text{" + (DE ? "der neue Vektor" : "the new vector") + "}} \\end{aligned}}_{\\text{" + (DE ? "was Bank aus dem Kontext mitnimmt" : "what bank takes from the context") + "}}";
 				attSum.setAttribute("data-tex", tex);
 				attSum.removeAttribute("data-tex-rendered");
 				if (TM.typesetMath) TM.typesetMath(attSum.parentNode);
