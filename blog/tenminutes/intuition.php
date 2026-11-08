@@ -303,7 +303,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 									<span class="demo-badge">live</span>
 								</div>
 								<div class="demo-body">
-									<p class="iso-note">For the sentence “The capital of France is”, this is the continuation the network finds plausible here. But instead of “France” it could also have chosen “Italy” or “Germany”, and then the paths would run through other parts of the landscape. The energy-landscape view follows the energy-based learning framework of LeCun et al. (2006).</p>
+									<p class="iso-note">For the sentence “The capital of France is”, this is the continuation the network finds plausible here. But instead of “France” it could also have chosen “Italy” or “Germany”, and then the paths would run through other parts of the landscape. The idea is that the LLM generates this probability distribution over possible continuations; the landscape is a picture of that distribution. The energy-landscape view follows the energy-based learning framework of LeCun et al. (2006).</p>
 									<p class="iso-source"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Quelle: ' : 'Source: '; ?><a href="http://yann.lecun.com/exdb/publis/pdf/lecun-06.pdf" target="_blank" rel="noopener">LeCun et al., A Tutorial on Energy-Based Learning (2006)</a></p>
 									<div class="iso-grid">
 										<div class="iso-main">
@@ -1755,6 +1755,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		var isoDrawn = false;
 		var isoBallPos = null;
 		var isoBallRaf = null;
+		var isoTempRaf = null;
 		var isoBallEl = document.getElementById("tt-ball");
 		var isoBallLabel = document.getElementById("tt-ball-label");
 		var isoStepGap = 1.35;
@@ -1999,7 +2000,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			});
 			var sideOffsets = [-1.20, -0.90, -0.60, -0.30, 0.30, 0.60, 0.90, 1.20];
 			for (var si = 0; si < sideOffsets.length; si++) {
-				var sy = centre + sideOffsets[si] + 0.08 * Math.sin(x * 1.25 + si * 1.7);
+				var sy = centre + sideOffsets[si] + 0.03 * Math.sin(x * 1.25 + si * 1.7);
 				var sw = 0.10 + 0.14 * (0.5 + 0.5 * Math.sin(x * 0.95 + si * 2.1)) * (0.5 + isoTemp / 1.8);
 				var sd = mainDepth * (0.18 + 0.22 * (0.5 + 0.5 * Math.sin(x * 1.6 + si * 2.3))) * (0.65 + 0.35 * isoTemp);
 				var ds = sd * Math.exp(-Math.pow((y - sy) / sw, 2));
@@ -2012,21 +2013,21 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function isoSurfaceHeight(stepX, y) {
 			var depth = isoValleyDepth(stepX, y);
 			var x = stepX * isoStepGap;
-			var ripple = 0.022 * Math.sin(x * 1.8 + y * 3.1) * Math.cos(y * 2.2 - x * 1.25)
-				+ 0.010 * Math.sin(x * 3.1 - y * 2.6) * Math.cos(y * 3.4 + x * 1.1);
+			var ripple = 0.010 * Math.sin(x * 1.8 + y * 3.1) * Math.cos(y * 2.2 - x * 1.25)
+				+ 0.004 * Math.sin(x * 3.1 - y * 2.6) * Math.cos(y * 3.4 + x * 1.1);
 			var edgeDrop = 0.05 * Math.pow(Math.abs(y) / isoYMax, 2);
 			var z = -depth + (ripple - edgeDrop) * (1 - Math.min(1, depth));
 			var centre = isoCenter(stepX);
-			var rough = (0.016 * Math.sin(stepX * 16.0)
-				+ 0.009 * Math.sin(stepX * 27.0 + 1.3))
-				* Math.exp(-Math.pow((y - centre) / 0.11, 2));
+			var rough = (0.008 * Math.sin(stepX * 16.0)
+				+ 0.004 * Math.sin(stepX * 27.0 + 1.3))
+				* Math.exp(-Math.pow((y - centre) / 0.13, 2));
 			z += rough;
 			isoBranches.forEach(function (branch) {
 				branch.alternatives.forEach(function (alt) {
 					if (isoAltEndKind(branch, alt) !== "hill") return;
 					var g = isoAltEndGeometry(branch, alt);
-					z += 0.12 * Math.exp(-Math.pow((x - g.x) / 0.16, 2)
-						- Math.pow((y - g.y) / 0.16, 2));
+					z += 0.12 * Math.exp(-Math.pow((x - g.x) / 0.20, 2)
+						- Math.pow((y - g.y) / 0.20, 2));
 				});
 			});
 			isoPits.forEach(function (pit) {
@@ -2034,7 +2035,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				var dy = y - pit.y;
 				var dist = Math.sqrt(dx * dx + dy * dy);
 				z -= pit.depth * Math.exp(-Math.pow(dist / pit.width, 2));
-				z += pit.rim * Math.exp(-Math.pow((dist - pit.rimR) / 0.06, 2));
+				z += pit.rim * Math.exp(-Math.pow((dist - pit.rimR) / 0.09, 2));
 			});
 			return z;
 		}
@@ -2502,15 +2503,26 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			return series;
 		}
 		function isoSurfaceColor(weight, colors) {
-			if (weight > 0.78) return colors.deep;
-			if (weight > 0.58) return colors.blue;
-			if (weight > 0.38) return colors.sky;
-			if (weight > 0.18) return colors.gold;
-			return colors.base;
+			var stops = [
+				{ w: 0.00, c: colors.base },
+				{ w: 0.18, c: colors.gold },
+				{ w: 0.34, c: colors.paleGold },
+				{ w: 0.50, c: colors.cream },
+				{ w: 0.66, c: colors.sky },
+				{ w: 0.83, c: colors.blue },
+				{ w: 1.00, c: colors.deep }
+			];
+			for (var i = 0; i < stops.length - 1; i++) {
+				if (weight <= stops[i + 1].w) {
+					var t = (weight - stops[i].w) / (stops[i + 1].w - stops[i].w);
+					return mixRgb(stops[i].c, stops[i + 1].c, Math.max(0, Math.min(1, t)));
+				}
+			}
+			return colors.deep;
 		}
 		function isoSurfaceData(colors) {
 			var data = [];
-			var xCount = 65, yCount = 45;
+			var xCount = 141, yCount = 101;
 			var xMin = 0, xMax = (isoTokens.length - 1) * isoStepGap;
 			var yMin = -isoYMax, yMax = isoYMax;
 			for (var yi = 0; yi <= yCount; yi++) {
@@ -2547,6 +2559,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				deep: deepSurface,
 				blue: c.blue,
 				sky: c.sky,
+				cream: mixRgb(c.paper2, c.gold, 0.12),
+				paleGold: mixRgb(c.gold, c.paper2, 0.55),
 				gold: c.gold,
 				base: baseSurface
 			});
@@ -2772,8 +2786,12 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					isoTemp = parseFloat(isoTempEl.value) || 0.8;
 					isoStopBall();
 					isoBallPos = isoTokenPoint(isoStep);
-					if (isoLoaded) drawIso();
-					else updateIsoSide();
+					if (isoTempRaf) return;
+					isoTempRaf = requestAnimationFrame(function () {
+						isoTempRaf = null;
+						if (isoLoaded) drawIso();
+						else updateIsoSide();
+					});
 				});
 			}
 			if (isoAdvance) {

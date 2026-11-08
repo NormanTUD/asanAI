@@ -2817,7 +2817,12 @@ function _tmUnitSphereSeries() {
 		}
 		rows.push(row);
 	}
-	return { type: 'surface', name: 'unit sphere', data: rows, shading: 'color', itemStyle: { color: themeColor('#cbd5e1'), opacity: 0.20 }, wireframe: { show: false }, silent: true };
+	const points = [];
+	rows.forEach(row => row.forEach(pt => points.push(pt)));
+	return [
+		{ type: 'surface', name: 'unit sphere', data: rows, shading: 'color', itemStyle: { color: '#3b82f6', opacity: 0.18 }, wireframe: { show: true, lineStyle: { color: '#3b82f6', opacity: 0.12 } }, silent: true },
+		{ type: 'scatter3D', name: 'unit sphere points', data: points, symbolSize: 2, itemStyle: { color: '#3b82f6', opacity: 0.18 }, silent: false, tooltip: { formatter: () => (window.tmMetric && window.tmMetric.sphereHint ? window.tmMetric.sphereHint(false) : '') } }
+	];
 }
 
 function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
@@ -3050,7 +3055,7 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 		});
 	}
 
-	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(_tmUnitSphereSeries());
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(..._tmUnitSphereSeries());
 	chart.setOption({
 		title: {
 			text: _tmMetricTitle('Embedding Space'), left: 'center',
@@ -5893,7 +5898,7 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 	const axis3DText = themeColor('#94a3b8');
 	const axis3DLine = themeColor('#475569');
 
-	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(_tmUnitSphereSeries());
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(..._tmUnitSphereSeries());
 	chart.setOption({
 		title: {
 			text: _tmMetricTitle('Semantic Vector → + Positional Shift'), left: 'center',

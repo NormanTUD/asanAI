@@ -130,9 +130,11 @@ function _resetParamBreakdownState(nrDiv, toggleDiv, chartDiv) {
 
 function buildTrajectoryHoverText(tokenLabel, tIdx, fromStage, toStage, hVec, embSnap, snapVocab) {
 	const logitWord = _traj_get_logit_word(hVec, embSnap, snapVocab);
+	const raw = (hVec || []).slice(0, 3).map(v => Number(v || 0).toFixed(3)).join(', ');
 	return `Token: ${tokenLabel} (pos ${tIdx + 1})<br>` +
 		`From: ${fromStage}<br>` +
 		`To: ${toStage}<br>` +
+		`Raw x,y,z: [${raw}]<br>` +
 		`Nearest logit: <b>${logitWord}</b>`;
 }
 
@@ -2755,7 +2757,12 @@ function _tmUnitSphereSeries() {
 		}
 		rows.push(row);
 	}
-	return { type: 'surface', name: 'unit sphere', data: rows, shading: 'color', itemStyle: { color: themeColor('#cbd5e1'), opacity: 0.20 }, wireframe: { show: false }, silent: true };
+	const points = [];
+	rows.forEach(row => row.forEach(pt => points.push(pt)));
+	return [
+		{ type: 'surface', name: 'unit sphere', data: rows, shading: 'color', itemStyle: { color: '#3b82f6', opacity: 0.18 }, wireframe: { show: true, lineStyle: { color: '#3b82f6', opacity: 0.12 } }, silent: true },
+		{ type: 'scatter3D', name: 'unit sphere points', data: points, symbolSize: 2, itemStyle: { color: '#3b82f6', opacity: 0.18 }, silent: false, tooltip: { formatter: () => (window.tmMetric && window.tmMetric.sphereHint ? window.tmMetric.sphereHint(false) : '') } }
+	];
 }
 
 function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
@@ -2820,15 +2827,35 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 
 function _embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, steps) {
 	const series = [];
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere() && dimensions === 2) {
+		const circle = [];
+		for (let a = 0; a <= 96; a++) {
+			const t = 2 * Math.PI * a / 96;
+			circle.push([Math.cos(t), Math.sin(t)]);
+		}
+		series.push({
+			type: 'line', name: 'unit circle', data: circle, symbol: 'none',
+			lineStyle: { color: '#3b82f6', width: 1, opacity: 0.35 },
+			areaStyle: { color: 'rgba(59,130,246,0.12)' }, silent: true
+		});
+	}
 
 	const vocabData = tokens.map(token => {
-		const vec = _tmTransformMetric(window.persistentEmbeddingSpace[token]);
+		const raw = window.persistentEmbeddingSpace[token] || [];
+		const vec = _tmTransformMetric(raw);
+		const coord = v => (v || []).slice(0, 2).map(x => Number(x || 0).toFixed(3)).join(', ');
+		let tip = `<b>${displayToken(token)}</b><br>Raw x,y: [${coord(raw)}]<br>Plot x,y: [${coord(vec)}]`;
+		if (highlightPos && window.tmMetric && window.tmMetric.distance) {
+			const ang = window.tmMetric.distance(raw, highlightPos, "angular");
+			tip += `<br>angle to result: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
+		}
 		return {
 			value: [vec[0], vec.length >= 2 ? vec[1] : 0],
 			name: displayToken(token),
 			itemStyle: {
 				color: `hsl(${getHueFromToken(token)}, 75%, 50%)`
-			}
+			},
+			_tmTip: tip
 		};
 	});
 
@@ -2845,9 +2872,7 @@ function _embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, s
 			fontSize: 11,
 			color: '#1e293b'
 		},
-		tooltip: {
-			formatter: p => `<b>${p.name}</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
-		},
+		tooltip: { formatter: p => p.data._tmTip },
 		z: 5
 	});
 
@@ -2933,13 +2958,21 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 		name: 'Vocabulary',
 		type: 'scatter3D',
 		data: tokens.map(token => {
-			const vec = _tmTransformMetric(window.persistentEmbeddingSpace[token]);
+			const raw = window.persistentEmbeddingSpace[token] || [];
+			const vec = _tmTransformMetric(raw);
+			const coord = v => (v || []).slice(0, 3).map(x => Number(x || 0).toFixed(3)).join(', ');
+			let tip = `<b>${displayToken(token)}</b><br>Raw x,y,z: [${coord(raw)}]<br>Plot x,y,z: [${coord(vec)}]`;
+			if (highlightPos && window.tmMetric && window.tmMetric.distance) {
+				const ang = window.tmMetric.distance(raw, highlightPos, "angular");
+				tip += `<br>angle to result: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
+			}
 			return {
 				name: displayToken(token),
 				value: [vec[0], vec[1] || 0, vec[2] || 0],
 				itemStyle: {
 					color: `hsl(${getHueFromToken(token)}, 75%, 50%)`
-				}
+				},
+				_tmTip: tip
 			};
 		}),
 		symbolSize: 6,
@@ -2948,7 +2981,8 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 			show: true, position: 'top', distance: 5,
 			formatter: p => p.name,
 			textStyle: { fontSize: 10, color: themeColor('#1e293b') }
-		}
+		},
+		tooltip: { formatter: p => p.data._tmTip }
 	});
 
 	if (steps && steps.length > 0) {
@@ -2995,7 +3029,7 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 		});
 	}
 
-	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(_tmUnitSphereSeries());
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(..._tmUnitSphereSeries());
 	chart.setOption({
 		title: {
 			text: _tmMetricTitle('Embedding Space'), left: 'center',
@@ -3024,7 +3058,7 @@ function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
 
 	myChart.setOption({
 		title: { text: "Embedding Space", left: 'center' },
-		tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+		tooltip: { trigger: 'item', formatter: p => (p.data && p.data._tmTip) ? p.data._tmTip : `Token: <b>${p.name}</b>` },
 		parallelAxis,
 		parallel: { left: 40, right: 40, bottom: 20, top: 50 },
 		series: [{
@@ -3898,8 +3932,12 @@ function initTrajectoryCollector(tokens, displayTokens, d_model, start_h) {
 		window.tlab_trajectory_collector.d_model = d_model;
 	}
 
-	if (!window.tlab_trajectory_collector.steps["00_raw"]) {
-		const rawEmbs = displayTokens.map(t => {
+	const rawKey = tokens.join("\u0001") + "|" + d_model;
+	if (!window.tlab_trajectory_collector.steps["00_raw"] || window.tlab_trajectory_collector._rawKey !== rawKey) {
+		// Use the raw token strings, not the display labels: display() turns a
+		// space into "␣", which is not a key in the embedding space and used to
+		// make every space token start at the origin.
+		const rawEmbs = tokens.map(t => {
 			if (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[t]) {
 				return window.persistentEmbeddingSpace[t];
 			}
@@ -3916,6 +3954,7 @@ function initTrajectoryCollector(tokens, displayTokens, d_model, start_h) {
 			name: "Embedding + Position",
 			data: freeze(start_h)
 		};
+		window.tlab_trajectory_collector._rawKey = rawKey;
 	}
 }
 
@@ -5035,15 +5074,12 @@ function _traj_unit_sphere_series() {
 		}
 		rows.push(row);
 	}
-	return {
-		type: 'surface',
-		name: 'unit sphere',
-		data: rows,
-		shading: 'color',
-		itemStyle: { color: themeColor('#cbd5e1'), opacity: 0.20 },
-		wireframe: { show: false },
-		silent: true
-	};
+	const points = [];
+	rows.forEach(row => row.forEach(pt => points.push(pt)));
+	return [
+		{ type: 'surface', name: 'unit sphere', data: rows, shading: 'color', itemStyle: { color: '#3b82f6', opacity: 0.18 }, wireframe: { show: true, lineStyle: { color: '#3b82f6', opacity: 0.12 } }, silent: true },
+		{ type: 'scatter3D', name: 'unit sphere points', data: points, symbolSize: 2, itemStyle: { color: '#3b82f6', opacity: 0.18 }, silent: false, tooltip: { formatter: () => (window.tmMetric && window.tmMetric.sphereHint ? window.tmMetric.sphereHint(false) : '') } }
+	];
 }
 
 function _traj_build_embedding_landmarks_2D(embSnap, snapVocab, dimA, dimB) {
@@ -5131,14 +5167,21 @@ function _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab) {
 		const logitWord = _traj_get_logit_word(curVec, embSnap, snapVocab);
 		const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
 		const toStage = p.name;
+		const plotVec = p.data[tIdx] || [];
+		const rawText = (curVec || []).slice(0, 3).map(v => Number(v || 0).toFixed(3)).join(', ');
+		const plotText = (plotVec || []).slice(0, 3).map(v => Number(v || 0).toFixed(3)).join(', ');
 		let distLine = "";
 		if (pIdx > 0 && window.tmMetric && window.tmMetric.distance) {
 			const prevVec = (dataPoints[pIdx - 1].rawData || dataPoints[pIdx - 1].data)[tIdx];
-			distLine = `<br>Step distance: ${window.tmMetric.distanceLabel(prevVec, curVec, window.tmMetric.get())}`;
+			const l2 = window.tmMetric.distance(prevVec, curVec, "euclidean");
+			const ang = window.tmMetric.distance(prevVec, curVec, "angular");
+			distLine = `<br>L2 step: ${l2.toFixed(3)} · angle: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
 		}
 		return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
 			`From: ${fromStage}<br>` +
 			`To: ${toStage}<br>` +
+			`Raw x,y,z: [${rawText}]<br>` +
+			`Plot x,y,z: [${plotText}]<br>` +
 			`Nearest logit: <b>${logitWord}</b>` + distLine;
 	});
 }
@@ -5367,8 +5410,26 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1, font: { size: 14, color: themeColor('#1e293b') } }
 	};
 
+	let circleTraces = [];
+	if (d_model === 2 && window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
+		const cx = [], cy = [];
+		for (let a = 0; a <= 96; a++) {
+			const t = 2 * Math.PI * a / 96;
+			cx.push(Math.cos(t));
+			cy.push(Math.sin(t));
+		}
+		circleTraces.push({
+			type: 'scatter', x: cx, y: cy, mode: 'lines', fill: 'toself',
+			fillcolor: 'rgba(59,130,246,0.12)',
+			line: { color: '#3b82f6', width: 1, opacity: 0.35 },
+			hoverinfo: 'text',
+			text: cx.map(() => (window.tmMetric && window.tmMetric.sphereHint ? window.tmMetric.sphereHint(true) : '')),
+			hovertemplate: '%{text}<extra></extra>',
+			showlegend: false, name: 'unit circle'
+		});
+	}
 	// Combine token traces + VF traces
-	Plotly.react(trajDiv.id, [...result.traces, ...vfTraces], layout);
+	Plotly.react(trajDiv.id, [...circleTraces, ...result.traces, ...vfTraces], layout);
 }
 
 // ─── Main 3D ECharts renderer ───────────────────────────────
@@ -5400,7 +5461,7 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 	});
 
 	const metric = (window.tmMetric && window.tmMetric.get) ? window.tmMetric.get() : "euclidean";
-	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(_traj_unit_sphere_series());
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(..._traj_unit_sphere_series());
 
 	// 3. All-layers vector field overlay
 	if (vfEnabled) {
@@ -5455,10 +5516,14 @@ function _traj_ec3d_marker_series(tokenLabel, color, dataPoints, tIdx, labels, e
 			labels[tIdx], tIdx, fromStage, p.name,
 			(p.rawData || p.data)[tIdx], embSnap, snapVocab
 		);
+		const plotVec = p.data[tIdx] || [];
+		hoverHtml += `<br>Plot x,y,z: [${(plotVec || []).slice(0, 3).map(v => Number(v || 0).toFixed(3)).join(', ')}]`;
 		if (pIdx > 0 && window.tmMetric && window.tmMetric.distance) {
 			const prevVec = (dataPoints[pIdx - 1].rawData || dataPoints[pIdx - 1].data)[tIdx];
 			const curVec = (p.rawData || p.data)[tIdx];
-			hoverHtml += `<br>Step distance: ${window.tmMetric.distanceLabel(prevVec, curVec, window.tmMetric.get())}`;
+			const l2 = window.tmMetric.distance(prevVec, curVec, "euclidean");
+			const ang = window.tmMetric.distance(prevVec, curVec, "angular");
+			hoverHtml += `<br>L2 step: ${l2.toFixed(3)} · angle: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
 		}
 
 		const isStart = pIdx === 0;
@@ -5751,6 +5816,18 @@ function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
 function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbeddings) {
 	const chart = echarts.init(container);
 	const series = [];
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere() && d_model === 2) {
+		const circle = [];
+		for (let a = 0; a <= 96; a++) {
+			const t = 2 * Math.PI * a / 96;
+			circle.push([Math.cos(t), Math.sin(t)]);
+		}
+		series.push({
+			type: 'line', name: 'unit circle', data: circle, symbol: 'none',
+			lineStyle: { color: '#3b82f6', width: 1, opacity: 0.35 },
+			areaStyle: { color: 'rgba(59,130,246,0.12)' }, silent: true
+		});
+	}
 
 	tokenStrings.forEach((token, pos) => {
 		const rawBase = window.persistentEmbeddingSpace[token];
@@ -5763,6 +5840,9 @@ function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbe
 		const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
 		const dispToken = displayToken(token);
 		const name = `${dispToken} (pos ${pos})`;
+		const l2Shift = window.tmMetric ? window.tmMetric.distance(rawBase, rawCombined, "euclidean") : 0;
+		const angShift = window.tmMetric ? window.tmMetric.distance(rawBase, rawCombined, "angular") : 0;
+		const rawCoord = v => (v || []).slice(0, 3).map(x => Number(x || 0).toFixed(3)).join(", ");
 
 		const x0 = semanticBase[0];
 		const y0 = d_model >= 2 ? semanticBase[1] : 0;
@@ -5783,7 +5863,9 @@ function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbe
 				formatter: () =>
 				`Token: <b>${dispToken}</b><br>Pos: ${pos}<br>` +
 				`Base: (${x0.toFixed(3)}, ${y0.toFixed(3)})<br>` +
-				`+PE:  (${x1.toFixed(3)}, ${y1.toFixed(3)})`
+				`+PE:  (${x1.toFixed(3)}, ${y1.toFixed(3)})<br>` +
+				`Raw x,y,z: [${rawCoord(rawBase)}] → [${rawCoord(rawCombined)}]<br>` +
+				`L2: ${l2Shift.toFixed(3)} · angle: ${angShift.toFixed(3)} (${(angShift * 180).toFixed(1)}°)`
 			},
 			z: 10
 		});
@@ -5865,6 +5947,10 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 
 		const from3 = [semanticBase[0], semanticBase[1], semanticBase[2]];
 		const to3   = [combined[0], combined[1], combined[2]];
+		const l2Shift3 = window.tmMetric ? window.tmMetric.distance(rawBase, rawCombined, "euclidean") : 0;
+		const angShift3 = window.tmMetric ? window.tmMetric.distance(rawBase, rawCombined, "angular") : 0;
+		const rawCoord3 = v => (v || []).slice(0, 3).map(x => Number(x || 0).toFixed(3)).join(", ");
+		const shiftTip = `Raw x,y,z: [${rawCoord3(rawBase)}] → [${rawCoord3(rawCombined)}]<br>L2: ${l2Shift3.toFixed(3)} · angle: ${angShift3.toFixed(3)} (${(angShift3 * 180).toFixed(1)}°)`;
 
 		series.push({
 			name: name, type: 'line3D',
@@ -5878,13 +5964,13 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 				{
 					value: from3, symbolSize: 8,
 					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: themeColor('#1e293b') },
-					_hover: `${dispToken} base (pos ${pos})`
+					_hover: `${dispToken} base (pos ${pos})<br>${shiftTip}`
 				},
 				{
 					value: to3, symbolSize: 13,
 					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#ffffff' },
 					label: { show: true, formatter: dispToken, color: tokenColor, fontSize: 9 },
-					_hover: `${dispToken} + PE (pos ${pos})`
+					_hover: `${dispToken} + PE (pos ${pos})<br>${shiftTip}`
 				}
 			],
 			symbol: 'circle',
@@ -5895,7 +5981,7 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 	const axis3DText = themeColor('#94a3b8');
 	const axis3DLine = themeColor('#475569');
 
-	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(_tmUnitSphereSeries());
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(..._tmUnitSphereSeries());
 	chart.setOption({
 		title: {
 			text: _tmMetricTitle('Semantic Vector → + Positional Shift'), left: 'center',
@@ -5955,10 +6041,13 @@ function getHueFromToken(str) {
 }
 
 function buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor) {
+	const l2 = window.tmMetric ? window.tmMetric.distance(semanticBase, combined, "euclidean") : 0;
+	const ang = window.tmMetric ? window.tmMetric.distance(semanticBase, combined, "angular") : 0;
 	return {
 		value: semanticBase.flatMap((val, i) => [val, combined[i]]),
 		name: `${displayToken(token)} (pos ${pos})`,
-		lineStyle: { color: tokenColor }
+		lineStyle: { color: tokenColor },
+		_tmTip: `Token: <b>${displayToken(token)}</b> (pos ${pos})<br>L2: ${l2.toFixed(3)} · angle: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`
 	};
 }
 
@@ -5994,7 +6083,7 @@ function renderShiftECharts(container, echartsData, d_model) {
 			left: 'center',
 			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
 		},
-		tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+		tooltip: { trigger: 'item', formatter: p => (p.data && p.data._tmTip) ? p.data._tmTip : `Token: <b>${p.name}</b>` },
 		legend: { data: echartsData.map(d => d.name), bottom: 0, left: 'center', textStyle: { fontSize: 10, color: themeColor('#1e293b') } },
 		grid: { top: 50, bottom: 55, left: 20, right: 20 },
 		parallelAxis: axes,

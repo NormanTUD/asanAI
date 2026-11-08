@@ -234,6 +234,8 @@ def main() -> None:
             }""")
             check("logit lens has a logits/angle view switch",
                   bool(logit_view) and logit_view["options"] == 2 and logit_view["value"] == "logits", str(logit_view))
+            page.evaluate("() => document.getElementById('unified-layer-0-logit-lens').scrollIntoView()")
+            page.wait_for_timeout(1200)
             page.evaluate("""() => { const s=document.querySelector('.tm-logit-view-select'); s.value='angle'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
             page.wait_for_timeout(1400)
             angle_view = page.evaluate("""() => {
@@ -248,7 +250,7 @@ def main() -> None:
                 };
             }""")
             check("angle view shows cos/θ/π in the logit lens and final rows",
-                  bool(angle_view) and angle_view["chip"] and angle_view["chip"].indexOf("cos ") == 0
+                  bool(angle_view) and angle_view["chip"] and angle_view["chip"].startswith("cos ")
                   and angle_view["finalDisplay"] != "none" and angle_view["rows"] > 0,
                   str(angle_view)[:300])
             page.evaluate("""() => { const s=document.querySelector('.tm-logit-view-select'); s.value='logits'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
@@ -333,7 +335,7 @@ def main() -> None:
             }""")
             check("sphere toggle is shown for great-circle and the sphere is ~20% visible",
                   bool(sticky_sphere) and sticky_sphere["display"] != "none" and sticky_sphere["checked"]
-                  and sticky_sphere["opacity"] is not None and abs(sticky_sphere["opacity"] - 0.2) < 0.02,
+                  and sticky_sphere["opacity"] is not None and abs(sticky_sphere["opacity"] - 0.18) < 0.03,
                   str(sticky_sphere))
             page.evaluate("""() => { const cb=document.getElementById('sticky-metric-sphere'); cb.checked=false; cb.dispatchEvent(new Event('change',{bubbles:true})); }""")
             page.wait_for_timeout(1200)
@@ -423,6 +425,29 @@ def main() -> None:
                   ("Euclidean" in explain_e or "Euklidisch" in explain_e)
                   and "Sphere" not in explain_e and "Kugel" not in explain_e and "Manhattan" not in explain_e,
                   explain_e[:220])
+
+            page.evaluate("() => { const s=document.getElementById('transformer-dimension-model'); s.value='2'; s.dispatchEvent(new Event('input',{bubbles:true})); }")
+            page.wait_for_timeout(1800)
+            page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
+            page.wait_for_timeout(1200)
+            page.evaluate("""() => { const s=document.getElementById('sticky-metric-select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(1400)
+            circle_2d = page.evaluate("""() => {
+                const el = document.getElementById('transformer-plotly-space');
+                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
+                const opt = chart ? chart.getOption() : null;
+                const series = opt ? (opt.series || []) : [];
+                return {
+                    circle: series.some(s => s.name === 'unit circle'),
+                    surface: series.some(s => s.type === 'surface')
+                };
+            }""")
+            check("2D angular view uses a circle, not a sphere",
+                  bool(circle_2d) and circle_2d["circle"] and not circle_2d["surface"], str(circle_2d))
+            page.evaluate("() => { const s=document.getElementById('transformer-dimension-model'); s.value='3'; s.dispatchEvent(new Event('input',{bubbles:true})); }")
+            page.wait_for_timeout(1200)
+            page.evaluate("""() => { const s=document.getElementById('sticky-metric-select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(500)
             check("no console/page errors", not errors, "; ".join(errors[:3]))
 
             errors.clear()

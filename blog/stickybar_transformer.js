@@ -39,10 +39,10 @@
 	/** Metric switch + sphere toggle, kept at the left of the sticky bar. */
 	function buildMetricControlHtml() {
 		return `
-	<div id="sticky-metric-control" style="display:flex; align-items:center; gap:10px; padding-right:12px; border-right:1px solid #374151; margin-right:4px; flex-shrink:0;">
+	<div id="sticky-metric-control" style="display:flex; align-items:center; gap:6px; padding-right:8px; border-right:1px solid #374151; margin-right:2px; flex-shrink:0;">
 	    <label style="display:inline-flex; align-items:center; gap:6px; color:#94a3b8; font-size:0.78rem; white-space:nowrap;">
 		Metric
-		<select id="sticky-metric-select" style="padding:4px 8px; border-radius:6px; border:1px solid #475569; background:#1f2937; color:#f8fafc; font-size:0.78rem;"></select>
+		<select id="sticky-metric-select" style="padding:3px 6px; border-radius:6px; border:1px solid #475569; background:#1f2937; color:#f8fafc; font-size:0.74rem; max-width:190px;"></select>
 	    </label>
 	    <label id="sticky-sphere-label" style="display:none; align-items:center; gap:5px; color:#94a3b8; font-size:0.78rem; white-space:nowrap;">
 		<input type="checkbox" id="sticky-metric-sphere" checked> Sphere
@@ -93,10 +93,10 @@
 	/** Returns the CSS for the root sticky bar container. */
 	function buildBarRootStyles() {
 		return `
-	position: fixed; bottom: 0; left: 0; width: 100%;
+	position: fixed; bottom: 0; left: 0; width: 100%; box-sizing: border-box; max-width: 100vw;
 	background: #1e293b; color: #f8fafc;
-	padding: 10px 20px; display: none; align-items: center;
-	gap: 14px; z-index: 999;
+	padding: 8px 12px; display: none; align-items: center;
+	gap: 10px; z-index: 999;
 	font-family: 'Inter', sans-serif; font-size: 0.85rem;
 	box-shadow: 0 -2px 12px rgba(0,0,0,0.3);
 	transition: opacity 0.25s ease, transform 0.25s ease;
@@ -107,7 +107,7 @@
 	/** Returns the HTML for the idle-state sub-panel. */
 	function buildIdlePanelHtml() {
 		return `
-	<div id="data-view-toggle" style="border: 1px solid #374151; border-radius: 8px; display: flex; align-items: center; gap: 0px; background: #1f2937; overflow: hidden; width: 300px;">
+	<div id="data-view-toggle" style="border: 1px solid #374151; border-radius: 8px; display: flex; align-items: center; gap: 0px; background: #1f2937; overflow: hidden; width: 220px; min-width: 160px; flex-shrink: 0;">
 	    <button id="view-toggle-train" 
 		onclick="setVisualizationMode('train')" 
 		style="padding: 8px 18px; border: 1px solid #3b82f6; border-radius: 6px 0 0 6px; background: #3b82f6; color: white; font-weight: bold; cursor: pointer; transition: all 0.15s; flex: 1;">
@@ -121,8 +121,8 @@
 	    </button>
 	</div>
 
-	<div id="tlab-bar-idle" style="display:flex; align-items:center; gap:14px; width:100%;">
-	    <span style="flex-grow:1; color:#94a3b8; font-size:0.82rem;">
+	<div id="tlab-bar-idle" style="display:flex; align-items:center; gap:10px; flex:1 1 auto; min-width:0;">
+	    <span style="flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#94a3b8; font-size:0.82rem;">
 		Ready to train
 	    </span>
 	    <button id="tlab-bar-train-btn" style="${buildTrainButtonStyles()}">▶ Start Training</button>
@@ -133,7 +133,7 @@
 	/** Returns inline styles for the idle-panel train button. */
 	function buildTrainButtonStyles() {
 		return `
-	margin-right: 35px;
+	margin-right: 8px;
 	background: linear-gradient(135deg, #3b82f6, #6366f1);
 	color: white; border: none; padding: 8px 22px;
 	border-radius: 8px; cursor: pointer; font-weight: 700;
@@ -146,7 +146,7 @@
 	/** Returns the HTML for the training-state sub-panel. */
 	function buildTrainingPanelHtml() {
 		return `
-	<div id="tlab-bar-training" style="display:none; align-items:center; gap:14px; width:100%;">
+	<div id="tlab-bar-training" style="display:none; align-items:center; gap:10px; flex:1 1 auto; min-width:0;">
 	    ${buildMiniChartHtml()}
 	    ${buildEpochLabelHtml()}
 	    ${buildProgressTrackHtml()}
@@ -161,7 +161,7 @@
 	function buildMiniChartHtml() {
 		return `
 	<div id="tlab-bar-mini-chart" style="
-	    width: 120px; height: 36px; flex-shrink: 0;
+	    width: 100px; height: 36px; flex-shrink: 0;
 	    background: #334155; border-radius: 6px; overflow: hidden;
 	    position: relative;
 	">
@@ -174,7 +174,7 @@
 	/** Returns the HTML for the epoch label span. */
 	function buildEpochLabelHtml() {
 		return `
-	<span id="training-progress-label" style="white-space:nowrap; min-width:140px;">
+	<span id="training-progress-label" style="white-space:nowrap; min-width:110px; overflow:hidden; text-overflow:ellipsis;">
 	    Starting training...
 	</span>
     `;
@@ -203,7 +203,7 @@
 	function buildLossLabelHtml() {
 		return `
 	<span id="training-progress-loss" style="
-	    white-space:nowrap; min-width:120px; text-align:right; color:#94a3b8;
+	    white-space:nowrap; min-width:90px; text-align:right; color:#94a3b8;
 	">Loss: —</span>
     `;
 	}
@@ -212,7 +212,7 @@
 	function buildEtaLabelHtml() {
 		return `
 	<span id="tlab-bar-eta" style="
-	    white-space:nowrap; min-width:100px; text-align:right; color:#64748b;
+	    white-space:nowrap; min-width:70px; text-align:right; color:#64748b;
 	    font-size:0.78rem;
 	">ETA: —</span>
     `;
@@ -225,7 +225,7 @@
 	    background: #ef4444; color: white; border: none;
 	    padding: 6px 16px; border-radius: 6px; cursor: pointer;
 	    font-weight: 600; font-size: 0.82rem; white-space: nowrap;
-	    margin-right: 50px; transition: background 0.15s;
+	    margin-right: 8px; transition: background 0.15s;
 	">⏹ Stop</button>
     `;
 	}

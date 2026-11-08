@@ -1878,7 +1878,18 @@
 		rerenderWithOverlay: rerenderWithOverlay,
 		sphereEnabled: function () { return window.tmMetricSphere !== false; },
 		setSphere: function (v) { window.tmMetricSphere = !!v; },
-		showSphere: function () { return featureMetric() === "angular" && window.tmMetricSphere !== false; }
+		showSphere: function () { return featureMetric() === "angular" && window.tmMetricSphere !== false; },
+		sphereHint: function (is2d) {
+			var de = DE();
+			if (is2d) {
+				return de
+					? "Einheitskreis: Jeder Vektor wird auf Länge 1 skaliert, jeder Punkt ist also eine Richtung, keine Länge. Die Winkelmetrik misst hier den Winkel θ zwischen zwei Richtungen; θ/π ist die normierte Distanz (0 = gleiche Richtung, 1 = Gegenrichtung). Die echten Token-Vektoren werden auf diesen Kreis projiziert."
+					: "Unit circle: every vector is scaled to length 1, so each point is a direction, not a length. The angular metric measures the angle θ between two directions here; θ/π is the normalized distance (0 = same direction, 1 = opposite). The real token vectors are projected onto this circle.";
+			}
+			return de
+				? "Einheitskugel: Jeder Vektor wird auf Länge 1 skaliert, jeder Punkt ist also eine Richtung, keine Länge. Die Winkelmetrik misst hier den Großkreiswinkel θ zwischen zwei Richtungen; θ/π ist die normierte Distanz (0 = gleiche Richtung, 1 = Gegenrichtung). Die echten Token-Vektoren werden auf diese Oberfläche projiziert."
+				: "Unit sphere: every vector is scaled to length 1, so each point is a direction, not a length. The angular metric measures the great-circle angle θ between two directions here; θ/π is the normalized distance (0 = same direction, 1 = opposite). The real token vectors are projected onto this surface.";
+		}
 	};
 	if (window.tmMetricSphere === undefined) window.tmMetricSphere = true;
 	window.addEventListener("tm:unembedview", function () {
@@ -1953,7 +1964,7 @@
 		var wrap = document.createElement("div");
 		wrap.id = "tm-global-metric";
 		wrap.className = "tm-global-metric";
-		wrap.innerHTML = "<label>" + (de ? "Distanzmetrik (alle Plots)" : "Distance metric (all plots)") + " <select>" + options + "</select></label><label class='tm-global-sphere'><input type='checkbox' " + (window.tmMetricSphere !== false ? "checked" : "") + "> " + (de ? "Kugel zeigen" : "Show sphere") + "</label><span class='tm-global-metric-note'>" + (de ? "Gilt global für Feature-Migration, Token-Trajectory, Embedding und Position." : "Applies globally to feature migration, token trajectory, embedding, and position.") + "</span>";
+		wrap.innerHTML = "<label>" + (de ? "Distanzmetrik (alle Plots)" : "Distance metric (all plots)") + " <select>" + options + "</select></label><label class='tm-global-sphere'><input type='checkbox' " + (window.tmMetricSphere !== false ? "checked" : "") + "> " + (de ? "Kugel / Kreis zeigen" : "Show sphere / circle") + "</label><span class='tm-global-metric-note'>" + (de ? "Gilt global für Feature-Migration, Token-Trajectory, Embedding und Position." : "Applies globally to feature migration, token trajectory, embedding, and position.") + "</span>";
 		var select = wrap.querySelector("select");
 		var sphere = wrap.querySelector("input[type=checkbox]");
 		var syncSphere = function () {
@@ -2101,7 +2112,7 @@
 				yAxis3D: { type: "value", name: projection.axes[1], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } },
 				zAxis3D: { type: "value", name: projection.axes[2], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } },
 				grid3D: {
-					boxWidth: 100, boxDepth: 100, boxHeight: 75,
+					boxWidth: 100, boxDepth: 100, boxHeight: 100,
 					viewControl: { alpha: 22, beta: 35, distance: 190 },
 					axisLine: { lineStyle: { color: c.line } },
 					splitLine: { lineStyle: { color: c.line } }
@@ -2152,17 +2163,28 @@
 				}
 				sphereRows.push(row);
 			}
+			var spherePoints = [];
+			sphereRows.forEach(function (row) { row.forEach(function (pt) { spherePoints.push(pt); }); });
 			series.push({
 				type: "surface",
 				name: "unit sphere",
 				data: sphereRows,
 				shading: "color",
-				itemStyle: { color: c.line, opacity: 0.20 },
-				wireframe: { show: false },
+				itemStyle: { color: "#3b82f6", opacity: 0.18 },
+				wireframe: { show: true, lineStyle: { color: "#3b82f6", opacity: 0.12 } },
 				silent: true
 			});
+			series.push({
+				type: "scatter3D",
+				name: "unit sphere points",
+				data: spherePoints,
+				symbolSize: 2,
+				itemStyle: { color: "#3b82f6", opacity: 0.18 },
+				silent: false,
+				tooltip: { formatter: function () { return window.tmMetric && window.tmMetric.sphereHint ? window.tmMetric.sphereHint(false) : ""; } }
+			});
 		}
-		if (metric === "angular" && !projection.is3d) {
+		if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere() && !projection.is3d) {
 			var circle = [];
 			for (var a = 0; a <= 96; a++) {
 				var t = 2 * Math.PI * a / 96;
@@ -2173,8 +2195,17 @@
 				name: "unit circle",
 				data: circle,
 				symbol: "none",
-				lineStyle: { color: c.line, width: 1, type: "dashed" },
+				lineStyle: { color: "#3b82f6", width: 1, opacity: 0.35 },
+				areaStyle: { color: "rgba(59,130,246,0.12)" },
 				silent: true
+			});
+			series.push({
+				type: "scatter",
+				name: "unit circle points",
+				data: circle,
+				symbolSize: 6,
+				itemStyle: { color: "#3b82f6", opacity: 0.01 },
+				tooltip: { formatter: function () { return window.tmMetric && window.tmMetric.sphereHint ? window.tmMetric.sphereHint(true) : ""; } }
 			});
 		}
 		for (var i = 0; i < data.n; i++) {
@@ -2182,6 +2213,11 @@
 			var col = sel ? c.gold : rgb(mix(hex(c.blue), hex(c.lilac), i / Math.max(1, data.n - 1)));
 			var distText = metricDistanceLabel(projection.rawIn[i], projection.rawOut[i], metric);
 			var seriesName = labels[i] + " · " + distText;
+			var rawIn = projection.rawIn[i] || [], rawOut = projection.rawOut[i] || [];
+			var l2 = metricDistance(rawIn, rawOut, "euclidean");
+			var ang = metricDistance(rawIn, rawOut, "angular");
+			var coord = function (v) { return (v || []).slice(0, 3).map(function (x) { return Number(x || 0).toFixed(3); }).join(", "); };
+			var tipHtml = "<b>" + labels[i] + "</b><br>L2 " + l2.toFixed(3) + " · angle " + ang.toFixed(3) + " (" + (ang * 180).toFixed(1) + "°)<br>from [" + coord(rawIn) + "]<br>to [" + coord(rawOut) + "]";
 			if (projection.is3d) {
 				var from = projection.in[i], to = projection.out[i];
 				var arc = metric === "angular" ? slerpPoints(from, to, 18) : [from, to];
@@ -2189,7 +2225,8 @@
 					name: seriesName,
 					type: "line3D",
 					data: arc,
-					lineStyle: { width: sel ? 5 : 2.4, color: col, opacity: sel ? 1 : 0.72 }
+					lineStyle: { width: sel ? 5 : 2.4, color: col, opacity: sel ? 1 : 0.72 },
+					tooltip: { formatter: function () { return tipHtml; } }
 				});
 				if (typeof _add3DArrowheadSeries === "function") {
 					_add3DArrowheadSeries(series, arc[arc.length - 2] || from, arc[arc.length - 1] || to, col, { lineWidth: sel ? 6 : 4, maxHeadLen: 0.45, spreadRatio: 0.35, name: seriesName });
@@ -2199,7 +2236,8 @@
 					type: "scatter3D",
 					data: [{ value: from, itemStyle: { color: col }, _tmPoint: "in" }],
 					symbolSize: sel ? 9 : 5,
-					label: { show: sel, formatter: labels[i], color: c.ink, fontSize: 10, fontWeight: 700 }
+					label: { show: sel, formatter: labels[i], color: c.ink, fontSize: 10, fontWeight: 700 },
+					tooltip: { formatter: function () { return tipHtml; } }
 				});
 			} else {
 				var a2 = projection.in[i], b2 = projection.out[i];
@@ -2212,7 +2250,8 @@
 					symbolSize: sel ? 9 : 5,
 					lineStyle: { width: sel ? 4 : 2, color: col, opacity: sel ? 1 : 0.72 },
 					itemStyle: { color: col },
-					label: { show: sel, formatter: labels[i], position: "end", color: c.ink, fontSize: 10, fontWeight: 700 }
+					label: { show: sel, formatter: labels[i], position: "end", color: c.ink, fontSize: 10, fontWeight: 700 },
+					tooltip: { formatter: function () { return tipHtml; } }
 				});
 			}
 		}
@@ -2234,7 +2273,7 @@
 			option.yAxis3D = { type: "value", name: projection.axes[1], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } };
 			option.zAxis3D = { type: "value", name: projection.axes[2], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } };
 			option.grid3D = {
-				boxWidth: 130, boxDepth: 130, boxHeight: 90,
+				boxWidth: 130, boxDepth: 130, boxHeight: 130,
 				width: "100%", height: "100%", left: 0, right: 0, top: 0, bottom: 0,
 				viewControl: { alpha: 20, beta: 30, distance: 105 },
 				axisLine: { lineStyle: { color: c.line } },
