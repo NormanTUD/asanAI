@@ -255,8 +255,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 
 					<section class="section-block" id="loop" data-chapter="The loop" data-chapter-de="Die Schleife">
 						<div class="section-kicker"><span class="sk-num">02</span> Play the loop</div>
-						<h2 class="section-title">Write a sentence, one word at a time.</h2>
+						<h2 class="section-title">One Word After Another</h2>
 						<div class="prose">
+							<p>One word after another is a slow feeling-forward in a complex world. At every step very much is possible, but not all of it makes sense; the loop is how the model narrows that space.</p>
 							<p>The demo shows the idea, not a trained model. The next token is drawn from a distribution, appended, and the loop repeats. Temperature controls how far the model drifts from the most likely path.</p>
 							<p>Why not always take the top token? Greedy does. Top-p keeps the smallest set whose cumulative probability reaches p, then samples. Low temperature sharpens the distribution; high temperature flattens it.</p>
 						</div>

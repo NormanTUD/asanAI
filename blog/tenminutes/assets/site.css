@@ -7874,32 +7874,11 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 .code-demo--console .code-demo-dollar { color: #63a44b; }
 .code-demo--console .code-demo-output { color: #eef7f4; border-top-color: rgba(238, 247, 244, 0.2); }
 
-/* The terminal is deliberately a green-on-black nerd console. */
-.code-demo--console .code-demo-terminal {
-	background: #04140a;
-	border-color: rgba(125, 255, 154, 0.38);
-	box-shadow: 0 0 0 1px rgba(125, 255, 154, 0.10),
-		0 22px 60px -34px rgba(125, 255, 154, 0.45);
-}
-.code-demo--console .code-demo-terminal .code-demo-bar {
-	background: #08200f;
-	border-bottom-color: rgba(125, 255, 154, 0.28);
-	color: #7dff9a;
-}
+/* Normal dark console chrome; only the terminal type is green. */
 .code-demo--console .code-demo-terminal .code-demo-name { color: #7dff9a; }
-.code-demo--console .code-demo-terminal .code-demo-dot {
-	background: #7dff9a;
-	opacity: 0.75;
-}
 .code-demo--console .code-demo-terminal .code-demo-term-body {
-	background: #04140a;
-	background-image: repeating-linear-gradient(
-		0deg,
-		rgba(125, 255, 154, 0.035) 0 1px,
-		transparent 1px 3px
-	);
+	background: #000000;
 	color: #7dff9a;
-	text-shadow: 0 0 7px rgba(125, 255, 154, 0.25);
 }
 .code-demo--console .code-demo-terminal .code-demo-cmd,
 .code-demo--console .code-demo-terminal .code-demo-dollar,
@@ -7909,7 +7888,7 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 .code-demo--console .code-demo-terminal .code-demo-output {
 	margin-top: 8px;
 	padding-top: 8px;
-	border-top: 1px dashed rgba(125, 255, 154, 0.28);
+	border-top: 1px dashed rgba(238, 247, 244, 0.2);
 	opacity: 0;
 	visibility: hidden;
 	transform: translateY(4px);
