@@ -82,7 +82,14 @@
 		function paint() {
 			raf = null;
 			var rect = canvas.getBoundingClientRect();
-			if (!rect.width) return;
+			if (!rect.width) {
+				if (canvas.isConnected && (canvas._tmZeroPaintRetries || 0) < 20) {
+					canvas._tmZeroPaintRetries = (canvas._tmZeroPaintRetries || 0) + 1;
+					setTimeout(request, 100);
+				}
+				return;
+			}
+			canvas._tmZeroPaintRetries = 0;
 			var dpr = Math.min(window.devicePixelRatio || 1, 2);
 			if (rect.width !== lastW || rect.height !== lastH || dpr !== lastDpr) {
 				canvas.width = Math.round(rect.width * dpr);
@@ -2151,6 +2158,17 @@
 		typesetMathIn(panel);
 	}
 
+	function redrawTripleCanvases(triple) {
+		if (!triple || !triple.isConnected) return;
+		triple.querySelectorAll(".tm-residual-heatmap-canvas").forEach(function (canvas) {
+			var match = /-residual-(in|delta|out)$/.exec(canvas.id);
+			var layer = parseInt(canvas.getAttribute("data-layer-idx"), 10);
+			if (match && !isNaN(layer) && window.TransformerSteps && window.TransformerSteps.renderLayerResidualHeatmap) {
+				window.TransformerSteps.renderLayerResidualHeatmap(canvas.id, layer, match[1]);
+			}
+		});
+	}
+
 	function renderLayerTripleResiduals(layerIdx) {
 		var prefix = "unified-layer-" + layerIdx;
 		var trace = (window.__tmLayerTrace || [])[layerIdx];
@@ -2214,6 +2232,15 @@
 				triple.title = DE() ? "Klicken für die Matrizen" : "Click for the matrices";
 				triple.addEventListener("click", function () { toggleTripleMath(layerIdx, triple); });
 			}
+		}
+		if (triple) {
+			if (window.ResizeObserver && !triple._tmTripleRO) {
+				triple._tmTripleRO = new ResizeObserver(function () { redrawTripleCanvases(triple); });
+				triple._tmTripleRO.observe(triple);
+			}
+			requestAnimationFrame(function () {
+				requestAnimationFrame(function () { redrawTripleCanvases(triple); });
+			});
 		}
 	}
 

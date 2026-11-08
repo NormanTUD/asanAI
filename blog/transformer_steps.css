@@ -1192,10 +1192,11 @@
 .tm-residual-triple {
 	position: relative;
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
-	gap: 6px;
+	grid-template-columns: 1fr;
+	gap: 2px;
 	align-items: stretch;
 	margin: 10px 0 14px;
+	width: 100%;
 }
 .tm-triple-cell {
 	min-width: 0;
@@ -1234,12 +1235,13 @@
 .tm-triple-cell .tm-residual-heatmap-canvas {
 	display: block;
 	width: 100%;
-	height: 170px;
+	height: 190px;
 }
 .tm-triple-op {
-	align-self: center;
+	justify-self: center;
+	padding: 2px 0;
 	color: var(--tm-muted, var(--mn-text-muted, #627476));
-	font: 700 1rem/1 "Barlow", "Open Sans", system-ui, sans-serif;
+	font: 700 1.1rem/1 "Barlow", "Open Sans", system-ui, sans-serif;
 }
 .tm-triple-range {
 	padding: 3px 6px 5px;
@@ -1248,8 +1250,7 @@
 	font: 600 0.62rem/1.2 "Open Sans", system-ui, sans-serif;
 }
 @media (max-width: 900px) {
-	.tm-residual-triple { grid-template-columns: 1fr; }
-	.tm-triple-op { display: none; }
+	.tm-triple-op { display: block; }
 }
 
 /* No deepening left rail in expanded layer boxes. */
