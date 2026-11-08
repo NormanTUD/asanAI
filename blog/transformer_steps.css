@@ -1616,3 +1616,69 @@
 		overflow-x: auto;
 	}
 }
+
+/* Logit-lens view switch and the final unembedding angle view. */
+.tm-logit-view,
+.tm-final-view {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0 0 8px;
+	font: 600 0.78rem/1.4 "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text-muted, var(--tm-muted, #627476));
+}
+.tm-logit-view select,
+.tm-final-view select {
+	padding: 3px 7px;
+	border: 1px solid var(--mn-border, var(--tm-line, #cbd5e1));
+	background: var(--mn-surface, var(--tm-card, #ffffff));
+	color: var(--mn-text, var(--tm-ink, #0f172a));
+	font: 600 0.76rem/1.2 "Open Sans", system-ui, sans-serif;
+}
+.tm-final-angle {
+	margin-top: 12px;
+}
+.tm-final-angle-title {
+	font: 700 0.85rem/1.3 "Barlow", "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text, var(--tm-ink, #0f172a));
+	margin-bottom: 4px;
+}
+.tm-final-angle-note {
+	margin: 0 0 8px;
+	color: var(--mn-text-muted, var(--tm-muted, #627476));
+	font-size: 0.76rem;
+	line-height: 1.5;
+}
+.tm-final-angle-row {
+	display: grid;
+	grid-template-columns: 110px minmax(0, 1fr) 150px;
+	gap: 8px;
+	align-items: center;
+	margin: 4px 0;
+}
+.tm-final-angle-word {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font: 600 0.78rem/1.2 "Barlow", "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text, var(--tm-ink, #0f172a));
+}
+.tm-final-angle-bar {
+	display: block;
+	height: 6px;
+	border-radius: 999px;
+	background: var(--mn-border, var(--tm-line, #cbd5e1));
+	overflow: hidden;
+}
+.tm-final-angle-bar i {
+	display: block;
+	height: 100%;
+	border-radius: 999px;
+	background: var(--mn-accent, var(--tm-petrol, #3b82f6));
+}
+.tm-final-angle-val {
+	font-size: 0.75rem;
+	text-align: right;
+	color: var(--mn-text-muted, var(--tm-muted, #627476));
+	font-variant-numeric: tabular-nums;
+}

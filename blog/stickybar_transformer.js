@@ -6,6 +6,7 @@
 // ============================================================
 
 (function () {
+	window.__tmMetricInStickyBar = true;
 	let barEl = null;
 	let siteIsVisible = false;
 	let miniChartInited = false;
@@ -21,6 +22,7 @@
 		wireTrainButton();
 		wireStopButton();
 		wireButtonHoverEffects();
+		wireMetricControls();
 
 		return barEl;
 	}
@@ -30,8 +32,62 @@
 		const el = document.createElement('div');
 		el.id = 'training-progress-bar-container';
 		el.style.cssText = buildBarRootStyles();
-		el.innerHTML = buildIdlePanelHtml() + buildTrainingPanelHtml();
+		el.innerHTML = buildMetricControlHtml() + buildIdlePanelHtml() + buildTrainingPanelHtml();
 		return el;
+	}
+
+	/** Metric switch + sphere toggle, kept at the left of the sticky bar. */
+	function buildMetricControlHtml() {
+		return `
+	<div id="sticky-metric-control" style="display:flex; align-items:center; gap:10px; padding-right:12px; border-right:1px solid #374151; margin-right:4px; flex-shrink:0;">
+	    <label style="display:inline-flex; align-items:center; gap:6px; color:#94a3b8; font-size:0.78rem; white-space:nowrap;">
+		Metric
+		<select id="sticky-metric-select" style="padding:4px 8px; border-radius:6px; border:1px solid #475569; background:#1f2937; color:#f8fafc; font-size:0.78rem;"></select>
+	    </label>
+	    <label id="sticky-sphere-label" style="display:none; align-items:center; gap:5px; color:#94a3b8; font-size:0.78rem; white-space:nowrap;">
+		<input type="checkbox" id="sticky-metric-sphere" checked> Sphere
+	    </label>
+	</div>
+    `;
+	}
+
+	/** Wire the metric select and the sphere toggle to the shared metric API. */
+	function wireMetricControls() {
+		const select = document.getElementById('sticky-metric-select');
+		const sphere = document.getElementById('sticky-metric-sphere');
+		if (!select || !sphere) return;
+		const sphereLabel = sphere.closest('label');
+		const api = window.tmMetric;
+		const fallback = {
+			euclidean: { en: 'Euclidean (L2)' },
+			angular: { en: 'Great-circle / angular (cosine, 0–1)' }
+		};
+		const options = (api && api.options) ? api.options : fallback;
+		select.innerHTML = Object.keys(options).map(function (key) {
+			return `<option value="${key}">${options[key].en || key}</option>`;
+		}).join('');
+		select.value = (api && api.get) ? api.get() : (window.tmFeatureMetric || 'euclidean');
+
+		const sync = () => {
+			const angular = select.value === 'angular';
+			sphereLabel.style.display = angular ? 'inline-flex' : 'none';
+			sphere.disabled = !angular;
+			sphere.checked = (api && api.sphereEnabled) ? api.sphereEnabled() : (window.tmMetricSphere !== false);
+		};
+		sync();
+
+		select.addEventListener('change', function () {
+			if (api && api.set) api.set(select.value);
+			else window.tmFeatureMetric = select.value;
+			sync();
+			window.dispatchEvent(new CustomEvent('tm:metricchange', { detail: { metric: select.value } }));
+		});
+		sphere.addEventListener('change', function () {
+			if (api && api.setSphere) api.setSphere(sphere.checked);
+			else window.tmMetricSphere = sphere.checked;
+			window.dispatchEvent(new CustomEvent('tm:metricchange', { detail: { metric: select.value } }));
+		});
+		window.addEventListener('tm:metricchange', sync);
 	}
 
 	/** Returns the CSS for the root sticky bar container. */

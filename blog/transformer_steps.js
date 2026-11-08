@@ -1881,6 +1881,14 @@
 		showSphere: function () { return featureMetric() === "angular" && window.tmMetricSphere !== false; }
 	};
 	if (window.tmMetricSphere === undefined) window.tmMetricSphere = true;
+	window.addEventListener("tm:unembedview", function () {
+		document.querySelectorAll(".tm-logit-lens-host").forEach(function (host) {
+			var match = /^unified-layer-(\d+)-logit-lens$/.exec(host.id);
+			if (!match) return;
+			var idx = parseInt(match[1], 10);
+			rerenderWithOverlay(host, function () { renderLayerLogitLens(idx); });
+		});
+	});
 	window.addEventListener("tm:metricchange", function () {
 		Object.keys(featureState).forEach(function (key) {
 			var idx = parseInt(key, 10);
@@ -2128,7 +2136,7 @@
 		var labels = data.tokens.map(function (t) { return display(t); });
 		var metric = projection.metric || featureMetric();
 		var series = [];
-		if (metric === "angular" && projection.is3d) {
+		if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere() && projection.is3d) {
 			var sphereRows = [];
 			var nu = 18, nv = 36;
 			for (var u = 0; u <= nu; u++) {
@@ -2149,7 +2157,7 @@
 				name: "unit sphere",
 				data: sphereRows,
 				shading: "color",
-				itemStyle: { color: c.line, opacity: 0.07 },
+				itemStyle: { color: c.line, opacity: 0.20 },
 				wireframe: { show: false },
 				silent: true
 			});
@@ -2287,12 +2295,28 @@
 		if (typeof getTransformerConfig === "function") {
 			try { temperature = Math.max(0.05, getTransformerConfig().temperature || 1); } catch (e) { temperature = 1; }
 		}
+		var angleMode = !!window.tmUnembedAngleView;
+		var vecNorm = 0;
+		for (var vi = 0; vi < vec.length; vi++) vecNorm += (vec[vi] || 0) * (vec[vi] || 0);
+		vecNorm = Math.sqrt(vecNorm) || 1;
 		var scores = words.map(function (word) {
 			var row = space[word] || [];
-			var dot = 0;
-			for (var i = 0; i < vec.length; i++) dot += (vec[i] || 0) * (row[i] || 0);
+			var dot = 0, rowNorm = 0;
+			for (var i = 0; i < vec.length; i++) {
+				dot += (vec[i] || 0) * (row[i] || 0);
+				rowNorm += (row[i] || 0) * (row[i] || 0);
+			}
+			if (angleMode) {
+				var cos = dot / (vecNorm * (Math.sqrt(rowNorm) || 1));
+				cos = Math.max(-1, Math.min(1, cos));
+				return { word: word, score: cos, prob: cos, cos: cos, angle: Math.acos(cos) / Math.PI };
+			}
 			return { word: word, score: dot / temperature };
 		});
+		if (angleMode) {
+			scores.sort(function (a, b) { return b.cos - a.cos; });
+			return scores.slice(0, count);
+		}
 		var max = Math.max.apply(null, scores.map(function (s) { return s.score; }));
 		var exps = scores.map(function (s) { return Math.exp(s.score - max); });
 		var sum = exps.reduce(function (a, b) { return a + b; }, 0) || 1;
@@ -2306,9 +2330,14 @@
 	}
 
 	function logitChip(item, color) {
-		var pct = Math.max(0, Math.min(100, Math.round((item.prob || 0) * 100)));
+		var angleMode = !!window.tmUnembedAngleView;
+		var pct = angleMode
+			? Math.max(0, Math.min(100, Math.round((item.cos || 0) * 100)))
+			: Math.max(0, Math.min(100, Math.round((item.prob || 0) * 100)));
+		var label = angleMode ? "cos " + (item.cos || 0).toFixed(2) : pct + "%";
+		var title = angleMode ? "θ/π " + (item.angle || 0).toFixed(3) + " (" + ((item.angle || 0) * 180).toFixed(1) + "°)" : "";
 		return '<span class="tm-logit-chip" style="--tm-logit-color:' + color + '">' +
-			'<span class="tm-logit-chip-top"><span class="tm-logit-word">' + featureEsc(display(item.word)) + '</span><span class="tm-logit-pct">' + pct + '%</span></span>' +
+			'<span class="tm-logit-chip-top"><span class="tm-logit-word">' + featureEsc(display(item.word)) + '</span><span class="tm-logit-pct" title="' + title + '">' + label + '</span></span>' +
 			'<span class="tm-logit-bar"><i style="width:' + pct + '%"></i></span></span>';
 	}
 
@@ -2343,9 +2372,15 @@
 		var depthColor = (typeof getPositionColor === "function") ? getPositionColor(layerIdx, totalLayers, "temml") : "";
 		var hafterTex = "\\underbrace{" + depthColor + " h_{\\text{after}}^{(" + (layerIdx + 1) + ")}}_{\\text{hidden state after layer " + (layerIdx + 1) + "}} = \\underbrace{\\begin{pmatrix} " + texRows + " \\end{pmatrix}}_{\\substack{\\text{rows: tokens }(T)\\\\ \\text{columns: dimensions }(d_{\\text{model}})}}";
 		var title = DE() ? "Logit-Linse · Schicht " + (layerIdx + 1) : "Logit lens · layer " + (layerIdx + 1);
-		var note = DE()
-			? "Die Logit-Linse projiziert den Vektor nach dieser Schicht auf das Vokabular und vergleicht die Winkel. Standardmäßig siehst du nur das letzte Token: Sein Vektor hat den gesamten Kontext gesehen und bestimmt die nächste Vorhersage. Die Balken zeigen die Wahrscheinlichkeit des jeweiligen Kandidaten."
-			: "The logit lens projects the vector after this layer onto the vocabulary and compares the angles. By default you see only the last token: its vector has seen the whole context and drives the next prediction. The bars show each candidate's probability.";
+		var angleMode = !!window.tmUnembedAngleView;
+		var note = angleMode
+			? (DE()
+				? "Winkelansicht: Der Vektor wird mit jeder Wortzeile per Cosinus verglichen. Die Balken zeigen cos; der Tooltip nennt θ/π (0 = gleiche Richtung, 1 = Gegenrichtung). Das ist eine normierte Richtungsansicht, nicht die Modellwahrscheinlichkeit."
+				: "Angle view: the vector is compared with every word row by cosine. The bars show cos; the tooltip gives θ/π (0 = same direction, 1 = opposite). This is a normalized direction view, not the model probability.")
+			: (DE()
+				? "Die Logit-Linse projiziert den Vektor nach dieser Schicht auf das Vokabular und vergleicht die Winkel. Standardmäßig siehst du nur das letzte Token: Sein Vektor hat den gesamten Kontext gesehen und bestimmt die nächste Vorhersage. Die Balken zeigen die Wahrscheinlichkeit des jeweiligen Kandidaten."
+				: "The logit lens projects the vector after this layer onto the vocabulary and compares the angles. By default you see only the last token: its vector has seen the whole context and drives the next prediction. The bars show each candidate's probability.");
+		var viewSelect = "<label class='tm-logit-view'>" + (DE() ? "Ansicht" : "View") + " <select class='tm-logit-view-select'><option value='logits'" + (!angleMode ? " selected" : "") + ">" + (DE() ? "Wahrscheinlichkeiten" : "Probabilities") + "</option><option value='angle'" + (angleMode ? " selected" : "") + ">" + (DE() ? "Winkel (Cosinus)" : "Angle (cosine)") + "</option></select></label>";
 		var traces = window.__tmLayerTrace || [];
 		var lastTokenIdx = data.tokens.length - 1;
 		var sweep = "";
@@ -2359,9 +2394,17 @@
 			sweep += "</div>";
 		}
 		host.innerHTML = "<details class='tm-layer-subbox tm-logit-subbox' data-sub='logit'><summary>" + title + "</summary><div class='tm-layer-subbox-body tm-logit-wrap'>" +
+			viewSelect +
 			"<div class='tm-hafter-simple'><div class='tm-hafter-math' data-tex='" + hafterTex + "' data-tex-display='true'></div></div>" +
 			"<p class='tm-logit-note'>" + note + "</p><div class='tm-logit-lens'>" + head + lastRow + "</div>" + others + sweep + "</div></details>";
 		typesetMathIn(host);
+		var viewSel = host.querySelector(".tm-logit-view-select");
+		if (viewSel) {
+			viewSel.addEventListener("change", function () {
+				window.tmUnembedAngleView = viewSel.value === "angle";
+				window.dispatchEvent(new CustomEvent("tm:unembedview", { detail: { angle: window.tmUnembedAngleView } }));
+			});
+		}
 	}
 
 	function toggleTripleMath(layerIdx, triple) {

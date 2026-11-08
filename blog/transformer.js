@@ -2616,6 +2616,40 @@ function ensureProjectionSubContainers(container) {
 	return { detailsDiv };
 }
 
+function renderFinalAngleView() {
+	const data = window._tmFinalUnembed;
+	const view = document.getElementById('tm-final-angle-view');
+	const finalSel = document.querySelector('.tm-final-view select');
+	if (finalSel) finalSel.value = window.tmUnembedAngleView ? 'angle' : 'logits';
+	if (!data || !view) return;
+	if (!window.tmUnembedAngleView) { view.style.display = 'none'; return; }
+	view.style.display = 'block';
+	const h = data.h_last || [];
+	const space = window.persistentEmbeddingSpace || {};
+	let hn = 0;
+	for (let i = 0; i < h.length; i++) hn += h[i] * h[i];
+	hn = Math.sqrt(hn) || 1;
+	const rows = data.vocabulary.map(word => {
+		const w = space[word] || [];
+		let dot = 0, wn = 0;
+		for (let i = 0; i < h.length; i++) {
+			dot += (h[i] || 0) * (w[i] || 0);
+			wn += (w[i] || 0) * (w[i] || 0);
+		}
+		const cos = Math.max(-1, Math.min(1, dot / (hn * (Math.sqrt(wn) || 1))));
+		return { word, cos, angle: Math.acos(cos) / Math.PI };
+	}).sort((a, b) => b.cos - a.cos).slice(0, 12);
+	view.innerHTML = '<div class="tm-final-angle-title">Angle view: h_last vs vocabulary rows</div>'
+		+ '<p class="tm-final-angle-note">cos = 1 means same direction; θ/π 0 = same, 1 = opposite. This is a normalized direction view, not the model probability.</p>'
+		+ rows.map(r => '<div class="tm-final-angle-row"><span class="tm-final-angle-word">' + escapeHtml(displayToken(r.word)) + '</span>'
+			+ '<span class="tm-final-angle-bar"><i style="width:' + Math.max(0, Math.round(r.cos * 100)) + '%"></i></span>'
+			+ '<span class="tm-final-angle-val">cos ' + r.cos.toFixed(2) + ' · θ/π ' + r.angle.toFixed(3) + '</span></div>').join('');
+}
+if (!window.__tmFinalAngleListener) {
+	window.__tmFinalAngleListener = true;
+	window.addEventListener('tm:unembedview', renderFinalAngleView);
+}
+
 function render_final_projection(h_final, vocabulary, d_model, temperature) {
     const container = document.getElementById('transformer-output-projection');
     if (!container) return;
@@ -2625,6 +2659,21 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
     const { detailsDiv } = ensureProjectionSubContainers(container);
 
     detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
+    window._tmFinalUnembed = { h_last, vocabulary, d_model, temperature };
+    const viewControl = document.createElement('label');
+    viewControl.className = 'tm-final-view';
+    const isDeView = !!(window.TM && TM.lang && TM.lang() === 'de');
+    viewControl.innerHTML = (isDeView ? 'Wortansicht' : 'Word view') + ' <select><option value="logits"' + (!window.tmUnembedAngleView ? ' selected' : '') + '>' + (isDeView ? 'Logits' : 'Logits') + '</option><option value="angle"' + (window.tmUnembedAngleView ? ' selected' : '') + '>' + (isDeView ? 'Winkel (Cosinus)' : 'Angle (cosine)') + '</option></select>';
+    const viewSelect = viewControl.querySelector('select');
+    viewSelect.addEventListener('change', () => {
+        window.tmUnembedAngleView = viewSelect.value === 'angle';
+        window.dispatchEvent(new CustomEvent('tm:unembedview', { detail: { angle: window.tmUnembedAngleView } }));
+    });
+    detailsDiv.insertBefore(viewControl, detailsDiv.firstChild);
+    const angleView = document.createElement('div');
+    angleView.id = 'tm-final-angle-view';
+    detailsDiv.appendChild(angleView);
+    renderFinalAngleView();
 
     // SCOPED rendering — do NOT call global render_temml()
     _renderTemmlOnElements([detailsDiv]);
@@ -2706,7 +2755,7 @@ function _tmUnitSphereSeries() {
 		}
 		rows.push(row);
 	}
-	return { type: 'surface', name: 'unit sphere', data: rows, shading: 'color', itemStyle: { color: themeColor('#cbd5e1'), opacity: 0.07 }, wireframe: { show: false }, silent: true };
+	return { type: 'surface', name: 'unit sphere', data: rows, shading: 'color', itemStyle: { color: themeColor('#cbd5e1'), opacity: 0.20 }, wireframe: { show: false }, silent: true };
 }
 
 function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
@@ -2946,7 +2995,7 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 		});
 	}
 
-	if (window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular') series.push(_tmUnitSphereSeries());
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(_tmUnitSphereSeries());
 	chart.setOption({
 		title: {
 			text: _tmMetricTitle('Embedding Space'), left: 'center',
@@ -4991,7 +5040,7 @@ function _traj_unit_sphere_series() {
 		name: 'unit sphere',
 		data: rows,
 		shading: 'color',
-		itemStyle: { color: themeColor('#cbd5e1'), opacity: 0.07 },
+		itemStyle: { color: themeColor('#cbd5e1'), opacity: 0.20 },
 		wireframe: { show: false },
 		silent: true
 	};
@@ -5351,7 +5400,7 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 	});
 
 	const metric = (window.tmMetric && window.tmMetric.get) ? window.tmMetric.get() : "euclidean";
-	if (metric === "angular") series.push(_traj_unit_sphere_series());
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(_traj_unit_sphere_series());
 
 	// 3. All-layers vector field overlay
 	if (vfEnabled) {
@@ -5846,7 +5895,7 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 	const axis3DText = themeColor('#94a3b8');
 	const axis3DLine = themeColor('#475569');
 
-	if (window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular') series.push(_tmUnitSphereSeries());
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(_tmUnitSphereSeries());
 	chart.setOption({
 		title: {
 			text: _tmMetricTitle('Semantic Vector → + Positional Shift'), left: 'center',

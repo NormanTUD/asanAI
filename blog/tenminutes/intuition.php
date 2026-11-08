@@ -102,7 +102,7 @@
 		.tt-swatch { width: 10px; height: 10px; border-radius: 2px; border: 1px solid var(--tm-line-strong); flex: 0 0 auto; }
 		.tt-swatch--deep { background: var(--tm-blue); }
 		.tt-swatch--side { background: var(--tm-gold); }
-		.tt-swatch--base { background: var(--tm-paper-2); }
+		.tt-swatch--base { background: var(--tm-gold); opacity: 0.6; }
 		.tt-swatch--filler { width: 7px; height: 7px; border-radius: 50%; background: var(--tm-gold); opacity: 0.65; }
 		.tt-token-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
 		.tt-token { appearance: none; border: 1px solid var(--tm-line-strong); background: var(--tm-paper-2); color: var(--tm-muted); font: 600 0.72rem/1.2 var(--tm-mono); padding: 0.32em 0.55em; cursor: pointer; }
@@ -315,7 +315,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 											<div class="tt-legend">
 												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--deep"></i><span>deep blue = likely path</span></span>
 												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--side"></i><span>gold = possible exits</span></span>
-												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--base"></i><span>pale plane = all other tokens</span></span>
+												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--base"></i><span>gold plane = all other tokens</span></span>
 												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--filler"></i><span>small dots = other plausible tokens</span></span>
 											</div>
 											<div class="tt-token-row" id="tt-token-row" aria-label="Jump to a token"></div>
@@ -2501,7 +2501,14 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			series.push(arrows[0], arrows[1]);
 			return series;
 		}
-		function isoSurfaceData() {
+		function isoSurfaceColor(weight, colors) {
+			if (weight > 0.78) return colors.deep;
+			if (weight > 0.58) return colors.blue;
+			if (weight > 0.38) return colors.sky;
+			if (weight > 0.18) return colors.gold;
+			return colors.base;
+		}
+		function isoSurfaceData(colors) {
 			var data = [];
 			var xCount = 65, yCount = 45;
 			var xMin = 0, xMax = (isoTokens.length - 1) * isoStepGap;
@@ -2510,8 +2517,15 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				var y = isoLerp(yMin, yMax, yi / yCount);
 				for (var xi = 0; xi <= xCount; xi++) {
 					var x = isoLerp(xMin, xMax, xi / xCount);
-					var z = isoSurfaceHeight(x / isoStepGap, y);
-					data.push([Number(x.toFixed(3)), Number(y.toFixed(3)), Number(z.toFixed(4))]);
+					var stepX = x / isoStepGap;
+					var depth = isoValleyDepth(stepX, y);
+					var mainDepth = isoMainDepthAt(stepX);
+					var weight = Math.min(1, depth / (mainDepth + 1e-6));
+					var z = isoSurfaceHeight(stepX, y);
+					data.push({
+						value: [Number(x.toFixed(3)), Number(y.toFixed(3)), Number(z.toFixed(4))],
+						itemStyle: { color: isoSurfaceColor(weight, colors) }
+					});
 				}
 			}
 			return { data: data, shape: [yCount + 1, xCount + 1] };
@@ -2527,17 +2541,21 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function drawIso() {
 			if (!isoHost || !window.echarts || !window.echarts.init) return;
 			var c = TM.colors();
-			var surface = isoSurfaceData();
+			var deepSurface = mixRgb(c.blue, c.ink, c.dark ? 0.28 : 0.52);
+			var baseSurface = mixRgb(c.paper2, c.gold, c.dark ? 0.55 : 0.65);
+			var surface = isoSurfaceData({
+				deep: deepSurface,
+				blue: c.blue,
+				sky: c.sky,
+				gold: c.gold,
+				base: baseSurface
+			});
 			var zMin = 0;
 			for (var zi = 0; zi < surface.data.length; zi++) {
-				if (surface.data[zi][2] < zMin) zMin = surface.data[zi][2];
+				var surfaceZ = surface.data[zi].value[2];
+				if (surfaceZ < zMin) zMin = surfaceZ;
 			}
 			zMin -= 0.03;
-			var deepSurface = mixRgb(c.blue, c.ink, c.dark ? 0.28 : 0.52);
-			var baseSurface = mixRgb(c.paper2, c.gold, c.dark ? 0.16 : 0.22);
-			var surfacePalette = [
-				deepSurface, c.blue, c.sky, c.sky, c.gold, baseSurface
-			];
 			if (!isoChart) {
 				isoHost.innerHTML = "";
 				try {
@@ -2583,13 +2601,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					backgroundColor: c.dark ? "rgba(10,34,44,.96)" : "rgba(255,255,255,.98)",
 					borderColor: c.lineStrong,
 					textStyle: { color: c.ink, fontSize: 12 }
-				},
-				visualMap: {
-					show: false,
-					dimension: 2,
-					min: -0.55,
-					max: 0.02,
-					inRange: { color: surfacePalette }
 				},
 				xAxis3D: {
 					type: "value", name: isoLabels.axisStep,

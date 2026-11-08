@@ -228,6 +228,37 @@ def main() -> None:
             check("logit lens shows the last token first, with bars and others toggle",
                   bool(logit) and logit["lastOnly"] and logit["bars"] > 0 and logit["others"], str(logit))
 
+            logit_view = page.evaluate("""() => {
+                const sel = document.querySelector('.tm-logit-view-select');
+                return sel ? {options: sel.options.length, value: sel.value} : null;
+            }""")
+            check("logit lens has a logits/angle view switch",
+                  bool(logit_view) and logit_view["options"] == 2 and logit_view["value"] == "logits", str(logit_view))
+            page.evaluate("""() => { const s=document.querySelector('.tm-logit-view-select'); s.value='angle'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(1400)
+            angle_view = page.evaluate("""() => {
+                const chip = document.querySelector('.tm-logit-lens .tm-logit-chip .tm-logit-pct');
+                const final = document.getElementById('tm-final-angle-view');
+                const finalSel = document.querySelector('.tm-final-view select');
+                return {
+                    chip: chip ? chip.textContent.trim() : null,
+                    finalDisplay: final ? getComputedStyle(final).display : null,
+                    rows: final ? final.querySelectorAll('.tm-final-angle-row').length : 0,
+                    finalSel: finalSel ? finalSel.value : null
+                };
+            }""")
+            check("angle view shows cos/θ/π in the logit lens and final rows",
+                  bool(angle_view) and angle_view["chip"] and angle_view["chip"].indexOf("cos ") == 0
+                  and angle_view["finalDisplay"] != "none" and angle_view["rows"] > 0,
+                  str(angle_view)[:300])
+            page.evaluate("""() => { const s=document.querySelector('.tm-logit-view-select'); s.value='logits'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(900)
+            angle_hidden = page.evaluate("""() => {
+                const final = document.getElementById('tm-final-angle-view');
+                return final ? getComputedStyle(final).display : null;
+            }""")
+            check("angle view hides when logits is selected", angle_hidden == "none", str(angle_hidden))
+
             optional = page.evaluate("""() => {
                 const block = document.querySelector('.optional');
                 if (!block) return null;
@@ -258,8 +289,9 @@ def main() -> None:
                 const d = document.querySelector('.tm-head-method-details');
                 return d ? {open: d.open, hasMethod: !!d.querySelector('.tm-head-method')} : null;
             }""")
+            page.wait_for_function("() => !!document.getElementById('sticky-metric-select')", timeout=60000)
             global_metric = page.evaluate("""() => {
-                const sel = document.querySelector('#tm-global-metric select');
+                const sel = document.querySelector('#sticky-metric-select');
                 const perPlot = !!document.querySelector('[data-feature-metric], .trajectory-metric-select, .tm-step-metric');
                 return sel ? {options: sel.options.length, value: sel.value, perPlot} : null;
             }""")
@@ -270,7 +302,7 @@ def main() -> None:
             page.evaluate("() => document.getElementById('unified-layer-0-feature-arrows').scrollIntoView()")
             page.wait_for_timeout(1200)
             overlay = page.evaluate("""() => {
-                const s=document.querySelector('#tm-global-metric select');
+                const s=document.querySelector('#sticky-metric-select');
                 s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true}));
                 return !!document.querySelector('.tm-metric-loading');
             }""")
@@ -286,12 +318,41 @@ def main() -> None:
             check("feature migration follows the global metric",
                   bool(feature_metric) and "great-circle" in feature_metric["subtext"].lower() and feature_metric["surface"], str(feature_metric))
 
+            sticky_sphere = page.evaluate("""() => {
+                const label = document.getElementById('sticky-sphere-label');
+                const cb = document.getElementById('sticky-metric-sphere');
+                const el = document.getElementById('unified-layer-0-feature-arrows');
+                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
+                const opt = chart ? chart.getOption() : null;
+                const surface = (opt ? (opt.series || []) : []).find(s => s.type === 'surface');
+                return {
+                    display: label ? getComputedStyle(label).display : null,
+                    checked: cb ? cb.checked : null,
+                    opacity: surface && surface.itemStyle ? surface.itemStyle.opacity : null
+                };
+            }""")
+            check("sphere toggle is shown for great-circle and the sphere is ~20% visible",
+                  bool(sticky_sphere) and sticky_sphere["display"] != "none" and sticky_sphere["checked"]
+                  and sticky_sphere["opacity"] is not None and abs(sticky_sphere["opacity"] - 0.2) < 0.02,
+                  str(sticky_sphere))
+            page.evaluate("""() => { const cb=document.getElementById('sticky-metric-sphere'); cb.checked=false; cb.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(1200)
+            no_sphere = page.evaluate("""() => {
+                const el = document.getElementById('unified-layer-0-feature-arrows');
+                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
+                const opt = chart ? chart.getOption() : null;
+                return (opt ? (opt.series || []) : []).some(s => s.type === 'surface');
+            }""")
+            check("sphere toggle removes the surface", not no_sphere)
+            page.evaluate("""() => { const cb=document.getElementById('sticky-metric-sphere'); cb.checked=true; cb.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(800)
+
             page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
             page.wait_for_timeout(1200)
-            page.evaluate("""() => { const s=document.querySelector('#tm-global-metric select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.evaluate("""() => { const s=document.querySelector('#sticky-metric-select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
             page.wait_for_timeout(500)
             overlay_emb = page.evaluate("""() => {
-                const s=document.querySelector('#tm-global-metric select');
+                const s=document.querySelector('#sticky-metric-select');
                 s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true}));
                 return !!document.querySelector('.tm-metric-loading');
             }""")
@@ -309,9 +370,9 @@ def main() -> None:
 
             page.evaluate("() => document.getElementById('transformer-pe-shift-plot').scrollIntoView()")
             page.wait_for_timeout(1200)
-            page.evaluate("""() => { const s=document.querySelector('#tm-global-metric select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.evaluate("""() => { const s=document.querySelector('#sticky-metric-select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
             page.wait_for_timeout(500)
-            page.evaluate("""() => { const s=document.querySelector('#tm-global-metric select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.evaluate("""() => { const s=document.querySelector('#sticky-metric-select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
             page.wait_for_timeout(1200)
             pe_metric = page.evaluate("""() => {
                 const el = document.getElementById('transformer-pe-shift-plot');
@@ -355,7 +416,7 @@ def main() -> None:
                   bool(explain) and "1607.06450" in " ".join(explain["links"])
                   and "D19-1006" in " ".join(explain["links"]) and "1908.10084" in " ".join(explain["links"]),
                   str(explain["links"]))
-            page.evaluate("""() => { const s=document.querySelector('#tm-global-metric select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.evaluate("""() => { const s=document.querySelector('#sticky-metric-select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
             page.wait_for_timeout(500)
             explain_e = page.evaluate("() => { const f=document.querySelector('.tm-feature-metric-explain'); return f ? f.innerText : ''; }")
             check("Euclidean explanation omits the sphere section",
