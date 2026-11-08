@@ -66,7 +66,6 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 Each slider below carries a short note on why its constraint exists. What hyperparameters are in general, and how practitioners find good values instead of guessing, is the subject of the [Hyperparameters](hyperparameters.php) chapter.
 </div>
 
-<div class="tm-model-size-slot"><span class="tm-model-size-label">Model size</span><div id="nr_params" style="display:none"></div></div>
 <div id="transformer_config">
 	<div class="transformer-config-field">
 		<label class="transformer-slider-label">Model Dimension ($d_{\text{model}}$): </label>
@@ -130,6 +129,8 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 		<option value="bpe">Byte-Pair Encoding (BPE)</option>
 	    </select>
 	</div>
+
+	<div class="tm-model-size-slot" style="grid-column: 1 / -1;"><span class="tm-model-size-label">Model size</span><div id="nr_params" style="display:none"></div></div>
 
 	<div id="param-breakdown-toggle" style="display: none; margin-top: 8px;">
 	    <button id="param-breakdown-btn" onclick="toggleParamBreakdown()"

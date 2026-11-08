@@ -501,8 +501,8 @@
 	color: var(--tm-petrol, var(--mn-accent, #004b6f));
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	gap: 10px;
+	justify-content: flex-start;
+	gap: 6px;
 	text-align: left;
 }
 
@@ -896,6 +896,18 @@
 	font: 700 0.8rem/1.2 "Barlow", "Open Sans", system-ui, sans-serif;
 	color: var(--tm-petrol, var(--mn-accent, #004b6f));
 }
+.tm-hafter-simple {
+	margin: 0 0 10px;
+	overflow-x: auto;
+}
+.tm-logit-subbox .tm-logit-wrap {
+	margin-top: 0;
+}
+.tm-logit-subbox .tm-logit-lens {
+	border: 0;
+	background: transparent;
+}
+
 .tm-hafter-scroll {
 	overflow: auto;
 	max-height: 260px;
@@ -1189,11 +1201,10 @@
 	min-width: 0;
 	border: 0;
 	background: transparent;
-	cursor: pointer;
 }
-.tm-triple-cell:hover .tm-residual-heatmap-canvas {
+.tm-residual-triple:hover {
 	outline: 2px solid var(--mn-accent, var(--tm-petrol, #3b82f6));
-	outline-offset: 2px;
+	outline-offset: 4px;
 }
 .tm-triple-math {
 	margin: 4px 0 14px;
@@ -1363,8 +1374,8 @@
 /* Short "why this step" intuition, deliberately not a box. */
 .tm-step-why {
 	margin: 6px 0 10px;
-	padding: 2px 0 2px 10px;
-	border-left: 2px solid var(--mn-border, var(--tm-line, #cbd5e1));
+	padding: 0;
+	border-left: 0;
 	color: var(--mn-text-muted, var(--tm-muted, #627476));
 	font-size: 0.78rem;
 	line-height: 1.5;

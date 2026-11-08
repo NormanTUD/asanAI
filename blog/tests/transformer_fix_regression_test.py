@@ -161,7 +161,9 @@ def page_checks(page, port: int) -> None:
     check("active head tab is blue", head["bg"] == "rgb(37, 99, 235)", head["bg"])
     check("estimate explains context mixing", "dominates" in head["estimate"] or "dominiert" in head["estimate"])
     check("method note sits directly under the estimate", head["methodAfter"])
-    check("no per-layer summary when only context mixing is detected", head["summary"] is None, str(head["summary"]))
+    check("layer head summary only names real head types",
+          head["summary"] is None or ("could have" in head["summary"].lower() and "context mixing" not in head["summary"].lower()),
+          str(head["summary"]))
 
     page.evaluate("() => document.querySelector('.tm-layer-head').click()")
     page.wait_for_timeout(200)
@@ -208,19 +210,24 @@ def training_check(page) -> None:
         if (window.run_transformer_demo) window.run_transformer_demo();
         await tf.nextFrame();
         const cfg = getTransformerConfig();
+        // Deterministic init: the point is the capacity, not the lottery.
+        let seed = 123456789;
+        const origRandom = Math.random;
+        Math.random = function () { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
         ensureWeightsAndEmbeddings(tokens, cfg.n_layers, cfg.d_model);
+        Math.random = origRandom;
         const weightVars = convert_weights_to_tensors(window.currentWeights);
         const allVars = collectTrainableVars(weightVars);
         const optimizer = createOptimizer('adam', 0.08);
         let loss = null;
         let epochs = 0;
-        for (let epoch = 0; epoch < 160; epoch++) {
+        for (let epoch = 0; epoch < 220; epoch++) {
             epochs = epoch + 1;
             const cost = computeAndApplyGradients(tokens, weightVars, cfg.d_model, cfg.n_layers, cfg.n_heads, allVars, optimizer, 1.0);
             loss = (await cost.data())[0];
             dispose(cost);
             if (epoch % 20 === 0) await tf.nextFrame();
-            if (loss < 0.03) break;
+            if (loss < 0.005) break;
         }
         window.currentWeights = await convert_tensors_to_weights(weightVars);
         disposeWeightVars(weightVars);

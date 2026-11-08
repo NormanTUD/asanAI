@@ -2091,7 +2091,9 @@
 		var texRows = trace.h_out.map(function (row) {
 			return row.map(function (v) { return (Number(v) || 0).toFixed(2); }).join(" & ");
 		}).join(" \\\\ ");
-		var hafterTex = "h_{\\text{after}} = \\begin{pmatrix} " + texRows + " \\end{pmatrix}";
+		var totalLayers = (window.__tmLayerTrace || []).length || 1;
+		var depthColor = (typeof getPositionColor === "function") ? getPositionColor(layerIdx, totalLayers, "temml") : "";
+		var hafterTex = "\\underbrace{" + depthColor + " h_{\\text{after}}^{(" + (layerIdx + 1) + ")}}_{\\text{hidden state after layer " + (layerIdx + 1) + "}} = \\underbrace{\\begin{pmatrix} " + texRows + " \\end{pmatrix}}_{\\substack{\\text{rows: tokens }(T)\\\\ \\text{columns: dimensions }(d_{\\text{model}})}}";
 		var title = DE() ? "Logit-Linse · Schicht " + (layerIdx + 1) : "Logit lens · layer " + (layerIdx + 1);
 		var note = DE()
 			? "Die Logit-Linse projiziert den Vektor nach dieser Schicht auf das Vokabular und vergleicht die Winkel. Standardmäßig siehst du nur das letzte Token: Sein Vektor hat den gesamten Kontext gesehen und bestimmt die nächste Vorhersage. Die Balken zeigen die Wahrscheinlichkeit des jeweiligen Kandidaten."
@@ -2108,8 +2110,8 @@
 			});
 			sweep += "</div>";
 		}
-		host.innerHTML = "<details class='tm-logit-collapse'><summary>" + title + "</summary><div class='tm-logit-wrap'>" +
-			"<details class='tm-layer-hafter'><summary>" + (DE() ? "h_after · Hidden State nach Schicht " : "h_after · hidden state after layer ") + (layerIdx + 1) + "</summary><div class='tm-hafter-scroll'><div class='tm-hafter-math' data-tex='" + hafterTex + "' data-tex-display='true'></div></div></details>" +
+		host.innerHTML = "<details class='tm-layer-subbox tm-logit-subbox' data-sub='logit'><summary>" + title + "</summary><div class='tm-layer-subbox-body tm-logit-wrap'>" +
+			"<div class='tm-hafter-simple'><div class='tm-hafter-math' data-tex='" + hafterTex + "' data-tex-display='true'></div></div>" +
 			"<p class='tm-logit-note'>" + note + "</p><div class='tm-logit-lens'>" + head + lastRow + "</div>" + others + sweep + "</div></details>";
 		typesetMathIn(host);
 	}
@@ -2206,11 +2208,12 @@
 				});
 				canvas.addEventListener("mouseleave", function () { if (tip) tip.hidden = true; });
 			});
-			triple.querySelectorAll(".tm-triple-cell").forEach(function (cell) {
-				cell.style.cursor = "pointer";
-				cell.title = DE() ? "Klicken für die Matrizen" : "Click for the matrices";
-				cell.addEventListener("click", function () { toggleTripleMath(layerIdx, triple); });
-			});
+			if (!triple._tmTripleClickBound) {
+				triple._tmTripleClickBound = true;
+				triple.style.cursor = "pointer";
+				triple.title = DE() ? "Klicken für die Matrizen" : "Click for the matrices";
+				triple.addEventListener("click", function () { toggleTripleMath(layerIdx, triple); });
+			}
 		}
 	}
 

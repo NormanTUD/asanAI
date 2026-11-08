@@ -7263,9 +7263,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-16-part_of-transformer-block-13",
+      "id": "struct-transformer-stmt-16-part_of-transformer-block-12",
       "from": "transformer-stmt-16",
-      "to": "transformer-block-13",
+      "to": "transformer-block-12",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7273,9 +7273,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-17-part_of-transformer-block-13",
+      "id": "struct-transformer-stmt-17-part_of-transformer-block-12",
       "from": "transformer-stmt-17",
-      "to": "transformer-block-13",
+      "to": "transformer-block-12",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7283,9 +7283,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-18-part_of-transformer-block-15",
+      "id": "struct-transformer-stmt-18-part_of-transformer-block-14",
       "from": "transformer-stmt-18",
-      "to": "transformer-block-15",
+      "to": "transformer-block-14",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7293,9 +7293,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-19-part_of-transformer-block-15",
+      "id": "struct-transformer-stmt-19-part_of-transformer-block-14",
       "from": "transformer-stmt-19",
-      "to": "transformer-block-15",
+      "to": "transformer-block-14",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7303,8 +7303,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-20-part_of-transformer-block-15",
+      "id": "struct-transformer-stmt-20-part_of-transformer-block-14",
       "from": "transformer-stmt-20",
+      "to": "transformer-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-21-part_of-transformer-block-15",
+      "from": "transformer-stmt-21",
       "to": "transformer-block-15",
       "kind": "part_of",
       "qualifiers": {},
@@ -7313,18 +7323,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-21-part_of-transformer-block-16",
-      "from": "transformer-stmt-21",
-      "to": "transformer-block-16",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-22-part_of-transformer-block-16",
+      "id": "struct-transformer-stmt-22-part_of-transformer-block-15",
       "from": "transformer-stmt-22",
+      "to": "transformer-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-23-part_of-transformer-block-16",
+      "from": "transformer-stmt-23",
       "to": "transformer-block-16",
       "kind": "part_of",
       "qualifiers": {},
@@ -7333,19 +7343,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-23-part_of-transformer-block-17",
-      "from": "transformer-stmt-23",
-      "to": "transformer-block-17",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-24-part_of-transformer-block-17",
+      "id": "struct-transformer-stmt-24-part_of-transformer-block-16",
       "from": "transformer-stmt-24",
-      "to": "transformer-block-17",
+      "to": "transformer-block-16",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7353,9 +7353,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-25-part_of-transformer-block-19",
+      "id": "struct-transformer-stmt-25-part_of-transformer-block-18",
       "from": "transformer-stmt-25",
-      "to": "transformer-block-19",
+      "to": "transformer-block-18",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10182,70 +10182,70 @@
     {
       "id": "transformer-stmt-16",
       "quote": "4 How many transformer blocks are stacked.",
-      "block_id": "transformer-block-13",
+      "block_id": "transformer-block-12",
       "section": "Hyperparameters for this demo",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-17",
       "quote": "More layers allow more abstract reasoning.",
-      "block_id": "transformer-block-13",
+      "block_id": "transformer-block-12",
       "section": "Hyperparameters for this demo",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-18",
       "quote": "Effect: Sets the maximum number of tokens the model can “see” at once during training and inference.",
-      "block_id": "transformer-block-15",
+      "block_id": "transformer-block-14",
       "section": "Hyperparameters for this demo",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-19",
       "quote": "Reason: A larger context window lets the model capture longer-range dependencies, but the attention score matrix has size $\\text{Context}^2$, so a full forward pass costs quadratically in context length.",
-      "block_id": "transformer-block-15",
+      "block_id": "transformer-block-14",
       "section": "Hyperparameters for this demo",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-20",
       "quote": "A KV-Cache avoids recomputing past keys and values during generation — it lowers per-step work and trades it for linear memory — but it does not make attention sub-quadratic.",
-      "block_id": "transformer-block-15",
+      "block_id": "transformer-block-14",
       "section": "Hyperparameters for this demo",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-21",
       "quote": "FFN hidden size ( ): 12 Effect: Width of the expanded hidden layer inside the feed-forward network.",
-      "block_id": "transformer-block-16",
+      "block_id": "transformer-block-15",
       "section": "Hyperparameters for this demo",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-22",
       "quote": "The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.",
-      "block_id": "transformer-block-16",
+      "block_id": "transformer-block-15",
       "section": "Hyperparameters for this demo",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-23",
       "quote": "KV cache Reuse the keys and values of earlier tokens when you append a token.",
-      "block_id": "transformer-block-17",
+      "block_id": "transformer-block-16",
       "section": "Hyperparameters for this demo",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-24",
       "quote": "Only the new token's query is computed; the next-token distribution is identical.",
-      "block_id": "transformer-block-17",
+      "block_id": "transformer-block-16",
       "section": "Hyperparameters for this demo",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-25",
       "quote": "Words (Non-Alphanumeric Split) Byte-Pair Encoding (BPE)",
-      "block_id": "transformer-block-19",
+      "block_id": "transformer-block-18",
       "section": "Hyperparameters for this demo",
       "kind": "statement"
     },
@@ -12210,55 +12210,55 @@
     },
     {
       "id": "transformer-block-11",
-      "quote": "Model size",
-      "kind": "paragraph",
-      "section": "Hyperparameters for this demo"
-    },
-    {
-      "id": "transformer-block-12",
       "quote": "3",
       "kind": "paragraph",
       "section": "Hyperparameters for this demo"
     },
     {
-      "id": "transformer-block-13",
+      "id": "transformer-block-12",
       "quote": "4 How many transformer blocks are stacked. More layers allow more abstract reasoning.",
       "kind": "paragraph",
       "section": "Hyperparameters for this demo"
     },
     {
-      "id": "transformer-block-14",
+      "id": "transformer-block-13",
       "quote": "Context Size: 128",
       "kind": "paragraph",
       "section": "Hyperparameters for this demo"
     },
     {
-      "id": "transformer-block-15",
+      "id": "transformer-block-14",
       "quote": "Effect: Sets the maximum number of tokens the model can “see” at once during training and inference. Reason: A larger context window lets the model capture longer-range dependencies, but the attention score matrix has size $\\text{Context}^2$, so a full forward pass costs quadratically in context length. A KV-Cache avoids recomputing past keys and values during generation — it lowers per-step work and trades it for linear memory — but it does not make attention sub-quadratic.",
       "kind": "paragraph",
       "section": "Hyperparameters for this demo"
     },
     {
-      "id": "transformer-block-16",
+      "id": "transformer-block-15",
       "quote": "FFN hidden size ( ): 12 Effect: Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.",
       "kind": "paragraph",
       "section": "Hyperparameters for this demo"
     },
     {
-      "id": "transformer-block-17",
+      "id": "transformer-block-16",
       "quote": "KV cache Reuse the keys and values of earlier tokens when you append a token. Only the new token's query is computed; the next-token distribution is identical. Off",
       "kind": "paragraph",
       "section": "Hyperparameters for this demo"
     },
     {
-      "id": "transformer-block-18",
+      "id": "transformer-block-17",
       "quote": "Tokenizer:",
       "kind": "paragraph",
       "section": "Hyperparameters for this demo"
     },
     {
-      "id": "transformer-block-19",
+      "id": "transformer-block-18",
       "quote": "Words (Non-Alphanumeric Split) Byte-Pair Encoding (BPE)",
+      "kind": "paragraph",
+      "section": "Hyperparameters for this demo"
+    },
+    {
+      "id": "transformer-block-19",
+      "quote": "Model size",
       "kind": "paragraph",
       "section": "Hyperparameters for this demo"
     },

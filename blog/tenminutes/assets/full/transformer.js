@@ -1,5 +1,38 @@
 "use strict";
 
+var _TM_WHY = {
+	"attn-pre-ln": {
+		de: "<b>Intuition:</b> Jedes Token vor den Q/K/V-Projektionen auf eine vergleichbare Skala bringen. <b>Grenze der Intuition:</b> Das gilt pro Token; es bezieht Tokens nicht aufeinander und hält den Residual-Stream selbst nicht normiert.",
+		en: "<b>Intuition:</b> normalize each token to a comparable scale before the Q/K/V projections. <b>Limit of this intuition:</b> it is per token; it does not relate tokens, and it does not keep the residual stream itself normalized."
+	},
+	"attn-residual": {
+		de: "<b>Intuition:</b> $x \\leftarrow x + \\mathrm{Attn}(\\mathrm{Norm}(x))$: den Vorschlag addieren, den alten Vektor behalten. <b>Grenze der Intuition:</b> Addieren ist keine Auswahl; auch unpassende Heads schreiben in denselben Vektor, und Beiträge überlagern sich.",
+		en: "<b>Intuition:</b> $x \\leftarrow x + \\mathrm{Attn}(\\mathrm{Norm}(x))$: add the proposal, keep the old vector. <b>Limit of this intuition:</b> addition is not selection; unrelated heads still write into the same vector, and contributions superpose."
+	},
+	"ffn-pre-ln": {
+		de: "<b>Intuition:</b> Die Eingabe des FFN-Zweigs normalisieren, damit ihre Skala stabil ist. <b>Grenze der Intuition:</b> Der Residual-Stream kann weiter wachsen; sehr tiefe Pre-LN-Modelle brauchen meist eine finale LayerNorm.",
+		en: "<b>Intuition:</b> normalize the branch input before the FFN so its scale is stable. <b>Limit of this intuition:</b> the residual stream can still grow; very deep pre-LN models usually need a final LayerNorm."
+	},
+	"ffn-expansion": {
+		de: "<b>Intuition:</b> $h = \\mathrm{GELU}(W_1 x + b_1)$: Merkmale pro Token bilden; GELU lässt kleine negative Werte leben. <b>Grenze der Intuition:</b> Das FFN mischt keine Positionen; es transformiert nur, was Attention geliefert hat.",
+		en: "<b>Intuition:</b> $h = \\mathrm{GELU}(W_1 x + b_1)$: build features per token; GELU keeps small negatives. <b>Limit of this intuition:</b> the FFN cannot mix positions; it only transforms what attention delivered."
+	},
+	"ffn-compression": {
+		de: "<b>Intuition:</b> $y = W_2 h + b_2$: zurück auf $d_{\\mathrm{model}}$ projizieren, damit das Residual-Add passt. <b>Grenze der Intuition:</b> Das Update hat begrenzten Rang; vieles aus der Expansion wird verworfen.",
+		en: "<b>Intuition:</b> $y = W_2 h + b_2$: project back to $d_{\\mathrm{model}}$ so the residual add works. <b>Limit of this intuition:</b> the update is rank-limited; much of the expansion is discarded."
+	},
+	"ffn-residual": {
+		de: "<b>Intuition:</b> $x \\leftarrow x + \\mathrm{FFN}(\\mathrm{Norm}(x))$: den Stream verfeinern, den ursprünglichen Token behalten. <b>Grenze der Intuition:</b> Der Stream ist eine Summe; viele Schichten überlagern sich und können stören.",
+		en: "<b>Intuition:</b> $x \\leftarrow x + \\mathrm{FFN}(\\mathrm{Norm}(x))$: refine the stream, keep the original token. <b>Limit of this intuition:</b> the stream is a sum; many layers superpose and can interfere."
+	}
+};
+function _tmStepWhy(kind) {
+	var de = !!(window.TM && TM.lang && TM.lang() === "de");
+	var entry = _TM_WHY[kind] || { de: "", en: "" };
+	return '<p class="tm-step-why">' + (de ? entry.de : entry.en) + '</p>';
+}
+
+
 /*
 If you see stuff jumping around, try setting "overflow-anchor: none" to that element.
 */
@@ -2123,7 +2156,7 @@ function buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming) {
 
 	return `
     <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
-    <p class="tm-step-why">${_tmParamDe() ? "Warum hier: Attention projiziert den Stream in Queries, Keys und Values. Die Norm davor hält diese Projektionen bei einer stabilen Skala, damit ein tiefes Modell nicht schon am Blockeingang aus dem Ruder läuft. Intuition: Jedes Token wird für sich auf eine vergleichbare Größe gebracht, bevor es mit anderen verglichen wird. Grenze: Normiert wird pro Token, nicht über Tokens hinweg; die Beziehung der Tokens zueinander bleibt Aufgabe der Attention." : "Why here: attention projects the stream into queries, keys, and values. Normalizing first keeps those projections at a stable scale, so a deep model does not go off the rails at the block input. Intuition: each token is brought to a comparable size before it is compared with other tokens. Limit: normalization is per token, not across tokens; relating tokens to each other remains attention's job."}</p>
+    ${_tmStepWhy("attn-pre-ln")}
 
     <div style="margin-bottom:15px;">
     <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $${hInName}${sup}$ before attention:</p>
@@ -2150,7 +2183,7 @@ function buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts,
 
     <div style="margin-bottom:10px;">
     <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
-    <p class="tm-step-why">${_tmParamDe() ? "Warum hier: Attention liefert einen Vorschlag, das Addieren schreibt ihn in den Stream. Die alte Information bleibt erhalten und der Gradient hat einen kurzen Weg zurück. Intuition: Der Block ersetzt den Vektor nicht, er legt eine Korrektur darüber. Grenze: Addiert wird, nicht ausgewählt; auch ein unpassender Head schreibt in denselben Vektor, und viele Schichten überlagern ihre Beiträge." : "Why here: attention makes a proposal and the addition writes it into the stream. Old information survives and the gradient gets a short path back. Intuition: the block does not replace the vector, it lays a correction over it. Limit: additions are not selections; even a mismatched head writes into the same vector, and many layers superpose their contributions."}</p>
+    ${_tmStepWhy("attn-residual")}
     $$ \\underbrace{${hOutName}${sup}}_{\\text{Output of attention sublayer}} = \\underbrace{${hInName}${sup}}_{\\text{${hInStage}}} + \\underbrace{\\text{MultiHeadAttention}_{\\text{proj}}${sup}}_{\\text{Projected attention output}} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
@@ -3590,7 +3623,7 @@ function _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta,
     return `
     <div style="margin-bottom:15px;">
     <p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $${h1name}${sup}$ before FFN</p>
-    <p class="tm-step-why">${_tmParamDe() ? "Warum hier: Attention und FFN lesen denselben Residual-Stream, dessen Skala über die Tiefe driften kann. Die Norm davor hält die Eingabe jedes Sub-Layers stabil, sodass das Update aus vergleichbaren Zahlen kommt und Gradienten in einem tiefen Stapel weder explodieren noch verschwinden. Intuition: erst normalisieren, dann rechnen. Grenze: Der Stream selbst bleibt unnormiert und kann weiter wachsen; sehr tiefe Pre-LN-Modelle brauchen oft eine finale LayerNorm." : "Why here: attention and the FFN read the same residual stream, whose scale can drift with depth. Normalizing before the branch keeps each sublayer's input stable, so the update is computed from comparable numbers and gradients neither explode nor vanish in a deep stack. Intuition: normalize first, then compute. Limit: the stream itself stays unnormalized and can still grow; very deep pre-LN models often need a final LayerNorm."}</p>
+    ${_tmStepWhy("ffn-pre-ln")}
     $$ \\text{LayerNorm}(${h1name}${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{${h1name}${sup} - \\underbrace{\\mu}_{\\text{Mean of } ${h1name}${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } ${h1name}${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
     <div style="overflow-x:auto;">
     $$ \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}\\left(${h1name}${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h1, ts, h1Stage)}}_{${h1name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
@@ -3602,7 +3635,7 @@ function _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta,
 function _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts) {
     return `
     <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + GELU</strong></p>
-    <p class="tm-step-why">${_tmParamDe() ? "Warum hier: Attention hat den Kontext schon in jedes Token gemischt; jetzt bearbeitet das FFN das Token für sich. Die Expansion auf d_ff gibt der Nichtlinearität Raum, Merkmale zu bilden, und GELU lässt kleine negative Werte teilweise leben. Grenze: Das FFN bewegt keine Information zwischen Positionen; es transformiert nur, was Attention geliefert hat." : "Why here: attention has already mixed context into each token; the FFN now edits that token on its own. Expanding to d_ff gives the nonlinearity room to form features, and GELU keeps small negative values partly alive. Limit: the FFN cannot move information between positions; it only transforms what attention delivered."}</p>
+    ${_tmStepWhy("ffn-expansion")}
 
     $$ \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (expanded)}} = \\underbrace{\\text{GELU}}_{\\substack{\\text{Activation} \\\\ 0.5x(1 + \\text{erf}(x/\\sqrt{2}))}}\\!\\left(\\underbrace{\\text{Norm}(${h1name}${sup})}_{\\text{Normalized input}} \\cdot \\underbrace{W_1${sup}}_{\\substack{\\text{Expansion} \\\\ \\text{Weight Matrix}}} + \\underbrace{b_1${sup}}_{\\text{Expansion Bias}}\\right) $$
 
@@ -3616,7 +3649,7 @@ function _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts) {
 
     return `
     <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 2: Compression</strong></p>
-    <p class="tm-step-why">${_tmParamDe() ? "Warum hier: Der Residual-Stream hat Breite d_model, also muss der expandierte Hidden-State vor dem Addieren zurückprojiziert werden. Die Kompression ist ein gelernter Engpass: Sie entscheidet, welche Merkmale ins Update überleben. Grenze: Eine Matrix schreibt pro Token nur ein Update mit begrenztem Rang; vieles aus der Expansion wird verworfen." : "Why here: the residual stream has width d_model, so the expanded hidden state must be projected back before it can be added. The compression is a learned bottleneck: it decides which features survive into the update. Limit: one matrix writes only a rank-limited update per token, so much of the expansion is discarded."}</p>
+    ${_tmStepWhy("ffn-compression")}
 
     $$ \\underbrace{\\text{out}_{L2}${sup}}_{\\text{FFN output (compressed)}} = \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (expanded)}} \\cdot \\underbrace{W_2${sup}}_{\\substack{\\text{Compression} \\\\ \\text{Weight Matrix}}} + \\underbrace{b_2${sup}}_{\\text{Compression Bias}} $$
 
@@ -3631,7 +3664,7 @@ function _buildFFNStep3Html(naming, h1, out_FFN, h2, ts) {
     return `
     <div style="margin-bottom:10px;">
     <p style="font-size:0.85rem; color:#1e40af;"><strong>${_tmParamDe() ? 'Residual-Verbindung' : 'Residual connection'}</strong> ${_tmParamDe() ? '(Pre-LN: keine Normalisierung auf der Ausgabe der Unterschicht)' : '(Pre-LN: no normalization on sublayer output)'}:</p>
-    <p class="tm-step-why">${_tmParamDe() ? "Warum hier: Die Schicht soll den Stream verfeinern, nicht ersetzen. Das Addieren gibt dem Gradienten einen Identitätspfad und hält den ursprünglichen Token für spätere Schichten verfügbar. Intuition: Der Stream ist ein gemeinsames Notizbuch; jede Schicht schreibt eine Ergänzung hinein. Grenze: Der Stream ist eine Summe, also überlagern sich die Beiträge vieler Schichten und können sich gegenseitig stören." : "Why here: the layer should refine the stream, not replace it. Adding gives the gradient an identity path and keeps the original token available to later layers. Intuition: the stream is a shared notebook; each layer writes an addition. Limit: the stream is a sum, so contributions from many layers superpose and can interfere."}</p>
+    ${_tmStepWhy("ffn-residual")}
     $$ \\underbrace{${h2name}${sup}}_{\\text{${_tmParamDe() ? 'Schicht-Ausgabe' : 'Layer output'}}} = \\underbrace{${h1name}${sup}}_{\\text{${h1Stage}}} + \\underbrace{\\text{out}_{L2}${sup}}_{\\text{${_tmParamDe() ? 'FFN-Ausgabe (komprimiert)' : 'FFN output (compressed)'}}} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px;">
@@ -7479,7 +7512,10 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 			<div id="${prefix}-formula-body">
 				<details class="tm-formula-step" open><summary>${isDe ? 'LayerNorm' : 'LayerNorm'}</summary><div id="${prefix}-layernorm-viz" class="tm-formula-block"></div></details>
 				<details class="tm-formula-step"><summary>${isDe ? 'Attention-Ausgabe + Residual' : 'Attention output + residual'}</summary><div id="${prefix}-concat-viz" class="tm-formula-block"></div><div id="${prefix}-h1-final-viz" class="tm-formula-block"></div></details>
-				<details class="tm-formula-step"><summary>${isDe ? 'FFN / MLP' : 'FFN / MLP'}</summary><p class="tm-formula-kicker">${isDe ? 'Feed-Forward-Netz:' : 'Feed-Forward Network:'}</p><div id="${prefix}-step-1" class="math_transformer"></div><div id="${prefix}-step-2" class="math_transformer"></div><div id="${prefix}-step-3" class="math_transformer"></div></details>
+				<p class="tm-formula-kicker">${isDe ? 'Feed-Forward-Netz:' : 'Feed-Forward Network:'}</p>
+				<div id="${prefix}-step-1" class="math_transformer"></div>
+				<div id="${prefix}-step-2" class="math_transformer"></div>
+				<div id="${prefix}-step-3" class="math_transformer"></div>
 				<details class="tm-formula-step"><summary>h_last</summary><div id="${prefix}-hlast" class="tm-hlast"></div></details>
 			</div>
 		</div>

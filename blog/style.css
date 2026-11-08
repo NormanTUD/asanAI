@@ -1843,6 +1843,97 @@ html.theme-transition *::after {
 	transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
 }
 
+/* Brief boot-style screen for theme switches. The page changes underneath
+   while this is opaque, then it dissolves into the new theme. */
+#theme-loader {
+	--theme-loader-warm: #be7832;
+	position: fixed;
+	inset: 0;
+	z-index: 12000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #fff;
+	color: var(--mn-text);
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+	            background-color 0.45s ease,
+	            filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+html.dark #theme-loader {
+	--theme-loader-warm: #e9aa60;
+	background-color: var(--mn-bg);
+}
+#theme-loader::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(circle at 50% 44%, rgba(190, 120, 50, 0.09), transparent 58%);
+	pointer-events: none;
+}
+html.dark #theme-loader::before {
+	background: radial-gradient(circle at 50% 44%, rgba(233, 170, 96, 0.12), transparent 58%);
+}
+#theme-loader.is-visible {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+}
+#theme-loader.is-leaving {
+	opacity: 0;
+	filter: blur(8px);
+}
+.theme-loader-inner {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 0 24px;
+	text-align: center;
+}
+.theme-loader-title {
+	margin: 0;
+	font-family: var(--mn-font-prose);
+	font-size: clamp(1.45rem, 1rem + 2vw, 2.2rem);
+	font-weight: 400;
+	letter-spacing: 0.01em;
+	color: var(--mn-heading);
+}
+.theme-loader-rule {
+	display: block;
+	width: 44px;
+	height: 1px;
+	margin: 0.9rem 0 0.85rem;
+	background: var(--theme-loader-warm);
+	opacity: 0.42;
+}
+.theme-loader-spinner {
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	border: 1.5px solid transparent;
+	border-top-color: var(--theme-loader-warm);
+	border-right-color: rgba(190, 120, 50, 0.35);
+	animation: themeLoaderSpin 0.9s linear infinite;
+}
+html.dark .theme-loader-spinner {
+	border-right-color: rgba(233, 170, 96, 0.35);
+}
+.theme-loader-sub {
+	margin: 0.8rem 0 0;
+	font-family: var(--mn-font-prose);
+	font-style: italic;
+	font-size: 0.95rem;
+	letter-spacing: 0.02em;
+	color: var(--mn-text-muted);
+}
+@keyframes themeLoaderSpin {
+	to { transform: rotate(360deg); }
+}
+
 #contents, #loader {
 	font-family: var(--mn-font-prose);
 	margin: 0px;
@@ -3559,8 +3650,8 @@ pre code {
 	user-select: none;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	gap: 10px;
+	justify-content: flex-start;
+	gap: 6px;
 	text-align: left;
 }
 
@@ -3573,7 +3664,7 @@ pre code {
 }
 
 .optional-title {
-	flex: 1 1 auto;
+	flex: 0 1 auto;
 	text-align: left;
 }
 

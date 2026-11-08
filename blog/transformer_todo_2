@@ -28,3 +28,19 @@
 
 [done] die heads mit "Head types are heuristic estimates from the attention pattern; …" hebt sich visuell immer noch zu sehr hervor in ner blauen box mit ner schwarzen box usw. mit boxen in  What Happens with the Attention Weights — Head 1, Layer 3  und in Context Matrix for Head 1. mach es ein und ausklappbar wen nder user es will [Die Methoden-/Zitationsnotiz steckt jetzt in einem standardmäßig geschlossenen `<details>` direkt unter der Estimate-Zeile. Auch „What Happens with the Attention Weights“ ist ein geschlossenes `<details>`; „Context Matrix“ ist entboxt und erscheint erst beim Aufklappen. Estimate/Methode haben keine farbigen Balken mehr.]
 
+
+[done] verschiebe "Model size 567 parameters" unter die hyperparameter. "Model Dimension (dmodel): " ist in 3 spalten statt in einer, fixe das sofort und sauber. zeige die model size im "show parameter breakdown"-Buttontext. [Die Model-Size-Zeile sitzt jetzt unten in `#transformer_config`; das Grid ist eine Spalte (`grid-template-columns: 1fr`). Der Button heißt jetzt „Show parameter breakdown · 567 parameters“ bzw. „Hide … · 567 parameters“.]
+
+[done] mach die "Epochs Learning Rate Optimizer Adam SGD RMSProp" und die Hyperparam-Boxen weg oder so wie die Boxen bei 1·Tokenize. [Statt grüner/blauer Sonderboxen sind `#transformer_config`-Felder, Corpus und Trainingskarte jetzt flache weiße Boxen mit dünner Linie und ohne Radius, im Stil der Schritt-Boxen. Die Trainingsfunktionen bleiben erhalten.]
+
+[done] input change output: nicht die einzelnen Bilder anklickbar, sondern die ganze Reihe wie ein Bild. [Ein einziger Klick-Handler hängt jetzt an `.tm-residual-triple`; die Zellen haben keinen eigenen Cursor/Handler mehr. Hover markiert die ganze Reihe.]
+
+[done] "FFN / MLP" hat noch riesen Space und eine zweite Aufklappbox mit FFN / MLP darin. Entferne die zweite Stufe; zeige den Inhalt direkt beim Öffnen der ersten. [Summary-Zeilen sind linksbündig mit dem Plus direkt hinter dem Label. Die innere `tm-formula-step`-Box um FFN/MLP ist entfernt; die Schritt-Divs hängen direkt im FFN-Subbiox und erscheinen beim Öffnen.]
+
+[done] "Why here …" hat links eine Linie; die soll weg. Texte sind gut, aber zu lang: auf das Wesentliche kürzen, keine Prosa, Intuition und Mathe klar zeigen. Mit "limits" waren die Grenzen der Intuition gemeint; das klarer labeln und die Grenzen erklären. [`.tm-step-why` hat keinen linken Balken mehr. Die sechs Texte sind jetzt kurze `Intuition:`- und `Grenze der Intuition:`-Zeilen mit nur den nützlichen allgemeinen Formeln (Attn/FFN/Residual); keine langen Erklärungen mehr.]
+
+[done] logit lens: das "h_after · hidden state after layer 1" ist in einer hässlichen Box. Zeige es einfach. Färbe h_after nach Tiefe, nutze Underbraces für die Bedeutung und markiere Breite/Höhe (Tokens, Dimensionen). [Das h_after steht jetzt ohne Details-Box direkt im Logit-Lens-Bereich; es ist mit `\underbrace` als „hidden state after layer N“ und „rows: tokens (T) / columns: dimensions (d_model)“ beschriftet und mit der Tiefenfarbe eingefärbt.]
+
+[done] die Logit-Linse bei den Layern sieht anders aus als "Attention" und "FFN / MLP". [Die Logit-Linse ist jetzt eine `.tm-layer-subbox` mit gleicher flacher Summary/Plus-Optik; die innere Tabelle ist entboxt.]
+
+[done] Tests aktualisiert [transformer_ui2_regression_test.py prüft jetzt zusätzlich Ein-Spalten-Grid, Model-Size-Position, Button-Text, flache Config-/Trainingsboxen, ganze-Reihe-Klick, fehlende FFN-Doppelbox, Why-Labels, h_after-Underbrace/Farbe und die Logit-Linsen-Optik: 25/25. transformer_fix_regression_test.py 36/36 inkl. deterministischem d_model=10-Training.]

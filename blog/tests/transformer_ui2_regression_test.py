@@ -108,7 +108,7 @@ def main() -> None:
                 return {border: cs.borderTopWidth, bg: cs.backgroundColor, cursor: cs.cursor};
             }""")
             check("triple heatmaps have no box", bool(triple) and triple["border"] == "0px" and triple["bg"] == "rgba(0, 0, 0, 0)", str(triple))
-            page.locator(".tm-triple-cell").first.click()
+            page.locator(".tm-residual-triple").first.click()
             page.wait_for_timeout(400)
             math_panel = page.evaluate("""() => {
                 const panel = document.querySelector('.tm-triple-math');
@@ -118,6 +118,66 @@ def main() -> None:
             check("clicking a heatmap reveals its pmatrix math",
                   bool(math_panel) and math_panel["visible"] and math_panel["math"] >= 3, str(math_panel))
             check("matrix panel has no blue left bar", bool(math_panel) and math_panel["border"] == "0px", str(math_panel))
+
+            config = page.evaluate("""() => {
+                const cfg = document.getElementById('transformer_config');
+                const slot = document.querySelector('#transformer_config .tm-model-size-slot');
+                const btn = document.getElementById('param-breakdown-btn');
+                const field = cfg.querySelector('.transformer-config-field');
+                const train = document.getElementById('transformer-train-card');
+                return {
+                    cols: getComputedStyle(cfg).gridTemplateColumns,
+                    slotUnder: !!slot,
+                    btn: btn ? btn.textContent.trim() : '',
+                    fieldRadius: field ? getComputedStyle(field).borderRadius : null,
+                    trainRadius: train ? getComputedStyle(train).borderRadius : null
+                };
+            }""")
+            check("hyperparameter grid has one column", bool(config) and len(config["cols"].split()) == 1, str(config))
+            check("model size sits below the hyperparameters", bool(config) and config["slotUnder"], str(config))
+            check("hyperparameter/training boxes use the flat step style",
+                  bool(config) and config["fieldRadius"] == "0px" and config["trainRadius"] == "0px", str(config))
+            page.wait_for_function("() => { const b=document.getElementById('param-breakdown-btn'); return b && /parameters/i.test(b.textContent); }", timeout=30000)
+            check("parameter-breakdown button shows the model size",
+                  "parameters" in page.evaluate("() => document.getElementById('param-breakdown-btn').textContent"))
+
+            ffn_inner = page.evaluate("""() => {
+                const card = document.querySelector('.tm-layer-card');
+                const fb = card.querySelector('[id$="-formula-body"]');
+                if (!fb) return null;
+                return {
+                    hasInnerFfn: Array.from(fb.querySelectorAll('.tm-formula-step > summary')).some(s => s.textContent.trim() === 'FFN / MLP'),
+                    stepDirect: !!fb.querySelector('[id$="-step-1"]') && !fb.querySelector('[id$="-step-1"]').closest('.tm-formula-step')
+                };
+            }""")
+            check("FFN/MLP has no duplicate inner collapsible",
+                  bool(ffn_inner) and not ffn_inner["hasInnerFfn"] and ffn_inner["stepDirect"], str(ffn_inner))
+
+            why = page.evaluate("""() => {
+                const w = document.querySelector('.tm-step-why');
+                if (!w) return null;
+                return {border: getComputedStyle(w).borderLeftWidth, text: w.innerText};
+            }""")
+            check("why-note has no left bar and labels the limits",
+                  bool(why) and why["border"] == "0px" and ("Limit of this intuition" in why["text"] or "Grenze der Intuition" in why["text"]), str(why)[:200])
+
+            hafter = page.evaluate("""() => {
+                const sub = document.querySelector('.tm-logit-subbox');
+                const simple = document.querySelector('.tm-hafter-simple');
+                const texEl = simple ? simple.querySelector('[data-tex]') : null;
+                return {
+                    subbox: !!sub,
+                    summary: sub ? sub.querySelector('summary').textContent.trim() : '',
+                    simple: !!simple,
+                    math: simple ? simple.querySelectorAll('math').length : 0,
+                    tex: texEl ? texEl.getAttribute('data-tex') : ''
+                };
+            }""")
+            check("logit lens uses a flat subbox and a simple h_after",
+                  bool(hafter) and hafter["subbox"] and hafter["simple"] and "Logit lens" in hafter["summary"], str(hafter)[:200])
+            check("h_after actually renders as math", bool(hafter) and hafter["math"] >= 1, str(hafter)[:220])
+            check("h_after is coloured by depth and shape-labelled",
+                  bool(hafter) and "underbrace" in hafter["tex"] and "color[RGB]" in hafter["tex"], str(hafter)[:220])
 
             logit = page.evaluate("""() => {
                 const host = document.querySelector('.tm-logit-lens-host');
