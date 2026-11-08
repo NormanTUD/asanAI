@@ -244,14 +244,20 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Token trajectories through GPT-2 <span>· real PCA</span></p>
-									<p class="demo-sub">Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. The 3D points are a PCA projection of the 768-dimensional states.</p>
+									<p class="demo-sub">Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. PCA finds the three directions where the 768-dimensional states change most and projects everything onto them; the 3D points are a shadow of the real motion.</p>
 								</div>
 								<span class="demo-badge">GPT-2 · PCA</span>
 							</div>
 							<div class="demo-body">
 								<div id="real-trajectory-3d" class="traj-echarts-host" role="img" aria-label="3D token trajectories through GPT-2, PCA-reduced to three dimensions"></div>
+								<div class="demo-controls traj-step-controls">
+									<button class="btn-demo btn-demo--green" type="button" id="traj-next-layer">Next layer →</button>
+									<button class="btn-demo" type="button" id="traj-reset">Reset</button>
+									<span class="traj-layer-label" id="traj-layer-label">Embedding</span>
+								</div>
+								<div class="traj-candidates" id="traj-candidates" aria-live="polite"></div>
 							</div>
-							<div class="demo-foot">Real GPT-2 small hidden states, normalized per layer and PCA-reduced to 3D. Explained variance: PC1 22.5%, PC2 17.9%, PC3 13.5%. The 3D view is a projection; the model works in 768 dimensions. The last token, “ is”, is the one that predicts “ Paris” in the full model. Original diagram: Ten Minutes, CC BY-SA 4.0.</div>
+							<div class="demo-foot">Real GPT-2 small hidden states, normalized per layer and PCA-reduced to 3D. The highlighted candidate is the model's top next token. Press “Next layer” to reveal the path one block at a time.</div>
 						</div>
 						<div class="prose">
 							<p>This is the transformer. For every token, again and again, it asks how that token stands in context to all the other tokens right now. Attention lets it look around, a dense layer and an activation function transform each token, and LayerNorm keeps the numbers in a stable range. A few other parts do their jobs along the way.</p>
@@ -740,7 +746,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		</div>
 	</main>
 
-	<script type="application/json" id="gpt2-pca-data">{"sentence": "The capital of France is", "tokens": ["The", " capital", " of", " France", " is"], "ids": [464, 3139, 286, 4881, 318], "layers": ["Embedding + position", "Block 1", "Block 2", "Block 3", "Block 4", "Block 5", "Block 6", "Block 7", "Block 8", "Block 9", "Block 10", "Block 11", "Block 12"], "points": [[[-0.3471, -0.8096, 0.2115], [-0.6593, -0.211, -0.0394], [-0.6764, -0.2625, -0.0394], [-0.6951, 0.2452, -0.1424], [-0.6972, 0.2442, -0.1426], [-0.696, 0.2454, -0.1423], [-0.6931, 0.2477, -0.1418], [-0.6907, 0.2495, -0.1408], [-0.6888, 0.2513, -0.1391], [-0.6866, 0.2531, -0.1371], [-0.6848, 0.2545, -0.1361], [-0.682, 0.2568, -0.1333], [-0.6187, 0.2614, -0.1182]], [[-0.195, -0.9765, 0.1725], [0.2369, -0.2199, -0.21], [0.3837, -0.3651, -0.166], [0.3464, -0.2752, -0.1477], [0.3655, -0.287, -0.1155], [0.3446, -0.2389, -0.1081], [0.2728, -0.1175, -0.0563], [0.245, -0.0504, 0.0138], [0.2098, 0.0315, 0.1633], [0.1878, 0.0924, 0.246], [0.1908, 0.1183, 0.3141], [0.1422, 0.1851, 0.4405], [0.1004, 0.1329, 0.5923]], [[-0.3086, -0.9404, 0.2736], [0.1635, -0.0193, -0.3349], [0.2698, -0.0905, -0.386], [0.2752, -0.0491, -0.4003], [0.2486, -0.019, -0.3708], [0.2426, 0.001, -0.3648], [0.2252, 0.0445, -0.3008], [0.2276, 0.106, -0.1669], [0.1847, 0.1751, -0.0311], [0.1776, 0.2134, 0.1308], [0.1543, 0.2291, 0.2199], [0.1041, 0.2664, 0.3978], [0.0668, 0.1677, 0.5828]], [[-0.2823, -1.0, 0.2055], [0.1891, -0.1032, -0.2037], [0.2811, -0.1456, -0.1811], [0.2504, -0.0774, -0.1711], [0.267, -0.074, -0.1515], [0.2118, 0.0111, -0.1282], [0.1711, 0.0978, -0.065], [0.1564, 0.164, 0.0575], [0.1507, 0.1971, 0.169], [0.1315, 0.2047, 0.2125], [0.1408, 0.2132, 0.2665], [0.1317, 0.2466, 0.4238], [0.0686, 0.1452, 0.6055]], [[-0.3328, -0.9319, 0.2659], [0.1792, 0.0099, -0.3359], [0.2581, -0.0296, -0.3701], [0.2418, 0.0081, -0.3782], [0.1909, 0.0754, -0.3472], [0.1545, 0.137, -0.2952], [0.1915, 0.1396, -0.2517], [0.2004, 0.2089, -0.073], [0.1698, 0.2453, 0.0444], [0.1587, 0.264, 0.1754], [0.1483, 0.2599, 0.2912], [0.1308, 0.2486, 0.462], [0.0943, 0.1445, 0.6255]]], "explained": [0.225, 0.1785, 0.1349], "landmarks": [{"word": " Paris", "value": [-0.2537, -0.5461, 0.1589]}, {"word": " London", "value": [-0.2541, -0.5263, 0.143]}, {"word": " Berlin", "value": [-0.238, -0.5468, 0.1056]}, {"word": " the", "value": [-0.3445, -0.2858, 0.2668]}, {"word": " France", "value": [-0.2629, -0.5878, 0.1754]}]}
+	<script type="application/json" id="gpt2-pca-data">{"sentence": "The capital of France is", "tokens": ["The", " capital", " of", " France", " is"], "ids": [464, 3139, 286, 4881, 318], "layers": ["Embedding + position", "Block 1", "Block 2", "Block 3", "Block 4", "Block 5", "Block 6", "Block 7", "Block 8", "Block 9", "Block 10", "Block 11", "Block 12"], "points": [[[-0.3471, -0.8096, 0.2115], [-0.6593, -0.211, -0.0394], [-0.6764, -0.2625, -0.0394], [-0.6951, 0.2452, -0.1424], [-0.6972, 0.2442, -0.1426], [-0.696, 0.2454, -0.1423], [-0.6931, 0.2477, -0.1418], [-0.6907, 0.2495, -0.1408], [-0.6888, 0.2513, -0.1391], [-0.6866, 0.2531, -0.1371], [-0.6848, 0.2545, -0.1361], [-0.682, 0.2568, -0.1333], [-0.6187, 0.2614, -0.1182]], [[-0.195, -0.9765, 0.1725], [0.2369, -0.2199, -0.21], [0.3837, -0.3651, -0.166], [0.3464, -0.2752, -0.1477], [0.3655, -0.287, -0.1155], [0.3446, -0.2389, -0.1081], [0.2728, -0.1175, -0.0563], [0.245, -0.0504, 0.0138], [0.2098, 0.0315, 0.1633], [0.1878, 0.0924, 0.246], [0.1908, 0.1183, 0.3141], [0.1422, 0.1851, 0.4405], [0.1004, 0.1329, 0.5923]], [[-0.3086, -0.9404, 0.2736], [0.1635, -0.0193, -0.3349], [0.2698, -0.0905, -0.386], [0.2752, -0.0491, -0.4003], [0.2486, -0.019, -0.3708], [0.2426, 0.001, -0.3648], [0.2252, 0.0445, -0.3008], [0.2276, 0.106, -0.1669], [0.1847, 0.1751, -0.0311], [0.1776, 0.2134, 0.1308], [0.1543, 0.2291, 0.2199], [0.1041, 0.2664, 0.3978], [0.0668, 0.1677, 0.5828]], [[-0.2823, -1.0, 0.2055], [0.1891, -0.1032, -0.2037], [0.2811, -0.1456, -0.1811], [0.2504, -0.0774, -0.1711], [0.267, -0.074, -0.1515], [0.2118, 0.0111, -0.1282], [0.1711, 0.0978, -0.065], [0.1564, 0.164, 0.0575], [0.1507, 0.1971, 0.169], [0.1315, 0.2047, 0.2125], [0.1408, 0.2132, 0.2665], [0.1317, 0.2466, 0.4238], [0.0686, 0.1452, 0.6055]], [[-0.3328, -0.9319, 0.2659], [0.1792, 0.0099, -0.3359], [0.2581, -0.0296, -0.3701], [0.2418, 0.0081, -0.3782], [0.1909, 0.0754, -0.3472], [0.1545, 0.137, -0.2952], [0.1915, 0.1396, -0.2517], [0.2004, 0.2089, -0.073], [0.1698, 0.2453, 0.0444], [0.1587, 0.264, 0.1754], [0.1483, 0.2599, 0.2912], [0.1308, 0.2486, 0.462], [0.0943, 0.1445, 0.6255]]], "explained": [0.225, 0.1785, 0.1349], "landmarks": [{"word": " the", "value": [-0.3445, -0.2858, 0.2668], "p": 0.084654}, {"word": " now", "value": [-0.2676, -0.4073, 0.1668], "p": 0.047577}, {"word": " a", "value": [-0.3457, -0.3141, 0.2525], "p": 0.04621}, {"word": " France", "value": [-0.2629, -0.5878, 0.1754], "p": 0.031875}, {"word": " Paris", "value": [-0.2537, -0.5461, 0.1589], "p": 0.031726}, {"word": " in", "value": [-0.362, -0.3362, 0.3113], "p": 0.02672}, {"word": " also", "value": [-0.291, -0.4294, 0.1881], "p": 0.026292}, {"word": " not", "value": [-0.3338, -0.3821, 0.1969], "p": 0.023788}], "top": [{"id": 262, "token": " the", "p": 0.084654}, {"id": 783, "token": " now", "p": 0.047577}, {"id": 257, "token": " a", "p": 0.04621}, {"id": 4881, "token": " France", "p": 0.031875}, {"id": 6342, "token": " Paris", "p": 0.031726}, {"id": 287, "token": " in", "p": 0.02672}, {"id": 635, "token": " also", "p": 0.026292}, {"id": 407, "token": " not", "p": 0.023788}], "chosen": " the"}
 </script>
 	<script src="../temml.min.js"></script>
 	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
@@ -3866,6 +3872,26 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			});
 		}
 
+				var step = 0;
+		function updateStepLabel() {
+			var el = document.getElementById("traj-layer-label");
+			if (!el) return;
+			el.textContent = step === 0 ? "Embedding" : (de ? "Schicht " : "Layer ") + step + " / " + (data.layers.length - 1);
+		}
+		function renderCandidates() {
+			var el = document.getElementById("traj-candidates");
+			if (!el) return;
+			var top = (data.top || []).slice(0, 5);
+			el.innerHTML = top.map(function (item) {
+				var chosen = item.token === data.chosen;
+				return '<span class="traj-candidate' + (chosen ? " is-chosen" : "") + '">' +
+					'<b>' + displayToken(item.token) + '</b>' +
+					'<span class="pct">' + (item.p * 100).toFixed(2) + ' %</span>' +
+					(chosen ? '<span>' + (de ? "gewählt" : "chosen") + '</span>' : '') +
+					'</span>';
+			}).join("");
+		}
+
 		function draw() {
 			if (chart) {
 				try { chart.dispose(); } catch (e) {}
@@ -3880,19 +3906,44 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 			var series = [];
 			var legendData = [];
-			if (data.landmarks && data.landmarks.length) {
+			var topLandmarks = (data.landmarks || []).slice(0, 5);
+			if (topLandmarks.length) {
 				legendData.push(de ? "Kandidaten" : "Candidates");
 				series.push({
 					name: de ? "Kandidaten" : "Candidates",
 					type: "scatter3D",
-					data: data.landmarks.map(function (l) { return { name: displayToken(l.word), value: l.value }; }),
-					symbol: "diamond",
-					symbolSize: 8,
-					itemStyle: { color: "rgba(100,116,139,0.8)", borderWidth: 1, borderColor: "#334155" },
-					label: {
-						show: true, position: "top", distance: 5,
-						formatter: function (p) { return p.name; },
-						textStyle: { fontSize: 10, color: c.muted, fontWeight: 600 }
+					data: topLandmarks.map(function (item) {
+						var chosen = item.word === data.chosen;
+						return {
+							name: displayToken(item.word),
+							value: item.value,
+							p: item.p,
+							symbol: chosen ? "star" : "diamond",
+							symbolSize: chosen ? 18 : 9,
+							itemStyle: {
+								color: chosen ? c.green : "rgba(100,116,139,0.8)",
+								borderWidth: 1,
+								borderColor: chosen ? c.green : "#334155"
+							},
+							label: {
+								show: true,
+								position: "top",
+								distance: 5,
+								formatter: chosen
+									? (de ? "gewählt: " : "chosen: ") + displayToken(item.word) + " " + (item.p * 100).toFixed(1) + " %"
+									: displayToken(item.word),
+								textStyle: {
+									fontSize: chosen ? 12 : 10,
+									color: chosen ? c.green : c.muted,
+									fontWeight: chosen ? 700 : 600
+								}
+							}
+						};
+					}),
+					tooltip: {
+						formatter: function (p) {
+							return p.name + "<br>" + (p.data.p * 100).toFixed(2) + " %";
+						}
 					}
 				});
 			}
@@ -3901,7 +3952,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				var pts = data.points[ti];
 				var tokenLabel = displayToken(token) + " (" + (ti + 1) + ")";
 				legendData.push(tokenLabel);
-				for (var i = 0; i < pts.length - 1; i++) {
+				var last = Math.min(step, pts.length - 1);
+				for (var i = 0; i < last; i++) {
 					var from3 = pts[i];
 					var to3 = pts[i + 1];
 					var shaftEnd = computeArrowheadBase(from3, to3, 0.4);
@@ -3914,22 +3966,26 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					});
 					add3DArrowheadSeries(series, from3, to3, color, tokenLabel);
 				}
+				var markerData = [];
+				for (var j = 0; j <= last; j++) {
+					var isStart = j === 0;
+					var isCurrent = j === last && last > 0;
+					markerData.push({
+						value: pts[j],
+						name: layerLabel(j),
+						symbolSize: isStart ? 10 : (isCurrent ? 8 : 4),
+						itemStyle: {
+							color: color,
+							borderWidth: isStart ? 2 : 0,
+							borderColor: c.ink,
+							opacity: isStart ? 1 : (isCurrent ? 0.95 : 0.28)
+						}
+					});
+				}
 				series.push({
 					name: tokenLabel,
 					type: "scatter3D",
-					data: pts.map(function (p, li) {
-						return {
-							value: p,
-							name: layerLabel(li),
-							symbolSize: li === 0 ? 10 : 4,
-							itemStyle: {
-								color: color,
-								borderWidth: li === 0 ? 2 : 0,
-								borderColor: c.ink,
-								opacity: li === 0 ? 1 : 0.01
-							}
-						};
-					}),
+					data: markerData,
 					symbol: "circle",
 					tooltip: {
 						formatter: function (p) {
@@ -3938,6 +3994,19 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					}
 				});
 			});
+			if (step >= data.layers.length - 1 && data.chosen && topLandmarks.length) {
+				var chosen = topLandmarks.find(function (item) { return item.word === data.chosen; });
+				var lastToken = data.points[data.tokens.length - 1];
+				if (chosen && lastToken) {
+					series.push({
+						name: "__chosen__",
+						type: "line3D",
+						data: [lastToken[lastToken.length - 1], chosen.value],
+						lineStyle: { width: 2, color: c.green, type: "dashed", opacity: 0.8 },
+						silent: true
+					});
+				}
+			}
 			try {
 				chart.setOption({
 					backgroundColor: "transparent",
@@ -3979,7 +4048,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 		}
 
-function start() {
+		function start() {
 			if (loaded || loading) return;
 			loading = true;
 			ensureLibs(function () {
@@ -3988,6 +4057,22 @@ function start() {
 				draw();
 			});
 		}
+		var nextLayerBtn = document.getElementById("traj-next-layer");
+		var resetBtn = document.getElementById("traj-reset");
+		if (nextLayerBtn) nextLayerBtn.addEventListener("click", function () {
+			if (step < data.layers.length - 1) {
+				step += 1;
+				updateStepLabel();
+				if (loaded) draw();
+			}
+		});
+		if (resetBtn) resetBtn.addEventListener("click", function () {
+			step = 0;
+			updateStepLabel();
+			if (loaded) draw();
+		});
+		renderCandidates();
+		updateStepLabel();
 		if ("IntersectionObserver" in window) {
 			var io = new IntersectionObserver(function (entries) {
 				if (entries.some(function (e) { return e.isIntersecting; })) {

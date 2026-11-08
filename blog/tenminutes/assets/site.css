@@ -8168,6 +8168,40 @@ body.has-toc h4[id] { scroll-margin-top: 84px; }
 @media (max-width: 760px) {
 	.traj-echarts-host { height: 340px; min-height: 300px; }
 }
+.traj-step-controls { align-items: center; margin-top: 10px; }
+.traj-layer-label {
+	margin-left: auto;
+	font-family: var(--tm-ui);
+	font-size: 0.78rem;
+	font-weight: 600;
+	color: var(--tm-muted);
+}
+.traj-candidates {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 10px;
+	margin-top: 10px;
+	font-family: var(--tm-ui);
+	font-size: 0.76rem;
+	color: var(--tm-muted);
+}
+.traj-candidate {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 8px;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-paper);
+}
+.traj-candidate b { color: var(--tm-ink); font-weight: 700; }
+.traj-candidate .pct { color: var(--tm-muted); font-variant-numeric: tabular-nums; }
+.traj-candidate.is-chosen {
+	border-color: var(--tm-green);
+	background: color-mix(in srgb, var(--tm-green) 10%, var(--tm-paper));
+	color: var(--tm-green-deep);
+}
+.traj-candidate.is-chosen .pct { color: inherit; }
+html[data-theme="dark"] .traj-candidate.is-chosen { color: var(--tm-green); }
 
 /* ── real terminal for the generated-code demo ───────────── */
 .code-demo-term-body {
