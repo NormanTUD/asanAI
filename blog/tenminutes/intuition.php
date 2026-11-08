@@ -1738,33 +1738,82 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function probabilityColor(p, c) {
 			return mixRgb(c.gold, c.blue, Math.max(0, Math.min(1, p)));
 		}
-		function featherPath(ctx, origin, target, color, seed) {
+		function drawValley(ctx, origin, target, width, color) {
 			var dx = target.x - origin.x;
 			var dy = target.y - origin.y;
 			var len = Math.hypot(dx, dy) || 1;
 			var nx = -dy / len;
 			var ny = dx / len;
-			var strands = 7;
-			for (var i = 0; i < strands; i++) {
-				var off = (i - (strands - 1) / 2) * 2.4;
-				var jitter = Math.sin((i + 1) * 12.9898 + seed * 78.233) * 1.8;
-				var mx = (origin.x + target.x) / 2 + nx * (off + jitter);
-				var my = (origin.y + target.y) / 2 + ny * (off + jitter);
-				var grad = ctx.createLinearGradient(origin.x, origin.y, target.x, target.y);
-				grad.addColorStop(0, rgba(color, 0.28));
-				grad.addColorStop(0.55, rgba(color, 0.14));
-				grad.addColorStop(1, rgba(color, 0));
-				ctx.save();
-				ctx.strokeStyle = grad;
-				ctx.lineWidth = 1.1 + (i % 3 === 0 ? 0.6 : 0);
-				ctx.lineCap = "round";
-				ctx.beginPath();
-				ctx.moveTo(origin.x + nx * off * 0.15, origin.y + ny * off * 0.15);
-				ctx.quadraticCurveTo(mx, my, target.x + nx * off * 0.55, target.y + ny * off * 0.55);
-				ctx.stroke();
-				ctx.restore();
+			var mx = (origin.x + target.x) / 2 + nx * len * 0.06;
+			var my = (origin.y + target.y) / 2 + ny * len * 0.06;
+			var samples = 14;
+			var base = [];
+			for (var i = 0; i <= samples; i++) {
+				var t = i / samples;
+				var u = 1 - t;
+				var x = u * u * origin.x + 2 * u * t * mx + t * t * target.x;
+				var y = u * u * origin.y + 2 * u * t * my + t * t * target.y;
+				var tx = 2 * u * (mx - origin.x) + 2 * t * (target.x - mx);
+				var ty = 2 * u * (my - origin.y) + 2 * t * (target.y - my);
+				var tl = Math.hypot(tx, ty) || 1;
+				var px = -ty / tl;
+				var py = tx / tl;
+				var w = width * (0.16 + 0.84 * Math.pow(t, 0.75));
+				base.push({ x: x, y: y, px: px, py: py, w: w });
 			}
+			var levels = [1, 0.72, 0.46, 0.24];
+			levels.forEach(function (scale, li) {
+				var pts = [];
+				base.forEach(function (p) {
+					pts.push({ x: p.x + p.px * p.w * scale, y: p.y + p.py * p.w * scale });
+				});
+				var end = base[base.length - 1];
+				var capR = end.w * scale * 0.9;
+				var a0 = Math.atan2(end.py, end.px);
+				var steps = 6;
+				for (var k = 1; k < steps; k++) {
+					var a = a0 + Math.PI * k / steps;
+					pts.push({ x: target.x + Math.cos(a) * capR, y: target.y + Math.sin(a) * capR });
+				}
+				for (var j = base.length - 1; j >= 0; j--) {
+					var p = base[j];
+					pts.push({ x: p.x - p.px * p.w * scale, y: p.y - p.py * p.w * scale });
+				}
+				ctx.beginPath();
+				pts.forEach(function (p, idx) {
+					if (idx === 0) ctx.moveTo(p.x, p.y);
+					else ctx.lineTo(p.x, p.y);
+				});
+				ctx.closePath();
+				ctx.fillStyle = rgba(color, 0.018 + 0.018 * li);
+				ctx.fill();
+				ctx.strokeStyle = rgba(color, 0.16 + 0.08 * li);
+				ctx.lineWidth = 0.9;
+				ctx.stroke();
+			});
+			ctx.beginPath();
+			ctx.arc(target.x, target.y, 3.5, 0, Math.PI * 2);
+			ctx.fillStyle = rgba(color, 0.75);
+			ctx.fill();
 		}
+		function drawValleys(ctx, at, step, spread, baseWidth, c) {
+			isoBranches.forEach(function (branch) {
+				if (step < branch.atStep) return;
+				var origin = at(isoPath[branch.atStep]);
+				branch.alternatives.forEach(function (alt) {
+					var target = at(alt.path);
+					var pc = Math.max(0, Math.min(1, 1 - alt.entropy));
+					var color = probabilityColor(pc, c);
+					var maxW = Math.max(10, alt.entropy * spread * baseWidth * 0.75);
+					drawValley(ctx, origin, target, maxW, color);
+					ctx.font = "11px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
+					ctx.textAlign = "center";
+					ctx.fillStyle = color;
+					ctx.fillText(isoAltLabel(alt.token), target.x, target.y - maxW * 0.9 - 8);
+				});
+			});
+		}
+
 		function drawIso(ctx, w, h) {
 			var c = TM.colors();
 			var pad = 30;
@@ -1797,6 +1846,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var step = Math.min(isoStep, isoTokens.length - 1);
 			var baseWidth = Math.min(w, h) * 0.22;
 			var spread = 0.35 + 0.65 * isoTemp;
+			drawValleys(ctx, at, step, spread, baseWidth, c);
 			if (step >= 1) {
 				var upper = [], lower = [];
 				for (var i = 0; i <= step; i++) {
@@ -1847,37 +1897,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				ctx.stroke();
 				ctx.globalAlpha = 1;
 			}
-			isoBranches.forEach(function (branch) {
-				if (step < branch.atStep) return;
-				var origin = at(isoPath[branch.atStep]);
-				branch.alternatives.forEach(function (alt, altIndex) {
-					var target = at(alt.path);
-					var pc = Math.max(0, Math.min(1, 1 - alt.entropy));
-					var color = probabilityColor(pc, c);
-					var endW = Math.max(10, alt.entropy * spread * baseWidth * 0.65);
-					featherPath(ctx, origin, target, color, branch.atStep * 10 + altIndex);
-					var glowR = Math.max(13, endW * 1.15);
-					var glow = ctx.createRadialGradient(target.x, target.y, 0, target.x, target.y, glowR);
-					glow.addColorStop(0, rgba(color, 0.20));
-					glow.addColorStop(0.6, rgba(color, 0.08));
-					glow.addColorStop(1, rgba(color, 0));
-					ctx.fillStyle = glow;
-					ctx.beginPath();
-					ctx.arc(target.x, target.y, glowR, 0, Math.PI * 2);
-					ctx.fill();
-					ctx.globalAlpha = 0.55;
-					ctx.strokeStyle = color;
-					ctx.lineWidth = 1.1;
-					ctx.beginPath();
-					ctx.arc(target.x, target.y, Math.max(4, endW * 0.22), 0, Math.PI * 2);
-					ctx.stroke();
-					ctx.globalAlpha = 1;
-					ctx.font = "11px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
-					ctx.textAlign = "center";
-					ctx.fillStyle = color;
-					ctx.fillText(isoAltLabel(alt.token), target.x, target.y - Math.max(8, glowR * 0.75) - 6);
-				});
-			});
 			if (step >= 1) {
 				ctx.beginPath();
 				for (var s = 0; s <= step; s++) { var qs = at(isoPath[s]); if (s === 0) ctx.moveTo(qs.x, qs.y); else ctx.lineTo(qs.x, qs.y); }
@@ -3997,16 +4016,23 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				var markerData = [];
 				for (var j = 0; j <= last; j++) {
 					var isStart = j === 0;
-					var isCurrent = j === last && last > 0;
+					var isCurrent = j === last;
 					markerData.push({
 						value: pts[j],
 						name: layerLabel(j),
-						symbolSize: isStart ? 10 : (isCurrent ? 8 : 4),
+						symbolSize: isCurrent ? 9 : (isStart ? 5 : 4),
 						itemStyle: {
 							color: color,
-							borderWidth: isStart ? 2 : 0,
-							borderColor: c.ink,
-							opacity: isStart ? 1 : (isCurrent ? 0.95 : 0.28)
+							borderWidth: isCurrent ? 2 : 0,
+							borderColor: isCurrent ? c.paper : c.ink,
+							opacity: isCurrent ? 1 : (isStart ? 0.35 : 0.22)
+						},
+						label: {
+							show: isCurrent,
+							formatter: displayToken(token),
+							position: "top",
+							distance: 6,
+							textStyle: { color: color, fontSize: 11, fontWeight: 700 }
 						}
 					});
 				}
@@ -4056,9 +4082,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						textStyle: { fontSize: 12, color: c.ink },
 						itemWidth: 12, itemHeight: 10
 					},
-					xAxis3D: { type: "value", name: "PC 1", min: extent.x[0], max: extent.x[1], nameTextStyle: { color: c.muted }, axisLabel: { textStyle: { color: c.muted, fontSize: 9 } } },
-					yAxis3D: { type: "value", name: "PC 2", min: extent.y[0], max: extent.y[1], nameTextStyle: { color: c.muted }, axisLabel: { textStyle: { color: c.muted, fontSize: 9 } } },
-					zAxis3D: { type: "value", name: "PC 3", min: extent.z[0], max: extent.z[1], nameTextStyle: { color: c.muted }, axisLabel: { textStyle: { color: c.muted, fontSize: 9 } } },
+					xAxis3D: { type: "value", name: "PC 1", min: extent.x[0], max: extent.x[1], nameTextStyle: { color: c.muted }, axisLabel: { formatter: function (v) { return Number(v).toFixed(1); }, textStyle: { color: c.muted, fontSize: 9 } } },
+					yAxis3D: { type: "value", name: "PC 2", min: extent.y[0], max: extent.y[1], nameTextStyle: { color: c.muted }, axisLabel: { formatter: function (v) { return Number(v).toFixed(1); }, textStyle: { color: c.muted, fontSize: 9 } } },
+					zAxis3D: { type: "value", name: "PC 3", min: extent.z[0], max: extent.z[1], nameTextStyle: { color: c.muted }, axisLabel: { formatter: function (v) { return Number(v).toFixed(1); }, textStyle: { color: c.muted, fontSize: 9 } } },
 					grid3D: {
 						viewControl: { projection: "perspective", alpha: 30, beta: 40, distance: 200, autoRotate: false, damping: 0.9 },
 						light: { main: { intensity: 1.2, shadow: false }, ambient: { intensity: 0.3 } },
