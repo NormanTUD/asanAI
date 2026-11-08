@@ -56,7 +56,6 @@
 					<section class="section-block" id="realmodel">
 						<div class="section-kicker"><span class="sk-num">01</span> The real model</div>
 						<h2 class="section-title">Train a tiny transformer.</h2>
-<div class="tm-model-size-slot"><span class="tm-model-size-label"><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "Modellgröße" : "Model size"; ?></span><div id="nr_params" style="display:none"></div></div>
 <div id="transformer_config">
 <div style="margin-bottom: 15px;">
 <label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
@@ -165,11 +164,11 @@
 </div>
 <style>
 #transformer-train-card {
-	background: var(--mn-emerald-light, #f0fdf4);
-	border: 1px solid var(--mn-emerald, #10b981);
-	border-radius: 10px;
+	background: var(--mn-surface, #ffffff);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 0;
 	margin: 15px 0;
-	padding: 14px 16px;
+	padding: 12px 14px;
 }
 .transformer-train-controls {
 	display: flex;
@@ -283,14 +282,18 @@
 /* Compact hyperparameter cards: sliders stay inside a grid, not full-page. */
 #transformer_config {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-	gap: 12px 16px;
+	grid-template-columns: 1fr;
+	gap: 12px;
 	align-items: start;
+	background: transparent;
+	border: 0;
+	padding: 0;
 }
 #transformer_config > div {
 	margin-bottom: 0 !important;
 	padding: 10px 12px;
 	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	border-radius: 0;
 	background: var(--tm-card, var(--mn-surface, #ffffff));
 }
 #transformer_config > #param-breakdown-toggle,
@@ -308,19 +311,7 @@
 	font-size: 0.9rem;
 }
 
-.tm-model-size-slot {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	min-height: 30px;
-	margin: 4px 0 10px;
-	font: 600 0.8rem/1.3 "Open Sans", system-ui, sans-serif;
-	color: var(--tm-muted, #627476);
-}
-.tm-model-size-slot #nr_params { color: var(--tm-ink, #000000); }
-.tm-model-size-slot #nr_params b { color: var(--tm-petrol, #004b6f); }
-#transformer_config { align-items: stretch; }
-#transformer_config > div { height: 100%; box-sizing: border-box; }
+#transformer_config { align-items: start; }
 .transformer_corpus label { font-size: 0.95rem; }
 .transformer_corpus p { font-size: 0.85rem; line-height: 1.5; }
 .transformer-train-actions .train-btn {

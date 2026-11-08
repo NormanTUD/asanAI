@@ -121,7 +121,7 @@
 
 	TM.typesetMath = function (root) {
 		if (!window.temml) return;
-		(root || document).querySelectorAll("[data-tex]").forEach(function (el) {
+		(root || document).querySelectorAll("[data-tex]:not(math)").forEach(function (el) {
 			if (el.getAttribute("data-tex-rendered") === "1") return;
 			var tex = el.getAttribute("data-tex");
 			var displayMode = el.getAttribute("data-tex-display") !== "false";

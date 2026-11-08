@@ -108,6 +108,17 @@ function _tmParamDe() {
 	return !!(window.TM && TM.lang && TM.lang() === 'de');
 }
 
+function _tmParamBreakdownBtn(open) {
+	const de = _tmParamDe();
+	const count = window._currentNrParams;
+	const suffix = count ? " · " + count.toLocaleString() + (de ? " Parameter" : " parameters") : "";
+	const label = de
+		? (open ? "Parameter-Aufschlüsselung ausblenden" : "Parameter-Aufschlüsselung zeigen")
+		: (open ? "Hide parameter breakdown" : "Show parameter breakdown");
+	const rotation = open ? "rotate(90deg)" : "rotate(0deg)";
+	return `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: ${rotation};">▶</span> ${label}${suffix}`;
+}
+
 function _resetParamBreakdownState(nrDiv, toggleDiv, chartDiv) {
 	if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
 	if (toggleDiv) toggleDiv.style.display = 'none';
@@ -118,7 +129,7 @@ function _resetParamBreakdownState(nrDiv, toggleDiv, chartDiv) {
 		window._paramBreakdownRendered = false;
 		const btn = document.getElementById('param-breakdown-btn');
 		if (btn) {
-			btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> ${_tmParamDe() ? 'Parameter-Aufschlüsselung zeigen' : 'Show Parameter Breakdown'}`;
+			btn.innerHTML = _tmParamBreakdownBtn(false);
 		}
 		paramBreakdownObserver.unobserve(chartDiv);
 	}
@@ -783,13 +794,13 @@ function show_nr_of_params() {
 		return;
 	}
 
+	window._currentNrParams = nr_params;
+	const breakdownBtn = document.getElementById('param-breakdown-btn');
+	if (breakdownBtn) breakdownBtn.innerHTML = _tmParamBreakdownBtn(!!window._paramBreakdownOpen);
 	if (nrDiv) {
-		const inSlot = !!nrDiv.closest('.tm-model-size-slot');
-		nrDiv.innerHTML = inSlot
-			? `<b>${nr_params.toLocaleString()}</b> ${_tmParamDe() ? 'Parameter' : 'parameters'}`
-			: (_tmParamDe()
-				? `Das aktuelle Netz hat <b>${nr_params.toLocaleString()}</b> Parameter.`
-				: `The current network has <b>${nr_params.toLocaleString()}</b> parameters.`);
+		nrDiv.innerHTML = _tmParamDe()
+			? `Das aktuelle Netz hat <b>${nr_params.toLocaleString()}</b> Parameter.`
+			: `The current network has <b>${nr_params.toLocaleString()}</b> parameters.`;
 		nrDiv.style.display = 'block';
 	}
 
@@ -813,7 +824,7 @@ function toggleParamBreakdown() {
 		chartDiv.style.display = 'block';
 
 		// Update button text with arrow already rotated via inline style
-		btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(90deg);">▶</span> ${_tmParamDe() ? 'Parameter-Aufschlüsselung ausblenden' : 'Hide Parameter Breakdown'}`;
+		btn.innerHTML = _tmParamBreakdownBtn(true);
 
 		// Start observing for lazy render
 		paramBreakdownObserver.observe(chartDiv);
@@ -825,7 +836,7 @@ function toggleParamBreakdown() {
 		chartDiv.style.display = 'none';
 
 		// Update button text with arrow in default (collapsed) rotation
-		btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> ${_tmParamDe() ? 'Parameter-Aufschlüsselung zeigen' : 'Show Parameter Breakdown'}`;
+		btn.innerHTML = _tmParamBreakdownBtn(false);
 
 		paramBreakdownObserver.unobserve(chartDiv);
 	}

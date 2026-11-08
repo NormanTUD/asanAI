@@ -266,6 +266,31 @@ def main() -> None:
             errors.clear()
             page.goto(f"http://127.0.0.1:{port}/tenminutes/transformer.php", wait_until="load", timeout=120000)
             page.wait_for_timeout(2500)
+            page.wait_for_function("() => { const b=document.getElementById('param-breakdown-btn'); return b && /parameter/i.test(b.textContent); }", timeout=30000)
+            tm_layout = page.evaluate("""() => {
+                const cfg = document.getElementById('transformer_config');
+                const fields = Array.from(cfg.querySelectorAll(':scope > div'));
+                const kv = fields.find(d => /KV cache/i.test(d.textContent));
+                const ctx = fields.find(d => /Context Size/i.test(d.textContent));
+                const btn = document.getElementById('param-breakdown-btn');
+                const label = cfg.querySelector('label');
+                const m = label ? label.querySelector('math') : null;
+                return {
+                    cols: getComputedStyle(cfg).gridTemplateColumns,
+                    slot: !!document.querySelector('.tm-model-size-slot'),
+                    btn: btn ? btn.textContent.trim() : '',
+                    kv: kv ? kv.getBoundingClientRect().height : null,
+                    ctx: ctx ? ctx.getBoundingClientRect().height : null,
+                    nested: m ? m.querySelectorAll('math').length : 0
+                };
+            }""")
+            check("tenminutes: one-column config, no model-size line, dynamic heights",
+                  bool(tm_layout) and len(tm_layout["cols"].split()) == 1 and not tm_layout["slot"]
+                  and tm_layout["kv"] is not None and tm_layout["ctx"] is not None and tm_layout["kv"] < tm_layout["ctx"],
+                  str(tm_layout))
+            check("tenminutes: parameter button shows the size",
+                  bool(tm_layout) and "parameters" in tm_layout["btn"].lower(), str(tm_layout))
+            check("tenminutes: inline label math is not nested", bool(tm_layout) and tm_layout["nested"] == 0, str(tm_layout))
             tm_mt = page.evaluate("""() => {
                 const el = document.querySelector('.math_transformer');
                 if (!el) return null;

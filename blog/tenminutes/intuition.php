@@ -18,8 +18,57 @@
 		.traj-angle-list { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 6px; font: 600 0.72rem/1.4 var(--tm-ui); color: var(--tm-muted); }
 		.traj-angle-list .is-chosen { color: var(--tm-green); font-weight: 700; }
 		.iso-main { min-width: 0; }
-		.tt-echarts-host { width: 100%; height: 380px; min-height: 320px; background: transparent; }
+		.tt-plot-wrap { position: relative; min-width: 0; }
+		.tt-echarts-host { width: 100%; height: 380px; min-height: 320px; background: radial-gradient(circle at 50% 42%, var(--tm-wash), transparent 66%); }
 		.tt-echarts-host canvas { display: block; }
+		.tt-ball {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 18px;
+			height: 18px;
+			border-radius: 50%;
+			background: radial-gradient(circle at 32% 26%, #ffffff 0 16%, var(--tm-green) 40%, var(--tm-blue) 100%);
+			box-shadow: 0 0 0 2px var(--tm-paper),
+				0 0 14px color-mix(in srgb, var(--tm-green) 65%, transparent),
+				0 0 34px color-mix(in srgb, var(--tm-blue) 45%, transparent);
+			transform: translate(-50%, -50%);
+			opacity: 0;
+			pointer-events: none;
+			z-index: 2;
+			transition: opacity 0.25s ease;
+		}
+		.tt-ball.is-visible { opacity: 1; }
+		.tt-ball::after {
+			content: "";
+			position: absolute;
+			inset: -7px;
+			border: 1px solid color-mix(in srgb, var(--tm-green) 45%, transparent);
+			border-radius: 50%;
+			animation: ttBallPulse 2.6s ease-in-out infinite;
+		}
+		.tt-ball-label {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(15px, -50%);
+			padding: 0.18em 0.38em;
+			border: 1px solid var(--tm-green);
+			background: var(--tm-paper);
+			box-shadow: var(--tm-shadow);
+			color: var(--tm-ink);
+			font: 700 0.62rem/1 var(--tm-ui);
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+			white-space: nowrap;
+		}
+		@keyframes ttBallPulse {
+			0%, 100% { opacity: 0.35; transform: scale(0.92); }
+			50% { opacity: 0.9; transform: scale(1.12); }
+		}
+		@media (prefers-reduced-motion: reduce) {
+			.tt-ball::after { animation: none; }
+		}
 		.tt-fallback { display: flex; align-items: center; justify-content: center; height: 100%; padding: 24px; text-align: center; color: var(--tm-muted); font: 0.86rem/1.5 var(--tm-ui); }
 		.tt-legend { display: flex; flex-wrap: wrap; gap: 5px 14px; margin-top: 8px; font: 600 0.7rem/1.35 var(--tm-ui); color: var(--tm-muted); }
 		.tt-legend-item { display: inline-flex; align-items: center; gap: 5px; }
@@ -232,7 +281,10 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<div class="demo-body">
 									<div class="iso-grid">
 										<div class="iso-main">
-											<div id="tt-3d" class="tt-echarts-host" role="img" aria-label="A three-dimensional landscape of plausible continuations, with the most likely path carved as a deep blue valley"></div>
+											<div class="tt-plot-wrap">
+												<div id="tt-3d" class="tt-echarts-host" role="img" aria-label="A three-dimensional landscape of plausible continuations, with the most likely path carved as a deep blue valley"></div>
+												<div id="tt-ball" class="tt-ball" aria-hidden="true"><span class="tt-ball-label" id="tt-ball-label">context</span></div>
+											</div>
 											<div class="tt-legend">
 												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--deep"></i><span>deep blue = likely path</span></span>
 												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--side"></i><span>gold = other possible paths</span></span>
