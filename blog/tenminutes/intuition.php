@@ -728,7 +728,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 									<div class="prose-math" data-tex="\underbrace{ \text{layer}(X) = \begin{pmatrix} \text{FFN}(A_1) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix}, \quad \begin{pmatrix} A_1 \\ \vdots \\ A_n \end{pmatrix} = \text{attention}(X) }_{\text{attention mixes all tokens; FFN sees one row at a time}}" data-tex-de="\underbrace{ \text{layer}(X) = \begin{pmatrix} \text{FFN}(A_1) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix}, \quad \begin{pmatrix} A_1 \\ \vdots \\ A_n \end{pmatrix} = \text{Attention}(X) }_{\text{Attention mischt alle Tokens; das FFN sieht eine Zeile auf einmal}}" data-tex-display="true"></div>
 								</div>
 							</div>
-							<p class="layer-formula-note"><?php echo $layer_de ? 'W, b, W1 und W2 sind Parameter. Das Training passt sie an, damit der Fehler auf den Trainingsdaten kleiner wird. activation() ist eine Nichtlinearität wie ReLU oder GELU; sie ist der Knick, der einen tiefen Stapel erst möglich macht. In der Attention-Formel ist α gelernt und v der Vektor, den ein Token anbietet; die Summe ist ein gewichteter Durchschnitt der sichtbaren Tokens. In der Layer-Formel ist X die ganze Matrix und A_i die Zeile für Token i. Attention liest alle Zeilen; das FFN wird auf eine Zeile auf einmal angewendet.' : 'W, b, W1, and W2 are parameters. Training adjusts them to reduce the error on the training data. activation() is a nonlinearity such as ReLU or GELU; it is the bend that makes a deep stack possible. In the attention formula, α is learned and v is the vector a token offers; the sum is a weighted average of the visible tokens. In the layer formula, X is the whole matrix and A_i is the row for token i. Attention reads all rows; the FFN is applied to one row at a time.'; ?></p>
+							<p class="layer-formula-note"><?php echo $layer_de ? 'W, b, W1 und W2 sind Parameter. Das Training passt sie an, damit der Fehler auf den Trainingsdaten kleiner wird. Aktivierung() ist eine Nichtlinearität wie ReLU oder GELU; sie ist der Knick, der einen tiefen Stapel erst möglich macht. In der Attention-Formel ist α gelernt und v der Vektor, den ein Token anbietet; die Summe ist ein gewichteter Durchschnitt der sichtbaren Tokens. In der Schicht-Formel ist X die ganze Matrix und A_i die Zeile für Token i. Attention liest alle Zeilen; das FFN wird auf eine Zeile auf einmal angewendet.' : 'W, b, W1, and W2 are parameters. Training adjusts them to reduce the error on the training data. activation() is a nonlinearity such as ReLU or GELU; it is the bend that makes a deep stack possible. In the attention formula, α is learned and v is the vector a token offers; the sum is a weighted average of the visible tokens. In the layer formula, X is the whole matrix and A_i is the row for token i. Attention reads all rows; the FFN is applied to one row at a time.'; ?></p>
 							<?php if ($layer_de): ?>
 							<p>Das ist ein grobes Bild. Darunter steckt bei jedem Schritt eine Matrix von Zahlen; die Formeln zeigen die Form der Berechnung, nicht die Implementierung.</p>
 							<?php else: ?>
@@ -4759,7 +4759,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var el = document.getElementById("traj-layer-label");
 			if (el) el.textContent = step === 0 ? "Embedding" : (de ? "Schicht " : "Layer ") + step + " / " + (data.layers.length - 1);
 			var nextBtn = document.getElementById("traj-next-layer");
-			if (nextBtn) nextBtn.disabled = step >= data.layers.length - 1;
+			if (nextBtn) {
+				var atEnd = step >= data.layers.length - 1;
+				nextBtn.textContent = atEnd
+					? (de ? "Zum Anfang ↺" : "To the beginning ↺")
+					: (de ? "Nächste Schicht →" : "Next layer →");
+				nextBtn.disabled = false;
+			}
 		}
 		function start() {
 			if (loaded) return;
@@ -4778,7 +4784,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			if (loaded) draw();
 		});
 		if (nextBtn) nextBtn.addEventListener("click", function () {
-			step = Math.min(data.layers.length - 1, step + 1);
+			step = step >= data.layers.length - 1 ? 0 : step + 1;
 			if (slider) slider.value = String(step);
 			updateStepLabel();
 			renderCandidates();

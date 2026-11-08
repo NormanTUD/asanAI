@@ -8596,3 +8596,31 @@ html[data-theme="dark"] .traj-candidate.is-chosen { color: var(--tm-green); }
 @media (max-width: 760px) {
 	.layer-count-note { grid-template-columns: 1fr; }
 }
+
+.activation-card {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 12px;
+}
+.activation-plots {
+	order: 1;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.activation-copy {
+	order: 2;
+}
+
+@media (max-width: 760px) {
+	.activation-plots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 480px) {
+	.activation-plots { grid-template-columns: 1fr; }
+}
+
+#traj-next-layer {
+	min-width: 11.5rem;
+	justify-content: center;
+	white-space: nowrap;
+}

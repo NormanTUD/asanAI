@@ -3207,8 +3207,36 @@
 			var label = event.target.closest ? event.target.closest(".tm-signal-between-label") : null;
 			if (label) scheduleHide();
 		});
-		window.addEventListener("scroll", function () { if (popup) popup.hidden = true; }, true);
 	}
+
+	function subboxLoadingBody(sub) {
+		return sub ? sub.querySelector(".tm-layer-subbox-body") : null;
+	}
+
+	function showSubboxLoading(sub) {
+		var body = subboxLoadingBody(sub);
+		if (!body) return;
+		var loader = body.querySelector(":scope > .tm-subbox-loading");
+		if (!loader) {
+			loader = document.createElement("div");
+			loader.className = "tm-subbox-loading";
+			loader.innerHTML = '<span class="tm-metric-spinner" aria-hidden="true"></span><span></span>';
+			body.appendChild(loader);
+		}
+		loader.lastElementChild.textContent = DE() ? "Plots werden geladen …" : "Loading plots…";
+		loader.hidden = false;
+		body.classList.add("tm-subbox-loading-active");
+	}
+
+	function hideSubboxLoading(sub) {
+		var body = subboxLoadingBody(sub);
+		if (!body) return;
+		var loader = body.querySelector(":scope > .tm-subbox-loading");
+		if (loader) loader.hidden = true;
+		body.classList.remove("tm-subbox-loading-active");
+	}
+
+	window.tmSubboxLoading = { show: showSubboxLoading, hide: hideSubboxLoading };
 
 	window.TransformerSteps = {
 		init: function (hostId) {
