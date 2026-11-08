@@ -1803,7 +1803,6 @@
 
 	var FEATURE_METRICS = {
 		euclidean: { de: "Euklidisch (L2)", en: "Euclidean (L2)", short: "L2" },
-		manhattan: { de: "Manhattan (L1)", en: "Manhattan (L1)", short: "L1" },
 		angular: { de: "Großkreis / angular (Cosinus, 0–1)", en: "Great-circle / angular (cosine, 0–1)", short: "angle" }
 	};
 	if (!window.tmFeatureMetric || !FEATURE_METRICS[window.tmFeatureMetric]) window.tmFeatureMetric = "euclidean";
@@ -1811,7 +1810,6 @@
 	function featureMetricLabel() { return FEATURE_METRICS[featureMetric()][DE() ? "de" : "en"]; }
 	function vectorNorm(v) { return Math.sqrt((v || []).reduce(function (s, x) { return s + x * x; }, 0)); }
 	function normalizeVector(v) { var n = vectorNorm(v) || 1; return (v || []).map(function (x) { return x / n; }); }
-	function manhattanTransform(v) { return (v || []).map(function (x) { return Math.sign(x) * Math.sqrt(Math.abs(x)); }); }
 	function metricDistance(a, b, metric) {
 		metric = metric || featureMetric();
 		if (metric === "angular") {
@@ -1823,14 +1821,14 @@
 		var sum = 0;
 		for (var j = 0; j < Math.min(a.length, b.length); j++) {
 			var d = (a[j] || 0) - (b[j] || 0);
-			sum += metric === "manhattan" ? Math.abs(d) : d * d;
+			sum += d * d;
 		}
-		return metric === "manhattan" ? sum : Math.sqrt(sum);
+		return Math.sqrt(sum);
 	}
 	function metricDistanceLabel(a, b, metric) {
 		var d = metricDistance(a, b, metric);
 		if (metric === "angular") return (DE() ? "Winkel " : "angle ") + d.toFixed(3) + " (" + (d * 180).toFixed(1) + "°)";
-		return (metric === "manhattan" ? "L1 " : "L2 ") + d.toFixed(3);
+		return "L2 " + d.toFixed(3);
 	}
 	function slerpPoints(a, b, steps) {
 		var u = normalizeVector(a), w = normalizeVector(b);
@@ -1855,32 +1853,104 @@
 		label: featureMetricLabel,
 		explainHtml: function () {
 			var de = DE();
-			if (de) {
-				return '<p><b>Standard: Euklidisch (L2).</b> Für das nächste Token zählen oft die Winkel: Die Logits sind Skalarprodukte <code>h·w</code>; nach einer Normierung entscheidet der Cosinus, also der Winkel. Deshalb lohnt sich die Winkel-/Großkreis-Ansicht als zweite Metrik: Wir suchen die Darstellung, in der die Daten am einfachsten aussehen.</p>'
-					+ '<p><b>Name:</b> Der geometrische Name ist <i>Großkreis-Distanz</i> (Bogen auf der Einheitskugel). In ML heißt dieselbe Größe meist <i>Cosinus-Distanz</i> <code>1−cosθ</code> oder <i>Winkel-Distanz</i> <code>θ</code>. Wir zeigen <code>θ/π</code>: 0 = gleiche Richtung, 1 = Gegenrichtung.</p>'
-					+ '<p><b>Kugel:</b> Nach L2-Normalisierung liegen Vektoren per Definition auf der Einheitskugel; LayerNorm normiert die Features jedes Tokens vor den Subschichten (<a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Ba et al., 2016</a>), und GPT-artige Modelle setzen vor dem Unembedding oft eine finale LayerNorm. Roh sind Embeddings aber nicht gleichmäßig auf der Kugel verteilt: kontextuelle Repräsentationen sind anisotrop und liegen in einem engen Kegel (<a href="https://aclanthology.org/D19-1006/" target="_blank" rel="noopener">Ethayarajh, 2019</a>). Satz-Embeddings werden üblicherweise per Cosinus verglichen (<a href="https://arxiv.org/abs/1908.10084" target="_blank" rel="noopener">Reimers &amp; Gurevych, 2019</a>). Die Winkelansicht ist also eine nützliche Projektion, keine Behauptung, das Modell speichere eine perfekte Kugel.</p>';
+			if (featureMetric() === "angular") {
+				if (de) {
+					return '<p><b>Großkreis / angular (Cosinus, 0–1).</b> Der geometrische Name ist <i>Großkreis-Distanz</i> (Bogen auf der Einheitskugel). In ML heißt dieselbe Größe meist <i>Cosinus-Distanz</i> <code>1−cosθ</code> oder <i>Winkel-Distanz</i> <code>θ</code>. Wir zeigen <code>θ/π</code>: 0 = gleiche Richtung, 1 = Gegenrichtung; kleiner Winkel = kleiner Abstand, großer Winkel = großer Abstand.</p>'
+						+ '<p><b>Kugel.</b> Nach L2-Normalisierung liegen Vektoren per Definition auf der Einheitskugel; LayerNorm normiert die Features jedes Tokens vor den Subschichten (<a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Ba et al., 2016</a>), und GPT-artige Modelle setzen vor dem Unembedding oft eine finale LayerNorm. Roh sind Embeddings aber nicht gleichmäßig auf der Kugel verteilt: kontextuelle Repräsentationen sind anisotrop und liegen in einem engen Kegel (<a href="https://aclanthology.org/D19-1006/" target="_blank" rel="noopener">Ethayarajh, 2019</a>). Satz-Embeddings werden üblicherweise per Cosinus verglichen (<a href="https://arxiv.org/abs/1908.10084" target="_blank" rel="noopener">Reimers &amp; Gurevych, 2019</a>). Die Winkelansicht ist also eine nützliche Projektion, keine Behauptung, das Modell speichere eine perfekte Kugel.</p>';
+				}
+				return '<p><b>Great-circle / angular (cosine, 0–1).</b> The geometric name is <i>great-circle distance</i> (the arc on the unit sphere). In ML the same quantity is usually called <i>cosine distance</i> <code>1−cosθ</code> or <i>angular distance</i> <code>θ</code>. We show <code>θ/π</code>: 0 = same direction, 1 = opposite; small angle = small distance, large angle = large distance.</p>'
+					+ '<p><b>Sphere.</b> After L2 normalization vectors lie on the unit sphere by construction; LayerNorm normalizes each token\'s features before the sublayers (<a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Ba et al., 2016</a>), and GPT-style models often apply a final LayerNorm before the unembedding. Raw embeddings are not spread uniformly on that sphere, however: contextual representations are anisotropic and sit in a narrow cone (<a href="https://aclanthology.org/D19-1006/" target="_blank" rel="noopener">Ethayarajh, 2019</a>). Sentence embeddings are commonly compared by cosine similarity (<a href="https://arxiv.org/abs/1908.10084" target="_blank" rel="noopener">Reimers &amp; Gurevych, 2019</a>). The angular view is therefore a useful projection, not a claim that the model stores a perfect sphere.</p>';
 			}
-			return '<p><b>Default: Euclidean (L2).</b> The next token often depends on angles: logits are dot products <code>h·w</code>; after normalization the cosine, i.e. the angle, decides. That is why the angular / great-circle view is worth trying as a second metric: we look for the representation that makes the data simplest.</p>'
-				+ '<p><b>Name:</b> The geometric name is <i>great-circle distance</i> (the arc on the unit sphere). In ML the same quantity is usually called <i>cosine distance</i> <code>1−cosθ</code> or <i>angular distance</i> <code>θ</code>. We show <code>θ/π</code>: 0 = same direction, 1 = opposite.</p>'
-				+ '<p><b>Sphere:</b> After L2 normalization vectors lie on the unit sphere by construction; LayerNorm normalizes each token\'s features before the sublayers (<a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Ba et al., 2016</a>), and GPT-style models often apply a final LayerNorm before the unembedding. Raw embeddings are not spread uniformly on that sphere, however: contextual representations are anisotropic and sit in a narrow cone (<a href="https://aclanthology.org/D19-1006/" target="_blank" rel="noopener">Ethayarajh, 2019</a>). Sentence embeddings are commonly compared by cosine similarity (<a href="https://arxiv.org/abs/1908.10084" target="_blank" rel="noopener">Reimers &amp; Gurevych, 2019</a>). The angular view is therefore a useful projection, not a claim that the model stores a perfect sphere.</p>';
+			if (de) {
+				return '<p><b>Euklidisch (L2) · Standard.</b> Gerade Linie im Raum. Für das nächste Token zählen oft die Winkel: Die Logits sind Skalarprodukte <code>h·w</code>; nach Normierung entscheidet der Cosinus, also der Winkel. Schalte oben auf <b>Großkreis / angular</b>, um diese Sicht zu sehen; wir suchen die Darstellung, in der die Daten am einfachsten aussehen.</p>';
+			}
+			return '<p><b>Euclidean (L2) · default.</b> Straight-line distance in the space. For the next token, angles often matter more: the logits are dot products <code>h·w</code>; after normalization the cosine, i.e. the angle, decides. Switch to <b>Great-circle / angular</b> at the top to see that view; we look for the representation that makes the data simplest.</p>';
 		},
 		transform: function (v, metric) {
 			metric = metric || featureMetric();
-			if (metric === "manhattan") return manhattanTransform(v);
-			if (metric === "angular") return normalizeVector(v);
+				if (metric === "angular") return normalizeVector(v);
 			return v;
 		},
 		distance: metricDistance,
 		distanceLabel: metricDistanceLabel,
 		slerpPoints: slerpPoints,
-		normalize: normalizeVector
+		normalize: normalizeVector,
+		rerenderWithOverlay: rerenderWithOverlay
 	};
 	window.addEventListener("tm:metricchange", function () {
-		Object.keys(featureState).forEach(function (key) { renderLayerFeaturePlots(parseInt(key, 10)); });
-		document.querySelectorAll(".tm-step-metric select").forEach(function (sel) {
-			if (sel.value !== featureMetric()) sel.value = featureMetric();
+		Object.keys(featureState).forEach(function (key) {
+			var idx = parseInt(key, 10);
+			var target = document.getElementById("unified-layer-" + idx + "-feature-arrows");
+			rerenderWithOverlay(target, function () { renderLayerFeaturePlots(idx); });
+		});
+		document.querySelectorAll(".tm-feature-metric-explain").forEach(function (el) {
+			el.innerHTML = (window.tmMetric && window.tmMetric.explainHtml) ? window.tmMetric.explainHtml() : "";
 		});
 	});
+
+	function metricIsVisible(el) {
+		if (!el) return false;
+		var r = el.getBoundingClientRect();
+		var vh = window.innerHeight || document.documentElement.clientHeight;
+		var vw = window.innerWidth || document.documentElement.clientWidth;
+		return r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < vh && r.right > 0 && r.left < vw;
+	}
+	function showMetricOverlay(el) {
+		if (!el) return null;
+		var parent = el.parentElement || el;
+		if (getComputedStyle(parent).position === "static") parent.style.position = "relative";
+		var ov = document.createElement("div");
+		ov.className = "tm-metric-loading";
+		ov.innerHTML = "<span class='tm-metric-spinner' aria-hidden='true'></span><span>" + (DE() ? "Metrik wird angewendet…" : "Updating metric…") + "</span>";
+		parent.appendChild(ov);
+		return ov;
+	}
+	function hideMetricOverlay(ov) {
+		if (ov && ov.parentNode) ov.parentNode.removeChild(ov);
+	}
+	function rerenderWithOverlay(el, fn) {
+		if (!el) { fn(); return; }
+		var render = function () {
+			var ov = showMetricOverlay(el);
+			requestAnimationFrame(function () {
+				setTimeout(function () {
+					try { fn(); } finally { hideMetricOverlay(ov); }
+				}, 30);
+			});
+		};
+		if (metricIsVisible(el)) { render(); return; }
+		el.setAttribute("data-tm-metric-dirty", "1");
+		if (!el._tmMetricObserver) {
+			el._tmMetricObserver = new IntersectionObserver(function (entries) {
+				if (entries.some(function (e) { return e.isIntersecting; }) && el.getAttribute("data-tm-metric-dirty") === "1") {
+					el.removeAttribute("data-tm-metric-dirty");
+					render();
+				}
+			}, { rootMargin: "120px" });
+			el._tmMetricObserver.observe(el);
+		}
+	}
+	function ensureGlobalMetricControl() {
+		var cfg = document.getElementById("transformer_config");
+		if (!cfg || document.getElementById("tm-global-metric")) return;
+		var de = DE();
+		var options = Object.keys(FEATURE_METRICS).map(function (k) {
+			return "<option value='" + k + "'>" + FEATURE_METRICS[k][de ? "de" : "en"] + "</option>";
+		}).join("");
+		var wrap = document.createElement("div");
+		wrap.id = "tm-global-metric";
+		wrap.className = "tm-global-metric";
+		wrap.innerHTML = "<label>" + (de ? "Distanzmetrik (alle Plots)" : "Distance metric (all plots)") + " <select>" + options + "</select></label><span class='tm-global-metric-note'>" + (de ? "Gilt global für Feature-Migration, Token-Trajectory, Embedding und Position." : "Applies globally to feature migration, token trajectory, embedding, and position.") + "</span>";
+		var select = wrap.querySelector("select");
+		select.value = featureMetric();
+		select.addEventListener("change", function () {
+			window.tmFeatureMetric = select.value;
+			window.dispatchEvent(new CustomEvent("tm:metricchange", { detail: { metric: select.value } }));
+		});
+		cfg.insertBefore(wrap, cfg.firstChild);
+	}
+	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", ensureGlobalMetricControl);
+	else ensureGlobalMetricControl();
 
 	function featureData(layerIdx) {
 		var trace = (window.__tmLayerTrace || [])[layerIdx];
@@ -1899,8 +1969,7 @@
 		var rawIn = data.trace.h_in.slice(0, data.n);
 		var rawOut = data.trace.h_out.slice(0, data.n);
 		function transform(v) {
-			if (metric === "manhattan") return manhattanTransform(v);
-			if (metric === "angular") return normalizeVector(v);
+				if (metric === "angular") return normalizeVector(v);
 			return v;
 		}
 		var all = rawIn.map(transform).concat(rawOut.map(transform));
@@ -2507,34 +2576,16 @@
 			if (!sb.querySelector(".tm-feature-wrap")) {
 				var wrap = document.createElement("div");
 				wrap.className = "tm-feature-wrap";
-				var metricOptions = Object.keys(FEATURE_METRICS).map(function (key) {
-					return "<option value='" + key + "'>" + FEATURE_METRICS[key][isDe ? "de" : "en"] + "</option>";
-				}).join("");
-				var metricDefinitions = isDe
-					? "<p><b>Euklidisch (L2):</b> gerade Linie im Raum. <b>Manhattan (L1):</b> Summe der absoluten Koordinatenunterschiede; die Darstellung nutzt eine sqrt-Transformation, damit L1-Kugeln rund wirken. <b>Großkreis / angular:</b> jeder Vektor wird auf Länge 1 normiert; der Abstand ist der Winkel θ am Ursprung, geteilt durch π. In endlichen Dimensionen erzeugen L1 und L2 dieselbe Topologie (äquivalente Normen); der Winkel-Abstand ignoriert die Vektorlänge und ändert die Geometrie stärker.</p>"
-					: "<p><b>Euclidean (L2):</b> straight-line distance in the space. <b>Manhattan (L1):</b> sum of absolute coordinate differences; the plot uses a sqrt transform so L1 balls look round. <b>Great-circle / angular:</b> every vector is normalized to length 1; the distance is the angle θ at the origin divided by π. In finite dimensions L1 and L2 induce the same topology (equivalent norms); the angular metric drops vector length and changes the geometry more strongly.</p>";
 				var metricExplain = (window.tmMetric && window.tmMetric.explainHtml) ? window.tmMetric.explainHtml() : "";
 				wrap.innerHTML = "<div class='tm-feature-primary'><span class='tm-feature-note' id='unified-layer-" + idx + "-feature-projection'></span>" +
-					"<div class='tm-feature-metric'><label>" + (isDe ? "Distanzmetrik" : "Distance metric") + " <select data-feature-metric='" + idx + "'>" + metricOptions + "</select></label></div>" +
 					"<div id='unified-layer-" + idx + "-feature-arrows' class='tm-feature-arrows'></div>" +
-					"<div class='tm-feature-metric-explain'>" + metricDefinitions + metricExplain + "</div></div>" +
+					"<div class='tm-feature-metric-explain'>" + metricExplain + "</div></div>" +
 					"<div id='unified-layer-" + idx + "-logit-lens' class='tm-logit-lens-host'></div>";
 				sb.insertBefore(wrap, oldDetail || null);
 			}
 			var featureWrap = sb.querySelector(".tm-feature-wrap");
 			if (triple && featureWrap && triple.parentNode !== featureWrap) {
 				featureWrap.insertBefore(triple, featureWrap.querySelector(".tm-logit-lens-host"));
-			}
-			var metricSel = featureWrap && featureWrap.querySelector("[data-feature-metric]");
-			if (metricSel) {
-				metricSel.value = featureMetric();
-				if (!metricSel._tmMetricBound) {
-					metricSel._tmMetricBound = true;
-					metricSel.addEventListener("change", function () {
-						window.tmFeatureMetric = metricSel.value;
-						window.dispatchEvent(new CustomEvent("tm:metricchange", { detail: { metric: metricSel.value } }));
-					});
-				}
 			}
 			var attentionBody = card.querySelector('.tm-layer-subbox[data-sub="attention"] .tm-layer-subbox-body');
 			var formulaBody = card.querySelector('[id$="-formula-body"]');
@@ -3294,33 +3345,6 @@
 		}
 		return true;
 	}
-	function addStepMetricControl(step, key) {
-		var body = bodyOf(step);
-		if (!body || body.querySelector('[data-step-metric="' + key + '"]')) return;
-		var de = !!(window.TM && TM.lang && TM.lang() === "de");
-		var api = window.tmMetric || {};
-		var defs = api.options || {
-			euclidean: { de: "Euklidisch (L2)", en: "Euclidean (L2)" },
-			manhattan: { de: "Manhattan (L1)", en: "Manhattan (L1)" },
-			angular: { de: "Großkreis / angular (Cosinus, 0–1)", en: "Great-circle / angular (cosine, 0–1)" }
-		};
-		var options = Object.keys(defs).map(function (k) {
-			return "<option value='" + k + "'>" + defs[k][de ? "de" : "en"] + "</option>";
-		}).join("");
-		var wrap = document.createElement("div");
-		wrap.className = "tm-step-metric";
-		wrap.setAttribute("data-step-metric", key);
-		wrap.innerHTML = "<label>" + (de ? "Distanzmetrik" : "Distance metric") + " <select>" + options + "</select></label><span class='tm-step-metric-note'>" + (de ? "Default Euklidisch; die Winkelansicht ist oft die passendere." : "Default Euclidean; the angular view is often the more useful one.") + "</span>";
-		var select = wrap.querySelector("select");
-		select.value = api.get ? api.get() : (window.tmFeatureMetric || "euclidean");
-		select.addEventListener("change", function () {
-			if (api.set) api.set(select.value);
-			else window.tmFeatureMetric = select.value;
-			window.dispatchEvent(new CustomEvent("tm:metricchange", { detail: { metric: select.value } }));
-		});
-		body.appendChild(wrap);
-	}
-
 	function organize() {
 		// 1 · Tokenize: the coloured BPE view replaces the small canvas.
 		if (!moved.tokenize) {
@@ -3646,8 +3670,6 @@
 				un.addEventListener("toggle", function () { if (un.open) setTimeout(resizeCharts, 80); });
 			}
 		}
-		if (moved.embed) addStepMetricControl(2, "embed");
-		if (moved.position) addStepMetricControl(3, "position");
 		resizeCharts();
 	}
 	function schedule() {

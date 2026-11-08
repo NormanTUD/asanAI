@@ -2135,7 +2135,6 @@ function renderTrajectoryPlot(d_model) {
 		if (d_model <= 3) {
 			wrapper.appendChild(createTrajectoryVFToggleButton());
 		}
-		wrapper.appendChild(createTrajectoryMetricControl());
 
 		trajDiv = document.createElement('div');
 		trajDiv.id = containerId;
@@ -2157,9 +2156,6 @@ function renderTrajectoryPlot(d_model) {
 
 			if (wrapper) {
 				wrapper.setAttribute('data-d-model', d_model);
-				if (!wrapper.querySelector('.trajectory-metric-control')) {
-					wrapper.insertBefore(createTrajectoryMetricControl(), trajDiv);
-				}
 				if (!wrapper.querySelector('.trajectory-metric-explain')) {
 					wrapper.appendChild(createTrajectoryMetricExplanation());
 				}
@@ -7822,39 +7818,33 @@ function createTrajectoryMetricExplanation() {
 	return box;
 }
 
-function createTrajectoryMetricControl() {
-	const wrap = document.createElement('div');
-	wrap.className = 'trajectory-metric-control';
-	const de = !!(window.TM && TM.lang && TM.lang() === 'de');
-	const options = (window.tmMetric && window.tmMetric.options)
-		? window.tmMetric.options
-		: { euclidean: { de: "Euklidisch (L2)", en: "Euclidean (L2)" }, manhattan: { de: "Manhattan (L1)", en: "Manhattan (L1)" }, angular: { de: "Großkreis / Winkel", en: "Great-circle / angle" } };
-	const opts = Object.keys(options).map(key => `<option value="${key}">${options[key][de ? 'de' : 'en']}</option>`).join('');
-	wrap.innerHTML = `<label>${de ? 'Distanzmetrik' : 'Distance metric'} <select class="trajectory-metric-select">${opts}</select></label>`;
-	const select = wrap.querySelector('select');
-	select.value = (window.tmMetric && window.tmMetric.get) ? window.tmMetric.get() : 'euclidean';
-	select.addEventListener('change', () => {
-		if (window.tmMetric && window.tmMetric.set) window.tmMetric.set(select.value);
-		else window.tmFeatureMetric = select.value;
-		window.dispatchEvent(new CustomEvent('tm:metricchange', { detail: { metric: select.value } }));
-	});
-	if (!window.__tmTrajectoryMetricListener) {
-		window.__tmTrajectoryMetricListener = true;
-		window.addEventListener('tm:metricchange', () => {
-			try {
-				const embData = embeddingRenderRegistry.get('transformer-plotly-space');
-				if (embData) _execute_embedding_render(embData.d_model, embData.highlightPos, embData.steps);
-			} catch (e) { /* not ready */ }
-			try {
-				const peData = positionalShiftRegistry.get('transformer-pe-shift-plot');
-				if (peData) _execute_shift_render(peData.tokenStrings, peData.d_model, peData.injectedEmbeddings);
-			} catch (e) { /* not ready */ }
-			if (!window.tlab_trajectory_collector) return;
-			try { tlab_render_trajectory_plot(getTransformerConfig().d_model); } catch (e) { /* chart not ready */ }
+function installTrajectoryMetricListener() {
+	if (window.__tmTrajectoryMetricListener) return;
+	window.__tmTrajectoryMetricListener = true;
+	window.addEventListener('tm:metricchange', () => {
+		const embData = embeddingRenderRegistry.get('transformer-plotly-space');
+		if (embData && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-plotly-space'), () => {
+				_execute_embedding_render(embData.d_model, embData.highlightPos, embData.steps);
+			});
+		}
+		const peData = positionalShiftRegistry.get('transformer-pe-shift-plot');
+		if (peData && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-pe-shift-plot'), () => {
+				_execute_shift_render(peData.tokenStrings, peData.d_model, peData.injectedEmbeddings);
+			});
+		}
+		if (window.tlab_trajectory_collector && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-trajectory-full-path'), () => {
+				tlab_render_trajectory_plot(getTransformerConfig().d_model);
+			});
+		}
+		document.querySelectorAll('.trajectory-metric-explain').forEach(el => {
+			el.innerHTML = (window.tmMetric && window.tmMetric.explainHtml) ? window.tmMetric.explainHtml() : '';
 		});
-	}
-	return wrap;
+	});
 }
+installTrajectoryMetricListener();
 
 function createTrajectoryVFToggleButton() {
 	const toggleBtn = document.createElement('button');

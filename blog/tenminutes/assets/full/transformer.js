@@ -8090,13 +8090,17 @@ if (!window.__tmLayerCardListener) {
 if (!window.__tmEmbMetricListener) {
 	window.__tmEmbMetricListener = true;
 	window.addEventListener('tm:metricchange', () => {
-		try {
-			const emb = embeddingRenderRegistry.get('transformer-plotly-space');
-			if (emb) _execute_embedding_render(emb.d_model, emb.highlightPos, emb.steps);
-		} catch (e) { /* not ready */ }
-		try {
-			const pe = positionalShiftRegistry.get('transformer-pe-shift-plot');
-			if (pe) _execute_shift_render(pe.tokenStrings, pe.d_model, pe.injectedEmbeddings);
-		} catch (e) { /* not ready */ }
+		const emb = embeddingRenderRegistry.get('transformer-plotly-space');
+		if (emb && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-plotly-space'), () => {
+				_execute_embedding_render(emb.d_model, emb.highlightPos, emb.steps);
+			});
+		}
+		const pe = positionalShiftRegistry.get('transformer-pe-shift-plot');
+		if (pe && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-pe-shift-plot'), () => {
+				_execute_shift_render(pe.tokenStrings, pe.d_model, pe.injectedEmbeddings);
+			});
+		}
 	});
 }

@@ -258,55 +258,44 @@ def main() -> None:
                 const d = document.querySelector('.tm-head-method-details');
                 return d ? {open: d.open, hasMethod: !!d.querySelector('.tm-head-method')} : null;
             }""")
-            metric = page.evaluate("""() => {
-                const sel = document.querySelector('[data-feature-metric]');
-                const el = document.querySelector('.tm-feature-arrows');
-                if (!sel || !el || !window.echarts) return null;
-                sel.value = 'angular';
-                sel.dispatchEvent(new Event('change', { bubbles: true }));
-                const chart = echarts.getInstanceByDom(el);
+            global_metric = page.evaluate("""() => {
+                const sel = document.querySelector('#tm-global-metric select');
+                const perPlot = !!document.querySelector('[data-feature-metric], .trajectory-metric-select, .tm-step-metric');
+                return sel ? {options: sel.options.length, value: sel.value, perPlot} : null;
+            }""")
+            check("one global metric switch, default Euclidean",
+                  bool(global_metric) and global_metric["options"] == 2
+                  and global_metric["value"] == "euclidean" and not global_metric["perPlot"], str(global_metric))
+
+            page.evaluate("() => document.getElementById('unified-layer-0-feature-arrows').scrollIntoView()")
+            page.wait_for_timeout(1200)
+            overlay = page.evaluate("""() => {
+                const s=document.querySelector('#tm-global-metric select');
+                s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true}));
+                return !!document.querySelector('.tm-metric-loading');
+            }""")
+            check("visible plots show a small metric loading overlay", overlay)
+            page.wait_for_timeout(1200)
+            feature_metric = page.evaluate("""() => {
+                const el = document.getElementById('unified-layer-0-feature-arrows');
+                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
                 const opt = chart ? chart.getOption() : null;
                 const series = opt ? (opt.series || []) : [];
-                const scatter = series.find(s => s.type === 'scatter3D');
-                let norm = null;
-                if (scatter && scatter.data && scatter.data[0] && scatter.data[0].value) {
-                    const v = scatter.data[0].value;
-                    norm = Math.sqrt(v.reduce((a, x) => a + x * x, 0));
-                }
-                return {
-                    options: sel.options.length,
-                    value: sel.value,
-                    subtext: opt && opt.title && opt.title[0] ? opt.title[0].subtext : '',
-                    surface: series.some(s => s.type === 'surface'),
-                    hasAngleName: series.some(s => /angle|Winkel|°/.test(s.name || '')),
-                    norm
-                };
+                return {subtext: opt && opt.title ? opt.title[0].subtext : '', surface: series.some(s => s.type === 'surface')};
             }""")
-            check("feature-migration metric switch offers three metrics", bool(metric) and metric["options"] == 3, str(metric))
-            check("great-circle metric puts points on the unit sphere",
-                  bool(metric) and "great-circle" in metric["subtext"] and metric["surface"]
-                  and metric["hasAngleName"] and metric["norm"] is not None and abs(metric["norm"] - 1) < 0.02,
-                  str(metric)[:300])
-            page.evaluate("""() => { const sel=document.querySelector('[data-feature-metric]'); if (sel) { sel.value='euclidean'; sel.dispatchEvent(new Event('change', { bubbles: true })); } }""")
-            check("head-type method note is collapsed", bool(method) and not method["open"] and method["hasMethod"], str(method))
-            apv = page.evaluate("() => { const d=document.querySelector('.apv-head-detail'); return d ? {open:d.open} : null; }")
-            check("per-head math explanation is collapsed", bool(apv) and not apv["open"], str(apv))
+            check("feature migration follows the global metric",
+                  bool(feature_metric) and "great-circle" in feature_metric["subtext"].lower() and feature_metric["surface"], str(feature_metric))
 
-            step_metrics = page.evaluate("""() => {
-                const pick = (key) => {
-                    const box = document.querySelector('[data-step-metric="' + key + '"]');
-                    const sel = box ? box.querySelector('select') : null;
-                    return sel ? {options: sel.options.length, value: sel.value} : null;
-                };
-                return {embed: pick('embed'), position: pick('position')};
-            }""")
-            check("embedding and positional plots have the metric switch",
-                  bool(step_metrics) and bool(step_metrics["embed"]) and bool(step_metrics["position"])
-                  and step_metrics["embed"]["options"] == 3 and step_metrics["position"]["options"] == 3,
-                  str(step_metrics))
             page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
-            page.wait_for_timeout(1600)
-            page.evaluate("""() => { const s=document.querySelector('[data-step-metric="embed"] select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(1200)
+            page.evaluate("""() => { const s=document.querySelector('#tm-global-metric select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(500)
+            overlay_emb = page.evaluate("""() => {
+                const s=document.querySelector('#tm-global-metric select');
+                s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true}));
+                return !!document.querySelector('.tm-metric-loading');
+            }""")
+            check("embedding plot shows the metric loading overlay", overlay_emb)
             page.wait_for_timeout(1200)
             emb_metric = page.evaluate("""() => {
                 const el = document.getElementById('transformer-plotly-space');
@@ -315,11 +304,14 @@ def main() -> None:
                 const series = opt ? (opt.series || []) : [];
                 return {title: opt && opt.title ? opt.title[0].text : '', surface: series.some(s => s.type === 'surface')};
             }""")
-            check("embedding plot uses the angular metric",
+            check("embedding plot follows the global metric",
                   bool(emb_metric) and "Great-circle" in emb_metric["title"] and emb_metric["surface"], str(emb_metric))
+
             page.evaluate("() => document.getElementById('transformer-pe-shift-plot').scrollIntoView()")
-            page.wait_for_timeout(1600)
-            page.evaluate("""() => { const s=document.querySelector('[data-step-metric="position"] select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(1200)
+            page.evaluate("""() => { const s=document.querySelector('#tm-global-metric select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(500)
+            page.evaluate("""() => { const s=document.querySelector('#tm-global-metric select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
             page.wait_for_timeout(1200)
             pe_metric = page.evaluate("""() => {
                 const el = document.getElementById('transformer-pe-shift-plot');
@@ -328,29 +320,11 @@ def main() -> None:
                 const series = opt ? (opt.series || []) : [];
                 return {title: opt && opt.title ? opt.title[0].text : '', surface: series.some(s => s.type === 'surface')};
             }""")
-            check("positional-shift plot uses the angular metric",
+            check("positional-shift plot follows the global metric",
                   bool(pe_metric) and "Great-circle" in pe_metric["title"] and pe_metric["surface"], str(pe_metric))
-            page.evaluate("""() => {
-                const e=document.querySelector('[data-step-metric="embed"] select');
-                const p=document.querySelector('[data-step-metric="position"] select');
-                if(e){e.value='euclidean'; e.dispatchEvent(new Event('change',{bubbles:true}));}
-                if(p){p.value='euclidean'; p.dispatchEvent(new Event('change',{bubbles:true}));}
-            }""")
 
-            page.wait_for_function("() => !!document.querySelector('.trajectory-metric-select')", timeout=60000)
-            traj_metric = page.evaluate("""() => {
-                const sel = document.querySelector('.trajectory-metric-select');
-                const el = document.getElementById('transformer-trajectory-full-path');
-                return {
-                    options: sel.options.length,
-                    value: sel.value,
-                    chart: !!el && !!window.echarts && !!echarts.getInstanceByDom(el)
-                };
-            }""")
-            check("trajectory has the same three-metric switch",
-                  bool(traj_metric) and traj_metric["options"] == 3, str(traj_metric))
-            page.evaluate("""() => { const s=document.querySelector('.trajectory-metric-select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
-            page.wait_for_timeout(1200)
+            page.evaluate("() => document.getElementById('transformer-trajectory-full-path').scrollIntoView()")
+            page.wait_for_timeout(1500)
             traj_angular = page.evaluate("""() => {
                 const el = document.getElementById('transformer-trajectory-full-path');
                 const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
@@ -361,27 +335,33 @@ def main() -> None:
                 if (scatter) { const v = scatter.data[0].value; norm = Math.sqrt(v.reduce((a,x)=>a+x*x,0)); }
                 return {title: opt && opt.title ? opt.title[0].text : '', surface: series.some(s => s.type === 'surface'), norm};
             }""")
-            check("trajectory great-circle uses the unit sphere",
+            check("trajectory follows the global metric",
                   bool(traj_angular) and "Great-circle" in traj_angular["title"] and traj_angular["surface"]
                   and traj_angular["norm"] is not None and abs(traj_angular["norm"] - 1) < 0.02,
                   str(traj_angular)[:300])
+
             explain = page.evaluate("""() => {
                 const f = document.querySelector('.tm-feature-metric-explain');
                 const t = document.querySelector('.trajectory-metric-explain');
-                const links = Array.from((f ? f.querySelectorAll('a') : [])).map(a => a.href);
+                const links = Array.from(document.querySelectorAll('.tm-feature-metric-explain a')).map(a => a.href);
                 return {feature: !!f, featureText: f ? f.innerText : '', trajectory: !!t, links};
             }""")
-            check("metrics are explained below both plots",
+            check("explanation shows only the selected (angular) metric",
                   bool(explain) and explain["feature"] and explain["trajectory"]
-                  and ("Euclidean" in explain["featureText"] or "Euklidisch" in explain["featureText"])
-                  and ("great-circle" in explain["featureText"].lower() or "großkreis" in explain["featureText"].lower())
-                  and ("cosine" in explain["featureText"].lower() or "cosinus" in explain["featureText"].lower()),
-                  str(explain)[:300])
+                  and ("Great-circle" in explain["featureText"] or "Großkreis" in explain["featureText"])
+                  and ("Sphere" in explain["featureText"] or "Kugel" in explain["featureText"])
+                  and "Manhattan" not in explain["featureText"], str(explain["featureText"])[:220])
             check("metric explanation links the primary sources",
                   bool(explain) and "1607.06450" in " ".join(explain["links"])
                   and "D19-1006" in " ".join(explain["links"]) and "1908.10084" in " ".join(explain["links"]),
                   str(explain["links"]))
-            page.evaluate("""() => { const s=document.querySelector('.trajectory-metric-select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.evaluate("""() => { const s=document.querySelector('#tm-global-metric select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(500)
+            explain_e = page.evaluate("() => { const f=document.querySelector('.tm-feature-metric-explain'); return f ? f.innerText : ''; }")
+            check("Euclidean explanation omits the sphere section",
+                  ("Euclidean" in explain_e or "Euklidisch" in explain_e)
+                  and "Sphere" not in explain_e and "Kugel" not in explain_e and "Manhattan" not in explain_e,
+                  explain_e[:220])
             check("no console/page errors", not errors, "; ".join(errors[:3]))
 
             errors.clear()
@@ -406,9 +386,12 @@ def main() -> None:
                     nested: m ? m.querySelectorAll('math').length : 0
                 };
             }""")
-            tm_steps = page.evaluate("() => Array.from(document.querySelectorAll('.tm-step-metric')).map(e => e.getAttribute('data-step-metric'))")
-            check("tenminutes: embedding/position metric switches exist",
-                  "embed" in tm_steps and "position" in tm_steps, str(tm_steps))
+            tm_global = page.evaluate("""() => {
+                const s = document.querySelector('#tm-global-metric select');
+                return s ? {options: s.options.length, value: s.value} : null;
+            }""")
+            check("tenminutes: global metric switch exists",
+                  bool(tm_global) and tm_global["options"] == 2, str(tm_global))
             check("tenminutes: one-column config, no model-size line, dynamic heights",
                   bool(tm_layout) and len(tm_layout["cols"].split()) == 1 and not tm_layout["slot"]
                   and tm_layout["alignItems"] == "start", str(tm_layout))

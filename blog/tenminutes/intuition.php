@@ -68,12 +68,12 @@
 			left: 0;
 			top: 0;
 			transform: translate(-50%, calc(-100% - 8px));
-			padding: 2px 5px;
+			padding: 1px 4px;
 			border: 1px solid var(--tm-line-strong);
 			background: var(--tm-paper);
 			box-shadow: var(--tm-shadow);
 			color: var(--tm-ink);
-			font: 700 0.66rem/1.1 var(--tm-ui);
+			font: 700 0.62rem/1.05 var(--tm-ui);
 			white-space: nowrap;
 		}
 		.tt-point-label.is-current { border-color: var(--tm-green); color: var(--tm-green-deep); }
@@ -1749,7 +1749,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		var isoBallLabel = document.getElementById("tt-ball-label");
 		var isoStepGap = 1.35;
 		var isoYMax = 1.18;
-		var isoLabelZ = 0.0;
+		var isoPits = [
+			{ x: 2.35, y: -0.88, depth: 0.24, width: 0.11, rim: 0.045, rimR: 0.18 },
+			{ x: 5.55, y: 0.92, depth: 0.21, width: 0.10, rim: 0.040, rimR: 0.17 },
+			{ x: 4.15, y: -0.70, depth: 0.18, width: 0.08, rim: 0.035, rimR: 0.14 }
+		];
 		var isoLabels = DE ? {
 			certain: "fast sicher", likely: "wahrscheinlich", open: "offen", wide: "sehr offen", width: "Tunnelbreite",
 			axisStep: "Kontextschritt", axisMeaning: "andere Fortsetzungen", axisProb: "tiefer = wahrscheinlicher",
@@ -1877,10 +1881,25 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function isoAltEndY(alt) {
 			return (isoAltY(alt) >= 0 ? 1 : -1) * 1.12;
 		}
-		function isoAltEndPoint(branch, alt) {
+		function isoAltSlope(branch, alt) {
+			return isoClamp((alt.entropy - 0.45) * 1.6
+				+ 0.10 * Math.sin(branch.atStep * 1.7 + alt.path.x * 12), -0.55, 0.55);
+		}
+		function isoAltEndGeometry(branch, alt) {
 			var bx = branch.atStep + 0.52;
+			var startY = isoCenter(bx);
 			var endY = isoAltEndY(alt) * 0.97;
-			return [bx * isoStepGap, endY, isoSurfaceHeight(bx, endY) + 0.06];
+			var slope = isoAltSlope(branch, alt);
+			var stepX = bx + slope * (endY - startY);
+			return { bx: bx, startY: startY, endY: endY, y: endY, slope: slope, stepX: stepX, x: stepX * isoStepGap };
+		}
+		function isoAltEndKind(branch, alt) {
+			var code = (branch.atStep * 7 + Math.round(alt.entropy * 100)) % 5;
+			return code === 0 || code === 3 ? "hill" : "valley";
+		}
+		function isoAltEndPoint(branch, alt) {
+			var g = isoAltEndGeometry(branch, alt);
+			return [g.x, g.y, isoSurfaceHeight(g.stepX, g.y) + 0.06];
 		}
 		function isoAltDepth(alt, mainDepth) {
 			return mainDepth * (0.42 + 0.42 * (1 - alt.entropy) + 0.12 * isoTemp);
@@ -1892,12 +1911,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var depth = Math.exp(-Math.pow((y - centre) / mainWidth, 2)) * mainDepth;
 			isoBranches.forEach(function (branch) {
 				var bx = branch.atStep + 0.52;
-				var dx = x - bx;
 				var startY = isoCenter(bx);
 				branch.alternatives.forEach(function (alt) {
 					var endY = isoAltEndY(alt);
 					var t = (y - startY) / (endY - startY);
 					if (t < 0 || t > 1) return;
+					var channelX = bx + isoAltSlope(branch, alt) * (y - startY);
+					var dx = x - channelX;
 					var sx = 0.30 + 0.12 * alt.entropy;
 					var gate = 0.5 + 0.5 * Math.sin(Math.PI * t);
 					var d = isoAltDepth(alt, mainDepth)
@@ -1923,7 +1943,28 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var ripple = 0.022 * Math.sin(x * 1.8 + y * 3.1) * Math.cos(y * 2.2 - x * 1.25)
 				+ 0.010 * Math.sin(x * 3.1 - y * 2.6) * Math.cos(y * 3.4 + x * 1.1);
 			var edgeDrop = 0.05 * Math.pow(Math.abs(y) / isoYMax, 2);
-			return -depth + (ripple - edgeDrop) * (1 - Math.min(1, depth));
+			var z = -depth + (ripple - edgeDrop) * (1 - Math.min(1, depth));
+			var centre = isoCenter(stepX);
+			var rough = (0.016 * Math.sin(stepX * 16.0)
+				+ 0.009 * Math.sin(stepX * 27.0 + 1.3))
+				* Math.exp(-Math.pow((y - centre) / 0.11, 2));
+			z += rough;
+			isoBranches.forEach(function (branch) {
+				branch.alternatives.forEach(function (alt) {
+					if (isoAltEndKind(branch, alt) !== "hill") return;
+					var g = isoAltEndGeometry(branch, alt);
+					z += 0.12 * Math.exp(-Math.pow((x - g.x) / 0.16, 2)
+						- Math.pow((y - g.y) / 0.16, 2));
+				});
+			});
+			isoPits.forEach(function (pit) {
+				var dx = stepX - pit.x;
+				var dy = y - pit.y;
+				var dist = Math.sqrt(dx * dx + dy * dy);
+				z -= pit.depth * Math.exp(-Math.pow(dist / pit.width, 2));
+				z += pit.rim * Math.exp(-Math.pow((dist - pit.rimR) / 0.06, 2));
+			});
+			return z;
 		}
 		function isoTokenPoint(index) {
 			var x = index * isoStepGap;
@@ -1981,19 +2022,14 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				el.textContent = token;
 				container.appendChild(el);
 			});
-			for (var a = 0; a < 2; a++) {
+			var altCount = 0;
+			isoBranches.forEach(function (branch) { altCount += branch.alternatives.length; });
+			for (var a = 0; a < altCount; a++) {
 				var alt = document.createElement("span");
 				alt.className = "tt-point-label tt-point-label--alt";
 				alt.setAttribute("data-alt-index", a);
 				alt.style.display = "none";
 				container.appendChild(alt);
-			}
-			for (var d = 0; d < 4; d++) {
-				var detour = document.createElement("span");
-				detour.className = "tt-point-label tt-point-label--alt";
-				detour.setAttribute("data-detour-index", d);
-				detour.style.display = "none";
-				container.appendChild(detour);
 			}
 			container.dataset.ready = "1";
 			return container;
@@ -2001,38 +2037,53 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function isoLayoutLabels(entries) {
 			entries.sort(function (a, b) { return a.screen[1] - b.screen[1]; });
 			var placed = [];
+			var hostW = isoHost ? isoHost.clientWidth : 1e9;
+			var hostH = isoHost ? isoHost.clientHeight : 1e9;
 			entries.forEach(function (entry) {
 				var el = entry.el;
 				var w = el.offsetWidth;
 				var h = el.offsetHeight;
-				var shift = 0;
-				var box = { x: entry.screen[0] - w / 2, y: 0, w: w, h: h };
-				function setBox() {
-					box.y = entry.mode === "above"
-						? entry.screen[1] - 8 - h - shift
-						: entry.screen[1] + 8 + shift;
-				}
-				setBox();
-				var moved = true;
-				while (moved) {
-					moved = false;
+				var sx = entry.screen[0];
+				var sy = entry.screen[1];
+				var gap = 4;
+				var candidates = [];
+				[0, 18, 36, 54].forEach(function (shift) {
+					candidates.push({ dx: 0, dy: -gap - h - shift });
+					candidates.push({ dx: 0, dy: gap + shift });
+					candidates.push({ dx: gap + shift, dy: -h / 2 });
+					candidates.push({ dx: -w - gap - shift, dy: -h / 2 });
+					candidates.push({ dx: gap + shift, dy: -gap - h });
+					candidates.push({ dx: -w - gap - shift, dy: -gap - h });
+					candidates.push({ dx: gap + shift, dy: gap });
+					candidates.push({ dx: -w - gap - shift, dy: gap });
+				});
+				var bestBox = null;
+				var bestScore = Infinity;
+				candidates.forEach(function (cand) {
+					var box = { x: sx + cand.dx, y: sy + cand.dy, w: w, h: h };
+					var overlap = 0;
 					for (var i = 0; i < placed.length; i++) {
 						var p = placed[i];
-						if (box.x < p.x + p.w + 3 && box.x + box.w + 3 > p.x
-							&& box.y < p.y + p.h + 3 && box.y + box.h + 3 > p.y) {
-							shift += h + 3;
-							setBox();
-							moved = true;
-							break;
-						}
+						var ox = Math.min(box.x + box.w, p.x + p.w) - Math.max(box.x, p.x);
+						var oy = Math.min(box.y + box.h, p.y + p.h) - Math.max(box.y, p.y);
+						if (ox > 0 && oy > 0) overlap += ox * oy;
 					}
-				}
-				if (entry.mode === "above") {
-					el.style.transform = "translate(-50%, calc(-100% - " + (8 + shift) + "px))";
-				} else {
-					el.style.transform = "translate(-50%, " + (8 + shift) + "px)";
-				}
-				placed.push(box);
+					var outside = 0;
+					if (box.x < 0) outside += -box.x;
+					if (box.x + box.w > hostW) outside += box.x + box.w - hostW;
+					if (box.y < 0) outside += -box.y;
+					if (box.y + box.h > hostH) outside += box.y + box.h - hostH;
+					var dist = Math.abs(cand.dx) + Math.abs(cand.dy);
+					var score = overlap * 1000 + outside * 2 + dist * 0.1;
+					if (score < bestScore) {
+						bestScore = score;
+						bestBox = box;
+					}
+				});
+				el.style.left = bestBox.x + "px";
+				el.style.top = bestBox.y + "px";
+				el.style.transform = "none";
+				placed.push(bestBox);
 			});
 		}
 		function isoUpdateOverlayLabels() {
@@ -2043,8 +2094,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var step = Math.min(isoStep, isoTokens.length - 1);
 			container.querySelectorAll("[data-token-index]").forEach(function (el) {
 				var i = Number(el.getAttribute("data-token-index"));
-				var point = isoTokenPoint(i);
-				var screen = isoProjectPoint([point[0], point[1], isoLabelZ]);
+				var screen = isoProjectPoint(isoTokenPoint(i));
 				if (!screen) {
 					el.style.display = "none";
 					return;
@@ -2054,42 +2104,26 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				el.style.top = screen[1] + "px";
 				el.classList.toggle("is-current", i === step);
 				el.classList.toggle("is-future", i > step);
-				entries.push({ el: el, screen: screen, mode: "above" });
+				entries.push({ el: el, screen: screen, mode: i % 2 === 0 ? "above" : "below" });
 			});
 			var altEls = container.querySelectorAll("[data-alt-index]");
 			altEls.forEach(function (el) { el.style.display = "none"; });
-			var branch = null;
-			for (var bi = 0; bi < isoBranches.length; bi++) {
-				if (isoBranches[bi].atStep === step) { branch = isoBranches[bi]; break; }
-			}
-			if (branch) {
-				branch.alternatives.forEach(function (alt, j) {
-					var el = altEls[j];
+			var altIndex = 0;
+			isoBranches.forEach(function (branch) {
+				branch.alternatives.forEach(function (alt) {
+					var el = altEls[altIndex];
+					var mode = altIndex % 2 === 0 ? "below" : "above";
+					altIndex++;
 					if (!el) return;
-					var point = isoAltEndPoint(branch, alt);
-					var screen = isoProjectPoint([point[0], point[1], isoLabelZ]);
+					var screen = isoProjectPoint(isoAltEndPoint(branch, alt));
 					if (!screen) return;
 					el.style.display = "";
 					el.textContent = isoAltLabel(alt.token);
 					el.style.left = screen[0] + "px";
 					el.style.top = screen[1] + "px";
-					entries.push({ el: el, screen: screen, mode: "below" });
+					el.classList.toggle("is-current", branch.atStep === step);
+					entries.push({ el: el, screen: screen, mode: mode });
 				});
-			}
-			var detourEls = container.querySelectorAll("[data-detour-index]");
-			detourEls.forEach(function (el) { el.style.display = "none"; });
-			isoPossibleDetours().forEach(function (detour, j) {
-				if (detour.branch.atStep === step) return;
-				var el = detourEls[j];
-				if (!el) return;
-				var point = isoAltEndPoint(detour.branch, detour.alt);
-				var screen = isoProjectPoint([point[0], point[1], isoLabelZ]);
-				if (!screen) return;
-				el.style.display = "";
-				el.textContent = isoAltLabel(detour.alt.token);
-				el.style.left = screen[0] + "px";
-				el.style.top = screen[1] + "px";
-				entries.push({ el: el, screen: screen, mode: "below" });
 			});
 			isoLayoutLabels(entries);
 		}
@@ -2203,14 +2237,12 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 			var branch = detour.branch;
 			var alt = detour.alt;
-			var bx = branch.atStep + 0.52;
-			var x = bx * isoStepGap;
-			var startY = isoCenter(bx);
-			var endY = isoAltEndY(alt) * 0.97;
+			var g = isoAltEndGeometry(branch, alt);
 			var points = [];
 			for (var t = 0; t <= 1.0001; t += 0.1) {
-				var y = isoLerp(startY, endY, t);
-				points.push([x, y, isoSurfaceHeight(bx, y) + 0.14]);
+				var y = isoLerp(g.startY, g.endY, t);
+				var stepX = g.bx + g.slope * (y - g.startY);
+				points.push([stepX * isoStepGap, y, isoSurfaceHeight(stepX, y) + 0.14]);
 			}
 			return {
 				id: "detour-" + index,
