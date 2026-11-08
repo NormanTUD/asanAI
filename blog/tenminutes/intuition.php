@@ -438,7 +438,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						</div>
 						<h4 class="layer-subhead">From relations to translation</h4>
 						<div class="prose">
-							<p>The points form a manifold: locally flat, globally curved. The relations are similar enough to translate: the path from one word to another can be transformed into the corresponding path in another language. Feed-forward networks learn such transformations.</p>
+							<p>The points form a manifold: locally flat, globally curved. The relations are similar enough to translate: the path from one word to another can be transformed into the corresponding path in another language. Feed-forward networks learn such transformations. This is an approximation. In a real model the geometry is much messier: relations overlap, exceptions are common, and translation is learned from huge amounts of text rather than read off a clean map. The intuition still points in the right direction.</p>
 						</div>
 						<div class="demo demo--paper demo--canvas" id="tm-dual-manifold-demo">
 							<div class="demo-body">
@@ -900,7 +900,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="demo demo--paper demo--canvas" id="meadow-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">The map of words <span>· demo 09</span></p>
+									<p class="demo-title">The map of words <span>· demo 08</span></p>
 									<p class="demo-sub">Every word owns a cell. Move the pointer; the thought falls into the nearest cell. The golden seams are where two words are equally near.</p>
 								</div>
 							</div>
@@ -926,7 +926,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="demo demo--paper demo--plot softmax-demo" id="softmax-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">From logits to a probability distribution <span>· demo 08</span></p>
+									<p class="demo-title">From logits to a probability distribution <span>· demo 09</span></p>
 									<p class="demo-sub">Real GPT-2 small scores for two prompts. The left side is the raw logit from each dot product; the right side is what softmax makes of it. Switch the context and watch the whole distribution change.</p>
 								</div>
 								<span class="demo-badge">real GPT-2</span>
@@ -3699,6 +3699,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		var attOut = document.getElementById("iatt-out");
 		var attApi = null;
 		var attIndex = 0;
+		var attShown = [5, 5];
+		var attRaf = null;
 		var attExamples = DE ? [
 			{ sentence: 'Ich gehe zur <span class="aw-bank">Bank</span>.', contexts: [], shift: [5, 5], weights: { bank: 1, river: 0, money: 0 }, caption: 'Ohne eindeutigen Kontext: <b>Bank</b> bleibt in der Mitte, mehrdeutig.' },
 			{ sentence: 'Ich sitze im <span class="aw-river">Park</span> auf der <span class="aw-bank">Bank</span>.', contexts: ['river'], shift: [3.2, 6.8], weights: { bank: 0.35, river: 0.65, money: 0 }, caption: '<b>Park</b> ist der Nachbar → Bank bewegt sich zur Sitzbank-Bedeutung.' },
@@ -3754,27 +3756,27 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			});
 			ctx.beginPath();
 			ctx.moveTo(ax(bank[0]), ay(bank[1]));
-			ctx.lineTo(ax(ex.shift[0]), ay(ex.shift[1]));
+			ctx.lineTo(ax(attShown[0]), ay(attShown[1]));
 			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.6)" : "rgba(0,75,111,.55)";
 			ctx.lineWidth = 2;
 			ctx.stroke();
 			ctx.beginPath();
-			ctx.moveTo(ax(ex.shift[0]) - 6, ay(ex.shift[1]));
-			ctx.lineTo(ax(ex.shift[0]), ay(ex.shift[1]) - 6);
-			ctx.lineTo(ax(ex.shift[0]) + 6, ay(ex.shift[1]));
-			ctx.lineTo(ax(ex.shift[0]), ay(ex.shift[1]) + 6);
+			ctx.moveTo(ax(attShown[0]) - 6, ay(attShown[1]));
+			ctx.lineTo(ax(attShown[0]), ay(attShown[1]) - 6);
+			ctx.lineTo(ax(attShown[0]) + 6, ay(attShown[1]));
+			ctx.lineTo(ax(attShown[0]), ay(attShown[1]) + 6);
 			ctx.closePath();
 			ctx.fillStyle = c.dark ? "#9185be" : "#9f9700";
 			ctx.fill();
 			ctx.strokeStyle = c.card;
 			ctx.lineWidth = 2;
 			ctx.stroke();
-			var moved = Math.hypot(ex.shift[0] - bank[0], ex.shift[1] - bank[1]) > 0.15;
+			var moved = Math.hypot(attShown[0] - bank[0], attShown[1] - bank[1]) > 0.15;
 			if (moved) {
 				var label = DE ? "Bank (mit Kontext)" : "bank (with context)";
 				ctx.font = "700 10px Barlow, system-ui, sans-serif";
 				var tw = ctx.measureText(label).width;
-				var tx = ax(ex.shift[0]), ty = ay(ex.shift[1]) - 14;
+				var tx = ax(attShown[0]), ty = ay(attShown[1]) - 14;
 				tx = TM.clamp(tx, pad + tw / 2 + 6, w - pad - tw / 2 - 6);
 				TM.roundRect(ctx, tx - tw / 2 - 6, ty - 12, tw + 12, 16, 4);
 				ctx.fillStyle = c.dark ? "rgba(15,23,42,.86)" : "rgba(255,255,255,.92)";
@@ -3789,6 +3791,35 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		}
 		var attMatrix = document.getElementById("iatt-matrix");
 		var attSum = document.getElementById("iatt-sum");
+		function animateAttTo(target) {
+			var to = [target[0], target[1]];
+			if (attRaf) {
+				cancelAnimationFrame(attRaf);
+				attRaf = null;
+			}
+			var from = attShown.slice();
+			if (TM.prefersReduced() || Math.hypot(to[0] - from[0], to[1] - from[1]) < 0.01) {
+				attShown = to;
+				if (attApi) attApi.redraw({ spinner: false });
+				return;
+			}
+			var start = performance.now();
+			var duration = 260;
+			function tick(now) {
+				var t = Math.min(1, (now - start) / duration);
+				var e = TM.ease(t);
+				attShown = [from[0] + (to[0] - from[0]) * e, from[1] + (to[1] - from[1]) * e];
+				if (attApi) attApi.redraw({ spinner: false });
+				if (t < 1) {
+					attRaf = requestAnimationFrame(tick);
+				} else {
+					attShown = to;
+					attRaf = null;
+					if (attApi) attApi.redraw({ spinner: false });
+				}
+			}
+			attRaf = requestAnimationFrame(tick);
+		}
 		function renderAtt() {
 			var ex = attExamples[attIndex];
 			if (attSentence) attSentence.innerHTML = ex.sentence;
@@ -3845,7 +3876,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				attSum.removeAttribute("data-tex-rendered");
 				if (TM.typesetMath) TM.typesetMath(attSum.parentNode);
 			}
-			if (attApi) attApi.redraw();
+			animateAttTo(ex.shift);
 		}
 		if (attCanvas) {
 			attApi = TM.initCanvas(attCanvas, drawAtt);

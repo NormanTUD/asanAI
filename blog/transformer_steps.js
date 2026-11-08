@@ -3185,7 +3185,7 @@
 			var pw = popup.offsetWidth, ph = popup.offsetHeight;
 			var left = Math.max(8, Math.min(window.innerWidth - pw - 8, r.left));
 			var top = r.bottom + 8;
-			if (top + ph > window.innerHeight - 8) top = Math.max(8, r.top - ph - 8);
+			if (top + ph > window.innerHeight - 70) top = Math.max(8, r.top - ph - 8);
 			popup.style.left = left + "px";
 			popup.style.top = top + "px";
 		}
@@ -3208,7 +3208,8 @@
 			popup.hidden = false;
 			var prefix = pre ? (DE() ? "Residual-Stream vor Schicht 1" : "Residual stream before layer 1") : (DE() ? "Residual-Stream nach Schicht " : "Residual stream after layer ") + (idx + 1);
 			titleEl.textContent = prefix + " · " + (DE() ? "alle Tokens, alle Dimensionen" : "all tokens, all dimensions");
-			canvasEl.style.height = Math.max(220, data.length * 17 + 52) + "px";
+			var below = window.innerHeight - label.getBoundingClientRect().bottom - 180;
+			canvasEl.style.height = Math.max(200, Math.min(data.length * 17 + 52, below)) + "px";
 			updateVector();
 			api.redraw();
 			positionPopup(label);

@@ -290,9 +290,9 @@
 
 	var api = TM.initCanvas(cv, draw);
 	if (!api) return;
-	if (sN) sN.addEventListener("input", function () { setN(parseInt(sN.value, 10) || 12); if (rN) rN.textContent = currentN; api.redraw(); });
-	if (sT) sT.addEventListener("input", function () { T = clamp(parseFloat(sT.value) || 0.8, 0.2, 2.6); if (rT) rT.textContent = T.toFixed(2); api.redraw(); });
-	if (sK) sK.addEventListener("input", function () { K = clamp(parseInt(sK.value, 10) || 5, 1, 10); if (rK) rK.textContent = K; api.redraw(); });
+	if (sN) sN.addEventListener("input", function () { setN(parseInt(sN.value, 10) || 12); if (rN) rN.textContent = currentN; api.redraw({ spinner: false }); });
+	if (sT) sT.addEventListener("input", function () { T = clamp(parseFloat(sT.value) || 0.8, 0.2, 2.6); if (rT) rT.textContent = T.toFixed(2); api.redraw({ spinner: false }); });
+	if (sK) sK.addEventListener("input", function () { K = clamp(parseInt(sK.value, 10) || 5, 1, 10); if (rK) rK.textContent = K; api.redraw({ spinner: false }); });
 	function setPointer(ev) {
 		var rect = cv.getBoundingClientRect();
 		var cx = ev.touches ? ev.touches[0].clientX : ev.clientX;
