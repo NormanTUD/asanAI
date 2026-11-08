@@ -2628,6 +2628,12 @@
    "year": "2024",
    "url": "https://arxiv.org/abs/2404.02156"
   },
+  "guan2026adaptiveworms": {
+   "title": "AI Agents Enable Adaptive Computer Worms",
+   "author": "Jonas Guan, Tom Blanchard, Hanna Foerster, Hengrui Jia, Gabriel Huang, Nicolas Papernot",
+   "year": "2026",
+   "url": "https://arxiv.org/abs/2606.03811"
+  },
   "pope2023efficiently": {
    "title": "Efficiently Scaling Transformer Inference",
    "author": "Reiner Pope, Sholto Douglas, Aakanksha Chowdhery, Jacob Devlin, James Bradbury, Anselm Levskaya, Jonathan Heek, Kefan Xiao, Shivani Agrawal, Jeff Dean",
@@ -26855,6 +26861,11 @@
    "agents",
    "promptengineering"
   ],
+  "guan2026adaptiveworms": [
+   "agents",
+   "ai_existential_risk",
+   "security_inference"
+  ],
   "colah2015backprop": [
    "autodiff",
    "origami",
@@ -39822,6 +39833,55 @@
     "chen2024ibprotector"
    ]
   },
+  "Jonas Guan": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "guan2026adaptiveworms"
+   ]
+  },
+  "Tom Blanchard": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "guan2026adaptiveworms"
+   ]
+  },
+  "Hanna Foerster": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "guan2026adaptiveworms"
+   ]
+  },
+  "Hengrui Jia": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "guan2026adaptiveworms"
+   ]
+  },
+  "Gabriel Huang": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "guan2026adaptiveworms"
+   ]
+  },
+  "Nicolas Papernot": {
+   "count": 2,
+   "minyear": 2023,
+   "maxyear": 2026,
+   "keys": [
+    "guan2026adaptiveworms",
+    "shumailov2023modelcollapse"
+   ]
+  },
   "Reiner Pope": {
    "count": 1,
    "minyear": 2023,
@@ -46529,14 +46589,6 @@
     "shumailov2023modelcollapse",
     "wong2025sinks",
     "shumailov2024collapse"
-   ]
-  },
-  "Nicolas Papernot": {
-   "count": 1,
-   "minyear": 2023,
-   "maxyear": 2023,
-   "keys": [
-    "shumailov2023modelcollapse"
    ]
   },
   "Ross Anderson": {

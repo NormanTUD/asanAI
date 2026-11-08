@@ -57514,12 +57514,16 @@
   "city": "London, UK",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "guan2026adaptiveworms",
    "shumailov2023modelcollapse"
   ],
   "cited_in": [
+   "agents",
+   "ai_existential_risk",
    "philosophy",
+   "security_inference",
    "training_data"
   ]
  },
@@ -80515,6 +80519,101 @@
   "cited_in": [
    "human_mind",
    "intro"
+  ]
+ },
+ {
+  "name": "Jonas Guan",
+  "canon": "Jonas Guan",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "guan2026adaptiveworms"
+  ],
+  "cited_in": [
+   "agents",
+   "ai_existential_risk",
+   "security_inference"
+  ]
+ },
+ {
+  "name": "Tom Blanchard",
+  "canon": "Tom Blanchard",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "guan2026adaptiveworms"
+  ],
+  "cited_in": [
+   "agents",
+   "ai_existential_risk",
+   "security_inference"
+  ]
+ },
+ {
+  "name": "Hanna Foerster",
+  "canon": "Hanna Foerster",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "guan2026adaptiveworms"
+  ],
+  "cited_in": [
+   "agents",
+   "ai_existential_risk",
+   "security_inference"
+  ]
+ },
+ {
+  "name": "Hengrui Jia",
+  "canon": "Hengrui Jia",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "guan2026adaptiveworms"
+  ],
+  "cited_in": [
+   "agents",
+   "ai_existential_risk",
+   "security_inference"
+  ]
+ },
+ {
+  "name": "Gabriel Huang",
+  "canon": "Gabriel Huang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "guan2026adaptiveworms"
+  ],
+  "cited_in": [
+   "agents",
+   "ai_existential_risk",
+   "security_inference"
   ]
  },
  {
