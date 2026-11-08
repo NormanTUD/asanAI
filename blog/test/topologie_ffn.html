@@ -433,16 +433,21 @@
       float sd = uSeed;
       float t = uTime * 0.11;
       vec3 q = p;
-      q.x += m * (0.30 * sin(2.05*p.y + 1.62*p.z + sd + t*0.70)
-                + 0.15 * sin(3.55*p.z - 1.27*p.y + sd*1.73));
-      q.y += m * (0.27 * sin(2.38*p.z + 1.31*p.x - sd*1.31 + t*0.61)
-                + 0.13 * cos(3.11*p.x + 2.19*p.z + sd));
-      q.z += m * (0.31 * sin(1.93*p.x + 2.27*p.y + sd*0.71 + t*0.53)
-                + 0.14 * cos(3.27*p.y - 1.49*p.x - sd*1.11));
-      float a = m * (0.72*p.y + 0.24*sin(1.41*p.x + 0.93*p.z + sd));
+      q.x += m * (0.58 * sin(1.55*p.y + 1.15*p.z + sd + t*0.70)
+                + 0.27 * sin(2.85*p.z - 1.10*p.y + sd*1.73)
+                + 0.10 * sin(4.20*p.y + 1.70*p.z + sd*0.37));
+      q.y += m * (0.50 * sin(1.75*p.z + 1.05*p.x - sd*1.31 + t*0.61)
+                + 0.24 * cos(2.55*p.x + 1.75*p.z + sd)
+                + 0.10 * cos(4.00*p.z - 1.30*p.x + sd*0.91));
+      q.z += m * (0.58 * sin(1.50*p.x + 1.65*p.y + sd*0.71 + t*0.53)
+                + 0.27 * cos(2.75*p.y - 1.15*p.x - sd*1.11)
+                + 0.11 * sin(4.10*p.x + 1.90*p.y + sd*0.53));
+      q.x *= 1.0 + m * 0.16 * sin(0.95*p.z + 0.62*p.y + sd);
+      q.z *= 1.0 + m * 0.14 * cos(0.82*p.x - 0.72*p.y + sd*1.30);
+      float a = m * (1.15*p.y + 0.42*sin(1.20*p.x + 0.85*p.z + sd));
       float c = cos(a), s = sin(a);
       q.xz = mat2(c, -s, s, c) * q.xz;
-      q *= 1.0 + m * 0.055 * sin(t*1.37 + sd);
+      q *= 1.0 + m * 0.10 * sin(t*1.10 + sd);
       return q;
     }
     vec3 mnWarpNormal(vec3 p, vec3 n0) {
@@ -681,6 +686,92 @@
       gl_PointSize = clamp(aSize * uSizeScale * uPixelRatio / max(0.35, -mv.z) * tw, 0.5, 18.0);
       vColor = mix(vec3(0.55, 0.88, 1.0), vec3(1.0, 0.72, 0.36), aHue);
       vAlpha = uOpacity * (0.25 + 0.75 * tw);
+    }
+  `;
+
+  const AURA_VERT = `
+    attribute float aPhase;
+    attribute float aSpeed;
+    attribute float aRadius;
+    attribute float aY;
+    attribute float aSeed;
+    attribute float aSize;
+    attribute float aHue;
+    uniform float uTime;
+    uniform float uOpacity;
+    uniform float uDir;
+    uniform float uPixelRatio;
+    uniform float uSizeScale;
+    varying vec3 vColor;
+    varying float vAlpha;
+    void main() {
+      float life = fract(aPhase + uTime * aSpeed * uDir * 0.5);
+      float l = uDir > 0.0 ? life : 1.0 - life;
+      float r = mix(4.9, 0.85, l) * aRadius;
+      float ang = aPhase * 6.2831 + life * 4.4 * uDir + aSeed * 6.2831;
+      vec3 p = vec3(cos(ang) * r, aY + 0.32 * sin(ang * 2.0 + uTime * 0.55), sin(ang) * r);
+      vec4 world = modelMatrix * vec4(p, 1.0);
+      vec4 mv = viewMatrix * world;
+      gl_Position = projectionMatrix * mv;
+      gl_Position.z -= 0.00035 * gl_Position.w;
+      float fade = smoothstep(0.0, 0.12, life) * (1.0 - smoothstep(0.80, 1.0, life));
+      float tw = 0.62 + 0.38 * sin(uTime * (1.1 + aSeed * 2.0) + aSeed * 6.2831);
+      gl_PointSize = clamp(aSize * uSizeScale * uPixelRatio / max(0.4, -mv.z) * (0.55 + 0.45 * fade), 0.4, 9.0);
+      vec3 cA = uDir > 0.0 ? vec3(0.30, 0.84, 1.00) : vec3(1.00, 0.38, 0.30);
+      vec3 cB = uDir > 0.0 ? vec3(0.64, 0.44, 1.00) : vec3(1.00, 0.74, 0.28);
+      vColor = mix(cA, cB, aHue);
+      vAlpha = uOpacity * fade * (0.35 + 0.65 * tw);
+    }
+  `;
+
+  const AURA_TRAIL_VERT = `
+    attribute float aAge;
+    attribute float aPhase;
+    attribute float aSpeed;
+    attribute float aRadius;
+    attribute float aY;
+    attribute float aSeed;
+    attribute float aHue;
+    uniform float uTime;
+    uniform float uOpacity;
+    uniform float uDir;
+    varying vec3 vColor;
+    varying float vAlpha;
+    void main() {
+      float tt = uTime - aAge * 0.27;
+      float life = fract(aPhase + tt * aSpeed * uDir * 0.5);
+      float l = uDir > 0.0 ? life : 1.0 - life;
+      float r = mix(4.9, 0.85, l) * aRadius;
+      float ang = aPhase * 6.2831 + life * 4.4 * uDir + aSeed * 6.2831;
+      vec3 p = vec3(cos(ang) * r, aY + 0.32 * sin(ang * 2.0 + tt * 0.55), sin(ang) * r);
+      vec4 world = modelMatrix * vec4(p, 1.0);
+      gl_Position = projectionMatrix * viewMatrix * world;
+      gl_Position.z -= 0.00025 * gl_Position.w;
+      float fade = smoothstep(0.0, 0.12, life) * (1.0 - smoothstep(0.80, 1.0, life));
+      vec3 cA = uDir > 0.0 ? vec3(0.26, 0.78, 1.00) : vec3(1.00, 0.34, 0.26);
+      vec3 cB = uDir > 0.0 ? vec3(0.56, 0.38, 1.00) : vec3(1.00, 0.66, 0.24);
+      vColor = mix(cA, cB, aHue);
+      vAlpha = pow(1.0 - aAge, 3.0) * uOpacity * fade * 0.30;
+    }
+  `;
+
+  const AURA_FRAG = `
+    varying vec3 vColor;
+    varying float vAlpha;
+    void main() {
+      vec2 q = gl_PointCoord * 2.0 - 1.0;
+      float d = length(q);
+      if (d > 1.0) discard;
+      float a = pow(max(0.0, 1.0 - d), 2.4) * vAlpha;
+      gl_FragColor = vec4(vColor * 1.25, a);
+    }
+  `;
+
+  const AURA_TRAIL_FRAG = `
+    varying vec3 vColor;
+    varying float vAlpha;
+    void main() {
+      gl_FragColor = vec4(vColor * 1.1, vAlpha);
     }
   `;
 
