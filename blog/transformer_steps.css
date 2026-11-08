@@ -951,6 +951,41 @@
 }
 
 /* Primary feature-migration arrow plot, with the per-token view in a deep submenu. */
+.tm-feature-metric {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 14px;
+	margin: 0 0 10px;
+	font: 600 0.8rem/1.4 "Open Sans", system-ui, sans-serif;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+}
+.tm-feature-metric select {
+	padding: 4px 8px;
+	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	background: var(--tm-card, var(--mn-surface, #ffffff));
+	color: var(--tm-ink, var(--mn-text, #0f172a));
+	font: 600 0.78rem/1.2 "Open Sans", system-ui, sans-serif;
+}
+.tm-feature-metric-help {
+	flex-basis: 100%;
+}
+.tm-feature-metric-help > summary {
+	cursor: pointer;
+	font-size: 0.74rem;
+	color: var(--tm-petrol, var(--mn-accent, #004b6f));
+	text-align: left;
+}
+.tm-feature-metric-help p {
+	margin: 6px 0 0;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+	font-size: 0.76rem;
+	line-height: 1.5;
+}
+.tm-feature-metric-help a {
+	color: var(--tm-petrol, var(--mn-accent, #004b6f));
+}
+
 .tm-feature-primary {
 	margin-bottom: 12px;
 }

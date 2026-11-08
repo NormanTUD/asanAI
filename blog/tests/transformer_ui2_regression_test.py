@@ -258,6 +258,36 @@ def main() -> None:
                 const d = document.querySelector('.tm-head-method-details');
                 return d ? {open: d.open, hasMethod: !!d.querySelector('.tm-head-method')} : null;
             }""")
+            metric = page.evaluate("""() => {
+                const sel = document.querySelector('[data-feature-metric]');
+                const el = document.querySelector('.tm-feature-arrows');
+                if (!sel || !el || !window.echarts) return null;
+                sel.value = 'angular';
+                sel.dispatchEvent(new Event('change', { bubbles: true }));
+                const chart = echarts.getInstanceByDom(el);
+                const opt = chart ? chart.getOption() : null;
+                const series = opt ? (opt.series || []) : [];
+                const scatter = series.find(s => s.type === 'scatter3D');
+                let norm = null;
+                if (scatter && scatter.data && scatter.data[0] && scatter.data[0].value) {
+                    const v = scatter.data[0].value;
+                    norm = Math.sqrt(v.reduce((a, x) => a + x * x, 0));
+                }
+                return {
+                    options: sel.options.length,
+                    value: sel.value,
+                    subtext: opt && opt.title && opt.title[0] ? opt.title[0].subtext : '',
+                    surface: series.some(s => s.type === 'surface'),
+                    hasAngleName: series.some(s => (s.name || '').indexOf('great-circle') !== -1),
+                    norm
+                };
+            }""")
+            check("feature-migration metric switch offers three metrics", bool(metric) and metric["options"] == 3, str(metric))
+            check("great-circle metric puts points on the unit sphere",
+                  bool(metric) and "great-circle" in metric["subtext"] and metric["surface"]
+                  and metric["hasAngleName"] and metric["norm"] is not None and abs(metric["norm"] - 1) < 0.02,
+                  str(metric)[:300])
+            page.evaluate("""() => { const sel=document.querySelector('[data-feature-metric]'); if (sel) { sel.value='euclidean'; sel.dispatchEvent(new Event('change', { bubbles: true })); } }""")
             check("head-type method note is collapsed", bool(method) and not method["open"] and method["hasMethod"], str(method))
             apv = page.evaluate("() => { const d=document.querySelector('.apv-head-detail'); return d ? {open:d.open} : null; }")
             check("per-head math explanation is collapsed", bool(apv) and not apv["open"], str(apv))

@@ -1801,6 +1801,53 @@
 
 	var featureState = {};
 
+	var FEATURE_METRICS = {
+		euclidean: { de: "Euklidisch (L2)", en: "Euclidean (L2)", short: "L2" },
+		manhattan: { de: "Manhattan (L1)", en: "Manhattan (L1)", short: "L1" },
+		angular: { de: "Großkreis / Winkel", en: "Great-circle / angle", short: "angle" }
+	};
+	if (!window.tmFeatureMetric || !FEATURE_METRICS[window.tmFeatureMetric]) window.tmFeatureMetric = "euclidean";
+	function featureMetric() { return window.tmFeatureMetric || "euclidean"; }
+	function featureMetricLabel() { return FEATURE_METRICS[featureMetric()][DE() ? "de" : "en"]; }
+	function vectorNorm(v) { return Math.sqrt((v || []).reduce(function (s, x) { return s + x * x; }, 0)); }
+	function normalizeVector(v) { var n = vectorNorm(v) || 1; return (v || []).map(function (x) { return x / n; }); }
+	function manhattanTransform(v) { return (v || []).map(function (x) { return Math.sign(x) * Math.sqrt(Math.abs(x)); }); }
+	function metricDistance(a, b, metric) {
+		metric = metric || featureMetric();
+		if (metric === "angular") {
+			var u = normalizeVector(a), w = normalizeVector(b);
+			var dot = 0;
+			for (var i = 0; i < Math.min(u.length, w.length); i++) dot += u[i] * w[i];
+			return Math.acos(Math.max(-1, Math.min(1, dot)));
+		}
+		var sum = 0;
+		for (var j = 0; j < Math.min(a.length, b.length); j++) {
+			var d = (a[j] || 0) - (b[j] || 0);
+			sum += metric === "manhattan" ? Math.abs(d) : d * d;
+		}
+		return metric === "manhattan" ? sum : Math.sqrt(sum);
+	}
+	function metricDistanceLabel(a, b, metric) {
+		var d = metricDistance(a, b, metric);
+		if (metric === "angular") return (DE() ? "Großkreis " : "great-circle ") + (d * 180 / Math.PI).toFixed(1) + "°";
+		return (metric === "manhattan" ? "L1 " : "L2 ") + d.toFixed(3);
+	}
+	function slerpPoints(a, b, steps) {
+		var u = normalizeVector(a), w = normalizeVector(b);
+		var dot = 0;
+		for (var i = 0; i < Math.min(u.length, w.length); i++) dot += u[i] * w[i];
+		var theta = Math.acos(Math.max(-1, Math.min(1, dot)));
+		var out = [];
+		if (theta < 1e-5) return [a, b];
+		for (var k = 0; k <= steps; k++) {
+			var t = k / steps;
+			var s1 = Math.sin((1 - t) * theta) / Math.sin(theta);
+			var s2 = Math.sin(t * theta) / Math.sin(theta);
+			out.push(u.map(function (_, j) { return s1 * u[j] + s2 * w[j]; }));
+		}
+		return out;
+	}
+
 	function featureData(layerIdx) {
 		var trace = (window.__tmLayerTrace || [])[layerIdx];
 		if (!trace || !trace.h_in || !trace.h_out) return null;
@@ -1813,46 +1860,74 @@
 	}
 
 	function featureProjection(data) {
+		var metric = featureMetric();
 		var d = data.trace.h_in[0].length;
-		var all = data.trace.h_in.slice(0, data.n).concat(data.trace.h_out.slice(0, data.n));
+		var rawIn = data.trace.h_in.slice(0, data.n);
+		var rawOut = data.trace.h_out.slice(0, data.n);
+		function transform(v) {
+			if (metric === "manhattan") return manhattanTransform(v);
+			if (metric === "angular") return normalizeVector(v);
+			return v;
+		}
+		var all = rawIn.map(transform).concat(rawOut.map(transform));
 		var coords;
+		var normalizeProjected = function (p) {
+			var n = Math.sqrt(p.reduce(function (s, x) { return s + x * x; }, 0)) || 1;
+			return p.map(function (x) { return x / n; });
+		};
 		if (d > 3) {
 			coords = pca3(all);
+			if (metric === "angular") coords = coords.map(normalizeProjected);
 			return {
 				in: coords.slice(0, data.n),
 				out: coords.slice(data.n),
 				is3d: true,
-				axes: ["PC 1 (PCA)", "PC 2 (PCA)", "PC 3 (PCA)"],
-				label: "PCA: d=" + d + " → 3D"
+				axes: metric === "angular" ? ["dir 1", "dir 2", "dir 3"] : ["PC 1 (PCA)", "PC 2 (PCA)", "PC 3 (PCA)"],
+				label: (metric === "angular" ? "great-circle: unit sphere" : metric === "manhattan" ? "L1: sqrt transform + PCA" : "PCA") + ": d=" + d + " → 3D",
+				metric: metric,
+				rawIn: rawIn,
+				rawOut: rawOut
 			};
 		}
 		if (d === 3) {
 			coords = all.map(function (v) { return [v[0] || 0, v[1] || 0, v[2] || 0]; });
+			if (metric === "angular") coords = coords.map(normalizeProjected);
 			return {
 				in: coords.slice(0, data.n),
 				out: coords.slice(data.n),
 				is3d: true,
-				axes: ["Dim 0", "Dim 1", "Dim 2"],
-				label: ""
+				axes: metric === "angular" ? ["dir 0", "dir 1", "dir 2"] : ["Dim 0", "Dim 1", "Dim 2"],
+				label: metric === "angular" ? "great-circle: unit sphere" : metric === "manhattan" ? "L1: sqrt transform" : "",
+				metric: metric,
+				rawIn: rawIn,
+				rawOut: rawOut
 			};
 		}
 		if (d === 2) {
 			coords = all.map(function (v) { return [v[0] || 0, v[1] || 0]; });
+			if (metric === "angular") coords = coords.map(normalizeProjected);
 			return {
 				in: coords.slice(0, data.n),
 				out: coords.slice(data.n),
 				is3d: false,
-				axes: ["Dim 0", "Dim 1"],
-				label: ""
+				axes: metric === "angular" ? ["dir 0", "dir 1"] : ["Dim 0", "Dim 1"],
+				label: metric === "angular" ? "great-circle: unit circle" : metric === "manhattan" ? "L1: sqrt transform" : "",
+				metric: metric,
+				rawIn: rawIn,
+				rawOut: rawOut
 			};
 		}
 		coords = all.map(function (v) { return [v[0] || 0, 0]; });
+		if (metric === "angular") coords = coords.map(normalizeProjected);
 		return {
 			in: coords.slice(0, data.n),
 			out: coords.slice(data.n),
 			is3d: false,
 			axes: ["Dim 0", ""],
-			label: ""
+			label: metric === "angular" ? "great-circle: unit circle" : metric === "manhattan" ? "L1: sqrt transform" : "",
+			metric: metric,
+			rawIn: rawIn,
+			rawOut: rawOut
 		};
 	}
 
@@ -1931,34 +2006,80 @@
 		var c = palette();
 		var chart = echarts.getInstanceByDom(el) || echarts.init(el);
 		var labels = data.tokens.map(function (t) { return display(t); });
+		var metric = projection.metric || featureMetric();
 		var series = [];
+		if (metric === "angular" && projection.is3d) {
+			var sphereRows = [];
+			var nu = 18, nv = 36;
+			for (var u = 0; u <= nu; u++) {
+				var row = [];
+				var theta = Math.PI * u / nu;
+				for (var v = 0; v <= nv; v++) {
+					var phi = 2 * Math.PI * v / nv;
+					row.push([
+						Math.sin(theta) * Math.cos(phi),
+						Math.sin(theta) * Math.sin(phi),
+						Math.cos(theta)
+					]);
+				}
+				sphereRows.push(row);
+			}
+			series.push({
+				type: "surface",
+				name: "unit sphere",
+				data: sphereRows,
+				shading: "color",
+				itemStyle: { color: c.line, opacity: 0.07 },
+				wireframe: { show: false },
+				silent: true
+			});
+		}
+		if (metric === "angular" && !projection.is3d) {
+			var circle = [];
+			for (var a = 0; a <= 96; a++) {
+				var t = 2 * Math.PI * a / 96;
+				circle.push([Math.cos(t), Math.sin(t)]);
+			}
+			series.push({
+				type: "line",
+				name: "unit circle",
+				data: circle,
+				symbol: "none",
+				lineStyle: { color: c.line, width: 1, type: "dashed" },
+				silent: true
+			});
+		}
 		for (var i = 0; i < data.n; i++) {
 			var sel = i === data.selected;
 			var col = sel ? c.gold : rgb(mix(hex(c.blue), hex(c.lilac), i / Math.max(1, data.n - 1)));
+			var distText = metricDistanceLabel(projection.rawIn[i], projection.rawOut[i], metric);
+			var seriesName = labels[i] + " · " + distText;
 			if (projection.is3d) {
 				var from = projection.in[i], to = projection.out[i];
+				var arc = metric === "angular" ? slerpPoints(from, to, 18) : [from, to];
 				series.push({
-					name: labels[i],
+					name: seriesName,
 					type: "line3D",
-					data: [from, to],
+					data: arc,
 					lineStyle: { width: sel ? 5 : 2.4, color: col, opacity: sel ? 1 : 0.72 }
 				});
 				if (typeof _add3DArrowheadSeries === "function") {
-					_add3DArrowheadSeries(series, from, to, col, { lineWidth: sel ? 6 : 4, maxHeadLen: 0.45, spreadRatio: 0.35, name: labels[i] });
+					_add3DArrowheadSeries(series, arc[arc.length - 2] || from, arc[arc.length - 1] || to, col, { lineWidth: sel ? 6 : 4, maxHeadLen: 0.45, spreadRatio: 0.35, name: seriesName });
 				}
 				series.push({
-					name: labels[i],
+					name: seriesName,
 					type: "scatter3D",
 					data: [{ value: from, itemStyle: { color: col }, _tmPoint: "in" }],
 					symbolSize: sel ? 9 : 5,
 					label: { show: sel, formatter: labels[i], color: c.ink, fontSize: 10, fontWeight: 700 }
 				});
 			} else {
-				var a = projection.in[i], b = projection.out[i];
+				var a2 = projection.in[i], b2 = projection.out[i];
+				var path = metric === "angular" ? slerpPoints([a2[0], a2[1], 0], [b2[0], b2[1], 0], 18).map(function (p) { return [p[0], p[1]]; }) : [[a2[0], a2[1]], [b2[0], b2[1]]];
 				series.push({
-					name: labels[i],
+					name: seriesName,
 					type: "line",
-					data: [[a[0], a[1]], [b[0], b[1]]],
+					data: path,
 					symbol: ["circle", "arrow"],
 					symbolSize: sel ? 9 : 5,
 					lineStyle: { width: sel ? 4 : 2, color: col, opacity: sel ? 1 : 0.72 },
@@ -1971,7 +2092,7 @@
 			backgroundColor: "transparent",
 			title: {
 				text: (DE() ? "Feature-Migration · Schicht " : "Feature migration · layer ") + (layerIdx + 1),
-				subtext: (projection.label ? projection.label + " · " : "") + (DE() ? "alle Tokens, Pfeil = Eingabe → Ausgabe" : "all tokens, arrow = input → output"),
+				subtext: (projection.label ? projection.label + " · " : "") + featureMetricLabel() + " · " + (DE() ? "alle Tokens, Pfeil = Eingabe → Ausgabe" : "all tokens, arrow = input → output"),
 				left: "center",
 				textStyle: { fontSize: 13, color: c.ink, fontFamily: "Barlow, Open Sans, sans-serif" },
 				subtextStyle: { fontSize: 10, color: c.muted, fontFamily: "Open Sans, sans-serif" }
@@ -2352,13 +2473,32 @@
 			if (!sb.querySelector(".tm-feature-wrap")) {
 				var wrap = document.createElement("div");
 				wrap.className = "tm-feature-wrap";
-				wrap.innerHTML = "<div class='tm-feature-primary'><span class='tm-feature-note' id='unified-layer-" + idx + "-feature-projection'></span><div id='unified-layer-" + idx + "-feature-arrows' class='tm-feature-arrows'></div></div>" +
+				var metricOptions = Object.keys(FEATURE_METRICS).map(function (key) {
+					return "<option value='" + key + "'>" + FEATURE_METRICS[key][isDe ? "de" : "en"] + "</option>";
+				}).join("");
+				var metricHelp = isDe
+					? "<p><b>Euklidisch (L2):</b> gerade Linie im Raum. <b>Manhattan (L1):</b> Summe der absoluten Koordinatenunterschiede; die Darstellung nutzt eine sqrt-Transformation, damit L1-Kugeln rund wirken. <b>Großkreis (Winkel):</b> Jeder Vektor wird auf Länge 1 normiert; der Abstand ist der Winkel am Nullpunkt, also der Bogen auf der Einheitskugel. L1 und L2 erzeugen in endlichen Dimensionen dieselbe Topologie (äquivalente Normen); der Winkel-Abstand ignoriert die Vektorlänge und ändert die Geometrie stärker. Mehr: <a href='https://en.wikipedia.org/wiki/Metric_space' target='_blank' rel='noopener'>metric space</a>, <a href='https://en.wikipedia.org/wiki/Taxicab_geometry' target='_blank' rel='noopener'>taxicab geometry</a>, <a href='https://en.wikipedia.org/wiki/Great-circle_distance' target='_blank' rel='noopener'>great-circle distance</a>.</p>"
+					: "<p><b>Euclidean (L2):</b> straight-line distance in the space. <b>Manhattan (L1):</b> sum of absolute coordinate differences; the plot uses a sqrt transform so L1 balls look round. <b>Great-circle (angle):</b> every vector is normalized to length 1; the distance is the angle at the origin, i.e. the arc on the unit sphere. In finite dimensions L1 and L2 induce the same topology (equivalent norms); the angular metric drops vector length and changes the geometry more strongly. More: <a href='https://en.wikipedia.org/wiki/Metric_space' target='_blank' rel='noopener'>metric space</a>, <a href='https://en.wikipedia.org/wiki/Taxicab_geometry' target='_blank' rel='noopener'>taxicab geometry</a>, <a href='https://en.wikipedia.org/wiki/Great-circle_distance' target='_blank' rel='noopener'>great-circle distance</a>.</p>";
+				wrap.innerHTML = "<div class='tm-feature-primary'><span class='tm-feature-note' id='unified-layer-" + idx + "-feature-projection'></span>" +
+					"<div class='tm-feature-metric'><label>" + (isDe ? "Distanzmetrik" : "Distance metric") + " <select data-feature-metric='" + idx + "'>" + metricOptions + "</select></label><details class='tm-feature-metric-help'><summary>" + (isDe ? "Was bedeuten die Metriken?" : "What do these metrics mean?") + "</summary>" + metricHelp + "</details></div>" +
+					"<div id='unified-layer-" + idx + "-feature-arrows' class='tm-feature-arrows'></div></div>" +
 					"<div id='unified-layer-" + idx + "-logit-lens' class='tm-logit-lens-host'></div>";
 				sb.insertBefore(wrap, oldDetail || null);
 			}
 			var featureWrap = sb.querySelector(".tm-feature-wrap");
 			if (triple && featureWrap && triple.parentNode !== featureWrap) {
 				featureWrap.insertBefore(triple, featureWrap.querySelector(".tm-logit-lens-host"));
+			}
+			var metricSel = featureWrap && featureWrap.querySelector("[data-feature-metric]");
+			if (metricSel) {
+				metricSel.value = featureMetric();
+				if (!metricSel._tmMetricBound) {
+					metricSel._tmMetricBound = true;
+					metricSel.addEventListener("change", function () {
+						window.tmFeatureMetric = metricSel.value;
+						Object.keys(featureState).forEach(function (key) { renderLayerFeaturePlots(parseInt(key, 10)); });
+					});
+				}
 			}
 			var attentionBody = card.querySelector('.tm-layer-subbox[data-sub="attention"] .tm-layer-subbox-body');
 			var formulaBody = card.querySelector('[id$="-formula-body"]');
