@@ -1852,13 +1852,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 		}
 		function isoSetBall(point) {
-			isoBallPos = point;
+			isoBallPos = point.slice();
 			if (!isoChart) return;
 			try {
 				isoChart.setOption({
 					series: [
-						{ id: "context-glow", type: "scatter3D", data: [{ value: point }] },
-						{ id: "context-ball", type: "scatter3D", data: [{ value: point }] }
+						{ id: "context-glow", type: "scatter3D", data: [{ value: point.slice() }] },
+						{ id: "context-ball", type: "scatter3D", data: [{ value: point.slice() }] }
 					]
 				}, { lazyUpdate: false });
 			} catch (e) {}
@@ -1871,10 +1871,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				return;
 			}
 			var start = isoBallPos ? isoBallPos.slice() : target.slice();
-			var begin = performance.now();
+			var begin = 0;
 			var last = 0;
 			function frame(now) {
 				if (!isoChart) return;
+				if (!begin) begin = now;
 				if (now - last < 32) {
 					isoBallRaf = requestAnimationFrame(frame);
 					return;
@@ -1990,7 +1991,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				id: "context-glow",
 				name: "context-glow",
 				type: "scatter3D",
-				data: [{ value: isoBallPos }],
+				data: [{ value: isoBallPos.slice() }],
 				symbol: "circle",
 				symbolSize: ballSize * 2.2,
 				itemStyle: { color: rgba(c.green, 0.14), opacity: 0.7 },
@@ -2000,7 +2001,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				id: "context-ball",
 				name: "context-ball",
 				type: "scatter3D",
-				data: [{ value: isoBallPos }],
+				data: [{ value: isoBallPos.slice() }],
 				symbol: "circle",
 				symbolSize: ballSize,
 				itemStyle: { color: c.green, borderColor: c.paper, borderWidth: 2, opacity: 1 },
@@ -2035,7 +2036,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					id: "momentum",
 					name: "momentum",
 					type: "line3D",
-					data: [isoBallPos, arrowTo],
+					data: [isoBallPos.slice(), arrowTo],
 					lineStyle: { width: 5, color: c.green, opacity: 0.85 },
 					silent: true
 				});
