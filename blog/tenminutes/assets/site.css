@@ -8517,7 +8517,7 @@ html[data-theme="dark"] .traj-candidate.is-chosen { color: var(--tm-green); }
 
 .layer-formula-grid {
 	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 10px;
 	margin: 16px 0 12px;
 }
@@ -8531,6 +8531,12 @@ html[data-theme="dark"] .traj-candidate.is-chosen { color: var(--tm-green); }
 		var(--tm-card);
 }
 .layer-formula-card .layer-card-title { margin-bottom: 8px; }
+.layer-formula-card--layer {
+	border-color: color-mix(in srgb, var(--tm-green) 45%, var(--tm-line));
+	background:
+		radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--tm-green) 14%, transparent), transparent 58%),
+		var(--tm-card);
+}
 .layer-formula-card .prose-math {
 	margin: 0;
 	overflow-x: auto;
@@ -8555,4 +8561,38 @@ html[data-theme="dark"] .traj-candidate.is-chosen { color: var(--tm-green); }
 	max-width: 100%;
 	margin-left: auto !important;
 	margin-right: auto !important;
+}
+
+.layer-count-note {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+	margin: 14px 0 18px;
+}
+.layer-count-note > div {
+	padding: 12px 14px;
+	border: 1px solid var(--tm-line);
+	border-radius: 12px;
+	background:
+		radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--tm-green) 10%, transparent), transparent 58%),
+		var(--tm-card);
+}
+.layer-count-note b {
+	display: block;
+	font: 700 1.55rem/1 var(--tm-ui);
+	color: var(--tm-green);
+}
+.layer-count-note span {
+	display: block;
+	margin-top: 4px;
+	font: 400 0.72rem/1.35 var(--tm-ui);
+	color: var(--tm-muted);
+}
+.layer-count-note a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+@media (max-width: 760px) {
+	.layer-count-note { grid-template-columns: 1fr; }
 }
