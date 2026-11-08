@@ -86,6 +86,13 @@ again before reporting done.
   citation, a quotation, or a result.
 
 **WORKING DISCIPLINE**
+- Always work with a todo list. — For every multi-step task, create the
+  opencode todo list (`todowrite`) before the first edit, mirror every user
+  requirement and every item in a supplied `todo*` file as its own todo, keep
+  exactly one item `in_progress`, and update the list in real time as items
+  finish or new work appears. Mark an item `completed` only after the change
+  is verified. When the user supplies a `todo*` file, also keep its `DONE` /
+  `[in work]` markers in sync with the todo list.
 - Test everything, automatically. — Every behavior change needs automated
   coverage: the happy path, boundaries, malformed input, and failure modes.
   A bug fix comes with a regression test that fails without the fix. Do not
