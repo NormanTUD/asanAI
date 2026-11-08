@@ -7561,7 +7561,7 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 /* intuition: code generation demo */
 .code-demo-grid {
 	display: grid;
-	grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+	grid-template-columns: 1fr;
 	gap: 14px;
 	align-items: stretch;
 }
@@ -7906,9 +7906,9 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 	color: #7dff9a;
 }
 .code-demo--console .code-demo-terminal .code-demo-output {
-	margin-top: 0;
-	padding-top: 0;
-	border-top: 0;
+	margin-top: 8px;
+	padding-top: 8px;
+	border-top: 1px dashed rgba(125, 255, 154, 0.28);
 	opacity: 0;
 	transform: translateY(4px);
 	transition: opacity 0.35s ease, transform 0.35s ease;

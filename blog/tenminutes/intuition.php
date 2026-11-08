@@ -222,6 +222,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 									<div class="code-demo-terminal" id="code-demo-terminal" aria-live="polite" hidden>
 										<div class="code-demo-bar"><span class="code-demo-dot is-green"></span><span class="code-demo-dot is-gold"></span><span class="code-demo-dot is-sky"></span><span class="code-demo-name">Terminal</span></div>
 										<div class="code-demo-term-body" id="code-demo-term">
+											<div class="code-demo-cmd"><span class="code-demo-dollar">$</span> <span id="code-demo-command" data-en="python3 sky.py" data-de="python3 himmel.py">python3 sky.py</span></div>
 											<div class="code-demo-output" id="code-demo-output" hidden data-en="Blue is 4.35× more strongly scattered than red." data-de="Blau wird 4,35× stärker gestreut als Rot.">Blue is 4.35× more strongly scattered than red.</div>
 										</div>
 									</div>
@@ -4352,7 +4353,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					requestAnimationFrame(function () {
 						output.classList.add("is-visible");
 					});
-				}, 420));
+				}, 180));
 			}
 		}
 		function revealAll() {
