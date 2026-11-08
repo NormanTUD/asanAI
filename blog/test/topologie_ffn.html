@@ -2903,7 +2903,7 @@
     const ffnOn = smoothstep(0.89, 0.995, s);
 
     const morph = 1 - morphOut;
-    const organizeRaw = smoothstep(0.08, 0.22, s);
+    const organizeRaw = smoothstep(0.22, 0.38, s);
     const quant = smoothstep(0.07, 0.13, s) * (1 - smoothstep(0.22, 0.34, s));
     const organize = lerp(organizeRaw, Math.round(organizeRaw * 10) / 10, quant);
     const chaos = 1 - organize;

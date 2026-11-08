@@ -312,7 +312,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							</div>
 						<p class="step-note">The model does not jump to an answer. It feels its way through this space, one token at a time. Click a word below the landscape, or use Next word, to jump to that step.</p>
 						<div class="prose">
-							<p>Training is the process that shapes this landscape. The model moves its coarse points, the token and context representations, into relations with one another so that meaning can be stored in compressed form inside the network. Attention and dense layers are trained together so that, in the high-dimensional space behind the projection, the loss makes the ball move faster along paths that continue the training text and slower along paths that do not. The landscape is therefore learned, not given: what counts as plausible is defined entirely by the training data.</p>
+							<p>Training is the process that shapes this landscape. The model moves its coarse points, the token and context representations, into relations with one another so that meaning can be stored in compressed form inside the network. Attention and dense layers are trained together. In the high-dimensional space behind the projection, the loss makes the ball move faster along paths that continue the training text and slower along paths that do not. The landscape is therefore learned, not given: what counts as plausible is defined entirely by the training data.</p>
 						</div>
 					</section>
 
@@ -1726,6 +1726,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		var isoDrawn = false;
 		var isoBallPos = null;
 		var isoBallRaf = null;
+		var isoBallEl = document.getElementById("tt-ball");
+		var isoBallLabel = document.getElementById("tt-ball-label");
 		var isoStepGap = 1.35;
 		var isoLabels = DE ? {
 			certain: "fast sicher", likely: "wahrscheinlich", open: "offen", wide: "sehr offen", width: "Tunnelbreite",
@@ -1842,7 +1844,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			return isoLerp(isoEntropy[lo], isoEntropy[hi], x - lo);
 		}
 		function isoMainDepth() {
-			return 0.55 + 0.70 * (2.0 - isoTemp) / 1.95;
+			return 0.42 + 0.48 * (2.0 - isoTemp) / 1.95;
 		}
 		function isoMainDepthAt(x) {
 			var entropy = isoEntropyAt(x);
@@ -1856,10 +1858,10 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			return (alt.path.y - 0.4) * 2.2;
 		}
 		function isoAltDepth(alt, mainDepth) {
-			return mainDepth * (0.26 + 0.46 * (1 - alt.entropy) + 0.12 * isoTemp);
+			return mainDepth * (0.34 + 0.42 * (1 - alt.entropy) + 0.14 * isoTemp);
 		}
 		function isoAltWidth(alt) {
-			return 0.16 + 0.22 * (0.40 + alt.entropy) * (0.45 + isoTemp / 2);
+			return 0.18 + 0.24 * (0.40 + alt.entropy) * (0.45 + isoTemp / 2);
 		}
 		function isoValleyDepth(x, y) {
 			var centre = isoCenter(x);
@@ -1882,11 +1884,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					if (mid > depth) depth = mid;
 				});
 			});
-			var sideOffsets = [-0.86, -0.62, -0.38, 0.38, 0.62, 0.86];
+			var sideOffsets = [-1.0, -0.72, -0.46, -0.22, 0.22, 0.46, 0.72, 1.0];
 			for (var si = 0; si < sideOffsets.length; si++) {
 				var sy = centre + sideOffsets[si] + 0.05 * Math.sin(x * 1.25 + si * 1.7);
-				var sw = 0.05 + 0.10 * (0.5 + 0.5 * Math.sin(x * 0.95 + si * 2.1)) * (0.5 + isoTemp / 1.8);
-				var sd = mainDepth * (0.08 + 0.12 * (0.5 + 0.5 * Math.sin(x * 1.6 + si * 2.3))) * (0.5 + 0.5 * isoTemp);
+				var sw = 0.06 + 0.12 * (0.5 + 0.5 * Math.sin(x * 0.95 + si * 2.1)) * (0.5 + isoTemp / 1.8);
+				var sd = mainDepth * (0.10 + 0.15 * (0.5 + 0.5 * Math.sin(x * 1.6 + si * 2.3))) * (0.55 + 0.45 * isoTemp);
 				var ds = sd * Math.exp(-Math.pow((y - sy) / sw, 2));
 				if (ds > depth) depth = ds;
 			}
@@ -1903,17 +1905,52 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				isoBallRaf = null;
 			}
 		}
+		function isoMulMat4Vec4(m, v) {
+			return [
+				m[0] * v[0] + m[4] * v[1] + m[8] * v[2] + m[12] * v[3],
+				m[1] * v[0] + m[5] * v[1] + m[9] * v[2] + m[13] * v[3],
+				m[2] * v[0] + m[6] * v[1] + m[10] * v[2] + m[14] * v[3],
+				m[3] * v[0] + m[7] * v[1] + m[11] * v[2] + m[15] * v[3]
+			];
+		}
+		function isoProjectPoint(point) {
+			if (!isoChart || !isoHost) return null;
+			var series = isoChart.getModel().getSeriesByIndex(0);
+			var cs = series && series.coordinateSystem;
+			if (!cs || !cs.viewGL || !cs.dataToPoint) return null;
+			var viewGL = cs.viewGL;
+			var camera = viewGL.camera;
+			var viewport = viewGL.viewport;
+			var view = camera.viewMatrix.array || camera.viewMatrix;
+			var proj = camera.projectionMatrix.array || camera.projectionMatrix;
+			var world = cs.dataToPoint(point);
+			var eye = isoMulMat4Vec4(view, [world[0], world[1], world[2], 1]);
+			var clip = isoMulMat4Vec4(proj, eye);
+			if (clip[3] <= 1e-6) return null;
+			var ndcX = clip[0] / clip[3];
+			var ndcY = clip[1] / clip[3];
+			var scale = isoHost.clientWidth / viewport.width;
+			return [
+				(ndcX * 0.5 + 0.5) * viewport.width * scale,
+				(1 - (ndcY * 0.5 + 0.5)) * viewport.height * scale
+			];
+		}
+		function isoUpdateBallOverlay() {
+			if (!isoBallEl || !isoBallPos) return;
+			var screen = isoProjectPoint(isoBallPos);
+			if (!screen || !isFinite(screen[0]) || !isFinite(screen[1])
+				|| screen[0] < -24 || screen[0] > isoHost.clientWidth + 24
+				|| screen[1] < -24 || screen[1] > isoHost.clientHeight + 24) {
+				isoBallEl.classList.remove("is-visible");
+				return;
+			}
+			isoBallEl.style.left = screen[0] + "px";
+			isoBallEl.style.top = screen[1] + "px";
+			isoBallEl.classList.add("is-visible");
+		}
 		function isoSetBall(point) {
 			isoBallPos = point.slice();
-			if (!isoChart) return;
-			try {
-				isoChart.setOption({
-					series: [
-						{ id: "context-glow", type: "scatter3D", data: [{ value: point.slice() }] },
-						{ id: "context-ball", type: "scatter3D", data: [{ value: point.slice() }] }
-					]
-				}, { lazyUpdate: false });
-			} catch (e) {}
+			isoUpdateBallOverlay();
 		}
 		function isoRollBallTo(index) {
 			isoStopBall();
@@ -1948,7 +1985,12 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 			isoBallRaf = requestAnimationFrame(frame);
 		}
-		function isoAddArrowhead(series, from, to, color) {
+		function isoArrowheadSeries(from, to, color, active) {
+			var empty = [
+				{ id: "momentum-head-a", type: "line3D", data: [], lineStyle: { width: 4, color: color, opacity: 0 }, silent: true },
+				{ id: "momentum-head-b", type: "line3D", data: [], lineStyle: { width: 4, color: color, opacity: 0 }, silent: true }
+			];
+			if (!active || !from || !to) return empty;
 			var dx = to[0] - from[0];
 			var dy = to[1] - from[1];
 			var dz = to[2] - from[2];
@@ -1962,138 +2004,25 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var pl = Math.sqrt(px * px + py * py) || 1;
 			px /= pl; py /= pl;
 			var spread = head * 0.45;
-			series.push({
-				type: "line3D",
-				data: [[bx + px * spread, by + py * spread, bz], to],
-				lineStyle: { width: 4, color: color, opacity: 0.85 },
-				silent: true
-			});
-			series.push({
-				type: "line3D",
-				data: [[bx - px * spread, by - py * spread, bz], to],
-				lineStyle: { width: 4, color: color, opacity: 0.85 },
-				silent: true
-			});
-		}
-		function isoSurfaceData() {
-			var data = [];
-			var xCount = 65, yCount = 45;
-			var xMin = 0, xMax = (isoTokens.length - 1) * isoStepGap;
-			var yMin = -1.05, yMax = 1.05;
-			for (var yi = 0; yi <= yCount; yi++) {
-				var y = isoLerp(yMin, yMax, yi / yCount);
-				for (var xi = 0; xi <= xCount; xi++) {
-					var x = isoLerp(xMin, xMax, xi / xCount);
-					var depth = isoValleyDepth(x / isoStepGap, y);
-					var ripple = 0.022 * Math.sin(x * 1.8 + y * 3.1) * Math.cos(y * 2.2 - x * 1.25)
-						+ 0.010 * Math.sin(x * 3.1 - y * 2.6) * Math.cos(y * 3.4 + x * 1.1);
-					var z = -depth + ripple * (1 - Math.min(1, depth));
-					data.push([Number(x.toFixed(3)), Number(y.toFixed(3)), Number(z.toFixed(4))]);
-				}
-			}
-			return { data: data, shape: [yCount + 1, xCount + 1] };
-		}
-		function isoFallback(message) {
-			if (isoChart) { isoChart.dispose(); isoChart = null; }
-			if (isoHost) isoHost.innerHTML = '<div class="tt-fallback">' + message + '</div>';
-		}
-		function ensureIsoLibs(cb) {
-			if (TM.ensureECharts) TM.ensureECharts(cb, function () { isoFallback(isoLabels.failed); });
-			else isoFallback(isoLabels.failed);
-		}
-		function drawIso() {
-			if (!isoHost || !window.echarts || !window.echarts.init) return;
-			var c = TM.colors();
-			var surface = isoSurfaceData();
-			var mainDepth = isoMainDepth();
-			var zMin = -mainDepth - 0.08;
-			var deepSurface = mixRgb(c.blue, c.ink, c.dark ? 0.28 : 0.52);
-			var baseSurface = mixRgb(c.paper2, c.gold, c.dark ? 0.16 : 0.22);
-			if (!isoChart) {
-				isoHost.innerHTML = "";
-				try {
-					isoChart = echarts.init(isoHost);
-				} catch (e) {
-					isoFallback(isoLabels.failed);
-					return;
-				}
-				isoChart.on("click", function (params) {
-					var idx = null;
-					if (params && params.data && typeof params.data.tokenIndex === "number") idx = params.data.tokenIndex;
-					else if (params && params.value && params.value.length >= 1) idx = Math.round(params.value[0] / isoStepGap);
-					if (idx !== null && idx >= 0 && idx < isoTokens.length) {
-						isoSetStep(idx);
-					}
-				});
-			}
-			var step = Math.min(isoStep, isoTokens.length - 1);
-			if (!isoBallPos) isoBallPos = isoTokenPoint(step);
-			var series = [];
-			series.push({
-				name: "landscape",
-				type: "surface",
-				data: surface.data,
-				dataShape: surface.shape,
-				shading: "lambert",
-				wireframe: { show: false },
-				itemStyle: { opacity: 1 }
-			});
-			var ballSize = 13 + isoTemp * 7;
-			series.push({
-				id: "context-glow",
-				name: "context-glow",
-				type: "scatter3D",
-				data: [{ value: isoBallPos.slice() }],
-				symbol: "circle",
-				symbolSize: ballSize * 2.2,
-				itemStyle: { color: rgba(c.green, 0.14), opacity: 0.7 },
-				silent: true
-			});
-			series.push({
-				id: "context-ball",
-				name: "context-ball",
-				type: "scatter3D",
-				data: [{ value: isoBallPos.slice() }],
-				symbol: "circle",
-				symbolSize: ballSize,
-				itemStyle: { color: c.green, borderColor: c.paper, borderWidth: 2, opacity: 1 },
-				label: {
-					show: true,
-					position: "right",
-					distance: 5,
-					formatter: DE ? "Kontext" : "context",
-					textStyle: {
-						color: c.ink,
-						fontSize: 10,
-						fontWeight: 700,
-						backgroundColor: rgba(c.dark ? "#0f172a" : "#ffffff", 0.92),
-						borderColor: c.green,
-						borderWidth: 1,
-						padding: [2, 4],
-						borderRadius: 3
-					}
-				},
-				tooltip: {
-					formatter: function () {
-						return DE ? "Kontext-Ball: folgt dem Weg des geringsten Widerstands" : "Context ball: follows the path of least resistance";
-					}
-				}
-			});
-			if (step < isoTokens.length - 1) {
-				var arrowStepX = Math.min(isoTokens.length - 1, step + 0.52);
-				var arrowX = arrowStepX * isoStepGap;
-				var arrowY = isoCenter(arrowStepX);
-				var arrowTo = [arrowX, arrowY, -isoValleyDepth(arrowStepX, arrowY) + 0.11];
-				series.push({
-					id: "momentum",
-					name: "momentum",
+			return [
+				{
+					id: "momentum-head-a",
 					type: "line3D",
-					data: [isoBallPos.slice(), arrowTo],
-					lineStyle: { width: 5, color: c.green, opacity: 0.85 },
+					data: [[bx + px * spread, by + py * spread, bz], to.slice()],
+					lineStyle: { width: 4, color: color, opacity: 0.85 },
 					silent: true
-				});
-				isoAddArrowhead(series, isoBallPos, arrowTo, c.green);
-			}
+				},
+				{
+					id: "momentum-head-b",
+					type: "line3D",
+					data: [[bx - px * spread, by - py * spread, bz], to.slice()],
+					lineStyle: { width: 4, color: color, opacity: 0.85 },
+					silent: true
+				}
+			];
+		}
+		function isoBuildDynamicSeries(c, step) {
+			var series = [];
 			var tokens = isoTokens.map(function (token, i) {
 				var current = i === step;
 				var visited = i <= step;
@@ -2127,6 +2056,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				};
 			});
 			series.push({
+				id: "tokens",
 				name: "tokens",
 				type: "scatter3D",
 				data: tokens,
@@ -2135,23 +2065,32 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			});
 			var trail = [];
 			for (var ti = 0; ti <= step; ti++) trail.push(isoTokenPoint(ti));
-			if (trail.length > 1) {
-				series.push({
-					name: "path",
-					type: "line3D",
-					data: trail,
-					lineStyle: { width: 4, color: c.ink, opacity: 0.7 },
-					silent: true
-				});
-			}
+			var hasTrail = trail.length > 1;
+			series.push({
+				id: "path-glow",
+				name: "path-glow",
+				type: "line3D",
+				data: hasTrail ? trail : [],
+				lineStyle: { width: 12, color: c.blue, opacity: 0.16 },
+				silent: true
+			});
+			series.push({
+				id: "path",
+				name: "path",
+				type: "line3D",
+				data: hasTrail ? trail : [],
+				lineStyle: { width: 3.5, color: c.blue, opacity: 0.95 },
+				silent: true
+			});
 			var branch = null;
 			for (var bi = 0; bi < isoBranches.length; bi++) {
 				if (isoBranches[bi].atStep === step) { branch = isoBranches[bi]; break; }
 			}
+			var alternatives = [];
 			if (branch) {
 				var altStepX = branch.atStep + 0.52;
 				var altX = altStepX * isoStepGap;
-				var alternatives = branch.alternatives.map(function (alt) {
+				alternatives = branch.alternatives.map(function (alt) {
 					var y = isoAltY(alt);
 					return {
 						name: isoAltLabel(alt.token),
@@ -2175,15 +2114,120 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						}
 					};
 				});
-				series.push({
-					name: "alternatives",
-					type: "scatter3D",
-					data: alternatives,
-					symbol: "diamond",
-					symbolSize: 8,
-					tooltip: { formatter: function (p) { return p.name; } }
-				});
 			}
+			series.push({
+				id: "alternatives",
+				name: "alternatives",
+				type: "scatter3D",
+				data: alternatives,
+				symbol: "diamond",
+				symbolSize: 8,
+				tooltip: { formatter: function (p) { return p.name; } }
+			});
+			var hasMomentum = step < isoTokens.length - 1;
+			var arrowTo = null;
+			if (hasMomentum) {
+				var arrowStepX = Math.min(isoTokens.length - 1, step + 0.52);
+				var arrowX = arrowStepX * isoStepGap;
+				var arrowY = isoCenter(arrowStepX);
+				arrowTo = [arrowX, arrowY, -isoValleyDepth(arrowStepX, arrowY) + 0.11];
+			}
+			var momentumData = hasMomentum ? [isoBallPos.slice(), arrowTo] : [];
+			series.push({
+				id: "momentum-glow",
+				name: "momentum-glow",
+				type: "line3D",
+				data: momentumData,
+				lineStyle: { width: 14, color: c.green, opacity: 0.14 },
+				silent: true
+			});
+			series.push({
+				id: "momentum",
+				name: "momentum",
+				type: "line3D",
+				data: momentumData,
+				lineStyle: { width: 5, color: c.green, opacity: 0.85 },
+				silent: true
+			});
+			var arrows = isoArrowheadSeries(isoBallPos, arrowTo, c.green, hasMomentum);
+			series.push(arrows[0], arrows[1]);
+			return series;
+		}
+		function isoSurfaceData() {
+			var data = [];
+			var xCount = 65, yCount = 45;
+			var xMin = 0, xMax = (isoTokens.length - 1) * isoStepGap;
+			var yMin = -1.12, yMax = 1.12;
+			for (var yi = 0; yi <= yCount; yi++) {
+				var y = isoLerp(yMin, yMax, yi / yCount);
+				for (var xi = 0; xi <= xCount; xi++) {
+					var x = isoLerp(xMin, xMax, xi / xCount);
+					var depth = isoValleyDepth(x / isoStepGap, y);
+					var ripple = 0.022 * Math.sin(x * 1.8 + y * 3.1) * Math.cos(y * 2.2 - x * 1.25)
+						+ 0.010 * Math.sin(x * 3.1 - y * 2.6) * Math.cos(y * 3.4 + x * 1.1);
+					var edgeDrop = 0.09 * Math.pow(Math.abs(y) / yMax, 2);
+					var z = -depth + (ripple - edgeDrop) * (1 - Math.min(1, depth));
+					data.push([Number(x.toFixed(3)), Number(y.toFixed(3)), Number(z.toFixed(4))]);
+				}
+			}
+			return { data: data, shape: [yCount + 1, xCount + 1] };
+		}
+		function isoFallback(message) {
+			if (isoChart) { isoChart.dispose(); isoChart = null; }
+			if (isoHost) isoHost.innerHTML = '<div class="tt-fallback">' + message + '</div>';
+		}
+		function ensureIsoLibs(cb) {
+			if (TM.ensureECharts) TM.ensureECharts(cb, function () { isoFallback(isoLabels.failed); });
+			else isoFallback(isoLabels.failed);
+		}
+		function drawIso() {
+			if (!isoHost || !window.echarts || !window.echarts.init) return;
+			var c = TM.colors();
+			var surface = isoSurfaceData();
+			var zMin = 0;
+			for (var zi = 0; zi < surface.data.length; zi++) {
+				if (surface.data[zi][2] < zMin) zMin = surface.data[zi][2];
+			}
+			zMin -= 0.03;
+			var deepSurface = mixRgb(c.blue, c.ink, c.dark ? 0.28 : 0.52);
+			var baseSurface = mixRgb(c.paper2, c.gold, c.dark ? 0.16 : 0.22);
+			if (!isoChart) {
+				isoHost.innerHTML = "";
+				try {
+					isoChart = echarts.init(isoHost);
+				} catch (e) {
+					isoFallback(isoLabels.failed);
+					return;
+				}
+				isoChart.on("click", function (params) {
+					var idx = null;
+					if (params && params.data && typeof params.data.tokenIndex === "number") idx = params.data.tokenIndex;
+					else if (params && params.value && params.value.length >= 1) idx = Math.round(params.value[0] / isoStepGap);
+					if (idx !== null && idx >= 0 && idx < isoTokens.length) {
+						isoSetStep(idx);
+					}
+				});
+				isoChart.on("rendered", isoUpdateBallOverlay);
+			}
+			var step = Math.min(isoStep, isoTokens.length - 1);
+			if (!isoBallPos) isoBallPos = isoTokenPoint(step);
+			var surfaceSeries = {
+				id: "landscape",
+				name: "landscape",
+				type: "surface",
+				data: surface.data,
+				dataShape: surface.shape,
+				shading: "lambert",
+				wireframe: { show: false },
+				itemStyle: { opacity: 1 }
+			};
+			var ballSize = Math.round(14 + isoTemp * 5);
+			if (isoBallEl) {
+				isoBallEl.style.width = ballSize + "px";
+				isoBallEl.style.height = ballSize + "px";
+			}
+			if (isoBallLabel) isoBallLabel.textContent = DE ? "Kontext" : "context";
+			var series = [surfaceSeries].concat(isoBuildDynamicSeries(c, step));
 			var option = {
 				backgroundColor: "transparent",
 				tooltip: {
@@ -2197,7 +2241,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					dimension: 2,
 					min: zMin,
 					max: 0.03,
-					inRange: { color: [deepSurface, c.blue, c.sky, c.gold, baseSurface] }
+					inRange: { color: [deepSurface, c.blue, c.sky, c.green, c.gold, baseSurface] }
 				},
 				xAxis3D: {
 					type: "value", name: isoLabels.axisStep,
@@ -2217,7 +2261,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				},
 				yAxis3D: {
 					type: "value", name: isoLabels.axisMeaning,
-					min: -1.05, max: 1.05, interval: 0.5,
+					min: -1.12, max: 1.12, interval: 0.56,
 					nameTextStyle: { color: c.ink, fontSize: 12, fontWeight: 600 },
 					nameGap: 14,
 					axisLabel: { show: false },
@@ -2236,16 +2280,16 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				grid3D: {
 					viewControl: {
 						projection: "perspective",
-						alpha: 26, beta: 38, distance: 190,
+						alpha: 32, beta: 42, distance: 205,
 						autoRotate: false, damping: 0.9,
 						rotateSensitivity: 1.2, zoomSensitivity: 1.2
 					},
 					light: {
-						main: { intensity: 1.1, shadow: false, alpha: 40, beta: 20 },
-						ambient: { intensity: 0.45 }
+						main: { intensity: 1.22, shadow: false, alpha: 38, beta: 16 },
+						ambient: { intensity: 0.52 }
 					},
 					environment: c.paper2,
-					boxWidth: 115, boxHeight: 62, boxDepth: 92,
+					boxWidth: 125, boxHeight: 42, boxDepth: 100,
 					axisLine: { lineStyle: { color: c.lineStrong } },
 					splitLine: { lineStyle: { color: c.line } },
 					axisPointer: { show: false }
@@ -2260,13 +2304,24 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			} catch (e) {
 				isoFallback(isoLabels.failed);
 			}
+			requestAnimationFrame(isoUpdateBallOverlay);
+			updateIsoSide();
+		}
+		function isoUpdateStepSeries() {
+			if (!isoChart) return;
+			var c = TM.colors();
+			var step = Math.min(isoStep, isoTokens.length - 1);
+			try {
+				isoChart.setOption({ series: isoBuildDynamicSeries(c, step) }, { lazyUpdate: false });
+			} catch (e) {}
+			requestAnimationFrame(isoUpdateBallOverlay);
 			updateIsoSide();
 		}
 		function isoSetStep(index) {
 			var next = Math.max(0, Math.min(isoTokens.length - 1, index));
 			isoStep = next;
 			if (isoLoaded) {
-				drawIso();
+				isoUpdateStepSeries();
 				isoRollBallTo(next);
 			} else {
 				isoBallPos = null;
@@ -2369,7 +2424,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				isoBallPos = isoTokenPoint(isoStep);
 				drawIso();
 			});
-			window.addEventListener("resize", function () { if (isoChart) isoChart.resize(); });
+			window.addEventListener("resize", function () {
+				if (!isoChart) return;
+				isoChart.resize();
+				requestAnimationFrame(isoUpdateBallOverlay);
+			});
 			isoRenderTokens();
 			updateIsoSide();
 		}
