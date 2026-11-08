@@ -659,6 +659,7 @@
     uniform vec3 uRimB;
     uniform float uOpacity;
     uniform float uTime;
+    uniform float uOpaque;
     varying vec3 vN;
     varying vec3 vW;
     varying vec3 vBary;
@@ -677,7 +678,11 @@
       col += fres * mix(uRimA, uRimB, band) * 0.60;
       col += irid * fres * 0.16;
       float alpha = uOpacity * vGrow * (0.10 + 0.62 * fres) * (0.60 + 0.40 * lam);
-      gl_FragColor = vec4(col, alpha);
+      if (uOpaque > 0.5) {
+        gl_FragColor = vec4(col * alpha, 1.0);
+      } else {
+        gl_FragColor = vec4(col, alpha);
+      }
     }
   `;
 
@@ -1416,6 +1421,7 @@
         uSeed: { value: seed },
         uGrow: { value: 0 },
         uOpacity: { value: 0 },
+        uOpaque: { value: 0 },
         uColA: { value: colA.clone() },
         uColB: { value: colB.clone() },
         uRimA: { value: (rimA || colA).clone() },
@@ -1555,6 +1561,8 @@
 
   const mainSurfaceMat = surfaceMaterial(mainSeed, COL.cyan, COL.violet, COL.ice, COL.violet, THREE.FrontSide);
   mainSurfaceMat.depthWrite = true;
+  mainSurfaceMat.transparent = false;
+  mainSurfaceMat.uniforms.uOpaque.value = 1.0;
   const mainSurface = new THREE.Mesh(meshGeo, mainSurfaceMat);
   mainSurface.renderOrder = 2;
   mainSurface.frustumCulled = false;

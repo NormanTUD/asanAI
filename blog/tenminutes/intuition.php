@@ -1748,6 +1748,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		var isoBallLabel = document.getElementById("tt-ball-label");
 		var isoStepGap = 1.35;
 		var isoYMax = 1.18;
+		var isoLabelZ = 0.0;
 		var isoLabels = DE ? {
 			certain: "fast sicher", likely: "wahrscheinlich", open: "offen", wide: "sehr offen", width: "Tunnelbreite",
 			axisStep: "Kontextschritt", axisMeaning: "andere Fortsetzungen", axisProb: "tiefer = wahrscheinlicher",
@@ -2041,8 +2042,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var step = Math.min(isoStep, isoTokens.length - 1);
 			container.querySelectorAll("[data-token-index]").forEach(function (el) {
 				var i = Number(el.getAttribute("data-token-index"));
-				var screen = isoProjectPoint(isoTokenPoint(i));
-				if (!isoInsideHost(screen)) {
+				var point = isoTokenPoint(i);
+				var screen = isoProjectPoint([point[0], point[1], isoLabelZ]);
+				if (!screen) {
 					el.style.display = "none";
 					return;
 				}
@@ -2063,8 +2065,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				branch.alternatives.forEach(function (alt, j) {
 					var el = altEls[j];
 					if (!el) return;
-					var screen = isoProjectPoint(isoAltEndPoint(branch, alt));
-					if (!isoInsideHost(screen)) return;
+					var point = isoAltEndPoint(branch, alt);
+					var screen = isoProjectPoint([point[0], point[1], isoLabelZ]);
+					if (!screen) return;
 					el.style.display = "";
 					el.textContent = isoAltLabel(alt.token);
 					el.style.left = screen[0] + "px";
@@ -2078,8 +2081,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				if (detour.branch.atStep === step) return;
 				var el = detourEls[j];
 				if (!el) return;
-				var screen = isoProjectPoint(isoAltEndPoint(detour.branch, detour.alt));
-				if (!isoInsideHost(screen)) return;
+				var point = isoAltEndPoint(detour.branch, detour.alt);
+				var screen = isoProjectPoint([point[0], point[1], isoLabelZ]);
+				if (!screen) return;
 				el.style.display = "";
 				el.textContent = isoAltLabel(detour.alt.token);
 				el.style.left = screen[0] + "px";
