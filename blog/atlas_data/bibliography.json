@@ -22718,6 +22718,11 @@
    "recurrent_networks",
    "transformer"
   ],
+  "heraclitus500fragments": [
+   "coherent_difference",
+   "philosophy",
+   "transformer"
+  ],
   "gage1994bpe": [
    "attentionlab",
    "embeddinglab",
@@ -30795,10 +30800,6 @@
    "philosophy"
   ],
   "sartre1946existentialismishumanism": [
-   "philosophy"
-  ],
-  "heraclitus500fragments": [
-   "coherent_difference",
    "philosophy"
   ],
   "kierkegaard1844conceptofanxiety": [
