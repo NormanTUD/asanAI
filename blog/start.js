@@ -662,6 +662,8 @@ function render_temml() {
 			if (mathEl.dataset && mathEl.dataset.tex) return mathEl.dataset.tex.trim();
 			const ann = mathEl.querySelector('annotation[encoding="application/x-tex"]');
 			if (ann) return ann.textContent.trim();
+			const source = mathEl.closest('[data-tex]');
+			if (source) return source.getAttribute('data-tex').trim();
 			const wrapper = mathEl.closest('.temml');
 			if (wrapper && wrapper.dataset.tex) return wrapper.dataset.tex.trim();
 			return null;
