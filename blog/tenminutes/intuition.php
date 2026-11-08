@@ -3545,7 +3545,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				}
 			}
 
-			var tokenVec = [0.72, 0.46, 0.52];
+			var tokenVec = [0.30, 0.18, 0.24];
 			var tokenTip = project(tokenVec);
 			var tokenBase = project([0, 0, 0]);
 			var tokenPrev = tokenBase;
@@ -3575,8 +3575,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			});
 			pillData.push({ x: tokenTip.x, y: tokenTip.y - 16, color: c.sky, text: DE ? "Token" : "token" });
 			var tokenCenter = [tokenVec[0] * 0.55, tokenVec[1] * 0.55, tokenVec[2] * 0.55];
-			addRing(tokenCenter, tokenVec, 0.30, posRgba(c.sky, 0.34), 1.2);
-			addRing(tokenCenter, tokenVec, 0.40, posRgba(c.sky, 0.18), 1);
+			addRing(tokenCenter, tokenVec, 0.15, posRgba(c.sky, 0.34), 1.2);
+			addRing(tokenCenter, tokenVec, 0.22, posRgba(c.sky, 0.18), 1);
 
 			var v = posVector(posShown);
 			var tip = project(v);
