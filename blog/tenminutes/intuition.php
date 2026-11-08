@@ -21,6 +21,12 @@
 		.tt-echarts-host { width: 100%; height: 380px; min-height: 320px; background: transparent; }
 		.tt-echarts-host canvas { display: block; }
 		.tt-fallback { display: flex; align-items: center; justify-content: center; height: 100%; padding: 24px; text-align: center; color: var(--tm-muted); font: 0.86rem/1.5 var(--tm-ui); }
+		.tt-legend { display: flex; flex-wrap: wrap; gap: 5px 14px; margin-top: 8px; font: 600 0.7rem/1.35 var(--tm-ui); color: var(--tm-muted); }
+		.tt-legend-item { display: inline-flex; align-items: center; gap: 5px; }
+		.tt-swatch { width: 10px; height: 10px; border-radius: 2px; border: 1px solid var(--tm-line-strong); flex: 0 0 auto; }
+		.tt-swatch--deep { background: var(--tm-blue); }
+		.tt-swatch--side { background: var(--tm-gold); }
+		.tt-swatch--base { background: var(--tm-paper-2); }
 		.tt-token-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
 		.tt-token { appearance: none; border: 1px solid var(--tm-line-strong); background: var(--tm-paper-2); color: var(--tm-muted); font: 600 0.72rem/1.2 var(--tm-mono); padding: 0.32em 0.55em; cursor: pointer; }
 		.tt-token:hover { border-color: var(--tm-blue); color: var(--tm-ink); }
@@ -219,7 +225,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<div class="demo-head">
 									<div>
 										<p class="demo-title">The probability tunnel <span>· demo 01b</span></p>
-										<p class="demo-sub">A single prediction is one slice through a landscape of plausible continuations. The most likely path is the deepest blue valley; every other option is a shallower branch. Step through the sentence and watch the valley narrow as the context closes the options, then turn up the temperature and watch it widen again. Drag to rotate.</p>
+										<p class="demo-sub">A single prediction is one slice through a landscape of plausible continuations. The most likely path is the deepest blue valley; every other option sits in its own side basin, sometimes almost as deep as the main path. Step through the sentence and watch the valley narrow as the context closes the options, then turn up the temperature and watch it widen again. Drag to rotate.</p>
 									</div>
 									<span class="demo-badge">live</span>
 								</div>
@@ -227,6 +233,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 									<div class="iso-grid">
 										<div class="iso-main">
 											<div id="tt-3d" class="tt-echarts-host" role="img" aria-label="A three-dimensional landscape of plausible continuations, with the most likely path carved as a deep blue valley"></div>
+											<div class="tt-legend">
+												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--deep"></i><span>deep blue = likely path</span></span>
+												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--side"></i><span>gold = other possible paths</span></span>
+												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--base"></i><span>pale plane = all other tokens</span></span>
+											</div>
 											<div class="tt-token-row" id="tt-token-row" aria-label="Jump to a token"></div>
 										</div>
 										<aside class="iso-side">
@@ -1669,7 +1680,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			failed: "Die 3D-Bibliothek konnte nicht geladen werden."
 		} : {
 			certain: "near-certain", likely: "likely", open: "open", wide: "wide open", width: "tunnel width",
-			axisStep: "context", axisMeaning: "meaning", axisProb: "more likely ↓",
+			axisStep: "context step", axisMeaning: "other continuations", axisProb: "deeper = more likely",
 			deepest: "blue valley = path of least resistance",
 			loading: "Loading the 3D landscape …",
 			failed: "The 3D library could not be loaded."
@@ -1995,7 +2006,16 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					position: "right",
 					distance: 5,
 					formatter: DE ? "Kontext" : "context",
-					textStyle: { color: c.green, fontSize: 9, fontWeight: 700 }
+					textStyle: {
+						color: c.ink,
+						fontSize: 10,
+						fontWeight: 700,
+						backgroundColor: rgba(c.dark ? "#0f172a" : "#ffffff", 0.92),
+						borderColor: c.green,
+						borderWidth: 1,
+						padding: [2, 4],
+						borderRadius: 3
+					}
 				},
 				tooltip: {
 					formatter: function () {
@@ -2035,15 +2055,17 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					label: {
 						show: true,
 						position: "top",
-						distance: 4,
+						distance: 6,
 						formatter: token,
 						textStyle: {
-							color: current ? c.green : c.ink,
-							fontSize: current ? 12 : 10,
-							fontWeight: current ? 700 : 600,
-							backgroundColor: rgba(c.dark ? "#0f172a" : "#ffffff", 0.66),
-							padding: [2, 3],
-							borderRadius: 2
+							color: c.ink,
+							fontSize: current ? 13 : 11,
+							fontWeight: current ? 800 : 600,
+							backgroundColor: rgba(c.dark ? "#0f172a" : "#ffffff", 0.92),
+							borderColor: current ? c.green : c.lineStrong,
+							borderWidth: 1,
+							padding: [3, 5],
+							borderRadius: 3
 						}
 					}
 				};
