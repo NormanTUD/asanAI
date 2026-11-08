@@ -49,6 +49,7 @@
 			}
 		});
 	}
+	window.tmTypesetMathIn = typesetMathIn;
 
 	function css(name, fallback) {
 		var value = getComputedStyle(document.documentElement).getPropertyValue(name);

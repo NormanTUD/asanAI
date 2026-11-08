@@ -30,8 +30,6 @@
 		@media (max-width: 760px) { .traj-plotly-host { height: 340px; min-height: 300px; } }
 		.traj-metric-note { width: 100%; max-width: none; margin: 8px 0 0; font: 400 0.76rem/1.45 var(--tm-ui); color: var(--tm-muted); }
 		.iso-note { width: 100%; max-width: none; margin: 0 0 8px; font: 400 0.84rem/1.55 var(--tm-prose); color: var(--tm-ink-soft); }
-		.iso-source { width: 100%; margin: 0 0 12px; font: 400 0.74rem/1.4 var(--tm-ui); color: var(--tm-muted); }
-		.iso-source a { color: var(--tm-petrol); text-decoration: underline; text-underline-offset: 2px; }
 		.iso-main { min-width: 0; }
 		.tt-plot-wrap { position: relative; min-width: 0; }
 		.tt-echarts-host { width: 100%; height: 520px; min-height: 420px; background: radial-gradient(circle at 50% 42%, var(--tm-wash), transparent 66%); }
@@ -257,6 +255,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="section-kicker"><span class="sk-num">02</span> Play the loop</div>
 						<h2 class="section-title">One Word After Another</h2>
 						<div class="prose">
+							<p>Context is everything the model can see when it predicts the next token: the text in the input field, the conversation so far, and the instructions or examples that frame the exchange. Training taught it how to read such a frame, so a prompt can bring out a role, a tone, or a way of answering. The model has no other working memory.</p>
 							<p>One word after another is a slow feeling-forward in a complex world. At every step very much is possible, but not all of it makes sense; the loop is how the model narrows that space.</p>
 							<p>The demo shows the idea, not a trained model. The next token is drawn from a distribution, appended, and the loop repeats. Temperature controls how far the model drifts from the most likely path.</p>
 							<p>Why not always take the top token? Greedy does. Top-p keeps the smallest set whose cumulative probability reaches p, then samples. Low temperature sharpens the distribution; high temperature flattens it.</p>
@@ -314,13 +313,12 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<div class="demo-head">
 									<div>
 										<p class="demo-title">The probability tunnel <span>· demo 01b</span></p>
-										<p class="demo-sub">A single prediction is one slice through a landscape of plausible continuations. The most likely path is the deepest blue valley; every other option sits in its own side basin, sometimes almost as deep as the main path. Step through the sentence and watch the valley narrow as the context closes the options, then turn up the temperature and watch it widen again. Drag to rotate.</p>
+										<p class="demo-sub">A single prediction is one slice through a landscape of plausible continuations. The main path is the deepest blue valley, the route the model finds most likely. Every other option sits in its own side basin, close enough to remain possible. Step through the sentence and watch the valley narrow as context closes options; turn up the temperature and watch it widen again. Drag to rotate.</p>
 									</div>
 									<span class="demo-badge">live</span>
 								</div>
 								<div class="demo-body">
-									<p class="iso-note">For the sentence “The capital of France is”, this is the continuation the network finds plausible here. But instead of “France” it could also have chosen “Italy” or “Germany”, and then the paths would run through other parts of the landscape. The idea is that the LLM generates this probability distribution over possible continuations; the landscape is a picture of that distribution. The energy-landscape view follows the energy-based learning framework of LeCun et al. (2006).</p>
-									<p class="iso-source"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Quelle: ' : 'Source: '; ?><a href="http://yann.lecun.com/exdb/publis/pdf/lecun-06.pdf" target="_blank" rel="noopener">LeCun et al., A Tutorial on Energy-Based Learning (2006)</a></p>
+									<p class="iso-note"><?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>Stell dir jeden Punkt in dieser Landschaft als Embedding vor: ein Vektor, der für ein Wort oder eine Fortsetzung steht. Nachbarpunkte sind sich in der Bedeutung ähnlich, und die Tiefe eines Tals ist die Wahrscheinlichkeit, die das Modell dieser Fortsetzung gibt. Der blaue Pfad ist nur eine mögliche Route durch diesen Raum. Die anderen Pfade sind die Alternativen, die das Modell gelernt hat zu erwägen; sie sind seine Erfahrung, komprimiert in die Geometrie des Raums. Der Kontext ist der Teil der Landschaft, den das Modell gerade sieht: Er verschiebt die Täler und schließt Routen, die nicht mehr passen. Das Bild ist eine Abstraktion. Ein echtes Modell arbeitet in Tausenden von Dimensionen, mit weit mehr Pfaden, als hier gezeichnet werden können. Die Energie-Landschaft folgt dem Energy-Based-Learning-Rahmen von <a href="http://yann.lecun.com/exdb/publis/pdf/lecun-06.pdf" target="_blank" rel="noopener">LeCun et al., A Tutorial on Energy-Based Learning (2006)</a>.<?php else: ?>Think of every point in this landscape as an embedding: a vector that stands for a word or a continuation. Neighbouring points are similar in meaning, and the depth of a valley is the probability the model gives that continuation. The blue path is only one possible route through this space. The other paths are the alternatives the model has learned to consider; they are its experience compressed into the geometry of the space. The context is the part of the landscape the model can see right now: it shifts the valleys and closes routes that no longer fit. This picture is an abstraction. A real model works in thousands of dimensions, with far more paths than can be drawn here. The energy-landscape view follows the energy-based learning framework of <a href="http://yann.lecun.com/exdb/publis/pdf/lecun-06.pdf" target="_blank" rel="noopener">LeCun et al., A Tutorial on Energy-Based Learning (2006)</a>.<?php endif; ?></p>
 									<div class="iso-grid">
 										<div class="iso-main">
 											<div class="tt-plot-wrap">
@@ -486,7 +484,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<div class="prose">
 								<p class="pos-bridge-kicker">Same pattern, one dimension higher</p>
 								<h3>From the flat slice to the 3D curve</h3>
-								<p>The 3D curve is the same fingerprint with d = 3; a real model uses thousands of dimensions.</p>
+								<p>The curve is a small, readable slice of that geometry. A real model is far more complex, but it follows the same geometric principles in thousands of dimensions.</p>
 								<p class="pos-bridge-flow" aria-hidden="true"><span>position × dimension</span><i>→</i><span>3D curve</span><i>→</i><span>N dimensions</span></p>
 							</div>
 							<div class="step-stage">

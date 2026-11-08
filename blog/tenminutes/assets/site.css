@@ -5289,25 +5289,32 @@ html[data-theme="light"] .step-pane .aw-money { color: #004b6f; }
 	gap: 10px;
 }
 .attn-matrix .am-cell {
-	display: flex;
-	flex-direction: column;
-	gap: 3px;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: baseline;
+	column-gap: 6px;
+	row-gap: 1px;
 	min-width: 0;
 }
 .attn-matrix .am-cell b {
+	grid-column: 1;
 	font-family: var(--tm-mono);
 	font-size: .7rem;
 	color: var(--tm-ink);
 }
-.attn-matrix .am-cell span {
+.attn-matrix .am-cell > span:not(.am-bar) {
+	grid-column: 2;
 	font-family: var(--tm-mono);
 	font-size: .7rem;
 	color: var(--tm-muted);
+	text-align: right;
+	white-space: nowrap;
 }
 .attn-matrix .am-bar {
+	grid-column: 1 / -1;
 	display: block;
-	height: 10px;
-	margin-top: 3px;
+	height: 8px;
+	margin-top: 1px;
 	background: var(--tm-line-strong);
 	border: 1px solid var(--tm-line);
 	overflow: hidden;
@@ -8275,3 +8282,24 @@ html[data-theme="dark"] .traj-candidate.is-chosen { color: var(--tm-green); }
 	overflow-y: auto;
 }
 
+
+.prose-math,
+.formula,
+.fc-formula,
+.llm-math-eq,
+.conv-formula,
+.emb-formula,
+.layer-formula {
+	text-align: center;
+}
+.prose-math math,
+.formula math,
+.fc-formula math,
+.llm-math-eq math,
+.conv-formula math,
+.emb-formula math,
+.layer-formula math {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}

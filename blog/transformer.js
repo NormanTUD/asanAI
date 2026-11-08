@@ -2148,7 +2148,7 @@ function renderTrajectoryPlot(d_model) {
 		wrapper.appendChild(trajDiv);
 		var metricExplain = createTrajectoryMetricExplanation();
 		wrapper.appendChild(metricExplain);
-		if (typeof _renderTemmlOnElements === 'function') _renderTemmlOnElements([metricExplain]);
+		if (window.tmTypesetMathIn) window.tmTypesetMathIn(metricExplain);
 		if (d_model <= 3) wrapper.appendChild(createTrajectoryVFNote());
 		document.getElementById('transformer-migration-plots-container').appendChild(wrapper);
 	} else {
@@ -2163,7 +2163,7 @@ function renderTrajectoryPlot(d_model) {
 				if (!wrapper.querySelector('.trajectory-metric-explain')) {
 					var explain = createTrajectoryMetricExplanation();
 					wrapper.appendChild(explain);
-					if (typeof _renderTemmlOnElements === 'function') _renderTemmlOnElements([explain]);
+					if (window.tmTypesetMathIn) window.tmTypesetMathIn(explain);
 				}
 				const existingBtn = wrapper.querySelector('.trajectory-vf-toggle');
 				const existingNote = wrapper.querySelector('.trajectory-vf-note');
@@ -7723,7 +7723,8 @@ function createTrajectoryMetricExplanation() {
 	box.innerHTML = (window.tmMetric && window.tmMetric.explainHtml)
 		? window.tmMetric.explainHtml()
 		: '';
-	if (typeof _renderTemmlOnElements === 'function') _renderTemmlOnElements([box]);
+	if (window.tmTypesetMathIn) window.tmTypesetMathIn(box);
+	else if (typeof _renderTemmlOnElements === 'function') _renderTemmlOnElements([box]);
 	return box;
 }
 
@@ -7750,7 +7751,8 @@ function installTrajectoryMetricListener() {
 		}
 		document.querySelectorAll('.trajectory-metric-explain').forEach(el => {
 			el.innerHTML = (window.tmMetric && window.tmMetric.explainHtml) ? window.tmMetric.explainHtml() : '';
-			if (typeof _renderTemmlOnElements === 'function') _renderTemmlOnElements([el]);
+			if (window.tmTypesetMathIn) window.tmTypesetMathIn(el);
+			else if (typeof _renderTemmlOnElements === 'function') _renderTemmlOnElements([el]);
 		});
 	});
 	window.addEventListener('tm:highdimmode', () => {
