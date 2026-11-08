@@ -299,7 +299,7 @@
 		var cy = ev.touches ? ev.touches[0].clientY : ev.clientY;
 		pointer.x = clamp((cx - rect.left) / rect.width * CW, 0, CW - 1);
 		pointer.y = clamp((cy - rect.top) / rect.height * CH, 0, CH - 1);
-		api.redraw();
+		api.redraw({ spinner: false });
 	}
 	cv.addEventListener("pointermove", setPointer);
 	cv.addEventListener("pointerdown", setPointer);
