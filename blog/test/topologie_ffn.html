@@ -798,9 +798,11 @@
     attribute float aTorus;
     attribute float aHue;
     attribute float aSeed;
+    attribute vec3 aStart;
     uniform float uFlowDir;
     uniform float uOpacity;
     uniform float uChaos;
+    uniform float uOrganize;
     varying vec3 vColor;
     varying float vAlpha;
     void main() {
@@ -816,15 +818,20 @@
         sin(tt * 1.10 + aSeed * 5.0 + aPhase * 5.0)
       );
       p += uChaos * normalize(p + 0.001) * 0.55 * sin(tt * 0.90 + aSeed * 11.0);
+      float k = smoothstep(0.0, 1.0, uOrganize);
+      float na = (1.0 - k) * (1.2 + aSeed * 4.0) * (aSeed > 0.5 ? 1.0 : -1.0);
+      vec3 sp = aStart;
+      sp.xz = mat2(cos(na), -sin(na), sin(na), cos(na)) * sp.xz;
+      p = mix(sp, p, k);
       vec3 w = mnWarp(p);
       vec4 world = modelMatrix * vec4(w, 1.0);
       vec4 mv = viewMatrix * world;
       gl_Position = projectionMatrix * mv;
       gl_Position.z -= 0.0015 * gl_Position.w;
-      vec3 c1 = vec3(0.22, 0.86, 1.00);
-      vec3 c2 = vec3(1.00, 0.58, 0.22);
-      vec3 c3 = vec3(0.83, 0.30, 1.00);
-      vColor = mix(mix(c1, c2, aHue), c3, smoothstep(0.55, 1.0, aHue) * 0.45);
+      vec3 c1 = vec3(0.30, 0.74, 1.00);
+      vec3 c2 = vec3(0.72, 0.40, 1.00);
+      vec3 c3 = vec3(1.00, 0.72, 0.30);
+      vColor = mix(mix(c1, c2, aHue), c3, smoothstep(0.80, 1.0, aHue) * 0.5);
       vAlpha = (1.0 - aAge) * (1.0 - aAge) * uOpacity * 0.62;
     }
   `;
@@ -1530,7 +1537,8 @@
         uOpacity: { value: 0 },
         uChaos: { value: 0 },
         uQuant: { value: 0 },
-        uStep: { value: 0.22 }
+        uStep: { value: 0.22 },
+        uOrganize: { value: 1 }
       },
       vertexShader: TRAIL_VERT,
       fragmentShader: TRAIL_FRAG,
@@ -1659,8 +1667,15 @@
     const hue = new Float32Array(verts);
     const s = new Float32Array(verts);
     const pos = new Float32Array(verts * 3);
+    const aStart = new Float32Array(verts * 3);
     for (let i = 0; i < count; i++) {
-      const ph = rand() * Math.PI * 2;
+      const rr = 4.0 + Math.cbrt(rand()) * 16.0;
+      const th = rand() * Math.PI * 2;
+      const ph = Math.acos(2 * rand() - 1);
+      const sx = rr * Math.sin(ph) * Math.cos(th);
+      const sy = rr * Math.cos(ph) * 0.55;
+      const sz = rr * Math.sin(ph) * Math.sin(th);
+      const ph2 = rand() * Math.PI * 2;
       const sp = (0.12 + rand() * 0.18) * (rand() < 0.5 ? 1 : -1);
       const v0 = rand() * Math.PI * 2;
       const tc = rand() < 0.5 ? 0 : 1;
@@ -1671,16 +1686,20 @@
         for (let e = 0; e < 2; e++) {
           const idx = (i * segments + j) * 2 + e;
           age[idx] = a0 + (e ? 1 / segments : 0);
-          phase[idx] = ph;
+          phase[idx] = ph2;
           speed[idx] = sp;
           vv[idx] = v0;
           torus[idx] = tc;
           hue[idx] = hu;
           s[idx] = sd;
+          aStart[idx*3] = sx;
+          aStart[idx*3+1] = sy;
+          aStart[idx*3+2] = sz;
         }
       }
     }
     g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.setAttribute("aStart", new THREE.BufferAttribute(aStart, 3));
     g.setAttribute("aAge", new THREE.BufferAttribute(age, 1));
     g.setAttribute("aPhase", new THREE.BufferAttribute(phase, 1));
     g.setAttribute("aSpeed", new THREE.BufferAttribute(speed, 1));
@@ -1695,7 +1714,7 @@
     return { lines, geo: g, mat: m };
   }
 
-  const mainTrails = makeTrails(420, 7, 0.04);
+  const mainTrails = makeTrails(900, 7, 0.04);
   mainGroup.add(mainTrails.lines);
 
   /* static sparkles sampling the real triangle mesh (fills the bridge) */
@@ -2898,6 +2917,7 @@
     mainPoints.mat.uniforms.uQuant.value = quant;
     mainTrails.mat.uniforms.uChaos.value = chaos;
     mainTrails.mat.uniforms.uQuant.value = quant;
+    mainTrails.mat.uniforms.uOrganize.value = organize;
     spaceFlowMat.uniforms.uQuant.value = quant;
     spaceTrailMat.uniforms.uQuant.value = quant;
     mainSparks.mat.uniforms.uSizeScale.value = lerp(2.4, 1.15, smoothstep(0.10, 0.28, s));
@@ -2927,7 +2947,7 @@
     mainPoints.points.visible = pointOp > 0.003;
 
     mainTrails.mat.uniforms.uMorph.value = morph;
-    mainTrails.mat.uniforms.uOpacity.value = pointOp * 0.92 * smoothstep(0.26, 0.38, s) * (1 - ffnOn);
+    mainTrails.mat.uniforms.uOpacity.value = pointOp * 0.92 * smoothstep(0.08, 0.14, s) * (1 - ffnOn);
     mainTrails.lines.visible = mainTrails.mat.uniforms.uOpacity.value > 0.008;
 
     mainSparks.mat.uniforms.uMorph.value = morph;
