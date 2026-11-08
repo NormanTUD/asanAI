@@ -8146,29 +8146,28 @@ body.has-toc h4[id] { scroll-margin-top: 84px; }
 	.tm-toc__link { transition: none; }
 }
 
-/* ── transformer trajectory figure ───────────────────────── */
-.traj-figure {
-	margin: 18px 0 24px;
-	padding: 10px;
-	border: 1px solid var(--tm-line);
-	background: var(--tm-paper);
-}
-.traj-figure img {
-	display: block;
+/* ── GPT-2 PCA trajectory demo ───────────────────────────── */
+.traj-echarts-host {
 	width: 100%;
-	height: auto;
+	height: 460px;
+	min-height: 360px;
+	background: transparent;
 }
-.traj-figure .traj-img-dark { display: none; }
-html[data-theme="dark"] .traj-figure .traj-img-light { display: none; }
-html[data-theme="dark"] .traj-figure .traj-img-dark { display: block; }
-.traj-figure figcaption {
-	margin-top: 10px;
-	font-size: 0.78rem;
-	line-height: 1.45;
+.traj-echarts-host canvas { display: block; width: 100%; height: 100%; }
+.traj-echarts-fallback {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	padding: 24px;
+	text-align: center;
 	color: var(--tm-muted);
+	font-family: var(--tm-ui);
+	font-size: 0.9rem;
 }
-.traj-figure figcaption a { color: var(--tm-petrol); }
-html[data-theme="dark"] .traj-figure figcaption a { color: var(--tm-sky); }
+@media (max-width: 760px) {
+	.traj-echarts-host { height: 340px; min-height: 300px; }
+}
 
 /* ── real terminal for the generated-code demo ───────────── */
 .code-demo-term-body {

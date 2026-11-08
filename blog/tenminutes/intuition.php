@@ -240,11 +240,19 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					<section class="section-block" id="inside" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker"><span class="sk-num">03</span> Inside the model</div>
 						<h2 class="section-title">The transformer: six steps, one running vector.</h2>
-						<figure class="traj-figure">
-							<img class="traj-img-light" src="../image.php?f=transformer_trajectory_full_path_light.png&amp;w=900" alt="Token trajectories through a transformer: five colored paths move through the layers and end near related tokens" loading="lazy">
-							<img class="traj-img-dark" src="../image.php?f=transformer_trajectory_full_path.png&amp;w=900" alt="Token trajectories through a transformer: five colored paths move through the layers and end near related tokens" loading="lazy">
-							<figcaption class="md">Token trajectories through the full transformer. Each line is one token; each bend is one block. The 3D view is a projection; the model works in thousands of dimensions. Original diagram: Ten Minutes, <a href="transformer">Transformer</a>, CC BY-SA 4.0.</figcaption>
-						</figure>
+						<div class="demo demo--paper demo--canvas" id="block-trajectory-real">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Token trajectories through GPT-2 <span>· real PCA</span></p>
+									<p class="demo-sub">Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. The 3D points are a PCA projection of the 768-dimensional states.</p>
+								</div>
+								<span class="demo-badge">GPT-2 · PCA</span>
+							</div>
+							<div class="demo-body">
+								<div id="real-trajectory-3d" class="traj-echarts-host" role="img" aria-label="3D token trajectories through GPT-2, PCA-reduced to three dimensions"></div>
+							</div>
+							<div class="demo-foot">Real GPT-2 small hidden states, normalized per layer and PCA-reduced to 3D. Explained variance: PC1 22.5%, PC2 17.9%, PC3 13.5%. The 3D view is a projection; the model works in 768 dimensions. The last token, “ is”, is the one that predicts “ Paris” in the full model. Original diagram: Ten Minutes, CC BY-SA 4.0.</div>
+						</div>
 						<div class="prose">
 							<p>This is the transformer. For every token, again and again, it asks how that token stands in context to all the other tokens right now. Attention lets it look around, a dense layer and an activation function transform each token, and LayerNorm keeps the numbers in a stable range. A few other parts do their jobs along the way.</p>
 							<p>Each pass shifts the token's point in the space. The directions follow meaning paths and become clearer, so the last token ends up at a small angle to the tokens that are likely next in this context. That is the trick.</p>
@@ -732,6 +740,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		</div>
 	</main>
 
+	<script type="application/json" id="gpt2-pca-data">{"sentence": "The capital of France is", "tokens": ["The", " capital", " of", " France", " is"], "ids": [464, 3139, 286, 4881, 318], "layers": ["Embedding + position", "Block 1", "Block 2", "Block 3", "Block 4", "Block 5", "Block 6", "Block 7", "Block 8", "Block 9", "Block 10", "Block 11", "Block 12"], "points": [[[-0.3471, -0.8096, 0.2115], [-0.6593, -0.211, -0.0394], [-0.6764, -0.2625, -0.0394], [-0.6951, 0.2452, -0.1424], [-0.6972, 0.2442, -0.1426], [-0.696, 0.2454, -0.1423], [-0.6931, 0.2477, -0.1418], [-0.6907, 0.2495, -0.1408], [-0.6888, 0.2513, -0.1391], [-0.6866, 0.2531, -0.1371], [-0.6848, 0.2545, -0.1361], [-0.682, 0.2568, -0.1333], [-0.6187, 0.2614, -0.1182]], [[-0.195, -0.9765, 0.1725], [0.2369, -0.2199, -0.21], [0.3837, -0.3651, -0.166], [0.3464, -0.2752, -0.1477], [0.3655, -0.287, -0.1155], [0.3446, -0.2389, -0.1081], [0.2728, -0.1175, -0.0563], [0.245, -0.0504, 0.0138], [0.2098, 0.0315, 0.1633], [0.1878, 0.0924, 0.246], [0.1908, 0.1183, 0.3141], [0.1422, 0.1851, 0.4405], [0.1004, 0.1329, 0.5923]], [[-0.3086, -0.9404, 0.2736], [0.1635, -0.0193, -0.3349], [0.2698, -0.0905, -0.386], [0.2752, -0.0491, -0.4003], [0.2486, -0.019, -0.3708], [0.2426, 0.001, -0.3648], [0.2252, 0.0445, -0.3008], [0.2276, 0.106, -0.1669], [0.1847, 0.1751, -0.0311], [0.1776, 0.2134, 0.1308], [0.1543, 0.2291, 0.2199], [0.1041, 0.2664, 0.3978], [0.0668, 0.1677, 0.5828]], [[-0.2823, -1.0, 0.2055], [0.1891, -0.1032, -0.2037], [0.2811, -0.1456, -0.1811], [0.2504, -0.0774, -0.1711], [0.267, -0.074, -0.1515], [0.2118, 0.0111, -0.1282], [0.1711, 0.0978, -0.065], [0.1564, 0.164, 0.0575], [0.1507, 0.1971, 0.169], [0.1315, 0.2047, 0.2125], [0.1408, 0.2132, 0.2665], [0.1317, 0.2466, 0.4238], [0.0686, 0.1452, 0.6055]], [[-0.3328, -0.9319, 0.2659], [0.1792, 0.0099, -0.3359], [0.2581, -0.0296, -0.3701], [0.2418, 0.0081, -0.3782], [0.1909, 0.0754, -0.3472], [0.1545, 0.137, -0.2952], [0.1915, 0.1396, -0.2517], [0.2004, 0.2089, -0.073], [0.1698, 0.2453, 0.0444], [0.1587, 0.264, 0.1754], [0.1483, 0.2599, 0.2912], [0.1308, 0.2486, 0.462], [0.0943, 0.1445, 0.6255]]], "explained": [0.225, 0.1785, 0.1349], "landmarks": [{"word": " Paris", "value": [-0.2537, -0.5461, 0.1589]}, {"word": " London", "value": [-0.2541, -0.5263, 0.143]}, {"word": " Berlin", "value": [-0.238, -0.5468, 0.1056]}, {"word": " the", "value": [-0.3445, -0.2858, 0.2668]}, {"word": " France", "value": [-0.2629, -0.5878, 0.1754]}]}
+</script>
 	<script src="../temml.min.js"></script>
 	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
 	<script src="assets/demos.js?v=<?php echo filemtime(__DIR__.'/assets/demos.js'); ?>"></script>
@@ -1691,6 +1701,62 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			if (token === ".") return DE ? "Punkt" : "full stop";
 			return token;
 		}
+		function parseColor(value) {
+			var s = String(value || "").trim();
+			if (s.charAt(0) === "#") {
+				var h = s.slice(1);
+				if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+				var n = parseInt(h, 16);
+				return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+			}
+			var m = s.match(/rgba?\(([^)]+)\)/);
+			if (m) {
+				var parts = m[1].split(",").map(function (x) { return parseFloat(x) || 0; });
+				return [parts[0], parts[1], parts[2]];
+			}
+			return [100, 116, 139];
+		}
+		function rgba(value, alpha) {
+			var c = parseColor(value);
+			return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + alpha + ")";
+		}
+		function mixRgb(a, b, t) {
+			var A = parseColor(a), B = parseColor(b);
+			var r = Math.round(A[0] + (B[0] - A[0]) * t);
+			var g = Math.round(A[1] + (B[1] - A[1]) * t);
+			var bl = Math.round(A[2] + (B[2] - A[2]) * t);
+			return "rgb(" + r + "," + g + "," + bl + ")";
+		}
+		function probabilityColor(p, c) {
+			return mixRgb(c.gold, c.blue, Math.max(0, Math.min(1, p)));
+		}
+		function featherPath(ctx, origin, target, color, seed) {
+			var dx = target.x - origin.x;
+			var dy = target.y - origin.y;
+			var len = Math.hypot(dx, dy) || 1;
+			var nx = -dy / len;
+			var ny = dx / len;
+			var strands = 7;
+			for (var i = 0; i < strands; i++) {
+				var off = (i - (strands - 1) / 2) * 2.4;
+				var jitter = Math.sin((i + 1) * 12.9898 + seed * 78.233) * 1.8;
+				var mx = (origin.x + target.x) / 2 + nx * (off + jitter);
+				var my = (origin.y + target.y) / 2 + ny * (off + jitter);
+				var grad = ctx.createLinearGradient(origin.x, origin.y, target.x, target.y);
+				grad.addColorStop(0, rgba(color, 0.28));
+				grad.addColorStop(0.55, rgba(color, 0.14));
+				grad.addColorStop(1, rgba(color, 0));
+				ctx.save();
+				ctx.strokeStyle = grad;
+				ctx.lineWidth = 1.1 + (i % 3 === 0 ? 0.6 : 0);
+				ctx.lineCap = "round";
+				ctx.beginPath();
+				ctx.moveTo(origin.x + nx * off * 0.15, origin.y + ny * off * 0.15);
+				ctx.quadraticCurveTo(mx, my, target.x + nx * off * 0.55, target.y + ny * off * 0.55);
+				ctx.stroke();
+				ctx.restore();
+			}
+		}
 		function drawIso(ctx, w, h) {
 			var c = TM.colors();
 			var pad = 30;
@@ -1776,58 +1842,41 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			isoBranches.forEach(function (branch) {
 				if (step < branch.atStep) return;
 				var origin = at(isoPath[branch.atStep]);
-				branch.alternatives.forEach(function (alt) {
+				branch.alternatives.forEach(function (alt, altIndex) {
 					var target = at(alt.path);
-					var startW = Math.max(10, isoEntropy[branch.atStep] * spread * baseWidth * 0.55);
-					var endW = Math.max(12, alt.entropy * spread * baseWidth * 0.75);
-					var dx = target.x - origin.x;
-					var dy = target.y - origin.y;
-					var len = Math.hypot(dx, dy) || 1;
-					var nx = -dy / len;
-					var ny = dx / len;
-					var p1 = { x: origin.x + nx * startW, y: origin.y + ny * startW };
-					var p2 = { x: target.x + nx * endW, y: target.y + ny * endW };
-					var p3 = { x: target.x - nx * endW, y: target.y - ny * endW };
-					var p4 = { x: origin.x - nx * startW, y: origin.y - ny * startW };
+					var pc = Math.max(0, Math.min(1, 1 - alt.entropy));
+					var color = probabilityColor(pc, c);
+					var endW = Math.max(10, alt.entropy * spread * baseWidth * 0.65);
+					featherPath(ctx, origin, target, color, branch.atStep * 10 + altIndex);
+					var glowR = Math.max(13, endW * 1.15);
+					var glow = ctx.createRadialGradient(target.x, target.y, 0, target.x, target.y, glowR);
+					glow.addColorStop(0, rgba(color, 0.20));
+					glow.addColorStop(0.6, rgba(color, 0.08));
+					glow.addColorStop(1, rgba(color, 0));
+					ctx.fillStyle = glow;
 					ctx.beginPath();
-					ctx.moveTo(p1.x, p1.y);
-					ctx.lineTo(p2.x, p2.y);
-					ctx.lineTo(p3.x, p3.y);
-					ctx.lineTo(p4.x, p4.y);
-					ctx.closePath();
-					ctx.fillStyle = c.gold;
-					ctx.globalAlpha = 0.10;
+					ctx.arc(target.x, target.y, glowR, 0, Math.PI * 2);
 					ctx.fill();
-					ctx.globalAlpha = 0.32;
-					ctx.strokeStyle = c.gold;
-					ctx.lineWidth = 1.2;
-					ctx.stroke();
-					ctx.globalAlpha = 0.42;
+					ctx.globalAlpha = 0.55;
+					ctx.strokeStyle = color;
+					ctx.lineWidth = 1.1;
 					ctx.beginPath();
-					ctx.moveTo(origin.x, origin.y);
-					ctx.lineTo(target.x, target.y);
-					ctx.setLineDash([3, 5]);
-					ctx.stroke();
-					ctx.setLineDash([]);
-					ctx.globalAlpha = 1;
-					ctx.beginPath();
-					ctx.arc(target.x, target.y, Math.max(6, endW * 0.28), 0, Math.PI * 2);
-					ctx.fillStyle = c.gold;
-					ctx.globalAlpha = 0.10;
-					ctx.fill();
-					ctx.globalAlpha = 0.45;
-					ctx.strokeStyle = c.gold;
+					ctx.arc(target.x, target.y, Math.max(4, endW * 0.22), 0, Math.PI * 2);
 					ctx.stroke();
 					ctx.globalAlpha = 1;
 					ctx.font = "11px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
 					ctx.textAlign = "center";
-					ctx.fillStyle = c.gold;
-					ctx.fillText(isoAltLabel(alt.token), target.x, target.y - endW - 6);
+					ctx.fillStyle = color;
+					ctx.fillText(isoAltLabel(alt.token), target.x, target.y - Math.max(8, glowR * 0.75) - 6);
 				});
 			});
 			if (step >= 1) {
 				ctx.beginPath();
 				for (var s = 0; s <= step; s++) { var qs = at(isoPath[s]); if (s === 0) ctx.moveTo(qs.x, qs.y); else ctx.lineTo(qs.x, qs.y); }
+				ctx.strokeStyle = rgba(c.blue, 0.12);
+				ctx.lineWidth = 10;
+				ctx.lineCap = "round";
+				ctx.stroke();
 				ctx.strokeStyle = c.blue;
 				ctx.lineWidth = 2.5;
 				ctx.stroke();
@@ -1836,7 +1885,16 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				var q4 = at(isoPath[n2]);
 				var ent = isoEntropy[n2];
 				var radius = 5 + ent * isoTemp * 4;
-				var fill = ent < 0.3 ? c.green : ent < 0.6 ? c.gold : c.coral;
+				var fill = probabilityColor(1 - ent, c);
+				var haloR = radius * 2.8 + 7;
+				var halo = ctx.createRadialGradient(q4.x, q4.y, 0, q4.x, q4.y, haloR);
+				halo.addColorStop(0, rgba(fill, 0.24));
+				halo.addColorStop(0.6, rgba(fill, 0.08));
+				halo.addColorStop(1, rgba(fill, 0));
+				ctx.fillStyle = halo;
+				ctx.beginPath();
+				ctx.arc(q4.x, q4.y, haloR, 0, Math.PI * 2);
+				ctx.fill();
 				ctx.beginPath();
 				ctx.arc(q4.x, q4.y, radius, 0, Math.PI * 2);
 				ctx.fillStyle = fill;
@@ -3097,7 +3155,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			if (attSum) {
 				function vec(word) {
 					var p = attPos[word];
-					return "(" + p[0].toFixed(2) + ", " + p[1].toFixed(2) + ")";
+					return "\\begin{pmatrix}" + p[0].toFixed(2) + "\\\\" + p[1].toFixed(2) + "\\end{pmatrix}";
 				}
 				var words = ["bank", "river", "money"].filter(function (word) {
 					return ex.weights[word] > 0;
@@ -3112,9 +3170,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					xTerms.push(w + "\\cdot " + p[0].toFixed(2));
 					yTerms.push(w + "\\cdot " + p[1].toFixed(2));
 				});
-				var arithmetic = "\\big(" + xTerms.join(" + ") + ",\\; " + yTerms.join(" + ") + "\\big)";
-				var outTex = "(" + outv[0].toFixed(2) + ", " + outv[1].toFixed(2) + ")";
-				var tex = "\\underbrace{\\begin{aligned} \\text{out}_{\\text{" + attLabel("bank") + "}} &= " + weighted.join(" + ") + " \\\\ &= " + arithmetic + " = \\underbrace{" + outTex + "}_{\\text{" + (DE ? "gewichtete Summe" : "weighted sum") + "}} \\end{aligned}}_{\\text{" + (DE ? "was Bank aus dem Kontext mitnimmt" : "what bank takes from the context") + "}}";
+				var arithmetic = "\\begin{pmatrix}" + xTerms.join(" + ") + "\\\\" + yTerms.join(" + ") + "\\end{pmatrix}";
+				var outTex = "\\begin{pmatrix}" + outv[0].toFixed(2) + "\\\\" + outv[1].toFixed(2) + "\\end{pmatrix}";
+				var tex = "\\underbrace{\\begin{aligned} \\text{out}_{\\text{" + attLabel("bank") + "}} &= " + weighted.join(" \\\\ &\\quad + ") + " \\\\ &= " + arithmetic + " = \\underbrace{" + outTex + "}_{\\text{" + (DE ? "gewichtete Summe" : "weighted sum") + "}} \\end{aligned}}_{\\text{" + (DE ? "was Bank aus dem Kontext mitnimmt" : "what bank takes from the context") + "}}";
 				attSum.setAttribute("data-tex", tex);
 				attSum.removeAttribute("data-tex-rendered");
 				if (TM.typesetMath) TM.typesetMath(attSum.parentNode);
@@ -3706,6 +3764,243 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 		});
 		term.addEventListener("click", function () { input.focus(); });
+	})();
+	</script>
+
+	<script>
+	(function () {
+		"use strict";
+		var host = document.getElementById("real-trajectory-3d");
+		var dataEl = document.getElementById("gpt2-pca-data");
+		if (!host || !dataEl) return;
+		var data;
+		try { data = JSON.parse(dataEl.textContent); } catch (e) { return; }
+		var de = TM.lang() === "de";
+		var loaded = false;
+		var loading = false;
+		var chart = null;
+
+		function displayToken(token) { return token.replace(/^ /, "␣"); }
+		function layerLabel(i) {
+			if (i === 0) return de ? "Embedding + Position" : "Embedding + position";
+			return "Block " + i;
+		}
+		function palette() {
+			var c = TM.colors();
+			return {
+				ink: c.ink, muted: c.muted, line: c.line, lineStrong: c.lineStrong, paper: c.paper, dark: c.dark,
+				series: [c.green, c.blue, c.gold, c.coral, c.teal || c.sky]
+			};
+		}
+		function fallback(message) {
+			host.innerHTML = '<div class="traj-echarts-fallback">' + message + '</div>';
+		}
+		function loadScript(src, cb, err) {
+			var s = document.createElement("script");
+			s.src = src;
+			s.onload = cb;
+			s.onerror = err;
+			document.head.appendChild(s);
+		}
+		function ensureLibs(cb) {
+			function loadGl() {
+				loadScript("../echarts-gl.min.js", cb, function () {
+					fallback(de ? "Die 3D-Bibliothek konnte nicht geladen werden." : "The 3D library could not be loaded.");
+				});
+			}
+			if (window.echarts && window.echarts.init) loadGl();
+			else loadScript("../echarts.min.js", loadGl, function () {
+				fallback(de ? "Die 3D-Bibliothek konnte nicht geladen werden." : "The 3D library could not be loaded.");
+			});
+		}
+				function computePerpendicularVectors(nx, ny, nz) {
+			var ax, ay, az;
+			if (Math.abs(nx) < 0.9) { ax = 1; ay = 0; az = 0; }
+			else { ax = 0; ay = 1; az = 0; }
+			var p1x = ny * az - nz * ay;
+			var p1y = nz * ax - nx * az;
+			var p1z = nx * ay - ny * ax;
+			var p1mag = Math.sqrt(p1x * p1x + p1y * p1y + p1z * p1z) || 1;
+			p1x /= p1mag; p1y /= p1mag; p1z /= p1mag;
+			var p2x = ny * p1z - nz * p1y;
+			var p2y = nz * p1x - nx * p1z;
+			var p2z = nx * p1y - ny * p1x;
+			var p2mag = Math.sqrt(p2x * p2x + p2y * p2y + p2z * p2z) || 1;
+			p2x /= p2mag; p2y /= p2mag; p2z /= p2mag;
+			return { perp1: { x: p1x, y: p1y, z: p1z }, perp2: { x: p2x, y: p2y, z: p2z } };
+		}
+		function computeArrowheadBase(from3, to3, maxHeadLen) {
+			var dx = to3[0] - from3[0];
+			var dy = to3[1] - from3[1];
+			var dz = to3[2] - from3[2];
+			var mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+			if (mag < 1e-10) return [to3[0], to3[1], to3[2]];
+			var headLen = Math.min(mag * 0.3, maxHeadLen || 0.5);
+			var nx = dx / mag, ny = dy / mag, nz = dz / mag;
+			return [to3[0] - nx * headLen, to3[1] - ny * headLen, to3[2] - nz * headLen];
+		}
+		function add3DArrowheadSeries(series, from3, to3, color, name) {
+			var dx = to3[0] - from3[0];
+			var dy = to3[1] - from3[1];
+			var dz = to3[2] - from3[2];
+			var mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+			if (mag < 1e-10) return;
+			var nx = dx / mag, ny = dy / mag, nz = dz / mag;
+			var headLen = Math.min(mag * 0.3, 0.4);
+			var perp = computePerpendicularVectors(nx, ny, nz);
+			var spread = headLen * 0.35;
+			var bx = to3[0] - nx * headLen;
+			var by = to3[1] - ny * headLen;
+			var bz = to3[2] - nz * headLen;
+			var p = perp.perp1;
+			series.push({
+				type: "line3D", name: name, silent: true,
+				data: [[bx + p.x * spread, by + p.y * spread, bz + p.z * spread], to3, [bx - p.x * spread, by - p.y * spread, bz - p.z * spread]],
+				lineStyle: { width: 6, color: color }
+			});
+			p = perp.perp2;
+			series.push({
+				type: "line3D", name: name, silent: true,
+				data: [[bx + p.x * spread, by + p.y * spread, bz + p.z * spread], to3, [bx - p.x * spread, by - p.y * spread, bz - p.z * spread]],
+				lineStyle: { width: 6, color: color }
+			});
+		}
+
+		function draw() {
+			if (chart) {
+				try { chart.dispose(); } catch (e) {}
+				chart = null;
+			}
+			var c = palette();
+			try {
+				chart = echarts.init(host);
+			} catch (e) {
+				fallback(de ? "Die 3D-Ansicht konnte nicht initialisiert werden." : "The 3D view could not be initialized.");
+				return;
+			}
+			var series = [];
+			var legendData = [];
+			if (data.landmarks && data.landmarks.length) {
+				legendData.push(de ? "Kandidaten" : "Candidates");
+				series.push({
+					name: de ? "Kandidaten" : "Candidates",
+					type: "scatter3D",
+					data: data.landmarks.map(function (l) { return { name: displayToken(l.word), value: l.value }; }),
+					symbol: "diamond",
+					symbolSize: 8,
+					itemStyle: { color: "rgba(100,116,139,0.8)", borderWidth: 1, borderColor: "#334155" },
+					label: {
+						show: true, position: "top", distance: 5,
+						formatter: function (p) { return p.name; },
+						textStyle: { fontSize: 10, color: c.muted, fontWeight: 600 }
+					}
+				});
+			}
+			data.tokens.forEach(function (token, ti) {
+				var color = c.series[ti % c.series.length];
+				var pts = data.points[ti];
+				var tokenLabel = displayToken(token) + " (" + (ti + 1) + ")";
+				legendData.push(tokenLabel);
+				for (var i = 0; i < pts.length - 1; i++) {
+					var from3 = pts[i];
+					var to3 = pts[i + 1];
+					var shaftEnd = computeArrowheadBase(from3, to3, 0.4);
+					series.push({
+						name: tokenLabel,
+						type: "line3D",
+						data: [from3, shaftEnd],
+						lineStyle: { width: 4, color: color, opacity: 0.85 },
+						silent: true
+					});
+					add3DArrowheadSeries(series, from3, to3, color, tokenLabel);
+				}
+				series.push({
+					name: tokenLabel,
+					type: "scatter3D",
+					data: pts.map(function (p, li) {
+						return {
+							value: p,
+							name: layerLabel(li),
+							symbolSize: li === 0 ? 10 : 4,
+							itemStyle: {
+								color: color,
+								borderWidth: li === 0 ? 2 : 0,
+								borderColor: c.ink,
+								opacity: li === 0 ? 1 : 0.01
+							}
+						};
+					}),
+					symbol: "circle",
+					tooltip: {
+						formatter: function (p) {
+							return tokenLabel + "<br>" + p.name + "<br>PC1 " + p.value[0].toFixed(2) + " · PC2 " + p.value[1].toFixed(2) + " · PC3 " + p.value[2].toFixed(2);
+						}
+					}
+				});
+			});
+			try {
+				chart.setOption({
+					backgroundColor: "transparent",
+					title: {
+						text: de ? "Token-Trajektorie: Embedding → +Position → Layer-Ausgaben" : "Token Trajectory: Embedding → +Position → Layer Outputs",
+						left: "center", top: 10,
+						textStyle: { fontSize: 14, fontWeight: "bold", color: c.ink }
+					},
+					tooltip: {
+						trigger: "item", confine: true,
+						backgroundColor: c.dark ? "rgba(10,34,44,.96)" : "rgba(255,255,255,.98)",
+						borderColor: c.lineStrong,
+						textStyle: { color: c.ink, fontSize: 12 }
+					},
+					legend: {
+						data: legendData,
+						orient: "horizontal",
+						bottom: 5, left: "center",
+						textStyle: { fontSize: 12, color: c.ink },
+						itemWidth: 12, itemHeight: 10
+					},
+					xAxis3D: { type: "value", name: "PC 1", nameTextStyle: { color: c.muted }, axisLabel: { textStyle: { color: c.muted, fontSize: 9 } } },
+					yAxis3D: { type: "value", name: "PC 2", nameTextStyle: { color: c.muted }, axisLabel: { textStyle: { color: c.muted, fontSize: 9 } } },
+					zAxis3D: { type: "value", name: "PC 3", nameTextStyle: { color: c.muted }, axisLabel: { textStyle: { color: c.muted, fontSize: 9 } } },
+					grid3D: {
+						viewControl: { projection: "perspective", alpha: 30, beta: 40, distance: 200, autoRotate: false, damping: 0.9 },
+						light: { main: { intensity: 1.2, shadow: false }, ambient: { intensity: 0.3 } },
+						environment: c.paper,
+						boxWidth: 100, boxHeight: 100, boxDepth: 100,
+						axisLine: { lineStyle: { color: c.lineStrong } },
+						splitLine: { lineStyle: { color: c.line } },
+						axisPointer: { show: false }
+					},
+					series: series
+				}, true);
+				chart.resize();
+			} catch (e) {
+				fallback(de ? "Die 3D-Ansicht konnte nicht gezeichnet werden." : "The 3D view could not be drawn.");
+			}
+		}
+
+function start() {
+			if (loaded || loading) return;
+			loading = true;
+			ensureLibs(function () {
+				loaded = true;
+				loading = false;
+				draw();
+			});
+		}
+		if ("IntersectionObserver" in window) {
+			var io = new IntersectionObserver(function (entries) {
+				if (entries.some(function (e) { return e.isIntersecting; })) {
+					io.disconnect();
+					start();
+				}
+			}, { rootMargin: "400px 0px" });
+			io.observe(host);
+		} else {
+			start();
+		}
+		window.addEventListener("resize", function () { if (chart) chart.resize(); });
+		window.addEventListener("tm:theme", function () { if (loaded) draw(); });
 	})();
 	</script>
 </body>
