@@ -312,10 +312,10 @@
 		}
 		function request(opts) {
 			opts = opts || {};
-			var show = opts.spinner !== false;
+			var show = opts.spinner === true;
 			if (!visible) {
 				dirty = true;
-				pendingSpinner = pendingSpinner || show;
+				pendingSpinner = pendingSpinner || opts.spinner !== false;
 				return;
 			}
 			if (loading) {
