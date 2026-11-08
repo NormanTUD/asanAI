@@ -25,7 +25,7 @@ return [
 		'The aha' => 'Der Aha-Moment',
 		'The truth tunnel' => 'Der Wahrheitstunnel',
 		'· demo 01b' => '· Demo 01b',
-		'A single prediction is one slice through a landscape of plausible continuations. The most likely path is the deepest blue valley; every other option is a shallower branch. Step through the sentence and watch the valley narrow as the context closes the options, then turn up the temperature and watch it widen again. Drag to rotate.' => 'Eine einzelne Vorhersage ist ein Schnitt durch eine Landschaft plausibler Fortsetzungen. Der wahrscheinlichste Pfad ist das tiefste blaue Tal; jede andere Möglichkeit ist ein flacheres Seitental. Gehe den Satz Schritt für Schritt durch und beobachte, wie das Tal enger wird, wenn der Kontext die Möglichkeiten schließt. Dreh dann die Temperatur hoch und sieh zu, wie es sich wieder weitet. Ziehen zum Drehen.',
+		'A single prediction is one slice through a landscape of plausible continuations. The most likely path is the deepest blue valley; every other option is a shallower branch. Step through the sentence and watch the valley narrow as the context closes the options, then turn up the temperature and watch it widen again. Drag to rotate.' => 'Eine einzelne Vorhersage ist ein Schnitt durch eine Landschaft plausibler Fortsetzungen. Der wahrscheinlichste Pfad ist das tiefste blaue Tal; jede andere Möglichkeit ist ein flacheres Seitental. Gehe den Satz Schritt für Schritt durch und beobachte, wie das Tal enger wird, wenn der Kontext die Möglichkeiten schließt. Dreh dann die Temperatur hoch und sieh zu, wie es sich wieder weitet. Ziehe zum Drehen.',
 		'Next word' => 'Nächstes Wort',
 		'Next word →' => 'Nächstes Wort →',
 		'capital' => 'Hauptstadt',

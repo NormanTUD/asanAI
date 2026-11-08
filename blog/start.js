@@ -1188,21 +1188,109 @@ function applyTheme(dark, persist) {
 	// Update theme-color meta
 	var meta = document.querySelector('meta[name="theme-color"]');
 	if (meta) meta.content = dark ? '#0f172a' : '#ffffff';
+	document.querySelectorAll('#theme-toggle, [data-theme-toggle]').forEach(function (btn) {
+		btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+		btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+		btn.setAttribute('title', dark ? 'Light mode' : 'Dark mode');
+	});
 	if (persist) setThemeCookie(dark ? 'dark' : 'light');
+}
+
+var mnThemeLoader = null;
+var mnThemeTarget = null;
+var mnThemeApplyTimer = null;
+var mnThemeFadeTimer = null;
+var mnThemeRemoveTimer = null;
+
+function mnClearThemeTimers() {
+	clearTimeout(mnThemeApplyTimer);
+	clearTimeout(mnThemeFadeTimer);
+	clearTimeout(mnThemeRemoveTimer);
+	mnThemeApplyTimer = null;
+	mnThemeFadeTimer = null;
+	mnThemeRemoveTimer = null;
+}
+
+function mnThemeLoaderLabels() {
+	var lang = (document.documentElement.getAttribute('lang') || '').toLowerCase();
+	if (lang.indexOf('de') === 0) {
+		return { title: 'Design wird aktualisiert', sub: 'Einen Moment …' };
+	}
+	return { title: 'Updating theme', sub: 'One moment …' };
+}
+
+function mnEnsureThemeLoader() {
+	if (mnThemeLoader && mnThemeLoader.parentNode) return mnThemeLoader;
+	var labels = mnThemeLoaderLabels();
+	var el = document.createElement('div');
+	el.id = 'theme-loader';
+	el.setAttribute('role', 'status');
+	el.setAttribute('aria-live', 'polite');
+	el.setAttribute('aria-label', labels.title);
+	el.innerHTML = '<div class="theme-loader-inner">'
+		+ '<p class="theme-loader-title">' + labels.title + '</p>'
+		+ '<span class="theme-loader-rule" aria-hidden="true"></span>'
+		+ '<span class="theme-loader-spinner" aria-hidden="true"></span>'
+		+ '<p class="theme-loader-sub">' + labels.sub + '</p>'
+		+ '</div>';
+	document.body.appendChild(el);
+	mnThemeLoader = el;
+	return el;
+}
+
+function mnSwitchTheme() {
+	var current = mnThemeTarget !== null
+		? mnThemeTarget
+		: document.documentElement.classList.contains('dark');
+	var dark = !current;
+	mnThemeTarget = dark;
+	mnClearThemeTimers();
+	var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	if (reduced) {
+		document.documentElement.classList.add('theme-transition');
+		applyTheme(dark, true);
+		adaptLabsToTheme();
+		setTimeout(function () {
+			document.documentElement.classList.remove('theme-transition');
+			mnThemeTarget = null;
+		}, 350);
+		return;
+	}
+	var overlay = mnEnsureThemeLoader();
+	overlay.classList.remove('is-leaving');
+	overlay.style.transition = 'none';
+	overlay.classList.add('is-visible');
+	void overlay.offsetWidth;
+	overlay.style.removeProperty('transition');
+	// Let the opaque boot screen paint before the page changes underneath.
+	mnThemeApplyTimer = setTimeout(function () {
+		mnThemeApplyTimer = null;
+		document.documentElement.classList.add('theme-transition');
+		applyTheme(dark, true);
+		adaptLabsToTheme();
+		mnThemeTarget = null;
+		mnThemeFadeTimer = setTimeout(function () {
+			mnThemeFadeTimer = null;
+			document.documentElement.classList.remove('theme-transition');
+			overlay.classList.add('is-leaving');
+			mnThemeRemoveTimer = setTimeout(function () {
+				mnThemeRemoveTimer = null;
+				if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+				if (mnThemeLoader === overlay) mnThemeLoader = null;
+			}, 560);
+		}, 420);
+	}, 120);
 }
 
 function initDarkMode() {
 	var toggle = document.getElementById('theme-toggle');
-	if (!toggle) return;
+	if (!toggle || toggle.dataset.mnThemeBound === '1') return;
+	toggle.dataset.mnThemeBound = '1';
+
+	applyTheme(document.documentElement.classList.contains('dark'), false);
 
 	toggle.addEventListener('click', function() {
-		var isDark = !document.documentElement.classList.contains('dark');
-		document.documentElement.classList.add('theme-transition');
-		applyTheme(isDark, true);
-		setTimeout(function() {
-			document.documentElement.classList.remove('theme-transition');
-		}, 400);
-		adaptLabsToTheme();
+		mnSwitchTheme();
 	});
 
 	// If no cookie set, respect system preference
