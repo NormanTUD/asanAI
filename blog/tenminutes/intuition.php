@@ -3791,7 +3791,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				attRaf = null;
 			}
 			var from = attShown.slice();
-			if (TM.prefersReduced() || Math.hypot(to[0] - from[0], to[1] - from[1]) < 0.01) {
+			if (window.__tmHeightReserving || TM.prefersReduced() || Math.hypot(to[0] - from[0], to[1] - from[1]) < 0.01) {
 				attShown = to;
 				if (attApi) attApi.redraw({ spinner: false });
 				return;
@@ -4300,6 +4300,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			if (attChips.length) {
 				var activeAtt = attChips.filter(function (c) { return c.classList.contains("is-on"); })[0] || attChips[0];
 				var maxSent = 0, maxOut = 0, maxSum = 0;
+				window.__tmHeightReserving = true;
 				for (var i = 0; i < attChips.length; i++) {
 					attChips[i].click();
 					await sleep(30);
@@ -4311,6 +4312,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					if (sum) maxSum = Math.max(maxSum, sum.offsetHeight);
 				}
 				if (activeAtt) activeAtt.click();
+				window.__tmHeightReserving = false;
 				setMin("#iatt-sentence", maxSent);
 				setMin("#iatt-out", maxOut);
 				setMin("#iatt-sum", maxSum);
