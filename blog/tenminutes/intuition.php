@@ -144,6 +144,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 										</div>
 									</div>
 								</div>
+								<p class="demo-hint" id="code-demo-hint"></p>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>The model wrote the program; the program computed the ratio. Code is another sequence the loop can predict, one token at a time.</span></div>
 						</div>

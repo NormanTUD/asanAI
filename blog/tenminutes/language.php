@@ -22,11 +22,11 @@
 
 			<div class="lesson-layout">
 				<article class="lesson-main">
-					<section class="section-block" id="idea">
+					<section class="section-block" id="idea" data-chapter="Sound" data-chapter-de="Klang">
 						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
 						<h2 class="section-title">Listening came first.</h2>
 						<div class="prose">
-							<p>The history of computing traces the ideas that made computation possible. The medium those ideas needed is language. But language did not start with a word. It started with an ear.</p>
+							<p>Language did not start with a word. It started with an ear. How did sound become something a machine can read? Follow the path from hearing to writing to vectors.</p>
 							<p>Hearing is far older than speech. The ear is built from ancient hair cells, a cochlea, and a middle ear assembled from jaw bones; it is far older than humans. A fetus begins to hear before birth, and newborns prefer the voice they heard in the womb (<a href="https://pubmed.ncbi.nlm.nih.gov/7979483/" rel="noopener">Hepper and Shahidullah, 1994</a>; <a href="https://pubmed.ncbi.nlm.nih.gov/7375928/" rel="noopener">DeCasper and Fifer, 1980</a>). The channel that lets a child learn language was in place long before the first word was spoken.</p>
 						</div>
 						<figure>
@@ -36,7 +36,6 @@
 						<div class="prose">
 							<p>The human vocal tract can make a much wider range of sounds than those of other primates: the descended larynx, the vocal folds that sit in it, and fine motor control are part of the story, though the exact biological package is still debated. Genomic evidence suggests the human capacity for language was present at least 135,000 years ago, and in widespread social use by 100,000 years ago. That date comes from genetic and archaeological inference, not from a preserved organ of language; it is a range, not a timestamp.</p>
 							<p>Languages themselves are diverse, and none is a simpler version of another. Pirahã, a small language of the Amazon, has about a dozen phonemes and marks tone and evidentiality; Everett (2005) argued that it lacks syntactic recursion, a claim other linguists dispute. Whether or not that claim holds, Pirahã shows that a fully grammatical language does not need a large sound inventory, writing, or a large speaker community. Early languages were not primitive; they were spoken, and speech leaves no direct fossil.</p>
-							<p>Pāṇini's <a href="https://ia801807.us.archive.org/1/items/AshtadhyayiBhashyaCollection/019%20Ashtadhyayi%20Bhashyam-1-Dayananda_text.pdf" rel="noopener"><em>Aṣṭādhyāyī</em></a> (c. 4th century BCE) is the most complete surviving formal grammar, but it was not the first. Vedic phonetic and grammatical analysis, the Prātiśākhyas, and Yāška's <em>Nirukta</em> precede it. Pāṇini matters here because he described a language as a finite rule system that generates an unbounded set of sentences: the ambition that later formal grammars inherit.</p>
 							<p>Speech is fleeting. Writing began with accounting: clay tokens for goods appeared around 8000 BCE, and by 3200 BCE marks pressed into tablets in Mesopotamia had become cuneiform. It did not begin as literature; it grew out of administration.</p>
 						</div>
 						<figure>
@@ -53,37 +52,7 @@
 						</figure>
 					</section>
 
-					<section class="section-block" id="detail">
-						<div class="section-kicker"><span class="sk-num">02</span> The long background</div>
-						<h2 class="section-title">From print to vectors.</h2>
-						<div class="prose">
-							<p>Printing was a scaling step. Around 1440, Gutenberg combined movable metal type, oil-based ink, and a modified wine press in Mainz. A scribe copied a book in months; a press could produce hundreds of identical pages in a day. Cheap, standard text made dictionaries, standard spelling, and a shared scientific record possible. That abundance is the corpus a language model later learns from.</p>
-						</div>
-						<figure>
-							<img src="../gutenberg_press.jpg" alt="The Caxton Celebration: William Caxton showing specimens of printing to King Edward IV and his Queen" loading="lazy">
-							<figcaption>The Caxton Celebration (1877): William Caxton showing specimens of his printing to King Edward IV and his Queen. Image: William Small, <em>The Graphic</em>, 1877, <a href="https://commons.wikimedia.org/wiki/File:The_Caxton_Celebration_-_William_Caxton_showing_specimens_of_his_printing_to_King_Edward_IV_and_his_Queen.jpg" rel="noopener">public domain</a>, via Wikimedia Commons.</figcaption>
-						</figure>
-						<div class="prose">
-							<p>In 1948, Claude Shannon separated the message from its meaning and measured information in bits (<a href="https://archive.org/details/bstj27-3-379" rel="noopener">Shannon, 1948</a>). A bit is one yes/no answer, and the information in a message is the uncertainty it removes. That measure is also the training signal of a language model: the model does not need to understand a sentence to predict the next token; it needs a representation of the text and a way to score its guess against what actually comes next. The score is a form of Shannon's information, because a good guess removes surprise. The deflationary reading is that prediction needs no understanding. Experiments with Othello-GPT suggest that a model trained only to predict the next move can still build an internal representation of the board (<a href="https://arxiv.org/abs/2210.13382" rel="noopener">Li et al., 2022</a>); how far that generalises to natural language is still an open question.</p>
-						</div>
-						<figure>
-							<img src="../shannon.png" alt="Claude Shannon" loading="lazy">
-							<figcaption>Claude Shannon, c. 1930. Image: UM Bentley Historical Library, <a href="https://commons.wikimedia.org/wiki/File:Claude_Shannon_c1930.png" rel="noopener">public domain</a>, via Wikimedia Commons.</figcaption>
-						</figure>
-						<div class="prose">
-							<p>Firth's old slogan, “You shall know a word by the company it keeps” (<a href="https://archive.org/details/papersinlinguist0000firt" rel="noopener">Firth, 1957</a>), is the distributional idea: a word's meaning is the company it keeps. It is a claim about language, not about computers, and it was made decades before a machine could test it at scale.</p>
-							<p><strong>Word2vec</strong> (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>) made Firth's idea computable. It learned a vector by predicting a word from its neighbours or its neighbours from the word; subword tokenizers and modern embeddings followed. Tokens become vectors, and meaning becomes a pattern of distances and directions. The model inherits the whole stack (body, symbol, writing, information) and compresses it into weights.</p>
-						</div>
-						<div class="keypoints">
-							<div class="keypoint"><b>Vocal tract</b><span>Genomic evidence points to at least 135,000 years ago; the descended larynx and pharynx made a wide range of sounds possible.</span></div>
-							<div class="keypoint"><b>External memory</b><span>Writing (c. 3200 BCE) and oral tradition store language outside the speaker.</span></div>
-							<div class="keypoint"><b>Grammar</b><span>Pāṇini treated language as a rule system in the 4th century BCE.</span></div>
-							<div class="keypoint"><b>Information</b><span>Shannon made messages measurable in 1948; that made them computable.</span></div>
-							<div class="keypoint"><b>Geometry</b><span>Word2vec and modern embeddings turn meaning into distances and directions.</span></div>
-						</div>
-					</section>
-
-					<section class="section-block" id="machine">
+					<section class="section-block" id="machine" data-chapter="Sound" data-chapter-de="Klang">
 						<div class="section-kicker"><span class="sk-num">03</span> The machine learns to speak</div>
 						<h2 class="section-title">From bellows to text-to-speech.</h2>
 						<div class="prose">
@@ -100,10 +69,37 @@
 						</div>
 					</section>
 
-					<section class="section-block" id="extra">
+					<section class="section-block" id="detail" data-chapter="Writing and data" data-chapter-de="Schrift und Daten">
+						<div class="section-kicker"><span class="sk-num">02</span> The long background</div>
+						<h2 class="section-title">From print to vectors.</h2>
+						<div class="prose">
+							<p>Printing was a scaling step. Around 1440, Gutenberg combined movable metal type, oil-based ink, and a modified wine press in Mainz. A scribe copied a book in months; a press could produce hundreds of identical pages in a day. Cheap, standard text made dictionaries, standard spelling, and a shared scientific record possible. That abundance is the corpus a language model later learns from.</p>
+						</div>
+						<figure>
+							<img src="../gutenberg_press.jpg" alt="The Caxton Celebration: William Caxton showing specimens of printing to King Edward IV and his Queen" loading="lazy">
+							<figcaption>The Caxton Celebration (1877): William Caxton showing specimens of his printing to King Edward IV and his Queen. Image: William Small, <em>The Graphic</em>, 1877, <a href="https://commons.wikimedia.org/wiki/File:The_Caxton_Celebration_-_William_Caxton_showing_specimens_of_his_printing_to_King_Edward_IV_and_his_Queen.jpg" rel="noopener">public domain</a>, via Wikimedia Commons.</figcaption>
+						</figure>
+						<div class="prose">
+							<p>In 1948, Claude Shannon separated the message from its meaning and measured information in bits (<a href="https://archive.org/details/bstj27-3-379" rel="noopener">Shannon, 1948</a>). A bit is one yes/no answer, and the information in a message is the uncertainty it removes. That measure is also the training signal of a language model: the model does not need to understand a sentence to predict the next token; it needs a representation of the text and a way to score its guess against what actually comes next. The score is a form of Shannon's information, because a good guess removes surprise. The deflationary reading is that prediction needs no understanding. Experiments with Othello-GPT suggest that a model trained only to predict the next move can still build an internal representation of the board (<a href="https://arxiv.org/abs/2210.13382" rel="noopener">Li et al., 2022</a>); how far that generalises to natural language is still an open question.</p>
+						</div>
+						<figure>
+							<img src="../shannon.png" alt="Claude Shannon" loading="lazy">
+							<figcaption>Claude Shannon, c. 1930. Image: UM Bentley Historical Library, <a href="https://commons.wikimedia.org/wiki/File:Claude_Shannon_c1930.png" rel="noopener">public domain</a>, via Wikimedia Commons.</figcaption>
+						</figure>
+						<div class="keypoints">
+							<div class="keypoint"><b>Vocal tract</b><span>Genomic evidence points to at least 135,000 years ago; the descended larynx and pharynx made a wide range of sounds possible.</span></div>
+							<div class="keypoint"><b>External memory</b><span>Writing (c. 3200 BCE) and oral tradition store language outside the speaker.</span></div>
+							<div class="keypoint"><b>Grammar</b><span>Pāṇini treated language as a rule system in the 4th century BCE.</span></div>
+							<div class="keypoint"><b>Information</b><span>Shannon made messages measurable in 1948; that made them computable.</span></div>
+							<div class="keypoint"><b>Geometry</b><span>Word2vec and modern embeddings turn meaning into distances and directions.</span></div>
+						</div>
+					</section>
+
+					<section class="section-block" id="extra" data-chapter="Writing and data" data-chapter-de="Schrift und Daten">
 						<div class="section-kicker"><span class="sk-num">04</span> What the model inherits</div>
 						<h2 class="section-title">From text to vectors.</h2>
 						<div class="prose">
+							<p>What does the model actually see?</p>
 							<p>Text reaches a model as tokens. A tokenizer cuts the string into pieces from a fixed vocabulary: whole words, word fragments, punctuation, and bytes. The token ID is the only thing the model sees; the original characters are gone. That is why a model can be bad at spelling: it may never see the letters that make up a word, only the pieces the tokenizer chose. Byte-pair encoding learns those pieces from frequency, so common strings become single tokens and rare ones split.</p>
 							<p>Each token ID indexes a row in an embedding table and becomes a vector. The table has one row per vocabulary item; a 100,000-token vocabulary with 4,000 dimensions is already 400 million numbers, before any transformer layer. The distributional idea is old: “You shall know a word by the company it keeps” (<a href="https://archive.org/details/papersinlinguist0000firt" rel="noopener">Firth, 1957</a>). Words used in similar contexts end up with similar vectors. Word2vec (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>) made that idea computable at scale by learning vectors that predict a word from its neighbours, or its neighbours from the word.</p>
 							<p>A direction in that space can carry a relationship, such as the direction from “man” to “woman”, but the famous king − man + woman ≈ queen analogy is an illustration, not a law. It works on some embeddings and some pairs, and fails on others. The geometry is shaped by the training signal, and that signal is prediction: the model is rewarded for making the next token more likely, not for matching definitions.</p>
@@ -163,7 +159,7 @@
 
 
 
-					<section class="section-block" id="takeaway">
+					<section class="section-block" id="takeaway" data-chapter="Takeaway" data-chapter-de="Kurzfassung">
 						<div class="section-kicker"><span class="sk-num">05</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
