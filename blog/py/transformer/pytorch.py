@@ -1,9 +1,10 @@
 """
 A transformer, in PyTorch (the nanoGPT structure).
 
-This is the framework version of the same transformer that custom.py builds by
-hand. The structure is exactly nanoGPT's: a stack of Blocks, each Block being
-the two-line residual recurrence
+This is the framework version of the same block structure that custom.py builds
+by hand. It follows nanoGPT's layout and, unlike the single-head pure-Python
+version, splits attention into multiple heads. The structure is a stack of
+Blocks, each Block being the two-line residual recurrence
 
     x = x + CausalSelfAttention( LayerNorm(x) )
     x = x + MLP( LayerNorm(x) )

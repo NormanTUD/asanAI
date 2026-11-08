@@ -33,7 +33,7 @@ lists of learned vectors:
     Their sum, tok_emb[t] + pos_emb[p], is the input vector for "token t at
     position p" -- that sum is exactly what Step 1 (GPT.embed) computes.
 
-The structure follows nanoGPT. Run it directly:
+The block structure follows nanoGPT. To keep the code short, this pure-Python version uses one attention head over the full width and a separate output head; the PyTorch and TensorFlow tabs split heads. Run it directly:
     python3 custom.py
 """
 

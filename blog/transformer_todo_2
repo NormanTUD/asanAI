@@ -128,3 +128,13 @@
 [verify] `check_all.py --fast`: alle Stages PASS. `php_render_validator.py` für transformer und tenminutes: PASS, 0 JS-Fehler, 0 unrendered LaTeX. `transformer_ui2_regression_test.py`: 57/57. `transformer_fix_regression_test.py`: 36/36 (ein Lauf mit dem bekannten Timing-Flake bei „estimate explains context mixing“, Wiederholung grün).
 
 [note] Abschließender Konsistenz-Scan: keine `hsl()`/`Viridis`-Reste in den sichtbaren Transformer-Plots, keine blaue Head-Tab-Füllung mehr, `setupResidualHoverPopup`/`tmSubboxLoading` jeweils genau einmal definiert, Syntax- und HTML-Validatoren grün.
+
+## Content audit against real model code
+
+[done] Quellcode nach `/tmp/opencode/llm_sources/` geladen und gelesen: DeepSeek-V3 (`inference/model.py`), DeepSeek-V2, Qwen2/Qwen2.5 (`modeling_qwen2.py`), Qwen3 (`modeling_qwen3.py`), Llama 3 (`llama3/model.py`, HF `modeling_llama.py`), Mistral, Gemma, GPT-2 (`src/model.py`), nanoGPT (`model.py`).
+
+[done] Schritte verglichen: Tokenisierung, Embedding, Position, Pre-LN, Attention/MHA/GQA/MLA, FFN/SwiGLU/MoE, Residual, Final-Norm, Unembedding/Tying, Loss, Sampling, KV-Cache. Die interaktive Demo ist eine ehrliche Vereinfachung; die Code-Tabs folgen nanoGPT (learned positions, final LN, separates `lm_head`), nicht exakt der Demo.
+
+[done] Korrekturen: Hyperparameter-Anzahl (vier Kern + FFN-Breite), Tokenizer-Satz, Positionierungs-Nuancen (sinusoidal/GPT-2 learned/RoPE), IB-Überclaim entschärft, Mesa-Optimizer-Überclaim entschärft, geschlossene Modelle nicht als exakt nachgebaut behauptet, Unembedding-Zeilen statt „vocabulary embeddings“, Final-Norm-Hinweis, Top-k statt Top-p, Llama 2 7B statt pauschal „LLaMA“, Bias-/QK-Norm-Hinweis, Code-Tab-/Docstring-Klarstellung, Gradienten-Überclaim entschärft, Induktionskopf-Überclaim entschärft, veraltete 0.1-Skalierung entfernt.
+
+[note] Verbleibende Vereinfachungen der Demo: Word-Tokenizer, sinusoidale absolute PE, LayerNorm, MHA mit eigenen K/V-Heads, dichtes GELU-FFN, keine Final-Norm, tied Unembedding, winzige Einzelsequenz, kein AdamW/Schedule/Weight-Decay/Mixed-Precision/distributed Training. Die vollständige Differenzliste steht in der Antwort und in `/tmp/opencode/transformer_consistency_audit.md`.

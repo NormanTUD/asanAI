@@ -1,8 +1,9 @@
 """
 A transformer, in TensorFlow.
 
-The framework version of the same transformer that custom.py builds by hand.
-The structure mirrors nanoGPT: a stack of Blocks, each Block being
+The framework version of the same block structure that custom.py builds by
+hand. It mirrors nanoGPT and, unlike the single-head pure-Python version, splits
+attention into multiple heads. The structure is a stack of Blocks, each Block being
 
     x = x + CausalSelfAttention( LayerNorm(x) )
     x = x + MLP( LayerNorm(x) )

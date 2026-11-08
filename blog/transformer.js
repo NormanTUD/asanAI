@@ -7614,6 +7614,7 @@ function renderLayerAttention(layerIdx) {
 			registryEntry.instance.executeActualRender(registryEntry.headData, registryEntry.tokens);
 		}
 	}
+	if (window.tmClassifyAttentionHeads) setTimeout(window.tmClassifyAttentionHeads, 0);
 }
 
 function renderLayerMigrationPlot(layerIdx) {

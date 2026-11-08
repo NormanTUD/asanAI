@@ -399,6 +399,67 @@ Use the existing `.demo demo--paper` shell: `demo-head`, `demo-body`,
 `TM.colors()`, and re-render on `tm:theme`. Keep every demo inside the paper
 theme unless there is a specific reason not to.
 
+## Canvas demos: lazy render, no flicker, stable height
+
+`TM.initCanvas` is lazy and shared by every canvas demo. It draws when the
+canvas comes near the viewport (`IntersectionObserver` plus a scroll fallback),
+shows the loader on the initial draw, and keeps updates dirty while offscreen.
+Treat these as hard behaviour:
+
+- A visible, already drawn canvas must repaint immediately. `api.redraw()` is
+  spinner-free by default; pass `{ spinner: true }` only for a deliberate
+  blocking update. Hover, slider, button, and animation-loop redraws must never
+  show the loader, or the plot flashes white.
+- Offscreen updates stay dirty and are drawn when the canvas returns. The loader
+  may appear once when that deferred state becomes visible.
+- Coalesce continuous input through the existing rAF scheduler; do not call
+  `draw()` directly from an input handler.
+- The height-reservation pass clicks demo controls to measure maximum heights.
+  Set `window.__tmHeightReserving` around animated demos and jump to the final
+  state while it is true; skip measuring a demo that is currently visible.
+  Without this, the attention word visibly cycles through every context on load.
+- 3-D scenes: draw axes, token vectors, rings, and projection lines as
+  depth-sorted primitives. Split long lines into segments with their own `z`
+  values; drawing axes first and then a vector on top breaks occlusion. The
+  blue grid must be able to pass in front of the vector.
+- In the positional-encoding scene the token is a short vector near the centre
+  with rings around it, not a large glossy sphere at the origin. The long green
+  vector is the position; keep the token short so it reads as the base.
+- Verify no-flash behaviour after changes. `tenminutes_pages_test.py` catches
+  console and layout regressions; a small canvas-pixel count before and just
+  after a control click catches a loader flash.
+
+## Formula cards and ML notation
+
+Use the shared `.layer-formula-grid` / `.layer-formula-card` markup for
+explanatory formulas. `.layer-formula` is the old single-box style; do not add
+new cards with it. `.layer-formula-card--layer` marks the composed transformer
+layer.
+
+Keep notation consistent across the Dense, Self-attention, FFN, and Transformer
+cards:
+
+- `X` is the whole token matrix, one row per token; `x` is one vector.
+- `A = Self-Attention(X)` is the matrix of mixed rows; `A_i` is the row for
+  token `i`.
+- `α_ij` is the weight from visible token `j` to token `i`; `v_j` is the value
+  vector of token `j`. `α_ij ∈ [0,1]` and `Σ_j α_ij = 1`.
+- The transformer layer is `layer(X)`, the column of `FFN(A_i)` rows. The FFN
+  receives one `A_i` at a time. Do not write `FFN(A_1 X_1 + ...)` as if the FFN
+  receives the whole weighted sum; that sum defines `A_i` inside
+  self-attention.
+- Write `Self-Attention` in German card titles/formulas and `Self-attention`
+  in English. Use `Aktivierung` in German formulas and `activation` in English;
+  never mix the two in one language.
+- Prefer underbrace labels over extra definition paragraphs. Keep the
+  final-vector section short: `h`, `W_U`, `z`, softmax, geometry. Do not
+  reintroduce step lists or a second definitions block that repeat the formula
+  labels.
+- Optional worked examples use
+  `<details class="collapse-card"><summary class="cc-label">…</summary>`. The
+  stylesheet adds the `+`/`−` marker; do not leave a static `.cc-label` box that
+  looks interactive but is not.
+
 ## Arrow-key navigation
 
 `assets/site.js` installs one global keydown handler for demos marked
@@ -682,9 +743,9 @@ for both languages; a page that only looks right in English is not finished.
 
 ## Validation
 
-The blog validators are built around lesson `.php` files and the main blog's
-shared JS; they do not render or validate these standalone HTML pages. Before
-finishing, run:
+The main blog validators target the blog lesson pipeline; they do not cover
+these standalone pages. Run the main checks, then the Ten Minutes-specific page
+and height tests before finishing:
 
 1. `python3 blog/tools/check_all.py --fast` (from the repository root). When a
    top-level lesson, fact file, statement ledger, `literature.js`, or the search
@@ -695,10 +756,17 @@ finishing, run:
    image credits against `assets/image-credits.json` and cross-checks entries
    with a `literatureKey` against `literature.js`. Every static figure also
    needs a source link and a licence keyword in its caption.
-3. `php -l` every changed `.php`; `node --check` every changed JS file and every
-   extracted inline `<script>`; `git diff --check` for whitespace.
+3. `php -l` every changed `.php`; `uv run blog/tests/php_validator.py blog/`
+   (syntax plus HTML tag balance); `node --check` every changed JS file and
+   every extracted inline `<script>`; `git diff --check` for whitespace.
 4. Run the demo audit above in both languages, including the control clicks and
    generated-text/branch checks.
+5. `uv run blog/tests/tenminutes_pages_test.py` loads every page in EN and DE and
+   checks rendered math, console errors, and horizontal overflow. Use
+   `--pages intuition.php` for a focused run.
+6. `uv run blog/tests/tenminutes_height_test.py --pages intuition.php --langs en,de --viewports desktop,mobile --monkey 4`
+   clicks controls and checks height stability. Known current mobile deltas:
+   truth-tunnel side panel ±25 px and word-map slider 2–3 px.
 
 If `check_all.py` reports a stale statement ledger or index, regenerate only
 the affected part, then commit it:

@@ -54,7 +54,7 @@ Long before the Transformer, sequence models were recurrent. An encoder read a s
 
 ## Hyperparameters for this demo
 
-A **hyperparameter** is a number you choose *before* training starts; the model learns everything else — its weights — from the data. This demo exposes four of them:
+A **hyperparameter** is a number you choose *before* training starts; the model learns everything else — its weights — from the data. This demo exposes four core hyperparameters, plus the FFN width below:
 
 | Hyperparameter | What it sets | Constraint |
 |---|---|---|
@@ -226,7 +226,7 @@ $$ \underbrace{ \color[RGB]{59,130,246}\text{“the} \ \color[RGB]{55,135,235}\t
 				</div>
 				<p>Text becomes tokens. The order is the sentence; the number under each token is its vocabulary index in this demo.</p>
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-tokenize" aria-label="The token stream in reading order"></canvas>
-				<p class="tm-step-more">The tokenizer is a separate program trained before the model. It decides which strings become one id; the model itself only sees numbers.</p>
+				<p class="tm-step-more">In real LLMs the tokenizer is a separate program trained before the model; this demo uses a simple word splitter. Either way, the tokenizer decides which strings become one id, and the model itself only sees numbers.</p>
 				<div class="tm-step-formula" data-tex="T = [t_0,\, t_1,\, \dots,\, t_{n-1}]"></div>
 				<details class="tm-step-detail" id="tm-detail-tokenize"><summary>Tokenizer in detail</summary><div class="tm-step-detail-body"></div></details></div>
 			</section>
@@ -310,9 +310,9 @@ $$ \underbrace{ \color[RGB]{59,130,246}\text{“the} \ \color[RGB]{55,135,235}\t
 					<h3>7 · Unembed</h3>
 					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
 				</div>
-				<p>The final vector is compared with every vocabulary embedding. The bars are the model's shortlist for the next token.</p>
+				<p>The final vector is compared with every row of the unembedding matrix. The bars are the model's shortlist for the next token.</p>
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-unembed" aria-label="Top next-token logits"></canvas>
-				<p class="tm-step-more">The final vector is compared with every vocabulary embedding. Softmax turns the scores into probabilities; a decoding rule chooses one token. Click the top token.</p>
+				<p class="tm-step-more">The final vector is compared with every row of the unembedding matrix. Softmax turns the scores into probabilities; a decoding rule chooses one token. Click the top token. This demo uses h_last directly; production models usually apply a final LayerNorm or RMSNorm before this step.</p>
 				<div class="tm-step-formula" data-tex="p = \operatorname{softmax}(h_L W_U^\top)"></div>
 				<div class="tm-unembed-controls">
 					<label class="tm-unembed-temp">Temperature <input type="range" id="tm-unembed-temp" min="0.1" max="2" step="0.1" value="1"><output id="tm-unembed-temp-out">1.0</output></label>
@@ -569,15 +569,15 @@ $$PE_{(\text{pos}, 2i)} = \sin\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}
 
 $$PE_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
 
-These functions were chosen because they create unique, continuous patterns for each position, enabling the model to infer both absolute and relative positions. Because the formula is defined for any position, the encoding can be *computed* beyond the training length; whether the trained model actually generalizes there is a separate empirical question, and in practice it often does not. Additionally, their multi-frequency nature allows the model to capture both local and global positional relationships. The network's layers learn to interpret these fixed “geometric fingerprints” by adjusting their weights, enabling the model to apply position-specific logic and reason about sequence structure effectively.
+These functions give each absolute position a unique, continuous pattern, and their multi-frequency structure spans both fine and coarse offsets. Because the formula is defined for any position, the encoding can be *computed* beyond the training length; whether the trained model actually generalizes there is a separate empirical question, and in practice it often does not. The network learns to interpret these fixed “geometric fingerprints” by adjusting its weights, so position-specific behaviour is learned rather than hand-coded.
 
-The key to how the model infers relative positions lies in the mathematical properties of sine and cosine. For any fixed offset $k$, the positional encoding at position $\text{pos} + k$ can be expressed as a linear transformation of the encoding at position $\text{pos}$. This linearity is what lets the attention mechanism — through its $\mathbf{q}\cdot\mathbf{k}$ dot products — score a relative offset in a position-invariant way, so a head can learn to “attend $k$ steps back” regardless of the absolute location. (The FFN, being a pointwise operation, operates on the features that attention has already mixed; the relative-position geometry itself comes from the sinusoidal encodings interacting inside attention.) Over multiple layers, the network entangles positional and semantic information, enabling it to reason about sequence structure and relationships. This is what lets attention compare positions by their offset rather than their absolute index.
+For a fixed offset $k$, the sinusoidal encoding at position $\text{pos}+k$ is a fixed linear map of the encoding at $\text{pos}$. That linearity gives attention a way to represent relative offsets, but whether a head actually becomes position-invariant depends on its learned $W_Q$ and $W_K$; the raw sinusoids are not by themselves a relative-position mechanism. The FFN is pointwise, so it operates on features attention has already mixed. Over multiple layers the network entangles positional and semantic information. Modern LLMs mostly use RoPE instead (see the modern-block section), which makes the relative rotation explicit in $Q$ and $K$.
 
-This is required because the network looks at all words simultaneously instead of one after another. Since the matrix can be permuted and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.
+This demo uses the original sinusoidal scheme. GPT-2 instead uses learned position vectors, and most current LLMs use RoPE; the modern-block section below shows that variant. The sinusoidal scheme is still useful because it makes the position code explicit and easy to inspect. This is required because the network looks at all words simultaneously instead of one after another. Since the matrix can be permuted and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.
 </div>
 
 <div class="md" id="ifscalfactornotone" style="display: none">
-In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">0.1</span> because of the low dimensionality of our space.
+This example uses a positional scaling factor of <span id="posEmbedScaleFactor">1.0</span>.
 </div>
 
 <div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
@@ -591,11 +591,11 @@ When you add “random” values to a vector, you change its location in the mul
 
 - **High-Dimensional Space:** In real models, the embedding space is massive. Adding a positional vector moves the word “King” to a new location, but it remains in a “neighborhood” that the model still recognizes as “King.”
 - **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network's layers. Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.
-- **The Risk of Overlapping**: During training, the model learns to set the “scale” of the embeddings much larger than the “scale” of the positional encodings. This ensures the position “nudges” the meaning without overwriting it.
+- **Scale is learned, not hand-set.** In this demo the embedding entries start larger than the positional values, but Pre-LN normalizes each token before the sublayers, so absolute scale matters less than the directions and relative magnitudes the learned projections use. The model does not need a separate rule that embeddings must dominate positions; training adjusts the projections that read them.
 </div>
 
 <div class="optional md" data-headline="The Decoder-Only Architecture">
-Here, we do **not** use the original Encoder-Decoder architecture from Vaswani et al. (\citeyear{vaswani2017attention}). Instead, this example implements a **Decoder-only** Transformer with **Pre-Layer Normalization**, the same structural family that powers today's leading LLMs (GPT, Claude, Gemini and so on). The entire model is a stack of identical Decoder (with different weights) blocks, each containing:
+Here, we do **not** use the original Encoder-Decoder architecture from Vaswani et al. (\citeyear{vaswani2017attention}). Instead, this example implements a **Decoder-only** Transformer with **Pre-Layer Normalization**, the same GPT-style family as GPT-2/3/4. The exact blocks of closed models such as GPT-4, Claude and Gemini are not public, so this page does not claim to reproduce them. The entire model is a stack of identical Decoder (with different weights) blocks, each containing:
 
 1. **Pre-LN**: Layer Normalization is applied *before* each sublayer (attention and FFN), rather than after. The arrangement was used in deep Transformers by \cite[Wang et al. (2019)]{wang2019preln} and analyzed by \cite[Xiong et al. (2020)]{xiong2020}, who showed that it keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up.
 2. **Masked (Causal) Self-Attention**: Every token can only attend to itself and the tokens that came before it. This is enforced by setting the upper triangle of the attention score matrix to $-\infty$ before the SoftMax. This causal constraint is what makes the model **autoregressive**: to predict token $t_{n+1}$, the model processes $[t_1, t_2, \ldots, t_n]$ and prevents any token from “cheating” by looking at future positions.
@@ -616,7 +616,7 @@ In the Transformer, the Residual Stream embodies Heraclitus' flux, serving as a 
 1. It allows very deep networks without the **Vanishing Gradient**-problem.
 2. It serves as a shared notebook where, at each layer, the “experts” at that layer write down their results in the original stream, so it becomes a \cite[communication bus]{elhage2021mathematical} for all **Attention Heads** and **Feed-Forward-Networks**, where they perform “collaborative editing” by adding insights rather than overwriting the signal.
 
-This architecture is governed by the \cite[Information Bottleneck principle]{tishby2000informationbottleneck}; because the dimensionality $d_{\text{model}}$ is fixed, the stream forces a transition from surface-level features to task-relevant abstractions as depth increases. Ultimately, this constrained “river width” acts as an implicit regularizer, necessitating that token-level noise distill into conceptual structure to survive the journey through the layers.
+The fixed width $d_{\text{model}}$ caps how much the stream can carry, and it is tempting to call this an information bottleneck. That is an analogy, not a theorem: the \cite[information-bottleneck principle]{tishby2000informationbottleneck} is a separate information-theoretic framework, and no result here proves that a transformer's residual stream optimizes it. The practical point is narrower: because every layer writes into the same width, features must be composed and added rather than stored in ever-new dimensions.
 
 </div>
 
@@ -736,7 +736,7 @@ This is why simple deep networks without residual connections and normalization 
 
 $$\frac{\partial x_{l+1}}{\partial x_l} = I + \frac{\partial F}{\partial x_l}$$
 
-The identity term $I$ ensures that the gradient has a “highway” that bypasses the multiplicative chain, preventing both vanishing and explosion regardless of depth. The formal backpropagation analysis — showing that the gradient recursion through a residual block involves the factor $\mathbf{I} + J_F$ rather than $J_F$ alone — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 17.1.
+The identity term $I$ gives the gradient a short path that bypasses the multiplicative chain, which is a major reason very deep residual networks train. It does not make explosion impossible: the full Jacobian of a residual block is $\mathbf{I} + J_F$, and the $J_F$ part can still amplify gradients. The formal backpropagation analysis is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 17.1.
 </div>
 
 <div class="optional md" data-headline="What the heads actually react to">
@@ -748,7 +748,7 @@ In the paper \citealternativetitle{analyzingmultiheads}, the study identified th
 
 However, research into larger Decoder-only models from (\cite[Elhage et al., 2021]{elhage2021mathematical}) and (\cite[Olsson et al., 2022]{incontextlearninghead}) and recent discoveries in mechanistic interpretability have revealed even more specialized mechanisms:
 
-* **Induction Heads**: These specialized heads develop in the middle layers and are responsible for pattern matching. If they see a sequence like [A][B] and later encounter [A], they “induce” that [B] should follow. This is considered the primary mechanism behind a model's ability to follow instructions in a prompt.
+* **Induction Heads**: These specialized heads develop in the middle layers and are responsible for pattern matching. If they see a sequence like [A][B] and later encounter [A], they “induce” that [B] should follow. They are a key mechanism behind in-context pattern completion, one ingredient in instruction following rather than the whole story.
 * **Successor Heads**: Identified as universal circuits across various architectures (\cite[Gould et al., 2023]{successorheads}), these heads perform logical incrementation. They map tokens to their ordinal successors, such as “Monday” to “Tuesday”, “January” to “February”, or “1” to “2”.
 * **Name Mover Heads**: Observed in tasks like Indirect Object Identification by (\cite[Wang et al., 2022]{interpretabilityinwild}), these heads extract specific entities (like names) from the earlier context and “move” them to the final token position to ensure logical consistency in the output.
 * **Negative / Copy Suppression Heads**: These heads, identified by (\cite[McDougall et al., 2023]{copysuppression}), actively suppress tokens that are over-predicted by other circuits. They act as a corrective mechanism to prevent the model from repeating itself or making common probabilistic errors.
@@ -832,7 +832,7 @@ To calculate the transformation of a contextual vector through the FFN, you appl
 $$\text{FFN}(h_1) = \sigma(h_1 W_1 + b_1)W_2 + b_2$$
 
 Where:
-- $W_1$ is the first weight matrix (expansion to $d_\text{ff}$, usually $4 \times d_{\text{model}}$).
+- $W_1$ is the first weight matrix (expansion to $d_\text{ff}$; in this demo and GPT-2/nanoGPT it is typically $4 \times d_{\text{model}}$, while SwiGLU models use a narrower width).
 - $b_1$ is the bias vector for the first layer.
 - $\sigma$ is the activation function (like GELU, which the nanoGPT architecture uses, replacing the original ReLU).
 - $W_2$ is the second weight matrix (compression back to $d_{\text{model}}$).
@@ -872,7 +872,7 @@ $$
 \underbrace{y = z + \mathrm{FFN}(\mathrm{Norm}(z))}_{\text{the same pattern for the feed-forward branch}}
 $$
 
-\citeauthor{xiong2020} showed that this arrangement keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up (\cite[Xiong et al., 2020]{xiong2020}). The price is that the residual stream is no longer normalized. Production pre-norm models add a final LayerNorm before the output projection; this compact demo reads h_last directly, so its unembedding is the simplified version.
+\citeauthor{xiong2020} showed that this arrangement keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up (\cite[Xiong et al., 2020]{xiong2020}). The price is that the residual stream is no longer normalized. Production pre-norm models add a final normalization layer before the output projection (LayerNorm in GPT-2, RMSNorm in Llama, Qwen and DeepSeek); this compact demo reads h_last directly, so its unembedding is the simplified version.
 
 Layer normalization is younger than the Transformer. \cite[Ba et al. (2016)]{ba2016layernorm} introduced it in 2016 as a batch-independent alternative to BatchNorm for recurrent networks, normalizing each example's features rather than a batch statistic (\cite[Ba et al., 2016]{ba2016layernorm}). The residual connection is older still, imported from ResNet's identity shortcuts (\cite[He et al., 2015]{he2015resnet}); it gives gradients a path that bypasses the sublayer. The 2017 Transformer used both, but placed the normalization after each residual add — the post-LN arrangement that later deep stacks reversed.
 
@@ -884,23 +884,25 @@ $$
 \underbrace{\mathrm{FFN}_{\mathrm{SwiGLU}}(x) = W_2\big(\mathrm{Swish}(W_1 x) \odot W_g x\big)}_{\text{gate the expanded features before projecting back down}}
 $$
 
-with a third matrix $W_g$ whose output multiplies the activated branch elementwise. Because there are now three matrices rather than two, the hidden width is reduced to keep the parameter count comparable — LLaMA uses $d_{\text{model}} = 4096$ and $d_{\text{ff}} = 11008$, about $2.7\,d_{\text{model}}$ instead of $4\,d_{\text{model}}$ (\cite[Shazeer, 2020]{shazeer2020glu}; \cite[Touvron et al., 2023]{touvron2023llama}).
+with a third matrix $W_g$ whose output multiplies the activated branch elementwise. Because there are now three matrices rather than two, the hidden width is reduced to keep the parameter count comparable — Llama 2 7B uses $d_{\text{model}} = 4096$ and $d_{\text{ff}} = 11008$, about $2.7\,d_{\text{model}}$ instead of $4\,d_{\text{model}}$ (\cite[Shazeer, 2020]{shazeer2020glu}; \cite[Touvron et al., 2023]{touvron2023llama}).
 
 **RoPE instead of sinusoidal vectors.** Rotary position embedding rotates the query and key vectors by position-dependent angles, so their dot product depends only on the *relative* offset. It is now the default in the Llama, Mistral, Qwen, Gemma, and DeepSeek lines (\cite[Su et al., 2021]{su2021rope}); the [positional embeddings lab](positionalembeddingslab.php) builds the rotation matrix step by step.
 
 **Fewer key/value heads.** Multi-head attention gives every query head its own key and value head. The head structure is also the main lever on inference cost: decoding must cache one key and one value vector per head per token, and \citeauthor{shazeer2019mqa} observed that incremental decoding is bound not by arithmetic but by **memory bandwidth**, because the accelerator reloads the whole cache to produce each token. Multi-query attention (MQA) keeps all query heads but shares one K/V head across them, shrinking the cache by the head count at some quality cost; grouped-query attention (GQA) shares one per group and became the mainstream compromise (\cite[Shazeer, 2019]{shazeer2019mqa}; \cite[Ainslie et al., 2023]{ainslie2023gqa}). The GQA paper also made adoption cheap: an existing MHA checkpoint can be *uptrained* by mean-pooling its key and value heads and continuing pretraining for roughly 5 percent of the original compute. DeepSeek-V2 went further with **multi-head latent attention** (MLA), caching a low-rank compressed latent plus a small decoupled rotary-position component instead of full per-head keys and values, and reconstructing them on the fly; it reported a KV cache over 90 percent smaller than an equivalent MHA configuration (\cite[DeepSeek-AI, 2024]{deepseek2024v2}). By 2025 the choice among MHA, GQA, and MLA had become one of the few architecture decisions still visibly separating frontier models.
 
-**The parameter budget is mostly FFN.** For a LLaMA-class layer with $d_{\text{model}} = 4096$ and $d_{\text{ff}} = 11008$, the three SwiGLU matrices hold $3 \times 4096 \times 11008 \approx 1.35 \times 10^{8}$ parameters. Across 32 layers that is roughly $4.3 \times 10^{9}$ of the model's $6.7 \times 10^{9}$ parameters — near two thirds. This is why the FFN is the main target of mixture-of-experts sparsity (see [Mixture of Experts](mixture_of_experts.php)) and of weight quantization.
+**Bias terms and QK normalization are configuration-specific.** GPT-2 and Qwen2 put biases on the Q/K/V projections; Llama, Qwen3 and DeepSeek omit them, and their SwiGLU FFN matrices are also bias-free. Qwen3 additionally applies an RMSNorm to every Q and K head before attention. This demo omits attention biases, keeps biases in the dense FFN, and uses full-width Q/K/V slices, which is the plain MHA case.
+
+**The parameter budget is mostly FFN.** For a Llama 2 7B layer with $d_{\text{model}} = 4096$ and $d_{\text{ff}} = 11008$, the three SwiGLU matrices hold $3 \times 4096 \times 11008 \approx 1.35 \times 10^{8}$ parameters. Across its 32 layers that is roughly $4.3 \times 10^{9}$ of the model's $6.7 \times 10^{9}$ parameters — near two thirds. Qwen and DeepSeek use their own widths, so this is one concrete budget, not a universal ratio. This is why the FFN is the main target of mixture-of-experts sparsity (see [Mixture of Experts](mixture_of_experts.php)) and of weight quantization.
 
 Scaling became a science in 2020. \cite[Kaplan et al. (2020)]{kaplan2020scaling} measured how language-model loss falls as parameters, data and compute grow, and found smooth power laws across several orders of magnitude (\cite[Kaplan et al., 2020]{kaplan2020scaling}). That turned “make it bigger” from a hunch into a budget line: spend compute where the curve says the next unit buys the most loss. GPT-3 followed the curve to 175 billion parameters and showed that scale alone produced usable few-shot behaviour (\cite[Brown et al., 2020]{brown2020gpt3}).
 
-The modern block, in one line: **normalize the branch, rotate positions, gate the FFN, and share the KV heads.**
+The common LLaMA-style block, in one line: **normalize the branch, rotate positions, gate the FFN, and share the KV heads.** DeepSeek's MLA is the main exception: it replaces the shared K/V heads with a compressed latent.
 </div>
 
 <div class="md" id="step-code">
 ## The Same, in Code: A Transformer You Can Run
 
-Everything above — the embeddings, the residual blocks, the attention, the final projection — is a lot of structure. Here is that exact structure as executable code, three ways, in the tabs below: a complete transformer written in pure Python with no framework at all, modelled on nanoGPT, plus the same model built with PyTorch and TensorFlow. Read any of them top to bottom and every line maps back to one of the equations on this page.
+Everything above — the embeddings, the residual blocks, the attention, the final projection — is a lot of structure. Here is the same block structure as executable code, three ways: a compact GPT-style transformer written in pure Python with no framework, plus PyTorch and TensorFlow versions. They follow the nanoGPT layout. The interactive demo and these files are the same family, not the same configuration: the demo uses fixed sinusoidal position vectors and a tied output matrix, while the code tabs use a learned position table and a separate output projection. The pure-Python tab also uses one attention head to keep the code short; the PyTorch and TensorFlow tabs split heads.
 </div>
 
 <?php
@@ -909,16 +911,16 @@ $pytorch = get_string_of_file_or_die("py/transformer/pytorch.py");
 $tensorflow = get_string_of_file_or_die("py/transformer/tf.py");
 
 $transformercodetabs = array(
-	"From Scratch" => '<div class="optional" data-headline="The full pure-Python implementation"><div class="md">No framework at all — pure Python. The only imports are the standard library `math` (for `sqrt` and `exp`) and `random`. `Linear` is the matrix product $W x + b$; `LayerNorm` the per-token renormalization; `CausalSelfAttention` is $\text{Attention}(Q, K, V)$ with the causal mask; `MLP` the feed-forward network; and `Block` the residual recurrence. Every operation is built by hand.</div><pre><code class="language-python">'.$custom.'</code></pre></div>',
-	"PyTorch" => '<div class="optional" data-headline="The PyTorch implementation"><div class="md">The same model the nanoGPT way, with torch doing the heavy lifting. `nn.Linear` is the matrix product, `nn.LayerNorm` the renormalization, `CausalSelfAttention` the masked attention, `MLP` the feed-forward network, and `Block` the two-line residual recurrence.</div><pre><code class="language-python">'.$pytorch.'</code></pre></div>',
-	"TensorFlow" => '<div class="optional" data-headline="The TensorFlow implementation"><div class="md">The same model built with Keras layers — `Dense`, `LayerNormalization`, and `tf.matmul` — structurally identical to the PyTorch version.</div><pre><code class="language-python">'.$tensorflow.'</code></pre></div>'
+	"From Scratch" => '<div class="optional" data-headline="The full pure-Python implementation"><div class="md">No framework at all — pure Python. The only imports are the standard library `math` (for `sqrt` and `exp`) and `random`. `Linear` is the matrix product $W x + b$; `LayerNorm` the per-token renormalization; `CausalSelfAttention` is $\text{Attention}(Q, K, V)$ with the causal mask, using one head over the full width here; `MLP` the feed-forward network; and `Block` the residual recurrence. Every operation is built by hand.</div><pre><code class="language-python">'.$custom.'</code></pre></div>',
+	"PyTorch" => '<div class="optional" data-headline="The PyTorch implementation"><div class="md">A nanoGPT-style PyTorch implementation, with torch doing the heavy lifting. `nn.Linear` is the matrix product, `nn.LayerNorm` the renormalization, `CausalSelfAttention` the masked attention, `MLP` the feed-forward network, and `Block` the two-line residual recurrence.</div><pre><code class="language-python">'.$pytorch.'</code></pre></div>',
+	"TensorFlow" => '<div class="optional" data-headline="The TensorFlow implementation"><div class="md">A TensorFlow/Keras version of the same block structure — `Dense`, `LayerNormalization`, and `tf.matmul` — with the same learned position table, final normalization, and separate output head as the PyTorch tab.</div><pre><code class="language-python">'.$tensorflow.'</code></pre></div>'
 );
 
 render_gem_tabs($transformercodetabs, "transformer");
 ?>
 
 <div class="md">
-`GPT.forward` (in every tab) chains the embedding, the `n_layer` blocks, the final `LayerNorm`, and the `lm_head` projection, and returns the logits — a score for every token in the vocabulary. Run any of the files and it walks a two-token prompt through the machine and prints the logits and the predicted next token.
+`GPT.forward` in the code tabs chains the embedding, the `n_layer` blocks, the final `LayerNorm`, and the `lm_head` projection, and returns the logits — a score for every token in the vocabulary. Run any of the files and it walks a two-token prompt through the machine and prints the logits and the predicted next token. The interactive demo above skips the final norm and ties the output to the token embeddings; the modern-block note explains why that is the simplified path.
 </div>
 
 <div id="ffn-equations-container"></div>
@@ -983,14 +985,14 @@ $$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
 
 This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
 
-We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_\text{vocab}$). This effectively asks: “How similar is our current thought vector to every known word vector?”
+We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_\text{vocab}$). This effectively asks: “How similar is our current thought vector to every vocabulary readout direction?”
 
 </div>
 
 <div class="md" data-mathlevel="45">
 ### Step-by-Step Logit Calculation
 
-To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\text{last}$ and the word's learned embedding row $w_\text{row}$ from the Unembedding Matrix $W_\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure.
+To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\text{last}$ and that word's row $w_\text{row}$ of the unembedding matrix $W_\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure.
 
 
 The hidden state vector $\mathbf{h}_{\text{last}}$ (represented by `h[pos]`) is dotted against each row $\mathbf{e}_w$ of the unembedding matrix $W \substack{\text{vocab}}$ to produce the logit for word $w$:
@@ -1001,7 +1003,7 @@ $$\text{logit}_w = \mathbf{h}_{\text{last}} \cdot \mathbf{e}_w = \sum_{k=0}^{d-1
 </div>
 
 <div class="md" data-mathlevel="55">
-This operation computes the entire logit vector $\mathbf{L}$ simultaneously. If $W_{\text{vocab}}$ is a matrix where each row is a word embedding, the operation is a matrix-vector multiplication:
+This operation computes the entire logit vector $\mathbf{L}$ simultaneously. If $W_{\text{vocab}}$ is a matrix where each row is a readout vector for one vocabulary item, the operation is a matrix-vector multiplication:
 
 $$\mathbf{L} = W_{\text{vocab}} \mathbf{h}_{\text{last}}$$
 
@@ -1027,7 +1029,7 @@ This single row $h_{\text{last}}$ is a vector in $d_{\text{model}}$ space. When 
 </div>
 
 <div class="optional md" data-headline="The Unembedding Matrix as a Dual Space">
-The unembedding matrix $W_U$ (often identical to $W_E$ due to weight tying) gives a **linear readout** of the residual stream: each row is a direction whose dot product with the stream contributes to one token's logit. Moving the stream along the direction of $W_U[\text{“Paris”}]$ increases the logit of “Paris,” but that does not make every direction a word, and it does not make every intermediate state a proposition or a belief.
+The unembedding matrix $W_U$ (identical to $W_E$ in GPT-2 and in this demo due to weight tying, but separate in Qwen2.5/Qwen3, Llama and DeepSeek) gives a **linear readout** of the residual stream: each row is a direction whose dot product with the stream contributes to one token's logit. Moving the stream along the direction of $W_U[\text{“Paris”}]$ increases the logit of “Paris,” but that does not make every direction a word, and it does not make every intermediate state a proposition or a belief.
 
 This is the careful way to read the **logit lens**. Applying $W_U$ to an intermediate residual stream answers a conditional question: *if the forward pass stopped here, what would this linear readout favor?* It does not tell you what the model “thinks,” because the model never outputs at that layer, earlier layers use bases the unembedding was not trained for, and the readout can be systematically biased. The **tuned lens** learns a small per-layer affine correction to reduce that bias (\cite[Belrose et al., 2023]{belrose2023tunedlens}). Use the logit lens as a diagnostic of how the next-token distribution is forming, not as direct access to internal language-like beliefs (\cite[nostalgebraist, 2020]{nostalgebraist2020logitlens}).
 </div>
@@ -1141,7 +1143,7 @@ Meaning emerges not from words themselves, but from how vectors **move, align, a
 
 ### The model as a machine that learns *inside* its forward pass
 
-A striking result is that a trained Transformer does not merely *predict* from its context — it **runs gradient descent on the examples in its prompt, right inside the forward pass**. (\cite[von Oswald et al., 2022]{vonoswald2022indc}) showed that the data transformation performed by a single linear self-attention layer is, to first order, *one step of gradient descent* on a squared-error regression loss: the attention weights play the role of a preconditioner, and the value vectors carry the residuals that the step moves along. A trained model has learned to become a <span class="glossary-term" data-tooltip-id="tt-mesa-optimizer">mesa-optimizer</span>: hand it a few input/output pairs in its context and its forward pass takes a handful of gradient steps over them and reads off the answer. That reinterprets **in-context learning** — the ability to "learn" a brand-new task from a handful of examples in the prompt, with no weight updates at all — as nothing mysterious: it is the same optimizer the model uses to *train itself*, reused at inference time on the prompt's own examples.
+A striking theoretical result is that a linear self-attention layer can implement, to first order, *one step of gradient descent* on a squared-error regression loss (\cite[von Oswald et al., 2022]{vonoswald2022indc}). In that simplified setting the forward pass can be viewed as an inner optimizer: the prompt supplies examples, and the layer can approximate a few optimization steps over them without changing its weights. This is a useful lens on **in-context learning**, not a claim that every LLM literally runs gradient descent inside its forward pass.
 
 ### Inference vs. Training: Two Modes of Operation
 
@@ -1157,7 +1159,7 @@ While the architecture is identical in both modes, the behavior of the model dif
 | **Gradients** | Not computed | Computed via backpropagation |
 | **Memory** | O(context²) attention matrix, recomputed each step | O(context²) attention matrix + stored activations for backprop |
 | **Parallelism** | Sequential (one token at a time) | Parallel (all tokens in the batch processed simultaneously) |
-| **Randomness** | Controlled by temperature / top-p | Deterministic (given the same initialization) |
+| **Randomness** | Controlled by temperature / top-k here; top-p is a common alternative | Deterministic (given the same initialization) |
 
 **The key distinction:** During training, the model sees the entire target sequence and learns to predict each token conditioned on all previous tokens, computing gradients to update weights. During inference, the model has no target, it generates tokens one at a time, using its own previous outputs as context for the next prediction. This is why inference is inherently sequential while training can be parallelized across the sequence length.
 

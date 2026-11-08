@@ -724,25 +724,20 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<div class="layer-formula-card">
 									<div class="layer-card-title"><?php echo $layer_de ? 'Dense-Einheit' : 'Dense unit'; ?></div>
 									<div class="prose-math" data-tex="\underbrace{\text{dense}(x) = \text{activation}\!\left(\underbrace{W x + b}_{\text{learned linear map}}\right)}_{\text{a function with parameters } W,\ b}" data-tex-de="\underbrace{\text{dense}(x) = \text{Aktivierung}\!\left(\underbrace{W x + b}_{\text{gelernte lineare Abbildung}}\right)}_{\text{eine Funktion mit Parametern } W,\ b}" data-tex-display="true"></div>
-									<div class="layer-formula-io"><?php echo $layer_de ? 'rein: x → raus: dense(x)' : 'in: x → out: dense(x)'; ?></div>
 								</div>
 								<div class="layer-formula-card">
-									<div class="layer-card-title">Self-attention</div>
+									<div class="layer-card-title"><?php echo $layer_de ? 'Self-Attention' : 'Self-attention'; ?></div>
 									<div class="prose-math" data-tex="\underbrace{\text{self-attention}(X)_i = \sum_{\underbrace{j}_{\text{visible token }j}} \underbrace{\alpha_{ij}}_{\substack{\text{self-attention}\\\text{from }j\text{ to }i}} \underbrace{v_j}_{\text{value of token }j}}_{\text{token with number }i\text{ mixes in all visible tokens }j}" data-tex-de="\underbrace{\text{Self-Attention}(X)_i = \sum_{\underbrace{j}_{\text{sichtbares Token }j}} \underbrace{\alpha_{ij}}_{\substack{\text{Self-Attention}\\\text{von }j\text{ nach }i}} \underbrace{v_j}_{\text{Value von Token }j}}_{\text{Token mit der Nummer }i\text{ mischt alle sichtbaren Tokens }j\text{ ein}}" data-tex-display="true"></div>
 									<div class="prose-math" data-tex="\alpha_{ij}\in[0,1], \qquad \sum_j \alpha_{ij}=1" data-tex-de="\alpha_{ij}\in[0,1], \qquad \sum_j \alpha_{ij}=1" data-tex-display="true"></div>
-									<div class="layer-formula-io"><?php echo $layer_de ? 'rein: X (alle Tokens) → raus: A_i (eine Zeile pro Token)' : 'in: X (all tokens) → out: A_i (one row per token)'; ?></div>
 								</div>
 								<div class="layer-formula-card">
 									<div class="layer-card-title">FFN</div>
 									<div class="prose-math" data-tex="\underbrace{\text{FFN}(x) = \text{dense}_2(\text{activation}(\text{dense}_1(x)))}_{\text{the simplest view: two dense units with an activation between them}}" data-tex-de="\underbrace{\text{FFN}(x) = \text{dense}_2(\text{Aktivierung}(\text{dense}_1(x)))}_{\text{die einfachste Sicht: zwei Dense-Einheiten mit einer Aktivierung dazwischen}}" data-tex-display="true"></div>
-									<div class="layer-formula-io"><?php echo $layer_de ? 'rein: x → raus: FFN(x)' : 'in: x → out: FFN(x)'; ?></div>
 								</div>
 								<div class="layer-formula-card layer-formula-card--layer">
 									<div class="layer-card-title"><?php echo $layer_de ? 'Transformer-Schicht (Self-Attention + FFN)' : 'Transformer layer (self-attention + FFN)'; ?></div>
-									<div class="prose-math" data-tex="\underbrace{\begin{aligned} A &= \text{self-attention}(X) \\ \text{layer}(X) &= \begin{pmatrix} \text{FFN}(A_1) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix} \end{aligned}}_{\text{self-attention turns X into A; the FFN works on one row at a time}}" data-tex-de="\underbrace{\begin{aligned} A &= \text{Self-Attention}(X) \\ \text{layer}(X) &= \begin{pmatrix} \text{FFN}(A_1) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix} \end{aligned}}_{\text{Self-Attention macht aus X die Matrix A; das FFN arbeitet auf einer Zeile auf einmal}}" data-tex-display="true"></div>
-									<div class="layer-formula-io"><?php echo $layer_de ? 'rein: X → raus: layer(X)' : 'in: X → out: layer(X)'; ?></div>
+									<div class="prose-math" data-tex="\underbrace{\begin{aligned} A &= \text{self-attention}(X) \\ \text{layer}(X) &= \left. \begin{pmatrix} \text{FFN}(A_1) \\ \text{FFN}(A_2) \\ \text{FFN}(A_3) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix} \right\} \begin{matrix} \text{token 1} \\ \text{token 2} \\ \text{token 3} \\ \vdots \\ \text{token }n \end{matrix} \end{aligned}}_{\text{self-attention turns X into A; the FFN works on one row at a time}}" data-tex-de="\underbrace{\begin{aligned} A &= \text{Self-Attention}(X) \\ \text{layer}(X) &= \left. \begin{pmatrix} \text{FFN}(A_1) \\ \text{FFN}(A_2) \\ \text{FFN}(A_3) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix} \right\} \begin{matrix} \text{Token 1} \\ \text{Token 2} \\ \text{Token 3} \\ \vdots \\ \text{Token }n \end{matrix} \end{aligned}}_{\text{Self-Attention macht aus X die Matrix A; das FFN arbeitet auf einer Zeile auf einmal}}" data-tex-display="true"></div>
 								</div>
-							</div>
 							</div>
 							<p class="layer-formula-note"><?php echo $layer_de ? 'W, b, W1 und W2 sind Parameter; das Training passt sie an. Aktivierung() ist eine Nichtlinearität wie ReLU oder GELU. Self-Attention nimmt die ganze Matrix X (eine Zeile pro Token) und liefert A mit einer Zeile pro Token. Die Gewichte α_ij liegen in [0,1] und summieren sich für jedes i zu 1. Das FFN transformiert dann jede Zeile A_i einzeln; es bekommt nie die ganze Matrix.' : 'W, b, W1, and W2 are parameters; training adjusts them. activation() is a nonlinearity such as ReLU or GELU. Self-attention takes the whole matrix X (one row per token) and returns A with one row per token. The weights α_ij lie in [0,1] and sum to 1 for each i. The FFN then transforms each row A_i separately; it never receives the whole matrix.'; ?></p>
 							<?php if ($layer_de): ?>
