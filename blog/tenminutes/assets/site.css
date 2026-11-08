@@ -7906,7 +7906,9 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 	color: #7dff9a;
 }
 .code-demo--console .code-demo-terminal .code-demo-output {
-	border-top-color: rgba(125, 255, 154, 0.28);
+	margin-top: 0;
+	padding-top: 0;
+	border-top: 0;
 	opacity: 0;
 	transform: translateY(4px);
 	transition: opacity 0.35s ease, transform 0.35s ease;

@@ -674,8 +674,8 @@
                  + dot(N, V)*1.3 + vW.x*0.18 + vW.z*0.14));
       vec3 col = mix(uColA, uColB, band);
       col *= 0.30 + 0.70 * lam;
-      col += fres * mix(uRimA, uRimB, band) * 0.95;
-      col += irid * fres * 0.30;
+      col += fres * mix(uRimA, uRimB, band) * 0.60;
+      col += irid * fres * 0.16;
       float alpha = uOpacity * vGrow * (0.10 + 0.62 * fres) * (0.60 + 0.40 * lam);
       gl_FragColor = vec4(col, alpha);
     }
@@ -697,7 +697,7 @@
       vec4 world = modelMatrix * vec4(w, 1.0);
       vec4 mv = viewMatrix * world;
       gl_Position = projectionMatrix * mv;
-      gl_Position.z -= 0.0018 * gl_Position.w;
+      gl_Position.z -= 0.0026 * gl_Position.w;
       vBary = aBary;
       vW = world.xyz;
       vSeed = aSeed;
@@ -716,12 +716,12 @@
     void main() {
       float e = min(min(vBary.x, vBary.y), vBary.z);
       float w = max(fwidth(e), 0.00055);
-      float line = 1.0 - smoothstep(0.0, w * 2.15, e);
-      float soft = 1.0 - smoothstep(0.0, w * 7.5, e);
-      float face = (1.0 - smoothstep(0.0, 0.55, e)) * 0.030;
+      float line = 1.0 - smoothstep(0.0, w * 3.30, e);
+      float soft = 1.0 - smoothstep(0.0, w * 10.0, e);
+      float face = (1.0 - smoothstep(0.0, 0.55, e)) * 0.018;
       vec3 col = mix(uColA, uColB, 0.5 + 0.5 * sin(vW.x*1.1 + vW.y*0.8 + vW.z*1.3));
-      vec3 outc = col * (line * 0.70 + soft * 0.17 + face * 0.55);
-      float alpha = (line * 0.55 + soft * 0.065 + face * 0.45) * vGrow * uOpacity;
+      vec3 outc = col * (line * 0.52 + soft * 0.10 + face * 0.40);
+      float alpha = (line * 0.42 + soft * 0.045 + face * 0.32) * vGrow * uOpacity;
       gl_FragColor = vec4(outc, alpha);
     }
   `;
@@ -765,7 +765,7 @@
       vec4 world = modelMatrix * vec4(w, 1.0);
       vec4 mv = viewMatrix * world;
       gl_Position = projectionMatrix * mv;
-      gl_Position.z -= 0.0011 * gl_Position.w;
+      gl_Position.z -= 0.0022 * gl_Position.w;
       float size = aSize * uSizeScale * uPixelRatio / max(0.35, -mv.z);
       gl_PointSize = clamp(size, 0.65, 34.0);
       vec3 c1 = vec3(0.30, 0.74, 1.00);
@@ -829,7 +829,7 @@
       vec4 world = modelMatrix * vec4(w, 1.0);
       vec4 mv = viewMatrix * world;
       gl_Position = projectionMatrix * mv;
-      gl_Position.z -= 0.0015 * gl_Position.w;
+      gl_Position.z -= 0.0025 * gl_Position.w;
       vec3 c1 = vec3(0.30, 0.74, 1.00);
       vec3 c2 = vec3(0.72, 0.40, 1.00);
       vec3 c3 = vec3(1.00, 0.72, 0.30);
@@ -860,7 +860,7 @@
       vec4 world = modelMatrix * vec4(w, 1.0);
       vec4 mv = viewMatrix * world;
       gl_Position = projectionMatrix * mv;
-      gl_Position.z -= 0.0009 * gl_Position.w;
+      gl_Position.z -= 0.0016 * gl_Position.w;
       float tw = 0.55 + 0.45 * sin(uTime * (0.7 + aSeed * 1.7) + aSeed * 6.2831);
       gl_PointSize = clamp(aSize * uSizeScale * uPixelRatio / max(0.35, -mv.z) * tw, 0.5, 18.0);
       vColor = mix(vec3(0.55, 0.88, 1.0), vec3(1.0, 0.72, 0.36), aHue);
@@ -1050,7 +1050,7 @@
       vec3 w = mnWarp(position);
       vec4 world = modelMatrix * vec4(w, 1.0);
       gl_Position = projectionMatrix * viewMatrix * world;
-      gl_Position.z -= 0.0009 * gl_Position.w;
+      gl_Position.z -= 0.0016 * gl_Position.w;
       vAlong = aAlong;
       vW = world.xyz;
     }
@@ -1408,7 +1408,7 @@
     return mat;
   }
 
-  function surfaceMaterial(seed, colA, colB, rimA, rimB) {
+  function surfaceMaterial(seed, colA, colB, rimA, rimB, side) {
     return regMat(new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 },
@@ -1426,7 +1426,7 @@
       transparent: true,
       depthWrite: false,
       depthTest: true,
-      side: THREE.DoubleSide,
+      side: side || THREE.DoubleSide,
       blending: THREE.NormalBlending
     }), seed * 4.1);
   }
@@ -1469,7 +1469,7 @@
       fragmentShader: EDGE_FRAG,
       transparent: true,
       depthWrite: false,
-      depthTest: false,
+      depthTest: true,
       side: THREE.DoubleSide,
       blending: THREE.AdditiveBlending
     }), seed * 4.7);
@@ -1516,7 +1516,7 @@
       fragmentShader: TRAIL_FRAG,
       transparent: true,
       depthWrite: false,
-      depthTest: false,
+      depthTest: true,
       blending: THREE.AdditiveBlending
     }), seed * 5.9);
   }
@@ -1553,7 +1553,8 @@
   mainDepth.frustumCulled = false;
   mainGroup.add(mainDepth);
 
-  const mainSurfaceMat = surfaceMaterial(mainSeed, COL.cyan, COL.violet, COL.ice, COL.violet);
+  const mainSurfaceMat = surfaceMaterial(mainSeed, COL.cyan, COL.violet, COL.ice, COL.violet, THREE.FrontSide);
+  mainSurfaceMat.depthWrite = true;
   const mainSurface = new THREE.Mesh(meshGeo, mainSurfaceMat);
   mainSurface.renderOrder = 2;
   mainSurface.frustumCulled = false;
@@ -1686,7 +1687,7 @@
     return { lines, geo: g, mat: m };
   }
 
-  const mainTrails = makeTrails(900, 7, 0.04);
+  const mainTrails = makeTrails(520, 7, 0.04);
   mainGroup.add(mainTrails.lines);
 
   /* static sparkles sampling the real triangle mesh (fills the bridge) */
@@ -2897,7 +2898,7 @@
     const quant = smoothstep(0.07, 0.13, s) * (1 - smoothstep(0.22, 0.34, s));
     const organize = lerp(organizeRaw, Math.round(organizeRaw * 10) / 10, quant);
     const chaos = 1 - organize;
-    const pointOp = 0.90 * (1 - 0.30 * isolate) * (1 - 0.35 * ffnOn);
+    const pointOp = 0.90 * (1 - 0.12 * organize) * (1 - 0.30 * isolate) * (1 - 0.35 * ffnOn);
     const mainScale = lerp(lerp(1.0, 0.54, mapOn), 0.63, ffnOn);
     const ffnBoost = 1 + 0.25 * ffnOn;
     const introSize = lerp(12.0, 1.4, smoothstep(0.10, 0.32, s));
@@ -2914,34 +2915,34 @@
     mainHalo.material.opacity = 0.09 * mapOn * (1 - ffnOn) + 0.12 * ffnOn;
 
     mainGroup.scale.setScalar(mainScale);
-    mainGroup.rotation.y = elapsed * 0.035 * (1 - 0.55 * mapOn);
+    mainGroup.rotation.y = elapsed * 0.022 * (1 - 0.55 * mapOn);
 
     mainSurfaceMat.uniforms.uMorph.value = morph;
     mainSurfaceMat.uniforms.uGrow.value = grow;
     mainSurfaceMat.uniforms.uOpacity.value =
-      surfOn * (0.88 + 0.12 * isolate) * (1 - 0.55 * mapOn) * (1 - 0.72 * ffnOn);
+      surfOn * (0.58 + 0.10 * isolate) * (1 - 0.55 * mapOn) * (1 - 0.72 * ffnOn);
     mainSurface.visible = surfOn > 0.003 && mainSurfaceMat.uniforms.uOpacity.value > 0.004;
 
     mainEdgeMat.uniforms.uMorph.value = morph;
     mainEdgeMat.uniforms.uGrow.value = grow;
     mainEdgeMat.uniforms.uOpacity.value =
-      0.62 * smoothstep(0.25, 0.44, s) * (0.82 + 0.18 * isolate)
+      0.38 * smoothstep(0.25, 0.44, s) * (0.82 + 0.18 * isolate)
       * (1 - 0.15 * mapOn) * (1 - 0.65 * ffnOn);
     mainEdges.visible = grow > 0.003 && mainEdgeMat.uniforms.uOpacity.value > 0.004;
 
     mainDepthMat.uniforms.uMorph.value = morph;
-    mainDepth.visible = (surfOn > 0.02 || grow > 0.02);
+    mainDepth.visible = false;
 
     mainPoints.mat.uniforms.uMorph.value = morph;
     mainPoints.mat.uniforms.uOpacity.value = pointOp;
     mainPoints.points.visible = pointOp > 0.003;
 
     mainTrails.mat.uniforms.uMorph.value = morph;
-    mainTrails.mat.uniforms.uOpacity.value = pointOp * 0.92 * smoothstep(0.08, 0.14, s) * (1 - ffnOn);
+    mainTrails.mat.uniforms.uOpacity.value = pointOp * 0.72 * smoothstep(0.08, 0.14, s) * (1 - ffnOn);
     mainTrails.lines.visible = mainTrails.mat.uniforms.uOpacity.value > 0.008;
 
     mainSparks.mat.uniforms.uMorph.value = morph;
-    mainSparks.mat.uniforms.uOpacity.value = pointOp * 0.72 * smoothstep(0.30, 0.42, s);
+    mainSparks.mat.uniforms.uOpacity.value = pointOp * 0.50 * smoothstep(0.30, 0.42, s);
     mainSparks.points.visible = mainSparks.mat.uniforms.uOpacity.value > 0.01;
 
     for (const c of cycles) {
