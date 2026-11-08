@@ -36,8 +36,8 @@
 	padding: 16px !important;
 }
 .math_transformer {
-	background: var(--tm-paper-2) !important;
-	border-left: 3px solid var(--tm-gold) !important;
+	background: transparent !important;
+	border-left: 0 !important;
 }
 .plot-container {
 	background: var(--tm-card) !important;

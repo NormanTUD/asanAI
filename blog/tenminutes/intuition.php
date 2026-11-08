@@ -17,9 +17,13 @@
 		.traj-quote span { font-style: normal; color: var(--tm-faint); }
 		.traj-angle-list { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 6px; font: 600 0.72rem/1.4 var(--tm-ui); color: var(--tm-muted); }
 		.traj-angle-list .is-chosen { color: var(--tm-green); font-weight: 700; }
+		.tt-echarts-host { width: 100%; height: 380px; min-height: 320px; background: transparent; }
+		.tt-echarts-host canvas { display: block; }
+		.tt-fallback { display: flex; align-items: center; justify-content: center; height: 100%; padding: 24px; text-align: center; color: var(--tm-muted); font: 0.86rem/1.5 var(--tm-ui); }
 		@media (max-width: 720px) {
 			.traj-demo-grid { grid-template-columns: 1fr; }
 			.traj-panel canvas { height: 260px; }
+			.tt-echarts-host { height: 320px; min-height: 280px; }
 		}
 	</style>
 </head>
@@ -210,13 +214,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<div class="demo-head">
 									<div>
 										<p class="demo-title">The truth tunnel <span>· demo 01b</span></p>
-										<p class="demo-sub">A single prediction is one slice through a tube of plausible continuations. Step through the sentence and watch the tube narrow as the context closes the options, then turn up the temperature and watch it inflate again.</p>
+										<p class="demo-sub">A single prediction is one slice through a landscape of plausible continuations. The most likely path is the deepest blue valley; every other option is a shallower branch. Step through the sentence and watch the valley narrow as the context closes the options, then turn up the temperature and watch it widen again. Drag to rotate.</p>
 									</div>
 									<span class="demo-badge">live</span>
 								</div>
 								<div class="demo-body">
 									<div class="iso-grid">
-										<canvas class="demo-canvas" id="tt-canvas" style="height:340px" aria-label="A path through embedding space wrapped in a glowing probability isosurface"></canvas>
+										<div id="tt-3d" class="tt-echarts-host" role="img" aria-label="A three-dimensional landscape of plausible continuations, with the most likely path carved as a deep blue valley"></div>
 										<aside class="iso-side">
 											<div class="iso-kicker">Next word</div>
 											<div class="iso-next" id="tt-next">capital</div>
@@ -234,7 +238,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								</div>
 								<div class="demo-insight"><b>Takeaway</b><span>The model never decides that something is right. It builds a distribution from its training data and draws from it; the tunnel shows how context narrows that distribution.</span></div>
 							</div>
-						<p class="step-note">The model does not jump to an answer. It feels its way through this space, one token at a time. Click a word to jump to that step.</p>
+						<p class="step-note">The model does not jump to an answer. It feels its way through this space, one token at a time. Click a word on the ridge, or any point in the landscape, to jump to that step.</p>
 					</section>
 
 					<section class="section-block" id="inside" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
