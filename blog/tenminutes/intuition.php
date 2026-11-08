@@ -505,9 +505,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 
 					<section class="section-block" id="step-attention-section" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker">Step 4 · Attend</div>
-						<h2 class="section-title">Attention: context pulls the word into place</h2>
+						<h2 class="section-title">Self-attention: context pulls the word into place</h2>
 						<div class="prose">
-							<p>How does a word know which neighbours matter? Attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the river or money reading. A real layer has many heads; the demo shows one.</p>
+							<p>How does a word know which neighbours matter? Self-attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the river or money reading. A real layer has many heads; the demo shows one.</p>
 						</div>
 						<div class="step-pane" id="step-attention">
 															<div class="step-stage">
@@ -520,7 +520,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																	</div>
 																</div>
 																<div class="attn-sentence" id="iatt-sentence">I walk to the <span class="aw-bank">bank</span>.</div>
-																<canvas class="step-canvas" id="iatt-canvas" aria-label="Attention moving the embedding of bank toward the context"></canvas>
+																<canvas class="step-canvas" id="iatt-canvas" aria-label="Self-attention moving the embedding of bank toward the context"></canvas>
 																<div class="step-out" id="iatt-out">No unambiguous context: bank stays in the middle, ambiguous.</div>
 																<div class="attn-matrix" id="iatt-matrix" aria-live="polite"></div>
 																<div class="prose-math attn-sum" id="iatt-sum" data-tex-display="true"></div>
@@ -531,24 +531,34 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					</section>
 
 					<section class="section-block" id="layer-detail-section" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
+						<?php $layer_de = function_exists('tm_lang') && tm_lang() === 'de'; ?>
 						<div class="section-kicker">The layer in detail · the MLP</div>
 						<h2 class="section-title">FFN: a projection, a bias, a bend</h2>
 						<div class="prose">
 							<p>After attention, each token passes through its own small network, the MLP. It projects the vector, applies a nonlinearity, and projects back. The bend is what lets a straight cut separate what was inseparable.</p>
 						</div>
 						<div class="step-pane layer-pane" id="layer-detail">
-															<div class="layer-formula" data-tex="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{weight}\\\text{matrix}}}\,x + \underbrace{b}_{\text{bias}}\right)" data-tex-de="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{Gewichts-}\\\text{Matrix}}}\,x + \underbrace{b}_{\text{Bias}}\right)"></div>
-															<div class="collapse-card">
-																<div class="cc-label">Worked example · 2 inputs, 2 outputs</div>
+															<div class="layer-formula-grid">
+																<div class="layer-formula-card">
+																	<div class="layer-card-title"><?php echo $layer_de ? 'Dense-Einheit' : 'Dense unit'; ?></div>
+																	<div class="prose-math" data-tex="\underbrace{\text{dense}(x) = \text{activation}\!\left(\underbrace{W x + b}_{\text{learned linear map}}\right)}_{\text{a function with parameters } W,\ b}" data-tex-de="\underbrace{\text{dense}(x) = \text{Aktivierung}\!\left(\underbrace{W x + b}_{\text{gelernte lineare Abbildung}}\right)}_{\text{eine Funktion mit Parametern } W,\ b}" data-tex-display="true"></div>
+																</div>
+																<div class="layer-formula-card">
+																	<div class="layer-card-title">FFN</div>
+																	<div class="prose-math" data-tex="\underbrace{\text{FFN}(x) = \text{dense}_2(\text{activation}(\text{dense}_1(x)))}_{\text{two dense units with an activation between them}}" data-tex-de="\underbrace{\text{FFN}(x) = \text{dense}_2(\text{Aktivierung}(\text{dense}_1(x)))}_{\text{zwei Dense-Einheiten mit einer Aktivierung dazwischen}}" data-tex-display="true"></div>
+																</div>
+															</div>
+																														<details class="collapse-card">
+																<summary class="cc-label">Worked example · 2 inputs, 2 outputs</summary>
 																<div class="collapse-math" data-tex="\begin{aligned} W &amp;= \begin{pmatrix} 1 &amp; 2 \\ 0 &amp; -1 \end{pmatrix}, \quad x = \begin{pmatrix} 3 \\ 1 \end{pmatrix}, \quad b = \begin{pmatrix} 0 \\ -2 \end{pmatrix} \\[6pt] Wx &amp;= \begin{pmatrix} 1\cdot 3 + 2\cdot 1 \\ 0\cdot 3 + (-1)\cdot 1 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \end{pmatrix} \\[6pt] z = Wx + b &amp;= \begin{pmatrix} 5 \\ -1 \end{pmatrix} + \begin{pmatrix} 0 \\ -2 \end{pmatrix} = \begin{pmatrix} 5 \\ -3 \end{pmatrix} \\[6pt] \operatorname{ReLU}(z) &amp;= \begin{pmatrix} 5 \\ 0 \end{pmatrix} \end{aligned}"></div>
 																<p>Each output is a dot product plus a bias, then the activation. The matrix above shows the arithmetic.</p>
-															</div>
+															</details>
 															<h4 class="layer-subhead">Depth without a nonlinearity</h4>
-															<div class="collapse-card">
-																<div class="cc-label">two dense layers without a nonlinearity</div>
+																														<details class="collapse-card">
+																<summary class="cc-label">two dense layers without a nonlinearity</summary>
 																<div class="collapse-math" id="collapse-math" data-tex="\begin{aligned} \operatorname{dense}_2(\operatorname{dense}_1(x)) &amp;= W_2(W_1 x + b_1) + b_2 \\ &amp;= (W_2 W_1)x + (W_2 b_1 + b_2) \\ &amp;= Wx + b \\[4pt] W &amp;= W_2 W_1, \qquad b = W_2 b_1 + b_2 \end{aligned}"></div>
 																<p>Without a nonlinearity, two layers collapse into one. Depth adds no expressive power.</p>
-															</div>
+															</details>
 															<h4 class="layer-subhead">Nonlinear activation functions</h4>
 															<div class="activation-card">
 																<div class="activation-copy">
@@ -703,12 +713,12 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<h4 class="layer-subhead"><?php echo $layer_de ? 'Eine Schicht ist eine kleine Funktion' : 'One layer is a small function'; ?></h4>
 							<?php if ($layer_de): ?>
 							<p>Eine einfache Schicht muss nicht kompliziert sein. Sie multipliziert ihre Eingabe mit einer gelernten Matrix W, addiert einen gelernten Vektor b und schickt das Ergebnis durch eine Aktivierungsfunktion. Die Aktivierung bringt eine Krümmung ins Spiel, eine Nichtlinearität. Ohne sie würde jede Anzahl von Dense-Einheiten zu einer einzigen linearen Abbildung zusammenfallen.</p>
-							<p>So kann eine einfache Schicht aussehen: eine Matrix, ein Bias, eine Aktivierung. Das ist eine Dense-Einheit. Sie ist der grundlegende Baustein; eine Transformer-Schicht kombiniert später Attention und ein FFN.</p>
-							<p>Echte Netze kombinieren Bausteine unterschiedlich. Eine Convolutional-Schicht ist für Bilder gebaut, eine Attention-Schicht für Sequenzen, eine Dense-Schicht für Tabellen mit Zahlen. Eine Transformer-Schicht ist keine einzelne Dense-Einheit: Sie kombiniert Attention, die Information zwischen Tokens mischt, mit einem FFN, das selbst ein kleiner Stapel von Dense-Einheiten ist. Sie teilen dieselbe Idee: Funktionen mit Parametern, die mit Trainingsdaten so trainiert werden, dass ihre Ausgabe näher an der richtigen Antwort liegt.</p>
+							<p>So kann eine einfache Schicht aussehen: eine Matrix, ein Bias, eine Aktivierung. Das ist eine Dense-Einheit. Sie ist der grundlegende Baustein; eine Transformer-Schicht kombiniert später Self-Attention und ein FFN.</p>
+							<p>Echte Netze kombinieren Bausteine unterschiedlich. Eine Convolutional-Schicht ist für Bilder gebaut, eine Attention-Schicht für Sequenzen, eine Dense-Schicht für Tabellen mit Zahlen. Eine Transformer-Schicht ist keine einzelne Dense-Einheit: Sie kombiniert Self-Attention, die Information zwischen Tokens mischt, mit einem FFN, das selbst ein kleiner Stapel von Dense-Einheiten ist. Sie teilen dieselbe Idee: Funktionen mit Parametern, die mit Trainingsdaten so trainiert werden, dass ihre Ausgabe näher an der richtigen Antwort liegt.</p>
 							<?php else: ?>
 							<p>A simple layer does not need to be complicated. It multiplies its input by a learned matrix W, adds a learned vector b, and passes the result through an activation function. The activation adds a bend, a nonlinearity. Without it, any number of dense units would collapse into one linear map.</p>
-							<p>A simple layer can look like this: one matrix, one bias, one activation. That is a dense unit. It is the basic building block; a transformer layer later combines attention and an FFN.</p>
-							<p>Real networks combine building blocks differently. A convolutional layer is built for images, an attention layer for sequences, a dense layer for tables of numbers. A transformer layer is not one dense unit: it combines attention, which mixes information between tokens, with an FFN, which is itself a small stack of dense units. They share the same idea: functions with parameters, trained on data so that their output gets closer to the right answer.</p>
+							<p>A simple layer can look like this: one matrix, one bias, one activation. That is a dense unit. It is the basic building block; a transformer layer later combines self-attention and an FFN.</p>
+							<p>Real networks combine building blocks differently. A convolutional layer is built for images, an attention layer for sequences, a dense layer for tables of numbers. A transformer layer is not one dense unit: it combines self-attention, which mixes information between tokens, with an FFN, which is itself a small stack of dense units. They share the same idea: functions with parameters, trained on data so that their output gets closer to the right answer.</p>
 							<?php endif; ?>
 							<div class="layer-formula-grid">
 								<div class="layer-formula-card">
@@ -717,7 +727,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								</div>
 								<div class="layer-formula-card">
 									<div class="layer-card-title">Self-attention</div>
-									<div class="prose-math" data-tex="\underbrace{\text{self-attention}(x)_i = \sum_j \underbrace{\alpha_{ij}}_{\text{self-attention}} \underbrace{v_j}_{\text{value vector}}}_{\text{token } i \text{ mixes in the visible context}}" data-tex-de="\underbrace{\text{Self-Attention}(x)_i = \sum_j \underbrace{\alpha_{ij}}_{\text{Self-Attention}} \underbrace{v_j}_{\text{Value-Vektor}}}_{\text{Token } i \text{ mischt den sichtbaren Kontext ein}}" data-tex-display="true"></div>
+									<div class="prose-math" data-tex="\underbrace{\text{self-attention}(x)_i = \sum_{\underbrace{j}_{\text{visible token }j}} \underbrace{\alpha_{ij}}_{\substack{\text{self-attention}\\\text{from }j\text{ to }i}} \underbrace{v_j}_{\text{value of token }j}}_{\text{token with number }i\text{ mixes in all visible tokens }j}" data-tex-de="\underbrace{\text{Self-Attention}(x)_i = \sum_{\underbrace{j}_{\text{sichtbares Token }j}} \underbrace{\alpha_{ij}}_{\substack{\text{Self-Attention}\\\text{von }j\text{ nach }i}} \underbrace{v_j}_{\text{Value von Token }j}}_{\text{Token mit der Nummer }i\text{ mischt alle sichtbaren Tokens }j\text{ ein}}" data-tex-display="true"></div>
 								</div>
 								<div class="layer-formula-card">
 									<div class="layer-card-title">FFN</div>
@@ -728,7 +738,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 									<div class="prose-math" data-tex="\underbrace{ \text{layer}(X) = \begin{pmatrix} \text{FFN}(A_1) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix}, \quad \begin{pmatrix} A_1 \\ \vdots \\ A_n \end{pmatrix} = \text{self-attention}(X) }_{\text{self-attention mixes all tokens; FFN sees one row at a time}}" data-tex-de="\underbrace{ \text{layer}(X) = \begin{pmatrix} \text{FFN}(A_1) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix}, \quad \begin{pmatrix} A_1 \\ \vdots \\ A_n \end{pmatrix} = \text{Self-Attention}(X) }_{\text{Self-Attention mischt alle Tokens; das FFN sieht eine Zeile auf einmal}}" data-tex-display="true"></div>
 								</div>
 							</div>
-							<p class="layer-formula-note"><?php echo $layer_de ? 'W, b, W1 und W2 sind Parameter. Das Training passt sie an, damit der Fehler auf den Trainingsdaten kleiner wird. Aktivierung() ist eine Nichtlinearität wie ReLU oder GELU; sie ist der Knick, der einen tiefen Stapel erst möglich macht. In der Attention-Formel ist α gelernt und v der Vektor, den ein Token anbietet; die Summe ist ein gewichteter Durchschnitt der sichtbaren Tokens. In der Schicht-Formel ist X die ganze Matrix und A_i die Zeile für Token i. Attention liest alle Zeilen; das FFN wird auf eine Zeile auf einmal angewendet.' : 'W, b, W1, and W2 are parameters. Training adjusts them to reduce the error on the training data. activation() is a nonlinearity such as ReLU or GELU; it is the bend that makes a deep stack possible. In the attention formula, α is learned and v is the vector a token offers; the sum is a weighted average of the visible tokens. In the layer formula, X is the whole matrix and A_i is the row for token i. Attention reads all rows; the FFN is applied to one row at a time.'; ?></p>
+							<p class="layer-formula-note"><?php echo $layer_de ? 'W, b, W1 und W2 sind Parameter. Das Training passt sie an, damit der Fehler auf den Trainingsdaten kleiner wird. Aktivierung() ist eine Nichtlinearität wie ReLU oder GELU; sie ist der Knick, der einen tiefen Stapel erst möglich macht. In der Self-Attention-Formel ist α gelernt und v der Vektor, den ein Token anbietet; die Summe ist ein gewichteter Durchschnitt der sichtbaren Tokens; i ist das Token, das die Mischung erhält, j läuft über die sichtbaren Tokens. In der Schicht-Formel ist X die ganze Matrix und A_i die Zeile für Token i. Self-Attention liest alle Zeilen; das FFN wird auf eine Zeile auf einmal angewendet.' : 'W, b, W1, and W2 are parameters. Training adjusts them to reduce the error on the training data. activation() is a nonlinearity such as ReLU or GELU; it is the bend that makes a deep stack possible. In the self-attention formula, α is learned and v is the vector a token offers; the sum is a weighted average of the visible tokens; i is the token receiving the mix, and j runs over the visible tokens. In the layer formula, X is the whole matrix and A_i is the row for token i. Self-attention reads all rows; the FFN is applied to one row at a time.'; ?></p>
 							<?php if ($layer_de): ?>
 							<p>Das ist ein grobes Bild. Darunter steckt bei jedem Schritt eine Matrix von Zahlen; die Formeln zeigen die Form der Berechnung, nicht die Implementierung.</p>
 							<?php else: ?>
@@ -736,14 +746,14 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<?php endif; ?>
 							<h4 class="layer-subhead"><?php echo $layer_de ? 'Ein Sprachmodell kombiniert diese und weitere Bausteine' : 'A language model combines these and other building blocks'; ?></h4>
 							<?php if ($layer_de): ?>
-							<p>Ein Sprachmodell kombiniert diese Bausteine zu einem Transformer-Block: Zuerst fragt Attention, wie stark jedes Wort mit jedem anderen Wort im Kontext verbunden ist; diese Verbindungen lernt das Modell aus den Daten. Ein FFN entwirrt das Ergebnis dann: Es faltet die Vektoren in einen höherdimensionalen Raum, trennt Merkmale und faltet sie wieder zurück. Eine echte Transformer-Schicht enthält außerdem LayerNorm, Residualverbindungen und andere Teile. Sie sind hier weggelassen, damit das Bild lesbar bleibt; die späteren Abschnitte, darunter der <a href="#step-residual-section">Residual-Abschnitt</a>, behandeln sie im Detail.</p>
+							<p>Ein Sprachmodell kombiniert diese Bausteine zu einem Transformer-Block: Zuerst fragt Self-Attention, wie stark jedes Wort mit jedem anderen Wort im Kontext verbunden ist; diese Verbindungen lernt das Modell aus den Daten. Ein FFN entwirrt das Ergebnis dann: Es faltet die Vektoren in einen höherdimensionalen Raum, trennt Merkmale und faltet sie wieder zurück. Eine echte Transformer-Schicht enthält außerdem LayerNorm, Residualverbindungen und andere Teile. Sie sind hier weggelassen, damit das Bild lesbar bleibt; die späteren Abschnitte, darunter der <a href="#step-residual-section">Residual-Abschnitt</a>, behandeln sie im Detail.</p>
 							<p>Am Anfang geht eine Matrix X hinein: eine Zeile pro Token, jede Zeile ein Vektor. Am Ende kommt eine Matrix mit derselben Form heraus, aber die Werte haben sich verändert. Das letzte Token hat die Bedeutung des ganzen Kontexts aufgenommen. Das Unembedding macht aus seinem Vektor Scores für jedes Vokabular-Token; diese Scores zeigen auf eine Region von Token-Richtungen mit kleinen Winkeln, und Softmax zieht eines daraus. Der aktuelle Aufbau von ChatGPT ist nicht veröffentlicht, aber die öffentlichen Zahlen vergleichbarer Flagship-Modelle zeigen die Größenordnung: GPT-3 175B hatte 96 Transformer-Schichten, Llama 3 405B hat 126. Der Stapel läuft also wirklich ungefähr hundertmal.</p>
 							<div class="layer-count-note">
 								<div><b>96</b><span><a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener">Transformer-Schichten in GPT-3 175B</a></span></div>
 								<div><b>126</b><span><a href="https://arxiv.org/abs/2407.21783" target="_blank" rel="noopener">Transformer-Schichten in Llama 3 405B</a></span></div>
 							</div>
 							<?php else: ?>
-							<p>A language model combines these building blocks into a transformer block: attention first asks how strongly each word is connected to every other word in the context, and the model learns those connections from data. An FFN then untangles the result: it folds the vectors into a higher-dimensional space, separates features, and folds them back. A real transformer layer also contains layer normalization, residual connections, and other pieces. They are left out here so the picture stays readable; the later sections, including the <a href="#step-residual-section">residual section</a>, cover them in detail.</p>
+							<p>A language model combines these building blocks into a transformer block: self-attention first asks how strongly each word is connected to every other word in the context, and the model learns those connections from data. An FFN then untangles the result: it folds the vectors into a higher-dimensional space, separates features, and folds them back. A real transformer layer also contains layer normalization, residual connections, and other pieces. They are left out here so the picture stays readable; the later sections, including the <a href="#step-residual-section">residual section</a>, cover them in detail.</p>
 							<p>At the start, a matrix X goes in: one row per token, each row a vector. At the end, a matrix of the same shape comes out, but the values have changed. The last token has absorbed the meaning of the whole context. The unembedding turns its vector into scores for every vocabulary token; those scores point to a region of token directions with small angles, and softmax draws one. ChatGPT's current architecture is not published, but public numbers for comparable flagship models show the scale: GPT-3 175B used 96 transformer layers, and Llama 3 405B uses 126. The stack really does run roughly a hundred times.</p>
 							<div class="layer-count-note">
 								<div><b>96</b><span><a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener"><?php echo $layer_de ? 'Transformer-Schichten in GPT-3 175B' : 'transformer layers in GPT-3 175B'; ?></a></span></div>
@@ -757,19 +767,19 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<span class="lf-arrow" aria-hidden="true">→</span>
 								<div class="lf-stage lf-stage--embed"><span class="lf-num">02</span><b>Embedding</b><span><?php echo $layer_de ? 'Tokens → Vektoren' : 'tokens → vectors'; ?></span></div>
 								<span class="lf-arrow" aria-hidden="true">→</span>
-								<div class="lf-stage lf-stage--layers"><span class="lf-num">03</span><b><?php echo $layer_de ? 'Schichten × N' : 'Layers × N'; ?></b><span>Attention + FFN</span><span class="lf-stack-bars" aria-hidden="true"><i></i><i></i><i></i></span></div>
+								<div class="lf-stage lf-stage--layers"><span class="lf-num">03</span><b><?php echo $layer_de ? 'Schichten × N' : 'Layers × N'; ?></b><span>Self-attention + FFN</span><span class="lf-stack-bars" aria-hidden="true"><i></i><i></i><i></i></span></div>
 								<span class="lf-arrow" aria-hidden="true">→</span>
 								<div class="lf-stage lf-stage--unembed"><span class="lf-num">04</span><b>Unembedding</b><span><?php echo $layer_de ? 'Vektor → Scores' : 'vector → scores'; ?></span></div>
 							</div>
 							<h4 class="layer-subhead"><?php echo $layer_de ? 'Wie der Kontext gemischt wird' : 'How the context is mixed'; ?></h4>
 							<?php if ($layer_de): ?>
-							<p>In einer Schicht schaut Attention auf den ganzen Kontext. Für jedes Token bewertet sie, wie viel es von jedem anderen sichtbaren Token übernehmen soll. Die Scores bilden eine Token-für-Token-Matrix: eine Zeile für das fragende Token, eine Spalte für das antwortende Token. Die <a href="#step-attention-section">Attention-Demo unten</a> zeigt einen Head dabei.</p>
+							<p>In einer Schicht schaut Self-Attention auf den ganzen Kontext. Für jedes Token bewertet sie, wie viel es von jedem anderen sichtbaren Token übernehmen soll. Die Scores bilden eine Token-für-Token-Matrix: eine Zeile für das fragende Token, eine Spalte für das antwortende Token. Die <a href="#step-attention-section">Self-Attention-Demo unten</a> zeigt einen Head dabei.</p>
 							<?php else: ?>
-							<p>Inside a layer, attention looks at the whole context. For every token, it scores how much that token should take from every other visible token. The scores form a token-by-token matrix: one row for the token asking, one column for the token answering. The <a href="#step-attention-section">attention demo below</a> shows one head doing this.</p>
+							<p>Inside a layer, self-attention looks at the whole context. For every token, it scores how much that token should take from every other visible token. The scores form a token-by-token matrix: one row for the token asking, one column for the token answering. The <a href="#step-attention-section">self-attention demo below</a> shows one head doing this.</p>
 							<?php endif; ?>
 							<div class="layer-mix">
 								<div class="layer-matrix-card">
-									<div class="layer-card-title"><?php echo $layer_de ? 'Kausale Attention' : 'Causal attention'; ?></div>
+									<div class="layer-card-title"><?php echo $layer_de ? 'Kausale Self-Attention' : 'Causal self-attention'; ?></div>
 									<?php
 									$layer_tokens = $layer_de ? ['Die', 'Hauptstadt', 'von', 'Frankreich'] : ['The', 'capital', 'of', 'France'];
 									$layer_weights = [

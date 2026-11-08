@@ -8624,3 +8624,17 @@ html[data-theme="dark"] .traj-candidate.is-chosen { color: var(--tm-green); }
 	justify-content: center;
 	white-space: nowrap;
 }
+
+.collapse-card > summary.cc-label {
+	display: block;
+	cursor: pointer;
+	list-style: none;
+}
+.collapse-card > summary.cc-label::-webkit-details-marker { display: none; }
+.collapse-card > summary.cc-label::after {
+	content: " +";
+	float: right;
+	color: var(--tm-muted);
+	font-weight: 600;
+}
+.collapse-card[open] > summary.cc-label::after { content: " −"; }

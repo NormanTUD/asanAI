@@ -116,3 +116,15 @@
 [done] Farberklärung weiter gekürzt: keine Heraklit-Erklärung, kein Griechisch, kein langer Prosatext. Stattdessen der kurze Satz, dass die Farbe nur Lesehilfe ist und nicht in die Rechnung eingeht (Positionsinformation kommt über Positional Embeddings), darunter das farbige Beispiel und die zitierte Quelle.
 
 [verify] `python3 blog/tools/check_all.py`: alle Stages PASS (php-validator, js-validator, fact/statement ledger, semantic/RAG build + freshness, Atlas). `php_render_validator.py blog/ --pages /transformer.php --check-width --check-math`: PASS, 0 JS errors, 0 unrendered LaTeX, 0 width overflow. `transformer_ui2_regression_test.py`: 57/57. `transformer_fix_regression_test.py`: 36/36.
+
+## Review current pass: dark mode, residual hover, loading spinners
+
+[done] Embedding-Space im Dark Mode: Die Token-Textlabels in 3D- und PCA-Scatter-Plots bekommen `textfont.color` aus `tmPlotly.colors().ink` (hell im Dark Mode), zusätzlich zu den bereits theme-abhängigen Achsen/Titeln. Tenminutes-Kopie gleich mitgezogen.
+
+[done] Residual-Stream-Label-Hover: Beim Überfahren von „Residual stream after layer N · T tokens“ erscheint ein Popup mit einer Heatmap aller Tokens × Dimensionen. Zeilen-Hover zeigt den vollständigen Vektor des Tokens als Text; Zelle und Zeile werden hervorgehoben. Das Popup bleibt im Viewport, überdeckt das Label nicht und nutzt die Theme-Palette. Pre-Layer-1 zeigt `h_in`, After-Layer zeigt `h_out`.
+
+[done] Lade-Spinner in aufklappbaren Layer-Boxen: Attention, FFN/MLP, Feature-Migration und Logit-Linse zeigen beim Öffnen einen Spinner („Plots werden geladen …“), der erst nach dem Rendern verschwindet. Der Render läuft nach zwei Frames, damit der Spinner sichtbar wird. Parent und Tenminutes-Kopie sind synchron.
+
+[verify] `check_all.py --fast`: alle Stages PASS. `php_render_validator.py` für transformer und tenminutes: PASS, 0 JS-Fehler, 0 unrendered LaTeX. `transformer_ui2_regression_test.py`: 57/57. `transformer_fix_regression_test.py`: 36/36 (ein Lauf mit dem bekannten Timing-Flake bei „estimate explains context mixing“, Wiederholung grün).
+
+[note] Abschließender Konsistenz-Scan: keine `hsl()`/`Viridis`-Reste in den sichtbaren Transformer-Plots, keine blaue Head-Tab-Füllung mehr, `setupResidualHoverPopup`/`tmSubboxLoading` jeweils genau einmal definiert, Syntax- und HTML-Validatoren grün.
