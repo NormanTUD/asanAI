@@ -1877,6 +1877,9 @@
 	};
 	window.addEventListener("tm:metricchange", function () {
 		Object.keys(featureState).forEach(function (key) { renderLayerFeaturePlots(parseInt(key, 10)); });
+		document.querySelectorAll(".tm-step-metric select").forEach(function (sel) {
+			if (sel.value !== featureMetric()) sel.value = featureMetric();
+		});
 	});
 
 	function featureData(layerIdx) {
@@ -3291,6 +3294,33 @@
 		}
 		return true;
 	}
+	function addStepMetricControl(step, key) {
+		var body = bodyOf(step);
+		if (!body || body.querySelector('[data-step-metric="' + key + '"]')) return;
+		var de = !!(window.TM && TM.lang && TM.lang() === "de");
+		var api = window.tmMetric || {};
+		var defs = api.options || {
+			euclidean: { de: "Euklidisch (L2)", en: "Euclidean (L2)" },
+			manhattan: { de: "Manhattan (L1)", en: "Manhattan (L1)" },
+			angular: { de: "Großkreis / angular (Cosinus, 0–1)", en: "Great-circle / angular (cosine, 0–1)" }
+		};
+		var options = Object.keys(defs).map(function (k) {
+			return "<option value='" + k + "'>" + defs[k][de ? "de" : "en"] + "</option>";
+		}).join("");
+		var wrap = document.createElement("div");
+		wrap.className = "tm-step-metric";
+		wrap.setAttribute("data-step-metric", key);
+		wrap.innerHTML = "<label>" + (de ? "Distanzmetrik" : "Distance metric") + " <select>" + options + "</select></label><span class='tm-step-metric-note'>" + (de ? "Default Euklidisch; die Winkelansicht ist oft die passendere." : "Default Euclidean; the angular view is often the more useful one.") + "</span>";
+		var select = wrap.querySelector("select");
+		select.value = api.get ? api.get() : (window.tmFeatureMetric || "euclidean");
+		select.addEventListener("change", function () {
+			if (api.set) api.set(select.value);
+			else window.tmFeatureMetric = select.value;
+			window.dispatchEvent(new CustomEvent("tm:metricchange", { detail: { metric: select.value } }));
+		});
+		body.appendChild(wrap);
+	}
+
 	function organize() {
 		// 1 · Tokenize: the coloured BPE view replaces the small canvas.
 		if (!moved.tokenize) {
@@ -3616,6 +3646,8 @@
 				un.addEventListener("toggle", function () { if (un.open) setTimeout(resizeCharts, 80); });
 			}
 		}
+		if (moved.embed) addStepMetricControl(2, "embed");
+		if (moved.position) addStepMetricControl(3, "position");
 		resizeCharts();
 	}
 	function schedule() {

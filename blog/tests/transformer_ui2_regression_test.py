@@ -292,6 +292,51 @@ def main() -> None:
             apv = page.evaluate("() => { const d=document.querySelector('.apv-head-detail'); return d ? {open:d.open} : null; }")
             check("per-head math explanation is collapsed", bool(apv) and not apv["open"], str(apv))
 
+            step_metrics = page.evaluate("""() => {
+                const pick = (key) => {
+                    const box = document.querySelector('[data-step-metric="' + key + '"]');
+                    const sel = box ? box.querySelector('select') : null;
+                    return sel ? {options: sel.options.length, value: sel.value} : null;
+                };
+                return {embed: pick('embed'), position: pick('position')};
+            }""")
+            check("embedding and positional plots have the metric switch",
+                  bool(step_metrics) and bool(step_metrics["embed"]) and bool(step_metrics["position"])
+                  and step_metrics["embed"]["options"] == 3 and step_metrics["position"]["options"] == 3,
+                  str(step_metrics))
+            page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
+            page.wait_for_timeout(1600)
+            page.evaluate("""() => { const s=document.querySelector('[data-step-metric="embed"] select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(1200)
+            emb_metric = page.evaluate("""() => {
+                const el = document.getElementById('transformer-plotly-space');
+                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
+                const opt = chart ? chart.getOption() : null;
+                const series = opt ? (opt.series || []) : [];
+                return {title: opt && opt.title ? opt.title[0].text : '', surface: series.some(s => s.type === 'surface')};
+            }""")
+            check("embedding plot uses the angular metric",
+                  bool(emb_metric) and "Great-circle" in emb_metric["title"] and emb_metric["surface"], str(emb_metric))
+            page.evaluate("() => document.getElementById('transformer-pe-shift-plot').scrollIntoView()")
+            page.wait_for_timeout(1600)
+            page.evaluate("""() => { const s=document.querySelector('[data-step-metric="position"] select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(1200)
+            pe_metric = page.evaluate("""() => {
+                const el = document.getElementById('transformer-pe-shift-plot');
+                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
+                const opt = chart ? chart.getOption() : null;
+                const series = opt ? (opt.series || []) : [];
+                return {title: opt && opt.title ? opt.title[0].text : '', surface: series.some(s => s.type === 'surface')};
+            }""")
+            check("positional-shift plot uses the angular metric",
+                  bool(pe_metric) and "Great-circle" in pe_metric["title"] and pe_metric["surface"], str(pe_metric))
+            page.evaluate("""() => {
+                const e=document.querySelector('[data-step-metric="embed"] select');
+                const p=document.querySelector('[data-step-metric="position"] select');
+                if(e){e.value='euclidean'; e.dispatchEvent(new Event('change',{bubbles:true}));}
+                if(p){p.value='euclidean'; p.dispatchEvent(new Event('change',{bubbles:true}));}
+            }""")
+
             page.wait_for_function("() => !!document.querySelector('.trajectory-metric-select')", timeout=60000)
             traj_metric = page.evaluate("""() => {
                 const sel = document.querySelector('.trajectory-metric-select');

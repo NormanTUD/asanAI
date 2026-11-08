@@ -2690,6 +2690,29 @@ window.appendToken = (token) => {
 	run_transformer_demo();
 };
 
+function _tmTransformMetric(v) {
+	return (window.tmMetric && window.tmMetric.transform) ? window.tmMetric.transform(v, window.tmMetric.get()) : v;
+}
+
+function _tmMetricTitle(base) {
+	return base + (window.tmMetric && window.tmMetric.label ? " · " + window.tmMetric.label() : "");
+}
+
+function _tmUnitSphereSeries() {
+	const rows = [];
+	const nu = 18, nv = 36;
+	for (let u = 0; u <= nu; u++) {
+		const row = [];
+		const theta = Math.PI * u / nu;
+		for (let v = 0; v <= nv; v++) {
+			const phi = 2 * Math.PI * v / nv;
+			row.push([Math.sin(theta) * Math.cos(phi), Math.sin(theta) * Math.sin(phi), Math.cos(theta)]);
+		}
+		rows.push(row);
+	}
+	return { type: 'surface', name: 'unit sphere', data: rows, shading: 'color', itemStyle: { color: themeColor('#cbd5e1'), opacity: 0.07 }, wireframe: { show: false }, silent: true };
+}
+
 function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
 	const containerId = 'transformer-plotly-space';
 
@@ -2754,7 +2777,7 @@ function _embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, s
 	const series = [];
 
 	const vocabData = tokens.map(token => {
-		const vec = window.persistentEmbeddingSpace[token];
+		const vec = _tmTransformMetric(window.persistentEmbeddingSpace[token]);
 		return {
 			value: [vec[0], vec.length >= 2 ? vec[1] : 0],
 			name: displayToken(token),
@@ -2785,15 +2808,19 @@ function _embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, s
 
 	if (steps && steps.length > 0) {
 		const arrowColor = '#3b82f6';
-		const arrowData = steps.map(step => ({
-			value: [
-				step.from[0],
-				dimensions >= 2 ? step.from[1] : 0,
-				step.to[0],
-				dimensions >= 2 ? step.to[1] : 0
-			],
-			_label: step.label
-		}));
+		const arrowData = steps.map(step => {
+			const from = _tmTransformMetric(step.from);
+			const to = _tmTransformMetric(step.to);
+			return {
+				value: [
+					from[0],
+					dimensions >= 2 ? from[1] : 0,
+					to[0],
+					dimensions >= 2 ? to[1] : 0
+				],
+				_label: step.label
+			};
+		});
 
 		series.push({
 			type: 'custom',
@@ -2811,11 +2838,12 @@ function _embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, s
 	}
 
 	if (highlightPos) {
+		const hp = _tmTransformMetric(highlightPos);
 		series.push({
 			type: 'scatter',
 			name: 'Result',
 			data: [{
-				value: [highlightPos[0], dimensions >= 2 ? highlightPos[1] : 0]
+				value: [hp[0], dimensions >= 2 ? hp[1] : 0]
 			}],
 			symbol: 'diamond',
 			symbolSize: 14,
@@ -2830,7 +2858,7 @@ function _embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, s
 
 	chart.setOption({
 		title: {
-			text: 'Embedding Space', left: 'center',
+			text: _tmMetricTitle('Embedding Space'), left: 'center',
 			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
 		},
 		tooltip: { show: true, trigger: 'item', confine: true },
@@ -2860,7 +2888,7 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 		name: 'Vocabulary',
 		type: 'scatter3D',
 		data: tokens.map(token => {
-			const vec = window.persistentEmbeddingSpace[token];
+			const vec = _tmTransformMetric(window.persistentEmbeddingSpace[token]);
 			return {
 				name: displayToken(token),
 				value: [vec[0], vec[1] || 0, vec[2] || 0],
@@ -2880,8 +2908,8 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 
 	if (steps && steps.length > 0) {
 		steps.forEach((step, idx) => {
-			const from3 = step.from.slice(0, 3);
-			const to3   = step.to.slice(0, 3);
+			const from3 = _tmTransformMetric(step.from).slice(0, 3);
+			const to3   = _tmTransformMetric(step.to).slice(0, 3);
 
 			const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
 			series.push({
@@ -2912,7 +2940,7 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 		series.push({
 			name: 'Result',
 			type: 'scatter3D',
-			data: [{ value: highlightPos.slice(0, 3) }],
+			data: [{ value: _tmTransformMetric(highlightPos).slice(0, 3) }],
 			symbol: 'diamond', symbolSize: 10,
 			itemStyle: { color: '#ef4444' },
 			tooltip: {
@@ -2922,9 +2950,10 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 		});
 	}
 
+	if (window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular') series.push(_tmUnitSphereSeries());
 	chart.setOption({
 		title: {
-			text: 'Embedding Space', left: 'center',
+			text: _tmMetricTitle('Embedding Space'), left: 'center',
 			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
 		},
 		tooltip: { show: true, trigger: 'item', confine: true },
@@ -2945,7 +2974,7 @@ function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
 
 	const data = tokens.map(token => ({
 		name: token,
-		value: window.persistentEmbeddingSpace[token]
+		value: _tmTransformMetric(window.persistentEmbeddingSpace[token])
 	}));
 
 	myChart.setOption({
@@ -5667,7 +5696,7 @@ function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
 			if (!combined) return;
 			const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
 			echartsData.push(
-				buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor)
+				buildShiftEChartsEntry(token, pos, _tmTransformMetric(semanticBase), _tmTransformMetric(combined), tokenColor)
 			);
 		});
 		renderShiftECharts(container, echartsData, d_model);
@@ -5679,10 +5708,12 @@ function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbe
 	const series = [];
 
 	tokenStrings.forEach((token, pos) => {
-		const semanticBase = window.persistentEmbeddingSpace[token];
-		if (!semanticBase) return;
-		const combined = injectedEmbeddings[pos];
-		if (!combined) return;
+		const rawBase = window.persistentEmbeddingSpace[token];
+		if (!rawBase) return;
+		const rawCombined = injectedEmbeddings[pos];
+		if (!rawCombined) return;
+		const semanticBase = _tmTransformMetric(rawBase);
+		const combined = _tmTransformMetric(rawCombined);
 
 		const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
 		const dispToken = displayToken(token);
@@ -5775,10 +5806,12 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 	const legendData = [];
 
 	tokenStrings.forEach((token, pos) => {
-		const semanticBase = window.persistentEmbeddingSpace[token];
-		if (!semanticBase) return;
-		const combined = injectedEmbeddings[pos];
-		if (!combined) return;
+		const rawBase = window.persistentEmbeddingSpace[token];
+		if (!rawBase) return;
+		const rawCombined = injectedEmbeddings[pos];
+		if (!rawCombined) return;
+		const semanticBase = _tmTransformMetric(rawBase);
+		const combined = _tmTransformMetric(rawCombined);
 
 		const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
 		const dispToken = displayToken(token);
@@ -5817,9 +5850,10 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 	const axis3DText = themeColor('#94a3b8');
 	const axis3DLine = themeColor('#475569');
 
+	if (window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular') series.push(_tmUnitSphereSeries());
 	chart.setOption({
 		title: {
-			text: 'Semantic Vector → + Positional Shift', left: 'center',
+			text: _tmMetricTitle('Semantic Vector → + Positional Shift'), left: 'center',
 			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
 		},
 		backgroundColor: 'transparent',
@@ -7807,6 +7841,14 @@ function createTrajectoryMetricControl() {
 	if (!window.__tmTrajectoryMetricListener) {
 		window.__tmTrajectoryMetricListener = true;
 		window.addEventListener('tm:metricchange', () => {
+			try {
+				const embData = embeddingRenderRegistry.get('transformer-plotly-space');
+				if (embData) _execute_embedding_render(embData.d_model, embData.highlightPos, embData.steps);
+			} catch (e) { /* not ready */ }
+			try {
+				const peData = positionalShiftRegistry.get('transformer-pe-shift-plot');
+				if (peData) _execute_shift_render(peData.tokenStrings, peData.d_model, peData.injectedEmbeddings);
+			} catch (e) { /* not ready */ }
 			if (!window.tlab_trajectory_collector) return;
 			try { tlab_render_trajectory_plot(getTransformerConfig().d_model); } catch (e) { /* chart not ready */ }
 		});
