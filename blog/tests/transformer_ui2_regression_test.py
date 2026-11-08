@@ -103,11 +103,23 @@ def main() -> None:
 
             triple = page.evaluate("""() => {
                 const cell = document.querySelector('.tm-triple-cell');
-                if (!cell) return null;
+                const row = document.querySelector('.tm-residual-triple');
+                const canvas = document.querySelector('.tm-residual-heatmap-canvas');
+                if (!cell || !row || !canvas) return null;
                 const cs = getComputedStyle(cell);
-                return {border: cs.borderTopWidth, bg: cs.backgroundColor, cursor: cs.cursor};
+                return {
+                    border: cs.borderTopWidth, bg: cs.backgroundColor, cursor: cs.cursor,
+                    grid: getComputedStyle(row).gridTemplateColumns,
+                    rowWidth: row.getBoundingClientRect().width,
+                    cellWidth: cell.getBoundingClientRect().width,
+                    canvasWidth: canvas.getBoundingClientRect().width
+                };
             }""")
             check("triple heatmaps have no box", bool(triple) and triple["border"] == "0px" and triple["bg"] == "rgba(0, 0, 0, 0)", str(triple))
+            check("triple heatmaps span the full row",
+                  bool(triple) and len(triple["grid"].split()) == 1
+                  and abs(triple["cellWidth"] - triple["rowWidth"]) < 2
+                  and abs(triple["canvasWidth"] - triple["rowWidth"]) < 2, str(triple))
             page.locator(".tm-residual-triple").first.click()
             page.wait_for_timeout(400)
             math_panel = page.evaluate("""() => {

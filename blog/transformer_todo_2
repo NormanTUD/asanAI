@@ -50,3 +50,5 @@
 [done] "Model size 567 parameters" komplett entfernen, aber den Parameter-Breakdown-Button behalten; den großen Abstand davor weg. [Die separate Model-Size-Zeile ist aus `transformer.php` und dem CSS entfernt. Der Button zeigt die Zahl weiter im Text: „Show parameter breakdown · 567 parameters“.]
 
 [done] Die Hyperparameter-Boxen müssen nicht alle gleich hoch sein (z. B. KV-Cache kürzer). [Das Grid nutzt jetzt `align-items: start`; jede Box ist so hoch wie ihr Inhalt. Test vergleicht KV-Cache- und Context-Size-Höhe.]
+
+[done] Der Chart direkt nach "This layer reads … three heatmaps …" ist winzig / nicht über die ganze Breite. [Die drei Heatmaps sind jetzt untereinander statt nebeneinander: jede Zelle und jedes Canvas ist 100 % der Zeile (gemessen 728/728 px statt 228). Zusätzlich: Canvas-Zeichnung wartet bei Breite 0 und versucht es erneut, ein ResizeObserver auf der Tripel-Reihe zeichnet bei jeder Breitenänderung neu, und ein doppeltes requestAnimationFrame zeichnet nach dem Einblenden. Test prüft Grid = eine Spalte und Canvas-Breite ≈ Zeilenbreite.]
