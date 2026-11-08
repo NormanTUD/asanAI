@@ -333,7 +333,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 									<div class="demo-controls">
 										<button class="btn-demo btn-demo--green" type="button" id="tt-advance">Next word →</button>
 										<label>Temperature
-											<input type="range" id="tt-temp" min="0.05" max="2.0" step="0.05" value="0.8">
+											<input type="range" id="tt-temp" min="0.05" max="5.0" step="0.05" value="0.8">
 											<output id="tt-temp-out">0.80</output>
 										</label>
 									</div>
@@ -1902,7 +1902,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			return isoLerp(isoEntropy[lo], isoEntropy[hi], x - lo);
 		}
 		function isoMainDepth() {
-			return 0.26 + 0.30 * (2.0 - isoTemp) / 1.95;
+			return Math.max(0.12, 0.26 + 0.30 * (2.0 - isoTemp) / 1.95);
 		}
 		function isoMainDepthAt(x) {
 			var entropy = isoEntropyAt(x);
@@ -1910,7 +1910,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		}
 		function isoMainWidth(x) {
 			var entropy = isoEntropyAt(x);
-			return 0.14 + 0.55 * (0.25 + entropy) * (0.40 + isoTemp / 1.7);
+			var tempW = 0.40 + 0.90 * (isoTemp / (isoTemp + 1.2));
+			return 0.14 + 0.55 * (0.25 + entropy) * tempW;
 		}
 		function isoAltY(alt) {
 			return (alt.path.y - 0.4) * 2.2;
@@ -1994,7 +1995,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			return out;
 		}
 		function isoAltDepth(alt, mainDepth) {
-			return mainDepth * (0.42 + 0.42 * (1 - alt.entropy) + 0.12 * isoTemp);
+			var factor = 0.42 + 0.42 * (1 - alt.entropy) + 0.12 * isoTemp;
+			return mainDepth * Math.min(0.95, factor);
 		}
 		function isoValleyDepth(x, y) {
 			var centre = isoCenter(x);
@@ -2020,8 +2022,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var sideOffsets = [-1.20, -0.90, -0.60, -0.30, 0.30, 0.60, 0.90, 1.20];
 			for (var si = 0; si < sideOffsets.length; si++) {
 				var sy = centre + sideOffsets[si] + 0.05 * Math.sin(x * 1.25 + si * 1.7);
-				var sw = 0.10 + 0.14 * (0.5 + 0.5 * Math.sin(x * 0.95 + si * 2.1)) * (0.5 + isoTemp / 1.8);
-				var sd = mainDepth * (0.22 + 0.26 * (0.5 + 0.5 * Math.sin(x * 1.6 + si * 2.3))) * (0.65 + 0.35 * isoTemp);
+				var sw = 0.10 + 0.14 * (0.5 + 0.5 * Math.sin(x * 0.95 + si * 2.1)) * (0.5 + 0.9 * (isoTemp / (isoTemp + 1.5)));
+				var sd = mainDepth * (0.22 + 0.26 * (0.5 + 0.5 * Math.sin(x * 1.6 + si * 2.3))) * Math.min(1.25, 0.65 + 0.35 * isoTemp);
 				var ds = sd * Math.exp(-Math.pow((y - sy) / sw, 2));
 				if (ds > depth) depth = ds;
 			}
@@ -2530,26 +2532,37 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			return mixRgb(colors.deep, colors.base, Math.max(0, Math.min(1, t)));
 		}
 		function isoSurfaceData(colors) {
-			var data = [];
+			var points = [];
 			var xCount = 141, yCount = 101;
 			var xMin = 0, xMax = (isoTokens.length - 1) * isoStepGap;
 			var yMin = -isoYMax, yMax = isoYMax;
+			var minZ = Infinity, maxZ = -Infinity;
 			for (var yi = 0; yi <= yCount; yi++) {
 				var y = isoLerp(yMin, yMax, yi / yCount);
 				for (var xi = 0; xi <= xCount; xi++) {
 					var x = isoLerp(xMin, xMax, xi / xCount);
-					var stepX = x / isoStepGap;
-					var depth = isoValleyDepth(stepX, y);
-					var mainDepth = isoMainDepthAt(stepX);
-					var weight = Math.min(1, depth / (mainDepth + 1e-6));
-					var z = isoSurfaceHeight(stepX, y);
-					data.push({
-						value: [Number(x.toFixed(3)), Number(y.toFixed(3)), Number(z.toFixed(4))],
-						itemStyle: { color: isoSurfaceColor(weight, colors) }
-					});
+					var z = isoSurfaceHeight(x / isoStepGap, y);
+					if (z < minZ) minZ = z;
+					if (z > maxZ) maxZ = z;
+					points.push([x, y, z]);
 				}
 			}
-			return { data: data, shape: [yCount + 1, xCount + 1] };
+			var colorMin = Infinity;
+			for (var s = 0; s <= 80; s++) {
+				var sampleX = (s / 80) * (isoTokens.length - 1);
+				var sampleZ = isoSurfaceHeight(sampleX, isoCenter(sampleX));
+				if (sampleZ < colorMin) colorMin = sampleZ;
+			}
+			colorMin -= 0.02;
+			var span = Math.max(1e-6, maxZ - colorMin);
+			var data = points.map(function (p) {
+				var t = Math.pow(Math.max(0, Math.min(1, (p[2] - colorMin) / span)), 1.35);
+				return {
+					value: [Number(p[0].toFixed(3)), Number(p[1].toFixed(3)), Number(p[2].toFixed(4))],
+					itemStyle: { color: isoSurfaceColor(t, colors) }
+				};
+			});
+			return { data: data, shape: [yCount + 1, xCount + 1], minZ: minZ, maxZ: maxZ };
 		}
 		function isoFallback(message) {
 			if (isoChart) { isoChart.dispose(); isoChart = null; }

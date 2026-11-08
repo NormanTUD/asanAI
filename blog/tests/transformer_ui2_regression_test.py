@@ -301,7 +301,10 @@ def main() -> None:
                   bool(global_metric) and global_metric["options"] == 2
                   and global_metric["value"] == "euclidean" and not global_metric["perPlot"], str(global_metric))
 
-            page.evaluate("() => document.getElementById('unified-layer-0-feature-arrows').scrollIntoView()")
+            page.evaluate("""() => {
+                if (window.TransformerSteps && window.TransformerSteps.renderLayerFeaturePlots) window.TransformerSteps.renderLayerFeaturePlots(0);
+                document.getElementById('unified-layer-0-feature-arrows').scrollIntoView();
+            }""")
             page.wait_for_timeout(1200)
             overlay = page.evaluate("""() => {
                 const s=document.querySelector('#sticky-metric-select');
@@ -420,14 +423,19 @@ def main() -> None:
                   and "Sphere" not in explain_e and "Kugel" not in explain_e and "Manhattan" not in explain_e,
                   explain_e[:220])
 
-            page.evaluate("() => { const s=document.getElementById('transformer-dimension-model'); s.value='2'; s.dispatchEvent(new Event('input',{bubbles:true})); }")
-            page.wait_for_timeout(1800)
-            page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
-            page.wait_for_timeout(1200)
-            page.evaluate("""() => { const s=document.getElementById('sticky-metric-select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); if (typeof _execute_embedding_render === 'function') _execute_embedding_render(2, null, []); }""")
+            page.evaluate("""() => {
+                const h=document.getElementById('transformer-heads'); h.value='1'; h.dispatchEvent(new Event('input',{bubbles:true}));
+                const s=document.getElementById('transformer-dimension-model'); s.value='2'; s.dispatchEvent(new Event('input',{bubbles:true}));
+                if (window.run_transformer_demo) window.run_transformer_demo();
+            }""")
+            page.wait_for_function("() => window.__tmLayerTrace && window.__tmLayerTrace[0] && window.__tmLayerTrace[0].h_in && window.__tmLayerTrace[0].h_in[0] && window.__tmLayerTrace[0].h_in[0].length === 2", timeout=20000)
+            page.wait_for_timeout(800)
+            page.evaluate("() => document.getElementById('unified-layer-0-feature-arrows').scrollIntoView()")
+            page.wait_for_timeout(1000)
+            page.evaluate("""() => { const s=document.getElementById('sticky-metric-select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); if (window.TransformerSteps && window.TransformerSteps.renderLayerFeaturePlots) window.TransformerSteps.renderLayerFeaturePlots(0); }""")
             page.wait_for_timeout(1400)
             circle_2d = page.evaluate("""() => {
-                const el = document.getElementById('transformer-plotly-space');
+                const el = document.getElementById('unified-layer-0-feature-arrows');
                 const d = (el && el.data) || [];
                 return {
                     circle: d.some(s => s.name === 'unit circle'),
@@ -437,8 +445,12 @@ def main() -> None:
             }""")
             check("2D angular view uses a circle, not a sphere",
                   bool(circle_2d) and circle_2d["circle"] and not circle_2d["surface"], str(circle_2d))
-            page.evaluate("() => { const s=document.getElementById('transformer-dimension-model'); s.value='3'; s.dispatchEvent(new Event('input',{bubbles:true})); }")
-            page.wait_for_timeout(1200)
+            page.evaluate("""() => {
+                const h=document.getElementById('transformer-heads'); h.value='3'; h.dispatchEvent(new Event('input',{bubbles:true}));
+                const s=document.getElementById('transformer-dimension-model'); s.value='3'; s.dispatchEvent(new Event('input',{bubbles:true}));
+                if (window.run_transformer_demo) window.run_transformer_demo();
+            }""")
+            page.wait_for_timeout(1600)
             page.evaluate("""() => { const s=document.getElementById('sticky-metric-select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
             page.wait_for_timeout(500)
             check("no console/page errors", not errors, "; ".join(errors[:3]))
@@ -477,6 +489,20 @@ def main() -> None:
             check("tenminutes: parameter button shows the size",
                   bool(tm_layout) and "parameters" in tm_layout["btn"].lower(), str(tm_layout))
             check("tenminutes: inline label math is not nested", bool(tm_layout) and tm_layout["nested"] == 0, str(tm_layout))
+            page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
+            page.wait_for_timeout(1500)
+            tm_plot = page.evaluate("""() => {
+                const el = document.getElementById('transformer-plotly-space');
+                return el ? {plotly: !!el.data, types: [...new Set((el.data || []).map(t => t.type))]} : null;
+            }""")
+            check("tenminutes: embedding plot uses Plotly", bool(tm_plot) and tm_plot["plotly"], str(tm_plot))
+            page.evaluate("() => document.getElementById('transformer-pe-shift-plot').scrollIntoView()")
+            page.wait_for_timeout(1500)
+            tm_pe = page.evaluate("""() => {
+                const el = document.getElementById('transformer-pe-shift-plot');
+                return el ? {plotly: !!el.data, types: [...new Set((el.data || []).map(t => t.type))]} : null;
+            }""")
+            check("tenminutes: positional plot uses Plotly", bool(tm_pe) and tm_pe["plotly"], str(tm_pe))
             tm_mt = page.evaluate("""() => {
                 const el = document.querySelector('.math_transformer');
                 if (!el) return null;
