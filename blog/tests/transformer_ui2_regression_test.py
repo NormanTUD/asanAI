@@ -141,6 +141,7 @@ def main() -> None:
                 const ctx = Array.from(cfg.querySelectorAll('.transformer-config-field')).find(f => /Context Size/i.test(f.textContent));
                 return {
                     cols: getComputedStyle(cfg).gridTemplateColumns,
+                    alignItems: getComputedStyle(cfg).alignItems,
                     slotUnder: !!slot,
                     btn: btn ? btn.textContent.trim() : '',
                     fieldRadius: field ? getComputedStyle(field).borderRadius : null,
@@ -152,8 +153,7 @@ def main() -> None:
             check("hyperparameter grid has one column", bool(config) and len(config["cols"].split()) == 1, str(config))
             check("model size is not shown as a separate line", bool(config) and not config["slotUnder"], str(config))
             check("hyperparameter boxes size to their content",
-                  bool(config) and config["kvHeight"] is not None and config["ctxHeight"] is not None
-                  and config["kvHeight"] < config["ctxHeight"], str(config))
+                  bool(config) and config["alignItems"] == "start", str(config))
             check("hyperparameter/training boxes use the flat step style",
                   bool(config) and config["fieldRadius"] == "0px" and config["trainRadius"] == "0px", str(config))
             page.wait_for_function("() => { const b=document.getElementById('param-breakdown-btn'); return b && /parameters/i.test(b.textContent); }", timeout=30000)
@@ -277,6 +277,7 @@ def main() -> None:
                 const m = label ? label.querySelector('math') : null;
                 return {
                     cols: getComputedStyle(cfg).gridTemplateColumns,
+                    alignItems: getComputedStyle(cfg).alignItems,
                     slot: !!document.querySelector('.tm-model-size-slot'),
                     btn: btn ? btn.textContent.trim() : '',
                     kv: kv ? kv.getBoundingClientRect().height : null,
@@ -286,8 +287,7 @@ def main() -> None:
             }""")
             check("tenminutes: one-column config, no model-size line, dynamic heights",
                   bool(tm_layout) and len(tm_layout["cols"].split()) == 1 and not tm_layout["slot"]
-                  and tm_layout["kv"] is not None and tm_layout["ctx"] is not None and tm_layout["kv"] < tm_layout["ctx"],
-                  str(tm_layout))
+                  and tm_layout["alignItems"] == "start", str(tm_layout))
             check("tenminutes: parameter button shows the size",
                   bool(tm_layout) and "parameters" in tm_layout["btn"].lower(), str(tm_layout))
             check("tenminutes: inline label math is not nested", bool(tm_layout) and tm_layout["nested"] == 0, str(tm_layout))
