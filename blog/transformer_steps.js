@@ -1986,7 +1986,7 @@
 				out: coords.slice(data.n),
 				is3d: true,
 				axes: metric === "angular" ? ["dir 1", "dir 2", "dir 3"] : ["PC 1 (PCA)", "PC 2 (PCA)", "PC 3 (PCA)"],
-				label: (metric === "angular" ? "great-circle: unit sphere" : metric === "manhattan" ? "L1: sqrt transform + PCA" : "PCA") + ": d=" + d + " → 3D",
+				label: (metric === "angular" ? "great-circle: unit sphere" : "PCA") + ": d=" + d + " → 3D",
 				metric: metric,
 				rawIn: rawIn,
 				rawOut: rawOut
@@ -2000,7 +2000,7 @@
 				out: coords.slice(data.n),
 				is3d: true,
 				axes: metric === "angular" ? ["dir 0", "dir 1", "dir 2"] : ["Dim 0", "Dim 1", "Dim 2"],
-				label: metric === "angular" ? "great-circle: unit sphere" : metric === "manhattan" ? "L1: sqrt transform" : "",
+				label: metric === "angular" ? "great-circle: unit sphere" : "",
 				metric: metric,
 				rawIn: rawIn,
 				rawOut: rawOut
@@ -2014,7 +2014,7 @@
 				out: coords.slice(data.n),
 				is3d: false,
 				axes: metric === "angular" ? ["dir 0", "dir 1"] : ["Dim 0", "Dim 1"],
-				label: metric === "angular" ? "great-circle: unit circle" : metric === "manhattan" ? "L1: sqrt transform" : "",
+				label: metric === "angular" ? "great-circle: unit circle" : "",
 				metric: metric,
 				rawIn: rawIn,
 				rawOut: rawOut
@@ -2027,7 +2027,7 @@
 			out: coords.slice(data.n),
 			is3d: false,
 			axes: ["Dim 0", ""],
-			label: metric === "angular" ? "great-circle: unit circle" : metric === "manhattan" ? "L1: sqrt transform" : "",
+			label: metric === "angular" ? "great-circle: unit circle" : "",
 			metric: metric,
 			rawIn: rawIn,
 			rawOut: rawOut
