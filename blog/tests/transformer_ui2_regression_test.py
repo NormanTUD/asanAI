@@ -96,6 +96,8 @@ def main() -> None:
                 if (mig) mig.open = true;
                 const ffn = card.querySelector('.tm-layer-subbox[data-sub="ffn"]');
                 if (ffn) ffn.open = true;
+                const attn = card.querySelector('.tm-layer-subbox[data-sub="attention"]');
+                if (attn) attn.open = true;
             }""")
             page.wait_for_timeout(2500)
 
@@ -110,10 +112,12 @@ def main() -> None:
             page.wait_for_timeout(400)
             math_panel = page.evaluate("""() => {
                 const panel = document.querySelector('.tm-triple-math');
-                return panel ? {visible: !panel.hidden, math: panel.querySelectorAll('math').length} : null;
+                return panel ? {visible: !panel.hidden, math: panel.querySelectorAll('math').length,
+                                border: getComputedStyle(panel).borderLeftWidth} : null;
             }""")
             check("clicking a heatmap reveals its pmatrix math",
                   bool(math_panel) and math_panel["visible"] and math_panel["math"] >= 3, str(math_panel))
+            check("matrix panel has no blue left bar", bool(math_panel) and math_panel["border"] == "0px", str(math_panel))
 
             logit = page.evaluate("""() => {
                 const host = document.querySelector('.tm-logit-lens-host');
@@ -156,6 +160,13 @@ def main() -> None:
             }""")
             check("math_transformer is not an orange box",
                   bool(mt) and mt["bg"] == "rgba(0, 0, 0, 0)" and mt["border"] == "0px", str(mt))
+            method = page.evaluate("""() => {
+                const d = document.querySelector('.tm-head-method-details');
+                return d ? {open: d.open, hasMethod: !!d.querySelector('.tm-head-method')} : null;
+            }""")
+            check("head-type method note is collapsed", bool(method) and not method["open"] and method["hasMethod"], str(method))
+            apv = page.evaluate("() => { const d=document.querySelector('.apv-head-detail'); return d ? {open:d.open} : null; }")
+            check("per-head math explanation is collapsed", bool(apv) and not apv["open"], str(apv))
             check("no console/page errors", not errors, "; ".join(errors[:3]))
 
             errors.clear()

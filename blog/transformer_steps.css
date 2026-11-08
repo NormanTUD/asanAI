@@ -1197,10 +1197,10 @@
 }
 .tm-triple-math {
 	margin: 4px 0 14px;
-	padding: 8px 10px;
-	border-left: 3px solid var(--mn-accent, var(--tm-petrol, #3b82f6));
-	background: var(--mn-bg-subtle, var(--tm-paper-2, #f8fafc));
-	border-radius: 0 8px 8px 0;
+	padding: 8px 0;
+	border-left: 0;
+	background: transparent;
+	border-radius: 0;
 	overflow-x: auto;
 }
 .tm-triple-math-note {
@@ -1397,17 +1397,39 @@
 	margin: 4px 0;
 }
 .tm-head-estimate {
-	margin: 0 0 12px;
-	padding: 7px 9px;
-	border-left: 3px solid var(--tm-green, var(--mn-emerald, #63a44b));
-	background: var(--tm-paper-2, var(--mn-bg-subtle, #f8fafc));
+	margin: 0 0 6px;
+	padding: 0;
+	border-left: 0;
+	background: transparent;
 	color: var(--tm-ink-soft, var(--mn-text-secondary, #2c464d));
 	font: 600 0.76rem/1.45 "Open Sans", system-ui, sans-serif;
 }
+.tm-head-method-details {
+	margin: 2px 0 10px;
+}
+.tm-head-method-details > summary {
+	cursor: pointer;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+	font: 600 0.7rem/1.4 "Open Sans", system-ui, sans-serif;
+	text-align: left;
+}
 .tm-head-method {
-	margin: 8px 0 0;
+	margin: 4px 0 0;
 	color: var(--tm-muted, var(--mn-text-muted, #627476));
 	font: 400 0.7rem/1.5 "Open Sans", system-ui, sans-serif;
+}
+
+/* The per-head math explanation is collapsed by default. */
+.apv-head-detail {
+	margin: 8px 0;
+	border-top: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+}
+.apv-head-detail > summary {
+	cursor: pointer;
+	padding: 7px 0;
+	font: 600 0.82rem/1.4 "Open Sans", system-ui, sans-serif;
+	color: var(--tm-petrol, var(--mn-accent, #004b6f));
+	text-align: left;
 }
 .tm-head-method a {
 	color: var(--tm-petrol, var(--mn-accent, #004b6f));

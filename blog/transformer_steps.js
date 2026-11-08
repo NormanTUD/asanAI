@@ -1697,13 +1697,14 @@
 						content.insertBefore(note, content.firstChild);
 					}
 					note.textContent = (de ? "Schätzung: " : "Estimate: ") + labels[c.type] + " · ~" + confidence + "%. " + c.reason;
-					var method = content.querySelector(".tm-head-method");
+					var method = content.querySelector(".tm-head-method-details");
 					if (!method) {
-						method = document.createElement("p");
-						method.className = "tm-head-method";
+						method = document.createElement("details");
+						method.className = "tm-head-method-details";
+						method.innerHTML = "<summary>" + (de ? "Wie werden die Head-Typen geschätzt? · Quellen" : "How are head types estimated? · sources") + "</summary><div class='tm-head-method'></div>";
 					}
 					if (note.nextElementSibling !== method) note.insertAdjacentElement("afterend", method);
-					method.innerHTML = methodHtml;
+					method.querySelector(".tm-head-method").innerHTML = methodHtml;
 				}
 				if (c.type !== "content") {
 					detections.push({ head: h + 1, type: c.type, confidence: confidence, reason: c.reason });

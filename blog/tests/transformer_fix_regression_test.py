@@ -147,13 +147,13 @@ def page_checks(page, port: int) -> None:
         const card = document.querySelector('.tm-layer-card');
         const btn = card.querySelector('.mha-head-tab-btn');
         const note = card.querySelector('.tm-head-estimate');
-        const method = card.querySelector('.tm-head-method');
+        const method = card.querySelector('.tm-head-method-details');
         const summary = card.querySelector('.tm-layer-head-summary');
         return {
             label: btn.textContent.trim(),
             bg: getComputedStyle(btn).backgroundColor,
             estimate: note ? note.textContent : '',
-            methodAfter: !!(note && method && note.nextElementSibling === method),
+            methodAfter: !!(note && method && note.nextElementSibling === method && method.querySelector('.tm-head-method')),
             summary: summary ? summary.textContent.slice(0, 80) : null
         };
     }""")

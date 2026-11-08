@@ -93,8 +93,8 @@ class AttentionEngine {
 		const vMatrixTex = this._attnRowLabeledMatrix(Vi, displayTokens, n, 'V proj');
 		const contextMatrixTex = this._attnRowLabeledMatrix(context, displayTokens, n, 'head ctx');
 
-		return `<div style="margin-bottom:10px; padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
-    <p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Context Matrix for Head ${headIdx + 1}</p>
+		return `<div style="margin-bottom:10px;">
+    <p style="font-weight:600; margin-bottom:6px;">Context Matrix for Head ${headIdx + 1}</p>
     <p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">
 	Each token's <b>context vector</b> is a weighted average of all Value vectors it can see.
 	The attention weights (from Softmax) determine how much each Value contributes.
@@ -1433,22 +1433,11 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			return `<p style="color:#94a3b8;">Attention result data not available for this head.</p>`;
 		}
 
-		let html = '';
-
-		// Header
-		html += `<p style="font-weight:bold; color:#92400e; font-size:0.95rem; margin-bottom:12px;">
-	What Happens with the Attention Weights — Head ${headIdx + 1}, Layer ${L}
-    </p>`;
-
-		// Step 1: Context matrix equation with labeled matrices
-		html += this._buildContextMatrixSection(
-			headIdx, L, n, d_k, weights, Vi, context, displayTokens
-		);
-
-		// Step 2: What happens next (concat, projection, residual)
-		html += this._buildWhatHappensNextSection(n, d_k, d_model, n_heads);
-
-		return html;
+		return `<details class="apv-head-detail">
+	<summary>What Happens with the Attention Weights — Head ${headIdx + 1}, Layer ${L}</summary>
+	${this._buildContextMatrixSection(headIdx, L, n, d_k, weights, Vi, context, displayTokens)}
+	${this._buildWhatHappensNextSection(n, d_k, d_model, n_heads)}
+</details>`;
 	}
 
 	_apvComputeWeightsHash(weights) {

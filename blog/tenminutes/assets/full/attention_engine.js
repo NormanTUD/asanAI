@@ -118,8 +118,8 @@ class AttentionEngine {
 			? `In der <b>Attention-Gewichte-Matrix</b>: Zeilen sind <b>Query</b>-Tokens (wer schaut), Spalten sind <b>Key</b>-Tokens (wer angeschaut wird). Jede Zeile summiert zu 1 (Softmax). Die Spaltenköpfe zeigen, welches Token zu jeder Spalte gehört.`
 			: `In the <b>Attention Weights</b> matrix: rows are <b>query</b> tokens (who is looking), columns are <b>key</b> tokens (who is being looked at). Each row sums to 1 (softmax). The column headers show which token each column corresponds to.`;
 
-		return `<div style="margin-bottom:10px; padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
-    <p style="font-weight:600; color:#1e40af; margin-bottom:6px;">${isDe ? 'Kontextmatrix für Head' : 'Context Matrix for Head'} ${headIdx + 1}</p>
+		return `<div style="margin-bottom:10px;">
+    <p style="font-weight:600; margin-bottom:6px;">${isDe ? 'Kontextmatrix für Head' : 'Context Matrix for Head'} ${headIdx + 1}</p>
     <p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">${contextText}</p>
     $$ \\text{context}_i = \\sum_{j=0}^{i} \\underbrace{\\alpha_{i,j}}_{\\substack{\\text{${isDe ? 'Attention' : 'attention'}} \\\\ \\text{${isDe ? 'Gewicht' : 'weight'}}}} \\cdot \\underbrace{V_j}_{\\substack{\\text{${isDe ? 'Value-Vektor' : 'Value vector'}} \\\\ \\text{${isDe ? 'von Token' : 'of token'} } j}} $$
     <p style="font-size:0.8rem; color:#64748b;">${producesText}</p>
@@ -1452,23 +1452,12 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			return `<p style="color:#94a3b8;">Attention result data not available for this head.</p>`;
 		}
 
-		let html = '';
-
-		// Header
 		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
-		html += `<p style="font-weight:bold; color:#92400e; font-size:0.95rem; margin-bottom:12px;">
-	${isDe ? 'Was mit den Attention-Gewichten passiert' : 'What Happens with the Attention Weights'} — ${isDe ? 'Head' : 'Head'} ${headIdx + 1}, ${isDe ? 'Schicht' : 'Layer'} ${L}
-    </p>`;
-
-		// Step 1: Context matrix equation with labeled matrices
-		html += this._buildContextMatrixSection(
-			headIdx, L, n, d_k, weights, Vi, context, displayTokens
-		);
-
-		// Step 2: What happens next (concat, projection, residual)
-		html += this._buildWhatHappensNextSection(n, d_k, d_model, n_heads);
-
-		return html;
+		return `<details class="apv-head-detail">
+	<summary>${isDe ? 'Was mit den Attention-Gewichten passiert' : 'What Happens with the Attention Weights'} — ${isDe ? 'Head' : 'Head'} ${headIdx + 1}, ${isDe ? 'Schicht' : 'Layer'} ${L}</summary>
+	${this._buildContextMatrixSection(headIdx, L, n, d_k, weights, Vi, context, displayTokens)}
+	${this._buildWhatHappensNextSection(n, d_k, d_model, n_heads)}
+</details>`;
 	}
 
 	_apvComputeWeightsHash(weights) {
