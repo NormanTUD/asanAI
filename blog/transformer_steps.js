@@ -391,6 +391,15 @@
 		ctx.fillText(text, w / 2, h / 2);
 	}
 
+		function positionRgb(index, total) {
+		if (typeof getPositionColor === "function") {
+			var c = getPositionColor(index, total, "object");
+			return [c.r, c.g, c.b];
+		}
+		var t = total > 1 ? index / (total - 1) : 0;
+		return [Math.round(59 + (16 - 59) * t), Math.round(130 + (185 - 130) * t), Math.round(246 + (129 - 246) * t)];
+	}
+
 	function drawTokenize(ctx, w, h) {
 		var c = palette();
 		var tokens = tokenList();
@@ -406,8 +415,7 @@
 			var label = fitText(ctx, text, 92);
 			var tw = Math.max(30, ctx.measureText(label).width + 14);
 			if (x + tw > w - pad) { x = pad; y += lineH; }
-			var col = i / Math.max(1, tokens.length - 1);
-			var fill = mix(hex(c.blue), hex(c.lilac), col);
+			var fill = positionRgb(i, tokens.length - 1);
 			ctx.fillStyle = "rgba(" + fill[0] + "," + fill[1] + "," + fill[2] + ",.14)";
 			ctx.fillRect(x, y, tw, fontSize + 12);
 			ctx.strokeStyle = rgb(fill);
@@ -513,7 +521,7 @@
 				var idx = index[token];
 				if (idx == null) return;
 				var p = coords[idx], q = map(p);
-				var col = mix(hex(c.blue), hex(c.lilac), i / Math.max(1, tokens.length - 1));
+				var col = positionRgb(i, tokens.length - 1);
 				ctx.globalAlpha = view.is3d ? depthAlpha(p) : 1;
 				ctx.beginPath();
 				ctx.arc(q.x, q.y, view.is3d ? 3.4 + (p[3] || 1) * 1.6 : 5, 0, Math.PI * 2);
@@ -628,7 +636,7 @@
 			var item = null;
 			for (var i = 0; i < vocab.length; i++) if (vocab[i].word === token) { item = vocab[i]; break; }
 			if (!item) return;
-			var col = mix(hex(c.blue), hex(c.lilac), t / Math.max(1, tokens.length - 1));
+			var col = positionRgb(t, tokens.length - 1);
 			ctx.beginPath();
 			item.vec.forEach(function (value, dim) {
 				if (dim === 0) ctx.moveTo(px(dim), py(value)); else ctx.lineTo(px(dim), py(value));
@@ -875,7 +883,7 @@
 				ctx.fillStyle = rgb(col);
 				ctx.fillRect(padL + k * cw, padT + r * ch, Math.ceil(cw) + 0.5, Math.ceil(ch) + 0.5);
 			}
-			ctx.fillStyle = c.ink;
+			ctx.fillStyle = getPositionColor(r, rows - 1);
 			ctx.font = "600 8px Barlow, system-ui, sans-serif";
 			ctx.textAlign = "right";
 			ctx.textBaseline = "middle";
@@ -886,6 +894,40 @@
 		ctx.fillStyle = c.muted;
 		ctx.font = "600 9px Barlow, system-ui, sans-serif";
 		ctx.fillText((DE() ? "FFN-Hidden-Aktivierungen (GELU) · alle Tokens · Layer " : "FFN hidden activations (GELU) · all tokens · layer ") + (layerIdx + 1), padL, 15);
+	}
+
+	function attachFFNHeatmapHover(canvas, getLayerIdx) {
+		if (!canvas || canvas._tmFfnHoverBound) return;
+		canvas._tmFfnHoverBound = true;
+		var parent = canvas.parentNode;
+		if (parent && getComputedStyle(parent).position === "static") parent.style.position = "relative";
+		var tip = document.createElement("div");
+		tip.className = "tm-ffn-tooltip";
+		tip.hidden = true;
+		(parent || canvas).appendChild(tip);
+		canvas.addEventListener("mousemove", function (event) {
+			var layerIdx = getLayerIdx();
+			var ffn = (window.__tmFFNTrace || [])[layerIdx];
+			var tokens = tokenList();
+			if (!ffn || !ffn.out_L1 || !tokens.length) { tip.hidden = true; return; }
+			var rows = Math.min(tokens.length, ffn.out_L1.length);
+			var cols = Math.min((ffn.out_L1[0] || []).length, 64);
+			var rect = canvas.getBoundingClientRect();
+			var left = 74, top = 26, right = 14, bottom = 24;
+			var cw = (rect.width - left - right) / Math.max(1, cols);
+			var ch = (rect.height - top - bottom) / Math.max(1, rows);
+			var x = event.clientX - rect.left, y = event.clientY - rect.top;
+			var col = Math.floor((x - left) / cw), row = Math.floor((y - top) / ch);
+			if (x < left || y < top || col < 0 || row < 0 || col >= cols || row >= rows) { tip.hidden = true; return; }
+			var value = (ffn.out_L1[row] && ffn.out_L1[row][col]) || 0;
+			var token = (ffn.tokenStrings && ffn.tokenStrings[row]) || tokens[row] || "";
+			tip.textContent = display(token) + " · dim " + col + " · GELU " + value.toFixed(3);
+			tip.hidden = false;
+			var pr = (parent || canvas).getBoundingClientRect();
+			tip.style.left = Math.max(0, Math.min(pr.width - 160, event.clientX - pr.left + 12)) + "px";
+			tip.style.top = Math.max(0, event.clientY - pr.top + 12) + "px";
+		});
+		canvas.addEventListener("mouseleave", function () { tip.hidden = true; });
 	}
 
 	function drawFFN(ctx, w, h) {
@@ -1150,7 +1192,7 @@
 		order.forEach(function (t) {
 			var a = map(start[t]);
 			var b = map(end[t]);
-			var col = mix(hex(c.blue), hex(c.lilac), t / Math.max(1, n - 1));
+			var col = positionRgb(t, n - 1);
 			ctx.globalAlpha = view.is3d ? depthAlpha(start[t]) : 1;
 			ctx.beginPath();
 			ctx.arc(a.x, a.y, view.is3d ? 2.4 + (start[t][3] || 1) : 3.2, 0, Math.PI * 2);
@@ -1399,7 +1441,7 @@
 		}
 		if (!isFinite(minAll) || !isFinite(maxAll)) { minAll = -1; maxAll = 1; }
 		ctx.canvas._tmResidualRange = { min: minAll, max: maxAll };
-		var left = 74, top = 24, right = 10, bottom = 8;
+		var left = 74, top = 34, right = 10, bottom = 8;
 		var cw = (w - left - right) / Math.max(1, d);
 		var ch = (h - top - bottom) / Math.max(1, rows);
 		function cellColor(v) {
@@ -1411,7 +1453,7 @@
 				ctx.fillStyle = cellColor((source[i] && source[i][j]) || 0);
 				ctx.fillRect(left + j * cw, top + i * ch, Math.ceil(cw) + 0.5, Math.ceil(ch) + 0.5);
 			}
-			ctx.fillStyle = c.ink;
+			ctx.fillStyle = getPositionColor(i, rows - 1);
 			ctx.font = "600 8px Barlow, system-ui, sans-serif";
 			ctx.textAlign = "right";
 			ctx.textBaseline = "middle";
@@ -2274,7 +2316,7 @@
 		var coordinate = function (v) { return (v || []).slice(0, 3).map(function (x) { return Number(x || 0).toFixed(3); }).join(", "); };
 		for (var i = 0; i < data.n; i++) {
 			var sel = i === data.selected;
-			var col = sel ? c.gold : rgb(mix(hex(c.blue), hex(c.lilac), i / Math.max(1, data.n - 1)));
+			var col = getPositionColor(i, data.n - 1);
 			var rawIn = projection.rawIn[i] || [], rawOut = projection.rawOut[i] || [];
 			var l2 = metricDistance(rawIn, rawOut, "euclidean");
 			var ang = metricDistance(rawIn, rawOut, "angular");
@@ -2562,7 +2604,7 @@
 				if (!canvas) return;
 				canvas.addEventListener("mousemove", function (event) {
 					var rect = canvas.getBoundingClientRect();
-					var left = 74, top = 24, right = 10, bottom = 8;
+					var left = 74, top = 34, right = 10, bottom = 8;
 					var rows = trace.h_in.length, d = trace.h_in[0].length;
 					var cw = (rect.width - left - right) / Math.max(1, d);
 					var ch = (rect.height - top - bottom) / Math.max(1, rows);
@@ -3040,6 +3082,9 @@
 					draws[key](ctx, w, h, stepModes[key]);
 				});
 			});
+			if (canvases.ffn) attachFFNHeatmapHover(canvases.ffn, function () {
+				return (window.__tmFFNTrace || []).length - 1;
+			});
 			function stepModeLabels() {
 				var d = dModel();
 				var trace = (window.__tmLayerTrace || [])[0];
@@ -3313,6 +3358,7 @@
 				entry.layerIdx = layerIdx;
 				entry.api.redraw();
 			}
+			attachFFNHeatmapHover(canvas, function () { return entry.layerIdx; });
 			canvas.setAttribute("data-layer-ffn-ready", "1");
 		},
 		renderLayerSignal: function (canvasId, layerIdx) {
@@ -3498,7 +3544,7 @@
 		// 3 · Position: the shift plot is the default view.
 		if (!moved.position) {
 			var shift = document.getElementById("transformer-pe-shift-plot");
-			if (shift) shift.style.height = "420px";
+			if (shift) shift.style.height = "520px";
 			if (moveLiveView("transformer-pe-shift-plot", 3, "#tm-step-position")) {
 				moved.position = true;
 				var posModes = document.querySelector(".tm-step-body [data-step-modes='position']");

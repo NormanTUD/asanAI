@@ -1017,7 +1017,7 @@
 }
 .tm-feature-arrows {
 	width: 100%;
-	height: 380px;
+	height: 520px;
 	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
 	background: var(--tm-card, var(--mn-surface, #ffffff));
 }
@@ -1169,7 +1169,8 @@
 .tm-residual-overlay-out {
 	pointer-events: none;
 }
-.tm-residual-tooltip {
+.tm-residual-tooltip,
+.tm-ffn-tooltip {
 	position: absolute;
 	z-index: 4;
 	max-width: 190px;

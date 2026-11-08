@@ -1044,15 +1044,16 @@ html.dark .head-tab-list,
 html.dark .mha-layer-tab-btn,
 html.dark .mha-head-tab-btn,
 html.dark button.mha-head-tab-btn {
-	background: color-mix(in srgb, #3b82f6 18%, var(--mn-surface-raised)) !important;
+	background: var(--mn-surface-raised) !important;
 	border-color: var(--mn-border) !important;
 	color: var(--mn-text-secondary) !important;
 }
 html.dark .mha-head-tab-btn.is-active,
 html.dark button.mha-head-tab-btn.is-active {
-	background: #2563eb !important;
-	border-color: #2563eb !important;
-	color: #ffffff !important;
+	background: var(--mn-surface) !important;
+	border-color: var(--mn-border) !important;
+	color: var(--mn-accent) !important;
+	box-shadow: inset 0 -2px 0 var(--mn-accent) !important;
 }
 html.dark .mha-head-tab-btn[style*="background:#fff"],
 html.dark .mha-head-tab-btn[style*="background: #fff"],
@@ -1065,6 +1066,13 @@ html.dark .mha-head-tab-btn[style*="background: rgb(226, 232, 240)"] {
 	background: var(--mn-surface) !important;
 	color: var(--mn-text) !important;
 	border-color: var(--mn-border) !important;
+}
+html.dark .mha-head-tab-btn.is-active,
+html.dark button.mha-head-tab-btn.is-active {
+	background: var(--mn-surface) !important;
+	color: var(--mn-accent) !important;
+	border-color: var(--mn-border) !important;
+	box-shadow: inset 0 -2px 0 var(--mn-accent) !important;
 }
 
 /* Inner per-layer panels (LayerNorm, concat, h1-final, etc.) */
@@ -3745,6 +3753,8 @@ h5 .glossary-term .glossary-tooltip, h6 .glossary-term .glossary-tooltip {
 	border: 1px solid var(--mn-border, #cbd5e1);
 	border-radius: 0px 0px 10px 10px;
 	background-color: var(--mn-bg-subtle, #f8fafc);
+	max-width: 100%;
+	overflow-x: auto;
 }
 
 .unified-layer-tab-content {
@@ -6154,10 +6164,19 @@ TOKENIZER LAB — Visual Polish
 
 .apv-per-head-section {
 	text-align: center;
+	max-width: 100%;
+	overflow-x: auto;
 }
 
 .apv-matrix-container {
 	text-align: center;
+	max-width: 100%;
+	overflow-x: auto;
+}
+
+.apv-head-detail {
+	max-width: 100%;
+	overflow-x: auto;
 }
 
 .autociteelement {

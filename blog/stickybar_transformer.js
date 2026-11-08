@@ -39,7 +39,7 @@
 	/** Metric switch + sphere toggle, kept at the left of the sticky bar. */
 	function buildMetricControlHtml() {
 		return `
-	<div id="sticky-metric-control" style="display:flex; align-items:center; gap:6px; padding-right:8px; border-right:1px solid #374151; margin-right:2px; flex-shrink:0;">
+	<div id="sticky-metric-control" style="display:flex; align-items:center; flex-wrap:wrap; row-gap:4px; gap:6px; padding-right:8px; border-right:1px solid #374151; margin-right:2px; flex-shrink:1; min-width:0; max-width:100%;">
 	    <label style="display:inline-flex; align-items:center; gap:6px; color:#94a3b8; font-size:0.78rem; white-space:nowrap;">
 		Metric
 		<select id="sticky-metric-select" style="padding:3px 6px; border-radius:6px; border:1px solid #475569; background:#1f2937; color:#f8fafc; font-size:0.74rem; max-width:190px;"></select>
@@ -117,7 +117,8 @@
 		return `
 	position: fixed; bottom: 0; left: 0; width: 100%; box-sizing: border-box; max-width: 100vw;
 	background: #1e293b; color: #f8fafc;
-	padding: 8px 12px; display: none; align-items: center;
+	padding: 8px 12px; display: none; align-items: center; flex-wrap: wrap;
+	row-gap: 6px; align-content: center;
 	gap: 10px; z-index: 999;
 	font-family: 'Inter', sans-serif; font-size: 0.85rem;
 	box-shadow: 0 -2px 12px rgba(0,0,0,0.3);

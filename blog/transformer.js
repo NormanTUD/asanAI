@@ -2161,7 +2161,9 @@ function renderTrajectoryPlot(d_model) {
 			if (wrapper) {
 				wrapper.setAttribute('data-d-model', d_model);
 				if (!wrapper.querySelector('.trajectory-metric-explain')) {
-					wrapper.appendChild(createTrajectoryMetricExplanation());
+					var explain = createTrajectoryMetricExplanation();
+					wrapper.appendChild(explain);
+					if (typeof _renderTemmlOnElements === 'function') _renderTemmlOnElements([explain]);
 				}
 				const existingBtn = wrapper.querySelector('.trajectory-vf-toggle');
 				const existingNote = wrapper.querySelector('.trajectory-vf-note');
@@ -2823,7 +2825,7 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 		Array.prototype.push.apply(traces, dimensions === 3 ? window.tmPlotly.sphereTraces() : window.tmPlotly.circleTraces());
 	}
 	const coord = v => (v || []).slice(0, 3).map(x => Number(x || 0).toFixed(3)).join(', ');
-	tokens.forEach(token => {
+	tokens.forEach((token, tokenIdx) => {
 		const raw = window.persistentEmbeddingSpace[token] || [];
 		const vec = _tmTransformMetric(raw);
 		let tip = `<b>${displayToken(token)}</b><br>Raw x,y,z: [${coord(raw)}]<br>Plot x,y,z: [${coord(vec)}]`;
@@ -2837,7 +2839,7 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 				x: [vec[0]], y: [vec[1] || 0], z: [vec[2] || 0],
 				text: [displayToken(token)], textposition: 'top center',
 				hovertext: [tip], hovertemplate: '%{hovertext}<extra></extra>',
-				marker: { size: 5, color: `hsl(${getHueFromToken(token)}, 75%, 50%)` },
+				marker: { size: 5, color: getPositionColor(tokenIdx, tokens.length - 1) },
 				name: displayToken(token)
 			});
 		} else {
@@ -2846,28 +2848,29 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 				x: [vec[0]], y: [vec[1] || 0],
 				text: [displayToken(token)], textposition: 'top center',
 				hovertext: [tip], hovertemplate: '%{hovertext}<extra></extra>',
-				marker: { size: 7, color: `hsl(${getHueFromToken(token)}, 75%, 50%)` },
+				marker: { size: 7, color: getPositionColor(tokenIdx, tokens.length - 1) },
 				name: displayToken(token)
 			});
 		}
 	});
 	if (steps && steps.length) {
-		steps.forEach(step => {
+		steps.forEach((step, stepIdx) => {
 			const from = _tmTransformMetric(step.from);
 			const to = _tmTransformMetric(step.to);
 			const tip = `<b>${step.label || 'step'}</b><br>from [${coord(from)}]<br>to [${coord(to)}]`;
 			const angular = window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular' && window.tmMetric.slerpPoints;
+			const stepColor = getPositionColor(stepIdx, steps.length - 1);
 			if (dimensions === 3) {
 				const arc = angular ? window.tmMetric.slerpPoints(from, to, 24) : [from, to];
-				traces.push({ type: 'scatter3d', mode: 'lines', x: arc.map(pt => pt[0]), y: arc.map(pt => pt[1] || 0), z: arc.map(pt => pt[2] || 0), line: { color: '#3b82f6', width: 4 }, hoverinfo: 'skip', showlegend: false });
+				traces.push({ type: 'scatter3d', mode: 'lines', x: arc.map(pt => pt[0]), y: arc.map(pt => pt[1] || 0), z: arc.map(pt => pt[2] || 0), line: { color: stepColor, width: 4 }, hoverinfo: 'skip', showlegend: false });
 				const last = arc[arc.length - 1], prev = arc[arc.length - 2] || from;
 				const dx = last[0] - prev[0], dy = (last[1] || 0) - (prev[1] || 0), dz = (last[2] || 0) - (prev[2] || 0);
 				const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
-				const cone = window.tmPlotly.coneTrace([{ x: last[0], y: last[1] || 0, z: last[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], '#3b82f6', step.label || 'step');
+				const cone = window.tmPlotly.coneTrace([{ x: last[0], y: last[1] || 0, z: last[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], stepColor, step.label || 'step');
 				if (cone) traces.push(cone);
 			} else {
 				const arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 24).map(pt => [pt[0], pt[1]]) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
-				traces.push({ type: 'scatter', mode: 'lines+markers', x: arc2.map(pt => pt[0]), y: arc2.map(pt => pt[1]), line: { color: '#3b82f6', width: 2 }, marker: { symbol: arc2.map((_, k) => k === arc2.length - 1 ? 'arrow' : 'circle'), size: arc2.map((_, k) => k === arc2.length - 1 ? 8 : (k === 0 ? 6 : 0)), color: '#3b82f6', angleref: 'previous' }, hovertext: arc2.map(() => tip), hovertemplate: '%{hovertext}<extra></extra>', showlegend: false });
+				traces.push({ type: 'scatter', mode: 'lines+markers', x: arc2.map(pt => pt[0]), y: arc2.map(pt => pt[1]), line: { color: stepColor, width: 2 }, marker: { symbol: arc2.map((_, k) => k === arc2.length - 1 ? 'arrow' : 'circle'), size: arc2.map((_, k) => k === arc2.length - 1 ? 8 : (k === 0 ? 6 : 0)), color: stepColor, angleref: 'previous' }, hovertext: arc2.map(() => tip), hovertemplate: '%{hovertext}<extra></extra>', showlegend: false });
 			}
 		});
 	}
@@ -2895,7 +2898,7 @@ function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
 	try {
 		Plotly.react(container, [{
 			type: 'parcoords',
-			line: { color: colors, colorscale: 'Viridis', showscale: false },
+			line: { color: colors, colorscale: [[0, '#3b82f6'], [1, '#10b981']], showscale: false },
 			dimensions: dims
 		}], {
 			paper_bgcolor: c.paper, plot_bgcolor: c.plot,
@@ -2908,7 +2911,7 @@ function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
 		Plotly.react(container, [{
 			type: 'scatter', mode: 'markers',
 			x: dims[0] ? dims[0].values : [], y: dims[1] ? dims[1].values : [],
-			marker: { size: 5, color: colors, colorscale: 'Viridis' }
+			marker: { size: 5, color: colors, colorscale: [[0, '#3b82f6'], [1, '#10b981']] }
 		}], window.tmPlotly.layout2D(_tmMetricTitle('Embedding Space'), ['D0', 'D1']), { responsive: true, displayModeBar: false });
 	}
 }
@@ -2938,7 +2941,7 @@ function _embedding_render_highdim_pca(container, tokens, dimensions, highlightP
 			x: [plotted[idx][0]], y: [plotted[idx][1]], z: [plotted[idx][2]],
 			text: [displayToken(token)], textposition: 'top center',
 			hovertext: [tip], hovertemplate: '%{hovertext}<extra></extra>',
-			marker: { size: 5, color: `hsl(${getHueFromToken(token)}, 75%, 50%)` }, name: displayToken(token), showlegend: false
+			marker: { size: 5, color: getPositionColor(idx, tokens.length - 1) }, name: displayToken(token), showlegend: false
 		});
 	});
 	if (hp) {
@@ -3757,8 +3760,10 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 
 	const displayTokens = getMigrationDisplayTokens(tokens, tokenStrings);
 
-	// Initialize/update trajectory collector
-	initTrajectoryCollector(tokens, displayTokens, d_model, start_h);
+	// The trajectory needs token strings for the embedding lookup; the migration
+	// plot itself works on vectors, so `tokens` may be hidden states here.
+	const trajectoryTokens = (tokenStrings && tokenStrings.length) ? tokenStrings : tokens;
+	initTrajectoryCollector(trajectoryTokens, displayTokens, d_model, start_h);
 	recordTrajectoryLayerOutput(layerNum, end_h);
 	// Layer 1 is the embedding-to-block step; the user wants no migration
 	// subbox for it. Keep the trajectory data, skip the plot.
@@ -5775,7 +5780,7 @@ function _shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, 
 	tokenStrings.forEach((token, pos) => {
 		const from = base[pos] || [], to = combined[pos] || [];
 		const tip = _shift_metricTip(token, pos, rawBase[pos] || [], rawCombined[pos] || []);
-		const color = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
+		const color = getPositionColor(pos, tokenStrings.length - 1);
 		const angular = window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular' && window.tmMetric.slerpPoints;
 		const arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 24).map(pt => [pt[0], pt[1]]) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
 		traces.push({
@@ -5805,11 +5810,10 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
 		Array.prototype.push.apply(traces, window.tmPlotly.sphereTraces());
 	}
-	const cones = [];
 	tokenStrings.forEach((token, pos) => {
 		const from = base[pos] || [], to = combined[pos] || [];
 		const tip = _shift_metricTip(token, pos, rawBase[pos] || [], rawCombined[pos] || []);
-		const color = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
+		const color = getPositionColor(pos, tokenStrings.length - 1);
 		const angular3 = window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular' && window.tmMetric.slerpPoints;
 		const arc3 = angular3 ? window.tmMetric.slerpPoints(from, to, 24) : [from, to];
 		traces.push({
@@ -5820,7 +5824,8 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		const last3 = arc3[arc3.length - 1], prev3 = arc3[arc3.length - 2] || from;
 		const dx = last3[0] - prev3[0], dy = (last3[1] || 0) - (prev3[1] || 0), dz = (last3[2] || 0) - (prev3[2] || 0);
 		const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
-		cones.push({ x: last3[0], y: last3[1] || 0, z: last3[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip });
+		const cone = window.tmPlotly.coneTrace([{ x: last3[0], y: last3[1] || 0, z: last3[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], color, token);
+		if (cone) traces.push(cone);
 		traces.push({
 			type: 'scatter3d', mode: 'markers',
 			x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0], z: [from[2] || 0, to[2] || 0],
@@ -5828,7 +5833,6 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 			hovertext: [tip, tip], hovertemplate: '%{hovertext}<extra></extra>', showlegend: false
 		});
 	});
-	if (cones.length) traces.push(window.tmPlotly.coneTrace(cones, '#3b82f6', 'shift'));
 	const layout = window.tmPlotly.layout3D(_tmMetricTitle('Semantic Vector → + Positional Shift') + (modeLabel ? ' · ' + modeLabel : ''), ['Dim 0', 'Dim 1', 'Dim 2']);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
 	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
@@ -5845,7 +5849,7 @@ function _shift_render_highdim_plotly(container, tokenStrings, base, combined, d
 	try {
 		Plotly.react(container, [{
 			type: 'parcoords',
-			line: { color: colors, colorscale: 'Viridis', showscale: false },
+			line: { color: colors, colorscale: [[0, '#3b82f6'], [1, '#10b981']], showscale: false },
 			dimensions: dims
 		}], {
 			paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
@@ -5857,7 +5861,7 @@ function _shift_render_highdim_plotly(container, tokenStrings, base, combined, d
 		Plotly.react(container, [{
 			type: 'scatter', mode: 'markers',
 			x: base.map(v => v[0] || 0), y: combined.map(v => v[0] || 0),
-			marker: { size: 6, color: colors, colorscale: 'Viridis' }
+			marker: { size: 6, color: colors, colorscale: [[0, '#3b82f6'], [1, '#10b981']] }
 		}], window.tmPlotly.layout2D(_tmMetricTitle('Semantic Vector → + Positional Shift'), ['D0 Base', 'D0 +PE']), { responsive: true, displayModeBar: false });
 	}
 }

@@ -209,9 +209,9 @@
 
 					<section class="section-block" id="code" data-chapter="The loop" data-chapter-de="Die Schleife">
 						<div class="section-kicker">Next step · code</div>
-						<h2 class="section-title">It also writes code.</h2>
+						<h2 class="section-title">It writes text and code.</h2>
 						<div class="prose">
-							<p>The same loop writes code. The model predicts the tokens; Python runs the program. Code is just another sequence with strong regularities.</p>
+							<p>The same loop writes prose and code; Python runs the program.</p>
 						</div>
 
 						<div class="demo demo--paper demo--interactive code-demo--console" id="code-demo">

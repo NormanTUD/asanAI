@@ -92,7 +92,7 @@ def source_checks() -> None:
     for name, text in (("parent", attn), ("tenminutes", tm_attn)):
         check(f"{name}: orange attention-result box removed", "#fffbeb" not in text and "border:1px solid #f59e0b" not in text)
         check(f"{name}: green Pre-LN/next box removed", "background:#f0fdf4" not in text)
-        check(f"{name}: head tabs use the blue active state", "2563eb" in text and "is-active" in text)
+        check(f"{name}: head tabs mark the active state without a blue fill", "is-active" in text and "box-shadow" in text)
     for name, text in (("parent", js), ("tenminutes", tm_js)):
         check(f"{name}: collapse-all is a toggle", "updateLayerCollapseAllLabel" in text and "setLayerCardsOpen" in text)
         check(f"{name}: vector-field explanation exists", "createTrajectoryVFNote" in text)
@@ -158,7 +158,7 @@ def page_checks(page, port: int) -> None:
         };
     }""")
     check("head tab says only 'Head N'", head["label"] == "Head 1", head["label"])
-    check("active head tab is blue", head["bg"] == "rgb(37, 99, 235)", head["bg"])
+    check("active head tab has no blue background", head["bg"] != "rgb(37, 99, 235)", head["bg"])
     check("estimate explains context mixing", "dominates" in head["estimate"] or "dominiert" in head["estimate"])
     check("method note sits directly under the estimate", head["methodAfter"])
     check("layer head summary only names real head types",
