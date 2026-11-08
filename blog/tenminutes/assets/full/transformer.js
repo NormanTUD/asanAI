@@ -7502,7 +7502,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 					if (window.tmSubboxLoading) window.tmSubboxLoading.hide(sub);
 				}
 			};
-			if (window.requestAnimationFrame) requestAnimationFrame(function () { setTimeout(render, 0); });
+			if (window.requestAnimationFrame) requestAnimationFrame(function () { requestAnimationFrame(render); });
 			else render();
 		});
 	});
