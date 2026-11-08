@@ -259,6 +259,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<div class="demo-insight"><b>Takeaway</b><span>The model never decides that something is right. It builds a distribution from its training data and draws from it; the landscape shows how context narrows that distribution.</span></div>
 							</div>
 						<p class="step-note">The model does not jump to an answer. It feels its way through this space, one token at a time. Click a word below the landscape, or use Next word, to jump to that step.</p>
+						<div class="prose">
+							<p>Training is the process that shapes this landscape. The model moves its coarse points, the token and context representations, into relations with one another so that meaning can be stored in compressed form inside the network. Attention and dense layers are trained together so that, in the high-dimensional space behind the projection, the loss makes the ball move faster along paths that continue the training text and slower along paths that do not. The landscape is therefore learned, not given: what counts as plausible is defined entirely by the training data.</p>
+						</div>
 					</section>
 
 					<section class="section-block" id="inside" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">

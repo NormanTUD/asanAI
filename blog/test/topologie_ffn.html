@@ -1652,7 +1652,7 @@
     return { points: p, geo: g, mat: m };
   }
 
-  const mainPoints = makeTorusPoints(2600, 0.02, 1.12, true);
+  const mainPoints = makeTorusPoints(4200, 0.02, 1.12, true);
   mainGroup.add(mainPoints.points);
 
   /* a few comet trails */
@@ -2377,7 +2377,7 @@
      ============================================================ */
   let spaceFlowMat, spaceFlow, spaceTrailMat, spaceTrails;
   {
-    const n = 2700;
+    const n = 6000;
     const phase = new Float32Array(n);
     const speed = new Float32Array(n);
     const mode = new Float32Array(n);
