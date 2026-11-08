@@ -85,9 +85,9 @@
 
 [done] Training-Refresh gefixt: `registerLazyRenderable` rendert sichtbare Plots jetzt auch während des Trainings. [Vorher blieben Embedding/PE/Trajectory beim Training stehen; manuell geprüft: die „the“-Embedding-Position ändert sich nach 3 Epochen unter angular von (-0.381, 0.628, 0.679) auf (-0.460, 0.594, 0.660).]
 
-[open] Regressionstests ergänzen: Arc-Länge > 2 Punkte, Sphere-Hint, Training-Refresh, Sticky-Bar-Breite (1400 und 1024) und keine `removeChild`/Konsolenfehler bei wiederholten Metrik-/d_model-Wechseln.
+[done] Regressionstests ergänzen: Arc-Länge > 2 Punkte, Sphere-Hint, Training-Refresh, Sticky-Bar-Breite (1400 und 1024) und keine `removeChild`/Konsolenfehler bei wiederholten Metrik-/d_model-Wechseln. [transformer_ui2_regression_test.py: 52/52; transformer_fix_regression_test.py: 36/36.]
 
-[open] Sticky-Bar-Layout bei schmaleren Viewports prüfen (Training/Inference + Metric + Sphere) und ggf. weiter kompaktieren.
+[done] Sticky-Bar-Layout bei schmaleren Viewports prüfen (Training/Inference + Metric + Sphere) und ggf. weiter kompaktieren. [box-sizing + kompaktere Breiten; Test prüft scrollWidth <= clientWidth bei 1400 und 1024.]
 
 [note] Die früheren Einträge zu „Manhattan“/„drei Metriken“/„Per-Plot-Schalter“ sind überholt: aktuell gibt es nur Euklidisch (Default) und Großkreis/angular, global in der Sticky-Bar (Tenminutes: Config-Fallback).
 
