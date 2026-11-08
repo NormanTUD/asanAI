@@ -1154,8 +1154,31 @@
 }
 .tm-triple-cell {
 	min-width: 0;
-	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
-	background: var(--tm-card, var(--mn-surface, #ffffff));
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+}
+.tm-triple-cell:hover .tm-residual-heatmap-canvas {
+	outline: 2px solid var(--mn-accent, var(--tm-petrol, #3b82f6));
+	outline-offset: 2px;
+}
+.tm-triple-math {
+	margin: 4px 0 14px;
+	padding: 8px 10px;
+	border-left: 3px solid var(--mn-accent, var(--tm-petrol, #3b82f6));
+	background: var(--mn-bg-subtle, var(--tm-paper-2, #f8fafc));
+	border-radius: 0 8px 8px 0;
+	overflow-x: auto;
+}
+.tm-triple-math-note {
+	margin: 0 0 6px;
+	color: var(--mn-text-muted, var(--tm-muted, #627476));
+	font-size: 0.78rem;
+	line-height: 1.45;
+}
+.tm-triple-formula {
+	margin: 6px 0;
+	overflow-x: auto;
 }
 .tm-triple-label {
 	padding: 5px 7px 0;

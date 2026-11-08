@@ -964,7 +964,7 @@ function revealAncestorOptionalBlocks(el) {
 			contentWrapper.style.display = 'block';
 			if (header) {
 				const icon = header.querySelector('.optional-icon');
-				if (icon) icon.innerHTML = '▼';
+				if (icon) icon.innerHTML = '−';
 				header.classList.add('active');
 				header.setAttribute('aria-expanded', 'true');
 			}
@@ -1896,7 +1896,7 @@ function initOptionalBlocks() {
 		header.setAttribute('aria-expanded', 'false');
 		header.setAttribute('aria-controls', contentId);
 		header.innerHTML = `
-			<span class="optional-icon" style="display:inline-block; transition: transform 0.3s ease;" aria-hidden="true">▶</span>
+			<span class="optional-icon" style="display:inline-block;" aria-hidden="true">+</span>
 			<span class="optional-title">${headline}</span>
 		`;
 
@@ -2072,8 +2072,8 @@ function initOptionalBlocks() {
 				// --- EXPAND ---
 				isAnimating = true;
 
-				icon.style.transform = 'rotate(90deg)';
-				icon.innerHTML = '▼';
+				icon.style.transform = 'none';
+				icon.innerHTML = '−';
 				header.classList.add('active');
 				header.setAttribute('aria-expanded', 'true');
 
@@ -2117,8 +2117,8 @@ function initOptionalBlocks() {
 						child.style.transition = '';
 					});
 
-					icon.style.transform = 'rotate(0deg)';
-					icon.innerHTML = '▶';
+					icon.style.transform = 'none';
+					icon.innerHTML = '+';
 					header.classList.remove('active');
 					header.setAttribute('aria-expanded', 'false');
 

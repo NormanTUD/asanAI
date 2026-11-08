@@ -507,6 +507,8 @@
   const SURFACE_FRAG = `
     uniform vec3 uColA;
     uniform vec3 uColB;
+    uniform vec3 uRimA;
+    uniform vec3 uRimB;
     uniform float uOpacity;
     uniform float uTime;
     varying vec3 vN;
@@ -524,7 +526,7 @@
                  + dot(N, V)*1.4 + vW.x*0.22 + vW.z*0.18 + uTime*0.03));
       vec3 col = mix(uColA, uColB, band);
       col *= 0.30 + 0.70 * lam;
-      col += fres * mix(vec3(0.10,0.50,0.92), vec3(0.72,0.24,0.86), band) * 0.95;
+      col += fres * mix(uRimA, uRimB, band) * 0.95;
       col += irid * fres * 0.30;
       float face = 0.5 + 0.5 * sin(dot(vBary, vec3(13.0, 17.0, 19.0)) + uTime*0.3 + vSeed*7.0);
       col *= 0.88 + 0.12 * face;
@@ -571,12 +573,12 @@
       float w = max(fwidth(e), 0.00055);
       float line = 1.0 - smoothstep(0.0, w * 2.15, e);
       float soft = 1.0 - smoothstep(0.0, w * 7.5, e);
-      float face = (1.0 - smoothstep(0.0, 0.55, e)) * 0.045;
-      float pulse = 0.72 + 0.28 * sin(vW.y * 5.0 + vW.x * 2.0 + uTime * 0.55 + vSeed * 6.2831);
+      float face = (1.0 - smoothstep(0.0, 0.55, e)) * 0.024;
+      float pulse = 0.76 + 0.24 * sin(vW.y * 5.0 + vW.x * 2.0 + uTime * 0.55 + vSeed * 6.2831);
       vec3 col = mix(uColA, uColB, 0.5 + 0.5 * sin(vW.x*1.6 + vW.z*2.2 + vSeed*6.2831 + uTime*0.20));
       col *= pulse;
-      vec3 outc = col * (line * 1.35 + soft * 0.42 + face);
-      float alpha = (line * 0.92 + soft * 0.16 + face) * vGrow * uOpacity;
+      vec3 outc = col * (line * 0.70 + soft * 0.17 + face * 0.55);
+      float alpha = (line * 0.55 + soft * 0.065 + face * 0.45) * vGrow * uOpacity;
       gl_FragColor = vec4(outc, alpha);
     }
   `;
@@ -706,9 +708,17 @@
     varying float vAlpha;
     void main() {
       float life = fract(aPhase + uTime * aSpeed * uDir * 0.5);
-      float l = uDir > 0.0 ? life : 1.0 - life;
-      float r = mix(4.9, 0.85, l) * aRadius;
-      float ang = aPhase * 6.2831 + life * 4.4 * uDir + aSeed * 6.2831;
+      float r;
+      float ang = aPhase * 6.2831 + aSeed * 6.2831;
+      if (uDir > 0.0) {
+        r = mix(4.9, 0.85, life) * aRadius;
+        ang += life * 4.4;
+      } else {
+        float approach = smoothstep(0.0, 0.40, life);
+        float retreat = smoothstep(0.44, 1.0, life);
+        r = (mix(5.2, 1.05, approach) + retreat * 4.4) * aRadius;
+        ang += life * 1.2 + retreat * 5.0;
+      }
       vec3 p = vec3(cos(ang) * r, aY + 0.32 * sin(ang * 2.0 + uTime * 0.55), sin(ang) * r);
       vec4 world = modelMatrix * vec4(p, 1.0);
       vec4 mv = viewMatrix * world;
@@ -740,9 +750,17 @@
     void main() {
       float tt = uTime - aAge * 0.27;
       float life = fract(aPhase + tt * aSpeed * uDir * 0.5);
-      float l = uDir > 0.0 ? life : 1.0 - life;
-      float r = mix(4.9, 0.85, l) * aRadius;
-      float ang = aPhase * 6.2831 + life * 4.4 * uDir + aSeed * 6.2831;
+      float r;
+      float ang = aPhase * 6.2831 + aSeed * 6.2831;
+      if (uDir > 0.0) {
+        r = mix(4.9, 0.85, life) * aRadius;
+        ang += life * 4.4;
+      } else {
+        float approach = smoothstep(0.0, 0.40, life);
+        float retreat = smoothstep(0.44, 1.0, life);
+        r = (mix(5.2, 1.05, approach) + retreat * 4.4) * aRadius;
+        ang += life * 1.2 + retreat * 5.0;
+      }
       vec3 p = vec3(cos(ang) * r, aY + 0.32 * sin(ang * 2.0 + tt * 0.55), sin(ang) * r);
       vec4 world = modelMatrix * vec4(p, 1.0);
       gl_Position = projectionMatrix * viewMatrix * world;
@@ -867,11 +885,11 @@
       }
       void main() {
         vec3 d = normalize(vDir);
-        float band = pow(max(0.0, 1.0 - abs(d.y * 1.35 + 0.22 * sin(d.x * 2.1 + d.z * 1.7))), 7.0);
-        vec3 col = mix(vec3(0.0035, 0.0055, 0.016), vec3(0.012, 0.026, 0.064), band);
+        float band = pow(max(0.0, 1.0 - abs(d.y * 1.35 + 0.22 * sin(d.x * 2.1 + d.z * 1.7))), 9.0);
+        vec3 col = mix(vec3(0.0010, 0.0016, 0.0048), vec3(0.0026, 0.0062, 0.0170), band);
         float n = noise(d * 3.6 + vec3(0.0, uTime * 0.004, uTime * 0.006));
-        col += vec3(0.012, 0.030, 0.070) * n * band * 1.4;
-        col += vec3(0.004, 0.008, 0.020) * noise(d * 8.0 - uTime * 0.003);
+        col += vec3(0.0022, 0.0055, 0.0150) * n * band * 0.55;
+        col += vec3(0.0008, 0.0018, 0.0050) * noise(d * 8.0 - uTime * 0.003) * 0.55;
         gl_FragColor = vec4(col, 1.0);
       }
     `
@@ -895,7 +913,7 @@
   }
 
   let starMat = null;
-  const starCount = 1500;
+  const starCount = 1000;
   {
     const pos = new Float32Array(starCount * 3);
     const size = new Float32Array(starCount);
@@ -907,7 +925,7 @@
       pos[i*3] = r * Math.sin(ph) * Math.cos(th);
       pos[i*3+1] = r * Math.cos(ph);
       pos[i*3+2] = r * Math.sin(ph) * Math.sin(th);
-      size[i] = 0.5 + Math.pow(rand(), 3) * 2.4;
+      size[i] = 0.4 + Math.pow(rand(), 3) * 1.55;
       phase[i] = rand();
     }
     const g = new THREE.BufferGeometry();
@@ -923,7 +941,7 @@
       void main() {
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * mv;
-        gl_PointSize = clamp(aSize * uPixelRatio * 44.0 / max(1.0, -mv.z), 0.4, 4.2);
+        gl_PointSize = clamp(aSize * uPixelRatio * 30.0 / max(1.0, -mv.z), 0.35, 3.0);
         vTw = 0.45 + 0.55 * pow(0.5 + 0.5 * sin(uTime * (0.25 + aPhase * 0.5) + aPhase * 6.2831), 3.0);
       }
     `, `
@@ -934,7 +952,7 @@
         float d = length(q);
         if (d > 1.0) discard;
         float a = pow(max(0.0, 1.0 - d), 2.5) * vTw;
-        gl_FragColor = vec4(vec3(0.62, 0.82, 1.0) * 1.15, a);
+        gl_FragColor = vec4(vec3(0.55, 0.74, 1.0) * 0.78, a);
       }
     `, {
       uPixelRatio: { value: DPR },
@@ -1026,9 +1044,9 @@
       col *= uExposure;
       col = aces(col);
       float vig = smoothstep(0.98, 0.24, length(d) * 1.18);
-      col *= 0.52 + 0.48 * vig;
+      col *= 0.46 + 0.54 * vig;
       float g = fract(sin(dot(uv * vec2(1731.0, 977.0) + uTime * 0.7, vec2(12.9898, 78.233))) * 43758.5453);
-      col += (g - 0.5) * 0.011;
+      col += (g - 0.5) * 0.004;
       col = pow(max(col, 0.0), vec3(1.0 / 2.2));
       gl_FragColor = vec4(col, 1.0);
     }
@@ -1062,7 +1080,7 @@
 
     brightMat = makeFSMaterial(BRIGHT_FRAG, {
       tDiffuse: { value: sceneRT.texture },
-      uThreshold: { value: 0.56 }
+      uThreshold: { value: 0.68 }
     });
     blurMat = makeFSMaterial(BLUR_FRAG, {
       tDiffuse: { value: null },
@@ -1074,7 +1092,7 @@
       tBloomA: { value: bloomA.texture },
       tBloomB: { value: bloomC.texture },
       uTime: { value: 0 },
-      uExposure: { value: 1.12 }
+      uExposure: { value: 1.02 }
     });
   }
 
@@ -1167,7 +1185,7 @@
     return mat;
   }
 
-  function surfaceMaterial(seed, colA, colB) {
+  function surfaceMaterial(seed, colA, colB, rimA, rimB) {
     return regMat(new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 },
@@ -1176,7 +1194,9 @@
         uGrow: { value: 0 },
         uOpacity: { value: 0 },
         uColA: { value: colA.clone() },
-        uColB: { value: colB.clone() }
+        uColB: { value: colB.clone() },
+        uRimA: { value: (rimA || colA).clone() },
+        uRimB: { value: (rimB || colB).clone() }
       },
       vertexShader: SURFACE_VERT,
       fragmentShader: SURFACE_FRAG,
@@ -1302,7 +1322,7 @@
   mainDepth.frustumCulled = false;
   mainGroup.add(mainDepth);
 
-  const mainSurfaceMat = surfaceMaterial(mainSeed, COL.cyan, COL.violet);
+  const mainSurfaceMat = surfaceMaterial(mainSeed, COL.cyan, COL.violet, COL.ice, COL.violet);
   const mainSurface = new THREE.Mesh(meshGeo, mainSurfaceMat);
   mainSurface.renderOrder = 2;
   mainSurface.frustumCulled = false;
@@ -1434,6 +1454,325 @@
   mainGroup.add(mainSparks.points);
 
   /* ============================================================
+     a library of other surfaces for the surrounding landscape
+     ============================================================ */
+  const RED_A = new THREE.Color(0.98, 0.06, 0.11);
+  const RED_B = new THREE.Color(1.00, 0.40, 0.10);
+  const GREEN = new THREE.Color(0.18, 0.95, 0.62);
+  const PINK  = new THREE.Color(0.96, 0.28, 0.84);
+  const ORANGE = new THREE.Color(1.00, 0.54, 0.16);
+
+  function mergeNonIndexed(geos) {
+    let total = 0;
+    for (const g of geos) total += g.attributes.position.count;
+    const pos = new Float32Array(total * 3);
+    const nor = new Float32Array(total * 3);
+    let off = 0;
+    for (const g of geos) {
+      const p = g.attributes.position.array;
+      const n = g.attributes.normal.array;
+      pos.set(p, off * 3);
+      nor.set(n, off * 3);
+      off += p.length / 3;
+    }
+    const out = new THREE.BufferGeometry();
+    out.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    out.setAttribute("normal", new THREE.BufferAttribute(nor, 3));
+    return out;
+  }
+
+  function makeChainGeo() {
+    const list = [];
+    for (let i = -1; i <= 1; i++) {
+      const g = new THREE.TorusGeometry(0.62, 0.22, 16, 84);
+      g.rotateY(i * 0.34);
+      g.rotateZ(i * 0.12);
+      g.translate(i * 0.72, 0, 0);
+      list.push(g.toNonIndexed());
+    }
+    return mergeNonIndexed(list);
+  }
+
+  function makeShellGeo() {
+    const nu = 210, nv = 28, turns = 3.35;
+    const pos = [];
+    const idx = [];
+    const center = (u) => {
+      const th = u * turns * Math.PI * 2;
+      const R = 0.18 + 1.02 * u;
+      return new THREE.Vector3(Math.cos(th) * R, -1.0 + 1.85 * u, Math.sin(th) * R);
+    };
+    for (let i = 0; i <= nu; i++) {
+      const u = i / nu;
+      const c = center(u);
+      const c0 = center(Math.max(0, u - 0.002));
+      const c1 = center(Math.min(1, u + 0.002));
+      const T = c1.clone().sub(c0).normalize();
+      const up = new THREE.Vector3(0, 1, 0);
+      const N = new THREE.Vector3().crossVectors(T, up).normalize();
+      const B = new THREE.Vector3().crossVectors(T, N).normalize();
+      const rad = 0.055 + 0.285 * u;
+      for (let j = 0; j <= nv; j++) {
+        const v = j / nv * Math.PI * 2;
+        const p = c.clone()
+          .addScaledVector(N, Math.cos(v) * rad)
+          .addScaledVector(B, Math.sin(v) * rad);
+        pos.push(p.x, p.y, p.z);
+      }
+    }
+    for (let i = 0; i < nu; i++) {
+      for (let j = 0; j < nv; j++) {
+        const a = i * (nv + 1) + j;
+        const b = a + (nv + 1);
+        idx.push(a, b, a + 1, b, b + 1, a + 1);
+      }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+
+  function makeBlobGeo(spiky) {
+    const nu = 92, nv = 46;
+    const pos = [];
+    const idx = [];
+    for (let j = 0; j <= nv; j++) {
+      const phi = j / nv * Math.PI;
+      const sp = Math.sin(phi), cp = Math.cos(phi);
+      for (let i = 0; i <= nu; i++) {
+        const th = i / nu * Math.PI * 2;
+        const r = spiky
+          ? 0.84 + 0.23 * Math.sin(7 * th) * Math.sin(6 * phi) + 0.10 * Math.sin(13 * th + 4 * phi)
+          : 0.92 + 0.17 * Math.sin(5 * th) * Math.sin(3 * phi) + 0.055 * Math.sin(9 * th + 2 * phi);
+        pos.push(r * sp * Math.cos(th), r * cp, r * sp * Math.sin(th));
+      }
+    }
+    for (let j = 0; j < nv; j++) {
+      for (let i = 0; i < nu; i++) {
+        const a = j * (nu + 1) + i;
+        const b = a + 1;
+        const c = a + (nu + 1);
+        const d = c + 1;
+        idx.push(a, b, d, a, d, c);
+      }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+
+  function toSimplicial(src) {
+    let g = src.index ? src.toNonIndexed() : src;
+    if (!g.attributes.normal) g.computeVertexNormals();
+    const pos = g.attributes.position.array;
+    const nor = g.attributes.normal.array;
+    const triCount = pos.length / 9;
+    const P = new Float32Array(triCount * 9);
+    const N = new Float32Array(triCount * 9);
+    const B = new Float32Array(triCount * 9);
+    const C = new Float32Array(triCount * 9);
+    const S = new Float32Array(triCount * 3);
+    for (let t = 0; t < triCount; t++) {
+      const o = t * 9;
+      const ax = pos[o], ay = pos[o+1], az = pos[o+2];
+      const bx = pos[o+3], by = pos[o+4], bz = pos[o+5];
+      const cx = pos[o+6], cy = pos[o+7], cz = pos[o+8];
+      const mx = (ax + bx + cx) / 3, my = (ay + by + cy) / 3, mz = (az + bz + cz) / 3;
+      const seed = 0.62 * fract(0.5 + 0.5 * Math.sin(mx*1.37 + my*2.13 + mz*1.71)) + 0.06 * rand();
+      for (let q = 0; q < 3; q++) {
+        const k = o + q * 3;
+        P[k] = pos[k]; P[k+1] = pos[k+1]; P[k+2] = pos[k+2];
+        N[k] = nor[k]; N[k+1] = nor[k+1]; N[k+2] = nor[k+2];
+        B[k] = q === 0 ? 1 : 0;
+        B[k+1] = q === 1 ? 1 : 0;
+        B[k+2] = q === 2 ? 1 : 0;
+        C[k] = mx; C[k+1] = my; C[k+2] = mz;
+        S[t*3+q] = seed;
+      }
+    }
+    const out = new THREE.BufferGeometry();
+    out.setAttribute("position", new THREE.BufferAttribute(P, 3));
+    out.setAttribute("normal", new THREE.BufferAttribute(N, 3));
+    out.setAttribute("aBary", new THREE.BufferAttribute(B, 3));
+    out.setAttribute("aCentroid", new THREE.BufferAttribute(C, 3));
+    out.setAttribute("aSeed", new THREE.BufferAttribute(S, 1));
+    out.computeBoundingSphere();
+    return { geo: out, sparkPositions: P };
+  }
+
+  const islandGeoCache = {};
+  function getIslandGeo(kind) {
+    if (kind === "genus2") return { geo: meshGeo, sparkPositions: meshData.sourcePositions };
+    if (islandGeoCache[kind]) return islandGeoCache[kind];
+    let src;
+    if (kind === "torus") src = new THREE.TorusGeometry(1.0, 0.33, 18, 120);
+    else if (kind === "knot") src = new THREE.TorusKnotGeometry(0.82, 0.24, 210, 18, 2, 3);
+    else if (kind === "chain") src = makeChainGeo();
+    else if (kind === "shell") src = makeShellGeo();
+    else if (kind === "flower") src = makeBlobGeo(false);
+    else if (kind === "urchin") src = makeBlobGeo(true);
+    else src = new THREE.TorusGeometry(0.9, 0.3, 16, 96);
+    const res = toSimplicial(src);
+    islandGeoCache[kind] = res;
+    return res;
+  }
+
+  function makeIslandSparks(posArr, seed, count, sizeScale) {
+    const g = new THREE.BufferGeometry();
+    const n = posArr.length / 3;
+    const pos = new Float32Array(count * 3);
+    const size = new Float32Array(count);
+    const s = new Float32Array(count);
+    const hue = new Float32Array(count);
+    for (let i = 0; i < count; i++) {
+      const vi = Math.floor(rand() * n);
+      pos[i*3] = posArr[vi*3];
+      pos[i*3+1] = posArr[vi*3+1];
+      pos[i*3+2] = posArr[vi*3+2];
+      size[i] = 0.75 + Math.pow(rand(), 2) * 2.1;
+      s[i] = rand();
+      hue[i] = rand();
+    }
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.setAttribute("aSize", new THREE.BufferAttribute(size, 1));
+    g.setAttribute("aSeed", new THREE.BufferAttribute(s, 1));
+    g.setAttribute("aHue", new THREE.BufferAttribute(hue, 1));
+    const m = sparkMaterial(seed, sizeScale || 0.9);
+    const p = new THREE.Points(g, m);
+    p.frustumCulled = false;
+    p.renderOrder = 8;
+    return { points: p, mat: m };
+  }
+
+  /* points that fly around an island: inward for attractors,
+     approach-then-bounce for repellors; each with a short, quick trace */
+  function makeAura(repel, seed, count) {
+    const dir = repel ? -1 : 1;
+    const n = count, segs = 4;
+    const phase = new Float32Array(n);
+    const speed = new Float32Array(n);
+    const radius = new Float32Array(n);
+    const yy = new Float32Array(n);
+    const sd = new Float32Array(n);
+    const size = new Float32Array(n);
+    const hue = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      phase[i] = rand();
+      speed[i] = 0.06 + rand() * 0.16;
+      radius[i] = 0.82 + rand() * 0.42;
+      yy[i] = (rand() - 0.5) * 1.5;
+      sd[i] = rand();
+      size[i] = 0.8 + Math.pow(rand(), 2) * 2.4;
+      hue[i] = rand();
+    }
+
+    const pg = new THREE.BufferGeometry();
+    pg.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+    pg.setAttribute("aPhase", new THREE.BufferAttribute(phase, 1));
+    pg.setAttribute("aSpeed", new THREE.BufferAttribute(speed, 1));
+    pg.setAttribute("aRadius", new THREE.BufferAttribute(radius, 1));
+    pg.setAttribute("aY", new THREE.BufferAttribute(yy, 1));
+    pg.setAttribute("aSeed", new THREE.BufferAttribute(sd, 1));
+    pg.setAttribute("aSize", new THREE.BufferAttribute(size, 1));
+    pg.setAttribute("aHue", new THREE.BufferAttribute(hue, 1));
+    const pm = regMat(new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uOpacity: { value: 0 },
+        uDir: { value: dir },
+        uPixelRatio: { value: DPR },
+        uSizeScale: { value: 0.9 }
+      },
+      vertexShader: AURA_VERT,
+      fragmentShader: AURA_FRAG,
+      transparent: true,
+      depthWrite: false,
+      depthTest: true,
+      blending: THREE.AdditiveBlending
+    }), seed * 7.1);
+    const points = new THREE.Points(pg, pm);
+    points.frustumCulled = false;
+    points.renderOrder = 8;
+
+    const verts = n * segs * 2;
+    const tg = new THREE.BufferGeometry();
+    const tpos = new Float32Array(verts * 3);
+    const age = new Float32Array(verts);
+    const tphase = new Float32Array(verts);
+    const tspeed = new Float32Array(verts);
+    const tradius = new Float32Array(verts);
+    const tyy = new Float32Array(verts);
+    const tsd = new Float32Array(verts);
+    const thue = new Float32Array(verts);
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < segs; j++) {
+        for (let e = 0; e < 2; e++) {
+          const idx = (i * segs + j) * 2 + e;
+          age[idx] = (j + e) / segs;
+          tphase[idx] = phase[i];
+          tspeed[idx] = speed[i];
+          tradius[idx] = radius[i];
+          tyy[idx] = yy[i];
+          tsd[idx] = sd[i];
+          thue[idx] = hue[i];
+        }
+      }
+    }
+    tg.setAttribute("position", new THREE.BufferAttribute(tpos, 3));
+    tg.setAttribute("aAge", new THREE.BufferAttribute(age, 1));
+    tg.setAttribute("aPhase", new THREE.BufferAttribute(tphase, 1));
+    tg.setAttribute("aSpeed", new THREE.BufferAttribute(tspeed, 1));
+    tg.setAttribute("aRadius", new THREE.BufferAttribute(tradius, 1));
+    tg.setAttribute("aY", new THREE.BufferAttribute(tyy, 1));
+    tg.setAttribute("aSeed", new THREE.BufferAttribute(tsd, 1));
+    tg.setAttribute("aHue", new THREE.BufferAttribute(thue, 1));
+    const tm = regMat(new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uOpacity: { value: 0 },
+        uDir: { value: dir }
+      },
+      vertexShader: AURA_TRAIL_VERT,
+      fragmentShader: AURA_TRAIL_FRAG,
+      transparent: true,
+      depthWrite: false,
+      depthTest: true,
+      blending: THREE.AdditiveBlending
+    }), seed * 8.3);
+    const lines = new THREE.LineSegments(tg, tm);
+    lines.frustumCulled = false;
+    lines.renderOrder = 7;
+
+    return { points, mat: pm, lines, trailMat: tm };
+  }
+
+  /* the palette of the wider landscape: attractors of many shapes,
+     plus soft red repellors */
+  const ISLAND_TYPES = [
+    { kind: "genus2", repel: false, a: COL.ice,   b: COL.violet, ra: COL.cyan, rb: COL.violet },
+    { kind: "knot",   repel: false, a: COL.gold,  b: COL.rose,   ra: COL.gold, rb: COL.rose },
+    { kind: "torus",  repel: false, a: COL.cyan,  b: COL.ice,    ra: COL.cyan, rb: COL.ice },
+    { kind: "urchin", repel: true,  a: RED_A,     b: RED_B,      ra: RED_A,    rb: RED_B },
+    { kind: "shell",  repel: false, a: ORANGE,    b: COL.rose,   ra: ORANGE,   rb: COL.rose },
+    { kind: "chain",  repel: false, a: GREEN,     b: COL.cyan,   ra: GREEN,    rb: COL.cyan },
+    { kind: "flower", repel: false, a: PINK,      b: COL.violet, ra: PINK,     rb: COL.violet },
+    { kind: "genus2", repel: false, a: COL.cyan,  b: COL.rose,   ra: COL.ice,  rb: COL.rose },
+    { kind: "knot",   repel: false, a: COL.ice,   b: COL.gold,   ra: COL.ice,  rb: COL.gold },
+    { kind: "urchin", repel: true,  a: RED_A,     b: RED_B,      ra: RED_A,    rb: RED_B },
+    { kind: "torus",  repel: false, a: COL.violet,b: COL.ice,    ra: COL.violet,rb: COL.ice },
+    { kind: "shell",  repel: false, a: COL.rose,  b: ORANGE,     ra: COL.rose, rb: ORANGE },
+    { kind: "genus2", repel: false, a: COL.ice,   b: COL.cyan,   ra: COL.cyan, rb: COL.ice },
+    { kind: "flower", repel: false, a: COL.gold,  b: PINK,       ra: COL.gold, rb: PINK },
+    { kind: "chain",  repel: false, a: COL.cyan,  b: GREEN,      ra: COL.cyan, rb: GREEN },
+    { kind: "urchin", repel: true,  a: RED_A,     b: RED_B,      ra: RED_A,    rb: RED_B }
+  ];
+
+
+  /* ============================================================
      four invariant cycles: two around the holes, two around the tubes
      ============================================================ */
   const cycles = [];
@@ -1509,19 +1848,19 @@
   }
   const haloTex = haloTexture();
 
-  const islandCount = 14;
+  const islandCount = ISLAND_TYPES.length;
   const islands = [];
-  const mapDustPositions = [];
 
   function createIsland(i) {
-    const repel = (i % 5 === 4);
+    const type = ISLAND_TYPES[i];
+    const repel = !!type.repel;
     const seed = 1.7 + i * 2.31;
     const t = i / (islandCount - 1);
     const ga = i * 2.399963229728653;
-    const radius = 4.0 + 8.6 * Math.sqrt((i + 0.5) / islandCount);
+    const radius = 4.2 + 9.4 * Math.sqrt((i + 0.5) / islandCount);
     const mapPos = new THREE.Vector3(
       Math.cos(ga) * radius,
-      (rand() - 0.5) * 3.4 - 0.3,
+      (rand() - 0.5) * 4.2 - 0.4,
       Math.sin(ga) * radius
     );
     const layer = i % 5;
@@ -1532,29 +1871,50 @@
       -5.0 + layer * 2.5 + (rand() - 0.5) * 0.4,
       Math.sin(la) * lr
     );
-    const mapScale = 0.26 + rand() * 0.22;
-    const ffnScale = 0.17 + rand() * 0.12;
+    const mapScale = 0.28 + rand() * 0.24;
+    const ffnScale = 0.16 + rand() * 0.12;
 
     const group = new THREE.Group();
     group.position.copy(mapPos);
     group.scale.setScalar(mapScale);
     group.rotation.set(rand()*0.5, rand()*Math.PI*2, rand()*0.4);
 
-    const colA = repel ? COL.rose : (rand() < 0.5 ? COL.ice : COL.cyan);
-    const colB = repel ? COL.gold : (rand() < 0.5 ? COL.violet : COL.rose);
-    const edge = new THREE.Mesh(meshGeo, edgeMaterial(seed, colA, colB));
-    edge.material.uniforms.uGrow.value = 1;
+    const ig = getIslandGeo(type.kind);
+
+    const surfaceMat = surfaceMaterial(seed, type.a, type.b, type.ra, type.rb);
+    surfaceMat.uniforms.uGrow.value = 1;
+    const surface = new THREE.Mesh(ig.geo, surfaceMat);
+    surface.renderOrder = 7;
+    surface.frustumCulled = false;
+    group.add(surface);
+
+    const edgeMat = edgeMaterial(seed, type.a, type.b);
+    edgeMat.uniforms.uGrow.value = 1;
+    const edge = new THREE.Mesh(ig.geo, edgeMat);
     edge.renderOrder = 8;
     edge.frustumCulled = false;
     group.add(edge);
 
-    const pts = makeTorusPoints(repel ? 300 : 460, seed, repel ? 0.82 : 0.92);
-    pts.points.material.uniforms.uFlowDir.value = repel ? -1 : 1;
-    group.add(pts.points);
+    let pts = null;
+    if (type.kind === "genus2") {
+      pts = makeTorusPoints(repel ? 280 : 420, seed, 0.9);
+      pts.points.material.uniforms.uFlowDir.value = repel ? -1 : 1;
+      group.add(pts.points);
+    }
+
+    let sparks = null;
+    if (type.kind !== "genus2") {
+      sparks = makeIslandSparks(ig.sparkPositions, seed, repel ? 70 : 120, 0.9);
+      group.add(sparks.points);
+    }
+
+    const aura = makeAura(repel, seed, repel ? 92 : 62);
+    group.add(aura.points);
+    group.add(aura.lines);
 
     const halo = new THREE.Sprite(new THREE.SpriteMaterial({
       map: haloTex,
-      color: repel ? new THREE.Color(1.0, 0.35, 0.22) : new THREE.Color(0.35, 0.78, 1.0),
+      color: type.a.clone().lerp(type.b, 0.28),
       transparent: true,
       depthWrite: false,
       depthTest: true,
@@ -1566,10 +1926,14 @@
 
     scene.add(group);
     islands.push({
-      group, edge, pts, halo,
-      seed, repel, mapPos, ffnPos, mapScale, ffnScale,
-      edgeMat: edge.material,
-      pointMat: pts.points.material,
+      group, edge, surface, pts, sparks, aura, halo,
+      seed, repel, kind: type.kind, type,
+      mapPos, ffnPos, mapScale, ffnScale,
+      edgeMat, surfaceMat,
+      pointMat: pts ? pts.points.material : null,
+      sparkMat: sparks ? sparks.mat : null,
+      auraMat: aura.mat,
+      auraTrailMat: aura.trailMat,
       rotation: new THREE.Euler(rand()*0.5, rand()*Math.PI*2, rand()*0.4)
     });
   }
@@ -2032,7 +2396,7 @@
   let uiTimer = 0;
   const clock = new THREE.Clock();
 
-  const actStops = [0.01, 0.17, 0.35, 0.54, 0.78, 0.94];
+  const actStops = [0.01, 0.14, 0.29, 0.44, 0.58, 0.80, 0.95];
   const actButtons = [];
   for (let i = 0; i < actStops.length; i++) {
     const b = document.createElement("button");
@@ -2056,14 +2420,17 @@
   }
 
   const CAM_KEYS = [
-    { t: 0.00, r: 5.10, phi: 1.24, ty: 0.00, th: 0.32 },
-    { t: 0.16, r: 4.55, phi: 1.17, ty: 0.00, th: 0.38 },
-    { t: 0.34, r: 4.18, phi: 1.14, ty: 0.00, th: 0.46 },
-    { t: 0.52, r: 3.86, phi: 1.20, ty: 0.00, th: 0.52 },
-    { t: 0.65, r: 4.35, phi: 1.19, ty: 0.00, th: 0.60 },
-    { t: 0.82, r: 11.8, phi: 1.03, ty: 1.10, th: 0.78 },
-    { t: 0.93, r: 16.2, phi: 1.10, ty: 1.30, th: 0.92 },
-    { t: 1.00, r: 18.2, phi: 1.15, ty: 1.30, th: 1.02 }
+    { t: 0.00, r: 24.5, phi: 1.03, ty: 0.00, th: 0.10 },
+    { t: 0.05, r: 20.0, phi: 1.06, ty: 0.20, th: 0.16 },
+    { t: 0.10, r: 12.4, phi: 1.10, ty: 0.10, th: 0.22 },
+    { t: 0.15, r: 7.1,  phi: 1.16, ty: 0.00, th: 0.28 },
+    { t: 0.21, r: 5.0,  phi: 1.18, ty: 0.00, th: 0.34 },
+    { t: 0.34, r: 4.4,  phi: 1.15, ty: 0.00, th: 0.42 },
+    { t: 0.50, r: 4.0,  phi: 1.20, ty: 0.00, th: 0.50 },
+    { t: 0.64, r: 4.5,  phi: 1.18, ty: 0.00, th: 0.58 },
+    { t: 0.82, r: 12.0, phi: 1.04, ty: 1.05, th: 0.78 },
+    { t: 0.93, r: 16.4, phi: 1.10, ty: 1.30, th: 0.92 },
+    { t: 1.00, r: 18.4, phi: 1.15, ty: 1.30, th: 1.02 }
   ];
 
   function camSample(s) {
@@ -2222,16 +2589,17 @@
      story -> visible state
      ============================================================ */
   function updateStory(s) {
-    const appear = smoothstep(0.00, 0.12, s);
-    const grow = smoothstep(0.23, 0.50, s);
-    const surfOn = smoothstep(0.27, 0.43, s);
-    const isolate = smoothstep(0.45, 0.58, s);
-    const morphOut = smoothstep(0.58, 0.75, s);
-    const mapOn = smoothstep(0.72, 0.86, s);
-    const ffnOn = smoothstep(0.86, 0.99, s);
+    const introOn = smoothstep(0.00, 0.02, s) * (1 - smoothstep(0.10, 0.24, s));
+    const appear = smoothstep(0.07, 0.20, s);
+    const grow = smoothstep(0.32, 0.54, s);
+    const surfOn = smoothstep(0.35, 0.50, s);
+    const isolate = smoothstep(0.51, 0.63, s);
+    const morphOut = smoothstep(0.63, 0.79, s);
+    const mapOn = smoothstep(0.77, 0.89, s);
+    const ffnOn = smoothstep(0.89, 0.995, s);
 
     const morph = 1 - morphOut;
-    const pointOp = (0.16 + 0.84 * appear) * (1 - 0.30 * isolate) * (1 - 0.58 * ffnOn);
+    const pointOp = appear * (1 - 0.30 * isolate) * (1 - 0.58 * ffnOn);
     const mainScale = lerp(lerp(1.0, 0.54, mapOn), 0.63, ffnOn);
 
     mainGroup.scale.setScalar(mainScale);
@@ -2246,8 +2614,8 @@
     mainEdgeMat.uniforms.uMorph.value = morph;
     mainEdgeMat.uniforms.uGrow.value = grow;
     mainEdgeMat.uniforms.uOpacity.value =
-      0.95 * smoothstep(0.17, 0.34, s) * (0.82 + 0.18 * isolate)
-      * (1 - 0.34 * mapOn) * (1 - 0.50 * ffnOn);
+      0.62 * smoothstep(0.25, 0.44, s) * (0.82 + 0.18 * isolate)
+      * (1 - 0.30 * mapOn) * (1 - 0.45 * ffnOn);
     mainEdges.visible = grow > 0.003;
 
     mainDepthMat.uniforms.uMorph.value = morph;
@@ -2268,28 +2636,39 @@
     for (const c of cycles) {
       c.mat.uniforms.uMorph.value = morph;
       c.mat.uniforms.uOpacity.value =
-        c.base * smoothstep(0.46, 0.58, s) * (1 - smoothstep(0.79, 0.90, s));
+        c.base * smoothstep(0.52, 0.64, s) * (1 - smoothstep(0.82, 0.92, s));
       c.line.visible = c.mat.uniforms.uOpacity.value > 0.006;
     }
 
-    const islandOp = mapOn * (1 - 0.38 * ffnOn);
+    const islandOp = Math.max(introOn * 0.72, mapOn * (1 - 0.38 * ffnOn));
     for (let i = 0; i < islands.length; i++) {
       const isl = islands[i];
       isl.group.position.copy(isl.mapPos).lerp(isl.ffnPos, ffnOn);
       isl.group.scale.setScalar(lerp(isl.mapScale, isl.ffnScale, ffnOn));
       isl.group.rotation.y = isl.rotation.y + elapsed * (isl.repel ? -0.045 : 0.055) * (1 - 0.5 * ffnOn);
-      isl.group.visible = mapOn > 0.004;
-      const im = 0.22 + 0.58 * fract(isl.seed * 0.371);
+      isl.group.visible = islandOp > 0.004;
+      const im = 0.26 + 0.60 * fract(isl.seed * 0.371);
       isl.edgeMat.uniforms.uMorph.value = im;
-      isl.edgeMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.50 : 0.68);
-      isl.pointMat.uniforms.uMorph.value = im;
-      isl.pointMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.55 : 0.80);
-      isl.halo.material.opacity = islandOp * (isl.repel ? 0.32 : 0.20);
+      isl.edgeMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.32 : 0.48);
+      isl.surfaceMat.uniforms.uMorph.value = im;
+      isl.surfaceMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.48 : 0.13);
+      if (isl.pointMat) {
+        isl.pointMat.uniforms.uMorph.value = im;
+        isl.pointMat.uniforms.uOpacity.value = islandOp * 0.62;
+      }
+      if (isl.sparkMat) {
+        isl.sparkMat.uniforms.uMorph.value = im;
+        isl.sparkMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.12 : 0.38);
+      }
+      isl.auraMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.66 : 0.34);
+      isl.auraTrailMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.55 : 0.24);
+      isl.halo.material.opacity = islandOp * (isl.repel ? 0.40 : 0.16);
     }
 
-    threadMat.uniforms.uOpacity.value = mapOn * (1 - ffnOn) * 0.95;
+    const threadOp = Math.max(introOn * 0.45, mapOn * (1 - ffnOn));
+    threadMat.uniforms.uOpacity.value = threadOp * 0.95;
     threads.visible = threadMat.uniforms.uOpacity.value > 0.004;
-    mapDustMat.uniforms.uOpacity.value = mapOn * (1 - 0.42 * ffnOn) * 0.8;
+    mapDustMat.uniforms.uOpacity.value = Math.min(1, introOn * 0.9 + mapOn * (1 - 0.42 * ffnOn)) * 0.8;
     mapDust.visible = mapDustMat.uniforms.uOpacity.value > 0.004;
 
     ffnGroup.visible = ffnOn > 0.003;
@@ -2342,7 +2721,7 @@
     elapsed += dt;
 
     if (playing) {
-      story = Math.min(1, story + dt / 108);
+      story = Math.min(1, story + dt / 118);
       if (story >= 1) {
         story = 1;
         playing = false;
@@ -2373,6 +2752,13 @@
   /* ============================================================
      boot
      ============================================================ */
+  const params = new URLSearchParams(location.search);
+  if (params.has("story")) {
+    story = clamp(parseFloat(params.get("story")) || 0, 0, 1);
+    storySmooth = story;
+  }
+  if (params.get("pause") === "1") playing = false;
+
   initPost();
   resize();
   updateStory(0);

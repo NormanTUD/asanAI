@@ -2,8 +2,8 @@
 
 - lessons: 99
 - claims: 7388
-- statements: 17336
-- relations: 52450
+- statements: 17333
+- relations: 52462
 - uncovered years: 64
 - uncovered quantities: 6
 - uncited specific claims: 307
@@ -61,7 +61,7 @@
 | intro | 17 | 40 | 121 | 0 | 0 |
 | intuition | 32 | 261 | 750 | 1 | 0 |
 | knowledge_map | 15 | 0 | 14 | 0 | 0 |
-| language | 86 | 367 | 866 | 7 | 0 |
+| language | 86 | 367 | 878 | 7 | 0 |
 | law_regulation | 28 | 61 | 236 | 0 | 0 |
 | loss_landscape | 25 | 98 | 262 | 0 | 0 |
 | losslab | 23 | 70 | 231 | 0 | 0 |
@@ -107,7 +107,7 @@
 | training_infrastructure | 32 | 55 | 239 | 0 | 0 |
 | trainingdynamics | 23 | 29 | 140 | 0 | 0 |
 | traininglab | 15 | 7 | 67 | 0 | 0 |
-| transformer | 37 | 299 | 951 | 0 | 0 |
+| transformer | 37 | 296 | 951 | 0 | 0 |
 | unexpected_capabilities | 40 | 274 | 578 | 4 | 1 |
 | untold_history_i | 520 | 458 | 1503 | 3 | 0 |
 | untold_history_ii | 672 | 643 | 2025 | 6 | 0 |

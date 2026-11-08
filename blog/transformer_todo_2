@@ -8,4 +8,19 @@ in überschriften soll das glossary nicht gemacht werden, nur in texten. mach di
 
 "Pre-LN: Normalize h3(2) before FFN" erkläre bei den schritten jeweils wofür die da sind und warum sie jetzt da gemacht werden. recherchier das für jeden davon. mach es kurz, geb ne intuition dafür, zeige aber auch einschränkungen der intuition wenn es welche gibt. mach das für jeden schritt dort. die texte dann so dass man sie als mensch sehen kann, gern auch mit ein paar wenigen abstrakten formeln, damit man versteht, was die idee da ist.
 
+verschiebe "what the heads actually react to" zu den heads und mach es aufklappbar. mach dass die optional boxen systemweit so aussehen wie die boxen in denne auch "from vector to words" ist.
 
+
+die formeln wie das in "
+    Logits: Raw scores for every word in the dictionary.
+    SoftMax: Normalizes scores into probabilities (0 to 1).
+    Temperature (
+    T
+    ): Modifies the SoftMax:
+    σ(z)i=ezi/T∑ezj/T
+    .
+" sind immer noch in eigenen zeilen. das nervt. fixe das.
+
+
+
+"Remember that the n is the number of" zahlen wie das $n$ hier braucht KEINE nummer wie (4.13) oder sowas. allgemein brauchen formeln keine automatisch generierte nummer.

@@ -2105,6 +2105,41 @@
 		typesetMathIn(host);
 	}
 
+	function toggleTripleMath(layerIdx, triple) {
+		var host = triple.parentNode;
+		var panel = host.querySelector('.tm-triple-math[data-layer="' + layerIdx + '"]');
+		if (panel) { panel.hidden = !panel.hidden; return; }
+		var trace = (window.__tmLayerTrace || [])[layerIdx];
+		if (!trace) return;
+		var tokens = trace.tokenStrings || tokenList();
+		var delta = trace.h_in.map(function (row, i) {
+			return row.map(function (v, j) { return (trace.h_out[i][j] || 0) - v; });
+		});
+		var toMatrix = (typeof matrixToPmatrixLabeled === "function") ? matrixToPmatrixLabeled : matrixToPmatrix;
+		panel = document.createElement("div");
+		panel.className = "tm-triple-math";
+		panel.setAttribute("data-layer", String(layerIdx));
+		var intro = document.createElement("p");
+		intro.className = "tm-triple-math-note";
+		intro.textContent = DE()
+			? "Die Heatmaps zeigen genau diese Matrizen: Zeilen sind Tokens, Spalten sind Dimensionen. Der Ausgang ist die Summe aus Eingang und Änderung."
+			: "The heatmaps show exactly these matrices: rows are tokens, columns are dimensions. The output is the input plus the change.";
+		panel.appendChild(intro);
+		var formulas = [
+			"h_{\\text{in}} = " + toMatrix(trace.h_in, tokens, DE() ? "Eingang" : "input"),
+			"\\Delta h = " + toMatrix(delta, tokens, DE() ? "Änderung" : "change"),
+			"h_{\\text{out}} = h_{\\text{in}} + \\Delta h = " + toMatrix(trace.h_out, tokens, DE() ? "Ausgang" : "output")
+		];
+		formulas.forEach(function (tex) {
+			var row = document.createElement("div");
+			row.className = "tm-triple-formula";
+			row.setAttribute("data-tex", tex);
+			panel.appendChild(row);
+		});
+		host.insertBefore(panel, triple.nextSibling);
+		typesetMathIn(panel);
+	}
+
 	function renderLayerTripleResiduals(layerIdx) {
 		var prefix = "unified-layer-" + layerIdx;
 		var trace = (window.__tmLayerTrace || [])[layerIdx];
@@ -2161,6 +2196,11 @@
 					}
 				});
 				canvas.addEventListener("mouseleave", function () { if (tip) tip.hidden = true; });
+			});
+			triple.querySelectorAll(".tm-triple-cell").forEach(function (cell) {
+				cell.style.cursor = "pointer";
+				cell.title = DE() ? "Klicken für die Matrizen" : "Click for the matrices";
+				cell.addEventListener("click", function () { toggleTripleMath(idx, triple); });
 			});
 		}
 	}
