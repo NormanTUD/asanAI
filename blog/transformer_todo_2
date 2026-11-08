@@ -1,0 +1,11 @@
+bei den input change output plots bei "This layer reads the running vector and writes an update. The three heatmaps show input, the relative change, and output; the real min/max values are shown below." den layers in transformer.php: ich will dass um die einzelnen plots die box entfernt wird, das ist nur visueller clutter. ich will die anklicken können und dann die matheformel sehen, die pmatrizen, die sich daraus ergeben, die in den bildern dargestellt wird.
+
+bei FFN / MLP  diese aufklappbox sieht ander saus als die logit-lens. auch die optional boxen sollten eher so aussehen wie die reinen text-aufklappblöcke die du hier hast mit dem kleinen plus rechts und wo wenn man die überschrift anklickt. weniger visueller clutter. außerdem ist zwischen "FFN [hier] / [hier] MLP" extrem viel visueller platz. mach dass das linksbündig ist oder so und dann halt aufhört. 
+
+in überschriften soll das glossary nicht gemacht werden, nur in texten. mach die logit lens iwie hübscher mit progress bars und zeige dsa vllt sogar per default nur für den letzten token in das ja alles reingemsicht wird und dass man dann erstmal noch "andere tokens anzeigen" klicken muss um die ganze tabelle zu sehen. mach es dann mit visuellen repräsentation der zahlen, mit sowas wie progress bars für die prozente, mach es hübscher, besser lesbar.
+
+"Pre-LN: Normalize h3(2) before FFN" ist immer noch in einem orangenem block. mach das weg. FFN Layer 2: Compression auch. Residual connection (Pre-LN: no normalization on sublayer output): auch. "Residual connection (Pre-LN: no normalization on sublayer output):" auch und auch ganz viele andere dieser art.
+
+"Pre-LN: Normalize h3(2) before FFN" erkläre bei den schritten jeweils wofür die da sind und warum sie jetzt da gemacht werden. recherchier das für jeden davon. mach es kurz, geb ne intuition dafür, zeige aber auch einschränkungen der intuition wenn es welche gibt. mach das für jeden schritt dort. die texte dann so dass man sie als mensch sehen kann, gern auch mit ein paar wenigen abstrakten formeln, damit man versteht, was die idee da ist.
+
+

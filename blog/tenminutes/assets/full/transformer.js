@@ -2179,7 +2179,7 @@ function renderTrajectoryPlot(d_model) {
 		wrapper = document.createElement('div');
 		wrapper.id = wrapperId;
 		wrapper.style.cssText =
-			'border:2px solid ' + themeColor('#cbd5e1') + '; border-radius:12px; margin-top:10px; background:' + themeColor('#f8fafc') + ';';
+			'border:2px solid ' + themeColor('#cbd5e1') + '; border-radius:12px; margin-top:10px; background:' + themeColor('#f8fafc') + '; box-sizing:border-box;';
 		wrapper.setAttribute('data-d-model', d_model);
 
 		if (d_model <= 3) {

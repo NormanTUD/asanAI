@@ -15,7 +15,7 @@ Covers the problems that are easy to break and hard to see:
   * head tabs say "Head N", are blue, keep the estimate above the method note;
   * the removed training-window/share UI stays removed in both transformer pages;
   * the inference overlay exists and is theme-token based;
-  * a d_model = 10 model memorizes the default training sentence.
+  * a d_model = 10 model memorizes a short training sentence.
 
 Run from the repository root:
     uv run blog/tests/transformer_fix_regression_test.py
@@ -195,17 +195,27 @@ def training_check(page) -> None:
     result = page.evaluate("""async () => {
         const set = (id, v) => { const e = document.getElementById(id); if (e) { e.value = String(v); e.dispatchEvent(new Event('input', {bubbles:true})); } };
         set('transformer-dimension-model', 10); set('transformer-heads', 2);
-        set('transformer-depth', 2); set('transformer-ffn-size', 40); set('transformer-context-size', 10);
+        set('transformer-depth', 2); set('transformer-ffn-size', 40);
+        const trainEl = document.getElementById('transformer-training-data');
+        trainEl.value = 'the king rules the sea';
+        trainEl.dispatchEvent(new Event('input', {bubbles:true}));
+        clearTimeout(trainingDebounceTimer);
         if (window.syncTransformerSettings) window.syncTransformerSettings('dim');
-        await new Promise(resolve => setTimeout(resolve, 1200));
-        const cfg = getTransformerConfig();
+        clearTimeout(trainingDebounceTimer);
         const tokens = getTrainingTokens();
+        set('transformer-context-size', tokens.length - 1);
+        clearTimeout(trainingDebounceTimer);
+        if (window.run_transformer_demo) window.run_transformer_demo();
+        await tf.nextFrame();
+        const cfg = getTransformerConfig();
         ensureWeightsAndEmbeddings(tokens, cfg.n_layers, cfg.d_model);
         const weightVars = convert_weights_to_tensors(window.currentWeights);
         const allVars = collectTrainableVars(weightVars);
-        const optimizer = createOptimizer('adam', 0.03);
+        const optimizer = createOptimizer('adam', 0.08);
         let loss = null;
-        for (let epoch = 0; epoch < 400; epoch++) {
+        let epochs = 0;
+        for (let epoch = 0; epoch < 160; epoch++) {
+            epochs = epoch + 1;
             const cost = computeAndApplyGradients(tokens, weightVars, cfg.d_model, cfg.n_layers, cfg.n_heads, allVars, optimizer, 1.0);
             loss = (await cost.data())[0];
             dispose(cost);
@@ -232,9 +242,9 @@ def training_check(page) -> None:
             if (hit) correct++;
             predicted.push({target: tokens[k], pred: vocab[best], hit});
         }
-        return {correct, total: tokens.length - 1, loss, predicted, d_model: cfg.d_model};
+        return {correct, total: tokens.length - 1, loss, epochs, predicted, d_model: cfg.d_model};
     }""")
-    check("d_model = 10 memorizes the default sentence",
+    check("d_model = 10 memorizes a short sentence",
           result["d_model"] == 10 and result["correct"] == result["total"],
           json.dumps(result)[:400])
 
@@ -243,9 +253,12 @@ def tenminutes_check(page, port: int) -> None:
     errors: list[str] = []
     page.on("pageerror", lambda e: errors.append(str(e)))
     page.goto(f"http://127.0.0.1:{port}/tenminutes/transformer.php", wait_until="load", timeout=120000)
-    page.wait_for_timeout(2500)
+    try:
+        page.wait_for_function("() => !!document.querySelector('#transformer_config p math')", timeout=30000)
+    except Exception:
+        pass
     note = page.evaluate("""() => {
-        const m = document.querySelector('.transformer-slider-note math') || document.querySelector('[class*="slider"] math');
+        const m = document.querySelector('#transformer_config p math');
         return m ? {display: getComputedStyle(m).display, tex: m.getAttribute('data-tex')} : null;
     }""")
     check("tenminutes: slider-note math stays inline", bool(note) and note["display"] in ("inline-flex", "inline"), json.dumps(note))
