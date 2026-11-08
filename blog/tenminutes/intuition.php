@@ -43,7 +43,7 @@
 
 			<div class="lesson-layout">
 				<article class="lesson-main">
-					<section class="section-block" id="idea">
+					<section class="section-block" id="idea" data-chapter="The loop" data-chapter-de="Die Schleife">
 						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
 						<h2 class="section-title">A first intuition: predict the next word.</h2>
 						<div class="prose">
@@ -100,7 +100,7 @@
 						</div>
 					</section>
 
-					<section class="section-block" id="code">
+					<section class="section-block" id="code" data-chapter="The loop" data-chapter-de="Die Schleife">
 						<div class="section-kicker">Next step · code</div>
 						<h2 class="section-title">It also writes code.</h2>
 						<div class="prose">
@@ -147,7 +147,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						</div>
 					</section>
 
-					<section class="section-block" id="loop">
+					<section class="section-block" id="loop" data-chapter="The loop" data-chapter-de="Die Schleife">
 						<div class="section-kicker"><span class="sk-num">02</span> Play the loop</div>
 						<h2 class="section-title">Write a sentence, one word at a time.</h2>
 						<div class="prose">
@@ -262,7 +262,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						</div>
 					</section>
 
-					<section class="section-block" id="inside">
+					<section class="section-block" id="inside" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker"><span class="sk-num">03</span> Inside the model</div>
 						<h2 class="section-title">Six steps, one running vector.</h2>
 						<div class="prose">
@@ -273,9 +273,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					</section>
 
 
-					<section class="section-block" id="step-tokenize-section">
+					<section class="section-block" id="step-tokenize-section" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker">Step 1 · Tokenize</div>
-						<h2 class="section-title">Text becomes a sequence of ids</h2>
+						<h2 class="section-title">Tokenize: text becomes a sequence of IDs</h2>
 						<div class="prose">
 							<p>A token is not a word. Text is encoded as numbers: every character has a code point, and a byte-level tokenizer starts from 256 bytes, so every string is representable. Rare words split into subwords: “unbelievable” becomes “un”, “believ”, “able”, and the same “un” appears in “unhappy” and “unmarried”. A space can be a token too.</p>
 						</div>
@@ -295,9 +295,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 														</div>
 					</section>
 
-					<section class="section-block" id="step-embed-section">
+					<section class="section-block" id="step-embed-section" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker">Step 2 · Embed</div>
-						<h2 class="section-title">Ids become points in meaning space</h2>
+						<h2 class="section-title">Embed: IDs become points in meaning space</h2>
 						<h4 class="layer-subhead">Meaning becomes geometry</h4>
 						<div class="prose">
 							<p>Each token ID points to a learned vector. A real model uses thousands of dimensions; the demo uses two so you can see it. Similar words sit close, and a direction can carry a relationship: man → woman is the same arrow as king → queen. The axes here are labelled for humans; a real model's axes are unlabelled.</p>
@@ -352,9 +352,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						</div>
 					</section>
 
-					<section class="section-block" id="step-position-section">
+					<section class="section-block" id="step-position-section" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker">Step 3 · Positional embedding</div>
-						<h2 class="section-title">Every slot gets its own fingerprint</h2>
+						<h2 class="section-title">Position: every slot gets its own fingerprint</h2>
 						<div class="prose">
 							<p>Attention has no sense of order. Without a position signal, “man bites dog” and “dog bites man” are the same bag of vectors. A sinusoidal encoding adds a fingerprint to every slot: each pair of dimensions oscillates at a different frequency.</p>
 						</div>
@@ -402,9 +402,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						</div>
 					</section>
 
-					<section class="section-block" id="step-attention-section">
+					<section class="section-block" id="step-attention-section" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker">Step 4 · Attend</div>
-						<h2 class="section-title">Context pulls the word into place</h2>
+						<h2 class="section-title">Attention: context pulls the word into place</h2>
 						<div class="prose">
 							<p>How does a word know which neighbours matter? Attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the river or money reading. A real layer has many heads; the demo shows one.</p>
 						</div>
@@ -429,9 +429,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 														</div>
 					</section>
 
-					<section class="section-block" id="layer-detail-section">
+					<section class="section-block" id="layer-detail-section" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker">The layer in detail · the MLP</div>
-						<h2 class="section-title">A projection, a bias, a bend</h2>
+						<h2 class="section-title">FFN: a projection, a bias, a bend</h2>
 						<div class="prose">
 							<p>After attention, each token passes through its own small network, the MLP. It projects the vector, applies a nonlinearity, and projects back. The bend is what lets a straight cut separate what was inseparable.</p>
 						</div>
@@ -519,9 +519,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 														</div>
 					</section>
 
-					<section class="section-block" id="step-ffn-section">
+					<section class="section-block" id="step-ffn-section" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker">Step 5 · Feed-forward</div>
-						<h2 class="section-title">A pattern matches, a value is written</h2>
+						<h2 class="section-title">FFN: a pattern matches, a value is written</h2>
 						<div class="prose">
 							<p>The feed-forward network works on each token separately. It expands the vector, applies an activation, and projects back. Attention mixes tokens; the FFN computes within a token.</p>
 						</div>
@@ -557,9 +557,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 														</div>
 					</section>
 
-					<section class="section-block" id="step-residual-section">
+					<section class="section-block" id="step-residual-section" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker">Step 6 · Residual</div>
-						<h2 class="section-title">Every layer adds to the same stream</h2>
+						<h2 class="section-title">Residual stream: every layer adds to the same stream</h2>
 						<div class="prose">
 							<p>Every layer reads the same running vector, computes an update, and adds it back. Think of a shared notebook: earlier notes stay, later layers read them and add more. The new state is the old state plus a change.</p>
 						</div>
@@ -588,9 +588,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 														</div>
 					</section>
 
-					<section class="section-block" id="block-repeat">
+					<section class="section-block" id="block-repeat" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker"><span class="sk-num">04</span> The block repeats</div>
-						<h2 class="section-title">One block, again and again.</h2>
+						<h2 class="section-title">The whole block: attention + FFN, again and again</h2>
 						<div class="prose">
 							<p>Attention and the FFN are one transformer block. The same block runs again and again. Each pass lets every token look at the context, then moves it through its own MLP.</p>
 							<p>The picture is 3D; a real model works in thousands of dimensions. Follow five words through four blocks, then watch the last token choose the next one.</p>
@@ -635,7 +635,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						</div>
 					</section>
 
-					<section class="section-block" id="last-step">
+					<section class="section-block" id="last-step" data-chapter="From vector to word" data-chapter-de="Vom Vektor zum Wort">
 						<div class="section-kicker"><span class="sk-num">05</span> The last step</div>
 						<h2 class="section-title">The final vector picks a word.</h2>
 						<div class="prose">
@@ -694,7 +694,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						</div>
 					</section>
 
-					<section class="section-block" id="meadow">
+					<section class="section-block" id="meadow" data-chapter="From vector to word" data-chapter-de="Vom Vektor zum Wort">
 						<div class="section-kicker"><span class="sk-num">06</span> The meadow</div>
 						<h2 class="section-title">The same step, seen as geometry.</h2>
 						<div class="prose">
@@ -730,7 +730,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 
 					</section>
 
-					<section class="section-block" id="whole">
+					<section class="section-block" id="whole" data-chapter="From vector to word" data-chapter-de="Vom Vektor zum Wort">
 						<div class="section-kicker"><span class="sk-num">07</span> The whole loop</div>
 						<h2 class="section-title">Text in, geometry, one word out.</h2>
 						<div class="prose">

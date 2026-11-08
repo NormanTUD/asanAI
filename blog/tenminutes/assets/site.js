@@ -476,6 +476,214 @@
 		});
 	}
 
+	/* ── chapter contents ──────────────────────────────────── */
+
+	function tmEscapeHTML(text) {
+		return String(text).replace(/[&<>"']/g, function (c) {
+			return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+		});
+	}
+
+	function tmCleanKicker(text) {
+		if (!text) return "";
+		return text
+			.replace(/^(Step|Schritt)\s+\d+\s*[·:.\-–]?\s*/i, "")
+			.replace(/^\d+\s*[·:.\-–]?\s*/, "")
+			.replace(/\s+/g, " ")
+			.trim();
+	}
+
+	function tmCleanText(text) {
+		return String(text || "").replace(/\s+/g, " ").trim();
+	}
+
+	function initTOC() {
+		if (document.body.getAttribute("data-page") !== "lesson") return;
+		if (document.querySelector(".tm-toc")) return;
+		var layout = document.querySelector(".lesson-layout");
+		if (!layout || !layout.parentNode) return;
+		var sections = Array.prototype.slice.call(layout.querySelectorAll(".lesson-main > .section-block"));
+		if (!sections.length) {
+			sections = Array.prototype.slice.call(layout.querySelectorAll(".lesson-main .section-block"));
+		}
+		if (sections.length < 2) return;
+
+		var de = TM.lang() === "de";
+		var h1 = document.querySelector(".hero--lesson h1, .hero h1, h1");
+		var pageTitle = h1 ? tmCleanText(h1.textContent) : (de ? "Kapitel" : "Chapter");
+		var groups = [];
+		var groupByKey = {};
+		var items = [];
+
+		sections.forEach(function (section, index) {
+			if (!section.id) section.id = "tm-section-" + (index + 1);
+			var titleEl = section.querySelector(".section-title");
+			var kickerEl = section.querySelector(".section-kicker");
+			var title = titleEl ? tmCleanText(titleEl.textContent) : "";
+			var kicker = kickerEl ? tmCleanText(kickerEl.textContent) : "";
+			if (!title) title = (de ? "Abschnitt " : "Section ") + (index + 1);
+			var chapterKey = section.getAttribute("data-chapter") || "__page__";
+			var chapterTitle = section.getAttribute("data-chapter") || pageTitle;
+			if (de) {
+				var chapterDe = section.getAttribute("data-chapter-de");
+				if (chapterDe) chapterTitle = chapterDe;
+			}
+			if (!groupByKey[chapterKey]) {
+				groupByKey[chapterKey] = { key: chapterKey, title: chapterTitle, sections: [] };
+				groups.push(groupByKey[chapterKey]);
+			}
+			var item = {
+				id: section.id,
+				title: title,
+				kicker: tmCleanKicker(kicker),
+				num: String(index + 1).padStart(2, "0"),
+				subheadings: []
+			};
+			Array.prototype.forEach.call(section.querySelectorAll("h3, h4"), function (heading, headingIndex) {
+				if (heading.closest(".demo, .traj-panel, .optional, .collapse-card, .activation-card, .tm-toc")) return;
+				var headingText = tmCleanText(heading.textContent);
+				if (!headingText || headingText.length > 90) return;
+				if (!heading.id) heading.id = "tm-sub-" + section.id + "-" + (headingIndex + 1);
+				item.subheadings.push({ id: heading.id, title: headingText });
+			});
+			groupByKey[chapterKey].sections.push(item);
+			items.push(item);
+		});
+
+		var countText;
+		if (groups.length > 1) {
+			countText = groups.length + (de ? " Kapitel · " : " chapters · ") + items.length + (de ? " Abschnitte" : " sections");
+		} else {
+			countText = items.length + (de ? " Abschnitte" : " sections");
+		}
+
+		var nav = document.createElement("nav");
+		nav.className = "tm-toc";
+		nav.setAttribute("aria-label", de ? "Inhalt dieses Kapitels" : "Chapter contents");
+
+		var details = document.createElement("details");
+		details.className = "tm-toc__details";
+
+		var summary = document.createElement("summary");
+		summary.className = "tm-toc__summary";
+		summary.innerHTML =
+			'<span class="tm-toc__summary-main">' +
+				'<span class="tm-toc__icon" aria-hidden="true"></span>' +
+				'<span class="tm-toc__summary-copy">' +
+					'<span class="tm-toc__eyebrow">' + (de ? "In diesem Kapitel" : "In this chapter") + '</span>' +
+					'<span class="tm-toc__count">' + countText + '</span>' +
+				'</span>' +
+			'</span>' +
+			'<span class="tm-toc__toggle">' +
+				'<span class="tm-toc__toggle-label">' + (de ? "Inhalt" : "Contents") + '</span>' +
+				'<span class="tm-toc__chevron" aria-hidden="true"></span>' +
+			'</span>';
+
+		var panel = document.createElement("div");
+		panel.className = "tm-toc__panel";
+
+		groups.forEach(function (group, groupIndex) {
+			var chapter = document.createElement("div");
+			chapter.className = "tm-toc__chapter";
+			var head = document.createElement("div");
+			head.className = "tm-toc__chapter-head";
+			head.innerHTML =
+				'<span class="tm-toc__chapter-num">' + String(groupIndex + 1).padStart(2, "0") + '</span>' +
+				'<span class="tm-toc__chapter-title">' + tmEscapeHTML(group.title) + '</span>';
+			chapter.appendChild(head);
+
+			var list = document.createElement("ol");
+			list.className = "tm-toc__list";
+			group.sections.forEach(function (item) {
+				var li = document.createElement("li");
+				li.className = "tm-toc__item";
+				var link = document.createElement("a");
+				link.className = "tm-toc__link";
+				link.href = "#" + item.id;
+				link.innerHTML =
+					'<span class="tm-toc__num" aria-hidden="true">' + item.num + '</span>' +
+					'<span class="tm-toc__text">' +
+						(item.kicker ? '<span class="tm-toc__kicker">' + tmEscapeHTML(item.kicker) + '</span>' : '') +
+						'<span class="tm-toc__title">' + tmEscapeHTML(item.title) + '</span>' +
+					'</span>';
+				link.addEventListener("click", function () { details.open = false; });
+				li.appendChild(link);
+				if (item.subheadings.length) {
+					var sublist = document.createElement("ol");
+					sublist.className = "tm-toc__sublist";
+					item.subheadings.forEach(function (subheading) {
+						var subitem = document.createElement("li");
+						subitem.className = "tm-toc__subitem";
+						var sublink = document.createElement("a");
+						sublink.className = "tm-toc__sublink";
+						sublink.href = "#" + subheading.id;
+						sublink.textContent = subheading.title;
+						sublink.addEventListener("click", function () { details.open = false; });
+						subitem.appendChild(sublink);
+						sublist.appendChild(subitem);
+					});
+					li.appendChild(sublist);
+				}
+				list.appendChild(li);
+			});
+			chapter.appendChild(list);
+			panel.appendChild(chapter);
+		});
+
+		details.appendChild(summary);
+		details.appendChild(panel);
+		nav.appendChild(details);
+		layout.parentNode.insertBefore(nav, layout);
+		document.body.classList.add("has-toc");
+
+		if (groups.length > 1) {
+			groups.forEach(function (group, groupIndex) {
+				var first = group.sections[0];
+				var sectionEl = document.getElementById(first.id);
+				if (!sectionEl) return;
+				var heading = document.createElement("div");
+				heading.className = "chapter-heading";
+				heading.innerHTML =
+					'<span class="chapter-heading__num">' + String(groupIndex + 1).padStart(2, "0") + '</span>' +
+					'<span class="chapter-heading__copy">' +
+						'<span class="chapter-heading__kicker">' + (de ? "Kapitel" : "Chapter") + '</span>' +
+						'<span class="chapter-heading__title">' + tmEscapeHTML(group.title) + '</span>' +
+					'</span>';
+				sectionEl.parentNode.insertBefore(heading, sectionEl);
+			});
+		}
+
+		var links = Array.prototype.slice.call(panel.querySelectorAll(".tm-toc__link, .tm-toc__sublink"));
+		var targets = links.map(function (link) {
+			var id = link.getAttribute("href").slice(1);
+			return { link: link, el: document.getElementById(id) };
+		}).filter(function (item) { return item.el; });
+
+		var ticking = false;
+		function updateCurrent() {
+			ticking = false;
+			var line = window.innerHeight * 0.32;
+			var current = targets.length ? targets[0] : null;
+			targets.forEach(function (item) {
+				if (item.el.getBoundingClientRect().top <= line) current = item;
+			});
+			targets.forEach(function (item) {
+				var on = item === current;
+				item.link.classList.toggle("is-current", on);
+				if (on) item.link.setAttribute("aria-current", "location");
+				else item.link.removeAttribute("aria-current");
+			});
+		}
+		window.addEventListener("scroll", function () {
+			if (!ticking) {
+				ticking = true;
+				requestAnimationFrame(updateCurrent);
+			}
+		}, { passive: true });
+		window.addEventListener("resize", updateCurrent);
+		updateCurrent();
+	}
+
 	/* ── page chrome ───────────────────────────────────────── */
 
 	function initPage() {
@@ -487,6 +695,7 @@
 		initCompletion();
 		TM.typesetMath();
 		initArrowNav();
+		initTOC();
 		initHeightBridge();
 
 		var slug = document.body.getAttribute("data-lesson");

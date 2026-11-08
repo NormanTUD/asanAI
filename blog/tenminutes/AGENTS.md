@@ -197,6 +197,30 @@ both languages, including the strings its JavaScript builds at runtime.
 - When adding a new text container, include it in the justification selector
   group in `assets/site.css` instead of adding a one-off rule.
 
+## Chapter contents (TOC)
+
+`assets/site.js` builds one collapsible chapter contents bar per lesson page.
+It reads `.lesson-main > .section-block` (falling back to descendants if
+needed), uses the page `h1` as the chapter title by default, and adds `h3`/`h4`
+headings inside each section as third-level links. The bar is sticky on
+desktop, closes after a link click, and highlights the current section or
+subheading while scrolling.
+
+To group a page's sections into multiple chapters, add both attributes to every
+section in the group:
+
+```html
+<section class="section-block" id="attention"
+         data-chapter="Inside the transformer"
+         data-chapter-de="Im Transformer">
+```
+
+Consecutive sections with the same `data-chapter` form one chapter. When a page
+has more than one chapter, `site.js` inserts a visible `.chapter-heading`
+before each group. Keep the English and German chapter titles in sync. A page
+with no `data-chapter` attributes still gets the hierarchy: page title > section
+titles > `h3`/`h4` subheadings.
+
 ## History content and imagery
 
 The compact history page is a summary of `../history.php`; read the parent and
