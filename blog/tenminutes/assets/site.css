@@ -8169,12 +8169,23 @@ body.has-toc h4[id] { scroll-margin-top: 84px; }
 	.traj-echarts-host { height: 340px; min-height: 300px; }
 }
 .traj-step-controls { align-items: center; margin-top: 10px; }
-.traj-layer-label {
-	margin-left: auto;
+.traj-slider-label {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex: 1;
+	min-width: 220px;
 	font-family: var(--tm-ui);
 	font-size: 0.78rem;
 	font-weight: 600;
 	color: var(--tm-muted);
+}
+.traj-slider-label input[type="range"] { flex: 1; min-width: 120px; }
+.traj-slider-label output {
+	min-width: 9em;
+	text-align: right;
+	color: var(--tm-ink);
+	font-variant-numeric: tabular-nums;
 }
 .traj-candidates {
 	display: flex;

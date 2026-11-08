@@ -251,13 +251,15 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<div class="demo-body">
 								<div id="real-trajectory-3d" class="traj-echarts-host" role="img" aria-label="3D token trajectories through GPT-2, PCA-reduced to three dimensions"></div>
 								<div class="demo-controls traj-step-controls">
-									<button class="btn-demo btn-demo--green" type="button" id="traj-next-layer">Next layer →</button>
+									<label class="traj-slider-label" for="traj-layer-slider">Layer
+										<input type="range" id="traj-layer-slider" min="0" max="12" step="1" value="0">
+										<output id="traj-layer-label">Embedding</output>
+									</label>
 									<button class="btn-demo" type="button" id="traj-reset">Reset</button>
-									<span class="traj-layer-label" id="traj-layer-label">Embedding</span>
 								</div>
-								<div class="traj-candidates" id="traj-candidates" aria-live="polite"></div>
+								<div class="traj-candidates" id="traj-candidates" aria-live="polite" hidden></div>
 							</div>
-							<div class="demo-foot">Real GPT-2 small hidden states, normalized per layer and PCA-reduced to 3D. The highlighted candidate is the model's top next token. Press “Next layer” to reveal the path one block at a time.</div>
+							<div class="demo-foot">Real GPT-2 small hidden states, normalized per layer and PCA-reduced to 3D. Drag the slider to move through the layers. The next-token candidates appear at the final layer; the highlighted one is the model's top choice.</div>
 						</div>
 						<div class="prose">
 							<p>This is the transformer. For every token, again and again, it asks how that token stands in context to all the other tokens right now. Attention lets it look around, a dense layer and an activation function transform each token, and LayerNorm keeps the numbers in a stable range. A few other parts do their jobs along the way.</p>
@@ -3872,7 +3874,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			});
 		}
 
-				var step = 0;
+		var step = 0;
 		function updateStepLabel() {
 			var el = document.getElementById("traj-layer-label");
 			if (!el) return;
@@ -3881,6 +3883,12 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function renderCandidates() {
 			var el = document.getElementById("traj-candidates");
 			if (!el) return;
+			var show = step >= data.layers.length - 1;
+			el.hidden = !show;
+			if (!show) {
+				el.innerHTML = "";
+				return;
+			}
 			var top = (data.top || []).slice(0, 5);
 			el.innerHTML = top.map(function (item) {
 				var chosen = item.token === data.chosen;
@@ -3891,29 +3899,49 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					'</span>';
 			}).join("");
 		}
+		function layerExtent() {
+			var xs = [], ys = [], zs = [];
+			data.points.forEach(function (pts) {
+				pts.forEach(function (p) {
+					xs.push(p[0]); ys.push(p[1]); zs.push(p[2]);
+				});
+			});
+			(data.landmarks || []).slice(0, 5).forEach(function (item) {
+				xs.push(item.value[0]); ys.push(item.value[1]); zs.push(item.value[2]);
+			});
+			function mm(values) {
+				var mn = Math.min.apply(null, values);
+				var mx = Math.max.apply(null, values);
+				var d = (mx - mn) || 1;
+				var pad = d * 0.10;
+				return [mn - pad, mx + pad];
+			}
+			return { x: mm(xs), y: mm(ys), z: mm(zs) };
+		}
+		var extent = layerExtent();
 
 		function draw() {
-			if (chart) {
-				try { chart.dispose(); } catch (e) {}
-				chart = null;
-			}
+			var firstDraw = !chart;
 			var c = palette();
-			try {
-				chart = echarts.init(host);
-			} catch (e) {
-				fallback(de ? "Die 3D-Ansicht konnte nicht initialisiert werden." : "The 3D view could not be initialized.");
-				return;
+			if (!chart) {
+				try {
+					chart = echarts.init(host);
+				} catch (e) {
+					fallback(de ? "Die 3D-Ansicht konnte nicht initialisiert werden." : "The 3D view could not be initialized.");
+					return;
+				}
 			}
 			var series = [];
 			var legendData = [];
 			var topLandmarks = (data.landmarks || []).slice(0, 5);
+			var showChoice = step >= data.layers.length - 1;
 			if (topLandmarks.length) {
 				legendData.push(de ? "Kandidaten" : "Candidates");
 				series.push({
 					name: de ? "Kandidaten" : "Candidates",
 					type: "scatter3D",
 					data: topLandmarks.map(function (item) {
-						var chosen = item.word === data.chosen;
+						var chosen = showChoice && item.word === data.chosen;
 						return {
 							name: displayToken(item.word),
 							value: item.value,
@@ -4008,7 +4036,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				}
 			}
 			try {
-				chart.setOption({
+				var option = {
 					backgroundColor: "transparent",
 					title: {
 						text: de ? "Token-Trajektorie: Embedding → +Position → Layer-Ausgaben" : "Token Trajectory: Embedding → +Position → Layer Outputs",
@@ -4028,9 +4056,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						textStyle: { fontSize: 12, color: c.ink },
 						itemWidth: 12, itemHeight: 10
 					},
-					xAxis3D: { type: "value", name: "PC 1", nameTextStyle: { color: c.muted }, axisLabel: { textStyle: { color: c.muted, fontSize: 9 } } },
-					yAxis3D: { type: "value", name: "PC 2", nameTextStyle: { color: c.muted }, axisLabel: { textStyle: { color: c.muted, fontSize: 9 } } },
-					zAxis3D: { type: "value", name: "PC 3", nameTextStyle: { color: c.muted }, axisLabel: { textStyle: { color: c.muted, fontSize: 9 } } },
+					xAxis3D: { type: "value", name: "PC 1", min: extent.x[0], max: extent.x[1], nameTextStyle: { color: c.muted }, axisLabel: { textStyle: { color: c.muted, fontSize: 9 } } },
+					yAxis3D: { type: "value", name: "PC 2", min: extent.y[0], max: extent.y[1], nameTextStyle: { color: c.muted }, axisLabel: { textStyle: { color: c.muted, fontSize: 9 } } },
+					zAxis3D: { type: "value", name: "PC 3", min: extent.z[0], max: extent.z[1], nameTextStyle: { color: c.muted }, axisLabel: { textStyle: { color: c.muted, fontSize: 9 } } },
 					grid3D: {
 						viewControl: { projection: "perspective", alpha: 30, beta: 40, distance: 200, autoRotate: false, damping: 0.9 },
 						light: { main: { intensity: 1.2, shadow: false }, ambient: { intensity: 0.3 } },
@@ -4041,7 +4069,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						axisPointer: { show: false }
 					},
 					series: series
-				}, true);
+				};
+				if (!firstDraw) {
+					delete option.grid3D.viewControl;
+				}
+				chart.setOption(option, { replaceMerge: ["series"], lazyUpdate: false });
 				chart.resize();
 			} catch (e) {
 				fallback(de ? "Die 3D-Ansicht konnte nicht gezeichnet werden." : "The 3D view could not be drawn.");
@@ -4057,18 +4089,19 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				draw();
 			});
 		}
-		var nextLayerBtn = document.getElementById("traj-next-layer");
+		var slider = document.getElementById("traj-layer-slider");
 		var resetBtn = document.getElementById("traj-reset");
-		if (nextLayerBtn) nextLayerBtn.addEventListener("click", function () {
-			if (step < data.layers.length - 1) {
-				step += 1;
-				updateStepLabel();
-				if (loaded) draw();
-			}
+		if (slider) slider.addEventListener("input", function () {
+			step = parseInt(slider.value, 10) || 0;
+			updateStepLabel();
+			renderCandidates();
+			if (loaded) draw();
 		});
 		if (resetBtn) resetBtn.addEventListener("click", function () {
 			step = 0;
+			if (slider) slider.value = "0";
 			updateStepLabel();
+			renderCandidates();
 			if (loaded) draw();
 		});
 		renderCandidates();
