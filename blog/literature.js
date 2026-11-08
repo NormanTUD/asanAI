@@ -3173,6 +3173,13 @@ window.bibData = {
 		year: 2024,
 		url: "https://arxiv.org/abs/2404.02156"
 	},
+	"guan2026adaptiveworms": {
+		title: "AI Agents Enable Adaptive Computer Worms",
+		author: "Jonas Guan, Tom Blanchard, Hanna Foerster, Hengrui Jia, Gabriel Huang, Nicolas Papernot",
+		year: 2026,
+		url: "https://arxiv.org/abs/2606.03811",
+		alternativetitle: "Adaptive AI worms"
+	},
 
 	// ═══════════════════════════════════════════════
 	// Inference Optimization

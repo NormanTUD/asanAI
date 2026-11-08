@@ -488,6 +488,10 @@ $$
 The field is actively researching how to push this frontier, making agents both more capable *and* more aligned simultaneously, rather than trading one for the other.
 
 Concrete agents build these mitigations in from the start. In opencode (\cite[Abboud, 2025]{abboud2025opencode}), a permission system gates sensitive tools like `bash`, so a read-only planning agent must explicitly request approval before executing anything; the read tool refuses binary files, and edits are rejected for paths outside the working directory; oversized tool output is truncated before it re-enters the context; and at each step the agent records a git snapshot of the working tree, letting a failed change be rolled back in full. One grounding mechanism deserves special mention: after the model edits a file, the agent queries a Language Server for static diagnostics and feeds them back into the context, so undefined symbols or type errors become immediately visible — a squiggly-line IDE check injected into the agent's own observations.
+
+### Agents as Attack Infrastructure
+
+The same loop that makes an agent useful makes it a reusable attack harness. Replace the user's goal with network discovery and the tools with a shell, and the observe-reason-act cycle becomes a way to probe a host, read the result, and try again. \cite[Guan et al. (2026)]{guan2026adaptiveworms} built a proof-of-concept worm around exactly this architecture: a phase-structured agent core, a hierarchical memory, and a tool layer for shell sessions and file transfer, all driven by a single-GPU open-weight LLM hosted on a compromised machine. Once a host was taken, a copy of the agent was staged there and pointed at the next target, so the attack scaled without a human operator. This is why an agent's tool permissions, network reach, and ability to write and execute code are security boundaries, not convenience settings.
 </div>
 
 <div class="md">

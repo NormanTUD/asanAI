@@ -53,6 +53,14 @@ A classic example from reinforcement learning: an agent trained to play a racing
 
 The deeper problem: any scalar reward function is an **incomplete specification** of the human's true preference. There will always be edge cases where maximizing the reward leads to behavior the designer did not want. This is the **specification gaming** problem, and it is the technical heart of the alignment problem discussed in the philosophy section.
 
+## Adaptive Worms: Autonomous Offence
+
+A conventional worm ships a fixed repertoire of exploits. WannaCry and NotPetya spread through vulnerabilities whose patches had been available for months, and patching that finite set of flaws interrupts the spread. An **adaptive worm** replaces the fixed repertoire with generated attack logic: it reasons about a target, tries an approach, reads what happened, and writes the next exploit. \cite[Guan et al. (2026)]{guan2026adaptiveworms} demonstrated a proof-of-concept of this design, with a single-GPU open-weight LLM running on compromised hosts and no human in the loop.
+
+The worm was seeded on one host in an isolated 33-host network spanning Linux servers, Windows machines, and IoT devices, and ran autonomously for seven days in each of 15 trials. It identified an average of 31.3 vulnerabilities, escalated privileges on 23.1 hosts, and replicated to 20.4 hosts, reaching up to seven generations of self-replication; on average it exploited 73.8% of the network and replicated to 61.8% (\cite[Guan et al., 2026]{guan2026adaptiveworms}). It also exploited three vulnerabilities disclosed in 2026, after the model's training cutoff, by reading public advisories at runtime.
+
+The economics are adverse. Because the reasoning runs on stolen compute, the attacker's marginal cost per new infection is effectively zero. Because no commercial AI platform is involved, service refusals, rate limits, and other centralized safety controls never enter the picture. And because the harness supplies exploit syntax and advisory text at runtime, a small model can act on a vulnerability that is absent from its weights. The caveat is that the experiment was deliberately favourable: every host carried at least one exploitable weakness and no endpoint detection was active, so it measures adaptation rather than evasion. Even so, the defensive problem shifts from patching a known exploit list to detecting and containing autonomous reasoning across the network.
+
 ## Defenses
 
 | Defense | Layer | How it works |
