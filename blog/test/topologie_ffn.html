@@ -348,6 +348,11 @@
      ============================================================ */
   const R0 = 0.86, r0 = 0.31, D0 = 1.52, K0 = 0.235;
 
+  function curveY(x, z) {
+    return 0.42 * Math.sin(x * 0.50 + 0.70) * Math.cos(z * 0.42 - 0.30)
+         + 0.18 * Math.sin((x + z) * 0.35 + 1.20);
+  }
+
   function sdTorus(x, y, z, cx) {
     const qx = x - cx, qz = z;
     return Math.hypot(Math.hypot(qx, qz) - R0, y) - r0;
@@ -2210,19 +2215,11 @@
     const radius = 4.2 + 9.4 * Math.sqrt((i + 0.5) / islandCount);
     const mapPos = new THREE.Vector3(
       Math.cos(ga) * radius,
-      (rand() - 0.5) * 4.2 - 0.4,
+      0,
       Math.sin(ga) * radius
     );
-    const layer = i % 5;
-    const lr = 1.6 + 3.6 * ((i * 0.618) % 1);
-    const la = ga * 0.62;
-    const ffnPos = new THREE.Vector3(
-      Math.cos(la) * lr,
-      -5.0 + layer * 2.5 + (rand() - 0.5) * 0.4,
-      Math.sin(la) * lr
-    );
+    mapPos.y = curveY(mapPos.x, mapPos.z);
     const mapScale = 0.28 + rand() * 0.24;
-    const ffnScale = 0.16 + rand() * 0.12;
 
     const group = new THREE.Group();
     group.position.copy(mapPos);
@@ -2281,7 +2278,7 @@
     islands.push({
       group, edge, surface, pts, sparks, aura, inflow, halo,
       seed, repel, kind: type.kind, type,
-      mapPos, ffnPos, mapScale, ffnScale,
+      mapPos, mapScale,
       edgeMat, surfaceMat,
       pointMat: pts ? pts.points.material : null,
       sparkMat: sparks ? sparks.mat : null,
@@ -2491,8 +2488,64 @@
   /* ============================================================
      the FFN: stacked layers of points
      ============================================================ */
-  const layerY = [-5.0, -2.5, 0.0, 2.5, 5.0];
+  const layerY = [-3.2, 0.0, 3.2, 6.4, 9.6];
   const layerNodes = [];
+
+  /* curved layer surfaces */
+  const curvedPlaneGeo = (() => {
+    const g = new THREE.PlaneGeometry(30, 30, 96, 96);
+    g.rotateX(-Math.PI / 2);
+    const p = g.attributes.position;
+    for (let i = 0; i < p.count; i++) {
+      const x = p.getX(i), z = p.getZ(i);
+      p.setY(i, curveY(x, z));
+    }
+    g.computeVertexNormals();
+    return g;
+  })();
+  const planeMats = [];
+  const planeMeshes = [];
+  for (let li = 0; li < layerY.length; li++) {
+    const pm = new THREE.ShaderMaterial({
+      uniforms: {
+        uOpacity: { value: 0 },
+        uTint: { value: new THREE.Color(li === 1 ? 0.28 : 0.45, 0.45, 1.0) }
+      },
+      vertexShader: `
+        varying vec3 vW;
+        void main() {
+          vec4 world = modelMatrix * vec4(position, 1.0);
+          vW = world.xyz;
+          gl_Position = projectionMatrix * viewMatrix * world;
+        }
+      `,
+      fragmentShader: `
+        uniform float uOpacity;
+        uniform vec3 uTint;
+        varying vec3 vW;
+        void main() {
+          float fade = smoothstep(15.0, 9.0, length(vW.xz));
+          float gx = smoothstep(0.90, 1.0, abs(sin(vW.x * 1.15)));
+          float gz = smoothstep(0.90, 1.0, abs(sin(vW.z * 1.15)));
+          float grid = max(gx, gz);
+          float a = uOpacity * fade * (0.010 + 0.040 * grid);
+          gl_FragColor = vec4(uTint * (0.7 + 0.8 * grid), a);
+        }
+      `,
+      transparent: true,
+      depthWrite: false,
+      depthTest: true,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending
+    });
+    const mesh = new THREE.Mesh(curvedPlaneGeo, pm);
+    mesh.position.y = layerY[li];
+    mesh.renderOrder = 1;
+    mesh.frustumCulled = false;
+    scene.add(mesh);
+    planeMats.push(pm);
+    planeMeshes.push(mesh);
+  }
   const ffnGroup = new THREE.Group();
   scene.add(ffnGroup);
 
@@ -2512,13 +2565,14 @@
       const a = rand() * Math.PI * 2;
       const x = Math.cos(a) * r;
       const z = Math.sin(a) * r;
+      const yy = y + curveY(x, z) + (rand() - 0.5) * 0.035;
       pos[n*3] = x;
-      pos[n*3+1] = y + (rand() - 0.5) * 0.035;
+      pos[n*3+1] = yy;
       pos[n*3+2] = z;
       size[n] = 1.0 + Math.pow(rand(), 2) * 2.2;
       seed[n] = rand();
       hue[n] = rand();
-      nodes.push(new THREE.Vector3(x, y + (rand() - 0.5) * 0.035, z));
+      nodes.push(new THREE.Vector3(x, yy, z));
     }
     layerNodes.push(nodes);
 
@@ -2574,6 +2628,54 @@
     layerNodeMats.push(m);
   }
 
+  /* more attractors emerge on the curved layers above and below */
+  const layerForms = [];
+  {
+    const extraLayers = [
+      { li: 2, t0: 0.890, t1: 0.930 },
+      { li: 3, t0: 0.930, t1: 0.970 },
+      { li: 4, t0: 0.960, t1: 0.995 },
+      { li: 0, t0: 0.920, t1: 0.960 }
+    ];
+    for (const cfg of extraLayers) {
+      const baseY = layerY[cfg.li];
+      for (let k = 0; k < 8; k++) {
+        const type = ISLAND_TYPES[Math.floor(rand() * ISLAND_TYPES.length)];
+        const seed = 4.7 + cfg.li * 13.0 + k * 2.7;
+        const a = rand() * Math.PI * 2;
+        const rr = 2.5 + rand() * 6.5;
+        const x = Math.cos(a) * rr;
+        const z = Math.sin(a) * rr;
+        const y = baseY + curveY(x, z);
+        const scale = 0.16 + rand() * 0.16;
+        const group = new THREE.Group();
+        group.position.set(x, y, z);
+        group.scale.setScalar(scale);
+        group.rotation.set((rand() - 0.5) * 1.6, rand() * Math.PI * 2, (rand() - 0.5) * 1.6);
+        group.visible = false;
+
+        const ig = getIslandGeo(type.kind);
+        const em = edgeMaterial(seed, type.a, type.b);
+        em.uniforms.uGrow.value = 1;
+        em.uniforms.uMorph.value = 0.28 + rand() * 0.55;
+        const edge = new THREE.Mesh(ig.geo, em);
+        edge.renderOrder = 8;
+        edge.frustumCulled = false;
+        group.add(edge);
+
+        const sparks = makeIslandSparks(ig.sparkPositions, seed, 34, 0.75);
+        sparks.mat.uniforms.uMorph.value = 0.28 + rand() * 0.55;
+        group.add(sparks.points);
+
+        scene.add(group);
+        layerForms.push({
+          group, edgeMat: em, sparkMat: sparks.mat,
+          repel: !!type.repel, t0: cfg.t0, t1: cfg.t1
+        });
+      }
+    }
+  }
+
   /* a rising field of points through the whole stack */
   let finaleDustMat;
   {
@@ -2593,7 +2695,7 @@
       speed[i] = 0.05 + rand() * 0.20;
       radius[i] = 0.4 + Math.pow(rand(), 0.7) * 4.8;
       angle[i] = rand() * Math.PI * 2;
-      yy[i] = (rand() - 0.5) * 12.0;
+      yy[i] = (rand() - 0.5) * 18.0;
       size[i] = 0.6 + Math.pow(rand(), 2) * 2.8;
       sd[i] = rand();
       hue[i] = rand();
@@ -2628,7 +2730,7 @@
         varying vec3 vColor;
         varying float vAlpha;
         void main() {
-          float y = mod(aY + uTime * aSpeed + 6.0, 12.0) - 6.0;
+          float y = mod(aY + uTime * aSpeed + 6.0, 18.0) - 6.0;
           float ang = aAngle + uTime * 0.06 * (aSeed - 0.5) + y * 0.10;
           float r = aRadius + 0.35 * sin(uTime * 0.30 + aSeed * 6.2831);
           vec3 p = vec3(cos(ang) * r, y, sin(ang) * r);
@@ -2728,8 +2830,8 @@
     { t: 0.52, r: 4.0,  phi: 1.20, ty: 0.00, th: 0.52 },
     { t: 0.64, r: 4.5,  phi: 1.18, ty: 0.00, th: 0.60 },
     { t: 0.82, r: 18.0, phi: 1.04, ty: 1.10, th: 0.78, tx: 0.0 },
-    { t: 0.93, r: 14.6, phi: 1.11, ty: 1.20, th: 0.92, tx: -1.4 },
-    { t: 1.00, r: 14.5, phi: 1.13, ty: 1.15, th: 1.02, tx: -2.7 }
+    { t: 0.93, r: 21.0, phi: 1.10, ty: 2.60, th: 0.92, tx: -1.4 },
+    { t: 1.00, r: 22.5, phi: 1.12, ty: 3.20, th: 1.02, tx: -2.7 }
   ];
 
   function camSample(s) {
@@ -2923,6 +3025,7 @@
     mainHalo.material.opacity = 0.09 * mapOn * (1 - ffnOn) + 0.12 * ffnOn;
 
     mainGroup.scale.setScalar(mainScale);
+    mainGroup.position.y = mapOn * curveY(0, 0);
     mainGroup.rotation.y = elapsed * 0.022 * (1 - 0.55 * mapOn);
 
     mainSurfaceMat.uniforms.uMorph.value = morph;
@@ -2963,8 +3066,8 @@
     const islandOp = mapOn * (1 - 0.30 * ffnOn);
     for (let i = 0; i < islands.length; i++) {
       const isl = islands[i];
-      isl.group.position.copy(isl.mapPos).lerp(isl.ffnPos, ffnOn);
-      isl.group.scale.setScalar(lerp(isl.mapScale, isl.ffnScale, ffnOn));
+      isl.group.position.copy(isl.mapPos);
+      isl.group.scale.setScalar(isl.mapScale);
       isl.group.rotation.x = lerp(isl.rotation.x, isl.ffnRot.x, ffnOn);
       isl.group.rotation.z = lerp(isl.rotation.z, isl.ffnRot.z, ffnOn);
       isl.group.rotation.y = isl.rotation.y + elapsed * (isl.repel ? -0.045 : 0.055) * (1 - 0.5 * ffnOn);
@@ -3001,7 +3104,40 @@
     spaceTrails.visible = spaceTrailOn > 0.006;
 
     ffnGroup.visible = ffnOn > 0.003;
-    for (const m of layerNodeMats) m.uniforms.uOpacity.value = ffnOn;
+    const layerAppear = [
+      { t0: 0.920, t1: 0.960 },
+      null,
+      { t0: 0.890, t1: 0.930 },
+      { t0: 0.930, t1: 0.970 },
+      { t0: 0.960, t1: 0.995 }
+    ];
+    for (let i = 0; i < layerNodeMats.length; i++) {
+      let op;
+      if (i === 1) {
+        op = mapOn * 0.78;
+      } else {
+        const cfg = layerAppear[i];
+        op = smoothstep(cfg.t0, cfg.t1, s);
+      }
+      layerNodeMats[i].uniforms.uOpacity.value = op;
+    }
+    for (let i = 0; i < planeMats.length; i++) {
+      let op;
+      if (i === 1) {
+        op = mapOn * (0.85 - 0.25 * ffnOn);
+      } else {
+        const cfg = layerAppear[i];
+        op = smoothstep(cfg.t0, cfg.t1, s) * 0.65;
+      }
+      planeMats[i].uniforms.uOpacity.value = op;
+      planeMeshes[i].visible = op > 0.003;
+    }
+    for (const f of layerForms) {
+      const on = smoothstep(f.t0, f.t1, s);
+      f.group.visible = on > 0.004;
+      f.edgeMat.uniforms.uOpacity.value = on * (f.repel ? 0.075 : 0.105);
+      f.sparkMat.uniforms.uOpacity.value = on * (f.repel ? 0.045 : 0.075);
+    }
     finaleDustMat.uniforms.uOpacity.value = ffnOn * 0.95;
     finaleGlow.material.opacity = ffnOn * 0.14;
 
