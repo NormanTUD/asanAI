@@ -2838,6 +2838,7 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 				type: 'scatter3d', mode: 'markers+text',
 				x: [vec[0]], y: [vec[1] || 0], z: [vec[2] || 0],
 				text: [displayToken(token)], textposition: 'top center',
+				textfont: { color: c.ink, size: 10 },
 				hovertext: [tip], hovertemplate: '%{hovertext}<extra></extra>',
 				marker: { size: 5, color: getPositionColor(tokenIdx, tokens.length - 1) },
 				name: displayToken(token)
@@ -2847,6 +2848,7 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 				type: 'scatter', mode: 'markers+text',
 				x: [vec[0]], y: [vec[1] || 0],
 				text: [displayToken(token)], textposition: 'top center',
+				textfont: { color: c.ink, size: 10 },
 				hovertext: [tip], hovertemplate: '%{hovertext}<extra></extra>',
 				marker: { size: 7, color: getPositionColor(tokenIdx, tokens.length - 1) },
 				name: displayToken(token)
@@ -2917,6 +2919,7 @@ function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
 }
 
 function _embedding_render_highdim_pca(container, tokens, dimensions, highlightPos, steps) {
+	const c = window.tmPlotly.colors();
 	const rawVecs = tokens.map(t => window.persistentEmbeddingSpace[t] || []);
 	const vecs = rawVecs.map(_tmTransformMetric);
 	const all = vecs.slice();
@@ -2940,6 +2943,7 @@ function _embedding_render_highdim_pca(container, tokens, dimensions, highlightP
 			type: 'scatter3d', mode: 'markers+text',
 			x: [plotted[idx][0]], y: [plotted[idx][1]], z: [plotted[idx][2]],
 			text: [displayToken(token)], textposition: 'top center',
+			textfont: { color: c.ink, size: 10 },
 			hovertext: [tip], hovertemplate: '%{hovertext}<extra></extra>',
 			marker: { size: 5, color: getPositionColor(idx, tokens.length - 1) }, name: displayToken(token), showlegend: false
 		});

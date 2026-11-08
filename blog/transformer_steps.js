@@ -3036,6 +3036,180 @@
 	};
 	initKVCacheToggle();
 
+	function setupResidualHoverPopup() {
+		if (window.__tmResidualHoverBound) return;
+		window.__tmResidualHoverBound = true;
+
+		var popup = null, titleEl = null, canvasEl = null, vectorEl = null;
+		var api = null, current = null, hoverRow = -1, hoverCol = -1;
+		var hideTimer = null;
+
+		function ensurePopup() {
+			if (popup) return;
+			popup = document.createElement("div");
+			popup.className = "tm-res-hover-popup";
+			popup.hidden = true;
+			popup.innerHTML = '<div class="tm-res-hover-title"></div><canvas class="tm-res-hover-canvas"></canvas><div class="tm-res-hover-vector"></div>';
+			document.body.appendChild(popup);
+			titleEl = popup.querySelector(".tm-res-hover-title");
+			canvasEl = popup.querySelector(".tm-res-hover-canvas");
+			vectorEl = popup.querySelector(".tm-res-hover-vector");
+			api = initCanvas(canvasEl, function (ctx, w, h) { drawHeatmap(ctx, w, h); });
+			canvasEl.addEventListener("mousemove", onMove);
+			canvasEl.addEventListener("mouseleave", function () { hoverRow = -1; hoverCol = -1; updateVector(); api.redraw(); });
+			popup.addEventListener("mouseenter", cancelHide);
+			popup.addEventListener("mouseleave", scheduleHide);
+		}
+
+		function cancelHide() { clearTimeout(hideTimer); }
+		function scheduleHide() {
+			clearTimeout(hideTimer);
+			hideTimer = setTimeout(function () {
+				if (popup) popup.hidden = true;
+				current = null;
+				hoverRow = -1;
+				hoverCol = -1;
+			}, 180);
+		}
+
+		function getLayout(w, h) {
+			var rows = current ? current.data.length : 0;
+			var cols = current && current.data[0] ? current.data[0].length : 0;
+			var left = 78, top = 28, right = 10, bottom = 22;
+			return {
+				rows: rows, cols: cols, left: left, top: top, right: right, bottom: bottom,
+				cw: (w - left - right) / Math.max(1, cols),
+				ch: (h - top - bottom) / Math.max(1, rows)
+			};
+		}
+
+		function cellColor(v, min, max) {
+			var c = palette();
+			if (v < 0) return rgb(mix(hex(c.paper), hex(c.blue), Math.min(1, v / (min || -1))));
+			return rgb(mix(hex(c.paper), hex(c.gold), Math.min(1, v / (max || 1))));
+		}
+
+		function drawHeatmap(ctx, w, h) {
+			ctx.clearRect(0, 0, w, h);
+			if (!current || !current.data.length) return;
+			var c = palette();
+			var data = current.data, tokens = current.tokens;
+			var rows = data.length, cols = data[0].length;
+			var min = Infinity, max = -Infinity;
+			for (var i = 0; i < rows; i++) {
+				for (var j = 0; j < cols; j++) {
+					var v = data[i][j] || 0;
+					min = Math.min(min, v); max = Math.max(max, v);
+				}
+			}
+			if (!isFinite(min) || !isFinite(max)) { min = -1; max = 1; }
+			var L = getLayout(w, h);
+			for (var r = 0; r < rows; r++) {
+				for (var k = 0; k < cols; k++) {
+					ctx.fillStyle = cellColor(data[r][k] || 0, min, max);
+					ctx.fillRect(L.left + k * L.cw, L.top + r * L.ch, Math.ceil(L.cw) + 0.5, Math.ceil(L.ch) + 0.5);
+				}
+				ctx.fillStyle = getPositionColor(r, rows - 1);
+				ctx.font = "600 9px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "right";
+				ctx.textBaseline = "middle";
+				ctx.fillText(fitText(ctx, display(tokens[r] || ""), 70), L.left - 6, L.top + r * L.ch + L.ch / 2);
+			}
+			if (hoverRow >= 0 && hoverRow < rows) {
+				ctx.strokeStyle = c.ink;
+				ctx.lineWidth = 1.5;
+				ctx.strokeRect(L.left + 0.5, L.top + hoverRow * L.ch + 0.5, cols * L.cw - 1, L.ch - 1);
+			}
+			if (hoverRow >= 0 && hoverCol >= 0 && hoverCol < cols) {
+				ctx.strokeStyle = c.ink;
+				ctx.lineWidth = 2;
+				ctx.strokeRect(L.left + hoverCol * L.cw + 0.5, L.top + hoverRow * L.ch + 0.5, L.cw - 1, L.ch - 1);
+			}
+			ctx.textAlign = "center";
+			ctx.textBaseline = "alphabetic";
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 8px Barlow, system-ui, sans-serif";
+			var step = Math.max(1, Math.ceil(cols / 16));
+			for (var d = 0; d < cols; d += step) {
+				ctx.fillText(String(d), L.left + d * L.cw + L.cw / 2, h - 7);
+			}
+			ctx.textAlign = "left";
+			ctx.fillText(DE() ? "Dimension →" : "dimension →", L.left, 13);
+		}
+
+		function updateVector() {
+			if (!vectorEl) return;
+			if (!current || hoverRow < 0 || hoverRow >= current.data.length) {
+				vectorEl.textContent = DE() ? "Über eine Zeile fahren, um den vollständigen Vektor zu sehen." : "Hover a row to see the full vector.";
+				return;
+			}
+			var row = current.data[hoverRow] || [];
+			vectorEl.textContent = display(current.tokens[hoverRow] || "") + (DE() ? " · vollständiger Vektor: [" : " · full vector: [") + row.map(function (v) { return (v || 0).toFixed(3); }).join(", ") + "]";
+		}
+
+		function onMove(event) {
+			if (!current || !canvasEl) return;
+			var rect = canvasEl.getBoundingClientRect();
+			var L = getLayout(rect.width, rect.height);
+			var x = event.clientX - rect.left, y = event.clientY - rect.top;
+			var col = Math.floor((x - L.left) / L.cw);
+			var row = Math.floor((y - L.top) / L.ch);
+			if (x < L.left || y < L.top || col < 0 || row < 0 || col >= L.cols || row >= L.rows) {
+				row = -1; col = -1;
+			}
+			if (row === hoverRow && col === hoverCol) return;
+			hoverRow = row; hoverCol = col;
+			updateVector();
+			api.redraw();
+		}
+
+		function positionPopup(label) {
+			var r = label.getBoundingClientRect();
+			var pw = popup.offsetWidth, ph = popup.offsetHeight;
+			var left = Math.max(8, Math.min(window.innerWidth - pw - 8, r.left));
+			var top = r.bottom + 8;
+			if (top + ph > window.innerHeight - 8) top = Math.max(8, r.top - ph - 8);
+			popup.style.left = left + "px";
+			popup.style.top = top + "px";
+		}
+
+		function showFor(label) {
+			var wrap = label.closest(".tm-layer-signal-between");
+			if (!wrap) return;
+			var canvas = wrap.querySelector(".layer-signal-canvas");
+			var idx = canvas ? parseInt(canvas.getAttribute("data-layer-idx"), 10) : 0;
+			if (isNaN(idx)) idx = 0;
+			var trace = (window.__tmLayerTrace || [])[idx];
+			if (!trace) return;
+			var pre = wrap.classList.contains("tm-layer-signal-before");
+			var data = pre ? trace.h_in : trace.h_out;
+			if (!data || !data.length) return;
+			var tokens = trace.tokenStrings || tokenList();
+			ensurePopup();
+			current = { data: data, tokens: tokens, layerIdx: idx, pre: pre };
+			hoverRow = -1; hoverCol = -1;
+			popup.hidden = false;
+			var prefix = pre ? (DE() ? "Residual-Stream vor Schicht 1" : "Residual stream before layer 1") : (DE() ? "Residual-Stream nach Schicht " : "Residual stream after layer ") + (idx + 1);
+			titleEl.textContent = prefix + " · " + (DE() ? "alle Tokens, alle Dimensionen" : "all tokens, all dimensions");
+			canvasEl.style.height = Math.max(220, data.length * 17 + 52) + "px";
+			updateVector();
+			api.redraw();
+			positionPopup(label);
+			cancelHide();
+		}
+
+		document.addEventListener("mouseover", function (event) {
+			var label = event.target.closest ? event.target.closest(".tm-signal-between-label") : null;
+			if (label) { showFor(label); return; }
+			if (popup && popup.contains(event.target)) cancelHide();
+		});
+		document.addEventListener("mouseout", function (event) {
+			var label = event.target.closest ? event.target.closest(".tm-signal-between-label") : null;
+			if (label) scheduleHide();
+		});
+		window.addEventListener("scroll", function () { if (popup) popup.hidden = true; }, true);
+	}
+
 	window.TransformerSteps = {
 		init: function (hostId) {
 			var host = document.getElementById(hostId);
@@ -3426,6 +3600,7 @@
 			canvas.setAttribute('data-layer-migration-ready', '1');
 		}
 	};
+	setupResidualHoverPopup();
 })();
 
 /* The step boxes themselves are collapsible, independent of the data engine. */
@@ -3857,6 +4032,7 @@
 		}
 		resizeCharts();
 	}
+
 	function schedule() {
 		var tries = 0;
 		var timer = setInterval(function () {
