@@ -8638,3 +8638,9 @@ html[data-theme="dark"] .traj-candidate.is-chosen { color: var(--tm-green); }
 	font-weight: 600;
 }
 .collapse-card[open] > summary.cc-label::after { content: " −"; }
+
+.layer-formula-io {
+	margin-top: 6px;
+	font: 500 0.62rem/1.35 var(--tm-mono);
+	color: var(--tm-muted);
+}
