@@ -4209,6 +4209,153 @@ window.bibData = {
 	},
 
 	/* ─────────────────────────────────────────────────────────────────────
+	 *  Animal signals, hominins, and animal word learning  (language.php)
+	 *  Referential alarm calls, Neanderthal speech anatomy, the ape
+	 *  language projects, and the labels learned by dogs and cats.
+	 * ───────────────────────────────────────────────────────────────────── */
+
+	"seyfarth1980vervet": {
+		title: "Monkey Responses to Three Different Alarm Calls: Evidence of Predator Classification and Semantic Communication",
+		author: "Robert M. Seyfarth, Dorothy L. Cheney, Peter Marler",
+		year: 1980,
+		url: "https://pubmed.ncbi.nlm.nih.gov/7433999/",
+		alternativetitle: "Seyfarth et al., 1980"
+	},
+	"arnold2006semantic": {
+		title: "Semantic Combinations in Primate Calls",
+		author: "Kate Arnold and Klaus Zuberbühler",
+		year: 2006,
+		url: "https://pubmed.ncbi.nlm.nih.gov/16710411/",
+		alternativetitle: "Arnold and Zuberbühler, 2006"
+	},
+	"arensburg1989hyoid": {
+		title: "A Middle Palaeolithic Human Hyoid Bone",
+		author: "Baruch Arensburg et al.",
+		year: 1989,
+		url: "https://pubmed.ncbi.nlm.nih.gov/2716823/",
+		alternativetitle: "Arensburg et al., 1989"
+	},
+	"danastasio2013hyoid": {
+		title: "Micro-biomechanics of the Kebara 2 Hyoid and Its Implications for Speech in Neanderthals",
+		author: "Ruggero D'Anastasio et al.",
+		year: 2013,
+		url: "https://pubmed.ncbi.nlm.nih.gov/24367509/",
+		alternativetitle: "D'Anastasio et al., 2013"
+	},
+	"krause2007foxp2": {
+		title: "The Derived FOXP2 Variant of Modern Humans Was Shared with Neandertals",
+		author: "Johannes Krause et al.",
+		year: 2007,
+		url: "https://pubmed.ncbi.nlm.nih.gov/17949978/",
+		alternativetitle: "Krause et al., 2007"
+	},
+	"fitch2001larynx": {
+		title: "The Descended Larynx Is Not Uniquely Human",
+		author: "W. Tecumseh Fitch and David Reby",
+		year: 2001,
+		url: "https://pubmed.ncbi.nlm.nih.gov/11506679/",
+		alternativetitle: "Fitch and Reby, 2001"
+	},
+	"fitch2000evolution": {
+		title: "The Evolution of Speech: A Comparative Review",
+		author: "W. Tecumseh Fitch",
+		year: 2000,
+		url: "https://pubmed.ncbi.nlm.nih.gov/10859570/",
+		alternativetitle: "Fitch, 2000"
+	},
+	"gardner1969washoe": {
+		title: "Teaching Sign Language to a Chimpanzee",
+		author: "R. Allen Gardner and Beatrice T. Gardner",
+		year: 1969,
+		url: "https://pubmed.ncbi.nlm.nih.gov/5793972/",
+		alternativetitle: "Gardner and Gardner, 1969"
+	},
+	"patterson1978koko": {
+		title: "The Gestures of a Gorilla: Language Acquisition in Another Pongid",
+		author: "Francine G. Patterson",
+		year: 1978,
+		url: "https://pubmed.ncbi.nlm.nih.gov/618570/",
+		alternativetitle: "Patterson, 1978"
+	},
+	"premack1971language": {
+		title: "Language in Chimpanzee?",
+		author: "David Premack",
+		year: 1971,
+		url: "https://pubmed.ncbi.nlm.nih.gov/5572906/",
+		alternativetitle: "Premack, 1971"
+	},
+	"terrace1979nim": {
+		title: "Can an Ape Create a Sentence?",
+		author: "Herbert S. Terrace et al.",
+		year: 1979,
+		url: "https://pubmed.ncbi.nlm.nih.gov/504995/",
+		alternativetitle: "Terrace et al., 1979"
+	},
+	"savage1986kanzi": {
+		title: "Spontaneous Symbol Acquisition and Communicative Use by Pygmy Chimpanzees (Pan paniscus)",
+		author: "E. Sue Savage-Rumbaugh et al.",
+		year: 1986,
+		url: "https://pubmed.ncbi.nlm.nih.gov/2428917/",
+		alternativetitle: "Savage-Rumbaugh et al., 1986"
+	},
+	"savage1993language": {
+		title: "Language Comprehension in Ape and Child",
+		author: "E. Sue Savage-Rumbaugh et al.",
+		year: 1993,
+		url: "https://pubmed.ncbi.nlm.nih.gov/8366872/",
+		alternativetitle: "Savage-Rumbaugh et al., 1993"
+	},
+	"kaminski2004rico": {
+		title: "Word Learning in a Domestic Dog: Evidence for \"Fast Mapping\"",
+		author: "Juliane Kaminski, Josep Call, Julia Fischer",
+		year: 2004,
+		url: "https://pubmed.ncbi.nlm.nih.gov/15192233/",
+		alternativetitle: "Kaminski et al., 2004"
+	},
+	"pilley2011chaser": {
+		title: "Border Collie Comprehends Object Names as Verbal Referents",
+		author: "John W. Pilley and Alliston K. Reid",
+		year: 2011,
+		url: "https://pubmed.ncbi.nlm.nih.gov/21145379/",
+		alternativetitle: "Pilley and Reid, 2011"
+	},
+	"andics2014voice": {
+		title: "Voice-Sensitive Regions in the Dog and Human Brain Are Revealed by Comparative fMRI",
+		author: "Attila Andics et al.",
+		year: 2014,
+		url: "https://pubmed.ncbi.nlm.nih.gov/24560578/",
+		alternativetitle: "Andics et al., 2014"
+	},
+	"andics2016neural": {
+		title: "Neural Mechanisms for Lexical Processing in Dogs",
+		author: "Attila Andics et al.",
+		year: 2016,
+		url: "https://pubmed.ncbi.nlm.nih.gov/27576923/",
+		alternativetitle: "Andics et al., 2016"
+	},
+	"saito2019cats": {
+		title: "Domestic Cats (Felis catus) Discriminate Their Names from Other Words",
+		author: "Atsuko Saito et al.",
+		year: 2019,
+		url: "https://pubmed.ncbi.nlm.nih.gov/30948740/",
+		alternativetitle: "Saito et al., 2019"
+	},
+	"saito2013owners": {
+		title: "Vocal Recognition of Owners by Domestic Cats (Felis catus)",
+		author: "Atsuko Saito and Kazutaka Shinozuka",
+		year: 2013,
+		url: "https://pubmed.ncbi.nlm.nih.gov/23525707/",
+		alternativetitle: "Saito and Shinozuka, 2013"
+	},
+	"takagi2022cats": {
+		title: "Cats Learn the Names of Their Friend Cats in Their Daily Lives",
+		author: "Saho Takagi et al.",
+		year: 2022,
+		url: "https://pubmed.ncbi.nlm.nih.gov/35418204/",
+		alternativetitle: "Takagi et al., 2022"
+	},
+
+	/* ─────────────────────────────────────────────────────────────────────
 	 *  The First Brain, the First Eye, and the First Experience
 	 *  (untold_history_i.php, philosophy.php)
 	 *  The origin of nervous systems and vision, and the evolutionary
