@@ -2145,6 +2145,7 @@ function renderTrajectoryPlot(d_model) {
 		trajDiv.setAttribute('data-d-model', d_model);
 
 		wrapper.appendChild(trajDiv);
+		wrapper.appendChild(createTrajectoryMetricExplanation());
 		if (d_model <= 3) wrapper.appendChild(createTrajectoryVFNote());
 		document.getElementById('transformer-migration-plots-container').appendChild(wrapper);
 	} else {
@@ -2158,6 +2159,9 @@ function renderTrajectoryPlot(d_model) {
 				wrapper.setAttribute('data-d-model', d_model);
 				if (!wrapper.querySelector('.trajectory-metric-control')) {
 					wrapper.insertBefore(createTrajectoryMetricControl(), trajDiv);
+				}
+				if (!wrapper.querySelector('.trajectory-metric-explain')) {
+					wrapper.appendChild(createTrajectoryMetricExplanation());
 				}
 				const existingBtn = wrapper.querySelector('.trajectory-vf-toggle');
 				const existingNote = wrapper.querySelector('.trajectory-vf-note');
@@ -7773,6 +7777,15 @@ function createTrajectoryVFNote() {
 		: 'The vector field samples the layer on a grid of points: each arrow shows where the model pushes a state. The lines are your tokens; the field is the flow around them.';
 	note.style.cssText = 'margin: 0 12px 12px; font-size: 0.78rem; line-height: 1.45; color: ' + themeColor('#64748b') + ';';
 	return note;
+}
+
+function createTrajectoryMetricExplanation() {
+	const box = document.createElement('div');
+	box.className = 'trajectory-metric-explain';
+	box.innerHTML = (window.tmMetric && window.tmMetric.explainHtml)
+		? window.tmMetric.explainHtml()
+		: '';
+	return box;
 }
 
 function createTrajectoryMetricControl() {

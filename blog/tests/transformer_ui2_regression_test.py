@@ -320,6 +320,22 @@ def main() -> None:
                   bool(traj_angular) and "Great-circle" in traj_angular["title"] and traj_angular["surface"]
                   and traj_angular["norm"] is not None and abs(traj_angular["norm"] - 1) < 0.02,
                   str(traj_angular)[:300])
+            explain = page.evaluate("""() => {
+                const f = document.querySelector('.tm-feature-metric-explain');
+                const t = document.querySelector('.trajectory-metric-explain');
+                const links = Array.from((f ? f.querySelectorAll('a') : [])).map(a => a.href);
+                return {feature: !!f, featureText: f ? f.innerText : '', trajectory: !!t, links};
+            }""")
+            check("metrics are explained below both plots",
+                  bool(explain) and explain["feature"] and explain["trajectory"]
+                  and ("Euclidean" in explain["featureText"] or "Euklidisch" in explain["featureText"])
+                  and ("great-circle" in explain["featureText"].lower() or "großkreis" in explain["featureText"].lower())
+                  and ("cosine" in explain["featureText"].lower() or "cosinus" in explain["featureText"].lower()),
+                  str(explain)[:300])
+            check("metric explanation links the primary sources",
+                  bool(explain) and "1607.06450" in " ".join(explain["links"])
+                  and "D19-1006" in " ".join(explain["links"]) and "1908.10084" in " ".join(explain["links"]),
+                  str(explain["links"]))
             page.evaluate("""() => { const s=document.querySelector('.trajectory-metric-select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
             check("no console/page errors", not errors, "; ".join(errors[:3]))
 

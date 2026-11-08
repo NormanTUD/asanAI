@@ -967,6 +967,15 @@
 	color: var(--tm-ink, var(--mn-text, #0f172a));
 	font: 600 0.78rem/1.2 "Open Sans", system-ui, sans-serif;
 }
+.tm-feature-metric-explain {
+	margin: 10px 0 0;
+	color: var(--mn-text-muted, var(--tm-muted, #627476));
+	font-size: 0.78rem;
+	line-height: 1.55;
+}
+.tm-feature-metric-explain p { margin: 0 0 6px; }
+.tm-feature-metric-explain a { color: var(--mn-accent, var(--tm-petrol, #004b6f)); }
+
 .tm-feature-metric-help {
 	flex-basis: 100%;
 }

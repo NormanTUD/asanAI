@@ -185,6 +185,15 @@
 	font: 600 0.76rem/1.2 "Open Sans", system-ui, sans-serif;
 }
 
+.trajectory-metric-explain {
+	margin: 8px 12px 12px;
+	color: var(--mn-text-muted, #64748b);
+	font-size: 0.78rem;
+	line-height: 1.55;
+}
+.trajectory-metric-explain p { margin: 0 0 6px; }
+.trajectory-metric-explain a { color: var(--mn-accent, #004b6f); }
+
 /* Inference overlay: the next-token pass is synchronous, so paint first. */
 #tm-inference-busy {
 	position: fixed;

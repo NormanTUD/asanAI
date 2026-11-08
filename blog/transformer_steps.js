@@ -1804,7 +1804,7 @@
 	var FEATURE_METRICS = {
 		euclidean: { de: "Euklidisch (L2)", en: "Euclidean (L2)", short: "L2" },
 		manhattan: { de: "Manhattan (L1)", en: "Manhattan (L1)", short: "L1" },
-		angular: { de: "Großkreis / Winkel (0–1)", en: "Great-circle / angle (0–1)", short: "angle" }
+		angular: { de: "Großkreis / angular (Cosinus, 0–1)", en: "Great-circle / angular (cosine, 0–1)", short: "angle" }
 	};
 	if (!window.tmFeatureMetric || !FEATURE_METRICS[window.tmFeatureMetric]) window.tmFeatureMetric = "euclidean";
 	function featureMetric() { return window.tmFeatureMetric || "euclidean"; }
@@ -1853,6 +1853,17 @@
 		set: function (metric) { if (FEATURE_METRICS[metric]) window.tmFeatureMetric = metric; },
 		options: FEATURE_METRICS,
 		label: featureMetricLabel,
+		explainHtml: function () {
+			var de = DE();
+			if (de) {
+				return '<p><b>Standard: Euklidisch (L2).</b> Für das nächste Token zählen oft die Winkel: Die Logits sind Skalarprodukte <code>h·w</code>; nach einer Normierung entscheidet der Cosinus, also der Winkel. Deshalb lohnt sich die Winkel-/Großkreis-Ansicht als zweite Metrik: Wir suchen die Darstellung, in der die Daten am einfachsten aussehen.</p>'
+					+ '<p><b>Name:</b> Der geometrische Name ist <i>Großkreis-Distanz</i> (Bogen auf der Einheitskugel). In ML heißt dieselbe Größe meist <i>Cosinus-Distanz</i> <code>1−cosθ</code> oder <i>Winkel-Distanz</i> <code>θ</code>. Wir zeigen <code>θ/π</code>: 0 = gleiche Richtung, 1 = Gegenrichtung.</p>'
+					+ '<p><b>Kugel:</b> Nach L2-Normalisierung liegen Vektoren per Definition auf der Einheitskugel; LayerNorm normiert die Features jedes Tokens vor den Subschichten (<a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Ba et al., 2016</a>), und GPT-artige Modelle setzen vor dem Unembedding oft eine finale LayerNorm. Roh sind Embeddings aber nicht gleichmäßig auf der Kugel verteilt: kontextuelle Repräsentationen sind anisotrop und liegen in einem engen Kegel (<a href="https://aclanthology.org/D19-1006/" target="_blank" rel="noopener">Ethayarajh, 2019</a>). Satz-Embeddings werden üblicherweise per Cosinus verglichen (<a href="https://arxiv.org/abs/1908.10084" target="_blank" rel="noopener">Reimers &amp; Gurevych, 2019</a>). Die Winkelansicht ist also eine nützliche Projektion, keine Behauptung, das Modell speichere eine perfekte Kugel.</p>';
+			}
+			return '<p><b>Default: Euclidean (L2).</b> The next token often depends on angles: logits are dot products <code>h·w</code>; after normalization the cosine, i.e. the angle, decides. That is why the angular / great-circle view is worth trying as a second metric: we look for the representation that makes the data simplest.</p>'
+				+ '<p><b>Name:</b> The geometric name is <i>great-circle distance</i> (the arc on the unit sphere). In ML the same quantity is usually called <i>cosine distance</i> <code>1−cosθ</code> or <i>angular distance</i> <code>θ</code>. We show <code>θ/π</code>: 0 = same direction, 1 = opposite.</p>'
+				+ '<p><b>Sphere:</b> After L2 normalization vectors lie on the unit sphere by construction; LayerNorm normalizes each token\'s features before the sublayers (<a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Ba et al., 2016</a>), and GPT-style models often apply a final LayerNorm before the unembedding. Raw embeddings are not spread uniformly on that sphere, however: contextual representations are anisotropic and sit in a narrow cone (<a href="https://aclanthology.org/D19-1006/" target="_blank" rel="noopener">Ethayarajh, 2019</a>). Sentence embeddings are commonly compared by cosine similarity (<a href="https://arxiv.org/abs/1908.10084" target="_blank" rel="noopener">Reimers &amp; Gurevych, 2019</a>). The angular view is therefore a useful projection, not a claim that the model stores a perfect sphere.</p>';
+		},
 		transform: function (v, metric) {
 			metric = metric || featureMetric();
 			if (metric === "manhattan") return manhattanTransform(v);
@@ -2496,12 +2507,14 @@
 				var metricOptions = Object.keys(FEATURE_METRICS).map(function (key) {
 					return "<option value='" + key + "'>" + FEATURE_METRICS[key][isDe ? "de" : "en"] + "</option>";
 				}).join("");
-				var metricHelp = isDe
-					? "<p><b>Euklidisch (L2):</b> gerade Linie im Raum. <b>Manhattan (L1):</b> Summe der absoluten Koordinatenunterschiede; die Darstellung nutzt eine sqrt-Transformation, damit L1-Kugeln rund wirken. <b>Großkreis (Winkel, 0–1):</b> Jeder Vektor wird auf Länge 1 normiert; der Abstand ist der Winkel am Nullpunkt geteilt durch π, also 0 = gleiche Richtung und 1 = Gegenrichtung. L1 und L2 erzeugen in endlichen Dimensionen dieselbe Topologie (äquivalente Normen); der Winkel-Abstand ignoriert die Vektorlänge und ändert die Geometrie stärker. Mehr: <a href='https://en.wikipedia.org/wiki/Metric_space' target='_blank' rel='noopener'>metric space</a>, <a href='https://en.wikipedia.org/wiki/Taxicab_geometry' target='_blank' rel='noopener'>taxicab geometry</a>, <a href='https://en.wikipedia.org/wiki/Great-circle_distance' target='_blank' rel='noopener'>great-circle distance</a>.</p>"
-					: "<p><b>Euclidean (L2):</b> straight-line distance in the space. <b>Manhattan (L1):</b> sum of absolute coordinate differences; the plot uses a sqrt transform so L1 balls look round. <b>Great-circle (angle, 0–1):</b> every vector is normalized to length 1; the distance is the angle at the origin divided by π, so 0 = same direction and 1 = opposite. In finite dimensions L1 and L2 induce the same topology (equivalent norms); the angular metric drops vector length and changes the geometry more strongly. More: <a href='https://en.wikipedia.org/wiki/Metric_space' target='_blank' rel='noopener'>metric space</a>, <a href='https://en.wikipedia.org/wiki/Taxicab_geometry' target='_blank' rel='noopener'>taxicab geometry</a>, <a href='https://en.wikipedia.org/wiki/Great-circle_distance' target='_blank' rel='noopener'>great-circle distance</a>.</p>";
+				var metricDefinitions = isDe
+					? "<p><b>Euklidisch (L2):</b> gerade Linie im Raum. <b>Manhattan (L1):</b> Summe der absoluten Koordinatenunterschiede; die Darstellung nutzt eine sqrt-Transformation, damit L1-Kugeln rund wirken. <b>Großkreis / angular:</b> jeder Vektor wird auf Länge 1 normiert; der Abstand ist der Winkel θ am Ursprung, geteilt durch π. In endlichen Dimensionen erzeugen L1 und L2 dieselbe Topologie (äquivalente Normen); der Winkel-Abstand ignoriert die Vektorlänge und ändert die Geometrie stärker.</p>"
+					: "<p><b>Euclidean (L2):</b> straight-line distance in the space. <b>Manhattan (L1):</b> sum of absolute coordinate differences; the plot uses a sqrt transform so L1 balls look round. <b>Great-circle / angular:</b> every vector is normalized to length 1; the distance is the angle θ at the origin divided by π. In finite dimensions L1 and L2 induce the same topology (equivalent norms); the angular metric drops vector length and changes the geometry more strongly.</p>";
+				var metricExplain = (window.tmMetric && window.tmMetric.explainHtml) ? window.tmMetric.explainHtml() : "";
 				wrap.innerHTML = "<div class='tm-feature-primary'><span class='tm-feature-note' id='unified-layer-" + idx + "-feature-projection'></span>" +
-					"<div class='tm-feature-metric'><label>" + (isDe ? "Distanzmetrik" : "Distance metric") + " <select data-feature-metric='" + idx + "'>" + metricOptions + "</select></label><details class='tm-feature-metric-help'><summary>" + (isDe ? "Was bedeuten die Metriken?" : "What do these metrics mean?") + "</summary>" + metricHelp + "</details></div>" +
-					"<div id='unified-layer-" + idx + "-feature-arrows' class='tm-feature-arrows'></div></div>" +
+					"<div class='tm-feature-metric'><label>" + (isDe ? "Distanzmetrik" : "Distance metric") + " <select data-feature-metric='" + idx + "'>" + metricOptions + "</select></label></div>" +
+					"<div id='unified-layer-" + idx + "-feature-arrows' class='tm-feature-arrows'></div>" +
+					"<div class='tm-feature-metric-explain'>" + metricDefinitions + metricExplain + "</div></div>" +
 					"<div id='unified-layer-" + idx + "-logit-lens' class='tm-logit-lens-host'></div>";
 				sb.insertBefore(wrap, oldDetail || null);
 			}
