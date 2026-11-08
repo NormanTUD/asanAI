@@ -1636,7 +1636,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		}
 
 		/* ── truth tunnel ────────────────────────────────────── */
-		var isoCanvas = document.getElementById("tt-canvas");
+		var isoHost = document.getElementById("tt-3d");
 		var isoNextEl = document.getElementById("tt-next");
 		var isoAltEl = document.getElementById("tt-alt");
 		var isoMetaEl = document.getElementById("tt-meta");
@@ -1645,12 +1645,22 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		var isoTempOut = document.getElementById("tt-temp-out");
 		var isoStep = 0;
 		var isoTemp = 0.8;
-		var isoApi = null;
-		var isoHits = [];
+		var isoChart = null;
+		var isoLoaded = false;
+		var isoLoading = false;
+		var isoDrawn = false;
 		var isoLabels = DE ? {
-			certain: "fast sicher", likely: "wahrscheinlich", open: "offen", wide: "sehr offen", width: "Tunnelbreite", certainAxis: "sicher", openAxis: "offen", deepest: "blaues Tal = wahrscheinlichster Pfad"
+			certain: "fast sicher", likely: "wahrscheinlich", open: "offen", wide: "sehr offen", width: "Tunnelbreite",
+			axisStep: "Kontext", axisMeaning: "Bedeutung", axisProb: "wahrscheinlicher ↓",
+			deepest: "blaues Tal = wahrscheinlichster Pfad",
+			loading: "Die 3D-Landschaft wird geladen …",
+			failed: "Die 3D-Bibliothek konnte nicht geladen werden."
 		} : {
-			certain: "near-certain", likely: "likely", open: "open", wide: "wide open", width: "tunnel width", certainAxis: "certain", openAxis: "open", deepest: "blue valley = most likely path"
+			certain: "near-certain", likely: "likely", open: "open", wide: "wide open", width: "tunnel width",
+			axisStep: "context", axisMeaning: "meaning", axisProb: "more likely ↓",
+			deepest: "blue valley = most likely path",
+			loading: "Loading the 3D landscape …",
+			failed: "The 3D library could not be loaded."
 		};
 		var isoTokens = DE ? ["Die", "Hauptstadt", "von", "Frankreich", "ist", "Paris", "."] : ["The", "capital", "of", "France", "is", "Paris", "."];
 		var isoEntropy = [0.95, 0.55, 0.20, 0.60, 0.15, 0.05, 0.10];
@@ -1740,327 +1750,277 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var bl = Math.round(A[2] + (B[2] - A[2]) * t);
 			return "rgb(" + r + "," + g + "," + bl + ")";
 		}
-		function probabilityColor(p, c) {
-			return mixRgb(c.gold, c.blue, Math.max(0, Math.min(1, p)));
+		function isoClamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+		function isoLerp(a, b, t) { return a + (b - a) * t; }
+		function isoCenter(x) {
+			var lo = Math.max(0, Math.min(isoPath.length - 1, Math.floor(x)));
+			var hi = Math.min(isoPath.length - 1, lo + 1);
+			var y = isoLerp(isoPath[lo].y, isoPath[hi].y, x - lo);
+			return (y - 0.4) * 2.2;
 		}
-		function drawValley(ctx, origin, target, width, color) {
-			var dx = target.x - origin.x;
-			var dy = target.y - origin.y;
-			var len = Math.hypot(dx, dy) || 1;
-			var nx = -dy / len;
-			var ny = dx / len;
-			var mx = (origin.x + target.x) / 2 + nx * len * 0.06;
-			var my = (origin.y + target.y) / 2 + ny * len * 0.06;
-			var samples = 14;
-			var base = [];
-			for (var i = 0; i <= samples; i++) {
-				var t = i / samples;
-				var u = 1 - t;
-				var x = u * u * origin.x + 2 * u * t * mx + t * t * target.x;
-				var y = u * u * origin.y + 2 * u * t * my + t * t * target.y;
-				var tx = 2 * u * (mx - origin.x) + 2 * t * (target.x - mx);
-				var ty = 2 * u * (my - origin.y) + 2 * t * (target.y - my);
-				var tl = Math.hypot(tx, ty) || 1;
-				var px = -ty / tl;
-				var py = tx / tl;
-				var w = width * (0.16 + 0.84 * Math.pow(t, 0.75));
-				base.push({ x: x, y: y, px: px, py: py, w: w });
-			}
-			var levels = [1, 0.72, 0.46, 0.24];
-			levels.forEach(function (scale, li) {
-				var pts = [];
-				base.forEach(function (p) {
-					pts.push({ x: p.x + p.px * p.w * scale, y: p.y + p.py * p.w * scale });
-				});
-				var end = base[base.length - 1];
-				var capR = end.w * scale * 0.9;
-				var a0 = Math.atan2(end.py, end.px);
-				var steps = 6;
-				for (var k = 1; k < steps; k++) {
-					var a = a0 + Math.PI * k / steps;
-					pts.push({ x: target.x + Math.cos(a) * capR, y: target.y + Math.sin(a) * capR });
-				}
-				for (var j = base.length - 1; j >= 0; j--) {
-					var p = base[j];
-					pts.push({ x: p.x - p.px * p.w * scale, y: p.y - p.py * p.w * scale });
-				}
-				ctx.beginPath();
-				pts.forEach(function (p, idx) {
-					if (idx === 0) ctx.moveTo(p.x, p.y);
-					else ctx.lineTo(p.x, p.y);
-				});
-				ctx.closePath();
-				ctx.fillStyle = rgba(color, 0.018 + 0.018 * li);
-				ctx.fill();
-				ctx.strokeStyle = rgba(color, 0.16 + 0.08 * li);
-				ctx.lineWidth = 0.9;
-				ctx.stroke();
-			});
-			ctx.beginPath();
-			ctx.arc(target.x, target.y, 3.5, 0, Math.PI * 2);
-			ctx.fillStyle = rgba(color, 0.75);
-			ctx.fill();
+		function isoEntropyAt(x) {
+			var lo = Math.max(0, Math.min(isoEntropy.length - 1, Math.floor(x)));
+			var hi = Math.min(isoEntropy.length - 1, lo + 1);
+			return isoLerp(isoEntropy[lo], isoEntropy[hi], x - lo);
 		}
-		function drawValleys(ctx, at, step, spread, baseWidth, c) {
+		function isoMainDepth() {
+			return Math.max(0.55, 1.25 * (1.2 - 0.28 * isoTemp));
+		}
+		function isoMainWidth(x) {
+			return 0.075 + 0.42 * isoEntropyAt(x) * isoTemp;
+		}
+		function isoAltY(alt) {
+			return (alt.path.y - 0.4) * 2.2;
+		}
+		function isoAltDepth(alt) {
+			return isoMainDepth() * (0.30 + 0.18 * (1 - alt.entropy));
+		}
+		function isoAltWidth(alt) {
+			return 0.045 + 0.20 * alt.entropy * isoTemp;
+		}
+		function isoValleyDepth(x, y) {
+			var centre = isoCenter(x);
+			var mainWidth = isoMainWidth(x);
+			var depth = Math.exp(-Math.pow((y - centre) / mainWidth, 2)) * isoMainDepth();
 			isoBranches.forEach(function (branch) {
-				if (step < branch.atStep) return;
-				var origin = at(isoPath[branch.atStep]);
+				if (x < branch.atStep || x > branch.atStep + 1) return;
+				var t = x - branch.atStep;
+				var startY = isoCenter(branch.atStep);
 				branch.alternatives.forEach(function (alt) {
-					var target = at(alt.path);
-					var pc = Math.max(0, Math.min(1, 1 - alt.entropy));
-					var color = probabilityColor(pc, c);
-					var maxW = Math.max(10, alt.entropy * spread * baseWidth * 0.75);
-					drawValley(ctx, origin, target, maxW, color);
-					ctx.font = "11px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
-					ctx.textAlign = "center";
-					ctx.fillStyle = color;
-					ctx.fillText(isoAltLabel(alt.token), target.x, target.y - maxW * 0.9 - 8);
+					var cy = isoLerp(startY, isoAltY(alt), t);
+					var width = isoAltWidth(alt);
+					var d = isoAltDepth(alt) * Math.exp(-Math.pow((y - cy) / width, 2));
+					d *= 0.55 + 0.45 * Math.sin(Math.PI * t);
+					if (d > depth) depth = d;
 				});
 			});
+			return depth;
 		}
-
-		function drawFullMainValley(ctx, at, spread, baseWidth, c) {
-			var upper = [], lower = [];
-			for (var i = 0; i < isoPath.length; i++) {
-				var q = at(isoPath[i]);
-				var env = isoEntropy[i] * spread * baseWidth;
-				var dx = 0, dy = -1;
-				if (i < isoPath.length - 1) {
-					var n = at(isoPath[i + 1]);
-					var tx = n.x - q.x, ty = n.y - q.y, len = Math.hypot(tx, ty);
-					if (len > 0) { dx = -ty / len; dy = tx / len; }
-				} else if (i > 0) {
-					var p = at(isoPath[i - 1]);
-					var tx2 = q.x - p.x, ty2 = q.y - p.y, len2 = Math.hypot(tx2, ty2);
-					if (len2 > 0) { dx = -ty2 / len2; dy = tx2 / len2; }
+		function isoTokenPoint(index) {
+			var x = index;
+			var y = isoCenter(x);
+			return [x, y, -isoValleyDepth(x, y) + 0.06];
+		}
+		function isoSurfaceData() {
+			var data = [];
+			var xCount = 55, yCount = 39;
+			var xMin = 0, xMax = isoTokens.length - 1;
+			var yMin = -0.85, yMax = 0.85;
+			for (var yi = 0; yi <= yCount; yi++) {
+				var y = isoLerp(yMin, yMax, yi / yCount);
+				var row = [];
+				for (var xi = 0; xi <= xCount; xi++) {
+					var x = isoLerp(xMin, xMax, xi / xCount);
+					var depth = isoValleyDepth(x, y);
+					var ripple = 0.018 * Math.sin(x * 2.4 + y * 3.1) * Math.cos(y * 2.2 - x * 1.7);
+					var z = -depth + ripple * (1 - Math.min(1, depth));
+					row.push([Number(x.toFixed(3)), Number(y.toFixed(3)), Number(z.toFixed(4))]);
 				}
-				upper.push({ x: q.x + dx * env, y: q.y + dy * env });
-				lower.push({ x: q.x - dx * env, y: q.y - dy * env });
+				data.push(row);
 			}
-			ctx.beginPath();
-			upper.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
-			for (var j = lower.length - 1; j >= 0; j--) ctx.lineTo(lower[j].x, lower[j].y);
-			ctx.closePath();
-			ctx.fillStyle = rgba(c.blue, 0.025);
-			ctx.fill();
-			ctx.strokeStyle = rgba(c.blue, 0.16);
-			ctx.lineWidth = 1;
-			ctx.stroke();
+			return { data: data, shape: [yCount + 1, xCount + 1] };
 		}
-		function drawIso(ctx, w, h) {
-			isoHits = [];
+		function isoFallback(message) {
+			if (isoChart) { isoChart.dispose(); isoChart = null; }
+			if (isoHost) isoHost.innerHTML = '<div class="tt-fallback">' + message + '</div>';
+		}
+		function ensureIsoLibs(cb) {
+			if (TM.ensureECharts) TM.ensureECharts(cb, function () { isoFallback(isoLabels.failed); });
+			else isoFallback(isoLabels.failed);
+		}
+		function drawIso() {
+			if (!isoHost || !window.echarts || !window.echarts.init) return;
 			var c = TM.colors();
-			var pad = 30;
-			var plotW = Math.max(40, w - pad * 2 - 24);
-			var plotH = Math.max(40, h - pad * 2);
-			function at(p) {
-				return { x: pad + p.x * plotW, y: pad + p.y * plotH };
+			var surface = isoSurfaceData();
+			var mainDepth = isoMainDepth();
+			var zMin = -mainDepth - 0.08;
+			if (!isoChart) {
+				isoHost.innerHTML = "";
+				try {
+					isoChart = echarts.init(isoHost);
+				} catch (e) {
+					isoFallback(isoLabels.failed);
+					return;
+				}
+				isoChart.on("click", function (params) {
+					var idx = null;
+					if (params && params.data && typeof params.data.tokenIndex === "number") idx = params.data.tokenIndex;
+					else if (params && params.value && params.value.length >= 1) idx = Math.round(params.value[0]);
+					if (idx !== null && idx >= 0 && idx < isoTokens.length) {
+						isoStep = idx;
+						drawIso();
+					}
+				});
 			}
-			ctx.clearRect(0, 0, w, h);
-			ctx.fillStyle = c.paper2;
-			ctx.fillRect(0, 0, w, h);
-			ctx.strokeStyle = c.line;
-			ctx.lineWidth = 1;
-			for (var gx = pad; gx < pad + plotW; gx += 40) {
-				ctx.beginPath(); ctx.moveTo(gx, pad); ctx.lineTo(gx, pad + plotH); ctx.stroke();
-			}
-			for (var gy = pad; gy < pad + plotH; gy += 40) {
-				ctx.beginPath(); ctx.moveTo(pad, gy); ctx.lineTo(pad + plotW, gy); ctx.stroke();
-			}
-			ctx.beginPath();
-			isoPath.forEach(function (p, i) {
-				var q = at(p);
-				if (i === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
-			});
-			ctx.strokeStyle = c.lineStrong;
-			ctx.lineWidth = 1;
-			ctx.setLineDash([4, 8]);
-			ctx.stroke();
-			ctx.setLineDash([]);
 			var step = Math.min(isoStep, isoTokens.length - 1);
-			var baseWidth = Math.min(w, h) * 0.22;
-			var spread = 0.35 + 0.65 * isoTemp;
-			drawFullMainValley(ctx, at, spread, baseWidth, c);
-			drawValleys(ctx, at, step, spread, baseWidth, c);
-			if (step >= 1) {
-				var upper = [], lower = [];
-				for (var i = 0; i <= step; i++) {
-					var q = at(isoPath[i]);
-					var env = isoEntropy[i] * spread * baseWidth;
-					var dx = 0, dy = -1;
-					if (i < isoPath.length - 1) {
-						var n = at(isoPath[i + 1]);
-						var tx = n.x - q.x, ty = n.y - q.y, len = Math.hypot(tx, ty);
-						if (len > 0) { dx = -ty / len; dy = tx / len; }
-					} else if (i > 0) {
-						var p = at(isoPath[i - 1]);
-						var tx2 = q.x - p.x, ty2 = q.y - p.y, len2 = Math.hypot(tx2, ty2);
-						if (len2 > 0) { dx = -ty2 / len2; dy = tx2 / len2; }
+			var series = [];
+			series.push({
+				name: "landscape",
+				type: "surface",
+				data: surface.data,
+				dataShape: surface.shape,
+				shading: "color",
+				wireframe: { show: false },
+				itemStyle: { opacity: 1 }
+			});
+			var tokens = isoTokens.map(function (token, i) {
+				var current = i === step;
+				var visited = i <= step;
+				return {
+					name: token,
+					tokenIndex: i,
+					value: isoTokenPoint(i),
+					symbolSize: current ? 13 : 7,
+					itemStyle: {
+						color: current ? c.green : c.blue,
+						borderColor: c.paper,
+						borderWidth: current ? 2 : 1,
+						opacity: visited ? 1 : 0.55
+					},
+					label: {
+						show: true,
+						position: "top",
+						distance: 4,
+						formatter: token,
+						textStyle: {
+							color: current ? c.green : c.ink,
+							fontSize: current ? 12 : 10,
+							fontWeight: current ? 700 : 600,
+							backgroundColor: rgba(c.dark ? "#0f172a" : "#ffffff", 0.66),
+							padding: [2, 3],
+							borderRadius: 2
+						}
 					}
-					upper.push({ x: q.x + dx * env, y: q.y + dy * env });
-					lower.push({ x: q.x - dx * env, y: q.y - dy * env });
-				}
-				for (var layer = 3; layer >= 0; layer--) {
-					var scale = 1 + layer * 0.28;
-					ctx.beginPath();
-					upper.forEach(function (p, i2) {
-						var q2 = at(isoPath[i2]);
-						var x = q2.x + (p.x - q2.x) * scale, y = q2.y + (p.y - q2.y) * scale;
-						if (i2 === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-					});
-					for (var i3 = lower.length - 1; i3 >= 0; i3--) {
-						var q3 = at(isoPath[i3]);
-						var p3 = lower[i3];
-						ctx.lineTo(q3.x + (p3.x - q3.x) * scale, q3.y + (p3.y - q3.y) * scale);
-					}
-					ctx.closePath();
-					ctx.globalAlpha = 0.022 + (3 - layer) * 0.025;
-					ctx.fillStyle = c.blue;
-					ctx.fill();
-					ctx.globalAlpha = 1;
-				}
-				ctx.beginPath();
-				upper.forEach(function (p, i4) { if (i4 === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
-				for (var i5 = lower.length - 1; i5 >= 0; i5--) ctx.lineTo(lower[i5].x, lower[i5].y);
-				ctx.closePath();
-				ctx.fillStyle = c.blue;
-				ctx.globalAlpha = 0.10;
-				ctx.fill();
-				ctx.globalAlpha = 0.50;
-				ctx.strokeStyle = c.blue;
-				ctx.lineWidth = 1.5;
-				ctx.stroke();
-				ctx.globalAlpha = 1;
-				// Deeper inner trench
-				ctx.beginPath();
-				upper.forEach(function (p, i6) {
-					var q6 = at(isoPath[i6]);
-					var x = q6.x + (p.x - q6.x) * 0.42, y = q6.y + (p.y - q6.y) * 0.42;
-					if (i6 === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-				});
-				for (var i7 = lower.length - 1; i7 >= 0; i7--) {
-					var q7 = at(isoPath[i7]);
-					var p7 = lower[i7];
-					ctx.lineTo(q7.x + (p7.x - q7.x) * 0.42, q7.y + (p7.y - q7.y) * 0.42);
-				}
-				ctx.closePath();
-				ctx.fillStyle = c.blue;
-				ctx.globalAlpha = 0.18;
-				ctx.fill();
-				ctx.globalAlpha = 1;
-				// Light from above: shadow on the lower rim, highlight on the upper rim
-				ctx.beginPath();
-				lower.forEach(function (p, i8) { if (i8 === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
-				ctx.strokeStyle = rgba(c.ink, 0.12);
-				ctx.lineWidth = 2;
-				ctx.stroke();
-				ctx.beginPath();
-				upper.forEach(function (p, i9) { if (i9 === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
-				ctx.strokeStyle = rgba(c.paper, 0.35);
-				ctx.lineWidth = 1;
-				ctx.stroke();
-			}
-			if (step >= 1) {
-				ctx.beginPath();
-				for (var s = 0; s <= step; s++) { var qs = at(isoPath[s]); if (s === 0) ctx.moveTo(qs.x, qs.y); else ctx.lineTo(qs.x, qs.y); }
-				ctx.strokeStyle = rgba(c.blue, 0.12);
-				ctx.lineWidth = 10;
-				ctx.lineCap = "round";
-				ctx.stroke();
-				ctx.strokeStyle = c.blue;
-				ctx.lineWidth = 2.5;
-				ctx.stroke();
-			}
-			for (var n2 = 0; n2 <= step; n2++) {
-				var q4 = at(isoPath[n2]);
-				var ent = isoEntropy[n2];
-				var radius = 5 + ent * isoTemp * 4;
-				var fill = c.blue;
-				var haloR = radius * 2.8 + 7;
-				var halo = ctx.createRadialGradient(q4.x, q4.y, 0, q4.x, q4.y, haloR);
-				halo.addColorStop(0, rgba(fill, 0.24));
-				halo.addColorStop(0.6, rgba(fill, 0.08));
-				halo.addColorStop(1, rgba(fill, 0));
-				ctx.fillStyle = halo;
-				ctx.beginPath();
-				ctx.arc(q4.x, q4.y, haloR, 0, Math.PI * 2);
-				ctx.fill();
-				ctx.beginPath();
-				ctx.arc(q4.x, q4.y, radius, 0, Math.PI * 2);
-				ctx.fillStyle = fill;
-				ctx.fill();
-				ctx.strokeStyle = c.card;
-				ctx.lineWidth = 2;
-				ctx.stroke();
-				ctx.font = "700 12px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
-				ctx.textAlign = "center";
-				ctx.fillStyle = c.ink;
-				var labelY = q4.y - radius - 8;
-				ctx.fillText(isoTokens[n2], q4.x, labelY);
-				var labelW = ctx.measureText(isoTokens[n2]).width;
-				isoHits.push({
-					x: q4.x, y: q4.y, r: Math.max(14, radius + 6), index: n2,
-					label: { x1: q4.x - labelW / 2 - 4, x2: q4.x + labelW / 2 + 4, y1: labelY - 12, y2: labelY + 4 }
+				};
+			});
+			series.push({
+				name: "tokens",
+				type: "scatter3D",
+				data: tokens,
+				symbol: "circle",
+				tooltip: { formatter: function (p) { return p.name; } }
+			});
+			var trail = [];
+			for (var ti = 0; ti <= step; ti++) trail.push(isoTokenPoint(ti));
+			if (trail.length > 1) {
+				series.push({
+					name: "path",
+					type: "line3D",
+					data: trail,
+					lineStyle: { width: 4, color: c.ink, opacity: 0.7 },
+					silent: true
 				});
 			}
-			for (var f = step + 1; f < isoTokens.length; f++) {
-				var q5 = at(isoPath[f]);
-				ctx.beginPath();
-				ctx.arc(q5.x, q5.y, 3, 0, Math.PI * 2);
-				ctx.fillStyle = c.muted;
-				ctx.globalAlpha = 0.25;
-				ctx.fill();
-				ctx.globalAlpha = 0.35;
-				ctx.font = "10px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
-				ctx.textAlign = "center";
-				ctx.fillStyle = c.muted;
-				var futureLabelY = q5.y - 10;
-				ctx.fillText(isoTokens[f], q5.x, futureLabelY);
-				var futureLabelW = ctx.measureText(isoTokens[f]).width;
-				isoHits.push({
-					x: q5.x, y: q5.y, r: 12, index: f,
-					label: { x1: q5.x - futureLabelW / 2 - 4, x2: q5.x + futureLabelW / 2 + 4, y1: futureLabelY - 11, y2: futureLabelY + 3 }
+			var branch = null;
+			for (var bi = 0; bi < isoBranches.length; bi++) {
+				if (isoBranches[bi].atStep === step) { branch = isoBranches[bi]; break; }
+			}
+			if (branch) {
+				var altX = Math.min(isoTokens.length - 1, branch.atStep + 0.9);
+				var startY = isoCenter(branch.atStep);
+				var alternatives = branch.alternatives.map(function (alt) {
+					var y = isoLerp(startY, isoAltY(alt), 0.9);
+					return {
+						name: isoAltLabel(alt.token),
+						value: [altX, y, -isoValleyDepth(altX, y) + 0.05],
+						itemStyle: { color: c.gold, borderColor: c.paper, borderWidth: 1 },
+						label: {
+							show: true,
+							position: "bottom",
+							distance: 3,
+							formatter: isoAltLabel(alt.token),
+							textStyle: { color: c.gold, fontSize: 9, fontWeight: 600 }
+						}
+					};
 				});
-				ctx.globalAlpha = 1;
+				series.push({
+					name: "alternatives",
+					type: "scatter3D",
+					data: alternatives,
+					symbol: "diamond",
+					symbolSize: 8,
+					tooltip: { formatter: function (p) { return p.name; } }
+				});
 			}
-			var barX = w - 36, barY = 40, barW = 12, barH = h - 86;
-			if (barH > 40) {
-				var grad = ctx.createLinearGradient(0, barY, 0, barY + barH);
-				grad.addColorStop(0, c.blue);
-				grad.addColorStop(0.5, c.coral);
-				grad.addColorStop(1, c.gold);
-				ctx.fillStyle = grad;
-				ctx.fillRect(barX, barY, barW, barH);
-				var eff = Math.min(1, isoEntropy[step] * isoTemp);
-				var markerY = barY + (1 - eff) * barH;
-				ctx.beginPath();
-				ctx.moveTo(barX - 7, markerY);
-				ctx.lineTo(barX, markerY - 4);
-				ctx.lineTo(barX, markerY + 4);
-				ctx.closePath();
-				ctx.fillStyle = c.ink;
-				ctx.fill();
-				ctx.beginPath();
-				ctx.moveTo(barX, markerY);
-				ctx.lineTo(barX + barW, markerY);
-				ctx.strokeStyle = c.ink;
-				ctx.lineWidth = 2;
-				ctx.stroke();
-				ctx.font = "9px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
-				ctx.textAlign = "center";
-				ctx.fillStyle = c.muted;
-				ctx.fillText(isoLabels.certainAxis, barX + barW / 2, barY - 8);
-				ctx.fillText(isoLabels.openAxis, barX + barW / 2, barY + barH + 14);
-				ctx.font = "700 10px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
-				ctx.textAlign = "left";
-				ctx.fillStyle = c.ink;
-				ctx.fillText("H=" + eff.toFixed(2), barX + barW + 6, markerY + 4);
+			var option = {
+				backgroundColor: "transparent",
+				tooltip: {
+					trigger: "item", confine: true,
+					backgroundColor: c.dark ? "rgba(10,34,44,.96)" : "rgba(255,255,255,.98)",
+					borderColor: c.lineStrong,
+					textStyle: { color: c.ink, fontSize: 12 }
+				},
+				visualMap: {
+					show: false,
+					dimension: 2,
+					min: zMin,
+					max: 0.03,
+					inRange: { color: [mixRgb(c.blue, c.ink, c.dark ? 0.36 : 0.58), c.blue, c.sky, c.gold, c.paper2] }
+				},
+				xAxis3D: {
+					type: "value", name: isoLabels.axisStep,
+					min: 0, max: isoTokens.length - 1, interval: 1,
+					nameTextStyle: { color: c.muted, fontSize: 10 },
+					nameGap: 14,
+					axisLabel: {
+						interval: 0,
+						formatter: function (v) {
+							var i = Math.round(v);
+							return i >= 0 && i < isoTokens.length ? isoTokens[i] : "";
+						},
+						textStyle: { color: c.muted, fontSize: 9 }
+					},
+					axisLine: { lineStyle: { color: c.lineStrong } },
+					splitLine: { lineStyle: { color: c.line } }
+				},
+				yAxis3D: {
+					type: "value", name: isoLabels.axisMeaning,
+					min: -0.85, max: 0.85, interval: 0.4,
+					nameTextStyle: { color: c.muted, fontSize: 10 },
+					nameGap: 12,
+					axisLabel: {
+						formatter: function (v) { return Number(v).toFixed(1); },
+						textStyle: { color: c.muted, fontSize: 9 }
+					},
+					axisLine: { lineStyle: { color: c.lineStrong } },
+					splitLine: { lineStyle: { color: c.line } }
+				},
+				zAxis3D: {
+					type: "value", name: isoLabels.axisProb,
+					min: zMin, max: 0.03,
+					nameTextStyle: { color: c.muted, fontSize: 10 },
+					nameGap: 10,
+					axisLabel: { show: false },
+					axisLine: { lineStyle: { color: c.lineStrong } },
+					splitLine: { lineStyle: { color: c.line } }
+				},
+				grid3D: {
+					viewControl: {
+						projection: "perspective",
+						alpha: 26, beta: 38, distance: 190,
+						autoRotate: false, damping: 0.9,
+						rotateSensitivity: 1.2, zoomSensitivity: 1.2
+					},
+					light: {
+						main: { intensity: 1.1, shadow: false, alpha: 40, beta: 20 },
+						ambient: { intensity: 0.45 }
+					},
+					environment: c.paper2,
+					boxWidth: 115, boxHeight: 62, boxDepth: 82,
+					axisLine: { lineStyle: { color: c.lineStrong } },
+					splitLine: { lineStyle: { color: c.line } },
+					axisPointer: { show: false }
+				},
+				series: series
+			};
+			if (isoDrawn) delete option.grid3D.viewControl;
+			try {
+				isoChart.setOption(option, { replaceMerge: ["series"], lazyUpdate: false });
+				isoChart.resize();
+				isoDrawn = true;
+			} catch (e) {
+				isoFallback(isoLabels.failed);
 			}
-			ctx.font = "11px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
-			ctx.textAlign = "left";
-			ctx.fillStyle = c.muted;
-			ctx.fillText("T = " + isoTemp.toFixed(2), 12, 20);
-			ctx.fillText(isoLabels.deepest, 12, h - 14);
 			updateIsoSide();
 		}
 		function updateIsoSide() {
@@ -2093,49 +2053,47 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				else if (eff >= 0.12) { label = isoLabels.likely; cls = "is-likely"; }
 			}
 			isoMetaEl.innerHTML = '<span class="iso-badge ' + cls + '">' + label + '</span>'
-				+ '<div style="margin-top:.55em">' + isoLabels.width + ' <b>' + eff.toFixed(2) + '</b></div>';
+				+ '<div style="margin-top:.55em">' + isoLabels.width + ' <b>' + eff.toFixed(2) + '</b></div>'
+				+ '<div style="margin-top:.55em;color:var(--tm-muted)">' + isoLabels.deepest + '</div>';
 		}
-		if (isoCanvas) {
-			isoApi = TM.initCanvas(isoCanvas, drawIso);
-			function isoHitTest(ev) {
-				if (!isoHits.length) return null;
-				var rect = isoCanvas.getBoundingClientRect();
-				var x = ev.clientX - rect.left;
-				var y = ev.clientY - rect.top;
-				for (var hi = 0; hi < isoHits.length; hi++) {
-					var hit = isoHits[hi];
-					if (hit.label && x >= hit.label.x1 && x <= hit.label.x2 && y >= hit.label.y1 && y <= hit.label.y2) return hit;
-					var dx = x - hit.x, dy = y - hit.y;
-					if (dx * dx + dy * dy <= hit.r * hit.r) return hit;
-				}
-				return null;
+		function startIso() {
+			if (isoLoaded || isoLoading) return;
+			isoLoading = true;
+			if (isoHost) isoHost.innerHTML = '<div class="tt-fallback">' + isoLabels.loading + '</div>';
+			ensureIsoLibs(function () {
+				isoLoading = false;
+				isoLoaded = true;
+				drawIso();
+			});
+		}
+		if (isoHost) {
+			if ("IntersectionObserver" in window) {
+				var isoObserver = new IntersectionObserver(function (entries) {
+					if (entries.some(function (e) { return e.isIntersecting; })) {
+						isoObserver.disconnect();
+						startIso();
+					}
+				}, { rootMargin: "400px 0px" });
+				isoObserver.observe(isoHost);
+			} else {
+				startIso();
 			}
-			isoCanvas.addEventListener("click", function (ev) {
-				var hit = isoHitTest(ev);
-				if (hit) {
-					isoStep = hit.index;
-					if (isoApi) isoApi.redraw();
-				}
-			});
-			isoCanvas.addEventListener("mousemove", function (ev) {
-				isoCanvas.style.cursor = isoHitTest(ev) ? "pointer" : "default";
-			});
-			isoCanvas.addEventListener("mouseleave", function () {
-				isoCanvas.style.cursor = "default";
-			});
 			if (isoTempEl) {
 				isoTempEl.addEventListener("input", function () {
 					isoTemp = parseFloat(isoTempEl.value) || 0.8;
-					if (isoApi) isoApi.redraw();
+					if (isoLoaded) drawIso();
+					else updateIsoSide();
 				});
 			}
 			if (isoAdvance) {
 				isoAdvance.addEventListener("click", function () {
 					isoStep = (isoStep + 1) % isoTokens.length;
-					if (isoApi) isoApi.redraw();
+					if (isoLoaded) drawIso();
+					else updateIsoSide();
 				});
 			}
-			window.addEventListener("tm:theme", function () { if (isoApi) isoApi.redraw(); });
+			window.addEventListener("tm:theme", function () { if (isoLoaded) drawIso(); });
+			window.addEventListener("resize", function () { if (isoChart) isoChart.resize(); });
 			updateIsoSide();
 		}
 
@@ -3461,7 +3419,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 
 
 		window.addEventListener("tm:theme", function () {
-			if (isoApi) isoApi.redraw();
 			if (embApi) embApi.redraw();
 			if (posApi) posApi.redraw();
 			if (attApi) attApi.redraw();
@@ -3924,23 +3881,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function fallback(message) {
 			host.innerHTML = '<div class="traj-echarts-fallback">' + message + '</div>';
 		}
-		function loadScript(src, cb, err) {
-			var s = document.createElement("script");
-			s.src = src;
-			s.onload = cb;
-			s.onerror = err;
-			document.head.appendChild(s);
-		}
 		function ensureLibs(cb) {
-			function loadGl() {
-				loadScript("../echarts-gl.min.js", cb, function () {
-					fallback(de ? "Die 3D-Bibliothek konnte nicht geladen werden." : "The 3D library could not be loaded.");
-				});
-			}
-			if (window.echarts && window.echarts.init) loadGl();
-			else loadScript("../echarts.min.js", loadGl, function () {
+			if (TM.ensureECharts) TM.ensureECharts(cb, function () {
 				fallback(de ? "Die 3D-Bibliothek konnte nicht geladen werden." : "The 3D library could not be loaded.");
 			});
+			else fallback(de ? "Die 3D-Bibliothek konnte nicht geladen werden." : "The 3D library could not be loaded.");
 		}
 				function computePerpendicularVectors(nx, ny, nz) {
 			var ax, ay, az;

@@ -1786,8 +1786,8 @@ html.dark .head-tab-list {
 }
 
 html.dark .math_transformer {
-	background: rgba(245, 158, 11, 0.1) !important;
-	border-color: rgba(245, 158, 11, 0.3) !important;
+	background: transparent !important;
+	border-color: transparent !important;
 }
 html.dark #transformer_config {
 	background: rgba(59, 130, 246, 0.1) !important;
@@ -3245,11 +3245,12 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 
 .math_transformer {
 	width: 100%;
-	overflow: scroll;
-	margin: 15px 0;
-	padding: 15px;
-	border-left: 4px solid #f59e0b;
-	background: #fffbeb;
+	overflow-x: auto;
+	overflow-y: visible;
+	margin: 8px 0;
+	padding: 0;
+	border-left: 0;
+	background: transparent;
 }
 
 #transformer_config {
@@ -3543,29 +3544,37 @@ pre code {
 }
 
 .optional {
-	margin: 20px 0;
-	border-left: 4px solid #3498db;
-	background: rgba(52, 152, 219, 0.05);
-	border-radius: 0 4px 4px 0;
+	margin: 12px 0;
+	border: 0;
+	border-top: 1px solid var(--mn-border, #cbd5e1);
+	background: transparent;
+	border-radius: 0;
 	transition: background 0.3s ease;
 }
 
 .optional-header {
-	padding: 12px 15px;
-	font-weight: bold;
-	color: #2980b9;
+	padding: 7px 0;
+	font: 600 0.82rem/1.4 "Barlow", "Open Sans", system-ui, sans-serif;
+	color: var(--mn-accent, #004b6f);
 	user-select: none;
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	gap: 10px;
+	text-align: left;
 }
 
 .optional-header:hover {
-	background: rgba(52, 152, 219, 0.1);
+	background: transparent;
 }
 
 .optional-header.active {
-	border-bottom: 1px solid rgba(0,0,0,0.05);
+	border-bottom: 0;
+}
+
+.optional-title {
+	flex: 1 1 auto;
+	text-align: left;
 }
 
 .optional-content {
@@ -3592,6 +3601,20 @@ pre code {
 .optional-content *::before,
 .optional-content *::after {
 	transform: none !important;
+}
+
+/* No glossary decoration in headings: the heading already names the term. */
+h1 .glossary-term, h2 .glossary-term, h3 .glossary-term,
+h4 .glossary-term, h5 .glossary-term, h6 .glossary-term {
+	background: transparent;
+	padding: 0;
+	border-radius: 0;
+	cursor: inherit;
+}
+h1 .glossary-term .glossary-tooltip, h2 .glossary-term .glossary-tooltip,
+h3 .glossary-term .glossary-tooltip, h4 .glossary-term .glossary-tooltip,
+h5 .glossary-term .glossary-tooltip, h6 .glossary-term .glossary-tooltip {
+	display: none !important;
 }
 
 /* Hard guarantee on the term itself: its own stacking context must not
@@ -4887,7 +4910,7 @@ blockquote,
 }
 
 .optional-content {
-	padding: 15px;
+	padding: 6px 0 10px;
 	animation: optionalExpand 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -4906,16 +4929,13 @@ blockquote,
 	}
 }
 
-/* The toggle icon gets a smooth rotation */
+/* Small +/− on the right, matching the plain collapsible blocks. */
 .optional-icon {
-	font-size: 0.8em;
-	width: 15px;
+	font-size: 1.05rem;
+	line-height: 1;
+	width: auto;
 	display: inline-block;
-	transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.optional-header.active .optional-icon {
-	transform: rotate(90deg);
+	order: 2;
 }
 
 .code-copy-btn:hover {
@@ -8186,9 +8206,9 @@ span.cl-eq {
 	display: block;
 	position: relative;
 	margin: 1.2em 0;
-	padding-right: 3em; /* keeps centered math clear of the margin number */
+	padding-right: 0;
 	text-align: center;
-	counter-increment: eqcount;
+	counter-increment: none;
 }
 .cl-eq .tml-display,
 .cl-eq mjx-container[display="true"],
@@ -8196,15 +8216,7 @@ span.cl-eq {
 	margin: 0 !important;
 }
 .cl-eq::after {
-	content: "(" counter(h2count) "." counter(eqcount) ")";
-	position: absolute;
-	right: 0;
-	top: 50%;
-	transform: translateY(-50%);
-	font-size: .85em;
-	color: var(--mn-text-muted);
-	font-variant-numeric: tabular-nums;
-	white-space: nowrap;
+	content: none;
 }
 .cl-eq.no-eq-num { counter-increment: none; }
 .cl-eq.no-eq-num::after { content: none; }

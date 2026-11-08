@@ -84,6 +84,41 @@
 	TM.lerp = function (a, b, t) { return a + (b - a) * t; };
 	TM.ease = function (t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; };
 
+	TM.ensureECharts = function (cb, err) {
+		var state = window.__tmEchartsState;
+		if (!state) state = window.__tmEchartsState = { ready: false, loading: false, queue: [] };
+		if (state.ready) { cb(); return; }
+		state.queue.push({ cb: cb, err: err });
+		if (state.loading) return;
+		state.loading = true;
+		function finish(ok) {
+			state.loading = false;
+			state.ready = ok;
+			var queue = state.queue.slice();
+			state.queue = [];
+			queue.forEach(function (item) {
+				if (ok) item.cb();
+				else if (item.err) item.err();
+			});
+		}
+		function load(src, next, fail) {
+			var s = document.createElement("script");
+			s.src = src;
+			s.onload = next;
+			s.onerror = fail;
+			document.head.appendChild(s);
+		}
+		function loadGl() {
+			if (window.__tmEchartsGlReady) { finish(true); return; }
+			load("../echarts-gl.min.js", function () {
+				window.__tmEchartsGlReady = true;
+				finish(true);
+			}, function () { finish(false); });
+		}
+		if (window.echarts && window.echarts.init) loadGl();
+		else load("../echarts.min.js", loadGl, function () { finish(false); });
+	};
+
 	TM.typesetMath = function (root) {
 		if (!window.temml) return;
 		(root || document).querySelectorAll("[data-tex]").forEach(function (el) {

@@ -968,7 +968,7 @@ $$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
 **The Transformation:**
 1. **Logits**: Raw scores for every word in the dictionary.
 2. **SoftMax**: Normalizes scores into probabilities (0 to 1).
-3. **Temperature ($T$)**: Modifies the SoftMax: $\sigma(z)_i = \frac{e^{z_i/T}}{\sum e^{z_j/T}}$.
+3. **Temperature ($T$)**: Modifies the SoftMax: $p_i = e^{z_i/T} / \sum_j e^{z_j/T}$.
 
 This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
 

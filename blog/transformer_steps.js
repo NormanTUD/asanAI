@@ -2058,7 +2058,9 @@
 
 	function logitChip(item, color) {
 		var pct = Math.max(0, Math.min(100, Math.round((item.prob || 0) * 100)));
-		return '<span class="tm-logit-chip" style="--tm-logit-color:' + color + '"><span class="tm-logit-word">' + featureEsc(display(item.word)) + '</span><span class="tm-logit-pct">' + pct + '%</span><i style="width:' + pct + '%"></i></span>';
+		return '<span class="tm-logit-chip" style="--tm-logit-color:' + color + '">' +
+			'<span class="tm-logit-chip-top"><span class="tm-logit-word">' + featureEsc(display(item.word)) + '</span><span class="tm-logit-pct">' + pct + '%</span></span>' +
+			'<span class="tm-logit-bar"><i style="width:' + pct + '%"></i></span></span>';
 	}
 
 	function renderLayerLogitLens(layerIdx) {
@@ -2073,20 +2075,26 @@
 		var tokens = data.tokens;
 		var labels = tokens.map(function (t) { return featureEsc(display(t)); });
 		var d = trace.h_out[0].length;
-		var head = "<div class='tm-logit-head'><span>" + (DE() ? "Token" : "token") + "</span><span>" + (DE() ? "vorher" : "before") + "</span><span>" + (DE() ? "nachher" : "after") + "</span></div>";
-		var rows = labels.map(function (label, i) {
+		var head = "<div class='tm-logit-head'><span>" + (DE() ? "Token" : "token") + "</span><span>" + (DE() ? "vorher" : "before") + "</span><span></span><span>" + (DE() ? "nachher" : "after") + "</span></div>";
+		function makeRow(i) {
 			var before = featureTopWords(trace.h_in[i], 3);
 			var after = featureTopWords(trace.h_out[i], 3);
-			return "<div class='tm-logit-row'><span class='tm-logit-token'>" + label + "</span><div class='tm-logit-side'>" + before.map(function (w) { return logitChip(w, "var(--tm-blue)"); }).join("") + "</div><span class='tm-logit-arrow'>→</span><div class='tm-logit-side'>" + after.map(function (w) { return logitChip(w, "var(--tm-green)"); }).join("") + "</div></div>";
-		}).join("");
+			return "<div class='tm-logit-row" + (i === labels.length - 1 ? " is-last" : "") + "'><span class='tm-logit-token'>" + labels[i] + "</span><div class='tm-logit-side'>" + before.map(function (w) { return logitChip(w, "var(--tm-blue)"); }).join("") + "</div><span class='tm-logit-arrow'>→</span><div class='tm-logit-side'>" + after.map(function (w) { return logitChip(w, "var(--tm-green)"); }).join("") + "</div></div>";
+		}
+		var lastIdx = labels.length - 1;
+		var lastRow = makeRow(lastIdx);
+		var otherRows = labels.slice(0, lastIdx).map(function (_, i) { return makeRow(i); }).join("");
+		var others = otherRows
+			? "<details class='tm-logit-others'><summary>" + (DE() ? "Andere Tokens anzeigen" : "Show other tokens") + " (" + lastIdx + ")</summary><div class='tm-logit-lens'>" + head + otherRows + "</div></details>"
+			: "";
 		var texRows = trace.h_out.map(function (row) {
 			return row.map(function (v) { return (Number(v) || 0).toFixed(2); }).join(" & ");
 		}).join(" \\\\ ");
 		var hafterTex = "h_{\\text{after}} = \\begin{pmatrix} " + texRows + " \\end{pmatrix}";
 		var title = DE() ? "Logit-Linse · Schicht " + (layerIdx + 1) : "Logit lens · layer " + (layerIdx + 1);
 		var note = DE()
-			? "Die Logit-Linse projiziert den Vektor nach dieser Schicht auf das Vokabular und vergleicht die Winkel. Sie zeigt, welches Wort das Modell erzeugen würde, wenn es hier aufhören würde; über die Schichten hinweg siehst du, wie sich die Repräsentation bewegt und ihre Meinung ein wenig ändert."
-			: "The logit lens projects the vector after this layer onto the vocabulary and compares the angles. It shows which word the model would produce if it stopped here; across layers you can watch the representation move and change its guess, at least a little.";
+			? "Die Logit-Linse projiziert den Vektor nach dieser Schicht auf das Vokabular und vergleicht die Winkel. Standardmäßig siehst du nur das letzte Token: Sein Vektor hat den gesamten Kontext gesehen und bestimmt die nächste Vorhersage. Die Balken zeigen die Wahrscheinlichkeit des jeweiligen Kandidaten."
+			: "The logit lens projects the vector after this layer onto the vocabulary and compares the angles. By default you see only the last token: its vector has seen the whole context and drives the next prediction. The bars show each candidate's probability.";
 		var traces = window.__tmLayerTrace || [];
 		var lastTokenIdx = data.tokens.length - 1;
 		var sweep = "";
@@ -2101,7 +2109,7 @@
 		}
 		host.innerHTML = "<details class='tm-logit-collapse'><summary>" + title + "</summary><div class='tm-logit-wrap'>" +
 			"<details class='tm-layer-hafter'><summary>" + (DE() ? "h_after · Hidden State nach Schicht " : "h_after · hidden state after layer ") + (layerIdx + 1) + "</summary><div class='tm-hafter-scroll'><div class='tm-hafter-math' data-tex='" + hafterTex + "' data-tex-display='true'></div></div></details>" +
-			"<p class='tm-logit-note'>" + note + "</p><div class='tm-logit-lens'>" + head + rows + "</div>" + sweep + "</div></details>";
+			"<p class='tm-logit-note'>" + note + "</p><div class='tm-logit-lens'>" + head + lastRow + "</div>" + others + sweep + "</div></details>";
 		typesetMathIn(host);
 	}
 
@@ -2200,7 +2208,7 @@
 			triple.querySelectorAll(".tm-triple-cell").forEach(function (cell) {
 				cell.style.cursor = "pointer";
 				cell.title = DE() ? "Klicken für die Matrizen" : "Click for the matrices";
-				cell.addEventListener("click", function () { toggleTripleMath(idx, triple); });
+				cell.addEventListener("click", function () { toggleTripleMath(layerIdx, triple); });
 			});
 		}
 	}
@@ -2222,6 +2230,14 @@
 	function enhanceLayerCards() {
 		updateDimensionReadout();
 		if (!window.__tmLayerTrace || !window.__tmLayerTrace.length) return;
+		var headsFaq = document.querySelector('.optional[data-headline="What the heads actually react to"]');
+		if (headsFaq && !headsFaq.dataset.tmHeadsMoved) {
+			var firstAttn = document.querySelector('.tm-layer-card .tm-layer-subbox[data-sub="attention"] .tm-layer-subbox-body');
+			if (firstAttn) {
+				firstAttn.appendChild(headsFaq);
+				headsFaq.dataset.tmHeadsMoved = "1";
+			}
+		}
 		Array.prototype.slice.call(document.querySelectorAll(".tm-layer-card")).forEach(function (card) {
 			if (card.getAttribute("data-tm-enhanced") === "1") return;
 			var idx = parseInt(card.getAttribute("data-layer-idx"), 10);

@@ -1554,6 +1554,8 @@ function initGlossary() {
 					if (parent.closest('.mn-hook, .mn-aha, .mn-thread, .mn-psst, .mn-iso')) {
 						return NodeFilter.FILTER_REJECT;
 					}
+					// Glossary belongs in prose, not in headings.
+					if (parent.closest('h1, h2, h3, h4, h5, h6')) return NodeFilter.FILTER_REJECT;
 					// Skip if inside math element or already has glossary-term
 					if (parent.closest('math') || parent.closest('.glossary-term')) return NodeFilter.FILTER_REJECT;
 					// Only process if text contains potential matches
