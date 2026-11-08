@@ -2135,6 +2135,7 @@ function renderTrajectoryPlot(d_model) {
 		if (d_model <= 3) {
 			wrapper.appendChild(createTrajectoryVFToggleButton());
 		}
+		wrapper.appendChild(createTrajectoryMetricControl());
 
 		trajDiv = document.createElement('div');
 		trajDiv.id = containerId;
@@ -2155,6 +2156,9 @@ function renderTrajectoryPlot(d_model) {
 
 			if (wrapper) {
 				wrapper.setAttribute('data-d-model', d_model);
+				if (!wrapper.querySelector('.trajectory-metric-control')) {
+					wrapper.insertBefore(createTrajectoryMetricControl(), trajDiv);
+				}
 				const existingBtn = wrapper.querySelector('.trajectory-vf-toggle');
 				const existingNote = wrapper.querySelector('.trajectory-vf-note');
 				if (d_model <= 3 && !existingBtn) {
@@ -4933,10 +4937,41 @@ function _traj_get_logit_word(hVec, embSnap, snapVocab) {
 }
 
 // ─── Helper: Build 2D embedding landmark trace ───
+function _traj_metric_transform(v) {
+	return (window.tmMetric && window.tmMetric.transform) ? window.tmMetric.transform(v, window.tmMetric.get()) : v;
+}
+
+function _traj_unit_sphere_series() {
+	const rows = [];
+	const nu = 18, nv = 36;
+	for (let u = 0; u <= nu; u++) {
+		const row = [];
+		const theta = Math.PI * u / nu;
+		for (let v = 0; v <= nv; v++) {
+			const phi = 2 * Math.PI * v / nv;
+			row.push([
+				Math.sin(theta) * Math.cos(phi),
+				Math.sin(theta) * Math.sin(phi),
+				Math.cos(theta)
+			]);
+		}
+		rows.push(row);
+	}
+	return {
+		type: 'surface',
+		name: 'unit sphere',
+		data: rows,
+		shading: 'color',
+		itemStyle: { color: themeColor('#cbd5e1'), opacity: 0.07 },
+		wireframe: { show: false },
+		silent: true
+	};
+}
+
 function _traj_build_embedding_landmarks_2D(embSnap, snapVocab, dimA, dimB) {
 	const xs = [], ys = [], texts = [];
 	for (const word of snapVocab) {
-		const v = embSnap[word];
+		const v = _traj_metric_transform(embSnap[word]);
 		xs.push(v[dimA] || 0);
 		ys.push(v[dimB] || 0);
 		texts.push(displayToken(word));
@@ -5014,13 +5049,19 @@ function _traj_ensure_slice_div(grid, dimA, dimB) {
 // ─── 5. Build hover text array for a single token across all stages ───
 function _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab) {
 	return dataPoints.map((p, pIdx) => {
-		const logitWord = _traj_get_logit_word(p.data[tIdx], embSnap, snapVocab);
+		const curVec = (p.rawData || p.data)[tIdx];
+		const logitWord = _traj_get_logit_word(curVec, embSnap, snapVocab);
 		const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
 		const toStage = p.name;
+		let distLine = "";
+		if (pIdx > 0 && window.tmMetric && window.tmMetric.distance) {
+			const prevVec = (dataPoints[pIdx - 1].rawData || dataPoints[pIdx - 1].data)[tIdx];
+			distLine = `<br>Step distance: ${window.tmMetric.distanceLabel(prevVec, curVec, window.tmMetric.get())}`;
+		}
 		return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
 			`From: ${fromStage}<br>` +
 			`To: ${toStage}<br>` +
-			`Nearest logit: <b>${logitWord}</b>`;
+			`Nearest logit: <b>${logitWord}</b>` + distLine;
 	});
 }
 
@@ -5048,7 +5089,7 @@ function _traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts) {
 
 function _traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, isStart) {
 	const pIdx = isStart ? 0 : dataPoints.length - 1;
-	const logitWord = _traj_get_logit_word(dataPoints[pIdx].data[tIdx], embSnap, snapVocab);
+	const logitWord = _traj_get_logit_word((dataPoints[pIdx].rawData || dataPoints[pIdx].data)[tIdx], embSnap, snapVocab);
 	const label = isStart ? 'Start' : 'End';
 	return {
 		type: 'scatter',
@@ -5280,6 +5321,9 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 		));
 	});
 
+	const metric = (window.tmMetric && window.tmMetric.get) ? window.tmMetric.get() : "euclidean";
+	if (metric === "angular") series.push(_traj_unit_sphere_series());
+
 	// 3. All-layers vector field overlay
 	if (vfEnabled) {
 		const { n_heads, n_layers } = getTransformerConfig();
@@ -5304,7 +5348,7 @@ function _traj_ec3d_landmark_series(embSnap, snapVocab) {
 		name: 'Vocab Embeddings',
 		type: 'scatter3D',
 		data: snapVocab.map(word => {
-			const v = embSnap[word];
+			const v = _traj_metric_transform(embSnap[word]);
 			return { name: displayToken(word), value: [v[0], v[1] || 0, v[2] || 0] };
 		}),
 		symbol: 'diamond',
@@ -5329,10 +5373,15 @@ function _traj_ec3d_landmark_series(embSnap, snapVocab) {
 function _traj_ec3d_marker_series(tokenLabel, color, dataPoints, tIdx, labels, embSnap, snapVocab) {
 	const data = dataPoints.map((p, pIdx) => {
 		const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
-		const hoverHtml = buildTrajectoryHoverText(
+		let hoverHtml = buildTrajectoryHoverText(
 			labels[tIdx], tIdx, fromStage, p.name,
-			p.data[tIdx], embSnap, snapVocab
+			(p.rawData || p.data)[tIdx], embSnap, snapVocab
 		);
+		if (pIdx > 0 && window.tmMetric && window.tmMetric.distance) {
+			const prevVec = (dataPoints[pIdx - 1].rawData || dataPoints[pIdx - 1].data)[tIdx];
+			const curVec = (p.rawData || p.data)[tIdx];
+			hoverHtml += `<br>Step distance: ${window.tmMetric.distanceLabel(prevVec, curVec, window.tmMetric.get())}`;
+		}
 
 		const isStart = pIdx === 0;
 
@@ -5363,7 +5412,7 @@ function _traj_ec3d_marker_series(tokenLabel, color, dataPoints, tIdx, labels, e
 function _traj_ec3d_option(series, legendData) {
 	return {
 		title: {
-			text: 'Token Trajectory: Embedding → +Position → Layer Outputs',
+			text: 'Token Trajectory: Embedding → +Position → Layer Outputs' + (window.tmMetric && window.tmMetric.label ? ' · ' + window.tmMetric.label() : ''),
 			left: 'center', top: 10,
 			textStyle: { fontSize: 14, fontWeight: 'bold', color: themeColor('#1e293b') }
 		},
@@ -5417,16 +5466,22 @@ function tlab_render_trajectory_plot(d_model) {
 	const dataPoints = sortedKeys.map(k => steps[k]);
 	const { embSnap, snapVocab } = _traj_snapshot_embeddings();
 	const vfEnabled = window._trajectoryVfEnabled && d_model <= 3;
+	const metric = (window.tmMetric && window.tmMetric.get) ? window.tmMetric.get() : "euclidean";
+	const transform = (v) => (window.tmMetric && window.tmMetric.transform) ? window.tmMetric.transform(v, metric) : v;
+	const plottedPoints = dataPoints.map(stage => {
+		if (!stage || !stage.data) return stage;
+		return Object.assign({}, stage, { data: stage.data.map(transform), rawData: stage.data });
+	});
 
 	if (d_model >= 4) {
-		_traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
+		_traj_render_high_dimensional(trajDiv, tokens, labels, plottedPoints, d_model, embSnap, snapVocab);
 		requestAnimationFrame(() => {
 			const actualHeight = trajDiv.scrollHeight;
 			trajDiv.style.height    = actualHeight + 'px';
 			trajDiv.style.minHeight = actualHeight + 'px';
 		});
 	} else {
-		_traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab, vfEnabled);
+		_traj_render_low_dimensional(trajDiv, tokens, labels, plottedPoints, d_model, embSnap, snapVocab, vfEnabled);
 	}
 }
 
@@ -7718,6 +7773,32 @@ function createTrajectoryVFNote() {
 		: 'The vector field samples the layer on a grid of points: each arrow shows where the model pushes a state. The lines are your tokens; the field is the flow around them.';
 	note.style.cssText = 'margin: 0 12px 12px; font-size: 0.78rem; line-height: 1.45; color: ' + themeColor('#64748b') + ';';
 	return note;
+}
+
+function createTrajectoryMetricControl() {
+	const wrap = document.createElement('div');
+	wrap.className = 'trajectory-metric-control';
+	const de = !!(window.TM && TM.lang && TM.lang() === 'de');
+	const options = (window.tmMetric && window.tmMetric.options)
+		? window.tmMetric.options
+		: { euclidean: { de: "Euklidisch (L2)", en: "Euclidean (L2)" }, manhattan: { de: "Manhattan (L1)", en: "Manhattan (L1)" }, angular: { de: "Großkreis / Winkel", en: "Great-circle / angle" } };
+	const opts = Object.keys(options).map(key => `<option value="${key}">${options[key][de ? 'de' : 'en']}</option>`).join('');
+	wrap.innerHTML = `<label>${de ? 'Distanzmetrik' : 'Distance metric'} <select class="trajectory-metric-select">${opts}</select></label>`;
+	const select = wrap.querySelector('select');
+	select.value = (window.tmMetric && window.tmMetric.get) ? window.tmMetric.get() : 'euclidean';
+	select.addEventListener('change', () => {
+		if (window.tmMetric && window.tmMetric.set) window.tmMetric.set(select.value);
+		else window.tmFeatureMetric = select.value;
+		window.dispatchEvent(new CustomEvent('tm:metricchange', { detail: { metric: select.value } }));
+	});
+	if (!window.__tmTrajectoryMetricListener) {
+		window.__tmTrajectoryMetricListener = true;
+		window.addEventListener('tm:metricchange', () => {
+			if (!window.tlab_trajectory_collector) return;
+			try { tlab_render_trajectory_plot(getTransformerConfig().d_model); } catch (e) { /* chart not ready */ }
+		});
+	}
+	return wrap;
 }
 
 function createTrajectoryVFToggleButton() {

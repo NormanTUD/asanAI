@@ -278,7 +278,7 @@ def main() -> None:
                     value: sel.value,
                     subtext: opt && opt.title && opt.title[0] ? opt.title[0].subtext : '',
                     surface: series.some(s => s.type === 'surface'),
-                    hasAngleName: series.some(s => (s.name || '').indexOf('great-circle') !== -1),
+                    hasAngleName: series.some(s => /angle|Winkel|°/.test(s.name || '')),
                     norm
                 };
             }""")
@@ -291,6 +291,36 @@ def main() -> None:
             check("head-type method note is collapsed", bool(method) and not method["open"] and method["hasMethod"], str(method))
             apv = page.evaluate("() => { const d=document.querySelector('.apv-head-detail'); return d ? {open:d.open} : null; }")
             check("per-head math explanation is collapsed", bool(apv) and not apv["open"], str(apv))
+
+            page.wait_for_function("() => !!document.querySelector('.trajectory-metric-select')", timeout=60000)
+            traj_metric = page.evaluate("""() => {
+                const sel = document.querySelector('.trajectory-metric-select');
+                const el = document.getElementById('transformer-trajectory-full-path');
+                return {
+                    options: sel.options.length,
+                    value: sel.value,
+                    chart: !!el && !!window.echarts && !!echarts.getInstanceByDom(el)
+                };
+            }""")
+            check("trajectory has the same three-metric switch",
+                  bool(traj_metric) and traj_metric["options"] == 3, str(traj_metric))
+            page.evaluate("""() => { const s=document.querySelector('.trajectory-metric-select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(1200)
+            traj_angular = page.evaluate("""() => {
+                const el = document.getElementById('transformer-trajectory-full-path');
+                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
+                const opt = chart ? chart.getOption() : null;
+                const series = opt ? (opt.series || []) : [];
+                const scatter = series.find(s => s.type === 'scatter3D' && s.data && s.data.length);
+                let norm = null;
+                if (scatter) { const v = scatter.data[0].value; norm = Math.sqrt(v.reduce((a,x)=>a+x*x,0)); }
+                return {title: opt && opt.title ? opt.title[0].text : '', surface: series.some(s => s.type === 'surface'), norm};
+            }""")
+            check("trajectory great-circle uses the unit sphere",
+                  bool(traj_angular) and "Great-circle" in traj_angular["title"] and traj_angular["surface"]
+                  and traj_angular["norm"] is not None and abs(traj_angular["norm"] - 1) < 0.02,
+                  str(traj_angular)[:300])
+            page.evaluate("""() => { const s=document.querySelector('.trajectory-metric-select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
             check("no console/page errors", not errors, "; ".join(errors[:3]))
 
             errors.clear()

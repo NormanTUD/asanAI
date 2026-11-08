@@ -1804,7 +1804,7 @@
 	var FEATURE_METRICS = {
 		euclidean: { de: "Euklidisch (L2)", en: "Euclidean (L2)", short: "L2" },
 		manhattan: { de: "Manhattan (L1)", en: "Manhattan (L1)", short: "L1" },
-		angular: { de: "Großkreis / Winkel", en: "Great-circle / angle", short: "angle" }
+		angular: { de: "Großkreis / Winkel (0–1)", en: "Great-circle / angle (0–1)", short: "angle" }
 	};
 	if (!window.tmFeatureMetric || !FEATURE_METRICS[window.tmFeatureMetric]) window.tmFeatureMetric = "euclidean";
 	function featureMetric() { return window.tmFeatureMetric || "euclidean"; }
@@ -1818,7 +1818,7 @@
 			var u = normalizeVector(a), w = normalizeVector(b);
 			var dot = 0;
 			for (var i = 0; i < Math.min(u.length, w.length); i++) dot += u[i] * w[i];
-			return Math.acos(Math.max(-1, Math.min(1, dot)));
+			return Math.acos(Math.max(-1, Math.min(1, dot))) / Math.PI;
 		}
 		var sum = 0;
 		for (var j = 0; j < Math.min(a.length, b.length); j++) {
@@ -1829,7 +1829,7 @@
 	}
 	function metricDistanceLabel(a, b, metric) {
 		var d = metricDistance(a, b, metric);
-		if (metric === "angular") return (DE() ? "Großkreis " : "great-circle ") + (d * 180 / Math.PI).toFixed(1) + "°";
+		if (metric === "angular") return (DE() ? "Winkel " : "angle ") + d.toFixed(3) + " (" + (d * 180).toFixed(1) + "°)";
 		return (metric === "manhattan" ? "L1 " : "L2 ") + d.toFixed(3);
 	}
 	function slerpPoints(a, b, steps) {
@@ -1847,6 +1847,26 @@
 		}
 		return out;
 	}
+
+	window.tmMetric = {
+		get: featureMetric,
+		set: function (metric) { if (FEATURE_METRICS[metric]) window.tmFeatureMetric = metric; },
+		options: FEATURE_METRICS,
+		label: featureMetricLabel,
+		transform: function (v, metric) {
+			metric = metric || featureMetric();
+			if (metric === "manhattan") return manhattanTransform(v);
+			if (metric === "angular") return normalizeVector(v);
+			return v;
+		},
+		distance: metricDistance,
+		distanceLabel: metricDistanceLabel,
+		slerpPoints: slerpPoints,
+		normalize: normalizeVector
+	};
+	window.addEventListener("tm:metricchange", function () {
+		Object.keys(featureState).forEach(function (key) { renderLayerFeaturePlots(parseInt(key, 10)); });
+	});
 
 	function featureData(layerIdx) {
 		var trace = (window.__tmLayerTrace || [])[layerIdx];
@@ -2477,8 +2497,8 @@
 					return "<option value='" + key + "'>" + FEATURE_METRICS[key][isDe ? "de" : "en"] + "</option>";
 				}).join("");
 				var metricHelp = isDe
-					? "<p><b>Euklidisch (L2):</b> gerade Linie im Raum. <b>Manhattan (L1):</b> Summe der absoluten Koordinatenunterschiede; die Darstellung nutzt eine sqrt-Transformation, damit L1-Kugeln rund wirken. <b>Großkreis (Winkel):</b> Jeder Vektor wird auf Länge 1 normiert; der Abstand ist der Winkel am Nullpunkt, also der Bogen auf der Einheitskugel. L1 und L2 erzeugen in endlichen Dimensionen dieselbe Topologie (äquivalente Normen); der Winkel-Abstand ignoriert die Vektorlänge und ändert die Geometrie stärker. Mehr: <a href='https://en.wikipedia.org/wiki/Metric_space' target='_blank' rel='noopener'>metric space</a>, <a href='https://en.wikipedia.org/wiki/Taxicab_geometry' target='_blank' rel='noopener'>taxicab geometry</a>, <a href='https://en.wikipedia.org/wiki/Great-circle_distance' target='_blank' rel='noopener'>great-circle distance</a>.</p>"
-					: "<p><b>Euclidean (L2):</b> straight-line distance in the space. <b>Manhattan (L1):</b> sum of absolute coordinate differences; the plot uses a sqrt transform so L1 balls look round. <b>Great-circle (angle):</b> every vector is normalized to length 1; the distance is the angle at the origin, i.e. the arc on the unit sphere. In finite dimensions L1 and L2 induce the same topology (equivalent norms); the angular metric drops vector length and changes the geometry more strongly. More: <a href='https://en.wikipedia.org/wiki/Metric_space' target='_blank' rel='noopener'>metric space</a>, <a href='https://en.wikipedia.org/wiki/Taxicab_geometry' target='_blank' rel='noopener'>taxicab geometry</a>, <a href='https://en.wikipedia.org/wiki/Great-circle_distance' target='_blank' rel='noopener'>great-circle distance</a>.</p>";
+					? "<p><b>Euklidisch (L2):</b> gerade Linie im Raum. <b>Manhattan (L1):</b> Summe der absoluten Koordinatenunterschiede; die Darstellung nutzt eine sqrt-Transformation, damit L1-Kugeln rund wirken. <b>Großkreis (Winkel, 0–1):</b> Jeder Vektor wird auf Länge 1 normiert; der Abstand ist der Winkel am Nullpunkt geteilt durch π, also 0 = gleiche Richtung und 1 = Gegenrichtung. L1 und L2 erzeugen in endlichen Dimensionen dieselbe Topologie (äquivalente Normen); der Winkel-Abstand ignoriert die Vektorlänge und ändert die Geometrie stärker. Mehr: <a href='https://en.wikipedia.org/wiki/Metric_space' target='_blank' rel='noopener'>metric space</a>, <a href='https://en.wikipedia.org/wiki/Taxicab_geometry' target='_blank' rel='noopener'>taxicab geometry</a>, <a href='https://en.wikipedia.org/wiki/Great-circle_distance' target='_blank' rel='noopener'>great-circle distance</a>.</p>"
+					: "<p><b>Euclidean (L2):</b> straight-line distance in the space. <b>Manhattan (L1):</b> sum of absolute coordinate differences; the plot uses a sqrt transform so L1 balls look round. <b>Great-circle (angle, 0–1):</b> every vector is normalized to length 1; the distance is the angle at the origin divided by π, so 0 = same direction and 1 = opposite. In finite dimensions L1 and L2 induce the same topology (equivalent norms); the angular metric drops vector length and changes the geometry more strongly. More: <a href='https://en.wikipedia.org/wiki/Metric_space' target='_blank' rel='noopener'>metric space</a>, <a href='https://en.wikipedia.org/wiki/Taxicab_geometry' target='_blank' rel='noopener'>taxicab geometry</a>, <a href='https://en.wikipedia.org/wiki/Great-circle_distance' target='_blank' rel='noopener'>great-circle distance</a>.</p>";
 				wrap.innerHTML = "<div class='tm-feature-primary'><span class='tm-feature-note' id='unified-layer-" + idx + "-feature-projection'></span>" +
 					"<div class='tm-feature-metric'><label>" + (isDe ? "Distanzmetrik" : "Distance metric") + " <select data-feature-metric='" + idx + "'>" + metricOptions + "</select></label><details class='tm-feature-metric-help'><summary>" + (isDe ? "Was bedeuten die Metriken?" : "What do these metrics mean?") + "</summary>" + metricHelp + "</details></div>" +
 					"<div id='unified-layer-" + idx + "-feature-arrows' class='tm-feature-arrows'></div></div>" +
@@ -2496,7 +2516,7 @@
 					metricSel._tmMetricBound = true;
 					metricSel.addEventListener("change", function () {
 						window.tmFeatureMetric = metricSel.value;
-						Object.keys(featureState).forEach(function (key) { renderLayerFeaturePlots(parseInt(key, 10)); });
+						window.dispatchEvent(new CustomEvent("tm:metricchange", { detail: { metric: metricSel.value } }));
 					});
 				}
 			}
