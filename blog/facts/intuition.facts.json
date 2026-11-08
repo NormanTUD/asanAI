@@ -7925,6 +7925,66 @@
       "quote": "",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-voronoi-margin",
+      "from": "voronoi-margin",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "calls the lead of the winning token over the runner-up the **Voronoi margin**",
+      "citation_keys": [
+        "mabrok2026latent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-expressibility-gap",
+      "from": "expressibility-gap",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the band where that lead is smaller than a threshold the **expressibility gap**",
+      "citation_keys": [
+        "mabrok2026latent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-semantic-volume",
+      "from": "semantic-volume",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **semantic volume** of a token is the area of its Voronoi region",
+      "citation_keys": [
+        "mabrok2026latent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-finite-vocabulary",
+      "from": "finite-vocabulary",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the average distortion of a finite vocabulary falls only as a power law set by the intrinsic dimension of the semantic manifold",
+      "citation_keys": [
+        "mabrok2026latent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-mabrok2026latent",
+      "from": "mabrok2026latent",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Mabrok (2026)]{mabrok2026latent}",
+      "citation_keys": [
+        "mabrok2026latent"
+      ],
+      "confidence": "provenance"
     }
   ],
   "statements": [

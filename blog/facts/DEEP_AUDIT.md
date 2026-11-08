@@ -1,9 +1,9 @@
 # Deep fact audit
 
 - lessons: 99
-- claims: 7363
-- statements: 17281
-- relations: 52332
+- claims: 7379
+- statements: 17299
+- relations: 52387
 - uncovered years: 57
 - uncovered quantities: 6
 - uncited specific claims: 307
@@ -17,10 +17,10 @@
 | lesson | claims | statements | relations | missing years | missing quantities |
 |---|---:|---:|---:|---:|---:|
 | activationlab | 22 | 68 | 227 | 0 | 0 |
-| agents | 24 | 141 | 469 | 0 | 0 |
+| agents | 26 | 146 | 480 | 0 | 0 |
 | ai_and_society | 63 | 339 | 925 | 0 | 0 |
 | ai_economics | 14 | 30 | 91 | 0 | 0 |
-| ai_existential_risk | 31 | 61 | 200 | 0 | 0 |
+| ai_existential_risk | 35 | 61 | 201 | 0 | 0 |
 | ai_for_science | 31 | 22 | 83 | 0 | 0 |
 | algorithms | 42 | 244 | 718 | 0 | 0 |
 | alignment | 31 | 28 | 103 | 0 | 0 |
@@ -59,7 +59,7 @@
 | inference_vs_training | 19 | 14 | 47 | 0 | 0 |
 | information_market | 27 | 63 | 159 | 0 | 0 |
 | intro | 17 | 40 | 121 | 0 | 0 |
-| intuition | 32 | 261 | 745 | 1 | 0 |
+| intuition | 32 | 261 | 750 | 1 | 0 |
 | knowledge_map | 15 | 0 | 14 | 0 | 0 |
 | language | 77 | 330 | 803 | 0 | 0 |
 | law_regulation | 28 | 61 | 236 | 0 | 0 |
@@ -95,7 +95,7 @@
 | running_locally | 37 | 69 | 292 | 0 | 1 |
 | samplinglab | 30 | 61 | 256 | 0 | 0 |
 | search_lib | 21 | 0 | 12 | 0 | 0 |
-| security_inference | 10 | 37 | 123 | 0 | 0 |
+| security_inference | 20 | 50 | 148 | 0 | 0 |
 | software | 64 | 359 | 804 | 0 | 0 |
 | speech_audio | 23 | 33 | 137 | 1 | 0 |
 | statistics_i | 51 | 209 | 706 | 1 | 0 |
@@ -110,7 +110,7 @@
 | transformer | 37 | 299 | 951 | 0 | 0 |
 | unexpected_capabilities | 40 | 274 | 578 | 4 | 1 |
 | untold_history_i | 520 | 458 | 1503 | 3 | 0 |
-| untold_history_ii | 672 | 643 | 2012 | 6 | 0 |
+| untold_history_ii | 672 | 643 | 2025 | 6 | 0 |
 | untold_history_iii | 1639 | 922 | 3559 | 1 | 0 |
 | vectorsearch | 31 | 149 | 588 | 0 | 0 |
 | vibe_coding | 35 | 176 | 453 | 0 | 0 |

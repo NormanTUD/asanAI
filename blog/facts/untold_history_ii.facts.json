@@ -29916,6 +29916,162 @@
       "quote": "",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-germanium",
+      "from": "germanium",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "about 1.12 eV against 0.66 eV",
+      "citation_keys": [
+        "sze2007physics"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-first-silicon-transistor",
+      "from": "first-silicon-transistor",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Morris Tanenbaum at Bell Labs demonstrated the first working silicon transistor on 26 January 1954",
+      "citation_keys": [
+        "tanenbaum1955silicon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ti-silicon-transistor",
+      "from": "ti-silicon-transistor",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Gordon Teal and Willis Adcock at Texas Instruments announced a production silicon transistor in May of that year",
+      "citation_keys": [
+        "teal1976singlecrystals"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-planar-process",
+      "from": "planar-process",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Jean Hoerni at Fairchild combined the oxide with a metal interconnect in the planar process, filed in May 1959",
+      "citation_keys": [
+        "hoerni1959planar"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-metallurgical-grade-silicon",
+      "from": "metallurgical-grade-silicon",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "producing metallurgical-grade silicon that is 98 to 99 percent pure",
+      "citation_keys": [
+        "yan2019siemens"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-zone-refining",
+      "from": "zone-refining",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1952, William Pfann at Bell Labs passed a narrow molten zone along a silicon rod",
+      "citation_keys": [
+        "pfann1952zonemelting"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-silicon-wafer",
+      "from": "silicon-wafer",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The industry's largest standard wafer is 300 mm across and less than a millimetre thick",
+      "citation_keys": [
+        "hahn2001wafer300"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-perkin-elmer-micralign",
+      "from": "perkin-elmer-micralign",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Projection aligners such as the Perkin-Elmer Micralign, introduced in 1973",
+      "citation_keys": [
+        "perkinelmer1973micralign"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-gca-dsw-4800",
+      "from": "gca-dsw-4800",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "such as the GCA DSW 4800 in 1975",
+      "citation_keys": [
+        "gca1975stepper"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-excimer-laser-lithography",
+      "from": "excimer-laser-lithography",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1982 Kanti Jain and co-workers at IBM demonstrated lithography with an excimer laser",
+      "citation_keys": [
+        "jain1982excimer"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-duv-lithography",
+      "from": "duv-lithography",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The industry settled on krypton fluoride at 248 nm and argon fluoride at 193 nm",
+      "citation_keys": [
+        "levinson2005lithography"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-immersion-lithography",
+      "from": "immersion-lithography",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "raises the effective numerical aperture above 1.0",
+      "citation_keys": [
+        "lin2004immersion"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-water",
+      "from": "water",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "water has a refractive index of about 1.44",
+      "citation_keys": [
+        "lin2004immersion"
+      ],
+      "confidence": "provenance"
     }
   ],
   "deep_audit": true,

@@ -31,7 +31,8 @@
     "sutton2019bitter",
     "ord2020precipice",
     "bender2021stochasticparrots",
-    "lecun2022autonomous"
+    "lecun2022autonomous",
+    "guan2026adaptiveworms"
   ],
   "claims": [
     {
@@ -446,6 +447,65 @@
       "quote": "(\\cite[LeCun, 2022]{lecun2022autonomous})",
       "citation_keys": [
         "lecun2022autonomous"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-ai-worm-year",
+      "subject": "ai-worm",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "event": "Guan et al."
+      },
+      "quote": "A 2026 proof-of-concept worm ran an open-weight LLM on compromised hosts",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-ai-worm-network-size",
+      "subject": "ai-worm",
+      "predicate": "network_size",
+      "value": 33,
+      "unit": "count",
+      "qualifiers": {
+        "variant": "isolated test network"
+      },
+      "quote": "spread across a 33-host Linux, Windows, and IoT network without human operators",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-ai-worm-network-exploited-share",
+      "subject": "ai-worm",
+      "predicate": "network_exploited_share",
+      "value": 73.8,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "exploiting 73.8% of the hosts on average over seven days",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-ai-worm-marginal-cost",
+      "subject": "ai-worm",
+      "predicate": "marginal_cost",
+      "value": 0,
+      "unit": "USD",
+      "qualifiers": {
+        "definition": "per new infection",
+        "approx": true
+      },
+      "quote": "each additional infection cost the attacker essentially nothing",
+      "citation_keys": [
+        "guan2026adaptiveworms"
       ],
       "confidence": "stated"
     }
@@ -2497,6 +2557,18 @@
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-ai-worm",
+      "from": "ai-worm",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A 2026 proof-of-concept worm ran an open-weight LLM on compromised hosts",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
       "confidence": "provenance"
     }
   ],

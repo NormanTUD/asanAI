@@ -9,7 +9,8 @@
   "citations": [
     "greshake2023injection",
     "wei2024jailbroken",
-    "hubinger2024sleeperagents"
+    "hubinger2024sleeperagents",
+    "guan2026adaptiveworms"
   ],
   "claims": [
     {
@@ -134,6 +135,151 @@
       "unit": "name",
       "qualifiers": {},
       "quote": "LLMs are powerful but **fragile under adversarial pressure**"
+    },
+    {
+      "id": "ai-worm-network-size",
+      "subject": "ai-worm",
+      "predicate": "network_size",
+      "value": 33,
+      "unit": "count",
+      "qualifiers": {
+        "variant": "isolated test network"
+      },
+      "quote": "seeded on one host in an isolated 33-host network spanning Linux servers, Windows machines, and IoT devices",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai-worm-trials",
+      "subject": "ai-worm",
+      "predicate": "trials",
+      "value": 15,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "ran autonomously for seven days in each of 15 trials",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai-worm-vulnerabilities-found",
+      "subject": "ai-worm",
+      "predicate": "vulnerabilities_found",
+      "value": 31.3,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "It identified an average of 31.3 vulnerabilities",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai-worm-hosts-exploited",
+      "subject": "ai-worm",
+      "predicate": "hosts_exploited",
+      "value": 23.1,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "escalated privileges on 23.1 hosts",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai-worm-hosts-replicated",
+      "subject": "ai-worm",
+      "predicate": "hosts_replicated",
+      "value": 20.4,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "replicated to 20.4 hosts",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai-worm-generations",
+      "subject": "ai-worm",
+      "predicate": "generations",
+      "value": 7,
+      "unit": "count",
+      "qualifiers": {
+        "variant": "maximum observed"
+      },
+      "quote": "reaching up to seven generations of self-replication",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai-worm-network-exploited-share",
+      "subject": "ai-worm",
+      "predicate": "network_exploited_share",
+      "value": 73.8,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "on average it exploited 73.8% of the network",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai-worm-network-replicated-share",
+      "subject": "ai-worm",
+      "predicate": "network_replicated_share",
+      "value": 61.8,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "and replicated to 61.8%",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai-worm-post-cutoff-vulnerabilities",
+      "subject": "ai-worm",
+      "predicate": "disclosed_after_cutoff",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "event": "after the model's training cutoff"
+      },
+      "quote": "It also exploited three vulnerabilities disclosed in 2026, after the model's training cutoff, by reading public advisories at runtime.",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai-worm-marginal-cost",
+      "subject": "ai-worm",
+      "predicate": "marginal_cost",
+      "value": 0,
+      "unit": "USD",
+      "qualifiers": {
+        "definition": "per new infection",
+        "approx": true
+      },
+      "quote": "the attacker's marginal cost per new infection is effectively zero",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -810,16 +956,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-block-22-related_to-security_inference-block-18",
-      "from": "security_inference-block-22",
-      "to": "security_inference-block-18",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-security_inference-block-23-part_of-security-inference",
       "from": "security_inference-block-23",
       "to": "security-inference",
@@ -840,9 +976,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-block-23-related_to-security_inference-block-18",
+      "id": "struct-security_inference-block-23-related_to-security_inference-block-22",
       "from": "security_inference-block-23",
-      "to": "security_inference-block-18",
+      "to": "security_inference-block-22",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -870,9 +1006,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-block-24-related_to-security_inference-block-18",
+      "id": "struct-security_inference-block-24-related_to-security_inference-block-22",
       "from": "security_inference-block-24",
-      "to": "security_inference-block-18",
+      "to": "security_inference-block-22",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -900,9 +1036,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-block-25-related_to-security_inference-block-18",
+      "id": "struct-security_inference-block-25-related_to-security_inference-block-22",
       "from": "security_inference-block-25",
-      "to": "security_inference-block-18",
+      "to": "security_inference-block-22",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -930,9 +1066,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-block-26-related_to-security_inference-block-18",
+      "id": "struct-security_inference-block-26-related_to-security_inference-block-22",
       "from": "security_inference-block-26",
-      "to": "security_inference-block-18",
+      "to": "security_inference-block-22",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -960,9 +1096,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-block-27-related_to-security_inference-block-18",
+      "id": "struct-security_inference-block-27-related_to-security_inference-block-22",
       "from": "security_inference-block-27",
-      "to": "security_inference-block-18",
+      "to": "security_inference-block-22",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -990,9 +1126,129 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-block-28-related_to-security_inference-block-18",
+      "id": "struct-security_inference-block-28-related_to-security_inference-block-22",
       "from": "security_inference-block-28",
-      "to": "security_inference-block-18",
+      "to": "security_inference-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-block-29-part_of-security-inference",
+      "from": "security_inference-block-29",
+      "to": "security-inference",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-block-28-before-security_inference-block-29",
+      "from": "security_inference-block-28",
+      "to": "security_inference-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-block-29-related_to-security_inference-block-22",
+      "from": "security_inference-block-29",
+      "to": "security_inference-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-block-30-part_of-security-inference",
+      "from": "security_inference-block-30",
+      "to": "security-inference",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-block-29-before-security_inference-block-30",
+      "from": "security_inference-block-29",
+      "to": "security_inference-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-block-30-related_to-security_inference-block-22",
+      "from": "security_inference-block-30",
+      "to": "security_inference-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-block-31-part_of-security-inference",
+      "from": "security_inference-block-31",
+      "to": "security-inference",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-block-30-before-security_inference-block-31",
+      "from": "security_inference-block-30",
+      "to": "security_inference-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-block-31-related_to-security_inference-block-22",
+      "from": "security_inference-block-31",
+      "to": "security_inference-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-block-32-part_of-security-inference",
+      "from": "security_inference-block-32",
+      "to": "security-inference",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-block-31-before-security_inference-block-32",
+      "from": "security_inference-block-31",
+      "to": "security_inference-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-block-32-related_to-security_inference-block-22",
+      "from": "security_inference-block-32",
+      "to": "security_inference-block-22",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1250,8 +1506,38 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-stmt-26-part_of-security_inference-block-20",
+      "id": "struct-security_inference-stmt-26-part_of-security_inference-block-19",
       "from": "security_inference-stmt-26",
+      "to": "security_inference-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-27-part_of-security_inference-block-19",
+      "from": "security_inference-stmt-27",
+      "to": "security_inference-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-28-part_of-security_inference-block-19",
+      "from": "security_inference-stmt-28",
+      "to": "security_inference-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-29-part_of-security_inference-block-20",
+      "from": "security_inference-stmt-29",
       "to": "security_inference-block-20",
       "kind": "part_of",
       "qualifiers": {},
@@ -1260,8 +1546,28 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-stmt-27-part_of-security_inference-block-21",
-      "from": "security_inference-stmt-27",
+      "id": "struct-security_inference-stmt-30-part_of-security_inference-block-20",
+      "from": "security_inference-stmt-30",
+      "to": "security_inference-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-31-part_of-security_inference-block-20",
+      "from": "security_inference-stmt-31",
+      "to": "security_inference-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-32-part_of-security_inference-block-21",
+      "from": "security_inference-stmt-32",
       "to": "security_inference-block-21",
       "kind": "part_of",
       "qualifiers": {},
@@ -1270,9 +1576,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-stmt-28-part_of-security_inference-block-22",
-      "from": "security_inference-stmt-28",
-      "to": "security_inference-block-22",
+      "id": "struct-security_inference-stmt-33-part_of-security_inference-block-21",
+      "from": "security_inference-stmt-33",
+      "to": "security_inference-block-21",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1280,8 +1586,48 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-stmt-29-part_of-security_inference-block-23",
-      "from": "security_inference-stmt-29",
+      "id": "struct-security_inference-stmt-34-part_of-security_inference-block-21",
+      "from": "security_inference-stmt-34",
+      "to": "security_inference-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-35-part_of-security_inference-block-21",
+      "from": "security_inference-stmt-35",
+      "to": "security_inference-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-36-part_of-security_inference-block-21",
+      "from": "security_inference-stmt-36",
+      "to": "security_inference-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-37-part_of-security_inference-block-21",
+      "from": "security_inference-stmt-37",
+      "to": "security_inference-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-38-part_of-security_inference-block-23",
+      "from": "security_inference-stmt-38",
       "to": "security_inference-block-23",
       "kind": "part_of",
       "qualifiers": {},
@@ -1290,8 +1636,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-stmt-30-part_of-security_inference-block-24",
-      "from": "security_inference-stmt-30",
+      "id": "struct-security_inference-stmt-39-part_of-security_inference-block-24",
+      "from": "security_inference-stmt-39",
       "to": "security_inference-block-24",
       "kind": "part_of",
       "qualifiers": {},
@@ -1300,8 +1646,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-stmt-31-part_of-security_inference-block-26",
-      "from": "security_inference-stmt-31",
+      "id": "struct-security_inference-stmt-40-part_of-security_inference-block-25",
+      "from": "security_inference-stmt-40",
+      "to": "security_inference-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-41-part_of-security_inference-block-26",
+      "from": "security_inference-stmt-41",
       "to": "security_inference-block-26",
       "kind": "part_of",
       "qualifiers": {},
@@ -1310,28 +1666,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-stmt-32-part_of-security_inference-block-26",
-      "from": "security_inference-stmt-32",
-      "to": "security_inference-block-26",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-security_inference-stmt-33-part_of-security_inference-block-26",
-      "from": "security_inference-stmt-33",
-      "to": "security_inference-block-26",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-security_inference-stmt-34-part_of-security_inference-block-27",
-      "from": "security_inference-stmt-34",
+      "id": "struct-security_inference-stmt-42-part_of-security_inference-block-27",
+      "from": "security_inference-stmt-42",
       "to": "security_inference-block-27",
       "kind": "part_of",
       "qualifiers": {},
@@ -1340,8 +1676,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-stmt-35-part_of-security_inference-block-28",
-      "from": "security_inference-stmt-35",
+      "id": "struct-security_inference-stmt-43-part_of-security_inference-block-28",
+      "from": "security_inference-stmt-43",
       "to": "security_inference-block-28",
       "kind": "part_of",
       "qualifiers": {},
@@ -1350,9 +1686,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-stmt-36-part_of-security_inference-block-28",
-      "from": "security_inference-stmt-36",
-      "to": "security_inference-block-28",
+      "id": "struct-security_inference-stmt-44-part_of-security_inference-block-30",
+      "from": "security_inference-stmt-44",
+      "to": "security_inference-block-30",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1360,13 +1696,75 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-security_inference-stmt-37-part_of-security_inference-block-28",
-      "from": "security_inference-stmt-37",
-      "to": "security_inference-block-28",
+      "id": "struct-security_inference-stmt-45-part_of-security_inference-block-30",
+      "from": "security_inference-stmt-45",
+      "to": "security_inference-block-30",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-46-part_of-security_inference-block-30",
+      "from": "security_inference-stmt-46",
+      "to": "security_inference-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-47-part_of-security_inference-block-31",
+      "from": "security_inference-stmt-47",
+      "to": "security_inference-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-48-part_of-security_inference-block-32",
+      "from": "security_inference-stmt-48",
+      "to": "security_inference-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-49-part_of-security_inference-block-32",
+      "from": "security_inference-stmt-49",
+      "to": "security_inference-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-security_inference-stmt-50-part_of-security_inference-block-32",
+      "from": "security_inference-stmt-50",
+      "to": "security_inference-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-security_inference-ai-worm",
+      "from": "ai-worm",
+      "to": "security-inference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "seeded on one host in an isolated 33-host network spanning Linux servers, Windows machines, and IoT devices",
+      "citation_keys": [
+        "guan2026adaptiveworms"
+      ],
       "confidence": "provenance"
     }
   ],
@@ -1542,92 +1940,183 @@
     },
     {
       "id": "security_inference-stmt-25",
-      "quote": "| Defense | Layer | How it works |",
+      "quote": "A conventional worm ships a fixed repertoire of exploits.",
       "block_id": "security_inference-block-19",
-      "section": "Defenses",
+      "section": "Adaptive Worms: Autonomous Offence",
       "kind": "statement"
     },
     {
       "id": "security_inference-stmt-26",
-      "quote": "| Input filtering | Pre-model | Detect/remove high-perplexity adversarial tokens (\\cite[Jain et al., 2023]{jain2023baseline}) |",
-      "block_id": "security_inference-block-20",
-      "section": "Defenses",
+      "quote": "WannaCry and NotPetya spread through vulnerabilities whose patches had been available for months, and patching that finite set of flaws interrupts the spread.",
+      "block_id": "security_inference-block-19",
+      "section": "Adaptive Worms: Autonomous Offence",
       "kind": "statement"
     },
     {
       "id": "security_inference-stmt-27",
-      "quote": "| Instruction hierarchy | Prompt design | Separate system/user/tool messages with privilege levels (\\cite[Wallace et al., 2024]{wallace2024hierarchy}) |",
-      "block_id": "security_inference-block-21",
-      "section": "Defenses",
+      "quote": "An **adaptive worm** replaces the fixed repertoire with generated attack logic: it reasons about a target, tries an approach, reads what happened, and writes the next exploit.",
+      "block_id": "security_inference-block-19",
+      "section": "Adaptive Worms: Autonomous Offence",
       "kind": "statement"
     },
     {
       "id": "security_inference-stmt-28",
-      "quote": "| Output filtering | Post-model | Classifier checks output for policy violations |",
-      "block_id": "security_inference-block-22",
-      "section": "Defenses",
+      "quote": "\\cite[Guan et al. (2026)]{guan2026adaptiveworms} demonstrated a proof-of-concept of this design, with a single-GPU open-weight LLM running on compromised hosts and no human in the loop.",
+      "block_id": "security_inference-block-19",
+      "section": "Adaptive Worms: Autonomous Offence",
       "kind": "statement"
     },
     {
       "id": "security_inference-stmt-29",
-      "quote": "| Adversarial training | Training | Train on worst-case permutations (\\cite[Mazeika et al., 2024]{mazeika2024harmbench}) |",
+      "quote": "The worm was seeded on one host in an isolated 33-host network spanning Linux servers, Windows machines, and IoT devices, and ran autonomously for seven days in each of 15 trials.",
+      "block_id": "security_inference-block-20",
+      "section": "Adaptive Worms: Autonomous Offence",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-30",
+      "quote": "It identified an average of 31.3 vulnerabilities, escalated privileges on 23.1 hosts, and replicated to 20.4 hosts, reaching up to seven generations of self-replication; on average it exploited 73.8% of the network and replicated to 61.8% (\\cite[Guan et al., 2026]{guan2026adaptiveworms}).",
+      "block_id": "security_inference-block-20",
+      "section": "Adaptive Worms: Autonomous Offence",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-31",
+      "quote": "It also exploited three vulnerabilities disclosed in 2026, after the model's training cutoff, by reading public advisories at runtime.",
+      "block_id": "security_inference-block-20",
+      "section": "Adaptive Worms: Autonomous Offence",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-32",
+      "quote": "The economics are adverse.",
+      "block_id": "security_inference-block-21",
+      "section": "Adaptive Worms: Autonomous Offence",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-33",
+      "quote": "Because the reasoning runs on stolen compute, the attacker's marginal cost per new infection is effectively zero.",
+      "block_id": "security_inference-block-21",
+      "section": "Adaptive Worms: Autonomous Offence",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-34",
+      "quote": "Because no commercial AI platform is involved, service refusals, rate limits, and other centralized safety controls never enter the picture.",
+      "block_id": "security_inference-block-21",
+      "section": "Adaptive Worms: Autonomous Offence",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-35",
+      "quote": "And because the harness supplies exploit syntax and advisory text at runtime, a small model can act on a vulnerability that is absent from its weights.",
+      "block_id": "security_inference-block-21",
+      "section": "Adaptive Worms: Autonomous Offence",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-36",
+      "quote": "The caveat is that the experiment was deliberately favourable: every host carried at least one exploitable weakness and no endpoint detection was active, so it measures adaptation rather than evasion.",
+      "block_id": "security_inference-block-21",
+      "section": "Adaptive Worms: Autonomous Offence",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-37",
+      "quote": "Even so, the defensive problem shifts from patching a known exploit list to detecting and containing autonomous reasoning across the network.",
+      "block_id": "security_inference-block-21",
+      "section": "Adaptive Worms: Autonomous Offence",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-38",
+      "quote": "| Defense | Layer | How it works |",
       "block_id": "security_inference-block-23",
       "section": "Defenses",
       "kind": "statement"
     },
     {
-      "id": "security_inference-stmt-30",
-      "quote": "| Information bottleneck | Encoding | Perturb encoded input to strip adversarial signal (\\cite[Chen et al., 2024]{chen2024ibprotector}) |",
+      "id": "security_inference-stmt-39",
+      "quote": "| Input filtering | Pre-model | Detect/remove high-perplexity adversarial tokens (\\cite[Jain et al., 2023]{jain2023baseline}) |",
       "block_id": "security_inference-block-24",
       "section": "Defenses",
       "kind": "statement"
     },
     {
-      "id": "security_inference-stmt-31",
-      "quote": "No single defense is bulletproof.",
+      "id": "security_inference-stmt-40",
+      "quote": "| Instruction hierarchy | Prompt design | Separate system/user/tool messages with privilege levels (\\cite[Wallace et al., 2024]{wallace2024hierarchy}) |",
+      "block_id": "security_inference-block-25",
+      "section": "Defenses",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-41",
+      "quote": "| Output filtering | Post-model | Classifier checks output for policy violations |",
       "block_id": "security_inference-block-26",
       "section": "Defenses",
       "kind": "statement"
     },
     {
-      "id": "security_inference-stmt-32",
-      "quote": "Real-world deployments layer defense in depth : input filtering catches obvious attacks, instruction hierarchy enforces privilege levels, output classifiers catch policy violations that slip through, and adversarial training hardens the model against novel jailbreaks.",
-      "block_id": "security_inference-block-26",
-      "section": "Defenses",
-      "kind": "statement"
-    },
-    {
-      "id": "security_inference-stmt-33",
-      "quote": "The goal isn't perfection, it's raising the cost of attack high enough that adversaries move on to easier targets.",
-      "block_id": "security_inference-block-26",
-      "section": "Defenses",
-      "kind": "statement"
-    },
-    {
-      "id": "security_inference-stmt-34",
-      "quote": "Quantization & Inference Cost",
+      "id": "security_inference-stmt-42",
+      "quote": "| Adversarial training | Training | Train on worst-case permutations (\\cite[Mazeika et al., 2024]{mazeika2024harmbench}) |",
       "block_id": "security_inference-block-27",
       "section": "Defenses",
       "kind": "statement"
     },
     {
-      "id": "security_inference-stmt-35",
+      "id": "security_inference-stmt-43",
+      "quote": "| Information bottleneck | Encoding | Perturb encoded input to strip adversarial signal (\\cite[Chen et al., 2024]{chen2024ibprotector}) |",
+      "block_id": "security_inference-block-28",
+      "section": "Defenses",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-44",
+      "quote": "No single defense is bulletproof.",
+      "block_id": "security_inference-block-30",
+      "section": "Defenses",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-45",
+      "quote": "Real-world deployments layer defense in depth : input filtering catches obvious attacks, instruction hierarchy enforces privilege levels, output classifiers catch policy violations that slip through, and adversarial training hardens the model against novel jailbreaks.",
+      "block_id": "security_inference-block-30",
+      "section": "Defenses",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-46",
+      "quote": "The goal isn't perfection, it's raising the cost of attack high enough that adversaries move on to easier targets.",
+      "block_id": "security_inference-block-30",
+      "section": "Defenses",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-47",
+      "quote": "Quantization & Inference Cost",
+      "block_id": "security_inference-block-31",
+      "section": "Defenses",
+      "kind": "statement"
+    },
+    {
+      "id": "security_inference-stmt-48",
       "quote": "Running a 7B-parameter model in 32-bit precision needs ~28 GB of memory.",
-      "block_id": "security_inference-block-28",
+      "block_id": "security_inference-block-32",
       "section": "Defenses",
       "kind": "statement"
     },
     {
-      "id": "security_inference-stmt-36",
+      "id": "security_inference-stmt-49",
       "quote": "Lowering precision to 16 bits halves that to ~14 GB with virtually no quality loss; 8 bits drops it further to ~7 GB; 4 bits shrinks to ~3.5 GB but quality starts to degrade.",
-      "block_id": "security_inference-block-28",
+      "block_id": "security_inference-block-32",
       "section": "Defenses",
       "kind": "statement"
     },
     {
-      "id": "security_inference-stmt-37",
+      "id": "security_inference-stmt-50",
       "quote": "Real deployments combine quantization with KV-cache compression, speculative decoding, and Flash Attention to fit large models on consumer hardware.",
-      "block_id": "security_inference-block-28",
+      "block_id": "security_inference-block-32",
       "section": "Defenses",
       "kind": "statement"
     }
@@ -1737,66 +2226,90 @@
     },
     {
       "id": "security_inference-block-18",
+      "quote": "Adaptive Worms: Autonomous Offence",
+      "kind": "heading",
+      "section": "Adaptive Worms: Autonomous Offence"
+    },
+    {
+      "id": "security_inference-block-19",
+      "quote": "A conventional worm ships a fixed repertoire of exploits. WannaCry and NotPetya spread through vulnerabilities whose patches had been available for months, and patching that finite set of flaws interrupts the spread. An **adaptive worm** replaces the fixed repertoire with generated attack logic: it reasons about a target, tries an approach, reads what happened, and writes the next exploit. \\cite[Guan et al. (2026)]{guan2026adaptiveworms} demonstrated a proof-of-concept of this design, with a single-GPU open-weight LLM running on compromised hosts and no human in the loop.",
+      "kind": "paragraph",
+      "section": "Adaptive Worms: Autonomous Offence"
+    },
+    {
+      "id": "security_inference-block-20",
+      "quote": "The worm was seeded on one host in an isolated 33-host network spanning Linux servers, Windows machines, and IoT devices, and ran autonomously for seven days in each of 15 trials. It identified an average of 31.3 vulnerabilities, escalated privileges on 23.1 hosts, and replicated to 20.4 hosts, reaching up to seven generations of self-replication; on average it exploited 73.8% of the network and replicated to 61.8% (\\cite[Guan et al., 2026]{guan2026adaptiveworms}). It also exploited three vulnerabilities disclosed in 2026, after the model's training cutoff, by reading public advisories at runtime.",
+      "kind": "paragraph",
+      "section": "Adaptive Worms: Autonomous Offence"
+    },
+    {
+      "id": "security_inference-block-21",
+      "quote": "The economics are adverse. Because the reasoning runs on stolen compute, the attacker's marginal cost per new infection is effectively zero. Because no commercial AI platform is involved, service refusals, rate limits, and other centralized safety controls never enter the picture. And because the harness supplies exploit syntax and advisory text at runtime, a small model can act on a vulnerability that is absent from its weights. The caveat is that the experiment was deliberately favourable: every host carried at least one exploitable weakness and no endpoint detection was active, so it measures adaptation rather than evasion. Even so, the defensive problem shifts from patching a known exploit list to detecting and containing autonomous reasoning across the network.",
+      "kind": "paragraph",
+      "section": "Adaptive Worms: Autonomous Offence"
+    },
+    {
+      "id": "security_inference-block-22",
       "quote": "Defenses",
       "kind": "heading",
       "section": "Defenses"
     },
     {
-      "id": "security_inference-block-19",
+      "id": "security_inference-block-23",
       "quote": "| Defense | Layer | How it works |",
       "kind": "table-row",
       "section": "Defenses"
     },
     {
-      "id": "security_inference-block-20",
+      "id": "security_inference-block-24",
       "quote": "| Input filtering | Pre-model | Detect/remove high-perplexity adversarial tokens (\\cite[Jain et al., 2023]{jain2023baseline}) |",
       "kind": "table-row",
       "section": "Defenses"
     },
     {
-      "id": "security_inference-block-21",
+      "id": "security_inference-block-25",
       "quote": "| Instruction hierarchy | Prompt design | Separate system/user/tool messages with privilege levels (\\cite[Wallace et al., 2024]{wallace2024hierarchy}) |",
       "kind": "table-row",
       "section": "Defenses"
     },
     {
-      "id": "security_inference-block-22",
+      "id": "security_inference-block-26",
       "quote": "| Output filtering | Post-model | Classifier checks output for policy violations |",
       "kind": "table-row",
       "section": "Defenses"
     },
     {
-      "id": "security_inference-block-23",
+      "id": "security_inference-block-27",
       "quote": "| Adversarial training | Training | Train on worst-case permutations (\\cite[Mazeika et al., 2024]{mazeika2024harmbench}) |",
       "kind": "table-row",
       "section": "Defenses"
     },
     {
-      "id": "security_inference-block-24",
+      "id": "security_inference-block-28",
       "quote": "| Information bottleneck | Encoding | Perturb encoded input to strip adversarial signal (\\cite[Chen et al., 2024]{chen2024ibprotector}) |",
       "kind": "table-row",
       "section": "Defenses"
     },
     {
-      "id": "security_inference-block-25",
+      "id": "security_inference-block-29",
       "quote": "Defenses in Practice",
       "kind": "paragraph",
       "section": "Defenses"
     },
     {
-      "id": "security_inference-block-26",
+      "id": "security_inference-block-30",
       "quote": "No single defense is bulletproof. Real-world deployments layer defense in depth : input filtering catches obvious attacks, instruction hierarchy enforces privilege levels, output classifiers catch policy violations that slip through, and adversarial training hardens the model against novel jailbreaks. The goal isn't perfection, it's raising the cost of attack high enough that adversaries move on to easier targets.",
       "kind": "paragraph",
       "section": "Defenses"
     },
     {
-      "id": "security_inference-block-27",
+      "id": "security_inference-block-31",
       "quote": "Quantization & Inference Cost",
       "kind": "paragraph",
       "section": "Defenses"
     },
     {
-      "id": "security_inference-block-28",
+      "id": "security_inference-block-32",
       "quote": "Running a 7B-parameter model in 32-bit precision needs ~28 GB of memory. Lowering precision to 16 bits halves that to ~14 GB with virtually no quality loss; 8 bits drops it further to ~7 GB; 4 bits shrinks to ~3.5 GB but quality starts to degrade. Real deployments combine quantization with KV-cache compression, speculative decoding, and Flash Attention to fit large models on consumer hardware.",
       "kind": "paragraph",
       "section": "Defenses"
