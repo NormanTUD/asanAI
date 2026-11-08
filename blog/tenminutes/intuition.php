@@ -4298,24 +4298,29 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			if (maxPosPane) setMin("#step-position", maxPosPane + (mobile ? 180 : 80));
 			var attChips = Array.prototype.slice.call(document.querySelectorAll("[data-att]"));
 			if (attChips.length) {
-				var activeAtt = attChips.filter(function (c) { return c.classList.contains("is-on"); })[0] || attChips[0];
-				var maxSent = 0, maxOut = 0, maxSum = 0;
-				window.__tmHeightReserving = true;
-				for (var i = 0; i < attChips.length; i++) {
-					attChips[i].click();
-					await sleep(30);
-					var sent = document.getElementById("iatt-sentence");
-					var out = document.getElementById("iatt-out");
-					var sum = document.getElementById("iatt-sum");
-					if (sent) maxSent = Math.max(maxSent, sent.offsetHeight);
-					if (out) maxOut = Math.max(maxOut, out.offsetHeight);
-					if (sum) maxSum = Math.max(maxSum, sum.offsetHeight);
+				var attPane = document.getElementById("step-attention");
+				var attBounds = attPane ? attPane.getBoundingClientRect() : null;
+				var attVisible = !!(attBounds && attBounds.bottom > 0 && attBounds.top < window.innerHeight);
+				if (!attVisible) {
+					var activeAtt = attChips.filter(function (c) { return c.classList.contains("is-on"); })[0] || attChips[0];
+					var maxSent = 0, maxOut = 0, maxSum = 0;
+					window.__tmHeightReserving = true;
+					for (var i = 0; i < attChips.length; i++) {
+						attChips[i].click();
+						await sleep(30);
+						var sent = document.getElementById("iatt-sentence");
+						var out = document.getElementById("iatt-out");
+						var sum = document.getElementById("iatt-sum");
+						if (sent) maxSent = Math.max(maxSent, sent.offsetHeight);
+						if (out) maxOut = Math.max(maxOut, out.offsetHeight);
+						if (sum) maxSum = Math.max(maxSum, sum.offsetHeight);
+					}
+					if (activeAtt) activeAtt.click();
+					window.__tmHeightReserving = false;
+					setMin("#iatt-sentence", maxSent);
+					setMin("#iatt-out", maxOut);
+					setMin("#iatt-sum", maxSum);
 				}
-				if (activeAtt) activeAtt.click();
-				window.__tmHeightReserving = false;
-				setMin("#iatt-sentence", maxSent);
-				setMin("#iatt-out", maxOut);
-				setMin("#iatt-sum", maxSum);
 			}
 			var softChips = Array.prototype.slice.call(document.querySelectorAll("[data-softmax-prompt]"));
 			if (softChips.length) {
