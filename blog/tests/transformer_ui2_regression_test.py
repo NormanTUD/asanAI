@@ -406,6 +406,9 @@ def main() -> None:
                     nested: m ? m.querySelectorAll('math').length : 0
                 };
             }""")
+            tm_steps = page.evaluate("() => Array.from(document.querySelectorAll('.tm-step-metric')).map(e => e.getAttribute('data-step-metric'))")
+            check("tenminutes: embedding/position metric switches exist",
+                  "embed" in tm_steps and "position" in tm_steps, str(tm_steps))
             check("tenminutes: one-column config, no model-size line, dynamic heights",
                   bool(tm_layout) and len(tm_layout["cols"].split()) == 1 and not tm_layout["slot"]
                   and tm_layout["alignItems"] == "start", str(tm_layout))
