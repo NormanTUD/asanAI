@@ -180,14 +180,26 @@
 		}
 	};
 
-	TM.initCanvas = function (canvas, draw) {
+	TM.initCanvas = function (canvas, draw, options) {
+		options = options || {};
 		var ctx = canvas.getContext("2d");
 		var raf = null;
 		var lastW = 0, lastH = 0, lastDpr = 0;
-		function paint() {
-			raf = null;
+		var visible = false;
+		var drawn = false;
+		var dirty = true;
+		var loading = false;
+		var loaderRaf = null;
+		var loaderStart = 0;
+		var loaderUpdate = false;
+		var pendingSpinner = true;
+		var minLoader = options.minLoader == null ? 150 : options.minLoader;
+		var rootMargin = options.rootMargin || "700px 0px";
+		var reduce = TM.prefersReduced();
+
+		function measure() {
 			var rect = canvas.getBoundingClientRect();
-			if (!rect.width) return;
+			if (!rect.width || !rect.height) return null;
 			var dpr = Math.min(window.devicePixelRatio || 1, 2);
 			if (rect.width !== lastW || rect.height !== lastH || dpr !== lastDpr) {
 				canvas.width = Math.round(rect.width * dpr);
@@ -197,17 +209,165 @@
 				lastDpr = dpr;
 			}
 			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-			draw(ctx, rect.width, rect.height);
+			return rect;
 		}
-		function request() {
-			if (raf === null) raf = requestAnimationFrame(paint);
+		function loaderLabel(update) {
+			var de = TM.lang() === "de";
+			if (update) return de ? "Wird aktualisiert …" : "Updating …";
+			return de ? "Wird geladen …" : "Loading …";
+		}
+		function drawLoader(now) {
+			var rect = measure();
+			if (!rect) return;
+			var c = TM.colors();
+			var label = loaderLabel(loaderUpdate);
+			ctx.clearRect(0, 0, rect.width, rect.height);
+			ctx.font = "600 11px Barlow, system-ui, sans-serif";
+			var tw = ctx.measureText(label).width;
+			var r = 6;
+			var padX = 12;
+			var gap = 8;
+			var pillW = padX * 2 + r * 2 + gap + tw;
+			var pillH = 30;
+			var x, y;
+			if (loaderUpdate && drawn) {
+				x = Math.max(8, rect.width - pillW - 10);
+				y = 10;
+			} else {
+				x = Math.max(8, (rect.width - pillW) / 2);
+				y = Math.max(8, (rect.height - pillH) / 2);
+			}
+			ctx.fillStyle = c.dark ? "rgba(4, 34, 46, 0.92)" : "rgba(255, 255, 255, 0.94)";
+			ctx.strokeStyle = c.lineStrong;
+			ctx.lineWidth = 1;
+			TM.roundRect(ctx, x, y, pillW, pillH, 15);
+			ctx.fill();
+			ctx.stroke();
+			var cx = x + padX + r;
+			var cy = y + pillH / 2;
+			var angle = (((now || performance.now()) - loaderStart) / 1000) * 5;
+			ctx.strokeStyle = c.green;
+			ctx.lineWidth = 2;
+			ctx.beginPath();
+			ctx.arc(cx, cy, r, angle, angle + Math.PI * 1.4);
+			ctx.stroke();
+			ctx.fillStyle = c.muted;
+			ctx.textAlign = "left";
+			ctx.textBaseline = "middle";
+			ctx.fillText(label, cx + r + gap, cy + 0.5);
+			ctx.textBaseline = "alphabetic";
+		}
+		function loaderLoop(now) {
+			if (!loading || !visible) {
+				loaderRaf = null;
+				return;
+			}
+			drawLoader(now);
+			loaderRaf = requestAnimationFrame(loaderLoop);
+		}
+		function paintGraphic() {
+			var rect = measure();
+			if (!rect) return false;
+			draw(ctx, rect.width, rect.height);
+			return true;
+		}
+		function finishLoad() {
+			loading = false;
+			if (loaderRaf) {
+				cancelAnimationFrame(loaderRaf);
+				loaderRaf = null;
+			}
+			if (!visible) {
+				dirty = true;
+				return;
+			}
+			if (paintGraphic()) {
+				drawn = true;
+				dirty = false;
+			}
+		}
+		function startLoad(update) {
+			if (!visible) {
+				dirty = true;
+				return;
+			}
+			if (loading) {
+				dirty = true;
+				loaderUpdate = loaderUpdate || update;
+				return;
+			}
+			if (!drawn) update = false;
+			dirty = true;
+			loading = true;
+			loaderUpdate = update;
+			loaderStart = performance.now();
+			if (reduce) {
+				finishLoad();
+				return;
+			}
+			if (!loaderRaf) loaderRaf = requestAnimationFrame(loaderLoop);
+			setTimeout(finishLoad, minLoader);
+		}
+		function request(opts) {
+			opts = opts || {};
+			var show = opts.spinner !== false;
+			if (!visible) {
+				dirty = true;
+				pendingSpinner = pendingSpinner || show;
+				return;
+			}
+			if (loading) {
+				dirty = true;
+				return;
+			}
+			if (!drawn) {
+				startLoad(false);
+				return;
+			}
+			if (show) {
+				startLoad(true);
+				return;
+			}
+			dirty = true;
+			if (raf === null) {
+				raf = requestAnimationFrame(function () {
+					raf = null;
+					if (!visible) return;
+					if (paintGraphic()) {
+						drawn = true;
+						dirty = false;
+					}
+				});
+			}
+		}
+		function layout() {
+			if (!visible) {
+				dirty = true;
+				pendingSpinner = true;
+				return;
+			}
+			if (!drawn) startLoad(false);
+			else request({ spinner: false });
 		}
 		if (window.ResizeObserver) {
-			new ResizeObserver(request).observe(canvas);
+			new ResizeObserver(layout).observe(canvas);
 		} else {
-			window.addEventListener("resize", request);
+			window.addEventListener("resize", layout);
 		}
-		request();
+		if ("IntersectionObserver" in window && !reduce) {
+			new IntersectionObserver(function (entries) {
+				visible = entries.some(function (entry) { return entry.isIntersecting; });
+				if (!visible) return;
+				if (!drawn || dirty) {
+					if (pendingSpinner || !drawn) startLoad(drawn);
+					else request({ spinner: false });
+				}
+				pendingSpinner = false;
+			}, { rootMargin: rootMargin }).observe(canvas);
+		} else {
+			visible = true;
+			startLoad(false);
+		}
 		return { redraw: request, ctx: ctx };
 	};
 

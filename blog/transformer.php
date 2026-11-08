@@ -211,7 +211,7 @@ with the full formulas one level deeper.
 
 Every plot below uses one color code for token position: the first token is blue, the last token green, and the tokens in between blend from one to the other. The same color appears in the matrices, the arrows, and the trajectory, so a blue mark always means early in the sentence and a green one late.
 
-Heraclitus, fragment B60, makes the point with a path: *the way up and the way down are one and the same* (\cite[Heraclitus, frag. B60]{heraclitus500fragments}). Colored by position, the sentence reads:
+Heraclitus, fragment B60 (ὁδὸς ἄνω κάτω μία καὶ ὡυτή), makes the point with a path: *the way up and the way down are one and the same* (\cite[Heraclitus, frag. B60]{heraclitus500fragments}). Colored by position, the sentence reads:
 
 <div>
 $$ \underbrace{ \underbrace{\color[RGB]{59,130,246}\text{the}}_{\text{first: blue}} \ \color[RGB]{55,135,235}\text{way} \ \color[RGB]{51,140,225}\text{up} \ \color[RGB]{47,145,214}\text{and} \ \color[RGB]{43,150,203}\text{the} \ \color[RGB]{39,155,193}\text{way} \ \color[RGB]{36,160,182}\text{down} \ \color[RGB]{32,165,172}\text{are} \ \color[RGB]{28,170,161}\text{one} \ \color[RGB]{24,175,150}\text{and} \ \color[RGB]{20,180,140}\text{the} \ \underbrace{\color[RGB]{16,185,129}\text{same}}_{\text{last: green}} }_{\text{color encodes position from left to right}} $$

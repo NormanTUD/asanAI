@@ -92,3 +92,23 @@
 [note] Die früheren Einträge zu „Manhattan“/„drei Metriken“/„Per-Plot-Schalter“ sind überholt: aktuell gibt es nur Euklidisch (Default) und Großkreis/angular, global in der Sticky-Bar (Tenminutes: Config-Fallback).
 
 [note] Verbleibende ECharts-Renderer im Transformer sind nicht sichtbar: `render_migration_logic`/`tlab_render_echarts`/`_migration_render_*` (versteckte Legacy-Migrationsdetails), `renderFeatureChart`/`renderFeatureParallel` (unbenutzt). Die vier sichtbaren Geometrie-Plots sind Plotly.
+
+## Review current pass: layout, colors, collapse, metric-consistent vector fields
+
+[done] Sticky-Bar-Overflow bei hohem d_model: Die Leiste darf umbrechen (`flex-wrap`, `row-gap`), die Metrik-Gruppe bricht ebenfalls um; der High-Dim-Schalter bleibt sichtbar und die Leiste passt weiterhin bei 1024 px.
+
+[done] Attention-Head-Formeln bei d=10 horizontal scrollbar: `.head-tab-in-layer`, `.apv-per-head-section`, `.apv-matrix-container` und `.apv-head-detail` haben `overflow-x:auto` und `max-width:100%`. Die blaue Füllung des aktiven Head-Tabs ist entfernt; aktiv wird über Textfarbe und eine 2-px-Unterlinie markiert (hell und dunkel).
+
+[done] Input/Change/Output-Heatmaps: +10 px Abstand unter „Dimension →“ (Zellen beginnen bei `top=34`), Tooltip-Koordinaten angepasst. Jede Zeile ist 5 px höher; die Canvas-Höhe wächst mit `170 + 5·rows`, damit die Token-Wörter links Platz haben. FFN-Hidden-Aktivierungen haben jetzt einen Hover-Tooltip mit Token, Dimension und echtem GELU-Wert.
+
+[done] Farbsystem überall: Feature-Migration, Embedding, Positional-Shift, Token-Chips, Heatmap-Zeilenlabels und Trajektorie nutzen den Blau→Grün-Verlauf von `getPositionColor` (erster Token #3b82f6, letzter #10b981). Neuer kurzer Abschnitt „How to read the colors“ mit Heraklit B60 („the way up and the way down are one and the same“) als farbigem LaTeX-Beispiel; die Quellenzeile zitiert `heraclitus500fragments`.
+
+[done] Feature-Migration, Embedding und PE-Shift haben dieselbe Höhe wie die Trajektorie (520 px), gleiche Plotly-Layouts/Kegel/Aspect-Ratio.
+
+[done] Trajektorien-Ursprung erklärt und behoben: Der Collector bekam die Hidden-State-Vektoren als `tokens`; der Embedding-Lookup fand keinen Schlüssel und füllte `00_raw` mit Nullen. Jetzt werden die Token-Strings übergeben; `00_raw` enthält echte Embeddings, auch für Leerzeichen.
+
+[done] Metrik-Erklärungen ausklappbar: „Great-circle / angular“ und „Sphere“ (bzw. „Großkreis“/„Kugel“) sind `<details>`-Blöcke; die Formel bleibt sichtbar. Gilt unter Feature-Migration und Trajektorie.
+
+[done] Vektorfelder metrikkonform: Bei angular werden Trajektorie- und Feature-Migrations-Vektorfelder auf Einheitskreis bzw. Einheitskugel abgetastet (24 Richtungen in 2D, 64 Fibonacci-Richtungen in 3D), der Layer-Ausgang wird genauso normiert wie die Token-Punkte, und die Pfeile/Cones zeigen die Differenz im dargestellten Raum. Bei Euklidisch bleibt das bisherige Rohgitter.
+
+[note] Regressionstests (UI2 + Fix) und der volle Blog-Gate folgen am Ende des Passes; bis dahin keine weiteren Browser-Testläufe.

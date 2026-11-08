@@ -8510,3 +8510,7 @@ html[data-theme="dark"] .traj-candidate.is-chosen { color: var(--tm-green); }
 .prose-math math {
 	width: auto;
 }
+
+.prose-math math {
+	width: auto !important;
+}

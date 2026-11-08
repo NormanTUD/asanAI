@@ -3107,13 +3107,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				});
 				if (best !== embHover) {
 					embHover = best;
-					if (embApi) embApi.redraw();
+					if (embApi) embApi.redraw({ spinner: false });
 				}
 			});
 			embCanvas.addEventListener("pointerleave", function () {
 				if (embHover) {
 					embHover = null;
-					if (embApi) embApi.redraw();
+					if (embApi) embApi.redraw({ spinner: false });
 				}
 			});
 			document.querySelectorAll("[data-emb]").forEach(function (btn) {
@@ -3520,7 +3520,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			posApi = TM.initCanvas(posCanvas, drawPos);
 			var posSlider = document.getElementById("ipe-pos");
 			var posCountOut = document.getElementById("ipe-pos-out");
-			var posVisible = true;
+			var posVisible = !("IntersectionObserver" in window);
+			var posRaf = null;
 			posClock = (window.performance && performance.now) ? performance.now() : 0;
 			function posFormat(value) {
 				return value.toFixed(2).replace(".", DE ? "," : ".");
@@ -3543,10 +3544,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						} else {
 							posShown = pos;
 						}
-						posApi.redraw();
+						posApi.redraw({ spinner: false });
 					}
 				}
-				requestAnimationFrame(posTick);
+				if (posVisible && !document.hidden) posRaf = requestAnimationFrame(posTick);
+				else posRaf = null;
 			}
 			if (posSlider) {
 				posSlider.addEventListener("input", function () {
@@ -3598,13 +3600,14 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				posYaw += (ev.clientX - posDrag.x) * 0.01;
 				posPitch = TM.clamp(posPitch + (ev.clientY - posDrag.y) * 0.01, -1.2, 1.2);
 				posDrag = { x: ev.clientX, y: ev.clientY };
-				if (posApi) posApi.redraw();
+				if (posApi) posApi.redraw({ spinner: false });
 			});
 			posCanvas.addEventListener("pointerup", posEndDrag);
 			posCanvas.addEventListener("pointercancel", posEndDrag);
 			if ("IntersectionObserver" in window) {
 				new IntersectionObserver(function (entries) {
 					posVisible = entries[0].isIntersecting;
+					if (posVisible && posRaf === null && !document.hidden) posRaf = requestAnimationFrame(posTick);
 				}, { threshold: 0.01 }).observe(posCanvas);
 			}
 			window.addEventListener("tm:theme", function () {
@@ -3613,7 +3616,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			if (posCountOut) posCountOut.textContent = String(pos);
 			posRenderOut();
 			if (posApi) posApi.redraw();
-			requestAnimationFrame(posTick);
+			if (posVisible) posRaf = requestAnimationFrame(posTick);
 		}
 
 		/* ── attention ───────────────────────────────────────── */

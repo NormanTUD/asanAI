@@ -12,7 +12,7 @@ Covers the problems that are easy to break and hard to see:
   * right-clicking a rendered equation opens the LaTeX popup (also inside a layer card);
   * the "Collapse all layers" button is a real toggle and updates its label;
   * the 3D capacity note appears only above d_model = 3;
-  * head tabs say "Head N", are blue, keep the estimate above the method note;
+  * head tabs say "Head N", use a neutral active state, keep the estimate above the method note;
   * the removed training-window/share UI stays removed in both transformer pages;
   * the inference overlay exists and is theme-token based;
   * a d_model = 10 model memorizes a short training sentence.

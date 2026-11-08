@@ -4725,6 +4725,38 @@ function syncVFToggleButtonState(id, plotDiv, vfEnabled) {
 	}
 }
 
+function _vf_metric_is_angular() {
+	return !!(window.tmMetric && window.tmMetric.get && window.tmMetric.get() === "angular");
+}
+
+function _vf_display_unit(v, dims) {
+	const out = [];
+	for (let i = 0; i < dims; i++) out.push((v && v[i]) || 0);
+	const n = Math.sqrt(out.reduce((s, x) => s + x * x, 0)) || 1;
+	return out.map(x => x / n);
+}
+
+function _vf_angular_circle_points(count) {
+	const points = [];
+	for (let i = 0; i < count; i++) {
+		const theta = 2 * Math.PI * i / count;
+		points.push({ x: Math.cos(theta), y: Math.sin(theta) });
+	}
+	return points;
+}
+
+function _vf_angular_sphere_points(count) {
+	const points = [];
+	const golden = Math.PI * (1 + Math.sqrt(5));
+	for (let i = 0; i < count; i++) {
+		const y = 1 - 2 * (i + 0.5) / count;
+		const radius = Math.sqrt(Math.max(0, 1 - y * y));
+		const theta = golden * i;
+		points.push({ x: Math.cos(theta) * radius, y: y, z: Math.sin(theta) * radius });
+	}
+	return points;
+}
+
 function _compute_vector_field_points_2d(migrationId, layerNum, d_model, n_heads) {
 	const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
 	if (!regData) return null;
@@ -4732,6 +4764,24 @@ function _compute_vector_field_points_2d(migrationId, layerNum, d_model, n_heads
 	const realContext = regData.start_h;
 	const seqLen = realContext.length;
 	const substitutePos = seqLen - 1;
+
+	if (_vf_metric_is_angular()) {
+		const gridRes = 24;
+		const layerWeights = window.currentWeights[layerNum - 1];
+		const points = [];
+		let maxMag = 0;
+		_vf_angular_circle_points(gridRes).forEach(p => {
+			const modifiedContext = realContext.map((row, idx) => idx === substitutePos ? [p.x, p.y] : [...row]);
+			const result = forwardOneLayer(modifiedContext, layerWeights, d_model, n_heads, null, null, null);
+			const end = _vf_display_unit(result.h_out[substitutePos], 2);
+			const dx = end[0] - p.x;
+			const dy = end[1] - p.y;
+			const mag = Math.sqrt(dx * dx + dy * dy);
+			points.push({ x: p.x, y: p.y, dx, dy, mag });
+			if (mag > maxMag) maxMag = mag;
+		});
+		return { points, maxMag: Math.max(maxMag, 1e-8), maxArrowLen: 0.18, seqLen, substitutePos };
+	}
 
 	const allVecs = Object.values(window.persistentEmbeddingSpace);
 	let xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
@@ -4799,6 +4849,24 @@ function _compute_vector_field_points_3d(migrationId, layerNum, d_model, n_heads
 	const realContext = regData.start_h;
 	const seqLen = realContext.length;
 	const substitutePos = seqLen - 1;
+
+	if (_vf_metric_is_angular()) {
+		const layerWeights = window.currentWeights[layerNum - 1];
+		const points = [];
+		let maxMag = 0;
+		_vf_angular_sphere_points(64).forEach(p => {
+			const modifiedContext = realContext.map((row, idx) => idx === substitutePos ? [p.x, p.y, p.z] : [...row]);
+			const result = forwardOneLayer(modifiedContext, layerWeights, d_model, n_heads, null, null, null);
+			const end = _vf_display_unit(result.h_out[substitutePos], 3);
+			const dx = end[0] - p.x;
+			const dy = end[1] - p.y;
+			const dz = end[2] - p.z;
+			const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+			points.push({ x: p.x, y: p.y, z: p.z, dx, dy, dz, mag });
+			if (mag > maxMag) maxMag = mag;
+		});
+		return { points, maxMag: Math.max(maxMag, 1e-8), maxArrowLen: 0.16, seqLen, substitutePos };
+	}
 
 	const bounds = _vf3d_overlay_compute_bounds_from_context_and_embeddings(realContext);
 	const gridRes = 6;
@@ -7836,6 +7904,26 @@ function _compute_trajectory_vf_2d(d_model, n_heads, n_layers) {
 	const weights = window.currentWeights;
 	if (!weights || weights.length < n_layers) return null;
 
+	if (_vf_metric_is_angular()) {
+		const gridRes = 24;
+		const points = [];
+		let maxMag = 0;
+		_vf_angular_circle_points(gridRes).forEach(p => {
+			const modifiedH0 = h0.map((row, idx) => idx === substitutePos ? [p.x, p.y] : [...row]);
+			let h = modifiedH0;
+			for (let l = 0; l < n_layers; l++) {
+				h = forwardOneLayer(h, weights[l], d_model, n_heads, null, null, null).h_out;
+			}
+			const end = _vf_display_unit(h[substitutePos], 2);
+			const dx = end[0] - p.x;
+			const dy = end[1] - p.y;
+			const mag = Math.sqrt(dx * dx + dy * dy);
+			points.push({ x: p.x, y: p.y, dx, dy, mag });
+			if (mag > maxMag) maxMag = mag;
+		});
+		return { points, maxMag: Math.max(maxMag, 1e-8), maxArrowLen: 0.18 };
+	}
+
 	// ── Bounds from every trajectory stage + vocab embeddings ──
 	let xMin = Infinity, xMax = -Infinity,
 		yMin = Infinity, yMax = -Infinity;
@@ -7905,6 +7993,26 @@ function _compute_trajectory_vf_3d(d_model, n_heads, n_layers) {
 	const substitutePos = seqLen - 1;
 	const weights = window.currentWeights;
 	if (!weights || weights.length < n_layers) return null;
+
+	if (_vf_metric_is_angular()) {
+		const points = [];
+		let maxMag = 0;
+		_vf_angular_sphere_points(64).forEach(p => {
+			const modifiedH0 = h0.map((row, idx) => idx === substitutePos ? [p.x, p.y, p.z] : [...row]);
+			let h = modifiedH0;
+			for (let l = 0; l < n_layers; l++) {
+				h = forwardOneLayer(h, weights[l], d_model, n_heads, null, null, null).h_out;
+			}
+			const end = _vf_display_unit(h[substitutePos], 3);
+			const dx = end[0] - p.x;
+			const dy = end[1] - p.y;
+			const dz = end[2] - p.z;
+			const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+			points.push({ x: p.x, y: p.y, z: p.z, dx, dy, dz, mag });
+			if (mag > maxMag) maxMag = mag;
+		});
+		return { points, maxMag: Math.max(maxMag, 1e-8), maxArrowLen: 0.16 };
+	}
 
 	let xMin = Infinity, xMax = -Infinity,
 		yMin = Infinity, yMax = -Infinity,
