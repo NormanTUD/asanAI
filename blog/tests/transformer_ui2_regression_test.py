@@ -1,0 +1,189 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "playwright>=1.40",
+# ]
+# ///
+"""Short regression test for the second transformer UI pass.
+
+Focus on the complex, easy-to-regress pieces:
+  * clickable input/change/output heatmaps that reveal their matrices;
+  * logit lens shows the last token first, with bars and an others toggle;
+  * optional blocks are flat collapsibles with a small +/- on the right;
+  * no automatic equation numbers, no orange `.math_transformer` boxes;
+  * each formula step carries its short "why here" intuition.
+
+Run from the repository root:
+    uv run blog/tests/transformer_ui2_regression_test.py
+"""
+
+from __future__ import annotations
+
+import shutil
+import socket
+import subprocess
+import sys
+from pathlib import Path
+
+from playwright.sync_api import sync_playwright
+
+ROOT = Path(__file__).resolve().parents[2]
+BLOG = ROOT / "blog"
+CASES: list[tuple[str, bool, str]] = []
+
+
+def check(name: str, ok: bool, detail: str = "") -> None:
+    CASES.append((name, bool(ok), detail))
+    print(("  PASS  " if ok else "  FAIL  ") + name + (f" — {detail}" if detail and not ok else ""))
+
+
+def free_port() -> int:
+    with socket.socket() as sock:
+        sock.bind(("127.0.0.1", 0))
+        return int(sock.getsockname()[1])
+
+
+def ensure_chromium() -> None:
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            browser.close()
+            return
+    except Exception:
+        pass
+    subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"],
+                   stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+
+
+def serve(port: int) -> subprocess.Popen:
+    php = shutil.which("php")
+    if php is None:
+        print("ERROR: php is not on PATH", file=sys.stderr)
+        raise SystemExit(1)
+    return subprocess.Popen([php, "-S", f"127.0.0.1:{port}", "-t", str(BLOG)],
+                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def main() -> None:
+    source = (BLOG / "style.css").read_text(encoding="utf-8")
+    steps_css = (BLOG / "transformer_steps.css").read_text(encoding="utf-8")
+    check("optional blocks are flat (no blue side bar)",
+          "border-left: 4px solid #3498db" not in source and ".optional-title" in source)
+    check("equation numbers are disabled",
+          ".cl-eq::after {\n\tcontent: none;" in source)
+    check("triple math panel and why-note styles exist",
+          ".tm-triple-math" in steps_css and ".tm-step-why" in steps_css)
+
+    ensure_chromium()
+    port = free_port()
+    server = serve(port)
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 1400, "height": 1000})
+            errors: list[str] = []
+            page.on("pageerror", lambda e: errors.append(str(e)))
+            page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
+            page.goto(f"http://127.0.0.1:{port}/transformer.php", wait_until="load", timeout=120000)
+            page.wait_for_function("() => !!document.querySelector('.tm-layer-card')", timeout=120000)
+
+            page.evaluate("""() => {
+                const card = document.querySelector('.tm-layer-card');
+                const head = card.querySelector('.tm-layer-head');
+                if (head && card.querySelector('.tm-layer-body').hidden) head.click();
+                const mig = card.querySelector('.tm-layer-subbox[data-sub="migration"]');
+                if (mig) mig.open = true;
+                const ffn = card.querySelector('.tm-layer-subbox[data-sub="ffn"]');
+                if (ffn) ffn.open = true;
+            }""")
+            page.wait_for_timeout(2500)
+
+            triple = page.evaluate("""() => {
+                const cell = document.querySelector('.tm-triple-cell');
+                if (!cell) return null;
+                const cs = getComputedStyle(cell);
+                return {border: cs.borderTopWidth, bg: cs.backgroundColor, cursor: cs.cursor};
+            }""")
+            check("triple heatmaps have no box", bool(triple) and triple["border"] == "0px" and triple["bg"] == "rgba(0, 0, 0, 0)", str(triple))
+            page.locator(".tm-triple-cell").first.click()
+            page.wait_for_timeout(400)
+            math_panel = page.evaluate("""() => {
+                const panel = document.querySelector('.tm-triple-math');
+                return panel ? {visible: !panel.hidden, math: panel.querySelectorAll('math').length} : null;
+            }""")
+            check("clicking a heatmap reveals its pmatrix math",
+                  bool(math_panel) and math_panel["visible"] and math_panel["math"] >= 3, str(math_panel))
+
+            logit = page.evaluate("""() => {
+                const host = document.querySelector('.tm-logit-lens-host');
+                if (!host) return null;
+                const lens = host.querySelector('.tm-logit-lens');
+                const rows = lens ? lens.querySelectorAll(':scope > .tm-logit-row') : [];
+                return {
+                    rows: rows.length,
+                    lastOnly: rows.length === 1 && rows[0].classList.contains('is-last'),
+                    bars: host.querySelectorAll('.tm-logit-bar').length,
+                    others: !!host.querySelector('.tm-logit-others')
+                };
+            }""")
+            check("logit lens shows the last token first, with bars and others toggle",
+                  bool(logit) and logit["lastOnly"] and logit["bars"] > 0 and logit["others"], str(logit))
+
+            optional = page.evaluate("""() => {
+                const block = document.querySelector('.optional');
+                if (!block) return null;
+                const cs = getComputedStyle(block);
+                const icon = block.querySelector('.optional-icon');
+                return {border: cs.borderLeftWidth, bg: cs.backgroundColor, icon: icon && icon.textContent.trim()};
+            }""")
+            check("optional blocks are flat with a + icon",
+                  bool(optional) and optional["border"] == "0px" and optional["bg"] == "rgba(0, 0, 0, 0)" and optional["icon"] in ("+", "−"), str(optional))
+
+            eq = page.evaluate("""() => {
+                const el = document.querySelector('.cl-eq');
+                return el ? getComputedStyle(el, '::after').display + '|' + getComputedStyle(el, '::after').content : null;
+            }""")
+            check("display equations carry no number", bool(eq) and eq.split("|")[1] in ("none", "normal", '""'), str(eq))
+
+            why = page.evaluate("() => document.querySelectorAll('.tm-step-why').length")
+            check("formula steps carry a short why-note", why > 0, f"count={why}")
+            mt = page.evaluate("""() => {
+                const el = document.querySelector('.math_transformer');
+                if (!el) return null;
+                const cs = getComputedStyle(el);
+                return {bg: cs.backgroundColor, border: cs.borderLeftWidth};
+            }""")
+            check("math_transformer is not an orange box",
+                  bool(mt) and mt["bg"] == "rgba(0, 0, 0, 0)" and mt["border"] == "0px", str(mt))
+            check("no console/page errors", not errors, "; ".join(errors[:3]))
+
+            errors.clear()
+            page.goto(f"http://127.0.0.1:{port}/tenminutes/transformer.php", wait_until="load", timeout=120000)
+            page.wait_for_timeout(2500)
+            tm_mt = page.evaluate("""() => {
+                const el = document.querySelector('.math_transformer');
+                if (!el) return null;
+                const cs = getComputedStyle(el);
+                return {bg: cs.backgroundColor, border: cs.borderLeftWidth};
+            }""")
+            check("tenminutes: math_transformer is not a gold box",
+                  tm_mt is None or (tm_mt["bg"] == "rgba(0, 0, 0, 0)" and tm_mt["border"] == "0px"), str(tm_mt))
+            check("tenminutes: no page errors", not errors, "; ".join(errors[:3]))
+            browser.close()
+    finally:
+        server.terminate()
+        try:
+            server.wait(timeout=5)
+        except Exception:
+            server.kill()
+
+    failed = [name for name, ok, _ in CASES if not ok]
+    print(f"\n{len(CASES) - len(failed)}/{len(CASES)} passed")
+    if failed:
+        print("FAILED: " + ", ".join(failed))
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
