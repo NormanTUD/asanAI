@@ -234,7 +234,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								</div>
 								<div class="demo-insight"><b>Takeaway</b><span>The model never decides that something is right. It builds a distribution from its training data and draws from it; the tunnel shows how context narrows that distribution.</span></div>
 							</div>
-						<p class="step-note">The model does not jump to an answer. It feels its way through this space, one token at a time.</p>
+						<p class="step-note">The model does not jump to an answer. It feels its way through this space, one token at a time. Click a word to jump to that step.</p>
 					</section>
 
 					<section class="section-block" id="inside" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
@@ -1642,10 +1642,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		var isoStep = 0;
 		var isoTemp = 0.8;
 		var isoApi = null;
+		var isoHits = [];
 		var isoLabels = DE ? {
-			certain: "fast sicher", likely: "wahrscheinlich", open: "offen", wide: "sehr offen", width: "Tunnelbreite", certainAxis: "sicher", openAxis: "offen"
+			certain: "fast sicher", likely: "wahrscheinlich", open: "offen", wide: "sehr offen", width: "Tunnelbreite", certainAxis: "sicher", openAxis: "offen", deepest: "blaues Tal = wahrscheinlichster Pfad"
 		} : {
-			certain: "near-certain", likely: "likely", open: "open", wide: "wide open", width: "tunnel width", certainAxis: "certain", openAxis: "open"
+			certain: "near-certain", likely: "likely", open: "open", wide: "wide open", width: "tunnel width", certainAxis: "certain", openAxis: "open", deepest: "blue valley = most likely path"
 		};
 		var isoTokens = DE ? ["Die", "Hauptstadt", "von", "Frankreich", "ist", "Paris", "."] : ["The", "capital", "of", "France", "is", "Paris", "."];
 		var isoEntropy = [0.95, 0.55, 0.20, 0.60, 0.15, 0.05, 0.10];
@@ -1814,7 +1815,36 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			});
 		}
 
+		function drawFullMainValley(ctx, at, spread, baseWidth, c) {
+			var upper = [], lower = [];
+			for (var i = 0; i < isoPath.length; i++) {
+				var q = at(isoPath[i]);
+				var env = isoEntropy[i] * spread * baseWidth;
+				var dx = 0, dy = -1;
+				if (i < isoPath.length - 1) {
+					var n = at(isoPath[i + 1]);
+					var tx = n.x - q.x, ty = n.y - q.y, len = Math.hypot(tx, ty);
+					if (len > 0) { dx = -ty / len; dy = tx / len; }
+				} else if (i > 0) {
+					var p = at(isoPath[i - 1]);
+					var tx2 = q.x - p.x, ty2 = q.y - p.y, len2 = Math.hypot(tx2, ty2);
+					if (len2 > 0) { dx = -ty2 / len2; dy = tx2 / len2; }
+				}
+				upper.push({ x: q.x + dx * env, y: q.y + dy * env });
+				lower.push({ x: q.x - dx * env, y: q.y - dy * env });
+			}
+			ctx.beginPath();
+			upper.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+			for (var j = lower.length - 1; j >= 0; j--) ctx.lineTo(lower[j].x, lower[j].y);
+			ctx.closePath();
+			ctx.fillStyle = rgba(c.blue, 0.025);
+			ctx.fill();
+			ctx.strokeStyle = rgba(c.blue, 0.16);
+			ctx.lineWidth = 1;
+			ctx.stroke();
+		}
 		function drawIso(ctx, w, h) {
+			isoHits = [];
 			var c = TM.colors();
 			var pad = 30;
 			var plotW = Math.max(40, w - pad * 2 - 24);
@@ -1846,6 +1876,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var step = Math.min(isoStep, isoTokens.length - 1);
 			var baseWidth = Math.min(w, h) * 0.22;
 			var spread = 0.35 + 0.65 * isoTemp;
+			drawFullMainValley(ctx, at, spread, baseWidth, c);
 			drawValleys(ctx, at, step, spread, baseWidth, c);
 			if (step >= 1) {
 				var upper = [], lower = [];
@@ -1866,7 +1897,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					lower.push({ x: q.x - dx * env, y: q.y - dy * env });
 				}
 				for (var layer = 3; layer >= 0; layer--) {
-					var scale = 1 + layer * 0.3;
+					var scale = 1 + layer * 0.28;
 					ctx.beginPath();
 					upper.forEach(function (p, i2) {
 						var q2 = at(isoPath[i2]);
@@ -1879,8 +1910,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						ctx.lineTo(q3.x + (p3.x - q3.x) * scale, q3.y + (p3.y - q3.y) * scale);
 					}
 					ctx.closePath();
-					ctx.globalAlpha = 0.03 + (3 - layer) * 0.03;
-					ctx.fillStyle = c.coral;
+					ctx.globalAlpha = 0.022 + (3 - layer) * 0.025;
+					ctx.fillStyle = c.blue;
 					ctx.fill();
 					ctx.globalAlpha = 1;
 				}
@@ -1888,14 +1919,42 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				upper.forEach(function (p, i4) { if (i4 === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
 				for (var i5 = lower.length - 1; i5 >= 0; i5--) ctx.lineTo(lower[i5].x, lower[i5].y);
 				ctx.closePath();
-				ctx.fillStyle = c.coral;
-				ctx.globalAlpha = 0.08;
+				ctx.fillStyle = c.blue;
+				ctx.globalAlpha = 0.10;
 				ctx.fill();
-				ctx.globalAlpha = 0.35;
-				ctx.strokeStyle = c.coral;
+				ctx.globalAlpha = 0.50;
+				ctx.strokeStyle = c.blue;
 				ctx.lineWidth = 1.5;
 				ctx.stroke();
 				ctx.globalAlpha = 1;
+				// Deeper inner trench
+				ctx.beginPath();
+				upper.forEach(function (p, i6) {
+					var q6 = at(isoPath[i6]);
+					var x = q6.x + (p.x - q6.x) * 0.42, y = q6.y + (p.y - q6.y) * 0.42;
+					if (i6 === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+				});
+				for (var i7 = lower.length - 1; i7 >= 0; i7--) {
+					var q7 = at(isoPath[i7]);
+					var p7 = lower[i7];
+					ctx.lineTo(q7.x + (p7.x - q7.x) * 0.42, q7.y + (p7.y - q7.y) * 0.42);
+				}
+				ctx.closePath();
+				ctx.fillStyle = c.blue;
+				ctx.globalAlpha = 0.18;
+				ctx.fill();
+				ctx.globalAlpha = 1;
+				// Light from above: shadow on the lower rim, highlight on the upper rim
+				ctx.beginPath();
+				lower.forEach(function (p, i8) { if (i8 === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+				ctx.strokeStyle = rgba(c.ink, 0.12);
+				ctx.lineWidth = 2;
+				ctx.stroke();
+				ctx.beginPath();
+				upper.forEach(function (p, i9) { if (i9 === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+				ctx.strokeStyle = rgba(c.paper, 0.35);
+				ctx.lineWidth = 1;
+				ctx.stroke();
 			}
 			if (step >= 1) {
 				ctx.beginPath();
@@ -1912,7 +1971,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				var q4 = at(isoPath[n2]);
 				var ent = isoEntropy[n2];
 				var radius = 5 + ent * isoTemp * 4;
-				var fill = probabilityColor(1 - ent, c);
+				var fill = c.blue;
 				var haloR = radius * 2.8 + 7;
 				var halo = ctx.createRadialGradient(q4.x, q4.y, 0, q4.x, q4.y, haloR);
 				halo.addColorStop(0, rgba(fill, 0.24));
@@ -1932,7 +1991,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				ctx.font = "700 12px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
 				ctx.textAlign = "center";
 				ctx.fillStyle = c.ink;
-				ctx.fillText(isoTokens[n2], q4.x, q4.y - radius - 8);
+				var labelY = q4.y - radius - 8;
+				ctx.fillText(isoTokens[n2], q4.x, labelY);
+				var labelW = ctx.measureText(isoTokens[n2]).width;
+				isoHits.push({
+					x: q4.x, y: q4.y, r: Math.max(14, radius + 6), index: n2,
+					label: { x1: q4.x - labelW / 2 - 4, x2: q4.x + labelW / 2 + 4, y1: labelY - 12, y2: labelY + 4 }
+				});
 			}
 			for (var f = step + 1; f < isoTokens.length; f++) {
 				var q5 = at(isoPath[f]);
@@ -1945,7 +2010,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				ctx.font = "10px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
 				ctx.textAlign = "center";
 				ctx.fillStyle = c.muted;
-				ctx.fillText(isoTokens[f], q5.x, q5.y - 10);
+				var futureLabelY = q5.y - 10;
+				ctx.fillText(isoTokens[f], q5.x, futureLabelY);
+				var futureLabelW = ctx.measureText(isoTokens[f]).width;
+				isoHits.push({
+					x: q5.x, y: q5.y, r: 12, index: f,
+					label: { x1: q5.x - futureLabelW / 2 - 4, x2: q5.x + futureLabelW / 2 + 4, y1: futureLabelY - 11, y2: futureLabelY + 3 }
+				});
 				ctx.globalAlpha = 1;
 			}
 			var barX = w - 36, barY = 40, barW = 12, barH = h - 86;
@@ -1985,6 +2056,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			ctx.textAlign = "left";
 			ctx.fillStyle = c.muted;
 			ctx.fillText("T = " + isoTemp.toFixed(2), 12, 20);
+			ctx.fillText(isoLabels.deepest, 12, h - 14);
 			updateIsoSide();
 		}
 		function updateIsoSide() {
@@ -2021,6 +2093,32 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		}
 		if (isoCanvas) {
 			isoApi = TM.initCanvas(isoCanvas, drawIso);
+			function isoHitTest(ev) {
+				if (!isoHits.length) return null;
+				var rect = isoCanvas.getBoundingClientRect();
+				var x = ev.clientX - rect.left;
+				var y = ev.clientY - rect.top;
+				for (var hi = 0; hi < isoHits.length; hi++) {
+					var hit = isoHits[hi];
+					if (hit.label && x >= hit.label.x1 && x <= hit.label.x2 && y >= hit.label.y1 && y <= hit.label.y2) return hit;
+					var dx = x - hit.x, dy = y - hit.y;
+					if (dx * dx + dy * dy <= hit.r * hit.r) return hit;
+				}
+				return null;
+			}
+			isoCanvas.addEventListener("click", function (ev) {
+				var hit = isoHitTest(ev);
+				if (hit) {
+					isoStep = hit.index;
+					if (isoApi) isoApi.redraw();
+				}
+			});
+			isoCanvas.addEventListener("mousemove", function (ev) {
+				isoCanvas.style.cursor = isoHitTest(ev) ? "pointer" : "default";
+			});
+			isoCanvas.addEventListener("mouseleave", function () {
+				isoCanvas.style.cursor = "default";
+			});
 			if (isoTempEl) {
 				isoTempEl.addEventListener("input", function () {
 					isoTemp = parseFloat(isoTempEl.value) || 0.8;
