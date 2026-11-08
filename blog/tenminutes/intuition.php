@@ -218,7 +218,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="demo demo--paper demo--canvas" id="truth-tunnel-demo">
 								<div class="demo-head">
 									<div>
-										<p class="demo-title">The truth tunnel <span>· demo 01b</span></p>
+										<p class="demo-title">The probability tunnel <span>· demo 01b</span></p>
 										<p class="demo-sub">A single prediction is one slice through a landscape of plausible continuations. The most likely path is the deepest blue valley; every other option is a shallower branch. Step through the sentence and watch the valley narrow as the context closes the options, then turn up the temperature and watch it widen again. Drag to rotate.</p>
 									</div>
 									<span class="demo-badge">live</span>
@@ -244,6 +244,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 										</label>
 									</div>
 								</div>
+								<div class="demo-foot">The green ball is the current context. Each token gives it direction and momentum; it rolls into the deepest valley, the path of least resistance. Raise the temperature and the ridges flatten, so the ball can leave the main valley more easily.</div>
 								<div class="demo-insight"><b>Takeaway</b><span>The model never decides that something is right. It builds a distribution from its training data and draws from it; the landscape shows how context narrows that distribution.</span></div>
 							</div>
 						<p class="step-note">The model does not jump to an answer. It feels its way through this space, one token at a time. Click a word below the landscape, or use Next word, to jump to that step.</p>
@@ -1643,7 +1644,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 		}
 
-		/* ── truth tunnel ────────────────────────────────────── */
+		/* ── probability tunnel ───────────────────────────────── */
 		var isoHost = document.getElementById("tt-3d");
 		var isoNextEl = document.getElementById("tt-next");
 		var isoAltEl = document.getElementById("tt-alt");
@@ -1657,16 +1658,19 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		var isoLoaded = false;
 		var isoLoading = false;
 		var isoDrawn = false;
+		var isoBallPos = null;
+		var isoBallRaf = null;
+		var isoStepGap = 1.35;
 		var isoLabels = DE ? {
 			certain: "fast sicher", likely: "wahrscheinlich", open: "offen", wide: "sehr offen", width: "Tunnelbreite",
-			axisStep: "Kontext", axisMeaning: "Bedeutung", axisProb: "wahrscheinlicher ↓",
-			deepest: "blaues Tal = wahrscheinlichster Pfad",
+			axisStep: "Kontextschritt", axisMeaning: "andere Fortsetzungen", axisProb: "tiefer = wahrscheinlicher",
+			deepest: "blaues Tal = Weg des geringsten Widerstands",
 			loading: "Die 3D-Landschaft wird geladen …",
 			failed: "Die 3D-Bibliothek konnte nicht geladen werden."
 		} : {
 			certain: "near-certain", likely: "likely", open: "open", wide: "wide open", width: "tunnel width",
 			axisStep: "context", axisMeaning: "meaning", axisProb: "more likely ↓",
-			deepest: "blue valley = most likely path",
+			deepest: "blue valley = path of least resistance",
 			loading: "Loading the 3D landscape …",
 			failed: "The 3D library could not be loaded."
 		};
@@ -1772,54 +1776,150 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			return isoLerp(isoEntropy[lo], isoEntropy[hi], x - lo);
 		}
 		function isoMainDepth() {
-			return Math.max(0.55, 1.25 * (1.2 - 0.28 * isoTemp));
+			return 0.55 + 0.70 * (2.0 - isoTemp) / 1.95;
+		}
+		function isoMainDepthAt(x) {
+			var entropy = isoEntropyAt(x);
+			return isoMainDepth() * (0.70 + 0.30 * (1 - entropy));
 		}
 		function isoMainWidth(x) {
-			return 0.075 + 0.42 * isoEntropyAt(x) * isoTemp;
+			var entropy = isoEntropyAt(x);
+			return 0.14 + 0.55 * (0.25 + entropy) * (0.40 + isoTemp / 1.7);
 		}
 		function isoAltY(alt) {
 			return (alt.path.y - 0.4) * 2.2;
 		}
-		function isoAltDepth(alt) {
-			return isoMainDepth() * (0.30 + 0.18 * (1 - alt.entropy));
+		function isoAltDepth(alt, mainDepth) {
+			return mainDepth * (0.26 + 0.46 * (1 - alt.entropy) + 0.12 * isoTemp);
 		}
 		function isoAltWidth(alt) {
-			return 0.045 + 0.20 * alt.entropy * isoTemp;
+			return 0.16 + 0.22 * (0.40 + alt.entropy) * (0.45 + isoTemp / 2);
 		}
 		function isoValleyDepth(x, y) {
 			var centre = isoCenter(x);
 			var mainWidth = isoMainWidth(x);
-			var depth = Math.exp(-Math.pow((y - centre) / mainWidth, 2)) * isoMainDepth();
+			var mainDepth = isoMainDepthAt(x);
+			var depth = Math.exp(-Math.pow((y - centre) / mainWidth, 2)) * mainDepth;
 			isoBranches.forEach(function (branch) {
-				if (x < branch.atStep || x > branch.atStep + 1) return;
-				var t = x - branch.atStep;
-				var startY = isoCenter(branch.atStep);
+				var bx = branch.atStep + 0.52;
+				var dx = x - bx;
 				branch.alternatives.forEach(function (alt) {
-					var cy = isoLerp(startY, isoAltY(alt), t);
-					var width = isoAltWidth(alt);
-					var d = isoAltDepth(alt) * Math.exp(-Math.pow((y - cy) / width, 2));
-					d *= 0.55 + 0.45 * Math.sin(Math.PI * t);
+					var by = isoAltY(alt);
+					var sx = 0.26 + 0.10 * alt.entropy;
+					var sy = isoAltWidth(alt);
+					var d = isoAltDepth(alt, mainDepth)
+						* Math.exp(-Math.pow(dx / sx, 2) - Math.pow((y - by) / sy, 2));
 					if (d > depth) depth = d;
+					var midY = isoLerp(isoCenter(bx), by, 0.55);
+					var mid = d * 0.30
+						* Math.exp(-Math.pow(dx / (sx * 0.70), 2) - Math.pow((y - midY) / (sy * 0.55), 2));
+					if (mid > depth) depth = mid;
 				});
 			});
+			var sideOffsets = [-0.86, -0.62, -0.38, 0.38, 0.62, 0.86];
+			for (var si = 0; si < sideOffsets.length; si++) {
+				var sy = centre + sideOffsets[si] + 0.05 * Math.sin(x * 1.25 + si * 1.7);
+				var sw = 0.05 + 0.10 * (0.5 + 0.5 * Math.sin(x * 0.95 + si * 2.1)) * (0.5 + isoTemp / 1.8);
+				var sd = mainDepth * (0.08 + 0.12 * (0.5 + 0.5 * Math.sin(x * 1.6 + si * 2.3))) * (0.5 + 0.5 * isoTemp);
+				var ds = sd * Math.exp(-Math.pow((y - sy) / sw, 2));
+				if (ds > depth) depth = ds;
+			}
 			return depth;
 		}
 		function isoTokenPoint(index) {
-			var x = index;
-			var y = isoCenter(x);
-			return [x, y, -isoValleyDepth(x, y) + 0.06];
+			var x = index * isoStepGap;
+			var y = isoCenter(index);
+			return [x, y, -isoValleyDepth(index, y) + 0.06];
+		}
+		function isoStopBall() {
+			if (isoBallRaf) {
+				cancelAnimationFrame(isoBallRaf);
+				isoBallRaf = null;
+			}
+		}
+		function isoSetBall(point) {
+			isoBallPos = point;
+			if (!isoChart) return;
+			try {
+				isoChart.setOption({
+					series: [
+						{ id: "context-glow", type: "scatter3D", data: [{ value: point }] },
+						{ id: "context-ball", type: "scatter3D", data: [{ value: point }] }
+					]
+				}, { lazyUpdate: false });
+			} catch (e) {}
+		}
+		function isoRollBallTo(index) {
+			isoStopBall();
+			var target = isoTokenPoint(index);
+			if (!isoLoaded || !isoChart || TM.prefersReduced()) {
+				isoSetBall(target);
+				return;
+			}
+			var start = isoBallPos ? isoBallPos.slice() : target.slice();
+			var begin = performance.now();
+			var last = 0;
+			function frame(now) {
+				if (!isoChart) return;
+				if (now - last < 32) {
+					isoBallRaf = requestAnimationFrame(frame);
+					return;
+				}
+				last = now;
+				var t = Math.min(1, (now - begin) / 680);
+				var e = 1 - Math.pow(1 - t, 3);
+				var x = isoLerp(start[0], target[0], e);
+				var y = isoLerp(start[1], target[1], e);
+				var z = -isoValleyDepth(x / isoStepGap, y) + 0.10;
+				isoSetBall([x, y, z]);
+				if (t < 1) {
+					isoBallRaf = requestAnimationFrame(frame);
+				} else {
+					isoBallRaf = null;
+					isoBallPos = target;
+				}
+			}
+			isoBallRaf = requestAnimationFrame(frame);
+		}
+		function isoAddArrowhead(series, from, to, color) {
+			var dx = to[0] - from[0];
+			var dy = to[1] - from[1];
+			var dz = to[2] - from[2];
+			var len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
+			var ux = dx / len, uy = dy / len, uz = dz / len;
+			var head = Math.min(0.24, len * 0.45);
+			var bx = to[0] - ux * head;
+			var by = to[1] - uy * head;
+			var bz = to[2] - uz * head;
+			var px = -uy, py = ux;
+			var pl = Math.sqrt(px * px + py * py) || 1;
+			px /= pl; py /= pl;
+			var spread = head * 0.45;
+			series.push({
+				type: "line3D",
+				data: [[bx + px * spread, by + py * spread, bz], to],
+				lineStyle: { width: 4, color: color, opacity: 0.85 },
+				silent: true
+			});
+			series.push({
+				type: "line3D",
+				data: [[bx - px * spread, by - py * spread, bz], to],
+				lineStyle: { width: 4, color: color, opacity: 0.85 },
+				silent: true
+			});
 		}
 		function isoSurfaceData() {
 			var data = [];
-			var xCount = 55, yCount = 39;
-			var xMin = 0, xMax = isoTokens.length - 1;
-			var yMin = -0.85, yMax = 0.85;
+			var xCount = 65, yCount = 45;
+			var xMin = 0, xMax = (isoTokens.length - 1) * isoStepGap;
+			var yMin = -1.05, yMax = 1.05;
 			for (var yi = 0; yi <= yCount; yi++) {
 				var y = isoLerp(yMin, yMax, yi / yCount);
 				for (var xi = 0; xi <= xCount; xi++) {
 					var x = isoLerp(xMin, xMax, xi / xCount);
-					var depth = isoValleyDepth(x, y);
-					var ripple = 0.018 * Math.sin(x * 2.4 + y * 3.1) * Math.cos(y * 2.2 - x * 1.7);
+					var depth = isoValleyDepth(x / isoStepGap, y);
+					var ripple = 0.022 * Math.sin(x * 1.8 + y * 3.1) * Math.cos(y * 2.2 - x * 1.25)
+						+ 0.010 * Math.sin(x * 3.1 - y * 2.6) * Math.cos(y * 3.4 + x * 1.1);
 					var z = -depth + ripple * (1 - Math.min(1, depth));
 					data.push([Number(x.toFixed(3)), Number(y.toFixed(3)), Number(z.toFixed(4))]);
 				}
@@ -1840,6 +1940,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var surface = isoSurfaceData();
 			var mainDepth = isoMainDepth();
 			var zMin = -mainDepth - 0.08;
+			var deepSurface = mixRgb(c.blue, c.ink, c.dark ? 0.28 : 0.52);
+			var baseSurface = mixRgb(c.paper2, c.gold, c.dark ? 0.16 : 0.22);
 			if (!isoChart) {
 				isoHost.innerHTML = "";
 				try {
@@ -1851,14 +1953,14 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				isoChart.on("click", function (params) {
 					var idx = null;
 					if (params && params.data && typeof params.data.tokenIndex === "number") idx = params.data.tokenIndex;
-					else if (params && params.value && params.value.length >= 1) idx = Math.round(params.value[0]);
+					else if (params && params.value && params.value.length >= 1) idx = Math.round(params.value[0] / isoStepGap);
 					if (idx !== null && idx >= 0 && idx < isoTokens.length) {
-						isoStep = idx;
-						drawIso();
+						isoSetStep(idx);
 					}
 				});
 			}
 			var step = Math.min(isoStep, isoTokens.length - 1);
+			if (!isoBallPos) isoBallPos = isoTokenPoint(step);
 			var series = [];
 			series.push({
 				name: "landscape",
@@ -1869,6 +1971,53 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				wireframe: { show: false },
 				itemStyle: { opacity: 1 }
 			});
+			var ballSize = 13 + isoTemp * 7;
+			series.push({
+				id: "context-glow",
+				name: "context-glow",
+				type: "scatter3D",
+				data: [{ value: isoBallPos }],
+				symbol: "circle",
+				symbolSize: ballSize * 2.2,
+				itemStyle: { color: rgba(c.green, 0.14), opacity: 0.7 },
+				silent: true
+			});
+			series.push({
+				id: "context-ball",
+				name: "context-ball",
+				type: "scatter3D",
+				data: [{ value: isoBallPos }],
+				symbol: "circle",
+				symbolSize: ballSize,
+				itemStyle: { color: c.green, borderColor: c.paper, borderWidth: 2, opacity: 1 },
+				label: {
+					show: true,
+					position: "right",
+					distance: 5,
+					formatter: DE ? "Kontext" : "context",
+					textStyle: { color: c.green, fontSize: 9, fontWeight: 700 }
+				},
+				tooltip: {
+					formatter: function () {
+						return DE ? "Kontext-Ball: folgt dem Weg des geringsten Widerstands" : "Context ball: follows the path of least resistance";
+					}
+				}
+			});
+			if (step < isoTokens.length - 1) {
+				var arrowStepX = Math.min(isoTokens.length - 1, step + 0.52);
+				var arrowX = arrowStepX * isoStepGap;
+				var arrowY = isoCenter(arrowStepX);
+				var arrowTo = [arrowX, arrowY, -isoValleyDepth(arrowStepX, arrowY) + 0.11];
+				series.push({
+					id: "momentum",
+					name: "momentum",
+					type: "line3D",
+					data: [isoBallPos, arrowTo],
+					lineStyle: { width: 5, color: c.green, opacity: 0.85 },
+					silent: true
+				});
+				isoAddArrowhead(series, isoBallPos, arrowTo, c.green);
+			}
 			var tokens = isoTokens.map(function (token, i) {
 				var current = i === step;
 				var visited = i <= step;
@@ -1922,20 +2071,29 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				if (isoBranches[bi].atStep === step) { branch = isoBranches[bi]; break; }
 			}
 			if (branch) {
-				var altX = Math.min(isoTokens.length - 1, branch.atStep + 0.9);
-				var startY = isoCenter(branch.atStep);
+				var altStepX = branch.atStep + 0.52;
+				var altX = altStepX * isoStepGap;
 				var alternatives = branch.alternatives.map(function (alt) {
-					var y = isoLerp(startY, isoAltY(alt), 0.9);
+					var y = isoAltY(alt);
 					return {
 						name: isoAltLabel(alt.token),
-						value: [altX, y, -isoValleyDepth(altX, y) + 0.05],
+						value: [altX, y, -isoValleyDepth(altStepX, y) + 0.05],
 						itemStyle: { color: c.gold, borderColor: c.paper, borderWidth: 1 },
 						label: {
 							show: true,
 							position: "bottom",
-							distance: 3,
+							distance: 4,
 							formatter: isoAltLabel(alt.token),
-							textStyle: { color: c.gold, fontSize: 9, fontWeight: 600 }
+							textStyle: {
+								color: c.ink,
+								fontSize: 10,
+								fontWeight: 600,
+								backgroundColor: rgba(c.dark ? "#0f172a" : "#ffffff", 0.92),
+								borderColor: c.gold,
+								borderWidth: 1,
+								padding: [2, 4],
+								borderRadius: 3
+							}
 						}
 					};
 				});
@@ -1961,41 +2119,38 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					dimension: 2,
 					min: zMin,
 					max: 0.03,
-					inRange: { color: [mixRgb(c.blue, c.ink, c.dark ? 0.36 : 0.58), c.blue, c.sky, c.gold, c.paper2] }
+					inRange: { color: [deepSurface, c.blue, c.sky, c.gold, baseSurface] }
 				},
 				xAxis3D: {
 					type: "value", name: isoLabels.axisStep,
-					min: 0, max: isoTokens.length - 1, interval: 1,
-					nameTextStyle: { color: c.muted, fontSize: 10 },
-					nameGap: 14,
+					min: 0, max: (isoTokens.length - 1) * isoStepGap, interval: isoStepGap,
+					nameTextStyle: { color: c.ink, fontSize: 12, fontWeight: 600 },
+					nameGap: 16,
 					axisLabel: {
 						interval: 0,
 						formatter: function (v) {
-							var i = Math.round(v);
-							return i >= 0 && i < isoTokens.length ? isoTokens[i] : "";
+							var i = Math.round(v / isoStepGap);
+							return i >= 0 && i < isoTokens.length ? String(i) : "";
 						},
-						textStyle: { color: c.muted, fontSize: 9 }
+						textStyle: { color: c.inkSoft || c.ink, fontSize: 10, fontWeight: 600 }
 					},
 					axisLine: { lineStyle: { color: c.lineStrong } },
 					splitLine: { lineStyle: { color: c.line } }
 				},
 				yAxis3D: {
 					type: "value", name: isoLabels.axisMeaning,
-					min: -0.85, max: 0.85, interval: 0.4,
-					nameTextStyle: { color: c.muted, fontSize: 10 },
-					nameGap: 12,
-					axisLabel: {
-						formatter: function (v) { return Number(v).toFixed(1); },
-						textStyle: { color: c.muted, fontSize: 9 }
-					},
+					min: -1.05, max: 1.05, interval: 0.5,
+					nameTextStyle: { color: c.ink, fontSize: 12, fontWeight: 600 },
+					nameGap: 14,
+					axisLabel: { show: false },
 					axisLine: { lineStyle: { color: c.lineStrong } },
 					splitLine: { lineStyle: { color: c.line } }
 				},
 				zAxis3D: {
 					type: "value", name: isoLabels.axisProb,
 					min: zMin, max: 0.03,
-					nameTextStyle: { color: c.muted, fontSize: 10 },
-					nameGap: 10,
+					nameTextStyle: { color: c.ink, fontSize: 12, fontWeight: 600 },
+					nameGap: 12,
 					axisLabel: { show: false },
 					axisLine: { lineStyle: { color: c.lineStrong } },
 					splitLine: { lineStyle: { color: c.line } }
@@ -2012,7 +2167,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						ambient: { intensity: 0.45 }
 					},
 					environment: c.paper2,
-					boxWidth: 115, boxHeight: 62, boxDepth: 82,
+					boxWidth: 115, boxHeight: 62, boxDepth: 92,
 					axisLine: { lineStyle: { color: c.lineStrong } },
 					splitLine: { lineStyle: { color: c.line } },
 					axisPointer: { show: false }
@@ -2029,6 +2184,17 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 			updateIsoSide();
 		}
+		function isoSetStep(index) {
+			var next = Math.max(0, Math.min(isoTokens.length - 1, index));
+			isoStep = next;
+			if (isoLoaded) {
+				drawIso();
+				isoRollBallTo(next);
+			} else {
+				isoBallPos = null;
+				updateIsoSide();
+			}
+		}
 		function isoRenderTokens() {
 			var row = document.getElementById("tt-token-row");
 			if (!row) return;
@@ -2037,9 +2203,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}).join("");
 			row.querySelectorAll("button").forEach(function (btn) {
 				btn.addEventListener("click", function () {
-					isoStep = parseInt(btn.getAttribute("data-index"), 10) || 0;
-					if (isoLoaded) drawIso();
-					else updateIsoSide();
+					isoSetStep(parseInt(btn.getAttribute("data-index"), 10) || 0);
 				});
 			});
 		}
@@ -2110,18 +2274,23 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			if (isoTempEl) {
 				isoTempEl.addEventListener("input", function () {
 					isoTemp = parseFloat(isoTempEl.value) || 0.8;
+					isoStopBall();
+					isoBallPos = isoTokenPoint(isoStep);
 					if (isoLoaded) drawIso();
 					else updateIsoSide();
 				});
 			}
 			if (isoAdvance) {
 				isoAdvance.addEventListener("click", function () {
-					isoStep = (isoStep + 1) % isoTokens.length;
-					if (isoLoaded) drawIso();
-					else updateIsoSide();
+					isoSetStep((isoStep + 1) % isoTokens.length);
 				});
 			}
-			window.addEventListener("tm:theme", function () { if (isoLoaded) drawIso(); });
+			window.addEventListener("tm:theme", function () {
+				if (!isoLoaded) return;
+				isoStopBall();
+				isoBallPos = isoTokenPoint(isoStep);
+				drawIso();
+			});
 			window.addEventListener("resize", function () { if (isoChart) isoChart.resize(); });
 			isoRenderTokens();
 			updateIsoSide();
