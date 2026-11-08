@@ -73,7 +73,7 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 		<span id="dim-val" class="transformer-slider-value">3</span>
 		<p class="transformer-slider-note">
             <b>Dependency:</b> Must be a multiple of Heads.<br>
-            <b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = \frac{d_{\text{model}}}{h}$) of the vector to perform dot products.<br>
+            <b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = d_{\text{model}}/h$) of the vector to perform dot products.<br>
             <b>3D view:</b> up to 3 dimensions are shown raw; above that the plot uses PCA.
         </p>
 		<input type="range" id="transformer-dimension-model" min="2" max="16" step="1" value="3"
@@ -185,8 +185,6 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 		</div>
 		<div class="transformer-train-actions">
 			<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
-			<button class="btn" id="tda-toggle-training-windows" onclick="toggleTrainingWindows()" type="button">Show training windows</button>
-			<button class="btn" type="button" onclick="TransformerRun.share(this)">Share run</button>
 		</div>
 	</div>
 	<div id="training-status" class="transformer-train-status"></div>
@@ -199,10 +197,6 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	if (typeof drawTrainingPlaceholder === 'function') drawTrainingPlaceholder();
 })();
 </script>
-
-<div id="show_training_sentences" style="display: none">
-	<p>Current Training Windows: <span id="current_training_sentence"></span></p><br>
-</div>
 
 <div class="md">
 ## The steps, live
@@ -244,19 +238,21 @@ with the full formulas one level deeper.
 					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
 				</div>
 				<p>The plot shows the semantic vector h0 = token embedding + position. Up to three dimensions are shown raw; above that a PCA reduces it to three and the label says so.</p>
-				<div class="tm-capacity-note">
-					<b>3D is a window, not a capacity promise.</b> Up to <code>d_model = 3</code> the plot shows every coordinate raw; above that it is a PCA projection. The picture always looks three-dimensional, but three dimensions are not automatically enough. Test runs on the default sentence (21 next-token positions):
-					<table>
-						<thead><tr><th><code>d_model</code></th><th>correct next tokens</th><th>verdict</th></tr></thead>
-						<tbody>
-							<tr><td>2</td><td>11 / 21</td><td>fails</td></tr>
-							<tr><td>3</td><td>17-21 / 21</td><td>borderline</td></tr>
-							<tr><td>6</td><td>21 / 21</td><td>reliable</td></tr>
-							<tr><td>8-16</td><td>21 / 21</td><td>reliable</td></tr>
-						</tbody>
-					</table>
-					<p>Sweep with one attention head so every width is selectable; the default three-head model was borderline at 3 and reliable at 6.</p>
-					<p>Treat 8 dimensions as a safe rule of thumb: from there the model reliably memorizes the short training sentence. This is memorization, not generalization.</p>
+				<div class="tm-capacity-note" id="tm-capacity-note" hidden>
+					<b>This is a projection, not extra capacity.</b> Above <code>d_model = 3</code> the plot uses PCA; three drawn dimensions do not mean the model can store more.
+					<details>
+						<summary>Test runs on the default sentence (21 next-token positions)</summary>
+						<table>
+							<thead><tr><th><code>d_model</code></th><th>correct next tokens</th><th>verdict</th></tr></thead>
+							<tbody>
+								<tr><td>2</td><td>11 / 21</td><td>fails</td></tr>
+								<tr><td>3</td><td>17-21 / 21</td><td>borderline</td></tr>
+								<tr><td>6</td><td>21 / 21</td><td>reliable</td></tr>
+								<tr><td>8-16</td><td>21 / 21</td><td>reliable</td></tr>
+							</tbody>
+						</table>
+						<p>One attention head, so every width is selectable. Eight dimensions are a safe rule of thumb for memorizing this short training sentence; that is memorization, not generalization.</p>
+					</details>
 				</div>
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-position" aria-label="Semantic vectors: token embedding plus position"></canvas>
 				<div class="tm-step-modes" data-step-modes="position"></div>
@@ -689,10 +685,7 @@ $$z_{0} = h_{0} + \text{MultiHead}(\text{LayerNorm}(h_{0}))$$
 <div class="md" data-mathlevel="50">
 LayerNorm normalizes the features of **one token**: it subtracts that token's feature mean, divides by its feature standard deviation, then applies a learned scale $\gamma$ and shift $\beta$ (\cite[Ba et al., 2016]{ba2016layernorm}). This keeps each sublayer's input at a controlled scale, which makes the optimization landscape better behaved and allows higher learning rates. It does **not** guarantee that the residual stream stays at mean zero and variance one: the affine transform can rescale and re-center the normalized output, and the residual stream is a running sum whose norm can grow or shrink across layers. The stability of a pre-norm Transformer comes from the combination of per-token normalization, the identity path of the residual connection, and careful initialization -- not from a global invariant enforced by LayerNorm alone (\cite[Xiong et al., 2020]{xiong2020}).
 
-* $B = \text{Batch Size}$ (The number of independent sequences processed in a single forward pass)
-* $T = \text{Sequence Length}$ (The number of tokens/words in each sequence; **note**: $T$ is reused as the *temperature* symbol in the Sampling section, context disambiguates.)
-* $d_k = \text{Key/Query Head Dimension}$ (dimensionality of the projected keys and queries in each head; usually $d_\text{model} / h$)
-* $d_v = \text{Value Head Dimension}$ (dimensionality of the projected values in each head; in the original Transformer $d_v = d_k$, but the two can differ in general)
+Here $B$ is the batch size (how many independent sequences run through at once), $T$ is the sequence length (how many tokens each sequence gives the model; the same letter is reused for the sampling temperature later, and the context disambiguates), $d_k$ is the key/query dimension per head (usually $d_{\text{model}}/h$), and $d_v$ is the value dimension per head (in the original Transformer $d_v = d_k$, but the two can differ).
 
 For a single head, we say:
 </div>
@@ -1300,6 +1293,13 @@ While the architecture is identical in both modes, the behavior of the model dif
 </details>
 <br>
 </div>
+</div>
+
+<div id="tm-inference-busy" hidden aria-live="polite" aria-busy="true">
+	<div class="tm-inference-busy-card">
+		<span class="tm-inference-spinner" aria-hidden="true"></span>
+		<span id="tm-inference-busy-text">Computing the next token…</span>
+	</div>
 </div>
 
 <div class="mn-quiz" data-quiz="transformer"><script type="application/json">{"title": "The transformer", "questions": [{"q": "Which two sub-layers make up one transformer block?", "options": ["Multi-head attention and a feed-forward network", "A convolution followed by a global pooling step", "A pair of recurrent layers with gating", "A tokenizer and a detokenizer pipeline"], "answer": 0, "explain": "Each is wrapped with a residual connection and a normalisation."}, {"q": "What do the residual connections do?", "options": ["Add each sub-layer's output to its input, so information and gradients can flow past it", "Replace each sub-layer's output with a normalised copy of the full input vector", "Concatenate each sub-layer's output onto its input, doubling the vector width each time", "Multiply each sub-layer's output by a learned scalar before adding it to the input"], "answer": 0, "explain": "The running sum is often called the residual stream."}, {"q": "How does the final vector become a next-token prediction?", "options": ["It is projected onto the vocabulary (unembedding), then softmaxed", "It is looked up in a fixed dictionary of all the known token strings", "It is rounded to the nearest token id in the embedding table", "It is averaged with the hidden vector of the previous token"], "answer": 0, "explain": "The projection gives one score per token; softmax turns the scores into probabilities."}, {"q": "In a decoder-only model like GPT, what does the causal mask prevent?", "options": ["Tokens attending to later tokens they should not yet see", "Tokens attending to themselves instead of earlier positions", "Tokens attending across sentence and paragraph boundaries", "Using the feed-forward layer before the attention block"], "answer": 0, "explain": "During training, a position may only use the past, matching how text is generated."}]}</script></div>

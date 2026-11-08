@@ -1304,6 +1304,31 @@
 }
 
 /* Heuristic attention-head labels and method note. */
+.tm-layer-head-summary {
+	margin: 8px 0;
+	padding: 8px 10px;
+	border-left: 3px solid var(--mn-accent, var(--tm-petrol, #3b82f6));
+	background: var(--mn-bg-subtle, var(--tm-paper-2, #f8fafc));
+	border-radius: 0 8px 8px 0;
+}
+.tm-layer-head-summary > summary {
+	cursor: pointer;
+	font: 600 0.8rem/1.4 "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text, var(--tm-ink, #0f172a));
+}
+.tm-layer-head-summary-body {
+	margin-top: 6px;
+	color: var(--mn-text-secondary, var(--tm-muted, #475569));
+	font-size: 0.78rem;
+	line-height: 1.5;
+}
+.tm-layer-head-summary-body ul {
+	margin: 0 0 8px 18px;
+	padding: 0;
+}
+.tm-layer-head-summary-body p {
+	margin: 4px 0;
+}
 .tm-head-estimate {
 	margin: 0 0 12px;
 	padding: 7px 9px;

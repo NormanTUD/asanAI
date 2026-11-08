@@ -11,6 +11,25 @@
 		return !!(window.TM && window.TM.lang && window.TM.lang() === "de");
 	}
 
+	function updateCapacityNote() {
+		var note = document.getElementById("tm-capacity-note");
+		var slider = document.getElementById("transformer-dimension-model");
+		if (!note || !slider) return;
+		var d = parseInt(slider.value, 10);
+		note.hidden = !(d > 3);
+	}
+
+	function bindCapacityNote() {
+		updateCapacityNote();
+		var slider = document.getElementById("transformer-dimension-model");
+		if (slider && !slider._tmCapacityBound) {
+			slider._tmCapacityBound = true;
+			slider.addEventListener("input", updateCapacityNote);
+		}
+	}
+	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bindCapacityNote);
+	else bindCapacityNote();
+
 	function typesetMathIn(root) {
 		if (!root) return;
 		if (window.TM && typeof TM.typesetMath === "function") {
@@ -1595,11 +1614,47 @@
 			reason = de ? "Die normalisierte Attention-Entropie ist hoch (Schwelle 0,72)."
 				: "Normalized attention entropy is high (threshold 0.72).";
 		} else {
-			reason = de ? "Die stärkste mittlere Zeilengewichtung liegt über 35 %."
-				: "The strongest mean row weight is above 35%.";
+			reason = de ? "Kein einzelnes Token dominiert (stärkstes mittleres Zeilengewicht unter 35 %); die Attention verteilt sich auf mehrere Tokens und mischt so den Kontext."
+				: "No single token dominates (the strongest mean row weight is below 35%); attention is spread across several tokens, so the head mixes context.";
 		}
 		var confidence = Math.max(0.5, Math.min(0.95, 0.5 + 0.45 * Math.min(1, score / Math.max(0.001, threshold * 2))));
 		return { type: type, score: score, threshold: threshold, confidence: confidence, reason: reason };
+	}
+
+	function headTypeMechanism(type, de) {
+		var mechanisms = {
+			induction: de
+				? "Ein Vorheriges-Token-Head merkt sich, was zuletzt kam. Ein Induction-Head sucht eine frühere Stelle, an der dasselbe vorherige Token stand, und kopiert, was danach folgte. Erkannt wird das über Zeilen, deren stärkstes Gewicht auf dem Token nach einem früheren Vorkommen des vorherigen Tokens liegt (mindestens 25 %)."
+				: "A previous-token head tracks what just came before. An induction head then finds an earlier place where that same previous token appeared and copies what followed it. Detection: rows whose strongest weight lands on the token after an earlier occurrence of the previous token (at least 25%).",
+			duplicate: de
+				? "Die Attention liegt auf einem früheren Vorkommen desselben Tokens, sodass die Position liest, was beim letzten Mal mit diesem Token geschah. Schwelle: mindestens 30 % der Zeilenmasse."
+				: "Attention sits on an earlier occurrence of the same token, so the position can read what happened last time this token appeared. Threshold: at least 30% of the row mass.",
+			previous: de
+				? "Die Attention liegt fast ganz auf dem unmittelbar vorherigen Token. Schwelle: mindestens 45 % der Zeilenmasse."
+				: "Attention sits almost entirely on the immediately preceding token. Threshold: at least 45% of the row mass.",
+			self: de
+				? "Die Attention bleibt auf dem Query-Token selbst. Schwelle: mindestens 50 % auf der Diagonalen."
+				: "Attention stays on the query token itself. Threshold: at least 50% on the diagonal.",
+			first: de
+				? "Die Attention sammelt sich auf Position 0, einem häufigen Attention-Sink. Schwelle: mindestens 40 % auf dem ersten Token."
+				: "Attention collects on position 0, a common attention sink. Threshold: at least 40% on the first token.",
+			positional: de
+				? "Ein fester Abstand dominiert, unabhängig vom Inhalt. Erkannt wird das über einen mittleren Positions-Offset k > 3 mit mindestens 35 % Gewicht."
+				: "A fixed distance dominates, independent of content. Detection: an average positional offset k > 3 carries at least 35% of the weight.",
+			local: de
+				? "Die Attention bleibt in den letzten drei Positionen. Schwelle: mindestens 45 % der Zeilenmasse."
+				: "Attention stays within the previous three positions. Threshold: at least 45% of the row mass.",
+			rare: de
+				? "Die Attention bevorzugt seltene Tokens, die im Satz höchstens zweimal vorkommen. Schwelle: mindestens 50 % auf seltenen Tokens."
+				: "Attention prefers rare tokens that occur at most twice in the sentence. Threshold: at least 50% on rare tokens.",
+			broad: de
+				? "Die Attention ist fast gleichmäßig über die Zeile verteilt. Schwelle: normalisierte Entropie mindestens 0,72."
+				: "Attention is spread almost uniformly across the row. Threshold: normalized entropy at least 0.72.",
+			content: de
+				? "Kein einzelnes Muster dominiert; der Head verteilt die Attention über mehrere Tokens und mischt so den Kontext."
+				: "No single pattern dominates; the head spreads attention across several tokens and mixes context."
+		};
+		return mechanisms[type] || mechanisms.content;
 	}
 
 	function classifyAttentionHeads() {
@@ -1612,13 +1667,27 @@
 			var contents = card.querySelectorAll(".head-tab-in-layer");
 			var labels = headTypeLabels();
 			var de = DE();
+			var links = {
+				voita: '<a href="https://arxiv.org/abs/1905.09418" target="_blank" rel="noopener">Voita et al. (2019)</a>',
+				clark: '<a href="https://arxiv.org/abs/1906.04341" target="_blank" rel="noopener">Clark et al. (2019)</a>',
+				olsson: '<a href="https://arxiv.org/abs/2209.11895" target="_blank" rel="noopener">Olsson et al. (2022)</a>',
+				wang: '<a href="https://arxiv.org/abs/2211.00593" target="_blank" rel="noopener">Wang et al. (2022)</a>',
+				zheng: '<a href="https://arxiv.org/abs/2409.03752" target="_blank" rel="noopener">Zheng et al. (2024)</a>',
+				jain: '<a href="https://arxiv.org/abs/1902.10186" target="_blank" rel="noopener">Jain &amp; Wallace (2019)</a>',
+				wiegreffe: '<a href="https://arxiv.org/abs/1908.04626" target="_blank" rel="noopener">Wiegreffe &amp; Pinter (2019)</a>'
+			};
+			var methodHtml = de
+				? "Head-Typen sind heuristische <b>Schätzungen</b> aus dem Attention-Muster; die Schwelle steht jeweils dabei. Grundlage: " + links.voita + ", " + links.clark + ", " + links.olsson + ", " + links.wang + ", " + links.zheng + ". Attention-Gewichte sind keine vollständige Erklärung (" + links.jain + "; " + links.wiegreffe + ")."
+				: "Head types are heuristic <b>estimates</b> from the attention pattern; the threshold is stated in each label. Basis: " + links.voita + ", " + links.clark + ", " + links.olsson + ", " + links.wang + ", " + links.zheng + ". Attention weights are not a complete explanation (" + links.jain + "; " + links.wiegreffe + ").";
+			var detections = [];
 			Array.prototype.slice.call(buttons).forEach(function (btn, h) {
 				var result = analyzeHead(trace.headData[h], trace.tokenStrings || []);
 				if (!result) return;
 				var c = classifyHead(result, de);
 				btn.dataset.headType = c.type;
 				btn.title = (de ? "Geschätzt: " : "Estimated: ") + labels[c.type] + " · ~" + Math.round(c.confidence * 100) + "%\n" + c.reason;
-				btn.textContent = (de ? "Head " : "Head ") + (h + 1) + " · " + labels[c.type] + " · ~" + Math.round(c.confidence * 100) + "%";
+				btn.textContent = "Head " + (h + 1);
+				var confidence = Math.round(c.confidence * 100);
 				var content = contents[h];
 				if (content) {
 					var note = content.querySelector(".tm-head-estimate");
@@ -1627,26 +1696,49 @@
 						note.className = "tm-head-estimate";
 						content.insertBefore(note, content.firstChild);
 					}
-					note.textContent = (de ? "Schätzung: " : "Estimate: ") + labels[c.type] + " · ~" + Math.round(c.confidence * 100) + "%. " + c.reason;
+					note.textContent = (de ? "Schätzung: " : "Estimate: ") + labels[c.type] + " · ~" + confidence + "%. " + c.reason;
+					var method = content.querySelector(".tm-head-method");
+					if (!method) {
+						method = document.createElement("p");
+						method.className = "tm-head-method";
+					}
+					if (note.nextElementSibling !== method) note.insertAdjacentElement("afterend", method);
+					method.innerHTML = methodHtml;
+				}
+				if (c.type !== "content") {
+					detections.push({ head: h + 1, type: c.type, confidence: confidence, reason: c.reason });
 				}
 			});
-			var attnBody = card.querySelector('.tm-layer-subbox[data-sub="attention"] .tm-layer-subbox-body');
-			if (attnBody && !attnBody.querySelector(".tm-head-method")) {
-				var method = document.createElement("p");
-				method.className = "tm-head-method";
-				var links = {
-					voita: '<a href="https://arxiv.org/abs/1905.09418" target="_blank" rel="noopener">Voita et al. (2019)</a>',
-					clark: '<a href="https://arxiv.org/abs/1906.04341" target="_blank" rel="noopener">Clark et al. (2019)</a>',
-					olsson: '<a href="https://arxiv.org/abs/2209.11895" target="_blank" rel="noopener">Olsson et al. (2022)</a>',
-					wang: '<a href="https://arxiv.org/abs/2211.00593" target="_blank" rel="noopener">Wang et al. (2022)</a>',
-					zheng: '<a href="https://arxiv.org/abs/2409.03752" target="_blank" rel="noopener">Zheng et al. (2024)</a>',
-					jain: '<a href="https://arxiv.org/abs/1902.10186" target="_blank" rel="noopener">Jain &amp; Wallace (2019)</a>',
-					wiegreffe: '<a href="https://arxiv.org/abs/1908.04626" target="_blank" rel="noopener">Wiegreffe &amp; Pinter (2019)</a>'
-				};
-				method.innerHTML = de
-					? "Head-Typen sind heuristische <b>Schätzungen</b> aus dem Attention-Muster; die Schwelle steht jeweils dabei. Grundlage: " + links.voita + ", " + links.clark + ", " + links.olsson + ", " + links.wang + ", " + links.zheng + ". Attention-Gewichte sind keine vollständige Erklärung (" + links.jain + "; " + links.wiegreffe + ")."
-					: "Head types are heuristic <b>estimates</b> from the attention pattern; the threshold is stated in each label. Basis: " + links.voita + ", " + links.clark + ", " + links.olsson + ", " + links.wang + ", " + links.zheng + ". Attention weights are not a complete explanation (" + links.jain + "; " + links.wiegreffe + ").";
-				attnBody.appendChild(method);
+			var attnSub = card.querySelector('.tm-layer-subbox[data-sub="attention"]');
+			var existingSummary = card.querySelector(".tm-layer-head-summary");
+			if (!detections.length) {
+				if (existingSummary) existingSummary.remove();
+				return;
+			}
+			var counts = {};
+			detections.forEach(function (d) { counts[d.type] = (counts[d.type] || 0) + 1; });
+			var parts = Object.keys(counts).map(function (type) {
+				var n = counts[type];
+				return de
+					? n + " Head" + (n === 1 ? "" : "s") + " vom Typ " + labels[type]
+					: n + " " + labels[type].toLowerCase() + " head" + (n === 1 ? "" : "s");
+			});
+			var summaryText = de
+				? "Diese Schicht könnte " + parts.join(" und ") + " enthalten. Öffne für die Evidenz."
+				: "This layer could have " + parts.join(" and ") + " based on the attention pattern. Open for the evidence.";
+			var items = detections.map(function (d) {
+				return "<li><b>Head " + d.head + "</b> · " + labels[d.type] + " · ~" + d.confidence + "%: " + d.reason + "</li>";
+			}).join("");
+			var mechanisms = Object.keys(counts).map(function (type) {
+				return "<p><b>" + labels[type] + ":</b> " + headTypeMechanism(type, de) + "</p>";
+			}).join("");
+			if (!existingSummary) {
+				existingSummary = document.createElement("details");
+				existingSummary.className = "tm-layer-head-summary";
+			}
+			existingSummary.innerHTML = "<summary>" + summaryText + "</summary><div class='tm-layer-head-summary-body'><ul>" + items + "</ul>" + mechanisms + "</div>";
+			if (attnSub && existingSummary.parentNode !== attnSub.parentNode) {
+				attnSub.parentNode.insertBefore(existingSummary, attnSub);
 			}
 		});
 	}
@@ -2202,14 +2294,14 @@
 			var attentionLead = card.querySelector('.tm-layer-subbox[data-sub="attention"] .tm-level-text');
 			if (attentionLead) {
 				attentionLead.textContent = isDe
-					? "Attention verteilt Aufmerksamkeit anhand des Kontexts: Sie mischt die Tokens je nachdem, in welchem Kontext sie stehen. Die Query fragt, was ein Token sucht; der Key sagt, was ein anderes anbietet; der Value ist der Inhalt, der bei einem guten Match weitergegeben wird."
-					: "Attention distributes attention based on context: it mixes the tokens depending on the context they are in. The query asks what a token looks for; the key says what another offers; the value is the content that travels on a good match.";
+					? "Attention ist der Mixer. Für ein Token bewertet seine Query jedes sichtbare Token; Softmax macht aus den Scores Gewichte, die sich zu 1 addieren. Lautet eine Zeile zum Beispiel [0.8, 0.05, 0.15], dann ist der neue Vektor 0.8·v₁ + 0.05·v₂ + 0.15·v₃: Das Token wandert zur Bedeutung des Kontexts, auf den es schaut. Die Query fragt, was das Token sucht; der Key sagt, was ein anderes Token anbietet; der Value ist der Inhalt, der bei einem guten Match mitkommt."
+					: "Attention is the mixer. For one token, its query scores every visible token; softmax turns the scores into weights that sum to 1. With a row of [0.8, 0.05, 0.15], the new vector is 0.8·v₁ + 0.05·v₂ + 0.15·v₃: the token moves toward the meaning of the context it looks at. The query asks what the token is looking for; the key says what another token offers; the value is the content that travels on a good match.";
 			}
 			var ffnLead = card.querySelector('.tm-layer-subbox[data-sub="ffn"] .tm-level-text');
 			if (ffnLead) {
 				ffnLead.textContent = isDe
-					? "Das FFN verschiebt den Punkt danach im Raum mit der Information aus dem bisherigen Kontext. Es expandiert auf d_ff, wendet GELU an und komprimiert wieder zurück."
-					: "The FFN then shifts the point in space with the information from the previous context. It expands to d_ff, applies GELU, and compresses back.";
+					? "Das FFN ist der Bearbeiter pro Token. Es schaut nicht auf andere Positionen: Attention hat den Kontext bereits in den Vektor gemischt. Das FFN expandiert den Vektor auf d_ff, wendet GELU als Nichtlinearität an und komprimiert ihn zurück auf d_model. Danach addiert der Residual-Stream das Ergebnis zum alten Vektor, statt ihn zu überschreiben."
+					: "The FFN is the per-token editor. It does not look at other positions: attention has already mixed the context into the vector. The FFN expands the vector to d_ff, applies GELU as the nonlinearity, and compresses it back to d_model. The residual stream then adds the result to the old vector instead of overwriting it.";
 			}
 			if (!sub._tmFeatureBound) {
 				sub._tmFeatureBound = true;
@@ -2453,6 +2545,8 @@
 		init: function (hostId) {
 			var host = document.getElementById(hostId);
 			if (!host) return null;
+			updateCapacityNote();
+			bindCapacityNote();
 			var canvases = {
 				tokenize: document.getElementById("tm-step-tokenize"),
 				embed: document.getElementById("tm-step-embed"),
@@ -3058,12 +3152,15 @@
 					box = document.createElement("section");
 					box.className = "tm-step tm-transformer-box";
 					box.id = "tm-transformer-box";
-					box.innerHTML = '<div class="tm-step-head"><h3>4 · Transformer</h3><button class="tm-step-toggle" type="button" aria-expanded="true" aria-label="' + (isDe ? "Schritt einklappen" : "Collapse step") + '">−</button></div><p>' + (isDe ? "Jede Schicht liest den laufenden Vektor, lässt Attention Information zwischen den Tokens austauschen, addiert das Ergebnis zum Vektor, und das FFN transformiert jeden Token einzeln, bevor es wieder addiert wird. Die Token Trajectory zeigt die Vektoren Schicht für Schicht; darunter stehen die Layer mit ihren Attention- und FFN-Schritten. Ein Transformer ist ein Stapel kleiner, wiederverwendbarer Änderungen an einem gemeinsamen Vektor, in dem der gesamte Kontext mit beachtet wird." : "Each layer reads the running vector, lets attention exchange information between tokens, adds the result back, and the FFN transforms each token on its own before adding it back. The token trajectory shows the vectors layer by layer; below are the layers with their attention and FFN steps. A transformer is a stack of small, reusable edits to one shared vector, with the whole context taken into account.") + '</p><div class="tm-step-body" id="tm-transformer-body"></div>';
+					box.innerHTML = '<div class="tm-step-head"><h3>4 · Transformer</h3><button class="tm-step-toggle" type="button" aria-expanded="true" aria-label="' + (isDe ? "Schritt einklappen" : "Collapse step") + '">−</button></div><p>' + (isDe ? "Ein Transformer-Block schreibt den laufenden Vektor in zwei Schritten um. Zuerst mischt Attention Information aus den anderen Tokens in jede Position; danach transformiert das FFN jede Position für sich. Beide Ergebnisse werden zum Vektor addiert, nichts wird überschrieben. Der Plot verfolgt den Vektor jedes Tokens durch die Schichten; die Schichtkarten unten öffnen dieselben Schritte mit den vollständigen Formeln." : "A transformer block makes two edits to the running vector. Attention first mixes information from the other tokens into each position; the FFN then transforms each position on its own. Both edits are added back to the vector, so nothing is overwritten. The plot follows each token's vector through the layers; the layer cards below open the same steps with their full formulas.") + '</p><div class="tm-step-body" id="tm-transformer-body"></div>';
 				var formulaStrip = document.createElement("div");
 				formulaStrip.className = "tm-transformer-formulas";
-				formulaStrip.innerHTML = "<div data-tex='\\operatorname{Attention}(Q,K,V)=\\operatorname{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)V'></div>" +
-					"<div data-tex='z=x+\\operatorname{Attention}(\\operatorname{Norm}(x)),\\quad y=z+\\operatorname{FFN}(\\operatorname{Norm}(z))'></div>" +
-					"<div data-tex='\\operatorname{FFN}(x)=W_2\\operatorname{GELU}(W_1x+b_1)+b_2'></div>";
+				formulaStrip.innerHTML =
+					"<div data-tex='Q=\\operatorname{Norm}(h_{\\text{in}})W^Q,\\quad K=\\operatorname{Norm}(h_{\\text{in}})W^K,\\quad V=\\operatorname{Norm}(h_{\\text{in}})W^V'></div>" +
+					"<div data-tex='\\text{head}_i=\\operatorname{softmax}\\!\\left(\\frac{Q_iK_i^\\top}{\\sqrt{d_k}}\\right)V_i'></div>" +
+					"<div data-tex='h_{\\text{attn}}=h_{\\text{in}}+\\operatorname{Concat}(\\text{head}_1,\\dots,\\text{head}_h)\\,W^O'></div>" +
+					"<div data-tex='h_{\\text{out}}=h_{\\text{attn}}+\\operatorname{FFN}(\\operatorname{Norm}(h_{\\text{attn}}))'></div>" +
+					"<div data-tex='\\operatorname{FFN}(x)=W_2\\,\\operatorname{GELU}(W_1x+b_1)+b_2'></div>";
 				box.querySelector(".tm-step-body").appendChild(formulaStrip);
 				typesetMathInOrg(formulaStrip);
 				var vizSwitch = document.createElement("div");

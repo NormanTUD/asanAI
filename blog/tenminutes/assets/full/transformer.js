@@ -479,7 +479,9 @@ function switchTab(containerId, activeIdx, totalCount, idPrefixes, inactiveStyle
 		const btn = document.getElementById(`${idPrefixes.btn}-${containerId}-${i}`);
 		if (btn) {
 			btn.style.background = inactiveStyle.bg;
+			if (inactiveStyle.color) btn.style.color = inactiveStyle.color;
 			btn.style.fontWeight = 'normal';
+			if (idPrefixes.btn === 'head-tab-btn') btn.classList.remove('is-active');
 		}
 	}
 
@@ -489,7 +491,9 @@ function switchTab(containerId, activeIdx, totalCount, idPrefixes, inactiveStyle
 	const activeBtn = document.getElementById(`${idPrefixes.btn}-${containerId}-${activeIdx}`);
 	if (activeBtn) {
 		activeBtn.style.background = activeStyle.bg;
+		if (activeStyle.color) activeBtn.style.color = activeStyle.color;
 		activeBtn.style.fontWeight = 'bold';
+		if (idPrefixes.btn === 'head-tab-btn') activeBtn.classList.add('is-active');
 	}
 
 	return activeContent;
@@ -1190,7 +1194,7 @@ window.showLayer = (containerId, layerIdx, numLayers) => {
 window.showHeadInLayer = (containerId, layerIdx, headIdx, numHeads) => {
     const activeContent = switchTab(`${containerId}-${layerIdx}`, headIdx, numHeads,
         { content: 'head-content', btn: 'head-tab-btn' },
-        { bg: '#e2e8f0' }, { bg: themeColor('#fff') }
+        { bg: '#dbeafe', color: '#1e3a8a' }, { bg: '#2563eb', color: '#ffffff' }
     );
 
     const registryEntry = attentionRenderRegistry.get(containerId);
@@ -2275,6 +2279,7 @@ function renderTrajectoryPlot(d_model) {
 		trajDiv.setAttribute('data-d-model', d_model);
 
 		wrapper.appendChild(trajDiv);
+		if (d_model <= 3) wrapper.appendChild(createTrajectoryVFNote());
 		document.getElementById('transformer-migration-plots-container').appendChild(wrapper);
 	} else {
 		const prevDModel = parseInt(trajDiv.getAttribute('data-d-model') || '0');
@@ -2286,11 +2291,17 @@ function renderTrajectoryPlot(d_model) {
 			if (wrapper) {
 				wrapper.setAttribute('data-d-model', d_model);
 				const existingBtn = wrapper.querySelector('.trajectory-vf-toggle');
+				const existingNote = wrapper.querySelector('.trajectory-vf-note');
 				if (d_model <= 3 && !existingBtn) {
 					wrapper.insertBefore(createTrajectoryVFToggleButton(), trajDiv);
 				} else if (d_model > 3 && existingBtn) {
 					existingBtn.remove();
 					window._trajectoryVfEnabled = false;
+				}
+				if (d_model <= 3 && !existingNote) {
+					wrapper.appendChild(createTrajectoryVFNote());
+				} else if (d_model > 3 && existingNote) {
+					existingNote.remove();
 				}
 			}
 		}
@@ -3660,7 +3671,7 @@ function _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, 
 
 function _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta, ts) {
     return `
-    <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
+    <div style="margin-bottom:15px;">
     <p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $${h1name}${sup}$ before FFN</p>
     $$ \\text{LayerNorm}(${h1name}${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{${h1name}${sup} - \\underbrace{\\mu}_{\\text{Mean of } ${h1name}${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } ${h1name}${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
     <div style="overflow-x:auto;">
@@ -7435,6 +7446,38 @@ function _tmLayerCard(layerIdx) {
 	return document.getElementById(`unified-layer-${layerIdx}-card`);
 }
 
+function _layerCards(container) {
+	return container ? Array.from(container.querySelectorAll('.tm-layer-card')) : [];
+}
+
+function _layerCardIsOpen(card) {
+	const body = card.querySelector('.tm-layer-body');
+	return !!body && !body.hidden;
+}
+
+function updateLayerCollapseAllLabel(container) {
+	const btn = container && container.querySelector('.tm-layer-collapse-all');
+	if (!btn) return;
+	const anyOpen = _layerCards(container).some(_layerCardIsOpen);
+	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+	btn.textContent = anyOpen
+		? (isDe ? 'Alle Schichten einklappen' : 'Collapse all layers')
+		: (isDe ? 'Alle Schichten ausklappen' : 'Expand all layers');
+	btn.setAttribute('aria-label', btn.textContent);
+}
+
+function setLayerCardsOpen(container, open) {
+	_layerCards(container).forEach(function (card) {
+		const body = card.querySelector('.tm-layer-body');
+		const head = card.querySelector('.tm-layer-head');
+		if (body) body.hidden = !open;
+		if (head) head.setAttribute('aria-expanded', String(open));
+		card.classList.toggle('is-open', open);
+		if (!open) card.querySelectorAll('.tm-layer-subbox').forEach(function (sub) { sub.open = false; });
+	});
+	updateLayerCollapseAllLabel(container);
+}
+
 function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	const container = document.getElementById('ffn-equations-container');
 	if (!container) return;
@@ -7459,14 +7502,8 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 		collapseAll.className = 'tm-layer-collapse-all';
 		collapseAll.textContent = isDe ? 'Alle Schichten einklappen' : 'Collapse all layers';
 		collapseAll.addEventListener('click', function () {
-			container.querySelectorAll('.tm-layer-card').forEach(function (card) {
-				const body = card.querySelector('.tm-layer-body');
-				const head = card.querySelector('.tm-layer-head');
-				if (body) body.hidden = true;
-				if (head) head.setAttribute('aria-expanded', 'false');
-				card.classList.remove('is-open');
-				card.querySelectorAll('.tm-layer-subbox').forEach(function (sub) { sub.open = false; });
-			});
+			const anyOpen = _layerCards(container).some(_layerCardIsOpen);
+			setLayerCardsOpen(container, !anyOpen);
 		});
 		toolbar.appendChild(collapseAll);
 		container.insertBefore(toolbar, stack);
@@ -7534,6 +7571,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 		body.hidden = !open;
 		head.setAttribute('aria-expanded', String(open));
 		card.classList.toggle('is-open', open);
+		updateLayerCollapseAllLabel(container);
 	});
 	body.querySelectorAll('.tm-layer-subbox').forEach(function (sub) {
 		sub.addEventListener('toggle', function () {
@@ -7553,6 +7591,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 		});
 	});
 	stack.appendChild(card);
+	updateLayerCollapseAllLabel(container);
 }
 
 function renderLayerMigration(layerIdx) {
@@ -7590,6 +7629,7 @@ function openUnifiedLayer(layerIdx) {
 	if (body) body.hidden = false;
 	if (head) head.setAttribute('aria-expanded', 'true');
 	card.classList.add('is-open');
+	updateLayerCollapseAllLabel(card.closest('#ffn-equations-container') || document);
 }
 
 window.showUnifiedLayer = function (layerIdx) {
@@ -7792,6 +7832,16 @@ async function loadTransformerModule () {
 function displayToken(token) {
 	if (typeof token !== 'string') return String(token);
 	return /^\s+$/.test(token) ? token.replace(/ /g, '␣') : token;
+}
+
+function createTrajectoryVFNote() {
+	const note = document.createElement('p');
+	note.className = 'trajectory-vf-note';
+	note.textContent = (window.TM && TM.lang && TM.lang() === 'de')
+		? 'Das Vektorfeld tastet die Schicht auf einem Punktgitter ab: Jeder Pfeil zeigt, wohin das Modell einen Zustand schiebt. Die Linien sind deine Tokens, das Feld ist die Strömung drumherum.'
+		: 'The vector field samples the layer on a grid of points: each arrow shows where the model pushes a state. The lines are your tokens; the field is the flow around them.';
+	note.style.cssText = 'margin: 0 12px 12px; font-size: 0.78rem; line-height: 1.45; color: ' + themeColor('#64748b') + ';';
+	return note;
 }
 
 function createTrajectoryVFToggleButton() {

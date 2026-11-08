@@ -2134,6 +2134,114 @@
       "confidence": "provenance"
     },
     {
+      "id": "prov-language-vervet-monkey",
+      "from": "vervet-monkey",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "three distinct alarm calls",
+      "citation_keys": [
+        "seyfarth1980vervet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-putty-nosed-monkey",
+      "from": "putty-nosed-monkey",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "combine two calls into sequences",
+      "citation_keys": [
+        "arnold2006semantic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-neanderthal-hyoid-kebara-2",
+      "from": "neanderthal-hyoid-kebara-2",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "about 60,000 years old",
+      "citation_keys": [
+        "arensburg1989hyoid"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-neanderthal-human-split",
+      "from": "neanderthal-human-split",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "roughly 300,000 to 400,000 years ago",
+      "citation_keys": [
+        "krause2007foxp2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-foxp2",
+      "from": "foxp2",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "two derived changes in FOXP2",
+      "citation_keys": [
+        "krause2007foxp2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-nim-chimpsky",
+      "from": "nim-chimpsky",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "more than 19,000 multi-sign utterances",
+      "citation_keys": [
+        "terrace1979nim"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-rico",
+      "from": "rico",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "more than 200 objects",
+      "citation_keys": [
+        "kaminski2004rico"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-chaser",
+      "from": "chaser",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "1,022 objects",
+      "citation_keys": [
+        "pilley2011chaser"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-kanzi",
+      "from": "kanzi",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "at about the level of a two-year-old child",
+      "citation_keys": [
+        "savage1993language"
+      ],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-language-block-1-part_of-language",
       "from": "language-block-1",
       "to": "language",
@@ -9962,114 +10070,6 @@
       "quote": "",
       "citation_keys": [],
       "confidence": "provenance"
-    },
-    {
-      "id": "prov-language-vervet-monkey",
-      "from": "vervet-monkey",
-      "to": "language",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "three distinct alarm calls",
-      "citation_keys": [
-        "seyfarth1980vervet"
-      ],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-language-putty-nosed-monkey",
-      "from": "putty-nosed-monkey",
-      "to": "language",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "combine two calls into sequences",
-      "citation_keys": [
-        "arnold2006semantic"
-      ],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-language-neanderthal-hyoid-kebara-2",
-      "from": "neanderthal-hyoid-kebara-2",
-      "to": "language",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "about 60,000 years old",
-      "citation_keys": [
-        "arensburg1989hyoid"
-      ],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-language-neanderthal-human-split",
-      "from": "neanderthal-human-split",
-      "to": "language",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "roughly 300,000 to 400,000 years ago",
-      "citation_keys": [
-        "krause2007foxp2"
-      ],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-language-foxp2",
-      "from": "foxp2",
-      "to": "language",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "two derived changes in FOXP2",
-      "citation_keys": [
-        "krause2007foxp2"
-      ],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-language-nim-chimpsky",
-      "from": "nim-chimpsky",
-      "to": "language",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "more than 19,000 multi-sign utterances",
-      "citation_keys": [
-        "terrace1979nim"
-      ],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-language-rico",
-      "from": "rico",
-      "to": "language",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "more than 200 objects",
-      "citation_keys": [
-        "kaminski2004rico"
-      ],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-language-chaser",
-      "from": "chaser",
-      "to": "language",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "1,022 objects",
-      "citation_keys": [
-        "pilley2011chaser"
-      ],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-language-kanzi",
-      "from": "kanzi",
-      "to": "language",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "at about the level of a two-year-old child",
-      "citation_keys": [
-        "savage1993language"
-      ],
-      "confidence": "provenance"
     }
   ],
   "statements": [
@@ -10677,7 +10677,7 @@
     },
     {
       "id": "language-stmt-87",
-      "quote": "The two derived changes in FOXP2, a gene involved in speech and language development, are shared with Neanderthals and predate the split of the two lineages, which existed roughly 300,000 to 400,000 years ago (\\cite[Krause et al., 2007]{krause2007foxp2}).",
+      "quote": "The two derived changes in FOXP2, a gene involved in speech and language development, are shared with Neanderthals and predate the split of the two lineages; the common ancestor existed roughly 300,000 to 400,000 years ago (\\cite[Krause et al., 2007]{krause2007foxp2}).",
       "block_id": "language-block-29",
       "section": "Before Words: Animal Signals and the Limits of Ape Language",
       "kind": "statement"
@@ -12814,7 +12814,7 @@
     },
     {
       "id": "language-block-29",
-      "quote": "The evidence for our own branch is harder to read. Speech leaves no fossil, and the soft tissue of the vocal tract decays. What survives is bone and DNA. A Neanderthal hyoid from Kebara Cave, about 60,000 years old, is almost identical in size and shape to a modern human hyoid, which suggests that the morphological basis for speech was already present in the Middle Palaeolithic (\\cite[Arensburg et al., 1989]{arensburg1989hyoid}). A later biomechanical analysis of the same bone found an internal architecture and load behavior similar to ours, consistent with a capacity for speech (\\cite[D'Anastasio et al., 2013]{danastasio2013hyoid}). The two derived changes in FOXP2, a gene involved in speech and language development, are shared with Neanderthals and predate the split of the two lineages, which existed roughly 300,000 to 400,000 years ago (\\cite[Krause et al., 2007]{krause2007foxp2}). Neanderthals are a sister lineage, not an ancestor, and earlier hominins left skulls and ear bones but no preserved larynx. None of this proves that Neanderthals spoke a language like ours. It shows that parts of the hardware were not uniquely ours. The descended larynx, once treated as the signature of human speech, also occurs in red and fallow deer, where it exaggerates body size (\\cite[Fitch and Reby, 2001]{fitch2001larynx}), and attempts to date the key changes from fossils have been inconclusive (\\cite[Fitch, 2000]{fitch2000evolution}).",
+      "quote": "The evidence for our own branch is harder to read. Speech leaves no fossil, and the soft tissue of the vocal tract decays. What survives is bone and DNA. A Neanderthal hyoid from Kebara Cave, about 60,000 years old, is almost identical in size and shape to a modern human hyoid, which suggests that the morphological basis for speech was already present in the Middle Palaeolithic (\\cite[Arensburg et al., 1989]{arensburg1989hyoid}). A later biomechanical analysis of the same bone found an internal architecture and load behavior similar to ours, consistent with a capacity for speech (\\cite[D'Anastasio et al., 2013]{danastasio2013hyoid}). The two derived changes in FOXP2, a gene involved in speech and language development, are shared with Neanderthals and predate the split of the two lineages; the common ancestor existed roughly 300,000 to 400,000 years ago (\\cite[Krause et al., 2007]{krause2007foxp2}). Neanderthals are a sister lineage, not an ancestor, and earlier hominins left skulls and ear bones but no preserved larynx. None of this proves that Neanderthals spoke a language like ours. It shows that parts of the hardware were not uniquely ours. The descended larynx, once treated as the signature of human speech, also occurs in red and fallow deer, where it exaggerates body size (\\cite[Fitch and Reby, 2001]{fitch2001larynx}), and attempts to date the key changes from fossils have been inconclusive (\\cite[Fitch, 2000]{fitch2000evolution}).",
       "kind": "paragraph",
       "section": "Before Words: Animal Signals and the Limits of Ape Language"
     },

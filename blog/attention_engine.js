@@ -61,7 +61,7 @@ class AttentionEngine {
 	}
 
 	_buildWhatHappensNextSection(n, d_k, d_model, n_heads) {
-		return `<div style="padding:12px; background:#f0fdf4; border:1px solid #10b981; border-radius:8px;">
+		return `<div style="padding:8px 0;">
     <p style="font-weight:600; color:#065f46; margin-bottom:6px;">What Happens Next</p>
     <p style="font-size:0.85rem; color:#334155; margin-bottom:6px;">
 	This head's context matrix is <b>one of ${n_heads} heads</b>. All heads run in parallel, each
@@ -93,7 +93,7 @@ class AttentionEngine {
 		const vMatrixTex = this._attnRowLabeledMatrix(Vi, displayTokens, n, 'V proj');
 		const contextMatrixTex = this._attnRowLabeledMatrix(context, displayTokens, n, 'head ctx');
 
-		return `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
+		return `<div style="margin-bottom:10px; padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
     <p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Context Matrix for Head ${headIdx + 1}</p>
     <p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">
 	Each token's <b>context vector</b> is a weighted average of all Value vectors it can see.
@@ -388,10 +388,10 @@ class AttentionEngine {
 			for (let h = 0; h < layerHeadData.length; h++) {
 				const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${h}`);
 				const isActive = headDiv ? headDiv.style.display !== 'none' : h === 0;
-				headTabHtml += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
+				headTabHtml += `<button class="mha-head-tab-btn${isActive ? ' is-active' : ''}" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
 	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
-	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer; border-radius: 10px 10px 0px 0px;
-	background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
+	style="padding:7px 13px; border:none; border-right:1px solid ${isActive ? '#1d4ed8' : '#93c5fd'}; cursor:pointer; border-radius: 10px 10px 0px 0px;
+	background:${isActive ? '#2563eb' : '#dbeafe'}; color:${isActive ? '#ffffff' : '#1e3a8a'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
 	Head ${h + 1}
     </button>`;
 			}
@@ -496,7 +496,7 @@ class AttentionEngine {
 
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<div id="head-content-${this.containerId}-${layerIdx}-${h}" class="head-tab-in-layer"
-	    style="contain:layout; overflow-anchor:none; padding:20px; display:${h === 0 ? 'block' : 'none'}"
+	    style="contain:layout; overflow-anchor:none; padding:10px 12px; display:${h === 0 ? 'block' : 'none'}"
 	    data-head-idx="${h}" data-rendered="false"
 	    data-container-id="${this.containerId}" data-layer-idx="${layerIdx}" data-head-idx="${h}">
 	    <div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
@@ -638,10 +638,10 @@ class AttentionEngine {
 	 * Generates the HTML for a single head tab button.
 	 */
 	_buildHeadTabButtonHtml(layerIdx, headIdx, isActive) {
-		return `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${headIdx}"
+		return `<button class="mha-head-tab-btn${isActive ? ' is-active' : ''}" id="head-tab-btn-${this.containerId}-${layerIdx}-${headIdx}"
 	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${headIdx}, ${this._getLayerHeadCount(layerIdx)})"
-	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer; border-radius: 10px 10px 0px 0px;
-	background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
+	style="padding:7px 13px; border:none; border-right:1px solid ${isActive ? '#1d4ed8' : '#93c5fd'}; cursor:pointer; border-radius: 10px 10px 0px 0px;
+	background:${isActive ? '#2563eb' : '#dbeafe'}; color:${isActive ? '#ffffff' : '#1e3a8a'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
 	Head ${headIdx + 1}
     </button>`;
 	}
@@ -735,12 +735,12 @@ class AttentionEngine {
 		let html = '';
 
 		// ── Head tabs ──
-		html += `<div class="head-tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6; flex-wrap:wrap;">`;
+		html += `<div class="head-tab-list" style="background:#eff6ff; display:flex; border-bottom:1px solid #2563eb; flex-wrap:wrap;">`;
 		for (let h = 0; h < layerHeadData.length; h++) {
-			html += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
+			html += `<button class="mha-head-tab-btn${h === 0 ? ' is-active' : ''}" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
 	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
-	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer; border-radius: 10px 10px 0px 0px;
-	background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
+	style="padding:7px 13px; border:none; border-right:1px solid ${h === 0 ? '#1d4ed8' : '#93c5fd'}; cursor:pointer; border-radius: 10px 10px 0px 0px;
+	background:${h === 0 ? '#2563eb' : '#dbeafe'}; color:${h === 0 ? '#ffffff' : '#1e3a8a'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
 	Head ${h + 1}
     </button>`;
 		}
@@ -749,7 +749,7 @@ class AttentionEngine {
 		// ── Head content panels ──
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<div id="head-content-${this.containerId}-${layerIdx}-${h}" class="head-tab-in-layer"
-	style="contain:layout;padding:20px; display:${h === 0 ? 'block' : 'none'}"
+	style="contain:layout;padding:10px 12px; display:${h === 0 ? 'block' : 'none'}"
 	data-head-idx="${h}" data-rendered="false">
 	<div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
     </div>`;
@@ -857,7 +857,7 @@ Click a word to see where it focuses its attention.
 <div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
 </div>
 
-<div class="apv-per-head-section" style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
+<div class="apv-per-head-section" style="margin-bottom:12px; padding:10px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
 <div id="apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}"
 style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px; overflow-anchor:none; contain:layout style;">
 <svg id="${apvHeadCanvasId}" style="max-width: 800px; width:100%; min-height:180px;"></svg>
@@ -868,7 +868,7 @@ Hover a token to highlight its attention connections. Line thickness = attention
 </div>
 </div>
 
-<div style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
+<div style="margin-bottom:12px; padding:10px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
 <div class="apv-matrix-container" id="apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}"
 style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px; overflow-anchor:none; contain:layout style;">
 <svg id="${apvMatrixCanvasId}" style="max-width: 800px; width:100%; min-height:180px;"></svg>
@@ -876,7 +876,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 </div>
 
 <div id="apv-attn-result-${this.containerId}-${layerIdx}-${headIdx}"
- style="margin-top:20px; padding:20px; border:1px solid #f59e0b; border-radius:12px; background:#fffbeb; overflow-x:auto; overflow-anchor:none;">
+ style="margin-top:20px; overflow-x:auto; overflow-anchor:none;">
     ${this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens)}
 </div>
 

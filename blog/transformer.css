@@ -83,15 +83,6 @@
 	gap: 8px;
 	margin-left: auto;
 }
-#tda-toggle-training-windows {
-	padding: 4px 12px;
-	border-radius: 6px;
-	border: 1px solid var(--mn-border, #cbd5e1);
-	background: var(--mn-surface, #fff);
-	color: var(--mn-text, #0f172a);
-	cursor: pointer;
-	font-weight: 600;
-}
 .transformer-train-status {
 	height: 32px;
 	min-height: 32px;
@@ -171,6 +162,45 @@
 	color: var(--mn-text);
 	font-size: .9rem;
 }
+.themeriver-residual-note {
+	margin: 4px 16px 0;
+	color: var(--mn-text-muted, #64748b);
+	font-size: .78rem;
+	line-height: 1.45;
+}
+
+/* Inference overlay: the next-token pass is synchronous, so paint first. */
+#tm-inference-busy {
+	position: fixed;
+	inset: 0;
+	z-index: 10000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: color-mix(in srgb, var(--mn-bg, #000000) 28%, transparent);
+}
+#tm-inference-busy[hidden] { display: none; }
+.tm-inference-busy-card {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 16px 20px;
+	background: var(--mn-surface, #ffffff);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 10px;
+	box-shadow: 0 8px 28px rgba(0, 0, 0, .18);
+	color: var(--mn-text, #0f172a);
+	font-size: .9rem;
+}
+.tm-inference-spinner {
+	width: 20px;
+	height: 20px;
+	border: 3px solid color-mix(in srgb, var(--mn-accent, #3b82f6) 25%, transparent);
+	border-top-color: var(--mn-accent, #3b82f6);
+	border-radius: 50%;
+	animation: tm-inference-spin .7s linear infinite;
+}
+@keyframes tm-inference-spin { to { transform: rotate(360deg); } }
 .themeriver-residual-block {
 	padding: 0 0 14px;
 	background: var(--mn-surface);

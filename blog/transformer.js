@@ -9,7 +9,6 @@ window.tlabVisualizationMode = 'train';
 window._cachedFinalProjection = null;
 window._activeUnifiedLayerIdx = 0;
 window.isTraining = false;
-window.currentTrainingWindows = [];
 window._paramBreakdownOpen = false;
 window._paramBreakdownRendered = false;
 const widthEmbeddingInit = 5;
@@ -430,7 +429,9 @@ function switchTab(containerId, activeIdx, totalCount, idPrefixes, inactiveStyle
 		const btn = document.getElementById(`${idPrefixes.btn}-${containerId}-${i}`);
 		if (btn) {
 			btn.style.background = inactiveStyle.bg;
+			if (inactiveStyle.color) btn.style.color = inactiveStyle.color;
 			btn.style.fontWeight = 'normal';
+			if (idPrefixes.btn === 'head-tab-btn') btn.classList.remove('is-active');
 		}
 	}
 
@@ -440,7 +441,9 @@ function switchTab(containerId, activeIdx, totalCount, idPrefixes, inactiveStyle
 	const activeBtn = document.getElementById(`${idPrefixes.btn}-${containerId}-${activeIdx}`);
 	if (activeBtn) {
 		activeBtn.style.background = activeStyle.bg;
+		if (activeStyle.color) activeBtn.style.color = activeStyle.color;
 		activeBtn.style.fontWeight = 'bold';
+		if (idPrefixes.btn === 'head-tab-btn') activeBtn.classList.add('is-active');
 	}
 
 	return activeContent;
@@ -625,20 +628,6 @@ function reset_graph() {
 		}
 	}
 	drawTrainingPlaceholder();
-	$("#show_training_sentences").hide();
-	const tw = document.getElementById('tda-toggle-training-windows');
-	if (tw) tw.innerText = 'Show training windows';
-}
-
-function toggleTrainingWindows() {
-	// User-controlled toggle: the auto-show used to add ~460px mid-page
-	// and shove every panel below down. The user now decides when to see it.
-	const box = document.getElementById('show_training_sentences');
-	const btn = document.getElementById('tda-toggle-training-windows');
-	if (!box) return;
-	const showing = getComputedStyle(box).display !== 'none';
-	box.style.display = showing ? 'none' : 'block';
-	if (btn) btn.innerText = showing ? 'Show training windows' : 'Hide training windows';
 }
 
 function computePositionalEncoding(pos, d_model, scalar = 1.0) {
@@ -1137,7 +1126,7 @@ window.showLayer = (containerId, layerIdx, numLayers) => {
 window.showHeadInLayer = (containerId, layerIdx, headIdx, numHeads) => {
     const activeContent = switchTab(`${containerId}-${layerIdx}`, headIdx, numHeads,
         { content: 'head-content', btn: 'head-tab-btn' },
-        { bg: '#e2e8f0' }, { bg: themeColor('#fff') }
+        { bg: '#dbeafe', color: '#1e3a8a' }, { bg: '#2563eb', color: '#ffffff' }
     );
 
     const registryEntry = attentionRenderRegistry.get(containerId);
@@ -1350,118 +1339,6 @@ function run_transformer_demo(activeId = null) {
 	}
 }
 
-/* ── TransformerRun: one shareable snapshot of the current experiment ──
-   Prompt + architecture + training settings live in many controls; this
-   unifies them in the URL so a reader can copy a link to the exact run. */
-const TRANSFORMER_RUN_KEYS = ['d', 'h', 'n', 'c', 't', 'train', 'prompt', 'epochs', 'lr', 'opt'];
-
-function collectTransformerRun() {
-	const cfg = getTransformerConfig();
-	const val = (id) => document.getElementById(id);
-	const ctx = val('transformer-context-size');
-	const train = val('transformer-training-data');
-	const prompt = val('transformer-master-token-input');
-	const epochs = val('train-epochs');
-	const lr = val('train-lr');
-	const opt = document.querySelector('input[name="train-optimizer-choice"]:checked');
-	return {
-		d: cfg.d_model,
-		h: cfg.n_heads,
-		n: cfg.n_layers,
-		c: ctx ? parseInt(ctx.value) : undefined,
-		t: cfg.temperature,
-		train: train ? train.value : undefined,
-		prompt: prompt ? prompt.value : undefined,
-		epochs: epochs ? parseInt(epochs.value) : undefined,
-		lr: lr ? parseFloat(lr.value) : undefined,
-		opt: opt ? opt.value : undefined
-	};
-}
-
-function _runNum(params, key) {
-	if (!params.has(key)) return undefined;
-	const v = Number(params.get(key));
-	return Number.isFinite(v) ? v : undefined;
-}
-
-function transformerRunFromURL() {
-	const params = new URLSearchParams(location.search);
-	if (!TRANSFORMER_RUN_KEYS.some((k) => params.has(k))) return null;
-	return {
-		d: _runNum(params, 'd'),
-		h: _runNum(params, 'h'),
-		n: _runNum(params, 'n'),
-		c: _runNum(params, 'c'),
-		t: _runNum(params, 't'),
-		train: params.has('train') ? params.get('train') : undefined,
-		prompt: params.has('prompt') ? params.get('prompt') : undefined,
-		epochs: _runNum(params, 'epochs'),
-		lr: _runNum(params, 'lr'),
-		opt: params.get('opt') || undefined
-	};
-}
-
-function applyTransformerRun(cfg) {
-	if (!cfg) return;
-	const setVal = (id, v) => {
-		if (v === undefined || v === null) return;
-		const el = document.getElementById(id);
-		if (el) el.value = String(v);
-	};
-	setVal('transformer-dimension-model', cfg.d);
-	setVal('transformer-heads', cfg.h);
-	setVal('transformer-depth', cfg.n);
-	setVal('transformer-context-size', cfg.c);
-	setVal('transformer-temperature', cfg.t);
-	setVal('train-epochs', cfg.epochs);
-	setVal('train-lr', cfg.lr);
-	if (typeof cfg.train === 'string') {
-		const trainEl = document.getElementById('transformer-training-data');
-		if (trainEl) trainEl.value = cfg.train;
-	}
-	if (typeof cfg.prompt === 'string') {
-		const promptEl = document.getElementById('transformer-master-token-input');
-		if (promptEl) promptEl.value = cfg.prompt;
-	}
-	if (cfg.opt) {
-		const radio = document.querySelector('input[name="train-optimizer-choice"][value="' + cfg.opt + '"]');
-		if (radio) radio.checked = true;
-	}
-	const label = (id, v) => {
-		if (v === undefined) return;
-		const el = document.getElementById(id);
-		if (el) el.innerText = String(v);
-	};
-	label('dim-val', cfg.d);
-	label('heads-val', cfg.h);
-	label('depth-val', cfg.n);
-	label('context-val', cfg.c);
-	label('temp-val', cfg.t);
-	if (typeof render_token_picker_chips === 'function') render_token_picker_chips();
-	if (typeof updateArchitectureValidityUI === 'function') updateArchitectureValidityUI();
-}
-
-function transformerRunParams() {
-	const cfg = collectTransformerRun();
-	const params = new URLSearchParams(location.search);
-	TRANSFORMER_RUN_KEYS.forEach((k) => params.delete(k));
-	const put = (k, v) => {
-		if (v === undefined || v === null || v === '' || Number.isNaN(v)) return;
-		params.set(k, String(v));
-	};
-	put('d', cfg.d);
-	put('h', cfg.h);
-	put('n', cfg.n);
-	put('c', cfg.c);
-	put('t', cfg.t);
-	put('epochs', cfg.epochs);
-	put('lr', cfg.lr);
-	put('opt', cfg.opt);
-	put('train', cfg.train);
-	put('prompt', cfg.prompt);
-	return params;
-}
-
 function scrollToRunStep(attempt) {
 	attempt = attempt || 0;
 	const step = new URLSearchParams(location.search).get('step');
@@ -1475,27 +1352,6 @@ function scrollToRunStep(attempt) {
 		setTimeout(() => scrollToRunStep(attempt + 1), 700);
 	}
 }
-
-window.TransformerRun = {
-	snapshot: collectTransformerRun,
-	apply: applyTransformerRun,
-	fromURL: transformerRunFromURL,
-	toURL: () => location.origin + location.pathname + '?' + transformerRunParams().toString(),
-	share: function (btn) {
-		const url = this.toURL();
-		const done = () => {
-			if (!btn) return;
-			const old = btn.textContent;
-			btn.textContent = 'Link copied';
-			setTimeout(() => { btn.textContent = old; }, 1600);
-		};
-		if (navigator.clipboard && navigator.clipboard.writeText) {
-			navigator.clipboard.writeText(url).then(done).catch(done);
-		} else {
-			done();
-		}
-	}
-};
 
 function get_init_weights(n_layers, d_model, d_ff) {
 	const weights = [];
@@ -1572,90 +1428,6 @@ function createOptimizer(optType, lr) {
 	if (optType === 'adam')    return tf.train.adam(lr);
 	if (optType === 'rmsprop') return tf.train.rmsprop(lr);
 	return tf.train.sgd(lr);
-}
-
-function buildTrainingWindows(tokens, contextSize) {
-	window.currentTrainingWindows = [];
-	for (let startIdx = 0; startIdx < tokens.length - contextSize; startIdx++) {
-		const inputSlice  = tokens.slice(startIdx, startIdx + contextSize);
-		const targetSlice = tokens.slice(startIdx + 1, startIdx + contextSize + 1);
-		window.currentTrainingWindows.push({ input: inputSlice, target: targetSlice });
-	}
-}
-
-function renderTrainingWindowPredictions(d_model, n_layers) {
-	const sentenceSpan = document.getElementById('current_training_sentence');
-	if (!sentenceSpan || window.currentTrainingWindows.length === 0) return;
-
-	const vocab     = Object.keys(window.persistentEmbeddingSpace);
-	const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
-	const { n_heads: n_heads_local } = getTransformerConfig();
-
-	const maxWordLen = Math.max(
-		...window.currentTrainingWindows.flatMap(w => w.target.map(t => t.length)),
-		...vocab.map(v => v.length),
-		1
-	);
-	const chipMinWidth = Math.max(250, maxWordLen * 9 + 70) + 'px';
-
-	const windowsHtml = window.currentTrainingWindows.map((w, idx) => {
-		const predictions = getPredictionsForWindow(w, vocab, embMatrix, d_model, n_heads_local, n_layers);
-		return renderSingleWindowHtml(w, predictions, idx, chipMinWidth);
-	}).join('');
-
-	sentenceSpan.innerHTML = windowsHtml;
-	// Don't auto-show: the training-windows block is large and would shove the
-	// entire page (and the TDA panel below) downward mid-training. Render the
-	// content but require the user to click "Show training windows" to see it.
-}
-
-function getPredictionsForWindow(w, vocab, embMatrix, d_model, n_heads, n_layers) {
-	const predictions = [];
-	try {
-		const h = runSimpleForwardPass(w.input, window.currentWeights, d_model, n_heads, n_layers);
-
-		for (let pos = 0; pos < h.length; pos++) {
-			const logits = embMatrix.map(embRow =>
-				h[pos].reduce((sum, val, k) => sum + val * embRow[k], 0));
-			const probs = softmax(logits);
-
-			let bestIdx = 0;
-			for (let j = 1; j < probs.length; j++) {
-				if (probs[j] > probs[bestIdx]) bestIdx = j;
-			}
-			predictions.push({ word: vocab[bestIdx], prob: probs[bestIdx] });
-		}
-	} catch (e) {
-		w.target.forEach(() => predictions.push({ word: '?', prob: 0 }));
-	}
-	return predictions;
-}
-
-function renderSingleWindowHtml(w, predictions, idx, chipMinWidth) {
-	const targetHtml = w.target.map((targetWord, pos) => {
-		const pred      = predictions[pos] || { word: '?', prob: 0 };
-		const isCorrect = pred.word === targetWord;
-		const icon      = isCorrect ? '✅' : '❌';
-		const probStr   = (pred.prob * 100).toFixed(1);
-		const bgColor   = isCorrect ? '#dcfce7' : '#fee2e2';
-		const dispTarget = displayToken(targetWord);
-		const dispPred   = displayToken(pred.word);
-
-		return `<span style="display:inline-block; margin:2px; padding:2px 6px; border-radius:4px; background:${bgColor}; font-size:0.8rem; min-width:${chipMinWidth}; text-align:center; box-sizing:border-box;" title="Target: ${dispTarget} | Predicted: ${dispPred} (${probStr}%)">
-	${icon} <b>${escapeHtml(dispTarget)}</b>→<span style="color:${isCorrect ? '#16a34a' : '#dc2626'}">${escapeHtml(dispPred)}</span> <span style="opacity:0.6; font-size:0.7rem;">${probStr}%</span>
-    </span>`;
-	}).join('');
-
-	const dispInput = w.input.map(t => displayToken(t));
-
-	return `<div style="margin-bottom:6px; padding:6px 10px; background:#f1f5f9; border-radius:6px; font-family:monospace; font-size:0.85rem;">
-    <strong>Window ${idx + 1}:</strong>
-    [${dispInput.join(' ')}] →<br>
-    <div style="margin-top:4px; margin-left:10px;">
-	<span style="color:#64748b; font-size:0.75rem;">Expected vs Predicted:</span><br>
-	${targetHtml}
-    </div>
-    </div>`;
 }
 
 function computeAndApplyGradients(tokens, weightVars, d_model, n_layers, n_heads, allVars, optimizer, clipValue) {
@@ -1787,8 +1559,6 @@ function ensureWeightsAndEmbeddings(tokens, n_layers, d_model) {
 
 async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime, doVisualSync = true) {
 	const clipValue = 1.0;
-	const thisContextSize = Math.min(getContextSize(), tokens.length - 1);
-	buildTrainingWindows(tokens, thisContextSize);
 
 	// TDA live: snapshot the weights BEFORE the gradient step so we can
 	// compute the weight deltas (W_new - W_prev) for this epoch.
@@ -1810,7 +1580,6 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 	if (doVisualSync) {
 		// Sync state
 		await syncTrainingState(weightVars);
-		renderTrainingWindowPredictions(d_model, n_layers);
 
 		// TDA live: capture residual stream + weight deltas for this epoch
 		if (window.TDALive) {
@@ -2330,6 +2099,7 @@ function renderTrajectoryPlot(d_model) {
 		trajDiv.setAttribute('data-d-model', d_model);
 
 		wrapper.appendChild(trajDiv);
+		if (d_model <= 3) wrapper.appendChild(createTrajectoryVFNote());
 		document.getElementById('transformer-migration-plots-container').appendChild(wrapper);
 	} else {
 		const prevDModel = parseInt(trajDiv.getAttribute('data-d-model') || '0');
@@ -2341,11 +2111,17 @@ function renderTrajectoryPlot(d_model) {
 			if (wrapper) {
 				wrapper.setAttribute('data-d-model', d_model);
 				const existingBtn = wrapper.querySelector('.trajectory-vf-toggle');
+				const existingNote = wrapper.querySelector('.trajectory-vf-note');
 				if (d_model <= 3 && !existingBtn) {
 					wrapper.insertBefore(createTrajectoryVFToggleButton(), trajDiv);
 				} else if (d_model > 3 && existingBtn) {
 					existingBtn.remove();
 					window._trajectoryVfEnabled = false;
+				}
+				if (d_model <= 3 && !existingNote) {
+					wrapper.appendChild(createTrajectoryVFNote());
+				} else if (d_model > 3 && existingNote) {
+					existingNote.remove();
 				}
 			}
 		}
@@ -2530,18 +2306,44 @@ function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_
 	render_final_projection(h_final, vocabulary, d_model, temperature);
 }
 
+window.tmShowInferenceBusy = function () {
+	const el = document.getElementById('tm-inference-busy');
+	if (!el) return;
+	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+	const text = document.getElementById('tm-inference-busy-text');
+	if (text) text.textContent = isDe ? 'Berechne das nächste Token…' : 'Computing the next token…';
+	el.hidden = false;
+	clearTimeout(window.__tmBusyInferenceTimer);
+	window.__tmBusyInferenceTimer = setTimeout(function () {
+		if (typeof window.tmHideInferenceBusy === 'function') window.tmHideInferenceBusy();
+	}, 10000);
+};
+
+window.tmHideInferenceBusy = function () {
+	const el = document.getElementById('tm-inference-busy');
+	if (el) el.hidden = true;
+	clearTimeout(window.__tmBusyInferenceTimer);
+};
+
 window.select_suggested_word = (word) => {
 	const masterInput = document.getElementById('transformer-master-token-input');
+	if (!masterInput) return;
 
-	// Keep the token separate without inserting a visible space.
-	if (masterInput.value.length > 0 && !/[\s\u200B]$/.test(masterInput.value)) {
-		masterInput.value += TM_TOKEN_BOUNDARY;
-	}
+	if (typeof window.tmShowInferenceBusy === 'function') window.tmShowInferenceBusy();
+	// Let the overlay paint before the synchronous forward pass blocks the thread.
+	requestAnimationFrame(function () {
+		setTimeout(function () {
+			// Keep the token separate without inserting a visible space.
+			if (masterInput.value.length > 0 && !/[\s\u200B]$/.test(masterInput.value)) {
+				masterInput.value += TM_TOKEN_BOUNDARY;
+			}
+			masterInput.value += word;
 
-	masterInput.value += word;
-
-	// Set master as active and re-run
-	run_transformer_demo('transformer-master-token-input');
+			// Set master as active and re-run
+			run_transformer_demo('transformer-master-token-input');
+			if (typeof window.tmHideInferenceBusy === 'function') window.tmHideInferenceBusy();
+		}, 0);
+	});
 };
 
 function computeFinalPredictions(h_last, vocabulary, d_model, temperature) {
@@ -3663,7 +3465,7 @@ function _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, 
 
 function _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta, ts) {
     return `
-    <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
+    <div style="margin-bottom:15px;">
     <p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $${h1name}${sup}$ before FFN</p>
     $$ \\text{LayerNorm}(${h1name}${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{${h1name}${sup} - \\underbrace{\\mu}_{\\text{Mean of } ${h1name}${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } ${h1name}${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
     <div style="overflow-x:auto;">
@@ -7459,6 +7261,38 @@ function _tmLayerCard(layerIdx) {
 	return document.getElementById(`unified-layer-${layerIdx}-card`);
 }
 
+function _layerCards(container) {
+	return container ? Array.from(container.querySelectorAll('.tm-layer-card')) : [];
+}
+
+function _layerCardIsOpen(card) {
+	const body = card.querySelector('.tm-layer-body');
+	return !!body && !body.hidden;
+}
+
+function updateLayerCollapseAllLabel(container) {
+	const btn = container && container.querySelector('.tm-layer-collapse-all');
+	if (!btn) return;
+	const anyOpen = _layerCards(container).some(_layerCardIsOpen);
+	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+	btn.textContent = anyOpen
+		? (isDe ? 'Alle Schichten einklappen' : 'Collapse all layers')
+		: (isDe ? 'Alle Schichten ausklappen' : 'Expand all layers');
+	btn.setAttribute('aria-label', btn.textContent);
+}
+
+function setLayerCardsOpen(container, open) {
+	_layerCards(container).forEach(function (card) {
+		const body = card.querySelector('.tm-layer-body');
+		const head = card.querySelector('.tm-layer-head');
+		if (body) body.hidden = !open;
+		if (head) head.setAttribute('aria-expanded', String(open));
+		card.classList.toggle('is-open', open);
+		if (!open) card.querySelectorAll('.tm-layer-subbox').forEach(function (sub) { sub.open = false; });
+	});
+	updateLayerCollapseAllLabel(container);
+}
+
 function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	const container = document.getElementById('ffn-equations-container');
 	if (!container) return;
@@ -7483,14 +7317,8 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 		collapseAll.className = 'tm-layer-collapse-all';
 		collapseAll.textContent = isDe ? 'Alle Schichten einklappen' : 'Collapse all layers';
 		collapseAll.addEventListener('click', function () {
-			container.querySelectorAll('.tm-layer-card').forEach(function (card) {
-				const body = card.querySelector('.tm-layer-body');
-				const head = card.querySelector('.tm-layer-head');
-				if (body) body.hidden = true;
-				if (head) head.setAttribute('aria-expanded', 'false');
-				card.classList.remove('is-open');
-				card.querySelectorAll('.tm-layer-subbox').forEach(function (sub) { sub.open = false; });
-			});
+			const anyOpen = _layerCards(container).some(_layerCardIsOpen);
+			setLayerCardsOpen(container, !anyOpen);
 		});
 		toolbar.appendChild(collapseAll);
 		container.insertBefore(toolbar, stack);
@@ -7558,6 +7386,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 		body.hidden = !open;
 		head.setAttribute('aria-expanded', String(open));
 		card.classList.toggle('is-open', open);
+		updateLayerCollapseAllLabel(container);
 	});
 	body.querySelectorAll('.tm-layer-subbox').forEach(function (sub) {
 		sub.addEventListener('toggle', function () {
@@ -7577,6 +7406,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 		});
 	});
 	stack.appendChild(card);
+	updateLayerCollapseAllLabel(container);
 }
 
 function renderLayerMigration(layerIdx) {
@@ -7614,6 +7444,7 @@ function openUnifiedLayer(layerIdx) {
 	if (body) body.hidden = false;
 	if (head) head.setAttribute('aria-expanded', 'true');
 	card.classList.add('is-open');
+	updateLayerCollapseAllLabel(card.closest('#ffn-equations-container') || document);
 }
 
 window.showUnifiedLayer = function (layerIdx) {
@@ -7803,8 +7634,6 @@ async function loadTransformerModule () {
 	observer_vector_math();
 
 	drawTrainingPlaceholder();
-	const initialRun = transformerRunFromURL();
-	if (initialRun) applyTransformerRun(initialRun);
 	updateTrainButtonState();
 	updateArchitectureValidityUI();
 	run_transformer_demo();
@@ -7823,6 +7652,16 @@ async function loadTransformerModule () {
 function displayToken(token) {
 	if (typeof token !== 'string') return String(token);
 	return /^\s+$/.test(token) ? token.replace(/ /g, '␣') : token;
+}
+
+function createTrajectoryVFNote() {
+	const note = document.createElement('p');
+	note.className = 'trajectory-vf-note';
+	note.textContent = (window.TM && TM.lang && TM.lang() === 'de')
+		? 'Das Vektorfeld tastet die Schicht auf einem Punktgitter ab: Jeder Pfeil zeigt, wohin das Modell einen Zustand schiebt. Die Linien sind deine Tokens, das Feld ist die Strömung drumherum.'
+		: 'The vector field samples the layer on a grid of points: each arrow shows where the model pushes a state. The lines are your tokens; the field is the flow around them.';
+	note.style.cssText = 'margin: 0 12px 12px; font-size: 0.78rem; line-height: 1.45; color: ' + themeColor('#64748b') + ';';
+	return note;
 }
 
 function createTrajectoryVFToggleButton() {

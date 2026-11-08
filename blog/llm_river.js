@@ -147,7 +147,7 @@ function _themeriver_render_residual_contrib(tokenIdx, d_model) {
 		const res = forwardOneLayer(h, weights[l], d_model, n_heads, tokens, null);
 		const attnDiff = res.h_attn[pos].map((v, i) => v - h[pos][i]);
 		const ffnDiff = res.h_out[pos].map((v, i) => v - res.h_attn[pos][i]);
-		layers.push('L' + (l + 1));
+		layers.push(weights.length > 8 ? 'L' + (l + 1) : 'Layer ' + (l + 1));
 		attnWrites.push(+norm(attnDiff).toFixed(4));
 		ffnWrites.push(+norm(ffnDiff).toFixed(4));
 		h = res.h_out;
@@ -164,7 +164,7 @@ function _themeriver_render_residual_contrib(tokenIdx, d_model) {
 	const axisFont = { fontSize: 11, color: themeColor('#64748b') };
 	chart.setOption({
 		title: {
-			text: 'What each layer adds to h for "' + (collector.displayTokens || tokens)[pos] + '"',
+			text: 'How far each sublayer moves h for "' + (collector.displayTokens || tokens)[pos] + '"',
 			left: 'center',
 			textStyle: { fontSize: 12, color: themeColor('#1e293b'), fontWeight: 'bold' }
 		},
@@ -403,16 +403,14 @@ function _themeriver_ensure_dom(containerId) {
 		const wrapper = document.createElement('div');
 		wrapper.id = 'themeriver-wrapper';
 		wrapper.className = 'themeriver-wrapper';
+		wrapper.setAttribute('aria-label', 'Probability flow through the layers');
 		wrapper.style.cssText = `
 	border: 0; border-radius: 0;
 	background: transparent; margin-top: 16px; overflow: visible;
     `;
 		wrapper.innerHTML = `
-	<div class="themeriver-header" style="display:flex; align-items:center; gap:12px; padding:8px 0;
+	<div class="themeriver-header" style="display:flex; align-items:center; gap:12px; padding:4px 0 8px;
 		    background:transparent; border-bottom:1px solid ${themeColor('#cbd5e1')}; flex-wrap:wrap;">
-	    <span style="font-weight:700; color:${themeColor('#004b6f')}; font-size:0.95rem;">
-		🌊 Probability Flow
-	    </span>
 	    <label style="color:${themeColor('#7c3aed')}; font-size:0.8rem;">Token position:</label>
 	    <select id="themeriver-token-select"
 		    onchange="window._themeriver_on_change()"
@@ -465,6 +463,7 @@ function _themeriver_ensure_residual_block(parent) {
 	block.className = 'themeriver-residual-block';
 	block.innerHTML = `
 	<div class="themeriver-residual-head">Residual stream writes per layer</div>
+	<p class="themeriver-residual-note">Bar height is the size of each sublayer's write into the running vector for the selected token: the length (L2 norm) of the attention update and of the FFN update. It is not a share of the stream, just how far that step moves the vector.</p>
 	<div id="transformer-residual-contrib-plot" style="width:90%; margin:0 auto; height:280px;"></div>
 	`;
 	parent.appendChild(block);

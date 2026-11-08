@@ -73,7 +73,7 @@ class AttentionEngine {
 		const footer = isDe
 			? 'Konkatenation, Projektion und Residual-Schritt stehen in den Abschnitten unter dieser Head-Ansicht.'
 			: 'The concatenation, projection, and residual steps are shown in the sections below this head view.';
-		return `<div style="padding:12px; background:#f0fdf4; border:1px solid #10b981; border-radius:8px;">
+		return `<div style="padding:8px 0;">
     <p style="font-weight:600; color:#065f46; margin-bottom:6px;">${nextTitle}</p>
     <p style="font-size:0.85rem; color:#334155; margin-bottom:6px;">
 	${intro}
@@ -118,7 +118,7 @@ class AttentionEngine {
 			? `In der <b>Attention-Gewichte-Matrix</b>: Zeilen sind <b>Query</b>-Tokens (wer schaut), Spalten sind <b>Key</b>-Tokens (wer angeschaut wird). Jede Zeile summiert zu 1 (Softmax). Die Spaltenköpfe zeigen, welches Token zu jeder Spalte gehört.`
 			: `In the <b>Attention Weights</b> matrix: rows are <b>query</b> tokens (who is looking), columns are <b>key</b> tokens (who is being looked at). Each row sums to 1 (softmax). The column headers show which token each column corresponds to.`;
 
-		return `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
+		return `<div style="margin-bottom:10px; padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
     <p style="font-weight:600; color:#1e40af; margin-bottom:6px;">${isDe ? 'Kontextmatrix für Head' : 'Context Matrix for Head'} ${headIdx + 1}</p>
     <p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">${contextText}</p>
     $$ \\text{context}_i = \\sum_{j=0}^{i} \\underbrace{\\alpha_{i,j}}_{\\substack{\\text{${isDe ? 'Attention' : 'attention'}} \\\\ \\text{${isDe ? 'Gewicht' : 'weight'}}}} \\cdot \\underbrace{V_j}_{\\substack{\\text{${isDe ? 'Value-Vektor' : 'Value vector'}} \\\\ \\text{${isDe ? 'von Token' : 'of token'} } j}} $$
@@ -400,10 +400,10 @@ class AttentionEngine {
 			for (let h = 0; h < layerHeadData.length; h++) {
 				const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${h}`);
 				const isActive = headDiv ? headDiv.style.display !== 'none' : h === 0;
-				headTabHtml += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
+				headTabHtml += `<button class="mha-head-tab-btn${isActive ? ' is-active' : ''}" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
 	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
-	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer; border-radius: 10px 10px 0px 0px;
-	background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
+	style="padding:7px 13px; border:none; border-right:1px solid ${isActive ? '#1d4ed8' : '#93c5fd'}; cursor:pointer; border-radius: 10px 10px 0px 0px;
+	background:${isActive ? '#2563eb' : '#dbeafe'}; color:${isActive ? '#ffffff' : '#1e3a8a'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
 	Head ${h + 1}
     </button>`;
 			}
@@ -500,7 +500,7 @@ class AttentionEngine {
 	 */
 	_buildUnifiedLayerHeadTabs(attnSection, layerIdx, layerHeadData) {
 		let html = '';
-		html += `<div class="head-tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6; flex-wrap:wrap; border-radius:8px 8px 0 0;">`;
+		html += `<div class="head-tab-list" style="background:#eff6ff; display:flex; border-bottom:1px solid #2563eb; flex-wrap:wrap; border-radius:8px 8px 0 0;">`;
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += this._buildHeadTabButtonHtml(layerIdx, h, h === 0);
 		}
@@ -508,7 +508,7 @@ class AttentionEngine {
 
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<div id="head-content-${this.containerId}-${layerIdx}-${h}" class="head-tab-in-layer"
-	    style="contain:layout; overflow-anchor:none; padding:20px; display:${h === 0 ? 'block' : 'none'}"
+	    style="contain:layout; overflow-anchor:none; padding:10px 12px; display:${h === 0 ? 'block' : 'none'}"
 	    data-head-idx="${h}" data-rendered="false"
 	    data-container-id="${this.containerId}" data-layer-idx="${layerIdx}" data-head-idx="${h}">
 	    <div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
@@ -650,10 +650,10 @@ class AttentionEngine {
 	 * Generates the HTML for a single head tab button.
 	 */
 	_buildHeadTabButtonHtml(layerIdx, headIdx, isActive) {
-		return `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${headIdx}"
+		return `<button class="mha-head-tab-btn${isActive ? ' is-active' : ''}" id="head-tab-btn-${this.containerId}-${layerIdx}-${headIdx}"
 	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${headIdx}, ${this._getLayerHeadCount(layerIdx)})"
-	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer; border-radius: 10px 10px 0px 0px;
-	background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
+	style="padding:7px 13px; border:none; border-right:1px solid ${isActive ? '#1d4ed8' : '#93c5fd'}; cursor:pointer; border-radius: 10px 10px 0px 0px;
+	background:${isActive ? '#2563eb' : '#dbeafe'}; color:${isActive ? '#ffffff' : '#1e3a8a'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
 	Head ${headIdx + 1}
     </button>`;
 	}
@@ -747,12 +747,12 @@ class AttentionEngine {
 		let html = '';
 
 		// ── Head tabs ──
-		html += `<div class="head-tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6; flex-wrap:wrap;">`;
+		html += `<div class="head-tab-list" style="background:#eff6ff; display:flex; border-bottom:1px solid #2563eb; flex-wrap:wrap;">`;
 		for (let h = 0; h < layerHeadData.length; h++) {
-			html += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
+			html += `<button class="mha-head-tab-btn${h === 0 ? ' is-active' : ''}" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
 	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
 	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer; border-radius: 10px 10px 0px 0px;
-	background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
+	background:${h === 0 ? '#2563eb' : '#dbeafe'}; color:${h === 0 ? '#ffffff' : '#1e3a8a'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
 	Head ${h + 1}
     </button>`;
 		}
@@ -761,7 +761,7 @@ class AttentionEngine {
 		// ── Head content panels ──
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<div id="head-content-${this.containerId}-${layerIdx}-${h}" class="head-tab-in-layer"
-	style="contain:layout;padding:20px; display:${h === 0 ? 'block' : 'none'}"
+	style="contain:layout;padding:10px 12px; display:${h === 0 ? 'block' : 'none'}"
 	data-head-idx="${h}" data-rendered="false">
 	<div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
     </div>`;
@@ -876,7 +876,7 @@ ${(window.TM && TM.lang && TM.lang() === 'de') ? 'Klicke auf ein Wort, um zu seh
 <div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
 </div>
 
-<div class="apv-per-head-section" style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
+<div class="apv-per-head-section" style="margin-bottom:12px; padding:10px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
 <div id="apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}"
 style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px; overflow-anchor:none; contain:layout style;">
 <svg id="${apvHeadCanvasId}" style="max-width: 800px; width:100%; min-height:180px;"></svg>
@@ -887,7 +887,7 @@ Hover a token to highlight its attention connections. Line thickness = attention
 </div>
 </div>
 
-<div style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
+<div style="margin-bottom:12px; padding:10px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
 <div class="apv-matrix-container" id="apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}"
 style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px; overflow-anchor:none; contain:layout style;">
 <svg id="${apvMatrixCanvasId}" style="max-width: 800px; width:100%; min-height:180px;"></svg>
@@ -895,7 +895,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 </div>
 
 <div id="apv-attn-result-${this.containerId}-${layerIdx}-${headIdx}"
- style="margin-top:20px; padding:20px; border:1px solid #f59e0b; border-radius:12px; background:#fffbeb; overflow-x:auto; overflow-anchor:none;">
+ style="margin-top:20px; overflow-x:auto; overflow-anchor:none;">
     ${this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens)}
 </div>
 

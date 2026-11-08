@@ -63,7 +63,7 @@
 <span id="dim-val" style="font-weight: bold; color: #3b82f6;">3</span>
 <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
 <b>Dependency:</b> Must be a multiple of Heads.<br/>
-<b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = \frac{d_{\text{model}}}{h}$) of the vector to perform dot products.<br/>
+<b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = d_{\text{model}}/h$) of the vector to perform dot products.<br/>
 <b>3D view:</b> up to 3 dimensions are shown raw; above that the plot uses PCA.
         </p>
 <input id="transformer-dimension-model" max="16" min="2" oninput="syncTransformerSettings('dim')" step="1" style="width: 100%;" type="range" value="3"/>

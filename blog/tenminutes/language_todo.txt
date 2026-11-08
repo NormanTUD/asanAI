@@ -31,3 +31,9 @@ Nachtrag (November 2026):
 Nachtrag 2:
 - „Die Gehörknöchelchen stammen von Kieferknochen“ → „entwickelten sich aus Kieferknochen“ (englisch: „evolved from“).
 - Hören: Das Cochlea-Bild in der Timeline und als statische Figur durch „Anatomy of the Human Ear“ ersetzt (Lars Chittka; Axel Brockmann, CC BY 2.5, via Wikimedia Commons); Credit im Manifest ergänzt.
+
+Nachtrag 3 (November 2026):
+- Neue Sektion „Meaning before words“ / „Bedeutung vor Worten“: referenzielle Alarmrufe (Vervet, Putty-nosed), Neandertaler-Zungenbein und FOXP2, Affensprachprojekte (Washoe, Koko, Sarah, Nim, Kanzi) sowie Hunde- und Katzenstudien (Rico, Chaser, Andics, Saito, Takagi). Die Primärquellen sind als PubMed-Links eingebunden.
+- Abschnittsnummern neu vergeben: Idee 01, Tiersignale 02, Sprechmaschine 03, Vorgeschichte 04, Erbe 05, Fazit 06.
+- Die lange Fassung in ../language.php trägt dieselben Inhalte als eigenen Abschnitt „Before Words: Animal Signals and the Limits of Ape Language“.
+- Selbstkritik: Die Affensprachforschung bleibt umstritten; der Text schreibt „was reported“ für Koko und „no ape has been shown“ für Grammatik. Die Katzenstudien testen Namensdiskrimination, nicht Sprachverständnis im engeren Sinn.
