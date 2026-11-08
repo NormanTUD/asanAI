@@ -7478,19 +7478,32 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	});
 	body.querySelectorAll('.tm-layer-subbox').forEach(function (sub) {
 		sub.addEventListener('toggle', function () {
-			if (!sub.open) return;
-			const kind = sub.getAttribute('data-sub');
-			if (kind === 'migration') {
-				renderLayerMigration(layerIndex);
-				renderLayerMigrationPlot(layerIndex);
-			} else if (kind === 'attention') {
-				renderLayerAttentionLines(layerIndex);
-				renderLayerFormulas(layerIndex);
-				renderLayerAttention(layerIndex);
-			} else if (kind === 'ffn') {
-				renderLayerFFNHeatmap(layerIndex);
-				renderLayerFormulas(layerIndex);
+			if (!sub.open) {
+				if (window.tmSubboxLoading) window.tmSubboxLoading.hide(sub);
+				return;
 			}
+			if (window.tmSubboxLoading) window.tmSubboxLoading.show(sub);
+			const render = function () {
+				if (!sub.open) { if (window.tmSubboxLoading) window.tmSubboxLoading.hide(sub); return; }
+				const kind = sub.getAttribute('data-sub');
+				try {
+					if (kind === 'migration') {
+						renderLayerMigration(layerIndex);
+						renderLayerMigrationPlot(layerIndex);
+					} else if (kind === 'attention') {
+						renderLayerAttentionLines(layerIndex);
+						renderLayerFormulas(layerIndex);
+						renderLayerAttention(layerIndex);
+					} else if (kind === 'ffn') {
+						renderLayerFFNHeatmap(layerIndex);
+						renderLayerFormulas(layerIndex);
+					}
+				} finally {
+					if (window.tmSubboxLoading) window.tmSubboxLoading.hide(sub);
+				}
+			};
+			if (window.requestAnimationFrame) requestAnimationFrame(function () { setTimeout(render, 0); });
+			else render();
 		});
 	});
 	stack.appendChild(card);

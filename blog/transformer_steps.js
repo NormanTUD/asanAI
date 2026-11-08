@@ -2514,6 +2514,15 @@
 			"<div class='tm-hafter-simple'><div class='tm-hafter-math' data-tex='" + hafterTex + "' data-tex-display='true'></div></div>" +
 			"<p class='tm-logit-note'>" + note + "</p><div class='tm-logit-lens'>" + head + lastRow + "</div>" + others + sweep + "</div></details>";
 		typesetMathIn(host);
+		var logitDetails = host.querySelector(".tm-logit-subbox");
+		if (logitDetails && !logitDetails._tmSpinWired) {
+			logitDetails._tmSpinWired = true;
+			logitDetails.addEventListener("toggle", function () {
+				if (!logitDetails.open) { hideSubboxLoading(logitDetails); return; }
+				showSubboxLoading(logitDetails);
+				setTimeout(function () { hideSubboxLoading(logitDetails); }, 450);
+			});
+		}
 		var viewSel = host.querySelector(".tm-logit-view-select");
 		if (viewSel) {
 			viewSel.addEventListener("change", function () {
@@ -2730,6 +2739,14 @@
 			if (summary) summary.textContent = isDe ? "Feature-Migration" : "Feature migration";
 			var sb = sub.querySelector(".tm-layer-subbox-body");
 			if (!sb) return;
+			if (!sub._tmSpinWired) {
+				sub._tmSpinWired = true;
+				sub.addEventListener("toggle", function () {
+					if (!sub.open) { hideSubboxLoading(sub); return; }
+					showSubboxLoading(sub);
+					setTimeout(function () { hideSubboxLoading(sub); }, 450);
+				});
+			}
 			Array.prototype.slice.call(sb.querySelectorAll(".tm-migration-canvas")).forEach(function (el) { el.remove(); });
 			var oldDetail = sb.querySelector(".tm-migration-detail");
 			if (oldDetail) oldDetail.style.display = "none";

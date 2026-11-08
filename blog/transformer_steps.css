@@ -524,6 +524,28 @@
 .tm-layer-subbox-body {
 	padding: 0 14px 14px;
 }
+.tm-layer-subbox-body {
+	position: relative;
+}
+.tm-layer-subbox-body.tm-subbox-loading-active {
+	min-height: 150px;
+}
+.tm-subbox-loading {
+	position: absolute;
+	inset: 0;
+	z-index: 12;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 16px;
+	background: color-mix(in srgb, var(--mn-bg, var(--tm-paper, #ffffff)) 78%, transparent);
+	color: var(--mn-text-secondary, var(--tm-muted, #627476));
+	font: 600 0.8rem/1.4 "Open Sans", system-ui, sans-serif;
+	pointer-events: none;
+}
+.tm-subbox-loading[hidden] { display: none; }
+
 
 .layer-signal-canvas {
 	display: block;

@@ -892,6 +892,35 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<?php else: ?>
 							<p>Here <span class="nt-formula" data-tex="\mathbf{h}" data-tex-display="false"></span> is the final context vector, <span class="nt-formula" data-tex="W_U" data-tex-display="false"></span> the learned unembedding matrix, <span class="nt-formula" data-tex="\mathbf{w}_i" data-tex-display="false"></span> its row for token <span class="nt-formula" data-tex="i" data-tex-display="false"></span>, <span class="nt-formula" data-tex="z_i" data-tex-display="false"></span> the logit, <span class="nt-formula" data-tex="V" data-tex-display="false"></span> the vocabulary size, <span class="nt-formula" data-tex="Z" data-tex-display="false"></span> the normalizer, and <span class="nt-formula" data-tex="p_i" data-tex-display="false"></span> the probability of token <span class="nt-formula" data-tex="i" data-tex-display="false"></span>. The largest probability becomes the most likely next token, but the alternatives stay alive.</p>
 							<?php endif; ?>
+
+							<p>The final vector can also be read as a point on a map. Every token owns a region of the thought space; the next word is the region the thought falls into. Near a seam, two words are almost equally likely.</p>
+							<p>More tokens make the cells smaller, but the seams never close. The model can represent a distinction more finely than it can express it in one token. <a href="https://arxiv.org/abs/2603.22301" rel="noopener">Mabrok (2026)</a> calls the band around a seam the expressibility gap.</p>
+						</div>
+
+						<div class="demo demo--paper demo--canvas" id="meadow-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The map of words <span>· demo 09</span></p>
+									<p class="demo-sub">Every word owns a cell. Move the pointer; the thought falls into the nearest cell. The golden seams are where two words are equally near.</p>
+								</div>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas" id="meadow-canvas" style="aspect-ratio:560/196;height:auto" aria-label="A Voronoi field of words. Move the pointer to place a thought."></canvas>
+								<div class="demo-controls">
+									<label>Words <input type="range" id="md-n" min="12" max="30" step="6" value="12"><output id="md-n-out">12</output></label>
+									<label>Temperature <input type="range" id="md-temp" min="0.2" max="2.6" step="0.05" value="0.8"><output id="md-temp-out">0.80</output></label>
+									<label>Top-k <input type="range" id="md-k" min="1" max="10" step="1" value="5"><output id="md-k-out">5</output></label>
+								</div>
+								<div class="demo-readout demo-readout--4">
+									<div><b>Nearest word</b><span id="md-word">Dog</span></div>
+									<div><b>Wins with</b><span id="md-chance">—</span></div>
+									<div><b>Margin to seam</b><span id="md-margin">—</span></div>
+									<div><b>Ambiguous share</b><span id="md-gap">—</span></div>
+								</div>
+								<p class="meadow-caption" id="md-caption">Move the pointer across the map.</p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Words divide the space of thoughts into cells. Certainty is being deep inside a cell; uncertainty is standing on a seam or right at the edge. The model can think more finely than one word can say.</span></div>
+							<div class="demo-foot">More words make smaller cells and thinner seams, but the ambiguous share never reaches zero. In a real model the space has thousands of dimensions and the vocabulary has tens of thousands of tokens.</div>
 						</div>
 
 						<div class="demo demo--paper demo--plot softmax-demo" id="softmax-demo">
@@ -943,54 +972,28 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						</div>
 					</section>
 
-					<section class="section-block" id="meadow" data-chapter="From vector to word" data-chapter-de="Vom Vektor zum Wort">
-						<div class="section-kicker"><span class="sk-num">07</span> The meadow</div>
-						<h2 class="section-title">The same step, seen as geometry.</h2>
-						<div class="prose">
-							<p>The meadow looks at the same step geometrically. Every token owns a region of the thought space; the next word is the region the thought falls into. Near a seam, two words are almost equally likely.</p>
-							<p>More tokens make the cells smaller, but the seams never close. The model can represent a distinction more finely than it can express it in one token. <a href="https://arxiv.org/abs/2603.22301" rel="noopener">Mabrok (2026)</a> calls the band around a seam the expressibility gap.</p>
-						</div>
-
-						<div class="demo demo--paper demo--canvas" id="meadow-demo">
-							<div class="demo-head">
-								<div>
-									<p class="demo-title">The meadow of words <span>· demo 09</span></p>
-									<p class="demo-sub">Every word owns a cell. Move the pointer; the thought falls into the nearest cell. The golden seams are where two words are equally near.</p>
-								</div>
-							</div>
-							<div class="demo-body">
-								<canvas class="demo-canvas" id="meadow-canvas" style="aspect-ratio:560/196;height:auto" aria-label="A Voronoi field of words. Move the pointer to place a thought."></canvas>
-								<div class="demo-controls">
-									<label>Words <input type="range" id="md-n" min="12" max="30" step="6" value="12"><output id="md-n-out">12</output></label>
-									<label>Temperature <input type="range" id="md-temp" min="0.2" max="2.6" step="0.05" value="0.8"><output id="md-temp-out">0.80</output></label>
-									<label>Top-k <input type="range" id="md-k" min="1" max="10" step="1" value="5"><output id="md-k-out">5</output></label>
-								</div>
-								<div class="demo-readout demo-readout--4">
-									<div><b>Nearest word</b><span id="md-word">Dog</span></div>
-									<div><b>Wins with</b><span id="md-chance">—</span></div>
-									<div><b>Margin to seam</b><span id="md-margin">—</span></div>
-									<div><b>Ambiguous share</b><span id="md-gap">—</span></div>
-								</div>
-								<p class="meadow-caption" id="md-caption">Move the pointer across the meadow.</p>
-							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Words divide the space of thoughts into cells. Certainty is being deep inside a cell; uncertainty is standing on a seam or right at the edge. The model can think more finely than one word can say.</span></div>
-							<div class="demo-foot">More words make smaller cells and thinner seams, but the ambiguous share never reaches zero. In a real model the space has thousands of dimensions and the vocabulary has tens of thousands of tokens.</div>
-						</div>
-
-					</section>
-
 					<section class="section-block" id="whole" data-chapter="From vector to word" data-chapter-de="Vom Vektor zum Wort">
-						<div class="section-kicker"><span class="sk-num">08</span> The whole loop</div>
+						<div class="section-kicker"><span class="sk-num">07</span> The whole loop</div>
 						<h2 class="section-title">Text in, geometry, one word out.</h2>
+						<?php $tm_de = function_exists('tm_lang') && tm_lang() === 'de'; ?>
 						<div class="prose">
-							<p>The pieces fit in a fixed order: text → tokens → vectors → position → attention + residual → FFN → distribution → draw → append. The loop ends when the model emits the special token &lt;|endoftext|&gt;.</p>
-							<p>No step has a tidy fact database. Knowledge is distributed across the weights, and meaning lives in the geometry. Whether fluent prediction amounts to understanding is still contested. A pile of numbers becomes a sentence one token at a time.</p>
+							<?php if ($tm_de): ?>
+							<p>Die Teile fügen sich in fester Reihenfolge zusammen: <strong>Text → Tokens → Vektoren → Position → Attention + Residual → FFN → Verteilung → Ziehen → Anhängen</strong>. Die Schleife endet, wenn das Modell das spezielle Token <strong>&lt;|endoftext|&gt;</strong> ausgibt.</p>
+							<p>Kein Schritt hat eine ordentliche Fakten-Datenbank. Wissen ist über die Gewichte verteilt, und Bedeutung lebt in der Geometrie. Ein Haufen Zahlen wird Token für Token zu einem Satz.</p>
+							<?php else: ?>
+							<p>The pieces fit in a fixed order: <strong>text → tokens → vectors → position → attention + residual → FFN → distribution → draw → append</strong>. The loop ends when the model emits the special token <strong>&lt;|endoftext|&gt;</strong>.</p>
+							<p>No step has a tidy fact database. Knowledge is distributed across the weights, and meaning lives in the geometry. A pile of numbers becomes a sentence one token at a time.</p>
+							<?php endif; ?>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>What it is</b><span>A next-token predictor: one distribution, one draw, one append, repeated.</span></div>
 							<div class="keypoint"><b>Why it works</b><span>More context and more layers narrow the distribution, so the next token becomes easier to choose.</span></div>
 							<div class="keypoint"><b>Its limits</b><span>It predicts plausible text. It can be fluent and wrong, and it offers no guarantee of truth.</span></div>
-							<div class="keypoint"><b>The contested part</b><span>Whether fluent prediction is genuine world knowledge or “stochastic parroting” is not settled.</span></div>
+							<?php if ($tm_de): ?>
+							<div class="keypoint"><b>Die feste Reihenfolge</b><span><strong>Text → Tokens → Vektoren → Position → Attention + Residual → FFN → Verteilung → Ziehen → Anhängen</strong>. Die Schleife endet, wenn das Modell das spezielle Token <strong>&lt;|endoftext|&gt;</strong> ausgibt.</span></div>
+							<?php else: ?>
+							<div class="keypoint"><b>The fixed order</b><span><strong>text → tokens → vectors → position → attention + residual → FFN → distribution → draw → append</strong>. The loop ends when the model emits <strong>&lt;|endoftext|&gt;</strong>.</span></div>
+							<?php endif; ?>
 						</div>
 					</section>
 
