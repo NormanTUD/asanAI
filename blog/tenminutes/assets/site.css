@@ -8596,11 +8596,3 @@ html[data-theme="dark"] .traj-candidate.is-chosen { color: var(--tm-green); }
 @media (max-width: 760px) {
 	.layer-count-note { grid-template-columns: 1fr; }
 }
-
-.layer-formula-sub {
-	margin: 10px 0 4px;
-	font: 700 0.58rem/1.2 var(--tm-ui);
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	color: var(--tm-muted);
-}

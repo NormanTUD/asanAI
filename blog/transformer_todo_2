@@ -112,3 +112,7 @@
 [done] Vektorfelder metrikkonform: Bei angular werden Trajektorie- und Feature-Migrations-Vektorfelder auf Einheitskreis bzw. Einheitskugel abgetastet (24 Richtungen in 2D, 64 Fibonacci-Richtungen in 3D), der Layer-Ausgang wird genauso normiert wie die Token-Punkte, und die Pfeile/Cones zeigen die Differenz im dargestellten Raum. Bei Euklidisch bleibt das bisherige Rohgitter.
 
 [note] Regressionstests (UI2 + Fix) und der volle Blog-Gate folgen am Ende des Passes; bis dahin keine weiteren Browser-Testläufe.
+
+[done] Farberklärung weiter gekürzt: keine Heraklit-Erklärung, kein Griechisch, kein langer Prosatext. Stattdessen der kurze Satz, dass die Farbe nur Lesehilfe ist und nicht in die Rechnung eingeht (Positionsinformation kommt über Positional Embeddings), darunter das farbige Beispiel und die zitierte Quelle.
+
+[verify] `python3 blog/tools/check_all.py`: alle Stages PASS (php-validator, js-validator, fact/statement ledger, semantic/RAG build + freshness, Atlas). `php_render_validator.py blog/ --pages /transformer.php --check-width --check-math`: PASS, 0 JS errors, 0 unrendered LaTeX, 0 width overflow. `transformer_ui2_regression_test.py`: 57/57. `transformer_fix_regression_test.py`: 36/36.

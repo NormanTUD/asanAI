@@ -722,8 +722,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<div class="layer-formula-card">
 									<div class="layer-card-title">FFN</div>
 									<div class="prose-math" data-tex="\underbrace{\text{FFN}(x) = \text{dense}_2(\text{activation}(\text{dense}_1(x)))}_{\text{the simplest view: two dense units with an activation between them}}" data-tex-de="\underbrace{\text{FFN}(x) = \text{dense}_2(\text{Aktivierung}(\text{dense}_1(x)))}_{\text{die einfachste Sicht: zwei Dense-Einheiten mit einer Aktivierung dazwischen}}" data-tex-display="true"></div>
-									<div class="layer-formula-sub"><?php echo $layer_de ? 'ausgeschrieben' : 'written out'; ?></div>
-									<div class="prose-math" data-tex="\underbrace{\text{FFN}(x) = \underbrace{W_2\,\text{activation}(W_1 x + b_1) + b_2}_{\text{expand, transform, project back}}}_{\text{the same MLP for every token}}" data-tex-de="\underbrace{\text{FFN}(x) = \underbrace{W_2\,\text{Aktivierung}(W_1 x + b_1) + b_2}_{\text{auffalten, transformieren, zurückfalten}}}_{\text{dasselbe MLP für jedes Token}}" data-tex-display="true"></div>
 								</div>
 								<div class="layer-formula-card layer-formula-card--layer">
 									<div class="layer-card-title"><?php echo $layer_de ? 'Transformer-Schicht' : 'Transformer layer'; ?></div>
@@ -732,25 +730,20 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							</div>
 							<p class="layer-formula-note"><?php echo $layer_de ? 'W, b, W1 und W2 sind Parameter. Das Training passt sie an, damit der Fehler auf den Trainingsdaten kleiner wird. activation() ist eine Nichtlinearität wie ReLU oder GELU; sie ist der Knick, der einen tiefen Stapel erst möglich macht. In der Attention-Formel ist α gelernt und v der Vektor, den ein Token anbietet; die Summe ist ein gewichteter Durchschnitt der sichtbaren Tokens.' : 'W, b, W1, and W2 are parameters. Training adjusts them to reduce the error on the training data. activation() is a nonlinearity such as ReLU or GELU; it is the bend that makes a deep stack possible. In the attention formula, α is learned and v is the vector a token offers; the sum is a weighted average of the visible tokens.'; ?></p>
 							<?php if ($layer_de): ?>
-							<p class="layer-formula-note">Die echte Transformer-Schicht ergänzt Residualverbindungen und Normalisierung; sie halten das alte Signal und stabilisieren die Skala. Der <a href="#step-residual-section">Residual-Abschnitt</a> zeigt das.</p>
-							<?php else: ?>
-							<p class="layer-formula-note">The real transformer layer also adds residual connections and normalization; they keep the old signal and stabilize the scale. The <a href="#step-residual-section">residual section</a> shows that.</p>
-							<?php endif; ?>
-							<?php if ($layer_de): ?>
 							<p>Das ist ein grobes Bild. Darunter steckt bei jedem Schritt eine Matrix von Zahlen; die Formeln zeigen die Form der Berechnung, nicht die Implementierung.</p>
 							<?php else: ?>
 							<p>This is a coarse picture. Underneath, every step is a matrix of numbers; the formulas show the shape of the computation, not the implementation.</p>
 							<?php endif; ?>
-							<h4 class="layer-subhead"><?php echo $layer_de ? 'Ein Sprachmodell nutzt denselben Stapel' : 'A language model uses the same stack'; ?></h4>
+							<h4 class="layer-subhead"><?php echo $layer_de ? 'Ein Sprachmodell kombiniert diese und weitere Bausteine' : 'A language model combines these and other building blocks'; ?></h4>
 							<?php if ($layer_de): ?>
-							<p>Ein Sprachmodell nutzt diesen Stapel mit einem Transformer-Block als Schicht. Zuerst fragt Attention, wie stark jedes Wort mit jedem anderen Wort im Kontext verbunden ist; diese Verbindungen lernt das Modell aus den Daten. Ein FFN entwirrt das Ergebnis dann: Es faltet die Vektoren in einen höherdimensionalen Raum, trennt Merkmale und faltet sie wieder zurück.</p>
+							<p>Ein Sprachmodell kombiniert diese Bausteine zu einem Transformer-Block: Zuerst fragt Attention, wie stark jedes Wort mit jedem anderen Wort im Kontext verbunden ist; diese Verbindungen lernt das Modell aus den Daten. Ein FFN entwirrt das Ergebnis dann: Es faltet die Vektoren in einen höherdimensionalen Raum, trennt Merkmale und faltet sie wieder zurück. Eine echte Transformer-Schicht enthält außerdem LayerNorm, Residualverbindungen und andere Teile. Sie sind hier weggelassen, damit das Bild lesbar bleibt; die späteren Abschnitte, darunter der <a href="#step-residual-section">Residual-Abschnitt</a>, behandeln sie im Detail.</p>
 							<p>Am Anfang geht eine Matrix X hinein: eine Zeile pro Token, jede Zeile ein Vektor. Am Ende kommt eine Matrix mit derselben Form heraus, aber die Werte haben sich verändert. Das letzte Token hat die Bedeutung des ganzen Kontexts aufgenommen. Das Unembedding macht aus seinem Vektor Scores für jedes Vokabular-Token; diese Scores zeigen auf eine Region von Token-Richtungen mit kleinen Winkeln, und Softmax zieht eines daraus. Der aktuelle Aufbau von ChatGPT ist nicht veröffentlicht, aber die öffentlichen Zahlen vergleichbarer Flagship-Modelle zeigen die Größenordnung: GPT-3 175B hatte 96 Transformer-Schichten, Llama 3 405B hat 126. Der Stapel läuft also wirklich ungefähr hundertmal.</p>
 							<div class="layer-count-note">
 								<div><b>96</b><span><a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener">Transformer-Schichten in GPT-3 175B</a></span></div>
 								<div><b>126</b><span><a href="https://arxiv.org/abs/2407.21783" target="_blank" rel="noopener">Transformer-Schichten in Llama 3 405B</a></span></div>
 							</div>
 							<?php else: ?>
-							<p>A language model uses this stack with a transformer block as its layer. Attention first asks how strongly each word is connected to every other word in the context; the model learns those connections from data. An FFN then untangles the result: it folds the vectors into a higher-dimensional space, separates features, and folds them back.</p>
+							<p>A language model combines these building blocks into a transformer block: attention first asks how strongly each word is connected to every other word in the context, and the model learns those connections from data. An FFN then untangles the result: it folds the vectors into a higher-dimensional space, separates features, and folds them back. A real transformer layer also contains layer normalization, residual connections, and other pieces. They are left out here so the picture stays readable; the later sections, including the <a href="#step-residual-section">residual section</a>, cover them in detail.</p>
 							<p>At the start, a matrix X goes in: one row per token, each row a vector. At the end, a matrix of the same shape comes out, but the values have changed. The last token has absorbed the meaning of the whole context. The unembedding turns its vector into scores for every vocabulary token; those scores point to a region of token directions with small angles, and softmax draws one. ChatGPT's current architecture is not published, but public numbers for comparable flagship models show the scale: GPT-3 175B used 96 transformer layers, and Llama 3 405B uses 126. The stack really does run roughly a hundred times.</p>
 							<div class="layer-count-note">
 								<div><b>96</b><span><a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener"><?php echo $layer_de ? 'Transformer-Schichten in GPT-3 175B' : 'transformer layers in GPT-3 175B'; ?></a></span></div>
