@@ -197,14 +197,11 @@ blue = <span class="cd-fn">scattering</span>(<span class="cd-num">450e-9</span>,
 red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>, <span class="cd-num">1e5</span>, <span class="cd-num">293</span>)
 <span class="cd-fn">print</span>(f<span class="cd-str" data-en="&quot;Blue is {blue / red:.2f}x more strongly scattered than red&quot;" data-de="&quot;Blau wird {blue / red:.2f}× stärker gestreut als Rot&quot;">"Blue is {blue / red:.2f}x more strongly scattered than red"</span>)</code></pre>
 									</div>
-									<div class="code-demo-terminal" aria-live="polite">
+									<div class="code-demo-terminal" id="code-demo-terminal" aria-live="polite" hidden>
 										<div class="code-demo-bar"><span class="code-demo-dot is-green"></span><span class="code-demo-dot is-gold"></span><span class="code-demo-dot is-sky"></span><span class="code-demo-name">Terminal</span></div>
 										<div class="code-demo-term-body" id="code-demo-term">
-											<div class="code-demo-history" id="code-demo-history"></div>
-											<div class="code-demo-prompt-line">
-												<span class="code-demo-dollar">$</span>
-												<input class="code-demo-input" id="code-demo-input" type="text" autocomplete="off" spellcheck="false" aria-label="Terminal command">
-											</div>
+											<div class="code-demo-cmd"><span class="code-demo-dollar">$</span> <span id="code-demo-command" data-en="python3 sky.py" data-de="python3 himmel.py">python3 sky.py</span></div>
+											<div class="code-demo-output" id="code-demo-output" hidden data-en="Blue is 4.35× more strongly scattered than red." data-de="Blau wird 4,35× stärker gestreut als Rot.">Blue is 4.35× more strongly scattered than red.</div>
 										</div>
 									</div>
 								</div>
@@ -4125,67 +4122,123 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		demo.querySelectorAll("[data-en][data-de]").forEach(function (el) {
 			el.textContent = de ? el.getAttribute("data-de") : el.getAttribute("data-en");
 		});
-		var term = document.getElementById("code-demo-term");
-		var historyEl = document.getElementById("code-demo-history");
-		var input = document.getElementById("code-demo-input");
-		if (!term || !historyEl || !input) return;
-		var scriptName = de ? "himmel.py" : "sky.py";
-		var output = de ? "Blau wird 4,35× stärker gestreut als Rot." : "Blue is 4.35× more strongly scattered than red.";
-		var help = de ? "Tippe python3 " + scriptName + " und drücke Enter." : "Type python3 " + scriptName + " and press Enter.";
-		var notFound = de ? "Befehl nicht gefunden: " : "command not found: ";
-		var commands = [];
-		var index = 0;
-		input.value = "python3 " + scriptName;
-		input.setAttribute("aria-label", de ? "Terminal-Befehl" : "Terminal command");
-		function append(className, text) {
-			var el = document.createElement("div");
-			el.className = className;
-			if (className === "code-demo-cmd") {
-				var prompt = document.createElement("span");
-				prompt.className = "code-demo-dollar";
-				prompt.textContent = "$";
-				el.appendChild(prompt);
-				el.appendChild(document.createTextNode(" " + text));
-			} else {
-				el.textContent = text;
-			}
-			historyEl.appendChild(el);
-			term.scrollTop = term.scrollHeight;
+		var codeBox = demo.querySelector(".code-demo-code");
+		var codeEl = codeBox ? codeBox.querySelector("code") : null;
+		var terminal = document.getElementById("code-demo-terminal");
+		var output = document.getElementById("code-demo-output");
+		if (!codeBox || !codeEl || !terminal) return;
+
+		var tokens = [];
+		function pushText(text, cls) {
+			var parts = text.match(/\s+|[^\s]+/g) || [];
+			parts.forEach(function (part) {
+				tokens.push({ text: part, cls: cls });
+			});
 		}
-		function run() {
-			var cmd = input.value.trim();
-			if (!cmd) return;
-			append("code-demo-cmd", cmd);
-			commands.push(cmd);
-			index = commands.length;
-			if (/^(python3?|py)\s+(sky|himmel)\.py$/i.test(cmd)) append("code-demo-output", output);
-			else if (/^help$/i.test(cmd)) append("code-demo-output", help);
-			else append("code-demo-output", notFound + cmd);
-			input.value = "";
-			term.scrollTop = term.scrollHeight;
-		}
-		input.addEventListener("keydown", function (e) {
-			if (e.key === "Enter") {
-				e.preventDefault();
-				run();
-			} else if (e.key === "ArrowUp") {
-				e.preventDefault();
-				if (index > 0) {
-					index -= 1;
-					input.value = commands[index];
-				}
-			} else if (e.key === "ArrowDown") {
-				e.preventDefault();
-				if (index < commands.length - 1) {
-					index += 1;
-					input.value = commands[index];
-				} else {
-					index = commands.length;
-					input.value = "";
-				}
+		function walk(node, cls) {
+			if (node.nodeType === 3) {
+				pushText(node.nodeValue, cls);
+				return;
 			}
+			if (node.nodeType !== 1) return;
+			var nextCls = node.className || cls;
+			for (var child = node.firstChild; child; child = child.nextSibling) {
+				walk(child, nextCls);
+			}
+		}
+		for (var child = codeEl.firstChild; child; child = child.nextSibling) {
+			walk(child, "");
+		}
+
+		codeEl.innerHTML = "";
+		var tokenEls = [];
+		tokens.forEach(function (tok) {
+			var span = document.createElement("span");
+			span.className = "cd-token" + (tok.cls ? " " + tok.cls : "");
+			span.textContent = tok.text;
+			codeEl.appendChild(span);
+			tokenEls.push(span);
 		});
-		term.addEventListener("click", function () { input.focus(); });
+		var cursor = document.createElement("span");
+		cursor.className = "cd-cursor";
+		cursor.setAttribute("aria-hidden", "true");
+		codeEl.insertBefore(cursor, codeEl.firstChild);
+		codeBox.classList.add("is-typing");
+
+		var timers = [];
+		var started = false;
+		function showTerminal() {
+			if (!terminal.hidden && terminal.classList.contains("is-revealed")) return;
+			terminal.hidden = false;
+			requestAnimationFrame(function () {
+				terminal.classList.add("is-revealed");
+			});
+			if (output) {
+				timers.push(setTimeout(function () {
+					output.hidden = false;
+					requestAnimationFrame(function () {
+						output.classList.add("is-visible");
+					});
+				}, 420));
+			}
+		}
+		function revealAll() {
+			timers.forEach(clearTimeout);
+			timers = [];
+			started = true;
+			tokenEls.forEach(function (el) {
+				el.classList.add("is-visible");
+			});
+			codeBox.classList.remove("is-typing");
+			if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
+			showTerminal();
+		}
+		function typeNext(index) {
+			if (index >= tokenEls.length) {
+				codeBox.classList.remove("is-typing");
+				if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
+				timers.push(setTimeout(showTerminal, 280));
+				return;
+			}
+			var el = tokenEls[index];
+			el.classList.add("is-visible");
+			if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
+			if (el.nextSibling) codeEl.insertBefore(cursor, el.nextSibling);
+			else codeEl.appendChild(cursor);
+			var text = el.textContent;
+			var delay = /^\s+$/.test(text) ? 0 : (text.length > 8 ? 52 : 34);
+			timers.push(setTimeout(function () {
+				typeNext(index + 1);
+			}, delay));
+		}
+		function start() {
+			if (started) return;
+			if (TM.prefersReduced()) {
+				revealAll();
+				return;
+			}
+			started = true;
+			timers.push(setTimeout(function () {
+				typeNext(0);
+			}, 520));
+		}
+		if ("IntersectionObserver" in window) {
+			var io = new IntersectionObserver(function (entries) {
+				if (entries.some(function (e) { return e.isIntersecting; })) {
+					io.disconnect();
+					start();
+				}
+			}, { rootMargin: "0px 0px -12% 0px", threshold: 0.2 });
+			io.observe(demo);
+		} else {
+			start();
+		}
+		timers.push(setTimeout(function () {
+			if (!started) revealAll();
+		}, 9000));
+		timers.push(setTimeout(function () {
+			if (terminal.hidden) revealAll();
+		}, 15000));
 	})();
 	</script>
 

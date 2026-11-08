@@ -7873,6 +7873,72 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 .code-demo--console .code-demo-dollar { color: #63a44b; }
 .code-demo--console .code-demo-output { color: #eef7f4; border-top-color: rgba(238, 247, 244, 0.2); }
 
+/* The terminal is deliberately a green-on-black nerd console. */
+.code-demo--console .code-demo-terminal {
+	background: #04140a;
+	border-color: rgba(125, 255, 154, 0.38);
+	box-shadow: 0 0 0 1px rgba(125, 255, 154, 0.10),
+		0 22px 60px -34px rgba(125, 255, 154, 0.45);
+}
+.code-demo--console .code-demo-terminal .code-demo-bar {
+	background: #08200f;
+	border-bottom-color: rgba(125, 255, 154, 0.28);
+	color: #7dff9a;
+}
+.code-demo--console .code-demo-terminal .code-demo-name { color: #7dff9a; }
+.code-demo--console .code-demo-terminal .code-demo-dot {
+	background: #7dff9a;
+	opacity: 0.75;
+}
+.code-demo--console .code-demo-terminal .code-demo-term-body {
+	background: #04140a;
+	background-image: repeating-linear-gradient(
+		0deg,
+		rgba(125, 255, 154, 0.035) 0 1px,
+		transparent 1px 3px
+	);
+	color: #7dff9a;
+	text-shadow: 0 0 7px rgba(125, 255, 154, 0.25);
+}
+.code-demo--console .code-demo-terminal .code-demo-cmd,
+.code-demo--console .code-demo-terminal .code-demo-dollar,
+.code-demo--console .code-demo-terminal .code-demo-output {
+	color: #7dff9a;
+}
+.code-demo--console .code-demo-terminal .code-demo-output {
+	border-top-color: rgba(125, 255, 154, 0.28);
+	opacity: 0;
+	transform: translateY(4px);
+	transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.code-demo--console .code-demo-terminal .code-demo-output.is-visible {
+	opacity: 1;
+	transform: none;
+}
+.code-demo--console .code-demo-terminal.is-revealed {
+	animation: codeTerminalIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes codeTerminalIn {
+	from { opacity: 0; transform: translateY(8px); }
+	to { opacity: 1; transform: none; }
+}
+.code-demo-code .cd-token { opacity: 1; }
+.code-demo-code.is-typing .cd-token { opacity: 0; }
+.code-demo-code.is-typing .cd-token.is-visible { opacity: 1; }
+.cd-cursor {
+	display: inline-block;
+	width: 0.58em;
+	height: 1.05em;
+	margin-left: 1px;
+	vertical-align: -0.12em;
+	background: #7dff9a;
+	box-shadow: 0 0 8px rgba(125, 255, 154, 0.45);
+	animation: cdBlink 0.9s steps(1) infinite;
+}
+@keyframes cdBlink {
+	50% { opacity: 0; }
+}
+
 /* Keep glossary popups visually identical regardless of the checked option. */
 .glossary-tooltip {
 	font-weight: 400;
