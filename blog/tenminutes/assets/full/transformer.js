@@ -2943,7 +2943,7 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 
 function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
 	const c = window.tmPlotly.colors();
-	const dims = Array.from({ length: dimensions }, (_, i) => ({ label: `D${i}`, values: [] }));
+	const dims = Array.from({ length: dimensions }, (_, i) => ({ label: dimensions > 8 && i % 2 ? '' : `D${i}`, values: [] }));
 	const colors = [];
 	tokens.forEach((token, idx) => {
 		const vec = _tmTransformMetric(window.persistentEmbeddingSpace[token] || []);
@@ -2957,8 +2957,9 @@ function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
 			dimensions: dims
 		}], {
 			paper_bgcolor: c.paper, plot_bgcolor: c.plot,
-			title: { text: _tmMetricTitle('Embedding Space'), font: { size: 13, color: c.ink } },
-			margin: { l: 60, r: 30, t: 40, b: 20 }
+			title: { text: _tmMetricTitle('Embedding Space · parallel'), font: { size: 13, color: c.ink } },
+			margin: { l: 60, r: 30, t: 40, b: 20 },
+			labelfont: { size: 9, color: c.muted }, tickfont: { size: 8, color: c.muted }, labelside: 'bottom'
 		}, { responsive: true, displayModeBar: false });
 	} catch (e) {
 		/* Fallback: first two dimensions as a scatter */
@@ -2968,6 +2969,45 @@ function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
 			marker: { size: 5, color: colors, colorscale: 'Viridis' }
 		}], window.tmPlotly.layout2D(_tmMetricTitle('Embedding Space'), ['D0', 'D1']), { responsive: true, displayModeBar: false });
 	}
+}
+
+function _embedding_render_highdim_pca(container, tokens, dimensions, highlightPos, steps) {
+	const rawVecs = tokens.map(t => window.persistentEmbeddingSpace[t] || []);
+	const vecs = rawVecs.map(_tmTransformMetric);
+	const all = vecs.slice();
+	const hp = highlightPos ? _tmTransformMetric(highlightPos) : null;
+	if (hp) all.push(hp);
+	const coords = window.tmPCA3 ? window.tmPCA3(all) : all.map(v => v.slice(0, 3));
+	const normalize3 = p => { const n = Math.sqrt(p.reduce((s, x) => s + x * x, 0)) || 1; return p.map(x => x / n); };
+	const plotted = (window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular') ? coords.map(normalize3) : coords;
+	const traces = [];
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
+		Array.prototype.push.apply(traces, window.tmPlotly.sphereTraces());
+	}
+	const coord = v => (v || []).slice(0, 3).map(x => Number(x || 0).toFixed(3)).join(', ');
+	tokens.forEach((token, idx) => {
+		let tip = `<b>${displayToken(token)}</b><br>Raw x,y,z: [${coord(rawVecs[idx])}]<br>PCA x,y,z: [${coord(plotted[idx])}]`;
+		if (hp && window.tmMetric && window.tmMetric.distance) {
+			const ang = window.tmMetric.distance(rawVecs[idx], highlightPos, 'angular');
+			tip += `<br>angle to result: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
+		}
+		traces.push({
+			type: 'scatter3d', mode: 'markers+text',
+			x: [plotted[idx][0]], y: [plotted[idx][1]], z: [plotted[idx][2]],
+			text: [displayToken(token)], textposition: 'top center',
+			hovertext: [tip], hovertemplate: '%{hovertext}<extra></extra>',
+			marker: { size: 5, color: `hsl(${getHueFromToken(token)}, 75%, 50%)` }, name: displayToken(token), showlegend: false
+		});
+	});
+	if (hp) {
+		traces.push({
+			type: 'scatter3d', mode: 'markers', x: [plotted[plotted.length - 1][0]], y: [plotted[plotted.length - 1][1]], z: [plotted[plotted.length - 1][2]],
+			marker: { size: 8, symbol: 'diamond', color: '#ef4444' }, name: 'Result', showlegend: false
+		});
+	}
+	const layout = window.tmPlotly.layout3D(_tmMetricTitle('Embedding Space · PCA (d→3)'), ['PC 1', 'PC 2', 'PC 3']);
+	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
+	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
 }
 
 function _execute_embedding_render(dimensions, highlightPos = null, steps = []) {
@@ -2990,8 +3030,10 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 
 	if (dimensions <= 3) {
 		renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, steps);
-	} else {
+	} else if (window.tmHighDimMode === 'parallel') {
 		renderHighDimEmbeddingPlot(container, tokens, dimensions);
+	} else {
+		_embedding_render_highdim_pca(container, tokens, dimensions, highlightPos, steps);
 	}
 }
 
@@ -5685,8 +5727,15 @@ function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
 		_shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, base, combined);
 	} else if (d_model <= 2) {
 		_shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, base, combined, d_model);
-	} else {
+	} else if (window.tmHighDimMode === 'parallel') {
 		_shift_render_highdim_plotly(container, tokenStrings, base, combined, d_model);
+	} else {
+		const all = base.concat(combined);
+		const coords = (window.tmPCA3 ? window.tmPCA3(all) : all.map(v => v.slice(0, 3)));
+		const normalize3 = p => { const n = Math.sqrt(p.reduce((s, x) => s + x * x, 0)) || 1; return p.map(x => x / n); };
+		const plotted = (window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular') ? coords.map(normalize3) : coords;
+		const nTokens = tokenStrings.length;
+		_shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, plotted.slice(0, nTokens), plotted.slice(nTokens), 'PCA (d→3)');
 	}
 }
 
@@ -5694,7 +5743,7 @@ function _shift_metricTip(token, pos, rawBase, rawCombined) {
 	const l2 = window.tmMetric ? window.tmMetric.distance(rawBase, rawCombined, "euclidean") : 0;
 	const ang = window.tmMetric ? window.tmMetric.distance(rawBase, rawCombined, "angular") : 0;
 	const coord = v => (v || []).slice(0, 3).map(x => Number(x || 0).toFixed(3)).join(', ');
-	return `<b>${displayToken(token)}</b> (pos ${pos})<br>Raw x,y,z: [${coord(rawBase)}] → [${coord(rawCombined)}]<br>L2: ${l2.toFixed(3)} · angle: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
+	return `<b>${displayToken(token)}</b> (pos ${pos})<br>Raw x,y,z:<br>[${coord(rawBase)}]<br>→ [${coord(rawCombined)}]<br>L2: ${l2.toFixed(3)}<br>angle: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
 }
 
 function _shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, base, combined, d_model) {
@@ -5730,7 +5779,7 @@ function _shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, 
 	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
 }
 
-function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, base, combined) {
+function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, base, combined, modeLabel) {
 	const traces = [];
 	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
 		Array.prototype.push.apply(traces, window.tmPlotly.sphereTraces());
@@ -5759,7 +5808,7 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		});
 	});
 	if (cones.length) traces.push(window.tmPlotly.coneTrace(cones, '#3b82f6', 'shift'));
-	const layout = window.tmPlotly.layout3D(_tmMetricTitle('Semantic Vector → + Positional Shift'), ['Dim 0', 'Dim 1', 'Dim 2']);
+	const layout = window.tmPlotly.layout3D(_tmMetricTitle('Semantic Vector → + Positional Shift') + (modeLabel ? ' · ' + modeLabel : ''), ['Dim 0', 'Dim 1', 'Dim 2']);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
 	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
 }
@@ -5767,8 +5816,9 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 function _shift_render_highdim_plotly(container, tokenStrings, base, combined, d_model) {
 	const dims = [];
 	for (let i = 0; i < d_model; i++) {
-		dims.push({ label: `D${i} Base`, values: base.map(v => (v[i] || 0)) });
-		dims.push({ label: `D${i} +PE`, values: combined.map(v => (v[i] || 0)) });
+		const baseLabel = d_model > 10 && i % 2 ? '' : `D${i}`;
+		dims.push({ label: baseLabel, values: base.map(v => (v[i] || 0)) });
+		dims.push({ label: d_model > 6 ? '' : `D${i}+`, values: combined.map(v => (v[i] || 0)) });
 	}
 	const colors = tokenStrings.map((_, i) => i);
 	try {
@@ -5778,8 +5828,9 @@ function _shift_render_highdim_plotly(container, tokenStrings, base, combined, d
 			dimensions: dims
 		}], {
 			paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
-			title: { text: _tmMetricTitle('Semantic Vector → + Positional Shift'), font: { size: 13, color: themeColor('#1e293b') } },
-			margin: { l: 60, r: 30, t: 40, b: 20 }
+			title: { text: _tmMetricTitle('Semantic Vector → + Positional Shift · parallel'), font: { size: 13, color: themeColor('#1e293b') } },
+			margin: { l: 60, r: 30, t: 40, b: 20 },
+			labelfont: { size: 9, color: themeColor('#64748b') }, tickfont: { size: 8, color: themeColor('#64748b') }, labelside: 'bottom'
 		}, { responsive: true, displayModeBar: false });
 	} catch (e) {
 		Plotly.react(container, [{
@@ -7885,6 +7936,30 @@ if (!window.__tmEmbMetricListener) {
 		if (pe && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
 			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-pe-shift-plot'), () => {
 				_execute_shift_render(pe.tokenStrings, pe.d_model, pe.injectedEmbeddings);
+			});
+		}
+	});
+}
+
+/* Re-render high-dimensional views when PCA/parallel changes. */
+if (!window.__tmHighDimListener) {
+	window.__tmHighDimListener = true;
+	window.addEventListener('tm:highdimmode', () => {
+		const emb = embeddingRenderRegistry.get('transformer-plotly-space');
+		if (emb && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-plotly-space'), () => {
+				_execute_embedding_render(emb.d_model, emb.highlightPos, emb.steps);
+			});
+		}
+		const pe = positionalShiftRegistry.get('transformer-pe-shift-plot');
+		if (pe && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-pe-shift-plot'), () => {
+				_execute_shift_render(pe.tokenStrings, pe.d_model, pe.injectedEmbeddings);
+			});
+		}
+		if (window.tlab_trajectory_collector && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-trajectory-full-path'), () => {
+				tlab_render_trajectory_plot(getTransformerConfig().d_model);
 			});
 		}
 	});

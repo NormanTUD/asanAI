@@ -451,6 +451,12 @@ def main() -> None:
                   bool(explain) and "1607.06450" in " ".join(explain["links"])
                   and "D19-1006" in " ".join(explain["links"]) and "1908.10084" in " ".join(explain["links"]),
                   str(explain["links"]))
+            formula = page.evaluate("""() => {
+                const f = document.querySelector('.tm-feature-metric-explain .tm-metric-formula math');
+                const t = document.querySelector('.trajectory-metric-explain .tm-metric-formula math');
+                return {feature: !!f, trajectory: !!t};
+            }""")
+            check("metric formula is rendered below the plots", bool(formula) and formula["feature"] and formula["trajectory"], str(formula))
             page.evaluate("""() => { const s=document.querySelector('#sticky-metric-select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
             page.wait_for_timeout(500)
             explain_e = page.evaluate("() => { const f=document.querySelector('.tm-feature-metric-explain'); return f ? f.innerText : ''; }")
@@ -489,6 +495,67 @@ def main() -> None:
             page.wait_for_timeout(1600)
             page.evaluate("""() => { const s=document.getElementById('sticky-metric-select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
             page.wait_for_timeout(500)
+
+            page.evaluate("""() => {
+                const d=document.getElementById('transformer-dimension-model'); d.value='10'; d.dispatchEvent(new Event('input',{bubbles:true}));
+                const h=document.getElementById('transformer-heads'); h.value='2'; h.dispatchEvent(new Event('input',{bubbles:true}));
+                if (window.run_transformer_demo) window.run_transformer_demo();
+            }""")
+            page.wait_for_timeout(2200)
+            hd = page.evaluate("""() => {
+                const l=document.getElementById('sticky-highdim-label');
+                const s=document.getElementById('sticky-highdim-select');
+                return {display:l?getComputedStyle(l).display:null, value:s?s.value:null};
+            }""")
+            check("high-dim view switch appears and defaults to PCA",
+                  bool(hd) and hd["display"] != "none" and hd["value"] == "pca", str(hd))
+            page.evaluate("""() => {
+                if (typeof _execute_embedding_render==='function') _execute_embedding_render(10);
+                try { const d=positionalShiftRegistry.get('transformer-pe-shift-plot'); if(d) _execute_shift_render(d.tokenStrings,d.d_model,d.injectedEmbeddings); } catch(e) {}
+                if (typeof tlab_render_trajectory_plot==='function') tlab_render_trajectory_plot(10);
+            }""")
+            page.wait_for_timeout(1200)
+            hd_pca = page.evaluate("""() => {
+                const pick = (id) => { const el=document.getElementById(id); const d=el&&el.data||[]; return {types:[...new Set(d.map(t=>t.type))], title:el&&el.layout&&el.layout.title?el.layout.title.text:''}; };
+                return {embedding:pick('transformer-plotly-space'), pe:pick('transformer-pe-shift-plot'), traj:pick('transformer-trajectory-full-path')};
+            }""")
+            check("10-dim default uses PCA to 3D",
+                  bool(hd_pca) and "scatter3d" in hd_pca["embedding"]["types"]
+                  and "scatter3d" in hd_pca["pe"]["types"]
+                  and "scatter3d" in hd_pca["traj"]["types"]
+                  and "PCA" in hd_pca["embedding"]["title"] and "PCA" in hd_pca["pe"]["title"] and "PCA" in hd_pca["traj"]["title"],
+                  str(hd_pca)[:350])
+            page.evaluate("""() => { const s=document.getElementById('sticky-highdim-select'); s.value='parallel'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.wait_for_timeout(500)
+            page.evaluate("""() => {
+                if (typeof _execute_embedding_render==='function') _execute_embedding_render(10);
+                try { const d=positionalShiftRegistry.get('transformer-pe-shift-plot'); if(d) _execute_shift_render(d.tokenStrings,d.d_model,d.injectedEmbeddings); } catch(e) {}
+            }""")
+            page.wait_for_timeout(900)
+            hd_parallel = page.evaluate("""() => {
+                const pick = (id) => { const el=document.getElementById(id); const d=el&&el.data||[]; return {types:[...new Set(d.map(t=>t.type))], labels:d[0]&&d[0].dimensions?d[0].dimensions.map(x=>x.label).slice(0,8):null}; };
+                return {embedding:pick('transformer-plotly-space'), pe:pick('transformer-pe-shift-plot')};
+            }""")
+            check("high-dim parallel option renders a parcoords plot with short labels",
+                  bool(hd_parallel) and "parcoords" in hd_parallel["embedding"]["types"]
+                  and "parcoords" in hd_parallel["pe"]["types"]
+                  and hd_parallel["embedding"]["labels"] is not None
+                  and hd_parallel["pe"]["labels"] is not None
+                  and max(len(x or "") for x in hd_parallel["embedding"]["labels"]) <= 4,
+                  str(hd_parallel)[:300])
+            hd_bar = page.evaluate("""() => {
+                const b=document.getElementById('training-progress-bar-container');
+                return b?{scroll:b.scrollWidth, client:b.clientWidth}:null;
+            }""")
+            check("sticky bar still fits with the high-dim control", bool(hd_bar) and hd_bar["scroll"] <= hd_bar["client"] + 1, str(hd_bar))
+            page.evaluate("""() => {
+                const d=document.getElementById('transformer-dimension-model'); d.value='3'; d.dispatchEvent(new Event('input',{bubbles:true}));
+                const h=document.getElementById('transformer-heads'); h.value='3'; h.dispatchEvent(new Event('input',{bubbles:true}));
+                window.tmHighDimMode='pca';
+                const s=document.getElementById('sticky-highdim-select'); if(s) s.value='pca';
+                if (window.run_transformer_demo) window.run_transformer_demo();
+            }""")
+            page.wait_for_timeout(1600)
 
             page.evaluate("() => document.getElementById('transformer_site').scrollIntoView()")
             page.wait_for_timeout(600)
@@ -547,10 +614,11 @@ def main() -> None:
             }""")
             tm_global = page.evaluate("""() => {
                 const s = document.querySelector('#tm-global-metric select');
-                return s ? {options: s.options.length, value: s.value} : null;
+                const hd = document.querySelector('#tm-global-metric .tm-global-highdim select');
+                return s ? {options: s.options.length, value: s.value, highdim: !!hd} : null;
             }""")
             check("tenminutes: global metric switch exists",
-                  bool(tm_global) and tm_global["options"] == 2, str(tm_global))
+                  bool(tm_global) and tm_global["options"] == 2 and tm_global["highdim"], str(tm_global))
             check("tenminutes: one-column config, no model-size line, dynamic heights",
                   bool(tm_layout) and len(tm_layout["cols"].split()) == 1 and not tm_layout["slot"]
                   and tm_layout["alignItems"] == "start", str(tm_layout))

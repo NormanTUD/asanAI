@@ -2146,7 +2146,9 @@ function renderTrajectoryPlot(d_model) {
 		trajDiv.setAttribute('data-d-model', d_model);
 
 		wrapper.appendChild(trajDiv);
-		wrapper.appendChild(createTrajectoryMetricExplanation());
+		var metricExplain = createTrajectoryMetricExplanation();
+		wrapper.appendChild(metricExplain);
+		if (typeof _renderTemmlOnElements === 'function') _renderTemmlOnElements([metricExplain]);
 		if (d_model <= 3) wrapper.appendChild(createTrajectoryVFNote());
 		document.getElementById('transformer-migration-plots-container').appendChild(wrapper);
 	} else {
@@ -7717,6 +7719,7 @@ function createTrajectoryMetricExplanation() {
 	box.innerHTML = (window.tmMetric && window.tmMetric.explainHtml)
 		? window.tmMetric.explainHtml()
 		: '';
+	if (typeof _renderTemmlOnElements === 'function') _renderTemmlOnElements([box]);
 	return box;
 }
 
@@ -7743,7 +7746,27 @@ function installTrajectoryMetricListener() {
 		}
 		document.querySelectorAll('.trajectory-metric-explain').forEach(el => {
 			el.innerHTML = (window.tmMetric && window.tmMetric.explainHtml) ? window.tmMetric.explainHtml() : '';
+			if (typeof _renderTemmlOnElements === 'function') _renderTemmlOnElements([el]);
 		});
+	});
+	window.addEventListener('tm:highdimmode', () => {
+		const embData = embeddingRenderRegistry.get('transformer-plotly-space');
+		if (embData && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-plotly-space'), () => {
+				_execute_embedding_render(embData.d_model, embData.highlightPos, embData.steps);
+			});
+		}
+		const peData = positionalShiftRegistry.get('transformer-pe-shift-plot');
+		if (peData && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-pe-shift-plot'), () => {
+				_execute_shift_render(peData.tokenStrings, peData.d_model, peData.injectedEmbeddings);
+			});
+		}
+		if (window.tlab_trajectory_collector && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-trajectory-full-path'), () => {
+				tlab_render_trajectory_plot(getTransformerConfig().d_model);
+			});
+		}
 	});
 }
 installTrajectoryMetricListener();

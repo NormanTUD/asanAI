@@ -1972,13 +1972,21 @@
 		var wrap = document.createElement("div");
 		wrap.id = "tm-global-metric";
 		wrap.className = "tm-global-metric";
-		wrap.innerHTML = "<label>" + (de ? "Distanzmetrik (alle Plots)" : "Distance metric (all plots)") + " <select>" + options + "</select></label><label class='tm-global-sphere'><input type='checkbox' " + (window.tmMetricSphere !== false ? "checked" : "") + "> " + (de ? "Kugel / Kreis zeigen" : "Show sphere / circle") + "</label><span class='tm-global-metric-note'>" + (de ? "Gilt global für Feature-Migration, Token-Trajectory, Embedding und Position." : "Applies globally to feature migration, token trajectory, embedding, and position.") + "</span>";
+		wrap.innerHTML = "<label>" + (de ? "Distanzmetrik (alle Plots)" : "Distance metric (all plots)") + " <select>" + options + "</select></label><label class='tm-global-sphere'><input type='checkbox' " + (window.tmMetricSphere !== false ? "checked" : "") + "> " + (de ? "Kugel / Kreis zeigen" : "Show sphere / circle") + "</label><label class='tm-global-highdim' style='display:none; margin-left:10px;'>" + (de ? "Hochdim" : "High-dim") + " <select><option value='pca'>PCA</option><option value='parallel'>Parallel</option></select></label><span class='tm-global-metric-note'>" + (de ? "Gilt global für Feature-Migration, Token-Trajectory, Embedding und Position." : "Applies globally to feature migration, token trajectory, embedding, and position.") + "</span>";
 		var select = wrap.querySelector("select");
 		var sphere = wrap.querySelector("input[type=checkbox]");
+		var highdimLabel = wrap.querySelector(".tm-global-highdim");
+		var highdimSelect = highdimLabel ? highdimLabel.querySelector("select") : null;
 		var syncSphere = function () {
 			var angular = select.value === "angular";
 			sphere.parentElement.style.display = angular ? "inline-flex" : "none";
 			sphere.checked = window.tmMetricSphere !== false;
+			if (highdimLabel && highdimSelect) {
+				var dimSlider = document.getElementById("transformer-dimension-model");
+				var dim = dimSlider ? parseInt(dimSlider.value, 10) : 3;
+				highdimLabel.style.display = dim > 3 ? "inline-flex" : "none";
+				highdimSelect.value = window.tmHighDimMode || "pca";
+			}
 		};
 		select.value = featureMetric();
 		syncSphere();
@@ -1991,6 +1999,14 @@
 			window.tmMetricSphere = sphere.checked;
 			window.dispatchEvent(new CustomEvent("tm:metricchange", { detail: { metric: select.value } }));
 		});
+		if (highdimSelect) {
+			highdimSelect.addEventListener("change", function () {
+				window.tmHighDimMode = highdimSelect.value;
+				window.dispatchEvent(new CustomEvent("tm:highdimmode", { detail: { mode: highdimSelect.value } }));
+			});
+		}
+		var dimSlider = document.getElementById("transformer-dimension-model");
+		if (dimSlider) dimSlider.addEventListener("input", syncSphere);
 		cfg.insertBefore(wrap, cfg.firstChild);
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", ensureGlobalMetricControl);
