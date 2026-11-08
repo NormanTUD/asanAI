@@ -37,7 +37,7 @@
 			return;
 		}
 		if (!window.temml || typeof temml.renderToString !== "function") return;
-		root.querySelectorAll("[data-tex]").forEach(function (el) {
+		root.querySelectorAll("[data-tex]:not(math)").forEach(function (el) {
 			if (el.getAttribute("data-tex-rendered") === "1") return;
 			var tex = el.getAttribute("data-tex");
 			var display = el.getAttribute("data-tex-display") !== "false";
@@ -3053,7 +3053,7 @@
 		if (!root) return;
 		if (window.TM && typeof TM.typesetMath === "function") { TM.typesetMath(root); return; }
 		if (!window.temml || typeof temml.renderToString !== "function") return;
-		root.querySelectorAll("[data-tex]").forEach(function (el) {
+		root.querySelectorAll("[data-tex]:not(math)").forEach(function (el) {
 			if (el.getAttribute("data-tex-rendered") === "1") return;
 			var tex = el.getAttribute("data-tex");
 			var display = el.getAttribute("data-tex-display") !== "false";

@@ -125,21 +125,43 @@ def main() -> None:
                 const btn = document.getElementById('param-breakdown-btn');
                 const field = cfg.querySelector('.transformer-config-field');
                 const train = document.getElementById('transformer-train-card');
+                const kv = Array.from(cfg.querySelectorAll('.transformer-config-field')).find(f => /KV cache/i.test(f.textContent));
+                const ctx = Array.from(cfg.querySelectorAll('.transformer-config-field')).find(f => /Context Size/i.test(f.textContent));
                 return {
                     cols: getComputedStyle(cfg).gridTemplateColumns,
                     slotUnder: !!slot,
                     btn: btn ? btn.textContent.trim() : '',
                     fieldRadius: field ? getComputedStyle(field).borderRadius : null,
-                    trainRadius: train ? getComputedStyle(train).borderRadius : null
+                    trainRadius: train ? getComputedStyle(train).borderRadius : null,
+                    kvHeight: kv ? kv.getBoundingClientRect().height : null,
+                    ctxHeight: ctx ? ctx.getBoundingClientRect().height : null
                 };
             }""")
             check("hyperparameter grid has one column", bool(config) and len(config["cols"].split()) == 1, str(config))
-            check("model size sits below the hyperparameters", bool(config) and config["slotUnder"], str(config))
+            check("model size is not shown as a separate line", bool(config) and not config["slotUnder"], str(config))
+            check("hyperparameter boxes size to their content",
+                  bool(config) and config["kvHeight"] is not None and config["ctxHeight"] is not None
+                  and config["kvHeight"] < config["ctxHeight"], str(config))
             check("hyperparameter/training boxes use the flat step style",
                   bool(config) and config["fieldRadius"] == "0px" and config["trainRadius"] == "0px", str(config))
             page.wait_for_function("() => { const b=document.getElementById('param-breakdown-btn'); return b && /parameters/i.test(b.textContent); }", timeout=30000)
             check("parameter-breakdown button shows the model size",
                   "parameters" in page.evaluate("() => document.getElementById('param-breakdown-btn').textContent"))
+
+            inline_math = page.evaluate("""() => {
+                const label = document.querySelector('.transformer-slider-label');
+                const note = document.querySelector('.transformer-slider-note');
+                const m = label ? label.querySelector('math') : null;
+                const n = note ? note.querySelector('math') : null;
+                return {
+                    labelCount: label ? label.querySelectorAll('math').length : 0,
+                    labelNested: m ? m.querySelectorAll('math').length : 0,
+                    noteNested: n ? n.querySelectorAll('math').length : 0
+                };
+            }""")
+            check("inline math in labels/notes is not re-rendered as a block",
+                  bool(inline_math) and inline_math["labelCount"] == 1
+                  and inline_math["labelNested"] == 0 and inline_math["noteNested"] == 0, str(inline_math))
 
             ffn_inner = page.evaluate("""() => {
                 const card = document.querySelector('.tm-layer-card');

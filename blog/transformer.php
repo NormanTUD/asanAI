@@ -130,8 +130,6 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	    </select>
 	</div>
 
-	<div class="tm-model-size-slot" style="grid-column: 1 / -1;"><span class="tm-model-size-label">Model size</span><div id="nr_params" style="display:none"></div></div>
-
 	<div id="param-breakdown-toggle" style="display: none; margin-top: 8px;">
 	    <button id="param-breakdown-btn" onclick="toggleParamBreakdown()"
 		style="background: none; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 16px;
@@ -387,7 +385,7 @@ with the full formulas one level deeper.
 (function () {
 	function renderStepMath() {
 		if (!window.temml) return;
-		document.querySelectorAll('#transformer-step-visuals [data-tex]').forEach(function (el) {
+		document.querySelectorAll('#transformer-step-visuals [data-tex]:not(math)').forEach(function (el) {
 			if (el.getAttribute('data-tex-rendered') === '1') return;
 			var tex = el.getAttribute('data-tex');
 			var display = el.getAttribute('data-tex-display') !== 'false';

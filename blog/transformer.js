@@ -742,15 +742,12 @@ function show_nr_of_params() {
 		return;
 	}
 
+	window._currentNrParams = nr_params;
+	const breakdownBtn = document.getElementById('param-breakdown-btn');
+	if (breakdownBtn) breakdownBtn.innerHTML = paramBreakdownButtonHtml(!!window._paramBreakdownOpen);
 	if (nrDiv) {
-		const inSlot = !!nrDiv.closest('.tm-model-size-slot');
-		window._currentNrParams = nr_params;
-		nrDiv.innerHTML = inSlot
-			? `<b>${nr_params.toLocaleString()}</b> parameters`
-			: `The current network has <b>${nr_params.toLocaleString()}</b> parameters.`;
+		nrDiv.innerHTML = `The current network has <b>${nr_params.toLocaleString()}</b> parameters.`;
 		nrDiv.style.display = 'block';
-		const breakdownBtn = document.getElementById('param-breakdown-btn');
-		if (breakdownBtn) breakdownBtn.innerHTML = paramBreakdownButtonHtml(!!window._paramBreakdownOpen);
 	}
 
 	if (toggleDiv) toggleDiv.style.display = 'block';

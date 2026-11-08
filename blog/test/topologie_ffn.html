@@ -639,15 +639,13 @@
       vec3 V = normalize(cameraPosition - vW);
       float fres = pow(1.0 - clamp(abs(dot(N, V)), 0.0, 1.0), 2.15);
       float lam = 0.5 + 0.5 * dot(N, normalize(vec3(0.55, 1.0, 0.42)));
-      float band = 0.5 + 0.5 * sin(vW.x*4.7 + vW.y*3.1 + vW.z*4.3 - uTime*0.55);
+      float band = 0.5 + 0.5 * sin(vW.x*3.8 + vW.y*2.6 + vW.z*3.4);
       vec3 irid = 0.5 + 0.5 * cos(6.2831 * (vec3(0.0,0.33,0.67)
-                 + dot(N, V)*1.4 + vW.x*0.22 + vW.z*0.18 + uTime*0.03));
+                 + dot(N, V)*1.3 + vW.x*0.18 + vW.z*0.14));
       vec3 col = mix(uColA, uColB, band);
       col *= 0.30 + 0.70 * lam;
       col += fres * mix(uRimA, uRimB, band) * 0.95;
       col += irid * fres * 0.30;
-      float face = 0.5 + 0.5 * sin(dot(vBary, vec3(13.0, 17.0, 19.0)) + uTime*0.3 + vSeed*7.0);
-      col *= 0.88 + 0.12 * face;
       float alpha = uOpacity * vGrow * (0.10 + 0.62 * fres) * (0.60 + 0.40 * lam);
       gl_FragColor = vec4(col, alpha);
     }
@@ -669,7 +667,7 @@
       vec4 world = modelMatrix * vec4(w, 1.0);
       vec4 mv = viewMatrix * world;
       gl_Position = projectionMatrix * mv;
-      gl_Position.z -= 0.00055 * gl_Position.w;
+      gl_Position.z -= 0.0018 * gl_Position.w;
       vBary = aBary;
       vW = world.xyz;
       vSeed = aSeed;
@@ -678,7 +676,6 @@
   `;
 
   const EDGE_FRAG = `
-    uniform float uTime;
     uniform float uOpacity;
     uniform vec3 uColA;
     uniform vec3 uColB;
@@ -691,10 +688,8 @@
       float w = max(fwidth(e), 0.00055);
       float line = 1.0 - smoothstep(0.0, w * 2.15, e);
       float soft = 1.0 - smoothstep(0.0, w * 7.5, e);
-      float face = (1.0 - smoothstep(0.0, 0.55, e)) * 0.024;
-      float pulse = 0.76 + 0.24 * sin(vW.y * 5.0 + vW.x * 2.0 + uTime * 0.55 + vSeed * 6.2831);
-      vec3 col = mix(uColA, uColB, 0.5 + 0.5 * sin(vW.x*1.6 + vW.z*2.2 + vSeed*6.2831 + uTime*0.20));
-      col *= pulse;
+      float face = (1.0 - smoothstep(0.0, 0.55, e)) * 0.030;
+      vec3 col = mix(uColA, uColB, 0.5 + 0.5 * sin(vW.x*1.1 + vW.y*0.8 + vW.z*1.3));
       vec3 outc = col * (line * 0.70 + soft * 0.17 + face * 0.55);
       float alpha = (line * 0.55 + soft * 0.065 + face * 0.45) * vGrow * uOpacity;
       gl_FragColor = vec4(outc, alpha);
@@ -709,11 +704,13 @@
     attribute float aTorus;
     attribute float aHue;
     attribute float aSeed;
+    attribute vec3 aStart;
     uniform float uPixelRatio;
     uniform float uSizeScale;
     uniform float uFlowDir;
     uniform float uOpacity;
     uniform float uChaos;
+    uniform float uOrganize;
     varying vec3 vColor;
     varying float vAlpha;
     void main() {
@@ -728,11 +725,16 @@
         sin(uTime * 1.10 + aSeed * 5.0 + aPhase * 5.0)
       );
       p += uChaos * normalize(p + 0.001) * 0.55 * sin(uTime * 0.90 + aSeed * 11.0);
+      float k = smoothstep(0.0, 1.0, uOrganize);
+      float na = (1.0 - k) * (1.2 + aSeed * 4.0) * (aSeed > 0.5 ? 1.0 : -1.0);
+      vec3 sp = aStart;
+      sp.xz = mat2(cos(na), -sin(na), sin(na), cos(na)) * sp.xz;
+      p = mix(sp, p, k);
       vec3 w = mnWarp(p);
       vec4 world = modelMatrix * vec4(w, 1.0);
       vec4 mv = viewMatrix * world;
       gl_Position = projectionMatrix * mv;
-      gl_Position.z -= 0.00075 * gl_Position.w;
+      gl_Position.z -= 0.0011 * gl_Position.w;
       float size = aSize * uSizeScale * uPixelRatio / max(0.35, -mv.z);
       gl_PointSize = clamp(size, 0.65, 34.0);
       vec3 c1 = vec3(0.30, 0.92, 1.00);
@@ -789,7 +791,7 @@
       vec4 world = modelMatrix * vec4(w, 1.0);
       vec4 mv = viewMatrix * world;
       gl_Position = projectionMatrix * mv;
-      gl_Position.z -= 0.00065 * gl_Position.w;
+      gl_Position.z -= 0.0015 * gl_Position.w;
       vec3 c1 = vec3(0.22, 0.86, 1.00);
       vec3 c2 = vec3(1.00, 0.58, 0.22);
       vec3 c3 = vec3(0.83, 0.30, 1.00);
@@ -820,7 +822,7 @@
       vec4 world = modelMatrix * vec4(w, 1.0);
       vec4 mv = viewMatrix * world;
       gl_Position = projectionMatrix * mv;
-      gl_Position.z -= 0.0004 * gl_Position.w;
+      gl_Position.z -= 0.0009 * gl_Position.w;
       float tw = 0.55 + 0.45 * sin(uTime * (0.7 + aSeed * 1.7) + aSeed * 6.2831);
       gl_PointSize = clamp(aSize * uSizeScale * uPixelRatio / max(0.35, -mv.z) * tw, 0.5, 18.0);
       vColor = mix(vec3(0.55, 0.88, 1.0), vec3(1.0, 0.72, 0.36), aHue);
@@ -975,6 +977,47 @@
     }
   `;
 
+  const SPACE_TRAIL_VERT = `
+    attribute float aAge;
+    attribute float aPhase;
+    attribute float aSpeed;
+    attribute float aMode;
+    attribute float aRadius;
+    attribute float aY;
+    attribute float aSeed;
+    attribute float aHue;
+    uniform float uTime;
+    uniform float uOpacity;
+    varying vec3 vColor;
+    varying float vAlpha;
+    vec3 mnSpacePos(float tt, float phase, float speed, float mode, float radius, float y, float seed) {
+      float t = tt * speed;
+      if (mode < 0.34) {
+        float cyc = fract(phase + t * 0.045);
+        float r = radius + (cyc - 0.35) * 17.0;
+        float ang = phase * 6.2831 + r * 0.095 + seed * 2.0;
+        return vec3(cos(ang) * r, y + 1.6 * sin(ang * 0.9 + t * 0.7 + seed * 6.0), sin(ang) * r);
+      } else if (mode < 0.67) {
+        float ang = phase * 6.2831 + t * 0.55;
+        float r = radius + 1.4 * sin(t * 0.8 + seed * 6.2831);
+        return vec3(cos(ang) * r, y + 2.2 * sin(ang * 0.8 + t * 0.45 + seed * 4.0), sin(ang) * r);
+      }
+      float u = phase * 6.2831 + t * 0.25;
+      return vec3(
+        cos(u) * radius + 2.2 * sin(t * 0.33 + seed * 5.0),
+        y + 2.9 * sin(u * 1.3 + t * 0.5 + seed * 6.0),
+        sin(u) * radius + 2.2 * cos(t * 0.27 + seed * 4.0)
+      );
+    }
+    void main() {
+      vec3 p = mnSpacePos(uTime - aAge * 0.30, aPhase, aSpeed, aMode, aRadius, aY, aSeed);
+      vec4 mv = viewMatrix * modelMatrix * vec4(p, 1.0);
+      gl_Position = projectionMatrix * mv;
+      vColor = mix(mix(vec3(0.26,0.64,1.0), vec3(0.62,0.32,1.0), aHue), vec3(1.0,0.62,0.24), smoothstep(0.80,1.0,aHue) * 0.5);
+      vAlpha = pow(1.0 - aAge, 3.0) * uOpacity * 0.34;
+    }
+  `;
+
   const SPACE_FRAG = `
     varying vec3 vColor;
     varying float vAlpha;
@@ -1059,6 +1102,41 @@
       float pulse = 0.30 + 0.70 * pow(0.5 + 0.5 * sin(vAlong * 28.0 - uTime * 2.1), 2.0);
       float a = uOpacity * (0.35 + 0.65 * pulse);
       gl_FragColor = vec4(uColor * (0.8 + 1.2 * pulse), a);
+    }
+  `;
+
+  const INFLOW_VERT = `
+    attribute float aAlong;
+    attribute float aSeed;
+    attribute float aHead;
+    varying float vAlong;
+    varying float vSeed;
+    varying float vHead;
+    void main() {
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      vAlong = aAlong;
+      vSeed = aSeed;
+      vHead = aHead;
+    }
+  `;
+
+  const INFLOW_FRAG = `
+    uniform float uTime;
+    uniform float uOpacity;
+    uniform vec3 uColA;
+    uniform vec3 uColB;
+    varying float vAlong;
+    varying float vSeed;
+    varying float vHead;
+    void main() {
+      float prog = fract(uTime * 0.11 + vSeed * 6.2831);
+      float d = vAlong - prog;
+      d -= floor(d + 0.5);
+      float pulse = exp(-d * d * 90.0);
+      vec3 col = mix(uColA, uColB, 0.5 + 0.5 * sin(vSeed * 6.2831 + vAlong * 3.0));
+      float base = 0.035 + 0.08 * (1.0 - vAlong);
+      float a = uOpacity * (base + 0.65 * pulse + 0.9 * vHead);
+      gl_FragColor = vec4(col * (0.5 + 1.6 * pulse + 1.8 * vHead), a);
     }
   `;
 
@@ -1427,7 +1505,7 @@
       fragmentShader: EDGE_FRAG,
       transparent: true,
       depthWrite: false,
-      depthTest: true,
+      depthTest: false,
       side: THREE.DoubleSide,
       blending: THREE.AdditiveBlending
     }), seed * 4.7);
@@ -1443,7 +1521,8 @@
         uOpacity: { value: 0 },
         uPixelRatio: { value: DPR },
         uSizeScale: { value: sizeScale || 1.0 },
-        uChaos: { value: 0 }
+        uChaos: { value: 0 },
+        uOrganize: { value: 1 }
       },
       vertexShader: POINT_VERT,
       fragmentShader: POINT_FRAG,
@@ -1468,7 +1547,7 @@
       fragmentShader: TRAIL_FRAG,
       transparent: true,
       depthWrite: false,
-      depthTest: true,
+      depthTest: false,
       blending: THREE.AdditiveBlending
     }), seed * 5.9);
   }
@@ -1531,7 +1610,7 @@
   mainGroup.add(mainHalo);
 
   /* particles that flow on the two handles */
-  function makeTorusPoints(count, seed, sizeScale) {
+  function makeTorusPoints(count, seed, sizeScale, uniformStart) {
     const g = new THREE.BufferGeometry();
     const phase = new Float32Array(count);
     const speed = new Float32Array(count);
@@ -1549,7 +1628,19 @@
       hue[i] = rand();
       s[i] = rand();
     }
+    const aStart = new Float32Array(count * 3);
+    if (uniformStart) {
+      for (let i = 0; i < count; i++) {
+        const r = 4.0 + Math.cbrt(rand()) * 16.0;
+        const th = rand() * Math.PI * 2;
+        const ph = Math.acos(2 * rand() - 1);
+        aStart[i*3] = r * Math.sin(ph) * Math.cos(th);
+        aStart[i*3+1] = r * Math.cos(ph) * 0.55;
+        aStart[i*3+2] = r * Math.sin(ph) * Math.sin(th);
+      }
+    }
     g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(count * 3), 3));
+    g.setAttribute("aStart", new THREE.BufferAttribute(aStart, 3));
     g.setAttribute("aPhase", new THREE.BufferAttribute(phase, 1));
     g.setAttribute("aSpeed", new THREE.BufferAttribute(speed, 1));
     g.setAttribute("aV", new THREE.BufferAttribute(vv, 1));
@@ -1564,7 +1655,7 @@
     return { points: p, geo: g, mat: m };
   }
 
-  const mainPoints = makeTorusPoints(2600, 0.02, 1.12);
+  const mainPoints = makeTorusPoints(2600, 0.02, 1.12, true);
   mainGroup.add(mainPoints.points);
 
   /* a few comet trails */
@@ -1946,6 +2037,73 @@
     return { points, mat: pm, lines, trailMat: tm };
   }
 
+  /* arrows that form when ambient points enter an attractor's basin */
+  function makeInflowArrows(repel, seed, colA, colB) {
+    const nArrows = repel ? 15 : 19;
+    const steps = 11;
+    const pos = [];
+    const along = [];
+    const sd = [];
+    const head = [];
+    for (let a = 0; a < nArrows; a++) {
+      const baseAngle = rand() * Math.PI * 2;
+      const baseY = (rand() - 0.5) * 1.7;
+      const spin = (rand() < 0.5 ? 1 : -1) * (1.3 + rand() * 1.9);
+      const pts = [];
+      for (let s = 0; s <= steps; s++) {
+        const u = s / steps;
+        const r = repel ? (1.05 + 4.35 * u) : (5.40 - 4.35 * u);
+        const ang = baseAngle + u * spin;
+        const y = baseY * (1 - u) + 0.32 * Math.sin(u * Math.PI * 2 + a);
+        pts.push(new THREE.Vector3(Math.cos(ang) * r, y, Math.sin(ang) * r));
+      }
+      for (let s = 0; s < steps; s++) {
+        const p0 = pts[s], p1 = pts[s + 1];
+        pos.push(p0.x, p0.y, p0.z, p1.x, p1.y, p1.z);
+        along.push(s / steps, (s + 1) / steps);
+        sd.push(a / nArrows, a / nArrows);
+        head.push(0, 0);
+      }
+      const tip = pts[steps];
+      const prev = pts[steps - 1];
+      const tan = tip.clone().sub(prev).normalize();
+      const up = new THREE.Vector3(0, 1, 0);
+      const side = new THREE.Vector3().crossVectors(tan, up);
+      if (side.lengthSq() < 0.001) side.set(1, 0, 0);
+      side.normalize();
+      const back = tip.clone().addScaledVector(tan, -0.60);
+      const b1 = back.clone().addScaledVector(side, 0.30);
+      const b2 = back.clone().addScaledVector(side, -0.30);
+      pos.push(tip.x, tip.y, tip.z, b1.x, b1.y, b1.z);
+      along.push(1, 1); sd.push(a / nArrows, a / nArrows); head.push(1, 1);
+      pos.push(tip.x, tip.y, tip.z, b2.x, b2.y, b2.z);
+      along.push(1, 1); sd.push(a / nArrows, a / nArrows); head.push(1, 1);
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(pos), 3));
+    g.setAttribute("aAlong", new THREE.BufferAttribute(new Float32Array(along), 1));
+    g.setAttribute("aSeed", new THREE.BufferAttribute(new Float32Array(sd), 1));
+    g.setAttribute("aHead", new THREE.BufferAttribute(new Float32Array(head), 1));
+    const m = regMat(new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uOpacity: { value: 0 },
+        uColA: { value: colA.clone() },
+        uColB: { value: colB.clone() }
+      },
+      vertexShader: INFLOW_VERT,
+      fragmentShader: INFLOW_FRAG,
+      transparent: true,
+      depthWrite: false,
+      depthTest: true,
+      blending: THREE.AdditiveBlending
+    }), seed * 9.7);
+    const lines = new THREE.LineSegments(g, m);
+    lines.frustumCulled = false;
+    lines.renderOrder = 9;
+    return { lines, mat: m };
+  }
+
   /* the palette of the wider landscape: attractors of many shapes,
      plus soft red repellors */
   const ISLAND_TYPES = [
@@ -2101,6 +2259,9 @@
     group.add(aura.points);
     group.add(aura.lines);
 
+    const inflow = makeInflowArrows(repel, seed, type.a, type.b);
+    group.add(inflow.lines);
+
     const halo = new THREE.Sprite(new THREE.SpriteMaterial({
       map: haloTex,
       color: type.a.clone().lerp(type.b, 0.28),
@@ -2115,7 +2276,7 @@
 
     scene.add(group);
     islands.push({
-      group, edge, surface, pts, sparks, aura, halo,
+      group, edge, surface, pts, sparks, aura, inflow, halo,
       seed, repel, kind: type.kind, type,
       mapPos, ffnPos, mapScale, ffnScale,
       edgeMat, surfaceMat,
@@ -2123,97 +2284,11 @@
       sparkMat: sparks ? sparks.mat : null,
       auraMat: aura.mat,
       auraTrailMat: aura.trailMat,
+      inflowMat: inflow.mat,
       rotation: new THREE.Euler(rand()*0.5, rand()*Math.PI*2, rand()*0.4)
     });
   }
   for (let i = 0; i < islandCount; i++) createIsland(i);
-
-  /* faint threads between nearby islands, one merged line set */
-  let threadMat, threads;
-  {
-    const segs = [];
-    const links = [];
-    for (let i = 0; i < islandCount; i++) {
-      const candidates = [];
-      for (let j = 0; j < islandCount; j++) {
-        if (i === j) continue;
-        candidates.push({ j, d: islands[i].mapPos.distanceTo(islands[j].mapPos) });
-      }
-      candidates.sort((a, b) => a.d - b.d);
-      for (let q = 0; q < 2; q++) {
-        const j = candidates[q].j;
-        const key = i < j ? i + ":" + j : j + ":" + i;
-        if (links.indexOf(key) === -1) links.push(key);
-      }
-    }
-    const grouped = {};
-    for (const key of links) {
-      const [a, b] = key.split(":").map(Number);
-      if (!grouped[a]) grouped[a] = [];
-      grouped[a].push(b);
-    }
-    for (const a in grouped) {
-      for (const b of grouped[a]) {
-        const A = islands[a].mapPos, B = islands[b].mapPos;
-        const mid = A.clone().add(B).multiplyScalar(0.5);
-        const dirx = B.x - A.x, dirz = B.z - A.z;
-        mid.x += -dirz * 0.09;
-        mid.z +=  dirx * 0.09;
-        mid.y += 0.8;
-        const curve = new THREE.QuadraticBezierCurve3(A, mid, B);
-        const pts = curve.getPoints(14);
-        for (let k = 0; k < pts.length - 1; k++) {
-          segs.push(pts[k], pts[k+1]);
-        }
-      }
-    }
-    const pos = new Float32Array(segs.length * 3);
-    const along = new Float32Array(segs.length);
-    for (let i = 0; i < segs.length; i++) {
-      pos[i*3] = segs[i].x; pos[i*3+1] = segs[i].y; pos[i*3+2] = segs[i].z;
-      along[i] = (i % 14) / 14;
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-    g.setAttribute("aAlong", new THREE.BufferAttribute(along, 1));
-    threadMat = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime: { value: 0 },
-        uOpacity: { value: 0 }
-      },
-      vertexShader: `
-        attribute float aAlong;
-        varying float vAlong;
-        varying vec3 vW;
-        void main() {
-          vec4 world = modelMatrix * vec4(position, 1.0);
-          gl_Position = projectionMatrix * viewMatrix * world;
-          vAlong = aAlong;
-          vW = world.xyz;
-        }
-      `,
-      fragmentShader: `
-        uniform float uTime;
-        uniform float uOpacity;
-        varying float vAlong;
-        varying vec3 vW;
-        void main() {
-          float edge = smoothstep(0.0, 0.12, vAlong) * smoothstep(1.0, 0.88, vAlong);
-          float pulse = 0.35 + 0.65 * pow(0.5 + 0.5 * sin(vAlong * 42.0 - uTime * 1.4), 3.0);
-          float a = uOpacity * edge * (0.10 + 0.35 * pulse);
-          gl_FragColor = vec4(vec3(0.35, 0.72, 1.0) * (0.4 + pulse), a);
-        }
-      `,
-      transparent: true,
-      depthWrite: false,
-      depthTest: true,
-      blending: THREE.AdditiveBlending
-    });
-    threads = new THREE.LineSegments(g, threadMat);
-    threads.frustumCulled = false;
-    threads.renderOrder = 3;
-    scene.add(threads);
-  }
 
   /* dust around the landscape */
   let mapDust, mapDustMat;
@@ -2277,7 +2352,7 @@
      the opening weather: data points crossing the whole volume,
      following several different patterns, some streaming away
      ============================================================ */
-  let spaceFlowMat, spaceFlow;
+  let spaceFlowMat, spaceFlow, spaceTrailMat, spaceTrails;
   {
     const n = 2700;
     const phase = new Float32Array(n);
@@ -2327,6 +2402,58 @@
     spaceFlow.renderOrder = 3;
     scene.add(spaceFlow);
 
+    const segs = 3;
+    const verts = n * segs * 2;
+    const tg = new THREE.BufferGeometry();
+    const tpos = new Float32Array(verts * 3);
+    const age = new Float32Array(verts);
+    const tphase = new Float32Array(verts);
+    const tspeed = new Float32Array(verts);
+    const tmode = new Float32Array(verts);
+    const tradius = new Float32Array(verts);
+    const tyy = new Float32Array(verts);
+    const tsd = new Float32Array(verts);
+    const thue = new Float32Array(verts);
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < segs; j++) {
+        for (let e = 0; e < 2; e++) {
+          const idx = (i * segs + j) * 2 + e;
+          age[idx] = (j + e) / segs;
+          tphase[idx] = phase[i];
+          tspeed[idx] = speed[i];
+          tmode[idx] = mode[i];
+          tradius[idx] = radius[i];
+          tyy[idx] = yy[i];
+          tsd[idx] = sd[i];
+          thue[idx] = hue[i];
+        }
+      }
+    }
+    tg.setAttribute("position", new THREE.BufferAttribute(tpos, 3));
+    tg.setAttribute("aAge", new THREE.BufferAttribute(age, 1));
+    tg.setAttribute("aPhase", new THREE.BufferAttribute(tphase, 1));
+    tg.setAttribute("aSpeed", new THREE.BufferAttribute(tspeed, 1));
+    tg.setAttribute("aMode", new THREE.BufferAttribute(tmode, 1));
+    tg.setAttribute("aRadius", new THREE.BufferAttribute(tradius, 1));
+    tg.setAttribute("aY", new THREE.BufferAttribute(tyy, 1));
+    tg.setAttribute("aSeed", new THREE.BufferAttribute(tsd, 1));
+    tg.setAttribute("aHue", new THREE.BufferAttribute(thue, 1));
+    spaceTrailMat = regMat(new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uOpacity: { value: 0 }
+      },
+      vertexShader: SPACE_TRAIL_VERT,
+      fragmentShader: TRAIL_FRAG,
+      transparent: true,
+      depthWrite: false,
+      depthTest: false,
+      blending: THREE.AdditiveBlending
+    }), 0.4);
+    spaceTrails = new THREE.LineSegments(tg, spaceTrailMat);
+    spaceTrails.frustumCulled = false;
+    spaceTrails.renderOrder = 4;
+    scene.add(spaceTrails);
   }
 
   /* points that get captured out of that cloud into the double torus */
@@ -2622,12 +2749,12 @@
 
   const CAM_KEYS = [
     { t: 0.00, r: 17.5, phi: 1.05, ty: 0.00, th: 0.10 },
-    { t: 0.06, r: 17.0, phi: 1.06, ty: 0.10, th: 0.14 },
-    { t: 0.12, r: 15.5, phi: 1.08, ty: 0.10, th: 0.18 },
-    { t: 0.16, r: 11.0, phi: 1.12, ty: 0.00, th: 0.22 },
-    { t: 0.21, r: 7.0,  phi: 1.16, ty: 0.00, th: 0.27 },
-    { t: 0.28, r: 4.9,  phi: 1.18, ty: 0.00, th: 0.33 },
-    { t: 0.34, r: 4.4,  phi: 1.15, ty: 0.00, th: 0.42 },
+    { t: 0.08, r: 17.2, phi: 1.06, ty: 0.10, th: 0.14 },
+    { t: 0.15, r: 16.8, phi: 1.08, ty: 0.10, th: 0.18 },
+    { t: 0.20, r: 11.0, phi: 1.12, ty: 0.00, th: 0.22 },
+    { t: 0.26, r: 7.0,  phi: 1.16, ty: 0.00, th: 0.27 },
+    { t: 0.33, r: 4.9,  phi: 1.18, ty: 0.00, th: 0.33 },
+    { t: 0.40, r: 4.4,  phi: 1.15, ty: 0.00, th: 0.42 },
     { t: 0.50, r: 4.0,  phi: 1.20, ty: 0.00, th: 0.50 },
     { t: 0.64, r: 4.5,  phi: 1.18, ty: 0.00, th: 0.58 },
     { t: 0.82, r: 12.0, phi: 1.04, ty: 1.05, th: 0.78, tx: 0.0 },
@@ -2794,7 +2921,8 @@
      story -> visible state
      ============================================================ */
   function updateStory(s) {
-    const introOn = 1 - smoothstep(0.10, 0.24, s);
+    const introOn = 1 - smoothstep(0.52, 0.66, s);
+    const spaceTrailOn = smoothstep(0.06, 0.15, s) * (1 - smoothstep(0.52, 0.66, s));
     const appear = smoothstep(0.07, 0.20, s);
     const grow = smoothstep(0.32, 0.54, s);
     const surfOn = smoothstep(0.35, 0.50, s);
@@ -2804,13 +2932,15 @@
     const ffnOn = smoothstep(0.89, 0.995, s);
 
     const morph = 1 - morphOut;
-    const chaos = 1 - smoothstep(0.04, 0.17, s);
-    const pointOp = (0.82 + 0.18 * appear) * (1 - 0.30 * isolate) * (1 - 0.18 * ffnOn);
+    const organize = smoothstep(0.04, 0.18, s);
+    const chaos = 1 - organize;
+    const pointOp = (0.55 + 0.45 * organize) * (1 - 0.30 * isolate) * (1 - 0.18 * ffnOn);
     const mainScale = lerp(lerp(1.0, 0.54, mapOn), 0.63, ffnOn);
     const ffnBoost = 1 + 0.55 * ffnOn;
-    const introSize = lerp(4.2, 1.12, smoothstep(0.10, 0.26, s));
+    const introSize = lerp(3.0, 1.12, smoothstep(0.10, 0.26, s));
     mainPoints.mat.uniforms.uSizeScale.value = introSize * ffnBoost;
     mainPoints.mat.uniforms.uChaos.value = chaos;
+    mainPoints.mat.uniforms.uOrganize.value = organize;
     mainTrails.mat.uniforms.uChaos.value = chaos;
     mainSparks.mat.uniforms.uSizeScale.value = lerp(2.4, 1.15, smoothstep(0.10, 0.28, s));
     mainHalo.material.opacity = 0.09 * mapOn * (1 - ffnOn) + 0.20 * ffnOn;
@@ -2821,18 +2951,18 @@
     mainSurfaceMat.uniforms.uMorph.value = morph;
     mainSurfaceMat.uniforms.uGrow.value = grow;
     mainSurfaceMat.uniforms.uOpacity.value =
-      surfOn * (0.88 + 0.12 * isolate) * (1 - 0.78 * mapOn) * (1 - ffnOn);
+      surfOn * (0.88 + 0.12 * isolate) * (1 - 0.55 * mapOn) * (1 - 0.15 * ffnOn);
     mainSurface.visible = surfOn > 0.003 && mainSurfaceMat.uniforms.uOpacity.value > 0.004;
 
     mainEdgeMat.uniforms.uMorph.value = morph;
     mainEdgeMat.uniforms.uGrow.value = grow;
     mainEdgeMat.uniforms.uOpacity.value =
       0.62 * smoothstep(0.25, 0.44, s) * (0.82 + 0.18 * isolate)
-      * (1 - 0.30 * mapOn) * (1 - ffnOn);
+      * (1 - 0.15 * mapOn) * (1 - 0.15 * ffnOn);
     mainEdges.visible = grow > 0.003 && mainEdgeMat.uniforms.uOpacity.value > 0.004;
 
     mainDepthMat.uniforms.uMorph.value = morph;
-    mainDepth.visible = (surfOn > 0.02 || grow > 0.02) && ffnOn < 0.35;
+    mainDepth.visible = (surfOn > 0.02 || grow > 0.02);
 
     mainPoints.mat.uniforms.uMorph.value = morph;
     mainPoints.mat.uniforms.uOpacity.value = pointOp;
@@ -2853,7 +2983,7 @@
       c.line.visible = c.mat.uniforms.uOpacity.value > 0.006;
     }
 
-    const islandOp = mapOn * (1 - 0.20 * ffnOn);
+    const islandOp = mapOn * (1 - 0.05 * ffnOn);
     for (let i = 0; i < islands.length; i++) {
       const isl = islands[i];
       isl.group.position.copy(isl.mapPos).lerp(isl.ffnPos, ffnOn);
@@ -2862,9 +2992,9 @@
       isl.group.visible = islandOp > 0.004;
       const im = 0.26 + 0.60 * fract(isl.seed * 0.371);
       isl.edgeMat.uniforms.uMorph.value = im;
-      isl.edgeMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.32 : 0.48) * (1 - ffnOn);
+      isl.edgeMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.32 : 0.48) * (1 - 0.12 * ffnOn);
       isl.surfaceMat.uniforms.uMorph.value = im;
-      isl.surfaceMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.48 : 0.13) * (1 - ffnOn);
+      isl.surfaceMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.48 : 0.18) * (1 - 0.12 * ffnOn);
       isl.edge.visible = isl.edgeMat.uniforms.uOpacity.value > 0.006;
       isl.surface.visible = isl.surfaceMat.uniforms.uOpacity.value > 0.006;
       if (isl.pointMat) {
@@ -2878,18 +3008,19 @@
       isl.auraMat.uniforms.uOpacity.value = Math.min(1, islandOp * (isl.repel ? 0.66 : 0.34) * (1 + 0.55 * ffnOn));
       isl.auraTrailMat.uniforms.uOpacity.value = Math.min(1, islandOp * (isl.repel ? 0.55 : 0.24) * (1 + 0.60 * ffnOn)) * (1 - ffnOn);
       isl.aura.lines.visible = isl.auraTrailMat.uniforms.uOpacity.value > 0.006;
-      isl.halo.material.opacity = islandOp * (isl.repel ? 0.40 : 0.16) * (1 - ffnOn);
+      isl.inflowMat.uniforms.uOpacity.value = mapOn * 0.90 * (1 - 0.25 * ffnOn);
+      isl.inflow.lines.visible = isl.inflowMat.uniforms.uOpacity.value > 0.006;
+      isl.halo.material.opacity = islandOp * (isl.repel ? 0.40 : 0.16) * (1 - 0.65 * ffnOn);
     }
 
-    const threadOp = mapOn * (1 - ffnOn);
-    threadMat.uniforms.uOpacity.value = threadOp * 0.95;
-    threads.visible = threadMat.uniforms.uOpacity.value > 0.004;
     mapDustMat.uniforms.uOpacity.value = mapOn * (1 - 0.42 * ffnOn) * 0.8;
     mapDust.visible = mapDustMat.uniforms.uOpacity.value > 0.004;
 
     const captureOn = smoothstep(0.16, 0.24, s) * (1 - smoothstep(0.32, 0.44, s));
     spaceFlowMat.uniforms.uOpacity.value = introOn * 0.95;
     spaceFlow.visible = introOn > 0.004;
+    spaceTrailMat.uniforms.uOpacity.value = spaceTrailOn * 0.95;
+    spaceTrails.visible = spaceTrailOn > 0.006;
     captureMat.uniforms.uOpacity.value = captureOn * 0.95;
     captureMat.uniforms.uMorph.value = morph;
     capturePoints.visible = captureOn > 0.004;
@@ -2971,7 +3102,6 @@
     }
     bgUniforms.uTime.value = elapsed;
     mapDustMat.uniforms.uTime.value = elapsed;
-    threadMat.uniforms.uTime.value = elapsed;
     for (const m of layerNodeMats) m.uniforms.uTime.value = elapsed;
 
     updateUI();

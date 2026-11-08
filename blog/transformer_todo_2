@@ -44,3 +44,9 @@
 [done] die Logit-Linse bei den Layern sieht anders aus als "Attention" und "FFN / MLP". [Die Logit-Linse ist jetzt eine `.tm-layer-subbox` mit gleicher flacher Summary/Plus-Optik; die innere Tabelle ist entboxt.]
 
 [done] Tests aktualisiert [transformer_ui2_regression_test.py prüft jetzt zusätzlich Ein-Spalten-Grid, Model-Size-Position, Button-Text, flache Config-/Trainingsboxen, ganze-Reihe-Klick, fehlende FFN-Doppelbox, Why-Labels, h_after-Underbrace/Farbe und die Logit-Linsen-Optik: 25/25. transformer_fix_regression_test.py 36/36 inkl. deterministischem d_model=10-Training.]
+
+[done] Inline-Formeln wie "Model Dimension (d_model):" und "Reason: Each head needs … (d_k = d_model/h)" brechen nach der Klammer um. [Ursache: `typesetMathIn`/`TM.typesetMath` haben das bereits inline gerenderte, mit `data-tex` gestempelte `<math>` erneut als Display-Math gerendert und eine block-level `<math>` hineingeschachtelt. Der Selektor ist jetzt `[data-tex]:not(math)`; Label- und Noten-Mathe bleibt eine einzige inline `<math>` (Test: labelNested/noteNested = 0).]
+
+[done] "Model size 567 parameters" komplett entfernen, aber den Parameter-Breakdown-Button behalten; den großen Abstand davor weg. [Die separate Model-Size-Zeile ist aus `transformer.php` und dem CSS entfernt. Der Button zeigt die Zahl weiter im Text: „Show parameter breakdown · 567 parameters“.]
+
+[done] Die Hyperparameter-Boxen müssen nicht alle gleich hoch sein (z. B. KV-Cache kürzer). [Das Grid nutzt jetzt `align-items: start`; jede Box ist so hoch wie ihr Inhalt. Test vergleicht KV-Cache- und Context-Size-Höhe.]
