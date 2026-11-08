@@ -237,11 +237,6 @@
     height:1px;margin:16px 0 11px;
     background:linear-gradient(90deg,rgba(98,230,255,.52),rgba(180,135,255,.16) 65%,transparent);
   }
-  .finale-foot{
-    font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
-    color:rgba(170,215,255,.5);
-  }
-
   @media (max-width:760px){
     #bettiWrap{width:206px;left:14px;top:15%}
     #betti{padding:13px 14px 12px 15px}
@@ -280,11 +275,9 @@
   <div id="finale">
     <div class="finale-kicker">FFN · Aktivierungsraum</div>
     <h2 class="finale-title">Das LLM ist global.</h2>
-    <p>Man muss viele Proben nehmen und einzelne Werte hineinwerfen.</p>
-    <p>Außerhalb einer gewählten, möglichst repräsentativen Auswahl von Startpunkten muss man keine konkreten Sätze bilden: Man zieht hoffentlich diese Attraktoren heraus und klassifiziert sie.</p>
-    <p>Im realen LLM lässt sich dann beobachten, wann welche Region aktiv wird. So koppelt man die Handlung des LLM an topologische Regionen und bekommt Zugang zur <strong>Netzwerkwelt</strong>.</p>
+    <p>Viele Proben, einzelne Werte. Aus repräsentativen Startpunkten ziehen wir Attraktoren heraus und klassifizieren sie, ohne Sätze zu bilden.</p>
+    <p>Im realen LLM zeigt sich, wann welche Region aktiv wird. Handlung und Topologie werden koppelbar: Zugang zur <strong>Netzwerkwelt</strong>.</p>
     <div class="finale-rule"></div>
-    <div class="finale-foot">Topologie als Karte des Netzwerks</div>
   </div>
 </div>
 
@@ -382,8 +375,9 @@
   /* ============================================================
      surface nets: one clean genus-2 triangle mesh
      ============================================================ */
-  function buildSurfaceMesh() {
-    const nx = 104, ny = 42, nz = 68;
+  function buildSurfaceMesh(opts) {
+    opts = opts || {};
+    const nx = opts.nx || 104, ny = opts.ny || 42, nz = opts.nz || 68;
     const x0 = -2.12, x1 = 2.12;
     const y0 = -0.74, y1 = 0.74;
     const z0 = -1.34, z1 = 1.34;
@@ -1391,15 +1385,22 @@
   /* ============================================================
      build the base mesh
      ============================================================ */
+  function meshDataToGeometry(data) {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(data.positions, 3));
+    g.setAttribute("normal", new THREE.BufferAttribute(data.normals, 3));
+    g.setAttribute("aBary", new THREE.BufferAttribute(data.bary, 3));
+    g.setAttribute("aCentroid", new THREE.BufferAttribute(data.centroids, 3));
+    g.setAttribute("aSeed", new THREE.BufferAttribute(data.seeds, 1));
+    g.computeBoundingSphere();
+    return g;
+  }
+
   const buildStart = performance.now();
   const meshData = buildSurfaceMesh();
-  const meshGeo = new THREE.BufferGeometry();
-  meshGeo.setAttribute("position", new THREE.BufferAttribute(meshData.positions, 3));
-  meshGeo.setAttribute("normal", new THREE.BufferAttribute(meshData.normals, 3));
-  meshGeo.setAttribute("aBary", new THREE.BufferAttribute(meshData.bary, 3));
-  meshGeo.setAttribute("aCentroid", new THREE.BufferAttribute(meshData.centroids, 3));
-  meshGeo.setAttribute("aSeed", new THREE.BufferAttribute(meshData.seeds, 1));
-  meshGeo.computeBoundingSphere();
+  const meshGeo = meshDataToGeometry(meshData);
+  const lowMeshData = buildSurfaceMesh({ nx: 56, ny: 22, nz: 36 });
+  const lowMeshGeo = meshDataToGeometry(lowMeshData);
   const buildMs = performance.now() - buildStart;
 
   /* ============================================================
@@ -1732,7 +1733,7 @@
   function makeChainGeo() {
     const list = [];
     for (let i = -1; i <= 1; i++) {
-      const g = new THREE.TorusGeometry(0.62, 0.22, 16, 84);
+      const g = new THREE.TorusGeometry(0.62, 0.22, 12, 56);
       g.rotateY(i * 0.34);
       g.rotateZ(i * 0.12);
       g.translate(i * 0.72, 0, 0);
@@ -1742,7 +1743,7 @@
   }
 
   function makeShellGeo() {
-    const nu = 210, nv = 28, turns = 3.35;
+    const nu = 140, nv = 18, turns = 3.35;
     const pos = [];
     const idx = [];
     const center = (u) => {
@@ -1783,7 +1784,7 @@
   }
 
   function makeBlobGeo(spiky) {
-    const nu = 92, nv = 46;
+    const nu = 64, nv = 32;
     const pos = [];
     const idx = [];
     for (let j = 0; j <= nv; j++) {
@@ -1854,16 +1855,16 @@
 
   const islandGeoCache = {};
   function getIslandGeo(kind) {
-    if (kind === "genus2") return { geo: meshGeo, sparkPositions: meshData.sourcePositions };
+    if (kind === "genus2") return { geo: lowMeshGeo, sparkPositions: lowMeshData.sourcePositions };
     if (islandGeoCache[kind]) return islandGeoCache[kind];
     let src;
-    if (kind === "torus") src = new THREE.TorusGeometry(1.0, 0.33, 18, 120);
-    else if (kind === "knot") src = new THREE.TorusKnotGeometry(0.82, 0.24, 210, 18, 2, 3);
+    if (kind === "torus") src = new THREE.TorusGeometry(1.0, 0.33, 12, 72);
+    else if (kind === "knot") src = new THREE.TorusKnotGeometry(0.82, 0.24, 140, 12, 2, 3);
     else if (kind === "chain") src = makeChainGeo();
     else if (kind === "shell") src = makeShellGeo();
     else if (kind === "flower") src = makeBlobGeo(false);
     else if (kind === "urchin") src = makeBlobGeo(true);
-    else src = new THREE.TorusGeometry(0.9, 0.3, 16, 96);
+    else src = new THREE.TorusGeometry(0.9, 0.3, 12, 64);
     const res = toSimplicial(src);
     islandGeoCache[kind] = res;
     return res;
@@ -2084,12 +2085,6 @@
     g.addColorStop(1.00, "rgba(0,0,0,0)");
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, s, s);
-    ctx.globalCompositeOperation = "lighter";
-    ctx.strokeStyle = "rgba(190,235,255,0.16)";
-    ctx.lineWidth = 2.0;
-    ctx.beginPath();
-    ctx.arc(s/2, s/2, s*0.37, 0, Math.PI*2);
-    ctx.stroke();
     const t = new THREE.CanvasTexture(c);
     t.colorSpace = THREE.SRGBColorSpace;
     return t;
@@ -2561,63 +2556,17 @@
   }
 
   /* ============================================================
-     the FFN: stacked activation planes, dense edges, rising tokens
+     the FFN: stacked layers of points
      ============================================================ */
   const layerY = [-5.0, -2.5, 0.0, 2.5, 5.0];
   const layerNodes = [];
   const ffnGroup = new THREE.Group();
   scene.add(ffnGroup);
 
-  const layerDiscs = [];
   const layerNodeMats = [];
-  let ffnEdgeMat, ffnEdges, ffnTokenMat, ffnTokens;
 
   for (let li = 0; li < layerY.length; li++) {
     const y = layerY[li];
-
-    const discMat = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime: { value: 0 },
-        uOpacity: { value: 0 }
-      },
-      vertexShader: `
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform float uTime;
-        uniform float uOpacity;
-        varying vec2 vUv;
-        void main() {
-          vec2 p = vUv * 2.0 - 1.0;
-          float r = length(p);
-          if (r > 1.0) discard;
-          float rim = smoothstep(0.995, 0.945, r) * smoothstep(0.885, 0.955, r);
-          float inner = pow(max(0.0, 1.0 - r), 2.2);
-          float rings = 0.5 + 0.5 * sin(r * 44.0 - uTime * 1.05);
-          float spokes = 0.5 + 0.5 * sin(atan(p.y, p.x) * 22.0 + uTime * 0.23);
-          float a = uOpacity * (0.022 + 0.085 * inner + 0.17 * rim + 0.010 * rings * (1.0 - r));
-          vec3 col = mix(vec3(0.06, 0.28, 0.78), vec3(0.45, 0.16, 0.82),
-                         0.5 + 0.5 * sin(uTime * 0.14 + r * 2.0));
-          col += 0.35 * spokes * rim;
-          gl_FragColor = vec4(col, a);
-        }
-      `,
-      transparent: true,
-      depthWrite: false,
-      depthTest: true,
-      side: THREE.DoubleSide,
-      blending: THREE.AdditiveBlending
-    });
-    const disc = new THREE.Mesh(new THREE.CircleGeometry(5.55, 96), discMat);
-    disc.rotation.x = -Math.PI / 2;
-    disc.position.y = y;
-    disc.renderOrder = 9;
-    ffnGroup.add(disc);
-    layerDiscs.push(discMat);
 
     const nodeCount = 150 + li * 8;
     const pos = new Float32Array(nodeCount * 3);
@@ -2692,297 +2641,12 @@
     layerNodeMats.push(m);
   }
 
-  /* connections between adjacent layers */
-  {
-    const segs = [];
-    const along = [];
-    const seeds = [];
-    for (let li = 0; li < layerY.length - 1; li++) {
-      const A = layerNodes[li], B = layerNodes[li + 1];
-      const density = window.innerWidth < 700 ? 1 : 2;
-      for (let k = 0; k < A.length; k++) {
-        for (let q = 0; q < density; q++) {
-          const b = B[Math.floor(rand() * B.length)];
-          const a = A[k];
-          const mid = a.clone().add(b).multiplyScalar(0.5);
-          mid.x += (rand() - 0.5) * 0.6;
-          mid.z += (rand() - 0.5) * 0.6;
-          const curve = new THREE.QuadraticBezierCurve3(a, mid, b);
-          const pts = curve.getPoints(7);
-          for (let s = 0; s < pts.length - 1; s++) {
-            segs.push(pts[s], pts[s+1]);
-            along.push(s / (pts.length - 1));
-            along.push((s+1) / (pts.length - 1));
-            seeds.push(rand()); seeds.push(rand());
-          }
-        }
-      }
-    }
-    const pos = new Float32Array(segs.length * 3);
-    const al = new Float32Array(segs.length);
-    const sd = new Float32Array(segs.length);
-    for (let i = 0; i < segs.length; i++) {
-      pos[i*3] = segs[i].x; pos[i*3+1] = segs[i].y; pos[i*3+2] = segs[i].z;
-      al[i] = along[i];
-      sd[i] = seeds[i];
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-    g.setAttribute("aAlong", new THREE.BufferAttribute(al, 1));
-    g.setAttribute("aSeed", new THREE.BufferAttribute(sd, 1));
-    ffnEdgeMat = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime: { value: 0 },
-        uOpacity: { value: 0 }
-      },
-      vertexShader: `
-        attribute float aAlong;
-        attribute float aSeed;
-        varying float vAlong;
-        varying float vSeed;
-        void main() {
-          vec4 world = modelMatrix * vec4(position, 1.0);
-          gl_Position = projectionMatrix * viewMatrix * world;
-          vAlong = aAlong;
-          vSeed = aSeed;
-        }
-      `,
-      fragmentShader: `
-        uniform float uTime;
-        uniform float uOpacity;
-        varying float vAlong;
-        varying float vSeed;
-        void main() {
-          float signal = smoothstep(0.0, 0.08, fract(vAlong - uTime * 0.22 + vSeed));
-          float a = uOpacity * (0.035 + 0.20 * signal * signal);
-          vec3 col = mix(vec3(0.20, 0.55, 1.0), vec3(0.70, 0.35, 1.0), vSeed);
-          gl_FragColor = vec4(col * (0.5 + 1.5 * signal), a);
-        }
-      `,
-      transparent: true,
-      depthWrite: false,
-      depthTest: true,
-      blending: THREE.AdditiveBlending
-    });
-    ffnEdges = new THREE.LineSegments(g, ffnEdgeMat);
-    ffnEdges.frustumCulled = false;
-    ffnEdges.renderOrder = 9;
-    ffnGroup.add(ffnEdges);
-  }
-
-  /* tokens rising through the stack */
-  {
-    const tokenCount = 20;
-    const segs = [];
-    const along = [];
-    const token = [];
-    for (let i = 0; i < tokenCount; i++) {
-      const pts = [];
-      const sa = rand() * Math.PI * 2;
-      const sr = 0.6 + rand() * 3.7;
-      pts.push(new THREE.Vector3(Math.cos(sa) * sr, -6.15, Math.sin(sa) * sr));
-      for (let li = 0; li < layerY.length; li++) {
-        const nodes = layerNodes[li];
-        const n = nodes[Math.floor(rand() * nodes.length)];
-        pts.push(new THREE.Vector3(
-          n.x * 0.92 + (rand() - 0.5) * 0.25,
-          n.y + 0.04,
-          n.z * 0.92 + (rand() - 0.5) * 0.25
-        ));
-      }
-      const curve = new THREE.CatmullRomCurve3(pts, false, "catmullrom", 0.35);
-      const samples = curve.getPoints(96);
-      for (let s = 0; s < samples.length - 1; s++) {
-        segs.push(samples[s], samples[s+1]);
-        along.push(s / (samples.length - 1));
-        along.push((s+1) / (samples.length - 1));
-        token.push(i / tokenCount);
-        token.push(i / tokenCount);
-      }
-    }
-    const pos = new Float32Array(segs.length * 3);
-    const al = new Float32Array(segs.length);
-    const tk = new Float32Array(segs.length);
-    for (let i = 0; i < segs.length; i++) {
-      pos[i*3] = segs[i].x; pos[i*3+1] = segs[i].y; pos[i*3+2] = segs[i].z;
-      al[i] = along[i];
-      tk[i] = token[i];
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-    g.setAttribute("aAlong", new THREE.BufferAttribute(al, 1));
-    g.setAttribute("aToken", new THREE.BufferAttribute(tk, 1));
-    ffnTokenMat = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime: { value: 0 },
-        uOpacity: { value: 0 }
-      },
-      vertexShader: `
-        attribute float aAlong;
-        attribute float aToken;
-        varying float vAlong;
-        varying float vToken;
-        void main() {
-          vec4 world = modelMatrix * vec4(position, 1.0);
-          gl_Position = projectionMatrix * viewMatrix * world;
-          vAlong = aAlong;
-          vToken = aToken;
-        }
-      `,
-      fragmentShader: `
-        uniform float uTime;
-        uniform float uOpacity;
-        varying float vAlong;
-        varying float vToken;
-        void main() {
-          float prog = fract(uTime * 0.028 + vToken * 0.713);
-          float d = vAlong - prog;
-          d = d - floor(d + 0.5);
-          float head = exp(-d * d * 700.0);
-          float tail = d < 0.0 ? exp(d * 9.0) : 0.0;
-          float a = uOpacity * (head * 0.95 + tail * 0.32);
-          vec3 col = mix(vec3(1.0, 0.78, 0.38), vec3(0.62, 0.95, 1.0), smoothstep(0.0, 1.0, vAlong));
-          gl_FragColor = vec4(col * (0.5 + 2.2 * head), a);
-        }
-      `,
-      transparent: true,
-      depthWrite: false,
-      depthTest: true,
-      blending: THREE.AdditiveBlending
-    });
-    ffnTokens = new THREE.LineSegments(g, ffnTokenMat);
-    ffnTokens.frustumCulled = false;
-    ffnTokens.renderOrder = 11;
-    ffnGroup.add(ffnTokens);
-  }
-
-  /* chosen representative starting points beneath the stack */
-  let probeMat;
-  {
-    const n = 54;
-    const pos = new Float32Array(n * 3);
-    const size = new Float32Array(n);
-    const sd = new Float32Array(n);
-    const hue = new Float32Array(n);
-    for (let i = 0; i < n; i++) {
-      const a = i / n * Math.PI * 2 + (rand() - 0.5) * 0.035;
-      const rr = 4.55 + (rand() - 0.5) * 0.22;
-      pos[i*3] = Math.cos(a) * rr;
-      pos[i*3+1] = -6.18;
-      pos[i*3+2] = Math.sin(a) * rr;
-      size[i] = 0.8 + Math.pow(rand(), 1.5) * 2.2 + (i % 7 === 0 ? 1.4 : 0);
-      sd[i] = rand();
-      hue[i] = (i % 7 === 0) ? 0.9 : rand() * 0.55;
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-    g.setAttribute("aSize", new THREE.BufferAttribute(size, 1));
-    g.setAttribute("aSeed", new THREE.BufferAttribute(sd, 1));
-    g.setAttribute("aHue", new THREE.BufferAttribute(hue, 1));
-    probeMat = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime: { value: 0 },
-        uOpacity: { value: 0 },
-        uPixelRatio: { value: DPR }
-      },
-      vertexShader: `
-        attribute float aSize;
-        attribute float aSeed;
-        attribute float aHue;
-        uniform float uPixelRatio;
-        uniform float uTime;
-        uniform float uOpacity;
-        varying vec3 vColor;
-        varying float vAlpha;
-        void main() {
-          vec4 mv = modelViewMatrix * vec4(position, 1.0);
-          gl_Position = projectionMatrix * mv;
-          float tw = 0.55 + 0.45 * sin(uTime * (0.8 + aSeed * 1.6) + aSeed * 6.2831);
-          gl_PointSize = clamp(aSize * uPixelRatio * 30.0 / max(1.0, -mv.z) * tw, 0.5, 7.5);
-          vColor = mix(vec3(0.40, 0.82, 1.0), vec3(1.0, 0.74, 0.30), aHue);
-          vAlpha = uOpacity * (0.35 + 0.65 * tw);
-        }
-      `,
-      fragmentShader: `
-        varying vec3 vColor;
-        varying float vAlpha;
-        void main() {
-          vec2 q = gl_PointCoord * 2.0 - 1.0;
-          float d = length(q);
-          if (d > 1.0) discard;
-          float a = pow(max(0.0, 1.0 - d), 2.3) * vAlpha;
-          gl_FragColor = vec4(vColor * 1.25, a);
-        }
-      `,
-      transparent: true,
-      depthWrite: false,
-      depthTest: true,
-      blending: THREE.AdditiveBlending
-    });
-    const pts = new THREE.Points(g, probeMat);
-    pts.frustumCulled = false;
-    pts.renderOrder = 10;
-    ffnGroup.add(pts);
-  }
-
-  /* the active topological region inside the stack */
-  let activationRingMat, activationRing;
-  {
-    const n = 200;
-    const pos = new Float32Array(n * 3);
-    const along = new Float32Array(n);
-    for (let i = 0; i < n; i++) {
-      const a = i / n * Math.PI * 2;
-      pos[i*3] = Math.cos(a) * 1.82;
-      pos[i*3+1] = 0.0;
-      pos[i*3+2] = Math.sin(a) * 1.82;
-      along[i] = i / n;
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-    g.setAttribute("aAlong", new THREE.BufferAttribute(along, 1));
-    activationRingMat = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime: { value: 0 },
-        uOpacity: { value: 0 },
-        uColor: { value: new THREE.Color(1.0, 0.70, 0.30) }
-      },
-      vertexShader: `
-        attribute float aAlong;
-        varying float vAlong;
-        void main() {
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          vAlong = aAlong;
-        }
-      `,
-      fragmentShader: `
-        uniform float uTime;
-        uniform float uOpacity;
-        uniform vec3 uColor;
-        varying float vAlong;
-        void main() {
-          float pulse = 0.22 + 0.78 * pow(0.5 + 0.5 * sin(vAlong * 24.0 - uTime * 2.3), 3.0);
-          float a = uOpacity * (0.18 + 0.82 * pulse);
-          gl_FragColor = vec4(uColor * (0.6 + 1.5 * pulse), a);
-        }
-      `,
-      transparent: true,
-      depthWrite: false,
-      depthTest: true,
-      blending: THREE.AdditiveBlending
-    });
-    activationRing = new THREE.LineLoop(g, activationRingMat);
-    activationRing.frustumCulled = false;
-    activationRing.renderOrder = 12;
-    ffnGroup.add(activationRing);
-  }
-
   /* ============================================================
      story, camera, UI
      ============================================================ */
   let story = 0;
   let storySmooth = 0;
-  let playing = true;
+  let playing = false;
   let orbitOn = true;
   let elapsed = 0;
   let autoTheta = 0;
@@ -3005,7 +2669,6 @@
     b.innerHTML = "<i></i>";
     b.addEventListener("click", () => {
       story = actStops[i];
-      playing = true;
       updatePlayButton();
       wakeUI();
     });
@@ -3071,7 +2734,7 @@
     uiTimer = setTimeout(() => ui.classList.remove("visible"), 3000);
   }
 
-  playBtn.addEventListener("click", () => {
+  function togglePlay() {
     if (story >= 0.999 && !playing) {
       story = 0;
       playing = true;
@@ -3080,10 +2743,10 @@
     }
     updatePlayButton();
     wakeUI();
-  });
+  }
+  playBtn.addEventListener("click", togglePlay);
   restartBtn.addEventListener("click", () => {
     story = 0;
-    playing = true;
     updatePlayButton();
     wakeUI();
   });
@@ -3124,11 +2787,13 @@
   window.addEventListener("pointermove", wakeUI, { passive: true });
   window.addEventListener("touchstart", wakeUI, { passive: true });
   window.addEventListener("keydown", (e) => {
-    if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
-    if (e.code === "Space") {
+    if (e.code === "Space" || e.code === "Enter" || e.code === "Tab") {
       e.preventDefault();
-      playBtn.click();
-    } else if (e.code === "ArrowRight") {
+      if (!e.repeat) togglePlay();
+      return;
+    }
+    if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+    if (e.code === "ArrowRight") {
       story = clamp(story + 0.018, 0, 1);
       wakeUI();
     } else if (e.code === "ArrowLeft") {
@@ -3216,18 +2881,18 @@
     mainSurfaceMat.uniforms.uMorph.value = morph;
     mainSurfaceMat.uniforms.uGrow.value = grow;
     mainSurfaceMat.uniforms.uOpacity.value =
-      surfOn * (0.88 + 0.12 * isolate) * (1 - 0.78 * mapOn) * (1 - 0.55 * ffnOn);
-    mainSurface.visible = surfOn > 0.003;
+      surfOn * (0.88 + 0.12 * isolate) * (1 - 0.78 * mapOn) * (1 - ffnOn);
+    mainSurface.visible = surfOn > 0.003 && mainSurfaceMat.uniforms.uOpacity.value > 0.004;
 
     mainEdgeMat.uniforms.uMorph.value = morph;
     mainEdgeMat.uniforms.uGrow.value = grow;
     mainEdgeMat.uniforms.uOpacity.value =
       0.62 * smoothstep(0.25, 0.44, s) * (0.82 + 0.18 * isolate)
-      * (1 - 0.30 * mapOn) * (1 - 0.45 * ffnOn);
-    mainEdges.visible = grow > 0.003;
+      * (1 - 0.30 * mapOn) * (1 - ffnOn);
+    mainEdges.visible = grow > 0.003 && mainEdgeMat.uniforms.uOpacity.value > 0.004;
 
     mainDepthMat.uniforms.uMorph.value = morph;
-    mainDepth.visible = (surfOn > 0.02 || grow > 0.02);
+    mainDepth.visible = (surfOn > 0.02 || grow > 0.02) && ffnOn < 0.35;
 
     mainPoints.mat.uniforms.uMorph.value = morph;
     mainPoints.mat.uniforms.uOpacity.value = pointOp;
@@ -3244,11 +2909,11 @@
     for (const c of cycles) {
       c.mat.uniforms.uMorph.value = morph;
       c.mat.uniforms.uOpacity.value =
-        c.base * smoothstep(0.52, 0.64, s) * (1 - 0.55 * smoothstep(0.88, 0.96, s));
+        c.base * smoothstep(0.52, 0.64, s) * (1 - smoothstep(0.82, 0.92, s));
       c.line.visible = c.mat.uniforms.uOpacity.value > 0.006;
     }
 
-    const islandOp = Math.max(introOn * 0.72, mapOn * (1 - 0.38 * ffnOn));
+    const islandOp = mapOn * (1 - 0.38 * ffnOn);
     for (let i = 0; i < islands.length; i++) {
       const isl = islands[i];
       isl.group.position.copy(isl.mapPos).lerp(isl.ffnPos, ffnOn);
@@ -3257,9 +2922,11 @@
       isl.group.visible = islandOp > 0.004;
       const im = 0.26 + 0.60 * fract(isl.seed * 0.371);
       isl.edgeMat.uniforms.uMorph.value = im;
-      isl.edgeMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.32 : 0.48);
+      isl.edgeMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.32 : 0.48) * (1 - ffnOn);
       isl.surfaceMat.uniforms.uMorph.value = im;
-      isl.surfaceMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.48 : 0.13);
+      isl.surfaceMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.48 : 0.13) * (1 - ffnOn);
+      isl.edge.visible = isl.edgeMat.uniforms.uOpacity.value > 0.006;
+      isl.surface.visible = isl.surfaceMat.uniforms.uOpacity.value > 0.006;
       if (isl.pointMat) {
         isl.pointMat.uniforms.uMorph.value = im;
         isl.pointMat.uniforms.uOpacity.value = islandOp * 0.62;
@@ -3270,13 +2937,13 @@
       }
       isl.auraMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.66 : 0.34);
       isl.auraTrailMat.uniforms.uOpacity.value = islandOp * (isl.repel ? 0.55 : 0.24);
-      isl.halo.material.opacity = islandOp * (isl.repel ? 0.40 : 0.16);
+      isl.halo.material.opacity = islandOp * (isl.repel ? 0.40 : 0.16) * (1 - ffnOn);
     }
 
-    const threadOp = Math.max(introOn * 0.45, mapOn * (1 - ffnOn));
+    const threadOp = mapOn * (1 - ffnOn);
     threadMat.uniforms.uOpacity.value = threadOp * 0.95;
     threads.visible = threadMat.uniforms.uOpacity.value > 0.004;
-    mapDustMat.uniforms.uOpacity.value = Math.min(1, introOn * 0.9 + mapOn * (1 - 0.42 * ffnOn)) * 0.8;
+    mapDustMat.uniforms.uOpacity.value = mapOn * (1 - 0.42 * ffnOn) * 0.8;
     mapDust.visible = mapDustMat.uniforms.uOpacity.value > 0.004;
 
     const captureOn = smoothstep(0.05, 0.15, s) * (1 - smoothstep(0.27, 0.40, s));
@@ -3292,14 +2959,9 @@
     captureTrails.visible = captureOn > 0.006;
 
     ffnGroup.visible = ffnOn > 0.003;
-    for (const m of layerDiscs) m.uniforms.uOpacity.value = ffnOn * 0.82;
     for (const m of layerNodeMats) m.uniforms.uOpacity.value = ffnOn * 0.92;
-    ffnEdgeMat.uniforms.uOpacity.value = ffnOn * 0.82;
-    ffnTokenMat.uniforms.uOpacity.value = ffnOn;
-    probeMat.uniforms.uOpacity.value = ffnOn * 0.88;
-    activationRingMat.uniforms.uOpacity.value = ffnOn * 0.58;
 
-    const bettiOn = smoothstep(0.53, 0.63, s) * (1 - smoothstep(0.81, 0.89, s));
+    const bettiOn = smoothstep(0.53, 0.63, s) * (1 - smoothstep(0.79, 0.86, s));
     bettiWrap.style.opacity = bettiOn.toFixed(3);
     betti.style.transform = "translateY(" + ((1 - bettiOn) * 10).toFixed(2) + "px)";
     bettiWrap.setAttribute("aria-hidden", bettiOn < 0.5 ? "true" : "false");
@@ -3372,12 +3034,7 @@
     bgUniforms.uTime.value = elapsed;
     mapDustMat.uniforms.uTime.value = elapsed;
     threadMat.uniforms.uTime.value = elapsed;
-    for (const m of layerDiscs) m.uniforms.uTime.value = elapsed;
     for (const m of layerNodeMats) m.uniforms.uTime.value = elapsed;
-    ffnEdgeMat.uniforms.uTime.value = elapsed;
-    ffnTokenMat.uniforms.uTime.value = elapsed;
-    probeMat.uniforms.uTime.value = elapsed;
-    activationRingMat.uniforms.uTime.value = elapsed;
 
     updateUI();
     renderPost();

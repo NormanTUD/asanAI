@@ -17,9 +17,14 @@
 		.traj-quote span { font-style: normal; color: var(--tm-faint); }
 		.traj-angle-list { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 6px; font: 600 0.72rem/1.4 var(--tm-ui); color: var(--tm-muted); }
 		.traj-angle-list .is-chosen { color: var(--tm-green); font-weight: 700; }
+		.iso-main { min-width: 0; }
 		.tt-echarts-host { width: 100%; height: 380px; min-height: 320px; background: transparent; }
 		.tt-echarts-host canvas { display: block; }
 		.tt-fallback { display: flex; align-items: center; justify-content: center; height: 100%; padding: 24px; text-align: center; color: var(--tm-muted); font: 0.86rem/1.5 var(--tm-ui); }
+		.tt-token-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+		.tt-token { appearance: none; border: 1px solid var(--tm-line-strong); background: var(--tm-paper-2); color: var(--tm-muted); font: 600 0.72rem/1.2 var(--tm-mono); padding: 0.32em 0.55em; cursor: pointer; }
+		.tt-token:hover { border-color: var(--tm-blue); color: var(--tm-ink); }
+		.tt-token.is-current { border-color: var(--tm-green); background: var(--tm-green); color: #ffffff; }
 		@media (max-width: 720px) {
 			.traj-demo-grid { grid-template-columns: 1fr; }
 			.traj-panel canvas { height: 260px; }
@@ -220,7 +225,10 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								</div>
 								<div class="demo-body">
 									<div class="iso-grid">
-										<div id="tt-3d" class="tt-echarts-host" role="img" aria-label="A three-dimensional landscape of plausible continuations, with the most likely path carved as a deep blue valley"></div>
+										<div class="iso-main">
+											<div id="tt-3d" class="tt-echarts-host" role="img" aria-label="A three-dimensional landscape of plausible continuations, with the most likely path carved as a deep blue valley"></div>
+											<div class="tt-token-row" id="tt-token-row" aria-label="Jump to a token"></div>
+										</div>
 										<aside class="iso-side">
 											<div class="iso-kicker">Next word</div>
 											<div class="iso-next" id="tt-next">capital</div>
@@ -236,9 +244,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 										</label>
 									</div>
 								</div>
-								<div class="demo-insight"><b>Takeaway</b><span>The model never decides that something is right. It builds a distribution from its training data and draws from it; the tunnel shows how context narrows that distribution.</span></div>
+								<div class="demo-insight"><b>Takeaway</b><span>The model never decides that something is right. It builds a distribution from its training data and draws from it; the landscape shows how context narrows that distribution.</span></div>
 							</div>
-						<p class="step-note">The model does not jump to an answer. It feels its way through this space, one token at a time. Click a word on the ridge, or any point in the landscape, to jump to that step.</p>
+						<p class="step-note">The model does not jump to an answer. It feels its way through this space, one token at a time. Click a word below the landscape, or use Next word, to jump to that step.</p>
 					</section>
 
 					<section class="section-block" id="inside" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
@@ -1808,15 +1816,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var yMin = -0.85, yMax = 0.85;
 			for (var yi = 0; yi <= yCount; yi++) {
 				var y = isoLerp(yMin, yMax, yi / yCount);
-				var row = [];
 				for (var xi = 0; xi <= xCount; xi++) {
 					var x = isoLerp(xMin, xMax, xi / xCount);
 					var depth = isoValleyDepth(x, y);
 					var ripple = 0.018 * Math.sin(x * 2.4 + y * 3.1) * Math.cos(y * 2.2 - x * 1.7);
 					var z = -depth + ripple * (1 - Math.min(1, depth));
-					row.push([Number(x.toFixed(3)), Number(y.toFixed(3)), Number(z.toFixed(4))]);
+					data.push([Number(x.toFixed(3)), Number(y.toFixed(3)), Number(z.toFixed(4))]);
 				}
-				data.push(row);
 			}
 			return { data: data, shape: [yCount + 1, xCount + 1] };
 		}
@@ -1859,7 +1865,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				type: "surface",
 				data: surface.data,
 				dataShape: surface.shape,
-				shading: "color",
+				shading: "lambert",
 				wireframe: { show: false },
 				itemStyle: { opacity: 1 }
 			});
@@ -2023,8 +2029,31 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 			updateIsoSide();
 		}
+		function isoRenderTokens() {
+			var row = document.getElementById("tt-token-row");
+			if (!row) return;
+			row.innerHTML = isoTokens.map(function (token, i) {
+				return '<button class="tt-token" type="button" data-index="' + i + '">' + token + '</button>';
+			}).join("");
+			row.querySelectorAll("button").forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					isoStep = parseInt(btn.getAttribute("data-index"), 10) || 0;
+					if (isoLoaded) drawIso();
+					else updateIsoSide();
+				});
+			});
+		}
+		function isoMarkCurrentToken(step) {
+			var row = document.getElementById("tt-token-row");
+			if (!row) return;
+			row.querySelectorAll(".tt-token").forEach(function (btn, i) {
+				btn.classList.toggle("is-current", i === step);
+				btn.setAttribute("aria-pressed", i === step ? "true" : "false");
+			});
+		}
 		function updateIsoSide() {
 			var step = Math.min(isoStep, isoTokens.length - 1);
+			isoMarkCurrentToken(step);
 			var isEnd = step >= isoTokens.length - 1;
 			var nextWord = isEnd ? "|endoftext|" : isoTokens[step + 1];
 			var entropy = isEnd ? 0.02 : isoEntropy[step + 1];
@@ -2094,6 +2123,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 			window.addEventListener("tm:theme", function () { if (isoLoaded) drawIso(); });
 			window.addEventListener("resize", function () { if (isoChart) isoChart.resize(); });
+			isoRenderTokens();
 			updateIsoSide();
 		}
 
