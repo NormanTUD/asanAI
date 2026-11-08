@@ -5270,7 +5270,7 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 
 // ─── Main 3D ECharts renderer ───────────────────────────────
 
-function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab, vfEnabled) {
+function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab, vfEnabled, titleSuffix) {
 	const traces = [];
 	const colors = window.tmPlotly.colors();
 	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
@@ -5308,7 +5308,7 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 				const prevRaw = (points[pIdx - 1].rawData || points[pIdx - 1].data)[tIdx];
 				const l2 = window.tmMetric ? window.tmMetric.distance(prevRaw, raw, 'euclidean') : 0;
 				const ang = window.tmMetric ? window.tmMetric.distance(prevRaw, raw, 'angular') : 0;
-				tip += `<br>L2 step: ${l2.toFixed(3)} · angle: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
+				tip += `<br>L2 step: ${l2.toFixed(3)}<br>angle: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
 			}
 			hover.push(tip);
 		});
@@ -5361,7 +5361,7 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 		}
 	}
 
-	const title = 'Token Trajectory: Embedding → +Position → Layer Outputs' + (window.tmMetric && window.tmMetric.label ? ' · ' + window.tmMetric.label() : '');
+	const title = 'Token Trajectory: Embedding → +Position → Layer Outputs' + (window.tmMetric && window.tmMetric.label ? ' · ' + window.tmMetric.label() : '') + (titleSuffix ? ' · ' + titleSuffix : '');
 	const layout = window.tmPlotly.layout3D(title, ['Dim 0', 'Dim 1', 'Dim 2']);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(trajDiv); if (oldChart) oldChart.dispose(); }
 	Plotly.react(trajDiv, traces, layout, { responsive: true, displayModeBar: false });
@@ -5487,16 +5487,37 @@ function tlab_render_trajectory_plot(d_model) {
 	const dataPoints = sortedKeys.map(k => steps[k]);
 	const { embSnap, snapVocab } = _traj_snapshot_embeddings();
 	const vfEnabled = window._trajectoryVfEnabled && d_model <= 3;
+	const metric = (window.tmMetric && window.tmMetric.get) ? window.tmMetric.get() : "euclidean";
+	const transform = (v) => (window.tmMetric && window.tmMetric.transform) ? window.tmMetric.transform(v, metric) : v;
+	const plottedPoints = dataPoints.map(stage => {
+		if (!stage || !stage.data) return stage;
+		return Object.assign({}, stage, { data: stage.data.map(transform), rawData: stage.data });
+	});
 
 	if (d_model >= 4) {
-		_traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
+		if (window.tmHighDimMode === 'parallel') {
+			_traj_render_high_dimensional(trajDiv, tokens, labels, plottedPoints, d_model, embSnap, snapVocab);
+		} else {
+			const all = [];
+			plottedPoints.forEach(p => { if (p && p.data) all.push(...p.data); });
+			const coords = (window.tmPCA3 ? window.tmPCA3(all) : all.map(v => v.slice(0, 3)));
+			const normalize3 = p => { const n = Math.sqrt(p.reduce((s, x) => s + x * x, 0)) || 1; return p.map(x => x / n); };
+			let cursor = 0;
+			const pcaPoints = plottedPoints.map(p => {
+				if (!p || !p.data) return p;
+				const chunk = coords.slice(cursor, cursor + p.data.length);
+				cursor += p.data.length;
+				return Object.assign({}, p, { data: metric === 'angular' ? chunk.map(normalize3) : chunk, rawData: p.rawData || p.data });
+			});
+			_traj_render_3d_echarts(trajDiv, tokens, labels, pcaPoints, {}, [], false, 'PCA (d→3)');
+		}
 		requestAnimationFrame(() => {
 			const actualHeight = trajDiv.scrollHeight;
 			trajDiv.style.height    = actualHeight + 'px';
 			trajDiv.style.minHeight = actualHeight + 'px';
 		});
 	} else {
-		_traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab, vfEnabled);
+		_traj_render_low_dimensional(trajDiv, tokens, labels, plottedPoints, d_model, embSnap, snapVocab, vfEnabled);
 	}
 }
 

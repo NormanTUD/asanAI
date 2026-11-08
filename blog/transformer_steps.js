@@ -235,6 +235,9 @@
 		});
 	}
 
+	window.tmPCA3 = pca3;
+	if (!window.tmHighDimMode) window.tmHighDimMode = "pca";
+
 	function project3(p, max, rotY, rotX) {
 		var x = (p[0] || 0) / max;
 		var y = (p[1] || 0) / max;
@@ -1856,15 +1859,19 @@
 			if (featureMetric() === "angular") {
 				if (de) {
 					return '<p><b>Großkreis / angular (Cosinus, 0–1).</b> Der geometrische Name ist <i>Großkreis-Distanz</i> (Bogen auf der Einheitskugel). In ML heißt dieselbe Größe meist <i>Cosinus-Distanz</i> <code>1−cosθ</code> oder <i>Winkel-Distanz</i> <code>θ</code>. Wir zeigen <code>θ/π</code>: 0 = gleiche Richtung, 1 = Gegenrichtung; kleiner Winkel = kleiner Abstand, großer Winkel = großer Abstand.</p>'
-						+ '<p><b>Kugel.</b> Nach L2-Normalisierung liegen Vektoren per Definition auf der Einheitskugel; LayerNorm normiert die Features jedes Tokens vor den Subschichten (<a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Ba et al., 2016</a>), und GPT-artige Modelle setzen vor dem Unembedding oft eine finale LayerNorm. Roh sind Embeddings aber nicht gleichmäßig auf der Kugel verteilt: kontextuelle Repräsentationen sind anisotrop und liegen in einem engen Kegel (<a href="https://aclanthology.org/D19-1006/" target="_blank" rel="noopener">Ethayarajh, 2019</a>). Satz-Embeddings werden üblicherweise per Cosinus verglichen (<a href="https://arxiv.org/abs/1908.10084" target="_blank" rel="noopener">Reimers &amp; Gurevych, 2019</a>). Die Winkelansicht ist also eine nützliche Projektion, keine Behauptung, das Modell speichere eine perfekte Kugel.</p>';
+						+ '<p><b>Kugel.</b> Nach L2-Normalisierung liegen Vektoren per Definition auf der Einheitskugel; LayerNorm normiert die Features jedes Tokens vor den Subschichten (<a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Ba et al., 2016</a>), und GPT-artige Modelle setzen vor dem Unembedding oft eine finale LayerNorm. Roh sind Embeddings aber nicht gleichmäßig auf der Kugel verteilt: kontextuelle Repräsentationen sind anisotrop und liegen in einem engen Kegel (<a href="https://aclanthology.org/D19-1006/" target="_blank" rel="noopener">Ethayarajh, 2019</a>). Satz-Embeddings werden üblicherweise per Cosinus verglichen (<a href="https://arxiv.org/abs/1908.10084" target="_blank" rel="noopener">Reimers &amp; Gurevych, 2019</a>). Die Winkelansicht ist also eine nützliche Projektion, keine Behauptung, das Modell speichere eine perfekte Kugel.</p>'
+					+ '<div class="tm-metric-formula" data-tex="\\theta=\\arccos\\!\\left(\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}\\right),\\quad d=\\frac{\\theta}{\\pi}"></div>';
 				}
 				return '<p><b>Great-circle / angular (cosine, 0–1).</b> The geometric name is <i>great-circle distance</i> (the arc on the unit sphere). In ML the same quantity is usually called <i>cosine distance</i> <code>1−cosθ</code> or <i>angular distance</i> <code>θ</code>. We show <code>θ/π</code>: 0 = same direction, 1 = opposite; small angle = small distance, large angle = large distance.</p>'
-					+ '<p><b>Sphere.</b> After L2 normalization vectors lie on the unit sphere by construction; LayerNorm normalizes each token\'s features before the sublayers (<a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Ba et al., 2016</a>), and GPT-style models often apply a final LayerNorm before the unembedding. Raw embeddings are not spread uniformly on that sphere, however: contextual representations are anisotropic and sit in a narrow cone (<a href="https://aclanthology.org/D19-1006/" target="_blank" rel="noopener">Ethayarajh, 2019</a>). Sentence embeddings are commonly compared by cosine similarity (<a href="https://arxiv.org/abs/1908.10084" target="_blank" rel="noopener">Reimers &amp; Gurevych, 2019</a>). The angular view is therefore a useful projection, not a claim that the model stores a perfect sphere.</p>';
+					+ '<p><b>Sphere.</b> After L2 normalization vectors lie on the unit sphere by construction; LayerNorm normalizes each token\'s features before the sublayers (<a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Ba et al., 2016</a>), and GPT-style models often apply a final LayerNorm before the unembedding. Raw embeddings are not spread uniformly on that sphere, however: contextual representations are anisotropic and sit in a narrow cone (<a href="https://aclanthology.org/D19-1006/" target="_blank" rel="noopener">Ethayarajh, 2019</a>). Sentence embeddings are commonly compared by cosine similarity (<a href="https://arxiv.org/abs/1908.10084" target="_blank" rel="noopener">Reimers &amp; Gurevych, 2019</a>). The angular view is therefore a useful projection, not a claim that the model stores a perfect sphere.</p>'
+					+ '<div class="tm-metric-formula" data-tex="\\theta=\\arccos\\!\\left(\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}\\right),\\quad d=\\frac{\\theta}{\\pi}"></div>';
 			}
 			if (de) {
-				return '<p><b>Euklidisch (L2) · Standard.</b> Gerade Linie im Raum. Für das nächste Token zählen oft die Winkel: Die Logits sind Skalarprodukte <code>h·w</code>; nach Normierung entscheidet der Cosinus, also der Winkel. Schalte oben auf <b>Großkreis / angular</b>, um diese Sicht zu sehen; wir suchen die Darstellung, in der die Daten am einfachsten aussehen.</p>';
+				return '<p><b>Euklidisch (L2) · Standard.</b> Gerade Linie im Raum. Für das nächste Token zählen oft die Winkel: Die Logits sind Skalarprodukte <code>h·w</code>; nach Normierung entscheidet der Cosinus, also der Winkel. Schalte oben auf <b>Großkreis / angular</b>, um diese Sicht zu sehen; wir suchen die Darstellung, in der die Daten am einfachsten aussehen.</p>'
+					+ '<div class="tm-metric-formula" data-tex="d_{\\text{L2}}=\\lVert u-v\\rVert_2"></div>';
 			}
-			return '<p><b>Euclidean (L2) · default.</b> Straight-line distance in the space. For the next token, angles often matter more: the logits are dot products <code>h·w</code>; after normalization the cosine, i.e. the angle, decides. Switch to <b>Great-circle / angular</b> at the top to see that view; we look for the representation that makes the data simplest.</p>';
+			return '<p><b>Euclidean (L2) · default.</b> Straight-line distance in the space. For the next token, angles often matter more: the logits are dot products <code>h·w</code>; after normalization the cosine, i.e. the angle, decides. Switch to <b>Great-circle / angular</b> at the top to see that view; we look for the representation that makes the data simplest.</p>'
+				+ '<div class="tm-metric-formula" data-tex="d_{\\text{L2}}=\\lVert u-v\\rVert_2"></div>';
 		},
 		transform: function (v, metric) {
 			metric = metric || featureMetric();
@@ -1908,6 +1915,7 @@
 		});
 		document.querySelectorAll(".tm-feature-metric-explain").forEach(function (el) {
 			el.innerHTML = (window.tmMetric && window.tmMetric.explainHtml) ? window.tmMetric.explainHtml() : "";
+			typesetMathIn(el);
 		});
 	});
 
@@ -2690,6 +2698,7 @@
 					"<div class='tm-feature-metric-explain'>" + metricExplain + "</div></div>" +
 					"<div id='unified-layer-" + idx + "-logit-lens' class='tm-logit-lens-host'></div>";
 				sb.insertBefore(wrap, oldDetail || null);
+				typesetMathIn(wrap);
 			}
 			var featureWrap = sb.querySelector(".tm-feature-wrap");
 			if (triple && featureWrap && triple.parentNode !== featureWrap) {

@@ -4225,7 +4225,17 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var near = nearest(avg);
 			var sym = Math.abs(avg - near.value) < 0.5 ? "=" : "≈";
 			if (result) result.textContent = a.label + " + " + b.label + " " + sym + " " + avg.toFixed(1) + " → " + near.label + " (" + near.value + ")";
-			if (lineApi && lineApi.setHighlight) lineApi.setHighlight({ value: avg, label: near.label, color: near.color });
+			if (lineApi && lineApi.setHighlight) {
+				lineApi.setHighlight({ value: avg, label: near.label, color: near.color, showVector: true, vectorLabel: de ? "Ergebnisvektor" : "result vector" });
+			}
+			var formulaEl = document.getElementById("oned-formula");
+			if (formulaEl && window.TM && TM.typesetMath) {
+				var tex = "\\frac{\\underbrace{" + a.value + "}_{\\text{" + a.label + "}} + \\underbrace{" + b.value + "}_{\\text{" + b.label + "}}}{\\underbrace{2}_{\\text{" + (de ? "Anzahl" : "count") + "}}} = \\underbrace{" + avg.toFixed(1) + "}_{\\text{" + (de ? "Mittelwert" : "midpoint") + "}}";
+				tex += sym === "=" ? " = \\underbrace{" + near.value + "}_{\\text{" + near.label + "}}" : " \\approx \\underbrace{" + near.value + "}_{\\text{" + near.label + "}}";
+				formulaEl.setAttribute("data-tex", tex);
+				formulaEl.removeAttribute("data-tex-rendered");
+				TM.typesetMath(formulaEl);
+			}
 			if (row) row.querySelectorAll("button").forEach(function (other) {
 				other.classList.toggle("is-on", other === button);
 				other.setAttribute("aria-pressed", other === button ? "true" : "false");
@@ -4548,9 +4558,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			if (!host._plotlyDrawn) {
 				var p = Plotly.newPlot(host, traces, layout, config);
 				host._plotlyDrawn = true;
-				if (p && p.then) p.then(attachCamera); else attachCamera();
+				if (p && p.then) p.then(function () { attachCamera(); clearLoading(); });
+				else { attachCamera(); clearLoading(); }
 			} else {
 				Plotly.react(host, traces, layout, config);
+				clearLoading();
 			}
 		}
 		function attachCamera() {
@@ -4562,6 +4574,10 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		}
 		function captureCamera() {
 			if (host.layout && host.layout.scene && host.layout.scene.camera) camera = host.layout.scene.camera;
+		}
+		function clearLoading() {
+			var loading = host.querySelector(".traj-loading");
+			if (loading) loading.remove();
 		}
 		function renderCandidates() {
 			var el = document.getElementById("traj-candidates");

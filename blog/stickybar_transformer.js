@@ -47,6 +47,13 @@
 	    <label id="sticky-sphere-label" style="display:none; align-items:center; gap:5px; color:#94a3b8; font-size:0.78rem; white-space:nowrap;">
 		<input type="checkbox" id="sticky-metric-sphere" checked> Sphere
 	    </label>
+	    <label id="sticky-highdim-label" style="display:none; align-items:center; gap:5px; color:#94a3b8; font-size:0.78rem; white-space:nowrap;">
+		High-dim
+		<select id="sticky-highdim-select" style="padding:3px 6px; border-radius:6px; border:1px solid #475569; background:#1f2937; color:#f8fafc; font-size:0.74rem;">
+			<option value="pca">PCA</option>
+			<option value="parallel">Parallel</option>
+		</select>
+	    </label>
 	</div>
     `;
 	}
@@ -55,8 +62,10 @@
 	function wireMetricControls() {
 		const select = document.getElementById('sticky-metric-select');
 		const sphere = document.getElementById('sticky-metric-sphere');
+		const highdim = document.getElementById('sticky-highdim-select');
 		if (!select || !sphere) return;
 		const sphereLabel = sphere.closest('label');
+		const highdimLabel = highdim ? highdim.closest('label') : null;
 		const api = window.tmMetric;
 		const fallback = {
 			euclidean: { en: 'Euclidean (L2)' },
@@ -73,6 +82,11 @@
 			sphereLabel.style.display = angular ? 'inline-flex' : 'none';
 			sphere.disabled = !angular;
 			sphere.checked = (api && api.sphereEnabled) ? api.sphereEnabled() : (window.tmMetricSphere !== false);
+			if (highdimLabel && highdim) {
+				const dim = (typeof getTransformerConfig === 'function') ? getTransformerConfig().d_model : 3;
+				highdimLabel.style.display = dim > 3 ? 'inline-flex' : 'none';
+				highdim.value = window.tmHighDimMode || 'pca';
+			}
 		};
 		sync();
 
@@ -87,6 +101,14 @@
 			else window.tmMetricSphere = sphere.checked;
 			window.dispatchEvent(new CustomEvent('tm:metricchange', { detail: { metric: select.value } }));
 		});
+		if (highdim) {
+			highdim.addEventListener('change', function () {
+				window.tmHighDimMode = highdim.value;
+				window.dispatchEvent(new CustomEvent('tm:highdimmode', { detail: { mode: highdim.value } }));
+			});
+		}
+		const dimSlider = document.getElementById('transformer-dimension-model');
+		if (dimSlider) dimSlider.addEventListener('input', sync);
 		window.addEventListener('tm:metricchange', sync);
 	}
 

@@ -298,6 +298,20 @@
 				ctx.fillStyle = c.muted;
 				ctx.font = "600 10px Barlow, system-ui, sans-serif";
 				ctx.fillText(hv.toFixed(1), hx, axisY + 40);
+				if (state.highlight.showVector) {
+					var vx0 = X(0);
+					var vy = 22;
+					ctx.strokeStyle = hc;
+					ctx.lineWidth = 2;
+					ctx.beginPath(); ctx.moveTo(vx0, vy); ctx.lineTo(hx, vy); ctx.stroke();
+					var dir = hx >= vx0 ? 1 : -1;
+					ctx.beginPath(); ctx.moveTo(hx, vy); ctx.lineTo(hx - dir * 8, vy - 4); ctx.lineTo(hx - dir * 8, vy + 4); ctx.closePath();
+					ctx.fillStyle = hc;
+					ctx.fill();
+					ctx.font = "600 10px Barlow, system-ui, sans-serif";
+					ctx.textAlign = "center";
+					ctx.fillText(state.highlight.vectorLabel || "result", (vx0 + hx) / 2, vy - 6);
+				}
 				ctx.restore();
 			}
 		});
