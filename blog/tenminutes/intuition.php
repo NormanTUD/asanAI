@@ -3339,14 +3339,14 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				heatContextSlider.addEventListener("input", function () {
 					heatCount = TM.clamp(parseInt(heatContextSlider.value, 10) || 16, 16, 128);
 					if (heatContextOut) heatContextOut.textContent = String(heatCount);
-					if (heatApi) heatApi.redraw();
+					if (heatApi) heatApi.redraw({ spinner: false });
 				});
 			}
 			if (heatDimsSlider) {
 				heatDimsSlider.addEventListener("input", function () {
 					heatDims = TM.clamp(parseInt(heatDimsSlider.value, 10) || 2, 2, 64);
 					if (heatDimsOut) heatDimsOut.textContent = String(heatDims);
-					if (heatApi) heatApi.redraw();
+					if (heatApi) heatApi.redraw({ spinner: false });
 				});
 			}
 			window.addEventListener("tm:theme", function () {
@@ -3459,6 +3459,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			ctx.textAlign = "left";
 
 			var pillData = [];
+			var primitives = [];
 			POS_LABELS.forEach(function (label, i) {
 				var plus = [0, 0, 0];
 				var minus = [0, 0, 0];
@@ -3466,16 +3467,21 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				minus[i] = -1.08;
 				var a = project(plus);
 				var b = project(minus);
-				ctx.beginPath();
-				ctx.moveTo(a.x, a.y);
-				ctx.lineTo(b.x, b.y);
-				ctx.strokeStyle = posRgba(c[POS_COLORS[i]], 0.5);
-				ctx.lineWidth = 1.4;
-				ctx.stroke();
+				var prev = b;
+				for (var seg = 1; seg <= 24; seg++) {
+					var u = seg / 24;
+					var p3 = [
+						minus[0] + (plus[0] - minus[0]) * u,
+						minus[1] + (plus[1] - minus[1]) * u,
+						minus[2] + (plus[2] - minus[2]) * u
+					];
+					var q = project(p3);
+					addLine(prev.x, prev.y, prev.z, q.x, q.y, q.z, posRgba(c[POS_COLORS[i]], 0.45), 1.4);
+					prev = q;
+				}
 				pillData.push({ x: a.x, y: a.y, color: c[POS_COLORS[i]], text: label });
 			});
 
-			var primitives = [];
 			function addLine(ax, ay, az, bx, by, bz, color, width, dash, cap) {
 				primitives.push({
 					z: (az + bz) / 2,
@@ -3504,6 +3510,28 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					}
 				});
 			}
+			function addRing(center, normal, radius, color, width) {
+				var n = normal.slice();
+				var nl = Math.hypot(n[0], n[1], n[2]) || 1;
+				n = [n[0] / nl, n[1] / nl, n[2] / nl];
+				var ref = Math.abs(n[2]) < 0.9 ? [0, 0, 1] : [0, 1, 0];
+				var u = [n[1] * ref[2] - n[2] * ref[1], n[2] * ref[0] - n[0] * ref[2], n[0] * ref[1] - n[1] * ref[0]];
+				var ul = Math.hypot(u[0], u[1], u[2]) || 1;
+				u = [u[0] / ul, u[1] / ul, u[2] / ul];
+				var v = [n[1] * u[2] - n[2] * u[1], n[2] * u[0] - n[0] * u[2], n[0] * u[1] - n[1] * u[0]];
+				var prev = null;
+				for (var ring = 0; ring <= 56; ring++) {
+					var a = ring / 56 * Math.PI * 2;
+					var p = [
+						center[0] + radius * (Math.cos(a) * u[0] + Math.sin(a) * v[0]),
+						center[1] + radius * (Math.cos(a) * u[1] + Math.sin(a) * v[1]),
+						center[2] + radius * (Math.cos(a) * u[2] + Math.sin(a) * v[2])
+					];
+					var q = project(p);
+					if (prev) addLine(prev.x, prev.y, prev.z, q.x, q.y, q.z, color, width);
+					prev = q;
+				}
+			}
 
 			if (posShown > 0.01) {
 				var steps = Math.max(2, Math.min(1600, Math.ceil(posShown / POS_CURVE_STEP)));
@@ -3515,6 +3543,39 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					prev = q;
 				}
 			}
+
+			var tokenVec = [0.72, 0.46, 0.52];
+			var tokenTip = project(tokenVec);
+			var tokenBase = project([0, 0, 0]);
+			var tokenPrev = tokenBase;
+			for (var tk = 1; tk <= 24; tk++) {
+				var tu = tk / 24;
+				var tokenPoint = project([tokenVec[0] * tu, tokenVec[1] * tu, tokenVec[2] * tu]);
+				addLine(tokenPrev.x, tokenPrev.y, tokenPrev.z, tokenPoint.x, tokenPoint.y, tokenPoint.z, posRgba(c.sky, 0.95), 2.8);
+				tokenPrev = tokenPoint;
+			}
+			var tokenBefore = project([tokenVec[0] * 0.9, tokenVec[1] * 0.9, tokenVec[2] * 0.9]);
+			var tokenAngle = Math.atan2(tokenTip.y - tokenBefore.y, tokenTip.x - tokenBefore.x);
+			primitives.push({
+				z: tokenTip.z,
+				draw: function (ctx) {
+					posGlow(ctx, tokenTip.x, tokenTip.y, 18, c.sky, 0.28);
+					ctx.beginPath();
+					ctx.moveTo(tokenTip.x, tokenTip.y);
+					ctx.lineTo(tokenTip.x - 9 * Math.cos(tokenAngle - 0.38), tokenTip.y - 9 * Math.sin(tokenAngle - 0.38));
+					ctx.lineTo(tokenTip.x - 9 * Math.cos(tokenAngle + 0.38), tokenTip.y - 9 * Math.sin(tokenAngle + 0.38));
+					ctx.closePath();
+					ctx.fillStyle = c.sky;
+					ctx.fill();
+					ctx.strokeStyle = c.card;
+					ctx.lineWidth = 1.5;
+					ctx.stroke();
+				}
+			});
+			pillData.push({ x: tokenTip.x, y: tokenTip.y - 16, color: c.sky, text: DE ? "Token" : "token" });
+			var tokenCenter = [tokenVec[0] * 0.55, tokenVec[1] * 0.55, tokenVec[2] * 0.55];
+			addRing(tokenCenter, tokenVec, 0.30, posRgba(c.sky, 0.34), 1.2);
+			addRing(tokenCenter, tokenVec, 0.40, posRgba(c.sky, 0.18), 1);
 
 			var v = posVector(posShown);
 			var tip = project(v);
@@ -3562,25 +3623,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					ctx.stroke();
 				}
 			});
-
-			var ballRadius = Math.max(10, unit * 0.12);
-			primitives.push({
-				z: origin.z,
-				draw: function (ctx) {
-					var ball = ctx.createRadialGradient(cx - ballRadius * 0.4, cy - ballRadius * 0.45, ballRadius * 0.12, cx, cy, ballRadius);
-					ball.addColorStop(0, c.dark ? "#f2fbf8" : "#ffffff");
-					ball.addColorStop(0.36, c.sky);
-					ball.addColorStop(0.72, c.petrol);
-					ball.addColorStop(1, "#000000");
-					ctx.fillStyle = ball;
-					ctx.beginPath();
-					ctx.arc(cx, cy, ballRadius, 0, Math.PI * 2);
-					ctx.fill();
-					ctx.strokeStyle = posRgba(c.sky, 0.55);
-					ctx.lineWidth = 1;
-					ctx.stroke();
-				}
-			});
+			pillData.push({ x: tip.x, y: tip.y - 16, color: c.green, text: DE ? "Position" : "position" });
 
 			primitives.sort(function (a, b) { return a.z - b.z; });
 			primitives.forEach(function (p) { p.draw(ctx); });
@@ -3590,7 +3633,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			ctx.textAlign = "center";
 			ctx.font = "600 10px Barlow, system-ui, sans-serif";
 			ctx.fillStyle = c.muted;
-			ctx.fillText(DE ? "Token (Originalwort)" : "token (original word)", cx, cy + ballRadius + 16);
+			ctx.fillText(DE ? "blau: Token-Vektor · grün: Positionsvektor" : "blue: token vector · green: position vector", cx, h - 12);
 			ctx.textAlign = "left";
 		}
 		if (posCanvas) {
@@ -3633,7 +3676,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					if (posReduce) posShown = pos;
 					if (posCountOut) posCountOut.textContent = String(pos);
 					posRenderOut();
-					if (posApi) posApi.redraw();
+					if (posApi) posApi.redraw({ spinner: false });
 				});
 			}
 			var posAutoBtn = document.getElementById("ipe-autorotate");
