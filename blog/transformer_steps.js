@@ -2577,6 +2577,10 @@
 		var outEl = document.getElementById(prefix + "-residual-out");
 		var triple = inEl ? inEl.closest(".tm-residual-triple") : null;
 		if (!trace || !inEl || !deltaEl || !outEl) return;
+		var tripleRows = (trace.h_in && trace.h_in.length) || 0;
+		[inEl, deltaEl, outEl].forEach(function (canvas) {
+			canvas.style.height = (170 + tripleRows * 5) + "px";
+		});
 		["in", "delta", "out"].forEach(function (which) {
 			var el = document.getElementById(prefix + "-residual-" + which);
 			if (el && window.TransformerSteps && window.TransformerSteps.renderLayerResidualHeatmap) {

@@ -689,8 +689,92 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 														</div>
 					</section>
 
+					<section class="section-block" id="layer-stack" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
+						<?php $layer_de = function_exists('tm_lang') && tm_lang() === 'de'; ?>
+						<div class="section-kicker"><span class="sk-num">04</span> <?php echo $layer_de ? 'Der Stapel' : 'The stack'; ?></div>
+						<h2 class="section-title"><?php echo $layer_de ? 'Ein Modell ist ein Stapel von Funktionen.' : 'A model is a stack of functions.'; ?></h2>
+						<div class="prose">
+							<?php if ($layer_de): ?>
+							<p>Ein neuronales Netz entsteht, indem man Funktionen nacheinander anwendet. Eine Schicht transformiert ihre Eingabe, die nächste transformiert dieses Ergebnis, und der Stapel macht aus einer kleinen Operation ein tiefes Modell. Tiefe ist Komposition: viele einfache Schritte, jeder füttert den nächsten.</p>
+							<?php else: ?>
+							<p>A neural network is built by applying functions one after another. One layer transforms its input, the next layer transforms that result, and the stack turns a small operation into a deep model. The depth is composition: many simple steps, each feeding the next.</p>
+							<?php endif; ?>
+							<div class="prose-math layer-stack-formula" data-tex="\underbrace{ \text{output} = \text{layer}_3\!\left( \underbrace{ \text{layer}_2\!\left( \underbrace{\text{layer}_1(\text{input})}_{\text{first transformation}} \right) }_{\text{second transformation}} \right) }_{\text{a stack of functions, each feeding the next}}" data-tex-de="\underbrace{ \text{output} = \text{layer}_3\!\left( \underbrace{ \text{layer}_2\!\left( \underbrace{\text{layer}_1(\text{input})}_{\text{erste Transformation}} \right) }_{\text{zweite Transformation}} \right) }_{\text{ein Stapel von Funktionen, jede füttert die nächste}}" data-tex-display="true"></div>
+							<?php if ($layer_de): ?>
+							<p>Ein Sprachmodell ergänzt diesen Stapel an beiden Enden. Ein Tokenizer macht aus dem Kontext Tokens, ein Embedding macht aus jedem Token einen Vektor, die Schichten mischen und schreiben diese Vektoren um, und ein Unembedding macht aus dem letzten Vektor einen Score für jedes mögliche nächste Token.</p>
+							<?php else: ?>
+							<p>A language model adds two ends to this stack. A tokenizer turns the context into tokens, an embedding turns each token into a vector, the layers mix and rewrite those vectors, and an unembedding turns the final vector into a score for every possible next token.</p>
+							<?php endif; ?>
+							<div class="prose-math layer-stack-formula" data-tex="\underbrace{ \text{next word} = \text{unembed}\!\left( \underbrace{ \text{layer}_n\!\left(\cdots \text{layer}_2\!\left(\text{layer}_1\!\left( \underbrace{\text{embedding}(\text{tokenizer}(\text{context}))}_{\text{text becomes vectors}} \right)\right)\cdots\right) }_{\text{each layer mixes and rewrites the vectors}} \right) }_{\text{the whole model: text in, next token out}}" data-tex-de="\underbrace{ \text{nächstes Wort} = \text{unembed}\!\left( \underbrace{ \text{layer}_n\!\left(\cdots \text{layer}_2\!\left(\text{layer}_1\!\left( \underbrace{\text{embedding}(\text{tokenizer}(\text{context}))}_{\text{Text wird zu Vektoren}} \right)\right)\cdots\right) }_{\text{jede Schicht mischt und schreibt die Vektoren um}} \right) }_{\text{das ganze Modell: Text rein, nächstes Token raus}}" data-tex-display="true"></div>
+							<div class="layer-flow" role="img" aria-label="<?php echo $layer_de ? 'Der Aufbau als Stapel: Tokenizer, Embedding, N Transformer-Schichten, Unembedding' : 'The model as a stack: tokenizer, embedding, N transformer layers, unembedding'; ?>">
+								<div class="lf-stage lf-stage--token"><span class="lf-num">01</span><b>Tokenizer</b><span><?php echo $layer_de ? 'Kontext → Tokens' : 'context → tokens'; ?></span></div>
+								<span class="lf-arrow" aria-hidden="true">→</span>
+								<div class="lf-stage lf-stage--embed"><span class="lf-num">02</span><b>Embedding</b><span><?php echo $layer_de ? 'Tokens → Vektoren' : 'tokens → vectors'; ?></span></div>
+								<span class="lf-arrow" aria-hidden="true">→</span>
+								<div class="lf-stage lf-stage--layers"><span class="lf-num">03</span><b><?php echo $layer_de ? 'Schichten × N' : 'Layers × N'; ?></b><span>Attention + FFN</span><span class="lf-stack-bars" aria-hidden="true"><i></i><i></i><i></i></span></div>
+								<span class="lf-arrow" aria-hidden="true">→</span>
+								<div class="lf-stage lf-stage--unembed"><span class="lf-num">04</span><b>Unembedding</b><span><?php echo $layer_de ? 'Vektor → Scores' : 'vector → scores'; ?></span></div>
+							</div>
+							<?php if ($layer_de): ?>
+							<p>In einer Schicht schaut Attention auf den ganzen Kontext. Für jedes Token bewertet sie, wie viel es von jedem anderen sichtbaren Token übernehmen soll. Die Scores bilden eine Token-für-Token-Matrix: eine Zeile für das fragende Token, eine Spalte für das antwortende Token. Die <a href="#step-attention-section">Attention-Demo unten</a> zeigt einen Head dabei.</p>
+							<?php else: ?>
+							<p>Inside a layer, attention looks at the whole context. For every token, it scores how much that token should take from every other visible token. The scores form a token-by-token matrix: one row for the token asking, one column for the token answering. The <a href="#step-attention-section">attention demo below</a> shows one head doing this.</p>
+							<?php endif; ?>
+							<div class="layer-mix">
+								<div class="layer-matrix-card">
+									<div class="layer-card-title"><?php echo $layer_de ? 'Kausale Attention' : 'Causal attention'; ?></div>
+									<?php
+									$layer_tokens = $layer_de ? ['Die', 'Hauptstadt', 'von', 'Frankreich'] : ['The', 'capital', 'of', 'France'];
+									$layer_weights = [
+										[1.0, null, null, null],
+										[0.8, 0.2, null, null],
+										[0.1, 0.3, 0.6, null],
+										[0.05, 0.45, 0.1, 0.4],
+									];
+									?>
+									<div class="layer-attn-matrix" role="img" aria-label="<?php echo $layer_de ? 'Token-für-Token-Aufmerksamkeitsmatrix mit maskierter oberer Dreiecksfläche' : 'Token-by-token attention matrix with a masked upper triangle'; ?>">
+										<div class="lam-corner">Token</div>
+										<?php foreach ($layer_tokens as $layer_token): ?>
+										<div class="lam-head"><?php echo htmlspecialchars($layer_token, ENT_QUOTES, 'UTF-8'); ?></div>
+										<?php endforeach; ?>
+										<?php foreach ($layer_tokens as $layer_i => $layer_token): ?>
+										<div class="lam-label"><?php echo htmlspecialchars($layer_token, ENT_QUOTES, 'UTF-8'); ?></div>
+										<?php foreach ($layer_tokens as $layer_j => $layer_other): ?>
+										<?php $layer_w = $layer_weights[$layer_i][$layer_j]; ?>
+										<?php if ($layer_w === null): ?>
+										<div class="lam-cell is-masked" aria-hidden="true">—</div>
+										<?php else: ?>
+										<div class="lam-cell" style="--w:<?php echo $layer_w; ?>"><?php echo (int) round($layer_w * 100); ?>%</div>
+										<?php endif; ?>
+										<?php endforeach; ?>
+										<?php endforeach; ?>
+									</div>
+									<div class="layer-matrix-legend">
+										<span><i></i><?php echo $layer_de ? 'Zeile = Token fragt' : 'row = token asking'; ?></span>
+										<span><i></i><?php echo $layer_de ? 'Spalte = Token antwortet' : 'column = token answering'; ?></span>
+										<span><i class="is-mask"></i><?php echo $layer_de ? 'maskiert = zukünftiges Token' : 'masked = future token'; ?></span>
+									</div>
+								</div>
+								<div class="layer-mix-card">
+									<div class="layer-card-title"><?php echo $layer_de ? 'Die Mischung' : 'The mix'; ?></div>
+									<div class="prose-math" data-tex="\underbrace{ \text{new}_2 = \underbrace{0.2\,\text{token}_2 + 0.8\,\text{token}_1}_{\text{weighted mix of visible vectors}} }_{\text{token 2 after attention}}" data-tex-de="\underbrace{ \text{neu}_2 = \underbrace{0.2\,\text{token}_2 + 0.8\,\text{token}_1}_{\text{gewichtete Mischung der sichtbaren Vektoren}} }_{\text{Token 2 nach Attention}}" data-tex-display="true"></div>
+									<p class="layer-mix-note"><?php echo $layer_de ? 'Token 2 liest Token 1 und sich selbst. Token 3 kann es nicht lesen, weil Token 3 erst später kommt. Das obere Dreieck ist maskiert.' : 'Token 2 reads token 1 and itself. It cannot read token 3, because token 3 comes later. The upper triangle is masked.'; ?></p>
+								</div>
+							</div>
+							<?php if ($layer_de): ?>
+							<p>Die erste Schicht mischt die ursprünglichen Token-Vektoren. Spätere Schichten mischen Vektoren, die frühere Schichten bereits verändert haben; jeder Durchlauf sieht also einen anderen Kontext. In einem autoregressiven Modell ist die Matrix unterdreieckig: Ein Token kann auf sich und frühere Tokens achten, nie auf Tokens, die erst später kommen. Diese Kausalmaskierung erlaubt es, mit jedem Präfix eines Satzes zu trainieren und das nächste Token vorherzusagen, ohne die Zukunft zu sehen.</p>
+							<p>Nach der Attention geht der neue Vektor jedes Tokens durch ein Feed-Forward-Netz. Das FFN arbeitet mit einem Token auf einmal: Es trennt Merkmale und schreibt den Vektor um. Attention bewegt Information zwischen Tokens; das FFN transformiert, was jedes Token trägt. Der <a href="#step-ffn-section">FFN-Abschnitt</a> öffnet diesen Schritt.</p>
+							<p>Der Stapel wiederholt sich. Jede Schicht hat ihre eigenen gelernten Gewichte; die Struktur ist geteilt, die Parameter nicht. Nach der letzten Schicht liest das Unembedding den letzten Vektor und erzeugt eine Verteilung über das nächste Token. Die <a href="#block-repeat">echten GPT-2-Trajektorien unten</a> zeigen die Bewegung durch 12 dieser Blöcke; <a href="#last-step">der letzte Schritt</a> macht aus dem letzten Vektor ein Wort.</p>
+							<?php else: ?>
+							<p>The first layer mixes the original token vectors. Later layers mix vectors that earlier layers have already changed, so every pass sees a different context. In an autoregressive model the matrix is lower-triangular: a token can attend to itself and earlier tokens, never to tokens that come later. That causal mask is what lets the model train on every prefix of a sentence and predict the next token without seeing the future.</p>
+							<p>After attention, each token's new vector goes through a feed-forward network. The FFN works on one token at a time: it separates features and rewrites the vector. Attention moves information between tokens; the FFN transforms what each token carries. The <a href="#step-ffn-section">FFN section</a> opens that step.</p>
+							<p>The stack repeats. Each layer has its own learned weights, so the structure is shared but the parameters are not. After the last layer, the unembedding reads the final vector and produces a distribution over the next token. The <a href="#block-repeat">real GPT-2 trajectories below</a> show the movement through 12 of these blocks; <a href="#last-step">the last step</a> turns the final vector into a word.</p>
+							<?php endif; ?>
+						</div>
+					</section>
+
 					<section class="section-block" id="block-repeat" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
-						<div class="section-kicker"><span class="sk-num">04</span> The block repeats</div>
+						<div class="section-kicker"><span class="sk-num">05</span> The block repeats</div>
 						<h2 class="section-title">The whole block: attention + FFN, again and again</h2>
 						<div class="prose">
 							<p>Attention and the FFN are one transformer block. The same architecture runs again and again, but each layer has its own learned weights and its own learned vectors. The block repeats in structure, not in parameters. Each pass lets every token look at the context, then moves it through its own MLP.</p>
@@ -726,7 +810,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					</section>
 
 					<section class="section-block" id="last-step" data-chapter="From vector to word" data-chapter-de="Vom Vektor zum Wort">
-						<div class="section-kicker"><span class="sk-num">05</span> The last step</div>
+						<div class="section-kicker"><span class="sk-num">06</span> The last step</div>
 						<h2 class="section-title">The final vector picks a word.</h2>
 						<div class="prose">
 							<p>How does the final vector become a probability? The last token carries the whole context. Its final residual vector h is multiplied by a learned unembedding matrix W_U. Each row w_i is the direction the model has learned for token i. The result is one raw score per vocabulary entry: the logit z_i.</p>
@@ -789,7 +873,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					</section>
 
 					<section class="section-block" id="meadow" data-chapter="From vector to word" data-chapter-de="Vom Vektor zum Wort">
-						<div class="section-kicker"><span class="sk-num">06</span> The meadow</div>
+						<div class="section-kicker"><span class="sk-num">07</span> The meadow</div>
 						<h2 class="section-title">The same step, seen as geometry.</h2>
 						<div class="prose">
 							<p>The meadow looks at the same step geometrically. Every token owns a region of the thought space; the next word is the region the thought falls into. Near a seam, two words are almost equally likely.</p>
@@ -825,7 +909,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					</section>
 
 					<section class="section-block" id="whole" data-chapter="From vector to word" data-chapter-de="Vom Vektor zum Wort">
-						<div class="section-kicker"><span class="sk-num">07</span> The whole loop</div>
+						<div class="section-kicker"><span class="sk-num">08</span> The whole loop</div>
 						<h2 class="section-title">Text in, geometry, one word out.</h2>
 						<div class="prose">
 							<p>The pieces fit in a fixed order: text → tokens → vectors → position → attention + residual → FFN → distribution → draw → append. The loop ends when the model emits the special token &lt;|endoftext|&gt;.</p>

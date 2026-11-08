@@ -8501,3 +8501,12 @@ html[data-theme="dark"] .traj-candidate.is-chosen { color: var(--tm-green); }
 	margin-left: auto;
 	margin-right: auto;
 }
+
+.prose-math {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.prose-math math {
+	width: auto;
+}
