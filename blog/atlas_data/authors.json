@@ -81196,6 +81196,382 @@
   ]
  },
  {
+  "name": "Robert M. Seyfarth",
+  "canon": "Robert M. Seyfarth",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1980,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "seyfarth1980vervet"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Dorothy L. Cheney",
+  "canon": "Dorothy L. Cheney",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1980,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "seyfarth1980vervet"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Peter Marler",
+  "canon": "Peter Marler",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1980,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "seyfarth1980vervet"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Kate Arnold and Klaus Zuberbühler",
+  "canon": "Kate Arnold and Klaus Zuberbühler",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2006,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "arnold2006semantic"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Baruch Arensburg et al.",
+  "canon": "Baruch Arensburg",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1989,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "arensburg1989hyoid"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Ruggero D'Anastasio et al.",
+  "canon": "Ruggero D'Anastasio",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2013,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "danastasio2013hyoid"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Johannes Krause et al.",
+  "canon": "Johannes Krause",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2007,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "krause2007foxp2"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "W. Tecumseh Fitch and David Reby",
+  "canon": "W. Tecumseh Fitch and David Reby",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2001,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "fitch2001larynx"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "W. Tecumseh Fitch",
+  "canon": "W. Tecumseh Fitch",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2000,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "fitch2000evolution"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "R. Allen Gardner and Beatrice T. Gardner",
+  "canon": "R. Allen Gardner and Beatrice T. Gardner",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1969,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gardner1969washoe"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Francine G. Patterson",
+  "canon": "Francine G. Patterson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1978,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "patterson1978koko"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "David Premack",
+  "canon": "David Premack",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1971,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "premack1971language"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Herbert S. Terrace et al.",
+  "canon": "Herbert S. Terrace",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1979,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "terrace1979nim"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "E. Sue Savage-Rumbaugh et al.",
+  "canon": "E. Sue Savage-Rumbaugh",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1986,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "savage1986kanzi",
+   "savage1993language"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Juliane Kaminski",
+  "canon": "Juliane Kaminski",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kaminski2004rico"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Josep Call",
+  "canon": "Josep Call",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kaminski2004rico"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Julia Fischer",
+  "canon": "Julia Fischer",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kaminski2004rico"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "John W. Pilley and Alliston K. Reid",
+  "canon": "John W. Pilley and Alliston K. Reid",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pilley2011chaser"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Attila Andics et al.",
+  "canon": "Attila Andics",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2014,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "andics2014voice",
+   "andics2016neural"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Atsuko Saito et al.",
+  "canon": "Atsuko Saito",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "saito2019cats"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Atsuko Saito and Kazutaka Shinozuka",
+  "canon": "Atsuko Saito and Kazutaka Shinozuka",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2013,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "saito2013owners"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Saho Takagi et al.",
+  "canon": "Saho Takagi",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "takagi2022cats"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
   "name": "Michael Tye",
   "canon": "Michael Tye",
   "alias": null,

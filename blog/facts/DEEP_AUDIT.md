@@ -1,10 +1,10 @@
 # Deep fact audit
 
 - lessons: 99
-- claims: 7379
-- statements: 17299
-- relations: 52387
-- uncovered years: 57
+- claims: 7388
+- statements: 17336
+- relations: 52450
+- uncovered years: 64
 - uncovered quantities: 6
 - uncited specific claims: 307
 - citation keys not found in lesson: 0
@@ -61,7 +61,7 @@
 | intro | 17 | 40 | 121 | 0 | 0 |
 | intuition | 32 | 261 | 750 | 1 | 0 |
 | knowledge_map | 15 | 0 | 14 | 0 | 0 |
-| language | 77 | 330 | 803 | 0 | 0 |
+| language | 86 | 367 | 866 | 7 | 0 |
 | law_regulation | 28 | 61 | 236 | 0 | 0 |
 | loss_landscape | 25 | 98 | 262 | 0 | 0 |
 | losslab | 23 | 70 | 231 | 0 | 0 |
@@ -131,6 +131,13 @@
 - human_mind.php: 2007
 - human_mind.php: 2013
 - intuition.php: 2016
+- language.php: 1971
+- language.php: 1979
+- language.php: 2001
+- language.php: 2004
+- language.php: 2006
+- language.php: 2019
+- language.php: 2022
 - overandunderfittinglab.php: 2017
 - reasoning.php: 2026
 - recurrent_networks.php: 2015
@@ -146,14 +153,7 @@
 - statistics_ii.php: 1924
 - statistics_ii.php: 1951
 - statistics_ii.php: 1952
-- statistics_ii.php: 1958
-- statistics_ii.php: 1959
-- statistics_ii.php: 1974
-- statistics_ii.php: 1978
-- statistics_ii.php: 2006
-- statistics_ii.php: 2007
-- tokenizerlab.php: 1234
-- … and 22 more
+- … and 29 more
 
 ## Uncovered quantities
 

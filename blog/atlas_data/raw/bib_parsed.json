@@ -3582,6 +3582,126 @@
    "year": "1993",
    "url": "https://doi.org/10.1016/0163-6383(93)80007-U"
   },
+  "seyfarth1980vervet": {
+   "title": "Monkey Responses to Three Different Alarm Calls: Evidence of Predator Classification and Semantic Communication",
+   "author": "Robert M. Seyfarth, Dorothy L. Cheney, Peter Marler",
+   "year": "1980",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/7433999/"
+  },
+  "arnold2006semantic": {
+   "title": "Semantic Combinations in Primate Calls",
+   "author": "Kate Arnold and Klaus Zuberbühler",
+   "year": "2006",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16710411/"
+  },
+  "arensburg1989hyoid": {
+   "title": "A Middle Palaeolithic Human Hyoid Bone",
+   "author": "Baruch Arensburg et al.",
+   "year": "1989",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/2716823/"
+  },
+  "danastasio2013hyoid": {
+   "title": "Micro-biomechanics of the Kebara 2 Hyoid and Its Implications for Speech in Neanderthals",
+   "author": "Ruggero D'Anastasio et al.",
+   "year": "2013",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24367509/"
+  },
+  "krause2007foxp2": {
+   "title": "The Derived FOXP2 Variant of Modern Humans Was Shared with Neandertals",
+   "author": "Johannes Krause et al.",
+   "year": "2007",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/17949978/"
+  },
+  "fitch2001larynx": {
+   "title": "The Descended Larynx Is Not Uniquely Human",
+   "author": "W. Tecumseh Fitch and David Reby",
+   "year": "2001",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/11506679/"
+  },
+  "fitch2000evolution": {
+   "title": "The Evolution of Speech: A Comparative Review",
+   "author": "W. Tecumseh Fitch",
+   "year": "2000",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/10859570/"
+  },
+  "gardner1969washoe": {
+   "title": "Teaching Sign Language to a Chimpanzee",
+   "author": "R. Allen Gardner and Beatrice T. Gardner",
+   "year": "1969",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/5793972/"
+  },
+  "patterson1978koko": {
+   "title": "The Gestures of a Gorilla: Language Acquisition in Another Pongid",
+   "author": "Francine G. Patterson",
+   "year": "1978",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/618570/"
+  },
+  "premack1971language": {
+   "title": "Language in Chimpanzee?",
+   "author": "David Premack",
+   "year": "1971",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/5572906/"
+  },
+  "terrace1979nim": {
+   "title": "Can an Ape Create a Sentence?",
+   "author": "Herbert S. Terrace et al.",
+   "year": "1979",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/504995/"
+  },
+  "savage1986kanzi": {
+   "title": "Spontaneous Symbol Acquisition and Communicative Use by Pygmy Chimpanzees (Pan paniscus)",
+   "author": "E. Sue Savage-Rumbaugh et al.",
+   "year": "1986",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/2428917/"
+  },
+  "savage1993language": {
+   "title": "Language Comprehension in Ape and Child",
+   "author": "E. Sue Savage-Rumbaugh et al.",
+   "year": "1993",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/8366872/"
+  },
+  "kaminski2004rico": {
+   "title": "Word Learning in a Domestic Dog: Evidence for \\",
+   "author": "Juliane Kaminski, Josep Call, Julia Fischer",
+   "year": "2004",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/15192233/"
+  },
+  "pilley2011chaser": {
+   "title": "Border Collie Comprehends Object Names as Verbal Referents",
+   "author": "John W. Pilley and Alliston K. Reid",
+   "year": "2011",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/21145379/"
+  },
+  "andics2014voice": {
+   "title": "Voice-Sensitive Regions in the Dog and Human Brain Are Revealed by Comparative fMRI",
+   "author": "Attila Andics et al.",
+   "year": "2014",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24560578/"
+  },
+  "andics2016neural": {
+   "title": "Neural Mechanisms for Lexical Processing in Dogs",
+   "author": "Attila Andics et al.",
+   "year": "2016",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27576923/"
+  },
+  "saito2019cats": {
+   "title": "Domestic Cats (Felis catus) Discriminate Their Names from Other Words",
+   "author": "Atsuko Saito et al.",
+   "year": "2019",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/30948740/"
+  },
+  "saito2013owners": {
+   "title": "Vocal Recognition of Owners by Domestic Cats (Felis catus)",
+   "author": "Atsuko Saito and Kazutaka Shinozuka",
+   "year": "2013",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/23525707/"
+  },
+  "takagi2022cats": {
+   "title": "Cats Learn the Names of Their Friend Cats in Their Daily Lives",
+   "author": "Saho Takagi et al.",
+   "year": "2022",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35418204/"
+  },
   "sep_qualia": {
    "title": "Qualia",
    "author": "Michael Tye",
@@ -25730,6 +25850,66 @@
   "moon1993native": [
    "language"
   ],
+  "seyfarth1980vervet": [
+   "language"
+  ],
+  "arnold2006semantic": [
+   "language"
+  ],
+  "arensburg1989hyoid": [
+   "language"
+  ],
+  "danastasio2013hyoid": [
+   "language"
+  ],
+  "krause2007foxp2": [
+   "language"
+  ],
+  "fitch2001larynx": [
+   "language"
+  ],
+  "fitch2000evolution": [
+   "language"
+  ],
+  "gardner1969washoe": [
+   "language"
+  ],
+  "patterson1978koko": [
+   "language"
+  ],
+  "premack1971language": [
+   "language"
+  ],
+  "terrace1979nim": [
+   "language"
+  ],
+  "savage1986kanzi": [
+   "language"
+  ],
+  "savage1993language": [
+   "language"
+  ],
+  "kaminski2004rico": [
+   "language"
+  ],
+  "pilley2011chaser": [
+   "language"
+  ],
+  "andics2014voice": [
+   "language"
+  ],
+  "andics2016neural": [
+   "language"
+  ],
+  "saito2019cats": [
+   "language"
+  ],
+  "saito2013owners": [
+   "language"
+  ],
+  "takagi2022cats": [
+   "language"
+  ],
   "lebombobone": [
    "geometry_i",
    "language",
@@ -41841,6 +42021,184 @@
    "maxyear": 1993,
    "keys": [
     "moon1993native"
+   ]
+  },
+  "Robert M. Seyfarth": {
+   "count": 1,
+   "minyear": 1980,
+   "maxyear": 1980,
+   "keys": [
+    "seyfarth1980vervet"
+   ]
+  },
+  "Dorothy L. Cheney": {
+   "count": 1,
+   "minyear": 1980,
+   "maxyear": 1980,
+   "keys": [
+    "seyfarth1980vervet"
+   ]
+  },
+  "Peter Marler": {
+   "count": 1,
+   "minyear": 1980,
+   "maxyear": 1980,
+   "keys": [
+    "seyfarth1980vervet"
+   ]
+  },
+  "Kate Arnold and Klaus Zuberbühler": {
+   "count": 1,
+   "minyear": 2006,
+   "maxyear": 2006,
+   "keys": [
+    "arnold2006semantic"
+   ]
+  },
+  "Baruch Arensburg et al.": {
+   "count": 1,
+   "minyear": 1989,
+   "maxyear": 1989,
+   "keys": [
+    "arensburg1989hyoid"
+   ]
+  },
+  "Ruggero D'Anastasio et al.": {
+   "count": 1,
+   "minyear": 2013,
+   "maxyear": 2013,
+   "keys": [
+    "danastasio2013hyoid"
+   ]
+  },
+  "Johannes Krause et al.": {
+   "count": 1,
+   "minyear": 2007,
+   "maxyear": 2007,
+   "keys": [
+    "krause2007foxp2"
+   ]
+  },
+  "W. Tecumseh Fitch and David Reby": {
+   "count": 1,
+   "minyear": 2001,
+   "maxyear": 2001,
+   "keys": [
+    "fitch2001larynx"
+   ]
+  },
+  "W. Tecumseh Fitch": {
+   "count": 1,
+   "minyear": 2000,
+   "maxyear": 2000,
+   "keys": [
+    "fitch2000evolution"
+   ]
+  },
+  "R. Allen Gardner and Beatrice T. Gardner": {
+   "count": 1,
+   "minyear": 1969,
+   "maxyear": 1969,
+   "keys": [
+    "gardner1969washoe"
+   ]
+  },
+  "Francine G. Patterson": {
+   "count": 1,
+   "minyear": 1978,
+   "maxyear": 1978,
+   "keys": [
+    "patterson1978koko"
+   ]
+  },
+  "David Premack": {
+   "count": 1,
+   "minyear": 1971,
+   "maxyear": 1971,
+   "keys": [
+    "premack1971language"
+   ]
+  },
+  "Herbert S. Terrace et al.": {
+   "count": 1,
+   "minyear": 1979,
+   "maxyear": 1979,
+   "keys": [
+    "terrace1979nim"
+   ]
+  },
+  "E. Sue Savage-Rumbaugh et al.": {
+   "count": 2,
+   "minyear": 1986,
+   "maxyear": 1993,
+   "keys": [
+    "savage1986kanzi",
+    "savage1993language"
+   ]
+  },
+  "Juliane Kaminski": {
+   "count": 1,
+   "minyear": 2004,
+   "maxyear": 2004,
+   "keys": [
+    "kaminski2004rico"
+   ]
+  },
+  "Josep Call": {
+   "count": 1,
+   "minyear": 2004,
+   "maxyear": 2004,
+   "keys": [
+    "kaminski2004rico"
+   ]
+  },
+  "Julia Fischer": {
+   "count": 1,
+   "minyear": 2004,
+   "maxyear": 2004,
+   "keys": [
+    "kaminski2004rico"
+   ]
+  },
+  "John W. Pilley and Alliston K. Reid": {
+   "count": 1,
+   "minyear": 2011,
+   "maxyear": 2011,
+   "keys": [
+    "pilley2011chaser"
+   ]
+  },
+  "Attila Andics et al.": {
+   "count": 2,
+   "minyear": 2014,
+   "maxyear": 2016,
+   "keys": [
+    "andics2014voice",
+    "andics2016neural"
+   ]
+  },
+  "Atsuko Saito et al.": {
+   "count": 1,
+   "minyear": 2019,
+   "maxyear": 2019,
+   "keys": [
+    "saito2019cats"
+   ]
+  },
+  "Atsuko Saito and Kazutaka Shinozuka": {
+   "count": 1,
+   "minyear": 2013,
+   "maxyear": 2013,
+   "keys": [
+    "saito2013owners"
+   ]
+  },
+  "Saho Takagi et al.": {
+   "count": 1,
+   "minyear": 2022,
+   "maxyear": 2022,
+   "keys": [
+    "takagi2022cats"
    ]
   },
   "Michael Tye": {
