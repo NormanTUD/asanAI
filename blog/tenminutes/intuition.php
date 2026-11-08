@@ -135,11 +135,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 									</div>
 									<div class="code-demo-terminal" aria-live="polite">
 										<div class="code-demo-bar"><span class="code-demo-dot is-green"></span><span class="code-demo-dot is-gold"></span><span class="code-demo-dot is-sky"></span><span class="code-demo-name">Terminal</span></div>
-										<div class="code-demo-term-body">
-											<div class="code-demo-cmd"><span class="code-demo-dollar">$</span> python3 <span data-en="sky.py" data-de="himmel.py">sky.py</span></div>
-											<div class="code-demo-output" id="code-demo-output" data-en="Blue is 4.35× more strongly scattered than red." data-de="Blau wird 4,35× stärker gestreut als Rot." hidden>Blue is 4.35× more strongly scattered than red.</div>
+										<div class="code-demo-term-body" id="code-demo-term">
+											<div class="code-demo-history" id="code-demo-history"></div>
+											<div class="code-demo-prompt-line">
+												<span class="code-demo-dollar">$</span>
+												<input class="code-demo-input" id="code-demo-input" type="text" autocomplete="off" spellcheck="false" aria-label="Terminal command">
+											</div>
 										</div>
-										<button type="button" class="code-demo-run" id="code-demo-run" aria-controls="code-demo-output" aria-expanded="false">Run program</button>
 									</div>
 								</div>
 							</div>
@@ -231,42 +233,20 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								</div>
 								<div class="demo-insight"><b>Takeaway</b><span>The model never decides that something is right. It builds a distribution from its training data and draws from it; the tunnel shows how context narrows that distribution.</span></div>
 							</div>
-						<div class="aha">
-							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">A good predictor compresses.</p>
-							<p class="aha-sub">A compact description of regularities is a form of compression. Whether that is understanding is still open.</p>
-						</div>
-						<div class="demo demo--paper" data-demo="compression">
-							<div class="demo-head">
-								<div>
-									<p class="demo-title">Prediction = compression <span>· demo</span></p>
-									<p class="demo-sub">A better next-character predictor needs fewer bits to encode the same sentence. The bars compare a uniform code with the model's code.</p>
-								</div>
-								<span class="demo-badge">information theory</span>
-							</div>
-							<div class="demo-body">
-								<canvas class="demo-canvas demo-canvas--md" data-compression-canvas aria-label="A sentence encoded with a uniform code and with a model-based code, showing the bit counts and compression ratio"></canvas>
-								<div class="demo-controls">
-									<label>Model quality <input type="range" data-compression-quality min="0.05" max="0.99" step="0.01" value="0.82"><output data-compression-quality-out>82 %</output></label>
-									<button class="btn-demo btn-demo--green" type="button" data-compression-run>Run</button>
-									<button class="btn-demo" type="button" data-compression-reset>Restart</button>
-								</div>
-								<div class="demo-readout demo-readout--3">
-									<div><b>Uniform code</b><span data-compression-uniform>0 bits</span></div>
-									<div><b>Model code</b><span data-compression-model>0 bits</span></div>
-									<div><b>Compression</b><span data-compression-ratio>—</span></div>
-								</div>
-								<p class="demo-hint" data-compression-note></p>
-							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Prediction and compression are two views of the same objective. Lower cross-entropy means a shorter code.</span></div>
-						</div>
+						<p class="step-note">The model does not jump to an answer. It feels its way through this space, one token at a time.</p>
 					</section>
 
 					<section class="section-block" id="inside" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker"><span class="sk-num">03</span> Inside the model</div>
-						<h2 class="section-title">Six steps, one running vector.</h2>
+						<h2 class="section-title">The transformer: six steps, one running vector.</h2>
+						<figure class="traj-figure">
+							<img class="traj-img-light" src="../image.php?f=transformer_trajectory_full_path_light.png&amp;w=900" alt="Token trajectories through a transformer: five colored paths move through the layers and end near related tokens" loading="lazy">
+							<img class="traj-img-dark" src="../image.php?f=transformer_trajectory_full_path.png&amp;w=900" alt="Token trajectories through a transformer: five colored paths move through the layers and end near related tokens" loading="lazy">
+							<figcaption class="md">Token trajectories through the full transformer. Each line is one token; each bend is one block. The 3D view is a projection; the model works in thousands of dimensions. Original diagram: Ten Minutes, <a href="transformer">Transformer</a>, CC BY-SA 4.0.</figcaption>
+						</figure>
 						<div class="prose">
-							<p>Inside, one token passes through six steps: tokenize, embed, position, attention, feed-forward, residual. Each step changes its vector; the residual stream carries it to the next layer.</p>
+							<p>This is the transformer. For every token, again and again, it asks how that token stands in context to all the other tokens right now. Attention lets it look around, a dense layer and an activation function transform each token, and LayerNorm keeps the numbers in a stable range. A few other parts do their jobs along the way.</p>
+							<p>Each pass shifts the token's point in the space. The directions follow meaning paths and become clearer, so the last token ends up at a small angle to the tokens that are likely next in this context. That is the trick.</p>
 							<div class="prose-math" data-tex="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{token vector}})}_{\text{what layer 1 adds}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{running vector}})}_{\text{what layer 2 adds}} \end{aligned}" data-tex-de="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{Token-Vektor}})}_{\text{was Schicht 1 hinzufügt}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{laufender Vektor}})}_{\text{was Schicht 2 hinzufügt}} \end{aligned}" data-tex-display="true"></div>
 							<p>The new state is the old state plus what the layer adds. The demos are simplified; the order is the real architecture.</p>
 						</div>
@@ -739,7 +719,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>What it is</b><span>A next-token predictor: one distribution, one draw, one append, repeated.</span></div>
-							<div class="keypoint"><b>Why it scales</b><span>Better prediction usually means better compression, and compression needs more of the world’s structure.</span></div>
+							<div class="keypoint"><b>Why it works</b><span>More context and more layers narrow the distribution, so the next token becomes easier to choose.</span></div>
 							<div class="keypoint"><b>Its limits</b><span>It predicts plausible text. It can be fluent and wrong, and it offers no guarantee of truth.</span></div>
 							<div class="keypoint"><b>The contested part</b><span>Whether fluent prediction is genuine world knowledge or “stochastic parroting” is not settled.</span></div>
 						</div>
@@ -1740,12 +1720,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			ctx.stroke();
 			ctx.setLineDash([]);
 			var step = Math.min(isoStep, isoTokens.length - 1);
-			var baseWidth = Math.min(w, h) * 0.10;
+			var baseWidth = Math.min(w, h) * 0.22;
+			var spread = 0.35 + 0.65 * isoTemp;
 			if (step >= 1) {
 				var upper = [], lower = [];
 				for (var i = 0; i <= step; i++) {
 					var q = at(isoPath[i]);
-					var env = isoEntropy[i] * isoTemp * baseWidth;
+					var env = isoEntropy[i] * spread * baseWidth;
 					var dx = 0, dy = -1;
 					if (i < isoPath.length - 1) {
 						var n = at(isoPath[i + 1]);
@@ -1796,30 +1777,51 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				var origin = at(isoPath[branch.atStep]);
 				branch.alternatives.forEach(function (alt) {
 					var target = at(alt.path);
-					var env = Math.max(6, alt.entropy * isoTemp * baseWidth * 0.6);
+					var startW = Math.max(10, isoEntropy[branch.atStep] * spread * baseWidth * 0.55);
+					var endW = Math.max(12, alt.entropy * spread * baseWidth * 0.75);
+					var dx = target.x - origin.x;
+					var dy = target.y - origin.y;
+					var len = Math.hypot(dx, dy) || 1;
+					var nx = -dy / len;
+					var ny = dx / len;
+					var p1 = { x: origin.x + nx * startW, y: origin.y + ny * startW };
+					var p2 = { x: target.x + nx * endW, y: target.y + ny * endW };
+					var p3 = { x: target.x - nx * endW, y: target.y - ny * endW };
+					var p4 = { x: origin.x - nx * startW, y: origin.y - ny * startW };
+					ctx.beginPath();
+					ctx.moveTo(p1.x, p1.y);
+					ctx.lineTo(p2.x, p2.y);
+					ctx.lineTo(p3.x, p3.y);
+					ctx.lineTo(p4.x, p4.y);
+					ctx.closePath();
+					ctx.fillStyle = c.gold;
+					ctx.globalAlpha = 0.10;
+					ctx.fill();
+					ctx.globalAlpha = 0.32;
+					ctx.strokeStyle = c.gold;
+					ctx.lineWidth = 1.2;
+					ctx.stroke();
+					ctx.globalAlpha = 0.42;
 					ctx.beginPath();
 					ctx.moveTo(origin.x, origin.y);
 					ctx.lineTo(target.x, target.y);
-					ctx.strokeStyle = c.gold;
-					ctx.globalAlpha = 0.35;
-					ctx.lineWidth = 1.5;
 					ctx.setLineDash([3, 5]);
 					ctx.stroke();
 					ctx.setLineDash([]);
 					ctx.globalAlpha = 1;
 					ctx.beginPath();
-					ctx.arc(target.x, target.y, env, 0, Math.PI * 2);
+					ctx.arc(target.x, target.y, Math.max(6, endW * 0.28), 0, Math.PI * 2);
 					ctx.fillStyle = c.gold;
-					ctx.globalAlpha = 0.06;
+					ctx.globalAlpha = 0.10;
 					ctx.fill();
-					ctx.globalAlpha = 0.3;
+					ctx.globalAlpha = 0.45;
 					ctx.strokeStyle = c.gold;
 					ctx.stroke();
 					ctx.globalAlpha = 1;
 					ctx.font = "11px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
 					ctx.textAlign = "center";
 					ctx.fillStyle = c.gold;
-					ctx.fillText(isoAltLabel(alt.token), target.x, target.y - env - 6);
+					ctx.fillText(isoAltLabel(alt.token), target.x, target.y - endW - 6);
 				});
 			});
 			if (step >= 1) {
@@ -3642,14 +3644,67 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		demo.querySelectorAll("[data-en][data-de]").forEach(function (el) {
 			el.textContent = de ? el.getAttribute("data-de") : el.getAttribute("data-en");
 		});
-		var out = document.getElementById("code-demo-output");
-		var btn = document.getElementById("code-demo-run");
-		if (!out || !btn) return;
-		btn.addEventListener("click", function () {
-			out.hidden = false;
-			btn.setAttribute("aria-expanded", "true");
-			btn.textContent = de ? "Erneut ausführen" : "Run again";
+		var term = document.getElementById("code-demo-term");
+		var historyEl = document.getElementById("code-demo-history");
+		var input = document.getElementById("code-demo-input");
+		if (!term || !historyEl || !input) return;
+		var scriptName = de ? "himmel.py" : "sky.py";
+		var output = de ? "Blau wird 4,35× stärker gestreut als Rot." : "Blue is 4.35× more strongly scattered than red.";
+		var help = de ? "Tippe python3 " + scriptName + " und drücke Enter." : "Type python3 " + scriptName + " and press Enter.";
+		var notFound = de ? "Befehl nicht gefunden: " : "command not found: ";
+		var commands = [];
+		var index = 0;
+		input.value = "python3 " + scriptName;
+		input.setAttribute("aria-label", de ? "Terminal-Befehl" : "Terminal command");
+		function append(className, text) {
+			var el = document.createElement("div");
+			el.className = className;
+			if (className === "code-demo-cmd") {
+				var prompt = document.createElement("span");
+				prompt.className = "code-demo-dollar";
+				prompt.textContent = "$";
+				el.appendChild(prompt);
+				el.appendChild(document.createTextNode(" " + text));
+			} else {
+				el.textContent = text;
+			}
+			historyEl.appendChild(el);
+			term.scrollTop = term.scrollHeight;
+		}
+		function run() {
+			var cmd = input.value.trim();
+			if (!cmd) return;
+			append("code-demo-cmd", cmd);
+			commands.push(cmd);
+			index = commands.length;
+			if (/^(python3?|py)\s+(sky|himmel)\.py$/i.test(cmd)) append("code-demo-output", output);
+			else if (/^help$/i.test(cmd)) append("code-demo-output", help);
+			else append("code-demo-output", notFound + cmd);
+			input.value = "";
+			term.scrollTop = term.scrollHeight;
+		}
+		input.addEventListener("keydown", function (e) {
+			if (e.key === "Enter") {
+				e.preventDefault();
+				run();
+			} else if (e.key === "ArrowUp") {
+				e.preventDefault();
+				if (index > 0) {
+					index -= 1;
+					input.value = commands[index];
+				}
+			} else if (e.key === "ArrowDown") {
+				e.preventDefault();
+				if (index < commands.length - 1) {
+					index += 1;
+					input.value = commands[index];
+				} else {
+					index = commands.length;
+					input.value = "";
+				}
+			}
 		});
+		term.addEventListener("click", function () { input.focus(); });
 	})();
 	</script>
 </body>

@@ -8145,3 +8145,68 @@ body.has-toc h4[id] { scroll-margin-top: 84px; }
 	.tm-toc__chevron,
 	.tm-toc__link { transition: none; }
 }
+
+/* ── transformer trajectory figure ───────────────────────── */
+.traj-figure {
+	margin: 18px 0 24px;
+	padding: 10px;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-paper);
+}
+.traj-figure img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+.traj-figure .traj-img-dark { display: none; }
+html[data-theme="dark"] .traj-figure .traj-img-light { display: none; }
+html[data-theme="dark"] .traj-figure .traj-img-dark { display: block; }
+.traj-figure figcaption {
+	margin-top: 10px;
+	font-size: 0.78rem;
+	line-height: 1.45;
+	color: var(--tm-muted);
+}
+.traj-figure figcaption a { color: var(--tm-petrol); }
+html[data-theme="dark"] .traj-figure figcaption a { color: var(--tm-sky); }
+
+/* ── real terminal for the generated-code demo ───────────── */
+.code-demo-term-body {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+}
+.code-demo-history {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.code-demo-history .code-demo-cmd,
+.code-demo-history .code-demo-output {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.code-demo-prompt-line {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: auto;
+}
+.code-demo-input {
+	flex: 1;
+	min-width: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	caret-color: currentColor;
+}
+.code-demo-input::selection { background: rgba(99, 164, 75, 0.35); }
+.code-demo--console .code-demo-input { color: #eef7f4; }
+.code-demo--console .code-demo-input::placeholder { color: rgba(238, 247, 244, 0.45); }
