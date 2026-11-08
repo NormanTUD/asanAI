@@ -87,6 +87,9 @@
 			color: var(--tm-ink);
 			font-weight: 600;
 		}
+		@media (max-width: 760px) {
+			.tt-point-label { font-size: 0.58rem; padding: 0 3px; }
+		}
 		@keyframes ttBallPulse {
 			0%, 100% { opacity: 0.35; transform: scale(0.92); }
 			50% { opacity: 0.9; transform: scale(1.12); }
@@ -1763,7 +1766,16 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		var isoPits = [
 			{ x: 2.35, y: -0.88, depth: 0.24, width: 0.11, rim: 0.045, rimR: 0.18 },
 			{ x: 5.55, y: 0.92, depth: 0.21, width: 0.10, rim: 0.040, rimR: 0.17 },
-			{ x: 4.15, y: -0.70, depth: 0.18, width: 0.08, rim: 0.035, rimR: 0.14 }
+			{ x: 4.15, y: -0.70, depth: 0.18, width: 0.08, rim: 0.035, rimR: 0.14 },
+			{ x: 1.25, y: 0.95, depth: 0.20, width: 0.09, rim: 0.040, rimR: 0.15 },
+			{ x: 3.15, y: -0.98, depth: 0.18, width: 0.09, rim: 0.040, rimR: 0.14 },
+			{ x: 6.35, y: 0.55, depth: 0.16, width: 0.08, rim: 0.035, rimR: 0.13 }
+		];
+		var isoBumps = [
+			{ x: 1.60, y: 0.35, amp: 0.07, r: 0.18 },
+			{ x: 2.90, y: -0.45, amp: 0.06, r: 0.20 },
+			{ x: 4.70, y: 0.40, amp: 0.08, r: 0.17 },
+			{ x: 6.10, y: -0.35, amp: 0.06, r: 0.19 }
 		];
 		var isoLabels = DE ? {
 			certain: "fast sicher", likely: "wahrscheinlich", open: "offen", wide: "sehr offen", width: "Tunnelbreite",
@@ -1907,8 +1919,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			return (isoAltY(alt) >= 0 ? 1 : -1) * 1.12;
 		}
 		function isoAltSlope(branch, alt) {
-			return isoClamp((alt.entropy - 0.45) * 1.6
-				+ 0.10 * Math.sin(branch.atStep * 1.7 + alt.path.x * 12), -0.55, 0.55);
+			var sign;
+			if (branch.atStep < 1.5) sign = 1;
+			else if (branch.atStep > 4.5) sign = -1;
+			else sign = Math.sin(branch.atStep * 1.7 + alt.entropy * 12) >= 0 ? 1 : -1;
+			var mag = 0.65 + 0.35 * Math.abs(alt.entropy - 0.45) * 2
+				+ 0.10 * Math.sin(branch.atStep * 2.1 + alt.path.x * 14);
+			return sign * isoClamp(mag, 0.55, 1.15);
 		}
 		function isoAltEndGeometry(branch, alt) {
 			var bx = branch.atStep + 0.52;
@@ -1918,6 +1935,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var slope = isoAltSlope(branch, alt);
 			var stepX = bx + slope * (endY - startY)
 				+ 0.04 * Math.sin(branch.atStep * 1.4 + alt.entropy * 20);
+			stepX = Math.max(0.1, Math.min(isoTokens.length - 1, stepX));
 			return { bx: bx, startY: startY, endY: endY, y: endY, slope: slope, stepX: stepX, x: stepX * isoStepGap };
 		}
 		function isoAltEndKind(branch, alt) {
@@ -1938,10 +1956,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			if (!alt) return null;
 			var g = isoAltEndGeometry(branch, alt);
 			var dir = g.y >= 0 ? 1 : -1;
-			var offsets = [1.5, 2.8];
+			var dirX = g.slope >= 0 ? 1 : -1;
 			var points = [];
 			for (var p = 0; p < seq.tokens.length; p++) {
-				var stepX = branch.atStep + offsets[p];
+				var stepX = g.stepX + dirX * (p + 1) * 0.9;
+				stepX = Math.max(0.1, Math.min(isoTokens.length - 1, stepX));
 				var y = dir * (0.92 - p * 0.20)
 					+ 0.03 * Math.sin(branch.atStep * 1.3 + p * 2.1);
 				points.push({
@@ -2000,9 +2019,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			});
 			var sideOffsets = [-1.20, -0.90, -0.60, -0.30, 0.30, 0.60, 0.90, 1.20];
 			for (var si = 0; si < sideOffsets.length; si++) {
-				var sy = centre + sideOffsets[si] + 0.03 * Math.sin(x * 1.25 + si * 1.7);
+				var sy = centre + sideOffsets[si] + 0.05 * Math.sin(x * 1.25 + si * 1.7);
 				var sw = 0.10 + 0.14 * (0.5 + 0.5 * Math.sin(x * 0.95 + si * 2.1)) * (0.5 + isoTemp / 1.8);
-				var sd = mainDepth * (0.18 + 0.22 * (0.5 + 0.5 * Math.sin(x * 1.6 + si * 2.3))) * (0.65 + 0.35 * isoTemp);
+				var sd = mainDepth * (0.22 + 0.26 * (0.5 + 0.5 * Math.sin(x * 1.6 + si * 2.3))) * (0.65 + 0.35 * isoTemp);
 				var ds = sd * Math.exp(-Math.pow((y - sy) / sw, 2));
 				if (ds > depth) depth = ds;
 			}
@@ -2013,13 +2032,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function isoSurfaceHeight(stepX, y) {
 			var depth = isoValleyDepth(stepX, y);
 			var x = stepX * isoStepGap;
-			var ripple = 0.010 * Math.sin(x * 1.8 + y * 3.1) * Math.cos(y * 2.2 - x * 1.25)
-				+ 0.004 * Math.sin(x * 3.1 - y * 2.6) * Math.cos(y * 3.4 + x * 1.1);
+			var ripple = 0.014 * Math.sin(x * 1.8 + y * 3.1) * Math.cos(y * 2.2 - x * 1.25)
+				+ 0.006 * Math.sin(x * 3.1 - y * 2.6) * Math.cos(y * 3.4 + x * 1.1);
 			var edgeDrop = 0.05 * Math.pow(Math.abs(y) / isoYMax, 2);
 			var z = -depth + (ripple - edgeDrop) * (1 - Math.min(1, depth));
 			var centre = isoCenter(stepX);
-			var rough = (0.008 * Math.sin(stepX * 16.0)
-				+ 0.004 * Math.sin(stepX * 27.0 + 1.3))
+			var rough = (0.012 * Math.sin(stepX * 16.0)
+				+ 0.006 * Math.sin(stepX * 27.0 + 1.3))
 				* Math.exp(-Math.pow((y - centre) / 0.13, 2));
 			z += rough;
 			isoBranches.forEach(function (branch) {
@@ -2029,6 +2048,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					z += 0.12 * Math.exp(-Math.pow((x - g.x) / 0.20, 2)
 						- Math.pow((y - g.y) / 0.20, 2));
 				});
+			});
+			isoBumps.forEach(function (bump) {
+				var bdx = stepX - bump.x;
+				var bdy = y - bump.y;
+				z += bump.amp * Math.exp(-(bdx * bdx + bdy * bdy) / (bump.r * bump.r));
 			});
 			isoPits.forEach(function (pit) {
 				var dx = stepX - pit.x;
@@ -2124,7 +2148,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				var sy = entry.screen[1];
 				var gap = 4;
 				var candidates = [];
-				[0, 18, 36, 54].forEach(function (shift) {
+				[0, 18, 36, 54, 72, 90, 108, 126, 150, 180].forEach(function (shift) {
 					candidates.push({ dx: 0, dy: -gap - h - shift });
 					candidates.push({ dx: 0, dy: gap + shift });
 					candidates.push({ dx: gap + shift, dy: -h / 2 });
@@ -2502,23 +2526,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			series.push(arrows[0], arrows[1]);
 			return series;
 		}
-		function isoSurfaceColor(weight, colors) {
-			var stops = [
-				{ w: 0.00, c: colors.base },
-				{ w: 0.18, c: colors.gold },
-				{ w: 0.34, c: colors.paleGold },
-				{ w: 0.50, c: colors.cream },
-				{ w: 0.66, c: colors.sky },
-				{ w: 0.83, c: colors.blue },
-				{ w: 1.00, c: colors.deep }
-			];
-			for (var i = 0; i < stops.length - 1; i++) {
-				if (weight <= stops[i + 1].w) {
-					var t = (weight - stops[i].w) / (stops[i + 1].w - stops[i].w);
-					return mixRgb(stops[i].c, stops[i + 1].c, Math.max(0, Math.min(1, t)));
-				}
-			}
-			return colors.deep;
+		function isoSurfaceColor(t, colors) {
+			return mixRgb(colors.deep, colors.base, Math.max(0, Math.min(1, t)));
 		}
 		function isoSurfaceData(colors) {
 			var data = [];
@@ -2555,21 +2564,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var c = TM.colors();
 			var deepSurface = mixRgb(c.blue, c.ink, c.dark ? 0.28 : 0.52);
 			var baseSurface = mixRgb(c.paper2, c.gold, c.dark ? 0.55 : 0.65);
-			var surface = isoSurfaceData({
-				deep: deepSurface,
-				blue: c.blue,
-				sky: c.sky,
-				cream: mixRgb(c.paper2, c.gold, 0.12),
-				paleGold: mixRgb(c.gold, c.paper2, 0.55),
-				gold: c.gold,
-				base: baseSurface
-			});
-			var zMin = 0;
-			for (var zi = 0; zi < surface.data.length; zi++) {
-				var surfaceZ = surface.data[zi].value[2];
-				if (surfaceZ < zMin) zMin = surfaceZ;
-			}
-			zMin -= 0.03;
+			var surface = isoSurfaceData({ deep: deepSurface, base: baseSurface });
+			var zMin = surface.minZ - 0.03;
 			if (!isoChart) {
 				isoHost.innerHTML = "";
 				try {
@@ -2813,6 +2809,11 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			});
 			isoRenderTokens();
 			updateIsoSide();
+			if (document.fonts && document.fonts.ready) {
+				document.fonts.ready.then(function () {
+					if (isoLoaded) requestAnimationFrame(isoUpdateOverlayLabels);
+				});
+			}
 		}
 
 		/* ── tokens ──────────────────────────────────────────── */
