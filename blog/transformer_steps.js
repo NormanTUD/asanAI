@@ -1883,12 +1883,12 @@
 			var de = DE();
 			if (is2d) {
 				return de
-					? "Einheitskreis: Jeder Vektor wird auf Länge 1 skaliert, jeder Punkt ist also eine Richtung, keine Länge. Die Winkelmetrik misst hier den Winkel θ zwischen zwei Richtungen; θ/π ist die normierte Distanz (0 = gleiche Richtung, 1 = Gegenrichtung). Die echten Token-Vektoren werden auf diesen Kreis projiziert."
-					: "Unit circle: every vector is scaled to length 1, so each point is a direction, not a length. The angular metric measures the angle θ between two directions here; θ/π is the normalized distance (0 = same direction, 1 = opposite). The real token vectors are projected onto this circle.";
+					? "Einheitskreis:<br>Jeder Vektor wird auf Länge 1 skaliert,<br>jeder Punkt ist also eine Richtung, keine Länge.<br>Die Winkelmetrik misst hier den Winkel θ<br>zwischen zwei Richtungen;<br>θ/π ist die normierte Distanz<br>(0 = gleiche Richtung, 1 = Gegenrichtung).<br>Die echten Token-Vektoren werden auf diesen Kreis projiziert."
+					: "Unit circle:<br>every vector is scaled to length 1,<br>so each point is a direction, not a length.<br>The angular metric measures the angle θ<br>between two directions here;<br>θ/π is the normalized distance<br>(0 = same direction, 1 = opposite).<br>The real token vectors are projected onto this circle.";
 			}
 			return de
-				? "Einheitskugel: Jeder Vektor wird auf Länge 1 skaliert, jeder Punkt ist also eine Richtung, keine Länge. Die Winkelmetrik misst hier den Großkreiswinkel θ zwischen zwei Richtungen; θ/π ist die normierte Distanz (0 = gleiche Richtung, 1 = Gegenrichtung). Die echten Token-Vektoren werden auf diese Oberfläche projiziert."
-				: "Unit sphere: every vector is scaled to length 1, so each point is a direction, not a length. The angular metric measures the great-circle angle θ between two directions here; θ/π is the normalized distance (0 = same direction, 1 = opposite). The real token vectors are projected onto this surface.";
+				? "Einheitskugel:<br>Jeder Vektor wird auf Länge 1 skaliert,<br>jeder Punkt ist also eine Richtung, keine Länge.<br>Die Winkelmetrik misst hier den Großkreiswinkel θ<br>zwischen zwei Richtungen;<br>θ/π ist die normierte Distanz<br>(0 = gleiche Richtung, 1 = Gegenrichtung).<br>Die echten Token-Vektoren werden auf diese Oberfläche projiziert."
+				: "Unit sphere:<br>every vector is scaled to length 1,<br>so each point is a direction, not a length.<br>The angular metric measures the great-circle angle θ<br>between two directions here;<br>θ/π is the normalized distance<br>(0 = same direction, 1 = opposite).<br>The real token vectors are projected onto this surface.";
 		}
 	};
 	if (window.tmMetricSphere === undefined) window.tmMetricSphere = true;
@@ -2256,14 +2256,18 @@
 			var ang = metricDistance(rawIn, rawOut, "angular");
 			var tip = "<b>" + labels[i] + "</b><br>L2 " + l2.toFixed(3) + " · angle " + ang.toFixed(3) + " (" + (ang * 180).toFixed(1) + "°)<br>from [" + coordinate(rawIn) + "]<br>to [" + coordinate(rawOut) + "]";
 			var from = projection.in[i], to = projection.out[i];
+			var angular = metric === "angular" && window.tmMetric && window.tmMetric.slerpPoints;
 			if (projection.is3d) {
+				var arc = angular ? window.tmMetric.slerpPoints(from, to, 24) : [from, to];
 				traces.push({
-					type: "scatter3d", mode: "lines", x: [from[0], to[0]], y: [from[1], to[1]], z: [from[2], to[2]],
+					type: "scatter3d", mode: "lines",
+					x: arc.map(function (p) { return p[0]; }), y: arc.map(function (p) { return p[1]; }), z: arc.map(function (p) { return p[2]; }),
 					line: { color: col, width: sel ? 6 : 3 }, hoverinfo: "skip", showlegend: false
 				});
-				var dx = to[0] - from[0], dy = to[1] - from[1], dz = to[2] - from[2];
+				var last = arc[arc.length - 1], prev = arc[arc.length - 2] || from;
+				var dx = last[0] - prev[0], dy = last[1] - prev[1], dz = last[2] - prev[2];
 				var len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
-				var cone = tmPlotly.coneTrace([{ x: to[0], y: to[1], z: to[2], u: dx / len, v: dy / len, w: dz / len, tip: tip }], col, labels[i]);
+				var cone = tmPlotly.coneTrace([{ x: last[0], y: last[1], z: last[2], u: dx / len, v: dy / len, w: dz / len, tip: tip }], col, labels[i]);
 				if (cone) traces.push(cone);
 				traces.push({
 					type: "scatter3d", mode: "markers", x: [from[0]], y: [from[1]], z: [from[2]],
@@ -2271,11 +2275,17 @@
 					hoverinfo: "text", text: [tip], showlegend: false
 				});
 			} else {
+				var arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 24).map(function (p) { return [p[0], p[1]]; }) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
 				traces.push({
-					type: "scatter", mode: "lines+markers", x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0],
+					type: "scatter", mode: "lines+markers",
+					x: arc2.map(function (p) { return p[0]; }), y: arc2.map(function (p) { return p[1]; }),
 					line: { color: col, width: sel ? 4 : 2 },
-					marker: { symbol: "arrow", angleref: "previous", size: sel ? 9 : 6, color: col, line: { color: sel ? c.ink : col, width: sel ? 1 : 0 } },
-					hoverinfo: "text", text: [tip, tip], showlegend: false
+					marker: {
+						symbol: arc2.map(function (_, k) { return k === arc2.length - 1 ? "arrow" : "circle"; }),
+						size: arc2.map(function (_, k) { return k === arc2.length - 1 ? (sel ? 9 : 6) : (k === 0 ? (sel ? 6 : 4) : 0); }),
+						color: col, line: { color: sel ? c.ink : col, width: sel ? 1 : 0 }, angleref: "previous"
+					},
+					hovertext: arc2.map(function () { return tip; }), hovertemplate: "%{hovertext}<extra></extra>", showlegend: false
 				});
 			}
 		}

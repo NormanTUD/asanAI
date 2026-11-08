@@ -17,6 +17,11 @@
 		.traj-quote span { font-style: normal; color: var(--tm-faint); }
 		.traj-angle-list { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 6px; font: 600 0.72rem/1.4 var(--tm-ui); color: var(--tm-muted); }
 		.traj-angle-list .is-chosen { color: var(--tm-green); font-weight: 700; }
+		.traj-metric-switch { flex: 0 0 auto; }
+		.traj-plotly-host { width: 100%; height: 460px; min-height: 360px; }
+		.traj-candidate-metric { color: var(--tm-muted); font-size: 0.68rem; font-weight: 600; }
+		@media (max-width: 760px) { .traj-plotly-host { height: 340px; min-height: 300px; } }
+		.traj-metric-note { max-width: 78ch; margin: 8px 0 0; font: 400 0.76rem/1.45 var(--tm-ui); color: var(--tm-muted); }
 		.iso-note { width: 100%; max-width: none; margin: 0 0 8px; font: 400 0.84rem/1.55 var(--tm-prose); color: var(--tm-ink-soft); }
 		.iso-source { width: 100%; margin: 0 0 12px; font: 400 0.74rem/1.4 var(--tm-ui); color: var(--tm-muted); }
 		.iso-source a { color: var(--tm-petrol); text-decoration: underline; text-underline-offset: 2px; }
@@ -359,14 +364,19 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<span class="demo-badge">GPT-2 · PCA</span>
 							</div>
 							<div class="demo-body">
-								<div id="real-trajectory-3d" class="traj-echarts-host" role="img" aria-label="3D token trajectories through GPT-2, PCA-reduced to three dimensions"></div>
+								<div id="real-trajectory-3d" class="traj-plotly-host" role="img" aria-label="3D token trajectories through GPT-2, PCA-reduced to three dimensions"></div>
 								<div class="demo-controls traj-step-controls">
 									<label class="traj-slider-label" for="traj-layer-slider">Layer
 										<input type="range" id="traj-layer-slider" min="0" max="12" step="1" value="0">
 										<output id="traj-layer-label">Embedding</output>
 									</label>
+									<div class="seg traj-metric-switch" id="traj-metric" role="group" aria-label="Distance metric">
+										<button class="is-on" type="button" data-metric="euclidean" aria-pressed="true">Euclidean (PCA)</button>
+										<button type="button" data-metric="angular" aria-pressed="false">Great-circle / angle</button>
+									</div>
 									<button class="btn-demo" type="button" id="traj-reset">Reset</button>
 								</div>
+								<p class="traj-metric-note">Euclidean distance measures the straight-line gap, like a tape measure. The model compares directions: in the angular view every vector is normalized to the unit sphere, where the angle is the metric that matters. The real model does this in 768 dimensions; the 3D sphere is its PCA shadow.</p>
 								<div class="traj-candidates" id="traj-candidates" aria-live="polite" hidden></div>
 							</div>
 							<div class="demo-foot">Real GPT-2 small hidden states, normalized per layer and PCA-reduced to 3D. Drag the slider to move through the layers. The next-token candidates appear at the final layer; the highlighted one is the model's top choice.</div>
@@ -4639,13 +4649,14 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		"use strict";
 		var host = document.getElementById("real-trajectory-3d");
 		var dataEl = document.getElementById("gpt2-pca-data");
-		if (!host || !dataEl) return;
+		if (!host || !dataEl || !window.Plotly) return;
 		var data;
 		try { data = JSON.parse(dataEl.textContent); } catch (e) { return; }
 		var de = TM.lang() === "de";
+		var step = 0;
+		var metric = "euclidean";
 		var loaded = false;
-		var loading = false;
-		var chart = null;
+		var camera = null;
 
 		function displayToken(token) { return token.replace(/^ /, "␣"); }
 		function layerLabel(i) {
@@ -4655,296 +4666,214 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function palette() {
 			var c = TM.colors();
 			return {
-				ink: c.ink, muted: c.muted, line: c.line, lineStrong: c.lineStrong, paper: c.paper, dark: c.dark,
-				series: [c.green, c.blue, c.gold, c.coral, c.teal || c.sky]
+				ink: c.ink, muted: c.muted, line: c.line, lineStrong: c.lineStrong,
+				paper: c.paper, dark: c.dark,
+				series: [c.green, c.blue, c.gold, c.coral, c.sky]
 			};
 		}
-		function fallback(message) {
-			host.innerHTML = '<div class="traj-echarts-fallback">' + message + '</div>';
+		function norm3(v) {
+			var n = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]) || 1;
+			return [v[0] / n, v[1] / n, v[2] / n];
 		}
-		function ensureLibs(cb) {
-			if (TM.ensureECharts) TM.ensureECharts(cb, function () {
-				fallback(de ? "Die 3D-Bibliothek konnte nicht geladen werden." : "The 3D library could not be loaded.");
-			});
-			else fallback(de ? "Die 3D-Bibliothek konnte nicht geladen werden." : "The 3D library could not be loaded.");
+		function transform(v) {
+			return metric === "angular" ? norm3(v) : [v[0], v[1], v[2]];
 		}
-				function computePerpendicularVectors(nx, ny, nz) {
-			var ax, ay, az;
-			if (Math.abs(nx) < 0.9) { ax = 1; ay = 0; az = 0; }
-			else { ax = 0; ay = 1; az = 0; }
-			var p1x = ny * az - nz * ay;
-			var p1y = nz * ax - nx * az;
-			var p1z = nx * ay - ny * ax;
-			var p1mag = Math.sqrt(p1x * p1x + p1y * p1y + p1z * p1z) || 1;
-			p1x /= p1mag; p1y /= p1mag; p1z /= p1mag;
-			var p2x = ny * p1z - nz * p1y;
-			var p2y = nz * p1x - nx * p1z;
-			var p2z = nx * p1y - ny * p1x;
-			var p2mag = Math.sqrt(p2x * p2x + p2y * p2y + p2z * p2z) || 1;
-			p2x /= p2mag; p2y /= p2mag; p2z /= p2mag;
-			return { perp1: { x: p1x, y: p1y, z: p1z }, perp2: { x: p2x, y: p2y, z: p2z } };
-		}
-		function computeArrowheadBase(from3, to3, maxHeadLen) {
-			var dx = to3[0] - from3[0];
-			var dy = to3[1] - from3[1];
-			var dz = to3[2] - from3[2];
-			var mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
-			if (mag < 1e-10) return [to3[0], to3[1], to3[2]];
-			var headLen = Math.min(mag * 0.3, maxHeadLen || 0.5);
-			var nx = dx / mag, ny = dy / mag, nz = dz / mag;
-			return [to3[0] - nx * headLen, to3[1] - ny * headLen, to3[2] - nz * headLen];
-		}
-		function add3DArrowheadSeries(series, from3, to3, color, name) {
-			var dx = to3[0] - from3[0];
-			var dy = to3[1] - from3[1];
-			var dz = to3[2] - from3[2];
-			var mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
-			if (mag < 1e-10) return;
-			var nx = dx / mag, ny = dy / mag, nz = dz / mag;
-			var headLen = Math.min(mag * 0.3, 0.4);
-			var perp = computePerpendicularVectors(nx, ny, nz);
-			var spread = headLen * 0.35;
-			var bx = to3[0] - nx * headLen;
-			var by = to3[1] - ny * headLen;
-			var bz = to3[2] - nz * headLen;
-			var p = perp.perp1;
-			series.push({
-				type: "line3D", name: name, silent: true,
-				data: [[bx + p.x * spread, by + p.y * spread, bz + p.z * spread], to3, [bx - p.x * spread, by - p.y * spread, bz - p.z * spread]],
-				lineStyle: { width: 6, color: color }
-			});
-			p = perp.perp2;
-			series.push({
-				type: "line3D", name: name, silent: true,
-				data: [[bx + p.x * spread, by + p.y * spread, bz + p.z * spread], to3, [bx - p.x * spread, by - p.y * spread, bz - p.z * spread]],
-				lineStyle: { width: 6, color: color }
+		function transformedPoints(ti) { return data.points[ti].map(transform); }
+		function transformedLandmarks() {
+			return (data.landmarks || []).slice(0, 5).map(function (item) {
+				return { word: item.word, value: transform(item.value), p: item.p };
 			});
 		}
-
-		var step = 0;
-		function updateStepLabel() {
-			var el = document.getElementById("traj-layer-label");
-			if (!el) return;
-			el.textContent = step === 0 ? "Embedding" : (de ? "Schicht " : "Layer ") + step + " / " + (data.layers.length - 1);
+		function lastTokenPoint() {
+			var pts = transformedPoints(data.tokens.length - 1);
+			return pts[pts.length - 1];
+		}
+		function metricValue(value) {
+			var last = lastTokenPoint();
+			var p = transform(value);
+			if (metric === "angular") {
+				var dot = last[0] * p[0] + last[1] * p[1] + last[2] * p[2];
+				dot = Math.max(-1, Math.min(1, dot));
+				return (Math.acos(dot) * 180 / Math.PI).toFixed(0) + "°";
+			}
+			var dx = last[0] - p[0], dy = last[1] - p[1], dz = last[2] - p[2];
+			return "d " + Math.sqrt(dx * dx + dy * dy + dz * dz).toFixed(2);
+		}
+		function sphereTrace(c) {
+			var n = 32, x = [], y = [], z = [];
+			for (var i = 0; i <= n; i++) {
+				var theta = i * Math.PI / n;
+				var xr = [], yr = [], zr = [];
+				for (var j = 0; j <= n; j++) {
+					var phi = j * 2 * Math.PI / n;
+					xr.push(Math.sin(theta) * Math.cos(phi));
+					yr.push(Math.sin(theta) * Math.sin(phi));
+					zr.push(Math.cos(theta));
+				}
+				x.push(xr); y.push(yr); z.push(zr);
+			}
+			return {
+				type: "surface", x: x, y: y, z: z,
+				opacity: 0.06,
+				colorscale: [[0, c.blue], [1, c.sky]],
+				showscale: false, hoverinfo: "skip", name: "unit sphere",
+				lighting: { ambient: 1, diffuse: 0.15, specular: 0.05 }
+			};
+		}
+		function sceneLayout(c) {
+			var angular = metric === "angular";
+			function axis(name) {
+				return {
+					title: { text: name, font: { size: 10, color: c.ink } },
+					color: c.muted, gridcolor: c.line, zerolinecolor: c.line,
+					showbackground: false, tickfont: { size: 9, color: c.muted }
+				};
+			}
+			return {
+				bgcolor: "rgba(0,0,0,0)",
+				aspectmode: "cube",
+				xaxis: axis(angular ? (de ? "Richtung 1" : "direction 1") : "PC 1"),
+				yaxis: axis(angular ? (de ? "Richtung 2" : "direction 2") : "PC 2"),
+				zaxis: axis(angular ? (de ? "Richtung 3" : "direction 3") : "PC 3"),
+				camera: camera || { eye: { x: 1.55, y: 1.35, z: 1.2 } },
+				dragmode: "orbit"
+			};
+		}
+		function draw() {
+			if (!loaded) return;
+			var c = palette();
+			var traces = [];
+			if (metric === "angular") traces.push(sphereTrace(c));
+			var showChoice = step >= data.layers.length - 1;
+			var landmarks = showChoice ? transformedLandmarks() : [];
+			if (landmarks.length) {
+				traces.push({
+					type: "scatter3d", mode: "markers+text",
+					x: landmarks.map(function (l) { return l.value[0]; }),
+					y: landmarks.map(function (l) { return l.value[1]; }),
+					z: landmarks.map(function (l) { return l.value[2]; }),
+					text: landmarks.map(function (l) { return displayToken(l.word); }),
+					textposition: "top center",
+					textfont: { size: 10, color: c.muted },
+					marker: {
+						size: landmarks.map(function (l) { return l.word === data.chosen ? 10 : 6; }),
+						symbol: "diamond",
+						color: landmarks.map(function (l) { return l.word === data.chosen ? c.green : "rgba(100,116,139,.68)"; }),
+						line: { width: 1, color: c.ink }
+					},
+					name: de ? "Kandidaten" : "Candidates",
+					customdata: landmarks.map(function (l) { return (l.p * 100).toFixed(2); }),
+					hovertemplate: "%{text}<br>%{customdata}%<extra></extra>"
+				});
+			}
+			data.tokens.forEach(function (token, ti) {
+				var pts = transformedPoints(ti);
+				var last = Math.min(step, pts.length - 1);
+				var shown = pts.slice(0, last + 1);
+				var color = c.series[ti % c.series.length];
+				var label = displayToken(token) + " (" + (ti + 1) + ")";
+				traces.push({
+					type: "scatter3d", mode: "lines+markers+text",
+					x: shown.map(function (p) { return p[0]; }),
+					y: shown.map(function (p) { return p[1]; }),
+					z: shown.map(function (p) { return p[2]; }),
+					name: label,
+					line: { width: 4, color: color },
+					marker: {
+						size: shown.map(function (_, i) { return i === last ? 6 : 3; }),
+						color: color,
+						opacity: 0.78,
+						line: { width: 0 }
+					},
+					text: shown.map(function (_, i) { return i === last ? displayToken(token) : ""; }),
+					textposition: "top center",
+					textfont: { size: 10, color: color },
+					hovertemplate: label + "<br>%{text}<extra></extra>"
+				});
+			});
+			if (showChoice && data.chosen && landmarks.length) {
+				var chosen = landmarks.find(function (l) { return l.word === data.chosen; });
+				var lastPts = transformedPoints(data.tokens.length - 1);
+				var last = lastPts[lastPts.length - 1];
+				if (chosen && last) {
+					traces.push({
+						type: "scatter3d", mode: "lines",
+						x: [last[0], chosen.value[0]],
+						y: [last[1], chosen.value[1]],
+						z: [last[2], chosen.value[2]],
+						line: { width: 2, color: c.green, dash: "dash" },
+						showlegend: false, hoverinfo: "skip"
+					});
+				}
+			}
+			var layout = {
+				paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)",
+				margin: { l: 0, r: 0, t: 28, b: 28 },
+				showlegend: true,
+				legend: { orientation: "h", x: 0, y: -0.04, font: { size: 10, color: c.ink }, bgcolor: "rgba(0,0,0,0)" },
+				font: { family: "Barlow, system-ui, sans-serif", color: c.ink },
+				title: {
+					text: metric === "angular"
+						? (de ? "Einheitskugel / Winkel" : "Unit sphere / angle")
+						: (de ? "PCA-Raum" : "PCA space"),
+					font: { size: 12, color: c.ink }, x: 0.5, y: 0.98
+				},
+				scene: sceneLayout(c)
+			};
+			var config = { displayModeBar: false, responsive: true };
+			if (!host._plotlyDrawn) {
+				var p = Plotly.newPlot(host, traces, layout, config);
+				host._plotlyDrawn = true;
+				if (p && p.then) p.then(attachCamera); else attachCamera();
+			} else {
+				Plotly.react(host, traces, layout, config);
+			}
+		}
+		function attachCamera() {
+			if (host._cameraBound || !host.on) return;
+			host._cameraBound = true;
+			host.on("plotly_relayout", function (ev) {
+				if (ev && ev["scene.camera"]) camera = ev["scene.camera"];
+			});
+		}
+		function captureCamera() {
+			if (host.layout && host.layout.scene && host.layout.scene.camera) camera = host.layout.scene.camera;
 		}
 		function renderCandidates() {
 			var el = document.getElementById("traj-candidates");
 			if (!el) return;
 			var show = step >= data.layers.length - 1;
 			el.hidden = !show;
-			if (!show) {
-				el.innerHTML = "";
-				return;
-			}
-			var top = (data.top || []).slice(0, 5);
-			el.innerHTML = top.map(function (item) {
+			if (!show) { el.innerHTML = ""; return; }
+			var lmMap = {};
+			(data.landmarks || []).forEach(function (l) { lmMap[l.word] = l; });
+			el.innerHTML = (data.top || []).slice(0, 5).map(function (item) {
 				var chosen = item.token === data.chosen;
+				var lm = lmMap[item.token];
+				var mv = lm ? metricValue(lm.value) : "";
 				return '<span class="traj-candidate' + (chosen ? " is-chosen" : "") + '">' +
 					'<b>' + displayToken(item.token) + '</b>' +
 					'<span class="pct">' + (item.p * 100).toFixed(2) + ' %</span>' +
+					(mv ? '<span class="traj-candidate-metric">' + mv + '</span>' : '') +
 					(chosen ? '<span>' + (de ? "gewählt" : "chosen") + '</span>' : '') +
 					'</span>';
 			}).join("");
 		}
-		function layerExtent() {
-			var xs = [], ys = [], zs = [];
-			data.points.forEach(function (pts) {
-				pts.forEach(function (p) {
-					xs.push(p[0]); ys.push(p[1]); zs.push(p[2]);
-				});
-			});
-			(data.landmarks || []).slice(0, 5).forEach(function (item) {
-				xs.push(item.value[0]); ys.push(item.value[1]); zs.push(item.value[2]);
-			});
-			function mm(values) {
-				var mn = Math.min.apply(null, values);
-				var mx = Math.max.apply(null, values);
-				var d = (mx - mn) || 1;
-				var pad = d * 0.10;
-				return [mn - pad, mx + pad];
-			}
-			return { x: mm(xs), y: mm(ys), z: mm(zs) };
+		function updateStepLabel() {
+			var el = document.getElementById("traj-layer-label");
+			if (!el) return;
+			el.textContent = step === 0 ? (de ? "Embedding" : "Embedding") : (de ? "Schicht " : "Layer ") + step + " / " + (data.layers.length - 1);
 		}
-		var extent = layerExtent();
-
-		function draw() {
-			var firstDraw = !chart;
-			var c = palette();
-			if (!chart) {
-				try {
-					chart = echarts.init(host);
-				} catch (e) {
-					fallback(de ? "Die 3D-Ansicht konnte nicht initialisiert werden." : "The 3D view could not be initialized.");
-					return;
-				}
-			}
-			var series = [];
-			var legendData = [];
-			var topLandmarks = (data.landmarks || []).slice(0, 5);
-			var showChoice = step >= data.layers.length - 1;
-			if (topLandmarks.length) {
-				legendData.push(de ? "Kandidaten" : "Candidates");
-				series.push({
-					name: de ? "Kandidaten" : "Candidates",
-					type: "scatter3D",
-					data: topLandmarks.map(function (item) {
-						var chosen = showChoice && item.word === data.chosen;
-						return {
-							name: displayToken(item.word),
-							value: item.value,
-							p: item.p,
-							symbol: chosen ? "star" : "diamond",
-							symbolSize: chosen ? 18 : 9,
-							itemStyle: {
-								color: chosen ? c.green : "rgba(100,116,139,0.8)",
-								borderWidth: 1,
-								borderColor: chosen ? c.green : "#334155"
-							},
-							label: {
-								show: true,
-								position: "top",
-								distance: 5,
-								formatter: chosen
-									? (de ? "gewählt: " : "chosen: ") + displayToken(item.word) + " " + (item.p * 100).toFixed(1) + " %"
-									: displayToken(item.word),
-								textStyle: {
-									fontSize: chosen ? 12 : 10,
-									color: chosen ? c.green : c.muted,
-									fontWeight: chosen ? 700 : 600
-								}
-							}
-						};
-					}),
-					tooltip: {
-						formatter: function (p) {
-							return p.name + "<br>" + (p.data.p * 100).toFixed(2) + " %";
-						}
-					}
-				});
-			}
-			data.tokens.forEach(function (token, ti) {
-				var color = c.series[ti % c.series.length];
-				var pts = data.points[ti];
-				var tokenLabel = displayToken(token) + " (" + (ti + 1) + ")";
-				legendData.push(tokenLabel);
-				var last = Math.min(step, pts.length - 1);
-				for (var i = 0; i < last; i++) {
-					var from3 = pts[i];
-					var to3 = pts[i + 1];
-					var shaftEnd = computeArrowheadBase(from3, to3, 0.4);
-					series.push({
-						name: tokenLabel,
-						type: "line3D",
-						data: [from3, shaftEnd],
-						lineStyle: { width: 4, color: color, opacity: 0.85 },
-						silent: true
-					});
-					add3DArrowheadSeries(series, from3, to3, color, tokenLabel);
-				}
-				var markerData = [];
-				for (var j = 0; j <= last; j++) {
-					var isStart = j === 0;
-					var isCurrent = j === last;
-					markerData.push({
-						value: pts[j],
-						name: layerLabel(j),
-						symbolSize: isCurrent ? 9 : (isStart ? 5 : 4),
-						itemStyle: {
-							color: color,
-							borderWidth: isCurrent ? 2 : 0,
-							borderColor: isCurrent ? c.paper : c.ink,
-							opacity: isCurrent ? 1 : (isStart ? 0.35 : 0.22)
-						},
-						label: {
-							show: isCurrent,
-							formatter: displayToken(token),
-							position: "top",
-							distance: 6,
-							textStyle: { color: color, fontSize: 11, fontWeight: 700 }
-						}
-					});
-				}
-				series.push({
-					name: tokenLabel,
-					type: "scatter3D",
-					data: markerData,
-					symbol: "circle",
-					tooltip: {
-						formatter: function (p) {
-							return tokenLabel + "<br>" + p.name + "<br>PC1 " + p.value[0].toFixed(2) + " · PC2 " + p.value[1].toFixed(2) + " · PC3 " + p.value[2].toFixed(2);
-						}
-					}
-				});
-			});
-			if (step >= data.layers.length - 1 && data.chosen && topLandmarks.length) {
-				var chosen = topLandmarks.find(function (item) { return item.word === data.chosen; });
-				var lastToken = data.points[data.tokens.length - 1];
-				if (chosen && lastToken) {
-					series.push({
-						name: "__chosen__",
-						type: "line3D",
-						data: [lastToken[lastToken.length - 1], chosen.value],
-						lineStyle: { width: 2, color: c.green, type: "dashed", opacity: 0.8 },
-						silent: true
-					});
-				}
-			}
-			try {
-				var option = {
-					backgroundColor: "transparent",
-					title: {
-						text: de ? "Token-Trajektorie: Embedding → +Position → Layer-Ausgaben" : "Token Trajectory: Embedding → +Position → Layer Outputs",
-						left: "center", top: 10,
-						textStyle: { fontSize: 14, fontWeight: "bold", color: c.ink }
-					},
-					tooltip: {
-						trigger: "item", confine: true,
-						backgroundColor: c.dark ? "rgba(10,34,44,.96)" : "rgba(255,255,255,.98)",
-						borderColor: c.lineStrong,
-						textStyle: { color: c.ink, fontSize: 12 }
-					},
-					legend: {
-						data: legendData,
-						orient: "horizontal",
-						bottom: 5, left: "center",
-						textStyle: { fontSize: 12, color: c.ink },
-						itemWidth: 12, itemHeight: 10
-					},
-					xAxis3D: { type: "value", name: "PC 1", min: extent.x[0], max: extent.x[1], nameTextStyle: { color: c.muted }, axisLabel: { formatter: function (v) { return Number(v).toFixed(1); }, textStyle: { color: c.muted, fontSize: 9 } } },
-					yAxis3D: { type: "value", name: "PC 2", min: extent.y[0], max: extent.y[1], nameTextStyle: { color: c.muted }, axisLabel: { formatter: function (v) { return Number(v).toFixed(1); }, textStyle: { color: c.muted, fontSize: 9 } } },
-					zAxis3D: { type: "value", name: "PC 3", min: extent.z[0], max: extent.z[1], nameTextStyle: { color: c.muted }, axisLabel: { formatter: function (v) { return Number(v).toFixed(1); }, textStyle: { color: c.muted, fontSize: 9 } } },
-					grid3D: {
-						viewControl: { projection: "perspective", alpha: 30, beta: 40, distance: 200, autoRotate: false, damping: 0.9 },
-						light: { main: { intensity: 1.2, shadow: false }, ambient: { intensity: 0.3 } },
-						environment: c.paper,
-						boxWidth: 100, boxHeight: 100, boxDepth: 100,
-						axisLine: { lineStyle: { color: c.lineStrong } },
-						splitLine: { lineStyle: { color: c.line } },
-						axisPointer: { show: false }
-					},
-					series: series
-				};
-				if (!firstDraw) {
-					delete option.grid3D.viewControl;
-				}
-				chart.setOption(option, { replaceMerge: ["series"], lazyUpdate: false });
-				chart.resize();
-			} catch (e) {
-				fallback(de ? "Die 3D-Ansicht konnte nicht gezeichnet werden." : "The 3D view could not be drawn.");
-			}
-		}
-
 		function start() {
-			if (loaded || loading) return;
-			loading = true;
-			ensureLibs(function () {
-				loaded = true;
-				loading = false;
-				draw();
-			});
+			if (loaded) return;
+			loaded = true;
+			draw();
+			renderCandidates();
+			updateStepLabel();
 		}
 		var slider = document.getElementById("traj-layer-slider");
 		var resetBtn = document.getElementById("traj-reset");
+		var metricEl = document.getElementById("traj-metric");
 		if (slider) slider.addEventListener("input", function () {
 			step = parseInt(slider.value, 10) || 0;
 			updateStepLabel();
@@ -4955,6 +4884,19 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			step = 0;
 			if (slider) slider.value = "0";
 			updateStepLabel();
+			renderCandidates();
+			if (loaded) draw();
+		});
+		if (metricEl) metricEl.addEventListener("click", function (ev) {
+			var btn = ev.target.closest("[data-metric]");
+			if (!btn) return;
+			metric = btn.getAttribute("data-metric") === "angular" ? "angular" : "euclidean";
+			metricEl.querySelectorAll("button").forEach(function (b) {
+				var on = b === btn;
+				b.classList.toggle("is-on", on);
+				b.setAttribute("aria-pressed", on ? "true" : "false");
+			});
+			captureCamera();
 			renderCandidates();
 			if (loaded) draw();
 		});
@@ -4971,8 +4913,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		} else {
 			start();
 		}
-		window.addEventListener("resize", function () { if (chart) chart.resize(); });
-		window.addEventListener("tm:theme", function () { if (loaded) draw(); });
+		window.addEventListener("resize", function () { if (loaded) Plotly.Plots.resize(host); });
+		window.addEventListener("tm:theme", function () { if (loaded) { captureCamera(); draw(); } });
 	})();
 	</script>
 </body>

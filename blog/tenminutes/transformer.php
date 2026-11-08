@@ -808,6 +808,7 @@
 	</div>
 
 
+	<script src="../plotly-2.24.1.min.js"></script>
 	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
 	<script src="../temml.min.js"></script>
 	<script src="../transformer_steps.js?v=<?php echo (int) @filemtime(__DIR__ . '/../transformer_steps.js'); ?>"></script>

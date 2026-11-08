@@ -301,27 +301,54 @@ def main() -> None:
                   bool(global_metric) and global_metric["options"] == 2
                   and global_metric["value"] == "euclidean" and not global_metric["perPlot"], str(global_metric))
 
+            hint = page.evaluate("""() => {
+                const api = window.tmMetric;
+                return api && api.sphereHint ? {sphere: api.sphereHint(false), circle: api.sphereHint(true)} : null;
+            }""")
+            check("sphere/circle hover hint explains the surface and wraps",
+                  bool(hint) and ("Unit sphere" in hint["sphere"] or "Einheitskugel" in hint["sphere"])
+                  and ("<br>" in hint["sphere"]) and ("Unit circle" in hint["circle"] or "Einheitskreis" in hint["circle"]),
+                  str(hint)[:250])
+            bar_fit = page.evaluate("""() => {
+                const b = document.getElementById('training-progress-bar-container');
+                return b ? {scroll: b.scrollWidth, client: b.clientWidth} : null;
+            }""")
+            check("sticky bar fits at desktop width", bool(bar_fit) and bar_fit["scroll"] <= bar_fit["client"] + 1, str(bar_fit))
+            page.set_viewport_size({"width": 1024, "height": 900})
+            page.wait_for_timeout(700)
+            bar_fit_narrow = page.evaluate("""() => {
+                const b = document.getElementById('training-progress-bar-container');
+                return b ? {scroll: b.scrollWidth, client: b.clientWidth} : null;
+            }""")
+            check("sticky bar fits at 1024px", bool(bar_fit_narrow) and bar_fit_narrow["scroll"] <= bar_fit_narrow["client"] + 1, str(bar_fit_narrow))
+            page.set_viewport_size({"width": 1400, "height": 1000})
+            page.wait_for_timeout(500)
+
             page.evaluate("""() => {
                 if (window.TransformerSteps && window.TransformerSteps.renderLayerFeaturePlots) window.TransformerSteps.renderLayerFeaturePlots(0);
                 document.getElementById('unified-layer-0-feature-arrows').scrollIntoView();
             }""")
             page.wait_for_timeout(1200)
             overlay = page.evaluate("""() => {
-                const s=document.querySelector('#sticky-metric-select');
-                s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true}));
+                const el = document.getElementById('unified-layer-0-feature-arrows');
+                if (!el || !window.tmMetric || !window.tmMetric.rerenderWithOverlay) return false;
+                window.tmMetric.rerenderWithOverlay(el, function () {});
                 return !!document.querySelector('.tm-metric-loading');
             }""")
             check("visible plots show a small metric loading overlay", overlay)
+            page.wait_for_timeout(300)
+            page.evaluate("""() => { const s=document.querySelector('#sticky-metric-select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
             page.wait_for_timeout(1200)
             feature_metric = page.evaluate("""() => {
                 const el = document.getElementById('unified-layer-0-feature-arrows');
                 const d = (el && el.data) || [];
                 const title = el && el.layout && el.layout.title ? el.layout.title.text : '';
-                return {title, surface: d.some(t => t.type === 'surface'), cone: d.some(t => t.type === 'cone')};
+                const arc = d.find(t => (t.type === 'scatter3d' || t.type === 'scatter') && Array.isArray(t.x) && t.x.length > 2);
+                return {title, surface: d.some(t => t.type === 'surface'), cone: d.some(t => t.type === 'cone'), arc: !!arc};
             }""")
             check("feature migration follows the global metric",
                   bool(feature_metric) and "great-circle" in feature_metric["title"].lower()
-                  and feature_metric["surface"] and feature_metric["cone"], str(feature_metric))
+                  and feature_metric["surface"] and feature_metric["cone"] and feature_metric["arc"], str(feature_metric))
 
             sticky_sphere = page.evaluate("""() => {
                 const label = document.getElementById('sticky-sphere-label');
@@ -378,11 +405,12 @@ def main() -> None:
                 const el = document.getElementById('transformer-pe-shift-plot');
                 const d = (el && el.data) || [];
                 const title = el && el.layout && el.layout.title ? el.layout.title.text : '';
-                return {title, surface: d.some(s => s.type === 'surface'), cone: d.some(s => s.type === 'cone')};
+                const arc = d.find(t => (t.type === 'scatter3d' || t.type === 'scatter') && Array.isArray(t.x) && t.x.length > 2);
+                return {title, surface: d.some(s => s.type === 'surface'), cone: d.some(s => s.type === 'cone'), arc: !!arc};
             }""")
             check("positional-shift plot follows the global metric",
                   bool(pe_metric) and "Great-circle" in pe_metric["title"] and pe_metric["surface"]
-                  and pe_metric["cone"], str(pe_metric))
+                  and pe_metric["cone"] and pe_metric["arc"], str(pe_metric))
 
             page.evaluate("() => document.getElementById('transformer-trajectory-full-path').scrollIntoView()")
             page.wait_for_timeout(1500)
@@ -393,11 +421,13 @@ def main() -> None:
                 const scatter = d.find(s => s.type === 'scatter3d' && Array.isArray(s.x) && s.x.length > 1);
                 let norm = null;
                 if (scatter) norm = Math.sqrt((scatter.x[0] || 0) ** 2 + (scatter.y[0] || 0) ** 2 + (scatter.z[0] || 0) ** 2);
-                return {title, surface: d.some(s => s.type === 'surface'), cone: d.some(s => s.type === 'cone'), norm};
+                const arc = d.find(t => t.type === 'scatter3d' && Array.isArray(t.x) && t.x.length > 2);
+                return {title, surface: d.some(s => s.type === 'surface'), cone: d.some(s => s.type === 'cone'), arc: !!arc, norm};
             }""")
             check("trajectory follows the global metric",
                   bool(traj_angular) and "Great-circle" in traj_angular["title"] and traj_angular["surface"]
-                  and traj_angular["cone"] and traj_angular["norm"] is not None and abs(traj_angular["norm"] - 1) < 0.02,
+                  and traj_angular["cone"] and traj_angular["arc"]
+                  and traj_angular["norm"] is not None and abs(traj_angular["norm"] - 1) < 0.02,
                   str(traj_angular)[:300])
 
             explain = page.evaluate("""() => {
@@ -453,7 +483,39 @@ def main() -> None:
             page.wait_for_timeout(1600)
             page.evaluate("""() => { const s=document.getElementById('sticky-metric-select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
             page.wait_for_timeout(500)
-            check("no console/page errors", not errors, "; ".join(errors[:3]))
+
+            page.evaluate("() => document.getElementById('transformer_site').scrollIntoView()")
+            page.wait_for_timeout(600)
+            page.evaluate("""() => { const s=document.getElementById('sticky-metric-select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
+            page.wait_for_timeout(1200)
+            def_embedding_point = """() => {
+                const el = document.getElementById('transformer-plotly-space');
+                const d = (el && el.data) || [];
+                const s = d.find(t => t.type === 'scatter3d' && t.name && t.name !== 'unit sphere points' && t.name !== 'Vocab Embeddings');
+                return s ? { x: s.x[0], y: s.y[0], z: s.z[0], name: s.name } : null;
+            }"""
+            before_train = page.evaluate(def_embedding_point)
+            page.evaluate("""() => {
+                const e=document.getElementById('train-epochs'); if(e) e.value='2';
+                const l=document.getElementById('train-lr'); if(l) l.value='0.1';
+                if (window.train_transformer) window.train_transformer();
+            }""")
+            page.wait_for_timeout(600)
+            started = page.evaluate("() => !!window.isTraining")
+            for _ in range(90):
+                page.wait_for_timeout(1000)
+                if not page.evaluate("() => !!window.isTraining"):
+                    break
+            page.wait_for_timeout(800)
+            after_train = page.evaluate(def_embedding_point)
+            moved = bool(before_train and after_train) and (
+                abs(before_train["x"] - after_train["x"]) +
+                abs(before_train["y"] - after_train["y"]) +
+                abs(before_train["z"] - after_train["z"]) > 1e-6
+            )
+            check("training refreshes the visible embedding plot", started and moved, str({"started": started, "before": before_train, "after": after_train}))
+            check("no console/page errors during training", not errors, "; ".join(errors[:3]))
 
             errors.clear()
             page.goto(f"http://127.0.0.1:{port}/tenminutes/transformer.php", wait_until="load", timeout=120000)
@@ -496,8 +558,22 @@ def main() -> None:
                 return el ? {plotly: !!el.data, types: [...new Set((el.data || []).map(t => t.type))]} : null;
             }""")
             check("tenminutes: embedding plot uses Plotly", bool(tm_plot) and tm_plot["plotly"], str(tm_plot))
-            page.evaluate("() => document.getElementById('transformer-pe-shift-plot').scrollIntoView()")
+            page.evaluate("""() => {
+                const el = document.getElementById('transformer-pe-shift-plot');
+                if (el) {
+                    const step = el.closest('.tm-step');
+                    if (step) { const b = step.querySelector('.tm-step-toggle'); if (b && step.classList.contains('is-collapsed')) b.click(); }
+                    el.scrollIntoView();
+                }
+            }""")
             page.wait_for_timeout(1500)
+            page.evaluate("""() => {
+                try {
+                    const d = positionalShiftRegistry.get('transformer-pe-shift-plot');
+                    if (d) _execute_shift_render(d.tokenStrings, d.d_model, d.injectedEmbeddings);
+                } catch (e) {}
+            }""")
+            page.wait_for_timeout(1200)
             tm_pe = page.evaluate("""() => {
                 const el = document.getElementById('transformer-pe-shift-plot');
                 return el ? {plotly: !!el.data, types: [...new Set((el.data || []).map(t => t.type))]} : null;

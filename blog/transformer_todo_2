@@ -72,3 +72,23 @@
 [done] Manhattan entfernt, Metrik global statt pro Plot, Ladeoverlay/Visibility-Lazy, Erklärung nur zur Auswahl. [Es gibt nur noch Euklidisch (Default) und Großkreis/angular. Der eine Schalter sitzt oben in den Hyperparametern (`#tm-global-metric`) und gilt für Feature-Migration, Token-Trajectory, Embedding und Position; die Per-Plot-Schalter sind entfernt. Beim Wechsel zeigt jedes sichtbare Ziel ein kleines Overlay („Updating metric…“); verborgene Ziele bekommen `data-tm-metric-dirty` und rendern per IntersectionObserver neu, sobald sie sichtbar werden. Die Erklärblöcke unter Feature-Migration und Trajectory werden beim Wechsel aktualisiert und zeigen nur den Text der gewählten Metrik (Euklidisch: kurzer L2-Hinweis auf die Winkelansicht; angular: Name, θ/π, Kugel/Analyse mit den drei Quellen). Test: 40/40.]
 
 [done] Input/Change/Output-Heatmaps wieder in einer Reihe; jede Zelle nimmt genau ein Drittel der Zeile, Canvas füllt die Zelle. Die robuste Resize-/Redraw-Logik bleibt. Die Heatmaps bleiben bewusst roh: Die globale Distanzmetrik wirkt auf Feature-Migration, Token-Trajectory, Embedding und Positional-Shift (die Geometrie-/Distanzplots), nicht auf die Rohmatrizen. Der Lead-Text sagt das jetzt explizit. Test prüft 5 Grid-Spuren, Canvas = Zellbreite und 3 Zellen ≤ Zeilenbreite: 40/40.]
+
+## Review current pass: Plotly geometry plots + metrics
+
+[done] Feature-Migration, Embedding, Positional-Shift und Token-Trajectory auf Plotly umgestellt (parent + tenminutes copy). [Plotly `scatter`/`scatter3d`, `surface` für die Kugel, `scatter`-Kreis für 2D, `cone` als Richtungsmarker statt ECharts-Arrowheads. Alte ECharts-Renderer werden vor dem Plotly-Render disposed.]
+
+[done] Pfeile biegen sich bei angular/great-circle entlang des kürzesten Pfads auf der Oberfläche. [slerp-Sampling zwischen Start und Ziel für Feature-Arrows, Embedding-Satzpfad, PE-Shift und Trajectory; der Cone zeigt die Tangente am Ziel, 2D-Plotly-Pfeile folgen dem letzten Arc-Segment.]
+
+[done] Tooltips umbrechen (mehrere `<br>`-Zeilen) und zeigen Raw-/Plot-Koordinaten plus L2 und Winkel. [Feature, Trajectory, Embedding, PE-Shift; Sphere/Circle-Hover erklärt die Oberfläche.]
+
+[done] Gleiche Skalierung in alle Richtungen: 3D-Plotly-Layouts nutzen `aspectmode: "cube"`; die alten ECharts-Boxen 100/100/75 und 130/130/90 sind auf 100/100/100 bzw. 130/130/130 korrigiert.]
+
+[done] Training-Refresh gefixt: `registerLazyRenderable` rendert sichtbare Plots jetzt auch während des Trainings. [Vorher blieben Embedding/PE/Trajectory beim Training stehen; manuell geprüft: die „the“-Embedding-Position ändert sich nach 3 Epochen unter angular von (-0.381, 0.628, 0.679) auf (-0.460, 0.594, 0.660).]
+
+[open] Regressionstests ergänzen: Arc-Länge > 2 Punkte, Sphere-Hint, Training-Refresh, Sticky-Bar-Breite (1400 und 1024) und keine `removeChild`/Konsolenfehler bei wiederholten Metrik-/d_model-Wechseln.
+
+[open] Sticky-Bar-Layout bei schmaleren Viewports prüfen (Training/Inference + Metric + Sphere) und ggf. weiter kompaktieren.
+
+[note] Die früheren Einträge zu „Manhattan“/„drei Metriken“/„Per-Plot-Schalter“ sind überholt: aktuell gibt es nur Euklidisch (Default) und Großkreis/angular, global in der Sticky-Bar (Tenminutes: Config-Fallback).
+
+[note] Verbleibende ECharts-Renderer im Transformer sind nicht sichtbar: `render_migration_logic`/`tlab_render_echarts`/`_migration_render_*` (versteckte Legacy-Migrationsdetails), `renderFeatureChart`/`renderFeatureParallel` (unbenutzt). Die vier sichtbaren Geometrie-Plots sind Plotly.

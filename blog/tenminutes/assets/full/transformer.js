@@ -2914,14 +2914,18 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 			const from = _tmTransformMetric(step.from);
 			const to = _tmTransformMetric(step.to);
 			const tip = `<b>${step.label || 'step'}</b><br>from [${coord(from)}]<br>to [${coord(to)}]`;
+			const angular = window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular' && window.tmMetric.slerpPoints;
 			if (dimensions === 3) {
-				traces.push({ type: 'scatter3d', mode: 'lines', x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0], z: [from[2] || 0, to[2] || 0], line: { color: '#3b82f6', width: 4 }, hoverinfo: 'skip', showlegend: false });
-				const dx = to[0] - from[0], dy = (to[1] || 0) - (from[1] || 0), dz = (to[2] || 0) - (from[2] || 0);
+				const arc = angular ? window.tmMetric.slerpPoints(from, to, 24) : [from, to];
+				traces.push({ type: 'scatter3d', mode: 'lines', x: arc.map(pt => pt[0]), y: arc.map(pt => pt[1] || 0), z: arc.map(pt => pt[2] || 0), line: { color: '#3b82f6', width: 4 }, hoverinfo: 'skip', showlegend: false });
+				const last = arc[arc.length - 1], prev = arc[arc.length - 2] || from;
+				const dx = last[0] - prev[0], dy = (last[1] || 0) - (prev[1] || 0), dz = (last[2] || 0) - (prev[2] || 0);
 				const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
-				const cone = window.tmPlotly.coneTrace([{ x: to[0], y: to[1] || 0, z: to[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], '#3b82f6', step.label || 'step');
+				const cone = window.tmPlotly.coneTrace([{ x: last[0], y: last[1] || 0, z: last[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], '#3b82f6', step.label || 'step');
 				if (cone) traces.push(cone);
 			} else {
-				traces.push({ type: 'scatter', mode: 'lines+markers', x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0], line: { color: '#3b82f6', width: 2 }, marker: { symbol: 'arrow', angleref: 'previous', size: 8, color: '#3b82f6' }, hovertext: [tip, tip], hovertemplate: '%{hovertext}<extra></extra>', showlegend: false });
+				const arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 24).map(pt => [pt[0], pt[1]]) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
+				traces.push({ type: 'scatter', mode: 'lines+markers', x: arc2.map(pt => pt[0]), y: arc2.map(pt => pt[1]), line: { color: '#3b82f6', width: 2 }, marker: { symbol: arc2.map((_, k) => k === arc2.length - 1 ? 'arrow' : 'circle'), size: arc2.map((_, k) => k === arc2.length - 1 ? 8 : (k === 0 ? 6 : 0)), color: '#3b82f6', angleref: 'previous' }, hovertext: arc2.map(() => tip), hovertemplate: '%{hovertext}<extra></extra>', showlegend: false });
 			}
 		});
 	}
@@ -5099,12 +5103,21 @@ function _traj_build_slice_traces(tokens, labels, dataPoints, dimA, dimB, embSna
 		const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
 		if (!hasDataInAllSteps) return;
 
-		const x = dataPoints.map(p => p.data[tIdx][dimA]);
-		const y = dataPoints.map(p => p.data[tIdx][dimB]);
+		let x = dataPoints.map(p => p.data[tIdx][dimA]);
+		let y = dataPoints.map(p => p.data[tIdx][dimB]);
 		const tColor = getPositionColor(tIdx, tokens.length);
 		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
 
-		const hoverTexts = _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab);
+		let hoverTexts = _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab);
+		if (window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular' && window.tmMetric.slerpPoints && x.length > 1) {
+			const ax = [], ay = [], ah = [];
+			for (let i = 0; i < x.length; i++) {
+				if (i === 0) { ax.push(x[0]); ay.push(y[0]); ah.push(hoverTexts[0]); continue; }
+				const arc = window.tmMetric.slerpPoints([x[i - 1], y[i - 1], 0], [x[i], y[i], 0], 16);
+				for (let k = 1; k < arc.length; k++) { ax.push(arc[k][0]); ay.push(arc[k][1]); ah.push(hoverTexts[i]); }
+			}
+			x = ax; y = ay; hoverTexts = ah;
+		}
 
 		traces.push(_traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts));
 		traces.push(_traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, 1));
@@ -5299,17 +5312,37 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 			}
 			hover.push(tip);
 		});
+		const angular = window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular' && window.tmMetric.slerpPoints;
+		const lineX = [], lineY = [], lineZ = [];
+		points.forEach((p, pIdx) => {
+			if (pIdx === 0) {
+				const a = p.data[tIdx];
+				lineX.push(a[0] || 0); lineY.push(a[1] || 0); lineZ.push(a[2] || 0);
+			} else {
+				const a = points[pIdx - 1].data[tIdx], b = p.data[tIdx];
+				const arc = angular ? window.tmMetric.slerpPoints(a, b, 16) : [a, b];
+				for (let k = 1; k < arc.length; k++) {
+					lineX.push(arc[k][0] || 0); lineY.push(arc[k][1] || 0); lineZ.push(arc[k][2] || 0);
+				}
+			}
+		});
 		traces.push({
-			type: 'scatter3d', mode: 'lines+markers', x: xs, y: ys, z: zs,
-			line: { color: color, width: 4 }, marker: { size: 3, color: color },
+			type: 'scatter3d', mode: 'lines', x: lineX, y: lineY, z: lineZ,
+			line: { color: color, width: 4 }, hoverinfo: 'skip', showlegend: false
+		});
+		traces.push({
+			type: 'scatter3d', mode: 'markers', x: xs, y: ys, z: zs,
+			marker: { size: 3, color: color },
 			hovertext: hover, hovertemplate: '%{hovertext}<extra></extra>', name: labels[tIdx], showlegend: false
 		});
 		const cones = [];
 		for (let pIdx = 1; pIdx < points.length; pIdx++) {
 			const a = points[pIdx - 1].data[tIdx], b = points[pIdx].data[tIdx];
-			const dx = (b[0] || 0) - (a[0] || 0), dy = (b[1] || 0) - (a[1] || 0), dz = (b[2] || 0) - (a[2] || 0);
+			const arc = angular ? window.tmMetric.slerpPoints(a, b, 16) : [a, b];
+			const last = arc[arc.length - 1], prev = arc[arc.length - 2] || a;
+			const dx = (last[0] || 0) - (prev[0] || 0), dy = (last[1] || 0) - (prev[1] || 0), dz = (last[2] || 0) - (prev[2] || 0);
 			const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
-			cones.push({ x: b[0] || 0, y: b[1] || 0, z: b[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: hover[pIdx] });
+			cones.push({ x: last[0] || 0, y: last[1] || 0, z: last[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: hover[pIdx] });
 		}
 		const cone = window.tmPlotly.coneTrace(cones, color, labels[tIdx]);
 		if (cone) traces.push(cone);
@@ -5652,12 +5685,18 @@ function _shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		const from = base[pos] || [], to = combined[pos] || [];
 		const tip = _shift_metricTip(token, pos, rawBase[pos] || [], rawCombined[pos] || []);
 		const color = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
+		const angular = window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular' && window.tmMetric.slerpPoints;
+		const arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 24).map(pt => [pt[0], pt[1]]) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
 		traces.push({
 			type: 'scatter', mode: 'lines+markers',
-			x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0],
+			x: arc2.map(pt => pt[0]), y: arc2.map(pt => pt[1]),
 			line: { color: color, width: 2 },
-			marker: { symbol: 'arrow', angleref: 'previous', size: 8, color: color },
-			hovertext: [tip, tip], hovertemplate: '%{hovertext}<extra></extra>', showlegend: false
+			marker: {
+				symbol: arc2.map((_, k) => k === arc2.length - 1 ? 'arrow' : 'circle'),
+				size: arc2.map((_, k) => k === arc2.length - 1 ? 8 : (k === 0 ? 6 : 0)),
+				color: color, angleref: 'previous'
+			},
+			hovertext: arc2.map(() => tip), hovertemplate: '%{hovertext}<extra></extra>', showlegend: false
 		});
 		traces.push({
 			type: 'scatter', mode: 'markers', x: [from[0]], y: [from[1] || 0],
@@ -5680,14 +5719,17 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		const from = base[pos] || [], to = combined[pos] || [];
 		const tip = _shift_metricTip(token, pos, rawBase[pos] || [], rawCombined[pos] || []);
 		const color = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
+		const angular3 = window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular' && window.tmMetric.slerpPoints;
+		const arc3 = angular3 ? window.tmMetric.slerpPoints(from, to, 24) : [from, to];
 		traces.push({
 			type: 'scatter3d', mode: 'lines',
-			x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0], z: [from[2] || 0, to[2] || 0],
+			x: arc3.map(pt => pt[0]), y: arc3.map(pt => pt[1] || 0), z: arc3.map(pt => pt[2] || 0),
 			line: { color: color, width: 4 }, hoverinfo: 'skip', showlegend: false
 		});
-		const dx = to[0] - from[0], dy = (to[1] || 0) - (from[1] || 0), dz = (to[2] || 0) - (from[2] || 0);
+		const last3 = arc3[arc3.length - 1], prev3 = arc3[arc3.length - 2] || from;
+		const dx = last3[0] - prev3[0], dy = (last3[1] || 0) - (prev3[1] || 0), dz = (last3[2] || 0) - (prev3[2] || 0);
 		const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
-		cones.push({ x: to[0], y: to[1] || 0, z: to[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip });
+		cones.push({ x: last3[0], y: last3[1] || 0, z: last3[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip });
 		traces.push({
 			type: 'scatter3d', mode: 'markers',
 			x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0], z: [from[2] || 0, to[2] || 0],
