@@ -18,6 +18,13 @@
 		.traj-angle-list { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 6px; font: 600 0.72rem/1.4 var(--tm-ui); color: var(--tm-muted); }
 		.traj-angle-list .is-chosen { color: var(--tm-green); font-weight: 700; }
 		.traj-metric-switch { flex: 0 0 auto; }
+		.traj-loading { display: flex; align-items: center; justify-content: center; gap: 10px; height: 100%; color: var(--tm-muted); font: 400 0.86rem/1.4 var(--tm-ui); }
+		.traj-loader-spinner { width: 18px; height: 18px; border: 2px solid var(--tm-line-strong); border-top-color: var(--tm-green); border-radius: 50%; animation: trajSpin 0.8s linear infinite; }
+		@keyframes trajSpin { to { transform: rotate(360deg); } }
+		.traj-candidates { visibility: hidden; opacity: 0; transition: opacity 0.2s ease; }
+		.traj-candidates.is-visible { visibility: visible; opacity: 1; }
+		.traj-next-btn { padding: 0.7em 1.2em; font-size: 0.82rem; }
+		.oned-formula { min-height: 4.2em; margin-top: 6px; }
 		.traj-plotly-host { width: 100%; height: 460px; min-height: 360px; }
 		.traj-candidate-metric { color: var(--tm-muted); font-size: 0.68rem; font-weight: 600; }
 		@media (max-width: 760px) { .traj-plotly-host { height: 340px; min-height: 300px; } }
@@ -355,34 +362,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					<section class="section-block" id="inside" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker"><span class="sk-num">03</span> Inside the model</div>
 						<h2 class="section-title">The transformer: six steps, one running vector.</h2>
-						<div class="demo demo--paper demo--canvas" id="block-trajectory-real">
-							<div class="demo-head">
-								<div>
-									<p class="demo-title">Token trajectories through GPT-2 <span>· real PCA</span></p>
-									<p class="demo-sub">Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. PCA finds the three directions where the 768-dimensional states change most and projects everything onto them; the 3D points are a shadow of the real motion.</p>
-								</div>
-								<span class="demo-badge">GPT-2 · PCA</span>
-							</div>
-							<div class="demo-body">
-								<div id="real-trajectory-3d" class="traj-plotly-host" role="img" aria-label="3D token trajectories through GPT-2, PCA-reduced to three dimensions"></div>
-								<div class="demo-controls traj-step-controls">
-									<label class="traj-slider-label" for="traj-layer-slider">Layer
-										<input type="range" id="traj-layer-slider" min="0" max="12" step="1" value="0">
-										<output id="traj-layer-label">Embedding</output>
-									</label>
-									<div class="seg traj-metric-switch" id="traj-metric" role="group" aria-label="Distance metric">
-										<button type="button" data-metric="euclidean" aria-pressed="false">Euclidean (PCA)</button>
-										<button class="is-on" type="button" data-metric="angular" aria-pressed="true">Great-circle / angle</button>
-									</div>
-									<button class="btn-demo" type="button" id="traj-reset">Reset</button>
-								</div>
-								<p class="traj-metric-note">Euclidean distance measures the straight-line gap, like a tape measure. The model compares directions: in the angular view every vector is normalized to the unit sphere, where the angle is the metric that matters. The real model does this in 768 dimensions; the 3D sphere is its PCA shadow.</p>
-								<div class="traj-candidates" id="traj-candidates" aria-live="polite" hidden></div>
-							</div>
-							<div class="demo-foot">Real GPT-2 small hidden states, normalized per layer and PCA-reduced to 3D. Drag the slider to move through the layers. The next-token candidates appear at the final layer; the highlighted one is the model's top choice.</div>
-						</div>
 						<div class="prose">
-							<p>The model moves points in a high-dimensional space. Training shapes those points so that the final context vector has smaller angles to words that plausibly come next than to words that do not. Because the decision is about angles, not straight-line distances, this page uses the great-circle metric by default. The model works on a hypersphere of directions; to draw it, we project that sphere down to three dimensions.</p>
+							<p>The model moves points in a high-dimensional space. Training shapes those points so that the final context vector has smaller angles to words that plausibly come next than to words that do not. Because the decision is about angles, not straight-line distances, this page uses the great-circle metric by default. The model works on a hypersphere of directions; to draw it, we project that sphere down to three dimensions. Plausible here means the continuation occurred in the training data; it does not mean that the model has a separate notion of truth.</p>
 							<p>This is the transformer. For every token, again and again, it asks how that token stands in context to all the other tokens right now. Attention lets it look around, a dense layer and an activation function transform each token, and LayerNorm keeps the numbers in a stable range. A few other parts do their jobs along the way.</p>
 							<p>Each pass shifts the token's point in the space. The directions follow meaning paths and become clearer, so the last token ends up at a small angle to the tokens that are likely next in this context. That is the trick.</p>
 							<div class="prose-math" data-tex="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{token vector}})}_{\text{what layer 1 adds}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{running vector}})}_{\text{what layer 2 adds}} \end{aligned}" data-tex-de="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{Token-Vektor}})}_{\text{was Schicht 1 hinzufügt}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{laufender Vektor}})}_{\text{was Schicht 2 hinzufügt}} \end{aligned}" data-tex-display="true"></div>
@@ -430,13 +411,14 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<div class="demo-body">
 								<div class="oned-twod-grid">
 									<div>
-										<canvas id="i1d-canvas" class="demo-canvas" style="height:170px" aria-label="A temperature line with Freezing at -30, Cold at 5, Lukewarm at 30, Warm at 55, and Hot at 100"></canvas>
+										<canvas id="i1d-canvas" class="demo-canvas" style="height:210px" aria-label="A temperature line with Freezing at -30, Cold at 5, Lukewarm at 30, Warm at 55, and Hot at 100"></canvas>
 										<p class="meadow-caption" style="color:var(--tm-muted)">1D: temperature</p>
 									</div>
 
 								</div>
 								<div class="chip-row" id="oned-examples" aria-label="Temperature examples"></div>
 								<p class="meadow-caption" id="oned-result" aria-live="polite" style="color:var(--tm-muted)"></p>
+								<div class="prose-math oned-formula" id="oned-formula" data-tex-display="true"></div>
 							</div>
 						</div>
 						<div class="step-pane" id="step-embed">
@@ -712,46 +694,35 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="section-kicker"><span class="sk-num">04</span> The block repeats</div>
 						<h2 class="section-title">The whole block: attention + FFN, again and again</h2>
 						<div class="prose">
-							<p>Attention and the FFN are one transformer block. The same block runs again and again. Each pass lets every token look at the context, then moves it through its own MLP.</p>
-							<p>The picture is 3D; a real model works in thousands of dimensions. Follow five words through four blocks, then watch the last token choose the next one.</p>
+							<p>Attention and the FFN are one transformer block. The same architecture runs again and again, but each layer has its own learned weights and its own learned vectors. The block repeats in structure, not in parameters. Each pass lets every token look at the context, then moves it through its own MLP.</p>
+							<p>Below, real GPT-2 trajectories show the same movement. Each line is one token, each bend is one block. The vectors live in 768 dimensions; the plot is their 3D PCA shadow. The angular view is the default because the model compares directions, and “plausible” means the continuation is frequent in its training data, not that it is true.</p>
 						</div>
 
-						<div class="demo demo--paper demo--canvas" id="block-trajectory-demo">
+						<div class="demo demo--paper demo--canvas" id="block-trajectory-real">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">From token to token <span>· demo 10</span></p>
-									<p class="demo-sub">Five words from a Ringelnatz line. Attention mixes context; the FFN moves each token. After four blocks, the last token's angle to a candidate word decides the next token. The smallest angles are the actual next words: “am”, then “Sieb”.</p>
+									<p class="demo-title">Token trajectories through GPT-2 <span>· real PCA</span></p>
+									<p class="demo-sub">Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. PCA finds the three directions where the 768-dimensional states change most and projects everything onto them; the 3D points are a shadow of the real motion.</p>
 								</div>
-								<span class="demo-badge">simplified 3D</span>
+								<span class="demo-badge">GPT-2 · PCA</span>
 							</div>
 							<div class="demo-body">
-								<div class="traj-demo-grid">
-									<div class="traj-panel">
-										<p class="traj-panel-title">Token trajectory · 4 blocks</p>
-										<canvas id="traj-3d" aria-label="Five token trajectories through four transformer blocks"></canvas>
+								<div id="real-trajectory-3d" class="traj-plotly-host" role="img" aria-label="3D token trajectories through GPT-2, PCA-reduced to three dimensions"><div class="traj-loading"><span class="traj-loader-spinner" aria-hidden="true"></span><span><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "GPT-2-Trajektorien werden geladen …" : "Loading GPT-2 trajectories …"; ?></span></div></div>
+								<div class="demo-controls traj-step-controls">
+									<label class="traj-slider-label" for="traj-layer-slider">Layer
+										<input type="range" id="traj-layer-slider" min="0" max="12" step="1" value="0">
+										<output id="traj-layer-label">Embedding</output>
+									</label>
+									<div class="seg traj-metric-switch" id="traj-metric" role="group" aria-label="Distance metric">
+										<button type="button" data-metric="euclidean" aria-pressed="false">Euclidean (PCA)</button>
+										<button class="is-on" type="button" data-metric="angular" aria-pressed="true">Great-circle / angle</button>
 									</div>
-									<div class="traj-panel">
-										<p class="traj-panel-title">Angle to the next word</p>
-										<canvas id="traj-angles" aria-label="Angles from the last token to candidate next words"></canvas>
-										<div id="traj-angle-list" class="traj-angle-list" aria-live="polite"></div>
-									</div>
+									<button class="btn-demo btn-demo--green traj-next-btn" type="button" id="traj-next-layer">Next layer →</button>
 								</div>
-								<div class="demo-controls">
-									<button class="btn-demo btn-demo--green" type="button" id="traj-next">Next block →</button>
-									<button class="btn-demo" type="button" id="traj-angles-btn">Show angles</button>
-									<button class="btn-demo" type="button" id="traj-choose">Choose next word →</button>
-									<button class="btn-demo" type="button" id="traj-reset">Reset</button>
-								</div>
-								<div class="demo-readout demo-readout--3">
-									<div><b>Step</b><span id="traj-step">Embedding</span></div>
-									<div><b>Block</b><span id="traj-block">0 / 4</span></div>
-									<div><b>Next word</b><span id="traj-next-word">–</span></div>
-								</div>
-								<p class="demo-hint" id="traj-note">The tokens start as separate points.</p>
-								<p class="traj-quote">„Die Löcher sind das Wichtigste …“ <span>Joachim Ringelnatz (zugeschrieben)</span></p>
+								<p class="traj-metric-note">Euclidean distance measures the straight-line gap, like a tape measure. The model compares directions: in the angular view every vector is normalized to the unit sphere, where the angle is the metric that matters. The real model does this in 768 dimensions; the 3D sphere is its PCA shadow.</p>
+								<div class="traj-candidates" id="traj-candidates" aria-live="polite"></div>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Attention contextualizes, the FFN moves. The last token's angle to the vocabulary picks the next word, and the loop starts again.</span></div>
-							<div class="demo-foot">The 3D vectors are a toy model, not GPT-2. The angles are computed from those vectors. Quote: <a href="https://www.aphorismen.de/zitat/60074" rel="noopener">Joachim Ringelnatz (zugeschrieben), „Die Löcher sind das Wichtigste am Sieb“</a>; the attribution is common but not secure.</div>
+							<div class="demo-foot">Real GPT-2 small hidden states, normalized per layer and PCA-reduced to 3D. Drag the slider to move through the layers. The next-token candidates appear at the final layer; the highlighted one is the model's top choice.</div>
 						</div>
 					</section>
 
@@ -759,10 +730,14 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="section-kicker"><span class="sk-num">05</span> The last step</div>
 						<h2 class="section-title">The final vector picks a word.</h2>
 						<div class="prose">
-							<p>How does the final vector become a probability? The last token carries the whole context. The model takes the dot product of its final vector h with every token embedding, producing logits: one raw score per vocabulary entry.</p>
-							<div class="prose-math" data-tex="\underbrace{\text{logit}_i = \underbrace{h}_{\text{context vector}} \cdot \underbrace{w_i}_{\text{token direction}}}_{\text{how much the context points toward token }i}" data-tex-de="\underbrace{\text{logit}_i = \underbrace{h}_{\text{Kontextvektor}} \cdot \underbrace{w_i}_{\text{Token-Richtung}}}_{\text{wie stark der Kontext auf Token }i\text{ zeigt}}" data-tex-display="true"></div>
-							<p>Softmax turns the logits into a distribution: exponentiate, divide by the sum. The largest score becomes the most likely next token, but the alternatives stay alive.</p>
-							<div class="prose-math" data-tex="p_i = \frac{\exp(\text{logit}_i)}{Z}" data-tex-de="p_i = \frac{\exp(\text{Logit}_i)}{Z}" data-tex-display="true"></div>
+							<p>How does the final vector become a probability? The last token carries the whole context. Its final residual vector h is multiplied by a learned unembedding matrix W_U. Each row w_i is the direction the model has learned for token i. The result is one raw score per vocabulary entry: the logit z_i.</p>
+							<p>In GPT-2 the unembedding matrix is often tied to the input embedding matrix, but it is still a learned matrix. The model does not compare a vector to a stored list of words; it projects the vector through this learned map into vocabulary space.</p>
+							<div class="prose-math" data-tex="\underbrace{\mathbf{z} = \mathbf{h}\,W_U^{\top}}_{\text{one learned matrix, all vocabulary scores}}" data-tex-de="\underbrace{\mathbf{z} = \mathbf{h}\,W_U^{\top}}_{\text{eine gelernte Matrix, alle Vokabular-Scores}}" data-tex-display="true"></div>
+							<div class="prose-math" data-tex="\underbrace{z_i = \underbrace{\mathbf{h}}_{\text{final context vector}} \cdot \underbrace{\mathbf{w}_i}_{\text{row }i\text{ of }W_U}}_{\text{logit for token }i}" data-tex-de="\underbrace{z_i = \underbrace{\mathbf{h}}_{\text{finaler Kontextvektor}} \cdot \underbrace{\mathbf{w}_i}_{\text{Zeile }i\text{ von }W_U}}_{\text{Logit für Token }i}" data-tex-display="true"></div>
+							<p>After normalization, that dot product is the cosine of the angle between the context vector and the token direction. The great-circle view makes that angle visible; the raw logit still includes the magnitudes as well.</p>
+							<p>Softmax turns the logits into a probability distribution. It exponentiates every logit and divides by the sum of all exponentials. The normalizer Z is the partition function: it makes the probabilities sum to one.</p>
+							<div class="prose-math" data-tex="\underbrace{p_i = \frac{\exp(z_i)}{\underbrace{Z}_{\text{normalizer}}}, \qquad \underbrace{Z = \sum_{j=1}^{V} \exp(z_j)}_{\text{sum over all }V\text{ vocabulary entries}}}_{\text{softmax: a distribution over the vocabulary}}" data-tex-de="\underbrace{p_i = \frac{\exp(z_i)}{\underbrace{Z}_{\text{Normalisierer}}}, \qquad \underbrace{Z = \sum_{j=1}^{V} \exp(z_j)}_{\text{Summe über alle }V\text{ Vokabular-Einträge}}}_{\text{Softmax: eine Verteilung über das Vokabular}}" data-tex-display="true"></div>
+							<p>Here h is the final context vector, W_U the learned unembedding matrix, w_i its row for token i, z_i the logit, V the vocabulary size, Z the normalizer, and p_i the probability of token i. The largest probability becomes the most likely next token, but the alternatives stay alive.</p>
 						</div>
 
 						<div class="demo demo--paper demo--plot softmax-demo" id="softmax-demo">
@@ -878,305 +853,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 	<script src="assets/demos.js?v=<?php echo filemtime(__DIR__.'/assets/demos.js'); ?>"></script>
 	<script src="assets/space-morph.js?v=<?php echo filemtime(__DIR__.'/assets/space-morph.js'); ?>"></script>
 	<script src="assets/word-meadow.js?v=20261105c"></script>
-	<script>
-	(function () {
-		"use strict";
-		var root = document.getElementById("block-trajectory-demo");
-		if (!root || !window.TM || !TM.initCanvas) return;
-
-		var DE = TM.lang() === "de";
-		function t(en, de) { return DE ? de : en; }
-
-		var TOKENS = ["Die", "Löcher", "sind", "das", "Wichtigste"];
-		var TRAJ = [
-			[[0.9,0.2,0.1],[0.85,0.225,0.175],[0.8,0.25,0.25],[0.75,0.275,0.325],[0.7,0.3,0.4]],
-			[[0.2,0.9,0.2],[0.3066,0.8326,0.3033],[0.38,0.79,0.39],[0.4066,0.7826,0.4533],[0.4,0.8,0.5]],
-			[[0.2,0.3,0.9],[0.1896,0.4066,0.8788],[0.2,0.48,0.87],[0.2396,0.5066,0.8788],[0.3,0.5,0.9]],
-			[[0.8,0.1,0.6],[0.7924,0.1533,0.5755],[0.76,0.19,0.58],[0.6924,0.2033,0.6255],[0.6,0.2,0.7]],
-			[[0.3,0.6,0.8],[0.2267,0.4696,0.8849],[0.17,0.36,0.945],[0.1367,0.2796,0.9699],[0.12,0.22,0.97]]
-		];
-		var LAST = [0.12, 0.22, 0.97];
-		var CANDS = [
-			["am", [0.10, 0.20, 1.00]],
-			["wichtig", [0.55, 0.55, 0.45]],
-			["und", [0.30, 0.90, 0.30]],
-			["Sieb", [0.95, 0.10, 0.15]]
-		];
-		var LAST2 = [0.80, 0.10, 0.25];
-		var CANDS2 = [
-			["Sieb", [0.95, 0.05, 0.15]],
-			["wichtig", [0.50, 0.50, 0.50]],
-			["am", [0.10, 0.20, 1.00]]
-		];
-
-		var state = { step: 0, phase: "traj", chosen: "" };
-		var left = document.getElementById("traj-3d");
-		var right = document.getElementById("traj-angles");
-		if (!left || !right) return;
-
-		function colors() {
-			var c = TM.colors();
-			return {
-				ink: c.ink, muted: c.muted, faint: c.faint,
-				line: c.line, lineStrong: c.lineStrong,
-				green: c.green, blue: c.blue, gold: c.gold,
-				coral: c.coral, teal: c.teal || c.sky || c.blue,
-				paper: c.paper, dark: c.dark
-			};
-		}
-		var TOKEN_COLORS = null;
-		function tokenColors(c) {
-			return [c.green, c.blue, c.gold, c.coral, c.teal];
-		}
-
-		function project(p, w, h) {
-			var cx = w * 0.50, cy = h * 0.58;
-			var scale = Math.min(w, h) * 0.58;
-			var x = p[0] - 0.5, y = p[1] - 0.5, z = p[2] - 0.5;
-			var yaw = -0.65, pitch = 0.38;
-			var x1 = x * Math.cos(yaw) - z * Math.sin(yaw);
-			var z1 = x * Math.sin(yaw) + z * Math.cos(yaw);
-			var y2 = y * Math.cos(pitch) - z1 * Math.sin(pitch);
-			var z2 = y * Math.sin(pitch) + z1 * Math.cos(pitch);
-			var f = 2.0 / (2.0 + z2 * 0.55);
-			return [cx + x1 * scale * f, cy - y2 * scale * f];
-		}
-
-		function line(ctx, a, b, color, width, dash) {
-			ctx.save();
-			ctx.strokeStyle = color;
-			ctx.lineWidth = width || 1;
-			if (dash) ctx.setLineDash(dash);
-			ctx.beginPath();
-			ctx.moveTo(a[0], a[1]);
-			ctx.lineTo(b[0], b[1]);
-			ctx.stroke();
-			ctx.restore();
-		}
-
-		function dot(ctx, p, color, r) {
-			ctx.beginPath();
-			ctx.arc(p[0], p[1], r || 3.5, 0, Math.PI * 2);
-			ctx.fillStyle = color;
-			ctx.fill();
-		}
-
-		function label(ctx, text, p, color, font, align) {
-			ctx.save();
-			ctx.fillStyle = color;
-			ctx.font = font || "600 10px Barlow, system-ui, sans-serif";
-			ctx.textAlign = align || "left";
-			ctx.textBaseline = "middle";
-			ctx.fillText(text, p[0], p[1]);
-			ctx.restore();
-		}
-
-		function drawAxes(ctx, w, h, c) {
-			var origin = project([0, 0, 0], w, h);
-			var axes = [
-				[[1.25, 0, 0], "dim 1"],
-				[[0, 1.25, 0], "dim 2"],
-				[[0, 0, 1.25], "dim 3"]
-			];
-			axes.forEach(function (axis) {
-				var p = project(axis[0], w, h);
-				line(ctx, origin, p, c.lineStrong, 1);
-				label(ctx, axis[1], [p[0] + 4, p[1] - 4], c.faint, "600 9px Barlow, system-ui, sans-serif");
-			});
-		}
-
-		function drawLeft(ctx, w, h) {
-			var c = colors();
-			var cols = tokenColors(c);
-			ctx.clearRect(0, 0, w, h);
-			drawAxes(ctx, w, h, c);
-
-			var activeCands = state.phase === "after" ? CANDS2 : CANDS;
-			var activeLast = state.phase === "after" ? LAST2 : LAST;
-			var chosen = state.phase === "after" ? "Sieb" : state.chosen;
-			var origin = project([0, 0, 0], w, h);
-
-			if (state.phase !== "traj") {
-				var lp = project(activeLast, w, h);
-				line(ctx, origin, lp, c.ink, 2, [4, 4]);
-				label(ctx, t("last token", "letztes Token"), [lp[0] + 6, lp[1] - 8], c.ink, "700 10px Barlow, system-ui, sans-serif");
-				activeCands.forEach(function (cand) {
-					var cp = project(cand[1], w, h);
-					var isChosen = cand[0] === chosen;
-					line(ctx, origin, cp, isChosen ? c.green : c.lineStrong, isChosen ? 2.2 : 1, [3, 5]);
-					label(ctx, cand[0], [cp[0] + 5, cp[1] - 5], isChosen ? c.green : c.muted, isChosen ? "700 10px Barlow, system-ui, sans-serif" : "600 9px Barlow, system-ui, sans-serif");
-				});
-			}
-
-			TOKENS.forEach(function (token, ti) {
-				var path = TRAJ[ti];
-				var color = cols[ti];
-				var lastIdx = Math.min(state.step, path.length - 1);
-				ctx.save();
-				ctx.globalAlpha = 0.20;
-				for (var s = 1; s < path.length; s++) {
-					line(ctx, project(path[s - 1], w, h), project(path[s], w, h), color, 1.4);
-				}
-				ctx.restore();
-				for (var a = 1; a <= lastIdx; a++) {
-					line(ctx, project(path[a - 1], w, h), project(path[a], w, h), color, 2.2);
-				}
-				for (var d = 0; d <= lastIdx; d++) {
-					dot(ctx, project(path[d], w, h), color, d === lastIdx ? 4.5 : 2.5);
-				}
-				var cur = project(path[lastIdx], w, h);
-				var isLast = ti === TOKENS.length - 1;
-				if (isLast) {
-					ctx.save();
-					ctx.strokeStyle = c.ink;
-					ctx.lineWidth = 1.2;
-					ctx.beginPath();
-					ctx.arc(cur[0], cur[1], 7, 0, Math.PI * 2);
-					ctx.stroke();
-					ctx.restore();
-				}
-				label(ctx, token, [cur[0] + 7, cur[1] + (ti % 2 ? 10 : -9)], color, isLast ? "700 10px Barlow, system-ui, sans-serif" : "600 10px Barlow, system-ui, sans-serif");
-			});
-
-			if (state.phase === "after") {
-				var p4 = project(LAST, w, h);
-				var p5 = project(LAST2, w, h);
-				line(ctx, p4, p5, c.green, 2.2, [3, 4]);
-				dot(ctx, p5, c.green, 4.5);
-				label(ctx, t("after 'am'", "nach „am“"), [p5[0] + 7, p5[1] + 12], c.green, "700 10px Barlow, system-ui, sans-serif");
-			}
-
-			label(ctx, t("3D schematic; the real model uses thousands of dimensions", "3D-Schema; das echte Modell nutzt Tausende Dimensionen"), [12, h - 12], c.faint, "600 9px Barlow, system-ui, sans-serif");
-		}
-
-		function angleDeg(a, b) {
-			var dot = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
-			var na = Math.sqrt(a[0]*a[0] + a[1]*a[1] + a[2]*a[2]);
-			var nb = Math.sqrt(b[0]*b[0] + b[1]*b[1] + b[2]*b[2]);
-			var cos = Math.max(-1, Math.min(1, dot / (na * nb)));
-			return Math.acos(cos) * 180 / Math.PI;
-		}
-
-		function renderAngleList(angles, chosen) {
-			var el = document.getElementById("traj-angle-list");
-			if (!el) return;
-			el.innerHTML = angles.map(function (item) {
-				var cls = item.word === chosen ? "is-chosen" : "";
-				return '<span class="' + cls + '">' + item.word + " · " + item.angle.toFixed(1) + "°</span>";
-			}).join("");
-		}
-
-		function drawRight(ctx, w, h) {
-			var c = colors();
-			ctx.clearRect(0, 0, w, h);
-			var listEl = document.getElementById("traj-angle-list");
-			if (listEl && state.step < 4) listEl.textContent = "";
-			if (state.step < 4) {
-				label(ctx, t("Run four blocks, then show the angles.", "Vier Blöcke laufen lassen, dann die Winkel zeigen."), [w * 0.5, h * 0.5], c.faint, "600 11px Barlow, system-ui, sans-serif", "center");
-				return;
-			}
-			var after = state.phase === "after";
-			var last = after ? LAST2 : LAST;
-			var cands = after ? CANDS2 : CANDS;
-			var chosen = after ? "Sieb" : state.chosen;
-			var ox = w * 0.10, oy = h * 0.58, R = Math.min(w * 0.72, h * 0.42);
-			var angles = cands.map(function (cand) { return { word: cand[0], vec: cand[1], angle: angleDeg(last, cand[1]) }; });
-			angles.sort(function (a, b) { return a.angle - b.angle; });
-			renderAngleList(angles, chosen);
-
-			ctx.save();
-			ctx.strokeStyle = c.line;
-			ctx.lineWidth = 1;
-			ctx.beginPath();
-			ctx.arc(ox, oy, R, -Math.PI / 2, 0);
-			ctx.stroke();
-			ctx.restore();
-			for (var tick = 0; tick <= 90; tick += 30) {
-				var a = tick * Math.PI / 180;
-				var x = ox + Math.cos(a) * R;
-				var y = oy - Math.sin(a) * R;
-				line(ctx, [ox, oy], [x, y], c.line, 0.7);
-				label(ctx, tick + "°", [x + 2, y - 6], c.faint, "600 9px Barlow, system-ui, sans-serif");
-			}
-			line(ctx, [ox, oy], [ox + R, oy], c.ink, 2.2);
-			label(ctx, t("last token", "letztes Token"), [ox + R - 2, oy + 12], c.ink, "700 10px Barlow, system-ui, sans-serif", "right");
-
-			angles.forEach(function (item) {
-				var a = item.angle * Math.PI / 180;
-				var x = ox + Math.cos(a) * R;
-				var y = oy - Math.sin(a) * R;
-				var isChosen = item.word === chosen;
-				line(ctx, [ox, oy], [x, y], isChosen ? c.green : c.lineStrong, isChosen ? 2.4 : 1.1);
-				dot(ctx, [x, y], isChosen ? c.green : c.muted, isChosen ? 4 : 2.6);
-				label(ctx, item.word + " · " + item.angle.toFixed(1) + "°", [x + 5, y - 7], isChosen ? c.green : c.muted, isChosen ? "700 10px Barlow, system-ui, sans-serif" : "600 9px Barlow, system-ui, sans-serif");
-			});
-			label(ctx, t("smallest angle wins", "der kleinste Winkel gewinnt"), [ox, h - 12], c.green, "700 10px Barlow, system-ui, sans-serif");
-		}
-
-		var chartLeft = TM.initCanvas(left, drawLeft);
-		var chartRight = TM.initCanvas(right, drawRight);
-
-		function setText(id, text) {
-			var el = document.getElementById(id);
-			if (el) el.textContent = text;
-		}
-		function updateUI() {
-			var stepLabel = state.phase === "after" ? t("After am", "Nach „am“") : (state.phase === "angles" ? t("Angles", "Winkel") : (state.step === 0 ? t("Embedding", "Embedding") : t("Block ", "Block ") + state.step));
-			setText("traj-step", stepLabel);
-			setText("traj-block", state.step + " / 4");
-			setText("traj-next-word", state.phase === "after" ? "Sieb" : (state.chosen || "–"));
-			var note = "";
-			if (state.phase === "traj") {
-				if (state.step === 0) note = t("The tokens start as separate points.", "Die Tokens starten als getrennte Punkte.");
-				else if (state.step < 4) note = t("Block " + state.step + ": attention mixes context; the FFN moves each token.", "Block " + state.step + ": Attention mischt Kontext; das FFN bewegt jedes Token.");
-				else note = t("Four blocks done. The last token is the query for the next word.", "Vier Blöcke fertig. Das letzte Token ist die Query für das nächste Wort.");
-			} else if (state.phase === "angles") {
-				note = t("Angles from the last token to candidate words. The smallest angle wins.", "Winkel vom letzten Token zu den Kandidatenwörtern. Der kleinste Winkel gewinnt.");
-			} else {
-				note = t("The model chose “am”. The loop continues; now “Sieb” has the smallest angle.", "Das Modell hat „am“ gewählt. Die Schleife läuft weiter; jetzt hat „Sieb“ den kleinsten Winkel.");
-			}
-			setText("traj-note", note);
-			var nextBtn = document.getElementById("traj-next");
-			var anglesBtn = document.getElementById("traj-angles-btn");
-			var chooseBtn = document.getElementById("traj-choose");
-			if (nextBtn) nextBtn.disabled = state.phase !== "traj" || state.step >= 4;
-			if (anglesBtn) anglesBtn.disabled = state.phase !== "traj" || state.step < 4;
-			if (chooseBtn) chooseBtn.disabled = state.phase !== "angles";
-			if (chartLeft) chartLeft.redraw();
-			if (chartRight) chartRight.redraw();
-		}
-
-		var nextBtn = document.getElementById("traj-next");
-		var anglesBtn = document.getElementById("traj-angles-btn");
-		var chooseBtn = document.getElementById("traj-choose");
-		var resetBtn = document.getElementById("traj-reset");
-		if (nextBtn) nextBtn.addEventListener("click", function () {
-			if (state.phase !== "traj") return;
-			state.step = Math.min(4, state.step + 1);
-			updateUI();
-		});
-		if (anglesBtn) anglesBtn.addEventListener("click", function () {
-			if (state.step < 4 || state.phase !== "traj") return;
-			state.phase = "angles";
-			state.chosen = "am";
-			updateUI();
-		});
-		if (chooseBtn) chooseBtn.addEventListener("click", function () {
-			if (state.phase !== "angles") return;
-			state.phase = "after";
-			state.chosen = "Sieb";
-			updateUI();
-		});
-		if (resetBtn) resetBtn.addEventListener("click", function () {
-			state.step = 0;
-			state.phase = "traj";
-			state.chosen = "";
-			updateUI();
-		});
-		window.addEventListener("tm:theme", function () { updateUI(); });
-		updateUI();
-	})();
-	</script>
 
 	<script src="../plotly-2.24.1.min.js"></script>
 	<script src="../manifold_scenes.js?v=<?php echo filemtime(__DIR__.'/../manifold_scenes.js'); ?>"></script>
@@ -4506,21 +4182,66 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		"use strict";
 		var de = TM.lang() === "de";
 		var line = document.getElementById("i1d-canvas");
-		if (line && TM.numberLine) {
-			var c = TM.colors();
-			TM.numberLine(line, {
-				min: -40,
-				max: 110,
-				points: [
-					{ value: -30, label: de ? "Gefrierpunkt" : "Freezing", color: c.sky },
-					{ value: 5, label: de ? "Kalt" : "Cold", color: c.blue },
-					{ value: 30, label: de ? "Lauwarm" : "Lukewarm", color: c.green },
-					{ value: 100, label: de ? "Heiß" : "Hot", color: c.gold }
-				],
-				ops: [
-					{ from: 30, to: 100, label: de ? "Heiß − Lauwarm = 70" : "Hot − Lukewarm = 70", color: c.gold },
-					{ from: 5, to: 30, label: de ? "Lauwarm − Kalt = 25" : "Lukewarm − Cold = 25", color: c.green }
-				]
+		if (!line || !TM.numberLine) return;
+		var c = TM.colors();
+		var labels = de ? {
+			freezing: "Gefrierpunkt", cold: "Kalt", lukewarm: "Lauwarm", warm: "Warm", hot: "Heiß"
+		} : {
+			freezing: "Freezing", cold: "Cold", lukewarm: "Lukewarm", warm: "Warm", hot: "Hot"
+		};
+		var pointDefs = [
+			{ key: "freezing", value: -30, label: labels.freezing, color: c.sky },
+			{ key: "cold", value: 5, label: labels.cold, color: c.blue },
+			{ key: "lukewarm", value: 30, label: labels.lukewarm, color: c.green },
+			{ key: "warm", value: 55, label: labels.warm, color: c.lime },
+			{ key: "hot", value: 100, label: labels.hot, color: c.gold }
+		];
+		var lineApi = TM.numberLine(line, {
+			min: -40, max: 110,
+			points: pointDefs.map(function (p) { return { value: p.value, label: p.label, color: p.color }; })
+		});
+		var examples = [
+			{ a: "cold", b: "warm" },
+			{ a: "cold", b: "hot" },
+			{ a: "freezing", b: "hot" },
+			{ a: "freezing", b: "warm" }
+		];
+		var row = document.getElementById("oned-examples");
+		var result = document.getElementById("oned-result");
+		function byKey(key) {
+			for (var i = 0; i < pointDefs.length; i++) if (pointDefs[i].key === key) return pointDefs[i];
+			return pointDefs[0];
+		}
+		function nearest(value) {
+			var best = pointDefs[0];
+			for (var i = 1; i < pointDefs.length; i++) {
+				if (Math.abs(pointDefs[i].value - value) < Math.abs(best.value - value)) best = pointDefs[i];
+			}
+			return best;
+		}
+		function apply(example, button) {
+			var a = byKey(example.a), b = byKey(example.b);
+			var avg = (a.value + b.value) / 2;
+			var near = nearest(avg);
+			var sym = Math.abs(avg - near.value) < 0.5 ? "=" : "≈";
+			if (result) result.textContent = a.label + " + " + b.label + " " + sym + " " + avg.toFixed(1) + " → " + near.label + " (" + near.value + ")";
+			if (lineApi && lineApi.setHighlight) lineApi.setHighlight({ value: avg, label: near.label, color: near.color });
+			if (row) row.querySelectorAll("button").forEach(function (other) {
+				other.classList.toggle("is-on", other === button);
+				other.setAttribute("aria-pressed", other === button ? "true" : "false");
+			});
+		}
+		if (row) {
+			examples.forEach(function (example, i) {
+				var a = byKey(example.a), b = byKey(example.b);
+				var button = document.createElement("button");
+				button.type = "button";
+				button.className = "chip" + (i === 0 ? " is-on" : "");
+				button.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+				button.textContent = a.label + " + " + b.label;
+				button.addEventListener("click", function () { apply(example, button); });
+				row.appendChild(button);
+				if (i === 0) apply(example, button);
 			});
 		}
 	})();
@@ -4846,8 +4567,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var el = document.getElementById("traj-candidates");
 			if (!el) return;
 			var show = step >= data.layers.length - 1;
-			el.hidden = !show;
-			if (!show) { el.innerHTML = ""; return; }
+			el.classList.toggle("is-visible", show);
 			var lmMap = {};
 			(data.landmarks || []).forEach(function (l) { lmMap[l.word] = l; });
 			el.innerHTML = (data.top || []).slice(0, 5).map(function (item) {
@@ -4864,8 +4584,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		}
 		function updateStepLabel() {
 			var el = document.getElementById("traj-layer-label");
-			if (!el) return;
-			el.textContent = step === 0 ? (de ? "Embedding" : "Embedding") : (de ? "Schicht " : "Layer ") + step + " / " + (data.layers.length - 1);
+			if (el) el.textContent = step === 0 ? "Embedding" : (de ? "Schicht " : "Layer ") + step + " / " + (data.layers.length - 1);
+			var nextBtn = document.getElementById("traj-next-layer");
+			if (nextBtn) nextBtn.disabled = step >= data.layers.length - 1;
 		}
 		function start() {
 			if (loaded) return;
@@ -4875,7 +4596,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			updateStepLabel();
 		}
 		var slider = document.getElementById("traj-layer-slider");
-		var resetBtn = document.getElementById("traj-reset");
+		var nextBtn = document.getElementById("traj-next-layer");
 		var metricEl = document.getElementById("traj-metric");
 		if (slider) slider.addEventListener("input", function () {
 			step = parseInt(slider.value, 10) || 0;
@@ -4883,9 +4604,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			renderCandidates();
 			if (loaded) draw();
 		});
-		if (resetBtn) resetBtn.addEventListener("click", function () {
-			step = 0;
-			if (slider) slider.value = "0";
+		if (nextBtn) nextBtn.addEventListener("click", function () {
+			step = Math.min(data.layers.length - 1, step + 1);
+			if (slider) slider.value = String(step);
 			updateStepLabel();
 			renderCandidates();
 			if (loaded) draw();
