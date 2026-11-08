@@ -195,7 +195,9 @@
 		var pendingSpinner = true;
 		var minLoader = options.minLoader == null ? 150 : options.minLoader;
 		var rootMargin = options.rootMargin || "700px 0px";
+		var margin = parseInt(rootMargin, 10) || 700;
 		var reduce = TM.prefersReduced();
+		var checkRaf = null;
 
 		function measure() {
 			var rect = canvas.getBoundingClientRect();
@@ -349,21 +351,44 @@
 			if (!drawn) startLoad(false);
 			else request({ spinner: false });
 		}
+		function activate() {
+			if (!visible) return;
+			if (!drawn || dirty) {
+				if (pendingSpinner || !drawn) startLoad(drawn);
+				else request({ spinner: false });
+			}
+			pendingSpinner = false;
+		}
+		function setVisible(next) {
+			if (visible === next) return;
+			visible = next;
+			if (visible) activate();
+		}
+		function inView() {
+			var rect = canvas.getBoundingClientRect();
+			return rect.bottom >= -margin && rect.top <= window.innerHeight + margin;
+		}
+		function check() {
+			checkRaf = null;
+			setVisible(inView());
+		}
+		function queueCheck() {
+			if (checkRaf === null) checkRaf = requestAnimationFrame(check);
+		}
 		if (window.ResizeObserver) {
-			new ResizeObserver(layout).observe(canvas);
+			canvas.__tmResizeObserver = new ResizeObserver(layout);
+			canvas.__tmResizeObserver.observe(canvas);
 		} else {
 			window.addEventListener("resize", layout);
 		}
 		if ("IntersectionObserver" in window && !reduce) {
-			new IntersectionObserver(function (entries) {
-				visible = entries.some(function (entry) { return entry.isIntersecting; });
-				if (!visible) return;
-				if (!drawn || dirty) {
-					if (pendingSpinner || !drawn) startLoad(drawn);
-					else request({ spinner: false });
-				}
-				pendingSpinner = false;
-			}, { rootMargin: rootMargin }).observe(canvas);
+			canvas.__tmViewObserver = new IntersectionObserver(function (entries) {
+				setVisible(entries.some(function (entry) { return entry.isIntersecting; }));
+			}, { rootMargin: rootMargin });
+			canvas.__tmViewObserver.observe(canvas);
+			window.addEventListener("scroll", queueCheck, { passive: true });
+			window.addEventListener("resize", queueCheck);
+			setTimeout(check, 0);
 		} else {
 			visible = true;
 			startLoad(false);

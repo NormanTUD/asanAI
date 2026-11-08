@@ -8514,3 +8514,45 @@ html[data-theme="dark"] .traj-candidate.is-chosen { color: var(--tm-green); }
 .prose-math math {
 	width: auto !important;
 }
+
+.layer-formula-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px;
+	margin: 16px 0 12px;
+}
+.layer-formula-card {
+	min-width: 0;
+	padding: 12px 14px;
+	border: 1px solid var(--tm-line);
+	border-radius: 12px;
+	background:
+		radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--tm-sky) 10%, transparent), transparent 55%),
+		var(--tm-card);
+}
+.layer-formula-card .layer-card-title { margin-bottom: 8px; }
+.layer-formula-card .prose-math {
+	margin: 0;
+	overflow-x: auto;
+}
+.layer-formula-note {
+	margin: 0 0 18px;
+	font: 400 0.78rem/1.55 var(--tm-prose);
+	color: var(--tm-ink-soft);
+}
+
+@media (max-width: 760px) {
+	.layer-formula-grid { grid-template-columns: 1fr; }
+}
+
+[data-tex-display="true"] {
+	display: flex !important;
+	justify-content: center !important;
+	text-align: center !important;
+}
+[data-tex-display="true"] > math {
+	width: auto !important;
+	max-width: 100%;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
