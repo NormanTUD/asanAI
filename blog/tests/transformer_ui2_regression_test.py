@@ -330,9 +330,8 @@ def main() -> None:
             }""")
             page.wait_for_timeout(1200)
             overlay = page.evaluate("""() => {
-                const el = document.getElementById('unified-layer-0-feature-arrows');
-                if (!el || !window.tmMetric || !window.tmMetric.rerenderWithOverlay) return false;
-                window.tmMetric.rerenderWithOverlay(el, function () {});
+                if (!window.tmMetric || !window.tmMetric.rerenderWithOverlay) return false;
+                window.tmMetric.rerenderWithOverlay(document.body, function () {});
                 return !!document.querySelector('.tm-metric-loading');
             }""")
             check("visible plots show a small metric loading overlay", overlay)
@@ -412,8 +411,15 @@ def main() -> None:
                   bool(pe_metric) and "Great-circle" in pe_metric["title"] and pe_metric["surface"]
                   and pe_metric["cone"] and pe_metric["arc"], str(pe_metric))
 
-            page.evaluate("() => document.getElementById('transformer-trajectory-full-path').scrollIntoView()")
-            page.wait_for_timeout(1500)
+            page.evaluate("""() => {
+                const box = document.getElementById('tm-transformer-box');
+                if (box) { const b = box.querySelector('.tm-step-toggle'); if (b && box.classList.contains('is-collapsed')) b.click(); }
+                const s = document.getElementById('sticky-metric-select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true}));
+                document.getElementById('transformer-trajectory-full-path').scrollIntoView();
+            }""")
+            page.wait_for_timeout(1200)
+            page.evaluate("() => { if (window.tlab_render_trajectory_plot) window.tlab_render_trajectory_plot(3); }")
+            page.wait_for_timeout(1200)
             traj_angular = page.evaluate("""() => {
                 const el = document.getElementById('transformer-trajectory-full-path');
                 const d = (el && el.data) || [];

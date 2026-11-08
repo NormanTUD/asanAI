@@ -21,7 +21,7 @@
 		.traj-plotly-host { width: 100%; height: 460px; min-height: 360px; }
 		.traj-candidate-metric { color: var(--tm-muted); font-size: 0.68rem; font-weight: 600; }
 		@media (max-width: 760px) { .traj-plotly-host { height: 340px; min-height: 300px; } }
-		.traj-metric-note { max-width: 78ch; margin: 8px 0 0; font: 400 0.76rem/1.45 var(--tm-ui); color: var(--tm-muted); }
+		.traj-metric-note { width: 100%; max-width: none; margin: 8px 0 0; font: 400 0.76rem/1.45 var(--tm-ui); color: var(--tm-muted); }
 		.iso-note { width: 100%; max-width: none; margin: 0 0 8px; font: 400 0.84rem/1.55 var(--tm-prose); color: var(--tm-ink-soft); }
 		.iso-source { width: 100%; margin: 0 0 12px; font: 400 0.74rem/1.4 var(--tm-ui); color: var(--tm-muted); }
 		.iso-source a { color: var(--tm-petrol); text-decoration: underline; text-underline-offset: 2px; }
@@ -371,8 +371,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 										<output id="traj-layer-label">Embedding</output>
 									</label>
 									<div class="seg traj-metric-switch" id="traj-metric" role="group" aria-label="Distance metric">
-										<button class="is-on" type="button" data-metric="euclidean" aria-pressed="true">Euclidean (PCA)</button>
-										<button type="button" data-metric="angular" aria-pressed="false">Great-circle / angle</button>
+										<button type="button" data-metric="euclidean" aria-pressed="false">Euclidean (PCA)</button>
+										<button class="is-on" type="button" data-metric="angular" aria-pressed="true">Great-circle / angle</button>
 									</div>
 									<button class="btn-demo" type="button" id="traj-reset">Reset</button>
 								</div>
@@ -382,6 +382,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<div class="demo-foot">Real GPT-2 small hidden states, normalized per layer and PCA-reduced to 3D. Drag the slider to move through the layers. The next-token candidates appear at the final layer; the highlighted one is the model's top choice.</div>
 						</div>
 						<div class="prose">
+							<p>The model moves points in a high-dimensional space. Training shapes those points so that the final context vector has smaller angles to words that plausibly come next than to words that do not. Because the decision is about angles, not straight-line distances, this page uses the great-circle metric by default. The model works on a hypersphere of directions; to draw it, we project that sphere down to three dimensions.</p>
 							<p>This is the transformer. For every token, again and again, it asks how that token stands in context to all the other tokens right now. Attention lets it look around, a dense layer and an activation function transform each token, and LayerNorm keeps the numbers in a stable range. A few other parts do their jobs along the way.</p>
 							<p>Each pass shifts the token's point in the space. The directions follow meaning paths and become clearer, so the last token ends up at a small angle to the tokens that are likely next in this context. That is the trick.</p>
 							<div class="prose-math" data-tex="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{token vector}})}_{\text{what layer 1 adds}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{running vector}})}_{\text{what layer 2 adds}} \end{aligned}" data-tex-de="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{Token-Vektor}})}_{\text{was Schicht 1 hinzufügt}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{laufender Vektor}})}_{\text{was Schicht 2 hinzufügt}} \end{aligned}" data-tex-display="true"></div>
@@ -423,17 +424,19 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">From one axis to two <span>· demo</span></p>
-									<p class="demo-sub">One axis orders words by temperature. The embedding demo below adds a second direction, so the same words can carry more relations.</p>
+									<p class="demo-sub">One axis orders words by temperature. Pick two words and see where their midpoint lands; the embedding demo below adds a second direction, so the same words can carry more relations.</p>
 								</div>
 							</div>
 							<div class="demo-body">
 								<div class="oned-twod-grid">
 									<div>
-										<canvas id="i1d-canvas" class="demo-canvas" style="height:170px" aria-label="A temperature line with Freezing at -30, Cold at 5, Lukewarm at 30, and Hot at 100"></canvas>
+										<canvas id="i1d-canvas" class="demo-canvas" style="height:170px" aria-label="A temperature line with Freezing at -30, Cold at 5, Lukewarm at 30, Warm at 55, and Hot at 100"></canvas>
 										<p class="meadow-caption" style="color:var(--tm-muted)">1D: temperature</p>
 									</div>
 
 								</div>
+								<div class="chip-row" id="oned-examples" aria-label="Temperature examples"></div>
+								<p class="meadow-caption" id="oned-result" aria-live="polite" style="color:var(--tm-muted)"></p>
 							</div>
 						</div>
 						<div class="step-pane" id="step-embed">
@@ -4654,7 +4657,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		try { data = JSON.parse(dataEl.textContent); } catch (e) { return; }
 		var de = TM.lang() === "de";
 		var step = 0;
-		var metric = "euclidean";
+		var metric = "angular";
 		var loaded = false;
 		var camera = null;
 

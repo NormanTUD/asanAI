@@ -214,6 +214,7 @@
 	TM.numberLine = function (canvas, opts) {
 		if (!canvas) return null;
 		opts = opts || {};
+		var state = { highlight: opts.highlight || null };
 		var api = TM.initCanvas(canvas, function (ctx, w, h) {
 			var c = TM.colors();
 			var points = opts.points || [];
@@ -279,7 +280,31 @@
 				ctx.textAlign = "center";
 				ctx.fillText(op.label, (x1 + x2) / 2, y - 6);
 			});
+			if (state.highlight && state.highlight.value != null) {
+				var hv = Number(state.highlight.value);
+				var hx = X(hv);
+				var hc = state.highlight.color || c.green;
+				ctx.save();
+				ctx.strokeStyle = hc;
+				ctx.lineWidth = 2;
+				ctx.setLineDash([4, 3]);
+				ctx.beginPath(); ctx.moveTo(hx, axisY - 34); ctx.lineTo(hx, axisY + 10); ctx.stroke();
+				ctx.setLineDash([]);
+				ctx.beginPath(); ctx.arc(hx, axisY, 11, 0, Math.PI * 2); ctx.stroke();
+				ctx.fillStyle = hc;
+				ctx.font = "700 11px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "center";
+				ctx.fillText(state.highlight.label || "", hx, axisY - 44);
+				ctx.fillStyle = c.muted;
+				ctx.font = "600 10px Barlow, system-ui, sans-serif";
+				ctx.fillText(hv.toFixed(1), hx, axisY + 40);
+				ctx.restore();
+			}
 		});
+		api.setHighlight = function (highlight) {
+			state.highlight = highlight || null;
+			api.redraw();
+		};
 		window.addEventListener("tm:theme", function () { api.redraw(); });
 		return api;
 	};
