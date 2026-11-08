@@ -2737,6 +2737,14 @@ window.appendToken = (token) => {
 	run_transformer_demo();
 };
 
+function getHueFromToken(str) {
+	let hash = 0;
+	for (let i = 0; i < str.length; i++) {
+		hash = str.charCodeAt(i) + ((hash << 5) - hash);
+	}
+	return Math.abs(hash) % 360;
+}
+
 function _tmTransformMetric(v) {
 	return (window.tmMetric && window.tmMetric.transform) ? window.tmMetric.transform(v, window.tmMetric.get()) : v;
 }
@@ -2807,269 +2815,95 @@ function computePerpendicularVectors(nx, ny, nz) {
 }
 
 function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, steps) {
-	let chart = echarts.getInstanceByDom(container);
-	if (!chart) chart = echarts.init(container);
-
-	if (dimensions === 3) {
-		_embedding_render_3d_echarts(chart, tokens, highlightPos, steps);
-	} else {
-		_embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, steps);
+	const c = window.tmPlotly.colors();
+	const traces = [];
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
+		Array.prototype.push.apply(traces, dimensions === 3 ? window.tmPlotly.sphereTraces() : window.tmPlotly.circleTraces());
 	}
-
-	if (!container._ecEmbResize) {
-		container._ecEmbResize = () => {
-			const c = echarts.getInstanceByDom(container);
-			if (c) c.resize();
-		};
-		window.addEventListener('resize', container._ecEmbResize);
-	}
-}
-
-function _embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, steps) {
-	const series = [];
-	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere() && dimensions === 2) {
-		const circle = [];
-		for (let a = 0; a <= 96; a++) {
-			const t = 2 * Math.PI * a / 96;
-			circle.push([Math.cos(t), Math.sin(t)]);
-		}
-		series.push({
-			type: 'line', name: 'unit circle', data: circle, symbol: 'none',
-			lineStyle: { color: '#3b82f6', width: 1, opacity: 0.35 },
-			areaStyle: { color: 'rgba(59,130,246,0.12)' }, silent: true
-		});
-	}
-
-	const vocabData = tokens.map(token => {
+	const coord = v => (v || []).slice(0, 3).map(x => Number(x || 0).toFixed(3)).join(', ');
+	tokens.forEach(token => {
 		const raw = window.persistentEmbeddingSpace[token] || [];
 		const vec = _tmTransformMetric(raw);
-		const coord = v => (v || []).slice(0, 2).map(x => Number(x || 0).toFixed(3)).join(', ');
-		let tip = `<b>${displayToken(token)}</b><br>Raw x,y: [${coord(raw)}]<br>Plot x,y: [${coord(vec)}]`;
+		let tip = `<b>${displayToken(token)}</b><br>Raw x,y,z: [${coord(raw)}]<br>Plot x,y,z: [${coord(vec)}]`;
 		if (highlightPos && window.tmMetric && window.tmMetric.distance) {
-			const ang = window.tmMetric.distance(raw, highlightPos, "angular");
+			const ang = window.tmMetric.distance(raw, highlightPos, 'angular');
 			tip += `<br>angle to result: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
 		}
-		return {
-			value: [vec[0], vec.length >= 2 ? vec[1] : 0],
-			name: displayToken(token),
-			itemStyle: {
-				color: `hsl(${getHueFromToken(token)}, 75%, 50%)`
-			},
-			_tmTip: tip
-		};
+		if (dimensions === 3) {
+			traces.push({
+				type: 'scatter3d', mode: 'markers+text',
+				x: [vec[0]], y: [vec[1] || 0], z: [vec[2] || 0],
+				text: [displayToken(token)], textposition: 'top center',
+				hovertext: [tip], hovertemplate: '%{hovertext}<extra></extra>',
+				marker: { size: 5, color: `hsl(${getHueFromToken(token)}, 75%, 50%)` },
+				name: displayToken(token)
+			});
+		} else {
+			traces.push({
+				type: 'scatter', mode: 'markers+text',
+				x: [vec[0]], y: [vec[1] || 0],
+				text: [displayToken(token)], textposition: 'top center',
+				hovertext: [tip], hovertemplate: '%{hovertext}<extra></extra>',
+				marker: { size: 7, color: `hsl(${getHueFromToken(token)}, 75%, 50%)` },
+				name: displayToken(token)
+			});
+		}
 	});
-
-	series.push({
-		type: 'scatter',
-		name: 'Vocabulary',
-		data: vocabData,
-		symbolSize: 8,
-		itemStyle: { opacity: 0.85 },
-		label: {
-			show: true,
-			position: 'top',
-			formatter: p => p.name,
-			fontSize: 11,
-			color: '#1e293b'
-		},
-		tooltip: { formatter: p => p.data._tmTip },
-		z: 5
-	});
-
-	if (steps && steps.length > 0) {
-		const arrowColor = '#3b82f6';
-		const arrowData = steps.map(step => {
+	if (steps && steps.length) {
+		steps.forEach(step => {
 			const from = _tmTransformMetric(step.from);
 			const to = _tmTransformMetric(step.to);
-			return {
-				value: [
-					from[0],
-					dimensions >= 2 ? from[1] : 0,
-					to[0],
-					dimensions >= 2 ? to[1] : 0
-				],
-				_label: step.label
-			};
-		});
-
-		series.push({
-			type: 'custom',
-			name: 'Steps',
-			renderItem: function (params, api) {
-				const sPx = api.coord([api.value(0), api.value(1)]);
-				const ePx = api.coord([api.value(2), api.value(3)]);
-				return _ec2d_render_arrow(sPx, ePx, arrowColor, 3);
-			},
-			encode: { x: [0, 2], y: [1, 3] },
-			data: arrowData,
-			tooltip: { formatter: p => `<b>${p.data._label}</b>` },
-			z: 10
+			const tip = `<b>${step.label || 'step'}</b><br>from [${coord(from)}]<br>to [${coord(to)}]`;
+			if (dimensions === 3) {
+				traces.push({ type: 'scatter3d', mode: 'lines', x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0], z: [from[2] || 0, to[2] || 0], line: { color: '#3b82f6', width: 4 }, hoverinfo: 'skip', showlegend: false });
+				const dx = to[0] - from[0], dy = (to[1] || 0) - (from[1] || 0), dz = (to[2] || 0) - (from[2] || 0);
+				const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
+				const cone = window.tmPlotly.coneTrace([{ x: to[0], y: to[1] || 0, z: to[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], '#3b82f6', step.label || 'step');
+				if (cone) traces.push(cone);
+			} else {
+				traces.push({ type: 'scatter', mode: 'lines+markers', x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0], line: { color: '#3b82f6', width: 2 }, marker: { symbol: 'arrow', angleref: 'previous', size: 8, color: '#3b82f6' }, hovertext: [tip, tip], hovertemplate: '%{hovertext}<extra></extra>', showlegend: false });
+			}
 		});
 	}
-
 	if (highlightPos) {
 		const hp = _tmTransformMetric(highlightPos);
-		series.push({
-			type: 'scatter',
-			name: 'Result',
-			data: [{
-				value: [hp[0], dimensions >= 2 ? hp[1] : 0]
-			}],
-			symbol: 'diamond',
-			symbolSize: 14,
-			itemStyle: { color: '#ef4444' },
-			tooltip: {
-				formatter: p =>
-				`<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
-			},
-			z: 15
-		});
+		traces.push(dimensions === 3
+			? { type: 'scatter3d', mode: 'markers', x: [hp[0]], y: [hp[1] || 0], z: [hp[2] || 0], marker: { size: 8, symbol: 'diamond', color: '#ef4444' }, name: 'Result' }
+			: { type: 'scatter', mode: 'markers', x: [hp[0]], y: [hp[1] || 0], marker: { size: 9, symbol: 'diamond', color: '#ef4444' }, name: 'Result' });
 	}
-
-	chart.setOption({
-		title: {
-			text: _tmMetricTitle('Embedding Space'), left: 'center',
-			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
-		},
-		tooltip: { show: true, trigger: 'item', confine: true },
-		legend: { show: false, bottom: 0 },
-		xAxis: {
-			type: 'value', name: 'Dim 0',
-			nameLocation: 'center', nameGap: 25,
-			splitLine: { lineStyle: { color: themeColor('#f0f0f0') } }
-		},
-		yAxis: {
-			type: 'value',
-			name: dimensions >= 2 ? 'Dim 1' : '',
-			nameLocation: 'center', nameGap: 35,
-			splitLine: { lineStyle: { color: themeColor('#f0f0f0') } }
-		},
-		grid: { top: 50, bottom: 50, left: 55, right: 30 },
-		series: series,
-		animation: false
-	}, true);
-}
-
-function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
-	const series = [];
-	const arrowColor = '#3b82f6';
-
-	series.push({
-		name: 'Vocabulary',
-		type: 'scatter3D',
-		data: tokens.map(token => {
-			const raw = window.persistentEmbeddingSpace[token] || [];
-			const vec = _tmTransformMetric(raw);
-			const coord = v => (v || []).slice(0, 3).map(x => Number(x || 0).toFixed(3)).join(', ');
-			let tip = `<b>${displayToken(token)}</b><br>Raw x,y,z: [${coord(raw)}]<br>Plot x,y,z: [${coord(vec)}]`;
-			if (highlightPos && window.tmMetric && window.tmMetric.distance) {
-				const ang = window.tmMetric.distance(raw, highlightPos, "angular");
-				tip += `<br>angle to result: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
-			}
-			return {
-				name: displayToken(token),
-				value: [vec[0], vec[1] || 0, vec[2] || 0],
-				itemStyle: {
-					color: `hsl(${getHueFromToken(token)}, 75%, 50%)`
-				},
-				_tmTip: tip
-			};
-		}),
-		symbolSize: 6,
-		itemStyle: { opacity: 0.85 },
-		label: {
-			show: true, position: 'top', distance: 5,
-			formatter: p => p.name,
-			textStyle: { fontSize: 10, color: themeColor('#1e293b') }
-		},
-		tooltip: { formatter: p => p.data._tmTip }
-	});
-
-	if (steps && steps.length > 0) {
-		steps.forEach((step, idx) => {
-			const from3 = _tmTransformMetric(step.from).slice(0, 3);
-			const to3   = _tmTransformMetric(step.to).slice(0, 3);
-
-			const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
-			series.push({
-				type: 'line3D',
-				data: [from3, shaftEnd],
-				lineStyle: { width: 5, color: arrowColor, opacity: 0.85 },
-				silent: true
-			});
-
-			_add3DArrowheadSeries(series, from3, to3, arrowColor, {
-				lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4, name: 'Steps'
-			});
-
-			series.push({
-				type: 'scatter3D',
-				data: [{
-					value: [(from3[0]+to3[0])/2, (from3[1]+to3[1])/2, (from3[2]+to3[2])/2],
-					_hover: step.label
-				}],
-				symbolSize: 4,
-				itemStyle: { color: 'rgba(59,130,246,0.01)' },
-				tooltip: { formatter: p => `<b>${p.data._hover}</b>` }
-			});
-		});
-	}
-
-	if (highlightPos) {
-		series.push({
-			name: 'Result',
-			type: 'scatter3D',
-			data: [{ value: _tmTransformMetric(highlightPos).slice(0, 3) }],
-			symbol: 'diamond', symbolSize: 10,
-			itemStyle: { color: '#ef4444' },
-			tooltip: {
-				formatter: p =>
-				`<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)}, ${p.value[2].toFixed(4)})`
-			}
-		});
-	}
-
-	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(..._tmUnitSphereSeries());
-	chart.setOption({
-		title: {
-			text: _tmMetricTitle('Embedding Space'), left: 'center',
-			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
-		},
-		tooltip: { show: true, trigger: 'item', confine: true },
-		xAxis3D: { type: 'value', name: 'Dim 0' },
-		yAxis3D: { type: 'value', name: 'Dim 1' },
-		zAxis3D: { type: 'value', name: 'Dim 2' },
-		grid3D: _defaultGrid3DConfig(),
-		series: series,
-		animation: false
-	}, true);
+	const title = _tmMetricTitle('Embedding Space');
+	const layout = dimensions === 3 ? window.tmPlotly.layout3D(title, ['Dim 0', 'Dim 1', 'Dim 2']) : window.tmPlotly.layout2D(title, ['Dim 0', 'Dim 1']);
+	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
+	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
 }
 
 function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
-	const myChart = echarts.init(container);
-	const parallelAxis = Array.from({ length: dimensions }, (_, i) => ({
-		dim: i, name: `D${i}`
-	}));
-
-	const data = tokens.map(token => ({
-		name: token,
-		value: _tmTransformMetric(window.persistentEmbeddingSpace[token])
-	}));
-
-	myChart.setOption({
-		title: { text: "Embedding Space", left: 'center' },
-		tooltip: { trigger: 'item', formatter: p => (p.data && p.data._tmTip) ? p.data._tmTip : `Token: <b>${p.name}</b>` },
-		parallelAxis,
-		parallel: { left: 40, right: 40, bottom: 20, top: 50 },
-		series: [{
-			type: 'parallel',
-			data,
-			lineStyle: { width: 2, opacity: 0.5, color: '#6366f1' },
-			emphasis: { lineStyle: { width: 6, color: '#f59e0b' } }
-		}]
+	const c = window.tmPlotly.colors();
+	const dims = Array.from({ length: dimensions }, (_, i) => ({ label: `D${i}`, values: [] }));
+	const colors = [];
+	tokens.forEach((token, idx) => {
+		const vec = _tmTransformMetric(window.persistentEmbeddingSpace[token] || []);
+		dims.forEach((d, i) => d.values.push(vec[i] || 0));
+		colors.push(idx);
 	});
-
-	myChart.resize();
+	try {
+		Plotly.react(container, [{
+			type: 'parcoords',
+			line: { color: colors, colorscale: 'Viridis', showscale: false },
+			dimensions: dims
+		}], {
+			paper_bgcolor: c.paper, plot_bgcolor: c.plot,
+			title: { text: _tmMetricTitle('Embedding Space'), font: { size: 13, color: c.ink } },
+			margin: { l: 60, r: 30, t: 40, b: 20 }
+		}, { responsive: true, displayModeBar: false });
+	} catch (e) {
+		/* Fallback: first two dimensions as a scatter */
+		Plotly.react(container, [{
+			type: 'scatter', mode: 'markers',
+			x: dims[0] ? dims[0].values : [], y: dims[1] ? dims[1].values : [],
+			marker: { size: 5, color: colors, colorscale: 'Viridis' }
+		}], window.tmPlotly.layout2D(_tmMetricTitle('Embedding Space'), ['D0', 'D1']), { responsive: true, displayModeBar: false });
+	}
 }
 
 function _execute_embedding_render(dimensions, highlightPos = null, steps = []) {
@@ -3085,8 +2919,7 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 		return;
 	}
 
-	const existingChart = echarts.getInstanceByDom(container);
-	if (existingChart) dispose(existingChart);
+	if (window.Plotly) { try { Plotly.purge(container); } catch (e) { /* not a Plotly node */ } }
 	container.innerHTML = '';
 
 	const tokens = Object.keys(window.persistentEmbeddingSpace);
@@ -5435,49 +5268,80 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 // ─── Main 3D ECharts renderer ───────────────────────────────
 
 function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab, vfEnabled) {
-	let chart = echarts.getInstanceByDom(trajDiv);
-	if (!chart) chart = echarts.init(trajDiv);
+	const traces = [];
+	const colors = window.tmPlotly.colors();
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
+		Array.prototype.push.apply(traces, window.tmPlotly.sphereTraces());
+	}
+	const transform = v => _tmTransformMetric(v);
+	const coord = v => (v || []).slice(0, 3).map(x => Number(x || 0).toFixed(3)).join(', ');
 
-	const series = [];
-	const legendData = [];
-
-	// 1. Vocabulary embedding landmarks
-	series.push(_traj_ec3d_landmark_series(embSnap, snapVocab));
-	legendData.push('Vocab Embeddings');
-
-	// 2. Per-token trajectories
-	tokens.forEach((token, tIdx) => {
-		const hasData = dataPoints.every(p => p.data && p.data[tIdx]);
-		if (!hasData) return;
-
-		const tColor = getPositionColor(tIdx, tokens.length);
-		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
-		legendData.push(tokenLabel);
-
-		series.push(..._traj_ec3d_line_series_with_arrows(tokenLabel, tColor, dataPoints, tIdx));
-		series.push(_traj_ec3d_marker_series(
-			tokenLabel, tColor, dataPoints, tIdx, labels, embSnap, snapVocab
-		));
-	});
-
-	const metric = (window.tmMetric && window.tmMetric.get) ? window.tmMetric.get() : "euclidean";
-	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(..._traj_unit_sphere_series());
-
-	// 3. All-layers vector field overlay
-	if (vfEnabled) {
-		const { n_heads, n_layers } = getTransformerConfig();
-		const computed = _compute_trajectory_vf_3d(3, n_heads, n_layers);
-		if (computed) series.push(..._vf_ec3d_series(computed));
+	// Vocabulary embedding landmarks
+	if (snapVocab && snapVocab.length) {
+		const lx = [], ly = [], lz = [], lt = [];
+		snapVocab.forEach(word => {
+			const v = transform(embSnap[word] || []);
+			lx.push(v[0] || 0); ly.push(v[1] || 0); lz.push(v[2] || 0); lt.push(displayToken(word));
+		});
+		traces.push({
+			type: 'scatter3d', mode: 'markers', x: lx, y: ly, z: lz,
+			marker: { size: 3, symbol: 'diamond', color: 'rgba(100,116,139,0.8)' },
+			text: lt, hovertext: lt, hovertemplate: 'Vocab: %{hovertext}<extra></extra>', name: 'Vocab Embeddings', showlegend: false
+		});
 	}
 
-	chart.setOption(_traj_ec3d_option(series, legendData), true);
+	tokens.forEach((token, tIdx) => {
+		const points = dataPoints.filter(p => p.data && p.data[tIdx]);
+		if (points.length < 2) return;
+		const color = getPositionColor(tIdx, tokens.length);
+		const xs = [], ys = [], zs = [], hover = [];
+		points.forEach((p, pIdx) => {
+			const plot = p.data[tIdx];
+			const raw = (p.rawData || p.data)[tIdx];
+			xs.push(plot[0] || 0); ys.push(plot[1] || 0); zs.push(plot[2] || 0);
+			const fromStage = pIdx > 0 ? points[pIdx - 1].name : '(start)';
+			let tip = `<b>${labels[tIdx]}</b> (pos ${tIdx + 1})<br>${fromStage} → ${p.name}<br>Raw x,y,z: [${coord(raw)}]<br>Plot x,y,z: [${coord(plot)}]`;
+			if (pIdx > 0) {
+				const prevRaw = (points[pIdx - 1].rawData || points[pIdx - 1].data)[tIdx];
+				const l2 = window.tmMetric ? window.tmMetric.distance(prevRaw, raw, 'euclidean') : 0;
+				const ang = window.tmMetric ? window.tmMetric.distance(prevRaw, raw, 'angular') : 0;
+				tip += `<br>L2 step: ${l2.toFixed(3)} · angle: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
+			}
+			hover.push(tip);
+		});
+		traces.push({
+			type: 'scatter3d', mode: 'lines+markers', x: xs, y: ys, z: zs,
+			line: { color: color, width: 4 }, marker: { size: 3, color: color },
+			hovertext: hover, hovertemplate: '%{hovertext}<extra></extra>', name: labels[tIdx], showlegend: false
+		});
+		const cones = [];
+		for (let pIdx = 1; pIdx < points.length; pIdx++) {
+			const a = points[pIdx - 1].data[tIdx], b = points[pIdx].data[tIdx];
+			const dx = (b[0] || 0) - (a[0] || 0), dy = (b[1] || 0) - (a[1] || 0), dz = (b[2] || 0) - (a[2] || 0);
+			const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
+			cones.push({ x: b[0] || 0, y: b[1] || 0, z: b[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: hover[pIdx] });
+		}
+		const cone = window.tmPlotly.coneTrace(cones, color, labels[tIdx]);
+		if (cone) traces.push(cone);
+	});
 
-	if (trajDiv._ecResizeTraj) window.removeEventListener('resize', trajDiv._ecResizeTraj);
-	trajDiv._ecResizeTraj = () => {
-		const c = echarts.getInstanceByDom(trajDiv);
-		if (c) c.resize();
-	};
-	window.addEventListener('resize', trajDiv._ecResizeTraj);
+	if (vfEnabled && typeof _compute_trajectory_vf_3d === 'function') {
+		const { n_heads, n_layers } = getTransformerConfig();
+		const computed = _compute_trajectory_vf_3d(3, n_heads, n_layers);
+		if (computed && computed.points) {
+			const vf = computed.points.map(pt => {
+				const len = pt.mag || 1;
+				return { x: pt.x, y: pt.y, z: pt.z, u: pt.dx / len, v: pt.dy / len, w: pt.dz / len, tip: '|Δh| ' + pt.mag.toFixed(4) };
+			});
+			const cone = window.tmPlotly.coneTrace(vf, '#8b5cf6', 'Vector field');
+			if (cone) traces.push(cone);
+		}
+	}
+
+	const title = 'Token Trajectory: Embedding → +Position → Layer Outputs' + (window.tmMetric && window.tmMetric.label ? ' · ' + window.tmMetric.label() : '');
+	const layout = window.tmPlotly.layout3D(title, ['Dim 0', 'Dim 1', 'Dim 2']);
+	if (window.echarts) { const oldChart = echarts.getInstanceByDom(trajDiv); if (oldChart) oldChart.dispose(); }
+	Plotly.react(trajDiv, traces, layout, { responsive: true, displayModeBar: false });
 }
 
 // ─── Embedding landmark diamonds ─────────────────────────────
@@ -5777,323 +5641,115 @@ function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
 		console.error("Plotting requires an array of string tokens.");
 		return;
 	}
-
 	if (!window.persistentEmbeddingSpace || Object.keys(window.persistentEmbeddingSpace).length === 0) {
-		_renderChartError(
-			container,
-			'⚠️ Invalid Configuration — positional shift unavailable',
-			'No embedding space exists because <i>d<sub>model</sub></i> is not evenly divisible by <i>h</i>. Fix the configuration above to restore this visualization.'
-		);
+		_renderChartError(container, '⚠️ Invalid Configuration — positional shift unavailable',
+			'No embedding space exists because <i>d<sub>model</sub></i> is not evenly divisible by <i>h</i>. Fix the configuration above to restore this visualization.');
 		return;
 	}
-
-	// Unified cleanup: dispose any existing ECharts instance
-	const existingChart = echarts.getInstanceByDom(container);
-	if (existingChart) dispose(existingChart);
+	if (window.Plotly) { try { Plotly.purge(container); } catch (e) { /* not a Plotly node */ } }
 	container.innerHTML = '';
-
+	const rawBase = tokenStrings.map(t => window.persistentEmbeddingSpace[t] || []);
+	const rawCombined = injectedEmbeddings;
+	const base = rawBase.map(_tmTransformMetric);
+	const combined = rawCombined.map(_tmTransformMetric);
 	if (d_model === 3) {
-		_shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings);
+		_shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, base, combined);
 	} else if (d_model <= 2) {
-		_shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbeddings);
+		_shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, base, combined, d_model);
 	} else {
-		// d_model >= 4  →  existing ECharts parallel-coordinates path
-		const echartsData = [];
-		tokenStrings.forEach((token, pos) => {
-			const semanticBase = window.persistentEmbeddingSpace[token];
-			if (!semanticBase) return;
-			const combined = injectedEmbeddings[pos];
-			if (!combined) return;
-			const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
-			echartsData.push(
-				buildShiftEChartsEntry(token, pos, _tmTransformMetric(semanticBase), _tmTransformMetric(combined), tokenColor)
-			);
-		});
-		renderShiftECharts(container, echartsData, d_model);
+		_shift_render_highdim_plotly(container, tokenStrings, base, combined, d_model);
 	}
 }
 
-function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbeddings) {
-	const chart = echarts.init(container);
-	const series = [];
+function _shift_metricTip(token, pos, rawBase, rawCombined) {
+	const l2 = window.tmMetric ? window.tmMetric.distance(rawBase, rawCombined, "euclidean") : 0;
+	const ang = window.tmMetric ? window.tmMetric.distance(rawBase, rawCombined, "angular") : 0;
+	const coord = v => (v || []).slice(0, 3).map(x => Number(x || 0).toFixed(3)).join(', ');
+	return `<b>${displayToken(token)}</b> (pos ${pos})<br>Raw x,y,z: [${coord(rawBase)}] → [${coord(rawCombined)}]<br>L2: ${l2.toFixed(3)} · angle: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
+}
+
+function _shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, base, combined, d_model) {
+	const traces = [];
 	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere() && d_model === 2) {
-		const circle = [];
-		for (let a = 0; a <= 96; a++) {
-			const t = 2 * Math.PI * a / 96;
-			circle.push([Math.cos(t), Math.sin(t)]);
-		}
-		series.push({
-			type: 'line', name: 'unit circle', data: circle, symbol: 'none',
-			lineStyle: { color: '#3b82f6', width: 1, opacity: 0.35 },
-			areaStyle: { color: 'rgba(59,130,246,0.12)' }, silent: true
-		});
+		Array.prototype.push.apply(traces, window.tmPlotly.circleTraces());
 	}
-
 	tokenStrings.forEach((token, pos) => {
-		const rawBase = window.persistentEmbeddingSpace[token];
-		if (!rawBase) return;
-		const rawCombined = injectedEmbeddings[pos];
-		if (!rawCombined) return;
-		const semanticBase = _tmTransformMetric(rawBase);
-		const combined = _tmTransformMetric(rawCombined);
-
-		const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
-		const dispToken = displayToken(token);
-		const name = `${dispToken} (pos ${pos})`;
-		const l2Shift = window.tmMetric ? window.tmMetric.distance(rawBase, rawCombined, "euclidean") : 0;
-		const angShift = window.tmMetric ? window.tmMetric.distance(rawBase, rawCombined, "angular") : 0;
-		const rawCoord = v => (v || []).slice(0, 3).map(x => Number(x || 0).toFixed(3)).join(", ");
-
-		const x0 = semanticBase[0];
-		const y0 = d_model >= 2 ? semanticBase[1] : 0;
-		const x1 = combined[0];
-		const y1 = d_model >= 2 ? combined[1] : 0;
-
-		series.push({
-			type: 'custom',
-			name: name,
-			renderItem: function (params, api) {
-				const sPx = api.coord([api.value(0), api.value(1)]);
-				const ePx = api.coord([api.value(2), api.value(3)]);
-				return _ec2d_render_arrow(sPx, ePx, tokenColor, 3);
-			},
-			encode: { x: [0, 2], y: [1, 3] },
-			data: [{ value: [x0, y0, x1, y1] }],
-			tooltip: {
-				formatter: () =>
-				`Token: <b>${dispToken}</b><br>Pos: ${pos}<br>` +
-				`Base: (${x0.toFixed(3)}, ${y0.toFixed(3)})<br>` +
-				`+PE:  (${x1.toFixed(3)}, ${y1.toFixed(3)})<br>` +
-				`Raw x,y,z: [${rawCoord(rawBase)}] → [${rawCoord(rawCombined)}]<br>` +
-				`L2: ${l2Shift.toFixed(3)} · angle: ${angShift.toFixed(3)} (${(angShift * 180).toFixed(1)}°)`
-			},
-			z: 10
+		const from = base[pos] || [], to = combined[pos] || [];
+		const tip = _shift_metricTip(token, pos, rawBase[pos] || [], rawCombined[pos] || []);
+		const color = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
+		traces.push({
+			type: 'scatter', mode: 'lines+markers',
+			x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0],
+			line: { color: color, width: 2 },
+			marker: { symbol: 'arrow', angleref: 'previous', size: 8, color: color },
+			hovertext: [tip, tip], hovertemplate: '%{hovertext}<extra></extra>', showlegend: false
 		});
-
-		series.push({
-			type: 'scatter', name: name,
-			data: [{ value: [x0, y0], _hover: `${dispToken} base` }],
-			symbolSize: 7,
-			itemStyle: { color: tokenColor, borderWidth: 2, borderColor: themeColor('#1e293b') },
-			tooltip: { formatter: p => `<b>${dispToken}</b> base embedding` },
-			z: 12
-		});
-
-		series.push({
-			type: 'scatter', name: name,
-			data: [{ value: [x1, y1], _hover: `${dispToken} +PE` }],
-			symbol: 'triangle', symbolSize: 11,
-			itemStyle: { color: tokenColor, borderWidth: 1, borderColor: '#ffffff' },
-			label: { show: true, formatter: dispToken, position: 'top', color: tokenColor, fontSize: 9 },
-			tooltip: { formatter: p => `<b>${dispToken}</b> + positional encoding` },
-			z: 12
+		traces.push({
+			type: 'scatter', mode: 'markers', x: [from[0]], y: [from[1] || 0],
+			marker: { size: 7, color: color, line: { color: themeColor('#1e293b'), width: 1 } },
+			hovertext: [tip], hovertemplate: '%{hovertext}<extra></extra>', showlegend: false
 		});
 	});
-
-	const axisTextColor = themeColor('#64748b');
-	const axisNameColor = themeColor('#94a3b8');
-	const axisLineColor = themeColor('#cbd5e1');
-
-	chart.setOption({
-		title: {
-			text: (window.TM && TM.lang && TM.lang() === 'de') ? 'Semantischer Vektor → + Positionsverschiebung' : 'Semantic Vector → + Positional Shift', left: 'center',
-			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
-		},
-		backgroundColor: 'transparent',
-		tooltip: { show: true, trigger: 'item', confine: true },
-		legend: { show: true, bottom: 5, left: 'center', textStyle: { fontSize: 11, color: axisTextColor } },
-		xAxis: {
-			type: 'value', name: 'Dim 0',
-			nameLocation: 'center', nameGap: 25,
-			nameTextStyle: { color: axisNameColor },
-			axisLabel: { color: axisTextColor },
-			axisLine: { lineStyle: { color: axisLineColor } },
-			splitLine: { lineStyle: { color: themeColor('#f0f0f0') } }
-		},
-		yAxis: {
-			type: 'value',
-			name: d_model >= 2 ? 'Dim 1' : '',
-			nameLocation: 'center', nameGap: 35,
-			nameTextStyle: { color: axisNameColor },
-			axisLabel: { color: axisTextColor },
-			axisLine: { lineStyle: { color: axisLineColor } },
-			splitLine: { lineStyle: { color: themeColor('#f0f0f0') } }
-		},
-		grid: { top: 50, bottom: 60, left: 55, right: 30 },
-		series: series,
-		animation: false
-	}, true);
-
-	_wireEChartsResize(container, '_ecShiftResize');
+	const layout = window.tmPlotly.layout2D(_tmMetricTitle('Semantic Vector → + Positional Shift'), ['Dim 0', 'Dim 1']);
+	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
+	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
 }
 
-function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
-	const chart = echarts.init(container);
-	const series = [];
-	const legendData = [];
-
+function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, base, combined) {
+	const traces = [];
+	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
+		Array.prototype.push.apply(traces, window.tmPlotly.sphereTraces());
+	}
+	const cones = [];
 	tokenStrings.forEach((token, pos) => {
-		const rawBase = window.persistentEmbeddingSpace[token];
-		if (!rawBase) return;
-		const rawCombined = injectedEmbeddings[pos];
-		if (!rawCombined) return;
-		const semanticBase = _tmTransformMetric(rawBase);
-		const combined = _tmTransformMetric(rawCombined);
-
-		const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
-		const dispToken = displayToken(token);
-		const name = `${dispToken} (pos ${pos})`;
-		legendData.push(name);
-
-		const from3 = [semanticBase[0], semanticBase[1], semanticBase[2]];
-		const to3   = [combined[0], combined[1], combined[2]];
-		const l2Shift3 = window.tmMetric ? window.tmMetric.distance(rawBase, rawCombined, "euclidean") : 0;
-		const angShift3 = window.tmMetric ? window.tmMetric.distance(rawBase, rawCombined, "angular") : 0;
-		const rawCoord3 = v => (v || []).slice(0, 3).map(x => Number(x || 0).toFixed(3)).join(", ");
-		const shiftTip = `Raw x,y,z: [${rawCoord3(rawBase)}] → [${rawCoord3(rawCombined)}]<br>L2: ${l2Shift3.toFixed(3)} · angle: ${angShift3.toFixed(3)} (${(angShift3 * 180).toFixed(1)}°)`;
-
-		series.push({
-			name: name, type: 'line3D',
-			data: [from3, to3],
-			lineStyle: { width: 6, color: tokenColor, opacity: 0.85 }
+		const from = base[pos] || [], to = combined[pos] || [];
+		const tip = _shift_metricTip(token, pos, rawBase[pos] || [], rawCombined[pos] || []);
+		const color = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
+		traces.push({
+			type: 'scatter3d', mode: 'lines',
+			x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0], z: [from[2] || 0, to[2] || 0],
+			line: { color: color, width: 4 }, hoverinfo: 'skip', showlegend: false
 		});
-
-		series.push({
-			name: name, type: 'scatter3D',
-			data: [
-				{
-					value: from3, symbolSize: 8,
-					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: themeColor('#1e293b') },
-					_hover: `${dispToken} base (pos ${pos})<br>${shiftTip}`
-				},
-				{
-					value: to3, symbolSize: 13,
-					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#ffffff' },
-					label: { show: true, formatter: dispToken, color: tokenColor, fontSize: 9 },
-					_hover: `${dispToken} + PE (pos ${pos})<br>${shiftTip}`
-				}
-			],
-			symbol: 'circle',
-			tooltip: { formatter: p => p.data._hover }
+		const dx = to[0] - from[0], dy = (to[1] || 0) - (from[1] || 0), dz = (to[2] || 0) - (from[2] || 0);
+		const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
+		cones.push({ x: to[0], y: to[1] || 0, z: to[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip });
+		traces.push({
+			type: 'scatter3d', mode: 'markers',
+			x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0], z: [from[2] || 0, to[2] || 0],
+			marker: { size: [6, 8], color: color, symbol: ['circle', 'diamond'] },
+			hovertext: [tip, tip], hovertemplate: '%{hovertext}<extra></extra>', showlegend: false
 		});
 	});
-
-	const axis3DText = themeColor('#94a3b8');
-	const axis3DLine = themeColor('#475569');
-
-	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) series.push(..._tmUnitSphereSeries());
-	chart.setOption({
-		title: {
-			text: _tmMetricTitle('Semantic Vector → + Positional Shift'), left: 'center',
-			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
-		},
-		backgroundColor: 'transparent',
-		tooltip: { show: true, trigger: 'item', confine: true },
-		legend: {
-			data: legendData, type: 'scroll', orient: 'horizontal',
-			bottom: 0, left: 'center', width: '92%', textStyle: { fontSize: 11, color: axis3DText }
-		},
-		xAxis3D: {
-			type: 'value', name: 'Dim 0',
-			nameTextStyle: { color: axis3DText },
-			axisLabel: { color: axis3DText },
-			axisLine: { lineStyle: { color: axis3DLine } },
-			splitLine: { lineStyle: { color: themeColor('#334155') } }
-		},
-		yAxis3D: {
-			type: 'value', name: 'Dim 1',
-			nameTextStyle: { color: axis3DText },
-			axisLabel: { color: axis3DText },
-			axisLine: { lineStyle: { color: axis3DLine } },
-			splitLine: { lineStyle: { color: themeColor('#334155') } }
-		},
-		zAxis3D: {
-			type: 'value', name: 'Dim 2',
-			nameTextStyle: { color: axis3DText },
-			axisLabel: { color: axis3DText },
-			axisLine: { lineStyle: { color: axis3DLine } },
-			splitLine: { lineStyle: { color: themeColor('#334155') } }
-		},
-		grid3D: _defaultGrid3DConfig({ bottom: 55 }),
-		series: series,
-		animation: false
-	}, true);
-
-	_wireEChartsResize(container, '_ecShiftResize');
+	if (cones.length) traces.push(window.tmPlotly.coneTrace(cones, '#3b82f6', 'shift'));
+	const layout = window.tmPlotly.layout3D(_tmMetricTitle('Semantic Vector → + Positional Shift'), ['Dim 0', 'Dim 1', 'Dim 2']);
+	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
+	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
 }
 
-function _wireEChartsResize(container, key) {
-	if (!container[key]) {
-		container[key] = () => {
-			const c = echarts.getInstanceByDom(container);
-			if (c) c.resize();
-		};
-		window.addEventListener('resize', container[key]);
-	}
-}
-
-function getHueFromToken(str) {
-	let hash = 0;
-	for (let i = 0; i < str.length; i++) {
-		hash = str.charCodeAt(i) + ((hash << 5) - hash);
-	}
-	return Math.abs(hash) % 360;
-}
-
-function buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor) {
-	const l2 = window.tmMetric ? window.tmMetric.distance(semanticBase, combined, "euclidean") : 0;
-	const ang = window.tmMetric ? window.tmMetric.distance(semanticBase, combined, "angular") : 0;
-	return {
-		value: semanticBase.flatMap((val, i) => [val, combined[i]]),
-		name: `${displayToken(token)} (pos ${pos})`,
-		lineStyle: { color: tokenColor },
-		_tmTip: `Token: <b>${displayToken(token)}</b> (pos ${pos})<br>L2: ${l2.toFixed(3)} · angle: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`
-	};
-}
-
-function renderShiftECharts(container, echartsData, d_model) {
-	const myChart = echarts.init(container);
-	const axes = [];
-	const axisTextColor = themeColor('#64748b');
-	const axisNameColor = themeColor('#94a3b8');
-	const axisLineColor = themeColor('#cbd5e1');
+function _shift_render_highdim_plotly(container, tokenStrings, base, combined, d_model) {
+	const dims = [];
 	for (let i = 0; i < d_model; i++) {
-		axes.push(
-			{
-				dim: i * 2,
-				name: `D${i} Base`,
-				nameTextStyle: { color: axisNameColor },
-				axisLabel: { color: axisTextColor },
-				axisLine: { lineStyle: { color: axisLineColor } }
-			},
-			{
-				dim: i * 2 + 1,
-				name: `D${i} +PE`,
-				nameTextStyle: { color: axisNameColor },
-				axisLabel: { color: axisTextColor },
-				axisLine: { lineStyle: { color: axisLineColor } }
-			}
-		);
+		dims.push({ label: `D${i} Base`, values: base.map(v => (v[i] || 0)) });
+		dims.push({ label: `D${i} +PE`, values: combined.map(v => (v[i] || 0)) });
 	}
-
-	myChart.setOption({
-		backgroundColor: 'transparent',
-		title: {
-			text: (window.TM && TM.lang && TM.lang() === 'de') ? "Semantischer Vektor → + Positionsverschiebung" : "Semantic Vector → + Positional Shift",
-			left: 'center',
-			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
-		},
-		tooltip: { trigger: 'item', formatter: p => (p.data && p.data._tmTip) ? p.data._tmTip : `Token: <b>${p.name}</b>` },
-		legend: { data: echartsData.map(d => d.name), bottom: 0, left: 'center', textStyle: { fontSize: 10, color: themeColor('#1e293b') } },
-		grid: { top: 50, bottom: 55, left: 20, right: 20 },
-		parallelAxis: axes,
-		series: [{
-			type: 'parallel', data: echartsData,
-			lineStyle: { width: 2, opacity: 0.6 },
-			emphasis: { lineStyle: { width: 5 } }
-		}]
-	});
-	myChart.resize();
+	const colors = tokenStrings.map((_, i) => i);
+	try {
+		Plotly.react(container, [{
+			type: 'parcoords',
+			line: { color: colors, colorscale: 'Viridis', showscale: false },
+			dimensions: dims
+		}], {
+			paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+			title: { text: _tmMetricTitle('Semantic Vector → + Positional Shift'), font: { size: 13, color: themeColor('#1e293b') } },
+			margin: { l: 60, r: 30, t: 40, b: 20 }
+		}, { responsive: true, displayModeBar: false });
+	} catch (e) {
+		Plotly.react(container, [{
+			type: 'scatter', mode: 'markers',
+			x: base.map(v => v[0] || 0), y: combined.map(v => v[0] || 0),
+			marker: { size: 6, color: colors, colorscale: 'Viridis' }
+		}], window.tmPlotly.layout2D(_tmMetricTitle('Semantic Vector → + Positional Shift'), ['D0 Base', 'D0 +PE']), { responsive: true, displayModeBar: false });
+	}
 }
 
 function tf_layer_norm(x, gamma, beta) {

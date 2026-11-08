@@ -1988,6 +1988,104 @@
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", ensureGlobalMetricControl);
 	else ensureGlobalMetricControl();
 
+	function _plotlyColors() {
+		var c = palette();
+		return { paper: "rgba(0,0,0,0)", plot: "rgba(0,0,0,0)", ink: c.ink, muted: c.muted, line: c.line, blue: "#3b82f6", green: c.green, gold: c.gold };
+	}
+	function plotlySphereTraces() {
+		var n = 22, m = 44;
+		var xs = [], ys = [], zs = [];
+		for (var i = 0; i <= n; i++) {
+			var xr = [], yr = [], zr = [];
+			var theta = Math.PI * i / n;
+			for (var j = 0; j <= m; j++) {
+				var phi = 2 * Math.PI * j / m;
+				xr.push(Math.sin(theta) * Math.cos(phi));
+				yr.push(Math.sin(theta) * Math.sin(phi));
+				zr.push(Math.cos(theta));
+			}
+			xs.push(xr); ys.push(yr); zs.push(zr);
+		}
+		var hint = (window.tmMetric && window.tmMetric.sphereHint) ? window.tmMetric.sphereHint(false) : "";
+		var textGrid = zs.map(function (row) { return row.map(function () { return hint; }); });
+		var px = [], py = [], pz = [], pt = [];
+		for (var a = 0; a < xs.length; a += 2) {
+			for (var b = 0; b < xs[a].length; b += 2) {
+				px.push(xs[a][b]); py.push(ys[a][b]); pz.push(zs[a][b]); pt.push(hint);
+			}
+		}
+		return [
+			{ type: "surface", x: xs, y: ys, z: zs, surfacecolor: zs.map(function (r) { return r.map(function () { return 0; }); }), colorscale: [[0, "#3b82f6"], [1, "#3b82f6"]], showscale: false, opacity: 0.18, hoverinfo: "text", text: textGrid, name: "unit sphere" },
+			{ type: "scatter3d", mode: "markers", x: px, y: py, z: pz, marker: { size: 1.4, color: "#3b82f6", opacity: 0.18 }, hoverinfo: "text", text: pt, name: "unit sphere points" }
+		];
+	}
+	function plotlyCircleTraces() {
+		var cx = [], cy = [];
+		for (var a = 0; a <= 96; a++) {
+			var t = 2 * Math.PI * a / 96;
+			cx.push(Math.cos(t)); cy.push(Math.sin(t));
+		}
+		var hint = (window.tmMetric && window.tmMetric.sphereHint) ? window.tmMetric.sphereHint(true) : "";
+		return [
+			{ type: "scatter", mode: "lines", x: cx, y: cy, fill: "toself", fillcolor: "rgba(59,130,246,0.12)", line: { color: "#3b82f6", width: 1 }, hoverinfo: "text", text: cx.map(function () { return hint; }), name: "unit circle" }
+		];
+	}
+	function plotlyConeTrace(items, color, name) {
+		if (!items || !items.length) return null;
+		return {
+			type: "cone",
+			x: items.map(function (p) { return p.x; }),
+			y: items.map(function (p) { return p.y; }),
+			z: items.map(function (p) { return p.z; }),
+			u: items.map(function (p) { return p.u; }),
+			v: items.map(function (p) { return p.v; }),
+			w: items.map(function (p) { return p.w; }),
+			colorscale: [[0, color], [1, color]],
+			showscale: false,
+			sizemode: "absolute",
+			sizeref: 0.22,
+			anchor: "tip",
+			hoverinfo: "text",
+			text: items.map(function (p) { return p.tip || ""; }),
+			name: name || "direction",
+			showlegend: false
+		};
+	}
+	function plotlyLayout3D(title, axes) {
+		var c = _plotlyColors();
+		var axis = function (name) { return { title: { text: name }, color: c.muted, gridcolor: c.line, zerolinecolor: c.line, showbackground: false }; };
+		return {
+			paper_bgcolor: c.paper, plot_bgcolor: c.plot,
+			title: { text: title, font: { size: 13, color: c.ink } },
+			showlegend: false,
+			margin: { l: 0, r: 0, t: 38, b: 0 },
+			scene: {
+				aspectmode: "cube",
+				xaxis: axis(axes[0]), yaxis: axis(axes[1]), zaxis: axis(axes[2]),
+				camera: { eye: { x: 1.6, y: 1.6, z: 1.15 } }
+			}
+		};
+	}
+	function plotlyLayout2D(title, axes) {
+		var c = _plotlyColors();
+		var axis = function (name) { return { title: { text: name }, color: c.muted, gridcolor: c.line, zeroline: false }; };
+		return {
+			paper_bgcolor: c.paper, plot_bgcolor: c.plot,
+			title: { text: title, font: { size: 13, color: c.ink } },
+			showlegend: false,
+			margin: { l: 46, r: 18, t: 38, b: 42 },
+			xaxis: axis(axes[0]), yaxis: axis(axes[1])
+		};
+	}
+	window.tmPlotly = {
+		colors: _plotlyColors,
+		sphereTraces: plotlySphereTraces,
+		circleTraces: plotlyCircleTraces,
+		coneTrace: plotlyConeTrace,
+		layout3D: plotlyLayout3D,
+		layout2D: plotlyLayout2D
+	};
+
 	function featureData(layerIdx) {
 		var trace = (window.__tmLayerTrace || [])[layerIdx];
 		if (!trace || !trace.h_in || !trace.h_out) return null;
@@ -2141,151 +2239,52 @@
 	}
 
 	function renderFeatureArrows(el, layerIdx, data, projection) {
-		if (!el || !window.echarts || !projection || !projection.in.length) return;
+		if (!el || !window.Plotly || !projection || !projection.in.length) return;
 		var c = palette();
-		var chart = echarts.getInstanceByDom(el) || echarts.init(el);
 		var labels = data.tokens.map(function (t) { return display(t); });
 		var metric = projection.metric || featureMetric();
-		var series = [];
-		if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere() && projection.is3d) {
-			var sphereRows = [];
-			var nu = 18, nv = 36;
-			for (var u = 0; u <= nu; u++) {
-				var row = [];
-				var theta = Math.PI * u / nu;
-				for (var v = 0; v <= nv; v++) {
-					var phi = 2 * Math.PI * v / nv;
-					row.push([
-						Math.sin(theta) * Math.cos(phi),
-						Math.sin(theta) * Math.sin(phi),
-						Math.cos(theta)
-					]);
-				}
-				sphereRows.push(row);
-			}
-			var spherePoints = [];
-			sphereRows.forEach(function (row) { row.forEach(function (pt) { spherePoints.push(pt); }); });
-			series.push({
-				type: "surface",
-				name: "unit sphere",
-				data: sphereRows,
-				shading: "color",
-				itemStyle: { color: "#3b82f6", opacity: 0.18 },
-				wireframe: { show: true, lineStyle: { color: "#3b82f6", opacity: 0.12 } },
-				silent: true
-			});
-			series.push({
-				type: "scatter3D",
-				name: "unit sphere points",
-				data: spherePoints,
-				symbolSize: 2,
-				itemStyle: { color: "#3b82f6", opacity: 0.18 },
-				silent: false,
-				tooltip: { formatter: function () { return window.tmMetric && window.tmMetric.sphereHint ? window.tmMetric.sphereHint(false) : ""; } }
-			});
+		var traces = [];
+		if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
+			Array.prototype.push.apply(traces, projection.is3d ? tmPlotly.sphereTraces() : tmPlotly.circleTraces());
 		}
-		if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere() && !projection.is3d) {
-			var circle = [];
-			for (var a = 0; a <= 96; a++) {
-				var t = 2 * Math.PI * a / 96;
-				circle.push([Math.cos(t), Math.sin(t)]);
-			}
-			series.push({
-				type: "line",
-				name: "unit circle",
-				data: circle,
-				symbol: "none",
-				lineStyle: { color: "#3b82f6", width: 1, opacity: 0.35 },
-				areaStyle: { color: "rgba(59,130,246,0.12)" },
-				silent: true
-			});
-			series.push({
-				type: "scatter",
-				name: "unit circle points",
-				data: circle,
-				symbolSize: 6,
-				itemStyle: { color: "#3b82f6", opacity: 0.01 },
-				tooltip: { formatter: function () { return window.tmMetric && window.tmMetric.sphereHint ? window.tmMetric.sphereHint(true) : ""; } }
-			});
-		}
+		var coordinate = function (v) { return (v || []).slice(0, 3).map(function (x) { return Number(x || 0).toFixed(3); }).join(", "); };
 		for (var i = 0; i < data.n; i++) {
 			var sel = i === data.selected;
 			var col = sel ? c.gold : rgb(mix(hex(c.blue), hex(c.lilac), i / Math.max(1, data.n - 1)));
-			var distText = metricDistanceLabel(projection.rawIn[i], projection.rawOut[i], metric);
-			var seriesName = labels[i] + " · " + distText;
 			var rawIn = projection.rawIn[i] || [], rawOut = projection.rawOut[i] || [];
 			var l2 = metricDistance(rawIn, rawOut, "euclidean");
 			var ang = metricDistance(rawIn, rawOut, "angular");
-			var coord = function (v) { return (v || []).slice(0, 3).map(function (x) { return Number(x || 0).toFixed(3); }).join(", "); };
-			var tipHtml = "<b>" + labels[i] + "</b><br>L2 " + l2.toFixed(3) + " · angle " + ang.toFixed(3) + " (" + (ang * 180).toFixed(1) + "°)<br>from [" + coord(rawIn) + "]<br>to [" + coord(rawOut) + "]";
+			var tip = "<b>" + labels[i] + "</b><br>L2 " + l2.toFixed(3) + " · angle " + ang.toFixed(3) + " (" + (ang * 180).toFixed(1) + "°)<br>from [" + coordinate(rawIn) + "]<br>to [" + coordinate(rawOut) + "]";
+			var from = projection.in[i], to = projection.out[i];
 			if (projection.is3d) {
-				var from = projection.in[i], to = projection.out[i];
-				var arc = metric === "angular" ? slerpPoints(from, to, 18) : [from, to];
-				series.push({
-					name: seriesName,
-					type: "line3D",
-					data: arc,
-					lineStyle: { width: sel ? 5 : 2.4, color: col, opacity: sel ? 1 : 0.72 },
-					tooltip: { formatter: function () { return tipHtml; } }
+				traces.push({
+					type: "scatter3d", mode: "lines", x: [from[0], to[0]], y: [from[1], to[1]], z: [from[2], to[2]],
+					line: { color: col, width: sel ? 6 : 3 }, hoverinfo: "skip", showlegend: false
 				});
-				if (typeof _add3DArrowheadSeries === "function") {
-					_add3DArrowheadSeries(series, arc[arc.length - 2] || from, arc[arc.length - 1] || to, col, { lineWidth: sel ? 6 : 4, maxHeadLen: 0.45, spreadRatio: 0.35, name: seriesName });
-				}
-				series.push({
-					name: seriesName,
-					type: "scatter3D",
-					data: [{ value: from, itemStyle: { color: col }, _tmPoint: "in" }],
-					symbolSize: sel ? 9 : 5,
-					label: { show: sel, formatter: labels[i], color: c.ink, fontSize: 10, fontWeight: 700 },
-					tooltip: { formatter: function () { return tipHtml; } }
+				var dx = to[0] - from[0], dy = to[1] - from[1], dz = to[2] - from[2];
+				var len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
+				var cone = tmPlotly.coneTrace([{ x: to[0], y: to[1], z: to[2], u: dx / len, v: dy / len, w: dz / len, tip: tip }], col, labels[i]);
+				if (cone) traces.push(cone);
+				traces.push({
+					type: "scatter3d", mode: "markers", x: [from[0]], y: [from[1]], z: [from[2]],
+					marker: { size: sel ? 6 : 4, color: col, line: { color: sel ? c.ink : col, width: sel ? 1 : 0 } },
+					hoverinfo: "text", text: [tip], showlegend: false
 				});
 			} else {
-				var a2 = projection.in[i], b2 = projection.out[i];
-				var path = metric === "angular" ? slerpPoints([a2[0], a2[1], 0], [b2[0], b2[1], 0], 18).map(function (p) { return [p[0], p[1]]; }) : [[a2[0], a2[1]], [b2[0], b2[1]]];
-				series.push({
-					name: seriesName,
-					type: "line",
-					data: path,
-					symbol: ["circle", "arrow"],
-					symbolSize: sel ? 9 : 5,
-					lineStyle: { width: sel ? 4 : 2, color: col, opacity: sel ? 1 : 0.72 },
-					itemStyle: { color: col },
-					label: { show: sel, formatter: labels[i], position: "end", color: c.ink, fontSize: 10, fontWeight: 700 },
-					tooltip: { formatter: function () { return tipHtml; } }
+				traces.push({
+					type: "scatter", mode: "lines+markers", x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0],
+					line: { color: col, width: sel ? 4 : 2 },
+					marker: { symbol: "arrow", angleref: "previous", size: sel ? 9 : 6, color: col, line: { color: sel ? c.ink : col, width: sel ? 1 : 0 } },
+					hoverinfo: "text", text: [tip, tip], showlegend: false
 				});
 			}
 		}
-		var option = {
-			backgroundColor: "transparent",
-			title: {
-				text: (DE() ? "Feature-Migration · Schicht " : "Feature migration · layer ") + (layerIdx + 1),
-				subtext: (projection.label ? projection.label + " · " : "") + featureMetricLabel() + " · " + (DE() ? "alle Tokens, Pfeil = Eingabe → Ausgabe" : "all tokens, arrow = input → output"),
-				left: "center",
-				textStyle: { fontSize: 13, color: c.ink, fontFamily: "Barlow, Open Sans, sans-serif" },
-				subtextStyle: { fontSize: 10, color: c.muted, fontFamily: "Open Sans, sans-serif" }
-			},
-			tooltip: { trigger: "item", confine: true },
-			series: series,
-			animation: false
-		};
-		if (projection.is3d) {
-			option.xAxis3D = { type: "value", name: projection.axes[0], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } };
-			option.yAxis3D = { type: "value", name: projection.axes[1], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } };
-			option.zAxis3D = { type: "value", name: projection.axes[2], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } };
-			option.grid3D = {
-				boxWidth: 130, boxDepth: 130, boxHeight: 130,
-				width: "100%", height: "100%", left: 0, right: 0, top: 0, bottom: 0,
-				viewControl: { alpha: 20, beta: 30, distance: 105 },
-				axisLine: { lineStyle: { color: c.line } },
-				splitLine: { lineStyle: { color: c.line } }
-			};
-		} else {
-			option.grid = { top: 62, bottom: 38, left: 48, right: 24 };
-			option.xAxis = { type: "value", name: projection.axes[0], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted }, splitLine: { lineStyle: { color: c.line } } };
-			option.yAxis = { type: "value", name: projection.axes[1], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted }, splitLine: { lineStyle: { color: c.line } } };
-		}
-		chart.setOption(option, true);
-		chart.resize();
+		var title = (DE() ? "Feature-Migration · Schicht " : "Feature migration · layer ") + (layerIdx + 1)
+			+ "<br><span style='font-size:10px;color:" + _plotlyColors().muted + "'>"
+			+ (projection.label ? projection.label + " · " : "") + featureMetricLabel() + " · " + (DE() ? "Pfeil = Eingabe → Ausgabe" : "arrow = input → output") + "</span>";
+		var layout = projection.is3d ? tmPlotly.layout3D(title, projection.axes) : tmPlotly.layout2D(title, projection.axes);
+		if (window.echarts && el) { var oldChart = echarts.getInstanceByDom(el); if (oldChart) oldChart.dispose(); }
+		Plotly.react(el, traces, layout, { responsive: true, displayModeBar: false });
 	}
 
 	function renderFeatureParallel(el, vec, label, color, title) {

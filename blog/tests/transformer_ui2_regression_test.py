@@ -312,25 +312,23 @@ def main() -> None:
             page.wait_for_timeout(1200)
             feature_metric = page.evaluate("""() => {
                 const el = document.getElementById('unified-layer-0-feature-arrows');
-                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
-                const opt = chart ? chart.getOption() : null;
-                const series = opt ? (opt.series || []) : [];
-                return {subtext: opt && opt.title ? opt.title[0].subtext : '', surface: series.some(s => s.type === 'surface')};
+                const d = (el && el.data) || [];
+                const title = el && el.layout && el.layout.title ? el.layout.title.text : '';
+                return {title, surface: d.some(t => t.type === 'surface'), cone: d.some(t => t.type === 'cone')};
             }""")
             check("feature migration follows the global metric",
-                  bool(feature_metric) and "great-circle" in feature_metric["subtext"].lower() and feature_metric["surface"], str(feature_metric))
+                  bool(feature_metric) and "great-circle" in feature_metric["title"].lower()
+                  and feature_metric["surface"] and feature_metric["cone"], str(feature_metric))
 
             sticky_sphere = page.evaluate("""() => {
                 const label = document.getElementById('sticky-sphere-label');
                 const cb = document.getElementById('sticky-metric-sphere');
                 const el = document.getElementById('unified-layer-0-feature-arrows');
-                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
-                const opt = chart ? chart.getOption() : null;
-                const surface = (opt ? (opt.series || []) : []).find(s => s.type === 'surface');
+                const surface = (el && el.data ? el.data : []).find(s => s.type === 'surface');
                 return {
                     display: label ? getComputedStyle(label).display : null,
                     checked: cb ? cb.checked : null,
-                    opacity: surface && surface.itemStyle ? surface.itemStyle.opacity : null
+                    opacity: surface ? surface.opacity : null
                 };
             }""")
             check("sphere toggle is shown for great-circle and the sphere is ~20% visible",
@@ -341,9 +339,7 @@ def main() -> None:
             page.wait_for_timeout(1200)
             no_sphere = page.evaluate("""() => {
                 const el = document.getElementById('unified-layer-0-feature-arrows');
-                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
-                const opt = chart ? chart.getOption() : null;
-                return (opt ? (opt.series || []) : []).some(s => s.type === 'surface');
+                return (el && el.data ? el.data : []).some(s => s.type === 'surface');
             }""")
             check("sphere toggle removes the surface", not no_sphere)
             page.evaluate("""() => { const cb=document.getElementById('sticky-metric-sphere'); cb.checked=true; cb.dispatchEvent(new Event('change',{bubbles:true})); }""")
@@ -362,10 +358,9 @@ def main() -> None:
             page.wait_for_timeout(1200)
             emb_metric = page.evaluate("""() => {
                 const el = document.getElementById('transformer-plotly-space');
-                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
-                const opt = chart ? chart.getOption() : null;
-                const series = opt ? (opt.series || []) : [];
-                return {title: opt && opt.title ? opt.title[0].text : '', surface: series.some(s => s.type === 'surface')};
+                const d = (el && el.data) || [];
+                const title = el && el.layout && el.layout.title ? el.layout.title.text : '';
+                return {title, surface: d.some(s => s.type === 'surface')};
             }""")
             check("embedding plot follows the global metric",
                   bool(emb_metric) and "Great-circle" in emb_metric["title"] and emb_metric["surface"], str(emb_metric))
@@ -378,29 +373,28 @@ def main() -> None:
             page.wait_for_timeout(1200)
             pe_metric = page.evaluate("""() => {
                 const el = document.getElementById('transformer-pe-shift-plot');
-                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
-                const opt = chart ? chart.getOption() : null;
-                const series = opt ? (opt.series || []) : [];
-                return {title: opt && opt.title ? opt.title[0].text : '', surface: series.some(s => s.type === 'surface')};
+                const d = (el && el.data) || [];
+                const title = el && el.layout && el.layout.title ? el.layout.title.text : '';
+                return {title, surface: d.some(s => s.type === 'surface'), cone: d.some(s => s.type === 'cone')};
             }""")
             check("positional-shift plot follows the global metric",
-                  bool(pe_metric) and "Great-circle" in pe_metric["title"] and pe_metric["surface"], str(pe_metric))
+                  bool(pe_metric) and "Great-circle" in pe_metric["title"] and pe_metric["surface"]
+                  and pe_metric["cone"], str(pe_metric))
 
             page.evaluate("() => document.getElementById('transformer-trajectory-full-path').scrollIntoView()")
             page.wait_for_timeout(1500)
             traj_angular = page.evaluate("""() => {
                 const el = document.getElementById('transformer-trajectory-full-path');
-                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
-                const opt = chart ? chart.getOption() : null;
-                const series = opt ? (opt.series || []) : [];
-                const scatter = series.find(s => s.type === 'scatter3D' && s.data && s.data.length);
+                const d = (el && el.data) || [];
+                const title = el && el.layout && el.layout.title ? el.layout.title.text : '';
+                const scatter = d.find(s => s.type === 'scatter3d' && Array.isArray(s.x) && s.x.length > 1);
                 let norm = null;
-                if (scatter) { const v = scatter.data[0].value; norm = Math.sqrt(v.reduce((a,x)=>a+x*x,0)); }
-                return {title: opt && opt.title ? opt.title[0].text : '', surface: series.some(s => s.type === 'surface'), norm};
+                if (scatter) norm = Math.sqrt((scatter.x[0] || 0) ** 2 + (scatter.y[0] || 0) ** 2 + (scatter.z[0] || 0) ** 2);
+                return {title, surface: d.some(s => s.type === 'surface'), cone: d.some(s => s.type === 'cone'), norm};
             }""")
             check("trajectory follows the global metric",
                   bool(traj_angular) and "Great-circle" in traj_angular["title"] and traj_angular["surface"]
-                  and traj_angular["norm"] is not None and abs(traj_angular["norm"] - 1) < 0.02,
+                  and traj_angular["cone"] and traj_angular["norm"] is not None and abs(traj_angular["norm"] - 1) < 0.02,
                   str(traj_angular)[:300])
 
             explain = page.evaluate("""() => {
@@ -430,16 +424,15 @@ def main() -> None:
             page.wait_for_timeout(1800)
             page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
             page.wait_for_timeout(1200)
-            page.evaluate("""() => { const s=document.getElementById('sticky-metric-select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
+            page.evaluate("""() => { const s=document.getElementById('sticky-metric-select'); s.value='angular'; s.dispatchEvent(new Event('change',{bubbles:true})); if (typeof _execute_embedding_render === 'function') _execute_embedding_render(2, null, []); }""")
             page.wait_for_timeout(1400)
             circle_2d = page.evaluate("""() => {
                 const el = document.getElementById('transformer-plotly-space');
-                const chart = el && window.echarts ? echarts.getInstanceByDom(el) : null;
-                const opt = chart ? chart.getOption() : null;
-                const series = opt ? (opt.series || []) : [];
+                const d = (el && el.data) || [];
                 return {
-                    circle: series.some(s => s.name === 'unit circle'),
-                    surface: series.some(s => s.type === 'surface')
+                    circle: d.some(s => s.name === 'unit circle'),
+                    surface: d.some(s => s.type === 'surface'),
+                    types: [...new Set(d.map(s => s.type))]
                 };
             }""")
             check("2D angular view uses a circle, not a sphere",
