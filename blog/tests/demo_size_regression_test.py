@@ -1,0 +1,244 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "playwright>=1.40",
+# ]
+# ///
+"""Exercise every lesson page and its demos; fail on size/layout escapes.
+
+The check is deliberately about the annoying failure mode: a demo opens or a
+control changes a value, and a plot/canvas/content box grows past the reading
+column or changes its width unexpectedly. Height changes are allowed for
+collapsible content; width escapes and horizontal scrollers wider than their
+container are not.
+
+Run from the repository root:
+    uv run blog/tests/demo_size_regression_test.py
+    uv run blog/tests/demo_size_regression_test.py --quick
+    uv run blog/tests/demo_size_regression_test.py --only transformer.php
+"""
+
+from __future__ import annotations
+
+import argparse
+import re
+import shutil
+import socket
+import subprocess
+import sys
+from pathlib import Path
+
+from playwright.sync_api import sync_playwright
+
+ROOT = Path(__file__).resolve().parents[2]
+BLOG = ROOT / "blog"
+SKIP = {"index", "index_full", "functions", "asanai_blog_proxy", "graph", "intro"}
+DEMO_SELECTOR = (
+    ".plot-container, .js-plotly-plot, canvas, svg, .demo, .viz-container, "
+    ".mtl-panel, .tm-step, .tm-layer-card, .optional, .mn-quiz"
+)
+CASES: list[tuple[str, bool, str]] = []
+
+
+def check(name: str, ok: bool, detail: str = "") -> None:
+    CASES.append((name, bool(ok), detail))
+    print(("  PASS  " if ok else "  FAIL  ") + name + (f" — {detail}" if detail and not ok else ""))
+
+
+def lessons() -> list[Path]:
+    out = []
+    for path in sorted(BLOG.glob("*.php")):
+        if path.stem in SKIP:
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        if "COURSE_METADATA:" in text:
+            out.append(path)
+    return out
+
+
+def free_port() -> int:
+    with socket.socket() as sock:
+        sock.bind(("127.0.0.1", 0))
+        return int(sock.getsockname()[1])
+
+
+def ensure_chromium() -> None:
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            browser.close()
+            return
+    except Exception:
+        pass
+    subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"],
+                   stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+
+
+def serve(port: int) -> subprocess.Popen:
+    php = shutil.which("php")
+    if php is None:
+        print("ERROR: php is not on PATH", file=sys.stderr)
+        raise SystemExit(1)
+    return subprocess.Popen([php, "-S", f"127.0.0.1:{port}", "-t", str(BLOG)],
+                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def scroll_through(page) -> None:
+    page.evaluate("""async () => {
+        const step = Math.max(400, innerHeight * 0.7);
+        for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
+            scrollTo(0, y);
+            await new Promise(r => setTimeout(r, 45));
+        }
+        scrollTo(0, 0);
+        await new Promise(r => setTimeout(r, 150));
+    }""")
+
+
+def open_details(page, limit: int) -> None:
+    page.evaluate("""async (limit) => {
+        const opts = [...document.querySelectorAll('.optional-header')].slice(0, limit);
+        for (const h of opts) {
+            h.click();
+            await new Promise(r => setTimeout(r, 55));
+        }
+        const details = [...document.querySelectorAll('details')].filter(d => d.offsetParent !== null).slice(0, limit);
+        for (const d of details) {
+            d.open = true;
+            d.dispatchEvent(new Event('toggle', {bubbles: true}));
+            await new Promise(r => setTimeout(r, 45));
+        }
+        await new Promise(r => setTimeout(r, 250));
+    }""", limit)
+
+
+def demo_widths(page) -> list[dict]:
+    return page.evaluate("""(sel) => [...document.querySelectorAll(sel)].filter(e => {
+        const r=e.getBoundingClientRect(); const cs=getComputedStyle(e);
+        return r.width > 0 && r.height > 0 && cs.display !== 'none' && cs.visibility !== 'hidden';
+    }).slice(0, 120).map((e, i) => {
+        const r=e.getBoundingClientRect(); const p=e.parentElement;
+        return {i, tag:e.tagName, id:e.id||'', cls:(e.className||'').toString().slice(0,80),
+                w:Math.round(r.width), sw:e.scrollWidth, cw:e.clientWidth,
+                parent:p?(p.tagName+'.'+(p.className||'')).slice(0,100):''};
+    })""", DEMO_SELECTOR)
+
+
+def exercise_controls(page, limit: int) -> list[str]:
+    problems = []
+    errors = []
+    page.on("pageerror", lambda e: errors.append(str(e)))
+    page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
+    controls = page.evaluate("""(limit) => {
+        const out=[];
+        for (const e of document.querySelectorAll('input[type=range], select')) {
+            const r=e.getBoundingClientRect(); if (r.width<=0 || r.height<=0) continue;
+            if (e.closest('.optional-content') && e.closest('.optional-content').offsetParent === null) continue;
+            out.push({id:e.id||'', tag:e.tagName, kind:e.type||'select', min:e.min||'', max:e.max||'', value:e.value});
+            if (out.length >= limit) break;
+        }
+        return out;
+    }""", limit)
+    for c in controls:
+        try:
+            if c["tag"] == "INPUT":
+                vals = [c["min"], c["max"], c["value"]]
+            else:
+                vals = page.evaluate("""(id) => {
+                    const e=document.getElementById(id); if(!e)return [];
+                    return [...e.options].slice(0,5).map(o=>o.value);
+                }""", c["id"])
+            for v in vals:
+                if v == "": continue
+                page.evaluate("""(args) => {
+                    const e=document.getElementById(args.id); if(!e)return;
+                    e.value=args.v;
+                    e.dispatchEvent(new Event('input',{bubbles:true}));
+                    e.dispatchEvent(new Event('change',{bubbles:true}));
+                }""", {"id": c["id"], "v": v})
+                page.wait_for_timeout(55)
+                overflow = page.evaluate("() => document.documentElement.scrollWidth - document.documentElement.clientWidth")
+                if overflow > 2:
+                    problems.append(f"{c['tag']}#{c['id']} value {v}: page horizontal overflow {overflow}px")
+        except Exception as e:
+            problems.append(f"{c['tag']}#{c['id']}: {e}")
+    if errors:
+        problems.extend("console: " + e for e in errors[:3])
+    return problems
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--only", action="append", default=[], help="page filename(s), e.g. transformer.php")
+    ap.add_argument("--quick", action="store_true", help="fewer details/controls per page")
+    ap.add_argument("--timeout", type=int, default=45)
+    args = ap.parse_args()
+    pages = [p for p in lessons() if not args.only or p.name in args.only]
+    if not pages:
+        print("No lesson pages found", file=sys.stderr)
+        raise SystemExit(1)
+    ensure_chromium()
+    port = free_port()
+    server = serve(port)
+    detail_limit = 3 if args.quick else 8
+    control_limit = 4 if args.quick else 14
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True, args=["--enable-precise-memory-info"])
+            for path in pages:
+                print(f"\n[{path.name}]", flush=True)
+                page = browser.new_page(viewport={"width": 1400, "height": 1000})
+                errors: list[str] = []
+                page.on("pageerror", lambda e: errors.append("pageerror: " + str(e)))
+                page.on("console", lambda m: errors.append("console: " + m.text) if m.type == "error" else None)
+                try:
+                    page.goto(f"http://127.0.0.1:{port}/{path.name}", wait_until="load", timeout=args.timeout * 1000)
+                    try:
+                        page.wait_for_function("() => document.documentElement.classList.contains('is-ready')", timeout=8000)
+                    except Exception:
+                        pass
+                    scroll_through(page)
+                    page.wait_for_timeout(300)
+                    before = demo_widths(page)
+                    open_details(page, detail_limit)
+                    after = demo_widths(page)
+                    width_changes = []
+                    old = {d["i"]: d for d in before}
+                    for d in after:
+                        if d["i"] in old and abs(d["w"] - old[d["i"]]["w"]) > 3:
+                            width_changes.append(f"{d['tag']}#{d['id']} {old[d['i']]['w']}→{d['w']}px")
+                    page_overflow = page.evaluate("() => document.documentElement.scrollWidth - document.documentElement.clientWidth")
+                    check(f"{path.name}: page has no horizontal overflow", page_overflow <= 2, f"{page_overflow}px")
+                    guard = page.evaluate("() => window.__layoutGuardrailCheck ? window.__layoutGuardrailCheck() : null")
+                    check(f"{path.name}: layout guardrail", guard is None or guard.get("ok", True),
+                          str(guard)[:300] if guard else "")
+                    bad = [d for d in after if d["sw"] > d["cw"] + 2 and d["cw"] > 0]
+                    check(f"{path.name}: demos fit their boxes", not bad,
+                          "; ".join(f"{d['tag']}#{d['id']} {d['sw']}>{d['cw']}" for d in bad[:3]))
+                    check(f"{path.name}: opening details keeps demo widths", not width_changes,
+                          "; ".join(width_changes[:4]))
+                    control_problems = exercise_controls(page, control_limit)
+                    check(f"{path.name}: controls keep layout", not control_problems,
+                          "; ".join(control_problems[:4]))
+                    check(f"{path.name}: no page/console errors", not errors, "; ".join(errors[:4]))
+                finally:
+                    page.close()
+            browser.close()
+    finally:
+        server.terminate()
+        try:
+            server.wait(timeout=5)
+        except Exception:
+            server.kill()
+    failed = [c for c in CASES if not c[1]]
+    print(f"\n{len(CASES) - len(failed)}/{len(CASES)} passed")
+    if failed:
+        print("FAILED:")
+        for name, _, detail in failed:
+            print(f"  - {name}: {detail}")
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()

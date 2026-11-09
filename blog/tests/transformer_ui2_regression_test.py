@@ -86,6 +86,7 @@ def main() -> None:
             page.on("pageerror", lambda e: errors.append(str(e)))
             page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
             page.goto(f"http://127.0.0.1:{port}/transformer.php", wait_until="load", timeout=120000)
+            page.wait_for_function("() => document.documentElement.classList.contains('is-ready')", timeout=120000)
             # The heavy layer cards are lazy now: bring the step section near
             # the viewport, then wait for the dependency bundle and the cards.
             page.evaluate("() => document.getElementById('transformer-step-visuals').scrollIntoView()")
