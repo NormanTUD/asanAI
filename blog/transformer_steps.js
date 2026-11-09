@@ -2419,6 +2419,7 @@
 		if (window.echarts && el) { var oldChart = echarts.getInstanceByDom(el); if (oldChart) oldChart.dispose(); }
 		var loading = el.querySelector(".plot-loading");
 		if (loading) loading.remove();
+		el.style.height = featurePlotHeight() + "px";
 		Plotly.react(el, traces, layout, { responsive: true, displayModeBar: false });
 		el._tmFeatureRendered = true;
 		el._tmFeatureQueued = false;
@@ -2465,6 +2466,11 @@
 	/* Automatic layer-card renders go through an observer and the shared
 	   heavy-render queue: the 520px box stays (with its spinner) until the
 	   card is actually near the viewport, then one plot is built per frame. */
+	function featurePlotHeight() {
+		var cfg = (typeof getTransformerConfig === 'function') ? getTransformerConfig() : null;
+		return (cfg && cfg.d_model <= 3) ? 850 : 520;
+	}
+
 	function layerFeatureLoadingMarkup() {
 		var text = DE() ? "Feature-Migration wird geladen…" : "Loading feature migration…";
 		return (window.PlotState && PlotState.loadingMarkup) ? PlotState.loadingMarkup(text) : text;
@@ -2496,6 +2502,7 @@
 			}
 		}
 		if (arrowsEl._tmFeatureRendered) return;
+		arrowsEl.style.height = featurePlotHeight() + "px";
 		if (!arrowsEl.querySelector(".plot-loading")) {
 			arrowsEl.innerHTML = layerFeatureLoadingMarkup();
 		}
@@ -2926,7 +2933,7 @@
 				wrap.className = "tm-feature-wrap";
 				var metricExplain = (window.tmMetric && window.tmMetric.explainHtml) ? window.tmMetric.explainHtml() : "";
 				wrap.innerHTML = "<div class='tm-feature-primary'><span class='tm-feature-note' id='unified-layer-" + idx + "-feature-projection'></span>" +
-					"<div id='unified-layer-" + idx + "-feature-arrows' class='tm-feature-arrows'></div>" +
+					"<div id='unified-layer-" + idx + "-feature-arrows' class='tm-feature-arrows tm-plotly-frame'></div>" +
 					"<div class='tm-feature-metric-explain'>" + metricExplain + "</div></div>" +
 					"<div id='unified-layer-" + idx + "-logit-lens' class='tm-logit-lens-host'></div>";
 				sb.insertBefore(wrap, oldDetail || null);

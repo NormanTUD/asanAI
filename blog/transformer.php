@@ -502,7 +502,7 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 </div>
 
 <div class="transformer-viz-card">
-	<div id="transformer-plotly-space" style="width: 100%; height: 520px; background: var(--mn-surface, white); border-radius: 8px;"></div>
+	<div id="transformer-plotly-space" class="tm-plotly-frame" style="width: 100%; height: 520px;"></div>
 	<div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
 
 	<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px; max-height: 420px; overflow-y: auto;"></div>
@@ -645,9 +645,9 @@ This demo uses the original sinusoidal scheme. GPT-2 instead uses learned positi
 This example uses a positional scaling factor of <span id="posEmbedScaleFactor">1.0</span>.
 </div>
 
-<div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+<div id="transformer-pe-wave-plot" class="tm-plotly-frame" style="width: 100%; height: 300px; margin-top: 20px;"></div>
 
-<div id="transformer-pe-shift-plot" style="width: 100%; height: 520px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+<div id="transformer-pe-shift-plot" class="tm-plotly-frame" style="width: 100%; height: 520px; margin-top: 20px;"></div>
 
 <div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>
 

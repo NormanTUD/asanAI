@@ -270,6 +270,11 @@
 	.tm-layer-body {
 		padding: 0 14px 14px;
 	}
+	.tm-feature-arrows {
+		width: calc(100% + 28px);
+		margin-left: -14px;
+		margin-right: -14px;
+	}
 	.tm-level-step {
 		font-size: 0.68rem;
 		min-height: 28px;
@@ -1048,12 +1053,10 @@
 	margin-bottom: 6px;
 }
 .tm-feature-arrows {
-	width: 100%;
+	width: calc(100% + 36px);
+	margin-left: -18px;
+	margin-right: -18px;
 	height: 520px;
-	border: 2px solid var(--mn-border, #cbd5e1);
-	border-radius: 12px;
-	background: var(--mn-surface, #FDFAF1);
-	box-sizing: border-box;
 }
 .tm-feature-real {
 	margin-top: 12px;

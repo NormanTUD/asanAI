@@ -195,7 +195,9 @@ def main() -> None:
             why = page.evaluate("""() => {
                 const w = document.querySelector('.tm-step-why');
                 if (!w) return null;
-                return {border: getComputedStyle(w).borderLeftWidth, text: w.innerText};
+                // The why-notes now sit inside the reveal/collapsible formula
+                // sections, so innerText is empty while they are closed.
+                return {border: getComputedStyle(w).borderLeftWidth, text: w.textContent || ''};
             }""")
             check("why-note has no left bar and labels the limits",
                   bool(why) and why["border"] == "0px" and ("Limit of this intuition" in why["text"] or "Grenze der Intuition" in why["text"]), str(why)[:200])

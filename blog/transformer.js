@@ -1662,7 +1662,7 @@ function _execute_positional_waves_render(d_model, tokens) {
 		hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: themeColor('#f8fafc'), size: 12 } }
 	};
 
-	Plotly.react(containerId, traces, layout);
+	Plotly.react(containerId, traces, layout, { responsive: true, displayModeBar: false });
 }
 
 function run_transformer_demo(activeId = null) {
@@ -2519,8 +2519,8 @@ function renderTrajectoryPlot(d_model) {
 		// ── Build wrapper (houses toggle + plot) ──
 		wrapper = document.createElement('div');
 		wrapper.id = wrapperId;
-		wrapper.style.cssText =
-			'border:2px solid var(--mn-border, #cbd5e1); border-radius:12px; margin-top:10px; background:var(--mn-surface, #FDFAF1); box-sizing:border-box;';
+		wrapper.className = 'tm-plotly-frame';
+		wrapper.style.cssText = 'margin-top:10px; box-sizing:border-box;';
 		wrapper.setAttribute('data-d-model', d_model);
 
 		trajDiv = document.createElement('div');
@@ -5900,7 +5900,7 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 		});
 	}
 	// Combine token traces + VF traces
-	Plotly.react(trajDiv.id, [...circleTraces, ...result.traces, ...vfTraces], layout);
+	Plotly.react(trajDiv.id, [...circleTraces, ...result.traces, ...vfTraces], layout, { responsive: true, displayModeBar: false });
 }
 
 // ─── Main 3D ECharts renderer ───────────────────────────────
