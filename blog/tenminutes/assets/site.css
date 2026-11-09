@@ -7162,6 +7162,32 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 	gap: 18px;
 }
 
+.prose-demo-split {
+	display: grid;
+	grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+	gap: 24px;
+	align-items: start;
+	margin: 18px 0 6px;
+}
+.prose-demo-split > .prose,
+.prose-demo-split > .demo {
+	margin: 0;
+	min-width: 0;
+}
+.prose-demo-split > .demo {
+	justify-self: end;
+	width: 100%;
+}
+@media (max-width: 860px) {
+	.prose-demo-split {
+		grid-template-columns: 1fr;
+		gap: 18px;
+	}
+	.prose-demo-split > .demo {
+		justify-self: stretch;
+	}
+}
+
 .pool-wrap {
 	display: flex;
 	align-items: center;

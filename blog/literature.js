@@ -2287,25 +2287,21 @@ window.bibData = {
 		title: "The Feeling of What Happens: Body and Emotion in the Making of Consciousness",
 		author: "Antonio Damasio",
 		year: 1999,
-		url: "https://archive.org/details/feelingofwhathap00dama"
 	},
 	"damasio2010selfcomestomind": {
 		title: "Self Comes to Mind: Constructing the Conscious Brain",
 		author: "Antonio Damasio",
 		year: 2010,
-		url: "https://archive.org/details/selfcomestomindc0000dama"
 	},
 	"edelman1989remembered": {
 		title: "The Remembered Present: A Biological Theory of Consciousness",
 		author: "Gerald M. Edelman",
 		year: 1989,
-		url: "https://archive.org/details/rememberedpresen0000edel"
 	},
 	"edelman2000universe": {
 		title: "A Universe of Consciousness: How Matter Becomes Imagination",
 		author: "Gerald M. Edelman, Giulio Tononi",
 		year: 2000,
-		url: "https://archive.org/details/universeofconsci0000edel"
 	},
 	"prinz2012conscious": {
 		title: "The Conscious Brain: How Attention Engenders Experience",
@@ -2707,7 +2703,6 @@ window.bibData = {
 		title: "Einführung in die Metaphysik",
 		author: "Martin Heidegger",
 		year: 1935,
-		url: "https://archive.org/details/einfhrungindieme0000heid"
 	},
 	"jocaxiannothing": {
 		title: "Why There Is Something Rather Than Nothing: The Instability of Nothingness",
@@ -2896,7 +2891,6 @@ window.bibData = {
 		title: "An Introduction to the Study of Stellar Structure",
 		author: "Subrahmanyan Chandrasekhar",
 		year: 1935,
-		url: "https://archive.org/details/introductiontost0000chan_g5e4"
 	},
 
 	"hewish1968pulsar": {
@@ -2940,7 +2934,6 @@ window.bibData = {
 		title: "The Policeman's Beard Is Half Constructed: Computer Prose and Poetry by Racter",
 		author: "Racter (William Chamberlain, Thomas Etter)",
 		year: 1984,
-		url: "https://f17webadvanced.teachinginter.net/contents/pdfs/RACTER_Policemans-Beard.pdf"
 	},
 	"strachey1952": {
 		title: "Love Letter Generator (Manchester Mark I)",
@@ -3364,7 +3357,6 @@ window.bibData = {
 		title: "Catching Fire: How Cooking Made Us Human",
 		author: "Richard Wrangham",
 		year: 2009,
-		url: "https://archive.org/details/catchingfirehowc0000wran"
 	},
 
 	"taocp3": {
@@ -3380,7 +3372,6 @@ window.bibData = {
 		alternativetitle: "Rosenblatt's 1961 CAL Report on Back-Propagating Errors"
 	},
 	"hayakawa": {
-		url: "https://archive.org/details/languageinthough0000siha_k3x0/page/n5/mode/2up",
 		title: "Language in Thought and Action",
 		author: "Samuel Ichiye Hayakawa",
 		year: 1939
@@ -3821,7 +3812,6 @@ window.bibData = {
 	},
 	"statisticsofextremes": {
 		year: 1958,
-		url: "https://archive.org/details/statisticsofextr0000gumb",
 		title: "Statistics of extremes",
 		author: "Emil Julius Gumbel"
 	},
@@ -3959,7 +3949,6 @@ window.bibData = {
 		title: "Papers in Linguistics 1934–1951",
 		author: "J.R. Firth",
 		year: 1957,
-		url: "https://archive.org/details/papersinlinguist0000firt"
 	},
 	"emergenceofmodernhumanbehaviour": {
 		url: "https://pubmed.ncbi.nlm.nih.gov/11786608/",
@@ -4417,7 +4406,6 @@ window.bibData = {
 		title: "Other Minds: The Octopus, the Sea, and the Deep Origins of Consciousness",
 		author: "Peter Godfrey-Smith",
 		year: 2016,
-		url: "https://archive.org/details/othermindsoctopu0000godf",
 		alternativetitle: "Godfrey-Smith, 2016"
 	},
 	"ginsburg2019sensitive": {
@@ -4684,7 +4672,6 @@ window.bibData = {
 		title: "The Tacit Dimension",
 		author: "Michael Polanyi",
 		year: 1966,
-		url: "https://archive.org/details/tacitdimension0000mich_w4j8"
 	},
 	"weatherfactory": {
 		author: "Lewis Fry Richardson",
@@ -5490,7 +5477,6 @@ window.bibData = {
 	"kolmogorov1933": {
 		author: "Andrey Kolmogorov",
 		title: "Foundations of the theory of probability",
-		url: "https://www.york.ac.uk/depts/maths/histstat/kolmogorov_foundations.pdf",
 		year: 1933
 	},
 	"fisher1922": {
@@ -5741,7 +5727,6 @@ window.bibData = {
 		url: "https://doi.org/10.1109/MAHC.2024.3498692"
 	},
 	"oxfordetymology": {
-		url: "https://archive.org/details/oxforddictionary0000unse_c3e9",
 		year: 1966,
 		title: "The Oxford Dictionary of English Etymology",
 		author: "Charles Talbut Onions"
@@ -5914,7 +5899,6 @@ window.bibData = {
 		title: "The Turk: The Life and Times of the Famous Eighteenth-Century Chess-Playing Machine",
 		author: "Tom Standage",
 		year: 2002,
-		url: "https://archive.org/details/turklifetimesoff0000stan",
 		alternativetitle: "Standage, The Turk (2002)"
 	},
 	"zhanghengseismoscope": {
@@ -6074,7 +6058,6 @@ window.bibData = {
 		author: "Jakob von Uexküll",
 		year: "1934",
 		title: "A Foray into the Worlds of Animals and Humans",
-		url: "https://xenopraxis.net/readings/uexkull_foray.pdf"
 	},
 
 	"arsmagnavolvelle": {
@@ -6770,7 +6753,6 @@ window.bibData = {
 		author: "George Kingsley Zipf",
 		year: "1949",
 		title: "Human Behavior and the Principle of Least Effort: An Introduction to Human Ecology",
-		url: "https://archive.org/details/humanbehaviorpri0000zipf",
 	},
 	"sutskever2011generating": {
 		author: "Ilya Sutskever, James Martens, Geoffrey Everest Hinton",
@@ -7025,7 +7007,6 @@ window.bibData = {
 	},
 	"weizenbaum1976computer": {
 		author: "Joseph Weizenbaum",
-		url: "https://archive.org/details/computerpowerhum0000weiz_v0i3",
 		year: "1976",
 		title: "Computer Power and Human Reason: From Judgment to Calculation",
 		alternativetitle: "Computer Power and Human Reason"
@@ -7243,7 +7224,6 @@ window.bibData = {
 		author: "Paul John Werbos",
 		title: "Beyond Regression: New Tools for Prediction and Analysis in the Behavioral Sciences",
 		year: 1974,
-		url: "https://gwern.net/doc/ai/nn/1974-werbos.pdf",
 	},
 	"rumelhart1986": {
 		author: "David E. Rumelhart, Geoffrey E. Hinton, Ronald J. Williams",
@@ -7593,7 +7573,6 @@ window.bibData = {
 		title: "AI: The Tumultuous History of the Search for Artificial Intelligence",
 		author: "Daniel Crevier",
 		year: 1993,
-		url: "https://archive.org/details/aitumultuoushist0000crev",
 		alternativetitle: "Crevier, AI: The Tumultuous History (1993)"
 	},
 	"marsh2018elektro": {
@@ -14391,7 +14370,6 @@ window.bibData = {
 		title: "The Number Sense: How the Mind Creates Mathematics",
 		author: "Stanislas Dehaene",
 		year: 1997,
-		url: "https://archive.org/details/numbersensehowmi0000deha_b8w0",
 		alternativetitle: "Dehaene, The Number Sense"
 	},
 	"clarkchalmers1998extended": {
@@ -14465,7 +14443,6 @@ window.bibData = {
 		title: "Classical Probability in the Enlightenment",
 		author: "Lorraine Daston",
 		year: 1988,
-		url: "https://archive.org/details/classicalprobabi0000dast",
 		alternativetitle: "Daston, Classical Probability in the Enlightenment"
 	},
 	"poincare1910creation": {
@@ -14549,7 +14526,6 @@ window.bibData = {
 		title: "Cognition in the Wild",
 		author: "Edwin Hutchins",
 		year: 1995,
-		url: "https://archive.org/details/cognitioninwild0000hutc",
 		alternativetitle: "Hutchins, Cognition in the Wild"
 	},
 	"kirsh2013external": {
@@ -17115,7 +17091,6 @@ window.bibData = {
 		title: "The Nature of Explanation",
 		author: "Kenneth J. W. Craik",
 		year: 1943,
-		url: "https://www.cis.upenn.edu/~cis6280/lectures/lecture-02/media/lecture02/history/craik_1943_the_nature_of_explanation.pdf",
 		alternativetitle: "Craik, The Nature of Explanation (1943)"
 	},
 	"bush1945aswemaythink": {
@@ -17385,14 +17360,12 @@ window.bibData = {
 		title: "The Logical Syntax of Language",
 		author: "Rudolf Carnap",
 		year: 1937,
-		url: "https://archive.org/details/logicalsyntaxofl0000carn",
 		alternativetitle: "Carnap, The Logical Syntax of Language (1937)"
 	},
 	"northrop1931sciencefirstprinciples": {
 		title: "Science and First Principles",
 		author: "F. S. C. Northrop",
 		year: 1931,
-		url: "https://archive.org/details/sciencefirstprin0000fscn",
 		alternativetitle: "Northrop, Science and First Principles (1931)"
 	},
 	"woodger1937axiomatic": {
@@ -17405,21 +17378,18 @@ window.bibData = {
 		title: "The Logical Structure of Mind: An Inquiry into the Philosophical Foundation of Psychology and Psychiatry",
 		author: "Eilhard von Domarus",
 		year: 1930,
-		url: "https://archive.org/details/communicationthe0000inte",
 		alternativetitle: "Von Domarus, The Logical Structure of Mind (1930; repr. in Thayer, 1967)"
 	},
 	"domarus1944specificlaws": {
 		title: "The Specific Laws of Logic in Schizophrenia",
 		author: "Eilhard von Domarus",
 		year: 1944,
-		url: "https://archive.org/details/languagethoughti0000jska_m7m5",
 		alternativetitle: "Von Domarus, The Specific Laws of Logic in Schizophrenia (1944)"
 	},
 	"mcculloch1965embodiments": {
 		title: "Embodiments of Mind",
 		author: "Warren S. McCulloch",
 		year: 1965,
-		url: "https://archive.org/details/embodimentsofmin0000mccu",
 		alternativetitle: "McCulloch, Embodiments of Mind (1965)"
 	},
 	"mcculloch1945heterarchy": {
@@ -19508,7 +19478,6 @@ window.bibData = {
 		title: "Strukturwandel der Öffentlichkeit (The Structural Transformation of the Public Sphere)",
 		author: "Jürgen Habermas",
 		year: 1962,
-		url: "https://archive.org/details/strukturwandelde0000habe",
 		alternativetitle: "Habermas, Strukturwandel der Öffentlichen (1962)"
 	},
 	"encyclopedie": {
@@ -20414,7 +20383,6 @@ window.bibData = {
 
 	/* Mellaart 1967 — the original Çatalhöyük excavation report */
 	"mellaart1967catal": {
-		url: "https://archive.org/details/catalhuyukneolit0000mell",
 		title: "Çatal Hüyük: A Neolithic Town in Anatolia",
 		author: "James Mellaart",
 		year: 1967,
@@ -20431,7 +20399,6 @@ window.bibData = {
 
 	/* Kathleen Kenyon — original Jericho excavation */
 	"kenyon1957digging": {
-		url: "https://archive.org/details/diggingupjericho0000keny",
 		title: "Digging Up Jericho",
 		author: "Kathleen M. Kenyon",
 		year: 1957,
@@ -20600,7 +20567,6 @@ window.bibData = {
 	/* Goldberg & Robson 1983 — Smalltalk (book reference; full PDF
 	 * originally from Xerox PARC, hosted at various mirrors) */
 	"goldberg1983smalltalk": {
-		url: "https://stephane.ducasse.free.fr/FreeBooks/BlueBook/Bluebook.pdf",
 		title: "Smalltalk-80: The Language and its Implementation (Blue Book)",
 		author: "Adele Goldberg, David Robson",
 		year: 1983,
@@ -21801,14 +21767,12 @@ window.bibData = {
 		alternativetitle: "Frege, Begriffsschrift"
 	},
 	"hodges1983enigma": {
-		url: "https://archive.org/details/alanturingenigma0000hodg",
 		title: "Alan Turing: The Enigma",
 		author: "Andrew Hodges",
 		year: 1983,
 		alternativetitle: "Hodges, Alan Turing: The Enigma"
 	},
 	"mccorduck1979machines": {
-		url: "https://archive.org/details/machineswhothink0000mcco",
 		title: "Machines Who Think: A Personal Inquiry into the History and Prospects of Artificial Intelligence",
 		author: "Pamela McCorduck",
 		year: 1979,
@@ -24086,7 +24050,6 @@ window.bibData = {
 		author: "Richard Bellman",
 		year: 1957,
 		publisher: "Princeton University Press",
-		url: "https://archive.org/details/dynamicprogrammi0000bell",
 		alternativetitle: "Bellman, Dynamic Programming (1957; Dover reprint)"
 	},
 	"bellman1961adaptive": {
@@ -24094,7 +24057,6 @@ window.bibData = {
 		author: "Richard Bellman",
 		year: 1961,
 		publisher: "Princeton University Press",
-		url: "https://archive.org/details/adaptivecontrolp0000rich",
 		alternativetitle: "Bellman, Adaptive Control Processes (1961)"
 	},
 	"gorban2018blessing": {
@@ -24271,7 +24233,6 @@ window.bibData = {
 		title: "A History of Vector Analysis: The Evolution of the Idea of a Vectorial System",
 		author: "Michael J. Crowe",
 		year: 1967,
-		url: "https://archive.org/details/historyofvectora0000crow",
 		alternativetitle: "Crowe, A History of Vector Analysis (1967)"
 	},
 	"stewart1993svd": {
@@ -24348,7 +24309,6 @@ window.bibData = {
 		title: "The Classical Groups: Their Invariants and Representations",
 		author: "Hermann Weyl",
 		year: 1939,
-		url: "https://archive.org/details/classicalgroupst0000weyl",
 		alternativetitle: "Weyl, The Classical Groups (1939)"
 	},
 	"jacobi1846": {

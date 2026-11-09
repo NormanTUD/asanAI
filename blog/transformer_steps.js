@@ -898,32 +898,55 @@
 	var layerAttentionLineRegistry = {};
 	var layerFFNHeatmapRegistry = {};
 
-	function drawFFNHeatmap(ctx, w, h, layerIdx) {
+	function drawFFNMatrix(ctx, w, h, layerIdx, which) {
 		var c = palette();
 		var ffn = (window.__tmFFNTrace || [])[layerIdx];
 		var tokens = tokenList();
 		ctx.clearRect(0, 0, w, h);
-		if (!ffn || !ffn.out_L1 || !tokens.length) {
+		if (!ffn || !tokens.length) {
 			return drawPlaceholder(ctx, w, h, DE() ? "Öffne eine Schicht, um die FFN-Aktivierungen zu sehen." : "Open a layer to see the FFN activations.");
 		}
-		var rows = Math.min(tokens.length, ffn.out_L1.length);
-		var cols = Math.min((ffn.out_L1[0] || []).length, 64);
+		var matrix, label, title;
+		if (which === "h1") {
+			matrix = ffn.h1;
+			label = DE() ? "Eingang" : "input";
+			title = DE() ? "FFN-Eingang h₁" : "FFN input h₁";
+		} else if (which === "norm") {
+			matrix = ffn.normed_h1;
+			label = DE() ? "normiert" : "normalized";
+			title = DE() ? "nach LayerNorm" : "after LayerNorm";
+		} else if (which === "outFFN") {
+			matrix = ffn.out_FFN;
+			label = DE() ? "komprimiert" : "compressed";
+			title = DE() ? "FFN-Ausgabe" : "FFN output";
+		} else {
+			matrix = ffn.out_L1;
+			var act = (typeof tmActivationLabel === "function") ? tmActivationLabel() : "GELU";
+			label = act;
+			title = (DE() ? "Hidden-Aktivierungen (" : "hidden activations (") + act + ")";
+		}
+		if (!matrix || !matrix.length) {
+			return drawPlaceholder(ctx, w, h, DE() ? "Keine FFN-Aktivierungen." : "No FFN activations.");
+		}
+		var rows = Math.min(tokens.length, matrix.length);
+		var cols = Math.min((matrix[0] || []).length, 64);
 		if (!rows || !cols) return drawPlaceholder(ctx, w, h, DE() ? "Keine FFN-Aktivierungen." : "No FFN activations.");
 		var min = Infinity, max = -Infinity;
 		for (var i = 0; i < rows; i++) {
 			for (var j = 0; j < cols; j++) {
-				var v = ffn.out_L1[i][j] || 0;
+				var v = matrix[i][j] || 0;
 				min = Math.min(min, v); max = Math.max(max, v);
 			}
 		}
 		var span = max - min || 1;
-		var padL = 74, padT = 26, padB = 24, padR = 14;
+		var narrow = w < 240;
+		var padL = narrow ? 46 : 74, padT = 26, padB = 24, padR = 14;
 		var cw = (w - padL - padR) / cols;
 		var ch = (h - padT - padB) / rows;
 		var neg = hex(c.blue), zero = hex(c.paper), pos = hex(c.gold);
 		for (var r = 0; r < rows; r++) {
 			for (var k = 0; k < cols; k++) {
-				var t = ((ffn.out_L1[r][k] || 0) - min) / span;
+				var t = ((matrix[r][k] || 0) - min) / span;
 				var col = t < 0.5 ? mix(neg, zero, t * 2) : mix(zero, pos, (t - 0.5) * 2);
 				ctx.fillStyle = rgb(col);
 				ctx.fillRect(padL + k * cw, padT + r * ch, Math.ceil(cw) + 0.5, Math.ceil(ch) + 0.5);
@@ -932,16 +955,20 @@
 			ctx.font = "600 8px Barlow, system-ui, sans-serif";
 			ctx.textAlign = "right";
 			ctx.textBaseline = "middle";
-			ctx.fillText(fitText(ctx, display(tokens[r]), 66), padL - 5, padT + r * ch + ch / 2);
+			ctx.fillText(fitText(ctx, display(tokens[r]), padL - 6), padL - 5, padT + r * ch + ch / 2);
 		}
 		ctx.textBaseline = "alphabetic";
 		ctx.textAlign = "left";
 		ctx.fillStyle = c.muted;
 		ctx.font = "600 9px Barlow, system-ui, sans-serif";
-		ctx.fillText((DE() ? "FFN-Hidden-Aktivierungen (GELU) · alle Tokens · Layer " : "FFN hidden activations (GELU) · all tokens · layer ") + (layerIdx + 1), padL, 15);
+		ctx.fillText(fitText(ctx, title + " · " + (DE() ? "Layer " : "layer ") + (layerIdx + 1), w - padL - padR), padL, 15);
 	}
 
-	function attachFFNHeatmapHover(canvas, getLayerIdx) {
+	function drawFFNHeatmap(ctx, w, h, layerIdx) {
+		drawFFNMatrix(ctx, w, h, layerIdx, "outL1");
+	}
+
+	function attachFFNHeatmapHover(canvas, getEntry) {
 		if (!canvas || canvas._tmFfnHoverBound) return;
 		canvas._tmFfnHoverBound = true;
 		var parent = canvas.parentNode;
@@ -951,22 +978,27 @@
 		tip.hidden = true;
 		(parent || canvas).appendChild(tip);
 		canvas.addEventListener("mousemove", function (event) {
-			var layerIdx = getLayerIdx();
+			var entry = getEntry();
+			var layerIdx = entry.layerIdx;
+			var which = entry.which;
 			var ffn = (window.__tmFFNTrace || [])[layerIdx];
 			var tokens = tokenList();
-			if (!ffn || !ffn.out_L1 || !tokens.length) { tip.hidden = true; return; }
-			var rows = Math.min(tokens.length, ffn.out_L1.length);
-			var cols = Math.min((ffn.out_L1[0] || []).length, 64);
+			var matrix = ffn ? (which === "h1" ? ffn.h1 : which === "norm" ? ffn.normed_h1 : which === "outFFN" ? ffn.out_FFN : ffn.out_L1) : null;
+			if (!ffn || !matrix || !matrix.length || !tokens.length) { tip.hidden = true; return; }
+			var rows = Math.min(tokens.length, matrix.length);
+			var cols = Math.min((matrix[0] || []).length, 64);
 			var rect = canvas.getBoundingClientRect();
-			var left = 74, top = 26, right = 14, bottom = 24;
+			var narrow = rect.width < 240;
+			var left = narrow ? 46 : 74, top = 26, right = 14, bottom = 24;
 			var cw = (rect.width - left - right) / Math.max(1, cols);
 			var ch = (rect.height - top - bottom) / Math.max(1, rows);
 			var x = event.clientX - rect.left, y = event.clientY - rect.top;
 			var col = Math.floor((x - left) / cw), row = Math.floor((y - top) / ch);
 			if (x < left || y < top || col < 0 || row < 0 || col >= cols || row >= rows) { tip.hidden = true; return; }
-			var value = (ffn.out_L1[row] && ffn.out_L1[row][col]) || 0;
+			var value = (matrix[row] && matrix[row][col]) || 0;
 			var token = (ffn.tokenStrings && ffn.tokenStrings[row]) || tokens[row] || "";
-			tip.textContent = display(token) + " · dim " + col + " · GELU " + value.toFixed(3);
+			var label = which === "h1" ? (DE() ? "Eingang" : "input") : which === "norm" ? (DE() ? "normiert" : "normalized") : which === "outFFN" ? (DE() ? "Ausgabe" : "output") : ((typeof tmActivationLabel === "function") ? tmActivationLabel() : "GELU");
+			tip.textContent = display(token) + " · dim " + col + " · " + label + " " + value.toFixed(3);
 			tip.hidden = false;
 			var pr = (parent || canvas).getBoundingClientRect();
 			tip.style.left = Math.max(0, Math.min(pr.width - 160, event.clientX - pr.left + 12)) + "px";
@@ -2730,12 +2762,24 @@
 			var target = document.getElementById(head.getAttribute("data-reveal-target"));
 			if (!target) return;
 			var isDetails = target.tagName === "DETAILS";
+			var group = head.getAttribute("data-reveal-group");
 			var sync = function () {
 				var open = isDetails ? target.open : !target.hidden;
 				head.classList.toggle("is-revealed", open);
 				head.setAttribute("aria-expanded", String(open));
 			};
 			var toggle = function () {
+				var willOpen = isDetails ? !target.open : target.hidden;
+				if (willOpen && group) {
+					root.querySelectorAll('[data-reveal-group="' + group + '"]').forEach(function (other) {
+						if (other === head) return;
+						var t = document.getElementById(other.getAttribute("data-reveal-target"));
+						if (!t) return;
+						if (t.tagName === "DETAILS") t.open = false; else t.hidden = true;
+						other.classList.remove("is-revealed");
+						other.setAttribute("aria-expanded", "false");
+					});
+				}
 				if (isDetails) target.open = !target.open;
 				else target.hidden = !target.hidden;
 				sync();
@@ -3009,6 +3053,7 @@
 					setTimeout(function () {
 						renderLayerTripleResiduals(idx);
 						renderLayerPreLNTriple(idx);
+						renderLayerFFNStages(idx);
 						renderLayerFeaturePlots(idx);
 						renderLayerLogitLens(idx);
 					}, 60);
@@ -3031,6 +3076,8 @@
 			}
 			wireRevealHeads(card);
 			renderLayerPreLNTriple(idx);
+			var stageGrid = card.querySelector(".tm-ffn-stages");
+			if (stageGrid) typesetMathIn(stageGrid);
 			card.setAttribute("data-tm-enhanced", "1");
 			if (sub.open) {
 				scheduleLayerFeaturePlot(idx);
@@ -3447,6 +3494,41 @@
 
 	window.tmSubboxLoading = { show: showSubboxLoading, hide: hideSubboxLoading };
 
+	function renderLayerFFNMatrix(canvasId, layerIdx, which) {
+		var canvas = document.getElementById(canvasId);
+		if (!canvas) return;
+		var entry = layerFFNHeatmapRegistry[canvasId];
+		if (entry && (entry.canvas !== canvas || entry.which !== which)) {
+			delete layerFFNHeatmapRegistry[canvasId];
+			entry = null;
+		}
+		if (!entry) {
+			entry = { canvas: canvas, layerIdx: layerIdx, which: which, api: null };
+			entry.api = initCanvas(canvas, function (ctx, w, h) {
+				drawFFNMatrix(ctx, w, h, entry.layerIdx, entry.which);
+			});
+			layerFFNHeatmapRegistry[canvasId] = entry;
+		} else {
+			entry.layerIdx = layerIdx;
+			entry.which = which;
+			entry.api.redraw();
+		}
+		attachFFNHeatmapHover(canvas, function () { return entry; });
+		canvas.setAttribute("data-layer-ffn-ready", "1");
+	}
+
+	function renderLayerFFNStages(layerIdx) {
+		var prefix = "unified-layer-" + layerIdx;
+		[
+			["-ffn-preln-in", "h1"],
+			["-ffn-preln-out", "norm"],
+			["-ffn-heatmap", "outL1"],
+			["-ffn-compress-heatmap", "outFFN"]
+		].forEach(function (pair) {
+			renderLayerFFNMatrix(prefix + pair[0], layerIdx, pair[1]);
+		});
+	}
+
 	window.TransformerSteps = {
 		init: function (hostId) {
 			var host = document.getElementById(hostId);
@@ -3762,22 +3844,10 @@
 			canvas.setAttribute("data-layer-attention-ready", "1");
 		},
 		renderLayerFFNHeatmap: function (canvasId, layerIdx) {
-			var canvas = document.getElementById(canvasId);
-			if (!canvas) return;
-			var entry = layerFFNHeatmapRegistry[canvasId];
-			if (!entry) {
-				entry = { layerIdx: layerIdx, api: null };
-				entry.api = initCanvas(canvas, function (ctx, w, h) {
-					drawFFNHeatmap(ctx, w, h, entry.layerIdx);
-				});
-				layerFFNHeatmapRegistry[canvasId] = entry;
-			} else {
-				entry.layerIdx = layerIdx;
-				entry.api.redraw();
-			}
-			attachFFNHeatmapHover(canvas, function () { return entry.layerIdx; });
-			canvas.setAttribute("data-layer-ffn-ready", "1");
+			renderLayerFFNMatrix(canvasId, layerIdx, "outL1");
 		},
+		renderLayerFFNMatrix: renderLayerFFNMatrix,
+		renderLayerFFNStages: renderLayerFFNStages,
 		renderLayerSignal: function (canvasId, layerIdx) {
 			var canvas = document.getElementById(canvasId);
 			if (!canvas) return;

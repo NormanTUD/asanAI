@@ -60,6 +60,13 @@ function tmFfnAbstractHtml() {
 	}
 	return 'FFN(x) = W<sub>2</sub> · ' + tmActivationInfo(kind).html + '(W<sub>1</sub>x + b<sub>1</sub>) + b<sub>2</sub>';
 }
+function tmFfnExpansionAbstractTex() {
+	var kind = tmActivationKind();
+	if (tmActivationIsGated(kind)) {
+		return "\\text{out}_{L1}=\\operatorname{SiLU}(\\text{Norm}(h_1)W_1+b_1)\\odot(\\text{Norm}(h_1)W_g+b_g)";
+	}
+	return "\\text{out}_{L1}=" + tmActivationLatex(kind) + "(\\text{Norm}(h_1)W_1+b_1)";
+}
 
 
 /*
@@ -3947,13 +3954,17 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	const step1 = document.getElementById(`${prefix}-step-1`);
 	const step2 = document.getElementById(`${prefix}-step-2`);
 	const step3 = document.getElementById(`${prefix}-step-3`);
-	if (!step1 || !step2 || !step3) return;
+	const prelnEl = document.getElementById(`${prefix}-ffn-preln-formula`);
+	const expandEl = document.getElementById(`${prefix}-ffn-expand-formula`);
+	if (!step1 || !step2 || !step3 || !prelnEl || !expandEl) return;
 
-	const step1Html = _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, ts, Wg, bg);
+	const { sup, h1name, h1Stage } = naming;
+	const prelnHtml = _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta, ts);
+	const expansionHtml = _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts, Wg, bg);
 	const step2Html = _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts);
 	const step3Html = _buildFFNStep3Html(naming, h1, out_FFN, h2, ts);
 
-	heightLockedMathUpdate([step1, step2, step3], [step1Html, step2Html, step3Html]);
+	heightLockedMathUpdate([prelnEl, expandEl, step2, step3], [prelnHtml, expansionHtml, step2Html, step3Html]);
 
 	// Provenance: annotate the three FFN steps
 	if (window.Prov) {
@@ -3992,15 +4003,6 @@ function _ffnNaming(layerIndex) {
         ? 'after attn residual'
         : `out layer ${layerIndex}`;
     return { L, sup, h1name, h2name, h1Stage };
-}
-
-function _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, ts, Wg, bg) {
-    const { sup, h1name, h1Stage } = naming;
-
-    const preLNHtml = _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta, ts);
-    const expansionHtml = _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts, Wg, bg);
-
-    return preLNHtml + expansionHtml;
 }
 
 function _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta, ts) {
@@ -8089,15 +8091,41 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 				<details class="tm-formula-step" id="${prefix}-layernorm-step"><summary>${isDe ? 'LayerNorm-Formeln' : 'LayerNorm formulas'}</summary><div id="${prefix}-layernorm-viz" class="tm-formula-block"></div></details>
 			</div>
 			<details class="tm-formula-step"><summary>${isDe ? 'Attention-Ausgabe + Residual' : 'Attention output + residual'}</summary><div id="${prefix}-concat-viz" class="tm-formula-block"></div><div id="${prefix}-h1-final-viz" class="tm-formula-block"></div></details>
-			<div class="tm-reveal-head tm-ffn-reveal-head" data-reveal-target="${prefix}-ffn-formulas" role="button" tabindex="0" aria-expanded="false">
-				<div class="tm-ffn-abstract">${tmFfnAbstractHtml()}</div>
-				<canvas id="${prefix}-ffn-heatmap" class="tm-layer-ffn-heatmap" aria-label="${isDe ? 'FFN-Aktivierungen für alle Tokens in dieser Schicht' : 'FFN activations for all tokens in this layer'}"></canvas>
-				<span class="tm-reveal-hint">${isDe ? 'Klicke auf die Aktivierungen, um Expansion, Aktivierung, Kompression und den Residual-Schritt als Formeln zu zeigen.' : 'Click the activations to show expansion, activation, compression and the residual step as formulas.'}</span>
+			<div class="tm-ffn-stages">
+				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-preln-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
+					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Pre-LN</span><span class="tm-ffn-stage-shape">h₁ → Norm</span></div>
+					<div class="tm-ffn-stage-formula" data-tex="\text{Norm}(h_1)=\gamma_2\odot\frac{h_1-\mu}{\sqrt{\sigma^2+\epsilon}}+\beta_2" data-tex-display="false"></div>
+					<div class="tm-ffn-stage-plots tm-ffn-stage-plots--two">
+						<canvas id="${prefix}-ffn-preln-in" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Eingang vor LayerNorm' : 'FFN input before LayerNorm'}"></canvas>
+						<canvas id="${prefix}-ffn-preln-out" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Eingang nach LayerNorm' : 'FFN input after LayerNorm'}"></canvas>
+					</div>
+					<span class="tm-ffn-stage-hint">${isDe ? 'Klicke für die Matrixformel' : 'Click for the matrix formula'}</span>
+				</div>
+				<span class="tm-ffn-stage-arrow" aria-hidden="true">→</span>
+				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-expand-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
+					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Expansion + ${tmActivationInfo(tmActivationKind()).html}</span><span class="tm-ffn-stage-shape">d_model → d_ff</span></div>
+					<div class="tm-ffn-stage-formula" data-tex="${tmFfnExpansionAbstractTex()}" data-tex-display="false"></div>
+					<div class="tm-ffn-stage-plots">
+						<canvas id="${prefix}-ffn-heatmap" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Hidden-Aktivierungen für alle Tokens' : 'FFN hidden activations for all tokens'}"></canvas>
+					</div>
+					<span class="tm-ffn-stage-hint">${isDe ? 'Klicke für die Matrixformel' : 'Click for the matrix formula'}</span>
+				</div>
+				<span class="tm-ffn-stage-arrow" aria-hidden="true">→</span>
+				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-compress-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
+					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Compression</span><span class="tm-ffn-stage-shape">d_ff → d_model</span></div>
+					<div class="tm-ffn-stage-formula" data-tex="\text{out}_{FFN}=\text{out}_{L1}W_2+b_2" data-tex-display="false"></div>
+					<div class="tm-ffn-stage-plots">
+						<canvas id="${prefix}-ffn-compress-heatmap" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Ausgabe nach der Kompression' : 'FFN output after compression'}"></canvas>
+					</div>
+					<span class="tm-ffn-stage-hint">${isDe ? 'Klicke für die Matrixformel' : 'Click for the matrix formula'}</span>
+				</div>
 			</div>
 			<div id="${prefix}-formula-body">
-				<div id="${prefix}-ffn-formulas" hidden>
-					<p class="tm-formula-kicker">${isDe ? 'Feed-Forward-Netz:' : 'Feed-Forward Network:'}</p>
-					<div id="${prefix}-step-1" class="math_transformer"></div>
+				<div id="${prefix}-step-1" class="math_transformer">
+					<div id="${prefix}-ffn-preln-formula" class="tm-ffn-answer" hidden></div>
+					<div id="${prefix}-ffn-expand-formula" class="tm-ffn-answer" hidden></div>
+				</div>
+				<div id="${prefix}-ffn-compress-formula" class="tm-ffn-answer" hidden>
 					<div id="${prefix}-step-2" class="math_transformer"></div>
 					<div id="${prefix}-step-3" class="math_transformer"></div>
 				</div>
@@ -8135,7 +8163,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 						renderLayerAttention(layerIndex);
 						if (window.TransformerSteps && window.TransformerSteps.renderLayerPreLNTriple) window.TransformerSteps.renderLayerPreLNTriple(layerIndex);
 					} else if (kind === 'ffn') {
-						renderLayerFFNHeatmap(layerIndex);
+						renderLayerFFNStages(layerIndex);
 						renderLayerFormulas(layerIndex);
 					}
 				} finally {
@@ -8172,7 +8200,7 @@ function refreshOpenLayerSubboxes() {
 			renderLayerAttention(idx);
 			if (window.TransformerSteps && window.TransformerSteps.renderLayerPreLNTriple) window.TransformerSteps.renderLayerPreLNTriple(idx);
 		} else if (kind === 'ffn') {
-			renderLayerFFNHeatmap(idx);
+			renderLayerFFNStages(idx);
 			renderLayerFormulas(idx);
 		}
 	});
@@ -8204,6 +8232,12 @@ function renderLayerFFNHeatmap(layerIdx) {
 	const canvas = document.getElementById(`unified-layer-${layerIdx}-ffn-heatmap`);
 	if (canvas && window.TransformerSteps && window.TransformerSteps.renderLayerFFNHeatmap) {
 		window.TransformerSteps.renderLayerFFNHeatmap(canvas.id, layerIdx);
+	}
+}
+
+function renderLayerFFNStages(layerIdx) {
+	if (window.TransformerSteps && window.TransformerSteps.renderLayerFFNStages) {
+		window.TransformerSteps.renderLayerFFNStages(layerIdx);
 	}
 }
 

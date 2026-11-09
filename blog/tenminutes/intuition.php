@@ -417,12 +417,20 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 
 								</div>
 								<div class="chip-row" id="oned-examples" aria-label="Temperature examples"></div>
-								<p class="meadow-caption" id="oned-result" aria-live="polite" style="color:var(--tm-muted)"></p>
-								<div class="prose-math oned-formula" id="oned-formula" data-tex-display="true"></div>
+								<div class="prose-math oned-formula" id="oned-formula" data-tex-display="true" aria-live="polite"></div>
 							</div>
 						</div>
-						<div class="step-pane" id="step-embed">
-							<div class="step-stage">
+						<div class="prose">
+							<p>In the same space, word vectors add and subtract. Treat each word as an arrow from the origin: add two arrows and the result lands near the word that combines their meanings.</p>
+						</div>
+						<div class="demo demo--paper demo--canvas" id="step-embed">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Embedding arithmetic <span>· demo</span></p>
+									<p class="demo-sub">Pick an example. The vectors add and subtract in the same two-dimensional space, and the result lands near a word.</p>
+								</div>
+							</div>
+							<div class="demo-body">
 								<div class="step-toolbar">
 									<div class="step-chips">
 										<button class="chip is-on" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
@@ -438,18 +446,20 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							</div>
 						</div>
 						<h4 class="layer-subhead">From relations to translation</h4>
-						<div class="prose">
-							<p>The points form a manifold: locally flat, globally curved. The relations are similar enough to translate: the path from one word to another can be transformed into the corresponding path in another language. Feed-forward networks learn such transformations. This is an approximation. In a real model the geometry is much messier: relations overlap, exceptions are common, and translation is learned from huge amounts of text rather than read off a clean map. The intuition still points in the right direction.</p>
-						</div>
-						<div class="demo demo--paper demo--canvas" id="tm-dual-manifold-demo">
-							<div class="demo-body">
-								<div id="tm-dual-manifolds" style="width:100%;height:420px;">
-									<div class="tm-manifold-loading">
-										<span class="tm-spinner" aria-hidden="true"></span>
-										<span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Lade die Mannigfaltigkeiten …' : 'Loading the manifolds …'; ?></span>
+						<div class="prose-demo-split">
+							<div class="prose">
+								<p>The points form a manifold: locally flat, globally curved. The relations are similar enough to translate: the path from one word to another can be transformed into the corresponding path in another language. Feed-forward networks learn such transformations. This is an approximation. In a real model the geometry is much messier: relations overlap, exceptions are common, and translation is learned from huge amounts of text rather than read off a clean map. The intuition still points in the right direction.</p>
+							</div>
+							<div class="demo demo--paper demo--canvas" id="tm-dual-manifold-demo">
+								<div class="demo-body">
+									<div id="tm-dual-manifolds" style="width:100%;height:360px;">
+										<div class="tm-manifold-loading">
+											<span class="tm-spinner" aria-hidden="true"></span>
+											<span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Lade die Mannigfaltigkeiten …' : 'Loading the manifolds …'; ?></span>
+										</div>
 									</div>
+									<div id="tm-dual-controls" style="max-width:520px;margin:8px auto 0;min-height:118px;"></div>
 								</div>
-								<div id="tm-dual-controls" style="max-width:520px;margin:8px auto 0;min-height:118px;"></div>
 							</div>
 						</div>
 					</section>
@@ -494,9 +504,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 										<input type="range" id="ipe-pos" min="0" max="1000" step="1" value="7">
 										<output id="ipe-pos-out">7</output>
 									</label>
+									<div class="step-chips" id="ipe-metric" aria-label="Distance metric">
+										<button class="chip is-on" type="button" data-pos-metric="euclid" aria-pressed="true">Euclidean length</button>
+										<button class="chip" type="button" data-pos-metric="angle" aria-pressed="false">Angle to the word</button>
+									</div>
 									<button class="chip is-on" type="button" id="ipe-autorotate" aria-pressed="true">Auto-rotate view</button>
 								</div>
-								<p class="step-note pos-drag-hint">Move the slider to travel along the curve; drag the view to rotate it.</p>
+								<p class="step-note pos-drag-hint">Move the slider to travel along the curve; drag the view to rotate it. The switch shows the straight chord between token and position, or normalizes both to the unit sphere and measures the great-circle arc.</p>
 								<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A single sinusoidal positional-encoding vector for one token: three dimensions as axes, one point on the curve"></canvas>
 								<div class="step-out" id="ipe-out">One token at position <b>7</b>.</div>
 							</div>
@@ -3371,6 +3385,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		var POS_CURVE_STEP = 0.75;
 		var POS_COLORS = ["green", "blue", "gold"];
 		var POS_LABELS = ["d0", "d1", "d2"];
+		var POS_TOKEN_VEC = [0.30, 0.18, 0.24];
+		var posMetric = "euclid";
 		var posReduce = TM.prefersReduced();
 		var posAuto = !posReduce;
 		var posClock = 0;
@@ -3439,6 +3455,20 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		}
 		function posVector(position) {
 			return [posPE(position, 0), posPE(position, 1), posPE(position, 2)];
+		}
+		function posUnit(vec) {
+			var length = Math.hypot(vec[0], vec[1], vec[2]) || 1;
+			return [vec[0] / length, vec[1] / length, vec[2] / length];
+		}
+		function posMeasure(position) {
+			var v = posVector(position);
+			var length = Math.hypot(v[0], v[1], v[2]);
+			var chord = Math.hypot(v[0] - POS_TOKEN_VEC[0], v[1] - POS_TOKEN_VEC[1], v[2] - POS_TOKEN_VEC[2]);
+			var tokenLength = Math.hypot(POS_TOKEN_VEC[0], POS_TOKEN_VEC[1], POS_TOKEN_VEC[2]);
+			var dot = v[0] * POS_TOKEN_VEC[0] + v[1] * POS_TOKEN_VEC[1] + v[2] * POS_TOKEN_VEC[2];
+			var cos = tokenLength && length ? dot / (tokenLength * length) : 1;
+			var angleRad = Math.acos(TM.clamp(cos, -1, 1));
+			return { length: length, chord: chord, angle: angleRad * 180 / Math.PI, arc: angleRad };
 		}
 		function drawPos(ctx, w, h) {
 			var c = TM.colors();
@@ -3537,18 +3567,23 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				}
 			}
 
+			function posDisplayVector(position) {
+				var raw = posVector(position);
+				return posMetric === "angle" ? posUnit(raw) : raw;
+			}
+
 			if (posShown > 0.01) {
 				var steps = Math.max(2, Math.min(1600, Math.ceil(posShown / POS_CURVE_STEP)));
-				var prev = project(posVector(0));
+				var prev = project(posDisplayVector(0));
 				for (var i = 1; i <= steps; i++) {
 					var t = posShown * i / steps;
-					var q = project(posVector(t));
+					var q = project(posDisplayVector(t));
 					addLine(prev.x, prev.y, prev.z, q.x, q.y, q.z, posRgba(c.sky, 0.42), 1.6, null, "butt");
 					prev = q;
 				}
 			}
 
-			var tokenVec = [0.30, 0.18, 0.24];
+			var tokenVec = posMetric === "angle" ? posUnit(POS_TOKEN_VEC) : POS_TOKEN_VEC;
 			var tokenTip = project(tokenVec);
 			var tokenBase = project([0, 0, 0]);
 			var tokenPrev = tokenBase;
@@ -3581,7 +3616,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			addRing(tokenCenter, tokenVec, 0.15, posRgba(c.sky, 0.34), 1.2);
 			addRing(tokenCenter, tokenVec, 0.22, posRgba(c.sky, 0.18), 1);
 
-			var v = posVector(posShown);
+			var v = posDisplayVector(posShown);
 			var tip = project(v);
 			var origin = project([0, 0, 0]);
 			v.forEach(function (val, i) {
@@ -3614,6 +3649,42 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				last = p;
 			}
 
+			var measure = posMeasure(posShown);
+			if (posMetric === "euclid") {
+				addLine(tokenTip.x, tokenTip.y, tokenTip.z, tip.x, tip.y, tip.z, posRgba(c.gold, 0.9), 2.2, [6, 4]);
+				pillData.push({
+					x: (tokenTip.x + tip.x) / 2,
+					y: (tokenTip.y + tip.y) / 2 - 6,
+					color: c.gold,
+					text: "d " + measure.chord.toFixed(2).replace(".", DE ? "," : ".")
+				});
+			} else {
+				var vLen = Math.hypot(v[0], v[1], v[2]) || 1;
+				var tLen = Math.hypot(tokenVec[0], tokenVec[1], tokenVec[2]) || 1;
+				var dirV = [v[0] / vLen, v[1] / vLen, v[2] / vLen];
+				var dirT = [tokenVec[0] / tLen, tokenVec[1] / tLen, tokenVec[2] / tLen];
+				var arcRadius = 1;
+				var prevArc = null;
+				for (var ar = 0; ar <= 48; ar++) {
+					var mix = ar / 48;
+					var dir = [
+						dirV[0] * (1 - mix) + dirT[0] * mix,
+						dirV[1] * (1 - mix) + dirT[1] * mix,
+						dirV[2] * (1 - mix) + dirT[2] * mix
+					];
+					var dirLen = Math.hypot(dir[0], dir[1], dir[2]) || 1;
+					dir = [dir[0] / dirLen, dir[1] / dirLen, dir[2] / dirLen];
+					var arcPoint = project([dir[0] * arcRadius, dir[1] * arcRadius, dir[2] * arcRadius]);
+					if (prevArc) addLine(prevArc.x, prevArc.y, prevArc.z, arcPoint.x, arcPoint.y, arcPoint.z, posRgba(c.gold, 0.95), 2.4);
+					prevArc = arcPoint;
+				}
+				var mid = [dirV[0] + dirT[0], dirV[1] + dirT[1], dirV[2] + dirT[2]];
+				var midLen = Math.hypot(mid[0], mid[1], mid[2]) || 1;
+				mid = [mid[0] / midLen, mid[1] / midLen, mid[2] / midLen];
+				var midPoint = project([mid[0] * arcRadius, mid[1] * arcRadius, mid[2] * arcRadius]);
+				pillData.push({ x: midPoint.x, y: midPoint.y, color: c.gold, text: "d " + measure.arc.toFixed(2).replace(".", DE ? "," : ".") });
+			}
+
 			primitives.push({
 				z: tip.z,
 				draw: function (ctx) {
@@ -3637,7 +3708,10 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			ctx.textAlign = "center";
 			ctx.font = "600 10px Barlow, system-ui, sans-serif";
 			ctx.fillStyle = c.muted;
-			ctx.fillText(DE ? "blau: Token-Vektor · grün: Positionsvektor" : "blue: token vector · green: position vector", cx, h - 12);
+			var posFoot = posMetric === "angle"
+				? (DE ? "blau: Token-Richtung · grün: Positionsrichtung · gelb: Großkreis" : "blue: token direction · green: position direction · gold: great circle")
+				: (DE ? "blau: Token-Vektor · grün: Positionsvektor · gelb: Abstand" : "blue: token vector · green: position vector · gold: distance");
+			ctx.fillText(posFoot, cx, h - 12);
 			ctx.textAlign = "left";
 		}
 		if (posCanvas) {
@@ -3652,10 +3726,16 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 			function posRenderOut() {
 				if (!posOut) return;
+				var measure = posMeasure(pos);
+				var metric = posMetric === "angle"
+					? (DE ? ' · Winkel zum Token ' : ' · angle to token ') + '<b>' + measure.angle.toFixed(1).replace(".", DE ? "," : ".") + '°</b>' +
+						(DE ? ' · Großkreis-Abstand ' : ' · great-circle distance ') + '<b>' + measure.arc.toFixed(2).replace(".", DE ? "," : ".") + '</b>'
+					: (DE ? ' · Abstand Token ↔ Position ' : ' · distance token ↔ position ') + '<b>' + posFormat(measure.chord) + '</b>';
 				posOut.innerHTML = (DE ? 'Ein Token an Position ' : 'One token at position ') + '<b>' + pos + '</b>' +
 					' · d0 <b>' + posFormat(posPE(pos, 0)) + '</b>' +
 					' · d1 <b>' + posFormat(posPE(pos, 1)) + '</b>' +
-					' · d2 <b>' + posFormat(posPE(pos, 2)) + '</b>.';
+					' · d2 <b>' + posFormat(posPE(pos, 2)) + '</b>' +
+					metric + '.';
 			}
 			function posTick(now) {
 				if (posApi && posVisible && !document.hidden) {
@@ -3695,6 +3775,20 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					if (posApi) posApi.redraw();
 				});
 			}
+			var posMetricChips = Array.prototype.slice.call(document.querySelectorAll("[data-pos-metric]"));
+			function posSetMetric(metric) {
+				posMetric = metric === "angle" ? "angle" : "euclid";
+				posMetricChips.forEach(function (btn) {
+					var on = btn.getAttribute("data-pos-metric") === posMetric;
+					btn.classList.toggle("is-on", on);
+					btn.setAttribute("aria-pressed", on ? "true" : "false");
+				});
+				posRenderOut();
+				if (posApi) posApi.redraw({ spinner: false });
+			}
+			posMetricChips.forEach(function (btn) {
+				btn.addEventListener("click", function () { posSetMetric(btn.getAttribute("data-pos-metric")); });
+			});
 			function posEndDrag(ev) {
 				if (!posDrag) return;
 				posDrag = null;
@@ -3738,6 +3832,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				if (posApi) posApi.redraw();
 			});
 			if (posCountOut) posCountOut.textContent = String(pos);
+			posSetMetric(posMetric);
 			posRenderOut();
 			if (posApi) posApi.redraw();
 			if (posVisible) posRaf = requestAnimationFrame(posTick);
@@ -4445,7 +4540,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			{ a: "freezing", b: "warm" }
 		];
 		var row = document.getElementById("oned-examples");
-		var result = document.getElementById("oned-result");
 		function byKey(key) {
 			for (var i = 0; i < pointDefs.length; i++) if (pointDefs[i].key === key) return pointDefs[i];
 			return pointDefs[0];
@@ -4462,7 +4556,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var avg = (a.value + b.value) / 2;
 			var near = nearest(avg);
 			var sym = Math.abs(avg - near.value) < 0.5 ? "=" : "≈";
-			if (result) result.textContent = a.label + " + " + b.label + " " + sym + " " + avg.toFixed(1) + " → " + near.label + " (" + near.value + ")";
 			if (lineApi && lineApi.setHighlight) {
 				lineApi.setHighlight({ value: avg, label: near.label, color: near.color, showVector: true, vectorLabel: de ? "Ergebnisvektor" : "result vector" });
 			}
