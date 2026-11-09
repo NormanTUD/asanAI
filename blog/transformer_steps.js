@@ -2988,8 +2988,8 @@
 	function equalizeHyperCards() {
 		var config = document.getElementById("transformer_config");
 		if (!config) return;
-		var cards = Array.prototype.slice.call(config.querySelectorAll(":scope > div")).filter(function (el) {
-			return el.offsetParent !== null && el.id !== "param-breakdown-toggle" && el.id !== "param-breakdown-chart" && el.id !== "arch-validity-message";
+		var cards = Array.prototype.slice.call(config.querySelectorAll(".transformer-config-field")).filter(function (el) {
+			return el.id !== "transformer-preset-field" && el.offsetParent !== null;
 		});
 		if (!cards.length) return;
 		cards.forEach(function (el) { el.style.minHeight = "0px"; });

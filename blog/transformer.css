@@ -251,6 +251,35 @@
 #transformer_config > div[style*="display: none"] {
 	grid-column: 1 / -1;
 }
+/* The example picker leads; the manual knobs live behind one summary. */
+#transformer-preset-field {
+	order: -1;
+}
+#transformer-advanced-config {
+	border: 1px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface, #fff);
+}
+#transformer-advanced-config > summary {
+	padding: 12px 14px;
+	cursor: pointer;
+	font-weight: 700;
+	color: var(--mn-text);
+	list-style-position: inside;
+}
+#transformer-advanced-config[open] > summary {
+	border-bottom: 1px solid var(--mn-border, #cbd5e1);
+}
+#transformer-advanced-config .transformer-config-field {
+	margin: 0;
+	padding: 12px 14px;
+	border: 0;
+	border-top: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 0;
+	background: transparent;
+}
+#transformer-advanced-config .transformer-config-field:first-of-type {
+	border-top: 0;
+}
 .transformer-slider-label {
 	font-size: 0.95rem;
 }

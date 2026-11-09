@@ -65,6 +65,8 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 
 
 <div id="transformer_config">
+	<details class="transformer-advanced-config" id="transformer-advanced-config">
+	<summary>Advanced: hyperparameters, initializer &amp; tokenizer</summary>
 	<div class="transformer-config-field">
 		<label class="transformer-slider-label">Model Dimension ($d_{\text{model}}$): </label>
 		<span id="dim-val" class="transformer-slider-value">3</span>
@@ -143,9 +145,11 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	    </select>
 	    <p class="transformer-slider-note"><b>Effect:</b> Word splitting is simple and keeps the vocabulary tiny. BPE learns frequent subword merges from the current training corpus, so rare words become several tokens. Switching the tokenizer retrains the vocabulary; BPE can make the sequence longer.</p>
 	</div>
+	<p class="transformer-slider-note">32D and 64D were tested in desktop Chromium; both use PCA, and 64D needs more memory, so 3D remains the default. The copy and conditional examples demonstrate pattern completion and memorization; the tiny model did not show a clean induction-head circuit in the scale tests.</p>
+	</details>
 
 <div class="transformer-config-field" id="transformer-preset-field">
-	<label class="transformer-slider-label">Configuration preset</label>
+	<label class="transformer-slider-label">Example</label>
 	<select id="transformer-preset" style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" onchange="applyTransformerPreset(this.value)">
 		<option value="custom" selected>Custom (manual sliders)</option>
 		<option value="tiny">Tiny 3D · every formula visible</option>
@@ -155,7 +159,7 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 		<option value="copy16">Copy pattern · 16D</option>
 		<option value="conditional16">Conditional pattern · 16D</option>
 	</select>
-	<p class="transformer-slider-note">Presets set the sliders and, for the pattern examples, the training corpus. Nothing trains automatically; press <b>Train Model</b> afterwards. 32D and 64D were tested in desktop Chromium; both use PCA, and 64D needs more memory, so 3D remains the default. The copy and conditional examples demonstrate pattern completion and memorization; the tiny model did not show a clean induction-head circuit in the scale tests.</p>
+	<p class="transformer-slider-note">Start here: pick a ready-made model. Presets set the sliders and, for the pattern examples, the training corpus. Nothing trains automatically; press <b>Train Model</b> afterwards. Open <b>Advanced</b> only if you want to change the manual hyperparameters.</p>
 </div>
 
 	<div id="param-breakdown-toggle" style="display: none; margin-top: 8px;">

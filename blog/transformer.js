@@ -1759,19 +1759,27 @@ function finalizeTrainingSession(btn, status, completedAll) {
 	if (typeof render_token_picker === 'function') render_token_picker();
 }
 
-async function train_transformer() {
-	const { d_model, n_layers, n_heads } = getTransformerConfig();
-	const btn    = document.querySelector('.train-btn');
-	const status = document.getElementById('training-status');
+async function tmWithCpuBackend(fn) {
+	let prev = null;
+	try {
+		if (typeof tf.ready === 'function') await tf.ready();
+		prev = tf.getBackend();
+	} catch (e) { prev = null; }
+	let switched = false;
+	if (prev && prev !== 'cpu') {
+		try { await tf.setBackend('cpu'); await tf.ready(); switched = true; } catch (e) { switched = false; }
+	}
+	try {
+		return await fn();
+	} finally {
+		if (switched) {
+			try { await tf.setBackend(prev); await tf.ready(); } catch (e) { /* stay on cpu */ }
+		}
+	}
+}
 
-	if (!validateTrainingPreconditions(status)) return;
-	if (window.isTraining) { window.isTraining = false; return; }
-
-	const { lr, epochs, optType } = initTrainingSession(btn, status);
+async function _runTrainingSession(lr, epochs, optType, tokens, d_model, n_layers, n_heads, btn, status) {
 	const optimizer = createOptimizer(optType, lr);
-
-	const tokens = getTrainingTokens();
-	if (tokens.length === 0) { finalizeTrainingSession(btn, status, false); return; }
 
 	ensureWeightsAndEmbeddings(tokens, n_layers, d_model);
 	if (_forceFullTransformerVisualization) _forceFullTransformerVisualization();
@@ -1811,6 +1819,24 @@ async function train_transformer() {
 	run_transformer_demo();
 
 	finalizeTrainingSession(btn, status, completedAll);
+}
+
+async function train_transformer() {
+	const { d_model, n_layers, n_heads } = getTransformerConfig();
+	const btn    = document.querySelector('.train-btn');
+	const status = document.getElementById('training-status');
+
+	if (!validateTrainingPreconditions(status)) return;
+	if (window.isTraining) { window.isTraining = false; return; }
+
+	const { lr, epochs, optType } = initTrainingSession(btn, status);
+
+	const tokens = getTrainingTokens();
+	if (tokens.length === 0) { finalizeTrainingSession(btn, status, false); return; }
+
+	await tmWithCpuBackend(function () {
+		return _runTrainingSession(lr, epochs, optType, tokens, d_model, n_layers, n_heads, btn, status);
+	});
 }
 
 function getTrainingTokens() {
