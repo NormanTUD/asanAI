@@ -121,6 +121,7 @@
 		_js("representation_analysis.js");
 		_js("skip_connection.js");
 		_js("optimizer.js");
+		_js("tooltips.js");
 		_js("loss_metric.js");
 		_js("labels.js");
 		// cnn3d.js + libs/CSS2DRenderer.js are loaded lazily on first

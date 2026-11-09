@@ -20,6 +20,127 @@ function is_basic_option(item) {
 	return BASIC_OPTIONS.has(item);
 }
 
+var LAYER_OPTION_TOOLTIP_KEYS = {
+	activation: "layer_activation_description",
+	recurrent_activation: "layer_recurrent_activation_description",
+	units: "layer_units_description",
+	filters: "layer_filters_description",
+	kernel_size: "layer_kernel_size_description",
+	pool_size: "layer_pool_size_description",
+	strides: "layer_strides_description",
+	padding: "layer_padding_description",
+	dilation_rate: "layer_dilation_rate_description",
+	dropout_rate: "layer_dropout_rate_description",
+	rate: "layer_dropout_rate_description",
+	dropout: "layer_dropout_rate_description",
+	recurrent_dropout: "layer_recurrent_dropout_description",
+	use_bias: "layer_use_bias_description",
+	trainable: "layer_trainable_description",
+	seed: "layer_seed_description",
+	alpha: "layer_alpha_description",
+	beta: "layer_beta_description",
+	max_value: "layer_max_value_description",
+	visualize: "layer_visualize_description",
+	theta: "layer_theta_description",
+	axis: "layer_axis_description",
+	epsilon: "layer_epsilon_description",
+	center: "layer_center_description",
+	scale: "layer_scale_description",
+	momentum: "layer_momentum_description",
+	size: "layer_size_description",
+	target_shape: "layer_target_shape_description",
+	interpolation: "layer_interpolation_description",
+	depth_multiplier: "layer_depth_multiplier_description",
+	stddev: "layer_stddev_description",
+	max_features: "layer_max_features_description",
+	number_lstm_cells: "layer_number_lstm_cells_description",
+	implementation: "layer_implementation_description",
+	stateful: "layer_stateful_description",
+	return_state: "layer_return_state_description",
+	return_sequences: "layer_return_sequences_description",
+	go_backwards: "layer_go_backwards_description",
+	unroll: "layer_unroll_description",
+	unit_forget_bias: "layer_unit_forget_bias_description",
+	dtype: "layer_dtype_description",
+	initializer: "layer_initializer_description",
+	kernel_initializer: "layer_kernel_initializer_description",
+	bias_initializer: "layer_bias_initializer_description",
+	gamma_initializer: "layer_gamma_initializer_description",
+	beta_initializer: "layer_beta_initializer_description",
+	moving_mean_initializer: "layer_moving_mean_initializer_description",
+	moving_variance_initializer: "layer_moving_variance_initializer_description",
+	recurrent_initializer: "layer_recurrent_initializer_description",
+	depthwise_initializer: "layer_depthwise_initializer_description",
+	pointwise_initializer: "layer_pointwise_initializer_description",
+	regularizer: "layer_regularizer_description",
+	kernel_regularizer: "layer_kernel_regularizer_description",
+	bias_regularizer: "layer_bias_regularizer_description",
+	gamma_regularizer: "layer_gamma_regularizer_description",
+	beta_regularizer: "layer_beta_regularizer_description",
+	activity_regularizer: "layer_activity_regularizer_description",
+	depthwise_regularizer: "layer_depthwise_regularizer_description",
+	pointwise_regularizer: "layer_pointwise_regularizer_description",
+	constraint: "layer_constraint_description",
+	kernel_constraint: "layer_kernel_constraint_description",
+	bias_constraint: "layer_bias_constraint_description",
+	gamma_constraint: "layer_gamma_constraint_description",
+	beta_constraint: "layer_beta_constraint_description",
+	depthwise_constraint: "layer_depthwise_constraint_description",
+	pointwise_constraint: "layer_pointwise_constraint_description",
+	recurrent_constraint: "layer_recurrent_constraint_description",
+	regularizer_l1: "layer_regularizer_l1_description",
+	regularizer_l2: "layer_regularizer_l2_description",
+	initializer_value: "layer_initializer_value_description",
+	initializer_seed: "layer_initializer_seed_description",
+	initializer_stddev: "layer_initializer_stddev_description",
+	initializer_mean: "layer_initializer_mean_description",
+	initializer_minval: "layer_initializer_minval_description",
+	initializer_maxval: "layer_initializer_maxval_description",
+	initializer_gain: "layer_initializer_gain_description",
+	initializer_scale: "layer_initializer_scale_description",
+	initializer_mode: "layer_initializer_mode_description",
+	initializer_distribution: "layer_initializer_distribution_description",
+	activation_alpha: "layer_activation_alpha_description",
+	activation_max_value: "layer_activation_max_value_description",
+	activation_axis: "layer_activation_axis_description",
+	activation_theta: "layer_activation_theta_description"
+};
+
+function get_layer_option_tooltip_key (classname) {
+	var name = String(classname || "").replace(/_[xyz]$/, "");
+
+	if (Object.prototype.hasOwnProperty.call(LAYER_OPTION_TOOLTIP_KEYS, name)) {
+		return LAYER_OPTION_TOOLTIP_KEYS[name];
+	}
+
+	if (/^activation_/.test(name)) {
+		return LAYER_OPTION_TOOLTIP_KEYS[name] || LAYER_OPTION_TOOLTIP_KEYS[name.replace(/^activation_/, "")] || null;
+	}
+
+	if (/^[a-z]+_initializer_/.test(name)) {
+		var initializer_param = name.replace(/^[a-z]+_initializer_/, "");
+		return LAYER_OPTION_TOOLTIP_KEYS["initializer_" + initializer_param] || LAYER_OPTION_TOOLTIP_KEYS.initializer;
+	}
+
+	if (name.indexOf("_initializer") !== -1) {
+		return LAYER_OPTION_TOOLTIP_KEYS[name] || LAYER_OPTION_TOOLTIP_KEYS.initializer;
+	}
+
+	if (/^[a-z]+_regularizer_l[12]$/.test(name)) {
+		return LAYER_OPTION_TOOLTIP_KEYS[name.replace(/^[a-z]+_/, "")] || LAYER_OPTION_TOOLTIP_KEYS.regularizer;
+	}
+
+	if (name.indexOf("_regularizer") !== -1) {
+		return LAYER_OPTION_TOOLTIP_KEYS[name] || LAYER_OPTION_TOOLTIP_KEYS.regularizer;
+	}
+
+	if (name.indexOf("_constraint") !== -1) {
+		return LAYER_OPTION_TOOLTIP_KEYS[name] || LAYER_OPTION_TOOLTIP_KEYS.constraint;
+	}
+
+	return null;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // build_layer_options_html
 // ─────────────────────────────────────────────────────────────────────────────
@@ -160,6 +281,8 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 	assert(typeof(tr_class) == "string" || tr_class === undefined || tr_class === null, "tr_class is not a string");
 
 	var new_uuid = uuidv4();
+	var tooltip_key = get_layer_option_tooltip_key(classname);
+	var tooltip_attr = tooltip_key ? " data-tr-title='" + tooltip_key + "'" : "";
 
 	var str = "<tr";
 	if (tr_class) {
@@ -170,9 +293,9 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 	}
 	str += ">";
 
-	str += "<td>" + desc + ":</td>";
+	str += "<td" + tooltip_attr + ">" + desc + ":</td>";
 	str += "<td>";
-	str += build_input_element(type, classname, new_uuid, data, nr);
+	str += build_input_element(type, classname, new_uuid, data, nr, tooltip_key);
 	str += "</td>";
 
 	return str;
@@ -183,15 +306,15 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 // Dispatches to the correct input creator based on type
 // ─────────────────────────────────────────────────────────────────────────────
 
-function build_input_element(type, classname, new_uuid, data, nr) {
+function build_input_element(type, classname, new_uuid, data, nr, tooltip_key = null) {
 	if (type == "select") {
-		return create_select_for_layer_panel_str(classname, new_uuid, data);
+		return create_select_for_layer_panel_str(classname, new_uuid, data, tooltip_key);
 	} else if (type == "text") {
-		return create_text_for_layer_panel_str(classname, data, nr);
+		return create_text_for_layer_panel_str(classname, data, nr, tooltip_key);
 	} else if (type == "number") {
-		return create_number_input_for_layer_panel_str(classname, new_uuid, data);
+		return create_number_input_for_layer_panel_str(classname, new_uuid, data, tooltip_key);
 	} else if (type == "checkbox") {
-		return create_checkbox_for_layer_panel_str(classname, new_uuid, data);
+		return create_checkbox_for_layer_panel_str(classname, new_uuid, data, tooltip_key);
 	}
 
 	err("[build_input_element] Invalid table type: " + type);
@@ -206,8 +329,8 @@ async function show_layers(number) {
 	var layers_container_str = "";
 	var layer_visualizations_tab_str = get_layer_visualization_tab_str();
 
-	var remove = "<button class='add_remove_layer_button remove_layer' disabled='' onclick='remove_layer(this)'>-</button>&thinsp;";
-	var add = "<button class='add_remove_layer_button add_layer' onclick='add_layer(this)'>+</button>&nbsp;";
+	var remove = "<button class='add_remove_layer_button remove_layer' data-tr-title='layer_remove_button_description' disabled='' onclick='remove_layer(this)'>-</button>&thinsp;";
+	var add = "<button class='add_remove_layer_button add_layer' data-tr-title='layer_add_button_description' onclick='add_layer(this)'>+</button>&nbsp;";
 
 	for (var layer_idx = 0; layer_idx < number; layer_idx++) {
 		layers_container_str +=
@@ -252,11 +375,11 @@ function option_for_layer(nr) {
 	var str = "";
 	str += "<tr>";
 	str += "<td style='width: 110%;'>";
-	str += "<button style='cursor: pointer' class='left_border_radius show_data layer_options_button' onclick='toggle_layer_options(this)'><img src='_gui/icons/settings.svg' class='icon_small' />&nbsp;<span class='TRANSLATEME_settings'></span></button>";
-	str += "<button style='cursor: pointer' class='right_border_radius show_data layer_help_button' onclick='toggle_layer_help(this)'>?</button>";
+	str += "<button style='cursor: pointer' class='left_border_radius show_data layer_options_button' data-tr-title='layer_settings_button_description' onclick='toggle_layer_options(this)'><img src='_gui/icons/settings.svg' class='icon_small' />&nbsp;<span class='TRANSLATEME_settings'></span></button>";
+	str += "<button style='cursor: pointer' class='right_border_radius show_data layer_help_button' data-tr-title='layer_help_button_description' onclick='toggle_layer_help(this)'>?</button>";
 	str += "</td>";
 	str += "<td>";
-	str += `<select id="${option_for_layer_id}" onfocus='disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
+	str += `<select id="${option_for_layer_id}" onfocus='disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type' data-tr-title='layer_type_description'>`;
 	var last_category = "";
 	for (var key of layer_names) {
 		var this_category = layer_options[key].category;
@@ -329,7 +452,7 @@ function add_seed_option (type, nr) {
 
 	var seed_value = get_unique_seed_for_layer(nr);
 
-	var res = "<tr class='seed_value' " + style + "><td>Seed</td><td><input onchange='updated_page()' type='number' name='seed' class='seed dropout_seed' value='" + seed_value + "' /></td></tr>";
+	var res = "<tr class='seed_value' " + style + "><td data-tr-title='layer_seed_description'>Seed</td><td><input onchange='updated_page()' type='number' name='seed' class='seed dropout_seed' data-tr-title='layer_seed_description' value='" + seed_value + "' /></td></tr>";
 
 	return res;
 }
@@ -340,7 +463,7 @@ function add_visualize_option(type, nr) {
 
 	var style = "";
 
-	var res = "<tr class='visualize_button' " + style + "><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>";
+	var res = "<tr class='visualize_button' " + style + "><td data-tr-title='layer_visualize_description'><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' data-tr-title='layer_visualize_description' onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>";
 
 	return res;
 }
@@ -472,9 +595,10 @@ async function insert_activation_options(layer_nr) {
 	await updated_page();
 }
 
-function create_number_input_for_layer_panel_str (classname, new_uuid, data) {
+function create_number_input_for_layer_panel_str (classname, new_uuid, data, tooltip_key = null) {
 	var str = "";
-	str += "<input class='input_field input_data " + classname + "' type='number' ";
+	var tooltip_attr = tooltip_key ? " data-tr-title='" + tooltip_key + "'" : "";
+	str += "<input class='input_field input_data " + classname + "' type='number' " + tooltip_attr + " ";
 
 	["min", "max", "step", "value"].forEach(key => {
 		if (key in data) {
@@ -494,11 +618,12 @@ function create_number_input_for_layer_panel_str (classname, new_uuid, data) {
 	return str;
 }
 
-function create_checkbox_for_layer_panel_str (classname, new_uuid, data) {
+function create_checkbox_for_layer_panel_str (classname, new_uuid, data, tooltip_key = null) {
 	var str = "";
 	var on_change_string = "updated_page(null, null, this);";
+	var tooltip_attr = tooltip_key ? " data-tr-title='" + tooltip_key + "'" : "";
 
-	str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}' `;
+	str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}'${tooltip_attr} `;
 	if ("status" in data && data["status"] == "checked") {
 		str += " checked ";
 	}
@@ -512,8 +637,9 @@ function create_checkbox_for_layer_panel_str (classname, new_uuid, data) {
 	return str;
 }
 
-function create_text_for_layer_panel_str (classname, data, nr) {
+function create_text_for_layer_panel_str (classname, data, nr, tooltip_key = null) {
 	var str = "";
+	var tooltip_attr = tooltip_key ? " data-tr-title='" + tooltip_key + "'" : "";
 	var placeholder = "";
 
 	if ("placeholder" in data) {
@@ -538,13 +664,14 @@ function create_text_for_layer_panel_str (classname, data, nr) {
 		pre_text = ` value='${dilation_rate_generated}'`;
 	}
 
-	str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} data-createdfrom="create_text_for_layer_panel_str" type="text" _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />`;
+	str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} ${tooltip_attr} data-createdfrom="create_text_for_layer_panel_str" type="text" _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />`;
 
 	return str;
 }
 
-function create_select_for_layer_panel_str(classname, new_uuid, data) {
+function create_select_for_layer_panel_str(classname, new_uuid, data, tooltip_key = null) {
 	var str = "";
+	var tooltip_attr = tooltip_key ? " data-tr-title='" + tooltip_key + "'" : "";
 
 	var onchange_text = "updated_page(null, null, this);";
 
@@ -568,7 +695,7 @@ function create_select_for_layer_panel_str(classname, new_uuid, data) {
 		//onchange_text = "insert_activation_options(find_layer_number_by_element($(this)));updated_page(null, null, this)";
 	}
 
-	str += `<select id="select_${new_uuid}" class='input_field input_data  ${classname}' data-createdfrom="create_select_for_layer_panel_str" _onchange='${onchange_text}'>`;
+	str += `<select id="select_${new_uuid}" class='input_field input_data  ${classname}'${tooltip_attr} data-createdfrom="create_select_for_layer_panel_str" _onchange='${onchange_text}'>`;
 	for (var [key, value] of Object.entries(data)) {
 		str += "<option value=\"" + key + "\">" + value + "</option>";
 	}
@@ -1737,7 +1864,7 @@ function build_advanced_section(advanced_html, nr) {
 	var marked_html = $temp.find("tbody").html();
 
 	var toggle_btn = "<tr class='advanced_toggle_row'><td colspan='2'>";
-	toggle_btn += "<button type='button' class='advanced_options_toggle_button' ";
+	toggle_btn += "<button type='button' class='advanced_options_toggle_button' data-tr-title='layer_advanced_options_description' ";
 	toggle_btn += "data-section-class='" + section_class + "' ";
 	toggle_btn += "data-expanded='false' ";
 	toggle_btn += "onclick='toggle_advanced_options(this)'>";

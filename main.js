@@ -1357,6 +1357,7 @@ async function _init_app_finalization(LM) {
 	}
 
 	autoset_dark_theme_if_user_prefers_it();
+	setRibbonTooltips();
 	setOptimizerTooltips();
 
 	document.getElementById('navbar1').addEventListener('click', function(event) {

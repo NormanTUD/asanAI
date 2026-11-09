@@ -77,7 +77,9 @@ function setOptimizerTooltips() {
 
 		Object.keys(variables).forEach(function(variableName) {
 			const tooltipText = variables[variableName][lang];
-			$(`#${optimizerName}_metadata .TRANSLATEME_${variableName}`).attr('title', tooltipText);
+			const $label = $(`#${optimizerName}_metadata .TRANSLATEME_${variableName}`);
+			$label.attr('title', tooltipText);
+			$label.closest("tr").find("input, select").attr('title', tooltipText);
 		});
 	});
 }

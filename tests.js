@@ -1375,6 +1375,7 @@ function removeIdAttribute(htmlString) {
 	try {
 		var regex = /(\s+id\s*=\s*['"][^'"]+['"])/g;
 		var modifiedHtml = htmlString.replace(regex, "");
+		modifiedHtml = modifiedHtml.replace(/\s+data-tr-title\s*=\s*['"][^'"]*['"]/g, "");
 
 		return modifiedHtml;
 	} catch (error) {
@@ -2049,6 +2050,58 @@ function test_ribbon_labels_toggle_checkboxes() {
 	return toggled && checkbox.checked === before;
 }
 
+function test_ribbon_and_layer_tooltips() {
+	setRibbonTooltips();
+
+	var missing = [];
+	Object.keys(RIBBON_TOOLTIP_KEYS).forEach(function (selector) {
+		var $nodes = $(selector);
+		if (!$nodes.length) {
+			missing.push(selector + " (no match)");
+			return;
+		}
+		$nodes.each(function () {
+			if (!$(this).attr("data-tr-title") || !$(this).attr("title")) {
+				missing.push(selector);
+			}
+		});
+	});
+	test_equal("every ribbon control has a hover tooltip", missing.join(", "), "");
+
+	var missing_keys = [];
+	["en", "de"].forEach(function (language_code) {
+		Object.keys(RIBBON_TOOLTIP_KEYS).forEach(function (selector) {
+			var key = RIBBON_TOOLTIP_KEYS[selector];
+			if (!language[language_code][key]) {
+				missing_keys.push(language_code + ":" + key);
+			}
+		});
+		Object.keys(LAYER_OPTION_TOOLTIP_KEYS).forEach(function (name) {
+			var key = LAYER_OPTION_TOOLTIP_KEYS[name];
+			if (!language[language_code][key]) {
+				missing_keys.push(language_code + ":" + key);
+			}
+		});
+	});
+	test_equal("all tooltip keys exist in English and German", missing_keys.join(", "), "");
+
+	var samples = {
+		units: "layer_units_description",
+		filters: "layer_filters_description",
+		kernel_size_x: "layer_kernel_size_description",
+		activation: "layer_activation_description"
+	};
+	Object.keys(samples).forEach(function (classname) {
+		test_equal("layer option " + classname + " maps to its tooltip", get_layer_option_tooltip_key(classname), samples[classname]);
+	});
+
+	var html = get_tr_str_for_layer_table("Units", "units", "number", { "min": 1, "value": 2 }, 0);
+	test_equal("generated layer rows carry a tooltip on label and input", (html.match(/data-tr-title/g) || []).length, 2);
+	test_equal("generated layer rows use the units description", html.indexOf("layer_units_description") !== -1, true);
+
+	return missing.length === 0 && missing_keys.length === 0;
+}
+
 function test_prepare_site_for_training_always_clears_plot() {
 	const old_unchanged = _model_fingerprint_unchanged;
 	const plot = document.getElementById("plotly_epoch_history");
@@ -2394,6 +2447,7 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("hidden-tab Plotly charts resize after activation", await test_plotly_resize_after_tab_show(), true);
 	test_equal("mobile More panel exposes views and model actions", test_mobile_more_panel_markup(), true);
 	test_equal("ribbon labels toggle their checkboxes", test_ribbon_labels_toggle_checkboxes(), true);
+	test_equal("ribbon and layer settings expose bilingual hover tooltips", test_ribbon_and_layer_tooltips(), true);
 	test_equal("new training run always clears the old loss plot", test_prepare_site_for_training_always_clears_plot(), true);
 	test_equal("loss plot shows a loading spinner until the first render", test_plotly_loading_placeholder_clears_after_render(), true);
 	test_equal("augmented previews are drawn into the photo gallery canvas", await test_augmented_previews_go_to_gallery_canvas(), true);

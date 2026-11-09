@@ -186,6 +186,8 @@ function _get_skip_initializer_sub_options_html(nr, initializer_name, section_cl
 	for (var i = 0; i < options.length; i++) {
 		var opt_name = options[i];
 		var opt_value = (opt_name in current_params) ? current_params[opt_name] : _get_skip_initializer_default_value(opt_name, nr);
+		var tooltip_key = LAYER_OPTION_TOOLTIP_KEYS["initializer_" + opt_name] || LAYER_OPTION_TOOLTIP_KEYS.initializer;
+		var tooltip_attr = " data-tr-title='" + tooltip_key + "'";
 
 		var class_attr = "skip_connection_initializer_option_tr";
 		if (section_class) {
@@ -193,24 +195,24 @@ function _get_skip_initializer_sub_options_html(nr, initializer_name, section_cl
 		}
 
 		str += "<tr class='" + class_attr + "' style='" + display_style + "'>";
-		str += "<td>" + opt_name.charAt(0).toUpperCase() + opt_name.slice(1) + ":</td>";
+		str += "<td" + tooltip_attr + ">" + opt_name.charAt(0).toUpperCase() + opt_name.slice(1) + ":</td>";
 		str += "<td>";
 		if (opt_name === "mode") {
-			str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page();'>";
+			str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "'" + tooltip_attr + " onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page();'>";
 			for (var mk in mode_modes) {
 				var sel = (mk === ("" + opt_value)) ? " selected" : "";
 				str += "<option value='" + mk + "'" + sel + ">" + mode_modes[mk] + "</option>";
 			}
 			str += "</select>";
 		} else if (opt_name === "distribution") {
-			str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page();'>";
+			str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "'" + tooltip_attr + " onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page();'>";
 			for (var dk in distribution_modes) {
 				var sel2 = (dk === ("" + opt_value)) ? " selected" : "";
 				str += "<option value='" + dk + "'" + sel2 + ">" + distribution_modes[dk] + "</option>";
 			}
 			str += "</select>";
 		} else {
-			str += "<input class='input_field skip_connection_initializer_param_" + opt_name + "' type='number' value='" + opt_value + "' min='-3.4e+38' max='3.4e+38' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page();' />";
+			str += "<input class='input_field skip_connection_initializer_param_" + opt_name + "'" + tooltip_attr + " type='number' value='" + opt_value + "' min='-3.4e+38' max='3.4e+38' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page();' />";
 		}
 		str += "</td>";
 		str += "</tr>";
@@ -238,9 +240,9 @@ function add_skip_connection_option(type, nr) {
 
 	var str = "";
 	str += "<tr class='skip_connection_tr'>";
-	str += "<td><span class='TRANSLATEME_skip_connection'>Skip Connection</span>:</td>";
+	str += "<td data-tr-title='layer_skip_connection_description'><span class='TRANSLATEME_skip_connection'>Skip Connection</span>:</td>";
 	str += "<td>";
-	str += "<input type='checkbox' class='skip_connection_enabled' " + checked_attr + " onchange='toggle_skip_connection(find_layer_number_by_element(this), this)' />";
+	str += "<input type='checkbox' class='skip_connection_enabled' data-tr-title='layer_skip_connection_description' " + checked_attr + " onchange='toggle_skip_connection(find_layer_number_by_element(this), this)' />";
 	str += "</td>";
 	str += "</tr>";
 
@@ -257,17 +259,17 @@ function add_skip_connection_option(type, nr) {
 		current_skip_count = max_skip_count;
 	}
 	str += "<tr class='skip_connection_count_tr' style='" + init_display + "'>";
-	str += "<td><span class='TRANSLATEME_skip_layers_count'>Layers to skip</span>:</td>";
+	str += "<td data-tr-title='layer_skip_layers_count_description'><span class='TRANSLATEME_skip_layers_count'>Layers to skip</span>:</td>";
 	str += "<td>";
-	str += "<input class='input_field skip_connection_count' type='number' value='" + current_skip_count + "' min='1' max='" + max_skip_count + "' onchange='update_skip_connection_count(find_layer_number_by_element(this), this)' />";
+	str += "<input class='input_field skip_connection_count' data-tr-title='layer_skip_layers_count_description' type='number' value='" + current_skip_count + "' min='1' max='" + max_skip_count + "' onchange='update_skip_connection_count(find_layer_number_by_element(this), this)' />";
 	str += "</td>";
 	str += "</tr>";
 
 	// Initializer selector row (hidden when skip is disabled)
 	str += "<tr class='skip_connection_initializer_tr' style='" + init_display + "'>";
-	str += "<td>Skip Initializer:</td>";
+	str += "<td data-tr-title='layer_skip_initializer_description'>Skip Initializer:</td>";
 	str += "<td>";
-	str += "<select class='input_field skip_connection_initializer_select' onchange='update_skip_connection_initializer(find_layer_number_by_element(this), this); insert_skip_initializer_options(find_layer_number_by_element(this), this); updated_page(null, null, this, null, 1);'>";
+	str += "<select class='input_field skip_connection_initializer_select' data-tr-title='layer_skip_initializer_description' onchange='update_skip_connection_initializer(find_layer_number_by_element(this), this); insert_skip_initializer_options(find_layer_number_by_element(this), this); updated_page(null, null, this, null, 1);'>";
 	for (var key in initializers) {
 		if (initializers.hasOwnProperty(key)) {
 			var selected_attr = (key === current_initializer) ? " selected" : "";
