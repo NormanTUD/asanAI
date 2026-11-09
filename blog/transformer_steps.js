@@ -2164,6 +2164,39 @@
 			showlegend: false
 		};
 	}
+	function _flattenNumbers(value, out) {
+		if (typeof value === "number") {
+			if (isFinite(value)) out.push(value);
+			return;
+		}
+		if (Array.isArray(value)) {
+			value.forEach(function (v) { _flattenNumbers(v, out); });
+		}
+	}
+
+	/* Equal x/y/z spans keep the unit sphere round. Without this, Plotly's
+	   auto ranges can give the axes different spans and the sphere renders
+	   as an ellipsoid. */
+	function equalize3D(layout, traces) {
+		if (!layout || !layout.scene) return layout;
+		var R = 1;
+		(traces || []).forEach(function (trace) {
+			["x", "y", "z"].forEach(function (axis) {
+				if (!trace || trace[axis] == null) return;
+				var nums = [];
+				_flattenNumbers(trace[axis], nums);
+				nums.forEach(function (v) { R = Math.max(R, Math.abs(v)); });
+			});
+		});
+		if (!isFinite(R) || R <= 0) R = 1;
+		layout.scene.aspectmode = "cube";
+		["xaxis", "yaxis", "zaxis"].forEach(function (axis) {
+			layout.scene[axis] = layout.scene[axis] || {};
+			layout.scene[axis].range = [-R, R];
+		});
+		return layout;
+	}
+
 	function plotlyLayout3D(title, axes) {
 		var c = _plotlyColors();
 		var p = palette();
@@ -2200,6 +2233,7 @@
 		sphereTraces: plotlySphereTraces,
 		circleTraces: plotlyCircleTraces,
 		coneTrace: plotlyConeTrace,
+		equalize3D: equalize3D,
 		layout3D: plotlyLayout3D,
 		layout2D: plotlyLayout2D
 	};
@@ -2408,6 +2442,7 @@
 		// The surrounding step text already describes the plot; no redundant
 		// in-plot title / metric subtitle.
 		var layout = projection.is3d ? tmPlotly.layout3D("", projection.axes) : tmPlotly.layout2D("", projection.axes);
+		if (projection.is3d) tmPlotly.equalize3D(layout, traces);
 		if (window.echarts && el) { var oldChart = echarts.getInstanceByDom(el); if (oldChart) oldChart.dispose(); }
 		var loading = el.querySelector(".plot-loading");
 		if (loading) loading.remove();

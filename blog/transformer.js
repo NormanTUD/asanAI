@@ -3342,6 +3342,7 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 	}
 	const title = _tmMetricTitle('Embedding Space');
 	const layout = dimensions === 3 ? window.tmPlotly.layout3D(title, ['Dim 0', 'Dim 1', 'Dim 2']) : window.tmPlotly.layout2D(title, ['Dim 0', 'Dim 1']);
+	if (dimensions === 3) window.tmPlotly.equalize3D(layout, traces);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
 	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
 }
@@ -3413,6 +3414,7 @@ function _embedding_render_highdim_pca(container, tokens, dimensions, highlightP
 		});
 	}
 	const layout = window.tmPlotly.layout3D(_tmMetricTitle('Embedding Space · PCA (d→3)'), ['PC 1', 'PC 2', 'PC 3']);
+	window.tmPlotly.equalize3D(layout, traces);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
 	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
 }
@@ -6003,6 +6005,7 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 
 	const title = 'Token Trajectory: Embedding → +Position → Layer Outputs' + (window.tmMetric && window.tmMetric.label ? ' · ' + window.tmMetric.label() : '') + (titleSuffix ? ' · ' + titleSuffix : '');
 	const layout = window.tmPlotly.layout3D(title, ['Dim 0', 'Dim 1', 'Dim 2']);
+	window.tmPlotly.equalize3D(layout, traces);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(trajDiv); if (oldChart) oldChart.dispose(); }
 	Plotly.react(trajDiv, traces, layout, { responsive: true, displayModeBar: false });
 }
@@ -6381,7 +6384,7 @@ function _shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, 
 			hovertext: [tip], hovertemplate: '%{hovertext}<extra></extra>', showlegend: false
 		});
 	});
-	const layout = window.tmPlotly.layout2D(_tmMetricTitle('Semantic Vector → + Positional Shift'), ['Dim 0', 'Dim 1']);
+	const layout = window.tmPlotly.layout2D('', ['Dim 0', 'Dim 1']);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
 	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
 }
@@ -6412,7 +6415,8 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		markerPoints.push({ x: to[0], y: to[1] || 0, z: to[2] || 0, size: 8, color: color, symbol: 'diamond', hover: tip });
 	});
 	if (markerPoints.length) traces.push(_tmMarkerTrace(markerPoints));
-	const layout = window.tmPlotly.layout3D(_tmMetricTitle('Semantic Vector → + Positional Shift') + (modeLabel ? ' · ' + modeLabel : ''), ['Dim 0', 'Dim 1', 'Dim 2']);
+	const layout = window.tmPlotly.layout3D('', ['Dim 0', 'Dim 1', 'Dim 2']);
+	window.tmPlotly.equalize3D(layout, traces);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
 	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
 }
@@ -6448,8 +6452,8 @@ function _shift_render_highdim_plotly(container, tokenStrings, base, combined, d
 			dimensions: dims
 		}], {
 			paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
-			title: { text: _tmMetricTitle('Semantic Vector → + Positional Shift · parallel'), font: { size: 13, color: themeColor('#1e293b') } },
-			margin: { l: 60, r: 30, t: 40, b: 20 },
+			title: { text: '' },
+			margin: { l: 60, r: 30, t: 10, b: 20 },
 			labelfont: { size: 9, color: themeColor('#64748b') }, tickfont: { size: 8, color: themeColor('#64748b') }, labelside: 'bottom'
 		}, { responsive: true, displayModeBar: false });
 	} catch (e) {
@@ -6457,7 +6461,7 @@ function _shift_render_highdim_plotly(container, tokenStrings, base, combined, d
 			type: 'scatter', mode: 'markers',
 			x: base.map(v => v[0] || 0), y: combined.map(v => v[0] || 0),
 			marker: { size: 6, color: colors, colorscale: [[0, '#3b82f6'], [1, '#10b981']] }
-		}], window.tmPlotly.layout2D(_tmMetricTitle('Semantic Vector → + Positional Shift'), ['D0 Base', 'D0 +PE']), { responsive: true, displayModeBar: false });
+		}], window.tmPlotly.layout2D('', ['D0 Base', 'D0 +PE']), { responsive: true, displayModeBar: false });
 	}
 }
 
