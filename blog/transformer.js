@@ -2523,10 +2523,6 @@ function renderTrajectoryPlot(d_model) {
 			'border:2px solid var(--mn-border, #cbd5e1); border-radius:12px; margin-top:10px; background:var(--mn-surface, #FDFAF1); box-sizing:border-box;';
 		wrapper.setAttribute('data-d-model', d_model);
 
-		if (d_model <= 3) {
-			wrapper.appendChild(createTrajectoryVFToggleButton());
-		}
-
 		trajDiv = document.createElement('div');
 		trajDiv.id = containerId;
 		trajDiv.style.cssText =
@@ -2535,6 +2531,7 @@ function renderTrajectoryPlot(d_model) {
 		trajDiv.setAttribute('data-d-model', d_model);
 
 		wrapper.appendChild(trajDiv);
+		if (d_model <= 3) wrapper.appendChild(createTrajectoryVFToggleButton());
 		var metricExplain = createTrajectoryMetricExplanation();
 		wrapper.appendChild(metricExplain);
 		if (window.tmTypesetMathIn) window.tmTypesetMathIn(metricExplain);
@@ -2557,7 +2554,8 @@ function renderTrajectoryPlot(d_model) {
 				const existingBtn = wrapper.querySelector('.trajectory-vf-toggle');
 				const existingNote = wrapper.querySelector('.trajectory-vf-note');
 				if (d_model <= 3 && !existingBtn) {
-					wrapper.insertBefore(createTrajectoryVFToggleButton(), trajDiv);
+					var newBtn = createTrajectoryVFToggleButton();
+					wrapper.insertBefore(newBtn, trajDiv.nextSibling || null);
 				} else if (d_model > 3 && existingBtn) {
 					existingBtn.remove();
 					window._trajectoryVfEnabled = false;
@@ -4375,7 +4373,7 @@ function createVFToggleButton(id, d_model, existingVfEnabled) {
 	toggleBtn.dataset.migrationId = id;
 	toggleBtn.textContent = existingVfEnabled ? ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field') : ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field');
 	toggleBtn.style.cssText = `
-	margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
+	margin: 6px 12px 0; padding: 6px 16px; border-radius: 6px;
 	border: 1px solid #3b82f6; background: ${existingVfEnabled ? '#dbeafe' : '#fff'}; color: #3b82f6;
 	cursor: pointer; font-weight: 600; font-size: 0.82rem;
 	transition: all 0.15s;
@@ -8471,7 +8469,7 @@ function createTrajectoryVFToggleButton() {
 		? ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field')
 		: ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field');
 	toggleBtn.style.cssText = `
-	margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
+	margin: 6px 12px 0; padding: 6px 16px; border-radius: 6px;
 	border: 1px solid #8b5cf6;
 	background: ${window._trajectoryVfEnabled ? '#ede9fe' : '#fff'};
 	color: #8b5cf6;
