@@ -428,6 +428,10 @@ Treat these as hard behaviour:
 - Verify no-flash behaviour after changes. `tenminutes_pages_test.py` catches
   console and layout regressions; a small canvas-pixel count before and just
   after a control click catches a loader flash.
+- The standalone `probability_tunnel.html` is the reference for a true 3-D,
+  rotatable heightfield without libraries: raw WebGL terrain, 2-D background and
+  FX canvases, depth-tested path ribbons, camera orbit/zoom/pan, and precomputed
+  canyon kernels for smooth temperature morphs. Keep it self-contained.
 
 ## Formula cards and ML notation
 

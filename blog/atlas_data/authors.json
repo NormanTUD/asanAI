@@ -1200,6 +1200,7 @@
    "history",
    "intuition",
    "math_iv",
+   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -6157,6 +6158,7 @@
    "history",
    "intuition",
    "math_iv",
+   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -7896,6 +7898,7 @@
   "cited_in": [
    "attentionlab",
    "frontier",
+   "modern_transformer",
    "positionalembeddingslab",
    "transformer"
   ]
@@ -21065,6 +21068,7 @@
    "zhang2019rmsnorm"
   ],
   "cited_in": [
+   "modern_transformer",
    "normalizationlab",
    "transformer"
   ]
@@ -40839,6 +40843,7 @@
    "history",
    "intuition",
    "math_iv",
+   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -42506,6 +42511,7 @@
    "history",
    "intuition",
    "math_iv",
+   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -42860,6 +42866,7 @@
    "attentionlab",
    "contextwindows",
    "inference_optimization",
+   "modern_transformer",
    "production_serving",
    "transformer"
   ]
@@ -44583,6 +44590,7 @@
   "cited_in": [
    "attentionlab",
    "frontier",
+   "modern_transformer",
    "positionalembeddingslab",
    "transformer"
   ]
@@ -47015,6 +47023,7 @@
    "attentionlab",
    "contextwindows",
    "inference_optimization",
+   "modern_transformer",
    "production_serving",
    "transformer"
   ]
@@ -50900,6 +50909,7 @@
    "history",
    "intuition",
    "math_iv",
+   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -55245,6 +55255,7 @@
    "attentionlab",
    "contextwindows",
    "inference_optimization",
+   "modern_transformer",
    "production_serving",
    "transformer"
   ]
@@ -57710,6 +57721,7 @@
    "history",
    "intuition",
    "math_iv",
+   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -58193,6 +58205,7 @@
    "intuition",
    "math_iv",
    "mixture_of_experts",
+   "modern_transformer",
    "music_video_generation",
    "optimizerlab",
    "origami",
@@ -62832,6 +62845,7 @@
    "embeddinglab",
    "history",
    "intuition",
+   "modern_transformer",
    "normalizationlab",
    "people_of_ai",
    "tokenizerlab",
@@ -66881,6 +66895,7 @@
   "cited_in": [
    "attentionlab",
    "frontier",
+   "modern_transformer",
    "positionalembeddingslab",
    "transformer"
   ]
@@ -77412,6 +77427,7 @@
   "cited_in": [
    "attentionlab",
    "frontier",
+   "modern_transformer",
    "positionalembeddingslab",
    "transformer"
   ]
@@ -77834,6 +77850,7 @@
   "cited_in": [
    "attentionlab",
    "frontier",
+   "modern_transformer",
    "positionalembeddingslab",
    "transformer"
   ]
@@ -79214,6 +79231,7 @@
    "history",
    "intuition",
    "math_iv",
+   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",

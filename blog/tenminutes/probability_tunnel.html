@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="de" data-lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Der Wahrscheinlichkeitstunnel — Ten Minutes</title>
+<style>
+@font-face { font-family: "Barlow"; src: url("assets/fonts/barlow-700.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("assets/fonts/barlow-600.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Open Sans"; src: url("assets/fonts/open-sans-v40-latin-300.woff2") format("woff2"); font-weight: 300; font-display: swap; }
+@font-face { font-family: "Open Sans"; src: url("assets/fonts/open-sans-v40-latin-regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Open Sans"; src: url("assets/fonts/open-sans-v40-latin-600.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+
+:root {
+  --ink: #eaf6ff;
+  --soft: #b9d0e2;
+  --muted: #7f9bb0;
+  --cyan: #68dcff;
+  --cyan-deep: #1496b8;
+  --gold: #ffd166;
+  --gold-soft: #ffe6a6;
+  --bg: #040812;
+  --line: rgba(125, 205, 255, 0.16);
+  --line-strong: rgba(125, 205, 255, 0.3);
+  --glass: rgba(6, 16, 30, 0.78);
+  --mono: "SFMono-Regular", "Cascadia Code", "Liberation Mono", monospace;
+}
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; }
+body {
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Open Sans", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+#bg, #stage, #fx { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+#bg { z-index: 0; }
+#stage { z-index: 1; cursor: grab; touch-action: none; }
+#stage.is-grabbing { cursor: grabbing; }
+#fx { z-index: 2; pointer-events: none; }
+.vignette {
+  position: fixed; inset: 0; pointer-events: none; z-index: 3;
+  background:
+    radial-gradient(ellipse 65% 55% at 50% 48%, transparent 42%, rgba(1, 4, 10, 0.58) 100%),
+    linear-gradient(180deg, rgba(1, 4, 10, 0.32), transparent 28%, transparent 78%, rgba(1, 4, 10, 0.5));
+}
+.hero {
+  position: fixed; top: 30px; left: 34px; width: min(460px, calc(100vw - 68px));
+  pointer-events: none; z-index: 5;
+}
+.kicker {
+  margin-bottom: 12px;
+  font: 600 0.64rem/1.2 "Barlow", sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.hero h1 {
+  margin: 0;
+  font: 700 clamp(2.3rem, 4.2vw, 4.2rem)/0.92 "Barlow", sans-serif;
+  letter-spacing: -0.035em;
+  text-shadow: 0 0 35px rgba(80, 200, 255, 0.18);
+}
+.hero p {
+  max-width: 42ch;
+  margin: 14px 0 0;
+  font: 300 0.92rem/1.6 "Open Sans", sans-serif;
+  color: var(--soft);
+}
+.panel {
+  position: fixed; top: 30px; right: 30px; width: min(342px, calc(100vw - 60px));
+  z-index: 6;
+  padding: 18px 18px 16px;
+  background: linear-gradient(155deg, rgba(9, 24, 43, 0.86), rgba(4, 11, 22, 0.8));
+  border: 1px solid var(--line);
+  box-shadow: 0 28px 80px -38px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+}
+.panel::before {
+  content: ""; position: absolute; inset: 0 auto auto 0; width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0.65;
+}
+.eyebrow, .next-label, .temp-head, .legend-label {
+  font: 600 0.58rem/1.2 "Barlow", sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sequence {
+  display: flex; flex-wrap: wrap; gap: 0.34em; align-items: baseline;
+  margin: 7px 0 16px;
+  font: 600 0.84rem/1.4 var(--mono);
+  color: var(--soft);
+}
+.sequence span { opacity: 0.42; }
+.sequence span.is-current { color: var(--cyan); opacity: 1; text-shadow: 0 0 12px rgba(104, 220, 255, 0.5); }
+.next-card {
+  padding: 12px 13px 11px;
+  border: 1px solid var(--line);
+  background: rgba(3, 10, 20, 0.52);
+}
+.next-word {
+  margin-top: 5px;
+  font: 700 1.65rem/1 "Barlow", sans-serif;
+  letter-spacing: -0.02em;
+  color: var(--gold-soft);
+  text-shadow: 0 0 24px rgba(255, 209, 102, 0.18);
+}
+.next-prob { margin-top: 4px; font: 600 0.7rem/1.2 var(--mono); color: var(--gold); }
+.options { display: grid; gap: 8px; margin: 14px 0 16px; }
+.opt {
+  display: grid;
+  grid-template-columns: minmax(0, 5.6rem) minmax(0, 1fr) 3.2rem;
+  align-items: center; gap: 8px;
+  font: 400 0.7rem/1.2 var(--mono);
+  color: var(--muted);
+}
+.opt.is-main { color: var(--ink); }
+.opt-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.opt-bar { height: 4px; background: rgba(125, 205, 255, 0.11); overflow: hidden; }
+.opt-bar i { display: block; width: 0%; height: 100%; background: linear-gradient(90deg, var(--cyan-deep), var(--cyan)); transition: width 120ms linear; }
+.opt.is-main .opt-bar i { background: linear-gradient(90deg, #b8860b, var(--gold)); }
+.opt-pct { text-align: right; color: var(--muted); }
+.opt.is-main .opt-pct { color: var(--gold); }
+.temp-block { padding-top: 14px; border-top: 1px solid var(--line); }
+.temp-head { display: flex; align-items: baseline; justify-content: space-between; }
+.temp-head output { font: 600 0.7rem/1 var(--mono); color: var(--cyan); }
+#temp {
+  width: 100%; margin: 11px 0 5px; accent-color: var(--cyan); cursor: pointer;
+  height: 20px; background: transparent;
+}
+#temp::-webkit-slider-runnable-track {
+  height: 3px;
+  background: linear-gradient(90deg, rgba(104, 220, 255, 0.18), var(--cyan), var(--gold));
+}
+#temp::-moz-range-track {
+  height: 3px;
+  background: linear-gradient(90deg, rgba(104, 220, 255, 0.18), var(--cyan), var(--gold));
+}
+#temp::-webkit-slider-thumb {
+  width: 13px; height: 13px; margin-top: -5px; border: 2px solid #04101c;
+  border-radius: 50%; background: var(--cyan); box-shadow: 0 0 14px rgba(104, 220, 255, 0.8);
+  -webkit-appearance: none;
+}
+#temp::-moz-range-thumb {
+  width: 11px; height: 11px; border: 2px solid #04101c;
+  border-radius: 50%; background: var(--cyan); box-shadow: 0 0 14px rgba(104, 220, 255, 0.8);
+}
+.temp-note { font: 300 0.66rem/1.35 "Open Sans", sans-serif; color: var(--muted); }
+.actions { display: flex; gap: 8px; margin-top: 15px; }
+.btn {
+  min-height: 36px; padding: 0 12px; border: 1px solid var(--line-strong);
+  background: rgba(7, 20, 36, 0.72); color: var(--soft);
+  font: 600 0.66rem/1 "Barlow", sans-serif; letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+}
+.btn:hover { border-color: var(--cyan); color: var(--ink); }
+.btn.primary {
+  flex: 1; min-width: 10.5rem;
+  border-color: transparent; color: #04111c;
+  background: linear-gradient(100deg, #73e3ff, #b8f4ff);
+}
+.btn.primary:hover { background: linear-gradient(100deg, #a2efff, #d8fbff); }
+.btn.primary span:last-child { margin-left: 8px; font-size: 0.95rem; }
+.lang-switch { position: fixed; right: 30px; bottom: 28px; z-index: 7; display: flex; gap: 6px; }
+.lang-switch button {
+  width: 36px; height: 30px; border: 1px solid var(--line);
+  background: rgba(4, 12, 24, 0.7); color: var(--muted);
+  font: 600 0.62rem/1 "Barlow", sans-serif; cursor: pointer;
+}
+.lang-switch button.is-on { border-color: var(--cyan); color: var(--cyan); background: rgba(104, 220, 255, 0.08); }
+.legend {
+  position: fixed; left: 34px; bottom: 28px; z-index: 5;
+  display: grid; gap: 7px; padding: 11px 13px;
+  border: 1px solid var(--line); background: rgba(3, 10, 20, 0.6);
+  backdrop-filter: blur(10px);
+}
+.legend-row { display: flex; align-items: center; gap: 8px; font: 400 0.64rem/1.3 var(--mono); color: var(--muted); }
+.legend-dot { width: 18px; height: 2px; display: inline-block; box-shadow: 0 0 8px currentColor; }
+.legend-dot.blue { color: var(--cyan); background: var(--cyan); }
+.legend-dot.gold { color: var(--gold); background: var(--gold); }
+.legend-dot.ridge { color: #ffedb0; background: linear-gradient(90deg, var(--cyan), var(--gold-soft)); }
+.hint {
+  position: fixed; left: 50%; bottom: 28px; z-index: 5; transform: translateX(-50%);
+  max-width: min(42ch, 48vw); text-align: center; pointer-events: none;
+  font: 300 0.68rem/1.5 "Open Sans", sans-serif; color: var(--muted);
+}
+.labels { position: fixed; inset: 0; z-index: 4; pointer-events: none; overflow: hidden; }
+.label {
+  position: absolute; left: 0; top: 0; transform: translate(-50%, -50%) translate3d(0, 0, 0);
+  padding: 4px 7px; border: 1px solid rgba(125, 205, 255, 0.18);
+  background: rgba(3, 10, 20, 0.76); color: var(--soft);
+  font: 600 0.6rem/1 var(--mono); letter-spacing: 0.02em; white-space: nowrap;
+  box-shadow: 0 6px 18px -12px rgba(0, 0, 0, 0.9);
+  transition: color 220ms ease, border-color 220ms ease, opacity 220ms ease;
+  will-change: transform, opacity;
+}
+.label.main.is-current { color: var(--cyan); border-color: rgba(104, 220, 255, 0.62); box-shadow: 0 0 18px -6px rgba(104, 220, 255, 0.7); }
+.label.side { color: var(--gold); border-color: rgba(255, 209, 102, 0.28); background: rgba(15, 12, 4, 0.7); }
+.label.side.is-main { color: var(--cyan); border-color: rgba(104, 220, 255, 0.42); background: rgba(3, 12, 22, 0.74); }
+.label.is-hidden { opacity: 0; }
+
+@media (max-width: 900px) {
+  .hero { top: 20px; left: 20px; width: calc(100vw - 40px); }
+  .hero h1 { font-size: clamp(2rem, 9vw, 3rem); }
+  .hero p { display: none; }
+  .panel {
+    top: auto; left: 14px; right: 14px; bottom: 14px; width: auto;
+    max-height: 45vh; overflow: auto; padding: 14px;
+  }
+  .legend { display: none; }
+  .hint { display: none; }
+  .lang-switch { top: 20px; bottom: auto; right: 20px; }
+  .next-word { font-size: 1.35rem; }
+  .actions { position: sticky; bottom: -14px; padding-top: 10px; background: linear-gradient(180deg, transparent, rgba(4, 11, 22, 0.94) 28%); }
+}
+@media (max-width: 560px) {
+  .opt { grid-template-columns: minmax(0, 4.8rem) minmax(0, 1fr) 2.8rem; }
+  .btn { font-size: 0.58rem; }
+  .btn.primary { min-width: 8.5rem; }
+}
+</style>
+</head>
+<body data-page="probability-tunnel">
+<canvas id="bg" aria-hidden="true"></canvas>
+<canvas id="stage" aria-label="A rotatable three-dimensional probability landscape with a deep winding canyon and glowing side canyons"></canvas>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="vignette"></div>
+
+<header class="hero">
+  <div class="kicker" data-i18n="kicker">Demo · Wahrscheinlichkeitslandschaft</div>
+  <h1 data-i18n="title">Der Wahrscheinlichkeitstunnel</h1>
+  <p data-i18n="subtitle">Eine Landschaft plausibler Fortsetzungen. Tiefe bedeutet Wahrscheinlichkeit: der blaue Pfad ist die wahrscheinlichste Route, goldene Becken sind Alternativen.</p>
+</header>
+
+<div class="lang-switch" role="group" aria-label="Language">
+  <button type="button" data-lang="de" class="is-on">DE</button>
+  <button type="button" data-lang="en">EN</button>
+</div>
+
+<aside class="panel" aria-label="Probability tunnel controls">
+  <div class="eyebrow" data-i18n="current">Aktueller Schritt</div>
+  <div class="sequence" id="sequence"></div>
+
+  <div class="next-card">
+    <div class="next-label" data-i18n="next">Nächstes Wort</div>
+    <div class="next-word" id="nextWord">capital</div>
+    <div class="next-prob" id="nextProb">—</div>
+  </div>
+
+  <div class="options" id="options"></div>
+
+  <div class="temp-block">
+    <div class="temp-head">
+      <span data-i18n="temperature">Temperatur</span>
+      <output id="tempOut">1.00</output>
+    </div>
+    <input id="temp" type="range" min="0.3" max="2" step="0.05" value="1" aria-label="Temperature">
+    <div class="temp-note" data-i18n="tempNote">Höher = breitere Verteilung, mehr Alternativen werden erreichbar.</div>
+  </div>
+
+  <div class="actions">
+    <button id="next" type="button" class="btn primary"><span id="nextLabel" data-i18n="nextBtn">Nächstes Wort</span><span aria-hidden="true">→</span></button>
+    <button id="reset" type="button" class="btn" data-i18n="reset">Von vorn</button>
+  </div>
+</aside>
+
+<div class="legend" aria-hidden="true">
+  <div class="legend-row"><i class="legend-dot blue"></i><span data-i18n="legendMain">wahrscheinlichster Pfad</span></div>
+  <div class="legend-row"><i class="legend-dot gold"></i><span data-i18n="legendSide">mögliche Abzweigungen</span></div>
+  <div class="legend-row"><i class="legend-dot ridge"></i><span data-i18n="legendRidge">unwahrscheinliche Grate</span></div>
+</div>
+<div class="hint" data-i18n="hint">Ziehe die Temperatur. Klicke „Nächstes Wort“ und beobachte, wie der Pfad tiefer wird.</div>
+<div id="labels" class="labels" aria-hidden="true"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var bgCanvas = document.getElementById("bg");
+  var stageCanvas = document.getElementById("stage");
+  var fxCanvas = document.getElementById("fx");
+  var bgCtx = bgCanvas.getContext("2d");
+  var fxCtx = fxCanvas.getContext("2d");
+  var gl = stageCanvas.getContext("webgl", { alpha: true, antialias: true, premultipliedAlpha: false });
+  var labelsRoot = document.getElementById("labels");
+  var sequenceEl = document.getElementById("sequence");
+  var nextWordEl = document.getElementById("nextWord");
+  var nextProbEl = document.getElementById("nextProb");
+  var optionsEl = document.getElementById("options");
+  var tempEl = document.getElementById("temp");
+  var tempOutEl = document.getElementById("tempOut");
+  var nextBtn = document.getElementById("next");
+  var nextLabel = document.getElementById("nextLabel");
+  var resetBtn = document.getElementById("reset");
+  var langButtons = Array.prototype.slice.call(document.querySelectorAll("[data-lang]"));
+
+  if (!gl) {
+    var panel = document.querySelector(".panel");
+    if (panel) panel.innerHTML = '<p style="font: 300 0.9rem/1.6 Open Sans, sans-serif;color:#b9d0e2">This demo needs WebGL. Open it in a browser with hardware acceleration enabled.</p>';
+    return;
+  }
+
+  var STEPS = [
+    { token: "The", x: 0.06, options: [
+      { label: "capital", logit: 2.7 },
+      { label: "city", logit: 0.9 },
+      { label: "idea", logit: 0.2 }
+    ]},
+    { token: "capital", x: 0.23, options: [
+      { label: "of", logit: 2.9 },
+      { label: "city", logit: 1.1 },
+      { label: "market", logit: 0.4 }
+    ]},
+    { token: "of", x: 0.40, options: [
+      { label: "France", logit: 3.0 },
+      { label: "Italy", logit: 1.2 },
+      { label: "the", logit: 0.5 }
+    ]},
+    { token: "France", x: 0.57, options: [
+      { label: "is", logit: 2.8 },
+      { label: "has", logit: 0.9 },
+      { label: "was", logit: 0.6 }
+    ]},
+    { token: "is", x: 0.74, options: [
+      { label: "Paris", logit: 3.2 },
+      { label: "Lyon", logit: 1.1 },
+      { label: "a", logit: 0.7 }
+    ]},
+    { token: "Paris", x: 0.90, options: [
+      { label: ".", logit: 2.2 },
+      { label: "and", logit: 0.9 },
+      { label: "the", logit: 0.6 }
+    ]}
+  ];
+
+  var I18N = {
+    de: {
+      kicker: "Demo · Wahrscheinlichkeitslandschaft",
+      title: "Der Wahrscheinlichkeitstunnel",
+      subtitle: "Eine Landschaft plausibler Fortsetzungen. Tiefe bedeutet Wahrscheinlichkeit: der blaue Pfad ist die wahrscheinlichste Route, goldene Canyons sind Alternativen.",
+      current: "Aktueller Schritt",
+      next: "Nächstes Wort",
+      temperature: "Temperatur",
+      tempNote: "Höher = breitere Verteilung, mehr Alternativen werden erreichbar.",
+      nextBtn: "Nächstes Wort",
+      restart: "Von vorn",
+      reset: "Von vorn",
+      legendMain: "wahrscheinlichster Pfad",
+      legendSide: "mögliche Abzweigungen",
+      legendRidge: "unwahrscheinliche Grate",
+      hint: "Ziehe zum Drehen, rolle zum Zoomen, Shift+Ziehen zum Verschieben, Doppelklick zum Zurücksetzen. Die Temperatur vertieft die Neben-Canyons."
+    },
+    en: {
+      kicker: "Demo · probability landscape",
+      title: "The probability tunnel",
+      subtitle: "A landscape of plausible continuations. Depth means probability: the blue path is the most likely route, golden canyons are alternatives.",
+      current: "Current step",
+      next: "Next word",
+      temperature: "Temperature",
+      tempNote: "Higher = a wider distribution, more alternatives become reachable.",
+      nextBtn: "Next word",
+      restart: "From the start",
+      reset: "From the start",
+      legendMain: "most likely path",
+      legendSide: "possible branches",
+      legendRidge: "unlikely ridges",
+      hint: "Drag to rotate, scroll to zoom, Shift+drag to pan, double-click to reset. Temperature deepens the side canyons."
+    }
+  };
+
+  var lang = "de";
+  var step = 0;
+  var orb = 0;
+  var temp = 1;
+  var tempTarget = 1;
+  var W = 0, H = 0, DPR = 1;
+  var NX = 144, NZ = 92;
+  var PATH_N = 260;
+  var SEGMENTS = [];
+  var KMAIN = null, KSIDE = null, KNOISE = null, KSIDEPROX = null;
+  var heights = null;
+  var mainWorld = [];
+  var sideWorld = [];
+  var trail = [];
+  var stars = [];
+  var frameCount = 0;
+  var lastFrame = performance.now();
+  var drawSamples = 0, drawTime = 0, terrainTime = 0;
+  var labels = [], sideLabels = [];
+  var panelRows = [];
+  var panelStep = -1;
+  var panelLang = "";
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var cam = { yaw: 0.26, pitch: 0.80, dist: 3.85, tx: 0, ty: 0.16, tz: 0 };
+  var camT = { yaw: 0.26, pitch: 0.80, dist: 3.85, tx: 0, ty: 0.16, tz: 0 };
+  var mvp = new Float32Array(16);
+  var viewM = new Float32Array(16);
+  var projM = new Float32Array(16);
+  var eye = [0, 0, 0];
+  var light = [-0.44, 0.82, 0.36];
+  var fog = [0.012, 0.028, 0.058];
+  var bgGrad = null, haloGrad = null;
+  var pointers = new Map();
+  var dragging = false;
+  var dragMode = "rotate";
+  var lastPointer = null;
+  var pinch = null;
+  var lastInteraction = performance.now();
+
+  function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function tNorm(t) { return clamp((t - 0.3) / 1.7, 0, 1); }
+  function pathCenter(x) { return 0.14 * Math.sin(x * 7.2 + 0.4) + 0.06 * Math.sin(x * 13.1 + 1.1); }
+  function worldX(nx) { return -1.35 + 2.70 * nx; }
+  function sideEnd(i, k) {
+    var dir = k === 1 ? 1 : -1;
+    var n0 = STEPS[i].x;
+    var n1 = clamp(n0 + 0.10 + 0.055 * (((i * 2 + k) % 4)), 0, 0.99);
+    var z = pathCenter(n1) + dir * (0.60 + 0.20 * Math.sin(i * 1.7 + k * 2.1));
+    z = clamp(z, -0.98, 0.98);
+    return { nx: n1, wx: worldX(n1), z: z };
+  }
+  function sidePoints(i, k) {
+    var n0 = STEPS[i].x;
+    var end = sideEnd(i, k);
+    var midN = clamp(lerp(n0, end.nx, 0.52) + 0.018 * Math.sin(i * 1.3 + k), 0, 0.99);
+    var midZ = clamp(lerp(pathCenter(n0), end.z, 0.52) + 0.10 * Math.sin(i * 2.0 + k * 1.7), -0.99, 0.99);
+    return [
+      [worldX(n0), pathCenter(n0)],
+      [worldX(midN), midZ],
+      [end.wx, end.z]
+    ];
+  }
+  function distToPolyline(px, pz, pts) {
+    var best = 1e9;
+    for (var j = 1; j < pts.length; j++) {
+      var d = segDist(px, pz, pts[j - 1][0], pts[j - 1][1], pts[j][0], pts[j][1]);
+      if (d < best) best = d;
+    }
+    return best;
+  }
+  function stepX(v) {
+    var i = Math.floor(v);
+    if (i >= STEPS.length - 1) return STEPS[STEPS.length - 1].x;
+    if (i < 0) return STEPS[0].x;
+    return lerp(STEPS[i].x, STEPS[i + 1].x, v - i);
+  }
+  function segDist(px, pz, ax, az, bx, bz) {
+    var vx = bx - ax, vz = bz - az;
+    var wx = px - ax, wz = pz - az;
+    var d = vx * vx + vz * vz;
+    var t = d ? clamp((wx * vx + wz * vz) / d, 0, 1) : 0;
+    var dx = px - (ax + vx * t), dz = pz - (az + vz * t);
+    return Math.hypot(dx, dz);
+  }
+  function prepareSegments() {
+    SEGMENTS = [];
+    for (var i = 0; i < STEPS.length; i++) {
+      for (var k = 1; k < STEPS[i].options.length; k++) {
+        SEGMENTS.push({
+          i: i, k: k,
+          points: sidePoints(i, k),
+          logit: STEPS[i].options[k].logit
+        });
+      }
+    }
+  }
+  function heightAt(nx, z, t) {
+    var tn = tNorm(t);
+    var wx = worldX(nx);
+    var h = 1.035;
+    var main = Math.exp(-Math.pow((z - pathCenter(nx)) / 0.145, 2));
+    h -= (0.94 - 0.24 * tn) * main;
+    for (var i = 0; i < SEGMENTS.length; i++) {
+      var s = SEGMENTS[i];
+      var d = distToPolyline(wx, z, s.points);
+      var depth = 0.34 + 0.50 * tn + 0.12 * ((s.logit + 1) / 4.2);
+      h -= depth * Math.exp(-Math.pow(d / 0.11, 2));
+    }
+    var r1 = Math.sin(7.0 * wx + 4.0 * z) * Math.cos(6.0 * z - 5.0 * wx);
+    var r2 = 0.55 * Math.sin(15.0 * wx - 8.0 * z + 1.3) * Math.cos(11.0 * z + 3.0 * wx);
+    h += 0.075 * Math.pow(Math.abs((r1 + r2) * 0.5), 1.22);
+    h += 0.022 * Math.sin(29.0 * wx + 17.0 * z) * Math.cos(23.0 * z - 13.0 * wx);
+    return Math.max(0, h);
+  }
+  function sideProx(nx, z) {
+    var wx = worldX(nx);
+    var best = 0;
+    for (var i = 0; i < SEGMENTS.length; i++) {
+      var s = SEGMENTS[i];
+      var d = distToPolyline(wx, z, s.points);
+      var p = Math.exp(-Math.pow(d / 0.14, 2));
+      if (p > best) best = p;
+    }
+    return best;
+  }
+  function softmax(options, t) {
+    var vals = options.map(function (o) { return o.logit / t; });
+    var max = Math.max.apply(null, vals);
+    var ex = vals.map(function (v) { return Math.exp(v - max); });
+    var sum = ex.reduce(function (a, b) { return a + b; }, 0);
+    return ex.map(function (v) { return v / sum; });
+  }
+
+  function perspective(out, fovy, aspect, near, far) {
+    var f = 1 / Math.tan(fovy / 2), nf = 1 / (near - far);
+    out[0] = f / aspect; out[1] = 0; out[2] = 0; out[3] = 0;
+    out[4] = 0; out[5] = f; out[6] = 0; out[7] = 0;
+    out[8] = 0; out[9] = 0; out[10] = (far + near) * nf; out[11] = -1;
+    out[12] = 0; out[13] = 0; out[14] = 2 * far * near * nf; out[15] = 0;
+  }
+  function lookAt(out, e, c, up) {
+    var z0 = e[0] - c[0], z1 = e[1] - c[1], z2 = e[2] - c[2];
+    var len = Math.hypot(z0, z1, z2) || 1;
+    z0 /= len; z1 /= len; z2 /= len;
+    var x0 = up[1] * z2 - up[2] * z1, x1 = up[2] * z0 - up[0] * z2, x2 = up[0] * z1 - up[1] * z0;
+    len = Math.hypot(x0, x1, x2) || 1;
+    x0 /= len; x1 /= len; x2 /= len;
+    var y0 = z1 * x2 - z2 * x1, y1 = z2 * x0 - z0 * x2, y2 = z0 * x1 - z1 * x0;
+    out[0] = x0; out[1] = y0; out[2] = z0; out[3] = 0;
+    out[4] = x1; out[5] = y1; out[6] = z1; out[7] = 0;
+    out[8] = x2; out[9] = y2; out[10] = z2; out[11] = 0;
+    out[12] = -(x0 * e[0] + x1 * e[1] + x2 * e[2]);
+    out[13] = -(y0 * e[0] + y1 * e[1] + y2 * e[2]);
+    out[14] = -(z0 * e[0] + z1 * e[1] + z2 * e[2]);
+    out[15] = 1;
+  }
+  function multiply(out, a, b) {
+    for (var c = 0; c < 4; c++) {
+      for (var r = 0; r < 4; r++) {
+        out[c * 4 + r] = a[r] * b[c * 4] + a[4 + r] * b[c * 4 + 1] + a[8 + r] * b[c * 4 + 2] + a[12 + r] * b[c * 4 + 3];
+      }
+    }
+  }
+  function projectPoint(x, y, z) {
+    var cx = mvp[0] * x + mvp[4] * y + mvp[8] * z + mvp[12];
+    var cy = mvp[1] * x + mvp[5] * y + mvp[9] * z + mvp[13];
+    var cw = mvp[3] * x + mvp[7] * y + mvp[11] * z + mvp[15];
+    if (cw <= 0.0001) return { x: 0, y: 0, visible: false };
+    var nx = cx / cw, ny = cy / cw;
+    return {
+      x: (nx * 0.5 + 0.5) * W,
+      y: (1 - (ny * 0.5 + 0.5)) * H,
+      visible: nx > -1.2 && nx < 1.2 && ny > -1.2 && ny < 1.2
+    };
+  }
+
+  var terrainVS = [
+    "attribute vec3 aPos;",
+    "attribute vec3 aNormal;",
+    "attribute vec2 aPath;",
+    "uniform mat4 uMVP;",
+    "uniform mat4 uMV;",
+    "varying vec3 vNormal;",
+    "varying vec3 vPos;",
+    "varying vec2 vPath;",
+    "varying float vDepth;",
+    "void main() {",
+    "  vNormal = aNormal;",
+    "  vPos = aPos;",
+    "  vPath = aPath;",
+    "  vec4 mv = uMV * vec4(aPos, 1.0);",
+    "  vDepth = -mv.z;",
+    "  gl_Position = uMVP * vec4(aPos, 1.0);",
+    "}"
+  ].join("\n");
+  var terrainFS = [
+    "precision highp float;",
+    "varying vec3 vNormal;",
+    "varying vec3 vPos;",
+    "varying vec2 vPath;",
+    "varying float vDepth;",
+    "uniform vec3 uLight;",
+    "uniform vec3 uEye;",
+    "uniform vec3 uFog;",
+    "vec3 palette(float t) {",
+    "  vec3 c = mix(vec3(0.015,0.035,0.09), vec3(0.025,0.16,0.30), smoothstep(0.00,0.16,t));",
+    "  c = mix(c, vec3(0.035,0.38,0.52), smoothstep(0.16,0.32,t));",
+    "  c = mix(c, vec3(0.06,0.68,0.68), smoothstep(0.32,0.50,t));",
+    "  c = mix(c, vec3(0.38,0.88,0.72), smoothstep(0.50,0.66,t));",
+    "  c = mix(c, vec3(1.00,0.82,0.40), smoothstep(0.66,0.83,t));",
+    "  c = mix(c, vec3(1.00,0.96,0.80), smoothstep(0.83,1.00,t));",
+    "  return c;",
+    "}",
+    "void main() {",
+    "  vec3 n = normalize(vNormal);",
+    "  float diff = max(dot(n, normalize(uLight)), 0.0);",
+    "  float h = clamp(vPos.y / 1.08, 0.0, 1.0);",
+    "  vec3 base = palette(h);",
+    "  base = mix(base, vec3(0.08,0.60,1.00), vPath.x * 0.58);",
+    "  base = mix(base, vec3(1.00,0.71,0.22), vPath.y * 0.50);",
+    "  float bands = 0.93 + 0.07 * smoothstep(0.35, 0.65, fract(vPos.y * 22.0));",
+    "  vec3 col = base * (0.44 + 0.94 * diff) * bands;",
+    "  col += vec3(0.020,0.085,0.150) * pow(0.5 + 0.5 * n.y, 2.0);",
+    "  col += vec3(0.018,0.090,0.150) * vPath.x;",
+    "  col += vec3(0.100,0.048,0.000) * vPath.y;",
+    "  float rim = pow(1.0 - max(dot(n, normalize(uEye - vPos)), 0.0), 2.0);",
+    "  col += vec3(0.10,0.38,0.55) * rim * 0.24;",
+    "  float fogAmt = 1.0 - exp(-vDepth * 0.11);",
+    "  col = mix(col, uFog, fogAmt * 0.60);",
+    "  gl_FragColor = vec4(col, 1.0);",
+    "}"
+  ].join("\n");
+  var ribbonVS = [
+    "attribute vec3 aPos;",
+    "uniform mat4 uMVP;",
+    "void main() { gl_Position = uMVP * vec4(aPos, 1.0); }"
+  ].join("\n");
+  var ribbonFS = [
+    "precision mediump float;",
+    "uniform vec4 uColor;",
+    "void main() { gl_FragColor = uColor; }"
+  ].join("\n");
+
+  function shader(type, source) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, source);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+    return s;
+  }
+  function makeProgram(vs, fs) {
+    var p = gl.createProgram();
+    gl.attachShader(p, shader(gl.VERTEX_SHADER, vs));
+    gl.attachShader(p, shader(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    return p;
+  }
+  var terrainProg = makeProgram(terrainVS, terrainFS);
+  var ribbonProg = makeProgram(ribbonVS, ribbonFS);
+  var terrain = {
+    aPos: gl.getAttribLocation(terrainProg, "aPos"),
+    aNormal: gl.getAttribLocation(terrainProg, "aNormal"),
+    aPath: gl.getAttribLocation(terrainProg, "aPath"),
+    uMVP: gl.getUniformLocation(terrainProg, "uMVP"),
+    uMV: gl.getUniformLocation(terrainProg, "uMV"),
+    uLight: gl.getUniformLocation(terrainProg, "uLight"),
+    uEye: gl.getUniformLocation(terrainProg, "uEye"),
+    uFog: gl.getUniformLocation(terrainProg, "uFog")
+  };
+  var ribbon = {
+    aPos: gl.getAttribLocation(ribbonProg, "aPos"),
+    uMVP: gl.getUniformLocation(ribbonProg, "uMVP"),
+    uColor: gl.getUniformLocation(ribbonProg, "uColor")
+  };
+  var posBuf = gl.createBuffer();
+  var pathAttrUploaded = false;
+  var normBuf = gl.createBuffer();
+  var pathBuf = gl.createBuffer();
+  var idxBuf = gl.createBuffer();
+  var ribbonPosBuf = gl.createBuffer();
+  var ribbonIdxBuf = gl.createBuffer();
+  var indexCount = 0;
+  var mainGlow = null, mainCore = null, sideGlow = [], sideCore = [];
+
+  function buildIndices() {
+    var idx = new Uint16Array(NX * NZ * 6);
+    var p = 0;
+    for (var r = 0; r < NZ; r++) {
+      for (var c = 0; c < NX; c++) {
+        var a = r * (NX + 1) + c;
+        var b = a + 1;
+        var d = a + (NX + 1);
+        var e = d + 1;
+        idx[p++] = a; idx[p++] = d; idx[p++] = b;
+        idx[p++] = b; idx[p++] = d; idx[p++] = e;
+      }
+    }
+    indexCount = idx.length;
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, idxBuf);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);
+  }
+  function prepareKernels() {
+    var n = (NX + 1) * (NZ + 1);
+    KMAIN = new Float32Array(n);
+    KNOISE = new Float32Array(n);
+    KSIDEPROX = new Float32Array(n);
+    KSIDE = new Float32Array(n * SEGMENTS.length);
+    for (var c = 0; c <= NX; c++) {
+      var nx = c / NX;
+      var wx = worldX(nx);
+      for (var r = 0; r <= NZ; r++) {
+        var z = -1.05 + 2.1 * (r / NZ);
+        var i = r * (NX + 1) + c;
+        KMAIN[i] = Math.exp(-Math.pow((z - pathCenter(nx)) / 0.145, 2));
+        var r1 = Math.sin(7.0 * wx + 4.0 * z) * Math.cos(6.0 * z - 5.0 * wx);
+        var r2 = 0.55 * Math.sin(15.0 * wx - 8.0 * z + 1.3) * Math.cos(11.0 * z + 3.0 * wx);
+        KNOISE[i] = 0.075 * Math.pow(Math.abs((r1 + r2) * 0.5), 1.22) + 0.022 * Math.sin(29.0 * wx + 17.0 * z) * Math.cos(23.0 * z - 13.0 * wx);
+        var best = 0;
+        for (var s = 0; s < SEGMENTS.length; s++) {
+          var seg = SEGMENTS[s];
+          var d = distToPolyline(wx, z, seg.points);
+          KSIDE[i * SEGMENTS.length + s] = Math.exp(-Math.pow(d / 0.11, 2));
+          var p = Math.exp(-Math.pow(d / 0.14, 2));
+          if (p > best) best = p;
+        }
+        KSIDEPROX[i] = best;
+      }
+    }
+  }
+  function heightFromKernels(i, t) {
+    var tn = tNorm(t);
+    var h = 1.035 + KNOISE[i] - (0.94 - 0.24 * tn) * KMAIN[i];
+    for (var s = 0; s < SEGMENTS.length; s++) {
+      h -= (0.34 + 0.50 * tn + 0.12 * ((SEGMENTS[s].logit + 1) / 4.2)) * KSIDE[i * SEGMENTS.length + s];
+    }
+    return Math.max(0, h);
+  }
+  function buildTerrain() {
+    var t0 = performance.now();
+    var n = (NX + 1) * (NZ + 1);
+    heights = new Float32Array(n);
+    var pos = new Float32Array(n * 3);
+    var norm = new Float32Array(n * 3);
+    var pattr = new Float32Array(n * 2);
+    for (var c = 0; c <= NX; c++) {
+      var nx = c / NX;
+      var wx = worldX(nx);
+      for (var r = 0; r <= NZ; r++) {
+        var z = -1.05 + 2.1 * (r / NZ);
+        var i = r * (NX + 1) + c;
+        var h = heightFromKernels(i, temp);
+        heights[i] = h;
+        pos[i * 3] = wx; pos[i * 3 + 1] = h; pos[i * 3 + 2] = z;
+        pattr[i * 2] = KMAIN[i];
+        pattr[i * 2 + 1] = KSIDEPROX[i];
+      }
+    }
+    var dx = 2.70 / NX, dz = 2.10 / NZ;
+    for (var c2 = 0; c2 <= NX; c2++) {
+      for (var r2 = 0; r2 <= NZ; r2++) {
+        var i2 = r2 * (NX + 1) + c2;
+        var hl = heights[r2 * (NX + 1) + Math.max(0, c2 - 1)];
+        var hr = heights[r2 * (NX + 1) + Math.min(NX, c2 + 1)];
+        var hd = heights[Math.max(0, r2 - 1) * (NX + 1) + c2];
+        var hu = heights[Math.min(NZ, r2 + 1) * (NX + 1) + c2];
+        var nxv = -(hr - hl) / (2 * dx), nzv = -(hu - hd) / (2 * dz), nyv = 1;
+        var nl = Math.hypot(nxv, nyv, nzv) || 1;
+        norm[i2 * 3] = nxv / nl; norm[i2 * 3 + 1] = nyv / nl; norm[i2 * 3 + 2] = nzv / nl;
+      }
+    }
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, pos, gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, normBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, norm, gl.DYNAMIC_DRAW);
+    if (!pathAttrUploaded) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, pathBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, pattr, gl.STATIC_DRAW);
+      pathAttrUploaded = true;
+    }
+    terrainTime = performance.now() - t0;
+    buildPaths();
+  }
+  function makeRibbon(points, width) {
+    var n = points.length;
+    if (n < 2) return null;
+    var pos = new Float32Array(n * 2 * 3);
+    var idx = new Uint16Array((n - 1) * 6);
+    for (var i = 0; i < n; i++) {
+      var p = points[i];
+      var a = points[Math.max(0, i - 1)];
+      var b = points[Math.min(n - 1, i + 1)];
+      var tx = b[0] - a[0], tz = b[2] - a[2];
+      var len = Math.hypot(tx, tz) || 1;
+      var px = -tz / len * width, pz = tx / len * width;
+      var o = i * 6;
+      pos[o] = p[0] + px; pos[o + 1] = p[1]; pos[o + 2] = p[2] + pz;
+      pos[o + 3] = p[0] - px; pos[o + 4] = p[1]; pos[o + 5] = p[2] - pz;
+    }
+    for (var j = 0; j < n - 1; j++) {
+      var q = j * 6, v = j * 2;
+      idx[q] = v; idx[q + 1] = v + 1; idx[q + 2] = v + 2;
+      idx[q + 3] = v + 1; idx[q + 4] = v + 3; idx[q + 5] = v + 2;
+    }
+    return { pos: pos, idx: idx };
+  }
+  function buildPaths() {
+    mainWorld = [];
+    for (var i = 0; i < PATH_N; i++) {
+      var nx = i / (PATH_N - 1);
+      var z = pathCenter(nx);
+      mainWorld.push([worldX(nx), heightAt(nx, z, temp) + 0.022, z]);
+    }
+    mainGlow = makeRibbon(mainWorld, 0.12);
+    mainCore = makeRibbon(mainWorld, 0.032);
+    sideWorld = [];
+    sideGlow = [];
+    sideCore = [];
+    var s = STEPS[step];
+    for (var k = 1; k < s.options.length; k++) {
+      var seg = SEGMENTS.find(function (item) { return item.i === step && item.k === k; });
+      if (!seg) continue;
+      var p0 = seg.points[0], p1 = seg.points[1], p2 = seg.points[2];
+      var pts = [];
+      for (var j = 0; j <= 48; j++) {
+        var t = j / 48;
+        var u = 1 - t;
+        var wx2 = u * u * p0[0] + 2 * u * t * p1[0] + t * t * p2[0];
+        var z2 = u * u * p0[1] + 2 * u * t * p1[1] + t * t * p2[1];
+        var nx2 = (wx2 + 1.35) / 2.70;
+        pts.push([wx2, heightAt(nx2, z2, temp) + 0.024, z2]);
+      }
+      sideWorld.push(pts);
+      sideGlow.push(makeRibbon(pts, 0.11));
+      sideCore.push(makeRibbon(pts, 0.028));
+    }
+  }
+  function drawRibbon(rib, color) {
+    if (!rib) return;
+    gl.bindBuffer(gl.ARRAY_BUFFER, ribbonPosBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, rib.pos, gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(ribbon.aPos, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(ribbon.aPos);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ribbonIdxBuf);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, rib.idx, gl.DYNAMIC_DRAW);
+    gl.uniform4fv(ribbon.uColor, color);
+    gl.drawElements(gl.TRIANGLES, rib.idx.length, gl.UNSIGNED_SHORT, 0);
+  }
+  function updateCamera() {
+    var ease = 0.18;
+    cam.yaw += (camT.yaw - cam.yaw) * ease;
+    cam.pitch += (camT.pitch - cam.pitch) * ease;
+    cam.dist += (camT.dist - cam.dist) * ease;
+    cam.tx += (camT.tx - cam.tx) * ease;
+    cam.ty += (camT.ty - cam.ty) * ease;
+    cam.tz += (camT.tz - cam.tz) * ease;
+    var cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+    eye = [cam.tx + cam.dist * cp * Math.sin(cam.yaw), cam.ty + cam.dist * sp, cam.tz + cam.dist * cp * Math.cos(cam.yaw)];
+    perspective(projM, 42 * Math.PI / 180, W / H, 0.1, 30);
+    lookAt(viewM, eye, [cam.tx, cam.ty, cam.tz], [0, 1, 0]);
+    multiply(mvp, projM, viewM);
+  }
+  function drawScene() {
+    gl.viewport(0, 0, stageCanvas.width, stageCanvas.height);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.disable(gl.BLEND);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthMask(true);
+    gl.disable(gl.CULL_FACE);
+    gl.useProgram(terrainProg);
+    gl.uniformMatrix4fv(terrain.uMVP, false, mvp);
+    gl.uniformMatrix4fv(terrain.uMV, false, viewM);
+    gl.uniform3fv(terrain.uLight, light);
+    gl.uniform3fv(terrain.uEye, eye);
+    gl.uniform3fv(terrain.uFog, fog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+    gl.vertexAttribPointer(terrain.aPos, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(terrain.aPos);
+    gl.bindBuffer(gl.ARRAY_BUFFER, normBuf);
+    gl.vertexAttribPointer(terrain.aNormal, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(terrain.aNormal);
+    gl.bindBuffer(gl.ARRAY_BUFFER, pathBuf);
+    gl.vertexAttribPointer(terrain.aPath, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(terrain.aPath);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, idxBuf);
+    gl.drawElements(gl.TRIANGLES, indexCount, gl.UNSIGNED_SHORT, 0);
+    gl.useProgram(ribbonProg);
+    gl.uniformMatrix4fv(ribbon.uMVP, false, mvp);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+    gl.depthMask(false);
+    for (var i = 0; i < sideGlow.length; i++) {
+      drawRibbon(sideGlow[i], [1.0, 0.66, 0.18, 0.14]);
+      drawRibbon(sideCore[i], [1.0, 0.81, 0.40, 0.94]);
+    }
+    drawRibbon(mainGlow, [0.18, 0.72, 1.0, 0.16]);
+    drawRibbon(mainCore, [0.68, 0.96, 1.0, 0.98]);
+    gl.depthMask(true);
+    gl.disable(gl.BLEND);
+  }
+  function drawBackground(now) {
+    bgCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    bgCtx.clearRect(0, 0, W, H);
+    bgCtx.fillStyle = bgGrad;
+    bgCtx.fillRect(0, 0, W, H);
+    bgCtx.fillStyle = haloGrad;
+    bgCtx.fillRect(0, 0, W, H);
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      var a = reduced ? 0.25 : 0.18 + 0.28 * (0.5 + 0.5 * Math.sin(now * s.speed + s.phase));
+      bgCtx.fillStyle = "rgba(190, 230, 255, " + a.toFixed(3) + ")";
+      bgCtx.beginPath();
+      bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      bgCtx.fill();
+    }
+  }
+  function orbWorld() {
+    var t = clamp(stepX(orb), 0, 1);
+    var idx = t * (mainWorld.length - 1);
+    var i = Math.floor(idx), f = idx - i;
+    var a = mainWorld[Math.min(i, mainWorld.length - 1)];
+    var b = mainWorld[Math.min(i + 1, mainWorld.length - 1)];
+    if (!a || !b) return [0, 0, 0];
+    return [lerp(a[0], b[0], f), lerp(a[1], b[1], f) + 0.05, lerp(a[2], b[2], f)];
+  }
+  function drawFx(now) {
+    fxCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    fxCtx.clearRect(0, 0, W, H);
+    var ow = orbWorld();
+    trail.push(ow);
+    if (trail.length > 24) trail.shift();
+    for (var i = 0; i < trail.length; i++) {
+      var p = projectPoint(trail[i][0], trail[i][1], trail[i][2]);
+      if (!p.visible) continue;
+      var a = (i / trail.length) * 0.18;
+      fxCtx.fillStyle = "rgba(104, 220, 255, " + a.toFixed(3) + ")";
+      fxCtx.beginPath();
+      fxCtx.arc(p.x, p.y, 1.2 + 3.5 * (i / trail.length), 0, Math.PI * 2);
+      fxCtx.fill();
+    }
+    var op = projectPoint(ow[0], ow[1], ow[2]);
+    if (op.visible) {
+      var g = fxCtx.createRadialGradient(op.x, op.y, 0, op.x, op.y, 36);
+      g.addColorStop(0, "rgba(235, 253, 255, 0.98)");
+      g.addColorStop(0.16, "rgba(120, 235, 255, 0.82)");
+      g.addColorStop(0.5, "rgba(42, 180, 230, 0.24)");
+      g.addColorStop(1, "rgba(20, 90, 140, 0)");
+      fxCtx.fillStyle = g;
+      fxCtx.beginPath();
+      fxCtx.arc(op.x, op.y, 36, 0, Math.PI * 2);
+      fxCtx.fill();
+      fxCtx.fillStyle = "#f2feff";
+      fxCtx.beginPath();
+      fxCtx.arc(op.x, op.y, 4.1, 0, Math.PI * 2);
+      fxCtx.fill();
+    }
+  }
+  function makeLabel(text, cls) {
+    var el = document.createElement("div");
+    el.className = "label " + cls;
+    el.textContent = text;
+    labelsRoot.appendChild(el);
+    return el;
+  }
+  function renderLabels() {
+    labelsRoot.innerHTML = "";
+    labels = STEPS.map(function (s, i) {
+      var el = makeLabel(s.token, "main");
+      el.dataset.step = String(i);
+      return el;
+    });
+    sideLabels = [];
+    for (var i = 0; i < 2; i++) sideLabels.push(makeLabel("", "side"));
+  }
+  function setLabel(el, p, text, active, hidden) {
+    if (text != null) el.textContent = text;
+    el.classList.toggle("is-current", !!active);
+    el.classList.toggle("is-hidden", !!hidden || !p.visible);
+    el.style.transform = "translate(-50%, -50%) translate3d(" + p.x.toFixed(1) + "px," + p.y.toFixed(1) + "px, 0)";
+  }
+  function labelWorld(nx, z, lift) {
+    return projectPoint(worldX(nx), heightAt(nx, z, temp) + (lift || 0.07), z);
+  }
+  function updateLabels() {
+    for (var i = 0; i < labels.length; i++) {
+      var s = STEPS[i];
+      setLabel(labels[i], labelWorld(s.x, pathCenter(s.x), 0.075), s.token, i === step, false);
+    }
+    var s2 = STEPS[step];
+    for (var k = 1; k < 3; k++) {
+      var el = sideLabels[k - 1];
+      var opt = s2.options[k];
+      if (!opt) { el.classList.add("is-hidden"); continue; }
+      var seg = SEGMENTS.find(function (item) { return item.i === step && item.k === k; });
+      if (!seg) { el.classList.add("is-hidden"); continue; }
+      var end = seg.points[2];
+      var p = labelWorld((end[0] + 1.35) / 2.70, end[1], 0.08);
+      setLabel(el, p, opt.label, false, false);
+    }
+  }
+  function rebuildPanel() {
+    var s = STEPS[step];
+    var probs = softmax(s.options, temp);
+    var maxP = Math.max.apply(null, probs) || 1;
+    sequenceEl.innerHTML = STEPS.map(function (item, i) {
+      return '<span class="' + (i === step ? "is-current" : "") + '">' + item.token + "</span>";
+    }).join("");
+    optionsEl.innerHTML = s.options.map(function (opt, i) {
+      return '<div class="opt ' + (i === 0 ? "is-main" : "") + '">' +
+        '<span class="opt-label">' + opt.label + "</span>" +
+        '<span class="opt-bar"><i></i></span>' +
+        '<span class="opt-pct">—</span>' +
+      "</div>";
+    }).join("");
+    panelRows = Array.prototype.map.call(optionsEl.querySelectorAll(".opt"), function (row) {
+      return { bar: row.querySelector(".opt-bar i"), pct: row.querySelector(".opt-pct") };
+    });
+    panelStep = step;
+    panelLang = lang;
+    updatePanelValues(probs, maxP);
+  }
+  function updatePanelValues(probs, maxP) {
+    var s = STEPS[step];
+    for (var i = 0; i < panelRows.length; i++) {
+      panelRows[i].bar.style.width = (probs[i] / maxP * 100).toFixed(2) + "%";
+      panelRows[i].pct.textContent = (probs[i] * 100).toFixed(1) + "%";
+    }
+    nextWordEl.textContent = s.options[0].label;
+    nextProbEl.textContent = (probs[0] * 100).toFixed(1) + "% " + (lang === "de" ? "Wahrscheinlichkeit" : "probability");
+    tempOutEl.textContent = temp.toFixed(2);
+    nextLabel.textContent = step >= STEPS.length - 1 ? I18N[lang].restart : I18N[lang].nextBtn;
+  }
+  function updatePanel() {
+    if (panelStep !== step || panelLang !== lang) {
+      rebuildPanel();
+      return;
+    }
+    var probs = softmax(STEPS[step].options, temp);
+    var maxP = Math.max.apply(null, probs) || 1;
+    updatePanelValues(probs, maxP);
+  }
+  function applyLang(next) {
+    lang = next === "en" ? "en" : "de";
+    document.documentElement.lang = lang;
+    document.documentElement.dataset.lang = lang;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-i18n]"), function (el) {
+      var key = el.getAttribute("data-i18n");
+      if (I18N[lang][key]) el.textContent = I18N[lang][key];
+    });
+    langButtons.forEach(function (b) {
+      var on = b.getAttribute("data-lang") === lang;
+      b.classList.toggle("is-on", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    panelLang = "";
+    updatePanel();
+  }
+  function goNext() {
+    if (step >= STEPS.length - 1) {
+      step = 0;
+      orb = 0;
+    } else {
+      step++;
+    }
+    buildPaths();
+    panelStep = -1;
+    updatePanel();
+  }
+  function reset() {
+    step = 0;
+    orb = 0;
+    buildPaths();
+    panelStep = -1;
+    updatePanel();
+  }
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    [bgCanvas, stageCanvas, fxCanvas].forEach(function (c) {
+      c.width = Math.round(W * DPR);
+      c.height = Math.round(H * DPR);
+      c.style.width = W + "px";
+      c.style.height = H + "px";
+    });
+    bgCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    fxCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    bgGrad = bgCtx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, "#02050c");
+    bgGrad.addColorStop(0.52, "#061426");
+    bgGrad.addColorStop(1, "#01040a");
+    haloGrad = bgCtx.createRadialGradient(W * 0.5, H * 0.54, 0, W * 0.5, H * 0.54, H * 0.7);
+    haloGrad.addColorStop(0, "rgba(36, 142, 180, 0.16)");
+    haloGrad.addColorStop(0.45, "rgba(18, 78, 116, 0.05)");
+    haloGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+    stars = [];
+    var count = Math.round(W * H / 15000);
+    for (var i = 0; i < count; i++) {
+      stars.push({ x: Math.random() * W, y: Math.random() * H * 0.74, r: Math.random() * 1.2 + 0.2, phase: Math.random() * Math.PI * 2, speed: Math.random() * 0.0007 + 0.0002 });
+    }
+    buildTerrain();
+    renderLabels();
+    updatePanel();
+  }
+  function tick(now) {
+    var dt = Math.min(50, now - lastFrame);
+    lastFrame = now;
+    var t0 = performance.now();
+    if (Math.abs(temp - tempTarget) > 0.0005) {
+      temp += (tempTarget - temp) * 0.13;
+      if (Math.abs(temp - tempTarget) < 0.001) temp = tempTarget;
+      buildTerrain();
+      updatePanel();
+    }
+    if (Math.abs(orb - step) > 0.0008) {
+      orb += (step - orb) * (reduced ? 1 : 0.14);
+      if (Math.abs(orb - step) < 0.001) orb = step;
+    } else {
+      orb = step;
+    }
+    updateCamera();
+    drawBackground(now);
+    drawScene();
+    drawFx(now);
+    updateLabels();
+    frameCount++;
+    drawTime += performance.now() - t0;
+    drawSamples++;
+    requestAnimationFrame(tick);
+  }
+  function panBy(dx, dy) {
+    var scale = 0.0016 * camT.dist;
+    var rx = Math.cos(camT.yaw), rz = -Math.sin(camT.yaw);
+    var fx = -Math.sin(camT.yaw), fz = -Math.cos(camT.yaw);
+    camT.tx -= (dx * rx + dy * fx) * scale;
+    camT.tz -= (dx * rz + dy * fz) * scale;
+  }
+  stageCanvas.addEventListener("pointerdown", function (ev) {
+    lastInteraction = performance.now();
+    pointers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+    if (pointers.size === 2) {
+      var ps = Array.from(pointers.values());
+      pinch = { dist: Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y), target: camT.dist };
+      dragging = false;
+    } else {
+      dragging = true;
+      dragMode = (ev.button === 2 || ev.shiftKey) ? "pan" : "rotate";
+      lastPointer = { x: ev.clientX, y: ev.clientY };
+    }
+    try { stageCanvas.setPointerCapture(ev.pointerId); } catch (e) {}
+    stageCanvas.classList.add("is-grabbing");
+    ev.preventDefault();
+  });
+  stageCanvas.addEventListener("pointermove", function (ev) {
+    if (!pointers.has(ev.pointerId)) return;
+    pointers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+    lastInteraction = performance.now();
+    if (pointers.size === 2 && pinch) {
+      var ps = Array.from(pointers.values());
+      var d = Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y);
+      camT.dist = clamp(pinch.target * pinch.dist / Math.max(d, 1), 2.2, 8.0);
+      return;
+    }
+    if (!dragging || !lastPointer) return;
+    var dx = ev.clientX - lastPointer.x, dy = ev.clientY - lastPointer.y;
+    lastPointer = { x: ev.clientX, y: ev.clientY };
+    if (dragMode === "pan") {
+      panBy(dx, dy);
+    } else {
+      camT.yaw += dx * 0.006;
+      camT.pitch = clamp(camT.pitch - dy * 0.005, 0.22, 1.28);
+    }
+  });
+  function endPointer(ev) {
+    pointers.delete(ev.pointerId);
+    if (pointers.size < 2) pinch = null;
+    if (pointers.size === 0) {
+      dragging = false;
+      lastPointer = null;
+      stageCanvas.classList.remove("is-grabbing");
+    }
+    try { stageCanvas.releasePointerCapture(ev.pointerId); } catch (e) {}
+  }
+  stageCanvas.addEventListener("pointerup", endPointer);
+  stageCanvas.addEventListener("pointercancel", endPointer);
+  stageCanvas.addEventListener("wheel", function (ev) {
+    ev.preventDefault();
+    lastInteraction = performance.now();
+    camT.dist = clamp(camT.dist * Math.exp(ev.deltaY * 0.0011), 2.2, 8.0);
+  }, { passive: false });
+  stageCanvas.addEventListener("contextmenu", function (ev) { ev.preventDefault(); });
+  stageCanvas.addEventListener("dblclick", function () {
+    camT.yaw = 0.26; camT.pitch = 0.80; camT.dist = 3.85; camT.tx = 0; camT.tz = 0;
+  });
+  tempEl.addEventListener("input", function () {
+    tempTarget = parseFloat(tempEl.value) || 1;
+    updatePanel();
+  });
+  nextBtn.addEventListener("click", goNext);
+  resetBtn.addEventListener("click", reset);
+  langButtons.forEach(function (b) {
+    b.addEventListener("click", function () { applyLang(b.getAttribute("data-lang")); });
+  });
+  window.addEventListener("resize", resize, { passive: true });
+  document.addEventListener("visibilitychange", function () { lastFrame = performance.now(); });
+
+  prepareSegments();
+  prepareKernels();
+  buildIndices();
+  applyLang("de");
+  resize();
+  requestAnimationFrame(tick);
+
+  window.__probabilityTunnel = {
+    state: function () {
+      return { step: step, orb: orb, temp: temp, frames: frameCount, lang: lang, avgFrame: drawSamples ? drawTime / drawSamples : 0, terrainMs: terrainTime, camera: { yaw: cam.yaw, pitch: cam.pitch, dist: cam.dist, tx: cam.tx, tz: cam.tz }, sidePaths: sideCore.length, segments: SEGMENTS.length };
+    },
+    next: goNext,
+    reset: reset
+  };
+})();
+
+</script>
+</body>
+</html>

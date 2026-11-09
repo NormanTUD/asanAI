@@ -132,6 +132,32 @@ def main() -> None:
                   "scatter3d" in traj["types"] and "cone" in traj["types"] and "PCA" in traj["title"],
                   json.dumps(traj)[:300])
 
+            # 1c. The experimental 64D preset still renders through PCA.
+            page.evaluate("""() => {
+                const s = document.getElementById('transformer-preset');
+                s.value = 'wide64';
+                s.dispatchEvent(new Event('change', {bubbles: true}));
+            }""")
+            page.wait_for_timeout(900)
+            page.locator("#transformer-plotly-space").scroll_into_view_if_needed()
+            page.wait_for_timeout(1200)
+            high64 = page.evaluate("""() => {
+                const e = document.getElementById('transformer-plotly-space');
+                const d = (e && e.data) || [];
+                return {
+                    d: document.getElementById('transformer-dimension-model').value,
+                    types: [...new Set(d.map(t => t.type))],
+                    title: e && e.layout && e.layout.title ? e.layout.title.text : '',
+                    heap: performance.memory ? performance.memory.usedJSHeapSize : null,
+                };
+            }""")
+            check("64D preset renders through PCA",
+                  high64["d"] == "64" and "scatter3d" in high64["types"] and "PCA (d→3)" in high64["title"],
+                  json.dumps(high64)[:300])
+            check("64D render keeps JS heap under 350 MB",
+                  high64["heap"] is None or high64["heap"] < 350 * 1024 * 1024,
+                  json.dumps(high64)[:300])
+
             # 1b. A short 32D training run must stay finite.
             page.evaluate("""() => {
                 const set = (id, v, max) => {
@@ -194,6 +220,17 @@ def main() -> None:
             check("BPE tokenizer produces tokens and a vocabulary",
                   len(bpe["tokens"]) > 0 and bpe["vocab"] >= 5, json.dumps(bpe)[:300])
 
+            # 2b. Character tokenizer.
+            page.evaluate("""() => {
+                const s = document.getElementById('transformer-tokenizer-type');
+                s.value = 'chars';
+                s.dispatchEvent(new Event('change', {bubbles: true}));
+            }""")
+            page.wait_for_timeout(500)
+            chars = page.evaluate("() => transformer_tokenize_render('a b a', null, false)")
+            check("character tokenizer splits into characters",
+                  chars == ["a", " ", "b", " ", "a"], json.dumps(chars))
+
             # 3. Copy/induction-style learning at 16D.
             page.evaluate("""() => {
                 const s = document.getElementById('transformer-preset');
@@ -221,14 +258,18 @@ def main() -> None:
                 window.currentWeights = null;
                 window.persistentEmbeddingSpace = null;
                 window.last_d_model = null;
+                let seed = 123456789;
+                const origRandom = Math.random;
+                Math.random = function () { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
                 ensureWeightsAndEmbeddings(tokens, 2, 16);
+                Math.random = origRandom;
                 const cfg = getTransformerConfig();
                 const wv = convert_weights_to_tensors(window.currentWeights);
                 const av = collectTrainableVars(wv);
                 const opt = createOptimizer('adam', 0.05);
                 const t0 = performance.now();
                 let loss = null;
-                for (let e = 0; e < 50; e++) {
+                for (let e = 0; e < 80; e++) {
                     const cost = computeAndApplyGradients(tokens, wv, 16, 2, cfg.n_heads, av, opt, 1.0);
                     loss = (await cost.data())[0];
                     dispose(cost);
@@ -262,6 +303,37 @@ def main() -> None:
                   json.dumps(trained)[:400])
             check("copy training stays under 90 seconds at 16D",
                   trained["trainMs"] < 90000, json.dumps(trained)[:300])
+
+            # 4. Modern Transformer Lab: controls change real plots.
+            modern_errors: list[str] = []
+            page2 = browser.new_page(viewport={"width": 1200, "height": 900})
+            page2.on("pageerror", lambda e: modern_errors.append("pageerror: " + str(e)))
+            page2.on("console", lambda m: modern_errors.append("console: " + m.text) if m.type == "error" else None)
+            page2.goto(f"http://127.0.0.1:{port}/modern_transformer.php", wait_until="load", timeout=120000)
+            page2.wait_for_function("() => !!document.getElementById('mtl-attention').data", timeout=60000)
+            modern = page2.evaluate("""() => ({
+                attention: !!document.getElementById('mtl-attention').data,
+                logits: !!document.getElementById('mtl-logits').data,
+                rope: !!document.getElementById('mtl-rope-vectors').data,
+                score: !!document.getElementById('mtl-rope-score').data,
+            })""")
+            check("modern lab renders attention, logits and RoPE plots",
+                  all(modern.values()), json.dumps(modern))
+            page2.select_option("#mtl-pos", "sin")
+            page2.select_option("#mtl-attn", "mha")
+            page2.select_option("#mtl-ffn", "gelu")
+            page2.wait_for_timeout(500)
+            modern_changed = page2.evaluate("""() => ({
+                attention: !!document.getElementById('mtl-attention').data,
+                logits: !!document.getElementById('mtl-logits').data,
+                readout: document.getElementById('mtl-readout').textContent,
+            })""")
+            check("modern lab controls re-render the forward pass",
+                  modern_changed["attention"] and modern_changed["logits"]
+                  and "Sinusoidal" in modern_changed["readout"] and "MHA" in modern_changed["readout"],
+                  json.dumps(modern_changed)[:300])
+            check("modern lab has no page or console errors", not modern_errors, "; ".join(modern_errors[:5]))
+            page2.close()
 
             check("no page or console errors", not errors, "; ".join(errors[:5]))
             browser.close()

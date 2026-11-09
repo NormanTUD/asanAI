@@ -21182,6 +21182,7 @@
    "normalizationlab"
   ],
   "zhang2019rmsnorm": [
+   "modern_transformer",
    "normalizationlab",
    "transformer"
   ],
@@ -21353,6 +21354,7 @@
    "history",
    "intuition",
    "math_iv",
+   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -22410,6 +22412,7 @@
   "su2021rope": [
    "attentionlab",
    "frontier",
+   "modern_transformer",
    "transformer"
   ],
   "peng2023yarn": [
@@ -22621,6 +22624,7 @@
    "attentionlab",
    "contextwindows",
    "inference_optimization",
+   "modern_transformer",
    "production_serving",
    "transformer"
   ],
@@ -22843,6 +22847,7 @@
   ],
   "shazeer2020glu": [
    "intuition",
+   "modern_transformer",
    "people_of_ai",
    "transformer"
   ],

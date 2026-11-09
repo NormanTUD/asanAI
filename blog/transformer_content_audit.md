@@ -59,12 +59,17 @@ Die Rechenreihenfolge ist korrekt: Token-Embedding, Positionssignal, Pre-LN, kau
 
 Die optionalen Interpretability-Absätze (Safety Heads, TDA, Length Planning usw.) wurden auf offensichtliche Overclaims geprüft, aber nicht jede dort zitierte Paper-Passage neu gelesen. Die Architektur- und Rechenbehauptungen der Implementierung wurden gegen den oben genannten Modellcode geprüft.
 
+## Modern Transformer Lab and RoPE
+
+The new `modern_transformer.php` page shows one forward pass with selectable RMSNorm, RoPE, GQA, SwiGLU, final normalization, tied/untied output head, QK normalization, attention bias and a toy two-expert MoE. It is explicitly a forward-pass lab with random fixed weights, not a trained model. The RoPE section rotates Q/K, plots the relative score and links from the positional-embeddings and transformer lessons. DeepSeek's MLA is discussed in the table but not implemented in the toy lab; that remains a documented difference.
+
 ## Scale and induction experiments
 
+- 1D was tested but is not exposed: with `a b a b a b` and `a b c a b c`, a 1D/2D model did not learn the alternation (3–6 of 11 next tokens after 80 epochs). The UI keeps `d_model = 2` as the minimum.
 - 8D, 16D, 32D and 64D embeddings/trajectories render as `scatter3d` PCA plots in headless Chromium without console errors.
-- JS heap measured in headless Chromium: about 78 MB at 8D, 126 MB at 16D, 147 MB at 32D, 174 MB at 64D. For that reason the UI exposes up to 32D; 64D was tested but is not exposed.
+- JS heap measured in headless Chromium: about 78 MB at 8D, 126 MB at 16D, 147 MB at 32D, 174 MB at 64D. For that reason the UI exposes 32D and an experimental 64D preset; 64D is not the default.
 - 32D rendering keeps the page usable; a 10-epoch 32D training run with the default LR stayed finite and stable. 64D training is much slower and did not converge in the short sweep.
 - Copy pattern (`a b c d ...`) and conditional pattern (`wenn a dann b ...`) both reached 100% next-token accuracy on their own training sequences at 16D.
 - Attention inspection at 16D and 32D did **not** show a clean induction-head circuit: the best head attended the token after the previous occurrence only about 2/12 times, close to the local/uniform baseline. The model is memorizing the sequence. The lesson therefore labels these as copy/conditional pattern demos, not as proof of induction heads.
-- Presets added: Tiny 3D, Wide 16D, Wide 32D, Copy pattern 16D, Conditional pattern 16D. The tokenizer can be switched between the word splitter and a corpus-trained BPE tokenizer.
-- New CI test: `blog/tests/transformer_scale_regression_test.py`, wired into `.github/workflows/blog_php_validator.yml`. It checks 32D PCA rendering, JS heap, 32D short-training stability, BPE tokenization, copy-pattern learning, training time and console errors.
+- Presets added: Tiny 3D, Wide 16D, Wide 32D, Wide 64D (experimental), Copy pattern 16D, Conditional pattern 16D. The tokenizer can be switched between the word splitter, character-level tokens and a corpus-trained BPE tokenizer.
+- New CI test: `blog/tests/transformer_scale_regression_test.py`, wired into `.github/workflows/blog_php_validator.yml`. It checks 32D/64D PCA rendering, JS heap, 32D short-training stability, BPE and character tokenization, copy-pattern learning, the modern lab controls, training time and console errors.

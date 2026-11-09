@@ -1,0 +1,2065 @@
+{
+  "schema_version": 1,
+  "source": "modern_transformer.php",
+  "lesson": "modern_transformer",
+  "title": "Modern Transformer Lab: RoPE, RMSNorm, GQA, SwiGLU",
+  "part": 4,
+  "order": 19,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [],
+  "claims": [
+    {
+      "id": "auto-modern_transformer-1",
+      "subject": "modern_transformer",
+      "predicate": "title",
+      "value": "Modern Transformer Lab: RoPE, RMSNorm, GQA, SwiGLU",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "modern_transformer"
+      },
+      "quote": "title: Modern Transformer Lab: RoPE, RMSNorm, GQA, SwiGLU",
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-modern_transformer-2",
+      "subject": "modern_transformer",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "modern_transformer"
+      },
+      "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-modern_transformer-3",
+      "subject": "modern_transformer",
+      "predicate": "order",
+      "value": 19,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "modern_transformer"
+      },
+      "quote": "order: 19",
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "modern-rope-relative",
+      "subject": "rope",
+      "predicate": "property",
+      "value": "dot product depends on relative offset",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The dot product of two rotated vectors depends on the **difference** of their angles, so the attention score becomes naturally relative",
+      "citation_keys": [
+        "su2021rope"
+      ],
+      "source_url": "https://arxiv.org/abs/2104.09864",
+      "confidence": "stated"
+    },
+    {
+      "id": "modern-rmsnorm-definition",
+      "subject": "rmsnorm",
+      "predicate": "definition",
+      "value": "root mean square scaling without mean subtraction",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "RMSNorm (no mean, no beta)",
+      "citation_keys": [
+        "zhang2019rmsnorm"
+      ],
+      "source_url": "https://arxiv.org/abs/1910.07467",
+      "confidence": "stated"
+    },
+    {
+      "id": "modern-gqa-definition",
+      "subject": "gqa",
+      "predicate": "definition",
+      "value": "one key/value head shared across a group of query heads",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "One key/value head across a group of query heads",
+      "citation_keys": [
+        "ainslie2023gqa"
+      ],
+      "source_url": "https://arxiv.org/abs/2305.13245",
+      "confidence": "stated"
+    },
+    {
+      "id": "modern-swiglu-definition",
+      "subject": "swiglu",
+      "predicate": "definition",
+      "value": "gated feed-forward with Swish activation",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "One branch is activated and multiplied by another linear branch",
+      "citation_keys": [
+        "shazeer2020glu"
+      ],
+      "source_url": "https://arxiv.org/abs/2002.05202",
+      "confidence": "stated"
+    },
+    {
+      "id": "modern-transformer-2017",
+      "subject": "transformer",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "2017 / GPT-2-style",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "source_url": "https://arxiv.org/abs/1706.03762",
+      "confidence": "stated"
+    },
+    {
+      "id": "modern-transformer-demo-tokens",
+      "subject": "modern-transformer-demo",
+      "predicate": "tokens",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "4 tokens, d_model = 8",
+      "citation_keys": [],
+      "source_url": "",
+      "confidence": "stated"
+    }
+  ],
+  "relations": [
+    {
+      "id": "prov-modern_transformer-part",
+      "from": "modern-transformer",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-modern_transformer-rope",
+      "from": "rope",
+      "to": "modern-transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the dot product of two rotated vectors depends on the **difference** of their angles, so the attention score becomes naturally relative",
+      "citation_keys": [
+        "su2021rope"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-modern_transformer-rmsnorm",
+      "from": "rmsnorm",
+      "to": "modern-transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "RMSNorm (no mean, no beta)",
+      "citation_keys": [
+        "zhang2019rmsnorm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-modern_transformer-gqa",
+      "from": "gqa",
+      "to": "modern-transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "One key/value head across a group of query heads",
+      "citation_keys": [
+        "ainslie2023gqa"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-modern_transformer-swiglu",
+      "from": "swiglu",
+      "to": "modern-transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "One linear branch is multiplied elementwise by a Swish-activated gate branch",
+      "citation_keys": [
+        "shazeer2020glu"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-modern_transformer-transformer",
+      "from": "transformer",
+      "to": "modern-transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "2017 / GPT-2-style",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-modern_transformer-modern-transformer-demo",
+      "from": "modern-transformer-demo",
+      "to": "modern-transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "4 tokens, d_model = 8",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-1-part_of-modern-transformer",
+      "from": "modern_transformer-block-1",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-2-part_of-modern-transformer",
+      "from": "modern_transformer-block-2",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-1-before-modern_transformer-block-2",
+      "from": "modern_transformer-block-1",
+      "to": "modern_transformer-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-3-part_of-modern-transformer",
+      "from": "modern_transformer-block-3",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-2-before-modern_transformer-block-3",
+      "from": "modern_transformer-block-2",
+      "to": "modern_transformer-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-3-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-3",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-4-part_of-modern-transformer",
+      "from": "modern_transformer-block-4",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-3-before-modern_transformer-block-4",
+      "from": "modern_transformer-block-3",
+      "to": "modern_transformer-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-4-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-4",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-5-part_of-modern-transformer",
+      "from": "modern_transformer-block-5",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-4-before-modern_transformer-block-5",
+      "from": "modern_transformer-block-4",
+      "to": "modern_transformer-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-5-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-5",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-6-part_of-modern-transformer",
+      "from": "modern_transformer-block-6",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-5-before-modern_transformer-block-6",
+      "from": "modern_transformer-block-5",
+      "to": "modern_transformer-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-6-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-6",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-7-part_of-modern-transformer",
+      "from": "modern_transformer-block-7",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-6-before-modern_transformer-block-7",
+      "from": "modern_transformer-block-6",
+      "to": "modern_transformer-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-7-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-7",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-8-part_of-modern-transformer",
+      "from": "modern_transformer-block-8",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-7-before-modern_transformer-block-8",
+      "from": "modern_transformer-block-7",
+      "to": "modern_transformer-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-8-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-8",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-9-part_of-modern-transformer",
+      "from": "modern_transformer-block-9",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-8-before-modern_transformer-block-9",
+      "from": "modern_transformer-block-8",
+      "to": "modern_transformer-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-9-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-9",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-10-part_of-modern-transformer",
+      "from": "modern_transformer-block-10",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-9-before-modern_transformer-block-10",
+      "from": "modern_transformer-block-9",
+      "to": "modern_transformer-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-10-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-10",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-11-part_of-modern-transformer",
+      "from": "modern_transformer-block-11",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-10-before-modern_transformer-block-11",
+      "from": "modern_transformer-block-10",
+      "to": "modern_transformer-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-11-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-11",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-12-part_of-modern-transformer",
+      "from": "modern_transformer-block-12",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-11-before-modern_transformer-block-12",
+      "from": "modern_transformer-block-11",
+      "to": "modern_transformer-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-12-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-12",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-13-part_of-modern-transformer",
+      "from": "modern_transformer-block-13",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-12-before-modern_transformer-block-13",
+      "from": "modern_transformer-block-12",
+      "to": "modern_transformer-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-13-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-13",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-14-part_of-modern-transformer",
+      "from": "modern_transformer-block-14",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-13-before-modern_transformer-block-14",
+      "from": "modern_transformer-block-13",
+      "to": "modern_transformer-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-14-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-14",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-15-part_of-modern-transformer",
+      "from": "modern_transformer-block-15",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-14-before-modern_transformer-block-15",
+      "from": "modern_transformer-block-14",
+      "to": "modern_transformer-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-15-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-15",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-16-part_of-modern-transformer",
+      "from": "modern_transformer-block-16",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-15-before-modern_transformer-block-16",
+      "from": "modern_transformer-block-15",
+      "to": "modern_transformer-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-16-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-16",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-17-part_of-modern-transformer",
+      "from": "modern_transformer-block-17",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-16-before-modern_transformer-block-17",
+      "from": "modern_transformer-block-16",
+      "to": "modern_transformer-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-17-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-17",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-18-part_of-modern-transformer",
+      "from": "modern_transformer-block-18",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-17-before-modern_transformer-block-18",
+      "from": "modern_transformer-block-17",
+      "to": "modern_transformer-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-18-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-18",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-19-part_of-modern-transformer",
+      "from": "modern_transformer-block-19",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-18-before-modern_transformer-block-19",
+      "from": "modern_transformer-block-18",
+      "to": "modern_transformer-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-19-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-19",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-20-part_of-modern-transformer",
+      "from": "modern_transformer-block-20",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-19-before-modern_transformer-block-20",
+      "from": "modern_transformer-block-19",
+      "to": "modern_transformer-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-20-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-20",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-21-part_of-modern-transformer",
+      "from": "modern_transformer-block-21",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-20-before-modern_transformer-block-21",
+      "from": "modern_transformer-block-20",
+      "to": "modern_transformer-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-21-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-21",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-22-part_of-modern-transformer",
+      "from": "modern_transformer-block-22",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-21-before-modern_transformer-block-22",
+      "from": "modern_transformer-block-21",
+      "to": "modern_transformer-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-22-related_to-modern_transformer-block-2",
+      "from": "modern_transformer-block-22",
+      "to": "modern_transformer-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-23-part_of-modern-transformer",
+      "from": "modern_transformer-block-23",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-22-before-modern_transformer-block-23",
+      "from": "modern_transformer-block-22",
+      "to": "modern_transformer-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-24-part_of-modern-transformer",
+      "from": "modern_transformer-block-24",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-23-before-modern_transformer-block-24",
+      "from": "modern_transformer-block-23",
+      "to": "modern_transformer-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-24-related_to-modern_transformer-block-23",
+      "from": "modern_transformer-block-24",
+      "to": "modern_transformer-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-25-part_of-modern-transformer",
+      "from": "modern_transformer-block-25",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-24-before-modern_transformer-block-25",
+      "from": "modern_transformer-block-24",
+      "to": "modern_transformer-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-25-related_to-modern_transformer-block-23",
+      "from": "modern_transformer-block-25",
+      "to": "modern_transformer-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-26-part_of-modern-transformer",
+      "from": "modern_transformer-block-26",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-25-before-modern_transformer-block-26",
+      "from": "modern_transformer-block-25",
+      "to": "modern_transformer-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-26-related_to-modern_transformer-block-23",
+      "from": "modern_transformer-block-26",
+      "to": "modern_transformer-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-27-part_of-modern-transformer",
+      "from": "modern_transformer-block-27",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-26-before-modern_transformer-block-27",
+      "from": "modern_transformer-block-26",
+      "to": "modern_transformer-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-27-related_to-modern_transformer-block-23",
+      "from": "modern_transformer-block-27",
+      "to": "modern_transformer-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-28-part_of-modern-transformer",
+      "from": "modern_transformer-block-28",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-27-before-modern_transformer-block-28",
+      "from": "modern_transformer-block-27",
+      "to": "modern_transformer-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-28-related_to-modern_transformer-block-23",
+      "from": "modern_transformer-block-28",
+      "to": "modern_transformer-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-29-part_of-modern-transformer",
+      "from": "modern_transformer-block-29",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-28-before-modern_transformer-block-29",
+      "from": "modern_transformer-block-28",
+      "to": "modern_transformer-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-29-related_to-modern_transformer-block-23",
+      "from": "modern_transformer-block-29",
+      "to": "modern_transformer-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-30-part_of-modern-transformer",
+      "from": "modern_transformer-block-30",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-29-before-modern_transformer-block-30",
+      "from": "modern_transformer-block-29",
+      "to": "modern_transformer-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-31-part_of-modern-transformer",
+      "from": "modern_transformer-block-31",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-30-before-modern_transformer-block-31",
+      "from": "modern_transformer-block-30",
+      "to": "modern_transformer-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-31-related_to-modern_transformer-block-30",
+      "from": "modern_transformer-block-31",
+      "to": "modern_transformer-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-32-part_of-modern-transformer",
+      "from": "modern_transformer-block-32",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-31-before-modern_transformer-block-32",
+      "from": "modern_transformer-block-31",
+      "to": "modern_transformer-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-32-related_to-modern_transformer-block-30",
+      "from": "modern_transformer-block-32",
+      "to": "modern_transformer-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-33-part_of-modern-transformer",
+      "from": "modern_transformer-block-33",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-32-before-modern_transformer-block-33",
+      "from": "modern_transformer-block-32",
+      "to": "modern_transformer-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-33-related_to-modern_transformer-block-30",
+      "from": "modern_transformer-block-33",
+      "to": "modern_transformer-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-34-part_of-modern-transformer",
+      "from": "modern_transformer-block-34",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-33-before-modern_transformer-block-34",
+      "from": "modern_transformer-block-33",
+      "to": "modern_transformer-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-34-related_to-modern_transformer-block-30",
+      "from": "modern_transformer-block-34",
+      "to": "modern_transformer-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-35-part_of-modern-transformer",
+      "from": "modern_transformer-block-35",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-34-before-modern_transformer-block-35",
+      "from": "modern_transformer-block-34",
+      "to": "modern_transformer-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-35-related_to-modern_transformer-block-30",
+      "from": "modern_transformer-block-35",
+      "to": "modern_transformer-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-36-part_of-modern-transformer",
+      "from": "modern_transformer-block-36",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-35-before-modern_transformer-block-36",
+      "from": "modern_transformer-block-35",
+      "to": "modern_transformer-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-36-related_to-modern_transformer-block-30",
+      "from": "modern_transformer-block-36",
+      "to": "modern_transformer-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-37-part_of-modern-transformer",
+      "from": "modern_transformer-block-37",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-36-before-modern_transformer-block-37",
+      "from": "modern_transformer-block-36",
+      "to": "modern_transformer-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-37-related_to-modern_transformer-block-30",
+      "from": "modern_transformer-block-37",
+      "to": "modern_transformer-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-38-part_of-modern-transformer",
+      "from": "modern_transformer-block-38",
+      "to": "modern-transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-37-before-modern_transformer-block-38",
+      "from": "modern_transformer-block-37",
+      "to": "modern_transformer-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-block-38-related_to-modern_transformer-block-30",
+      "from": "modern_transformer-block-38",
+      "to": "modern_transformer-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-1-part_of-modern_transformer-block-1",
+      "from": "modern_transformer-stmt-1",
+      "to": "modern_transformer-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-2-part_of-modern_transformer-block-1",
+      "from": "modern_transformer-stmt-2",
+      "to": "modern_transformer-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-3-part_of-modern_transformer-block-1",
+      "from": "modern_transformer-stmt-3",
+      "to": "modern_transformer-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-4-part_of-modern_transformer-block-3",
+      "from": "modern_transformer-stmt-4",
+      "to": "modern_transformer-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-5-part_of-modern_transformer-block-3",
+      "from": "modern_transformer-stmt-5",
+      "to": "modern_transformer-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-6-part_of-modern_transformer-block-5",
+      "from": "modern_transformer-stmt-6",
+      "to": "modern_transformer-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-7-part_of-modern_transformer-block-7",
+      "from": "modern_transformer-stmt-7",
+      "to": "modern_transformer-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-8-part_of-modern_transformer-block-9",
+      "from": "modern_transformer-stmt-8",
+      "to": "modern_transformer-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-9-part_of-modern_transformer-block-11",
+      "from": "modern_transformer-stmt-9",
+      "to": "modern_transformer-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-10-part_of-modern_transformer-block-13",
+      "from": "modern_transformer-stmt-10",
+      "to": "modern_transformer-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-11-part_of-modern_transformer-block-15",
+      "from": "modern_transformer-stmt-11",
+      "to": "modern_transformer-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-12-part_of-modern_transformer-block-19",
+      "from": "modern_transformer-stmt-12",
+      "to": "modern_transformer-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-13-part_of-modern_transformer-block-20",
+      "from": "modern_transformer-stmt-13",
+      "to": "modern_transformer-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-14-part_of-modern_transformer-block-20",
+      "from": "modern_transformer-stmt-14",
+      "to": "modern_transformer-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-15-part_of-modern_transformer-block-20",
+      "from": "modern_transformer-stmt-15",
+      "to": "modern_transformer-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-16-part_of-modern_transformer-block-24",
+      "from": "modern_transformer-stmt-16",
+      "to": "modern_transformer-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-17-part_of-modern_transformer-block-24",
+      "from": "modern_transformer-stmt-17",
+      "to": "modern_transformer-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-18-part_of-modern_transformer-block-24",
+      "from": "modern_transformer-stmt-18",
+      "to": "modern_transformer-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-19-part_of-modern_transformer-block-29",
+      "from": "modern_transformer-stmt-19",
+      "to": "modern_transformer-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-20-part_of-modern_transformer-block-29",
+      "from": "modern_transformer-stmt-20",
+      "to": "modern_transformer-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-21-part_of-modern_transformer-block-29",
+      "from": "modern_transformer-stmt-21",
+      "to": "modern_transformer-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-22-part_of-modern_transformer-block-29",
+      "from": "modern_transformer-stmt-22",
+      "to": "modern_transformer-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-23-part_of-modern_transformer-block-31",
+      "from": "modern_transformer-stmt-23",
+      "to": "modern_transformer-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-24-part_of-modern_transformer-block-32",
+      "from": "modern_transformer-stmt-24",
+      "to": "modern_transformer-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-25-part_of-modern_transformer-block-33",
+      "from": "modern_transformer-stmt-25",
+      "to": "modern_transformer-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-26-part_of-modern_transformer-block-34",
+      "from": "modern_transformer-stmt-26",
+      "to": "modern_transformer-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-27-part_of-modern_transformer-block-35",
+      "from": "modern_transformer-stmt-27",
+      "to": "modern_transformer-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-28-part_of-modern_transformer-block-36",
+      "from": "modern_transformer-stmt-28",
+      "to": "modern_transformer-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-29-part_of-modern_transformer-block-37",
+      "from": "modern_transformer-stmt-29",
+      "to": "modern_transformer-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-30-part_of-modern_transformer-block-38",
+      "from": "modern_transformer-stmt-30",
+      "to": "modern_transformer-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-modern_transformer-stmt-31-part_of-modern_transformer-block-38",
+      "from": "modern_transformer-stmt-31",
+      "to": "modern_transformer-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "modern_transformer-block-1",
+      "quote": "Modern Transformer Lab One forward pass, many design choices. Switch the block components that separate the 2017 Transformer from a modern LLaMA/Qwen/DeepSeek-style model, then look at the same sentence through each setting. The weights are random and fixed; this page is for seeing the computation, not for training a useful model.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "modern_transformer-block-2",
+      "quote": "The block is no longer just attention plus an MLP",
+      "kind": "heading",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-3",
+      "quote": "The 2017 baseline is the original Transformer (\\cite[Vaswani et al., 2017]{vaswani2017attention}); modern open-weight models keep its residual skeleton but replace several parts: RMSNorm instead of LayerNorm, RoPE instead of additive position vectors, SwiGLU instead of GELU, grouped-query attention instead of full MHA, and usually a final normalization with a separate output head. The controls below change one forward pass of a four-token sentence.",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-4",
+      "quote": "Normalization",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-5",
+      "quote": "RMSNorm (modern) LayerNorm (2017 / GPT-2)",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-6",
+      "quote": "Position",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-7",
+      "quote": "RoPE (rotary) Sinusoidal absolute",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-8",
+      "quote": "Attention",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-9",
+      "quote": "GQA (shared K/V heads) MHA (one K/V per query head)",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-10",
+      "quote": "Feed-forward",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-11",
+      "quote": "SwiGLU (gated) GELU dense MoE, 2 experts (toy)",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-12",
+      "quote": "Final normalization",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-13",
+      "quote": "On (production) Off (toy demo)",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-14",
+      "quote": "Output head",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-15",
+      "quote": "Separate (modern) Tied to embeddings (GPT-2)",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-16",
+      "quote": "Q/K normalization",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-17",
+      "quote": "On (Qwen3-style) Off",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-18",
+      "quote": "Attention bias",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-19",
+      "quote": "Off (Llama/Qwen3/DeepSeek) On (GPT-2/Qwen2)",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-20",
+      "quote": "The settings are independent. “Modern” below means the first option in every select: RMSNorm + RoPE + GQA + SwiGLU + final norm + separate head + QK norm + no attention bias. That is the modern block used in this lab; the scale (4 tokens, d_model = 8) is deliberately tiny.",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-21",
+      "quote": "Attention pattern",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-22",
+      "quote": "Final next-token scores",
+      "kind": "paragraph",
+      "section": "The block is no longer just attention plus an MLP"
+    },
+    {
+      "id": "modern_transformer-block-23",
+      "quote": "RoPE: position is a rotation, not an addition",
+      "kind": "heading",
+      "section": "RoPE: position is a rotation, not an addition"
+    },
+    {
+      "id": "modern_transformer-block-24",
+      "quote": "Sinusoidal and learned schemes *add* a position vector to the token embedding. RoPE leaves the embedding alone and rotates the query and key vectors by an angle proportional to their position. The dot product of two rotated vectors depends on the **difference** of their angles, so the attention score becomes naturally relative (\\cite[Su et al., 2021]{su2021rope}).",
+      "kind": "paragraph",
+      "section": "RoPE: position is a rotation, not an addition"
+    },
+    {
+      "id": "modern_transformer-block-25",
+      "quote": "Query position m: 3",
+      "kind": "paragraph",
+      "section": "RoPE: position is a rotation, not an addition"
+    },
+    {
+      "id": "modern_transformer-block-26",
+      "quote": "Key position n: 1",
+      "kind": "paragraph",
+      "section": "RoPE: position is a rotation, not an addition"
+    },
+    {
+      "id": "modern_transformer-block-27",
+      "quote": "Frequency pair: 0",
+      "kind": "paragraph",
+      "section": "RoPE: position is a rotation, not an addition"
+    },
+    {
+      "id": "modern_transformer-block-28",
+      "quote": "RoPE base theta: 10000",
+      "kind": "paragraph",
+      "section": "RoPE: position is a rotation, not an addition"
+    },
+    {
+      "id": "modern_transformer-block-29",
+      "quote": "The vectors are drawn in one two-dimensional frequency plane. RoPE rotates the query by m·ω and the key by n·ω . The dot product is cos((m−n)·ω) : only the relative offset survives. The second plot shows that relative score as the distance changes.",
+      "kind": "paragraph",
+      "section": "RoPE: position is a rotation, not an addition"
+    },
+    {
+      "id": "modern_transformer-block-30",
+      "quote": "What changed, and what stayed the same",
+      "kind": "heading",
+      "section": "What changed, and what stayed the same"
+    },
+    {
+      "id": "modern_transformer-block-31",
+      "quote": "| Piece | 2017 / GPT-2-style | Modern open-weight block |",
+      "kind": "table-row",
+      "section": "What changed, and what stayed the same"
+    },
+    {
+      "id": "modern_transformer-block-32",
+      "quote": "| Normalization | LayerNorm (mean, gamma, beta) | RMSNorm (no mean, no beta) (\\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}) |",
+      "kind": "table-row",
+      "section": "What changed, and what stayed the same"
+    },
+    {
+      "id": "modern_transformer-block-33",
+      "quote": "| Position | added sinusoidal or learned vector | RoPE applied to Q and K |",
+      "kind": "table-row",
+      "section": "What changed, and what stayed the same"
+    },
+    {
+      "id": "modern_transformer-block-34",
+      "quote": "| Attention | MHA, one K/V head per query head | GQA (\\cite[Ainslie et al., 2023]{ainslie2023gqa}); DeepSeek uses MLA instead |",
+      "kind": "table-row",
+      "section": "What changed, and what stayed the same"
+    },
+    {
+      "id": "modern_transformer-block-35",
+      "quote": "| Feed-forward | dense GELU, often 4× width | SwiGLU gate, no biases, narrower width (\\cite[Shazeer, 2020]{shazeer2020glu}); large models may replace it with MoE |",
+      "kind": "table-row",
+      "section": "What changed, and what stayed the same"
+    },
+    {
+      "id": "modern_transformer-block-36",
+      "quote": "| Final norm | one final LayerNorm | final RMSNorm |",
+      "kind": "table-row",
+      "section": "What changed, and what stayed the same"
+    },
+    {
+      "id": "modern_transformer-block-37",
+      "quote": "| Output head | often tied to embeddings | usually separate |",
+      "kind": "table-row",
+      "section": "What changed, and what stayed the same"
+    },
+    {
+      "id": "modern_transformer-block-38",
+      "quote": "The residual stream, causal mask, next-token cross-entropy and the idea “attention mixes, the FFN transforms” remain the same. This is why the modern block still reads as a Transformer, even though several named parts changed.",
+      "kind": "paragraph",
+      "section": "What changed, and what stayed the same"
+    }
+  ],
+  "statements": [
+    {
+      "id": "modern_transformer-stmt-1",
+      "quote": "Modern Transformer Lab One forward pass, many design choices.",
+      "block_id": "modern_transformer-block-1",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-2",
+      "quote": "Switch the block components that separate the 2017 Transformer from a modern LLaMA/Qwen/DeepSeek-style model, then look at the same sentence through each setting.",
+      "block_id": "modern_transformer-block-1",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-3",
+      "quote": "The weights are random and fixed; this page is for seeing the computation, not for training a useful model.",
+      "block_id": "modern_transformer-block-1",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-4",
+      "quote": "The 2017 baseline is the original Transformer (\\cite[Vaswani et al., 2017]{vaswani2017attention}); modern open-weight models keep its residual skeleton but replace several parts: RMSNorm instead of LayerNorm, RoPE instead of additive position vectors, SwiGLU instead of GELU, grouped-query attention instead of full MHA, and usually a final normalization with a separate output head.",
+      "block_id": "modern_transformer-block-3",
+      "section": "The block is no longer just attention plus an MLP",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-5",
+      "quote": "The controls below change one forward pass of a four-token sentence.",
+      "block_id": "modern_transformer-block-3",
+      "section": "The block is no longer just attention plus an MLP",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-6",
+      "quote": "RMSNorm (modern) LayerNorm (2017 / GPT-2)",
+      "block_id": "modern_transformer-block-5",
+      "section": "The block is no longer just attention plus an MLP",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-7",
+      "quote": "RoPE (rotary) Sinusoidal absolute",
+      "block_id": "modern_transformer-block-7",
+      "section": "The block is no longer just attention plus an MLP",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-8",
+      "quote": "GQA (shared K/V heads) MHA (one K/V per query head)",
+      "block_id": "modern_transformer-block-9",
+      "section": "The block is no longer just attention plus an MLP",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-9",
+      "quote": "SwiGLU (gated) GELU dense MoE, 2 experts (toy)",
+      "block_id": "modern_transformer-block-11",
+      "section": "The block is no longer just attention plus an MLP",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-10",
+      "quote": "On (production) Off (toy demo)",
+      "block_id": "modern_transformer-block-13",
+      "section": "The block is no longer just attention plus an MLP",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-11",
+      "quote": "Separate (modern) Tied to embeddings (GPT-2)",
+      "block_id": "modern_transformer-block-15",
+      "section": "The block is no longer just attention plus an MLP",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-12",
+      "quote": "Off (Llama/Qwen3/DeepSeek) On (GPT-2/Qwen2)",
+      "block_id": "modern_transformer-block-19",
+      "section": "The block is no longer just attention plus an MLP",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-13",
+      "quote": "The settings are independent.",
+      "block_id": "modern_transformer-block-20",
+      "section": "The block is no longer just attention plus an MLP",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-14",
+      "quote": "“Modern” below means the first option in every select: RMSNorm + RoPE + GQA + SwiGLU + final norm + separate head + QK norm + no attention bias.",
+      "block_id": "modern_transformer-block-20",
+      "section": "The block is no longer just attention plus an MLP",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-15",
+      "quote": "That is the modern block used in this lab; the scale (4 tokens, d_model = 8) is deliberately tiny.",
+      "block_id": "modern_transformer-block-20",
+      "section": "The block is no longer just attention plus an MLP",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-16",
+      "quote": "Sinusoidal and learned schemes *add* a position vector to the token embedding.",
+      "block_id": "modern_transformer-block-24",
+      "section": "RoPE: position is a rotation, not an addition",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-17",
+      "quote": "RoPE leaves the embedding alone and rotates the query and key vectors by an angle proportional to their position.",
+      "block_id": "modern_transformer-block-24",
+      "section": "RoPE: position is a rotation, not an addition",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-18",
+      "quote": "The dot product of two rotated vectors depends on the **difference** of their angles, so the attention score becomes naturally relative (\\cite[Su et al., 2021]{su2021rope}).",
+      "block_id": "modern_transformer-block-24",
+      "section": "RoPE: position is a rotation, not an addition",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-19",
+      "quote": "The vectors are drawn in one two-dimensional frequency plane.",
+      "block_id": "modern_transformer-block-29",
+      "section": "RoPE: position is a rotation, not an addition",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-20",
+      "quote": "RoPE rotates the query by m·ω and the key by n·ω .",
+      "block_id": "modern_transformer-block-29",
+      "section": "RoPE: position is a rotation, not an addition",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-21",
+      "quote": "The dot product is cos((m−n)·ω) : only the relative offset survives.",
+      "block_id": "modern_transformer-block-29",
+      "section": "RoPE: position is a rotation, not an addition",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-22",
+      "quote": "The second plot shows that relative score as the distance changes.",
+      "block_id": "modern_transformer-block-29",
+      "section": "RoPE: position is a rotation, not an addition",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-23",
+      "quote": "| Piece | 2017 / GPT-2-style | Modern open-weight block |",
+      "block_id": "modern_transformer-block-31",
+      "section": "What changed, and what stayed the same",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-24",
+      "quote": "| Normalization | LayerNorm (mean, gamma, beta) | RMSNorm (no mean, no beta) (\\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}) |",
+      "block_id": "modern_transformer-block-32",
+      "section": "What changed, and what stayed the same",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-25",
+      "quote": "| Position | added sinusoidal or learned vector | RoPE applied to Q and K |",
+      "block_id": "modern_transformer-block-33",
+      "section": "What changed, and what stayed the same",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-26",
+      "quote": "| Attention | MHA, one K/V head per query head | GQA (\\cite[Ainslie et al., 2023]{ainslie2023gqa}); DeepSeek uses MLA instead |",
+      "block_id": "modern_transformer-block-34",
+      "section": "What changed, and what stayed the same",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-27",
+      "quote": "| Feed-forward | dense GELU, often 4× width | SwiGLU gate, no biases, narrower width (\\cite[Shazeer, 2020]{shazeer2020glu}); large models may replace it with MoE |",
+      "block_id": "modern_transformer-block-35",
+      "section": "What changed, and what stayed the same",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-28",
+      "quote": "| Final norm | one final LayerNorm | final RMSNorm |",
+      "block_id": "modern_transformer-block-36",
+      "section": "What changed, and what stayed the same",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-29",
+      "quote": "| Output head | often tied to embeddings | usually separate |",
+      "block_id": "modern_transformer-block-37",
+      "section": "What changed, and what stayed the same",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-30",
+      "quote": "The residual stream, causal mask, next-token cross-entropy and the idea “attention mixes, the FFN transforms” remain the same.",
+      "block_id": "modern_transformer-block-38",
+      "section": "What changed, and what stayed the same",
+      "kind": "statement"
+    },
+    {
+      "id": "modern_transformer-stmt-31",
+      "quote": "This is why the modern block still reads as a Transformer, even though several named parts changed.",
+      "block_id": "modern_transformer-block-38",
+      "section": "What changed, and what stayed the same",
+      "kind": "statement"
+    }
+  ]
+}

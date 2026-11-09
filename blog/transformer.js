@@ -3008,6 +3008,9 @@ function _getDemoBPETokenizer(corpus) {
 function tokenizeTextCore(text, type) {
 	const raw = String(text == null ? '' : text);
 	const cleaned = raw.split(TM_EOS_TOKEN).join(' ').replace(/ {2,}/g, ' ');
+	if (type === 'chars') {
+		return Array.from(cleaned);
+	}
 	if (type === 'bpe') {
 		const corpusEl = document.getElementById('transformer-training-data');
 		const corpus = corpusEl ? corpusEl.value : cleaned;
@@ -5983,6 +5986,7 @@ function applyTransformerPreset(name) {
 		tiny:          { d: 3,  h: 3, n: 4, ffn: 12,  text: 'the king rules the land and the queen rules the sea' },
 		wide16:        { d: 16, h: 4, n: 4, ffn: 64,  text: 'the king rules the land and the queen rules the sea' },
 		wide32:        { d: 32, h: 8, n: 4, ffn: 128, text: 'the king rules the land and the queen rules the sea' },
+		wide64:        { d: 64, h: 8, n: 4, ffn: 256, text: 'the king rules the land and the queen rules the sea' },
 		copy16:        { d: 16, h: 4, n: 2, ffn: 64,  text: 'a b c d a b c d a b c d x y z w x y z w' },
 		conditional16: { d: 16, h: 4, n: 2, ffn: 64,  text: 'wenn a dann b . jetzt a also b . wenn x dann y . jetzt x also y .' }
 	};
@@ -6011,7 +6015,7 @@ function applyTransformerPreset(name) {
 	if (window.syncTransformerSettings) window.syncTransformerSettings('preset');
 	const tokens = (typeof getTrainingTokens === 'function') ? getTrainingTokens() : [];
 	if (tokens.length > 1) setVal('transformer-context-size', Math.min(256, tokens.length - 1));
-	if (name === 'wide16' || name === 'wide32') window.tmHighDimMode = 'pca';
+	if (name === 'wide16' || name === 'wide32' || name === 'wide64') window.tmHighDimMode = 'pca';
 	if (typeof run_transformer_demo === 'function') run_transformer_demo();
 }
 window.applyTransformerPreset = applyTransformerPreset;

@@ -142,7 +142,10 @@ def page_checks(page, port: int) -> None:
         if (sub) sub.open = true;
     }""")
     page.wait_for_function("() => !!document.querySelector('.tm-layer-card .mha-head-tab-btn')", timeout=60000)
-    page.wait_for_timeout(1200)
+    page.wait_for_function("""() => {
+        const n = document.querySelector('.tm-layer-card .tm-head-estimate');
+        return !!(n && /dominates|dominiert/.test(n.textContent));
+    }""", timeout=30000)
     head = page.evaluate("""() => {
         const card = document.querySelector('.tm-layer-card');
         const btn = card.querySelector('.mha-head-tab-btn');
@@ -227,7 +230,7 @@ def training_check(page) -> None:
             loss = (await cost.data())[0];
             dispose(cost);
             if (epoch % 20 === 0) await tf.nextFrame();
-            if (loss < 0.005) break;
+            if (loss < 0.0005) break;
         }
         window.currentWeights = await convert_tensors_to_weights(weightVars);
         disposeWeightVars(weightVars);

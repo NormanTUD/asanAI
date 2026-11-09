@@ -74,9 +74,9 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 		<p class="transformer-slider-note">
             <b>Dependency:</b> Must be a multiple of Heads.<br>
             <b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = d_{\text{model}}/h$) of the vector to perform dot products.<br>
-            <b>3D view:</b> up to 3 dimensions are shown raw; above that the plot uses PCA. 32D is available and tested in desktop Chromium; 64D renders but is not exposed because it pushes browser memory above roughly 170 MB.
+            <b>3D view:</b> up to 3 dimensions are shown raw; above that the plot uses PCA. 32D and 64D are available; 64D is experimental, uses PCA and pushes desktop browser memory to roughly 170 MB.
         </p>
-		<input type="range" id="transformer-dimension-model" min="2" max="32" step="1" value="3"
+		<input type="range" id="transformer-dimension-model" min="2" max="64" step="1" value="3"
 			oninput="syncTransformerSettings('dim')">
 	</div>
 
@@ -114,7 +114,7 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	    <label class="transformer-slider-label">FFN hidden size (<span class="tm-inline-math" data-tex="d_{\text{ff}}" data-tex-display="false"></span>): </label>
 	    <span id="ffn-val" class="transformer-slider-value">12</span>
 	    <p class="transformer-slider-note"><b>Effect:</b> Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.</p>
-	    <input type="range" id="transformer-ffn-size" min="1" max="128" step="1" value="12"
+	    <input type="range" id="transformer-ffn-size" min="1" max="256" step="1" value="12"
 		oninput="syncTransformerSettings('ffn')">
 	</div>
 
@@ -127,6 +127,7 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	    <label class="transformer-slider-label">Tokenizer</label>
 	    <select id="transformer-tokenizer-type" style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" onchange="debounced_run_transformer_demo()">
 		<option value="regex" selected>Words / characters (demo default)</option>
+		<option value="chars">Characters (one token per Unicode character)</option>
 		<option value="bpe">Byte-Pair Encoding (BPE, trained on this corpus)</option>
 	    </select>
 	    <p class="transformer-slider-note"><b>Effect:</b> Word splitting is simple and keeps the vocabulary tiny. BPE learns frequent subword merges from the current training corpus, so rare words become several tokens. Switching the tokenizer retrains the vocabulary; BPE can make the sequence longer.</p>
@@ -139,10 +140,11 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 		<option value="tiny">Tiny 3D · every formula visible</option>
 		<option value="wide16">Wide 16D · PCA view</option>
 		<option value="wide32">Wide 32D · PCA, slower training</option>
+		<option value="wide64">Wide 64D · PCA, experimental</option>
 		<option value="copy16">Copy pattern · 16D</option>
 		<option value="conditional16">Conditional pattern · 16D</option>
 	</select>
-	<p class="transformer-slider-note">Presets set the sliders and, for the pattern examples, the training corpus. Nothing trains automatically; press <b>Train Model</b> afterwards. 32D was tested in desktop Chromium; it uses PCA and more memory, so it is not the default. The copy and conditional examples demonstrate pattern completion and memorization; the tiny model did not show a clean induction-head circuit in the scale tests.</p>
+	<p class="transformer-slider-note">Presets set the sliders and, for the pattern examples, the training corpus. Nothing trains automatically; press <b>Train Model</b> afterwards. 32D and 64D were tested in desktop Chromium; both use PCA, and 64D needs more memory, so 3D remains the default. The copy and conditional examples demonstrate pattern completion and memorization; the tiny model did not show a clean induction-head circuit in the scale tests.</p>
 </div>
 
 	<div id="param-breakdown-toggle" style="display: none; margin-top: 8px;">
@@ -586,7 +588,7 @@ $$PE_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}
 
 These functions give each absolute position a unique, continuous pattern, and their multi-frequency structure spans both fine and coarse offsets. Because the formula is defined for any position, the encoding can be *computed* beyond the training length; whether the trained model actually generalizes there is a separate empirical question, and in practice it often does not. The network learns to interpret these fixed “geometric fingerprints” by adjusting its weights, so position-specific behaviour is learned rather than hand-coded.
 
-For a fixed offset $k$, the sinusoidal encoding at position $\text{pos}+k$ is a fixed linear map of the encoding at $\text{pos}$. That linearity gives attention a way to represent relative offsets, but whether a head actually becomes position-invariant depends on its learned $W_Q$ and $W_K$; the raw sinusoids are not by themselves a relative-position mechanism. The FFN is pointwise, so it operates on features attention has already mixed. Over multiple layers the network entangles positional and semantic information. Modern LLMs mostly use RoPE instead (see the modern-block section), which makes the relative rotation explicit in $Q$ and $K$.
+For a fixed offset $k$, the sinusoidal encoding at position $\text{pos}+k$ is a fixed linear map of the encoding at $\text{pos}$. That linearity gives attention a way to represent relative offsets, but whether a head actually becomes position-invariant depends on its learned $W_Q$ and $W_K$; the raw sinusoids are not by themselves a relative-position mechanism. The FFN is pointwise, so it operates on features attention has already mixed. Over multiple layers the network entangles positional and semantic information. Modern LLMs mostly use RoPE instead (see the modern-block section), which makes the relative rotation explicit in $Q$ and $K$. The [Modern Transformer Lab](modern_transformer.php#mtl-rope-lab) lets you rotate the query and key vectors and watch the dot product depend only on the offset.
 
 This demo uses the original sinusoidal scheme. GPT-2 instead uses learned position vectors, and most current LLMs use RoPE; the modern-block section below shows that variant. The sinusoidal scheme is still useful because it makes the position code explicit and easy to inspect. This is required because the network looks at all words simultaneously instead of one after another. Since the matrix can be permuted and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.
 </div>
@@ -875,7 +877,7 @@ As $h$ progresses from $h_0$ to $h_{N}$, the vector for “apple” might move f
 </div>
 
 <div class="optional md" data-headline="The Modern Block: What Changed After 2017">
-The equations above describe the 2017 Transformer. Open a 2025 open-weight model, however, and the same two sublayers are wired slightly differently. None of these changes alters the big picture — attention mixes, the FFN computes, residuals carry — but together they define the “LLaMA-style” block that most open models now share.
+The equations above describe the 2017 Transformer. Open a 2025 open-weight model, however, and the same two sublayers are wired slightly differently. The [Modern Transformer Lab](modern_transformer.php) lets you switch RMSNorm, RoPE, GQA, SwiGLU, final norm and output-head tying and watch one forward pass change. None of these changes alters the big picture — attention mixes, the FFN computes, residuals carry — but together they define the “LLaMA-style” block that most open models now share.
 
 The years after 2017 split the family in two. \cite[Devlin et al. (2019)]{bert} kept the encoder and trained it bidirectionally with a masked-token objective, making fine-tuning on downstream tasks the default (\cite[Devlin et al., 2019]{bert}). \cite[Radford et al. (2019)]{gpt2} kept the decoder, scaled it, and showed that one autoregressive model could perform tasks zero-shot from its prompt (\cite[Radford et al., 2019]{gpt2}). Its largest variant — 48 layers, a model width of 1600, 1.5 billion parameters — also moved layer normalization to the input of each sub-block and scaled residual weights by the inverse square root of the layer count at initialization, the pre-norm arrangement described below. The split matters for this chapter: the causal mask you see here is the GPT branch, while BERT's bidirectional attention is the encoder branch.
 
@@ -901,7 +903,7 @@ $$
 
 with a third matrix $W_g$ whose output multiplies the activated branch elementwise. Because there are now three matrices rather than two, the hidden width is reduced to keep the parameter count comparable — Llama 2 7B uses $d_{\text{model}} = 4096$ and $d_{\text{ff}} = 11008$, about $2.7\,d_{\text{model}}$ instead of $4\,d_{\text{model}}$ (\cite[Shazeer, 2020]{shazeer2020glu}; \cite[Touvron et al., 2023]{touvron2023llama}).
 
-**RoPE instead of sinusoidal vectors.** Rotary position embedding rotates the query and key vectors by position-dependent angles, so their dot product depends only on the *relative* offset. It is now the default in the Llama, Mistral, Qwen, Gemma, and DeepSeek lines (\cite[Su et al., 2021]{su2021rope}); the [positional embeddings lab](positionalembeddingslab.php) builds the rotation matrix step by step.
+**RoPE instead of sinusoidal vectors.** Rotary position embedding rotates the query and key vectors by position-dependent angles, so their dot product depends only on the *relative* offset. It is now the default in the Llama, Mistral, Qwen, Gemma, and DeepSeek lines (\cite[Su et al., 2021]{su2021rope}); the [positional embeddings lab](positionalembeddingslab.php) builds the rotation matrix step by step, and the [Modern Transformer Lab](modern_transformer.php#mtl-rope-lab) lets you rotate the vectors yourself.
 
 **Fewer key/value heads.** Multi-head attention gives every query head its own key and value head. The head structure is also the main lever on inference cost: decoding must cache one key and one value vector per head per token, and \citeauthor{shazeer2019mqa} observed that incremental decoding is bound not by arithmetic but by **memory bandwidth**, because the accelerator reloads the whole cache to produce each token. Multi-query attention (MQA) keeps all query heads but shares one K/V head across them, shrinking the cache by the head count at some quality cost; grouped-query attention (GQA) shares one per group and became the mainstream compromise (\cite[Shazeer, 2019]{shazeer2019mqa}; \cite[Ainslie et al., 2023]{ainslie2023gqa}). The GQA paper also made adoption cheap: an existing MHA checkpoint can be *uptrained* by mean-pooling its key and value heads and continuing pretraining for roughly 5 percent of the original compute. DeepSeek-V2 went further with **multi-head latent attention** (MLA), caching a low-rank compressed latent plus a small decoupled rotary-position component instead of full per-head keys and values, and reconstructing them on the fly; it reported a KV cache over 90 percent smaller than an equivalent MHA configuration (\cite[DeepSeek-AI, 2024]{deepseek2024v2}). By 2025 the choice among MHA, GQA, and MLA had become one of the few architecture decisions still visibly separating frontier models.
 
@@ -1335,7 +1337,7 @@ While the architecture is identical in both modes, the behavior of the model dif
 
 The interactive model is a didactic simulator. It implements the real computation order, but deliberately uses smaller and older components:
 
-- **Tokenizer:** a word/character splitter by default, or an optional BPE trained on the current corpus; neither is a production byte-level tokenizer.
+- **Tokenizer:** a word splitter by default, with character-level and corpus-trained BPE options; none is a production byte-level tokenizer.
 - **Position:** fixed sinusoidal absolute encodings, not RoPE or learned position tables.
 - **Normalization:** LayerNorm with mean, gamma and beta, not RMSNorm; no final norm.
 - **Attention:** plain MHA with one K/V head per query head, not GQA or MLA.
@@ -1356,7 +1358,7 @@ The interactive model is a didactic simulator. It implements the real computatio
 
 The code tabs follow nanoGPT: they use a learned position table, a final LayerNorm and a separate output head, so they are the same family as this demo but not the same configuration.
 
-**Scale and induction limits.** A 32D preset is available and renders through PCA; 64D also renders in desktop Chromium but is intentionally not exposed because browser memory rises above roughly 170 MB. The copy and conditional presets learn the training sequence to 100%, but the attention inspection found no clean induction-head circuit at 16D or 32D; the tiny model is memorizing or completing a local pattern, not proving a general induction mechanism. The full correction log is in [the audit note](transformer_content_audit.md).
+**Scale and induction limits.** 32D and 64D presets are available and render through PCA; 64D is experimental and raises desktop browser memory to roughly 170 MB. The copy and conditional presets learn the training sequence to 100%, but the attention inspection found no clean induction-head circuit at 16D or 32D; the tiny model is memorizing or completing a local pattern, not proving a general induction mechanism. The full correction log is in [the audit note](transformer_content_audit.md).
 </div>
 
 <div class="mn-quiz" data-quiz="transformer"><script type="application/json">{"title": "The transformer", "questions": [{"q": "Which two sub-layers make up one transformer block?", "options": ["Multi-head attention and a feed-forward network", "A convolution followed by a global pooling step", "A pair of recurrent layers with gating", "A tokenizer and a detokenizer pipeline"], "answer": 0, "explain": "Each is wrapped with a residual connection and a normalisation."}, {"q": "What do the residual connections do?", "options": ["Add each sub-layer's output to its input, so information and gradients can flow past it", "Replace each sub-layer's output with a normalised copy of the full input vector", "Concatenate each sub-layer's output onto its input, doubling the vector width each time", "Multiply each sub-layer's output by a learned scalar before adding it to the input"], "answer": 0, "explain": "The running sum is often called the residual stream."}, {"q": "How does the final vector become a next-token prediction?", "options": ["It is projected onto the vocabulary (unembedding), then softmaxed", "It is looked up in a fixed dictionary of all the known token strings", "It is rounded to the nearest token id in the embedding table", "It is averaged with the hidden vector of the previous token"], "answer": 0, "explain": "The projection gives one score per token; softmax turns the scores into probabilities."}, {"q": "In a decoder-only model like GPT, what does the causal mask prevent?", "options": ["Tokens attending to later tokens they should not yet see", "Tokens attending to themselves instead of earlier positions", "Tokens attending across sentence and paragraph boundaries", "Using the feed-forward layer before the attention block"], "answer": 0, "explain": "During training, a position may only use the past, matching how text is generated."}]}</script></div>
