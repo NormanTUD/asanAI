@@ -8104,8 +8104,15 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Expansion + ${tmActivationInfo(tmActivationKind()).html}</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-expand">d_model → d_ff</span></div>
 					<div class="tm-ffn-widthbar" id="${prefix}-ffn-width-expand" aria-hidden="true"></div>
 					<div class="tm-ffn-stage-formula" data-tex="${tmFfnExpansionAbstractTex()}" data-tex-display="false"></div>
+					<div class="tm-ffn-viewswitch" role="tablist" aria-label="${isDe ? 'Ansicht' : 'View'}">
+						<button type="button" data-view="heatmap" class="is-active">Heatmap</button>
+						<button type="button" data-view="fan">Space fan</button>
+						<button type="button" data-view="curve">Curvature</button>
+					</div>
 					<div class="tm-ffn-stage-plots">
-						<canvas id="${prefix}-ffn-heatmap" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Hidden-Aktivierungen für alle Tokens' : 'FFN hidden activations for all tokens'}"></canvas>
+						<canvas id="${prefix}-ffn-heatmap" class="tm-ffn-stage-canvas" data-view="heatmap" aria-label="${isDe ? 'FFN-Hidden-Aktivierungen für alle Tokens' : 'FFN hidden activations for all tokens'}"></canvas>
+						<canvas id="${prefix}-ffn-fan" class="tm-ffn-stage-canvas" data-view="fan" hidden aria-label="${isDe ? 'W1- und W2-Gewichte als Fächer' : 'W1 and W2 weights as a fan-out'}"></canvas>
+						<canvas id="${prefix}-ffn-curve" class="tm-ffn-stage-canvas" data-view="curve" hidden aria-label="${isDe ? 'Aktivierungsfunktion und echte Voraktivierungen' : 'Activation function and real pre-activations'}"></canvas>
 					</div>
 				</div>
 				<span class="tm-ffn-stage-arrow" aria-hidden="true">→</span>

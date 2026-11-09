@@ -971,6 +971,149 @@
 		drawFFNMatrix(ctx, w, h, layerIdx, "outL1");
 	}
 
+	function drawFFNCurvature(ctx, w, h, layerIdx) {
+		var c = palette();
+		var ffn = (window.__tmFFNTrace || [])[layerIdx];
+		var tokens = tokenList();
+		ctx.clearRect(0, 0, w, h);
+		if (!ffn || !ffn.normed_h1 || !ffn.W1 || !tokens.length) {
+			return drawPlaceholder(ctx, w, h, DE() ? "Öffne eine Schicht, um die Krümmung zu sehen." : "Open a layer to see the curvature.");
+		}
+		var kind = (typeof tmActivationKind === "function") ? tmActivationKind() : "gelu";
+		var gated = (typeof tmActivationIsGated === "function") && tmActivationIsGated(kind);
+		var actKind = gated ? "silu" : kind;
+		var actName = gated ? "SiLU gate" : ((typeof tmActivationLabel === "function") ? tmActivationLabel(kind) : "GELU");
+		var u = matMul(ffn.normed_h1, ffn.W1, ffn.b1);
+		var act = function (x) { return (typeof activationValue === "function") ? activationValue(actKind, x) : x; };
+		var xs = [], ys = [];
+		u.forEach(function (row) { row.forEach(function (v) { xs.push(v); ys.push(act(v)); }); });
+		if (!xs.length) return drawPlaceholder(ctx, w, h, DE() ? "Keine Voraktivierungen." : "No pre-activations.");
+		var xlo = Math.min.apply(null, xs), xhi = Math.max.apply(null, xs);
+		var ylo = Math.min(0, Math.min.apply(null, ys)), yhi = Math.max(0, Math.max.apply(null, ys));
+		if (xhi - xlo < 1e-9) { xlo -= 1; xhi += 1; }
+		if (yhi - ylo < 1e-9) { yhi += 1; }
+		var xpad = (xhi - xlo) * 0.08, ypad = (yhi - ylo) * 0.12;
+		xlo -= xpad; xhi += xpad; ylo -= ypad; yhi += ypad;
+		var padL = 58, padR = 18, padT = 30, padB = 30;
+		var px = function (v) { return padL + (v - xlo) / (xhi - xlo) * (w - padL - padR); };
+		var py = function (v) { return h - padB - (v - ylo) / (yhi - ylo) * (h - padT - padB); };
+		ctx.strokeStyle = c.line; ctx.lineWidth = 1;
+		ctx.beginPath(); ctx.moveTo(padL, h - padB); ctx.lineTo(w - padR, h - padB); ctx.stroke();
+		ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, h - padB); ctx.stroke();
+		if (xlo <= 0 && xhi >= 0) {
+			ctx.strokeStyle = c.line; ctx.setLineDash([3, 4]);
+			ctx.beginPath(); ctx.moveTo(px(0), padT); ctx.lineTo(px(0), h - padB); ctx.stroke();
+			ctx.setLineDash([]);
+		}
+		if (ylo <= 0 && yhi >= 0) {
+			ctx.strokeStyle = c.line; ctx.setLineDash([3, 4]);
+			ctx.beginPath(); ctx.moveTo(padL, py(0)); ctx.lineTo(w - padR, py(0)); ctx.stroke();
+			ctx.setLineDash([]);
+		}
+		ctx.strokeStyle = c.blue; ctx.lineWidth = 2.4;
+		ctx.beginPath();
+		for (var i = 0; i <= 180; i++) {
+			var xv = xlo + (xhi - xlo) * i / 180;
+			var yv = act(xv);
+			if (i === 0) ctx.moveTo(px(xv), py(yv)); else ctx.lineTo(px(xv), py(yv));
+		}
+		ctx.stroke();
+		u.forEach(function (row, r) {
+			var col = getPositionColor(r, tokens.length - 1);
+			row.forEach(function (xv) {
+				var yv = act(xv);
+				ctx.beginPath();
+				ctx.arc(px(xv), py(yv), 2.1, 0, Math.PI * 2);
+				ctx.fillStyle = col;
+				ctx.globalAlpha = 0.8;
+				ctx.fill();
+				ctx.globalAlpha = 1;
+			});
+		});
+		ctx.fillStyle = c.muted;
+		ctx.font = "600 9px Barlow, system-ui, sans-serif";
+		ctx.textAlign = "left";
+		ctx.fillText(actName + " curvature · " + (DE() ? "Layer " : "layer ") + (layerIdx + 1), padL, 15);
+		ctx.textAlign = "right";
+		ctx.fillText("pre-activation u", w - padR, h - 8);
+		ctx.save();
+		ctx.translate(12, h / 2);
+		ctx.rotate(-Math.PI / 2);
+		ctx.textAlign = "center";
+		ctx.fillText("activation", 0, 0);
+		ctx.restore();
+	}
+
+	function drawFFNFan(ctx, w, h, layerIdx) {
+		var c = palette();
+		var ffn = (window.__tmFFNTrace || [])[layerIdx];
+		var tokens = tokenList();
+		ctx.clearRect(0, 0, w, h);
+		if (!ffn || !ffn.W1 || !ffn.W2 || !tokens.length) {
+			return drawPlaceholder(ctx, w, h, DE() ? "Öffne eine Schicht, um den Gewichts-Fächer zu sehen." : "Open a layer to see the weight fan.");
+		}
+		var dm = ffn.W1.length, dff = (ffn.W1[0] || []).length;
+		if (!dm || !dff) return drawPlaceholder(ctx, w, h, DE() ? "Keine Gewichte." : "No weights.");
+		var maxIn = Math.min(dm, 12), maxOut = Math.min(dm, 12), maxHid = Math.min(dff, 16);
+		var hidIdx = [];
+		for (var q = 0; q < maxHid; q++) {
+			hidIdx.push(maxHid === 1 ? 0 : Math.round(q * (dff - 1) / (maxHid - 1)));
+		}
+		var xIn = 46, xHid = w * 0.5, xOut = w - 46;
+		var top = 38, bottom = h - 30;
+		var yAt = function (i, n) { return n <= 1 ? (top + bottom) / 2 : top + (bottom - top) * i / Math.max(1, n - 1); };
+		var maxW = 1e-9;
+		for (var i = 0; i < maxIn; i++) hidIdx.forEach(function (j) { maxW = Math.max(maxW, Math.abs(ffn.W1[i][j] || 0)); });
+		hidIdx.forEach(function (j) { for (var o = 0; o < maxOut; o++) maxW = Math.max(maxW, Math.abs(ffn.W2[j][o] || 0)); });
+		function edge(x1, y1, x2, y2, weight) {
+			var mag = Math.abs(weight) / maxW;
+			ctx.strokeStyle = weight >= 0 ? c.blue : c.gold;
+			ctx.globalAlpha = Math.min(0.9, 0.12 + mag * 0.75);
+			ctx.lineWidth = 0.6 + mag * 3.2;
+			ctx.beginPath();
+			ctx.moveTo(x1, y1);
+			ctx.quadraticCurveTo(x1 + (x2 - x1) * 0.55, y1 + (y2 - y1) * 0.12, x2, y2);
+			ctx.stroke();
+		}
+		for (var i = 0; i < maxIn; i++) {
+			hidIdx.forEach(function (j, ji) {
+				edge(xIn, yAt(i, maxIn), xHid, yAt(ji, maxHid), ffn.W1[i][j] || 0);
+			});
+		}
+		hidIdx.forEach(function (j, ji) {
+			for (var o = 0; o < maxOut; o++) {
+				edge(xHid, yAt(ji, maxHid), xOut, yAt(o, maxOut), ffn.W2[j][o] || 0);
+			}
+		});
+		ctx.globalAlpha = 1;
+		var last = (ffn.out_L1 && ffn.out_L1[ffn.out_L1.length - 1]) || [];
+		if (!last.length) last = new Array(dff).fill(0);
+		var hmin = Math.min.apply(null, last), hmax = Math.max.apply(null, last);
+		function node(x, y, r, col) {
+			ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+			ctx.fillStyle = col; ctx.fill();
+			ctx.strokeStyle = c.paper; ctx.lineWidth = 1.2; ctx.stroke();
+		}
+		for (var i = 0; i < maxIn; i++) node(xIn, yAt(i, maxIn), 3.6, c.muted);
+		hidIdx.forEach(function (j, ji) {
+			var t = (last[j] - hmin) / (hmax - hmin || 1);
+			var col = rgb(mix(hex(c.blue), hex(c.gold), Math.max(0, Math.min(1, t))));
+			node(xHid, yAt(ji, maxHid), 4.4, col);
+		});
+		for (var o = 0; o < maxOut; o++) node(xOut, yAt(o, maxOut), 3.6, c.muted);
+		ctx.fillStyle = c.muted;
+		ctx.font = "600 9px Barlow, system-ui, sans-serif";
+		ctx.textAlign = "center";
+		ctx.fillText("input " + dm, xIn, 18);
+		ctx.fillText("hidden " + dff, xHid, 18);
+		ctx.fillText("output " + dm, xOut, 18);
+		ctx.textAlign = "left";
+		ctx.fillText("W1 fan-out → W2 projection · " + (DE() ? "Layer " : "layer ") + (layerIdx + 1), xIn, 32);
+		if (dff > maxHid || dm > maxIn) {
+			ctx.fillText((DE() ? "zeigt " : "showing ") + maxIn + "/" + maxHid + (DE() ? " von " : " of ") + dm + "/" + dff + (DE() ? " Einheiten" : " units"), xIn, h - 8);
+		}
+	}
+
 	function attachFFNHeatmapHover(canvas, getEntry) {
 		if (!canvas || canvas._tmFfnHoverBound) return;
 		canvas._tmFfnHoverBound = true;
@@ -2799,6 +2942,29 @@
 		});
 	}
 
+	function wireFFNViewSwitches(root) {
+		if (!root) return;
+		root.querySelectorAll(".tm-ffn-viewswitch").forEach(function (sw) {
+			if (sw._tmViewBound) return;
+			sw._tmViewBound = true;
+			sw.addEventListener("click", function (event) {
+				var btn = event.target.closest ? event.target.closest("button[data-view]") : null;
+				if (!btn) return;
+				event.stopPropagation();
+				var view = btn.getAttribute("data-view");
+				var stage = sw.closest(".tm-ffn-stage");
+				if (!stage) return;
+				sw.querySelectorAll("button").forEach(function (b) { b.classList.toggle("is-active", b === btn); });
+				stage.querySelectorAll(".tm-ffn-stage-canvas[data-view]").forEach(function (c) {
+					c.hidden = c.getAttribute("data-view") !== view;
+				});
+				var card = stage.closest(".tm-layer-card");
+				var idx = card ? parseInt(card.getAttribute("data-layer-idx"), 10) : NaN;
+				if (!isNaN(idx)) renderLayerFFNStages(idx);
+			});
+		});
+	}
+
 	function redrawTripleCanvases(triple) {
 		if (!triple || !triple.isConnected) return;
 		triple.querySelectorAll(".tm-residual-heatmap-canvas").forEach(function (canvas) {
@@ -3082,6 +3248,7 @@
 				}, 80);
 			}
 			wireRevealHeads(card);
+			wireFFNViewSwitches(card);
 			renderLayerPreLNTriple(idx);
 			var stageGrid = card.querySelector(".tm-ffn-stages");
 			if (stageGrid) typesetMathIn(stageGrid);
@@ -3518,7 +3685,9 @@
 		if (!entry) {
 			entry = { canvas: canvas, layerIdx: layerIdx, which: which, api: null };
 			entry.api = initCanvas(canvas, function (ctx, w, h) {
-				drawFFNMatrix(ctx, w, h, entry.layerIdx, entry.which);
+				if (entry.which === "fan") drawFFNFan(ctx, w, h, entry.layerIdx);
+				else if (entry.which === "curve") drawFFNCurvature(ctx, w, h, entry.layerIdx);
+				else drawFFNMatrix(ctx, w, h, entry.layerIdx, entry.which);
 			});
 			layerFFNHeatmapRegistry[canvasId] = entry;
 		} else {
@@ -3526,7 +3695,9 @@
 			entry.which = which;
 			entry.api.redraw();
 		}
-		attachFFNHeatmapHover(canvas, function () { return entry; });
+		if (which !== "fan" && which !== "curve") {
+			attachFFNHeatmapHover(canvas, function () { return entry; });
+		}
 		canvas.setAttribute("data-layer-ffn-ready", "1");
 	}
 
@@ -3556,7 +3727,9 @@
 			["-ffn-preln-in", "h1"],
 			["-ffn-preln-out", "norm"],
 			["-ffn-heatmap", "outL1"],
-			["-ffn-compress-heatmap", "outFFN"]
+			["-ffn-compress-heatmap", "outFFN"],
+			["-ffn-fan", "fan"],
+			["-ffn-curve", "curve"]
 		].forEach(function (pair) {
 			renderLayerFFNMatrix(prefix + pair[0], layerIdx, pair[1]);
 		});
