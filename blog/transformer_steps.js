@@ -3045,9 +3045,13 @@
 			}
 			var ffnLead = card.querySelector('.tm-layer-subbox[data-sub="ffn"] .tm-level-text');
 			if (ffnLead) {
-				ffnLead.textContent = isDe
-					? "Das FFN ist der Bearbeiter pro Token. Es schaut nicht auf andere Positionen: Attention hat den Kontext bereits in den Vektor gemischt. Das FFN expandiert den Vektor auf d_ff, wendet GELU als Nichtlinearität an und komprimiert ihn zurück auf d_model. Danach addiert der Residual-Stream das Ergebnis zum alten Vektor, statt ihn zu überschreiben."
-					: "The FFN is the per-token editor. It does not look at other positions: attention has already mixed the context into the vector. The FFN expands the vector to d_ff, applies GELU as the nonlinearity, and compresses it back to d_model. The residual stream then adds the result to the old vector instead of overwriting it.";
+				var actLabel = (typeof tmActivationLabel === "function") ? tmActivationLabel() : "GELU";
+				var dmTag = '<span class="tm-inline-math" data-tex="d_{\\text{model}}" data-tex-display="false"></span>';
+				var dffTag = '<span class="tm-inline-math" data-tex="d_{\\text{ff}}" data-tex-display="false"></span>';
+				ffnLead.innerHTML = isDe
+					? "Das FFN ist der Bearbeiter pro Token. Es schaut nicht auf andere Positionen: Attention hat den Kontext bereits in den Vektor gemischt. Das FFN expandiert den Vektor auf " + dffTag + ", wendet " + actLabel + " als Nichtlinearität an und komprimiert ihn zurück auf " + dmTag + ". Danach addiert der Residual-Stream das Ergebnis zum alten Vektor, statt ihn zu überschreiben."
+					: "The FFN is the per-token editor. It does not look at other positions: attention has already mixed the context into the vector. The FFN expands the vector to " + dffTag + ", applies " + actLabel + " as the nonlinearity, and compresses it back to " + dmTag + ". The residual stream then adds the result to the old vector instead of overwriting it.";
+				typesetMathIn(ffnLead);
 			}
 			if (!sub._tmFeatureBound) {
 				sub._tmFeatureBound = true;
