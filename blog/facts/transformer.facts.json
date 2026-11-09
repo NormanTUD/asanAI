@@ -11106,7 +11106,7 @@
   "statements": [
     {
       "id": "transformer-stmt-1",
-      "quote": "<link rel=\"stylesheet\" href=\"transformer.css?v= \"> <link rel=\"stylesheet\" href=\"transformer_steps.css?v= \">",
+      "quote": "<link rel=\"stylesheet\" href=\"transformer.css?v= \"> <link rel=\"stylesheet\" href=\"transformer_steps.css?v= \"> <link rel=\"stylesheet\" href=\"modern_transformer.css?v= \">",
       "block_id": "transformer-block-1",
       "section": "",
       "kind": "statement"
@@ -12604,7 +12604,7 @@
     },
     {
       "id": "transformer-stmt-215",
-      "quote": "The [Modern Transformer Lab](modern_transformer.php) lets you switch RMSNorm, RoPE, GQA, SwiGLU, final norm and output-head tying and watch one forward pass change.",
+      "quote": "The [Modern Transformer Lab](transformer.php#modern-transformer-lab) lets you switch RMSNorm, RoPE, GQA, SwiGLU, final norm and output-head tying and watch one forward pass change.",
       "block_id": "transformer-block-147",
       "section": "The Feed-Forward Network",
       "kind": "statement"
@@ -13418,7 +13418,7 @@
   "blocks": [
     {
       "id": "transformer-block-1",
-      "quote": "<link rel=\"stylesheet\" href=\"transformer.css?v= \"> <link rel=\"stylesheet\" href=\"transformer_steps.css?v= \">",
+      "quote": "<link rel=\"stylesheet\" href=\"transformer.css?v= \"> <link rel=\"stylesheet\" href=\"transformer_steps.css?v= \"> <link rel=\"stylesheet\" href=\"modern_transformer.css?v= \">",
       "kind": "paragraph",
       "section": ""
     },
@@ -14294,7 +14294,7 @@
     },
     {
       "id": "transformer-block-147",
-      "quote": "The equations above describe the 2017 Transformer. Open a 2025 open-weight model, however, and the same two sublayers are wired slightly differently. The [Modern Transformer Lab](modern_transformer.php) lets you switch RMSNorm, RoPE, GQA, SwiGLU, final norm and output-head tying and watch one forward pass change. None of these changes alters the big picture — attention mixes, the FFN computes, residuals carry — but together they define the “LLaMA-style” block that most open models now share.",
+      "quote": "The equations above describe the 2017 Transformer. Open a 2025 open-weight model, however, and the same two sublayers are wired slightly differently. The [Modern Transformer Lab](transformer.php#modern-transformer-lab) lets you switch RMSNorm, RoPE, GQA, SwiGLU, final norm and output-head tying and watch one forward pass change. None of these changes alters the big picture — attention mixes, the FFN computes, residuals carry — but together they define the “LLaMA-style” block that most open models now share.",
       "kind": "paragraph",
       "section": "The Feed-Forward Network"
     },

@@ -161,7 +161,7 @@
 
 [done] Weitere Tokenizer: Wort-/Zeichen-Splitter, Characters (ein Unicode-Codepoint pro Token), korpus-trainierter BPE. Umschalten trainiert die Vokabeln neu; der BPE-Tokenizer wird pro Korpus gecacht.
 
-[done] Neues `modern_transformer.php` / `modern_transformer.js`: interaktives Forward-Pass-Labor mit Umschaltern für RMSNorm/LayerNorm, RoPE/sinusoidal, GQA/MHA, SwiGLU/GELU, finale Norm, getiedeten/separaten Head, QK-Norm und Attention-Bias. Zeigt Attention-Heatmap, Logits, RoPE-Rotation und relative Scores. RoPE interaktiv mit m/n, Frequenzpaar und Basis; Formel mit zwei Underbraces. Kein Training; ehrlich als Forward-Pass-Labor deklariert.
+[done] Neues `transformer.php#modern-transformer-lab` / `modern_transformer.js`: interaktives Forward-Pass-Labor mit Umschaltern für RMSNorm/LayerNorm, RoPE/sinusoidal, GQA/MHA, SwiGLU/GELU, finale Norm, getiedeten/separaten Head, QK-Norm und Attention-Bias. Zeigt Attention-Heatmap, Logits, RoPE-Rotation und relative Scores. RoPE interaktiv mit m/n, Frequenzpaar und Basis; Formel mit zwei Underbraces. Kein Training; ehrlich als Forward-Pass-Labor deklariert.
 
 [done] Neue Seite verlinkt von `transformer.php` (Positions- und Modern-Block) und `positionalembeddingslab.php`. Metadaten, Fact-File, Statements und Quiz-Balance ergänzt; Renderer und Lesson-Guard grün.
 
@@ -175,7 +175,7 @@
 
 [done] Tokenizer-Auswahl: Wort-/Zeichen-Splitter, Characters und korpus-trainierter BPE. BPE wird pro Korpus gecacht und für Inferenz wiederverwendet; unbekannte Zeichen fallen auf Zeichen zurück.
 
-[done] Neues `modern_transformer.php`/`.js`: interaktives Forward-Pass-Labor mit RMSNorm/LayerNorm, RoPE/sinusoidal, GQA/MHA, SwiGLU/GELU/toy-MoE, finaler Norm, getiedetem/separatem Head, QK-Norm und Attention-Bias. Zeigt Attention, Logits, RoPE-Rotation und relative Scores. Kein Training, ehrlich als Forward-Pass-Labor markiert. RoPE-Formel mit zwei Underbraces und interaktiven m/n/Frequenz/Basis-Sliders.
+[done] Neues `transformer.php#modern-transformer-lab`/`.js`: interaktives Forward-Pass-Labor mit RMSNorm/LayerNorm, RoPE/sinusoidal, GQA/MHA, SwiGLU/GELU/toy-MoE, finaler Norm, getiedetem/separatem Head, QK-Norm und Attention-Bias. Zeigt Attention, Logits, RoPE-Rotation und relative Scores. Kein Training, ehrlich als Forward-Pass-Labor markiert. RoPE-Formel mit zwei Underbraces und interaktiven m/n/Frequenz/Basis-Sliders.
 
 [done] Seite verlinkt von `transformer.php` (Position, Modern-Block) und `positionalembeddingslab.php`. Metadaten, Fact-File, Statements, Quiz-Balance und Deep-Audit ergänzt.
 

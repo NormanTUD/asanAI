@@ -13,13 +13,10 @@ math: 65
 featured: true
 -->
 
-<script src="llm_river.js?v=<?php echo filemtime(__DIR__.'/llm_river.js'); ?>"></script>
 <script src="stickybar_transformer.js?v=<?php echo filemtime(__DIR__.'/stickybar_transformer.js'); ?>"></script>
-<script src="attention_engine.js?v=<?php echo filemtime(__DIR__.'/attention_engine.js'); ?>"></script>
-<script src="provenance.js?v=<?php echo filemtime(__DIR__.'/provenance.js'); ?>"></script>
-<script src="tda_live.js?v=<?php echo filemtime(__DIR__.'/tda_live.js'); ?>"></script>
 <link rel="stylesheet" href="transformer.css?v=<?php echo filemtime(__DIR__.'/transformer.css'); ?>">
 <link rel="stylesheet" href="transformer_steps.css?v=<?php echo filemtime(__DIR__.'/transformer_steps.css'); ?>">
+<link rel="stylesheet" href="modern_transformer.css?v=<?php echo (int) @filemtime(__DIR__ . '/modern_transformer.css'); ?>">
 
 <!--
 https://nlp.seas.harvard.edu/2018/04/03/attention.html
@@ -386,7 +383,52 @@ $$ \underbrace{ \color[RGB]{59,130,246}\text{“the} \ \color[RGB]{55,135,235}\t
 	else window.addEventListener('load', start);
 })();
 </script>
-<script src="transformer_steps.js?v=<?php echo filemtime(__DIR__ . '/transformer_steps.js'); ?>"></script>
+<script>
+(function () {
+	window.__tmStepDepsReady = false;
+	var loading = false;
+	var files = [
+		'attention_engine.js?v=<?php echo (int) @filemtime(__DIR__ . '/attention_engine.js'); ?>',
+		'provenance.js?v=<?php echo (int) @filemtime(__DIR__ . '/provenance.js'); ?>',
+		'llm_river.js?v=<?php echo (int) @filemtime(__DIR__ . '/llm_river.js'); ?>',
+		'tda_live.js?v=<?php echo (int) @filemtime(__DIR__ . '/tda_live.js'); ?>',
+		'transformer_steps.js?v=<?php echo (int) @filemtime(__DIR__ . '/transformer_steps.js'); ?>'
+	];
+	function load(src) {
+		return new Promise(function (resolve, reject) {
+			var s = document.createElement('script');
+			s.src = src;
+			s.onload = resolve;
+			s.onerror = reject;
+			document.body.appendChild(s);
+		});
+	}
+	function loadDeps() {
+		if (loading) return;
+		loading = true;
+		files.reduce(function (p, file) { return p.then(function () { return load(file); }); }, Promise.resolve())
+			.then(function () {
+				window.__tmStepDepsReady = true;
+				if (window.TransformerSteps) window.TransformerSteps.init('transformer-step-visuals');
+				if (window.ensureFullTransformerVisualization) window.ensureFullTransformerVisualization(true);
+			})
+			.catch(function (err) { console.error('Transformer step dependencies failed to load', err); });
+	}
+	var anchor = document.getElementById('transformer-step-visuals');
+	if ('IntersectionObserver' in window && anchor) {
+		var io = new IntersectionObserver(function (entries) {
+			if (entries.some(function (e) { return e.isIntersecting; })) {
+				io.disconnect();
+				loadDeps();
+			}
+		}, { rootMargin: '800px 0px' });
+		io.observe(anchor);
+	} else {
+		loadDeps();
+	}
+})();
+</script>
+
 <script>
 (function () {
 	var host = document.getElementById('transformer-step-visuals');
@@ -588,7 +630,7 @@ $$PE_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}
 
 These functions give each absolute position a unique, continuous pattern, and their multi-frequency structure spans both fine and coarse offsets. Because the formula is defined for any position, the encoding can be *computed* beyond the training length; whether the trained model actually generalizes there is a separate empirical question, and in practice it often does not. The network learns to interpret these fixed “geometric fingerprints” by adjusting its weights, so position-specific behaviour is learned rather than hand-coded.
 
-For a fixed offset $k$, the sinusoidal encoding at position $\text{pos}+k$ is a fixed linear map of the encoding at $\text{pos}$. That linearity gives attention a way to represent relative offsets, but whether a head actually becomes position-invariant depends on its learned $W_Q$ and $W_K$; the raw sinusoids are not by themselves a relative-position mechanism. The FFN is pointwise, so it operates on features attention has already mixed. Over multiple layers the network entangles positional and semantic information. Modern LLMs mostly use RoPE instead (see the modern-block section), which makes the relative rotation explicit in $Q$ and $K$. The [Modern Transformer Lab](modern_transformer.php#mtl-rope-lab) lets you rotate the query and key vectors and watch the dot product depend only on the offset.
+For a fixed offset $k$, the sinusoidal encoding at position $\text{pos}+k$ is a fixed linear map of the encoding at $\text{pos}$. That linearity gives attention a way to represent relative offsets, but whether a head actually becomes position-invariant depends on its learned $W_Q$ and $W_K$; the raw sinusoids are not by themselves a relative-position mechanism. The FFN is pointwise, so it operates on features attention has already mixed. Over multiple layers the network entangles positional and semantic information. Modern LLMs mostly use RoPE instead (see the modern-block section), which makes the relative rotation explicit in $Q$ and $K$. The [Modern Transformer Lab](transformer.php#modern-transformer-lab) lets you rotate the query and key vectors and watch the dot product depend only on the offset.
 
 This demo uses the original sinusoidal scheme. GPT-2 instead uses learned position vectors, and most current LLMs use RoPE; the modern-block section below shows that variant. The sinusoidal scheme is still useful because it makes the position code explicit and easy to inspect. This is required because the network looks at all words simultaneously instead of one after another. Since the matrix can be permuted and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.
 </div>
@@ -877,7 +919,7 @@ As $h$ progresses from $h_0$ to $h_{N}$, the vector for “apple” might move f
 </div>
 
 <div class="optional md" data-headline="The Modern Block: What Changed After 2017">
-The equations above describe the 2017 Transformer. Open a 2025 open-weight model, however, and the same two sublayers are wired slightly differently. The [Modern Transformer Lab](modern_transformer.php) lets you switch RMSNorm, RoPE, GQA, SwiGLU, final norm and output-head tying and watch one forward pass change. None of these changes alters the big picture — attention mixes, the FFN computes, residuals carry — but together they define the “LLaMA-style” block that most open models now share.
+The equations above describe the 2017 Transformer. Open a 2025 open-weight model, however, and the same two sublayers are wired slightly differently. The [Modern Transformer Lab](transformer.php#modern-transformer-lab) lets you switch RMSNorm, RoPE, GQA, SwiGLU, final norm and output-head tying and watch one forward pass change. None of these changes alters the big picture — attention mixes, the FFN computes, residuals carry — but together they define the “LLaMA-style” block that most open models now share.
 
 The years after 2017 split the family in two. \cite[Devlin et al. (2019)]{bert} kept the encoder and trained it bidirectionally with a masked-token objective, making fine-tuning on downstream tasks the default (\cite[Devlin et al., 2019]{bert}). \cite[Radford et al. (2019)]{gpt2} kept the decoder, scaled it, and showed that one autoregressive model could perform tasks zero-shot from its prompt (\cite[Radford et al., 2019]{gpt2}). Its largest variant — 48 layers, a model width of 1600, 1.5 billion parameters — also moved layer normalization to the input of each sub-block and scaled residual weights by the inverse square root of the layer count at initialization, the pre-norm arrangement described below. The split matters for this chapter: the causal mask you see here is the GPT branch, while BERT's bidirectional attention is the encoder branch.
 
@@ -903,7 +945,7 @@ $$
 
 with a third matrix $W_g$ whose output multiplies the activated branch elementwise. Because there are now three matrices rather than two, the hidden width is reduced to keep the parameter count comparable — Llama 2 7B uses $d_{\text{model}} = 4096$ and $d_{\text{ff}} = 11008$, about $2.7\,d_{\text{model}}$ instead of $4\,d_{\text{model}}$ (\cite[Shazeer, 2020]{shazeer2020glu}; \cite[Touvron et al., 2023]{touvron2023llama}).
 
-**RoPE instead of sinusoidal vectors.** Rotary position embedding rotates the query and key vectors by position-dependent angles, so their dot product depends only on the *relative* offset. It is now the default in the Llama, Mistral, Qwen, Gemma, and DeepSeek lines (\cite[Su et al., 2021]{su2021rope}); the [positional embeddings lab](positionalembeddingslab.php) builds the rotation matrix step by step, and the [Modern Transformer Lab](modern_transformer.php#mtl-rope-lab) lets you rotate the vectors yourself.
+**RoPE instead of sinusoidal vectors.** Rotary position embedding rotates the query and key vectors by position-dependent angles, so their dot product depends only on the *relative* offset. It is now the default in the Llama, Mistral, Qwen, Gemma, and DeepSeek lines (\cite[Su et al., 2021]{su2021rope}); the [positional embeddings lab](positionalembeddingslab.php) builds the rotation matrix step by step, and the [Modern Transformer Lab](transformer.php#modern-transformer-lab) lets you rotate the vectors yourself.
 
 **Fewer key/value heads.** Multi-head attention gives every query head its own key and value head. The head structure is also the main lever on inference cost: decoding must cache one key and one value vector per head per token, and \citeauthor{shazeer2019mqa} observed that incremental decoding is bound not by arithmetic but by **memory bandwidth**, because the accelerator reloads the whole cache to produce each token. Multi-query attention (MQA) keeps all query heads but shares one K/V head across them, shrinking the cache by the head count at some quality cost; grouped-query attention (GQA) shares one per group and became the mainstream compromise (\cite[Shazeer, 2019]{shazeer2019mqa}; \cite[Ainslie et al., 2023]{ainslie2023gqa}). The GQA paper also made adoption cheap: an existing MHA checkpoint can be *uptrained* by mean-pooling its key and value heads and continuing pretraining for roughly 5 percent of the original compute. DeepSeek-V2 went further with **multi-head latent attention** (MLA), caching a low-rank compressed latent plus a small decoupled rotary-position component instead of full per-head keys and values, and reconstructing them on the fly; it reported a KV cache over 90 percent smaller than an equivalent MHA configuration (\cite[DeepSeek-AI, 2024]{deepseek2024v2}). By 2025 the choice among MHA, GQA, and MLA had become one of the few architecture decisions still visibly separating frontier models.
 
@@ -1331,6 +1373,41 @@ While the architecture is identical in both modes, the behavior of the model dif
 		<span id="tm-inference-busy-text">Computing the next token…</span>
 	</div>
 </div>
+
+<div class="optional" id="modern-transformer-lab-optional" data-headline="Modern Transformer Lab: RoPE, RMSNorm, GQA, SwiGLU">
+<?php include __DIR__ . '/transformer_modern_lab.php'; ?>
+</div>
+<script>
+(function () {
+	var block = document.getElementById('modern-transformer-lab-optional');
+	if (!block) return;
+	var loaded = false;
+	function load() {
+		if (loaded) return;
+		loaded = true;
+		var script = document.createElement('script');
+		script.src = 'modern_transformer.js?v=<?php echo (int) @filemtime(__DIR__ . '/modern_transformer.js'); ?>';
+		script.onload = function () {
+			if (window.loadModernTransformerModule) window.loadModernTransformerModule();
+		};
+		document.body.appendChild(script);
+	}
+	if ('IntersectionObserver' in window) {
+		var io = new IntersectionObserver(function (entries) {
+			if (entries.some(function (e) { return e.isIntersecting; })) {
+				io.disconnect();
+				load();
+			}
+		}, { rootMargin: '700px' });
+		io.observe(block);
+	} else {
+		load();
+	}
+	document.addEventListener('click', function (event) {
+		if (event.target.closest && event.target.closest('#modern-transformer-lab-optional .optional-header')) load();
+	}, true);
+})();
+</script>
 
 <div class="optional md" data-headline="What this demo simplifies, and how it differs from production LLMs">
 ### What this demo simplifies

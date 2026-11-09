@@ -345,6 +345,23 @@ function loadModernTransformerModule() {
 		if (window.__MN_DARK && window.__MN_DARK.onChange) window.__MN_DARK.onChange(() => { renderLab(); renderRope(); });
 		else window.addEventListener("tm:theme", () => { renderLab(); renderRope(); });
 	}
-	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
-	else init();
+	function boot() {
+		if (window.__mtlInit) return;
+		const block = document.getElementById("modern-transformer-lab-optional");
+		if (!block) return;
+		const header = block.querySelector(".optional-header");
+		const content = block.querySelector(".optional-content");
+		if (!header) { setTimeout(boot, 150); return; }
+		if (!content || content.style.display === "none") {
+			if (!header._mtlBound) {
+				header._mtlBound = true;
+				header.addEventListener("click", function () { setTimeout(boot, 80); });
+			}
+			return;
+		}
+		window.__mtlInit = true;
+		init();
+	}
+	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(boot, 0); });
+	else setTimeout(boot, 0);
 }

@@ -61,7 +61,7 @@ Die optionalen Interpretability-Absätze (Safety Heads, TDA, Length Planning usw
 
 ## Modern Transformer Lab and RoPE
 
-The new `modern_transformer.php` page shows one forward pass with selectable RMSNorm, RoPE, GQA, SwiGLU, final normalization, tied/untied output head, QK normalization, attention bias and a toy two-expert MoE. It is explicitly a forward-pass lab with random fixed weights, not a trained model. The RoPE section rotates Q/K, plots the relative score and links from the positional-embeddings and transformer lessons. DeepSeek's MLA is discussed in the table but not implemented in the toy lab; that remains a documented difference.
+The new `transformer.php#modern-transformer-lab` page shows one forward pass with selectable RMSNorm, RoPE, GQA, SwiGLU, final normalization, tied/untied output head, QK normalization, attention bias and a toy two-expert MoE. It is explicitly a forward-pass lab with random fixed weights, not a trained model. The RoPE section rotates Q/K, plots the relative score and links from the positional-embeddings and transformer lessons. DeepSeek's MLA is discussed in the table but not implemented in the toy lab; that remains a documented difference.
 
 ## Scale and induction experiments
 

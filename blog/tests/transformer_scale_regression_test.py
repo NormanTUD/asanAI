@@ -309,7 +309,11 @@ def main() -> None:
             page2 = browser.new_page(viewport={"width": 1200, "height": 900})
             page2.on("pageerror", lambda e: modern_errors.append("pageerror: " + str(e)))
             page2.on("console", lambda m: modern_errors.append("console: " + m.text) if m.type == "error" else None)
-            page2.goto(f"http://127.0.0.1:{port}/modern_transformer.php", wait_until="load", timeout=120000)
+            page2.goto(f"http://127.0.0.1:{port}/transformer.php", wait_until="load", timeout=120000)
+            page2.wait_for_function("() => !!document.querySelector('#modern-transformer-lab-optional .optional-header')", timeout=120000)
+            page2.locator("#modern-transformer-lab-optional").scroll_into_view_if_needed()
+            page2.wait_for_timeout(500)
+            page2.locator("#modern-transformer-lab-optional .optional-header").click()
             page2.wait_for_function("() => !!document.getElementById('mtl-attention').data", timeout=60000)
             modern = page2.evaluate("""() => ({
                 attention: !!document.getElementById('mtl-attention').data,

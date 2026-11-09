@@ -58,6 +58,9 @@ const transformerLabVisMigrationDataRegistry = new Map();
 const positionalWavesRegistry = new Map();
 window.tlab_trajectory_collector = null;
 window._trajectoryVfEnabled = false;
+window.__tmFullVizLoaded = false;
+window.__tmFullVizPending = null;
+window.__tmFullVizObserver = null;
 
 const oldTrajWrapper = document.getElementById('transformer-trajectory-full-path-wrapper');
 const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
@@ -1551,6 +1554,7 @@ async function train_transformer() {
 	if (tokens.length === 0) { finalizeTrainingSession(btn, status, false); return; }
 
 	ensureWeightsAndEmbeddings(tokens, n_layers, d_model);
+	if (_forceFullTransformerVisualization) _forceFullTransformerVisualization();
 
 	const weightVars = convert_weights_to_tensors(window.currentWeights);
 	const allVars    = collectTrainableVars(weightVars);
@@ -2236,8 +2240,11 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	const needsReinit = handleWeightReinit(d_model, n_heads, n_layers);
 	const weights = window.currentWeights;
 
-	// 2. Pre-attention visualizations
-	const h0 = renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature);
+	// 2. Only the embedding table is needed for the first (top) output.
+	// The token, embedding, positional-wave and shift plots are built later,
+	// when their section approaches the viewport.
+	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
+	const h0 = embedTokensWithPE(knownTokens, d_model);
 	const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
 
 	// 2b. Provenance: record the initial hidden states h_0 = embedding + PE
@@ -2249,15 +2256,78 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 	// 3. Prepare migration/trajectory state
 	prepareMigrationState(needsReinit);
-	// 4. Core forward pass + visualization
+	// 4. Core forward pass + visualization. Keep the heavy layer cards and
+	// plots out of the first paint; build them when the step section is near.
+	window.__tmFullVizPending = { tokensWithPositional, knownTokens, trainingTokens, h0, weights, d_model, n_heads, n_layers };
+	if (window.__tmFullVizLoaded) {
+		_runFullTransformerVisualization(window.__tmFullVizPending);
+	} else {
+		ensureFullTransformerVisualization();
+		window.dispatchEvent(new CustomEvent("tm:transformer-data"));
+	}
+}
+
+function _renderDeferredPreAttentionVisualizations(payload) {
+	render_token_picker();
+	render_embedding_plot(payload.d_model);
+	tled_initEditor();
+	calculate_positional_injection(payload.knownTokens, payload.d_model);
+	render_positional_waves(payload.d_model, payload.knownTokens);
+	render_positional_shift_plot(payload.knownTokens, payload.d_model);
+}
+
+function _runFullTransformerVisualization(payload) {
+	if (!payload) return;
+	_renderDeferredPreAttentionVisualizations(payload);
 	window.__tmCollectLayerTrace = true;
 	try {
-		renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
+		renderForwardPassOrPlaceholder(
+			payload.tokensWithPositional, payload.knownTokens, payload.h0,
+			payload.weights, payload.d_model, payload.n_heads, payload.n_layers
+		);
 	} finally {
 		window.__tmCollectLayerTrace = false;
 	}
+	window.__tmFullVizLoaded = true;
 	window.dispatchEvent(new CustomEvent("tm:transformer-data"));
 }
+
+function ensureFullTransformerVisualization(force) {
+	if (window.__tmFullVizLoaded) return;
+	if (!window.__tmStepDepsReady) {
+		window.__tmFullVizAfterDeps = true;
+		return;
+	}
+	if (force && window.__tmFullVizPending) {
+		_runFullTransformerVisualization(window.__tmFullVizPending);
+		return;
+	}
+	if (window.__tmFullVizObserver) return;
+	const anchor = document.getElementById('transformer-step-visuals') ||
+		document.getElementById('ffn-equations-container');
+	if (!anchor) {
+		setTimeout(function () { ensureFullTransformerVisualization(false); }, 200);
+		return;
+	}
+	if (!('IntersectionObserver' in window)) {
+		_runFullTransformerVisualization(window.__tmFullVizPending);
+		return;
+	}
+	window.__tmFullVizObserver = new IntersectionObserver(function (entries) {
+		if (!entries.some(function (e) { return e.isIntersecting; })) return;
+		window.__tmFullVizObserver.disconnect();
+		window.__tmFullVizObserver = null;
+		_runFullTransformerVisualization(window.__tmFullVizPending);
+	}, { rootMargin: '700px 0px' });
+	window.__tmFullVizObserver.observe(anchor);
+}
+window.ensureFullTransformerVisualization = ensureFullTransformerVisualization;
+
+// Training needs the layer cards live, even if the reader pressed Train at the top.
+function _forceFullTransformerVisualization() {
+	ensureFullTransformerVisualization(true);
+}
+
 
 function getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary) {
 	const vizMode = window.tlabVisualizationMode || 'train';
