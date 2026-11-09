@@ -42,6 +42,7 @@ window.tlabVisualizationMode = 'train';
 window._cachedFinalProjection = null;
 window._activeUnifiedLayerIdx = 0;
 window.isTraining = false;
+window.tmInitializer = 'xavier';
 window._paramBreakdownOpen = false;
 window._paramBreakdownRendered = false;
 const widthEmbeddingInit = 5;
@@ -251,6 +252,7 @@ function lockArchitectureControls(lock) {
 		'transformer-context-size',      // context size
 		'transformer-ffn-size',          // FFN hidden width
 		'transformer-tokenizer-type',    // tokenizer
+		'transformer-initializer',       // initializer
 		'transformer-preset',            // config preset
 
 		// Training hyperparameters (safe, but locked by request)
@@ -1155,12 +1157,119 @@ function get_or_init_embeddings(tokens, d_model) {
 	return space;
 }
 
-function initWeights(r, c) {
-	const limit = Math.sqrt(6 / (r + c));
+function _initKind() {
+	return window.tmInitializer || 'xavier';
+}
+
+function _orthogonalMatrix(r, c) {
+	const m = Array.from({ length: r }, () => Array.from({ length: c }, () => gaussianRandom()));
+	const rows = r <= c;
+	const n = rows ? r : c;
+	const length = rows ? c : r;
+	for (let a = 0; a < n; a++) {
+		for (let b = 0; b < a; b++) {
+			let dot = 0;
+			for (let k = 0; k < length; k++) dot += rows ? m[a][k] * m[b][k] : m[k][a] * m[k][b];
+			for (let k = 0; k < length; k++) {
+				if (rows) m[a][k] -= dot * m[b][k];
+				else m[k][a] -= dot * m[k][b];
+			}
+		}
+		let norm = 0;
+		for (let k = 0; k < length; k++) norm += rows ? m[a][k] * m[a][k] : m[k][a] * m[k][a];
+		norm = Math.sqrt(norm) || 1;
+		for (let k = 0; k < length; k++) {
+			if (rows) m[a][k] /= norm;
+			else m[k][a] /= norm;
+		}
+	}
+	return m;
+}
+
+function initWeights(r, c, kind, residualScale) {
+	kind = kind || _initKind();
+	const fanIn = Math.max(1, r);
+	const fanOut = Math.max(1, c);
+	if (kind === 'orthogonal') return _orthogonalMatrix(r, c);
+	if (kind === 'gpt2') {
+		const std = 0.02 * (residualScale || 1);
+		return Array.from({ length: r }, () => Array.from({ length: c }, () => gaussianRandom() * std));
+	}
+	if (kind === 'he') {
+		const std = Math.sqrt(2 / fanIn);
+		return Array.from({ length: r }, () => Array.from({ length: c }, () => gaussianRandom() * std));
+	}
+	if (kind === 'lecun') {
+		const std = Math.sqrt(1 / fanIn);
+		return Array.from({ length: r }, () => Array.from({ length: c }, () => gaussianRandom() * std));
+	}
+	if (kind === 'uniform') {
+		const limit = 1 / Math.sqrt(fanIn);
+		return Array.from({ length: r }, () => Array.from({ length: c }, () => Math.random() * 2 * limit - limit));
+	}
+	const limit = Math.sqrt(6 / (fanIn + fanOut));
 	return Array.from({ length: r }, () =>
 		Array.from({ length: c }, () => (Math.random() * 2 * limit) - limit)
 	);
 }
+
+function renderInitializerHistogram() {
+	const canvas = document.getElementById('transformer-init-hist');
+	if (!canvas) return;
+	const rect = canvas.getBoundingClientRect();
+	const w = Math.max(220, rect.width || 320);
+	const h = Math.max(90, rect.height || 130);
+	const dpr = Math.min(window.devicePixelRatio || 1, 2);
+	canvas.width = Math.round(w * dpr);
+	canvas.height = Math.round(h * dpr);
+	const ctx = canvas.getContext('2d');
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	ctx.clearRect(0, 0, w, h);
+	const kind = _initKind();
+	const values = [];
+	const matrix = initWeights(32, 32, kind);
+	for (let i = 0; i < matrix.length; i++) for (let j = 0; j < matrix[i].length; j++) values.push(matrix[i][j]);
+	let lo = Math.min.apply(null, values), hi = Math.max.apply(null, values);
+	if (!isFinite(lo) || !isFinite(hi)) { lo = -1; hi = 1; }
+	if (hi === lo) { hi = lo + 1; }
+	const bins = 28, counts = new Array(bins).fill(0);
+	for (const v of values) {
+		const b = Math.min(bins - 1, Math.max(0, Math.floor((v - lo) / (hi - lo) * bins)));
+		counts[b]++;
+	}
+	const maxC = Math.max.apply(null, counts) || 1;
+	const padL = 8, padR = 8, padT = 8, padB = 18;
+	const bw = (w - padL - padR) / bins;
+	const ink = (typeof cssVar === 'function' ? cssVar('--mn-text') : '') || '#0f172a';
+	const muted = (typeof cssVar === 'function' ? cssVar('--mn-text-secondary') : '') || '#64748b';
+	const line = (typeof cssVar === 'function' ? cssVar('--mn-border') : '') || '#cbd5e1';
+	ctx.strokeStyle = line;
+	ctx.lineWidth = 1;
+	ctx.beginPath(); ctx.moveTo(padL, h - padB); ctx.lineTo(w - padR, h - padB); ctx.stroke();
+	for (let i = 0; i < bins; i++) {
+		const bh = counts[i] / maxC * (h - padT - padB);
+		ctx.fillStyle = 'rgba(59,130,246,.72)';
+		ctx.fillRect(padL + i * bw + 1, h - padB - bh, Math.max(1, bw - 2), bh);
+	}
+	ctx.fillStyle = muted;
+	ctx.font = '600 9px system-ui, sans-serif';
+	ctx.textAlign = 'left';
+	ctx.fillText(lo.toFixed(3), padL, h - 4);
+	ctx.textAlign = 'right';
+	ctx.fillText(hi.toFixed(3), w - padR, h - 4);
+	ctx.textAlign = 'left';
+	ctx.fillStyle = ink;
+	ctx.font = '700 10px system-ui, sans-serif';
+	ctx.fillText(kind + ' · sampled 32×32', padL, 12);
+}
+
+function applyTransformerInitializer(kind) {
+	window.tmInitializer = kind || 'xavier';
+	window.currentWeights = null;
+	if (typeof run_transformer_demo === 'function') run_transformer_demo();
+	renderInitializerHistogram();
+}
+window.applyTransformerInitializer = applyTransformerInitializer;
 
 window.showLayer = (containerId, layerIdx, numLayers) => {
     const activeContent = switchTab(containerId, layerIdx, numLayers,
@@ -1427,10 +1536,10 @@ function get_init_weights(n_layers, d_model, d_ff) {
 
 			// Attention
 			attention: {
-				query: initWeights(d_model, d_model),
-				key: initWeights(d_model, d_model),
-				value: initWeights(d_model, d_model),
-				output: initWeights(d_model, d_model)
+				query: initWeights(d_model, d_model, _initKind()),
+				key: initWeights(d_model, d_model, _initKind()),
+				value: initWeights(d_model, d_model, _initKind()),
+				output: initWeights(d_model, d_model, _initKind(), 1 / Math.sqrt(2 * n_layers))
 			},
 
 			// Norm 2 (Pre-FFN) -- NEW: Separate norm for the second block
@@ -1438,9 +1547,9 @@ function get_init_weights(n_layers, d_model, d_ff) {
 			beta2: new Array(d_model).fill(0.0),
 
 			// Feed-Forward Network
-			W1: initWeights(d_model, d_ff),
+			W1: initWeights(d_model, d_ff, _initKind()),
 			b1: new Array(d_ff).fill(0),
-			W2: initWeights(d_ff, d_model),
+			W2: initWeights(d_ff, d_model, _initKind(), 1 / Math.sqrt(2 * n_layers)),
 			b2: new Array(d_model).fill(0)
 		});
 	}
@@ -7923,6 +8032,9 @@ async function loadTransformerModule () {
 	updateTrainButtonState();
 	updateArchitectureValidityUI();
 	run_transformer_demo();
+	renderInitializerHistogram();
+	window.addEventListener('tm:theme', renderInitializerHistogram);
+	if (window.__MN_DARK && window.__MN_DARK.onChange) window.__MN_DARK.onChange(renderInitializerHistogram);
 	_observeOutputProjectionMath();
 	window.addEventListener('blogPostLoadComplete', scrollToRunStep, { once: true });
 	scrollToRunStep();

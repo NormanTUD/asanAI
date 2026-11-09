@@ -6727,6 +6727,20 @@ window.bibData = {
 		title: "Learning long-term dependencies with gradient descent is difficult",
 		url: "https://web.archive.org/web/20260425113855/https://www.comp.hkbu.edu.hk/~markus/teaching/comp7650/tnn-94-gradient.pdf",
 	},
+	"glorot2010understanding": {
+		title: "Understanding the difficulty of training deep feedforward neural networks",
+		author: "Xavier Glorot, Yoshua Bengio",
+		year: 2010,
+		url: "https://proceedings.mlr.press/v9/glorot10a.html",
+		alternativetitle: "Glorot & Bengio (2010)"
+	},
+	"he2015delving": {
+		title: "Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification",
+		author: "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun",
+		year: 2015,
+		url: "https://arxiv.org/abs/1502.01852",
+		alternativetitle: "He et al. (2015)"
+	},
 	"he2015resnet": {
 		author: "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun",
 		year: "2015",

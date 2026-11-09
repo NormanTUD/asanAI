@@ -116,6 +116,20 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	</div>
 
 	<div class="transformer-config-field">
+	    <label class="transformer-slider-label">Initializer</label>
+	    <select id="transformer-initializer" style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" onchange="applyTransformerInitializer(this.value)">
+		<option value="xavier" selected>Xavier / Glorot uniform (demo default)</option>
+		<option value="he">He normal (ReLU / GELU)</option>
+		<option value="lecun">LeCun normal</option>
+		<option value="orthogonal">Orthogonal</option>
+		<option value="gpt2">GPT-2: normal σ = 0.02, scaled residuals</option>
+		<option value="uniform">Uniform ±1/√fan_in</option>
+	    </select>
+	    <p class="transformer-slider-note">The initializer sets the distribution of the weight matrices. Xavier keeps variance roughly constant through tanh layers; He doubles the variance for ReLU; orthogonal starts with independent directions; GPT-2 uses a small normal and scales residual projections by 1/√(2N). The histogram samples the selected matrix. <a href="initializers.php">Read the initializer chapter</a>.</p>
+	    <canvas id="transformer-init-hist" style="width:100%; height:130px; display:block; margin-top:6px;" aria-label="Histogram of initial weights"></canvas>
+	</div>
+
+	<div class="transformer-config-field">
 	    <label class="transformer-kv-label"><input type="checkbox" id="transformer-kv-cache"> KV cache</label>
 	    <p class="transformer-slider-note">Reuse the keys and values of earlier tokens when you append a token. Only the new token's query is computed; the next-token distribution is identical. <span id="tm-kv-cache-status" class="tm-kv-cache-status">Off</span></p>
 	</div>

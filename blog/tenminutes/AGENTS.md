@@ -431,7 +431,9 @@ Treat these as hard behaviour:
 - The standalone `probability_tunnel.html` is the reference for a true 3-D,
   rotatable heightfield without libraries: raw WebGL terrain, 2-D background and
   FX canvases, depth-tested path ribbons, camera orbit/zoom/pan, and precomputed
-  canyon kernels for smooth temperature morphs. Keep it self-contained.
+  canyon kernels. The 3-D heights are sampled from the same 80x26 ASCII level
+  grid that defines the height-field plan; do not let the rendered terrain and
+  the plan diverge. Keep it self-contained.
 
 ## Formula cards and ML notation
 

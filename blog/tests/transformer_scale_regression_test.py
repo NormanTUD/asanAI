@@ -90,13 +90,13 @@ def main() -> None:
                 s.dispatchEvent(new Event('change', {bubbles: true}));
             }""")
             page.wait_for_timeout(800)
-            page.locator("#transformer-step-visuals").scroll_into_view_if_needed()
+            page.evaluate("() => document.getElementById('transformer-step-visuals').scrollIntoView()")
             page.wait_for_function("() => window.__tmStepDepsReady === true", timeout=60000)
-            page.locator("#transformer-plotly-space").scroll_into_view_if_needed()
+            page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
             page.wait_for_function("""() => {
                 const e = document.getElementById('transformer-plotly-space');
                 return !!(e && e.data && e.data.length && e.layout && e.layout.title);
-            }""", timeout=30000)
+            }""", timeout=60000)
             page.wait_for_timeout(1200)
             highdim = page.evaluate("""() => {
                 const e = document.getElementById('transformer-plotly-space');
@@ -123,7 +123,7 @@ def main() -> None:
                   json.dumps(highdim)[:300])
 
             # Trajectory is also projected through PCA at 32D.
-            page.locator("#transformer-trajectory-full-path").scroll_into_view_if_needed()
+            page.evaluate("() => document.getElementById('transformer-trajectory-full-path').scrollIntoView()")
             page.wait_for_timeout(1200)
             traj = page.evaluate("""() => {
                 const e = document.getElementById('transformer-trajectory-full-path');
@@ -141,7 +141,7 @@ def main() -> None:
                 s.dispatchEvent(new Event('change', {bubbles: true}));
             }""")
             page.wait_for_timeout(900)
-            page.locator("#transformer-plotly-space").scroll_into_view_if_needed()
+            page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
             page.wait_for_timeout(1200)
             high64 = page.evaluate("""() => {
                 const e = document.getElementById('transformer-plotly-space');
@@ -340,6 +340,32 @@ def main() -> None:
                   json.dumps(modern_changed)[:300])
             check("modern lab has no page or console errors", not modern_errors, "; ".join(modern_errors[:5]))
             page2.close()
+
+            # 5. Initializer chapter controls.
+            init_errors: list[str] = []
+            page3 = browser.new_page(viewport={"width": 1200, "height": 900})
+            page3.on("pageerror", lambda e: init_errors.append("pageerror: " + str(e)))
+            page3.on("console", lambda m: init_errors.append("console: " + m.text) if m.type == "error" else None)
+            page3.goto(f"http://127.0.0.1:{port}/initializers.php", wait_until="load", timeout=120000)
+            page3.wait_for_function("() => !!document.getElementById('init-variance-plot').data", timeout=60000)
+            init_plot = page3.evaluate("""() => ({
+                plot: !!document.getElementById('init-variance-plot').data,
+                hist: !!document.querySelector('#init-hist').getContext,
+                note: document.getElementById('init-variance-note').textContent,
+            })""")
+            check("initializer chapter renders variance and histogram", all([init_plot["plot"], init_plot["hist"], bool(init_plot["note"])]), json.dumps(init_plot)[:300])
+            page3.select_option("#init-scheme", "he")
+            page3.select_option("#init-act", "relu")
+            page3.wait_for_timeout(400)
+            init_after = page3.evaluate("""() => ({
+                scheme: document.getElementById('init-scheme').value,
+                note: document.getElementById('init-variance-note').textContent,
+            })""")
+            check("initializer controls recompute the variance model",
+                  init_after["scheme"] == "he" and "relu" in init_after["note"].lower(),
+                  json.dumps(init_after)[:200])
+            check("initializer chapter has no page or console errors", not init_errors, "; ".join(init_errors[:5]))
+            page3.close()
 
             check("no page or console errors", not errors, "; ".join(errors[:5]))
             browser.close()

@@ -383,7 +383,13 @@ body {
   var temp = 1;
   var tempTarget = 1;
   var W = 0, H = 0, DPR = 1;
-  var NX = 144, NZ = 92;
+  var NX = 128, NZ = 82;
+  var MAP_W = 80, MAP_H = 26;
+  var ASCII_LEVELS = " .:-=+*#%@";
+  var asciiRows = [];
+  var design = null;
+  var DM = null, DN = null, DH = null, DS = null, DG = null, DP = null;
+  var meshAttrs = null;
   var PATH_N = 260;
   var SEGMENTS = [];
   var KMAIN = null, KSIDE = null, KSIDEG = null, KNOISE = null, KSIDEPROX = null;
@@ -420,7 +426,11 @@ body {
   function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
   function lerp(a, b, t) { return a + (b - a) * t; }
   function tNorm(t) { return clamp((t - 0.3) / 1.7, 0, 1); }
-  function pathCenter(x) { return 0.14 * Math.sin(x * 7.2 + 0.4) + 0.06 * Math.sin(x * 13.1 + 1.1); }
+  function smoothstep01(t) { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); }
+  function pathCenter(x) {
+    var base = 0.18 * Math.sin(x * 6.4 + 0.3) + 0.09 * Math.sin(x * 13.7 + 1.2) + 0.035 * Math.sin(x * 24.0 + 0.7);
+    return base + 0.22 * smoothstep01((x - 0.72) / 0.16);
+  }
   function worldX(nx) { return -1.35 + 2.70 * nx; }
   function sideEnd(i, k) {
     var dir = k === 1 ? 1 : -1;
@@ -482,16 +492,13 @@ body {
   function heightAt(nx, z, t) {
     var tn = tNorm(t);
     var wx = worldX(nx);
-    var h = 0.64;
+    var h = 0.54 + 0.06 * smoothstep01((Math.abs(z - pathCenter(nx)) - 0.12) / 0.35);
     var main = Math.exp(-Math.pow((z - pathCenter(nx)) / 0.16, 2));
-    h -= (0.56 - 0.08 * tn) * main;
+    h -= (0.48 - 0.06 * tn) * main;
     for (var i = 0; i < SEGMENTS.length; i++) {
       var s = SEGMENTS[i];
       var d = distToPolyline(wx, z, s.points);
-      var broad = Math.exp(-Math.pow(d / 0.14, 2));
-      var groove = Math.exp(-Math.pow(d / 0.05, 2));
-      var lift = 0.17 - 0.05 * tn + 0.04 * ((s.logit + 2) / 2);
-      h += lift * broad - 0.05 * groove;
+      h -= 0.10 * Math.exp(-Math.pow(d / 0.07, 2));
     }
     var r1 = Math.sin(7.0 * wx + 4.0 * z) * Math.cos(6.0 * z - 5.0 * wx);
     var r2 = 0.55 * Math.sin(15.0 * wx - 8.0 * z + 1.3) * Math.cos(11.0 * z + 3.0 * wx);
@@ -601,7 +608,7 @@ body {
     "void main() {",
     "  vec3 n = normalize(vNormal);",
     "  float diff = max(dot(n, normalize(uLight)), 0.0);",
-    "  float h = clamp(vPos.y / 0.88, 0.0, 1.0);",
+    "  float h = clamp(vPos.y / 0.70, 0.0, 1.0);",
     "  vec3 base = palette(h);",
     "  base = mix(base, vec3(0.08,0.60,1.00), vPath.x * 0.58);",
     "  base = mix(base, vec3(1.00,0.71,0.22), vPath.y * 0.50);",
@@ -726,24 +733,113 @@ body {
     }
     return Math.max(0, h);
   }
+  function prepareMeshAttrs() {
+    meshAttrs = new Float32Array((NX + 1) * (NZ + 1) * 2);
+    for (var c = 0; c <= NX; c++) {
+      var nx = c / NX;
+      for (var r = 0; r <= NZ; r++) {
+        var z = -1.05 + 2.10 * (r / NZ);
+        var i = r * (NX + 1) + c;
+        meshAttrs[i * 2] = Math.exp(-Math.pow((z - pathCenter(nx)) / 0.16, 2));
+        meshAttrs[i * 2 + 1] = sideProx(nx, z);
+      }
+    }
+  }
+  function designHeight(i, tn) {
+    var h = 0.54 + DH[i] + DN[i] - (0.48 - 0.06 * tn) * DM[i];
+    for (var s = 0; s < SEGMENTS.length; s++) {
+      h -= 0.10 * DG[i * SEGMENTS.length + s];
+    }
+    return Math.max(0, h);
+  }
+  function prepareDesignKernels() {
+    var n = (MAP_W + 1) * (MAP_H + 1);
+    var segs = SEGMENTS.length;
+    DM = new Float32Array(n);
+    DN = new Float32Array(n);
+    DH = new Float32Array(n);
+    DP = new Float32Array(n);
+    DS = new Float32Array(n * segs);
+    DG = new Float32Array(n * segs);
+    for (var c = 0; c <= MAP_W; c++) {
+      var nx = c / MAP_W;
+      var wx = worldX(nx);
+      for (var r = 0; r <= MAP_H; r++) {
+        var z = -1.05 + 2.10 * (r / MAP_H);
+        var i = r * (MAP_W + 1) + c;
+        DM[i] = Math.exp(-Math.pow((z - pathCenter(nx)) / 0.16, 2));
+        DH[i] = 0.06 * smoothstep01((Math.abs(z - pathCenter(nx)) - 0.12) / 0.35);
+        var r1 = Math.sin(7.0 * wx + 4.0 * z) * Math.cos(6.0 * z - 5.0 * wx);
+        var r2 = 0.55 * Math.sin(15.0 * wx - 8.0 * z + 1.3) * Math.cos(11.0 * z + 3.0 * wx);
+        DN[i] = 0.072 * Math.pow(Math.abs((r1 + r2) * 0.5), 1.22) + 0.020 * Math.sin(29.0 * wx + 17.0 * z) * Math.cos(23.0 * z - 13.0 * wx);
+        var best = 0;
+        for (var s = 0; s < segs; s++) {
+          var d = distToPolyline(wx, z, SEGMENTS[s].points);
+          DS[i * segs + s] = Math.exp(-Math.pow(d / 0.14, 2));
+          DG[i * segs + s] = Math.exp(-Math.pow(d / 0.05, 2));
+          var p = Math.exp(-Math.pow(d / 0.18, 2));
+          if (p > best) best = p;
+        }
+        DP[i] = best;
+      }
+    }
+  }
+  function designHeight(i, tn) {
+    var h = 0.64 + DN[i] - (0.56 - 0.08 * tn) * DM[i];
+    for (var s = 0; s < SEGMENTS.length; s++) {
+      var lift = 0.17 - 0.05 * tn + 0.04 * ((SEGMENTS[s].logit + 2) / 2);
+      h += lift * DS[i * SEGMENTS.length + s] - 0.05 * DG[i * SEGMENTS.length + s];
+    }
+    return Math.max(0, h);
+  }
+  function buildDesign() {
+    design = new Float32Array((MAP_W + 1) * (MAP_H + 1));
+    asciiRows = [];
+    var levels = ASCII_LEVELS.length - 1;
+    for (var r = 0; r <= MAP_H; r++) {
+      var z = -1.05 + 2.10 * (r / MAP_H);
+      var row = "";
+      for (var c = 0; c <= MAP_W; c++) {
+        var nx = c / MAP_W;
+        var h = designHeight(r * (MAP_W + 1) + c, tNorm(temp));
+        var ch = ASCII_LEVELS[Math.round(clamp(h / 0.88, 0, 1) * levels)];
+        if (Math.abs(z - pathCenter(nx)) < 0.075) ch = " ";
+        row += ch;
+        design[r * (MAP_W + 1) + c] = ASCII_LEVELS.indexOf(ch) / levels * 0.88;
+      }
+      asciiRows.push(row);
+    }
+  }
+  function surfaceHeight(nx, z) {
+    if (!design) return heightAt(nx, z, temp);
+    var fx = clamp(nx, 0, 1) * MAP_W;
+    var fz = clamp((z + 1.05) / 2.10, 0, 1) * MAP_H;
+    var x0 = Math.floor(fx), z0 = Math.floor(fz);
+    var x1 = Math.min(MAP_W, x0 + 1), z1 = Math.min(MAP_H, z0 + 1);
+    var tx = fx - x0, tz = fz - z0;
+    var h00 = design[z0 * (MAP_W + 1) + x0];
+    var h10 = design[z0 * (MAP_W + 1) + x1];
+    var h01 = design[z1 * (MAP_W + 1) + x0];
+    var h11 = design[z1 * (MAP_W + 1) + x1];
+    return lerp(lerp(h00, h10, tx), lerp(h01, h11, tx), tz);
+  }
   function buildTerrain() {
     var t0 = performance.now();
+    buildDesign();
     var n = (NX + 1) * (NZ + 1);
     heights = new Float32Array(n);
     var pos = new Float32Array(n * 3);
     var norm = new Float32Array(n * 3);
-    var pattr = new Float32Array(n * 2);
+    var pattr = meshAttrs;
     for (var c = 0; c <= NX; c++) {
       var nx = c / NX;
       var wx = worldX(nx);
       for (var r = 0; r <= NZ; r++) {
         var z = -1.05 + 2.1 * (r / NZ);
         var i = r * (NX + 1) + c;
-        var h = heightFromKernels(i, temp);
+        var h = surfaceHeight(nx, z);
         heights[i] = h;
         pos[i * 3] = wx; pos[i * 3 + 1] = h; pos[i * 3 + 2] = z;
-        pattr[i * 2] = KMAIN[i];
-        pattr[i * 2 + 1] = KSIDEPROX[i];
       }
     }
     var dx = 2.70 / NX, dz = 2.10 / NZ;
@@ -799,7 +895,7 @@ body {
     for (var i = 0; i < PATH_N; i++) {
       var nx = i / (PATH_N - 1);
       var z = pathCenter(nx);
-      mainWorld.push([worldX(nx), heightAt(nx, z, temp) + 0.022, z]);
+      mainWorld.push([worldX(nx), surfaceHeight(nx, z) + 0.022, z]);
     }
     mainGlow = makeRibbon(mainWorld, 0.12);
     mainCore = makeRibbon(mainWorld, 0.032);
@@ -819,7 +915,7 @@ body {
         var wx2 = lerp(poly[si][0], poly[si + 1][0], u);
         var z2 = lerp(poly[si][1], poly[si + 1][1], u);
         var nx2 = (wx2 + 1.35) / 2.70;
-        pts.push([wx2, heightAt(nx2, z2, temp) + 0.024, z2]);
+        pts.push([wx2, surfaceHeight(nx2, z2) + 0.024, z2]);
       }
       sideWorld.push(pts);
       sideGlow.push(makeRibbon(pts, 0.11));
@@ -976,7 +1072,7 @@ body {
     el.style.transform = "translate(-50%, -50%) translate3d(" + p.x.toFixed(1) + "px," + p.y.toFixed(1) + "px, 0)";
   }
   function labelWorld(nx, z, lift) {
-    return projectPoint(worldX(nx), heightAt(nx, z, temp) + (lift || 0.07), z);
+    return projectPoint(worldX(nx), surfaceHeight(nx, z) + (lift || 0.07), z);
   }
   function updateLabels() {
     for (var i = 0; i < labels.length; i++) {
@@ -1219,7 +1315,8 @@ body {
   document.addEventListener("visibilitychange", function () { lastFrame = performance.now(); });
 
   prepareSegments();
-  prepareKernels();
+  prepareDesignKernels();
+  prepareMeshAttrs();
   buildIndices();
   applyLang("de");
   resize();
@@ -1230,7 +1327,8 @@ body {
       return { step: step, orb: orb, temp: temp, frames: frameCount, lang: lang, avgFrame: drawSamples ? drawTime / drawSamples : 0, terrainMs: terrainTime, camera: { yaw: cam.yaw, pitch: cam.pitch, dist: cam.dist, tx: cam.tx, tz: cam.tz }, sidePaths: sideCore.length, segments: SEGMENTS.length };
     },
     next: goNext,
-    reset: reset
+    reset: reset,
+    ascii: function () { return asciiRows.join("\n"); }
   };
 })();
 
