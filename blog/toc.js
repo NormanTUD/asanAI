@@ -157,7 +157,7 @@ function toc() {
 		'#toc li.toc-level-4 > .toc-row > a, #toc li.toc-level-5 > .toc-row > a, #toc li.toc-level-6 > .toc-row > a { color: var(--mn-text-muted); font-size: 0.9em; }',
 
 		// Optional content: muted + italic, no badge.
-		'#toc li.toc-optional > .toc-row > a { color: var(--mn-text-muted); font-style: italic; }',
+		'#toc li.toc-optional > .toc-row > a { color: var(--mn-text-muted); font-style: normal; }',
 		'#toc li.toc-optional > .toc-row:hover > a { color: var(--mn-text-secondary); }',
 
 		// Reading-time meta on the right: tiny, tabular, muted.

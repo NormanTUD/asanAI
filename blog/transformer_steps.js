@@ -1852,8 +1852,8 @@
 		euclidean: { de: "Euklidisch (L2)", en: "Euclidean (L2)", short: "L2" },
 		angular: { de: "Großkreis / angular (Cosinus, 0–1)", en: "Great-circle / angular (cosine, 0–1)", short: "angle" }
 	};
-	if (!window.tmFeatureMetric || !FEATURE_METRICS[window.tmFeatureMetric]) window.tmFeatureMetric = "euclidean";
-	function featureMetric() { return window.tmFeatureMetric || "euclidean"; }
+	if (!window.tmFeatureMetric || !FEATURE_METRICS[window.tmFeatureMetric]) window.tmFeatureMetric = "angular";
+	function featureMetric() { return window.tmFeatureMetric || "angular"; }
 	function featureMetricLabel() { return FEATURE_METRICS[featureMetric()][DE() ? "de" : "en"]; }
 	function vectorNorm(v) { return Math.sqrt((v || []).reduce(function (s, x) { return s + x * x; }, 0)); }
 	function normalizeVector(v) { var n = vectorNorm(v) || 1; return (v || []).map(function (x) { return x / n; }); }

@@ -1,0 +1,45 @@
+.mtl-wrap { display: grid; gap: 16px; }
+.mtl-hero {
+	position: relative; overflow: hidden; border-radius: 18px; padding: 22px 24px;
+	background:
+		radial-gradient(circle at 12% 10%, rgba(59,130,246,.22), transparent 34%),
+		radial-gradient(circle at 88% 20%, rgba(16,185,129,.20), transparent 32%),
+		linear-gradient(135deg, var(--mn-surface, #fff), var(--mn-bg-subtle, #f8fafc));
+	border: 1px solid var(--mn-border, #cbd5e1);
+	box-shadow: 0 14px 40px rgba(15, 23, 42, .08);
+}
+.mtl-hero h2 { margin: 0 0 6px; font-size: clamp(1.25rem, 2.2vw, 1.7rem); }
+.mtl-hero p { margin: 0; color: var(--mn-text-secondary, #475569); max-width: 74ch; }
+.mtl-panel {
+	min-width: 0;
+	overflow: hidden;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 16px; padding: 16px;
+	background: color-mix(in srgb, var(--mn-surface, #fff) 88%, var(--mn-bg-subtle, #f8fafc));
+	box-shadow: 0 8px 26px rgba(15, 23, 42, .06);
+}
+.mtl-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px 14px; align-items: end; }
+.mtl-control { display: grid; gap: 4px; font-size: .84rem; }
+.mtl-control label { font-weight: 700; color: var(--mn-text, #0f172a); }
+.mtl-control select, .mtl-control input[type="range"] { width: 100%; }
+.mtl-readout { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.mtl-chip {
+	display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px;
+	border-radius: 999px; border: 1px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface, #fff); color: var(--mn-text-secondary, #475569);
+	font: 700 .72rem/1.2 "Open Sans", system-ui, sans-serif;
+}
+.mtl-chip b { color: var(--mn-text, #0f172a); }
+.mtl-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; width: 100%; }
+.mtl-grid > * { min-width: 0; }
+@media (max-width: 900px) { .mtl-grid { grid-template-columns: 1fr; } }
+.mtl-plot { width: 100%; max-width: 100%; min-width: 0; min-height: 360px; }
+.mtl-small { min-height: 250px; }
+.mtl-note { font-size: .8rem; line-height: 1.5; color: var(--mn-text-secondary, #475569); margin: 8px 0 0; }
+.mtl-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+.mtl-code {
+	font-family: "Courier New", monospace; font-size: .78rem; line-height: 1.55;
+	background: var(--mn-bg-subtle, #f1f5f9); border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 10px; padding: 10px 12px; color: var(--mn-text, #0f172a);
+}
+.mtl-pill { display: inline-block; padding: 2px 7px; border-radius: 999px; background: rgba(59,130,246,.12); color: #2563eb; font-weight: 700; }

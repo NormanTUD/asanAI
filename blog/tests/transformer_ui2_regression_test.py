@@ -297,9 +297,9 @@ def main() -> None:
                 const perPlot = !!document.querySelector('[data-feature-metric], .trajectory-metric-select, .tm-step-metric');
                 return sel ? {options: sel.options.length, value: sel.value, perPlot} : null;
             }""")
-            check("one global metric switch, default Euclidean",
+            check("one global metric switch, default Great-circle",
                   bool(global_metric) and global_metric["options"] == 2
-                  and global_metric["value"] == "euclidean" and not global_metric["perPlot"], str(global_metric))
+                  and global_metric["value"] == "angular" and not global_metric["perPlot"], str(global_metric))
 
             hint = page.evaluate("""() => {
                 const api = window.tmMetric;

@@ -1,10 +1,10 @@
 # Deep fact audit
 
-- lessons: 100
-- claims: 7397
-- statements: 17398
-- relations: 52712
-- uncovered years: 68
+- lessons: 99
+- claims: 7388
+- statements: 17400
+- relations: 52709
+- uncovered years: 64
 - uncovered quantities: 8
 - uncited specific claims: 307
 - citation keys not found in lesson: 0
@@ -74,7 +74,6 @@
 | minimalneuron | 25 | 82 | 245 | 0 | 0 |
 | mirror_in_machine | 27 | 54 | 183 | 0 | 0 |
 | mixture_of_experts | 18 | 29 | 79 | 0 | 0 |
-| modern_transformer | 9 | 31 | 147 | 4 | 0 |
 | multimodal | 14 | 59 | 202 | 0 | 0 |
 | music_video_generation | 51 | 241 | 682 | 0 | 0 |
 | myths | 26 | 91 | 258 | 0 | 0 |
@@ -108,7 +107,7 @@
 | training_infrastructure | 32 | 55 | 239 | 0 | 0 |
 | trainingdynamics | 23 | 29 | 140 | 0 | 0 |
 | traininglab | 15 | 7 | 67 | 0 | 0 |
-| transformer | 37 | 330 | 1054 | 0 | 2 |
+| transformer | 37 | 363 | 1198 | 0 | 2 |
 | unexpected_capabilities | 40 | 274 | 578 | 4 | 1 |
 | untold_history_i | 520 | 458 | 1503 | 3 | 0 |
 | untold_history_ii | 672 | 643 | 2025 | 6 | 0 |
@@ -139,10 +138,6 @@
 - language.php: 2006
 - language.php: 2019
 - language.php: 2022
-- modern_transformer.php: 2019
-- modern_transformer.php: 2020
-- modern_transformer.php: 2021
-- modern_transformer.php: 2023
 - overandunderfittinglab.php: 2017
 - reasoning.php: 2026
 - recurrent_networks.php: 2015
@@ -154,7 +149,11 @@
 - speech_audio.php: 2016
 - statistics_i.php: 2019
 - statistics_ii.php: 1915
-- … and 33 more
+- statistics_ii.php: 1920
+- statistics_ii.php: 1924
+- statistics_ii.php: 1951
+- statistics_ii.php: 1952
+- … and 29 more
 
 ## Uncovered quantities
 

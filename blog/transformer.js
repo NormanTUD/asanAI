@@ -5721,7 +5721,7 @@ function tlab_render_trajectory_plot(d_model) {
 	const dataPoints = sortedKeys.map(k => steps[k]);
 	const { embSnap, snapVocab } = _traj_snapshot_embeddings();
 	const vfEnabled = window._trajectoryVfEnabled && d_model <= 3;
-	const metric = (window.tmMetric && window.tmMetric.get) ? window.tmMetric.get() : "euclidean";
+	const metric = (window.tmMetric && window.tmMetric.get) ? window.tmMetric.get() : "angular";
 	const transform = (v) => (window.tmMetric && window.tmMetric.transform) ? window.tmMetric.transform(v, metric) : v;
 	const plottedPoints = dataPoints.map(stage => {
 		if (!stage || !stage.data) return stage;

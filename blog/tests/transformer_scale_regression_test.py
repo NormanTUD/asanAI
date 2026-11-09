@@ -90,6 +90,8 @@ def main() -> None:
                 s.dispatchEvent(new Event('change', {bubbles: true}));
             }""")
             page.wait_for_timeout(800)
+            page.locator("#transformer-step-visuals").scroll_into_view_if_needed()
+            page.wait_for_function("() => window.__tmStepDepsReady === true", timeout=60000)
             page.locator("#transformer-plotly-space").scroll_into_view_if_needed()
             page.wait_for_function("""() => {
                 const e = document.getElementById('transformer-plotly-space');
