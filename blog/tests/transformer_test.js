@@ -152,7 +152,7 @@ function loadSandbox() {
 	sandbox.self = sandbox;
 
 	const ctx = vm.createContext(sandbox);
-	for (const file of ['transformer.js', 'attention_engine.js']) {
+	for (const file of ['transformer.js', 'attention_engine.js', 'tda_ffn.js']) {
 		const code = fs.readFileSync(path.join(BLOG, file), 'utf8');
 		vm.runInContext(code, ctx, { filename: file });
 	}
@@ -431,6 +431,32 @@ function testLessonSource() {
 	}
 }
 
+function testTDA(ctx) {
+	const square = [[0, 0], [1, 0], [1, 1], [0, 1]];
+	const topo = ctx.TDAFFN.persistence(square);
+	const finite = topo.h0.filter(bar => isFinite(bar.death));
+	check(topo.h0.length === 4, 'H0 has one bar per point');
+	check(finite.length === 3, 'three of four components die at a square edge');
+	check(finite.every(bar => approx(bar.death, 1 / Math.SQRT2, 1e-12)),
+		'square components merge at the side length');
+	check(topo.h0.some(bar => !isFinite(bar.death)), 'one H0 component survives');
+	check(topo.h1.length === 1, 'square creates one H1 class');
+	check(topo.h1.length === 1 && approx(topo.h1[0].birth, 1 / Math.SQRT2, 1e-12),
+		'H1 is born when the fourth side closes the loop');
+	check(topo.h1.length === 1 && approx(topo.h1[0].death, 1, 1e-12),
+		'H1 dies when the diagonals fill the square');
+	check(ctx.TDAFFN.bettiAt(topo.h0, 0.8) === 1, 'square has b0=1 at eps=0.8');
+	check(ctx.TDAFFN.bettiAt(topo.h1, 0.8) === 1, 'square has b1=1 at eps=0.8');
+	check(ctx.TDAFFN.bettiAt(topo.h1, 1) === 0, 'square has b1=0 at eps=1');
+
+	const line = ctx.TDAFFN.persistence([[0, 0], [1, 0], [2, 0], [3, 0]]);
+	check(line.h1.length === 0, 'a line has no H1 class');
+
+	const duplicate = ctx.TDAFFN.persistence([[1, 1], [1, 1]]);
+	check(duplicate.h0.length === 1 && ctx.TDAFFN.bettiAt(duplicate.h0, 0) === 1,
+		'duplicate points are one component at eps=0');
+}
+
 function testFFNViews() {
 	const template = fs.readFileSync(path.join(BLOG, 'transformer.js'), 'utf8');
 	const steps = fs.readFileSync(path.join(BLOG, 'transformer_steps.js'), 'utf8');
@@ -567,6 +593,7 @@ function main() {
 	testLazyRenderableDefers(ctx);
 	testLessonSource();
 	testFFNViews();
+	testTDA(ctx);
 	testCitations();
 
 	console.log('\ntransformer tests: ' + pass + ' passed, ' + fail + ' failed');

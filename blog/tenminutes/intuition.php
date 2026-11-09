@@ -3408,9 +3408,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var el = TM.clamp(0.34 + posPitch + (posAuto ? Math.sin(t * 0.7) * 0.035 : 0), -1.2, 1.2);
 			var ca = Math.cos(az), sa = Math.sin(az);
 			var ce = Math.cos(el), se = Math.sin(el);
-			var unit = Math.min(w * 0.29, h * 0.36);
+			var unit = Math.min(w * 0.40, h * 0.47);
 			var cx = w / 2;
-			var cy = h * 0.52;
+			var cy = h * 0.43;
 			function project(p) {
 				var x1 = p[0] * ca + p[2] * sa;
 				var z1 = -p[0] * sa + p[2] * ca;

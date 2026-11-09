@@ -7982,12 +7982,17 @@ html[data-theme="dark"] .tm-toc {
 	align-items: center;
 	justify-content: space-between;
 	gap: 18px;
+	width: 100%;
 	padding: 14px clamp(16px, 2.4vw, 26px);
-	list-style: none;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: left;
+	appearance: none;
 	cursor: pointer;
 	user-select: none;
 }
-.tm-toc__summary::-webkit-details-marker { display: none; }
 .tm-toc__summary:focus-visible {
 	outline: 2px solid var(--tm-green);
 	outline-offset: -4px;
@@ -8043,7 +8048,7 @@ html[data-theme="dark"] .tm-toc__toggle { color: var(--tm-sky); }
 	transform: rotate(45deg) translateY(-2px);
 	transition: transform 0.22s ease;
 }
-.tm-toc__details[open] .tm-toc__chevron {
+.tm-toc__details.is-open .tm-toc__chevron {
 	transform: rotate(225deg) translateY(-2px);
 }
 .tm-toc__panel {
@@ -8053,6 +8058,10 @@ html[data-theme="dark"] .tm-toc__toggle { color: var(--tm-sky); }
 	padding: 8px clamp(12px, 2vw, 22px) 18px;
 	border-top: 1px solid var(--tm-line);
 	animation: tm-toc-in 0.22s ease both;
+}
+.tm-toc__details:not(.is-open) .tm-toc__panel,
+.tm-toc__panel[hidden] {
+	display: none;
 }
 @keyframes tm-toc-in {
 	from { opacity: 0; transform: translateY(-5px); }

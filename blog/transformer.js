@@ -8130,6 +8130,46 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 					</div>
 				</div>
 			</div>
+			<details class="tm-tda-step" id="${prefix}-tda-step">
+				<summary>${isDe ? 'Topologie (TDA): Bleiben Strukturen erhalten?' : 'Topology (TDA): do structures survive?'}</summary>
+				<div class="tm-tda-body">
+					<p class="tm-tda-intro">${isDe ? 'Persistente Homologie (Vietoris–Rips) auf der echten Token-Wolke vor und nach dem FFN. Blau ist H0 (Komponenten), Gold ist H1 (Schleifen). Der Slider ist der Filtrationsradius ε, als Anteil am jeweiligen Durchmesser der Wolke.' : 'Persistent homology (Vietoris–Rips) on the real token cloud before and after the FFN. Blue is H0 (components), gold is H1 (loops). The slider is the filtration radius ε as a fraction of each cloud’s diameter.'}</p>
+					<div class="tm-tda-controls">
+						<label for="${prefix}-tda-eps">${isDe ? 'Filtrationsradius ε' : 'Filtration radius ε'}</label>
+						<input type="range" id="${prefix}-tda-eps" min="0" max="100" step="1" value="35">
+						<span class="tm-tda-eps-val" id="${prefix}-tda-eps-val">0.35</span>
+						<label for="${prefix}-tda-mode">${isDe ? 'Vergleich' : 'Comparison'}</label>
+						<select id="${prefix}-tda-mode">
+							<option value="residual">${isDe ? 'h₁ → h₂ (mit Residual)' : 'h₁ → h₂ (with residual)'}</option>
+							<option value="ffn">${isDe ? 'normiert → FFN-Update' : 'normalized → FFN update'}</option>
+						</select>
+					</div>
+					<div class="tm-tda-betti" id="${prefix}-tda-betti" aria-live="polite"></div>
+					<div class="tm-tda-status" id="${prefix}-tda-status" aria-live="polite"></div>
+					<div class="tm-tda-grid">
+						<div class="tm-tda-cell">
+							<div class="tm-tda-cell-title" id="${prefix}-tda-before-title">${isDe ? 'Vorher: Token-Wolke (h₁)' : 'Before: token cloud (h₁)'}</div>
+							<canvas id="${prefix}-tda-before-cloud" class="tm-tda-canvas" aria-label="${isDe ? 'Token-Punktwolke vor dem FFN, Kanten beim aktuellen Radius' : 'Token point cloud before the FFN, edges at the current radius'}"></canvas>
+						</div>
+						<div class="tm-tda-cell">
+							<div class="tm-tda-cell-title" id="${prefix}-tda-after-title">${isDe ? 'Nachher: Token-Wolke (h₂)' : 'After: token cloud (h₂)'}</div>
+							<canvas id="${prefix}-tda-after-cloud" class="tm-tda-canvas" aria-label="${isDe ? 'Token-Punktwolke nach dem FFN, Kanten beim aktuellen Radius' : 'Token point cloud after the FFN, edges at the current radius'}"></canvas>
+						</div>
+					</div>
+					<div class="tm-tda-grid tm-tda-grid--barcode">
+						<div class="tm-tda-cell">
+							<div class="tm-tda-cell-title">${isDe ? 'Barcodes vorher' : 'Barcodes before'}</div>
+							<canvas id="${prefix}-tda-before-barcode" class="tm-tda-canvas tm-tda-canvas--barcode" aria-label="${isDe ? 'Barcodes der persistenten Homologie vor dem FFN' : 'Persistent homology barcodes before the FFN'}"></canvas>
+						</div>
+						<div class="tm-tda-cell">
+							<div class="tm-tda-cell-title">${isDe ? 'Barcodes nachher' : 'Barcodes after'}</div>
+							<canvas id="${prefix}-tda-after-barcode" class="tm-tda-canvas tm-tda-canvas--barcode" aria-label="${isDe ? 'Barcodes der persistenten Homologie nach dem FFN' : 'Persistent homology barcodes after the FFN'}"></canvas>
+						</div>
+					</div>
+					<p class="tm-tda-explain" id="${prefix}-tda-explain" aria-live="polite"></p>
+					<p class="tm-tda-note">${isDe ? 'Bei so wenigen Tokens ist das eine explorative Diagnose, keine statistische Aussage. Die Wolken sind auf ihren eigenen Durchmesser normiert, damit die Formen vergleichbar bleiben; die Barcodes zeigen, wann Komponenten verschmelzen und wann Schleifen gefüllt werden. Für die Filtration werden höchstens die ersten 16 Tokens verwendet.' : 'With so few tokens this is an exploratory diagnostic, not a statistical claim. Each cloud is normalised by its own diameter so the shapes stay comparable; the barcodes show when components merge and when loops are filled. The filtration uses at most the first 16 tokens.'}</p>
+				</div>
+			</details>
 			<div id="${prefix}-formula-body">
 				<div id="${prefix}-step-1" class="math_transformer">
 					<div id="${prefix}-ffn-preln-formula" class="tm-ffn-answer" hidden></div>

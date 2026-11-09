@@ -462,6 +462,105 @@
 }
 .tm-ffn-answer[hidden] { display: none; }
 
+/* TDA block under the FFN: real token clouds, a filtration slider and the
+   H0/H1 barcodes before and after the layer. */
+.tm-tda-step {
+	margin: 12px 0 4px;
+	padding-top: 6px;
+	border-top: 1px solid var(--mn-border, #cbd5e1);
+}
+.tm-tda-step > summary {
+	cursor: pointer;
+	font: 700 0.78rem/1.3 "Barlow", "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text);
+}
+.tm-tda-body { padding: 4px 0 2px; }
+.tm-tda-intro,
+.tm-tda-note {
+	margin: 4px 0 6px;
+	font: 400 0.72rem/1.5 "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text-muted);
+}
+.tm-tda-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 6px 0;
+	font: 600 0.7rem/1.3 "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text-secondary);
+}
+.tm-tda-controls input[type="range"] {
+	flex: 1 1 220px;
+	max-width: 520px;
+	accent-color: var(--mn-accent, #3b82f6);
+}
+.tm-tda-controls select {
+	padding: 3px 6px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 6px;
+	background: var(--mn-surface, #fff);
+	color: var(--mn-text-secondary);
+	font: 600 0.68rem/1.3 "Open Sans", system-ui, sans-serif;
+}
+.tm-tda-eps-val {
+	min-width: 3.2em;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	color: var(--mn-text);
+}
+.tm-tda-betti {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 4px 0 2px;
+}
+.tm-tda-chip {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 4px;
+	padding: 2px 8px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 999px;
+	background: var(--mn-surface, #fff);
+	font: 600 0.68rem/1.3 "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text-secondary);
+}
+.tm-tda-chip b { color: var(--mn-text); font-size: 0.72rem; }
+.tm-tda-chip--after { border-color: var(--mn-accent, #3b82f6); }
+.tm-tda-status {
+	margin: 2px 0 6px;
+	font: 600 0.7rem/1.4 "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text-secondary);
+}
+.tm-tda-explain {
+	margin: 8px 0 4px;
+	font: 400 0.74rem/1.55 "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text-secondary);
+}
+.tm-tda-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+	margin: 8px 0;
+}
+.tm-tda-cell { min-width: 0; }
+.tm-tda-cell-title {
+	margin-bottom: 3px;
+	font: 600 0.68rem/1.3 "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text-muted);
+}
+.tm-tda-canvas {
+	display: block;
+	width: 100%;
+	height: 210px;
+	background: transparent;
+}
+.tm-tda-canvas--barcode { height: 190px; }
+@media (max-width: 720px) {
+	.tm-tda-grid { grid-template-columns: 1fr; }
+}
+
 /* Step cards: the box itself is collapsible; details inside it are a second
    collapsible level, so the page stays calm until the reader asks for more. */
 .tm-step-head {

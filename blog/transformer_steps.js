@@ -1328,6 +1328,448 @@
 		}
 	}
 
+	var tdaState = {};
+
+	function tdaSliderValue(prefix) {
+		var slider = document.getElementById(prefix + "-tda-eps");
+		var value = slider ? parseFloat(slider.value) : 35;
+		if (!isFinite(value)) value = 35;
+		return Math.max(0, Math.min(1, value / 100));
+	}
+
+	function tdaMode(prefix) {
+		var select = document.getElementById(prefix + "-tda-mode");
+		return select && select.value === "ffn" ? "ffn" : "residual";
+	}
+
+	function tdaInitCanvas(id, draw) {
+		var canvas = document.getElementById(id);
+		if (!canvas) return;
+		if (!canvas._tmTdaApi) {
+			canvas._tmTdaApi = initCanvas(canvas, function (ctx, w, h) { draw(ctx, w, h); });
+		}
+	}
+
+	function tdaRedraw(prefix) {
+		var det = document.getElementById(prefix + "-tda-step");
+		if (!det || !det.open) return;
+		["-tda-before-cloud", "-tda-after-cloud", "-tda-before-barcode", "-tda-after-barcode"].forEach(function (suffix) {
+			var canvas = document.getElementById(prefix + suffix);
+			if (canvas && canvas._tmTdaApi) canvas._tmTdaApi.redraw();
+		});
+	}
+
+	function tdaFmt(value) {
+		return isFinite(value) ? value.toFixed(2) : "∞";
+	}
+
+	function tdaDeaths(topo) {
+		return topo.h0.filter(function (bar) { return isFinite(bar.death); })
+			.map(function (bar) { return bar.death; });
+	}
+
+	function tdaFirstLast(values) {
+		if (!values.length) return null;
+		var sorted = values.slice().sort(function (a, b) { return a - b; });
+		return { first: sorted[0], last: sorted[sorted.length - 1], count: sorted.length };
+	}
+
+	function tdaStableH1(topo) {
+		var bars = topo.h1.slice().sort(function (a, b) {
+			return (b.death - b.birth) - (a.death - a.birth);
+		});
+		return bars.length ? bars[0] : null;
+	}
+
+	function tdaBarText(bar, de) {
+		var birth = de ? "bei ε≈" + tdaFmt(bar.birth) : "at ε≈" + tdaFmt(bar.birth);
+		if (!isFinite(bar.death)) return birth + (de ? " und bleibt bis ε=1 offen" : " and stays open to ε=1");
+		return birth + (de ? " und wird bei ε≈" + tdaFmt(bar.death) + " gefüllt" : " and is filled at ε≈" + tdaFmt(bar.death));
+	}
+
+	function tdaExplanation(prefix) {
+		var st = tdaState[prefix];
+		if (!st || !window.TDAFFN) return "";
+		var de = DE();
+		var before = st.before.topo;
+		var after = st.after.topo;
+		var sentences = [];
+		sentences.push(de
+			? (st.mode === "ffn"
+				? "Verglichen wird der normierte FFN-Eingang mit dem FFN-Update nach W₂."
+				: "Verglichen wird der Zustand h₁ vor dem FFN mit h₂ nach dem Residual-Schritt.")
+			: (st.mode === "ffn"
+				? "The comparison is the normalized FFN input against the FFN update after W₂."
+				: "The comparison is the state h₁ before the FFN against h₂ after the residual step."));
+
+		var db = tdaDeaths(before);
+		var da = tdaDeaths(after);
+		var nb = tdaFirstLast(db);
+		var na = tdaFirstLast(da);
+		if (nb && na) {
+			var close = nb.count === na.count &&
+				Math.abs(nb.first - na.first) < 0.03 &&
+				Math.abs(nb.last - na.last) < 0.03;
+			if (close) {
+				sentences.push(de
+					? "Die H0-Barcodes sind fast deckungsgleich: Vorher verschmelzen die Tokens zwischen ε≈" + tdaFmt(nb.first) + " und ε≈" + tdaFmt(nb.last) + ", nachher zwischen ε≈" + tdaFmt(na.first) + " und ε≈" + tdaFmt(na.last) + ". Die Cluster-Struktur bleibt in diesem Schnitt praktisch erhalten."
+					: "The H0 barcodes are almost identical: before, the tokens merge between ε≈" + tdaFmt(nb.first) + " and ε≈" + tdaFmt(nb.last) + "; after, between ε≈" + tdaFmt(na.first) + " and ε≈" + tdaFmt(na.last) + ". The cluster structure is practically preserved on this slice.");
+			} else {
+				var tail = na.last < nb.last - 0.03
+					? (de ? "Nachher ist die Wolke früher zu einer Komponente verbunden." : "Afterwards the cloud becomes one component earlier.")
+					: na.last > nb.last + 0.03
+						? (de ? "Nachher bleibt die Wolke länger getrennt." : "Afterwards the cloud stays separated longer.")
+						: (de ? "Die letzte Verschmelzung liegt ähnlich." : "The last merge is similar.");
+				sentences.push(de
+					? "Die H0-Barcodes unterscheiden sich: Vorher verschmelzen die Tokens zwischen ε≈" + tdaFmt(nb.first) + " und ε≈" + tdaFmt(nb.last) + ", nachher zwischen ε≈" + tdaFmt(na.first) + " und ε≈" + tdaFmt(na.last) + ". " + tail
+					: "The H0 barcodes differ: before, the tokens merge between ε≈" + tdaFmt(nb.first) + " and ε≈" + tdaFmt(nb.last) + "; after, between ε≈" + tdaFmt(na.first) + " and ε≈" + tdaFmt(na.last) + ". " + tail);
+			}
+		} else if (nb || na) {
+			sentences.push(de
+				? "Nur eine der beiden Wolken hat endliche H0-Balken; die andere ist bereits bei ε=0 oder gar nicht verbunden."
+				: "Only one of the two clouds has finite H0 bars; the other is already connected at ε=0 or not at all.");
+		} else {
+			sentences.push(de
+				? "Beide Wolken haben keine endlichen H0-Balken; alle Tokens sind schon bei ε=0 in einer Komponente."
+				: "Both clouds have no finite H0 bars; all tokens already form one component at ε=0.");
+		}
+
+		var hb = tdaStableH1(before);
+		var ha = tdaStableH1(after);
+		if (hb && ha) {
+			var similar = Math.abs(hb.birth - ha.birth) < 0.03 &&
+				(!isFinite(hb.death) && !isFinite(ha.death) || isFinite(hb.death) && isFinite(ha.death) && Math.abs(hb.death - ha.death) < 0.03);
+			if (similar) {
+				sentences.push(de
+					? "Die H1-Barcodes sind fast deckungsgleich: " + tdaBarText(hb, true) + " (vorher) und " + tdaBarText(ha, true) + " (nachher). Die Schleifenstruktur bleibt erhalten."
+					: "The H1 barcodes are almost identical: " + tdaBarText(hb, false) + " (before) and " + tdaBarText(ha, false) + " (after). The loop structure is preserved.");
+			} else {
+				var pb = hb.death - hb.birth;
+				var pa = ha.death - ha.birth;
+				var tail1 = pa > pb + 0.05
+					? (de ? "Nachher hält die Schleife also länger." : "Afterwards the loop persists longer.")
+					: pa < pb - 0.05
+						? (de ? "Nachher wird sie früher gefüllt." : "Afterwards it is filled earlier.")
+						: (de ? "Die Persistenz ist ähnlich." : "The persistence is similar.");
+				sentences.push(de
+					? "Vorher entsteht die stabilste H1-Schleife " + tdaBarText(hb, true) + "; nachher " + tdaBarText(ha, true) + ". " + tail1
+					: "Before, the most persistent H1 loop is born " + tdaBarText(hb, false) + "; after, " + tdaBarText(ha, false) + ". " + tail1);
+			}
+			if (before.h1.length !== after.h1.length) {
+				sentences.push(de
+					? "Insgesamt hat die Wolke vorher " + before.h1.length + " H1-Balken, nachher " + after.h1.length + "."
+					: "In total the cloud has " + before.h1.length + " H1 bars before and " + after.h1.length + " after.");
+			}
+		} else if (hb || ha) {
+			var only = hb || ha;
+			sentences.push(de
+				? "Nur " + (hb ? "vorher" : "nachher") + " entsteht eine H1-Schleife (" + tdaBarText(only, true) + "); in der anderen Wolke bleibt H1 leer."
+				: "Only " + (hb ? "before" : "after") + " does an H1 loop appear (" + tdaBarText(only, false) + "); H1 stays empty in the other cloud.");
+		} else {
+			sentences.push(de
+				? "In beiden Wolken entsteht im gezeigten Bereich keine H1-Schleife; die H1-Barcodes sind leer."
+				: "No H1 loop appears in either cloud on the shown range; the H1 barcodes are empty.");
+		}
+
+		var b0b = window.TDAFFN.bettiAt(before.h0, st.eps);
+		var b1b = window.TDAFFN.bettiAt(before.h1, st.eps);
+		var b0a = window.TDAFFN.bettiAt(after.h0, st.eps);
+		var b1a = window.TDAFFN.bettiAt(after.h1, st.eps);
+		sentences.push(de
+			? "Beim aktuellen ε=" + st.eps.toFixed(2) + " hat die Wolke vorher b₀=" + b0b + ", b₁=" + b1b + "; nachher b₀=" + b0a + ", b₁=" + b1a + "."
+			: "At the current ε=" + st.eps.toFixed(2) + " the cloud has b₀=" + b0b + ", b₁=" + b1b + " before and b₀=" + b0a + ", b₁=" + b1a + " after.");
+		return sentences.join(" ");
+	}
+
+	function tdaUpdateLabels(prefix) {
+		var st = tdaState[prefix];
+		if (!st || !window.TDAFFN) return;
+		var epsEl = document.getElementById(prefix + "-tda-eps-val");
+		if (epsEl) epsEl.textContent = st.eps.toFixed(2);
+		var b0b = window.TDAFFN.bettiAt(st.before.topo.h0, st.eps);
+		var b1b = window.TDAFFN.bettiAt(st.before.topo.h1, st.eps);
+		var b0a = window.TDAFFN.bettiAt(st.after.topo.h0, st.eps);
+		var b1a = window.TDAFFN.bettiAt(st.after.topo.h1, st.eps);
+		var betti = document.getElementById(prefix + "-tda-betti");
+		if (betti) {
+			betti.innerHTML = '<span class="tm-tda-chip">' + (DE() ? "Vorher" : "Before") + ' <b>b₀=' + b0b + '</b> <b>b₁=' + b1b + '</b></span>' +
+				'<span class="tm-tda-chip tm-tda-chip--after">' + (DE() ? "Nachher" : "After") + ' <b>b₀=' + b0a + '</b> <b>b₁=' + b1a + '</b></span>';
+		}
+		var status = document.getElementById(prefix + "-tda-status");
+		if (!status) return;
+		var d0 = b0a - b0b;
+		var d1 = b1a - b1b;
+		var parts = [];
+		if (d0 > 0) parts.push(DE() ? "trennt " + d0 + " zusätzliche Komponente" + (d0 === 1 ? "" : "n") : "splits into " + d0 + " extra component" + (d0 === 1 ? "" : "s"));
+		else if (d0 < 0) parts.push(DE() ? "führt " + (-d0) + " Komponente" + (-d0 === 1 ? "" : "n") + " zusammen" : "merges " + (-d0) + " component" + (-d0 === 1 ? "" : "s"));
+		if (d1 > 0) parts.push(DE() ? "erzeugt " + d1 + " zusätzliche Schleife" + (d1 === 1 ? "" : "n") : "creates " + d1 + " extra loop" + (d1 === 1 ? "" : "s"));
+		else if (d1 < 0) parts.push(DE() ? "füllt " + (-d1) + " Schleife" + (-d1 === 1 ? "" : "n") : "fills " + (-d1) + " loop" + (-d1 === 1 ? "" : "s"));
+		status.textContent = (DE() ? "Bei ε = " : "At ε = ") + st.eps.toFixed(2) + ": " +
+			(parts.length ? parts.join(" · ") : (DE() ? "H0 und H1 unverändert" : "H0 and H1 unchanged"));
+		var explain = document.getElementById(prefix + "-tda-explain");
+		if (explain) explain.textContent = tdaExplanation(prefix);
+	}
+
+	function drawTDACloud(ctx, w, h, cloud, tokens, eps, before, mode) {
+		var c = palette();
+		ctx.clearRect(0, 0, w, h);
+		if (!cloud || !cloud.proj || !cloud.proj.length || !tokens.length) {
+			return drawPlaceholder(ctx, w, h, DE() ? "Keine Token-Wolke." : "No token cloud.");
+		}
+		var proj = cloud.proj;
+		var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+		proj.forEach(function (p) {
+			if (p[0] < minX) minX = p[0];
+			if (p[0] > maxX) maxX = p[0];
+			if (p[1] < minY) minY = p[1];
+			if (p[1] > maxY) maxY = p[1];
+		});
+		var span = Math.max(maxX - minX, maxY - minY, 1e-6);
+		var pad = 30;
+		var scale = (Math.min(w, h) - pad * 2) / span;
+		var midX = (minX + maxX) / 2;
+		var midY = (minY + maxY) / 2;
+		function tdaX(p) { return w / 2 + (p[0] - midX) * scale; }
+		function tdaY(p) { return h / 2 - (p[1] - midY) * scale; }
+
+		ctx.strokeStyle = c.line;
+		ctx.lineWidth = 0.8;
+		ctx.globalAlpha = 0.45;
+		for (var i = 0; i < proj.length; i++) {
+			for (var j = i + 1; j < proj.length; j++) {
+				var d = cloud.topo.dist[i][j] / (cloud.topo.scale || 1);
+				if (d <= eps + 1e-12) {
+					ctx.beginPath();
+					ctx.moveTo(tdaX(proj[i]), tdaY(proj[i]));
+					ctx.lineTo(tdaX(proj[j]), tdaY(proj[j]));
+					ctx.stroke();
+				}
+			}
+		}
+		ctx.globalAlpha = 1;
+		proj.forEach(function (p, i) {
+			var X = tdaX(p), Y = tdaY(p);
+			ctx.beginPath();
+			ctx.arc(X, Y, 4.2, 0, Math.PI * 2);
+			ctx.fillStyle = getPositionColor(i, proj.length - 1);
+			ctx.fill();
+			ctx.strokeStyle = c.paper;
+			ctx.lineWidth = 1.2;
+			ctx.stroke();
+			ctx.fillStyle = c.ink;
+			ctx.font = "600 8px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "left";
+			ctx.fillText(fitText(ctx, display(tokens[i] || ""), 54), X + 6, Y + 3);
+		});
+		var b0 = window.TDAFFN.bettiAt(cloud.topo.h0, eps);
+		var b1 = window.TDAFFN.bettiAt(cloud.topo.h1, eps);
+		ctx.fillStyle = c.muted;
+		ctx.font = "600 9px Barlow, system-ui, sans-serif";
+		ctx.textAlign = "left";
+		var cloudLabel = before
+			? (mode === "ffn" ? (DE() ? "normiert (FFN-Eingang)" : "normalized (FFN input)") : (DE() ? "h₁ vor dem FFN" : "h₁ before the FFN"))
+			: (mode === "ffn" ? (DE() ? "FFN-Update (W₂)" : "FFN update (W₂)") : (DE() ? "h₂ nach dem FFN" : "h₂ after the FFN"));
+		ctx.fillText(fitText(ctx,
+			cloudLabel + " · ε=" + eps.toFixed(2) + " · b₀=" + b0 + " · b₁=" + b1, w - 16), 8, 14);
+		ctx.textAlign = "right";
+		ctx.fillText(fitText(ctx, DE() ? "PCA-Projektion; Kanten aus vollen Distanzen" : "PCA projection; edges from full distances", w - 16), w - 8, h - 6);
+	}
+
+	function drawTDABarcode(ctx, w, h, topo, eps) {
+		var c = palette();
+		ctx.clearRect(0, 0, w, h);
+		if (!topo) return drawPlaceholder(ctx, w, h, DE() ? "Keine Barcodes." : "No barcodes.");
+		var padL = 34, padR = 12, padT = 22, padB = 24;
+		var x0 = padL, x1 = w - padR, y0 = padT, y1 = h - padB;
+		function tdaBarX(v) { return x0 + Math.max(0, Math.min(1, v)) * (x1 - x0); }
+
+		ctx.strokeStyle = c.line;
+		ctx.lineWidth = 1;
+		ctx.beginPath();
+		ctx.moveTo(x0, y1);
+		ctx.lineTo(x1, y1);
+		ctx.stroke();
+		ctx.fillStyle = c.muted;
+		ctx.font = "600 8px Barlow, system-ui, sans-serif";
+		ctx.textAlign = "center";
+		for (var t = 0; t <= 4; t++) {
+			var tv = t / 4;
+			ctx.beginPath();
+			ctx.moveTo(tdaBarX(tv), y1);
+			ctx.lineTo(tdaBarX(tv), y1 + 3);
+			ctx.stroke();
+			ctx.fillText(tv === 0 ? "0" : tv === 1 ? "1" : tv.toFixed(2).replace("0.", "."), tdaBarX(tv), y1 + 13);
+		}
+
+		ctx.strokeStyle = c.ink;
+		ctx.globalAlpha = 0.65;
+		ctx.setLineDash([3, 4]);
+		ctx.beginPath();
+		ctx.moveTo(tdaBarX(eps), y0);
+		ctx.lineTo(tdaBarX(eps), y1);
+		ctx.stroke();
+		ctx.setLineDash([]);
+		ctx.globalAlpha = 1;
+		ctx.fillStyle = c.ink;
+		ctx.font = "600 8px Barlow, system-ui, sans-serif";
+		ctx.textAlign = "right";
+		ctx.fillText("ε=" + eps.toFixed(2), x1, 12);
+
+		var gap = 8;
+		var areaH = (y1 - y0 - gap) / 2;
+		[
+			{ name: "H0", bars: topo.h0, color: c.blue, top: y0 },
+			{ name: "H1", bars: topo.h1, color: c.gold, top: y0 + areaH + gap }
+		].forEach(function (group) {
+			ctx.fillStyle = group.color;
+			ctx.font = "700 9px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "left";
+			ctx.fillText(group.name, 4, group.top + 9);
+			if (!group.bars.length) {
+				ctx.fillStyle = c.muted;
+				ctx.font = "600 8px Barlow, system-ui, sans-serif";
+				ctx.fillText(group.name === "H1" ? (DE() ? "keine H1-Balken" : "no H1 bars") : (DE() ? "keine H0-Balken" : "no H0 bars"), x0 + 4, group.top + areaH / 2 + 3);
+				return;
+			}
+			var rowH = areaH / Math.max(1, group.bars.length);
+			group.bars.forEach(function (bar, i) {
+				var yy = group.top + (i + 0.5) * rowH;
+				var xd = isFinite(bar.death) ? tdaBarX(bar.death) : x1 - 4;
+				ctx.strokeStyle = group.color;
+				ctx.globalAlpha = 0.9;
+				ctx.lineWidth = Math.max(1.6, Math.min(3, rowH * 0.5));
+				ctx.beginPath();
+				ctx.moveTo(tdaBarX(bar.birth), yy);
+				ctx.lineTo(xd, yy);
+				ctx.stroke();
+				if (!isFinite(bar.death)) {
+					ctx.beginPath();
+					ctx.moveTo(x1 - 4, yy - 3);
+					ctx.lineTo(x1, yy);
+					ctx.lineTo(x1 - 4, yy + 3);
+					ctx.closePath();
+					ctx.fillStyle = group.color;
+					ctx.fill();
+				}
+				ctx.globalAlpha = 1;
+			});
+		});
+		ctx.fillStyle = c.muted;
+		ctx.font = "600 8px Barlow, system-ui, sans-serif";
+		ctx.textAlign = "center";
+		ctx.fillText(DE() ? "Filtrationsradius ε (normiert)" : "filtration radius ε (normalised)", (x0 + x1) / 2, h - 4);
+	}
+
+	function renderTDAStep(layerIdx) {
+		var prefix = "unified-layer-" + layerIdx;
+		var det = document.getElementById(prefix + "-tda-step");
+		if (!det || !det.open) return;
+		var ffn = (window.__tmFFNTrace || [])[layerIdx];
+		var tokens = tokenList();
+		var status = document.getElementById(prefix + "-tda-status");
+		if (!ffn || !ffn.h1 || !ffn.h2 || !tokens.length) {
+			if (status) status.textContent = DE() ? "Noch keine Token-Zustände." : "No token states yet.";
+			return;
+		}
+		if (!window.TDAFFN || typeof window.TDAFFN.persistence !== "function") {
+			if (status) status.textContent = DE() ? "TDA-Bibliothek nicht geladen." : "TDA library not loaded.";
+			return;
+		}
+		var n = Math.min(tokens.length, ffn.h1.length, ffn.h2.length, 16);
+		if (n < 2) {
+			if (status) status.textContent = DE() ? "Zu wenige Tokens für eine Filtration." : "Too few tokens for a filtration.";
+			return;
+		}
+		var st = tdaState[prefix] || (tdaState[prefix] = {});
+		st.layerIdx = layerIdx;
+		st.mode = tdaMode(prefix);
+		st.tokens = tokens.slice(0, n);
+		var beforePoints = (st.mode === "ffn" ? ffn.normed_h1 : ffn.h1).slice(0, n);
+		var afterPoints = (st.mode === "ffn" ? ffn.out_FFN : ffn.h2).slice(0, n);
+		if (!beforePoints.length || !afterPoints.length) {
+			if (status) status.textContent = DE() ? "Noch keine passenden Zustände für diesen Vergleich." : "No matching states for this comparison yet.";
+			return;
+		}
+		st.before = {
+			points: beforePoints,
+			topo: window.TDAFFN.persistence(beforePoints),
+			proj: pca2(beforePoints)
+		};
+		st.after = {
+			points: afterPoints,
+			topo: window.TDAFFN.persistence(afterPoints),
+			proj: pca2(afterPoints)
+		};
+		st.eps = tdaSliderValue(prefix);
+		var beforeTitle = document.getElementById(prefix + "-tda-before-title");
+		var afterTitle = document.getElementById(prefix + "-tda-after-title");
+		if (beforeTitle) beforeTitle.textContent = st.mode === "ffn"
+			? (DE() ? "Vorher: normiert (FFN-Eingang)" : "Before: normalized (FFN input)")
+			: (DE() ? "Vorher: Token-Wolke (h₁)" : "Before: token cloud (h₁)");
+		if (afterTitle) afterTitle.textContent = st.mode === "ffn"
+			? (DE() ? "Nachher: FFN-Update (W₂)" : "After: FFN update (W₂)")
+			: (DE() ? "Nachher: Token-Wolke (h₂)" : "After: token cloud (h₂)");
+
+		tdaInitCanvas(prefix + "-tda-before-cloud", function (ctx, w, h) {
+			var cur = tdaState[prefix];
+			if (cur) drawTDACloud(ctx, w, h, cur.before, cur.tokens, cur.eps, true, cur.mode);
+		});
+		tdaInitCanvas(prefix + "-tda-after-cloud", function (ctx, w, h) {
+			var cur = tdaState[prefix];
+			if (cur) drawTDACloud(ctx, w, h, cur.after, cur.tokens, cur.eps, false, cur.mode);
+		});
+		tdaInitCanvas(prefix + "-tda-before-barcode", function (ctx, w, h) {
+			var cur = tdaState[prefix];
+			if (cur) drawTDABarcode(ctx, w, h, cur.before.topo, cur.eps);
+		});
+		tdaInitCanvas(prefix + "-tda-after-barcode", function (ctx, w, h) {
+			var cur = tdaState[prefix];
+			if (cur) drawTDABarcode(ctx, w, h, cur.after.topo, cur.eps);
+		});
+		tdaUpdateLabels(prefix);
+		tdaRedraw(prefix);
+	}
+
+	function wireTDASteps(root) {
+		if (!root) return;
+		root.querySelectorAll(".tm-tda-step").forEach(function (det) {
+			if (det._tmTdaBound) return;
+			det._tmTdaBound = true;
+			det.addEventListener("toggle", function () {
+				if (!det.open) return;
+				var card = det.closest(".tm-layer-card");
+				var idx = card ? parseInt(card.getAttribute("data-layer-idx"), 10) : NaN;
+				if (!isNaN(idx)) renderTDAStep(idx);
+			});
+			var slider = det.querySelector('input[type="range"]');
+			if (slider && !slider._tmTdaBound) {
+				slider._tmTdaBound = true;
+				slider.addEventListener("input", function () {
+					var card = det.closest(".tm-layer-card");
+					var idx = card ? parseInt(card.getAttribute("data-layer-idx"), 10) : NaN;
+					if (isNaN(idx)) return;
+					var prefix = "unified-layer-" + idx;
+					var st = tdaState[prefix];
+					var value = parseFloat(slider.value);
+					if (!st) { renderTDAStep(idx); return; }
+					if (!isFinite(value)) return;
+					st.eps = Math.max(0, Math.min(1, value / 100));
+					tdaUpdateLabels(prefix);
+					tdaRedraw(prefix);
+				});
+			}
+			var mode = det.querySelector("select");
+			if (mode && !mode._tmTdaBound) {
+				mode._tmTdaBound = true;
+				mode.addEventListener("change", function () {
+					var card = det.closest(".tm-layer-card");
+					var idx = card ? parseInt(card.getAttribute("data-layer-idx"), 10) : NaN;
+					if (!isNaN(idx)) renderTDAStep(idx);
+				});
+			}
+		});
+	}
+
 	function attachFFNHeatmapHover(canvas, getEntry) {
 		if (!canvas || canvas._tmFfnHoverBound) return;
 		canvas._tmFfnHoverBound = true;
@@ -3463,6 +3905,7 @@
 			}
 			wireRevealHeads(card);
 			wireFFNViewSwitches(card);
+			wireTDASteps(card);
 			renderLayerPreLNTriple(idx);
 			var stageGrid = card.querySelector(".tm-ffn-stages");
 			if (stageGrid) typesetMathIn(stageGrid);
@@ -3475,6 +3918,7 @@
 	}
 	window.addEventListener("tm:theme", function () {
 		Object.keys(featureState).forEach(function (key) { renderLayerFeaturePlots(parseInt(key, 10)); });
+		Object.keys(tdaState).forEach(tdaRedraw);
 	});
 	window.addEventListener("resize", function () {
 		Object.keys(featureState).forEach(function (key) {
@@ -3952,6 +4396,7 @@
 			if (canvas && canvas.hidden && pair[1] === "space") return;
 			renderLayerFFNMatrix(prefix + pair[0], layerIdx, pair[1]);
 		});
+		renderTDAStep(layerIdx);
 	}
 
 	window.TransformerSteps = {

@@ -92,18 +92,27 @@
 		}, 900);
 	}
 
+	function tmTocSetOpen(open) {
+		var wrap = document.querySelector(".tm-toc__details");
+		var summary = document.querySelector(".tm-toc__summary");
+		var panel = document.querySelector(".tm-toc__panel");
+		if (!wrap || !summary || !panel) return;
+		open = !!open;
+		wrap.classList.toggle("is-open", open);
+		summary.setAttribute("aria-expanded", open ? "true" : "false");
+		panel.hidden = !open;
+	}
+
 	function refreshChrome() {
 		var toc = document.querySelector(".tm-toc");
-		var wasOpen = !!(toc && toc.querySelector("details") && toc.querySelector("details").open);
+		var tocDetails = toc && toc.querySelector(".tm-toc__details");
+		var wasOpen = !!(tocDetails && tocDetails.classList.contains("is-open"));
 		document.querySelectorAll(".tm-toc, .chapter-heading").forEach(function (node) {
 			node.parentNode.removeChild(node);
 		});
 		document.body.classList.remove("has-toc");
 		initTOC();
-		if (wasOpen) {
-			var details = document.querySelector(".tm-toc details");
-			if (details) details.open = true;
-		}
+		if (wasOpen) tmTocSetOpen(true);
 	}
 
 	TM.setLang = function (lang) {
@@ -929,11 +938,13 @@
 		nav.className = "tm-toc";
 		nav.setAttribute("aria-label", de ? "Inhalt dieses Kapitels" : "Chapter contents");
 
-		var details = document.createElement("details");
+		var details = document.createElement("div");
 		details.className = "tm-toc__details";
 
-		var summary = document.createElement("summary");
+		var summary = document.createElement("button");
+		summary.type = "button";
 		summary.className = "tm-toc__summary";
+		summary.setAttribute("aria-expanded", "false");
 		summary.innerHTML =
 			'<span class="tm-toc__summary-main">' +
 				'<span class="tm-toc__icon" aria-hidden="true"></span>' +
@@ -949,6 +960,12 @@
 
 		var panel = document.createElement("div");
 		panel.className = "tm-toc__panel";
+		panel.id = "tm-toc-panel";
+		panel.hidden = true;
+		summary.setAttribute("aria-controls", "tm-toc-panel");
+		summary.addEventListener("click", function () {
+			tmTocSetOpen(summary.getAttribute("aria-expanded") !== "true");
+		});
 
 		groups.forEach(function (group, groupIndex) {
 			var chapter = document.createElement("div");
@@ -974,7 +991,7 @@
 						(item.kicker ? '<span class="tm-toc__kicker">' + tmEscapeHTML(item.kicker) + '</span>' : '') +
 						'<span class="tm-toc__title">' + tmEscapeHTML(item.title) + '</span>' +
 					'</span>';
-				link.addEventListener("click", function () { details.open = false; });
+				link.addEventListener("click", function () { tmTocSetOpen(false); });
 				li.appendChild(link);
 				if (item.subheadings.length) {
 					var sublist = document.createElement("ol");
@@ -986,7 +1003,7 @@
 						sublink.className = "tm-toc__sublink";
 						sublink.href = "#" + subheading.id;
 						sublink.textContent = subheading.title;
-						sublink.addEventListener("click", function () { details.open = false; });
+						sublink.addEventListener("click", function () { tmTocSetOpen(false); });
 						subitem.appendChild(sublink);
 						sublist.appendChild(subitem);
 					});

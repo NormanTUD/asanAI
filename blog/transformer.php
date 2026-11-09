@@ -398,6 +398,7 @@ $$ \underbrace{ \color[RGB]{59,130,246}\text{“the} \ \color[RGB]{55,135,235}\t
 		'provenance.js?v=<?php echo (int) @filemtime(__DIR__ . '/provenance.js'); ?>',
 		'llm_river.js?v=<?php echo (int) @filemtime(__DIR__ . '/llm_river.js'); ?>',
 		'tda_live.js?v=<?php echo (int) @filemtime(__DIR__ . '/tda_live.js'); ?>',
+		'tda_ffn.js?v=<?php echo (int) @filemtime(__DIR__ . '/tda_ffn.js'); ?>',
 		'transformer_steps.js?v=<?php echo (int) @filemtime(__DIR__ . '/transformer_steps.js'); ?>'
 	];
 	function load(src) {
