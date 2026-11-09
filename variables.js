@@ -1764,21 +1764,21 @@ var optimizer_infos_json = [
 		"optimizer": `adam`,
 		"variables": ["learning_rate", "beta1", "beta2", "epsilon"],
 		"info": {
-			"de": `Adam ist ein fortschrittlicher Optimierer, der die Vorteile von Adagrad und Momentum kombiniert. Er passt die Lernrate an und berücksichtigt auch die Richtung.`,
-			"en": `Adam is an advanced optimizer that combines the benefits of Adagrad and Momentum. It adjusts the learning rate and considers direction.`
+			"de": `Adam kombiniert Ideen von Momentum und Adagrad. Er mittelt die Gradienten und ihre Quadrate und bildet daraus für jeden Parameter eine eigene effektive Schrittweite. Die eingestellte Lernrate bleibt die Basis dafür.`,
+			"en": `Adam combines ideas from momentum and Adagrad. It averages the gradients and their squares to form a separate effective step size for each parameter. The configured learning rate remains the base for that.`
 		},
 		"variable_info": {
 			"learning_rate": {
-				"de": `Die Geschwindigkeit des Lernens. Adam passt diesen Wert dynamisch an.`,
-				"en": `The speed of learning. Adam dynamically adjusts this value.`
+				"de": `Die Basis-Lernrate. Adam behält sie bei und skaliert die Updates pro Parameter über die Schätzungen des ersten und zweiten Moments.`,
+				"en": `The base learning rate. Adam keeps it and scales the updates per parameter using the first and second moment estimates.`
 			},
 			"beta1": {
 				"de": `Gewichtet, wie stark frühere Gradienten berücksichtigt werden. Ein Wert nahe 1 bedeutet, dass frühere Werte stark gewichtet werden.`,
 				"en": `Weights how much past gradients are considered. A value close to 1 means past values are heavily weighted.`
 			},
 			"beta2": {
-				"de": `Gewichtet, wie stark frühere Gradientenquadrate berücksichtigt werden. Hilft bei der Anpassung der Lernrate.`,
-				"en": `Weights how much past squared gradients are considered. Helps adjust the learning rate.`
+				"de": `Gewichtet frühere Gradientenquadrate. Daraus entsteht die per-Parameter-Skalierung des Updates, nicht eine Änderung der Basis-Lernrate.`,
+				"en": `Weights past squared gradients. This produces the per-parameter update scaling, not a change of the base learning rate.`
 			},
 			"epsilon": {
 				"de": `Ein kleiner Wert, um Stabilität zu gewährleisten und durch Null teilen zu vermeiden.`,
@@ -1842,21 +1842,21 @@ var optimizer_infos_json = [
 		"optimizer": `rmsprop`,
 		"variables": ["learning_rate", "decay", "rho", "momentum", "epsilon"],
 		"info": {
-			"de": `RMSprop ist ein Optimierer, der die Lernrate für jede Variable separat anpasst und gut für nicht-stationäre Probleme geeignet ist.`,
-			"en": `RMSprop is an optimizer that adjusts the learning rate for each variable separately and is well-suited for non-stationary problems.`
+			"de": `RMSprop nutzt einen gleitenden Mittelwert der Gradientenquadrate, um die Updates für jeden Parameter separat zu skalieren. Das eignet sich gut für nicht-stationäre Probleme.`,
+			"en": `RMSprop uses a moving average of squared gradients to scale the updates for each parameter separately. This suits non-stationary problems well.`
 		},
 		"variable_info": {
 			"learning_rate": {
-				"de": `Die Geschwindigkeit des Lernens. RMSprop passt diesen Wert dynamisch an.`,
-				"en": `The speed of learning. RMSprop dynamically adjusts this value.`
+				"de": `Die Basis-Lernrate. RMSprop behält sie bei und skaliert die Updates pro Parameter über den gleitenden Mittelwert der Gradientenquadrate.`,
+				"en": `The base learning rate. RMSprop keeps it and scales the updates per parameter using the moving average of squared gradients.`
 			},
 			"decay": {
 				"de": `Reduziert die Lernrate über die Zeit, um das Lernen langsamer zu machen, wenn sich das Modell den optimalen Werten nähert.`,
 				"en": `Reduces the learning rate over time to slow down learning as the model approaches optimal values.`
 			},
 			"rho": {
-				"de": `Gewichtet, wie stark vergangene Gradienten berücksichtigt werden, um die Lernrate zu steuern.`,
-				"en": `Weights how much past gradients are considered to control the learning rate.`
+				"de": `Gewichtet, wie stark vergangene Gradientenquadrate im gleitenden Mittelwert berücksichtigt werden.`,
+				"en": `Weights how much past squared gradients are considered in the moving average.`
 			},
 			"momentum": {
 				"de": `Berücksichtigt vergangene Bewegungen, um das Lernen zu beschleunigen.`,

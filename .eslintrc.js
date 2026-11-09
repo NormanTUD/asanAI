@@ -652,6 +652,7 @@ module.exports = {
 		"setOptimizerTooltips": "readonly",
 		"setRibbonTooltips": "readonly",
 		"RIBBON_TOOLTIP_KEYS": "readonly",
+		"RIBBON_GROUP_TOOLTIP_KEYS": "readonly",
 		"LAYER_OPTION_TOOLTIP_KEYS": "readonly",
 		"get_layer_option_tooltip_key": "readonly",
 		"updated_page": "readonly",

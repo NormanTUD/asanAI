@@ -81,6 +81,27 @@ var RIBBON_TOOLTIP_KEYS = {
 	"#ribbon_shower span[onclick*='update_lang(\"en\")']": "ribbon_language_english"
 };
 
+var RIBBON_GROUP_TOOLTIP_KEYS = {
+	"#home_ribbon .ribbon-group-title .TRANSLATEME_dataset_and_network": "ribbon_group_dataset_and_network_description",
+	"#home_ribbon .ribbon-group-title .TRANSLATEME_loss_metric_data_and_shape": "ribbon_group_loss_metric_data_and_shape_description",
+	"#home_ribbon .ribbon-group-title .TRANSLATEME_layers": "ribbon_group_layers_description",
+	"#home_ribbon .ribbon-group-title .TRANSLATEME_hyperparameters": "ribbon_group_hyperparameters_description",
+	"#home_ribbon .ribbon-group-title .TRANSLATEME_image_options": "ribbon_group_image_options_description",
+	"#home_ribbon .ribbon-group-title .TRANSLATEME_training": "ribbon_group_training_description",
+	"#tf_ribbon_settings .ribbon-group-title .TRANSLATEME_gui_mode_style": "ribbon_group_gui_mode_style_description",
+	"#tf_ribbon_settings .ribbon-group-title .TRANSLATEME_tf_backend": "ribbon_group_tf_backend_description",
+	"#tf_ribbon_settings .ribbon-group-title .TRANSLATEME_webcam_options": "ribbon_group_webcam_options_description",
+	"#tf_ribbon_settings .ribbon-group-title .TRANSLATEME_weights_shuffle_resize": "ribbon_group_weights_shuffle_resize_description",
+	"#tf_ribbon_settings .ribbon-group-title .TRANSLATEME_set_all_initializers": "ribbon_group_set_all_initializers_description",
+	"#tf_ribbon_settings .ribbon-group-title .TRANSLATEME_optimizer": "ribbon_group_optimizer_description",
+	"#tf_ribbon_augmentation .ribbon-group-title .TRANSLATEME_augmentation": "ribbon_group_augmentation_description",
+	"#visualization_ribbon .ribbon-group-title .TRANSLATEME_max_activated_neurons": "ribbon_group_max_activated_neurons_description",
+	"#visualization_ribbon .ribbon-group-title .TRANSLATEME_fcnn_batch_plot": "ribbon_group_fcnn_batch_plot_description",
+	"#visualization_ribbon .ribbon-group-title .TRANSLATEME_various_plots": "ribbon_group_various_plots_description",
+	"#visualization_ribbon .ribbon-group-title .TRANSLATEME_layer_data_flow": "ribbon_group_layer_data_flow_description",
+	"#log_ribbon .ribbon-group-title .TRANSLATEME_log_label": "ribbon_group_log_description"
+};
+
 function _set_ribbon_tooltip ($element, key, text, force = false) {
 	if(!$element.length) return;
 
@@ -121,6 +142,11 @@ function setRibbonTooltips () {
 				_set_ribbon_tooltip($('label[for="' + id + '"]'), key, text);
 			}
 		});
+	});
+
+	Object.keys(RIBBON_GROUP_TOOLTIP_KEYS).forEach(function (selector) {
+		var key = RIBBON_GROUP_TOOLTIP_KEYS[selector];
+		_set_ribbon_tooltip($(selector), key, translations[key]);
 	});
 
 	_set_ribbon_label_tooltip($("#inputShape"), "ribbon_shapes_description", translations["ribbon_shapes_description"], true);

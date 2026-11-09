@@ -2092,10 +2092,31 @@ function test_ribbon_and_layer_tooltips() {
 	test_equal("the shapes label describes input and output together", $("#inputShape").closest("tr").children("td").first().attr("data-tr-title"), "ribbon_shapes_description");
 	test_equal("ribbon tab labels have hover tooltips", !!$("#tablist a[href='#home_ribbon']").attr("title"), true);
 
+	var missing_groups = [];
+	Object.keys(RIBBON_GROUP_TOOLTIP_KEYS).forEach(function (selector) {
+		var $nodes = $(selector);
+		if (!$nodes.length) {
+			missing_groups.push(selector + " (no match)");
+			return;
+		}
+		$nodes.each(function () {
+			if (!$(this).attr("title")) {
+				missing_groups.push(selector);
+			}
+		});
+	});
+	test_equal("ribbon group headings have hover tooltips", missing_groups.join(", "), "");
+
 	var missing_keys = [];
 	["en", "de"].forEach(function (language_code) {
 		Object.keys(RIBBON_TOOLTIP_KEYS).forEach(function (selector) {
 			var key = RIBBON_TOOLTIP_KEYS[selector];
+			if (!language[language_code][key]) {
+				missing_keys.push(language_code + ":" + key);
+			}
+		});
+		Object.keys(RIBBON_GROUP_TOOLTIP_KEYS).forEach(function (selector) {
+			var key = RIBBON_GROUP_TOOLTIP_KEYS[selector];
 			if (!language[language_code][key]) {
 				missing_keys.push(language_code + ":" + key);
 			}
