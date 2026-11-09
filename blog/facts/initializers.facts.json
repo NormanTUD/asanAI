@@ -1,0 +1,983 @@
+{
+  "schema_version": 1,
+  "source": "initializers.php",
+  "lesson": "initializers",
+  "title": "Initializers: Starting a Network in the Right Regime",
+  "part": 2,
+  "order": 14,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "lecun1998gradient",
+    "glorot2010understanding",
+    "saxe2014deep",
+    "he2015delving",
+    "gpt2"
+  ],
+  "claims": [
+    {
+      "id": "auto-initializers-1",
+      "subject": "initializers",
+      "predicate": "title",
+      "value": "Initializers: Starting a Network in the Right Regime",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "initializers"
+      },
+      "quote": "title: Initializers: Starting a Network in the Right Regime",
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-initializers-2",
+      "subject": "initializers",
+      "predicate": "part",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "initializers"
+      },
+      "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-initializers-3",
+      "subject": "initializers",
+      "predicate": "order",
+      "value": 14,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "initializers"
+      },
+      "quote": "order: 14",
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "init-lecun-formula",
+      "subject": "lecun-initialization",
+      "predicate": "formula",
+      "value": "std = 1/sqrt(fan_in)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "standard deviation proportional to $1/\\sqrt{\\text{fan-in}}$",
+      "citation_keys": [
+        "lecun1998gradient"
+      ],
+      "source_url": "https://doi.org/10.1109/5.726791",
+      "confidence": "stated"
+    },
+    {
+      "id": "init-xavier-formula",
+      "subject": "xavier-initialization",
+      "predicate": "formula",
+      "value": "uniform limit sqrt(6/(fan_in+fan_out))",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "uniform limit $\\sqrt{6/(\\text{fan-in}+\\text{fan-out})}$",
+      "citation_keys": [
+        "glorot2010understanding"
+      ],
+      "source_url": "https://proceedings.mlr.press/v9/glorot10a.html",
+      "confidence": "stated"
+    },
+    {
+      "id": "init-he-formula",
+      "subject": "he-initialization",
+      "predicate": "formula",
+      "value": "std = sqrt(2/fan_in)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "$\\sqrt{2/\\text{fan-in}}$",
+      "citation_keys": [
+        "he2015delving"
+      ],
+      "source_url": "https://arxiv.org/abs/1502.01852",
+      "confidence": "stated"
+    },
+    {
+      "id": "init-orthogonal-year",
+      "subject": "orthogonal-initialization",
+      "predicate": "year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Orthogonal (2013).**",
+      "citation_keys": [
+        "saxe2014deep"
+      ],
+      "source_url": "https://arxiv.org/abs/1312.6120",
+      "confidence": "stated"
+    },
+    {
+      "id": "init-gpt2-sigma",
+      "subject": "gpt-2-initialization",
+      "predicate": "formula",
+      "value": "sigma = 0.02, residual scale 1/sqrt(2N)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "normal distribution with $\\sigma = 0.02$",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "source_url": "https://openai.com/research/better-language-models",
+      "confidence": "stated"
+    }
+  ],
+  "relations": [
+    {
+      "id": "struct-initializers-block-1-part_of-initializers",
+      "from": "initializers-block-1",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-2-part_of-initializers",
+      "from": "initializers-block-2",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-1-before-initializers-block-2",
+      "from": "initializers-block-1",
+      "to": "initializers-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-2-related_to-initializers-block-1",
+      "from": "initializers-block-2",
+      "to": "initializers-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-3-part_of-initializers",
+      "from": "initializers-block-3",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-2-before-initializers-block-3",
+      "from": "initializers-block-2",
+      "to": "initializers-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-4-part_of-initializers",
+      "from": "initializers-block-4",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-3-before-initializers-block-4",
+      "from": "initializers-block-3",
+      "to": "initializers-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-4-related_to-initializers-block-3",
+      "from": "initializers-block-4",
+      "to": "initializers-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-5-part_of-initializers",
+      "from": "initializers-block-5",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-4-before-initializers-block-5",
+      "from": "initializers-block-4",
+      "to": "initializers-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-5-related_to-initializers-block-3",
+      "from": "initializers-block-5",
+      "to": "initializers-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-6-part_of-initializers",
+      "from": "initializers-block-6",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-5-before-initializers-block-6",
+      "from": "initializers-block-5",
+      "to": "initializers-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-6-related_to-initializers-block-3",
+      "from": "initializers-block-6",
+      "to": "initializers-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-7-part_of-initializers",
+      "from": "initializers-block-7",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-6-before-initializers-block-7",
+      "from": "initializers-block-6",
+      "to": "initializers-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-7-related_to-initializers-block-3",
+      "from": "initializers-block-7",
+      "to": "initializers-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-8-part_of-initializers",
+      "from": "initializers-block-8",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-7-before-initializers-block-8",
+      "from": "initializers-block-7",
+      "to": "initializers-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-8-related_to-initializers-block-3",
+      "from": "initializers-block-8",
+      "to": "initializers-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-9-part_of-initializers",
+      "from": "initializers-block-9",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-8-before-initializers-block-9",
+      "from": "initializers-block-8",
+      "to": "initializers-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-9-related_to-initializers-block-3",
+      "from": "initializers-block-9",
+      "to": "initializers-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-10-part_of-initializers",
+      "from": "initializers-block-10",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-9-before-initializers-block-10",
+      "from": "initializers-block-9",
+      "to": "initializers-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-10-related_to-initializers-block-3",
+      "from": "initializers-block-10",
+      "to": "initializers-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-11-part_of-initializers",
+      "from": "initializers-block-11",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-10-before-initializers-block-11",
+      "from": "initializers-block-10",
+      "to": "initializers-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-11-related_to-initializers-block-3",
+      "from": "initializers-block-11",
+      "to": "initializers-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-12-part_of-initializers",
+      "from": "initializers-block-12",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-11-before-initializers-block-12",
+      "from": "initializers-block-11",
+      "to": "initializers-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-13-part_of-initializers",
+      "from": "initializers-block-13",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-12-before-initializers-block-13",
+      "from": "initializers-block-12",
+      "to": "initializers-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-14-part_of-initializers",
+      "from": "initializers-block-14",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-13-before-initializers-block-14",
+      "from": "initializers-block-13",
+      "to": "initializers-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-14-related_to-initializers-block-13",
+      "from": "initializers-block-14",
+      "to": "initializers-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-15-part_of-initializers",
+      "from": "initializers-block-15",
+      "to": "initializers",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-14-before-initializers-block-15",
+      "from": "initializers-block-14",
+      "to": "initializers-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-block-15-related_to-initializers-block-13",
+      "from": "initializers-block-15",
+      "to": "initializers-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-1-part_of-initializers-block-1",
+      "from": "initializers-stmt-1",
+      "to": "initializers-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-2-part_of-initializers-block-2",
+      "from": "initializers-stmt-2",
+      "to": "initializers-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-3-part_of-initializers-block-2",
+      "from": "initializers-stmt-3",
+      "to": "initializers-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-4-part_of-initializers-block-4",
+      "from": "initializers-stmt-4",
+      "to": "initializers-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-5-part_of-initializers-block-4",
+      "from": "initializers-stmt-5",
+      "to": "initializers-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-6-part_of-initializers-block-4",
+      "from": "initializers-stmt-6",
+      "to": "initializers-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-7-part_of-initializers-block-4",
+      "from": "initializers-stmt-7",
+      "to": "initializers-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-8-part_of-initializers-block-5",
+      "from": "initializers-stmt-8",
+      "to": "initializers-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-9-part_of-initializers-block-5",
+      "from": "initializers-stmt-9",
+      "to": "initializers-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-10-part_of-initializers-block-5",
+      "from": "initializers-stmt-10",
+      "to": "initializers-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-11-part_of-initializers-block-5",
+      "from": "initializers-stmt-11",
+      "to": "initializers-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-12-part_of-initializers-block-7",
+      "from": "initializers-stmt-12",
+      "to": "initializers-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-13-part_of-initializers-block-14",
+      "from": "initializers-stmt-13",
+      "to": "initializers-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-14-part_of-initializers-block-14",
+      "from": "initializers-stmt-14",
+      "to": "initializers-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-15-part_of-initializers-block-14",
+      "from": "initializers-stmt-15",
+      "to": "initializers-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-16-part_of-initializers-block-15",
+      "from": "initializers-stmt-16",
+      "to": "initializers-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-initializers-stmt-17-part_of-initializers-block-15",
+      "from": "initializers-stmt-17",
+      "to": "initializers-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-initializers-part",
+      "from": "initializers",
+      "to": "part-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-initializers-lecun-initialization",
+      "from": "lecun-initialization",
+      "to": "initializers",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "standard deviation proportional to $1/\\sqrt{\\text{fan-in}}$",
+      "citation_keys": [
+        "lecun1998gradient"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-initializers-xavier-initialization",
+      "from": "xavier-initialization",
+      "to": "initializers",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "uniform limit $\\sqrt{6/(\\text{fan-in}+\\text{fan-out})}$",
+      "citation_keys": [
+        "glorot2010understanding"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-initializers-he-initialization",
+      "from": "he-initialization",
+      "to": "initializers",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$\\sqrt{2/\\text{fan-in}}$",
+      "citation_keys": [
+        "he2015delving"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-initializers-orthogonal-initialization",
+      "from": "orthogonal-initialization",
+      "to": "initializers",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Orthogonal (2013).**",
+      "citation_keys": [
+        "saxe2014deep"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-initializers-gpt-2-initialization",
+      "from": "gpt-2-initialization",
+      "to": "initializers",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "normal distribution with $\\sigma = 0.02$",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "confidence": "provenance"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "initializers-block-1",
+      "quote": "<link rel=\"stylesheet\" href=\"initializers.css?v= \">",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "initializers-block-2",
+      "quote": "Initializers: Starting a Network in the Right Regime Before the first gradient step, every weight matrix needs a starting distribution. That choice decides whether activations and gradients stay in a usable range through depth, or collapse or explode before learning starts.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "initializers-block-3",
+      "quote": "Why initialization matters",
+      "kind": "heading",
+      "section": "Why initialization matters"
+    },
+    {
+      "id": "initializers-block-4",
+      "quote": "A linear layer mixes its inputs: each output is a weighted sum over the fan-in. If the weights are too large, the variance grows layer after layer; if they are too small, it shrinks toward zero. With a nonlinearity in between, the same argument applies to the derivative that carries the gradient backward. The goal is a **critical regime**: variance roughly preserved from layer to layer.",
+      "kind": "paragraph",
+      "section": "Why initialization matters"
+    },
+    {
+      "id": "initializers-block-5",
+      "quote": "Initialization also breaks symmetry. If every weight were zero, every hidden unit in a layer would receive the same gradient and stay identical. Random values make units start different. The question is not “random or not”, but **which variance and which correlations** the random values should have.",
+      "kind": "paragraph",
+      "section": "Why initialization matters"
+    },
+    {
+      "id": "initializers-block-6",
+      "quote": "Initializer",
+      "kind": "paragraph",
+      "section": "Why initialization matters"
+    },
+    {
+      "id": "initializers-block-7",
+      "quote": "LeCun normal Xavier / Glorot uniform He normal Orthogonal GPT-2 normal (σ = 0.02) Uniform ±1/√fan_in",
+      "kind": "paragraph",
+      "section": "Why initialization matters"
+    },
+    {
+      "id": "initializers-block-8",
+      "quote": "Activation",
+      "kind": "paragraph",
+      "section": "Why initialization matters"
+    },
+    {
+      "id": "initializers-block-9",
+      "quote": "tanh ReLU GELU",
+      "kind": "paragraph",
+      "section": "Why initialization matters"
+    },
+    {
+      "id": "initializers-block-10",
+      "quote": "Fan-in: 256",
+      "kind": "paragraph",
+      "section": "Why initialization matters"
+    },
+    {
+      "id": "initializers-block-11",
+      "quote": "Depth: 24",
+      "kind": "paragraph",
+      "section": "Why initialization matters"
+    },
+    {
+      "id": "initializers-block-12",
+      "quote": "The historical ladder",
+      "kind": "heading",
+      "section": "The historical ladder"
+    },
+    {
+      "id": "initializers-block-13",
+      "quote": "What to choose today",
+      "kind": "heading",
+      "section": "What to choose today"
+    },
+    {
+      "id": "initializers-block-14",
+      "quote": "For a small pre-LN Transformer, **Xavier** is a safe default for tanh-like activations, **He** for ReLU/GELU, and **orthogonal** when you care about stable singular values. GPT-2's $\\sigma=0.02$ with scaled residual projections is a useful reminder that initialization and residual scaling are a package: changing one without the other can push the stream off balance. Framework defaults (for example PyTorch's Kaiming-uniform Linear initialization) are reasonable starting points, not laws; the validation loss is the referee.",
+      "kind": "paragraph",
+      "section": "What to choose today"
+    },
+    {
+      "id": "initializers-block-15",
+      "quote": "The page above is a variance model, not a substitute for training. It shows the mechanism: change the activation or the fan-in and watch the variance trajectory bend.",
+      "kind": "paragraph",
+      "section": "What to choose today"
+    }
+  ],
+  "statements": [
+    {
+      "id": "initializers-stmt-1",
+      "quote": "<link rel=\"stylesheet\" href=\"initializers.css?v= \">",
+      "block_id": "initializers-block-1",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-2",
+      "quote": "Initializers: Starting a Network in the Right Regime Before the first gradient step, every weight matrix needs a starting distribution.",
+      "block_id": "initializers-block-2",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-3",
+      "quote": "That choice decides whether activations and gradients stay in a usable range through depth, or collapse or explode before learning starts.",
+      "block_id": "initializers-block-2",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-4",
+      "quote": "A linear layer mixes its inputs: each output is a weighted sum over the fan-in.",
+      "block_id": "initializers-block-4",
+      "section": "Why initialization matters",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-5",
+      "quote": "If the weights are too large, the variance grows layer after layer; if they are too small, it shrinks toward zero.",
+      "block_id": "initializers-block-4",
+      "section": "Why initialization matters",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-6",
+      "quote": "With a nonlinearity in between, the same argument applies to the derivative that carries the gradient backward.",
+      "block_id": "initializers-block-4",
+      "section": "Why initialization matters",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-7",
+      "quote": "The goal is a **critical regime**: variance roughly preserved from layer to layer.",
+      "block_id": "initializers-block-4",
+      "section": "Why initialization matters",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-8",
+      "quote": "Initialization also breaks symmetry.",
+      "block_id": "initializers-block-5",
+      "section": "Why initialization matters",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-9",
+      "quote": "If every weight were zero, every hidden unit in a layer would receive the same gradient and stay identical.",
+      "block_id": "initializers-block-5",
+      "section": "Why initialization matters",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-10",
+      "quote": "Random values make units start different.",
+      "block_id": "initializers-block-5",
+      "section": "Why initialization matters",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-11",
+      "quote": "The question is not “random or not”, but **which variance and which correlations** the random values should have.",
+      "block_id": "initializers-block-5",
+      "section": "Why initialization matters",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-12",
+      "quote": "LeCun normal Xavier / Glorot uniform He normal Orthogonal GPT-2 normal (σ = 0.02) Uniform ±1/√fan_in",
+      "block_id": "initializers-block-7",
+      "section": "Why initialization matters",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-13",
+      "quote": "For a small pre-LN Transformer, **Xavier** is a safe default for tanh-like activations, **He** for ReLU/GELU, and **orthogonal** when you care about stable singular values.",
+      "block_id": "initializers-block-14",
+      "section": "What to choose today",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-14",
+      "quote": "GPT-2's $\\sigma=0.02$ with scaled residual projections is a useful reminder that initialization and residual scaling are a package: changing one without the other can push the stream off balance.",
+      "block_id": "initializers-block-14",
+      "section": "What to choose today",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-15",
+      "quote": "Framework defaults (for example PyTorch's Kaiming-uniform Linear initialization) are reasonable starting points, not laws; the validation loss is the referee.",
+      "block_id": "initializers-block-14",
+      "section": "What to choose today",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-16",
+      "quote": "The page above is a variance model, not a substitute for training.",
+      "block_id": "initializers-block-15",
+      "section": "What to choose today",
+      "kind": "statement"
+    },
+    {
+      "id": "initializers-stmt-17",
+      "quote": "It shows the mechanism: change the activation or the fan-in and watch the variance trajectory bend.",
+      "block_id": "initializers-block-15",
+      "section": "What to choose today",
+      "kind": "statement"
+    }
+  ]
+}
