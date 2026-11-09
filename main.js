@@ -259,6 +259,55 @@ function init_tabs () {
 
 var _cnn3d_lazily_loading = 0;
 
+function _set_cnn3d_loading (loading) {
+	var container = document.getElementById("cnn3d");
+	if(!container) return;
+
+	if(!loading) {
+		if(container._cnn3dLoadingObserver) {
+			container._cnn3dLoadingObserver.disconnect();
+			container._cnn3dLoadingObserver = null;
+		}
+		if(container._cnn3dLoadingTimeout) {
+			clearTimeout(container._cnn3dLoadingTimeout);
+			container._cnn3dLoadingTimeout = null;
+		}
+		container.querySelectorAll(".cnn3d-loading-placeholder").forEach(function (placeholder) {
+			placeholder.remove();
+		});
+		container.removeAttribute("aria-busy");
+		return;
+	}
+
+	if(container.querySelector(".cnn3d-loading-placeholder")) {
+		return;
+	}
+
+	var text = (typeof language !== "undefined" && language[lang] && language[lang]["cnn3d_loading"]) || "Loading 3D network...";
+	var placeholder = document.createElement("div");
+	placeholder.className = "cnn3d-loading-placeholder";
+	placeholder.innerHTML = '<div class="spinner"></div><div class="cnn3d-loading-text" data-tr-text="cnn3d_loading"></div>';
+	placeholder.querySelector(".cnn3d-loading-text").textContent = text;
+	container.setAttribute("aria-busy", "true");
+	container.appendChild(placeholder);
+
+	if(typeof MutationObserver === "undefined") {
+		return;
+	}
+
+	var observer = new MutationObserver(function () {
+		if(container.querySelector(".cnn3d-canvas-wrapper")) {
+			_set_cnn3d_loading(false);
+		}
+	});
+	container._cnn3dLoadingObserver = observer;
+	observer.observe(container, { childList: true, subtree: true });
+	container._cnn3dLoadingTimeout = setTimeout(function () {
+		container._cnn3dLoadingTimeout = null;
+		_set_cnn3d_loading(false);
+	}, 20000);
+}
+
 function load_cnn3d_lazily () {
 	if (typeof CNN3D !== "undefined") {
 		CNN3D.render("cnn3d");
@@ -270,6 +319,7 @@ function load_cnn3d_lazily () {
 	}
 
 	_cnn3d_lazily_loading = 1;
+	_set_cnn3d_loading(true);
 
 	function load_script (src, next) {
 		var s = document.createElement("script");
@@ -279,6 +329,7 @@ function load_cnn3d_lazily () {
 		};
 		s.onerror = function () {
 			_cnn3d_lazily_loading = 0;
+			_set_cnn3d_loading(false);
 			err("Failed to load " + src);
 		};
 		document.head.appendChild(s);

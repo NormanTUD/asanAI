@@ -2147,6 +2147,28 @@ function test_ribbon_and_layer_tooltips() {
 	return missing.length === 0 && missing_keys.length === 0;
 }
 
+function test_cnn3d_loading_placeholder() {
+	var container = document.getElementById("cnn3d");
+	if (!container) return false;
+
+	_set_cnn3d_loading(false);
+	_set_cnn3d_loading(true);
+	var placeholder = container.querySelector(".cnn3d-loading-placeholder");
+	var has_spinner = !!placeholder && !!placeholder.querySelector(".spinner");
+	var has_text = !!placeholder && placeholder.textContent.trim().length > 0;
+	var busy = container.getAttribute("aria-busy") === "true";
+
+	_set_cnn3d_loading(false);
+	var removed = !container.querySelector(".cnn3d-loading-placeholder") && !container.hasAttribute("aria-busy");
+
+	test_equal("3D network loading placeholder has a spinner and text", has_spinner && has_text, true);
+	test_equal("3D network sets aria-busy while loading", busy, true);
+	test_equal("3D network loading placeholder is removed again", removed, true);
+	test_equal("3D network loading text exists in English and German", !!(language.en["cnn3d_loading"] && language.de["cnn3d_loading"]), true);
+
+	return has_spinner && has_text && busy && removed;
+}
+
 function test_prepare_site_for_training_always_clears_plot() {
 	const old_unchanged = _model_fingerprint_unchanged;
 	const plot = document.getElementById("plotly_epoch_history");
@@ -2493,6 +2515,7 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("mobile More panel exposes views and model actions", test_mobile_more_panel_markup(), true);
 	test_equal("ribbon labels toggle their checkboxes", test_ribbon_labels_toggle_checkboxes(), true);
 	test_equal("ribbon and layer settings expose bilingual hover tooltips", test_ribbon_and_layer_tooltips(), true);
+	test_equal("3D network shows a bilingual loading placeholder", test_cnn3d_loading_placeholder(), true);
 	test_equal("new training run always clears the old loss plot", test_prepare_site_for_training_always_clears_plot(), true);
 	test_equal("loss plot shows a loading spinner until the first render", test_plotly_loading_placeholder_clears_after_render(), true);
 	test_equal("augmented previews are drawn into the photo gallery canvas", await test_augmented_previews_go_to_gallery_canvas(), true);

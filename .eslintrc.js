@@ -651,6 +651,7 @@ module.exports = {
 		"change_all_initializers": "readonly",
 		"setOptimizerTooltips": "readonly",
 		"setRibbonTooltips": "readonly",
+		"_set_cnn3d_loading": "readonly",
 		"RIBBON_TOOLTIP_KEYS": "readonly",
 		"RIBBON_GROUP_TOOLTIP_KEYS": "readonly",
 		"LAYER_OPTION_TOOLTIP_KEYS": "readonly",
