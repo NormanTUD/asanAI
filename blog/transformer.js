@@ -3432,6 +3432,11 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 
 	if (window.Plotly) { try { Plotly.purge(container); } catch (e) { /* not a Plotly node */ } }
 	container.innerHTML = '';
+	const embHeight = (typeof getTrajectoryPlotHeight === 'function')
+		? getTrajectoryPlotHeight(dimensions)
+		: (dimensions <= 3 ? 850 : 520);
+	container.style.height = embHeight + 'px';
+	container.style.minHeight = embHeight + 'px';
 
 	const tokens = Object.keys(window.persistentEmbeddingSpace);
 
@@ -6321,17 +6326,6 @@ function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
 	}
 	if (window.Plotly) { try { Plotly.purge(container); } catch (e) { /* not a Plotly node */ } }
 	container.innerHTML = '';
-	// Match the trajectory frame exactly: same responsive height, same
-	// centred flex box, same spacing.
-	const shiftHeight = (typeof getTrajectoryPlotHeight === 'function')
-		? getTrajectoryPlotHeight(d_model)
-		: (d_model <= 3 ? 850 : 520);
-	container.style.height = shiftHeight + 'px';
-	container.style.minHeight = shiftHeight + 'px';
-	container.style.display = 'flex';
-	container.style.alignItems = 'center';
-	container.style.justifyContent = 'center';
-	container.style.marginTop = '10px';
 	const rawBase = tokenStrings.map(t => window.persistentEmbeddingSpace[t] || []);
 	const rawCombined = injectedEmbeddings;
 	const base = rawBase.map(_tmTransformMetric);
@@ -8379,6 +8373,15 @@ function _tmInitStaticPlotLoading() {
 		'transformer-pe-wave-plot': 'Loading positional waves…',
 		'transformer-pe-shift-plot': 'Loading positional shift…'
 	};
+	const cfg = (typeof getTransformerConfig === 'function') ? getTransformerConfig() : { d_model: 3 };
+	const emb = document.getElementById('transformer-plotly-space');
+	if (emb) {
+		const h = (typeof getTrajectoryPlotHeight === 'function')
+			? getTrajectoryPlotHeight(cfg.d_model)
+			: (cfg.d_model <= 3 ? 850 : 520);
+		emb.style.height = h + 'px';
+		emb.style.minHeight = h + 'px';
+	}
 	Object.keys(texts).forEach(function (id) {
 		const el = document.getElementById(id);
 		if (!el || el.innerHTML.trim()) return;
