@@ -1,0 +1,33 @@
+{
+  "global": [
+    {
+      "selector": "[data-allow-resize]",
+      "reason": "explicitly opted out of the size guard"
+    },
+    {
+      "selector": ".optional-content",
+      "reason": "collapsible optional content is expected to grow when opened"
+    },
+    {
+      "selector": ".tm-step-body",
+      "reason": "step bodies expand when their step is opened"
+    },
+    {
+      "selector": ".tm-layer-body",
+      "reason": "layer cards expand when opened"
+    },
+    {
+      "selector": ".tm-layer-subbox-body",
+      "reason": "layer subboxes expand when opened"
+    },
+    {
+      "selector": ".tm-step",
+      "reason": "step cards expand when their formulas/plots are opened"
+    },
+    {
+      "selector": ".tm-layer-card",
+      "reason": "layer cards expand when their subboxes open"
+    }
+  ],
+  "pages": {}
+}

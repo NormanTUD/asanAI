@@ -22,6 +22,7 @@ Run from the repository root:
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import shutil
 import socket
@@ -35,9 +36,11 @@ ROOT = Path(__file__).resolve().parents[2]
 BLOG = ROOT / "blog"
 SKIP = {"index", "index_full", "functions", "asanai_blog_proxy", "graph", "intro"}
 DEMO_SELECTOR = (
-    ".plot-container, .js-plotly-plot, canvas, svg, .demo, .viz-container, "
-    ".mtl-panel, .tm-step, .tm-layer-card, .optional, .mn-quiz"
+    ".plot-container, .js-plotly-plot, canvas, .demo, .viz-container, "
+    ".mtl-panel, .tm-step, .tm-layer-card, .tm-triple-math, .tm-feature-arrows, "
+    ".tm-residual-triple, .tm-layer-subbox, .mn-quiz"
 )
+EXCEPTIONS_FILE = Path(__file__).with_name("demo_size_exceptions.json")
 CASES: list[tuple[str, bool, str]] = []
 
 
@@ -55,6 +58,47 @@ def lessons() -> list[Path]:
         if "COURSE_METADATA:" in text:
             out.append(path)
     return out
+
+
+def changed_lessons() -> list[Path]:
+    """Changed lesson pages. Shared assets mean every page is a candidate."""
+    root = ROOT
+    try:
+        changed = subprocess.check_output(
+            ["git", "diff", "--name-only", "--diff-filter=ACMRT", "HEAD", "--", "blog"],
+            cwd=root, text=True, stderr=subprocess.DEVNULL
+        ).splitlines()
+        changed += subprocess.check_output(
+            ["git", "ls-files", "--others", "--exclude-standard", "--", "blog"],
+            cwd=root, text=True, stderr=subprocess.DEVNULL
+        ).splitlines()
+    except Exception:
+        return lessons()
+    changed = [c for c in changed if c]
+    page_names = {p.name for p in lessons()}
+    selected = {Path(c).name for c in changed if Path(c).name in page_names}
+    shared = any(
+        Path(c).suffix in {".js", ".css", ".php"} and Path(c).name not in page_names
+        for c in changed
+    )
+    if shared:
+        return lessons()
+    if selected:
+        return [p for p in lessons() if p.name in selected]
+    return lessons()
+
+
+def load_exceptions() -> tuple[list[str], dict[str, list[str]]]:
+    try:
+        data = json.loads(EXCEPTIONS_FILE.read_text())
+    except Exception:
+        return [], {}
+    glob = [e["selector"] for e in data.get("global", []) if e.get("selector")]
+    pages = {
+        name: [e["selector"] for e in entries if e.get("selector")]
+        for name, entries in data.get("pages", {}).items()
+    }
+    return glob, pages
 
 
 def free_port() -> int:
@@ -113,16 +157,23 @@ def open_details(page, limit: int) -> None:
     }""", limit)
 
 
-def demo_widths(page) -> list[dict]:
-    return page.evaluate("""(sel) => [...document.querySelectorAll(sel)].filter(e => {
+def demo_widths(page, exceptions: list[str]) -> list[dict]:
+    return page.evaluate("""(args) => [...document.querySelectorAll(args.sel)].filter(e => {
         const r=e.getBoundingClientRect(); const cs=getComputedStyle(e);
-        return r.width > 0 && r.height > 0 && cs.display !== 'none' && cs.visibility !== 'hidden';
-    }).slice(0, 120).map((e, i) => {
+        if (!(r.width > 0 && r.height > 0 && cs.display !== 'none' && cs.visibility !== 'hidden')) return false;
+        if (e.tagName === 'CANVAS' && (r.width < 80 || r.height < 40)) return false;
+        return true;
+    }).slice(0, 160).map((e, i) => {
         const r=e.getBoundingClientRect(); const p=e.parentElement;
+        let path = e.tagName.toLowerCase();
+        if (e.id) path += '#' + e.id;
+        else if (e.className && typeof e.className === 'string') path += '.' + e.className.trim().split(/\\s+/).join('.');
+        const exempt = args.exceptions.some(sel => { try { return e.matches(sel) || !!e.closest(sel); } catch (_) { return false; } }) || !!e.closest('[data-allow-resize]');
         return {i, tag:e.tagName, id:e.id||'', cls:(e.className||'').toString().slice(0,80),
-                w:Math.round(r.width), sw:e.scrollWidth, cw:e.clientWidth,
+                path, exempt, insideOpen: !!e.closest('details[open], .optional-content'),
+                w:Math.round(r.width), h:Math.round(r.height), sw:e.scrollWidth, cw:e.clientWidth,
                 parent:p?(p.tagName+'.'+(p.className||'')).slice(0,100):''};
-    })""", DEMO_SELECTOR)
+    })""", {"sel": DEMO_SELECTOR, "exceptions": exceptions})
 
 
 def exercise_controls(page, limit: int) -> list[str]:
@@ -171,10 +222,13 @@ def exercise_controls(page, limit: int) -> list[str]:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", action="append", default=[], help="page filename(s), e.g. transformer.php")
+    ap.add_argument("--changed", action="store_true", help="only pages touched by the working tree (shared assets = all)")
+    ap.add_argument("--all", action="store_true", help="all lesson pages (default unless --changed)")
     ap.add_argument("--quick", action="store_true", help="fewer details/controls per page")
     ap.add_argument("--timeout", type=int, default=45)
     args = ap.parse_args()
-    pages = [p for p in lessons() if not args.only or p.name in args.only]
+    source = lessons() if not args.changed else changed_lessons()
+    pages = [p for p in source if not args.only or p.name in args.only]
     if not pages:
         print("No lesson pages found", file=sys.stderr)
         raise SystemExit(1)
@@ -183,6 +237,7 @@ def main() -> None:
     server = serve(port)
     detail_limit = 3 if args.quick else 8
     control_limit = 4 if args.quick else 14
+    global_exceptions, page_exceptions = load_exceptions()
     try:
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True, args=["--enable-precise-memory-info"])
@@ -200,14 +255,20 @@ def main() -> None:
                         pass
                     scroll_through(page)
                     page.wait_for_timeout(300)
-                    before = demo_widths(page)
+                    before = demo_widths(page, global_exceptions + page_exceptions.get(path.name, []))
                     open_details(page, detail_limit)
-                    after = demo_widths(page)
+                    after = demo_widths(page, global_exceptions + page_exceptions.get(path.name, []))
                     width_changes = []
+                    height_changes = []
                     old = {d["i"]: d for d in before}
                     for d in after:
-                        if d["i"] in old and abs(d["w"] - old[d["i"]]["w"]) > 3:
-                            width_changes.append(f"{d['tag']}#{d['id']} {old[d['i']]['w']}→{d['w']}px")
+                        if d["i"] not in old:
+                            continue
+                        o = old[d["i"]]
+                        if abs(d["w"] - o["w"]) > 3:
+                            width_changes.append(f"{d['path']} {o['w']}→{d['w']}px")
+                        if abs(d["h"] - o["h"]) > 8 and not d["exempt"] and not d["insideOpen"]:
+                            height_changes.append(f"{d['path']} {o['h']}→{d['h']}px")
                     page_overflow = page.evaluate("() => document.documentElement.scrollWidth - document.documentElement.clientWidth")
                     check(f"{path.name}: page has no horizontal overflow", page_overflow <= 2, f"{page_overflow}px")
                     guard = page.evaluate("() => window.__layoutGuardrailCheck ? window.__layoutGuardrailCheck() : null")
@@ -215,9 +276,13 @@ def main() -> None:
                           str(guard)[:300] if guard else "")
                     bad = [d for d in after if d["sw"] > d["cw"] + 2 and d["cw"] > 0]
                     check(f"{path.name}: demos fit their boxes", not bad,
-                          "; ".join(f"{d['tag']}#{d['id']} {d['sw']}>{d['cw']}" for d in bad[:3]))
+                          "; ".join(f"{d['path']} scrollWidth={d['sw']} clientWidth={d['cw']}" for d in bad[:3]) +
+                          " — widen the container or add .lg-scroll; do not let the demo escape the reading column")
                     check(f"{path.name}: opening details keeps demo widths", not width_changes,
                           "; ".join(width_changes[:4]))
+                    check(f"{path.name}: opening details only resizes known containers", not height_changes,
+                          "; ".join(height_changes[:4]) +
+                          " — add the selector to blog/tests/demo_size_exceptions.json or set data-allow-resize")
                     control_problems = exercise_controls(page, control_limit)
                     check(f"{path.name}: controls keep layout", not control_problems,
                           "; ".join(control_problems[:4]))
