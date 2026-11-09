@@ -496,6 +496,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<p class="pos-bridge-kicker">Same pattern, one dimension higher</p>
 								<h3>From the flat slice to the 3D curve</h3>
 								<p>The curve is a small, readable slice of that geometry. A real model is far more complex, but it follows the same geometric principles in thousands of dimensions.</p>
+								<p>In the first three dimensions the curve is a spiral: the first two dimensions turn in a circle, while the third drifts slowly. The Euclidean view measures the straight-line chord from the token to the current point on that spiral. Switch to the angle view and the same points are projected onto the unit sphere, and in a real model onto a hypersphere: the distance is now the great-circle arc, the angle between the token direction and the position direction. The spiral stays, but the question changes from how far apart the two points are to how far their directions have turned.</p>
 								<p class="pos-bridge-flow" aria-hidden="true"><span>position × dimension</span><i>→</i><span>3D curve</span><i>→</i><span>N dimensions</span></p>
 							</div>
 							<div class="step-stage">
@@ -3382,7 +3383,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		var pos = 7;
 		var posShown = 7;
 		var POS_D_MODEL = 3;
-		var POS_CURVE_STEP = 0.75;
 		var POS_COLORS = ["green", "blue", "gold"];
 		var POS_LABELS = ["d0", "d1", "d2"];
 		var POS_TOKEN_VEC = [0.30, 0.18, 0.24];
@@ -3589,15 +3589,40 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				}
 			}
 
+			function posCurvePoint(value) {
+				var raw = posVector(value);
+				return posMetric === "angle" ? posUnit(raw) : raw;
+			}
+			function addCurveChunk(points, color, width) {
+				if (points.length < 2) return;
+				var zSum = 0;
+				for (var ci = 0; ci < points.length; ci++) zSum += points[ci].z;
+				primitives.push({
+					z: zSum / points.length,
+					draw: function (ctx) {
+						ctx.beginPath();
+						ctx.moveTo(points[0].x, points[0].y);
+						for (var cj = 1; cj < points.length; cj++) ctx.lineTo(points[cj].x, points[cj].y);
+						ctx.strokeStyle = color;
+						ctx.lineWidth = width;
+						ctx.lineCap = "butt";
+						ctx.stroke();
+					}
+				});
+			}
 			if (posShown > 0.01) {
-				var steps = Math.max(2, Math.min(1600, Math.ceil(posShown / POS_CURVE_STEP)));
-				var prev = project(posMetric === "angle" ? posUnit(posVector(0)) : posVector(0));
-				for (var i = 1; i <= steps; i++) {
-					var t = posShown * i / steps;
-					var q = project(posMetric === "angle" ? posUnit(posVector(t)) : posVector(t));
-					addLine(prev.x, prev.y, prev.z, q.x, q.y, q.z, posRgba(c.sky, 0.42), 1.6, null, "butt");
-					prev = q;
+				var curveStep = Math.max(0.5, posShown / 16000);
+				var curveCount = Math.max(2, Math.ceil(posShown / curveStep));
+				var curveColor = posRgba(c.sky, 0.55);
+				var curveChunk = [];
+				for (var ci = 0; ci <= curveCount; ci++) {
+					curveChunk.push(project(posCurvePoint(posShown * ci / curveCount)));
+					if (curveChunk.length >= 161) {
+						addCurveChunk(curveChunk, curveColor, 1.6);
+						curveChunk = [curveChunk[curveChunk.length - 1]];
+					}
 				}
+				if (curveChunk.length > 1) addCurveChunk(curveChunk, curveColor, 1.6);
 			}
 
 			var tokenVec = POS_TOKEN_VEC;

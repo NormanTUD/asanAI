@@ -106,7 +106,7 @@
    "title": "Solving Cubics with Creases: The Work of Beloch and Lill",
    "author": "Thomas C. Hull",
    "year": "2011",
-   "url": "http://origametry.net/papers/amer.math.monthly.118.04.307-hull.pdf"
+   "url": ""
   },
   "hull1997origametry": {
    "title": "A comparison between straight edge and compass constructions and origami",
@@ -292,7 +292,7 @@
    "title": "Basics of Polyhedral Theory",
    "author": "Martin Grötschel",
    "year": "2005",
-   "url": "https://www.math.u-szeged.hu/~hajnal/courses/BSc_Opkut/Grotschel.pdf"
+   "url": ""
   },
   "huchette2026polyhedral": {
    "title": "When Deep Learning Meets Polyhedral Theory: A Survey",
@@ -844,7 +844,7 @@
    "title": "Groupoids and van Kampen's theorem",
    "author": "Ronald Brown",
    "year": "1967",
-   "url": "https://www.sas.rochester.edu/mth/sites/doug-ravenel/otherpapers/rbrown-topgrpds-e.pdf"
+   "url": ""
   },
   "freudenthal1937": {
    "title": "Über die Klassen der Sphärenabbildungen",
@@ -1756,13 +1756,13 @@
    "title": "Beitrag zum Verständnis der magnetischen Erscheinungen in festen Körpern",
    "author": "Wilhelm Lenz",
    "year": "1920",
-   "url": "https://www.physik.uni-rostock.de/storages/uni-rostock/Alle_MNF/Physik/Historisches/Kalenderblaetter_Physik/KB_2013_06_Lenz/Lenz_1920.pdf"
+   "url": ""
   },
   "ising1925": {
    "title": "Beitrag zur Theorie des Ferromagnetismus",
    "author": "Ernst Ising",
    "year": "1925",
-   "url": "https://icmp.lviv.ua/ising/books/isingshort.pdf"
+   "url": ""
   },
   "amari1972": {
    "title": "Learning Patterns and Pattern Sequences by Self-Organizing Nets of Threshold Elements",
@@ -2320,7 +2320,7 @@
    "title": "Satellite-Sized Planetesimals and Lunar Origin",
    "author": "William K. Hartmann, Donald R. Davis",
    "year": "1975",
-   "url": "https://courses.seas.harvard.edu/climate/eli/Courses/EPS281r/Sources/Origin-of-the-Moon/more/Hartmann-Davis-1975.pdf"
+   "url": ""
   },
   "alperbethegamow1948": {
    "title": "The Origin of Chemical Elements",
@@ -2470,13 +2470,13 @@
    "title": "A Storage System for Use with Binary-Digital Computing Machines",
    "author": "Frederic Calland Williams, Tom Kilburn",
    "year": "1948",
-   "url": "https://lampes-et-tubes.info/sc/WillamsKilburn1949.pdf"
+   "url": ""
   },
   "eniac1946": {
    "title": "Electronic Numerical Integrator and Computer",
    "author": "John Presper Eckert, John W. Mauchly",
    "year": "1946",
-   "url": "https://fi.edu/sites/default/files/2016-04/EckertAndMauchly_CaseFilesReport_TheFranklinInstitute.pdf"
+   "url": ""
   },
   "kilbyic": {
    "title": "Miniaturized Electronic Circuits (U.S. Patent 3,138,743)",
@@ -2536,7 +2536,7 @@
    "title": "PCI Express Base Specification Revision 1.0",
    "author": "PCI-SIG",
    "year": "2002",
-   "url": "https://0x04.net/~mwk/doc/pci/PCI%20Express%20Base%20Specification%20v1.0%20-%202002.pdf"
+   "url": ""
   },
   "nvlink": {
    "title": "NVIDIA NVLink High-Speed GPU Interconnect",
@@ -2554,7 +2554,7 @@
    "title": "Ethernet: Distributed Packet Switching for Local Computer Networks",
    "author": "Robert Melancton Metcalfe, David R. Boggs",
    "year": "1976",
-   "url": "https://www.cl.cam.ac.uk/teaching/2425/CompNet/files/p395-metcalfe.pdf"
+   "url": ""
   },
   "horovod2018": {
    "title": "Horovod: fast and easy distributed deep learning in TensorFlow",
@@ -2992,7 +2992,7 @@
    "title": "Sketchpad, A Man-Machine Graphical Communication System",
    "author": "Ivan Edward Sutherland",
    "year": "1959",
-   "url": "http://images.designworldonline.com.s3.amazonaws.com/CADhistory/Sketchpad_A_Man-Machine_Graphical_Communication_System_Jan63.pdf"
+   "url": ""
   },
   "rfc1": {
    "title": "Network Working Group Request for Comment: 1",
@@ -3034,7 +3034,7 @@
    "title": "A Protocol for Packet Network Intercommunication",
    "author": "Vinton G. Cerf, Robert E. Kahn",
    "year": "1974",
-   "url": "https://www.cs.princeton.edu/courses/archive/fall06/cos561/papers/cerf74.pdf"
+   "url": ""
   },
   "patent1250": {
    "title": "Kälteerzeugungsmaschine",
@@ -3070,7 +3070,7 @@
    "title": "On the Constitution of Atoms and Molecules",
    "author": "Nils Bohr",
    "year": "1913",
-   "url": "https://uni-tuebingen.de/fileadmin/Uni_Tuebingen/Fakultaeten/MathePhysik/Institute/IAP/Forschung/MOettel/Geburt_QM/bohr_PhilMag_26_1_1913.pdf"
+   "url": ""
   },
   "wilsonsemiconductors": {
    "title": "The Theory of Electronic Semi-Conductors",
@@ -3154,7 +3154,7 @@
    "title": "The Nature of Mental States Hilary Putnam",
    "author": "Hilary Putnam",
    "year": "1967",
-   "url": "https://web.stanford.edu/~paulsko/papers/PutnamNMS.pdf"
+   "url": ""
   },
   "chalmers1995hard": {
    "title": "Facing Up the Problem of Consciousness",
@@ -3232,13 +3232,13 @@
    "title": "On the Stability of Inverse Problems",
    "author": "Andrej Nikolaevič Tichonov",
    "year": "1943",
-   "url": "https://cs.uwaterloo.ca/~y328yu/classics/Tikhonov43.pdf"
+   "url": ""
   },
   "hornik1989universal": {
    "title": "Multilayer Feedforward Networks are Universal Approximators",
    "author": "Kurt Hornik, Maxwell Stinchcombe, Halbert White",
    "year": "1989",
-   "url": "https://www.cs.cmu.edu/~epxing/Class/10715/reading/Kornick_et_al.pdf"
+   "url": ""
   },
   "statisticsofextremes": {
    "title": "Statistics of extremes",
@@ -3262,7 +3262,7 @@
    "title": "Generalized Linear Model",
    "author": "John Ashworth Nelder and Robert William Maclagan Wedderburn",
    "year": "1972",
-   "url": "https://jhanley.biostat.mcgill.ca/bios601/Likelihood/NelderWedderburn1972.pdf"
+   "url": ""
   },
   "logitorigin": {
    "title": "Application of the Logistic Function to Bio-Assay",
@@ -3274,7 +3274,7 @@
    "title": "The Method of Probits",
    "author": "Chester Ittner Bliss",
    "year": "1934",
-   "url": "https://www.jhanley.biostat.mcgill.ca/anniversaries/ByTopic/Bliss1934.pdf"
+   "url": ""
   },
   "acrophonic": {
    "title": "The Egyptian Origin of the Semitic Alphabet",
@@ -3790,7 +3790,7 @@
    "title": "Gradient Theory of Optimal Flight Paths",
    "author": "Henry J. Kelley",
    "year": "1960",
-   "url": "https://perceptrondemo.com/assets/1960-kelley-07dff188.pdf"
+   "url": ""
   },
   "successorheads": {
    "title": "Successor Heads: Recurring, Interpretable Attention Heads In The Wild",
@@ -3826,7 +3826,7 @@
    "title": "Two Cultures",
    "author": "Charles Percy Snow",
    "year": "1959",
-   "url": "https://sciencepolicy.colorado.edu/students/envs_5110/snow_1959.pdf"
+   "url": ""
   },
   "breakingsoftmaxbottleneck": {
    "title": "Breaking the Softmax Bottleneck: A High-Rank RNN Language Model",
@@ -3922,7 +3922,7 @@
    "title": "Incorporating Nesterov Momentum into Adam",
    "author": "Timothy Dozat",
    "year": "2016",
-   "url": "http://cs229.stanford.edu/proj2015/054_report.pdf"
+   "url": ""
   },
   "reddi2018amsgrad": {
    "title": "On the Convergence of Adam and Beyond",
@@ -4504,7 +4504,7 @@
    "title": "The Hindu–Arabic Numerals: A Critical Study of All the Principal Sources of European Knowledge of and Claim to Priority in the Numeration System",
    "author": "David Eugene Smith and Louis Charles Karpinski",
    "year": "1911",
-   "url": "https://archive.org/details/hinduarabicnumer00smitrich"
+   "url": ""
   },
   "ishango12": {
    "title": "Does the Ishango Bone Indicate Knowledge of the Base 12? An Interpretation of a Prehistoric Discovery, the First Mathematical Tool of Humankind",
@@ -4708,7 +4708,7 @@
    "title": "Reflections on Trusting Trust",
    "author": "Ken Thompson",
    "year": "1984",
-   "url": "https://www.cs.cmu.edu/~rdriley/487/papers/Thompson_1984_ReflectionsonTrustingTrust.pdf"
+   "url": ""
   },
   "gesetzderkleinenzahlen": {
    "title": "Das Gesetz der kleinen Zahlen",
@@ -4738,7 +4738,7 @@
    "title": "Distributional Structure",
    "author": "Zellig Harris",
    "year": "1954",
-   "url": "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf"
+   "url": ""
   },
   "leiblerkullback": {
    "title": "On Information and Sufficiency",
@@ -4756,7 +4756,7 @@
    "title": "On the Mathematical Foundations of Theoretical Statistics",
    "author": "Ronald Aylmer Fisher",
    "year": "1922",
-   "url": "https://jhanley.biostat.mcgill.ca/bios601/Likelihood/Fisher1922.pdf"
+   "url": ""
   },
   "student1907haemocytometer": {
    "title": "On the Error of Counting with a Hæmocytometer",
@@ -4840,7 +4840,7 @@
    "title": "Research Trends  Summer 1958: Vol 6 Iss 2",
    "author": "Cornell University",
    "year": "1958",
-   "url": "https://archive.org/details/sim_research-trends_summer-1958_6_2"
+   "url": ""
   },
   "newyorktimesperceptron2": {
    "title": "Electronic 'Brain' Teaches Itself",
@@ -4858,13 +4858,13 @@
    "title": "The Design of an Intelligent Automaton",
    "author": "Frank Rosenblatt",
    "year": "1957",
-   "url": "https://archive.org/details/sim_research-trends_summer-1958_6_2/page/2/mode/2up"
+   "url": ""
   },
   "rosenblattperceptron": {
    "title": "The Perceptron: A Perceiving and Recognizing Automaton",
    "author": "Frank Rosenblatt",
    "year": "1957",
-   "url": "https://bpb-us-e2.wpmucdn.com/websites.umass.edu/dist/a/27637/files/2016/03/rosenblatt-1957.pdf"
+   "url": ""
   },
   "rosenblattperceptronresults": {
    "title": "Perceptron Simulation Experiments (Project Para)",
@@ -4996,7 +4996,7 @@
    "title": "The Automatic Sequence Controlled Calculator",
    "author": "Howard Aiken, Grace Hopper",
    "year": "1946",
-   "url": "https://inversethought.com/jordi/mark1.pdf"
+   "url": ""
   },
   "turing1937": {
    "title": "On Computable Numbers, with an Application to the Entscheidungsproblem",
@@ -5074,7 +5074,7 @@
    "title": "Decoging an Ancient Computer",
    "author": "Tony Freeth (Scientific American)",
    "year": "2009",
-   "url": "https://www.cs.virginia.edu/~robins/Decoding_an_Ancient_Computer.pdf"
+   "url": ""
   },
   "antikytheraimage": {
    "title": "Fragments (B, A and C) of the Antikythera Mechanism",
@@ -5296,7 +5296,7 @@
    "title": "A Logical Calculus of the Ideas Immanent in Nervous Activity",
    "author": "Warren Sturgis McCulloch and Walter Pitts",
    "year": "1943",
-   "url": "https://www.cs.cmu.edu/~epxing/Class/10715/reading/McCulloch.and.Pitts.pdf"
+   "url": ""
   },
   "behaviorpurpose1943": {
    "title": "Behavior, Purpose and Teleology",
@@ -5458,7 +5458,7 @@
    "title": "A Mathematical Theory of Communication",
    "author": "Claude Elwood Shannon",
    "year": "1948",
-   "url": "https://archive.org/details/bstj27-3-379"
+   "url": ""
   },
   "pearson1894zscore": {
    "title": "Contributions to the Mathematical Theory of Evolution",
@@ -5566,7 +5566,7 @@
    "title": "Transfer Learning",
    "author": "Lisa Torrey, Jude Shavlik",
    "year": "2010",
-   "url": "https://ftp.cs.wisc.edu/machine-learning/shavlik-group/torrey.handbook09.pdf"
+   "url": ""
   },
   "novaactaacdemiaeiscientiarumporopolitanae": {
    "title": "Nova acta academiae i. scientiarum Petropolitanae",
@@ -5584,7 +5584,7 @@
    "title": "Neural Networks and the Bias/Variance Dilemma",
    "author": "Stuart Geman, Elie Bienenstock, René Doursat",
    "year": "1992",
-   "url": "https://www.dam.brown.edu/people/documents/bias-variance.pdf"
+   "url": ""
   },
   "approximationetymology": {
    "title": "Origin and history of approximation",
@@ -5638,13 +5638,13 @@
    "title": "Cramming more components onto integrated circuits",
    "author": "Gordon Earle Moore",
    "year": "1965",
-   "url": "http://cva.stanford.edu/classes/cs99s/papers/moore-crammingmorecomponents.pdf"
+   "url": ""
   },
   "lecun1989backpropagation": {
    "title": "Backpropagation Applied to Handwritten Zip Code Recognition",
    "author": "Yann LeCun, Bernhard Boser, John S. Denker, Donnie Henderson, Richard E. Howard, Wayne Hubbard, Lawrence D. Jackel",
    "year": "1989",
-   "url": "https://galileo-unbound.blog/wp-content/uploads/2025/02/lecun.neco_.1989.1.4.541.pdf"
+   "url": ""
   },
   "lecun1998gradientbased": {
    "title": "Gradient-based learning applied to document recognition",
@@ -5656,7 +5656,7 @@
    "title": "Neocognitron: A Self-organizing Neural Network Model for a Mechanism of Pattern Recognition Unaffected by Shift in Position",
    "author": "Kunihiko Fukushima",
    "year": "1980",
-   "url": "https://www.cs.princeton.edu/courses/archive/spr08/cos598B/Readings/Fukushima1980.pdf"
+   "url": ""
   },
   "deng2009imagenet": {
    "title": "ImageNet: A Large-Scale Hierarchical Image Database",
@@ -5686,7 +5686,7 @@
    "title": "A Stochastic Approximation Method",
    "author": "Herbert Robbins, Sutton Monro",
    "year": "1951",
-   "url": "https://www.columbia.edu/~ww2040/8100F16/RM51.pdf"
+   "url": ""
   },
   "cauchy1847": {
    "title": "Méthode générale pour la résolution des systèmes d'équations simultanées",
@@ -5716,7 +5716,7 @@
    "title": "Brain Mechanisms and Intelligence: A Quantitative Study of Injuries to the Brain",
    "author": "Karl S. Lashley",
    "year": "1929",
-   "url": "https://archive.org/details/brainmechanismsi00lash"
+   "url": ""
   },
   "perceptronimagecables": {
    "title": "The Mark I Perceptron, an early pattern recognition system, at the Cornell Aeronautical Laboratory",
@@ -5800,13 +5800,13 @@
    "title": "Regression Shrinkage and Selection via the Lasso",
    "author": "Robert Tibshirani",
    "year": "1996",
-   "url": "https://webdoc.agsci.colostate.edu/koontz/arec-econ535/papers/Tibshirani%20(JRSS-B%201996).pdf"
+   "url": ""
   },
   "hoerl1970ridge": {
    "title": "Ridge Regression: Biased Estimation for Nonorthogonal Problems",
    "author": "Arthur E. Hoerl, Robert W. Kennard",
    "year": "1970",
-   "url": "https://homepages.math.uic.edu/~lreyzin/papers/ridge.pdf"
+   "url": ""
   },
   "hochreiter1991vanishing": {
    "title": "Untersuchungen zu dynamischen neuronalen Netzen",
@@ -5848,7 +5848,7 @@
    "title": "Prediction and Entropy of Printed English",
    "author": "Claude Elwood Shannon",
    "year": "1951",
-   "url": "https://www.princeton.edu/~wbialek/rome/refs/shannon_51.pdf"
+   "url": ""
   },
   "markov1913ngram": {
    "title": "An Example of Statistical Investigation of the Text Eugene Onegin Concerning the Connection of Samples in Chains",
@@ -5860,7 +5860,7 @@
    "title": "A New Algorithm for Data Compression",
    "author": "Philip Gage",
    "year": "1994",
-   "url": "https://www.derczynski.com/papers/archive/BPE_Gage.pdf"
+   "url": ""
   },
   "schuster2012wordpiece": {
    "title": "Japanese and Korean voice search",
@@ -5896,7 +5896,7 @@
    "title": "The Extended Mind",
    "author": "Andy Clark, David Chalmers",
    "year": "1998",
-   "url": "https://www.alice.id.tue.nl/references/clark-chalmers-1998.pdf"
+   "url": ""
   },
   "noe2009outofourheads": {
    "title": "Out of Our Heads: Why You are Not Your Brain, and Other Lessons From the Biology of Consciousness",
@@ -6028,7 +6028,7 @@
    "title": "Epiphenomenal Qualia",
    "author": "Frank Jackson",
    "year": "1982",
-   "url": "https://www.sfu.ca/~jillmc/JacksonfromJStore.pdf"
+   "url": ""
   },
   "sutton2019bitter": {
    "title": "The Bitter Lesson",
@@ -6274,7 +6274,7 @@
    "title": "A Synopsis of Linguistic Theory, 1930-1955",
    "author": "John Rupert Firth",
    "year": "1957",
-   "url": "https://cs.brown.edu/courses/csci2952d/readings/lecture1-firth.pdf"
+   "url": ""
   },
   "salton1975vectorspace": {
    "title": "A Vector Space Model for Automatic Indexing",
@@ -6334,13 +6334,13 @@
    "title": "Principia Mathematica",
    "author": "Bertrand Russell, Alfred North Whitehead",
    "year": "1910",
-   "url": "https://archive.org/details/cu31924001575244"
+   "url": ""
   },
   "hilbert1928entscheidung": {
    "title": "Grundzüge der theoretischen Logik",
    "author": "David Hilbert, Wilhelm Ackermann",
    "year": "1928",
-   "url": "https://archive.org/details/grundzugedertheo0000wack"
+   "url": ""
   },
   "nyquist1924certain": {
    "title": "Certain Factors Affecting Telegraph Speed",
@@ -8356,7 +8356,7 @@
    "title": "Toward a Universal Law of Generalization for Psychological Science",
    "author": "Roger N. Shepard",
    "year": "1987",
-   "url": "https://legacy.voteview.com/pdf/Shepard_1987.pdf"
+   "url": ""
   },
   "he2023sideeffects": {
    "title": "Side Effects of Learning from Low-Dimensional Data Embedded in a Euclidean Space",
@@ -9046,7 +9046,7 @@
    "title": "On Manifolds Homeomorphic to the 7-Sphere",
    "author": "John Milnor",
    "year": "1956",
-   "url": "https://webhomes.maths.ed.ac.uk/~v1ranick/papers/exotic.pdf"
+   "url": ""
   },
   "smale1961hccobordism": {
    "title": "Generalized Poincaré's Conjecture in Dimensions Greater Than Four",
@@ -9466,7 +9466,7 @@
    "title": "Least squares quantization in PCM",
    "author": "Stuart P. Lloyd",
    "year": "1982",
-   "url": "https://web.stanford.edu/~boyd/papers/pdf/lloyd_1982.pdf"
+   "url": ""
   },
   "macqueen1967kmeans": {
    "title": "Some Methods for Classification and Analysis of Multivariate Observations",
@@ -9646,7 +9646,7 @@
    "title": "Induction of Decision Trees",
    "author": "J. Ross Quinlan",
    "year": "1986",
-   "url": "https://www.cs.toronto.edu/~roweis/csc2515-2006/readings/quinlan.pdf"
+   "url": ""
   },
   "quinlan1993c45": {
    "title": "C4.5: Programs for Machine Learning",
@@ -9796,7 +9796,7 @@
    "title": "On the optimality of the simple Bayesian classifier under zero-one loss",
    "author": "Pedro Domingos, Michael Pazzani",
    "year": "1997",
-   "url": "https://www.cs.unb.ca/~hzhang/publications/MLJ97.pdf"
+   "url": ""
   },
   "hand2001nb": {
    "title": "Idiot's Bayes — not so stupid after all?",
@@ -9814,13 +9814,13 @@
    "title": "Naive (Bayes) at Forty: The Independence Assumption in Information Retrieval",
    "author": "David D. Lewis",
    "year": "1998",
-   "url": "https://www.cs.rutgers.edu/~mlittman/courses/ml03/i-200/readings/lewis98.pdf"
+   "url": ""
   },
   "pearl1985bn": {
    "title": "Bayesian Networks: A Model of Self-Activated Memory for Evidential Reasoning",
    "author": "Judea Pearl",
    "year": "1985",
-   "url": "https://www.cs.columbia.edu/graphics/courses/cmsc_290i-2023/papers/Pearl_1985_BNs.pdf"
+   "url": ""
   },
   "pearl1988book": {
    "title": "Probabilistic Reasoning in Intelligent Systems: Networks of Plausible Inference",
@@ -9904,7 +9904,7 @@
    "title": "An Introduction to Variational Methods for Graphical Models",
    "author": "Michael I. Jordan, Zoubin Ghahramani, Tommi S. Jaakkola, Lawrence K. Saul",
    "year": "1999",
-   "url": "https://www.cs.cmu.edu/~epxing/Class/10715/reading/jordan_ghahramani_jaakkola_saul_99.pdf"
+   "url": ""
   },
   "blei2017vi": {
    "title": "Variational Inference: A Review for Statisticians",
@@ -9928,7 +9928,7 @@
    "title": "Continuous speech recognition by statistical methods",
    "author": "Frederick Jelinek",
    "year": "1976",
-   "url": "https://www.cs.unc.edu/~lazebnik/spring09/jelinek76.pdf"
+   "url": ""
   },
   "eddy1998hmmer": {
    "title": "Profile hidden Markov models",
@@ -10150,7 +10150,7 @@
    "title": "Efficient Selectivity and Backup Operators in Monte-Carlo Tree Search",
    "author": "Rémi Coulom",
    "year": "2006",
-   "url": "https://www.cs.ualberta.ca/~mmueller/ps/cg2006/coulom.pdf"
+   "url": ""
   },
   "schrittwieser2020muzero": {
    "title": "Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model",
@@ -10174,7 +10174,7 @@
    "title": "On the Likelihood that One Unknown Probability Exceeds Another in View of the Evidence of Two Samples",
    "author": "William R. Thompson",
    "year": "1933",
-   "url": "https://www.cas.cmu.edu/~rsb/compbio/Thompson1933.pdf"
+   "url": ""
   },
   "ng2000irl": {
    "title": "Algorithms for Inverse Reinforcement Learning",
@@ -10198,7 +10198,7 @@
    "title": "Principia Mathematica",
    "author": "Bertrand Russell, Alfred North Whitehead",
    "year": "1910",
-   "url": "https://archive.org/details/PrincipiaMathematicaVolumeI"
+   "url": ""
   },
   "biere2009handbook": {
    "title": "Handbook of Satisfiability",
@@ -10228,7 +10228,7 @@
    "title": "Un Système de Communication Homme–Machine en Français",
    "author": "Alain Colmerauer, Philippe Roussel",
    "year": "1973",
-   "url": "https://www.marc-herreros.net/Marc/Papers_files/Prolog.pdf"
+   "url": ""
   },
   "kowalski1974prolog": {
    "title": "Predicate Logic as a Programming Language",
@@ -10270,7 +10270,7 @@
    "title": "R1: A Rule-Based Configurer of Computer Systems",
    "author": "John McDermott",
    "year": "1982",
-   "url": "https://www.cs.utexas.edu/~kuipers/readings/mcDermott-82_R1.pdf"
+   "url": ""
   },
   "baader2003dl": {
    "title": "The Description Logic Handbook: Theory, Implementation, and Applications",
@@ -10300,7 +10300,7 @@
    "title": "The Semantic Web",
    "author": "Tim Berners-Lee, James Hendler, Ora Lassila",
    "year": "2001",
-   "url": "https://www-sop.inria.fr/acacia/cours/essi2007/Scientific%20American_%20The%20Semantic%20Web_%20May%202001.pdf"
+   "url": ""
   },
   "mcguinness2004owl": {
    "title": "OWL Web Ontology Language Overview",
@@ -10336,7 +10336,7 @@
    "title": "Matrix Factorization Techniques for Recommender Systems",
    "author": "Yehuda Koren, Robert Bell, Chris Volinsky",
    "year": "2009",
-   "url": "https://datajobs.com/data-science-repo/Matrix-Factorization-Tutorial-%5BKoren-et-al%5D.pdf"
+   "url": ""
   },
   "bell2007netflix": {
    "title": "The BellKor Solution to the Netflix Prize",
@@ -10372,7 +10372,7 @@
    "title": "Toward the Next Generation of Recommender Systems: A Survey of the State-of-the-Art and Possible Extensions",
    "author": "Gediminas Adomavicius, Alexander Tuzhilin",
    "year": "2005",
-   "url": "https://www.cs.umn.edu/~yzhu0912/ding-2017-2/papers/rs-survey/2005%20-%20Toward%20the%20Next%20Generation%20of%20Recommender%20Systems.pdf"
+   "url": ""
   },
   "box1970arima": {
    "title": "Time Series Analysis: Forecasting and Control",
@@ -10420,7 +10420,7 @@
    "title": "The Anatomy of a Large-Scale Hypertextual Web Search Engine",
    "author": "Sergey Brin, Lawrence Page",
    "year": "1998",
-   "url": "https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf"
+   "url": ""
   },
   "page1999pagerank": {
    "title": "The PageRank Citation Ranking: Bringing Order to the Web",
@@ -10528,7 +10528,7 @@
    "title": "Analysis of a Complex of Statistical Variables into Principal Components",
    "author": "Harold Hotelling",
    "year": "1933",
-   "url": "https://www.stat.cmu.edu/~hseltman/318/notes/Hotelling1933.pdf"
+   "url": ""
   },
   "hyvarinen2000ica": {
    "title": "Independent Component Analysis: Algorithms and Applications",
@@ -10636,7 +10636,7 @@
    "title": "The echo state approach to analysing and training recurrent neural networks",
    "author": "Herbert Jaeger",
    "year": "2001",
-   "url": "https://www.ai.rug.nl/~mrobins/ChaosCourse/Jaeger_2001.pdf"
+   "url": ""
   },
   "maass2002liquid": {
    "title": "Real-time computing without stable states: A new framework for neural computation based on perturbations",
@@ -10726,7 +10726,7 @@
    "title": "Causal Diagrams for Empirical Research",
    "author": "Judea Pearl",
    "year": "1995",
-   "url": "https://www.cs.columbia.edu/graphics/courses/cmsc_290i-2023/papers/Pearl_Causality.pdf"
+   "url": ""
   },
   "pearl2009book": {
    "title": "Causality: Models, Reasoning, and Inference",
@@ -10846,7 +10846,7 @@
    "title": "Data Clustering: A User's Dilemma",
    "author": "Anil K. Jain, M. Narasimha Murty, Patrick J. Flynn",
    "year": "1999",
-   "url": "https://www.cs.rug.nl/~ieeema/2010-2011/Datamining/2010-2011/files%20opdrachten/Data%20Mining%20-%20Assignment%201/Data%20Clustering%20-%20A%20User%27s%20Dilemma.pdf"
+   "url": ""
   },
   "gelman2013bda": {
    "title": "Bayesian Data Analysis",
@@ -10900,7 +10900,7 @@
    "title": "Biometrika article on Causal Diagrams (Pearl's seminal causal inference paper)",
    "author": "Judea Pearl",
    "year": "1995",
-   "url": "https://www.cs.columbia.edu/graphics/courses/cmsc_290i-2023/papers/Pearl_Causality.pdf"
+   "url": ""
   },
   "freund1997boosting": {
    "title": "A Decision-Theoretic Generalization of On-Line Learning and an Application to Boosting",
@@ -13132,7 +13132,7 @@
    "title": "A Symbolic Analysis of Relay and Switching Circuits",
    "author": "Claude Elwood Shannon",
    "year": "1938",
-   "url": "https://archive.org/details/symbolicanalysis00shanno"
+   "url": ""
   },
   "aristotle1685history": {
    "title": "Historia Animalium (History of Animals)",
@@ -14320,7 +14320,7 @@
    "title": "Die Lernmatrix",
    "author": "Karl Steinbuch",
    "year": "1961",
-   "url": "https://archive.org/details/biological-cybernetics_1961-01_1_1"
+   "url": ""
   },
   "steinbuch1963learningmatrices": {
    "title": "Learning Matrices and Their Applications",
@@ -14560,7 +14560,7 @@
    "title": "Architectonics and Structure of the Cerebral Cortex (Chapter XV in Fulton's Physiology of the Nervous System)",
    "author": "Rafael Lorente de Nó",
    "year": "1938",
-   "url": "https://bsd.neuroinf.jp/w/images/9/9e/Lorente_De_No_1938.pdf"
+   "url": ""
   },
   "sutton2019bitterlesson": {
    "title": "The Bitter Lesson",
@@ -19186,7 +19186,7 @@
    "title": "Economic Quality Control of Manufactured Product",
    "author": "W. A. Shewhart",
    "year": "1930",
-   "url": "https://archive.org/details/bstj9-2-364"
+   "url": ""
   },
   "bell1876telephone": {
    "title": "Improvement in Telegraphy (US Patent 174,465)",
@@ -19972,7 +19972,7 @@
    "title": "The Principles of Mathematics",
    "author": "Bertrand Russell",
    "year": "1903",
-   "url": "https://archive.org/details/principlesofmath01russ"
+   "url": ""
   },
   "russell_paradox_sep": {
    "title": "Russell's Paradox",
@@ -20050,7 +20050,7 @@
    "title": "Vector Analysis: A Text-book for the Use of Students of Mathematics and Physics, Founded upon the Lectures of J. Willard Gibbs",
    "author": "Edwin Bidwell Wilson, J. Willard Gibbs",
    "year": "1901",
-   "url": "https://archive.org/details/vectoranalysiste00gibbiala"
+   "url": ""
   },
   "heaviside1893electromagnetic": {
    "title": "Electromagnetic Theory",
@@ -20650,7 +20650,7 @@
    "title": "An Axiomatic Basis for Computer Programming",
    "author": "C. A. R. Hoare",
    "year": "1969",
-   "url": "https://www.cs.cmu.edu/~crary/819-f09/Hoare69.pdf"
+   "url": ""
   },
   "binarysearch_wiki": {
    "title": "Binary search algorithm",
@@ -20956,13 +20956,13 @@
    "title": "Welcome to Prestel Gateway",
    "author": "British Telecom",
    "year": "1982",
-   "url": "https://archive.org/details/Welcome-to-Prestel-Gateway"
+   "url": ""
   },
   "prestel1984briefing": {
    "title": "Prestel Briefing, Issue 2",
    "author": "British Telecom",
    "year": "1984",
-   "url": "https://archive.org/details/prestel-briefing-issue-2"
+   "url": ""
   },
   "btx1984drucksache": {
    "title": "Bildschirmtext und Datenschutz (Drucksache 10/2582)",

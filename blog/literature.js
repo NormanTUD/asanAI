@@ -157,7 +157,6 @@ window.bibData = {
 		title: "Solving Cubics with Creases: The Work of Beloch and Lill",
 		author: "Thomas C. Hull",
 		year: 2011,
-		url: "http://origametry.net/papers/amer.math.monthly.118.04.307-hull.pdf",
 		alternativetitle: "Hull, American Mathematical Monthly 118(4):307-315 (2011)"
 	},
 	"hull1997origametry": {
@@ -386,7 +385,6 @@ window.bibData = {
 		title: "Basics of Polyhedral Theory",
 		author: "Martin Grötschel",
 		year: 2005,
-		url: "https://www.math.u-szeged.hu/~hajnal/courses/BSc_Opkut/Grotschel.pdf",
 		alternativetitle: "Grötschel, Basics of Polyhedral Theory (block-course notes, TU Berlin 2005)"
 	},
 	"huchette2026polyhedral": {
@@ -1131,7 +1129,6 @@ window.bibData = {
 		journal: "Proceedings of the London Mathematical Society",
 		volume: "(3) 17",
 		pages: "385–401",
-		url: "https://www.sas.rochester.edu/mth/sites/doug-ravenel/otherpapers/rbrown-topgrpds-e.pdf",
 		alternativetitle: "Brown, Groupoids and van Kampen's theorem (1967)"
 	},
 	"freudenthal1937": {
@@ -2237,13 +2234,11 @@ window.bibData = {
 		title: "Beitrag zum Verständnis der magnetischen Erscheinungen in festen Körpern",
 		author: "Wilhelm Lenz",
 		year: 1920,
-		url: "https://www.physik.uni-rostock.de/storages/uni-rostock/Alle_MNF/Physik/Historisches/Kalenderblaetter_Physik/KB_2013_06_Lenz/Lenz_1920.pdf"
 	},
 	"ising1925": {
 		title: "Beitrag zur Theorie des Ferromagnetismus",
 		author: "Ernst Ising",
 		year: 1925,
-		url: "https://icmp.lviv.ua/ising/books/isingshort.pdf"
 	},
 	"amari1972": {
 		title: "Learning Patterns and Pattern Sequences by Self-Organizing Nets of Threshold Elements",
@@ -2828,7 +2823,6 @@ window.bibData = {
 		title: "Satellite-Sized Planetesimals and Lunar Origin",
 		author: "William K. Hartmann, Donald R. Davis",
 		year: 1975,
-		url: "https://courses.seas.harvard.edu/climate/eli/Courses/EPS281r/Sources/Origin-of-the-Moon/more/Hartmann-Davis-1975.pdf"
 	},
 
 	"alperbethegamow1948": {
@@ -2999,14 +2993,12 @@ window.bibData = {
 		title: "A Storage System for Use with Binary-Digital Computing Machines",
 		author: "Frederic Calland Williams, Tom Kilburn",
 		year: 1948,
-		url: "https://lampes-et-tubes.info/sc/WillamsKilburn1949.pdf"
 	},
 
 	"eniac1946": {
 		title: "Electronic Numerical Integrator and Computer",
 		author: "John Presper Eckert, John W. Mauchly",
 		year: 1946,
-		url: "https://fi.edu/sites/default/files/2016-04/EckertAndMauchly_CaseFilesReport_TheFranklinInstitute.pdf"
 	},
 	"kilbyic": {
 		title: "Miniaturized Electronic Circuits (U.S. Patent 3,138,743)",
@@ -3066,7 +3058,6 @@ window.bibData = {
 		title: "PCI Express Base Specification Revision 1.0",
 		author: "PCI-SIG",
 		year: 2002,
-		url: "https://0x04.net/~mwk/doc/pci/PCI%20Express%20Base%20Specification%20v1.0%20-%202002.pdf"
 	},
 	"nvlink": {
 		title: "NVIDIA NVLink High-Speed GPU Interconnect",
@@ -3084,7 +3075,6 @@ window.bibData = {
 		title: "Ethernet: Distributed Packet Switching for Local Computer Networks",
 		author: "Robert Melancton Metcalfe, David R. Boggs",
 		year: 1976,
-		url: "https://www.cl.cam.ac.uk/teaching/2425/CompNet/files/p395-metcalfe.pdf"
 	},
 	"horovod2018": {
 		title: "Horovod: fast and easy distributed deep learning in TensorFlow",
@@ -3554,7 +3544,6 @@ window.bibData = {
 		author: "Christopher Latham Sholes"
 	},
 	"sketchpad": {
-		url: "http://images.designworldonline.com.s3.amazonaws.com/CADhistory/Sketchpad_A_Man-Machine_Graphical_Communication_System_Jan63.pdf",
 		author: "Ivan Edward Sutherland",
 		year: 1959,
 		title: "Sketchpad, A Man-Machine Graphical Communication System"
@@ -3599,7 +3588,6 @@ window.bibData = {
 		year: 1989
 	},
 	"cerfkahn": {
-		url: "https://www.cs.princeton.edu/courses/archive/fall06/cos561/papers/cerf74.pdf",
 		title: "A Protocol for Packet Network Intercommunication",
 		author: "Vinton G. Cerf, Robert E. Kahn",
 		year: 1974
@@ -3635,7 +3623,6 @@ window.bibData = {
 		url: "https://ieeexplore.ieee.org/document/6773080"
 	},
 	"bohr": {
-		url: "https://uni-tuebingen.de/fileadmin/Uni_Tuebingen/Fakultaeten/MathePhysik/Institute/IAP/Forschung/MOettel/Geburt_QM/bohr_PhilMag_26_1_1913.pdf",
 		author: "Nils Bohr",
 		title: "On the Constitution of Atoms and Molecules",
 		year: 1913
@@ -3716,7 +3703,6 @@ window.bibData = {
 		year: 1996,
 	},
 	"putnam1967functionalism": {
-		url: "https://web.stanford.edu/~paulsko/papers/PutnamNMS.pdf",
 		year: 1967,
 		author: "Hilary Putnam",
 		title: "The Nature of Mental States Hilary Putnam"
@@ -3799,13 +3785,11 @@ window.bibData = {
 		title: "A Treatise of Human Nature"
 	},
 	"earlyl2": {
-		url: "https://cs.uwaterloo.ca/~y328yu/classics/Tikhonov43.pdf",
 		author: "Andrej Nikolaevič Tichonov",
 		title: "On the Stability of Inverse Problems",
 		year: 1943
 	},
 	"hornik1989universal": {
-		url: "https://www.cs.cmu.edu/~epxing/Class/10715/reading/Kornick_et_al.pdf",
 		title: "Multilayer Feedforward Networks are Universal Approximators",
 		year: 1989,
 		author: "Kurt Hornik, Maxwell Stinchcombe, Halbert White"
@@ -3827,7 +3811,6 @@ window.bibData = {
 		year: 1989
 	},
 	"generalizedlinearmodels": {
-		url: "https://jhanley.biostat.mcgill.ca/bios601/Likelihood/NelderWedderburn1972.pdf",
 		author: "John Ashworth Nelder and Robert William Maclagan Wedderburn",
 		year: 1972,
 		title: "Generalized Linear Model"
@@ -3839,7 +3822,6 @@ window.bibData = {
 		title: "Application of the Logistic Function to Bio-Assay"
 	},
 	"probitorigin": {
-		url: "https://www.jhanley.biostat.mcgill.ca/anniversaries/ByTopic/Bliss1934.pdf",
 		title: "The Method of Probits",
 		year: 1934,
 		author: "Chester Ittner Bliss"
@@ -4442,7 +4424,6 @@ window.bibData = {
 	},
 	"kelley": {
 		year: 1960,
-		url: "https://perceptrondemo.com/assets/1960-kelley-07dff188.pdf",
 		title: "Gradient Theory of Optimal Flight Paths",
 		author: "Henry J. Kelley"
 	},
@@ -4480,7 +4461,6 @@ window.bibData = {
 		title: "Two Cultures",
 		year: 1959,
 		author: "Charles Percy Snow",
-		url: "https://sciencepolicy.colorado.edu/students/envs_5110/snow_1959.pdf",
 		alternativetitle: "Two-Cultures"
 	},
 	"breakingsoftmaxbottleneck": {
@@ -4585,7 +4565,6 @@ window.bibData = {
 		title: "Incorporating Nesterov Momentum into Adam",
 		author: "Timothy Dozat",
 		year: 2016,
-		url: "http://cs229.stanford.edu/proj2015/054_report.pdf",
 		alternativetitle: "Dozat, 2016"
 	},
 	"reddi2018amsgrad": {
@@ -5215,7 +5194,6 @@ window.bibData = {
 		year: 1911,
 		title: "The Hindu–Arabic Numerals: A Critical Study of All the Principal Sources of European Knowledge of and Claim to Priority in the Numeration System",
 		publisher: "Ginn and Company",
-		url: "https://archive.org/details/hinduarabicnumer00smitrich"
 	},
 	"ishango12": {
 		url: "https://arxiv.org/abs/1204.1019",
@@ -5434,7 +5412,6 @@ window.bibData = {
 		alternativetitle: "The cumulative rounding error of an algorithm as a sum of partial derivatives of individual rounding errors"
 	},
 	"reflectionstrustingtrust": {
-		url: "https://www.cs.cmu.edu/~rdriley/487/papers/Thompson_1984_ReflectionsonTrustingTrust.pdf",
 		author: "Ken Thompson",
 		title: "Reflections on Trusting Trust",
 		year: 1984
@@ -5463,7 +5440,6 @@ window.bibData = {
 		year: 2003,
 	},
 	"zelligharris": {
-		url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf",
 		author: "Zellig Harris",
 		title: "Distributional Structure",
 		year: 1954
@@ -5480,7 +5456,6 @@ window.bibData = {
 		year: 1933
 	},
 	"fisher1922": {
-		url: "https://jhanley.biostat.mcgill.ca/bios601/Likelihood/Fisher1922.pdf",
 		year: 1922,
 		title: "On the Mathematical Foundations of Theoretical Statistics",
 		author: "Ronald Aylmer Fisher"
@@ -5581,7 +5556,6 @@ window.bibData = {
 		title: "Long Short-Term Memory"
 	},
 	"researchtrends": {
-		url: "https://archive.org/details/sim_research-trends_summer-1958_6_2",
 		year: 1958,
 		title: "Research Trends  Summer 1958: Vol 6 Iss 2",
 		author: "Cornell University"
@@ -5604,13 +5578,11 @@ window.bibData = {
 		title: "The Design of an Intelligent Automaton",
 		year: 1957,
 		author: "Frank Rosenblatt",
-		url: "https://archive.org/details/sim_research-trends_summer-1958_6_2/page/2/mode/2up"
 	},
 	"rosenblattperceptron": {
 		title: "The Perceptron: A Perceiving and Recognizing Automaton",
 		year: 1957,
 		author: "Frank Rosenblatt",
-		url: "https://bpb-us-e2.wpmucdn.com/websites.umass.edu/dist/a/27637/files/2016/03/rosenblatt-1957.pdf",
 		alternativetitle: "Perceptron"
 	},
 	"rosenblattperceptronresults": {
@@ -5767,7 +5739,6 @@ window.bibData = {
 		alternativetitle: "Von Neumann, The General and Logical Theory of Automata (1951)"
 	},
 	"aiken": {
-		url: "https://inversethought.com/jordi/mark1.pdf",
 		year: 1946,
 		author: "Howard Aiken, Grace Hopper",
 		title: "The Automatic Sequence Controlled Calculator"
@@ -5850,7 +5821,6 @@ window.bibData = {
 		author: "Tony Freeth (Scientific American)",
 		alternativetitle: "Antikythera Mechanism",
 		year: 2009,
-		url: "https://www.cs.virginia.edu/~robins/Decoding_an_Ancient_Computer.pdf"
 	},
 	"antikytheraimage": {
 		url: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Fragments_of_the_Antikythera_Mechanism.jpg",
@@ -6106,7 +6076,6 @@ window.bibData = {
 		year: "1943",
 		title: "A Logical Calculus of the Ideas Immanent in Nervous Activity",
 		alternativetitle: "The First Artificial Neuron",
-		url: "https://www.cs.cmu.edu/~epxing/Class/10715/reading/McCulloch.and.Pitts.pdf"
 	},
 
 	/* ── The Cyberneticians (1943-1953) ── */
@@ -6301,7 +6270,6 @@ window.bibData = {
 		author: "Claude Elwood Shannon",
 		year: "1948",
 		title: "A Mathematical Theory of Communication",
-		url: "https://archive.org/details/bstj27-3-379",
 		alternativetitle: "Information Theory"
 	},
 	"pearson1894zscore": {
@@ -6422,7 +6390,6 @@ window.bibData = {
 		author: "Lisa Torrey, Jude Shavlik",
 		title: "Transfer Learning",
 		year: 2010,
-		url: "https://ftp.cs.wisc.edu/machine-learning/shavlik-group/torrey.handbook09.pdf"
 	},
 	"novaactaacdemiaeiscientiarumporopolitanae": {
 		author: "Leonhard Euler",
@@ -6440,7 +6407,6 @@ window.bibData = {
 		author: "Stuart Geman, Elie Bienenstock, René Doursat",
 		year: "1992",
 		title: "Neural Networks and the Bias/Variance Dilemma",
-		url: "https://www.dam.brown.edu/people/documents/bias-variance.pdf"
 	},
 	"approximationetymology": {
 		title: "Origin and history of approximation",
@@ -6497,13 +6463,11 @@ window.bibData = {
 		year: 1965,
 		title: "Cramming more components onto integrated circuits",
 		alternativetitle: "Moore's Law",
-		url: "http://cva.stanford.edu/classes/cs99s/papers/moore-crammingmorecomponents.pdf"
 	},
 	"lecun1989backpropagation": {
 		author: "Yann LeCun, Bernhard Boser, John S. Denker, Donnie Henderson, Richard E. Howard, Wayne Hubbard, Lawrence D. Jackel",
 		year: "1989",
 		title: "Backpropagation Applied to Handwritten Zip Code Recognition",
-		url: "https://galileo-unbound.blog/wp-content/uploads/2025/02/lecun.neco_.1989.1.4.541.pdf",
 	},
 	"lecun1998gradientbased": {
 		author: "Yann LeCun, Léon Bottou, Yoshua Bengio, Patrick Haffner",
@@ -6516,7 +6480,6 @@ window.bibData = {
 		alternativetitle: "Neocognitron",
 		author: "Kunihiko Fukushima",
 		year: "1980",
-		url: "https://www.cs.princeton.edu/courses/archive/spr08/cos598B/Readings/Fukushima1980.pdf",
 	},
 	"deng2009imagenet": {
 		title: "ImageNet: A Large-Scale Hierarchical Image Database",
@@ -6549,7 +6512,6 @@ window.bibData = {
 	"sgd": {
 		title: "A Stochastic Approximation Method",
 		year: "1951",
-		url: "https://www.columbia.edu/~ww2040/8100F16/RM51.pdf",
 		author: "Herbert Robbins, Sutton Monro",
 	},
 	"cauchy1847": {
@@ -6583,7 +6545,6 @@ window.bibData = {
 		year: "1929",
 		title: "Brain Mechanisms and Intelligence: A Quantitative Study of Injuries to the Brain",
 		alternativetitle: "Lashley, Brain Mechanisms and Intelligence (1929)",
-		url: "https://archive.org/details/brainmechanismsi00lash",
 	},
 	"perceptronimagecables": {
 		url: "https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg",
@@ -6670,13 +6631,11 @@ window.bibData = {
 		author: "Robert Tibshirani",
 		year: "1996",
 		title: "Regression Shrinkage and Selection via the Lasso",
-		url: "https://webdoc.agsci.colostate.edu/koontz/arec-econ535/papers/Tibshirani%20(JRSS-B%201996).pdf",
 	},
 	"hoerl1970ridge": {
 		author: "Arthur E. Hoerl, Robert W. Kennard",
 		year: "1970",
 		title: "Ridge Regression: Biased Estimation for Nonorthogonal Problems",
-		url: "https://homepages.math.uic.edu/~lreyzin/papers/ridge.pdf",
 	},
 	"hochreiter1991vanishing": {
 		author: "Josef Hochreiter",
@@ -6722,7 +6681,6 @@ window.bibData = {
 		author: "Claude Elwood Shannon",
 		year: "1951",
 		title: "Prediction and Entropy of Printed English",
-		url: "https://www.princeton.edu/~wbialek/rome/refs/shannon_51.pdf",
 	},
 	"markov1913ngram": {
 		author: "Andrei Andreyevich Markov",
@@ -6734,7 +6692,6 @@ window.bibData = {
 		author: "Philip Gage",
 		year: "1994",
 		title: "A New Algorithm for Data Compression",
-		url: "https://www.derczynski.com/papers/archive/BPE_Gage.pdf",
 		alternativetitle: "Byte-Pair-Encoding"
 	},
 	"schuster2012wordpiece": {
@@ -6771,7 +6728,6 @@ window.bibData = {
 		author: "Andy Clark, David Chalmers",
 		year: "1998",
 		title: "The Extended Mind",
-		url: "https://www.alice.id.tue.nl/references/clark-chalmers-1998.pdf",
 	},
 	"noe2009outofourheads": {
 		author: "Alva Noë",
@@ -6934,7 +6890,6 @@ window.bibData = {
 		author: "Frank Jackson",
 		year: "1982",
 		title: "Epiphenomenal Qualia",
-		url: "https://www.sfu.ca/~jillmc/JacksonfromJStore.pdf",
 		alternativetitle: "Mary's Room"
 	},
 	"sutton2019bitter": {
@@ -7194,7 +7149,6 @@ window.bibData = {
 		author: "John Rupert Firth",
 		year: "1957",
 		title: "A Synopsis of Linguistic Theory, 1930-1955",
-		url: "https://cs.brown.edu/courses/csci2952d/readings/lecture1-firth.pdf",
 	},
 	"salton1975vectorspace": {
 		author: "Gerard Salton, Anita Wong, Chung-Shu Yang",
@@ -7259,13 +7213,11 @@ window.bibData = {
 		year: 1910,
 		author: "Bertrand Russell, Alfred North Whitehead",
 		title: "Principia Mathematica",
-		url: "https://archive.org/details/cu31924001575244"
 	},
 	"hilbert1928entscheidung": {
 		year: 1928,
 		author: "David Hilbert, Wilhelm Ackermann",
 		title: "Grundzüge der theoretischen Logik",
-		url: "https://archive.org/details/grundzugedertheo0000wack",
 		alternativetitle: "Hilbert & Ackermann, Grundzüge der theoretischen Logik (1928; 1946 ed.)"
 	},
 
@@ -9727,7 +9679,6 @@ window.bibData = {
 		author: "Roger N. Shepard",
 		year: 1987,
 		title: "Toward a Universal Law of Generalization for Psychological Science",
-		url: "https://legacy.voteview.com/pdf/Shepard_1987.pdf",
 		alternativetitle: "The Universal Law of Generalization"
 	},
 	/* He, Tsai & Ward (2023) — "Side Effects of Learning from Low-dimensional
@@ -10623,7 +10574,6 @@ window.bibData = {
 		journal: "Annals of Mathematics",
 		volume: 64,
 		pages: "399–405",
-		url: "https://webhomes.maths.ed.ac.uk/~v1ranick/papers/exotic.pdf",
 		alternativetitle: "Exotic spheres"
 	},
 	"smale1961hccobordism": {
@@ -11143,7 +11093,6 @@ window.bibData = {
 		title: "Least squares quantization in PCM",
 		author: "Stuart P. Lloyd",
 		year: 1982,
-		url: "https://web.stanford.edu/~boyd/papers/pdf/lloyd_1982.pdf",
 		alternativetitle: "Lloyd's Algorithm"
 	},
 	"macqueen1967kmeans": {
@@ -11344,7 +11293,6 @@ window.bibData = {
 		title: "Induction of Decision Trees",
 		author: "J. Ross Quinlan",
 		year: 1986,
-		url: "https://www.cs.toronto.edu/~roweis/csc2515-2006/readings/quinlan.pdf",
 		alternativetitle: "ID3"
 	},
 	"quinlan1993c45": {
@@ -11508,7 +11456,6 @@ window.bibData = {
 		title: "On the optimality of the simple Bayesian classifier under zero-one loss",
 		author: "Pedro Domingos, Michael Pazzani",
 		year: 1997,
-		url: "https://www.cs.unb.ca/~hzhang/publications/MLJ97.pdf",
 		alternativetitle: "Naive Bayes Optimality"
 	},
 	"hand2001nb": {
@@ -11527,14 +11474,12 @@ window.bibData = {
 		title: "Naive (Bayes) at Forty: The Independence Assumption in Information Retrieval",
 		author: "David D. Lewis",
 		year: 1998,
-		url: "https://www.cs.rutgers.edu/~mlittman/courses/ml03/i-200/readings/lewis98.pdf",
 		alternativetitle: "Naive Bayes at Forty"
 	},
 	"pearl1985bn": {
 		title: "Bayesian Networks: A Model of Self-Activated Memory for Evidential Reasoning",
 		author: "Judea Pearl",
 		year: 1985,
-		url: "https://www.cs.columbia.edu/graphics/courses/cmsc_290i-2023/papers/Pearl_1985_BNs.pdf",
 		alternativetitle: "Bayesian Networks"
 	},
 	"pearl1988book": {
@@ -11629,7 +11574,6 @@ window.bibData = {
 		title: "An Introduction to Variational Methods for Graphical Models",
 		author: "Michael I. Jordan, Zoubin Ghahramani, Tommi S. Jaakkola, Lawrence K. Saul",
 		year: 1999,
-		url: "https://www.cs.cmu.edu/~epxing/Class/10715/reading/jordan_ghahramani_jaakkola_saul_99.pdf",
 		alternativetitle: "Variational Inference"
 	},
 	"blei2017vi": {
@@ -11657,7 +11601,6 @@ window.bibData = {
 		title: "Continuous speech recognition by statistical methods",
 		author: "Frederick Jelinek",
 		year: 1976,
-		url: "https://www.cs.unc.edu/~lazebnik/spring09/jelinek76.pdf",
 		alternativetitle: "Continuous Speech Recognition"
 	},
 	"eddy1998hmmer": {
@@ -11906,7 +11849,6 @@ window.bibData = {
 		title: "Efficient Selectivity and Backup Operators in Monte-Carlo Tree Search",
 		author: "Rémi Coulom",
 		year: 2006,
-		url: "https://www.cs.ualberta.ca/~mmueller/ps/cg2006/coulom.pdf",
 		alternativetitle: "MCTS"
 	},
 	"schrittwieser2020muzero": {
@@ -11934,7 +11876,6 @@ window.bibData = {
 		title: "On the Likelihood that One Unknown Probability Exceeds Another in View of the Evidence of Two Samples",
 		author: "William R. Thompson",
 		year: 1933,
-		url: "https://www.cas.cmu.edu/~rsb/compbio/Thompson1933.pdf",
 		alternativetitle: "Thompson Sampling"
 	},
 	"ng2000irl": {
@@ -11962,7 +11903,6 @@ window.bibData = {
 		title: "Principia Mathematica",
 		author: "Bertrand Russell, Alfred North Whitehead",
 		year: 1910,
-		url: "https://archive.org/details/PrincipiaMathematicaVolumeI",
 		alternativetitle: "Principia Mathematica"
 	},
 	"biere2009handbook": {
@@ -11997,7 +11937,6 @@ window.bibData = {
 		title: "Un Système de Communication Homme–Machine en Français",
 		author: "Alain Colmerauer, Philippe Roussel",
 		year: 1973,
-		url: "https://www.marc-herreros.net/Marc/Papers_files/Prolog.pdf",
 		alternativetitle: "Prolog"
 	},
 	"kowalski1974prolog": {
@@ -12042,7 +11981,6 @@ window.bibData = {
 		title: "R1: A Rule-Based Configurer of Computer Systems",
 		author: "John McDermott",
 		year: 1982,
-		url: "https://www.cs.utexas.edu/~kuipers/readings/mcDermott-82_R1.pdf",
 		alternativetitle: "R1 / XCON"
 	},
 	"baader2003dl": {
@@ -12077,7 +12015,6 @@ window.bibData = {
 		title: "The Semantic Web",
 		author: "Tim Berners-Lee, James Hendler, Ora Lassila",
 		year: 2001,
-		url: "https://www-sop.inria.fr/acacia/cours/essi2007/Scientific%20American_%20The%20Semantic%20Web_%20May%202001.pdf",
 		alternativetitle: "Semantic Web"
 	},
 	"mcguinness2004owl": {
@@ -12119,7 +12056,6 @@ window.bibData = {
 		title: "Matrix Factorization Techniques for Recommender Systems",
 		author: "Yehuda Koren, Robert Bell, Chris Volinsky",
 		year: 2009,
-		url: "https://datajobs.com/data-science-repo/Matrix-Factorization-Tutorial-%5BKoren-et-al%5D.pdf",
 		alternativetitle: "Matrix Factorization for Recommenders"
 	},
 	"bell2007netflix": {
@@ -12157,7 +12093,6 @@ window.bibData = {
 		title: "Toward the Next Generation of Recommender Systems: A Survey of the State-of-the-Art and Possible Extensions",
 		author: "Gediminas Adomavicius, Alexander Tuzhilin",
 		year: 2005,
-		url: "https://www.cs.umn.edu/~yzhu0912/ding-2017-2/papers/rs-survey/2005%20-%20Toward%20the%20Next%20Generation%20of%20Recommender%20Systems.pdf",
 		alternativetitle: "Recommender Systems Survey"
 	},
 	"box1970arima": {
@@ -12213,7 +12148,6 @@ window.bibData = {
 		title: "The Anatomy of a Large-Scale Hypertextual Web Search Engine",
 		author: "Sergey Brin, Lawrence Page",
 		year: 1998,
-		url: "https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf",
 		alternativetitle: "PageRank"
 	},
 	"page1999pagerank": {
@@ -12339,7 +12273,6 @@ window.bibData = {
 		title: "Analysis of a Complex of Statistical Variables into Principal Components",
 		author: "Harold Hotelling",
 		year: 1933,
-		url: "https://www.stat.cmu.edu/~hseltman/318/notes/Hotelling1933.pdf",
 		alternativetitle: "Hotelling PCA"
 	},
 	"hyvarinen2000ica": {
@@ -12465,7 +12398,6 @@ window.bibData = {
 		title: "The echo state approach to analysing and training recurrent neural networks",
 		author: "Herbert Jaeger",
 		year: 2001,
-		url: "https://www.ai.rug.nl/~mrobins/ChaosCourse/Jaeger_2001.pdf",
 		alternativetitle: "Echo State Networks"
 	},
 	"maass2002liquid": {
@@ -12561,7 +12493,6 @@ window.bibData = {
 		title: "Causal Diagrams for Empirical Research",
 		author: "Judea Pearl",
 		year: 1995,
-		url: "https://www.cs.columbia.edu/graphics/courses/cmsc_290i-2023/papers/Pearl_Causality.pdf",
 		alternativetitle: "Do-Calculus / Causal Diagrams"
 	},
 	"pearl2009book": {
@@ -12699,7 +12630,6 @@ window.bibData = {
 		title: "Data Clustering: A User's Dilemma",
 		author: "Anil K. Jain, M. Narasimha Murty, Patrick J. Flynn",
 		year: 1999,
-		url: "https://www.cs.rug.nl/~ieeema/2010-2011/Datamining/2010-2011/files%20opdrachten/Data%20Mining%20-%20Assignment%201/Data%20Clustering%20-%20A%20User%27s%20Dilemma.pdf",
 		alternativetitle: "Data Clustering Survey"
 	},
 	"gelman2013bda": {
@@ -12762,7 +12692,6 @@ window.bibData = {
 		title: "Biometrika article on Causal Diagrams (Pearl's seminal causal inference paper)",
 		author: "Judea Pearl",
 		year: 1995,
-		url: "https://www.cs.columbia.edu/graphics/courses/cmsc_290i-2023/papers/Pearl_Causality.pdf",
 		alternativetitle: "Pearl 1995 (causal diagrams)"
 	},
 	"freund1997boosting": {
@@ -15529,7 +15458,6 @@ window.bibData = {
 		volume: 57,
 		number: 12,
 		pages: "713–722",
-		url: "https://archive.org/details/symbolicanalysis00shanno",
 		alternativetitle: "Shannon, Relay and Switching Circuits (1938)"
 	},
 	"aristotle1685history": {
@@ -17153,7 +17081,6 @@ window.bibData = {
 		title: "Die Lernmatrix",
 		author: "Karl Steinbuch",
 		year: 1961,
-		url: "https://archive.org/details/biological-cybernetics_1961-01_1_1",
 		alternativetitle: "Steinbuch, Die Lernmatrix (1961)"
 	},
 	"steinbuch1963learningmatrices": {
@@ -17431,7 +17358,6 @@ window.bibData = {
 		title: "Architectonics and Structure of the Cerebral Cortex (Chapter XV in Fulton's Physiology of the Nervous System)",
 		author: "Rafael Lorente de Nó",
 		year: 1938,
-		url: "https://bsd.neuroinf.jp/w/images/9/9e/Lorente_De_No_1938.pdf",
 		alternativetitle: "Lorente de Nó, Cerebral Cortex: Architecture and Closed Loops (1938)"
 	},
 	"sutton2019bitterlesson": {
@@ -23156,7 +23082,6 @@ window.bibData = {
 		title: "Economic Quality Control of Manufactured Product",
 		author: "W. A. Shewhart",
 		year: 1930,
-		url: "https://archive.org/details/bstj9-2-364",
 		alternativetitle: "Shewhart, 1930"
 	},
 	"bell1876telephone": {
@@ -24123,7 +24048,6 @@ window.bibData = {
 		author: "Bertrand Russell",
 		year: 1903,
 		publisher: "Cambridge University Press",
-		url: "https://archive.org/details/principlesofmath01russ",
 		alternativetitle: "Russell, The Principles of Mathematics (1903)"
 	},
 	"russell_paradox_sep": {
@@ -24219,7 +24143,6 @@ window.bibData = {
 		title: "Vector Analysis: A Text-book for the Use of Students of Mathematics and Physics, Founded upon the Lectures of J. Willard Gibbs",
 		author: "Edwin Bidwell Wilson, J. Willard Gibbs",
 		year: 1901,
-		url: "https://archive.org/details/vectoranalysiste00gibbiala",
 		alternativetitle: "Gibbs & Wilson, Vector Analysis (1901)"
 	},
 	"heaviside1893electromagnetic": {
@@ -24941,7 +24864,6 @@ window.bibData = {
 		title: "An Axiomatic Basis for Computer Programming",
 		author: "C. A. R. Hoare",
 		year: 1969,
-		url: "https://www.cs.cmu.edu/~crary/819-f09/Hoare69.pdf",
 		alternativetitle: "Hoare (1969) — axiomatic semantics"
 	},
 	"binarysearch_wiki": {
@@ -25139,14 +25061,12 @@ window.bibData = {
 		title: "Welcome to Prestel Gateway",
 		author: "British Telecom",
 		year: 1982,
-		url: "https://archive.org/details/Welcome-to-Prestel-Gateway",
 		alternativetitle: "Prestel Gateway (1982)"
 	},
 	"prestel1984briefing": {
 		title: "Prestel Briefing, Issue 2",
 		author: "British Telecom",
 		year: 1984,
-		url: "https://archive.org/details/prestel-briefing-issue-2",
 		alternativetitle: "Prestel Briefing (1984)"
 	},
 	"btx1984drucksache": {
