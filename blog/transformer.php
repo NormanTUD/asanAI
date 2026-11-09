@@ -66,6 +66,7 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 Each slider below carries a short note on why its constraint exists. What hyperparameters are in general, and how practitioners find good values instead of guessing, is the subject of the [Hyperparameters](hyperparameters.php) chapter.
 </div>
 
+
 <div id="transformer_config">
 	<div class="transformer-config-field">
 		<label class="transformer-slider-label">Model Dimension ($d_{\text{model}}$): </label>
@@ -73,9 +74,9 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 		<p class="transformer-slider-note">
             <b>Dependency:</b> Must be a multiple of Heads.<br>
             <b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = d_{\text{model}}/h$) of the vector to perform dot products.<br>
-            <b>3D view:</b> up to 3 dimensions are shown raw; above that the plot uses PCA.
+            <b>3D view:</b> up to 3 dimensions are shown raw; above that the plot uses PCA. 32D is available and tested in desktop Chromium; 64D renders but is not exposed because it pushes browser memory above roughly 170 MB.
         </p>
-		<input type="range" id="transformer-dimension-model" min="2" max="16" step="1" value="3"
+		<input type="range" id="transformer-dimension-model" min="2" max="32" step="1" value="3"
 			oninput="syncTransformerSettings('dim')">
 	</div>
 
@@ -113,7 +114,7 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	    <label class="transformer-slider-label">FFN hidden size (<span class="tm-inline-math" data-tex="d_{\text{ff}}" data-tex-display="false"></span>): </label>
 	    <span id="ffn-val" class="transformer-slider-value">12</span>
 	    <p class="transformer-slider-note"><b>Effect:</b> Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.</p>
-	    <input type="range" id="transformer-ffn-size" min="1" max="64" step="1" value="12"
+	    <input type="range" id="transformer-ffn-size" min="1" max="128" step="1" value="12"
 		oninput="syncTransformerSettings('ffn')">
 	</div>
 
@@ -122,13 +123,27 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	    <p class="transformer-slider-note">Reuse the keys and values of earlier tokens when you append a token. Only the new token's query is computed; the next-token distribution is identical. <span id="tm-kv-cache-status" class="tm-kv-cache-status">Off</span></p>
 	</div>
 
-	<div style="display: none">
-	    <label style="font-weight: bold;">Tokenizer: </label>
-	    <select id="transformer-tokenizer-type" style="padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1;" onchange="debounced_run_transformer_demo()">
-		<option value="regex" selected>Words (Non-Alphanumeric Split)</option>
-		<option value="bpe">Byte-Pair Encoding (BPE)</option>
+	<div class="transformer-config-field">
+	    <label class="transformer-slider-label">Tokenizer</label>
+	    <select id="transformer-tokenizer-type" style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" onchange="debounced_run_transformer_demo()">
+		<option value="regex" selected>Words / characters (demo default)</option>
+		<option value="bpe">Byte-Pair Encoding (BPE, trained on this corpus)</option>
 	    </select>
+	    <p class="transformer-slider-note"><b>Effect:</b> Word splitting is simple and keeps the vocabulary tiny. BPE learns frequent subword merges from the current training corpus, so rare words become several tokens. Switching the tokenizer retrains the vocabulary; BPE can make the sequence longer.</p>
 	</div>
+
+<div class="transformer-config-field" id="transformer-preset-field">
+	<label class="transformer-slider-label">Configuration preset</label>
+	<select id="transformer-preset" style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" onchange="applyTransformerPreset(this.value)">
+		<option value="custom" selected>Custom (manual sliders)</option>
+		<option value="tiny">Tiny 3D · every formula visible</option>
+		<option value="wide16">Wide 16D · PCA view</option>
+		<option value="wide32">Wide 32D · PCA, slower training</option>
+		<option value="copy16">Copy pattern · 16D</option>
+		<option value="conditional16">Conditional pattern · 16D</option>
+	</select>
+	<p class="transformer-slider-note">Presets set the sliders and, for the pattern examples, the training corpus. Nothing trains automatically; press <b>Train Model</b> afterwards. 32D was tested in desktop Chromium; it uses PCA and more memory, so it is not the default. The copy and conditional examples demonstrate pattern completion and memorization; the tiny model did not show a clean induction-head circuit in the scale tests.</p>
+</div>
 
 	<div id="param-breakdown-toggle" style="display: none; margin-top: 8px;">
 	    <button id="param-breakdown-btn" onclick="toggleParamBreakdown()"
@@ -1313,6 +1328,35 @@ While the architecture is identical in both modes, the behavior of the model dif
 		<span class="tm-inference-spinner" aria-hidden="true"></span>
 		<span id="tm-inference-busy-text">Computing the next token…</span>
 	</div>
+</div>
+
+<div class="optional md" data-headline="What this demo simplifies, and how it differs from production LLMs">
+### What this demo simplifies
+
+The interactive model is a didactic simulator. It implements the real computation order, but deliberately uses smaller and older components:
+
+- **Tokenizer:** a word/character splitter by default, or an optional BPE trained on the current corpus; neither is a production byte-level tokenizer.
+- **Position:** fixed sinusoidal absolute encodings, not RoPE or learned position tables.
+- **Normalization:** LayerNorm with mean, gamma and beta, not RMSNorm; no final norm.
+- **Attention:** plain MHA with one K/V head per query head, not GQA or MLA.
+- **FFN:** a dense GELU network with biases, not SwiGLU and not MoE.
+- **Output:** the unembedding is tied to the token embeddings.
+- **Training:** one tiny sequence, no batches, no AdamW schedule, weight decay, mixed precision or distributed training.
+
+### How it differs from DeepSeek, Qwen, Llama and GPT-2
+
+| Component | This demo | DeepSeek-V3 | Qwen2.5 / Qwen3 | Llama 3 | GPT-2 / nanoGPT |
+|---|---|---|---|---|---|
+| Positions | sinusoidal, added | decoupled RoPE | RoPE | RoPE | learned absolute |
+| Norm | LayerNorm, no final norm | RMSNorm + final RMSNorm | RMSNorm + final RMSNorm; Qwen3 also Q/K-norm | RMSNorm + final RMSNorm | LayerNorm + final LayerNorm |
+| Attention | MHA, no attention bias | MLA, no bias | GQA; Qwen2 has Q/K/V bias, Qwen3 has QK-norm | GQA, no bias | MHA with biases |
+| FFN | dense GELU + biases | SwiGLU + MoE, no bias | SwiGLU, no bias; some variants MoE | SwiGLU, no bias | dense GELU + biases |
+| Output head | tied | separate | separate | separate | tied |
+| Training | one tiny sequence | large distributed pretraining | large distributed pretraining | large distributed pretraining | small/medium pretraining |
+
+The code tabs follow nanoGPT: they use a learned position table, a final LayerNorm and a separate output head, so they are the same family as this demo but not the same configuration.
+
+**Scale and induction limits.** A 32D preset is available and renders through PCA; 64D also renders in desktop Chromium but is intentionally not exposed because browser memory rises above roughly 170 MB. The copy and conditional presets learn the training sequence to 100%, but the attention inspection found no clean induction-head circuit at 16D or 32D; the tiny model is memorizing or completing a local pattern, not proving a general induction mechanism. The full correction log is in [the audit note](transformer_content_audit.md).
 </div>
 
 <div class="mn-quiz" data-quiz="transformer"><script type="application/json">{"title": "The transformer", "questions": [{"q": "Which two sub-layers make up one transformer block?", "options": ["Multi-head attention and a feed-forward network", "A convolution followed by a global pooling step", "A pair of recurrent layers with gating", "A tokenizer and a detokenizer pipeline"], "answer": 0, "explain": "Each is wrapped with a residual connection and a normalisation."}, {"q": "What do the residual connections do?", "options": ["Add each sub-layer's output to its input, so information and gradients can flow past it", "Replace each sub-layer's output with a normalised copy of the full input vector", "Concatenate each sub-layer's output onto its input, doubling the vector width each time", "Multiply each sub-layer's output by a learned scalar before adding it to the input"], "answer": 0, "explain": "The running sum is often called the residual stream."}, {"q": "How does the final vector become a next-token prediction?", "options": ["It is projected onto the vocabulary (unembedding), then softmaxed", "It is looked up in a fixed dictionary of all the known token strings", "It is rounded to the nearest token id in the embedding table", "It is averaged with the hidden vector of the previous token"], "answer": 0, "explain": "The projection gives one score per token; softmax turns the scores into probabilities."}, {"q": "In a decoder-only model like GPT, what does the causal mask prevent?", "options": ["Tokens attending to later tokens they should not yet see", "Tokens attending to themselves instead of earlier positions", "Tokens attending across sentence and paragraph boundaries", "Using the feed-forward layer before the attention block"], "answer": 0, "explain": "During training, a position may only use the past, matching how text is generated."}]}</script></div>

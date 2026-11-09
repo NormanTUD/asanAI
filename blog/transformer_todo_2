@@ -138,3 +138,17 @@
 [done] Korrekturen: Hyperparameter-Anzahl (vier Kern + FFN-Breite), Tokenizer-Satz, Positionierungs-Nuancen (sinusoidal/GPT-2 learned/RoPE), IB-Überclaim entschärft, Mesa-Optimizer-Überclaim entschärft, geschlossene Modelle nicht als exakt nachgebaut behauptet, Unembedding-Zeilen statt „vocabulary embeddings“, Final-Norm-Hinweis, Top-k statt Top-p, Llama 2 7B statt pauschal „LLaMA“, Bias-/QK-Norm-Hinweis, Code-Tab-/Docstring-Klarstellung, Gradienten-Überclaim entschärft, Induktionskopf-Überclaim entschärft, veraltete 0.1-Skalierung entfernt.
 
 [note] Verbleibende Vereinfachungen der Demo: Word-Tokenizer, sinusoidale absolute PE, LayerNorm, MHA mit eigenen K/V-Heads, dichtes GELU-FFN, keine Final-Norm, tied Unembedding, winzige Einzelsequenz, kein AdamW/Schedule/Weight-Decay/Mixed-Precision/distributed Training. Die vollständige Differenzliste steht in der Antwort und in `/tmp/opencode/transformer_consistency_audit.md`.
+
+## Review current pass: scale, presets, tokenizer choice, CI
+
+[done] Tokenizer-Auswahl sichtbar gemacht: Wort-/Zeichen-Splitter oder korpus-trainierter BPE (`transformer-tokenizer-type`). Der BPE-Tokenizer wird pro Korpus gecacht, beim Korpuswechsel neu trainiert und auch für Inferenz-Prompts verwendet; unbekannte Zeichen fallen auf Zeichen-Tokens zurück.
+
+[done] Größere Configs getestet: 8D, 16D, 32D und 64D rendern als PCA-`scatter3d` in Chromium ohne Konsolenfehler. Gemessener JS-Heap ca. 78/126/147/174 MB (8/16/32/64D). 32D ist jetzt in der UI erlaubt; 64D bleibt bewusst nicht exponiert (Mobilspeicher). 32D-Training mit Default-LR blieb in kurzen Läufen endlich; 64D-Training ist langsam und konvergierte im kurzen Sweep nicht.
+
+[done] Presets hinzugefügt: Tiny 3D, Wide 16D, Wide 32D, Copy pattern 16D, Conditional pattern 16D. Pattern-Presets setzen auch den Korpus und den Kontext; trainiert wird nie automatisch. Copy- und Conditional-Sequenzen erreichten auf ihrem Trainingssatz 100% Next-Token-Genauigkeit.
+
+[done] Induction-Head-Test: Bei 16D und 32D zeigte die Attention-Auswertung keinen sauberen Induction-Head (bester Head traf den Nachfolger der vorherigen Token-Position nur ~2/12 mal, nahe Baseline). Die Beispiele sind daher als Copy-/Pattern-Completion und Memorization deklariert, nicht als Induction-Head-Beweis. Das steht auch im optionalen Endblock und in der Audit-Datei.
+
+[done] Neuer CI-Test `blog/tests/transformer_scale_regression_test.py` (uv + Playwright, Chromium-Auto-Install): prüft 32D-Preset, PCA-Plots, Heap < 350 MB, 32D-Kurztraining endlich, BPE-Tokens, Copy-Pattern-Lernen, Trainingszeit < 90 s und null Page-/Console-Fehler. In `.github/workflows/blog_php_validator.yml` nach dem UI2-Test verdrahtet.
+
+[verify] `transformer_ui2_regression_test.py`: 57/57. `transformer_fix_regression_test.py`: 36/36. `transformer_scale_regression_test.py`: 9/9. `check_all.py`: alle Stages PASS. `php_render_validator.py`: PASS (0 JS, 0 LaTeX, 0 Width).

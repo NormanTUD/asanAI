@@ -2,10 +2,10 @@
 
 - lessons: 99
 - claims: 7388
-- statements: 17341
-- relations: 52475
+- statements: 17366
+- relations: 52564
 - uncovered years: 64
-- uncovered quantities: 6
+- uncovered quantities: 8
 - uncited specific claims: 307
 - citation keys not found in lesson: 0
 - relation grounding issues: 87
@@ -107,7 +107,7 @@
 | training_infrastructure | 32 | 55 | 239 | 0 | 0 |
 | trainingdynamics | 23 | 29 | 140 | 0 | 0 |
 | traininglab | 15 | 7 | 67 | 0 | 0 |
-| transformer | 37 | 304 | 964 | 0 | 0 |
+| transformer | 37 | 329 | 1053 | 0 | 2 |
 | unexpected_capabilities | 40 | 274 | 578 | 4 | 1 |
 | untold_history_i | 520 | 458 | 1503 | 3 | 0 |
 | untold_history_ii | 672 | 643 | 2025 | 6 | 0 |
@@ -162,6 +162,8 @@
 - diffusion.php: 1.4 M
 - running_locally.php: 0.7 PARAMETER
 - topology.php: 2 layer
+- transformer.php: 170 MB
+- transformer.php: 170 MB
 - unexpected_capabilities.php: 1.5B
 
 ## Uncited specific claims

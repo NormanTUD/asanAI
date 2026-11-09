@@ -237,6 +237,7 @@ function lockArchitectureControls(lock) {
 		'transformer-context-size',      // context size
 		'transformer-ffn-size',          // FFN hidden width
 		'transformer-tokenizer-type',    // tokenizer
+		'transformer-preset',            // config preset
 
 		// Training hyperparameters (safe, but locked by request)
 		'train-epochs',                  // epochs
@@ -2993,9 +2994,29 @@ const TM_EOS_TOKEN = '<|endoftext|>';
 // without inserting a visible space the reader did not type.
 const TM_TOKEN_BOUNDARY = '\u200B';
 
+function _getDemoBPETokenizer(corpus) {
+	if (typeof BPETokenizer === 'undefined') return null;
+	const key = String(corpus || '');
+	if (!window.__tmDemoBPETokenizer || window.__tmDemoBPETokenizer.corpus !== key) {
+		const tokenizer = new BPETokenizer();
+		tokenizer.train(key, { maxMerges: 60, minFrequency: 2 });
+		window.__tmDemoBPETokenizer = { corpus: key, tokenizer: tokenizer };
+	}
+	return window.__tmDemoBPETokenizer.tokenizer;
+}
+
 function tokenizeTextCore(text, type) {
 	const raw = String(text == null ? '' : text);
 	const cleaned = raw.split(TM_EOS_TOKEN).join(' ').replace(/ {2,}/g, ' ');
+	if (type === 'bpe') {
+		const corpusEl = document.getElementById('transformer-training-data');
+		const corpus = corpusEl ? corpusEl.value : cleaned;
+		const tokenizer = _getDemoBPETokenizer(corpus);
+		if (tokenizer) {
+			const bpeTokens = tokenizer.tokenize(cleaned);
+			if (bpeTokens.length) return bpeTokens;
+		}
+	}
 	const tokens = [];
 	let i = 0;
 	while (i < cleaned.length) {
@@ -5955,6 +5976,45 @@ function tf_gelu(x) {
 		return x.mul(half).mul(one.add(tf.erf(x.div(sqrtTwo))));
 	});
 }
+
+function applyTransformerPreset(name) {
+	if (!name || name === 'custom') return;
+	const presets = {
+		tiny:          { d: 3,  h: 3, n: 4, ffn: 12,  text: 'the king rules the land and the queen rules the sea' },
+		wide16:        { d: 16, h: 4, n: 4, ffn: 64,  text: 'the king rules the land and the queen rules the sea' },
+		wide32:        { d: 32, h: 8, n: 4, ffn: 128, text: 'the king rules the land and the queen rules the sea' },
+		copy16:        { d: 16, h: 4, n: 2, ffn: 64,  text: 'a b c d a b c d a b c d x y z w x y z w' },
+		conditional16: { d: 16, h: 4, n: 2, ffn: 64,  text: 'wenn a dann b . jetzt a also b . wenn x dann y . jetzt x also y .' }
+	};
+	const preset = presets[name];
+	if (!preset) return;
+	const setVal = (id, value) => {
+		const el = document.getElementById(id);
+		if (!el) return;
+		el.value = String(value);
+		el.dispatchEvent(new Event('input', { bubbles: true }));
+	};
+	const tok = document.getElementById('transformer-tokenizer-type');
+	if (tok) { tok.value = 'regex'; tok.dispatchEvent(new Event('change', { bubbles: true })); }
+	if (preset.text) {
+		const ta = document.getElementById('transformer-training-data');
+		if (ta) {
+			ta.value = preset.text;
+			ta.dispatchEvent(new Event('input', { bubbles: true }));
+		}
+	}
+	setVal('transformer-dimension-model', preset.d);
+	setVal('transformer-heads', preset.h);
+	setVal('transformer-depth', preset.n);
+	setVal('transformer-ffn-size', preset.ffn);
+	clearTimeout(trainingDebounceTimer);
+	if (window.syncTransformerSettings) window.syncTransformerSettings('preset');
+	const tokens = (typeof getTrainingTokens === 'function') ? getTrainingTokens() : [];
+	if (tokens.length > 1) setVal('transformer-context-size', Math.min(256, tokens.length - 1));
+	if (name === 'wide16' || name === 'wide32') window.tmHighDimMode = 'pca';
+	if (typeof run_transformer_demo === 'function') run_transformer_demo();
+}
+window.applyTransformerPreset = applyTransformerPreset;
 
 function syncTransformerSettings(trigger) {
 	const dimSlider = document.getElementById('transformer-dimension-model');

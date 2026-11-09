@@ -36,7 +36,7 @@ Diese Notiz gehört zur Lektion `transformer.php`. Geprüft wurde die interaktiv
 
 ## Was die Demo bewusst anders macht
 
-- Wort-/Zeichen-Splitter statt byte-level BPE.
+- Wort-/Zeichen-Splitter als Default; optional ein auf dem aktuellen Korpus trainierter BPE-Tokenizer, aber kein produktionsüblicher byte-level BPE.
 - Sinusoidale absolute PE statt RoPE (DeepSeek/Qwen/Llama/Mistral/Gemma) oder gelernten absoluten Positionen (GPT-2/nanoGPT).
 - LayerNorm mit Mittelwert/Gamma/Beta statt RMSNorm.
 - MHA mit eigenen K/V-Heads statt GQA (Qwen/Llama/Mistral) oder MLA (DeepSeek).
@@ -58,3 +58,13 @@ Die Rechenreihenfolge ist korrekt: Token-Embedding, Positionssignal, Pre-LN, kau
 - Fact-/Statement-Ledger: PASS
 
 Die optionalen Interpretability-Absätze (Safety Heads, TDA, Length Planning usw.) wurden auf offensichtliche Overclaims geprüft, aber nicht jede dort zitierte Paper-Passage neu gelesen. Die Architektur- und Rechenbehauptungen der Implementierung wurden gegen den oben genannten Modellcode geprüft.
+
+## Scale and induction experiments
+
+- 8D, 16D, 32D and 64D embeddings/trajectories render as `scatter3d` PCA plots in headless Chromium without console errors.
+- JS heap measured in headless Chromium: about 78 MB at 8D, 126 MB at 16D, 147 MB at 32D, 174 MB at 64D. For that reason the UI exposes up to 32D; 64D was tested but is not exposed.
+- 32D rendering keeps the page usable; a 10-epoch 32D training run with the default LR stayed finite and stable. 64D training is much slower and did not converge in the short sweep.
+- Copy pattern (`a b c d ...`) and conditional pattern (`wenn a dann b ...`) both reached 100% next-token accuracy on their own training sequences at 16D.
+- Attention inspection at 16D and 32D did **not** show a clean induction-head circuit: the best head attended the token after the previous occurrence only about 2/12 times, close to the local/uniform baseline. The model is memorizing the sequence. The lesson therefore labels these as copy/conditional pattern demos, not as proof of induction heads.
+- Presets added: Tiny 3D, Wide 16D, Wide 32D, Copy pattern 16D, Conditional pattern 16D. The tokenizer can be switched between the word splitter and a corpus-trained BPE tokenizer.
+- New CI test: `blog/tests/transformer_scale_regression_test.py`, wired into `.github/workflows/blog_php_validator.yml`. It checks 32D PCA rendering, JS heap, 32D short-training stability, BPE tokenization, copy-pattern learning, training time and console errors.
