@@ -74,6 +74,70 @@ window.__tmFullVizLoaded = false;
 window.__tmFullVizPending = null;
 window.__tmFullVizObserver = null;
 
+/* Cooperative queue for heavy WebGL/Plotly renders.
+   Each job gets its own frame so the browser can paint placeholders and
+   keep the page responsive between plots instead of doing one long burst. */
+window.tmScheduleHeavyRender = (function () {
+	let queue = [];
+	let pumping = false;
+	function pump() {
+		if (pumping || queue.length === 0) return;
+		pumping = true;
+		requestAnimationFrame(function () {
+			setTimeout(function () {
+				pumping = false;
+				const job = queue.shift();
+				if (job) {
+					try { job(); } catch (err) { console.error("[transformer] deferred plot render failed", err); }
+				}
+				if (queue.length) pump();
+			}, 0);
+		});
+	}
+	function schedule(fn, front) {
+		if (typeof fn !== "function") return;
+		if (front) queue.unshift(fn); else queue.push(fn);
+		pump();
+	}
+	schedule.pending = function () { return queue.length; };
+	return schedule;
+})();
+
+/* Some plot containers live inside a closed <details>. Their geometry is
+   laid out but IntersectionObserver never reports them as intersecting, so
+   they would wait forever. This small shared watcher schedules them once
+   their box comes near the viewport, without polling. */
+var tmNearViewportJobs = new Map();
+var tmNearViewportTicking = false;
+var tmNearViewportBound = false;
+function tmFlushNearViewport() {
+	tmNearViewportTicking = false;
+	if (tmNearViewportJobs.size === 0) return;
+	var vh = window.innerHeight || document.documentElement.clientHeight;
+	var margin = 800;
+	tmNearViewportJobs.forEach(function (job, key) {
+		var rect = job.container.getBoundingClientRect();
+		if (rect.top < vh + margin && rect.bottom > -margin) {
+			tmNearViewportJobs.delete(key);
+			job.run();
+		}
+	});
+}
+function tmRequestNearViewportFlush() {
+	if (tmNearViewportTicking) return;
+	tmNearViewportTicking = true;
+	requestAnimationFrame(tmFlushNearViewport);
+}
+function tmScheduleWhenNearViewport(container, key, run) {
+	tmNearViewportJobs.set(key, { container: container, run: run });
+	if (!tmNearViewportBound) {
+		tmNearViewportBound = true;
+		window.addEventListener("scroll", tmRequestNearViewportFlush, { passive: true });
+		window.addEventListener("resize", tmRequestNearViewportFlush, { passive: true });
+	}
+	tmRequestNearViewportFlush();
+}
+
 const oldTrajWrapper = document.getElementById('transformer-trajectory-full-path-wrapper');
 const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
 if (oldTrajDiv) {
@@ -162,8 +226,10 @@ function registerLazyRenderable(containerId, registry, observer, data, renderFn,
 		// Merge new data into existing entry, preserving UI state
 		Object.assign(existing, data);
 		existing.rendered = false;
+		existing._tmGen = (existing._tmGen || 0) + 1;
 	} else {
 		data.rendered = false;
+		data._tmGen = 1;
 		registry.set(containerId, data);
 	}
 
@@ -172,11 +238,30 @@ function registerLazyRenderable(containerId, registry, observer, data, renderFn,
 	}
 	observer.observe(container);
 
-	if (isElementInViewport(container)) {
-		renderFn();
-		const entry = registry.get(containerId);
-		if (entry) entry.rendered = true;
-	}
+	const entry = registry.get(containerId);
+	const generation = entry ? entry._tmGen : 0;
+	const queueRender = function () {
+		const current = registry.get(containerId);
+		if (!current || current.rendered || current._tmScheduled) return;
+		current._tmScheduled = true;
+		window.tmScheduleHeavyRender(function () {
+			const live = registry.get(containerId);
+			if (!live) return;
+			live._tmScheduled = false;
+			if (live.rendered) return;
+			// A newer registration replaced this one while it waited; hand
+			// off to its job so the plot renders with the current data.
+			if (live._tmGen !== generation) {
+				if (typeof live._tmQueueRender === "function") live._tmQueueRender();
+				return;
+			}
+			live.rendered = true;
+			renderFn();
+		});
+	};
+	if (entry) entry._tmQueueRender = queueRender;
+	if (isElementInViewport(container)) queueRender();
+	else tmScheduleWhenNearViewport(container, containerId, queueRender);
 }
 
 function causalMultiHeadAttention(normH, weights, d_model, n_heads) {
@@ -526,14 +611,19 @@ function dotProduct(a, b) {
 function createLazyRenderObserver(registry, renderFn, options = { threshold: 0 }) {
 	return new IntersectionObserver((entries) => {
 		entries.forEach(entry => {
-			if (entry.isIntersecting) {
-				const containerId = entry.target.id;
-				const data = registry.get(containerId);
-				if (data && !data.rendered) {
-					renderFn(containerId, data);
-					data.rendered = true;
-				}
-			}
+			if (!entry.isIntersecting) return;
+			const containerId = entry.target.id;
+			const data = registry.get(containerId);
+			if (!data || data.rendered || data._tmScheduled) return;
+			data._tmScheduled = true;
+			window.tmScheduleHeavyRender(function () {
+				const current = registry.get(containerId);
+				if (!current) return;
+				current._tmScheduled = false;
+				if (current.rendered) return;
+				current.rendered = true;
+				renderFn(containerId, current);
+			});
 		});
 	}, options);
 }
@@ -1216,8 +1306,18 @@ function initWeights(r, c, kind, residualScale) {
 function renderInitializerHistogram() {
 	const canvas = document.getElementById('transformer-init-hist');
 	if (!canvas) return;
+	if (!canvas._tmHistObserver && typeof ResizeObserver !== 'undefined') {
+		// The first call can run before the config column has its final
+		// width. Redraw whenever the box changes so the bitmap is never
+		// stretched by the CSS width.
+		canvas._tmHistObserver = new ResizeObserver(function () {
+			renderInitializerHistogram();
+		});
+		canvas._tmHistObserver.observe(canvas);
+	}
 	const rect = canvas.getBoundingClientRect();
-	const w = Math.max(220, rect.width || 320);
+	if (rect.width < 40) return; // layout not ready yet; the observer retries
+	const w = Math.max(220, rect.width);
 	const h = Math.max(90, rect.height || 130);
 	const dpr = Math.min(window.devicePixelRatio || 1, 2);
 	canvas.width = Math.round(w * dpr);
@@ -2256,7 +2356,7 @@ function renderTrajectoryPlot(d_model) {
 		wrapper = document.createElement('div');
 		wrapper.id = wrapperId;
 		wrapper.style.cssText =
-			'border:2px solid ' + themeColor('#cbd5e1') + '; border-radius:12px; margin-top:10px; background:' + themeColor('#f8fafc') + '; box-sizing:border-box;';
+			'border:2px solid var(--mn-border, #cbd5e1); border-radius:12px; margin-top:10px; background:var(--mn-surface, #FDFAF1); box-sizing:border-box;';
 		wrapper.setAttribute('data-d-model', d_model);
 
 		if (d_model <= 3) {
@@ -2313,7 +2413,7 @@ function renderTrajectoryPlot(d_model) {
 		trajectoryObserver,
 		{ d_model },
 		() => tlab_render_trajectory_plot(d_model),
-		`<div class="plot-loading traj-loading-placeholder" style="height:100%; flex-direction:column; gap:14px;"><div class="spinner"></div><span>Loading token trajectory: embedding → position → layer outputs...</span></div>`
+		`<div class="plot-loading traj-loading-placeholder" style="height:100%; flex-direction:column; justify-content:flex-start; padding-top:28px; gap:14px;"><div class="spinner"></div><span>Loading token trajectory: embedding → position → layer outputs...</span></div>`
 	);
 }
 
@@ -2494,6 +2594,9 @@ function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, w
 
 function forceRerenderVisibleMigrationPlots() {
 	transformerLabVisMigrationDataRegistry.forEach((data, id) => {
+		// A queued lazy render will run on its own; only training needs the
+		// synchronous redraw here.
+		if (!window.isTraining && (data.rendered || data._tmScheduled)) return;
 		// During training, always re-render visible plots
 		// regardless of the rendered flag
 		if (!data.rendered || window.isTraining) {
@@ -2513,6 +2616,7 @@ function forceRerenderVisibleMigrationPlots() {
 function forceRerenderVisibleTrajectoryPlot(d_model) {
 	const trajId = 'transformer-trajectory-full-path';
 	const trajEntry = trajectoryRenderRegistry.get(trajId);
+	if (!window.isTraining && trajEntry && (trajEntry.rendered || trajEntry._tmScheduled)) return;
 	if (trajEntry && (!trajEntry.rendered || window.isTraining)) {
 		const trajEl = document.getElementById(trajId);
 		if (trajEl && isElementInViewport(trajEl)) {
@@ -2951,7 +3055,7 @@ function _tmMetricTitle(base) {
 
 function _tmUnitSphereSeries() {
 	const rows = [];
-	const nu = 18, nv = 36;
+	const nu = 12, nv = 24;
 	for (let u = 0; u <= nu; u++) {
 		const row = [];
 		const theta = Math.PI * u / nu;
@@ -2962,7 +3066,7 @@ function _tmUnitSphereSeries() {
 		rows.push(row);
 	}
 	const points = [];
-	rows.forEach(row => row.forEach(pt => points.push(pt)));
+	rows.forEach((row, u) => row.forEach((pt, v) => { if (u % 2 === 0 && v % 2 === 0) points.push(pt); }));
 	return [
 		{ type: 'surface', name: 'unit sphere', data: rows, shading: 'color', itemStyle: { color: '#3b82f6', opacity: 0.18 }, wireframe: { show: true, lineStyle: { color: '#3b82f6', opacity: 0.12 } }, silent: true },
 		{ type: 'scatter3D', name: 'unit sphere points', data: points, symbolSize: 2, itemStyle: { color: '#3b82f6', opacity: 0.18 }, silent: false, tooltip: { formatter: () => (window.tmMetric && window.tmMetric.sphereHint ? window.tmMetric.sphereHint(false) : '') } }
@@ -5233,7 +5337,7 @@ function _traj_metric_transform(v) {
 
 function _traj_unit_sphere_series() {
 	const rows = [];
-	const nu = 18, nv = 36;
+	const nu = 12, nv = 24;
 	for (let u = 0; u <= nu; u++) {
 		const row = [];
 		const theta = Math.PI * u / nu;
@@ -5248,7 +5352,7 @@ function _traj_unit_sphere_series() {
 		rows.push(row);
 	}
 	const points = [];
-	rows.forEach(row => row.forEach(pt => points.push(pt)));
+	rows.forEach((row, u) => row.forEach((pt, v) => { if (u % 2 === 0 && v % 2 === 0) points.push(pt); }));
 	return [
 		{ type: 'surface', name: 'unit sphere', data: rows, shading: 'color', itemStyle: { color: '#3b82f6', opacity: 0.18 }, wireframe: { show: true, lineStyle: { color: '#3b82f6', opacity: 0.12 } }, silent: true },
 		{ type: 'scatter3D', name: 'unit sphere points', data: points, symbolSize: 2, itemStyle: { color: '#3b82f6', opacity: 0.18 }, silent: false, tooltip: { formatter: () => (window.tmMetric && window.tmMetric.sphereHint ? window.tmMetric.sphereHint(false) : '') } }
@@ -5580,7 +5684,7 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 
 	const axisTemplate = {
 		showticklabels: false, showgrid: true, zeroline: false,
-		title: { text: "" }, backgroundcolor: "#f9fafb"
+		title: { text: "" }, backgroundcolor: "rgba(0,0,0,0)"
 	};
 
 	const layout = {
@@ -6098,6 +6202,7 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
 		Array.prototype.push.apply(traces, window.tmPlotly.sphereTraces());
 	}
+	const markerPoints = [];
 	tokenStrings.forEach((token, pos) => {
 		const from = base[pos] || [], to = combined[pos] || [];
 		const tip = _shift_metricTip(token, pos, rawBase[pos] || [], rawCombined[pos] || []);
@@ -6114,16 +6219,29 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
 		const cone = window.tmPlotly.coneTrace([{ x: last3[0], y: last3[1] || 0, z: last3[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], color, token);
 		if (cone) traces.push(cone);
-		traces.push({
-			type: 'scatter3d', mode: 'markers',
-			x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0], z: [from[2] || 0, to[2] || 0],
-			marker: { size: [6, 8], color: color, symbol: ['circle', 'diamond'] },
-			hovertext: [tip, tip], hovertemplate: '%{hovertext}<extra></extra>', showlegend: false
-		});
+		markerPoints.push({ x: from[0], y: from[1] || 0, z: from[2] || 0, size: 6, color: color, symbol: 'circle', hover: tip });
+		markerPoints.push({ x: to[0], y: to[1] || 0, z: to[2] || 0, size: 8, color: color, symbol: 'diamond', hover: tip });
 	});
+	if (markerPoints.length) traces.push(_tmMarkerTrace(markerPoints));
 	const layout = window.tmPlotly.layout3D(_tmMetricTitle('Semantic Vector → + Positional Shift') + (modeLabel ? ' · ' + modeLabel : ''), ['Dim 0', 'Dim 1', 'Dim 2']);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
 	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
+}
+
+function _tmMarkerTrace(points, name) {
+	return {
+		type: 'scatter3d', mode: 'markers',
+		x: points.map(p => p.x), y: points.map(p => p.y), z: points.map(p => p.z),
+		marker: {
+			size: points.map(p => p.size),
+			color: points.map(p => p.color),
+			symbol: points.map(p => p.symbol)
+		},
+		hovertext: points.map(p => p.hover || ''),
+		hovertemplate: '%{hovertext}<extra></extra>',
+		showlegend: false,
+		name: name || 'tokens'
+	};
 }
 
 function _shift_render_highdim_plotly(container, tokenStrings, base, combined, d_model) {
@@ -6180,7 +6298,7 @@ function applyTransformerPreset(name) {
 		wide32:        { d: 32, h: 8, n: 4, ffn: 128, text: 'the king rules the land and the queen rules the sea' },
 		wide64:        { d: 64, h: 8, n: 4, ffn: 256, text: 'the king rules the land and the queen rules the sea' },
 		copy16:        { d: 16, h: 4, n: 2, ffn: 64,  text: 'a b c d a b c d a b c d x y z w x y z w' },
-		conditional16: { d: 16, h: 4, n: 2, ffn: 64,  text: 'wenn a dann b . jetzt a also b . wenn x dann y . jetzt x also y .' }
+		conditional16: { d: 16, h: 4, n: 2, ffn: 64,  text: 'if a then b . now a so b . if x then y . now x so y .' }
 	};
 	const preset = presets[name];
 	if (!preset) return;

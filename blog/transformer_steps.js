@@ -51,6 +51,50 @@
 	}
 	window.tmTypesetMathIn = typesetMathIn;
 
+	/* One heavy render per frame. The main transformer page provides the
+	   shared queue; the tenminutes page uses its own engine copy, so fall
+	   back to a local queue there. */
+	function tmQueueHeavy(fn) {
+		if (typeof fn !== "function") return;
+		if (typeof window.tmScheduleHeavyRender === "function") {
+			window.tmScheduleHeavyRender(fn);
+			return;
+		}
+		if (!tmQueueHeavy._q) { tmQueueHeavy._q = []; tmQueueHeavy._running = false; }
+		tmQueueHeavy._q.push(fn);
+		tmQueueHeavy._pump();
+	}
+	tmQueueHeavy._pump = function () {
+		if (tmQueueHeavy._running || tmQueueHeavy._q.length === 0) return;
+		tmQueueHeavy._running = true;
+		requestAnimationFrame(function () {
+			setTimeout(function () {
+				tmQueueHeavy._running = false;
+				var job = tmQueueHeavy._q.shift();
+				try { if (job) job(); } catch (e) { console.error("[transformer_steps] deferred plot render failed", e); }
+				if (tmQueueHeavy._q.length) tmQueueHeavy._pump();
+			}, 0);
+		});
+	};
+
+	function markerTrace(points, name) {
+		return {
+			type: "scatter3d", mode: "markers",
+			x: points.map(function (p) { return p.x; }),
+			y: points.map(function (p) { return p.y; }),
+			z: points.map(function (p) { return p.z; }),
+			marker: {
+				size: points.map(function (p) { return p.size; }),
+				color: points.map(function (p) { return p.color; }),
+				symbol: points.map(function (p) { return p.symbol; })
+			},
+			hovertext: points.map(function (p) { return p.hover || ""; }),
+			hovertemplate: "%{hovertext}<extra></extra>",
+			showlegend: false,
+			name: name || "tokens"
+		};
+	}
+
 	function css(name, fallback) {
 		var value = getComputedStyle(document.documentElement).getPropertyValue(name);
 		return value ? value.trim() : fallback;
@@ -2062,7 +2106,7 @@
 		return { paper: "rgba(0,0,0,0)", plot: "rgba(0,0,0,0)", ink: c.ink, muted: c.muted, line: c.line, blue: "#3b82f6", green: c.green, gold: c.gold };
 	}
 	function plotlySphereTraces() {
-		var n = 22, m = 44;
+		var n = 14, m = 28;
 		var xs = [], ys = [], zs = [];
 		for (var i = 0; i <= n; i++) {
 			var xr = [], yr = [], zr = [];
@@ -2078,8 +2122,8 @@
 		var hint = (window.tmMetric && window.tmMetric.sphereHint) ? window.tmMetric.sphereHint(false) : "";
 		var textGrid = zs.map(function (row) { return row.map(function () { return hint; }); });
 		var px = [], py = [], pz = [], pt = [];
-		for (var a = 0; a < xs.length; a += 2) {
-			for (var b = 0; b < xs[a].length; b += 2) {
+		for (var a = 0; a < xs.length; a += 3) {
+			for (var b = 0; b < xs[a].length; b += 3) {
 				px.push(xs[a][b]); py.push(ys[a][b]); pz.push(zs[a][b]); pt.push(hint);
 			}
 		}
@@ -2132,6 +2176,7 @@
 			margin: { l: 0, r: 0, t: 38, b: 0 },
 			scene: {
 				aspectmode: "cube",
+				dragmode: "turntable",
 				xaxis: axis(axes[0]), yaxis: axis(axes[1]), zaxis: axis(axes[2]),
 				camera: { eye: { x: 1.6, y: 1.6, z: 1.15 } }
 			}
@@ -2321,6 +2366,7 @@
 			Array.prototype.push.apply(traces, projection.is3d ? tmPlotly.sphereTraces() : tmPlotly.circleTraces());
 		}
 		var coordinate = function (v) { return (v || []).slice(0, 3).map(function (x) { return Number(x || 0).toFixed(3); }).join(", "); };
+		var markerPoints = [];
 		for (var i = 0; i < data.n; i++) {
 			var sel = i === data.selected;
 			var col = getPositionColor(i, data.n - 1);
@@ -2342,11 +2388,7 @@
 				var len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
 				var cone = tmPlotly.coneTrace([{ x: last[0], y: last[1], z: last[2], u: dx / len, v: dy / len, w: dz / len, tip: tip }], col, labels[i]);
 				if (cone) traces.push(cone);
-				traces.push({
-					type: "scatter3d", mode: "markers", x: [from[0]], y: [from[1]], z: [from[2]],
-					marker: { size: sel ? 6 : 4, color: col, line: { color: sel ? c.ink : col, width: sel ? 1 : 0 } },
-					hoverinfo: "text", text: [tip], showlegend: false
-				});
+				markerPoints.push({ x: from[0], y: from[1], z: from[2], size: sel ? 6 : 4, color: col, symbol: "circle", hover: tip });
 			} else {
 				var arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 24).map(function (p) { return [p[0], p[1]]; }) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
 				traces.push({
@@ -2362,12 +2404,15 @@
 				});
 			}
 		}
+		if (markerPoints.length) traces.push(markerTrace(markerPoints));
 		var title = (DE() ? "Feature-Migration · Schicht " : "Feature migration · layer ") + (layerIdx + 1)
 			+ "<br><span style='font-size:10px;color:" + _plotlyColors().muted + "'>"
 			+ (projection.label ? projection.label + " · " : "") + featureMetricLabel() + " · " + (DE() ? "Pfeil = Eingabe → Ausgabe" : "arrow = input → output") + "</span>";
 		var layout = projection.is3d ? tmPlotly.layout3D(title, projection.axes) : tmPlotly.layout2D(title, projection.axes);
 		if (window.echarts && el) { var oldChart = echarts.getInstanceByDom(el); if (oldChart) oldChart.dispose(); }
 		Plotly.react(el, traces, layout, { responsive: true, displayModeBar: false });
+		el._tmFeatureRendered = true;
+		el._tmFeatureQueued = false;
 	}
 
 	function renderFeatureParallel(el, vec, label, color, title) {
@@ -2406,6 +2451,52 @@
 			note.style.display = proj.label ? "block" : "none";
 		}
 		renderFeatureArrows(arrowsEl, layerIdx, data, proj);
+	}
+
+	/* Automatic layer-card renders go through an observer and the shared
+	   heavy-render queue: the 520px box stays (with its spinner) until the
+	   card is actually near the viewport, then one plot is built per frame. */
+	function layerFeatureLoadingMarkup() {
+		var text = DE() ? "Feature-Migration wird geladen…" : "Loading feature migration…";
+		return (window.PlotState && PlotState.loadingMarkup) ? PlotState.loadingMarkup(text) : text;
+	}
+
+	function queueLayerFeaturePlot(layerIdx, arrowsEl) {
+		if (!arrowsEl || arrowsEl._tmFeatureRendered || arrowsEl._tmFeatureQueued) return;
+		arrowsEl._tmFeatureQueued = true;
+		var run = function () {
+			arrowsEl._tmFeatureQueued = false;
+			if (arrowsEl._tmFeatureRendered || !arrowsEl.isConnected) return;
+			renderLayerFeaturePlots(layerIdx);
+			arrowsEl._tmFeatureRendered = !!arrowsEl.data;
+		};
+		tmQueueHeavy(run);
+	}
+
+	function scheduleLayerFeaturePlot(layerIdx, force) {
+		var arrowsEl = document.getElementById("unified-layer-" + layerIdx + "-feature-arrows");
+		if (!arrowsEl) return;
+		if (force) {
+			arrowsEl._tmFeatureRendered = false;
+			arrowsEl._tmFeatureQueued = false;
+			if (arrowsEl._tmFeatureObserver) {
+				arrowsEl._tmFeatureObserver.disconnect();
+				arrowsEl._tmFeatureObserver = null;
+			}
+		}
+		if (arrowsEl._tmFeatureRendered) return;
+		if (!arrowsEl.querySelector(".plot-loading")) {
+			arrowsEl.innerHTML = layerFeatureLoadingMarkup();
+		}
+		if (arrowsEl._tmFeatureObserver) return;
+		if (!('IntersectionObserver' in window)) { queueLayerFeaturePlot(layerIdx, arrowsEl); return; }
+		arrowsEl._tmFeatureObserver = new IntersectionObserver(function (entries) {
+			if (!entries.some(function (e) { return e.isIntersecting; })) return;
+			arrowsEl._tmFeatureObserver.disconnect();
+			arrowsEl._tmFeatureObserver = null;
+			queueLayerFeaturePlot(layerIdx, arrowsEl);
+		}, { rootMargin: "200px 0px" });
+		arrowsEl._tmFeatureObserver.observe(arrowsEl);
 	}
 
 	function featureTopWords(vec, count) {
@@ -2842,13 +2933,13 @@
 				if (sub.parentNode) sub.remove();
 				setTimeout(function () {
 					renderLayerTripleResiduals(idx);
-					renderLayerFeaturePlots(idx);
+					scheduleLayerFeaturePlot(idx);
 					renderLayerLogitLens(idx);
 				}, 80);
 			}
 			card.setAttribute("data-tm-enhanced", "1");
 			if (sub.open) {
-				renderLayerFeaturePlots(idx);
+				scheduleLayerFeaturePlot(idx);
 				renderLayerLogitLens(idx);
 			}
 		});
@@ -2877,7 +2968,7 @@
 				var idx = parseInt(card.getAttribute("data-layer-idx"), 10);
 				if (!isNaN(idx)) {
 					renderLayerTripleResiduals(idx);
-					renderLayerFeaturePlots(idx);
+					scheduleLayerFeaturePlot(idx, true);
 					renderLayerLogitLens(idx);
 				}
 			});

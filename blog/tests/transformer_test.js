@@ -334,8 +334,7 @@ function testAttentionEngine(ctx) {
 		'AttentionEngine uses the current weights, not a cached forward pass');
 }
 
-function testTrainingPlot(ctx) {
-	const calls = ctx.__reactCalls;
+function testTrainingPlot(ctx) {	const calls = ctx.__reactCalls;
 	const purges = ctx.__purgeCalls;
 
 	calls.length = 0;
@@ -456,6 +455,71 @@ function testCitations() {
 		(missing.length ? ' (missing: ' + missing.join(', ') + ')' : ''));
 }
 
+function drainFrames(rafs, timeouts, max) {
+	for (let i = 0; i < (max || 20) && (rafs.length || timeouts.length); i++) {
+		if (rafs.length) rafs.shift()();
+		if (timeouts.length) timeouts.shift()();
+	}
+}
+
+function testHeavyRenderQueue(ctx) {
+	check(typeof ctx.tmScheduleHeavyRender === 'function', 'heavy-render scheduler exists');
+
+	const oldRaf = ctx.requestAnimationFrame;
+	const oldTimeout = ctx.setTimeout;
+	const rafs = [];
+	const timeouts = [];
+	ctx.requestAnimationFrame = fn => { rafs.push(fn); return rafs.length; };
+	ctx.setTimeout = fn => { timeouts.push(fn); return timeouts.length; };
+
+	const order = [];
+	ctx.tmScheduleHeavyRender(() => order.push(1));
+	ctx.tmScheduleHeavyRender(() => order.push(2));
+	check(order.length === 0, 'heavy renders wait for a frame');
+	check(ctx.tmScheduleHeavyRender.pending() === 2, 'scheduler reports queued jobs');
+
+	drainFrames(rafs, timeouts);
+	check(order.join(',') === '1,2', 'heavy renders run one at a time, in order');
+	check(rafs.length === 0 && timeouts.length === 0, 'scheduler drains completely');
+
+	ctx.requestAnimationFrame = oldRaf;
+	ctx.setTimeout = oldTimeout;
+}
+
+function testLazyRenderableDefers(ctx) {
+	const el = fakeElement();
+	const origGet = ctx.document.getElementById;
+	ctx.document.getElementById = function (id) { return id === 'lazy-test-plot' ? el : null; };
+
+	const registry = new Map();
+	const observed = [];
+	const observer = { observe(target) { observed.push(target); } };
+	let renders = 0;
+	const renderFn = function () { renders++; el.innerHTML = 'rendered'; };
+
+	const oldRaf = ctx.requestAnimationFrame;
+	const oldTimeout = ctx.setTimeout;
+	const rafs = [];
+	const timeouts = [];
+	ctx.requestAnimationFrame = fn => { rafs.push(fn); return rafs.length; };
+	ctx.setTimeout = fn => { timeouts.push(fn); return timeouts.length; };
+
+	ctx.registerLazyRenderable('lazy-test-plot', registry, observer, { d_model: 3 },
+		renderFn, '<div class="plot-loading">spinner</div>');
+
+	check(observed.length === 1, 'lazy plot is observed for visibility');
+	check(el.innerHTML.indexOf('plot-loading') !== -1, 'lazy plot reserves its box with a spinner');
+	check(renders === 0, 'visible lazy plot is not rendered synchronously');
+
+	drainFrames(rafs, timeouts);
+	check(renders === 1, 'deferred lazy plot renders once after a frame');
+	check(el.innerHTML === 'rendered', 'deferred render replaces the spinner');
+
+	ctx.document.getElementById = origGet;
+	ctx.requestAnimationFrame = oldRaf;
+	ctx.setTimeout = oldTimeout;
+}
+
 function main() {
 	const ctx = loadSandbox();
 	testSoftmax(ctx);
@@ -465,6 +529,8 @@ function main() {
 	testCausalAttention(ctx);
 	testAttentionEngine(ctx);
 	testTrainingPlot(ctx);
+	testHeavyRenderQueue(ctx);
+	testLazyRenderableDefers(ctx);
 	testLessonSource();
 	testCitations();
 

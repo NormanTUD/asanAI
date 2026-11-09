@@ -49,6 +49,10 @@ function _themeriver_collect_probs(tokenIdx, d_model) {
  * Core ECharts rendering logic.
  */
 function _execute_themeriver_render(d_model) {
+	// A lazy render may run after the configuration changed. Always use the
+	// current width so the residual pass matches the live weights.
+	const cfg = (typeof getTransformerConfig === 'function') ? getTransformerConfig() : null;
+	if (cfg && cfg.d_model) d_model = cfg.d_model;
 	const containerId = 'transformer-themeriver-plot';
 	const container = document.getElementById(containerId);
 	if (!container) return;
@@ -136,21 +140,32 @@ function _themeriver_render_residual_contrib(tokenIdx, d_model) {
 
 	const tokens = collector.tokens;
 	const pos = Math.max(0, Math.min(tokenIdx, tokens.length - 1));
-	const n_heads = getTransformerConfig().n_heads;
+	const cfg = (typeof getTransformerConfig === 'function') ? getTransformerConfig() : null;
+	const dm = (cfg && cfg.d_model) || d_model;
+	const n_heads = cfg && cfg.n_heads;
+	if (!dm || !n_heads || dm % n_heads !== 0) {
+		empty('Residual stream unavailable for this configuration.');
+		return;
+	}
 	const layers = [];
 	const attnWrites = [];
 	const ffnWrites = [];
-	let h = embedTokensWithPE(tokens, d_model);
 	const norm = (v) => Math.sqrt(v.reduce((sum, x) => sum + x * x, 0));
-
-	for (let l = 0; l < weights.length; l++) {
-		const res = forwardOneLayer(h, weights[l], d_model, n_heads, tokens, null);
-		const attnDiff = res.h_attn[pos].map((v, i) => v - h[pos][i]);
-		const ffnDiff = res.h_out[pos].map((v, i) => v - res.h_attn[pos][i]);
-		layers.push(weights.length > 8 ? 'L' + (l + 1) : 'Layer ' + (l + 1));
-		attnWrites.push(+norm(attnDiff).toFixed(4));
-		ffnWrites.push(+norm(ffnDiff).toFixed(4));
-		h = res.h_out;
+	let h;
+	try {
+		h = embedTokensWithPE(tokens, dm);
+		for (let l = 0; l < weights.length; l++) {
+			const res = forwardOneLayer(h, weights[l], dm, n_heads, tokens, null);
+			const attnDiff = res.h_attn[pos].map((v, i) => v - h[pos][i]);
+			const ffnDiff = res.h_out[pos].map((v, i) => v - res.h_attn[pos][i]);
+			layers.push(weights.length > 8 ? 'L' + (l + 1) : 'Layer ' + (l + 1));
+			attnWrites.push(+norm(attnDiff).toFixed(4));
+			ffnWrites.push(+norm(ffnDiff).toFixed(4));
+			h = res.h_out;
+		}
+	} catch (err) {
+		empty('Residual stream unavailable for this configuration.');
+		return;
 	}
 
 	let chart = echarts.getInstanceByDom(container);
