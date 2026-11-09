@@ -169,6 +169,16 @@ def test_main_ui(driver, base, results):
     print("\n[main UI]")
     driver.get(base)
     wait_for(driver, "return !!document.getElementById('step-input')")
+    # The quiz reserves its feedback height after the page loader releases the
+    # layout; wait for that pass instead of racing it.
+    try:
+        wait_for(
+            driver,
+            "var fb=document.querySelector('.mn-quiz .mnz-feedback'); return !!fb && parseFloat(getComputedStyle(fb).minHeight) > 0;",
+            timeout=15,
+        )
+    except AssertionError:
+        pass
     results.check(
         "no layer-summary panel rendered",
         driver.execute_script("return !document.getElementById('transformer-layer-summary')"),

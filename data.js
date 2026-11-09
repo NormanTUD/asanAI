@@ -3728,7 +3728,10 @@ function get_csv_train_percentage () {
 	var $input = $("#csv_train_percentage");
 	if(!$input.length) return 100;
 
-	var percentage = Math.round(parse_float($input.val()));
+	var raw = $input.val();
+	if(raw === "" || raw === null || raw === undefined) return 100;
+
+	var percentage = Math.round(Number(raw));
 	if(!isFinite(percentage)) return 100;
 	if(percentage < 1) return 1;
 	if(percentage > 100) return 100;

@@ -4891,6 +4891,7 @@ function test_csv_training_subset_helpers() {
 	var $percentage = $("#csv_train_percentage");
 	var old_value = $percentage.val();
 	var old_random = Math.random;
+	var warnings_before = num_wrns;
 	var ok = true;
 
 	try {
@@ -4919,6 +4920,7 @@ function test_csv_training_subset_helpers() {
 	}
 
 	test_equal("CSV training subset helpers validate percentage and sample the full range", ok, true);
+	test_equal("CSV training subset helpers do not log warnings", num_wrns, warnings_before);
 	return ok;
 }
 
