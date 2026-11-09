@@ -256,6 +256,8 @@ function registerLazyRenderable(containerId, registry, observer, data, renderFn,
 				return;
 			}
 			live.rendered = true;
+			const loader = container.querySelector('.plot-loading');
+			if (loader) loader.remove();
 			renderFn();
 		});
 	};
@@ -622,6 +624,8 @@ function createLazyRenderObserver(registry, renderFn, options = { threshold: 0 }
 				current._tmScheduled = false;
 				if (current.rendered) return;
 				current.rendered = true;
+				const loader = entry.target.querySelector('.plot-loading');
+				if (loader) loader.remove();
 				renderFn(containerId, current);
 			});
 		});

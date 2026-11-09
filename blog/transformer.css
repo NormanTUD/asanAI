@@ -156,6 +156,26 @@
 }
 
 /* Residual-stream contribution chart inside the Probability Flow wrapper */
+.themeriver-controls-wrap {
+	margin-bottom: 8px;
+}
+.themeriver-controls > summary {
+	padding: 6px 0;
+}
+.themeriver-controls-body {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+	padding-top: 8px;
+}
+.themeriver-control-label {
+	color: var(--mn-text-secondary, #5c5043);
+	font-size: 0.78rem;
+}
+.themeriver-residual-body {
+	padding-top: 8px;
+}
 .themeriver-residual-head {
 	padding: 14px 16px 0;
 	font-weight: 700;

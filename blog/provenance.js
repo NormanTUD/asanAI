@@ -2187,6 +2187,7 @@
 	var _lastMouse = { x: 0, y: 0 };
 	var _timer = null;
 	var _hideTimer = null;
+	var _lastScroll = 0;
 	var _stylesInjected = false;
 
 	function _injectStyles() {
@@ -2709,6 +2710,9 @@
 	function _onMouseOver(e) {
 		var cell = e.target && e.target.closest ? e.target.closest('[data-prov-id]') : null;
 		if (cell) {
+			// Scrolling moves cells under a stationary cursor; do not open
+			// the heavy provenance card from a scroll-induced hover.
+			if (Date.now() - _lastScroll < 400) return;
 			_lastMouse.x = e.clientX;
 			_lastMouse.y = e.clientY;
 			_clearHide();
@@ -2716,13 +2720,14 @@
 			_timer = setTimeout(function () {
 				_timer = null;
 				if (S._pinned) return;
+				if (Date.now() - _lastScroll < 400) return;
 				S._activeCell = cell;
 				var active = document.querySelector('.prov-cell.prov-active');
 				if (active) active.classList.remove('prov-active');
 				cell.classList.add('prov-active');
 				_traceView = 'deriv';
 				S.show(cell.getAttribute('data-prov-id'));
-			}, 250);
+			}, 350);
 		}
 	}
 
@@ -2741,6 +2746,14 @@
 	function _onMouseMove(e) {
 		_lastMouse.x = e.clientX;
 		_lastMouse.y = e.clientY;
+	}
+
+	function _onScroll(e) {
+		var target = e && e.target;
+		if (target && target.closest && target.closest('#prov-tooltip')) return;
+		_lastScroll = Date.now();
+		if (_timer) { clearTimeout(_timer); _timer = null; }
+		if (!S._pinned) S.hide();
 	}
 
 	function _onDocClick(e) {
@@ -2768,6 +2781,7 @@
 		document.addEventListener('mousemove', _onMouseMove, true);
 		document.addEventListener('click', _onDocClick, true);
 		document.addEventListener('keydown', _onKeyDown, true);
+		window.addEventListener('scroll', _onScroll, { capture: true, passive: true });
 	}
 
 	S.init = function () {

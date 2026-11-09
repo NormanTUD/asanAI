@@ -2417,6 +2417,8 @@
 			+ (projection.label ? projection.label + " · " : "") + featureMetricLabel() + " · " + (DE() ? "Pfeil = Eingabe → Ausgabe" : "arrow = input → output") + "</span>";
 		var layout = projection.is3d ? tmPlotly.layout3D(title, projection.axes) : tmPlotly.layout2D(title, projection.axes);
 		if (window.echarts && el) { var oldChart = echarts.getInstanceByDom(el); if (oldChart) oldChart.dispose(); }
+		var loading = el.querySelector(".plot-loading");
+		if (loading) loading.remove();
 		Plotly.react(el, traces, layout, { responsive: true, displayModeBar: false });
 		el._tmFeatureRendered = true;
 		el._tmFeatureQueued = false;
@@ -2474,6 +2476,8 @@
 		var run = function () {
 			arrowsEl._tmFeatureQueued = false;
 			if (arrowsEl._tmFeatureRendered || !arrowsEl.isConnected) return;
+			var loader = arrowsEl.querySelector(".plot-loading");
+			if (loader) loader.remove();
 			renderLayerFeaturePlots(layerIdx);
 			arrowsEl._tmFeatureRendered = !!arrowsEl.data;
 		};

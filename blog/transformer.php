@@ -1200,21 +1200,12 @@ A striking theoretical result is that a linear self-attention layer can implemen
 
 ### Inference vs. Training: Two Modes of Operation
 
-While the architecture is identical in both modes, the behavior of the model differs fundamentally between **inference** and **training**:
+The architecture is identical in both modes; only the execution changes.
 
-| Aspect | Inference | Training |
-|--------|-----------|----------|
-| **Goal** | Generate text | Update weights to minimize loss |
-| **Weights** | Frozen, never change | Updated via gradient descent |
-| **Dropout** | Not used in this model | Not used in this model |
-| **Normalization** | LayerNorm (feature-wise, no running stats) | LayerNorm (feature-wise, no running stats) |
-| **KV Cache** | Optional (checkbox in the hyperparameters) — reuse prefix keys/values | Not used (full sequence processed at once) |
-| **Gradients** | Not computed | Computed via backpropagation |
-| **Memory** | O(context²) attention matrix, recomputed each step | O(context²) attention matrix + stored activations for backprop |
-| **Parallelism** | Sequential (one token at a time) | Parallel (all tokens in the batch processed simultaneously) |
-| **Randomness** | Controlled by temperature / top-k here; top-p is a common alternative | Deterministic (given the same initialization) |
+- **Inference** generates text. The weights stay frozen, no gradients are computed, and tokens are produced one at a time, so the $O(\text{context}^2)$ attention matrix is recomputed at each step; the optional KV cache reuses prefix keys and values instead. Sampling is stochastic through temperature and top-k (top-p is the common alternative).
+- **Training** updates the weights by gradient descent from backpropagation. The full sequence runs in parallel, so the attention matrix and the activations needed for the backward pass are stored at once. For a fixed initialization the run is deterministic.
 
-**The key distinction:** During training, the model sees the entire target sequence and learns to predict each token conditioned on all previous tokens, computing gradients to update weights. During inference, the model has no target, it generates tokens one at a time, using its own previous outputs as context for the next prediction. This is why inference is inherently sequential while training can be parallelized across the sequence length.
+Dropout is off in both modes. Both use the same feature-wise LayerNorm without running statistics.
 
 </div>
 

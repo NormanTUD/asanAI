@@ -124,6 +124,8 @@ function _themeriver_observe_chart(container) {
 function _themeriver_render_residual_contrib(tokenIdx, d_model) {
 	const container = document.getElementById('transformer-residual-contrib-plot');
 	if (!container) return;
+	const residualDetails = document.getElementById('themeriver-residual-details');
+	if (residualDetails && !residualDetails.open) return;
 	const empty = (msg) => {
 		const old = echarts.getInstanceByDom(container);
 		if (old) old.dispose();
@@ -424,28 +426,33 @@ function _themeriver_ensure_dom(containerId) {
 	background: transparent; margin-top: 16px; overflow: visible;
     `;
 		wrapper.innerHTML = `
-	<div class="themeriver-header" style="display:flex; align-items:center; gap:12px; padding:4px 0 8px;
-		    background:transparent; border-bottom:1px solid ${themeColor('#cbd5e1')}; flex-wrap:wrap;">
-	    <label style="color:${themeColor('#7c3aed')}; font-size:0.8rem;">Token position:</label>
-	    <select id="themeriver-token-select"
-		    onchange="window._themeriver_on_change()"
-		    class="themeriver-select"
-		    style="padding:4px 8px; border:1px solid ${themeColor('#c4b5fd')};
-			   border-radius:6px; font-size:0.82rem; background:${themeColor('#fff')};">
-	    </select>
-	    <label style="color:${themeColor('#7c3aed')}; font-size:0.8rem; margin-left:auto;">Show top</label>
-	    <select id="themeriver-topn-select"
-		    onchange="window._themeriver_on_change()"
-		    class="themeriver-select"
-		    style="padding:4px 8px; border:1px solid ${themeColor('#c4b5fd')};
-			   border-radius:6px; font-size:0.82rem; background:${themeColor('#fff')};">
-		<option value="5">5</option>
-		<option value="8" selected>8</option>
-		<option value="10">10</option>
-		<option value="15">15</option>
-		<option value="all">All</option>
-	    </select>
-	    <span style="color:${themeColor('#7c3aed')}; font-size:0.8rem;">words</span>
+	<div class="themeriver-controls-wrap">
+	<details class="tm-step-detail themeriver-controls">
+	    <summary>Probability flow settings</summary>
+	    <div class="themeriver-controls-body">
+		<label class="themeriver-control-label" for="themeriver-token-select">Token position</label>
+		<select id="themeriver-token-select"
+			onchange="window._themeriver_on_change()"
+			class="themeriver-select"
+			aria-label="Token position"
+			style="padding:4px 8px; border:1px solid var(--mn-border, #cbd5e1);
+			       border-radius:6px; font-size:0.82rem; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b);">
+		</select>
+		<label class="themeriver-control-label" for="themeriver-topn-select">Show top</label>
+		<select id="themeriver-topn-select"
+			onchange="window._themeriver_on_change()"
+			class="themeriver-select"
+			style="padding:4px 8px; border:1px solid var(--mn-border, #cbd5e1);
+			       border-radius:6px; font-size:0.82rem; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b);">
+		    <option value="5">5</option>
+		    <option value="8" selected>8</option>
+		    <option value="10">10</option>
+		    <option value="15">15</option>
+		    <option value="all">All</option>
+		</select>
+		<span class="themeriver-control-label">words</span>
+	    </div>
+	</details>
 	</div>
 	<div id="${containerId}" style="width:100%; height:520px;"></div>
     `;
@@ -477,10 +484,21 @@ function _themeriver_ensure_residual_block(parent) {
 	block.id = 'themeriver-residual-block';
 	block.className = 'themeriver-residual-block';
 	block.innerHTML = `
-	<div class="themeriver-residual-head">Residual stream writes per layer</div>
+	<details class="tm-step-detail themeriver-residual-details" id="themeriver-residual-details">
+	<summary>Residual stream writes per layer</summary>
+	<div class="themeriver-residual-body">
 	<p class="themeriver-residual-note">Bar height is the size of each sublayer's write into the running vector for the selected token: the length (L2 norm) of the attention update and of the FFN update. It is not a share of the stream, just how far that step moves the vector.</p>
-	<div id="transformer-residual-contrib-plot" style="width:90%; margin:0 auto; height:280px;"></div>
+	<div id="transformer-residual-contrib-plot" style="width:100%; margin:0 auto; height:280px;"></div>
+	</div>
+	</details>
 	`;
+	const details = block.querySelector('#themeriver-residual-details');
+	if (details) {
+		details.addEventListener('toggle', function () {
+			if (!details.open) return;
+			setTimeout(function () { if (window._themeriver_on_change) window._themeriver_on_change(); }, 40);
+		});
+	}
 	parent.appendChild(block);
 }
 
