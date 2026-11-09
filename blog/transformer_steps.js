@@ -1044,6 +1044,220 @@
 		ctx.restore();
 	}
 
+	/* A 2-D slice through the real normalized input: two input dimensions vary,
+	   all others stay fixed at the last token. The surface is the real FFN output. */
+	function drawFFNSpace(ctx, w, h, layerIdx) {
+		var c = palette();
+		var ffn = (window.__tmFFNTrace || [])[layerIdx];
+		var tokens = tokenList();
+		ctx.clearRect(0, 0, w, h);
+		if (!ffn || !ffn.normed_h1 || !ffn.W1 || !ffn.W2 || !tokens.length) {
+			return drawPlaceholder(ctx, w, h, DE() ? "Öffne eine Schicht, um die Raumkrümmung zu sehen." : "Open a layer to see the space curvature.");
+		}
+		var dm = ffn.W1.length;
+		var dff = (ffn.W1[0] || []).length;
+		var x0 = ffn.normed_h1[ffn.normed_h1.length - 1];
+		if (!x0 || x0.length < 2 || dm < 2 || !dff) {
+			return drawPlaceholder(ctx, w, h, DE() ? "Zu wenige Dimensionen für einen Schnitt." : "Too few dimensions for a slice.");
+		}
+		var kind = (typeof tmActivationKind === "function") ? tmActivationKind() : "gelu";
+		var gated = !!(typeof tmActivationIsGated === "function" && tmActivationIsGated(kind) && ffn.Wg);
+		var actKind = (typeof tmActivationIsGated === "function" && tmActivationIsGated(kind)) ? "silu" : kind;
+		var actName = (typeof tmActivationLabel === "function") ? tmActivationLabel(kind) : "GELU";
+		var act = function (x) { return (typeof activationValue === "function") ? activationValue(actKind, x) : x; };
+
+		var influence = [];
+		for (var d = 0; d < dm; d++) {
+			var score = 0;
+			for (var j = 0; j < dff; j++) score += Math.abs((ffn.W1[d] && ffn.W1[d][j]) || 0);
+			influence.push({ d: d, score: score });
+		}
+		influence.sort(function (a, b) { return b.score - a.score; });
+		var d0 = influence[0].d;
+		var d1 = influence.length > 1 ? influence[1].d : (d0 === 0 ? 1 : 0);
+		if (d1 === d0) d1 = (d0 + 1) % dm;
+
+		var maxAbs = 0.9;
+		ffn.normed_h1.forEach(function (row) {
+			maxAbs = Math.max(maxAbs, Math.abs(row[d0] || 0), Math.abs(row[d1] || 0));
+		});
+		var R = Math.max(0.9, Math.min(2.2, maxAbs * 1.25));
+		var N = 14;
+		var off = [];
+		for (var i = 0; i <= N; i++) off.push((i / N * 2 - 1) * R);
+
+		var hiddenFor = function (xin) {
+			var pre = matMul([xin], ffn.W1, ffn.b1)[0];
+			if (gated) {
+				var value = matMul([xin], ffn.Wg, ffn.bg)[0];
+				return pre.map(function (v, k) { return act("silu", v) * ((value[k]) || 0); });
+			}
+			return pre.map(function (v) { return act(v); });
+		};
+
+		var Y = [];
+		for (var i = 0; i <= N; i++) {
+			var rowY = [];
+			for (var j = 0; j <= N; j++) {
+				var xin = x0.slice();
+				xin[d0] += off[i];
+				xin[d1] += off[j];
+				rowY.push(matMul([hiddenFor(xin)], ffn.W2, ffn.b2)[0]);
+			}
+			Y.push(rowY);
+		}
+
+		var outDim = 0, outSpan = -1, outMin = 0, outMax = 0;
+		for (var o = 0; o < dm; o++) {
+			var lo = Infinity, hi = -Infinity;
+			for (var i = 0; i <= N; i++) {
+				for (var j = 0; j <= N; j++) {
+					var v = Y[i][j][o] || 0;
+					if (v < lo) lo = v;
+					if (v > hi) hi = v;
+				}
+			}
+			if (hi - lo > outSpan) { outSpan = hi - lo; outDim = o; outMin = lo; outMax = hi; }
+		}
+		var zmin = outMin;
+		var zRange = (outMax - outMin) || 1;
+		var zrel = [];
+		for (var i = 0; i <= N; i++) {
+			var zrow = [];
+			for (var j = 0; j <= N; j++) zrow.push((Y[i][j][outDim] || 0) - zmin);
+			zrel.push(zrow);
+		}
+
+		var zGain = 1;
+		if (zRange > 1e-6) zGain = Math.min(8, Math.max(1, (R * 0.9) / zRange));
+		var zPlot = [];
+		var zMaxPlot = 0;
+		for (var i = 0; i <= N; i++) {
+			var zrowPlot = [];
+			for (var j = 0; j <= N; j++) {
+				var zz = zrel[i][j] * zGain;
+				zrowPlot.push(zz);
+				if (zz > zMaxPlot) zMaxPlot = zz;
+			}
+			zPlot.push(zrowPlot);
+		}
+		var scaleX = (w * 0.46) / (R * 1.35);
+		var scaleY = (h * 0.44) / Math.max(1e-6, R * 1.15 + zMaxPlot);
+		var cx = w * 0.5;
+		var cy = h * 0.54;
+		var yaw = -0.70, pitch = 0.58;
+		var cyaw = Math.cos(yaw), syaw = Math.sin(yaw);
+		var cpit = Math.cos(pitch), spit = Math.sin(pitch);
+		function project(u, v, z) {
+			var x1 = u * cyaw - v * syaw;
+			var y1 = u * syaw + v * cyaw;
+			var y2 = y1 * cpit - z * spit;
+			var depth = y1 * spit + z * cpit;
+			return { x: cx + x1 * scaleX, y: cy + y2 * scaleY, d: depth };
+		}
+
+		var flat = [], surf = [];
+		for (var i = 0; i <= N; i++) {
+			flat.push([]); surf.push([]);
+			for (var j = 0; j <= N; j++) {
+				flat[i].push(project(off[i], off[j], 0));
+				surf[i].push(project(off[i], off[j], zPlot[i][j]));
+			}
+		}
+
+		ctx.strokeStyle = c.line;
+		ctx.globalAlpha = 0.32;
+		ctx.lineWidth = 1;
+		for (var i = 0; i <= N; i++) {
+			ctx.beginPath();
+			for (var j = 0; j <= N; j++) {
+				var p = flat[i][j];
+				if (j === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+			}
+			ctx.stroke();
+		}
+		for (var j = 0; j <= N; j++) {
+			ctx.beginPath();
+			for (var i = 0; i <= N; i++) {
+				var p = flat[i][j];
+				if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+			}
+			ctx.stroke();
+		}
+
+		ctx.strokeStyle = c.muted;
+		ctx.globalAlpha = 0.22;
+		ctx.lineWidth = 0.8;
+		for (var i = 0; i <= N; i += 2) {
+			for (var j = 0; j <= N; j += 2) {
+				var a = flat[i][j], b = surf[i][j];
+				ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+			}
+		}
+		ctx.globalAlpha = 1;
+
+		var quads = [];
+		for (var i = 0; i < N; i++) {
+			for (var j = 0; j < N; j++) {
+				var p00 = surf[i][j], p10 = surf[i + 1][j], p11 = surf[i + 1][j + 1], p01 = surf[i][j + 1];
+				quads.push({
+					p: [p00, p10, p11, p01],
+					d: (p00.d + p10.d + p11.d + p01.d) / 4,
+					z: (zrel[i][j] + zrel[i + 1][j] + zrel[i + 1][j + 1] + zrel[i][j + 1]) / 4
+				});
+			}
+		}
+		quads.sort(function (a, b) { return a.d - b.d; });
+		var neg = hex(c.blue), mid = hex(c.paper), pos = hex(c.gold);
+		quads.forEach(function (q) {
+			var t = Math.max(0, Math.min(1, q.z / zRange));
+			var col = t < 0.5 ? mix(neg, mid, t * 2) : mix(mid, pos, (t - 0.5) * 2);
+			ctx.beginPath();
+			ctx.moveTo(q.p[0].x, q.p[0].y);
+			ctx.lineTo(q.p[1].x, q.p[1].y);
+			ctx.lineTo(q.p[2].x, q.p[2].y);
+			ctx.lineTo(q.p[3].x, q.p[3].y);
+			ctx.closePath();
+			ctx.fillStyle = rgb(col);
+			ctx.globalAlpha = 0.62;
+			ctx.fill();
+			ctx.strokeStyle = c.line;
+			ctx.globalAlpha = 0.35;
+			ctx.lineWidth = 0.7;
+			ctx.stroke();
+		});
+		ctx.globalAlpha = 1;
+
+		var centre = surf[N / 2][N / 2];
+		if (centre) {
+			ctx.beginPath();
+			ctx.arc(centre.x, centre.y, 4.2, 0, Math.PI * 2);
+			ctx.fillStyle = c.paper;
+			ctx.fill();
+			ctx.strokeStyle = c.ink;
+			ctx.lineWidth = 1.5;
+			ctx.stroke();
+			ctx.fillStyle = c.ink;
+			ctx.font = "600 9px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "left";
+			ctx.fillText(fitText(ctx, display(tokens[tokens.length - 1]), 80), centre.x + 7, centre.y - 6);
+		}
+
+		ctx.fillStyle = c.muted;
+		ctx.font = "600 9px Barlow, system-ui, sans-serif";
+		ctx.textAlign = "left";
+		var head = (DE() ? "Raumkrümmung · echte W₁ → " : "Space curvature · real W₁ → ") + actName +
+			(DE() ? " → W₂" : " → W₂") + " · " + (DE() ? "Layer " : "layer ") + (layerIdx + 1);
+		ctx.fillText(fitText(ctx, head, w - 20), 10, 15);
+		var foot = (DE() ? "grau: flacher Schnitt · Farbe: FFN-Ausgabe (Dim " : "grey: flat slice · colour: FFN output (dim ") + (outDim + 1) + ")" +
+			(zGain > 1.15 ? (DE() ? " · Höhe ×" : " · height ×") + zGain.toFixed(1) : "");
+		ctx.fillText(fitText(ctx, foot, w * 0.62), 10, h - 9);
+		ctx.textAlign = "right";
+		var slice = (DE() ? "2-D-Schnitt · Dim " : "2-D slice · dims ") + (d0 + 1) + "/" + (d1 + 1) +
+			(DE() ? " · übrige Dims fest" : " · other dims fixed");
+		ctx.fillText(fitText(ctx, slice, w * 0.5), w - 10, h - 9);
+	}
+
 	function drawFFNFan(ctx, w, h, layerIdx) {
 		var c = palette();
 		var ffn = (window.__tmFFNTrace || [])[layerIdx];
@@ -3687,6 +3901,7 @@
 			entry.api = initCanvas(canvas, function (ctx, w, h) {
 				if (entry.which === "fan") drawFFNFan(ctx, w, h, entry.layerIdx);
 				else if (entry.which === "curve") drawFFNCurvature(ctx, w, h, entry.layerIdx);
+				else if (entry.which === "space") drawFFNSpace(ctx, w, h, entry.layerIdx);
 				else drawFFNMatrix(ctx, w, h, entry.layerIdx, entry.which);
 			});
 			layerFFNHeatmapRegistry[canvasId] = entry;
@@ -3695,7 +3910,7 @@
 			entry.which = which;
 			entry.api.redraw();
 		}
-		if (which !== "fan" && which !== "curve") {
+		if (which !== "fan" && which !== "curve" && which !== "space") {
 			attachFFNHeatmapHover(canvas, function () { return entry; });
 		}
 		canvas.setAttribute("data-layer-ffn-ready", "1");
@@ -3729,8 +3944,12 @@
 			["-ffn-heatmap", "outL1"],
 			["-ffn-compress-heatmap", "outFFN"],
 			["-ffn-fan", "fan"],
-			["-ffn-curve", "curve"]
+			["-ffn-curve", "curve"],
+			["-ffn-space", "space"]
 		].forEach(function (pair) {
+			var canvas = document.getElementById(prefix + pair[0]);
+			// The space view evaluates the real FFN on a grid; build it only when visible.
+			if (canvas && canvas.hidden && pair[1] === "space") return;
 			renderLayerFFNMatrix(prefix + pair[0], layerIdx, pair[1]);
 		});
 	}

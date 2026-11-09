@@ -394,6 +394,11 @@
 	color: var(--mn-text-muted);
 	white-space: nowrap;
 }
+.tm-ffn-stage-desc {
+	margin: 0 0 5px;
+	font: 400 0.7rem/1.45 "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text-muted);
+}
 .tm-ffn-stage-formula {
 	min-height: 2.2em;
 	margin-bottom: 4px;
@@ -404,6 +409,7 @@
 .tm-ffn-stage-plots { display: block; }
 .tm-ffn-stage-plots--two { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
 .tm-ffn-stage-canvas { display: block; width: 100%; height: 230px; }
+.tm-ffn-stage-canvas[data-view="space"] { height: 340px; }
 .tm-ffn-stage-arrow {
 	justify-self: center;
 	align-self: center;

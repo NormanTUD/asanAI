@@ -8093,6 +8093,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 			<div class="tm-ffn-stages">
 				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-preln-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
 					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Pre-LN</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-preln">h₁ → Norm</span></div>
+					<div class="tm-ffn-stage-desc">${isDe ? 'Zwei echte Token-Matrizen: vor und nach LayerNorm. Jede Zeile ist ein Token, jede Spalte eine Dimension; die Norm zieht jede Zeile auf Mittelwert 0 und Streuung 1.' : 'Two real token matrices: before and after LayerNorm. Each row is a token, each column a dimension; the norm pulls each row to mean 0 and variance 1.'}</div>
 					<div class="tm-ffn-stage-formula" data-tex="${tmFfnPrelnAbstractTex()}" data-tex-display="false"></div>
 					<div class="tm-ffn-stage-plots tm-ffn-stage-plots--two">
 						<canvas id="${prefix}-ffn-preln-in" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Eingang vor LayerNorm' : 'FFN input before LayerNorm'}"></canvas>
@@ -8103,22 +8104,26 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-expand-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
 					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Expansion + ${tmActivationInfo(tmActivationKind()).html}</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-expand">d_model → d_ff</span></div>
 					<div class="tm-ffn-widthbar" id="${prefix}-ffn-width-expand" aria-hidden="true"></div>
+					<div class="tm-ffn-stage-desc">${isDe ? 'Die echte W₁-Projektion in den breiteren Raum. Heatmap: alle Hidden-Aktivierungen. Space fan: W₁/W₂ als Gewichte. Aktivierung: die Aktivierungsfunktion an den echten Voraktivierungen. Raumkrümmung: ein flacher 2-D-Schnitt durch den echten Eingang, von W₁, Aktivierung und W₂ zu einer gekrümmten Fläche gefaltet.' : 'The real W₁ projection into the wider space. Heatmap: all hidden activations. Space fan: W₁/W₂ as weights. Activation: the activation function at the real pre-activations. Space curvature: a flat 2-D slice through the real input, folded into a curved surface by W₁, the activation and W₂.'}</div>
 					<div class="tm-ffn-stage-formula" data-tex="${tmFfnExpansionAbstractTex()}" data-tex-display="false"></div>
 					<div class="tm-ffn-viewswitch" role="tablist" aria-label="${isDe ? 'Ansicht' : 'View'}">
 						<button type="button" data-view="heatmap" class="is-active">Heatmap</button>
 						<button type="button" data-view="fan">Space fan</button>
-						<button type="button" data-view="curve">Curvature</button>
+						<button type="button" data-view="curve">${isDe ? 'Aktivierung' : 'Activation'}</button>
+						<button type="button" data-view="space">${isDe ? 'Raumkrümmung' : 'Space curvature'}</button>
 					</div>
 					<div class="tm-ffn-stage-plots">
 						<canvas id="${prefix}-ffn-heatmap" class="tm-ffn-stage-canvas" data-view="heatmap" aria-label="${isDe ? 'FFN-Hidden-Aktivierungen für alle Tokens' : 'FFN hidden activations for all tokens'}"></canvas>
 						<canvas id="${prefix}-ffn-fan" class="tm-ffn-stage-canvas" data-view="fan" hidden aria-label="${isDe ? 'W1- und W2-Gewichte als Fächer' : 'W1 and W2 weights as a fan-out'}"></canvas>
 						<canvas id="${prefix}-ffn-curve" class="tm-ffn-stage-canvas" data-view="curve" hidden aria-label="${isDe ? 'Aktivierungsfunktion und echte Voraktivierungen' : 'Activation function and real pre-activations'}"></canvas>
+						<canvas id="${prefix}-ffn-space" class="tm-ffn-stage-canvas" data-view="space" hidden aria-label="${isDe ? 'Raumkrümmung: flacher Eingabe-Schnitt, vom echten FFN gefaltet' : 'Space curvature: flat input slice folded by the real FFN'}"></canvas>
 					</div>
 				</div>
 				<span class="tm-ffn-stage-arrow" aria-hidden="true">→</span>
 				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-compress-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
 					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Compression</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-compress">d_ff → d_model</span></div>
 					<div class="tm-ffn-widthbar" id="${prefix}-ffn-width-compress" aria-hidden="true"></div>
+					<div class="tm-ffn-stage-desc">${isDe ? 'Die echte W₂-Projektion zurück auf d_model. Das Ergebnis ist das FFN-Update, das der Residual-Stream zum alten Vektor addiert.' : 'The real W₂ projection back to d_model. The result is the FFN update that the residual stream adds to the old vector.'}</div>
 					<div class="tm-ffn-stage-formula" data-tex="${tmFfnCompressAbstractTex()}" data-tex-display="false"></div>
 					<div class="tm-ffn-stage-plots">
 						<canvas id="${prefix}-ffn-compress-heatmap" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Ausgabe nach der Kompression' : 'FFN output after compression'}"></canvas>

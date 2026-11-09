@@ -431,6 +431,17 @@ function testLessonSource() {
 	}
 }
 
+function testFFNViews() {
+	const template = fs.readFileSync(path.join(BLOG, 'transformer.js'), 'utf8');
+	const steps = fs.readFileSync(path.join(BLOG, 'transformer_steps.js'), 'utf8');
+	check(template.includes('data-view="space"'), 'FFN expansion keeps the space-curvature view');
+	check(template.includes('Raumkrümmung'), 'space-curvature view has a German label');
+	check(template.includes('tm-ffn-stage-desc'), 'FFN stages keep their short descriptions');
+	check(steps.includes('function drawFFNSpace'), 'space-curvature view has a draw function');
+	check(steps.includes('ffn.normed_h1') && steps.includes('ffn.W1') && steps.includes('ffn.W2'),
+		'space-curvature view reads the real FFN trace and weights');
+}
+
 function testCitations() {
 	const php = fs.readFileSync(path.join(BLOG, 'transformer.php'), 'utf8');
 	const literature = fs.readFileSync(path.join(BLOG, 'literature.js'), 'utf8');
@@ -555,6 +566,7 @@ function main() {
 	testHeavyRenderQueue(ctx);
 	testLazyRenderableDefers(ctx);
 	testLessonSource();
+	testFFNViews();
 	testCitations();
 
 	console.log('\ntransformer tests: ' + pass + ' passed, ' + fail + ' failed');
