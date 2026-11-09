@@ -107,10 +107,10 @@
 		<div class="ribbon-group" data-importance="1">
 			<div class="ribbon-toolbar" style="width: 135px">
 				<table>
-					<tr><td><span class="TRANSLATEME_epochs"></span></td><td><input type="number" name="Epochs" id="epochs" value="30" min="1" step="10" style="width: 40px;"></td></tr>
-					<tr><td><span class="TRANSLATEME_batch_size"></span></td><td><input type="number" name="Batch-Size" id="batchSize" value="10" min="1" step="5" style="width: 40px;"></td></tr>
-				<tr><td><span class="TRANSLATEME_valsplit"></span>&nbsp;%</td><td><input type="number" name="Validation-Split" min="0" max="99" step="5" value="20" style="width: 40px;" id="validationSplit"></td></tr>
-					<tr class="expert_mode_only"><td><span class="TRANSLATEME_number_of_runs"></span></td><td><input type="number" id="number_of_runs" value="1" min="1" max="50" step="1" style="width: 40px;"></td></tr>
+					<tr><td><span class="TRANSLATEME_epochs" data-tr-title="epochs_description"></span></td><td><input type="number" name="Epochs" id="epochs" value="30" min="1" step="10" style="width: 40px;" data-tr-title="epochs_description"></td></tr>
+					<tr><td><span class="TRANSLATEME_batch_size" data-tr-title="batch_size_description"></span></td><td><input type="number" name="Batch-Size" id="batchSize" value="10" min="1" step="5" style="width: 40px;" data-tr-title="batch_size_description"></td></tr>
+				<tr><td><span class="TRANSLATEME_valsplit" data-tr-title="valsplit_description"></span>&nbsp;%</td><td><input type="number" name="Validation-Split" min="0" max="99" step="5" value="20" style="width: 40px;" id="validationSplit" data-tr-title="valsplit_description"></td></tr>
+					<tr class="expert_mode_only"><td><span class="TRANSLATEME_number_of_runs" data-tr-title="number_of_runs_description"></span></td><td><input type="number" id="number_of_runs" value="1" min="1" max="50" step="1" style="width: 40px;" data-tr-title="number_of_runs_description"></td></tr>
 				</table>
 				<div class="ribbon-group-title"><span class="TRANSLATEME_hyperparameters"></span></div>
 			</div>
@@ -154,10 +154,10 @@
 					</tr>
 					<tr>
 						<td>
-							<label class="ribbon-checkbox-label" for="jump_to_interesting_tab"><span class="symbol_button"><img height=16 src="_gui/icons/graph.svg" /></span> <span class="TRANSLATEME_autotab"></span></label>
+							<label class="ribbon-checkbox-label" for="jump_to_interesting_tab" data-tr-title="autotab_description"><span class="symbol_button"><img height=16 src="_gui/icons/graph.svg" /></span> <span class="TRANSLATEME_autotab"></span></label>
 						</td>
 						<td>
-							<input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked>
+							<input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" data-tr-title="autotab_description" checked>
 						</td>
 					</tr>
 					<tr class="expert_mode_only">

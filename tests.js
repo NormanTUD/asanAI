@@ -2064,10 +2064,37 @@ function test_prepare_site_for_training_always_clears_plot() {
 		wrapper.style.display = "block";
 		_model_fingerprint_unchanged = true;
 		prepare_site_for_training();
-		return plot.innerHTML === "" && wrapper.style.display === "none";
+		const placeholder = wrapper.querySelector(".plotly-loading-placeholder");
+		return plot.innerHTML === "" &&
+			wrapper.style.display !== "none" &&
+			!!placeholder &&
+			!!placeholder.querySelector(".spinner");
 	} finally {
 		_model_fingerprint_unchanged = old_unchanged;
+		_hide_plotly_loading_placeholder("plotly_epoch_history");
 		plot.innerHTML = old_html;
+		plot.style.display = old_plot_display;
+		wrapper.style.display = old_wrapper_display;
+	}
+}
+
+function test_plotly_loading_placeholder_clears_after_render() {
+	const plot = document.getElementById("plotly_epoch_history");
+	if (!plot) return false;
+	const wrapper = plot.parentElement;
+	const old_plot_display = plot.style.display;
+	const old_wrapper_display = wrapper.style.display;
+
+	try {
+		_show_plotly_loading_placeholder("plotly_epoch_history");
+		const shown = !!wrapper.querySelector(".plotly-loading-placeholder .spinner") &&
+			plot.getAttribute("aria-busy") === "true";
+		_hide_plotly_loading_placeholder("plotly_epoch_history");
+		const hidden = !wrapper.querySelector(".plotly-loading-placeholder") &&
+			!plot.hasAttribute("aria-busy");
+		return shown && hidden;
+	} finally {
+		_hide_plotly_loading_placeholder("plotly_epoch_history");
 		plot.style.display = old_plot_display;
 		wrapper.style.display = old_wrapper_display;
 	}
@@ -2368,6 +2395,7 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("mobile More panel exposes views and model actions", test_mobile_more_panel_markup(), true);
 	test_equal("ribbon labels toggle their checkboxes", test_ribbon_labels_toggle_checkboxes(), true);
 	test_equal("new training run always clears the old loss plot", test_prepare_site_for_training_always_clears_plot(), true);
+	test_equal("loss plot shows a loading spinner until the first render", test_plotly_loading_placeholder_clears_after_render(), true);
 	test_equal("augmented previews are drawn into the photo gallery canvas", await test_augmented_previews_go_to_gallery_canvas(), true);
 
 	var fit_data = await get_fit_data();
@@ -4753,6 +4781,91 @@ async function test_custom_csv_parses_once () {
 	test_equal("get_x_y_from_csv reuses the parsed CSV", calls, 0);
 
 	return calls === 0;
+}
+
+async function test_custom_csv_training_subset() {
+	var $saved_headers = $(".header_select").removeClass("header_select").addClass("header_select_saved");
+	var $headers = $("<div id='test_csv_subset_header_selects'></div>");
+	$headers.append("<select class='header_select' name='x'><option value='X' selected>X</option></select>");
+	$headers.append("<select class='header_select' name='y'><option value='Y' selected>Y</option></select>");
+	$("body").append($headers);
+
+	var rows = [];
+	for (var i = 0; i < 20; i++) {
+		rows.push(i + "," + (i * 2));
+	}
+	var parsed = parse_csv_file("x,y\n" + rows.join("\n") + "\n");
+
+	var $percentage = $("#csv_train_percentage");
+	var old_percentage = $percentage.val();
+	var old_shuffle = $("#shuffle_data").is(":checked");
+	var original_set_labels = window.set_labels;
+	window.set_labels = async function () {};
+
+	try {
+		$("#shuffle_data").prop("checked", false);
+
+		$percentage.val("50");
+		var subset = await get_x_y_from_csv(parsed, true);
+		var subset_count = subset.x.shape[0];
+
+		var preview = await get_x_y_from_csv(parsed, false);
+		var preview_count = preview.x.shape[0];
+
+		$percentage.val("100");
+		var all = await get_x_y_from_csv(parsed, true);
+		var all_count = all.x.shape[0];
+
+		test_equal("CSV training subset uses the requested share", subset_count, 10);
+		test_equal("CSV training subset keeps x and y aligned", subset.y.shape[0], subset_count);
+		test_equal("CSV training subset tracks unique original rows", new Set(subset.original_indices).size, subset_count);
+		test_equal("CSV training subset keeps original row indices in range", subset.original_indices.every(function (i) { return i >= 0 && i < 20; }), true);
+		test_equal("CSV preview still uses all rows", preview_count, 20);
+		test_equal("CSV training subset at 100% uses all rows", all_count, 20);
+	} finally {
+		window.set_labels = original_set_labels;
+		$percentage.val(old_percentage);
+		$("#shuffle_data").prop("checked", old_shuffle);
+		$headers.remove();
+		$saved_headers.removeClass("header_select_saved").addClass("header_select");
+	}
+
+	return true;
+}
+
+function test_csv_training_subset_helpers() {
+	var $percentage = $("#csv_train_percentage");
+	var old_value = $percentage.val();
+	var old_random = Math.random;
+	var ok = true;
+
+	try {
+		$percentage.val("20");
+		ok = ok && get_csv_train_percentage() === 20;
+		$percentage.val("0");
+		ok = ok && get_csv_train_percentage() === 1;
+		$percentage.val("150");
+		ok = ok && get_csv_train_percentage() === 100;
+		$percentage.val("not a number");
+		ok = ok && get_csv_train_percentage() === 100;
+
+		var subset = _select_random_subset_indices(20, 50);
+		ok = ok && subset.length === 10;
+		ok = ok && new Set(subset).size === 10;
+		ok = ok && subset.every(function (i) { return i >= 0 && i < 20; });
+		ok = ok && _select_random_subset_indices(20, 100) === null;
+		ok = ok && _select_random_subset_indices(0, 50) === null;
+
+		Math.random = function () { return 0.999999; };
+		var edge = _select_random_subset_indices(20, 50);
+		ok = ok && edge.indexOf(0) !== -1 && edge.indexOf(19) !== -1;
+	} finally {
+		Math.random = old_random;
+		$percentage.val(old_value);
+	}
+
+	test_equal("CSV training subset helpers validate percentage and sample the full range", ok, true);
+	return ok;
 }
 
 async function test_custom_csv_x_squared() {
@@ -13694,6 +13807,8 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_custom_csv_preview_updates_immediately()", await test_custom_csv_preview_updates_immediately(), true);
 		test_equal("test_custom_csv_parses_once()", await test_custom_csv_parses_once(), true);
 		test_equal("test_custom_csv_empty_headers_do_not_warn()", await test_custom_csv_empty_headers_do_not_warn(), true);
+		test_equal("test_custom_csv_training_subset()", await test_custom_csv_training_subset(), true);
+		test_equal("test_csv_training_subset_helpers()", test_csv_training_subset_helpers(), true);
 		test_equal("cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);
 		test_equal("test_custom_tensor()", await test_custom_tensor(), true);
 		test_equal("test_image_map_dense()", await test_image_map_dense(), true);

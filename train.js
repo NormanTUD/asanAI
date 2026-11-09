@@ -180,6 +180,8 @@ async function gui_not_in_training(set_started_training = 1) {
 	if (set_started_training) {
 		started_training = false;
 	}
+	_hide_plotly_loading_placeholder("plotly_epoch_history");
+	_hide_plotly_loading_placeholder("plotly_metric_history");
 	reset_start_stop_training_buttons();
 	await update_translations();
 	favicon_default();
@@ -979,6 +981,7 @@ async function get_fit_data () {
 			} else {
 				Plotly.update('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"], "Loss"));
 			}
+			_hide_plotly_loading_placeholder("plotly_epoch_history");
 		} catch (e) {
 			dbg("Error trying to write plotly_epoch_history plot!");
 		}
@@ -1464,6 +1467,7 @@ function _training_metric_display_name (key) {
 }
 
 function _clear_plotly_metric_history () {
+	_hide_plotly_loading_placeholder("plotly_metric_history");
 	$("#plotly_metric_history_div").hide();
 	$("#plotly_metric_history").html("");
 
@@ -1527,6 +1531,7 @@ function _update_training_metric_plot (epoch, metric_key, metric_value, val_metr
 		} else {
 			Plotly.update("plotly_metric_history", traces, layout);
 		}
+		_hide_plotly_loading_placeholder("plotly_metric_history");
 	} catch (e) {
 		dbg("Error trying to write plotly_metric_history plot: " + e);
 	}
@@ -1558,6 +1563,9 @@ function reset_training_live_metrics (config={}) {
 	var show_metric_card = !_training_metric_is_loss_like(configured_metric);
 
 	$("#tlm_metric_card").toggle(show_metric_card);
+	if(show_metric_card) {
+		_show_plotly_loading_placeholder("plotly_metric_history");
+	}
 	$("#tlm_metric_label").text(show_metric_card ? _training_metric_display_name(configured_metric) : "—");
 	$("#tlm_metric").text("—");
 	$("#tlm_metric_sub").text("").removeClass("tlm-better tlm-worse");
@@ -1669,7 +1677,40 @@ function update_training_live_metrics (state={}) {
 	}
 }
 
+function _show_plotly_loading_placeholder (plot_id) {
+	var plot = document.getElementById(plot_id);
+	if(!plot || !plot.parentElement) return;
+
+	var wrapper = plot.parentElement;
+	var placeholder = wrapper.querySelector(".plotly-loading-placeholder");
+
+	if(!placeholder) {
+		placeholder = document.createElement("div");
+		placeholder.className = "plotly-loading-placeholder";
+		placeholder.innerHTML = '<div class="spinner"></div>';
+		wrapper.appendChild(placeholder);
+	}
+
+	placeholder.style.display = "flex";
+	plot.setAttribute("aria-busy", "true");
+	wrapper.style.display = "";
+	plot.style.display = "";
+}
+
+function _hide_plotly_loading_placeholder (plot_id) {
+	var plot = document.getElementById(plot_id);
+	if(!plot || !plot.parentElement) return;
+
+	var placeholder = plot.parentElement.querySelector(".plotly-loading-placeholder");
+	if(placeholder) {
+		placeholder.remove();
+	}
+
+	plot.removeAttribute("aria-busy");
+}
+
 function _clear_plotly_epoch_history () {
+	_hide_plotly_loading_placeholder("plotly_epoch_history");
 	$("#plotly_epoch_history").parent().hide();
 	$("#plotly_epoch_history").html("");
 	_clear_plotly_metric_history();
@@ -2366,6 +2407,7 @@ function get_minimal_callbacks() {
 				} else {
 					Plotly.update('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"], "Loss"));
 				}
+				_hide_plotly_loading_placeholder("plotly_epoch_history");
 			} catch (e) {}
 
 			current_loss_value = logs.loss;
@@ -2837,6 +2879,9 @@ function prepare_site_for_training() {
 	// A training run always gets its own plot, even when the model/
 	// hyperparameter fingerprint is unchanged.
 	_clear_plotly_epoch_history();
+	// Reserve the plot's height with a spinner before the first epoch is
+	// rendered, so the content below does not jump when the curve appears.
+	_show_plotly_loading_placeholder("plotly_epoch_history");
 }
 
 async function set_input_shape_from_xs(x_and_y) {

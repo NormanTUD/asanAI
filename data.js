@@ -2375,7 +2375,7 @@ async function get_xy_data_for_noncustom_data() {
 	} else if (_data_origin == "tensordata") {
 		xy_data = get_xy_data_from_tensordata();
 	} else if (_data_origin == "csv") {
-		xy_data = await get_x_y_from_csv();
+		xy_data = await get_x_y_from_csv(null, true);
 	} else {
 		alert("Unknown data type: " + _data_origin);
 	}
@@ -3723,6 +3723,64 @@ function get_csv_seperator () {
 function shuffle_data_is_checked() {
 	return $("#shuffle_data").is(":checked");
 }
+
+function get_csv_train_percentage () {
+	var $input = $("#csv_train_percentage");
+	if(!$input.length) return 100;
+
+	var percentage = Math.round(parse_float($input.val()));
+	if(!isFinite(percentage)) return 100;
+	if(percentage < 1) return 1;
+	if(percentage > 100) return 100;
+	return percentage;
+}
+
+function _select_random_subset_indices (count, percentage) {
+	if(count <= 0 || percentage >= 100) return null;
+
+	var keep = Math.max(1, Math.round(count * percentage / 100));
+	if(keep >= count) return null;
+
+	var indices = Array.from({length: count}, (_, i) => i);
+
+	for(var i = 0; i < keep; i++) {
+		var j = i + Math.floor(Math.random() * (count - i));
+		var tmp = indices[i];
+		indices[i] = indices[j];
+		indices[j] = tmp;
+	}
+
+	return indices.slice(0, keep);
+}
+
+function _prepare_csv_training_rows (x_data, y_data, use_training_subset) {
+	var subset_indices = null;
+
+	if(use_training_subset) {
+		var total_rows = x_data["data"] ? x_data["data"].length : 0;
+		subset_indices = _select_random_subset_indices(total_rows, get_csv_train_percentage());
+
+		if(subset_indices) {
+			x_data["data"] = subset_indices.map(function (i) { return x_data["data"][i]; });
+			y_data["data"] = subset_indices.map(function (i) { return y_data["data"][i]; });
+			l(sprintf(language[lang]["csv_using_subset_for_training"], subset_indices.length, total_rows));
+		}
+	}
+
+	var row_indices = subset_indices ? subset_indices.slice() : (x_data["data"] ? Array.from({length: x_data["data"].length}, (_, i) => i) : []);
+
+	if(shuffle_data_is_checked()) {
+		if (x_data["data"] && x_data["data"].length) {
+			_shuffle_with_indices(x_data["data"], y_data["data"], row_indices);
+			csv_original_indices = row_indices;
+		} else {
+			shuffleCombo(x_data["data"], y_data["data"]);
+		}
+	} else {
+		csv_original_indices = row_indices;
+	}
+}
+
 function auto_one_hot_is_checked() {
 	return $("#auto_one_hot_y").is(":checked");
 }
@@ -3731,7 +3789,7 @@ function disable_auto_one_hot_encoding () {
 	$("#auto_one_hot_y").prop("checked", false);
 }
 
-async function get_x_y_from_csv (parsed_data = null) {
+async function get_x_y_from_csv (parsed_data = null, use_training_subset = false) {
 	if(csv_global_x) {
 		await dispose(csv_global_x);
 	}
@@ -3769,17 +3827,7 @@ async function get_x_y_from_csv (parsed_data = null) {
 		return "incomplete";
 	}
 
-	if(shuffle_data_is_checked()) {
-		if (x_data["data"] && x_data["data"].length) {
-			var csv_idx = Array.from({length: x_data["data"].length}, (_, i) => i);
-			_shuffle_with_indices(x_data["data"], y_data["data"], csv_idx);
-			csv_original_indices = csv_idx;
-		} else {
-			shuffleCombo(x_data["data"], y_data["data"]);
-		}
-	} else {
-		csv_original_indices = x_data["data"] ? Array.from({length: x_data["data"].length}, (_, i) => i) : [];
-	}
+	_prepare_csv_training_rows(x_data, y_data, use_training_subset);
 
 	if(auto_one_hot_is_checked()) {
 		if(y_headers.length == 1) {

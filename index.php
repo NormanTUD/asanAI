@@ -375,27 +375,27 @@
 				<div class="mobile-panel-section">
 					<div class="mobile-panel-section-title" data-tr-text="hyperparameters_label">Hyperparameters</div>
 					<div class="mobile-panel-row">
-						<span class="mobile-panel-label"><span class="TRANSLATEME_epochs"></span></span>
+						<span class="mobile-panel-label" data-tr-title="epochs_description"><span class="TRANSLATEME_epochs"></span></span>
 						<div class="mobile-panel-control">
-							<input type="number" id="mobile_epochs" value="30" min="1" step="10" onchange="$('#epochs').val(this.value).trigger('change');">
+							<input type="number" id="mobile_epochs" value="30" min="1" step="10" data-tr-title="epochs_description" onchange="$('#epochs').val(this.value).trigger('change');">
 						</div>
 					</div>
 					<div class="mobile-panel-row">
-						<span class="mobile-panel-label"><span class="TRANSLATEME_batch_size"></span></span>
+						<span class="mobile-panel-label" data-tr-title="batch_size_description"><span class="TRANSLATEME_batch_size"></span></span>
 						<div class="mobile-panel-control">
-							<input type="number" id="mobile_batchSize" value="10" min="1" step="5" onchange="$('#batchSize').val(this.value).trigger('change');">
+							<input type="number" id="mobile_batchSize" value="10" min="1" step="5" data-tr-title="batch_size_description" onchange="$('#batchSize').val(this.value).trigger('change');">
 						</div>
 					</div>
 					<div class="mobile-panel-row">
-						<span class="mobile-panel-label"><span class="TRANSLATEME_valsplit"></span> %</span>
+						<span class="mobile-panel-label" data-tr-title="valsplit_description"><span class="TRANSLATEME_valsplit"></span> %</span>
 						<div class="mobile-panel-control">
-							<input type="number" id="mobile_validationSplit" value="20" min="0" max="99" step="5" onchange="$('#validationSplit').val(this.value).trigger('change');">
+							<input type="number" id="mobile_validationSplit" value="20" min="0" max="99" step="5" data-tr-title="valsplit_description" onchange="$('#validationSplit').val(this.value).trigger('change');">
 						</div>
 					</div>
 					<div class="mobile-panel-row expert_mode_only">
-						<span class="mobile-panel-label"><span class="TRANSLATEME_number_of_runs"></span></span>
+						<span class="mobile-panel-label" data-tr-title="number_of_runs_description"><span class="TRANSLATEME_number_of_runs"></span></span>
 						<div class="mobile-panel-control">
-							<input type="number" id="mobile_number_of_runs" value="1" min="1" max="50" step="1" onchange="$('#number_of_runs').val(this.value).trigger('change');">
+							<input type="number" id="mobile_number_of_runs" value="1" min="1" max="50" step="1" data-tr-title="number_of_runs_description" onchange="$('#number_of_runs').val(this.value).trigger('change');">
 						</div>
 					</div>
 				</div>
@@ -513,9 +513,9 @@
 						<span class="TRANSLATEME_start_training_from_scratch"></span>
 					</button>
 					<div class="mobile-panel-row">
-						<span class="mobile-panel-label"><span class="TRANSLATEME_autotab"></span></span>
+						<span class="mobile-panel-label" data-tr-title="autotab_description"><span class="TRANSLATEME_autotab"></span></span>
 						<div class="mobile-panel-control">
-							<input type="checkbox" id="mobile_jump_to_interesting_tab" onchange="$('#jump_to_interesting_tab').prop('checked', this.checked);">
+							<input type="checkbox" id="mobile_jump_to_interesting_tab" data-tr-title="autotab_description" onchange="$('#jump_to_interesting_tab').prop('checked', this.checked);">
 						</div>
 					</div>
 					<div class="mobile-panel-row expert_mode_only">

@@ -16,6 +16,10 @@
 						<td><span class="TRANSLATEME_shuffle_data_before_validation_split"></span></td>
 						<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="shuffle_data" checked></td>
 					</tr>
+					<tr>
+						<td><span class="TRANSLATEME_csv_train_percentage" data-tr-title="csv_train_percentage_description"></span></td>
+						<td><input type="number" id="csv_train_percentage" value="100" min="1" max="100" step="5" style="width: 60px" data-tr-title="csv_train_percentage_description"> <span>%</span></td>
+					</tr>
 					<!--
 						<tr>
 							<td><span class='TRANSLATEME_auto_one_hot_encoding'></span></td>

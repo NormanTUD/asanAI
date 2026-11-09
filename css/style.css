@@ -3925,6 +3925,25 @@ td.confusion_matrix_tx.cm-hover {
 	height: 320px;
 }
 
+#plotly_epoch_history_div,
+#plotly_metric_history_div {
+	position: relative;
+}
+
+#plotly_epoch_history {
+	min-height: 450px;
+}
+
+.plotly-loading-placeholder {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	z-index: 3;
+}
+
 body.darkmode .tlm-heading {
 	color: rgba(255, 255, 255, 0.92);
 }
