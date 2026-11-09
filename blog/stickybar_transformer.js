@@ -130,16 +130,16 @@
 	/** Returns the HTML for the idle-state sub-panel. */
 	function buildIdlePanelHtml() {
 		return `
-	<div id="data-view-toggle" style="border: 1px solid #374151; border-radius: 8px; display: flex; align-items: center; gap: 0px; background: #1f2937; overflow: hidden; width: 220px; min-width: 160px; flex-shrink: 0;">
+	<div id="data-view-toggle" style="border: 1px solid #374151; border-radius: 8px; display: flex; align-items: center; gap: 0px; background: #1f2937; overflow: hidden; width: 240px; min-width: 180px; flex-shrink: 0;">
 	    <button id="view-toggle-train" 
 		onclick="setVisualizationMode('train')" 
-		style="padding: 8px 18px; border: 1px solid #3b82f6; border-radius: 6px 0 0 6px; background: #3b82f6; color: white; font-weight: bold; cursor: pointer; transition: all 0.15s; flex: 1;">
+		style="padding: 8px 18px; border: 1px solid #3b82f6; border-radius: 6px 0 0 6px; background: #3b82f6; color: white; font-weight: bold; cursor: pointer; transition: all 0.15s; flex: 1; white-space: nowrap;">
 		Training
 	    </button>
 	    
 	    <button id="view-toggle-inference" 
 		onclick="setVisualizationMode('inference')" 
-		style="padding: 8px 18px; border: 1px solid #374151; border-radius: 0 6px 6px 0; background: #1f2937; color: #9ca3af; font-weight: bold; cursor: pointer; transition: all 0.15s; flex: 1;">
+		style="padding: 8px 18px; border: 1px solid #374151; border-radius: 0 6px 6px 0; background: #1f2937; color: #9ca3af; font-weight: bold; cursor: pointer; transition: all 0.15s; flex: 1; white-space: nowrap;">
 		Inference
 	    </button>
 	</div>
