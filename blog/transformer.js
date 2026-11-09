@@ -8166,8 +8166,8 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 							<canvas id="${prefix}-tda-after-barcode" class="tm-tda-canvas tm-tda-canvas--barcode" aria-label="${isDe ? 'Barcodes der persistenten Homologie nach dem FFN' : 'Persistent homology barcodes after the FFN'}"></canvas>
 						</div>
 					</div>
-					<p class="tm-tda-explain" id="${prefix}-tda-explain" aria-live="polite"></p>
-					<p class="tm-tda-note">${isDe ? 'Bei so wenigen Tokens ist das eine explorative Diagnose, keine statistische Aussage. Die Wolken sind auf ihren eigenen Durchmesser normiert, damit die Formen vergleichbar bleiben; die Barcodes zeigen, wann Komponenten verschmelzen und wann Schleifen gefüllt werden. Für die Filtration werden höchstens die ersten 16 Tokens verwendet.' : 'With so few tokens this is an exploratory diagnostic, not a statistical claim. Each cloud is normalised by its own diameter so the shapes stay comparable; the barcodes show when components merge and when loops are filled. The filtration uses at most the first 16 tokens.'}</p>
+					<p class="tm-tda-explain" id="${prefix}-tda-explain"></p>
+					<p class="tm-tda-note">${isDe ? 'H1-Balken mit Persistenz unter 0.08 sind blass und zählen nicht als belastbare Struktur; die Schwelle ist eine heuristische Anzeigehilfe, kein statistischer Test. Bei so wenigen Tokens ist das eine explorative Diagnose, keine statistische Aussage. Die Wolken sind auf ihren eigenen Durchmesser normiert, damit die Formen vergleichbar bleiben; die Barcodes zeigen, wann Komponenten verschmelzen und wann Schleifen gefüllt werden. Für die Filtration werden höchstens die ersten 16 Tokens verwendet.' : 'H1 bars with persistence below 0.08 are drawn faintly and do not count as a reliable structure; the threshold is a heuristic display aid, not a statistical test. With so few tokens this is an exploratory diagnostic, not a statistical claim. Each cloud is normalised by its own diameter so the shapes stay comparable; the barcodes show when components merge and when loops are filled. The filtration uses at most the first 16 tokens.'}</p>
 				</div>
 			</details>
 			<div id="${prefix}-formula-body">

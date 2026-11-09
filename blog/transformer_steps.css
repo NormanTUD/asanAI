@@ -528,6 +528,7 @@
 }
 .tm-tda-chip b { color: var(--mn-text); font-size: 0.72rem; }
 .tm-tda-chip--after { border-color: var(--mn-accent, #3b82f6); }
+.tm-tda-chip--muted { border-style: dashed; opacity: 0.72; }
 .tm-tda-status {
 	margin: 2px 0 6px;
 	font: 600 0.7rem/1.4 "Open Sans", system-ui, sans-serif;

@@ -1329,6 +1329,7 @@
 	}
 
 	var tdaState = {};
+	var TDA_MIN_PERSISTENCE = 0.08;
 
 	function tdaSliderValue(prefix) {
 		var slider = document.getElementById(prefix + "-tda-eps");
@@ -1363,22 +1364,35 @@
 		return isFinite(value) ? value.toFixed(2) : "∞";
 	}
 
-	function tdaDeaths(topo) {
-		return topo.h0.filter(function (bar) { return isFinite(bar.death); })
-			.map(function (bar) { return bar.death; });
-	}
-
-	function tdaFirstLast(values) {
-		if (!values.length) return null;
-		var sorted = values.slice().sort(function (a, b) { return a - b; });
-		return { first: sorted[0], last: sorted[sorted.length - 1], count: sorted.length };
-	}
-
-	function tdaStableH1(topo) {
-		var bars = topo.h1.slice().sort(function (a, b) {
+	function tdaRobustH1(topo) {
+		return topo.h1.filter(function (bar) {
+			return !isFinite(bar.death) || bar.death - bar.birth >= TDA_MIN_PERSISTENCE;
+		}).sort(function (a, b) {
 			return (b.death - b.birth) - (a.death - a.birth);
 		});
-		return bars.length ? bars[0] : null;
+	}
+
+	function tdaComponentGap(before, after) {
+		var best = { diff: 0, eps: 0, b0b: 0, b0a: 0, start: 0, end: 0 };
+		var points = [];
+		for (var i = 0; i <= 100; i++) {
+			var eps = i / 100;
+			var b0b = window.TDAFFN.bettiAt(before.h0, eps);
+			var b0a = window.TDAFFN.bettiAt(after.h0, eps);
+			var point = { eps: eps, b0b: b0b, b0a: b0a, diff: b0a - b0b };
+			points.push(point);
+			if (Math.abs(point.diff) > Math.abs(best.diff)) {
+				best = { diff: point.diff, eps: eps, b0b: b0b, b0a: b0a, start: eps, end: eps };
+			}
+		}
+		if (best.diff === 0) return best;
+		var idx = Math.round(best.eps * 100);
+		var lo = idx, hi = idx;
+		while (lo > 0 && Math.sign(points[lo - 1].diff) === Math.sign(best.diff)) lo--;
+		while (hi < points.length - 1 && Math.sign(points[hi + 1].diff) === Math.sign(best.diff)) hi++;
+		best.start = points[lo].eps;
+		best.end = points[hi].eps;
+		return best;
 	}
 
 	function tdaBarText(bar, de) {
@@ -1393,91 +1407,110 @@
 		var de = DE();
 		var before = st.before.topo;
 		var after = st.after.topo;
+		var minP = TDA_MIN_PERSISTENCE.toFixed(2);
 		var sentences = [];
 		sentences.push(de
 			? (st.mode === "ffn"
-				? "Verglichen wird der normierte FFN-Eingang mit dem FFN-Update nach W₂."
-				: "Verglichen wird der Zustand h₁ vor dem FFN mit h₂ nach dem Residual-Schritt.")
+				? "Verglichen wird der normierte FFN-Eingang mit dem FFN-Update nach W₂; ε ist jeweils ein Anteil am eigenen Durchmesser der Wolke."
+				: "Verglichen wird der Zustand h₁ vor dem FFN mit h₂ nach dem Residual-Schritt; ε ist jeweils ein Anteil am eigenen Durchmesser der Wolke.")
 			: (st.mode === "ffn"
-				? "The comparison is the normalized FFN input against the FFN update after W₂."
-				: "The comparison is the state h₁ before the FFN against h₂ after the residual step."));
+				? "The comparison is the normalized FFN input against the FFN update after W₂; ε is a fraction of each cloud’s own diameter."
+				: "The comparison is the state h₁ before the FFN against h₂ after the residual step; ε is a fraction of each cloud’s own diameter."));
 
-		var db = tdaDeaths(before);
-		var da = tdaDeaths(after);
-		var nb = tdaFirstLast(db);
-		var na = tdaFirstLast(da);
-		if (nb && na) {
-			var close = nb.count === na.count &&
-				Math.abs(nb.first - na.first) < 0.03 &&
-				Math.abs(nb.last - na.last) < 0.03;
-			if (close) {
+		var gap = tdaComponentGap(before, after);
+		var b0b0 = window.TDAFFN.bettiAt(before.h0, 0);
+		var b0a0 = window.TDAFFN.bettiAt(after.h0, 0);
+		var gapWidth = gap.end - gap.start;
+		var gapStrong = gapWidth >= 0.05;
+		var startText = b0b0 === b0a0
+			? (de ? "Bei ε=0 starten beide mit " + b0b0 + " Komponenten." : "At ε=0 both start with " + b0b0 + " components.")
+			: (de ? "Bei ε=0 starten sie mit " + b0b0 + " bzw. " + b0a0 + " Komponenten." : "At ε=0 they start with " + b0b0 + " and " + b0a0 + " components.");
+		if (gap.diff === 0) {
+			sentences.push(de
+				? "Die H0-Kurven sind über die ganze Filtration identisch: Bei ε=0 starten vorher " + b0b0 + " und nachher " + b0a0 + " Komponenten, und sie verschmelzen bei denselben Radien. Der Layer verändert die Komponentenzahl in diesem Schnitt nicht."
+				: "The H0 curves are identical over the whole filtration: at ε=0 the cloud starts with " + b0b0 + " components before and " + b0a0 + " after, and they merge at the same radii. The layer does not change the component count on this slice.");
+		} else if (!gapStrong) {
+			sentences.push(de
+				? "Die H0-Kurven unterscheiden sich nur in einem schmalen Fenster um ε≈" + tdaFmt(gap.eps) + " (vorher " + gap.b0b + " von " + b0b0 + ", nachher " + gap.b0a + " von " + b0a0 + " Komponenten); die Breite ≈" + tdaFmt(gapWidth) + " ist zu klein für eine belastbare Aussage. " + startText
+				: "The H0 curves differ only in a narrow window around ε≈" + tdaFmt(gap.eps) + " (" + gap.b0b + " of " + b0b0 + " components before, " + gap.b0a + " of " + b0a0 + " after); the width ≈" + tdaFmt(gapWidth) + " is too small for a reliable claim. " + startText);
+		} else if (gap.diff > 0) {
+			var windowText = gap.end - gap.start < 0.005
+				? (de ? "Bei ε≈" + tdaFmt(gap.eps) + " " : "At ε≈" + tdaFmt(gap.eps) + " ")
+				: (de ? "Zwischen ε≈" + tdaFmt(gap.start) + " und ε≈" + tdaFmt(gap.end) + " " : "Between ε≈" + tdaFmt(gap.start) + " and ε≈" + tdaFmt(gap.end) + " ");
+			sentences.push(de
+				? "Die H0-Kurven trennen sich am stärksten bei ε≈" + tdaFmt(gap.eps) + ": vorher sind noch " + gap.b0b + " von " + b0b0 + " Komponenten übrig, nachher " + gap.b0a + " von " + b0a0 + ". " + windowText + "hält der Layer also " + gap.diff + " zusätzliche Komponente" + (gap.diff === 1 ? "" : "n") + " getrennt. " + startText
+				: "The H0 curves separate most strongly at ε≈" + tdaFmt(gap.eps) + ": " + gap.b0b + " of " + b0b0 + " components remain before, " + gap.b0a + " of " + b0a0 + " after. " + windowText + "the layer therefore keeps " + gap.diff + " extra component" + (gap.diff === 1 ? "" : "s") + " apart. " + startText);
+			if (gap.diff === 1 && gap.b0b === 1 && gap.b0a === 2) {
 				sentences.push(de
-					? "Die H0-Barcodes sind fast deckungsgleich: Vorher verschmelzen die Tokens zwischen ε≈" + tdaFmt(nb.first) + " und ε≈" + tdaFmt(nb.last) + ", nachher zwischen ε≈" + tdaFmt(na.first) + " und ε≈" + tdaFmt(na.last) + ". Die Cluster-Struktur bleibt in diesem Schnitt praktisch erhalten."
-					: "The H0 barcodes are almost identical: before, the tokens merge between ε≈" + tdaFmt(nb.first) + " and ε≈" + tdaFmt(nb.last) + "; after, between ε≈" + tdaFmt(na.first) + " and ε≈" + tdaFmt(na.last) + ". The cluster structure is practically preserved on this slice.");
-			} else {
-				var tail = na.last < nb.last - 0.03
-					? (de ? "Nachher ist die Wolke früher zu einer Komponente verbunden." : "Afterwards the cloud becomes one component earlier.")
-					: na.last > nb.last + 0.03
-						? (de ? "Nachher bleibt die Wolke länger getrennt." : "Afterwards the cloud stays separated longer.")
-						: (de ? "Die letzte Verschmelzung liegt ähnlich." : "The last merge is similar.");
-				sentences.push(de
-					? "Die H0-Barcodes unterscheiden sich: Vorher verschmelzen die Tokens zwischen ε≈" + tdaFmt(nb.first) + " und ε≈" + tdaFmt(nb.last) + ", nachher zwischen ε≈" + tdaFmt(na.first) + " und ε≈" + tdaFmt(na.last) + ". " + tail
-					: "The H0 barcodes differ: before, the tokens merge between ε≈" + tdaFmt(nb.first) + " and ε≈" + tdaFmt(nb.last) + "; after, between ε≈" + tdaFmt(na.first) + " and ε≈" + tdaFmt(na.last) + ". " + tail);
+					? "An dieser Stelle ist vorher alles eine Komponente, nachher zwei: Der Layer trennt einen zusammenhängenden topologischen Verband in zwei Teile."
+					: "At this radius everything is one component before and two after: the layer splits one connected topological object into two.");
 			}
-		} else if (nb || na) {
-			sentences.push(de
-				? "Nur eine der beiden Wolken hat endliche H0-Balken; die andere ist bereits bei ε=0 oder gar nicht verbunden."
-				: "Only one of the two clouds has finite H0 bars; the other is already connected at ε=0 or not at all.");
 		} else {
+			var merged = -gap.diff;
+			var windowText2 = gap.end - gap.start < 0.005
+				? (de ? "Bei ε≈" + tdaFmt(gap.eps) + " " : "At ε≈" + tdaFmt(gap.eps) + " ")
+				: (de ? "Zwischen ε≈" + tdaFmt(gap.start) + " und ε≈" + tdaFmt(gap.end) + " " : "Between ε≈" + tdaFmt(gap.start) + " and ε≈" + tdaFmt(gap.end) + " ");
 			sentences.push(de
-				? "Beide Wolken haben keine endlichen H0-Balken; alle Tokens sind schon bei ε=0 in einer Komponente."
-				: "Both clouds have no finite H0 bars; all tokens already form one component at ε=0.");
+				? "Die H0-Kurven fallen am stärksten bei ε≈" + tdaFmt(gap.eps) + " zusammen: vorher sind noch " + gap.b0b + " von " + b0b0 + " Komponenten übrig, nachher nur " + gap.b0a + " von " + b0a0 + ". " + windowText2 + "sind es " + merged + " Komponente" + (merged === 1 ? "" : "n") + " weniger. " + startText
+				: "The H0 curves collapse most strongly at ε≈" + tdaFmt(gap.eps) + ": " + gap.b0b + " of " + b0b0 + " components remain before, only " + gap.b0a + " of " + b0a0 + " after. " + windowText2 + "there are " + merged + " fewer component" + (merged === 1 ? "" : "s") + ". " + startText);
+			if (gap.diff === -1 && gap.b0b === 2 && gap.b0a === 1) {
+				sentences.push(de
+					? "An dieser Stelle sind vorher zwei Komponenten getrennt, nachher eine: Der Layer führt sie zusammen."
+					: "At this radius two components are separate before and one after: the layer merges them.");
+			}
 		}
 
-		var hb = tdaStableH1(before);
-		var ha = tdaStableH1(after);
+		var rb = tdaRobustH1(before);
+		var ra = tdaRobustH1(after);
+		var hb = rb.length ? rb[0] : null;
+		var ha = ra.length ? ra[0] : null;
+		var shortB = before.h1.length - rb.length;
+		var shortA = after.h1.length - ra.length;
 		if (hb && ha) {
 			var similar = Math.abs(hb.birth - ha.birth) < 0.03 &&
-				(!isFinite(hb.death) && !isFinite(ha.death) || isFinite(hb.death) && isFinite(ha.death) && Math.abs(hb.death - ha.death) < 0.03);
+				((!isFinite(hb.death) && !isFinite(ha.death)) ||
+					(isFinite(hb.death) && isFinite(ha.death) && Math.abs(hb.death - ha.death) < 0.03));
 			if (similar) {
 				sentences.push(de
-					? "Die H1-Barcodes sind fast deckungsgleich: " + tdaBarText(hb, true) + " (vorher) und " + tdaBarText(ha, true) + " (nachher). Die Schleifenstruktur bleibt erhalten."
-					: "The H1 barcodes are almost identical: " + tdaBarText(hb, false) + " (before) and " + tdaBarText(ha, false) + " (after). The loop structure is preserved.");
+					? "Eine belastbare H1-Schleife (Persistenz ≥ " + minP + ") entsteht vorher " + tdaBarText(hb, true) + ", nachher " + tdaBarText(ha, true) + ". Die Schleifenstruktur bleibt erhalten."
+					: "A reliable H1 loop (persistence ≥ " + minP + ") appears before " + tdaBarText(hb, false) + ", after " + tdaBarText(ha, false) + ". The loop structure is preserved.");
 			} else {
 				var pb = hb.death - hb.birth;
 				var pa = ha.death - ha.birth;
-				var tail1 = pa > pb + 0.05
-					? (de ? "Nachher hält die Schleife also länger." : "Afterwards the loop persists longer.")
+				var tail = pa > pb + 0.05
+					? (de ? "Nachher hält die Schleife länger." : "Afterwards the loop persists longer.")
 					: pa < pb - 0.05
 						? (de ? "Nachher wird sie früher gefüllt." : "Afterwards it is filled earlier.")
 						: (de ? "Die Persistenz ist ähnlich." : "The persistence is similar.");
 				sentences.push(de
-					? "Vorher entsteht die stabilste H1-Schleife " + tdaBarText(hb, true) + "; nachher " + tdaBarText(ha, true) + ". " + tail1
-					: "Before, the most persistent H1 loop is born " + tdaBarText(hb, false) + "; after, " + tdaBarText(ha, false) + ". " + tail1);
+					? "Eine belastbare H1-Schleife (Persistenz ≥ " + minP + ") entsteht vorher " + tdaBarText(hb, true) + ", nachher " + tdaBarText(ha, true) + ". " + tail
+					: "A reliable H1 loop (persistence ≥ " + minP + ") appears before " + tdaBarText(hb, false) + ", after " + tdaBarText(ha, false) + ". " + tail);
 			}
-			if (before.h1.length !== after.h1.length) {
+			if (rb.length !== ra.length) {
 				sentences.push(de
-					? "Insgesamt hat die Wolke vorher " + before.h1.length + " H1-Balken, nachher " + after.h1.length + "."
-					: "In total the cloud has " + before.h1.length + " H1 bars before and " + after.h1.length + " after.");
+					? "Insgesamt gibt es vorher " + rb.length + " belastbare H1-Balken, nachher " + ra.length + "."
+					: "In total there are " + rb.length + " reliable H1 bars before and " + ra.length + " after.");
+			}
+			if (shortB || shortA) {
+				sentences.push(de
+					? "Dazu kommen " + shortB + " kurzlebige H1-Balken vorher und " + shortA + " nachher (Persistenz < " + minP + "); sie werden blass gezeichnet und zählen nicht als belastbare Struktur."
+					: "There are also " + shortB + " short-lived H1 bars before and " + shortA + " after (persistence < " + minP + "); they are drawn faintly and do not count as a reliable structure.");
 			}
 		} else if (hb || ha) {
 			var only = hb || ha;
+			var otherShort = hb ? shortA : shortB;
 			sentences.push(de
-				? "Nur " + (hb ? "vorher" : "nachher") + " entsteht eine H1-Schleife (" + tdaBarText(only, true) + "); in der anderen Wolke bleibt H1 leer."
-				: "Only " + (hb ? "before" : "after") + " does an H1 loop appear (" + tdaBarText(only, false) + "); H1 stays empty in the other cloud.");
+				? "Eine belastbare H1-Schleife (Persistenz ≥ " + minP + ") entsteht nur " + (hb ? "vorher" : "nachher") + ": " + tdaBarText(only, true) + ". In der anderen Wolke gibt es " + (otherShort ? otherShort + " kurzlebige H1-Balken (Persistenz < " + minP + "), aber keine belastbare Schleife." : "keine H1-Balken.")
+				: "A reliable H1 loop (persistence ≥ " + minP + ") appears only " + (hb ? "before" : "after") + ": " + tdaBarText(only, false) + ". The other cloud has " + (otherShort ? otherShort + " short-lived H1 bars (persistence < " + minP + ") but no reliable loop." : "no H1 bars."));
+		} else if (before.h1.length || after.h1.length) {
+			sentences.push(de
+				? "H1 zeigt nur kurzlebige Balken: " + before.h1.length + " vorher und " + after.h1.length + " nachher, alle mit Persistenz < " + minP + ". Sie sind zu kurz für eine belastbare Aussage."
+				: "H1 shows only short-lived bars: " + before.h1.length + " before and " + after.h1.length + " after, all with persistence < " + minP + ". They are too short for a reliable claim.");
 		} else {
 			sentences.push(de
 				? "In beiden Wolken entsteht im gezeigten Bereich keine H1-Schleife; die H1-Barcodes sind leer."
 				: "No H1 loop appears in either cloud on the shown range; the H1 barcodes are empty.");
 		}
-
-		var b0b = window.TDAFFN.bettiAt(before.h0, st.eps);
-		var b1b = window.TDAFFN.bettiAt(before.h1, st.eps);
-		var b0a = window.TDAFFN.bettiAt(after.h0, st.eps);
-		var b1a = window.TDAFFN.bettiAt(after.h1, st.eps);
-		sentences.push(de
-			? "Beim aktuellen ε=" + st.eps.toFixed(2) + " hat die Wolke vorher b₀=" + b0b + ", b₁=" + b1b + "; nachher b₀=" + b0a + ", b₁=" + b1a + "."
-			: "At the current ε=" + st.eps.toFixed(2) + " the cloud has b₀=" + b0b + ", b₁=" + b1b + " before and b₀=" + b0a + ", b₁=" + b1a + " after.");
 		return sentences.join(" ");
 	}
 
@@ -1490,24 +1523,28 @@
 		var b1b = window.TDAFFN.bettiAt(st.before.topo.h1, st.eps);
 		var b0a = window.TDAFFN.bettiAt(st.after.topo.h0, st.eps);
 		var b1a = window.TDAFFN.bettiAt(st.after.topo.h1, st.eps);
+		var rb = tdaRobustH1(st.before.topo);
+		var ra = tdaRobustH1(st.after.topo);
+		var shortH1 = (st.before.topo.h1.length - rb.length) + (st.after.topo.h1.length - ra.length);
 		var betti = document.getElementById(prefix + "-tda-betti");
 		if (betti) {
 			betti.innerHTML = '<span class="tm-tda-chip">' + (DE() ? "Vorher" : "Before") + ' <b>b₀=' + b0b + '</b> <b>b₁=' + b1b + '</b></span>' +
-				'<span class="tm-tda-chip tm-tda-chip--after">' + (DE() ? "Nachher" : "After") + ' <b>b₀=' + b0a + '</b> <b>b₁=' + b1a + '</b></span>';
+				'<span class="tm-tda-chip tm-tda-chip--after">' + (DE() ? "Nachher" : "After") + ' <b>b₀=' + b0a + '</b> <b>b₁=' + b1a + '</b></span>' +
+				(shortH1 ? '<span class="tm-tda-chip tm-tda-chip--muted">H1 blass: kurzlebig (<' + TDA_MIN_PERSISTENCE.toFixed(2) + ')</span>' : '');
 		}
 		var status = document.getElementById(prefix + "-tda-status");
 		if (!status) return;
 		var d0 = b0a - b0b;
-		var d1 = b1a - b1b;
+		var d1 = ra.length - rb.length;
 		var parts = [];
-		if (d0 > 0) parts.push(DE() ? "trennt " + d0 + " zusätzliche Komponente" + (d0 === 1 ? "" : "n") : "splits into " + d0 + " extra component" + (d0 === 1 ? "" : "s"));
-		else if (d0 < 0) parts.push(DE() ? "führt " + (-d0) + " Komponente" + (-d0 === 1 ? "" : "n") + " zusammen" : "merges " + (-d0) + " component" + (-d0 === 1 ? "" : "s"));
-		if (d1 > 0) parts.push(DE() ? "erzeugt " + d1 + " zusätzliche Schleife" + (d1 === 1 ? "" : "n") : "creates " + d1 + " extra loop" + (d1 === 1 ? "" : "s"));
-		else if (d1 < 0) parts.push(DE() ? "füllt " + (-d1) + " Schleife" + (-d1 === 1 ? "" : "n") : "fills " + (-d1) + " loop" + (-d1 === 1 ? "" : "s"));
-		status.textContent = (DE() ? "Bei ε = " : "At ε = ") + st.eps.toFixed(2) + ": " +
-			(parts.length ? parts.join(" · ") : (DE() ? "H0 und H1 unverändert" : "H0 and H1 unchanged"));
-		var explain = document.getElementById(prefix + "-tda-explain");
-		if (explain) explain.textContent = tdaExplanation(prefix);
+		if (d0 > 0) parts.push(DE() ? "+" + d0 + " Komponente" + (d0 === 1 ? "" : "n") + " getrennt (bei diesem ε)" : "+" + d0 + " component" + (d0 === 1 ? "" : "s") + " separated (at this ε)");
+		else if (d0 < 0) parts.push(DE() ? "-" + (-d0) + " Komponente" + (-d0 === 1 ? "" : "n") + " zusammengeführt (bei diesem ε)" : "-" + (-d0) + " component" + (-d0 === 1 ? "" : "s") + " merged (at this ε)");
+		if (d1 > 0) parts.push(DE() ? "+" + d1 + " belastbare Schleife" + (d1 === 1 ? "" : "n") + " über die Filtration" : "+" + d1 + " reliable loop" + (d1 === 1 ? "" : "s") + " across the filtration");
+		else if (d1 < 0) parts.push(DE() ? "-" + (-d1) + " belastbare Schleife" + (-d1 === 1 ? "" : "n") + " über die Filtration" : "-" + (-d1) + " reliable loop" + (-d1 === 1 ? "" : "s") + " across the filtration");
+		else if (shortH1 && (st.before.topo.h1.length || st.after.topo.h1.length)) parts.push(DE() ? "H1 nur kurzlebig (<" + TDA_MIN_PERSISTENCE.toFixed(2) + ") über die Filtration" : "H1 only short-lived (<" + TDA_MIN_PERSISTENCE.toFixed(2) + ") across the filtration");
+		var current = (DE() ? "Bei ε = " : "At ε = ") + st.eps.toFixed(2) + ": " +
+			(DE() ? "vorher b₀=" + b0b + ", b₁=" + b1b + "; nachher b₀=" + b0a + ", b₁=" + b1a + "." : "before b₀=" + b0b + ", b₁=" + b1b + "; after b₀=" + b0a + ", b₁=" + b1a + ".");
+		status.textContent = current + (parts.length ? " " + parts.join(" · ") + "." : "");
 	}
 
 	function drawTDACloud(ctx, w, h, cloud, tokens, eps, before, mode) {
@@ -1625,6 +1662,13 @@
 			ctx.font = "700 9px Barlow, system-ui, sans-serif";
 			ctx.textAlign = "left";
 			ctx.fillText(group.name, 4, group.top + 9);
+			if (group.name === "H1" && group.bars.some(function (bar) {
+				return isFinite(bar.death) && bar.death - bar.birth < TDA_MIN_PERSISTENCE;
+			})) {
+				ctx.fillStyle = c.muted;
+				ctx.font = "600 7px Barlow, system-ui, sans-serif";
+				ctx.fillText(DE() ? "blass <" + TDA_MIN_PERSISTENCE.toFixed(2) : "faint <" + TDA_MIN_PERSISTENCE.toFixed(2), 22, group.top + 9);
+			}
 			if (!group.bars.length) {
 				ctx.fillStyle = c.muted;
 				ctx.font = "600 8px Barlow, system-ui, sans-serif";
@@ -1635,8 +1679,11 @@
 			group.bars.forEach(function (bar, i) {
 				var yy = group.top + (i + 0.5) * rowH;
 				var xd = isFinite(bar.death) ? tdaBarX(bar.death) : x1 - 4;
+				var persistence = isFinite(bar.death) ? bar.death - bar.birth : Infinity;
+				var shortBar = group.name === "H1" && persistence < TDA_MIN_PERSISTENCE;
 				ctx.strokeStyle = group.color;
-				ctx.globalAlpha = 0.9;
+				ctx.globalAlpha = shortBar ? 0.3 : 0.9;
+				ctx.setLineDash(shortBar ? [2, 3] : []);
 				ctx.lineWidth = Math.max(1.6, Math.min(3, rowH * 0.5));
 				ctx.beginPath();
 				ctx.moveTo(tdaBarX(bar.birth), yy);
@@ -1651,6 +1698,7 @@
 					ctx.fillStyle = group.color;
 					ctx.fill();
 				}
+				ctx.setLineDash([]);
 				ctx.globalAlpha = 1;
 			});
 		});
@@ -1727,6 +1775,8 @@
 			if (cur) drawTDABarcode(ctx, w, h, cur.after.topo, cur.eps);
 		});
 		tdaUpdateLabels(prefix);
+		var explain = document.getElementById(prefix + "-tda-explain");
+		if (explain) explain.textContent = tdaExplanation(prefix);
 		tdaRedraw(prefix);
 	}
 
