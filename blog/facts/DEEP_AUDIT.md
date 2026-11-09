@@ -1,10 +1,10 @@
 # Deep fact audit
 
-- lessons: 99
-- claims: 7388
-- statements: 17400
-- relations: 52709
-- uncovered years: 64
+- lessons: 100
+- claims: 7396
+- statements: 17422
+- relations: 52786
+- uncovered years: 69
 - uncovered quantities: 8
 - uncited specific claims: 307
 - citation keys not found in lesson: 0
@@ -58,6 +58,7 @@
 | inference_optimization | 41 | 81 | 365 | 0 | 0 |
 | inference_vs_training | 19 | 14 | 47 | 0 | 0 |
 | information_market | 27 | 63 | 159 | 0 | 0 |
+| initializers | 8 | 17 | 63 | 5 | 0 |
 | intro | 17 | 40 | 121 | 0 | 0 |
 | intuition | 32 | 261 | 750 | 1 | 0 |
 | knowledge_map | 15 | 0 | 14 | 0 | 0 |
@@ -107,7 +108,7 @@
 | training_infrastructure | 32 | 55 | 239 | 0 | 0 |
 | trainingdynamics | 23 | 29 | 140 | 0 | 0 |
 | traininglab | 15 | 7 | 67 | 0 | 0 |
-| transformer | 37 | 363 | 1198 | 0 | 2 |
+| transformer | 37 | 368 | 1212 | 0 | 2 |
 | unexpected_capabilities | 40 | 274 | 578 | 4 | 1 |
 | untold_history_i | 520 | 458 | 1503 | 3 | 0 |
 | untold_history_ii | 672 | 643 | 2025 | 6 | 0 |
@@ -130,6 +131,11 @@
 - human_mind.php: 1986
 - human_mind.php: 2007
 - human_mind.php: 2013
+- initializers.php: 1998
+- initializers.php: 2010
+- initializers.php: 2014
+- initializers.php: 2015
+- initializers.php: 2019
 - intuition.php: 2016
 - language.php: 1971
 - language.php: 1979
@@ -148,12 +154,7 @@
 - reliability.php: 2024
 - speech_audio.php: 2016
 - statistics_i.php: 2019
-- statistics_ii.php: 1915
-- statistics_ii.php: 1920
-- statistics_ii.php: 1924
-- statistics_ii.php: 1951
-- statistics_ii.php: 1952
-- … and 29 more
+- … and 34 more
 
 ## Uncovered quantities
 

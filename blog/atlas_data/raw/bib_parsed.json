@@ -5820,6 +5820,18 @@
    "year": "1994",
    "url": "https://web.archive.org/web/20260425113855/https://www.comp.hkbu.edu.hk/~markus/teaching/comp7650/tnn-94-gradient.pdf"
   },
+  "glorot2010understanding": {
+   "title": "Understanding the difficulty of training deep feedforward neural networks",
+   "author": "Xavier Glorot, Yoshua Bengio",
+   "year": "2010",
+   "url": "https://proceedings.mlr.press/v9/glorot10a.html"
+  },
+  "he2015delving": {
+   "title": "Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification",
+   "author": "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun",
+   "year": "2015",
+   "url": "https://arxiv.org/abs/1502.01852"
+  },
   "he2015resnet": {
    "title": "Deep Residual Learning for Image Recognition",
    "author": "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun",
@@ -21182,7 +21194,6 @@
    "normalizationlab"
   ],
   "zhang2019rmsnorm": [
-   "modern_transformer",
    "normalizationlab",
    "transformer"
   ],
@@ -21354,7 +21365,6 @@
    "history",
    "intuition",
    "math_iv",
-   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -22412,7 +22422,6 @@
   "su2021rope": [
    "attentionlab",
    "frontier",
-   "modern_transformer",
    "transformer"
   ],
   "peng2023yarn": [
@@ -22624,7 +22633,6 @@
    "attentionlab",
    "contextwindows",
    "inference_optimization",
-   "modern_transformer",
    "production_serving",
    "transformer"
   ],
@@ -22757,6 +22765,7 @@
   ],
   "gpt2": [
    "history",
+   "initializers",
    "intuition",
    "philosophy",
    "positionalembeddingslab",
@@ -22847,7 +22856,6 @@
   ],
   "shazeer2020glu": [
    "intuition",
-   "modern_transformer",
    "people_of_ai",
    "transformer"
   ],
@@ -30196,6 +30204,19 @@
   "hu2026humanguidance": [
    "vibe_coding"
   ],
+  "lecun1998gradient": [
+   "initializers"
+  ],
+  "glorot2010understanding": [
+   "initializers"
+  ],
+  "saxe2014deep": [
+   "initializers",
+   "loss_landscape"
+  ],
+  "he2015delving": [
+   "initializers"
+  ],
   "twocultures": [
    "intro"
   ],
@@ -30487,9 +30508,6 @@
    "loss_landscape"
   ],
   "ioffe2015batchnorm": [
-   "loss_landscape"
-  ],
-  "saxe2014deep": [
    "loss_landscape"
   ],
   "kawaguchi2016deep": [
@@ -31513,7 +31531,7 @@
    ]
   },
   "Yoshua Bengio": {
-   "count": 24,
+   "count": 25,
    "minyear": 1994,
    "maxyear": 2023,
    "keys": [
@@ -31522,6 +31540,7 @@
     "neuralprobabilistic",
     "lecun1998gradientbased",
     "bengio1994learning",
+    "glorot2010understanding",
     "glorot2011deep",
     "bengio2013representation",
     "bornschein2014reweighted",
@@ -46772,11 +46791,21 @@
     "bengio1994learning"
    ]
   },
+  "Xavier Glorot": {
+   "count": 2,
+   "minyear": 2010,
+   "maxyear": 2011,
+   "keys": [
+    "glorot2010understanding",
+    "glorot2011deep"
+   ]
+  },
   "Kaiming He": {
-   "count": 8,
+   "count": 9,
    "minyear": 2015,
    "maxyear": 2022,
    "keys": [
+    "he2015delving",
     "he2015resnet",
     "wu2018groupnorm",
     "ren2015faster",
@@ -46788,20 +46817,22 @@
    ]
   },
   "Xiangyu Zhang": {
-   "count": 3,
+   "count": 4,
    "minyear": 2015,
    "maxyear": 2016,
    "keys": [
+    "he2015delving",
     "he2015resnet",
     "he2016identity",
     "he2016resnet"
    ]
   },
   "Shaoqing Ren": {
-   "count": 4,
+   "count": 5,
    "minyear": 2015,
    "maxyear": 2016,
    "keys": [
+    "he2015delving",
     "he2015resnet",
     "ren2015faster",
     "he2016identity",
@@ -46809,10 +46840,11 @@
    ]
   },
   "Jian Sun": {
-   "count": 4,
+   "count": 5,
    "minyear": 2015,
    "maxyear": 2016,
    "keys": [
+    "he2015delving",
     "he2015resnet",
     "ren2015faster",
     "he2016identity",
@@ -47686,14 +47718,6 @@
    "keys": [
     "holtzman2019nucleus",
     "holtzman2020nucleus"
-   ]
-  },
-  "Xavier Glorot": {
-   "count": 1,
-   "minyear": 2011,
-   "maxyear": 2011,
-   "keys": [
-    "glorot2011deep"
    ]
   },
   "Kevin Gimpel": {

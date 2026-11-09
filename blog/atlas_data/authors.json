@@ -1200,7 +1200,6 @@
    "history",
    "intuition",
    "math_iv",
-   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -1795,6 +1794,7 @@
    "finetuninglab",
    "history",
    "hyperparameters",
+   "initializers",
    "intuition",
    "mechanistic_interpretability",
    "multimodal",
@@ -4126,6 +4126,7 @@
    "saxe2014exact"
   ],
   "cited_in": [
+   "initializers",
    "loss_landscape"
   ]
  },
@@ -6158,7 +6159,6 @@
    "history",
    "intuition",
    "math_iv",
-   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -7898,7 +7898,6 @@
   "cited_in": [
    "attentionlab",
    "frontier",
-   "modern_transformer",
    "positionalembeddingslab",
    "transformer"
   ]
@@ -21068,7 +21067,6 @@
    "zhang2019rmsnorm"
   ],
   "cited_in": [
-   "modern_transformer",
    "normalizationlab",
    "transformer"
   ]
@@ -29340,6 +29338,7 @@
    "fact_lookup",
    "history",
    "hyperparameters",
+   "initializers",
    "intuition",
    "math_iii",
    "mechanistic_interpretability",
@@ -30304,6 +30303,7 @@
   "cited_in": [
    "beyond_llms",
    "history",
+   "initializers",
    "intuition",
    "people_of_ai",
    "philosophy",
@@ -40843,7 +40843,6 @@
    "history",
    "intuition",
    "math_iv",
-   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -40909,6 +40908,7 @@
    "embeddinglab",
    "finetuninglab",
    "history",
+   "initializers",
    "intuition",
    "overandunderfittinglab",
    "people_of_ai",
@@ -42511,7 +42511,6 @@
    "history",
    "intuition",
    "math_iv",
-   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -42844,6 +42843,7 @@
   "cited_in": [
    "history",
    "human_mind",
+   "initializers",
    "loss_landscape",
    "minimalneuron",
    "people_of_ai"
@@ -42866,7 +42866,6 @@
    "attentionlab",
    "contextwindows",
    "inference_optimization",
-   "modern_transformer",
    "production_serving",
    "transformer"
   ]
@@ -44125,6 +44124,7 @@
    "beyond_llms",
    "history",
    "hyperparameters",
+   "initializers",
    "intuition",
    "people_of_ai",
    "philosophy",
@@ -44486,8 +44486,9 @@
   "city": "Beijing, China",
   "year": 2015.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
+   "he2015delving",
    "he2015resnet",
    "ren2015faster",
    "he2016identity",
@@ -44497,6 +44498,7 @@
    "autodiff",
    "computer_vision",
    "deeplearninglab",
+   "initializers",
    "loss_landscape",
    "origami",
    "people_of_ai",
@@ -44590,7 +44592,6 @@
   "cited_in": [
    "attentionlab",
    "frontier",
-   "modern_transformer",
    "positionalembeddingslab",
    "transformer"
   ]
@@ -47023,7 +47024,6 @@
    "attentionlab",
    "contextwindows",
    "inference_optimization",
-   "modern_transformer",
    "production_serving",
    "transformer"
   ]
@@ -48007,8 +48007,9 @@
   "city": "Cambridge, USA",
   "year": 2021.0,
   "conf": 1,
-  "works": 8,
+  "works": 9,
   "keys": [
+   "he2015delving",
    "he2015resnet",
    "wu2018groupnorm",
    "ren2015faster",
@@ -48022,6 +48023,7 @@
    "autodiff",
    "computer_vision",
    "deeplearninglab",
+   "initializers",
    "loss_landscape",
    "losslab",
    "normalizationlab",
@@ -49578,7 +49580,9 @@
   "keys": [
    "lecun1998gradient"
   ],
-  "cited_in": []
+  "cited_in": [
+   "initializers"
+  ]
  },
  {
   "name": "L. Chen",
@@ -50909,7 +50913,6 @@
    "history",
    "intuition",
    "math_iv",
-   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -55255,7 +55258,6 @@
    "attentionlab",
    "contextwindows",
    "inference_optimization",
-   "modern_transformer",
    "production_serving",
    "transformer"
   ]
@@ -57721,7 +57723,6 @@
    "history",
    "intuition",
    "math_iv",
-   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
@@ -58205,7 +58206,6 @@
    "intuition",
    "math_iv",
    "mixture_of_experts",
-   "modern_transformer",
    "music_video_generation",
    "optimizerlab",
    "origami",
@@ -58965,7 +58965,9 @@
   "keys": [
    "lecun1998gradient"
   ],
-  "cited_in": []
+  "cited_in": [
+   "initializers"
+  ]
  },
  {
   "name": "P. J. Grabowski",
@@ -62429,6 +62431,7 @@
    "beyond_llms",
    "history",
    "hyperparameters",
+   "initializers",
    "intuition",
    "people_of_ai",
    "philosophy",
@@ -62845,7 +62848,6 @@
    "embeddinglab",
    "history",
    "intuition",
-   "modern_transformer",
    "normalizationlab",
    "people_of_ai",
    "tokenizerlab",
@@ -66603,8 +66605,9 @@
   "city": "Palo Alto, USA",
   "year": 2015.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
+   "he2015delving",
    "he2015resnet",
    "ren2015faster",
    "he2016identity",
@@ -66614,6 +66617,7 @@
    "autodiff",
    "computer_vision",
    "deeplearninglab",
+   "initializers",
    "loss_landscape",
    "origami",
    "people_of_ai",
@@ -66895,7 +66899,6 @@
   "cited_in": [
    "attentionlab",
    "frontier",
-   "modern_transformer",
    "positionalembeddingslab",
    "transformer"
   ]
@@ -69129,6 +69132,7 @@
    "beyond_llms",
    "deeplearninglab",
    "diffusion",
+   "initializers",
    "loss_landscape"
   ]
  },
@@ -75175,12 +75179,14 @@
   "city": "Montreal, Canada",
   "year": 2011.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "glorot2010understanding",
    "glorot2011deep"
   ],
   "cited_in": [
-   "activationlab"
+   "activationlab",
+   "initializers"
   ]
  },
  {
@@ -75362,8 +75368,9 @@
   "city": "Beijing, China",
   "year": 2015.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
+   "he2015delving",
    "he2015resnet",
    "he2016identity",
    "he2016resnet"
@@ -75372,6 +75379,7 @@
    "autodiff",
    "computer_vision",
    "deeplearninglab",
+   "initializers",
    "loss_landscape",
    "origami",
    "people_of_ai",
@@ -75873,7 +75881,9 @@
   "keys": [
    "lecun1998gradient"
   ],
-  "cited_in": []
+  "cited_in": [
+   "initializers"
+  ]
  },
  {
   "name": "Y. Hoshino",
@@ -75906,7 +75916,9 @@
    "lecun1998gradient",
    "lecun2007icdar"
   ],
-  "cited_in": []
+  "cited_in": [
+   "initializers"
+  ]
  },
  {
   "name": "Y. Li",
@@ -77307,13 +77319,14 @@
   "city": "Montreal, Canada",
   "year": 2011.0,
   "conf": 1,
-  "works": 24,
+  "works": 25,
   "keys": [
    "cho2014gru",
    "bahdanau2014",
    "neuralprobabilistic",
    "lecun1998gradientbased",
    "bengio1994learning",
+   "glorot2010understanding",
    "glorot2011deep",
    "bengio2013representation",
    "bornschein2014reweighted",
@@ -77343,6 +77356,7 @@
    "embeddinglab",
    "history",
    "hyperparameters",
+   "initializers",
    "loss_landscape",
    "math_iv",
    "origami",
@@ -77427,7 +77441,6 @@
   "cited_in": [
    "attentionlab",
    "frontier",
-   "modern_transformer",
    "positionalembeddingslab",
    "transformer"
   ]
@@ -77850,7 +77863,6 @@
   "cited_in": [
    "attentionlab",
    "frontier",
-   "modern_transformer",
    "positionalembeddingslab",
    "transformer"
   ]
@@ -79231,7 +79243,6 @@
    "history",
    "intuition",
    "math_iv",
-   "modern_transformer",
    "music_video_generation",
    "origami",
    "overandunderfittinglab",
