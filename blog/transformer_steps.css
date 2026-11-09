@@ -1368,9 +1368,63 @@
 	color: var(--tm-muted, var(--mn-text-muted, #627476));
 	font: 600 0.62rem/1.2 "Open Sans", system-ui, sans-serif;
 }
+.tm-preln-block {
+	margin-bottom: 10px;
+}
+.tm-reveal-head {
+	cursor: pointer;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface, #fff);
+	padding: 10px 12px;
+	margin: 10px 0 12px;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.tm-reveal-head:hover,
+.tm-reveal-head:focus-visible,
+.tm-reveal-head.is-revealed {
+	border-color: var(--mn-accent, #3b82f6);
+	box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.12);
+	outline: none;
+}
+.tm-reveal-copy {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin-bottom: 8px;
+}
+.tm-reveal-title {
+	font-weight: 700;
+	color: var(--mn-text);
+}
+.tm-reveal-hint {
+	display: block;
+	margin-top: 8px;
+	font-size: 0.78rem;
+	line-height: 1.4;
+	color: var(--mn-text-muted);
+}
+.tm-preln-triple {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+	gap: 6px;
+	align-items: stretch;
+}
+.tm-preln-triple .tm-triple-cell .tm-residual-heatmap-canvas {
+	height: 150px;
+}
+.tm-ffn-abstract {
+	margin-bottom: 8px;
+	font: 700 0.95rem/1.4 "Barlow", "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text);
+}
+.tm-ffn-reveal-head .tm-layer-ffn-heatmap {
+	margin-bottom: 0;
+}
 @media (max-width: 900px) {
 	.tm-residual-triple { grid-template-columns: 1fr; }
 	.tm-triple-op { display: none; }
+	.tm-preln-triple { grid-template-columns: 1fr; }
+	.tm-preln-triple .tm-triple-op { display: none; }
 }
 
 /* No deepening left rail in expanded layer boxes. */

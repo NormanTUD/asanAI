@@ -1472,16 +1472,23 @@
 			source = trace.h_in.map(function (row, i) {
 				return row.map(function (v, j) { return (trace.h_out[i][j] || 0) - v; });
 			});
+		} else if (which === "normdelta") {
+			source = trace.h_in.map(function (row, i) {
+				return row.map(function (v, j) { return ((trace.normH && trace.normH[i] ? trace.normH[i][j] : 0) || 0) - v; });
+			});
+		} else if (which === "norm") {
+			source = trace.normH || trace.h_in;
 		} else {
 			source = which === "in" ? trace.h_in : trace.h_out;
 		}
 		var minAll = Infinity, maxAll = -Infinity;
-		if (which === "delta") {
+		if (which === "delta" || which === "normdelta") {
 			source.forEach(function (row) { row.forEach(function (v) { minAll = Math.min(minAll, v); maxAll = Math.max(maxAll, v); }); });
 		} else {
 			tokens.forEach(function (_, i) {
 				(trace.h_in[i] || []).forEach(function (v) { minAll = Math.min(minAll, v); maxAll = Math.max(maxAll, v); });
 				(trace.h_out[i] || []).forEach(function (v) { minAll = Math.min(minAll, v); maxAll = Math.max(maxAll, v); });
+				if (trace.normH && trace.normH[i]) trace.normH[i].forEach(function (v) { minAll = Math.min(minAll, v); maxAll = Math.max(maxAll, v); });
 			});
 		}
 		if (!isFinite(minAll) || !isFinite(maxAll)) { minAll = -1; maxAll = 1; }
@@ -2143,7 +2150,7 @@
 			{ type: "scatter", mode: "lines", x: cx, y: cy, fill: "toself", fillcolor: "rgba(59,130,246,0.12)", line: { color: "#3b82f6", width: 1 }, hoverinfo: "text", text: cx.map(function () { return hint; }), name: "unit circle" }
 		];
 	}
-	function plotlyConeTrace(items, color, name) {
+	function plotlyConeTrace(items, color, name, sizeref) {
 		if (!items || !items.length) return null;
 		return {
 			type: "cone",
@@ -2156,7 +2163,7 @@
 			colorscale: [[0, color], [1, color]],
 			showscale: false,
 			sizemode: "absolute",
-			sizeref: 0.32,
+			sizeref: (typeof sizeref === "number" && sizeref > 0) ? sizeref : 0.32,
 			anchor: "tip",
 			hoverinfo: "text",
 			text: items.map(function (p) { return p.tip || ""; }),
@@ -2377,7 +2384,7 @@
 			var from = projection.in[i], to = projection.out[i];
 			var angular = metric === "angular" && window.tmMetric && window.tmMetric.slerpPoints;
 			if (projection.is3d) {
-				var arc = angular ? window.tmMetric.slerpPoints(from, to, 24) : [from, to];
+				var arc = angular ? window.tmMetric.slerpPoints(from, to, 14) : [from, to];
 				traces.push({
 					type: "scatter3d", mode: "lines",
 					x: arc.map(function (p) { return p[0]; }), y: arc.map(function (p) { return p[1]; }), z: arc.map(function (p) { return p[2]; }),
@@ -2390,7 +2397,7 @@
 				if (cone) traces.push(cone);
 				markerPoints.push({ x: from[0], y: from[1], z: from[2], size: sel ? 6 : 4, color: col, symbol: "circle", hover: tip });
 			} else {
-				var arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 24).map(function (p) { return [p[0], p[1]]; }) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
+				var arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 14).map(function (p) { return [p[0], p[1]]; }) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
 				traces.push({
 					type: "scatter", mode: "lines+markers",
 					x: arc2.map(function (p) { return p[0]; }), y: arc2.map(function (p) { return p[1]; }),
@@ -2663,6 +2670,50 @@
 		typesetMathIn(panel);
 	}
 
+	function renderLayerPreLNTriple(layerIdx) {
+		var prefix = "unified-layer-" + layerIdx;
+		var pairs = [["in", "in"], ["delta", "normdelta"], ["out", "norm"]];
+		pairs.forEach(function (pair) {
+			var id = prefix + "-preln-" + pair[0];
+			var canvas = document.getElementById(id);
+			if (!canvas) return;
+			canvas.setAttribute("data-which", pair[1]);
+			if (window.TransformerSteps && window.TransformerSteps.renderLayerResidualHeatmap) {
+				window.TransformerSteps.renderLayerResidualHeatmap(id, layerIdx, pair[1]);
+			}
+		});
+	}
+
+	function wireRevealHeads(root) {
+		if (!root) return;
+		root.querySelectorAll("[data-reveal-target]").forEach(function (head) {
+			if (head._tmRevealBound) return;
+			head._tmRevealBound = true;
+			var target = document.getElementById(head.getAttribute("data-reveal-target"));
+			if (!target) return;
+			var isDetails = target.tagName === "DETAILS";
+			var sync = function () {
+				var open = isDetails ? target.open : !target.hidden;
+				head.classList.toggle("is-revealed", open);
+				head.setAttribute("aria-expanded", String(open));
+			};
+			var toggle = function () {
+				if (isDetails) target.open = !target.open;
+				else target.hidden = !target.hidden;
+				sync();
+			};
+			head.addEventListener("click", function (event) {
+				if (event.target.closest && event.target.closest("summary, a, button")) return;
+				toggle();
+			});
+			head.addEventListener("keydown", function (event) {
+				if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggle(); }
+			});
+			if (isDetails) target.addEventListener("toggle", sync);
+			sync();
+		});
+	}
+
 	function redrawTripleCanvases(triple) {
 		if (!triple || !triple.isConnected) return;
 		triple.querySelectorAll(".tm-residual-heatmap-canvas").forEach(function (canvas) {
@@ -2891,10 +2942,12 @@
 				Array.prototype.slice.call(attentionBody.querySelectorAll(".tm-layer-attention-lines")).forEach(function (el) { el.remove(); });
 				var normViz = document.getElementById(prefix + "-layernorm-viz");
 				var normStep = normViz ? normViz.closest(".tm-formula-step") : null;
+				var prelnBlock = document.getElementById(prefix + "-preln-block");
 				var outViz = document.getElementById(prefix + "-concat-viz");
 				var outStep = outViz ? outViz.closest(".tm-formula-step") : null;
 				var headsHost = attentionBody.querySelector('[id$="-attention-heads"]') || attentionBody.firstChild;
-				if (normStep && normStep.parentNode !== attentionBody) attentionBody.insertBefore(normStep, headsHost);
+				if (prelnBlock && prelnBlock.parentNode !== attentionBody) attentionBody.insertBefore(prelnBlock, headsHost);
+				else if (!prelnBlock && normStep && normStep.parentNode !== attentionBody) attentionBody.insertBefore(normStep, headsHost);
 				if (outStep && outStep.parentNode !== attentionBody) attentionBody.appendChild(outStep);
 			}
 			var logitHost = sb.querySelector(".tm-logit-lens-host");
@@ -2917,6 +2970,7 @@
 					if (!sub.open) return;
 					setTimeout(function () {
 						renderLayerTripleResiduals(idx);
+						renderLayerPreLNTriple(idx);
 						renderLayerFeaturePlots(idx);
 						renderLayerLogitLens(idx);
 					}, 60);
@@ -2937,6 +2991,8 @@
 					renderLayerLogitLens(idx);
 				}, 80);
 			}
+			wireRevealHeads(card);
+			renderLayerPreLNTriple(idx);
 			card.setAttribute("data-tm-enhanced", "1");
 			if (sub.open) {
 				scheduleLayerFeaturePlot(idx);
@@ -2968,6 +3024,7 @@
 				var idx = parseInt(card.getAttribute("data-layer-idx"), 10);
 				if (!isNaN(idx)) {
 					renderLayerTripleResiduals(idx);
+					renderLayerPreLNTriple(idx);
 					scheduleLayerFeaturePlot(idx, true);
 					renderLayerLogitLens(idx);
 				}
@@ -3722,6 +3779,7 @@
 			canvas.setAttribute("data-residual-heatmap-ready", "1");
 		},
 		enhanceLayerCards: enhanceLayerCards,
+		renderLayerPreLNTriple: renderLayerPreLNTriple,
 		renderLayerFeaturePlots: renderLayerFeaturePlots,
 		renderLayerLogitLens: renderLayerLogitLens,
 		renderLayerMigration: function (canvasId, layerIdx) {

@@ -3193,7 +3193,7 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 				const cone = window.tmPlotly.coneTrace([{ x: last[0], y: last[1] || 0, z: last[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], stepColor, step.label || 'step');
 				if (cone) traces.push(cone);
 			} else {
-				const arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 24).map(pt => [pt[0], pt[1]]) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
+				const arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 14).map(pt => [pt[0], pt[1]]) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
 				traces.push({ type: 'scatter', mode: 'lines+markers', x: arc2.map(pt => pt[0]), y: arc2.map(pt => pt[1]), line: { color: stepColor, width: 2 }, marker: { symbol: arc2.map((_, k) => k === arc2.length - 1 ? 'arrow' : 'circle'), size: arc2.map((_, k) => k === arc2.length - 1 ? 8 : (k === 0 ? 6 : 0)), color: stepColor, angleref: 'previous' }, hovertext: arc2.map(() => tip), hovertemplate: '%{hovertext}<extra></extra>', showlegend: false });
 			}
 		});
@@ -6200,7 +6200,7 @@ function _shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		const tip = _shift_metricTip(token, pos, rawBase[pos] || [], rawCombined[pos] || []);
 		const color = getPositionColor(pos, tokenStrings.length - 1);
 		const angular = window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular' && window.tmMetric.slerpPoints;
-		const arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 24).map(pt => [pt[0], pt[1]]) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
+		const arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 14).map(pt => [pt[0], pt[1]]) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
 		traces.push({
 			type: 'scatter', mode: 'lines+markers',
 			x: arc2.map(pt => pt[0]), y: arc2.map(pt => pt[1]),
@@ -6234,7 +6234,7 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		const tip = _shift_metricTip(token, pos, rawBase[pos] || [], rawCombined[pos] || []);
 		const color = getPositionColor(pos, tokenStrings.length - 1);
 		const angular3 = window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular' && window.tmMetric.slerpPoints;
-		const arc3 = angular3 ? window.tmMetric.slerpPoints(from, to, 24) : [from, to];
+		const arc3 = angular3 ? window.tmMetric.slerpPoints(from, to, 14) : [from, to];
 		traces.push({
 			type: 'scatter3d', mode: 'lines',
 			x: arc3.map(pt => pt[0]), y: arc3.map(pt => pt[1] || 0), z: arc3.map(pt => pt[2] || 0),
@@ -6243,7 +6243,7 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		const last3 = arc3[arc3.length - 1], prev3 = arc3[arc3.length - 2] || from;
 		const dx = last3[0] - prev3[0], dy = (last3[1] || 0) - (prev3[1] || 0), dz = (last3[2] || 0) - (prev3[2] || 0);
 		const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
-		const cone = window.tmPlotly.coneTrace([{ x: last3[0], y: last3[1] || 0, z: last3[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], color, token);
+		const cone = window.tmPlotly.coneTrace([{ x: last3[0], y: last3[1] || 0, z: last3[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], color, token, 0.22);
 		if (cone) traces.push(cone);
 		markerPoints.push({ x: from[0], y: from[1] || 0, z: from[2] || 0, size: 6, color: color, symbol: 'circle', hover: tip });
 		markerPoints.push({ x: to[0], y: to[1] || 0, z: to[2] || 0, size: 8, color: color, symbol: 'diamond', hover: tip });
@@ -7891,14 +7891,35 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 		<summary>${isDe ? 'FFN / MLP' : 'FFN / MLP'}</summary>
 		<div class="tm-layer-subbox-body" id="${prefix}-content">
 			<p class="tm-level-text">${isDe ? 'Hier stehen die exakten Matrizen dieser Schicht: Pre-LayerNorm, Query-, Key- und Value-Projektionen, die Softmax-Gewichte, der gewichtete Value-Mix, die Ausgabeprojektion, der Residual-Schritt, dann die FFN-Expansion, GELU und die Kompression. Jede Zeile ist eine Token-Position; jede Spalte eine Dimension.' : 'Here are the exact matrices of this layer: pre-LayerNorm, the query, key and value projections, the softmax weights, the weighted value mix, the output projection, the residual add, then the FFN expansion, GELU and compression. Each row is a token position; each column is a dimension.'}</p>
-			<canvas id="${prefix}-ffn-heatmap" class="tm-layer-ffn-heatmap" aria-label="${isDe ? 'FFN-Aktivierungen für alle Tokens in dieser Schicht' : 'FFN activations for all tokens in this layer'}"></canvas>
+			<div class="tm-preln-block" id="${prefix}-preln-block">
+				<div class="tm-reveal-head tm-preln-reveal-head" data-reveal-target="${prefix}-layernorm-step" role="button" tabindex="0" aria-expanded="false">
+					<div class="tm-reveal-copy">
+						<span class="tm-reveal-title">${isDe ? 'Pre-LN: Eingang → normiert' : 'Pre-LN: input → normalized'}</span>
+						<span class="tm-reveal-hint">${isDe ? 'Klicke auf die Heatmaps, um die LayerNorm-Formeln zu zeigen.' : 'Click the heatmaps to show the LayerNorm formulas.'}</span>
+					</div>
+					<div class="tm-preln-triple">
+						<div class="tm-triple-cell"><div class="tm-triple-label">${isDe ? 'Eingang' : 'input'}</div><canvas id="${prefix}-preln-in" class="tm-residual-heatmap-canvas" data-layer-idx="${layerIndex}" data-which="in"></canvas></div>
+						<span class="tm-triple-op">→</span>
+						<div class="tm-triple-cell"><div class="tm-triple-label">${isDe ? 'Norm-Änderung' : 'norm change'}</div><canvas id="${prefix}-preln-delta" class="tm-residual-heatmap-canvas" data-layer-idx="${layerIndex}" data-which="normdelta"></canvas></div>
+						<span class="tm-triple-op">=</span>
+						<div class="tm-triple-cell"><div class="tm-triple-label">${isDe ? 'Normiert' : 'normalized'}</div><canvas id="${prefix}-preln-out" class="tm-residual-heatmap-canvas" data-layer-idx="${layerIndex}" data-which="norm"></canvas></div>
+					</div>
+				</div>
+				<details class="tm-formula-step" id="${prefix}-layernorm-step"><summary>${isDe ? 'LayerNorm-Formeln' : 'LayerNorm formulas'}</summary><div id="${prefix}-layernorm-viz" class="tm-formula-block"></div></details>
+			</div>
+			<details class="tm-formula-step"><summary>${isDe ? 'Attention-Ausgabe + Residual' : 'Attention output + residual'}</summary><div id="${prefix}-concat-viz" class="tm-formula-block"></div><div id="${prefix}-h1-final-viz" class="tm-formula-block"></div></details>
+			<div class="tm-reveal-head tm-ffn-reveal-head" data-reveal-target="${prefix}-ffn-formulas" role="button" tabindex="0" aria-expanded="false">
+				<div class="tm-ffn-abstract">FFN(x) = W<sub>2</sub> · GELU(W<sub>1</sub>x + b<sub>1</sub>) + b<sub>2</sub></div>
+				<canvas id="${prefix}-ffn-heatmap" class="tm-layer-ffn-heatmap" aria-label="${isDe ? 'FFN-Aktivierungen für alle Tokens in dieser Schicht' : 'FFN activations for all tokens in this layer'}"></canvas>
+				<span class="tm-reveal-hint">${isDe ? 'Klicke auf die Aktivierungen, um Expansion, GELU, Kompression und den Residual-Schritt als Formeln zu zeigen.' : 'Click the activations to show expansion, GELU, compression and the residual step as formulas.'}</span>
+			</div>
 			<div id="${prefix}-formula-body">
-				<details class="tm-formula-step" open><summary>${isDe ? 'LayerNorm' : 'LayerNorm'}</summary><div id="${prefix}-layernorm-viz" class="tm-formula-block"></div></details>
-				<details class="tm-formula-step"><summary>${isDe ? 'Attention-Ausgabe + Residual' : 'Attention output + residual'}</summary><div id="${prefix}-concat-viz" class="tm-formula-block"></div><div id="${prefix}-h1-final-viz" class="tm-formula-block"></div></details>
-				<p class="tm-formula-kicker">${isDe ? 'Feed-Forward-Netz:' : 'Feed-Forward Network:'}</p>
-				<div id="${prefix}-step-1" class="math_transformer"></div>
-				<div id="${prefix}-step-2" class="math_transformer"></div>
-				<div id="${prefix}-step-3" class="math_transformer"></div>
+				<div id="${prefix}-ffn-formulas" hidden>
+					<p class="tm-formula-kicker">${isDe ? 'Feed-Forward-Netz:' : 'Feed-Forward Network:'}</p>
+					<div id="${prefix}-step-1" class="math_transformer"></div>
+					<div id="${prefix}-step-2" class="math_transformer"></div>
+					<div id="${prefix}-step-3" class="math_transformer"></div>
+				</div>
 				<details class="tm-formula-step"><summary>h_last</summary><div id="${prefix}-hlast" class="tm-hlast"></div></details>
 			</div>
 		</div>
@@ -7931,6 +7952,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 						renderLayerAttentionLines(layerIndex);
 						renderLayerFormulas(layerIndex);
 						renderLayerAttention(layerIndex);
+						if (window.TransformerSteps && window.TransformerSteps.renderLayerPreLNTriple) window.TransformerSteps.renderLayerPreLNTriple(layerIndex);
 					} else if (kind === 'ffn') {
 						renderLayerFFNHeatmap(layerIndex);
 						renderLayerFormulas(layerIndex);
@@ -7967,6 +7989,7 @@ function refreshOpenLayerSubboxes() {
 		} else if (kind === 'attention') {
 			renderLayerAttentionLines(idx);
 			renderLayerAttention(idx);
+			if (window.TransformerSteps && window.TransformerSteps.renderLayerPreLNTriple) window.TransformerSteps.renderLayerPreLNTriple(idx);
 		} else if (kind === 'ffn') {
 			renderLayerFFNHeatmap(idx);
 			renderLayerFormulas(idx);

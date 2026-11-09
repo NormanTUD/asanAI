@@ -31,17 +31,9 @@ https://arxiv.org/html/2505.11611v1
 <div class="md">
 Until now, this course has built one part of a machine at a time: [tokenization](tokenizerlab.php) chops text into integers, [embeddings](embeddinglab.php) turn the integers into vectors, [positional encoding](positionalembeddingslab.php) marks their order, [attention](attentionlab.php) lets tokens exchange information, the **FFN** transforms each token, the **unembedding** reads the result back out as a word, and the [loss](losslab.php), [backpropagation](backproplab.php) and [optimizer](optimizerlab.php) make the stack learn. This chapter assembles those parts into one machine and runs it. Every section below is one of those parts, shown as an equation and as its behavior on the live model; the chapter that introduced a part is linked where it first appears.
 
-An LLM is not a cloud: at this scale it is a stack of matrix multiplications that
-fits entirely in your browser. A browser is far too weak to train a good language
-model; this demo is for inspecting and following the computation step by step, not
-for building a useful model. Real models need terabytes of data and compute. The
-demo below trains one on the text you type, and the rest of the chapter walks
-through that same run — every step of the machinery, from tokenization over
-attention to the FFN block, the unembedding and the loss, is executed on screen and
-shown where its equation is derived. The hyperparameters below are the
-$d_{\text{model}}$, $h$ and $N$ of those equations: move any of them by one step and
-the change shows up, visibly, in the equations and plots that follow. **Play with
-the sliders:** moving them is part of understanding what the architecture does.
+An LLM is not a cloud: at this scale it is a stack of matrix multiplications that fits entirely in your browser. A browser is far too weak to train a good language model; this demo is for inspecting and following the computation step by step, not for building a useful model. Real models need terabytes of data and compute. The demo below trains one on the text you type, and the rest of the chapter walks through that same run. Tokenization, attention, the FFN block, the unembedding and the loss are all executed on screen, each shown where its equation is derived.
+
+Start with one of the ready-made examples; the manual hyperparameters sit one level deeper under **Advanced**. What matters for reading the equations is $d_{\text{model}}$, $h$, $N$ and the context size, and moving a slider by one step makes the change appear in the plots and formulas that follow. Each advanced slider states the reason for its constraint in its note. **Play with the sliders:** moving them is part of understanding what the architecture does.
 </div>
 
 <div class="md" id="step-config">
@@ -51,16 +43,9 @@ Long before the Transformer, sequence models were recurrent. An encoder read a s
 
 ## Hyperparameters for this demo
 
-A **hyperparameter** is a number you choose *before* training starts; the model learns everything else — its weights — from the data. This demo exposes four core hyperparameters, plus the FFN width below:
+A **hyperparameter** is a number you choose *before* training starts; the model learns everything else, its weights, from the data. The demo exposes the model width $d_{\text{model}}$, the number of attention heads $h$, the depth $N$, the context size and the FFN width. Their constraints follow from the shapes in the equations: $d_{\text{model}}$ must split evenly across the heads, and attention cost grows quadratically with the context. The notes on the advanced sliders repeat each constraint where you can change it. What hyperparameters are in general, and how practitioners find good values instead of guessing, is the subject of the [Hyperparameters](hyperparameters.php) chapter.
 
-| Hyperparameter | What it sets | Constraint |
-|---|---|---|
-| $d_{\text{model}}$ | the width of every vector in the network | a multiple of $h$ |
-| $h$ | the number of parallel attention heads | $d_{\text{model}} / h$ must be an integer |
-| $N$ | the number of stacked mix-then-transform blocks | — |
-| context size | the maximum number of tokens visible at once | attention cost grows quadratically with it |
-
-Each slider below carries a short note on why its constraint exists. What hyperparameters are in general, and how practitioners find good values instead of guessing, is the subject of the [Hyperparameters](hyperparameters.php) chapter.
+The steps below are the steps from the intuition chapter, now driven by the real numbers of the live model on this page. Read the heading, then look at the picture. The layer cards repeat the attention, feed-forward and residual steps for every layer, with the full formulas one level deeper.
 </div>
 
 
@@ -228,15 +213,6 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	if (typeof drawTrainingPlaceholder === 'function') drawTrainingPlaceholder();
 })();
 </script>
-
-<div class="md">
-## The steps, live
-
-These are the steps from the intuition chapter, now driven by the real numbers
-of the tiny model above. Read the heading, then look at the picture. The layer
-cards below repeat the attention, feed-forward and residual steps for every layer,
-with the full formulas one level deeper.
-</div>
 
 <div class="md">
 ## How to read the colors
