@@ -520,6 +520,28 @@ function testLazyRenderableDefers(ctx) {
 	ctx.setTimeout = oldTimeout;
 }
 
+
+function testActivations(ctx) {
+	check(ctx.activationValue('relu', -2) === 0, 'ReLU clamps negatives to zero');
+	check(ctx.activationValue('relu', 3) === 3, 'ReLU passes positives through');
+	check(approx(ctx.activationValue('silu', 0), 0, 1e-12), 'SiLU(0) is zero');
+	check(approx(ctx.activationValue('tanh', 0), 0, 1e-12), 'tanh(0) is zero');
+	check(approx(ctx.activationValue('gelu', 0), 0, 1e-12), 'GELU(0) is zero');
+
+	const normed = [[1, 2], [3, 4]];
+	const W1 = [[1, 0], [0, 1]];
+	const b1 = [0, 0];
+	const relu = ctx.ffnHiddenMatrix('relu', normed, W1, b1);
+	check(allApprox(relu, [[1, 2], [3, 4]]), 'dense FFN hidden uses the selected activation');
+
+	const Wg = [[2, 0], [0, 2]];
+	const bg = [1, 1];
+	const swiglu = ctx.ffnHiddenMatrix('swiglu', normed, W1, b1, Wg, bg);
+	check(approx(swiglu[0][0], ctx.siluApprox(1) * 3, 1e-12), 'SwiGLU gate multiplies the value projection');
+	check(approx(swiglu[0][1], ctx.siluApprox(2) * 5, 1e-12), 'SwiGLU gate is applied elementwise');
+	check(swiglu.length === 2 && swiglu[0].length === 2, 'SwiGLU keeps the hidden shape');
+}
+
 function main() {
 	const ctx = loadSandbox();
 	testSoftmax(ctx);
@@ -527,6 +549,7 @@ function main() {
 	testInitWeights(ctx);
 	testPositionalEncoding(ctx);
 	testCausalAttention(ctx);
+	testActivations(ctx);
 	testAttentionEngine(ctx);
 	testTrainingPlot(ctx);
 	testHeavyRenderQueue(ctx);

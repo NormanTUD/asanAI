@@ -32,6 +32,35 @@ function _tmStepWhy(kind) {
 	return '<p class="tm-step-why">' + (de ? entry.de : entry.en) + '</p>';
 }
 
+/* Feed-forward nonlinearities. GELU is the demo default; ReLU is the
+   original choice; SiLU and SwiGLU dominate modern open-weight models.
+   SwiGLU needs a second projection (Wg) and is handled as a gated variant. */
+var TM_ACTIVATIONS = {
+	gelu:   { label: "GELU", latex: "\\mathrm{GELU}", html: "GELU" },
+	relu:   { label: "ReLU", latex: "\\mathrm{ReLU}", html: "ReLU" },
+	silu:   { label: "SiLU / Swish", latex: "\\mathrm{SiLU}", html: "SiLU" },
+	tanh:   { label: "Tanh", latex: "\\tanh", html: "tanh" },
+	swiglu: { label: "SwiGLU", latex: "\\mathrm{SwiGLU}", html: "SwiGLU" }
+};
+window.tmActivation = window.tmActivation || "gelu";
+function tmActivationKind() {
+	var kind = window.tmActivation || "gelu";
+	return TM_ACTIVATIONS[kind] ? kind : "gelu";
+}
+function tmActivationInfo(kind) {
+	return TM_ACTIVATIONS[kind || tmActivationKind()] || TM_ACTIVATIONS.gelu;
+}
+function tmActivationLabel(kind) { return tmActivationInfo(kind).label; }
+function tmActivationLatex(kind) { return tmActivationInfo(kind).latex; }
+function tmActivationIsGated(kind) { return (kind || tmActivationKind()) === "swiglu"; }
+function tmFfnAbstractHtml() {
+	var kind = tmActivationKind();
+	if (tmActivationIsGated(kind)) {
+		return 'FFN(x) = W<sub>2</sub> · (SiLU(W<sub>1</sub>x + b<sub>1</sub>) ⊙ (W<sub>g</sub>x + b<sub>g</sub>)) + b<sub>2</sub>';
+	}
+	return 'FFN(x) = W<sub>2</sub> · ' + tmActivationInfo(kind).html + '(W<sub>1</sub>x + b<sub>1</sub>) + b<sub>2</sub>';
+}
+
 
 /*
 If you see stuff jumping around, try setting "overflow-anchor: none" to that element.
@@ -338,6 +367,7 @@ function lockArchitectureControls(lock) {
 		'transformer-depth',             // n_layers
 		'transformer-context-size',      // context size
 		'transformer-ffn-size',          // FFN hidden width
+		'transformer-ffn-activation',    // FFN nonlinearity
 		'transformer-tokenizer-type',    // tokenizer
 		'transformer-initializer',       // initializer
 		'transformer-preset',            // config preset
@@ -387,6 +417,7 @@ function getTransformerConfig() {
 		n_layers:    parseInt(document.getElementById('transformer-depth')?.value)             || 1,
 		temperature: parseFloat(document.getElementById('transformer-temperature')?.value)     || 1.0,
 		d_ff:        Math.max(1, d_ff),
+		activation:  tmActivationKind(),
 	};
 }
 
@@ -417,7 +448,7 @@ function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers, recor
 			const gamma2 = w.gamma2 || new Array(d_model).fill(1.0);
 			const beta2 = w.beta2 || new Array(d_model).fill(0.0);
 			const norm2 = calculateLayerNorm(result.h_attn, gamma2, beta2);
-			const outL1 = matMul(norm2, w.W1, w.b1).map(row => row.map(v => geluApprox(v)));
+			const outL1 = ffnHiddenMatrix(tmActivationKind(), norm2, w.W1, w.b1, w.Wg, w.bg);
 			const outFFN = matMul(outL1, w.W2, w.b2);
 
 			window.Prov.recordLayer(l, {
@@ -434,7 +465,7 @@ function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers, recor
 				attention: w.attention
 			}, 'R');
 
-			window.Prov.recordFfn(l, {
+			if (tmActivationKind() === 'gelu') window.Prov.recordFfn(l, {
 				gamma2, beta2,
 				norm2,
 				W1: w.W1, b1: w.b1,
@@ -483,6 +514,37 @@ function erfApprox(x) {
 
 function geluApprox(x) {
 	return 0.5 * x * (1 + erfApprox(x / Math.SQRT2));
+}
+
+function siluApprox(x) {
+	return x / (1 + Math.exp(-x));
+}
+
+function activationValue(kind, x) {
+	switch (kind || tmActivationKind()) {
+		case "relu": return Math.max(0, x);
+		case "silu": return siluApprox(x);
+		case "tanh": return Math.tanh(x);
+		case "gelu":
+		default: return geluApprox(x);
+	}
+}
+
+function activationMatrix(kind, matrix) {
+	return matrix.map(row => row.map(v => activationValue(kind, v)));
+}
+
+/* Hidden layer of the FFN. For SwiGLU the gate projection W1 (with SiLU)
+   multiplies a separate value projection Wg. Without Wg we fall back to the
+   dense SiLU activation so an older weight set never produces NaNs. */
+function ffnHiddenMatrix(kind, normed, W1, b1, Wg, bg) {
+	const gate = matMul(normed, W1, b1);
+	if (tmActivationIsGated(kind) && Wg) {
+		const value = matMul(normed, Wg, bg);
+		return gate.map((row, i) => row.map((v, j) => siluApprox(v) * ((value[i] && value[i][j]) || 0)));
+	}
+	const denseKind = tmActivationIsGated(kind) ? "silu" : kind;
+	return activationMatrix(denseKind, gate);
 }
 
 function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings = null, containerId = null, ffnLayerIndex = null) {
@@ -938,7 +1000,9 @@ function renderParamBreakdown(weights) {
 		const b1Params = countAllNumbers(layer.b1);
 		const w2Params = countAllNumbers(layer.W2);
 		const b2Params = countAllNumbers(layer.b2);
-		const ffnTotal = w1Params + b1Params + w2Params + b2Params;
+		const wgParams = countAllNumbers(layer.Wg || []);
+		const bgParams = countAllNumbers(layer.bg || []);
+		const ffnTotal = w1Params + b1Params + w2Params + b2Params + wgParams + bgParams;
 
 		const norm1Params = countAllNumbers(layer.gamma) + countAllNumbers(layer.beta);
 		const norm2Params = countAllNumbers(layer.gamma2 || []) + countAllNumbers(layer.beta2 || []);
@@ -951,7 +1015,7 @@ function renderParamBreakdown(weights) {
 		layerBreakdowns.push({
 			layer: l + 1,
 			attention: { q: qParams, k: kParams, v: vParams, o: oParams, total: attnTotal },
-			ffn: { w1: w1Params, b1: b1Params, w2: w2Params, b2: b2Params, total: ffnTotal },
+			ffn: { w1: w1Params, b1: b1Params, w2: w2Params, b2: b2Params, wg: wgParams, bg: bgParams, total: ffnTotal },
 			norm: { pre_attn: norm1Params, pre_ffn: norm2Params, total: normTotal },
 			total: attnTotal + ffnTotal + normTotal
 		});
@@ -1060,7 +1124,8 @@ function appendSunburstFFN(data, layerId, lb, d_model, d_ff) {
 	data.labels.push('FFN');
 	data.parents.push(layerId);
 	data.values.push(lb.ffn.total);
-	data.hoverTexts.push(`FFN: ${lb.ffn.total.toLocaleString()} params<br>W1 + b1 + W2 + b2`);
+	const hasGate = (lb.ffn.wg || 0) > 0;
+	data.hoverTexts.push(`FFN: ${lb.ffn.total.toLocaleString()} params<br>` + (hasGate ? 'W1 + b1 + gate + W2 + b2' : 'W1 + b1 + W2 + b2'));
 	data.colors.push(data.ffnColor);
 
 	const ffnChildren = [
@@ -1069,6 +1134,12 @@ function appendSunburstFFN(data, layerId, lb, d_model, d_ff) {
 		{ key: 'w2', label: 'W₂', desc: `Compression: ${d_ff}×${d_model}` },
 		{ key: 'b2', label: 'b₂', desc: `Bias: ${d_model}` }
 	];
+	if (hasGate) {
+		ffnChildren.splice(2, 0,
+			{ key: 'wg', label: 'W_g', desc: `SwiGLU gate: ${d_model}×${d_ff}` },
+			{ key: 'bg', label: 'b_g', desc: `SwiGLU gate bias: ${d_ff}` }
+		);
+	}
 
 	ffnChildren.forEach(({ key, label, desc }) => {
 		appendSunburstLeaf(data, `${ffnId}-${key}`, label, ffnId, lb.ffn[key], desc, data.ffnColor);
@@ -1193,7 +1264,9 @@ function buildSingleLayerRows(lb, fmt, pct) {
     </tr>`;
 
 	html += buildLayerSubRow('Attention (Q+K+V+O)', '#3b82f6', lb.attention.total, '4 × (d×d)', fmt, pct);
-	html += buildLayerSubRow('FFN (W₁+b₁+W₂+b₂)', '#f59e0b', lb.ffn.total, 'd×4d + 4d + 4d×d + d', fmt, pct);
+	const hasGate = (lb.ffn.wg || 0) > 0;
+	html += buildLayerSubRow(hasGate ? 'FFN (W₁+b₁+W_g+b_g+W₂+b₂)' : 'FFN (W₁+b₁+W₂+b₂)', '#f59e0b', lb.ffn.total,
+		hasGate ? '3 × (d×d_ff) + 3 × bias' : 'd×d_ff + d_ff + d_ff×d + d', fmt, pct);
 	html += buildLayerSubRow('LayerNorm (γ+β ×2)', '#10b981', lb.norm.total, '4 × d', fmt, pct, 'border-bottom:1px solid var(--mn-border, #e2e8f0);');
 
 	return html;
@@ -1374,6 +1447,40 @@ function applyTransformerInitializer(kind) {
 	renderInitializerHistogram();
 }
 window.applyTransformerInitializer = applyTransformerInitializer;
+
+function tmStepFfnFormulaTex() {
+	const kind = tmActivationKind();
+	if (tmActivationIsGated(kind)) {
+		return "\\operatorname{FFN}_{\\mathrm{SwiGLU}}(x) = W_2\\left(\\operatorname{SiLU}(W_1x+b_1)\\odot(W_gx+b_g)\\right)+b_2";
+	}
+	return "\\operatorname{FFN}(x) = W_2\\," + tmActivationLatex(kind) + "(W_1x+b_1)+b_2";
+}
+
+function _updateStepFfnFormula() {
+	const el = document.getElementById('tm-step-ffn-formula');
+	if (!el) return;
+	const tex = tmStepFfnFormulaTex();
+	el.setAttribute('data-tex', tex);
+	try {
+		if (window.temml && typeof temml.renderToString === 'function') {
+			el.innerHTML = temml.renderToString(tex, { displayMode: true });
+			el.setAttribute('data-tex-rendered', '1');
+		}
+	} catch (e) { /* leave the source for the next render pass */ }
+}
+
+function applyTransformerActivation(kind) {
+	const next = TM_ACTIVATIONS[kind] ? kind : 'gelu';
+	if (window.isTraining) return;
+	window.tmActivation = next;
+	window.currentWeights = null;
+	const ffnContainer = document.getElementById('ffn-equations-container');
+	if (ffnContainer) ffnContainer.innerHTML = '';
+	_updateStepFfnFormula();
+	if (typeof reset_graph === 'function') reset_graph();
+	if (typeof run_transformer_demo === 'function') run_transformer_demo();
+}
+window.applyTransformerActivation = applyTransformerActivation;
 
 window.showLayer = (containerId, layerIdx, numLayers) => {
     const activeContent = switchTab(containerId, layerIdx, numLayers,
@@ -1633,7 +1740,7 @@ function get_init_weights(n_layers, d_model, d_ff) {
 	d_ff = Math.max(1, parseInt(d_ff, 10) || d_model * 4);
 
 	for (let n = 0; n < n_layers; n++) {
-		weights.push({
+		const layer = {
 			// Norm 1 (Pre-Attention)
 			gamma: new Array(d_model).fill(1.0),
 			beta: new Array(d_model).fill(0.0),
@@ -1655,7 +1762,12 @@ function get_init_weights(n_layers, d_model, d_ff) {
 			b1: new Array(d_ff).fill(0),
 			W2: initWeights(d_ff, d_model, _initKind(), 1 / Math.sqrt(2 * n_layers)),
 			b2: new Array(d_model).fill(0)
-		});
+		};
+		if (tmActivationIsGated()) {
+			layer.Wg = initWeights(d_model, d_ff, _initKind());
+			layer.bg = new Array(d_ff).fill(0);
+		}
+		weights.push(layer);
 	}
 
 	show_nr_of_params();
@@ -1918,27 +2030,34 @@ function convert_weights_to_tensors(weights) {
 	const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
 
 	const vars = {
-		layers: weights.map(layer => ({
-			// Attention Weights
-			wq: tf.variable(tensor2d(layer.attention.query)),
-			wk: tf.variable(tensor2d(layer.attention.key)),
-			wv: tf.variable(tensor2d(layer.attention.value)),
-			wo: tf.variable(tensor2d(layer.attention.output)),
+		layers: weights.map(layer => {
+			const layerVars = {
+				// Attention Weights
+				wq: tf.variable(tensor2d(layer.attention.query)),
+				wk: tf.variable(tensor2d(layer.attention.key)),
+				wv: tf.variable(tensor2d(layer.attention.value)),
+				wo: tf.variable(tensor2d(layer.attention.output)),
 
-			// Layer Norm 1 Parameters
-			gamma: tf.variable(tensor1d(layer.gamma)),
-			beta: tf.variable(tensor1d(layer.beta)),
+				// Layer Norm 1 Parameters
+				gamma: tf.variable(tensor1d(layer.gamma)),
+				beta: tf.variable(tensor1d(layer.beta)),
 
-			// Layer Norm 2 Parameters (NEW)
-			gamma2: tf.variable(tensor1d(layer.gamma2 || new Array(layer.gamma.length).fill(1.0))),
-			beta2: tf.variable(tensor1d(layer.beta2 || new Array(layer.beta.length).fill(0.0))),
+				// Layer Norm 2 Parameters (NEW)
+				gamma2: tf.variable(tensor1d(layer.gamma2 || new Array(layer.gamma.length).fill(1.0))),
+				beta2: tf.variable(tensor1d(layer.beta2 || new Array(layer.beta.length).fill(0.0))),
 
-			// FFN Weights
-			w1: tf.variable(tensor2d(layer.W1)),
-			b1: tf.variable(tensor1d(layer.b1)),
-			w2: tf.variable(tensor2d(layer.W2)),
-			b2: tf.variable(tensor1d(layer.b2))
-		})),
+				// FFN Weights
+				w1: tf.variable(tensor2d(layer.W1)),
+				b1: tf.variable(tensor1d(layer.b1)),
+				w2: tf.variable(tensor2d(layer.W2)),
+				b2: tf.variable(tensor1d(layer.b2))
+			};
+			if (layer.Wg) {
+				layerVars.wg = tf.variable(tensor2d(layer.Wg));
+				layerVars.bg = tf.variable(tensor1d(layer.bg));
+			}
+			return layerVars;
+		}),
 		embeddings: tf.variable(tensor2d(embMatrix)),
 		vocab_map: vocab
 	};
@@ -2038,8 +2157,17 @@ function applySingleTransformerLayer(x, layer, n_heads, d_k, contextSize, d_mode
 
 	// Pre-LN + FFN
 	const normX2 = tf_layer_norm(x, layer.gamma2, layer.beta2);
-	let ffn = tf_gelu(add(tf.matMul(normX2, layer.w1), layer.b1));
-	ffn = add(tf.matMul(ffn, layer.w2), layer.b2);
+	const kind = tmActivationKind();
+	let ffn;
+	if (tmActivationIsGated(kind) && layer.wg) {
+		const gate = tf_silu(add(tf.matMul(normX2, layer.w1), layer.b1));
+		const value = add(tf.matMul(normX2, layer.wg), layer.bg);
+		ffn = add(tf.matMul(tf.mul(gate, value), layer.w2), layer.b2);
+	} else {
+		const denseKind = tmActivationIsGated(kind) ? 'silu' : kind;
+		ffn = tf_activation(denseKind, add(tf.matMul(normX2, layer.w1), layer.b1));
+		ffn = add(tf.matMul(ffn, layer.w2), layer.b2);
+	}
 	return add(x, ffn);
 }
 
@@ -2072,6 +2200,7 @@ function collectTrainableVars(weightVars) {
 			l.gamma, l.beta, l.gamma2, l.beta2,
 			l.w1, l.b1, l.w2, l.b2
 		);
+		if (l.wg) vars.push(l.wg, l.bg);
 	});
 	vars.push(weightVars.embeddings);
 	return vars;
@@ -2080,7 +2209,7 @@ function collectTrainableVars(weightVars) {
 async function convert_tensors_to_weights(vars) {
 	const newWeights = [];
 	for (const layer of vars.layers) {
-		newWeights.push({
+		const outLayer = {
 			attention: {
 				query: (await layer.wq.array()),
 				key: (await layer.wk.array()),
@@ -2095,7 +2224,12 @@ async function convert_tensors_to_weights(vars) {
 			beta: await layer.beta.array(),
 			gamma2: await layer.gamma2.array(),
 			beta2: await layer.beta2.array()
-		});
+		};
+		if (layer.wg) {
+			outLayer.Wg = await layer.wg.array();
+			outLayer.bg = await layer.bg.array();
+		}
+		newWeights.push(outLayer);
 	}
 
 	// Sync embeddings back to the global persistent space
@@ -2281,7 +2415,7 @@ function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_m
 	const h1 = matAdd(h0, projected);
 	const h2 = run_ffn_block(h1, layer, true, 0, knownTokens);
 	const ffn0 = (window.__tmFFNTrace || [])[0];
-	if (window.Prov && ffn0) {
+	if (window.Prov && ffn0 && tmActivationKind() === 'gelu') {
 		window.Prov.recordFfn(0, {
 			gamma2: ffn0.gamma2, beta2: ffn0.beta2, norm2: ffn0.normed_h1,
 			W1: ffn0.W1, b1: ffn0.b1, outL1: ffn0.out_L1,
@@ -3692,12 +3826,14 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, toke
 	let b1 = assertShape('b1', params.b1, d_ff, 1);
 	let W2 = assertShape('W2', params.W2, d_ff, d_model);
 	let b2 = assertShape('b2', params.b2, d_model, 1);
+	let Wg = params.Wg || null;
+	let bg = params.bg || null;
 	let gamma2 = params.gamma2 || new Array(d_model).fill(1.0);
 	let beta2 = params.beta2 || new Array(d_model).fill(0.0);
 
 	const normed_h1 = calculateLayerNorm(h1, gamma2, beta2);
 
-	const out_L1 = matMul(normed_h1, W1, b1).map(row => row.map(v => geluApprox(v)));
+	const out_L1 = ffnHiddenMatrix(tmActivationKind(), normed_h1, W1, b1, Wg, bg);
 
 	const out_FFN = matMul(out_L1, W2, b2);
 
@@ -3705,12 +3841,13 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, toke
 
 	if (window.__tmCollectLayerTrace) {
 		if (!window.__tmFFNTrace) window.__tmFFNTrace = [];
-		window.__tmFFNTrace[layerIndex] = { h1, normed_h1, out_L1, out_FFN, h2, W1, b1, W2, b2, gamma2, beta2 };
+		window.__tmFFNTrace[layerIndex] = { h1, normed_h1, out_L1, out_FFN, h2, W1, b1, W2, b2, Wg, bg, gamma2, beta2 };
 	}
 
 	if (!skipRender) {
-		// Provenance: record the FFN sublayer values
-		if (window.Prov) {
+		// Provenance: the FFN derivation cards assume GELU. Skip them for
+		// the other nonlinearities instead of showing a wrong formula.
+		if (window.Prov && tmActivationKind() === 'gelu') {
 			window.Prov.recordFfn(layerIndex, {
 				gamma2, beta2,
 				norm2: normed_h1,
@@ -3722,13 +3859,13 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, toke
 				h1
 			});
 		}
-		render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2, layerIndex, tokenStrings);
+		render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2, layerIndex, tokenStrings, Wg, bg);
 	}
 
 	return h2;
 }
 
-function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
+function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings, Wg, bg) {
 	ensureFFNLayerContainers(layerIndex);
 	const prefix = `unified-layer-${layerIndex}`;
 
@@ -3736,21 +3873,21 @@ function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, b
 	if (!contentDiv) return;
 
 	// Store latest data for deferred rendering
-	contentDiv._deferredFFNData = { h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings };
+	contentDiv._deferredFFNData = { h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings, Wg, bg };
 
 	if (contentDiv.style.display === 'none') {
 		contentDiv.dataset.ffnRendered = 'false';
 		return;
 	}
 
-	const hash = _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta);
+	const hash = _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta) + '|' + tmActivationKind() + '|' + (Wg ? 'gate' : '');
 
 	if (contentDiv.dataset.ffnRendered === 'true' && contentDiv._lastFFNHash === hash) {
 		return;
 	}
 
 	contentDiv._lastFFNHash = hash;
-	_writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings);
+	_writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings, Wg, bg);
 	contentDiv.dataset.ffnRendered = 'true';
 }
 
@@ -3798,7 +3935,7 @@ function _heightLockedUpdate(el, newHtml) {
 	return true;
 }
 
-function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
+function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings, Wg, bg) {
 	const naming = _ffnNaming(layerIndex);
 	const ts = tokenStrings || null;
 
@@ -3807,7 +3944,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	const step3 = document.getElementById(`${prefix}-step-3`);
 	if (!step1 || !step2 || !step3) return;
 
-	const step1Html = _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, ts);
+	const step1Html = _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, ts, Wg, bg);
 	const step2Html = _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts);
 	const step3Html = _buildFFNStep3Html(naming, h1, out_FFN, h2, ts);
 
@@ -3852,11 +3989,11 @@ function _ffnNaming(layerIndex) {
     return { L, sup, h1name, h2name, h1Stage };
 }
 
-function _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, ts) {
+function _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, ts, Wg, bg) {
     const { sup, h1name, h1Stage } = naming;
 
     const preLNHtml = _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta, ts);
-    const expansionHtml = _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts);
+    const expansionHtml = _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts, Wg, bg);
 
     return preLNHtml + expansionHtml;
 }
@@ -3875,16 +4012,35 @@ function _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta,
     </div>`;
 }
 
-function _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts) {
+function _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts, Wg, bg) {
     const isDe = !!(window.TM && TM.lang && TM.lang() === "de");
-    return `
-    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + GELU</strong></p>
-    ${_tmStepWhy("ffn-expansion")}
+    const kind = tmActivationKind();
+    const label = tmActivationLabel(kind);
+    const act = tmActivationLatex(kind);
+    const why = kind === "gelu"
+        ? _tmStepWhy("ffn-expansion")
+        : '<p class="tm-step-why">The FFN expands each token, applies ' + label + ', and compresses back. <b>Limit of this intuition:</b> the FFN cannot mix positions; it only transforms what attention delivered.</p>';
+    if (tmActivationIsGated(kind) && Wg) {
+        return `
+    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + SwiGLU gate</strong></p>
+    ${why}
 
-    $$ \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (expanded)}} = \\underbrace{\\text{GELU}}_{\\substack{\\text{Activation} \\\\ 0.5x(1 + \\text{erf}(x/\\sqrt{2}))}}\\!\\left(\\underbrace{\\text{Norm}(${h1name}${sup})}_{\\text{Normalized input}} \\cdot \\underbrace{W_1${sup}}_{\\substack{\\text{Expansion} \\\\ \\text{Weight Matrix}}} + \\underbrace{b_1${sup}}_{\\text{Expansion Bias}}\\right) $$
+    $$ \\underbrace{\\text{gate}${sup}}_{\\text{Gate}} = \\underbrace{\\operatorname{SiLU}}_{\\text{Activation}}\\!\\left(\\underbrace{\\text{Norm}(${h1name}${sup})}_{\\text{Normalized input}} \\cdot \\underbrace{W_1${sup}}_{\\text{Gate Weight}} + \\underbrace{b_1${sup}}_{\\text{Gate Bias}}\\right) $$
+    $$ \\underbrace{\\text{value}${sup}}_{\\text{Value}} = \\underbrace{\\text{Norm}(${h1name}${sup})}_{\\text{Normalized input}} \\cdot \\underbrace{W_g${sup}}_{\\text{Value Weight}} + \\underbrace{b_g${sup}}_{\\text{Value Bias}} $$
+    $$ \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (gated)}} = \\underbrace{\\text{gate}${sup}}_{\\text{Gate}} \\odot \\underbrace{\\text{value}${sup}}_{\\text{Value}} $$
 
     <div style="overflow-x:auto; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after GELU')}}_{\\text{out}_{L1}${sup}} = \\text{GELU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after SwiGLU')}}_{\\text{out}_{L1}${sup}} = \\operatorname{SiLU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) \\odot \\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(Wg)}}_{W_g${sup}} + \\underbrace{${vecToPmatrix(bg)}}_{b_g${sup}} \\right) $$
+    </div>`;
+    }
+    return `
+    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + ${label}</strong></p>
+    ${why}
+
+    $$ \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (expanded)}} = \\underbrace{${act}}_{\\text{Activation}}\\!\\left(\\underbrace{\\text{Norm}(${h1name}${sup})}_{\\text{Normalized input}} \\cdot \\underbrace{W_1${sup}}_{\\substack{\\text{Expansion} \\\\ \\text{Weight Matrix}}} + \\underbrace{b_1${sup}}_{\\text{Expansion Bias}}\\right) $$
+
+    <div style="overflow-x:auto; padding-bottom: 10px;">
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ' + label)}}_{\\text{out}_{L1}${sup}} = ${act}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
     </div>`;
 }
 
@@ -3899,7 +4055,7 @@ function _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts) {
     $$ \\underbrace{\\text{out}_{L2}${sup}}_{\\text{FFN output (compressed)}} = \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (expanded)}} \\cdot \\underbrace{W_2${sup}}_{\\substack{\\text{Compression} \\\\ \\text{Weight Matrix}}} + \\underbrace{b_2${sup}}_{\\text{Compression Bias}} $$
 
     <div style="overflow-x:auto; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after GELU')}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ' + tmActivationLabel())}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
     </div>`;
 }
 
@@ -3975,7 +4131,7 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 				attention: layer.attention
 			});
 			const ffn = (window.__tmFFNTrace || [])[n];
-			if (ffn) {
+			if (ffn && tmActivationKind() === 'gelu') {
 				window.Prov.recordFfn(n, {
 					gamma2: ffn.gamma2, beta2: ffn.beta2, norm2: ffn.normed_h1,
 					W1: ffn.W1, b1: ffn.b1, outL1: ffn.out_L1,
@@ -6320,6 +6476,20 @@ function tf_gelu(x) {
 	});
 }
 
+function tf_silu(x) {
+	return x.mul(x.sigmoid());
+}
+
+function tf_activation(kind, x) {
+	switch (kind || tmActivationKind()) {
+		case "relu": return x.relu();
+		case "silu": return tf_silu(x);
+		case "tanh": return x.tanh();
+		case "gelu":
+		default: return tf_gelu(x);
+	}
+}
+
 function applyTransformerPreset(name) {
 	if (!name || name === 'custom') return;
 	const presets = {
@@ -7894,7 +8064,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	<details class="tm-layer-subbox" data-sub="ffn">
 		<summary>${isDe ? 'FFN / MLP' : 'FFN / MLP'}</summary>
 		<div class="tm-layer-subbox-body" id="${prefix}-content">
-			<p class="tm-level-text">${isDe ? 'Hier stehen die exakten Matrizen dieser Schicht: Pre-LayerNorm, Query-, Key- und Value-Projektionen, die Softmax-Gewichte, der gewichtete Value-Mix, die Ausgabeprojektion, der Residual-Schritt, dann die FFN-Expansion, GELU und die Kompression. Jede Zeile ist eine Token-Position; jede Spalte eine Dimension.' : 'Here are the exact matrices of this layer: pre-LayerNorm, the query, key and value projections, the softmax weights, the weighted value mix, the output projection, the residual add, then the FFN expansion, GELU and compression. Each row is a token position; each column is a dimension.'}</p>
+			<p class="tm-level-text">${isDe ? 'Hier stehen die exakten Matrizen dieser Schicht: Pre-LayerNorm, Query-, Key- und Value-Projektionen, die Softmax-Gewichte, der gewichtete Value-Mix, die Ausgabeprojektion, der Residual-Schritt, dann die FFN-Expansion, die Aktivierung und die Kompression. Jede Zeile ist eine Token-Position; jede Spalte eine Dimension.' : 'Here are the exact matrices of this layer: pre-LayerNorm, the query, key and value projections, the softmax weights, the weighted value mix, the output projection, the residual add, then the FFN expansion, the activation and compression. Each row is a token position; each column is a dimension.'}</p>
 			<div class="tm-preln-block" id="${prefix}-preln-block">
 				<div class="tm-reveal-head tm-preln-reveal-head" data-reveal-target="${prefix}-layernorm-step" role="button" tabindex="0" aria-expanded="false">
 					<div class="tm-reveal-copy">
@@ -7913,9 +8083,9 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 			</div>
 			<details class="tm-formula-step"><summary>${isDe ? 'Attention-Ausgabe + Residual' : 'Attention output + residual'}</summary><div id="${prefix}-concat-viz" class="tm-formula-block"></div><div id="${prefix}-h1-final-viz" class="tm-formula-block"></div></details>
 			<div class="tm-reveal-head tm-ffn-reveal-head" data-reveal-target="${prefix}-ffn-formulas" role="button" tabindex="0" aria-expanded="false">
-				<div class="tm-ffn-abstract">FFN(x) = W<sub>2</sub> · GELU(W<sub>1</sub>x + b<sub>1</sub>) + b<sub>2</sub></div>
+				<div class="tm-ffn-abstract">${tmFfnAbstractHtml()}</div>
 				<canvas id="${prefix}-ffn-heatmap" class="tm-layer-ffn-heatmap" aria-label="${isDe ? 'FFN-Aktivierungen für alle Tokens in dieser Schicht' : 'FFN activations for all tokens in this layer'}"></canvas>
-				<span class="tm-reveal-hint">${isDe ? 'Klicke auf die Aktivierungen, um Expansion, GELU, Kompression und den Residual-Schritt als Formeln zu zeigen.' : 'Click the activations to show expansion, GELU, compression and the residual step as formulas.'}</span>
+				<span class="tm-reveal-hint">${isDe ? 'Klicke auf die Aktivierungen, um Expansion, Aktivierung, Kompression und den Residual-Schritt als Formeln zu zeigen.' : 'Click the activations to show expansion, activation, compression and the residual step as formulas.'}</span>
 			</div>
 			<div id="${prefix}-formula-body">
 				<div id="${prefix}-ffn-formulas" hidden>
@@ -8072,7 +8242,7 @@ function renderLayerFormulas(layerIdx) {
 	}
 	const ffn = trace.ffn || (window.__tmFFNTrace || [])[layerIdx];
 	if (ffn) {
-		render_ffn(ffn.h1, ffn.normed_h1, ffn.W1, ffn.b1, ffn.out_L1, ffn.W2, ffn.b2, ffn.out_FFN, ffn.h2, ffn.gamma2, ffn.beta2, layerIdx, tokens);
+		render_ffn(ffn.h1, ffn.normed_h1, ffn.W1, ffn.b1, ffn.out_L1, ffn.W2, ffn.b2, ffn.out_FFN, ffn.h2, ffn.gamma2, ffn.beta2, layerIdx, tokens, ffn.Wg, ffn.bg);
 	}
 	const hlast = document.getElementById(`${prefix}-hlast`);
 	if (hlast && layerIdx === (window.__tmLayerTrace || []).length - 1) {

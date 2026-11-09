@@ -98,8 +98,20 @@ The steps below are the steps from the intuition chapter, now driven by the real
 	    <label class="transformer-slider-label">FFN hidden size (<span class="tm-inline-math" data-tex="d_{\text{ff}}" data-tex-display="false"></span>): </label>
 	    <span id="ffn-val" class="transformer-slider-value">12</span>
 	    <p class="transformer-slider-note"><b>Effect:</b> Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.</p>
-	    <input type="range" id="transformer-ffn-size" min="1" max="256" step="1" value="12"
+	<input type="range" id="transformer-ffn-size" min="1" max="256" step="1" value="12"
 		oninput="syncTransformerSettings('ffn')">
+	</div>
+
+	<div class="transformer-config-field">
+	    <label class="transformer-slider-label">FFN activation</label>
+	    <select id="transformer-ffn-activation" style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" onchange="applyTransformerActivation(this.value)">
+		<option value="gelu" selected>GELU (transformer default)</option>
+		<option value="relu">ReLU (original 2017 choice)</option>
+		<option value="silu">SiLU / Swish</option>
+		<option value="tanh">Tanh</option>
+		<option value="swiglu">SwiGLU (gated, adds Wg)</option>
+	    </select>
+	    <p class="transformer-slider-note"><b>Effect:</b> the nonlinearity inside the feed-forward network. GELU is the transformer default; ReLU is the original choice; SiLU and SwiGLU are common in modern open-weight models. SwiGLU adds a second gate projection, so it raises the parameter count and changes the FFN formulas.</p>
 	</div>
 
 	<div class="transformer-config-field">
@@ -299,8 +311,8 @@ $$ \underbrace{ \color[RGB]{59,130,246}\text{“the} \ \color[RGB]{55,135,235}\t
 				<p>The FFN transforms one token at a time. The heatmap shows the hidden activations for every token: the pattern the layer writes back.</p>
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-ffn" aria-label="Feed-forward hidden activations"></canvas>
 				<p class="tm-step-more">The FFN expands the vector, applies a nonlinearity, and contracts it. It cannot see other positions; attention has already copied their information in.</p>
-				<div class="tm-step-formula" data-tex="\operatorname{FFN}(x) = W_2\,\operatorname{GELU}(W_1x+b_1)+b_2"></div>
-				<details class="tm-step-detail"><summary>Feed-forward in detail</summary><div class="tm-step-detail-body"><p>The FFN works on one token at a time. It expands the vector to a wider hidden layer, applies GELU, and contracts it back. Attention decides what to look at; the FFN decides what to do with it.</p><p>Most of the model's parameters and much of its factual recall live in these matrices, but knowledge is distributed. The layer cards below show the real expansion, activation and compression for every layer.</p></div></details></div>
+				<div class="tm-step-formula" id="tm-step-ffn-formula" data-tex="\operatorname{FFN}(x) = W_2\,\operatorname{GELU}(W_1x+b_1)+b_2"></div>
+				<details class="tm-step-detail"><summary>Feed-forward in detail</summary><div class="tm-step-detail-body"><p>The FFN works on one token at a time. It expands the vector to a wider hidden layer, applies the selected activation (GELU by default), and contracts it back. Attention decides what to look at; the FFN decides what to do with it.</p><p>Most of the model's parameters and much of its factual recall live in these matrices, but knowledge is distributed. The layer cards below show the real expansion, activation and compression for every layer.</p></div></details></div>
 			</section>
 	<section class="tm-step">
 				<div class="tm-step-head">
