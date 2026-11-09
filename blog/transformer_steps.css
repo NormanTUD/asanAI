@@ -358,8 +358,8 @@
    that reveal the concrete matrix formula underneath. */
 .tm-ffn-stages {
 	display: grid;
-	grid-template-columns: minmax(0, 1.25fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
-	gap: 8px;
+	grid-template-columns: 1fr;
+	gap: 10px;
 	align-items: stretch;
 	margin: 10px 0 14px;
 }
@@ -403,14 +403,37 @@
 }
 .tm-ffn-stage-plots { display: block; }
 .tm-ffn-stage-plots--two { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-.tm-ffn-stage-canvas { display: block; width: 100%; height: 150px; }
-.tm-ffn-stage-hint { display: block; margin-top: 4px; font-size: 0.7rem; color: var(--mn-text-muted); }
-.tm-ffn-stage-arrow { align-self: center; color: var(--mn-text-muted); font-weight: 700; }
-.tm-ffn-answer[hidden] { display: none; }
-@media (max-width: 900px) {
-	.tm-ffn-stages { grid-template-columns: 1fr; }
-	.tm-ffn-stage-arrow { display: none; }
+.tm-ffn-stage-canvas { display: block; width: 100%; height: 230px; }
+.tm-ffn-stage-arrow {
+	justify-self: center;
+	align-self: center;
+	transform: rotate(90deg);
+	color: var(--mn-text-muted);
+	font-weight: 700;
+	line-height: 1;
 }
+.tm-ffn-widthbar {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	margin: 2px 0 6px;
+}
+.tm-ffn-widthrow {
+	display: grid;
+	grid-template-columns: 82px minmax(0, 1fr);
+	gap: 6px;
+	align-items: center;
+	font: 600 0.64rem/1.2 "Open Sans", system-ui, sans-serif;
+	color: var(--mn-text-muted);
+}
+.tm-ffn-widthrow i {
+	display: block;
+	height: 6px;
+	min-width: 2px;
+	border-radius: 999px;
+	background: linear-gradient(90deg, var(--mn-accent, #3b82f6), var(--mn-emerald, #10b981));
+}
+.tm-ffn-answer[hidden] { display: none; }
 
 /* Step cards: the box itself is collapsible; details inside it are a second
    collapsible level, so the page stays calm until the reader asks for more. */

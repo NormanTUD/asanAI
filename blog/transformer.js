@@ -8098,25 +8098,24 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 						<canvas id="${prefix}-ffn-preln-in" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Eingang vor LayerNorm' : 'FFN input before LayerNorm'}"></canvas>
 						<canvas id="${prefix}-ffn-preln-out" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Eingang nach LayerNorm' : 'FFN input after LayerNorm'}"></canvas>
 					</div>
-					<span class="tm-ffn-stage-hint">${isDe ? 'Klicke für die Matrixformel' : 'Click for the matrix formula'}</span>
 				</div>
 				<span class="tm-ffn-stage-arrow" aria-hidden="true">→</span>
 				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-expand-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
 					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Expansion + ${tmActivationInfo(tmActivationKind()).html}</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-expand">d_model → d_ff</span></div>
+					<div class="tm-ffn-widthbar" id="${prefix}-ffn-width-expand" aria-hidden="true"></div>
 					<div class="tm-ffn-stage-formula" data-tex="${tmFfnExpansionAbstractTex()}" data-tex-display="false"></div>
 					<div class="tm-ffn-stage-plots">
 						<canvas id="${prefix}-ffn-heatmap" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Hidden-Aktivierungen für alle Tokens' : 'FFN hidden activations for all tokens'}"></canvas>
 					</div>
-					<span class="tm-ffn-stage-hint">${isDe ? 'Klicke für die Matrixformel' : 'Click for the matrix formula'}</span>
 				</div>
 				<span class="tm-ffn-stage-arrow" aria-hidden="true">→</span>
 				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-compress-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
 					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Compression</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-compress">d_ff → d_model</span></div>
+					<div class="tm-ffn-widthbar" id="${prefix}-ffn-width-compress" aria-hidden="true"></div>
 					<div class="tm-ffn-stage-formula" data-tex="${tmFfnCompressAbstractTex()}" data-tex-display="false"></div>
 					<div class="tm-ffn-stage-plots">
 						<canvas id="${prefix}-ffn-compress-heatmap" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Ausgabe nach der Kompression' : 'FFN output after compression'}"></canvas>
 					</div>
-					<span class="tm-ffn-stage-hint">${isDe ? 'Klicke für die Matrixformel' : 'Click for the matrix formula'}</span>
 				</div>
 			</div>
 			<div id="${prefix}-formula-body">

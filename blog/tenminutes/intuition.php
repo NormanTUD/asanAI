@@ -3456,6 +3456,10 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function posVector(position) {
 			return [posPE(position, 0), posPE(position, 1), posPE(position, 2)];
 		}
+		function posUnit(vec) {
+			var length = Math.hypot(vec[0], vec[1], vec[2]) || 1;
+			return [vec[0] / length, vec[1] / length, vec[2] / length];
+		}
 		function posMeasure(position) {
 			var v = posVector(position);
 			var length = Math.hypot(v[0], v[1], v[2]);
@@ -3497,17 +3501,19 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				minus[i] = -1.08;
 				var a = project(plus);
 				var b = project(minus);
-				var prev = b;
-				for (var seg = 1; seg <= 24; seg++) {
-					var u = seg / 24;
-					var p3 = [
-						minus[0] + (plus[0] - minus[0]) * u,
-						minus[1] + (plus[1] - minus[1]) * u,
-						minus[2] + (plus[2] - minus[2]) * u
-					];
-					var q = project(p3);
-					addLine(prev.x, prev.y, prev.z, q.x, q.y, q.z, posRgba(c[POS_COLORS[i]], 0.45), 1.4);
-					prev = q;
+				if (posMetric !== "angle") {
+					var prev = b;
+					for (var seg = 1; seg <= 24; seg++) {
+						var u = seg / 24;
+						var p3 = [
+							minus[0] + (plus[0] - minus[0]) * u,
+							minus[1] + (plus[1] - minus[1]) * u,
+							minus[2] + (plus[2] - minus[2]) * u
+						];
+						var q = project(p3);
+						addLine(prev.x, prev.y, prev.z, q.x, q.y, q.z, posRgba(c[POS_COLORS[i]], 0.45), 1.4);
+						prev = q;
+					}
 				}
 				pillData.push({ x: a.x, y: a.y, color: c[POS_COLORS[i]], text: label });
 			});
@@ -3563,12 +3569,32 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				}
 			}
 
+			if (posMetric === "angle") {
+				for (var ringAxis = 0; ringAxis < 3; ringAxis++) {
+					var prevRing = null;
+					var uAxis = [0, 0, 0];
+					var wAxis = [0, 0, 0];
+					uAxis[(ringAxis + 1) % 3] = 1;
+					wAxis[(ringAxis + 2) % 3] = 1;
+					for (var ringStep = 0; ringStep <= 64; ringStep++) {
+						var ringAngle = ringStep / 64 * Math.PI * 2;
+						var ringPoint = project([
+							Math.cos(ringAngle) * uAxis[0] + Math.sin(ringAngle) * wAxis[0],
+							Math.cos(ringAngle) * uAxis[1] + Math.sin(ringAngle) * wAxis[1],
+							Math.cos(ringAngle) * uAxis[2] + Math.sin(ringAngle) * wAxis[2]
+						]);
+						if (prevRing) addLine(prevRing.x, prevRing.y, prevRing.z, ringPoint.x, ringPoint.y, ringPoint.z, posRgba(c.sky, 0.32), 1.2);
+						prevRing = ringPoint;
+					}
+				}
+			}
+
 			if (posShown > 0.01) {
 				var steps = Math.max(2, Math.min(1600, Math.ceil(posShown / POS_CURVE_STEP)));
-				var prev = project(posVector(0));
+				var prev = project(posMetric === "angle" ? posUnit(posVector(0)) : posVector(0));
 				for (var i = 1; i <= steps; i++) {
 					var t = posShown * i / steps;
-					var q = project(posVector(t));
+					var q = project(posMetric === "angle" ? posUnit(posVector(t)) : posVector(t));
 					addLine(prev.x, prev.y, prev.z, q.x, q.y, q.z, posRgba(c.sky, 0.42), 1.6, null, "butt");
 					prev = q;
 				}
@@ -3602,12 +3628,17 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					ctx.stroke();
 				}
 			});
+			if (posMetric === "angle") {
+				var tokenDir = posUnit(tokenVec);
+				var tokenDirTip = project([tokenDir[0], tokenDir[1], tokenDir[2]]);
+				addLine(tokenTip.x, tokenTip.y, tokenTip.z, tokenDirTip.x, tokenDirTip.y, tokenDirTip.z, posRgba(c.sky, 0.4), 1.2, [4, 4]);
+			}
 			pillData.push({ x: tokenTip.x, y: tokenTip.y - 16, color: c.sky, text: DE ? "Token" : "token" });
 			var tokenCenter = [tokenVec[0] * 0.55, tokenVec[1] * 0.55, tokenVec[2] * 0.55];
 			addRing(tokenCenter, tokenVec, 0.15, posRgba(c.sky, 0.34), 1.2);
 			addRing(tokenCenter, tokenVec, 0.22, posRgba(c.sky, 0.18), 1);
 
-			var v = posVector(posShown);
+			var v = posMetric === "angle" ? posUnit(posVector(posShown)) : posVector(posShown);
 			var tip = project(v);
 			var origin = project([0, 0, 0]);
 			v.forEach(function (val, i) {
@@ -3654,7 +3685,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				var tLen = Math.hypot(tokenVec[0], tokenVec[1], tokenVec[2]) || 1;
 				var dirV = [v[0] / vLen, v[1] / vLen, v[2] / vLen];
 				var dirT = [tokenVec[0] / tLen, tokenVec[1] / tLen, tokenVec[2] / tLen];
-				var arcRadius = Math.min(0.55, Math.max(0.3, tLen));
+				var arcRadius = 1;
 				var prevArc = null;
 				for (var ar = 0; ar <= 48; ar++) {
 					var mix = ar / 48;
@@ -3748,7 +3779,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			if (posSlider) {
 				posSlider.addEventListener("input", function () {
 					pos = TM.clamp(parseInt(posSlider.value, 10) || 0, 0, 10000);
-					if (posReduce) posShown = pos;
+					if (posReduce || window.__tmHeightReserving) posShown = pos;
 					if (posCountOut) posCountOut.textContent = String(pos);
 					posRenderOut();
 					if (posApi) posApi.redraw({ spinner: false });
@@ -4417,6 +4448,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var posSliders = ["#ipe-heat-context", "#ipe-heat-dims", "#ipe-pos"];
 			var maxHeatOut = 0, maxPosOut = 0, maxPosPane = 0;
 			var posPane = document.getElementById("step-position");
+			window.__tmHeightReserving = true;
 			for (var ps = 0; ps < posSliders.length; ps++) {
 				var slider = document.querySelector(posSliders[ps]);
 				if (!slider) continue;
@@ -4435,6 +4467,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				slider.value = original;
 				slider.dispatchEvent(new Event("input", { bubbles: true }));
 			}
+			window.__tmHeightReserving = false;
 			var mobile = window.innerWidth < 640;
 			setMin("#ipe-heat-out", Math.max(maxHeatOut, mobile ? 150 : 90));
 			setMin("#ipe-out", Math.max(maxPosOut, mobile ? 120 : 80));
@@ -4489,16 +4522,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			window.__tmHeightsReserved = true;
 		}
 		window.addEventListener("load", start);
-		var timer = null;
-		window.addEventListener("resize", function () {
-			clearTimeout(timer);
-			timer = setTimeout(async function () {
-				window.__tmHeightsReserved = false;
-				if (document.fonts && document.fonts.ready) await document.fonts.ready;
-				await reserve();
-				window.__tmHeightsReserved = true;
-			}, 220);
-		});
+		/* Heights are reserved on load only. Re-running the reservation on
+		   resize would click every demo control and make the demos jump. */
 	})();
 	</script>
 	<script>

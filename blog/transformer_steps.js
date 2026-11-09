@@ -939,8 +939,8 @@
 			}
 		}
 		var span = max - min || 1;
-		var narrow = w < 240;
-		var padL = narrow ? 46 : 74, padT = 26, padB = 24, padR = 14;
+		var narrow = w < 300;
+		var padL = narrow ? 68 : 90, padT = 26, padB = 24, padR = 14;
 		var cw = (w - padL - padR) / cols;
 		var ch = (h - padT - padB) / rows;
 		var neg = hex(c.blue), zero = hex(c.paper), pos = hex(c.gold);
@@ -991,8 +991,8 @@
 			var rows = Math.min(tokens.length, matrix.length);
 			var cols = Math.min((matrix[0] || []).length, 64);
 			var rect = canvas.getBoundingClientRect();
-			var narrow = rect.width < 240;
-			var left = narrow ? 46 : 74, top = 26, right = 14, bottom = 24;
+			var narrow = rect.width < 300;
+			var left = narrow ? 68 : 90, top = 26, right = 14, bottom = 24;
 			var cw = (rect.width - left - right) / Math.max(1, cols);
 			var ch = (rect.height - top - bottom) / Math.max(1, rows);
 			var x = event.clientX - rect.left, y = event.clientY - rect.top;
@@ -3542,6 +3542,15 @@
 			if (p) p.textContent = "h₁ (" + dm + ") → Norm (" + dm + ")";
 			if (e) e.textContent = dm + " → " + dff;
 			if (c) c.textContent = dff + " → " + dm;
+			var fillBar = function (id, a, b, la, lb) {
+				var el = document.getElementById(id);
+				if (!el) return;
+				var max = Math.max(a, b) || 1;
+				el.innerHTML = '<div class="tm-ffn-widthrow"><span>' + la + ' · ' + a + '</span><i style="width:' + (a / max * 100).toFixed(1) + '%"></i></div>' +
+					'<div class="tm-ffn-widthrow"><span>' + lb + ' · ' + b + '</span><i style="width:' + (b / max * 100).toFixed(1) + '%"></i></div>';
+			};
+			fillBar(prefix + "-ffn-width-expand", dm, dff, "d_model", "d_ff");
+			fillBar(prefix + "-ffn-width-compress", dff, dm, "d_ff", "d_model");
 		}
 		[
 			["-ffn-preln-in", "h1"],
