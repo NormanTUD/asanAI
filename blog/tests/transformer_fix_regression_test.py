@@ -104,6 +104,15 @@ def page_checks(page, port: int) -> None:
     page.on("pageerror", lambda e: errors.append("pageerror: " + str(e)))
     page.on("console", lambda m: errors.append("console: " + m.text) if m.type == "error" else None)
     page.goto(f"http://127.0.0.1:{port}/transformer.php", wait_until="load", timeout=120000)
+    # The step dependencies load lazily when the step anchor approaches the
+    # viewport; scroll there so the formula strip can be created. Some modules
+    # restore the scroll position just after load, so retry briefly.
+    page.wait_for_timeout(600)
+    for _ in range(8):
+        page.evaluate("() => { const a = document.getElementById('transformer-step-visuals'); if (a) a.scrollIntoView({ block: 'center' }); }")
+        page.wait_for_timeout(400)
+        if page.evaluate("() => !!document.querySelector('.tm-transformer-formulas')"):
+            break
     page.wait_for_function("() => !!document.querySelector('.tm-transformer-formulas')", timeout=120000)
     page.wait_for_function("() => !!document.querySelector('.tm-layer-card')", timeout=120000)
 

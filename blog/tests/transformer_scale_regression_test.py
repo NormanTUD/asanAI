@@ -47,6 +47,19 @@ def free_port() -> int:
         return int(sock.getsockname()[1])
 
 
+def scroll_until(page, selector: str, ready_js: str, tries: int = 12, wait_ms: int = 350) -> bool:
+    """Scroll a lazily rendered chart into view until it has data."""
+    for _ in range(tries):
+        page.evaluate(
+            "(sel) => { const el = document.querySelector(sel); if (el) el.scrollIntoView({ block: 'center' }); }",
+            selector,
+        )
+        page.wait_for_timeout(wait_ms)
+        if page.evaluate(ready_js):
+            return True
+    return False
+
+
 def ensure_chromium() -> None:
     try:
         with sync_playwright() as p:
@@ -90,13 +103,11 @@ def main() -> None:
                 s.dispatchEvent(new Event('change', {bubbles: true}));
             }""")
             page.wait_for_timeout(800)
-            page.evaluate("() => document.getElementById('transformer-step-visuals').scrollIntoView()")
-            page.wait_for_function("() => window.__tmStepDepsReady === true", timeout=60000)
-            page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
-            page.wait_for_function("""() => {
+            scroll_until(page, "#transformer-step-visuals", "() => window.__tmStepDepsReady === true")
+            scroll_until(page, "#transformer-plotly-space", """() => {
                 const e = document.getElementById('transformer-plotly-space');
                 return !!(e && e.data && e.data.length && e.layout && e.layout.title);
-            }""", timeout=60000)
+            }""")
             page.wait_for_timeout(1200)
             highdim = page.evaluate("""() => {
                 const e = document.getElementById('transformer-plotly-space');
@@ -123,8 +134,11 @@ def main() -> None:
                   json.dumps(highdim)[:300])
 
             # Trajectory is also projected through PCA at 32D.
-            page.evaluate("() => document.getElementById('transformer-trajectory-full-path').scrollIntoView()")
-            page.wait_for_timeout(1200)
+            scroll_until(page, "#transformer-trajectory-full-path", """() => {
+                const e = document.getElementById('transformer-trajectory-full-path');
+                return !!(e && e.data && e.data.length && e.layout && e.layout.title);
+            }""")
+            page.wait_for_timeout(600)
             traj = page.evaluate("""() => {
                 const e = document.getElementById('transformer-trajectory-full-path');
                 const d = (e && e.data) || [];
@@ -141,8 +155,11 @@ def main() -> None:
                 s.dispatchEvent(new Event('change', {bubbles: true}));
             }""")
             page.wait_for_timeout(900)
-            page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
-            page.wait_for_timeout(1200)
+            scroll_until(page, "#transformer-plotly-space", """() => {
+                const e = document.getElementById('transformer-plotly-space');
+                return !!(e && e.data && e.data.some(t => t.type === 'scatter3d') && e.layout && e.layout.title && e.layout.title.text.indexOf('PCA') !== -1);
+            }""")
+            page.wait_for_timeout(600)
             high64 = page.evaluate("""() => {
                 const e = document.getElementById('transformer-plotly-space');
                 const d = (e && e.data) || [];
@@ -316,7 +333,11 @@ def main() -> None:
             page2.locator("#modern-transformer-lab-optional").scroll_into_view_if_needed()
             page2.wait_for_timeout(500)
             page2.locator("#modern-transformer-lab-optional .optional-header").click()
-            page2.wait_for_function("() => !!document.getElementById('mtl-attention').data", timeout=60000)
+            for _ in range(12):
+                page2.locator("#modern-transformer-lab-optional").scroll_into_view_if_needed()
+                page2.wait_for_timeout(300)
+                if page2.evaluate("() => !!document.getElementById('mtl-attention').data"):
+                    break
             modern = page2.evaluate("""() => ({
                 attention: !!document.getElementById('mtl-attention').data,
                 logits: !!document.getElementById('mtl-logits').data,
@@ -347,7 +368,7 @@ def main() -> None:
             page3.on("pageerror", lambda e: init_errors.append("pageerror: " + str(e)))
             page3.on("console", lambda m: init_errors.append("console: " + m.text) if m.type == "error" else None)
             page3.goto(f"http://127.0.0.1:{port}/initializers.php", wait_until="load", timeout=120000)
-            page3.wait_for_function("() => !!document.getElementById('init-variance-plot').data", timeout=60000)
+            scroll_until(page3, "#init-variance-plot", "() => !!document.getElementById('init-variance-plot').data")
             init_plot = page3.evaluate("""() => ({
                 plot: !!document.getElementById('init-variance-plot').data,
                 hist: !!document.querySelector('#init-hist').getContext,
