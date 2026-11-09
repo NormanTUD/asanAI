@@ -2256,7 +2256,6 @@ window.bibData = {
 		title: "Cybernetic Predicting Devices",
 		author: "Alexey Grigorevich Ivakhnenko, Valentin Grigorevich Lapa",
 		year: 1965,
-		url: "https://gwern.net/doc/ai/1966-ivakhnenko.pdf"
 	},
 	"ivakhnenko1971": {
 		title: "Polynomial Theory of Complex Systems",
@@ -2817,7 +2816,6 @@ window.bibData = {
 		title: "The First Three Minutes: A Modern View of the Origin of the Universe",
 		author: "Steven Weinberg",
 		year: 1977,
-		url: "https://svetlogike.wordpress.com/wp-content/uploads/2014/02/15-steven-weinberg-the-first-three-minutes-a-moderm-view-of-the-origin-of-the-universe-1977.pdf"
 	},
 	"penzias1965measurement": {
 		title: "A Measurement of Excess Antenna Temperature at 4080 Mc/s",
@@ -3720,13 +3718,11 @@ window.bibData = {
 		title: "Περὶ ψυχῆς",
 		author: "Aristotle",
 		year: "ca. 335 BC",
-		url: "https://ia600704.us.archive.org/26/items/aristotle-entire-collected-writings/Aristotle/De%20Anima%20%28On%20the%20Soul%29%20%5Btrans.%20Shiffman%5D/Aristotle%20-%20De%20Anima%20%28On%20the%20Soul%29%20%28Focus%2C%202011%29.pdf"
 	},
 	"chalmers1996conscious": {
 		author: "David J. Chalmers",
 		title: "The Conscious Mind",
 		year: 1996,
-		url: "https://personal.lse.ac.uk/ROBERT49/teaching/ph103/pdf/Chalmers_The_Conscious_Mind.pdf"
 	},
 	"putnam1967functionalism": {
 		url: "https://web.stanford.edu/~paulsko/papers/PutnamNMS.pdf",
@@ -3868,7 +3864,6 @@ window.bibData = {
 		title: "Éléments de linguistique générale",
 		year: 1960,
 		author: "André Martinet",
-		url: "https://dn721508.ca.archive.org/0/items/ElmentsDeLinguistiqueGGnraleAndrnMartinet/El%C3%A9ments%20de%20linguistique%20g%C3%A9n%C3%A9rale%20-%20Andr%C3%A9%20Martinet.pdf"
 	},
 	"persistenthomology": {
 		url: "https://pub.ista.ac.at/~edels/Papers/2002-04-TopologicalPersistence.pdf",
@@ -4636,7 +4631,6 @@ window.bibData = {
 		title: "Psychology and Religion",
 		year: 1938,
 		author: "Carl Gustav Jung",
-		url: "https://archive.org/details/x-psychology-religion"
 	},
 	"waluigi": {
 		url: "https://www.alignmentforum.org/posts/D7PumeYTDPfBTp3i7/the-waluigi-effect-mega-post",
@@ -4823,7 +4817,6 @@ window.bibData = {
 		title: "Gottfried Wilhelm Leibniz - Rechenmaschine"
 	},
 	"artandlogicofllull": {
-		url: "https://uberty.org/wp-content/uploads/2015/12/Anthony_Bonner_The_art_and_logic_of_Ramon_Llull.pdf",
 		author: "Anthony Bonner",
 		title: "The Art and Logic of Ramon Llull",
 		year: 2007
@@ -5481,7 +5474,6 @@ window.bibData = {
 		author: "Yoshua Bengio, Réjean Ducharme, Pascal Vincent, Christian Jauvin",
 		title: "A Neural Probabilistic Language Model",
 		year: 2003,
-		url: "https://archive.org/details/bub_gb__8FAjzHfzHgC"
 	},
 	"zelligharris": {
 		url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf",
@@ -5533,7 +5525,6 @@ window.bibData = {
 		author: "E. S. Pearson, edited with R. L. Plackett",
 		year: 1990,
 		publisher: "Oxford University Press",
-		url: "https://www.gwern.net/docs/statistics/decision/1990-pearson-studentastatisticalbiographyofwilliamsealygosset.pdf",
 		alternativetitle: "Pearson (1990) — the biography of Gosset"
 	},
 	"ziliak2008guinnessometrics": {
@@ -5758,7 +5749,6 @@ window.bibData = {
 	"kleinetymology": {
 		title: "Klein's Comprehensive Etymological Dictionary of the English Language",
 		author: "Ernest Klein",
-		url: "https://archive.org/details/EtymologicalDictionary",
 		year: 1971
 	},
 	"raina2009large": {
@@ -5778,7 +5768,6 @@ window.bibData = {
 		title: "GPU implementation of neural networks",
 		author: "Kyoung-Su Oh, Keechul Jung",
 		year: 2004,
-		url: "https://gwern.net/doc/ai/scaling/hardware/2004-oh.pdf"
 	},
 	"vonneumann": {
 		url: "https://archive.org/details/20200901-vN_First_Draft_Report_EDVAC_Moore_Sch_1945/page/n1/mode/2up",
@@ -5787,7 +5776,6 @@ window.bibData = {
 		title: "First draft of a report on the EDVAC"
 	},
 	"vonneumann1951automata": {
-		url: "https://archive.org/details/dli.scoerat.383cerebralmechanismsinbehavior",
 		year: 1951,
 		author: "John von Neumann",
 		title: "The General and Logical Theory of Automata (in Cerebral Mechanisms in Behavior: The Hixon Symposium)",
@@ -6042,7 +6030,6 @@ window.bibData = {
 	"bochenski": {
 		title: "A History of Formal Logic",
 		author: "Joseph Maria Bocheński",
-		url: "https://archive.org/details/historyofformall00boch/page/n5/mode/2up",
 		year: "1961"
 	},
 	"kramp1799": {
@@ -6130,7 +6117,6 @@ window.bibData = {
 		year: "1948",
 		title: "Cybernetics: Or Control and Communication in the Animal and the Machine",
 		alternativetitle: "Cybernetics",
-		url: "https://uberty.org/wp-content/uploads/2015/07/Norbert_Wiener_Cybernetics.pdf"
 	},
 	"mccullochpitts1943": {
 		author: "Warren Sturgis McCulloch and Walter Pitts",
@@ -6216,7 +6202,6 @@ window.bibData = {
 		year: "1952",
 		title: "Design for a Brain",
 		alternativetitle: "Design for a Brain",
-		url: "https://archive.org/details/designforbrainor00ashb"
 	},
 	"ashbyintrocybernetics1956": {
 		author: "W. Ross Ashby",
@@ -6418,7 +6403,6 @@ window.bibData = {
 		title: "Perceptrons",
 		year: "1969",
 		author: "Marvin Minsky, Seymour Papert",
-		url: "https://rodsmith.nz/wp-content/uploads/Minsky-and-Papert-Perceptrons.pdf",
 	},
 	"perceptronswiki": {
 		author: "Wikipedia contributors",
@@ -6432,7 +6416,6 @@ window.bibData = {
 		title: "The Organization Of Behavior",
 		author: "Donald Olding Hebb",
 		year: "1949",
-		url: "https://archive.org/details/in.ernet.dli.2015.226341"
 	},
 	"deepblue": {
 		url: "https://www.theguardian.com/sport/2021/feb/12/deep-blue-computer-beats-kasparov-chess-1996",
@@ -6605,14 +6588,12 @@ window.bibData = {
 		year: "1962",
 		title: "Principles of Neurodynamics: Perceptrons and the Theory of Brain Mechanisms",
 		alternativetitle: "Rosenblatt, Principles of Neurodynamics (1962)",
-		url: "https://archive.org/details/principles-of-neurodynamics",
 	},
 	"hayek1952sensoryorder": {
 		author: "Friedrich A. Hayek",
 		year: "1952",
 		title: "The Sensory Order: An Inquiry into the Foundations of Theoretical Psychology",
 		alternativetitle: "Hayek, The Sensory Order (1952)",
-		url: "https://archive.org/details/sensoryorderinqu00haye",
 	},
 	"lashley1929brainmechanisms": {
 		author: "Karl S. Lashley",
@@ -7136,7 +7117,6 @@ window.bibData = {
 		author: "Harry Gordon Frankfurt",
 		year: "2005",
 		title: "On Bullshit",
-		url: "https://web350b.ipsp.uni-hohenheim.de/scimeth/literature/frankfurt-on-bullshit.pdf",
 	},
 	"berglund2023reversal": {
 		author: "Lukas Berglund, Meg Tong, Max Kaufmann, Mikita Balesni, Asa Cooper Stickland, Tomasz Korbak, Owain Evans",
@@ -7507,7 +7487,6 @@ window.bibData = {
 		title: "A Simple Automatic Derivative Evaluation Program",
 		author: "R. Wengert",
 		year: 1964,
-		url: "https://www.scribd.com/document/863222571/Wengert-1964-A-Simple-Automatic-Derivative-Evaluation-Program"
 	},
 
 	"socher2011": {
@@ -10396,7 +10375,6 @@ window.bibData = {
 		title: "Sequential Analysis",
 		author: "Abraham Wald",
 		year: 1947,
-		url: "https://archive.org/details/in.ernet.dli.2015.271076",
 		alternativetitle: "Wald's Sequential Analysis, developed during WWII for inspection sampling"
 	},
 	"edwards1996closedworld": {
@@ -10627,7 +10605,6 @@ window.bibData = {
 		year: 2006,
 		publisher: "The Architecture of Modern Mathematics (ed. J. Ferreriós, J. Gray), Oxford University Press",
 		pages: "187–208",
-		url: "https://www.academia.edu/3249793/Emmy_Noethers_Set_Theoretic_Topology_From_Dedekind_to_the_Rise_of_Functors",
 		alternativetitle: "Noether and the first homology groups"
 	},
 	"hopf1931fibration": {
@@ -10754,7 +10731,6 @@ window.bibData = {
 		title: "Récoltes et Semailles: Réflexions et témoignage sur un passé de mathématicien",
 		author: "Alexander Grothendieck",
 		year: 1986,
-		url: "https://uberty.org/wp-content/uploads/2015/12/Grothendeick-RetS.pdf",
 		alternativetitle: "Grothendieck's autobiographical manuscript"
 	},
 	"grothendieck_image": {
@@ -11403,7 +11379,6 @@ window.bibData = {
 		title: "Simplifying Decision Trees",
 		author: "J. Ross Quinlan",
 		year: 1987,
-		url: "https://www.researchgate.net/publication/220730256_Simplifying_Decision_Trees",
 		alternativetitle: "Reduced-Error Pruning"
 	},
 	"morgan1963aid": {
@@ -11561,7 +11536,6 @@ window.bibData = {
 		title: "Idiot's Bayes — not so stupid after all?",
 		author: "David J. Hand, Keming Yu",
 		year: 2001,
-		url: "https://www.researchgate.net/publication/227579671_Idiot's_Bayes_-_not_so_stupid_after_all"
 	},
 	"maron1961nb": {
 		title: "Automatic Indexing: An Experimental Inquiry",
@@ -12802,7 +12776,6 @@ window.bibData = {
 		title: "Stacked Generalization",
 		author: "David H. Wolpert",
 		year: 1992,
-		url: "https://www.researchgate.net/publication/222482730_Stacked_Generalization",
 		alternativetitle: "Stacking"
 	},
 
@@ -13481,7 +13454,6 @@ window.bibData = {
 		title: "Logic, Semantics, Metamathematics: Papers from 1923 to 1938",
 		author: "Alfred Tarski (trans. J. H. Woodger)",
 		year: 1956,
-		url: "https://archive.org/details/logic-semantics-metamathematics",
 		alternativetitle: "Logic, Semantics, Metamathematics (Oxford: Clarendon Press, 1956) — contains the standard English translation of the 1935 paper, pp. 152–278"
 	},
 	"bradley1893appearance": {
@@ -13495,7 +13467,6 @@ window.bibData = {
 		title: "The Nature of Thought",
 		author: "Brand Blanshard",
 		year: 1939,
-		url: "https://archive.org/details/in.ernet.dli.2015.140855",
 		alternativetitle: "The Nature of Thought (London: George Allen & Unwin, 1939)"
 	},
 	"joachim1906nature": {
@@ -14508,7 +14479,6 @@ window.bibData = {
 		title: "How to Solve It: A New Aspect of Mathematical Method",
 		author: "George Pólya",
 		year: 1945,
-		url: "https://archive.org/details/how-to-solve-it-a-new-aspect-of-mathematical-method-george-polya",
 		alternativetitle: "Pólya, How to Solve It"
 	},
 	"simon1955bounded": {
@@ -14543,7 +14513,6 @@ window.bibData = {
 		title: "The Society of Mind",
 		author: "Marvin Minsky",
 		year: 1986,
-		url: "https://archive.org/details/marvin-minsky-the-society-of-mind",
 		alternativetitle: "Minsky, The Society of Mind"
 	},
 	"newellsimon1972problemsolving": {
@@ -14594,7 +14563,6 @@ window.bibData = {
 		title: "The Selfish Gene",
 		author: "Richard Dawkins",
 		year: 1976,
-		url: "https://archive.org/details/the-selfish-gene-r.-dawkins-1976-ww",
 		alternativetitle: "Dawkins, The Selfish Gene"
 	},
 	"merton1973norms": {
@@ -14708,7 +14676,6 @@ window.bibData = {
 		title: "The Conscious Mind: In Search of a Fundamental Theory",
 		author: "David J. Chalmers",
 		year: 1995,
-		url: "https://archive.org/details/chalmers-the-conscious-mind",
 		alternativetitle: "Chalmers, The Conscious Mind"
 	},
 	"churchland1981eliminative": {
@@ -14722,14 +14689,12 @@ window.bibData = {
 		title: "The Idea of the World: A Cosmology of Consciousness",
 		author: "Bernardo Kastrup",
 		year: 2019,
-		url: "https://archive.org/details/the-idea-of-the-world-a-multi-disciplinary-argument-for-the-mental-nature-of-rea",
 		alternativetitle: "Kastrup, The Idea of the World"
 	},
 	"dennett2017bacteria": {
 		title: "From Bacteria to Bach and Back",
 		author: "Daniel C. Dennett",
 		year: 2017,
-		url: "https://archive.org/details/daniel-dennett-consciousness-explained-from-bacteria-to-bach-and-back-the-evolut",
 		alternativetitle: "Dennett, From Bacteria to Bach and Back"
 	},
 	"descartesmeditations": {
@@ -19659,7 +19624,6 @@ window.bibData = {
 		title: "The Design of Experiments",
 		author: "Ronald A. Fisher",
 		year: 1935,
-		url: "https://archive.org/details/in.ernet.dli.2015.199572",
 		alternativetitle: "Fisher, The Design of Experiments (1935)"
 	},
 	"doubleblind": {
@@ -20420,14 +20384,12 @@ window.bibData = {
 	 * the conceptual foundation for his later coinage of "Neolithic
 	 * Revolution" (1950) and "Urban Revolution" (1950). */
 	"childe1936man": {
-		url: "https://archive.org/details/ManMakesHimself",
 		title: "Man Makes Himself",
 		author: "V. Gordon Childe",
 		year: 1936,
 		alternativetitle: "Childe, Man Makes Himself (1936)"
 	},
 	"childe1936man_txt": {
-		url: "https://archive.org/stream/ManMakesHimself/ManMakesHimself_djvu.txt",
 		title: "Man Makes Himself (full text, djvu OCR)",
 		author: "V. Gordon Childe",
 		year: 1936,
@@ -20566,7 +20528,6 @@ window.bibData = {
 
 	/* Sammet 1969 — foundational history of programming languages */
 	"sammet1969programming": {
-		url: "https://archive.org/details/programminglanguage0000samm",
 		title: "Programming Languages: History and Fundamentals",
 		author: "Jean E. Sammet",
 		year: 1969,
@@ -20657,7 +20618,6 @@ window.bibData = {
 
 	/* Zohary & Hopf 1988 (revised 1993, 2000, 2012) — founder crops */
 	"zoharyhopf2000domestication": {
-		url: "https://web.archive.org/web/2024/https://www.researchgate.net/publication/271807071_The_mode_of_domestication_of_the_founder_crops_of_Southwest_Asian_agriculture",
 		title: "The Mode of Domestication of the Founder Crops of Southwest Asian Agriculture (in Domestication of Plants in the Old World, 3rd ed.)",
 		author: "Daniel Zohary, Maria Hopf, Ehud Weiss",
 		year: 2012,
@@ -21961,7 +21921,6 @@ window.bibData = {
 		title: "Discovery of the Elements",
 		author: "Mary Elvira Weeks",
 		year: 1945,
-		url: "https://archive.org/details/in.ernet.dli.2015.19567",
 		alternativetitle: "Weeks, Discovery of the Elements (1945)"
 	},
 	"frosch1957surface": {
@@ -24015,7 +23974,6 @@ window.bibData = {
 		author: "R. Duncan Luce",
 		year: 1959,
 		publisher: "John Wiley & Sons, New York",
-		url: "https://archive.org/details/dli.scoerat.3346ndividualchoicebehavior",
 		alternativetitle: "Luce (1959) — the choice axiom and the softmax/relative-preference formula"
 	},
 	"bridle1990softmax": {

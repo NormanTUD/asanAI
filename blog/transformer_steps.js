@@ -2173,7 +2173,7 @@
 			hoverlabel: { bgcolor: p.paper, bordercolor: p.line, font: { color: p.ink, size: 12 } },
 			title: { text: title, font: { size: 13, color: c.ink } },
 			showlegend: false,
-			margin: { l: 0, r: 0, t: 38, b: 0 },
+			margin: { l: 0, r: 0, t: title ? 38 : 8, b: 0 },
 			scene: {
 				aspectmode: "cube",
 				dragmode: "turntable",
@@ -2191,7 +2191,7 @@
 			hoverlabel: { bgcolor: p.paper, bordercolor: p.line, font: { color: p.ink, size: 12 } },
 			title: { text: title, font: { size: 13, color: c.ink } },
 			showlegend: false,
-			margin: { l: 46, r: 18, t: 38, b: 42 },
+			margin: { l: 46, r: 18, t: title ? 38 : 12, b: 42 },
 			xaxis: axis(axes[0]), yaxis: axis(axes[1])
 		};
 	}
@@ -2405,10 +2405,9 @@
 			}
 		}
 		if (markerPoints.length) traces.push(markerTrace(markerPoints));
-		var title = (DE() ? "Feature-Migration · Schicht " : "Feature migration · layer ") + (layerIdx + 1)
-			+ "<br><span style='font-size:10px;color:" + _plotlyColors().muted + "'>"
-			+ (projection.label ? projection.label + " · " : "") + featureMetricLabel() + " · " + (DE() ? "Pfeil = Eingabe → Ausgabe" : "arrow = input → output") + "</span>";
-		var layout = projection.is3d ? tmPlotly.layout3D(title, projection.axes) : tmPlotly.layout2D(title, projection.axes);
+		// The surrounding step text already describes the plot; no redundant
+		// in-plot title / metric subtitle.
+		var layout = projection.is3d ? tmPlotly.layout3D("", projection.axes) : tmPlotly.layout2D("", projection.axes);
 		if (window.echarts && el) { var oldChart = echarts.getInstanceByDom(el); if (oldChart) oldChart.dispose(); }
 		var loading = el.querySelector(".plot-loading");
 		if (loading) loading.remove();
@@ -2450,8 +2449,8 @@
 		if (!data || !arrowsEl) return;
 		var proj = featureProjection(data);
 		if (note) {
-			note.textContent = proj.label || "";
-			note.style.display = proj.label ? "block" : "none";
+			note.textContent = "";
+			note.style.display = "none";
 		}
 		renderFeatureArrows(arrowsEl, layerIdx, data, proj);
 	}
