@@ -134,27 +134,50 @@
 		/* Reserve the tallest possible explanation before it is shown, so
 		   answering a question cannot push the content below it down. */
 		function reserveFeedbackHeight(tries) {
-			tries = tries || 0;
+			if (root._mnzFeedbackObserver) {
+				root._mnzFeedbackObserver.disconnect();
+				root._mnzFeedbackObserver = null;
+			}
 			const fb = body.querySelector(".mnz-feedback");
 			if (!fb) return;
-			const width = fb.getBoundingClientRect().width;
-			if (!width) {
-				// #contents is still hidden behind the page loader on the
-				// first pass; retry once the layout has a width.
-				if (tries < 12) setTimeout(() => reserveFeedbackHeight(tries + 1), 400);
+			function measure() {
+				const width = fb.getBoundingClientRect().width;
+				if (!width) return false;
+				const longest = Q.reduce((a, q) =>
+					((q.explain || "").length > (a.explain || "").length ? q : a), Q[0] || {});
+				const probe = document.createElement("div");
+				probe.className = "mnz-explain";
+				probe.style.cssText = "position:absolute;left:-99999px;top:0;visibility:hidden;box-sizing:border-box;";
+				probe.style.width = width + "px";
+				probe.innerHTML = "<b>Not quite.</b> " + fmt(longest.explain || "");
+				document.body.appendChild(probe);
+				const h = probe.offsetHeight;
+				probe.remove();
+				fb.style.minHeight = (h + 2) + "px";
+				return true;
+			}
+			if (measure()) return;
+			if ("ResizeObserver" in window) {
+				// #contents can still be hidden behind the page loader on the
+				// first pass. Measure the real text as soon as the card gets a
+				// width instead of giving up after a fixed retry budget.
+				const observer = new ResizeObserver(function () {
+					if (!fb.isConnected) {
+						observer.disconnect();
+						if (root._mnzFeedbackObserver === observer) root._mnzFeedbackObserver = null;
+						return;
+					}
+					if (measure()) {
+						observer.disconnect();
+						if (root._mnzFeedbackObserver === observer) root._mnzFeedbackObserver = null;
+					}
+				});
+				root._mnzFeedbackObserver = observer;
+				observer.observe(fb);
 				return;
 			}
-			const longest = Q.reduce((a, q) =>
-				((q.explain || "").length > (a.explain || "").length ? q : a), Q[0] || {});
-			const probe = document.createElement("div");
-			probe.className = "mnz-explain";
-			probe.style.cssText = "position:absolute;left:-99999px;top:0;visibility:hidden;box-sizing:border-box;";
-			probe.style.width = width + "px";
-			probe.innerHTML = "<b>Not quite.</b> " + fmt(longest.explain || "");
-			document.body.appendChild(probe);
-			const h = probe.offsetHeight;
-			probe.remove();
-			fb.style.minHeight = (h + 2) + "px";
+			tries = tries || 0;
+			if (tries < 12) setTimeout(() => reserveFeedbackHeight(tries + 1), 400);
 		}
 		root._mnzReserveFeedback = reserveFeedbackHeight;
 		reserveFeedbackHeight();
