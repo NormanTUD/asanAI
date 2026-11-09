@@ -1216,6 +1216,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 			}
 
 			var real_trace = get_empty_default_trace("Ground Truth");
+			real_trace.mode = "markers";
 			var predicted_trace = get_empty_default_trace("Prediction");
 
 			var x_data, y_data;
