@@ -21,14 +21,40 @@
 	TM.storage = storage;
 
 	function readLang() {
+		var choice = "";
+		try { choice = (localStorage.getItem("tm_lang_choice") || "").toLowerCase(); } catch (e) {}
+		if (choice === "de" || choice === "en") return { lang: choice, source: "stored" };
 		var params = new URLSearchParams(window.location.search);
 		var requested = (params.get("lang") || "").toLowerCase();
-		if (requested === "de" || requested === "en") return requested;
+		if (requested === "de" || requested === "en") return { lang: requested, source: "url" };
 		var match = document.cookie.match(/(?:^|;\s*)tm_lang=(de|en)\b/);
-		return match ? match[1] : "en";
+		if (match) return { lang: match[1], source: "cookie" };
+		return { lang: "en", source: "default" };
 	}
 
-	var currentLang = readLang();
+	function syncLangPreference(source) {
+		// A URL visit must stay overridable; only the switcher stores an explicit choice.
+		if (source !== "default") {
+			try { localStorage.setItem("tm_lang", currentLang); } catch (e) {}
+			document.cookie = "tm_lang=" + currentLang + "; path=/; SameSite=Lax";
+		}
+		try {
+			var url = new URL(window.location.href);
+			var requested = (url.searchParams.get("lang") || "").toLowerCase();
+			if (currentLang === "de") {
+				if (requested !== "de") url.searchParams.set("lang", "de");
+			} else if (requested) {
+				url.searchParams.delete("lang");
+			}
+			var next = url.pathname + url.search + url.hash;
+			var current = window.location.pathname + window.location.search + window.location.hash;
+			if (next !== current) window.history.replaceState(null, "", next);
+		} catch (e) {}
+	}
+
+	var resolvedLang = readLang();
+	var currentLang = resolvedLang.lang;
+	syncLangPreference(resolvedLang.source);
 	var inlineLangDemo = false;
 	var langDetected = false;
 	TM.lang = function () { return currentLang; };
@@ -89,7 +115,10 @@
 		}
 		var previous = currentLang;
 		currentLang = lang;
-		try { localStorage.setItem("tm_lang", lang); } catch (e) {}
+		try {
+			localStorage.setItem("tm_lang_choice", lang);
+			localStorage.setItem("tm_lang", lang);
+		} catch (e) {}
 		document.cookie = "tm_lang=" + lang + "; path=/; SameSite=Lax";
 		try {
 			var url = new URL(window.location.href);

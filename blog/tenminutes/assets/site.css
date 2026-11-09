@@ -8693,9 +8693,13 @@ html[data-theme="dark"] #tm-lang-switch {
 
 @media (max-width: 900px) {
 	#tm-lang-switch {
-		top: auto;
-		bottom: 14px;
-		right: 12px;
+		top: 10px;
+		right: 10px;
+		padding: 4px;
+	}
+	#tm-lang-switch button img {
+		width: 26px;
+		height: 18px;
 	}
 }
 

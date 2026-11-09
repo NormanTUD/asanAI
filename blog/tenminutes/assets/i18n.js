@@ -11,7 +11,8 @@
 	var blocks = de.blocks || {};
 	var texts = de.texts || {};
 	var attrs = de.attrs || {};
-	var current = data.lang === "de" ? "de" : "en";
+	var serverLang = data.lang === "de" ? "de" : "en";
+	var current = (window.TM && TM.lang) ? TM.lang() : serverLang;
 	var contentLang = "en";
 	var applying = false;
 
@@ -232,6 +233,19 @@
 	}
 
 	function start() {
+		if (window.TM && TM.lang && document.body
+			&& document.body.getAttribute("data-tm-reload-lang") === "1"
+			&& serverLang !== current) {
+			var key = "tm_lang_synced";
+			var done = "";
+			try { done = sessionStorage.getItem(key) || ""; } catch (e) {}
+			if (done !== current) {
+				try { sessionStorage.setItem(key, current); } catch (e) {}
+				window.location.reload();
+				return;
+			}
+		}
+		try { sessionStorage.removeItem("tm_lang_synced"); } catch (e) {}
 		buildSwitcher();
 		apply(current);
 
