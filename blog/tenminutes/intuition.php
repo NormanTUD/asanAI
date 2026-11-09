@@ -4444,6 +4444,18 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				slider.value = original;
 				slider.dispatchEvent(new Event("input", { bubbles: true }));
 			}
+			var metricChips = Array.prototype.slice.call(document.querySelectorAll("[data-pos-metric]"));
+			if (metricChips.length) {
+				var activeMetric = metricChips.filter(function (c) { return c.classList.contains("is-on"); })[0] || metricChips[0];
+				for (var mc = 0; mc < metricChips.length; mc++) {
+					metricChips[mc].click();
+					await sleep(30);
+					var metricOut = document.getElementById("ipe-out");
+					if (metricOut) maxPosOut = Math.max(maxPosOut, metricOut.offsetHeight);
+					if (posPane) maxPosPane = Math.max(maxPosPane, posPane.offsetHeight);
+				}
+				if (activeMetric) activeMetric.click();
+			}
 			var mobile = window.innerWidth < 640;
 			setMin("#ipe-heat-out", Math.max(maxHeatOut, mobile ? 150 : 90));
 			setMin("#ipe-out", Math.max(maxPosOut, mobile ? 120 : 80));
