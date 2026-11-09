@@ -53,13 +53,6 @@ function tmActivationInfo(kind) {
 function tmActivationLabel(kind) { return tmActivationInfo(kind).label; }
 function tmActivationLatex(kind) { return tmActivationInfo(kind).latex; }
 function tmActivationIsGated(kind) { return (kind || tmActivationKind()) === "swiglu"; }
-function tmFfnAbstractHtml() {
-	var kind = tmActivationKind();
-	if (tmActivationIsGated(kind)) {
-		return 'FFN(x) = W<sub>2</sub> · (SiLU(W<sub>1</sub>x + b<sub>1</sub>) ⊙ (W<sub>g</sub>x + b<sub>g</sub>)) + b<sub>2</sub>';
-	}
-	return 'FFN(x) = W<sub>2</sub> · ' + tmActivationInfo(kind).html + '(W<sub>1</sub>x + b<sub>1</sub>) + b<sub>2</sub>';
-}
 function tmFfnExpansionAbstractTex() {
 	var kind = tmActivationKind();
 	if (tmActivationIsGated(kind)) {
@@ -8093,7 +8086,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 			<details class="tm-formula-step"><summary>${isDe ? 'Attention-Ausgabe + Residual' : 'Attention output + residual'}</summary><div id="${prefix}-concat-viz" class="tm-formula-block"></div><div id="${prefix}-h1-final-viz" class="tm-formula-block"></div></details>
 			<div class="tm-ffn-stages">
 				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-preln-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
-					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Pre-LN</span><span class="tm-ffn-stage-shape">h₁ → Norm</span></div>
+					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Pre-LN</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-preln">h₁ → Norm</span></div>
 					<div class="tm-ffn-stage-formula" data-tex="\text{Norm}(h_1)=\gamma_2\odot\frac{h_1-\mu}{\sqrt{\sigma^2+\epsilon}}+\beta_2" data-tex-display="false"></div>
 					<div class="tm-ffn-stage-plots tm-ffn-stage-plots--two">
 						<canvas id="${prefix}-ffn-preln-in" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Eingang vor LayerNorm' : 'FFN input before LayerNorm'}"></canvas>
@@ -8103,7 +8096,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 				</div>
 				<span class="tm-ffn-stage-arrow" aria-hidden="true">→</span>
 				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-expand-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
-					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Expansion + ${tmActivationInfo(tmActivationKind()).html}</span><span class="tm-ffn-stage-shape">d_model → d_ff</span></div>
+					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Expansion + ${tmActivationInfo(tmActivationKind()).html}</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-expand">d_model → d_ff</span></div>
 					<div class="tm-ffn-stage-formula" data-tex="${tmFfnExpansionAbstractTex()}" data-tex-display="false"></div>
 					<div class="tm-ffn-stage-plots">
 						<canvas id="${prefix}-ffn-heatmap" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Hidden-Aktivierungen für alle Tokens' : 'FFN hidden activations for all tokens'}"></canvas>
@@ -8112,7 +8105,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 				</div>
 				<span class="tm-ffn-stage-arrow" aria-hidden="true">→</span>
 				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-compress-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
-					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Compression</span><span class="tm-ffn-stage-shape">d_ff → d_model</span></div>
+					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Compression</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-compress">d_ff → d_model</span></div>
 					<div class="tm-ffn-stage-formula" data-tex="\text{out}_{FFN}=\text{out}_{L1}W_2+b_2" data-tex-display="false"></div>
 					<div class="tm-ffn-stage-plots">
 						<canvas id="${prefix}-ffn-compress-heatmap" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Ausgabe nach der Kompression' : 'FFN output after compression'}"></canvas>

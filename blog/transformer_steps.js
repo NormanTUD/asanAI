@@ -961,7 +961,10 @@
 		ctx.textAlign = "left";
 		ctx.fillStyle = c.muted;
 		ctx.font = "600 9px Barlow, system-ui, sans-serif";
-		ctx.fillText(fitText(ctx, title + " · " + (DE() ? "Layer " : "layer ") + (layerIdx + 1), w - padL - padR), padL, 15);
+		var titleText = (w < 140)
+			? ("L" + (layerIdx + 1))
+			: (title + " · " + (DE() ? "Layer " : "layer ") + (layerIdx + 1));
+		ctx.fillText(fitText(ctx, titleText, w - padL - padR), padL, 15);
 	}
 
 	function drawFFNHeatmap(ctx, w, h, layerIdx) {
@@ -3114,6 +3117,12 @@
 					renderLayerLogitLens(idx);
 				}
 			});
+			Array.prototype.slice.call(document.querySelectorAll('.tm-layer-subbox[data-sub="ffn"][open]')).forEach(function (sub) {
+				var card = sub.closest(".tm-layer-card");
+				if (!card) return;
+				var idx = parseInt(card.getAttribute("data-layer-idx"), 10);
+				if (!isNaN(idx)) renderLayerFFNStages(idx);
+			});
 		}, 350);
 	});
 	setInterval(enhanceLayerCards, 1200);
@@ -3519,6 +3528,17 @@
 
 	function renderLayerFFNStages(layerIdx) {
 		var prefix = "unified-layer-" + layerIdx;
+		var ffn = (window.__tmFFNTrace || [])[layerIdx];
+		if (ffn && ffn.normed_h1 && ffn.normed_h1[0] && ffn.out_L1 && ffn.out_L1[0]) {
+			var dm = ffn.normed_h1[0].length;
+			var dff = ffn.out_L1[0].length;
+			var p = document.getElementById(prefix + "-ffn-shape-preln");
+			var e = document.getElementById(prefix + "-ffn-shape-expand");
+			var c = document.getElementById(prefix + "-ffn-shape-compress");
+			if (p) p.textContent = "h₁ (" + dm + ") → Norm (" + dm + ")";
+			if (e) e.textContent = dm + " → " + dff;
+			if (c) c.textContent = dff + " → " + dm;
+		}
 		[
 			["-ffn-preln-in", "h1"],
 			["-ffn-preln-out", "norm"],
