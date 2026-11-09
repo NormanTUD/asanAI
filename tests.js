@@ -2068,6 +2068,30 @@ function test_ribbon_and_layer_tooltips() {
 	});
 	test_equal("every ribbon control has a hover tooltip", missing.join(", "), "");
 
+	var label_selectors = [
+		"#home_ribbon #dataset",
+		"#home_ribbon #data_origin",
+		"#home_ribbon #model_dataset",
+		"#home_ribbon #loss",
+		"#home_ribbon #metric",
+		"#home_ribbon #height",
+		"#home_ribbon #width",
+		"#tf_ribbon_settings #default_resize_method",
+		"#tf_ribbon_settings #set_all_kernel_initializers",
+		"#tf_ribbon_settings #set_all_bias_initializers",
+		"#tf_ribbon_settings #set_all_activation_functions",
+		"#tf_ribbon_settings #set_all_activation_functions_except_last_layer",
+		"#tf_ribbon_settings #optimizer"
+	];
+	var missing_labels = label_selectors.filter(function (selector) {
+		var $control = $(selector);
+		var $label_cell = $control.closest("tr").children("td").first();
+		return !$control.length || !$label_cell.length || !$label_cell.attr("title");
+	});
+	test_equal("visible ribbon labels have hover tooltips", missing_labels.join(", "), "");
+	test_equal("the shapes label describes input and output together", $("#inputShape").closest("tr").children("td").first().attr("data-tr-title"), "ribbon_shapes_description");
+	test_equal("ribbon tab labels have hover tooltips", !!$("#tablist a[href='#home_ribbon']").attr("title"), true);
+
 	var missing_keys = [];
 	["en", "de"].forEach(function (language_code) {
 		Object.keys(RIBBON_TOOLTIP_KEYS).forEach(function (selector) {

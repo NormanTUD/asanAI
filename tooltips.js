@@ -81,15 +81,29 @@ var RIBBON_TOOLTIP_KEYS = {
 	"#ribbon_shower span[onclick*='update_lang(\"en\")']": "ribbon_language_english"
 };
 
-function _set_ribbon_tooltip ($element, key, text) {
+function _set_ribbon_tooltip ($element, key, text, force = false) {
 	if(!$element.length) return;
 
-	if(!$element.attr("data-tr-title")) {
+	var existing_key = $element.attr("data-tr-title");
+
+	if(force || !existing_key) {
 		$element.attr("data-tr-title", key);
+		if(text) {
+			$element.attr("title", text);
+		}
+		return;
 	}
-	if(text) {
-		$element.attr("title", text);
+
+	var existing_text = (typeof language !== "undefined" && language[lang]) ? language[lang][existing_key] : null;
+	if(existing_text && !$element.attr("title")) {
+		$element.attr("title", existing_text);
 	}
+}
+
+function _set_ribbon_label_tooltip ($control, key, text, force = false) {
+	var $label_cell = $control.closest("tr").children("td").first();
+	if(!$label_cell.length) return;
+	_set_ribbon_tooltip($label_cell, key, text, force);
 }
 
 function setRibbonTooltips () {
@@ -101,10 +115,13 @@ function setRibbonTooltips () {
 
 		$(selector).each(function () {
 			_set_ribbon_tooltip($(this), key, text);
+			_set_ribbon_label_tooltip($(this), key, text);
 			var id = $(this).attr("id");
 			if(id) {
 				_set_ribbon_tooltip($('label[for="' + id + '"]'), key, text);
 			}
 		});
 	});
+
+	_set_ribbon_label_tooltip($("#inputShape"), "ribbon_shapes_description", translations["ribbon_shapes_description"], true);
 }
