@@ -6321,6 +6321,17 @@ function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
 	}
 	if (window.Plotly) { try { Plotly.purge(container); } catch (e) { /* not a Plotly node */ } }
 	container.innerHTML = '';
+	// Match the trajectory frame exactly: same responsive height, same
+	// centred flex box, same spacing.
+	const shiftHeight = (typeof getTrajectoryPlotHeight === 'function')
+		? getTrajectoryPlotHeight(d_model)
+		: (d_model <= 3 ? 850 : 520);
+	container.style.height = shiftHeight + 'px';
+	container.style.minHeight = shiftHeight + 'px';
+	container.style.display = 'flex';
+	container.style.alignItems = 'center';
+	container.style.justifyContent = 'center';
+	container.style.marginTop = '10px';
 	const rawBase = tokenStrings.map(t => window.persistentEmbeddingSpace[t] || []);
 	const rawCombined = injectedEmbeddings;
 	const base = rawBase.map(_tmTransformMetric);
@@ -6396,7 +6407,7 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		traces.push({
 			type: 'scatter3d', mode: 'lines',
 			x: arc3.map(pt => pt[0]), y: arc3.map(pt => pt[1] || 0), z: arc3.map(pt => pt[2] || 0),
-			line: { color: color, width: 4 }, hoverinfo: 'skip', showlegend: false
+			line: { color: color, width: 6 }, hoverinfo: 'skip', showlegend: false
 		});
 		const last3 = arc3[arc3.length - 1], prev3 = arc3[arc3.length - 2] || from;
 		const dx = last3[0] - prev3[0], dy = (last3[1] || 0) - (prev3[1] || 0), dz = (last3[2] || 0) - (prev3[2] || 0);
