@@ -11,7 +11,7 @@
 	<link rel="stylesheet" href="assets/full/demos.css">
 	<link rel="stylesheet" href="../transformer_steps.css?v=<?php echo (int) @filemtime(__DIR__ . '/../transformer_steps.css'); ?>">
 </head>
-<body data-lesson="transformer" data-page="lesson" data-no-full-article>
+<body data-lesson="transformer" data-page="lesson" data-no-full-article data-tm-reload-lang="1">
 	<div class="readbar" aria-hidden="true"><span></span></div>
 
 	<main id="main">

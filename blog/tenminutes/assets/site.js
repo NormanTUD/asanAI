@@ -19,12 +19,92 @@
 	};
 
 	TM.storage = storage;
-	TM.lang = function () {
+
+	function readLang() {
 		var params = new URLSearchParams(window.location.search);
 		var requested = (params.get("lang") || "").toLowerCase();
 		if (requested === "de" || requested === "en") return requested;
 		var match = document.cookie.match(/(?:^|;\s*)tm_lang=(de|en)\b/);
 		return match ? match[1] : "en";
+	}
+
+	var currentLang = readLang();
+	var inlineLangDemo = false;
+	var langDetected = false;
+	TM.lang = function () { return currentLang; };
+
+	function hasInlineLangDemo() {
+		return Array.prototype.some.call(document.querySelectorAll("script:not([src])"), function (script) {
+			var type = (script.getAttribute("type") || "").toLowerCase();
+			if (type && type !== "text/javascript" && type !== "module") return false;
+			return /\bTM\.lang\s*\(/.test(script.textContent || "");
+		});
+	}
+
+	function hasServerLangContent() {
+		return document.body && document.body.getAttribute("data-tm-reload-lang") === "1";
+	}
+
+	function smoothReload() {
+		try { sessionStorage.setItem("tm_scroll", String(window.scrollY)); } catch (e) {}
+		window.location.reload();
+	}
+
+	function restoreScroll() {
+		var raw = null;
+		try { raw = sessionStorage.getItem("tm_scroll"); } catch (e) {}
+		if (raw === null) return;
+		var y = parseInt(raw, 10);
+		if (isNaN(y)) return;
+		function go() { window.scrollTo(0, y); }
+		go();
+		requestAnimationFrame(go);
+		setTimeout(go, 250);
+		setTimeout(go, 800);
+		setTimeout(function () {
+			try { sessionStorage.removeItem("tm_scroll"); } catch (e) {}
+		}, 900);
+	}
+
+	function refreshChrome() {
+		var toc = document.querySelector(".tm-toc");
+		var wasOpen = !!(toc && toc.querySelector("details") && toc.querySelector("details").open);
+		document.querySelectorAll(".tm-toc, .chapter-heading").forEach(function (node) {
+			node.parentNode.removeChild(node);
+		});
+		document.body.classList.remove("has-toc");
+		initTOC();
+		if (wasOpen) {
+			var details = document.querySelector(".tm-toc details");
+			if (details) details.open = true;
+		}
+	}
+
+	TM.setLang = function (lang) {
+		lang = lang === "de" ? "de" : "en";
+		if (lang === currentLang) return;
+		if (!langDetected) {
+			inlineLangDemo = hasInlineLangDemo();
+			langDetected = true;
+		}
+		var previous = currentLang;
+		currentLang = lang;
+		try { localStorage.setItem("tm_lang", lang); } catch (e) {}
+		document.cookie = "tm_lang=" + lang + "; path=/; SameSite=Lax";
+		try {
+			var url = new URL(window.location.href);
+			if (lang === "de") url.searchParams.set("lang", "de");
+			else url.searchParams.delete("lang");
+			window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+		} catch (e) {}
+		if (hasServerLangContent() || (inlineLangDemo && !window.__tmLiveLang)) {
+			smoothReload();
+			return;
+		}
+		document.documentElement.lang = lang;
+		window.dispatchEvent(new CustomEvent("tm:lang", { detail: { lang: lang, previous: previous } }));
+		if (TM.i18n && TM.i18n.apply) TM.i18n.apply(lang);
+		refreshChrome();
 	};
 	TM.done = function () { return storage.get("tm_done", []); };
 	TM.isDone = function (slug) { return TM.done().indexOf(slug) !== -1; };
@@ -946,6 +1026,9 @@
 	/* ── page chrome ───────────────────────────────────────── */
 
 	function initPage() {
+		inlineLangDemo = hasInlineLangDemo();
+		langDetected = true;
+		restoreScroll();
 		initDemoTypes();
 		initTheme();
 		initReadbar();
@@ -960,6 +1043,7 @@
 		var slug = document.body.getAttribute("data-lesson");
 		if (slug) TM.markSeen(slug);
 
+		window.addEventListener("load", restoreScroll);
 		document.querySelectorAll("[data-copy]").forEach(function (btn) {
 			btn.addEventListener("click", function () {
 				var target = document.querySelector(btn.getAttribute("data-copy"));

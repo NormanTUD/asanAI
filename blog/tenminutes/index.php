@@ -132,7 +132,7 @@ $simDateLabel = $today->format('j F Y');
 	<title>End-of-Year AI Calendar | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
-<body data-page="calendar"<?php if ($showSnow) echo ' data-snow="1"'; ?><?php if ($showSanta) echo ' data-santa="1"'; ?><?php if ($showFireworks) echo ' data-fireworks="1"'; ?>>
+<body data-page="calendar" data-tm-reload-lang="1"<?php if ($showSnow) echo ' data-snow="1"'; ?><?php if ($showSanta) echo ' data-santa="1"'; ?><?php if ($showFireworks) echo ' data-fireworks="1"'; ?>>
 	<div class="readbar" aria-hidden="true"><span></span></div>
 
 	<main id="main">

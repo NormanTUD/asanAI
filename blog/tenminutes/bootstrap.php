@@ -40,11 +40,7 @@ function tm_lang(): string
 
 function tm_load_lang(string $slug): array
 {
-	$dict = ['lang' => 'en', 'blocks' => [], 'texts' => [], 'attrs' => [], 'title' => '', 'description' => ''];
-	if (tm_lang() !== 'de') {
-		return $dict;
-	}
-	$dict['lang'] = 'de';
+	$dict = ['blocks' => [], 'texts' => [], 'attrs' => [], 'title' => '', 'description' => ''];
 	$files = [__DIR__ . '/lang/de/shared.php'];
 	if ($slug === 'index' || $slug === 'advent') {
 		$files[] = __DIR__ . '/lang/de/calendar.php';
@@ -95,34 +91,40 @@ function tm_full_lesson_title(string $slug, string $lang = 'en'): string
 	return $title;
 }
 
-function tm_full_article_html(string $compactSlug, string $lang): string
+function tm_full_article_html(string $compactSlug): string
 {
 	$lessons = TM_FULL_LESSON_MAP[$compactSlug] ?? [$compactSlug];
 	if ($lessons === []) {
 		return '';
 	}
-	$kicker = $lang === 'de' ? 'Die Originallektionen' : 'The original lessons';
-	$prefix = $lang === 'de' ? 'Die vollständige Lektion lesen: ' : 'Read the full lesson: ';
-	$html = '<aside class="full-article">';
-	$html .= '<span class="full-article-kicker">' . $kicker . '</span>';
+	$items = [];
 	foreach ($lessons as $lesson) {
 		$entry = tm_full_lesson_entry($lesson);
 		if ($entry['page'] === '') {
 			continue;
 		}
-		$page = $entry['page'];
-		if ($lang === 'de') {
-			$page .= (strpos($page, '?') === false ? '?' : '&') . 'lang=de';
-		}
-		$url = htmlspecialchars($page, ENT_QUOTES, 'UTF-8');
-		$title = $entry['title_de'] ?? null;
-		if ($lang !== 'de' || $title === null) {
-			$title = $lang === 'de' && $entry['slug'] !== ''
-				? tm_full_lesson_title($entry['slug'], 'de')
-				: ($entry['title'] ?? ($entry['slug'] !== '' ? tm_full_lesson_title($entry['slug'], 'en') : $url));
-		}
-		$title = htmlspecialchars((string) $title, ENT_QUOTES, 'UTF-8');
-		$html .= '<a class="full-article-main" href="' . $url . '" target="_blank" rel="noopener">' . $prefix . $title . '</a>';
+		$enPage = $entry['page'];
+		$dePage = $entry['page'] . (strpos($entry['page'], '?') === false ? '?' : '&') . 'lang=de';
+		$enTitle = $entry['title'] ?? ($entry['slug'] !== '' ? tm_full_lesson_title($entry['slug'], 'en') : $enPage);
+		$deTitle = $entry['title_de'] ?? ($entry['slug'] !== '' ? tm_full_lesson_title($entry['slug'], 'de') : $dePage);
+		$items[] = [
+			'enPage' => $enPage,
+			'dePage' => $dePage,
+			'enTitle' => (string) $enTitle,
+			'deTitle' => (string) $deTitle,
+		];
+	}
+	if ($items === []) {
+		return '';
+	}
+	$html = '<aside class="full-article" data-no-i18n>';
+	$html .= '<span class="full-article-kicker tm-lang-only-en">The original lessons</span>';
+	$html .= '<span class="full-article-kicker tm-lang-only-de">Die Originallektionen</span>';
+	foreach ($items as $item) {
+		$html .= '<a class="full-article-main tm-lang-only-en" href="' . htmlspecialchars($item['enPage'], ENT_QUOTES, 'UTF-8')
+			. '" target="_blank" rel="noopener">Read the full lesson: ' . htmlspecialchars($item['enTitle'], ENT_QUOTES, 'UTF-8') . '</a>';
+		$html .= '<a class="full-article-main tm-lang-only-de" href="' . htmlspecialchars($item['dePage'], ENT_QUOTES, 'UTF-8')
+			. '" target="_blank" rel="noopener">Die vollständige Lektion lesen: ' . htmlspecialchars($item['deTitle'], ENT_QUOTES, 'UTF-8') . '</a>';
 	}
 	$html .= '</aside>';
 	return $html;
@@ -144,18 +146,21 @@ $tm_in_advent = $tm_today >= new DateTimeImmutable('2026-12-01')
 if (PHP_SAPI !== 'cli') {
 	$pageSlug = pathinfo((string) ($_SERVER['SCRIPT_FILENAME'] ?? ''), PATHINFO_FILENAME);
 	$tm_dict = tm_load_lang($pageSlug);
-	$tm_i18nJson = json_encode($tm_dict, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+	$tm_i18nJson = json_encode(['lang' => $tm_lang, 'de' => $tm_dict], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 	$tm_i18nScript = "\n<script type=\"application/json\" id=\"tm-i18n\">" . $tm_i18nJson . "</script>\n"
 		. "<script src=\"assets/i18n.js\" defer></script>\n";
 
 	ob_start(static function (string $buffer) use ($tm_in_advent, $tm_lang, $tm_i18nScript): string {
 		$isHtml = stripos($buffer, '</body>') !== false;
+		if ($isHtml) {
+			$buffer = preg_replace('/<html\b([^>]*)\blang="[^"]*"/i', '<html$1lang="' . $tm_lang . '"', $buffer, 1) ?? $buffer;
+		}
 		if ($isHtml && !$tm_in_advent
 			&& strpos($buffer, 'data-page="lesson"') !== false
 			&& strpos($buffer, 'data-no-full-article') === false
 			&& preg_match('/data-lesson="([^"]+)"/', $buffer, $match)
 			&& strpos($buffer, '</article>') !== false) {
-			$block = tm_full_article_html($match[1], $tm_lang);
+			$block = tm_full_article_html($match[1]);
 			if ($block !== '') {
 				$buffer = preg_replace('/<\/article>/', $block . '</article>', $buffer, 1) ?? $buffer;
 			}

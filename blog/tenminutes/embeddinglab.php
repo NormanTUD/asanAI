@@ -19,7 +19,7 @@ $oned_tex = (function_exists('tm_lang') && tm_lang() === 'de') ? [
 	<link rel="stylesheet" href="../embedding_manifold.css?v=<?php echo filemtime(__DIR__.'/../embedding_manifold.css'); ?>">
 	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
-<body data-lesson="embeddinglab" data-page="lesson">
+<body data-lesson="embeddinglab" data-page="lesson" data-tm-reload-lang="1">
 	<div class="readbar" aria-hidden="true"><span></span></div>
 
 	<main id="main">
@@ -411,6 +411,7 @@ $oned_tex = (function_exists('tm_lang') && tm_lang() === 'de') ? [
 	(function () {
 		"use strict";
 
+		window.__tmLiveLang = true;
 		var DE = TM.lang() === "de";
 
 		/* ── semantic map ────────────────────────────────────── */
@@ -679,6 +680,11 @@ $oned_tex = (function_exists('tm_lang') && tm_lang() === 'de') ? [
 				});
 			}
 			window.addEventListener("tm:theme", function () { if (api) api.redraw(); });
+			window.addEventListener("tm:lang", function () {
+				DE = TM.lang() === "de";
+				if (api) api.redraw();
+				setEquation(analogyIndex >= 0 ? analogies[analogyIndex] : null);
+			});
 		}
 
 		/* ── cosine demo ─────────────────────────────────────── */
@@ -756,6 +762,7 @@ $oned_tex = (function_exists('tm_lang') && tm_lang() === 'de') ? [
 				});
 			});
 			["tm:theme", "resize"].forEach(function (ev) { window.addEventListener(ev, redrawCos); });
+			window.addEventListener("tm:lang", function () { DE = TM.lang() === "de"; redrawCos(); });
 		}
 
 	})();
@@ -765,21 +772,33 @@ $oned_tex = (function_exists('tm_lang') && tm_lang() === 'de') ? [
 		"use strict";
 		var canvas = document.getElementById("oned-canvas");
 		if (!canvas || !TM.numberLine) return;
-		var de = TM.lang() === "de";
-		var c = TM.colors();
-		TM.numberLine(canvas, {
-			min: -40,
-			max: 110,
-			points: [
-				{ value: -30, label: de ? "Gefrierpunkt" : "Freezing", color: c.sky },
-				{ value: 5, label: de ? "Kalt" : "Cold", color: c.blue },
-				{ value: 30, label: de ? "Lauwarm" : "Lukewarm", color: c.green },
-				{ value: 100, label: de ? "Heiß" : "Hot", color: c.gold }
-			],
-			ops: [
-				{ from: 30, to: 100, label: de ? "Heiß − Lauwarm = 70" : "Hot − Lukewarm = 70", color: c.gold },
-				{ from: 5, to: 30, label: de ? "Lauwarm − Kalt = 25" : "Lukewarm − Cold = 25", color: c.green }
-			]
+		window.__tmLiveLang = true;
+		function buildNumberLine() {
+			var de = TM.lang() === "de";
+			var c = TM.colors();
+			TM.numberLine(canvas, {
+				min: -40,
+				max: 110,
+				points: [
+					{ value: -30, label: de ? "Gefrierpunkt" : "Freezing", color: c.sky },
+					{ value: 5, label: de ? "Kalt" : "Cold", color: c.blue },
+					{ value: 30, label: de ? "Lauwarm" : "Lukewarm", color: c.green },
+					{ value: 100, label: de ? "Heiß" : "Hot", color: c.gold }
+				],
+				ops: [
+					{ from: 30, to: 100, label: de ? "Heiß − Lauwarm = 70" : "Hot − Lukewarm = 70", color: c.gold },
+					{ from: 5, to: 30, label: de ? "Lauwarm − Kalt = 25" : "Lukewarm − Cold = 25", color: c.green }
+				]
+			});
+		}
+		buildNumberLine();
+		window.addEventListener("tm:lang", function () {
+			var parent = canvas.parentNode;
+			if (!parent) return;
+			var fresh = canvas.cloneNode(false);
+			parent.replaceChild(fresh, canvas);
+			canvas = fresh;
+			buildNumberLine();
 		});
 	})();
 	</script>
@@ -790,6 +809,7 @@ $oned_tex = (function_exists('tm_lang') && tm_lang() === 'de') ? [
 		var aliceData = window.TM_EMBEDDING_MANIFOLD;
 		var api = window.EmbeddingManifold;
 		if (!poemData || !aliceData || !api) return;
+		window.__tmLiveLang = true;
 		var uiDe = TM.lang() === "de";
 		var current = uiDe ? "de" : "en";
 		var caption = document.getElementById("poem-caption");
@@ -865,6 +885,35 @@ $oned_tex = (function_exists('tm_lang') && tm_lang() === 'de') ? [
 		}
 		chips.forEach(function (chip) {
 			chip.addEventListener("click", function () { render(chip.getAttribute("data-poem")); });
+		});
+		window.addEventListener("tm:lang", function () {
+			uiDe = TM.lang() === "de";
+			blakeQuote = uiDe
+				? "„Der Narr sieht nicht denselben Baum, den ein Weiser sieht.“"
+				: "“The fool sees not the same tree that a wise man sees.”";
+			blakeCite = uiDe
+				? "William Blake, Sprüche der Hölle, Die Hochzeit des Himmels und der Hölle (um 1790)."
+				: "William Blake, Proverbs of Hell, The Marriage of Heaven and Hell (c. 1790).";
+			ringQuote = uiDe
+				? "„Die Löcher sind das Wichtigste am Sieb.“"
+				: "“The holes are the most important thing about a sieve.”";
+			ringCite = uiDe
+				? "Joachim Ringelnatz (zugeschrieben). Die Zuschreibung ist verbreitet, aber nicht gesichert."
+				: "Joachim Ringelnatz (attributed). The attribution is common but not secure.";
+			aliceQuote = uiDe
+				? "„" + aliceData.sentence.de + "“"
+				: "“" + aliceData.sentence.en + "”";
+			aliceCite = uiDe
+				? "Lewis Carroll, Alice’s Abenteuer im Wunderland, übers. Antonie Zimmermann (1869), Kap. II. Englisch: „" + aliceData.sentence.en + "“, Alice’s Adventures in Wonderland (1865), Kap. II."
+				: "Lewis Carroll, Alice’s Adventures in Wonderland (1865), ch. II. German: „" + aliceData.sentence.de + "“, Alice’s Abenteuer im Wunderland, trans. Antonie Zimmermann (1869), ch. II.";
+			sources = {
+				en: { data: poemData.poems.en, payload: poemData.poems.en, quote: blakeQuote, cite: blakeCite },
+				de: { data: poemData.poems.de, payload: poemData.poems.de, quote: ringQuote, cite: ringCite },
+				alice: { data: aliceData, payload: aliceData.modes.combined, quote: aliceQuote, cite: aliceCite }
+			};
+			current = uiDe ? "de" : "en";
+			Object.keys(hosts).forEach(function (key) { if (hosts[key]) hosts[key].removeAttribute("data-demo-ready"); });
+			render(current);
 		});
 		render(current);
 	})();

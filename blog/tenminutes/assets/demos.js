@@ -35,6 +35,29 @@
 		return [parseInt(h.slice(0, 2), 16) || 0, parseInt(h.slice(2, 4), 16) || 0, parseInt(h.slice(4, 6), 16) || 0];
 	}
 
+	/* Every shared demo is rebuilt from its server-rendered markup when the
+	   language changes, so dynamic labels and canvases switch together. */
+	var teardowns = new WeakMap();
+	function onTeardown(root, fn) {
+		var list = teardowns.get(root);
+		if (!list) { list = []; teardowns.set(root, list); }
+		list.push(fn);
+	}
+	function cleanupRoot(root) {
+		var list = teardowns.get(root);
+		if (!list) return;
+		list.forEach(function (fn) { try { fn(); } catch (e) {} });
+		teardowns.delete(root);
+	}
+	function capturePristine() {
+		$$("[data-demo]").forEach(function (root) {
+			if (typeof root.__tmPristineHTML !== "string") {
+				root.__tmPristineHTML = root.innerHTML;
+			}
+		});
+	}
+	capturePristine();
+
 	/* ── sampling ───────────────────────────────────────────── */
 
 	function initSampling(root) {
@@ -872,6 +895,7 @@
 		var outCtx = outCanvas.getContext("2d");
 		var scanCell = 0;
 		var scanTimer = null;
+		onTeardown(root, function () { if (scanTimer) { clearInterval(scanTimer); scanTimer = null; } });
 		var lastGeom = null;
 		function kernelValue(v) {
 			return Math.abs(v - Math.round(v)) < 0.001 ? String(v) : v.toFixed(2);
@@ -1757,6 +1781,7 @@
 			{ label: "house", x: 0.52, y: 0.46 }
 		];
 		var t = 0, target = 0, raf = null;
+		onTeardown(root, function () { if (raf) { cancelAnimationFrame(raf); raf = null; } });
 		function draw(ctx, W, H) {
 			var c = colors();
 			var pad = 26, mid = W / 2;
@@ -2319,6 +2344,7 @@
 		if (!contextEl || !candsEl) return;
 		var running = false;
 		var runTimer = null;
+		onTeardown(root, function () { if (runTimer) { clearInterval(runTimer); runTimer = null; } });
 
 		var states = {
 			start: [
@@ -2789,6 +2815,7 @@
 		var losses = [f(pos.x, pos.y)];
 		var steps = 0;
 		var timer = null;
+		onTeardown(root, function () { if (timer) { clearInterval(timer); timer = null; } });
 		var ghostSpecs = [
 			{ lr: 0.02, label: "slow", color: "sky" },
 			{ lr: 0.12, label: "good", color: "gold" },
@@ -3590,6 +3617,7 @@
 		var count = 8;
 		var state = { experts: 4, topk: 2, queue: [], routed: 0, loads: [], current: 0, phase: 0, t: 0, target: 0, auto: true, last: "—" };
 		var timer = null;
+		onTeardown(root, function () { if (timer) { clearInterval(timer); timer = null; } });
 		var api;
 		var visible = true;
 
@@ -3834,6 +3862,7 @@
 		var uniformBitsPerChar = Math.log2(26);
 		var state = { index: 0, bits: 0, uniform: 0, running: false };
 		var timer = null;
+		onTeardown(root, function () { if (timer) { clearInterval(timer); timer = null; } });
 		var api;
 
 		function num(v, d) { return DEMO_DE ? v.toFixed(d).replace(".", ",") : v.toFixed(d); }
@@ -4852,6 +4881,7 @@
 		var step = 0;
 		var running = false;
 		var raf = null;
+		onTeardown(root, function () { running = false; if (raf) { cancelAnimationFrame(raf); raf = null; } });
 		var bg = null;
 		var bgKey = "";
 		var api = canvasDemo(canvas, paint);
@@ -5146,55 +5176,77 @@
 
 	/* ── boot ───────────────────────────────────────────────── */
 
-	function boot() {
-		$$("[data-demo]").forEach(function (root) {
-			var type = root.getAttribute("data-demo");
-			if (type === "sampling") initSampling(root);
-			else if (type === "decoding") initDecoding(root);
-			else if (type === "linefit") initLineFit(root);
-			else if (type === "polyfit") initPolyFit(root);
-			else if (type === "activation") initActivation(root);
-			else if (type === "datamix") initDataMix(root);
-			else if (type === "convolution") initConvolution(root);
-			else if (type === "pooling") initPooling(root);
-			else if (type === "vram") initVram(root);
-			else if (type === "budget") initBudget(root);
-			else if (type === "retrieval") initRetrieval(root);
-			else if (type === "entropy") initEntropy(root);
-			else if (type === "cot") initCot(root);
-			else if (type === "timeline") initTimeline(root);
-			else if (type === "contamination") initContamination(root);
-			else if (type === "position") initPosition(root);
-			else if (type === "waveform") initWaveform(root);
-			else if (type === "ragspace") initRagSpace(root);
-			else if (type === "align") initAlign(root);
-			else if (type === "preference") initPreference(root);
-			else if (type === "mary") initMary(root);
-			else if (type === "logitlens") initLogitLens(root);
-			else if (type === "filter") initFilter(root);
-			else if (type === "residual") initResidual(root);
-			else if (type === "science") initScience(root);
-			else if (type === "predict") initPredict(root);
-			else if (type === "perceptron") initPerceptron(root);
-			else if (type === "gradient") initGradient(root);
-			else if (type === "verify") initVerify(root);
-			else if (type === "ambiguity") initAmbiguity(root);
-			else if (type === "negation") initNegation(root);
-			else if (type === "receptive") initReceptive(root);
-			else if (type === "citecheck") initCitecheck(root);
-			else if (type === "reasoning") initReasoning(root);
-			else if (type === "surprise") initLossSurprise(root);
-			else if (type === "refusal") initRefusal(root);
-			else if (type === "compression") initCompression(root);
-			else if (type === "moe") initMoeGalaxy(root);
-			else if (type === "prompt") initPrompt(root);
-			else if (type === "trajectory") initTrajectory(root);
-			else if (type === "folds") initFolds(root);
-			else if (type === "headbudget") initHeadBudget(root);
-			else if (type === "optimizer") initOptimizer(root);
-			root.setAttribute("data-demo-ready", "1");
-		});
+	function bootRoot(root) {
+		var type = root.getAttribute("data-demo");
+		if (type === "sampling") initSampling(root);
+		else if (type === "decoding") initDecoding(root);
+		else if (type === "linefit") initLineFit(root);
+		else if (type === "polyfit") initPolyFit(root);
+		else if (type === "activation") initActivation(root);
+		else if (type === "datamix") initDataMix(root);
+		else if (type === "convolution") initConvolution(root);
+		else if (type === "pooling") initPooling(root);
+		else if (type === "vram") initVram(root);
+		else if (type === "budget") initBudget(root);
+		else if (type === "retrieval") initRetrieval(root);
+		else if (type === "entropy") initEntropy(root);
+		else if (type === "cot") initCot(root);
+		else if (type === "timeline") initTimeline(root);
+		else if (type === "contamination") initContamination(root);
+		else if (type === "position") initPosition(root);
+		else if (type === "waveform") initWaveform(root);
+		else if (type === "ragspace") initRagSpace(root);
+		else if (type === "align") initAlign(root);
+		else if (type === "preference") initPreference(root);
+		else if (type === "mary") initMary(root);
+		else if (type === "logitlens") initLogitLens(root);
+		else if (type === "filter") initFilter(root);
+		else if (type === "residual") initResidual(root);
+		else if (type === "science") initScience(root);
+		else if (type === "predict") initPredict(root);
+		else if (type === "perceptron") initPerceptron(root);
+		else if (type === "gradient") initGradient(root);
+		else if (type === "verify") initVerify(root);
+		else if (type === "ambiguity") initAmbiguity(root);
+		else if (type === "negation") initNegation(root);
+		else if (type === "receptive") initReceptive(root);
+		else if (type === "citecheck") initCitecheck(root);
+		else if (type === "reasoning") initReasoning(root);
+		else if (type === "surprise") initLossSurprise(root);
+		else if (type === "refusal") initRefusal(root);
+		else if (type === "compression") initCompression(root);
+		else if (type === "moe") initMoeGalaxy(root);
+		else if (type === "prompt") initPrompt(root);
+		else if (type === "trajectory") initTrajectory(root);
+		else if (type === "folds") initFolds(root);
+		else if (type === "headbudget") initHeadBudget(root);
+		else if (type === "optimizer") initOptimizer(root);
+		root.setAttribute("data-demo-ready", "1");
 	}
+
+	function boot() {
+		$$("[data-demo]").forEach(bootRoot);
+	}
+
+	function restart(root) {
+		if (window.TM && TM.lang) {
+			DEMO_LANG = TM.lang();
+			DEMO_DE = DEMO_LANG === "de";
+		}
+		cleanupRoot(root);
+		if (typeof root.__tmPristineHTML === "string") root.innerHTML = root.__tmPristineHTML;
+		root.removeAttribute("data-demo-ready");
+		bootRoot(root);
+	}
+
+	window.addEventListener("tm:lang", function () {
+		capturePristine();
+		$$("[data-demo]").forEach(function (root) {
+			if (root.getAttribute("data-demo-ready") !== "1") return;
+			restart(root);
+		});
+	});
+
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
 	else boot();
 })();

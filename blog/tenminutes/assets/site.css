@@ -8638,3 +8638,69 @@ html[data-theme="dark"] .traj-candidate.is-chosen { color: var(--tm-green); }
 	font-weight: 600;
 }
 .collapse-card[open] > summary.cc-label::after { content: " −"; }
+
+/* ── live language switcher ─────────────────────────────── */
+#tm-lang-switch {
+	position: fixed;
+	top: 14px;
+	right: 14px;
+	z-index: 95;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	padding: 5px;
+	background: var(--tm-card);
+	border: 1px solid var(--tm-line-strong);
+	box-shadow: 0 8px 22px rgba(0, 75, 111, 0.14);
+}
+html[data-theme="dark"] #tm-lang-switch {
+	box-shadow: 0 8px 22px rgba(0, 0, 0, 0.42);
+}
+#tm-lang-switch button {
+	display: block;
+	padding: 0;
+	margin: 0;
+	border: 1px solid transparent;
+	background: none;
+	cursor: pointer;
+	line-height: 0;
+	opacity: 0.45;
+	filter: grayscale(0.55);
+	transition: opacity 0.16s ease, filter 0.16s ease, border-color 0.16s ease;
+}
+#tm-lang-switch button img {
+	display: block;
+	width: 30px;
+	height: 20px;
+	object-fit: cover;
+	border: 1px solid var(--tm-line);
+}
+#tm-lang-switch button:hover {
+	opacity: 0.85;
+	filter: none;
+}
+#tm-lang-switch button.is-on {
+	opacity: 1;
+	filter: none;
+	border-color: var(--tm-green);
+}
+#tm-lang-switch button:focus-visible {
+	outline: 2px solid var(--tm-green);
+	outline-offset: 2px;
+}
+
+.tm-lang-hidden { display: none !important; }
+
+@media (max-width: 900px) {
+	#tm-lang-switch {
+		top: auto;
+		bottom: 14px;
+		right: 12px;
+	}
+}
+
+/* Bilingual server markup: only the active language is displayed.
+   The switcher toggles the same classes from JavaScript. */
+.tm-lang-only-de { display: none !important; }
+html[lang="de"] .tm-lang-only-en { display: none !important; }
+html[lang="de"] .tm-lang-only-de { display: inline !important; }

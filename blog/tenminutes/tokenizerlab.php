@@ -289,6 +289,7 @@ training text, and stop at the target vocabulary size.
 	(function () {
 		"use strict";
 
+		window.__tmLiveLang = true;
 		var TOK_DE = TM.lang() === "de";
 		var REASON_DE = {
 			"whitespace run": "Leerraum",
@@ -591,6 +592,12 @@ training text, and stop at the target vocabulary size.
 			});
 		}
 		updateLanguageDemo();
+		window.addEventListener("tm:lang", function () {
+			TOK_DE = TM.lang() === "de";
+			render();
+			measureStreamHeight();
+			updateLanguageDemo();
+		});
 	})();
 	</script>
 </body>

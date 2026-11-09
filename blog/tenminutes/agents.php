@@ -328,6 +328,7 @@ opencode
 	(function () {
 		"use strict";
 
+		window.__tmLiveLang = true;
 		var AGENT_DE = TM.lang() === "de";
 
 		/* ── agent simulation ───────────────────────────────── */
@@ -503,6 +504,12 @@ opencode
 				var key = li.getAttribute("data-tool");
 				if (toolDocEl && toolDocs[key]) toolDocEl.textContent = toolDocs[key];
 			});
+		});
+
+		window.addEventListener("tm:lang", function () {
+			AGENT_DE = TM.lang() === "de";
+			if (feed) reset();
+			if (toolDocEl) toolDocEl.textContent = "";
 		});
 
 		/* ── prompt injection demo ───────────────────────────── */

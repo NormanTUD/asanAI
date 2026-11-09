@@ -258,6 +258,7 @@
 		"use strict";
 		var canvas = document.getElementById("sinfit-canvas");
 		if (!canvas) return;
+		window.__tmLiveLang = true;
 		var DE = TM.lang() === "de";
 		var noiseSlider = document.getElementById("sinfit-noise");
 		var noiseOut = document.getElementById("sinfit-noise-out");
@@ -659,6 +660,12 @@
 			if (hintEl) hintEl.textContent = DE ? "TF.js konnte nicht initialisiert werden: " + err.message : "TF.js could not be initialized: " + err.message;
 		});
 		window.addEventListener("tm:theme", function () {
+			if (state.api) state.api.redraw();
+			if (state.lossApi) state.lossApi.redraw();
+		});
+		window.addEventListener("tm:lang", function () {
+			DE = TM.lang() === "de";
+			updateReadout();
 			if (state.api) state.api.redraw();
 			if (state.lossApi) state.lossApi.redraw();
 		});

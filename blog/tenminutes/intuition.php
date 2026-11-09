@@ -126,9 +126,17 @@
 			.traj-panel canvas { height: 260px; }
 			.tt-echarts-host { height: 380px; min-height: 340px; }
 		}
+		.tm-ai-disclaimer {
+			margin: 16px 0 0;
+			padding-left: 12px;
+			border-left: 3px solid var(--tm-green);
+			max-width: 62ch;
+			font: 600 0.78rem/1.5 var(--tm-ui);
+			color: var(--tm-muted);
+		}
 	</style>
 </head>
-<body data-lesson="intuition" data-page="lesson">
+<body data-lesson="intuition" data-page="lesson" data-tm-reload-lang="1">
 	<div class="readbar" aria-hidden="true"><span></span></div>
 
 	<main id="main">
@@ -143,6 +151,7 @@
 						drives it: enough to see how the parts fit together, without following every
 						detail.
 					</p>
+					<p class="tm-ai-disclaimer">This series was created with AI and intensively curated and reviewed by humans.</p>
 				</div>
 			</section>
 

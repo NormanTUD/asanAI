@@ -428,6 +428,7 @@
 	(function () {
 		"use strict";
 
+		window.__tmLiveLang = true;
 		var ATT_DE = TM.lang() === "de";
 		var TOKENS_EN = ["Maria", "told", "the", "bank", "that", "she", "would", "repay", "the", "loan", "tomorrow"];
 		var TOKENS_DE = ["Maria", "told", "the", "bank", "that", "she", "the", "loan", "tomorrow", "repay", "would"];
@@ -613,6 +614,14 @@
 				});
 			}
 			window.addEventListener("tm:theme", function () { if (matrixApi) matrixApi.redraw(); });
+			window.addEventListener("tm:lang", function () {
+				ATT_DE = TM.lang() === "de";
+				tokens = ATT_DE ? TOKENS_DE : TOKENS_EN;
+				LABELS = ATT_DE ? ["Maria", "sagte", "der", "Bank", "dass", "sie", "den", "Kredit", "morgen", "zurückzahlen", "würde"] : TOKENS_EN.slice();
+				if (query >= tokens.length) query = tokens.length - 1;
+				renderSentence();
+				if (matrixApi) matrixApi.redraw();
+			});
 			renderSentence();
 			if (matrixApi) matrixApi.redraw();
 			if (window.TM && TM.typesetMath) TM.typesetMath();
@@ -662,6 +671,11 @@
 					: "Higher τ spreads the budget; lower τ concentrates it. The EOT objective trades similarity against entropy.";
 			}
 			if (eotTemp) eotTemp.addEventListener("input", renderEot);
+			window.addEventListener("tm:lang", function () {
+				ATT_DE = TM.lang() === "de";
+				eotTokens = ATT_DE ? ["Maria", "Bank", "Kredit", "sie", "zurückzahlen", "morgen"] : ["Maria", "bank", "loan", "she", "repay", "tomorrow"];
+				renderEot();
+			});
 			renderEot();
 		}
 	})();

@@ -8,7 +8,7 @@
 	<title>Minds, Meaning, and Machines | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
-<body data-lesson="philosophy" data-page="lesson">
+<body data-lesson="philosophy" data-page="lesson" data-tm-reload-lang="1">
 	<div class="readbar" aria-hidden="true"><span></span></div>
 
 	<main id="main">

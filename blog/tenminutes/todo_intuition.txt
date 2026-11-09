@@ -26,3 +26,4 @@ Nachtrag (November 2026):
 - Wahrscheinlichkeits-Satz neu: Das Modell weist jedem möglichen nächsten Token einen Wert zu; die Werte summieren sich zu eins, und die ganze Verteilung ist die Ausgabe.
 - Autoregressive Schleife: Beim Abschluss wird der Cursor nicht mehr aus dem DOM entfernt, sondern nur unsichtbar; dadurch bleibt die Zeilenbox stabil und der Halb-Pixel-Sprung verschwindet.
 - Code-Demo: englischer Dateiname sky.py (deutsch himmel.py) in Fenstertitel und Terminalbefehl; das Konsolenfenster hat jetzt unabhängig vom Theme einen schwarzen Hintergrund mit heller Schrift.
+- Transparenz-Hinweis im Hero ergänzt: Die Reihe wurde mit KI erstellt und intensiv von Menschen kuratiert und geprüft (EN/DE im Wörterbuch). Selbstkritik: Der Satz nennt keine Prüfmaßstäbe; er macht nur die Beteiligung transparent.
