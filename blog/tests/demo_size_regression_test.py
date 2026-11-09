@@ -3,6 +3,7 @@
 # requires-python = ">=3.11"
 # dependencies = [
 #     "playwright>=1.40",
+#     "rich>=13.0",
 # ]
 # ///
 """Exercise every lesson page and its demos; fail on size/layout escapes.
@@ -31,6 +32,11 @@ import sys
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
+from rich.console import Console, Group
+from rich.live import Live
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
 
 ROOT = Path(__file__).resolve().parents[2]
 BLOG = ROOT / "blog"
@@ -42,11 +48,85 @@ DEMO_SELECTOR = (
 )
 EXCEPTIONS_FILE = Path(__file__).with_name("demo_size_exceptions.json")
 CASES: list[tuple[str, bool, str]] = []
+CONSOLE = Console()
+UI: "RunnerUI | None" = None
+
+
+class RunnerUI:
+    """A Rich live table of pages, current action and failures."""
+
+    def __init__(self, pages: list[Path]) -> None:
+        self.state: dict[str, dict] = {
+            p.name: {"status": "queued", "checks": 0, "action": "", "color": "dim"}
+            for p in pages
+        }
+        self.failures: list[tuple[str, str, str]] = []
+        self.done = 0
+        self.total = len(pages)
+        self.live: Live | None = None
+        self.table = self.render_table()
+
+    def render_table(self) -> Table:
+        table = Table(title=f"Demo size regression · {self.done}/{self.total} pages", expand=True)
+        table.add_column("Page", style="cyan", no_wrap=True)
+        table.add_column("Status", no_wrap=True)
+        table.add_column("Checks", justify="right", no_wrap=True)
+        table.add_column("Current action / last failure", overflow="fold")
+        for page, st in self.state.items():
+            table.add_row(
+                page,
+                Text(st["status"], style=st["color"]),
+                str(st["checks"]),
+                Text(st["action"][:180])
+            )
+        return table
+
+    def update(self) -> None:
+        self.table = self.render_table()
+        if self.live:
+            self.live.update(self.table)
+
+    def start(self, page: str) -> None:
+        st = self.state[page]
+        st.update(status="running", checks=0, action="loading page…", color="bold yellow")
+        self.update()
+
+    def action(self, page: str, text: str) -> None:
+        self.state[page]["action"] = text
+        self.update()
+
+    def record(self, name: str, ok: bool, detail: str) -> None:
+        page = name.split(":", 1)[0]
+        if page not in self.state:
+            page = next((p for p in self.state if name.startswith(p)), page)
+        if page not in self.state:
+            return
+        st = self.state[page]
+        st["checks"] += 1
+        if ok:
+            st.update(status="ok", action="check passed", color="green")
+        else:
+            self.failures.append((page, name, detail))
+            st.update(status="FAIL", action=f"{name}: {detail}", color="bold red")
+        self.update()
+
+    def finish(self, page: str, failed: bool) -> None:
+        self.done += 1
+        st = self.state[page]
+        st.update(
+            status="FAIL" if failed else "done",
+            color="bold red" if failed else "green",
+            action=f"finished ({self.done}/{self.total})"
+        )
+        self.update()
 
 
 def check(name: str, ok: bool, detail: str = "") -> None:
     CASES.append((name, bool(ok), detail))
-    print(("  PASS  " if ok else "  FAIL  ") + name + (f" — {detail}" if detail and not ok else ""))
+    if UI:
+        UI.record(name, bool(ok), detail)
+    else:
+        print(("  PASS  " if ok else "  FAIL  ") + name + (f" — {detail}" if detail and not ok else ""))
 
 
 def lessons() -> list[Path]:
@@ -238,25 +318,35 @@ def main() -> None:
     detail_limit = 3 if args.quick else 8
     control_limit = 4 if args.quick else 14
     global_exceptions, page_exceptions = load_exceptions()
+    global UI
+    UI = RunnerUI(pages)
+    live = Live(UI.table, console=CONSOLE, refresh_per_second=8, transient=False)
+    live.start()
+    UI.live = live
     try:
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True, args=["--enable-precise-memory-info"])
             for path in pages:
-                print(f"\n[{path.name}]", flush=True)
+                UI.start(path.name)
                 page = browser.new_page(viewport={"width": 1400, "height": 1000})
                 errors: list[str] = []
                 page.on("pageerror", lambda e: errors.append("pageerror: " + str(e)))
                 page.on("console", lambda m: errors.append("console: " + m.text) if m.type == "error" else None)
                 try:
+                    UI.action(path.name, "loading page…")
                     page.goto(f"http://127.0.0.1:{port}/{path.name}", wait_until="load", timeout=args.timeout * 1000)
                     try:
                         page.wait_for_function("() => document.documentElement.classList.contains('is-ready')", timeout=8000)
                     except Exception:
                         pass
+                    UI.action(path.name, "scrolling through lazy sections…")
                     scroll_through(page)
                     page.wait_for_timeout(300)
+                    UI.action(path.name, "measuring demo boxes…")
                     before = demo_widths(page, global_exceptions + page_exceptions.get(path.name, []))
+                    UI.action(path.name, "opening optional boxes and details…")
                     open_details(page, detail_limit)
+                    UI.action(path.name, "re-measuring after opening…")
                     after = demo_widths(page, global_exceptions + page_exceptions.get(path.name, []))
                     width_changes = []
                     height_changes = []
@@ -283,12 +373,15 @@ def main() -> None:
                     check(f"{path.name}: opening details only resizes known containers", not height_changes,
                           "; ".join(height_changes[:4]) +
                           " — add the selector to blog/tests/demo_size_exceptions.json or set data-allow-resize")
+                    UI.action(path.name, "exercising controls…")
                     control_problems = exercise_controls(page, control_limit)
                     check(f"{path.name}: controls keep layout", not control_problems,
                           "; ".join(control_problems[:4]))
                     check(f"{path.name}: no page/console errors", not errors, "; ".join(errors[:4]))
                 finally:
                     page.close()
+                    failed = any(n.startswith(path.name + ":") and not ok for n, ok, _ in CASES)
+                    UI.finish(path.name, failed)
             browser.close()
     finally:
         server.terminate()
@@ -296,12 +389,18 @@ def main() -> None:
             server.wait(timeout=5)
         except Exception:
             server.kill()
+    live.stop()
     failed = [c for c in CASES if not c[1]]
-    print(f"\n{len(CASES) - len(failed)}/{len(CASES)} passed")
+    CONSOLE.print(f"\n[bold]{len(CASES) - len(failed)}/{len(CASES)} checks passed[/bold]")
     if failed:
-        print("FAILED:")
+        CONSOLE.print("[bold red]FAILURES — actionable[/bold red]")
         for name, _, detail in failed:
-            print(f"  - {name}: {detail}")
+            CONSOLE.print(Panel(
+                Text(f"{detail}\n\nFix the selector/layout or add it to blog/tests/demo_size_exceptions.json with a reason; use data-allow-resize only when the resize is intentional.", style="white"),
+                title=f"✗ {name}",
+                border_style="red",
+                expand=True
+            ))
         raise SystemExit(1)
 
 

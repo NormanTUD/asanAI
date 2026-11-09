@@ -706,8 +706,10 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="prose">
 							<?php if ($layer_de): ?>
 							<p>Ein neuronales Netz entsteht, indem man Funktionen nacheinander anwendet. Eine Schicht transformiert ihre Eingabe, die nächste transformiert dieses Ergebnis, und der Stapel macht aus einer kleinen Operation ein tiefes Modell. Tiefe ist Komposition: viele einfache Schritte, jeder füttert den nächsten.</p>
+							<p>Ein Modell ist aber mehr als seine Funktionen: Es braucht Daten, aus denen es lernt. Man gibt ihm Eingaben und passende Ausgaben; die Funktionen suchen dann eine Folge von Transformationen, die die Eingabe möglichst gut in die Ausgabe überführt.</p>
 							<?php else: ?>
 							<p>A neural network is built by applying functions one after another. One layer transforms its input, the next layer transforms that result, and the stack turns a small operation into a deep model. The depth is composition: many simple steps, each feeding the next.</p>
+							<p>A model is more than its functions: it also needs data to learn from. You give it inputs and matching outputs; the functions then search for a sequence of transformations that turns the input into the output as closely as possible.</p>
 							<?php endif; ?>
 							<div class="prose-math layer-stack-formula" data-tex="\underbrace{ \text{output} = \text{layer}_3\!\left( \underbrace{ \text{layer}_2\!\left( \underbrace{\text{layer}_1(\text{input})}_{\text{first transformation}} \right) }_{\text{second transformation}} \right) }_{\text{a stack of functions, each feeding the next}}" data-tex-de="\underbrace{ \text{output} = \text{layer}_3\!\left( \underbrace{ \text{layer}_2\!\left( \underbrace{\text{layer}_1(\text{input})}_{\text{erste Transformation}} \right) }_{\text{zweite Transformation}} \right) }_{\text{ein Stapel von Funktionen, jede füttert die nächste}}" data-tex-display="true"></div>
 							<h4 class="layer-subhead"><?php echo $layer_de ? 'Eine Schicht ist eine kleine Funktion' : 'One layer is a small function'; ?></h4>
