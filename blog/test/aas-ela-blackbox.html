@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Die Landschaft lesen, den Solver wählen — AAS × ELA</title>
+<style>
+:root{--acc:#5eead4;--acc2:#818cf8;--ink:#eef2ff;--mut:#98a2b3;--line:rgba(255,255,255,.12);--bg:#05060a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(900px 620px at 85% -10%,rgba(94,234,212,.16),transparent 62%),radial-gradient(760px 560px at 2% 15%,rgba(129,140,248,.15),transparent 60%),var(--bg);color:var(--ink);font:15px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(circle at 50% 20%,#000 12%,transparent 76%)}
+.wrap{max-width:1080px;margin:0 auto;padding:26px 22px 80px}
+nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:38px}
+.back,.pdf{text-decoration:none;font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:7px 13px;color:#c7cede;background:rgba(255,255,255,.035);transition:.2s}
+.back:hover,.pdf:hover{background:rgba(255,255,255,.09);color:#fff}
+.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.hero{border:1px solid var(--line);border-radius:28px;padding:40px 38px 34px;background:linear-gradient(155deg,rgba(255,255,255,.075),rgba(255,255,255,.018));box-shadow:0 30px 90px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.13);margin-bottom:40px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;right:-140px;top:-180px;background:radial-gradient(circle,rgba(94,234,212,.18),transparent 65%);pointer-events:none}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+h1{font-size:clamp(34px,5.8vw,62px);line-height:1.02;letter-spacing:-.045em;margin:0 0 16px;font-weight:800;max-width:800px}
+h1 em{font-style:normal;color:var(--acc);text-shadow:0 0 40px rgba(94,234,212,.35)}
+.lede{font-size:clamp(15px,2vw,18px);color:#c3ccdd;max-width:680px;margin:0 0 22px}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px}
+.tag{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#dbe3f3;background:rgba(255,255,255,.04)}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{border:1px solid var(--line);background:rgba(5,7,12,.5);border-radius:15px;padding:11px 15px;min-width:125px}
+.stat b{display:block;font-size:21px;letter-spacing:-.02em;color:#fff}
+.stat span{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.demo{border:1px solid var(--line);border-radius:24px;background:linear-gradient(165deg,rgba(255,255,255,.06),rgba(255,255,255,.015));padding:22px;margin-bottom:24px;box-shadow:0 18px 50px rgba(0,0,0,.28)}
+.demoHead{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.n{flex:0 0 auto;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:12px;font-weight:800;color:#07100d;background:linear-gradient(135deg,var(--acc),#a7f3d0);box-shadow:0 0 24px rgba(94,234,212,.25)}
+.demoHead h2{font-size:19px;margin:0 0 3px;letter-spacing:-.015em}
+.demoHead p{margin:0;color:var(--mut);font-size:13px}
+.stage{position:relative;height:340px;border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;background:#070a11;margin:12px 0}
+.stage canvas{display:block;width:100%;height:100%}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 4px}
+button{font:inherit;font-size:12.5px;color:#d6deed;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:9px;padding:7px 11px;cursor:pointer;transition:.18s}
+button:hover{background:rgba(255,255,255,.1);color:#fff}
+button.on{background:linear-gradient(100deg,var(--acc),#a7f3d0);color:#06100c;border-color:transparent;font-weight:700;box-shadow:0 0 20px rgba(94,234,212,.22)}
+.insight{border-left:2px solid var(--acc);background:rgba(94,234,212,.055);border-radius:0 12px 12px 0;padding:10px 13px;font-size:12.5px;color:#c6d2e2;margin-top:12px}
+.insight b{color:var(--acc)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{font-size:11px;color:#dbe3f3;border:1px solid var(--line);background:rgba(255,255,255,.045);padding:4px 8px;border-radius:999px}
+.chip b{color:var(--acc)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--mut);margin-top:8px}
+.legend i{display:inline-block;width:16px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+footer{border-top:1px solid var(--line);padding-top:18px;color:var(--mut);font-size:11.5px;margin-top:44px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:640px){.hero{padding:28px 20px}.wrap{padding:18px 14px 60px}.stage{height:300px}.demo{padding:16px}.demoHead h2{font-size:17px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="back" href="optimizing_index.html">← Index</a>
+    <div class="brand">Algorithm Selection · 01</div>
+    <a class="pdf" href="Algorithm%20Selection/2019-ECJ-AAS_on_Continuous_Black_Box_Problems.pdf">PDF öffnen ↗</a>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">ECJ 2019 · Kerschke &amp; Trautmann</div>
+    <h1>Erst <em>hinschauen</em>, dann rechnen.</h1>
+    <p class="lede">Ein Portfolio aus 12 Solvern, 102 Landschafts-Features und ein ML-Modell: Statt blind den „besten“ Algorithmus zu nehmen, liest ELA die Landschaft aus wenigen Punkten — und wählt den Solver, der zu ihr passt.</p>
+    <div class="tags"><span class="tag">Exploratory Landscape Analysis</span><span class="tag">Algorithm Selection</span><span class="tag">BBOB / COCO</span></div>
+    <div class="stats">
+      <div class="stat"><b>50·d</b><span>Sample-Punkte</span></div>
+      <div class="stat"><b>30.37 → 16.67</b><span>relERT SBS → AS</span></div>
+      <div class="stat"><b>≈ 2×</b><span>weniger Aufwand</span></div>
+    </div>
+  </header>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">01</div><div><h2>Die 50·d-Probe</h2><p>Ein Latin-Hypercube-Sample genügt, um die wichtigsten Landschaftseigenschaften zu schätzen.</p></div></div>
+    <div class="stage"><canvas id="c1"></canvas></div>
+    <div class="controls" id="fnBtns1"></div>
+    <button id="resample">Neu samplen</button>
+    <div class="chips" id="featChips"></div>
+    <div class="insight"><b>Aha:</b> Schon ~100 Punkte trennen Kugel, Rastrigin und Rosenbrock. Die Probe ist fast gratis — sie kann die initiale Population eines EA sein.</div>
+  </section>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">02</div><div><h2>Feature-Fingerprint → Solver</h2><p>Dasselbe Portfolio, eine andere Landschaft — und plötzlich gewinnt ein anderer Algorithmus.</p></div></div>
+    <div class="stage"><canvas id="c2"></canvas></div>
+    <div class="controls" id="fnBtns2"></div>
+    <div class="insight"><b>Aha:</b> Es gibt keinen universell besten Solver. Das Modell lernt aus Features + Benchmark-Ergebnissen, welcher Kandidat zur Instanz passt.</div>
+  </section>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">03</div><div><h2>SBS vs. AS vs. VBS</h2><p>Der Vergleich, der zählt: schlägt der Selektor den besten Einzelsolver — inklusive Feature-Kosten?</p></div></div>
+    <div class="stage" style="height:300px"><canvas id="c3"></canvas></div>
+    <button id="race">Rennen starten</button>
+    <div class="legend"><span><i style="background:#8792a8"></i>SBS (HCMA)</span><span><i style="background:#fbbf24"></i>AS inkl. Feature-Kosten</span><span><i style="background:#5eead4"></i>AS ohne Feature-Kosten</span><span><i style="background:#818cf8"></i>idealer VBS</span></div>
+    <div class="insight"><b>Aha:</b> Der Selektor halbiert den Aufwand gegenüber dem Single Best Solver. Ohne Feature-Kosten (Wiederverwendung der Population) wären es sogar 2,2×.</div>
+  </section>
+
+  <footer><span>Quelle: Kerschke &amp; Trautmann, <i>Automated Algorithm Selection on Continuous Black-Box Problems</i>, ECJ 2019.</span><a class="back" href="optimizing_index.html">← zurück</a></footer>
+</div>
+
+<script>
+const TAU=Math.PI*2;
+function stage(cv){const d=Math.min(devicePixelRatio||1,2),r=cv.getBoundingClientRect(),W=Math.max(2,Math.round(r.width*d)),H=Math.max(2,Math.round(r.height*d));if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}const x=cv.getContext('2d');x.setTransform(d,0,0,d,0,0);return {x,w:r.width,h:r.height}}
+function rr(a,b){a|=0;b|=0;return function(){a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296}}
+function clamp(v,a,b){return v<a?a:v>b?b:v}
+function lerp(a,b,t){return a+(b-a)*t}
+
+const FUNCS={
+  sphere:{name:'Sphere',domain:[-5,5],f:(x,y)=>x*x+y*y,feat:[.05,.08,.06,.96,.25,.5],sol:[1.0,1.05,8.2,9.1,12.0,7.0,6.1,14.0,15.2,3.2,18.0,10.0]},
+  rastrigin:{name:'Rastrigin',domain:[-5,5],f:(x,y)=>20+x*x-10*Math.cos(TAU*x)+y*y-10*Math.cos(TAU*y),feat:[.96,.78,.25,.9,.62,.5],sol:[30,29,18.5,17.2,14.1,11.3,13.0,3.0,4.5,8.0,22.0,12.2]},
+  rosenbrock:{name:'Rosenbrock',domain:[-2.2,2.2],f:(x,y)=>Math.pow(1-x,2)+100*Math.pow(y-x*x,2),feat:[.16,.4,.97,.12,.82,.9],sol:[20,19,4.0,3.5,2.2,2.0,5.2,9.0,8.0,6.2,26.0,7.1]},
+  schwefel:{name:'Schwefel',domain:[-5,5],f:(x,y)=>418.9829*2-x*Math.sin(Math.sqrt(Math.abs(x)))-y*Math.sin(Math.sqrt(Math.abs(y))),feat:[.9,.92,.55,.34,.42,.56],sol:[16,15,20.0,18.0,7.0,6.1,11.0,5.0,4.2,3.0,22.0,9.2]}
+};
+const SOLVERS=['BSqi','BSrr','fmincon','fminunc','MLSL','HMLSL','MCS','CMA-CSA','IPOP400D','HCMA','SMAC','OQNLP'];
+const STOP=[[8,10,18],[17,70,92],[42,190,175],[252,194,82],[255,95,122]];
+function palette(t){
+  if(!Number.isFinite(t))t=0;
+  t=clamp(t,0,1)*(STOP.length-1);const i=Math.min(STOP.length-2,Math.floor(t)),u=t-i,a=STOP[i],b=STOP[i+1];
+  return [lerp(a[0],b[0],u)|0,lerp(a[1],b[1],u)|0,lerp(a[2],b[2],u)|0];
+}
+function makeHeat(f,dom,res=120){
+  const c=document.createElement('canvas');c.width=c.height=res;const g=c.getContext('2d'),img=g.createImageData(res,res);
+  let lo=Infinity,hi=-Infinity,vals=new Float32Array(res*res);
+  for(let j=0;j<res;j++)for(let i=0;i<res;i++){const x=dom[0]+(i+.5)/res*(dom[1]-dom[0]),y=dom[0]+(j+.5)/res*(dom[1]-dom[0]),v=f(x,y);vals[j*res+i]=v;if(v<lo)lo=v;if(v>hi)hi=v}
+  for(let k=0;k<res*res;k++){const t=Math.pow(clamp((vals[k]-lo)/(hi-lo+1e-12),0,1),.42),p=palette(t);img.data[k*4]=p[0];img.data[k*4+1]=p[1];img.data[k*4+2]=p[2];img.data[k*4+3]=255}
+  g.putImageData(img,0,0);return {canvas:c,vals,res,lo,hi};
+}
+function localOptima(vals,res){const cand=[];for(let j=1;j<res-1;j++)for(let i=1;i<res-1;i++){const k=j*res+i,v=vals[k];let ok=true;for(let b=-1;b<=1&&ok;b++)for(let a=-1;a<=1;a++){if(!a&&!b)continue;if(vals[(j+b)*res+i+a]<v){ok=false;break}}if(ok)cand.push({i,j,v})}cand.sort((a,b)=>a.v-b.v);const keep=[];for(const c of cand){if(!keep.some(k=>Math.hypot(k.i-c.i,k.j-c.j)<3.2))keep.push(c)}return keep.length}
+function lhs(n,seed){
+  const r=rr(seed),xs=[],ys=[];for(let i=0;i<n;i++){xs.push((i+r())/n);ys.push((i+r())/n)}
+  for(let i=n-1;i>0;i--){const j=Math.floor(r()*(i+1));[xs[i],xs[j]]=[xs[j],xs[i]];[ys[i],ys[j]]=[ys[j],ys[i]]}
+  return xs.map((v,i)=>[v,ys[i]]);
+}
+function skewKurt(data){
+  const n=data.length,m=data.reduce((a,b)=>a+b,0)/n;let s2=0,s3=0,s4=0;
+  for(const v of data){const d=v-m;s2+=d*d;s3+=d*d*d;s4+=d*d*d*d}
+  s2/=n;const sd=Math.sqrt(s2+1e-12);return {skew:(s3/n)/(sd*sd*sd+1e-12),kurt:(s4/n)/(s2*s2+1e-12)-3};
+}
+
+/* Demo 1 */
+let fn1='rastrigin',heat1=makeHeat(FUNCS[fn1].f,FUNCS[fn1].domain),pts1=[],reveal=0,seed=7,git=0;
+const c1=document.getElementById('c1');
+function reset1(){heat1=makeHeat(FUNCS[fn1].f,FUNCS[fn1].domain);pts1=lhs(100,seed);reveal=performance.now();}
+function draw1(){
+  const {x,w,h}=stage(c1),dom=FUNCS[fn1].domain;
+  x.clearRect(0,0,w,h);const pad=18,side=h-pad*2,ox=(w-side)/2;
+  x.save();x.beginPath();x.roundRect(ox,pad,side,side,12);x.clip();
+  x.drawImage(heat1.canvas,ox,pad,side,side);
+  const q=(v)=>{const t=clamp((v-heat1.lo)/(heat1.hi-heat1.lo+1e-12),0,1);return palette(Math.pow(t,.42))};
+  const prog=clamp((performance.now()-reveal)/900,0,1);
+  for(let i=0;i<pts1.length;i++){
+    const t=clamp((prog-i/pts1.length*0.75)/.25,0,1);if(t<=0)continue;
+    const [u,v]=pts1[i],px=ox+u*side,py=pad+v*side,fv=FUNCS[fn1].f(dom[0]+u*(dom[1]-dom[0]),dom[0]+v*(dom[1]-dom[0])),p=q(fv);
+    x.beginPath();x.arc(px,py,2.6,0,TAU);x.fillStyle=`rgba(${p[0]},${p[1]},${p[2]},${.35+.65*t})`;x.shadowColor=`rgba(${p[0]},${p[1]},${p[2]},.9)`;x.shadowBlur=8;x.fill();x.shadowBlur=0;
+  }
+  x.restore();
+  x.fillStyle='rgba(255,255,255,.7)';x.font='600 11px ui-sans-serif,system-ui';x.fillText(FUNCS[fn1].name.toUpperCase(),ox+8,pad+16);
+  x.fillStyle='rgba(255,255,255,.4)';x.font='10px ui-sans-serif';x.fillText('50·d LHS-Sample · 100 Punkte',ox+8,pad+30);
+  x.fillStyle='rgba(255,255,255,.35)';x.font='10px ui-sans-serif';x.fillText('niedrig',ox+side-42,pad+side-8);x.fillText('hoch',ox+side-42,pad+14);
+  // feature chips
+  const domv=FUNCS[fn1].domain,ys=pts1.map(([u,v])=>FUNCS[fn1].f(domv[0]+u*(domv[1]-domv[0]),domv[0]+v*(domv[1]-domv[0])));
+  const sk=skewKurt(ys);let sep=0;for(const [u,v] of pts1){const xx=domv[0]+u*(domv[1]-domv[0]),yy=domv[0]+v*(domv[1]-domv[0]),f=FUNCS[fn1].f,res=Math.abs(f(xx,yy)-(f(xx,0)+f(0,yy)-f(0,0)));sep+=res}
+  sep=sep/pts1.length/(heat1.hi-heat1.lo+1e-12);
+  const sepc=clamp(1-sep*2,0,1);
+  const lo=localOptima(heat1.vals,heat1.res);
+  document.getElementById('featChips').innerHTML=
+    `<span class="chip"><b>${pts1.length}</b> Punkte</span>
+     <span class="chip">y-Skew <b>${sk.skew.toFixed(2)}</b></span>
+     <span class="chip">y-Kurtosis <b>${sk.kurt.toFixed(2)}</b></span>
+     <span class="chip">lokale Optima (Grid) <b>${lo}</b></span>
+     <span class="chip">Separierbarkeit <b>${(sepc*100).toFixed(0)} %</b></span>`;
+  requestAnimationFrame(draw1);
+}
+const fbtns1=document.getElementById('fnBtns1');
+for(const k in FUNCS){const b=document.createElement('button');b.textContent=FUNCS[k].name;b.className=k===fn1?'on':'';b.onclick=()=>{fn1=k;seed=7;reset1();[...fbtns1.children].forEach(c=>c.className='');b.className='on'};fbtns1.appendChild(b)}
+document.getElementById('resample').onclick=()=>{seed=Math.floor(Math.random()*1e6);reset1()};
+reset1();draw1();
+
+/* Demo 2 */
+let fn2='rastrigin',prog2=0;
+const c2=document.getElementById('c2');
+function draw2(){
+  const {x,w,h}=stage(c2);x.clearRect(0,0,w,h);
+  const split=Math.min(430,w*.46),cx=split*.5,cy=h*.52,R=Math.min(split*.34,h*.31);
+  const labels=['multimodal','ragged','conditioning','separabel','basin','skew'],vals=FUNCS[fn2].feat;
+  x.save();x.translate(cx,cy);
+  for(let ring=1;ring<=4;ring++){x.beginPath();x.arc(0,0,R*ring/4,0,TAU);x.strokeStyle='rgba(255,255,255,.08)';x.lineWidth=1;x.stroke()}
+  for(let i=0;i<6;i++){const a=-Math.PI/2+i*TAU/6,ex=Math.cos(a)*R,ey=Math.sin(a)*R;x.beginPath();x.moveTo(0,0);x.lineTo(ex,ey);x.strokeStyle='rgba(255,255,255,.07)';x.stroke();
+    x.fillStyle='rgba(180,195,215,.7)';x.font='9.5px ui-sans-serif';x.textAlign=Math.cos(a)>.3?'left':Math.cos(a)<-.3?'right':'center';
+    x.fillText(labels[i],Math.cos(a)*(R+15),Math.sin(a)*(R+15)+3)}
+  const t=clamp(prog2/1,0,1);x.beginPath();
+  for(let i=0;i<6;i++){const a=-Math.PI/2+i*TAU/6,v=R*(.12+.82*vals[i]*t);const px=Math.cos(a)*v,py=Math.sin(a)*v;i?x.lineTo(px,py):x.moveTo(px,py)}
+  x.closePath();x.fillStyle='rgba(94,234,212,.16)';x.strokeStyle='#5eead4';x.lineWidth=2;x.shadowColor='#5eead4';x.shadowBlur=18;x.fill();x.stroke();x.shadowBlur=0;
+  for(let i=0;i<6;i++){const a=-Math.PI/2+i*TAU/6,v=R*(.12+.82*vals[i]*t);x.beginPath();x.arc(Math.cos(a)*v,Math.sin(a)*v,2.6,0,TAU);x.fillStyle='#d9fff8';x.fill()}
+  x.restore();
+  x.fillStyle='rgba(255,255,255,.75)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText('FEATURE-FINGERPRINT',16,22);
+
+  // bars
+  const bx=split+10,bw=w-split-28,top=40,bh=(h-top-18)/12-3;
+  x.fillStyle='rgba(255,255,255,.75)';x.font='600 11px ui-sans-serif';x.fillText('PORTFOLIO — vorhergesagte relERT',bx,22);
+  const scores=FUNCS[fn2].sol,best=Math.min(...scores);
+  for(let i=0;i<12;i++){
+    const y=top+i*(bh+3),v=scores[i],len=clamp(v/32,0,1)*bw*0.82*t,isBest=v===best;
+    x.fillStyle=isBest?'rgba(94,234,212,.18)':'rgba(255,255,255,.045)';x.beginPath();x.roundRect(bx,y,bw,bh,4);x.fill();
+    const gr=x.createLinearGradient(bx,0,bx+len,0);gr.addColorStop(0,isBest?'#5eead4':'#818cf8');gr.addColorStop(1,isBest?'#a7f3d0':'#c4b5fd');
+    x.fillStyle=gr;x.beginPath();x.roundRect(bx,y,Math.max(2,len),bh,4);x.fill();
+    x.fillStyle=isBest?'#e9fff9':'rgba(200,210,230,.75)';x.font=(isBest?'700 ':'')+'10px ui-sans-serif';x.textAlign='left';x.fillText(SOLVERS[i],bx+6,y+bh-3);
+    x.textAlign='right';x.fillStyle=isBest?'#5eead4':'rgba(200,210,230,.55)';x.fillText(v.toFixed(1),bx+bw-4,y+bh-3);
+    if(isBest){x.strokeStyle='rgba(94,234,212,.65)';x.lineWidth=1;x.beginPath();x.roundRect(bx-1,y-1,bw+2,bh+2,5);x.stroke()}
+  }
+  prog2=Math.min(1,prog2+.035);
+  requestAnimationFrame(draw2);
+}
+const fbtns2=document.getElementById('fnBtns2');
+for(const k in FUNCS){const b=document.createElement('button');b.textContent=FUNCS[k].name;b.className=k===fn2?'on':'';b.onclick=()=>{fn2=k;prog2=0;[...fbtns2.children].forEach(c=>c.className='');b.className='on'};fbtns2.appendChild(b)}
+draw2();
+
+/* Demo 3 */
+const c3=document.getElementById('c3');let t0=0,raceT=0;
+const rows=[{n:'SBS · HCMA',v:30.37,c:'#8792a8'},{n:'AS · inkl. Feature',v:16.67,c:'#fbbf24'},{n:'AS · ohne Feature',v:13.60,c:'#5eead4'},{n:'VBS · Oracle',v:1.0,c:'#818cf8'}];
+function draw3(){
+  const {x,w,h}=stage(c3);x.clearRect(0,0,w,h);
+  const left=150,right=w-50,top=54,gap=(h-top-26)/rows.length,bw=right-left;
+  x.fillStyle='rgba(255,255,255,.75)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText('RELATIVE ERT — je kürzer, desto besser',16,24);
+  const t=clamp(raceT,0,1),ease=1-Math.pow(1-t,3);
+  rows.forEach((r,i)=>{
+    const y=top+i*gap,len=clamp(r.v/32,0,1)*bw*ease;
+    x.fillStyle='rgba(255,255,255,.42)';x.font='10.5px ui-sans-serif';x.textAlign='left';x.fillText(r.n,16,y+14);
+    x.fillStyle='rgba(255,255,255,.05)';x.beginPath();x.roundRect(left,y+2,bw,12,6);x.fill();
+    const gr=x.createLinearGradient(left,0,left+Math.max(4,len),0);gr.addColorStop(0,r.c+'88');gr.addColorStop(1,r.c);
+    x.fillStyle=gr;x.beginPath();x.roundRect(left,y+2,Math.max(4,len),12,6);x.fill();
+    x.beginPath();x.arc(left+len,y+8,4.5,0,TAU);x.fillStyle=r.c;x.shadowColor=r.c;x.shadowBlur=14;x.fill();x.shadowBlur=0;
+    x.fillStyle='rgba(235,240,250,.85)';x.font='700 11px ui-sans-serif';x.textAlign='right';x.fillText(r.v.toFixed(1)+(i===3?' (ideal)':''),w-14,y+14);
+  });
+  if(t>0.75){x.fillStyle='rgba(94,234,212,.9)';x.font='700 12px ui-sans-serif';x.textAlign='left';x.fillText('≈ 1.8× schneller als SBS',left,top+rows.length*gap+2)}
+  if(raceT<1)raceT+=.012;
+  requestAnimationFrame(draw3);
+}
+document.getElementById('race').onclick=()=>{raceT=0};
+draw3();
+</script>
+</body>
+</html>

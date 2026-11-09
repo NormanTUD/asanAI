@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>R2 v2 — der ehrliche Indikator</title>
+<style>
+:root{--acc:#34d399;--acc2:#67e8f9;--ink:#eef2ff;--mut:#98a2b3;--line:rgba(255,255,255,.12);--bg:#05060a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(900px 620px at 86% -10%,rgba(52,211,153,.16),transparent 62%),radial-gradient(760px 560px at 0% 18%,rgba(103,232,249,.12),transparent 60%),var(--bg);color:var(--ink);font:15px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(circle at 50% 20%,#000 12%,transparent 76%)}
+.wrap{max-width:1080px;margin:0 auto;padding:26px 22px 80px}
+nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:38px}
+.back,.pdf{text-decoration:none;font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:7px 13px;color:#c7cede;background:rgba(255,255,255,.035);transition:.2s}
+.back:hover,.pdf:hover{background:rgba(255,255,255,.09);color:#fff}
+.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.hero{border:1px solid var(--line);border-radius:28px;padding:40px 38px 34px;background:linear-gradient(155deg,rgba(255,255,255,.075),rgba(255,255,255,.018));box-shadow:0 30px 90px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.13);margin-bottom:40px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;right:-140px;top:-180px;background:radial-gradient(circle,rgba(52,211,153,.2),transparent 65%);pointer-events:none}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+h1{font-size:clamp(34px,5.8vw,62px);line-height:1.02;letter-spacing:-.045em;margin:0 0 16px;font-weight:800;max-width:830px}
+h1 em{font-style:normal;color:var(--acc);text-shadow:0 0 40px rgba(52,211,153,.4)}
+.lede{font-size:clamp(15px,2vw,18px);color:#c3ccdd;max-width:700px;margin:0 0 22px}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px}
+.tag{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#dbe3f3;background:rgba(255,255,255,.04)}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{border:1px solid var(--line);background:rgba(5,7,12,.5);border-radius:15px;padding:11px 15px;min-width:125px}
+.stat b{display:block;font-size:21px;letter-spacing:-.02em;color:#fff}
+.stat span{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.demo{border:1px solid var(--line);border-radius:24px;background:linear-gradient(165deg,rgba(255,255,255,.06),rgba(255,255,255,.015));padding:22px;margin-bottom:24px;box-shadow:0 18px 50px rgba(0,0,0,.28)}
+.demoHead{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.n{flex:0 0 auto;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:12px;font-weight:800;color:#04120c;background:linear-gradient(135deg,#a7f3d0,var(--acc));box-shadow:0 0 24px rgba(52,211,153,.3)}
+.demoHead h2{font-size:19px;margin:0 0 3px;letter-spacing:-.015em}
+.demoHead p{margin:0;color:var(--mut);font-size:13px}
+.stage{position:relative;height:380px;border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;background:#070a11;margin:12px 0}
+.stage canvas{display:block;width:100%;height:100%}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 4px}
+button{font:inherit;font-size:12.5px;color:#d6deed;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:9px;padding:7px 11px;cursor:pointer;transition:.18s}
+button:hover{background:rgba(255,255,255,.1);color:#fff}
+button.on{background:linear-gradient(100deg,#a7f3d0,var(--acc));color:#04120c;border-color:transparent;font-weight:700;box-shadow:0 0 20px rgba(52,211,153,.25)}
+input[type=range]{accent-color:var(--acc);width:190px}
+label{font-size:12px;color:var(--mut);display:flex;align-items:center;gap:8px}
+.insight{border-left:2px solid var(--acc);background:rgba(52,211,153,.06);border-radius:0 12px 12px 0;padding:10px 13px;font-size:12.5px;color:#c6d2e2;margin-top:12px}
+.insight b{color:#a7f3d0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{font-size:11px;color:#dbe3f3;border:1px solid var(--line);background:rgba(255,255,255,.045);padding:4px 8px;border-radius:999px}
+.chip b{color:#a7f3d0}
+footer{border-top:1px solid var(--line);padding-top:18px;color:var(--mut);font-size:11.5px;margin-top:44px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:640px){.hero{padding:28px 20px}.wrap{padding:18px 14px 60px}.stage{height:330px}.demo{padding:16px}.demoHead h2{font-size:17px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="back" href="optimizing_index.html">← Index</a>
+    <div class="brand">Multiobjective · 04</div>
+    <a class="pdf" href="Multiobjective%20Optimization/2025-ECJ-R2_v2.pdf">PDF öffnen ↗</a>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">ECJ 2025 · Schäpermeier &amp; Kerschke</div>
+    <h1>Ein Indikator, der <em>nie</em> lügt.</h1>
+    <p class="lede">Das übliche R2 wird über diskrete Gewichtsvektoren approximiert — und ist dann nur schwach Pareto-konform. Die kontinuierliche Variante integriert über alle Tchebycheff-Gewichte, ist echt Pareto-konform und für zwei Ziele exakt in O(N log N) berechenbar.</p>
+    <div class="tags"><span class="tag">Pareto-Compliance</span><span class="tag">Tchebycheff-Utility</span><span class="tag">O(N log N)</span></div>
+    <div class="stats">
+      <div class="stat"><b>1/6</b><span>R2 der linearen Front</span></div>
+      <div class="stat"><b>&lt; 1/6</b><span>konvex</span></div>
+      <div class="stat"><b>&gt; 1/6</b><span>konkav</span></div>
+    </div>
+  </header>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">01</div><div><h2>Die Tchebycheff-Wippe</h2><p>Ein Gewicht w entscheidet, welcher Punkt die Utility max(w·f₁, (1−w)·f₂) minimiert.</p></div></div>
+    <div class="stage" style="height:400px"><canvas id="c1"></canvas></div>
+    <div class="controls"><label>Gewicht w: <input id="w1" type="range" min="1" max="99" value="50"><span id="wv">0.50</span></label><button id="sweep1">Sweep</button></div>
+    <div class="chips" id="chips1"></div>
+    <div class="insight"><b>Aha:</b> Jeder nichtdominierte Punkt ist für ein Intervall von Gewichten optimal. R2 ist genau die Fläche unter der unteren Einhüllenden dieser Utility-Kurven.</div>
+  </section>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">02</div><div><h2>Exakt vs. diskret</h2><p>Füge einen nichtdominierten Punkt hinzu. Exakt wird es besser — diskret kann es stagnieren.</p></div></div>
+    <div class="stage" style="height:370px"><canvas id="c2"></canvas></div>
+    <div class="controls"><button id="add2">Punkt hinzufügen</button><button id="grid2" class="on">|W| = 3</button><button id="grid2b">feiner</button></div>
+    <div class="chips" id="chips2"></div>
+    <div class="insight"><b>Aha:</b> Diskretes R2 optimiert nur |W| Stützstellen. Ein Punkt, der nur zwischen zwei Gewichten gewinnt, verbessert die exakte Fläche — nicht aber die diskrete Summe.</div>
+  </section>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">03</div><div><h2>Form follows R2</h2><p>Ziehe die Front von konvex nach konkav. Der exakte R2-Wert erzählt die Geschichte.</p></div></div>
+    <div class="stage" style="height:360px"><canvas id="c3"></canvas></div>
+    <div class="controls"><label>Frontform: <input id="g3" type="range" min="40" max="250" value="100"><span id="gv">linear</span></label></div>
+    <div class="chips" id="chips3"></div>
+    <div class="insight"><b>Aha:</b> Konvexe Fronten kommen dem Idealpunkt näher (R2 &lt; 1/6), konkave entfernen sich (R2 &gt; 1/6). Die lineare Referenz hat exakt R2 = 1/6.</div>
+  </section>
+
+  <footer><span>Quelle: Schäpermeier &amp; Kerschke, <i>R2 v2: The Pareto-compliant R2 Indicator for Bi-objective Benchmarking</i>, ECJ 2025.</span><a class="back" href="optimizing_index.html">← zurück</a></footer>
+</div>
+
+<script>
+const TAU=Math.PI*2;
+function stage(cv){const d=Math.min(devicePixelRatio||1,2),r=cv.getBoundingClientRect(),W=Math.max(2,Math.round(r.width*d)),H=Math.max(2,Math.round(r.height*d));if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}const x=cv.getContext('2d');x.setTransform(d,0,0,d,0,0);return {x,w:r.width,h:r.height}}
+const clamp=(v,a,b)=>v<a?a:v>b?b:v,lerp=(a,b,t)=>a+(b-a)*t;
+function exactR2(Y,steps=1500){let s=0;for(let i=0;i<steps;i++){const w=(i+.5)/steps;let m=Infinity;for(const y of Y){const u=Math.max(w*y[0],(1-w)*y[1]);if(u<m)m=u}s+=m/steps}return s}
+function discR2(Y,W){let s=0;for(const w of W){let m=Infinity;for(const y of Y){const u=Math.max(w*y[0],(1-w)*y[1]);if(u<m)m=u}s+=m}return s/W.length}
+function pointForW(w){const th=w<=0?0:w>=1?Math.PI/2:Math.atan(w/(1-w));return [Math.cos(th),Math.sin(th)]}
+
+/* Demo 1 */
+const FRONT=[];for(let i=0;i<8;i++){const f1=(i+.5)/8, f2=1-Math.pow(f1,1.8);FRONT.push([f1,Math.max(0,f2)])}
+let w1=.5,sweep1=false;
+const c1=document.getElementById('c1');
+function draw1(){
+  const {x,w,h}=stage(c1);x.clearRect(0,0,w,h);
+  const panelW=Math.min(310,w*.34),pad=40,size=Math.min(h-70,w-panelW-110),ox=44,oy=(h-size)/2+10;
+  x.fillStyle='rgba(255,255,255,.78)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText('ZIELRAUM',ox,24);
+  x.strokeStyle='rgba(255,255,255,.16)';x.strokeRect(ox,oy,size,size);
+  x.fillStyle='rgba(190,200,220,.5)';x.font='10px ui-sans-serif';x.fillText('f₁',ox+size+8,oy+size+4);x.fillText('f₂',ox-22,oy-8);
+  const P=p=>[ox+p[0]*size,oy+size-p[1]*size];
+  let best=0,bu=Infinity,util=FRONT.map(p=>{const u=Math.max(w1*p[0],(1-w1)*p[1]);if(u<bu){bu=u;best=FRONT.indexOf(p)}return u});
+  // level set
+  const cf=Math.min(10,bu/w1||0),cg=Math.min(10,bu/(1-w1)||0);
+  x.fillStyle='rgba(52,211,153,.07)';x.fillRect(ox,oy+size-cg*size,Math.min(size,cf*size),cg*size);
+  x.strokeStyle='rgba(255,255,255,.28)';x.setLineDash([5,5]);x.beginPath();x.moveTo(ox+Math.min(size,cf*size),oy+size);x.lineTo(ox+Math.min(size,cf*size),oy+size-Math.min(size,cg*size));x.lineTo(ox,oy+size-Math.min(size,cg*size));x.stroke();x.setLineDash([]);
+  FRONT.forEach((p,i)=>{const [px,py]=P(p);x.beginPath();x.arc(px,py,i===best?6:3.6,0,TAU);x.fillStyle=i===best?'#34d399':'rgba(167,243,208,.55)';if(i===best){x.shadowColor='#34d399';x.shadowBlur=22}x.fill();x.shadowBlur=0});
+  const [bx,by]=P(FRONT[best]);x.strokeStyle='#34d399';x.lineWidth=1;x.beginPath();x.arc(bx,by,12,0,TAU);x.stroke();
+  // right utility curves
+  const rx=w-panelW-18,rw=panelW-10,top=54,bot=h-42;
+  x.fillStyle='rgba(255,255,255,.78)';x.font='600 11px ui-sans-serif';x.fillText('UTILITY ÜBER w',rx,24);
+  x.strokeStyle='rgba(255,255,255,.16)';x.beginPath();x.moveTo(rx,bot);x.lineTo(rx+rw,bot);x.moveTo(rx,bot);x.lineTo(rx,bot-top+20);x.stroke();
+  const N=160,env=[];for(let i=0;i<=N;i++){const ww=i/N;let m=Infinity;FRONT.forEach(p=>{const u=Math.max(ww*p[0],(1-ww)*p[1]);if(u<m)m=u});env.push(m)}
+  x.beginPath();x.moveTo(rx, bot);env.forEach((v,i)=>{x.lineTo(rx+i/N*rw,bot-v*(bot-top+10))});x.lineTo(rx+rw,bot);x.closePath();
+  const gr=x.createLinearGradient(0,bot,0,top);gr.addColorStop(0,'rgba(52,211,153,.06)');gr.addColorStop(1,'rgba(52,211,153,.3)');x.fillStyle=gr;x.fill();
+  FRONT.forEach(p=>{x.beginPath();for(let i=0;i<=N;i+=4){const ww=i/N,u=Math.max(ww*p[0],(1-ww)*p[1]);const px=rx+ww*rw,py=bot-u*(bot-top+10);i?x.lineTo(px,py):x.moveTo(px,py)}x.strokeStyle='rgba(167,243,208,.22)';x.lineWidth=1;x.stroke()});
+  x.beginPath();env.forEach((v,i)=>{const px=rx+i/N*rw,py=bot-v*(bot-top+10);i?x.lineTo(px,py):x.moveTo(px,py)});x.strokeStyle='#34d399';x.lineWidth=2.4;x.shadowColor='#34d399';x.shadowBlur=14;x.stroke();x.shadowBlur=0;
+  x.strokeStyle='rgba(255,255,255,.6)';x.setLineDash([3,3]);x.beginPath();x.moveTo(rx+w1*rw,bot);x.lineTo(rx+w1*rw,top);x.stroke();x.setLineDash([]);
+  x.fillStyle='#a7f3d0';x.font='600 10px ui-sans-serif';x.fillText('R2 = '+exactR2(FRONT).toFixed(4),rx+8,top+2);
+  document.getElementById('chips1').innerHTML=`<span class="chip">w = <b>${w1.toFixed(2)}</b></span><span class="chip">bester Punkt <b>#${best+1}</b></span><span class="chip">Utility <b>${bu.toFixed(3)}</b></span><span class="chip">R2 exakt <b>${exactR2(FRONT).toFixed(4)}</b></span>`;
+  if(sweep1){w1+=.006;if(w1>=1){w1=1;sweep1=false}document.getElementById('w1').value=Math.round(w1*100);document.getElementById('wv').textContent=w1.toFixed(2)}
+  requestAnimationFrame(draw1);
+}
+document.getElementById('w1').oninput=e=>{w1=+e.target.value/100;document.getElementById('wv').textContent=w1.toFixed(2);sweep1=false};
+document.getElementById('sweep1').onclick=()=>{w1=0;sweep1=true};
+draw1();
+
+/* Demo 2 */
+const c2=document.getElementById('c2');let added2=false,fine2=false;
+const BASE2=[pointForW(0),pointForW(.5),pointForW(1)], ADD2=pointForW(.25);
+const W3=[0,.5,1], W9=[0,.125,.25,.375,.5,.625,.75,.875,1];
+function draw2(){
+  const {x,w,h}=stage(c2);x.clearRect(0,0,w,h);
+  const set=added2?BASE2.concat([ADD2]):BASE2, W=fine2?W9:W3;
+  const pad=42,size=Math.min(h-72,w*.34),ox=40,oy=(h-size)/2+8;
+  x.fillStyle='rgba(255,255,255,.78)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText('FRONT + NEUER PUNKT',ox,24);
+  x.strokeStyle='rgba(255,255,255,.16)';x.strokeRect(ox,oy,size,size);
+  const P=p=>[ox+p[0]*size,oy+size-p[1]*size];
+  set.forEach((p,i)=>{const isNew=added2&&i===set.length-1;const [px,py]=P(p);x.beginPath();x.arc(px,py,isNew?7:4,0,TAU);x.fillStyle=isNew?'#67e8f9':'#34d399';if(isNew){x.shadowColor='#67e8f9';x.shadowBlur=22}x.fill();x.shadowBlur=0});
+  // utility panel / bars
+  const baseE=exactR2(BASE2),curE=exactR2(set),baseD=discR2(BASE2,W),curD=discR2(set,W);
+  const rx=w*.5+20,rw=w-rx-30,top=60;
+  x.fillStyle='rgba(255,255,255,.78)';x.font='600 11px ui-sans-serif';x.fillText('INDIKATORWERTE · niedriger = besser',rx,24);
+  const groups=[{n:'exakt',base:baseE,cur:curE,c:'#34d399'},{n:'diskret',base:baseD,cur:curD,c:'#67e8f9'}];
+  groups.forEach((g,gi)=>{
+    const y=top+gi*100,bw=rw*.72;
+    x.fillStyle='rgba(200,210,230,.7)';x.font='600 10px ui-sans-serif';x.fillText(g.n,rx,y);
+    x.fillStyle='rgba(255,255,255,.05)';x.beginPath();x.roundRect(rx,y+10,bw,12,6);x.fill();
+    x.fillStyle=g.c+'44';x.beginPath();x.roundRect(rx,y+10,clamp(g.base/(g.base*1.35),0,1)*bw,12,6);x.fill();
+    x.fillStyle=g.c;x.beginPath();x.roundRect(rx,y+10,clamp(g.cur/(g.base*1.35),0,1)*bw,12,6);x.fill();
+    x.fillStyle='#eef2ff';x.font='700 11px ui-sans-serif';x.fillText(g.cur.toFixed(4),rx+bw+10,y+20);
+    x.fillStyle='rgba(160,175,200,.6)';x.font='9px ui-sans-serif';x.fillText('vorher '+g.base.toFixed(4),rx,y+38);
+  });
+  const de=curE-baseE,dd=curD-baseD;
+  x.fillStyle=Math.abs(dd)<1e-9?'#fbbf24':'#a7f3d0';x.font='700 11px ui-sans-serif';x.fillText(added2?('Δ exakt '+de.toFixed(4)+' · Δ diskret '+dd.toFixed(4)):'Punkt hinzufügen testen',rx,top+220);
+  x.fillStyle='rgba(160,175,200,.55)';x.font='9.5px ui-sans-serif';x.fillText('diskret: |W| = '+(fine2?9:3),rx,top+236);
+  document.getElementById('chips2').innerHTML=`<span class="chip">exakt <b>${curE.toFixed(4)}</b></span><span class="chip">diskret <b>${curD.toFixed(4)}</b></span><span class="chip">Δ diskret <b>${dd.toFixed(4)}</b></span><span class="chip">${!added2?'wartet':(Math.abs(dd)<1e-9?'stagniert':'reagiert')}</span>`;
+  requestAnimationFrame(draw2);
+}
+document.getElementById('add2').onclick=()=>{added2=!added2;document.getElementById('add2').textContent=added2?'Punkt entfernen':'Punkt hinzufügen'};
+document.getElementById('grid2').onclick=e=>{fine2=false;e.target.classList.add('on');document.getElementById('grid2b').classList.remove('on')};
+document.getElementById('grid2b').onclick=e=>{fine2=true;e.target.classList.add('on');document.getElementById('grid2').classList.remove('on')};
+draw2();
+
+/* Demo 3 */
+const c3=document.getElementById('c3');let g3=1,r2c=1/6;
+function front3(g,n=240){const out=[];for(let i=0;i<n;i++){const f1=i/(n-1);out.push([f1,Math.max(0,1-Math.pow(f1,g))])}return out}
+function calc3(){r2c=exactR2(front3(g3),1200)}
+function draw3(){
+  const {x,w,h}=stage(c3);x.clearRect(0,0,w,h);
+  const pad=44,size=Math.min(h-80,w*.46),ox=44,oy=(h-size)/2+4;
+  x.fillStyle='rgba(255,255,255,.78)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText('FRONTFORM',ox,24);
+  x.strokeStyle='rgba(255,255,255,.16)';x.strokeRect(ox,oy,size,size);
+  const F=front3(g3),P=p=>[ox+p[0]*size,oy+size-p[1]*size];
+  x.beginPath();F.forEach((p,i)=>{const [px,py]=P(p);i?x.lineTo(px,py):x.moveTo(px,py)});x.strokeStyle='#34d399';x.lineWidth=2.4;x.shadowColor='#34d399';x.shadowBlur=16;x.stroke();x.shadowBlur=0;
+  // linear reference
+  x.strokeStyle='rgba(255,255,255,.2)';x.setLineDash([5,5]);x.beginPath();x.moveTo(ox,oy+size);x.lineTo(ox+size,oy);x.stroke();x.setLineDash([]);
+  const label=g3<.95?'konvex':g3>1.05?'konkav':'linear';
+  x.fillStyle='#a7f3d0';x.font='700 12px ui-sans-serif';x.fillText(label.toUpperCase(),ox+8,oy+size-10);
+  // gauge
+  const rx=w*.56,rw=w-rx-44,gy=h*.52;
+  x.fillStyle='rgba(255,255,255,.78)';x.font='600 11px ui-sans-serif';x.fillText('EXAKTER R2',rx,24);
+  const gr=x.createLinearGradient(rx,0,rx+rw,0);gr.addColorStop(0,'#34d399');gr.addColorStop(.66,'#fbbf24');gr.addColorStop(1,'#fb7185');x.fillStyle=gr;x.beginPath();x.roundRect(rx,gy,rw,12,6);x.fill();
+  const marks=[{v:0,l:'0'},{v:1/6,l:'1/6 linear'},{v:1/4,l:'1/4'}];
+  marks.forEach(m=>{const px=rx+(m.v/.25)*rw;x.strokeStyle='rgba(255,255,255,.65)';x.beginPath();x.moveTo(px,gy-8);x.lineTo(px,gy+20);x.stroke();x.fillStyle='rgba(220,228,240,.7)';x.font='9px ui-sans-serif';x.textAlign='center';x.fillText(m.l,px,gy+34)});
+  const px=rx+clamp(r2c/0.25,0,1)*rw;x.beginPath();x.arc(px,gy+6,8,0,TAU);x.fillStyle='#fff';x.shadowColor='#fff';x.shadowBlur=18;x.fill();x.shadowBlur=0;
+  x.fillStyle='#eef2ff';x.font='700 26px ui-sans-serif';x.textAlign='left';x.fillText(r2c.toFixed(4),rx,gy-24);
+  x.fillStyle='rgba(160,175,200,.6)';x.font='9.5px ui-sans-serif';x.fillText('exakte Integration über w ∈ [0,1]',rx,gy+60);
+  document.getElementById('chips3').innerHTML=`<span class="chip">Form <b>${label}</b></span><span class="chip">R2 <b>${r2c.toFixed(4)}</b></span><span class="chip">linear <b>0.1667</b></span>`;
+  requestAnimationFrame(draw3);
+}
+document.getElementById('g3').oninput=e=>{g3=+e.target.value/100;document.getElementById('gv').textContent=g3<.95?'konvex':g3>1.05?'konkav':'linear';calc3()};
+calc3();draw3();
+</script>
+</body>
+</html>

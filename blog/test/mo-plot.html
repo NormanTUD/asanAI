@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLOT — ein Bild für alle Landschaften</title>
+<style>
+:root{--acc:#fbbf24;--acc2:#fb7185;--ink:#eef2ff;--mut:#98a2b3;--line:rgba(255,255,255,.12);--bg:#05060a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(900px 620px at 86% -10%,rgba(251,191,36,.15),transparent 62%),radial-gradient(760px 560px at 0% 18%,rgba(251,113,133,.13),transparent 60%),var(--bg);color:var(--ink);font:15px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(circle at 50% 20%,#000 12%,transparent 76%)}
+.wrap{max-width:1080px;margin:0 auto;padding:26px 22px 80px}
+nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:38px}
+.back,.pdf{text-decoration:none;font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:7px 13px;color:#c7cede;background:rgba(255,255,255,.035);transition:.2s}
+.back:hover,.pdf:hover{background:rgba(255,255,255,.09);color:#fff}
+.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.hero{border:1px solid var(--line);border-radius:28px;padding:40px 38px 34px;background:linear-gradient(155deg,rgba(255,255,255,.075),rgba(255,255,255,.018));box-shadow:0 30px 90px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.13);margin-bottom:40px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;right:-140px;top:-180px;background:radial-gradient(circle,rgba(251,191,36,.18),transparent 65%);pointer-events:none}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+h1{font-size:clamp(34px,5.8vw,62px);line-height:1.02;letter-spacing:-.045em;margin:0 0 16px;font-weight:800;max-width:820px}
+h1 em{font-style:normal;color:var(--acc);text-shadow:0 0 40px rgba(251,191,36,.4)}
+.lede{font-size:clamp(15px,2vw,18px);color:#c3ccdd;max-width:700px;margin:0 0 22px}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px}
+.tag{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#dbe3f3;background:rgba(255,255,255,.04)}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{border:1px solid var(--line);background:rgba(5,7,12,.5);border-radius:15px;padding:11px 15px;min-width:125px}
+.stat b{display:block;font-size:21px;letter-spacing:-.02em;color:#fff}
+.stat span{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.demo{border:1px solid var(--line);border-radius:24px;background:linear-gradient(165deg,rgba(255,255,255,.06),rgba(255,255,255,.015));padding:22px;margin-bottom:24px;box-shadow:0 18px 50px rgba(0,0,0,.28)}
+.demoHead{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.n{flex:0 0 auto;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:12px;font-weight:800;color:#160d02;background:linear-gradient(135deg,#fde68a,var(--acc));box-shadow:0 0 24px rgba(251,191,36,.3)}
+.demoHead h2{font-size:19px;margin:0 0 3px;letter-spacing:-.015em}
+.demoHead p{margin:0;color:var(--mut);font-size:13px}
+.stage{position:relative;height:380px;border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;background:#070a11;margin:12px 0}
+.stage canvas{display:block;width:100%;height:100%}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 4px}
+button{font:inherit;font-size:12.5px;color:#d6deed;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:9px;padding:7px 11px;cursor:pointer;transition:.18s}
+button:hover{background:rgba(255,255,255,.1);color:#fff}
+button.on{background:linear-gradient(100deg,#fde68a,var(--acc));color:#160d02;border-color:transparent;font-weight:700;box-shadow:0 0 20px rgba(251,191,36,.25)}
+.insight{border-left:2px solid var(--acc);background:rgba(251,191,36,.06);border-radius:0 12px 12px 0;padding:10px 13px;font-size:12.5px;color:#c6d2e2;margin-top:12px}
+.insight b{color:#fde68a}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--mut);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-2px}
+footer{border-top:1px solid var(--line);padding-top:18px;color:var(--mut);font-size:11.5px;margin-top:44px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:640px){.hero{padding:28px 20px}.wrap{padding:18px 14px 60px}.stage{height:330px}.demo{padding:16px}.demoHead h2{font-size:17px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="back" href="optimizing_index.html">← Index</a>
+    <div class="brand">Multiobjective · 01</div>
+    <a class="pdf" href="Multiobjective%20Optimization/2020-PPSN-PLOT.pdf">PDF öffnen ↗</a>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">PPSN 2020 · Schäpermeier, Grimme &amp; Kerschke</div>
+    <h1>Lokal und global. <em>Ein</em> Bild.</h1>
+    <p class="lede">Cost Landscapes zeigen, was global gut ist. Gradient Field Heatmaps zeigen, wohin lokale Suche läuft. PLOT kombiniert beides: Einzugsgebiete als graue Landschaft, lokal effiziente Mengen farbig nach ihrer Dominanz.</p>
+    <div class="tags"><span class="tag">Gradient Field Heatmap</span><span class="tag">Divergenz-Kriterium</span><span class="tag">Pareto-Ranking</span></div>
+    <div class="stats">
+      <div class="stat"><b>2</b><span>Welten in einem Plot</span></div>
+      <div class="stat"><b>div &lt; 0</b><span>stabil = lokal effizient</span></div>
+      <div class="stat"><b>O(N²)</b><span>Grid statt Orakel</span></div>
+    </div>
+  </header>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">01</div><div><h2>Cost vs. GFH vs. PLOT</h2><p>Dieselbe Landschaft, drei Brillen. Wechsle die Ansicht und achte auf Attraktionsbecken und effiziente Mengen.</p></div></div>
+    <div class="stage"><canvas id="c1"></canvas></div>
+    <div class="controls" id="modeBtns"></div>
+    <div class="controls" id="mopBtns"></div>
+    <div class="legend"><span><i style="background:#34d399"></i>global effizient</span><span><i style="background:#fb7185"></i>lokal, schlechter</span><span><i style="background:#94a3b8"></i>Einzugsgebiet</span><span><i style="background:#fff"></i>MOG-Pfeile</span></div>
+    <div class="insight"><b>Aha:</b> Die Cost Landscape kennt nur globale Dominanz; die GFH nur lokale Dynamik. PLOT zeigt beides — und macht sichtbar, welche lokale Menge eine Falle ist.</div>
+  </section>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">02</div><div><h2>Der Lokal-Effizienz-Inspektor</h2><p>Bewege die Maus über die Landschaft. Kritisch? Stabil? Oder nur ein Sattel auf einem Ridge?</p></div></div>
+    <div class="stage" style="height:380px"><canvas id="c2"></canvas></div>
+    <div class="insight"><b>Aha:</b> Erste Ordnung allein reicht nicht: An einem kritischen Punkt entscheidet die Divergenz des MO-Gradientenfelds, ob er lokal effizient oder nur ein Sattel ist.</div>
+  </section>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">03</div><div><h2>Einzugsgebiete in Aktion</h2><p>Klick in die Landschaft: eine MO-Gradientensuche läuft los. Wo sie endet, ist ihre lokale Menge.</p></div></div>
+    <div class="stage"><canvas id="c3"></canvas></div>
+    <div class="controls"><button id="run3">5 Starts</button><button id="clear3">Leeren</button></div>
+    <div class="insight"><b>Aha:</b> Startpunkte im selben Becken landen im selben lokalen Optimum. PLOT malt genau diese Becken — bevor ein Algorithmus sie teuer entdecken muss.</div>
+  </section>
+
+  <footer><span>Quelle: Schäpermeier, Grimme &amp; Kerschke, <i>One PLOT to Show Them All</i>, PPSN 2020.</span><a class="back" href="optimizing_index.html">← zurück</a></footer>
+</div>
+
+<script>
+const TAU=Math.PI*2,N=60;
+function stage(cv){const d=Math.min(devicePixelRatio||1,2),r=cv.getBoundingClientRect(),W=Math.max(2,Math.round(r.width*d)),H=Math.max(2,Math.round(r.height*d));if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}const x=cv.getContext('2d');x.setTransform(d,0,0,d,0,0);return {x,w:r.width,h:r.height}}
+function rr(a){return function(){a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296}}
+const clamp=(v,a,b)=>v<a?a:v>b?b:v,lerp=(a,b,t)=>a+(b-a)*t;
+const MOPS={
+  aspar:{name:'Aspar',dom:[-2.5,2.5],f:(x,y)=>[x*x*x*x-2*x*x+2*y*y+1,(x+.5)*(x+.5)+(y-2)*(y-2)]},
+  bisphere:{name:'Bi-Sphere',dom:[-2,2],f:(x,y)=>[(x-1)*(x-1)+(y-1)*(y-1),(x+1)*(x+1)+(y+1)*(y+1)]}
+};
+const COST=[[8,16,40],[30,86,166],[56,196,196],[250,198,78],[255,82,112]];
+const GFH=[[10,20,54],[40,72,166],[132,84,204],[241,112,162],[255,204,122]];
+const LEC=[[94,234,212],[129,140,248],[251,191,36],[251,113,133]];
+function pal(stops,t){t=clamp(t,0,1)*(stops.length-1);const i=Math.min(stops.length-2,Math.floor(t)),u=t-i,a=stops[i],b=stops[i+1];return [lerp(a[0],b[0],u)|0,lerp(a[1],b[1],u)|0,lerp(a[2],b[2],u)|0]}
+function leColor(t){return pal(LEC,t)}
+function buildMop(key){
+  const mop=MOPS[key],dom=mop.dom,step=(dom[1]-dom[0])/(N-1),n=N*N;
+  const f1=new Float32Array(n),f2=new Float32Array(n),g1x=new Float32Array(n),g1y=new Float32Array(n),g2x=new Float32Array(n),g2y=new Float32Array(n),mx=new Float32Array(n),my=new Float32Array(n);
+  for(let j=0;j<N;j++)for(let i=0;i<N;i++){const x=dom[0]+i*step,y=dom[0]+j*step,idx=j*N+i,[a,b]=mop.f(x,y);f1[idx]=a;f2[idx]=b}
+  for(let j=0;j<N;j++)for(let i=0;i<N;i++){
+    const idx=j*N+i,ip=Math.min(N-1,i+1),im=Math.max(0,i-1),jp=Math.min(N-1,j+1),jm=Math.max(0,j-1);
+    const a1x=(f1[j*N+ip]-f1[j*N+im])/((ip-im)*step),a1y=(f1[jp*N+i]-f1[jm*N+i])/((jp-jm)*step);
+    const a2x=(f2[j*N+ip]-f2[j*N+im])/((ip-im)*step),a2y=(f2[jp*N+i]-f2[jm*N+i])/((jp-jm)*step);
+    g1x[idx]=a1x;g1y[idx]=a1y;g2x[idx]=a2x;g2y[idx]=a2y;
+    const l1=Math.hypot(a1x,a1y)||1,l2=Math.hypot(a2x,a2y)||1;
+    mx[idx]=a1x/l1+a2x/l2;my[idx]=a1y/l1+a2y/l2;
+    if(Math.hypot(a1x,a1y)<1e-9||Math.hypot(a2x,a2y)<1e-9){mx[idx]=0;my[idx]=0}
+  }
+  // flow / basins / height
+  const state=new Int32Array(n).fill(-1),height=new Float32Array(n);let basins=0;
+  for(let s=0;s<n;s++){
+    if(state[s]>=0)continue;let path=[],cur=s,guard=0;
+    while(cur>=0&&state[cur]<0&&guard++<350){
+      path.push(cur);const ci=cur%N,cj=(cur/N)|0,vx=mx[cur],vy=my[cur],vm=Math.hypot(vx,vy);if(vm<1e-5)break;
+      let best=-1,bestSum=Infinity;
+      for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){if(!di&&!dj)continue;const ni=ci+di,nj=cj+dj;if(ni<0||ni>=N||nj<0||nj>=N)continue;const idx=nj*N+ni,dot=-((di*step)*vx+(dj*step)*vy),sum=f1[idx]+f2[idx];if(dot>1e-6&&sum<bestSum){bestSum=sum;best=idx}}
+      if(best<0)break;cur=best;
+    }
+    const id=state[cur]>=0?state[cur]:basins++;
+    let len=0;
+    for(let k=path.length-1;k>=0;k--){const idx=path[k];state[idx]=id;height[idx]=len;if(k>0){const a=path[k-1],b=path[k];len+=Math.hypot(a%N-b%N,((a/N)|0)-((b/N)|0))*step}}
+  }
+  let maxH=1;for(let i=0;i<n;i++)maxH=Math.max(maxH,height[i]);
+  // cost rank
+  const rank=new Int32Array(n);let maxR=0;
+  for(let a=0;a<n;a++){let r=0;for(let b=0;b<n;b++){if(f1[b]<=f1[a]&&f2[b]<=f2[a]&&(f1[b]<f1[a]||f2[b]<f2[a]))r++}rank[a]=r;if(r>maxR)maxR=r}
+  // locally efficient points (grid heuristic)
+  const leIdx=[];
+  for(let j=0;j<n;j++){
+    const jj=(j/N)|0,ii=j%N;let ok=true;
+    for(let dj=-2;dj<=2&&ok;dj++)for(let di=-2;di<=2;di++){if(!di&&!dj)continue;const ni=ii+di,nj=jj+dj;if(ni<0||ni>=N||nj<0||nj>=N)continue;const idx=nj*N+ni;if(f1[idx]<=f1[j]&&f2[idx]<=f2[j]&&(f1[idx]<f1[j]||f2[idx]<f2[j])){ok=false;break}}
+    if(ok)leIdx.push(j);
+  }
+  const le=leIdx.map(idx=>({idx,rank:0}));
+  for(const o of le){let r=0;for(const other of le){if(other===o)continue;if(f1[other.idx]<=f1[o.idx]&&f2[other.idx]<=f2[o.idx]&&(f1[other.idx]<f1[o.idx]||f2[other.idx]<f2[o.idx]))r++}o.rank=r}
+  let maxLR=0;for(const o of le)maxLR=Math.max(maxLR,o.rank);
+  const cache={};
+  for(const mode of ['cost','gfh','plot']){
+    const c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d'),img=g.createImageData(N,N);
+    for(let idx=0;idx<n;idx++){
+      let p;
+      if(mode==='cost')p=pal(COST,Math.pow(rank[idx]/(maxR||1),.55));
+      else if(mode==='gfh')p=pal(GFH,Math.pow(height[idx]/(maxH||1),.55));
+      else{const t=Math.pow(height[idx]/(maxH||1),.75),v=8+118*t;p=[v*.82,v*.86,v]}
+      img.data[idx*4]=p[0];img.data[idx*4+1]=p[1];img.data[idx*4+2]=p[2];img.data[idx*4+3]=255;
+    }
+    g.putImageData(img,0,0);cache[mode]=c;
+  }
+  return {key,mop,dom,f1,f2,mx,my,g1x,g1y,g2x,g2y,state,height,maxH,rank,maxR,le,maxLR,cache};
+}
+let M=buildMop('aspar'),mode='plot',mcache=M.cache[mode];
+const mapXY=(M,u,v)=>{const d=M.dom;return [d[0]+u*(d[1]-d[0]),d[0]+v*(d[1]-d[0])]};
+
+/* Demo 1 */
+const c1=document.getElementById('c1');let tick=0;
+function draw1(){
+  const {x,w,h}=stage(c1);x.clearRect(0,0,w,h);tick+=.01;
+  const side=Math.min(h-38,w-250),ox=(w-side)/2-(w>720?60:0),oy=(h-side)/2;
+  x.save();x.beginPath();x.roundRect(ox,oy,side,side,12);x.clip();x.drawImage(mcache,ox,oy,side,side);
+  const toPx=idx=>[ox+(idx%N)/(N-1)*side,ox*0+oy+(((idx/N)|0)/(N-1))*side];
+  if(mode!=='cost'){
+    x.strokeStyle='rgba(255,255,255,.3)';x.lineWidth=.8;
+    for(let j=5;j<N-3;j+=7)for(let i=5;i<N-3;i+=7){const idx=j*N+i,vx=M.mx[idx],vy=M.my[idx],vm=Math.hypot(vx,vy);if(vm<1e-4)continue;const [px,py]=toPx(idx),sx=px-vx/vm*8,sy=py+vy/vm*8;x.beginPath();x.moveTo(px,py);x.lineTo(sx,sy);x.stroke();x.beginPath();x.arc(sx,sy,1.1,0,TAU);x.fillStyle='rgba(255,255,255,.55)';x.fill()}
+  }
+  if(mode==='plot'){
+    for(const o of M.le){const [px,py]=toPx(o.idx),t=M.le.length>1?o.rank/(M.maxLR||1):0,p=leColor(t);x.beginPath();x.arc(px,py,2.4+1.2*Math.sin(tick*3+o.idx),0,TAU);x.fillStyle=`rgb(${p[0]},${p[1]},${p[2]})`;x.shadowColor=`rgb(${p[0]},${p[1]},${p[2]})`;x.shadowBlur=14;x.fill();x.shadowBlur=0}
+  }
+  x.restore();
+  x.fillStyle='rgba(255,255,255,.8)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText(M.mop.name.toUpperCase(),ox+8,oy+16);
+  x.fillStyle='rgba(255,255,255,.4)';x.font='10px ui-sans-serif';x.fillText({cost:'Cost Landscape · Pareto-Rang',gfh:'Gradient Field Heatmap · Pfadlänge',plot:'PLOT · Becken + effiziente Mengen'}[mode],ox+8,oy+30);
+  const sx=ox+side+22;
+  if(w>720){
+    x.fillStyle='rgba(255,255,255,.7)';x.font='600 10px ui-sans-serif';x.fillText('LESEART',sx,oy+16);
+    const rows=[['Cost','globaler Rang'],['GFH','lokale Dynamik'],['PLOT','beides zusammen']];
+    rows.forEach((r,i)=>{x.fillStyle=mode===r[0].toLowerCase()?'#fbbf24':'rgba(180,195,215,.55)';x.font=(mode===r[0].toLowerCase()?'700 ':'')+'10px ui-sans-serif';x.fillText(r[0],sx,oy+44+i*24);x.fillStyle='rgba(180,195,215,.45)';x.font='9.5px ui-sans-serif';x.fillText(r[1],sx+42,oy+44+i*24)});
+    x.fillStyle='rgba(255,255,255,.45)';x.font='9.5px ui-sans-serif';x.fillText('lokale Mengen: '+M.le.length,sx,oy+136);x.fillText('Becken: '+new Set(M.state).size,sx,oy+152);
+  }
+  requestAnimationFrame(draw1);
+}
+const mb=document.getElementById('modeBtns');
+for(const [k,v] of [['cost','Cost'],['gfh','GFH'],['plot','PLOT']]){const b=document.createElement('button');b.textContent=v;b.className=k===mode?'on':'';b.onclick=()=>{mode=k;mcache=M.cache[k];[...mb.children].forEach(c=>c.className='');b.className='on'};mb.appendChild(b)}
+const mopb=document.getElementById('mopBtns');
+for(const k in MOPS){const b=document.createElement('button');b.textContent=MOPS[k].name;b.className=k==='aspar'?'on':'';b.onclick=()=>{M=buildMop(k);mcache=M.cache[mode];[...mopb.children].forEach(c=>c.className='');b.className='on'};mopb.appendChild(b)}
+draw1();
+
+/* Demo 2 */
+const c2=document.getElementById('c2');let insp={u:.5,v:.5,on:false};
+function gradF(fn,x,y,h){return [(fn(x+h,y)-fn(x-h,y))/(2*h),(fn(x,y+h)-fn(x,y-h))/(2*h)]}
+function mogAt(x,y){
+  const h=1e-4,[a1x,a1y]=gradF((a,b)=>M.mop.f(a,b)[0],x,y,h),[a2x,a2y]=gradF((a,b)=>M.mop.f(a,b)[1],x,y,h);
+  const l1=Math.hypot(a1x,a1y)||1,l2=Math.hypot(a2x,a2y)||1;return [a1x/l1+a2x/l2,a1y/l1+a2y/l2];
+}
+function draw2(){
+  const {x,w,h}=stage(c2);x.clearRect(0,0,w,h);
+  const side=Math.min(h-38,w-280),ox=(w-side)/2-(w>720?70:0),oy=(h-side)/2;
+  x.save();x.beginPath();x.roundRect(ox,oy,side,side,12);x.clip();x.drawImage(M.cache.plot,ox,oy,side,side);
+  const toPx=(u,v)=>[ox+u*side,oy+v*side];
+  for(const o of M.le){const idx=o.idx,px=ox+(idx%N)/(N-1)*side,py=oy+(((idx/N)|0)/(N-1))*side,p=leColor(M.le.length>1?o.rank/(M.maxLR||1):0);x.beginPath();x.arc(px,py,2.2,0,TAU);x.fillStyle=`rgb(${p[0]},${p[1]},${p[2]})`;x.fill()}
+  const u=insp.u,v=insp.v,[wx,wy]=mapXY(M,u,v),[px,py]=toPx(u,v);
+  const hh=1e-4,[g1x,g1y]=gradF((a,b)=>M.mop.f(a,b)[0],wx,wy,hh),[g2x,g2y]=gradF((a,b)=>M.mop.f(a,b)[1],wx,wy,hh);
+  const l1=Math.hypot(g1x,g1y)||1,l2=Math.hypot(g2x,g2y)||1,mogx=g1x/l1+g2x/l2,mogy=g1y/l1+g2y/l2,mogl=Math.hypot(mogx,mogy);
+  const eps=hh*2,mp=mogAt(wx+eps,wy),mm=mogAt(wx-eps,wy),mq=mogAt(wx,wy+eps),mr=mogAt(wx,wy-eps);
+  const div=(mp[0]-mm[0])/(2*eps)+(mq[1]-mr[1])/(2*eps);
+  const scale=side*.11;
+  function arrow(dx,dy,col,lw,label){const ex=px+dx*scale,ey=py-dy*scale;x.beginPath();x.moveTo(px,py);x.lineTo(ex,ey);x.strokeStyle=col;x.lineWidth=lw;x.shadowColor=col;x.shadowBlur=12;x.stroke();x.shadowBlur=0;x.beginPath();x.arc(ex,ey,2.4,0,TAU);x.fillStyle=col;x.fill();if(label){x.fillStyle=col;x.font='9.5px ui-sans-serif';x.textAlign='left';x.fillText(label,ex+5,ey+3)}}
+  arrow(g1x/l1,g1y/l1,'#5eead4',1.4,'∇f₁');arrow(g2x/l2,g2y/l2,'#fb7185',1.4,'∇f₂');arrow(mogx,mogy,'#fff',2,'MOG');
+  x.beginPath();x.arc(px,py,6,0,TAU);x.strokeStyle='#fbbf24';x.lineWidth=1.6;x.setLineDash([3,3]);x.stroke();x.setLineDash([]);
+  x.fillStyle='rgba(255,255,255,.8)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText('MO-GRADIENTENFELD',ox+8,oy+16);
+  x.fillStyle='rgba(255,255,255,.42)';x.font='10px ui-sans-serif';x.fillText('Maus bewegen · Vektor am Punkt',ox+8,oy+30);
+  const sx=ox+side+24;
+  if(w>720){
+    x.fillStyle='rgba(255,255,255,.7)';x.font='600 10px ui-sans-serif';x.fillText('DIAGNOSE',sx,oy+16);
+    const rows=[['‖MOG‖',mogl.toFixed(3)],['div(−MOG)',(-div).toFixed(2)],['Status',mogl<.08?(div>0?'lokal effizient':'Sattel / Ridge'):'nicht kritisch']];
+    rows.forEach((r,i)=>{x.fillStyle='rgba(180,195,215,.5)';x.font='9.5px ui-sans-serif';x.fillText(r[0],sx,oy+46+i*30);x.fillStyle=i===2?(mogl<.08&&div>0?'#5eead4':'#fbbf24'):'rgba(235,240,250,.85)';x.font='600 11px ui-sans-serif';x.fillText(r[1],sx,oy+60+i*30)});
+    x.fillStyle='rgba(255,255,255,.35)';x.font='9px ui-sans-serif';x.fillText('div < 0 → stabil',sx,oy+156);x.fillText('div ≥ 0 → instabil',sx,oy+172);
+  }
+  x.restore();
+  requestAnimationFrame(draw2);
+}
+c2.addEventListener('pointermove',e=>{const r=c2.getBoundingClientRect(),{w,h}=stage(c2),side=Math.min(h-38,w-280),ox=(w-side)/2-(w>720?70:0),oy=(h-side)/2;insp.u=clamp((e.clientX-r.left-ox)/side,0,1);insp.v=clamp((e.clientY-r.top-oy)/side,0,1);insp.on=true});
+draw2();
+
+/* Demo 3 */
+const c3=document.getElementById('c3');let desc3=[],queue3=[],coln3=0,opt3=[];
+function mg(x,y){return mogAt(x,y)}
+function spawn3(u,v){const d=M.dom;desc3.push({x:d[0]+u*(d[1]-d[0]),y:d[0]+v*(d[1]-d[0]),trail:[[d[0]+u*(d[1]-d[0]),d[0]+v*(d[1]-d[0])]],done:false,steps:0,cluster:-1})}
+function draw3(){
+  const {x,w,h}=stage(c3);x.clearRect(0,0,w,h);
+  const side=Math.min(h-38,w-250),ox=(w-side)/2-(w>720?60:0),oy=(h-side)/2;
+  x.save();x.beginPath();x.roundRect(ox,oy,side,side,12);x.clip();x.drawImage(M.cache.plot,ox,oy,side,side);
+  const toPx=(x0,y0)=>[ox+(x0-M.dom[0])/(M.dom[1]-M.dom[0])*side,oy+(y0-M.dom[0])/(M.dom[1]-M.dom[0])*side];
+  for(const o of M.le){const idx=o.idx,px=ox+(idx%N)/(N-1)*side,py=oy+(((idx/N)|0)/(N-1))*side,p=leColor(M.le.length>1?o.rank/(M.maxLR||1):0);x.beginPath();x.arc(px,py,2.2,0,TAU);x.fillStyle=`rgb(${p[0]},${p[1]},${p[2]})`;x.fill()}
+  const cols=['#fbbf24','#5eead4','#fb7185','#818cf8','#34d399','#f97316'];
+  for(const d of desc3){if(d.trail.length>1){x.beginPath();d.trail.forEach((p,i)=>{const [px,py]=toPx(p[0],p[1]);i?x.lineTo(px,py):x.moveTo(px,py)});x.strokeStyle=d.cluster<0?'rgba(255,255,255,.45)':cols[d.cluster%6];x.lineWidth=1.5;x.globalAlpha=d.done?.9:.6;x.stroke();x.globalAlpha=1}}
+  for(const o of opt3){const [px,py]=toPx(o.x,o.y);x.beginPath();x.arc(px,py,5,0,TAU);x.fillStyle=cols[o.cluster%6];x.shadowColor=cols[o.cluster%6];x.shadowBlur=18;x.fill();x.shadowBlur=0}
+  for(const d of desc3){const [px,py]=toPx(d.x,d.y);x.beginPath();x.arc(px,py,2.6,0,TAU);x.fillStyle='#fff';x.fill()}
+  x.restore();
+  x.fillStyle='rgba(255,255,255,.45)';x.font='10px ui-sans-serif';x.fillText('Klick = Startpunkt · '+desc3.filter(d=>d.done).length+' abgeschlossen',ox+8,oy+side+16);
+  if(w>720){const sx=ox+side+22;x.fillStyle='rgba(255,255,255,.7)';x.font='600 10px ui-sans-serif';x.fillText('BECKEN',sx,oy+16);x.fillStyle='#fbbf24';x.font='700 22px ui-sans-serif';x.fillText(opt3.length,sx,oy+44);x.fillStyle='rgba(255,255,255,.4)';x.font='9.5px ui-sans-serif';x.fillText('gefundene lokale Mengen',sx,oy+64)}
+  if(queue3.length&&Math.random()<.16){const q=queue3.shift();spawn3(q[0],q[1])}
+  for(const d of desc3){if(d.done)continue;const [vx,vy]=mg(d.x,d.y),l=Math.hypot(vx,vy);if(l<.03||d.steps++>500){d.done=true;let ci=opt3.findIndex(o=>(o.x-d.x)**2+(o.y-d.y)**2<.16);if(ci<0){opt3.push({x:d.x,y:d.y,cluster:coln3++});ci=opt3.length-1}d.cluster=ci;continue}const st=(M.dom[1]-M.dom[0])*.028;d.x=clamp(d.x-vx/l*st,M.dom[0],M.dom[1]);d.y=clamp(d.y-vy/l*st,M.dom[0],M.dom[1]);d.trail.push([d.x,d.y]);if(d.trail.length>400)d.trail.shift()}
+  requestAnimationFrame(draw3);
+}
+c3.addEventListener('pointerdown',e=>{const r=c3.getBoundingClientRect(),{w,h}=stage(c3),side=Math.min(h-38,w-250),ox=(w-side)/2-(w>720?60:0),oy=(h-side)/2;if(e.clientX-r.left<ox||e.clientX-r.left>ox+side||e.clientY-r.top<oy||e.clientY-r.top>oy+side)return;spawn3((e.clientX-r.left-ox)/side,(e.clientY-r.top-oy)/side)});
+document.getElementById('run3').onclick=()=>{const r=rr(Date.now()&0xfffff);for(let i=0;i<5;i++)queue3.push([r(),r()])};
+document.getElementById('clear3').onclick=()=>{desc3=[];queue3=[];opt3=[];coln3=0};
+draw3();
+</script>
+</body>
+</html>

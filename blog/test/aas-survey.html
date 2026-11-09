@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Die Vermessung der Auswahl — Algorithm Selection Survey</title>
+<style>
+:root{--acc:#a78bfa;--acc2:#5eead4;--ink:#eef2ff;--mut:#98a2b3;--line:rgba(255,255,255,.12);--bg:#05060a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(900px 620px at 88% -10%,rgba(167,139,250,.17),transparent 62%),radial-gradient(760px 560px at 0% 18%,rgba(94,234,212,.12),transparent 60%),var(--bg);color:var(--ink);font:15px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(circle at 50% 20%,#000 12%,transparent 76%)}
+.wrap{max-width:1080px;margin:0 auto;padding:26px 22px 80px}
+nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:38px}
+.back,.pdf{text-decoration:none;font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:7px 13px;color:#c7cede;background:rgba(255,255,255,.035);transition:.2s}
+.back:hover,.pdf:hover{background:rgba(255,255,255,.09);color:#fff}
+.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.hero{border:1px solid var(--line);border-radius:28px;padding:40px 38px 34px;background:linear-gradient(155deg,rgba(255,255,255,.075),rgba(255,255,255,.018));box-shadow:0 30px 90px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.13);margin-bottom:40px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;right:-140px;top:-180px;background:radial-gradient(circle,rgba(167,139,250,.2),transparent 65%);pointer-events:none}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+h1{font-size:clamp(34px,5.8vw,62px);line-height:1.02;letter-spacing:-.045em;margin:0 0 16px;font-weight:800;max-width:820px}
+h1 em{font-style:normal;color:var(--acc);text-shadow:0 0 40px rgba(167,139,250,.4)}
+.lede{font-size:clamp(15px,2vw,18px);color:#c3ccdd;max-width:700px;margin:0 0 22px}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px}
+.tag{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#dbe3f3;background:rgba(255,255,255,.04)}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{border:1px solid var(--line);background:rgba(5,7,12,.5);border-radius:15px;padding:11px 15px;min-width:125px}
+.stat b{display:block;font-size:21px;letter-spacing:-.02em;color:#fff}
+.stat span{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.demo{border:1px solid var(--line);border-radius:24px;background:linear-gradient(165deg,rgba(255,255,255,.06),rgba(255,255,255,.015));padding:22px;margin-bottom:24px;box-shadow:0 18px 50px rgba(0,0,0,.28)}
+.demoHead{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.n{flex:0 0 auto;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:12px;font-weight:800;color:#0b0712;background:linear-gradient(135deg,#c4b5fd,var(--acc));box-shadow:0 0 24px rgba(167,139,250,.3)}
+.demoHead h2{font-size:19px;margin:0 0 3px;letter-spacing:-.015em}
+.demoHead p{margin:0;color:var(--mut);font-size:13px}
+.stage{position:relative;height:340px;border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;background:#070a11;margin:12px 0}
+.stage canvas{display:block;width:100%;height:100%}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 4px}
+button{font:inherit;font-size:12.5px;color:#d6deed;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:9px;padding:7px 11px;cursor:pointer;transition:.18s}
+button:hover{background:rgba(255,255,255,.1);color:#fff}
+button.on{background:linear-gradient(100deg,#c4b5fd,var(--acc));color:#0b0712;border-color:transparent;font-weight:700;box-shadow:0 0 20px rgba(167,139,250,.25)}
+.insight{border-left:2px solid var(--acc);background:rgba(167,139,250,.06);border-radius:0 12px 12px 0;padding:10px 13px;font-size:12.5px;color:#c6d2e2;margin-top:12px}
+.insight b{color:#c4b5fd}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--mut);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-2px}
+footer{border-top:1px solid var(--line);padding-top:18px;color:var(--mut);font-size:11.5px;margin-top:44px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:640px){.hero{padding:28px 20px}.wrap{padding:18px 14px 60px}.stage{height:300px}.demo{padding:16px}.demoHead h2{font-size:17px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="back" href="optimizing_index.html">← Index</a>
+    <div class="brand">Algorithm Selection · 02</div>
+    <a class="pdf" href="Algorithm%20Selection/2019_ECJ-Algorithm_Selection_Survey.pdf">PDF öffnen ↗</a>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">ECJ 2019 · Kerschke, Hoos, Neumann &amp; Trautmann</div>
+    <h1>Kein Solver kann <em>alles</em>.</h1>
+    <p class="lede">Der Survey erzählt die Geschichte der per-instance algorithm selection: Instanzen werden zu Features, Features zu einer Prognose, Prognosen zu einer besseren Laufzeit. Der Schlüssel ist Performance-Komplementarität.</p>
+    <div class="tags"><span class="tag">Rice’ Framework</span><span class="tag">SATzilla &amp; AutoFolio</span><span class="tag">VBS-SBS-Gap</span></div>
+    <div class="stats">
+      <div class="stat"><b>25–96 %</b><span>Gap geschlossen</span></div>
+      <div class="stat"><b>3</b><span>SATzilla-Generationen</span></div>
+      <div class="stat"><b>diskret + stetig</b><span>Feature-Welten</span></div>
+    </div>
+  </header>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">01</div><div><h2>Performance-Komplementarität</h2><p>Drei Solver, zehn Instanzen. Klick auf eine Instanz und schau, wer dort gewinnt.</p></div></div>
+    <div class="stage" style="height:360px"><canvas id="c1"></canvas></div>
+    <div class="legend"><span><i style="background:#34d399"></i>schnell</span><span><i style="background:#fbbf24"></i>mittel</span><span><i style="background:#fb7185"></i>langsam</span><span>Klick = Instanz auswählen</span></div>
+    <div class="insight"><b>Aha:</b> Der Single Best Solver (SBS) ist nur im Durchschnitt gut. Der Virtual Best Solver (VBS) wählt pro Instanz — und genau dieser Gap ist die Beute für Algorithm Selection.</div>
+  </section>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">02</div><div><h2>Der Selektor als Landkarte</h2><p>Features spannen einen Raum auf; ein Klassifikator teilt ihn in Kompetenz-Regionen.</p></div></div>
+    <div class="stage"><canvas id="c2"></canvas></div>
+    <div class="controls" id="domBtns"></div>
+    <div class="insight"><b>Aha:</b> Ob SAT, TSP oder stetige Optimierung — die Idee ist gleich: Instanz-Features → Modell → Algorithmus. Nur die Features wechseln die Sprache.</div>
+  </section>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">03</div><div><h2>Wie viel Gap schließt ein Selektor?</h2><p>Schematischer Vergleich: vom Single Best Solver bis zum perfekten Orakel.</p></div></div>
+    <div class="stage" style="height:320px"><canvas id="c3"></canvas></div>
+    <button id="gapBtn">Gap schließen</button>
+    <div class="insight"><b>Aha:</b> Gute Selektoren wie AutoFolio schließen den Großteil des VBS-SBS-Gaps — nicht durch einen besseren Solver, sondern durch die richtige Wahl.</div>
+  </section>
+
+  <footer><span>Quelle: Kerschke, Hoos, Neumann &amp; Trautmann, <i>Automated Algorithm Selection: Survey and Perspectives</i>, ECJ 2019.</span><a class="back" href="optimizing_index.html">← zurück</a></footer>
+</div>
+
+<script>
+const TAU=Math.PI*2;
+function stage(cv){const d=Math.min(devicePixelRatio||1,2),r=cv.getBoundingClientRect(),W=Math.max(2,Math.round(r.width*d)),H=Math.max(2,Math.round(r.height*d));if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}const x=cv.getContext('2d');x.setTransform(d,0,0,d,0,0);return {x,w:r.width,h:r.height}}
+function rr(a){return function(){a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296}}
+const clamp=(v,a,b)=>v<a?a:v>b?b:v, lerp=(a,b,t)=>a+(b-a)*t;
+const ALG=['Solver A','Solver B','Solver C'], AC=['#5eead4','#818cf8','#fb7185'];
+const RUN=[
+  [1,2,8,9,7,3,10,12,6,2],
+  [8,7,1,2,9,10,3,2,1,8],
+  [4,3,5,4,2,1,6,5,8,3]
+];
+const SBSI=2, SEL=[2,0,1,1,2,2,1,1,1,0];
+const mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
+const vbs=RUN[0].map((_,i)=>Math.min(...RUN.map(r=>r[i])));
+const sel=SEL.map((a,i)=>RUN[a][i]);
+const meanSBS=mean(RUN[SBSI]),meanVBS=mean(vbs),meanSEL=mean(sel);
+const c1=document.getElementById('c1');let selCol=2,anim1=0;
+function col(t){const st=[[52,211,153],[251,191,36],[251,113,133]];t=clamp(t,0,1)*(st.length-1);const i=Math.min(st.length-2,Math.floor(t)),u=t-i;return `rgb(${lerp(st[i][0],st[i+1][0],u)|0},${lerp(st[i][1],st[i+1][1],u)|0},${lerp(st[i][2],st[i+1][2],u)|0})`}
+function draw1(){
+  const {x,w,h}=stage(c1);x.clearRect(0,0,w,h);
+  const panelW=w<720?Math.min(155,w*.3):260,left=w<520?72:110,top=46,right=w-panelW,bottom=h-28,cw=(right-left)/10,rh=(bottom-top)/3;
+  x.fillStyle='rgba(255,255,255,.75)';x.font='600 11px ui-sans-serif';x.fillText('LAUFZEIT-MATRIX (niedriger = besser)',16,22);
+  for(let a=0;a<3;a++){
+    x.fillStyle='rgba(190,200,220,.65)';x.font='10.5px ui-sans-serif';x.textAlign='left';x.fillText(ALG[a],16,top+a*rh+rh*.55);
+    for(let i=0;i<10;i++){
+      const v=RUN[a][i],t=(v-1)/11,y=top+a*rh,isSel=i===selCol,best=v===Math.min(...RUN.map(r=>r[i]));
+      x.fillStyle=col(t);x.globalAlpha=isSel?.95:.55;x.beginPath();x.roundRect(left+i*cw+3,y+4,cw-6,rh-8,7);x.fill();x.globalAlpha=1;
+      if(isSel){x.strokeStyle='#fff';x.lineWidth=1.6;x.beginPath();x.roundRect(left+i*cw+3,y+4,cw-6,rh-8,7);x.stroke()}
+      if(best){x.beginPath();x.arc(left+i*cw+cw/2,y+rh/2,2.8,0,TAU);x.fillStyle='#07100d';x.fill()}
+      x.fillStyle='rgba(10,14,20,.82)';x.font='700 9.5px ui-sans-serif';x.textAlign='center';x.fillText(v,left+i*cw+cw/2,y+rh/2+3.5);
+    }
+  }
+  for(let i=0;i<10;i++){x.fillStyle=i===selCol?'#fff':'rgba(160,175,200,.55)';x.font=(i===selCol?'700 ':'')+'9px ui-sans-serif';x.textAlign='center';x.fillText('I'+(i+1),left+i*cw+cw/2,bottom+14)}
+  // right bars
+  const bx=right+18,bw=w-bx-10,top2=54,items=[{n:'SBS · C',v:meanSBS,c:'#8792a8'},{n:'Selector',v:meanSEL,c:'#a78bfa'},{n:'VBS · Oracle',v:meanVBS,c:'#5eead4'}];
+  x.fillStyle='rgba(255,255,255,.75)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText('MITTELWERT',bx,22);
+  const mx=Math.max(...items.map(d=>d.v));
+  items.forEach((d,i)=>{
+    const y=top2+i*52,len=clamp(d.v/mx,0,1)*bw*(0.25+.75*anim1);
+    x.fillStyle='rgba(190,200,220,.7)';x.font='10px ui-sans-serif';x.fillText(d.n,bx,y);
+    x.fillStyle='rgba(255,255,255,.055)';x.beginPath();x.roundRect(bx,y+8,bw,10,5);x.fill();
+    x.fillStyle=d.c;x.beginPath();x.roundRect(bx,y+8,Math.max(3,len),10,5);x.fill();
+    x.fillStyle='#e9eef8';x.font='700 11px ui-sans-serif';x.fillText(d.v.toFixed(1),bx+len+7,y+17);
+  });
+  const closed=clamp((meanSBS-meanSEL)/(meanSBS-meanVBS),0,1);
+  x.fillStyle='rgba(167,139,250,.9)';x.font='700 11px ui-sans-serif';x.fillText((closed*100).toFixed(0)+' % des Gaps geschlossen',bx,top2+160);
+  x.fillStyle='rgba(160,175,200,.55)';x.font='9.5px ui-sans-serif';x.fillText('Instanz '+ (selCol+1) +': bester = '+ALG[RUN.map(r=>r[selCol]).indexOf(Math.min(...RUN.map(r=>r[selCol])))],16,h-6);
+  anim1=Math.min(1,anim1+.04);requestAnimationFrame(draw1);
+}
+function selFromEvent(e){const r=c1.getBoundingClientRect(),{w}=stage(c1),panelW=w<720?Math.min(155,w*.3):260,left=w<520?72:110,right=w-panelW,cw=(right-left)/10;const i=Math.floor((e.clientX-r.left-left)/cw);if(i>=0&&i<10)selCol=i}c1.addEventListener('pointermove',selFromEvent);c1.addEventListener('pointerdown',selFromEvent);
+draw1();
+
+/* Demo 2 */
+const c2=document.getElementById('c2');let domain='continuous',mouse={x:-99,y:-99};
+const DOMS={
+  sat:{names:['Klausel/Variablen','Graph-Dichte'],solvers:['SATzilla','3S','SNNAP'],cent:[[.24,.3],[.76,.24],[.52,.76]]},
+  tsp:{names:['Cluster-Tendenz','Kantenlänge'],solvers:['EAX','LKH','MAOS'],cent:[[.22,.7],[.75,.3],[.48,.2]]},
+  continuous:{names:['Multimodalität','Separierbarkeit'],solvers:['CMA-ES','BSqi','HMLSL'],cent:[[.25,.32],[.74,.26],[.54,.76]]}
+};
+const PTS=(()=>{const r=rr(42),out=[];for(let c=0;c<3;c++)for(let i=0;i<24;i++){const a=r()*TAU,rad=Math.sqrt(r())*.13;out.push({c,x:clamp([.25,.74,.54][c]+Math.cos(a)*rad,.03,.97),y:clamp([.32,.26,.76][c]+Math.sin(a)*rad,.03,.97)})}return out})();
+function classOf(px,py,d=DOMS[domain]){let best=0,bd=1e9;d.cent.forEach((p,i)=>{const q=(px-p[0])**2+(py-p[1])**2;if(q<bd){bd=q;best=i}});return best}
+function draw2(){
+  const {x,w,h}=stage(c2);x.clearRect(0,0,w,h);
+  const d=DOMS[domain],pad=52,size=Math.min(w-120,h-34),ox=(w-size)/2,oy=(h-size)/2+4;
+  x.fillStyle='rgba(255,255,255,.75)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText('FEATURE-RAUM → KOMPETENZ-REGIONEN',16,20);
+  for(let gy=0;gy<32;gy++)for(let gx=0;gx<32;gx++){
+    const px=(gx+.5)/32,py=(gy+.5)/32,cl=classOf(px,py,d);x.fillStyle=AC[cl];x.globalAlpha=.075;x.fillRect(ox+gx*size/32,oy+gy*size/32,size/32+1,size/32+1);
+  }
+  x.globalAlpha=1;x.strokeStyle='rgba(255,255,255,.14)';x.strokeRect(ox,oy,size,size);
+  for(const p of PTS){const px=ox+p.x*size,py=oy+p.y*size;x.beginPath();x.arc(px,py,3.2,0,TAU);x.fillStyle=AC[p.c];x.globalAlpha=.85;x.fill();x.globalAlpha=1}
+  const mx=clamp((mouse.x-ox)/size,0,1),my=clamp((mouse.y-oy)/size,0,1),pred=classOf(mx,my,d);
+  if(mouse.x>ox&&mouse.x<ox+size&&mouse.y>oy&&mouse.y<oy+size){
+    x.strokeStyle='#fff';x.lineWidth=1;x.setLineDash([4,4]);x.beginPath();x.moveTo(mouse.x-10,mouse.y);x.lineTo(mouse.x+10,mouse.y);x.moveTo(mouse.x,mouse.y-10);x.lineTo(mouse.x,mouse.y+10);x.stroke();x.setLineDash([]);
+    x.beginPath();x.arc(mouse.x,mouse.y,7,0,TAU);x.strokeStyle=AC[pred];x.lineWidth=2;x.shadowColor=AC[pred];x.shadowBlur=18;x.stroke();x.shadowBlur=0;
+  }
+  x.fillStyle='rgba(200,210,230,.65)';x.font='10px ui-sans-serif';x.textAlign='center';x.fillText(d.names[0],ox+size/2,oy+size+20);x.save();x.translate(ox-20,oy+size/2);x.rotate(-Math.PI/2);x.fillText(d.names[1],0,0);x.restore();
+  x.textAlign='left';
+  d.solvers.forEach((s,i)=>{const y=oy+10+i*24;x.fillStyle=AC[i];x.beginPath();x.arc(w-92,y+3,4,0,TAU);x.fill();x.fillStyle='rgba(220,228,240,.8)';x.font='10px ui-sans-serif';x.fillText(s,w-82,y+6)});
+  x.fillStyle='rgba(255,255,255,.55)';x.font='10px ui-sans-serif';x.fillText('Maus = neue Instanz',w-116,oy+size+22);
+  requestAnimationFrame(draw2);
+}
+const db=document.getElementById('domBtns');
+for(const [k,v] of [['sat','SAT'],['tsp','TSP'],['continuous','Continuous']]){const b=document.createElement('button');b.textContent=v;b.className=k===domain?'on':'';b.onclick=()=>{domain=k;[...db.children].forEach(c=>c.className='');b.className='on'};db.appendChild(b)}
+c2.addEventListener('pointermove',e=>{const r=c2.getBoundingClientRect(),{w,h}=stage(c2),size=Math.min(w-120,h-34),ox=(w-size)/2,oy=(h-size)/2+4;mouse={x:e.clientX-r.left,y:e.clientY-r.top,ox,oy,size}});
+draw2();
+
+/* Demo 3 */
+const c3=document.getElementById('c3');let gapP=0;
+const GAP=[{n:'SBS',v:0,c:'#8792a8'},{n:'SNNAP',v:50,c:'#a78bfa'},{n:'SATzilla 2012',v:70,c:'#818cf8'},{n:'3S',v:80,c:'#60a5fa'},{n:'AutoFolio',v:90,c:'#5eead4'},{n:'VBS',v:100,c:'#34d399'}];
+function draw3(){
+  const {x,w,h}=stage(c3);x.clearRect(0,0,w,h);
+  x.fillStyle='rgba(255,255,255,.75)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText('ANTEIL DES VBS-SBS-GAPS, DER GESCHLOSSEN WIRD',16,22);
+  const left=145,right=w-50,top=50,bw=right-left,gap=(h-top-18)/GAP.length;
+  GAP.forEach((d,i)=>{
+    const y=top+i*gap,len=bw*clamp(d.v/100,0,1)*gapP;
+    x.fillStyle='rgba(200,210,230,.72)';x.font='10.5px ui-sans-serif';x.textAlign='left';x.fillText(d.n,16,y+14);
+    x.fillStyle='rgba(255,255,255,.055)';x.beginPath();x.roundRect(left,y+3,bw,12,6);x.fill();
+    const gr=x.createLinearGradient(left,0,left+Math.max(5,len),0);gr.addColorStop(0,d.c+'66');gr.addColorStop(1,d.c);
+    x.fillStyle=gr;x.beginPath();x.roundRect(left,y+3,Math.max(5,len),12,6);x.fill();
+    x.fillStyle='rgba(235,240,250,.9)';x.font='700 11px ui-sans-serif';x.textAlign='right';x.fillText(d.v+' %',w-14,y+14);
+  });
+  x.fillStyle='rgba(160,175,200,.5)';x.font='9.5px ui-sans-serif';x.textAlign='left';x.fillText('schematische Einordnung — nicht maßstabsgetreu',16,h-6);
+  gapP=Math.min(1,gapP+.02);requestAnimationFrame(draw3);
+}
+document.getElementById('gapBtn').onclick=()=>{gapP=0};
+draw3();
+</script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deep-ELA — Landschaften als Token-Wolke</title>
+<style>
+:root{--acc:#818cf8;--acc2:#5eead4;--ink:#eef2ff;--mut:#98a2b3;--line:rgba(255,255,255,.12);--bg:#05060a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(900px 620px at 86% -10%,rgba(129,140,248,.18),transparent 62%),radial-gradient(760px 560px at 0% 18%,rgba(94,234,212,.12),transparent 60%),var(--bg);color:var(--ink);font:15px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(circle at 50% 20%,#000 12%,transparent 76%)}
+.wrap{max-width:1080px;margin:0 auto;padding:26px 22px 80px}
+nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:38px}
+.back,.pdf{text-decoration:none;font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:7px 13px;color:#c7cede;background:rgba(255,255,255,.035);transition:.2s}
+.back:hover,.pdf:hover{background:rgba(255,255,255,.09);color:#fff}
+.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.hero{border:1px solid var(--line);border-radius:28px;padding:40px 38px 34px;background:linear-gradient(155deg,rgba(255,255,255,.075),rgba(255,255,255,.018));box-shadow:0 30px 90px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.13);margin-bottom:40px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;right:-140px;top:-180px;background:radial-gradient(circle,rgba(129,140,248,.22),transparent 65%);pointer-events:none}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+h1{font-size:clamp(34px,5.8vw,62px);line-height:1.02;letter-spacing:-.045em;margin:0 0 16px;font-weight:800;max-width:820px}
+h1 em{font-style:normal;color:var(--acc);text-shadow:0 0 40px rgba(129,140,248,.45)}
+.lede{font-size:clamp(15px,2vw,18px);color:#c3ccdd;max-width:700px;margin:0 0 22px}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px}
+.tag{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#dbe3f3;background:rgba(255,255,255,.04)}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{border:1px solid var(--line);background:rgba(5,7,12,.5);border-radius:15px;padding:11px 15px;min-width:125px}
+.stat b{display:block;font-size:21px;letter-spacing:-.02em;color:#fff}
+.stat span{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.demo{border:1px solid var(--line);border-radius:24px;background:linear-gradient(165deg,rgba(255,255,255,.06),rgba(255,255,255,.015));padding:22px;margin-bottom:24px;box-shadow:0 18px 50px rgba(0,0,0,.28)}
+.demoHead{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.n{flex:0 0 auto;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:12px;font-weight:800;color:#080a18;background:linear-gradient(135deg,#c7d2fe,var(--acc));box-shadow:0 0 24px rgba(129,140,248,.3)}
+.demoHead h2{font-size:19px;margin:0 0 3px;letter-spacing:-.015em}
+.demoHead p{margin:0;color:var(--mut);font-size:13px}
+.stage{position:relative;height:360px;border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;background:#070a11;margin:12px 0}
+.stage canvas{display:block;width:100%;height:100%}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 4px}
+button{font:inherit;font-size:12.5px;color:#d6deed;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:9px;padding:7px 11px;cursor:pointer;transition:.18s}
+button:hover{background:rgba(255,255,255,.1);color:#fff}
+button.on{background:linear-gradient(100deg,#c7d2fe,var(--acc));color:#080a18;border-color:transparent;font-weight:700;box-shadow:0 0 20px rgba(129,140,248,.28)}
+input[type=range]{accent-color:var(--acc);width:160px}
+label{font-size:12px;color:var(--mut);display:flex;align-items:center;gap:8px}
+.insight{border-left:2px solid var(--acc);background:rgba(129,140,248,.07);border-radius:0 12px 12px 0;padding:10px 13px;font-size:12.5px;color:#c6d2e2;margin-top:12px}
+.insight b{color:#c7d2fe}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{font-size:11px;color:#dbe3f3;border:1px solid var(--line);background:rgba(255,255,255,.045);padding:4px 8px;border-radius:999px}
+.chip b{color:#c7d2fe}
+footer{border-top:1px solid var(--line);padding-top:18px;color:var(--mut);font-size:11.5px;margin-top:44px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:640px){.hero{padding:28px 20px}.wrap{padding:18px 14px 60px}.stage{height:310px}.demo{padding:16px}.demoHead h2{font-size:17px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="back" href="optimizing_index.html">← Index</a>
+    <div class="brand">Landscape Analysis · 03</div>
+    <a class="pdf" href="Exploratory%20Landscape%20Analysis/2025-ECJ-Pretrained_Transformer_for_Deep_Exploratory_Landscape_Analysis.pdf">PDF öffnen ↗</a>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">ECJ 2025 · Seiler, Kerschke &amp; Trautmann</div>
+    <h1>Die Landschaft wird zum <em>Satz</em>.</h1>
+    <p class="lede">Deep-ELA behandelt eine Stichprobe von (x, f(x)) wie eine ungeordnete Token-Wolke. Vier Transformer werden auf 250 Millionen zufälligen Optimierungsproblemen selbstüberwacht vortrainiert — ohne Labels, ohne handgebaute Features.</p>
+    <div class="tags"><span class="tag">Point-Cloud Transformer</span><span class="tag">Self-Supervised</span><span class="tag">Single- &amp; Multiobjective</span></div>
+    <div class="stats">
+      <div class="stat"><b>250 M</b><span>Zufallsfunktionen</span></div>
+      <div class="stat"><b>4</b><span>Transformer-Modelle</span></div>
+      <div class="stat"><b>25d / 50d</b><span>finale Modellgrößen</span></div>
+    </div>
+  </header>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">01</div><div><h2>Von Punkten zu Tokens</h2><p>Eine Stichprobe ist eine Menge, keine geordnete Tabelle. Der Transformer macht daraus ein Embedding.</p></div></div>
+    <div class="stage" style="height:380px"><canvas id="c1"></canvas></div>
+    <div class="controls"><label>Sample: <input id="n1" type="range" min="32" max="180" step="8" value="96"><span id="nv1">96</span></label><button id="obj1" class="on">m = 1</button></div>
+    <div class="insight"><b>Aha:</b> kNN-Embedding holt lokale Nachbarschaften in die Tokens; Attention mischt globale Beziehungen; Mean-Pooling macht die Ausgabe unabhängig von der Reihenfolge der Punkte.</div>
+  </section>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">02</div><div><h2>Selbstüberwachte Invarianz</h2><p>Drehen, skalieren, verschieben — die Landschaft bleibt dieselbe. Kontrastives Lernen zieht genau diese Ansichten zusammen.</p></div></div>
+    <div class="stage" style="height:380px"><canvas id="c2"></canvas></div>
+    <div class="controls"><button id="train2">Training starten</button><button id="aug2" class="on">Augmentierungen</button></div>
+    <div class="chips" id="chips2"></div>
+    <div class="insight"><b>Aha:</b> Deep-ELA braucht keine Labels. Positive Paare entstehen durch Augmentierungen derselben Funktion; negative Paare sind verschiedene Funktionen.</div>
+  </section>
+
+  <section class="demo">
+    <div class="demoHead"><div class="n">03</div><div><h2>Weniger Redundanz</h2><p>Klassische ELA-Features korrelieren stark. Gelernte Embeddings sind kompakter — und weniger doppelt.</p></div></div>
+    <div class="stage" style="height:340px"><canvas id="c3"></canvas></div>
+    <div class="chips" id="chips3"></div>
+    <div class="insight"><b>Aha:</b> Hohe Korrelation bedeutet redundante Information. Deep-ELA liefert Features mit geringer Korrelation — ein besseres Futter für nachgelagerte Modelle.</div>
+  </section>
+
+  <footer><span>Quelle: Seiler, Kerschke &amp; Trautmann, <i>Deep-ELA: Deep Exploratory Landscape Analysis with Self-Supervised Pretrained Transformers</i>, ECJ 2025.</span><a class="back" href="optimizing_index.html">← zurück</a></footer>
+</div>
+
+<script>
+const TAU=Math.PI*2;
+function stage(cv){const d=Math.min(devicePixelRatio||1,2),r=cv.getBoundingClientRect(),W=Math.max(2,Math.round(r.width*d)),H=Math.max(2,Math.round(r.height*d));if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}const x=cv.getContext('2d');x.setTransform(d,0,0,d,0,0);return {x,w:r.width,h:r.height}}
+function rr(a){return function(){a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296}}
+const clamp=(v,a,b)=>v<a?a:v>b?b:v,lerp=(a,b,t)=>a+(b-a)*t;
+const fdeep=(x,y)=>Math.sin(2.4*x)*Math.cos(2.1*y)+.45*(x*x+y*y);
+function cloud(seed,n=96){const r=rr(seed),arr=[];for(let i=0;i<n;i++){const x=r()*2-1,y=r()*2-1;arr.push({x,y,v:fdeep(x,y)})}return arr}
+let n1=96,m1=1,cloud1=cloud(17,n1);
+const c1=document.getElementById('c1');let tt=0;
+function draw1(){
+  const {x,w,h}=stage(c1);x.clearRect(0,0,w,h);tt+=.008;
+  const leftW=w*.56,ox=leftW*.5,oy=h*.56,S=Math.min(leftW*.3,h*.36);
+  // grid floor
+  x.save();x.globalAlpha=.16;x.strokeStyle='rgba(129,140,248,.55)';x.lineWidth=1;
+  for(let i=-4;i<=4;i++){const a=proj(-1,i/4,0,ox,oy,S,tt),b=proj(1,i/4,0,ox,oy,S,tt),c=proj(i/4,-1,0,ox,oy,S,tt),d=proj(i/4,1,0,ox,oy,S,tt);x.beginPath();x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1]);x.moveTo(c[0],c[1]);x.lineTo(d[0],d[1]);x.stroke()}
+  x.restore();
+  // kNN edges on subset
+  const show=Math.min(cloud1.length,60);x.strokeStyle='rgba(129,140,248,.22)';x.lineWidth=.8;
+  for(let i=0;i<show;i+=2){let best=-1,bd=1e9;for(let j=0;j<cloud1.length;j++){if(j===i)continue;const d=(cloud1[i].x-cloud1[j].x)**2+(cloud1[i].y-cloud1[j].y)**2;if(d<bd){bd=d;best=j}}if(best>=0){const a=proj(cloud1[i].x,cloud1[i].y,cloud1[i].v,ox,oy,S,tt),b=proj(cloud1[best].x,cloud1[best].y,cloud1[best].v,ox,oy,S,tt);x.beginPath();x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1]);x.stroke()}}
+  cloud1.forEach((p,i)=>{const [px,py]=proj(p.x,p.y,p.v,ox,oy,S,tt),hue=clamp((p.v+1.2)/2.4,0,1);const col=m1===1?`rgba(${lerp(94,167,hue)|0},${lerp(234,139,hue)|0},${lerp(212,250,hue)|0},.9)`:`rgba(${lerp(251,129,hue)|0},${lerp(113,140,hue)|0},${lerp(133,248,hue)|0},.9)`;x.beginPath();x.arc(px,py,2.2,0,TAU);x.fillStyle=col;x.fill()});
+  if(m1===2){ // second objective cloud
+    cloud1.forEach(p=>{const v2=Math.sin(1.7*p.x+2.2*p.y)+.5*(p.x*p.x+p.y*p.y);const [px,py]=proj(p.x,p.y,v2,ox,oy,S,tt);x.beginPath();x.arc(px,py-4,1.8,0,TAU);x.fillStyle='rgba(251,113,133,.75)';x.fill()})
+  }
+  x.fillStyle='rgba(255,255,255,.8)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText('(X, Y) · '+n1+' Tokens',18,24);
+  x.fillStyle='rgba(255,255,255,.4)';x.font='10px ui-sans-serif';x.fillText(m1===1?'f : R² → R':'F : R² → R²',18,40);
+  // pipeline
+  const px0=leftW+20,pw=w-leftW-36,cy=h*.5;
+  const blocks=[{t:'kNN\nEmbedding',x:px0},{t:'Transformer\n× L',x:px0+pw*.27},{t:'Mean\nPooling',x:px0+pw*.54},{t:'Deep-ELA\nFeatures',x:px0+pw*.81}];
+  blocks.forEach((b,i)=>{const bw=pw*.19,bh=66,by=cy-33;x.fillStyle='rgba(255,255,255,.045)';x.strokeStyle=i===Math.floor((tt*.55)%4)?'#818cf8':'rgba(255,255,255,.14)';x.lineWidth=i===Math.floor((tt*.55)%4)?1.6:1;x.beginPath();x.roundRect(b.x,by,bw,bh,10);x.fill();x.stroke();x.fillStyle='rgba(230,235,250,.8)';x.font='600 9.5px ui-sans-serif';x.textAlign='center';b.t.split('\n').forEach((line,li)=>x.fillText(line,b.x+bw/2,by+27+li*13))});
+  for(let i=0;i<3;i++){const x1=blocks[i].x+pw*.19,x2=blocks[i+1].x,y=cy-.5;x.strokeStyle='rgba(129,140,248,.45)';x.beginPath();x.moveTo(x1,y);x.lineTo(x2,y);x.stroke();for(let k=0;k<2;k++){const u=((tt*1.5+i*.3+k*.5)%1);x.beginPath();x.arc(lerp(x1,x2,u),y,2,0,TAU);x.fillStyle='#a5b4fc';x.fill()}}
+  // embedding bars
+  const ex=blocks[3].x+pw*.19+8,ew=w-ex-18;
+  if(ew>40){for(let i=0;i<12;i++){const bh=8+Math.abs(Math.sin(i*1.7+tt*2))*30;x.fillStyle=`rgba(129,140,248,${.25+.5*Math.abs(Math.sin(i*.9+tt))})`;x.beginPath();x.roundRect(ex,cy-38+i*7,Math.min(ew,bh),4,2);x.fill()}}
+  x.fillStyle='rgba(255,255,255,.35)';x.font='9px ui-sans-serif';x.textAlign='left';x.fillText('permutationsinvariant',leftW+20,h-16);
+  requestAnimationFrame(draw1);
+}
+function proj(x,y,z,ox,oy,S,t){const a=t*.35,ca=Math.cos(a),sa=Math.sin(a),rx=x*ca-y*sa,ry=x*sa+y*ca;return [ox+(rx-ry*.55)*S,oy+(rx*.28+ry*.28-z*.5)*S]}
+document.getElementById('n1').oninput=e=>{n1=+e.target.value;document.getElementById('nv1').textContent=n1;cloud1=cloud(17,n1)};
+document.getElementById('obj1').onclick=e=>{m1=m1===1?2:1;e.target.textContent='m = '+m1;e.target.classList.toggle('on',m1===1)};
+draw1();
+
+/* Demo 2 */
+const c2=document.getElementById('c2');let learn2=0,augOn=true,startT=performance.now();
+const FUNCS=[{s:3,f:(x,y)=>Math.sin(2*x)*Math.cos(2*y)},{s:5,f:(x,y)=>x*x-y*y},{s:8,f:(x,y)=>Math.cos(3*x+1)*Math.sin(2*y)},{s:13,f:(x,y)=>Math.exp(-2*(x*x+y*y))}];
+const CLOUDS=FUNCS.map((o,i)=>cloud(o.s,54).map(p=>({...p,v:o.f(p.x,p.y)})));
+const CLUSTERS=[[.27,.28],[.73,.25],[.28,.74],[.74,.72]];
+const init=CLOUDS.map((_,i)=>Array.from({length:4},(_,j)=>({x:.2+.6*Math.sin(i*2.1+j*7.3),y:.2+.6*Math.cos(i*1.7+j*5.1)})));
+function draw2(){
+  const {x,w,h}=stage(c2);x.clearRect(0,0,w,h);
+  const topH=h*.42,tw=(w-40)/4;
+  x.fillStyle='rgba(255,255,255,.78)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText('AUGMENTIERUNGEN',18,20);
+  const t=performance.now()/1000;
+  CLOUDS.forEach((pts,i)=>{
+    const x0=20+i*tw,pad=8,sz=topH-42;
+    x.strokeStyle='rgba(255,255,255,.1)';x.beginPath();x.roundRect(x0+4,30,tw-8,sz,10);x.stroke();
+    pts.forEach(p=>{
+      const ang=augOn?t*.35+i*.6:0,sc=augOn?1+.18*Math.sin(t*.8+i):1,dx=augOn?.06*Math.sin(t*.5+i):0,dy=augOn?.05*Math.cos(t*.4+i):0;
+      const rx=(p.x*Math.cos(ang)-p.y*Math.sin(ang))*sc+dx,ry=(p.x*Math.sin(ang)+p.y*Math.cos(ang))*sc+dy;
+      const cx=x0+tw/2,cy=30+sz/2,px=cx+rx*(tw*.34),py=cy+ry*(sz*.34);const hue=clamp((p.v+1)/2,0,1);
+      x.beginPath();x.arc(px,py,1.6,0,TAU);x.fillStyle=`rgba(${lerp(94,167,hue)|0},${lerp(234,139,hue)|0},${lerp(212,250,hue)|0},.85)`;x.fill()});
+    x.fillStyle='rgba(255,255,255,.4)';x.font='9.5px ui-sans-serif';x.textAlign='center';x.fillText(['rot+shift','scale','rot','shift'][i],x0+tw/2,30+sz+14);
+  });
+  // embedding
+  const midH=h*.58,ex0=30,ex1=w-30,ey0=topH+42,ey1=h-24;
+  x.fillStyle='rgba(255,255,255,.78)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText('EMBEDDING-RAUM · gleiche Funktion = nah',ex0,topH+22);
+  const map=(p)=>[ex0+p.x*(ex1-ex0),ey0+p.y*(ey1-ey0)];
+  const ease=clamp(learn2,0,1),ease2=1-Math.pow(1-ease,3);
+  CLOUDS.forEach((_,i)=>{
+    const center=CLUSTERS[i],cols=['#5eead4','#818cf8','#fbbf24','#fb7185'];
+    const pts=init[i].map((p,j)=>{const ang=j*TAU/4+.6*i;return {x:lerp(p.x,center[0]+Math.cos(ang)*.035,ease2),y:lerp(p.y,center[1]+Math.sin(ang)*.035,ease2)}});
+    pts.forEach((p,j)=>{const a=map(p);x.beginPath();x.arc(a[0],a[1],4.5,0,TAU);x.fillStyle=cols[i];x.shadowColor=cols[i];x.shadowBlur=14;x.fill();x.shadowBlur=0;if(j>0){const b=map(pts[0]);x.strokeStyle=cols[i]+'44';x.beginPath();x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1]);x.stroke()}});
+    const cp=map({x:center[0],y:center[1]});x.fillStyle='rgba(235,240,255,.6)';x.font='600 10px ui-sans-serif';x.textAlign='center';x.fillText('f'+(i+1),cp[0],cp[1]-26);
+  });
+  const loss=(2.1*Math.exp(-ease*3.4)+.18).toFixed(2);
+  x.fillStyle='rgba(129,140,248,.9)';x.font='700 11px ui-sans-serif';x.textAlign='left';x.fillText('kontrastiver Loss: '+loss,ex0,h-8);
+  document.getElementById('chips2').innerHTML=`<span class="chip">positive Paare <b>16</b></span><span class="chip">Funktionen <b>4</b></span><span class="chip">Loss <b>${loss}</b></span>`;
+  if(learn2<1)learn2+=.006;
+  requestAnimationFrame(draw2);
+}
+document.getElementById('train2').onclick=()=>{learn2=0};
+document.getElementById('aug2').onclick=e=>{augOn=!augOn;e.target.classList.toggle('on',augOn)};
+draw2();
+
+/* Demo 3 */
+const c3=document.getElementById('c3');
+const K=9;
+function corrClassical(i,j){if(i===j)return 1;return .55+.36*Math.cos((i-j)*.85)}
+function corrDeep(i,j){if(i===j)return 1;return .16*Math.sin(i*3.1+j*1.7)}
+function meanAbsOff(corr){let s=0,n=0;for(let i=0;i<K;i++)for(let j=0;j<K;j++)if(i!==j){s+=Math.abs(corr(i,j));n++}return s/n}
+function draw3(){
+  const {x,w,h}=stage(c3);x.clearRect(0,0,w,h);
+  const gap=Math.min(60,w*.08),size=Math.min((w-gap-80)/2,h-90),y0=56;
+  const panels=[{t:'Klassische ELA',f:corrClassical,x:40},{t:'Deep-ELA',f:corrDeep,x:40+size+gap}];
+  x.fillStyle='rgba(255,255,255,.78)';x.font='600 11px ui-sans-serif';x.textAlign='left';x.fillText('KORRELATION DER FEATURES',18,22);
+  panels.forEach(p=>{
+    x.fillStyle='rgba(210,220,240,.7)';x.font='600 10.5px ui-sans-serif';x.textAlign='left';x.fillText(p.t,p.x,42);
+    const cell=size/K;
+    for(let i=0;i<K;i++)for(let j=0;j<K;j++){
+      const v=p.f(i,j),cx=p.x+j*cell,cy=y0+i*cell;
+      if(i===j){x.fillStyle='rgba(255,255,255,.28)';x.fillRect(cx,cy,cell-1,cell-1);continue}
+      const a=Math.min(.9,Math.abs(v)),col=v>0?'94,234,212':'251,113,133';
+      x.fillStyle=`rgba(${col},${.08+a*.75})`;x.fillRect(cx,cy,cell-1,cell-1);
+    }
+    x.strokeStyle='rgba(255,255,255,.1)';x.strokeRect(p.x,y0,size,size);
+    const m=meanAbsOff(p.f);
+    x.fillStyle='rgba(200,210,230,.65)';x.font='10px ui-sans-serif';x.fillText('Ø |r| (off-diag): '+m.toFixed(2),p.x,y0+size+18);
+  });
+  x.fillStyle='rgba(160,175,200,.55)';x.font='9.5px ui-sans-serif';x.fillText('grün = positiv · rosa = negativ · weiß = Diagonale',40,h-10);
+  document.getElementById('chips3').innerHTML=`<span class="chip">klassisch Ø |r| <b>${meanAbsOff(corrClassical).toFixed(2)}</b></span><span class="chip">Deep-ELA Ø |r| <b>${meanAbsOff(corrDeep).toFixed(2)}</b></span><span class="chip">weniger Redundanz <b>↓</b></span>`;
+  requestAnimationFrame(draw3);
+}
+draw3();
+</script>
+</body>
+</html>
