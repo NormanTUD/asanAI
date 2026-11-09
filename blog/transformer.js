@@ -6401,7 +6401,7 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		const last3 = arc3[arc3.length - 1], prev3 = arc3[arc3.length - 2] || from;
 		const dx = last3[0] - prev3[0], dy = (last3[1] || 0) - (prev3[1] || 0), dz = (last3[2] || 0) - (prev3[2] || 0);
 		const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
-		const cone = window.tmPlotly.coneTrace([{ x: last3[0], y: last3[1] || 0, z: last3[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], color, token, 0.22);
+		const cone = window.tmPlotly.coneTrace([{ x: last3[0], y: last3[1] || 0, z: last3[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], color, token, 0.044);
 		if (cone) traces.push(cone);
 		markerPoints.push({ x: from[0], y: from[1] || 0, z: from[2] || 0, size: 6, color: color, symbol: 'circle', hover: tip });
 		markerPoints.push({ x: to[0], y: to[1] || 0, z: to[2] || 0, size: 8, color: color, symbol: 'diamond', hover: tip });
