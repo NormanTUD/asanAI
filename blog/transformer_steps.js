@@ -2128,15 +2128,8 @@
 		}
 		var hint = (window.tmMetric && window.tmMetric.sphereHint) ? window.tmMetric.sphereHint(false) : "";
 		var textGrid = zs.map(function (row) { return row.map(function () { return hint; }); });
-		var px = [], py = [], pz = [], pt = [];
-		for (var a = 0; a < xs.length; a += 3) {
-			for (var b = 0; b < xs[a].length; b += 3) {
-				px.push(xs[a][b]); py.push(ys[a][b]); pz.push(zs[a][b]); pt.push(hint);
-			}
-		}
 		return [
-			{ type: "surface", x: xs, y: ys, z: zs, surfacecolor: zs.map(function (r) { return r.map(function () { return 0; }); }), colorscale: [[0, "#3b82f6"], [1, "#3b82f6"]], showscale: false, opacity: 0.18, hoverinfo: "text", text: textGrid, name: "unit sphere" },
-			{ type: "scatter3d", mode: "markers", x: px, y: py, z: pz, marker: { size: 1.4, color: "#3b82f6", opacity: 0.18 }, hoverinfo: "text", text: pt, name: "unit sphere points" }
+			{ type: "surface", x: xs, y: ys, z: zs, surfacecolor: zs.map(function (r) { return r.map(function () { return 0; }); }), colorscale: [[0, "#3b82f6"], [1, "#3b82f6"]], showscale: false, opacity: 0.18, hoverinfo: "text", text: textGrid, name: "unit sphere" }
 		];
 	}
 	function plotlyCircleTraces() {
@@ -3936,7 +3929,11 @@
 		// 3 · Position: the shift plot is the default view.
 		if (!moved.position) {
 			var shift = document.getElementById("transformer-pe-shift-plot");
-			if (shift) shift.style.height = "520px";
+			var embed = document.getElementById("transformer-plotly-space");
+			var stepH = (typeof getTrajectoryPlotHeight === 'function' && typeof getTransformerConfig === 'function')
+				? getTrajectoryPlotHeight(getTransformerConfig().d_model) : 850;
+			if (embed) { embed.style.height = stepH + "px"; embed.style.minHeight = stepH + "px"; }
+			if (shift) { shift.style.height = stepH + "px"; shift.style.minHeight = stepH + "px"; }
 			if (moveLiveView("transformer-pe-shift-plot", 3, "#tm-step-position")) {
 				moved.position = true;
 				var posModes = document.querySelector(".tm-step-body [data-step-modes='position']");
