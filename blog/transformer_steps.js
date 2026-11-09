@@ -2112,7 +2112,7 @@
 			colorscale: [[0, color], [1, color]],
 			showscale: false,
 			sizemode: "absolute",
-			sizeref: 0.22,
+			sizeref: 0.32,
 			anchor: "tip",
 			hoverinfo: "text",
 			text: items.map(function (p) { return p.tip || ""; }),
@@ -2122,9 +2122,11 @@
 	}
 	function plotlyLayout3D(title, axes) {
 		var c = _plotlyColors();
+		var p = palette();
 		var axis = function (name) { return { title: { text: name }, color: c.muted, gridcolor: c.line, zerolinecolor: c.line, showbackground: false }; };
 		return {
 			paper_bgcolor: c.paper, plot_bgcolor: c.plot,
+			hoverlabel: { bgcolor: p.paper, bordercolor: p.line, font: { color: p.ink, size: 12 } },
 			title: { text: title, font: { size: 13, color: c.ink } },
 			showlegend: false,
 			margin: { l: 0, r: 0, t: 38, b: 0 },
@@ -2137,9 +2139,11 @@
 	}
 	function plotlyLayout2D(title, axes) {
 		var c = _plotlyColors();
+		var p = palette();
 		var axis = function (name) { return { title: { text: name }, color: c.muted, gridcolor: c.line, zeroline: false }; };
 		return {
 			paper_bgcolor: c.paper, plot_bgcolor: c.plot,
+			hoverlabel: { bgcolor: p.paper, bordercolor: p.line, font: { color: p.ink, size: 12 } },
 			title: { text: title, font: { size: 13, color: c.ink } },
 			showlegend: false,
 			margin: { l: 46, r: 18, t: 38, b: 42 },

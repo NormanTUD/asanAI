@@ -49,6 +49,17 @@ const nr_fixed = 4;
 const posEmbedScalar = 1;
 let trainingDebounceTimer;
 const epsilon = 1e-6;
+function _tmHoverlabel() {
+	const dark = !!(window.__MN_DARK && window.__MN_DARK.isDark && window.__MN_DARK.isDark());
+	return {
+		bgcolor: (typeof cssVar === "function" ? cssVar("--mn-surface") : "") || (dark ? "#0f172a" : "#ffffff"),
+		bordercolor: (typeof cssVar === "function" ? cssVar("--mn-border") : "") || (dark ? "#475569" : "#cbd5e1"),
+		font: {
+			color: (typeof cssVar === "function" ? cssVar("--mn-text") : "") || (dark ? "#e2e8f0" : "#0f172a"),
+			size: 12
+		}
+	};
+}
 const attentionRenderRegistry = new Map();
 const positionalShiftRegistry = new Map();
 const embeddingRenderRegistry = new Map();
@@ -2288,6 +2299,7 @@ function _runFullTransformerVisualization(payload) {
 	} finally {
 		window.__tmCollectLayerTrace = false;
 	}
+	if (typeof ensureDisplayMathScrollable === 'function') ensureDisplayMathScrollable(document);
 	window.__tmFullVizLoaded = true;
 	window.dispatchEvent(new CustomEvent("tm:transformer-data"));
 }
@@ -5246,9 +5258,9 @@ function _traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts) {
 		mode: 'lines+markers',
 		name: tokenLabel,
 		legendgroup: tokenLabel,
-		line: { width: 2, color: tColor },
+		line: { width: 4, color: tColor },
 		marker: {
-			size: x.map((_, i) => i === 0 ? 0 : 10),
+			size: x.map((_, i) => i === 0 ? 0 : 14),
 			symbol: 'arrow',
 			angleref: 'previous',
 			color: tColor
@@ -5464,6 +5476,7 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 
 	const layout = {
 		title: '<b>Token Trajectory: Embedding + Position through the Layers</b>',
+		hoverlabel: _tmHoverlabel(),
 		xaxis: axisTemplate, yaxis: axisTemplate,
 		annotations: result.annotations,  // ← only stage labels, no VF annotations
 		margin: { l: 10, r: 10, b: 50, t: 80 },
@@ -5553,11 +5566,11 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 		});
 		traces.push({
 			type: 'scatter3d', mode: 'lines', x: lineX, y: lineY, z: lineZ,
-			line: { color: color, width: 4 }, hoverinfo: 'skip', showlegend: false
+			line: { color: color, width: 6 }, hoverinfo: 'skip', showlegend: false
 		});
 		traces.push({
 			type: 'scatter3d', mode: 'markers', x: xs, y: ys, z: zs,
-			marker: { size: 3, color: color },
+			marker: { size: 5, color: color },
 			hovertext: hover, hovertemplate: '%{hovertext}<extra></extra>', name: labels[tIdx], showlegend: false
 		});
 		const cones = [];

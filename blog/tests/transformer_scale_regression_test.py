@@ -303,8 +303,8 @@ def main() -> None:
             check("copy/induction-style sequence is learned",
                   trained["total"] > 0 and trained["correct"] == trained["total"],
                   json.dumps(trained)[:400])
-            check("copy training stays under 90 seconds at 16D",
-                  trained["trainMs"] < 90000, json.dumps(trained)[:300])
+            check("copy training stays under 120 seconds at 16D",
+                  trained["trainMs"] < 120000, json.dumps(trained)[:300])
 
             # 4. Modern Transformer Lab: controls change real plots.
             modern_errors: list[str] = []

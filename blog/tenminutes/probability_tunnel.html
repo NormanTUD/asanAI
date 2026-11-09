@@ -113,13 +113,14 @@ body {
 .options { display: grid; gap: 8px; margin: 14px 0 16px; }
 .opt {
   display: grid;
-  grid-template-columns: minmax(0, 5.6rem) minmax(0, 1fr) 3.2rem;
+  grid-template-columns: minmax(0, 7.2rem) minmax(0, 1fr) 3.2rem;
   align-items: center; gap: 8px;
   font: 400 0.7rem/1.2 var(--mono);
   color: var(--muted);
 }
 .opt.is-main { color: var(--ink); }
 .opt-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.opt-edge { color: var(--muted); font-size: 0.58rem; opacity: 0.78; }
 .opt-bar { height: 4px; background: rgba(125, 205, 255, 0.11); overflow: hidden; }
 .opt-bar i { display: block; width: 0%; height: 100%; background: linear-gradient(90deg, var(--cyan-deep), var(--cyan)); transition: width 120ms linear; }
 .opt.is-main .opt-bar i { background: linear-gradient(90deg, #b8860b, var(--gold)); }
@@ -201,6 +202,11 @@ body {
 .label.main.is-current { color: var(--cyan); border-color: rgba(104, 220, 255, 0.62); box-shadow: 0 0 18px -6px rgba(104, 220, 255, 0.7); }
 .label.side { color: var(--gold); border-color: rgba(255, 209, 102, 0.28); background: rgba(15, 12, 4, 0.7); }
 .label.side.is-main { color: var(--cyan); border-color: rgba(104, 220, 255, 0.42); background: rgba(3, 12, 22, 0.74); }
+.label.ridge {
+  color: rgba(185, 208, 226, 0.72); border-color: rgba(125, 205, 255, 0.10);
+  background: rgba(3, 10, 20, 0.38); font-size: 0.54rem; opacity: 0.72;
+}
+.label.side.edge { color: var(--gold-soft); font-size: 0.54rem; opacity: 0.86; }
 .label.is-hidden { opacity: 0; }
 
 @media (max-width: 900px) {
@@ -218,7 +224,7 @@ body {
   .actions { position: sticky; bottom: -14px; padding-top: 10px; background: linear-gradient(180deg, transparent, rgba(4, 11, 22, 0.94) 28%); }
 }
 @media (max-width: 560px) {
-  .opt { grid-template-columns: minmax(0, 4.8rem) minmax(0, 1fr) 2.8rem; }
+  .opt { grid-template-columns: minmax(0, 6.2rem) minmax(0, 1fr) 2.8rem; }
   .btn { font-size: 0.58rem; }
   .btn.primary { min-width: 8.5rem; }
 }
@@ -305,36 +311,35 @@ body {
   }
 
   var STEPS = [
-    { token: "The", x: 0.06, options: [
-      { label: "capital", logit: 2.7 },
-      { label: "city", logit: 0.9 },
-      { label: "idea", logit: 0.2 }
-    ]},
+    { token: "The", x: 0.06, options: [] },
     { token: "capital", x: 0.23, options: [
-      { label: "of", logit: 2.9 },
-      { label: "city", logit: 1.1 },
-      { label: "market", logit: 0.4 }
+      { label: "city", edge: "of", logit: -1.2 },
+      { label: "town", edge: "of", logit: -2.1 }
     ]},
     { token: "of", x: 0.40, options: [
-      { label: "France", logit: 3.0 },
-      { label: "Italy", logit: 1.2 },
-      { label: "the", logit: 0.5 }
+      { label: "in", edge: "France", logit: -1.0 },
+      { label: "for", edge: "France", logit: -1.9 }
     ]},
     { token: "France", x: 0.57, options: [
-      { label: "is", logit: 2.8 },
-      { label: "has", logit: 0.9 },
-      { label: "was", logit: 0.6 }
+      { label: "Italy", edge: "is", logit: -0.9 },
+      { label: "Germany", edge: "is", logit: -1.8 }
     ]},
     { token: "is", x: 0.74, options: [
-      { label: "Paris", logit: 3.2 },
-      { label: "Lyon", logit: 1.1 },
-      { label: "a", logit: 0.7 }
+      { label: "was", edge: "Paris", logit: -0.8 },
+      { label: "has", edge: "a", logit: -1.7 }
     ]},
     { token: "Paris", x: 0.90, options: [
-      { label: ".", logit: 2.2 },
-      { label: "and", logit: 0.9 },
-      { label: "the", logit: 0.6 }
+      { label: "Lyon", edge: ".", logit: -0.7 },
+      { label: "Marseille", edge: ".", logit: -1.5 }
     ]}
+  ];
+  var RIDGE_WORDS = [
+    { label: "now", x: 0.15, z: -0.76 },
+    { label: "also", x: 0.31, z: 0.82 },
+    { label: "not", x: 0.48, z: -0.86 },
+    { label: "in", x: 0.63, z: 0.80 },
+    { label: "a", x: 0.78, z: -0.78 },
+    { label: "the", x: 0.93, z: 0.76 }
   ];
 
   var I18N = {
@@ -343,7 +348,7 @@ body {
       title: "Der Wahrscheinlichkeitstunnel",
       subtitle: "Eine Landschaft plausibler Fortsetzungen. Tiefe bedeutet Wahrscheinlichkeit: der blaue Pfad ist die wahrscheinlichste Route, goldene Canyons sind Alternativen.",
       current: "Aktueller Schritt",
-      next: "Nächstes Wort",
+      next: "Wort an dieser Stelle",
       temperature: "Temperatur",
       tempNote: "Höher = breitere Verteilung, mehr Alternativen werden erreichbar.",
       nextBtn: "Nächstes Wort",
@@ -359,7 +364,7 @@ body {
       title: "The probability tunnel",
       subtitle: "A landscape of plausible continuations. Depth means probability: the blue path is the most likely route, golden canyons are alternatives.",
       current: "Current step",
-      next: "Next word",
+      next: "Token at this position",
       temperature: "Temperature",
       tempNote: "Higher = a wider distribution, more alternatives become reachable.",
       nextBtn: "Next word",
@@ -373,15 +378,15 @@ body {
   };
 
   var lang = "de";
-  var step = 0;
-  var orb = 0;
+  var step = 1;
+  var orb = 1;
   var temp = 1;
   var tempTarget = 1;
   var W = 0, H = 0, DPR = 1;
   var NX = 144, NZ = 92;
   var PATH_N = 260;
   var SEGMENTS = [];
-  var KMAIN = null, KSIDE = null, KNOISE = null, KSIDEPROX = null;
+  var KMAIN = null, KSIDE = null, KSIDEG = null, KNOISE = null, KSIDEPROX = null;
   var heights = null;
   var mainWorld = [];
   var sideWorld = [];
@@ -390,7 +395,7 @@ body {
   var frameCount = 0;
   var lastFrame = performance.now();
   var drawSamples = 0, drawTime = 0, terrainTime = 0;
-  var labels = [], sideLabels = [];
+  var labels = [], sideLabels = [], edgeLabels = [], ridgeLabels = [];
   var panelRows = [];
   var panelStep = -1;
   var panelLang = "";
@@ -420,20 +425,24 @@ body {
   function sideEnd(i, k) {
     var dir = k === 1 ? 1 : -1;
     var n0 = STEPS[i].x;
-    var n1 = clamp(n0 + 0.10 + 0.055 * (((i * 2 + k) % 4)), 0, 0.99);
-    var z = pathCenter(n1) + dir * (0.60 + 0.20 * Math.sin(i * 1.7 + k * 2.1));
-    z = clamp(z, -0.98, 0.98);
+    var n1 = clamp(n0 + 0.11 + 0.05 * (((i * 2 + k) % 4)), 0, 0.99);
+    var z = dir * (0.93 + 0.05 * Math.sin(i * 1.7 + k * 2.1));
+    z = clamp(z, -1.02, 1.02);
     return { nx: n1, wx: worldX(n1), z: z };
   }
   function sidePoints(i, k) {
+    var dir = k === 1 ? 1 : -1;
     var n0 = STEPS[i].x;
     var end = sideEnd(i, k);
     var midN = clamp(lerp(n0, end.nx, 0.52) + 0.018 * Math.sin(i * 1.3 + k), 0, 0.99);
-    var midZ = clamp(lerp(pathCenter(n0), end.z, 0.52) + 0.10 * Math.sin(i * 2.0 + k * 1.7), -0.99, 0.99);
+    var midZ = clamp(lerp(pathCenter(n0), end.z, 0.52) + 0.10 * Math.sin(i * 2.0 + k * 1.7), -1.01, 1.01);
+    var contX = clamp(end.wx + 0.16 + 0.04 * Math.sin(i * 1.9 + k), -1.30, 1.30);
+    var contZ = clamp(end.z + dir * 0.22, -1.22, 1.22);
     return [
       [worldX(n0), pathCenter(n0)],
       [worldX(midN), midZ],
-      [end.wx, end.z]
+      [end.wx, end.z],
+      [contX, contZ]
     ];
   }
   function distToPolyline(px, pz, pts) {
@@ -461,7 +470,7 @@ body {
   function prepareSegments() {
     SEGMENTS = [];
     for (var i = 0; i < STEPS.length; i++) {
-      for (var k = 1; k < STEPS[i].options.length; k++) {
+      for (var k = 0; k < STEPS[i].options.length; k++) {
         SEGMENTS.push({
           i: i, k: k,
           points: sidePoints(i, k),
@@ -473,19 +482,21 @@ body {
   function heightAt(nx, z, t) {
     var tn = tNorm(t);
     var wx = worldX(nx);
-    var h = 1.035;
-    var main = Math.exp(-Math.pow((z - pathCenter(nx)) / 0.145, 2));
-    h -= (0.94 - 0.24 * tn) * main;
+    var h = 0.64;
+    var main = Math.exp(-Math.pow((z - pathCenter(nx)) / 0.16, 2));
+    h -= (0.56 - 0.08 * tn) * main;
     for (var i = 0; i < SEGMENTS.length; i++) {
       var s = SEGMENTS[i];
       var d = distToPolyline(wx, z, s.points);
-      var depth = 0.34 + 0.50 * tn + 0.12 * ((s.logit + 1) / 4.2);
-      h -= depth * Math.exp(-Math.pow(d / 0.11, 2));
+      var broad = Math.exp(-Math.pow(d / 0.14, 2));
+      var groove = Math.exp(-Math.pow(d / 0.05, 2));
+      var lift = 0.17 - 0.05 * tn + 0.04 * ((s.logit + 2) / 2);
+      h += lift * broad - 0.05 * groove;
     }
     var r1 = Math.sin(7.0 * wx + 4.0 * z) * Math.cos(6.0 * z - 5.0 * wx);
     var r2 = 0.55 * Math.sin(15.0 * wx - 8.0 * z + 1.3) * Math.cos(11.0 * z + 3.0 * wx);
-    h += 0.075 * Math.pow(Math.abs((r1 + r2) * 0.5), 1.22);
-    h += 0.022 * Math.sin(29.0 * wx + 17.0 * z) * Math.cos(23.0 * z - 13.0 * wx);
+    h += 0.060 * Math.pow(Math.abs((r1 + r2) * 0.5), 1.22);
+    h += 0.018 * Math.sin(29.0 * wx + 17.0 * z) * Math.cos(23.0 * z - 13.0 * wx);
     return Math.max(0, h);
   }
   function sideProx(nx, z) {
@@ -494,7 +505,7 @@ body {
     for (var i = 0; i < SEGMENTS.length; i++) {
       var s = SEGMENTS[i];
       var d = distToPolyline(wx, z, s.points);
-      var p = Math.exp(-Math.pow(d / 0.14, 2));
+      var p = Math.exp(-Math.pow(d / 0.18, 2));
       if (p > best) best = p;
     }
     return best;
@@ -590,7 +601,7 @@ body {
     "void main() {",
     "  vec3 n = normalize(vNormal);",
     "  float diff = max(dot(n, normalize(uLight)), 0.0);",
-    "  float h = clamp(vPos.y / 1.08, 0.0, 1.0);",
+    "  float h = clamp(vPos.y / 0.88, 0.0, 1.0);",
     "  vec3 base = palette(h);",
     "  base = mix(base, vec3(0.08,0.60,1.00), vPath.x * 0.58);",
     "  base = mix(base, vec3(1.00,0.71,0.22), vPath.y * 0.50);",
@@ -682,22 +693,24 @@ body {
     KNOISE = new Float32Array(n);
     KSIDEPROX = new Float32Array(n);
     KSIDE = new Float32Array(n * SEGMENTS.length);
+    KSIDEG = new Float32Array(n * SEGMENTS.length);
     for (var c = 0; c <= NX; c++) {
       var nx = c / NX;
       var wx = worldX(nx);
       for (var r = 0; r <= NZ; r++) {
         var z = -1.05 + 2.1 * (r / NZ);
         var i = r * (NX + 1) + c;
-        KMAIN[i] = Math.exp(-Math.pow((z - pathCenter(nx)) / 0.145, 2));
+        KMAIN[i] = Math.exp(-Math.pow((z - pathCenter(nx)) / 0.16, 2));
         var r1 = Math.sin(7.0 * wx + 4.0 * z) * Math.cos(6.0 * z - 5.0 * wx);
         var r2 = 0.55 * Math.sin(15.0 * wx - 8.0 * z + 1.3) * Math.cos(11.0 * z + 3.0 * wx);
-        KNOISE[i] = 0.075 * Math.pow(Math.abs((r1 + r2) * 0.5), 1.22) + 0.022 * Math.sin(29.0 * wx + 17.0 * z) * Math.cos(23.0 * z - 13.0 * wx);
+        KNOISE[i] = 0.060 * Math.pow(Math.abs((r1 + r2) * 0.5), 1.22) + 0.018 * Math.sin(29.0 * wx + 17.0 * z) * Math.cos(23.0 * z - 13.0 * wx);
         var best = 0;
         for (var s = 0; s < SEGMENTS.length; s++) {
           var seg = SEGMENTS[s];
           var d = distToPolyline(wx, z, seg.points);
-          KSIDE[i * SEGMENTS.length + s] = Math.exp(-Math.pow(d / 0.11, 2));
-          var p = Math.exp(-Math.pow(d / 0.14, 2));
+          KSIDE[i * SEGMENTS.length + s] = Math.exp(-Math.pow(d / 0.14, 2));
+          KSIDEG[i * SEGMENTS.length + s] = Math.exp(-Math.pow(d / 0.05, 2));
+          var p = Math.exp(-Math.pow(d / 0.18, 2));
           if (p > best) best = p;
         }
         KSIDEPROX[i] = best;
@@ -706,9 +719,10 @@ body {
   }
   function heightFromKernels(i, t) {
     var tn = tNorm(t);
-    var h = 1.035 + KNOISE[i] - (0.94 - 0.24 * tn) * KMAIN[i];
+    var h = 0.64 + KNOISE[i] - (0.56 - 0.08 * tn) * KMAIN[i];
     for (var s = 0; s < SEGMENTS.length; s++) {
-      h -= (0.34 + 0.50 * tn + 0.12 * ((SEGMENTS[s].logit + 1) / 4.2)) * KSIDE[i * SEGMENTS.length + s];
+      var lift = 0.17 - 0.05 * tn + 0.04 * ((SEGMENTS[s].logit + 2) / 2);
+      h += lift * KSIDE[i * SEGMENTS.length + s] - 0.05 * KSIDEG[i * SEGMENTS.length + s];
     }
     return Math.max(0, h);
   }
@@ -793,16 +807,17 @@ body {
     sideGlow = [];
     sideCore = [];
     var s = STEPS[step];
-    for (var k = 1; k < s.options.length; k++) {
+    for (var k = 0; k < s.options.length; k++) {
       var seg = SEGMENTS.find(function (item) { return item.i === step && item.k === k; });
       if (!seg) continue;
-      var p0 = seg.points[0], p1 = seg.points[1], p2 = seg.points[2];
+      var poly = seg.points;
       var pts = [];
-      for (var j = 0; j <= 48; j++) {
-        var t = j / 48;
-        var u = 1 - t;
-        var wx2 = u * u * p0[0] + 2 * u * t * p1[0] + t * t * p2[0];
-        var z2 = u * u * p0[1] + 2 * u * t * p1[1] + t * t * p2[1];
+      for (var j = 0; j <= 54; j++) {
+        var f = j / 54 * (poly.length - 1);
+        var si = Math.min(poly.length - 2, Math.floor(f));
+        var u = f - si;
+        var wx2 = lerp(poly[si][0], poly[si + 1][0], u);
+        var z2 = lerp(poly[si][1], poly[si + 1][1], u);
         var nx2 = (wx2 + 1.35) / 2.70;
         pts.push([wx2, heightAt(nx2, z2, temp) + 0.024, z2]);
       }
@@ -947,7 +962,12 @@ body {
       return el;
     });
     sideLabels = [];
-    for (var i = 0; i < 2; i++) sideLabels.push(makeLabel("", "side"));
+    edgeLabels = [];
+    for (var i = 0; i < 2; i++) {
+      sideLabels.push(makeLabel("", "side"));
+      edgeLabels.push(makeLabel("", "side edge"));
+    }
+    ridgeLabels = RIDGE_WORDS.map(function (item) { return makeLabel(item.label, "ridge"); });
   }
   function setLabel(el, p, text, active, hidden) {
     if (text != null) el.textContent = text;
@@ -964,27 +984,42 @@ body {
       setLabel(labels[i], labelWorld(s.x, pathCenter(s.x), 0.075), s.token, i === step, false);
     }
     var s2 = STEPS[step];
-    for (var k = 1; k < 3; k++) {
-      var el = sideLabels[k - 1];
+    for (var k = 0; k < 2; k++) {
+      var el = sideLabels[k];
       var opt = s2.options[k];
-      if (!opt) { el.classList.add("is-hidden"); continue; }
+      if (!opt) { el.classList.add("is-hidden"); edgeLabels[k].classList.add("is-hidden"); continue; }
       var seg = SEGMENTS.find(function (item) { return item.i === step && item.k === k; });
-      if (!seg) { el.classList.add("is-hidden"); continue; }
-      var end = seg.points[2];
-      var p = labelWorld((end[0] + 1.35) / 2.70, end[1], 0.08);
+      if (!seg) { el.classList.add("is-hidden"); edgeLabels[k].classList.add("is-hidden"); continue; }
+      var edge = seg.points[2];
+      var p = labelWorld((edge[0] + 1.35) / 2.70, edge[1], 0.08);
       setLabel(el, p, opt.label, false, false);
+      var cont = seg.points[seg.points.length - 1];
+      var cp = labelWorld((cont[0] + 1.35) / 2.70, cont[1], 0.08);
+      setLabel(edgeLabels[k], cp, opt.edge === "." ? "…" : opt.edge + " …", false, false);
+    }
+    for (var ri = 0; ri < ridgeLabels.length; ri++) {
+      var rw = RIDGE_WORDS[ri];
+      var rp = labelWorld(rw.x, rw.z, 0.06);
+      setLabel(ridgeLabels[ri], rp, rw.label, false, false);
     }
   }
-  function rebuildPanel() {
+  function currentOptions() {
     var s = STEPS[step];
-    var probs = softmax(s.options, temp);
+    var next = step < STEPS.length - 1 ? STEPS[step + 1].token : "";
+    var out = [{ label: s.token, edge: next, logit: 0, main: true }];
+    for (var i = 0; i < s.options.length; i++) out.push(s.options[i]);
+    return out;
+  }
+  function rebuildPanel() {
+    var opts = currentOptions();
+    var probs = softmax(opts, temp);
     var maxP = Math.max.apply(null, probs) || 1;
     sequenceEl.innerHTML = STEPS.map(function (item, i) {
       return '<span class="' + (i === step ? "is-current" : "") + '">' + item.token + "</span>";
     }).join("");
-    optionsEl.innerHTML = s.options.map(function (opt, i) {
+    optionsEl.innerHTML = opts.map(function (opt, i) {
       return '<div class="opt ' + (i === 0 ? "is-main" : "") + '">' +
-        '<span class="opt-label">' + opt.label + "</span>" +
+        '<span class="opt-label">' + opt.label + (opt.edge ? ' <span class="opt-edge">→ ' + opt.edge + "</span>" : "") + "</span>" +
         '<span class="opt-bar"><i></i></span>' +
         '<span class="opt-pct">—</span>' +
       "</div>";
@@ -994,16 +1029,17 @@ body {
     });
     panelStep = step;
     panelLang = lang;
-    updatePanelValues(probs, maxP);
+    updatePanelValues(probs, maxP, opts);
   }
-  function updatePanelValues(probs, maxP) {
+  function updatePanelValues(probs, maxP, opts) {
     var s = STEPS[step];
     for (var i = 0; i < panelRows.length; i++) {
       panelRows[i].bar.style.width = (probs[i] / maxP * 100).toFixed(2) + "%";
       panelRows[i].pct.textContent = (probs[i] * 100).toFixed(1) + "%";
     }
-    nextWordEl.textContent = s.options[0].label;
-    nextProbEl.textContent = (probs[0] * 100).toFixed(1) + "% " + (lang === "de" ? "Wahrscheinlichkeit" : "probability");
+    var next = step < STEPS.length - 1 ? STEPS[step + 1].token : "—";
+    nextWordEl.textContent = s.token;
+    nextProbEl.textContent = (probs[0] * 100).toFixed(1) + "% · " + (lang === "de" ? "Pfad: " : "path: ") + next;
     tempOutEl.textContent = temp.toFixed(2);
     nextLabel.textContent = step >= STEPS.length - 1 ? I18N[lang].restart : I18N[lang].nextBtn;
   }
@@ -1012,9 +1048,10 @@ body {
       rebuildPanel();
       return;
     }
-    var probs = softmax(STEPS[step].options, temp);
+    var opts = currentOptions();
+    var probs = softmax(opts, temp);
     var maxP = Math.max.apply(null, probs) || 1;
-    updatePanelValues(probs, maxP);
+    updatePanelValues(probs, maxP, opts);
   }
   function applyLang(next) {
     lang = next === "en" ? "en" : "de";
@@ -1034,8 +1071,8 @@ body {
   }
   function goNext() {
     if (step >= STEPS.length - 1) {
-      step = 0;
-      orb = 0;
+      step = 1;
+      orb = 1;
     } else {
       step++;
     }
@@ -1044,8 +1081,8 @@ body {
     updatePanel();
   }
   function reset() {
-    step = 0;
-    orb = 0;
+    step = 1;
+    orb = 1;
     buildPaths();
     panelStep = -1;
     updatePanel();

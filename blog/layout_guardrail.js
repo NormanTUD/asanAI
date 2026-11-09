@@ -57,6 +57,9 @@
 	var EXEMPT =
 		'.sideimage, .sidenote, .sidenote-fallback, ' +
 		'#sideimages-rail, #sidenotes-rail, .optional, .cl-block, ' +
+		'.math_transformer, .tm-formula-block, .tm-triple-math, .tm-hafter-math, ' +
+		'.unified-layer-tab-content, .tm-layer-subbox-body, #ffn-equations-container, ' +
+		'#transformer-output-projection, ' +
 		'.lg-scroll, .lg-widescroll';
 	var MAX_ROWS = 6;
 
