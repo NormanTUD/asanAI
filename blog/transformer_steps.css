@@ -1058,6 +1058,10 @@
 	margin-right: -18px;
 	height: 520px;
 }
+/* The per-layer feature plot has straight corners, unlike the trajectory. */
+.tm-feature-arrows.tm-plotly-frame {
+	border-radius: 0;
+}
 .tm-feature-real {
 	margin-top: 12px;
 	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));

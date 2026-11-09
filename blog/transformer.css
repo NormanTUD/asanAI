@@ -174,6 +174,13 @@
 .tm-plotly-frame .js-plotly-plot .main-svg rect.bg {
 	fill: var(--mn-surface, #FDFAF1) !important;
 }
+/* Plotly adds .js-plotly-plot to its target element. When the target is
+   the frame itself (feature migration), the global dark .js-plotly-plot
+   background must not turn the frame darker than the card. */
+.tm-plotly-frame.js-plotly-plot,
+html.dark .tm-plotly-frame.js-plotly-plot {
+	background: var(--mn-surface, #FDFAF1) !important;
+}
 html.dark .tm-plotly-frame .js-plotly-plot,
 html.dark .tm-plotly-frame .js-plotly-plot .main-svg,
 html.dark .tm-plotly-frame .js-plotly-plot .main-svg .bg,
