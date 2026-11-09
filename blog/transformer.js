@@ -8362,9 +8362,27 @@ function _observeOutputProjectionMath() {
 	out._mathScrollObs.observe(out);
 }
 
+function _tmInitStaticPlotLoading() {
+	const texts = {
+		'transformer-plotly-space': 'Loading embedding space…',
+		'transformer-pe-wave-plot': 'Loading positional waves…',
+		'transformer-pe-shift-plot': 'Loading positional shift…'
+	};
+	Object.keys(texts).forEach(function (id) {
+		const el = document.getElementById(id);
+		if (!el || el.innerHTML.trim()) return;
+		if (window.PlotState && typeof PlotState.loading === 'function') {
+			PlotState.loading(el, texts[id]);
+		} else {
+			el.innerHTML = '<div class="plot-loading" style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;"><div class="spinner"></div><span>' + texts[id] + '</span></div>';
+		}
+	});
+}
+
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
 
+	_tmInitStaticPlotLoading();
 	observer_vector_math();
 
 	drawTrainingPlaceholder();

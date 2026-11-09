@@ -351,8 +351,6 @@
 .tm-step-formula {
 	margin: 8px 0 0;
 	padding: 8px 12px;
-	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
-	background: var(--tm-paper-2, var(--mn-bg-subtle, #f8fafc));
 	overflow-x: auto;
 	min-height: 48px;
 }
@@ -1678,10 +1676,6 @@
 .tm-step-detail-body p {
 	margin: 0 0 10px;
 }
-.tm-step-formula {
-	border-radius: 8px;
-}
-
 /* Capacity callout: the 3D plot is a projection, not a promise. */
 .tm-capacity-note {
 	margin: 16px 0;

@@ -129,13 +129,10 @@
 	margin: 2px 0;
 }
 
-/* Embedding / vector-math card */
+/* Embedding / vector-math card: no visible box around the plot */
 .transformer-viz-card {
-	background: var(--mn-bg-subtle, #f8fafc);
 	padding: 20px;
-	border-radius: 12px;
 	margin: 20px 0;
-	border: 1px solid var(--mn-border, #e2e8f0);
 }
 .transformer-vector-input {
 	width: 100%;
@@ -155,15 +152,11 @@
 	overflow-x: auto;
 }
 
-/* One frame and one canvas background for every Plotly chart on the
-   transformer page: embedding, positional shift, trajectory and the
-   per-layer feature migration. */
+/* Plotly charts sit directly on their page/card background: no frame,
+   no rounded corners, and a transparent Plotly canvas. */
 .tm-plotly-frame {
-	border: 2px solid var(--mn-border, #cbd5e1);
-	border-radius: 12px;
-	background: var(--mn-surface, #FDFAF1);
+	background: transparent;
 	box-sizing: border-box;
-	overflow: hidden;
 }
 .tm-plotly-frame .js-plotly-plot,
 .tm-plotly-frame .js-plotly-plot .main-svg,
@@ -172,14 +165,13 @@
 	background: transparent !important;
 }
 .tm-plotly-frame .js-plotly-plot .main-svg rect.bg {
-	fill: var(--mn-surface, #FDFAF1) !important;
+	fill: transparent !important;
 }
-/* Plotly adds .js-plotly-plot to its target element. When the target is
-   the frame itself (feature migration), the global dark .js-plotly-plot
-   background must not turn the frame darker than the card. */
+/* Plotly adds .js-plotly-plot to its target element; the global dark
+   background must not paint a box behind the chart. */
 .tm-plotly-frame.js-plotly-plot,
 html.dark .tm-plotly-frame.js-plotly-plot {
-	background: var(--mn-surface, #FDFAF1) !important;
+	background: transparent !important;
 }
 html.dark .tm-plotly-frame .js-plotly-plot,
 html.dark .tm-plotly-frame .js-plotly-plot .main-svg,
@@ -188,12 +180,27 @@ html.dark .tm-plotly-frame .js-plotly-plot .svg-container {
 	background: transparent !important;
 }
 html.dark .tm-plotly-frame .js-plotly-plot .main-svg rect.bg {
-	fill: var(--mn-surface, #1e293b) !important;
+	fill: transparent !important;
 }
 /* The generic migration-container rule gives every direct child a 1px
-   border; the shared plot frame must win for the trajectory wrapper. */
+   border; the shared plot frame has none. */
 #transformer-migration-plots-container > .tm-plotly-frame {
-	border: 2px solid var(--mn-border, #cbd5e1);
+	border: 0;
+}
+/* The global dark theme paints these transformer containers with the
+   surface colour. The charts should sit on the page/card instead. */
+html.dark #transformer-plotly-space,
+html.dark #transformer-pe-wave-plot,
+html.dark #transformer-pe-shift-plot,
+html.dark #transformer-trajectory-full-path,
+html.dark #transformer-trajectory-full-path-wrapper {
+	background: transparent !important;
+}
+html.dark #transformer-plotly-space .js-plotly-plot .main-svg rect.bg,
+html.dark #transformer-pe-wave-plot .js-plotly-plot .main-svg rect.bg,
+html.dark #transformer-pe-shift-plot .js-plotly-plot .main-svg rect.bg,
+html.dark #transformer-trajectory-full-path .js-plotly-plot .main-svg rect.bg {
+	fill: transparent !important;
 }
 
 /* Residual-stream contribution chart inside the Probability Flow wrapper */
