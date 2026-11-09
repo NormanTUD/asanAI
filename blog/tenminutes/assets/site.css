@@ -8708,3 +8708,18 @@ html[data-theme="dark"] #tm-lang-switch {
 .tm-lang-only-de { display: none !important; }
 html[lang="de"] .tm-lang-only-en { display: none !important; }
 html[lang="de"] .tm-lang-only-de { display: inline !important; }
+
+/* ── AI transparency note ───────────────────────────────── */
+.tm-ai-disclaimer {
+	margin: 16px 0 0;
+	padding-left: 12px;
+	border-left: 3px solid var(--tm-green);
+	width: 100%;
+	font: 600 0.78rem/1.5 var(--tm-ui);
+	color: var(--tm-muted);
+	hyphens: none;
+	text-wrap: balance;
+}
+@media (min-width: 820px) {
+	.tm-ai-disclaimer { white-space: nowrap; }
+}

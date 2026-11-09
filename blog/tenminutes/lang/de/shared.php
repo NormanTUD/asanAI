@@ -16,6 +16,7 @@ return [
 		'Start with Day 1' => 'Mit Tag 1 beginnen',
 		'Browse the shelf' => 'Regal durchsuchen',
 		'of 31 completed' => 'von 31 abgeschlossen',
+		'This series was created with AI and intensively curated and reviewed by humans.' => 'Diese Reihe wurde mit KI erstellt und intensiv von Menschen kuratiert und geprüft.',
 	],
 	'attrs' => [],
 ];

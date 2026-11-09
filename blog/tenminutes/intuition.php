@@ -126,19 +126,6 @@
 			.traj-panel canvas { height: 260px; }
 			.tt-echarts-host { height: 380px; min-height: 340px; }
 		}
-		.tm-ai-disclaimer {
-			margin: 16px 0 0;
-			padding-left: 12px;
-			border-left: 3px solid var(--tm-green);
-			width: 100%;
-			font: 600 0.78rem/1.5 var(--tm-ui);
-			color: var(--tm-muted);
-			hyphens: none;
-			text-wrap: balance;
-		}
-		@media (min-width: 820px) {
-			.tm-ai-disclaimer { white-space: nowrap; }
-		}
 	</style>
 </head>
 <body data-lesson="intuition" data-page="lesson" data-tm-reload-lang="1">

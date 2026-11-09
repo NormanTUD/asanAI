@@ -148,6 +148,7 @@ $simDateLabel = $today->format('j F Y');
 						The calendar follows the ideas behind modern AI, from next-token prediction to the
 						larger questions. Read one door a day, or follow the thread at your own pace.
 					</p>
+					<p class="tm-ai-disclaimer">This series was created with AI and intensively curated and reviewed by humans.</p>
 				</div>
 			</section>
 
