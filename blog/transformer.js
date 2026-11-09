@@ -60,6 +60,12 @@ function tmFfnExpansionAbstractTex() {
 	}
 	return "\\text{out}_{L1}=" + tmActivationLatex(kind) + "(\\text{Norm}(h_1)W_1+b_1)";
 }
+function tmFfnPrelnAbstractTex() {
+	return "\\text{Norm}(h_1)=\\gamma_2\\odot\\frac{h_1-\\mu}{\\sqrt{\\sigma^2+\\epsilon}}+\\beta_2";
+}
+function tmFfnCompressAbstractTex() {
+	return "\\text{out}_{FFN}=\\text{out}_{L1}W_2+b_2";
+}
 
 
 /*
@@ -8087,7 +8093,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 			<div class="tm-ffn-stages">
 				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-preln-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
 					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Pre-LN</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-preln">h₁ → Norm</span></div>
-					<div class="tm-ffn-stage-formula" data-tex="\text{Norm}(h_1)=\gamma_2\odot\frac{h_1-\mu}{\sqrt{\sigma^2+\epsilon}}+\beta_2" data-tex-display="false"></div>
+					<div class="tm-ffn-stage-formula" data-tex="${tmFfnPrelnAbstractTex()}" data-tex-display="false"></div>
 					<div class="tm-ffn-stage-plots tm-ffn-stage-plots--two">
 						<canvas id="${prefix}-ffn-preln-in" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Eingang vor LayerNorm' : 'FFN input before LayerNorm'}"></canvas>
 						<canvas id="${prefix}-ffn-preln-out" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Eingang nach LayerNorm' : 'FFN input after LayerNorm'}"></canvas>
@@ -8106,7 +8112,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 				<span class="tm-ffn-stage-arrow" aria-hidden="true">→</span>
 				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-compress-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
 					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Compression</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-compress">d_ff → d_model</span></div>
-					<div class="tm-ffn-stage-formula" data-tex="\text{out}_{FFN}=\text{out}_{L1}W_2+b_2" data-tex-display="false"></div>
+					<div class="tm-ffn-stage-formula" data-tex="${tmFfnCompressAbstractTex()}" data-tex-display="false"></div>
 					<div class="tm-ffn-stage-plots">
 						<canvas id="${prefix}-ffn-compress-heatmap" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Ausgabe nach der Kompression' : 'FFN output after compression'}"></canvas>
 					</div>

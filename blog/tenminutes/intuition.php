@@ -501,7 +501,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<div class="step-stage">
 								<div class="step-toolbar">
 									<label>Position
-										<input type="range" id="ipe-pos" min="0" max="1000" step="1" value="7">
+										<input type="range" id="ipe-pos" min="0" max="10000" step="1" value="7">
 										<output id="ipe-pos-out">7</output>
 									</label>
 									<div class="step-chips" id="ipe-metric" aria-label="Distance metric">
@@ -514,7 +514,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A single sinusoidal positional-encoding vector for one token: three dimensions as axes, one point on the curve"></canvas>
 								<div class="step-out" id="ipe-out">One token at position <b>7</b>.</div>
 							</div>
-							<p class="step-note">The three axes are the first three dimensions; the blue sphere is the word, the arrow its position. Drag to rotate. A real model uses thousands of dimensions.</p>
+							<p class="step-note">The three axes are the first three dimensions; the blue sphere is the word, the arrow its position. Drag to rotate. A real model adds the position vector to the token embedding and compares the resulting context vectors; the demo keeps the two vectors separate so the angle stays visible. A real model uses thousands of dimensions.</p>
 						</div>
 					</section>
 
@@ -3456,10 +3456,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		function posVector(position) {
 			return [posPE(position, 0), posPE(position, 1), posPE(position, 2)];
 		}
-		function posUnit(vec) {
-			var length = Math.hypot(vec[0], vec[1], vec[2]) || 1;
-			return [vec[0] / length, vec[1] / length, vec[2] / length];
-		}
 		function posMeasure(position) {
 			var v = posVector(position);
 			var length = Math.hypot(v[0], v[1], v[2]);
@@ -3567,23 +3563,18 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				}
 			}
 
-			function posDisplayVector(position) {
-				var raw = posVector(position);
-				return posMetric === "angle" ? posUnit(raw) : raw;
-			}
-
 			if (posShown > 0.01) {
 				var steps = Math.max(2, Math.min(1600, Math.ceil(posShown / POS_CURVE_STEP)));
-				var prev = project(posDisplayVector(0));
+				var prev = project(posVector(0));
 				for (var i = 1; i <= steps; i++) {
 					var t = posShown * i / steps;
-					var q = project(posDisplayVector(t));
+					var q = project(posVector(t));
 					addLine(prev.x, prev.y, prev.z, q.x, q.y, q.z, posRgba(c.sky, 0.42), 1.6, null, "butt");
 					prev = q;
 				}
 			}
 
-			var tokenVec = posMetric === "angle" ? posUnit(POS_TOKEN_VEC) : POS_TOKEN_VEC;
+			var tokenVec = POS_TOKEN_VEC;
 			var tokenTip = project(tokenVec);
 			var tokenBase = project([0, 0, 0]);
 			var tokenPrev = tokenBase;
@@ -3616,7 +3607,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			addRing(tokenCenter, tokenVec, 0.15, posRgba(c.sky, 0.34), 1.2);
 			addRing(tokenCenter, tokenVec, 0.22, posRgba(c.sky, 0.18), 1);
 
-			var v = posDisplayVector(posShown);
+			var v = posVector(posShown);
 			var tip = project(v);
 			var origin = project([0, 0, 0]);
 			v.forEach(function (val, i) {
@@ -3663,7 +3654,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				var tLen = Math.hypot(tokenVec[0], tokenVec[1], tokenVec[2]) || 1;
 				var dirV = [v[0] / vLen, v[1] / vLen, v[2] / vLen];
 				var dirT = [tokenVec[0] / tLen, tokenVec[1] / tLen, tokenVec[2] / tLen];
-				var arcRadius = 1;
+				var arcRadius = Math.min(0.55, Math.max(0.3, tLen));
 				var prevArc = null;
 				for (var ar = 0; ar <= 48; ar++) {
 					var mix = ar / 48;
@@ -3756,7 +3747,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 			if (posSlider) {
 				posSlider.addEventListener("input", function () {
-					pos = TM.clamp(parseInt(posSlider.value, 10) || 0, 0, 1000);
+					pos = TM.clamp(parseInt(posSlider.value, 10) || 0, 0, 10000);
 					if (posReduce) posShown = pos;
 					if (posCountOut) posCountOut.textContent = String(pos);
 					posRenderOut();
@@ -4443,18 +4434,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				}
 				slider.value = original;
 				slider.dispatchEvent(new Event("input", { bubbles: true }));
-			}
-			var metricChips = Array.prototype.slice.call(document.querySelectorAll("[data-pos-metric]"));
-			if (metricChips.length) {
-				var activeMetric = metricChips.filter(function (c) { return c.classList.contains("is-on"); })[0] || metricChips[0];
-				for (var mc = 0; mc < metricChips.length; mc++) {
-					metricChips[mc].click();
-					await sleep(30);
-					var metricOut = document.getElementById("ipe-out");
-					if (metricOut) maxPosOut = Math.max(maxPosOut, metricOut.offsetHeight);
-					if (posPane) maxPosPane = Math.max(maxPosPane, posPane.offsetHeight);
-				}
-				if (activeMetric) activeMetric.click();
 			}
 			var mobile = window.innerWidth < 640;
 			setMin("#ipe-heat-out", Math.max(maxHeatOut, mobile ? 150 : 90));
