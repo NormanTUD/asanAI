@@ -206,6 +206,21 @@ function asanai_proxy_normalize_path(string $path): string {
 	return implode('/', $parts);
 }
 
+function asanai_proxy_decode_request_path(string $path): string {
+	$query = '';
+	$query_pos = strpos($path, '?');
+	if ($query_pos !== false) {
+		$query = substr($path, $query_pos);
+		$path = substr($path, 0, $query_pos);
+	}
+	$path = rawurldecode($path);
+	// Some embeds turn the path into an empty query key ("?tenminutes/intuition=").
+	if ($path !== '' && str_ends_with($path, '=')) {
+		$path = substr($path, 0, -1);
+	}
+	return $path . $query;
+}
+
 function asanai_proxy_resolve_relative(string $current_path, string $url): string {
 	$fragment = '';
 	$hash_pos = strpos($url, '#');
@@ -339,6 +354,7 @@ if (is_string($proxy_path_param) && $proxy_path_param !== '') {
 	}
 } else {
 	$path = ltrim((string)($_SERVER['QUERY_STRING'] ?? ''), '/');
+	$path = asanai_proxy_decode_request_path($path);
 }
 
 $path = str_replace(["\r", "\n", "\0"], '', $path);

@@ -526,7 +526,9 @@ not the proxy script: a page at `tenminutes/history.php` resolves
 `assets/site.css` to `tenminutes/assets/site.css` and `../temml.min.js` to
 `temml.min.js`. Keep Ten Minutes pages on relative paths (`assets/…`, `../…`)
 so they work both standalone and through the proxy; do not hardcode
-`/blog/…` asset paths. The analytics endpoint in the inline tracker config is
+`/blog/…` asset paths. Encoded slashes (`%2F`) and an empty trailing `=` in the
+path are normalised before forwarding, because Apache rejects encoded slashes
+by default. The analytics endpoint in the inline tracker config is
 rewritten to `asanai_blog_proxy.php?track.php`, so page-time/scroll beacons are
 forwarded to the remote `track.php`. `X-Frame-Options` and CSP are not
 forwarded (the proxy is intentionally embeddable); cookies are filtered to the

@@ -75,6 +75,7 @@ def main() -> int:
 		(asset_dir / "site.js").write_text("window.__proxyAsset = 'site.js';\n", encoding="utf-8")
 		(asset_dir / "site.css").write_text("body { color: #123456; }\n", encoding="utf-8")
 		(asset_dir / "abs.js").write_text("window.__proxyAsset = 'abs.js';\n", encoding="utf-8")
+		(page_dir / "uri.php").write_text("<?php echo $_SERVER['REQUEST_URI'];", encoding="utf-8")
 		(remote_root / "blog" / "temml.min.js").write_text("window.__proxyAsset = 'temml';\n", encoding="utf-8")
 		(remote_root / "blog" / "Temml-Local.min.css").write_text(".temml { color: #123456; }\n", encoding="utf-8")
 
@@ -132,6 +133,16 @@ def main() -> int:
 			for fragment in expected:
 				check(fragment in text, f"rewrote {fragment}", text)
 			check("?../" not in text, "no unresolved parent segment in proxy targets")
+
+			for target in ("tenminutes%2Furi.php", "tenminutes%2Furi.php="):
+				response = session.get(f"{proxy_url}?{target}", timeout=15)
+				text = response.text
+				check(
+					response.status_code == 200 and "/blog/tenminutes/uri.php" in text
+					and "%2f" not in text.lower() and not text.rstrip().endswith("="),
+					f"encoded path {target} reaches the decoded remote path",
+					f"{response.status_code} {text!r}",
+				)
 
 			for asset in (
 				"tenminutes/assets/site.js?v=7",
