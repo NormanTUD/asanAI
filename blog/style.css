@@ -9772,6 +9772,12 @@ html.wide-math #contents .md h3 {
 	margin-left: auto;
 	margin-right: auto;
 }
+html.wide-math #sidenotes-rail,
+html.wide-math #sideimages-rail,
+html.wide-math [data-sideimage-rail],
+html.wide-math .sidenote-fallback {
+	display: none !important;
+}
 
 
 /* ── 11.6. Footnote hover tooltip ── */
