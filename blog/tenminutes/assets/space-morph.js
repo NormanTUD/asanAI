@@ -85,13 +85,23 @@
 			formula: "\\underbrace{x=\\begin{pmatrix}x_1\\\\x_2\\end{pmatrix}}_{\\text{input point}} \\quad \\underbrace{h=\\operatorname{act}(W_1x+b_1)}_{n\\text{ hidden neurons}} \\quad \\underbrace{z=W_2h+b_2}_{\\text{one height}}",
 			formulaDe: "\\underbrace{x=\\begin{pmatrix}x_1\\\\x_2\\end{pmatrix}}_{\\text{Eingabepunkt}} \\quad \\underbrace{h=\\operatorname{act}(W_1x+b_1)}_{n\\text{ versteckte Neuronen}} \\quad \\underbrace{z=W_2h+b_2}_{\\text{eine Höhe}}",
 			lift: 0, dense: 1, camA: 0, camB: 0, persp: 1, plane: 0, squash: 0, fail: 0, labels: 0, project: 0, box: 0
+		},
+		{
+			title: "Back to one dimension",
+			titleDe: "Zurück auf eine Dimension",
+			body: "The dense layer assigns a score to every point. Project every point onto that score. If the core and the ring end up on opposite sides of s = 0, one threshold separates them. If not, this slide says so; change the weights and try again.",
+			bodyDe: "Die Dense-Schicht ordnet jedem Punkt einen Score zu. Projiziere jeden Punkt auf diesen Score. Wenn Kern und Ring auf verschiedenen Seiten von s = 0 landen, trennt sie eine einzelne Schwelle. Wenn nicht, sagt dir die Folie das; ändere die Gewichte und versuche es erneut.",
+			lift: 0, dense: 1, denseProject: 1, camA: 0, camB: 0, persp: 1, plane: 0, squash: 0, fail: 0, labels: 0, project: 1, box: 0
 		}
 	];
 
-	let denseState = { neurons: 2, scale: 1.2, bias: 0, activation: "relu", probe: 0 };
+	let denseState = { neurons: 2, scale: 1.2, bias: 0, activation: "relu", w2Scale: 1.25, b2: 0 };
 	let denseSeed = 7;
 	let denseWeights = null;
 	let denseMix = 0;
+	let denseProjectMix = 0;
+	let denseScoreMin = -1;
+	let denseScoreMax = 1;
 	let denseFormulaTimer = 0;
 
 	function buildDenseWeights() {
@@ -103,9 +113,9 @@
 			const angle = (i / n) * TAU + (next() - 0.5) * 0.35;
 			W1.push([Math.cos(angle) * denseState.scale, Math.sin(angle) * denseState.scale]);
 			b1.push(denseState.bias + (next() - 0.5) * 0.12);
-			W2.push(1.25 / n);
+			W2.push((denseState.w2Scale || 1.25) / n);
 		}
-		denseWeights = { W1: W1, b1: b1, W2: W2, b2: 0 };
+		denseWeights = { W1: W1, b1: b1, W2: W2, b2: denseState.b2 || 0 };
 	}
 
 	function denseHeight(x, y) {
@@ -119,6 +129,57 @@
 		return z;
 	}
 
+	function updateDenseScoreRange() {
+		let min = Infinity, max = -Infinity;
+		PTS.forEach(function (p) {
+			const v = denseHeight(p.x, p.y);
+			if (v < min) min = v;
+			if (v > max) max = v;
+		});
+		if (!isFinite(min) || !isFinite(max)) { min = -1; max = 1; }
+		if (Math.abs(max - min) < 1e-6) { min -= 1; max += 1; }
+		denseScoreMin = min;
+		denseScoreMax = max;
+	}
+
+	function axisScoreX(score) {
+		if (denseProjectMix <= 0.001) return sx(score);
+		const min = lerp(SMIN, denseScoreMin, denseProjectMix);
+		const max = lerp(SMAX, denseScoreMax, denseProjectMix);
+		return AX_L + (AX_R - AX_L) * clamp((score - min) / (max - min || 1), 0, 1);
+	}
+
+	function separationInfo() {
+		if (!denseWeights) buildDenseWeights();
+		let coreMin = Infinity, coreMax = -Infinity, ringMin = Infinity, ringMax = -Infinity;
+		PTS.forEach(function (p) {
+			const v = denseHeight(p.x, p.y);
+			if (p.c === 0) { coreMin = Math.min(coreMin, v); coreMax = Math.max(coreMax, v); }
+			else { ringMin = Math.min(ringMin, v); ringMax = Math.max(ringMax, v); }
+		});
+		const separated = (coreMax < 0 && ringMin > 0) || (coreMin > 0 && ringMax < 0);
+		return { separated: separated, coreMin: coreMin, coreMax: coreMax, ringMin: ringMin, ringMax: ringMax };
+	}
+
+	function updateSeparationStatus() {
+		const el = document.getElementById("ism-separation-status");
+		if (!el) return;
+		if (cur !== 8) { el.hidden = true; return; }
+		el.hidden = false;
+		const info = separationInfo();
+		if (info.separated) {
+			el.textContent = DE
+				? "Getrennt bei s = 0: Kern und Ring liegen auf verschiedenen Seiten. Eine einzelne Schwelle reicht."
+				: "Separated at s = 0: the core and the ring lie on opposite sides. One threshold is enough.";
+			el.classList.add("is-ok");
+		} else {
+			el.textContent = DE
+				? "Kann aktuell nicht sauber getrennt werden. Spiele mit Neuronen, Gewichten, Skala, Bias, Aktivierung oder einem Preset."
+				: "Cannot separate cleanly yet. Play with the neurons, weights, scale, bias, activation, or a preset.";
+			el.classList.remove("is-ok");
+		}
+	}
+
 	function liftPoint(x, y, lift) {
 		const p = LIFT(x, y, lift);
 		if (denseMix > 0.0001) p.z += denseMix * denseHeight(x, y);
@@ -126,15 +187,12 @@
 	}
 
 	const DENSE_PRESETS = {
-		bowl: { neurons: 2, scale: 1.2, bias: 0, activation: "relu", seed: 7 },
-		ridge: { neurons: 1, scale: 1.6, bias: -0.2, activation: "relu", seed: 3 },
-		saddle: { neurons: 4, scale: 1.5, bias: 0.1, activation: "relu", seed: 11 },
-		smooth: { neurons: 2, scale: 1.2, bias: 0, activation: "tanh", seed: 7 }
+		bowl: { neurons: 2, scale: 1.2, bias: 0, activation: "relu", seed: 7, w2Scale: 1.25, b2: 0 },
+		ridge: { neurons: 1, scale: 1.6, bias: -0.2, activation: "relu", seed: 3, w2Scale: 1.25, b2: 0 },
+		saddle: { neurons: 4, scale: 1.5, bias: 0.1, activation: "relu", seed: 11, w2Scale: 1.25, b2: 0 },
+		smooth: { neurons: 2, scale: 1.2, bias: 0, activation: "tanh", seed: 7, w2Scale: 1.25, b2: 0 },
+		separator: { neurons: 8, scale: 1.4, bias: -0.84, activation: "relu", seed: 7, w2Scale: 8, b2: -0.2 }
 	};
-
-	function probeScoreText() {
-		return "s(" + denseState.probe.toFixed(2) + ") = " + denseHeight(denseState.probe, 0).toFixed(3);
-	}
 
 	function denseFormulas() {
 		if (!denseWeights) buildDenseWeights();
@@ -144,7 +202,7 @@
 		const layer = DE
 			? "\\underbrace{\\begin{aligned} a &= \\underbrace{W_1 " + xvec + " + b_1}_{\\text{Schicht 1}} \\\\ h &= \\underbrace{" + act + "(a)}_{\\text{Aktivierung}} \\\\ z &= \\underbrace{W_2 h + b_2}_{\\text{Schicht 2, eine Dimension}} \\end{aligned}}_{\\text{das MLP macht aus einem Punkt eine Höhe}}"
 			: "\\underbrace{\\begin{aligned} a &= \\underbrace{W_1 " + xvec + " + b_1}_{\\text{layer 1}} \\\\ h &= \\underbrace{" + act + "(a)}_{\\text{activation}} \\\\ z &= \\underbrace{W_2 h + b_2}_{\\text{layer 2, one dimension}} \\end{aligned}}_{\\text{the MLP maps a point to one height}}";
-		const back = "\\underbrace{s(t) = b_2 + \\sum_{i=1}^{" + n + "} \\underbrace{W_{2i}\\,\\," + act + "\\!\\left(W_{1i,1}\\,t + b_{1i}\\right)}_{\\text{" + (DE ? "Einheit" : "unit") + " } i}}_{\\text{" + (DE ? "Rückprojektion auf eine Dimension: bewege t" : "back-projection to one dimension: move t") + "}}";
+		const back = "\\underbrace{s(x,y) = b_2 + \\sum_{i=1}^{" + n + "} \\underbrace{W_{2i}\\,\\," + act + "\\!\\left(W_{1i,1}\\,x + W_{1i,2}\\,y + b_{1i}\\right)}_{\\text{" + (DE ? "Einheit" : "unit") + " } i}}_{\\text{" + (DE ? "Rückprojektion auf einen Score" : "back-projection to one score") + "}}";
 		return [layer, back];
 	}
 
@@ -191,8 +249,7 @@
 				else if (kind === "b2") denseWeights.b2 = value;
 				const preset = document.getElementById("ism-dense-preset");
 				if (preset) preset.value = "custom";
-				const score = document.getElementById("ism-probe-value");
-				if (score) score.textContent = probeScoreText();
+				updateSeparationStatus();
 				requestDraw();
 			});
 		});
@@ -221,11 +278,6 @@
 		editor.innerHTML = weightEditorHtml();
 		host.appendChild(editor);
 		addFormula(formulas[1]);
-		const value = document.createElement("p");
-		value.className = "ism-probe-value";
-		value.id = "ism-probe-value";
-		value.textContent = probeScoreText();
-		host.appendChild(value);
 		bindWeightEditor(editor);
 		if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(host);
 	}
@@ -306,10 +358,11 @@
 			});
 		}
 		const denseControls = document.getElementById("ism-dense-controls");
-		if (denseControls) denseControls.hidden = cur !== 7;
+		if (denseControls) denseControls.hidden = cur !== 7 && cur !== 8;
 		const stage = document.getElementById("ism-stage");
-		if (stage) stage.classList.toggle("is-dense", cur === 7);
+		if (stage) stage.classList.toggle("is-dense", cur === 7 || cur === 8);
 		if (cur === 7) renderDenseFormulas();
+		updateSeparationStatus();
 
 		const dots = copyEl("ism-dots");
 		if (!dots) return;
@@ -381,7 +434,8 @@
 	function warp(x, y, lift, project) {
 		const p = proj(liftPoint(x, y, lift));
 		if (project < 0.0005) return { X: p.X, Y: p.Y, k: p.k };
-		const tx = sx(SCORE(x, y));
+		const score = lerp(SCORE(x, y), denseHeight(x, y), denseProjectMix);
+		const tx = axisScoreX(score);
 		const ty = AX_Y - 46 * (1 - project);
 		const arc = Math.sin(project * Math.PI) * 34;
 		return {
@@ -481,7 +535,7 @@
 			ctx.lineTo(X, AX_Y + 4);
 			ctx.stroke();
 		}
-		const TX = sx(0);
+		const TX = axisScoreX(0);
 		ctx.strokeStyle = C.axisZero;
 		ctx.lineWidth = 2.6;
 		ctx.beginPath();
@@ -495,10 +549,19 @@
 		ctx.font = "13px Georgia, serif";
 		ctx.fillText("s = 0", TX, AX_Y + 58);
 		ctx.font = "600 13px system-ui, sans-serif";
-		ctx.fillStyle = C.inner;
-		ctx.fillText(DE ? (narrow ? "s < 0   Kern" : "s < 0   innerer Kern") : (narrow ? "s < 0   core" : "s < 0   inner core"), lerp(AX_L, TX, 0.40), AX_Y + 58);
-		ctx.fillStyle = C.outer;
-		ctx.fillText(DE ? (narrow ? "s > 0   Ring" : "s > 0   äußerer Ring") : (narrow ? "s > 0   ring" : "s > 0   outer ring"), lerp(TX, AX_R, 0.55), AX_Y + 58);
+		if (denseProjectMix > 0.5) {
+			const info = separationInfo();
+			const coreLeft = info.coreMax < 0;
+			ctx.fillStyle = C.inner;
+			ctx.fillText(DE ? "Kern" : "core", coreLeft ? lerp(AX_L, TX, 0.40) : lerp(TX, AX_R, 0.55), AX_Y + 58);
+			ctx.fillStyle = C.outer;
+			ctx.fillText(DE ? "Ring" : "ring", coreLeft ? lerp(TX, AX_R, 0.55) : lerp(AX_L, TX, 0.40), AX_Y + 58);
+		} else {
+			ctx.fillStyle = C.inner;
+			ctx.fillText(DE ? (narrow ? "s < 0   Kern" : "s < 0   innerer Kern") : (narrow ? "s < 0   core" : "s < 0   inner core"), lerp(AX_L, TX, 0.40), AX_Y + 58);
+			ctx.fillStyle = C.outer;
+			ctx.fillText(DE ? (narrow ? "s > 0   Ring" : "s > 0   äußerer Ring") : (narrow ? "s > 0   ring" : "s > 0   outer ring"), lerp(TX, AX_R, 0.55), AX_Y + 58);
+		}
 		ctx.textAlign = "left";
 		ctx.globalAlpha = 1;
 	}
@@ -632,6 +695,8 @@
 
 		const lift = lerp(a.lift, b.lift, u);
 		denseMix = lerp(a.dense || 0, b.dense || 0, u);
+		denseProjectMix = lerp(a.denseProject || 0, b.denseProject || 0, u);
+		if (denseProjectMix > 0.001) updateDenseScoreRange();
 		persp = lerp(a.persp, b.persp, u);
 		viewA = lerp(a.camA, b.camA, u);
 		viewB = lerp(a.camB, b.camB, u);
@@ -705,31 +770,6 @@
 		});
 
 		drawClassLabels(labels, C);
-		if (denseMix > 0.05) {
-			const px = denseState.probe;
-			const pz = denseHeight(px, 0);
-			const base = proj({ x: px, y: 0, z: 0 });
-			const top = proj({ x: px, y: 0, z: pz });
-			ctx.globalAlpha = 0.9;
-			ctx.strokeStyle = C.planeStrong;
-			ctx.lineWidth = 2;
-			ctx.beginPath();
-			ctx.moveTo(base.X, base.Y);
-			ctx.lineTo(top.X, top.Y);
-			ctx.stroke();
-			ctx.beginPath();
-			ctx.arc(base.X, base.Y, 3.2, 0, TAU);
-			ctx.fillStyle = C.planeStrong;
-			ctx.fill();
-			ctx.beginPath();
-			ctx.arc(top.X, top.Y, 4.2, 0, TAU);
-			ctx.fillStyle = C.inner;
-			ctx.fill();
-			ctx.font = "600 12px system-ui, sans-serif";
-			ctx.fillStyle = C.planeStrong;
-			ctx.fillText("s = " + pz.toFixed(2), top.X + 8, top.Y - 6);
-			ctx.globalAlpha = 1;
-		}
 	}
 
 	function resizeCanvas() {
@@ -827,49 +867,37 @@
 				<option value="ridge">Grat · 1 ReLU</option>
 				<option value="saddle">Sattel · 4 ReLU</option>
 				<option value="smooth">Weich · 2 tanh</option>
+				<option value="separator">Trenner · 8 ReLU</option>
 				<option value="custom">Eigene</option>
 			</select></label>
 			<label>Neuronen <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="2"><output>2</output></label>
 			<label>Gewichtsskala <input id="ism-dense-scale" type="range" min="0.2" max="3" step="0.1" value="1.2"><output>1.2</output></label>
 			<label>Bias <input id="ism-dense-bias" type="range" min="-2" max="2" step="0.1" value="0"><output>0.0</output></label>
 			<label>Aktivierung <select id="ism-dense-activation"><option value="relu" selected>ReLU</option><option value="tanh">tanh</option></select></label>
-			<label>Sonde t <input id="ism-dense-probe" type="range" min="-1.2" max="1.2" step="0.05" value="0"><output>0.00</output></label>
 			<button type="button" id="ism-dense-resample">Neue Gewichte</button>
-			<span class="ism-dense-hint">Bewege die Sonde: die senkrechte Linie ist s(t).</span>
+			<span class="ism-dense-hint">Die Rückprojektion s(x,y) macht aus jedem Punkt einen Score. Eine Schwelle bei s=0 trennt die Klassen.</span>
 		` : `
 			<label>Preset <select id="ism-dense-preset">
 				<option value="bowl" selected>Bowl · 2 ReLU</option>
 				<option value="ridge">Ridge · 1 ReLU</option>
 				<option value="saddle">Saddle · 4 ReLU</option>
 				<option value="smooth">Smooth · 2 tanh</option>
+				<option value="separator">Separator · 8 ReLU</option>
 				<option value="custom">Custom</option>
 			</select></label>
 			<label>Neurons <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="2"><output>2</output></label>
 			<label>Weight scale <input id="ism-dense-scale" type="range" min="0.2" max="3" step="0.1" value="1.2"><output>1.2</output></label>
 			<label>Bias <input id="ism-dense-bias" type="range" min="-2" max="2" step="0.1" value="0"><output>0.0</output></label>
 			<label>Activation <select id="ism-dense-activation"><option value="relu" selected>ReLU</option><option value="tanh">tanh</option></select></label>
-			<label>Probe t <input id="ism-dense-probe" type="range" min="-1.2" max="1.2" step="0.05" value="0"><output>0.00</output></label>
 			<button type="button" id="ism-dense-resample">New weights</button>
-			<span class="ism-dense-hint">Move the probe: the vertical line is s(t).</span>
+			<span class="ism-dense-hint">The back-projection s(x,y) turns every point into one score. A threshold at s=0 separates the classes.</span>
 		`);
 		const neurons = box.querySelector("#ism-dense-neurons");
 		const scale = box.querySelector("#ism-dense-scale");
 		const bias = box.querySelector("#ism-dense-bias");
 		const activation = box.querySelector("#ism-dense-activation");
-		const probe = box.querySelector("#ism-dense-probe");
 		const preset = box.querySelector("#ism-dense-preset");
-		const updateProbe = function () {
-			denseState.probe = parseFloat(probe.value) || 0;
-			probe.nextElementSibling.textContent = denseState.probe.toFixed(2);
-			const value = document.getElementById("ism-probe-value");
-			if (value) value.textContent = probeScoreText();
-		};
-		const sync = function (probeOnly) {
-			if (probeOnly) {
-				updateProbe();
-				requestDraw();
-				return;
-			}
+		const sync = function () {
 			denseState.neurons = parseInt(neurons.value, 10) || 1;
 			denseState.scale = parseFloat(scale.value) || 1;
 			denseState.bias = parseFloat(bias.value) || 0;
@@ -878,8 +906,8 @@
 			neurons.nextElementSibling.textContent = String(denseState.neurons);
 			scale.nextElementSibling.textContent = denseState.scale.toFixed(1);
 			bias.nextElementSibling.textContent = denseState.bias.toFixed(1);
-			updateProbe();
 			scheduleDenseFormulas();
+			updateSeparationStatus();
 			requestDraw();
 		};
 		const markCustom = function () { preset.value = "custom"; };
@@ -887,7 +915,6 @@
 		scale.addEventListener("input", function () { markCustom(); sync(); });
 		bias.addEventListener("input", function () { markCustom(); sync(); });
 		activation.addEventListener("change", function () { markCustom(); sync(); });
-		probe.addEventListener("input", function () { sync(true); });
 		preset.addEventListener("change", function () {
 			const p = DENSE_PRESETS[preset.value];
 			if (!p) { sync(); return; }
@@ -895,6 +922,8 @@
 			denseState.scale = p.scale;
 			denseState.bias = p.bias;
 			denseState.activation = p.activation;
+			denseState.w2Scale = p.w2Scale == null ? 1.25 : p.w2Scale;
+			denseState.b2 = p.b2 == null ? 0 : p.b2;
 			denseSeed = p.seed;
 			neurons.value = String(p.neurons);
 			scale.value = String(p.scale);

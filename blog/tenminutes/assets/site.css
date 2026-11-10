@@ -8955,3 +8955,25 @@ html[lang="de"] .tm-lang-only-de { display: inline !important; }
 	}
 	.ism-dense-controls input[type="range"] { width: 64px; }
 }
+
+/* The back-projection slide: separation status and the dense-layer hint. */
+.ism-separation-status {
+	margin: 8px auto 0;
+	max-width: 760px;
+	padding: 8px 12px;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-card);
+	color: var(--tm-ink-soft);
+	font: 600 0.82rem/1.45 var(--tm-ui);
+	text-align: center;
+}
+.ism-separation-status.is-ok {
+	border-color: var(--tm-green);
+	color: var(--tm-green-deep);
+	background: color-mix(in srgb, var(--tm-green) 8%, var(--tm-card));
+}
+.ism-dense-hint {
+	flex-basis: 100%;
+	font: 400 0.7rem/1.4 var(--tm-ui);
+	color: var(--tm-muted);
+}

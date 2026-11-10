@@ -646,6 +646,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																		<div id="ism-title" class="ism-title"></div>
 																		<div id="ism-body" class="ism-body"></div>
 																	</div>
+																	<div id="ism-separation-status" class="ism-separation-status" hidden></div>
 																	<div class="ism-stage" id="ism-stage">
 																		<div id="ism-wrap" class="ism-wrap" style="height:clamp(360px, 55vw, 480px)">
 																			<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
@@ -659,7 +660,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																		<button type="button" id="ism-prev" data-arrow-prev class="ism-btn" aria-label="Previous step">←</button>
 																		<button type="button" id="ism-next" data-arrow-next class="ism-btn" aria-label="Next step">→</button>
 																		<div id="ism-dots" class="ism-dots" aria-hidden="true"></div>
-																		<span id="ism-counter" class="ism-counter">1 / 8</span>
+																		<span id="ism-counter" class="ism-counter">1 / 9</span>
 																	</div>
 																</div>
 																<div class="demo-insight"><b>Takeaway</b><span>The layers in an MLP lift the points into a higher-dimensional space where a straight line can separate what was inseparable before. They change the space in which the cut is made.</span></div>
