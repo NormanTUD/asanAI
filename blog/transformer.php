@@ -33,7 +33,7 @@ This chapter assembles the parts you have met one at a time into one machine and
 
 The model is small enough that its output is not useful, and large enough that patterns become visible, so you can scale the picture up in your head. A large LLM runs the same operations, with more data, more layers and a few extra tricks.
 
-The hyperparameters sit behind the <span class="tm-intro-robot" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="11" rx="2"/><path d="M12 3v4"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M9 15h6"/><path d="M3 11v3M21 11v3"/></svg></span> robot on the left (<a href="#" onclick="toggleTransformerHyper(true); return false;">open them here</a>). Open them whenever you want to change the model; if you just want to play first, scroll on. The training card is right below, and the step-by-step visualizations follow.
+The hyperparameters sit behind the robot icon on the left of this page (<a href="#" onclick="toggleTransformerHyper(true); return false;">open them here</a>). Open them whenever you want to change the model; if you just want to play first, scroll on. The training card is right below, and the step-by-step visualizations follow.
 </div>
 
 <div class="md">
