@@ -7095,6 +7095,20 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2310.13548",
 		alternativetitle: "Sycophancy in Language Models"
 	},
+	"ji2023survey": {
+		author: "Ziwei Ji et al.",
+		year: 2023,
+		title: "Survey of Hallucination in Natural Language Generation",
+		url: "https://arxiv.org/abs/2202.03629",
+		alternativetitle: "Ji et al., 2023"
+	},
+	"maynez2020faithfulness": {
+		author: "Joshua Maynez, Shashi Narayan, Bernd Bohnet, Ryan McDonald",
+		year: 2020,
+		title: "On Faithfulness and Factuality in Abstractive Summarization",
+		url: "https://arxiv.org/abs/2005.00661",
+		alternativetitle: "Maynez et al., 2020"
+	},
 	"holtzman2019nucleus": {
 		author: "Aaron Holtzman, Jan Buys, Li Du, Maxwell Forbes, Yejin Choi",
 		year: 2019,
