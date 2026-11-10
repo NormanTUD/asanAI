@@ -103,6 +103,7 @@
 	let denseScoreMin = -1;
 	let denseScoreMax = 1;
 	let denseFormulaTimer = 0;
+	let denseContour = [];
 
 	function buildDenseWeights() {
 		let seed = denseSeed || 1;
@@ -116,6 +117,59 @@
 			W2.push((denseState.w2Scale || 1.25) / n);
 		}
 		denseWeights = { W1: W1, b1: b1, W2: W2, b2: denseState.b2 || 0 };
+		rebuildDenseContour();
+	}
+
+	function rebuildDenseContour() {
+		denseContour = [];
+		if (!denseWeights) return;
+		const N = 44, EXT = 1.12, step = (2 * EXT) / N;
+		const sign = function (v) { return v >= 0 ? 1 : -1; };
+		const edge = function (ax, ay, av, bx, by, bv) {
+			const t = av / (av - bv);
+			return { x: ax + (bx - ax) * t, y: ay + (by - ay) * t };
+		};
+		for (let i = 0; i < N; i++) {
+			const x0 = -EXT + i * step, x1 = x0 + step;
+			for (let j = 0; j < N; j++) {
+				const y0 = -EXT + j * step, y1 = y0 + step;
+				const v00 = denseHeight(x0, y0), v10 = denseHeight(x1, y0);
+				const v11 = denseHeight(x1, y1), v01 = denseHeight(x0, y1);
+				const pts = [];
+				if (sign(v00) !== sign(v10)) pts.push(edge(x0, y0, v00, x1, y0, v10));
+				if (sign(v10) !== sign(v11)) pts.push(edge(x1, y0, v10, x1, y1, v11));
+				if (sign(v11) !== sign(v01)) pts.push(edge(x1, y1, v11, x0, y1, v01));
+				if (sign(v01) !== sign(v00)) pts.push(edge(x0, y1, v01, x0, y0, v00));
+				if (pts.length === 2) denseContour.push([pts[0], pts[1]]);
+				else if (pts.length === 4) {
+					const center = denseHeight((x0 + x1) / 2, (y0 + y1) / 2);
+					if (sign(center) === sign(v00)) {
+						denseContour.push([pts[0], pts[3]]);
+						denseContour.push([pts[1], pts[2]]);
+					} else {
+						denseContour.push([pts[0], pts[1]]);
+						denseContour.push([pts[2], pts[3]]);
+					}
+				}
+			}
+		}
+	}
+
+	function drawDenseContour(C, project, alpha) {
+		if (alpha <= 0.01 || !denseContour.length || !separationInfo().separated) return;
+		ctx.save();
+		ctx.strokeStyle = C.axisZero;
+		ctx.lineWidth = 2.4;
+		ctx.globalAlpha = alpha;
+		denseContour.forEach(function (seg) {
+			const a = warp(seg[0].x, seg[0].y, 0, project);
+			const b = warp(seg[1].x, seg[1].y, 0, project);
+			ctx.beginPath();
+			ctx.moveTo(a.X, a.Y);
+			ctx.lineTo(b.X, b.Y);
+			ctx.stroke();
+		});
+		ctx.restore();
 	}
 
 	function denseHeight(x, y) {
@@ -161,25 +215,44 @@
 		return { separated: separated, coreMin: coreMin, coreMax: coreMax, ringMin: ringMin, ringMax: ringMax };
 	}
 
-	function updateSeparationStatus() {
-		const el = document.getElementById("ism-separation-status");
-		if (!el) return;
-		if (cur !== 8) { el.hidden = true; return; }
-		el.hidden = false;
+	function separationStatusLines() {
 		const info = separationInfo();
 		if (info.separated) {
-			el.textContent = DE
-				? "Getrennt bei s = 0: Kern und Ring liegen auf verschiedenen Seiten. Eine einzelne Schwelle reicht."
-				: "Separated at s = 0: the core and the ring lie on opposite sides. One threshold is enough.";
-			el.classList.add("is-ok");
-		} else {
-			el.textContent = DE
-				? "Kann aktuell nicht sauber getrennt werden. Spiele mit Neuronen, Gewichten, Skala, Bias, Aktivierung oder einem Preset."
-				: "Cannot separate cleanly yet. Play with the neurons, weights, scale, bias, activation, or a preset.";
-			el.classList.remove("is-ok");
+			return DE
+				? ["Getrennt bei s = 0.", "Kern und Ring liegen auf", "verschiedenen Seiten."]
+				: ["Separated at s = 0.", "The core and the ring are on", "opposite sides."];
 		}
+		return DE
+			? ["Kann aktuell nicht sauber", "getrennt werden.", "Spiele mit Neuronen, Gewichten,", "Skala, Bias oder Preset."]
+			: ["Cannot separate cleanly yet.", "Play with the neurons, weights,", "scale, bias, or a preset."];
 	}
 
+	function drawSeparationStatus(C) {
+		if (!(cur >= 7 || prevIdx >= 7)) return;
+		const lines = separationStatusLines();
+		const info = separationInfo();
+		const x = 16;
+		const w = Math.min(280, W * 0.36);
+		const lineH = 15;
+		const h = 26 + lines.length * lineH;
+		const y = Math.max(74, H * 0.46 - h / 2);
+		ctx.save();
+		ctx.fillStyle = C.dark ? "rgba(7,26,34,.86)" : "rgba(255,255,255,.9)";
+		ctx.strokeStyle = info.separated ? C.green : C.line;
+		ctx.lineWidth = 1;
+		if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, y, w, h, 8); ctx.fill(); ctx.stroke(); }
+		else { ctx.fillRect(x, y, w, h); ctx.strokeRect(x, y, w, h); }
+		ctx.textAlign = "left";
+		ctx.fillStyle = info.separated ? C.green : C.muted;
+		ctx.font = "700 10px system-ui, sans-serif";
+		ctx.fillText(DE ? "TRENNUNG" : "SEPARATION", x + 10, y + 15);
+		ctx.fillStyle = C.ink;
+		ctx.font = "500 12px system-ui, sans-serif";
+		lines.forEach(function (line, i) { ctx.fillText(line, x + 10, y + 32 + i * lineH); });
+		ctx.restore();
+	}
+
+	function liftPoint
 	function liftPoint(x, y, lift) {
 		const p = LIFT(x, y, lift);
 		if (denseMix > 0.0001) p.z += denseMix * denseHeight(x, y);
@@ -249,7 +322,6 @@
 				else if (kind === "b2") denseWeights.b2 = value;
 				const preset = document.getElementById("ism-dense-preset");
 				if (preset) preset.value = "custom";
-				updateSeparationStatus();
 				requestDraw();
 			});
 		});
@@ -339,11 +411,11 @@
 	function fitCopyHeight() {
 		const copy = copyEl("ism-copy");
 		if (!copy) return;
-		const active = copy.querySelector(".ism-scene.is-active");
-		if (!active) return;
+		const scenes = Array.prototype.slice.call(copy.querySelectorAll(".ism-scene"));
+		if (!scenes.length) return;
 		const previous = copy.style.minHeight;
 		copy.style.minHeight = "0px";
-		const height = active.getBoundingClientRect().height;
+		const height = Math.max.apply(null, scenes.map(function (el) { return el.getBoundingClientRect().height; }));
 		copy.style.minHeight = height ? (Math.ceil(height) + 1) + "px" : previous;
 	}
 
@@ -362,7 +434,6 @@
 		const stage = document.getElementById("ism-stage");
 		if (stage) stage.classList.toggle("is-dense", cur === 7 || cur === 8);
 		if (cur === 7) renderDenseFormulas();
-		updateSeparationStatus();
 
 		const dots = copyEl("ism-dots");
 		if (!dots) return;
@@ -770,6 +841,8 @@
 		});
 
 		drawClassLabels(labels, C);
+		drawDenseContour(C, project, clamp(denseMix, 0, 1));
+		drawSeparationStatus(C);
 	}
 
 	function resizeCanvas() {
@@ -907,7 +980,6 @@
 			scale.nextElementSibling.textContent = denseState.scale.toFixed(1);
 			bias.nextElementSibling.textContent = denseState.bias.toFixed(1);
 			scheduleDenseFormulas();
-			updateSeparationStatus();
 			requestDraw();
 		};
 		const markCustom = function () { preset.value = "custom"; };

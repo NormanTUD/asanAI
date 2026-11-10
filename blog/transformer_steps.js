@@ -2165,15 +2165,32 @@
 			var pPad = 16, pLeft = 90, pTop = 18, pBottom = 32;
 			var pCell = (w - pLeft - pPad) / Math.max(1, n);
 			var pMax = 0.0001;
-			tokens.forEach(function (_, i) { pMax = Math.max(pMax, norm(trace.h_in[i] || [])); });
+			tokens.forEach(function (_, i) {
+				pMax = Math.max(pMax, norm(trace.h_in[i] || []), norm(trace.h_out[i] || []));
+			});
 			var pScale = (h - pTop - pBottom) / pMax;
 			var pBase = h - pBottom;
+			var decrease = "#b23a48";
+			ctx.globalAlpha = 1;
+			ctx.fillStyle = c.blue;
+			ctx.font = "600 9px Barlow, system-ui, sans-serif";
+			ctx.fillText(DE() ? "blau = vorher · grün = Zunahme · rot = Abnahme" : "blue = before · green = increase · red = decrease", pLeft, 16);
 			tokens.forEach(function (token, i) {
-				var v = norm(trace.h_in[i] || []);
+				var before = norm(trace.h_in[i] || []);
+				var after = norm(trace.h_out[i] || []);
 				var x = pLeft + i * pCell + pCell * 0.2;
 				var bw = Math.max(1, pCell * 0.55);
-				ctx.fillStyle = c.lime;
-				ctx.fillRect(x, pBase - v * pScale, bw, v * pScale);
+				ctx.globalAlpha = 0.9;
+				ctx.fillStyle = c.blue;
+				ctx.fillRect(x, pBase - before * pScale, bw, before * pScale);
+				if (after >= before) {
+					ctx.fillStyle = c.green;
+					ctx.fillRect(x, pBase - after * pScale, bw, (after - before) * pScale);
+				} else {
+					ctx.fillStyle = decrease;
+					ctx.fillRect(x, pBase - before * pScale, bw, (before - after) * pScale);
+				}
+				ctx.globalAlpha = 1;
 				if (n <= 40 || i % Math.ceil(n / 40) === 0) {
 					ctx.save();
 					ctx.translate(x + bw / 2, pBase + 8);

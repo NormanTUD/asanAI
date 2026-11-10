@@ -646,7 +646,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																		<div id="ism-title" class="ism-title"></div>
 																		<div id="ism-body" class="ism-body"></div>
 																	</div>
-																	<div id="ism-separation-status" class="ism-separation-status" hidden></div>
 																	<div class="ism-stage" id="ism-stage">
 																		<div id="ism-wrap" class="ism-wrap" style="height:clamp(360px, 55vw, 480px)">
 																			<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>

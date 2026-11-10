@@ -2670,11 +2670,41 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	// plots out of the first paint; build them when the step section is near.
 	window.__tmFullVizPending = { tokensWithPositional, knownTokens, trainingTokens, h0, weights, d_model, n_heads, n_layers };
 	if (window.__tmFullVizLoaded) {
-		_runFullTransformerVisualization(window.__tmFullVizPending);
+		if (_fullVizNear()) _runFullTransformerVisualization(window.__tmFullVizPending);
+		else _markFullVizDirty();
 	} else {
+		_renderDeferredPreAttentionVisualizations(window.__tmFullVizPending);
 		ensureFullTransformerVisualization();
 		window.dispatchEvent(new CustomEvent("tm:transformer-data"));
 	}
+}
+
+function _fullVizNear() {
+	const anchor = document.getElementById('transformer-step-visuals') ||
+		document.getElementById('ffn-equations-container');
+	if (!anchor) return true;
+	const rect = anchor.getBoundingClientRect();
+	return rect.top < window.innerHeight + 700 && rect.bottom > -700;
+}
+
+function _markFullVizDirty() {
+	window.__tmFullVizDirty = true;
+	if (window.__tmFullVizDirtyObserver) return;
+	const anchor = document.getElementById('transformer-step-visuals') ||
+		document.getElementById('ffn-equations-container');
+	if (!anchor) return;
+	if (!('IntersectionObserver' in window)) {
+		window.__tmFullVizDirty = false;
+		if (window.__tmFullVizPending) _runFullTransformerVisualization(window.__tmFullVizPending);
+		return;
+	}
+	window.__tmFullVizDirtyObserver = new IntersectionObserver(function (entries) {
+		if (!entries.some(function (entry) { return entry.isIntersecting; })) return;
+		if (!window.__tmFullVizDirty) return;
+		window.__tmFullVizDirty = false;
+		if (window.__tmFullVizPending) _runFullTransformerVisualization(window.__tmFullVizPending);
+	}, { rootMargin: '700px 0px' });
+	window.__tmFullVizDirtyObserver.observe(anchor);
 }
 
 function _renderDeferredPreAttentionVisualizations(payload) {
