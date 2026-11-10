@@ -61,40 +61,29 @@ class AttentionEngine {
 	}
 
 	_buildWhatHappensNextSection(n, d_k, d_model, n_heads) {
-		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
-		const nextTitle = isDe ? 'Was als Nächstes passiert' : 'What Happens Next';
-		const intro = isDe
-			? `Die Kontextmatrix dieses Heads ist <b>einer von ${n_heads} Heads</b>. Alle Heads laufen parallel und erfassen unterschiedliche Beziehungen. Ihre Ausgaben werden dann:`
-			: `This head's context matrix is <b>one of ${n_heads} heads</b>. All heads run in parallel, each capturing different relationships. Their outputs are then:`;
-		const concat = isDe ? 'Konkateniert' : 'Concatenated';
-		const projection = isDe ? 'Ausgabeprojektion' : 'Output projection';
-		const added = isDe ? 'Addiert' : 'Added back';
-		const addedRest = isDe ? 'zur Eingabe über die Residual-Verbindung:' : 'to the input via the residual connection:';
-		const footer = isDe
-			? 'Konkatenation, Projektion und Residual-Schritt stehen in den Abschnitten unter dieser Head-Ansicht.'
-			: 'The concatenation, projection, and residual steps are shown in the sections below this head view.';
 		return `<div style="padding:8px 0;">
-    <p style="font-weight:600; color:#065f46; margin-bottom:6px;">${nextTitle}</p>
+    <p style="font-weight:600; color:#065f46; margin-bottom:6px;">What Happens Next</p>
     <p style="font-size:0.85rem; color:#334155; margin-bottom:6px;">
-	${intro}
+	This head's context matrix is <b>one of ${n_heads} heads</b>. All heads run in parallel, each
+	capturing different relationships. Their outputs are then:
     </p>
     <ol style="font-size:0.85rem; color:#334155; margin:0 0 8px 20px; padding:0;">
 	<li style="margin-bottom:4px;">
-	    <b>${concat}</b> ${isDe ? 'entlang der' : 'along the'} $d_k$ ${isDe ? 'Dimension' : 'dimension'}:
+	    <b>Concatenated</b> along the $d_k$ dimension:
 	    $\\text{Concat}(\\text{head}_1, \\ldots, \\text{head}_{${n_heads}}) \\in \\mathbb{R}^{${n} \\times ${d_model}}$
 	</li>
 	<li style="margin-bottom:4px;">
-	    <b>${projection}</b> $W^O \\in \\mathbb{R}^{${d_model} \\times ${d_model}}$
-	    ${isDe ? 'mischt die Head-Ausgaben' : 'mixes head outputs'}:
+	    <b>Output projection</b> $W^O \\in \\mathbb{R}^{${d_model} \\times ${d_model}}$
+	    mixes head outputs:
 	    $\\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{heads}) \\cdot W^O$
 	</li>
 	<li style="margin-bottom:4px;">
-	    <b>${added}</b> ${addedRest}
+	    <b>Added back</b> to the input via the residual connection:
 	    $h_1 = h_0 + \\text{MHA}_{\\text{proj}}$
 	</li>
     </ol>
     <p style="font-size:0.8rem; color:#64748b;">
-	${footer}
+	The concatenation, projection, and residual steps are shown in the sections below this head view.
     </p>
 </div>`;
 	}
@@ -104,29 +93,28 @@ class AttentionEngine {
 		const vMatrixTex = this._attnRowLabeledMatrix(Vi, displayTokens, n, 'V proj');
 		const contextMatrixTex = this._attnRowLabeledMatrix(context, displayTokens, n, 'head ctx');
 
-		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
-		const contextText = isDe
-			? `Der <b>Kontextvektor</b> jedes Tokens ist ein gewichteter Durchschnitt aller Value-Vektoren, die es sehen kann. Die Attention-Gewichte (aus Softmax) bestimmen, wie viel jedes Value beiträgt. Token $i$ kann nur auf Tokens $0 \\ldots i$ schauen (kausale Maske).`
-			: `Each token's <b>context vector</b> is a weighted average of all Value vectors it can see. The attention weights (from Softmax) determine how much each Value contributes. Token $i$ can only attend to tokens $0 \\ldots i$ (causal mask).`;
-		const producesText = isDe
-			? `Das erzeugt einen $d_k = ${d_k}$-dimensionalen Kontextvektor pro Token und Head.`
-			: `This produces one $d_k = ${d_k}$-dimensional context vector per token per head.`;
-		const stackingText = isDe
-			? `Alle Kontextvektoren übereinander ergeben die Ausgabe dieses Heads — eine Matrix der Form $(T \\times d_k) = (${n} \\times ${d_k})$.`
-			: `Stacking all context vectors gives the output of this head — a matrix of shape $(T \\times d_k) = (${n} \\times ${d_k})$.`;
-		const matrixText = isDe
-			? `In der <b>Attention-Gewichte-Matrix</b>: Zeilen sind <b>Query</b>-Tokens (wer schaut), Spalten sind <b>Key</b>-Tokens (wer angeschaut wird). Jede Zeile summiert zu 1 (Softmax). Die Spaltenköpfe zeigen, welches Token zu jeder Spalte gehört.`
-			: `In the <b>Attention Weights</b> matrix: rows are <b>query</b> tokens (who is looking), columns are <b>key</b> tokens (who is being looked at). Each row sums to 1 (softmax). The column headers show which token each column corresponds to.`;
-
 		return `<div style="margin-bottom:10px;">
-    <p style="font-weight:600; margin-bottom:6px;">${isDe ? 'Kontextmatrix für Head' : 'Context Matrix for Head'} ${headIdx + 1}</p>
-    <p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">${contextText}</p>
-    $$ \\text{context}_i = \\sum_{j=0}^{i} \\underbrace{\\alpha_{i,j}}_{\\substack{\\text{${isDe ? 'Attention' : 'attention'}} \\\\ \\text{${isDe ? 'Gewicht' : 'weight'}}}} \\cdot \\underbrace{V_j}_{\\substack{\\text{${isDe ? 'Value-Vektor' : 'Value vector'}} \\\\ \\text{${isDe ? 'von Token' : 'of token'} } j}} $$
-    <p style="font-size:0.8rem; color:#64748b;">${producesText}</p>
-    <p style="font-size:0.85rem; color:#334155; margin-bottom:4px;">${stackingText}</p>
-    <p style="font-size:0.82rem; color:#64748b; margin-bottom:10px;">${matrixText}</p>
+    <p style="font-weight:600; margin-bottom:6px;">Context Matrix for Head ${headIdx + 1}</p>
+    <p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">
+	Each token's <b>context vector</b> is a weighted average of all Value vectors it can see.
+	The attention weights (from Softmax) determine how much each Value contributes.
+	Token $i$ can only attend to tokens $0 \\ldots i$ (causal mask).
+    </p>
+    $$ \\text{context}_i = \\sum_{j=0}^{i} \\underbrace{\\alpha_{i,j}}_{\\substack{\\text{attention} \\\\ \\text{weight}}} \\cdot \\underbrace{V_j}_{\\substack{\\text{Value vector} \\\\ \\text{of token } j}} $$
+    <p style="font-size:0.8rem; color:#64748b;">
+	This produces one $d_k = ${d_k}$-dimensional context vector per token per head.
+    </p>
+    <p style="font-size:0.85rem; color:#334155; margin-bottom:4px;">
+	Stacking all context vectors gives the output of this head — a matrix of shape
+	$(T \\times d_k) = (${n} \\times ${d_k})$.
+    </p>
+    <p style="font-size:0.82rem; color:#64748b; margin-bottom:10px;">
+	In the <b>Attention Weights</b> matrix: rows are <b>query</b> tokens (who is looking),
+	columns are <b>key</b> tokens (who is being looked at).
+	Each row sums to 1 (softmax). The column headers show which token each column corresponds to.
+    </p>
     <div style="overflow-x:auto;">
-    $$ \\underbrace{${contextMatrixTex}}_{\\text{head}_{${headIdx + 1}}\\;(${n} \\times ${d_k})} = \\underbrace{${weightMatrixTex}}_{\\substack{\\text{${isDe ? 'Attention-Gewichte' : 'Attention Weights'}}\\;(${n} \\times ${n}) \\\\ \\text{${isDe ? 'Zeilen' : 'rows'}}=\\text{${isDe ? 'Query' : 'query'}},\\; \\text{${isDe ? 'Spalten' : 'cols'}}=\\text{${isDe ? 'Key' : 'key'}}}} \\cdot \\underbrace{${vMatrixTex}}_{V_{${headIdx + 1}}\\;(${n} \\times ${d_k})} $$
+    $$ \\underbrace{${contextMatrixTex}}_{\\text{head}_{${headIdx + 1}}\\;(${n} \\times ${d_k})} = \\underbrace{${weightMatrixTex}}_{\\substack{\\text{Attention Weights}\\;(${n} \\times ${n}) \\\\ \\text{rows}=\\text{query},\\; \\text{cols}=\\text{key}}} \\cdot \\underbrace{${vMatrixTex}}_{V_{${headIdx + 1}}\\;(${n} \\times ${d_k})} $$
     </div>
 </div>`;
 	}
@@ -402,8 +390,8 @@ class AttentionEngine {
 				const isActive = headDiv ? headDiv.style.display !== 'none' : h === 0;
 				headTabHtml += `<button class="mha-head-tab-btn${isActive ? ' is-active' : ''}" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
 	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
-	style="padding:7px 13px; border:none; border-right:1px solid ${isActive ? '#1d4ed8' : '#93c5fd'}; cursor:pointer; border-radius: 10px 10px 0px 0px;
-	background:${isActive ? '#2563eb' : '#dbeafe'}; color:${isActive ? '#ffffff' : '#1e3a8a'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
+	style="padding:7px 13px; border:none; border-right:1px solid ${isActive ? '#cbd5e1' : '#e2e8f0'}; cursor:pointer; border-radius: 10px 10px 0px 0px;
+	background:${isActive ? '#fff' : 'transparent'}; color:${isActive ? '#1d4ed8' : '#475569'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem; ${isActive ? 'box-shadow:inset 0 -2px 0 #2563eb;' : ''}">
 	Head ${h + 1}
     </button>`;
 			}
@@ -500,7 +488,7 @@ class AttentionEngine {
 	 */
 	_buildUnifiedLayerHeadTabs(attnSection, layerIdx, layerHeadData) {
 		let html = '';
-		html += `<div class="head-tab-list" style="background:#eff6ff; display:flex; border-bottom:1px solid #2563eb; flex-wrap:wrap; border-radius:8px 8px 0 0;">`;
+		html += `<div class="head-tab-list" style="background:#f8fafc; display:flex; border-bottom:1px solid #cbd5e1; flex-wrap:wrap; border-radius:8px 8px 0 0;">`;
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += this._buildHeadTabButtonHtml(layerIdx, h, h === 0);
 		}
@@ -625,7 +613,7 @@ class AttentionEngine {
 
 		let html = `<div class="attention-layer-tabs" style="border:1px solid #3b82f6; border-radius:8px; overflow:hidden;">`;
 
-		html += `<div class="layer-tab-list" style="background:#dbeafe; display:flex; border-bottom:2px solid #3b82f6; flex-wrap:wrap;">`;
+		html += `<div class="layer-tab-list" style="background:#f8fafc; display:flex; border-bottom:2px solid #cbd5e1; flex-wrap:wrap;">`;
 		for (let l = 0; l < numLayers; l++) {
 			html += this._buildLayerTabButtonHtml(l, l === startLayer);
 		}
@@ -652,8 +640,8 @@ class AttentionEngine {
 	_buildHeadTabButtonHtml(layerIdx, headIdx, isActive) {
 		return `<button class="mha-head-tab-btn${isActive ? ' is-active' : ''}" id="head-tab-btn-${this.containerId}-${layerIdx}-${headIdx}"
 	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${headIdx}, ${this._getLayerHeadCount(layerIdx)})"
-	style="padding:7px 13px; border:none; border-right:1px solid ${isActive ? '#1d4ed8' : '#93c5fd'}; cursor:pointer; border-radius: 10px 10px 0px 0px;
-	background:${isActive ? '#2563eb' : '#dbeafe'}; color:${isActive ? '#ffffff' : '#1e3a8a'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
+	style="padding:7px 13px; border:none; border-right:1px solid ${isActive ? '#cbd5e1' : '#e2e8f0'}; cursor:pointer; border-radius: 10px 10px 0px 0px;
+	background:${isActive ? '#fff' : 'transparent'}; color:${isActive ? '#1d4ed8' : '#475569'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem; ${isActive ? 'box-shadow:inset 0 -2px 0 #2563eb;' : ''}">
 	Head ${headIdx + 1}
     </button>`;
 	}
@@ -666,8 +654,8 @@ class AttentionEngine {
 		const numLayers = registry ? registry.layers.length : 1;
 		return `<button class="mha-layer-tab-btn" id="layer-tab-btn-${this.containerId}-${layerIdx}"
 	onclick="showLayer('${this.containerId}', ${layerIdx}, ${numLayers})"
-	style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-	background:${isActive ? '#fff' : '#bfdbfe'}; font-weight:${isActive ? 'bold' : 'normal'};">
+	style="padding:10px 18px; border:none; border-right:1px solid #e2e8f0; cursor:pointer;
+	background:${isActive ? '#fff' : 'transparent'}; font-weight:${isActive ? 'bold' : 'normal'};">
 	Layer ${layerIdx + 1}
     </button>`;
 	}
@@ -747,12 +735,12 @@ class AttentionEngine {
 		let html = '';
 
 		// ── Head tabs ──
-		html += `<div class="head-tab-list" style="background:#eff6ff; display:flex; border-bottom:1px solid #2563eb; flex-wrap:wrap;">`;
+		html += `<div class="head-tab-list" style="background:#f8fafc; display:flex; border-bottom:1px solid #cbd5e1; flex-wrap:wrap;">`;
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<button class="mha-head-tab-btn${h === 0 ? ' is-active' : ''}" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
 	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
-	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer; border-radius: 10px 10px 0px 0px;
-	background:${h === 0 ? '#2563eb' : '#dbeafe'}; color:${h === 0 ? '#ffffff' : '#1e3a8a'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
+	style="padding:7px 13px; border:none; border-right:1px solid ${h === 0 ? '#cbd5e1' : '#e2e8f0'}; cursor:pointer; border-radius: 10px 10px 0px 0px;
+	background:${h === 0 ? '#fff' : 'transparent'}; color:${h === 0 ? '#1d4ed8' : '#475569'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem; ${h === 0 ? 'box-shadow:inset 0 -2px 0 #2563eb;' : ''}">
 	Head ${h + 1}
     </button>`;
 		}
@@ -793,19 +781,12 @@ class AttentionEngine {
 	generateEquationsOnly(head) {
 		const { WQ, WK, WV } = head;
 		const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
-		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
-		const qLabel = isDe ? 'Query-Gewichte' : 'Query Weights';
-		const kLabel = isDe ? 'Key-Gewichte' : 'Key Weights';
-		const vLabel = isDe ? 'Value-Gewichte' : 'Value Weights';
-		const qText = isDe ? '"Wonach suche ich?"' : '"What am I looking for?"';
-		const kText = isDe ? '"Was enthalte ich?"' : '"What do I contain?"';
-		const vText = isDe ? '"Was biete ich an?"' : '"What do I offer?"';
 
 		return `
 <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:24px;">
-    <div>$$ \\underbrace{W_Q}_{\\substack{\\textbf{${qLabel}} \\\\ \\text{${qText}}}} = ${toMatrix(WQ)} $$</div>
-    <div>$$ \\underbrace{W_K}_{\\substack{\\textbf{${kLabel}} \\\\ \\text{${kText}}}} = ${toMatrix(WK)} $$</div>
-    <div>$$ \\underbrace{W_V}_{\\substack{\\textbf{${vLabel}} \\\\ \\text{${vText}}}} = ${toMatrix(WV)} $$</div>
+    <div>$$ \\underbrace{W_Q}_{\\substack{\\textbf{Query Weights} \\\\ \\text{"What am I looking for?"}}} = ${toMatrix(WQ)} $$</div>
+    <div>$$ \\underbrace{W_K}_{\\substack{\\textbf{Key Weights} \\\\ \\text{"What do I contain?"}}} = ${toMatrix(WK)} $$</div>
+    <div>$$ \\underbrace{W_V}_{\\substack{\\textbf{Value Weights} \\\\ \\text{"What do I offer?"}}} = ${toMatrix(WV)} $$</div>
 </div>
 `;
 	}
@@ -869,7 +850,7 @@ $$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{So
 </div>
 
 <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
-${(window.TM && TM.lang && TM.lang() === 'de') ? 'Klicke auf ein Wort, um zu sehen, worauf es seine Attention richtet.' : 'Click a word to see where it focuses its attention.'}
+Click a word to see where it focuses its attention.
 </p>
 <div id="${webContainerId}" style="padding-top:20px;position:relative; height:200px; margin-bottom:20px; background: var(--mn-surface, #fcfdfe); border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; overflow-x:auto; overflow-y:hidden;">
 <canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; max-width:none; pointer-events:none; z-index:5;"></canvas>
@@ -973,7 +954,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		this._markHeadRendered(headDiv, layerIdx, headIdx, hd.this_weights);
 
 		headContentObserver.unobserve(headDiv);
-		render_temml(headDiv);
+		render_temml();
 
 		this._annotateHead(headDiv, layerIdx, headIdx);
 
@@ -1021,7 +1002,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			this._morphEquationsAndResult(layerIdx, headIdx, hd, displayTokens, layerData);
 
 		if (needsTemml) {
-			render_temml(headDiv);
+			render_temml();
 			this._annotateHead(headDiv, layerIdx, headIdx);
 		}
 	}
@@ -1452,9 +1433,8 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			return `<p style="color:#94a3b8;">Attention result data not available for this head.</p>`;
 		}
 
-		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
 		return `<details class="apv-head-detail">
-	<summary>${isDe ? 'Was mit den Attention-Gewichten passiert' : 'What Happens with the Attention Weights'} — ${isDe ? 'Head' : 'Head'} ${headIdx + 1}, ${isDe ? 'Schicht' : 'Layer'} ${L}</summary>
+	<summary>What Happens with the Attention Weights — Head ${headIdx + 1}, Layer ${L}</summary>
 	${this._buildContextMatrixSection(headIdx, L, n, d_k, weights, Vi, context, displayTokens)}
 	${this._buildWhatHappensNextSection(n, d_k, d_model, n_heads)}
 </details>`;
@@ -1906,10 +1886,15 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		};
 		const leave = () => setHover(null);
 
+		// Replace previous listeners instead of stacking them on every redraw.
 		if (svg._apvHoverHandlers) {
 			svg.removeEventListener('mouseover', svg._apvHoverHandlers.over);
 			svg.removeEventListener('mouseout', svg._apvHoverHandlers.out);
 			svg.removeEventListener('mouseleave', svg._apvHoverHandlers.leave);
+		}
+		if (svg._apvHoverLeaveHandler) {
+			svg.removeEventListener('mouseleave', svg._apvHoverLeaveHandler);
+			svg._apvHoverLeaveHandler = null;
 		}
 		svg._apvHoverHandlers = { over, out, leave };
 		svg.addEventListener('mouseover', over);
@@ -2227,7 +2212,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		}
 
 		tooltip.innerHTML = html;
-		render_temml(tooltip);
+		render_temml();
 		this._positionTooltip(tooltip, e);
 	}
 
@@ -2250,7 +2235,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		}
 
 		tooltip.innerHTML = html;
-		render_temml(tooltip);
+		render_temml();
 		this._positionTooltip(tooltip, e);
 	}
 
@@ -2269,6 +2254,8 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			}
 		};
 
+		// Hovering a cell shows its explanation; leaving the matrix hides it
+		// again so the popup cannot get stuck on screen.
 		if (!svg._apvTooltipLeaveBound) {
 			svg._apvTooltipLeaveBound = true;
 			svg.addEventListener('mouseleave', () => {
@@ -2708,6 +2695,10 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			svg.removeEventListener('mouseover', svg._apvHoverHandlers.over);
 			svg.removeEventListener('mouseout', svg._apvHoverHandlers.out);
 			svg.removeEventListener('mouseleave', svg._apvHoverHandlers.leave);
+		}
+		if (svg._apvHoverLeaveHandler) {
+			svg.removeEventListener('mouseleave', svg._apvHoverLeaveHandler);
+			svg._apvHoverLeaveHandler = null;
 		}
 		svg._apvHoverHandlers = { over, out, leave };
 		svg.addEventListener('mouseover', over);

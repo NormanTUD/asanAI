@@ -1,0 +1,395 @@
+/* Transformer lesson chrome. Every colour goes through a --mn-* token so
+   light, dark and reader mode stay consistent. Moved out of the lesson PHP
+   so the markup stays readable and the styles are cacheable. */
+
+#transformer-train-card {
+	background: var(--mn-surface, #ffffff);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 0;
+	margin: 15px 0;
+	padding: 12px 14px;
+}
+.transformer-train-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 14px 22px;
+}
+.transformer-train-field {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+.transformer-train-field > .transformer-train-label {
+	font-weight: 600;
+	font-size: 0.8rem;
+	color: var(--mn-text-secondary, #475569);
+}
+.transformer-train-field input[type="number"] {
+	width: 72px;
+	padding: 5px 8px;
+	font-size: 0.9rem;
+	background: var(--mn-surface, #fff);
+	color: var(--mn-text, #1e293b);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 6px;
+}
+.transformer-train-field input[type="number"]:focus {
+	outline: 2px solid var(--mn-emerald, #10b981);
+	outline-offset: 1px;
+}
+.transformer-opt-group {
+	display: flex;
+	gap: 2px;
+	padding: 3px;
+	background: var(--mn-surface, #fff);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 8px;
+}
+.transformer-opt {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border-radius: 6px;
+	font-size: 0.85rem;
+	font-weight: 500;
+	color: var(--mn-text-secondary, #475569);
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+.transformer-opt:hover {
+	background: var(--mn-bg-subtle, #f1f5f9);
+}
+.transformer-opt input[type="radio"] {
+	margin: 0;
+	accent-color: var(--mn-emerald, #10b981);
+	cursor: pointer;
+}
+.transformer-opt:has(input:checked) {
+	background: var(--mn-emerald-light, #d1fae5);
+	color: var(--mn-text, #0f172a);
+}
+.transformer-opt input:checked + .glossary-term {
+	font-weight: 600;
+}
+.transformer-opt .glossary-term {
+	background: transparent;
+	padding: 0;
+}
+.transformer-train-actions {
+	display: flex;
+	gap: 8px;
+	margin-left: auto;
+}
+.transformer-train-status {
+	height: 32px;
+	min-height: 32px;
+	margin-top: 10px;
+	display: flex;
+	align-items: center;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	font-size: 0.85rem;
+	line-height: 1.3;
+	color: var(--mn-emerald, #047857);
+}
+#training-loss-plot {
+	width: 100%;
+	height: 200px;
+	margin-top: 10px;
+	border: 1px solid var(--mn-border, #e2e8f0);
+	border-radius: 8px;
+	background: var(--mn-surface, #fff);
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-user-drag: none;
+	touch-action: pan-y;
+}
+#training-loss-plot .nsewdrag {
+	cursor: default;
+}
+
+/* Hyperparameter sliders */
+.transformer-config-field { margin-bottom: 15px; }
+.transformer-slider-label {
+	display: block;
+	font-weight: 700;
+	color: var(--mn-text);
+}
+.transformer-slider-value {
+	font-weight: 700;
+	color: var(--mn-accent);
+}
+.transformer-slider-note {
+	font-size: 0.75rem;
+	color: var(--mn-text-muted);
+	margin: 2px 0;
+}
+
+/* Embedding / vector-math card: no visible box around the plot */
+.transformer-viz-card {
+	padding: 20px;
+	margin: 20px 0;
+}
+.transformer-vector-input {
+	width: 100%;
+	padding: 10px;
+	font-size: 1.1rem;
+	border-radius: 8px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface, #fff);
+	color: var(--mn-text, #1e293b);
+}
+.transformer-vector-result {
+	margin-top: 15px;
+	padding: 15px;
+	background: var(--mn-surface, #fff);
+	border-radius: 8px;
+	border: 1px dashed var(--mn-border, #cbd5e1);
+	overflow-x: auto;
+}
+
+/* Plotly charts sit directly on their page/card background: no frame,
+   no rounded corners, and a transparent Plotly canvas. */
+.tm-plotly-frame {
+	background: transparent;
+	box-sizing: border-box;
+}
+.tm-plotly-frame .js-plotly-plot,
+.tm-plotly-frame .js-plotly-plot .main-svg,
+.tm-plotly-frame .js-plotly-plot .main-svg .bg,
+.tm-plotly-frame .js-plotly-plot .svg-container {
+	background: transparent !important;
+}
+.tm-plotly-frame .js-plotly-plot .main-svg rect.bg {
+	fill: transparent !important;
+}
+/* Plotly adds .js-plotly-plot to its target element; the global dark
+   background must not paint a box behind the chart. */
+.tm-plotly-frame.js-plotly-plot,
+html.dark .tm-plotly-frame.js-plotly-plot {
+	background: transparent !important;
+}
+html.dark .tm-plotly-frame .js-plotly-plot,
+html.dark .tm-plotly-frame .js-plotly-plot .main-svg,
+html.dark .tm-plotly-frame .js-plotly-plot .main-svg .bg,
+html.dark .tm-plotly-frame .js-plotly-plot .svg-container {
+	background: transparent !important;
+}
+html.dark .tm-plotly-frame .js-plotly-plot .main-svg rect.bg {
+	fill: transparent !important;
+}
+/* The generic migration-container rule gives every direct child a 1px
+   border; the shared plot frame has none. */
+#transformer-migration-plots-container > .tm-plotly-frame {
+	border: 0;
+}
+/* The global dark theme paints these transformer containers with the
+   surface colour. The charts should sit on the page/card instead. */
+html.dark #transformer-plotly-space,
+html.dark #transformer-pe-wave-plot,
+html.dark #transformer-pe-shift-plot,
+html.dark #transformer-trajectory-full-path,
+html.dark #transformer-trajectory-full-path-wrapper {
+	background: transparent !important;
+}
+html.dark #transformer-plotly-space .js-plotly-plot .main-svg rect.bg,
+html.dark #transformer-pe-wave-plot .js-plotly-plot .main-svg rect.bg,
+html.dark #transformer-pe-shift-plot .js-plotly-plot .main-svg rect.bg,
+html.dark #transformer-trajectory-full-path .js-plotly-plot .main-svg rect.bg {
+	fill: transparent !important;
+}
+
+/* Residual-stream contribution chart inside the Probability Flow wrapper */
+.themeriver-controls-wrap {
+	margin-bottom: 8px;
+}
+.themeriver-controls > summary {
+	padding: 6px 0;
+}
+.themeriver-controls-body {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+	padding-top: 8px;
+}
+.themeriver-control-label {
+	color: var(--mn-text-secondary, #5c5043);
+	font-size: 0.78rem;
+}
+.themeriver-residual-body {
+	padding-top: 8px;
+}
+.themeriver-residual-head {
+	padding: 14px 16px 0;
+	font-weight: 700;
+	color: var(--mn-text);
+	font-size: .9rem;
+}
+.themeriver-residual-note {
+	margin: 4px 16px 0;
+	color: var(--mn-text-muted, #64748b);
+	font-size: .78rem;
+	line-height: 1.45;
+}
+
+.trajectory-metric-explain {
+	margin: 8px 12px 12px;
+	color: var(--mn-text-muted, #64748b);
+	font-size: 0.78rem;
+	line-height: 1.55;
+}
+.trajectory-metric-explain p { margin: 0 0 6px; }
+.trajectory-metric-explain a { color: var(--mn-accent, #004b6f); }
+
+/* Inference overlay: the next-token pass is synchronous, so paint first. */
+#tm-inference-busy {
+	position: fixed;
+	inset: 0;
+	z-index: 10000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: color-mix(in srgb, var(--mn-bg, #000000) 28%, transparent);
+}
+#tm-inference-busy[hidden] { display: none; }
+.tm-inference-busy-card {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 16px 20px;
+	background: var(--mn-surface, #ffffff);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 10px;
+	box-shadow: 0 8px 28px rgba(0, 0, 0, .18);
+	color: var(--mn-text, #0f172a);
+	font-size: .9rem;
+}
+.tm-inference-spinner {
+	width: 20px;
+	height: 20px;
+	border: 3px solid color-mix(in srgb, var(--mn-accent, #3b82f6) 25%, transparent);
+	border-top-color: var(--mn-accent, #3b82f6);
+	border-radius: 50%;
+	animation: tm-inference-spin .7s linear infinite;
+}
+@keyframes tm-inference-spin { to { transform: rotate(360deg); } }
+.themeriver-residual-block {
+	padding: 0 0 14px;
+	background: var(--mn-surface);
+}
+.themeriver-residual-block > #transformer-residual-contrib-plot,
+.themeriver-residual-block > #transformer-residual-stream-3d {
+	width: 100%;
+}
+
+@media (max-width: 640px) {
+	.transformer-train-actions {
+		margin-left: 0;
+		width: 100%;
+	}
+}
+
+
+/* Readability pass (main blog): the controls become a calm grid of cards,
+   the corpus and training card get room to breathe, and the shared step
+   cards get the blog's corner radius. */
+#transformer_config {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+	align-items: start;
+	background: transparent;
+	border: 0;
+	padding: 0;
+}
+#transformer_config > .transformer-config-field {
+	margin-bottom: 0;
+	padding: 12px 14px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 0;
+	background: var(--mn-surface, #fff);
+}
+#transformer_config > #param-breakdown-toggle,
+#transformer_config > #param-breakdown-chart,
+#transformer_config > div[style*="display: none"] {
+	grid-column: 1 / -1;
+}
+/* The example picker leads; the manual knobs live behind one summary. */
+#transformer-preset-field {
+	order: -1;
+}
+#transformer-advanced-config {
+	border: 1px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface, #fff);
+}
+#transformer-advanced-config > summary {
+	padding: 12px 14px;
+	cursor: pointer;
+	font-weight: 700;
+	color: var(--mn-text);
+	list-style-position: inside;
+}
+#transformer-advanced-config[open] > summary {
+	border-bottom: 1px solid var(--mn-border, #cbd5e1);
+}
+#transformer-advanced-config .transformer-config-field {
+	margin: 0;
+	padding: 12px 14px;
+	border: 0;
+	border-top: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 0;
+	background: transparent;
+}
+#transformer-advanced-config .transformer-config-field:first-of-type {
+	border-top: 0;
+}
+.transformer-slider-label {
+	font-size: 0.95rem;
+}
+.transformer-slider-value {
+	font-size: 1.05rem;
+}
+.transformer-slider-note {
+	font-size: 0.85rem;
+	line-height: 1.5;
+}
+.transformer_corpus {
+	padding: 12px 14px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 0;
+	background: var(--mn-surface, #fff);
+}
+.transformer_corpus label {
+	font-size: 0.95rem;
+}
+.transformer_corpus p {
+	font-size: 0.85rem;
+	line-height: 1.5;
+}
+#transformer-train-card {
+	border-radius: 0;
+	padding: 12px 14px;
+}
+.transformer-train-label {
+	font-size: 0.85rem;
+}
+.transformer-train-actions .train-btn {
+	background: var(--mn-emerald, #10b981);
+	border-color: var(--mn-emerald, #10b981);
+	color: #ffffff;
+	font-weight: 700;
+}
+.transformer-train-actions .train-btn:hover {
+	filter: brightness(1.06);
+}
+.tm-step {
+	border-radius: 12px;
+}
+.tm-capacity-note {
+	border-radius: 0 12px 12px 0;
+}

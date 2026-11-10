@@ -32,6 +32,41 @@ function _tmStepWhy(kind) {
 	return '<p class="tm-step-why">' + (de ? entry.de : entry.en) + '</p>';
 }
 
+/* Feed-forward nonlinearities. GELU is the demo default; ReLU is the
+   original choice; SiLU and SwiGLU dominate modern open-weight models.
+   SwiGLU needs a second projection (Wg) and is handled as a gated variant. */
+var TM_ACTIVATIONS = {
+	gelu:   { label: "GELU", latex: "\\mathrm{GELU}", html: "GELU" },
+	relu:   { label: "ReLU", latex: "\\mathrm{ReLU}", html: "ReLU" },
+	silu:   { label: "SiLU / Swish", latex: "\\mathrm{SiLU}", html: "SiLU" },
+	tanh:   { label: "Tanh", latex: "\\tanh", html: "tanh" },
+	swiglu: { label: "SwiGLU", latex: "\\mathrm{SwiGLU}", html: "SwiGLU" }
+};
+window.tmActivation = window.tmActivation || "gelu";
+function tmActivationKind() {
+	var kind = window.tmActivation || "gelu";
+	return TM_ACTIVATIONS[kind] ? kind : "gelu";
+}
+function tmActivationInfo(kind) {
+	return TM_ACTIVATIONS[kind || tmActivationKind()] || TM_ACTIVATIONS.gelu;
+}
+function tmActivationLabel(kind) { return tmActivationInfo(kind).label; }
+function tmActivationLatex(kind) { return tmActivationInfo(kind).latex; }
+function tmActivationIsGated(kind) { return (kind || tmActivationKind()) === "swiglu"; }
+function tmFfnExpansionAbstractTex() {
+	var kind = tmActivationKind();
+	if (tmActivationIsGated(kind)) {
+		return "\\text{out}_{L1}=\\operatorname{SiLU}(\\text{Norm}(h_1)W_1+b_1)\\odot(\\text{Norm}(h_1)W_g+b_g)";
+	}
+	return "\\text{out}_{L1}=" + tmActivationLatex(kind) + "(\\text{Norm}(h_1)W_1+b_1)";
+}
+function tmFfnPrelnAbstractTex() {
+	return "\\text{Norm}(h_1)=\\gamma_2\\odot\\frac{h_1-\\mu}{\\sqrt{\\sigma^2+\\epsilon}}+\\beta_2";
+}
+function tmFfnCompressAbstractTex() {
+	return "\\text{out}_{FFN}=\\text{out}_{L1}W_2+b_2";
+}
+
 
 /*
 If you see stuff jumping around, try setting "overflow-anchor: none" to that element.
@@ -42,6 +77,7 @@ window.tlabVisualizationMode = 'train';
 window._cachedFinalProjection = null;
 window._activeUnifiedLayerIdx = 0;
 window.isTraining = false;
+window.tmInitializer = 'xavier';
 window._paramBreakdownOpen = false;
 window._paramBreakdownRendered = false;
 const widthEmbeddingInit = 5;
@@ -49,6 +85,17 @@ const nr_fixed = 4;
 const posEmbedScalar = 1;
 let trainingDebounceTimer;
 const epsilon = 1e-6;
+function _tmHoverlabel() {
+	const dark = !!(window.__MN_DARK && window.__MN_DARK.isDark && window.__MN_DARK.isDark());
+	return {
+		bgcolor: (typeof cssVar === "function" ? cssVar("--mn-surface") : "") || (dark ? "#0f172a" : "#ffffff"),
+		bordercolor: (typeof cssVar === "function" ? cssVar("--mn-border") : "") || (dark ? "#475569" : "#cbd5e1"),
+		font: {
+			color: (typeof cssVar === "function" ? cssVar("--mn-text") : "") || (dark ? "#e2e8f0" : "#0f172a"),
+			size: 12
+		}
+	};
+}
 const attentionRenderRegistry = new Map();
 const positionalShiftRegistry = new Map();
 const embeddingRenderRegistry = new Map();
@@ -58,6 +105,73 @@ const transformerLabVisMigrationDataRegistry = new Map();
 const positionalWavesRegistry = new Map();
 window.tlab_trajectory_collector = null;
 window._trajectoryVfEnabled = false;
+window.__tmFullVizLoaded = false;
+window.__tmFullVizPending = null;
+window.__tmFullVizObserver = null;
+
+/* Cooperative queue for heavy WebGL/Plotly renders.
+   Each job gets its own frame so the browser can paint placeholders and
+   keep the page responsive between plots instead of doing one long burst. */
+window.tmScheduleHeavyRender = (function () {
+	let queue = [];
+	let pumping = false;
+	function pump() {
+		if (pumping || queue.length === 0) return;
+		pumping = true;
+		requestAnimationFrame(function () {
+			setTimeout(function () {
+				pumping = false;
+				const job = queue.shift();
+				if (job) {
+					try { job(); } catch (err) { console.error("[transformer] deferred plot render failed", err); }
+				}
+				if (queue.length) pump();
+			}, 0);
+		});
+	}
+	function schedule(fn, front) {
+		if (typeof fn !== "function") return;
+		if (front) queue.unshift(fn); else queue.push(fn);
+		pump();
+	}
+	schedule.pending = function () { return queue.length; };
+	return schedule;
+})();
+
+/* Some plot containers live inside a closed <details>. Their geometry is
+   laid out but IntersectionObserver never reports them as intersecting, so
+   they would wait forever. This small shared watcher schedules them once
+   their box comes near the viewport, without polling. */
+var tmNearViewportJobs = new Map();
+var tmNearViewportTicking = false;
+var tmNearViewportBound = false;
+function tmFlushNearViewport() {
+	tmNearViewportTicking = false;
+	if (tmNearViewportJobs.size === 0) return;
+	var vh = window.innerHeight || document.documentElement.clientHeight;
+	var margin = 800;
+	tmNearViewportJobs.forEach(function (job, key) {
+		var rect = job.container.getBoundingClientRect();
+		if (rect.top < vh + margin && rect.bottom > -margin) {
+			tmNearViewportJobs.delete(key);
+			job.run();
+		}
+	});
+}
+function tmRequestNearViewportFlush() {
+	if (tmNearViewportTicking) return;
+	tmNearViewportTicking = true;
+	requestAnimationFrame(tmFlushNearViewport);
+}
+function tmScheduleWhenNearViewport(container, key, run) {
+	tmNearViewportJobs.set(key, { container: container, run: run });
+	if (!tmNearViewportBound) {
+		tmNearViewportBound = true;
+		window.addEventListener("scroll", tmRequestNearViewportFlush, { passive: true });
+		window.addEventListener("resize", tmRequestNearViewportFlush, { passive: true });
+	}
+	tmRequestNearViewportFlush();
+}
 
 const oldTrajWrapper = document.getElementById('transformer-trajectory-full-path-wrapper');
 const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
@@ -104,17 +218,10 @@ function _defaultGrid3DConfig(overrides = {}) {
 	};
 }
 
-function _tmParamDe() {
-	return !!(window.TM && TM.lang && TM.lang() === 'de');
-}
-
-function _tmParamBreakdownBtn(open) {
-	const de = _tmParamDe();
+function paramBreakdownButtonHtml(open) {
 	const count = window._currentNrParams;
-	const suffix = count ? " · " + count.toLocaleString() + (de ? " Parameter" : " parameters") : "";
-	const label = de
-		? (open ? "Parameter-Aufschlüsselung ausblenden" : "Parameter-Aufschlüsselung zeigen")
-		: (open ? "Hide parameter breakdown" : "Show parameter breakdown");
+	const suffix = count ? " · " + count.toLocaleString() + " parameters" : "";
+	const label = open ? "Hide parameter breakdown" : "Show parameter breakdown";
 	const rotation = open ? "rotate(90deg)" : "rotate(0deg)";
 	return `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: ${rotation};">▶</span> ${label}${suffix}`;
 }
@@ -129,7 +236,7 @@ function _resetParamBreakdownState(nrDiv, toggleDiv, chartDiv) {
 		window._paramBreakdownRendered = false;
 		const btn = document.getElementById('param-breakdown-btn');
 		if (btn) {
-			btn.innerHTML = _tmParamBreakdownBtn(false);
+			btn.innerHTML = paramBreakdownButtonHtml(false);
 		}
 		paramBreakdownObserver.unobserve(chartDiv);
 	}
@@ -137,9 +244,11 @@ function _resetParamBreakdownState(nrDiv, toggleDiv, chartDiv) {
 
 function buildTrajectoryHoverText(tokenLabel, tIdx, fromStage, toStage, hVec, embSnap, snapVocab) {
 	const logitWord = _traj_get_logit_word(hVec, embSnap, snapVocab);
+	const raw = (hVec || []).slice(0, 3).map(v => Number(v || 0).toFixed(3)).join(', ');
 	return `Token: ${tokenLabel} (pos ${tIdx + 1})<br>` +
 		`From: ${fromStage}<br>` +
 		`To: ${toStage}<br>` +
+		`Raw x,y,z: [${raw}]<br>` +
 		`Nearest logit: <b>${logitWord}</b>`;
 }
 
@@ -152,8 +261,10 @@ function registerLazyRenderable(containerId, registry, observer, data, renderFn,
 		// Merge new data into existing entry, preserving UI state
 		Object.assign(existing, data);
 		existing.rendered = false;
+		existing._tmGen = (existing._tmGen || 0) + 1;
 	} else {
 		data.rendered = false;
+		data._tmGen = 1;
 		registry.set(containerId, data);
 	}
 
@@ -162,11 +273,32 @@ function registerLazyRenderable(containerId, registry, observer, data, renderFn,
 	}
 	observer.observe(container);
 
-	if (!window.isTraining && isElementInViewport(container)) {
-		renderFn();
-		const entry = registry.get(containerId);
-		if (entry) entry.rendered = true;
-	}
+	const entry = registry.get(containerId);
+	const generation = entry ? entry._tmGen : 0;
+	const queueRender = function () {
+		const current = registry.get(containerId);
+		if (!current || current.rendered || current._tmScheduled) return;
+		current._tmScheduled = true;
+		window.tmScheduleHeavyRender(function () {
+			const live = registry.get(containerId);
+			if (!live) return;
+			live._tmScheduled = false;
+			if (live.rendered) return;
+			// A newer registration replaced this one while it waited; hand
+			// off to its job so the plot renders with the current data.
+			if (live._tmGen !== generation) {
+				if (typeof live._tmQueueRender === "function") live._tmQueueRender();
+				return;
+			}
+			live.rendered = true;
+			const loader = container.querySelector('.plot-loading');
+			if (loader) loader.remove();
+			renderFn();
+		});
+	};
+	if (entry) entry._tmQueueRender = queueRender;
+	if (isElementInViewport(container)) queueRender();
+	else tmScheduleWhenNearViewport(container, containerId, queueRender);
 }
 
 function causalMultiHeadAttention(normH, weights, d_model, n_heads) {
@@ -241,7 +373,10 @@ function lockArchitectureControls(lock) {
 		'transformer-depth',             // n_layers
 		'transformer-context-size',      // context size
 		'transformer-ffn-size',          // FFN hidden width
+		'transformer-ffn-activation',    // FFN nonlinearity
 		'transformer-tokenizer-type',    // tokenizer
+		'transformer-initializer',       // initializer
+		'transformer-preset',            // config preset
 
 		// Training hyperparameters (safe, but locked by request)
 		'train-epochs',                  // epochs
@@ -288,53 +423,9 @@ function getTransformerConfig() {
 		n_layers:    parseInt(document.getElementById('transformer-depth')?.value)             || 1,
 		temperature: parseFloat(document.getElementById('transformer-temperature')?.value)     || 1.0,
 		d_ff:        Math.max(1, d_ff),
+		activation:  tmActivationKind(),
 	};
 }
-
-/* Lightweight forward pass for the six-step overview: no DOM, no Plotly,
-   no matrix rendering. It fills window.__tmLayerTrace / __tmFFNTrace so the
-   step canvases are live even before the reader reaches the heavy layer panels. */
-window.tmComputeStepTrace = function () {
-	if (!window.__tmInputState || !window.currentWeights) return false;
-	var state = window.__tmInputState;
-	var config = state.config || getTransformerConfig();
-	var d_model = config.d_model;
-	var n_heads = config.n_heads;
-	var n_layers = config.n_layers;
-	var tokens = state.tokensWithPositional;
-	var tokenStrings = state.knownTokens;
-	if (!tokens || !tokens.length || !window.currentWeights.length) return false;
-	window.__tmLayerTrace = [];
-	window.__tmFFNTrace = [];
-	var h = tokens;
-	window.__tmCollectLayerTrace = true;
-	try {
-		for (var n = 0; n < n_layers; n++) {
-			var layer = window.currentWeights[n];
-			if (!layer) break;
-			var norm = calculateLayerNorm(h, layer.gamma, layer.beta);
-			var headData = causalMultiHeadAttention(norm, layer.attention, d_model, n_heads);
-			var concat = h.map(function (_, tIdx) {
-				return [].concat.apply([], headData.map(function (hd) { return hd.context[tIdx]; }));
-			});
-			var projected = matMul(concat, layer.attention.output);
-			var h_attn = matAdd(h, projected);
-			var h_out = run_ffn_block(h_attn, layer, true, n, tokenStrings);
-			window.__tmLayerTrace[n] = { h_in: h, h_attn: h_attn, h_out: h_out, headData: headData, tokenStrings: tokenStrings };
-			h = h_out;
-		}
-	} finally {
-		window.__tmCollectLayerTrace = false;
-	}
-	window._cachedFinalProjection = {
-		h_final: h,
-		vocabulary: Object.keys(window.persistentEmbeddingSpace || {}),
-		d_model: d_model
-	};
-	for (var l = 0; l < n_layers; l++) ensureUnifiedLayerContainer(l, n_layers, 'mha-calculation-details');
-	window.dispatchEvent(new CustomEvent("tm:transformer-data"));
-	return true;
-};
 
 function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers, recordFinal) {
 	if (n_layers === undefined) n_layers = weights.length;
@@ -363,7 +454,7 @@ function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers, recor
 			const gamma2 = w.gamma2 || new Array(d_model).fill(1.0);
 			const beta2 = w.beta2 || new Array(d_model).fill(0.0);
 			const norm2 = calculateLayerNorm(result.h_attn, gamma2, beta2);
-			const outL1 = matMul(norm2, w.W1, w.b1).map(row => row.map(v => geluApprox(v)));
+			const outL1 = ffnHiddenMatrix(tmActivationKind(), norm2, w.W1, w.b1, w.Wg, w.bg);
 			const outFFN = matMul(outL1, w.W2, w.b2);
 
 			window.Prov.recordLayer(l, {
@@ -380,7 +471,7 @@ function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers, recor
 				attention: w.attention
 			}, 'R');
 
-			window.Prov.recordFfn(l, {
+			if (tmActivationKind() === 'gelu') window.Prov.recordFfn(l, {
 				gamma2, beta2,
 				norm2,
 				W1: w.W1, b1: w.b1,
@@ -429,6 +520,37 @@ function erfApprox(x) {
 
 function geluApprox(x) {
 	return 0.5 * x * (1 + erfApprox(x / Math.SQRT2));
+}
+
+function siluApprox(x) {
+	return x / (1 + Math.exp(-x));
+}
+
+function activationValue(kind, x) {
+	switch (kind || tmActivationKind()) {
+		case "relu": return Math.max(0, x);
+		case "silu": return siluApprox(x);
+		case "tanh": return Math.tanh(x);
+		case "gelu":
+		default: return geluApprox(x);
+	}
+}
+
+function activationMatrix(kind, matrix) {
+	return matrix.map(row => row.map(v => activationValue(kind, v)));
+}
+
+/* Hidden layer of the FFN. For SwiGLU the gate projection W1 (with SiLU)
+   multiplies a separate value projection Wg. Without Wg we fall back to the
+   dense SiLU activation so an older weight set never produces NaNs. */
+function ffnHiddenMatrix(kind, normed, W1, b1, Wg, bg) {
+	const gate = matMul(normed, W1, b1);
+	if (tmActivationIsGated(kind) && Wg) {
+		const value = matMul(normed, Wg, bg);
+		return gate.map((row, i) => row.map((v, j) => siluApprox(v) * ((value[i] && value[i][j]) || 0)));
+	}
+	const denseKind = tmActivationIsGated(kind) ? "silu" : kind;
+	return activationMatrix(denseKind, gate);
 }
 
 function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings = null, containerId = null, ffnLayerIndex = null) {
@@ -559,14 +681,21 @@ function dotProduct(a, b) {
 function createLazyRenderObserver(registry, renderFn, options = { threshold: 0 }) {
 	return new IntersectionObserver((entries) => {
 		entries.forEach(entry => {
-			if (entry.isIntersecting) {
-				const containerId = entry.target.id;
-				const data = registry.get(containerId);
-				if (data && !data.rendered) {
-					renderFn(containerId, data);
-					data.rendered = true;
-				}
-			}
+			if (!entry.isIntersecting) return;
+			const containerId = entry.target.id;
+			const data = registry.get(containerId);
+			if (!data || data.rendered || data._tmScheduled) return;
+			data._tmScheduled = true;
+			window.tmScheduleHeavyRender(function () {
+				const current = registry.get(containerId);
+				if (!current) return;
+				current._tmScheduled = false;
+				if (current.rendered) return;
+				current.rendered = true;
+				const loader = entry.target.querySelector('.plot-loading');
+				if (loader) loader.remove();
+				renderFn(containerId, current);
+			});
 		});
 	}, options);
 }
@@ -659,6 +788,10 @@ function _vmUpdateResult(resDiv, html) {
             }
         } catch(e) {}
 
+        if (typeof ensureDisplayMathScrollable === 'function') {
+            ensureDisplayMathScrollable(resDiv);
+        }
+
         // Re-observe the result div (innerHTML killed the old observation)
         vectorMathObserver.observe(resDiv);
     });
@@ -675,53 +808,49 @@ function getPositionColor(index, total, format = 'rgb') {
 	return `rgb(${r}, ${g}, ${b})`;
 }
 
-function _tmEcharts(dom) {
-	if (!dom || !window.echarts) return null;
-	var chart = echarts.getInstanceByDom(dom);
-	if (!chart) { dom.innerHTML = ""; chart = echarts.init(dom); }
-	return chart;
-}
-function _tmEchartsDispose(dom) {
-	if (!dom || !window.echarts) return;
-	var chart = echarts.getInstanceByDom(dom);
-	if (chart) chart.dispose();
-}
-function _tmFromPlotlyTraces(traces) {
-	var out = [];
-	(traces || []).forEach(function (t) {
-		if (!t || !t.x || !t.y) return;
-		var data = [];
-		for (var i = 0; i < t.x.length; i++) data.push([t.x[i], t.y[i]]);
-		var mode = t.mode || "";
-		if (mode.indexOf("lines") >= 0) {
-			out.push({ type: "line", name: t.name, data: data, showSymbol: false, smooth: false,
-				lineStyle: { color: (t.line && t.line.color) || undefined, width: (t.line && t.line.width) || 2 } });
-		}
-		if (mode.indexOf("markers") >= 0 || mode.indexOf("text") >= 0) {
-			out.push({ type: "scatter", name: t.name, data: data,
-				symbolSize: (t.marker && t.marker.size) || 6,
-				itemStyle: { color: (t.marker && t.marker.color) || undefined },
-				label: { show: mode.indexOf("text") >= 0,
-					formatter: function (p) { return String((t.text && t.text[p.dataIndex]) || "").replace(/<[^>]*>/g, ""); },
-					position: "top", fontSize: 9 } });
-		}
-	});
-	return out;
-}
-
 function drawTrainingPlaceholder() {
-	var box = document.getElementById('training-loss-plot');
-	if (!box) return;
-	_tmEchartsDispose(box);
-	box.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;font-size:13px;line-height:1.5;color:' + themeColor("#94a3b8") + ';"><span>The training plot appears here</span><span style="font-size:0.82em;margin-top:4px">Press Train Model to start</span></div>';
+	// The plot box is always mounted; draw a message instead of leaving it
+	// empty, so the panel reads as "not started yet" rather than "broken".
+	const box = document.getElementById('training-loss-plot');
+	if (!box || typeof Plotly === 'undefined') return;
+	const layout = {
+		annotations: [{
+			text: 'The training plot appears here<br>' +
+				'<span style="font-size:0.82em">Press Train Model to start</span>',
+			showarrow: false,
+			x: 0.5, y: 0.5,
+			xref: 'paper', yref: 'paper',
+			xanchor: 'center', yanchor: 'middle', align: 'center',
+			font: { size: 13, color: themeColor('#94a3b8') }
+		}],
+		margin: { t: 16, b: 16, l: 16, r: 16 },
+		paper_bgcolor: 'rgba(0,0,0,0)',
+		plot_bgcolor: 'rgba(0,0,0,0)',
+		dragmode: false,
+		xaxis: { visible: false },
+		yaxis: { visible: false },
+	};
+	try {
+		Plotly.react(box, [], layout, { responsive: true, displayModeBar: false });
+	} catch (e) { /* Plotly unavailable */ }
 }
 
 function reset_graph() {
-	var lp = document.getElementById('training-loss-plot');
-	if (lp) { _tmEchartsDispose(lp); lp.innerHTML = ''; }
+	// The loss panel stays mounted at a fixed 200px so the page never shifts
+	// during training. Use Plotly.purge so the next Plotly.react() call
+	// re-creates the chart cleanly — clearing innerHTML alone leaves Plotly's
+	// internal state referring to a chart whose DOM is gone, which renders
+	// an empty box.
+	const lp = document.getElementById('training-loss-plot');
+	if (lp) {
+		if (typeof Plotly !== 'undefined') {
+			try { Plotly.purge(lp); } catch (e) { lp.innerHTML = ''; }
+		} else {
+			lp.innerHTML = '';
+		}
+	}
 	drawTrainingPlaceholder();
 }
-
 
 function computePositionalEncoding(pos, d_model, scalar = 1.0) {
 	const pe = new Array(d_model);
@@ -796,11 +925,9 @@ function show_nr_of_params() {
 
 	window._currentNrParams = nr_params;
 	const breakdownBtn = document.getElementById('param-breakdown-btn');
-	if (breakdownBtn) breakdownBtn.innerHTML = _tmParamBreakdownBtn(!!window._paramBreakdownOpen);
+	if (breakdownBtn) breakdownBtn.innerHTML = paramBreakdownButtonHtml(!!window._paramBreakdownOpen);
 	if (nrDiv) {
-		nrDiv.innerHTML = _tmParamDe()
-			? `Das aktuelle Netz hat <b>${nr_params.toLocaleString()}</b> Parameter.`
-			: `The current network has <b>${nr_params.toLocaleString()}</b> parameters.`;
+		nrDiv.innerHTML = `The current network has <b>${nr_params.toLocaleString()}</b> parameters.`;
 		nrDiv.style.display = 'block';
 	}
 
@@ -824,7 +951,7 @@ function toggleParamBreakdown() {
 		chartDiv.style.display = 'block';
 
 		// Update button text with arrow already rotated via inline style
-		btn.innerHTML = _tmParamBreakdownBtn(true);
+		btn.innerHTML = paramBreakdownButtonHtml(true);
 
 		// Start observing for lazy render
 		paramBreakdownObserver.observe(chartDiv);
@@ -836,7 +963,7 @@ function toggleParamBreakdown() {
 		chartDiv.style.display = 'none';
 
 		// Update button text with arrow in default (collapsed) rotation
-		btn.innerHTML = _tmParamBreakdownBtn(false);
+		btn.innerHTML = paramBreakdownButtonHtml(false);
 
 		paramBreakdownObserver.unobserve(chartDiv);
 	}
@@ -879,7 +1006,9 @@ function renderParamBreakdown(weights) {
 		const b1Params = countAllNumbers(layer.b1);
 		const w2Params = countAllNumbers(layer.W2);
 		const b2Params = countAllNumbers(layer.b2);
-		const ffnTotal = w1Params + b1Params + w2Params + b2Params;
+		const wgParams = countAllNumbers(layer.Wg || []);
+		const bgParams = countAllNumbers(layer.bg || []);
+		const ffnTotal = w1Params + b1Params + w2Params + b2Params + wgParams + bgParams;
 
 		const norm1Params = countAllNumbers(layer.gamma) + countAllNumbers(layer.beta);
 		const norm2Params = countAllNumbers(layer.gamma2 || []) + countAllNumbers(layer.beta2 || []);
@@ -892,7 +1021,7 @@ function renderParamBreakdown(weights) {
 		layerBreakdowns.push({
 			layer: l + 1,
 			attention: { q: qParams, k: kParams, v: vParams, o: oParams, total: attnTotal },
-			ffn: { w1: w1Params, b1: b1Params, w2: w2Params, b2: b2Params, total: ffnTotal },
+			ffn: { w1: w1Params, b1: b1Params, w2: w2Params, b2: b2Params, wg: wgParams, bg: bgParams, total: ffnTotal },
 			norm: { pre_attn: norm1Params, pre_ffn: norm2Params, total: normTotal },
 			total: attnTotal + ffnTotal + normTotal
 		});
@@ -905,28 +1034,11 @@ const grandTotal = embeddingParams + totalAttention + totalFFN + totalNorm;
 }
 
 function renderParamSunburst(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff) {
-	var el = document.getElementById('param-breakdown-plotly');
-	var chart = _tmEcharts(el);
-	if (!chart) return;
-	var data = buildSunburstData(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff);
-	var nodes = {};
-	data.ids.forEach(function (id, i) {
-		nodes[id] = { name: data.labels[i], value: data.values[i], hover: data.hoverTexts[i],
-			itemStyle: { color: data.colors[i] }, children: [] };
-	});
-	var tree = [];
-	data.ids.forEach(function (id, i) {
-		var node = nodes[id], parent = data.parents[i];
-		if (parent && nodes[parent]) nodes[parent].children.push(node); else tree.push(node);
-	});
-	chart.setOption({
-		tooltip: { trigger: 'item', formatter: function (p) { return (p.data && p.data.hover) || p.name; } },
-		title: { text: _tmParamDe() ? 'Parameterverteilung' : 'Parameter Distribution', left: 'center', textStyle: { fontSize: 14 } },
-		series: [{ type: 'sunburst', data: tree, radius: ['15%', '90%'],
-			label: { rotate: 'radial', fontSize: 10 },
-			itemStyle: { borderColor: '#fff', borderWidth: 1 },
-			emphasis: { focus: 'ancestor' } }]
-	}, true);
+	const sunburstData = buildSunburstData(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff);
+	const trace = buildSunburstTrace(sunburstData);
+	const layout = buildSunburstLayout();
+
+	Plotly.react('param-breakdown-plotly', [trace], layout, { responsive: true });
 }
 
 // ─── Sunburst data assembly ─────────────────────────────────────────
@@ -957,10 +1069,10 @@ function createEmptySunburstArrays() {
 
 function appendSunburstRoot(data, grandTotal) {
 	data.ids.push('total');
-	data.labels.push(`${_tmParamDe() ? 'Gesamt' : 'Total'}: ${grandTotal.toLocaleString()}`);
+	data.labels.push(`Total: ${grandTotal.toLocaleString()}`);
 	data.parents.push('');
 	data.values.push(grandTotal);
-	data.hoverTexts.push(`${_tmParamDe() ? 'Gesamtparameter' : 'Total parameters'}: ${grandTotal.toLocaleString()}`);
+	data.hoverTexts.push(`Total parameters: ${grandTotal.toLocaleString()}`);
 	data.colors.push('#1e293b');
 }
 
@@ -969,7 +1081,7 @@ function appendSunburstEmbeddings(data, embeddingParams) {
 	data.labels.push('Embeddings');
 	data.parents.push('total');
 	data.values.push(embeddingParams);
-	data.hoverTexts.push(`${_tmParamDe() ? 'Embedding-Tabelle' : 'Embedding table'}: ${embeddingParams.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>vocab × d_model`);
+	data.hoverTexts.push(`Embedding table: ${embeddingParams.toLocaleString()} params<br>vocab × d_model`);
 	data.colors.push(data.embColor);
 }
 
@@ -978,10 +1090,10 @@ function appendSunburstLayer(data, lb, d_model, d_ff) {
 
 	// Layer parent node
 	data.ids.push(layerId);
-	data.labels.push(`${_tmParamDe() ? 'Schicht' : 'Layer'} ${lb.layer}`);
+	data.labels.push(`Layer ${lb.layer}`);
 	data.parents.push('total');
 	data.values.push(lb.total);
-	data.hoverTexts.push(`${_tmParamDe() ? 'Schicht' : 'Layer'} ${lb.layer}: ${lb.total.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}`);
+	data.hoverTexts.push(`Layer ${lb.layer}: ${lb.total.toLocaleString()} params`);
 	data.colors.push('#475569');
 
 	appendSunburstAttention(data, layerId, lb, d_model);
@@ -996,7 +1108,7 @@ function appendSunburstAttention(data, layerId, lb, d_model) {
 	data.labels.push('Attention');
 	data.parents.push(layerId);
 	data.values.push(lb.attention.total);
-	data.hoverTexts.push(`Attention: ${lb.attention.total.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>${_tmParamDe() ? 'Q + K + V + O-Projektionen' : 'Q + K + V + O projections'}`);
+	data.hoverTexts.push(`Attention: ${lb.attention.total.toLocaleString()} params<br>Q + K + V + O projections`);
 	data.colors.push(data.attnColor);
 
 	const attnChildren = [
@@ -1018,15 +1130,22 @@ function appendSunburstFFN(data, layerId, lb, d_model, d_ff) {
 	data.labels.push('FFN');
 	data.parents.push(layerId);
 	data.values.push(lb.ffn.total);
-	data.hoverTexts.push(`FFN: ${lb.ffn.total.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>W1 + b1 + W2 + b2`);
+	const hasGate = (lb.ffn.wg || 0) > 0;
+	data.hoverTexts.push(`FFN: ${lb.ffn.total.toLocaleString()} params<br>` + (hasGate ? 'W1 + b1 + gate + W2 + b2' : 'W1 + b1 + W2 + b2'));
 	data.colors.push(data.ffnColor);
 
 	const ffnChildren = [
 		{ key: 'w1', label: 'W₁', desc: `Expansion: ${d_model}×${d_ff}` },
 		{ key: 'b1', label: 'b₁', desc: `Bias: ${d_ff}` },
-		{ key: 'w2', label: 'W₂', desc: `${_tmParamDe() ? 'Kompression' : 'Compression'}: ${d_ff}×${d_model}` },
+		{ key: 'w2', label: 'W₂', desc: `Compression: ${d_ff}×${d_model}` },
 		{ key: 'b2', label: 'b₂', desc: `Bias: ${d_model}` }
 	];
+	if (hasGate) {
+		ffnChildren.splice(2, 0,
+			{ key: 'wg', label: 'W_g', desc: `SwiGLU gate: ${d_model}×${d_ff}` },
+			{ key: 'bg', label: 'b_g', desc: `SwiGLU gate bias: ${d_ff}` }
+		);
+	}
 
 	ffnChildren.forEach(({ key, label, desc }) => {
 		appendSunburstLeaf(data, `${ffnId}-${key}`, label, ffnId, lb.ffn[key], desc, data.ffnColor);
@@ -1040,14 +1159,14 @@ function appendSunburstNorm(data, layerId, lb, d_model) {
 	data.labels.push('LayerNorm');
 	data.parents.push(layerId);
 	data.values.push(lb.norm.total);
-	data.hoverTexts.push(`LayerNorm: ${lb.norm.total.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>γ + β (pre-attn & pre-FFN)`);
+	data.hoverTexts.push(`LayerNorm: ${lb.norm.total.toLocaleString()} params<br>γ + β (pre-attn & pre-FFN)`);
 	data.colors.push(data.normColor);
 
 	appendSunburstLeaf(data, `${normId}-pre-attn`, 'Pre-Attn', normId, lb.norm.pre_attn,
-		`Pre-Attention Norm: ${lb.norm.pre_attn.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>γ (${d_model}) + β (${d_model})`, data.normColor);
+		`Pre-Attention Norm: ${lb.norm.pre_attn.toLocaleString()} params<br>γ (${d_model}) + β (${d_model})`, data.normColor);
 
 	appendSunburstLeaf(data, `${normId}-pre-ffn`, 'Pre-FFN', normId, lb.norm.pre_ffn,
-		`Pre-FFN Norm: ${lb.norm.pre_ffn.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>γ₂ (${d_model}) + β₂ (${d_model})`, data.normColor);
+		`Pre-FFN Norm: ${lb.norm.pre_ffn.toLocaleString()} params<br>γ₂ (${d_model}) + β₂ (${d_model})`, data.normColor);
 }
 
 function appendSunburstLeaf(data, id, label, parentId, value, hoverDesc, color) {
@@ -1055,7 +1174,7 @@ function appendSunburstLeaf(data, id, label, parentId, value, hoverDesc, color) 
 	data.labels.push(label);
 	data.parents.push(parentId);
 	data.values.push(value);
-	data.hoverTexts.push(`${label}: ${value.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>${hoverDesc}`);
+	data.hoverTexts.push(`${label}: ${value.toLocaleString()} params<br>${hoverDesc}`);
 	data.colors.push(color);
 }
 
@@ -1080,7 +1199,7 @@ function buildSunburstTrace(data) {
 
 function buildSunburstLayout() {
 	return {
-		title: { text: _tmParamDe() ? 'Parameterverteilung' : 'Parameter Distribution', font: { size: 14, color: '#1e293b' } },
+		title: { text: 'Parameter Distribution', font: { size: 14, color: '#1e293b' } },
 		margin: { t: 40, b: 10, l: 10, r: 10 }
 	};
 }
@@ -1122,22 +1241,22 @@ function inferDModelFromBreakdowns(layerBreakdowns) {
 function buildParamTableHeader() {
 	return `<table style="width:100%; border-collapse:collapse; font-family:'Inter',sans-serif; font-size:0.8rem;">
     <thead>
-    <tr style="background:var(--tm-wash, #f1f5f9); border-bottom:2px solid var(--tm-line-strong, #cbd5e1); color:var(--tm-ink, #000);">
-	<th style="padding:6px 10px; text-align:left;">${_tmParamDe() ? 'Komponente' : 'Component'}</th>
-	<th style="padding:6px 10px; text-align:right;">${_tmParamDe() ? 'Parameter' : 'Parameters'}</th>
-	<th style="padding:6px 10px; text-align:right;">${_tmParamDe() ? '% der Gesamtzahl' : '% of Total'}</th>
-	<th style="padding:6px 10px; text-align:left;">${_tmParamDe() ? 'Form' : 'Shape'}</th>
+    <tr style="background:var(--mn-bg-subtle, #f1f5f9); border-bottom:2px solid var(--mn-border, #cbd5e1); color:var(--mn-text, #0f172a);">
+	<th style="padding:6px 10px; text-align:left;">Component</th>
+	<th style="padding:6px 10px; text-align:right;">Parameters</th>
+	<th style="padding:6px 10px; text-align:right;">% of Total</th>
+	<th style="padding:6px 10px; text-align:left;">Shape</th>
     </tr>
     </thead>
     <tbody>`;
 }
 
 function buildEmbeddingRow(embeddingParams, vocabSize, d_model, fmt, pct) {
-	return `<tr style="background:color-mix(in srgb, var(--tm-blue, #1275ac) 12%, transparent); border-bottom:1px solid var(--tm-line, #e2e8f0);">
-    <td style="padding:6px 10px; font-weight:600; color:var(--tm-blue, #1275ac);">Embeddings</td>
+	return `<tr style="background:color-mix(in srgb, var(--mn-accent) 10%, transparent); border-bottom:1px solid var(--mn-border, #e2e8f0);">
+    <td style="padding:6px 10px; font-weight:600; color:var(--mn-accent);">Embeddings</td>
     <td style="padding:6px 10px; text-align:right; font-weight:600;">${fmt(embeddingParams)}</td>
     <td style="padding:6px 10px; text-align:right;">${pct(embeddingParams)}%</td>
-    <td style="padding:6px 10px; color:var(--tm-muted, #64748b);">${vocabSize} × ${d_model || '?'}</td>
+    <td style="padding:6px 10px; color:var(--mn-text-muted);">${vocabSize} × ${d_model || '?'}</td>
     </tr>`;
 }
 
@@ -1146,34 +1265,36 @@ function buildAllLayerRows(layerBreakdowns, fmt, pct) {
 }
 
 function buildSingleLayerRows(lb, fmt, pct) {
-	let html = `<tr style="background:var(--tm-wash, #f8fafc); border-bottom:1px solid var(--tm-line, #f1f5f9); color:var(--tm-ink, #000);">
-	<td style="padding:6px 10px; font-weight:600;" colspan="4">${_tmParamDe() ? 'Schicht' : 'Layer'} ${lb.layer} — ${fmt(lb.total)} ${_tmParamDe() ? 'Parameter' : 'params'} (${pct(lb.total)}%)</td>
+	let html = `<tr style="background:var(--mn-bg-subtle, #f8fafc); border-bottom:1px solid var(--mn-border, #f1f5f9); color:var(--mn-text, #0f172a);">
+	<td style="padding:6px 10px; font-weight:600;" colspan="4">Layer ${lb.layer} — ${fmt(lb.total)} params (${pct(lb.total)}%)</td>
     </tr>`;
 
 	html += buildLayerSubRow('Attention (Q+K+V+O)', '#3b82f6', lb.attention.total, '4 × (d×d)', fmt, pct);
-	html += buildLayerSubRow('FFN (W₁+b₁+W₂+b₂)', '#f59e0b', lb.ffn.total, 'd×4d + 4d + 4d×d + d', fmt, pct);
-	html += buildLayerSubRow('LayerNorm (γ+β ×2)', '#10b981', lb.norm.total, '4 × d', fmt, pct, 'border-bottom:1px solid var(--tm-line, #e2e8f0);');
+	const hasGate = (lb.ffn.wg || 0) > 0;
+	html += buildLayerSubRow(hasGate ? 'FFN (W₁+b₁+W_g+b_g+W₂+b₂)' : 'FFN (W₁+b₁+W₂+b₂)', '#f59e0b', lb.ffn.total,
+		hasGate ? '3 × (d×d_ff) + 3 × bias' : 'd×d_ff + d_ff + d_ff×d + d', fmt, pct);
+	html += buildLayerSubRow('LayerNorm (γ+β ×2)', '#10b981', lb.norm.total, '4 × d', fmt, pct, 'border-bottom:1px solid var(--mn-border, #e2e8f0);');
 
 	return html;
 }
 
-function buildLayerSubRow(label, color, total, shape, fmt, pct, extraStyle = 'border-bottom:1px solid var(--tm-line, #f1f5f9);') {
+function buildLayerSubRow(label, color, total, shape, fmt, pct, extraStyle = 'border-bottom:1px solid var(--mn-border, #f1f5f9);') {
 	return `<tr style="${extraStyle}">
 	<td style="padding:4px 10px 4px 30px; color:${color};">${label}</td>
 	<td style="padding:4px 10px; text-align:right;">${fmt(total)}</td>
 	<td style="padding:4px 10px; text-align:right;">${pct(total)}%</td>
-	<td style="padding:4px 10px; color:var(--tm-muted, #64748b);">${shape}</td>
+	<td style="padding:4px 10px; color:var(--mn-text-muted);">${shape}</td>
     </tr>`;
 }
 
 function buildTotalRow(grandTotal, totalAttn, totalFFN, fmt, pct) {
 	const attnVsFFN = totalAttn > 0 ? (totalFFN / totalAttn).toFixed(1) : '—';
-	return `<tr style="background:color-mix(in srgb, var(--tm-green, #63a44b) 14%, transparent); border-top:2px solid var(--tm-green, #63a44b); font-weight:700;">
-    <td style="padding:8px 10px;">${_tmParamDe() ? 'Gesamt' : 'Total'}</td>
+	return `<tr style="background:color-mix(in srgb, var(--mn-emerald) 12%, transparent); border-top:2px solid var(--mn-emerald); font-weight:700;">
+    <td style="padding:8px 10px;">Total</td>
     <td style="padding:8px 10px; text-align:right;">${fmt(grandTotal)}</td>
     <td style="padding:8px 10px; text-align:right;">100%</td>
-    <td style="padding:8px 10px; color:var(--tm-green-deep, #004b6f); font-weight:normal; font-size:0.75rem;">
-	${_tmParamDe() ? `FFN ist ${attnVsFFN}× so groß wie Attention` : `FFN is ${attnVsFFN}× the size of Attention`}
+    <td style="padding:8px 10px; color:var(--mn-emerald); font-weight:normal; font-size:0.75rem;">
+	FFN is ${attnVsFFN}× the size of Attention
     </td>
     </tr>`;
 }
@@ -1209,12 +1330,163 @@ function get_or_init_embeddings(tokens, d_model) {
 	return space;
 }
 
-function initWeights(r, c) {
-	const limit = Math.sqrt(6 / (r + c));
+function _initKind() {
+	return window.tmInitializer || 'xavier';
+}
+
+function _orthogonalMatrix(r, c) {
+	const m = Array.from({ length: r }, () => Array.from({ length: c }, () => gaussianRandom()));
+	const rows = r <= c;
+	const n = rows ? r : c;
+	const length = rows ? c : r;
+	for (let a = 0; a < n; a++) {
+		for (let b = 0; b < a; b++) {
+			let dot = 0;
+			for (let k = 0; k < length; k++) dot += rows ? m[a][k] * m[b][k] : m[k][a] * m[k][b];
+			for (let k = 0; k < length; k++) {
+				if (rows) m[a][k] -= dot * m[b][k];
+				else m[k][a] -= dot * m[k][b];
+			}
+		}
+		let norm = 0;
+		for (let k = 0; k < length; k++) norm += rows ? m[a][k] * m[a][k] : m[k][a] * m[k][a];
+		norm = Math.sqrt(norm) || 1;
+		for (let k = 0; k < length; k++) {
+			if (rows) m[a][k] /= norm;
+			else m[k][a] /= norm;
+		}
+	}
+	return m;
+}
+
+function initWeights(r, c, kind, residualScale) {
+	kind = kind || _initKind();
+	const fanIn = Math.max(1, r);
+	const fanOut = Math.max(1, c);
+	if (kind === 'orthogonal') return _orthogonalMatrix(r, c);
+	if (kind === 'gpt2') {
+		const std = 0.02 * (residualScale || 1);
+		return Array.from({ length: r }, () => Array.from({ length: c }, () => gaussianRandom() * std));
+	}
+	if (kind === 'he') {
+		const std = Math.sqrt(2 / fanIn);
+		return Array.from({ length: r }, () => Array.from({ length: c }, () => gaussianRandom() * std));
+	}
+	if (kind === 'lecun') {
+		const std = Math.sqrt(1 / fanIn);
+		return Array.from({ length: r }, () => Array.from({ length: c }, () => gaussianRandom() * std));
+	}
+	if (kind === 'uniform') {
+		const limit = 1 / Math.sqrt(fanIn);
+		return Array.from({ length: r }, () => Array.from({ length: c }, () => Math.random() * 2 * limit - limit));
+	}
+	const limit = Math.sqrt(6 / (fanIn + fanOut));
 	return Array.from({ length: r }, () =>
 		Array.from({ length: c }, () => (Math.random() * 2 * limit) - limit)
 	);
 }
+
+function renderInitializerHistogram() {
+	const canvas = document.getElementById('transformer-init-hist');
+	if (!canvas) return;
+	if (!canvas._tmHistObserver && typeof ResizeObserver !== 'undefined') {
+		// The first call can run before the config column has its final
+		// width. Redraw whenever the box changes so the bitmap is never
+		// stretched by the CSS width.
+		canvas._tmHistObserver = new ResizeObserver(function () {
+			renderInitializerHistogram();
+		});
+		canvas._tmHistObserver.observe(canvas);
+	}
+	const rect = canvas.getBoundingClientRect();
+	if (rect.width < 40) return; // layout not ready yet; the observer retries
+	const w = Math.max(220, rect.width);
+	const h = Math.max(90, rect.height || 130);
+	const dpr = Math.min(window.devicePixelRatio || 1, 2);
+	canvas.width = Math.round(w * dpr);
+	canvas.height = Math.round(h * dpr);
+	const ctx = canvas.getContext('2d');
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	ctx.clearRect(0, 0, w, h);
+	const kind = _initKind();
+	const values = [];
+	const matrix = initWeights(32, 32, kind);
+	for (let i = 0; i < matrix.length; i++) for (let j = 0; j < matrix[i].length; j++) values.push(matrix[i][j]);
+	let lo = Math.min.apply(null, values), hi = Math.max.apply(null, values);
+	if (!isFinite(lo) || !isFinite(hi)) { lo = -1; hi = 1; }
+	if (hi === lo) { hi = lo + 1; }
+	const bins = 28, counts = new Array(bins).fill(0);
+	for (const v of values) {
+		const b = Math.min(bins - 1, Math.max(0, Math.floor((v - lo) / (hi - lo) * bins)));
+		counts[b]++;
+	}
+	const maxC = Math.max.apply(null, counts) || 1;
+	const padL = 8, padR = 8, padT = 8, padB = 18;
+	const bw = (w - padL - padR) / bins;
+	const ink = (typeof cssVar === 'function' ? cssVar('--mn-text') : '') || '#0f172a';
+	const muted = (typeof cssVar === 'function' ? cssVar('--mn-text-secondary') : '') || '#64748b';
+	const line = (typeof cssVar === 'function' ? cssVar('--mn-border') : '') || '#cbd5e1';
+	ctx.strokeStyle = line;
+	ctx.lineWidth = 1;
+	ctx.beginPath(); ctx.moveTo(padL, h - padB); ctx.lineTo(w - padR, h - padB); ctx.stroke();
+	for (let i = 0; i < bins; i++) {
+		const bh = counts[i] / maxC * (h - padT - padB);
+		ctx.fillStyle = 'rgba(59,130,246,.72)';
+		ctx.fillRect(padL + i * bw + 1, h - padB - bh, Math.max(1, bw - 2), bh);
+	}
+	ctx.fillStyle = muted;
+	ctx.font = '600 9px system-ui, sans-serif';
+	ctx.textAlign = 'left';
+	ctx.fillText(lo.toFixed(3), padL, h - 4);
+	ctx.textAlign = 'right';
+	ctx.fillText(hi.toFixed(3), w - padR, h - 4);
+	ctx.textAlign = 'left';
+	ctx.fillStyle = ink;
+	ctx.font = '700 10px system-ui, sans-serif';
+	ctx.fillText(kind + ' · sampled 32×32', padL, 12);
+}
+
+function applyTransformerInitializer(kind) {
+	window.tmInitializer = kind || 'xavier';
+	window.currentWeights = null;
+	if (typeof run_transformer_demo === 'function') run_transformer_demo();
+	renderInitializerHistogram();
+}
+window.applyTransformerInitializer = applyTransformerInitializer;
+
+function tmStepFfnFormulaTex() {
+	const kind = tmActivationKind();
+	if (tmActivationIsGated(kind)) {
+		return "\\operatorname{FFN}_{\\mathrm{SwiGLU}}(x) = W_2\\left(\\operatorname{SiLU}(W_1x+b_1)\\odot(W_gx+b_g)\\right)+b_2";
+	}
+	return "\\operatorname{FFN}(x) = W_2\\," + tmActivationLatex(kind) + "(W_1x+b_1)+b_2";
+}
+
+function _updateStepFfnFormula() {
+	const el = document.getElementById('tm-step-ffn-formula');
+	if (!el) return;
+	const tex = tmStepFfnFormulaTex();
+	el.setAttribute('data-tex', tex);
+	try {
+		if (window.temml && typeof temml.renderToString === 'function') {
+			el.innerHTML = temml.renderToString(tex, { displayMode: true });
+			el.setAttribute('data-tex-rendered', '1');
+		}
+	} catch (e) { /* leave the source for the next render pass */ }
+}
+
+function applyTransformerActivation(kind) {
+	const next = TM_ACTIVATIONS[kind] ? kind : 'gelu';
+	if (window.isTraining) return;
+	window.tmActivation = next;
+	window.currentWeights = null;
+	const ffnContainer = document.getElementById('ffn-equations-container');
+	if (ffnContainer) ffnContainer.innerHTML = '';
+	_updateStepFfnFormula();
+	if (typeof reset_graph === 'function') reset_graph();
+	if (typeof run_transformer_demo === 'function') run_transformer_demo();
+}
+window.applyTransformerActivation = applyTransformerActivation;
 
 window.showLayer = (containerId, layerIdx, numLayers) => {
     const activeContent = switchTab(containerId, layerIdx, numLayers,
@@ -1227,7 +1499,8 @@ window.showLayer = (containerId, layerIdx, numLayers) => {
         registryEntry.instance._renderLayerContent(layerIdx);
     }
 
-
+    const heatmaps = activeContent?.querySelectorAll('[id^="attn-heatmap-"]');
+    if (heatmaps) heatmaps.forEach(hm => { try { Plotly.Plots.resize(hm); } catch(e) {} });
 
     // SCOPED, not global
     if (activeContent) _renderTemmlOnElements([activeContent]);
@@ -1245,7 +1518,8 @@ window.showHeadInLayer = (containerId, layerIdx, headIdx, numHeads) => {
         registryEntry.instance._renderHeadContent(layerIdx, headIdx);
     }
 
-
+    const heatmapDiv = activeContent?.querySelector('[id^="attn-heatmap-"]');
+    if (heatmapDiv) { try { Plotly.Plots.resize(heatmapDiv); } catch(e) {} }
 
     // SCOPED, not global
     if (activeContent) _renderTemmlOnElements([activeContent]);
@@ -1325,57 +1599,88 @@ function render_positional_waves(d_model, tokens) {
         positionalWavesObserver,
         { d_model, tokens },
         () => _execute_positional_waves_render(d_model, tokens),
-        `<div style="padding:20px; color:#64748b;">Waiting for Positional Waves plot to load...</div>`
+        PlotState.loadingMarkup('Waiting for Positional Waves plot to load...')
     );
 }
 
 function _execute_positional_waves_render(d_model, tokens) {
-	var container = document.getElementById('transformer-pe-wave-plot');
-	var chart = _tmEcharts(container);
-	if (!chart) return;
-	var series = [];
-	var resolution = 0.1;
-	var maxPos = Math.max(1, tokens.length);
-	for (var i = 0; i < d_model; i++) {
-		var data = [];
-		for (var p = 0; p <= maxPos; p += resolution) {
-			var div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-			var val = ((i % 2 === 0) ? Math.sin(p / div_term) : Math.cos(p / div_term)) * posEmbedScalar;
-			data.push([p, val]);
+	const containerId = 'transformer-pe-wave-plot';
+	const container = document.getElementById(containerId);
+	if (!container) return;
+
+	const traces = [];
+	const resolution = 0.1;
+	const seqLen = tokens.length;
+	const maxPos = Math.max(1, seqLen);
+
+	for (let i = 0; i < d_model; i++) {
+		let x = [], y = [];
+		for (let p = 0; p <= maxPos; p += resolution) {
+			let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+			let val = ((i % 2 === 0)
+				? Math.sin(p / div_term)
+				: Math.cos(p / div_term)) * posEmbedScalar;
+			x.push(p);
+			y.push(val);
 		}
-		series.push({ type: 'line', name: 'Dim ' + i + (i % 2 === 0 ? ' Sin' : ' Cos'),
-			data: data, smooth: true, showSymbol: false, lineStyle: { width: 2 } });
+		traces.push({
+			x: x, y: y, mode: 'lines',
+			name: `Dim ${i} ${i % 2 === 0 ? 'Sin' : 'Cos'}`,
+			line: { shape: 'spline', width: 2 }
+		});
 	}
-	tokens.forEach(function (token, pos) {
-		series.push({ type: 'scatter', data: [[pos, 0]], symbolSize: 10,
-			itemStyle: { color: '#3b82f6' },
-			label: { show: true, formatter: displayToken(token), position: 'top', fontSize: 11 } });
+
+	tokens.forEach((token, pos) => {
+		traces.push({
+			x: [pos], y: [0], mode: 'markers+text',
+			text: [displayToken(token)], textposition: 'top center',
+			textfont: { color: themeColor('#1e293b'), size: 12 },
+			marker: { size: 12, color: '#3b82f6' },
+			name: `Pos ${pos}: ${displayToken(token)}`, showlegend: false
+		});
 	});
-	chart.setOption({
-		title: { text: 'Sinusoidal Positional Waves', left: 'center', textStyle: { fontSize: 16 } },
-		tooltip: { trigger: 'axis' },
-		xAxis: { type: 'value', name: 'Token Position', nameLocation: 'middle', nameGap: 28,
-			splitLine: { lineStyle: { color: themeColor('#f1f5f9') } } },
-		yAxis: { type: 'value', name: 'PE Value', min: -1.1, max: 1.1,
-			splitLine: { lineStyle: { color: themeColor('#f1f5f9') } } },
-		grid: { left: 50, right: 20, top: 50, bottom: 50 },
-		series: series
-	}, true);
+
+	const axisTitleFont = { size: 12, color: themeColor('#64748b') };
+	const tickFont = { size: 11, color: themeColor('#64748b') };
+
+	const layout = {
+		title: {
+			text: 'Sinusoidal Positional Waves',
+			font: { size: 16, color: themeColor('#1e293b') }
+		},
+		margin: { t: 50, b: 50, l: 50, r: 20 },
+		paper_bgcolor: 'rgba(0,0,0,0)',
+		plot_bgcolor: 'rgba(0,0,0,0)',
+		font: { color: themeColor('#475569') },
+		xaxis: {
+			title: { text: 'Token Position', font: axisTitleFont },
+			gridcolor: themeColor('#f1f5f9'),
+			zerolinecolor: themeColor('#e2e8f0'),
+			tickfont: tickFont
+		},
+		yaxis: {
+			title: { text: 'PE Value', font: axisTitleFont },
+			range: [-1.1, 1.1],
+			gridcolor: themeColor('#f1f5f9'),
+			zerolinecolor: themeColor('#e2e8f0'),
+			tickfont: tickFont
+		},
+		hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: themeColor('#f8fafc'), size: 12 } }
+	};
+
+	Plotly.react(containerId, traces, layout, { responsive: true, displayModeBar: false });
 }
 
-function run_transformer_demo(activeId = null, inputOnly = false) {
+function run_transformer_demo(activeId = null) {
 	const trainingInput = document.getElementById('transformer-training-data');
 	const masterInput = document.getElementById('transformer-master-token-input');
 
-	if (!trainingInput || !masterInput) {
-		if (window.__tmBusyInference && typeof window.tmHideInferenceBusy === 'function') window.tmHideInferenceBusy();
-		return;
-	}
+	if (!trainingInput || !masterInput) return;
 
 	// 1. Tokenize both for logic
 	const trainingTokens = transformer_tokenize_render(trainingInput.value, null);
-	// Inference prompts carry no EOS: the next token is read from the last
-	// real token, and EOS was never trained as an input.
+	// The inference prompt has no EOS: the next token is predicted from the
+	// last real prompt token, not from a marker the model never saw as input.
 	const masterTokens = transformer_tokenize_render(masterInput.value, null, false);
 
 	// 2. BPE visualization: respect the toggle mode
@@ -1385,138 +1690,50 @@ function run_transformer_demo(activeId = null, inputOnly = false) {
 		: trainingInput.value;
 	const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe", vizMode !== 'inference');
 
-	// Input-only pass: tokenizer, embeddings, positional encoding. The
-	// attention/FFN/output demos are built lazily when their sections are near.
-	if (inputOnly) {
-		const config = getTransformerConfig();
-		const { d_model, n_heads, n_layers, temperature } = config;
-		const vocabulary = [...new Set(trainingTokens)];
-		const knownTokens = getKnownTokensForVisualization(vizTokens, masterTokens, vocabulary);
-		if (!validateModelDimensions(d_model, n_heads)) return;
-		handleWeightReinit(d_model, n_heads, n_layers);
-		const h0 = renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature);
-		const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
-		window.__tmInputState = { h0, tokensWithPositional, knownTokens, trainingTokens, masterTokens, vocabulary, config };
-		if (window.tmComputeStepTrace) window.tmComputeStepTrace();
-		show_nr_of_params();
-		if (window.__tmBusyInference && typeof window.tmHideInferenceBusy === 'function') window.tmHideInferenceBusy();
-		return;
-	}
-
-	window.__tmBlockRendered = true;
-	if (!window.__tmSkipFinalProjection) window.__tmOutputRendered = true;
-
-	// 3. Run the network. During inference the busy overlay follows the
-	// actual stage; normal runs stay synchronous.
-	if (window.__tmBusyInference) {
-		var progress = function (kind, layer) {
-			var el = document.getElementById("tm-inference-busy-text");
-			var de = _tmParamDe();
-			var msg = "";
-			if (kind === "prepare") msg = de ? "Bereite Eingabe und Positionen vor…" : "Preparing input and positions…";
-			else if (kind === "layer") msg = de ? "Berechne Layer " + layer + ": Attention + FFN…" : "Computing layer " + layer + ": attention + FFN…";
-			else if (kind === "attention") msg = de ? "Berechne Attention · Layer " + layer + "…" : "Computing attention · layer " + layer + "…";
-			else if (kind === "ffn") msg = de ? "Berechne FFN · Layer " + layer + "…" : "Computing FFN · layer " + layer + "…";
-			else if (kind === "output") msg = de ? "Berechne nächste Token-Verteilung…" : "Computing next-token distribution…";
-			if (el && msg) el.textContent = msg;
-			return new Promise(function (resolve) { requestAnimationFrame(function () { setTimeout(resolve, 0); }); });
-		};
-		run_and_visualize_network(vizTokens, trainingTokens, masterTokens, progress).then(function () {
-			show_nr_of_params();
-			if (window.__tmBusyInference && typeof window.tmHideInferenceBusy === "function") window.tmHideInferenceBusy();
-		}).catch(function () {
-			if (window.__tmBusyInference && typeof window.tmHideInferenceBusy === "function") window.tmHideInferenceBusy();
-		});
-		return;
-	}
-
+	// 3. Run the network
 	run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
+
 	show_nr_of_params();
-}
 
-function render_transformer_block() {
-	if (window.__tmBlockRendered) return;
-	window.__tmBlockRendered = true;
-	run_transformer_demo(null, false);
-}
-
-function render_transformer_output() {
-	if (window.__tmOutputRendered) return;
-	window.__tmOutputRendered = true;
-	run_transformer_demo(null, false);
-}
-
-function observeTransformerSections() {
-	if (!window.IntersectionObserver) return;
-	var targets = [
-		{ id: 'block', fn: render_transformer_block },
-		{ id: 'output', fn: render_transformer_output }
-	];
-	targets.forEach(function (target) {
-		var el = document.getElementById(target.id);
-		if (!el) return;
-		var io = new IntersectionObserver(function (entries) {
-			if (entries.some(function (entry) { return entry.isIntersecting; })) {
-				io.disconnect();
-				target.fn();
-			}
-		}, { rootMargin: '600px 0px' });
-		io.observe(el);
-	});
-}
-
-function _tmVisible(id) {
-	var el = document.getElementById(id);
-	return !!(el && isElementInViewport(el));
-}
-
-function markTrainingDirty() {
-	window.__tmTrainingDirty = { loss: true, input: true, block: true, output: true };
-}
-
-function render_transformer_output_only() {
-	var trainingInput = document.getElementById('transformer-training-data');
-	var masterInput = document.getElementById('transformer-master-token-input');
-	if (!trainingInput || !masterInput || !window.currentWeights) return;
-	var config = getTransformerConfig();
-	var trainingTokens = transformer_tokenize_render(trainingInput.value, null);
-	var masterTokens = transformer_tokenize_render(masterInput.value, null, false);
-	var vocabulary = [...new Set(trainingTokens)];
-	renderFinalProbabilities(masterTokens, vocabulary, window.currentWeights, config.d_model, config.n_heads, config.n_layers, config.temperature);
-	window.__tmOutputRendered = true;
-}
-
-function refreshTrainingDemos() {
-	var dirty = window.__tmTrainingDirty;
-	if (!dirty) return;
-	var inputVisible = _tmVisible('inputlab');
-	var blockVisible = _tmVisible('block');
-	var outputVisible = _tmVisible('output');
-
-	if (dirty.loss && _tmVisible('training-loss-plot')) {
-		renderLossGraph();
-		dirty.loss = false;
+	// TDA live: keep a "current state" snapshot even when not training
+	if (window.TDALive && !window.isTraining) {
+		const { d_model, n_layers, n_heads } = getTransformerConfig();
+		const trainTokens = transformer_tokenize_render(trainingInput.value, null);
+		window.TDALive.captureEpoch({
+			epoch: -1,
+			tokens: trainTokens,
+			d_model, n_layers, n_heads,
+			weights: window.currentWeights,
+			prevWeights: null,
+			loss: null
+		});
 	}
-	if (dirty.input && inputVisible) {
-		run_transformer_demo(null, true);
-		calculate_vector_math();
-		tled_syncTableFromSpace();
-		dirty.input = false;
+
+	// Keep the Probability Flow residual-write chart in step with the new
+	// weights/token position (the river itself may already be rendered).
+	if (typeof _themeriver_render_residual_contrib === 'function' &&
+		document.getElementById('transformer-residual-contrib-plot')) {
+		const tokenSel = document.getElementById('themeriver-token-select');
+		const tokenIdx = tokenSel ? (parseInt(tokenSel.value) || 0) : 0;
+		_themeriver_render_residual_contrib(tokenIdx, getTransformerConfig().d_model);
 	}
-	if (dirty.block && blockVisible) {
-		window.__tmSkipInputVisuals = true;
-		window.__tmSkipFinalProjection = !outputVisible;
-		try {
-			run_transformer_demo(null, false);
-		} finally {
-			window.__tmSkipInputVisuals = false;
-			window.__tmSkipFinalProjection = false;
-		}
-		dirty.block = false;
-		dirty.output = !outputVisible;
-	} else if (dirty.output && outputVisible) {
-		render_transformer_output_only();
-		dirty.output = false;
+	if (typeof _themeriver_render_residual_3d === 'function' &&
+		document.getElementById('transformer-residual-stream-3d')) {
+		_themeriver_render_residual_3d();
+	}
+}
+
+function scrollToRunStep(attempt) {
+	attempt = attempt || 0;
+	const step = new URLSearchParams(location.search).get('step');
+	if (!step) return;
+	const target = document.getElementById('step-' + step);
+	if (!target) return;
+	target.scrollIntoView({ behavior: 'auto', block: 'start' });
+	// The loader / resume banner can move the page after this runs; retry
+	// briefly until the section actually sits at the top.
+	if (attempt < 2 && Math.abs(target.getBoundingClientRect().top) > 8) {
+		setTimeout(() => scrollToRunStep(attempt + 1), 700);
 	}
 }
 
@@ -1529,17 +1746,17 @@ function get_init_weights(n_layers, d_model, d_ff) {
 	d_ff = Math.max(1, parseInt(d_ff, 10) || d_model * 4);
 
 	for (let n = 0; n < n_layers; n++) {
-		weights.push({
+		const layer = {
 			// Norm 1 (Pre-Attention)
 			gamma: new Array(d_model).fill(1.0),
 			beta: new Array(d_model).fill(0.0),
 
 			// Attention
 			attention: {
-				query: initWeights(d_model, d_model),
-				key: initWeights(d_model, d_model),
-				value: initWeights(d_model, d_model),
-				output: initWeights(d_model, d_model)
+				query: initWeights(d_model, d_model, _initKind()),
+				key: initWeights(d_model, d_model, _initKind()),
+				value: initWeights(d_model, d_model, _initKind()),
+				output: initWeights(d_model, d_model, _initKind(), 1 / Math.sqrt(2 * n_layers))
 			},
 
 			// Norm 2 (Pre-FFN) -- NEW: Separate norm for the second block
@@ -1547,11 +1764,16 @@ function get_init_weights(n_layers, d_model, d_ff) {
 			beta2: new Array(d_model).fill(0.0),
 
 			// Feed-Forward Network
-			W1: initWeights(d_model, d_ff),
+			W1: initWeights(d_model, d_ff, _initKind()),
 			b1: new Array(d_ff).fill(0),
-			W2: initWeights(d_ff, d_model),
+			W2: initWeights(d_ff, d_model, _initKind(), 1 / Math.sqrt(2 * n_layers)),
 			b2: new Array(d_model).fill(0)
-		});
+		};
+		if (tmActivationIsGated()) {
+			layer.Wg = initWeights(d_model, d_ff, _initKind());
+			layer.bg = new Array(d_ff).fill(0);
+		}
+		weights.push(layer);
 	}
 
 	show_nr_of_params();
@@ -1656,34 +1878,44 @@ function finalizeTrainingSession(btn, status, completedAll) {
 	status.innerText += completedAll ? " Training Complete!" : " Training Stopped.";
 	hideTrainingProgressBar();
 	if (window.TDALive) window.TDALive.endSession();
-	window._tmSelectedProbCache = null;
 	if (typeof render_token_picker === 'function') render_token_picker();
 }
 
-async function train_transformer() {
-	const { d_model, n_layers, n_heads } = getTransformerConfig();
-	const btn    = document.querySelector('.train-btn');
-	const status = document.getElementById('training-status');
+async function tmWithCpuBackend(fn) {
+	let prev = null;
+	try {
+		if (typeof tf.ready === 'function') await tf.ready();
+		prev = tf.getBackend();
+	} catch (e) { prev = null; }
+	let switched = false;
+	if (prev && prev !== 'cpu') {
+		try { await tf.setBackend('cpu'); await tf.ready(); switched = true; } catch (e) { switched = false; }
+	}
+	try {
+		return await fn();
+	} finally {
+		if (switched) {
+			try { await tf.setBackend(prev); await tf.ready(); } catch (e) { /* stay on cpu */ }
+		}
+	}
+}
 
-	if (!validateTrainingPreconditions(status)) return;
-	if (window.isTraining) { window.isTraining = false; return; }
-
-	const { lr, epochs, optType } = initTrainingSession(btn, status);
+async function _runTrainingSession(lr, epochs, optType, tokens, d_model, n_layers, n_heads, btn, status) {
 	const optimizer = createOptimizer(optType, lr);
 
-	const tokens = getTrainingTokens();
-	if (tokens.length === 0) { finalizeTrainingSession(btn, status, false); return; }
-
 	ensureWeightsAndEmbeddings(tokens, n_layers, d_model);
+	if (_forceFullTransformerVisualization) _forceFullTransformerVisualization();
 
 	const weightVars = convert_weights_to_tensors(window.currentWeights);
 	const allVars    = collectTrainableVars(weightVars);
 	const startTime  = performance.now();
 	let completedAll = true;
-	// Heavy visual rebuilds are throttled; the interval grows with context so
-	// long sequences do not pay a full DOM/Plotly rebuild every epoch.
-	const ctx = getContextSize();
-	const VISUAL_INTERVAL_MS = Math.max(180, Math.min(1200, 120 + ctx * 4));
+
+	// Training is CPU-heavy; the expensive visual rebuild is throttled so the
+	// page keeps responding to hover/scroll/slider input while it runs. Longer
+	// contexts make the rebuild more expensive, so the interval scales with it.
+	const _ctx = getContextSize();
+	const VISUAL_INTERVAL_MS = Math.max(180, Math.min(1200, 120 + _ctx * 4));
 	let lastVisualSync = 0;
 
 	for (let i = 0; i < epochs; i++) {
@@ -1692,6 +1924,7 @@ async function train_transformer() {
 		const doVisualSync = isLast || (performance.now() - lastVisualSync >= VISUAL_INTERVAL_MS);
 		await runSingleEpoch(i, epochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime, doVisualSync);
 		if (doVisualSync) lastVisualSync = performance.now();
+		// Yield a frame even when the visual sync was skipped.
 		await tf.nextFrame();
 	}
 
@@ -1704,7 +1937,28 @@ async function train_transformer() {
 	// Also dispose the optimizer's internal state
 	dispose(optimizer);
 
+	// Reflect the final (or last stopped) state once the tensors are gone.
+	run_transformer_demo();
+
 	finalizeTrainingSession(btn, status, completedAll);
+}
+
+async function train_transformer() {
+	const { d_model, n_layers, n_heads } = getTransformerConfig();
+	const btn    = document.querySelector('.train-btn');
+	const status = document.getElementById('training-status');
+
+	if (!validateTrainingPreconditions(status)) return;
+	if (window.isTraining) { window.isTraining = false; return; }
+
+	const { lr, epochs, optType } = initTrainingSession(btn, status);
+
+	const tokens = getTrainingTokens();
+	if (tokens.length === 0) { finalizeTrainingSession(btn, status, false); return; }
+
+	await tmWithCpuBackend(function () {
+		return _runTrainingSession(lr, epochs, optType, tokens, d_model, n_layers, n_heads, btn, status);
+	});
 }
 
 function getTrainingTokens() {
@@ -1721,7 +1975,6 @@ function ensureWeightsAndEmbeddings(tokens, n_layers, d_model) {
 
 async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime, doVisualSync = true) {
 	const clipValue = 1.0;
-	const thisContextSize = Math.min(getContextSize(), tokens.length - 1);
 
 	// TDA live: snapshot the weights BEFORE the gradient step so we can
 	// compute the weight deltas (W_new - W_prev) for this epoch.
@@ -1737,8 +1990,6 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 	const lossValue = await cost.data();
 	window.lossHistory.push(lossValue[0]);
 
-	// Render predictions
-
 	// Progress & ETA
 	updateEpochProgress(epochIdx, totalEpochs, lossValue[0], startTime, status);
 
@@ -1748,14 +1999,14 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 
 		// TDA live: capture residual stream + weight deltas for this epoch
 		if (window.TDALive) {
-		window.TDALive.captureEpoch({
-			epoch: epochIdx,
-			tokens,
-			d_model, n_layers, n_heads,
-			weights: window.currentWeights,
-			prevWeights: tdaPrevWeights,
-			loss: lossValue[0]
-		});
+			window.TDALive.captureEpoch({
+				epoch: epochIdx,
+				tokens,
+				d_model, n_layers, n_heads,
+				weights: window.currentWeights,
+				prevWeights: tdaPrevWeights,
+				loss: lossValue[0]
+			});
 		}
 	}
 
@@ -1772,10 +2023,12 @@ function updateEpochProgress(epochIdx, totalEpochs, loss, startTime, status) {
 }
 
 async function syncTrainingState(weightVars) {
+	renderLossGraph();
 	window.currentWeights = await convert_tensors_to_weights(weightVars);
-	markTrainingDirty();
-	refreshTrainingDemos();
-	await new Promise(function (resolve) { setTimeout(resolve, 0); });
+	run_transformer_demo();
+	await tf.nextFrame();
+	calculate_vector_math();
+	tled_syncTableFromSpace();
 }
 
 function convert_weights_to_tensors(weights) {
@@ -1783,27 +2036,34 @@ function convert_weights_to_tensors(weights) {
 	const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
 
 	const vars = {
-		layers: weights.map(layer => ({
-			// Attention Weights
-			wq: tf.variable(tensor2d(layer.attention.query)),
-			wk: tf.variable(tensor2d(layer.attention.key)),
-			wv: tf.variable(tensor2d(layer.attention.value)),
-			wo: tf.variable(tensor2d(layer.attention.output)),
+		layers: weights.map(layer => {
+			const layerVars = {
+				// Attention Weights
+				wq: tf.variable(tensor2d(layer.attention.query)),
+				wk: tf.variable(tensor2d(layer.attention.key)),
+				wv: tf.variable(tensor2d(layer.attention.value)),
+				wo: tf.variable(tensor2d(layer.attention.output)),
 
-			// Layer Norm 1 Parameters
-			gamma: tf.variable(tensor1d(layer.gamma)),
-			beta: tf.variable(tensor1d(layer.beta)),
+				// Layer Norm 1 Parameters
+				gamma: tf.variable(tensor1d(layer.gamma)),
+				beta: tf.variable(tensor1d(layer.beta)),
 
-			// Layer Norm 2 Parameters (NEW)
-			gamma2: tf.variable(tensor1d(layer.gamma2 || new Array(layer.gamma.length).fill(1.0))),
-			beta2: tf.variable(tensor1d(layer.beta2 || new Array(layer.beta.length).fill(0.0))),
+				// Layer Norm 2 Parameters (NEW)
+				gamma2: tf.variable(tensor1d(layer.gamma2 || new Array(layer.gamma.length).fill(1.0))),
+				beta2: tf.variable(tensor1d(layer.beta2 || new Array(layer.beta.length).fill(0.0))),
 
-			// FFN Weights
-			w1: tf.variable(tensor2d(layer.W1)),
-			b1: tf.variable(tensor1d(layer.b1)),
-			w2: tf.variable(tensor2d(layer.W2)),
-			b2: tf.variable(tensor1d(layer.b2))
-		})),
+				// FFN Weights
+				w1: tf.variable(tensor2d(layer.W1)),
+				b1: tf.variable(tensor1d(layer.b1)),
+				w2: tf.variable(tensor2d(layer.W2)),
+				b2: tf.variable(tensor1d(layer.b2))
+			};
+			if (layer.Wg) {
+				layerVars.wg = tf.variable(tensor2d(layer.Wg));
+				layerVars.bg = tf.variable(tensor1d(layer.bg));
+			}
+			return layerVars;
+		}),
 		embeddings: tf.variable(tensor2d(embMatrix)),
 		vocab_map: vocab
 	};
@@ -1903,8 +2163,17 @@ function applySingleTransformerLayer(x, layer, n_heads, d_k, contextSize, d_mode
 
 	// Pre-LN + FFN
 	const normX2 = tf_layer_norm(x, layer.gamma2, layer.beta2);
-	let ffn = tf_gelu(add(tf.matMul(normX2, layer.w1), layer.b1));
-	ffn = add(tf.matMul(ffn, layer.w2), layer.b2);
+	const kind = tmActivationKind();
+	let ffn;
+	if (tmActivationIsGated(kind) && layer.wg) {
+		const gate = tf_silu(add(tf.matMul(normX2, layer.w1), layer.b1));
+		const value = add(tf.matMul(normX2, layer.wg), layer.bg);
+		ffn = add(tf.matMul(tf.mul(gate, value), layer.w2), layer.b2);
+	} else {
+		const denseKind = tmActivationIsGated(kind) ? 'silu' : kind;
+		ffn = tf_activation(denseKind, add(tf.matMul(normX2, layer.w1), layer.b1));
+		ffn = add(tf.matMul(ffn, layer.w2), layer.b2);
+	}
 	return add(x, ffn);
 }
 
@@ -1937,6 +2206,7 @@ function collectTrainableVars(weightVars) {
 			l.gamma, l.beta, l.gamma2, l.beta2,
 			l.w1, l.b1, l.w2, l.b2
 		);
+		if (l.wg) vars.push(l.wg, l.bg);
 	});
 	vars.push(weightVars.embeddings);
 	return vars;
@@ -1945,7 +2215,7 @@ function collectTrainableVars(weightVars) {
 async function convert_tensors_to_weights(vars) {
 	const newWeights = [];
 	for (const layer of vars.layers) {
-		newWeights.push({
+		const outLayer = {
 			attention: {
 				query: (await layer.wq.array()),
 				key: (await layer.wk.array()),
@@ -1960,7 +2230,12 @@ async function convert_tensors_to_weights(vars) {
 			beta: await layer.beta.array(),
 			gamma2: await layer.gamma2.array(),
 			beta2: await layer.beta2.array()
-		});
+		};
+		if (layer.wg) {
+			outLayer.Wg = await layer.wg.array();
+			outLayer.bg = await layer.bg.array();
+		}
+		newWeights.push(outLayer);
 	}
 
 	// Sync embeddings back to the global persistent space
@@ -1973,21 +2248,47 @@ async function convert_tensors_to_weights(vars) {
 }
 
 function renderLossGraph() {
-	if (!window.lossHistory || window.lossHistory.length === 0) { drawTrainingPlaceholder(); return; }
-	var chart = _tmEcharts(document.getElementById('training-loss-plot'));
-	if (!chart) return;
-	var data = window.lossHistory.map(function (v, i) { return [i, v]; });
-	chart.setOption({
-		title: { text: 'Training Loss', left: 'center', textStyle: { fontSize: 12 } },
-		tooltip: { trigger: 'axis' },
-		xAxis: { type: 'value', name: 'Total Epochs', nameLocation: 'middle', nameGap: 22,
-			splitLine: { lineStyle: { color: themeColor('#f1f5f9') } } },
-		yAxis: { type: 'value', name: 'Loss',
-			splitLine: { lineStyle: { color: themeColor('#f1f5f9') } } },
-		grid: { left: 44, right: 10, top: 30, bottom: 30 },
-		series: [{ type: 'line', data: data, showSymbol: false,
-			lineStyle: { color: themeColor('#10b981'), width: 2 } }]
-	}, true);
+	if (!window.lossHistory || window.lossHistory.length === 0) {
+		drawTrainingPlaceholder();
+		return;
+	}
+
+	const lineColor = themeColor('#10b981');
+	const trace = {
+		x: Array.from({length: window.lossHistory.length}, (_, i) => i),
+		y: window.lossHistory,
+		type: 'scatter',
+		mode: 'lines',
+		line: { color: lineColor, width: 2 }
+	};
+
+	const axisTitleFont = { size: 11, color: themeColor('#64748b') };
+	const tickFont = { size: 11, color: themeColor('#64748b') };
+
+	const layout = {
+		title: { text: 'Training Loss', font: { size: 12, color: themeColor('#1e293b') } },
+		margin: { t: 30, b: 30, l: 40, r: 10 },
+		paper_bgcolor: 'rgba(0,0,0,0)',
+		plot_bgcolor: 'rgba(0,0,0,0)',
+		dragmode: false,
+		font: { color: themeColor('#475569') },
+		xaxis: {
+			title: { text: 'Total Epochs', font: axisTitleFont },
+			gridcolor: themeColor('#f1f5f9'),
+			zerolinecolor: themeColor('#e2e8f0'),
+			tickfont: tickFont
+		},
+		yaxis: {
+			title: { text: 'Loss', font: axisTitleFont },
+			gridcolor: themeColor('#f1f5f9'),
+			zerolinecolor: themeColor('#e2e8f0'),
+			tickfont: tickFont
+		},
+		hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: themeColor('#f8fafc'), size: 12 } }
+	};
+
+	// Loss panel is always mounted at a fixed height; just render into it.
+	Plotly.react('training-loss-plot', [trace], layout, { responsive: true, displayModeBar: false });
 }
 
 function handleWeightReinit(d_model, n_heads, n_layers) {
@@ -2004,7 +2305,6 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 		window.last_n_heads = n_heads;
 		window.last_d_ff = d_ff;
 		window._cachedFinalProjection = null;
-		window._tmSelectedProbCache = null;
 
 		reset_graph();
 		calculate_vector_math();
@@ -2065,12 +2365,11 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 function renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature) {
 	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
 	render_token_picker();
-	if (!window.__tmSkipInputVisuals) {
-		render_embedding_plot(d_model);
-		tled_initEditor();
-		calculate_positional_injection(knownTokens, d_model);
-		render_positional_waves(d_model, knownTokens);
-	}
+	render_embedding_plot(d_model);
+	tled_initEditor();
+
+	calculate_positional_injection(knownTokens, d_model);
+	render_positional_waves(d_model, knownTokens);
 
 	const h0 = render_positional_shift_plot(knownTokens, d_model);
 
@@ -2122,7 +2421,7 @@ function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_m
 	const h1 = matAdd(h0, projected);
 	const h2 = run_ffn_block(h1, layer, true, 0, knownTokens);
 	const ffn0 = (window.__tmFFNTrace || [])[0];
-	if (window.Prov && ffn0) {
+	if (window.Prov && ffn0 && tmActivationKind() === 'gelu') {
 		window.Prov.recordFfn(0, {
 			gamma2: ffn0.gamma2, beta2: ffn0.beta2, norm2: ffn0.normed_h1,
 			W1: ffn0.W1, b1: ffn0.b1, outL1: ffn0.out_L1,
@@ -2158,11 +2457,12 @@ function _h1NamingForLayer(layerIndex) {
 	const hOutName = `h_{${base + 1}}`;
 	const hInStage = layerIndex === 0
 		? 'emb. + PE'
-		: (_tmParamDe() ? `Ausgabe Schicht ${layerIndex}` : `out layer ${layerIndex}`);
+		: `out layer ${layerIndex}`;
 	return { L, sup, hInName, hOutName, hInStage };
 }
 
 function buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming) {
+	const isDe = !!(window.TM && TM.lang && TM.lang() === "de");
 	const { sup, hInName, hInStage } = naming;
 
 	return `
@@ -2181,6 +2481,7 @@ function buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming) {
 }
 
 function buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts, naming) {
+	const isDe = !!(window.TM && TM.lang && TM.lang() === "de");
 	const { sup, hInName, hOutName, hInStage } = naming;
 
 	return `
@@ -2224,13 +2525,9 @@ function renderTrajectoryPlot(d_model) {
 		// ── Build wrapper (houses toggle + plot) ──
 		wrapper = document.createElement('div');
 		wrapper.id = wrapperId;
-		wrapper.style.cssText =
-			'border:2px solid ' + themeColor('#cbd5e1') + '; border-radius:12px; margin-top:10px; background:' + themeColor('#f8fafc') + '; box-sizing:border-box;';
+		wrapper.className = 'tm-plotly-frame';
+		wrapper.style.cssText = 'margin-top:10px; box-sizing:border-box;';
 		wrapper.setAttribute('data-d-model', d_model);
-
-		if (d_model <= 3) {
-			wrapper.appendChild(createTrajectoryVFToggleButton());
-		}
 
 		trajDiv = document.createElement('div');
 		trajDiv.id = containerId;
@@ -2240,6 +2537,10 @@ function renderTrajectoryPlot(d_model) {
 		trajDiv.setAttribute('data-d-model', d_model);
 
 		wrapper.appendChild(trajDiv);
+		if (d_model <= 3) wrapper.appendChild(createTrajectoryVFToggleButton());
+		var metricExplain = createTrajectoryMetricExplanation();
+		wrapper.appendChild(metricExplain);
+		if (window.tmTypesetMathIn) window.tmTypesetMathIn(metricExplain);
 		if (d_model <= 3) wrapper.appendChild(createTrajectoryVFNote());
 		document.getElementById('transformer-migration-plots-container').appendChild(wrapper);
 	} else {
@@ -2251,10 +2552,16 @@ function renderTrajectoryPlot(d_model) {
 
 			if (wrapper) {
 				wrapper.setAttribute('data-d-model', d_model);
+				if (!wrapper.querySelector('.trajectory-metric-explain')) {
+					var explain = createTrajectoryMetricExplanation();
+					wrapper.appendChild(explain);
+					if (window.tmTypesetMathIn) window.tmTypesetMathIn(explain);
+				}
 				const existingBtn = wrapper.querySelector('.trajectory-vf-toggle');
 				const existingNote = wrapper.querySelector('.trajectory-vf-note');
 				if (d_model <= 3 && !existingBtn) {
-					wrapper.insertBefore(createTrajectoryVFToggleButton(), trajDiv);
+					var newBtn = createTrajectoryVFToggleButton();
+					wrapper.insertBefore(newBtn, trajDiv.nextSibling || null);
 				} else if (d_model > 3 && existingBtn) {
 					existingBtn.remove();
 					window._trajectoryVfEnabled = false;
@@ -2274,9 +2581,7 @@ function renderTrajectoryPlot(d_model) {
 		trajectoryObserver,
 		{ d_model },
 		() => tlab_render_trajectory_plot(d_model),
-		`<div class="traj-loading-placeholder" style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
-	    Rendering the Token Trajectory Plot may take a while
-	</div>`
+		`<div class="plot-loading traj-loading-placeholder" style="height:100%; flex-direction:column; justify-content:flex-start; padding-top:28px; gap:14px;"><div class="spinner"></div><span>Loading token trajectory: embedding → position → layer outputs...</span></div>`
 	);
 }
 
@@ -2308,7 +2613,7 @@ function pruneOrphanedMigrationPlots() {
 	});
 }
 
-async function run_and_visualize_network(inputTokens, trainingTokens, masterTokens, progress) {
+function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	window.__tmLayerTrace = [];
 	window.__tmFFNTrace = [];
 	const config = getTransformerConfig();
@@ -2323,32 +2628,95 @@ async function run_and_visualize_network(inputTokens, trainingTokens, masterToke
 	const needsReinit = handleWeightReinit(d_model, n_heads, n_layers);
 	const weights = window.currentWeights;
 
-	// 2. Pre-attention visualizations
-	if (progress) await progress("prepare");
-	const h0 = renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature);
+	// 2. Only the embedding table is needed for the first (top) output.
+	// The token, embedding, positional-wave and shift plots are built later,
+	// when their section approaches the viewport.
+	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
+	const h0 = embedTokensWithPE(knownTokens, d_model);
 	const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
 
 	// 2b. Provenance: record the initial hidden states h_0 = embedding + PE
 	if (window.Prov) window.Prov.recordPre(knownTokens, d_model);
 
-	// 2c. Final probabilities first, so the output panel fills even if a
-	// later 3D/chart visualization throws.
-	if (!window.__tmSkipFinalProjection) {
-		renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
-	}
+	// 2c. Final probabilities first: the output projection must fill even if
+	// a later visualization (3D/GL, charts) throws. It only needs the weights.
+	renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
 
 	// 3. Prepare migration/trajectory state
 	prepareMigrationState(needsReinit);
-	// 4. Core forward pass + visualization
+	// 4. Core forward pass + visualization. Keep the heavy layer cards and
+	// plots out of the first paint; build them when the step section is near.
+	window.__tmFullVizPending = { tokensWithPositional, knownTokens, trainingTokens, h0, weights, d_model, n_heads, n_layers };
+	if (window.__tmFullVizLoaded) {
+		_runFullTransformerVisualization(window.__tmFullVizPending);
+	} else {
+		ensureFullTransformerVisualization();
+		window.dispatchEvent(new CustomEvent("tm:transformer-data"));
+	}
+}
+
+function _renderDeferredPreAttentionVisualizations(payload) {
+	render_token_picker();
+	render_embedding_plot(payload.d_model);
+	tled_initEditor();
+	calculate_positional_injection(payload.knownTokens, payload.d_model);
+	render_positional_waves(payload.d_model, payload.knownTokens);
+	render_positional_shift_plot(payload.knownTokens, payload.d_model);
+}
+
+function _runFullTransformerVisualization(payload) {
+	if (!payload) return;
+	_renderDeferredPreAttentionVisualizations(payload);
 	window.__tmCollectLayerTrace = true;
 	try {
-		if (progress) await renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers, progress);
-		else renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
+		renderForwardPassOrPlaceholder(
+			payload.tokensWithPositional, payload.knownTokens, payload.h0,
+			payload.weights, payload.d_model, payload.n_heads, payload.n_layers
+		);
 	} finally {
 		window.__tmCollectLayerTrace = false;
 	}
+	if (typeof ensureDisplayMathScrollable === 'function') ensureDisplayMathScrollable(document);
+	window.__tmFullVizLoaded = true;
 	window.dispatchEvent(new CustomEvent("tm:transformer-data"));
 }
+
+function ensureFullTransformerVisualization(force) {
+	if (window.__tmFullVizLoaded) return;
+	if (!window.__tmStepDepsReady) {
+		window.__tmFullVizAfterDeps = true;
+		return;
+	}
+	if (force && window.__tmFullVizPending) {
+		_runFullTransformerVisualization(window.__tmFullVizPending);
+		return;
+	}
+	if (window.__tmFullVizObserver) return;
+	const anchor = document.getElementById('transformer-step-visuals') ||
+		document.getElementById('ffn-equations-container');
+	if (!anchor) {
+		setTimeout(function () { ensureFullTransformerVisualization(false); }, 200);
+		return;
+	}
+	if (!('IntersectionObserver' in window)) {
+		_runFullTransformerVisualization(window.__tmFullVizPending);
+		return;
+	}
+	window.__tmFullVizObserver = new IntersectionObserver(function (entries) {
+		if (!entries.some(function (e) { return e.isIntersecting; })) return;
+		window.__tmFullVizObserver.disconnect();
+		window.__tmFullVizObserver = null;
+		_runFullTransformerVisualization(window.__tmFullVizPending);
+	}, { rootMargin: '700px 0px' });
+	window.__tmFullVizObserver.observe(anchor);
+}
+window.ensureFullTransformerVisualization = ensureFullTransformerVisualization;
+
+// Training needs the layer cards live, even if the reader pressed Train at the top.
+function _forceFullTransformerVisualization() {
+	ensureFullTransformerVisualization(true);
+}
+
 
 function getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary) {
 	const vizMode = window.tlabVisualizationMode || 'train';
@@ -2367,7 +2735,7 @@ function validateModelDimensions(d_model, n_heads) {
 	return true;
 }
 
-async function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers, progress) {
+function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers) {
 	if (tokensWithPositional.length === 0) {
 		showEmptyInputMessage();
 		return;
@@ -2378,11 +2746,9 @@ async function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens,
 		ensureUnifiedLayerContainer(l, n_layers, 'mha-calculation-details');
 	}
 
-	if (progress) await progress("layer", 1);
 	const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
 	create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
-	if (progress) await run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens, progress);
-	else run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
+	run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
 
 	renderAttentionDetails();
 	renderTrajectoryPlot(d_model);
@@ -2396,6 +2762,9 @@ async function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens,
 
 function forceRerenderVisibleMigrationPlots() {
 	transformerLabVisMigrationDataRegistry.forEach((data, id) => {
+		// A queued lazy render will run on its own; only training needs the
+		// synchronous redraw here.
+		if (!window.isTraining && (data.rendered || data._tmScheduled)) return;
 		// During training, always re-render visible plots
 		// regardless of the rendered flag
 		if (!data.rendered || window.isTraining) {
@@ -2415,6 +2784,7 @@ function forceRerenderVisibleMigrationPlots() {
 function forceRerenderVisibleTrajectoryPlot(d_model) {
 	const trajId = 'transformer-trajectory-full-path';
 	const trajEntry = trajectoryRenderRegistry.get(trajId);
+	if (!window.isTraining && trajEntry && (trajEntry.rendered || trajEntry._tmScheduled)) return;
 	if (trajEntry && (!trajEntry.rendered || window.isTraining)) {
 		const trajEl = document.getElementById(trajId);
 		if (trajEl && isElementInViewport(trajEl)) {
@@ -2433,6 +2803,9 @@ function showEmptyInputMessage() {
 
 function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature) {
 	let finalTokens = masterTokens.filter(token => vocabulary.includes(token));
+	// Unknown prompt tokens still have a zero embedding, so run them through
+	// instead of blanking the panel. With no prompt at all (e.g. after Clear)
+	// fall back to the last real training token so the projection stays filled.
 	if (finalTokens.length === 0 && masterTokens.length > 0) finalTokens = masterTokens.slice();
 	if (finalTokens.length === 0) {
 		const real = vocabulary.filter(token => token !== TM_EOS_TOKEN);
@@ -2455,10 +2828,9 @@ function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_
 window.tmShowInferenceBusy = function () {
 	const el = document.getElementById('tm-inference-busy');
 	if (!el) return;
-	window.__tmBusyInference = true;
 	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
 	const text = document.getElementById('tm-inference-busy-text');
-	if (text) text.textContent = isDe ? 'Berechne den nächsten Schritt…' : 'Computing the next step…';
+	if (text) text.textContent = isDe ? 'Berechne das nächste Token…' : 'Computing the next token…';
 	el.hidden = false;
 	clearTimeout(window.__tmBusyInferenceTimer);
 	window.__tmBusyInferenceTimer = setTimeout(function () {
@@ -2469,7 +2841,6 @@ window.tmShowInferenceBusy = function () {
 window.tmHideInferenceBusy = function () {
 	const el = document.getElementById('tm-inference-busy');
 	if (el) el.hidden = true;
-	window.__tmBusyInference = false;
 	clearTimeout(window.__tmBusyInferenceTimer);
 };
 
@@ -2478,13 +2849,18 @@ window.select_suggested_word = (word) => {
 	if (!masterInput) return;
 
 	if (typeof window.tmShowInferenceBusy === 'function') window.tmShowInferenceBusy();
+	// Let the overlay paint before the synchronous forward pass blocks the thread.
 	requestAnimationFrame(function () {
 		setTimeout(function () {
+			// Keep the token separate without inserting a visible space.
 			if (masterInput.value.length > 0 && !/[\s\u200B]$/.test(masterInput.value)) {
 				masterInput.value += TM_TOKEN_BOUNDARY;
 			}
 			masterInput.value += word;
-			masterInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+			// Set master as active and re-run
+			run_transformer_demo('transformer-master-token-input');
+			if (typeof window.tmHideInferenceBusy === 'function') window.tmHideInferenceBusy();
 		}, 0);
 	});
 };
@@ -2517,25 +2893,6 @@ function computeFinalPredictions(h_last, vocabulary, d_model, temperature) {
 	return { logits, predictions };
 }
 
-function buildPredictionChipsHtml(predictions, temperature) {
-	let html = `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 8px;">`;
-
-	predictions.forEach(p => {
-		const intensity = Math.min(1, p.prob * 5);
-		const safeWord = p.word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-		const displayWord = /^\s+$/.test(p.word) ? p.word.replace(/ /g, '␣') : p.word;
-		const title = `Original: ${(p.originalProb * 100).toFixed(1)}%; T=${temperature}: ${(p.prob * 100).toFixed(1)}%`;
-
-		html += `<button class="predict-chip" title="${escapeHtml(title)}" onclick="select_suggested_word('${safeWord}')"
-	    style="background:rgba(59, 130, 246, ${0.18 + intensity * 0.55}); padding:4px 8px; border-radius:0; border:1px solid #3b82f6; cursor:pointer; color: var(--mn-text); text-align:left; font-size:.75rem; line-height:1.25;">
-	    <strong>${escapeHtml(displayWord)}</strong> (${(p.prob * 100).toFixed(1)}%)
-	</button>`;
-	});
-
-	html += `</div>`;
-	return html;
-}
-
 function buildLogitDetailsHtml(h_last, logits) {
 	const temperature = parseFloat(document.getElementById('transformer-temperature')?.value) || 1.0;
 	const logitValues = logits.map(l => l.val);
@@ -2565,6 +2922,8 @@ function buildLogitDetailsHtml(h_last, logits) {
 }
 
 function buildHLastDisplayLatex(h_last) {
+	// One component per matrix row, so long residual vectors stay readable
+	// without a very wide single-line equation.
 	return h_last.map((v, dim) =>
 		`\\underbrace{${v.toFixed(nr_fixed)}}_{\\substack{h_{${dim}} \\\\ \\text{hidden dim ${dim}}}}`
 	).join(' \\\\ ');
@@ -2670,6 +3029,7 @@ function buildTemperatureSection(logits, logitValues, temperature) {
     const scaledProbs = softmax(scaledLogitValues);
 
     const scaledProbRows = buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature);
+    const entropySection = buildEntropyLatex(probs, scaledProbs, logits.length, temperature);
 
     return `
 <div style="overflow-x:auto; padding:10px 0;">
@@ -2683,7 +3043,7 @@ $$
 $$
 </div>
 
-`;
+        ${entropySection}`;
 }
 
 function buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature) {
@@ -2704,7 +3064,7 @@ function buildEntropyLatex(probs, scaledProbs, vocabSize, temperature) {
     const entropyScaled = computeEntropyBits(scaledProbs);
     const maxEntropy = Math.log2(vocabSize);
 
-    return `<div style="overflow-x:auto; padding:10px 0;">
+    return `<div class="lg-scroll" style="padding:10px 0;">
 $$
 \\underbrace{H_{T=1}}_{\\substack{\\text{Entropy of} \\\\ \\text{unscaled distribution} \\\\ \\text{(Temperature = 1)}}} = ${entropyOrig.toFixed(4)} \\text{ bits}, \\quad
 \\underbrace{H_{T=${temperature.toFixed(1)}}}_{\\substack{\\text{Entropy after} \\\\ \\text{temperature scaling} \\\\ \\text{(T = ${temperature.toFixed(1)})}}} = ${entropyScaled.toFixed(4)} \\text{ bits}, \\quad
@@ -2714,17 +3074,50 @@ $$
 }
 
 function ensureProjectionSubContainers(container) {
-	// The prediction chips were removed; the available-token palette is the
-	// single place to append tokens. Keep only the formula details panel.
-	const oldResults = document.getElementById('tlab-final-results');
-	if (oldResults) oldResults.remove();
+	const oldChips = document.getElementById('tlab-final-chips');
+	if (oldChips) oldChips.remove();
 
 	let detailsDiv = document.getElementById('tlab-final-details');
 	if (!detailsDiv) {
 		container.innerHTML = `<div id="tlab-final-details"></div>`;
 		detailsDiv = document.getElementById('tlab-final-details');
 	}
+
 	return { detailsDiv };
+}
+
+function renderFinalAngleView() {
+	const data = window._tmFinalUnembed;
+	const view = document.getElementById('tm-final-angle-view');
+	const finalSel = document.querySelector('.tm-final-view select');
+	if (finalSel) finalSel.value = window.tmUnembedAngleView ? 'angle' : 'logits';
+	if (!data || !view) return;
+	if (!window.tmUnembedAngleView) { view.style.display = 'none'; return; }
+	view.style.display = 'block';
+	const h = data.h_last || [];
+	const space = window.persistentEmbeddingSpace || {};
+	let hn = 0;
+	for (let i = 0; i < h.length; i++) hn += h[i] * h[i];
+	hn = Math.sqrt(hn) || 1;
+	const rows = data.vocabulary.map(word => {
+		const w = space[word] || [];
+		let dot = 0, wn = 0;
+		for (let i = 0; i < h.length; i++) {
+			dot += (h[i] || 0) * (w[i] || 0);
+			wn += (w[i] || 0) * (w[i] || 0);
+		}
+		const cos = Math.max(-1, Math.min(1, dot / (hn * (Math.sqrt(wn) || 1))));
+		return { word, cos, angle: Math.acos(cos) / Math.PI };
+	}).sort((a, b) => b.cos - a.cos).slice(0, 12);
+	view.innerHTML = '<div class="tm-final-angle-title">Angle view: h_last vs vocabulary rows</div>'
+		+ '<p class="tm-final-angle-note">cos = 1 means same direction; θ/π 0 = same, 1 = opposite. This is a normalized direction view, not the model probability.</p>'
+		+ rows.map(r => '<div class="tm-final-angle-row"><span class="tm-final-angle-word">' + escapeHtml(displayToken(r.word)) + '</span>'
+			+ '<span class="tm-final-angle-bar"><i style="width:' + Math.max(0, Math.round(r.cos * 100)) + '%"></i></span>'
+			+ '<span class="tm-final-angle-val">cos ' + r.cos.toFixed(2) + ' · θ/π ' + r.angle.toFixed(3) + '</span></div>').join('');
+}
+if (!window.__tmFinalAngleListener) {
+	window.__tmFinalAngleListener = true;
+	window.addEventListener('tm:unembedview', renderFinalAngleView);
 }
 
 function render_final_projection(h_final, vocabulary, d_model, temperature) {
@@ -2736,6 +3129,21 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
     const { detailsDiv } = ensureProjectionSubContainers(container);
 
     detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
+    window._tmFinalUnembed = { h_last, vocabulary, d_model, temperature };
+    const viewControl = document.createElement('label');
+    viewControl.className = 'tm-final-view';
+    const isDeView = !!(window.TM && TM.lang && TM.lang() === 'de');
+    viewControl.innerHTML = (isDeView ? 'Wortansicht' : 'Word view') + ' <select><option value="logits"' + (!window.tmUnembedAngleView ? ' selected' : '') + '>' + (isDeView ? 'Logits' : 'Logits') + '</option><option value="angle"' + (window.tmUnembedAngleView ? ' selected' : '') + '>' + (isDeView ? 'Winkel (Cosinus)' : 'Angle (cosine)') + '</option></select>';
+    const viewSelect = viewControl.querySelector('select');
+    viewSelect.addEventListener('change', () => {
+        window.tmUnembedAngleView = viewSelect.value === 'angle';
+        window.dispatchEvent(new CustomEvent('tm:unembedview', { detail: { angle: window.tmUnembedAngleView } }));
+    });
+    detailsDiv.insertBefore(viewControl, detailsDiv.firstChild);
+    const angleView = document.createElement('div');
+    angleView.id = 'tm-final-angle-view';
+    detailsDiv.appendChild(angleView);
+    renderFinalAngleView();
 
     // SCOPED rendering — do NOT call global render_temml()
     _renderTemmlOnElements([detailsDiv]);
@@ -2815,7 +3223,7 @@ function _tmMetricTitle(base) {
 
 function _tmUnitSphereSeries() {
 	const rows = [];
-	const nu = 18, nv = 36;
+	const nu = 12, nv = 24;
 	for (let u = 0; u <= nu; u++) {
 		const row = [];
 		const theta = Math.PI * u / nu;
@@ -2826,7 +3234,7 @@ function _tmUnitSphereSeries() {
 		rows.push(row);
 	}
 	const points = [];
-	rows.forEach(row => row.forEach(pt => points.push(pt)));
+	rows.forEach((row, u) => row.forEach((pt, v) => { if (u % 2 === 0 && v % 2 === 0) points.push(pt); }));
 	return [
 		{ type: 'surface', name: 'unit sphere', data: rows, shading: 'color', itemStyle: { color: '#3b82f6', opacity: 0.18 }, wireframe: { show: true, lineStyle: { color: '#3b82f6', opacity: 0.12 } }, silent: true },
 		{ type: 'scatter3D', name: 'unit sphere points', data: points, symbolSize: 2, itemStyle: { color: '#3b82f6', opacity: 0.18 }, silent: false, tooltip: { formatter: () => (window.tmMetric && window.tmMetric.sphereHint ? window.tmMetric.sphereHint(false) : '') } }
@@ -2842,7 +3250,7 @@ function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
 		embeddingObserver,
 		{ d_model: dimensions, highlightPos, steps },
 		() => _execute_embedding_render(dimensions, highlightPos, steps),
-		`<div style="padding:20px; color:#64748b;">Wait for Embedding Space to load...</div>`
+		PlotState.loadingMarkup('Wait for Embedding Space to load...')
 	);
 }
 
@@ -2927,7 +3335,7 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 				const cone = window.tmPlotly.coneTrace([{ x: last[0], y: last[1] || 0, z: last[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], stepColor, step.label || 'step');
 				if (cone) traces.push(cone);
 			} else {
-				const arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 24).map(pt => [pt[0], pt[1]]) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
+				const arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 14).map(pt => [pt[0], pt[1]]) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
 				traces.push({ type: 'scatter', mode: 'lines+markers', x: arc2.map(pt => pt[0]), y: arc2.map(pt => pt[1]), line: { color: stepColor, width: 2 }, marker: { symbol: arc2.map((_, k) => k === arc2.length - 1 ? 'arrow' : 'circle'), size: arc2.map((_, k) => k === arc2.length - 1 ? 8 : (k === 0 ? 6 : 0)), color: stepColor, angleref: 'previous' }, hovertext: arc2.map(() => tip), hovertemplate: '%{hovertext}<extra></extra>', showlegend: false });
 			}
 		});
@@ -2940,6 +3348,7 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 	}
 	const title = _tmMetricTitle('Embedding Space');
 	const layout = dimensions === 3 ? window.tmPlotly.layout3D(title, ['Dim 0', 'Dim 1', 'Dim 2']) : window.tmPlotly.layout2D(title, ['Dim 0', 'Dim 1']);
+	if (dimensions === 3) window.tmPlotly.equalize3D(layout, traces);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
 	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
 }
@@ -3011,6 +3420,7 @@ function _embedding_render_highdim_pca(container, tokens, dimensions, highlightP
 		});
 	}
 	const layout = window.tmPlotly.layout3D(_tmMetricTitle('Embedding Space · PCA (d→3)'), ['PC 1', 'PC 2', 'PC 3']);
+	window.tmPlotly.equalize3D(layout, traces);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
 	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
 }
@@ -3030,6 +3440,11 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 
 	if (window.Plotly) { try { Plotly.purge(container); } catch (e) { /* not a Plotly node */ } }
 	container.innerHTML = '';
+	const embHeight = (typeof getTrajectoryPlotHeight === 'function')
+		? getTrajectoryPlotHeight(dimensions)
+		: (dimensions <= 3 ? 850 : 520);
+	container.style.height = embHeight + 'px';
+	container.style.minHeight = embHeight + 'px';
 
 	const tokens = Object.keys(window.persistentEmbeddingSpace);
 
@@ -3045,18 +3460,43 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 // Updated Tokenizer to allow different containers
 
 const TM_EOS_TOKEN = '<|endoftext|>';
-// Invisible chip boundary, keeps adjacent chips as separate tokens
+// Invisible boundary between adjacent chips: keeps them as separate tokens
 // without inserting a visible space the reader did not type.
 const TM_TOKEN_BOUNDARY = '\u200B';
+
+function _getDemoBPETokenizer(corpus) {
+	if (typeof BPETokenizer === 'undefined') return null;
+	const key = String(corpus || '');
+	if (!window.__tmDemoBPETokenizer || window.__tmDemoBPETokenizer.corpus !== key) {
+		const tokenizer = new BPETokenizer();
+		tokenizer.train(key, { maxMerges: 60, minFrequency: 2 });
+		window.__tmDemoBPETokenizer = { corpus: key, tokenizer: tokenizer };
+	}
+	return window.__tmDemoBPETokenizer.tokenizer;
+}
 
 function tokenizeTextCore(text, type) {
 	const raw = String(text == null ? '' : text);
 	const cleaned = raw.split(TM_EOS_TOKEN).join(' ').replace(/ {2,}/g, ' ');
+	if (type === 'chars') {
+		return Array.from(cleaned);
+	}
+	if (type === 'bpe') {
+		const corpusEl = document.getElementById('transformer-training-data');
+		const corpus = corpusEl ? corpusEl.value : cleaned;
+		const tokenizer = _getDemoBPETokenizer(corpus);
+		if (tokenizer) {
+			const bpeTokens = tokenizer.tokenize(cleaned);
+			if (bpeTokens.length) return bpeTokens;
+		}
+	}
 	const tokens = [];
 	let i = 0;
 	while (i < cleaned.length) {
 		const ch = String.fromCodePoint(cleaned.codePointAt(i));
 		if (ch === TM_TOKEN_BOUNDARY) {
+			// Chip boundary, not a token: keeps adjacent chips separate
+			// without creating a space token.
 			i += ch.length;
 			continue;
 		}
@@ -3144,10 +3584,6 @@ function _tmTokenPickerSelectedProbs(tokens) {
 	if (window.isTraining || !window.currentWeights || !window.persistentEmbeddingSpace) return {};
 	const cfg = getTransformerConfig();
 	if (!cfg.d_model || !cfg.n_heads || !cfg.n_layers || cfg.d_model % cfg.n_heads !== 0) return {};
-	const cacheKey = tokens.join('\u0001') + '|' + (document.getElementById('transformer-temperature')?.value || '1');
-	if (window._tmSelectedProbCache && window._tmSelectedProbCache.key === cacheKey) {
-		return window._tmSelectedProbCache.value;
-	}
 	try {
 		const h = runSimpleForwardPass(tokens, window.currentWeights, cfg.d_model, cfg.n_heads, cfg.n_layers, false);
 		const vocab = Object.keys(window.persistentEmbeddingSpace).filter(token => token !== TM_EOS_TOKEN);
@@ -3169,7 +3605,6 @@ function _tmTokenPickerSelectedProbs(tokens) {
 			const probs = softmax(logits.map(v => v / (cfg.temperature || 1)));
 			result[i] = probs[idx];
 		}
-		window._tmSelectedProbCache = { key: cacheKey, value: result };
 		return result;
 	} catch (e) {
 		return {};
@@ -3239,32 +3674,26 @@ function render_token_picker() {
 		var clearBtn = document.getElementById('transformer-token-picker-clear');
 		var typeEl = document.getElementById('transformer-tokenizer-type');
 		var tempEl = document.getElementById('transformer-temperature');
-		function runAfterBusyPaint(work) {
-			if (window.tmShowInferenceBusy) window.tmShowInferenceBusy();
-			requestAnimationFrame(function () {
-				setTimeout(work, 0);
-			});
-		}
 		palette.addEventListener('click', function (event) {
 			var chip = event.target.closest && event.target.closest('.tm-token-chip');
 			if (!chip) return;
 			var token = chip.getAttribute('data-token');
 			if (token == null || token === TM_EOS_TOKEN) return;
-			runAfterBusyPaint(function () {
-				if (token.indexOf('##') === 0) {
-					input.value += token.slice(2);
-				} else {
-					var needsBoundary = input.value && !/[\s\u200B]$/.test(input.value) && !/^\s/.test(token);
-					input.value += (needsBoundary ? TM_TOKEN_BOUNDARY : '') + token;
-				}
-				input.dispatchEvent(new Event('input', { bubbles: true }));
-			});
+			// Keep words as separate tokens: a non-space token appended after
+			// another word gets an invisible boundary, not a visible space.
+			if (token.indexOf('##') === 0) {
+				input.value += token.slice(2);
+			} else {
+				var needsBoundary = input.value && !/[\s\u200B]$/.test(input.value) && !/^\s/.test(token);
+				input.value += (needsBoundary ? TM_TOKEN_BOUNDARY : '') + token;
+			}
+			input.dispatchEvent(new Event('input', { bubbles: true }));
+			render_token_picker_chips();
 		});
 		if (clearBtn) clearBtn.addEventListener('click', function () {
-			runAfterBusyPaint(function () {
-				input.value = '';
-				input.dispatchEvent(new Event('input', { bubbles: true }));
-			});
+			input.value = '';
+			input.dispatchEvent(new Event('input', { bubbles: true }));
+			render_token_picker_chips();
 		});
 		chips.addEventListener('click', function (event) {
 			var chip = event.target.closest && event.target.closest('.tm-token-chip');
@@ -3273,13 +3702,13 @@ function render_token_picker() {
 			var type = typeEl ? typeEl.value : 'regex';
 			var tokens = tokenizeTextCore(input.value, type);
 			if (idx < 0 || idx >= tokens.length) return;
-			runAfterBusyPaint(function () {
-				tokens.splice(idx, 1);
-				input.value = tokens.join(TM_TOKEN_BOUNDARY);
-				input.dispatchEvent(new Event('input', { bubbles: true }));
-			});
+			tokens.splice(idx, 1);
+			input.value = tokens.join(TM_TOKEN_BOUNDARY);
+			input.dispatchEvent(new Event('input', { bubbles: true }));
+			render_token_picker_chips();
 		});
 		input.addEventListener('input', function () {
+			render_token_picker_chips();
 			render_token_picker();
 		});
 		if (tempEl) tempEl.addEventListener('input', function () { render_token_picker(); });
@@ -3291,8 +3720,10 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe", 
 	const typeElement = document.getElementById('transformer-tokenizer-type');
 	const type = typeElement ? typeElement.value : 'regex';
 
-	// Training corpora end with EOS so the model learns to stop; inference
-	// prompts must not, or the model reads the next token at the EOS position.
+	// Training corpora end with EOS so the model learns when to stop.
+	// Inference prompts must NOT carry it: the next-token distribution is
+	// read from the last real prompt token, and EOS was never trained as an
+	// input token, so appending it made the model predict EOS right away.
 	const tokens = appendEos ? tokenizeText(text, type) : tokenizeTextCore(text, type);
 
 	const container = document.getElementById(containerId);
@@ -3406,12 +3837,14 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, toke
 	let b1 = assertShape('b1', params.b1, d_ff, 1);
 	let W2 = assertShape('W2', params.W2, d_ff, d_model);
 	let b2 = assertShape('b2', params.b2, d_model, 1);
+	let Wg = params.Wg || null;
+	let bg = params.bg || null;
 	let gamma2 = params.gamma2 || new Array(d_model).fill(1.0);
 	let beta2 = params.beta2 || new Array(d_model).fill(0.0);
 
 	const normed_h1 = calculateLayerNorm(h1, gamma2, beta2);
 
-	const out_L1 = matMul(normed_h1, W1, b1).map(row => row.map(v => geluApprox(v)));
+	const out_L1 = ffnHiddenMatrix(tmActivationKind(), normed_h1, W1, b1, Wg, bg);
 
 	const out_FFN = matMul(out_L1, W2, b2);
 
@@ -3419,12 +3852,13 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, toke
 
 	if (window.__tmCollectLayerTrace) {
 		if (!window.__tmFFNTrace) window.__tmFFNTrace = [];
-		window.__tmFFNTrace[layerIndex] = { h1, normed_h1, out_L1, out_FFN, h2, W1, b1, W2, b2, gamma2, beta2 };
+		window.__tmFFNTrace[layerIndex] = { h1, normed_h1, out_L1, out_FFN, h2, W1, b1, W2, b2, Wg, bg, gamma2, beta2 };
 	}
 
 	if (!skipRender) {
-		// Provenance: record the FFN sublayer values
-		if (window.Prov) {
+		// Provenance: the FFN derivation cards assume GELU. Skip them for
+		// the other nonlinearities instead of showing a wrong formula.
+		if (window.Prov && tmActivationKind() === 'gelu') {
 			window.Prov.recordFfn(layerIndex, {
 				gamma2, beta2,
 				norm2: normed_h1,
@@ -3436,13 +3870,13 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, toke
 				h1
 			});
 		}
-		render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2, layerIndex, tokenStrings);
+		render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2, layerIndex, tokenStrings, Wg, bg);
 	}
 
 	return h2;
 }
 
-function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
+function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings, Wg, bg) {
 	ensureFFNLayerContainers(layerIndex);
 	const prefix = `unified-layer-${layerIndex}`;
 
@@ -3450,21 +3884,21 @@ function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, b
 	if (!contentDiv) return;
 
 	// Store latest data for deferred rendering
-	contentDiv._deferredFFNData = { h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings };
+	contentDiv._deferredFFNData = { h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings, Wg, bg };
 
 	if (contentDiv.style.display === 'none') {
 		contentDiv.dataset.ffnRendered = 'false';
 		return;
 	}
 
-	const hash = _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta);
+	const hash = _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta) + '|' + tmActivationKind() + '|' + (Wg ? 'gate' : '');
 
 	if (contentDiv.dataset.ffnRendered === 'true' && contentDiv._lastFFNHash === hash) {
 		return;
 	}
 
 	contentDiv._lastFFNHash = hash;
-	_writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings);
+	_writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings, Wg, bg);
 	contentDiv.dataset.ffnRendered = 'true';
 }
 
@@ -3512,20 +3946,24 @@ function _heightLockedUpdate(el, newHtml) {
 	return true;
 }
 
-function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
+function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings, Wg, bg) {
 	const naming = _ffnNaming(layerIndex);
 	const ts = tokenStrings || null;
 
 	const step1 = document.getElementById(`${prefix}-step-1`);
 	const step2 = document.getElementById(`${prefix}-step-2`);
 	const step3 = document.getElementById(`${prefix}-step-3`);
-	if (!step1 || !step2 || !step3) return;
+	const prelnEl = document.getElementById(`${prefix}-ffn-preln-formula`);
+	const expandEl = document.getElementById(`${prefix}-ffn-expand-formula`);
+	if (!step1 || !step2 || !step3 || !prelnEl || !expandEl) return;
 
-	const step1Html = _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, ts);
+	const { sup, h1name, h1Stage } = naming;
+	const prelnHtml = _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta, ts);
+	const expansionHtml = _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts, Wg, bg);
 	const step2Html = _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts);
 	const step3Html = _buildFFNStep3Html(naming, h1, out_FFN, h2, ts);
 
-	heightLockedMathUpdate([step1, step2, step3], [step1Html, step2Html, step3Html]);
+	heightLockedMathUpdate([prelnEl, expandEl, step2, step3], [prelnHtml, expansionHtml, step2Html, step3Html]);
 
 	// Provenance: annotate the three FFN steps
 	if (window.Prov) {
@@ -3561,21 +3999,13 @@ function _ffnNaming(layerIndex) {
     const h1name = `h_{${base + 1}}`;
     const h2name = `h_{${base + 2}}`;
     const h1Stage = layerIndex === 0
-        ? (_tmParamDe() ? 'nach Attention-Residual' : 'after attn residual')
-        : (_tmParamDe() ? `Ausgabe Schicht ${layerIndex}` : `out layer ${layerIndex}`);
+        ? 'after attn residual'
+        : `out layer ${layerIndex}`;
     return { L, sup, h1name, h2name, h1Stage };
 }
 
-function _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, ts) {
-    const { sup, h1name, h1Stage } = naming;
-
-    const preLNHtml = _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta, ts);
-    const expansionHtml = _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts);
-
-    return preLNHtml + expansionHtml;
-}
-
 function _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta, ts) {
+    const isDe = !!(window.TM && TM.lang && TM.lang() === "de");
     return `
     <div style="margin-bottom:15px;">
     <p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $${h1name}${sup}$ before FFN</p>
@@ -3588,19 +4018,40 @@ function _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta,
     </div>`;
 }
 
-function _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts) {
-    return `
-    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + GELU</strong></p>
-    ${_tmStepWhy("ffn-expansion")}
+function _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts, Wg, bg) {
+    const isDe = !!(window.TM && TM.lang && TM.lang() === "de");
+    const kind = tmActivationKind();
+    const label = tmActivationLabel(kind);
+    const act = tmActivationLatex(kind);
+    const why = kind === "gelu"
+        ? _tmStepWhy("ffn-expansion")
+        : '<p class="tm-step-why">The FFN expands each token, applies ' + label + ', and compresses back. <b>Limit of this intuition:</b> the FFN cannot mix positions; it only transforms what attention delivered.</p>';
+    if (tmActivationIsGated(kind) && Wg) {
+        return `
+    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + SwiGLU gate</strong></p>
+    ${why}
 
-    $$ \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (expanded)}} = \\underbrace{\\text{GELU}}_{\\substack{\\text{Activation} \\\\ 0.5x(1 + \\text{erf}(x/\\sqrt{2}))}}\\!\\left(\\underbrace{\\text{Norm}(${h1name}${sup})}_{\\text{Normalized input}} \\cdot \\underbrace{W_1${sup}}_{\\substack{\\text{Expansion} \\\\ \\text{Weight Matrix}}} + \\underbrace{b_1${sup}}_{\\text{Expansion Bias}}\\right) $$
+    $$ \\underbrace{\\text{gate}${sup}}_{\\text{Gate}} = \\underbrace{\\operatorname{SiLU}}_{\\text{Activation}}\\!\\left(\\underbrace{\\text{Norm}(${h1name}${sup})}_{\\text{Normalized input}} \\cdot \\underbrace{W_1${sup}}_{\\text{Gate Weight}} + \\underbrace{b_1${sup}}_{\\text{Gate Bias}}\\right) $$
+    $$ \\underbrace{\\text{value}${sup}}_{\\text{Value}} = \\underbrace{\\text{Norm}(${h1name}${sup})}_{\\text{Normalized input}} \\cdot \\underbrace{W_g${sup}}_{\\text{Value Weight}} + \\underbrace{b_g${sup}}_{\\text{Value Bias}} $$
+    $$ \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (gated)}} = \\underbrace{\\text{gate}${sup}}_{\\text{Gate}} \\odot \\underbrace{\\text{value}${sup}}_{\\text{Value}} $$
 
     <div style="overflow-x:auto; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after GELU')}}_{\\text{out}_{L1}${sup}} = \\text{GELU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after SwiGLU')}}_{\\text{out}_{L1}${sup}} = \\operatorname{SiLU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) \\odot \\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(Wg)}}_{W_g${sup}} + \\underbrace{${vecToPmatrix(bg)}}_{b_g${sup}} \\right) $$
+    </div>`;
+    }
+    return `
+    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + ${label}</strong></p>
+    ${why}
+
+    $$ \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (expanded)}} = \\underbrace{${act}}_{\\text{Activation}}\\!\\left(\\underbrace{\\text{Norm}(${h1name}${sup})}_{\\text{Normalized input}} \\cdot \\underbrace{W_1${sup}}_{\\substack{\\text{Expansion} \\\\ \\text{Weight Matrix}}} + \\underbrace{b_1${sup}}_{\\text{Expansion Bias}}\\right) $$
+
+    <div style="overflow-x:auto; padding-bottom: 10px;">
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ' + label)}}_{\\text{out}_{L1}${sup}} = ${act}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
     </div>`;
 }
 
 function _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts) {
+    const isDe = !!(window.TM && TM.lang && TM.lang() === "de");
     const { sup } = naming;
 
     return `
@@ -3610,21 +4061,22 @@ function _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts) {
     $$ \\underbrace{\\text{out}_{L2}${sup}}_{\\text{FFN output (compressed)}} = \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (expanded)}} \\cdot \\underbrace{W_2${sup}}_{\\substack{\\text{Compression} \\\\ \\text{Weight Matrix}}} + \\underbrace{b_2${sup}}_{\\text{Compression Bias}} $$
 
     <div style="overflow-x:auto; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after GELU')}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ' + tmActivationLabel())}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
     </div>`;
 }
 
 function _buildFFNStep3Html(naming, h1, out_FFN, h2, ts) {
+    const isDe = !!(window.TM && TM.lang && TM.lang() === "de");
     const { sup, h1name, h2name, h1Stage } = naming;
 
     return `
     <div style="margin-bottom:10px;">
-    <p style="font-size:0.85rem; color:#1e40af;"><strong>${_tmParamDe() ? 'Residual-Verbindung' : 'Residual connection'}</strong> ${_tmParamDe() ? '(Pre-LN: keine Normalisierung auf der Ausgabe der Unterschicht)' : '(Pre-LN: no normalization on sublayer output)'}:</p>
+    <p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
     ${_tmStepWhy("ffn-residual")}
-    $$ \\underbrace{${h2name}${sup}}_{\\text{${_tmParamDe() ? 'Schicht-Ausgabe' : 'Layer output'}}} = \\underbrace{${h1name}${sup}}_{\\text{${h1Stage}}} + \\underbrace{\\text{out}_{L2}${sup}}_{\\text{${_tmParamDe() ? 'FFN-Ausgabe (komprimiert)' : 'FFN output (compressed)'}}} $$
+    $$ \\underbrace{${h2name}${sup}}_{\\text{Layer output}} = \\underbrace{${h1name}${sup}}_{\\text{${h1Stage}}} + \\underbrace{\\text{out}_{L2}${sup}}_{\\text{FFN output (compressed)}} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(h2, ts, _tmParamDe() ? 'Schicht-Ausgabe' : 'layer output')}}_{${h2name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h1, ts, h1Stage)}}_{${h1name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, _tmParamDe() ? 'FFN-Ausgabe' : 'FFN output')}}_{\\text{out}_{L2}${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(h2, ts, 'layer output')}}_{${h2name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h1, ts, h1Stage)}}_{${h1name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{out}_{L2}${sup}} $$
     </div>`;
 }
 
@@ -3637,9 +4089,6 @@ function _renderTemmlOnElements(elements) {
     }
     elements.forEach(el => {
         if (!el) return;
-        if (window.tmTranslateTex && el.innerHTML) {
-            el.innerHTML = window.tmTranslateTex(el.innerHTML);
-        }
         try {
             temml.renderMathInElement(el, {
                 delimiters: [
@@ -3650,14 +4099,16 @@ function _renderTemmlOnElements(elements) {
                 annotate: true
             });
         } catch(e) {}
+        if (typeof ensureDisplayMathScrollable === 'function') {
+            ensureDisplayMathScrollable(el);
+        }
     });
 }
 
-async function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights, startLayer = 0, tokenStrings = null, progress) {
+function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights, startLayer = 0, tokenStrings = null) {
 	let h_current = h_initial;
 	for (let n = startLayer; n < total_depth; n++) {
 		const layer = this_weights[n];
-		if (progress) await progress("attention", n + 1);
 		const h_before_layer = h_current.map(row => row.slice());
 		const normH = calculateLayerNorm(h_current, layer.gamma, layer.beta);
 		const headData = causalMultiHeadAttention(normH, layer.attention, d_model, n_heads);
@@ -3669,7 +4120,6 @@ async function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads,
 		const concat = h_current.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
 		const projected = matMul(concat, layer.attention.output);
 		const h_attn = matAdd(h_current, projected);
-		if (progress) await progress("ffn", n + 1);
 		const h_out = run_ffn_block(h_attn, layer, true, n, tokenStrings);
 		if (window.Prov) {
 			window.Prov.recordLayer(n, {
@@ -3687,7 +4137,7 @@ async function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads,
 				attention: layer.attention
 			});
 			const ffn = (window.__tmFFNTrace || [])[n];
-			if (ffn) {
+			if (ffn && tmActivationKind() === 'gelu') {
 				window.Prov.recordFfn(n, {
 					gamma2: ffn.gamma2, beta2: ffn.beta2, norm2: ffn.normed_h1,
 					W1: ffn.W1, b1: ffn.b1, outL1: ffn.out_L1,
@@ -3825,6 +4275,8 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 
 	const displayTokens = getMigrationDisplayTokens(tokens, tokenStrings);
 
+	// The trajectory needs token strings for the embedding lookup; the migration
+	// plot itself works on vectors, so `tokens` may be hidden states here.
 	const trajectoryTokens = (tokenStrings && tokenStrings.length) ? tokenStrings : tokens;
 	initTrajectoryCollector(trajectoryTokens, displayTokens, d_model, start_h);
 	recordTrajectoryLayerOutput(layerNum, end_h);
@@ -3850,7 +4302,8 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 		transformerLabVisMigrationDataRegistry,
 		migrationObserver,
 		registryData,
-		() => render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings)
+		() => render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings),
+		PlotState.loadingMarkup('Loading feature migration plot...')
 	);
 
 }
@@ -3880,8 +4333,12 @@ function initTrajectoryCollector(tokens, displayTokens, d_model, start_h) {
 		window.tlab_trajectory_collector.d_model = d_model;
 	}
 
-	if (!window.tlab_trajectory_collector.steps["00_raw"]) {
-		const rawEmbs = displayTokens.map(t => {
+	const rawKey = tokens.join("\u0001") + "|" + d_model;
+	if (!window.tlab_trajectory_collector.steps["00_raw"] || window.tlab_trajectory_collector._rawKey !== rawKey) {
+		// Use the raw token strings, not the display labels: display() turns a
+		// space into "␣", which is not a key in the embedding space and used to
+		// make every space token start at the origin.
+		const rawEmbs = tokens.map(t => {
 			if (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[t]) {
 				return window.persistentEmbeddingSpace[t];
 			}
@@ -3898,6 +4355,7 @@ function initTrajectoryCollector(tokens, displayTokens, d_model, start_h) {
 			name: "Embedding + Position",
 			data: freeze(start_h)
 		};
+		window.tlab_trajectory_collector._rawKey = rawKey;
 	}
 }
 
@@ -3923,7 +4381,7 @@ function createVFToggleButton(id, d_model, existingVfEnabled) {
 	toggleBtn.dataset.migrationId = id;
 	toggleBtn.textContent = existingVfEnabled ? ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field') : ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field');
 	toggleBtn.style.cssText = `
-	margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
+	margin: 6px 12px 0; padding: 6px 16px; border-radius: 6px;
 	border: 1px solid #3b82f6; background: ${existingVfEnabled ? '#dbeafe' : '#fff'}; color: #3b82f6;
 	cursor: pointer; font-weight: 600; font-size: 0.82rem;
 	transition: all 0.15s;
@@ -4034,6 +4492,10 @@ function buildMigrationRegistryData(tokens, start_h, end_h, layerNum, d_model, h
 }
 
 function _renderChartError(container, title, message) {
+	if (window.PlotState) {
+		PlotState.error(container, title, message);
+		return;
+	}
 	container.innerHTML = '';
 	const err = document.createElement('div');
 	err.style.cssText = `
@@ -4065,6 +4527,9 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 	document.querySelectorAll('.weight-grid-viz').forEach(el => el.remove());
 	const plotDiv = document.getElementById(id);
 	if (!plotDiv) return;
+
+	const loadingPlaceholder = plotDiv.querySelector('.plot-loading');
+	if (loadingPlaceholder) loadingPlaceholder.remove();
 
 	plotDiv.style.width = '100%';
 
@@ -5058,10 +5523,38 @@ function _traj_get_logit_word(hVec, embSnap, snapVocab) {
 }
 
 // ─── Helper: Build 2D embedding landmark trace ───
+function _traj_metric_transform(v) {
+	return (window.tmMetric && window.tmMetric.transform) ? window.tmMetric.transform(v, window.tmMetric.get()) : v;
+}
+
+function _traj_unit_sphere_series() {
+	const rows = [];
+	const nu = 12, nv = 24;
+	for (let u = 0; u <= nu; u++) {
+		const row = [];
+		const theta = Math.PI * u / nu;
+		for (let v = 0; v <= nv; v++) {
+			const phi = 2 * Math.PI * v / nv;
+			row.push([
+				Math.sin(theta) * Math.cos(phi),
+				Math.sin(theta) * Math.sin(phi),
+				Math.cos(theta)
+			]);
+		}
+		rows.push(row);
+	}
+	const points = [];
+	rows.forEach((row, u) => row.forEach((pt, v) => { if (u % 2 === 0 && v % 2 === 0) points.push(pt); }));
+	return [
+		{ type: 'surface', name: 'unit sphere', data: rows, shading: 'color', itemStyle: { color: '#3b82f6', opacity: 0.18 }, wireframe: { show: true, lineStyle: { color: '#3b82f6', opacity: 0.12 } }, silent: true },
+		{ type: 'scatter3D', name: 'unit sphere points', data: points, symbolSize: 2, itemStyle: { color: '#3b82f6', opacity: 0.18 }, silent: false, tooltip: { formatter: () => (window.tmMetric && window.tmMetric.sphereHint ? window.tmMetric.sphereHint(false) : '') } }
+	];
+}
+
 function _traj_build_embedding_landmarks_2D(embSnap, snapVocab, dimA, dimB) {
 	const xs = [], ys = [], texts = [];
 	for (const word of snapVocab) {
-		const v = embSnap[word];
+		const v = _traj_metric_transform(embSnap[word]);
 		xs.push(v[dimA] || 0);
 		ys.push(v[dimB] || 0);
 		texts.push(displayToken(word));
@@ -5139,13 +5632,26 @@ function _traj_ensure_slice_div(grid, dimA, dimB) {
 // ─── 5. Build hover text array for a single token across all stages ───
 function _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab) {
 	return dataPoints.map((p, pIdx) => {
-		const logitWord = _traj_get_logit_word(p.data[tIdx], embSnap, snapVocab);
+		const curVec = (p.rawData || p.data)[tIdx];
+		const logitWord = _traj_get_logit_word(curVec, embSnap, snapVocab);
 		const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
 		const toStage = p.name;
+		const plotVec = p.data[tIdx] || [];
+		const rawText = (curVec || []).slice(0, 3).map(v => Number(v || 0).toFixed(3)).join(', ');
+		const plotText = (plotVec || []).slice(0, 3).map(v => Number(v || 0).toFixed(3)).join(', ');
+		let distLine = "";
+		if (pIdx > 0 && window.tmMetric && window.tmMetric.distance) {
+			const prevVec = (dataPoints[pIdx - 1].rawData || dataPoints[pIdx - 1].data)[tIdx];
+			const l2 = window.tmMetric.distance(prevVec, curVec, "euclidean");
+			const ang = window.tmMetric.distance(prevVec, curVec, "angular");
+			distLine = `<br>L2 step: ${l2.toFixed(3)}<br>angle: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
+		}
 		return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
 			`From: ${fromStage}<br>` +
 			`To: ${toStage}<br>` +
-			`Nearest logit: <b>${logitWord}</b>`;
+			`Raw x,y,z: [${rawText}]<br>` +
+			`Plot x,y,z: [${plotText}]<br>` +
+			`Nearest logit: <b>${logitWord}</b>` + distLine;
 	});
 }
 
@@ -5157,9 +5663,9 @@ function _traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts) {
 		mode: 'lines+markers',
 		name: tokenLabel,
 		legendgroup: tokenLabel,
-		line: { width: 2, color: tColor },
+		line: { width: 4, color: tColor },
 		marker: {
-			size: x.map((_, i) => i === 0 ? 0 : 10),
+			size: x.map((_, i) => i === 0 ? 0 : 14),
 			symbol: 'arrow',
 			angleref: 'previous',
 			color: tColor
@@ -5173,7 +5679,7 @@ function _traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts) {
 
 function _traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, isStart) {
 	const pIdx = isStart ? 0 : dataPoints.length - 1;
-	const logitWord = _traj_get_logit_word(dataPoints[pIdx].data[tIdx], embSnap, snapVocab);
+	const logitWord = _traj_get_logit_word((dataPoints[pIdx].rawData || dataPoints[pIdx].data)[tIdx], embSnap, snapVocab);
 	const label = isStart ? 'Start' : 'End';
 	return {
 		type: 'scatter',
@@ -5262,18 +5768,10 @@ function _traj_build_slice_layout(dimA, dimB, annotations) {
 
 // ─── 12. Render a single dimension-pair slice plot ───
 function _traj_render_single_slice(grid, tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab) {
-	var plotId = _traj_ensure_slice_div(grid, dimA, dimB);
-	var chart = _tmEcharts(document.getElementById(plotId));
-	if (!chart) return;
-	var built = _traj_build_slice_traces(tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab);
-	chart.setOption({
-		title: { text: 'Dim ' + dimA + ' × Dim ' + dimB, left: 'center', textStyle: { fontSize: 13 } },
-		tooltip: { trigger: 'item' },
-		xAxis: { type: 'value', name: 'Dim ' + dimA, scale: true },
-		yAxis: { type: 'value', name: 'Dim ' + dimB, scale: true },
-		grid: { left: 45, right: 10, bottom: 45, top: 40 },
-		series: _tmFromPlotlyTraces(built.traces)
-	}, true);
+	const plotId = _traj_ensure_slice_div(grid, dimA, dimB);
+	const { traces, annotations } = _traj_build_slice_traces(tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab);
+	const layout = _traj_build_slice_layout(dimA, dimB, annotations);
+	Plotly.react(plotId, traces, layout, { responsive: true });
 }
 
 // ─── Main function: now a clean orchestrator ───
@@ -5364,23 +5862,53 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 		_traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab, vfEnabled);
 		return;
 	}
-	var result = _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab);
-	var vfTraces = [];
+
+	// ── 2D: Plotly path ──
+	const result = _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab);
+
+	// ── VF overlay (all-layers) — now as TRACES, not annotations ──
+	let vfTraces = [];
 	if (vfEnabled) {
-		var cfg = getTransformerConfig();
-		var computed = _compute_trajectory_vf_2d(d_model, cfg.n_heads, cfg.n_layers);
+		const { n_heads, n_layers } = getTransformerConfig();
+		const computed = _compute_trajectory_vf_2d(d_model, n_heads, n_layers);
 		if (computed) vfTraces = _traj_vf_2d_plotly_traces(computed);
 	}
-	var chart = _tmEcharts(trajDiv);
-	if (!chart) return;
-	chart.setOption({
-		title: { text: 'Token Trajectory: Embedding + Position through the Layers', left: 'center', textStyle: { fontSize: 13 } },
-		tooltip: { trigger: 'item' },
-		xAxis: { type: 'value', show: false },
-		yAxis: { type: 'value', show: false },
-		grid: { left: 10, right: 10, bottom: 50, top: 80 },
-		series: _tmFromPlotlyTraces([...result.traces, ...vfTraces])
-	}, true);
+
+	const axisTemplate = {
+		showticklabels: false, showgrid: true, zeroline: false,
+		title: { text: "" }, backgroundcolor: "rgba(0,0,0,0)"
+	};
+
+	const layout = {
+		title: '<b>Token Trajectory: Embedding + Position through the Layers</b>',
+		hoverlabel: _tmHoverlabel(),
+		xaxis: axisTemplate, yaxis: axisTemplate,
+		annotations: result.annotations,  // ← only stage labels, no VF annotations
+		margin: { l: 10, r: 10, b: 50, t: 80 },
+		showlegend: true,
+		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1, font: { size: 14, color: themeColor('#1e293b') } }
+	};
+
+	let circleTraces = [];
+	if (d_model === 2 && window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
+		const cx = [], cy = [];
+		for (let a = 0; a <= 96; a++) {
+			const t = 2 * Math.PI * a / 96;
+			cx.push(Math.cos(t));
+			cy.push(Math.sin(t));
+		}
+		circleTraces.push({
+			type: 'scatter', x: cx, y: cy, mode: 'lines', fill: 'toself',
+			fillcolor: 'rgba(59,130,246,0.12)',
+			line: { color: '#3b82f6', width: 1, opacity: 0.35 },
+			hoverinfo: 'text',
+			text: cx.map(() => (window.tmMetric && window.tmMetric.sphereHint ? window.tmMetric.sphereHint(true) : '')),
+			hovertemplate: '%{text}<extra></extra>',
+			showlegend: false, name: 'unit circle'
+		});
+	}
+	// Combine token traces + VF traces
+	Plotly.react(trajDiv.id, [...circleTraces, ...result.traces, ...vfTraces], layout, { responsive: true, displayModeBar: false });
 }
 
 // ─── Main 3D ECharts renderer ───────────────────────────────
@@ -5443,11 +5971,11 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 		});
 		traces.push({
 			type: 'scatter3d', mode: 'lines', x: lineX, y: lineY, z: lineZ,
-			line: { color: color, width: 4 }, hoverinfo: 'skip', showlegend: false
+			line: { color: color, width: 6 }, hoverinfo: 'skip', showlegend: false
 		});
 		traces.push({
 			type: 'scatter3d', mode: 'markers', x: xs, y: ys, z: zs,
-			marker: { size: 3, color: color },
+			marker: { size: 5, color: color },
 			hovertext: hover, hovertemplate: '%{hovertext}<extra></extra>', name: labels[tIdx], showlegend: false
 		});
 		const cones = [];
@@ -5478,6 +6006,7 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 
 	const title = 'Token Trajectory: Embedding → +Position → Layer Outputs' + (window.tmMetric && window.tmMetric.label ? ' · ' + window.tmMetric.label() : '') + (titleSuffix ? ' · ' + titleSuffix : '');
 	const layout = window.tmPlotly.layout3D(title, ['Dim 0', 'Dim 1', 'Dim 2']);
+	window.tmPlotly.equalize3D(layout, traces);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(trajDiv); if (oldChart) oldChart.dispose(); }
 	Plotly.react(trajDiv, traces, layout, { responsive: true, displayModeBar: false });
 }
@@ -5489,7 +6018,7 @@ function _traj_ec3d_landmark_series(embSnap, snapVocab) {
 		name: 'Vocab Embeddings',
 		type: 'scatter3D',
 		data: snapVocab.map(word => {
-			const v = embSnap[word];
+			const v = _traj_metric_transform(embSnap[word]);
 			return { name: displayToken(word), value: [v[0], v[1] || 0, v[2] || 0] };
 		}),
 		symbol: 'diamond',
@@ -5514,10 +6043,19 @@ function _traj_ec3d_landmark_series(embSnap, snapVocab) {
 function _traj_ec3d_marker_series(tokenLabel, color, dataPoints, tIdx, labels, embSnap, snapVocab) {
 	const data = dataPoints.map((p, pIdx) => {
 		const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
-		const hoverHtml = buildTrajectoryHoverText(
+		let hoverHtml = buildTrajectoryHoverText(
 			labels[tIdx], tIdx, fromStage, p.name,
-			p.data[tIdx], embSnap, snapVocab
+			(p.rawData || p.data)[tIdx], embSnap, snapVocab
 		);
+		const plotVec = p.data[tIdx] || [];
+		hoverHtml += `<br>Plot x,y,z: [${(plotVec || []).slice(0, 3).map(v => Number(v || 0).toFixed(3)).join(', ')}]`;
+		if (pIdx > 0 && window.tmMetric && window.tmMetric.distance) {
+			const prevVec = (dataPoints[pIdx - 1].rawData || dataPoints[pIdx - 1].data)[tIdx];
+			const curVec = (p.rawData || p.data)[tIdx];
+			const l2 = window.tmMetric.distance(prevVec, curVec, "euclidean");
+			const ang = window.tmMetric.distance(prevVec, curVec, "angular");
+			hoverHtml += `<br>L2 step: ${l2.toFixed(3)}<br>angle: ${ang.toFixed(3)} (${(ang * 180).toFixed(1)}°)`;
+		}
 
 		const isStart = pIdx === 0;
 
@@ -5548,7 +6086,7 @@ function _traj_ec3d_marker_series(tokenLabel, color, dataPoints, tIdx, labels, e
 function _traj_ec3d_option(series, legendData) {
 	return {
 		title: {
-			text: 'Token Trajectory: Embedding → +Position → Layer Outputs',
+			text: 'Token Trajectory: Embedding → +Position → Layer Outputs' + (window.tmMetric && window.tmMetric.label ? ' · ' + window.tmMetric.label() : ''),
 			left: 'center', top: 10,
 			textStyle: { fontSize: 14, fontWeight: 'bold', color: themeColor('#1e293b') }
 		},
@@ -5773,7 +6311,7 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 		positionalShiftObserver,
 		{ tokenStrings, d_model, injectedEmbeddings },
 		() => _execute_shift_render(tokenStrings, d_model, injectedEmbeddings),
-		`<div style="padding:20px; color:#64748b;">Wait for Positional Shift Plot to load...</div>`
+		PlotState.loadingMarkup('Wait for Positional Shift Plot to load...')
 	);
 
 	return injectedEmbeddings;
@@ -5829,7 +6367,7 @@ function _shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		const tip = _shift_metricTip(token, pos, rawBase[pos] || [], rawCombined[pos] || []);
 		const color = getPositionColor(pos, tokenStrings.length - 1);
 		const angular = window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular' && window.tmMetric.slerpPoints;
-		const arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 24).map(pt => [pt[0], pt[1]]) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
+		const arc2 = angular ? window.tmMetric.slerpPoints([from[0], from[1] || 0, 0], [to[0], to[1] || 0, 0], 14).map(pt => [pt[0], pt[1]]) : [[from[0], from[1] || 0], [to[0], to[1] || 0]];
 		traces.push({
 			type: 'scatter', mode: 'lines+markers',
 			x: arc2.map(pt => pt[0]), y: arc2.map(pt => pt[1]),
@@ -5847,7 +6385,7 @@ function _shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, 
 			hovertext: [tip], hovertemplate: '%{hovertext}<extra></extra>', showlegend: false
 		});
 	});
-	const layout = window.tmPlotly.layout2D(_tmMetricTitle('Semantic Vector → + Positional Shift'), ['Dim 0', 'Dim 1']);
+	const layout = window.tmPlotly.layout2D('', ['Dim 0', 'Dim 1']);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
 	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
 }
@@ -5857,32 +6395,49 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
 		Array.prototype.push.apply(traces, window.tmPlotly.sphereTraces());
 	}
+	const markerPoints = [];
 	tokenStrings.forEach((token, pos) => {
 		const from = base[pos] || [], to = combined[pos] || [];
 		const tip = _shift_metricTip(token, pos, rawBase[pos] || [], rawCombined[pos] || []);
 		const color = getPositionColor(pos, tokenStrings.length - 1);
 		const angular3 = window.tmMetric && window.tmMetric.get && window.tmMetric.get() === 'angular' && window.tmMetric.slerpPoints;
-		const arc3 = angular3 ? window.tmMetric.slerpPoints(from, to, 24) : [from, to];
+		const arc3 = angular3 ? window.tmMetric.slerpPoints(from, to, 14) : [from, to];
 		traces.push({
 			type: 'scatter3d', mode: 'lines',
 			x: arc3.map(pt => pt[0]), y: arc3.map(pt => pt[1] || 0), z: arc3.map(pt => pt[2] || 0),
-			line: { color: color, width: 4 }, hoverinfo: 'skip', showlegend: false
+			line: { color: color, width: 6 }, hoverinfo: 'skip', showlegend: false
 		});
 		const last3 = arc3[arc3.length - 1], prev3 = arc3[arc3.length - 2] || from;
 		const dx = last3[0] - prev3[0], dy = (last3[1] || 0) - (prev3[1] || 0), dz = (last3[2] || 0) - (prev3[2] || 0);
 		const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
-		const cone = window.tmPlotly.coneTrace([{ x: last3[0], y: last3[1] || 0, z: last3[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], color, token);
+		const cone = window.tmPlotly.coneTrace([{ x: last3[0], y: last3[1] || 0, z: last3[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], color, token, 0.044);
 		if (cone) traces.push(cone);
-		traces.push({
-			type: 'scatter3d', mode: 'markers',
-			x: [from[0], to[0]], y: [from[1] || 0, to[1] || 0], z: [from[2] || 0, to[2] || 0],
-			marker: { size: [6, 8], color: color, symbol: ['circle', 'diamond'] },
-			hovertext: [tip, tip], hovertemplate: '%{hovertext}<extra></extra>', showlegend: false
-		});
+		markerPoints.push({ x: from[0], y: from[1] || 0, z: from[2] || 0, size: 6, color: color, symbol: 'circle', hover: tip });
+		markerPoints.push({ x: to[0], y: to[1] || 0, z: to[2] || 0, size: 8, color: color, symbol: 'diamond', hover: tip });
 	});
-	const layout = window.tmPlotly.layout3D(_tmMetricTitle('Semantic Vector → + Positional Shift') + (modeLabel ? ' · ' + modeLabel : ''), ['Dim 0', 'Dim 1', 'Dim 2']);
+	if (markerPoints.length) traces.push(_tmMarkerTrace(markerPoints));
+	const metricLabel = (window.tmMetric && window.tmMetric.label) ? window.tmMetric.label() : '';
+	const title = 'Positional shift' + (metricLabel ? ' · ' + metricLabel : '') + (modeLabel ? ' · ' + modeLabel : '');
+	const layout = window.tmPlotly.layout3D(title, ['Dim 0', 'Dim 1', 'Dim 2']);
+	window.tmPlotly.equalize3D(layout, traces);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
 	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
+}
+
+function _tmMarkerTrace(points, name) {
+	return {
+		type: 'scatter3d', mode: 'markers',
+		x: points.map(p => p.x), y: points.map(p => p.y), z: points.map(p => p.z),
+		marker: {
+			size: points.map(p => p.size),
+			color: points.map(p => p.color),
+			symbol: points.map(p => p.symbol)
+		},
+		hovertext: points.map(p => p.hover || ''),
+		hovertemplate: '%{hovertext}<extra></extra>',
+		showlegend: false,
+		name: name || 'tokens'
+	};
 }
 
 function _shift_render_highdim_plotly(container, tokenStrings, base, combined, d_model) {
@@ -5900,8 +6455,8 @@ function _shift_render_highdim_plotly(container, tokenStrings, base, combined, d
 			dimensions: dims
 		}], {
 			paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
-			title: { text: _tmMetricTitle('Semantic Vector → + Positional Shift · parallel'), font: { size: 13, color: themeColor('#1e293b') } },
-			margin: { l: 60, r: 30, t: 40, b: 20 },
+			title: { text: '' },
+			margin: { l: 60, r: 30, t: 10, b: 20 },
 			labelfont: { size: 9, color: themeColor('#64748b') }, tickfont: { size: 8, color: themeColor('#64748b') }, labelside: 'bottom'
 		}, { responsive: true, displayModeBar: false });
 	} catch (e) {
@@ -5909,7 +6464,7 @@ function _shift_render_highdim_plotly(container, tokenStrings, base, combined, d
 			type: 'scatter', mode: 'markers',
 			x: base.map(v => v[0] || 0), y: combined.map(v => v[0] || 0),
 			marker: { size: 6, color: colors, colorscale: [[0, '#3b82f6'], [1, '#10b981']] }
-		}], window.tmPlotly.layout2D(_tmMetricTitle('Semantic Vector → + Positional Shift'), ['D0 Base', 'D0 +PE']), { responsive: true, displayModeBar: false });
+		}], window.tmPlotly.layout2D('', ['D0 Base', 'D0 +PE']), { responsive: true, displayModeBar: false });
 	}
 }
 
@@ -5930,6 +6485,60 @@ function tf_gelu(x) {
 		return x.mul(half).mul(one.add(tf.erf(x.div(sqrtTwo))));
 	});
 }
+
+function tf_silu(x) {
+	return x.mul(x.sigmoid());
+}
+
+function tf_activation(kind, x) {
+	switch (kind || tmActivationKind()) {
+		case "relu": return x.relu();
+		case "silu": return tf_silu(x);
+		case "tanh": return x.tanh();
+		case "gelu":
+		default: return tf_gelu(x);
+	}
+}
+
+function applyTransformerPreset(name) {
+	if (!name || name === 'custom') return;
+	const presets = {
+		tiny:          { d: 3,  h: 3, n: 4, ffn: 12,  text: 'the king rules the land and the queen rules the sea' },
+		wide16:        { d: 16, h: 4, n: 4, ffn: 64,  text: 'the king rules the land and the queen rules the sea' },
+		wide32:        { d: 32, h: 8, n: 4, ffn: 128, text: 'the king rules the land and the queen rules the sea' },
+		wide64:        { d: 64, h: 8, n: 4, ffn: 256, text: 'the king rules the land and the queen rules the sea' },
+		copy16:        { d: 16, h: 4, n: 2, ffn: 64,  text: 'a b c d a b c d a b c d x y z w x y z w' },
+		conditional16: { d: 16, h: 4, n: 2, ffn: 64,  text: 'if a then b . now a so b . if x then y . now x so y .' }
+	};
+	const preset = presets[name];
+	if (!preset) return;
+	const setVal = (id, value) => {
+		const el = document.getElementById(id);
+		if (!el) return;
+		el.value = String(value);
+		el.dispatchEvent(new Event('input', { bubbles: true }));
+	};
+	const tok = document.getElementById('transformer-tokenizer-type');
+	if (tok) { tok.value = 'regex'; tok.dispatchEvent(new Event('change', { bubbles: true })); }
+	if (preset.text) {
+		const ta = document.getElementById('transformer-training-data');
+		if (ta) {
+			ta.value = preset.text;
+			ta.dispatchEvent(new Event('input', { bubbles: true }));
+		}
+	}
+	setVal('transformer-dimension-model', preset.d);
+	setVal('transformer-heads', preset.h);
+	setVal('transformer-depth', preset.n);
+	setVal('transformer-ffn-size', preset.ffn);
+	clearTimeout(trainingDebounceTimer);
+	if (window.syncTransformerSettings) window.syncTransformerSettings('preset');
+	const tokens = (typeof getTrainingTokens === 'function') ? getTrainingTokens() : [];
+	if (tokens.length > 1) setVal('transformer-context-size', Math.min(256, tokens.length - 1));
+	if (name === 'wide16' || name === 'wide32' || name === 'wide64') window.tmHighDimMode = 'pca';
+	if (typeof run_transformer_demo === 'function') run_transformer_demo();
+}
+window.applyTransformerPreset = applyTransformerPreset;
 
 function syncTransformerSettings(trigger) {
 	const dimSlider = document.getElementById('transformer-dimension-model');
@@ -6096,7 +6705,7 @@ function debounce(func, wait) {
 // 300ms is usually the "sweet spot" for human typing speed
 const debouncedRun = debounce((id) => {
 	run_transformer_demo(id);
-}, 100);
+}, 600);
 
 // ═══════════════════════════════════════════════════════════════
 // Vector Math — v9 NUCLEAR REWRITE
@@ -6288,6 +6897,10 @@ function _vmRenderResult(html) {
         }
     } catch(e) {}
 
+    if (typeof ensureDisplayMathScrollable === 'function') {
+        ensureDisplayMathScrollable(resDiv);
+    }
+
     // IMMEDIATELY restore input if it was disturbed
     if (inputEl) {
         if (inputEl.value !== window._vmInputValue && window._vmInputValue !== '') {
@@ -6318,13 +6931,13 @@ function _vmDoMath(updatePlot) {
     const space = window.persistentEmbeddingSpace;
 
     if (!hasValidEmbeddingSpace(space)) {
-        _vmRenderResult("<em style='color: #94a3b8;'>" + (_tmParamDe() ? "Gib eine Gleichung ein..." : "Enter an equation...") + "</em>");
+        _vmRenderResult("<em style='color: #94a3b8;'>Enter an equation...</em>");
         return;
     }
 
     const vocabKeys = Object.keys(space);
     if (vocabKeys.length === 0) {
-        _vmRenderResult("<em style='color: #94a3b8;'>" + (_tmParamDe() ? "Noch kein Vokabular geladen." : "No vocabulary loaded yet.") + "</em>");
+        _vmRenderResult("<em style='color: #94a3b8;'>No vocabulary loaded yet.</em>");
         return;
     }
 
@@ -6332,7 +6945,7 @@ function _vmDoMath(updatePlot) {
     const tokens = tokenizeVectorMathInput(inputVal);
 
     if (!tokens || tokens.length === 0) {
-        _vmRenderResult("<em style='color: #94a3b8;'>" + (_tmParamDe() ? "Gib eine Gleichung ein..." : "Enter an equation...") + "</em>");
+        _vmRenderResult("<em style='color: #94a3b8;'>Enter an equation...</em>");
         if (updatePlot) {
             _execute_embedding_render(d_model, null, []);
         }
@@ -6630,6 +7243,9 @@ function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weigh
 		container._attnWebHoverIndex ?? null
 	);
 
+	// Always redraw through the current closure; the scroll listener and
+	// the ResizeObserver only attach once, but the chips are rebuilt on
+	// every token change.
 	container._attnWebDraw = drawArcs;
 
 	// Only re-attach events if chips were rebuilt or first time
@@ -6652,6 +7268,9 @@ function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weigh
 			attachResizeHandler(containerId, () => {
 				if (container._attnWebDraw) container._attnWebDraw();
 			});
+			// The web is often first rendered while its tab is hidden
+			// (clientWidth 0); redraw the moment it gets a real size and
+			// whenever the token strip grows or shrinks.
 			if (typeof ResizeObserver !== 'undefined') {
 				container._attnWebResizeObserver = new ResizeObserver(() => {
 					if (container._attnWebDraw) container._attnWebDraw();
@@ -6674,6 +7293,8 @@ function attachChipHoverEvents(chips, onHover, onLeave) {
 }
 
 function drawAttentionArcs(container, canvas, chips, tokens, weights, hoverIndex) {
+	// A hidden tab reports zero size; keep the previous canvas and wait
+	// for the ResizeObserver to fire once the tab becomes visible.
 	if (!container.clientWidth) return;
 
 	const scrollW = container.scrollWidth;
@@ -7453,15 +8074,113 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	<details class="tm-layer-subbox" data-sub="ffn">
 		<summary>${isDe ? 'FFN / MLP' : 'FFN / MLP'}</summary>
 		<div class="tm-layer-subbox-body" id="${prefix}-content">
-			<p class="tm-level-text">${isDe ? 'Hier stehen die exakten Matrizen dieser Schicht: Pre-LayerNorm, Query-, Key- und Value-Projektionen, die Softmax-Gewichte, der gewichtete Value-Mix, die Ausgabeprojektion, der Residual-Schritt, dann die FFN-Expansion, GELU und die Kompression. Jede Zeile ist eine Token-Position; jede Spalte eine Dimension.' : 'Here are the exact matrices of this layer: pre-LayerNorm, the query, key and value projections, the softmax weights, the weighted value mix, the output projection, the residual add, then the FFN expansion, GELU and compression. Each row is a token position; each column is a dimension.'}</p>
-			<canvas id="${prefix}-ffn-heatmap" class="tm-layer-ffn-heatmap" aria-label="${isDe ? 'FFN-Aktivierungen für alle Tokens in dieser Schicht' : 'FFN activations for all tokens in this layer'}"></canvas>
+			<p class="tm-level-text">${isDe ? 'Hier stehen die exakten Matrizen dieser Schicht: Pre-LayerNorm, Query-, Key- und Value-Projektionen, die Softmax-Gewichte, der gewichtete Value-Mix, die Ausgabeprojektion, der Residual-Schritt, dann die FFN-Expansion, die Aktivierung und die Kompression. Jede Zeile ist eine Token-Position; jede Spalte eine Dimension.' : 'Here are the exact matrices of this layer: pre-LayerNorm, the query, key and value projections, the softmax weights, the weighted value mix, the output projection, the residual add, then the FFN expansion, the activation and compression. Each row is a token position; each column is a dimension.'}</p>
+			<div class="tm-preln-block" id="${prefix}-preln-block">
+				<div class="tm-reveal-head tm-preln-reveal-head" data-reveal-target="${prefix}-layernorm-step" role="button" tabindex="0" aria-expanded="false">
+					<div class="tm-reveal-copy">
+						<span class="tm-reveal-title">${isDe ? 'Pre-LN: Eingang → normiert' : 'Pre-LN: input → normalized'}</span>
+						<span class="tm-reveal-hint">${isDe ? 'Klicke auf die Heatmaps, um die LayerNorm-Formeln zu zeigen.' : 'Click the heatmaps to show the LayerNorm formulas.'}</span>
+					</div>
+					<div class="tm-preln-triple">
+						<div class="tm-triple-cell"><div class="tm-triple-label">${isDe ? 'Eingang' : 'input'}</div><canvas id="${prefix}-preln-in" class="tm-residual-heatmap-canvas" data-layer-idx="${layerIndex}" data-which="in"></canvas></div>
+						<span class="tm-triple-op">→</span>
+						<div class="tm-triple-cell"><div class="tm-triple-label">${isDe ? 'Norm-Änderung' : 'norm change'}</div><canvas id="${prefix}-preln-delta" class="tm-residual-heatmap-canvas" data-layer-idx="${layerIndex}" data-which="normdelta"></canvas></div>
+						<span class="tm-triple-op">=</span>
+						<div class="tm-triple-cell"><div class="tm-triple-label">${isDe ? 'Normiert' : 'normalized'}</div><canvas id="${prefix}-preln-out" class="tm-residual-heatmap-canvas" data-layer-idx="${layerIndex}" data-which="norm"></canvas></div>
+					</div>
+				</div>
+				<details class="tm-formula-step" id="${prefix}-layernorm-step"><summary>${isDe ? 'LayerNorm-Formeln' : 'LayerNorm formulas'}</summary><div id="${prefix}-layernorm-viz" class="tm-formula-block"></div></details>
+			</div>
+			<details class="tm-formula-step"><summary>${isDe ? 'Attention-Ausgabe + Residual' : 'Attention output + residual'}</summary><div id="${prefix}-concat-viz" class="tm-formula-block"></div><div id="${prefix}-h1-final-viz" class="tm-formula-block"></div></details>
+			<div class="tm-ffn-stages">
+				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-preln-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
+					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Pre-LN</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-preln">h₁ → Norm</span></div>
+					<div class="tm-ffn-stage-desc">${isDe ? 'Zwei echte Token-Matrizen: vor und nach LayerNorm. Jede Zeile ist ein Token, jede Spalte eine Dimension; die Norm zieht jede Zeile auf Mittelwert 0 und Streuung 1.' : 'Two real token matrices: before and after LayerNorm. Each row is a token, each column a dimension; the norm pulls each row to mean 0 and variance 1.'}</div>
+					<div class="tm-ffn-stage-formula" data-tex="${tmFfnPrelnAbstractTex()}" data-tex-display="false"></div>
+					<div class="tm-ffn-stage-plots tm-ffn-stage-plots--two">
+						<canvas id="${prefix}-ffn-preln-in" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Eingang vor LayerNorm' : 'FFN input before LayerNorm'}"></canvas>
+						<canvas id="${prefix}-ffn-preln-out" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Eingang nach LayerNorm' : 'FFN input after LayerNorm'}"></canvas>
+					</div>
+				</div>
+				<span class="tm-ffn-stage-arrow" aria-hidden="true">→</span>
+				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-expand-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
+					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Expansion + ${tmActivationInfo(tmActivationKind()).html}</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-expand">d_model → d_ff</span></div>
+					<div class="tm-ffn-widthbar" id="${prefix}-ffn-width-expand" aria-hidden="true"></div>
+					<div class="tm-ffn-stage-desc">${isDe ? 'Die echte W₁-Projektion in den breiteren Raum. Heatmap: alle Hidden-Aktivierungen. Space fan: W₁/W₂ als Gewichte. Aktivierung: die Aktivierungsfunktion an den echten Voraktivierungen. Raumkrümmung: ein flacher 2-D-Schnitt durch den echten Eingang, von W₁, Aktivierung und W₂ zu einer gekrümmten Fläche gefaltet.' : 'The real W₁ projection into the wider space. Heatmap: all hidden activations. Space fan: W₁/W₂ as weights. Activation: the activation function at the real pre-activations. Space curvature: a flat 2-D slice through the real input, folded into a curved surface by W₁, the activation and W₂.'}</div>
+					<div class="tm-ffn-stage-formula" data-tex="${tmFfnExpansionAbstractTex()}" data-tex-display="false"></div>
+					<div class="tm-ffn-viewswitch" role="tablist" aria-label="${isDe ? 'Ansicht' : 'View'}">
+						<button type="button" data-view="heatmap" class="is-active">Heatmap</button>
+						<button type="button" data-view="fan">Space fan</button>
+						<button type="button" data-view="curve">${isDe ? 'Aktivierung' : 'Activation'}</button>
+						<button type="button" data-view="space">${isDe ? 'Raumkrümmung' : 'Space curvature'}</button>
+					</div>
+					<div class="tm-ffn-stage-plots">
+						<canvas id="${prefix}-ffn-heatmap" class="tm-ffn-stage-canvas" data-view="heatmap" aria-label="${isDe ? 'FFN-Hidden-Aktivierungen für alle Tokens' : 'FFN hidden activations for all tokens'}"></canvas>
+						<canvas id="${prefix}-ffn-fan" class="tm-ffn-stage-canvas" data-view="fan" hidden aria-label="${isDe ? 'W1- und W2-Gewichte als Fächer' : 'W1 and W2 weights as a fan-out'}"></canvas>
+						<canvas id="${prefix}-ffn-curve" class="tm-ffn-stage-canvas" data-view="curve" hidden aria-label="${isDe ? 'Aktivierungsfunktion und echte Voraktivierungen' : 'Activation function and real pre-activations'}"></canvas>
+						<canvas id="${prefix}-ffn-space" class="tm-ffn-stage-canvas" data-view="space" hidden aria-label="${isDe ? 'Raumkrümmung: flacher Eingabe-Schnitt, vom echten FFN gefaltet' : 'Space curvature: flat input slice folded by the real FFN'}"></canvas>
+					</div>
+				</div>
+				<span class="tm-ffn-stage-arrow" aria-hidden="true">→</span>
+				<div class="tm-ffn-stage" data-reveal-target="${prefix}-ffn-compress-formula" data-reveal-group="ffn" role="button" tabindex="0" aria-expanded="false">
+					<div class="tm-ffn-stage-head"><span class="tm-ffn-stage-title">Compression</span><span class="tm-ffn-stage-shape" id="${prefix}-ffn-shape-compress">d_ff → d_model</span></div>
+					<div class="tm-ffn-widthbar" id="${prefix}-ffn-width-compress" aria-hidden="true"></div>
+					<div class="tm-ffn-stage-desc">${isDe ? 'Die echte W₂-Projektion zurück auf d_model. Das Ergebnis ist das FFN-Update, das der Residual-Stream zum alten Vektor addiert.' : 'The real W₂ projection back to d_model. The result is the FFN update that the residual stream adds to the old vector.'}</div>
+					<div class="tm-ffn-stage-formula" data-tex="${tmFfnCompressAbstractTex()}" data-tex-display="false"></div>
+					<div class="tm-ffn-stage-plots">
+						<canvas id="${prefix}-ffn-compress-heatmap" class="tm-ffn-stage-canvas" aria-label="${isDe ? 'FFN-Ausgabe nach der Kompression' : 'FFN output after compression'}"></canvas>
+					</div>
+				</div>
+			</div>
+			<details class="tm-tda-step" id="${prefix}-tda-step">
+				<summary>${isDe ? 'Topologie (TDA): Bleiben Strukturen erhalten?' : 'Topology (TDA): do structures survive?'}</summary>
+				<div class="tm-tda-body">
+					<p class="tm-tda-intro">${isDe ? 'Persistente Homologie (Vietoris–Rips) auf der echten Token-Wolke vor und nach dem FFN. Blau ist H0 (Komponenten), Gold ist H1 (Schleifen). Der Slider ist der Filtrationsradius ε, als Anteil am jeweiligen Durchmesser der Wolke.' : 'Persistent homology (Vietoris–Rips) on the real token cloud before and after the FFN. Blue is H0 (components), gold is H1 (loops). The slider is the filtration radius ε as a fraction of each cloud’s diameter.'}</p>
+					<div class="tm-tda-controls">
+						<label for="${prefix}-tda-eps">${isDe ? 'Filtrationsradius ε' : 'Filtration radius ε'}</label>
+						<input type="range" id="${prefix}-tda-eps" min="0" max="100" step="1" value="35">
+						<span class="tm-tda-eps-val" id="${prefix}-tda-eps-val">0.35</span>
+						<label for="${prefix}-tda-mode">${isDe ? 'Vergleich' : 'Comparison'}</label>
+						<select id="${prefix}-tda-mode">
+							<option value="residual">${isDe ? 'h₁ → h₂ (mit Residual)' : 'h₁ → h₂ (with residual)'}</option>
+							<option value="ffn">${isDe ? 'normiert → FFN-Update' : 'normalized → FFN update'}</option>
+						</select>
+					</div>
+					<div class="tm-tda-betti" id="${prefix}-tda-betti" aria-live="polite"></div>
+					<div class="tm-tda-status" id="${prefix}-tda-status" aria-live="polite"></div>
+					<div class="tm-tda-grid">
+						<div class="tm-tda-cell">
+							<div class="tm-tda-cell-title" id="${prefix}-tda-before-title">${isDe ? 'Vorher: Token-Wolke (h₁)' : 'Before: token cloud (h₁)'}</div>
+							<canvas id="${prefix}-tda-before-cloud" class="tm-tda-canvas" aria-label="${isDe ? 'Token-Punktwolke vor dem FFN, Kanten beim aktuellen Radius' : 'Token point cloud before the FFN, edges at the current radius'}"></canvas>
+						</div>
+						<div class="tm-tda-cell">
+							<div class="tm-tda-cell-title" id="${prefix}-tda-after-title">${isDe ? 'Nachher: Token-Wolke (h₂)' : 'After: token cloud (h₂)'}</div>
+							<canvas id="${prefix}-tda-after-cloud" class="tm-tda-canvas" aria-label="${isDe ? 'Token-Punktwolke nach dem FFN, Kanten beim aktuellen Radius' : 'Token point cloud after the FFN, edges at the current radius'}"></canvas>
+						</div>
+					</div>
+					<div class="tm-tda-grid tm-tda-grid--barcode">
+						<div class="tm-tda-cell">
+							<div class="tm-tda-cell-title">${isDe ? 'Barcodes vorher' : 'Barcodes before'}</div>
+							<canvas id="${prefix}-tda-before-barcode" class="tm-tda-canvas tm-tda-canvas--barcode" aria-label="${isDe ? 'Barcodes der persistenten Homologie vor dem FFN' : 'Persistent homology barcodes before the FFN'}"></canvas>
+						</div>
+						<div class="tm-tda-cell">
+							<div class="tm-tda-cell-title">${isDe ? 'Barcodes nachher' : 'Barcodes after'}</div>
+							<canvas id="${prefix}-tda-after-barcode" class="tm-tda-canvas tm-tda-canvas--barcode" aria-label="${isDe ? 'Barcodes der persistenten Homologie nach dem FFN' : 'Persistent homology barcodes after the FFN'}"></canvas>
+						</div>
+					</div>
+					<p class="tm-tda-explain" id="${prefix}-tda-explain"></p>
+					<p class="tm-tda-note">${isDe ? 'H1-Balken mit Persistenz unter 0.08 sind blass und zählen nicht als belastbare Struktur; die Schwelle ist eine heuristische Anzeigehilfe, kein statistischer Test. Bei so wenigen Tokens ist das eine explorative Diagnose, keine statistische Aussage. Die Wolken sind auf ihren eigenen Durchmesser normiert, damit die Formen vergleichbar bleiben; die Barcodes zeigen, wann Komponenten verschmelzen und wann Schleifen gefüllt werden. Für die Filtration werden höchstens die ersten 16 Tokens verwendet.' : 'H1 bars with persistence below 0.08 are drawn faintly and do not count as a reliable structure; the threshold is a heuristic display aid, not a statistical test. With so few tokens this is an exploratory diagnostic, not a statistical claim. Each cloud is normalised by its own diameter so the shapes stay comparable; the barcodes show when components merge and when loops are filled. The filtration uses at most the first 16 tokens.'}</p>
+				</div>
+			</details>
 			<div id="${prefix}-formula-body">
-				<details class="tm-formula-step" open><summary>${isDe ? 'LayerNorm' : 'LayerNorm'}</summary><div id="${prefix}-layernorm-viz" class="tm-formula-block"></div></details>
-				<details class="tm-formula-step"><summary>${isDe ? 'Attention-Ausgabe + Residual' : 'Attention output + residual'}</summary><div id="${prefix}-concat-viz" class="tm-formula-block"></div><div id="${prefix}-h1-final-viz" class="tm-formula-block"></div></details>
-				<p class="tm-formula-kicker">${isDe ? 'Feed-Forward-Netz:' : 'Feed-Forward Network:'}</p>
-				<div id="${prefix}-step-1" class="math_transformer"></div>
-				<div id="${prefix}-step-2" class="math_transformer"></div>
-				<div id="${prefix}-step-3" class="math_transformer"></div>
+				<div id="${prefix}-step-1" class="math_transformer">
+					<div id="${prefix}-ffn-preln-formula" class="tm-ffn-answer" hidden></div>
+					<div id="${prefix}-ffn-expand-formula" class="tm-ffn-answer" hidden></div>
+				</div>
+				<div id="${prefix}-ffn-compress-formula" class="tm-ffn-answer" hidden>
+					<div id="${prefix}-step-2" class="math_transformer"></div>
+					<div id="${prefix}-step-3" class="math_transformer"></div>
+				</div>
 				<details class="tm-formula-step"><summary>h_last</summary><div id="${prefix}-hlast" class="tm-hlast"></div></details>
 			</div>
 		</div>
@@ -7494,8 +8213,9 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 						renderLayerAttentionLines(layerIndex);
 						renderLayerFormulas(layerIndex);
 						renderLayerAttention(layerIndex);
+						if (window.TransformerSteps && window.TransformerSteps.renderLayerPreLNTriple) window.TransformerSteps.renderLayerPreLNTriple(layerIndex);
 					} else if (kind === 'ffn') {
-						renderLayerFFNHeatmap(layerIndex);
+						renderLayerFFNStages(layerIndex);
 						renderLayerFormulas(layerIndex);
 					}
 				} finally {
@@ -7530,8 +8250,9 @@ function refreshOpenLayerSubboxes() {
 		} else if (kind === 'attention') {
 			renderLayerAttentionLines(idx);
 			renderLayerAttention(idx);
+			if (window.TransformerSteps && window.TransformerSteps.renderLayerPreLNTriple) window.TransformerSteps.renderLayerPreLNTriple(idx);
 		} else if (kind === 'ffn') {
-			renderLayerFFNHeatmap(idx);
+			renderLayerFFNStages(idx);
 			renderLayerFormulas(idx);
 		}
 	});
@@ -7566,6 +8287,12 @@ function renderLayerFFNHeatmap(layerIdx) {
 	}
 }
 
+function renderLayerFFNStages(layerIdx) {
+	if (window.TransformerSteps && window.TransformerSteps.renderLayerFFNStages) {
+		window.TransformerSteps.renderLayerFFNStages(layerIdx);
+	}
+}
+
 function renderLayerAttention(layerIdx) {
 	const registryEntry = attentionRenderRegistry.get('unified-attention-engine');
 	if (!registryEntry || !registryEntry.instance) return;
@@ -7577,6 +8304,7 @@ function renderLayerAttention(layerIdx) {
 			registryEntry.instance.executeActualRender(registryEntry.headData, registryEntry.tokens);
 		}
 	}
+	if (window.tmClassifyAttentionHeads) setTimeout(window.tmClassifyAttentionHeads, 0);
 }
 
 function renderLayerMigrationPlot(layerIdx) {
@@ -7607,7 +8335,7 @@ function renderLayerFormulas(layerIdx) {
 	}
 	const ffn = trace.ffn || (window.__tmFFNTrace || [])[layerIdx];
 	if (ffn) {
-		render_ffn(ffn.h1, ffn.normed_h1, ffn.W1, ffn.b1, ffn.out_L1, ffn.W2, ffn.b2, ffn.out_FFN, ffn.h2, ffn.gamma2, ffn.beta2, layerIdx, tokens);
+		render_ffn(ffn.h1, ffn.normed_h1, ffn.W1, ffn.b1, ffn.out_L1, ffn.W2, ffn.b2, ffn.out_FFN, ffn.h2, ffn.gamma2, ffn.beta2, layerIdx, tokens, ffn.Wg, ffn.bg);
 	}
 	const hlast = document.getElementById(`${prefix}-hlast`);
 	if (hlast && layerIdx === (window.__tmLayerTrace || []).length - 1) {
@@ -7715,27 +8443,62 @@ window._themeriver_on_change = function () {
 	if (entry) _execute_themeriver_render(entry.d_model);
 };
 
+/* The final projection is often rendered while the page loader still hides
+   #contents (width 0). Re-run the math-scroll pass once it gets a real width
+   so wide matrices cannot stay unclamped and trip the layout guardrail. */
+function _observeOutputProjectionMath() {
+	const out = document.getElementById('transformer-output-projection');
+	if (!out || out._mathScrollObs || typeof ResizeObserver === 'undefined') return;
+	out._mathScrollObs = new ResizeObserver(() => {
+		if (out.clientWidth > 0 && typeof ensureDisplayMathScrollable === 'function') {
+			ensureDisplayMathScrollable(out);
+		}
+	});
+	out._mathScrollObs.observe(out);
+}
+
+function _tmInitStaticPlotLoading() {
+	const texts = {
+		'transformer-plotly-space': 'Loading embedding space…',
+		'transformer-pe-wave-plot': 'Loading positional waves…',
+		'transformer-pe-shift-plot': 'Loading positional shift…'
+	};
+	const cfg = (typeof getTransformerConfig === 'function') ? getTransformerConfig() : { d_model: 3 };
+	const emb = document.getElementById('transformer-plotly-space');
+	if (emb) {
+		const h = (typeof getTrajectoryPlotHeight === 'function')
+			? getTrajectoryPlotHeight(cfg.d_model)
+			: (cfg.d_model <= 3 ? 850 : 520);
+		emb.style.height = h + 'px';
+		emb.style.minHeight = h + 'px';
+	}
+	Object.keys(texts).forEach(function (id) {
+		const el = document.getElementById(id);
+		if (!el || el.innerHTML.trim()) return;
+		if (window.PlotState && typeof PlotState.loading === 'function') {
+			PlotState.loading(el, texts[id]);
+		} else {
+			el.innerHTML = '<div class="plot-loading" style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;"><div class="spinner"></div><span>' + texts[id] + '</span></div>';
+		}
+	});
+}
+
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
 
+	_tmInitStaticPlotLoading();
 	observer_vector_math();
 
-	window.__tmBlockRendered = false;
-	window.__tmOutputRendered = false;
 	drawTrainingPlaceholder();
 	updateTrainButtonState();
 	updateArchitectureValidityUI();
-	run_transformer_demo(null, true);
-	observeTransformerSections();
-	window.addEventListener("scroll", function () {
-		if (!window.__tmTrainingDirty) return;
-		if (window.__tmTrainingRefreshQueued) return;
-		window.__tmTrainingRefreshQueued = true;
-		requestAnimationFrame(function () {
-			window.__tmTrainingRefreshQueued = false;
-			refreshTrainingDemos();
-		});
-	}, { passive: true });
+	run_transformer_demo();
+	renderInitializerHistogram();
+	window.addEventListener('tm:theme', renderInitializerHistogram);
+	if (window.__MN_DARK && window.__MN_DARK.onChange) window.__MN_DARK.onChange(renderInitializerHistogram);
+	_observeOutputProjectionMath();
+	window.addEventListener('blogPostLoadComplete', scrollToRunStep, { once: true });
+	scrollToRunStep();
 
 	const inputElement = document.getElementById('transformer-master-token-input');
 	inputElement.addEventListener('input', (event) => {
@@ -7760,6 +8523,66 @@ function createTrajectoryVFNote() {
 	return note;
 }
 
+function createTrajectoryMetricExplanation() {
+	const box = document.createElement('div');
+	box.className = 'trajectory-metric-explain';
+	box.innerHTML = (window.tmMetric && window.tmMetric.explainHtml)
+		? window.tmMetric.explainHtml()
+		: '';
+	if (window.tmTypesetMathIn) window.tmTypesetMathIn(box);
+	else if (typeof _renderTemmlOnElements === 'function') _renderTemmlOnElements([box]);
+	return box;
+}
+
+function installTrajectoryMetricListener() {
+	if (window.__tmTrajectoryMetricListener) return;
+	window.__tmTrajectoryMetricListener = true;
+	window.addEventListener('tm:metricchange', () => {
+		const embData = embeddingRenderRegistry.get('transformer-plotly-space');
+		if (embData && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-plotly-space'), () => {
+				_execute_embedding_render(embData.d_model, embData.highlightPos, embData.steps);
+			});
+		}
+		const peData = positionalShiftRegistry.get('transformer-pe-shift-plot');
+		if (peData && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-pe-shift-plot'), () => {
+				_execute_shift_render(peData.tokenStrings, peData.d_model, peData.injectedEmbeddings);
+			});
+		}
+		if (window.tlab_trajectory_collector && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-trajectory-full-path'), () => {
+				tlab_render_trajectory_plot(getTransformerConfig().d_model);
+			});
+		}
+		document.querySelectorAll('.trajectory-metric-explain').forEach(el => {
+			el.innerHTML = (window.tmMetric && window.tmMetric.explainHtml) ? window.tmMetric.explainHtml() : '';
+			if (window.tmTypesetMathIn) window.tmTypesetMathIn(el);
+			else if (typeof _renderTemmlOnElements === 'function') _renderTemmlOnElements([el]);
+		});
+	});
+	window.addEventListener('tm:highdimmode', () => {
+		const embData = embeddingRenderRegistry.get('transformer-plotly-space');
+		if (embData && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-plotly-space'), () => {
+				_execute_embedding_render(embData.d_model, embData.highlightPos, embData.steps);
+			});
+		}
+		const peData = positionalShiftRegistry.get('transformer-pe-shift-plot');
+		if (peData && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-pe-shift-plot'), () => {
+				_execute_shift_render(peData.tokenStrings, peData.d_model, peData.injectedEmbeddings);
+			});
+		}
+		if (window.tlab_trajectory_collector && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
+			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-trajectory-full-path'), () => {
+				tlab_render_trajectory_plot(getTransformerConfig().d_model);
+			});
+		}
+	});
+}
+installTrajectoryMetricListener();
+
 function createTrajectoryVFToggleButton() {
 	const toggleBtn = document.createElement('button');
 	toggleBtn.className = 'trajectory-vf-toggle';
@@ -7768,7 +8591,7 @@ function createTrajectoryVFToggleButton() {
 		? ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field')
 		: ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field');
 	toggleBtn.style.cssText = `
-	margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
+	margin: 6px 12px 0; padding: 6px 16px; border-radius: 6px;
 	border: 1px solid #8b5cf6;
 	background: ${window._trajectoryVfEnabled ? '#ede9fe' : '#fff'};
 	color: #8b5cf6;
@@ -8044,48 +8867,5 @@ if (!window.__tmLayerCardListener) {
 			var idx = parseInt(card.dataset.layerIdx, 10);
 			if (!isNaN(idx)) refreshOpenLayerSubboxes();
 		});
-	});
-}
-
-/* Re-render embedding / positional views when the shared metric switch changes. */
-if (!window.__tmEmbMetricListener) {
-	window.__tmEmbMetricListener = true;
-	window.addEventListener('tm:metricchange', () => {
-		const emb = embeddingRenderRegistry.get('transformer-plotly-space');
-		if (emb && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
-			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-plotly-space'), () => {
-				_execute_embedding_render(emb.d_model, emb.highlightPos, emb.steps);
-			});
-		}
-		const pe = positionalShiftRegistry.get('transformer-pe-shift-plot');
-		if (pe && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
-			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-pe-shift-plot'), () => {
-				_execute_shift_render(pe.tokenStrings, pe.d_model, pe.injectedEmbeddings);
-			});
-		}
-	});
-}
-
-/* Re-render high-dimensional views when PCA/parallel changes. */
-if (!window.__tmHighDimListener) {
-	window.__tmHighDimListener = true;
-	window.addEventListener('tm:highdimmode', () => {
-		const emb = embeddingRenderRegistry.get('transformer-plotly-space');
-		if (emb && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
-			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-plotly-space'), () => {
-				_execute_embedding_render(emb.d_model, emb.highlightPos, emb.steps);
-			});
-		}
-		const pe = positionalShiftRegistry.get('transformer-pe-shift-plot');
-		if (pe && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
-			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-pe-shift-plot'), () => {
-				_execute_shift_render(pe.tokenStrings, pe.d_model, pe.injectedEmbeddings);
-			});
-		}
-		if (window.tlab_trajectory_collector && window.tmMetric && window.tmMetric.rerenderWithOverlay) {
-			window.tmMetric.rerenderWithOverlay(document.getElementById('transformer-trajectory-full-path'), () => {
-				tlab_render_trajectory_plot(getTransformerConfig().d_model);
-			});
-		}
 	});
 }

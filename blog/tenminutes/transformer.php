@@ -7,9 +7,10 @@
 	<meta name="theme-color" content="#ffffff">
 	<title>The Whole Machine | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
-	<link rel="stylesheet" href="../Temml-Local.min.css">
+	<link rel="stylesheet" href="Temml-Local.min.css">
+	<link rel="stylesheet" href="assets/full/transformer.css?v=<?php echo (int) @filemtime(__DIR__ . '/assets/full/transformer.css'); ?>">
 	<link rel="stylesheet" href="assets/full/demos.css">
-	<link rel="stylesheet" href="../transformer_steps.css?v=<?php echo (int) @filemtime(__DIR__ . '/../transformer_steps.css'); ?>">
+	<link rel="stylesheet" href="assets/full/transformer_steps.css?v=<?php echo (int) @filemtime(__DIR__ . '/assets/full/transformer_steps.css'); ?>">
 </head>
 <body data-lesson="transformer" data-page="lesson" data-no-full-article data-tm-reload-lang="1">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -163,164 +164,133 @@
 <div id="training-loss-plot"></div>
 </div>
 <style>
-#transformer-train-card {
-	background: var(--mn-surface, #ffffff);
-	border: 1px solid var(--mn-border, #cbd5e1);
-	border-radius: 0;
-	margin: 15px 0;
-	padding: 12px 14px;
+/* TEN MINUTES — design bridge for the copied live transformer engine.
+   The engine keeps its --mn-* tokens; demos.css maps them to the tm-* set.
+   Here we align the remaining type, corners and surfaces with the other
+   ten-minute lessons (Barlow display, Open Sans UI, flat ten-minute cards). */
+#transformer_site {
+	max-width: 100%;
+	font-family: var(--tm-ui);
 }
-.transformer-train-controls {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-end;
-	gap: 14px 22px;
-}
-.transformer-train-field {
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
-}
-.transformer-train-field > .transformer-train-label {
-	font-weight: 600;
-	font-size: 0.8rem;
-	color: var(--mn-text-secondary, #475569);
-}
-.transformer-train-field input[type="number"] {
-	width: 72px;
-	padding: 5px 8px;
-	font-size: 0.9rem;
-	background: var(--mn-surface, #fff);
-	color: var(--mn-text, #1e293b);
-	border: 1px solid var(--mn-border, #cbd5e1);
-	border-radius: 6px;
-}
-.transformer-train-field input[type="number"]:focus {
-	outline: 2px solid var(--mn-emerald, #10b981);
-	outline-offset: 1px;
-}
-.transformer-opt-group {
-	display: flex;
-	gap: 2px;
-	padding: 3px;
-	background: var(--mn-surface, #fff);
-	border: 1px solid var(--mn-border, #cbd5e1);
-	border-radius: 8px;
-}
-.transformer-opt {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	padding: 4px 10px;
-	border-radius: 6px;
-	font-size: 0.85rem;
-	font-weight: 500;
-	color: var(--mn-text-secondary, #475569);
-	cursor: pointer;
-	white-space: nowrap;
-	transition: background-color 0.15s ease, color 0.15s ease;
-}
-.transformer-opt:hover {
-	background: var(--mn-bg-subtle, #f1f5f9);
-}
-.transformer-opt input[type="radio"] {
-	margin: 0;
-	accent-color: var(--mn-emerald, #10b981);
-	cursor: pointer;
-}
-.transformer-opt:has(input:checked) {
-	background: var(--mn-emerald-light, #d1fae5);
-	color: var(--mn-text, #0f172a);
-}
-.transformer-opt input:checked + .glossary-term {
-	font-weight: 600;
-}
-.transformer-opt .glossary-term {
-	background: transparent;
-	padding: 0;
-}
-.transformer-train-actions {
-	display: flex;
-	gap: 8px;
-	margin-left: auto;
-}
-.transformer-train-status {
-	height: 32px;
-	min-height: 32px;
-	margin-top: 10px;
-	display: flex;
-	align-items: center;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	font-size: 0.85rem;
-	line-height: 1.3;
-	color: var(--mn-emerald, #047857);
+#transformer_site h2,
+#transformer_site h3,
+#transformer_site h4,
+.tm-layer-head,
+.tm-step-head h3,
+.tm-ffn-stage-title,
+.tm-tda-step > summary {
+	font-family: var(--tm-display);
 }
 #training-loss-plot {
-	width: 100%;
-	height: 200px;
-	margin-top: 10px;
-	border: 1px solid var(--mn-border, #e2e8f0);
-	border-radius: 8px;
-	background: var(--mn-surface, #fff);
-	user-select: none;
-	-webkit-user-select: none;
-	-webkit-user-drag: none;
-	touch-action: pan-y;
-}
-#training-loss-plot .nsewdrag {
-	cursor: default;
-}
-@media (max-width: 640px) {
-	.transformer-train-actions {
-		margin-left: 0;
-		width: 100%;
-	}
-}
-
-/* Compact hyperparameter cards: sliders stay inside a grid, not full-page. */
-#transformer_config {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 12px;
-	align-items: start;
-	background: transparent;
-	border: 0;
-	padding: 0;
+	border-radius: 0;
+	border-color: var(--tm-line);
+	background: var(--tm-card);
 }
 #transformer_config > div {
-	margin-bottom: 0 !important;
-	padding: 10px 12px;
-	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
-	border-radius: 0;
-	background: var(--tm-card, var(--mn-surface, #ffffff));
-}
-#transformer_config > #param-breakdown-toggle,
-#transformer_config > #param-breakdown-chart {
-	grid-column: 1 / -1;
+	border-color: var(--tm-line);
+	background: var(--tm-card);
 }
 #transformer_config input[type="range"] {
-	width: 100%;
+	accent-color: var(--tm-green);
 }
-#transformer_config p {
-	font-size: 0.85rem !important;
-	line-height: 1.5;
+/* Flat ten-minute surfaces for the engine's generated cards. */
+.tm-step,
+.tm-layer-card,
+.tm-layer-subbox,
+.tm-optional,
+.tm-formula-step,
+.tm-step-detail,
+.tm-tda-step,
+.tm-ffn-stage,
+.tm-feature-metric-explain,
+.trajectory-metric-explain,
+.tm-metric-detail,
+.tm-metric-formula,
+.tm-step-why {
+	border-radius: 0;
 }
-#transformer_config label {
-	font-size: 0.9rem;
+.tm-layer-card {
+	border-color: var(--tm-line);
+	background: var(--tm-card);
 }
-
-#transformer_config { align-items: start; }
-.transformer_corpus label { font-size: 0.95rem; }
-.transformer_corpus p { font-size: 0.85rem; line-height: 1.5; }
-.transformer-train-actions .train-btn {
-	background: var(--tm-green, #63a44b);
-	border-color: var(--tm-green, #63a44b);
+.tm-layer-head { color: var(--tm-ink); }
+.tm-layer-sub { color: var(--tm-ink-soft); }
+.tm-layer-subbox,
+.tm-formula-step,
+.tm-step-detail { border-color: var(--tm-line); }
+.tm-ffn-stage:hover,
+.tm-ffn-stage:focus-visible,
+.tm-ffn-stage.is-revealed {
+	outline-color: var(--tm-green);
+}
+.tm-ffn-viewswitch button,
+.tm-tda-chip,
+.tm-feedback-chip {
+	font-family: var(--tm-ui);
+	border-radius: 0;
+	border-color: var(--tm-line-strong);
+	background: var(--tm-card);
+	color: var(--tm-ink-soft);
+}
+.tm-ffn-viewswitch button.is-active {
+	background: var(--tm-green);
+	border-color: var(--tm-green);
 	color: #ffffff;
-	font-weight: 700;
 }
-.transformer-train-actions .train-btn:hover { filter: brightness(1.06); }
+.tm-tda-chip--after { border-color: var(--tm-green); }
+.tm-tda-chip--muted { opacity: 0.72; border-style: dashed; }
+.tm-tda-explain,
+.tm-tda-note,
+.tm-tda-intro,
+.tm-tda-status,
+.tm-ffn-stage-desc,
+.tm-step-more,
+.tm-step-detail-body,
+.tm-level-text {
+	font-family: var(--tm-ui);
+	color: var(--tm-ink-soft);
+}
+.tm-tda-step > summary { color: var(--tm-ink); }
+.tm-tda-canvas,
+.tm-ffn-stage-canvas,
+.tm-step-canvas { background: transparent; }
+.tm-step-formula,
+.tm-ffn-stage-formula { color: var(--tm-ink-soft); }
+.plot-loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	height: 100%;
+	color: var(--tm-muted);
+	font: 600 0.78rem/1.4 var(--tm-ui);
+}
+.plot-loading .spinner {
+	width: 18px;
+	height: 18px;
+	border: 2px solid var(--tm-line-strong);
+	border-top-color: var(--tm-green);
+	border-radius: 50%;
+	animation: tm-plot-spin 0.8s linear infinite;
+}
+@keyframes tm-plot-spin { to { transform: rotate(360deg); } }
+.plot-state {
+	padding: 12px 14px;
+	border: 1px dashed var(--tm-line-strong);
+	background: var(--tm-card);
+	color: var(--tm-ink-soft);
+	font: 400 0.8rem/1.45 var(--tm-ui);
+}
+.plot-state-title { font-family: var(--tm-display); font-weight: 700; color: var(--tm-ink); }
+.plot-state-retry {
+	margin-top: 8px;
+	padding: 4px 10px;
+	border: 1px solid var(--tm-green);
+	background: var(--tm-green);
+	color: #fff;
+	font: 600 0.75rem/1.3 var(--tm-ui);
+	cursor: pointer;
+}
 </style>
 
 						<div class="prose">
@@ -808,10 +778,10 @@
 	</div>
 
 
-	<script src="../plotly-2.24.1.min.js"></script>
+	<script src="plotly-2.24.1.min.js"></script>
 	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
-	<script src="../temml.min.js"></script>
-	<script src="../transformer_steps.js?v=<?php echo (int) @filemtime(__DIR__ . '/../transformer_steps.js'); ?>"></script>
+	<script src="temml.min.js"></script>
+	<script src="assets/full/transformer_steps.js?v=<?php echo (int) @filemtime(__DIR__ . '/assets/full/transformer_steps.js'); ?>"></script>
 	<script>
 	(function () {
 		var host = document.getElementById('transformer-step-visuals');
@@ -842,10 +812,15 @@
 	<?php
 	$tmDemoFiles = [
 		'assets/full/shim.js',
+		'assets/full/plot_state.js',
 		'assets/full/transformer.js',
 		'assets/full/vendor/echarts.min.js',
 		'assets/full/vendor/echarts-gl.min.js',
 		'assets/full/attention_engine.js',
+		'assets/full/provenance.js',
+		'assets/full/llm_river.js',
+		'assets/full/tda_live.js',
+		'assets/full/tda_ffn.js',
 	];
 	$tmDemoSizes = [];
 	$tmDemoTotal = 0;
@@ -868,8 +843,13 @@
 			"echarts.min.js": ["ECharts (position waves)", "ECharts (Positionswellen)"],
 			"echarts-gl.min.js": ["ECharts GL (3D)", "ECharts GL (3D)"],
 			"shim.js": ["Demo shim", "Demo-Shim"],
+			"plot_state.js": ["Plot states", "Plot-Zustände"],
 			"transformer.js": ["Transformer engine", "Transformer-Engine"],
 			"attention_engine.js": ["Attention engine", "Attention-Engine"],
+			"provenance.js": ["Provenance layer", "Provenienz-Schicht"],
+			"llm_river.js": ["LLM river", "LLM-Fluss"],
+			"tda_live.js": ["Live TDA", "Live-TDA"],
+			"tda_ffn.js": ["FFN topology", "FFN-Topologie"],
 			"demo-i18n.js": ["German demo texts", "Deutsche Demo-Texte"],
 			"demo-render.js": ["Formula renderer", "Formel-Renderer"]
 		};
@@ -1065,6 +1045,7 @@
 				});
 			}, Promise.resolve()).then(function () {
 				perf.scriptsMs = performance.now() - perf.start;
+				window.__tmStepDepsReady = true;
 				window.__tmDemoPerf = perf;
 				if (perfOnly || fetchOnly) { showPerf(); finish(); return; }
 				try {
@@ -1078,6 +1059,8 @@
 						Promise.resolve(result).then(function () {
 							perf.engineMs = performance.now() - t0;
 							wireTrain();
+							if (window.TransformerSteps) window.TransformerSteps.init('transformer-step-visuals');
+							if (window.ensureFullTransformerVisualization) window.ensureFullTransformerVisualization(true);
 							if (engineOnly) { showPerf(); finish(); return; }
 							finish();
 							loadScript("assets/full/demo-i18n.js").then(function () {
