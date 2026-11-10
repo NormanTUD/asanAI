@@ -738,11 +738,17 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<p>A simple layer can look like this: one matrix, one bias, one activation. That is a dense unit. It is the basic building block; a transformer layer later combines self-attention and an FFN.</p>
 							<p>Real networks combine building blocks differently. A convolutional layer is built for images, an attention layer for sequences, a dense layer for tables of numbers. A transformer layer is not one dense unit: it combines self-attention, which mixes information between tokens, with an FFN, which is itself a small stack of dense units. They share the same idea: functions with parameters, trained on data so that their output gets closer to the right answer.</p>
 							<?php endif; ?>
-							<div class="layer-formula-grid">
-								<div class="layer-formula-card">
-									<div class="layer-card-title"><?php echo $layer_de ? 'Dense-Einheit' : 'Dense unit'; ?></div>
-									<div class="prose-math" data-tex="\underbrace{\text{dense}(x) = \text{activation}\!\left(\underbrace{W x + b}_{\text{learned linear map}}\right)}_{\text{a function with parameters } W,\ b}" data-tex-de="\underbrace{\text{dense}(x) = \text{Aktivierung}\!\left(\underbrace{W x + b}_{\text{gelernte lineare Abbildung}}\right)}_{\text{eine Funktion mit Parametern } W,\ b}" data-tex-display="true"></div>
-								</div>
+							<div class="layer-formula-dense">
+								<div class="layer-card-title"><?php echo $layer_de ? 'Dense-Einheit' : 'Dense unit'; ?></div>
+								<div class="prose-math" data-tex="\underbrace{\text{dense}(x) = \text{activation}\!\left(\underbrace{W x + b}_{\text{learned linear map}}\right)}_{\text{a function with parameters } W,\ b}" data-tex-de="\underbrace{\text{dense}(x) = \text{Aktivierung}\!\left(\underbrace{W x + b}_{\text{gelernte lineare Abbildung}}\right)}_{\text{eine Funktion mit Parametern } W,\ b}" data-tex-display="true"></div>
+							</div>
+							<h4 class="layer-subhead"><?php echo $layer_de ? 'Warum aus Scores Wahrscheinlichkeiten werden' : 'Why scores become probabilities'; ?></h4>
+							<?php if ($layer_de): ?>
+							<p>Softmax macht aus beliebigen Scores etwas, das sich wie eine Wahrscheinlichkeitsverteilung verhält. Es exponiert jeden Score, sodass alle Werte positiv werden, und teilt dann durch die Summe. Die Exponentialfunktion ist monoton, der größte Score bleibt also der größte; die Division sorgt dafür, dass die Ergebnisse sich zu eins summieren. Verschiebt man alle Scores um dieselbe Konstante, kürzt sich das im Verhältnis weg; der absolute Bereich der Scores spielt keine Rolle. Die Basis <span data-tex="e" data-tex-display="false"></span> ist eine Konvention: Jede positive Basis ergibt eine gültige Verteilung, aber mit <span data-tex="e" data-tex-display="false"></span> bleibt die Ableitung sauber und das Trainingssignal gutartig. Der Name „Softmax“ stammt von <a href="https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html" target="_blank" rel="noopener">Bridle (1990)</a>.</p>
+							<?php else: ?>
+							<p>Softmax turns arbitrary scores into something that behaves like a probability distribution. It exponentiates every score, so all values become positive, then divides by the sum. The exponential is monotone, so the largest score stays the largest; the division makes the results sum to one. Shifting every score by the same constant cancels in the ratio, so the absolute range of the scores does not matter. The base <span data-tex="e" data-tex-display="false"></span> is a convention: any positive base gives a valid distribution, but with <span data-tex="e" data-tex-display="false"></span> the derivative stays clean and the training signal well behaved. The name “softmax” comes from <a href="https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html" target="_blank" rel="noopener">Bridle (1990)</a>.</p>
+							<?php endif; ?>
+							<div class="layer-formula-grid layer-formula-grid--three">
 								<div class="layer-formula-card">
 									<div class="layer-card-title"><?php echo $layer_de ? 'Self-Attention' : 'Self-attention'; ?></div>
 									<div class="prose-math" data-tex="\underbrace{\text{self-attention}(X)_i = \sum_{\underbrace{j}_{\text{visible token }j}} \underbrace{\alpha_{ij}}_{\substack{\text{self-attention}\\\text{from }j\text{ to }i}} \underbrace{v_j}_{\text{value of token }j}}_{\text{token with number }i\text{ mixes in all visible tokens }j}" data-tex-de="\underbrace{\text{Self-Attention}(X)_i = \sum_{\underbrace{j}_{\text{sichtbares Token }j}} \underbrace{\alpha_{ij}}_{\substack{\text{Self-Attention}\\\text{von }j\text{ nach }i}} \underbrace{v_j}_{\text{Value von Token }j}}_{\text{Token mit der Nummer }i\text{ mischt alle sichtbaren Tokens }j\text{ ein}}" data-tex-display="true"></div>
@@ -752,17 +758,22 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 									<div class="layer-card-title">FFN</div>
 									<div class="prose-math" data-tex="\underbrace{\text{FFN}(x) = \text{dense}_2(\text{activation}(\text{dense}_1(x)))}_{\text{the simplest view: two dense units with an activation between them}}" data-tex-de="\underbrace{\text{FFN}(x) = \text{dense}_2(\text{Aktivierung}(\text{dense}_1(x)))}_{\text{die einfachste Sicht: zwei Dense-Einheiten mit einer Aktivierung dazwischen}}" data-tex-display="true"></div>
 								</div>
-								<div class="layer-formula-card layer-formula-card--layer">
-									<div class="layer-card-title"><?php echo $layer_de ? 'Transformer-Schicht (Self-Attention + FFN)' : 'Transformer layer (self-attention + FFN)'; ?></div>
-									<div class="prose-math" data-tex="\underbrace{\begin{aligned} A &= \text{self-attention}(X) \\ \text{layer}(X) &= \left. \begin{pmatrix} \text{FFN}(A_1) \\ \text{FFN}(A_2) \\ \text{FFN}(A_3) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix} \right\} \begin{matrix} \text{token 1} \\ \text{token 2} \\ \text{token 3} \\ \vdots \\ \text{token }n \end{matrix} \end{aligned}}_{\text{self-attention turns X into A; the FFN works on one row at a time}}" data-tex-de="\underbrace{\begin{aligned} A &= \text{Self-Attention}(X) \\ \text{layer}(X) &= \left. \begin{pmatrix} \text{FFN}(A_1) \\ \text{FFN}(A_2) \\ \text{FFN}(A_3) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix} \right\} \begin{matrix} \text{Token 1} \\ \text{Token 2} \\ \text{Token 3} \\ \vdots \\ \text{Token }n \end{matrix} \end{aligned}}_{\text{Self-Attention macht aus X die Matrix A; das FFN arbeitet auf einer Zeile auf einmal}}" data-tex-display="true"></div>
+								<div class="layer-formula-card">
+									<div class="layer-card-title">Softmax</div>
+									<div class="prose-math" data-tex="\underbrace{p_i = \frac{\exp(z_i)}{\sum_{j=1}^{V}\exp(z_j)}}_{\text{a positive distribution over the vocabulary}}" data-tex-de="\underbrace{p_i = \frac{\exp(z_i)}{\sum_{j=1}^{V}\exp(z_j)}}_{\text{eine positive Verteilung über das Vokabular}}" data-tex-display="true"></div>
 								</div>
 							</div>
-							<p class="layer-formula-note"><?php echo $layer_de ? 'W, b, W1 und W2 sind Parameter; das Training passt sie an. Aktivierung() ist eine Nichtlinearität wie ReLU oder GELU. Self-Attention nimmt die ganze Matrix X (eine Zeile pro Token) und liefert A mit einer Zeile pro Token. Die Gewichte α_ij liegen in [0,1] und summieren sich für jedes i zu 1. Das FFN transformiert dann jede Zeile A_i einzeln; es bekommt nie die ganze Matrix.' : 'W, b, W1, and W2 are parameters; training adjusts them. activation() is a nonlinearity such as ReLU or GELU. Self-attention takes the whole matrix X (one row per token) and returns A with one row per token. The weights α_ij lie in [0,1] and sum to 1 for each i. The FFN then transforms each row A_i separately; it never receives the whole matrix.'; ?></p>
+							<p class="layer-formula-note"><?php echo $layer_de ? 'W, b, W1 und W2 sind Parameter; das Training passt sie an. Aktivierung() ist eine Nichtlinearität wie ReLU oder GELU. Self-Attention nimmt die ganze Matrix X (eine Zeile pro Token) und liefert A mit einer Zeile pro Token. Die Gewichte α_ij liegen in [0,1] und summieren sich für jedes i zu 1. Das FFN transformiert dann jede Zeile A_i einzeln; es bekommt nie die ganze Matrix. Softmax macht aus den finalen Scores eine Verteilung über das Vokabular; die Reihenfolge der Scores bleibt erhalten.' : 'W, b, W1, and W2 are parameters; training adjusts them. activation() is a nonlinearity such as ReLU or GELU. Self-attention takes the whole matrix X (one row per token) and returns A with one row per token. The weights α_ij lie in [0,1] and sum to 1 for each i. The FFN then transforms each row A_i separately; it never receives the whole matrix. Softmax turns the final scores into a distribution over the vocabulary; it preserves their ranking.'; ?></p>
 							<?php if ($layer_de): ?>
 							<p>Das ist ein grobes Bild. Darunter steckt bei jedem Schritt eine Matrix von Zahlen; die Formeln zeigen die Form der Berechnung, nicht die Implementierung.</p>
 							<?php else: ?>
 							<p>This is a coarse picture. Underneath, every step is a matrix of numbers; the formulas show the shape of the computation, not the implementation.</p>
 							<?php endif; ?>
+							<div class="layer-formula-card layer-formula-card--layer layer-formula-wide">
+								<div class="layer-card-title"><?php echo $layer_de ? 'Die Schicht ist die ganze Komposition' : 'The layer is the whole composition'; ?></div>
+								<p class="layer-formula-wide-intro"><?php echo $layer_de ? 'Eine Schicht ist nicht nur Attention und nicht nur ein FFN. Sie ist die Komposition: Attention mischt die Tokens zu A, dann schreibt das FFN jede Zeile von A um. Das Ergebnis ist die nächste Matrix X mit derselben Form. In einem echten Block umschließen Residualverbindungen und Normalisierung beide Schritte; die Formel hält die Form sichtbar.' : 'A layer is not just attention and not just an FFN. It is the composition: attention mixes the tokens into A, then the FFN rewrites each row of A. The result is the next matrix X with the same shape. In a real block, residual connections and normalization wrap both steps; the formula keeps the shape visible.'; ?></p>
+								<div class="prose-math" data-tex="\underbrace{\begin{aligned} A &= \text{self-attention}(X) \\ \text{layer}(X) &= \left. \begin{pmatrix} \text{FFN}(A_1) \\ \text{FFN}(A_2) \\ \text{FFN}(A_3) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix} \right\} \begin{matrix} \text{token 1} \\ \text{token 2} \\ \text{token 3} \\ \vdots \\ \text{token }n \end{matrix} \end{aligned}}_{\text{self-attention turns X into A; the FFN works on one row at a time}}" data-tex-de="\underbrace{\begin{aligned} A &= \text{Self-Attention}(X) \\ \text{layer}(X) &= \left. \begin{pmatrix} \text{FFN}(A_1) \\ \text{FFN}(A_2) \\ \text{FFN}(A_3) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix} \right\} \begin{matrix} \text{Token 1} \\ \text{Token 2} \\ \text{Token 3} \\ \vdots \\ \text{Token }n \end{matrix} \end{aligned}}_{\text{Self-Attention macht aus X die Matrix A; das FFN arbeitet auf einer Zeile auf einmal}}" data-tex-display="true"></div>
+							</div>
 							<h4 class="layer-subhead"><?php echo $layer_de ? 'Ein Sprachmodell kombiniert diese und weitere Bausteine' : 'A language model combines these and other building blocks'; ?></h4>
 							<?php if ($layer_de): ?>
 							<p>Ein Sprachmodell kombiniert diese Bausteine zu einem Transformer-Block: Zuerst fragt Self-Attention, wie stark jedes Wort mit jedem anderen Wort im Kontext verbunden ist; diese Verbindungen lernt das Modell aus den Daten. Ein FFN entwirrt das Ergebnis dann: Es faltet die Vektoren in einen höherdimensionalen Raum, trennt Merkmale und faltet sie wieder zurück. Eine echte Transformer-Schicht enthält außerdem LayerNorm, Residualverbindungen und andere Teile. Sie sind hier weggelassen, damit das Bild lesbar bleibt; die späteren Abschnitte, darunter der <a href="#step-residual-section">Residual-Abschnitt</a>, behandeln sie im Detail.</p>
@@ -833,10 +844,36 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								</div>
 								<div class="layer-mix-card">
 									<div class="layer-card-title"><?php echo $layer_de ? 'Die Mischung' : 'The mix'; ?></div>
-									<div class="prose-math" data-tex="\underbrace{ \text{new}_2 = \underbrace{0.2\,\text{token}_2 + 0.8\,\text{token}_1}_{\text{weighted mix of visible vectors}} }_{\text{token 2 after attention}}" data-tex-de="\underbrace{ \text{neu}_2 = \underbrace{0.2\,\text{token}_2 + 0.8\,\text{token}_1}_{\text{gewichtete Mischung der sichtbaren Vektoren}} }_{\text{Token 2 nach Attention}}" data-tex-display="true"></div>
+									<div class="prose-math" data-tex="\underbrace{ \text{new}_2 = \underbrace{0.2 \cdot \text{token}_2 + 0.8 \cdot \text{token}_1}_{\text{weighted mix of visible vectors}} }_{\text{token 2 after attention}}" data-tex-de="\underbrace{ \text{neu}_2 = \underbrace{0.2 \cdot \text{token}_2 + 0.8 \cdot \text{token}_1}_{\text{gewichtete Mischung der sichtbaren Vektoren}} }_{\text{Token 2 nach Attention}}" data-tex-display="true"></div>
 									<p class="layer-mix-note"><?php echo $layer_de ? 'Token 2 liest Token 1 und sich selbst. Token 3 kann es nicht lesen, weil Token 3 erst später kommt. Das obere Dreieck ist maskiert.' : 'Token 2 reads token 1 and itself. It cannot read token 3, because token 3 comes later. The upper triangle is masked.'; ?></p>
 								</div>
 							</div>
+							<h4 class="layer-subhead"><?php echo $layer_de ? 'Jeder Head schaut aus einer anderen Perspektive' : 'Each head looks from a different perspective'; ?></h4>
+							<?php if ($layer_de): ?>
+							<p>Attention wählt seine Gewichte nicht aus einer festen Liste. Es lernt aus dem Loss, welche Aspekte der sichtbaren Tokens helfen, das nächste Token vorherzusagen. Mit genug Daten ist es keine Option, jeden Trainingssatz auswendig zu lernen; das Modell wird auf wiederverwendbare Struktur gedrückt: Geschlecht, Alter, syntaktische Rolle, Thema oder was auch immer den Loss senkt. Jeder Head kann dieselben Tokens aus einer anderen Perspektive sehen: Einer verfolgt ein Pronomen, ein anderer ein Verb, ein dritter das Thema, und jeder kann ignorieren, was die anderen nutzen.</p>
+							<?php else: ?>
+							<p>Attention does not choose its weights from a fixed list. It learns, from the loss, which aspects of the visible tokens help predict the next token. With enough data, memorizing every training sentence is not an option, so the model is pushed toward reusable structure: gender, age, syntactic role, topic, or whatever else lowers the loss. Each head can look at the same tokens from a different perspective: one head can track a pronoun, another a verb, another the topic, and each can ignore what the others use.</p>
+							<?php endif; ?>
+							<div class="attention-aspects" role="img" aria-label="<?php echo $layer_de ? 'Drei Heads betrachten dieselben Tokens aus unterschiedlichen Perspektiven: Pronomen, Verb und Thema' : 'Three heads look at the same tokens from different perspectives: pronoun, verb, and topic'; ?>">
+								<div class="attention-aspect"><span class="aa-head">Head 1</span><b><?php echo $layer_de ? 'Pronomen' : 'pronoun'; ?></b><span><?php echo $layer_de ? '„es“ → „Bank“' : '“it” → “bank”'; ?></span></div>
+								<div class="attention-aspect"><span class="aa-head">Head 2</span><b><?php echo $layer_de ? 'Verb' : 'verb'; ?></b><span><?php echo $layer_de ? '„saß“ → „Bank“' : '“sat” → “bank”'; ?></span></div>
+								<div class="attention-aspect"><span class="aa-head">Head 3</span><b><?php echo $layer_de ? 'Thema' : 'topic'; ?></b><span><?php echo $layer_de ? '„Fluss“ → „Bank“' : '“river” → “bank”'; ?></span></div>
+							</div>
+							<p class="attention-aspects-note"><?php echo $layer_de ? 'Eine Skizze, keine gemessenen Gewichte: Die Heads sehen dieselben Tokens, aber jeder kann auf etwas anderes achten.' : 'A sketch, not measured weights: the heads see the same tokens, but each can attend to something else.'; ?></p>
+							<?php if ($layer_de): ?>
+							<div class="pullquote">
+								„Pensar es olvidar diferencias, es generalizar, abstraer. En el abarrotado mundo de Funes no había sino detalles, casi inmediatos.“
+								<br><span class="borges-translation">Denken heißt Unterschiede vergessen, verallgemeinern, abstrahieren. In der übervollen Welt des Funes gab es nur Einzelheiten, fast unmittelbare Einzelheiten.</span>
+								<cite>Jorge Luis Borges, „Funes el memorioso“ (1942) · <a href="https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf" target="_blank" rel="noopener">Original</a></cite>
+							</div>
+							<p>Borges' Funes erinnert sich an alles und kann deshalb nicht denken. Zum Denken muss er Unterschiede vergessen, verallgemeinern und abstrahieren; die Geschichte sagt nicht, dass Erinnern schlecht ist, sondern dass Denken einen Schnitt braucht. Ein LLM macht dasselbe auf zwei Ebenen. Das Modell als Ganzes speichert nicht jeden Fakt; es lernt komprimierte Regelmäßigkeiten. Ein einzelner Head muss nicht alles auf einmal repräsentieren; er kann sich auf einen Aspekt konzentrieren und den Rest ignorieren. Der Stapel setzt die Schnitte dann wieder zu einem reichen Kontext zusammen.</p>
+							<?php else: ?>
+							<div class="pullquote">
+								“To think is to forget a difference, to generalize, to abstract. In the overly replete world of Funes there were nothing but details, almost contiguous details.”
+								<cite>Jorge Luis Borges, “Funes the Memorious” (1942) · <a href="https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf" target="_blank" rel="noopener">Spanish original</a></cite>
+							</div>
+							<p>Borges's Funes remembers everything and therefore cannot think. To think, he has to forget differences, generalize, and abstract; the story's point is not that memory is bad, but that thinking needs a cut. An LLM does the same at two scales. The model as a whole does not store every fact; it learns compressed regularities. A single head does not need to represent everything at once; it can focus on one aspect and ignore the rest. The stack then recombines the cuts into a rich context.</p>
+							<?php endif; ?>
 							<?php if ($layer_de): ?>
 							<p>Die erste Schicht mischt die ursprünglichen Token-Vektoren. Spätere Schichten mischen Vektoren, die frühere Schichten bereits verändert haben; jeder Durchlauf sieht also einen anderen Kontext. In einem autoregressiven Modell ist die Matrix unterdreieckig: Ein Token kann auf sich und frühere Tokens achten, nie auf Tokens, die erst später kommen. Diese Kausalmaskierung erlaubt es, mit jedem Präfix eines Satzes zu trainieren und das nächste Token vorherzusagen, ohne die Zukunft zu sehen.</p>
 							<p>Nach der Attention geht der neue Vektor jedes Tokens durch ein Feed-Forward-Netz. Das FFN arbeitet mit einem Token auf einmal: Es trennt Merkmale und schreibt den Vektor um. Attention bewegt Information zwischen Tokens; das FFN transformiert, was jedes Token trägt. Der <a href="#step-ffn-section">FFN-Abschnitt</a> öffnet diesen Schritt.</p>
@@ -4598,7 +4635,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			var near = nearest(avg);
 			var sym = Math.abs(avg - near.value) < 0.5 ? "=" : "≈";
 			if (lineApi && lineApi.setHighlight) {
-				lineApi.setHighlight({ value: avg, label: near.label, color: near.color, showVector: true, vectorLabel: de ? "Ergebnisvektor" : "result vector" });
+				lineApi.setHighlight({ value: avg, label: near.label, color: near.color });
 			}
 			var formulaEl = document.getElementById("oned-formula");
 			if (formulaEl && window.TM && TM.typesetMath) {
@@ -4606,7 +4643,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				tex += sym === "=" ? " = \\underbrace{" + near.value + "}_{\\text{" + near.label + "}}" : " \\approx \\underbrace{" + near.value + "}_{\\text{" + near.label + "}}";
 				formulaEl.setAttribute("data-tex", tex);
 				formulaEl.removeAttribute("data-tex-rendered");
-				TM.typesetMath(formulaEl);
+				TM.typesetMath(formulaEl.parentNode);
 			}
 			if (row) row.querySelectorAll("button").forEach(function (other) {
 				other.classList.toggle("is-on", other === button);

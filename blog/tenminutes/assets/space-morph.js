@@ -76,8 +76,51 @@
 			title: "Space collapses to a line",
 			body: "Now collapse the whole space the same way. Every point keeps its side of the boundary, and the classifier becomes one threshold on a one-dimensional score: s = 0.",
 			lift: 1, camA: 0, camB: 0, persp: 1, plane: 0, squash: 1, fail: 0, labels: 0, project: 1, box: 0
+		},
+		{
+			title: "The dense layer in numbers",
+			body: "The lift is a small dense layer. It expands the two input coordinates into n hidden values, bends each with an activation, and projects them back to one height. Change n, the weight scale or the bias and watch the surface change. One neuron gives one smooth ridge; more neurons can carve a bowl.",
+			formula: "\\underbrace{x=(x_1,x_2)}_{\\text{input point}} \\quad \\underbrace{h=\\operatorname{act}(W_1x+b_1)}_{n\\text{ hidden neurons}} \\quad \\underbrace{z=W_2h+b_2}_{\\text{one height}} \\quad \\underbrace{\\text{surface}=\\{(x_1,x_2,z(x_1,x_2))\\}}_{\\text{the plane becomes a surface}}",
+			formulaDe: "\\underbrace{x=(x_1,x_2)}_{\\text{Eingabepunkt}} \\quad \\underbrace{h=\\operatorname{act}(W_1x+b_1)}_{n\\text{ versteckte Neuronen}} \\quad \\underbrace{z=W_2h+b_2}_{\\text{eine Höhe}} \\quad \\underbrace{\\text{Fläche}=\\{(x_1,x_2,z(x_1,x_2))\\}}_{\\text{aus der Ebene wird eine Fläche}}",
+			lift: 0, dense: 1, camA: 0, camB: 0, persp: 1, plane: 0, squash: 0, fail: 0, labels: 0, project: 0, box: 0
 		}
 	];
+
+	let denseState = { neurons: 4, scale: 1.2, bias: 0, activation: "tanh" };
+	let denseSeed = 7;
+	let denseWeights = null;
+	let denseMix = 0;
+
+	function buildDenseWeights() {
+		let seed = denseSeed || 1;
+		const next = () => (seed = (seed * 1664525 + 1013904223) & 0x7fffffff) / 0x7fffffff;
+		const n = Math.max(1, denseState.neurons);
+		const W1 = [], b1 = [], W2 = [];
+		for (let i = 0; i < n; i++) {
+			const angle = (i / n) * TAU + (next() - 0.5) * 0.35;
+			W1.push([Math.cos(angle) * denseState.scale, Math.sin(angle) * denseState.scale]);
+			b1.push(denseState.bias + (next() - 0.5) * 0.12);
+			W2.push(1.25 / n);
+		}
+		denseWeights = { W1: W1, b1: b1, W2: W2, b2: 0 };
+	}
+
+	function denseHeight(x, y) {
+		if (!denseWeights) return 0;
+		let z = denseWeights.b2;
+		for (let i = 0; i < denseWeights.W1.length; i++) {
+			const pre = denseWeights.W1[i][0] * x + denseWeights.W1[i][1] * y + denseWeights.b1[i];
+			const h = denseState.activation === "relu" ? Math.max(0, pre) : Math.tanh(pre);
+			z += denseWeights.W2[i] * h;
+		}
+		return z;
+	}
+
+	function liftPoint(x, y, lift) {
+		const p = LIFT(x, y, lift);
+		if (denseMix > 0.0001) p.z += denseMix * denseHeight(x, y);
+		return p;
+	}
 
 	const ease = u => u * u * u * (u * (u * 6 - 15) + 10);
 	const lerp = (a, b, u) => a + (b - a) * u;
@@ -120,8 +163,17 @@
 			body.textContent = scene.body;
 			item.appendChild(title);
 			item.appendChild(body);
+			if (scene.formula) {
+				const formula = document.createElement("div");
+				formula.className = "ism-formula prose-math";
+				formula.setAttribute("data-tex", scene.formula);
+				if (scene.formulaDe) formula.setAttribute("data-tex-de", scene.formulaDe);
+				formula.setAttribute("data-tex-display", "true");
+				item.appendChild(formula);
+			}
 			copy.appendChild(item);
 		});
+		if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(copy);
 	}
 
 	function fitCopyHeight() {
@@ -145,6 +197,8 @@
 				el.classList.toggle("is-active", i === cur);
 			});
 		}
+		const denseControls = document.getElementById("ism-dense-controls");
+		if (denseControls) denseControls.hidden = cur !== 7;
 
 		const dots = copyEl("ism-dots");
 		if (!dots) return;
@@ -161,6 +215,7 @@
 		cur = n;
 		t0 = performance.now();
 		renderCopy();
+		setTimeout(fitCopyHeight, 0);
 		requestDraw();
 	}
 
@@ -213,7 +268,7 @@
 	const sx = score => AX_L + (AX_R - AX_L) * clamp((score - SMIN) / (SMAX - SMIN), 0, 1);
 
 	function warp(x, y, lift, project) {
-		const p = proj(LIFT(x, y, lift));
+		const p = proj(liftPoint(x, y, lift));
 		if (project < 0.0005) return { X: p.X, Y: p.Y, k: p.k };
 		const tx = sx(SCORE(x, y));
 		const ty = AX_Y - 46 * (1 - project);
@@ -465,6 +520,7 @@
 		const u = ease(raw);
 
 		const lift = lerp(a.lift, b.lift, u);
+		denseMix = lerp(a.dense || 0, b.dense || 0, u);
 		persp = lerp(a.persp, b.persp, u);
 		viewA = lerp(a.camA, b.camA, u);
 		viewB = lerp(a.camB, b.camB, u);
@@ -508,7 +564,7 @@
 		const items = [];
 		PTS.forEach(p => {
 			const P = warp(p.x, p.y, lift, project);
-			const depth = proj(LIFT(p.x, p.y, lift)).d;
+			const depth = proj(liftPoint(p.x, p.y, lift)).d;
 			items.push({ type: "point", depth: depth, at: P, c: p.c });
 		});
 
@@ -625,6 +681,60 @@
 		observer.observe(wrap);
 	}
 
+	function buildDenseControls() {
+		if (!wrap || document.getElementById("ism-dense-controls")) return;
+		const box = document.createElement("div");
+		box.id = "ism-dense-controls";
+		box.className = "ism-dense-controls";
+		box.hidden = true;
+		box.innerHTML = (DE ? `
+			<label>Neuronen <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="4"><output>4</output></label>
+			<label>Gewichtsskala <input id="ism-dense-scale" type="range" min="0.2" max="3" step="0.1" value="1.2"><output>1.2</output></label>
+			<label>Bias <input id="ism-dense-bias" type="range" min="-2" max="2" step="0.1" value="0"><output>0.0</output></label>
+			<label>Aktivierung <select id="ism-dense-activation"><option value="tanh">tanh</option><option value="relu">ReLU</option></select></label>
+			<button type="button" id="ism-dense-resample">Neue Gewichte</button>
+			<code id="ism-dense-readout" class="ism-dense-readout"></code>
+		` : `
+			<label>Neurons <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="4"><output>4</output></label>
+			<label>Weight scale <input id="ism-dense-scale" type="range" min="0.2" max="3" step="0.1" value="1.2"><output>1.2</output></label>
+			<label>Bias <input id="ism-dense-bias" type="range" min="-2" max="2" step="0.1" value="0"><output>0.0</output></label>
+			<label>Activation <select id="ism-dense-activation"><option value="tanh">tanh</option><option value="relu">ReLU</option></select></label>
+			<button type="button" id="ism-dense-resample">New weights</button>
+			<code id="ism-dense-readout" class="ism-dense-readout"></code>
+		`);
+		wrap.appendChild(box);
+		const neurons = box.querySelector("#ism-dense-neurons");
+		const scale = box.querySelector("#ism-dense-scale");
+		const bias = box.querySelector("#ism-dense-bias");
+		const activation = box.querySelector("#ism-dense-activation");
+		const readout = box.querySelector("#ism-dense-readout");
+		const sync = function () {
+			denseState.neurons = parseInt(neurons.value, 10) || 1;
+			denseState.scale = parseFloat(scale.value) || 1;
+			denseState.bias = parseFloat(bias.value) || 0;
+			denseState.activation = activation.value;
+			buildDenseWeights();
+			neurons.nextElementSibling.textContent = String(denseState.neurons);
+			scale.nextElementSibling.textContent = denseState.scale.toFixed(1);
+			bias.nextElementSibling.textContent = denseState.bias.toFixed(1);
+			if (readout && denseWeights) {
+				readout.textContent = "W1 = " + denseWeights.W1.map(function (row) {
+					return "[" + row.map(function (v) { return v.toFixed(2); }).join(", ") + "]";
+				}).join(" ") + "  W2 = [" + denseWeights.W2.map(function (v) { return v.toFixed(2); }).join(", ") + "]  b2 = 0.00";
+			}
+			requestDraw();
+		};
+		neurons.addEventListener("input", sync);
+		scale.addEventListener("input", sync);
+		bias.addEventListener("input", sync);
+		activation.addEventListener("change", sync);
+		box.querySelector("#ism-dense-resample").addEventListener("click", function () {
+			denseSeed = (denseSeed * 1664525 + 1013904223) & 0x7fffffff;
+			sync();
+		});
+		sync();
+	}
+
 	function init() {
 		if (inited) return;
 		wrap = document.getElementById("ism-wrap");
@@ -634,6 +744,7 @@
 		ctx = canvas.getContext("2d");
 		buildDots();
 		buildSceneStack();
+		buildDenseControls();
 		renderCopy();
 		fitCopyHeight();
 		bindDrag();

@@ -297,7 +297,7 @@
 			'<svg class="mnq-ring" viewBox="0 0 36 36" aria-hidden="true"><circle class="mnq-ring-bg" cx="18" cy="18" r="15.5"/><circle class="mnq-ring-fg" cx="18" cy="18" r="15.5"/></svg>' +
 			'<svg class="mnq-ring mnq-ring--flow" viewBox="0 0 36 36" aria-hidden="true"><circle class="mnq-flow-bg" cx="18" cy="18" r="12.5"/><circle class="mnq-flow-fg" cx="18" cy="18" r="12.5"/></svg>' +
 			'<span class="mnq-hud-icon" aria-hidden="true"></span><span class="mnq-hud-text"><b class="mnq-hud-lv"></b><span class="mnq-hud-xp"></span></span><span class="mnq-hud-week" hidden></span>' +
-			'<span class="mnq-hud-boost" hidden><span class="mnq-boost-bolt" aria-hidden="true">⚡</span><b class="mnq-boost-mult"></b><span class="mnq-boost-time"></span></span>';
+			'<span class="mnq-hud-boost" hidden><span class="mnq-boost-bolt" aria-hidden="true">⚡</span><b class="mnq-boost-mult"></b></span>';
 		hud.addEventListener("click", () => openPanel());
 		document.body.appendChild(hud);
 		document.documentElement.classList.add("mnq-on");
@@ -326,11 +326,13 @@
 		hud.classList.toggle("is-near", !L.max && L.frac >= 0.85);
 		hud.classList.toggle("is-surge", flow.active);
 		hud.setAttribute("aria-label", "Your progress: level " + L.n + ", " + state.xp + " XP" +
-			(flow.active ? ", Flow Surge active" : "") + ". Achievements and challenges.");
+			(flow.active ? ", Flow Surge active, every point counts double" : "") + ". Achievements and challenges.");
 
 		const fc = 2 * Math.PI * 12.5;
 		const ff = hud.querySelector(".mnq-flow-fg");
-		const flowFrac = flow.active ? 1 : flow.progress / flow.goal;
+		const flowFrac = flow.active
+			? Math.min(1, Math.max(0, flow.remaining / BOOST_MS))
+			: Math.min(1, Math.max(0, flow.progress / flow.goal));
 		ff.style.strokeDasharray = fc.toFixed(1);
 		ff.style.strokeDashoffset = (fc * (1 - flowFrac)).toFixed(1);
 		hud.classList.toggle("is-flow-hot", !flow.active && flowFrac >= 0.8);
@@ -339,8 +341,7 @@
 		badge.hidden = !flow.active;
 		if (flow.active) {
 			badge.querySelector(".mnq-boost-mult").textContent = "×" + flow.mult;
-			badge.querySelector(".mnq-boost-time").textContent = fmtClock(flow.remaining);
-			badge.title = "Flow Surge: double XP for " + fmtClock(flow.remaining);
+			badge.title = "Flow Surge: every point counts double";
 		}
 
 		const wk = weekStats(), wEl = hud.querySelector(".mnq-hud-week");
@@ -348,7 +349,7 @@
 		wEl.textContent = wk.days + (wk.days === 1 ? " day" : " days");
 		wEl.title = "Learning days this week: " + wk.days;
 		hud.title = flow.active
-			? "Your progress — Flow Surge burns for " + fmtClock(flow.remaining)
+			? "Your progress — Flow Surge: every point counts double"
 			: "Your progress" + (flow.progress > 0 ? " — Flow " + Math.round(flowFrac * 100) + "%" : "");
 		if (bump && !reduceMotion) {
 			hud.classList.remove("is-bump");
@@ -648,7 +649,7 @@
 		tickHud();
 		if (!surgeNotified) {
 			surgeNotified = true;
-			toast('<span class="mnq-t-icon">⚡</span><span><small>Flow Surge</small><b>×2 XP for two minutes</b><em>The badge counts down. Every point now counts double.</em></span>', "boost");
+			toast('<span class="mnq-t-icon">⚡</span><span><small>Flow Surge</small><b>×2 XP for two minutes</b><em>The ring drains slowly. Every point now counts double.</em></span>', "boost");
 		}
 	}
 

@@ -5256,6 +5256,13 @@ html[data-theme="light"] .step-out { background: var(--tm-wash); color: var(--tm
 html[data-theme="light"] .step-out b { color: var(--tm-green-deep); }
 .step-out#iffn-out { min-height: 96px; }
 
+/* Keep the position toolbar stable when the readout grows from 7 to 10000. */
+#ipe-pos-out {
+	display: inline-block;
+	min-width: 5ch;
+	text-align: right;
+}
+
 .step-pane .attn-sentence {
 	margin: 0 0 12px;
 	padding: 12px 16px;
@@ -6732,7 +6739,7 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 
 /* ── space-curvature demo ─────────────────────────────────── */
 .ism-copy {
-	max-width: 640px;
+	max-width: 100%;
 	min-height: 4.5em;
 	margin: 0 auto 14px;
 	text-align: center;
@@ -8772,4 +8779,82 @@ html[lang="de"] .tm-lang-only-de { display: inline !important; }
 }
 @media (min-width: 820px) {
 	.tm-ai-disclaimer { white-space: nowrap; }
+}
+
+/* Three building blocks above the full-width layer definition. */
+.layer-formula-grid--three {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.layer-formula-dense {
+	margin: 16px 0 4px;
+	padding: 12px 14px;
+	border: 1px solid var(--tm-line);
+	border-radius: 12px;
+	background: var(--tm-card);
+}
+.layer-formula-dense .prose-math {
+	margin: 0;
+	overflow-x: auto;
+}
+.layer-formula-wide {
+	margin: 16px 0 18px;
+}
+.layer-formula-wide .prose-math {
+	margin: 0;
+	overflow-x: auto;
+}
+.layer-formula-wide-intro {
+	margin: 0 0 8px;
+	font: 400 0.85rem/1.6 var(--tm-prose);
+	color: var(--tm-ink-soft);
+}
+@media (max-width: 900px) {
+	.layer-formula-grid--three { grid-template-columns: 1fr; }
+}
+
+/* Three heads, three perspectives: a compact sketch above the Borges quote. */
+.attention-aspects {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px;
+	margin: 14px 0 8px;
+}
+.attention-aspect {
+	min-width: 0;
+	padding: 10px 12px;
+	border: 1px solid var(--tm-line);
+	border-radius: 12px;
+	background:
+		radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--tm-sky) 10%, transparent), transparent 55%),
+		var(--tm-card);
+}
+.attention-aspect .aa-head {
+	display: block;
+	font: 700 0.62rem/1.2 var(--tm-ui);
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--tm-muted);
+}
+.attention-aspect b {
+	display: block;
+	margin: 4px 0;
+	font: 700 0.95rem/1.3 var(--tm-display);
+	color: var(--tm-ink);
+}
+.attention-aspect span:last-child {
+	font: 400 0.8rem/1.5 var(--tm-prose);
+	color: var(--tm-ink-soft);
+}
+.attention-aspects-note {
+	margin: 0 0 14px;
+	font: 400 0.78rem/1.5 var(--tm-prose);
+	color: var(--tm-muted);
+}
+.borges-translation {
+	display: inline-block;
+	margin-top: 6px;
+	font-size: 0.95em;
+}
+@media (max-width: 700px) {
+	.attention-aspects { grid-template-columns: 1fr; }
 }

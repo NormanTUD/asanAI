@@ -226,6 +226,25 @@ def main() -> int:
 		check(browser.execute_script(
 			"return document.getElementById('mnq-hud').classList.contains('is-surge');"
 		), "the reward badge enters its surge state")
+		check(not browser.execute_script(
+			"return !!document.querySelector('.mnq-boost-time');"
+		), "the badge no longer prints a ticking clock")
+		time.sleep(0.5)
+		check(browser.execute_script(
+			"return parseFloat(getComputedStyle("
+			"document.querySelector('.mnq-hud-text')).opacity) > 0.9;"
+		), "the XP points stay visible during the surge")
+
+		# The inner ring drains over the surge instead of showing seconds.
+		offset_before = browser.execute_script(
+			"return parseFloat(document.querySelector('.mnq-flow-fg').style.strokeDashoffset) || 0;"
+		)
+		time.sleep(4)
+		offset_after = browser.execute_script(
+			"return parseFloat(document.querySelector('.mnq-flow-fg').style.strokeDashoffset) || 0;"
+		)
+		check(offset_after > offset_before + 1,
+			"the flow ring drains slowly during the surge", f"{offset_before} -> {offset_after}")
 
 		# Boosted awards are doubled and stay quiet too.
 		boosted = browser.execute_script(

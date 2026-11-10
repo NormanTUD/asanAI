@@ -12925,6 +12925,7 @@ html.reader-mode .mnq-hud { --mnq-hud-rest: .28; }
 .mnq-hud-xp { color: var(--mn-text-muted); font: 500 10.5px var(--mn-font-mono); }
 .mnq-hud-week { padding: 0; border-radius: 99px; font: 700 11px var(--mn-font-mono); color: var(--mn-accent); background: color-mix(in srgb, var(--mn-accent) 15%, transparent); max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: max-width .35s ease, opacity .25s ease, padding .35s ease, margin .35s ease; }
 .mnq-hud:hover .mnq-hud-text, .mnq-hud:focus-visible .mnq-hud-text { max-width: 170px; opacity: 1; }
+.mnq-hud.is-surge .mnq-hud-text { max-width: 170px; opacity: 1; }
 .mnq-hud:hover .mnq-hud-week:not([hidden]), .mnq-hud:focus-visible .mnq-hud-week:not([hidden]) { max-width: 64px; opacity: 1; padding: 3px 7px; margin-left: 2px; }
 /* the chapter switcher and the badge share the bottom-left corner: the
    switcher sits at the very bottom, the badge above it */
@@ -12969,11 +12970,11 @@ html:has(#loader) .mnq-toasts { visibility: hidden; }
 .mnq-burst { position: fixed; inset: 0; z-index: 9996; pointer-events: none; }
 
 /* Flow Surge — the inner ring fills while a demo holds your attention;
-   a full ring lights the ×2 booster and its countdown badge. */
+   a full ring lights the ×2 booster and the ring drains slowly while it burns. */
 .mnq-ring--flow { pointer-events: none; }
 .mnq-flow-bg { fill: none; stroke: color-mix(in srgb, var(--mn-text-muted) 16%, transparent); stroke-width: 2; }
 .mnq-flow-fg { fill: none; stroke: var(--mn-emerald); stroke-width: 2; stroke-linecap: round; transition: stroke-dashoffset .6s cubic-bezier(.2, .8, .2, 1), stroke .4s ease; }
-.mnq-hud.is-surge .mnq-flow-fg { stroke: var(--mn-coral); filter: drop-shadow(0 0 4px color-mix(in srgb, var(--mn-coral) 80%, transparent)); animation: mnq-flow-pulse 1.3s ease-in-out infinite; }
+.mnq-hud.is-surge .mnq-flow-fg { stroke: var(--mn-coral); filter: drop-shadow(0 0 4px color-mix(in srgb, var(--mn-coral) 80%, transparent)); animation: mnq-flow-pulse 1.3s ease-in-out infinite; transition: stroke-dashoffset 1s linear, stroke .4s ease; }
 .mnq-hud.is-surge { border-color: color-mix(in srgb, var(--mn-coral) 55%, var(--mn-border)); box-shadow: var(--mn-shadow-md), 0 0 20px -4px color-mix(in srgb, var(--mn-coral) 60%, transparent); }
 .mnq-hud.is-flow-hot { border-color: color-mix(in srgb, var(--mn-emerald) 55%, var(--mn-border)); box-shadow: var(--mn-shadow-md), 0 0 18px -4px color-mix(in srgb, var(--mn-emerald) 55%, transparent); }
 .mnq-hud.is-near .mnq-ring-fg { stroke: var(--mn-coral); filter: drop-shadow(0 0 5px color-mix(in srgb, var(--mn-coral) 70%, transparent)); }
@@ -12991,7 +12992,6 @@ html:has(#loader) .mnq-toasts { visibility: hidden; }
 .mnq-hud-boost[hidden] { display: none; }
 .mnq-boost-bolt { font-size: 11px; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--mn-coral) 80%, transparent)); animation: mnq-bolt 1.6s ease-in-out infinite; }
 .mnq-boost-mult { color: var(--mn-coral); }
-.mnq-boost-time { color: var(--mn-text-secondary); font-weight: 600; }
 @keyframes mnq-bolt { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.28) rotate(-7deg); } }
 
 /* the XP orb: leaves the reader's finger, arcs into the badge */
