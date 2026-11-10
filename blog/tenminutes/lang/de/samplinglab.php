@@ -96,6 +96,7 @@ return [
 		'The aha' => 'Der Aha-Moment',
 		'Generation is a sequence of choices, not a single answer.' => 'Generierung ist eine Folge von Wahlen, keine einzelne Antwort.',
 		'The model supplies the distribution; the decoder supplies the personality.' => 'Das Modell liefert die Verteilung; der Decoder liefert die Persönlichkeit.',
+		'Once upon a time there was a' => 'Es war einmal eine',
 	],
 	'attrs' => [],
 ];

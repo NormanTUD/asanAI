@@ -3257,6 +3257,7 @@
 		var noteEl = $("[data-numtokens-note]", root);
 		var diffEl = $("[data-numtokens-diff]", root);
 		var sharedEl = $("[data-numtokens-shared]", root);
+		var countEl = $("[data-numtokens-count]", root);
 		var chips = $$("[data-numtokens-pair]", root);
 		var COLORS = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
 		var presets = [
@@ -3268,18 +3269,25 @@
 				de: "Die Grenze verschiebt sich: 123 | 45 gegen 12 | 346. Die Ziffern stehen nicht übereinander."
 			},
 			{
+				a: "9998", b: "9999", diff: 1,
+				aTok: [["99", 2079], ["98", 4089]],
+				bTok: [["9999", 24214]],
+				en: "One is split into two tokens, the other is a single token. Nothing marks the shared value.",
+				de: "Die eine Zahl wird in zwei Tokens zerlegt, die andere ist ein einziges Token. Nichts markiert den gemeinsamen Wert."
+			},
+			{
 				a: "1234.56", b: "1234.57", diff: 0.01,
 				aTok: [["12", 1065], ["34", 2682], [".", 13], ["56", 3980]],
 				bTok: [["12", 1065], ["34", 2682], [".", 13], ["57", 3553]],
-				en: "The first three tokens match; only the last one changes, and its ID is unrelated.",
-				de: "Die ersten drei Tokens stimmen überein; nur das letzte ändert sich, und seine ID hat keinen Bezug dazu."
+				en: "The first three tokens match; the last token changes from 56 (ID 3980) to 57 (ID 3553).",
+				de: "Die ersten drei Tokens stimmen überein; das letzte wechselt von 56 (ID 3980) zu 57 (ID 3553)."
 			},
 			{
-				a: "2023", b: "2024", diff: 1,
-				aTok: [["20", 1238], ["23", 1954]],
-				bTok: [["20", 1238], ["24", 1731]],
-				en: "A year that is one larger gets a different second token, not a different number.",
-				de: "Ein um eins größeres Jahr bekommt ein anderes zweites Token, keine andere Zahl."
+				a: "9999.99", b: "10000.00", diff: 0.01,
+				aTok: [["9999", 24214], [".", 13], ["99", 2079]],
+				bTok: [["10000", 49388], [".", 13], ["00", 486]],
+				en: "Adding 0.01 changes the integer token from 9999 to 10000. The carry has no token of its own.",
+				de: "0,01 dazu verändert das Integer-Token von 9999 zu 10000. Der Übertrag hat kein eigenes Token."
 			}
 		];
 		function fmtDiff(v) {
@@ -3287,8 +3295,8 @@
 			return DEMO_DE ? s.replace(".", ",") : s;
 		}
 		function chipsHtml(tokens) {
-			return tokens.map(function (tok, i) {
-				return '<span class="token token--static" style="--tok:' + COLORS[i % COLORS.length] + '">' +
+			return tokens.map(function (tok) {
+				return '<span class="token token--static" style="--tok:' + COLORS[Math.abs(tok[1]) % COLORS.length] + '">' +
 					escapeHtml(tok[0]) + "<small>" + tok[1] + "</small></span>";
 			}).join("");
 		}
@@ -3301,6 +3309,7 @@
 			if (labelB) labelB.textContent = p.b;
 			if (diffEl) diffEl.textContent = fmtDiff(p.diff);
 			if (noteEl) noteEl.textContent = DEMO_DE ? p.de : p.en;
+			if (countEl) countEl.textContent = p.aTok.length + " / " + p.bTok.length;
 			if (sharedEl) {
 				var n = Math.max(p.aTok.length, p.bTok.length);
 				var shared = 0;

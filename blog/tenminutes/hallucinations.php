@@ -54,7 +54,8 @@
 						</div>
 
 						<div class="prose">
-							<p>Keep three failures apart. A summary can add a detail that is not in the source (faithfulness), a factual answer can be wrong about the world (factuality), and a model can contradict itself in one conversation (self-consistency). The distinction is standard in the literature (<a href="https://arxiv.org/abs/2202.03629" rel="noopener">Ji et al., 2023</a>). Each failure has its own test. The next section starts with the one people trust most: the confident tone.</p>
+							<p>Keep three failures apart. A summary can contradict its source (intrinsic) or add a detail the source neither supports nor contradicts (extrinsic); both are failures of faithfulness. A factual answer can be wrong about the world (factuality), and a model can contradict itself in one conversation (self-consistency). The distinction is standard in the literature (<a href="https://arxiv.org/abs/2202.03629" rel="noopener">Ji et al., 2023</a>).</p>
+							<p>The extrinsic case is easy to misread. The added detail can be true and still fail the source test, so the right conclusion is “unsupported”, not “false”. Each failure has its own test. The next section starts with the one people trust most: the confident tone.</p>
 						</div>
 					</section>
 
@@ -92,7 +93,7 @@
 
 						<div class="prose">
 							<p>Models are most reliable where the pattern is dense and redundant, least reliable where it is sparse or rare (<a href="https://arxiv.org/abs/2211.08411" rel="noopener">Kandpal et al., 2023</a>). Long context adds a quieter failure: evidence at the beginning and end is used more reliably than evidence in the middle (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>). Scale improves many benchmark scores (<a href="https://arxiv.org/abs/2005.14165" rel="noopener">Brown et al., 2020</a>), but it does not install a guarantee.</p>
-							<p>Arithmetic is a special case. The model predicts digits, it does not calculate. Numbers are split into tokens, so “1234.56” may become “12”, “34”, “.”, and “56” (see the <a href="tokenizerlab">tokenizer lab</a>), and the model must carry the digits without a scratchpad. The split does not follow place value: in the public GPT-2 vocabulary, 12345 becomes “123” + “45” while 12346 becomes “12” + “346” (Radford et al., 2019; <a href="https://github.com/openai/gpt-2/blob/master/vocab.bpe" rel="noopener">vocab.bpe</a>). For exact work, use a calculator or code.</p>
+							<p>Arithmetic is a special case. The model predicts digits, it does not calculate. Numbers are split into tokens, so “1234.56” may become “12”, “34”, “.”, and “56” (see the <a href="tokenizerlab">tokenizer lab</a>), and the model must carry the digits without a scratchpad. The split does not follow place value: in the public GPT-2 vocabulary, 12345 becomes “123” + “45” while 12346 becomes “12” + “346” (<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" rel="noopener">Radford et al., 2019</a>; <a href="https://openaipublic.blob.core.windows.net/gpt-2/models/117M/vocab.bpe" rel="noopener">vocab.bpe</a>). <a href="https://arxiv.org/abs/2202.03629" rel="noopener">Ji et al. (2023)</a> list hallucinations in numerals as a problem in its own right. For exact work, use a calculator or code.</p>
 						</div>
 
 						<div class="demo demo--paper" data-demo="numtokens">
@@ -106,8 +107,9 @@
 							<div class="demo-body">
 								<div class="chip-row">
 									<button class="chip is-on" type="button" data-numtokens-pair="0" aria-pressed="true">12345 vs 12346</button>
-									<button class="chip" type="button" data-numtokens-pair="1" aria-pressed="false">1234.56 vs 1234.57</button>
-									<button class="chip" type="button" data-numtokens-pair="2" aria-pressed="false">2023 vs 2024</button>
+									<button class="chip" type="button" data-numtokens-pair="1" aria-pressed="false">9998 vs 9999</button>
+									<button class="chip" type="button" data-numtokens-pair="2" aria-pressed="false">1234.56 vs 1234.57</button>
+									<button class="chip" type="button" data-numtokens-pair="3" aria-pressed="false">9999.99 vs 10000.00</button>
 								</div>
 								<div class="numtokens-pair">
 									<p class="numtokens-label"><span data-numtokens-label-a>12345</span></p>
@@ -120,11 +122,12 @@
 								<p class="demo-hint" data-numtokens-note>The boundary moves: 123 | 45 against 12 | 346. The digits do not line up.</p>
 								<div class="demo-readout">
 									<div><b>Difference</b><span data-numtokens-diff>1</span></div>
+									<div><b>Tokens</b><span data-numtokens-count>2 / 2</span></div>
 									<div><b>Shared tokens</b><span data-numtokens-shared>0 / 2</span></div>
 								</div>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>Arithmetic over these chunks is a learned pattern, not column addition. For an exact result, use code or a calculator.</span></div>
-							<div class="demo-foot">Splits computed with the public GPT-2 byte-level BPE vocabulary (<a href="https://github.com/openai/gpt-2/blob/master/vocab.bpe" rel="noopener">openai/gpt-2</a>; Radford et al., 2019). Other tokenizers differ in the details, not in the mechanism.</div>
+							<div class="demo-foot">Splits computed with the public GPT-2 byte-level BPE vocabulary (<a href="https://openaipublic.blob.core.windows.net/gpt-2/models/117M/vocab.bpe" rel="noopener">vocab.bpe</a>; <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" rel="noopener">Radford et al., 2019</a>). Tokens with the same colour are the same token. Other tokenizers differ in the details, not in the mechanism.</div>
 						</div>
 					</section>
 
