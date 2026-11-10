@@ -3998,6 +3998,8 @@
 				if (!isNaN(idx)) {
 					renderLayerTripleResiduals(idx);
 					renderLayerPreLNTriple(idx);
+					if (typeof renderLayerMigration === 'function') renderLayerMigration(idx);
+					if (typeof renderLayerMigrationPlot === 'function') renderLayerMigrationPlot(idx);
 					scheduleLayerFeaturePlot(idx, true);
 					renderLayerLogitLens(idx);
 				}
