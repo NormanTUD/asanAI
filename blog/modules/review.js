@@ -52,6 +52,12 @@
 		return m ? { slug: m.slug, title: m.title, url: m.url } : null;
 	}
 
+	function slugOf(url) {
+		const raw = String(url || "");
+		if (/^(?:[a-z][a-z0-9+.-]*:)?\/\//i.test(raw)) return "";
+		return raw.replace(/[?#].*$/, "").replace(/^.*\//, "").replace(/\.php$/, "");
+	}
+
 	// Collect wrong answers from every quiz on the page.
 	window.addEventListener("mnquiz:answer", (e) => {
 		const d = e.detail || {};
@@ -138,7 +144,10 @@
 				card.box++;
 				if (card.box >= DAYS.length) {
 					delete deck.cards[c.key];
-					if (window.MNQuest) window.MNQuest.count("retired");
+					if (window.MNQuest) {
+						window.MNQuest.xp(40, "· long-term recall", "retire-" + c.key);
+						window.MNQuest.count("retired");
+					}
 				} else card.due = dueAfter(DAYS[card.box]);
 			} else {
 				card.box = 0;
@@ -148,7 +157,15 @@
 		}
 		if (window.MNQuest) {
 			window.MNQuest.count("reviews");
-			if (right) window.MNQuest.xp(5, "· review", "review-" + c.key + "-" + dayKey());
+			if (right) {
+				window.MNQuest.xp(10, "· review", "review-" + c.key + "-" + dayKey());
+				const here = lesson(), fromSlug = slugOf(c.url);
+				const mods = (window.__moduleNavData && window.__moduleNavData.modules) || [];
+				const courseSlug = fromSlug && mods.some((m) => m.slug === fromSlug);
+				if (here && courseSlug && fromSlug !== here.slug) {
+					window.MNQuest.xp(5, "· cross-lesson recall", "review-cross-" + c.key + "-" + dayKey());
+				}
+			}
 		}
 		window.MNQuest && window.MNQuest.refresh();
 	}

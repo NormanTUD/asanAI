@@ -135,7 +135,7 @@ const FogGame = {
 			(pb !== null ? " <b>New personal best!</b>" : "") + "</p>";
 		if (window.MNQuest) {
 			const d = new Date(), day = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
-			if (stars > 0) window.MNQuest.xp(stars * 10, "· foggy mountain, " + stars + "★", "fog-" + day + "-" + stars);
+			if (stars > 0) window.MNQuest.xp(stars * 15, "· foggy mountain, " + stars + "★", "fog-" + day + "-" + stars);
 			if (stars === 3) window.MNQuest.count("fog3");
 		}
 		window.dispatchEvent(new CustomEvent("foggame:finish", { detail: { score: s, gd: sg, stars: stars } }));

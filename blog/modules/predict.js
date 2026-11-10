@@ -74,7 +74,7 @@
 			if (rv) rv.addEventListener("click", () => {
 				revealed = true;
 				const m = load(); m[id] = { guess: guess, revealed: true }; save(m);
-				if (guess === data.answer && window.MNQuest && window.MNQuest.xp(10, "· prediction was right", "predict-right-" + id)) window.MNQuest.count("predictRight");
+				if (guess === data.answer && window.MNQuest && window.MNQuest.xp(15, "· prediction was right", "predict-right-" + id)) window.MNQuest.count("predictRight");
 				paint();
 				const feedback = root.querySelector(".mnp-feedback");
 				if (feedback) {

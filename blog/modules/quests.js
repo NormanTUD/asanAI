@@ -426,9 +426,9 @@
 	}
 
 	// ── XP flight: the orb that lands in the reward center ─────────
-	// Only the first interactive award on a page gets the full flight. Every
-	// later award just ticks the badge, so the reward stays informative
-	// without repeatedly taking over the screen.
+	// The first interactive award on a page gets the full flight. Later
+	// interactions scale the orb down and eventually only tick the badge,
+	// so the reward stays informative without taking over the screen.
 	let lastPointer = null;
 	window.addEventListener("pointerdown", (e) => {
 		if (typeof e.clientX === "number" && typeof e.clientY === "number") {
@@ -895,11 +895,11 @@
 			(next.length ? '<div class="mnq-sect">Almost there</div><div class="mnq-achs">' + next.map((n) => achCard(n.id)).join("") + "</div>" : "") +
 			'<div class="mnq-sect">Your last 12 weeks</div><div class="mnq-heat">' + cells.join("") + "</div>" +
 			'<div class="mnq-sect">How to earn XP</div><ul class="mnq-how">' +
-			"<li><b>+10</b> first visit of a lesson · <b>+10</b> per lesson quest · <b>+30</b> for mastering a lesson</li>" +
-			"<li><b>+15</b> per correct quiz answer · <b>+20–50</b> per lab challenge</li>" +
-			"<li><b>+3</b> per deep dive opened · <b>+2</b> per demo watched · <b>+5</b> per demo you play with</li>" +
-			"<li><b>+5</b> per prediction (<b>+10</b> more if it was right) · <b>+5</b> per review answer</li>" +
-			"<li><b>+15</b> for the question of the day · <b>+100</b> for completing a learning path</li>" +
+			"<li><b>+5</b> first visit · <b>+8–20</b> per lesson quest (reading &lt; source &lt; quiz &lt; lab challenge) · <b>+60</b> for mastering a lesson</li>" +
+			"<li><b>+20</b> per correct quiz answer · <b>+60</b> for a flawless quiz · <b>+10</b> per review answer · <b>+40</b> when a review card retires</li>" +
+			"<li><b>+20–50</b> per lab challenge · <b>+15</b> for a correct prediction · <b>+5</b> for committing to one</li>" +
+			"<li><b>+2</b> per demo watched · <b>+6</b> per demo played · <b>+3</b> per deep dive</li>" +
+			"<li><b>+120</b> for reading a whole part · <b>+150</b> for completing a learning path · cross-lesson review adds a transfer bonus</li>" +
 			"<li>⚡ Fill the Flow meter by staying with a demo: every point is <b>×2</b> for two minutes</li></ul>";
 	}
 
@@ -1110,12 +1110,12 @@
 
 	// Lesson quests: small goals at the bottom of every lesson.
 	const LESSON_TASKS = [
-		{ id: "read", icon: "📖", label: "Read to the end", hint: "scroll down to here", test: () => true },
-		{ id: "deep", icon: "🔍", label: "Open a deep dive", hint: "the collapsible boxes", test: () => !!document.querySelector("#contents div.optional") },
-		{ id: "demo", icon: "🕹️", label: "Play with a demo", hint: "drag, click or slide", test: () => demoRoots().length > 0 },
-		{ id: "source", icon: "📚", label: "Check a source", hint: "click a citation", test: () => !!document.querySelector('#contents a[id^="cite-"], #contents .citation, #sources a') },
-		{ id: "quiz", icon: "✅", label: "Finish the quiz", hint: "“Check yourself” card", test: () => !!document.querySelector("#contents .mn-quiz") },
-		{ id: "challenge", icon: "🏆", label: "Solve a lab challenge", hint: "goals inside the lab", test: () => !!document.querySelector("#contents .mnc") }
+		{ id: "read", icon: "📖", label: "Read to the end", hint: "scroll down to here", xp: 8, test: () => true },
+		{ id: "deep", icon: "🔍", label: "Open a deep dive", hint: "the collapsible boxes", xp: 10, test: () => !!document.querySelector("#contents div.optional") },
+		{ id: "demo", icon: "🕹️", label: "Play with a demo", hint: "drag, click or slide", xp: 12, test: () => demoRoots().length > 0 },
+		{ id: "source", icon: "📚", label: "Check a source", hint: "click a citation", xp: 12, test: () => !!document.querySelector('#contents a[id^="cite-"], #contents .citation, #sources a') },
+		{ id: "quiz", icon: "✅", label: "Finish the quiz", hint: "“Check yourself” card", xp: 15, test: () => !!document.querySelector("#contents .mn-quiz") },
+		{ id: "challenge", icon: "🏆", label: "Solve a lab challenge", hint: "goals inside the lab", xp: 20, test: () => !!document.querySelector("#contents .mnc") }
 	];
 
 	function completeTask(task) {
@@ -1124,8 +1124,8 @@
 		if (state.keys[key]) return;
 		const t = LESSON_TASKS.find((x) => x.id === task);
 		if (!t || !t.test()) return;
-		if (task === "read") state.finished[SLUG] = Date.now();
-		xp(10, "· " + t.label.toLowerCase(), key);
+		if (task === "read") { state.finished[SLUG] = Date.now(); checkPartFinished(); }
+		xp(t.xp, "· " + t.label.toLowerCase(), key);
 		renderLessonCard();
 		checkMastered();
 	}
@@ -1135,9 +1135,24 @@
 		const avail = LESSON_TASKS.filter((t) => t.test());
 		if (avail.length && avail.every((t) => state.keys[onceLessonKey(t.id)])) {
 			state.mastered[SLUG] = Date.now();
-			xp(30, "· lesson mastered!", "lq-" + SLUG + "-mastered");
+			xp(60, "· lesson mastered, all tasks connected", "lq-" + SLUG + "-mastered");
 			renderLessonCard();
 		}
+	}
+
+	// Reading a whole part is the integration reward: the individual lessons
+	// only pay off once their ideas sit next to each other.
+	function checkPartFinished() {
+		if (!IS_LESSON) return;
+		const mods = navModules();
+		const here = mods.find((m) => m.slug === SLUG);
+		if (!here) return;
+		const list = mods.filter((m) => String(m.part) === String(here.part));
+		if (!list.length || !list.every((m) => state.finished[m.slug])) return;
+		const key = "part-done-" + here.part;
+		if (state.keys[key]) return;
+		xp(120, "· whole part read, ideas connected", key);
+		toast('<span class="mnq-t-icon">🧩</span><span><small>Part complete</small><b>Part ' + esc(here.part) + " read end to end</b><em>+120 XP for connecting the whole arc.</em></span>", "ach");
 	}
 
 	function renderLessonCard() {
@@ -1170,9 +1185,9 @@
 			'<div class="mnq-lesson-body">' +
 			'<ul class="mnq-lesson-tasks">' + avail.map((t) => {
 				const ok = !!state.keys[onceLessonKey(t.id)];
-				return '<li class="' + (ok ? "is-done" : "") + '"><span class="mnq-lt-ic">' + (ok ? "✓" : t.icon) + '</span><span class="mnq-lt-txt"><b>' + t.label + "</b><small>" + t.hint + '</small></span><em>+10</em></li>';
+				return '<li class="' + (ok ? "is-done" : "") + '"><span class="mnq-lt-ic">' + (ok ? "✓" : t.icon) + '</span><span class="mnq-lt-txt"><b>' + t.label + "</b><small>" + t.hint + '</small></span><em>+' + t.xp + "</em></li>";
 			}).join("") + "</ul>" +
-			'<div class="mnq-lesson-foot">' + (mastered ? "All done — +30 XP bonus collected." : "Complete all of them for a <b>+30 XP</b> mastery bonus.") + "</div>" +
+			'<div class="mnq-lesson-foot">' + (mastered ? "All done — +60 XP bonus collected." : "Complete all of them for a <b>+60 XP</b> mastery bonus.") + "</div>" +
 			'<button type="button" class="mnq-lesson-open">View all progress →</button>' +
 			"</div>";
 		card.querySelector(".mnq-lesson-toggle").addEventListener("click", () => {
@@ -1262,7 +1277,7 @@
 				const k = demoKey(el);
 				if (!state.demosPlayed[k]) {
 					state.demosPlayed[k] = Date.now();
-					xp(5, "· you played with a demo");
+					xp(6, "· you played with a demo");
 				}
 				completeTask("demo");
 			};
@@ -1391,7 +1406,7 @@
 		const d = dayKey(new Date());
 		if (!state.days[d]) {
 			state.days[d] = 1;
-			if (Object.keys(state.days).length > 1) xp(5, "· new learning day", "day-" + d);
+			if (Object.keys(state.days).length > 1) xp(3, "· new learning day", "day-" + d);
 		}
 		if (streak() >= 3) unlock("streak-fire", true);
 		checkClock(true);
@@ -1401,8 +1416,9 @@
 
 		if (IS_LESSON && !state.lessons[SLUG]) {
 			state.lessons[SLUG] = Date.now();
-			xp(10, "· new lesson: " + lessonTitle(SLUG));
+			xp(5, "· new lesson: " + lessonTitle(SLUG));
 		}
+		checkPartFinished();
 		checkParts();
 
 		document.addEventListener("click", onOptionalClick, true);

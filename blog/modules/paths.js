@@ -172,7 +172,7 @@
 			if (!q) return;
 			allPaths().forEach((p) => {
 				if (!progress(p).complete || q.done("path-" + p.id)) return;
-				q.xp(100, "· path complete: " + p.title, "path-" + p.id);
+				q.xp(150, "· path complete: " + p.title, "path-" + p.id);
 				q.count("paths");
 				q.toast('<span class="mnq-t-icon">🎓</span><span><small>Learning path complete</small><b>' + esc(p.title) + "</b><em>Click to get your certificate.</em></span>", "ach", open);
 			});

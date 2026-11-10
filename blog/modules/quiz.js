@@ -88,7 +88,7 @@
 			body.querySelector(".mnz-feedback").innerHTML =
 				'<div class="mnz-explain' + (right ? "" : " is-wrong") + '"><b>' + (right ? "Correct!" : "Not quite.") + "</b> " + fmt(q.explain || "") + "</div>";
 			if (right && window.MNQuest) {
-				const fresh = window.MNQuest.xp(15, "· quiz answer", "quiz-" + id + "-" + i);
+				const fresh = window.MNQuest.xp(20, "· quiz answer", "quiz-" + id + "-" + i);
 				if (fresh) window.MNQuest.count("quizCorrect");
 			}
 			window.dispatchEvent(new CustomEvent("mnquiz:answer", { detail: { id: id, index: i, right: right, question: q, title: data.title || "", source: data.source || null } }));
@@ -123,7 +123,7 @@
 				'<button type="button" class="mnz-btn mnz-btn--ghost">↺ Try again</button></div>';
 			body.querySelector("button").addEventListener("click", () => { i = 0; results = []; show(); });
 			if (perfect && window.MNQuest) {
-				window.MNQuest.xp(30, "· perfect quiz", "quiz-perfect-" + id);
+				window.MNQuest.xp(60, "· perfect quiz, everything connected", "quiz-perfect-" + id);
 				window.MNQuest.unlock("perfect-round");
 			}
 			window.dispatchEvent(new CustomEvent("mnquiz:finish", { detail: { id: id, score: n, total: Q.length } }));

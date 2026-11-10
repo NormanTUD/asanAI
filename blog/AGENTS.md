@@ -243,10 +243,12 @@ lessons.
 **Reader-retention modules** (all state in localStorage, nothing leaves the
 browser): `quests.js` (`MNQuest`: XP, levels, achievements, lesson quests, the
 progress overview; other modules add overview tabs via `MNQuest.addTab`; only
-the first interactive XP award per page flies into the bottom-left reward
-badge, later awards just tick it, and sustained demo interaction fills a Flow
-meter that lights a two-minute ×2 **Flow Surge**, via `MNQuest.flow()` /
-`feedFlow()`),
+the first interactive XP award per page gets the full flight into the
+bottom-left reward badge; later awards scale down and soon only tick it, while
+sustained demo interaction fills a Flow meter that lights a two-minute ×2
+**Flow Surge**, via `MNQuest.flow()` / `feedFlow()`; effortless actions
+pay little, retrieval/lab/integration work pays more, and the feedback
+animation decays with each repeated interaction),
 `quiz.js` (`.mn-quiz` cards; emits `mnquiz:answer` / `mnquiz:finish`),
 `lab_challenges.js` (goals inside labs; old labs without a `root` use
 `anchor`), `review.js` (spaced-repetition deck of missed quiz questions),
