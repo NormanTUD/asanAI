@@ -402,6 +402,12 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 	var overlay = document.getElementById('transformer-hyper-overlay');
 	var toggle = document.getElementById('transformer-hyper-toggle');
 	if (!overlay || !toggle) return;
+	// #contents forces `contain: layout` on every node, which traps fixed
+	// descendants. Portal the robot and the dialog to the body so they stay
+	// on the viewport and out of the table of contents.
+	var wrap = document.querySelector('.tm-hyper-robot-wrap');
+	if (wrap && wrap.parentNode !== document.body) document.body.appendChild(wrap);
+	if (overlay.parentNode !== document.body) document.body.appendChild(overlay);
 	function setOpen(open) {
 		overlay.hidden = !open;
 		toggle.setAttribute('aria-expanded', open ? 'true' : 'false');

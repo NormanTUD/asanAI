@@ -362,12 +362,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 
 					<section class="section-block" id="inside" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<div class="section-kicker"><span class="sk-num">03</span> Inside the model</div>
-						<h2 class="section-title">The transformer: six steps, one running vector.</h2>
-						<div class="prose">
-							<p>The model moves points in a high-dimensional space. Training shapes those points so that the final context vector has smaller angles to words that plausibly come next than to words that do not. Because the decision is about angles, not straight-line distances, this page uses the great-circle metric by default. The model works on a hypersphere of directions; to draw it, we project that sphere down to three dimensions. Plausible here means the continuation occurred in the training data; it does not mean that the model has a separate notion of truth.</p>
-							<p>This is the transformer. For every token, again and again, it asks how that token stands in context to all the other tokens right now. Attention lets it look around, a dense layer and an activation function transform each token, and LayerNorm keeps the numbers in a stable range. A few other parts do their jobs along the way.</p>
-							<p>Each pass shifts the token's point in the space. The directions follow meaning paths and become clearer, so the last token ends up at a small angle to the tokens that are likely next in this context. That is the trick.</p>
-						</div>
 						<h2 class="section-title"><?php echo $layer_de ? 'Ein Modell ist ein Stapel von Funktionen.' : 'A model is a stack of functions.'; ?></h2>
 						<div class="prose">
 							<?php if ($layer_de): ?>
@@ -379,6 +373,12 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<?php endif; ?>
 							<div class="prose-math layer-stack-formula" data-tex="\underbrace{ \text{output} = \text{layer}_3\!\left( \underbrace{ \text{layer}_2\!\left( \underbrace{\text{layer}_1(\text{input})}_{\text{first transformation}} \right) }_{\text{second transformation}} \right) }_{\text{a stack of functions, each feeding the next}}" data-tex-de="\underbrace{ \text{output} = \text{layer}_3\!\left( \underbrace{ \text{layer}_2\!\left( \underbrace{\text{layer}_1(\text{input})}_{\text{erste Transformation}} \right) }_{\text{zweite Transformation}} \right) }_{\text{ein Stapel von Funktionen, jede füttert die nächste}}" data-tex-display="true"></div>
 							
+						</div>
+						<h2 class="section-title">The transformer: six steps, one running vector.</h2>
+						<div class="prose">
+							<p>The stack of functions above is the transformer. For every token, it runs the same six steps, again and again. The model moves points in a high-dimensional space. Training shapes those points so that the final context vector has smaller angles to words that plausibly come next than to words that do not. Because the decision is about angles, not straight-line distances, this page uses the great-circle metric by default. The model works on a hypersphere of directions; to draw it, we project that sphere down to three dimensions. Plausible here means the continuation occurred in the training data; it does not mean that the model has a separate notion of truth.</p>
+							<p>For every token, again and again, it asks how that token stands in context to all the other tokens right now. Attention lets it look around, a dense layer and an activation function transform each token, and LayerNorm keeps the numbers in a stable range. A few other parts do their jobs along the way.</p>
+							<p>Each pass shifts the token's point in the space. The directions follow meaning paths and become clearer, so the last token ends up at a small angle to the tokens that are likely next in this context. That is the trick.</p>
 						</div>
 						<div class="prose">
 							<?php if ($layer_de): ?>

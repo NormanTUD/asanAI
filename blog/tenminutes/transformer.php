@@ -350,6 +350,9 @@
 	var overlay = document.getElementById('transformer-hyper-overlay');
 	var toggle = document.getElementById('transformer-hyper-toggle');
 	if (!overlay || !toggle) return;
+	var wrap = document.querySelector('.tm-hyper-robot-wrap');
+	if (wrap && wrap.parentNode !== document.body) document.body.appendChild(wrap);
+	if (overlay.parentNode !== document.body) document.body.appendChild(overlay);
 	function setOpen(open) {
 		overlay.hidden = !open;
 		toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
