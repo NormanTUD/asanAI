@@ -79,9 +79,11 @@
 		},
 		{
 			title: "The dense layer in numbers",
+			titleDe: "Die Dense-Schicht in Zahlen",
 			body: "The lift is a small dense layer. It expands the two input coordinates into n hidden values, bends each with an activation, and projects them back to one height. Change n, the weight scale or the bias and watch the surface change. One neuron gives one smooth ridge; more neurons can carve a bowl.",
-			formula: "\\underbrace{x=(x_1,x_2)}_{\\text{input point}} \\quad \\underbrace{h=\\operatorname{act}(W_1x+b_1)}_{n\\text{ hidden neurons}} \\quad \\underbrace{z=W_2h+b_2}_{\\text{one height}} \\quad \\underbrace{\\text{surface}=\\{(x_1,x_2,z(x_1,x_2))\\}}_{\\text{the plane becomes a surface}}",
-			formulaDe: "\\underbrace{x=(x_1,x_2)}_{\\text{Eingabepunkt}} \\quad \\underbrace{h=\\operatorname{act}(W_1x+b_1)}_{n\\text{ versteckte Neuronen}} \\quad \\underbrace{z=W_2h+b_2}_{\\text{eine Höhe}} \\quad \\underbrace{\\text{Fläche}=\\{(x_1,x_2,z(x_1,x_2))\\}}_{\\text{aus der Ebene wird eine Fläche}}",
+			bodyDe: "Die Anhebung ist eine kleine Dense-Schicht. Sie dehnt die beiden Eingabekoordinaten auf n verborgene Werte aus, biegt jeden mit einer Aktivierung und projiziert sie zurück auf eine Höhe. Ändere n, die Gewichtsskala oder den Bias und beobachte, wie sich die Fläche verändert. Ein Neuron ergibt einen glatten Grat; mehr Neuronen können eine Schüssel formen.",
+			formula: "\\underbrace{x=\\begin{pmatrix}x_1\\\\x_2\\end{pmatrix}}_{\\text{input point}} \\quad \\underbrace{h=\\operatorname{act}(W_1x+b_1)}_{n\\text{ hidden neurons}} \\quad \\underbrace{z=W_2h+b_2}_{\\text{one height}}",
+			formulaDe: "\\underbrace{x=\\begin{pmatrix}x_1\\\\x_2\\end{pmatrix}}_{\\text{Eingabepunkt}} \\quad \\underbrace{h=\\operatorname{act}(W_1x+b_1)}_{n\\text{ versteckte Neuronen}} \\quad \\underbrace{z=W_2h+b_2}_{\\text{eine Höhe}}",
 			lift: 0, dense: 1, camA: 0, camB: 0, persp: 1, plane: 0, squash: 0, fail: 0, labels: 0, project: 0, box: 0
 		}
 	];
@@ -130,32 +132,70 @@
 		smooth: { neurons: 2, scale: 1.2, bias: 0, activation: "tanh", seed: 7 }
 	};
 
-	function matTex(rows) {
-		return "\\begin{bmatrix}" + rows.map(function (row) {
-			return row.map(function (v) { return v.toFixed(2); }).join(" & ");
-		}).join(" \\\\ ") + "\\end{bmatrix}";
-	}
-
-	function vecTex(values) {
-		return "\\begin{bmatrix}" + values.map(function (v) { return v.toFixed(2); }).join(" \\\\ ") + "\\end{bmatrix}";
+	function probeScoreText() {
+		return "s(" + denseState.probe.toFixed(2) + ") = " + denseHeight(denseState.probe, 0).toFixed(3);
 	}
 
 	function denseFormulas() {
 		if (!denseWeights) buildDenseWeights();
 		const n = denseWeights.W1.length;
 		const act = denseState.activation === "relu" ? "\\operatorname{ReLU}" : "\\tanh";
-		const w1 = matTex(denseWeights.W1);
-		const b1 = vecTex(denseWeights.b1);
-		const w2 = "\\begin{bmatrix}" + denseWeights.W2.map(function (v) { return v.toFixed(2); }).join(" & ") + "\\end{bmatrix}";
-		const b2 = denseWeights.b2.toFixed(2);
-		const probe = denseState.probe.toFixed(2);
-		const score = denseHeight(denseState.probe, 0).toFixed(3);
+		const xvec = "\\begin{pmatrix}x_1\\\\x_2\\end{pmatrix}";
 		const layer = DE
-			? "\\underbrace{\\begin{aligned} a &= \\underbrace{W_1 x + b_1}_{\\text{Schicht 1}} \\\\ h &= \\underbrace{" + act + "(a)}_{\\text{Aktivierung}} \\\\ z &= \\underbrace{W_2 h + b_2}_{\\text{Schicht 2, eine Dimension}} \\end{aligned}}_{\\text{das MLP macht aus einem Punkt eine Höhe}}"
-			: "\\underbrace{\\begin{aligned} a &= \\underbrace{W_1 x + b_1}_{\\text{layer 1}} \\\\ h &= \\underbrace{" + act + "(a)}_{\\text{activation}} \\\\ z &= \\underbrace{W_2 h + b_2}_{\\text{layer 2, one dimension}} \\end{aligned}}_{\\text{the MLP maps a point to one height}}";
-		const weights = "\\underbrace{\\underbrace{W_1 = " + w1 + ",\\quad b_1 = " + b1 + "}_{\\text{" + (DE ? "Schicht 1" : "layer 1") + "}},\\quad \\underbrace{W_2 = " + w2 + ",\\quad b_2 = " + b2 + "}_{\\text{" + (DE ? "Schicht 2" : "layer 2") + "}}}_{\\text{" + (DE ? "die Gewichte, die du änderst" : "the weights you are changing") + "}}";
+			? "\\underbrace{\\begin{aligned} a &= \\underbrace{W_1 " + xvec + " + b_1}_{\\text{Schicht 1}} \\\\ h &= \\underbrace{" + act + "(a)}_{\\text{Aktivierung}} \\\\ z &= \\underbrace{W_2 h + b_2}_{\\text{Schicht 2, eine Dimension}} \\end{aligned}}_{\\text{das MLP macht aus einem Punkt eine Höhe}}"
+			: "\\underbrace{\\begin{aligned} a &= \\underbrace{W_1 " + xvec + " + b_1}_{\\text{layer 1}} \\\\ h &= \\underbrace{" + act + "(a)}_{\\text{activation}} \\\\ z &= \\underbrace{W_2 h + b_2}_{\\text{layer 2, one dimension}} \\end{aligned}}_{\\text{the MLP maps a point to one height}}";
 		const back = "\\underbrace{s(t) = b_2 + \\sum_{i=1}^{" + n + "} \\underbrace{W_{2i}\\,\\," + act + "\\!\\left(W_{1i,1}\\,t + b_{1i}\\right)}_{\\text{" + (DE ? "Einheit" : "unit") + " } i}}_{\\text{" + (DE ? "Rückprojektion auf eine Dimension: bewege t" : "back-projection to one dimension: move t") + "}}";
-		return [layer, weights, back, (DE ? "s(" : "s(") + probe + ") = " + score];
+		return [layer, back];
+	}
+
+	function weightInput(kind, i, j, value, label) {
+		return '<input class="ism-weight-input" type="number" step="0.01" data-w="' + kind +
+			'" data-i="' + i + '" data-j="' + j + '" value="' + value.toFixed(2) +
+			'" aria-label="' + label + '">';
+	}
+
+	function weightEditorHtml() {
+		if (!denseWeights) buildDenseWeights();
+		const n = denseWeights.W1.length;
+		let w1 = '<span class="ism-matrix-grid" style="grid-template-columns:repeat(2,auto)">';
+		for (let i = 0; i < n; i++) {
+			w1 += weightInput("W1", i, 0, denseWeights.W1[i][0], "W1 row " + (i + 1) + " column 1");
+			w1 += weightInput("W1", i, 1, denseWeights.W1[i][1], "W1 row " + (i + 1) + " column 2");
+		}
+		w1 += "</span>";
+		let b1 = '<span class="ism-matrix-grid" style="grid-template-columns:repeat(1,auto)">';
+		for (let i = 0; i < n; i++) b1 += weightInput("b1", i, 0, denseWeights.b1[i], "b1 row " + (i + 1));
+		b1 += "</span>";
+		let w2 = '<span class="ism-matrix-grid" style="grid-template-columns:repeat(' + n + ',auto)">';
+		for (let i = 0; i < n; i++) w2 += weightInput("W2", i, 0, denseWeights.W2[i], "W2 column " + (i + 1));
+		w2 += "</span>";
+		const b2 = weightInput("b2", 0, 0, denseWeights.b2, "b2");
+		const paren = (inner) => '<span class="ism-matrix-paren" aria-hidden="true">(</span>' + inner + '<span class="ism-matrix-paren" aria-hidden="true">)</span>';
+		return '<div class="ism-weight-block"><span class="ism-weight-label">W₁ =</span>' + paren(w1) + '</div>' +
+			'<div class="ism-weight-block"><span class="ism-weight-label">b₁ =</span>' + paren(b1) + '</div>' +
+			'<div class="ism-weight-block"><span class="ism-weight-label">W₂ =</span>' + paren(w2) + '</div>' +
+			'<div class="ism-weight-block"><span class="ism-weight-label">b₂ =</span>' + paren('<span class="ism-matrix-grid" style="grid-template-columns:repeat(1,auto)">' + b2 + '</span>') + '</div>';
+	}
+
+	function bindWeightEditor(host) {
+		host.querySelectorAll("input[data-w]").forEach(function (input) {
+			input.addEventListener("input", function () {
+				const value = parseFloat(input.value);
+				if (!isFinite(value)) return;
+				const kind = input.dataset.w;
+				const i = parseInt(input.dataset.i, 10) || 0;
+				const j = parseInt(input.dataset.j, 10) || 0;
+				if (kind === "W1") denseWeights.W1[i][j] = value;
+				else if (kind === "b1") denseWeights.b1[i] = value;
+				else if (kind === "W2") denseWeights.W2[i] = value;
+				else if (kind === "b2") denseWeights.b2 = value;
+				const preset = document.getElementById("ism-dense-preset");
+				if (preset) preset.value = "custom";
+				const score = document.getElementById("ism-probe-value");
+				if (score) score.textContent = probeScoreText();
+				requestDraw();
+			});
+		});
 	}
 
 	function scheduleDenseFormulas() {
@@ -168,17 +208,25 @@
 		if (!host) return;
 		const formulas = denseFormulas();
 		host.innerHTML = "";
-		formulas.slice(0, 3).forEach(function (tex) {
+		const addFormula = function (tex) {
 			const el = document.createElement("div");
 			el.className = "ism-formula prose-math";
 			el.setAttribute("data-tex", tex);
 			el.setAttribute("data-tex-display", "true");
 			host.appendChild(el);
-		});
+		};
+		addFormula(formulas[0]);
+		const editor = document.createElement("div");
+		editor.className = "ism-weight-editor";
+		editor.innerHTML = weightEditorHtml();
+		host.appendChild(editor);
+		addFormula(formulas[1]);
 		const value = document.createElement("p");
 		value.className = "ism-probe-value";
-		value.textContent = formulas[3];
+		value.id = "ism-probe-value";
+		value.textContent = probeScoreText();
 		host.appendChild(value);
+		bindWeightEditor(editor);
 		if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(host);
 	}
 
@@ -217,10 +265,10 @@
 			item.className = "ism-scene" + (i === 0 ? " is-active" : "");
 			const title = document.createElement("div");
 			title.className = "ism-title";
-			title.textContent = scene.title;
+			title.textContent = DE && scene.titleDe ? scene.titleDe : scene.title;
 			const body = document.createElement("div");
 			body.className = "ism-body";
-			body.textContent = scene.body;
+			body.textContent = DE && scene.bodyDe ? scene.bodyDe : scene.body;
 			item.appendChild(title);
 			item.appendChild(body);
 			if (scene.formula) {
@@ -810,17 +858,27 @@
 		const activation = box.querySelector("#ism-dense-activation");
 		const probe = box.querySelector("#ism-dense-probe");
 		const preset = box.querySelector("#ism-dense-preset");
-		const sync = function () {
+		const updateProbe = function () {
+			denseState.probe = parseFloat(probe.value) || 0;
+			probe.nextElementSibling.textContent = denseState.probe.toFixed(2);
+			const value = document.getElementById("ism-probe-value");
+			if (value) value.textContent = probeScoreText();
+		};
+		const sync = function (probeOnly) {
+			if (probeOnly) {
+				updateProbe();
+				requestDraw();
+				return;
+			}
 			denseState.neurons = parseInt(neurons.value, 10) || 1;
 			denseState.scale = parseFloat(scale.value) || 1;
 			denseState.bias = parseFloat(bias.value) || 0;
 			denseState.activation = activation.value;
-			denseState.probe = parseFloat(probe.value) || 0;
 			buildDenseWeights();
 			neurons.nextElementSibling.textContent = String(denseState.neurons);
 			scale.nextElementSibling.textContent = denseState.scale.toFixed(1);
 			bias.nextElementSibling.textContent = denseState.bias.toFixed(1);
-			probe.nextElementSibling.textContent = denseState.probe.toFixed(2);
+			updateProbe();
 			scheduleDenseFormulas();
 			requestDraw();
 		};
@@ -829,7 +887,7 @@
 		scale.addEventListener("input", function () { markCustom(); sync(); });
 		bias.addEventListener("input", function () { markCustom(); sync(); });
 		activation.addEventListener("change", function () { markCustom(); sync(); });
-		probe.addEventListener("input", sync);
+		probe.addEventListener("input", function () { sync(true); });
 		preset.addEventListener("change", function () {
 			const p = DENSE_PRESETS[preset.value];
 			if (!p) { sync(); return; }

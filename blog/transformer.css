@@ -751,3 +751,31 @@ html #contents .tm-hyper-body .md p {
 .tm-hyper-note .transformer-slider-note {
 	margin: 4px 0 0;
 }
+
+/* Make the controls panel fit on one screen at desktop widths. */
+.tm-hyper-overlay { padding: 12px; }
+.tm-hyper-panel { max-height: 96vh; }
+.tm-hyper-grid {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 8px 12px;
+}
+.tm-hyper-grid .transformer-config-field {
+	padding: 8px 10px;
+}
+@media (max-width: 1000px) {
+	.tm-hyper-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+	.tm-hyper-grid { grid-template-columns: 1fr; }
+}
+.tm-hyper-overlay,
+.tm-hyper-overlay .md,
+.tm-hyper-overlay .md p,
+.tm-hyper-overlay p,
+.tm-hyper-overlay label,
+.tm-hyper-overlay select,
+.tm-hyper-overlay button,
+.tm-hyper-overlay summary,
+.tm-hyper-overlay code {
+	font-family: var(--mn-font-body) !important;
+}
