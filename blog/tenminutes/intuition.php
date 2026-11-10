@@ -859,14 +859,14 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<h2 class="section-title">The whole block: attention + FFN, again and again</h2>
 						<div class="prose">
 							<p>Attention and the FFN are one transformer block. The same architecture runs again and again, but each layer has its own learned weights and its own learned vectors. The block repeats in structure, not in parameters. Each pass lets every token look at the context, then moves it through its own MLP.</p>
-							<p>Below, real GPT-2 trajectories show the same movement. Each line is one token, each bend is one block. The vectors live in 768 dimensions; the plot is their 3D PCA shadow. The angular view is the default because the model compares directions, and “plausible” means the continuation is frequent in its training data, not that it is true.</p>
+							<p>Below, real GPT-2 trajectories show the same movement. Each line is one token, each bend is one block. The vectors live in 768 dimensions, too many to picture, so the plot projects them down to three. What you see is not the real motion but its PCA shadow. The angular view is the default because the model compares directions, and “plausible” means the continuation is frequent in its training data, not that it is true.</p>
 						</div>
 
 						<div class="demo demo--paper demo--canvas" id="block-trajectory-real">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Token trajectories through GPT-2 <span>· real PCA</span></p>
-									<p class="demo-sub">Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. PCA finds the three directions where the 768-dimensional states change most and projects everything onto them; the 3D points are a shadow of the real motion.</p>
+									<p class="demo-sub">Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. Each state has 768 dimensions, too many to picture, so this is not the real motion: PCA keeps the three directions where the states change most and flattens everything onto them. The 3D points are a shadow. Lines that cross here need not touch in the full space, and a flat-looking bend can hide a large move.</p>
 								</div>
 								<span class="demo-badge">GPT-2 · PCA</span>
 							</div>
