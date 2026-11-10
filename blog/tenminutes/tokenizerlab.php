@@ -276,10 +276,6 @@ training text, and stop at the target vocabulary size.
 							and what the model sees as a unit.
 							<cite>The tokenizer, seen from close up</cite>
 						</div>
-						<details class="collapse-card">
-							<summary class="cc-label">Sources for the tokenizer claims</summary>
-							<p>Byte-pair encoding and subword units: <a href="https://arxiv.org/abs/1508.07909" rel="noopener">Sennrich et al. (2016)</a>; SentencePiece: <a href="https://arxiv.org/abs/1808.06226" rel="noopener">Kudo &amp; Richardson (2018)</a>; under-trained “glitch” tokens: <a href="https://arxiv.org/abs/2405.05417" rel="noopener">Land &amp; Bartolo (2024)</a>.</p>
-						</details>
 					</section>
 
 

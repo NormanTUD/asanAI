@@ -34,16 +34,16 @@
 							<figcaption>Anatomy of the human ear: outer ear (green), middle ear (red), inner ear (purple). Image: Lars Chittka; Axel Brockmann, <a href="https://commons.wikimedia.org/wiki/File:Anatomy_of_the_Human_Ear.svg" rel="noopener">CC BY 2.5</a>, via Wikimedia Commons.</figcaption>
 						</figure>
 						<div class="prose">
-							<p>The human vocal tract can make a much wider range of sounds than those of other primates: the descended larynx, the vocal folds that sit in it, and fine motor control are part of the story, though the exact biological package is still debated. Genomic evidence suggests the human capacity for language was present at least 135,000 years ago, and in widespread social use by 100,000 years ago. That date comes from genetic and archaeological inference, not from a preserved organ of language; it is a range, not a timestamp.</p>
-							<p>Languages themselves are diverse, and none is a simpler version of another. Pirahã, a small language of the Amazon, has about a dozen phonemes and marks tone and evidentiality; Everett (2005) argued that it lacks syntactic recursion, a claim other linguists dispute. Whether or not that claim holds, Pirahã shows that a fully grammatical language does not need a large sound inventory, writing, or a large speaker community. Early languages were not primitive; they were spoken, and speech leaves no direct fossil.</p>
-							<p>Speech is fleeting. Writing began with accounting: clay tokens for goods appeared around 8000 BCE, and by 3200 BCE marks pressed into tablets in Mesopotamia had become cuneiform. It did not begin as literature; it grew out of administration.</p>
+							<p>The human vocal tract can make a much wider range of sounds than those of other primates: the descended larynx, the vocal folds that sit in it, and fine motor control are part of the story, though the exact biological package is still debated. Genomic evidence suggests the human capacity for language was present at least 135,000 years ago, and in widespread social use by 100,000 years ago (<a href="https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1503900/full" rel="noopener">Miyagawa et al., 2025</a>). That date comes from genetic and archaeological inference, not from a preserved organ of language; it is a range, not a timestamp.</p>
+							<p>Languages themselves are diverse, and none is a simpler version of another. Pirahã, a small language of the Amazon, has about a dozen phonemes and marks tone and evidentiality; <a href="https://en.wikipedia.org/wiki/Pirah%C3%A3_language" rel="noopener">Everett (2005)</a> argued that it lacks syntactic recursion, a claim other linguists dispute. Whether or not that claim holds, Pirahã shows that a fully grammatical language does not need a large sound inventory, writing, or a large speaker community. Early languages were not primitive; they were spoken, and speech leaves no direct fossil.</p>
+							<p>Speech is fleeting. Writing began with accounting: clay tokens for goods appeared around 8000 BCE, and by 3200 BCE marks pressed into tablets in Mesopotamia had become cuneiform (<a href="https://www.worldhistory.org/writing/" rel="noopener">World History Encyclopedia</a>). It did not begin as literature; it grew out of administration.</p>
 						</div>
 						<figure>
 							<img src="../cuneiform.jpg" alt="An early cuneiform clay tablet" loading="lazy">
 							<figcaption>Early cuneiform tablet, c. 2470 BCE. Image: Osama Shukir Muhammed Amin, <a href="https://commons.wikimedia.org/wiki/File:Clay_tablet_mentioning_the_name_of_Eannatum,_prince_of_Lagash._From_Iraq,_c._2470_BCE._Iraq_Museum.jpg" rel="noopener">CC BY-SA 4.0</a>, via Wikimedia Commons.</figcaption>
 						</figure>
 						<div class="prose">
-							<p>The earliest alphabetic writing is much later. The Wadi el-Hol inscriptions in Upper Egypt, from about 1850 BCE, are among the oldest surviving alphabetic texts; whether they already carried a full script or only a few signs is not settled. Proto-Sinaitic writers in contact with Egyptian scribes borrowed a handful of hieroglyphs and used their first sounds: the sign for water became /m/, the sign for house became /b/. Scribes used pictures for their sounds rather than their meanings. That use was not a plan; it was a practice, and from it single letters eventually developed. A script of a few dozen signs replaced hundreds of pictures and made writing portable.</p>
+							<p>The earliest alphabetic writing is much later. The Wadi el-Hol inscriptions in Upper Egypt, from about 1850 BCE, are among the oldest surviving alphabetic texts; whether they already carried a full script or only a few signs is not settled (<a href="https://commons.wikimedia.org/wiki/File:Wadi_el-Hol_inscriptions_I_drawing.jpg" rel="noopener">Lundberg, drawing</a>). Proto-Sinaitic writers in contact with Egyptian scribes borrowed a handful of hieroglyphs and used their first sounds: the sign for water became /m/, the sign for house became /b/. Scribes used pictures for their sounds rather than their meanings. That use was not a plan; it was a practice, and from it single letters eventually developed. A script of a few dozen signs replaced hundreds of pictures and made writing portable.</p>
 							<p>Writing stored language outside the speaker, so a message could travel, survive, and be inspected long after the conversation ended. The principle is older than writing: the Lebombo bone and the other tally bones stored a count outside the mind in the same way.</p>
 						</div>
 						<figure>
@@ -68,7 +68,7 @@
 						<div class="section-kicker"><span class="sk-num">03</span> The machine learns to speak</div>
 						<h2 class="section-title">From bellows to text-to-speech.</h2>
 						<div class="prose">
-							<p>Wolfgang von Kempelen's speaking machine (1791) was the first serious attempt to build human speech from parts: a bellows for the lungs, reeds for the larynx, and a leather mouth shaped by the operator's hand. It could say words and short phrases, and it made the point that speech is a physical process that can be engineered.</p>
+							<p>Wolfgang von Kempelen's speaking machine (1791) was the first serious attempt to build human speech from parts: a bellows for the lungs, reeds for the larynx, and a leather mouth shaped by the operator's hand. It could say words and short phrases (<a href="https://www.deutschestextarchiv.de/book/show/kempelen_maschine_1791" rel="noopener">Kempelen, 1791</a>), and it made the point that speech is a physical process that can be engineered.</p>
 							<p>Kempelen's machine was mechanical, not digital, but it belongs to the same lineage as modern text-to-speech. The problem he posed, namely how to turn a stream of symbols into audible language, is still the problem a speech synthesizer solves.</p>
 						</div>
 						<figure>
@@ -85,7 +85,7 @@
 						<div class="section-kicker"><span class="sk-num">04</span> The long background</div>
 						<h2 class="section-title">From print to vectors.</h2>
 						<div class="prose">
-							<p>Printing was a scaling step. Around 1440, Gutenberg combined movable metal type, oil-based ink, and a modified wine press in Mainz. A scribe copied a book in months; a press could produce hundreds of identical pages in a day. Cheap, standard text made dictionaries, standard spelling, and a shared scientific record possible. That abundance is the corpus a language model later learns from.</p>
+							<p>Printing was a scaling step. Around 1440, Gutenberg combined movable metal type, oil-based ink, and a modified wine press in Mainz (<a href="https://www.bl.uk/collection-items/gutenberg-bible" rel="noopener">British Library</a>). A scribe copied a book in months; a press could produce hundreds of identical pages in a day. Cheap, standard text made dictionaries, standard spelling, and a shared scientific record possible. That abundance is the corpus a language model later learns from.</p>
 						</div>
 						<figure>
 							<img src="../gutenberg_press.jpg" alt="The Caxton Celebration: William Caxton showing specimens of printing to King Edward IV and his Queen" loading="lazy">
@@ -171,10 +171,6 @@
 
 
 
-					<details class="collapse-card">
-						<summary class="cc-label">Sources for the historical claims</summary>
-						<p>Writing and accounting: <a href="https://www.worldhistory.org/writing/" rel="noopener">World History Encyclopedia, Writing</a>; Wadi el-Hol: <a href="https://commons.wikimedia.org/wiki/File:Wadi_el-Hol_inscriptions_I_drawing.jpg" rel="noopener">Lundberg, drawing</a>; printing: <a href="https://www.bl.uk/collection-items/gutenberg-bible" rel="noopener">British Library, Gutenberg Bible</a>; Kempelen: <a href="https://www.deutschestextarchiv.de/book/show/kempelen_maschine_1791" rel="noopener">Mechanismus der menschlichen Sprache (1791)</a>; the 135,000-year estimate: <a href="https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1503900/full" rel="noopener">Miyagawa et al. (2025)</a>; the Pirahã debate: <a href="https://en.wikipedia.org/wiki/Pirah%C3%A3_language" rel="noopener">Wikipedia, Pirahã language</a>.</p>
-					</details>
 
 					<section class="section-block" id="takeaway" data-chapter="Takeaway" data-chapter-de="Kurzfassung">
 						<div class="section-kicker"><span class="sk-num">06</span> Takeaway</div>

@@ -47,7 +47,7 @@
 								Friedrich Gauß treated the noisy positions as <em>one</em> whole and
 								assumed the true orbit lay in the middle of the errors. His method of
 								least squares minimised the squared distance between the observations
-								and the orbit, and it predicted where Ceres would reappear. The move is
+								and the orbit, and it predicted where Ceres would reappear (<a href="https://doi.org/10.1214/aos/1176345451" rel="noopener">Stigler, 1981</a>). The move is
 								the one a model repeats when it fits weights to noisy data: no single
 								measurement is trusted, and the fit is chosen to be closest to all
 								of them at once.
@@ -255,7 +255,7 @@
 								Text has its own encoding layer. Telegraph codes such as Baudot (1870s)
 								packed characters into five bits. ASCII (1963) standardised 7-bit codes
 								for 128 characters. Unicode (1991) gave the world one code-point space, and
-								UTF-8 (1993) encodes each code point in one to four bytes. A single visible
+								UTF-8 (1993) encodes each code point in one to four bytes (<a href="https://www.unicode.org/versions/Unicode15.0.0/" rel="noopener">The Unicode Standard</a>). A single visible
 								character can therefore span several bytes, and the same character can be a
 								base letter plus a combining mark. Every later step that handles text
 								depends on that layer.
@@ -354,7 +354,7 @@
 							<p>
 								The 20th century turns the plan into hardware. Konrad Zuse’s <strong>Z3</strong>
 								(1941) is the first functional, programmable, fully automatic digital computer,
-								built from 2,000 telephone relays; he also designs <em>Plankalkül</em>, an early
+								built from 2,000 telephone relays (<a href="https://doi.org/10.1109/85.586068" rel="noopener">Rojas, 1997</a>); he also designs <em>Plankalkül</em>, an early
 								high-level language. “First” depends on the definition: the Z3 was
 								electromechanical, not electronic. Programmability itself reaches further
 								back: <strong>Ismail al-Jazari</strong> described programmable automata in
@@ -457,7 +457,7 @@
 								The paper reached the hardware of the next decade. Von Neumann’s 1945 EDVAC
 								report, the first published description of the stored-program computer, cited
 								exactly one paper (this one) and proposed building the machine from
-								McCulloch-Pitts-style logic gates, with Pitts’s loops as memory. At the 1948
+								McCulloch-Pitts-style logic gates (<a href="https://doi.org/10.1007/BF02478259" rel="noopener">McCulloch &amp; Pitts, 1943</a>), with Pitts’s loops as memory. At the 1948
 								Hixon Symposium, von Neumann gave the nets a wide audience and called their
 								theorems “probably the most significant result obtained with the axiomatic
 								method up to now.” Pitts, the runaway logician, became the hinge between
@@ -508,7 +508,7 @@
 								and be conscious of its existence.” The science heard a learning rule,
 								<span data-tex="\Delta w = \eta \cdot (\text{target} - \text{output}) \cdot \text{input}" data-tex-display="false"></span>, that turns error into a weight
 								change. Minsky and Papert’s <em>Perceptrons</em> (1969) then showed the limits
-								of a single-layer network (famously, XOR) and the first winter began. The
+								of a single-layer network (famously, XOR) (<a href="https://www.deeplearningbook.org/" rel="noopener">Goodfellow et al., 2016</a>) and the first winter began. The
 								critique was about one layer; a multilayer network can represent XOR, and
 								backpropagation later supplied a way to train one. The idea survived in the
 								margins.
@@ -992,7 +992,7 @@
 								<b>Better frame</b>
 								<span>“The winters were part of the learning curve.” Promise, disappointment, and quiet accumulation are how the field actually moves.</span>
 							</div>
-						</div>
+					</div>
 					</section>
 
 				</article>
