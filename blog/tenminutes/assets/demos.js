@@ -118,14 +118,14 @@
 				return '<div class="dist-row' + (isKept ? "" : " is-cut") + '">' +
 					'<span class="dist-label">' + escapeHtml(tok.t) + '</span>' +
 					'<span class="dist-track"><span class="dist-fill" style="width:' + (isKept ? rounded[i] : 0) + '%;background:' + tok.c + '"></span></span>' +
-					'<span class="dist-val">' + (isKept ? rounded[i] + '%' : 'cut') + '</span></div>';
+					'<span class="dist-val">' + (isKept ? rounded[i] + '%' : (DEMO_DE ? 'weg' : 'cut')) + '</span></div>';
 			}).join("");
 			if (choice) choice.textContent = tokens[kept[0]].t;
 			if (count) count.textContent = kept.length + " / " + tokens.length;
 			if (entropy) entropy.textContent = ent.toFixed(2) + " bits";
 			$$(".dist-row", bars).forEach(function (row, i) {
 				row.style.cursor = keep[i] ? "pointer" : "default";
-				row.title = keep[i] ? "Draw this token" : "Cut by top-p";
+				row.title = keep[i] ? (DEMO_DE ? "Dieses Token ziehen" : "Draw this token") : (DEMO_DE ? "Von Top-p abgeschnitten" : "Cut by top-p");
 				row.addEventListener("click", function () {
 					if (!keep[i]) return;
 					var draw = $("[data-sampling-draw]", root);
@@ -144,7 +144,7 @@
 			sampleBtn.type = "button";
 			sampleBtn.className = "btn-demo btn-demo--green";
 			sampleBtn.setAttribute("data-sampling-sample", "");
-			sampleBtn.textContent = "Draw a token →";
+			sampleBtn.textContent = DEMO_DE ? "Ein Token ziehen →" : "Draw a token →";
 			controls.appendChild(sampleBtn);
 			sampleBtn.addEventListener("click", function () {
 				var T = clamp(parseFloat(temp && temp.value) || 0.8, 0.05, 3);
@@ -171,7 +171,7 @@
 		var readout = $(".demo-readout", root);
 		if (readout && !$("[data-sampling-draw]", root)) {
 			var cell = document.createElement("div");
-			cell.innerHTML = "<b>Sampled draw</b><span data-sampling-draw>—</span>";
+			cell.innerHTML = "<b>" + (DEMO_DE ? "Gezogener Wert" : "Sampled draw") + "</b><span data-sampling-draw>—</span>";
 			readout.appendChild(cell);
 		}
 		if (temp) temp.addEventListener("input", render);
@@ -3349,7 +3349,7 @@
 					'<div class="cc-actions">' +
 					'<button class="btn-demo" type="button" data-cc-guess="real">' + (DEMO_DE ? "Echt" : "Real") + '</button>' +
 					'<button class="btn-demo" type="button" data-cc-guess="fake">' + (DEMO_DE ? "Fabriziert" : "Fabricated") + '</button>' +
-					'</div><div class="cc-verdict" style="min-height:0" data-cc-feedback></div></div>';
+					'</div><div class="cc-verdict" data-cc-feedback></div></div>';
 			}).join("");
 			answered = 0; correct = 0;
 			if (scoreEl) scoreEl.textContent = "0 / " + round.length;

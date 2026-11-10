@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-	<meta name="description" content="Why a next-token predictor can sound certain and still be wrong, and how to use it without trusting it blindly.">
+	<meta name="description" content="Why a language model can invent a study, a date, or a quote, how to recognize the failure, and how to check claims against reality and for consistency.">
 	<meta name="theme-color" content="#ffffff">
 	<title>When the Model Does Not Know | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
@@ -16,7 +16,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>Plausible is <em>not the same as true.</em></h1>
-					<p class="hero-deck">A language model is a pattern completion engine, not a database. That is the source of its fluency and the source of its most dangerous failure.</p>
+					<p class="hero-deck">A model can invent a study, a date, or a quote in the same confident tone as a fact. This page shows how to spot the failure, why it happens, and how to check claims against reality and against themselves.</p>
 				</div>
 			</section>
 
@@ -26,98 +26,164 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
 						<h2 class="section-title">It completes patterns.</h2>
 						<div class="prose">
-							<p>The next-token loop is a pattern completer. The same property that makes it fluent also makes it capable of confident nonsense. The model does not look up facts in a table. It has learned, from a very large amount of text, which continuations usually follow which contexts. Ask for a medical study and it knows what a study title looks like; it can produce a convincing one that does not exist. The reason is structural: there is no separate “truth” variable in the objective. The training signal rewards a likely continuation, and a well-formed fake citation is often a very likely continuation of “a 2019 study in <em>Nature</em> found…”.</p>
-							<p>This is not lying in the human sense. The model has no intention to deceive and no internal fact-checker. It is doing the only thing it was trained to do: assigning probability to the next token. The word “hallucination” is itself a metaphor: the model is not perceiving something that is not there; it is completing a pattern. Some researchers prefer “confabulation”, which at least captures the sense of a confident story built to fit.</p>
+							<p>Ask for three papers on a niche topic and you may get three titles with the right venue, the right author initials, and no DOI that resolves. The model predicts token by token; it does not look up facts. At every position it scores every token in the vocabulary, and training compares that distribution with the next token in the text. A well-formed fake citation is often a very likely continuation of “a 2019 study in <em>Nature</em> found…”. There is no truth variable in the training objective.</p>
+							<p>This is not lying. The model has no intention to deceive and no internal fact-checker. Some researchers prefer “confabulation”: <a href="https://arxiv.org/abs/2406.04175" rel="noopener">Sui et al. (2024)</a> use it for the narrative character of the output, and <a href="https://arxiv.org/abs/2312.03729" rel="noopener">Liu et al. (2024)</a> use it for an answer that disagrees with the model’s own internal representation of truth. Whatever the name, the failure is real.</p>
+							<p>Keep three failures apart. A summary can add a detail that is not in the source (faithfulness), a factual answer can be wrong about the world (factuality), and a model can contradict itself in one conversation (self-consistency). The distinction is standard in the literature (<a href="https://arxiv.org/abs/2202.03629" rel="noopener">Ji et al., 2023</a>).</p>
 						</div>
 					</section>
 
-					<section class="section-block" id="detail">
+					<section class="section-block" id="confident">
 						<div class="section-kicker"><span class="sk-num">02</span> Why it sounds confident</div>
 						<h2 class="section-title">Confidence is not evidence.</h2>
 						<div class="prose">
-							<p>Confidence is a property of the text, not of the model's knowledge. A fluent answer with a plausible citation can be wrong in every detail. Temperature makes this worse: a higher temperature flattens the distribution and can push the model toward less likely, more inventive continuations (<a href="https://arxiv.org/abs/1904.09751" rel="noopener">Holtzman et al., 2020</a>). Why doesn't the model simply say “I don't know”? Sometimes it does, but that is a behaviour learned in post-training, not a reading from an internal truth meter. One common failure is <strong>sycophancy</strong>: the model agrees with a false premise and invents a justification (<a href="https://arxiv.org/abs/2310.13548" rel="noopener">Sharma et al., 2023</a>). There is no dial inside the model labelled certainty.</p>
-							<p>Hallucination is not uniform. Models are most reliable where the pattern is dense and redundant (common syntax, well-known facts, code idioms) and least reliable where the pattern is sparse, recent, private, or contradictory. Scale lowers the error rate on many benchmarks, but it also makes a wrong answer sound better; it shifts the odds, it does not install a guarantee.</p>
-							<p>Use the model as a draft, a tutor, or a search aid, not as an oracle. Verify names, numbers, quotes, and citations. Give it documents with retrieval, ask it to show its sources, and keep a human in the loop for anything that matters. Retrieval helps because it changes the task: instead of recalling a fact from compressed weights, the model can copy a passage that is present in the context. It is not a guarantee (the model can still misread the passage) but it makes “where did this come from?” a question with an answer.</p>
-							<p>Arithmetic is a special case. A model predicts digits; it does not calculate. Numbers are tokenized in chunks, so “1234.56” may become “123”, “4”, “.”, and “56”, and the model has to carry the digits in its head without a scratchpad. Small changes in tokenization or wording can therefore change the result. For any exact calculation, use a calculator or code, not the model's prose.</p>
+							<p>Confidence is a property of the text, not of the model’s knowledge. Temperature makes this worse: a higher temperature flattens the distribution and can push the model toward less likely, more inventive continuations (<a href="https://arxiv.org/abs/1904.09751" rel="noopener">Holtzman et al., 2020</a>). A lower temperature makes the likely token dominate, but the likely token can still be false. Decoding changes the odds, not the facts.</p>
+							<p>Why not say “I don’t know”? Sometimes it does, but that is learned in post-training, not read from a truth meter. One common failure is sycophancy: the model accepts a false premise and invents a justification (<a href="https://arxiv.org/abs/2310.13548" rel="noopener">Sharma et al., 2023</a>). Ask “Why did the 2024 study show that X causes Y?” and the model may explain the premise instead of checking it.</p>
 						</div>
-						<div class="keypoints">
-							<div class="keypoint"><b>Pattern completion</b><span>The model predicts plausible text; it does not consult a truth database.</span></div>
-							<div class="keypoint"><b>Fluency</b><span>Confident tone is a property of the writing, not evidence of correctness.</span></div>
-							<div class="keypoint"><b>Temperature</b><span>More randomness can increase invention and error.</span></div>
-							<div class="keypoint"><b>Verification</b><span>Check claims and sources; use retrieval and tools for grounding.</span></div>
-						</div>
-					</section>
 
-
-					<div class="demo demo--paper" data-demo="sampling">
-						<div class="demo-head">
-							<div>
-								<p class="demo-title">The distribution behind the sentence <span>· demo</span></p>
-								<p class="demo-sub">The model has just read “The capital of France is”. Change the temperature and the candidate filter. Top-p is a cumulative probability between 0 and 1, so decimals are meaningful; top-k would be the integer count. After top-p, the surviving bars are renormalized to 100%; cut tokens are shown in grey and do not count.</p>
+						<div class="demo demo--paper" data-demo="sampling">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The distribution behind the sentence <span>· demo</span></p>
+									<p class="demo-sub">The model has just read “The capital of France is”. Change the temperature and the candidate filter. Top-p is a cumulative probability between 0 and 1, so decimals are meaningful; top-k would be the integer count. After top-p, the surviving bars are renormalized to 100%; cut tokens are shown in grey and do not count.</p>
+								</div>
+								<span class="demo-badge">live</span>
 							</div>
-							<span class="demo-badge">live</span>
-						</div>
-						<div class="demo-body">
-							<div class="dist-bars" data-sampling-bars></div>
-							<div class="demo-controls">
-								<label>Temperature <input type="range" data-sampling-temp min="0.1" max="2" step="0.05" value="0.8"><output data-sampling-temp-out>0.80</output></label>
-								<label>Top-p <input type="range" data-sampling-topp min="0.1" max="1" step="0.05" value="1"><output data-sampling-topp-out>1.00</output></label>
+							<div class="demo-body">
+								<div class="dist-bars" data-sampling-bars></div>
+								<div class="demo-controls">
+									<label>Temperature <input type="range" data-sampling-temp min="0.1" max="2" step="0.05" value="0.8"><output data-sampling-temp-out>0.80</output></label>
+									<label>Top-p <input type="range" data-sampling-topp min="0.1" max="1" step="0.05" value="1"><output data-sampling-topp-out>1.00</output></label>
+								</div>
+								<div class="demo-readout">
+									<div><b>Likely choice</b><span data-sampling-choice>Paris</span></div>
+									<div><b>Surviving tokens</b><span data-sampling-count>5 / 5</span></div>
+									<div><b>Entropy</b><span data-sampling-entropy>...</span></div>
+								</div>
 							</div>
-							<div class="demo-readout">
-								<div><b>Likely choice</b><span data-sampling-choice>Paris</span></div>
-								<div><b>Surviving tokens</b><span data-sampling-count>5 / 5</span></div>
-								<div><b>Entropy</b><span data-sampling-entropy>...</span></div>
-							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>A confident tone is just a sharp distribution. Lower temperature makes the likely token dominate; top-p removes the long tail. Neither makes the answer true.</span></div>
+							<div class="demo-foot">Top-p changes the candidate set, not the model’s knowledge. The bright bars are the renormalized distribution; the grey rows are the tokens that were cut.</div>
 						</div>
-						<div class="demo-insight"><b>Takeaway</b><span>A confident tone is just a sharp distribution. Lower temperature makes the likely token dominate; top-p removes the long tail. Neither makes the answer true.</span></div>
-						<div class="demo-foot">Top-p changes the candidate set, not the model’s knowledge. The bright bars are the renormalized distribution; the grey rows are the tokens that were cut.</div>
-					</div>
 
-					<div class="demo demo--paper" data-demo="citecheck">
-						<div class="demo-head">
-							<div>
-								<p class="demo-title">Real paper or convincing fake? <span>· demo</span></p>
-								<p class="demo-sub">Models produce references that look exactly like real ones. Guess, then check. The point is not intuition: it is provenance.</p>
-							</div>
-							<span class="demo-badge">spot the fake</span>
-						</div>
-						<div class="demo-body">
-							<div class="cc-list" data-citecheck-list></div>
-							<div class="cc-actions">
-								<button class="btn-demo" type="button" data-citecheck-reset>New round</button>
-								<span class="nt-temp" style="margin-left:auto">Score <b data-citecheck-score>...</b></span>
-							</div>
-							<p class="cc-verdict" data-citecheck-verdict></p>
-						</div>
-						<div class="demo-insight"><b>Takeaway</b><span>A plausible title, venue, and author list are cheap to generate. A DOI that resolves is not.</span></div>
-						<div class="demo-foot">The real references are real; the fabricated ones are invented for the exercise. Verify any citation before you use it.</div>
-					</div>
-
-
-
-
-					<section class="section-block" id="mitigate">
-						<div class="section-kicker"><span class="sk-num">03</span> Detection and mitigation</div>
-						<h2 class="section-title">A workflow, not a detector.</h2>
 						<div class="prose">
-							<p>No single detector is reliable. A watermark can be removed, a classifier can be fooled, and an LLM asked to grade its own answer can be confidently wrong. The practical response is a chain: retrieve documents and ask for citations, cross-check names, numbers, and quotes, run self-consistency or a second model, and use tools for arithmetic and code. For high-stakes work, a human reads the evidence.</p>
-							<p>It helps to separate <strong>bullshit</strong> from lying in Harry Frankfurt's sense: a liar knows the truth and tries to hide it, while the model is indifferent to truth and produces what fits the context. The output can be fluent, useful, and false at the same time. Sycophancy and length bias make it worse: the model may agree with a false premise or pad an answer because longer, agreeable text is a common pattern in the training data.</p>
-						</div>
-						<div class="keypoints">
-							<div class="keypoint"><b>Retrieve</b><span>Put the evidence in the context and ask for citations.</span></div>
-							<div class="keypoint"><b>Cross-check</b><span>Verify names, numbers, quotes, and DOIs independently.</span></div>
-							<div class="keypoint"><b>Use tools</b><span>Let code, search, or a calculator do the exact part.</span></div>
-							<div class="keypoint"><b>Abstain</b><span>Make “I don't know” an acceptable answer.</span></div>
+							<p>Models are most reliable where the pattern is dense and redundant, least reliable where it is sparse or rare (<a href="https://arxiv.org/abs/2211.08411" rel="noopener">Kandpal et al., 2023</a>). Long context adds a quieter failure: evidence at the beginning and end is used more reliably than evidence in the middle (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>). Scale improves many benchmark scores (<a href="https://arxiv.org/abs/2005.14165" rel="noopener">Brown et al., 2020</a>), but it does not install a guarantee.</p>
+							<p>Arithmetic is a special case. The model predicts digits, it does not calculate. Numbers are split into tokens, so “1234.56” may become “123”, “4”, “.”, and “56” (see the <a href="tokenizerlab">tokenizer lab</a>), and the model must carry the digits without a scratchpad. For exact work, use a calculator or code.</p>
 						</div>
 					</section>
 
-					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
-						<h2 class="section-title">The short version.</h2>
+					<section class="section-block" id="tests">
+						<div class="section-kicker"><span class="sk-num">03</span> Reality, consistency, and your knowledge</div>
+						<h2 class="section-title">Check it against the world, itself, and what you know.</h2>
+						<div class="prose">
+							<p>Reality does not contradict itself. If two claims about the same thing cannot both be true, at least one is wrong. That gives a cheap first test: coherence. Does the answer fit with itself, with the documents you gave it, and with what you can check? A contradiction is a warning, not a detail to smooth over.</p>
+							<p>Coherence is necessary but not enough. A story can be internally perfect and never touch the world. The second test is correspondence: does the claim meet reality at a point where it could fail? For example, a DOI that leads to a real paper, a quote that appears on the page, a calculation that checks out. A fluent fabrication passes the first test and fails the second.</p>
+							<p>Your own knowledge is a third test. If a claim contradicts something you know well, that is a signal. Your knowledge can be outdated or wrong, but it catches errors that are internally consistent. Treat it as a source, not as a verdict.</p>
+							<p>Every factual claim needs a contact point. If you cannot name the observation that would make it true or false, you have a sentence, not a fact. Comparisons also need a trusted bridge: a title that looks like a paper is not a paper, a search result is not support, and two samples that agree are not two independent witnesses. Name the bridge and ask what would make it fail.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Coherent and grounded</b><span>A good indicator. Still not proof: the next check can fail.</span></div>
+							<div class="keypoint"><b>Coherent, not grounded</b><span>The main hallucination: a fluent story with no contact.</span></div>
+							<div class="keypoint"><b>Incoherent</b><span>Certainly wrong as a description of one thing.</span></div>
+							<div class="keypoint"><b>Grounded, not coherent</b><span>A pile of true facts without a model.</span></div>
+						</div>
+						<div class="prose">
+							<p>When the tests disagree, reality decides. A coherent answer that fails a check is wrong at that point. A pile of checked facts that does not fit together is not yet an explanation. The goal is a story that survives contact.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="diagnosis">
+						<div class="section-kicker"><span class="sk-num">04</span> Diagnosis</div>
+						<h2 class="section-title">Five failure modes, five fixes.</h2>
+						<div class="prose">
+							<p>Hallucination is an umbrella word. The failure decides the fix. A fluent wrong answer needs grounding; a self-contradicting answer needs coherence; an answer outside the evidence needs to stop. Treating every failure as one problem gives one ineffective fix: more text, more confidence, more scale.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Self-consistent fantasy</b><span>Fluent, wrong, coherent. Test: correspondence. Fix: retrieve and verify.</span></div>
+							<div class="keypoint"><b>Self-contradiction</b><span>Two answers to one question. Test: coherence. Fix: re-ask, structured steps.</span></div>
+							<div class="keypoint"><b>Facts without a model</b><span>Correct details, no synthesis. Test: coherence. Fix: outline, chain-of-thought.</span></div>
+							<div class="keypoint"><b>Calibrated bias</b><span>Plausible, systematically off. Test: known values. Fix: audit and recalibrate.</span></div>
+							<div class="keypoint"><b>Out of reach</b><span>Confident about recent, private, or niche topics. Test: coverage. Fix: abstain, retrieve, ask a human.</span></div>
+						</div>
+						<div class="prose">
+							<p>Four forces make these failures likely. The objective rewards likelihood, not truth. The corpus contains errors, stale facts, contradictions, and model-written text. The prompt can carry a false premise (<a href="https://arxiv.org/abs/2310.13548" rel="noopener">Sharma et al., 2023</a>), and the decoder can sample a rare continuation (<a href="https://arxiv.org/abs/1904.09751" rel="noopener">Holtzman et al., 2020</a>). None is a bug in one component. They are the price of compressing text into a function (<a href="https://arxiv.org/abs/2202.03629" rel="noopener">Ji et al., 2023</a>).</p>
+							<p>One cause is easy to miss. A model trained on text written by earlier models sees a copy of a copy. Over repeated generations, errors can compound and contact with the original distribution can drop (<a href="https://www.nature.com/articles/s41586-024-07566-y" rel="noopener">Shumailov et al., 2024</a>). Consistency can rise while correspondence falls. Coherence is not a substitute for fresh contact with the world.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="recognize">
+						<div class="section-kicker"><span class="sk-num">05</span> Recognizing</div>
+						<h2 class="section-title">Signals, not vibes.</h2>
+						<div class="prose">
+							<p>No detector is reliable. A model can invent 3 references in one paragraph, each with a plausible author and venue. Watermarks can be removed and classifiers fooled (<a href="https://arxiv.org/abs/2303.11156" rel="noopener">Sadasivan et al., 2023</a>); an LLM judge has its own biases (<a href="https://arxiv.org/abs/2306.05685" rel="noopener">Zheng et al., 2023</a>). Look for the conditions where hallucination is likely and run a few checks.</p>
+							<p>Start with the question. Is the topic recent, private, niche, or contested? Is the answer unusually specific: a date, a number, a name, a quote, a citation? Does the model never say “I don’t know”? Does it accept a false premise? Does it answer differently when you rephrase?</p>
+							<p>Then check the text against itself. Ask for the same fact twice and compare. Ask for the passage that supports each claim; a quote that is not in the source is a direct failure. Ask for the assumptions; contradictory steps undermine the conclusion. Self-consistency sampling (<a href="https://arxiv.org/abs/2203.11171" rel="noopener">Wang et al., 2022</a>), SelfCheckGPT, or semantic entropy can flag uncertainty, but agreement can be shared bias.</p>
+							<p>Then check it against the world. Open the DOI. Search the exact quote. Run the code. Recompute the number. Ask someone who knows the domain. Use a primary source, not a summary of a summary. A DOI that works proves the paper exists, not that it says what the model claims. Even with a model, you still have to research the topic.</p>
+						</div>
+
+						<div class="demo demo--paper" data-demo="citecheck">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Real paper or convincing fake? <span>· demo</span></p>
+									<p class="demo-sub">Models produce references that look exactly like real ones. Guess, then check. The point is not intuition: it is provenance.</p>
+								</div>
+								<span class="demo-badge">spot the fake</span>
+							</div>
+							<div class="demo-body">
+								<div class="cc-list" data-citecheck-list></div>
+								<div class="cc-actions">
+									<button class="btn-demo" type="button" data-citecheck-reset>New round</button>
+									<span class="nt-temp" style="margin-left:auto">Score <b data-citecheck-score>...</b></span>
+								</div>
+								<p class="cc-verdict" data-citecheck-verdict></p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>A plausible title, venue, and author list are cheap to generate. A DOI that resolves is a contact point, not a proof.</span></div>
+							<div class="demo-foot">The real references are real; the fabricated ones are invented for the exercise. Verify any citation before you use it, and open the paper before you trust what it says.</div>
+						</div>
+
+						<details class="collapse-card">
+							<summary class="cc-label">Worked example: the citation that looked real</summary>
+							<p>A model writes a citation that looks real. Coherence passes: the claim fits what you know about sleep and memory. Correspondence fails: search the title, check the authors, resolve the DOI. If none exist, the claim has no contact point. The right conclusion is “no evidence”, not “probably true”.</p>
+							<p>Ask for a source you can open, then open it. If the model cannot produce one, treat the claim as a hypothesis, not a fact.</p>
+						</details>
+					</section>
+
+					<section class="section-block" id="prevent">
+						<div class="section-kicker"><span class="sk-num">06</span> Prevention</div>
+						<h2 class="section-title">Build the check in.</h2>
+						<div class="prose">
+							<p>Prevention starts before the prompt. Use the model where a wrong answer is cheap to catch, and keep a human in the loop where it is not. Give it the documents and ask it to answer from them. Make “I don’t know” acceptable. For exact work, use a calculator, code, or a database. A tool is not grounding by default, but it gives you a checkable point. One unchecked number can ruin a table.</p>
+							<p>Four techniques do most of the work. Retrieval puts evidence in the context (<a href="https://arxiv.org/abs/2005.11401" rel="noopener">Lewis et al., 2020</a>). Tools replace a prediction with an observation. Chain-of-verification drafts, asks verification questions, answers them independently, and revises (<a href="https://arxiv.org/abs/2309.11495" rel="noopener">Dhuliawala et al., 2023</a>). Decomposition breaks a long claim into atomic facts (<a href="https://arxiv.org/abs/2305.14251" rel="noopener">Min et al., 2023</a>). Each adds a contact point; none adds a guarantee.</p>
+							<p>Prompting can make failure more likely. A leading question invites agreement. A demand for confidence removes the option to abstain. A long context buries evidence. A request for a citation can produce a fake one. Ask for evidence first, then the answer; ask for uncertainty; ask what would change the model’s mind.</p>
+							<p>Evaluation is part of prevention. Keep a small test set with known answers, including “not enough information”. Test after every change. Measure calibration: when the model sounds confident, is it right more often (<a href="https://arxiv.org/abs/2207.05221" rel="noopener">Kadavath et al., 2022</a>)? A model that knows the edge of its evidence is safer.</p>
+							<p>Work in small steps. A single large prompt hides its errors. Write down the state, check each step, and make it visible as a table, plot, diagram, or trace. For small programming problems, use an external judge: a type checker, a test suite, or a proof assistant such as <a href="https://rocq-prover.org/" rel="noopener">Rocq</a> (formerly Coq), <a href="https://lean-lang.org/" rel="noopener">Lean</a>, or <a href="https://agda.readthedocs.io/" rel="noopener">Agda</a>. Run the checker, feed the error back, repeat; an agent can run the loop. The checker is relentless, but it only checks what you gave it: the model can assume a false premise, state a vacuous theorem, or formalize the wrong problem. It is a help, not a guarantee.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="checklist">
+						<div class="section-kicker"><span class="sk-num">07</span> Checklist and takeaway</div>
+						<h2 class="section-title">Before you trust an answer.</h2>
+						<div class="trythis">
+							<b>Run these checks</b>
+							<ol>
+								<li>Is the question inside the model’s evidence: public, old enough, well documented, not contested?</li>
+								<li>Is the answer specific about a name, number, date, quotation, or citation? If yes, can you check it?</li>
+								<li>Does the model admit uncertainty, or does it sound equally confident everywhere?</li>
+								<li>Does it agree with a premise you know is false when you phrase the question that way?</li>
+								<li>Does it contradict itself when you ask the same thing twice or in a different order?</li>
+								<li>Can it quote the passage that supports each claim, and does the quote actually appear in the source?</li>
+								<li>Have you opened the source, resolved the DOI, run the code, or recomputed the number?</li>
+								<li>Is there a human, a test, or a tool that catches the error before it matters?</li>
+							</ol>
+						</div>
+						<div class="prose">
+							<p>The 8 answers are not proof. They are a filter. Make the cheap checks routine, so the expensive mistake does not reach the reader.</p>
+						</div>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">The model is not lying. It is completing a pattern.</p>
 							<p class="aha-sub">Truth is a property of your workflow, not a promise from the model.</p>
+						</div>
+						<div class="prose">
+							<p>Next time an answer sounds perfect, ask 2 questions: does it fit together, and does it touch reality? If you can answer both, you can use it. If only the first, you have a story. The model is a good start. It is a bad place to stop.</p>
 						</div>
 					</section>
 				</article>

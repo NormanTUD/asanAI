@@ -548,14 +548,48 @@ simulator used by `philosophy.php`. Both are plain-JS and self-initialising.
   vegetarian; use the non-food ambiguity examples (telescope, flying planes,
   visiting relatives) instead.
 
+## Claims and sources (hard rule)
+
+Every claim that does real work must carry a source the reader can verify.
+This is not optional and it is not satisfied by a plausible name.
+
+- **Attributions need a named work and a working link.** Never write “some
+  researchers prefer …”, “studies show …”, or “experts say …” without naming
+  at least one author and linking the paper, book, or report. Prefer the form
+  “Sui et al. (2024) use …” with an arXiv, DOI, publisher, or primary-source
+  link. One named work is the minimum; two are better when the claim is
+  contested or you are summarising a debate.
+- **Empirical claims need evidence.** A number, date, benchmark result, model
+  specification, causal claim, or statement about what a field has found needs
+  a source that actually supports that claim, not merely the topic. Read the
+  abstract and the relevant passage before linking.
+- **The source must be the primary source where possible.** A survey may point
+  you to the primary work; cite the primary work for the claim it makes. If the
+  primary source is inaccessible, cite the best available source and say so.
+- **If you cannot source it, do not assert it.** Rewrite the sentence as your
+  own analysis (“this page treats …”), mark it as uncertain, or remove it. A
+  nice sentence with no source is a bug.
+- **The German text carries the same sources.** A citation link is content, not
+  an English-only decoration. When you add or change a source in the English
+  page, add or change it in `lang/de/<slug>.php` in the same edit.
+- **Check the link.** A source URL must resolve (HTTP 2xx) and must not be a
+  search result, a guessed DOI, or a page that merely mentions the topic.
+  Never invent an author, title, year, arXiv id, or DOI.
+
+This rule covers claims inside prose, keypoints, captions, demo text, and
+tooltips. Definitions, mathematical identities, and explicitly labelled
+analysis are not empirical claims, but if a definition comes from a named
+tradition or paper, name it.
+
 ## Sentence review (use this for every prose edit)
 
 German uses informal **du**; imperatives are the default (“Klicke”, “Nutze”).
 Read every sentence on its own, then in its paragraph, and fix it in this order:
 
-1. **Fact.** Is the claim true and supported by the parent lesson or primary
-   source? If not, rewrite or remove it; never keep a nice sentence that makes
-   an unsupported simplification, causal claim, or equivalence.
+1. **Fact.** Is the claim true, supported by the parent lesson or primary
+   source, and does it carry the verified source link required by “Claims and
+   sources”? If not, rewrite or remove it; never keep a nice sentence that
+   makes an unsupported simplification, causal claim, or equivalence.
 2. **Grammar and clarity.** Check subject–verb agreement, article/gender/case,
    relative pronouns, tense, and unambiguous references. A sentence that needs
    a second read is not finished.

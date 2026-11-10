@@ -6569,13 +6569,16 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	background: var(--tm-paper-2);
 	transition: border-color 0.18s ease, background 0.18s ease;
 }
-.cc-card h4 { margin: 0; font-family: var(--tm-prose); font-size: 0.86rem; font-weight: 600; color: var(--tm-ink); }
+.cc-card h4 { margin: 0; min-height: 2.2em; font-family: var(--tm-prose); font-size: 0.86rem; font-weight: 600; color: var(--tm-ink); }
+@media (max-width: 720px) { .cc-card h4 { min-height: 4.4em; } }
 .cc-card p { margin: 4px 0 0; font-family: var(--tm-mono); font-size: 0.66rem; line-height: 1.45; color: var(--tm-muted); }
 .cc-card.is-real { border-color: color-mix(in srgb, var(--tm-green) 55%, var(--tm-line)); background: color-mix(in srgb, var(--tm-green) 7%, var(--tm-paper-2)); }
 .cc-card.is-fake { border-color: color-mix(in srgb, var(--tm-coral) 55%, var(--tm-line)); background: color-mix(in srgb, var(--tm-coral) 7%, var(--tm-paper-2)); }
 .cc-tag { display: inline-block; margin-top: 6px; font-family: var(--tm-mono); font-size: 0.56rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tm-faint); }
 .cc-actions { display: flex; gap: 8px; margin-top: 12px; }
 .cc-verdict { margin-top: 10px; font-size: 0.78rem; line-height: 1.5; color: var(--tm-muted); min-height: 2.6em; }
+.cc-card .cc-verdict[data-cc-feedback] { min-height: 4.5em; }
+.cc-verdict[data-citecheck-verdict] { min-height: 4.5em; }
 .cc-verdict b { color: var(--tm-ink-soft); }
 
 @media (prefers-reduced-motion: reduce) {
