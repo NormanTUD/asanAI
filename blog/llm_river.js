@@ -417,28 +417,32 @@ function _themeriver_ensure_dom(containerId) {
 	if (!parent) return;
 
 	if (!document.getElementById(containerId)) {
-		const wrapper = document.createElement('div');
+		const wrapper = document.createElement('details');
 		wrapper.id = 'themeriver-wrapper';
-		wrapper.className = 'themeriver-wrapper';
+		wrapper.className = 'themeriver-wrapper tm-step-detail themeriver-optional';
+		wrapper.open = false;
 		wrapper.setAttribute('aria-label', 'Probability flow through the layers');
+		const riverDe = !!(window.TM && TM.lang && TM.lang() === 'de');
 		wrapper.style.cssText = `
 	border: 0; border-radius: 0;
 	background: transparent; margin-top: 16px; overflow: visible;
     `;
 		wrapper.innerHTML = `
+	<summary>${riverDe ? 'Probability Flow (optional)' : 'Probability Flow (optional)'}</summary>
+	<div class="themeriver-optional-body">
 	<div class="themeriver-controls-wrap">
 	<details class="tm-step-detail themeriver-controls">
-	    <summary>Probability flow settings</summary>
+	    <summary>${riverDe ? 'Probability-Flow-Einstellungen' : 'Probability flow settings'}</summary>
 	    <div class="themeriver-controls-body">
-		<label class="themeriver-control-label" for="themeriver-token-select">Token position</label>
+		<label class="themeriver-control-label" for="themeriver-token-select">${riverDe ? 'Token-Position' : 'Token position'}</label>
 		<select id="themeriver-token-select"
 			onchange="window._themeriver_on_change()"
 			class="themeriver-select"
-			aria-label="Token position"
+			aria-label="${riverDe ? 'Token-Position' : 'Token position'}"
 			style="padding:4px 8px; border:1px solid var(--mn-border, #cbd5e1);
 			       border-radius:6px; font-size:0.82rem; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b);">
 		</select>
-		<label class="themeriver-control-label" for="themeriver-topn-select">Show top</label>
+		<label class="themeriver-control-label" for="themeriver-topn-select">${riverDe ? 'Zeige Top' : 'Show top'}</label>
 		<select id="themeriver-topn-select"
 			onchange="window._themeriver_on_change()"
 			class="themeriver-select"
@@ -448,14 +452,23 @@ function _themeriver_ensure_dom(containerId) {
 		    <option value="8" selected>8</option>
 		    <option value="10">10</option>
 		    <option value="15">15</option>
-		    <option value="all">All</option>
+		    <option value="all">${riverDe ? 'Alle' : 'All'}</option>
 		</select>
-		<span class="themeriver-control-label">words</span>
+		<span class="themeriver-control-label">${riverDe ? 'Wörter' : 'words'}</span>
 	    </div>
 	</details>
 	</div>
 	<div id="${containerId}" style="width:100%; height:520px;"></div>
+	</div>
     `;
+		wrapper.addEventListener('toggle', function () {
+			if (!wrapper.open) return;
+			setTimeout(function () {
+				const entry = themeRiverRegistry.get(containerId);
+				if (entry) _execute_themeriver_render(entry.d_model);
+				else if (window._themeriver_on_change) window._themeriver_on_change();
+			}, 40);
+		});
 		parent.appendChild(wrapper);
 	}
 

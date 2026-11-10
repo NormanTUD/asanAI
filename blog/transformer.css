@@ -269,7 +269,7 @@ html.dark #transformer-trajectory-full-path .js-plotly-plot .main-svg rect.bg {
 	border-radius: 10px;
 	box-shadow: 0 8px 28px rgba(0, 0, 0, .18);
 	color: var(--mn-text, #0f172a);
-	font-size: .9rem;
+	font: 600 .9rem/1.35 "Open Sans", system-ui, sans-serif;
 }
 .tm-inference-spinner {
 	width: 20px;
