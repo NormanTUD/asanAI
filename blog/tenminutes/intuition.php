@@ -636,7 +636,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																		<button type="button" id="ism-prev" data-arrow-prev class="ism-btn" aria-label="Previous step">←</button>
 																		<button type="button" id="ism-next" data-arrow-next class="ism-btn" aria-label="Next step">→</button>
 																		<div id="ism-dots" class="ism-dots" aria-hidden="true"></div>
-																		<span id="ism-counter" class="ism-counter">1 / 7</span>
+																		<span id="ism-counter" class="ism-counter">1 / 8</span>
 																	</div>
 																</div>
 																<div class="demo-insight"><b>Takeaway</b><span>The layers in an MLP lift the points into a higher-dimensional space where a straight line can separate what was inseparable before. They change the space in which the cut is made.</span></div>

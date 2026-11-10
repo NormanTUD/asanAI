@@ -8858,3 +8858,79 @@ html[lang="de"] .tm-lang-only-de { display: inline !important; }
 @media (max-width: 700px) {
 	.attention-aspects { grid-template-columns: 1fr; }
 }
+
+/* Dense-layer slide inside the space-morph demo. */
+.ism-formula {
+	margin: 8px auto 0;
+	max-width: 100%;
+	overflow-x: auto;
+	font-size: 0.92em;
+}
+.ism-dense-controls {
+	position: absolute;
+	left: 10px;
+	right: 10px;
+	bottom: 10px;
+	z-index: 2;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 12px;
+	align-items: center;
+	padding: 8px 10px;
+	border: 1px solid var(--tm-line);
+	background: color-mix(in srgb, var(--tm-card) 92%, transparent);
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+	font: 600 0.7rem/1.2 var(--tm-ui);
+	color: var(--tm-ink-soft);
+}
+.ism-dense-controls[hidden] { display: none !important; }
+.ism-dense-controls label {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+}
+.ism-dense-controls input[type="range"] { width: 88px; }
+.ism-dense-controls output {
+	min-width: 2.4em;
+	text-align: right;
+	color: var(--tm-ink);
+}
+.ism-dense-controls select {
+	padding: 2px 4px;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-card);
+	color: var(--tm-ink);
+	font: 600 0.7rem var(--tm-ui);
+}
+.ism-dense-controls button {
+	padding: 3px 8px;
+	border: 1px solid var(--tm-line-strong);
+	background: var(--tm-card);
+	color: var(--tm-ink-soft);
+	font: 600 0.7rem var(--tm-ui);
+	cursor: pointer;
+}
+.ism-dense-controls button:hover {
+	border-color: var(--tm-green);
+	color: var(--tm-green-deep);
+}
+.ism-dense-readout {
+	flex-basis: 100%;
+	font: 400 0.66rem/1.35 "Courier New", monospace;
+	color: var(--tm-muted);
+	white-space: pre-wrap;
+	max-height: 2.8em;
+	overflow: hidden;
+}
+@media (max-width: 700px) {
+	.ism-dense-controls {
+		left: 6px;
+		right: 6px;
+		bottom: 6px;
+		gap: 4px 8px;
+		padding: 6px 8px;
+	}
+	.ism-dense-controls input[type="range"] { width: 64px; }
+	.ism-dense-readout { display: none; }
+}
