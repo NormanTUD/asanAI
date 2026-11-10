@@ -733,7 +733,7 @@ function label_debug (...args) {
 	console.trace();
 }
 
-function create_graphviz_function_call_graph () {
+function create_graphviz_function_call_graph (log_output = true) {
 	const dependencies = {};
 
 	for (const functionName in window) {
@@ -766,8 +766,11 @@ function create_graphviz_function_call_graph () {
 	}
 	dotFileContent += "}\n";
 
-	// You can log the dotFileContent or use other methods to save it as needed.
-	log(dotFileContent); // Example: Logging the content to the console
+	if (log_output) {
+		log(dotFileContent);
+	}
+
+	return dotFileContent;
 }
 
 // Execute the analysis

@@ -10740,7 +10740,8 @@ async function _coverage_tests_debug_helpers() {
 		test_equal("detect_and_color_stacktrace survives garbage", detect_and_color_stacktrace(null), undefined);
 
 		showCustomTensors();
-		create_graphviz_function_call_graph();
+		var call_graph = create_graphviz_function_call_graph(false);
+		test_equal("create_graphviz_function_call_graph builds a dot graph", call_graph.indexOf("digraph FunctionCalls {") === 0, true);
 
 		var profiled = 0;
 		var profiled_tensor = null;
