@@ -74,13 +74,13 @@
 			{ t: "Paris", z: 2.9, c: "var(--tm-green)" },
 			{ t: "Lyon", z: 1.1, c: "var(--tm-sky)" },
 			{ t: "Berlin", z: 0.7, c: "var(--tm-gold)" },
-			{ t: "Frosch", z: -0.4, c: "var(--tm-coral)" },
-			{ t: "der", z: -1.1, c: "var(--tm-faint)" }
+			{ t: "Marseille", z: -0.4, c: "var(--tm-coral)" },
+			{ t: "die", z: -1.1, c: "var(--tm-faint)" }
 		] : [
 			{ t: "Paris", z: 2.9, c: "var(--tm-green)" },
 			{ t: "Lyon", z: 1.1, c: "var(--tm-sky)" },
 			{ t: "Berlin", z: 0.7, c: "var(--tm-gold)" },
-			{ t: "Frog", z: -0.4, c: "var(--tm-coral)" },
+			{ t: "Marseille", z: -0.4, c: "var(--tm-coral)" },
 			{ t: "the", z: -1.1, c: "var(--tm-faint)" }
 		];
 		function render() {
