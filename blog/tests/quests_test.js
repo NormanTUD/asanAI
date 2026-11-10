@@ -1,12 +1,12 @@
-/* Node smoke test for quests.js — the XP economy and the Flow Surge.
+/* Node smoke test for quests.js — the XP economy and the hidden Flow bonus.
  * Run with:  node tests/quests_test.js
  *
  * Verifies:
  *   • the public XP API still awards once per key (no double-counting)
- *   • demo engagement fills the Flow meter and lights a booster at the goal
- *   • the booster doubles XP while it burns and expires afterwards
- *   • a refill can light a second surge; the surge count is persisted
- *   • feeding while a surge is active is a no-op (no infinite stacking)
+ *   • demo engagement fills the hidden meter and starts a bonus at the goal
+ *   • the bonus doubles XP while it burns and expires afterwards
+ *   • a refill can start a second bonus; the count is persisted
+ *   • feeding while the bonus is active is a no-op (no infinite stacking)
  */
 
 'use strict';

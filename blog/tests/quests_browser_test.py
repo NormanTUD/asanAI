@@ -3,14 +3,14 @@
 # requires-python = ">=3.11"
 # dependencies = ["selenium", "webdriver-manager"]
 # ///
-"""Browser regression test for the XP reward center and the Flow Surge.
+"""Browser regression test for the XP reward center and the hidden Flow bonus.
 
 Boots a PHP server, opens a demo-heavy lesson, then exercises the real UI:
   * the first interactive award spawns the full orb into the badge
   * the badge pulses (`.is-receive`) when that first orb arrives
   * the next award uses the scaled-down orb; distant awards only tick (`.is-tick`)
-  * sustained demo interaction fills the Flow meter
-  * a full meter lights the ×2 booster, its badge and the overview card
+  * sustained demo interaction silently doubles later awards
+  * the bonus has no badge, timer, x2 label or overview card
 
 Run from the repository root:
     uv run blog/tests/quests_browser_test.py
@@ -125,10 +125,10 @@ def main() -> int:
 		check(browser.execute_script(
 			"return !!document.querySelector('#mnq-hud')"
 		), "the reward badge is rendered")
-		check(browser.execute_script(
-			"return document.querySelector('.mnq-hud-boost').hidden"
-		), "no booster badge before a surge")
-		check(flow(browser)["active"] is False, "the flow meter starts inactive")
+		check(not browser.execute_script(
+			"return !!document.querySelector('.mnq-hud-boost, .mnq-ring--flow');"
+		), "the hidden bonus has no badge or flow ring")
+		check(flow(browser)["active"] is False, "the hidden bonus starts inactive")
 
 		# The first demo interaction is the one showy moment: its award leaves
 		# as an orb and lands in the badge.
@@ -212,39 +212,19 @@ def main() -> int:
 		check(quiet["orbs"] == 0, "distant awards do not spawn a flying orb")
 		check(quiet["tick"] is True, "distant awards only tick the badge")
 
-		# A full meter lights the booster.
+		# A full meter silently doubles later awards.
 		browser.execute_script("window.MNQuest.feedFlow(30);")
 		status = flow(browser)
-		check(status["active"] is True, "a full meter activates the Flow Surge")
-		check(status["mult"] == 2, "the surge reports the x2 multiplier")
+		check(status["active"] is True, "a full meter activates the hidden bonus")
+		check(status["mult"] == 2, "the hidden bonus reports the x2 multiplier")
 		check(not browser.execute_script(
-			"return document.querySelector('.mnq-hud-boost').hidden"
-		), "the booster badge appears with the surge")
-		check("×2" in browser.execute_script(
-			"return document.querySelector('.mnq-hud-boost').textContent;"
-		), "the badge names the multiplier")
-		check(browser.execute_script(
-			"return document.getElementById('mnq-hud').classList.contains('is-surge');"
-		), "the reward badge enters its surge state")
-		check(not browser.execute_script(
-			"return !!document.querySelector('.mnq-boost-time');"
-		), "the badge no longer prints a ticking clock")
-		time.sleep(0.5)
-		check(browser.execute_script(
-			"return parseFloat(getComputedStyle("
-			"document.querySelector('.mnq-hud-text')).opacity) > 0.9;"
-		), "the XP points stay visible during the surge")
-
-		# The inner ring drains over the surge instead of showing seconds.
-		offset_before = browser.execute_script(
-			"return parseFloat(document.querySelector('.mnq-flow-fg').style.strokeDashoffset) || 0;"
-		)
-		time.sleep(4)
-		offset_after = browser.execute_script(
-			"return parseFloat(document.querySelector('.mnq-flow-fg').style.strokeDashoffset) || 0;"
-		)
-		check(offset_after > offset_before + 1,
-			"the flow ring drains slowly during the surge", f"{offset_before} -> {offset_after}")
+			"return !!document.querySelector('.mnq-hud-boost, .mnq-boost-time, "
+			".mnq-flow-fg, .mnq-boostcard, .is-surge');"
+		), "the bonus adds no badge, timer, ring or card")
+		check("Flow Surge" not in browser.execute_script(
+			"return document.querySelector('.mnq-toasts, .mnq-panel') "
+			"? document.querySelector('.mnq-toasts, .mnq-panel').textContent : '';"
+		), "the bonus announces nothing")
 
 		# Boosted awards are doubled and stay quiet too.
 		boosted = browser.execute_script(
@@ -259,20 +239,9 @@ def main() -> int:
 			};
 			"""
 		)
-		check(boosted["delta"] == 20, "an award is doubled during the surge", str(boosted["delta"]))
+		check(boosted["delta"] == 20, "an award is doubled during the hidden bonus", str(boosted["delta"]))
 		check(boosted["orbs"] == 0, "boosted awards do not spawn a flying orb")
 		check(boosted["tick"] is True, "boosted awards tick the badge")
-
-		# The overview explains the meter and shows the live surge.
-		browser.execute_script("window.MNQuest.open('overview');")
-		WebDriverWait(browser, 5).until(
-			lambda d: d.execute_script(
-				"return !!document.querySelector('.mnq-boostcard');"
-			)
-		)
-		check(browser.execute_script(
-			"return !!document.querySelector('.mnq-boostcard.is-active');"
-		), "the overview shows the active surge card")
 
 		severe = [
 			entry for entry in browser.get_log("browser")

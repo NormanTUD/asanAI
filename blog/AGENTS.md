@@ -245,9 +245,10 @@ browser): `quests.js` (`MNQuest`: XP, levels, achievements, lesson quests, the
 progress overview; other modules add overview tabs via `MNQuest.addTab`; only
 the first interactive XP award per page gets the full flight into the
 bottom-left reward badge; later awards scale down and soon only tick it, while
-sustained demo interaction fills a Flow meter that lights a two-minute ×2
-**Flow Surge**, via `MNQuest.flow()` / `feedFlow()`; effortless actions
-pay little, retrieval/lab/integration work pays more, and the feedback
+sustained demo interaction silently doubles XP for two minutes via a hidden
+Flow meter (`MNQuest.flow()` / `feedFlow()`): no badge, timer, ×2 label or
+overview card is shown, the extra points are the only signal; effortless
+actions pay little, retrieval/lab/integration work pays more, and the feedback
 animation decays with each repeated interaction),
 `quiz.js` (`.mn-quiz` cards; emits `mnquiz:answer` / `mnquiz:finish`),
 `lab_challenges.js` (goals inside labs; old labs without a `root` use
@@ -1212,7 +1213,7 @@ authoritative list of individual checks; `check_all.py` orchestrates them.
 | `uv run blog/tests/rag_index_test.py` | server RAG index freshness vs `.search_cache.json`, vector shape, large + 50-char detail indexes, no redirect/macro chunks | stale index or any failed check | `blog/**` (semantic-index job) |
 | `uv run blog/tests/rag_incremental_test.py` | incremental RAG builder: fresh sourceHash is a no-op, only changed chunks re-embed, reused rows stay byte-identical, small index files written | any failed check | `blog/**` (semantic-index job) |
 | `uv run blog/tests/rag_server_test.py` | RAG retrieval helpers, detail windows (anchor ± neighbours), grounding/citations, queue position/ETA, answer cache, HTTP API (fake Ollama) | any failed check | `blog/**` (semantic-index job) |
-| `uv run blog/tests/{semantic,rag,quests}_browser_test.py` | headless-Chrome UI: semantic question + AI toggle + fallback; RAG chat health, queue/ETA text, answer and source links; XP orb flight into the reward badge + Flow Surge | any failed check | `blog/**` (php-render job) |
+| `uv run blog/tests/{semantic,rag,quests}_browser_test.py` | headless-Chrome UI: semantic question + AI toggle + fallback; RAG chat health, queue/ETA text, answer and source links; XP orb flight into the reward badge + hidden Flow bonus | any failed check | `blog/**` (php-render job) |
 | `uv run blog/tests/php_render_validator.py blog/` | headless-Chrome render (PHP built-in server): console error → exit 1; unrendered `$$` (with `_`/`\`) outside a `<div>` → exit 2; width overflow → exit 3 (only with `--check-width`); `--all-lessons --check-width --width-only` sweeps every lesson + the width gate via `window.__layoutGuardrailCheck()` | per exit codes | index.php only (width job currently disabled in CI) |
 | `uv run blog/tests/typo_checker.py blog/` | spell-checks lesson prose; whitelist `blog/tests/typo_whitelist.txt` (one word/line, case-insensitive, append to add) | typos | **local only** |
 | `uv run blog/tests/latex_error_checker.py --docroot blog/` | Playwright sweep of every lesson for LaTeX/render errors + static risk scan (`--trace` for traces) | failures (risk warnings don't) | **local only** |

@@ -399,17 +399,17 @@ html.dark #transformer-trajectory-full-path .js-plotly-plot .main-svg rect.bg {
 /* ── Left-middle robot: opens the hyperparameter overview ─────── */
 .tm-hyper-robot-wrap {
 	position: fixed;
-	left: 18px;
+	left: 24px;
 	top: 50%;
 	transform: translateY(-50%);
 	z-index: 9998;
 }
 #transformer-hyper-toggle {
-	width: 52px;
-	height: 52px;
+	width: 44px;
+	height: 44px;
 	padding: 0;
 	border: 1px solid var(--mn-border, #cbd5e1);
-	border-radius: 16px;
+	border-radius: 14px;
 	background: var(--mn-surface, #ffffff);
 	color: var(--mn-text-secondary, #475569);
 	box-shadow: var(--mn-shadow-md, 0 4px 16px rgba(15, 23, 42, .12));
@@ -433,7 +433,7 @@ html.tm-hyper-open #transformer-hyper-toggle {
 	background: var(--mn-bg-subtle, #f8fafc);
 }
 @media (max-width: 720px) {
-	.tm-hyper-robot-wrap { left: 10px; }
+	.tm-hyper-robot-wrap { left: 12px; }
 	#transformer-hyper-toggle { width: 44px; height: 44px; border-radius: 14px; }
 }
 @media print {
@@ -449,7 +449,7 @@ html.tm-hyper-open #transformer-hyper-toggle {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: clamp(12px, 4vw, 40px);
+	padding: 0;
 }
 .tm-hyper-overlay[hidden] { display: none !important; }
 .tm-hyper-backdrop {
@@ -461,13 +461,14 @@ html.tm-hyper-open #transformer-hyper-toggle {
 }
 .tm-hyper-panel {
 	position: relative;
-	width: min(920px, 96vw);
-	max-height: min(90vh, 900px);
+	width: 100%;
+	height: 100%;
+	max-height: none;
 	overflow-y: auto;
 	background: var(--mn-surface, #ffffff);
-	border: 1px solid var(--mn-border, #cbd5e1);
-	border-radius: 16px;
-	box-shadow: 0 24px 70px rgba(15, 23, 42, .32);
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
 }
 .tm-hyper-head {
 	position: sticky;

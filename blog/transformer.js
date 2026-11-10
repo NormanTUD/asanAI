@@ -1706,6 +1706,10 @@ function run_transformer_demo(activeId = null) {
 
 	// 3. Run the network
 	run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
+	// The embedding space is populated inside the network step. Re-render the
+	// tokenizer chips here so the vocabulary IDs are real numbers instead of "?".
+	const vizContainer = document.getElementById("transformer-viz-bpe");
+	if (vizContainer) renderTokenChips(vizContainer, vizTokens);
 
 	show_nr_of_params();
 

@@ -24,7 +24,7 @@
 		.traj-candidates { visibility: hidden; opacity: 0; transition: opacity 0.2s ease; }
 		.traj-candidates.is-visible { visibility: visible; opacity: 1; }
 		.traj-next-btn { padding: 0.7em 1.2em; font-size: 0.82rem; }
-		.oned-formula { min-height: 4.2em; margin-top: 6px; }
+		.oned-formula { min-height: 4.6em; margin-top: 6px; }
 		.traj-plotly-host { width: 100%; height: 460px; min-height: 360px; }
 		.traj-candidate-metric { color: var(--tm-muted); font-size: 0.68rem; font-weight: 600; }
 		@media (max-width: 760px) { .traj-plotly-host { height: 340px; min-height: 300px; } }
@@ -701,43 +701,37 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 														</div>
 					</section>
 
-					<section class="section-block" id="step-residual-section" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
-						<div class="section-kicker">Step 6 · Residual</div>
-						<h2 class="section-title">Residual stream: every layer adds to the same stream</h2>
-						<div class="prose">
-							<p>Every layer reads the same running vector, computes an update, and adds it back. Think of a shared notebook: earlier notes stay, later layers read them and add more. The new state is the old state plus a change.</p>
-						</div>
-							<div class="prose-math" data-tex="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{token vector}})}_{\text{what layer 1 adds}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{running vector}})}_{\text{what layer 2 adds}} \end{aligned}" data-tex-de="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{Token-Vektor}})}_{\text{was Schicht 1 hinzufügt}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{laufender Vektor}})}_{\text{was Schicht 2 hinzufügt}} \end{aligned}" data-tex-display="true"></div>
-							<p>The new state is the old state plus what the layer adds. The demos are simplified; the order is the real architecture.</p>
-						<div class="step-pane" id="step-residual">
-															<div class="step-stage">
-																<figure class="res-notebook">
-																	<div class="res-nb-page">
-																		<p class="res-nb-sentence"><span class="res-nb-emb">The</span> <span class="res-nb-emb res-nb-att">cat</span> <span class="res-nb-emb res-nb-mlp">sat</span> on the <span class="res-nb-emb">mat</span> because <span class="res-nb-emb res-nb-att">she</span> was <span class="res-nb-emb res-nb-mlp">tired</span>.</p>
-																		<p class="res-nb-note res-nb-note--emb"><b>Embedding</b> every word becomes a vector.</p>
-																		<p class="res-nb-note res-nb-note--att"><b>Attention</b> “she” points back to “cat”.</p>
-																		<p class="res-nb-note res-nb-note--mlp"><b>MLP</b> “tired” explains why the cat sat.</p>
-																	</div>
-																	<figcaption>One shared page. Each layer writes in its own color, and earlier notes stay readable.</figcaption>
-																</figure>
-																<div class="res-stream">
-																	<div class="res-layers" id="ires-layers"></div>
-																	<div class="res-panel">
-																		<div class="res-bars" id="ires-bars"></div>
-																		<div class="res-vector" id="ires-vector" aria-live="polite"></div>
-																		<div class="res-legend"><span><i></i> running stream</span><span id="ires-out"></span></div>
-																		<div class="prose-math" data-tex="\underbrace{x_{n+1}}_{\text{new stream}} = \underbrace{x_n}_{\text{running stream}} + \underbrace{\operatorname{layer}_{n+1}(x_n)}_{\text{what this layer writes}}" data-tex-de="\underbrace{x_{n+1}}_{\text{neuer Stream}} = \underbrace{x_n}_{\text{laufender Stream}} + \underbrace{\operatorname{layer}_{n+1}(x_n)}_{\text{was diese Schicht schreibt}}" data-tex-display="true"></div>
-																	</div>
-																</div>
-															</div>
-															<p class="step-note">Nothing is overwritten, so the original signal survives and gradients have a short path back. That is why deep networks train.</p>
-														</div>
-					</section>
-
 					<section class="section-block" id="layer-stack" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
-						<?php $layer_de = function_exists('tm_lang') && tm_lang() === 'de'; ?>
 						<div class="section-kicker"><span class="sk-num">04</span> <?php echo $layer_de ? 'Der Stapel' : 'The stack'; ?></div>
 						<h2 class="section-title"><?php echo $layer_de ? 'Eine Schicht, dann der Stapel.' : 'One layer, then the stack.'; ?></h2>
+						<div class="prose-math layer-stack-formula" data-tex="\underbrace{ \text{next word} = \text{unembed}\!\left( \underbrace{ \text{layer}_n\!\left(\cdots \text{layer}_2\!\left(\text{layer}_1\!\left( \underbrace{\text{embedding}(\text{tokenizer}(\text{context}))}_{\text{text becomes vectors}} \right)\right)\cdots\right) }_{\text{each layer mixes and rewrites the vectors}} \right) }_{\text{the whole model: text in, next token out}}" data-tex-de="\underbrace{ \text{nächstes Wort} = \text{unembed}\!\left( \underbrace{ \text{layer}_n\!\left(\cdots \text{layer}_2\!\left(\text{layer}_1\!\left( \underbrace{\text{embedding}(\text{tokenizer}(\text{context}))}_{\text{Text wird zu Vektoren}} \right)\right)\cdots\right) }_{\text{jede Schicht mischt und schreibt die Vektoren um}} \right) }_{\text{das ganze Modell: Text rein, nächstes Token raus}}" data-tex-display="true"></div>
+						<div class="prose-math layer-stack-formula" data-tex="\underbrace{X_{\text{out}} = \text{layer}_n(\cdots \text{layer}_1(\underbrace{X_{\text{in}}}_{\text{one row per token}}))}_{\text{same shape, new values}}" data-tex-de="\underbrace{X_{\text{out}} = \text{layer}_n(\cdots \text{layer}_1(\underbrace{X_{\text{in}}}_{\text{eine Zeile pro Token}}))}_{\text{dieselbe Form, neue Werte}}" data-tex-display="true"></div>
+						<div class="layer-flow" role="img" aria-label="<?php echo $layer_de ? 'Der Aufbau als Stapel: Tokenizer, Embedding, N Transformer-Schichten, Unembedding' : 'The model as a stack: tokenizer, embedding, N transformer layers, unembedding'; ?>">
+							<div class="lf-stage lf-stage--token"><span class="lf-num">01</span><b>Tokenizer</b><span><?php echo $layer_de ? 'Kontext → Tokens' : 'context → tokens'; ?></span></div>
+							<span class="lf-arrow" aria-hidden="true">→</span>
+							<div class="lf-stage lf-stage--embed"><span class="lf-num">02</span><b>Embedding</b><span><?php echo $layer_de ? 'Tokens → Vektoren' : 'tokens → vectors'; ?></span></div>
+							<span class="lf-arrow" aria-hidden="true">→</span>
+							<div class="lf-stage lf-stage--layers"><span class="lf-num">03</span><b><?php echo $layer_de ? 'Schichten × N' : 'Layers × N'; ?></b><span>Self-attention + FFN</span><span class="lf-stack-bars" aria-hidden="true"><i></i><i></i><i></i></span></div>
+							<span class="lf-arrow" aria-hidden="true">→</span>
+							<div class="lf-stage lf-stage--unembed"><span class="lf-num">04</span><b>Unembedding</b><span><?php echo $layer_de ? 'Vektor → Scores' : 'vector → scores'; ?></span></div>
+						</div>
+						<div class="prose">
+							<?php if ($layer_de): ?>
+							<ol class="layer-flow-walk">
+								<li><b>01 Tokenizer.</b> Der Kontext wird in Tokens zerlegt, und jedes Token bekommt eine ID. Die <a href="#step-tokenize-section">Tokenize-Demo</a> zeigt den Schritt.</li>
+								<li><b>02 Embedding.</b> Jede ID zeigt auf einen gelernten Vektor. Die <a href="#step-embed-section">Embedding-Demo</a> zeigt, wie Bedeutung zu Geometrie wird.</li>
+								<li><b>03 Schichten × N.</b> Eine Schicht ist Self-Attention plus FFN: Attention mischt Tokens, das FFN schreibt jeden Vektor um. Dieselbe Form läuft N-mal, jede Schicht mit eigenen Gewichten. Die <a href="#step-attention-section">Attention-Demo</a> zeigt einen Head, die Komposition darunter zeigt die ganze Schicht.</li>
+								<li><b>04 Unembedding.</b> Der letzte Vektor wird zu Scores über das Vokabular, und Softmax macht daraus eine Verteilung. Der <a href="#last-step">letzte Schritt</a> zeigt den Übergang vom Vektor zum Wort.</li>
+							</ol>
+							<?php else: ?>
+							<ol class="layer-flow-walk">
+								<li><b>01 Tokenizer.</b> The context is split into tokens, and each token gets an ID. The <a href="#step-tokenize-section">tokenize demo</a> shows the step.</li>
+								<li><b>02 Embedding.</b> Each ID points to a learned vector. The <a href="#step-embed-section">embedding demo</a> shows how meaning becomes geometry.</li>
+								<li><b>03 Layers × N.</b> One layer is self-attention plus an FFN: attention mixes tokens, the FFN rewrites each vector. The same shape runs N times, each layer with its own weights. The <a href="#step-attention-section">attention demo</a> shows one head; the composition below shows the whole layer.</li>
+								<li><b>04 Unembedding.</b> The last vector becomes scores over the vocabulary, and softmax turns them into a distribution. <a href="#last-step">The last step</a> shows the move from vector to word.</li>
+							</ol>
+							<?php endif; ?>
+						</div>
 						<div class="prose">
 							<h4 class="layer-subhead"><?php echo $layer_de ? 'Eine Schicht ist eine kleine Funktion' : 'One layer is a small function'; ?></h4>
 							<?php if ($layer_de): ?>
@@ -787,31 +781,12 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							</div>
 							<h4 class="layer-subhead"><?php echo $layer_de ? 'Ein Sprachmodell kombiniert diese und weitere Bausteine' : 'A language model combines these and other building blocks'; ?></h4>
 							<?php if ($layer_de): ?>
-							<p>Ein Sprachmodell kombiniert diese Bausteine zu einem Transformer-Block: Zuerst fragt Self-Attention, wie stark jedes Wort mit jedem anderen Wort im Kontext verbunden ist; diese Verbindungen lernt das Modell aus den Daten. Ein FFN entwirrt das Ergebnis dann: Es faltet die Vektoren in einen höherdimensionalen Raum, trennt Merkmale und faltet sie wieder zurück. Eine echte Transformer-Schicht enthält außerdem LayerNorm, Residualverbindungen und andere Teile. Sie sind hier weggelassen, damit das Bild lesbar bleibt; die späteren Abschnitte, darunter der <a href="#step-residual-section">Residual-Abschnitt</a>, behandeln sie im Detail.</p>
-							<p>Am Anfang geht eine Matrix X hinein: eine Zeile pro Token, jede Zeile ein Vektor. Am Ende kommt eine Matrix mit derselben Form heraus, aber die Werte haben sich verändert. Das letzte Token hat die Bedeutung des ganzen Kontexts aufgenommen. Das Unembedding macht aus seinem Vektor Scores für jedes Vokabular-Token; diese Scores zeigen auf eine Region von Token-Richtungen mit kleinen Winkeln, und Softmax zieht eines daraus. Der aktuelle Aufbau von ChatGPT ist nicht veröffentlicht, aber die öffentlichen Zahlen vergleichbarer Flagship-Modelle zeigen die Größenordnung: GPT-3 175B hatte 96 Transformer-Schichten, Llama 3 405B hat 126. Der Stapel läuft also wirklich ungefähr hundertmal.</p>
-							<div class="layer-count-note">
-								<div><b>96</b><span><a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener">Transformer-Schichten in GPT-3 175B</a></span></div>
-								<div><b>126</b><span><a href="https://arxiv.org/abs/2407.21783" target="_blank" rel="noopener">Transformer-Schichten in Llama 3 405B</a></span></div>
-							</div>
+							<p>Ein Sprachmodell kombiniert diese Bausteine zu einem Transformer-Block: Zuerst fragt Self-Attention, wie stark jedes Wort mit jedem anderen Wort im Kontext verbunden ist; diese Verbindungen lernt das Modell aus den Daten. Ein FFN entwirrt das Ergebnis dann: Es faltet die Vektoren in einen höherdimensionalen Raum, trennt Merkmale und faltet sie wieder zurück. Eine echte Transformer-Schicht enthält außerdem LayerNorm, Residualverbindungen und andere Teile. Sie sind hier weggelassen, damit das Bild lesbar bleibt; der <a href="#step-residual-section">Residual-Abschnitt</a> am Ende dieses Kapitels behandelt sie im Detail.</p>
+							<p>Am Anfang geht eine Matrix X hinein: eine Zeile pro Token, jede Zeile ein Vektor. Am Ende kommt eine Matrix mit derselben Form heraus, aber die Werte haben sich verändert. Das letzte Token hat die Bedeutung des ganzen Kontexts aufgenommen. Das Unembedding macht aus seinem Vektor Scores für jedes Vokabular-Token; diese Scores zeigen auf eine Region von Token-Richtungen mit kleinen Winkeln, und Softmax zieht eines daraus.</p>
 							<?php else: ?>
-							<p>A language model combines these building blocks into a transformer block: self-attention first asks how strongly each word is connected to every other word in the context, and the model learns those connections from data. An FFN then untangles the result: it folds the vectors into a higher-dimensional space, separates features, and folds them back. A real transformer layer also contains layer normalization, residual connections, and other pieces. They are left out here so the picture stays readable; the later sections, including the <a href="#step-residual-section">residual section</a>, cover them in detail.</p>
-							<p>At the start, a matrix X goes in: one row per token, each row a vector. At the end, a matrix of the same shape comes out, but the values have changed. The last token has absorbed the meaning of the whole context. The unembedding turns its vector into scores for every vocabulary token; those scores point to a region of token directions with small angles, and softmax draws one. ChatGPT's current architecture is not published, but public numbers for comparable flagship models show the scale: GPT-3 175B used 96 transformer layers, and Llama 3 405B uses 126. The stack really does run roughly a hundred times.</p>
-							<div class="layer-count-note">
-								<div><b>96</b><span><a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener"><?php echo $layer_de ? 'Transformer-Schichten in GPT-3 175B' : 'transformer layers in GPT-3 175B'; ?></a></span></div>
-								<div><b>126</b><span><a href="https://arxiv.org/abs/2407.21783" target="_blank" rel="noopener"><?php echo $layer_de ? 'Transformer-Schichten in Llama 3 405B' : 'transformer layers in Llama 3 405B'; ?></a></span></div>
-							</div>
+							<p>A language model combines these building blocks into a transformer block: self-attention first asks how strongly each word is connected to every other word in the context, and the model learns those connections from data. An FFN then untangles the result: it folds the vectors into a higher-dimensional space, separates features, and folds them back. A real transformer layer also contains layer normalization, residual connections, and other pieces. They are left out here so the picture stays readable; the <a href="#step-residual-section">residual section</a> at the end of this chapter covers them in detail.</p>
+							<p>At the start, a matrix X goes in: one row per token, each row a vector. At the end, a matrix of the same shape comes out, but the values have changed. The last token has absorbed the meaning of the whole context. The unembedding turns its vector into scores for every vocabulary token; those scores point to a region of token directions with small angles, and softmax draws one.</p>
 							<?php endif; ?>
-							<div class="prose-math layer-stack-formula" data-tex="\underbrace{ \text{next word} = \text{unembed}\!\left( \underbrace{ \text{layer}_n\!\left(\cdots \text{layer}_2\!\left(\text{layer}_1\!\left( \underbrace{\text{embedding}(\text{tokenizer}(\text{context}))}_{\text{text becomes vectors}} \right)\right)\cdots\right) }_{\text{each layer mixes and rewrites the vectors}} \right) }_{\text{the whole model: text in, next token out}}" data-tex-de="\underbrace{ \text{nächstes Wort} = \text{unembed}\!\left( \underbrace{ \text{layer}_n\!\left(\cdots \text{layer}_2\!\left(\text{layer}_1\!\left( \underbrace{\text{embedding}(\text{tokenizer}(\text{context}))}_{\text{Text wird zu Vektoren}} \right)\right)\cdots\right) }_{\text{jede Schicht mischt und schreibt die Vektoren um}} \right) }_{\text{das ganze Modell: Text rein, nächstes Token raus}}" data-tex-display="true"></div>
-							<div class="prose-math layer-stack-formula" data-tex="\underbrace{X_{\text{out}} = \text{layer}_n(\cdots \text{layer}_1(\underbrace{X_{\text{in}}}_{\text{one row per token}}))}_{\text{same shape, new values}}" data-tex-de="\underbrace{X_{\text{out}} = \text{layer}_n(\cdots \text{layer}_1(\underbrace{X_{\text{in}}}_{\text{eine Zeile pro Token}}))}_{\text{dieselbe Form, neue Werte}}" data-tex-display="true"></div>
-							<div class="layer-flow" role="img" aria-label="<?php echo $layer_de ? 'Der Aufbau als Stapel: Tokenizer, Embedding, N Transformer-Schichten, Unembedding' : 'The model as a stack: tokenizer, embedding, N transformer layers, unembedding'; ?>">
-								<div class="lf-stage lf-stage--token"><span class="lf-num">01</span><b>Tokenizer</b><span><?php echo $layer_de ? 'Kontext → Tokens' : 'context → tokens'; ?></span></div>
-								<span class="lf-arrow" aria-hidden="true">→</span>
-								<div class="lf-stage lf-stage--embed"><span class="lf-num">02</span><b>Embedding</b><span><?php echo $layer_de ? 'Tokens → Vektoren' : 'tokens → vectors'; ?></span></div>
-								<span class="lf-arrow" aria-hidden="true">→</span>
-								<div class="lf-stage lf-stage--layers"><span class="lf-num">03</span><b><?php echo $layer_de ? 'Schichten × N' : 'Layers × N'; ?></b><span>Self-attention + FFN</span><span class="lf-stack-bars" aria-hidden="true"><i></i><i></i><i></i></span></div>
-								<span class="lf-arrow" aria-hidden="true">→</span>
-								<div class="lf-stage lf-stage--unembed"><span class="lf-num">04</span><b>Unembedding</b><span><?php echo $layer_de ? 'Vektor → Scores' : 'vector → scores'; ?></span></div>
-							</div>
 							<h4 class="layer-subhead"><?php echo $layer_de ? 'Wie der Kontext gemischt wird' : 'How the context is mixed'; ?></h4>
 							<?php if ($layer_de): ?>
 							<p>In einer Schicht schaut Self-Attention auf den ganzen Kontext. Für jedes Token bewertet sie, wie viel es von jedem anderen sichtbaren Token übernehmen soll. Die Scores bilden eine Token-für-Token-Matrix: eine Zeile für das fragende Token, eine Spalte für das antwortende Token. Die <a href="#step-attention-section">Self-Attention-Demo unten</a> zeigt einen Head dabei.</p>
@@ -900,7 +875,38 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<?php endif; ?>
 							<div class="prose-math layer-stack-formula" data-tex="\underbrace{p(\text{next} \mid \text{context}) = \text{softmax}(\underbrace{W_U\, h_{\text{last}}}_{\text{scores for every token}})}_{\text{the vector points to a region of token directions, then one is drawn}}" data-tex-de="\underbrace{p(\text{nächstes} \mid \text{Kontext}) = \text{softmax}(\underbrace{W_U\, h_{\text{letztes}}}_{\text{Scores für jedes Token}})}_{\text{der Vektor zeigt auf eine Region von Token-Richtungen, dann wird eines gezogen}}" data-tex-display="true"></div>
 						</div>
-
+						<div id="step-residual-section">
+							<div class="section-kicker">Step 6 · Residual</div>
+							<h3 class="section-title">Residual stream: every layer adds to the same stream</h3>
+							<div class="prose">
+								<p>Every layer reads the same running vector, computes an update, and adds it back. Think of a shared notebook: earlier notes stay, later layers read them and add more. The new state is the old state plus a change.</p>
+							</div>
+							<div class="prose-math" data-tex="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{token vector}})}_{\text{what layer 1 adds}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{running vector}})}_{\text{what layer 2 adds}} \end{aligned}" data-tex-de="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{Token-Vektor}})}_{\text{was Schicht 1 hinzufügt}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{laufender Vektor}})}_{\text{was Schicht 2 hinzufügt}} \end{aligned}" data-tex-display="true"></div>
+							<p>The new state is the old state plus what the layer adds. The demos are simplified; the order is the real architecture.</p>
+							<div class="step-pane" id="step-residual">
+								<div class="step-stage">
+									<figure class="res-notebook">
+										<div class="res-nb-page">
+											<p class="res-nb-sentence"><span class="res-nb-emb">The</span> <span class="res-nb-emb res-nb-att">cat</span> <span class="res-nb-emb res-nb-mlp">sat</span> on the <span class="res-nb-emb">mat</span> because <span class="res-nb-emb res-nb-att">she</span> was <span class="res-nb-emb res-nb-mlp">tired</span>.</p>
+											<p class="res-nb-note res-nb-note--emb"><b>Embedding</b> every word becomes a vector.</p>
+											<p class="res-nb-note res-nb-note--att"><b>Attention</b> “she” points back to “cat”.</p>
+											<p class="res-nb-note res-nb-note--mlp"><b>MLP</b> “tired” explains why the cat sat.</p>
+										</div>
+										<figcaption>One shared page. Each layer writes in its own color, and earlier notes stay readable.</figcaption>
+									</figure>
+									<div class="res-stream">
+										<div class="res-layers" id="ires-layers"></div>
+										<div class="res-panel">
+											<div class="res-bars" id="ires-bars"></div>
+											<div class="res-vector" id="ires-vector" aria-live="polite"></div>
+											<div class="res-legend"><span><i></i> running stream</span><span id="ires-out"></span></div>
+											<div class="prose-math" data-tex="\underbrace{x_{n+1}}_{\text{new stream}} = \underbrace{x_n}_{\text{running stream}} + \underbrace{\operatorname{layer}_{n+1}(x_n)}_{\text{what this layer writes}}" data-tex-de="\underbrace{x_{n+1}}_{\text{neuer Stream}} = \underbrace{x_n}_{\text{laufender Stream}} + \underbrace{\operatorname{layer}_{n+1}(x_n)}_{\text{was diese Schicht schreibt}}" data-tex-display="true"></div>
+										</div>
+									</div>
+								</div>
+								<p class="step-note">Nothing is overwritten, so the original signal survives and gradients have a short path back. That is why deep networks train.</p>
+							</div>
+						</div>
 					</section>
 
 					<section class="section-block" id="block-repeat" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
@@ -956,9 +962,9 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<div class="prose-math" data-tex="\underbrace{ \underbrace{\mathbf{z}}_{\text{all vocabulary logits}} = \underbrace{\mathbf{h}}_{\text{final context vector}} \underbrace{W_U^{\top}}_{\substack{\text{transpose of }W_U\\\text{the learned unembedding matrix}}} }_{\text{one matrix-vector product gives a score for every token}}" data-tex-de="\underbrace{ \underbrace{\mathbf{z}}_{\text{alle Vokabular-Logits}} = \underbrace{\mathbf{h}}_{\text{finaler Kontextvektor}} \underbrace{W_U^{\top}}_{\substack{\text{Transponierte von }W_U\\\text{der gelernten Unembedding-Matrix}}} }_{\text{ein Matrix-Vektor-Produkt gibt einen Score für jedes Token}}" data-tex-display="true"></div>
 							<div class="prose-math" data-tex="\underbrace{z_i = \underbrace{\mathbf{h}}_{\text{final context vector}} \cdot \underbrace{\mathbf{w}_i}_{\text{row }i\text{ of }W_U}}_{\text{logit for token }i}" data-tex-de="\underbrace{z_i = \underbrace{\mathbf{h}}_{\text{finaler Kontextvektor}} \cdot \underbrace{\mathbf{w}_i}_{\text{Zeile }i\text{ von }W_U}}_{\text{Logit für Token }i}" data-tex-display="true"></div>
 							<?php if ($tm_de): ?>
-							<p>Softmax macht aus den Logits Wahrscheinlichkeiten: <span class="nt-formula" data-tex="p_i = \exp(z_i)/Z" data-tex-display="false"></span>, wobei <span class="nt-formula" data-tex="Z" data-tex-display="false"></span> über das ganze Vokabular summiert. Die größte Wahrscheinlichkeit gewinnt, aber die Alternativen bleiben möglich.</p>
+							<p>Softmax macht aus den Logits Wahrscheinlichkeiten: <span class="nt-formula" data-tex="p_i = \exp(z_i)/Z" data-tex-display="false"></span>, wobei <span class="nt-formula" data-tex="Z" data-tex-display="false"></span> über das ganze Vokabular summiert. Warum nicht einfach Logit durch Summe teilen? Logits können negativ oder null sein, dann wäre das Ergebnis keine Wahrscheinlichkeit. Die Exponentialfunktion macht jeden Wert positiv und erhält die Reihenfolge; die Division durch die Summe ergibt Zahlen zwischen 0 und 1, die sich zu 1 summieren. Sie macht aus Unterschieden außerdem Verhältnisse: Addiert man zu allen Logits dieselbe Konstante, ändert sich nichts. Der größte Score bekommt die meiste Masse, die Alternativen behalten aber etwas.</p>
 							<?php else: ?>
-							<p>Softmax turns the logits into probabilities: <span class="nt-formula" data-tex="p_i = \exp(z_i)/Z" data-tex-display="false"></span>, where <span class="nt-formula" data-tex="Z" data-tex-display="false"></span> sums over the whole vocabulary. The largest probability wins, but the alternatives remain possible.</p>
+							<p>Softmax turns the logits into probabilities: <span class="nt-formula" data-tex="p_i = \exp(z_i)/Z" data-tex-display="false"></span>, where <span class="nt-formula" data-tex="Z" data-tex-display="false"></span> sums over the whole vocabulary. Why not simply divide each logit by the sum? Logits can be negative or zero, so the result would not be a probability. The exponential makes every value positive and preserves the order; dividing by the sum gives numbers between 0 and 1 that add to 1. It also turns differences into ratios: adding the same constant to every logit changes nothing. The largest score gets the most mass, but the alternatives keep some.</p>
 							<?php endif; ?>
 							<div class="prose-math" data-tex="\underbrace{p_i = \frac{\exp(z_i)}{\underbrace{Z}_{\text{normalizer}}}, \qquad \underbrace{Z = \sum_{j=1}^{V} \exp(z_j)}_{\text{sum over all }V\text{ vocabulary entries}}}_{\text{softmax: a distribution over the vocabulary}}" data-tex-de="\underbrace{p_i = \frac{\exp(z_i)}{\underbrace{Z}_{\text{Normalisierer}}}, \qquad \underbrace{Z = \sum_{j=1}^{V} \exp(z_j)}_{\text{Summe über alle }V\text{ Vokabular-Einträge}}}_{\text{Softmax: eine Verteilung über das Vokabular}}" data-tex-display="true"></div>
 							<?php if ($tm_de): ?>

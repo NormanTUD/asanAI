@@ -12925,7 +12925,6 @@ html.reader-mode .mnq-hud { --mnq-hud-rest: .28; }
 .mnq-hud-xp { color: var(--mn-text-muted); font: 500 10.5px var(--mn-font-mono); }
 .mnq-hud-week { padding: 0; border-radius: 99px; font: 700 11px var(--mn-font-mono); color: var(--mn-accent); background: color-mix(in srgb, var(--mn-accent) 15%, transparent); max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: max-width .35s ease, opacity .25s ease, padding .35s ease, margin .35s ease; }
 .mnq-hud:hover .mnq-hud-text, .mnq-hud:focus-visible .mnq-hud-text { max-width: 170px; opacity: 1; }
-.mnq-hud.is-surge .mnq-hud-text { max-width: 170px; opacity: 1; }
 .mnq-hud:hover .mnq-hud-week:not([hidden]), .mnq-hud:focus-visible .mnq-hud-week:not([hidden]) { max-width: 64px; opacity: 1; padding: 3px 7px; margin-left: 2px; }
 /* the chapter switcher and the badge share the bottom-left corner: the
    switcher sits at the very bottom, the badge above it */
@@ -12969,30 +12968,7 @@ html:has(#loader) .mnq-toasts { visibility: hidden; }
 .mnq-toast em { display: block; font-style: normal; color: var(--mn-text-secondary); font-size: 12px; }
 .mnq-burst { position: fixed; inset: 0; z-index: 9996; pointer-events: none; }
 
-/* Flow Surge — the inner ring fills while a demo holds your attention;
-   a full ring lights the ×2 booster and the ring drains slowly while it burns. */
-.mnq-ring--flow { pointer-events: none; }
-.mnq-flow-bg { fill: none; stroke: color-mix(in srgb, var(--mn-text-muted) 16%, transparent); stroke-width: 2; }
-.mnq-flow-fg { fill: none; stroke: var(--mn-emerald); stroke-width: 2; stroke-linecap: round; transition: stroke-dashoffset .6s cubic-bezier(.2, .8, .2, 1), stroke .4s ease; }
-.mnq-hud.is-surge .mnq-flow-fg { stroke: var(--mn-coral); filter: drop-shadow(0 0 4px color-mix(in srgb, var(--mn-coral) 80%, transparent)); animation: mnq-flow-pulse 1.3s ease-in-out infinite; transition: stroke-dashoffset 1s linear, stroke .4s ease; }
-.mnq-hud.is-surge { border-color: color-mix(in srgb, var(--mn-coral) 55%, var(--mn-border)); box-shadow: var(--mn-shadow-md), 0 0 20px -4px color-mix(in srgb, var(--mn-coral) 60%, transparent); }
-.mnq-hud.is-flow-hot { border-color: color-mix(in srgb, var(--mn-emerald) 55%, var(--mn-border)); box-shadow: var(--mn-shadow-md), 0 0 18px -4px color-mix(in srgb, var(--mn-emerald) 55%, transparent); }
 .mnq-hud.is-near .mnq-ring-fg { stroke: var(--mn-coral); filter: drop-shadow(0 0 5px color-mix(in srgb, var(--mn-coral) 70%, transparent)); }
-@keyframes mnq-flow-pulse { 50% { stroke-width: 3; } }
-.mnq-hud-boost {
-	position: absolute; top: -10px; right: -8px; z-index: 2;
-	display: inline-flex; align-items: center; gap: 3px;
-	padding: 2px 7px 2px 5px; border-radius: 99px;
-	border: 1px solid color-mix(in srgb, var(--mn-coral) 55%, transparent);
-	background: color-mix(in srgb, var(--mn-coral) 16%, var(--mn-surface));
-	color: var(--mn-heading); font: 800 10px/1 var(--mn-font-mono);
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--mn-coral) 12%, transparent), 0 0 16px color-mix(in srgb, var(--mn-coral) 55%, transparent);
-	white-space: nowrap; pointer-events: none;
-}
-.mnq-hud-boost[hidden] { display: none; }
-.mnq-boost-bolt { font-size: 11px; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--mn-coral) 80%, transparent)); animation: mnq-bolt 1.6s ease-in-out infinite; }
-.mnq-boost-mult { color: var(--mn-coral); }
-@keyframes mnq-bolt { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.28) rotate(-7deg); } }
 
 /* the XP orb: leaves the reader's finger, arcs into the badge */
 .mnq-flight-layer { position: fixed; inset: 0; z-index: 9997; pointer-events: none; overflow: hidden; }
@@ -13072,15 +13048,8 @@ html:has(#loader) .mnq-toasts { visibility: hidden; }
 	45% { transform: scale(1.015); border-color: color-mix(in srgb, var(--mn-emerald) 45%, var(--mn-border)); }
 	100% { transform: none; }
 }
-.mnq-toast--boost {
-	pointer-events: auto; cursor: pointer; padding: 10px 14px;
-	border-color: color-mix(in srgb, var(--mn-coral) 55%, transparent);
-	background: linear-gradient(135deg, color-mix(in srgb, var(--mn-coral) 12%, var(--mn-surface)), color-mix(in srgb, var(--mn-emerald) 10%, var(--mn-surface)));
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--mn-coral) 10%, transparent), var(--mn-shadow-xl);
-}
-.mnq-toast--boost small { color: var(--mn-coral); }
 @media (prefers-reduced-motion: reduce) {
-	.mnq-hud.is-receive, .mnq-hud.is-tick, .mnq-boost-bolt, .mnq-hud.is-surge .mnq-flow-fg { animation: none !important; }
+	.mnq-hud.is-receive, .mnq-hud.is-tick { animation: none !important; }
 	.mnq-spark, .mnq-why, .mnq-receive-float { display: none !important; }
 }
 
@@ -13162,31 +13131,6 @@ html:has(#loader) .mnq-toasts { visibility: hidden; }
 .mnq-sect-n { font: 600 11px var(--mn-font-mono); letter-spacing: 0; color: var(--mn-text-muted); }
 .mnq-intro { margin: 0 0 12px; font-size: 13px; color: var(--mn-text-secondary); line-height: 1.5; text-align: left; }
 .mnq-ladder { display: flex; align-items: center; padding: 12px 14px; border-radius: 14px; background: color-mix(in srgb, var(--mn-bg) 60%, transparent); margin-bottom: 14px; }
-.mnq-boostcard {
-	display: flex; align-items: center; gap: 12px; position: relative;
-	padding: 12px 14px; margin-bottom: 14px; border-radius: 14px;
-	border: 1px solid color-mix(in srgb, var(--mn-emerald) 35%, var(--mn-border));
-	background: linear-gradient(120deg, color-mix(in srgb, var(--mn-emerald) 7%, var(--mn-surface)), color-mix(in srgb, var(--mn-accent) 5%, var(--mn-surface)));
-}
-.mnq-boostcard.is-active {
-	border-color: color-mix(in srgb, var(--mn-coral) 62%, transparent);
-	background: linear-gradient(120deg, color-mix(in srgb, var(--mn-coral) 14%, var(--mn-surface)), color-mix(in srgb, var(--mn-emerald) 10%, var(--mn-surface)));
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--mn-coral) 8%, transparent), 0 0 24px -8px color-mix(in srgb, var(--mn-coral) 70%, transparent);
-}
-.mnq-boost-ic {
-	flex: none; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; font-size: 19px;
-	background: color-mix(in srgb, var(--mn-emerald) 16%, transparent);
-}
-.mnq-boostcard.is-active .mnq-boost-ic { background: color-mix(in srgb, var(--mn-coral) 22%, transparent); animation: mnq-bolt 1.6s ease-in-out infinite; }
-.mnq-boost-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-.mnq-boost-body b { color: var(--mn-heading); font-size: 13.5px; }
-.mnq-boost-body > span { font-size: 12px; line-height: 1.45; color: var(--mn-text-secondary); }
-.mnq-boostbar { display: block; height: 6px; margin-top: 3px; border-radius: 99px; background: color-mix(in srgb, var(--mn-text-muted) 22%, transparent); overflow: hidden; }
-.mnq-boostbar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--mn-emerald), var(--mn-coral)); transition: width .5s cubic-bezier(.2, .8, .2, 1); }
-.mnq-boostcard.is-active .mnq-boostbar i { background: linear-gradient(90deg, var(--mn-coral), var(--mn-emerald)); }
-.mnq-boost-pct { flex: none; font: 800 15px var(--mn-font-mono); font-style: normal; color: var(--mn-emerald); }
-.mnq-boostcard.is-active .mnq-boost-pct { color: var(--mn-coral); }
-.mnq-boost-count { position: absolute; top: 8px; right: 12px; font: 600 9px var(--mn-font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--mn-text-muted); }
 .mnq-lvl { font-size: 20px; filter: grayscale(1); opacity: .28; transition: transform .2s ease; flex: none; }
 .mnq-lvl.is-reached { filter: none; opacity: 1; }
 .mnq-lvl.is-now { transform: scale(1.3); filter: drop-shadow(0 0 8px color-mix(in srgb, var(--mn-accent) 70%, transparent)); }
@@ -13289,8 +13233,6 @@ html:has(#loader) .mnq-toasts { visibility: hidden; }
 	.mnq-weekdots i { width: 23px; height: 23px; font-size: 9.5px; }
 	.mnq-station-head { flex-wrap: wrap; }
 	.mnq-lvl { font-size: 16px; }
-	.mnq-boost-count { display: none; }
-	.mnq-hud-boost { top: -9px; right: -6px; }
 	.mnq-why { max-width: 190px; }
 }
 

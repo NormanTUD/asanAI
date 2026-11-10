@@ -325,3 +325,8 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
   great-circle/angular because angles often matter more than exact distances.
 - DONE Topbar toggle for full-width math/demos; prose keeps its reading
   measure, plots/formula grids/labs use the wide shell.
+
+## Review 2026-11-10 (tokenizer IDs)
+
+- DONE Tokenizer chips in Step 1 now re-render after the embedding space is
+  populated, so the vocabulary IDs are numbers instead of "ID ?".
