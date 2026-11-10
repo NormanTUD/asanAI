@@ -1371,9 +1371,13 @@ bash run_tests --no-smoke-tests --no-docker --chromium \
   "repair" it into life.
 - `functions.php::_js()` **`die()`s the whole page** if a listed JS file is
   missing (and appends `?t=<filemtime>` cache-busters).
-- `translations.js` is `async` in `<head>` (defer ignored when async is set) —
-  its top-level binding can run before the body parses; language switching
-  works only via the inline `onclick="update_lang(…)"` handlers.
+- `translations.js` is loaded with `defer` (never `async`) in `<head>` so it
+  has executed before `main.js`'s `$(document).ready` runs. Boot calls
+  `update_translations()` synchronously; an async load races the parser and
+  aborts the page with `ReferenceError: update_translations is not defined`
+  (seen on slow hosts/CI runners), leaving the input shape empty and the app
+  not ready. Language switching works via the inline
+  `onclick="update_lang(…)"` handlers.
 - Theme cookie mismatch: the chooser writes `naturalmode`, but `index.php`
   tests `== "natural"` — a saved natural theme falls back to light on reload.
 - HPC/SSH helpers (`ssh_taurus`, `get_number_model_names`) exist **only in the

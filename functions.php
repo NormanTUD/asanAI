@@ -52,7 +52,7 @@
 		} else if($async && !$defer) {
 			print "<script async crossorigin src='$file'></script>";
 		} else if(!$async && $defer) {
-			print "<script defer defer crossorigin src='$file'></script>";
+			print "<script defer crossorigin src='$file'></script>";
 		} else {
 			print "<script src='$file' crossorigin></script>";
 		}

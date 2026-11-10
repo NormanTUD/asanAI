@@ -69,7 +69,7 @@
 		_js("libs/jquery.js");
 		_js("libs/jquery-ui.js");
 
-		_js("translations.js", 1, 1);
+		_js("translations.js", 0, 1);
 		_js("debug.js");
 		_js("variables.js");
 		_js("valsplitwatcher.js");

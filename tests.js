@@ -10951,6 +10951,11 @@ async function _coverage_tests_low_coverage_modules() {
 		test_equal("math_mode formats skip kernel rows", _format_skip_kernel_rows([1, 2, 3]).indexOf("&") !== -1, true);
 
 		// --- translations.js ---
+		var translationsScript = Array.prototype.slice.call(document.scripts).filter(function (s) {
+			return /(^|\/)translations\.js(\?|$)/.test(s.src);
+		})[0];
+		test_equal("translations.js is deferred and not async so boot can call update_translations", !!translationsScript && translationsScript.defer && !translationsScript.async, true);
+
 		var probeImg = document.createElement("img");
 		probeImg.src = "lang/__de__probe.png";
 		var blankImg = document.createElement("img");
