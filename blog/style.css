@@ -1091,7 +1091,6 @@ html.dark [id^="unified-layer-"][id$="-migration-container"] {
 	border-color: var(--mn-border);
 }
 html.dark #tled-editor-container,
-html.dark #tled-editor-container > div,
 html.dark #tled-editor-container table,
 html.dark #tled-editor-container thead,
 html.dark #tled-editor-container tbody,

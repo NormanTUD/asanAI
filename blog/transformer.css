@@ -150,6 +150,8 @@
 	border-radius: 8px;
 	border: 1px dashed var(--mn-border, #cbd5e1);
 	overflow-x: auto;
+	box-sizing: border-box;
+	min-height: 15.75em;
 }
 
 /* Plotly charts sit directly on their page/card background: no frame,

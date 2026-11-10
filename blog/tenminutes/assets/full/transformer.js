@@ -2364,6 +2364,7 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 
 function renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature) {
 	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
+	tled_updateVectorPlaceholder(window.persistentEmbeddingSpace);
 	render_token_picker();
 	render_embedding_plot(d_model);
 	tled_initEditor();
@@ -7385,11 +7386,28 @@ function attachResizeHandler(containerId, drawFn) {
 	window.addEventListener('resize', drawFn);
 }
 
+function tled_updateVectorPlaceholder(space) {
+	const input = document.getElementById('transformer-vector-math-input');
+	if (!input) return;
+
+	const de = !!(window.TM && TM.lang && TM.lang() === 'de');
+	const tokens = Object.keys(space || {})
+		.filter(token => /^[a-zA-ZäöüÄÖÜ0-9_#]+$/.test(token))
+		.slice(0, 3);
+	if (tokens.length < 2) {
+		input.placeholder = de ? 'z. B. könig - königin + land' : 'e.g., king - man + woman';
+		return;
+	}
+	input.placeholder = (de ? 'z. B. ' : 'e.g., ') + tokens[0] + ' - ' + tokens[1] +
+		(tokens.length > 2 ? ' + ' + tokens[2] : '');
+}
+
 function tled_initEditor() {
 	const container = document.getElementById('tled-editor-container');
 	if (!container) return;
 
 	const space = window.persistentEmbeddingSpace;
+	tled_updateVectorPlaceholder(space);
 	if (!space || Object.keys(space).length === 0) {
 		container.innerHTML = `<p style="color:#94a3b8; padding:10px;">No embeddings yet. Enter training data and run the model.</p>`;
 		return;
@@ -7405,7 +7423,7 @@ function tled_initEditor() {
 	}
 
 	let html = `
-    <div style="overflow-x: auto; margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
+    <div style="overflow-x: auto; margin-top: 20px;">
 	<table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;" id="tled-table">
 	    <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
 		<tr>

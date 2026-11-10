@@ -363,17 +363,15 @@
 					<summary>Embedding in detail</summary>
 					<div class="tm-step-detail-body">
 						<p>The embedding table maps each token id to a vector. The position is added after this lookup; the vector math below works on the current vocabulary.</p>
-						<div style="background: var(--mn-bg-subtle, #f8fafc); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
-<div id="transformer-plotly-space" style="width: 100%; height: 520px; background: var(--mn-surface, white); border-radius: 8px;"></div>
+<div id="transformer-plotly-space" class="tm-plotly-frame" style="width: 100%; height: 520px;"></div>
 <div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
-<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px; max-height: 420px; overflow-y: auto;"></div>
+<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px;"></div>
 <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.</p>
-<input id="transformer-vector-math-input" oninput="debounced_vector_math()" onkeydown="if(event.key==='Enter'){event.preventDefault(); immediate_vector_math();}" placeholder="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'z. B. könig - königin + land' : 'e.g., king - man + woman'; ?>" value="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'könig - königin + land' : 'king - man + woman'; ?>" style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" type="text"/>
-<div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: var(--mn-surface, white); border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
+<input id="transformer-vector-math-input" oninput="debounced_vector_math()" onkeydown="if(event.key==='Enter'){event.preventDefault(); immediate_vector_math();}" placeholder="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'z. B. könig - königin + land' : 'e.g., king - man + woman'; ?>" style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" type="text"/>
+<div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: var(--mn-surface, white); border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto; min-height: 11.6em;">
 <em style="color: #94a3b8;">Enter an equation and press Enter...</em>
 </div>
 <p class="tm-vector-note" style="font-size: 0.82rem; color: #64748b; margin-top: 10px;">The classic analogy “king − man + woman = queen” will not look clean here: the tiny demo corpus has no “mann” or “frau”, and a model trained on one sentence has not learned such relations. Real transformers trained on large corpora get much closer.</p>
-</div>
 					</div>
 				</details></div>
 			</section>
@@ -405,8 +403,8 @@
 					<summary>Positional encoding in detail</summary>
 					<div class="tm-step-detail-body">
 						<p>The plot above shows the semantic vector h0, not the raw sinusoidal pattern. Up to three dimensions are raw; above that the plot uses PCA to three dimensions and labels it. The plots below show the sinusoidal encoding as waves and the shift for each position.</p>
-						<div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
-<div id="transformer-pe-shift-plot" style="width: 100%; height: 520px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+						<div id="transformer-pe-wave-plot" class="tm-plotly-frame" style="width: 100%; height: 300px; margin-top: 20px;"></div>
+<div id="transformer-pe-shift-plot" class="tm-plotly-frame" style="width: 100%; height: 520px; margin-top: 20px;"></div>
 <div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>
 						<div class="md" id="ifscalfactornotone" style="display:none">In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">0.1</span> because of the low dimensionality of our space.</div>
 					</div>

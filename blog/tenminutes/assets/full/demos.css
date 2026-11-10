@@ -136,8 +136,23 @@
 	border-radius: 0 !important;
 	border-color: var(--tm-line) !important;
 }
-.embedding-table-container {
-	border: 1px solid var(--tm-line);
+
+/* Plotly charts sit directly on the card background, like the main page. */
+.tm-plotly-frame,
+.tm-plotly-frame.js-plotly-plot {
+	background: transparent !important;
+	border: 0 !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+}
+.tm-plotly-frame .js-plotly-plot,
+.tm-plotly-frame .js-plotly-plot .main-svg,
+.tm-plotly-frame .js-plotly-plot .main-svg .bg,
+.tm-plotly-frame .js-plotly-plot .svg-container {
+	background: transparent !important;
+}
+.tm-plotly-frame .js-plotly-plot .main-svg rect.bg {
+	fill: transparent !important;
 }
 .transformer_positional_embeddings {
 	max-height: 250px;

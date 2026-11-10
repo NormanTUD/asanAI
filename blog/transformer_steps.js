@@ -3331,6 +3331,9 @@
 		if (window.echarts && el) { var oldChart = echarts.getInstanceByDom(el); if (oldChart) oldChart.dispose(); }
 		var loading = el.querySelector(".plot-loading");
 		if (loading) loading.remove();
+		Array.prototype.slice.call(el.childNodes).forEach(function (node) {
+			if (node.nodeType === 3 && node.nodeValue.trim()) node.remove();
+		});
 		el.style.height = featurePlotHeight() + "px";
 		Plotly.react(el, traces, layout, { responsive: true, displayModeBar: false });
 		el._tmFeatureRendered = true;
@@ -3385,7 +3388,9 @@
 
 	function layerFeatureLoadingMarkup() {
 		var text = DE() ? "Feature-Migration wird geladen…" : "Loading feature migration…";
-		return (window.PlotState && PlotState.loadingMarkup) ? PlotState.loadingMarkup(text) : text;
+		if (window.PlotState && PlotState.loadingMarkup) return PlotState.loadingMarkup(text);
+		return '<div class="plot-loading" style="height:100%; flex-direction:column; gap:14px;">' +
+			'<div class="spinner"></div><span>' + text + '</span></div>';
 	}
 
 	function queueLayerFeaturePlot(layerIdx, arrowsEl) {

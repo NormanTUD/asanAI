@@ -506,7 +506,7 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 	<div id="transformer-plotly-space" class="tm-plotly-frame" style="width: 100%; height: 520px;"></div>
 	<div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
 
-	<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px; max-height: 420px; overflow-y: auto;"></div>
+	<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px;"></div>
 
 	<p class="transformer-slider-note" style="font-size: 0.9rem; margin-bottom: 15px;">Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.</p>
 	<input

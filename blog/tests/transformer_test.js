@@ -387,6 +387,51 @@ function testTrainingPlot(ctx) {	const calls = ctx.__reactCalls;
 		'reset_graph redraws the placeholder instead of leaving a blank box');
 }
 
+function testVectorPlaceholder(ctx) {
+	const input = fakeElement();
+	const originalGetElementById = ctx.document.getElementById;
+	ctx.document.getElementById = function (id) {
+		return id === 'transformer-vector-math-input' ? input : null;
+	};
+
+	ctx.tled_updateVectorPlaceholder({ alpha: [0], beta: [0], gamma: [0] });
+	check(input.placeholder === 'e.g., alpha - beta + gamma',
+		'three valid tokens produce a three-token vector-math placeholder');
+
+	ctx.tled_updateVectorPlaceholder({ alpha: [0], beta: [0] });
+	check(input.placeholder === 'e.g., alpha - beta',
+		'two valid tokens produce a two-token vector-math placeholder');
+
+	ctx.tled_updateVectorPlaceholder({ alpha: [0], 'bad token': [0] });
+	check(input.placeholder === 'e.g., king - man + woman',
+		'fewer than two parseable tokens falls back to the default placeholder');
+
+	ctx.document.getElementById = originalGetElementById;
+}
+
+function testTransformerStepsSource() {
+	const steps = fs.readFileSync(path.join(BLOG, 'transformer_steps.js'), 'utf8');
+	const tmPhp = fs.readFileSync(path.join(BLOG, 'tenminutes', 'transformer.php'), 'utf8');
+	const tmJs = fs.readFileSync(path.join(BLOG, 'tenminutes', 'assets', 'full', 'transformer.js'), 'utf8');
+	const tmCss = fs.readFileSync(path.join(BLOG, 'tenminutes', 'assets', 'full', 'demos.css'), 'utf8');
+
+	check(/function layerFeatureLoadingMarkup\(\)[\s\S]*?return '<div class="plot-loading"/.test(steps),
+		'feature loading fallback returns a real plot-loading element');
+	check(!/PlotState\.loadingMarkup\(text\)\)\s*:\s*text;/.test(steps),
+		'feature loading fallback never inserts a bare text node');
+	check(steps.includes('node.nodeType === 3'), 'feature render removes stray text nodes');
+	for (const id of ['transformer-plotly-space', 'transformer-pe-wave-plot', 'transformer-pe-shift-plot']) {
+		check(new RegExp('id="' + id + '" class="tm-plotly-frame"').test(tmPhp),
+			id + ' uses the shared frameless plot class');
+	}
+	check(tmJs.includes("wrapper.className = 'tm-plotly-frame'"),
+		'tenminutes trajectory wrapper uses the shared frameless plot class');
+	check(tmJs.includes('function tled_updateVectorPlaceholder'),
+		'tenminutes has the dynamic vector-math placeholder');
+	check(/\.tm-plotly-frame,\s*\n\.tm-plotly-frame\.js-plotly-plot\s*\{[\s\S]*?border: 0 !important;/.test(tmCss),
+		'tenminutes plot frame has no border');
+}
+
 function testLessonSource() {
 	const php = fs.readFileSync(path.join(BLOG, 'transformer.php'), 'utf8');
 
@@ -591,6 +636,8 @@ function main() {
 	testTrainingPlot(ctx);
 	testHeavyRenderQueue(ctx);
 	testLazyRenderableDefers(ctx);
+	testVectorPlaceholder(ctx);
+	testTransformerStepsSource();
 	testLessonSource();
 	testFFNViews();
 	testTDA(ctx);
