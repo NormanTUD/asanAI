@@ -263,20 +263,34 @@ Long before the Transformer, sequence models were recurrent. An encoder read a s
 		</header>
 		<div class="tm-hyper-body">
 <div class="md">
-A **hyperparameter** is a number you choose *before* training starts; the model learns everything else, its weights, from the data. The demo exposes the model width $d_{\text{model}}$, the number of attention heads $h$, the depth $N$, the context size and the FFN width. Their constraints follow from the shapes in the equations: $d_{\text{model}}$ must split evenly across the heads, and attention cost grows quadratically with the context. The notes on the advanced sliders repeat each constraint where you can change it. What hyperparameters are in general, and how practitioners find good values instead of guessing, is the subject of the [Hyperparameters](hyperparameters.php) chapter.
+A **hyperparameter** is a number you choose *before* training starts; the model learns everything else, its weights, from the data. The demo exposes the model width $d_{\text{model}}$, the number of attention heads $h$, the depth $N$, the context size and the FFN width. Their constraints follow from the shapes in the equations: $d_{\text{model}}$ must split evenly across the heads, and attention cost grows quadratically with the context. The notes on the sliders repeat each constraint where you can change it. What hyperparameters are in general, and how practitioners find good values instead of guessing, is the subject of the [Hyperparameters](hyperparameters.php) chapter.
 </div>
 
 <div id="transformer_config">
-	<details class="transformer-advanced-config" id="transformer-advanced-config" open>
-	<summary>Advanced: hyperparameters, initializer &amp; tokenizer</summary>
+	<div class="transformer-config-field" id="transformer-preset-field">
+	<label class="transformer-slider-label">Example</label>
+	<select id="transformer-preset" style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" onchange="applyTransformerPreset(this.value)">
+		<option value="custom" selected>Custom (manual sliders)</option>
+		<option value="tiny">Tiny 3D · every formula visible</option>
+		<option value="wide16">Wide 16D · PCA view</option>
+		<option value="wide32">Wide 32D · PCA, slower training</option>
+		<option value="wide64">Wide 64D · PCA, experimental</option>
+		<option value="copy16">Copy pattern · 16D</option>
+		<option value="conditional16">Conditional pattern · 16D</option>
+	</select>
+	<p class="transformer-slider-note">Start here: pick a ready-made model. Presets set the sliders and, for the pattern examples, the training corpus. Nothing trains automatically; press <b>Train Model</b> afterwards. The manual sliders below are for changing the model by hand.</p>
+</div>
+
+	<div class="tm-hyper-grid">
+
 	<div class="transformer-config-field">
 		<label class="transformer-slider-label">Model Dimension ($d_{\text{model}}$): </label>
 		<span id="dim-val" class="transformer-slider-value">3</span>
-		<p class="transformer-slider-note">
+		<details class="tm-hyper-note"><summary>Details</summary><p class="transformer-slider-note">
             <b>Dependency:</b> Must be a multiple of Heads.<br>
             <b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = d_{\text{model}}/h$) of the vector to perform dot products.<br>
             <b>3D view:</b> up to 3 dimensions are shown raw; above that the plot uses PCA. 32D and 64D are available; 64D is experimental, uses PCA and pushes desktop browser memory to roughly 170 MB.
-        </p>
+        </p></details>
 		<input type="range" id="transformer-dimension-model" min="2" max="64" step="1" value="3"
 			oninput="syncTransformerSettings('dim')">
 	</div>
@@ -284,10 +298,10 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 	<div class="transformer-config-field">
 		<label class="transformer-slider-label">Attention Heads ($h$): </label>
 		<span id="heads-val" class="transformer-slider-value">3</span>
-		<p class="transformer-slider-note">
+		<details class="tm-hyper-note"><summary>Details</summary><p class="transformer-slider-note">
 	    <b>Dependency:</b> $d_{\text{model}}$ must be a multiple of $h$.<br>
             <b>Reason:</b> Multi-head attention splits the main vector into $h$ parallel “viewpoints.” If $d_{\text{model}}$ is 4 and $h$ is 2, each head looks at 2 dimensions.
-        </p>
+        </p></details>
 		<input type="range" id="transformer-heads" min="1" max="8" value="3"
 			oninput="syncTransformerSettings('heads')">
 	</div>
@@ -295,7 +309,7 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 	<div class="transformer-config-field">
 		<label class="transformer-slider-label">Network Depth ($N$ layers): </label>
 		<span id="depth-val" class="transformer-slider-value">4</span>
-		<p class="transformer-slider-note">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
+		<details class="tm-hyper-note"><summary>Details</summary><p class="transformer-slider-note">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p></details>
 		<input type="range" id="transformer-depth" min="1" max="12" value="4"
 			oninput="document.getElementById('depth-val').innerText = this.value; debounced_run_transformer_demo();">
 	</div>
@@ -303,10 +317,10 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 	<div class="transformer-config-field">
 	    <label class="transformer-slider-label">Context Size: </label>
 	    <span id="context-val" class="transformer-slider-value">128</span>
-	    <p class="transformer-slider-note">
+	    <details class="tm-hyper-note"><summary>Details</summary><p class="transformer-slider-note">
 		<b>Effect:</b> Sets the maximum number of tokens the model can “see” at once during training and inference.<br>
 		<b>Reason:</b> A larger context window lets the model capture longer-range dependencies, but the attention score matrix has size $\text{Context}^2$, so a full forward pass costs quadratically in context length. A <i>KV-Cache</i> avoids recomputing past keys and values during generation — it lowers per-step work and trades it for linear memory — but it does not make attention sub-quadratic.
-	    </p>
+	    </p></details>
 	    <input type="range" id="transformer-context-size" min="2" max="256" step="1" value="128"
 		oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();">
 	</div>
@@ -314,7 +328,7 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 	<div class="transformer-config-field">
 	    <label class="transformer-slider-label">FFN hidden size (<span class="tm-inline-math" data-tex="d_{\text{ff}}" data-tex-display="false"></span>): </label>
 	    <span id="ffn-val" class="transformer-slider-value">12</span>
-	    <p class="transformer-slider-note"><b>Effect:</b> Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.</p>
+	    <details class="tm-hyper-note"><summary>Details</summary><p class="transformer-slider-note"><b>Effect:</b> Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.</p></details>
 	<input type="range" id="transformer-ffn-size" min="1" max="256" step="1" value="12"
 		oninput="syncTransformerSettings('ffn')">
 	</div>
@@ -328,7 +342,7 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 		<option value="tanh">Tanh</option>
 		<option value="swiglu">SwiGLU (gated, adds Wg)</option>
 	    </select>
-	    <p class="transformer-slider-note"><b>Effect:</b> the nonlinearity inside the feed-forward network. GELU is the transformer default; ReLU is the original choice; SiLU and SwiGLU are common in modern open-weight models. SwiGLU adds a second gate projection, so it raises the parameter count and changes the FFN formulas.</p>
+	    <details class="tm-hyper-note"><summary>Details</summary><p class="transformer-slider-note"><b>Effect:</b> the nonlinearity inside the feed-forward network. GELU is the transformer default; ReLU is the original choice; SiLU and SwiGLU are common in modern open-weight models. SwiGLU adds a second gate projection, so it raises the parameter count and changes the FFN formulas.</p></details>
 	</div>
 
 	<div class="transformer-config-field">
@@ -341,13 +355,13 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 		<option value="gpt2">GPT-2: normal σ = 0.02, scaled residuals</option>
 		<option value="uniform">Uniform ±1/√fan_in</option>
 	    </select>
-	    <p class="transformer-slider-note">The initializer sets the distribution of the weight matrices. Xavier keeps variance roughly constant through tanh layers; He doubles the variance for ReLU; orthogonal starts with independent directions; GPT-2 uses a small normal and scales residual projections by 1/√(2N). The histogram samples the selected matrix. <a href="initializers.php">Read the initializer chapter</a>.</p>
+	    <details class="tm-hyper-note"><summary>Details</summary><p class="transformer-slider-note">The initializer sets the distribution of the weight matrices. Xavier keeps variance roughly constant through tanh layers; He doubles the variance for ReLU; orthogonal starts with independent directions; GPT-2 uses a small normal and scales residual projections by 1/√(2N). The histogram samples the selected matrix. <a href="initializers.php">Read the initializer chapter</a>.</p></details>
 	    <canvas id="transformer-init-hist" style="width:100%; height:130px; display:block; margin-top:6px;" aria-label="Histogram of initial weights"></canvas>
 	</div>
 
 	<div class="transformer-config-field">
 	    <label class="transformer-kv-label"><input type="checkbox" id="transformer-kv-cache"> KV cache</label>
-	    <p class="transformer-slider-note">Reuse the keys and values of earlier tokens when you append a token. Only the new token's query is computed; the next-token distribution is identical. <span id="tm-kv-cache-status" class="tm-kv-cache-status">Off</span></p>
+	    <details class="tm-hyper-note"><summary>Details</summary><p class="transformer-slider-note">Reuse the keys and values of earlier tokens when you append a token. Only the new token's query is computed; the next-token distribution is identical. <span id="tm-kv-cache-status" class="tm-kv-cache-status">Off</span></p></details>
 	</div>
 
 	<div class="transformer-config-field">
@@ -357,24 +371,12 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 		<option value="chars">Characters (one token per Unicode character)</option>
 		<option value="bpe">Byte-Pair Encoding (BPE, trained on this corpus)</option>
 	    </select>
-	    <p class="transformer-slider-note"><b>Effect:</b> Word splitting is simple and keeps the vocabulary tiny. BPE learns frequent subword merges from the current training corpus, so rare words become several tokens. Switching the tokenizer retrains the vocabulary; BPE can make the sequence longer.</p>
+	    <details class="tm-hyper-note"><summary>Details</summary><p class="transformer-slider-note"><b>Effect:</b> Word splitting is simple and keeps the vocabulary tiny. BPE learns frequent subword merges from the current training corpus, so rare words become several tokens. Switching the tokenizer retrains the vocabulary; BPE can make the sequence longer.</p></details>
 	</div>
-	<p class="transformer-slider-note">32D and 64D were tested in desktop Chromium; both use PCA, and 64D needs more memory, so 3D remains the default. The copy and conditional examples demonstrate pattern completion and memorization; the tiny model did not show a clean induction-head circuit in the scale tests.</p>
-	</details>
+		</div>
 
-<div class="transformer-config-field" id="transformer-preset-field">
-	<label class="transformer-slider-label">Example</label>
-	<select id="transformer-preset" style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" onchange="applyTransformerPreset(this.value)">
-		<option value="custom" selected>Custom (manual sliders)</option>
-		<option value="tiny">Tiny 3D · every formula visible</option>
-		<option value="wide16">Wide 16D · PCA view</option>
-		<option value="wide32">Wide 32D · PCA, slower training</option>
-		<option value="wide64">Wide 64D · PCA, experimental</option>
-		<option value="copy16">Copy pattern · 16D</option>
-		<option value="conditional16">Conditional pattern · 16D</option>
-	</select>
-	<p class="transformer-slider-note">Start here: pick a ready-made model. Presets set the sliders and, for the pattern examples, the training corpus. Nothing trains automatically; press <b>Train Model</b> afterwards. Open <b>Advanced</b> only if you want to change the manual hyperparameters.</p>
-</div>
+	<p class="transformer-slider-note tm-hyper-footnote">32D and 64D were tested in desktop Chromium; both use PCA, and 64D needs more memory, so 3D remains the default. The copy and conditional examples demonstrate pattern completion and memorization; the tiny model did not show a clean induction-head circuit in the scale tests.</p>
+
 
 	
 	</div>

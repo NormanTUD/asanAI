@@ -4024,6 +4024,7 @@
 	function equalizeHyperCards() {
 		var config = document.getElementById("transformer_config");
 		if (!config) return;
+		if (config.closest(".tm-hyper-body")) return;
 		var cards = Array.prototype.slice.call(config.querySelectorAll(".transformer-config-field")).filter(function (el) {
 			return el.id !== "transformer-preset-field" && el.offsetParent !== null;
 		});
