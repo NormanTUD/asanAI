@@ -651,8 +651,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																			<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
 																		</div>
 																		<aside id="ism-side" class="ism-side">
-																			<div id="ism-formulas" class="ism-formulas" aria-live="polite"></div>
 																			<div id="ism-dense-controls" class="ism-dense-controls" hidden></div>
+																			<div id="ism-formulas" class="ism-formulas" aria-live="polite"></div>
 																		</aside>
 																	</div>
 																	<div class="ism-controls">

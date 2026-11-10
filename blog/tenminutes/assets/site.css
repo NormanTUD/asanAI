@@ -6799,6 +6799,7 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	opacity: 1;
 	transform: none;
 }
+.ism-side > .ism-dense-controls { margin-top: 0; margin-bottom: 10px; }
 .ism-formulas { display: flex; flex-direction: column; gap: 10px; }
 .ism-formulas .ism-formula { margin: 0; }
 .ism-weight-editor {
