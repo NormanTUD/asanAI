@@ -720,6 +720,11 @@ if(!server_php_self_ends_with_index_php()) {
 					});
 				}
 			}, 180);
+			setTimeout(function () {
+				if (typeof window.__layoutGuardrailCheck === 'function') {
+					window.__layoutGuardrailCheck();
+				}
+			}, 700);
 		}
 		(function() {
 			try {

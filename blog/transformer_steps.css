@@ -2035,3 +2035,18 @@
 	color: var(--tm-muted, var(--mn-text-muted, #627476));
 	font-size: 0.82rem;
 }
+
+/* The residual overview and the between-layer signal labels are labels,
+   not cards: remove the surrounding box so the stream reads as one flow. */
+.tm-step.tm-residual-overview {
+	border: 0;
+	background: transparent;
+	padding-left: 0;
+	padding-right: 0;
+}
+.tm-layer-signal-between {
+	border: 0;
+	background: transparent;
+	padding: 0;
+	margin: 4px 0;
+}

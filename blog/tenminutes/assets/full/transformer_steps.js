@@ -5063,11 +5063,11 @@
 				var formulaStrip = document.createElement("div");
 				formulaStrip.className = "tm-transformer-formulas";
 				formulaStrip.innerHTML =
-					"<div data-tex='Q=\\operatorname{Norm}(h_{\\text{in}})W^Q,\\quad K=\\operatorname{Norm}(h_{\\text{in}})W^K,\\quad V=\\operatorname{Norm}(h_{\\text{in}})W^V'></div>" +
-					"<div data-tex='\\text{head}_i=\\operatorname{softmax}\\!\\left(\\frac{Q_iK_i^\\top}{\\sqrt{d_k}}\\right)V_i'></div>" +
-					"<div data-tex='h_{\\text{attn}}=h_{\\text{in}}+\\operatorname{Concat}(\\text{head}_1,\\dots,\\text{head}_h)\\,W^O'></div>" +
-					"<div data-tex='h_{\\text{out}}=h_{\\text{attn}}+\\operatorname{FFN}(\\operatorname{Norm}(h_{\\text{attn}}))'></div>" +
-					"<div data-tex='\\operatorname{FFN}(x)=W_2\\,\\operatorname{GELU}(W_1x+b_1)+b_2'></div>";
+					"<div data-tex='Q=\\operatorname{Norm}(h_{\\text{in}})W^Q,\\quad K=\\operatorname{Norm}(h_{\\text{in}})W^K,\\quad V=\\operatorname{Norm}(h_{\\text{in}})W^V' title='" + (isDe ? "Q ist, wonach ein Token sucht; K ist, was ein Token anbietet; V ist der Inhalt, der weitergegeben wird. Norm hält die Zahlen stabil, und W sind gelernte Projektionsmatrizen." : "Q is what a token looks for; K is what each token offers; V is the content that travels. Norm keeps the numbers stable, and W are learned projection matrices.") + "'></div>" +
+					"<div data-tex='\\text{head}_i=\\operatorname{softmax}\\!\\left(\\frac{Q_iK_i^\\top}{\\sqrt{d_k}}\\right)V_i' title='" + (isDe ? "Ein Attention-Head vergleicht jede Query mit allen Keys, macht aus den Scores mit Softmax Gewichte und mischt die Values. d_k ist die Kopfbreite, damit die Scores nicht explodieren." : "One attention head compares each query with all keys, turns the scores into weights with softmax, and mixes the values. d_k is the head width, so the scores do not explode.") + "'></div>" +
+					"<div data-tex='h_{\\text{attn}}=h_{\\text{in}}+\\operatorname{Concat}(\\text{head}_1,\\dots,\\text{head}_h)\\,W^O' title='" + (isDe ? "Der gemischte Kontext wird zur Eingabe addiert: Das Token behält seinen alten Vektor und bekommt das Attention-Update obendrauf. Concat verbindet die Heads; W^O mischt sie." : "The mixed context is added back to the input: the token keeps its old vector and gets the attention update on top. Concat joins the heads; W^O mixes them.") + "'></div>" +
+					"<div data-tex='h_{\\text{out}}=h_{\\text{attn}}+\\operatorname{FFN}(\\operatorname{Norm}(h_{\\text{attn}}))' title='" + (isDe ? "Auch das FFN-Update wird addiert. Das Ergebnis ist der nächste laufende Vektor; nichts wird überschrieben." : "The FFN update is added back too. The result is the next running vector; nothing is overwritten.") + "'></div>" +
+					"<div data-tex='\\operatorname{FFN}(x)=W_2\\,\\operatorname{GELU}(W_1x+b_1)+b_2' title='" + (isDe ? "Das Feed-Forward-Netz erweitert den Vektor, wendet GELU an und komprimiert ihn wieder. Es arbeitet mit einem Token auf einmal." : "The feed-forward network expands the vector, applies GELU, and compresses it back. It works on one token at a time.") + "'></div>";
 				box.querySelector(".tm-step-body").appendChild(formulaStrip);
 				typesetMathInOrg(formulaStrip);
 				var vizSwitch = document.createElement("div");
@@ -5100,6 +5100,7 @@
 				[[residualCard, isDe ? "Residual-Stream-Überblick" : "Residual stream overview"]].forEach(function (pair) {
 					var card = pair[0];
 					if (!card || !boxBody) return;
+					card.classList.add("tm-residual-overview");
 					var h = card.querySelector("h3");
 					if (h) h.textContent = pair[1];
 					var b = card.querySelector(".tm-step-body");

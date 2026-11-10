@@ -86,10 +86,11 @@
 		}
 	];
 
-	let denseState = { neurons: 4, scale: 1.2, bias: 0, activation: "tanh" };
+	let denseState = { neurons: 2, scale: 1.2, bias: 0, activation: "relu", probe: 0 };
 	let denseSeed = 7;
 	let denseWeights = null;
 	let denseMix = 0;
+	let denseFormulaTimer = 0;
 
 	function buildDenseWeights() {
 		let seed = denseSeed || 1;
@@ -120,6 +121,65 @@
 		const p = LIFT(x, y, lift);
 		if (denseMix > 0.0001) p.z += denseMix * denseHeight(x, y);
 		return p;
+	}
+
+	const DENSE_PRESETS = {
+		bowl: { neurons: 2, scale: 1.2, bias: 0, activation: "relu", seed: 7 },
+		ridge: { neurons: 1, scale: 1.6, bias: -0.2, activation: "relu", seed: 3 },
+		saddle: { neurons: 4, scale: 1.5, bias: 0.1, activation: "relu", seed: 11 },
+		smooth: { neurons: 2, scale: 1.2, bias: 0, activation: "tanh", seed: 7 }
+	};
+
+	function matTex(rows) {
+		return "\\begin{bmatrix}" + rows.map(function (row) {
+			return row.map(function (v) { return v.toFixed(2); }).join(" & ");
+		}).join(" \\\\ ") + "\\end{bmatrix}";
+	}
+
+	function vecTex(values) {
+		return "\\begin{bmatrix}" + values.map(function (v) { return v.toFixed(2); }).join(" \\\\ ") + "\\end{bmatrix}";
+	}
+
+	function denseFormulas() {
+		if (!denseWeights) buildDenseWeights();
+		const n = denseWeights.W1.length;
+		const act = denseState.activation === "relu" ? "\\operatorname{ReLU}" : "\\tanh";
+		const w1 = matTex(denseWeights.W1);
+		const b1 = vecTex(denseWeights.b1);
+		const w2 = "\\begin{bmatrix}" + denseWeights.W2.map(function (v) { return v.toFixed(2); }).join(" & ") + "\\end{bmatrix}";
+		const b2 = denseWeights.b2.toFixed(2);
+		const probe = denseState.probe.toFixed(2);
+		const score = denseHeight(denseState.probe, 0).toFixed(3);
+		const layer = DE
+			? "\\underbrace{\\begin{aligned} a &= \\underbrace{W_1 x + b_1}_{\\text{Schicht 1}} \\\\ h &= \\underbrace{" + act + "(a)}_{\\text{Aktivierung}} \\\\ z &= \\underbrace{W_2 h + b_2}_{\\text{Schicht 2, eine Dimension}} \\end{aligned}}_{\\text{das MLP macht aus einem Punkt eine Höhe}}"
+			: "\\underbrace{\\begin{aligned} a &= \\underbrace{W_1 x + b_1}_{\\text{layer 1}} \\\\ h &= \\underbrace{" + act + "(a)}_{\\text{activation}} \\\\ z &= \\underbrace{W_2 h + b_2}_{\\text{layer 2, one dimension}} \\end{aligned}}_{\\text{the MLP maps a point to one height}}";
+		const weights = "\\underbrace{\\underbrace{W_1 = " + w1 + ",\\quad b_1 = " + b1 + "}_{\\text{" + (DE ? "Schicht 1" : "layer 1") + "}},\\quad \\underbrace{W_2 = " + w2 + ",\\quad b_2 = " + b2 + "}_{\\text{" + (DE ? "Schicht 2" : "layer 2") + "}}}_{\\text{" + (DE ? "die Gewichte, die du änderst" : "the weights you are changing") + "}}";
+		const back = "\\underbrace{s(t) = b_2 + \\sum_{i=1}^{" + n + "} \\underbrace{W_{2i}\\,\\," + act + "\\!\\left(W_{1i,1}\\,t + b_{1i}\\right)}_{\\text{" + (DE ? "Einheit" : "unit") + " } i}}_{\\text{" + (DE ? "Rückprojektion auf eine Dimension: bewege t" : "back-projection to one dimension: move t") + "}}";
+		return [layer, weights, back, (DE ? "s(" : "s(") + probe + ") = " + score];
+	}
+
+	function scheduleDenseFormulas() {
+		clearTimeout(denseFormulaTimer);
+		denseFormulaTimer = setTimeout(renderDenseFormulas, 80);
+	}
+
+	function renderDenseFormulas() {
+		const host = document.getElementById("ism-formulas");
+		if (!host) return;
+		const formulas = denseFormulas();
+		host.innerHTML = "";
+		formulas.slice(0, 3).forEach(function (tex) {
+			const el = document.createElement("div");
+			el.className = "ism-formula prose-math";
+			el.setAttribute("data-tex", tex);
+			el.setAttribute("data-tex-display", "true");
+			host.appendChild(el);
+		});
+		const value = document.createElement("p");
+		value.className = "ism-probe-value";
+		value.textContent = formulas[3];
+		host.appendChild(value);
+		if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(host);
 	}
 
 	const ease = u => u * u * u * (u * (u * 6 - 15) + 10);
@@ -199,6 +259,9 @@
 		}
 		const denseControls = document.getElementById("ism-dense-controls");
 		if (denseControls) denseControls.hidden = cur !== 7;
+		const stage = document.getElementById("ism-stage");
+		if (stage) stage.classList.toggle("is-dense", cur === 7);
+		if (cur === 7) renderDenseFormulas();
 
 		const dots = copyEl("ism-dots");
 		if (!dots) return;
@@ -594,6 +657,31 @@
 		});
 
 		drawClassLabels(labels, C);
+		if (denseMix > 0.05) {
+			const px = denseState.probe;
+			const pz = denseHeight(px, 0);
+			const base = proj({ x: px, y: 0, z: 0 });
+			const top = proj({ x: px, y: 0, z: pz });
+			ctx.globalAlpha = 0.9;
+			ctx.strokeStyle = C.planeStrong;
+			ctx.lineWidth = 2;
+			ctx.beginPath();
+			ctx.moveTo(base.X, base.Y);
+			ctx.lineTo(top.X, top.Y);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.arc(base.X, base.Y, 3.2, 0, TAU);
+			ctx.fillStyle = C.planeStrong;
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(top.X, top.Y, 4.2, 0, TAU);
+			ctx.fillStyle = C.inner;
+			ctx.fill();
+			ctx.font = "600 12px system-ui, sans-serif";
+			ctx.fillStyle = C.planeStrong;
+			ctx.fillText("s = " + pz.toFixed(2), top.X + 8, top.Y - 6);
+			ctx.globalAlpha = 1;
+		}
 	}
 
 	function resizeCanvas() {
@@ -682,54 +770,83 @@
 	}
 
 	function buildDenseControls() {
-		if (!wrap || document.getElementById("ism-dense-controls")) return;
-		const box = document.createElement("div");
-		box.id = "ism-dense-controls";
-		box.className = "ism-dense-controls";
-		box.hidden = true;
+		const box = document.getElementById("ism-dense-controls");
+		if (!box || box.dataset.built) return;
+		box.dataset.built = "1";
 		box.innerHTML = (DE ? `
-			<label>Neuronen <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="4"><output>4</output></label>
+			<label>Preset <select id="ism-dense-preset">
+				<option value="bowl" selected>Schüssel · 2 ReLU</option>
+				<option value="ridge">Grat · 1 ReLU</option>
+				<option value="saddle">Sattel · 4 ReLU</option>
+				<option value="smooth">Weich · 2 tanh</option>
+				<option value="custom">Eigene</option>
+			</select></label>
+			<label>Neuronen <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="2"><output>2</output></label>
 			<label>Gewichtsskala <input id="ism-dense-scale" type="range" min="0.2" max="3" step="0.1" value="1.2"><output>1.2</output></label>
 			<label>Bias <input id="ism-dense-bias" type="range" min="-2" max="2" step="0.1" value="0"><output>0.0</output></label>
-			<label>Aktivierung <select id="ism-dense-activation"><option value="tanh">tanh</option><option value="relu">ReLU</option></select></label>
+			<label>Aktivierung <select id="ism-dense-activation"><option value="relu" selected>ReLU</option><option value="tanh">tanh</option></select></label>
+			<label>Sonde t <input id="ism-dense-probe" type="range" min="-1.2" max="1.2" step="0.05" value="0"><output>0.00</output></label>
 			<button type="button" id="ism-dense-resample">Neue Gewichte</button>
-			<code id="ism-dense-readout" class="ism-dense-readout"></code>
+			<span class="ism-dense-hint">Bewege die Sonde: die senkrechte Linie ist s(t).</span>
 		` : `
-			<label>Neurons <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="4"><output>4</output></label>
+			<label>Preset <select id="ism-dense-preset">
+				<option value="bowl" selected>Bowl · 2 ReLU</option>
+				<option value="ridge">Ridge · 1 ReLU</option>
+				<option value="saddle">Saddle · 4 ReLU</option>
+				<option value="smooth">Smooth · 2 tanh</option>
+				<option value="custom">Custom</option>
+			</select></label>
+			<label>Neurons <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="2"><output>2</output></label>
 			<label>Weight scale <input id="ism-dense-scale" type="range" min="0.2" max="3" step="0.1" value="1.2"><output>1.2</output></label>
 			<label>Bias <input id="ism-dense-bias" type="range" min="-2" max="2" step="0.1" value="0"><output>0.0</output></label>
-			<label>Activation <select id="ism-dense-activation"><option value="tanh">tanh</option><option value="relu">ReLU</option></select></label>
+			<label>Activation <select id="ism-dense-activation"><option value="relu" selected>ReLU</option><option value="tanh">tanh</option></select></label>
+			<label>Probe t <input id="ism-dense-probe" type="range" min="-1.2" max="1.2" step="0.05" value="0"><output>0.00</output></label>
 			<button type="button" id="ism-dense-resample">New weights</button>
-			<code id="ism-dense-readout" class="ism-dense-readout"></code>
+			<span class="ism-dense-hint">Move the probe: the vertical line is s(t).</span>
 		`);
-		wrap.appendChild(box);
 		const neurons = box.querySelector("#ism-dense-neurons");
 		const scale = box.querySelector("#ism-dense-scale");
 		const bias = box.querySelector("#ism-dense-bias");
 		const activation = box.querySelector("#ism-dense-activation");
-		const readout = box.querySelector("#ism-dense-readout");
+		const probe = box.querySelector("#ism-dense-probe");
+		const preset = box.querySelector("#ism-dense-preset");
 		const sync = function () {
 			denseState.neurons = parseInt(neurons.value, 10) || 1;
 			denseState.scale = parseFloat(scale.value) || 1;
 			denseState.bias = parseFloat(bias.value) || 0;
 			denseState.activation = activation.value;
+			denseState.probe = parseFloat(probe.value) || 0;
 			buildDenseWeights();
 			neurons.nextElementSibling.textContent = String(denseState.neurons);
 			scale.nextElementSibling.textContent = denseState.scale.toFixed(1);
 			bias.nextElementSibling.textContent = denseState.bias.toFixed(1);
-			if (readout && denseWeights) {
-				readout.textContent = "W1 = " + denseWeights.W1.map(function (row) {
-					return "[" + row.map(function (v) { return v.toFixed(2); }).join(", ") + "]";
-				}).join(" ") + "  W2 = [" + denseWeights.W2.map(function (v) { return v.toFixed(2); }).join(", ") + "]  b2 = 0.00";
-			}
+			probe.nextElementSibling.textContent = denseState.probe.toFixed(2);
+			scheduleDenseFormulas();
 			requestDraw();
 		};
-		neurons.addEventListener("input", sync);
-		scale.addEventListener("input", sync);
-		bias.addEventListener("input", sync);
-		activation.addEventListener("change", sync);
+		const markCustom = function () { preset.value = "custom"; };
+		neurons.addEventListener("input", function () { markCustom(); sync(); });
+		scale.addEventListener("input", function () { markCustom(); sync(); });
+		bias.addEventListener("input", function () { markCustom(); sync(); });
+		activation.addEventListener("change", function () { markCustom(); sync(); });
+		probe.addEventListener("input", sync);
+		preset.addEventListener("change", function () {
+			const p = DENSE_PRESETS[preset.value];
+			if (!p) { sync(); return; }
+			denseState.neurons = p.neurons;
+			denseState.scale = p.scale;
+			denseState.bias = p.bias;
+			denseState.activation = p.activation;
+			denseSeed = p.seed;
+			neurons.value = String(p.neurons);
+			scale.value = String(p.scale);
+			bias.value = String(p.bias);
+			activation.value = p.activation;
+			sync();
+		});
 		box.querySelector("#ism-dense-resample").addEventListener("click", function () {
 			denseSeed = (denseSeed * 1664525 + 1013904223) & 0x7fffffff;
+			preset.value = "custom";
 			sync();
 		});
 		sync();

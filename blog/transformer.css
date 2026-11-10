@@ -592,3 +592,49 @@ html.wide-math #contents .tm-hyper-body .md {
 	color: var(--mn-text-secondary, #475569);
 	white-space: nowrap;
 }
+
+/* Keep the TDA live panel and its controls inside the reading column.
+   The plot containers are Plotly-managed, so clamp the wrappers too. */
+#tda-live-section {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+#tda-live-section,
+#tda-live-section p,
+#tda-live-details,
+#tda-live-controls,
+#tda-live-explain,
+#tda-live-stats,
+#tda-live-legend,
+#tda-live-phase,
+#tda-live-sweep,
+#tda-live-persistence,
+#tda-live-barcode,
+#tda-live-betti,
+#tda-live-topo,
+#tda-live-weights {
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+/* Parameter breakdown moved to the end of the model, not into Advanced. */
+.parameter-breakdown-end {
+	margin: 24px 0;
+	padding: 18px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 12px;
+	background: var(--mn-surface, #ffffff);
+	max-width: 100%;
+	box-sizing: border-box;
+}
+.parameter-breakdown-end h2 {
+	margin: 0 0 6px;
+	font-size: 1.15rem;
+}
+.parameter-breakdown-end > p {
+	margin: 0 0 10px;
+	color: var(--mn-text-secondary, #475569);
+	font-size: 0.9rem;
+	line-height: 1.5;
+}

@@ -6767,13 +6767,45 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	line-height: 1.55;
 	color: var(--tm-muted);
 }
+.ism-stage {
+	display: flex;
+	align-items: stretch;
+	gap: 14px;
+}
 .ism-wrap {
 	position: relative;
+	flex: 1 1 100%;
+	min-width: 0;
 	height: 480px;
 	overflow: hidden;
 	border: 1px solid var(--tm-line);
 	border-radius: 10px;
 	background: var(--tm-paper-2);
+	transition: flex-basis 0.45s cubic-bezier(.22, .8, .2, 1), transform 0.45s cubic-bezier(.22, .8, .2, 1);
+}
+.ism-side {
+	flex: 0 0 0;
+	width: 0;
+	max-height: 480px;
+	overflow-y: auto;
+	opacity: 0;
+	transform: translateX(18px);
+	transition: flex-basis 0.45s cubic-bezier(.22, .8, .2, 1), width 0.45s cubic-bezier(.22, .8, .2, 1), opacity 0.3s ease, transform 0.45s cubic-bezier(.22, .8, .2, 1);
+}
+.ism-stage.is-dense .ism-wrap { flex-basis: 57%; }
+.ism-stage.is-dense .ism-side {
+	flex-basis: 43%;
+	width: auto;
+	opacity: 1;
+	transform: none;
+}
+.ism-formulas { display: flex; flex-direction: column; gap: 10px; }
+.ism-formulas .ism-formula { margin: 0; }
+@media (max-width: 760px) {
+	.ism-stage { flex-direction: column; }
+	.ism-stage.is-dense .ism-wrap,
+	.ism-stage.is-dense .ism-side { flex-basis: auto; width: auto; }
+	.ism-side { max-height: none; }
 }
 #ism-canvas {
 	display: block;
@@ -8833,20 +8865,14 @@ html[lang="de"] .tm-lang-only-de { display: inline !important; }
 	font-size: 0.92em;
 }
 .ism-dense-controls {
-	position: absolute;
-	left: 10px;
-	right: 10px;
-	bottom: 10px;
-	z-index: 2;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 6px 12px;
+	gap: 8px 12px;
 	align-items: center;
-	padding: 8px 10px;
+	margin-top: 10px;
+	padding: 10px;
 	border: 1px solid var(--tm-line);
-	background: color-mix(in srgb, var(--tm-card) 92%, transparent);
-	backdrop-filter: blur(6px);
-	-webkit-backdrop-filter: blur(6px);
+	background: var(--tm-paper-2);
 	font: 600 0.7rem/1.2 var(--tm-ui);
 	color: var(--tm-ink-soft);
 }
@@ -8881,22 +8907,16 @@ html[lang="de"] .tm-lang-only-de { display: inline !important; }
 	border-color: var(--tm-green);
 	color: var(--tm-green-deep);
 }
-.ism-dense-readout {
+.ism-dense-hint {
 	flex-basis: 100%;
-	font: 400 0.66rem/1.35 "Courier New", monospace;
+	font-weight: 400;
+	line-height: 1.45;
 	color: var(--tm-muted);
-	white-space: pre-wrap;
-	max-height: 2.8em;
-	overflow: hidden;
 }
 @media (max-width: 700px) {
 	.ism-dense-controls {
-		left: 6px;
-		right: 6px;
-		bottom: 6px;
 		gap: 4px 8px;
-		padding: 6px 8px;
+		padding: 8px;
 	}
 	.ism-dense-controls input[type="range"] { width: 64px; }
-	.ism-dense-readout { display: none; }
 }

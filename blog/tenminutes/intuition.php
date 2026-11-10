@@ -646,8 +646,14 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																		<div id="ism-title" class="ism-title"></div>
 																		<div id="ism-body" class="ism-body"></div>
 																	</div>
-																	<div id="ism-wrap" class="ism-wrap" style="height:clamp(360px, 55vw, 480px)">
-																		<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
+																	<div class="ism-stage" id="ism-stage">
+																		<div id="ism-wrap" class="ism-wrap" style="height:clamp(360px, 55vw, 480px)">
+																			<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
+																		</div>
+																		<aside id="ism-side" class="ism-side">
+																			<div id="ism-formulas" class="ism-formulas" aria-live="polite"></div>
+																			<div id="ism-dense-controls" class="ism-dense-controls" hidden></div>
+																		</aside>
 																	</div>
 																	<div class="ism-controls">
 																		<button type="button" id="ism-prev" data-arrow-prev class="ism-btn" aria-label="Previous step">←</button>
@@ -699,6 +705,22 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																<p class="step-note ffn-caveat"><b>What is simplified:</b> a real FFN has no labelled keys or values. The patterns are learned directions in W₁; the pull is a learned direction in W₂.</p>
 															</div>
 														</div>
+						<div class="prose">
+							<h4 class="layer-subhead"><?php echo $layer_de ? 'Eine Schicht ist eine kleine Funktion' : 'One layer is a small function'; ?></h4>
+							<?php if ($layer_de): ?>
+							<p>Eine einfache Schicht muss nicht kompliziert sein. Sie multipliziert ihre Eingabe mit einer gelernten Matrix W, addiert einen gelernten Vektor b und schickt das Ergebnis durch eine Aktivierungsfunktion. Die Aktivierung bringt eine Krümmung ins Spiel, eine Nichtlinearität. Ohne sie würde jede Anzahl von Dense-Einheiten zu einer einzigen linearen Abbildung zusammenfallen.</p>
+							<p>So kann eine einfache Schicht aussehen: eine Matrix, ein Bias, eine Aktivierung. Das ist eine Dense-Einheit. Sie ist der grundlegende Baustein; eine Transformer-Schicht kombiniert später Self-Attention und ein FFN.</p>
+							<p>Echte Netze kombinieren Bausteine unterschiedlich. Eine Convolutional-Schicht ist für Bilder gebaut, eine Attention-Schicht für Sequenzen, eine Dense-Schicht für Tabellen mit Zahlen. Eine Transformer-Schicht ist keine einzelne Dense-Einheit: Sie kombiniert Self-Attention, die Information zwischen Tokens mischt, mit einem FFN, das selbst ein kleiner Stapel von Dense-Einheiten ist. Sie teilen dieselbe Idee: Funktionen mit Parametern, die mit Trainingsdaten so trainiert werden, dass ihre Ausgabe näher an der richtigen Antwort liegt.</p>
+							<?php else: ?>
+							<p>A simple layer does not need to be complicated. It multiplies its input by a learned matrix W, adds a learned vector b, and passes the result through an activation function. The activation adds a bend, a nonlinearity. Without it, any number of dense units would collapse into one linear map.</p>
+							<p>A simple layer can look like this: one matrix, one bias, one activation. That is a dense unit. It is the basic building block; a transformer layer later combines self-attention and an FFN.</p>
+							<p>Real networks combine building blocks differently. A convolutional layer is built for images, an attention layer for sequences, a dense layer for tables of numbers. A transformer layer is not one dense unit: it combines self-attention, which mixes information between tokens, with an FFN, which is itself a small stack of dense units. They share the same idea: functions with parameters, trained on data so that their output gets closer to the right answer.</p>
+							<?php endif; ?>
+							<div class="layer-formula-dense">
+								<div class="layer-card-title"><?php echo $layer_de ? 'Dense-Einheit' : 'Dense unit'; ?></div>
+								<div class="prose-math" data-tex="\underbrace{\text{dense}(x) = \text{activation}\!\left(\underbrace{W x + b}_{\text{learned linear map}}\right)}_{\text{a function with parameters } W,\ b}" data-tex-de="\underbrace{\text{dense}(x) = \text{Aktivierung}\!\left(\underbrace{W x + b}_{\text{gelernte lineare Abbildung}}\right)}_{\text{eine Funktion mit Parametern } W,\ b}" data-tex-display="true"></div>
+							</div>
+						</div>
 					</section>
 
 					<section class="section-block" id="layer-stack" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
@@ -733,20 +755,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<?php endif; ?>
 						</div>
 						<div class="prose">
-							<h4 class="layer-subhead"><?php echo $layer_de ? 'Eine Schicht ist eine kleine Funktion' : 'One layer is a small function'; ?></h4>
-							<?php if ($layer_de): ?>
-							<p>Eine einfache Schicht muss nicht kompliziert sein. Sie multipliziert ihre Eingabe mit einer gelernten Matrix W, addiert einen gelernten Vektor b und schickt das Ergebnis durch eine Aktivierungsfunktion. Die Aktivierung bringt eine Krümmung ins Spiel, eine Nichtlinearität. Ohne sie würde jede Anzahl von Dense-Einheiten zu einer einzigen linearen Abbildung zusammenfallen.</p>
-							<p>So kann eine einfache Schicht aussehen: eine Matrix, ein Bias, eine Aktivierung. Das ist eine Dense-Einheit. Sie ist der grundlegende Baustein; eine Transformer-Schicht kombiniert später Self-Attention und ein FFN.</p>
-							<p>Echte Netze kombinieren Bausteine unterschiedlich. Eine Convolutional-Schicht ist für Bilder gebaut, eine Attention-Schicht für Sequenzen, eine Dense-Schicht für Tabellen mit Zahlen. Eine Transformer-Schicht ist keine einzelne Dense-Einheit: Sie kombiniert Self-Attention, die Information zwischen Tokens mischt, mit einem FFN, das selbst ein kleiner Stapel von Dense-Einheiten ist. Sie teilen dieselbe Idee: Funktionen mit Parametern, die mit Trainingsdaten so trainiert werden, dass ihre Ausgabe näher an der richtigen Antwort liegt.</p>
-							<?php else: ?>
-							<p>A simple layer does not need to be complicated. It multiplies its input by a learned matrix W, adds a learned vector b, and passes the result through an activation function. The activation adds a bend, a nonlinearity. Without it, any number of dense units would collapse into one linear map.</p>
-							<p>A simple layer can look like this: one matrix, one bias, one activation. That is a dense unit. It is the basic building block; a transformer layer later combines self-attention and an FFN.</p>
-							<p>Real networks combine building blocks differently. A convolutional layer is built for images, an attention layer for sequences, a dense layer for tables of numbers. A transformer layer is not one dense unit: it combines self-attention, which mixes information between tokens, with an FFN, which is itself a small stack of dense units. They share the same idea: functions with parameters, trained on data so that their output gets closer to the right answer.</p>
-							<?php endif; ?>
-							<div class="layer-formula-dense">
-								<div class="layer-card-title"><?php echo $layer_de ? 'Dense-Einheit' : 'Dense unit'; ?></div>
-								<div class="prose-math" data-tex="\underbrace{\text{dense}(x) = \text{activation}\!\left(\underbrace{W x + b}_{\text{learned linear map}}\right)}_{\text{a function with parameters } W,\ b}" data-tex-de="\underbrace{\text{dense}(x) = \text{Aktivierung}\!\left(\underbrace{W x + b}_{\text{gelernte lineare Abbildung}}\right)}_{\text{eine Funktion mit Parametern } W,\ b}" data-tex-display="true"></div>
-							</div>
 							<h4 class="layer-subhead"><?php echo $layer_de ? 'Warum aus Scores Wahrscheinlichkeiten werden' : 'Why scores become probabilities'; ?></h4>
 							<?php if ($layer_de): ?>
 							<p>Softmax macht aus beliebigen Scores etwas, das sich wie eine Wahrscheinlichkeitsverteilung verhält. Es exponiert jeden Score, sodass alle Werte positiv werden, und teilt dann durch die Summe. Die Exponentialfunktion ist monoton, der größte Score bleibt also der größte; die Division sorgt dafür, dass die Ergebnisse sich zu eins summieren. Verschiebt man alle Scores um dieselbe Konstante, kürzt sich das im Verhältnis weg; der absolute Bereich der Scores spielt keine Rolle. Die Basis <span data-tex="e" data-tex-display="false"></span> ist eine Konvention: Jede positive Basis ergibt eine gültige Verteilung, aber mit <span data-tex="e" data-tex-display="false"></span> bleibt die Ableitung sauber und das Trainingssignal gutartig. Der Name „Softmax“ stammt von <a href="https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html" target="_blank" rel="noopener">Bridle (1990)</a>.</p>

@@ -3003,11 +3003,9 @@ function buildHLastSection(h_last) {
 	const note = isDe
 		? '(die letzte Zeile der Ausgabematrix der letzten Schicht der Inferenzdaten)'
 		: "(the last layers' output matrix last line of the inference-data)";
-	return `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; text-align: center;">
-    <span class="md">
+	return `<div style="margin-top: 25px; text-align: center;">
     <div class="logit_calc" style="text-align: center; margin-left: auto; margin-right: auto;">
-    <p style="margin: 0 0 4px;">${head}</p>
-    $$h_\\text{last} = \\begin{bmatrix} ${hLastRows} \\end{bmatrix}$$
+    $$\\text{${head}} \\; h_\\text{last} = \\begin{pmatrix} ${hLastRows} \\end{pmatrix}$$
     <p style="margin: 4px 0 0;">${note}</p>
     </div>\n`;
 }
@@ -3017,7 +3015,8 @@ function buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logi
 		const displayWord = /^\s+$/.test(vocabWords[wIdx]) ? vocabWords[wIdx].replace(/ /g, '␣') : vocabWords[wIdx];
 		const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
 		const vals = row.map(v => v.toFixed(nr_fixed)).join(' & ');
-		return `\\color{#6366f1}{\\text{${safeWord}}} & ${vals}`;
+		const color = getPositionColor(wIdx, vocabWords.length, 'temml');
+		return `${color}{\\text{${safeWord}}} & ${vals}`;
 	}).join(' \\\\ ');
 
 	const vocabColSpec = 'r|' + 'r'.repeat(h_last.length);
@@ -3047,10 +3046,11 @@ $$
 }
 
 function buildLogitLatexRows(logits) {
-	return logits.map(({ word, val }) => {
+	return logits.map(({ word, val }, i) => {
 		const displayWord = /^\s+$/.test(word) ? word.replace(/ /g, '␣') : word;
 		const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
-		return `\\color{#6366f1}{\\text{${safeWord}}} & ${val.toFixed(nr_fixed)}`;
+		const color = getPositionColor(i, logits.length, 'temml');
+		return `${color}{\\text{${safeWord}}} & ${val.toFixed(nr_fixed)}`;
 	}).join(' \\\\ ');
 }
 
@@ -8461,7 +8461,7 @@ function renderLayerFormulas(layerIdx) {
 		const hLast = trace.h_out[trace.h_out.length - 1];
 		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
 		const rows = buildHLastDisplayLatex(hLast);
-		hlast.innerHTML = `<p>${isDe ? 'Aktuell' : 'Current'}</p>$$h_\\text{last} = \\begin{bmatrix} ${rows} \\end{bmatrix}$$<p>${isDe ? '(die letzte Zeile der Ausgabematrix der aktuellen Layer-Ansicht)' : "(the output matrix last line of the current layer view)"}</p>`;
+		hlast.innerHTML = `$$\\text{${isDe ? 'Aktuell' : 'Current'}} \\; h_\\text{last} = \\begin{pmatrix} ${rows} \\end{pmatrix}$$<p>${isDe ? '(die letzte Zeile der Ausgabematrix der aktuellen Layer-Ansicht)' : "(the output matrix last line of the current layer view)"}</p>`;
 	}
 	_renderTemmlOnElements([body]);
 }

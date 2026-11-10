@@ -376,21 +376,7 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 	<p class="transformer-slider-note">Start here: pick a ready-made model. Presets set the sliders and, for the pattern examples, the training corpus. Nothing trains automatically; press <b>Train Model</b> afterwards. Open <b>Advanced</b> only if you want to change the manual hyperparameters.</p>
 </div>
 
-	<div id="param-breakdown-toggle" style="display: none; margin-top: 8px;">
-	    <button id="param-breakdown-btn" onclick="toggleParamBreakdown()"
-		style="background: none; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 16px;
-		       cursor: pointer; font-size: 0.85rem; color: #3b82f6; font-weight: 600;
-		       display: flex; align-items: center; gap: 6px; transition: all 0.15s;">
-		<span id="param-breakdown-arrow" style="transition: transform 0.2s;">▶</span>
-		Show Parameter Breakdown
-	    </button>
-	</div>
-
-	<div id="param-breakdown-chart" style="display: none; margin-top: 10px; padding: 15px;
-	     background: var(--mn-bg-subtle, #f8fafc); border: 1px solid #e2e8f0; border-radius: 10px;">
-	    <div id="param-breakdown-plotly" style="width: 100%; height: 350px;"></div>
-	    <div id="param-breakdown-table" style="margin-top: 10px; font-size: 0.82rem; overflow-x: auto;"></div>
-	</div>
+	
 	</div>
 
 		</div>
@@ -1316,7 +1302,7 @@ Dropout is off in both modes. Both use the same feature-wise LayerNorm without r
 	<summary style="cursor: pointer; font-size: 1.05rem; font-weight: 700; color: var(--mn-text, #0f172a); padding: 6px 0;">
 		🧭 TDA Live, Attractors in the Residual Stream
 	</summary>
-	<p style="font-size: 0.85rem; color: var(--mn-text-muted, #64748b); margin: 6px 0 12px 0; max-width: 900px;">
+	<p style="font-size: 0.85rem; color: var(--mn-text-muted, #64748b); margin: 6px 0 12px 0; max-width: 100%;">
 		A <b>topological data analysis</b> of the residual stream and the weight deltas (weights minus their previous
 		values). Tokens drift through a phase space; over epochs the drift field reorganizes into <b>attractors</b> (stable
 		sinks where states settle, blue) and <b>repellers</b> (unstable points the flow pushes away from, red, not
@@ -1450,6 +1436,26 @@ Dropout is off in both modes. Both use the same feature-wise LayerNorm without r
 </details>
 <br>
 </div>
+</div>
+
+<div id="param-breakdown-end" class="parameter-breakdown-end">
+	<h2>Parameter breakdown</h2>
+	<p>Where the parameters of this model live: attention projections, feed-forward matrices, and the embedding table.</p>
+	<div id="param-breakdown-toggle" style="display: none; margin-top: 8px;">
+	    <button id="param-breakdown-btn" onclick="toggleParamBreakdown()"
+		style="background: none; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 16px;
+		       cursor: pointer; font-size: 0.85rem; color: #3b82f6; font-weight: 600;
+		       display: flex; align-items: center; gap: 6px; transition: all 0.15s;">
+		<span id="param-breakdown-arrow" style="transition: transform 0.2s;">▶</span>
+		Show Parameter Breakdown
+	    </button>
+	</div>
+
+	<div id="param-breakdown-chart" style="display: none; margin-top: 10px; padding: 15px;
+	     background: var(--mn-bg-subtle, #f8fafc); border: 1px solid #e2e8f0; border-radius: 10px;">
+	    <div id="param-breakdown-plotly" style="width: 100%; height: 350px;"></div>
+	    <div id="param-breakdown-table" style="margin-top: 10px; font-size: 0.82rem; overflow-x: auto;"></div>
+	</div>
 </div>
 
 <div id="tm-inference-busy" hidden aria-live="polite" aria-busy="true">
