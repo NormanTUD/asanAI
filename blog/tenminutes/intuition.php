@@ -129,6 +129,7 @@
 	</style>
 </head>
 <body data-lesson="intuition" data-page="lesson" data-tm-reload-lang="1">
+	<?php $layer_de = function_exists('tm_lang') && tm_lang() === 'de'; ?>
 	<div class="readbar" aria-hidden="true"><span></span></div>
 
 	<main id="main">
@@ -371,10 +372,10 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="prose">
 							<?php if ($layer_de): ?>
 							<p>Ein neuronales Netz entsteht, indem man Funktionen nacheinander anwendet. Eine Schicht transformiert ihre Eingabe, die nächste transformiert dieses Ergebnis, und der Stapel macht aus einer kleinen Operation ein tiefes Modell. Tiefe ist Komposition: viele einfache Schritte, jeder füttert den nächsten.</p>
-							<p>Ein Modell ist aber mehr als seine Funktionen: Es braucht Daten, aus denen es lernt. Man gibt ihm Eingaben und passende Ausgaben; die Funktionen suchen dann eine Folge von Transformationen, die die Eingabe möglichst gut in die Ausgabe überführt.</p>
+							<p>Klassisches Programmieren beginnt mit dem Verfahren: Du schreibst jeden Schritt vor, und der Computer führt ihn aus. Bei KI drehst du das um: Du gibst genug Beispiele mit passenden Ausgaben, und das Training sucht die Funktion, die dazwischen liegt. Die Schichten sind die Form, in der diese Funktion Platz findet; die Daten bestimmen, was sie tut.</p>
 							<?php else: ?>
 							<p>A neural network is built by applying functions one after another. One layer transforms its input, the next layer transforms that result, and the stack turns a small operation into a deep model. The depth is composition: many simple steps, each feeding the next.</p>
-							<p>A model is more than its functions: it also needs data to learn from. You give it inputs and matching outputs; the functions then search for a sequence of transformations that turns the input into the output as closely as possible.</p>
+							<p>Classical programming starts with the procedure: you write down every step, and the computer executes it. AI reverses that: you provide enough examples with matching outputs, and training searches for the function in between. The layers are the shape that function takes; the data decides what it does.</p>
 							<?php endif; ?>
 							<div class="prose-math layer-stack-formula" data-tex="\underbrace{ \text{output} = \text{layer}_3\!\left( \underbrace{ \text{layer}_2\!\left( \underbrace{\text{layer}_1(\text{input})}_{\text{first transformation}} \right) }_{\text{second transformation}} \right) }_{\text{a stack of functions, each feeding the next}}" data-tex-de="\underbrace{ \text{output} = \text{layer}_3\!\left( \underbrace{ \text{layer}_2\!\left( \underbrace{\text{layer}_1(\text{input})}_{\text{erste Transformation}} \right) }_{\text{zweite Transformation}} \right) }_{\text{ein Stapel von Funktionen, jede füttert die nächste}}" data-tex-display="true"></div>
 							
@@ -564,7 +565,6 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					</section>
 
 					<section class="section-block" id="layer-detail-section" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
-						<?php $layer_de = function_exists('tm_lang') && tm_lang() === 'de'; ?>
 						<div class="section-kicker">The layer in detail · the MLP</div>
 						<h2 class="section-title">FFN: a projection, a bias, a bend</h2>
 						<div class="prose">
