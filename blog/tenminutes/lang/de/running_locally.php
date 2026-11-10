@@ -90,6 +90,9 @@ return [
 		'Local AI trades some capability for ownership.' => 'Lokale KI tauscht etwas Fähigkeit gegen Eigentum.',
 		"The question is not 'can it run?' but 'is it good enough, fast enough, and private enough for this task?'" => 'Die Frage ist nicht „Kann es laufen?“, sondern „Ist es gut genug, schnell genug und privat genug für diese Aufgabe?“',
 	],
+	'blocks' => [
+		'“4-bit” does not mean every weight is simply rounded to one of sixteen values. Quantizers usually work in small groups, store a scale and a zero point per group, and keep sensitive layers at higher precision. The result is not identical to the original; it is a different model with a similar behaviour and a smaller memory footprint (<a href="https://arxiv.org/abs/2305.14314" rel="noopener">Dettmers et al., 2023</a>; <a href="https://arxiv.org/abs/2210.17323" rel="noopener">Frantar et al., 2023</a>).' => '„4-Bit“ heißt nicht, dass jedes Gewicht einfach auf einen von sechzehn Werten gerundet wird. Quantisierer arbeiten meist in kleinen Gruppen, speichern eine Skala und einen Nullpunkt pro Gruppe und halten empfindliche Schichten auf höherer Präzision. Das Ergebnis ist nicht identisch mit dem Original; es ist ein anderes Modell mit ähnlichem Verhalten und kleinerem Speicherbedarf (<a href="https://arxiv.org/abs/2305.14314" rel="noopener">Dettmers et al., 2023</a>; <a href="https://arxiv.org/abs/2210.17323" rel="noopener">Frantar et al., 2023</a>).',
+	],
 	'attrs' => [
 		'Choose your shell' => 'Wähle deine Shell',
 	],

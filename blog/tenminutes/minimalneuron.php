@@ -71,7 +71,7 @@
 						<div class="section-kicker"><span class="sk-num">03</span> The loss</div>
 						<h2 class="section-title">How wrong is the model?</h2>
 						<div class="prose">
-							<p>To learn, a model needs a number that says how wrong it is. That number is the <strong>loss</strong>. For a line through noisy points, the usual choice is the <strong>mean squared error</strong> (MSE): the average of the squared vertical distances between the points and the line. Gauß used the same idea for Ceres in 1801, as the history chapter tells it. Squaring punishes a large miss much more than a small one, and it makes the slope smooth.</p>
+							<p>To learn, a model needs a number that says how wrong it is. That number is the <strong>loss</strong>. For a line through noisy points, the usual choice is the <strong>mean squared error</strong> (MSE): the average of the squared vertical distances between the points and the line. Gauß used the same idea for Ceres in 1801, as the <a href="history">history chapter</a> tells it. Squaring punishes a large miss much more than a small one, and it makes the slope smooth.</p>
 							<p>MSE has a useful shape for learning. Far from the best line the error surface is steep, so a gradient step can move a long way and quickly reach the right region. Close to the bottom the surface flattens, so the same step size would overshoot; the learning rate has to become smaller, or the optimizer has to adapt it, to do the fine work. Early progress is coarse, late progress is detailed.</p>
 							<p>Not every task is a curve. A classifier chooses among categories, and there the usual loss is <strong>categorical cross-entropy</strong>. It asks two questions: was the right category chosen, and how confident was the model? A confident correct answer is rewarded; an uncertain correct answer is rewarded less; a confident wrong answer is punished much more. The model’s outputs are treated as probabilities over the categories, and the loss measures how much probability the correct category received.</p>
 							<p>The network’s output is scored with that function, and <strong>backpropagation</strong> computes how each weight contributed to the loss. An <strong>optimizer</strong> then changes the weights a little. The details belong to the backpropagation and optimizer chapters; here the shape is enough: the loss defines a landscape, every weight is one direction, and the height is the error.</p>
@@ -150,7 +150,7 @@
 					</div>
 
 					<div class="prose">
-						<p>The perceptron is the smallest classifier. It draws one straight line and puts each point on one side. That works when the classes are linearly separable, and fails when they are not: XOR is the classic failure. Train it below and switch to XOR to see the line get stuck.</p>
+						<p>The perceptron is the smallest classifier. It draws one straight line and puts each point on one side. That works when the classes are linearly separable, and fails when they are not: XOR is the classic failure (<a href="https://www.deeplearningbook.org/" rel="noopener">Goodfellow et al., 2016</a>). Train it below and switch to XOR to see the line get stuck.</p>
 					</div>
 					<figure class="perceptron-figure">
 						<img src="../rosenblatt_perceptron_cc.png" alt="Rosenblatt's perceptron: inputs, weights, a summing unit, and a threshold output" loading="lazy">

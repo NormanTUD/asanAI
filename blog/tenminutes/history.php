@@ -232,7 +232,7 @@
 								separate inventions: <strong>place value</strong> (Babylonian, c. 2000 BCE),
 								<strong>zero as a number with arithmetic rules</strong> (Brahmagupta, 628 CE),
 								<strong>negative quantities</strong> (Han-dynasty Chinese linear-equation
-								texts), and <strong>decimal fractions</strong> (Stevin, 1585, building on
+								texts), and <strong>decimal fractions</strong> (<a href="https://mathshistory.st-andrews.ac.uk/Biographies/Stevin/" rel="noopener">Stevin, 1585</a>, building on
 								earlier Arabic work). Babylonian place value was base 60, which is why an
 								hour still has sixty minutes and a circle 360 degrees. Pingala’s
 								<strong>Sanskrit prosody</strong> (c. 3rd-1st century BCE) uses a

@@ -76,6 +76,9 @@ return [
 		'Prediction becomes discovery only when the proposal survives a check: an experiment, a synthesis, a proof, or a measurement.' => 'Vorhersage wird nur dann Entdeckung, wenn der Vorschlag eine Prüfung überlebt: ein Experiment, eine Synthese, einen Beweis oder eine Messung.',
 		'Step back to' => 'Zurück zu',
 	],
+	'blocks' => [
+		'The most important output is not the ribbon diagram. It is the confidence. AlphaFold reports a per-residue score called <strong>pLDDT</strong>. A high score means the model is confident about that part of the chain; a low score often marks a disordered tail or a region the model cannot pin down. The structure comes with a map of where it is guessing (<a href="https://www.alphafold.ebi.ac.uk/" rel="noopener">AlphaFold DB</a>).' => 'Die wichtigste Ausgabe ist nicht das Bändermodell. Es ist die Konfidenz. AlphaFold meldet einen Score pro Rest namens <strong>pLDDT</strong>. Ein hoher Score heißt, das Modell ist für diesen Teil der Kette selbstsicher; ein niedriger Score markiert oft einen ungeordneten Tail oder eine Region, die das Modell nicht festnageln kann. Die Struktur kommt mit einer Karte, wo das Modell rät (<a href="https://www.alphafold.ebi.ac.uk/" rel="noopener">AlphaFold-DB</a>).',
+	],
 	'attrs' => [
 		'A toy protein contact map and per-residue confidence' => 'Eine Spielzeug-Proteinkontaktkarte und Konfidenz pro Rest',
 		'A predicted protein structure coloured by pLDDT confidence' => 'Eine vorhergesagte Proteinstruktur, nach pLDDT-Konfidenz eingefärbt',

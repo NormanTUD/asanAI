@@ -40,6 +40,9 @@ return [
 		'The same trick works for sound: turn it into tokens, then predict.' => 'Derselbe Trick funktioniert für Klang: Verwandle ihn in Tokens und sage dann voraus.',
 		'Audio models are language models with a different front end.' => 'Audiomodelle sind Sprachmodelle mit einem anderen Frontend.',
 	],
+	'blocks' => [
+		'Modern systems often use codec tokens because they behave like a vocabulary. Once sound is a sequence of tokens, the same transformer machinery that handles text can listen, transcribe, and generate. A codec does not simply round the waveform; it learns a small set of reusable acoustic units, often with several “codebooks” stacked, and sends the indices of those units. That is what makes the output discrete enough to predict (<a href="https://arxiv.org/abs/2107.03312" rel="noopener">Zeghidour et al., 2021</a>; <a href="https://arxiv.org/abs/2210.13438" rel="noopener">Défossez et al., 2022</a>).' => 'Moderne Systeme nutzen oft Codec-Tokens, weil sie sich wie ein Vokabular verhalten. Sobald Klang eine Tokenfolge ist, kann dieselbe Transformer-Technik, die Text verarbeitet, hören, transkribieren und generieren. Ein Codec rundet die Wellenform nicht einfach; er lernt eine kleine Menge wiederverwendbarer akustischer Einheiten, oft mit mehreren gestapelten „Codebooks“, und sendet die Indizes dieser Einheiten. Das macht die Ausgabe diskret genug, um sie vorherzusagen (<a href="https://arxiv.org/abs/2107.03312" rel="noopener">Zeghidour et al., 2021</a>; <a href="https://arxiv.org/abs/2210.13438" rel="noopener">Défossez et al., 2022</a>).',
+	],
 	'attrs' => [
 		'A waveform, a spectrogram, and codec token blocks' => 'Eine Wellenform, ein Spektrogramm und Codec-Token-Blöcke',
 		'Spectrogram of the spoken word open' => 'Spektrogramm des gesprochenen Wortes open',
