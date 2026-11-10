@@ -658,6 +658,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																	<div class="ism-controls">
 																		<button type="button" id="ism-prev" data-arrow-prev class="ism-btn" aria-label="Previous step">←</button>
 																		<button type="button" id="ism-next" data-arrow-next class="ism-btn" aria-label="Next step">→</button>
+																		<button type="button" id="ism-reset-camera" class="ism-btn" aria-label="Reset view" title="Reset view">⟲</button>
 																		<div id="ism-dots" class="ism-dots" aria-hidden="true"></div>
 																		<span id="ism-counter" class="ism-counter">1 / 9</span>
 																	</div>

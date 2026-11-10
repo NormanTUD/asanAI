@@ -25,6 +25,7 @@
 		wireMetricControls();
 		wireEpochControl();
 		wireIdleLoss();
+		wireCameraReset();
 
 		return barEl;
 	}
@@ -51,6 +52,8 @@
 		#tlab-bar-idle-loss:focus-within #tlab-bar-loss-popover { display:block; }
 		#tlab-bar-full-loss-canvas { display:block; width:100%; height:180px; background:#111827; border-radius:4px; }
 		#tlab-bar-loss-caption { display:block; margin-top:4px; color:#94a3b8; font-size:0.7rem; }
+		.tlab-bar-reset-camera { background:#1f2937; color:#cbd5e1; border:1px solid #475569; border-radius:6px; padding:6px 10px; font:600 0.76rem/1.2 Inter, sans-serif; cursor:pointer; white-space:nowrap; }
+		.tlab-bar-reset-camera:hover { border-color:#94a3b8; color:#f8fafc; }
 		`;
 	}
 
@@ -169,6 +172,7 @@
 	    ${buildEpochControlHtml()}
 	    ${buildStepsHtml()}
 	    ${buildIdleLossHtml()}
+	    <button type="button" class="tlab-bar-reset-camera" title="Reset the 3D camera">⟲ Camera</button>
 	    <button id="tlab-bar-train-btn" style="${buildTrainButtonStyles()}">▶ Start Training</button>
 	</div>
     `;
@@ -223,6 +227,7 @@
 	    ${buildProgressTrackHtml()}
 	    ${buildLossLabelHtml()}
 	    ${buildEtaLabelHtml()}
+	    <button type="button" class="tlab-bar-reset-camera" title="Reset the 3D camera">⟲ Camera</button>
 	    ${buildStopButtonHtml()}
 	</div>
     `;
@@ -357,6 +362,27 @@
 		if (!wrap) return;
 		wrap.addEventListener('mouseenter', drawFullLossChart);
 		wrap.addEventListener('focusin', drawFullLossChart);
+	}
+
+	function wireCameraReset() {
+		Array.prototype.forEach.call(document.querySelectorAll('.tlab-bar-reset-camera'), function (btn) {
+			btn.addEventListener('click', function () {
+				if (window.Plotly) {
+					document.querySelectorAll('.js-plotly-plot').forEach(function (el) {
+						try {
+							if (el._fullLayout && el._fullLayout.scene) {
+								Plotly.relayout(el, { 'scene.camera': {
+									eye: { x: 1.25, y: 1.25, z: 1.25 },
+									center: { x: 0, y: 0, z: 0 },
+									up: { x: 0, y: 0, z: 1 }
+								} });
+							}
+						} catch (e) {}
+					});
+				}
+				window.dispatchEvent(new CustomEvent('tm:resetcamera'));
+			});
+		});
 	}
 
 	/** Draw a loss curve into a mini or full canvas. */

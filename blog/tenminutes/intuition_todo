@@ -1,0 +1,26 @@
+intuition.php:
+
+DONE — bei "Von einer Achse zu zwei "  entferne das aus diesem einen plot
+DONE — die formel unten muss sich live updaten wenn ich die buttons anklicke. aktuell steht da immer "5⏟Kalt+55⏟Warm2⏟Anzahl=30.0⏟Mittelwert=30⏟Lauwarm". mach es so dass das gleichheitszeichen ein approx wird wenn es nicht ganz exakt ist
+DONE — bei "Position 10000 " bei "Position × Dimension → 3D-Kurve →N Dimensionen" wenn ich die zahl größer mache wird sie breite und die elemente springen in der breitenposition, mach dass das div bereits die breite hat als wäre es maximal eingestellt
+
+DONE — "Sieh zu, wie das MLP den Raum biegt " - zeige als folie 8 dort die formel die das hebt als matrix und wie dsa ne funktion ist, nehme da mathe, zeige mal ein dense layer in hoch und rückprojektion als formeln, reicht ja wenn das kleine dense layer sind mit kleinen daten und einstellbar vielen neuronen um ein solches problem zu lösen. schaue dir an wie das ../../ macht, und mach ne miniversion davon. lade dafür tfjs wenn du das brauchst aber ich glaub so winzig sollte gehen. ich will diese zahlen editiern können und sehen wie das den raum krümmt und wie es 
+
+DONE — "Zwei Klassen, keine gerade Linie Ein innerer Kern roter Punkte sitzt in einem blauen Ring. Keine gerade Linie trennt sie: Jede Linie quer durch die Ebene muss den Ring schneiden." das muss nicht getrennt sein aber wird als 2 zeilen gerendert, das kann über die ganze breite des parents gehen.
+
+DONE — zeige die "Transformer-Schicht (Self-Attention + FFN)" in nem eigenen in ganzer breite als eigenen block vor "Ein Sprachmodell kombiniert diese und weitere Bausteine", erkläre ihn extrem kurz. mach da oben zu den vier dann aber 3 blöcken stattdessen softmax dazu, das ist auch wichtig, am ende für die wahrscheinlichkeit. recherchier und erkläre vorher warum das mit e usw und dass man damit die in etwas was sich verhält wie wahrscheinlcihkeit einordnen kann egal wie die grenzen der daten sind relativ zu ihrer größe relativ zum gesamtdatensatz. definiere dann da den layer, den du später benutzt, da steht aktuell "Transformer-Schicht (Self-Attention + FFN)" aber das sieht man nicht sofort als schicht ne schicht ist das alles vorherige zusammen. dann kannst du weiter machen mit Ein Sprachmodell kombiniert diese und weitere Bausteine.
+
+DONE — bei "Die Mischung" mach dass da "0.2 \cdot \text{token}_2$ usw. steht. die aufgabe von attention ist es, sie anhand von (vom computer selbstgewählten) aspekten, die dafür da sind, den loss gering zu machen, so zu wählen dass der loss möglichst gut war mit so vielen daten dass auswendiglernen keine option ist. daher lernen sie manche strukturen, die wir als menschen kennen und verstehen wie geschlecht oder alter oder macht oder kategorien oder oder oder, also zeug, was ihm dabei hilft auf gewisse aspekte zu achten. die idee ist dass jeder attn head aus ner anderen perspektive auf die selben daten schauen kann. er kann auf das eine achten aber andere dinge völlig ignorieren. recherchier die geschichte von borgess, von dem typen der nicht vergessen konnte, zitiere daraus (suche dsa originalzitat) dass er nicht denken konnte weil er nicht vergessen konnte, zum denken muss man offensichtliche unterschiede vergessen, genauso muss das llm als ganzes nicht alle fakten auswendiglernen, und genauso muss  es nicht in jedem head an alles gleichzeitig denken. es muss dinge aus dem ganzen wegabstrahieren, wegschneiden, bis das für ihn wichtige da übrig bleibt. erkläre das irgendwie da. zeige das. 
+
+DONE — Ergänze beim Embedding-Schritt, dass die Beziehung manchmal nicht exakt herauskommt, eine ungefähre Richtung aber schon nützlich ist.
+DONE — Verschiebe „Ein Modell ist ein Stapel von Funktionen“ direkt nach „Der Transformer: sechs Schritte, ein laufender Vektor“, mit dem Brückensatz zu den Bausteinen.
+DONE — Verschiebe die x1/x2-Formel und den Satz „Der neue Zustand ist der alte Zustand plus …“ in den Residual-Stream-Abschnitt.
+DONE — Ergänze bei „Softmax macht aus den Logits Wahrscheinlichkeiten“ kurz, warum exp und nicht einfach Logit durch Summe.
+
+DONE — Verschiebe den gesamten Stapelblock vor „Der Transformer: sechs Schritte, ein laufender Vektor“; die Transformer-Intro referenziert jetzt den Stapel.
+DONE — Der Absatz „Klassisches Programmieren beginnt mit dem Verfahren …“ steht im Stapelblock.
+
+DONE — Neue Folie 9: Rückprojektion s(x,y) auf 1D, Status „getrennt / nicht sauber getrennt“, Trennlinie im Plot und im Übergang zu Folie 9.
+DONE — Die unklare Sonde entfernt; die Rückprojektion selbst ist jetzt der Testpunkt.
+DONE — Status im Canvas statt außerhalb; die höchste Szene wird reserviert, damit die Demo nicht in der Höhe springt.
+DONE — Kamera-Reset-Button für die ism-Ansicht.

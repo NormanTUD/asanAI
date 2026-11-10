@@ -330,3 +330,11 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
 
 - DONE Tokenizer chips in Step 1 now re-render after the embedding space is
   populated, so the vocabulary IDs are numbers instead of "ID ?".
+
+## Review 2026-11-10 (sticky bar, camera reset, wide centering)
+
+- DONE Sticky bottom bar: epochs input, steps readout, loss chart, full loss
+  chart on hover; epochs removed from the training card.
+- DONE Camera reset button in the sticky bar for all Plotly 3D plots.
+- DONE Wide math/demo mode centres formula blocks and plots; the concatenation
+  formula is centred and scrolls inside its own box.

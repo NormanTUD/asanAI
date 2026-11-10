@@ -1033,6 +1033,9 @@
 		const prevBtn = copyEl("ism-prev");
 		if (nextBtn) nextBtn.addEventListener("click", next);
 		if (prevBtn) prevBtn.addEventListener("click", prev);
+		const resetCamera = copyEl("ism-reset-camera");
+		if (resetCamera) resetCamera.addEventListener("click", function () { dragA = 0; dragB = 0; requestDraw(); });
+		window.addEventListener("tm:resetcamera", function () { dragA = 0; dragB = 0; requestDraw(); });
 
 		window.addEventListener("resize", fitCopyHeight);
 		window.addEventListener("resize", requestDraw);
