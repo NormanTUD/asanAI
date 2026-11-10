@@ -29,25 +29,199 @@ https://arxiv.org/html/2505.11611v1
 </div>
 
 <div class="md">
-Until now, this course has built one part of a machine at a time: [tokenization](tokenizerlab.php) chops text into integers, [embeddings](embeddinglab.php) turn the integers into vectors, [positional encoding](positionalembeddingslab.php) marks their order, [attention](attentionlab.php) lets tokens exchange information, the **FFN** transforms each token, the **unembedding** reads the result back out as a word, and the [loss](losslab.php), [backpropagation](backproplab.php) and [optimizer](optimizerlab.php) make the stack learn. This chapter assembles those parts into one machine and runs it. Every section below is one of those parts, shown as an equation and as its behavior on the live model; the chapter that introduced a part is linked where it first appears.
+This chapter assembles the parts you have met one at a time into one machine and runs it. Here you can follow the step-by-step visualizations, or jump to the live training of a tiny transformer below. Do not expect a frontier model: the goal is not useful text, but training you can see and follow.
 
-An LLM is not a cloud: at this scale it is a stack of matrix multiplications that fits entirely in your browser. A browser is far too weak to train a good language model; this demo is for inspecting and following the computation step by step, not for building a useful model. Real models need terabytes of data and compute. The demo below trains one on the text you type, and the rest of the chapter walks through that same run. Tokenization, attention, the FFN block, the unembedding and the loss are all executed on screen, each shown where its equation is derived.
-
-Start with one of the ready-made examples; the manual hyperparameters sit one level deeper under **Advanced**. What matters for reading the equations is $d_{\text{model}}$, $h$, $N$ and the context size, and moving a slider by one step makes the change appear in the plots and formulas that follow. Each advanced slider states the reason for its constraint in its note. **Play with the sliders:** moving them is part of understanding what the architecture does.
+The model is small enough that its output is not useful, and large enough that patterns become visible, so you can scale the picture up in your head. A large LLM runs the same operations, with more data, more layers and a few extra tricks. If you want to change this model, the hyperparameters sit below the loss plot.
 </div>
 
-<div class="md" id="step-config">
-## Before the Transformer
-
-Long before the Transformer, sequence models were recurrent. An encoder read a sentence one token at a time into a single fixed-length vector, and a decoder generated the translation from that vector alone. \cite[Bahdanau et al. (2014)]{bahdanau2014} attacked that bottleneck: their decoder could look back at every encoder state and learn a soft alignment, so the relevant source words changed at each output step (\cite[Bahdanau et al., 2014]{bahdanau2014}). This was attention before it had a Transformer to live in.
-
-## Hyperparameters for this demo
-
-A **hyperparameter** is a number you choose *before* training starts; the model learns everything else, its weights, from the data. The demo exposes the model width $d_{\text{model}}$, the number of attention heads $h$, the depth $N$, the context size and the FFN width. Their constraints follow from the shapes in the equations: $d_{\text{model}}$ must split evenly across the heads, and attention cost grows quadratically with the context. The notes on the advanced sliders repeat each constraint where you can change it. What hyperparameters are in general, and how practitioners find good values instead of guessing, is the subject of the [Hyperparameters](hyperparameters.php) chapter.
-
+<div class="md">
 The steps below are the steps from the intuition chapter, now driven by the real numbers of the live model on this page. Read the heading, then look at the picture. The layer cards repeat the attention, feed-forward and residual steps for every layer, with the full formulas one level deeper.
 </div>
 
+<div class="md">
+## How to read the colors
+
+The colors are a reading aid, not a model input. They make the order of tokens visible in the equations and plots, but they are not used in any calculation; positional information enters the model through positional embeddings.
+
+<div>
+$$ \underbrace{ \color[RGB]{59,130,246}\text{“the} \ \color[RGB]{55,135,235}\text{way} \ \color[RGB]{51,140,225}\text{up} \ \color[RGB]{47,145,214}\text{and} \ \color[RGB]{43,150,203}\text{the} \ \color[RGB]{39,155,193}\text{way} \ \color[RGB]{36,160,182}\text{down} \ \color[RGB]{32,165,172}\text{are} \ \color[RGB]{28,170,161}\text{one} \ \color[RGB]{24,175,150}\text{and} \ \color[RGB]{20,180,140}\text{the} \ \color[RGB]{16,185,129}\text{same”} }_{\text{first word blue, last word green}} $$
+</div>
+
+(\cite[Heraclitus, frag. B60]{heraclitus500fragments})
+</div>
+
+<div class="tm-step-grid lg-widescroll" id="transformer-step-visuals">
+	<section class="tm-step">
+				<div class="tm-step-head">
+					<h3>1 · Tokenize</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>Text becomes tokens. The order is the sentence; the number under each token is its vocabulary index in this demo.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-tokenize" aria-label="The token stream in reading order"></canvas>
+				<p class="tm-step-more">In real LLMs the tokenizer is a separate program trained before the model; this demo uses a simple word splitter. Either way, the tokenizer decides which strings become one id, and the model itself only sees numbers.</p>
+				<div class="tm-step-formula" data-tex="T = [t_0,\, t_1,\, \dots,\, t_{n-1}]"></div>
+				<details class="tm-step-detail" id="tm-detail-tokenize"><summary>Tokenizer in detail</summary><div class="tm-step-detail-body"></div></details></div>
+			</section>
+	<section class="tm-step">
+				<div class="tm-step-head">
+					<h3>2 · Embed</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>Each token becomes a point in the learned embedding space. The line follows the sentence; the faint cloud is the rest of the vocabulary.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-embed" aria-label="The embedding space with the sentence path"></canvas>
+				<div class="tm-step-modes" data-step-modes="embed"></div>
+				<p class="tm-step-more">The embedding table is a learned matrix; each row is a token's starting vector. The positions are added in the next step.</p>
+				<div class="tm-step-formula" data-tex="h_0 = E[t] + p_i,\qquad p_i = \left(PE_{(i,0)}, PE_{(i,1)}, \dots\right)"></div>
+				<div class="tm-step-formula" data-tex="PE_{(i,2k)} = \sin\left(\frac{i}{10000^{2k/d}}\right),\quad PE_{(i,2k+1)} = \cos\left(\frac{i}{10000^{2k/d}}\right)"></div>
+				<details class="tm-step-detail" id="tm-detail-embed"><summary>Embedding in detail</summary><div class="tm-step-detail-body"></div></details></div>
+			</section>
+	<section class="tm-step">
+				<div class="tm-step-head">
+					<h3>3 · Position</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>The plot shows the semantic vector h0 = token embedding + position. Up to three dimensions are shown raw; above that a PCA reduces it to three and the label says so.</p>
+				<div class="tm-capacity-note" id="tm-capacity-note" hidden>
+					<b>This is a projection, not extra capacity.</b> Above <code>d_model = 3</code> the plot uses PCA; three drawn dimensions do not mean the model can store more.
+					<details>
+						<summary>Test runs on the default sentence (21 next-token positions)</summary>
+						<table>
+							<thead><tr><th><code>d_model</code></th><th>correct next tokens</th><th>verdict</th></tr></thead>
+							<tbody>
+								<tr><td>2</td><td>11 / 21</td><td>fails</td></tr>
+								<tr><td>3</td><td>17-21 / 21</td><td>borderline</td></tr>
+								<tr><td>6</td><td>21 / 21</td><td>reliable</td></tr>
+								<tr><td>8-16</td><td>21 / 21</td><td>reliable</td></tr>
+							</tbody>
+						</table>
+						<p>One attention head, so every width is selectable. Eight dimensions are a safe rule of thumb for memorizing this short training sentence; that is memorization, not generalization.</p>
+					</details>
+				</div>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-position" aria-label="Semantic vectors: token embedding plus position"></canvas>
+				<div class="tm-step-modes" data-step-modes="position"></div>
+				<p class="tm-step-more">Without a position signal, the same tokens in a different order would look identical. The position vector gives every slot a unique fingerprint.</p>
+				<div class="tm-step-formula" data-tex="PE_{(i,2k)} = \sin\left(\frac{i}{10000^{2k/d}}\right),\quad PE_{(i,2k+1)} = \cos\left(\frac{i}{10000^{2k/d}}\right)"></div>
+				<details class="tm-step-detail" id="tm-detail-position"><summary>Positional encoding in detail</summary><div class="tm-step-detail-body"></div></details></div>
+			</section>
+	<section class="tm-step">
+				<div class="tm-step-head">
+					<h3>4 · Attend</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>Attention lets every token read the others. Each arc is a weighted connection; a thicker line carries more information.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-attend" aria-label="Attention arcs between tokens"></canvas>
+				<div class="tm-step-modes" data-step-modes="attend"></div>
+				<p class="tm-step-more">Attention is the only step where information moves between tokens. Everything else in the block works on one token at a time.</p>
+				<div class="tm-step-formula" data-tex="\operatorname{Attention}(Q,K,V) = \operatorname{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V"></div>
+				<details class="tm-step-detail"><summary>Attention in detail</summary><div class="tm-step-detail-body"><p>Attention is the only operation in the block that moves information between tokens. Each token projects its vector into a query, a key and a value. The dot product of a query and a key is a score; softmax turns the row of scores into weights that sum to one; the output is the weighted sum of the value vectors.</p><p>A layer runs several heads in parallel, each in its own subspace. Every head has one unit of attention to spend: if it puts 80% on one word, only 20% remains for the others. The layer cards below show the real weights and the attention web for each head.</p></div></details></div>
+			</section>
+	<section class="tm-step">
+				<div class="tm-step-head">
+					<h3>5 · Feed-forward</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>The FFN transforms one token at a time. The heatmap shows the hidden activations for every token: the pattern the layer writes back.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-ffn" aria-label="Feed-forward hidden activations"></canvas>
+				<p class="tm-step-more">The FFN expands the vector, applies a nonlinearity, and contracts it. It cannot see other positions; attention has already copied their information in.</p>
+				<div class="tm-step-formula" id="tm-step-ffn-formula" data-tex="\operatorname{FFN}(x) = W_2\,\operatorname{GELU}(W_1x+b_1)+b_2"></div>
+				<details class="tm-step-detail"><summary>Feed-forward in detail</summary><div class="tm-step-detail-body"><p>The FFN works on one token at a time. It expands the vector to a wider hidden layer, applies the selected activation (GELU by default), and contracts it back. Attention decides what to look at; the FFN decides what to do with it.</p><p>Most of the model's parameters and much of its factual recall live in these matrices, but knowledge is distributed. The layer cards below show the real expansion, activation and compression for every layer.</p></div></details></div>
+			</section>
+	<section class="tm-step">
+				<div class="tm-step-head">
+					<h3>6 · Residual</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>Every layer adds an attention update and an FFN update to the running stream. The heatmap shows how much each layer writes for each token.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
+				<p class="tm-step-more">The residual stream is the running vector. Every layer reads it and writes an update; nothing is overwritten, so late layers can still use the original token.</p>
+				<div class="tm-step-formula" data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)"></div>
+				<details class="tm-step-detail" id="tm-detail-residual"><summary>The residual stream in detail</summary><div class="tm-step-detail-body"><p>Each sublayer computes an update and adds it to the running vector: <span data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)" data-tex-display="false"></span>. Nothing is overwritten, so the original token stays available and gradients have a short path back.</p><p>The per-layer residual preview above shows how much attention and the FFN write for each token; the last layer has a separate h_last step.</p><p>The block input and output keep the same d_model width; the FFN expands to d_ff inside and compresses back. That is the width where it has room to work.</p><p class="tm-dim-readout" id="tm-dim-readout"></p></div></details></div>
+			</section>
+	<section class="tm-step">
+				<div class="tm-step-head">
+					<h3>7 · Unembed</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>The final vector is compared with every row of the unembedding matrix. The bars are the model's shortlist for the next token.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-unembed" aria-label="Top next-token logits"></canvas>
+				<p class="tm-step-more">The final vector is compared with every row of the unembedding matrix. Softmax turns the scores into probabilities; a decoding rule chooses one token. Click the top token. This demo uses h_last directly; production models usually apply a final LayerNorm or RMSNorm before this step.</p>
+				<div class="tm-step-formula" data-tex="p = \operatorname{softmax}(h_L W_U^\top)"></div>
+				<div class="tm-unembed-controls">
+					<label class="tm-unembed-temp">Temperature <input type="range" id="tm-unembed-temp" min="0.1" max="2" step="0.1" value="1"><output id="tm-unembed-temp-out">1.0</output></label>
+				</div>
+				<div class="tm-unembed-topk-row">
+					<label class="tm-unembed-topk">Top-k <input type="range" id="tm-unembed-topk" min="1" max="20" step="1" value="5"><output id="tm-unembed-topk-out">5</output></label>
+					<button type="button" class="tm-unembed-sample" id="tm-unembed-sample">Sample</button>
+					<span class="tm-unembed-sample-out" id="tm-unembed-sample-out"></span>
+				</div>
+				<div class="tm-unembed-sentence-wrap">
+					<span class="tm-unembed-sentence-label">Tokenized input</span>
+					<div class="tm-unembed-sentence" id="tm-unembed-sentence"></div>
+				</div>
+				<details class="tm-step-detail"><summary>From vectors to words</summary><div class="tm-step-detail-body"><p>The final vector is multiplied by the unembedding matrix, producing one logit per vocabulary entry. Softmax turns the logits into probabilities; temperature sharpens or flattens the distribution.</p><p>The output section below lets you change the temperature and click tokens to append them. The layer cards show the logit lens for every layer.</p></div></details></div>
+			</section>
+</div>
+<div class="md">
+## Before the Transformer
+
+Long before the Transformer, sequence models were recurrent. An encoder read a sentence one token at a time into a single fixed-length vector, and a decoder generated the translation from that vector alone. \cite[Bahdanau et al. (2014)]{bahdanau2014} attacked that bottleneck: their decoder could look back at every encoder state and learn a soft alignment, so the relevant source words changed at each output step (\cite[Bahdanau et al., 2014]{bahdanau2014}). This was attention before it had a Transformer to live in.
+</div>
+
+<div class="transformer_corpus">
+    <label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
+    <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 8px;">The token <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
+    <textarea
+        id="transformer-training-data"
+        style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; color: var(--mn-text, #1e293b);"
+        oninput="debounced_run_transformer_demo('transformer-training-data')">the king rules the land and the queen rules the sea</textarea>
+</div>
+<div id="transformer-train-card">
+	<div class="transformer-train-controls">
+		<label class="transformer-train-field">
+			<span class="transformer-train-label">Epochs</span>
+			<input type="number" id="train-epochs" value="200" min="1" step="1">
+		</label>
+		<label class="transformer-train-field">
+			<span class="transformer-train-label">Learning Rate</span>
+			<input type="number" id="train-lr" value="0.01" step="0.01" min="0">
+		</label>
+		<div class="transformer-train-field">
+			<span class="transformer-train-label">Optimizer</span>
+			<div id="train-optimizer" class="transformer-opt-group" role="radiogroup" aria-label="Optimizer">
+				<label class="transformer-opt">
+					<input type="radio" name="train-optimizer-choice" value="adam" checked>
+					<span class="glossary-term" data-tooltip-id="tt-train-adam">Adam<span class="glossary-tooltip" data-tooltip-id="tt-train-adam">An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
+				</label>
+				<label class="transformer-opt">
+					<input type="radio" name="train-optimizer-choice" value="sgd">
+					<span class="glossary-term" data-tooltip-id="tt-train-sgd">SGD<span class="glossary-tooltip" data-tooltip-id="tt-train-sgd">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
+				</label>
+				<label class="transformer-opt">
+					<input type="radio" name="train-optimizer-choice" value="rmsprop">
+					<span class="glossary-term" data-tooltip-id="tt-train-rmsprop">RMSProp<span class="glossary-tooltip" data-tooltip-id="tt-train-rmsprop">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
+				</label>
+			</div>
+		</div>
+		<div class="transformer-train-actions">
+			<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
+		</div>
+	</div>
+	<div id="training-status" class="transformer-train-status"></div>
+	<div id="training-loss-plot" role="img" aria-label="Training loss over epochs"></div>
+</div>
+<script>
+(function () {
+	// Keep the loss panel mounted at a fixed height from the first paint and
+	// show a readable placeholder so training never shifts the page.
+	if (typeof drawTrainingPlaceholder === 'function') drawTrainingPlaceholder();
+})();
+</script>
+
+<div class="md">
+## Hyperparameters for this demo
+
+A **hyperparameter** is a number you choose *before* training starts; the model learns everything else, its weights, from the data. The demo exposes the model width $d_{\text{model}}$, the number of attention heads $h$, the depth $N$, the context size and the FFN width. Their constraints follow from the shapes in the equations: $d_{\text{model}}$ must split evenly across the heads, and attention cost grows quadratically with the context. The notes on the advanced sliders repeat each constraint where you can change it. What hyperparameters are in general, and how practitioners find good values instead of guessing, is the subject of the [Hyperparameters](hyperparameters.php) chapter.
+</div>
 
 <div id="transformer_config">
 	<details class="transformer-advanced-config" id="transformer-advanced-config">
@@ -176,179 +350,6 @@ The steps below are the steps from the intuition chapter, now driven by the real
 	</div>
 	</div>
 
-<div class="transformer_corpus">
-    <label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
-    <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 8px;">The token <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
-    <textarea
-        id="transformer-training-data"
-        style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; color: var(--mn-text, #1e293b);"
-        oninput="debounced_run_transformer_demo('transformer-training-data')">the king rules the land and the queen rules the sea</textarea>
-</div>
-<div id="transformer-train-card">
-	<div class="transformer-train-controls">
-		<label class="transformer-train-field">
-			<span class="transformer-train-label">Epochs</span>
-			<input type="number" id="train-epochs" value="200" min="1" step="1">
-		</label>
-		<label class="transformer-train-field">
-			<span class="transformer-train-label">Learning Rate</span>
-			<input type="number" id="train-lr" value="0.01" step="0.01" min="0">
-		</label>
-		<div class="transformer-train-field">
-			<span class="transformer-train-label">Optimizer</span>
-			<div id="train-optimizer" class="transformer-opt-group" role="radiogroup" aria-label="Optimizer">
-				<label class="transformer-opt">
-					<input type="radio" name="train-optimizer-choice" value="adam" checked>
-					<span class="glossary-term" data-tooltip-id="tt-train-adam">Adam<span class="glossary-tooltip" data-tooltip-id="tt-train-adam">An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
-				</label>
-				<label class="transformer-opt">
-					<input type="radio" name="train-optimizer-choice" value="sgd">
-					<span class="glossary-term" data-tooltip-id="tt-train-sgd">SGD<span class="glossary-tooltip" data-tooltip-id="tt-train-sgd">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
-				</label>
-				<label class="transformer-opt">
-					<input type="radio" name="train-optimizer-choice" value="rmsprop">
-					<span class="glossary-term" data-tooltip-id="tt-train-rmsprop">RMSProp<span class="glossary-tooltip" data-tooltip-id="tt-train-rmsprop">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
-				</label>
-			</div>
-		</div>
-		<div class="transformer-train-actions">
-			<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
-		</div>
-	</div>
-	<div id="training-status" class="transformer-train-status"></div>
-	<div id="training-loss-plot"></div>
-</div>
-<script>
-(function () {
-	// Keep the loss panel mounted at a fixed height from the first paint and
-	// show a readable placeholder so training never shifts the page.
-	if (typeof drawTrainingPlaceholder === 'function') drawTrainingPlaceholder();
-})();
-</script>
-
-<div class="md">
-## How to read the colors
-
-The colors are a reading aid, not a model input. They make the order of tokens visible in the equations and plots, but they are not used in any calculation; positional information enters the model through positional embeddings.
-
-<div>
-$$ \underbrace{ \color[RGB]{59,130,246}\text{“the} \ \color[RGB]{55,135,235}\text{way} \ \color[RGB]{51,140,225}\text{up} \ \color[RGB]{47,145,214}\text{and} \ \color[RGB]{43,150,203}\text{the} \ \color[RGB]{39,155,193}\text{way} \ \color[RGB]{36,160,182}\text{down} \ \color[RGB]{32,165,172}\text{are} \ \color[RGB]{28,170,161}\text{one} \ \color[RGB]{24,175,150}\text{and} \ \color[RGB]{20,180,140}\text{the} \ \color[RGB]{16,185,129}\text{same”} }_{\text{first word blue, last word green}} $$
-</div>
-
-(\cite[Heraclitus, frag. B60]{heraclitus500fragments})
-</div>
-
-<div class="tm-step-grid lg-widescroll" id="transformer-step-visuals">
-	<section class="tm-step">
-				<div class="tm-step-head">
-					<h3>1 · Tokenize</h3>
-					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
-				</div>
-				<p>Text becomes tokens. The order is the sentence; the number under each token is its vocabulary index in this demo.</p>
-				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-tokenize" aria-label="The token stream in reading order"></canvas>
-				<p class="tm-step-more">In real LLMs the tokenizer is a separate program trained before the model; this demo uses a simple word splitter. Either way, the tokenizer decides which strings become one id, and the model itself only sees numbers.</p>
-				<div class="tm-step-formula" data-tex="T = [t_0,\, t_1,\, \dots,\, t_{n-1}]"></div>
-				<details class="tm-step-detail" id="tm-detail-tokenize"><summary>Tokenizer in detail</summary><div class="tm-step-detail-body"></div></details></div>
-			</section>
-	<section class="tm-step">
-				<div class="tm-step-head">
-					<h3>2 · Embed</h3>
-					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
-				</div>
-				<p>Each token becomes a point in the learned embedding space. The line follows the sentence; the faint cloud is the rest of the vocabulary.</p>
-				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-embed" aria-label="The embedding space with the sentence path"></canvas>
-				<div class="tm-step-modes" data-step-modes="embed"></div>
-				<p class="tm-step-more">The embedding table is a learned matrix; each row is a token's starting vector. The positions are added in the next step.</p>
-				<div class="tm-step-formula" data-tex="h_0 = E[t] + p_i,\qquad p_i = \left(PE_{(i,0)}, PE_{(i,1)}, \dots\right)"></div>
-				<div class="tm-step-formula" data-tex="PE_{(i,2k)} = \sin\left(\frac{i}{10000^{2k/d}}\right),\quad PE_{(i,2k+1)} = \cos\left(\frac{i}{10000^{2k/d}}\right)"></div>
-				<details class="tm-step-detail" id="tm-detail-embed"><summary>Embedding in detail</summary><div class="tm-step-detail-body"></div></details></div>
-			</section>
-	<section class="tm-step">
-				<div class="tm-step-head">
-					<h3>3 · Position</h3>
-					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
-				</div>
-				<p>The plot shows the semantic vector h0 = token embedding + position. Up to three dimensions are shown raw; above that a PCA reduces it to three and the label says so.</p>
-				<div class="tm-capacity-note" id="tm-capacity-note" hidden>
-					<b>This is a projection, not extra capacity.</b> Above <code>d_model = 3</code> the plot uses PCA; three drawn dimensions do not mean the model can store more.
-					<details>
-						<summary>Test runs on the default sentence (21 next-token positions)</summary>
-						<table>
-							<thead><tr><th><code>d_model</code></th><th>correct next tokens</th><th>verdict</th></tr></thead>
-							<tbody>
-								<tr><td>2</td><td>11 / 21</td><td>fails</td></tr>
-								<tr><td>3</td><td>17-21 / 21</td><td>borderline</td></tr>
-								<tr><td>6</td><td>21 / 21</td><td>reliable</td></tr>
-								<tr><td>8-16</td><td>21 / 21</td><td>reliable</td></tr>
-							</tbody>
-						</table>
-						<p>One attention head, so every width is selectable. Eight dimensions are a safe rule of thumb for memorizing this short training sentence; that is memorization, not generalization.</p>
-					</details>
-				</div>
-				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-position" aria-label="Semantic vectors: token embedding plus position"></canvas>
-				<div class="tm-step-modes" data-step-modes="position"></div>
-				<p class="tm-step-more">Without a position signal, the same tokens in a different order would look identical. The position vector gives every slot a unique fingerprint.</p>
-				<div class="tm-step-formula" data-tex="PE_{(i,2k)} = \sin\left(\frac{i}{10000^{2k/d}}\right),\quad PE_{(i,2k+1)} = \cos\left(\frac{i}{10000^{2k/d}}\right)"></div>
-				<details class="tm-step-detail" id="tm-detail-position"><summary>Positional encoding in detail</summary><div class="tm-step-detail-body"></div></details></div>
-			</section>
-	<section class="tm-step">
-				<div class="tm-step-head">
-					<h3>4 · Attend</h3>
-					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
-				</div>
-				<p>Attention lets every token read the others. Each arc is a weighted connection; a thicker line carries more information.</p>
-				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-attend" aria-label="Attention arcs between tokens"></canvas>
-				<div class="tm-step-modes" data-step-modes="attend"></div>
-				<p class="tm-step-more">Attention is the only step where information moves between tokens. Everything else in the block works on one token at a time.</p>
-				<div class="tm-step-formula" data-tex="\operatorname{Attention}(Q,K,V) = \operatorname{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V"></div>
-				<details class="tm-step-detail"><summary>Attention in detail</summary><div class="tm-step-detail-body"><p>Attention is the only operation in the block that moves information between tokens. Each token projects its vector into a query, a key and a value. The dot product of a query and a key is a score; softmax turns the row of scores into weights that sum to one; the output is the weighted sum of the value vectors.</p><p>A layer runs several heads in parallel, each in its own subspace. Every head has one unit of attention to spend: if it puts 80% on one word, only 20% remains for the others. The layer cards below show the real weights and the attention web for each head.</p></div></details></div>
-			</section>
-	<section class="tm-step">
-				<div class="tm-step-head">
-					<h3>5 · Feed-forward</h3>
-					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
-				</div>
-				<p>The FFN transforms one token at a time. The heatmap shows the hidden activations for every token: the pattern the layer writes back.</p>
-				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-ffn" aria-label="Feed-forward hidden activations"></canvas>
-				<p class="tm-step-more">The FFN expands the vector, applies a nonlinearity, and contracts it. It cannot see other positions; attention has already copied their information in.</p>
-				<div class="tm-step-formula" id="tm-step-ffn-formula" data-tex="\operatorname{FFN}(x) = W_2\,\operatorname{GELU}(W_1x+b_1)+b_2"></div>
-				<details class="tm-step-detail"><summary>Feed-forward in detail</summary><div class="tm-step-detail-body"><p>The FFN works on one token at a time. It expands the vector to a wider hidden layer, applies the selected activation (GELU by default), and contracts it back. Attention decides what to look at; the FFN decides what to do with it.</p><p>Most of the model's parameters and much of its factual recall live in these matrices, but knowledge is distributed. The layer cards below show the real expansion, activation and compression for every layer.</p></div></details></div>
-			</section>
-	<section class="tm-step">
-				<div class="tm-step-head">
-					<h3>6 · Residual</h3>
-					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
-				</div>
-				<p>Every layer adds an attention update and an FFN update to the running stream. The heatmap shows how much each layer writes for each token.</p>
-				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
-				<p class="tm-step-more">The residual stream is the running vector. Every layer reads it and writes an update; nothing is overwritten, so late layers can still use the original token.</p>
-				<div class="tm-step-formula" data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)"></div>
-				<details class="tm-step-detail" id="tm-detail-residual"><summary>The residual stream in detail</summary><div class="tm-step-detail-body"><p>Each sublayer computes an update and adds it to the running vector: <span data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)" data-tex-display="false"></span>. Nothing is overwritten, so the original token stays available and gradients have a short path back.</p><p>The per-layer residual preview above shows how much attention and the FFN write for each token; the last layer has a separate h_last step.</p><p>The block input and output keep the same d_model width; the FFN expands to d_ff inside and compresses back. That is the width where it has room to work.</p><p class="tm-dim-readout" id="tm-dim-readout"></p></div></details></div>
-			</section>
-	<section class="tm-step">
-				<div class="tm-step-head">
-					<h3>7 · Unembed</h3>
-					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
-				</div>
-				<p>The final vector is compared with every row of the unembedding matrix. The bars are the model's shortlist for the next token.</p>
-				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-unembed" aria-label="Top next-token logits"></canvas>
-				<p class="tm-step-more">The final vector is compared with every row of the unembedding matrix. Softmax turns the scores into probabilities; a decoding rule chooses one token. Click the top token. This demo uses h_last directly; production models usually apply a final LayerNorm or RMSNorm before this step.</p>
-				<div class="tm-step-formula" data-tex="p = \operatorname{softmax}(h_L W_U^\top)"></div>
-				<div class="tm-unembed-controls">
-					<label class="tm-unembed-temp">Temperature <input type="range" id="tm-unembed-temp" min="0.1" max="2" step="0.1" value="1"><output id="tm-unembed-temp-out">1.0</output></label>
-				</div>
-				<div class="tm-unembed-topk-row">
-					<label class="tm-unembed-topk">Top-k <input type="range" id="tm-unembed-topk" min="1" max="20" step="1" value="5"><output id="tm-unembed-topk-out">5</output></label>
-					<button type="button" class="tm-unembed-sample" id="tm-unembed-sample">Sample</button>
-					<span class="tm-unembed-sample-out" id="tm-unembed-sample-out"></span>
-				</div>
-				<div class="tm-unembed-sentence-wrap">
-					<span class="tm-unembed-sentence-label">Tokenized input</span>
-					<div class="tm-unembed-sentence" id="tm-unembed-sentence"></div>
-				</div>
-				<details class="tm-step-detail"><summary>From vectors to words</summary><div class="tm-step-detail-body"><p>The final vector is multiplied by the unembedding matrix, producing one logit per vocabulary entry. Softmax turns the logits into probabilities; temperature sharpens or flattens the distribution.</p><p>The output section below lets you change the temperature and click tokens to append them. The layer cards show the logit lens for every layer.</p></div></details></div>
-			</section>
-</div>
 <script>
 (function () {
 	"use strict";

@@ -36,285 +36,26 @@
 				<article class="lesson-main">
 					<div class="prose chapter-note">
 						<p>
-							This chapter is mathematically heavy today: matrices, dot products,
-							softmax, residual vectors, logits, cross-entropy and Adam. The demos are
-							there so you can see the equations and the numbers move together. Read the
-							prose for the route, and use the live panels when you want the detail.
+							Here you can follow the step-by-step visualizations, or jump to the live
+							training of a tiny transformer below. Do not expect a frontier model: the
+							goal is not useful text, but training you can see and follow.
 						</p>
 						<p>
-							This is the hardest chapter in the calendar. The following days become
-							lighter again.
-						</p>
-						<p>
-							This model is browser-sized on purpose. A browser is far too weak to train a
-							good language model; the point is to inspect and follow every calculation,
-							step by step. A model worth using needs terabytes of data and compute.
-							<strong>Play with the sliders:</strong> moving the width, the heads, the depth
-							and the context is part of understanding what the architecture does.
+							The model is small enough that its output is not useful, and large enough
+							that patterns become visible, so you can scale the picture up in your head.
+							A large LLM runs the same operations, with more data, more layers and a few
+							extra tricks. If you want to change this model, the hyperparameters sit
+							below the loss plot.
 						</p>
 					</div>
 
-					<section class="section-block" id="realmodel">
-						<div class="section-kicker"><span class="sk-num">01</span> The real model</div>
-						<h2 class="section-title">Train a tiny transformer.</h2>
-<div id="transformer_config">
-<div style="margin-bottom: 15px;">
-<label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
-<span id="dim-val" style="font-weight: bold; color: #3b82f6;">3</span>
-<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-<b>Dependency:</b> Must be a multiple of Heads.<br/>
-<b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = d_{\text{model}}/h$) of the vector to perform dot products.<br/>
-<b>3D view:</b> up to 3 dimensions are shown raw; above that the plot uses PCA.
-        </p>
-<input id="transformer-dimension-model" max="16" min="2" oninput="syncTransformerSettings('dim')" step="1" style="width: 100%;" type="range" value="3"/>
-</div>
-<div style="margin-bottom: 15px;">
-<label style="font-weight: bold;">Attention Heads ($h$): </label>
-<span id="heads-val" style="font-weight: bold; color: #3b82f6;">3</span>
-<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-<b>Dependency:</b> $d_{\text{model}}$ must be a multiple of $h$.<br/>
-<b>Reason:</b> Multi-head attention splits the main vector into $h$ parallel “viewpoints.” If $d_{\text{model}}$ is 4 and $h$ is 2, each head looks at 2 dimensions.
-        </p>
-<input id="transformer-heads" max="8" min="1" oninput="syncTransformerSettings('heads')" style="width: 100%;" type="range" value="3"/>
-</div>
-<div style="margin-bottom: 15px;">
-<label style="font-weight: bold;">Network Depth ($N$ layers): </label>
-<span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
-<p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
-<input id="transformer-depth" max="12" min="1" oninput="document.getElementById('depth-val').innerText = this.value; debounced_run_transformer_demo();" style="width: 100%;" type="range" value="2"/>
-</div>
-<div style="margin-bottom: 15px;">
-<label style="font-weight: bold;">Context Size: </label>
-<span id="context-val" style="font-weight: bold; color: #3b82f6;">32</span>
-<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-<b>Effect:</b> Sets the maximum number of tokens the model can “see” at once during training and inference.<br/>
-<b>Reason:</b> A larger context window lets the model capture longer-range dependencies, but the attention score matrix has size $\text{Context}^2$, so a full forward pass costs quadratically in context length. A KV-Cache avoids recomputing past keys and values during generation — it lowers per-step work and trades it for linear memory — but it does not make attention sub-quadratic.
-	    </p>
-<input id="transformer-context-size" max="256" min="2" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();" step="1" style="width: 100%;" type="range" value="32"/>
-</div>
-<div style="margin-bottom: 15px;">
-<label style="font-weight: bold;"><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "FFN-Hidden-Größe (" : "FFN hidden size ("; ?><span class="tm-inline-math" data-tex="d_{\text{ff}}" data-tex-display="false"></span>): </label>
-<span id="ffn-val" style="font-weight: bold; color: #3b82f6;">12</span>
-<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.</p>
-<input id="transformer-ffn-size" max="64" min="1" oninput="syncTransformerSettings('ffn')" step="1" style="width: 100%;" type="range" value="12"/>
-</div>
-<div style="margin-bottom: 15px;">
-<label style="font-weight: bold; display: flex; align-items: center; gap: 8px;"><input id="transformer-kv-cache" type="checkbox"/> KV cache</label>
-<p style="font-size: 0.75rem; color: #64748b; margin: 4px 0;">Reuse the keys and values of earlier tokens when you append a token. Only the new token's query is computed; the next-token distribution is identical. <span id="tm-kv-cache-status">Off</span></p>
-</div>
-<div style="display: none">
-<label style="font-weight: bold;">Tokenizer: </label>
-<select id="transformer-tokenizer-type" onchange="debounced_run_transformer_demo()" style="padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1;">
-<option selected="" value="regex">Words (Non-Alphanumeric Split)</option>
-<option value="bpe">Byte-Pair Encoding (BPE)</option>
-</select>
-</div>
-<div id="param-breakdown-toggle" style="display: none; margin-top: 8px;">
-<button id="param-breakdown-btn" onclick="toggleParamBreakdown()" style="background: none; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 16px;
-		       cursor: pointer; font-size: 0.85rem; color: #3b82f6; font-weight: 600;
-		       display: flex; align-items: center; gap: 6px; transition: all 0.15s;">
-<span id="param-breakdown-arrow" style="transition: transform 0.2s;">▶</span>
-		Show Parameter Breakdown
-	    </button>
-</div>
-<div id="param-breakdown-chart" style="display: none; margin-top: 10px; padding: 15px;
-	     background: var(--mn-bg-subtle, #f8fafc); border: 1px solid #e2e8f0; border-radius: 10px;">
-<div id="param-breakdown-plotly" style="width: 100%; height: 350px;"></div>
-<div id="param-breakdown-table" style="margin-top: 10px; font-size: 0.82rem; overflow-x: auto;"></div>
-</div>
-</div>
-<div class="transformer_corpus">
-<label style="font-weight: bold; display: block; margin-bottom: 8px;"><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "Trainingsdaten (Korpus):" : "Training Data (Corpus):"; ?></label>
-    <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 8px;">The token <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
-<textarea id="transformer-training-data" oninput="debounced_run_transformer_demo('transformer-training-data')" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);"><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "der könig herrscht über das land und die königin herrscht über das meer" : "the king rules the land and the queen rules the sea"; ?></textarea>
-</div>
-<div id="transformer-train-card">
-<div class="transformer-train-controls">
-<div class="transformer-train-actions">
-<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
-</div>
-<label class="transformer-train-field">
-<span class="transformer-train-label">Epochs</span>
-<input id="train-epochs" min="1" step="1" type="number" value="200"/>
-</label>
-<label class="transformer-train-field">
-<span class="transformer-train-label">Learning Rate</span>
-<input id="train-lr" min="0" step="0.01" type="number" value="0.01"/>
-</label>
-<div class="transformer-train-field">
-<span class="transformer-train-label">Optimizer</span>
-<div aria-label="Optimizer" class="transformer-opt-group" id="train-optimizer" role="radiogroup">
-<label class="transformer-opt">
-<input checked="" name="train-optimizer-choice" type="radio" value="adam"/>
-<span class="glossary-term" data-tooltip-id="tt-train-adam">Adam<span class="glossary-tooltip" data-tooltip-id="tt-train-adam">An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
-</label>
-<label class="transformer-opt">
-<input name="train-optimizer-choice" type="radio" value="sgd"/>
-<span class="glossary-term" data-tooltip-id="tt-train-sgd">SGD<span class="glossary-tooltip" data-tooltip-id="tt-train-sgd">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
-</label>
-<label class="transformer-opt">
-<input name="train-optimizer-choice" type="radio" value="rmsprop"/>
-<span class="glossary-term" data-tooltip-id="tt-train-rmsprop">RMSProp<span class="glossary-tooltip" data-tooltip-id="tt-train-rmsprop">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
-</label>
-</div>
-</div>
-
-</div>
-<div class="transformer-train-status" id="training-status"></div>
-<div id="training-loss-plot"></div>
-</div>
-<style>
-/* TEN MINUTES — design bridge for the copied live transformer engine.
-   The engine keeps its --mn-* tokens; demos.css maps them to the tm-* set.
-   Here we align the remaining type, corners and surfaces with the other
-   ten-minute lessons (Barlow display, Open Sans UI, flat ten-minute cards). */
-#transformer_site {
-	max-width: 100%;
-	font-family: var(--tm-ui);
-}
-#transformer_site h2,
-#transformer_site h3,
-#transformer_site h4,
-.tm-layer-head,
-.tm-step-head h3,
-.tm-ffn-stage-title,
-.tm-tda-step > summary {
-	font-family: var(--tm-display);
-}
-#training-loss-plot {
-	border-radius: 0;
-	border-color: var(--tm-line);
-	background: var(--tm-card);
-}
-#transformer_config > div {
-	border-color: var(--tm-line);
-	background: var(--tm-card);
-}
-#transformer_config input[type="range"] {
-	accent-color: var(--tm-green);
-}
-/* Flat ten-minute surfaces for the engine's generated cards. */
-.tm-step,
-.tm-layer-card,
-.tm-layer-subbox,
-.tm-optional,
-.tm-formula-step,
-.tm-step-detail,
-.tm-tda-step,
-.tm-ffn-stage,
-.tm-feature-metric-explain,
-.trajectory-metric-explain,
-.tm-metric-detail,
-.tm-metric-formula,
-.tm-step-why {
-	border-radius: 0;
-}
-.tm-layer-card {
-	border-color: var(--tm-line);
-	background: var(--tm-card);
-}
-.tm-layer-head { color: var(--tm-ink); }
-.tm-layer-sub { color: var(--tm-ink-soft); }
-.tm-layer-subbox,
-.tm-formula-step,
-.tm-step-detail { border-color: var(--tm-line); }
-.tm-ffn-stage:hover,
-.tm-ffn-stage:focus-visible,
-.tm-ffn-stage.is-revealed {
-	outline-color: var(--tm-green);
-}
-.tm-ffn-viewswitch button,
-.tm-tda-chip,
-.tm-feedback-chip {
-	font-family: var(--tm-ui);
-	border-radius: 0;
-	border-color: var(--tm-line-strong);
-	background: var(--tm-card);
-	color: var(--tm-ink-soft);
-}
-.tm-ffn-viewswitch button.is-active {
-	background: var(--tm-green);
-	border-color: var(--tm-green);
-	color: #ffffff;
-}
-.tm-tda-chip--after { border-color: var(--tm-green); }
-.tm-tda-chip--muted { opacity: 0.72; border-style: dashed; }
-.tm-tda-explain,
-.tm-tda-note,
-.tm-tda-intro,
-.tm-tda-status,
-.tm-ffn-stage-desc,
-.tm-step-more,
-.tm-step-detail-body,
-.tm-level-text {
-	font-family: var(--tm-ui);
-	color: var(--tm-ink-soft);
-}
-.tm-tda-step > summary { color: var(--tm-ink); }
-.tm-tda-canvas,
-.tm-ffn-stage-canvas,
-.tm-step-canvas { background: transparent; }
-.tm-step-formula,
-.tm-ffn-stage-formula { color: var(--tm-ink-soft); }
-.plot-loading {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 10px;
-	height: 100%;
-	color: var(--tm-muted);
-	font: 600 0.78rem/1.4 var(--tm-ui);
-}
-.plot-loading .spinner {
-	width: 18px;
-	height: 18px;
-	border: 2px solid var(--tm-line-strong);
-	border-top-color: var(--tm-green);
-	border-radius: 50%;
-	animation: tm-plot-spin 0.8s linear infinite;
-}
-@keyframes tm-plot-spin { to { transform: rotate(360deg); } }
-.plot-state {
-	padding: 12px 14px;
-	border: 1px dashed var(--tm-line-strong);
-	background: var(--tm-card);
-	color: var(--tm-ink-soft);
-	font: 400 0.8rem/1.45 var(--tm-ui);
-}
-.plot-state-title { font-family: var(--tm-display); font-weight: 700; color: var(--tm-ink); }
-.plot-state-retry {
-	margin-top: 8px;
-	padding: 4px 10px;
-	border: 1px solid var(--tm-green);
-	background: var(--tm-green);
-	color: #fff;
-	font: 600 0.75rem/1.3 var(--tm-ui);
-	cursor: pointer;
-}
-</style>
-
-						<div class="prose">
-							<p>
-								The demo above is a word-level decoder: token and position
-								embeddings, one or more multi-head attention blocks, a feed-forward
-								network, a residual stream, layer normalisation, an unembedding, and a
-								cross-entropy loss. TensorFlow.js computes the gradients, so the Train
-								button really updates the weights. The model is tiny, but the operations
-								and the formulas are the same as in a large transformer.
-							</p>
-							<p>
-								Change the architecture, the corpus, or the optimizer above, then train.
-								The loss, the attention heads, and the per-layer panels update live.
-							</p>
-						</div>
-					</section>
 					<section class="section-block" id="six-steps">
-						<div class="section-kicker"><span class="sk-num">02</span> The steps</div>
+						<div class="section-kicker"><span class="sk-num">01</span> The steps</div>
 						<h2 class="section-title">The whole route, visible at once.</h2>
 						<div class="prose">
 							<p>
 								These are the steps from the intuition chapter, now driven by the real
-								numbers of the tiny model above. Read the heading, then look at the picture.
+								numbers of the tiny model below. Read the heading, then look at the picture.
 								The layer cards below repeat the attention, feed-forward and residual steps
 								for every layer, with the full formulas one level deeper.
 							</p>
@@ -471,6 +212,260 @@
 						<div id="inputlab" hidden></div>
 					</section>
 
+					<section class="section-block" id="realmodel">
+						<div class="section-kicker"><span class="sk-num">02</span> The real model</div>
+						<h2 class="section-title">Train a tiny transformer.</h2>
+<div class="transformer_corpus">
+<label style="font-weight: bold; display: block; margin-bottom: 8px;"><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "Trainingsdaten (Korpus):" : "Training Data (Corpus):"; ?></label>
+    <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 8px;">The token <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
+<textarea id="transformer-training-data" oninput="debounced_run_transformer_demo('transformer-training-data')" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);"><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "der könig herrscht über das land und die königin herrscht über das meer" : "the king rules the land and the queen rules the sea"; ?></textarea>
+</div>
+<div id="transformer-train-card">
+<div class="transformer-train-controls">
+<div class="transformer-train-actions">
+<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
+</div>
+<label class="transformer-train-field">
+<span class="transformer-train-label">Epochs</span>
+<input id="train-epochs" min="1" step="1" type="number" value="200"/>
+</label>
+<label class="transformer-train-field">
+<span class="transformer-train-label">Learning Rate</span>
+<input id="train-lr" min="0" step="0.01" type="number" value="0.01"/>
+</label>
+<div class="transformer-train-field">
+<span class="transformer-train-label">Optimizer</span>
+<div aria-label="Optimizer" class="transformer-opt-group" id="train-optimizer" role="radiogroup">
+<label class="transformer-opt">
+<input checked="" name="train-optimizer-choice" type="radio" value="adam"/>
+<span class="glossary-term" data-tooltip-id="tt-train-adam">Adam<span class="glossary-tooltip" data-tooltip-id="tt-train-adam">An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
+</label>
+<label class="transformer-opt">
+<input name="train-optimizer-choice" type="radio" value="sgd"/>
+<span class="glossary-term" data-tooltip-id="tt-train-sgd">SGD<span class="glossary-tooltip" data-tooltip-id="tt-train-sgd">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
+</label>
+<label class="transformer-opt">
+<input name="train-optimizer-choice" type="radio" value="rmsprop"/>
+<span class="glossary-term" data-tooltip-id="tt-train-rmsprop">RMSProp<span class="glossary-tooltip" data-tooltip-id="tt-train-rmsprop">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
+</label>
+</div>
+</div>
+
+</div>
+<div class="transformer-train-status" id="training-status"></div>
+<div id="training-loss-plot" role="img" aria-label="Training loss over epochs"></div>
+</div>
+<div id="transformer_config">
+<div style="margin-bottom: 15px;">
+<label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
+<span id="dim-val" style="font-weight: bold; color: #3b82f6;">3</span>
+<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+<b>Dependency:</b> Must be a multiple of Heads.<br/>
+<b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = d_{\text{model}}/h$) of the vector to perform dot products.<br/>
+<b>3D view:</b> up to 3 dimensions are shown raw; above that the plot uses PCA.
+        </p>
+<input id="transformer-dimension-model" max="16" min="2" oninput="syncTransformerSettings('dim')" step="1" style="width: 100%;" type="range" value="3"/>
+</div>
+<div style="margin-bottom: 15px;">
+<label style="font-weight: bold;">Attention Heads ($h$): </label>
+<span id="heads-val" style="font-weight: bold; color: #3b82f6;">3</span>
+<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+<b>Dependency:</b> $d_{\text{model}}$ must be a multiple of $h$.<br/>
+<b>Reason:</b> Multi-head attention splits the main vector into $h$ parallel “viewpoints.” If $d_{\text{model}}$ is 4 and $h$ is 2, each head looks at 2 dimensions.
+        </p>
+<input id="transformer-heads" max="8" min="1" oninput="syncTransformerSettings('heads')" style="width: 100%;" type="range" value="3"/>
+</div>
+<div style="margin-bottom: 15px;">
+<label style="font-weight: bold;">Network Depth ($N$ layers): </label>
+<span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
+<p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
+<input id="transformer-depth" max="12" min="1" oninput="document.getElementById('depth-val').innerText = this.value; debounced_run_transformer_demo();" style="width: 100%;" type="range" value="2"/>
+</div>
+<div style="margin-bottom: 15px;">
+<label style="font-weight: bold;">Context Size: </label>
+<span id="context-val" style="font-weight: bold; color: #3b82f6;">32</span>
+<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+<b>Effect:</b> Sets the maximum number of tokens the model can “see” at once during training and inference.<br/>
+<b>Reason:</b> A larger context window lets the model capture longer-range dependencies, but the attention score matrix has size $\text{Context}^2$, so a full forward pass costs quadratically in context length. A KV-Cache avoids recomputing past keys and values during generation — it lowers per-step work and trades it for linear memory — but it does not make attention sub-quadratic.
+	    </p>
+<input id="transformer-context-size" max="256" min="2" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();" step="1" style="width: 100%;" type="range" value="32"/>
+</div>
+<div style="margin-bottom: 15px;">
+<label style="font-weight: bold;"><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "FFN-Hidden-Größe (" : "FFN hidden size ("; ?><span class="tm-inline-math" data-tex="d_{\text{ff}}" data-tex-display="false"></span>): </label>
+<span id="ffn-val" style="font-weight: bold; color: #3b82f6;">12</span>
+<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.</p>
+<input id="transformer-ffn-size" max="64" min="1" oninput="syncTransformerSettings('ffn')" step="1" style="width: 100%;" type="range" value="12"/>
+</div>
+<div style="margin-bottom: 15px;">
+<label style="font-weight: bold; display: flex; align-items: center; gap: 8px;"><input id="transformer-kv-cache" type="checkbox"/> KV cache</label>
+<p style="font-size: 0.75rem; color: #64748b; margin: 4px 0;">Reuse the keys and values of earlier tokens when you append a token. Only the new token's query is computed; the next-token distribution is identical. <span id="tm-kv-cache-status">Off</span></p>
+</div>
+<div style="display: none">
+<label style="font-weight: bold;">Tokenizer: </label>
+<select id="transformer-tokenizer-type" onchange="debounced_run_transformer_demo()" style="padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1;">
+<option selected="" value="regex">Words (Non-Alphanumeric Split)</option>
+<option value="bpe">Byte-Pair Encoding (BPE)</option>
+</select>
+</div>
+<div id="param-breakdown-toggle" style="display: none; margin-top: 8px;">
+<button id="param-breakdown-btn" onclick="toggleParamBreakdown()" style="background: none; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 16px;
+		       cursor: pointer; font-size: 0.85rem; color: #3b82f6; font-weight: 600;
+		       display: flex; align-items: center; gap: 6px; transition: all 0.15s;">
+<span id="param-breakdown-arrow" style="transition: transform 0.2s;">▶</span>
+		Show Parameter Breakdown
+	    </button>
+</div>
+<div id="param-breakdown-chart" style="display: none; margin-top: 10px; padding: 15px;
+	     background: var(--mn-bg-subtle, #f8fafc); border: 1px solid #e2e8f0; border-radius: 10px;">
+<div id="param-breakdown-plotly" style="width: 100%; height: 350px;"></div>
+<div id="param-breakdown-table" style="margin-top: 10px; font-size: 0.82rem; overflow-x: auto;"></div>
+</div>
+</div>
+<style>
+/* TEN MINUTES — design bridge for the copied live transformer engine.
+   The engine keeps its --mn-* tokens; demos.css maps them to the tm-* set.
+   Here we align the remaining type, corners and surfaces with the other
+   ten-minute lessons (Barlow display, Open Sans UI, flat ten-minute cards). */
+#transformer_site {
+	max-width: 100%;
+	font-family: var(--tm-ui);
+}
+#transformer_site h2,
+#transformer_site h3,
+#transformer_site h4,
+.tm-layer-head,
+.tm-step-head h3,
+.tm-ffn-stage-title,
+.tm-tda-step > summary {
+	font-family: var(--tm-display);
+}
+#training-loss-plot {
+	border-radius: 0;
+	border-color: var(--tm-line);
+	background: var(--tm-card);
+}
+#transformer_config > div {
+	border-color: var(--tm-line);
+	background: var(--tm-card);
+}
+#transformer_config input[type="range"] {
+	accent-color: var(--tm-green);
+}
+/* Flat ten-minute surfaces for the engine's generated cards. */
+.tm-step,
+.tm-layer-card,
+.tm-layer-subbox,
+.tm-optional,
+.tm-formula-step,
+.tm-step-detail,
+.tm-tda-step,
+.tm-ffn-stage,
+.tm-feature-metric-explain,
+.trajectory-metric-explain,
+.tm-metric-detail,
+.tm-metric-formula,
+.tm-step-why {
+	border-radius: 0;
+}
+.tm-layer-card {
+	border-color: var(--tm-line);
+	background: var(--tm-card);
+}
+.tm-layer-head { color: var(--tm-ink); }
+.tm-layer-sub { color: var(--tm-ink-soft); }
+.tm-layer-subbox,
+.tm-formula-step,
+.tm-step-detail { border-color: var(--tm-line); }
+.tm-ffn-stage:hover,
+.tm-ffn-stage:focus-visible,
+.tm-ffn-stage.is-revealed {
+	outline-color: var(--tm-green);
+}
+.tm-ffn-viewswitch button,
+.tm-tda-chip,
+.tm-feedback-chip {
+	font-family: var(--tm-ui);
+	border-radius: 0;
+	border-color: var(--tm-line-strong);
+	background: var(--tm-card);
+	color: var(--tm-ink-soft);
+}
+.tm-ffn-viewswitch button.is-active {
+	background: var(--tm-green);
+	border-color: var(--tm-green);
+	color: #ffffff;
+}
+.tm-tda-chip--after { border-color: var(--tm-green); }
+.tm-tda-chip--muted { opacity: 0.72; border-style: dashed; }
+.tm-tda-explain,
+.tm-tda-note,
+.tm-tda-intro,
+.tm-tda-status,
+.tm-ffn-stage-desc,
+.tm-step-more,
+.tm-step-detail-body,
+.tm-level-text {
+	font-family: var(--tm-ui);
+	color: var(--tm-ink-soft);
+}
+.tm-tda-step > summary { color: var(--tm-ink); }
+.tm-tda-canvas,
+.tm-ffn-stage-canvas,
+.tm-step-canvas { background: transparent; }
+.tm-step-formula,
+.tm-ffn-stage-formula { color: var(--tm-ink-soft); }
+.plot-loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	height: 100%;
+	color: var(--tm-muted);
+	font: 600 0.78rem/1.4 var(--tm-ui);
+}
+.plot-loading .spinner {
+	width: 18px;
+	height: 18px;
+	border: 2px solid var(--tm-line-strong);
+	border-top-color: var(--tm-green);
+	border-radius: 50%;
+	animation: tm-plot-spin 0.8s linear infinite;
+}
+@keyframes tm-plot-spin { to { transform: rotate(360deg); } }
+.plot-state {
+	padding: 12px 14px;
+	border: 1px dashed var(--tm-line-strong);
+	background: var(--tm-card);
+	color: var(--tm-ink-soft);
+	font: 400 0.8rem/1.45 var(--tm-ui);
+}
+.plot-state-title { font-family: var(--tm-display); font-weight: 700; color: var(--tm-ink); }
+.plot-state-retry {
+	margin-top: 8px;
+	padding: 4px 10px;
+	border: 1px solid var(--tm-green);
+	background: var(--tm-green);
+	color: #fff;
+	font: 600 0.75rem/1.3 var(--tm-ui);
+	cursor: pointer;
+}
+</style>
+
+						<div class="prose">
+							<p>
+								The demo above is a word-level decoder: token and position
+								embeddings, one or more multi-head attention blocks, a feed-forward
+								network, a residual stream, layer normalisation, an unembedding, and a
+								cross-entropy loss. TensorFlow.js computes the gradients, so the Train
+								button really updates the weights. The model is tiny, but the operations
+								and the formulas are the same as in a large transformer.
+							</p>
+							<p>
+								Change the architecture, the corpus, or the optimizer above, then train.
+								The loss, the attention heads, and the per-layer panels update live.
+							</p>
+						</div>
+					</section>
 					<section class="section-block" id="before">
 						<div class="section-kicker"><span class="sk-num">03</span> Before 2017</div>
 						<h2 class="section-title">The problem was the queue.</h2>
