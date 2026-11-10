@@ -2669,6 +2669,11 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	// 4. Core forward pass + visualization. Keep the heavy layer cards and
 	// plots out of the first paint; build them when the step section is near.
 	window.__tmFullVizPending = { tokensWithPositional, knownTokens, trainingTokens, h0, weights, d_model, n_heads, n_layers };
+	if (!window.__tmStepDepsReady) {
+		window.__tmFullVizAfterDeps = true;
+		window.dispatchEvent(new CustomEvent("tm:transformer-data"));
+		return;
+	}
 	if (window.__tmFullVizLoaded) {
 		if (_fullVizNear()) _runFullTransformerVisualization(window.__tmFullVizPending);
 		else _markFullVizDirty();
@@ -2855,6 +2860,7 @@ function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, w
 	forceRerenderVisibleMigrationPlots();
 	forceRerenderVisibleTrajectoryPlot(d_model);
 	forceRerenderVisibleThemeRiver(d_model); // ← NEU
+	if (window.isTraining && typeof refreshOpenLayerSubboxes === 'function') refreshOpenLayerSubboxes();
 }
 
 function forceRerenderVisibleMigrationPlots() {
@@ -3380,6 +3386,7 @@ function computePerpendicularVectors(nx, ny, nz) {
 }
 
 function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, steps) {
+	if (!window.tmPlotly) return;
 	const c = window.tmPlotly.colors();
 	const traces = [];
 	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
@@ -3451,6 +3458,7 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 }
 
 function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
+	if (!window.tmPlotly) return;
 	const c = window.tmPlotly.colors();
 	const dims = Array.from({ length: dimensions }, (_, i) => ({ label: dimensions > 8 && i % 2 ? '' : `D${i}`, values: [] }));
 	const colors = [];
@@ -6464,6 +6472,7 @@ function _shift_metricTip(token, pos, rawBase, rawCombined) {
 }
 
 function _shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, base, combined, d_model) {
+	if (!window.tmPlotly) return;
 	const traces = [];
 	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere() && d_model === 2) {
 		Array.prototype.push.apply(traces, window.tmPlotly.circleTraces());
@@ -6497,6 +6506,7 @@ function _shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, 
 }
 
 function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, base, combined, modeLabel) {
+	if (!window.tmPlotly) return;
 	const traces = [];
 	if (window.tmMetric && window.tmMetric.showSphere && window.tmMetric.showSphere()) {
 		Array.prototype.push.apply(traces, window.tmPlotly.sphereTraces());
