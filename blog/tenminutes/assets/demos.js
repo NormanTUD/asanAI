@@ -3130,13 +3130,23 @@
 	function initNegation(root) {
 		var canvas = $("[data-negation-canvas]", root);
 		if (!canvas) return;
-		var pts = [
-			{ x: 0.72, y: 0.34, label: DEMO_DE ? "glücklich" : "happy", role: "happy" },
-			{ x: 0.46, y: 0.20, label: DEMO_DE ? "nicht glücklich" : "not happy", role: "not" },
-			{ x: -0.54, y: -0.42, label: DEMO_DE ? "traurig" : "sad", role: "sad" },
-			{ x: -0.18, y: -0.16, label: DEMO_DE ? "unglücklich" : "unhappy", role: "unhappy" },
-			{ x: 0.60, y: 0.56, label: DEMO_DE ? "freudig" : "joyful", role: "joyful" }
-		];
+		var variants = {
+			happy: [
+				{ x: 0.72, y: 0.34, en: "happy", de: "glücklich", role: "happy" },
+				{ x: 0.46, y: 0.20, en: "not happy", de: "nicht glücklich", role: "not" },
+				{ x: -0.54, y: -0.42, en: "sad", de: "traurig", role: "sad" },
+				{ x: -0.18, y: -0.16, en: "unhappy", de: "unglücklich", role: "unhappy" },
+				{ x: 0.60, y: 0.56, en: "joyful", de: "freudig", role: "joyful" }
+			],
+			sad: [
+				{ x: -0.62, y: -0.34, en: "sad", de: "traurig", role: "sad" },
+				{ x: -0.36, y: -0.12, en: "not sad", de: "nicht traurig", role: "not" },
+				{ x: 0.66, y: 0.44, en: "happy", de: "glücklich", role: "happy" }
+			]
+		};
+		var pts = (variants[root.getAttribute("data-neg-variant")] || variants.happy).map(function (p) {
+			return { x: p.x, y: p.y, role: p.role, label: DEMO_DE ? p.de : p.en };
+		});
 		function draw(ctx, W, H) {
 			var c = colors();
 			var ox = W / 2, oy = H / 2 + 6;
@@ -3208,20 +3218,22 @@
 				ctx.textAlign = left ? "left" : "right";
 				ctx.fillText(p.label, lx, y - 6);
 			});
-			var happy = pts[0], notHappy = pts[1], sad = pts[2];
-			function seg(a, b, color) {
-				ctx.save();
-				ctx.setLineDash([4, 4]);
-				ctx.strokeStyle = color;
-				ctx.lineWidth = 1.4;
-				ctx.beginPath();
-				ctx.moveTo(ox + a.x * scale, oy - a.y * scale);
-				ctx.lineTo(ox + b.x * scale, oy - b.y * scale);
-				ctx.stroke();
-				ctx.restore();
+			var not = null;
+			pts.forEach(function (p) { if (p.role === "not") not = p; });
+			if (not) {
+				pts.forEach(function (p) {
+					if (p.role !== "happy" && p.role !== "sad") return;
+					ctx.save();
+					ctx.setLineDash([4, 4]);
+					ctx.strokeStyle = colorsByRole[p.role];
+					ctx.lineWidth = 1.4;
+					ctx.beginPath();
+					ctx.moveTo(ox + not.x * scale, oy - not.y * scale);
+					ctx.lineTo(ox + p.x * scale, oy - p.y * scale);
+					ctx.stroke();
+					ctx.restore();
+				});
 			}
-			seg(happy, notHappy, c.sky);
-			seg(happy, sad, c.coral);
 			ctx.fillStyle = c.muted;
 			ctx.font = "600 10px Barlow, system-ui, sans-serif";
 			ctx.textAlign = "left";
@@ -3231,8 +3243,83 @@
 		}
 		var api = canvasDemo(canvas, draw);
 		if (!api) return;
-		window.addEventListener("tm:theme", function () { api.redraw(); });
 		api.redraw();
+	}
+
+	/* ── number tokenization ────────────────────────────────── */
+
+	function initNumTokens(root) {
+		var wrapA = $("[data-numtokens-a]", root);
+		var wrapB = $("[data-numtokens-b]", root);
+		if (!wrapA || !wrapB) return;
+		var labelA = $("[data-numtokens-label-a]", root);
+		var labelB = $("[data-numtokens-label-b]", root);
+		var noteEl = $("[data-numtokens-note]", root);
+		var diffEl = $("[data-numtokens-diff]", root);
+		var sharedEl = $("[data-numtokens-shared]", root);
+		var chips = $$("[data-numtokens-pair]", root);
+		var COLORS = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
+		var presets = [
+			{
+				a: "12345", b: "12346", diff: 1,
+				aTok: [["123", 10163], ["45", 2231]],
+				bTok: [["12", 1065], ["346", 30557]],
+				en: "The boundary moves: 123 | 45 against 12 | 346. The digits do not line up.",
+				de: "Die Grenze verschiebt sich: 123 | 45 gegen 12 | 346. Die Ziffern stehen nicht übereinander."
+			},
+			{
+				a: "1234.56", b: "1234.57", diff: 0.01,
+				aTok: [["12", 1065], ["34", 2682], [".", 13], ["56", 3980]],
+				bTok: [["12", 1065], ["34", 2682], [".", 13], ["57", 3553]],
+				en: "The first three tokens match; only the last one changes, and its ID is unrelated.",
+				de: "Die ersten drei Tokens stimmen überein; nur das letzte ändert sich, und seine ID hat keinen Bezug dazu."
+			},
+			{
+				a: "2023", b: "2024", diff: 1,
+				aTok: [["20", 1238], ["23", 1954]],
+				bTok: [["20", 1238], ["24", 1731]],
+				en: "A year that is one larger gets a different second token, not a different number.",
+				de: "Ein um eins größeres Jahr bekommt ein anderes zweites Token, keine andere Zahl."
+			}
+		];
+		function fmtDiff(v) {
+			var s = String(v);
+			return DEMO_DE ? s.replace(".", ",") : s;
+		}
+		function chipsHtml(tokens) {
+			return tokens.map(function (tok, i) {
+				return '<span class="token token--static" style="--tok:' + COLORS[i % COLORS.length] + '">' +
+					escapeHtml(tok[0]) + "<small>" + tok[1] + "</small></span>";
+			}).join("");
+		}
+		function select(index) {
+			var p = presets[index];
+			if (!p) return;
+			wrapA.innerHTML = chipsHtml(p.aTok);
+			wrapB.innerHTML = chipsHtml(p.bTok);
+			if (labelA) labelA.textContent = p.a;
+			if (labelB) labelB.textContent = p.b;
+			if (diffEl) diffEl.textContent = fmtDiff(p.diff);
+			if (noteEl) noteEl.textContent = DEMO_DE ? p.de : p.en;
+			if (sharedEl) {
+				var n = Math.max(p.aTok.length, p.bTok.length);
+				var shared = 0;
+				for (var i = 0; i < n; i++) {
+					if (p.aTok[i] && p.bTok[i] && p.aTok[i][0] === p.bTok[i][0]) shared++;
+				}
+				sharedEl.textContent = shared + " / " + n;
+			}
+			chips.forEach(function (chip, i) {
+				chip.classList.toggle("is-on", i === index);
+				chip.setAttribute("aria-pressed", i === index ? "true" : "false");
+			});
+		}
+		chips.forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				select(parseInt(chip.getAttribute("data-numtokens-pair"), 10));
+			});
+		});
+		select(0);
 	}
 
 	/* ── receptive field ────────────────────────────────────── */
@@ -5209,6 +5296,7 @@
 		else if (type === "verify") initVerify(root);
 		else if (type === "ambiguity") initAmbiguity(root);
 		else if (type === "negation") initNegation(root);
+		else if (type === "numtokens") initNumTokens(root);
 		else if (type === "receptive") initReceptive(root);
 		else if (type === "citecheck") initCitecheck(root);
 		else if (type === "reasoning") initReasoning(root);

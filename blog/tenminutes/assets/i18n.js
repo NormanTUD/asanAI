@@ -30,7 +30,7 @@
 	var BLOCK_SELECTOR = [
 		"p", "h1", "h2", "h3", "h4", "h5", "h6", "li", "figcaption",
 		".kicker", ".section-title", ".section-kicker", ".week-label",
-		".aha-big", ".aha-sub", ".demo-title", ".demo-sub", ".demo-insight",
+		".aha-big", ".aha-sub", ".demo-title", ".demo-sub", ".demo-insight", ".demo-foot",
 		".keypoint", ".day-card h3", ".day-card p", ".dc-open", ".dc-tag",
 		".dc-part", ".dc-num", ".sp-title", ".sp-kicker", ".dp-title", ".dp-sub",
 		".calendar-notice h3", ".calendar-notice p",

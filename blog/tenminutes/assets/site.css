@@ -2102,6 +2102,17 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	font-weight: 400;
 }
 .token--space { opacity: 0.55; }
+.token--static { cursor: default; }
+
+.numtokens-pair { margin-top: 12px; }
+.numtokens-label {
+	margin: 0 0 6px;
+	font-family: var(--tm-mono);
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: var(--tm-ink-soft);
+}
+.numtokens-pair .token-stream { min-height: 0; padding: 10px 12px; }
 
 /* ── LLM demo ────────────────────────────────────────────── */
 

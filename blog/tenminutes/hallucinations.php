@@ -30,6 +30,30 @@
 							<p>A DOI is a persistent identifier for an article, an ISBN for a book, an ISSN for a journal, and an arXiv ID for a preprint. A real identifier leads to something. The model never does that lookup. It predicts token by token, so it has learned which words usually follow which contexts. A well-formed but invented reference is a very likely continuation of “a 2019 study in <em>Nature</em> found…”. The training objective contains no variable for truth.</p>
 							<p>That is not lying. The model has no intention to deceive and no internal fact-checker; nothing would mark the empty reference as empty. Some researchers prefer “confabulation”: <a href="https://arxiv.org/abs/2406.04175" rel="noopener">Sui et al. (2024)</a> use it for the narrative character of the output, and <a href="https://arxiv.org/abs/2312.03729" rel="noopener">Liu et al. (2024)</a> use it for an answer that disagrees with the model’s own internal representation of truth. Whatever the name, the failure is real.</p>
 							<p>Harry Frankfurt’s essay <a href="https://web.archive.org/web/20250201061311/https://www2.csudh.edu/ccauthen/576f12/frankfurt__harry_-_on_bullshit.pdf" rel="noopener">“On Bullshit” (1986)</a> draws the line: a liar knows the truth and works against it, while a bullshitter is indifferent to how things really are and says what suits the purpose. By that account, a fluent hallucination is bullshit, not a lie. The model chooses what fits the pattern, not what fits the world.</p>
+							<p>Meaning in the model is a position in a vector space, not a set of logical symbols. Negation is another context that moves the vector a little; it does not flip it to the opposite. A 2-D sketch shows the effect: “not sad” sits near “sad”, not near “happy”. Real embeddings are messier, but the measured failure is the same: universal text embedding models often score a negated sentence and its original as semantically similar (<a href="https://arxiv.org/abs/2504.00584" rel="noopener">Cao, 2025</a>).</p>
+						</div>
+
+						<div class="demo demo--paper" data-demo="negation" data-neg-variant="sad">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Where “not sad” lives <span>· demo</span></p>
+									<p class="demo-sub">The phrase “not sad” stays near “sad” and far from “happy”. Negation nudges the vector; it does not flip it to the opposite.</p>
+								</div>
+								<span class="demo-badge">2-D schematic</span>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas demo-canvas--md" data-negation-canvas aria-label="A two-dimensional schematic with sad, not sad, and happy; not sad sits near sad and far from happy"></canvas>
+								<div class="demo-readout">
+									<div><b>Nearest to “not sad”</b><span>sad</span></div>
+									<div><b>Distance to “sad”</b><span>0.34</span></div>
+									<div><b>Distance to “happy”</b><span>1.16</span></div>
+								</div>
+								<p class="demo-hint">Toy coordinates in arbitrary units. The measured failure is real: negated and original sentences often score as similar (<a href="https://arxiv.org/abs/2504.00584" rel="noopener">Cao, 2025</a>).</p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>A negation names the concept you want to suppress. It does not move the model to the opposite.</span></div>
+						</div>
+
+						<div class="prose">
 							<p>Keep three failures apart. A summary can add a detail that is not in the source (faithfulness), a factual answer can be wrong about the world (factuality), and a model can contradict itself in one conversation (self-consistency). The distinction is standard in the literature (<a href="https://arxiv.org/abs/2202.03629" rel="noopener">Ji et al., 2023</a>). Each failure has its own test. The next section starts with the one people trust most: the confident tone.</p>
 						</div>
 					</section>
@@ -68,7 +92,39 @@
 
 						<div class="prose">
 							<p>Models are most reliable where the pattern is dense and redundant, least reliable where it is sparse or rare (<a href="https://arxiv.org/abs/2211.08411" rel="noopener">Kandpal et al., 2023</a>). Long context adds a quieter failure: evidence at the beginning and end is used more reliably than evidence in the middle (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>). Scale improves many benchmark scores (<a href="https://arxiv.org/abs/2005.14165" rel="noopener">Brown et al., 2020</a>), but it does not install a guarantee.</p>
-							<p>Arithmetic is a special case. The model predicts digits, it does not calculate. Numbers are split into tokens, so “1234.56” may become “123”, “4”, “.”, and “56” (see the <a href="tokenizerlab">tokenizer lab</a>), and the model must carry the digits without a scratchpad. For exact work, use a calculator or code.</p>
+							<p>Arithmetic is a special case. The model predicts digits, it does not calculate. Numbers are split into tokens, so “1234.56” may become “12”, “34”, “.”, and “56” (see the <a href="tokenizerlab">tokenizer lab</a>), and the model must carry the digits without a scratchpad. The split does not follow place value: in the public GPT-2 vocabulary, 12345 becomes “123” + “45” while 12346 becomes “12” + “346” (Radford et al., 2019; <a href="https://github.com/openai/gpt-2/blob/master/vocab.bpe" rel="noopener">vocab.bpe</a>). For exact work, use a calculator or code.</p>
+						</div>
+
+						<div class="demo demo--paper" data-demo="numtokens">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The same number, different pieces <span>· demo</span></p>
+									<p class="demo-sub">Adjacent numbers can cross different token boundaries. The model receives token IDs, not digits lined up in columns.</p>
+								</div>
+								<span class="demo-badge">GPT-2 BPE</span>
+							</div>
+							<div class="demo-body">
+								<div class="chip-row">
+									<button class="chip is-on" type="button" data-numtokens-pair="0" aria-pressed="true">12345 vs 12346</button>
+									<button class="chip" type="button" data-numtokens-pair="1" aria-pressed="false">1234.56 vs 1234.57</button>
+									<button class="chip" type="button" data-numtokens-pair="2" aria-pressed="false">2023 vs 2024</button>
+								</div>
+								<div class="numtokens-pair">
+									<p class="numtokens-label"><span data-numtokens-label-a>12345</span></p>
+									<div class="token-stream" data-numtokens-a aria-live="polite"></div>
+								</div>
+								<div class="numtokens-pair">
+									<p class="numtokens-label"><span data-numtokens-label-b>12346</span></p>
+									<div class="token-stream" data-numtokens-b aria-live="polite"></div>
+								</div>
+								<p class="demo-hint" data-numtokens-note>The boundary moves: 123 | 45 against 12 | 346. The digits do not line up.</p>
+								<div class="demo-readout">
+									<div><b>Difference</b><span data-numtokens-diff>1</span></div>
+									<div><b>Shared tokens</b><span data-numtokens-shared>0 / 2</span></div>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Arithmetic over these chunks is a learned pattern, not column addition. For an exact result, use code or a calculator.</span></div>
+							<div class="demo-foot">Splits computed with the public GPT-2 byte-level BPE vocabulary (<a href="https://github.com/openai/gpt-2/blob/master/vocab.bpe" rel="noopener">openai/gpt-2</a>; Radford et al., 2019). Other tokenizers differ in the details, not in the mechanism.</div>
 						</div>
 					</section>
 
