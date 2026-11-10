@@ -130,6 +130,30 @@ def main() -> int:
 		), "the hidden bonus has no badge or flow ring")
 		check(flow(browser)["active"] is False, "the hidden bonus starts inactive")
 
+		# The HUD must not be rewritten while nothing changes: the flow
+		# heartbeat used to redraw the icon and week label every second.
+		xp_before = browser.execute_script("return window.MNQuest.summary().xp;")
+		browser.execute_script(
+			"""
+			window.__hudMutations = 0;
+			const hud = document.getElementById('mnq-hud');
+			window.__hudObserver = new MutationObserver(function (records) {
+				window.__hudMutations += records.length;
+			});
+			window.__hudObserver.observe(hud, {
+				childList: true, characterData: true, subtree: true
+			});
+			"""
+		)
+		time.sleep(2.5)
+		hud_state = browser.execute_script(
+			"window.__hudObserver.disconnect(); return {"
+			"mutations: window.__hudMutations,"
+			"xp: window.MNQuest.summary().xp};"
+		)
+		check(hud_state["xp"] != xp_before or hud_state["mutations"] == 0,
+			"the idle HUD is not redrawn", str(hud_state))
+
 		# The first demo interaction is the one showy moment: its award leaves
 		# as an orb and lands in the badge.
 		engaged = browser.execute_script(

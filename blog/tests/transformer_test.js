@@ -430,6 +430,27 @@ function testTransformerStepsSource() {
 		'tenminutes has the dynamic vector-math placeholder');
 	check(/\.tm-plotly-frame,\s*\n\.tm-plotly-frame\.js-plotly-plot\s*\{[\s\S]*?border: 0 !important;/.test(tmCss),
 		'tenminutes plot frame has no border');
+
+	const bodyStart = tmPhp.indexOf('<div class="tm-hyper-body">');
+	const configStart = tmPhp.indexOf('<div id="transformer_config">');
+	check(tmPhp.includes('class="tm-hyper-robot-wrap"') && tmPhp.includes('id="transformer-hyper-overlay"'),
+		'tenminutes transformer exposes the robot and the fullscreen overlay');
+	check(bodyStart !== -1 && configStart > bodyStart,
+		'the compact hyperparameters sit inside the overlay body');
+	for (const id of [
+		'transformer-dimension-model', 'transformer-heads', 'transformer-depth',
+		'transformer-context-size', 'transformer-ffn-size', 'transformer-kv-cache',
+	]) {
+		check(tmPhp.includes('id="' + id + '"'), 'compact hyperparameters keep ' + id);
+	}
+	check(tmPhp.includes('data-tm-hyper-close'),
+		'compact hyperparameter overlay has a close control');
+}
+
+function testTocSkipsHiddenOverlays() {
+	const toc = fs.readFileSync(path.join(BLOG, 'toc.js'), 'utf8');
+	check(/closest\(['"]\.tm-hyper-overlay/.test(toc),
+		'the TOC skips headings inside the hidden hyperparameter overlay');
 }
 
 function testReadingAidSource() {
@@ -666,6 +687,7 @@ function main() {
 	testLazyRenderableDefers(ctx);
 	testVectorPlaceholder(ctx);
 	testTransformerStepsSource();
+	testTocSkipsHiddenOverlays();
 	testReadingAidSource();
 	testLessonSource();
 	testFFNViews();
