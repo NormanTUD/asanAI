@@ -653,7 +653,7 @@ html.wide-math #contents .tm-hyper-body .md {
 }
 html #contents .tm-hyper-body .md,
 html #contents .tm-hyper-body .md p {
-	font-family: var(--mn-font-body);
+	font-family: var(--mn-font-heading, system-ui, sans-serif);
 }
 .tm-hyper-body .md {
 	font-size: 0.9rem;
@@ -670,14 +670,14 @@ html #contents .tm-hyper-body .md p {
 	padding: 10px 12px;
 }
 .tm-hyper-body .transformer-slider-label {
-	font-family: var(--mn-font-body);
+	font-family: var(--mn-font-heading, system-ui, sans-serif);
 	font-size: 0.88rem;
 }
 .tm-hyper-body .transformer-slider-value {
 	font-size: 0.98rem;
 }
 .tm-hyper-body .transformer-slider-note {
-	font-family: var(--mn-font-body);
+	font-family: var(--mn-font-heading, system-ui, sans-serif);
 	font-size: 0.76rem;
 	line-height: 1.45;
 }
@@ -731,17 +731,17 @@ html #contents .tm-hyper-body .md p {
 .tm-hyper-overlay input,
 .tm-hyper-overlay button,
 .tm-hyper-overlay code {
-	font-family: var(--mn-font-body);
+	font-family: var(--mn-font-heading, system-ui, sans-serif);
 }
 .tm-hyper-head h2 {
-	font-family: var(--mn-font-body);
+	font-family: var(--mn-font-heading, system-ui, sans-serif);
 }
 .tm-hyper-note {
 	margin: 2px 0 0;
 }
 .tm-hyper-note > summary {
 	cursor: pointer;
-	font: 600 0.72rem/1.3 var(--mn-font-body);
+	font: 600 0.72rem/1.3 var(--mn-font-heading, system-ui, sans-serif);
 	color: var(--mn-text-muted, #627476);
 	list-style-position: inside;
 }
@@ -777,5 +777,27 @@ html #contents .tm-hyper-body .md p {
 .tm-hyper-overlay button,
 .tm-hyper-overlay summary,
 .tm-hyper-overlay code {
-	font-family: var(--mn-font-body) !important;
+	font-family: var(--mn-font-heading, system-ui, sans-serif) !important;
+}
+
+/* Compact the overlay a little more so the controls fit on a laptop screen. */
+.tm-hyper-body .md {
+	font-size: 0.82rem;
+	line-height: 1.45;
+}
+.tm-hyper-body .transformer-config-field {
+	padding: 7px 9px;
+}
+.tm-hyper-grid {
+	gap: 7px 10px;
+}
+.tm-hyper-grid #transformer-init-hist {
+	height: 80px !important;
+}
+.tm-hyper-body #transformer-preset-field .transformer-slider-note {
+	font-size: 0.72rem;
+	line-height: 1.35;
+}
+.tm-hyper-body .tm-hyper-footnote {
+	font-size: 0.7rem;
 }

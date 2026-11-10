@@ -52,10 +52,7 @@ Change the corpus, press **Train Model**, and watch the loss. Everything below u
 </div>
 <div id="transformer-train-card">
 	<div class="transformer-train-controls">
-		<label class="transformer-train-field">
-			<span class="transformer-train-label">Epochs</span>
-			<input type="number" id="train-epochs" value="200" min="1" step="1">
-		</label>
+		<input type="hidden" id="train-epochs" value="200" min="1" step="1">
 		<label class="transformer-train-field">
 			<span class="transformer-train-label">Learning Rate</span>
 			<input type="number" id="train-lr" value="0.01" step="0.01" min="0">

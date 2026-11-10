@@ -23,6 +23,8 @@
 		wireStopButton();
 		wireButtonHoverEffects();
 		wireMetricControls();
+		wireEpochControl();
+		wireIdleLoss();
 
 		return barEl;
 	}
@@ -32,8 +34,24 @@
 		const el = document.createElement('div');
 		el.id = 'training-progress-bar-container';
 		el.style.cssText = buildBarRootStyles();
-		el.innerHTML = buildMetricControlHtml() + buildIdlePanelHtml() + buildTrainingPanelHtml();
+		el.innerHTML = `<style>${buildStickyBarCss()}</style>` + buildMetricControlHtml() + buildIdlePanelHtml() + buildTrainingPanelHtml();
 		return el;
+	}
+
+	/** Compact styles for the idle controls and the loss popover. */
+	function buildStickyBarCss() {
+		return `
+		#tlab-bar-epochs-label { display:inline-flex; align-items:center; gap:5px; color:#94a3b8; font-size:0.78rem; white-space:nowrap; }
+		#tlab-bar-epochs { width:68px; padding:3px 5px; border-radius:5px; border:1px solid #475569; background:#1f2937; color:#f8fafc; font-size:0.78rem; }
+		#tlab-bar-steps { color:#94a3b8; font-size:0.78rem; white-space:nowrap; }
+		#tlab-bar-idle-loss { position:relative; flex-shrink:0; }
+		#tlab-bar-idle-loss-canvas { display:block; width:100px; height:36px; background:#334155; border-radius:6px; }
+		#tlab-bar-loss-popover { display:none; position:absolute; right:0; bottom:46px; width:min(420px, calc(100vw - 24px)); padding:8px; background:#0f172a; border:1px solid #475569; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.45); z-index:1000; }
+		#tlab-bar-idle-loss:hover #tlab-bar-loss-popover,
+		#tlab-bar-idle-loss:focus-within #tlab-bar-loss-popover { display:block; }
+		#tlab-bar-full-loss-canvas { display:block; width:100%; height:180px; background:#111827; border-radius:4px; }
+		#tlab-bar-loss-caption { display:block; margin-top:4px; color:#94a3b8; font-size:0.7rem; }
+		`;
 	}
 
 	/** Metric switch + sphere toggle, kept at the left of the sticky bar. */
@@ -148,9 +166,39 @@
 	    <span style="flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#94a3b8; font-size:0.82rem;">
 		Ready to train
 	    </span>
+	    ${buildEpochControlHtml()}
+	    ${buildStepsHtml()}
+	    ${buildIdleLossHtml()}
 	    <button id="tlab-bar-train-btn" style="${buildTrainButtonStyles()}">▶ Start Training</button>
 	</div>
     `;
+	}
+
+	/** Epochs input: the visible control lives in the sticky bar. */
+	function buildEpochControlHtml() {
+		return `
+	<label id="tlab-bar-epochs-label">Epochs
+	    <input id="tlab-bar-epochs" type="number" min="1" step="1" value="200">
+	</label>
+	`;
+	}
+
+	/** Total steps / current step readout. */
+	function buildStepsHtml() {
+		return `<span id="tlab-bar-steps">Steps: 200</span>`;
+	}
+
+	/** Small idle loss chart with a larger chart on hover. */
+	function buildIdleLossHtml() {
+		return `
+	<div id="tlab-bar-idle-loss" tabindex="0" aria-label="Loss over epochs. Hover for the full chart.">
+	    <canvas id="tlab-bar-idle-loss-canvas" width="120" height="36"></canvas>
+	    <div id="tlab-bar-loss-popover">
+		<canvas id="tlab-bar-full-loss-canvas" width="420" height="180"></canvas>
+		<span id="tlab-bar-loss-caption">Loss over epochs · full view</span>
+	    </div>
+	</div>
+	`;
 	}
 
 	/** Returns inline styles for the idle-panel train button. */
@@ -279,6 +327,109 @@
 	}
 
 
+	/** Keep the bar's epochs input and the hidden training input in sync. */
+	function wireEpochControl() {
+		const barInput = document.getElementById('tlab-bar-epochs');
+		const mainInput = document.getElementById('train-epochs');
+		if (!barInput || !mainInput) return;
+		barInput.value = mainInput.value || '200';
+		const sync = () => {
+			mainInput.value = barInput.value;
+			updateStepsLabel();
+		};
+		barInput.addEventListener('input', sync);
+		mainInput.addEventListener('input', () => {
+			barInput.value = mainInput.value;
+			updateStepsLabel();
+		});
+		updateStepsLabel();
+	}
+
+	function updateStepsLabel() {
+		const label = document.getElementById('tlab-bar-steps');
+		const main = document.getElementById('train-epochs');
+		if (!label || !main) return;
+		label.textContent = 'Steps: ' + (parseInt(main.value, 10) || 0);
+	}
+
+	function wireIdleLoss() {
+		const wrap = document.getElementById('tlab-bar-idle-loss');
+		if (!wrap) return;
+		wrap.addEventListener('mouseenter', drawFullLossChart);
+		wrap.addEventListener('focusin', drawFullLossChart);
+	}
+
+	/** Draw a loss curve into a mini or full canvas. */
+	function drawLossChart(canvas, full) {
+		if (!canvas) return;
+		const ctx = canvas.getContext('2d');
+		const w = canvas.width;
+		const h = canvas.height;
+		const history = window.lossHistory || [];
+		ctx.clearRect(0, 0, w, h);
+		if (!history || history.length < 2) {
+			if (full) {
+				ctx.fillStyle = '#94a3b8';
+				ctx.font = '13px system-ui, sans-serif';
+				ctx.textAlign = 'center';
+				ctx.fillText('No loss yet. Press Start Training.', w / 2, h / 2);
+			}
+			return;
+		}
+
+		const maxLoss = Math.max.apply(null, history);
+		const minLoss = Math.min.apply(null, history);
+		const range = maxLoss - minLoss || 1;
+		const padL = full ? 34 : 0;
+		const padR = full ? 10 : 0;
+		const padT = full ? 10 : 2;
+		const padB = full ? 22 : 2;
+		const plotW = w - padL - padR;
+		const plotH = h - padT - padB;
+		const X = i => padL + (i / (history.length - 1)) * plotW;
+		const Y = v => padT + (1 - (v - minLoss) / range) * plotH;
+
+		if (full) {
+			ctx.strokeStyle = '#334155';
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(padL, padT);
+			ctx.lineTo(padL, padT + plotH);
+			ctx.lineTo(padL + plotW, padT + plotH);
+			ctx.stroke();
+			ctx.fillStyle = '#94a3b8';
+			ctx.font = '10px system-ui, sans-serif';
+			ctx.textAlign = 'right';
+			ctx.fillText(maxLoss.toFixed(3), padL - 4, padT + 4);
+			ctx.fillText(minLoss.toFixed(3), padL - 4, padT + plotH);
+			ctx.textAlign = 'center';
+			ctx.fillText('epoch', padL + plotW / 2, h - 5);
+		}
+
+		ctx.beginPath();
+		ctx.moveTo(X(0), Y(history[0]));
+		for (let i = 1; i < history.length; i++) ctx.lineTo(X(i), Y(history[i]));
+		ctx.lineWidth = full ? 2 : 1.5;
+		ctx.strokeStyle = '#10b981';
+		ctx.stroke();
+
+		if (!full) {
+			ctx.lineTo(X(history.length - 1), h);
+			ctx.lineTo(X(0), h);
+			ctx.closePath();
+			ctx.fillStyle = 'rgba(16, 185, 129, 0.15)';
+			ctx.fill();
+		}
+	}
+
+	function drawIdleLossChart() {
+		drawLossChart(document.getElementById('tlab-bar-idle-loss-canvas'), false);
+	}
+
+	function drawFullLossChart() {
+		drawLossChart(document.getElementById('tlab-bar-full-loss-canvas'), true);
+	}
+
 	/** Keep the site-wide "↑ top" button clear of the sticky bar. */
 	function positionTopButton() {
 		const topBtn = document.getElementById('cl-top');
@@ -299,6 +450,7 @@
 		void barEl.offsetHeight; // force reflow
 		barEl.style.opacity = '1';
 		barEl.style.transform = 'translateY(0)';
+		drawIdleLossChart();
 		positionTopButton();
 		positionChatWidgets();
 	}
@@ -339,6 +491,8 @@
 				trainBtn.style.opacity  = mainBtn.disabled ? '0.45' : '1';
 				trainBtn.style.cursor   = mainBtn.disabled ? 'not-allowed' : 'pointer';
 			}
+			drawIdleLossChart();
+			updateStepsLabel();
 		}
 
 		positionChatWidgets();
@@ -449,6 +603,8 @@
 		}
 
 		drawMiniLossChart();
+		const steps = document.getElementById('tlab-bar-steps');
+		if (steps) steps.textContent = `Steps: ${currentEpoch} / ${totalEpochs}`;
 	};
 
 	window.hideTrainingProgressBar = function () {
@@ -456,6 +612,8 @@
 		const etaLbl = document.getElementById('tlab-bar-eta');
 		if (etaLbl) etaLbl.textContent = 'ETA: —';
 		syncBarMode();
+		updateStepsLabel();
+		drawIdleLossChart();
 	};
 
 	// Also patch updateTrainButtonState to keep the bar's button in sync
