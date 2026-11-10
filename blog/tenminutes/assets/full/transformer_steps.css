@@ -1732,6 +1732,12 @@
 	color: var(--tm-ink, var(--mn-text, #000000));
 	font: 600 0.76rem/1.2 "Open Sans", system-ui, sans-serif;
 }
+.tm-viz-switch-note {
+	display: block;
+	margin-top: 3px;
+	font: 400 0.74rem/1.35 "Open Sans", system-ui, sans-serif;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+}
 
 /* Inline math inside normal paragraphs must flow with the text, not start a
    display block. Display equations live outside <p> and are unaffected. */

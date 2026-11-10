@@ -29,10 +29,62 @@ https://arxiv.org/html/2505.11611v1
 </div>
 
 <div class="md">
-This chapter assembles the parts you have met one at a time into one machine and runs it. Here you can follow the step-by-step visualizations, or jump to the live training of a tiny transformer below. Do not expect a frontier model: the goal is not useful text, but training you can see and follow.
+This chapter assembles the parts you have met one at a time into one machine and runs it. Do not expect a frontier model: the goal is not useful text, but training you can see and follow.
 
-The model is small enough that its output is not useful, and large enough that patterns become visible, so you can scale the picture up in your head. A large LLM runs the same operations, with more data, more layers and a few extra tricks. If you want to change this model, the hyperparameters sit below the loss plot.
+The model is small enough that its output is not useful, and large enough that patterns become visible, so you can scale the picture up in your head. A large LLM runs the same operations, with more data, more layers and a few extra tricks.
+
+The hyperparameters sit behind the <span class="tm-intro-robot" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="11" rx="2"/><path d="M12 3v4"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M9 15h6"/><path d="M3 11v3M21 11v3"/></svg></span> robot on the left (<a href="#" onclick="toggleTransformerHyper(true); return false;">open them here</a>). Open them whenever you want to change the model; if you just want to play first, scroll on. The training card is right below, and the step-by-step visualizations follow.
 </div>
+
+<div class="transformer_corpus">
+    <label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
+    <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 8px;">The token <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
+    <textarea
+        id="transformer-training-data"
+        style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; color: var(--mn-text, #1e293b);"
+        oninput="debounced_run_transformer_demo('transformer-training-data')">the king rules the land and the queen rules the sea</textarea>
+</div>
+<div id="transformer-train-card">
+	<div class="transformer-train-controls">
+		<label class="transformer-train-field">
+			<span class="transformer-train-label">Epochs</span>
+			<input type="number" id="train-epochs" value="200" min="1" step="1">
+		</label>
+		<label class="transformer-train-field">
+			<span class="transformer-train-label">Learning Rate</span>
+			<input type="number" id="train-lr" value="0.01" step="0.01" min="0">
+		</label>
+		<div class="transformer-train-field">
+			<span class="transformer-train-label">Optimizer</span>
+			<div id="train-optimizer" class="transformer-opt-group" role="radiogroup" aria-label="Optimizer">
+				<label class="transformer-opt">
+					<input type="radio" name="train-optimizer-choice" value="adam" checked>
+					<span class="glossary-term" data-tooltip-id="tt-train-adam">Adam<span class="glossary-tooltip" data-tooltip-id="tt-train-adam">An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
+				</label>
+				<label class="transformer-opt">
+					<input type="radio" name="train-optimizer-choice" value="sgd">
+					<span class="glossary-term" data-tooltip-id="tt-train-sgd">SGD<span class="glossary-tooltip" data-tooltip-id="tt-train-sgd">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
+				</label>
+				<label class="transformer-opt">
+					<input type="radio" name="train-optimizer-choice" value="rmsprop">
+					<span class="glossary-term" data-tooltip-id="tt-train-rmsprop">RMSProp<span class="glossary-tooltip" data-tooltip-id="tt-train-rmsprop">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
+				</label>
+			</div>
+		</div>
+		<div class="transformer-train-actions">
+			<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
+		</div>
+	</div>
+	<div id="training-status" class="transformer-train-status"></div>
+	<div id="training-loss-plot" role="img" aria-label="Training loss over epochs"></div>
+</div>
+<script>
+(function () {
+	// Keep the loss panel mounted at a fixed height from the first paint and
+	// show a readable placeholder so training never shifts the page.
+	if (typeof drawTrainingPlaceholder === 'function') drawTrainingPlaceholder();
+})();
+</script>
 
 <div class="md">
 The steps below are the steps from the intuition chapter, now driven by the real numbers of the live model on this page. Read the heading, then look at the picture. The layer cards repeat the attention, feed-forward and residual steps for every layer, with the full formulas one level deeper.
@@ -58,7 +110,27 @@ $$ \underbrace{ \color[RGB]{59,130,246}\text{“the} \ \color[RGB]{55,135,235}\t
 				</div>
 				<p>Text becomes tokens. The order is the sentence; the number under each token is its vocabulary index in this demo.</p>
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-tokenize" aria-label="The token stream in reading order"></canvas>
-				<p class="tm-step-more">In real LLMs the tokenizer is a separate program trained before the model; this demo uses a simple word splitter. Either way, the tokenizer decides which strings become one id, and the model itself only sees numbers.</p>
+				<p class="tm-step-more">In real LLMs the tokenizer is a separate program trained before the model; this demo uses <span id="tm-tokenizer-description">a simple word splitter</span>. Either way, the tokenizer decides which strings become one id, and the model itself only sees numbers.</p>
+<script>
+(function () {
+	function updateTokenizerDescription() {
+		var select = document.getElementById('transformer-tokenizer-type');
+		var label = document.getElementById('tm-tokenizer-description');
+		if (!select || !label) return;
+		var labels = {
+			regex: 'a simple word splitter',
+			chars: 'a character-level splitter',
+			bpe: 'a small BPE vocabulary learned from this corpus'
+		};
+		label.textContent = labels[select.value] || labels.regex;
+	}
+	if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateTokenizerDescription);
+	else updateTokenizerDescription();
+	document.addEventListener('change', function (event) {
+		if (event.target && event.target.id === 'transformer-tokenizer-type') updateTokenizerDescription();
+	});
+})();
+</script>
 				<div class="tm-step-formula" data-tex="T = [t_0,\, t_1,\, \dots,\, t_{n-1}]"></div>
 				<details class="tm-step-detail" id="tm-detail-tokenize"><summary>Tokenizer in detail</summary><div class="tm-step-detail-body"></div></details></div>
 			</section>
@@ -161,70 +233,35 @@ $$ \underbrace{ \color[RGB]{59,130,246}\text{“the} \ \color[RGB]{55,135,235}\t
 				<details class="tm-step-detail"><summary>From vectors to words</summary><div class="tm-step-detail-body"><p>The final vector is multiplied by the unembedding matrix, producing one logit per vocabulary entry. Softmax turns the logits into probabilities; temperature sharpens or flattens the distribution.</p><p>The output section below lets you change the temperature and click tokens to append them. The layer cards show the logit lens for every layer.</p></div></details></div>
 			</section>
 </div>
-<div class="md">
-## Before the Transformer
-
+<div class="optional md" data-headline="Before the Transformer">
 Long before the Transformer, sequence models were recurrent. An encoder read a sentence one token at a time into a single fixed-length vector, and a decoder generated the translation from that vector alone. \cite[Bahdanau et al. (2014)]{bahdanau2014} attacked that bottleneck: their decoder could look back at every encoder state and learn a soft alignment, so the relevant source words changed at each output step (\cite[Bahdanau et al., 2014]{bahdanau2014}). This was attention before it had a Transformer to live in.
 </div>
-
-<div class="transformer_corpus">
-    <label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
-    <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 8px;">The token <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
-    <textarea
-        id="transformer-training-data"
-        style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; color: var(--mn-text, #1e293b);"
-        oninput="debounced_run_transformer_demo('transformer-training-data')">the king rules the land and the queen rules the sea</textarea>
+<div class="tm-hyper-robot-wrap">
+	<button id="transformer-hyper-toggle" type="button" aria-label="Open hyperparameters" aria-haspopup="dialog" aria-expanded="false" title="Hyperparameters" onclick="toggleTransformerHyper(true)">
+		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<rect x="5" y="7" width="14" height="11" rx="2"/>
+			<path d="M12 3v4"/>
+			<circle cx="9" cy="12" r="1"/>
+			<circle cx="15" cy="12" r="1"/>
+			<path d="M9 15h6"/>
+			<path d="M3 11v3M21 11v3"/>
+		</svg>
+	</button>
 </div>
-<div id="transformer-train-card">
-	<div class="transformer-train-controls">
-		<label class="transformer-train-field">
-			<span class="transformer-train-label">Epochs</span>
-			<input type="number" id="train-epochs" value="200" min="1" step="1">
-		</label>
-		<label class="transformer-train-field">
-			<span class="transformer-train-label">Learning Rate</span>
-			<input type="number" id="train-lr" value="0.01" step="0.01" min="0">
-		</label>
-		<div class="transformer-train-field">
-			<span class="transformer-train-label">Optimizer</span>
-			<div id="train-optimizer" class="transformer-opt-group" role="radiogroup" aria-label="Optimizer">
-				<label class="transformer-opt">
-					<input type="radio" name="train-optimizer-choice" value="adam" checked>
-					<span class="glossary-term" data-tooltip-id="tt-train-adam">Adam<span class="glossary-tooltip" data-tooltip-id="tt-train-adam">An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
-				</label>
-				<label class="transformer-opt">
-					<input type="radio" name="train-optimizer-choice" value="sgd">
-					<span class="glossary-term" data-tooltip-id="tt-train-sgd">SGD<span class="glossary-tooltip" data-tooltip-id="tt-train-sgd">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
-				</label>
-				<label class="transformer-opt">
-					<input type="radio" name="train-optimizer-choice" value="rmsprop">
-					<span class="glossary-term" data-tooltip-id="tt-train-rmsprop">RMSProp<span class="glossary-tooltip" data-tooltip-id="tt-train-rmsprop">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
-				</label>
-			</div>
-		</div>
-		<div class="transformer-train-actions">
-			<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
-		</div>
-	</div>
-	<div id="training-status" class="transformer-train-status"></div>
-	<div id="training-loss-plot" role="img" aria-label="Training loss over epochs"></div>
-</div>
-<script>
-(function () {
-	// Keep the loss panel mounted at a fixed height from the first paint and
-	// show a readable placeholder so training never shifts the page.
-	if (typeof drawTrainingPlaceholder === 'function') drawTrainingPlaceholder();
-})();
-</script>
-
+<div id="transformer-hyper-overlay" class="tm-hyper-overlay" hidden>
+	<div class="tm-hyper-backdrop" data-tm-hyper-close></div>
+	<section class="tm-hyper-panel" role="dialog" aria-modal="true" aria-labelledby="tm-hyper-title">
+		<header class="tm-hyper-head">
+			<h2 id="tm-hyper-title">Hyperparameters</h2>
+			<button type="button" class="tm-hyper-close" data-tm-hyper-close aria-label="Close hyperparameters">×</button>
+		</header>
+		<div class="tm-hyper-body">
 <div class="md">
-## Hyperparameters for this demo
-
 A **hyperparameter** is a number you choose *before* training starts; the model learns everything else, its weights, from the data. The demo exposes the model width $d_{\text{model}}$, the number of attention heads $h$, the depth $N$, the context size and the FFN width. Their constraints follow from the shapes in the equations: $d_{\text{model}}$ must split evenly across the heads, and attention cost grows quadratically with the context. The notes on the advanced sliders repeat each constraint where you can change it. What hyperparameters are in general, and how practitioners find good values instead of guessing, is the subject of the [Hyperparameters](hyperparameters.php) chapter.
 </div>
 
 <div id="transformer_config">
-	<details class="transformer-advanced-config" id="transformer-advanced-config">
+	<details class="transformer-advanced-config" id="transformer-advanced-config" open>
 	<summary>Advanced: hyperparameters, initializer &amp; tokenizer</summary>
 	<div class="transformer-config-field">
 		<label class="transformer-slider-label">Model Dimension ($d_{\text{model}}$): </label>
@@ -349,6 +386,43 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 	    <div id="param-breakdown-table" style="margin-top: 10px; font-size: 0.82rem; overflow-x: auto;"></div>
 	</div>
 	</div>
+
+		</div>
+	</section>
+</div>
+<script>
+(function () {
+	"use strict";
+	var overlay = document.getElementById('transformer-hyper-overlay');
+	var toggle = document.getElementById('transformer-hyper-toggle');
+	if (!overlay || !toggle) return;
+	function setOpen(open) {
+		overlay.hidden = !open;
+		toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+		document.documentElement.classList.toggle('tm-hyper-open', open);
+		if (open) {
+			var adv = document.getElementById('transformer-advanced-config');
+			if (adv) adv.open = true;
+			if (window.TM && typeof TM.typesetMath === 'function') {
+				setTimeout(function () { TM.typesetMath(overlay); }, 60);
+			}
+			window.dispatchEvent(new Event('resize'));
+			setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 120);
+			var close = overlay.querySelector('.tm-hyper-close');
+			if (close) close.focus();
+		} else {
+			toggle.focus();
+		}
+	}
+	window.toggleTransformerHyper = setOpen;
+	overlay.querySelectorAll('[data-tm-hyper-close]').forEach(function (el) {
+		el.addEventListener('click', function () { setOpen(false); });
+	});
+	document.addEventListener('keydown', function (event) {
+		if (event.key === 'Escape' && !overlay.hidden) setOpen(false);
+	});
+})();
+</script>
 
 <script>
 (function () {

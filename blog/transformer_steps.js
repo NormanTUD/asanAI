@@ -5077,7 +5077,7 @@
 				typesetMathInOrg(formulaStrip);
 				var vizSwitch = document.createElement("div");
 				vizSwitch.className = "tm-viz-switch";
-				vizSwitch.innerHTML = "<label>" + (isDe ? "Layer-Ansicht" : "Layer view") + " <select id='tm-viz-mode'><option value='train'>" + (isDe ? "Trainingssatz" : "Training data") + "</option><option value='inference'>" + (isDe ? "Predict-Prompt" : "Prediction prompt") + "</option></select></label>";
+				vizSwitch.innerHTML = "<label>" + (isDe ? "Layer-Panels zeigen" : "Layer panels show") + " <select id='tm-viz-mode' title='" + (isDe ? "Gleiche Gewichte, andere Daten: Das ändert nur, welche Tokenfolge die Layer-Panels zeigen; das Modell wird nicht neu trainiert." : "Same weights, different data: this only changes which token sequence the layer panels show; the model is not retrained.") + "'><option value='train'>" + (isDe ? "Trainings-Tokens" : "Training tokens") + "</option><option value='inference'>" + (isDe ? "Prompt-Tokens" : "Prompt tokens") + "</option></select></label><span class='tm-viz-switch-note'>" + (isDe ? "Gleiche Gewichte, andere Daten: Das ändert nur, welche Tokenfolge die Layer-Panels zeigen; das Modell wird nicht neu trainiert." : "Same weights, different data: this only changes which token sequence the layer panels show; the model is not retrained.") + "</span>";
 				box.querySelector(".tm-step-body").appendChild(vizSwitch);
 				var vizSelect = vizSwitch.querySelector("select");
 				vizSelect.value = window.tlabVisualizationMode || "train";

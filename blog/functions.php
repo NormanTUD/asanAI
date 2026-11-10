@@ -700,6 +700,38 @@ if(!server_php_self_ends_with_index_php()) {
 				}
 			} catch (e) {}
 		})();
+		// Full-width math/demo mode: widen the content shell so plots,
+		// formulas and labs can use the page width, while prose keeps
+		// its readable measure. Pure UI preference, localStorage-backed.
+		function toggleWideMath() {
+			var html = document.documentElement;
+			var on = !html.classList.contains('wide-math');
+			if (on) html.classList.add('wide-math');
+			else html.classList.remove('wide-math');
+			var btn = document.getElementById('wide-toggle');
+			if (btn) btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+			try { localStorage.setItem('wideMath', on ? '1' : '0'); } catch (e) {}
+			window.dispatchEvent(new Event('resize'));
+			setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 120);
+			setTimeout(function () {
+				if (window.Plotly && Plotly.Plots) {
+					document.querySelectorAll('.js-plotly-plot').forEach(function (el) {
+						try { Plotly.Plots.resize(el); } catch (e) {}
+					});
+				}
+			}, 180);
+		}
+		(function() {
+			try {
+				if (localStorage.getItem('wideMath') === '1') {
+					document.documentElement.classList.add('wide-math');
+				}
+			} catch (e) {}
+			document.addEventListener('DOMContentLoaded', function () {
+				var btn = document.getElementById('wide-toggle');
+				if (btn) btn.setAttribute('aria-pressed', document.documentElement.classList.contains('wide-math') ? 'true' : 'false');
+			});
+		})();
 		// Keyboard shortcut: `r` toggles reader mode (ignored while
 		// typing in inputs / textareas).
 		document.addEventListener('keydown', function (ev) {
@@ -726,6 +758,7 @@ if(!server_php_self_ends_with_index_php()) {
 		<?php render_topics_toggle(); ?>
 		<?php render_paths_toggle(); ?>
 		<?php render_reader_toggle(); ?>
+		<?php render_wide_toggle(); ?>
 		<?php render_drawer(); ?>
 		<div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 			<div class="spinner" aria-hidden="true"></div>
@@ -972,6 +1005,23 @@ function render_reader_toggle(): void {
 	echo '<path d="M22 4h-7a4 4 0 0 0-4 4v12"/>';
 	echo '<path d="M2 4v16h7a4 4 0 0 0 4-4"/>';
 	echo '<path d="M22 4v16h-7a4 4 0 0 1-4-4"/>';
+	echo '</svg></span>';
+	echo '</button>';
+}
+
+/**
+ * Full-width math/demo toggle — sits left of the paths button. The
+ * opt-in `html.wide-math` class widens the content shell for plots,
+ * formula grids, tables and labs; prose stays at its reading measure.
+ */
+function render_wide_toggle(): void {
+	echo '<button id="wide-toggle" type="button" aria-label="Toggle full-width math and demos" aria-pressed="false" title="Full-width math and demos" onclick="toggleWideMath()">';
+	echo '<span class="ti-wide" aria-hidden="true">';
+	echo '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+	echo '<path d="M8 3H5a2 2 0 0 0-2 2v3"/>';
+	echo '<path d="M16 3h3a2 2 0 0 1 2 2v3"/>';
+	echo '<path d="M8 21H5a2 2 0 0 1-2-2v-3"/>';
+	echo '<path d="M16 21h3a2 2 0 0 0 2-2v-3"/>';
 	echo '</svg></span>';
 	echo '</button>';
 }

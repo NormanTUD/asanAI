@@ -9721,6 +9721,58 @@ html.reader-mode .md h3 {
 		max-width .35s ease, line-height .35s ease;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   11.5c. Full-width math/demo mode.
+   Opt-in view for technical pages. The content shell widens well
+   past the reading column so plots, formula grids, tables, labs
+   and the transformer step cards can use the page width. Prose
+   blocks keep their readable measure and stay centred, so long
+   text does not turn into one very long line.                    */
+html.wide-math {
+	--mn-wide-width: min(96vw, 1600px);
+}
+html.wide-math #contents {
+	width: var(--mn-wide-width);
+	max-width: var(--mn-wide-width);
+}
+html.wide-math #contents .md,
+html.wide-math #contents .prose {
+	width: min(92vw, var(--mn-col-width));
+	max-width: var(--mn-col-width);
+	margin-left: auto;
+	margin-right: auto;
+}
+html.wide-math #contents .lg-widescroll {
+	width: 100%;
+	max-width: 100%;
+}
+html.wide-math #contents .tm-step-grid,
+html.wide-math #contents .tm-transformer-box,
+html.wide-math #contents .layer-formula-grid,
+html.wide-math #contents .layer-formula-card,
+html.wide-math #contents .formula-grid,
+html.wide-math #contents .transformer_corpus,
+html.wide-math #contents #transformer_config,
+html.wide-math #contents #transformer-train-card,
+html.wide-math #contents #training-loss-plot,
+html.wide-math #contents .plot-container,
+html.wide-math #contents .viz-container,
+html.wide-math #contents .tm-plotly-frame,
+html.wide-math #contents .tm-layer-card,
+html.wide-math #contents .tm-step {
+	width: 100%;
+	max-width: 100%;
+}
+html.wide-math #contents .formula-grid,
+html.wide-math #contents .layer-formula-grid {
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+}
+html.wide-math #contents .md h2,
+html.wide-math #contents .md h3 {
+	margin-left: auto;
+	margin-right: auto;
+}
+
 
 /* ── 11.6. Footnote hover tooltip ── */
 .cl-fn-tip,
@@ -10423,6 +10475,61 @@ html.reader-mode #reader-toggle {
 		height: 36px;
 	}
 }
+
+/* Full-width math/demo toggle — sits left of the paths button. */
+#wide-toggle {
+	position: fixed;
+	top: 16px;
+	right: 300px;
+	z-index: 9999;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 1px solid var(--mn-border);
+	border-radius: 12px;
+	background: var(--mn-surface);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	box-shadow: var(--mn-shadow-md);
+	color: var(--mn-text-secondary);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity .35s ease, visibility .35s ease, all .2s ease;
+}
+html.is-ready #wide-toggle {
+	opacity: 1;
+	visibility: visible;
+}
+#wide-toggle svg { width: 18px; height: 18px; }
+#wide-toggle:hover {
+	border-color: var(--mn-accent);
+	box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
+	color: var(--mn-accent);
+	transform: scale(1.05);
+}
+#wide-toggle:active { transform: scale(0.95); }
+#wide-toggle:focus-visible {
+	outline: 2px solid var(--mn-accent);
+	outline-offset: 2px;
+}
+html.wide-math #wide-toggle {
+	border-color: var(--mn-accent);
+	color: var(--mn-accent);
+	background: var(--mn-accent-light);
+}
+@media (max-width: 600px) {
+	#wide-toggle {
+		top: 10px;
+		right: 292px;
+		width: 36px;
+		height: 36px;
+	}
+}
+@media print { #wide-toggle { display: none !important; } }
 
 /* ── inline target icon (used in prose so it matches the toggle) ── */
 .interest-icon {
