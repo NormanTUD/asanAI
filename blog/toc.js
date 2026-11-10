@@ -194,7 +194,8 @@ function toc() {
 	// Skip the first h1 — it's the page title from incl() and is already
 	// rendered as the visible page heading. Including it as a TOC item would
 	// produce a redundant "Coherent Difference" line at the top of the TOC.
-	var allHeaders = Array.from(contents.querySelectorAll("h1, h2, h3, h4, h5, h6"));
+	var allHeaders = Array.from(contents.querySelectorAll("h1, h2, h3, h4, h5, h6"))
+		.filter(function (h) { return !h.closest('.tm-hyper-overlay, .mnq-panel-wrap'); });
 	if (allHeaders.length && allHeaders[0].tagName === 'H1') {
 		allHeaders.shift();
 	}

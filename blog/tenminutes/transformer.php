@@ -255,6 +255,26 @@
 <div class="transformer-train-status" id="training-status"></div>
 <div id="training-loss-plot" role="img" aria-label="Training loss over epochs"></div>
 </div>
+<div class="tm-hyper-robot-wrap">
+	<button id="transformer-hyper-toggle" type="button" aria-label="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Hyperparameter öffnen' : 'Open hyperparameters'; ?>" aria-haspopup="dialog" aria-expanded="false" title="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Hyperparameter' : 'Hyperparameters'; ?>" onclick="toggleTransformerHyper(true)">
+		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<rect x="5" y="7" width="14" height="11" rx="2"/>
+			<path d="M12 3v4"/>
+			<circle cx="9" cy="12" r="1"/>
+			<circle cx="15" cy="12" r="1"/>
+			<path d="M9 15h6"/>
+			<path d="M3 11v3M21 11v3"/>
+		</svg>
+	</button>
+</div>
+<div id="transformer-hyper-overlay" class="tm-hyper-overlay" hidden>
+	<div class="tm-hyper-backdrop" data-tm-hyper-close></div>
+	<section class="tm-hyper-panel" role="dialog" aria-modal="true" aria-labelledby="tm-hyper-title">
+		<header class="tm-hyper-head">
+			<h2 id="tm-hyper-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Hyperparameter' : 'Hyperparameters'; ?></h2>
+			<button type="button" class="tm-hyper-close" data-tm-hyper-close aria-label="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Hyperparameter schließen' : 'Close hyperparameters'; ?>">×</button>
+		</header>
+		<div class="tm-hyper-body">
 <div id="transformer_config">
 <div style="margin-bottom: 15px;">
 <label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
@@ -321,6 +341,42 @@
 <div id="param-breakdown-table" style="margin-top: 10px; font-size: 0.82rem; overflow-x: auto;"></div>
 </div>
 </div>
+		</div>
+	</section>
+</div>
+<script>
+(function () {
+	"use strict";
+	var overlay = document.getElementById('transformer-hyper-overlay');
+	var toggle = document.getElementById('transformer-hyper-toggle');
+	if (!overlay || !toggle) return;
+	function setOpen(open) {
+		overlay.hidden = !open;
+		toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+		document.documentElement.classList.toggle('tm-hyper-open', open);
+		if (open) {
+			var adv = document.getElementById('transformer-advanced-config');
+			if (adv) adv.open = true;
+			if (window.TM && typeof TM.typesetMath === 'function') {
+				setTimeout(function () { TM.typesetMath(overlay); }, 60);
+			}
+			window.dispatchEvent(new Event('resize'));
+			setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 120);
+			var close = overlay.querySelector('.tm-hyper-close');
+			if (close) close.focus();
+		} else {
+			toggle.focus();
+		}
+	}
+	window.toggleTransformerHyper = setOpen;
+	overlay.querySelectorAll('[data-tm-hyper-close]').forEach(function (el) {
+		el.addEventListener('click', function () { setOpen(false); });
+	});
+	document.addEventListener('keydown', function (event) {
+		if (event.key === 'Escape' && !overlay.hidden) setOpen(false);
+	});
+})();
+</script>
 <style>
 /* TEN MINUTES — design bridge for the copied live transformer engine.
    The engine keeps its --mn-* tokens; demos.css maps them to the tm-* set.

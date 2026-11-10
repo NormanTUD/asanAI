@@ -281,7 +281,7 @@
 	}
 
 	// ── HUD + toasts ────────────────────────────────────────────────
-	let hud, toastWrap, panel;
+	let hud, toastWrap, panel, hudSig = "";
 
 	function buildUI() {
 		if (hud || !document.body) return;
@@ -299,12 +299,17 @@
 		toastWrap = node("div", "mnq-toasts");
 		toastWrap.setAttribute("aria-live", "polite");
 		document.body.appendChild(toastWrap);
+		hudSig = "";
 		renderHud(false);
 	}
 
 	function renderHud(bump) {
 		if (!hud) return;
 		const L = levelOf(state.xp);
+		const wk = weekStats();
+		const sig = L.icon + "|" + L.n + "|" + state.xp + "|" + L.frac + "|" + wk.days;
+		if (sig === hudSig && !bump) return;
+		hudSig = sig;
 		hud.querySelector(".mnq-hud-icon").textContent = L.icon;
 		hud.querySelector(".mnq-hud-lv").textContent = "Level " + L.n;
 		hud.querySelector(".mnq-hud-xp").textContent = state.xp + " XP";
@@ -315,7 +320,7 @@
 		hud.classList.toggle("is-near", !L.max && L.frac >= 0.85);
 		hud.setAttribute("aria-label", "Your progress: level " + L.n + ", " + state.xp + " XP. Achievements and challenges.");
 
-		const wk = weekStats(), wEl = hud.querySelector(".mnq-hud-week");
+		const wEl = hud.querySelector(".mnq-hud-week");
 		wEl.hidden = wk.days === 0;
 		wEl.textContent = wk.days + (wk.days === 1 ? " day" : " days");
 		wEl.title = "Learning days this week: " + wk.days;
@@ -612,15 +617,13 @@
 		wasBoost = true;
 		checkCounters();
 		save();
-		buildUI();
-		renderHud(false);
 	}
 
 	function feedFlow(seconds) {
 		if (boostActive()) return flowStatus();
 		state.flow = Math.min(FLOW_GOAL, Math.max(0, num(state.flow) + num(seconds)));
 		if (state.flow >= FLOW_GOAL) activateBoost();
-		else { save(); renderHud(false); }
+		else save();
 		return flowStatus();
 	}
 
@@ -631,20 +634,17 @@
 			wasBoost = true;
 			return;
 		}
-		if (wasBoost) { wasBoost = false; renderHud(false); }
+		if (wasBoost) wasBoost = false;
 		if (num(state.flow) >= FLOW_GOAL) { activateBoost(); return; }
 		const engaged = lastDemoTouch && now - lastDemoTouch <= FLOW_GRACE;
-		let changed = false;
 		if (engaged && num(state.flow) < FLOW_GOAL) {
 			state.flow = Math.min(FLOW_GOAL, num(state.flow) + 1);
-			changed = true;
 			if (state.flow >= FLOW_GOAL) { activateBoost(); return; }
 		} else if (!engaged && num(state.flow) > 0) {
 			state.flow = Math.max(0, num(state.flow) - 1);
-			changed = true;
+		} else {
+			return;
 		}
-		if (!changed) return;
-		renderHud(false);
 		if (now - lastFlowWrite > 4000) { lastFlowWrite = now; writeNow(false); }
 	}
 

@@ -394,6 +394,119 @@ html.dark #transformer-trajectory-full-path .js-plotly-plot .main-svg rect.bg {
 	border-radius: 0 12px 12px 0;
 }
 
+/* ── Left-middle robot: opens the hyperparameter overview ─────── */
+.tm-hyper-robot-wrap {
+	position: fixed;
+	left: 24px;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 9998;
+}
+#transformer-hyper-toggle {
+	width: 44px;
+	height: 44px;
+	padding: 0;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 14px;
+	background: var(--mn-surface, #ffffff);
+	color: var(--mn-text-secondary, #475569);
+	box-shadow: var(--mn-shadow-md, 0 4px 16px rgba(15, 23, 42, .12));
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+#transformer-hyper-toggle:hover,
+#transformer-hyper-toggle:focus-visible {
+	color: var(--mn-accent, #004b6f);
+	border-color: var(--mn-accent, #004b6f);
+	transform: translateY(-2px);
+	box-shadow: 0 8px 22px rgba(0, 75, 111, .18);
+	outline: none;
+}
+html.tm-hyper-open #transformer-hyper-toggle {
+	border-color: var(--mn-accent, #004b6f);
+	color: var(--mn-accent, #004b6f);
+	background: var(--mn-bg-subtle, #f8fafc);
+}
+@media (max-width: 720px) {
+	.tm-hyper-robot-wrap { left: 12px; }
+	#transformer-hyper-toggle { width: 44px; height: 44px; border-radius: 14px; }
+}
+@media print {
+	.tm-hyper-robot-wrap,
+	.tm-hyper-overlay { display: none !important; }
+}
+
+/* ── Hyperparameter overlay ───────────────────────────────────── */
+.tm-hyper-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 10060;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+}
+.tm-hyper-overlay[hidden] { display: none !important; }
+.tm-hyper-backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(8, 12, 24, .55);
+	backdrop-filter: blur(3px);
+	-webkit-backdrop-filter: blur(3px);
+}
+.tm-hyper-panel {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	max-height: none;
+	overflow-y: auto;
+	background: var(--mn-surface, #ffffff);
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+.tm-hyper-head {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 20px;
+	border-bottom: 1px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface, #ffffff);
+}
+.tm-hyper-head h2 { margin: 0; font-size: 1.2rem; }
+.tm-hyper-close {
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface, #ffffff);
+	color: var(--mn-text-secondary, #475569);
+	font-size: 1.35rem;
+	line-height: 1;
+	cursor: pointer;
+}
+.tm-hyper-close:hover,
+.tm-hyper-close:focus-visible {
+	color: var(--mn-accent, #004b6f);
+	border-color: var(--mn-accent, #004b6f);
+	outline: none;
+}
+.tm-hyper-body { padding: 6px 20px 24px; }
+.tm-hyper-body .md,
+html.wide-math #contents .tm-hyper-body .md {
+	width: auto;
+	max-width: none;
+	margin: 0;
+}
+.tm-hyper-body #transformer_config { margin-top: 12px; }
+
 /* Positional injection: one row group per token, three vector rows per group.
    The colours match the reading aid and the tokenizer chips. */
 .tm-pe-inject-wrap {
