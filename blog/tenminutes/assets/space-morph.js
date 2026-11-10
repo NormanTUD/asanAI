@@ -231,6 +231,11 @@
 		if (!(cur >= 7 || prevIdx >= 7)) return;
 		const lines = separationStatusLines();
 		const info = separationInfo();
+		const canvasEl = document.getElementById("ism-canvas");
+		if (canvasEl) {
+			canvasEl.setAttribute("data-separation", info.separated ? "ok" : "fail");
+			canvasEl.setAttribute("data-separation-message", lines.join(" "));
+		}
 		const x = 16;
 		const w = Math.min(280, W * 0.36);
 		const lineH = 15;
@@ -252,7 +257,6 @@
 		ctx.restore();
 	}
 
-	function liftPoint
 	function liftPoint(x, y, lift) {
 		const p = LIFT(x, y, lift);
 		if (denseMix > 0.0001) p.z += denseMix * denseHeight(x, y);

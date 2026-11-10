@@ -499,7 +499,7 @@ class AttentionEngine {
 	    style="contain:layout; overflow-anchor:none; padding:10px 12px; display:${h === 0 ? 'block' : 'none'}"
 	    data-head-idx="${h}" data-rendered="false"
 	    data-container-id="${this.containerId}" data-layer-idx="${layerIdx}" data-head-idx="${h}">
-	    <div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
+	    <div class="tm-head-loading"><span class="tm-head-spinner" aria-hidden="true"></span><span>Loading Head ${h + 1}…</span></div>
 	</div>`;
 		}
 
@@ -751,7 +751,7 @@ class AttentionEngine {
 			html += `<div id="head-content-${this.containerId}-${layerIdx}-${h}" class="head-tab-in-layer"
 	style="contain:layout;padding:10px 12px; display:${h === 0 ? 'block' : 'none'}"
 	data-head-idx="${h}" data-rendered="false">
-	<div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
+	<div class="tm-head-loading"><span class="tm-head-spinner" aria-hidden="true"></span><span>Loading Head ${h + 1}…</span></div>
     </div>`;
 		}
 

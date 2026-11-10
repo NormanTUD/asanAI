@@ -2162,7 +2162,7 @@
 		mode = mode || "attention";
 		var n = tokens.length;
 		if (mode === "pre") {
-			var pPad = 16, pLeft = 90, pTop = 18, pBottom = 32;
+			var pPad = 90, pLeft = 90, pTop = 18, pBottom = 32;
 			var pCell = (w - pLeft - pPad) / Math.max(1, n);
 			var pMax = 0.0001;
 			tokens.forEach(function (_, i) {
@@ -2699,7 +2699,7 @@
 					if (!note) {
 						note = document.createElement("p");
 						note.className = "tm-head-estimate";
-						content.insertBefore(note, content.firstChild);
+						content.appendChild(note);
 					}
 					note.textContent = (de ? "Schätzung: " : "Estimate: ") + labels[c.type] + " · ~" + confidence + "%. " + c.reason;
 					var method = content.querySelector(".tm-head-method-details");
@@ -2708,7 +2708,7 @@
 						method.className = "tm-head-method-details";
 						method.innerHTML = "<summary>" + (de ? "Wie werden die Head-Typen geschätzt? · Quellen" : "How are head types estimated? · sources") + "</summary><div class='tm-head-method'></div>";
 					}
-					if (note.nextElementSibling !== method) note.insertAdjacentElement("afterend", method);
+					content.appendChild(method);
 					method.querySelector(".tm-head-method").innerHTML = methodHtml;
 				}
 				if (c.type !== "content") {
@@ -2761,7 +2761,7 @@
 			var label = wrap.querySelector(".tm-signal-between-label");
 			if (!label) return;
 			if (wrap.classList.contains("tm-layer-signal-before")) {
-				label.textContent = (DE() ? "Residual-Stream vor Schicht 1" : "Residual stream before layer 1") + " · " + n + (DE() ? " Tokens" : " tokens");
+				label.textContent = (DE() ? "Residual-Stream vor/nach Schicht 1" : "Residual stream before/after layer 1") + " · " + n + (DE() ? " Tokens" : " tokens");
 			} else {
 				label.textContent = (DE() ? "Residual-Stream nach Schicht " : "Residual stream after layer ") + (idx + 1) + " · " + n + (DE() ? " Tokens" : " tokens");
 			}
@@ -3837,11 +3837,13 @@
 				if (firstCard) {
 					var preWrap = document.createElement("div");
 					preWrap.className = "tm-layer-signal-between tm-layer-signal-before";
-					preWrap.innerHTML = "<div class='tm-signal-between-label'>" + (isDe ? "Residual-Stream vor Schicht 1" : "Residual stream before layer 1") + " · " + ((window.__tmLayerTrace && window.__tmLayerTrace[0] && window.__tmLayerTrace[0].tokenStrings) ? window.__tmLayerTrace[0].tokenStrings.length : 0) + (isDe ? " Tokens" : " tokens") + "</div><canvas id='tm-pre-layer-signal' class='layer-signal-canvas' data-layer-idx='0' data-signal-mode='pre'></canvas>";
+					preWrap.innerHTML = "<div class='tm-signal-between-label'>" + (isDe ? "Residual-Stream vor/nach Schicht 1" : "Residual stream before/after layer 1") + " · " + ((window.__tmLayerTrace && window.__tmLayerTrace[0] && window.__tmLayerTrace[0].tokenStrings) ? window.__tmLayerTrace[0].tokenStrings.length : 0) + (isDe ? " Tokens" : " tokens") + "</div><canvas id='tm-pre-layer-signal' class='layer-signal-canvas' data-layer-idx='0' data-signal-mode='pre'></canvas>";
 					layerStack.insertBefore(preWrap, firstCard);
 				}
 			}
-			if (firstSignal && firstSignal.parentNode && !firstSignal.closest(".tm-layer-signal-between")) {
+			if (idx === 0 && firstSignal) {
+				firstSignal.style.display = "none";
+			} else if (firstSignal && firstSignal.parentNode && !firstSignal.closest(".tm-layer-signal-between")) {
 				var sigWrap = document.createElement("div");
 				sigWrap.className = "tm-layer-signal-between tm-layer-signal-after";
 				sigWrap.innerHTML = "<div class='tm-signal-between-label'>" + (isDe ? "Residual-Stream nach Schicht " : "Residual stream after layer ") + (idx + 1) + " · " + ((window.__tmLayerTrace && window.__tmLayerTrace[idx] && window.__tmLayerTrace[idx].tokenStrings) ? window.__tmLayerTrace[idx].tokenStrings.length : 0) + (isDe ? " Tokens" : " tokens") + "</div>";
@@ -4358,7 +4360,7 @@
 			current = { data: data, tokens: tokens, layerIdx: idx, pre: pre };
 			hoverRow = -1; hoverCol = -1;
 			popup.hidden = false;
-			var prefix = pre ? (DE() ? "Residual-Stream vor Schicht 1" : "Residual stream before layer 1") : (DE() ? "Residual-Stream nach Schicht " : "Residual stream after layer ") + (idx + 1);
+			var prefix = pre ? (DE() ? "Residual-Stream vor/nach Schicht 1" : "Residual stream before/after layer 1") : (DE() ? "Residual-Stream nach Schicht " : "Residual stream after layer ") + (idx + 1);
 			titleEl.textContent = prefix + " · " + (DE() ? "alle Tokens, alle Dimensionen" : "all tokens, all dimensions");
 			var below = window.innerHeight - label.getBoundingClientRect().bottom - 180;
 			canvasEl.style.height = Math.max(200, Math.min(data.length * 17 + 52, below)) + "px";
