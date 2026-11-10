@@ -304,3 +304,24 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
 - DONE Parent positional-prep details fixed; inline math inside paragraphs is
   forced inline; Probability Flow is de-boxed; feature-arrow 3D framing fills
   the chart; top-k display renormalizes over retained tokens.
+
+## Review 2026-11-10 (layout, invalid config, metric default)
+
+- DONE Intro: short and concise; says what the page is and is not, names the
+  tiny model, the scale-up in the head, and the robot hyperparameter button.
+- DONE Parent order: training data and the Train Model/loss card at the very
+  top; step visualizations next; "Before the Transformer" is now an optional
+  block.
+- DONE Parent hyperparameters live in a left-middle robot overlay; the intro
+  links to the same overlay; the advanced initializer/tokenizer card opens.
+- DONE Invalid configuration: one card per layer explains the d_k division
+  with the concrete number and actionable fix options. Tokenization and
+  embedding keep working; only the attention/layer stack is replaced. The
+  fixed warning now sits below the top icons instead of behind them.
+- DONE Layer view switch: renamed and explained. It only changes which token
+  sequence the layer panels show; the weights are the same.
+- DONE Tokenizer sentence adapts to the selected word/character/BPE setting.
+- DONE Euclidean is the default metric; the metric panel invites switching to
+  great-circle/angular because angles often matter more than exact distances.
+- DONE Topbar toggle for full-width math/demos; prose keeps its reading
+  measure, plots/formula grids/labs use the wide shell.

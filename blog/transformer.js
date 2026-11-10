@@ -2619,19 +2619,14 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	window.__tmFFNTrace = [];
 	const config = getTransformerConfig();
 	const { d_model, n_heads, temperature, n_layers } = config;
+	const valid = (d_model % n_heads === 0);
 
 	const vocabulary = [...new Set(trainingTokens)];
 	const knownTokens = getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary);
 
-	if (!validateModelDimensions(d_model, n_heads)) return;
-
-	// 1. Reinitialize weights if config changed
-	const needsReinit = handleWeightReinit(d_model, n_heads, n_layers);
-	const weights = window.currentWeights;
-
-	// 2. Only the embedding table is needed for the first (top) output.
-	// The token, embedding, positional-wave and shift plots are built later,
-	// when their section approaches the viewport.
+	// Tokenization, embedding and position do not need the attention heads
+	// to divide d_model. Keep them alive when only the head slices are
+	// impossible; the invalid branch replaces just the layers.
 	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
 	const h0 = embedTokensWithPE(knownTokens, d_model);
 	const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
@@ -2639,12 +2634,20 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	// 2b. Provenance: record the initial hidden states h_0 = embedding + PE
 	if (window.Prov) window.Prov.recordPre(knownTokens, d_model);
 
-	// 2c. Final probabilities first: the output projection must fill even if
-	// a later visualization (3D/GL, charts) throws. It only needs the weights.
-	renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
+	let weights = window.currentWeights;
+	if (valid) {
+		// 1. Reinitialize weights if config changed
+		const needsReinit = handleWeightReinit(d_model, n_heads, n_layers);
+		weights = window.currentWeights;
+		// 2c. Final probabilities first: the output projection must fill even if
+		// a later visualization (3D/GL, charts) throws. It only needs the weights.
+		renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
+		// 3. Prepare migration/trajectory state
+		prepareMigrationState(needsReinit);
+	} else {
+		window.currentWeights = null;
+	}
 
-	// 3. Prepare migration/trajectory state
-	prepareMigrationState(needsReinit);
 	// 4. Core forward pass + visualization. Keep the heavy layer cards and
 	// plots out of the first paint; build them when the step section is near.
 	window.__tmFullVizPending = { tokensWithPositional, knownTokens, trainingTokens, h0, weights, d_model, n_heads, n_layers };
@@ -2726,17 +2729,62 @@ function getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary) {
 }
 
 function validateModelDimensions(d_model, n_heads) {
-	if (d_model % n_heads !== 0) {
-		const container = document.getElementById('transformer-output-projection');
-		if (container) {
-			container.innerHTML = `<div style="color:red; padding:20px;">Error: d_model (${d_model}) must be divisible by n_heads (${n_heads}).</div>`;
-		}
-		return false;
+	return d_model % n_heads === 0;
+}
+
+function _tmInvalidLayerCard(d_model, n_heads, layerIdx) {
+	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+	const dk = d_model / n_heads;
+	const dkText = Number.isInteger(dk) ? String(dk) : dk.toFixed(2);
+	const validHeads = getValidHeads(d_model);
+	const validDims = getValidDimensions(n_heads);
+	const layerLabel = isDe ? `Schicht ${layerIdx + 1}` : `Layer ${layerIdx + 1}`;
+	const reason = isDe
+		? `Diese Schicht kann nicht gebaut werden: <code>d_k = d_model / h = ${d_model} / ${n_heads} = ${dkText}</code> ist keine ganze Zahl. Jeder Attention-Kopf braucht einen gleich großen, ganzzahligen Ausschnitt des Vektors.`
+		: `This layer cannot be built: <code>d_k = d_model / h = ${d_model} / ${n_heads} = ${dkText}</code> is not an integer. Each attention head needs an equal, integer-sized slice of the vector.`;
+	const fixA = isDe
+		? `Behalte <code>d_model = ${d_model}</code> und wähle <code>h ∈ {${validHeads.join(', ')}}</code>.`
+		: `Keep <code>d_model = ${d_model}</code> and choose <code>h ∈ {${validHeads.join(', ')}}</code>.`;
+	const fixB = isDe
+		? `Behalte <code>h = ${n_heads}</code> und wähle <code>d_model ∈ {${validDims.join(', ')}}</code>.`
+		: `Keep <code>h = ${n_heads}</code> and choose <code>d_model ∈ {${validDims.join(', ')}}</code>.`;
+	const note = isDe
+		? 'Tokenisierung und Embedding funktionieren weiterhin. Nur die Attention-Schichten brauchen die ganzzahlige Teilung.'
+		: 'Tokenization and embedding still work. Only the attention layers need the integer division.';
+	return `<section class="tm-layer-card tm-layer-card--invalid" data-layer-idx="${layerIdx}">
+		<div class="tm-layer-head" style="cursor:default;"><span class="tm-layer-num">${layerLabel}</span><span class="tm-layer-sub">${isDe ? 'nicht baubar' : 'cannot be built'}</span></div>
+		<div class="tm-layer-invalid-body">
+			<p class="tm-layer-invalid-title">${isDe ? 'Warum diese Schicht nicht existiert' : 'Why this layer cannot exist'}</p>
+			<p>${reason}</p>
+			<p>${fixA}</p>
+			<p>${fixB}</p>
+			<p class="tm-layer-invalid-note">${note}</p>
+		</div>
+	</section>`;
+}
+
+function showInvalidLayerMessage(d_model, n_heads) {
+	const container = document.getElementById('ffn-equations-container');
+	if (!container) return;
+	container.innerHTML = '';
+	const stack = document.createElement('div');
+	stack.className = 'unified-layer-stack lg-widescroll';
+	const config = getTransformerConfig();
+	const n_layers = Math.max(1, parseInt(config.n_layers, 10) || 1);
+	for (let l = 0; l < n_layers; l++) {
+		const wrap = document.createElement('div');
+		wrap.innerHTML = _tmInvalidLayerCard(d_model, n_heads, l);
+		stack.appendChild(wrap.firstElementChild);
 	}
-	return true;
+	container.appendChild(stack);
+	window.dispatchEvent(new CustomEvent('tm:transformer-data'));
 }
 
 function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers) {
+	if (!validateModelDimensions(d_model, n_heads)) {
+		showInvalidLayerMessage(d_model, n_heads);
+		return;
+	}
 	if (tokensWithPositional.length === 0) {
 		showEmptyInputMessage();
 		return;
@@ -6568,23 +6616,25 @@ function syncTransformerSettings(trigger) {
 	// Check validity and update the UI accordingly
 	updateArchitectureValidityUI();
 
-	// Only re-run the demo if the config is valid
-	if (d_model % h === 0) {
-		debounced_run_transformer_demo();
-	}
+	// Re-run even when only the attention slices are impossible: the
+	// tokenizer, embedding and position views still work and must refresh.
+	debounced_run_transformer_demo();
 }
 
 function updateArchitectureValidityUI() {
 	const d_model = parseInt(document.getElementById('transformer-dimension-model').value) || 3;
 	const h       = parseInt(document.getElementById('transformer-heads').value) || 1;
 	const isValid = (d_model % h === 0);
+	const isDe    = !!(window.TM && TM.lang && TM.lang() === 'de');
 
 	// ── Train button ──
 	const trainBtn = document.querySelector('.train-btn');
 	if (trainBtn) {
 		if (!isValid) {
 			trainBtn.disabled = true;
-			trainBtn.title = `d_model (${d_model}) must be divisible by heads (${h})`;
+			trainBtn.title = isDe
+				? `d_model (${d_model}) muss durch die Anzahl der Heads (${h}) teilbar sein`
+				: `d_model (${d_model}) must be divisible by heads (${h})`;
 			trainBtn.style.opacity = '0.45';
 			trainBtn.style.cursor = 'not-allowed';
 		} else {
@@ -6597,14 +6647,9 @@ function updateArchitectureValidityUI() {
 	// ── Validity message container ──
 	let msgDiv = document.getElementById('arch-validity-message');
 	if (!msgDiv) {
-		const headsSlider = document.getElementById('transformer-heads');
-		if (!headsSlider) return;
 		msgDiv = document.createElement('div');
 		msgDiv.id = 'arch-validity-message';
-		const parentDiv = headsSlider.closest('div[style]');
-		if (parentDiv && parentDiv.parentNode) {
-			parentDiv.parentNode.insertBefore(msgDiv, parentDiv.nextSibling);
-		}
+		document.body.appendChild(msgDiv);
 	}
 
 	if (isValid) {
@@ -6616,8 +6661,8 @@ function updateArchitectureValidityUI() {
 	}
 
 	// ── Invalid state: build the message ──
-	setSliderOutline('transformer-dimension-model', '2px solid #ef4444');
-	setSliderOutline('transformer-heads', '2px solid #ef4444');
+	setSliderOutline('transformer-dimension-model', '2px solid var(--tm-coral, var(--mn-rose, #9185be))');
+	setSliderOutline('transformer-heads', '2px solid var(--tm-coral, var(--mn-rose, #9185be))');
 
 	const validHeads = getValidHeads(d_model);
 	const validDims  = getValidDimensions(h);
@@ -6627,23 +6672,47 @@ function updateArchitectureValidityUI() {
 	msgDiv.style.cssText = `
 	display: block;
 	position: fixed;
-	top: 12px;
-	right: 12px;
+	top: 70px;
+	right: 16px;
 	left: auto;
-	z-index: 1000;
+	z-index: 10050;
 	max-width: min(480px, calc(100vw - 24px));
 	margin: 0;
 	padding: 12px 16px;
 	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
-	background: ${themeColor('#fef2f2')};
-	border: 2px solid ${themeColor('#ef4444')};
+	background: color-mix(in srgb, var(--tm-coral, var(--mn-rose, #9185be)) 10%, var(--tm-paper, #ffffff));
+	border: 2px solid var(--tm-coral, var(--mn-rose, #9185be));
 	border-radius: 8px;
 	font-size: 0.85rem;
-	color: ${themeColor('#991b1b')};
+	color: var(--tm-ink, var(--mn-text, #000000));
 	line-height: 1.7;
     `;
 
-	msgDiv.innerHTML = `
+	msgDiv.innerHTML = isDe ? `
+	<strong>⚠️ Ungültige Konfiguration — Training deaktiviert</strong><br>
+	<p>
+	    $d_{\\text{model}}$ muss durch $h$ teilbar sein, damit jeder
+	    Attention-Kopf einen gleich großen, ganzzahligen Ausschnitt des Vektors bekommt:
+	</p>
+	<p style="text-align:center;">
+	    $d_k = \\dfrac{d_{\\text{model}}}{h} = \\dfrac{${d_model}}{${h}} = ${dkValue}$
+	    &nbsp;— <strong>keine ganze Zahl.</strong>
+	</p>
+
+	<p style="margin-top:8px;">
+	    <strong>Option A</strong> — behalte $d_{\\text{model}} = ${d_model}$,
+	    ändere $h$ auf einen von:
+	    <code>${validHeads.length > 0 ? validHeads.join(', ') : 'keiner im Reglerbereich'}</code>
+	</p>
+	<p>
+	    <strong>Option B</strong> — behalte $h = ${h}$,
+	    ändere $d_{\\text{model}}$ auf einen von:
+	    <code>${validDims.length > 0 ? validDims.join(', ') : 'keiner im Reglerbereich'}</code>
+	</p>
+	<p style="margin-top:8px;">
+	    Tokenisierung und Embedding funktionieren weiterhin; nur die Attention-Schichten brauchen die ganzzahlige Teilung.
+	</p>
+    ` : `
 	<strong>⚠️ Invalid Configuration — Training Disabled</strong><br>
 	<p>
 	    $d_{\\text{model}}$ must be evenly divisible by $h$ so that each
@@ -6664,8 +6733,10 @@ function updateArchitectureValidityUI() {
 	    change $d_{\\text{model}}$ to one of:
 	    <code>${validDims.length > 0 ? validDims.join(', ') : 'none in slider range'}</code>
 	</p>
+	<p style="margin-top:8px;">
+	    Tokenization and embedding still work; only the attention layers need the integer slice.
+	</p>
     `;
-
 	if (msgDiv) _renderTemmlOnElements([msgDiv]);
 }
 
@@ -7168,15 +7239,18 @@ function updateTrainButtonState() {
 
 	const d_model = parseInt(document.getElementById('transformer-dimension-model').value) || 3;
 	const h       = parseInt(document.getElementById('transformer-heads').value) || 1;
+	const isDe    = !!(window.TM && TM.lang && TM.lang() === 'de');
 
 	if (d_model % h !== 0) {
 		btn.disabled = true;
-		btn.title = `d_model (${d_model}) must be divisible by heads (${h})`;
+		btn.title = isDe
+			? `d_model (${d_model}) muss durch die Anzahl der Heads (${h}) teilbar sein`
+			: `d_model (${d_model}) must be divisible by heads (${h})`;
 		btn.style.opacity = '0.45';
 		btn.style.cursor = 'not-allowed';
 	} else if (tokens.length < 2) {
 		btn.disabled = true;
-		btn.title = 'Need at least 2 tokens in training data';
+		btn.title = isDe ? 'Mindestens 2 Tokens in den Trainingsdaten nötig' : 'Need at least 2 tokens in training data';
 		btn.style.opacity = '0.5';
 		btn.style.cursor = 'not-allowed';
 	} else {

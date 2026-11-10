@@ -75,7 +75,7 @@
 		select.innerHTML = Object.keys(options).map(function (key) {
 			return `<option value="${key}">${options[key].en || key}</option>`;
 		}).join('');
-		select.value = (api && api.get) ? api.get() : (window.tmFeatureMetric || 'angular');
+		select.value = (api && api.get) ? api.get() : (window.tmFeatureMetric || 'euclidean');
 
 		const sync = () => {
 			const angular = select.value === 'angular';

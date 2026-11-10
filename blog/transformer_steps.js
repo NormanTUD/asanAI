@@ -2787,8 +2787,8 @@
 		euclidean: { de: "Euklidisch (L2)", en: "Euclidean (L2)", short: "L2" },
 		angular: { de: "Großkreis / angular (Cosinus, 0–1)", en: "Great-circle / angular (cosine, 0–1)", short: "angle" }
 	};
-	if (!window.tmFeatureMetric || !FEATURE_METRICS[window.tmFeatureMetric]) window.tmFeatureMetric = "angular";
-	function featureMetric() { return window.tmFeatureMetric || "angular"; }
+	if (!window.tmFeatureMetric || !FEATURE_METRICS[window.tmFeatureMetric]) window.tmFeatureMetric = "euclidean";
+	function featureMetric() { return window.tmFeatureMetric || "euclidean"; }
 	function featureMetricLabel() { return FEATURE_METRICS[featureMetric()][DE() ? "de" : "en"]; }
 	function vectorNorm(v) { return Math.sqrt((v || []).reduce(function (s, x) { return s + x * x; }, 0)); }
 	function normalizeVector(v) { var n = vectorNorm(v) || 1; return (v || []).map(function (x) { return x / n; }); }
@@ -2847,10 +2847,10 @@
 					+ formula;
 			}
 			if (de) {
-				return '<p><b>Euklidisch (L2) · Standard.</b> Gerade Linie im Raum. Für das nächste Token zählen oft die Winkel: Die Logits sind Skalarprodukte <code>h·w</code>; nach Normierung entscheidet der Cosinus, also der Winkel. Schalte oben auf <b>Großkreis / angular</b>, um diese Sicht zu sehen; wir suchen die Darstellung, in der die Daten am einfachsten aussehen.</p>'
+				return '<p><b>Euklidisch (L2) · Standard.</b> Gerade Linie im Raum. Für das nächste Token zählen oft die Winkel: Die Logits sind Skalarprodukte <code>h·w</code>; nach Normierung entscheidet der Cosinus, also der Winkel. Schalte im Metrik-Schalter auf <b>Großkreis / angular</b>, um diese Sicht zu sehen; wir suchen die Darstellung, in der die Daten am einfachsten aussehen.</p>'
 					+ '<div class="tm-metric-formula" data-tex="d_{\\text{L2}}=\\lVert u-v\\rVert_2"></div>';
 			}
-			return '<p><b>Euclidean (L2) · default.</b> Straight-line distance in the space. For the next token, angles often matter more: the logits are dot products <code>h·w</code>; after normalization the cosine, i.e. the angle, decides. Switch to <b>Great-circle / angular</b> at the top to see that view; we look for the representation that makes the data simplest.</p>'
+			return '<p><b>Euclidean (L2) · default.</b> Straight-line distance in the space. For the next token, angles often matter more: the logits are dot products <code>h·w</code>; after normalization the cosine, i.e. the angle, decides. Switch to <b>Great-circle / angular</b> in the metric switch to see that view; we look for the representation that makes the data simplest.</p>'
 				+ '<div class="tm-metric-formula" data-tex="d_{\\text{L2}}=\\lVert u-v\\rVert_2"></div>';
 		},
 		transform: function (v, metric) {
@@ -2952,7 +2952,7 @@
 		var wrap = document.createElement("div");
 		wrap.id = "tm-global-metric";
 		wrap.className = "tm-global-metric";
-		wrap.innerHTML = "<label>" + (de ? "Distanzmetrik (alle Plots)" : "Distance metric (all plots)") + " <select>" + options + "</select></label><label class='tm-global-sphere'><input type='checkbox' " + (window.tmMetricSphere !== false ? "checked" : "") + "> " + (de ? "Kugel / Kreis zeigen" : "Show sphere / circle") + "</label><label class='tm-global-highdim' style='display:none; margin-left:10px;'>" + (de ? "Hochdim" : "High-dim") + " <select><option value='pca'>PCA</option><option value='parallel'>Parallel</option></select></label><span class='tm-global-metric-note'>" + (de ? "Gilt global für Feature-Migration, Token-Trajectory, Embedding und Position." : "Applies globally to feature migration, token trajectory, embedding, and position.") + "</span>";
+		wrap.innerHTML = "<label>" + (de ? "Distanzmetrik (alle Plots)" : "Distance metric (all plots)") + " <select>" + options + "</select></label><label class='tm-global-sphere'><input type='checkbox' " + (window.tmMetricSphere !== false ? "checked" : "") + "> " + (de ? "Kugel / Kreis zeigen" : "Show sphere / circle") + "</label><label class='tm-global-highdim' style='display:none; margin-left:10px;'>" + (de ? "Hochdim" : "High-dim") + " <select><option value='pca'>PCA</option><option value='parallel'>Parallel</option></select></label><span class='tm-global-metric-note'>" + (de ? "Euklidisch ist der Standard. Probiere Großkreis/angular: Die scheinbar wirren Bewegungen ordnen sich auf einer Kugeloberfläche, und LLMs geht es oft mehr um Winkel als um exakte Distanzen." : "Euclidean is the default. Try great-circle/angular: the seemingly chaotic moves become ordered on a sphere, and LLMs often care more about angles than exact distances.") + "</span>";
 		var select = wrap.querySelector("select");
 		var sphere = wrap.querySelector("input[type=checkbox]");
 		var highdimLabel = wrap.querySelector(".tm-global-highdim");

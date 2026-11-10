@@ -1999,3 +1999,39 @@
 	color: var(--mn-text-muted, var(--tm-muted, #627476));
 	font-variant-numeric: tabular-nums;
 }
+
+/* Invalid architecture: one card per layer explains why the layer cannot
+   be built. Only the attention/layer stack is affected; tokenization and
+   embedding stay available. */
+.tm-layer-card--invalid {
+	border-color: var(--tm-coral, var(--mn-rose, #9185be));
+}
+.tm-layer-card--invalid .tm-layer-head {
+	cursor: default;
+}
+.tm-layer-card--invalid .tm-layer-num {
+	color: var(--tm-coral, var(--mn-rose, #9185be));
+}
+.tm-layer-invalid-body {
+	padding: 12px 16px 16px;
+	font: 400 0.88rem/1.55 "Open Sans", system-ui, sans-serif;
+	color: var(--tm-ink-soft, var(--mn-text-secondary, #2c464d));
+}
+.tm-layer-invalid-title {
+	margin: 0 0 6px;
+	font-weight: 700;
+	color: var(--tm-ink, var(--mn-text, #000000));
+}
+.tm-layer-invalid-body p {
+	margin: 6px 0;
+}
+.tm-layer-invalid-body code {
+	font-family: "Courier New", monospace;
+	font-size: 0.86em;
+	padding: 1px 4px;
+	background: var(--tm-paper-2, var(--mn-bg-subtle, #f8fafc));
+}
+.tm-layer-invalid-note {
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+	font-size: 0.82rem;
+}
