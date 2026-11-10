@@ -135,7 +135,7 @@
 								How is the vocabulary built? The workhorse is <strong>Byte Pair Encoding
 								(BPE)</strong>, at heart a compression algorithm: it tries to represent as much
 text, and therefore as much possible meaning, with as few tokens as possible. BPE
-began as a data-compression scheme (<a href="https://www.derczynski.com/papers/archive/BPE_Gage.pdf" rel="noopener">Gage, 1994</a>), adapted for subword
+began as a data-compression scheme (<a href="https://en.wikipedia.org/wiki/Byte_pair_encoding" rel="noopener">Gage, 1994</a>), adapted for subword
 tokenization by <a href="https://arxiv.org/abs/1508.07909" rel="noopener">Sennrich et al., 2016</a>: start from a base alphabet (characters, or
 bytes for byte-level BPE) repeatedly merge the most frequent adjacent pair in the
 training text, and stop at the target vocabulary size.
