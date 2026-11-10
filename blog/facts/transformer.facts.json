@@ -12658,7 +12658,7 @@
     },
     {
       "id": "transformer-stmt-7",
-      "quote": "The hyperparameters sit behind the <rect x=\"5\" y=\"7\" width=\"14\" height=\"11\" rx=\"2\"/> <circle cx=\"9\" cy=\"12\" r=\"1\"/><circle cx=\"15\" cy=\"12\" r=\"1\"/> robot on the left ( open them here ).",
+      "quote": "The hyperparameters sit behind the robot icon on the left of this page ( open them here ).",
       "block_id": "transformer-block-5",
       "section": "",
       "kind": "statement"
@@ -15260,7 +15260,7 @@
     },
     {
       "id": "transformer-block-5",
-      "quote": "The hyperparameters sit behind the <rect x=\"5\" y=\"7\" width=\"14\" height=\"11\" rx=\"2\"/> <circle cx=\"9\" cy=\"12\" r=\"1\"/><circle cx=\"15\" cy=\"12\" r=\"1\"/> robot on the left ( open them here ). Open them whenever you want to change the model; if you just want to play first, scroll on. The training card is right below, and the step-by-step visualizations follow.",
+      "quote": "The hyperparameters sit behind the robot icon on the left of this page ( open them here ). Open them whenever you want to change the model; if you just want to play first, scroll on. The training card is right below, and the step-by-step visualizations follow.",
       "kind": "paragraph",
       "section": ""
     },
