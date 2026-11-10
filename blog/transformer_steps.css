@@ -2067,3 +2067,17 @@
 	animation: tm-head-spin 0.7s linear infinite;
 }
 @keyframes tm-head-spin { to { transform: rotate(360deg); } }
+
+/* The layer card and its header must stay flat: no glow, no tint. */
+.tm-layer-card,
+.tm-layer-card.is-open,
+.tm-layer-head {
+	box-shadow: none !important;
+}
+html.dark .head-tab-in-layer,
+html.dark [id^="head-content-"] {
+	background: transparent !important;
+}
+html.dark .tm-tda-step > summary {
+	color: var(--tm-petrol, #5c9baf) !important;
+}

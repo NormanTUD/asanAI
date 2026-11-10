@@ -205,26 +205,43 @@
 
 	function separationInfo() {
 		if (!denseWeights) buildDenseWeights();
-		let coreMin = Infinity, coreMax = -Infinity, ringMin = Infinity, ringMax = -Infinity;
-		PTS.forEach(function (p) {
-			const v = denseHeight(p.x, p.y);
-			if (p.c === 0) { coreMin = Math.min(coreMin, v); coreMax = Math.max(coreMax, v); }
-			else { ringMin = Math.min(ringMin, v); ringMax = Math.max(ringMax, v); }
-		});
-		const separated = (coreMax < 0 && ringMin > 0) || (coreMin > 0 && ringMax < 0);
-		return { separated: separated, coreMin: coreMin, coreMax: coreMax, ringMin: ringMin, ringMax: ringMax };
+		const scored = PTS.map(function (p) { return { v: denseHeight(p.x, p.y), c: p.c }; })
+			.sort(function (a, b) { return a.v - b.v; });
+		const first = scored[0].c;
+		const last = scored[scored.length - 1].c;
+		let split = 0;
+		while (split < scored.length && scored[split].c === first) split++;
+		const monotone = first !== last && scored.slice(split).every(function (o) { return o.c === last; });
+		let best = -1, bestThreshold = 0;
+		for (let i = 1; i < scored.length; i++) {
+			const threshold = (scored[i - 1].v + scored[i].v) / 2;
+			let correct = 0;
+			scored.forEach(function (o) {
+				const predicted = o.v <= threshold ? first : last;
+				if (predicted === o.c) correct++;
+			});
+			if (correct > best) { best = correct; bestThreshold = threshold; }
+		}
+		const threshold = monotone && split > 0 ? (scored[split - 1].v + scored[split].v) / 2 : bestThreshold;
+		return {
+			separated: monotone && split > 0,
+			threshold: threshold,
+			wrong: scored.length - best,
+			total: scored.length
+		};
 	}
 
 	function separationStatusLines() {
 		const info = separationInfo();
+		const threshold = info.threshold.toFixed(2);
 		if (info.separated) {
 			return DE
-				? ["Getrennt bei s = 0.", "Kern und Ring liegen auf", "verschiedenen Seiten."]
-				: ["Separated at s = 0.", "The core and the ring are on", "opposite sides."];
+				? ["Linear trennbar: ja.", "Schwelle s = " + threshold + ".", "Kern und Ring liegen auf", "verschiedenen Seiten."]
+				: ["Linearly separable: yes.", "Threshold s = " + threshold + ".", "The core and the ring are on", "opposite sides."];
 		}
 		return DE
-			? ["Kann aktuell nicht sauber", "getrennt werden.", "Spiele mit Neuronen, Gewichten,", "Skala, Bias oder Preset."]
-			: ["Cannot separate cleanly yet.", "Play with the neurons, weights,", "scale, bias, or a preset."];
+			? ["Linear trennbar: nein.", "Beste Schwelle s = " + threshold + ".", info.wrong + " von " + info.total + " Punkten falsch.", "Spiele mit Neuronen, Gewichten,", "Skala, Bias oder Preset."]
+			: ["Linearly separable: no.", "Best threshold s = " + threshold + ".", info.wrong + " of " + info.total + " points wrong.", "Play with the neurons, weights,", "scale, bias, or a preset."];
 	}
 
 	function drawSeparationStatus(C) {
@@ -610,7 +627,9 @@
 			ctx.lineTo(X, AX_Y + 4);
 			ctx.stroke();
 		}
-		const TX = axisScoreX(0);
+		const denseAxis = denseProjectMix > 0.5;
+		const threshold = denseAxis ? separationInfo().threshold : 0;
+		const TX = axisScoreX(threshold);
 		ctx.strokeStyle = C.axisZero;
 		ctx.lineWidth = 2.6;
 		ctx.beginPath();
@@ -622,11 +641,11 @@
 		ctx.textAlign = "center";
 		ctx.fillStyle = C.planeStrong;
 		ctx.font = "13px Georgia, serif";
-		ctx.fillText("s = 0", TX, AX_Y + 58);
+		ctx.fillText("s = " + threshold.toFixed(2), TX, AX_Y + 58);
 		ctx.font = "600 13px system-ui, sans-serif";
-		if (denseProjectMix > 0.5) {
+		if (denseAxis) {
 			const info = separationInfo();
-			const coreLeft = info.coreMax < 0;
+			const coreLeft = info.coreMin < threshold;
 			ctx.fillStyle = C.inner;
 			ctx.fillText(DE ? "Kern" : "core", coreLeft ? lerp(AX_L, TX, 0.40) : lerp(TX, AX_R, 0.55), AX_Y + 58);
 			ctx.fillStyle = C.outer;
