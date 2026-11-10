@@ -82228,6 +82228,91 @@
   ]
  },
  {
+  "name": "Ziwei Ji et al.",
+  "canon": "Ziwei Ji",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ji2023survey"
+  ],
+  "cited_in": [
+   "hallucinations"
+  ]
+ },
+ {
+  "name": "Joshua Maynez",
+  "canon": "Joshua Maynez",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "maynez2020faithfulness"
+  ],
+  "cited_in": [
+   "hallucinations"
+  ]
+ },
+ {
+  "name": "Shashi Narayan",
+  "canon": "Shashi Narayan",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "maynez2020faithfulness"
+  ],
+  "cited_in": [
+   "hallucinations"
+  ]
+ },
+ {
+  "name": "Bernd Bohnet",
+  "canon": "Bernd Bohnet",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "maynez2020faithfulness"
+  ],
+  "cited_in": [
+   "hallucinations"
+  ]
+ },
+ {
+  "name": "Ryan McDonald",
+  "canon": "Ryan McDonald",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "maynez2020faithfulness"
+  ],
+  "cited_in": [
+   "hallucinations"
+  ]
+ },
+ {
   "name": "Daniel Crevier",
   "canon": "Daniel Crevier",
   "alias": null,
