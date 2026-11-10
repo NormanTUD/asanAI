@@ -24,6 +24,12 @@ The AI does not “know” that the capital of France is Paris. It simply knows 
 
 \marginfig{pareidolia_jupiter_face.jpg}{Humans are pattern completion engines too. This photo from NASA's Juno probe shows ordinary cloud turbulence on Jupiter, but the eye insists on seeing a *face* — pareidolia, the same conflating of noise and pattern that makes an LLM “see” a fact that isn't there. Image: [NASA/JPL-Caltech/SwRI/MSSS](https://commons.wikimedia.org/wiki/File:Just_in_Time_for_Halloween,_NASA%27s_Juno_Mission_Spots_Eerie_%22Face%22_on_Jupiter_(PIA25727).jpg) (public domain; color processing Vladimir Tarasov).}
 
+### Intrinsic and Extrinsic Hallucinations
+
+A summary can fail its source in two ways. An **intrinsic** hallucination contradicts the source: the source says the first Ebola vaccine was approved in 2019, the summary says 2021. An **extrinsic** hallucination adds a detail the source neither supports nor contradicts, for example background about clinical trials that the source never mentions. The added detail can be true and still be unverifiable from the source, so the right verdict is “unsupported”, not “false” (\cite[Maynez et al., 2020]{maynez2020faithfulness}; \cite[Ji et al., 2023]{ji2023survey}).
+
+This is why **faithfulness** and **factuality** are separate tests. Faithfulness asks whether the output stays consistent with the provided source; factuality asks whether it is true about the world. A faithful summary can repeat a false source, and a factually correct summary can add a detail the source does not support.
+
 ### The Mechanism: Next-Token Prediction
 
 At its core, an LLM is a giant mathematical function that calculates probabilities. It looks at the text you have written so far (the Context) and calculates a probability score for every single word in its vocabulary to see which one should come next.
@@ -277,6 +283,8 @@ Despite their fluency, LLMs are not calculators; they are statistical next-token
 This leads to several critical issues:
 
 - **Tokenization Errors**: Many LLMs tokenize numbers inconsistently. For example, “12345” might be split into `["12", "345"]` or `["1", "23", "45"]`. Since the model processes these chunks as discrete semantic units, it often loses the positional value required for arithmetic, much like trying to do long division while only seeing fragments of the numbers.
+
+Tokenization is one reason the survey by \cite[Ji et al. (2023)]{ji2023survey} lists hallucinations in numerals as a problem in its own right.
 - **Probabilistic Hallucinations**: If a specific calculation (e.g., $14 \times 18$) appears frequently in the training set, the model will recall it accurately. However, for rare or large-number calculations, the model might “hallucinate” a result that looks mathematically plausible in the embedding space but is computationally false.
 - **Lack of a Global State**: LLMs process information linearly. They lack a “scratchpad” or a centralized registry to store carrying values or intermediate remainders unless explicitly prompted to do so via **Chain-of-Thought** techniques.
 

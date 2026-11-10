@@ -5,7 +5,7 @@ return [
 	'texts' => [
 		'Ideas arrive' => 'Ideen kommen',
 		'through people.' => 'durch Menschen.',
-		'AI has a surprisingly small cast of recurring characters. The same names appear in the history, the mathematics, the labs, and the frontier: sometimes as the person who proved the theorem, sometimes as the person whose failure defined the next question.' => 'KI hat eine überraschend kleine Besetzung wiederkehrender Figuren. Dieselben Namen erscheinen in der Geschichte, der Mathematik, den Laboren und der Frontier: manchmal als die Person, die das Theorem bewies, manchmal als die Person, deren Scheitern die nächste Frage definierte.',
+		'AI has a surprisingly small cast of recurring characters. The same names appear in the history, the mathematics, the labs, and the frontier: sometimes as the person who proved the theorem, sometimes as the person whose failure defined the next question. Who gets remembered, and who does the work?' => 'KI hat eine überraschend kleine Besetzung wiederkehrender Figuren. Dieselben Namen erscheinen in der Geschichte, der Mathematik, den Laboren und der Frontier: manchmal als die Person, die das Theorem bewies, manchmal als die Person, deren Scheitern die nächste Frage definierte. Wer wird erinnert, und wer macht die Arbeit?',
 		'Before the machine' => 'Vor der Maschine',
 		'A long lineage.' => 'Eine lange Linie.',
 		'AI for science asked how prediction becomes discovery. Ada Lovelace and Charles Babbage imagined a programmable machine before electronics existed; her notes include the first published algorithm (' => 'KI für die Wissenschaft fragte, wie Vorhersage zu Entdeckung wird. Ada Lovelace und Charles Babbage dachten an eine programmierbare Maschine, bevor Elektronik existierte; ihre Notizen enthalten den ersten veröffentlichten Algorithmus (',
@@ -129,6 +129,10 @@ return [
 		'The short version.' => 'Die Kurzfassung.',
 		'The aha' => 'Der Aha-Moment',
 		'The history is collective, contested, and often late in giving credit.' => 'Die Geschichte ist kollektiv, umstritten und spricht oft spät Anerkennung aus.',
+		'The lesson is not that credit is arbitrary. It is that a breakthrough is a relay: the visible name, the group that made it work, and the next person who asks a better question.' => 'Die Lehre ist nicht, dass Anerkennung willkürlich ist. Sie ist, dass ein Durchbruch eine Staffel ist: der sichtbare Name, die Gruppe, die ihn zum Laufen brachte, und die nächste Person, die eine bessere Frage stellt.',
+	],
+	'blocks' => [
+		'The pattern repeats at Dartmouth. The 1955 proposal named the field and promised a great deal; the 1956 workshop was small, and no consensus emerged (<a href="http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf" rel="noopener">McCarthy et al., 1955</a>). The name stuck; the promise took decades.' => 'Das Muster wiederholt sich in Dartmouth. Das Proposal von 1955 benannte das Feld und versprach viel; der Workshop von 1956 war klein, und es entstand kein Konsens (<a href="http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf" rel="noopener">McCarthy et al., 1955</a>). Der Name blieb; das Versprechen brauchte Jahrzehnte.',
 	],
 	'attrs' => [
 		'Scroll left' => 'Nach links scrollen',
