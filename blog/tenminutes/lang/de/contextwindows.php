@@ -5,7 +5,7 @@ return [
 	'texts' => [
 		'The model only knows' => 'Das Modell kennt nur',
 		'what is in the window.' => 'was im Fenster ist.',
-		'A context window is not a persistent memory. It is the entire input the model can see in one forward pass: system prompt, history, documents, and your new question.' => 'Ein Kontextfenster ist kein dauerhaftes Gedächtnis. Es ist die gesamte Eingabe, die das Modell in einem Vorwärtspass sehen kann: System-Prompt, Verlauf, Dokumente und deine neue Frage.',
+		'A context window is not a persistent memory. It is the entire input the model can see in one forward pass: system prompt, history, documents, and your new question. What does the model actually see?' => 'Ein Kontextfenster ist kein dauerhaftes Gedächtnis. Es ist die gesamte Eingabe, die das Modell in einem Vorwärtspass sehen kann: System-Prompt, Verlauf, Dokumente und deine neue Frage. Was sieht das Modell eigentlich?',
 		'A fixed input buffer' => 'Ein fester Eingabepuffer',
 		'Everything competes for space.' => 'Alles konkurriert um Platz.',
 		'Attention can only see the window. Every token in the conversation occupies space in it. When the window is full, something has to be dropped, summarised, or moved outside the model. The model does not remember earlier turns unless they are still in the window.' => 'Attention kann nur das Fenster sehen. Jedes Token im Gespräch belegt darin Platz. Wenn das Fenster voll ist, muss etwas verworfen, zusammengefasst oder aus dem Modell herausbewegt werden. Das Modell erinnert sich nicht an frühere Runden, es sei denn, sie stehen noch im Fenster.',
@@ -48,6 +48,10 @@ return [
 		'The aha' => 'Der Aha-Moment',
 		'A context window is working memory, not a database.' => 'Ein Kontextfenster ist Arbeitsgedächtnis, keine Datenbank.',
 		'If it is not in the window, the model cannot use it, unless a retrieval system puts it there.' => 'Wenn es nicht im Fenster ist, kann das Modell es nicht nutzen, es sei denn, ein Retrieval-System legt es dort ab.',
+		'The window is a budget, not a guarantee of attention.' => 'Das Fenster ist ein Budget, keine Garantie für Aufmerksamkeit.',
+	],
+	'blocks' => [
+		'A concrete test: give the model 20 documents and place the one relevant document in the middle of the prompt. Accuracy often drops compared with placing the same document first or last (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>). A bigger window does not guarantee that the model uses the middle.' => 'Ein konkreter Test: Gib dem Modell 20 Dokumente und lege das eine relevante Dokument in die Mitte des Prompts. Die Genauigkeit sinkt oft, verglichen damit, dasselbe Dokument an den Anfang oder das Ende zu legen (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>). Ein größeres Fenster garantiert nicht, dass das Modell die Mitte nutzt.',
 	],
 	'attrs' => [],
 ];

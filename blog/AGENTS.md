@@ -242,7 +242,11 @@ lessons.
 
 **Reader-retention modules** (all state in localStorage, nothing leaves the
 browser): `quests.js` (`MNQuest`: XP, levels, achievements, lesson quests, the
-progress overview; other modules add overview tabs via `MNQuest.addTab`),
+progress overview; other modules add overview tabs via `MNQuest.addTab`; only
+the first interactive XP award per page flies into the bottom-left reward
+badge, later awards just tick it, and sustained demo interaction fills a Flow
+meter that lights a two-minute ×2 **Flow Surge**, via `MNQuest.flow()` /
+`feedFlow()`),
 `quiz.js` (`.mn-quiz` cards; emits `mnquiz:answer` / `mnquiz:finish`),
 `lab_challenges.js` (goals inside labs; old labs without a `root` use
 `anchor`), `review.js` (spaced-repetition deck of missed quiz questions),
@@ -1200,13 +1204,13 @@ authoritative list of individual checks; `check_all.py` orchestrates them.
 | `uv run blog/tools/factcheck/check_sentence_conflicts.py blog/ --strict` | sentence pairs whose factual claims contradict (`sentence "…" (a.php) contradicts sentence "…" (b.php)`) | any factual contradiction | `blog/**` (php-validation job) |
 | `uv run blog/tools/factcheck/deep_audit.py blog/ --strict` | quote/citation grounding, uncovered years/quantities, uncited claims, relations, ranges, normalised year conflicts | bad citations, range errors, year conflicts | `blog/**` (php-validation job) |
 | `uv run blog/tests/fact_ledger_test.py` | unit tests for aliases, unit normalisation, conflict detection, coverage | any failed test | `blog/**` (php-validation job) |
-| `node blog/tests/{topics,math_alt,keypoint,search_js,semantic_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, search, semantic ranking | any failed check | `blog/**` |
+| `node blog/tests/{topics,math_alt,keypoint,quests,search_js,semantic_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, the XP/Flow economy, search, semantic ranking | any failed check | `blog/**` |
 | `node blog/tests/rag_chat_test.js` | RAG chat status text, citation links, HTML escaping | any failed check | `blog/**` |
 | `uv run blog/tests/semantic_index_test.py` | semantic index freshness vs `.search_cache.json`, vector shape, Python↔JS tokenizer parity, int8 vector fidelity | stale index or any failed check | `blog/**` (semantic-index job) |
 | `uv run blog/tests/rag_index_test.py` | server RAG index freshness vs `.search_cache.json`, vector shape, large + 50-char detail indexes, no redirect/macro chunks | stale index or any failed check | `blog/**` (semantic-index job) |
 | `uv run blog/tests/rag_incremental_test.py` | incremental RAG builder: fresh sourceHash is a no-op, only changed chunks re-embed, reused rows stay byte-identical, small index files written | any failed check | `blog/**` (semantic-index job) |
 | `uv run blog/tests/rag_server_test.py` | RAG retrieval helpers, detail windows (anchor ± neighbours), grounding/citations, queue position/ETA, answer cache, HTTP API (fake Ollama) | any failed check | `blog/**` (semantic-index job) |
-| `uv run blog/tests/{semantic,rag}_browser_test.py` | headless-Chrome UI: semantic question + AI toggle + fallback; RAG chat health, queue/ETA text, answer and source links | any failed check | `blog/**` (php-render job) |
+| `uv run blog/tests/{semantic,rag,quests}_browser_test.py` | headless-Chrome UI: semantic question + AI toggle + fallback; RAG chat health, queue/ETA text, answer and source links; XP orb flight into the reward badge + Flow Surge | any failed check | `blog/**` (php-render job) |
 | `uv run blog/tests/php_render_validator.py blog/` | headless-Chrome render (PHP built-in server): console error → exit 1; unrendered `$$` (with `_`/`\`) outside a `<div>` → exit 2; width overflow → exit 3 (only with `--check-width`); `--all-lessons --check-width --width-only` sweeps every lesson + the width gate via `window.__layoutGuardrailCheck()` | per exit codes | index.php only (width job currently disabled in CI) |
 | `uv run blog/tests/typo_checker.py blog/` | spell-checks lesson prose; whitelist `blog/tests/typo_whitelist.txt` (one word/line, case-insensitive, append to add) | typos | **local only** |
 | `uv run blog/tests/latex_error_checker.py --docroot blog/` | Playwright sweep of every lesson for LaTeX/render errors + static risk scan (`--trace` for traces) | failures (risk warnings don't) | **local only** |

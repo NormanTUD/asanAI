@@ -16,7 +16,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>Give the model <em>a library card.</em></h1>
-					<p class="hero-deck">An LLM can only use what it memorized or what is in its context. RAG adds a search step: find the relevant passages, put them in the prompt, and answer from them.</p>
+					<p class="hero-deck">An LLM can only use what it memorized or what is in its context. RAG adds a search step: find the relevant passages, put them in the prompt, and answer from them. What happens when the retriever returns the wrong passage?</p>
 				</div>
 			</section>
 
@@ -43,6 +43,8 @@
 						<div class="prose">
 							<p>Retrieval can miss the right passage, return a misleading one, or find text that is outdated. The model can ignore the retrieved context or blend it with its own memorized errors. Chunking and ranking are design decisions, not details.</p>
 							<p>RAG is not a truth machine. It is a way to make the model's answer depend on documents you can inspect. Citations and evaluation are what make that useful.</p>
+							<p>A concrete case: a query asks for the current refund policy. The retriever returns an old policy page and a new one; if the old page ranks first, the model answers from the outdated text. Reranking, metadata filters, and citations help, but the retriever is the bottleneck (<a href="https://arxiv.org/abs/2005.11401" rel="noopener">Lewis et al., 2020</a>; <a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>).</p>
+							<p>RAG is only as good as the passage it puts in front of the model.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Chunking</b><span>Documents are split into passages that can be retrieved independently.</span></div>

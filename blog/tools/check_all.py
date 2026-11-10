@@ -194,6 +194,12 @@ STAGES: tuple[Stage, ...] = (
         needs=("node",),
     ),
     Stage(
+        "node-quests",
+        "unit",
+        (node("quests_test.js"),),
+        needs=("node",),
+    ),
+    Stage(
         "node-search",
         "unit",
         (node("search_js_test.js"),),

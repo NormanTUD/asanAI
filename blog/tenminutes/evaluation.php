@@ -16,7 +16,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>A score is <em>not understanding.</em></h1>
-					<p class="hero-deck">Benchmarks are useful, but they shape what models optimize for. The hardest part of evaluation is knowing whether you measured the thing you care about.</p>
+					<p class="hero-deck">Benchmarks are useful, but they shape what models optimize for. The hardest part of evaluation is knowing whether you measured the thing you care about. What exactly did the score measure?</p>
 				</div>
 			</section>
 
@@ -37,6 +37,8 @@
 						<div class="prose">
 							<p>Benchmark contamination is the central problem (<a href="https://arxiv.org/abs/2310.17589" rel="noopener">Li et al., 2023</a>): if the test data appeared in training, a high score may measure memorization rather than capability. Deduplication helps, but it is hard to prove a negative. Leaderboard pressure makes it worse. Goodhart's law applies (<a href="https://books.google.de/books?id=OMe6UQxu1KcC&amp;pg=PA111&amp;redir_esc=y#v=onepage&amp;q&amp;f=false" rel="noopener">Goodhart, 1975</a>), when a measure becomes a target, it stops being a good measure.</p>
 							<p>For your own use case, build a small evaluation that reflects the real task. Define a rubric, collect examples, measure agreement, and check whether the difference you see is larger than the noise. A general benchmark is a starting point, not a verdict.</p>
+							<p>A concrete number makes the point. In FActScore, ChatGPT’s biographies were only 58% supported by the cited sources; the rest were unsupported or wrong (<a href="https://arxiv.org/abs/2305.14251" rel="noopener">Min et al., 2023</a>). A single accuracy score would have hidden that.</p>
+							<p>The useful question is not “what is the score?” but “which claims does the score cover?”</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Benchmark types</b><span>Recognition, exact match, judged quality, and human preference measure different things.</span></div>

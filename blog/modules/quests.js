@@ -8,6 +8,8 @@
 //   MNQuest.unlock(id)                 unlock an achievement directly
 //   MNQuest.done(key) / MNQuest.mark(key)
 //   MNQuest.open(tab?)                 open the overview
+//   MNQuest.flow()                     Flow Surge status (progress, active, mult)
+//   MNQuest.feedFlow(seconds)          add demo-engagement seconds (the heartbeat does this)
 //
 // Console only (there is deliberately no reset button):
 //   mnResetProgress = true             wipe XP, levels, achievements, everything
@@ -21,6 +23,14 @@
 	if (window.MNQuest) return;
 
 	const STORE = "mn_quest_v1";
+
+	// Flow Surge: staying with a demo fills a meter. A full meter lights a
+	// two-minute booster that doubles every XP award earned during it, so
+	// sustained play pays off without changing the base rewards.
+	const FLOW_GOAL = 30;          // active demo seconds until the surge
+	const FLOW_GRACE = 2500;       // an interaction "holds" for this long
+	const BOOST_MS = 120000;       // surge lifetime
+	const BOOST_MULT = 2;          // XP multiplier while the surge burns
 
 	const LEVELS = [
 		{ xp: 0, name: "Pebble Counter", icon: "🪨" },
@@ -86,6 +96,8 @@
 		"reviewer": { cat: "quiz", icon: "🔁", name: "Second Chance", desc: "Answer 10 review questions.", counter: "reviews", goal: 10 },
 		"long-term": { cat: "quiz", icon: "🧠", name: "Long-Term Memory", desc: "Retire 5 questions from your review deck by getting them right again and again.", counter: "retired", goal: 5 },
 		"oracle": { cat: "demos", icon: "🔮", name: "Oracle", desc: "Predict 5 demo outcomes correctly before trying them.", counter: "predictRight", goal: 5 },
+		"flow-state": { cat: "demos", icon: "⚡", name: "Flow State", desc: "Light your first Flow Surge by staying with a demo.", counter: "boosts", goal: 1 },
+		"surge-rider": { cat: "demos", icon: "🌊", name: "Surge Rider", desc: "Light 5 Flow Surges.", counter: "boosts", goal: 5 },
 		"pathfinder": { cat: "mastery", icon: "🥾", name: "Pathfinder", desc: "Complete a learning path.", counter: "paths", goal: 1 },
 		"trailblazer": { cat: "mastery", icon: "🗻", name: "Trailblazer", desc: "Complete 3 learning paths.", counter: "paths", goal: 3 },
 		"konami": { cat: "hidden", icon: "🎮", name: "Old-School Gamer", desc: "↑ ↑ ↓ ↓ ← → ← → B A", hidden: true },
@@ -109,8 +121,14 @@
 	function blank() {
 		return {
 			xp: 0, keys: {}, earned: {}, unlocked: {}, counters: {}, days: {},
-			lessons: {}, finished: {}, mastered: {}, quests: {}, bests: {}, demosSeen: {}, demosPlayed: {}, learned: {}
+			lessons: {}, finished: {}, mastered: {}, quests: {}, bests: {}, demosSeen: {}, demosPlayed: {}, learned: {},
+			flow: 0, boostUntil: 0, boosts: 0
 		};
+	}
+
+	function num(v) {
+		const n = Number(v);
+		return Number.isFinite(n) ? n : 0;
 	}
 
 	const MAPS = ["keys", "earned", "unlocked", "days", "lessons", "finished", "mastered", "quests", "bests", "demosSeen", "demosPlayed", "learned"];
@@ -132,6 +150,9 @@
 		if ((theirs.rev || 0) !== (mine.rev || 0)) return (theirs.rev || 0) > (mine.rev || 0) ? theirs : mine;
 		const out = Object.assign(blank(), mine);
 		out.xp = Math.max(mine.xp || 0, theirs.xp || 0);
+		out.flow = Math.max(num(mine.flow), num(theirs.flow));
+		out.boostUntil = Math.max(num(mine.boostUntil), num(theirs.boostUntil));
+		out.boosts = Math.max(num(mine.boosts), num(theirs.boosts));
 		MAPS.forEach((k) => { out[k] = Object.assign({}, theirs[k] || {}, mine[k] || {}); });
 		Object.keys(theirs.unlocked || {}).forEach((id) => {
 			if (mine.unlocked && mine.unlocked[id]) out.unlocked[id] = Math.min(mine.unlocked[id], theirs.unlocked[id]);
@@ -197,6 +218,7 @@
 		if (name === "demosSeen") return Object.keys(state.demosSeen).length;
 		if (name === "demosPlayed") return Object.keys(state.demosPlayed).length;
 		if (name === "learned") return Object.keys(state.learned).length;
+		if (name === "boosts") return num(state.boosts);
 		return state.counters[name] || 0;
 	}
 
@@ -269,11 +291,13 @@
 		hud = node("button", "mnq-hud");
 		hud.id = "mnq-hud";
 		hud.type = "button";
-		hud.setAttribute("aria-label", "Your progress: level, achievements and challenges");
+		hud.setAttribute("aria-label", "Your progress: level, XP, achievements, Flow Surge and challenges");
 		hud.title = "Your progress";
 		hud.innerHTML =
 			'<svg class="mnq-ring" viewBox="0 0 36 36" aria-hidden="true"><circle class="mnq-ring-bg" cx="18" cy="18" r="15.5"/><circle class="mnq-ring-fg" cx="18" cy="18" r="15.5"/></svg>' +
-			'<span class="mnq-hud-icon" aria-hidden="true"></span><span class="mnq-hud-text"><b class="mnq-hud-lv"></b><span class="mnq-hud-xp"></span></span><span class="mnq-hud-week" hidden></span>';
+			'<svg class="mnq-ring mnq-ring--flow" viewBox="0 0 36 36" aria-hidden="true"><circle class="mnq-flow-bg" cx="18" cy="18" r="12.5"/><circle class="mnq-flow-fg" cx="18" cy="18" r="12.5"/></svg>' +
+			'<span class="mnq-hud-icon" aria-hidden="true"></span><span class="mnq-hud-text"><b class="mnq-hud-lv"></b><span class="mnq-hud-xp"></span></span><span class="mnq-hud-week" hidden></span>' +
+			'<span class="mnq-hud-boost" hidden><span class="mnq-boost-bolt" aria-hidden="true">⚡</span><b class="mnq-boost-mult"></b><span class="mnq-boost-time"></span></span>';
 		hud.addEventListener("click", () => openPanel());
 		document.body.appendChild(hud);
 		document.documentElement.classList.add("mnq-on");
@@ -283,9 +307,15 @@
 		renderHud(false);
 	}
 
+	function fmtClock(ms) {
+		const s = Math.max(0, Math.ceil(ms / 1000));
+		return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+	}
+
 	function renderHud(bump) {
 		if (!hud) return;
 		const L = levelOf(state.xp);
+		const flow = flowStatus();
 		hud.querySelector(".mnq-hud-icon").textContent = L.icon;
 		hud.querySelector(".mnq-hud-lv").textContent = "Level " + L.n;
 		hud.querySelector(".mnq-hud-xp").textContent = state.xp + " XP";
@@ -293,10 +323,33 @@
 		const fg = hud.querySelector(".mnq-ring-fg");
 		fg.style.strokeDasharray = c.toFixed(1);
 		fg.style.strokeDashoffset = (c * (1 - L.frac)).toFixed(1);
+		hud.classList.toggle("is-near", !L.max && L.frac >= 0.85);
+		hud.classList.toggle("is-surge", flow.active);
+		hud.setAttribute("aria-label", "Your progress: level " + L.n + ", " + state.xp + " XP" +
+			(flow.active ? ", Flow Surge active" : "") + ". Achievements and challenges.");
+
+		const fc = 2 * Math.PI * 12.5;
+		const ff = hud.querySelector(".mnq-flow-fg");
+		const flowFrac = flow.active ? 1 : flow.progress / flow.goal;
+		ff.style.strokeDasharray = fc.toFixed(1);
+		ff.style.strokeDashoffset = (fc * (1 - flowFrac)).toFixed(1);
+		hud.classList.toggle("is-flow-hot", !flow.active && flowFrac >= 0.8);
+
+		const badge = hud.querySelector(".mnq-hud-boost");
+		badge.hidden = !flow.active;
+		if (flow.active) {
+			badge.querySelector(".mnq-boost-mult").textContent = "×" + flow.mult;
+			badge.querySelector(".mnq-boost-time").textContent = fmtClock(flow.remaining);
+			badge.title = "Flow Surge: double XP for " + fmtClock(flow.remaining);
+		}
+
 		const wk = weekStats(), wEl = hud.querySelector(".mnq-hud-week");
 		wEl.hidden = wk.days === 0;
 		wEl.textContent = wk.days + (wk.days === 1 ? " day" : " days");
 		wEl.title = "Learning days this week: " + wk.days;
+		hud.title = flow.active
+			? "Your progress — Flow Surge burns for " + fmtClock(flow.remaining)
+			: "Your progress" + (flow.progress > 0 ? " — Flow " + Math.round(flowFrac * 100) + "%" : "");
 		if (bump && !reduceMotion) {
 			hud.classList.remove("is-bump");
 			void hud.offsetWidth;
@@ -307,7 +360,7 @@
 	let queuedToasts = null;
 	let introQuiet = true;
 	function endIntroQuiet() { introQuiet = false; }
-	["pointerdown", "keydown", "touchstart"].forEach((ev) => window.addEventListener(ev, endIntroQuiet, { passive: true, once: true }));
+	["pointerdown", "keydown", "touchstart"].forEach((ev) => window.addEventListener(ev, endIntroQuiet, { passive: true, once: true, capture: true }));
 	setTimeout(endIntroQuiet, 4000);
 	function loaderPending() { return !!document.getElementById("loader"); }
 	function flushQueuedToasts() {
@@ -328,14 +381,14 @@
 		buildUI();
 		if (!toastWrap) return;
 		const t = node("div", "mnq-toast" + (kind ? " mnq-toast--" + kind : ""), html);
-		if (kind === "ach" || kind === "level" || onClick) {
+		if (kind === "ach" || kind === "level" || kind === "boost" || onClick) {
 			t.setAttribute("role", "button");
 			t.tabIndex = 0;
 			t.addEventListener("click", () => (onClick ? onClick() : openPanel(kind === "ach" ? "achievements" : "overview")));
 		}
 		toastWrap.appendChild(t);
 		requestAnimationFrame(() => t.classList.add("is-in"));
-		const life = kind === "ach" || kind === "level" || onClick ? 4200 : 1500;
+		const life = kind === "ach" || kind === "level" || kind === "boost" || onClick ? 4200 : 1500;
 		setTimeout(() => { t.classList.remove("is-in"); setTimeout(() => t.remove(), 450); }, life);
 		while (toastWrap.children.length > 4) toastWrap.firstChild.remove();
 	}
@@ -372,6 +425,271 @@
 		requestAnimationFrame(tick);
 	}
 
+	// ── XP flight: the orb that lands in the reward center ─────────
+	// Only the first interactive award on a page gets the full flight. Every
+	// later award just ticks the badge, so the reward stays informative
+	// without repeatedly taking over the screen.
+	let lastPointer = null;
+	window.addEventListener("pointerdown", (e) => {
+		if (typeof e.clientX === "number" && typeof e.clientY === "number") {
+			lastPointer = { x: e.clientX, y: e.clientY, at: Date.now() };
+		}
+	}, { passive: true, capture: true });
+
+	function recentPointer() {
+		return lastPointer && Date.now() - lastPointer.at < 3000 ? lastPointer : null;
+	}
+
+	let flightLayer = null;
+	let flightQueue = 0;
+	let tickTimer = 0;
+
+	// Feedback intensity: the first interactive award is the full show. Each
+	// following interaction is quieter, and after a long pause the novelty
+	// recovers. This keeps clicking from turning into a slot machine.
+	let feedbackCount = 0;
+	let feedbackAt = 0;
+	const FEEDBACK_RESET = 90000;
+
+	function nextPower(amount) {
+		const now = Date.now();
+		if (!feedbackAt || now - feedbackAt > FEEDBACK_RESET) feedbackCount = 0;
+		feedbackAt = now;
+		const base = Math.pow(0.55, feedbackCount);
+		feedbackCount = Math.min(12, feedbackCount + 1);
+		return Math.min(1, base + Math.min(0.18, amount / 500));
+	}
+
+	function ensureFlightLayer() {
+		if (!flightLayer) {
+			flightLayer = node("div", "mnq-flight-layer");
+			flightLayer.setAttribute("aria-hidden", "true");
+			document.body.appendChild(flightLayer);
+		}
+		return flightLayer;
+	}
+
+	function spawnSpark(x, y) {
+		if (!flightLayer) return;
+		const s = node("i", "mnq-spark");
+		s.style.left = x + "px";
+		s.style.top = y + "px";
+		s.style.setProperty("--dx", (Math.random() * 34 - 17).toFixed(1) + "px");
+		s.style.setProperty("--dy", (Math.random() * 26 - 20).toFixed(1) + "px");
+		const cols = ["--mn-emerald", "--mn-accent", "--mn-sky", "--mn-coral"];
+		s.style.color = "var(" + cols[Math.floor(Math.random() * cols.length)] + ")";
+		flightLayer.appendChild(s);
+		setTimeout(() => s.remove(), 700);
+	}
+
+	function flyXP(amount, reason, bonus, origin, power) {
+		if (reduceMotion || introQuiet || loaderPending() || !document.body || !origin) return false;
+		buildUI();
+		if (!hud) return false;
+		const box = hud.getBoundingClientRect();
+		if (!box.width) return false;
+		const from = { x: origin.x + (Math.random() - 0.5) * 18, y: origin.y + (Math.random() - 0.5) * 12 };
+		const target = { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+		const delay = Math.min(240, flightQueue * 70);
+		flightQueue++;
+		const launch = () => {
+			flightQueue = Math.max(0, flightQueue - 1);
+			ensureFlightLayer();
+			const orb = node("span", "mnq-orb" + (power < 0.6 ? " mnq-orb--soft" : " mnq-orb--full") +
+				(amount >= 10 ? " mnq-orb--big" : ""));
+			orb.innerHTML = '<span class="mnq-orb-gem" aria-hidden="true">✦</span><b>+' + amount + "</b><small>XP</small>" +
+				(bonus > 0 ? '<i class="mnq-orb-bonus">×2</i>' : "");
+			orb.setAttribute("aria-hidden", "true");
+			flightLayer.appendChild(orb);
+
+			if (reason && power >= 0.7) {
+				const why = node("span", "mnq-why", esc(String(reason).replace(/^[·\s]+/, "").trim()));
+				why.style.left = from.x + "px";
+				why.style.top = from.y + "px";
+				flightLayer.appendChild(why);
+				setTimeout(() => why.remove(), 950);
+			}
+
+			const dx = target.x - from.x, dy = target.y - from.y;
+			const dist = Math.max(60, Math.hypot(dx, dy));
+			const cx = from.x + dx * 0.35;
+			const cy = Math.max(14, Math.min(from.y, target.y) - Math.min(150, 60 + dist * 0.1));
+			const dur = (520 + Math.min(380, amount * 8) + Math.min(260, dist * 0.18)) * (0.7 + 0.3 * power);
+			const fromScale = 0.85 + 0.15 * power;
+			const t0 = performance.now();
+			let lastSpark = 0;
+
+			const tick = (now) => {
+				const t = Math.min(1, (now - t0) / dur);
+				const e = 1 - Math.pow(1 - t, 3);
+				const mt = 1 - e;
+				const x = mt * mt * from.x + 2 * mt * e * cx + e * e * target.x;
+				const y = mt * mt * from.y + 2 * mt * e * cy + e * e * target.y;
+				const s = fromScale - (fromScale - 0.28) * e;
+				orb.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0) translate(-50%,-50%) scale(" + s.toFixed(3) + ")";
+				orb.style.opacity = t > 0.86 ? String((1 - t) / 0.14) : "1";
+				if (power >= 0.55 && now - lastSpark > (power > 0.8 ? 55 : 95)) {
+					lastSpark = now;
+					spawnSpark(x, y);
+				}
+				if (t < 1) requestAnimationFrame(tick);
+				else {
+					orb.remove();
+					receiveXP(amount, power);
+				}
+			};
+			requestAnimationFrame(tick);
+		};
+		if (delay > 0) setTimeout(launch, delay);
+		else launch();
+		return true;
+	}
+
+	function tickHud() {
+		if (!hud || reduceMotion) return;
+		hud.classList.remove("is-tick");
+		void hud.offsetWidth;
+		hud.classList.add("is-tick");
+		clearTimeout(tickTimer);
+		tickTimer = setTimeout(() => hud.classList.remove("is-tick"), 300);
+	}
+
+	function receiveXP(amount, power) {
+		if (!hud) return;
+		if (power < 0.4) { tickHud(); return; }
+		hud.classList.remove("is-receive");
+		void hud.offsetWidth;
+		hud.classList.add("is-receive");
+
+		const box = hud.getBoundingClientRect();
+		if (power >= 0.6) {
+			const float = node("span", "mnq-receive-float", "+" + amount + " XP");
+			float.setAttribute("aria-hidden", "true");
+			float.style.left = box.left + box.width / 2 + "px";
+			float.style.top = box.top - 2 + "px";
+			document.body.appendChild(float);
+			setTimeout(() => float.remove(), 950);
+		}
+
+		const ripple = node("i", "mnq-hud-ripple");
+		hud.appendChild(ripple);
+		setTimeout(() => ripple.remove(), 750);
+		if (power >= 0.5) spawnSpark(box.left + box.width / 2, box.top + box.height / 2);
+	}
+
+	// One interaction may award several things (+5 for playing, +10 for the
+	// lesson task). They are buffered into a single feedback so the screen
+	// never fires two orbs for one action.
+	let feedbackBuf = null;
+	let feedbackTimer = 0;
+	let feedbackTries = 0;
+
+	function flushFeedback() {
+		feedbackTimer = 0;
+		if (!feedbackBuf) return;
+		if (introQuiet || loaderPending()) {
+			if (++feedbackTries > 40) { feedbackBuf = null; feedbackTries = 0; return; }
+			feedbackTimer = setTimeout(flushFeedback, 320);
+			return;
+		}
+		feedbackTries = 0;
+		const b = feedbackBuf;
+		feedbackBuf = null;
+		const power = nextPower(b.amount);
+		if (power >= 0.16 && flyXP(b.amount, b.reason, b.bonus, b.origin, power)) return;
+		tickHud();
+	}
+
+	function awardFeedback(amount, reason, bonus) {
+		if (reduceMotion) { tickHud(); return; }
+		const origin = recentPointer();
+		if (!origin) { tickHud(); return; }
+		if (!feedbackBuf) feedbackBuf = { amount: 0, bonus: 0, reason: "", origin: origin };
+		feedbackBuf.amount += amount;
+		feedbackBuf.bonus += bonus;
+		if (!feedbackBuf.reason && reason) feedbackBuf.reason = reason;
+		if (!feedbackTimer) feedbackTimer = setTimeout(flushFeedback, 220);
+	}
+
+	// ── Flow Surge ─────────────────────────────────────────────────
+	let lastDemoTouch = 0;
+	let flowTimer = 0;
+	let lastFlowWrite = 0;
+	let wasBoost = false;
+	let surgeNotified = false;
+
+	function boostActive() {
+		return num(state.boostUntil) > Date.now();
+	}
+
+	function flowStatus() {
+		const now = Date.now();
+		const until = num(state.boostUntil);
+		const active = until > now;
+		return {
+			progress: Math.min(FLOW_GOAL, Math.max(0, num(state.flow))),
+			goal: FLOW_GOAL,
+			active: active,
+			remaining: active ? until - now : 0,
+			mult: active ? BOOST_MULT : 1,
+			total: num(state.boosts)
+		};
+	}
+
+	function activateBoost() {
+		state.boostUntil = Date.now() + BOOST_MS;
+		state.flow = 0;
+		state.boosts = num(state.boosts) + 1;
+		wasBoost = true;
+		checkCounters();
+		save();
+		buildUI();
+		renderHud(false);
+		tickHud();
+		if (!surgeNotified) {
+			surgeNotified = true;
+			toast('<span class="mnq-t-icon">⚡</span><span><small>Flow Surge</small><b>×2 XP for two minutes</b><em>The badge counts down. Every point now counts double.</em></span>', "boost");
+		}
+	}
+
+	function feedFlow(seconds) {
+		if (boostActive()) return flowStatus();
+		state.flow = Math.min(FLOW_GOAL, Math.max(0, num(state.flow) + num(seconds)));
+		if (state.flow >= FLOW_GOAL) activateBoost();
+		else { save(); renderHud(false); }
+		return flowStatus();
+	}
+
+	function flowHeartbeat() {
+		if (document.hidden) return;
+		const now = Date.now();
+		if (boostActive()) {
+			wasBoost = true;
+			renderHud(false);
+			return;
+		}
+		if (wasBoost) { wasBoost = false; renderHud(false); }
+		if (num(state.flow) >= FLOW_GOAL) { activateBoost(); return; }
+		const engaged = lastDemoTouch && now - lastDemoTouch <= FLOW_GRACE;
+		let changed = false;
+		if (engaged && num(state.flow) < FLOW_GOAL) {
+			state.flow = Math.min(FLOW_GOAL, num(state.flow) + 1);
+			changed = true;
+			if (state.flow >= FLOW_GOAL) { activateBoost(); return; }
+		} else if (!engaged && num(state.flow) > 0) {
+			state.flow = Math.max(0, num(state.flow) - 1);
+			changed = true;
+		}
+		if (!changed) return;
+		renderHud(false);
+		if (now - lastFlowWrite > 4000) { lastFlowWrite = now; writeNow(false); }
+	}
+
+	function startFlowHeartbeat() {
+		if (flowTimer) return;
+		flowTimer = setInterval(flowHeartbeat, 1000);
+	}
+
 	// ── Core state changes ──────────────────────────────────────────
 	function checkCounters() {
 		Object.keys(ACHIEVEMENTS).forEach((id) => {
@@ -402,12 +720,15 @@
 		if (key) {
 			if (state.keys[key]) return false;
 			state.keys[key] = 1;
-			state.earned[key] = amount;
 		}
+		const boost = boostActive();
+		const gained = boost ? Math.round(amount * BOOST_MULT) : amount;
+		const bonus = gained - amount;
+		if (key) state.earned[key] = gained;
 		const before = levelOf(state.xp).n;
-		state.xp += amount;
+		state.xp += gained;
 		buildUI();
-		if (amount >= 10) toast('<b class="mnq-plus">+' + amount + " XP</b> " + esc(reason || ""), "xp");
+		awardFeedback(gained, reason, bonus);
 		const after = levelOf(state.xp);
 		if (after.n > before) {
 			toast('<span class="mnq-t-icon">' + after.icon + '</span><span><small>Level up · Level ' + after.n + "</small><b>" + esc(after.name) + "</b><em>Click to see your progress.</em></span>", "level");
@@ -523,6 +844,21 @@
 		renderPanel();
 	}
 
+	function flowCard() {
+		const f = flowStatus();
+		const pct = f.active ? 100 : Math.round(f.progress / f.goal * 100);
+		const note = f.active
+			? "Every point you earn is doubled. " + fmtClock(f.remaining) + " left."
+			: "Stay with a demo for " + f.goal + " active seconds to double every point for two minutes. Drag a slider, zoom a plot, move a model.";
+		return '<div class="mnq-boostcard' + (f.active ? " is-active" : "") + '">' +
+			'<span class="mnq-boost-ic" aria-hidden="true">⚡</span>' +
+			'<div class="mnq-boost-body"><b>' + (f.active ? "Flow Surge" : "Flow meter") + "</b>" +
+			'<span>' + note + "</span>" +
+			'<span class="mnq-boostbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></span></div>' +
+			'<em class="mnq-boost-pct">' + (f.active ? "×" + f.mult : pct + "%") + "</em>" +
+			'<span class="mnq-boost-count">' + f.total + (f.total === 1 ? " surge" : " surges") + "</span></div>";
+	}
+
 	function renderOverview(L) {
 		const stats = [
 			["lessons", "lessons visited"], ["finished", "read to the end"], ["mastered", "lessons mastered"], ["demosPlayed", "demos played"],
@@ -551,6 +887,7 @@
 			'<div class="mnq-weekcard"><div class="mnq-weekdots" aria-hidden="true">' + weekDots + "</div>" +
 			'<div class="mnq-weeknote">A record of when you were here — no targets, no streak to keep alive.</div></div>';
 		return '<div class="mnq-ladder">' + ladder + "</div>" +
+			flowCard() +
 			'<div class="mnq-stats">' + stats.map((s) => "<div><b>" + counterValue(s[0]) + "</b><span>" + s[1] + "</span></div>").join("") + "</div>" +
 			weekCard +
 			'<button type="button" class="mnq-journey-chip" data-mnq-tab="lessons">🧭 <b>Your journey</b> — see where you are in the story →</button>' +
@@ -562,7 +899,8 @@
 			"<li><b>+15</b> per correct quiz answer · <b>+20–50</b> per lab challenge</li>" +
 			"<li><b>+3</b> per deep dive opened · <b>+2</b> per demo watched · <b>+5</b> per demo you play with</li>" +
 			"<li><b>+5</b> per prediction (<b>+10</b> more if it was right) · <b>+5</b> per review answer</li>" +
-			"<li><b>+15</b> for the question of the day · <b>+100</b> for completing a learning path</li></ul>";
+			"<li><b>+15</b> for the question of the day · <b>+100</b> for completing a learning path</li>" +
+			"<li>⚡ Fill the Flow meter by staying with a demo: every point is <b>×2</b> for two minutes</li></ul>";
 	}
 
 	function achCard(id) {
@@ -704,7 +1042,9 @@
 		done: function (key) { return !!state.keys[key]; },
 		mark: function (key) { state.keys[key] = 1; save(); },
 		level: function () { return levelOf(state.xp); },
-		summary: function () { return { xp: state.xp, level: levelOf(state.xp), unlocked: Object.keys(state.unlocked), streak: streak() }; },
+		summary: function () { return { xp: state.xp, level: levelOf(state.xp), unlocked: Object.keys(state.unlocked), streak: streak(), flow: flowStatus() }; },
+		flow: flowStatus,
+		feedFlow: feedFlow,
 		open: openPanel,
 		close: closePanel,
 		toast: toast,
@@ -917,6 +1257,7 @@
 			tracked.add(el);
 			io.observe(el);
 			const play = (ev) => {
+				lastDemoTouch = Date.now();
 				if (ev.target.closest && ev.target.closest(".mnc, #mnq-lesson")) return;
 				const k = demoKey(el);
 				if (!state.demosPlayed[k]) {
@@ -925,7 +1266,13 @@
 				}
 				completeTask("demo");
 			};
+			const engaged = (ev) => {
+				if (ev && ev.type === "pointermove" && !ev.buttons && ev.pointerType !== "touch") return;
+				lastDemoTouch = Date.now();
+			};
 			el.addEventListener("pointerdown", play, { passive: true });
+			el.addEventListener("pointermove", engaged, { passive: true });
+			el.addEventListener("wheel", engaged, { passive: true });
 			el.addEventListener("input", play, { passive: true });
 			el.addEventListener("change", play, { passive: true });
 		});
@@ -1063,6 +1410,8 @@
 		document.addEventListener("keydown", onKey);
 		wireChrome();
 		wireSecrets();
+		wasBoost = boostActive();
+		startFlowHeartbeat();
 
 		window.addEventListener("mnquiz:finish", () => completeTask("quiz"));
 		window.addEventListener("mnchallenge:done", (e) => {

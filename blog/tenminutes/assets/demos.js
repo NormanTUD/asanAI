@@ -3272,39 +3272,46 @@
 				a: "9998", b: "9999", diff: 1,
 				aTok: [["99", 2079], ["98", 4089]],
 				bTok: [["9999", 24214]],
-				en: "One is split into two tokens, the other is a single token. Nothing marks the shared value.",
-				de: "Die eine Zahl wird in zwei Tokens zerlegt, die andere ist ein einziges Token. Nichts markiert den gemeinsamen Wert."
+				en: "99 | 98 against 9999: one is split into two tokens, the other is a single token.",
+				de: "99 | 98 gegen 9999: Die eine Zahl wird in zwei Tokens zerlegt, die andere ist ein einziges Token."
 			},
 			{
 				a: "1234.56", b: "1234.57", diff: 0.01,
 				aTok: [["12", 1065], ["34", 2682], [".", 13], ["56", 3980]],
 				bTok: [["12", 1065], ["34", 2682], [".", 13], ["57", 3553]],
-				en: "The first three tokens match; the last token changes from 56 (ID 3980) to 57 (ID 3553).",
-				de: "Die ersten drei Tokens stimmen überein; das letzte wechselt von 56 (ID 3980) zu 57 (ID 3553)."
+				en: "The boundary stays at 12 | 34 | . | 56; only the last token changes, to 57 (ID 3553).",
+				de: "Die Grenze bleibt bei 12 | 34 | . | 56; nur das letzte Token wechselt zu 57 (ID 3553)."
 			},
 			{
 				a: "9999.99", b: "10000.00", diff: 0.01,
 				aTok: [["9999", 24214], [".", 13], ["99", 2079]],
 				bTok: [["10000", 49388], [".", 13], ["00", 486]],
-				en: "Adding 0.01 changes the integer token from 9999 to 10000. The carry has no token of its own.",
-				de: "0,01 dazu verändert das Integer-Token von 9999 zu 10000. Der Übertrag hat kein eigenes Token."
+				en: "9999 | . | 99 against 10000 | . | 00: the carry is not a token.",
+				de: "9999 | . | 99 gegen 10000 | . | 00: Der Übertrag ist kein eigenes Token."
 			}
 		];
 		function fmtDiff(v) {
 			var s = String(v);
 			return DEMO_DE ? s.replace(".", ",") : s;
 		}
-		function chipsHtml(tokens) {
-			return tokens.map(function (tok) {
-				return '<span class="token token--static" style="--tok:' + COLORS[Math.abs(tok[1]) % COLORS.length] + '">' +
+		function chipsHtml(tokens, other) {
+			var changed = -1;
+			if (other && other.length === tokens.length) {
+				var diff = [];
+				tokens.forEach(function (tok, i) { if (tok[0] !== other[i][0]) diff.push(i); });
+				if (diff.length === 1) changed = diff[0];
+			}
+			return tokens.map(function (tok, i) {
+				return '<span class="token token--static' + (i === changed ? " is-changed" : "") + '" style="--tok:' +
+					COLORS[Math.abs(tok[1]) % COLORS.length] + '">' +
 					escapeHtml(tok[0]) + "<small>" + tok[1] + "</small></span>";
 			}).join("");
 		}
 		function select(index) {
 			var p = presets[index];
 			if (!p) return;
-			wrapA.innerHTML = chipsHtml(p.aTok);
-			wrapB.innerHTML = chipsHtml(p.bTok);
+			wrapA.innerHTML = chipsHtml(p.aTok, p.bTok);
+			wrapB.innerHTML = chipsHtml(p.bTok, p.aTok);
 			if (labelA) labelA.textContent = p.a;
 			if (labelB) labelB.textContent = p.b;
 			if (diffEl) diffEl.textContent = fmtDiff(p.diff);

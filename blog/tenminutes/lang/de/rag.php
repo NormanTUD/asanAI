@@ -5,7 +5,7 @@ return [
 	'texts' => [
 		'Give the model' => 'Gib dem Modell',
 		'a library card.' => 'einen Bibliotheksausweis.',
-		'An LLM can only use what it memorized or what is in its context. RAG adds a search step: find the relevant passages, put them in the prompt, and answer from them.' => 'Ein LLM kann nur nutzen, was es auswendig gelernt hat oder in seinem Kontext steht. RAG fügt einen Suchschritt hinzu: Finde die relevanten Passagen, lege sie in den Prompt und antworte daraus.',
+		'An LLM can only use what it memorized or what is in its context. RAG adds a search step: find the relevant passages, put them in the prompt, and answer from them. What happens when the retriever returns the wrong passage?' => 'Ein LLM kann nur nutzen, was es auswendig gelernt hat oder in seinem Kontext steht. RAG fügt einen Suchschritt hinzu: Finde die relevanten Passagen, lege sie in den Prompt und antworte daraus. Was passiert, wenn der Retriever die falsche Passage zurückgibt?',
 		'The pipeline' => 'Die Pipeline',
 		'Index, retrieve, generate.' => 'Indexieren, abrufen, generieren.',
 		'Fine-tuning shaped the assistant. Now it gets a library. RAG (' => 'Fine-Tuning formte den Assistenten. Jetzt bekommt er eine Bibliothek. RAG (',
@@ -93,6 +93,10 @@ return [
 		'The aha' => 'Der Aha-Moment',
 		'RAG replaces memorization with a search step.' => 'RAG ersetzt Auswendiglernen durch einen Suchschritt.',
 		'The model still writes the answer; retrieval decides what it is allowed to see.' => 'Das Modell schreibt weiterhin die Antwort; Retrieval entscheidet, was es sehen darf.',
+		'RAG is only as good as the passage it puts in front of the model.' => 'RAG ist nur so gut wie die Passage, die es dem Modell vorlegt.',
+	],
+	'blocks' => [
+		'A concrete case: a query asks for the current refund policy. The retriever returns an old policy page and a new one; if the old page ranks first, the model answers from the outdated text. Reranking, metadata filters, and citations help, but the retriever is the bottleneck (<a href="https://arxiv.org/abs/2005.11401" rel="noopener">Lewis et al., 2020</a>; <a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>).' => 'Ein konkreter Fall: Eine Anfrage fragt nach der aktuellen Rückerstattungsrichtlinie. Der Retriever liefert eine alte und eine neue Richtlinienseite; steht die alte oben, antwortet das Modell aus dem veralteten Text. Reranking, Metadatenfilter und Zitate helfen, aber der Retriever ist der Engpass (<a href="https://arxiv.org/abs/2005.11401" rel="noopener">Lewis et al., 2020</a>; <a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>).',
 	],
 	'attrs' => [
 		'A two-dimensional map of chunks and a query' => 'Eine zweidimensionale Karte von Chunks und einer Query',

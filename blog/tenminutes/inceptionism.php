@@ -16,7 +16,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>Turn the network <em>around.</em></h1>
-					<p class="hero-deck">Normally we adjust the weights to fit an image. Inceptionism flips the direction: freeze the weights and adjust the image until it becomes what the network recognizes. The result is a picture of the network's learned features, not a photograph it has stored.</p>
+					<p class="hero-deck">Normally we adjust the weights to fit an image. Inceptionism flips the direction: freeze the weights and adjust the image until it becomes what the network recognizes. The result is a picture of the network's learned features, not a photograph it has stored. What has the network learned to expect?</p>
 				</div>
 			</section>
 
@@ -29,6 +29,8 @@
 							<p>The tiny learner fitted a line. A deep vision network learns features; turn the network around to see them. A classifier is trained to map an image to a label. If you freeze its weights and run gradient ascent on a class score, the pixels change instead of the parameters. Start from noise, ask for “banana”, and the noise slowly organizes into banana-like shapes.</p>
 							<p>The procedure is gradient ascent on the input. For a chosen layer and channel, compute the gradient of the mean activation with respect to the pixels, add a small step to the image, blur the result a little, and repeat. For a class visualization, maximize the class score instead. The blur keeps the optimization from collapsing into high-frequency noise and makes the patterns readable. Mordvintsev, Olah and Tyka describe exactly this loop in the 2015 Inceptionism essay (<a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">Mordvintsev et al., 2015</a>).</p>
 							<p>The result looks surreal because the network is not drawing a photograph. It is projecting its learned features back into pixel space. Lower layers produce edges, strokes, and textures; higher layers assemble parts and whole objects. Freezing the weights is the point: the question is not “what would a good image look like?” but “what does this fixed detector respond to?” The image is the answer, read backwards.</p>
+							<p>A concrete case from the original essay: asked to visualize a dumbbell, the network adds an arm holding it, because dumbbells in the training data usually came with people (<a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">Mordvintsev et al., 2015</a>). The image shows the co-occurrence, not the object.</p>
+							<p>The picture is a map of associations, not a photograph of a concept.</p>
 							<p>Starting from noise matters too. A blank or natural image already contains structure the network can latch onto; noise is neutral enough that the gradient has to supply the shape. In DeepDream, a real photo is fed in, the gradient amplifies whatever a chosen layer already detects, and the result is fed back in. That loop (recognize, amplify, repeat) is what turns a faint preference into a full-blown hallucination, and why a cloud can become a bird.</p>
 						</div>
 					</section>

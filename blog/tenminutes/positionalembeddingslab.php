@@ -17,7 +17,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>Attention is <em>order-blind.</em></h1>
-					<p class="hero-deck">A transformer processes tokens in parallel. Without a position signal, 'dog bites man' and 'man bites dog' would be the same bag of vectors.</p>
+					<p class="hero-deck">A transformer processes tokens in parallel. Without a position signal, 'dog bites man' and 'man bites dog' would be the same bag of vectors. How does order survive parallel processing?</p>
 				</div>
 			</section>
 
@@ -29,6 +29,8 @@
 						<div class="prose">
 							<p>Attention is order-blind. The missing coordinate is position. Attention compares tokens by content. It has no built-in notion of first, second, or last. Positional encodings add a signature to each token's vector so that the model can tell where it sits in the sequence. You might ask why the model cannot simply use the token's index. An index is unbounded and says nothing about distance: position 1,000 is not “far” in any useful sense unless the model learns a scale. A crafted encoding supplies that scale.</p>
 							<p>The original transformer used sine and cosine functions at different frequencies (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>). Modern models often use rotary position embeddings (RoPE), which rotate the query and key vectors by an amount that depends on position.</p>
+							<p>A concrete test: take a sentence, shuffle its words, and remove the positional signal. Attention still returns the same set of token vectors, only in a different order; the model cannot tell “dog bites man” from “man bites dog” (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>). Position is the coordinate that breaks the symmetry.</p>
+							<p>The model does not see order; it computes it.</p>
 						</div>
 					</section>
 

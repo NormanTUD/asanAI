@@ -110,8 +110,8 @@ jobs:
 
   # Fast, dependency-free node unit tests for the client-side interactivity:
   # topic/interest registry, tone picker, learned state + course progress,
-  # math-comfort 5-stop snapping, math-alternative text, keypoint cards, search.
-  # No browser required — completes in well under a minute.
+  # math-comfort 5-stop snapping, math-alternative text, keypoint cards,
+  # the XP/Flow economy, search. No browser required — under a minute.
   js-unit-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -132,6 +132,9 @@ jobs:
 
       - name: Run keypoint tests
         run: node blog/tests/keypoint_test.js
+
+      - name: Run XP economy and Flow Surge tests
+        run: node blog/tests/quests_test.js
 
       - name: Run search tests
         run: node blog/tests/search_js_test.js
@@ -237,6 +240,10 @@ jobs:
       - name: Run RAG Chat Browser Test
         run: |
           uv run blog/tests/rag_browser_test.py
+
+      - name: Run XP Reward and Flow Surge Browser Test
+        run: |
+          uv run blog/tests/quests_browser_test.py
 
       - name: Run Analytics Client Tracker Test
         run: |

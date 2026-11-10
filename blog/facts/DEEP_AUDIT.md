@@ -2,9 +2,9 @@
 
 - lessons: 100
 - claims: 7396
-- statements: 17423
-- relations: 52767
-- uncovered years: 69
+- statements: 17431
+- relations: 52786
+- uncovered years: 71
 - uncovered quantities: 8
 - uncited specific claims: 307
 - citation keys not found in lesson: 0
@@ -50,7 +50,7 @@
 | geometry_ii | 44 | 102 | 327 | 0 | 0 |
 | geometry_iii | 51 | 129 | 345 | 0 | 0 |
 | global_ai_ecosystem | 30 | 41 | 184 | 0 | 0 |
-| hallucinations | 25 | 143 | 453 | 0 | 0 |
+| hallucinations | 25 | 151 | 472 | 2 | 0 |
 | history | 1416 | 1188 | 3522 | 0 | 0 |
 | human_mind | 45 | 498 | 1085 | 5 | 0 |
 | hyperparameters | 25 | 55 | 175 | 0 | 0 |
@@ -126,6 +126,8 @@
 - embeddinglab.php: 1869
 - evaluation.php: 2009
 - evaluation.php: 2020
+- hallucinations.php: 2019
+- hallucinations.php: 2020
 - human_mind.php: 1974
 - human_mind.php: 1976
 - human_mind.php: 1986
@@ -152,9 +154,7 @@
 - reliability.php: 2022
 - reliability.php: 2023
 - reliability.php: 2024
-- speech_audio.php: 2016
-- statistics_i.php: 2019
-- … and 34 more
+- … and 36 more
 
 ## Uncovered quantities
 

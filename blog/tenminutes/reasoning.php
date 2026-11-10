@@ -16,7 +16,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>The model can <em>think longer.</em></h1>
-					<p class="hero-deck">For years, scaling meant training a bigger model. Reasoning models add another axis: give the model more computation at inference time and let it explore, check, and revise.</p>
+					<p class="hero-deck">For years, scaling meant training a bigger model. Reasoning models add another axis: give the model more computation at inference time and let it explore, check, and revise. When does thinking longer help?</p>
 				</div>
 			</section>
 
@@ -39,6 +39,8 @@
 						<div class="prose">
 							<p>The o1/R1 generation goes further: the model is trained with reinforcement learning on problems that can be checked (<a href="https://arxiv.org/abs/2402.03300" rel="noopener">Shao et al., 2024</a>), so it learns when to think longer, backtrack, and verify. The reasoning process can be much longer than the final answer. A user-facing “summary of reasoning” may be only that: a summary. It is not a guaranteed transcript of the computation that produced the answer, and a fluent explanation can be reconstructed after the fact.</p>
 							<p>More thinking is not always better. The model can reason confidently in the wrong direction, long chains are expensive, and on a simple task the extra tokens add latency without improving the answer. The useful question is whether the extra computation buys a real improvement on the task, not whether the explanation sounds thorough. The practical pattern is generate, then verify: use a checker when the answer can be checked, and a second model or prompt when it cannot.</p>
+							<p>A concrete case: the bat-and-ball problem. A bat and a ball cost $1.10; the bat costs $1 more than the ball; the ball costs 5 cents, not 10. The intuitive answer is wrong, and writing the equation fixes it (<a href="https://www.aeaweb.org/articles?id=10.1257/089533005775196732" rel="noopener">Frederick, 2005</a>). Extra reasoning helps when it forces that check.</p>
+							<p>Thinking longer pays off when the extra steps can be checked; otherwise it is just more tokens.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Chain-of-thought</b><span>Write intermediate steps instead of jumping to an answer.</span></div>

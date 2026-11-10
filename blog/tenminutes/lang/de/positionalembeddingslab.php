@@ -5,7 +5,7 @@ return [
 	'texts' => [
 		'Attention is' => 'Attention ist',
 		'order-blind.' => 'ordnungsblind.',
-		"A transformer processes tokens in parallel. Without a position signal, 'dog bites man' and 'man bites dog' would be the same bag of vectors." => 'Ein Transformer verarbeitet Tokens parallel. Ohne Positionssignal wären „dog bites man“ und „man bites dog“ derselbe Beutel von Vektoren.',
+		"A transformer processes tokens in parallel. Without a position signal, 'dog bites man' and 'man bites dog' would be the same bag of vectors. How does order survive parallel processing?" => 'Ein Transformer verarbeitet Tokens parallel. Ohne Positionssignal wären „dog bites man“ und „man bites dog“ derselbe Beutel von Vektoren. Wie überlebt Ordnung beim parallelen Verarbeiten?',
 		'The missing coordinate' => 'Die fehlende Koordinate',
 		'Where is the token?' => 'Wo ist das Token?',
 		"Attention is order-blind. The missing coordinate is position. Attention compares tokens by content. It has no built-in notion of first, second, or last. Positional encodings add a signature to each token's vector so that the model can tell where it sits in the sequence. You might ask why the model cannot simply use the token's index. An index is unbounded and says nothing about distance: position 1,000 is not “far” in any useful sense unless the model learns a scale. A crafted encoding supplies that scale." => 'Attention ist ordnungsblind. Die fehlende Koordinate ist die Position. Attention vergleicht Tokens nach Inhalt. Sie hat keinen eingebauten Begriff von erstem, zweitem oder letztem. Positional Encodings fügen dem Vektor jedes Tokens eine Signatur hinzu, sodass das Modell erkennen kann, wo es in der Sequenz sitzt. Man könnte fragen, warum das Modell nicht einfach den Index des Tokens nutzt. Ein Index ist unbegrenzt und sagt nichts über Distanz: Position 1.000 ist in keinem nützlichen Sinn „weit“, es sei denn, das Modell lernt einen Maßstab. Ein konstruiertes Encoding liefert diesen Maßstab.',
@@ -73,6 +73,10 @@ return [
 		'The aha' => 'Der Aha-Moment',
 		'Position is the coordinate that turns a bag of words into a sentence.' => 'Position ist die Koordinate, die aus einem Beutel Wörter einen Satz macht.',
 		'Attention supplies the relationships; position supplies the order.' => 'Attention liefert die Beziehungen; Position liefert die Ordnung.',
+		'The model does not see order; it computes it.' => 'Das Modell sieht Ordnung nicht; es berechnet sie.',
+	],
+	'blocks' => [
+		'A concrete test: take a sentence, shuffle its words, and remove the positional signal. Attention still returns the same set of token vectors, only in a different order; the model cannot tell “dog bites man” from “man bites dog” (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>). Position is the coordinate that breaks the symmetry.' => 'Ein konkreter Test: Nimm einen Satz, mische seine Wörter und entferne das Positionssignal. Attention liefert weiterhin dieselbe Menge von Token-Vektoren, nur in anderer Reihenfolge; das Modell kann „dog bites man“ nicht von „man bites dog“ unterscheiden (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>). Position ist die Koordinate, die die Symmetrie bricht.',
 	],
 	'attrs' => [
 		'Positional encoding heatmap' => 'Heatmap der Positions-Encodings',

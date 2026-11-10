@@ -16,7 +16,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>Sound becomes <em>tokens.</em></h1>
-					<p class="hero-deck">A waveform is too dense to feed directly into a language model. Audio systems compress it into representations that a transformer can treat like a sequence.</p>
+					<p class="hero-deck">A waveform is too dense to feed directly into a language model. Audio systems compress it into representations that a transformer can treat like a sequence. How does a waveform become a sequence?</p>
 				</div>
 			</section>
 
@@ -28,6 +28,8 @@
 						<div class="prose">
 							<p>Multimodal models joined pixels and words. The same move works for sound. The raw waveform is a long list of numbers: tens of thousands of samples per second. A spectrogram turns it into a picture of frequency over time. A neural audio codec compresses it into discrete tokens; self-supervised models learn representations without labels. The sample rate is already a design choice: speech is usually captured at 16 kHz because most of the information needed to understand words sits below 8 kHz, while music is captured at 44.1 kHz or 48 kHz because it uses the higher frequencies.</p>
 							<p>Modern systems often use codec tokens because they behave like a vocabulary. Once sound is a sequence of tokens, the same transformer machinery that handles text can listen, transcribe, and generate. A codec does not simply round the waveform; it learns a small set of reusable acoustic units, often with several “codebooks” stacked, and sends the indices of those units. That is what makes the output discrete enough to predict (<a href="https://arxiv.org/abs/2107.03312" rel="noopener">Zeghidour et al., 2021</a>; <a href="https://arxiv.org/abs/2210.13438" rel="noopener">Défossez et al., 2022</a>).</p>
+							<p>A neural codec does not store the raw waveform. It encodes it as a short sequence of discrete units, and that compression is what makes the sequence short enough for a transformer (<a href="https://arxiv.org/abs/2107.03312" rel="noopener">Zeghidour et al., 2021</a>; <a href="https://arxiv.org/abs/2210.13438" rel="noopener">Défossez et al., 2022</a>).</p>
+							<p>Once sound is tokens, the same machinery that reads text can listen.</p>
 						</div>
 					</section>
 

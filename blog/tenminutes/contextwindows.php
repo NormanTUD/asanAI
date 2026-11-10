@@ -16,7 +16,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>The model only knows <em>what is in the window.</em></h1>
-					<p class="hero-deck">A context window is not a persistent memory. It is the entire input the model can see in one forward pass: system prompt, history, documents, and your new question.</p>
+					<p class="hero-deck">A context window is not a persistent memory. It is the entire input the model can see in one forward pass: system prompt, history, documents, and your new question. What does the model actually see?</p>
 				</div>
 			</section>
 
@@ -51,6 +51,8 @@
 						<div class="prose">
 							<p>The KV cache stores the keys and values for every token in the context, so the model does not recompute the past at every step. The cache grows with the context length and can dominate memory during long conversations (<a href="https://arxiv.org/abs/2309.06180" rel="noopener">Kwon et al., 2023</a>). Efficient attention kernels (<a href="https://arxiv.org/abs/2205.14135" rel="noopener">Dao et al., 2022</a>) help with the arithmetic, not with that memory bill.</p>
 							<p>Long-context models also have to learn to use the middle of a long window; information near the start or end is often easier to retrieve (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>). Retrieval and long context are complementary: the window decides how much the model can see, and retrieval decides what is worth seeing.</p>
+							<p>A concrete test: give the model 20 documents and place the one relevant document in the middle of the prompt. Accuracy often drops compared with placing the same document first or last (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>). A bigger window does not guarantee that the model uses the middle.</p>
+							<p>The window is a budget, not a guarantee of attention.</p>
 						</div>
 					</section>
 

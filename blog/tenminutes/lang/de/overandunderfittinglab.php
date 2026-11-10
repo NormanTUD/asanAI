@@ -5,7 +5,7 @@ return [
 	'texts' => [
 		'Fit the pattern,' => 'Passe das Muster an,',
 		'not the noise.' => 'nicht das Rauschen.',
-		'A model can be too simple to see the rule or so flexible that it memorizes every accident. Generalization lives between those two failures.' => 'Ein Modell kann zu einfach sein, um die Regel zu sehen, oder so flexibel, dass es jeden Zufall auswendig lernt. Generalisierung lebt zwischen diesen beiden Fehlern.',
+		'A model can be too simple to see the rule or so flexible that it memorizes every accident. Generalization lives between those two failures. Why can a perfect training score be a warning?' => 'Ein Modell kann zu einfach sein, um die Regel zu sehen, oder so flexibel, dass es jeden Zufall auswendig lernt. Generalisierung lebt zwischen diesen beiden Fehlern. Warum kann ein perfekter Trainings-Score eine Warnung sein?',
 		'The two failures' => 'Die beiden Fehler',
 		'Too simple or too flexible.' => 'Zu einfach oder zu flexibel.',
 		'The tiny learner had two knobs. With many knobs, the danger shifts from underfitting to memorization. Underfitting is a model that is too simple. It misses the real pattern and performs badly on both training and new data. Overfitting is the opposite: the model is flexible enough to memorize the training examples, including their noise, and then fails when the noise changes.' => 'Der winzige Lerner hatte zwei Regler. Mit vielen Reglern verschiebt sich die Gefahr von Underfitting zu Auswendiglernen. Underfitting ist ein Modell, das zu einfach ist. Es verpasst das echte Muster und ist auf Trainings- und neuen Daten schlecht. Overfitting ist das Gegenteil: Das Modell ist flexibel genug, die Trainingsbeispiele inklusive ihres Rauschens auswendig zu lernen, und scheitert dann, wenn sich das Rauschen ändert.',
@@ -45,6 +45,10 @@ return [
 		'The aha' => 'Der Aha-Moment',
 		'A perfect training score can be a warning sign.' => 'Ein perfekter Trainingsscore kann ein Warnsignal sein.',
 		'What matters is performance on examples the model has never seen.' => 'Was zählt, ist die Leistung auf Beispielen, die das Modell nie gesehen hat.',
+		'The test set is not a formality; it is the only evidence that the pattern travels.' => 'Der Testsatz ist keine Formalie; er ist der einzige Beleg, dass das Muster mitreist.',
+	],
+	'blocks' => [
+		'A concrete case: a pneumonia detector trained on one hospital’s X-rays can lose accuracy at another hospital because the scanners and protocols differ (<a href="https://doi.org/10.1371/journal.pmed.1002683" rel="noopener">Zech et al., 2018</a>). The model learned the hospital as much as the disease. That is overfitting to a distribution, not to a single point.' => 'Ein konkreter Fall: Ein Pneumonie-Detektor, der auf den Röntgenbildern eines Krankenhauses trainiert wurde, kann in einem anderen Krankenhaus an Genauigkeit verlieren, weil Scanner und Protokolle anders sind (<a href="https://doi.org/10.1371/journal.pmed.1002683" rel="noopener">Zech et al., 2018</a>). Das Modell lernte das Krankenhaus fast so gut wie die Krankheit. Das ist Overfitting an eine Verteilung, nicht an einen einzelnen Punkt.',
 	],
 	'attrs' => [
 		'Polynomial fits to training and test points' => 'Polynomfits an Trainings- und Testpunkten',

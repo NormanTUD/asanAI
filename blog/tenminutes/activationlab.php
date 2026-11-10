@@ -17,7 +17,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>The bend <em>makes depth meaningful.</em></h1>
-					<p class="hero-deck">A dense layer can only stretch, rotate, and shift. The activation function after it is what lets a network learn curves, folds, and decisions.</p>
+					<p class="hero-deck">A dense layer can only stretch, rotate, and shift. The activation function after it is what lets a network learn curves, folds, and decisions. Why does a nonlinearity make depth useful?</p>
 				</div>
 			</section>
 
@@ -36,7 +36,7 @@
 						<div class="section-kicker"><span class="sk-num">02</span> Why the choice matters</div>
 						<h2 class="section-title">Gradients and probabilities.</h2>
 						<div class="prose">
-							<p>The activation decides how information flows and how gradients behave. ReLU is cheap but can produce dead units; sigmoid and tanh saturate; GELU is smooth and works well in deep transformers. A dead unit is not a metaphor, if a ReLU neuron's weights drift so that its input is negative for every training example, its gradient is zero forever and it stops learning. Leaky ReLU and GELU avoid the hard zero on the negative side.</p>
+							<p>The activation decides how information flows and how gradients behave. ReLU is cheap but can produce dead units; sigmoid and tanh saturate; GELU is smooth and works well in deep transformers. A dead unit is not a metaphor, if a ReLU neuron's weights drift so that its input is negative for every training example, its gradient is zero forever and it stops learning. Leaky ReLU and GELU avoid the hard zero on the negative side. A good activation keeps the gradient alive; a bad one silently removes capacity.</p>
 							<p>At the output, softmax turns a vector of scores into a probability distribution. It is not just a normalisation: it is the gate that turns the model's internal scores into a choice over the vocabulary. Do not confuse it with the hidden-layer activation. ReLU and GELU shape what a unit passes on inside the network; softmax is used at the end because the task is to choose among mutually exclusive tokens.</p>
 						</div>
 						<div class="keypoints">

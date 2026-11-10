@@ -26,7 +26,7 @@ The AI does not “know” that the capital of France is Paris. It simply knows 
 
 ### Intrinsic and Extrinsic Hallucinations
 
-A summary can fail its source in two ways. An **intrinsic** hallucination contradicts the source: the source says the first Ebola vaccine was approved in 2019, the summary says 2021. An **extrinsic** hallucination adds a detail the source neither supports nor contradicts, for example background about clinical trials that the source never mentions. The added detail can be true and still be unverifiable from the source, so the right verdict is “unsupported”, not “false” (\cite[Maynez et al., 2020]{maynez2020faithfulness}; \cite[Ji et al., 2023]{ji2023survey}).
+In a grounded task, the output can fail its source in two ways. An **intrinsic** hallucination contradicts the source: the source says the first Ebola vaccine was approved in 2019, the summary says 2021. An **extrinsic** hallucination adds a detail the source neither supports nor contradicts, for example background about clinical trials that the source never mentions. The added detail can be true and still be unverifiable from the source, so the right verdict is “unsupported”, not “false” (\cite[Maynez et al., 2020]{maynez2020faithfulness}; \cite[Ji et al., 2023]{ji2023survey}).
 
 This is why **faithfulness** and **factuality** are separate tests. Faithfulness asks whether the output stays consistent with the provided source; factuality asks whether it is true about the world. A faithful summary can repeat a false source, and a factually correct summary can add a detail the source does not support.
 

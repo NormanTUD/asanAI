@@ -5,7 +5,7 @@ return [
 	'texts' => [
 		'Turn the network' => 'Dreh das Netz',
 		'around.' => 'um.',
-		'Normally we adjust the weights to fit an image. Inceptionism flips the direction: freeze the weights and adjust the image until it becomes what the network recognizes. The result is a picture of the network\'s learned features, not a photograph it has stored.' => 'Normalerweise passen wir die Gewichte an, um ein Bild zu fitten. Inceptionism dreht die Richtung um: Friere die Gewichte ein und passe das Bild an, bis es das wird, was das Netz erkennt. Das Ergebnis ist ein Bild der gelernten Merkmale des Netzes, kein gespeichertes Foto.',
+		'Normally we adjust the weights to fit an image. Inceptionism flips the direction: freeze the weights and adjust the image until it becomes what the network recognizes. The result is a picture of the network\'s learned features, not a photograph it has stored. What has the network learned to expect?' => 'Normalerweise passen wir die Gewichte an, um ein Bild zu fitten. Inceptionism dreht die Richtung um: Friere die Gewichte ein und passe das Bild an, bis es das wird, was das Netz erkennt. Das Ergebnis ist ein Bild der gelernten Merkmale des Netzes, kein gespeichertes Foto. Was hat das Netz gelernt zu erwarten?',
 		'The idea' => 'Die Idee',
 		'The reverse direction.' => 'Die Gegenrichtung.',
 		"The tiny learner fitted a line. A deep vision network learns features; turn the network around to see them. A classifier is trained to map an image to a label. If you freeze its weights and run gradient ascent on a class score, the pixels change instead of the parameters. Start from noise, ask for “banana”, and the noise slowly organizes into banana-like shapes." => 'Der winzige Lerner passte eine Linie an. Ein tiefes Vision-Netz lernt Merkmale; dreh das Netz um, um sie zu sehen. Ein Klassifikator wird trainiert, ein Bild auf ein Label abzubilden. Wenn du seine Gewichte einfrierst und Gradientenaufstieg auf einem Klassenscore ausführst, ändern sich die Pixel statt der Parameter. Starte mit Rauschen, frage nach „banana“, und das Rauschen organisiert sich langsam zu bananenartigen Formen.',
@@ -56,6 +56,10 @@ return [
 		'Another run from white noise. Different seeds and layers grow different textures; the loop is the same. Image: Martin Thoma,' => 'Ein weiterer Lauf mit weißem Rauschen. Andere Seeds und Schichten lassen andere Texturen wachsen; die Schleife bleibt dieselbe. Bild: Martin Thoma,',
 		'A third run from white noise. The result is a picture of the layer\'s preferences, not a stored image. Image: Martin Thoma,' => 'Ein dritter Lauf mit weißem Rauschen. Das Ergebnis ist ein Bild der Präferenzen dieser Schicht, kein gespeichertes Bild. Bild: Martin Thoma,',
 		', via Wikimedia Commons.' => ', via Wikimedia Commons.',
+		'The picture is a map of associations, not a photograph of a concept.' => 'Das Bild ist eine Karte von Assoziationen, kein Foto eines Begriffs.',
+	],
+	'blocks' => [
+		'A concrete case from the original essay: asked to visualize a dumbbell, the network adds an arm holding it, because dumbbells in the training data usually came with people (<a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">Mordvintsev et al., 2015</a>). The image shows the co-occurrence, not the object.' => 'Ein konkreter Fall aus dem Originalessay: Bittet man das Netz, eine Hantel zu visualisieren, fügt es einen Arm hinzu, der sie hält, weil Hanteln in den Trainingsdaten meist mit Menschen vorkamen (<a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">Mordvintsev et al., 2015</a>). Das Bild zeigt die Koexistenz, nicht das Objekt.',
 	],
 	'attrs' => [
 		'Random noise gradually turning into a banana' => 'Zufallsrauschen, das sich allmählich in eine Banane verwandelt',
