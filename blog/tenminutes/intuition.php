@@ -4665,7 +4665,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 			}
 			var formulaEl = document.getElementById("oned-formula");
 			if (formulaEl && window.TM && TM.typesetMath) {
-				var tex = "\\frac{\\underbrace{" + a.value + "}_{\\text{" + a.label + "}} + \\underbrace{" + b.value + "}_{\\text{" + b.label + "}}}{\\underbrace{2}_{\\text{" + (de ? "Anzahl" : "count") + "}}} = \\underbrace{" + avg.toFixed(1) + "}_{\\text{" + (de ? "Mittelwert" : "midpoint") + "}}";
+				var sum = a.value + b.value;
+				var tex = "\\underbrace{" + a.value + "}_{\\text{" + a.label + "}} + \\underbrace{" + b.value + "}_{\\text{" + b.label + "}} = \\underbrace{" + sum.toFixed(1) + "}_{\\text{" + (de ? "Summe" : "sum") + "}} \\qquad \\underbrace{" + avg.toFixed(1) + "}_{\\text{" + (de ? "Mittelwert" : "midpoint") + "}}";
 				tex += sym === "=" ? " = \\underbrace{" + near.value + "}_{\\text{" + near.label + "}}" : " \\approx \\underbrace{" + near.value + "}_{\\text{" + near.label + "}}";
 				formulaEl.setAttribute("data-tex", tex);
 				formulaEl.removeAttribute("data-tex-rendered");
