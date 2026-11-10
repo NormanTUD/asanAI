@@ -16,7 +16,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>Ideas arrive <em>through people.</em></h1>
-					<p class="hero-deck">AI has a surprisingly small cast of recurring characters. The same names appear in the history, the mathematics, the labs, and the frontier: sometimes as the person who proved the theorem, sometimes as the person whose failure defined the next question.</p>
+					<p class="hero-deck">AI has a surprisingly small cast of recurring characters. The same names appear in the history, the mathematics, the labs, and the frontier: sometimes as the person who proved the theorem, sometimes as the person whose failure defined the next question. Who gets remembered, and who does the work?</p>
 				</div>
 			</section>
 
@@ -28,6 +28,7 @@
 						<div class="prose">
 							<p>AI for science asked how prediction becomes discovery. Ada Lovelace and Charles Babbage imagined a programmable machine before electronics existed; her notes include the first published algorithm (<a href="https://www.fourmilab.ch/babbage/sketch.html" rel="noopener">Menabrea &amp; Lovelace, 1843</a>). Alan Turing asked what computation is (<a href="https://www.cs.virginia.edu/~robins/Turing_Paper_1936.pdf" rel="noopener">Turing, 1936</a>). Claude Shannon separated information from meaning (<a href="https://archive.org/details/bstj27-3-379" rel="noopener">Shannon, 1948</a>). McCulloch and Pitts turned neurons into logic (<a href="https://www.cs.cmu.edu/~epxing/Class/10715/reading/McCulloch.and.Pitts.pdf" rel="noopener">McCulloch &amp; Pitts, 1943</a>).</p>
 							<p>Frank Rosenblatt built the perceptron (<a href="https://psycnet.apa.org/record/1959-09865-001" rel="noopener">Rosenblatt, 1958</a>) and promised a machine that could learn. The promise outran the hardware, and the field entered a winter. The ideas survived in the margins.</p>
+							<p>The pattern repeats at Dartmouth. The 1955 proposal named the field and promised a great deal; the 1956 workshop was small, and no consensus emerged (<a href="http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf" rel="noopener">McCarthy et al., 1955</a>). The name stuck; the promise took decades.</p>
 						</div>
 					</section>
 
@@ -37,6 +38,7 @@
 						<div class="prose">
 							<p>The transformer did not appear from nowhere. It condensed decades of work on attention, optimization, hardware, and data; the 2017 paper is the visible edge (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>). The names on the paper are only the visible edge of a much larger collaboration: data workers who label and filter corpora, hardware engineers who build the accelerators, operations teams who keep the clusters running, and annotators and red-teamers who shape the behaviour.</p>
 							<p>Credit in AI is contested, collaborative, and often late. Reading the primary sources is one way to see how the ideas actually developed, and how many people were needed to make them work.</p>
+							<p>The lesson is not that credit is arbitrary. It is that a breakthrough is a relay: the visible name, the group that made it work, and the next person who asks a better question.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Long lineage</b><span>The ideas predate electronic computers.</span></div>
