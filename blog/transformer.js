@@ -6416,7 +6416,9 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		markerPoints.push({ x: to[0], y: to[1] || 0, z: to[2] || 0, size: 8, color: color, symbol: 'diamond', hover: tip });
 	});
 	if (markerPoints.length) traces.push(_tmMarkerTrace(markerPoints));
-	const layout = window.tmPlotly.layout3D('', ['Dim 0', 'Dim 1', 'Dim 2']);
+	const metricLabel = (window.tmMetric && window.tmMetric.label) ? window.tmMetric.label() : '';
+	const title = 'Positional shift' + (metricLabel ? ' · ' + metricLabel : '') + (modeLabel ? ' · ' + modeLabel : '');
+	const layout = window.tmPlotly.layout3D(title, ['Dim 0', 'Dim 1', 'Dim 2']);
 	window.tmPlotly.equalize3D(layout, traces);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
 	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });

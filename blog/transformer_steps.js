@@ -3323,9 +3323,10 @@
 			}
 		}
 		if (markerPoints.length) traces.push(markerTrace(markerPoints));
-		// The surrounding step text already describes the plot; no redundant
-		// in-plot title / metric subtitle.
-		var layout = projection.is3d ? tmPlotly.layout3D("", projection.axes) : tmPlotly.layout2D("", projection.axes);
+		// Keep a compact metric title so a screenshot stays self-describing;
+		// the step text carries the long explanation.
+		var title = (DE() ? "Feature-Migration" : "Feature migration") + " · " + featureMetricLabel();
+		var layout = projection.is3d ? tmPlotly.layout3D(title, projection.axes) : tmPlotly.layout2D(title, projection.axes);
 		if (projection.is3d) tmPlotly.equalize3D(layout, traces);
 		if (window.echarts && el) { var oldChart = echarts.getInstanceByDom(el); if (oldChart) oldChart.dispose(); }
 		var loading = el.querySelector(".plot-loading");

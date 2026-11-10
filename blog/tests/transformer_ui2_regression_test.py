@@ -244,7 +244,13 @@ def main() -> None:
             page.evaluate("() => document.getElementById('unified-layer-0-logit-lens').scrollIntoView()")
             page.wait_for_timeout(1200)
             page.evaluate("""() => { const s=document.querySelector('.tm-logit-view-select'); s.value='angle'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
-            page.wait_for_timeout(1400)
+            page.wait_for_function("""() => {
+                const chip = document.querySelector('.tm-logit-lens .tm-logit-chip .tm-logit-pct');
+                const final = document.getElementById('tm-final-angle-view');
+                return !!(chip && /^cos /.test(chip.textContent.trim()) && final
+                    && getComputedStyle(final).display !== 'none'
+                    && final.querySelectorAll('.tm-final-angle-row').length > 0);
+            }""", timeout=15000)
             angle_view = page.evaluate("""() => {
                 const chip = document.querySelector('.tm-logit-lens .tm-logit-chip .tm-logit-pct');
                 const final = document.getElementById('tm-final-angle-view');
@@ -575,6 +581,14 @@ def main() -> None:
                 const s = d.find(t => t.type === 'scatter3d' && t.name && t.name !== 'unit sphere points' && t.name !== 'Vocab Embeddings');
                 return s ? { x: s.x[0], y: s.y[0], z: s.z[0], name: s.name } : null;
             }"""
+            embedding_ready = """() => {
+                const el = document.getElementById('transformer-plotly-space');
+                const d = (el && el.data) || [];
+                return d.some(t => t.type === 'scatter3d' && t.name
+                    && t.name !== 'unit sphere points' && t.name !== 'Vocab Embeddings'
+                    && Array.isArray(t.x) && t.x.length > 0);
+            }"""
+            page.wait_for_function(embedding_ready, timeout=30000)
             before_train = page.evaluate(def_embedding_point)
             page.evaluate("""() => {
                 const e=document.getElementById('train-epochs'); if(e) e.value='2';
@@ -588,13 +602,17 @@ def main() -> None:
                 if not page.evaluate("() => !!window.isTraining"):
                     break
             page.wait_for_timeout(800)
+            page.wait_for_function(embedding_ready, timeout=30000)
             after_train = page.evaluate(def_embedding_point)
             moved = bool(before_train and after_train) and (
                 abs(before_train["x"] - after_train["x"]) +
                 abs(before_train["y"] - after_train["y"]) +
                 abs(before_train["z"] - after_train["z"]) > 1e-6
             )
-            check("training refreshes the visible embedding plot", started and moved, str({"started": started, "before": before_train, "after": after_train}))
+            # Tiny models can finish before the 600 ms probe, so `isTraining`
+            # being false is not a failure; the moved embedding is the proof.
+            check("training refreshes the visible embedding plot", moved,
+                  str({"started": started, "moved": moved, "before": before_train, "after": after_train}))
             check("no console/page errors during training", not errors, "; ".join(errors[:3]))
 
             errors.clear()
