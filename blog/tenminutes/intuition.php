@@ -366,8 +366,25 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<p>The model moves points in a high-dimensional space. Training shapes those points so that the final context vector has smaller angles to words that plausibly come next than to words that do not. Because the decision is about angles, not straight-line distances, this page uses the great-circle metric by default. The model works on a hypersphere of directions; to draw it, we project that sphere down to three dimensions. Plausible here means the continuation occurred in the training data; it does not mean that the model has a separate notion of truth.</p>
 							<p>This is the transformer. For every token, again and again, it asks how that token stands in context to all the other tokens right now. Attention lets it look around, a dense layer and an activation function transform each token, and LayerNorm keeps the numbers in a stable range. A few other parts do their jobs along the way.</p>
 							<p>Each pass shifts the token's point in the space. The directions follow meaning paths and become clearer, so the last token ends up at a small angle to the tokens that are likely next in this context. That is the trick.</p>
-							<div class="prose-math" data-tex="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{token vector}})}_{\text{what layer 1 adds}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{running vector}})}_{\text{what layer 2 adds}} \end{aligned}" data-tex-de="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{Token-Vektor}})}_{\text{was Schicht 1 hinzufügt}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{laufender Vektor}})}_{\text{was Schicht 2 hinzufügt}} \end{aligned}" data-tex-display="true"></div>
-							<p>The new state is the old state plus what the layer adds. The demos are simplified; the order is the real architecture.</p>
+						</div>
+						<h2 class="section-title"><?php echo $layer_de ? 'Ein Modell ist ein Stapel von Funktionen.' : 'A model is a stack of functions.'; ?></h2>
+						<div class="prose">
+							<?php if ($layer_de): ?>
+							<p>Ein neuronales Netz entsteht, indem man Funktionen nacheinander anwendet. Eine Schicht transformiert ihre Eingabe, die nächste transformiert dieses Ergebnis, und der Stapel macht aus einer kleinen Operation ein tiefes Modell. Tiefe ist Komposition: viele einfache Schritte, jeder füttert den nächsten.</p>
+							<p>Ein Modell ist aber mehr als seine Funktionen: Es braucht Daten, aus denen es lernt. Man gibt ihm Eingaben und passende Ausgaben; die Funktionen suchen dann eine Folge von Transformationen, die die Eingabe möglichst gut in die Ausgabe überführt.</p>
+							<?php else: ?>
+							<p>A neural network is built by applying functions one after another. One layer transforms its input, the next layer transforms that result, and the stack turns a small operation into a deep model. The depth is composition: many simple steps, each feeding the next.</p>
+							<p>A model is more than its functions: it also needs data to learn from. You give it inputs and matching outputs; the functions then search for a sequence of transformations that turns the input into the output as closely as possible.</p>
+							<?php endif; ?>
+							<div class="prose-math layer-stack-formula" data-tex="\underbrace{ \text{output} = \text{layer}_3\!\left( \underbrace{ \text{layer}_2\!\left( \underbrace{\text{layer}_1(\text{input})}_{\text{first transformation}} \right) }_{\text{second transformation}} \right) }_{\text{a stack of functions, each feeding the next}}" data-tex-de="\underbrace{ \text{output} = \text{layer}_3\!\left( \underbrace{ \text{layer}_2\!\left( \underbrace{\text{layer}_1(\text{input})}_{\text{erste Transformation}} \right) }_{\text{zweite Transformation}} \right) }_{\text{ein Stapel von Funktionen, jede füttert die nächste}}" data-tex-display="true"></div>
+							
+						</div>
+						<div class="prose">
+							<?php if ($layer_de): ?>
+							<p>Jetzt erklären wir diese Bausteine Schritt für Schritt: tokenisieren, einbetten, Position hinzufügen, attenden, Feed-Forward und Residual Stream. Die Reihenfolge ist die echte Architektur; die Demos sind vereinfacht.</p>
+							<?php else: ?>
+							<p>Now we explain these building blocks step by step: tokenize, embed, add position, attend, feed-forward, and the residual stream. The order is the real architecture; the demos are simplified.</p>
+							<?php endif; ?>
 						</div>
 					</section>
 
@@ -399,7 +416,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<h2 class="section-title">Embed: IDs become points in meaning space</h2>
 						<h4 class="layer-subhead">Meaning becomes geometry</h4>
 						<div class="prose">
-							<p>Each token ID points to a learned vector. A real model uses thousands of dimensions; the demo uses two so you can see it. Similar words sit close, and a direction can carry a relationship: man → woman is the same arrow as king → queen. The axes here are labelled for humans; a real model's axes are unlabelled.</p>
+							<p>Each token ID points to a learned vector. A real model uses thousands of dimensions; the demo uses two so you can see it. Similar words sit close, and a direction can carry a relationship: man → woman is the same arrow as king → queen. The axes here are labelled for humans; a real model's axes are unlabelled. Sometimes the relation does not come out exactly; an approximate direction is already enough to be useful.</p>
 						</div>
 						<div class="demo demo--paper demo--plot" id="oned-twod-demo">
 							<div class="demo-head">
@@ -690,6 +707,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 						<div class="prose">
 							<p>Every layer reads the same running vector, computes an update, and adds it back. Think of a shared notebook: earlier notes stay, later layers read them and add more. The new state is the old state plus a change.</p>
 						</div>
+							<div class="prose-math" data-tex="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{token vector}})}_{\text{what layer 1 adds}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{running vector}})}_{\text{what layer 2 adds}} \end{aligned}" data-tex-de="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{Token-Vektor}})}_{\text{was Schicht 1 hinzufügt}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{laufender Vektor}})}_{\text{was Schicht 2 hinzufügt}} \end{aligned}" data-tex-display="true"></div>
+							<p>The new state is the old state plus what the layer adds. The demos are simplified; the order is the real architecture.</p>
 						<div class="step-pane" id="step-residual">
 															<div class="step-stage">
 																<figure class="res-notebook">
@@ -718,16 +737,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					<section class="section-block" id="layer-stack" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">
 						<?php $layer_de = function_exists('tm_lang') && tm_lang() === 'de'; ?>
 						<div class="section-kicker"><span class="sk-num">04</span> <?php echo $layer_de ? 'Der Stapel' : 'The stack'; ?></div>
-						<h2 class="section-title"><?php echo $layer_de ? 'Ein Modell ist ein Stapel von Funktionen.' : 'A model is a stack of functions.'; ?></h2>
+						<h2 class="section-title"><?php echo $layer_de ? 'Eine Schicht, dann der Stapel.' : 'One layer, then the stack.'; ?></h2>
 						<div class="prose">
-							<?php if ($layer_de): ?>
-							<p>Ein neuronales Netz entsteht, indem man Funktionen nacheinander anwendet. Eine Schicht transformiert ihre Eingabe, die nächste transformiert dieses Ergebnis, und der Stapel macht aus einer kleinen Operation ein tiefes Modell. Tiefe ist Komposition: viele einfache Schritte, jeder füttert den nächsten.</p>
-							<p>Ein Modell ist aber mehr als seine Funktionen: Es braucht Daten, aus denen es lernt. Man gibt ihm Eingaben und passende Ausgaben; die Funktionen suchen dann eine Folge von Transformationen, die die Eingabe möglichst gut in die Ausgabe überführt.</p>
-							<?php else: ?>
-							<p>A neural network is built by applying functions one after another. One layer transforms its input, the next layer transforms that result, and the stack turns a small operation into a deep model. The depth is composition: many simple steps, each feeding the next.</p>
-							<p>A model is more than its functions: it also needs data to learn from. You give it inputs and matching outputs; the functions then search for a sequence of transformations that turns the input into the output as closely as possible.</p>
-							<?php endif; ?>
-							<div class="prose-math layer-stack-formula" data-tex="\underbrace{ \text{output} = \text{layer}_3\!\left( \underbrace{ \text{layer}_2\!\left( \underbrace{\text{layer}_1(\text{input})}_{\text{first transformation}} \right) }_{\text{second transformation}} \right) }_{\text{a stack of functions, each feeding the next}}" data-tex-de="\underbrace{ \text{output} = \text{layer}_3\!\left( \underbrace{ \text{layer}_2\!\left( \underbrace{\text{layer}_1(\text{input})}_{\text{erste Transformation}} \right) }_{\text{zweite Transformation}} \right) }_{\text{ein Stapel von Funktionen, jede füttert die nächste}}" data-tex-display="true"></div>
 							<h4 class="layer-subhead"><?php echo $layer_de ? 'Eine Schicht ist eine kleine Funktion' : 'One layer is a small function'; ?></h4>
 							<?php if ($layer_de): ?>
 							<p>Eine einfache Schicht muss nicht kompliziert sein. Sie multipliziert ihre Eingabe mit einer gelernten Matrix W, addiert einen gelernten Vektor b und schickt das Ergebnis durch eine Aktivierungsfunktion. Die Aktivierung bringt eine Krümmung ins Spiel, eine Nichtlinearität. Ohne sie würde jede Anzahl von Dense-Einheiten zu einer einzigen linearen Abbildung zusammenfallen.</p>
@@ -889,6 +900,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<?php endif; ?>
 							<div class="prose-math layer-stack-formula" data-tex="\underbrace{p(\text{next} \mid \text{context}) = \text{softmax}(\underbrace{W_U\, h_{\text{last}}}_{\text{scores for every token}})}_{\text{the vector points to a region of token directions, then one is drawn}}" data-tex-de="\underbrace{p(\text{nächstes} \mid \text{Kontext}) = \text{softmax}(\underbrace{W_U\, h_{\text{letztes}}}_{\text{Scores für jedes Token}})}_{\text{der Vektor zeigt auf eine Region von Token-Richtungen, dann wird eines gezogen}}" data-tex-display="true"></div>
 						</div>
+
 					</section>
 
 					<section class="section-block" id="block-repeat" data-chapter="Inside the transformer" data-chapter-de="Im Transformer">

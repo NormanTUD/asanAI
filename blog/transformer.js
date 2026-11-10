@@ -1546,8 +1546,12 @@ function renderPositionalInjectionHtml(tokens, injectedEncodings, d_model) {
 	const resultsContainer = document.getElementById('transformer-pe-integration-results');
 	if (!resultsContainer) return;
 
-	let html = `<div class='transformer_positional_embeddings'>`;
+	const total = Math.max(1, tokens.length - 1);
+	let head = '<tr><th scope="col" class="tm-pe-corner">Token</th><th scope="col" class="tm-pe-vector">Vector</th>';
+	for (let d = 0; d < d_model; d++) head += `<th scope="col" class="tm-pe-dim">D${d}</th>`;
+	head += '</tr>';
 
+	let body = '';
 	tokens.forEach((token, pos) => {
 		const semanticVec = (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[token])
 			? window.persistentEmbeddingSpace[token].map(v => parseFloat(v.toFixed(nr_fixed)))
@@ -1556,38 +1560,36 @@ function renderPositionalInjectionHtml(tokens, injectedEncodings, d_model) {
 		const peVec = computePositionalEncoding(pos, d_model, posEmbedScalar);
 		const combined = injectedEncodings[pos];
 
-		html += buildInjectionRowHtml(token, pos, semanticVec, peVec, combined);
+		body += buildInjectionRowHtml(token, pos, semanticVec, peVec, combined, total);
 	});
 
-	html += `</div>`;
-
-	resultsContainer.innerHTML = html;
+	resultsContainer.innerHTML =
+		'<div class="tm-pe-inject-wrap"><table class="tm-pe-inject-table">'
+		+ '<thead>' + head + '</thead>'
+		+ body
+		+ '</table></div>';
 }
 
-function buildInjectionRowHtml(token, pos, semanticVec, peVec, combined) {
-    const displaySemantic = semanticVec.map(v => v.toFixed(nr_fixed));
-    const displayPE = peVec.map(v => v.toFixed(nr_fixed));
-    const displayCombined = combined.map(v => v.toFixed(nr_fixed));
-    const dispToken = displayToken(token);
+function buildInjectionRowHtml(token, pos, semanticVec, peVec, combined, total) {
+	const c = getPositionColor(pos, total, 'object');
+	const color = `rgb(${c.r}, ${c.g}, ${c.b})`;
+	const cells = (vec) => vec.map(v => `<td class="tm-pe-value">${v.toFixed(nr_fixed)}</td>`).join('');
 
-    return `
-    <div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: ${themeColor('#fff')}; overflow: auto;">
-        <strong>Pos ${pos}: ${escapeHtml(dispToken)}</strong>
-        <table style="width:100%; font-family: monospace; font-size: 11px; margin-top: 5px; border-collapse: collapse;">
-            <tr style="color: #64748b;">
-                <td style="padding-right: 10px;">Embedding Vector</td>
-                ${displaySemantic.map(v => `<td>${v}</td>`).join('')}
-            </tr>
-            <tr style="color: #3b82f6;">
-                <td style="padding-right: 10px;">PE (Sin/Cos)</td>
-                ${displayPE.map(v => `<td>${v}</td>`).join('')}
-            </tr>
-            <tr style="font-weight:bold; border-top: 1px solid #eee;">
-                <td style="padding-right: 10px;">Combined</td>
-                ${displayCombined.map(v => `<td>${v}</td>`).join('')}
-            </tr>
-        </table>
-    </div>`;
+	return `<tbody class="tm-pe-group" style="--tm-pe-token-color: ${color};">
+		<tr class="tm-pe-row tm-pe-row--embed">
+			<th scope="rowgroup" rowspan="3" class="tm-pe-token"><span class="tm-pe-pos">${pos}</span><span class="tm-pe-token-text">${escapeHtml(displayToken(token))}</span></th>
+			<th scope="row" class="tm-pe-label">Embedding Vector</th>
+			${cells(semanticVec)}
+		</tr>
+		<tr class="tm-pe-row tm-pe-row--pe">
+			<th scope="row" class="tm-pe-label">PE (Sin/Cos)</th>
+			${cells(peVec)}
+		</tr>
+		<tr class="tm-pe-row tm-pe-row--combined">
+			<th scope="row" class="tm-pe-label">Combined</th>
+			${cells(combined)}
+		</tr>
+	</tbody>`;
 }
 
 function render_positional_waves(d_model, tokens) {
@@ -1630,20 +1632,32 @@ function _execute_positional_waves_render(d_model, tokens) {
 		});
 	}
 
+	const tokenTotal = Math.max(1, tokens.length - 1);
+	const tokenShapes = [];
 	tokens.forEach((token, pos) => {
+		const c = getPositionColor(pos, tokenTotal, 'object');
+		const color = `rgb(${c.r}, ${c.g}, ${c.b})`;
 		traces.push({
 			x: [pos], y: [0], mode: 'markers+text',
 			text: [displayToken(token)], textposition: 'top center',
-			textfont: { color: themeColor('#1e293b'), size: 12 },
-			marker: { size: 12, color: '#3b82f6' },
+			textfont: { color: color, size: 12 },
+			marker: { size: 12, color: color, line: { color: themeColor('#ffffff'), width: 1 } },
 			name: `Pos ${pos}: ${displayToken(token)}`, showlegend: false
 		});
+		if (tokens.length <= 40) {
+			tokenShapes.push({
+				type: 'line', x0: pos, x1: pos, y0: -1.1, y1: 1.1,
+				line: { color: `rgba(${c.r}, ${c.g}, ${c.b}, 0.18)`, width: 1, dash: 'dot' },
+				layer: 'below'
+			});
+		}
 	});
 
 	const axisTitleFont = { size: 12, color: themeColor('#64748b') };
 	const tickFont = { size: 11, color: themeColor('#64748b') };
 
 	const layout = {
+		shapes: tokenShapes,
 		title: {
 			text: 'Sinusoidal Positional Waves',
 			font: { size: 16, color: themeColor('#1e293b') }
@@ -3577,24 +3591,33 @@ function renderTokenChips(container, tokens) {
 
 	container.innerHTML = '';
 
+	const vocab = Object.keys(window.persistentEmbeddingSpace || {});
+	const total = Math.max(1, tokens.length - 1);
+
 	tokens.forEach((t, i) => {
-		const c = tokenColor(t);
+		const c = getPositionColor(i, total, 'object');
+		const dark = `rgb(${Math.round(c.r * 0.7)},${Math.round(c.g * 0.7)},${Math.round(c.b * 0.7)})`;
+		const light = `rgb(${c.r},${c.g},${c.b})`;
+		const glow = `rgba(${c.r},${c.g},${c.b},0.35)`;
+		const border = `rgba(${c.r},${c.g},${c.b},0.45)`;
+		const vocabId = vocab.indexOf(t);
+		const idLabel = vocabId >= 0 ? String(vocabId) : '?';
 		const displayToken = t.replace(/ /g, '␣').replace(/\t/g, '⇥').replace(/\n/g, '⏎').replace(/\r/g, '␍');
 
 		const badge = document.createElement('div');
 		badge.className = 'token-badge token-enter';
 		badge.style.cssText = `
-	    --token-bg: ${c.bg};
-	    --token-glow: ${c.glow};
-	    --token-border: ${c.border};
+	    --token-bg: linear-gradient(135deg, ${light}, ${dark});
+	    --token-glow: ${glow};
+	    --token-border: ${border};
 	    animation-delay: ${i * 18}ms;
 	`;
 
 		badge.innerHTML = `
-	    <span class="token-text">${escapeHtml(displayToken)}</span><br><span class="token-id">${c.id}</span>
+	    <span class="token-text">${escapeHtml(displayToken)}</span><br><span class="token-id">ID ${idLabel}</span>
 	`;
 
-		badge.setAttribute('title', `"${t}" → ID ${c.id}`);
+		badge.setAttribute('title', `"${t}" → ID ${idLabel} · position ${i}`);
 		container.appendChild(badge);
 	});
 }

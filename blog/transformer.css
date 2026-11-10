@@ -516,3 +516,78 @@ html.wide-math #contents .tm-hyper-body .md {
 	color: var(--mn-accent, #004b6f);
 }
 .tm-intro-robot svg { width: 100%; height: 100%; }
+
+/* Positional injection: one row group per token, three vector rows per group.
+   The colours match the reading aid and the tokenizer chips. */
+.tm-pe-inject-wrap {
+	margin-top: 18px;
+	overflow-x: auto;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface, #ffffff);
+}
+.tm-pe-inject-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.72rem;
+	line-height: 1.35;
+}
+.tm-pe-inject-table thead th {
+	padding: 7px 9px;
+	background: var(--mn-bg-subtle, #f1f5f9);
+	color: var(--mn-text-secondary, #475569);
+	font: 700 0.66rem/1.2 var(--mn-font-mono, monospace);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	text-align: right;
+	white-space: nowrap;
+	border-bottom: 2px solid var(--mn-border, #cbd5e1);
+}
+.tm-pe-inject-table thead th.tm-pe-corner,
+.tm-pe-inject-table thead th.tm-pe-vector { text-align: left; }
+.tm-pe-group + .tm-pe-group tr:first-child > * {
+	border-top: 2px solid var(--mn-border-strong, #94a3b8);
+}
+.tm-pe-row > * {
+	padding: 5px 9px;
+	border-bottom: 1px solid var(--mn-border-light, #e2e8f0);
+}
+.tm-pe-token {
+	position: sticky;
+	left: 0;
+	z-index: 1;
+	text-align: left;
+	white-space: nowrap;
+	vertical-align: middle;
+	border-left: 4px solid var(--tm-pe-token-color, var(--mn-accent, #004b6f));
+	background: color-mix(in srgb, var(--tm-pe-token-color, #004b6f) 9%, var(--mn-surface, #ffffff));
+}
+.tm-pe-pos {
+	display: block;
+	font: 700 0.6rem/1 var(--mn-font-mono, monospace);
+	color: var(--mn-text-muted, #64748b);
+}
+.tm-pe-token-text {
+	display: block;
+	margin-top: 2px;
+	font: 700 0.78rem var(--mn-font-mono, monospace);
+	color: var(--mn-text, #1e293b);
+}
+.tm-pe-label {
+	text-align: left;
+	white-space: nowrap;
+	font-weight: 600;
+	color: var(--mn-text-secondary, #475569);
+}
+.tm-pe-row--pe .tm-pe-label { color: var(--mn-accent, #004b6f); }
+.tm-pe-row--combined .tm-pe-label,
+.tm-pe-row--combined .tm-pe-value {
+	font-weight: 700;
+	color: var(--mn-text, #0f172a);
+}
+.tm-pe-value {
+	text-align: right;
+	font-family: var(--mn-font-mono, monospace);
+	font-variant-numeric: tabular-nums;
+	color: var(--mn-text-secondary, #475569);
+	white-space: nowrap;
+}

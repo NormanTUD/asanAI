@@ -432,6 +432,34 @@ function testTransformerStepsSource() {
 		'tenminutes plot frame has no border');
 }
 
+function testReadingAidSource() {
+	const js = fs.readFileSync(path.join(BLOG, 'transformer.js'), 'utf8');
+	const css = fs.readFileSync(path.join(BLOG, 'transformer.css'), 'utf8');
+
+	const chips = js.slice(js.indexOf('function renderTokenChips'), js.indexOf('function _tmPickerDisplay'));
+	check(/getPositionColor\(i, total, 'object'\)/.test(chips),
+		'tokenizer chips use the position colour scale');
+	check(chips.includes('vocab.indexOf(t)') && chips.includes('ID ${idLabel}'),
+		'tokenizer chips keep the real vocabulary id visible');
+
+	const injection = js.slice(
+		js.indexOf('function renderPositionalInjectionHtml'),
+		js.indexOf('function render_positional_waves'));
+	check(injection.includes('tm-pe-inject-table') && injection.includes('rowspan="3"'),
+		'positional injection uses one three-row group per token');
+	check(!injection.includes('border-radius: 8px'),
+		'positional injection no longer draws one box per token');
+
+	const waves = js.slice(
+		js.indexOf('function _execute_positional_waves_render'),
+		js.indexOf('function run_transformer_demo'));
+	check(waves.includes('getPositionColor(pos, tokenTotal') && waves.includes('tokenShapes'),
+		'positional-wave plot uses the token colours');
+
+	check(css.includes('.tm-pe-inject-table') && css.includes('.tm-pe-token'),
+		'positional-injection table styles are present');
+}
+
 function testLessonSource() {
 	const php = fs.readFileSync(path.join(BLOG, 'transformer.php'), 'utf8');
 
@@ -638,6 +666,7 @@ function main() {
 	testLazyRenderableDefers(ctx);
 	testVectorPlaceholder(ctx);
 	testTransformerStepsSource();
+	testReadingAidSource();
 	testLessonSource();
 	testFFNViews();
 	testTDA(ctx);

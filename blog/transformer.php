@@ -99,7 +99,7 @@ The steps below are the steps from the intuition chapter, now driven by the real
 <div class="md">
 ## How to read the colors
 
-The colors are a reading aid, not a model input. They make the order of tokens visible in the equations and plots, but they are not used in any calculation; positional information enters the model through positional embeddings.
+The colors are a reading aid, not a model input. They make the order of tokens visible in the equations and plots, but they are not used in any calculation; positional information enters the model through positional embeddings. The same blue-to-green scale colours the tokenizer chips, the position markers in the wave plot, and the token groups in the positional table, so a word keeps its colour across the steps. The label on each token chip is still its vocabulary ID.
 
 <div>
 $$ \underbrace{ \color[RGB]{59,130,246}\text{“the} \ \color[RGB]{55,135,235}\text{way} \ \color[RGB]{51,140,225}\text{up} \ \color[RGB]{47,145,214}\text{and} \ \color[RGB]{43,150,203}\text{the} \ \color[RGB]{39,155,193}\text{way} \ \color[RGB]{36,160,182}\text{down} \ \color[RGB]{32,165,172}\text{are} \ \color[RGB]{28,170,161}\text{one} \ \color[RGB]{24,175,150}\text{and} \ \color[RGB]{20,180,140}\text{the} \ \color[RGB]{16,185,129}\text{same”} }_{\text{first word blue, last word green}} $$
