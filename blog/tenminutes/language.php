@@ -171,6 +171,11 @@
 
 
 
+					<details class="collapse-card">
+						<summary class="cc-label">Sources for the historical claims</summary>
+						<p>Writing and accounting: <a href="https://www.worldhistory.org/writing/" rel="noopener">World History Encyclopedia, Writing</a>; Wadi el-Hol: <a href="https://commons.wikimedia.org/wiki/File:Wadi_el-Hol_inscriptions_I_drawing.jpg" rel="noopener">Lundberg, drawing</a>; printing: <a href="https://www.bl.uk/collection-items/gutenberg-bible" rel="noopener">British Library, Gutenberg Bible</a>; Kempelen: <a href="https://www.deutschestextarchiv.de/book/show/kempelen_maschine_1791" rel="noopener">Mechanismus der menschlichen Sprache (1791)</a>; the 135,000-year estimate: <a href="https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1503900/full" rel="noopener">Miyagawa et al. (2025)</a>; the Pirahã debate: <a href="https://en.wikipedia.org/wiki/Pirah%C3%A3_language" rel="noopener">Wikipedia, Pirahã language</a>.</p>
+					</details>
+
 					<section class="section-block" id="takeaway" data-chapter="Takeaway" data-chapter-de="Kurzfassung">
 						<div class="section-kicker"><span class="sk-num">06</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>

@@ -50,8 +50,7 @@
 							<p>
 								Separate an agent from a <strong>workflow</strong>: a workflow is a
 								fixed sequence of steps chosen by the developer; an agent chooses the sequence
-								at runtime. Most production systems are workflows with a few agentic steps,
-								because a fixed path is easier to test, audit, and bound. “Agentic” is a dial,
+								at runtime. Most production systems are workflows with a few agentic steps (<a href="https://www.anthropic.com/research/building-effective-agents" rel="noopener">Anthropic, 2024</a>), because a fixed path is easier to test, audit, and bound. “Agentic” is a dial,
 								not a binary.
 							</p>
 						</div>
@@ -73,9 +72,7 @@
 								Read today, it is almost a specification for the modern agent.
 							</p>
 							<p>
-								Classical AI built symbolic agents (GPS, STRIPS, SHRDLU, Soar, BDI) with
-								hand-coded rules and complete world models. Reinforcement learning built
-								agents that learn a policy from reward, from TD-Gammon to AlphaGo. Both were
+								Classical AI built symbolic agents (GPS, STRIPS, SHRDLU, Soar, BDI) with hand-coded rules and complete world models (<a href="https://aima.cs.berkeley.edu/" rel="noopener">Russell &amp; Norvig</a>). Reinforcement learning built agents that learn a policy from reward, from TD-Gammon to AlphaGo (<a href="https://www.nature.com/articles/nature16961" rel="noopener">Silver et al., 2016</a>). Both were
 								brittle outside their domain: one needed a world model, the other enormous
 								experience and a single task. The LLM agent revolution (2022-) used the model
 								itself as the policy: it already carries world knowledge and can reason in

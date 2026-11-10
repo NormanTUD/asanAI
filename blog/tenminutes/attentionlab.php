@@ -190,9 +190,7 @@
 								each other, but inside one head, they do.
 							</p>
 							<p>
-								This is <strong>not</strong> redundancy. Studies of BERT find that a small
-								number of heads do most of the work, some specialize in dependency relations,
-								and many can be pruned with little loss. But no single head is a clean parser,
+								This is <strong>not</strong> redundancy. Studies of BERT find that a small number of heads do most of the work, some specialize in dependency relations, and many can be pruned with little loss (<a href="https://arxiv.org/abs/1905.09418" rel="noopener">Voita et al., 2019</a>; <a href="https://arxiv.org/abs/1906.04341" rel="noopener">Clark et al., 2019</a>). But no single head is a clean parser,
 								and much attention lands on punctuation or special tokens. The picture is
 								distributed: syntax is partitioned across heads and depth, built bottom-up,
 								not read off one tidy tree.
