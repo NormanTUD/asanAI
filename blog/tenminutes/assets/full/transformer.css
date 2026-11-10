@@ -581,3 +581,14 @@ html.wide-math #contents .tm-hyper-body .md {
 	color: var(--mn-text-secondary, #475569);
 	white-space: nowrap;
 }
+
+/* The concatenation formula is a wide display equation: centre it and let
+   the wrapper, not the page, own any horizontal scrolling. */
+.tm-concat-formula {
+	text-align: center;
+}
+.tm-concat-formula .cl-eq,
+.tm-concat-formula math {
+	margin-left: auto;
+	margin-right: auto;
+}

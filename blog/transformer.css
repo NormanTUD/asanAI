@@ -801,3 +801,14 @@ html #contents .tm-hyper-body .md p {
 .tm-hyper-body .tm-hyper-footnote {
 	font-size: 0.7rem;
 }
+
+/* The concatenation formula is a wide display equation: centre it and let
+   the wrapper, not the page, own any horizontal scrolling. */
+.tm-concat-formula {
+	text-align: center;
+}
+.tm-concat-formula .cl-eq,
+.tm-concat-formula math {
+	margin-left: auto;
+	margin-right: auto;
+}

@@ -15228,3 +15228,34 @@ summary:focus-visible,
 	font-size: .62rem;
 	opacity: .9;
 }
+
+/* Wide math/demo mode: formula blocks and plots centre in the wider shell. */
+html.wide-math #contents .formula-grid,
+html.wide-math #contents .layer-formula-grid,
+html.wide-math #contents .tm-transformer-formulas,
+html.wide-math #contents .tm-step-formula,
+html.wide-math #contents .tm-ffn-stage-formula,
+html.wide-math #contents .tm-formula-block,
+html.wide-math #contents .tm-concat-formula,
+html.wide-math #contents .tm-hafter-math,
+html.wide-math #contents .prose-math {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+html.wide-math #contents .tm-concat-formula {
+	display: flex;
+	justify-content: center;
+}
+html.wide-math #contents .tm-concat-formula > * {
+	flex: 0 0 auto;
+	margin-left: auto;
+	margin-right: auto;
+}
+html.wide-math #contents .tm-plotly-frame,
+html.wide-math #contents .viz-container,
+html.wide-math #contents .tm-step-canvas,
+html.wide-math #contents .plot-container {
+	margin-left: auto;
+	margin-right: auto;
+}

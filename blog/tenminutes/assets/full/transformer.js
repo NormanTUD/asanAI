@@ -3826,7 +3826,7 @@ function _renderConcatCore(container, headData, tokens, tokenStrings, stageLabel
 	);
 
 	const finalLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts, stageLabel || undefined)}}_{\\text{Total } d_{\\text{model}}}`;
-	const newHtml = `<div style='overflow-x: auto; overflow-y: hidden; max-width: 100%;'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalLaTeX} $$</div>`;
+	const newHtml = `<div class="tm-concat-formula" style='overflow-x: auto; overflow-y: hidden; max-width: 100%;'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalLaTeX} $$</div>`;
 
 	heightLockedMathUpdate([container], [newHtml]);
 	return fullMatrixData;
