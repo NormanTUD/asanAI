@@ -1758,6 +1758,7 @@
     var drawBtn = root.querySelector("#ls-samp-draw");
     var resetBtn = root.querySelector("#ls-samp-reset");
     var size = null;
+    var curMap = null, fromMap = null, toMap = null, animT = 1, animStart = 0, raf = 0;
 
     function probsFor() {
       var items = PROMPTS[st.prompt].items;
@@ -1813,8 +1814,8 @@
         var tw = barW;
         ctx.fillStyle = "rgba(0,75,111,.07)";
         ctx.fillRect(barX, y - rowH * 0.26, tw, rowH * 0.52);
-        var p = kept ? (x.q || x.p) : x.p;
-        var fw = Math.min(tw, tw * p / maxP);
+        var p = curMap && curMap[x.t] != null ? curMap[x.t] : (kept ? (x.q || x.p) : x.p);
+        var fw = Math.min(tw, tw * Math.max(0, p) / maxP);
         if (kept) {
           var grd = ctx.createLinearGradient(barX, 0, barX + tw, 0);
           if (sampled) {
@@ -1844,10 +1845,46 @@
         ctx.fillRect(0, 0, w, h);
       }
     }
+    function startLoop() {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(loop);
+    }
+    function loop(now) {
+      if (animT >= 1) { raf = 0; return; }
+      animT = clamp((now - animStart) / 280, 0, 1);
+      var e = ease(animT);
+      Object.keys(toMap).forEach(function (k) {
+        if (fromMap[k] == null) fromMap[k] = toMap[k];
+        curMap[k] = lerp(fromMap[k], toMap[k], e);
+      });
+      draw();
+      if (animT >= 1) { raf = 0; return; }
+      raf = requestAnimationFrame(loop);
+    }
     function render() {
       var ps = probsFor();
       var s = survivors(ps);
       var ent = -ps.reduce(function (a, x) { return a + (x.p > 0 ? x.p * Math.log2(x.p) : 0); }, 0);
+      var keepSet = new Set(s.keep.map(function (x) { return x.t; }));
+      var target = {};
+      s.all.forEach(function (x) {
+        target[x.t] = keepSet.has(x.t) ? (x.q || x.p) : x.p;
+      });
+      var same = curMap && Object.keys(target).every(function (k) { return curMap[k] != null; }) &&
+        Object.keys(curMap).every(function (k) { return target[k] != null; });
+      if (same) {
+        fromMap = {};
+        Object.keys(target).forEach(function (k) { fromMap[k] = curMap[k]; });
+        toMap = target;
+        animT = 0;
+        animStart = performance.now();
+        startLoop();
+      } else {
+        curMap = target;
+        fromMap = target;
+        toMap = target;
+        animT = 1;
+      }
       kicker.textContent = "Verteilung · " + PROMPTS[st.prompt].label;
       promptEl.textContent = PROMPTS[st.prompt].text;
       readout.innerHTML = '<span><b>Survivors</b> ' + s.keep.length + ' / ' + ps.length + '</span><span><b>Entropie</b> ' + ent.toFixed(2) + ' bit</span><span><b>Sampled</b> ' + (st.sampled || "—") + '</span>';
@@ -1879,7 +1916,7 @@
         render();
       },
       resize: function () { size = fitCanvas(canvas, canvas); draw(); },
-      destroy: function () {}
+      destroy: function () { if (raf) cancelAnimationFrame(raf); }
     };
   }
 

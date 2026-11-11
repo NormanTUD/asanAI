@@ -1,0 +1,5 @@
+"How to read the colors" soll den satz anzeigen der in der textbox ist, live geupdatet als beispiel. damit kann das heraklit zitat weg.
+
+zeige für jeden layer in der übersicht nur sein signal, lass selbst die schönen plots in einen unterpunkt der erst erscheint wenn man das signal anklickt. ich will dass jeder layer minimal ist und darunter nur steht, dass dieser layer jedes token so verschiebt, dass es einkontextualisiert ist, und dann ein neuronales netz genutzt wird, um eine bewegungsschrittrichtung im raum zu vollführen. ich will da aber nur das signal sehen, ähnlich wie in den input output. feature migration kann auch aufklappbar sein pro layer. die sollen minimal sein und untereinander übersichtlich so dass man sieht was sie tun wenn man den text liest. der text da mit dem rekontextualisieren usw. einmal über alle layer, dann sieht man nur den einzelnen layer und sein signal und kann das smooth anklicken und es kommen die ganzen details. mach das so.
+
+
