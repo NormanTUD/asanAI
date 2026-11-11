@@ -28,7 +28,14 @@
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--ls-paper);overflow:hidden}
 body{font-family:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:300;color:var(--ls-ink)}
-h1,h2,h3,h4,.ls-title,.ls-stage-head b,.ls-day-num,.ls-kicker{font-family:"Barlow",system-ui,sans-serif;font-weight:700;letter-spacing:-.01em}
+h1,h2,h3,h4,.ls-title,.ls-stage-head b,.ls-day-num,.ls-navbar{display:flex;align-items:center;gap:4px;width:max-content;max-width:100%;margin:0 0 18px;padding:4px;border:1px solid var(--ls-line);background:rgba(255,255,255,.72);backdrop-filter:blur(10px);box-shadow:0 2px 12px rgba(0,20,30,.04)}
+.ls-navbar .ls-btn{padding:3px 7px;font-size:11px;line-height:1}
+.ls-nav-pos{display:flex;align-items:center;gap:2px;min-width:0}
+.ls-nav-pos button{width:20px;height:20px;padding:0;border:1px solid var(--ls-line);background:#fff;color:var(--ls-muted);font-size:8px;line-height:1;cursor:pointer;transition:background .14s ease,border-color .14s ease,color .14s ease,transform .14s ease}
+.ls-nav-pos button:hover{border-color:var(--ls-blue);color:var(--ls-petrol);transform:translateY(-1px)}
+.ls-nav-pos button.is-on{background:var(--ls-green);border-color:var(--ls-green);color:#fff}
+.ls-nav-pos button.is-on:hover{background:var(--ls-green);color:#fff}
+.ls-kicker{font-family:"Barlow",system-ui,sans-serif;font-weight:700;letter-spacing:-.01em}
 button,input,select{font:inherit}
 button{color:inherit}
 .ls-app{position:fixed;inset:0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);background:var(--ls-paper);z-index:1}
@@ -38,8 +45,6 @@ button{color:inherit}
 .ls-keyhint span{font-size:13px;line-height:1}
 .ls-keyhint em{font-style:normal;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted)}
 .ls-keyhint:hover{border-color:var(--ls-petrol);background:#fff}
-.ls-text-scroll{padding-bottom:84px}
-.ls-demo{padding-bottom:68px}
 .ls-mix{position:fixed;right:14px;bottom:14px;z-index:60;display:flex;align-items:center;gap:5px;padding:6px;background:rgba(255,255,255,.92);border:1px solid var(--ls-line-strong);box-shadow:var(--ls-shadow);backdrop-filter:blur(8px)}
 .ls-mix-label{max-width:230px;font-size:9px;line-height:1.25;color:var(--ls-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 4px}
 @media (max-width:640px){.ls-mix{left:10px;right:10px;bottom:10px;justify-content:space-between}.ls-mix-label{max-width:none;flex:1 1 auto}}
@@ -223,8 +228,7 @@ button{color:inherit}
   .ls-controls{width:100%;justify-content:flex-start;gap:6px}
   .ls-main{grid-template-columns:1fr;grid-template-rows:minmax(0,44%) minmax(0,56%)}
   .ls-text{border-right:0;border-bottom:1px solid var(--ls-line)}
-  .ls-text-scroll{padding:46px 18px 100px;max-width:none}
-  .ls-keyhint{top:8px;left:8px}
+  .ls-text-scroll{padding:18px 18px 14px;max-width:none}
   .ls-title{font-size:calc(var(--ls-fs-title,28px) * 0.86);max-width:22ch}
   .ls-body{font-size:calc(var(--ls-fs-body,17px) * 0.88);line-height:1.55}
   .ls-days{padding:3px 2px}
@@ -233,7 +237,7 @@ button{color:inherit}
   .ls-day{flex:0 0 auto;min-width:88px;min-height:34px}
   .ls-stage-head{padding:8px 12px 6px}
   .ls-stage-foot{padding:5px 12px 7px}
-  .ls-demo{padding:6px 8px 88px}
+  .ls-demo{padding:6px 8px 2px}
   .ls-drawer{width:100vw}
   .ls-panel{right:8px;bottom:8px;width:calc(100vw - 16px)}
 }
@@ -246,14 +250,14 @@ button{color:inherit}
 .ls-mix-pos button.is-on:hover{background:var(--ls-green);color:#fff}
 .ls-mix-row .ls-btn{padding:3px 6px;font-size:10px}
 .ls-mix-label{flex:1 1 120px;min-width:0}
-.ls-help{position:fixed;right:14px;bottom:112px;z-index:70;width:min(360px,calc(100vw - 28px));padding:13px 15px;background:rgba(255,255,255,.96);border:1px solid var(--ls-line-strong);box-shadow:var(--ls-shadow);backdrop-filter:blur(14px);font-size:11px;line-height:1.45;color:var(--ls-soft)}
+.ls-help{position:fixed;right:14px;bottom:14px;z-index:70;width:min(360px,calc(100vw - 28px));padding:13px 15px;background:rgba(255,255,255,.96);border:1px solid var(--ls-line-strong);box-shadow:var(--ls-shadow);backdrop-filter:blur(14px);font-size:11px;line-height:1.45;color:var(--ls-soft)}
 .ls-help[hidden]{display:none}
 .ls-help>b{display:block;font-family:"Barlow",sans-serif;font-size:15px;color:var(--ls-ink);margin-bottom:8px}
 .ls-help-grid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 12px;align-items:center}
 .ls-help-grid span:nth-child(odd){white-space:nowrap;color:var(--ls-muted)}
 .ls-help kbd{display:inline-block;min-width:17px;padding:1px 4px;border:1px solid var(--ls-line-strong);background:var(--ls-paper-2);color:var(--ls-ink);font:600 9px "Open Sans",sans-serif;text-align:center}
 @keyframes lsMixIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@media (max-width:640px){.ls-mix{left:10px;right:10px;bottom:10px;justify-content:flex-start}.ls-mix-row{gap:3px}.ls-mix-label{flex:1 1 100%;order:-1;padding:0 1px}.ls-mix-pos button{min-width:15px}.ls-help{left:10px;right:10px;bottom:92px;width:auto}}
+@media (max-width:640px){.ls-mix{left:10px;right:10px;bottom:10px;justify-content:flex-start}.ls-mix-row{gap:3px}.ls-mix-label{flex:1 1 100%;order:-1;padding:0 1px}.ls-mix-pos button{min-width:15px}.ls-help{left:10px;right:10px;bottom:10px;width:auto}}
 @keyframes lsDayNext{from{opacity:.62;transform:translateX(6px)}to{opacity:1;transform:none}}
 @keyframes lsDayPrev{from{opacity:.62;transform:translateX(-6px)}to{opacity:1;transform:none}}
 .ls-app.is-day-next .ls-text-scroll,.ls-app.is-day-next .ls-stage{animation:lsDayNext .24s ease-out}

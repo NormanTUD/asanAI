@@ -227,6 +227,7 @@
         '<main class="ls-main">' +
           '<section class="ls-text" aria-live="polite">' +
             '<div class="ls-text-scroll">' +
+              (cfg.mix ? '<div class="ls-navbar" id="ls-navbar"><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-prev" title="Vorheriger Schritt" aria-label="Vorheriger Schritt">←</button><div class="ls-nav-pos ls-mix-pos" id="ls-mix-pos" aria-label="Position 0 bis 9">' + posHtml + '</div><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-next" title="Nächster Schritt" aria-label="Nächster Schritt">→</button></div>' : '') +
               '<div class="ls-kicker" id="ls-kicker"></div>' +
               '<h1 class="ls-title" id="ls-title"></h1>' +
               '<div class="ls-body" id="ls-body"></div>' +
@@ -247,7 +248,6 @@
           '</section>' +
         '</main>' +
         '<div class="ls-tip" id="ls-tip" role="tooltip" hidden></div>' +
-        (cfg.mix ? '<button type="button" class="ls-keyhint" id="ls-keyhint" title="Tastaturhilfe" aria-label="Tastaturhilfe"><span aria-hidden="true">← →</span><em>Schritt</em></button><div class="ls-mix" id="ls-mix"><div class="ls-mix-pos" id="ls-mix-pos" aria-label="Position 0 bis 9">' + posHtml + '</div><div class="ls-mix-row"><span class="ls-mix-label" id="ls-mix-label"></span><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-prev" title="Vorheriger Schritt" aria-label="Vorheriger Schritt">←</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-next" title="Nächster Schritt" aria-label="Nächster Schritt">→</button><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny" id="ls-mix-shuffle" title="Anderer Tag (R)" aria-label="Anderer Tag">Mix</button></div></div>' : '') +
         '<div class="ls-help" id="ls-help" hidden><b>Tastatur und Position</b><div class="ls-help-grid"><span><kbd>←</kbd><kbd>→</kbd></span><span>Schritt zurück / vor</span><span><kbd>Shift</kbd> + <kbd>←</kbd><kbd>→</kbd></span><span>Tag zurück / vor</span><span><kbd>0</kbd> … <kbd>9</kbd></span><span>Anfang, Mitte, Ende</span><span><kbd>Home</kbd> / <kbd>End</kbd></span><span>Erster / letzter Tag</span><span><kbd>R</kbd></span><span>Anderer Mix</span><span><kbd>D</kbd></span><span>Tiefe öffnen</span><span><kbd>F</kbd></span><span>Demo groß</span><span><kbd>+</kbd> / <kbd>−</kbd></span><span>Text größer / kleiner</span><span><kbd>?</kbd> / <kbd>Esc</kbd></span><span>Hilfe öffnen / schließen</span></div></div>' +
       '</div>';
 
@@ -260,12 +260,9 @@
     els.nowKicker = root.querySelector("#ls-now-kicker");
     els.nowTitle = root.querySelector("#ls-now-title");
     els.stepCount = root.querySelector("#ls-step-count");
-    els.mixLabel = root.querySelector("#ls-mix-label");
     els.mixPos = root.querySelectorAll("#ls-mix-pos [data-pos]");
-    els.mixPrev = root.querySelector("#ls-mix-prev");
-    els.mixNext = root.querySelector("#ls-mix-next");
-    els.mixShuffle = root.querySelector("#ls-mix-shuffle");
-    els.keyHint = root.querySelector("#ls-keyhint");
+    els.navPrev = root.querySelector("#ls-nav-prev");
+    els.navNext = root.querySelector("#ls-nav-next");
     els.help = root.querySelector("#ls-help");
     els.fontOut = root.querySelector("#ls-font-out");
     els.fontMinus = root.querySelector("#ls-font-minus");
@@ -470,7 +467,6 @@
     var s = activeStep();
     if (els.nowKicker) els.nowKicker.textContent = d.label + " · " + (TRACK_LABEL[d.track] ? TRACK_LABEL[d.track].label : d.track);
     if (els.nowTitle) els.nowTitle.textContent = d.title;
-    if (els.mixLabel) els.mixLabel.textContent = d.label + " · " + (state.step + 1) + "/" + d.steps.length + " · " + d.title;
     updatePosRail();
     els.kicker.textContent = s.kicker || d.kicker;
     els.title.textContent = s.title;
@@ -806,7 +802,7 @@
     if (!els.help) return;
     var show = typeof force === "boolean" ? force : els.help.hidden;
     els.help.hidden = !show;
-    if (els.keyHint) els.keyHint.setAttribute("aria-expanded", show ? "true" : "false");
+
   }
   function goDay(id) {
     var i = cfg.days.map(function (d) { return d.id; }).indexOf(id);
@@ -967,10 +963,8 @@
     });
     if (els.openDepth) els.openDepth.addEventListener("click", openDepth);
     els.depthBtn.addEventListener("click", openDepth);
-    if (els.mixShuffle) els.mixShuffle.addEventListener("click", function () { shuffle(); });
-    if (els.mixPrev) els.mixPrev.addEventListener("click", prev);
-    if (els.mixNext) els.mixNext.addEventListener("click", next);
-    if (els.keyHint) els.keyHint.addEventListener("click", function () { toggleHelp(); });
+    if (els.navPrev) els.navPrev.addEventListener("click", prev);
+    if (els.navNext) els.navNext.addEventListener("click", next);
     els.mixPos.forEach(function (b) {
       b.addEventListener("click", function () { goPosition(parseInt(b.getAttribute("data-pos"), 10)); });
     });
