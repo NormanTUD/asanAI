@@ -7,7 +7,9 @@ demo changes only the objects that actually change.
 
 Files:
 
-- `learnsystest.html` — the prototype shell and the day/step data.
+- `learnsystest.html` — the random demo-mix test page and the day/step data.
+  The top chrome is intentionally hidden here; each day becomes its own file
+  in the next step.
 - `learnsys.js` — the engine, the public API, and the built-in demos.
 - `spacemorph_demo.html` — the most complex demo (MLP bends space), embedded
   as a self-contained iframe.
@@ -16,7 +18,8 @@ Files:
 ## Mental model
 
 - **Day**: one self-contained lesson block. Days are grouped by a track
-  (`idea`, `failure`, `senses`, `transformer`, `assistant`, `questions`).
+  (`idea`, `failure`, `senses`, `transformer`, `assistant`, `questions`,
+  `history`).
 - **Step**: one short chapter of a day. The main text is 3–5 sentences.
 - **Cue**: a scroll section that changes the demo state. Cues do not replace
   the step text; they are deeper reading inside it.
@@ -27,6 +30,22 @@ Files:
 - **Static vs dynamic**: labels, axes, block stacks, and images belong to the
   static layer. Bars, arcs, points, highlights, and surfaces belong to the
   dynamic layer. Static content must not move during a transition.
+
+## Mix test mode
+
+`learnsystest.html` passes `mix: true`. The page:
+
+- removes the top bar completely; the text and demo fill the viewport;
+- opens on a random day every load;
+- shows a compact bottom-right dock with a 0–9 position scale, step back /
+  forward, `Mix`, `Tiefe`, `Alles`, and `?` for the keyboard help;
+- maps `0` to the first day, `9` to the last, `5` to the middle, and
+  `1…8` evenly between them;
+- supports `←`/`→` for steps, `Shift` + `←`/`→` for days, `Home`/`End` for
+  the first/last day, `R` for another mix, `D` for depth, `F` for focus,
+  `+`/`−` for text, and `?`/`Esc` for help;
+- uses the same engine as a future single-day page: `LearnSys.mount(el,
+  {days: [day], mix: false})` renders one day without needing the day rail.
 
 ## Public API
 
@@ -210,31 +229,30 @@ the term toggles the same note. The tip is removed immediately on navigation,
 depth change, text scroll, resize, focus mode, and day/track changes, so a
 removed term cannot leave a floating card behind.
 
-## Day rail
+## Position scale and day pages
 
-The bottom bar always contains every day:
+The mix page uses a ten-step position scale instead of a day rail. The scale
+is a compact snapshot of the whole prototype: `0` is the first day and `9`
+the last, so `5` sits in the middle. Clicking a tick jumps immediately; the
+active tick is green.
 
-- all days are rendered, even when a track is selected; the track is a lens
-  that dims the other days, not a filter that hides them;
-- days grow to fill the width when they fit (about 76 px minimum); a longer
-  arc scrolls, with edge fade, snap, drag, and wheel support;
-- active day: filled green, white text, `aria-current="step"`, plus a
-  track-colour top stripe;
-- clicking a dimmed day jumps to it and moves the lens to its track;
-- `← Zurück` and `Weiter →` move one day back/forward and are disabled at the
-  ends;
-- `Home` / `End` jump to the first/last day;
-- the active day is centred after a change;
-- the bar uses `auto` height and a safe-area bottom padding, so day labels are
-  never clipped.
+The old day rail markup remains in the engine for the coming per-day split,
+but it is not rendered in mix mode. A day page will mount one day only, so it
+needs no cross-day rail; navigation belongs to the page around it.
+
+The embedding day is deliberately stepwise: 1D, 2D, 3D, then context. It has
+no scroll cues anymore, so scrolling cannot silently change the dimension
+while the text still talks about one state. The stage hint and the canvas
+badge always name the active mode.
 
 ## Mobile
 
-- The controls wrap and the day rail scrolls horizontally.
+- The mix dock spans the bottom width; its scale stays usable on a phone.
 - `Demo groß` hides the text column and gives the demo the full stage.
 - Canvases use `touch-action: none` where dragging matters.
 - The text column keeps its own vertical scroll; the stage does not jump.
-- The font control is available in the top bar.
+- Text size, depth, help, shuffle, and step navigation are available from the
+  keyboard and the dock.
 
 ## Migrating a full demo
 
@@ -268,17 +286,20 @@ tips, step/day transitions, focus mode, mobile overflow and mobile wheel):
 uv run blog/tests/learnsys_browser_test.py
 ```
 
-Personas exercised by the browser suite:
+Personas and behaviours exercised by the browser suite:
 
-- **Hurried**: compact depth, short body, depth door still visible, all days
-  one tap away.
+- **Hurried**: compact depth, short body, depth door still visible.
 - **Deep**: every day and step, real context/deep/formula boxes, `Alles`
   opens all details, at least one maths box per walk.
-- **Returner**: day, step, depth, and font survive a reload.
-- **Backtracker**: bottom `← Zurück` reaches previous days, disabled at the
-  first day, re-enabled after moving forward.
-- **Mobile**: no horizontal overflow, rail on screen, wheel reaches later
-  days, focus mode works.
+- **Navigator**: `0`/`5`/`9`, position ticks, step arrows, `Shift` + arrows,
+  `Home`/`End`, and the help overlay.
+- **Mixer**: shuffle reaches several distinct demos and never repeats the
+  same state twice in a row.
+- **Embedding reader**: 1D → 2D → 3D hints and a drawn 3D scene.
+- **History reader**: timeline images load, captions keep their credit, and
+  clicking a station changes the step.
+- **Returner**: depth and font survive a reload; the mix day stays random.
+- **Mobile**: no horizontal overflow, dock fits, shuffle and focus work.
 - **Glossary user**: hover tip, click tip to open the note, click term to
   toggle, navigation removes stale tips.
 

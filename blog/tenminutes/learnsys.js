@@ -238,7 +238,6 @@
                 '<button type="button" class="ls-btn ls-btn--primary" id="ls-next">Weiter →</button>' +
                 '<button type="button" class="ls-btn ls-btn--ghost" id="ls-depth-btn">Tiefe</button>' +
               '</div>' +
-              '<div class="ls-footnote">Tastatur: ← → · Leertaste · D für Tiefe · Esc schließt.</div>' +
             '</div>' +
           '</section>' +
           '<section class="ls-stage" id="ls-stage" aria-label="Interaktive Demo">' +
@@ -248,7 +247,7 @@
           '</section>' +
         '</main>' +
         '<div class="ls-tip" id="ls-tip" role="tooltip" hidden></div>' +
-        (cfg.mix ? '<div class="ls-mix" id="ls-mix"><div class="ls-mix-pos" id="ls-mix-pos" aria-label="Position 0 bis 9">' + posHtml + '</div><div class="ls-mix-row"><span class="ls-mix-label" id="ls-mix-label"></span><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-prev" title="Vorheriger Schritt" aria-label="Vorheriger Schritt">←</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-next" title="Nächster Schritt" aria-label="Nächster Schritt">→</button><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny" id="ls-mix-shuffle" title="Anderer Tag (R)" aria-label="Anderer Tag">Mix</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-depth" title="Tiefe öffnen (D)" aria-label="Tiefe öffnen">Tiefe</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-all" title="Alles öffnen" aria-label="Alles öffnen">Alles</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-help" aria-expanded="false" title="Tastatur (?)" aria-label="Tastaturhilfe">?</button></div></div>' : '') +
+        (cfg.mix ? '<button type="button" class="ls-keyhint" id="ls-keyhint" title="Tastaturhilfe" aria-label="Tastaturhilfe"><span aria-hidden="true">← →</span><em>Schritt</em></button><div class="ls-mix" id="ls-mix"><div class="ls-mix-pos" id="ls-mix-pos" aria-label="Position 0 bis 9">' + posHtml + '</div><div class="ls-mix-row"><span class="ls-mix-label" id="ls-mix-label"></span><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-prev" title="Vorheriger Schritt" aria-label="Vorheriger Schritt">←</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-next" title="Nächster Schritt" aria-label="Nächster Schritt">→</button><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny" id="ls-mix-shuffle" title="Anderer Tag (R)" aria-label="Anderer Tag">Mix</button></div></div>' : '') +
         '<div class="ls-help" id="ls-help" hidden><b>Tastatur und Position</b><div class="ls-help-grid"><span><kbd>←</kbd><kbd>→</kbd></span><span>Schritt zurück / vor</span><span><kbd>Shift</kbd> + <kbd>←</kbd><kbd>→</kbd></span><span>Tag zurück / vor</span><span><kbd>0</kbd> … <kbd>9</kbd></span><span>Anfang, Mitte, Ende</span><span><kbd>Home</kbd> / <kbd>End</kbd></span><span>Erster / letzter Tag</span><span><kbd>R</kbd></span><span>Anderer Mix</span><span><kbd>D</kbd></span><span>Tiefe öffnen</span><span><kbd>F</kbd></span><span>Demo groß</span><span><kbd>+</kbd> / <kbd>−</kbd></span><span>Text größer / kleiner</span><span><kbd>?</kbd> / <kbd>Esc</kbd></span><span>Hilfe öffnen / schließen</span></div></div>' +
       '</div>';
 
@@ -266,9 +265,7 @@
     els.mixPrev = root.querySelector("#ls-mix-prev");
     els.mixNext = root.querySelector("#ls-mix-next");
     els.mixShuffle = root.querySelector("#ls-mix-shuffle");
-    els.mixDepth = root.querySelector("#ls-mix-depth");
-    els.mixAll = root.querySelector("#ls-mix-all");
-    els.mixHelp = root.querySelector("#ls-mix-help");
+    els.keyHint = root.querySelector("#ls-keyhint");
     els.help = root.querySelector("#ls-help");
     els.fontOut = root.querySelector("#ls-font-out");
     els.fontMinus = root.querySelector("#ls-font-minus");
@@ -809,7 +806,7 @@
     if (!els.help) return;
     var show = typeof force === "boolean" ? force : els.help.hidden;
     els.help.hidden = !show;
-    if (els.mixHelp) els.mixHelp.setAttribute("aria-expanded", show ? "true" : "false");
+    if (els.keyHint) els.keyHint.setAttribute("aria-expanded", show ? "true" : "false");
   }
   function goDay(id) {
     var i = cfg.days.map(function (d) { return d.id; }).indexOf(id);
@@ -973,9 +970,7 @@
     if (els.mixShuffle) els.mixShuffle.addEventListener("click", function () { shuffle(); });
     if (els.mixPrev) els.mixPrev.addEventListener("click", prev);
     if (els.mixNext) els.mixNext.addEventListener("click", next);
-    if (els.mixDepth) els.mixDepth.addEventListener("click", openDepth);
-    if (els.mixAll) els.mixAll.addEventListener("click", function () { state.track = "all"; state.depth = "deep"; renderAll(); openAllDepth(); });
-    if (els.mixHelp) els.mixHelp.addEventListener("click", function () { toggleHelp(); });
+    if (els.keyHint) els.keyHint.addEventListener("click", function () { toggleHelp(); });
     els.mixPos.forEach(function (b) {
       b.addEventListener("click", function () { goPosition(parseInt(b.getAttribute("data-pos"), 10)); });
     });
