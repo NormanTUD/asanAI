@@ -109,6 +109,7 @@
 									<button class="chip" type="button" data-preset="supercalifragilisticexpialidocious">long word</button>
 								</div>
 								<div class="token-stream" id="tok-stream" style="margin-top:12px" aria-live="polite"></div>
+								<p class="token-legend small"><span style="background:#63a44b"></span> known piece <span style="background:#1275ac"></span> character fallback <span style="background:#9f9700"></span> digit group <span style="background:#92a19a"></span> whitespace</p>
 								<div class="demo-readout demo-readout--4">
 									<div><b>Tokens</b><span id="tok-count">0</span></div>
 									<div><b>Characters</b><span id="tok-chars">0</span></div>
@@ -143,6 +144,13 @@ training text, and stop at the target vocabulary size.
 								candidate subwords and prunes the set that best explains the corpus.
 								<strong>Byte-level BPE</strong> (<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" rel="noopener">Radford et al., 2019</a>) starts from all 256 bytes, so every input is
 								representable; the price is that a non-ASCII character can take several tokens.
+							</p>
+							<p>
+								One merge, four words. Start with “low lower newest widest”, count adjacent
+								pairs, and merge the most frequent one. The pair “es” appears in “newest” and
+								“widest”, so it becomes one symbol; then “est” does the same. The final
+								segmentation is “low · lower · new · est · wid · est”. Each merge is a learned
+								rule, and the order of merges is the vocabulary.
 							</p>
 							<p>
 								The tokenizer is fixed before a single weight is trained. Its vocabulary is a
@@ -315,7 +323,13 @@ training text, and stop at the target vocabulary size.
 			"france", "paris", "city", "river", "bank", "cake", "king", "queen", "man", "woman",
 			"su", "pe", "rc", "al", "if", "ra", "gi", "li", "st", "ic", "ex", "pi", "id", "oc", "io", "us"
 		].sort(function (a, b) { return b.length - a.length; });
-		var COLORS = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
+		function tokenColor(type, sub, reason) {
+			if (type === "space") return "#92a19a";
+			if (type === "number") return "#9f9700";
+			if (type === "punct") return "#009299";
+			if (type === "char" || type === "joiner") return "#1275ac";
+			return "#63a44b";
+		}
 
 		function hash(s) {
 			var h = 2166136261;
@@ -333,7 +347,7 @@ training text, and stop at the target vocabulary size.
 				sub: !!sub,
 				reason: reason || "",
 				id: 1000 + (hash(text) % 48000),
-				color: COLORS[out.length % COLORS.length]
+				color: tokenColor(type, sub, reason)
 			});
 		}
 		function tokenize(text) {
@@ -359,7 +373,7 @@ training text, and stop at the target vocabulary size.
 						sub: true,
 						reason: "zero-width joiner",
 						id: 1000 + (hash(chunk) % 48000),
-						color: COLORS[out.length % COLORS.length],
+						color: tokenColor(type, sub, reason),
 						label: "U+200D"
 					});
 					return;

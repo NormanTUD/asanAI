@@ -4,7 +4,7 @@
   var KEY = "tm_learnsys_pref_v1";
   var root = null;
   var cfg = null;
-  var state = { track: "all", depth: "standard", day: 0, step: 0 };
+  var state = { track: "all", depth: "standard", font: 1, day: 0, step: 0 };
   var demo = null;
   var currentDemoDay = null;
   var els = {};
@@ -15,6 +15,19 @@
   var ignoreScroll = false;
 
   var LOREM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. Donec ullamcorper nulla non metus auctor fringilla.";
+  var FONT_LEVELS = [
+    { id: "s", label: "Klein", body: 15, title: 24, small: 11 },
+    { id: "m", label: "Normal", body: 17, title: 28, small: 12 },
+    { id: "l", label: "Groß", body: 19, title: 32, small: 13 },
+    { id: "xl", label: "Sehr groß", body: 21, title: 36, small: 14 },
+    { id: "xxl", label: "Maximal", body: 23, title: 40, small: 15 }
+  ];
+  var FONT_MIN = 0, FONT_MAX = FONT_LEVELS.length - 1;
+  function normalizeFont(v) {
+    v = parseInt(v, 10);
+    if (!isFinite(v)) return 1;
+    return clamp(v, FONT_MIN, FONT_MAX);
+  }
   var TRACK_LABEL = {};
   var GLOSSARY = {
     matrix: {
@@ -170,7 +183,7 @@
   function save() {
     try {
       localStorage.setItem(KEY, JSON.stringify({
-        track: state.track, depth: state.depth, day: state.day, step: state.step
+        track: state.track, depth: state.depth, font: state.font, day: state.day, step: state.step
       }));
     } catch (e) {}
   }
@@ -179,6 +192,7 @@
       var p = JSON.parse(localStorage.getItem(KEY) || "{}");
       if (p.track) state.track = p.track;
       if (p.depth) state.depth = p.depth;
+      state.font = normalizeFont(p.font);
       if (typeof p.day === "number") state.day = p.day;
       if (typeof p.step === "number") state.step = p.step;
     } catch (e) {}
@@ -196,6 +210,7 @@
               '<button type="button" data-depth="standard">Standard</button>' +
               '<button type="button" data-depth="deep">Tief</button>' +
             '</div></div>' +
+            '<div class="ls-field ls-font" aria-label="Textgröße"><span>Text</span><button type="button" class="ls-btn ls-btn--tiny" data-font-step="-1" id="ls-font-minus" aria-label="Text kleiner">A−</button><output id="ls-font-out" aria-live="polite">100%</output><button type="button" class="ls-btn ls-btn--tiny" data-font-step="1" id="ls-font-plus" aria-label="Text größer">A+</button></div>' +
             '<button type="button" class="ls-btn ls-btn--ghost" id="ls-all">Alles</button>' +
             '<button type="button" class="ls-btn ls-btn--primary" id="ls-open-depth">Tiefe öffnen</button>' +
           '</div>' +
@@ -218,13 +233,13 @@
             '</div>' +
           '</section>' +
           '<section class="ls-stage" id="ls-stage" aria-label="Interaktive Demo">' +
-            '<div class="ls-stage-head"><span id="ls-stage-kicker"></span><b id="ls-stage-title"></b></div>' +
+            '<div class="ls-stage-head"><span id="ls-stage-kicker"></span><b id="ls-stage-title"></b><button type="button" class="ls-btn ls-btn--tiny ls-focus-btn" id="ls-focus" aria-pressed="false">Demo groß</button></div>' +
             '<div class="ls-demo" id="ls-demo"></div>' +
             '<div class="ls-stage-foot"><span id="ls-stage-hint"></span><span class="ls-credit" id="ls-credit"></span></div>' +
           '</section>' +
         '</main>' +
         '<footer class="ls-bottom">' +
-          '<div class="ls-days" id="ls-days" role="tablist" aria-label="Tage"></div>' +
+          '<div class="ls-day-row"><button type="button" class="ls-day-nav" data-day-nav="-1" aria-label="Vorheriger Tag">‹</button><div class="ls-days" id="ls-days" role="tablist" aria-label="Tage"></div><button type="button" class="ls-day-nav" data-day-nav="1" aria-label="Nächster Tag">›</button></div>' +
           '<div class="ls-progress"><div class="ls-progress-bar"><span id="ls-progress-fill"></span></div><div class="ls-steps" id="ls-steps"></div></div>' +
         '</footer>' +
         '<div class="ls-tip" id="ls-tip" role="tooltip" hidden></div>' +
@@ -236,6 +251,10 @@
     els.depth = root.querySelector("#ls-depth");
     els.all = root.querySelector("#ls-all");
     els.openDepth = root.querySelector("#ls-open-depth");
+    els.fontOut = root.querySelector("#ls-font-out");
+    els.fontMinus = root.querySelector("#ls-font-minus");
+    els.fontPlus = root.querySelector("#ls-font-plus");
+    els.focus = root.querySelector("#ls-focus");
     els.kicker = root.querySelector("#ls-kicker");
     els.title = root.querySelector("#ls-title");
     els.body = root.querySelector("#ls-body");
@@ -251,6 +270,7 @@
     els.stageHint = root.querySelector("#ls-stage-hint");
     els.credit = root.querySelector("#ls-credit");
     els.days = root.querySelector("#ls-days");
+    els.dayNav = root.querySelectorAll("[data-day-nav]");
     els.steps = root.querySelector("#ls-steps");
     els.progress = root.querySelector("#ls-progress-fill");
     els.tip = root.querySelector("#ls-tip");
@@ -262,26 +282,58 @@
 
   }
 
+  function applyFont() {
+    var f = FONT_LEVELS[state.font];
+    els.app.setAttribute("data-font", f.id);
+    els.app.style.setProperty("--ls-fs-body", f.body + "px");
+    els.app.style.setProperty("--ls-fs-title", f.title + "px");
+    els.app.style.setProperty("--ls-fs-small", f.small + "px");
+    var pct = Math.round(f.body / FONT_LEVELS[1].body * 100);
+    if (els.fontOut) els.fontOut.textContent = pct + "%";
+    if (els.fontMinus) els.fontMinus.disabled = state.font <= FONT_MIN;
+    if (els.fontPlus) els.fontPlus.disabled = state.font >= FONT_MAX;
+  }
+  function setFont(i) {
+    state.font = normalizeFont(i);
+    applyFont();
+    save();
+  }
+  function toggleFocus() {
+    var on = els.app.classList.toggle("is-demo-focus");
+    els.focus.setAttribute("aria-pressed", on ? "true" : "false");
+    els.focus.textContent = on ? "Text zeigen" : "Demo groß";
+    if (demo && demo.resize) setTimeout(function () { demo.resize(); }, 260);
+  }
   function renderTop() {
+    applyFont();
     els.track.value = state.track;
     els.depth.querySelectorAll("button").forEach(function (b) {
       b.classList.toggle("is-on", b.getAttribute("data-depth") === state.depth);
     });
   }
 
+  function centerActiveDay() {
+    if (!els.days) return;
+    var a = els.days.querySelector(".ls-day.is-on");
+    if (!a) return;
+    var left = a.offsetLeft - (els.days.clientWidth - a.offsetWidth) / 2;
+    els.days.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+  }
   function renderDays() {
     var list = dayList();
+    els.dayNav.forEach(function (b) { b.disabled = list.length < 2; });
     if (!list.length) {
       els.days.innerHTML = '<div class="ls-empty">Für diesen Weg gibt es im Prototyp noch keinen Tag. Wähle „Alle Wege“ oder einen anderen Weg.</div>';
       return;
     }
     els.days.innerHTML = list.map(function (d) {
       var idx = cfg.days.indexOf(d);
-      return '<button type="button" class="ls-day' + (idx === state.day ? " is-on" : "") + '" data-day="' + idx + '" role="tab" aria-selected="' + (idx === state.day) + '">' +
+      var on = idx === state.day;
+      return '<button type="button" class="ls-day' + (on ? " is-on" : "") + '" data-day="' + idx + '" role="tab" aria-selected="' + on + '"' + (on ? ' aria-current="step"' : '') + '>' +
         '<span class="ls-day-num">' + esc(d.label) + '</span><span class="ls-day-name">' + esc(d.title) + '</span></button>';
     }).join("");
+    requestAnimationFrame(centerActiveDay);
   }
-
   function renderSteps() {
     var d = activeDay();
     els.steps.innerHTML = d.steps.map(function (s, i) {
@@ -291,30 +343,36 @@
   }
 
   function depthTree() {
-    var firstOpen = state.depth === "standard" || state.depth === "deep" ? " open" : "";
-    var secondOpen = state.depth === "deep" ? " open" : "";
+    var rootOpen = state.depth === "standard" || state.depth === "deep" ? " open" : "";
+    var firstOpen = state.depth === "deep" ? " open" : "";
     return '<div class="ls-depth-tree">' +
-      '<details class="ls-deepbox"' + firstOpen + '>' +
-        '<summary>Kontext (lorem ipsum)</summary>' +
-        '<p>' + LOREM + '</p>' +
-        '<details class="ls-deepbox"' + secondOpen + '>' +
-          '<summary>Eine Ebene tiefer</summary>' +
+      '<details class="ls-deepbox ls-deepbox--root"' + rootOpen + '>' +
+        '<summary>Tiefer eintauchen <span class="ls-depth-count">3 Fragen</span></summary>' +
+        '<details class="ls-deepbox"' + firstOpen + '>' +
+          '<summary>Kontext (lorem ipsum)</summary>' +
           '<p>' + LOREM + '</p>' +
           '<details class="ls-deepbox">' +
-            '<summary>Die letzte Frage</summary>' +
+            '<summary>Eine Ebene tiefer</summary>' +
             '<p>' + LOREM + '</p>' +
+            '<details class="ls-deepbox">' +
+              '<summary>Die letzte Frage</summary>' +
+              '<p>' + LOREM + '</p>' +
+            '</details>' +
           '</details>' +
         '</details>' +
       '</details>' +
     '</div>';
   }
-
   function openDepth() {
     var wasDeep = state.depth === "deep";
     if (state.depth === "short") state.depth = "standard";
     else if (state.depth === "standard") state.depth = "deep";
     renderTop();
     renderText();
+    var root = els.extras.querySelector(".ls-deepbox--root");
+    if (root) root.open = true;
+    var first = els.extras.querySelector(".ls-deepbox:not(.ls-deepbox--root)");
+    if (first) first.open = true;
     if (wasDeep) {
       els.extras.querySelectorAll("details").forEach(function (d) { d.open = true; });
     }
@@ -420,7 +478,13 @@
       colors: colors,
       esc: esc,
       termHTML: termHTML,
-      onHint: function (t) { els.stageHint.textContent = t; }
+      fit: fitCanvas,
+      fitPair: fitPair,
+      motion: LS.motion,
+      scene: LS.scene,
+      util: LS.util,
+      onHint: function (t) { els.stageHint.textContent = t; },
+      go: go
     });
     if (demo && demo.update) demo.update(s.demoState || {});
   }
@@ -735,6 +799,9 @@
     });
     els.openDepth.addEventListener("click", openDepth);
     els.depthBtn.addEventListener("click", openDepth);
+    if (els.fontMinus) els.fontMinus.addEventListener("click", function () { setFont(state.font - 1); });
+    if (els.fontPlus) els.fontPlus.addEventListener("click", function () { setFont(state.font + 1); });
+    if (els.focus) els.focus.addEventListener("click", toggleFocus);
     els.prev.addEventListener("click", prev);
     els.next.addEventListener("click", next);
     if (els.textScroll) {
@@ -762,12 +829,23 @@
       var b = e.target.closest("[data-step]");
       if (b) go(state.day, parseInt(b.getAttribute("data-step"), 10));
     });
+    els.dayNav.forEach(function (b) {
+      b.addEventListener("click", function () {
+        var list = dayList();
+        var pos = list.indexOf(activeDay());
+        var next = pos + parseInt(b.getAttribute("data-day-nav"), 10);
+        if (next >= 0 && next < list.length) go(cfg.days.indexOf(list[next]), 0);
+      });
+    });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") { hideTip(); return; }
       if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
       if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
       else if (e.key === "d" || e.key === "D") { e.preventDefault(); openDepth(); }
+      else if (e.key === "+" || e.key === "=") { e.preventDefault(); setFont(state.font + 1); }
+      else if (e.key === "-") { e.preventDefault(); setFont(state.font - 1); }
+      else if (e.key === "0") { e.preventDefault(); setFont(1); }
     });
     window.addEventListener("resize", function () {
       if (demo && demo.resize) demo.resize();
@@ -2433,6 +2511,180 @@
     hyper: demoHyper
   };
 
+
+  function filterDays(days, track) {
+    return (days || []).filter(function (d) {
+      return !track || track === "all" || d.track === track;
+    });
+  }
+  function normalizePrefs(raw) {
+    raw = raw || {};
+    var depths = ["short", "standard", "deep"];
+    return {
+      track: typeof raw.track === "string" && raw.track ? raw.track : "all",
+      depth: depths.indexOf(raw.depth) >= 0 ? raw.depth : "standard",
+      font: normalizeFont(raw.font),
+      day: Math.max(0, parseInt(raw.day, 10) || 0),
+      step: Math.max(0, parseInt(raw.step, 10) || 0)
+    };
+  }
+  var SCENE_TYPES = ["rect", "circle", "point", "line", "arc", "label", "bar", "image", "mesh"];
+  function sceneValidate(scene) {
+    if (!scene || !Array.isArray(scene.primitives)) throw new Error("scene.primitives must be an array");
+    var seen = {};
+    scene.primitives.forEach(function (p) {
+      if (!p || typeof p.id !== "string" || !p.id) throw new Error("primitive id required");
+      if (seen[p.id]) throw new Error("duplicate primitive id: " + p.id);
+      seen[p.id] = 1;
+      if (SCENE_TYPES.indexOf(p.type) < 0) throw new Error("unknown primitive type: " + p.type);
+    });
+    return true;
+  }
+  function sceneDiff(prev, next) {
+    var p = (prev && prev.primitives) || [];
+    var n = (next && next.primitives) || [];
+    var pm = {}, nm = {};
+    p.forEach(function (x) { pm[x.id] = x; });
+    n.forEach(function (x) { nm[x.id] = x; });
+    var persistent = [], exit = [], enter = [];
+    Object.keys(pm).forEach(function (id) {
+      if (nm[id]) persistent.push({ id: id, prev: pm[id], next: nm[id] });
+      else exit.push(pm[id]);
+    });
+    Object.keys(nm).forEach(function (id) { if (!pm[id]) enter.push(nm[id]); });
+    return {
+      persistent: persistent,
+      exit: exit,
+      enter: enter,
+      camera: { prev: (prev && prev.camera) || null, next: (next && next.camera) || null }
+    };
+  }
+  function isNum(v) { return typeof v === "number" && isFinite(v); }
+  function lerpFields(a, b, t) {
+    if (isNum(a) && isNum(b)) return lerp(a, b, t);
+    if (Array.isArray(a) && Array.isArray(b) && a.length === b.length) {
+      return a.map(function (v, i) { return lerpFields(v, b[i], t); });
+    }
+    if (a && b && typeof a === "object" && typeof b === "object") {
+      var o = {};
+      Object.keys(b).forEach(function (k) { o[k] = lerpFields(a[k], b[k], t); });
+      return o;
+    }
+    return t < 0.5 ? a : b;
+  }
+  function sceneInterpolate(prev, next, t) {
+    var e = ease(clamp(t, 0, 1));
+    var d = sceneDiff(prev, next);
+    var out = [];
+    d.persistent.forEach(function (p) { out.push(lerpFields(p.prev, p.next, e)); });
+    if (e < 0.5) {
+      d.exit.forEach(function (x) {
+        out.push(lerpFields(x, Object.assign({}, x, { opacity: 0 }), e * 2));
+      });
+    } else {
+      d.enter.forEach(function (x) {
+        out.push(lerpFields(Object.assign({}, x, { opacity: 0 }), x, (e - 0.5) * 2));
+      });
+    }
+    return {
+      camera: lerpFields(d.camera.prev || {}, d.camera.next || {}, e),
+      primitives: out
+    };
+  }
+  function sceneRender(ctx, scene, opts) {
+    opts = opts || {};
+    (scene.primitives || []).forEach(function (p) {
+      ctx.save();
+      ctx.globalAlpha = p.opacity == null ? 1 : p.opacity;
+      if (p.type === "rect") {
+        ctx.fillStyle = p.fill || "transparent";
+        if (p.fill) ctx.fillRect(p.x, p.y, p.w, p.h);
+        if (p.stroke) {
+          ctx.strokeStyle = p.stroke;
+          ctx.lineWidth = p.lineWidth || 1;
+          ctx.strokeRect(p.x, p.y, p.w, p.h);
+        }
+      } else if (p.type === "circle" || p.type === "point") {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r || 4, 0, Math.PI * 2);
+        if (p.fill) { ctx.fillStyle = p.fill; ctx.fill(); }
+        if (p.stroke) { ctx.strokeStyle = p.stroke; ctx.lineWidth = p.lineWidth || 1; ctx.stroke(); }
+      } else if (p.type === "line") {
+        ctx.beginPath();
+        ctx.moveTo(p.x1, p.y1);
+        ctx.lineTo(p.x2, p.y2);
+        ctx.strokeStyle = p.stroke || "#000";
+        ctx.lineWidth = p.lineWidth || 1;
+        ctx.stroke();
+      } else if (p.type === "arc") {
+        ctx.beginPath();
+        ctx.moveTo(p.x1, p.y1);
+        ctx.quadraticCurveTo(p.cx, p.cy, p.x2, p.y2);
+        ctx.strokeStyle = p.stroke || "#000";
+        ctx.lineWidth = p.lineWidth || 1;
+        ctx.stroke();
+      } else if (p.type === "label") {
+        ctx.fillStyle = p.fill || "#000";
+        ctx.font = p.font || '600 12px "Open Sans", sans-serif';
+        ctx.textAlign = p.align || "left";
+        ctx.textBaseline = p.baseline || "alphabetic";
+        ctx.fillText(p.text || "", p.x, p.y);
+      } else if (p.type === "bar") {
+        ctx.fillStyle = p.track || "rgba(0,75,111,.07)";
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+        ctx.fillStyle = p.fill || "#63a44b";
+        ctx.fillRect(p.x, p.y, p.w * clamp(p.value || 0, 0, 1), p.h);
+      } else if (p.type === "image") {
+        if (p.image) ctx.drawImage(p.image, p.x, p.y, p.w, p.h);
+      } else if (p.type === "mesh") {
+        var pts = p.vertices || [];
+        if (pts.length) {
+          ctx.beginPath();
+          ctx.moveTo(pts[0][0], pts[0][1]);
+          for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+          ctx.closePath();
+          if (p.fill) { ctx.fillStyle = p.fill; ctx.fill(); }
+          if (p.stroke) { ctx.strokeStyle = p.stroke; ctx.lineWidth = p.lineWidth || 1; ctx.stroke(); }
+        }
+      }
+      ctx.restore();
+    });
+  }
+  function sceneFromCanvas(canvas) {
+    return {
+      camera: null,
+      primitives: [{
+        id: "canvas", type: "image", x: 0, y: 0,
+        w: canvas.width, h: canvas.height, image: canvas, opacity: 1
+      }]
+    };
+  }
+  var DEMO_META = {};
+  DEMO_META.attention = { tier: 1, label: "Attention", staticLayer: false };
+  DEMO_META.embedding = { tier: 2, label: "Embedding", staticLayer: false };
+  DEMO_META.transformer = { tier: 2, label: "Transformer", staticLayer: true };
+  DEMO_META.convolution = { tier: 2, label: "Convolution", staticLayer: true };
+  DEMO_META.sampling = { tier: 1, label: "Sampling", staticLayer: false };
+  DEMO_META.hyper = { tier: 2, label: "Hyperparameter", staticLayer: false };
+  function defineDemo(name, factory, meta) {
+    DEMOS[name] = factory;
+    DEMO_META[name] = meta || {};
+  }
+  LS.version = "2.0";
+  LS.motion = { step: 180, day: 180, camera: 240, text: 70, enter: 160, exit: 120, stagger: 40 };
+  LS.util = {
+    clamp: clamp, lerp: lerp, ease: ease, normSpace: normSpace,
+    normalizeFont: normalizeFont, fontLevels: FONT_LEVELS, fontMin: FONT_MIN, fontMax: FONT_MAX,
+    filterDays: filterDays, normalizePrefs: normalizePrefs
+  };
+  LS.scene = {
+    types: SCENE_TYPES, validate: sceneValidate, diff: sceneDiff,
+    interpolate: sceneInterpolate, render: sceneRender, fromCanvas: sceneFromCanvas
+  };
+  LS.defineDemo = defineDemo;
+  LS.getDemoMeta = function (name) { return DEMO_META[name] || {}; };
+  LS.prefs = { normalize: normalizePrefs, key: KEY };
+
   LS.mount = function (el, config) {
     root = el;
     cfg = config;
@@ -2449,5 +2701,6 @@
   LS.setTrack = setTrack;
   LS.setDepth = setDepth;
   LS.go = go;
-  window.LearnSys = LS;
+  if (typeof module !== "undefined" && module.exports) module.exports = LS;
+  if (typeof window !== "undefined") window.LearnSys = LS;
 })();

@@ -76,6 +76,12 @@
 								the same reason: what a token is matched on need not be what it hands over.
 							</p>
 							<p>
+								In “Maria told the bank that she would repay”, “she” must find a person, not the
+								bank. The query of “she” can point at “Maria” even though Maria's key does not
+								look like the word “she”. Without separate Q/K/V, “she” would have to search
+								for the referent and describe the referent with one vector.
+							</p>
+							<p>
 								The score between a query and a key is their dot product, scaled by the square
 								root of the key dimension (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>). A large score means the vectors point in a similar
 								direction: “you are relevant to my search.” Softmax turns all the scores in a
@@ -134,8 +140,9 @@
 								</div>
 								<p class="vec-note" id="att-top3" style="color:var(--tm-muted)">Top 3: Maria 60% · she 14% · bank 12%. Every row sums to 1: attention is a finite budget.</p>
 								<div class="att-matrix" id="att-matrix">
+									<div class="att-axis"><span>query ↓</span><span>key →</span><span>each row Σ = 1.00</span></div>
 									<canvas id="att-matrix-canvas" aria-label="Attention matrix: rows are queries, columns are keys"></canvas>
-									<p class="pipe-note">Rows = query, columns = key. The causal mask is always on: each row can see itself and the past, never the future. The row is renormalized over those positions only.</p>
+									<p class="pipe-note">The causal mask is always on: each row can see itself and the past, never the future.</p>
 								</div>
 								<p class="meadow-caption" id="att-caption" style="color:var(--tm-muted)">The coreference head links “she” back to “Maria”. The pronoun needs a referent; the head retrieves it.</p>
 							</div>
@@ -272,6 +279,14 @@
 								choice. There is a stronger description of what it computes.
 							</p>
 							<p>
+								Softmax is a compromise: it wants to favour the key with the highest
+								similarity, but it does not put all attention on one key. Temperature is the
+								price of that spread: low temperature approaches argmax, high temperature
+								spreads the budget.
+							</p>
+							<details class="collapse-card">
+								<summary class="cc-label">The optimal-transport view</summary>
+							<p>
 								Softmax is often introduced as a smooth argmax. There is a stronger
 								description. For one query, the attention row is the exact solution to a
 								one-sided entropic optimal transport problem (<a href="https://arxiv.org/abs/2508.08369" rel="noopener">Litman, 2025</a>).
@@ -296,6 +311,7 @@
 								disguise, and the update is an advantage-based policy gradient (Litman, 2025).
 							</p>
 							<div class="formula" data-tex="\underbrace{ \underbrace{\phi^\star(s) = \tau \log\sum_{j=1}^{m} e^{s_j/\tau}, \qquad \nabla_s\phi^\star = p^\star}_{\text{dual potential and its gradient}} \quad \underbrace{\nabla_s^2\phi^\star = \tau F(s), \quad F(s) = \frac{1}{\tau^2}\left(\operatorname{diag}(p^\star)-p^\star(p^\star)^\top\right)}_{\text{Hessian is Fisher information}} \quad \underbrace{\frac{\partial\mathcal L}{\partial s_j}=p_j^\star(u_j-\bar u), \quad \bar u=\sum_k p_k^\star u_k}_{\text{advantage-based update}} }_{\text{forward inference and backward learning share one geometry}}">φ*(s) = τ log Σ exp(s_j/τ), ∇φ* = p*; ∇²φ* = τ F(s), F(s) = (diag(p*) - p*p*ᵀ)/τ²; ∂L/∂s_j = p_j*(u_j - ū)</div>
+							</details>
 						</div>
 
 						<div class="demo demo--paper demo--plot" id="eot-demo">

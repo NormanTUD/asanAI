@@ -174,11 +174,19 @@
 						</div>
 					</section>
 
-					<div class="prose">
-					</div>
+					<section class="section-block" id="act">
+						<div class="section-kicker"><span class="sk-num">06</span> What you can do</div>
+						<h2 class="section-title">Four levers that work.</h2>
+						<div class="prose">
+							<p><strong>Check provenance, not just content.</strong> A screenshot, a voice, and a citation can all be synthetic. Ask where the file came from, who signed it, and whether the original exists.</p>
+							<p><strong>Demand open sources.</strong> When a system makes a decision about you, ask which data and which evaluation it used. Transparency is a procurement condition, not a favour.</p>
+							<p><strong>Keep private data local or contractual.</strong> Use local models or agreements that forbid training on your data when the content is sensitive; a public chat box is not a confidential channel.</p>
+							<p><strong>Build a small evaluation set.</strong> For the tasks you actually use, keep twenty examples with known answers. Test after every model or prompt change. That is more useful than a leaderboard.</p>
+						</div>
+					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">06</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">07</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

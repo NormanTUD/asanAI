@@ -161,8 +161,8 @@ button{color:inherit}
   .ls-main{grid-template-columns:1fr;grid-template-rows:minmax(0,44%) minmax(0,56%)}
   .ls-text{border-right:0;border-bottom:1px solid var(--ls-line)}
   .ls-text-scroll{padding:18px 18px 14px;max-width:none}
-  .ls-title{font-size:26px;max-width:22ch}
-  .ls-body{font-size:14px;line-height:1.55}
+  .ls-title{font-size:calc(var(--ls-fs-title,28px) * 0.86);max-width:22ch}
+  .ls-body{font-size:calc(var(--ls-fs-body,17px) * 0.88);line-height:1.55}
   .ls-bottom{grid-template-columns:1fr;gap:4px;padding:0 12px}
   .ls-days{padding:4px 0}
   .ls-day{min-width:96px}
@@ -220,16 +220,17 @@ button{color:inherit}
 .ls-bar-track{background:rgba(0,75,111,.07)}
 .ls-bar-fill{background:linear-gradient(90deg,rgba(99,164,75,.95),rgba(92,155,175,.95));box-shadow:0 0 8px rgba(99,164,75,.18)}
 .ls-term{border-bottom-color:rgba(18,117,172,.45)}
-.ls-depth-tree{margin-top:18px;border-top:1px solid rgba(0,75,111,.08);padding-top:8px}
+.ls-depth-tree{margin:14px 0 0;border-top:1px solid rgba(0,75,111,.10)}
 .ls-deepbox{border:0;background:transparent;margin:0;padding:0}
-.ls-deepbox>summary{cursor:pointer;list-style:none;padding:9px 0;font-family:"Barlow",sans-serif;font-weight:700;font-size:14px;color:var(--ls-petrol);border-bottom:1px solid rgba(0,75,111,.07)}
+.ls-deepbox>summary{cursor:pointer;list-style:none;padding:5px 0;font-family:"Barlow",sans-serif;font-weight:700;font-size:11px;color:var(--ls-soft);border-bottom:1px solid rgba(0,75,111,.07)}
+.ls-deepbox--root>summary{padding:8px 0;font-size:12px;color:var(--ls-petrol);border-bottom:0}
 .ls-deepbox>summary::-webkit-details-marker{display:none}
 .ls-deepbox>summary:before{content:"+ ";color:var(--ls-green);font-weight:700}
 .ls-deepbox[open]>summary:before{content:"− "}
-.ls-deepbox>p{font-size:13px;line-height:1.65;color:var(--ls-soft);margin:10px 0 6px;max-width:62ch}
-.ls-deepbox .ls-deepbox{margin-left:14px;padding-left:14px;border-left:1px solid rgba(0,75,111,.08)}
-.ls-deepbox .ls-deepbox>summary{font-size:12px;color:var(--ls-soft)}
-.ls-deepbox .ls-deepbox .ls-deepbox>summary{font-size:11px;color:var(--ls-muted)}
+.ls-deepbox>p{font-size:calc(var(--ls-fs-body,17px) * 0.75);line-height:1.6;color:var(--ls-soft);margin:0;padding:6px 0 8px;max-width:62ch}
+.ls-deepbox .ls-deepbox{margin-left:10px;padding-left:10px;border-left:1px solid rgba(0,75,111,.08)}
+.ls-deepbox .ls-deepbox>summary{font-size:10px;color:var(--ls-muted)}
+.ls-depth-count{font-family:"Open Sans",sans-serif;font-weight:400;font-size:8px;color:var(--ls-muted);margin-left:6px;text-transform:uppercase;letter-spacing:.08em}
 .ls-depth-hint{font-size:10px;color:var(--ls-muted);letter-spacing:.02em;margin-top:14px}
 .ls-depth-hint button{border:0;background:none;color:var(--ls-petrol);font:inherit;font-weight:600;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px}
 .ls-text-scroll{transition:opacity .08s ease,filter .08s ease}
@@ -248,6 +249,19 @@ button{color:inherit}
 .ls-cue h3{font-size:18px;margin:0 0 6px}
 .ls-cue p{font-size:13px;line-height:1.65;color:var(--ls-soft);margin:0;max-width:62ch}
 .ls-morph-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
+.ls-body{font-size:var(--ls-fs-body,17px)}
+.ls-title{font-size:var(--ls-fs-title,28px)}
+.ls-watch{font-size:calc(var(--ls-fs-body,17px) * 0.82)}
+.ls-context p,.ls-deepbox>p,.ls-cue p,.ls-term-note{font-size:calc(var(--ls-fs-body,17px) * 0.8)}
+.ls-footnote{font-size:var(--ls-fs-small,12px)}
+.ls-font{gap:4px}
+.ls-font output{font-size:10px;min-width:34px;text-align:center;color:var(--ls-ink)}
+.ls-font .ls-btn{padding:3px 6px}
+.ls-focus-btn{margin-left:auto}
+.ls-app.is-demo-focus .ls-text{display:none}
+.ls-app.is-demo-focus .ls-main{grid-template-columns:1fr}
+.ls-app.is-demo-focus .ls-stage{border-left:0}
+.ls-canvas{touch-action:none}
 .ls-term-wrap{display:inline}
 .ls-term-note{display:block;margin:8px 0 12px;padding:10px 13px;border-left:2px solid var(--ls-green);background:rgba(255,255,255,.55);font-size:12px;line-height:1.6;color:var(--ls-soft)}
 .ls-term-note[hidden]{display:none}

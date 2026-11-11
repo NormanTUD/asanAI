@@ -55,6 +55,15 @@
 							<p><strong>Top-k</strong> (<a href="https://arxiv.org/abs/1805.04833" rel="noopener">Fan et al., 2018</a>) keeps the k most likely tokens and renormalises their probabilities. It is simple and fast: k = 1 is greedy, k = 50 is a common chat setting, k = 1000 is closer to open-ended sampling. The weakness is that k is fixed. Sometimes only three tokens are plausible; sometimes a hundred are. A fixed k cannot adapt to how sharp or flat the distribution is.</p>
 							<p><strong>Top-p</strong>, or nucleus sampling (<a href="https://arxiv.org/abs/1904.09751" rel="noopener">Holtzman et al., 2020</a>), keeps the smallest set of tokens whose cumulative probability reaches p. If one token already dominates, the set is tiny; if the distribution is flat, the set is large. That is the point: the candidate pool expands when the model is uncertain and contracts when it is confident. Typical values are p = 0.9 or 0.95; p = 0.5 is very focused.</p>
 							<p><strong>Min-p</strong> (<a href="https://arxiv.org/abs/2407.01082" rel="noopener">Nguyen et al., 2024</a>) scales with confidence. It keeps every token whose probability is at least s times the probability of the top token. With s = 0.1, any token within a factor of ten of the leader survives; with s = 1.0 only the leader survives. The method is available in several inference stacks and often behaves well at higher temperatures, where top-p alone can keep too much of the tail.</p>
+							<table class="cr-table">
+								<thead><tr><th>Use case</th><th>Temperature</th><th>Filter</th></tr></thead>
+								<tbody>
+									<tr><td>Code, factual answers</td><td>0.1–0.3 or greedy</td><td>top-p 0.9</td></tr>
+									<tr><td>Chat</td><td>0.7–1.0</td><td>top-p 0.9</td></tr>
+									<tr><td>Creative writing</td><td>1.0 or higher</td><td>top-p 0.95, small min-p</td></tr>
+								</tbody>
+							</table>
+							<p class="small">Starting points, not laws. Test on your own prompts and keep the setting that works.</p>
 							<p>The readout in the demo also shows <strong>entropy</strong>, a single number for how spread out the distribution is. Low entropy means the model is confident and the choice is nearly forced; high entropy means many continuations are plausible. Entropy is useful because it tells you whether the distribution itself is sharp, independently of where you set the filter.</p>
 						</div>
 						<div class="keypoints">
@@ -139,7 +148,6 @@
 						<div class="prose">
 							<p>Temperature and truncation are the first knobs, not the only ones. A <strong>repetition penalty</strong> lowers the score of tokens that already appeared; <strong>DRY</strong> (Don't Repeat Yourself) penalises repeated sequences rather than single tokens; <strong>XTC</strong> removes the most obvious choices to increase diversity. <strong>Contrastive search</strong> balances likelihood against novelty, and <strong>mirostat</strong> targets a fixed perplexity instead of a fixed candidate set. Each is a different answer to the same problem: the model's most likely continuation is often bland or repetitive.</p>
 							<p>Search changes the shape of the whole sequence. <strong>Beam search</strong> keeps several partial continuations alive and picks the best complete one; it is useful when there is one good answer and the score is reliable, as in some translation tasks, and a poor fit for open-ended conversation. <strong>Speculative sampling</strong> uses a small draft model to propose several tokens, then verifies them with the large model; it speeds up generation without changing the target distribution.</p>
-							<p>Practical starting points: code and factual answers at low temperature (0.1 to 0.3, or greedy) with top-p 0.9; chat at 0.7 to 1.0 with top-p 0.9; creative writing at 1.0 or higher with top-p 0.95 and a small min-p. These are starting points, not laws. Test on your own prompts and keep the setting that works.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Repetition controls</b><span>Penalise tokens or sequences that already appeared.</span></div>

@@ -17,6 +17,7 @@ return [
 		'Browse the shelf' => 'Regal durchsuchen',
 		'of 31 completed' => 'von 31 abgeschlossen',
 		'This series was created with AI and intensively curated and reviewed by humans.' => 'Diese Reihe wurde mit KI erstellt und intensiv von Menschen kuratiert und geprüft.',
+		'You do not need matrices to follow this page. The formulas sit in optional boxes; the main text explains what they do. Open a box only if you want the formal version.' => 'Du brauchst keine Matrizen, um dieser Seite zu folgen. Die Formeln stehen in optionalen Boxen; der Haupttext erklärt, was sie tun. Öffne eine Box nur, wenn du die formale Version sehen willst.',
 	],
 	'attrs' => [],
 ];

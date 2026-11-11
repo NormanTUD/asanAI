@@ -76,6 +76,7 @@
 								<span class="demo-badge">live</span>
 							</div>
 							<div class="demo-body">
+								<p class="demo-hint">Bright bars count; grey bars are cut by top-p. Before you move the slider: what happens to “Paris” when you lower top-p to 0.5?</p>
 								<div class="dist-bars" data-sampling-bars></div>
 								<div class="demo-controls">
 									<label>Temperature <input type="range" data-sampling-temp min="0.1" max="2" step="0.05" value="0.8"><output data-sampling-temp-out>0.80</output></label>
@@ -136,7 +137,7 @@
 						<h2 class="section-title">Check it against the world, itself, and what you know.</h2>
 						<div class="prose">
 							<p>Reality does not contradict itself. If two claims about the same thing cannot both be true, at least one is wrong. That gives a cheap first test: coherence. Does the answer fit with itself, with the documents you gave it, and with what you can check? A contradiction is a warning, not a detail to smooth over.</p>
-							<p>Coherence is necessary but not enough. A story can be internally perfect and never touch the world. The second test is correspondence: does the claim meet reality at a point where it could fail? For example, a DOI that leads to a real paper, a quote that appears on the page, a calculation that checks out. A fluent fabrication passes the first test and fails the second.</p>
+							<p>Coherence is necessary but not enough. A story can be internally perfect and never touch the world. The second test is correspondence: does the claim meet reality at a point where it could fail? For example, a DOI that leads to a real paper, a quote that appears on the page, a calculation that checks out. A fluent fabrication passes the first test and fails the second. Two answers show the difference. A: “A 2019 Nature study (Smith et al., DOI 10.…) found X.” It is internally coherent, but the DOI goes nowhere. B: “The study was small (n = 12) and did not replicate (link).” It passes both tests, even though the result is inconvenient. A passes coherence and fails correspondence; B passes both.</p>
 							<p>A model can build an argument that is logically coherent from the first sentence to the last and still be nonsense, because every premise was invented to fit the next one. Nothing inside the text disagrees, so it feels solid. This self-contained coherence is harder to catch than a broken sentence: there is no obvious error to point at, only a closed loop that never touches the world. The disagreement has to come from outside, from an anchor: a measurement, a document you can open, a source you can look up, a test that fails. Without an anchor in reality, coherence is the shape of the answer, not its truth.</p>
 							<p>Your own knowledge is a third test. If a claim contradicts something you know well, that is a signal. Your knowledge can be outdated or wrong, but it catches errors that are internally consistent. Treat it as a source, not as a verdict.</p>
 							<p>Every factual claim needs a contact point. If you cannot name the observation that would make it true or false, you have a sentence, not a fact. Comparisons also need a trusted bridge: a title that looks like a paper is not a paper, a search result is not support, and two samples that agree are not two independent witnesses. Name the bridge and ask what would make it fail.</p>
@@ -166,6 +167,7 @@
 							<div class="keypoint"><b>Out of reach</b><span>Confident about recent, private, or niche topics. Test: coverage. Fix: abstain, retrieve, ask a human.</span></div>
 						</div>
 						<div class="prose">
+							<p>Each diagnosis maps to one check below: self-consistent fantasy → open the DOI or quote; self-contradiction → ask twice; facts without a model → ask for an outline; calibrated bias → compare with known values; out of reach → check coverage. The checklist turns each diagnosis into a test.</p>
 							<p>Four forces make these failures likely. The objective rewards likelihood, not truth. The corpus contains errors, stale facts, contradictions, and model-written text. The prompt can carry a false premise (<a href="https://arxiv.org/abs/2310.13548" rel="noopener">Sharma et al., 2023</a>), and the decoder can sample a rare continuation (<a href="https://arxiv.org/abs/1904.09751" rel="noopener">Holtzman et al., 2020</a>). None is a bug in one component. They are the price of compressing text into a function (<a href="https://arxiv.org/abs/2202.03629" rel="noopener">Ji et al., 2023</a>).</p>
 							<p>One cause is easy to miss. A model trained on text written by earlier models sees a copy of a copy. Over repeated generations, errors can compound and contact with the original distribution can drop (<a href="https://www.nature.com/articles/s41586-024-07566-y" rel="noopener">Shumailov et al., 2024</a>). Consistency can rise while correspondence falls. Coherence is not a substitute for fresh contact with the world.</p>
 						</div>
@@ -201,11 +203,7 @@
 							<div class="demo-foot">The real references are real; the fabricated ones are invented for the exercise. Verify any citation before you use it, and open the paper before you trust what it says.</div>
 						</div>
 
-						<details class="collapse-card">
-							<summary class="cc-label">Worked example: the citation that looked real</summary>
-							<p>A model writes a citation that looks real. Coherence passes: the claim fits what you know about sleep and memory. Correspondence fails: search the title, check the authors, resolve the DOI. If none exist, the claim has no contact point. The right conclusion is “no evidence”, not “probably true”.</p>
-							<p>Ask for a source you can open, then open it. If the model cannot produce one, treat the claim as a hypothesis, not a fact.</p>
-						</details>
+
 					</section>
 
 					<section class="section-block" id="prevent">

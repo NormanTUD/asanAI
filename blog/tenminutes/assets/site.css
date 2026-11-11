@@ -2103,6 +2103,8 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 }
 .token--space { opacity: 0.55; }
 .token--static { cursor: default; }
+.token-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; margin: 8px 0 0; }
+.token-legend span { display: inline-block; width: 10px; height: 10px; margin-right: 4px; border: 1px solid var(--tm-line-strong); vertical-align: middle; }
 .token.is-changed { outline: 2px solid var(--tm-coral); outline-offset: 2px; }
 
 .numtokens-pair { margin-top: 12px; }
@@ -3986,6 +3988,7 @@ html[data-theme="dark"] .myth--ok b { color: var(--tm-green); }
 	margin: 14px 0 10px;
 }
 .att-matrix { position: relative; margin-top: 18px; clear: both; }
+.att-axis { display: flex; justify-content: space-between; gap: 10px; margin: 0 2px 6px; font-family: var(--tm-ui); font-size: 0.68rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--tm-muted); }
 .att-matrix canvas { display: block; width: 100%; height: 300px; border-radius: 10px; border: 1px solid var(--tm-line); background: var(--tm-paper-2); }
 .att-toggle { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.7rem; color: var(--tm-muted); }
 .att-toggle input { accent-color: var(--tm-green); }
