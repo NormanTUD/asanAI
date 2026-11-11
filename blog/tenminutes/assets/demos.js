@@ -1205,24 +1205,40 @@
 		var model = $("[data-vram-model]", root);
 		var bits = $("[data-vram-bits]", root);
 		var device = $("[data-vram-device]", root);
+		var context = $("[data-vram-context]", root);
+		var weightsEl = $("[data-vram-weights]", root);
+		var kvEl = $("[data-vram-kv]", root);
 		var mem = $("[data-vram-mem]", root);
 		var fit = $("[data-vram-fit]", root);
 		var note = $("[data-vram-note]", root);
+		var barWeights = $("[data-vram-bar-weights]", root);
+		var barKv = $("[data-vram-bar-kv]", root);
+		var barOverhead = $("[data-vram-bar-overhead]", root);
 		if (!model || !bits || !device) return;
+		var KV_BYTES_PER_TOKEN = 2 * 32 * 32 * 128 * 2;
 		function render() {
 			var p = parseFloat(model.value) || 7;
 			var b = parseFloat(bits.value) || 4;
 			var cap = parseFloat(device.value) || 16;
-			var gb = p * b / 8 * 1.2;
+			var ctx = (context ? parseFloat(context.value) : 4) * 1000;
+			var weights = p * b / 8;
+			var overhead = weights * 0.2;
+			var kv = KV_BYTES_PER_TOKEN * ctx / 1e9;
+			var gb = weights + overhead + kv;
+			if (weightsEl) weightsEl.textContent = weights.toFixed(1) + " GB";
+			if (kvEl) kvEl.textContent = kv.toFixed(1) + " GB";
 			if (mem) mem.textContent = gb.toFixed(1) + " GB";
-			var ok = gb <= cap * 0.85 ? "fits comfortably" : (gb <= cap ? "tight fit" : "does not fit");
+			if (barWeights) barWeights.style.width = (weights / gb * 100).toFixed(1) + "%";
+			if (barKv) barKv.style.width = (kv / gb * 100).toFixed(1) + "%";
+			if (barOverhead) barOverhead.style.width = (overhead / gb * 100).toFixed(1) + "%";
+			var ok = gb <= cap * 0.85 ? (DEMO_DE ? "passt bequem" : "fits comfortably") : (gb <= cap ? (DEMO_DE ? "knapp" : "tight fit") : (DEMO_DE ? "passt nicht" : "does not fit"));
 			if (fit) {
 				fit.textContent = ok;
 				fit.className = gb <= cap ? "fits-yes" : "fits-no";
 			}
-			if (note) note.textContent = "Weights plus rough runtime overhead. Context length and KV cache can add several more gigabytes.";
+			if (note) note.textContent = DEMO_DE ? "Gewichte plus 20 % Laufzeit-Overhead plus KV-Cache in fp16. Der KV-Cache nimmt 32 Schichten, 32 Heads und d_head = 128 an." : "Weights plus a 20% runtime overhead plus the KV cache at fp16. The KV cache assumes 32 layers, 32 heads, and d_head = 128.";
 		}
-		[model, bits, device].forEach(function (el) { el.addEventListener("change", render); });
+		[model, bits, device, context].forEach(function (el) { if (el) el.addEventListener("change", render); });
 		render();
 	}
 

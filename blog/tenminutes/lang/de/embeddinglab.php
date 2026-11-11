@@ -93,6 +93,8 @@ return [
 		'Meaning is a region, not a coordinate. A concept is a neighbourhood, a direction, or a subspace: often distributed across many dimensions.' => 'Bedeutung ist eine Region, keine Koordinate. Ein Konzept ist eine Nachbarschaft, eine Richtung oder ein Unterraum: oft über viele Dimensionen verteilt.',
 		'“Direction is meaning, magnitude is often noise” works as a default. Anisotropy and norm effects complicate it.' => '„Richtung ist Bedeutung, Magnitude ist oft Rauschen“ funktioniert als Standard. Anisotropie und Norm-Effekte verkomplizieren ihn.',
 		'Two more ideas are worth carrying. The first is' => 'Zwei weitere Ideen lohnen sich. Die erste ist',
+		'The map is useful, but it is not the territory: directions are learned, axes usually have no names, and context moves the point.' => 'Die Karte ist nützlich, aber sie ist nicht das Gebiet: Richtungen sind gelernt, Achsen haben meist keine Namen, und Kontext verschiebt den Punkt.',
+		'Superposition and the manifold hypothesis' => 'Superposition und die Mannigfaltigkeitshypothese',
 		'polysemanticity and superposition' => 'Polysemantizität und Superposition',
 		'): a single neuron often responds to several unrelated features because the model compresses more concepts than it has dimensions. The second is the' => '): Ein einzelnes Neuron reagiert oft auf mehrere unverbundene Merkmale, weil das Modell mehr Konzepte komprimiert, als es Dimensionen hat. Die zweite ist die',
 		'manifold hypothesis' => 'Manifold-Hypothese',

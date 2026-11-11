@@ -50,7 +50,7 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Folds add up <span>· demo</span></p>
-									<p class="demo-sub">Each ReLU layer can fold the input line again. Depth multiplies the number of linear pieces the network can represent.</p>
+									<p class="demo-sub">Each ReLU layer can fold the input line again. Watch the number of linear pieces grow with depth.</p>
 								</div>
 								<span class="demo-badge">illustrative</span>
 							</div>
@@ -66,7 +66,7 @@
 								</div>
 								<p class="demo-hint">Illustration, not a trained network: each ReLU layer can double the number of linear regions. The point is the composition, not the exact numbers.</p>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Depth is not just more parameters. It is more compositions, and each composition can add folds.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>More folds mean more pieces. That is what composition buys, and it is why a deep stack can represent a jagged function with fewer units.</span></div>
 						</div>
 					</section>
 
@@ -75,6 +75,11 @@
 						<h2 class="section-title">Reuse and composition.</h2>
 						<div class="prose">
 							<p>The universal approximation theorem (<a href="https://link.springer.com/content/pdf/10.1007/BF02551274.pdf" rel="noopener">Cybenko, 1989</a>; <a href="https://www.cs.cmu.edu/~epxing/Class/10715/reading/Kornick_et_al.pdf" rel="noopener">Hornik et al., 1989</a>) says a wide enough network can approximate a broad class of functions. It is an existence result, not a training guarantee: it does not say that gradient descent will find those weights, that the network will generalise, or that the network will be small. Depth offers a different kind of efficiency: a deep network can reuse a feature instead of relearning it at every level, and for some functions depth is provably exponentially more compact than width (<a href="https://arxiv.org/abs/1509.08101" rel="noopener">Telgarsky, 2016</a>). That is a statement about representation, not a promise that deeper is always better on your data.</p>
+							<p>Count the kinks in a one-dimensional example: f(x) = ReLU(2x) - ReLU(4x - 2) + ReLU(4x - 4). Each ReLU adds at most one kink. A layer with two ReLU units can double the number of linear pieces; with L such layers, up to 2^L pieces are possible. A layer with one unit only adds one kink. That is arithmetic you can follow, not an analogy.</p>
+							<details class="collapse-card">
+								<summary class="cc-label">Why depth can be exponentially more compact</summary>
+								<p>A 1-D ReLU layer with two units can double the number of linear pieces; L such layers can create up to 2^L pieces. A layer with one unit only adds one kink. To approximate the same function with a shallow layer, you need width exponential in L. That is a statement about representation, not training: it does not say that gradient descent finds those weights, and it does not say that deeper is better on your data.</p>
+							</details>
 							<p>A hierarchy is a compression of computation. Edges become parts, parts become objects, objects become concepts. Each level can build on the level below, so the number of parameters needed to represent a complex function can be much smaller than a single wide layer would require.</p>
 							<p>Depth is not free. Gradients can vanish or explode, activations can become unstable, and training deep networks requires careful initialisation, normalisation, and residual connections. The architecture is powerful, but the optimisation is part of the story.</p>
 						</div>
@@ -224,8 +229,8 @@
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">Depth is not repetition. It is composition.</p>
-							<p class="aha-sub">The power comes from building features on top of features, not from adding more of the same.</p>
+							<p class="aha-big">What would the world look like without depth?</p>
+							<p class="aha-sub">A shallow network can approximate the same function, but it may need exponentially many units. Depth is the cheaper route to some functions, not a guarantee on your data.</p>
 						</div>
 					</section>
 				</article>

@@ -33,6 +33,7 @@ $oned_tex = (function_exists('tm_lang') && tm_lang() === 'de') ? [
 						Move the points, follow the arrows, and see why <em>king − man + woman</em> can
 						land on <em>queen</em>, and where the metaphor breaks.
 					</p>
+					<p class="hero-permission">You do not need matrices to follow this page. The formulas sit in optional boxes; the main text explains what they do. Open a box only if you want the formal version.</p>
 				</div>
 			</section>
 
@@ -351,20 +352,27 @@ $oned_tex = (function_exists('tm_lang') && tm_lang() === 'de') ? [
 						</div>
 						<div class="prose">
 							<p>
-								Two more ideas are worth carrying. The first is <strong>polysemanticity
-								and superposition</strong> (<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>): a single neuron often responds to several
-								unrelated features because the model compresses more concepts than it has
-								dimensions. The second is the <strong>manifold hypothesis</strong>: real data
-								lies on or near a much lower-dimensional surface inside the huge ambient
-								space. A photograph of a face has millions of pixel values, but the set of
-								plausible faces is far smaller than the set of all pixel grids; sentences are
-								similar. If the data lies on a manifold, a model can learn the local
-								coordinates of that surface instead of memorizing every point. That is one
-								reason a high-dimensional model can generalize: it interpolates along the
-								manifold, not through the empty space around it. The hypothesis is a guide,
-								not a theorem; real embeddings are noisy, and the manifold may have many
-								dimensions.
+								The map is useful, but it is not the territory: directions are learned, axes
+								usually have no names, and context moves the point.
 							</p>
+							<details class="collapse-card">
+								<summary class="cc-label">Superposition and the manifold hypothesis</summary>
+								<p>
+									Two more ideas are worth carrying. The first is <strong>polysemanticity
+									and superposition</strong> (<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>): a single neuron often responds to several
+									unrelated features because the model compresses more concepts than it has
+									dimensions. The second is the <strong>manifold hypothesis</strong>: real data
+									lies on or near a much lower-dimensional surface inside the huge ambient
+									space. A photograph of a face has millions of pixel values, but the set of
+									plausible faces is far smaller than the set of all pixel grids; sentences are
+									similar. If the data lies on a manifold, a model can learn the local
+									coordinates of that surface instead of memorizing every point. That is one
+									reason a high-dimensional model can generalize: it interpolates along the
+									manifold, not through the empty space around it. The hypothesis is a guide,
+									not a theorem; real embeddings are noisy, and the manifold may have many
+									dimensions.
+								</p>
+							</details>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Distance</b><span>Euclidean gap: “how far apart in this projection?” Sensitive to magnitude.</span></div>

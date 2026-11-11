@@ -120,6 +120,7 @@
 									<div>
 										<div class="agent-feed" id="agent-feed" aria-live="polite"></div>
 										<div class="agent-choice-row" id="agent-choices"></div>
+										<div class="agent-debrief" id="agent-debrief" aria-live="polite"></div>
 										<div class="demo-controls" style="margin-top:10px">
 											<button class="btn-demo btn-demo--green" type="button" id="agent-next" data-arrow-next>Next step →</button>
 											<button class="btn-demo" type="button" id="agent-reset">Restart</button>
@@ -341,15 +342,15 @@ opencode
 			{ kind: "action", tool: "search", text: "web_search('Dresden Berlin flex ticket 2026-10-26')" },
 			{ kind: "obs", text: "DB Flex: €39.90, fully refundable. FlixTrain: €24.99, non-refundable. Regional: €31.00, limited flexibility." },
 			{ kind: "choice", prompt: "The cheapest option is FlixTrain. What now?", options: [
-				{ label: "Book FlixTrain immediately", safe: false, feedback: "You optimized price but ignored the user’s explicit constraint: flexible. A grounding failure." },
-				{ label: "Verify the flexible fare first", safe: true, tool: "browser", feedback: "Correct. The constraint is part of the goal, not a preference to drop." }
+				{ label: "Book FlixTrain immediately", safe: false, kind: "grounding", feedback: "You optimized price but ignored the user’s explicit constraint: flexible. A grounding failure." },
+				{ label: "Verify the flexible fare first", safe: true, kind: "grounding", tool: "browser", feedback: "Correct. The constraint is part of the goal, not a preference to drop." }
 			] },
 			{ kind: "action", tool: "browser", text: "browser.open('https://example.com/db-flex')" },
 			{ kind: "obs", text: "DB Flex: fully refundable until departure; exchangeable; €39.90. Conditions verified." },
 			{ kind: "thought", text: "Booking spends money and is hard to reverse. I must show the price and ask for confirmation." },
 			{ kind: "choice", prompt: "Before spending money, what is the right move?", options: [
-				{ label: "Book now, ask for forgiveness later", safe: false, feedback: "Safety gate: irreversible action blocked. Explicit confirmation is required before booking." },
-				{ label: "Ask the user to confirm €39.90", safe: true, tool: "confirm", feedback: "Correct. The confirmation is the boundary between a suggestion and a transaction." }
+				{ label: "Book now, ask for forgiveness later", safe: false, kind: "safety", feedback: "Safety gate: irreversible action blocked. Explicit confirmation is required before booking." },
+				{ label: "Ask the user to confirm €39.90", safe: true, kind: "safety", tool: "confirm", feedback: "Correct. The confirmation is the boundary between a suggestion and a transaction." }
 			] },
 			{ kind: "action", tool: "confirm", text: "request_confirmation('Book DB Flex, €39.90, tomorrow?')" },
 			{ kind: "obs", text: "User approved: “Yes, book the flexible fare.”" },
@@ -369,6 +370,7 @@ opencode
 		var meterEl = document.getElementById("agent-meter-fill");
 		var stepEl = document.getElementById("agent-step");
 		var toolDocEl = document.getElementById("agent-tool-doc");
+		var debriefEl = document.getElementById("agent-debrief");
 		var notes = [];
 		var tokenCount = 0;
 		var waiting = false;
@@ -410,6 +412,13 @@ opencode
 			var li = document.querySelector('[data-tool="' + tool + '"]');
 			if (li) li.classList.add("is-on");
 		}
+		function showDebrief(kind) {
+			if (!debriefEl) return;
+			var labels = AGENT_DE ? { knowledge: "Wissen", grounding: "Grounding", safety: "Safety" } : { knowledge: "knowledge", grounding: "grounding", safety: "safety" };
+			debriefEl.innerHTML = ["knowledge", "grounding", "safety"].map(function (k) {
+				return k === kind ? "<b>" + labels[k] + "</b>" : labels[k];
+			}).join(" · ");
+		}
 		function showChoices(step) {
 			waiting = true;
 			if (nextBtn) nextBtn.disabled = true;
@@ -428,6 +437,7 @@ opencode
 				b.textContent = opt.label;
 				b.addEventListener("click", function () {
 					if (!waiting) return;
+					showDebrief(opt.kind);
 					if (opt.safe) {
 						waiting = false;
 						choices.innerHTML = "";
@@ -467,6 +477,7 @@ opencode
 			cursor = 0;
 			waiting = false;
 			notes = [];
+			if (debriefEl) debriefEl.innerHTML = "";
 			tokenCount = 0;
 			if (feed) feed.innerHTML = "";
 			if (choices) choices.innerHTML = "";

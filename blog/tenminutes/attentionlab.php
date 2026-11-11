@@ -23,6 +23,7 @@
 						do you contain, what will I carry away? Click a word and watch the sentence decide
 						what it means.
 					</p>
+					<p class="hero-permission">You do not need matrices to follow this page. The formulas sit in optional boxes; the main text explains what they do. Open a box only if you want the formal version.</p>
 				</div>
 			</section>
 

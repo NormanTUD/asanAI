@@ -49,3 +49,13 @@ Status: in Arbeit
 - PENDING: volle Demos aus attentionlab/transformer einbinden
 - DONE: Flow-Morph 180ms
 - DONE: Keine Partikel bei Schritten
+- DONE: Raum-Morph als zweiter Tag
+- DONE: TM-Marke entfernt
+- DONE: Tag-Leiste gruen und nicht abgeschnitten
+- DONE: Fontgroesse mit Persistenz
+- DONE: Oeffentliche Demo-/Scene-API
+- DONE: 16 Unit- und 36 Browsertests
+- DONE: LEARN_SYSTEM.md dokumentiert
+- DONE: Fokusmodus und Touch-Hinweise
+- DONE: Vertiefungsfragen flach und normaler Text
+- DONE: Tag-Leiste mit Safe-Area-Padding

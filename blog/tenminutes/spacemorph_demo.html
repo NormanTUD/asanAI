@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Space Morph · MLP</title>
+<link rel="stylesheet" href="assets/site.css">
+<style>
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}
+body{font-family:"Open Sans",system-ui,sans-serif;color:var(--tm-ink)}
+.demo.ism-panel{border:0;background:transparent;box-shadow:none;margin:0;padding:0;height:100%}
+.demo.ism-panel .demo-body{padding:0;background:transparent;height:100%;display:flex;flex-direction:column;min-height:0}
+.ism-copy{margin:0 0 10px;min-height:0}
+.ism-stage{flex:1;min-height:0}
+.ism-wrap{height:100%;min-height:300px;background:rgba(255,255,255,.42);border-color:rgba(0,75,111,.08);border-radius:0}
+.ism-controls{padding-top:8px}
+.ism-title{font-size:15px}
+.ism-body{font-size:12px}
+@media (max-width:700px){
+  .ism-wrap{min-height:260px}
+  .ism-copy{min-height:0}
+}
+</style>
+</head>
+<body>
+<div class="demo demo--paper demo--canvas ism-panel">
+  <div class="demo-body">
+    <div id="ism-copy" class="ism-copy" aria-live="polite">
+      <div id="ism-title" class="ism-title"></div>
+      <div id="ism-body" class="ism-body"></div>
+    </div>
+    <div class="ism-stage" id="ism-stage">
+      <div id="ism-wrap" class="ism-wrap">
+        <canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
+        <div id="ism-canvas-status" class="ism-canvas-status" aria-live="polite" hidden></div>
+      </div>
+      <aside id="ism-side" class="ism-side">
+        <div id="ism-dense-controls" class="ism-dense-controls" hidden></div>
+        <div id="ism-formulas" class="ism-formulas" aria-live="polite"></div>
+      </aside>
+    </div>
+    <div class="ism-controls">
+      <button type="button" id="ism-prev" class="ism-btn ism-btn--nav" aria-label="Vorheriger Schritt">← Zurück</button>
+      <button type="button" id="ism-next" class="ism-btn ism-btn--nav" disabled aria-label="Nächster Schritt">Weiter →</button>
+      <button type="button" id="ism-reset-camera" class="ism-btn" aria-label="Ansicht zurücksetzen" title="Ansicht zurücksetzen">⟲</button>
+      <div id="ism-dots" class="ism-dots" role="group" aria-label="Folien"></div>
+      <span id="ism-counter" class="ism-counter">1 / 9</span>
+    </div>
+  </div>
+</div>
+<script>
+window.TM = {
+  lang: function () { return "de"; },
+  typesetMath: function () {},
+  colors: function () {
+    return {
+      ink: "#000000", inkSoft: "#2c464d", muted: "#627476", faint: "#92a19a",
+      blue: "#1275ac", gold: "#9f9700", petrol: "#004b6f",
+      lineStrong: "rgba(0,75,111,.18)", dark: false,
+      paper: "#ffffff", paper2: "#f7f9f8"
+    };
+  }
+};
+</script>
+<script src="assets/space-morph.js"></script>
+</body>
+</html>

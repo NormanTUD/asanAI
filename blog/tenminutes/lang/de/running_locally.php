@@ -4,6 +4,7 @@ return [
 	'description' => 'Quantisierung, GGUF, llama.cpp und was nötig ist, um ein leistungsfähiges Modell auf einem Laptop zu betreiben.',
 	'texts' => [
 		'You do not need' => 'Du brauchst kein',
+		'What Q4_K_M and Q5/Q6 mean' => 'Was Q4_K_M und Q5/Q6 bedeuten',
 		'a data centre.' => 'Rechenzentrum.',
 		'A quantized model can run on a laptop, a phone, or a single consumer GPU. The trade-off is capability and speed against control and privacy.' => 'Ein quantisiertes Modell kann auf einem Laptop, einem Telefon oder einer einzelnen Consumer-GPU laufen. Der Tausch ist Fähigkeit und Geschwindigkeit gegen Kontrolle und Privatsphäre.',
 		'Compression makes it fit' => 'Kompression macht es passend',
@@ -71,6 +72,11 @@ return [
 		'8-bit' => '8-Bit',
 		'16-bit' => '16-Bit',
 		'Device memory' => 'Gerätespeicher',
+		'Context length' => 'Kontextlänge',
+		'Weights' => 'Gewichte',
+		'KV cache' => 'KV-Cache',
+		'Total' => 'Gesamt',
+		'Weights plus a 20% runtime overhead plus the KV cache at fp16. The KV cache assumes 32 layers, 32 heads, and d_head = 128.' => 'Gewichte plus 20 % Laufzeit-Overhead plus KV-Cache in fp16. Der KV-Cache nimmt 32 Schichten, 32 Heads und d_head = 128 an.',
 		'Phone · 8 GB' => 'Telefon · 8 GB',
 		'Laptop · 16 GB' => 'Laptop · 16 GB',
 		'GPU · 24 GB' => 'GPU · 24 GB',
@@ -92,6 +98,7 @@ return [
 	],
 	'blocks' => [
 		'“4-bit” does not mean every weight is simply rounded to one of sixteen values. Quantizers usually work in small groups, store a scale and a zero point per group, and keep sensitive layers at higher precision. The result is not identical to the original; it is a different model with a similar behaviour and a smaller memory footprint (<a href="https://arxiv.org/abs/2305.14314" rel="noopener">Dettmers et al., 2023</a>; <a href="https://arxiv.org/abs/2210.17323" rel="noopener">Frantar et al., 2023</a>).' => '„4-Bit“ heißt nicht, dass jedes Gewicht einfach auf einen von sechzehn Werten gerundet wird. Quantisierer arbeiten meist in kleinen Gruppen, speichern eine Skala und einen Nullpunkt pro Gruppe und halten empfindliche Schichten auf höherer Präzision. Das Ergebnis ist nicht identisch mit dem Original; es ist ein anderes Modell mit ähnlichem Verhalten und kleinerem Speicherbedarf (<a href="https://arxiv.org/abs/2305.14314" rel="noopener">Dettmers et al., 2023</a>; <a href="https://arxiv.org/abs/2210.17323" rel="noopener">Frantar et al., 2023</a>).',
+		'Q4 means about 4 bits per weight on average, not a uniform grid of 16 values. K stands for k-quant blocks: a group of weights shares a scale and a zero point; M is a medium variant that keeps sensitive tensors higher. Q5/Q6 spend more bits on outliers, Q2/Q3 save memory but lose on rare tokens and long chains. The KV cache is separate and can need more memory than the weights at long context.' => 'Q4 bedeutet im Durchschnitt etwa 4 Bit pro Gewicht, kein gleichmäßiges Raster aus 16 Werten. K steht für K-Quant-Blöcke: Eine Gruppe von Gewichten teilt sich eine Skala und einen Nullpunkt; M ist eine mittlere Variante, die empfindliche Tensoren höher hält. Q5/Q6 geben mehr Bits für Ausreißer aus, Q2/Q3 sparen Speicher, verlieren aber bei seltenen Tokens und langen Ketten. Der KV-Cache ist separat und kann bei langem Kontext mehr Speicher brauchen als die Gewichte.',
 	],
 	'attrs' => [
 		'Choose your shell' => 'Wähle deine Shell',

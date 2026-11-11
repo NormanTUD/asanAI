@@ -22,6 +22,7 @@
   --ls-gold:#9f9700;
   --ls-lilac:#9185be;
   --ls-sky:#5c9baf;
+  --ls-teal:#009299;
   --ls-shadow:0 18px 50px rgba(0,0,0,.08);
 }
 *{box-sizing:border-box}
@@ -30,10 +31,9 @@ body{font-family:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-
 h1,h2,h3,h4,.ls-title,.ls-brand b,.ls-stage-head b,.ls-day-num,.ls-kicker{font-family:"Barlow",system-ui,sans-serif;font-weight:700;letter-spacing:-.01em}
 button,input,select{font:inherit}
 button{color:inherit}
-.ls-app{position:fixed;inset:0;display:grid;grid-template-rows:64px minmax(0,1fr) 76px;background:var(--ls-paper);z-index:1}
+.ls-app{position:fixed;inset:0;display:grid;grid-template-rows:64px minmax(0,1fr) auto;background:var(--ls-paper);z-index:1}
 .ls-top{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 22px;border-bottom:1px solid var(--ls-line);background:rgba(255,255,255,.96);backdrop-filter:blur(8px);z-index:10}
 .ls-brand{display:flex;align-items:center;gap:11px;min-width:0}
-.ls-mark{width:34px;height:34px;border:1px solid var(--ls-line-strong);display:grid;place-items:center;font-family:"Barlow";font-weight:700;background:var(--ls-paper-2);color:var(--ls-petrol)}
 .ls-brand b{display:block;font-size:15px;line-height:1.1}
 .ls-brand span{display:block;font-size:10px;color:var(--ls-muted);letter-spacing:.02em}
 .ls-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
@@ -78,19 +78,37 @@ button{color:inherit}
 .ls-demo{position:relative;z-index:1;flex:1;min-height:0;padding:12px 16px 8px}
 .ls-stage-foot{position:relative;z-index:2;display:flex;justify-content:space-between;gap:14px;padding:8px 22px 12px;border-top:1px solid var(--ls-line);font-size:10px;color:var(--ls-muted);background:rgba(247,249,248,.86)}
 .ls-credit{text-align:right;white-space:nowrap}
-.ls-bottom{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(240px,1fr);gap:18px;align-items:center;padding:0 22px;border-top:1px solid var(--ls-line);background:#fff;z-index:10}
-.ls-days{display:flex;gap:6px;overflow:auto;padding:8px 0;min-width:0}
-.ls-day{display:flex;flex-direction:column;gap:1px;min-width:112px;border:1px solid var(--ls-line);background:#fff;padding:6px 8px;text-align:left;cursor:pointer}
+.ls-bottom{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(240px,1fr);gap:18px;align-items:center;padding:6px 22px max(6px, env(safe-area-inset-bottom));min-height:76px;overflow:visible;border-top:1px solid var(--ls-line);background:#fff;z-index:10}
+.ls-day-row{display:flex;align-items:center;gap:4px;min-width:0;min-height:0}
+.ls-day-nav{flex:0 0 28px;width:28px;height:38px;border:1px solid var(--ls-line);background:#fff;color:var(--ls-petrol);font-size:16px;line-height:1;cursor:pointer;padding:0}
+.ls-day-nav:disabled{opacity:.35;cursor:not-allowed}
+.ls-days{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:6px 2px;min-width:0;scroll-snap-type:x proximity;scroll-behavior:smooth;overscroll-behavior-x:contain;scrollbar-width:thin;cursor:grab;touch-action:pan-x;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 10px),transparent 100%)}
+.ls-days.is-dragging{cursor:grabbing;scroll-behavior:auto;scroll-snap-type:none;user-select:none;mask-image:none}
+.ls-days::-webkit-scrollbar{height:5px}
+.ls-days::-webkit-scrollbar-track{background:transparent}
+.ls-days::-webkit-scrollbar-thumb{background:var(--ls-line-strong);border-radius:0}
+.ls-day{position:relative;display:flex;flex-direction:column;gap:1px;min-width:112px;min-height:42px;flex:0 0 auto;scroll-snap-align:center;border:1px solid var(--ls-line);background:#fff;padding:6px 8px;text-align:left;cursor:pointer;--ls-day-accent:var(--ls-line-strong)}
+.ls-day:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--ls-day-accent)}
+.ls-day[data-track="idea"]{--ls-day-accent:var(--ls-green)}
+.ls-day[data-track="failure"]{--ls-day-accent:var(--ls-lilac)}
+.ls-day[data-track="transformer"]{--ls-day-accent:var(--ls-petrol)}
+.ls-day[data-track="senses"]{--ls-day-accent:var(--ls-sky)}
+.ls-day[data-track="assistant"]{--ls-day-accent:var(--ls-teal)}
+.ls-day[data-track="questions"]{--ls-day-accent:var(--ls-gold)}
+.ls-day.is-track-start{margin-left:10px}
+.ls-day.is-track-start:after{content:"";position:absolute;left:-8px;top:6px;bottom:6px;width:1px;background:var(--ls-line-strong)}
+.ls-day.is-dim{opacity:.44}
+.ls-day.is-dim:hover{opacity:.78}
 .ls-day:hover{border-color:var(--ls-line-strong)}
 .ls-day.is-on{border-color:var(--ls-petrol);box-shadow:0 0 0 1px var(--ls-petrol) inset}
 .ls-day-num{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol);white-space:nowrap}
-.ls-day-name{font-size:10px;color:var(--ls-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ls-day-name{font-size:10px;line-height:1.25;color:var(--ls-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ls-progress{display:flex;flex-direction:column;gap:6px;min-width:0}
 .ls-progress-bar{height:3px;background:var(--ls-line);position:relative;overflow:hidden}
 .ls-progress-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ls-green),var(--ls-blue));transition:width .35s ease}
 .ls-steps{display:flex;gap:5px}
 .ls-dot{width:22px;height:22px;border:1px solid var(--ls-line);background:#fff;font-size:9px;color:var(--ls-muted);cursor:pointer;padding:0}
-.ls-dot.is-on{background:var(--ls-petrol);border-color:var(--ls-petrol);color:#fff}
+.ls-dot.is-on{background:var(--ls-green);border-color:var(--ls-green);color:#fff}
 .ls-backdrop{position:fixed;inset:0;background:rgba(0,20,30,.18);z-index:40;backdrop-filter:blur(1px)}
 .ls-drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,94vw);background:#fff;border-left:1px solid var(--ls-line-strong);box-shadow:var(--ls-shadow);z-index:50;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .24s ease}
 .ls-drawer.is-open{transform:none}
@@ -128,6 +146,7 @@ button{color:inherit}
 .ls-chip.is-on{background:var(--ls-petrol);border-color:var(--ls-petrol);color:#fff}
 .ls-canvas-wrap{position:relative;width:100%;height:100%;min-height:0}
 .ls-canvas-wrap .ls-canvas{position:absolute;inset:0;width:100%;height:100%}
+.ls-iframe{display:block;width:100%;height:100%;border:0;background:transparent}
 .ls-canvas{display:block;width:100%;height:100%;min-height:0}
 .ls-att,.ls-embed,.ls-conv,.ls-tr,.ls-hyper{display:grid;grid-template-rows:minmax(0,1fr) auto;height:100%;min-height:0}
 .ls-att-ui,.ls-embed-ui,.ls-conv-ui,.ls-tr-ui,.ls-hyper-ui{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:7px 10px 2px;min-height:0}
@@ -163,9 +182,9 @@ button{color:inherit}
   .ls-text-scroll{padding:18px 18px 14px;max-width:none}
   .ls-title{font-size:calc(var(--ls-fs-title,28px) * 0.86);max-width:22ch}
   .ls-body{font-size:calc(var(--ls-fs-body,17px) * 0.88);line-height:1.55}
-  .ls-bottom{grid-template-columns:1fr;gap:4px;padding:0 12px}
-  .ls-days{padding:4px 0}
-  .ls-day{min-width:96px}
+  .ls-bottom{grid-template-columns:1fr;gap:2px;padding:4px 12px max(6px, env(safe-area-inset-bottom));min-height:0}
+  .ls-days{padding:4px 2px}
+  .ls-day{min-width:96px;min-height:40px}
   .ls-stage-head{padding:8px 12px 6px}
   .ls-stage-foot{padding:5px 12px 7px}
   .ls-demo{padding:6px 8px 2px}
@@ -211,7 +230,8 @@ button{color:inherit}
 .ls-btn:hover,.ls-day:hover{border-color:rgba(0,75,111,.24);box-shadow:0 2px 8px rgba(0,20,30,.06)}
 .ls-btn--primary{background:var(--ls-petrol);border-color:transparent;box-shadow:0 2px 10px rgba(0,75,111,.16)}
 .ls-seg button.is-on{background:var(--ls-petrol);box-shadow:0 1px 6px rgba(0,75,111,.18)}
-.ls-day.is-on{border-color:rgba(99,164,75,.45);box-shadow:0 0 0 1px rgba(99,164,75,.25) inset,0 2px 10px rgba(99,164,75,.10)}
+.ls-day.is-on{background:var(--ls-green);border-color:var(--ls-green);color:#fff;box-shadow:0 2px 10px rgba(99,164,75,.18)}
+.ls-day.is-on .ls-day-num,.ls-day.is-on .ls-day-name{color:#fff}
 .ls-dot{border-color:rgba(0,75,111,.10);background:rgba(255,255,255,.62)}
 .ls-progress-bar{background:rgba(0,75,111,.08)}
 .ls-progress-bar span{background:linear-gradient(90deg,var(--ls-green),var(--ls-blue));box-shadow:0 0 10px rgba(99,164,75,.25)}
@@ -227,9 +247,9 @@ button{color:inherit}
 .ls-deepbox>summary::-webkit-details-marker{display:none}
 .ls-deepbox>summary:before{content:"+ ";color:var(--ls-green);font-weight:700}
 .ls-deepbox[open]>summary:before{content:"− "}
-.ls-deepbox>p{font-size:calc(var(--ls-fs-body,17px) * 0.75);line-height:1.6;color:var(--ls-soft);margin:0;padding:6px 0 8px;max-width:62ch}
-.ls-deepbox .ls-deepbox{margin-left:10px;padding-left:10px;border-left:1px solid rgba(0,75,111,.08)}
-.ls-deepbox .ls-deepbox>summary{font-size:10px;color:var(--ls-muted)}
+.ls-deepbox>p{font-size:var(--ls-fs-body,17px);line-height:1.65;color:var(--ls-soft);margin:0;padding:6px 0 8px;max-width:62ch}
+.ls-deepbox .ls-deepbox{margin-left:0;padding-left:0;border-left:0}
+.ls-deepbox .ls-deepbox>summary{font-size:11px;color:var(--ls-soft)}
 .ls-depth-count{font-family:"Open Sans",sans-serif;font-weight:400;font-size:8px;color:var(--ls-muted);margin-left:6px;text-transform:uppercase;letter-spacing:.08em}
 .ls-depth-hint{font-size:10px;color:var(--ls-muted);letter-spacing:.02em;margin-top:14px}
 .ls-depth-hint button{border:0;background:none;color:var(--ls-petrol);font:inherit;font-weight:600;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px}
@@ -252,7 +272,7 @@ button{color:inherit}
 .ls-body{font-size:var(--ls-fs-body,17px)}
 .ls-title{font-size:var(--ls-fs-title,28px)}
 .ls-watch{font-size:calc(var(--ls-fs-body,17px) * 0.82)}
-.ls-context p,.ls-deepbox>p,.ls-cue p,.ls-term-note{font-size:calc(var(--ls-fs-body,17px) * 0.8)}
+.ls-context p,.ls-cue p,.ls-term-note{font-size:calc(var(--ls-fs-body,17px) * 0.8)}
 .ls-footnote{font-size:var(--ls-fs-small,12px)}
 .ls-font{gap:4px}
 .ls-font output{font-size:10px;min-width:34px;text-align:center;color:var(--ls-ink)}
@@ -345,6 +365,38 @@ button{color:inherit}
         }
       ],
       boxes: [box("emb-day", "Mathematik", "Die ganze Rechnung", "Ein Embedding ist eine Matrix E mit einer Zeile pro Token. Der Startvektor ist E[id]. Die Ähnlichkeit ist cos(E[a], E[b]).")]
+    },
+    {
+      id: "spacemorph",
+      track: "failure",
+      label: "Tag 06",
+      kicker: "Fehler, Daten, Lernen · Tag 06",
+      title: "Wie das MLP den Raum biegt",
+      demo: "spacemorph",
+      credit: "Idee nach Keup & Helias, Origami in N dimensions (2022)",
+      steps: [
+        {
+          kicker: "01 / Die Biegung",
+          title: "Zwei Klassen, keine gerade Linie",
+          body: L + " Die Demo ist ein echter 3D-Raum: Ein roter Kern sitzt in einem blauen Ring. Eine flache Ebene kann ihn nicht trennen. ",
+          watch: "Klicke dich durch die neun Schritte. Wo hebt sich der Raum, wo kippt die Perspektive?",
+          demoState: {},
+          context: "Die Biegung ist eine Dense-Schicht: Sie hebt die Punkte in eine zusätzliche Dimension, bis ein flacher Schnitt reicht.",
+          deep: "Das ist keine Animation über den Daten, sondern eine Animation der Daten selbst: Jeder Punkt behält seine Nachbarschaft, während der Raum sich krümmt.",
+          boxes: [box("sp-1", "Mathematik", "Was passiert mit den Punkten?", "Die Schicht berechnet z = f(x, y). Die Punkte bleiben dieselben; ihre Höhe ändert sich.")]
+        },
+        {
+          kicker: "02 / Die Schichten",
+          title: "Tiefe ist Komposition",
+          body: L + " Mehrere Schichten können den Raum mehrfach falten. Aus einer Linie wird eine Schale, aus einer Schale ein Raum mit mehreren Tälern. ",
+          watch: "Ändere die Zahl der Neuronen und die Gewichtsskala. Wann wird die Trennung sauber?",
+          demoState: {},
+          context: "Die Demo zeigt eine kleine Dense-Schicht. In einem LLM macht jede FFN-Schicht denselben Schritt in Tausenden Dimensionen.",
+          deep: "Die Form der Fläche hängt von Gewichten, Bias und Aktivierung ab. Ein Neuron ergibt einen Grat; viele Neuronen können eine Schüssel formen.",
+          boxes: [box("sp-2", "Technik", "Warum sieht man das im LLM nicht?", "Weil die Räume zu hochdimensional sind. Die Demo ist eine Projektion auf drei Achsen.")]
+        }
+      ],
+      boxes: [box("sp-day", "Geschichte", "Woher kommt das Bild?", "Keup und Helias (2022) beschreiben Schichten als Falten einer Datenmannigfaltigkeit.")]
     },
     {
       id: "attention",

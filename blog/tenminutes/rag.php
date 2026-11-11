@@ -43,7 +43,7 @@
 						<div class="prose">
 							<p>Retrieval can miss the right passage, return a misleading one, or find text that is outdated. The model can ignore the retrieved context or blend it with its own memorized errors. Chunking and ranking are design decisions, not details.</p>
 							<p>RAG is not a truth machine. It is a way to make the model's answer depend on documents you can inspect. Citations and evaluation are what make that useful.</p>
-							<p>A concrete case: a query asks for the current refund policy. The retriever returns an old policy page and a new one; if the old page ranks first, the model answers from the outdated text. Reranking, metadata filters, and citations help, but the retriever is the bottleneck (<a href="https://arxiv.org/abs/2005.11401" rel="noopener">Lewis et al., 2020</a>; <a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>).</p>
+							<p>A concrete case: a query asks for the current refund policy. The retriever returns an old policy page and a new one; if the old page ranks first, the model answers from the outdated text. Both pages contain the word “refund”, so the cosine similarity is almost identical. The difference is the date, not the topic. That is why vector search alone is not enough: a metadata filter (“only documents after 2025”), a reranker that reads the question and the chunk together, and a requirement to cite the date solve three different parts of the same problem. Reranking, metadata filters, and citations help, but the retriever is the bottleneck (<a href="https://arxiv.org/abs/2005.11401" rel="noopener">Lewis et al., 2020</a>; <a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>).</p>
 							<p>RAG is only as good as the passage it puts in front of the model.</p>
 						</div>
 						<div class="keypoints">
@@ -60,6 +60,10 @@
 						<div class="prose">
 							<p>Chunking is a design decision. Too small and the passage lacks context; too large and the retriever has to match a lot of irrelevant text. Overlap helps avoid cutting a fact in half. Contextual retrieval adds a short summary of the surrounding document to each chunk.</p>
 							<p>Hybrid search combines keyword matching with dense vectors. Keyword search: BM25 is the standard (<a href="https://doi.org/10.1561/1500000019" rel="noopener">Robertson &amp; Zaragoza, 2009</a>): is good at names and exact terms; dense retrieval is good at paraphrase. A reranker can then score the top candidates with a more expensive model before the answer is generated.</p>
+							<details class="collapse-card">
+								<summary class="cc-label">BM25 in one paragraph</summary>
+								<p>BM25 scores a document with three factors: how often the query term occurs (term frequency, but saturating), how rare it is in the corpus (IDF: rare terms count more), and how long the document is (longer documents are penalised). That is why BM25 finds exact names, product codes, and quotes where an embedding model becomes unsure. Dense search finds paraphrases where BM25 comes up empty. Hybrid combines both, often with reciprocal rank fusion.</p>
+							</details>
 							<p>The failure modes are real: the right passage may be missing, the wrong passage may be ranked first, or the model may ignore the context. Evaluation and citations are what make RAG useful rather than decorative.</p>
 							<p>RAG and fine-tuning solve different problems. RAG changes what the model can <em>see</em>; fine-tuning changes what the model is <em>like</em>. Use RAG for facts that change, private documents, and anything that needs a citation. Use fine-tuning for a format, a tone, a tool-calling convention, or a behaviour the base model will not pick up from a prompt. The two can be combined: a fine-tuned model that reads retrieved passages is a common production pattern.</p>
 						</div>

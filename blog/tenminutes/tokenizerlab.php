@@ -373,7 +373,7 @@ training text, and stop at the target vocabulary size.
 						sub: true,
 						reason: "zero-width joiner",
 						id: 1000 + (hash(chunk) % 48000),
-						color: tokenColor(type, sub, reason),
+						color: tokenColor("joiner", true, "zero-width joiner"),
 						label: "U+200D"
 					});
 					return;

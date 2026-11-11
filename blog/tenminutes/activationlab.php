@@ -18,6 +18,7 @@
 				<div>
 					<h1>The bend <em>makes depth meaningful.</em></h1>
 					<p class="hero-deck">A dense layer can only stretch, rotate, and shift. The activation function after it is what lets a network learn curves, folds, and decisions. Why does a nonlinearity make depth useful?</p>
+					<p class="hero-permission">You do not need matrices to follow this page. The formulas sit in optional boxes; the main text explains what they do. Open a box only if you want the formal version.</p>
 				</div>
 			</section>
 
@@ -86,6 +87,10 @@
 						<div class="prose">
 							<p>The product <span data-tex="W = W_2 W_1" data-tex-display="false"></span> is another weight matrix, and <span data-tex="b = W_2 b_1 + b_2" data-tex-display="false"></span> is another bias. So without an activation between them, two dense layers are exactly one dense layer. Depth adds no expressive power; the hidden layer disappears.</p>
 							<p>The geometric picture comes from Keup and Helias (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">2022</a>): a layer's job is to fold the data manifold into unused higher dimensions until a flat cut can separate the classes. A ReLU is a hard fold. It is not injective, so it can change the topology of the representation and pull a ring apart. A smooth tanh or sigmoid is a homeomorphism: it bends the space but preserves its topology. That is why ReLU can untangle a ring in one piece, while a smooth activation needs more width or depth to do the same work.</p>
+							<details class="collapse-card">
+								<summary class="cc-label">The topology behind the fold</summary>
+								<p>A homeomorphism is a continuous, invertible map with a continuous inverse; it cannot tear a ring into two pieces. tanh and sigmoid are invertible for finite inputs, so they are homeomorphisms. ReLU maps all negative values to 0; it is not injective and can fold the space. That is why it can untangle a ring with fewer units, but it loses information. At low numerical precision, even a smooth activation becomes a staircase and loses that guarantee.</p>
+							</details>
 							<p>Precision adds a twist. A smooth tanh is only a faithful homeomorphism at enough numerical resolution. At low precision it saturates and quantizes into a staircase that maps many inputs to the same output. That many-to-one collapse is the same kind of move as a ReLU fold, which is why reduced-precision activations can sometimes make a hard problem easier instead of harder. The gain is not free: the same collapse throws information away. Low-precision polynomial approximations can match or beat full-precision baselines at the same accuracy budget (<a href="https://arxiv.org/abs/2402.11224" rel="noopener">Zhang et al., 2024</a>), but the effect depends on the task and the approximation.</p>
 						</div>
 					</section>

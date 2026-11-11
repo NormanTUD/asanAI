@@ -29,6 +29,7 @@
 						transformer. See the token stream, then follow the real model from embeddings to
 						the next-token distribution.
 					</p>
+					<p class="hero-permission">You do not need matrices to follow this page. The formulas sit in optional boxes; the main text explains what they do. Open a box only if you want the formal version.</p>
 				</div>
 			</section>
 
@@ -306,7 +307,7 @@
 <span id="context-val" style="font-weight: bold; color: #3b82f6;">32</span>
 <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
 <b>Effect:</b> Sets the maximum number of tokens the model can “see” at once during training and inference.<br/>
-<b>Reason:</b> A larger context window lets the model capture longer-range dependencies, but the attention score matrix has size $\text{Context}^2$, so a full forward pass costs quadratically in context length. A KV-Cache avoids recomputing past keys and values during generation — it lowers per-step work and trades it for linear memory — but it does not make attention sub-quadratic.
+<b>Reason:</b> A larger context window lets the model capture longer-range dependencies, but the attention score matrix grows with the square of the context length, so a full forward pass costs quadratically. A KV cache avoids recomputing past keys and values during generation; it lowers per-step work and trades it for linear memory, but it does not make attention sub-quadratic.
 	    </p>
 <input id="transformer-context-size" max="256" min="2" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();" step="1" style="width: 100%;" type="range" value="32"/>
 </div>
@@ -677,6 +678,13 @@
 								running stream. Nothing is overwritten.
 							</p>
 							<p>
+								Remove the addition and replace it with x ← f(x). Then every layer must
+								rewrite all information, and the gradient must travel back through every
+								transformation. In a 96-layer model, that is the difference between a path of
+								length 1 and a path of length 96. That is why deep networks with residual
+								connections train at all.
+							</p>
+							<p>
 								<strong>Layer normalization</strong> (<a href="https://arxiv.org/abs/1607.06450" rel="noopener">Ba, Kiros &amp; Hinton, 2016</a>) keeps activations in a healthy range. The
 								2017 block normalized after the residual addition; modern stacks usually
 								normalize <em>inside</em> the branch (pre-norm), leaving the stream unbroken,
@@ -685,6 +693,10 @@
 								SwiGLU are a separate change (<a href="https://arxiv.org/abs/2002.05202" rel="noopener">Shazeer, 2020</a>). The stream stays simple; each branch
 								arrives already scaled.
 							</p>
+							<details class="collapse-card">
+								<summary class="cc-label">Pre-norm, RMSNorm, SwiGLU</summary>
+								<p>Post-norm: x = LayerNorm(x + Sublayer(x)). Pre-norm: x = x + Sublayer(LayerNorm(x)). Pre-norm leaves the residual stream unnormalised and gives the gradient a direct path; that is why very deep stacks train more stably with it. RMSNorm drops the mean: x / sqrt(mean(x²)+ε) · γ; it is cheaper and often as good. SwiGLU replaces the second FFN matrix with a gate: (xW1 ⊙ swish(xW3))W2; it often does better at the same parameter budget. These are optimisations, not new principles.</p>
+							</details>
 							<p>
 								Where do the parameters actually live? In a typical decoder, most are in the
 								attention projections and the FFN matrices; the embedding and unembedding
@@ -710,11 +722,24 @@
 								<p>The first matrix expands the vector, the nonlinearity lets the model combine features, and the second matrix contracts it back. This is per-token computation: no information moves between positions here. Much of the model’s stored association memory lives in these weights.</p>
 							</div>
 						</div>
+						<details class="collapse-card">
+							<summary class="cc-label">Why 1/√d_k?</summary>
+							<p>If the entries of query and key are independent with variance 1, the dot product has variance d_k. With d_k = 64 the standard deviation is 8; the largest scores dominate, softmax becomes almost one-hot, and the gradient vanishes. Dividing by √d_k brings the variance back to 1. The scaling changes the temperature, not the ranking of the keys.</p>
+						</details>
 <div id="ffn-equations-container"></div>
 <div id="transformer-migration-plots-container"></div>
 						<div class="fieldnotes">
 							<h4>Why the block works at all</h4>
 							<p>The block is a division of labour. Attention supplies content-based routing; the FFN supplies per-token computation; the residual stream supplies a shared, additive workspace; normalization keeps the scale stable. The causal mask turns the same machinery into an autoregressive predictor. These pieces work because they compose, and because the whole stack is trained end-to-end on next-token prediction.</p>
+							<table class="cr-table">
+								<thead><tr><th>Operation</th><th>What moves</th><th>Scope</th></tr></thead>
+								<tbody>
+									<tr><td>Attention</td><td>Information between positions</td><td>Every token can read every earlier token.</td></tr>
+									<tr><td>Feed-forward</td><td>Features within one token</td><td>No mixing across positions.</td></tr>
+									<tr><td>Residual</td><td>An update is added</td><td>Adds without mixing.</td></tr>
+									<tr><td>Normalization</td><td>Scale and offset</td><td>Scales without mixing.</td></tr>
+								</tbody>
+							</table>
 						</div>
 						
 						<div class="keypoints">
@@ -753,6 +778,10 @@
 							<p class="aha-sub">EOS is just another token. The model stops when the next-token distribution has learned that a natural boundary is the most likely next move.</p>
 						</div>
 						<div class="formula" data-tex="\operatorname{P}(\text{token}) = \operatorname{softmax}\left(\frac{\text{logits}}{T}\right)"></div>
+						<details class="collapse-card">
+							<summary class="cc-label">Why softmax looks like that</summary>
+							<p>Exponentiation makes every score positive. Dividing by the sum makes the scores add to one. Because exp is monotone, the largest score stays the largest. Shifting all scores by the same constant cancels out, so subtract the maximum first for stability. The derivative is p_i(1-p_i) for the true class and -p_i p_j for the others; that is why the gradient is strong when the model is wrong. The base e is a convention; any positive base gives a valid distribution.</p>
+						</details>
 						<div class="prose">
 							<p>
 								Temperature <span data-tex="T" data-tex-display="false"></span> changes the shape of the distribution without

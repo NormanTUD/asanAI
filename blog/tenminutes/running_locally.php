@@ -28,6 +28,10 @@
 						<div class="prose">
 							<p>The first half of the course was about how models work. The next question is where they run. A large model is too big to fit in ordinary memory at full precision. Quantization stores the weights in fewer bits, which shrinks the model and speeds up inference at the cost of some quality. The arithmetic is worth doing once: a 7B model at 16 bits needs about 14 GB for the weights alone; at 4 bits it needs about 3.5 GB. That is the difference between a data-centre GPU and a laptop.</p>
 							<p>“4-bit” does not mean every weight is simply rounded to one of sixteen values. Quantizers usually work in small groups, store a scale and a zero point per group, and keep sensitive layers at higher precision. The result is not identical to the original; it is a different model with a similar behaviour and a smaller memory footprint (<a href="https://arxiv.org/abs/2305.14314" rel="noopener">Dettmers et al., 2023</a>; <a href="https://arxiv.org/abs/2210.17323" rel="noopener">Frantar et al., 2023</a>).</p>
+							<details class="collapse-card">
+								<summary class="cc-label">What Q4_K_M and Q5/Q6 mean</summary>
+								<p>Q4 means about 4 bits per weight on average, not a uniform grid of 16 values. K stands for k-quant blocks: a group of weights shares a scale and a zero point; M is a medium variant that keeps sensitive tensors higher. Q5/Q6 spend more bits on outliers, Q2/Q3 save memory but lose on rare tokens and long chains. The KV cache is separate and can need more memory than the weights at long context.</p>
+							</details>
 							<p>GGUF is a common file format for quantized models. Engines such as <a href="https://github.com/ggerganov/llama.cpp" rel="noopener">llama.cpp</a> run it efficiently on CPUs and consumer GPUs; <a href="https://ollama.com/" rel="noopener">Ollama</a> and <a href="https://lmstudio.ai/" rel="noopener">LM Studio</a> wrap the engine in a friendlier interface. The format matters because it packages the weights, the tokenizer, and the metadata together, so the engine does not have to guess how the model was built.</p>
 						</div>
 					</section>
@@ -148,13 +152,24 @@ ollama list</code></pre>
 										<option value="320">Server · 320 GB</option>
 									</select>
 								</div>
+								<div class="calc-field">
+									<label for="vram-context">Context length</label>
+									<select id="vram-context" data-vram-context>
+										<option value="4">4k</option>
+										<option value="8">8k</option>
+										<option value="32">32k</option>
+										<option value="128">128k</option>
+									</select>
+								</div>
 							</div>
-							<div class="demo-readout">
-								<div><b>Weights + overhead</b><span data-vram-mem>...</span></div>
+							<div class="vram-stack" aria-hidden="true"><span data-vram-bar-weights></span><span data-vram-bar-kv></span><span data-vram-bar-overhead></span></div>
+							<div class="demo-readout demo-readout--4">
+								<div><b>Weights</b><span data-vram-weights>...</span></div>
+								<div><b>KV cache</b><span data-vram-kv>...</span></div>
+								<div><b>Total</b><span data-vram-mem>...</span></div>
 								<div><b>Fit</b><span data-vram-fit>...</span></div>
-								<div><b>Precision</b><span>quantized</span></div>
 							</div>
-							<p class="mix-note" data-vram-note>Weights plus rough runtime overhead. Context length and KV cache can add several more gigabytes.</p>
+							<p class="mix-note" data-vram-note>Weights plus a 20% runtime overhead plus the KV cache at fp16. The KV cache assumes 32 layers, 32 heads, and d_head = 128.</p>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>The estimate is a starting point; context and KV cache add more.</span></div>
 					</div>

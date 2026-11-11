@@ -110,7 +110,7 @@
 						<div class="section-kicker"><span class="sk-num">03</span> The wider cast</div>
 						<h2 class="section-title">Most of the names are in the footnotes.</h2>
 						<div class="prose">
-							<p>The visible names are a small sample. The modern stack is a relay of mathematicians, engineers, annotators, and organizers. Here are some of the people whose work the rest of the course builds on, and the piece each is most associated with.</p>
+							<p>The visible names are a small sample. The modern stack is a relay of mathematicians, engineers, annotators, and organizers. The chain is easier to remember than thirty names: Rosenblatt built a learner; Minsky and Papert showed that one layer cannot do XOR; that posed the question of how to train more than one layer; Rumelhart, Hinton, and Williams answered with backpropagation; Krizhevsky, Sutskever, and Hinton made it fast enough with two GPUs. Each handoff is a problem the next person could not ignore. The list below is the index, not the argument.</p>
 						</div>
 						<div class="name-grid">
 							<div><b>John von Neumann &amp; Norbert Wiener</b> cybernetics, feedback, and the stored-program machine.</div>

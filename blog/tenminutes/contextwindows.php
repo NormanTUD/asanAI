@@ -50,6 +50,10 @@
 						<h2 class="section-title">Long context is not free.</h2>
 						<div class="prose">
 							<p>The KV cache stores the keys and values for every token in the context, so the model does not recompute the past at every step. The cache grows with the context length and can dominate memory during long conversations (<a href="https://arxiv.org/abs/2309.06180" rel="noopener">Kwon et al., 2023</a>). Efficient attention kernels (<a href="https://arxiv.org/abs/2205.14135" rel="noopener">Dao et al., 2022</a>) help with the arithmetic, not with that memory bill.</p>
+							<details class="collapse-card">
+								<summary class="cc-label">The KV-cache calculation</summary>
+								<p>KV bytes = 2 · L · H · d_head · T · bytes. Example: 32 layers, 32 heads, d_head = 128, 8,192 tokens, fp16: 2·32·32·128·8192·2 ≈ 4.3 GB. At 32k tokens it is already about 17 GB, before weights and activations. That is why long context is often a memory problem, not a compute problem.</p>
+							</details>
 							<p>Long-context models also have to learn to use the middle of a long window; information near the start or end is often easier to retrieve (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>). Retrieval and long context are complementary: the window decides how much the model can see, and retrieval decides what is worth seeing.</p>
 							<p>A concrete test: give the model 20 documents and place the one relevant document in the middle of the prompt. Accuracy often drops compared with placing the same document first or last (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>). A bigger window does not guarantee that the model uses the middle.</p>
 							<p>The window is a budget, not a guarantee of attention.</p>
@@ -60,7 +64,7 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">The context budget <span>· demo</span></p>
-								<p class="demo-sub">Everything the model sees competes for one budget. Shrink the window and watch history and documents fall out.</p>
+								<p class="demo-sub">Everything the model sees competes for one budget. Shrink the window and watch history and documents fall out. Before you move the slider: what would you sacrifice first, the system instruction, the last three turns, or the document that contains the answer? Why is the order not neutral?</p>
 							</div>
 							<span class="demo-badge">live</span>
 						</div>

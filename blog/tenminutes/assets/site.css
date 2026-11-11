@@ -449,6 +449,16 @@ html[data-theme="light"] body[data-page="advent"],
 html[data-theme="light"] body[data-page="library"] { background: #F9F9F9; }
 
 .hero--lesson { padding-bottom: clamp(34px, 4vw, 54px); }
+.hero-permission {
+	margin: 12px 0 0;
+	padding: 10px 14px;
+	border-left: 3px solid var(--tm-green);
+	background: color-mix(in srgb, var(--tm-green) 8%, transparent);
+	color: var(--tm-ink-soft);
+	font-size: 0.92rem;
+	line-height: 1.5;
+	max-width: 76ch;
+}
 
 .kicker {
 	display: inline-flex;
@@ -1971,6 +1981,11 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 .mix-note { margin: 10px 0 0; font-size: 0.78rem; line-height: 1.5; color: var(--tm-muted); min-height: 2.4em; }
 
 .calc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.vram-stack { display: flex; height: 12px; border: 1px solid var(--tm-line); background: var(--tm-paper-2); margin: 10px 0; }
+.vram-stack span { display: block; height: 100%; }
+.vram-stack span:nth-child(1) { background: var(--tm-green); }
+.vram-stack span:nth-child(2) { background: var(--tm-blue); }
+.vram-stack span:nth-child(3) { background: var(--tm-faint); }
 .calc-field { display: flex; flex-direction: column; gap: 6px; }
 .calc-field label {
 	font-size: 0.62rem;
@@ -4004,6 +4019,8 @@ html[data-theme="dark"] .myth--ok b { color: var(--tm-green); }
 
 /* ── agent simulation ───────────────────────────────────── */
 .agent-choice-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.agent-debrief { margin-top: 8px; font-family: var(--tm-ui); font-size: 0.74rem; letter-spacing: 0.04em; color: var(--tm-muted); min-height: 1.2em; }
+.agent-debrief b { color: var(--tm-petrol); font-weight: 700; }
 .agent-choice {
 	padding: 8px 12px;
 	border: 1px solid var(--tm-line-strong);

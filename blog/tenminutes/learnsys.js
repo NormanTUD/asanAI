@@ -1,3 +1,11 @@
+/*
+ * LearnSys 2.0 — Ten Minutes reading and demo layer.
+ * Public API: LearnSys.mount, .defineDemo, .scene, .util, .motion, .prefs.
+ * A demo factory is (root, api) -> { update, resize?, destroy?, getScene? }.
+ * Static content belongs on .ls-canvas--static; changing content on
+ * .ls-canvas--dynamic. Step changes animate only the changed objects;
+ * day changes may morph the dynamic layer. See LEARN_SYSTEM.md.
+ */
 "use strict";
 (function () {
   var LS = {};
@@ -164,16 +172,8 @@
   }
   function loremBlock(text) { return '<p>' + termHTML(text) + '</p>'; }
 
-  function dayList() {
-    return cfg.days.filter(function (d) {
-      return state.track === "all" || d.track === state.track;
-    });
-  }
   function activeDay() {
-    var list = dayList();
-    if (!list.length) return cfg.days[state.day] || cfg.days[0];
-    if (list.indexOf(cfg.days[state.day]) === -1) state.day = cfg.days.indexOf(list[0]);
-    return cfg.days[state.day] || list[0];
+    return cfg.days[state.day] || cfg.days[0];
   }
   function activeStep() {
     var d = activeDay();
@@ -202,7 +202,7 @@
     root.innerHTML =
       '<div class="ls-app">' +
         '<header class="ls-top">' +
-          '<div class="ls-brand"><span class="ls-mark">TM</span><div><b>LearnSys</b><span>Prototyp · ein Thema, jede Tiefe</span></div></div>' +
+          '<div class="ls-brand"><div><b>LearnSys</b><span>Prototyp · ein Thema, jede Tiefe</span></div></div>' +
           '<div class="ls-controls">' +
             '<label class="ls-field"><span>Weg</span><select class="ls-select" id="ls-track"></select></label>' +
             '<div class="ls-field"><span>Tiefe</span><div class="ls-seg" id="ls-depth">' +
@@ -312,27 +312,33 @@
     });
   }
 
-  function centerActiveDay() {
+  var lastCenteredDay = -1;
+  function centerActiveDay(force) {
     if (!els.days) return;
     var a = els.days.querySelector(".ls-day.is-on");
     if (!a) return;
+    if (!force && lastCenteredDay === state.day) return;
+    lastCenteredDay = state.day;
     var left = a.offsetLeft - (els.days.clientWidth - a.offsetWidth) / 2;
     els.days.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
   }
   function renderDays() {
-    var list = dayList();
-    els.dayNav.forEach(function (b) { b.disabled = list.length < 2; });
-    if (!list.length) {
-      els.days.innerHTML = '<div class="ls-empty">Für diesen Weg gibt es im Prototyp noch keinen Tag. Wähle „Alle Wege“ oder einen anderen Weg.</div>';
+    var all = cfg.days;
+    els.dayNav.forEach(function (b) { b.disabled = all.length < 2; });
+    if (!all.length) {
+      els.days.innerHTML = '<div class="ls-empty">Noch keine Tage.</div>';
       return;
     }
-    els.days.innerHTML = list.map(function (d) {
-      var idx = cfg.days.indexOf(d);
-      var on = idx === state.day;
-      return '<button type="button" class="ls-day' + (on ? " is-on" : "") + '" data-day="' + idx + '" role="tab" aria-selected="' + on + '"' + (on ? ' aria-current="step"' : '') + '>' +
+    els.days.innerHTML = all.map(function (d, i) {
+      var on = i === state.day;
+      var dim = state.track !== "all" && d.track !== state.track;
+      var track = TRACK_LABEL[d.track] ? TRACK_LABEL[d.track].label : d.track;
+      var cls = "ls-day" + (on ? " is-on" : "") + (dim ? " is-dim" : "") + (i > 0 && all[i - 1].track !== d.track ? " is-track-start" : "");
+      return '<button type="button" class="' + cls + '" data-day="' + i + '" data-track="' + esc(d.track) + '" role="tab" aria-selected="' + on + '"' + (on ? ' aria-current="step"' : '') +
+        ' aria-label="' + esc(track + ": " + d.label + " " + d.title) + '" title="' + esc(track + " · " + d.title) + '">' +
         '<span class="ls-day-num">' + esc(d.label) + '</span><span class="ls-day-name">' + esc(d.title) + '</span></button>';
     }).join("");
-    requestAnimationFrame(centerActiveDay);
+    requestAnimationFrame(function () { centerActiveDay(); });
   }
   function renderSteps() {
     var d = activeDay();
@@ -681,6 +687,7 @@
     var oldDemo = cfg.days[oldDay] ? cfg.days[oldDay].demo : null;
     state.day = clamp(day, 0, cfg.days.length - 1);
     var d = cfg.days[state.day];
+    if (state.track !== "all" && d.track !== state.track) state.track = d.track;
     state.step = clamp(step, 0, d.steps.length - 1);
     var dayChanged = oldDay !== state.day;
     var demoChanged = oldDemo !== d.demo;
@@ -701,20 +708,20 @@
     var d = activeDay();
     if (state.step < d.steps.length - 1) go(state.day, state.step + 1);
     else {
-      var list = dayList();
+      var list = cfg.days;
       var pos = list.indexOf(d);
-      if (pos >= 0 && pos < list.length - 1) go(cfg.days.indexOf(list[pos + 1]), 0);
+      if (pos >= 0 && pos < list.length - 1) go(pos + 1, 0);
     }
   }
   function prev() {
     var d = activeDay();
     if (state.step > 0) go(state.day, state.step - 1);
     else {
-      var list = dayList();
+      var list = cfg.days;
       var pos = list.indexOf(d);
       if (pos > 0) {
         var p = list[pos - 1];
-        go(cfg.days.indexOf(p), p.steps.length - 1);
+        go(pos - 1, p.steps.length - 1);
       }
     }
   }
@@ -723,7 +730,7 @@
     var oldDay = state.day;
     var oldDemo = cfg.days[oldDay] ? cfg.days[oldDay].demo : null;
     state.track = id;
-    var list = dayList();
+    var list = id === "all" ? cfg.days : cfg.days.filter(function (d) { return d.track === id; });
     if (list.length && list.indexOf(cfg.days[state.day]) === -1) {
       state.day = cfg.days.indexOf(list[0]);
       state.step = 0;
@@ -738,6 +745,7 @@
     }
     cueSuppressUntil = performance.now() + 500;
     swap(renderAll, changed, changed && CANVAS_DEMOS[oldDemo] && CANVAS_DEMOS[d ? d.demo : ""]);
+    setTimeout(function () { centerActiveDay(true); }, 80);
   }
   function setDepth(d) {
     state.depth = d;
@@ -785,7 +793,58 @@
   function hideTipSoon() { tipTimer = setTimeout(hideTip, 140); }
   function hideTip() { els.tip.hidden = true; }
 
+  function bindDayRail() {
+    var el = els.days;
+    if (!el || el.dataset.railBound) return;
+    el.dataset.railBound = "1";
+    var down = false, moved = false, startX = 0, startLeft = 0, pid = null;
+    el.addEventListener("pointerdown", function (e) {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      down = true;
+      moved = false;
+      startX = e.clientX;
+      startLeft = el.scrollLeft;
+      pid = e.pointerId;
+      el.classList.add("is-dragging");
+      try { el.setPointerCapture(pid); } catch (err) {}
+    });
+    el.addEventListener("pointermove", function (e) {
+      if (!down) return;
+      var dx = e.clientX - startX;
+      if (Math.abs(dx) > 5) moved = true;
+      el.scrollLeft = startLeft - dx;
+    });
+    function endDrag() {
+      if (!down) return;
+      down = false;
+      el.classList.remove("is-dragging");
+      try {
+        if (pid != null && el.hasPointerCapture(pid)) el.releasePointerCapture(pid);
+      } catch (err) {}
+      if (moved) {
+        el.dataset.suppressClick = "1";
+        setTimeout(function () { delete el.dataset.suppressClick; }, 0);
+      }
+    }
+    el.addEventListener("pointerup", endDrag);
+    el.addEventListener("pointercancel", endDrag);
+    el.addEventListener("pointerleave", endDrag);
+    el.addEventListener("click", function (e) {
+      if (el.dataset.suppressClick) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, true);
+    el.addEventListener("wheel", function (e) {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      if (!e.deltaY) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    }, { passive: false });
+  }
+
   function bind() {
+    bindDayRail();
     els.track.addEventListener("change", function () { setTrack(els.track.value); });
     els.depth.addEventListener("click", function (e) {
       var b = e.target.closest("button[data-depth]");
@@ -831,10 +890,10 @@
     });
     els.dayNav.forEach(function (b) {
       b.addEventListener("click", function () {
-        var list = dayList();
+        var list = cfg.days;
         var pos = list.indexOf(activeDay());
         var next = pos + parseInt(b.getAttribute("data-day-nav"), 10);
-        if (next >= 0 && next < list.length) go(cfg.days.indexOf(list[next]), 0);
+        if (next >= 0 && next < list.length) go(next, 0);
       });
     });
     document.addEventListener("keydown", function (e) {
@@ -842,6 +901,8 @@
       if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
       if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
+      else if (e.key === "Home") { e.preventDefault(); go(0, 0); }
+      else if (e.key === "End") { e.preventDefault(); go(cfg.days.length - 1, 0); }
       else if (e.key === "d" || e.key === "D") { e.preventDefault(); openDepth(); }
       else if (e.key === "+" || e.key === "=") { e.preventDefault(); setFont(state.font + 1); }
       else if (e.key === "-") { e.preventDefault(); setFont(state.font - 1); }
@@ -849,6 +910,8 @@
     });
     window.addEventListener("resize", function () {
       if (demo && demo.resize) demo.resize();
+      lastCenteredDay = -1;
+      requestAnimationFrame(function () { centerActiveDay(true); });
     });
   }
 
@@ -2217,6 +2280,14 @@
       }
     };
   }
+  function demoSpaceMorph(root, api) {
+    root.innerHTML = '<iframe class="ls-iframe" src="spacemorph_demo.html" title="Space Morph: das MLP biegt den Raum"></iframe>';
+    return {
+      update: function () {},
+      resize: function () {},
+      destroy: function () {}
+    };
+  }
   function demoHyper(root, api) {
     root.innerHTML = '<div class="ls-hyper"><canvas class="ls-canvas"></canvas><div class="ls-hyper-ui"></div></div>';
     var canvas = root.querySelector(".ls-canvas");
@@ -2499,7 +2570,7 @@
   }
 
   var CANVAS_DEMOS = { attention: 1, embedding: 1, transformer: 1, convolution: 1, sampling: 1, hyper: 1 };
-  var INTERNAL_MORPH = { embedding: 1, hyper: 1 };
+  var INTERNAL_MORPH = { embedding: 1, hyper: 1, spacemorph: 1 };
   var FLOW_ON_STEP = {};
   var ELEMENT_ANIM = { attention: 1, transformer: 1, convolution: 1, sampling: 1 };
   var DEMOS = {
@@ -2508,7 +2579,8 @@
     transformer: demoTransformer,
     convolution: demoConvolution,
     sampling: demoSampling,
-    hyper: demoHyper
+    hyper: demoHyper,
+    spacemorph: demoSpaceMorph
   };
 
 
@@ -2666,6 +2738,7 @@
   DEMO_META.convolution = { tier: 2, label: "Convolution", staticLayer: true };
   DEMO_META.sampling = { tier: 1, label: "Sampling", staticLayer: false };
   DEMO_META.hyper = { tier: 2, label: "Hyperparameter", staticLayer: false };
+  DEMO_META.spacemorph = { tier: 0, label: "Space Morph", staticLayer: false, iframe: true };
   function defineDemo(name, factory, meta) {
     DEMOS[name] = factory;
     DEMO_META[name] = meta || {};
@@ -2693,6 +2766,13 @@
     cfg.tracks.forEach(function (t) { TRACK_LABEL[t.id] = t; });
     if (state.track !== "all" && !TRACK_LABEL[state.track]) state.track = "all";
     if (state.day >= cfg.days.length) state.day = 0;
+    if (state.track !== "all") {
+      var trackDays = cfg.days.filter(function (d) { return d.track === state.track; });
+      if (trackDays.length && trackDays.indexOf(cfg.days[state.day]) === -1) {
+        state.day = cfg.days.indexOf(trackDays[0]);
+        state.step = 0;
+      }
+    }
     buildUI();
     bind();
     renderAll();
