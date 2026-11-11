@@ -124,7 +124,8 @@ def page_checks(page, port: int) -> None:
           and "z=x+" not in joined, joined[:180])
 
     note = page.evaluate("""() => {
-        const p = document.querySelector('.transformer-slider-note');
+        const field = document.querySelector('#transformer-dimension-model').closest('.transformer-config-field');
+        const p = field && field.querySelector('.transformer-slider-note');
         const m = p && p.querySelector('math');
         return m ? {display: getComputedStyle(m).display, tex: m.getAttribute('data-tex')} : null;
     }""")
