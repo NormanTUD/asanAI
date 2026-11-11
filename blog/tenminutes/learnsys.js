@@ -313,6 +313,10 @@
   }
 
   var lastCenteredDay = -1;
+  function updateRailOverflow() {
+    if (!els.days) return;
+    els.days.classList.toggle("is-scrollable", els.days.scrollWidth > els.days.clientWidth + 1);
+  }
   function centerActiveDay(force) {
     if (!els.days) return;
     var a = els.days.querySelector(".ls-day.is-on");
@@ -338,7 +342,7 @@
         ' aria-label="' + esc(track + ": " + d.label + " " + d.title) + '" title="' + esc(track + " · " + d.title) + '">' +
         '<span class="ls-day-num">' + esc(d.label) + '</span><span class="ls-day-name">' + esc(d.title) + '</span></button>';
     }).join("");
-    requestAnimationFrame(function () { centerActiveDay(); });
+    requestAnimationFrame(function () { updateRailOverflow(); centerActiveDay(); });
   }
   function renderSteps() {
     var d = activeDay();
@@ -911,7 +915,7 @@
     window.addEventListener("resize", function () {
       if (demo && demo.resize) demo.resize();
       lastCenteredDay = -1;
-      requestAnimationFrame(function () { centerActiveDay(true); });
+      requestAnimationFrame(function () { updateRailOverflow(); centerActiveDay(true); });
     });
   }
 

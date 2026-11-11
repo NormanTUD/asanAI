@@ -180,7 +180,7 @@ def check_days(driver, results):
     )
 
     # A selected track is a lens: every day stays visible, the others dim.
-    js(driver, "var s=document.querySelector('#ls-track'); s.value='idea'; s.dispatchEvent(new Event('change',{bubbles:true}))")
+    js(driver, "(function(){var s=document.querySelector('#ls-track'); s.value='idea'; s.dispatchEvent(new Event('change',{bubbles:true})); return true;})()")
     time.sleep(0.6)
     results.check(
         "all days stay visible while a track is selected",
@@ -204,7 +204,7 @@ def check_days(driver, results):
     )
     results.check(
         "cross-track click follows the day's track",
-        js(driver, "document.querySelector('#ls-track').value") == "questions",
+        js(driver, "document.querySelector('#ls-track').value") == js(driver, "document.querySelectorAll('.ls-day')[6].getAttribute('data-track')"),
     )
     results.check(
         "all days remain after a cross-track jump",
@@ -252,11 +252,11 @@ def check_days(driver, results):
         js(driver, "(function(){var r=document.querySelector('.ls-day.is-on').getBoundingClientRect();return r.top>=0 && r.bottom<=window.innerHeight+1;})()"),
     )
 
-    before = scroll_left
-    js(driver, "document.querySelector('#ls-days').dispatchEvent(new WheelEvent('wheel',{deltaY:-200,bubbles:true,cancelable:true}))")
-    time.sleep(0.5)
-    after = js(driver, "document.querySelector('#ls-days').scrollLeft")
-    results.check("wheel moves the day rail", (not scrollable) or after < before, f"{before} -> {after}")
+    prevented = js(
+        driver,
+        "(function(){var el=document.querySelector('#ls-days');var e=new WheelEvent('wheel',{deltaY:-200,bubbles:true,cancelable:true});el.dispatchEvent(e);return e.defaultPrevented;})()",
+    )
+    results.check("day rail captures the wheel", prevented)
 
 
 def check_spacemorph(driver, results):
@@ -333,6 +333,13 @@ def check_mobile(driver, results):
         "mobile day rail fully on screen",
         js(driver, "(function(){var r=document.querySelector('.ls-bottom').getBoundingClientRect();return r.top>=0 && r.bottom<=window.innerHeight+1;})()"),
     )
+    js(driver, "document.querySelectorAll('.ls-day')[0].click()")
+    time.sleep(0.6)
+    before = js(driver, "document.querySelector('#ls-days').scrollLeft")
+    js(driver, "document.querySelector('#ls-days').dispatchEvent(new WheelEvent('wheel',{deltaY:240,bubbles:true,cancelable:true}))")
+    time.sleep(0.7)
+    after = js(driver, "document.querySelector('#ls-days').scrollLeft")
+    results.check("mobile wheel moves the day rail", after > before, f"{before} -> {after}")
     js(driver, "document.querySelector('#ls-focus').click()")
     time.sleep(0.3)
     results.check("mobile focus mode hides text", js(driver, "getComputedStyle(document.querySelector('.ls-text')).display") == "none")
