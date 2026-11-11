@@ -8361,6 +8361,31 @@ body.has-toc h4[id] { scroll-margin-top: 84px; }
 	.tm-toc__link { transition: none; }
 }
 
+/* ── Hallucination: two equally likely answers ───────────── */
+.hl-echarts-host {
+	width: 100%;
+	height: 440px;
+	min-height: 340px;
+	background: transparent;
+}
+.hl-echarts-host canvas { display: block; width: 100%; height: 100%; }
+.hl-controls {
+	align-items: center;
+	gap: 14px;
+	flex-wrap: wrap;
+}
+.hl-choice {
+	color: var(--tm-muted);
+	font-family: var(--tm-ui);
+	font-size: 0.82rem;
+}
+.hl-choice b { color: var(--tm-petrol); }
+.hl-readout { margin-top: 4px; }
+.hl-status { margin: 8px 0 0; min-height: 4.5em; }
+@media (max-width: 760px) {
+	.hl-echarts-host { height: 340px; min-height: 300px; }
+}
+
 /* ── GPT-2 PCA trajectory demo ───────────────────────────── */
 .traj-echarts-host {
 	width: 100%;

@@ -182,10 +182,23 @@
 
 .tm-layer-preview {
 	padding: 0 18px 12px;
+	cursor: pointer;
+}
+
+.tm-layer-preview:focus-visible {
+	outline: 2px solid var(--tm-green, var(--mn-emerald, #63a44b));
+	outline-offset: 2px;
 }
 
 .tm-layer-card.is-open .tm-layer-preview {
 	display: block;
+	border-bottom: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+}
+
+.tm-layer-minimal-text {
+	margin: 6px 0 0;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+	font: 400 0.82rem/1.45 "Open Sans", system-ui, sans-serif;
 }
 
 .tm-layer-preview .layer-residual-canvas {

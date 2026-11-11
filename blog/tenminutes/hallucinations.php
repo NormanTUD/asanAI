@@ -92,6 +92,32 @@
 							<div class="demo-foot">Top-p changes the candidate set, not the model’s knowledge. The bright bars are the renormalized distribution; the grey rows are the tokens that were cut.</div>
 						</div>
 
+						<div class="demo demo--paper demo--canvas" id="hl-landscape-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">When the sources split in half <span>· demo</span></p>
+									<p class="demo-sub">The question is contested: about half the sources say yes, half say no, and nothing in them settles it. Both continuations sit in equally deep valleys. The model samples one and then writes as if it were the answer.</p>
+								</div>
+								<span class="demo-badge">3-D landscape</span>
+							</div>
+							<div class="demo-body">
+								<p class="demo-hint">Question: “Did the company really recall the product in 2023?” The corpus agrees only on the disagreement. Rotate the surface and compare the two basins.</p>
+								<div id="hl-3d" class="hl-echarts-host" role="img" aria-label="A three-dimensional landscape with two equally deep valleys, one for the answer yes and one for the answer no"></div>
+								<div class="demo-controls hl-controls">
+									<button class="btn-demo" type="button" data-hl-rerun>Sample again</button>
+									<span class="hl-choice">Chosen continuation: <b data-hl-choice>“Yes, it did.”</b></span>
+								</div>
+								<div class="demo-readout hl-readout">
+									<div><b>“Yes” path</b><span>about half the sources</span></div>
+									<div><b>“No” path</b><span>about half the sources</span></div>
+									<div><b>Reality</b><span>not settled by the corpus</span></div>
+								</div>
+								<p class="demo-hint hl-status" data-hl-status></p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Two paths can be equally likely and still only one is written. The landscape shows the model's preference, not the world's answer.</span></div>
+							<div class="demo-foot">Schematic, not a measurement. The energy-landscape view follows the energy-based learning framework of <a href="http://yann.lecun.com/exdb/publis/pdf/lecun-06.pdf" rel="noopener">LeCun et al., A Tutorial on Energy-Based Learning (2006)</a>. Deeper means more likely; the two valleys have the same depth.</div>
+						</div>
+
 						<div class="prose">
 							<p>Models are most reliable where the pattern is dense and redundant, least reliable where it is sparse or rare (<a href="https://arxiv.org/abs/2211.08411" rel="noopener">Kandpal et al., 2023</a>). Long context adds a quieter failure: evidence at the beginning and end is used more reliably than evidence in the middle (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>). Scale improves many benchmark scores (<a href="https://arxiv.org/abs/2005.14165" rel="noopener">Brown et al., 2020</a>), but it does not install a guarantee.</p>
 							<p>Arithmetic is a special case. The model predicts digits, it does not calculate. Numbers are split into tokens, so “1234.56” may become “12”, “34”, “.”, and “56” (see the <a href="tokenizerlab">tokenizer lab</a>), and the model must carry the digits without a scratchpad. The split does not follow place value: in the public GPT-2 vocabulary, 12345 becomes “123” + “45” while 12346 becomes “12” + “346” (<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" rel="noopener">Radford et al., 2019</a>; <a href="https://openaipublic.blob.core.windows.net/gpt-2/models/117M/vocab.bpe" rel="noopener">vocab.bpe</a>). <a href="https://arxiv.org/abs/2202.03629" rel="noopener">Ji et al. (2023)</a> list hallucinations in numerals as a problem in its own right. For exact work, use a calculator or code.</p>
@@ -253,5 +279,279 @@
 
 	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
 	<script src="assets/demos.js?v=<?php echo filemtime(__DIR__.'/assets/demos.js'); ?>"></script>
+	<script>
+	(function () {
+		var host = document.getElementById("hl-3d");
+		if (!host) return;
+		var DE = !!(window.TM && TM.lang && TM.lang() === "de");
+		var labels = DE ? {
+			yes: "„Ja, das hat es.“",
+			no: "„Nein, das hat es nicht.“",
+			initial: "Beide Täler sind gleich tief. Eine Ziehung wählt einen Pfad.",
+			sampled: "Gezogen: ",
+			sampledTail: " Die Fläche hat sich nicht geändert, nur die Ziehung.",
+			axisStep: "Kontextschritt",
+			axisAnswer: "Antwort",
+			axisProb: "tiefer = wahrscheinlicher",
+			failed: "Die 3D-Bibliothek konnte nicht geladen werden."
+		} : {
+			yes: "“Yes, it did.”",
+			no: "“No, it did not.”",
+			initial: "Both valleys are equally deep. One draw picks one path.",
+			sampled: "Sampled: ",
+			sampledTail: " The surface did not change; only the draw did.",
+			axisStep: "context step",
+			axisAnswer: "answer",
+			axisProb: "deeper = more likely",
+			failed: "The 3D library could not be loaded."
+		};
+		var choiceEl = document.querySelector("[data-hl-choice]");
+		var statusEl = document.querySelector("[data-hl-status]");
+		var rerunEl = document.querySelector("[data-hl-rerun]");
+		var choice = "yes";
+		var chart = null;
+		var drawn = false;
+		var xMax = 6.2;
+		var yMax = 1.15;
+
+		function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+		function smooth(a, b, x) {
+			var t = clamp((x - a) / (b - a), 0, 1);
+			return t * t * (3 - 2 * t);
+		}
+		function parseColor(value) {
+			var s = String(value || "").trim();
+			if (s.charAt(0) === "#") {
+				var h = s.slice(1);
+				if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+				var n = parseInt(h, 16);
+				return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+			}
+			var m = s.match(/rgba?\(([^)]+)\)/);
+			if (m) {
+				var parts = m[1].split(",").map(function (x) { return parseFloat(x) || 0; });
+				return [parts[0], parts[1], parts[2]];
+			}
+			return [100, 116, 139];
+		}
+		function mix(a, b, t) {
+			var A = parseColor(a), B = parseColor(b);
+			return "rgb(" + Math.round(A[0] + (B[0] - A[0]) * t) + "," + Math.round(A[1] + (B[1] - A[1]) * t) + "," + Math.round(A[2] + (B[2] - A[2]) * t) + ")";
+		}
+		function separation(x) {
+			return 0.34 + 0.46 * smooth(0.10, 0.82, x / xMax);
+		}
+		function surfaceHeight(x, y) {
+			var t = clamp(x / xMax, 0, 1);
+			var sep = separation(x);
+			var width = 0.25 + 0.10 * t;
+			var right = Math.exp(-Math.pow((y - sep) / width, 2));
+			var left = Math.exp(-Math.pow((y + sep) / width, 2));
+			var depth = 0.28 * (0.34 + 0.66 * smooth(0.10, 0.86, t));
+			var valley = Math.max(right, left);
+			var ripple = 0.012 * Math.sin(x * 2.1 + y * 3.7) * (1 - valley);
+			return -depth * valley + ripple;
+		}
+		function surfaceData(colors) {
+			var xCount = 121, yCount = 81;
+			var points = [];
+			var minZ = Infinity, maxZ = -Infinity;
+			for (var yi = 0; yi <= yCount; yi++) {
+				var y = -yMax + (2 * yMax) * (yi / yCount);
+				for (var xi = 0; xi <= xCount; xi++) {
+					var x = xMax * (xi / xCount);
+					var z = surfaceHeight(x, y);
+					if (z < minZ) minZ = z;
+					if (z > maxZ) maxZ = z;
+					points.push([x, y, z]);
+				}
+			}
+			var colorMin = -0.30;
+			var span = Math.max(1e-6, maxZ - colorMin);
+			var data = points.map(function (p) {
+				var t = Math.pow(clamp((p[2] - colorMin) / span, 0, 1), 1.35);
+				return {
+					value: [Number(p[0].toFixed(3)), Number(p[1].toFixed(3)), Number(p[2].toFixed(4))],
+					itemStyle: { color: mix(colors.deep, colors.base, t) }
+				};
+			});
+			return { data: data, shape: [yCount + 1, xCount + 1], minZ: minZ };
+		}
+		function pathData(sign) {
+			var points = [];
+			for (var i = 0; i <= 48; i++) {
+				var x = xMax * (i / 48);
+				var y = sign * separation(x);
+				points.push([x, y, surfaceHeight(x, y) + 0.045]);
+			}
+			return points;
+		}
+		function buildSeries(c) {
+			var deep = mix(c.blue, c.ink, c.dark ? 0.30 : 0.52);
+			var base = mix(c.paper2, c.gold, c.dark ? 0.55 : 0.65);
+			var surface = surfaceData({ deep: deep, base: base });
+			var chosenColor = c.blue;
+			var otherColor = c.gold;
+			var yesColor = choice === "yes" ? chosenColor : otherColor;
+			var noColor = choice === "no" ? chosenColor : otherColor;
+			var yesWidth = choice === "yes" ? 7 : 4;
+			var noWidth = choice === "no" ? 7 : 4;
+			var yesOpacity = choice === "yes" ? 0.95 : 0.48;
+			var noOpacity = choice === "no" ? 0.95 : 0.48;
+			var chosenY = separation(3.5) * (choice === "yes" ? 1 : -1);
+			return {
+				data: surface.data,
+				shape: surface.shape,
+				minZ: surface.minZ,
+				series: [
+					{
+						id: "hl-surface",
+						name: "landscape",
+						type: "surface",
+						data: surface.data,
+						dataShape: surface.shape,
+						shading: "lambert",
+						wireframe: { show: false },
+						itemStyle: { opacity: 1 }
+					},
+					{
+						id: "hl-yes",
+						name: labels.yes,
+						type: "line3D",
+						data: pathData(1),
+						lineStyle: { width: yesWidth, color: yesColor, opacity: yesOpacity }
+					},
+					{
+						id: "hl-no",
+						name: labels.no,
+						type: "line3D",
+						data: pathData(-1),
+						lineStyle: { width: noWidth, color: noColor, opacity: noOpacity }
+					},
+					{
+						id: "hl-fork",
+						name: DE ? "unklare Frage" : "open question",
+						type: "scatter3D",
+						data: [{ value: [1.7, 0, surfaceHeight(1.7, 0) + 0.06] }],
+						symbol: "diamond",
+						symbolSize: 10,
+						itemStyle: { color: c.gold, borderColor: c.paper, borderWidth: 1.2 }
+					},
+					{
+						id: "hl-choice",
+						name: DE ? "Ziehung" : "sample",
+						type: "scatter3D",
+						data: [{ value: [3.5, chosenY, surfaceHeight(3.5, chosenY) + 0.09] }],
+						symbol: "circle",
+						symbolSize: 15,
+						itemStyle: { color: chosenColor, borderColor: c.paper, borderWidth: 2 }
+					}
+				]
+			};
+		}
+		function updateLabels() {
+			if (choiceEl) choiceEl.textContent = choice === "yes" ? labels.yes : labels.no;
+			if (statusEl) statusEl.textContent = labels.initial;
+		}
+		function draw() {
+			if (!window.TM || !TM.ensureECharts) return;
+			TM.ensureECharts(function () {
+				var c = TM.colors();
+				var built = buildSeries(c);
+				if (!chart) {
+					host.innerHTML = "";
+					try {
+						chart = echarts.init(host);
+					} catch (e) {
+						host.innerHTML = '<div class="traj-echarts-fallback">' + labels.failed + "</div>";
+						return;
+					}
+				}
+				var option = {
+					backgroundColor: "transparent",
+					tooltip: {
+						trigger: "item", confine: true,
+						backgroundColor: c.dark ? "rgba(10,34,44,.96)" : "rgba(255,255,255,.98)",
+						borderColor: c.lineStrong,
+						textStyle: { color: c.ink, fontSize: 12 }
+					},
+					xAxis3D: {
+						type: "value", name: labels.axisStep,
+						min: 0, max: xMax, interval: 1,
+						nameTextStyle: { color: c.ink, fontSize: 12, fontWeight: 600 },
+						nameGap: 16,
+						axisLabel: { textStyle: { color: c.inkSoft || c.ink, fontSize: 10, fontWeight: 600 } },
+						axisLine: { lineStyle: { color: c.lineStrong } },
+						splitLine: { lineStyle: { color: c.line } }
+					},
+					yAxis3D: {
+						type: "value", name: labels.axisAnswer,
+						min: -yMax, max: yMax, interval: 0.575,
+						nameTextStyle: { color: c.ink, fontSize: 12, fontWeight: 600 },
+						nameGap: 14,
+						axisLabel: { show: false },
+						axisLine: { lineStyle: { color: c.lineStrong } },
+						splitLine: { lineStyle: { color: c.line } }
+					},
+					zAxis3D: {
+						type: "value", name: labels.axisProb,
+						min: built.minZ - 0.02, max: 0.04,
+						nameTextStyle: { color: c.ink, fontSize: 12, fontWeight: 600 },
+						nameGap: 12,
+						axisLabel: { show: false },
+						axisLine: { lineStyle: { color: c.lineStrong } },
+						splitLine: { lineStyle: { color: c.line } }
+					},
+					grid3D: {
+						viewControl: {
+							projection: "perspective",
+							alpha: 30, beta: 38, distance: 200,
+							autoRotate: false, damping: 0.9,
+							rotateSensitivity: 1.2, zoomSensitivity: 1.2
+						},
+						light: {
+							main: { intensity: 1.2, shadow: false, alpha: 38, beta: 16 },
+							ambient: { intensity: 0.54 }
+						},
+						environment: c.paper2,
+						boxWidth: 132, boxHeight: 30, boxDepth: 108,
+						axisLine: { lineStyle: { color: c.lineStrong } },
+						splitLine: { lineStyle: { color: c.line } },
+						axisPointer: { show: false }
+					},
+					series: built.series
+				};
+				if (drawn) delete option.grid3D.viewControl;
+				try {
+					chart.setOption(option, { replaceMerge: ["series"], lazyUpdate: false });
+					chart.resize();
+					drawn = true;
+				} catch (e) {
+					host.innerHTML = '<div class="traj-echarts-fallback">' + labels.failed + "</div>";
+				}
+				updateLabels();
+			}, function () {
+				host.innerHTML = '<div class="traj-echarts-fallback">' + labels.failed + "</div>";
+			});
+		}
+		if (rerunEl) {
+			rerunEl.addEventListener("click", function () {
+				choice = choice === "yes" ? "no" : "yes";
+				if (choiceEl) choiceEl.textContent = choice === "yes" ? labels.yes : labels.no;
+				if (statusEl) statusEl.textContent = labels.sampled + (choice === "yes" ? labels.yes : labels.no) + labels.sampledTail;
+				try {
+					var c = TM.colors();
+					var built = buildSeries(c);
+					if (chart) chart.setOption({ series: built.series }, { replaceMerge: ["series"], lazyUpdate: false });
+				} catch (e) {}
+			});
+		}
+		window.addEventListener("tm:theme", function () {
+			if (chart) { chart.dispose(); chart = null; drawn = false; }
+			draw();
+		});
+		draw();
+	})();
+	</script>
 </body>
 </html>

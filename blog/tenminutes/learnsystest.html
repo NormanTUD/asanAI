@@ -80,15 +80,16 @@ button{color:inherit}
 .ls-credit{text-align:right;white-space:nowrap}
 .ls-bottom{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(240px,1fr);gap:18px;align-items:center;padding:6px 22px max(6px, env(safe-area-inset-bottom));min-height:76px;overflow:visible;border-top:1px solid var(--ls-line);background:#fff;z-index:10}
 .ls-day-row{display:flex;align-items:center;gap:4px;min-width:0;min-height:0}
-.ls-day-nav{flex:0 0 28px;width:28px;height:38px;border:1px solid var(--ls-line);background:#fff;color:var(--ls-petrol);font-size:16px;line-height:1;cursor:pointer;padding:0}
+.ls-day-nav{flex:0 0 auto;min-width:50px;height:38px;display:inline-flex;align-items:center;justify-content:center;gap:4px;border:1px solid var(--ls-line);background:#fff;color:var(--ls-petrol);font-size:13px;line-height:1;cursor:pointer;padding:0 7px}
+.ls-day-nav-word{font-size:9px;text-transform:uppercase;letter-spacing:.07em}
 .ls-day-nav:disabled{opacity:.35;cursor:not-allowed}
-.ls-days{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:6px 2px;min-width:0;scroll-snap-type:x proximity;scroll-behavior:smooth;overscroll-behavior-x:contain;scrollbar-width:thin;cursor:grab;touch-action:pan-x;-webkit-overflow-scrolling:touch}
+.ls-days{display:flex;flex:1 1 0;gap:6px;overflow-x:auto;overflow-y:hidden;padding:6px 2px;min-width:0;scroll-snap-type:x proximity;scroll-behavior:smooth;overscroll-behavior-x:contain;scrollbar-width:thin;cursor:grab;touch-action:pan-x;-webkit-overflow-scrolling:touch}
 .ls-days.is-scrollable{mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 10px),transparent 100%)}
 .ls-days.is-dragging{cursor:grabbing;scroll-behavior:auto;scroll-snap-type:none;user-select:none;mask-image:none}
 .ls-days::-webkit-scrollbar{height:5px}
 .ls-days::-webkit-scrollbar-track{background:transparent}
 .ls-days::-webkit-scrollbar-thumb{background:var(--ls-line-strong);border-radius:0}
-.ls-day{position:relative;display:flex;flex-direction:column;gap:1px;min-width:84px;min-height:42px;flex:1 1 84px;scroll-snap-align:center;border:1px solid var(--ls-line);background:#fff;padding:6px 8px;text-align:left;cursor:pointer;--ls-day-accent:var(--ls-line-strong)}
+.ls-day{position:relative;display:flex;flex-direction:column;gap:1px;min-width:76px;min-height:42px;flex:1 1 76px;scroll-snap-align:center;border:1px solid var(--ls-line);background:#fff;padding:6px 8px;text-align:left;cursor:pointer;--ls-day-accent:var(--ls-line-strong)}
 .ls-day:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--ls-day-accent)}
 .ls-day[data-track="idea"]{--ls-day-accent:var(--ls-green)}
 .ls-day[data-track="failure"]{--ls-day-accent:var(--ls-lilac)}
@@ -96,8 +97,8 @@ button{color:inherit}
 .ls-day[data-track="senses"]{--ls-day-accent:var(--ls-sky)}
 .ls-day[data-track="assistant"]{--ls-day-accent:var(--ls-teal)}
 .ls-day[data-track="questions"]{--ls-day-accent:var(--ls-gold)}
-.ls-day.is-track-start{margin-left:10px}
-.ls-day.is-track-start:after{content:"";position:absolute;left:-8px;top:6px;bottom:6px;width:1px;background:var(--ls-line-strong)}
+.ls-day.is-track-start{margin-left:0}
+.ls-day.is-track-start:after{content:"";position:absolute;left:-3px;top:6px;bottom:6px;width:1px;background:var(--ls-line-strong)}
 .ls-day.is-dim{opacity:.44}
 .ls-day.is-dim:hover{opacity:.78}
 .ls-day:hover{border-color:var(--ls-line-strong)}
@@ -126,7 +127,7 @@ button{color:inherit}
 .ls-box p{margin:0;padding:0 11px 12px;font-size:12px;line-height:1.6;color:var(--ls-soft)}
 .ls-box-lens{display:inline-block;border:1px solid var(--ls-line);background:var(--ls-paper-2);color:var(--ls-muted);font-size:8px;text-transform:uppercase;letter-spacing:.09em;padding:1px 4px;margin-right:6px}
 .ls-inline-boxes{display:grid;gap:8px;margin-top:16px}
-.ls-tip{position:fixed;z-index:70;background:#fff;border:1px solid var(--ls-line-strong);box-shadow:var(--ls-shadow);padding:10px 12px;font-size:11px;line-height:1.5;color:var(--ls-soft);pointer-events:none}
+.ls-tip{position:fixed;z-index:70;background:#fff;border:1px solid var(--ls-line-strong);box-shadow:var(--ls-shadow);padding:10px 12px;font-size:11px;line-height:1.5;color:var(--ls-soft);pointer-events:auto;cursor:pointer}
 .ls-tip-kicker{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol);margin-bottom:3px}
 .ls-tip p{margin:0 0 4px}
 .ls-tip-more{font-size:9px;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.08em}
@@ -185,6 +186,8 @@ button{color:inherit}
   .ls-body{font-size:calc(var(--ls-fs-body,17px) * 0.88);line-height:1.55}
   .ls-bottom{grid-template-columns:1fr;gap:2px;padding:4px 12px max(6px, env(safe-area-inset-bottom));min-height:0}
   .ls-days{padding:4px 2px}
+  .ls-day-nav{min-width:30px;padding:0 6px}
+  .ls-day-nav-word{display:none}
   .ls-day{flex:0 0 auto;min-width:96px;min-height:40px}
   .ls-stage-head{padding:8px 12px 6px}
   .ls-stage-foot{padding:5px 12px 7px}
@@ -304,7 +307,6 @@ button{color:inherit}
 (function () {
   "use strict";
 
-  var L = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum.";
 
   function box(id, lens, title, body) {
     return { id: id, lens: lens, title: title, body: body };
@@ -322,22 +324,22 @@ button{color:inherit}
         {
           kicker: "01 / Die Karte",
           title: "1D: Eine Achse",
-          body: L + " Zuerst ist Bedeutung nur eine Zahl auf einer Linie: Temperatur. Ein [[Vektor]] ist eine Liste von Zahlen; mit einer Dimension ist er ein Punkt auf einer Achse. ",
+          body: " Zuerst ist Bedeutung nur eine Zahl auf einer Linie: Temperatur. Ein [[Vektor]] ist eine Liste von Zahlen; mit einer Dimension ist er ein Punkt auf einer Achse. ",
           watch: "Beobachte, wie die Wörter im Raum liegen. Nähe ist Ähnlichkeit, nicht Wahrheit.",
           demoState: { dim: 0, mode: "line" },
           context: "Die Karte ist gelernt, nicht gegeben: Jede Position kommt aus dem Trainingstext.",
           deep: "Eine [[Embedding]]-Tabelle ist eine gelernte Matrix. Jede Zeile ist der Startvektor eines Tokens; die Geometrie entsteht erst durch das Training.",
           boxes: [box("emb-1", "Mathematik", "Was ist ein Vektor?", "Ein Vektor ist ein Element eines Vektorraums. In der Praxis: eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt.")],
           cues: [
-            { label: "1D → 2D", title: "Die zweite Achse", text: L + " Eine zweite Dimension ist kein neuer Inhalt, sondern ein neuer Freiheitsgrad. Die Punkte heben sich aus der Linie und finden Nachbarn in zwei Richtungen. ", state: { dim: 1, mode: "neighbors", selected: "king" } },
-            { label: "2D → 3D", title: "Die dritte Achse", text: L + " Jetzt kommt Tiefe dazu. Dieselben Wörter liegen nicht mehr auf einem Blatt; sie bilden einen Raum, in dem Richtungen Beziehungen tragen. ", state: { dim: 2, mode: "arrows", selected: "king" } },
-            { label: "3D → Kontext", title: "Kontext verschiebt den Punkt", text: L + " Der Raum ist gelernt und bleibt statistisch. Kontext verschiebt den Punkt, ohne die Karte neu zu zeichnen. ", state: { dim: 2, mode: "context", selected: "bank" } }
+            { label: "1D → 2D", title: "Die zweite Achse", text: " Eine zweite Dimension ist kein neuer Inhalt, sondern ein neuer Freiheitsgrad. Die Punkte heben sich aus der Linie und finden Nachbarn in zwei Richtungen. ", state: { dim: 1, mode: "neighbors", selected: "king" } },
+            { label: "2D → 3D", title: "Die dritte Achse", text: " Jetzt kommt Tiefe dazu. Dieselben Wörter liegen nicht mehr auf einem Blatt; sie bilden einen Raum, in dem Richtungen Beziehungen tragen. ", state: { dim: 2, mode: "arrows", selected: "king" } },
+            { label: "3D → Kontext", title: "Kontext verschiebt den Punkt", text: " Der Raum ist gelernt und bleibt statistisch. Kontext verschiebt den Punkt, ohne die Karte neu zu zeichnen. ", state: { dim: 2, mode: "context", selected: "bank" } }
           ]
         },
         {
           kicker: "02 / Die Nachbarn",
           title: "2D: Eine Ebene",
-          body: L + " Jetzt kommt eine zweite Achse dazu. Die Punkte heben sich aus der Linie in eine Ebene; plötzlich gibt es Nähe in zwei Richtungen. ",
+          body: " Jetzt kommt eine zweite Achse dazu. Die Punkte heben sich aus der Linie in eine Ebene; plötzlich gibt es Nähe in zwei Richtungen. ",
           watch: "Fahre über einen Punkt. Welche Nachbarn erscheinen? Passen sie zu deiner Intuition?",
           demoState: { dim: 1, mode: "neighbors", selected: "king" },
           context: "Die Nachbarschaft ist ein statistisches Signal, keine Definition. Sie kann Stereotype tragen.",
@@ -347,7 +349,7 @@ button{color:inherit}
         {
           kicker: "03 / Die Richtungen",
           title: "3D: Ein Raum",
-          body: L + " Eine dritte Achse hebt die Ebene in einen Raum. Jetzt tragen Richtungen Beziehungen: Geschlecht, Hauptstadt, Alter. ",
+          body: " Eine dritte Achse hebt die Ebene in einen Raum. Jetzt tragen Richtungen Beziehungen: Geschlecht, Hauptstadt, Alter. ",
           watch: "Schalte die Pfeile ein. Welche Richtungen wirken konsistent, welche nicht?",
           demoState: { dim: 2, mode: "arrows", selected: "king" },
           context: "Die berühmte Analogie ist eine Illustration. In echten Embeddings ist sie noisy und nicht immer wahr.",
@@ -357,7 +359,7 @@ button{color:inherit}
         {
           kicker: "04 / Die Grenze",
           title: "Kontext: Die Karte verschiebt sich",
-          body: L + " Auch im 3D-Raum ist die Karte nicht das Territorium. Achsen haben meist keine Namen, und Kontext verschiebt den Punkt. ",
+          body: " Auch im 3D-Raum ist die Karte nicht das Territorium. Achsen haben meist keine Namen, und Kontext verschiebt den Punkt. ",
           watch: "Öffne die Tiefe. Welche Aussage würdest du einem Freund in einem Satz sagen?",
           demoState: { dim: 2, mode: "context", selected: "bank" },
           context: "Kontext ist der Teil der Karte, den das Modell gerade sieht. Er verschiebt die Täler.",
@@ -379,7 +381,7 @@ button{color:inherit}
         {
           kicker: "01 / Die Biegung",
           title: "Zwei Klassen, keine gerade Linie",
-          body: L + " Die Demo ist ein echter 3D-Raum: Ein roter Kern sitzt in einem blauen Ring. Eine flache Ebene kann ihn nicht trennen. ",
+          body: " Die Demo ist ein echter 3D-Raum: Ein roter Kern sitzt in einem blauen Ring. Eine flache Ebene kann ihn nicht trennen. ",
           watch: "Klicke dich durch die neun Schritte. Wo hebt sich der Raum, wo kippt die Perspektive?",
           demoState: {},
           context: "Die Biegung ist eine Dense-Schicht: Sie hebt die Punkte in eine zusätzliche Dimension, bis ein flacher Schnitt reicht.",
@@ -389,7 +391,7 @@ button{color:inherit}
         {
           kicker: "02 / Die Schichten",
           title: "Tiefe ist Komposition",
-          body: L + " Mehrere Schichten können den Raum mehrfach falten. Aus einer Linie wird eine Schale, aus einer Schale ein Raum mit mehreren Tälern. ",
+          body: " Mehrere Schichten können den Raum mehrfach falten. Aus einer Linie wird eine Schale, aus einer Schale ein Raum mit mehreren Tälern. ",
           watch: "Ändere die Zahl der Neuronen und die Gewichtsskala. Wann wird die Trennung sauber?",
           demoState: {},
           context: "Die Demo zeigt eine kleine Dense-Schicht. In einem LLM macht jede FFN-Schicht denselben Schritt in Tausenden Dimensionen.",
@@ -410,22 +412,22 @@ button{color:inherit}
         {
           kicker: "01 / Die Frage",
           title: "Wem gehört „sie“?",
-          body: L + " Ein Wort ist nicht allein bedeutsam. [[Attention]] lässt jedes Token die anderen lesen und gewichten. ",
+          body: " Ein Wort ist nicht allein bedeutsam. [[Attention]] lässt jedes Token die anderen lesen und gewichten. ",
           watch: "Lies den Satz. Welches Wort muss „sie“ auflösen? Rate, bevor du klickst.",
           demoState: { query: 5, head: "coreference", showArcs: false, showBudget: false },
           context: "Ein statisches Embedding gibt jedem „sie“ denselben Vektor. Attention macht ihn kontextabhängig.",
           deep: "Query, Key und Value sind drei gelernte Projektionen. Der Query fragt, der Key antwortet, der Value reist.",
           boxes: [box("att-1", "Technik", "Warum drei Vektoren?", "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen.")],
           cues: [
-            { label: "Koreferenz", title: "Ein Kopf liest zurück", text: L + " Der Kopf verbindet das Pronomen mit dem Namen. Die Bögen sind keine Erklärung, sondern ein Routing-Signal. ", state: { query: 5, head: "coreference", showArcs: true, showBudget: false } },
-            { label: "Budget", title: "Aufmerksamkeit ist zero-sum", text: L + " Jede Zeile hat genau 1,00 zu vergeben. Mehr für ein Token heißt weniger für alle anderen. ", state: { query: 5, head: "coreference", showArcs: true, showBudget: true } },
-            { label: "Syntax", title: "Ein anderer Kopf, eine andere Frage", text: L + " Wechsle den Kopf. Derselbe Satz sieht plötzlich anders aus, weil ein anderer Aspekt gelernt wurde. ", state: { query: 5, head: "syntax", showArcs: true, showBudget: true } }
+            { label: "Koreferenz", title: "Ein Kopf liest zurück", text: " Der Kopf verbindet das Pronomen mit dem Namen. Die Bögen sind keine Erklärung, sondern ein Routing-Signal. ", state: { query: 5, head: "coreference", showArcs: true, showBudget: false } },
+            { label: "Budget", title: "Aufmerksamkeit ist zero-sum", text: " Jede Zeile hat genau 1,00 zu vergeben. Mehr für ein Token heißt weniger für alle anderen. ", state: { query: 5, head: "coreference", showArcs: true, showBudget: true } },
+            { label: "Syntax", title: "Ein anderer Kopf, eine andere Frage", text: " Wechsle den Kopf. Derselbe Satz sieht plötzlich anders aus, weil ein anderer Aspekt gelernt wurde. ", state: { query: 5, head: "syntax", showArcs: true, showBudget: true } }
           ]
         },
         {
           kicker: "02 / Der Blick",
           title: "Ein Kopf liest zurück",
-          body: L + " Klicke auf „sie“. Die Bögen zeigen, wohin der Query schaut. ",
+          body: " Klicke auf „sie“. Die Bögen zeigen, wohin der Query schaut. ",
           watch: "Klicke auf „sie“ und dann auf „Maria“. Was passiert mit dem Budget?",
           demoState: { query: 5, head: "coreference", showArcs: true, showBudget: false },
           context: "Die Gewichte einer Zeile summieren zu 1. Mehr für ein Token heißt weniger für alle anderen.",
@@ -435,7 +437,7 @@ button{color:inherit}
         {
           kicker: "03 / Das Budget",
           title: "Aufmerksamkeit ist zero-sum",
-          body: L + " Jede Zeile hat genau 1,00 zu vergeben. Das ist die wichtigste Zahl der Seite. ",
+          body: " Jede Zeile hat genau 1,00 zu vergeben. Das ist die wichtigste Zahl der Seite. ",
           watch: "Beobachte den Balken unten. Wenn ein Token mehr bekommt, verliert jedes andere.",
           demoState: { query: 5, head: "coreference", showArcs: true, showBudget: true },
           context: "Mehrere Heads haben getrennte Budgets. Sie konkurrieren nicht miteinander, nur innerhalb eines Heads.",
@@ -445,7 +447,7 @@ button{color:inherit}
         {
           kicker: "04 / Die Grenze",
           title: "Die Karte ist keine Erklärung",
-          body: L + " Attention zeigt, wohin Information geroutet wurde. Sie zeigt nicht, was das FFN damit tut. ",
+          body: " Attention zeigt, wohin Information geroutet wurde. Sie zeigt nicht, was das FFN damit tut. ",
           watch: "Vergleiche die Heads. Welcher Zusammenhang wird sichtbar, welcher nicht?",
           demoState: { query: 5, head: "syntax", showArcs: true, showBudget: true },
           context: "Attention-Gewichte sind kein Geständnis. Sie sind ein Routing-Signal auf einer Schicht.",
@@ -466,23 +468,23 @@ button{color:inherit}
         {
           kicker: "01 / Der Stream",
           title: "Ein Vektor, viele Hände",
-          body: L + " Der [[Residual Stream]] ist der laufende Vektor jedes Tokens. Jede Schicht liest ihn und schreibt ein Update. ",
+          body: " Der [[Residual Stream]] ist der laufende Vektor jedes Tokens. Jede Schicht liest ihn und schreibt ein Update. ",
           watch: "Beobachte den Balken. Wird der Vektor ersetzt oder addiert?",
           demoState: { layer: 0, mode: "residual" },
           context: "Nichts wird überschrieben. Deshalb kann eine späte Schicht noch die ursprüngliche Bedeutung sehen.",
           deep: "Die Addition gibt dem Gradienten einen kurzen Pfad zurück. Ohne Residualverbindung müsste jede Schicht die gesamte Information neu schreiben.",
           boxes: [box("tr-1", "Mathematik", "Warum Addition?", "x ← x + f(x). Die Identität bleibt erhalten; die Schicht lernt nur die Änderung. Das macht tiefe Stapel trainierbar.")],
           cues: [
-            { label: "Layer 0", title: "Der Stream beginnt", text: L + " Am Anfang ist der Vektor nur ein Token plus Position. Noch hat keine Schicht etwas hinzugefügt. ", state: { layer: 0, mode: "residual" } },
-            { label: "Layer 2", title: "Attention schreibt", text: L + " Die ersten Blöcke mischen Kontext in den Vektor. Der Stream wird reicher, ohne dass etwas überschrieben wird. ", state: { layer: 2, mode: "lens" } },
-            { label: "Layer 4", title: "Die Antwort wird sichtbar", text: L + " Die Logit-Linse zeigt, wie sich die Wahrscheinlichkeiten verschieben. Früh ist die Antwort unscharf. ", state: { layer: 4, mode: "lens" } },
-            { label: "Layer 6", title: "Die Ausgabe", text: L + " Am Ende steht eine Verteilung. Der Streaming-Pfad ist zu Ende, die Wahl beginnt. ", state: { layer: 6, mode: "lens" } }
+            { label: "Layer 0", title: "Der Stream beginnt", text: " Am Anfang ist der Vektor nur ein Token plus Position. Noch hat keine Schicht etwas hinzugefügt. ", state: { layer: 0, mode: "residual" } },
+            { label: "Layer 2", title: "Attention schreibt", text: " Die ersten Blöcke mischen Kontext in den Vektor. Der Stream wird reicher, ohne dass etwas überschrieben wird. ", state: { layer: 2, mode: "lens" } },
+            { label: "Layer 4", title: "Die Antwort wird sichtbar", text: " Die Logit-Linse zeigt, wie sich die Wahrscheinlichkeiten verschieben. Früh ist die Antwort unscharf. ", state: { layer: 4, mode: "lens" } },
+            { label: "Layer 6", title: "Die Ausgabe", text: " Am Ende steht eine Verteilung. Der Streaming-Pfad ist zu Ende, die Wahl beginnt. ", state: { layer: 6, mode: "lens" } }
           ]
         },
         {
           kicker: "02 / Die Updates",
           title: "Attention und FFN schreiben",
-          body: L + " Attention mischt Information zwischen Positionen. Das FFN rechnet innerhalb eines Tokens. ",
+          body: " Attention mischt Information zwischen Positionen. Das FFN rechnet innerhalb eines Tokens. ",
           watch: "Klicke die Blöcke durch. Welcher Block ändert den Vektor stärker?",
           demoState: { layer: 2, mode: "residual" },
           context: "Attention entscheidet, was gelesen wird. Das FFN entscheidet, was damit gerechnet wird.",
@@ -492,7 +494,7 @@ button{color:inherit}
         {
           kicker: "03 / Die Linse",
           title: "Die Antwort entsteht schrittweise",
-          body: L + " Die Logit-Linse liest den Stream in jeder Schicht. Früh ist die Antwort unscharf, spät konzentriert. ",
+          body: " Die Logit-Linse liest den Stream in jeder Schicht. Früh ist die Antwort unscharf, spät konzentriert. ",
           watch: "Bewege den Layer-Regler. Ab wann wird „Paris“ wahrscheinlich?",
           demoState: { layer: 4, mode: "lens" },
           context: "Die Zwischenstände sind keine fertigen Antworten. Sie sind lesbare Projektionen eines Zwischenzustands.",
@@ -502,7 +504,7 @@ button{color:inherit}
         {
           kicker: "04 / Die Grenze",
           title: "Kein Stop-Button",
-          body: L + " Das Modell stoppt, weil EOS wahrscheinlich wird. Es gibt keinen separaten Detektor. ",
+          body: " Das Modell stoppt, weil EOS wahrscheinlich wird. Es gibt keinen separaten Detektor. ",
           watch: "Beobachte die Verteilung am Ausgang. Was bedeutet es, wenn EOS gewinnt?",
           demoState: { layer: 6, mode: "lens" },
           context: "EOS ist ein normales Vokabular-Token. Die Verteilung lernt, wann ein natürlicher Schluss erreicht ist.",
@@ -523,23 +525,23 @@ button{color:inherit}
         {
           kicker: "01 / Das Bild",
           title: "Ein Bild ist eine Tabelle",
-          body: L + " Ein Bild ist ein Gitter aus Zahlen. Ein [[Kernel]] ist ein kleines Fenster gelernter Gewichte. ",
+          body: " Ein Bild ist ein Gitter aus Zahlen. Ein [[Kernel]] ist ein kleines Fenster gelernter Gewichte. ",
           watch: "Fahre über das Bild. Welche Zahlen stehen unter dem Fenster?",
           demoState: { mode: "pixels" },
           context: "Das Netz bekommt kein Bild, sondern eine Matrix aus Helligkeiten oder Farbvektoren.",
           deep: "Ein RGB-Bild ist ein Tensor der Form Höhe × Breite × 3. Ein Batch fügt eine vierte Dimension hinzu.",
           boxes: [box("cv-1", "Mathematik", "Was ist eine Faltung?", "Ein Kernel gleitet über das Bild. An jeder Position werden die neun Pixel mit den neun Gewichten multipliziert und summiert.")],
           cues: [
-            { label: "Pixel", title: "Das Bild als Tabelle", text: L + " Jede Zelle ist ein Zahlenvektor. Das Netz bekommt kein Bild, sondern eine Matrix. ", state: { mode: "pixels" } },
-            { label: "Kernel", title: "Ein Muster, überall", text: L + " Derselbe Kernel gleitet über das Bild. Ein Muster wird einmal gelernt und überall angewendet. ", state: { mode: "kernel", kernel: "edge" } },
-            { label: "Feature-Map", title: "Was der Filter sieht", text: L + " Die Feature-Map zeigt, wo das Muster vorkommt. Sie ist das Ergebnis der Faltung. ", state: { mode: "feature", kernel: "edge" } },
-            { label: "Hierarchie", title: "Kanten werden Objekte", text: L + " Tiefe stapelt Filter. Aus Kanten werden Teile, aus Teilen Objekte. ", state: { mode: "hierarchy", kernel: "sharpen" } }
+            { label: "Pixel", title: "Das Bild als Tabelle", text: " Jede Zelle ist ein Zahlenvektor. Das Netz bekommt kein Bild, sondern eine Matrix. ", state: { mode: "pixels" } },
+            { label: "Kernel", title: "Ein Muster, überall", text: " Derselbe Kernel gleitet über das Bild. Ein Muster wird einmal gelernt und überall angewendet. ", state: { mode: "kernel", kernel: "edge" } },
+            { label: "Feature-Map", title: "Was der Filter sieht", text: " Die Feature-Map zeigt, wo das Muster vorkommt. Sie ist das Ergebnis der Faltung. ", state: { mode: "feature", kernel: "edge" } },
+            { label: "Hierarchie", title: "Kanten werden Objekte", text: " Tiefe stapelt Filter. Aus Kanten werden Teile, aus Teilen Objekte. ", state: { mode: "hierarchy", kernel: "sharpen" } }
           ]
         },
         {
           kicker: "02 / Der Filter",
           title: "Ein Muster, überall",
-          body: L + " Derselbe Kernel wird an jeder Position wiederverwendet. Das ist die eingebaute Annahme: Nähe zählt. ",
+          body: " Derselbe Kernel wird an jeder Position wiederverwendet. Das ist die eingebaute Annahme: Nähe zählt. ",
           watch: "Wechsle den Kernel. Welcher reagiert auf Kanten, welcher auf Flächen?",
           demoState: { mode: "kernel", kernel: "edge" },
           context: "Geteilte Gewichte sparen Parameter. Ein Muster wird einmal gelernt und überall angewendet.",
@@ -549,7 +551,7 @@ button{color:inherit}
         {
           kicker: "03 / Die Feature-Map",
           title: "Was der Filter sieht",
-          body: L + " Die Feature-Map ist das Ergebnis der Faltung. Sie zeigt, wo das Muster im Bild vorkommt. ",
+          body: " Die Feature-Map ist das Ergebnis der Faltung. Sie zeigt, wo das Muster im Bild vorkommt. ",
           watch: "Scanne das Bild. Wo leuchtet die Feature-Map?",
           demoState: { mode: "feature", kernel: "edge" },
           context: "Frühe Schichten sehen Kanten und Texturen. Spätere Schichten kombinieren sie zu Teilen und Objekten.",
@@ -559,7 +561,7 @@ button{color:inherit}
         {
           kicker: "04 / Die Hierarchie",
           title: "Kanten werden Objekte",
-          body: L + " Tiefe stapelt Filter. Aus Kanten werden Teile, aus Teilen Objekte. ",
+          body: " Tiefe stapelt Filter. Aus Kanten werden Teile, aus Teilen Objekte. ",
           watch: "Öffne die Tiefe. Welche Stufe würdest du einem Kind zeigen?",
           demoState: { mode: "hierarchy", kernel: "sharpen" },
           context: "Die Hierarchie ist keine gespeicherte Katze. Sie ist eine gelernte Komposition von Merkmalen.",
@@ -580,23 +582,23 @@ button{color:inherit}
         {
           kicker: "01 / Die Verteilung",
           title: "Das Modell liefert Möglichkeiten",
-          body: L + " Das Modell endet mit einer Wahrscheinlichkeit für jedes Token. Decoding wählt eines aus. ",
+          body: " Das Modell endet mit einer Wahrscheinlichkeit für jedes Token. Decoding wählt eines aus. ",
           watch: "Beobachte die Balken. Welches Token hat die größte Masse?",
           demoState: { prompt: "story", temp: 0.9, topP: 1.0, filter: "topp" },
           context: "Eine hohe Wahrscheinlichkeit ist keine Garantie für Wahrheit. Sie ist eine Aussage über den Trainingskorpus.",
           deep: "Logits sind unnormalisierte Scores. [[Softmax]] macht daraus eine Verteilung; Temperatur skaliert die Logits vorher.",
           boxes: [box("sa-1", "Mathematik", "Was macht Temperatur?", "Sie teilt die Logits vor dem Softmax. T < 1 schärft, T > 1 flacht ab. Bei T → 0 wird daraus Greedy.")],
           cues: [
-            { label: "Verteilung", title: "Das Modell liefert Möglichkeiten", text: L + " Eine hohe Wahrscheinlichkeit ist keine Garantie. Sie ist eine Aussage über den Trainingskorpus. ", state: { prompt: "story", temp: 0.9, topP: 1.0, filter: "topp" } },
-            { label: "Temperatur", title: "Die Schärfe", text: L + " Temperatur verändert nicht das Wissen. Sie verändert, wie breit der vorhandene Raum erkundet wird. ", state: { prompt: "story", temp: 1.6, topP: 1.0, filter: "topp" } },
-            { label: "Top-p", title: "Der Schnitt", text: L + " Top-p behält die kleinste Menge, die zusammen p erreicht. Der Pool atmet mit der Konfidenz. ", state: { prompt: "story", temp: 0.9, topP: 0.55, filter: "topp" } },
-            { label: "Fakten", title: "Eine andere Verteilung", text: L + " Bei einer Faktenfrage ist die Verteilung schärfer. Derselbe Decoder, eine andere Landschaft. ", state: { prompt: "fact", temp: 0.2, topP: 0.9, filter: "topp" } }
+            { label: "Verteilung", title: "Das Modell liefert Möglichkeiten", text: " Eine hohe Wahrscheinlichkeit ist keine Garantie. Sie ist eine Aussage über den Trainingskorpus. ", state: { prompt: "story", temp: 0.9, topP: 1.0, filter: "topp" } },
+            { label: "Temperatur", title: "Die Schärfe", text: " Temperatur verändert nicht das Wissen. Sie verändert, wie breit der vorhandene Raum erkundet wird. ", state: { prompt: "story", temp: 1.6, topP: 1.0, filter: "topp" } },
+            { label: "Top-p", title: "Der Schnitt", text: " Top-p behält die kleinste Menge, die zusammen p erreicht. Der Pool atmet mit der Konfidenz. ", state: { prompt: "story", temp: 0.9, topP: 0.55, filter: "topp" } },
+            { label: "Fakten", title: "Eine andere Verteilung", text: " Bei einer Faktenfrage ist die Verteilung schärfer. Derselbe Decoder, eine andere Landschaft. ", state: { prompt: "fact", temp: 0.2, topP: 0.9, filter: "topp" } }
           ]
         },
         {
           kicker: "02 / Die Schärfe",
           title: "Temperatur ist ein Regler",
-          body: L + " Niedrige Temperatur macht den wahrscheinlichsten Token dominanter. Hohe Temperatur öffnet den Tail. ",
+          body: " Niedrige Temperatur macht den wahrscheinlichsten Token dominanter. Hohe Temperatur öffnet den Tail. ",
           watch: "Ziehe die Temperatur. Wie verändert sich die Form der Verteilung?",
           demoState: { prompt: "story", temp: 1.6, topP: 1.0, filter: "topp" },
           context: "Temperatur ändert nicht das Wissen des Modells. Sie ändert, wie breit es den vorhandenen Raum erkundet.",
@@ -606,7 +608,7 @@ button{color:inherit}
         {
           kicker: "03 / Der Schnitt",
           title: "Top-p schneidet den Tail",
-          body: L + " Top-p behält die kleinste Menge, die zusammen p erreicht. Der Kandidatenpool atmet mit der Konfidenz. ",
+          body: " Top-p behält die kleinste Menge, die zusammen p erreicht. Der Kandidatenpool atmet mit der Konfidenz. ",
           watch: "Senke Top-p. Welche Tokens verschwinden zuerst?",
           demoState: { prompt: "story", temp: 0.9, topP: 0.55, filter: "topp" },
           context: "Top-k ist eine feste Anzahl, Top-p eine feste Masse. Min-p skaliert mit dem Top-Token.",
@@ -616,7 +618,7 @@ button{color:inherit}
         {
           kicker: "04 / Die Entscheidung",
           title: "Ziehen ist eine Policy",
-          body: L + " Das Modell liefert die Verteilung. Der Decoder entscheidet, wie daraus eine Sequenz wird. ",
+          body: " Das Modell liefert die Verteilung. Der Decoder entscheidet, wie daraus eine Sequenz wird. ",
           watch: "Klicke „Ziehen“. Welches Token kommt? Wie hättest du entschieden?",
           demoState: { prompt: "fact", temp: 0.2, topP: 0.9, filter: "topp" },
           context: "Ein anderer früher Token schickt den Text auf einen anderen Pfad. Decoding ist eine politische Entscheidung.",
@@ -637,22 +639,22 @@ button{color:inherit}
         {
           kicker: "01 / Zwei Regler",
           title: "Zwei Gewichte, eine Fläche",
-          body: L + " Ein Modell mit zwei Gewichten hat einen zweidimensionalen Parameterraum. Jede Wahl von a und b ist ein Punkt; der [[Loss]] ist die Höhe. ",
+          body: " Ein Modell mit zwei Gewichten hat einen zweidimensionalen Parameterraum. Jede Wahl von a und b ist ein Punkt; der [[Loss]] ist die Höhe. ",
           watch: "Beobachte die Kontur. Wo liegt das Tal? Wo liegt der Ball?",
           demoState: { mode: "2d" },
           context: "Der Loss ist kein einzelner Wert, sondern eine Funktion über alle Parameter. Training ist die Suche nach einem guten Punkt.",
           deep: "Die Landschaft ist selten eine runde Schale. Sie hat Täler, Plateaus und Sattelpunkte; deshalb zählen Initialisierung, Lernrate und Optimizer.",
           boxes: [box("hy-1", "Mathematik", "Warum ist die Landschaft krumm?", "Weil der Loss aus vielen nichtlinearen Schichten zusammengesetzt ist. Zwei Gewichte können gemeinsam wirken; die Fläche ist dann gekrümmt.")],
           cues: [
-            { label: "2D", title: "Zwei Regler", text: L + " Zwei Gewichte, eine Karte. Der Ball liegt auf einer Fläche, die du von oben siehst. ", state: { mode: "2d" } },
-            { label: "3D", title: "Die Landschaft hebt sich", text: L + " Dieselben Punkte, eine Dimension mehr. Jetzt siehst du die Höhe des Loss. ", state: { mode: "3d" } },
-            { label: "4D", title: "Ein Schnitt durch vier Dimensionen", text: L + " Mit c wird der Raum vierdimensional. Wir zeichnen einen Schnitt und färben ihn nach c. ", state: { mode: "4d", c: 0.35 } }
+            { label: "2D", title: "Zwei Regler", text: " Zwei Gewichte, eine Karte. Der Ball liegt auf einer Fläche, die du von oben siehst. ", state: { mode: "2d" } },
+            { label: "3D", title: "Die Landschaft hebt sich", text: " Dieselben Punkte, eine Dimension mehr. Jetzt siehst du die Höhe des Loss. ", state: { mode: "3d" } },
+            { label: "4D", title: "Ein Schnitt durch vier Dimensionen", text: " Mit c wird der Raum vierdimensional. Wir zeichnen einen Schnitt und färben ihn nach c. ", state: { mode: "4d", c: 0.35 } }
           ]
         },
         {
           kicker: "02 / Die Höhe",
           title: "Der Raum hebt sich",
-          body: L + " Dieselben Punkte, eine Dimension mehr: Aus der Karte wird eine Landschaft. Nichts an den Daten hat sich geändert, nur die Darstellung. ",
+          body: " Dieselben Punkte, eine Dimension mehr: Aus der Karte wird eine Landschaft. Nichts an den Daten hat sich geändert, nur die Darstellung. ",
           watch: "Drehe die Fläche. Wo ist der Gradient steil, wo flach?",
           demoState: { mode: "3d" },
           context: "Die dritte Achse ist der Loss. Der Ball rollt nicht auf der Karte, er rollt auf der Fläche.",
@@ -662,7 +664,7 @@ button{color:inherit}
         {
           kicker: "03 / Der dritte Regler",
           title: "Ein Schnitt durch vier Dimensionen",
-          body: L + " Mit einem dritten Parameter c wird der Raum vierdimensional. Wir zeichnen einen dreidimensionalen Schnitt und färben ihn nach c. ",
+          body: " Mit einem dritten Parameter c wird der Raum vierdimensional. Wir zeichnen einen dreidimensionalen Schnitt und färben ihn nach c. ",
           watch: "Ziehe c. Wie verändert sich die Form? Was bleibt gleich?",
           demoState: { mode: "4d", c: 0.35 },
           context: "Ein 4D-Schnitt ist eine ehrliche Projektion: Du siehst nicht alle vier Achsen, sondern eine Fläche plus eine Farbe.",
@@ -672,7 +674,7 @@ button{color:inherit}
         {
           kicker: "04 / Der Weg",
           title: "Der Ball rollt",
-          body: L + " Der Gradient zeigt die Richtung. Der Ball folgt ihr, Schritt für Schritt. ",
+          body: " Der Gradient zeigt die Richtung. Der Ball folgt ihr, Schritt für Schritt. ",
           watch: "Starte das Training. Wo bleibt der Ball hängen? Was sagt dir das über die Lernrate?",
           demoState: { mode: "3d" },
           context: "Ein guter Lauf ist kein Beweis für Generalisierung. Die Landschaft ist nur ein Teil der Geschichte.",

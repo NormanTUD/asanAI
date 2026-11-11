@@ -1280,6 +1280,46 @@ function getPositionColor(index, total, format = 'rgb') {
 	return `rgb(${r}, ${g}, ${b})`;
 }
 
+function renderColorSample() {
+	const host = document.getElementById('tm-color-sample');
+	if (!host) return;
+	const input = document.getElementById('transformer-training-data');
+	const typeEl = document.getElementById('transformer-tokenizer-type');
+	const type = typeEl ? typeEl.value : 'regex';
+	const tokens = tokenizeTextCore(input ? input.value : '', type).filter(function (token) {
+		return /\S/.test(token);
+	});
+	host.innerHTML = '';
+	if (!tokens.length) {
+		host.textContent = (window.TM && TM.lang && TM.lang() === 'de')
+			? 'Der Farbcode folgt dem Satz im Trainingsfeld. Tippe oben einen Satz ein.'
+			: 'The colour scale follows the sentence in the training box. Type a sentence above.';
+		return;
+	}
+	tokens.forEach(function (token, index) {
+		const chip = document.createElement('span');
+		chip.className = 'tm-color-chip';
+		chip.style.background = getPositionColor(index, tokens.length, 'rgb');
+		chip.textContent = displayToken(token);
+		host.appendChild(chip);
+	});
+}
+
+function initColorSample() {
+	renderColorSample();
+	const input = document.getElementById('transformer-training-data');
+	if (input && !input._tmColorSampleBound) {
+		input._tmColorSampleBound = true;
+		input.addEventListener('input', renderColorSample);
+	}
+	if (!window.__tmColorSampleListener) {
+		window.__tmColorSampleListener = true;
+		document.addEventListener('change', function (event) {
+			if (event.target && event.target.id === 'transformer-tokenizer-type') renderColorSample();
+		});
+	}
+}
+
 function drawTrainingPlaceholder() {
 	// The plot box is always mounted; draw a message instead of leaving it
 	// empty, so the panel reads as "not started yet" rather than "broken".
@@ -8733,8 +8773,10 @@ function setLayerCardsOpen(container, open) {
 	_layerCards(container).forEach(function (card) {
 		const body = card.querySelector('.tm-layer-body');
 		const head = card.querySelector('.tm-layer-head');
+		const preview = card.querySelector('.tm-layer-preview');
 		if (body) body.hidden = !open;
 		if (head) head.setAttribute('aria-expanded', String(open));
+		if (preview) preview.setAttribute('aria-expanded', String(open));
 		card.classList.toggle('is-open', open);
 		if (!open) card.querySelectorAll('.tm-layer-subbox').forEach(function (sub) { sub.open = false; });
 	});
@@ -8780,12 +8822,16 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	head.type = 'button';
 	head.className = 'tm-layer-head';
 	head.setAttribute('aria-expanded', 'false');
-	head.innerHTML = `<span class="tm-layer-num">Layer ${layerIndex + 1}</span><span class="tm-layer-sub">${isDe ? 'Attention mischt, das FFN schreibt, der Residual-Stream addiert.' : 'Attention mixes, the FFN writes, the residual stream adds.'}</span><span class="tm-layer-chevron" aria-hidden="true">⌄</span>`;
+	head.innerHTML = `<span class="tm-layer-num">Layer ${layerIndex + 1}</span><span class="tm-layer-sub">Signal</span><span class="tm-layer-chevron" aria-hidden="true">⌄</span>`;
 	card.appendChild(head);
 
 	const preview = document.createElement('div');
 	preview.className = 'tm-layer-preview';
-	preview.innerHTML = `<canvas id="${prefix}-signal-canvas" data-layer-idx="${layerIndex}" class="layer-signal-canvas" aria-label="${isDe ? 'Signal und Transformation dieser Schicht, pro Token und Dimension' : 'Signal and transformation in this layer, per token and dimension'}"></canvas>`;
+	preview.setAttribute('role', 'button');
+	preview.tabIndex = 0;
+	preview.setAttribute('aria-expanded', 'false');
+	preview.innerHTML = `<canvas id="${prefix}-signal-canvas" data-layer-idx="${layerIndex}" class="layer-signal-canvas" aria-label="${isDe ? 'Signal und Transformation dieser Schicht, pro Token und Dimension' : 'Signal and transformation in this layer, per token and dimension'}"></canvas>
+	<p class="tm-layer-minimal-text">${isDe ? 'Diese Schicht verschiebt jedes Token so, dass es im Kontext steht; danach wählt ein kleines neuronales Netz die Richtung des nächsten Schritts im Raum.' : 'This layer moves every token into its context; a small neural network then chooses the direction of the next step in the space.'}</p>`;
 	card.appendChild(preview);
 
 	const migration = layerIndex > 0 ? `
@@ -8930,12 +8976,23 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	</div>`;
 	card.appendChild(body);
 
-	head.addEventListener('click', function () {
+	function toggleCard() {
 		const open = body.hidden;
 		body.hidden = !open;
 		head.setAttribute('aria-expanded', String(open));
+		preview.setAttribute('aria-expanded', String(open));
 		card.classList.toggle('is-open', open);
 		updateLayerCollapseAllLabel(container);
+	}
+	head.addEventListener('click', toggleCard);
+	preview.addEventListener('click', function (event) {
+		if (event.target && event.target.closest('a, button, input, select, textarea, summary')) return;
+		toggleCard();
+	});
+	preview.addEventListener('keydown', function (event) {
+		if (event.key !== 'Enter' && event.key !== ' ') return;
+		event.preventDefault();
+		toggleCard();
 	});
 	body.querySelectorAll('.tm-layer-subbox').forEach(function (sub) {
 		sub.addEventListener('toggle', function () {
@@ -9231,6 +9288,7 @@ async function loadTransformerModule () {
 
 	_tmInitStaticPlotLoading();
 	observer_vector_math();
+	initColorSample();
 
 	drawTrainingPlaceholder();
 	updateTrainButtonState();

@@ -24,10 +24,6 @@ https://nlp.seas.harvard.edu/2018/04/03/attention.html
 https://arxiv.org/html/2505.11611v1
 -->
 <div id="transformer_site">
-<div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 54">
-	The hidden harmony is better than the obvious one
-</div>
-
 <div class="md">
 This chapter assembles the parts you have met one at a time into one machine and runs it. Do not expect a frontier model: the goal is not useful text, but training you can see and follow.
 
@@ -98,11 +94,9 @@ The steps below are the steps from the intuition chapter, now driven by the real
 
 The colors are a reading aid, not a model input. They make the order of tokens visible in the equations and plots, but they are not used in any calculation; positional information enters the model through positional embeddings. The same blue-to-green scale colours the tokenizer chips, the position markers in the wave plot, and the token groups in the positional table, so a word keeps its colour across the steps. The label on each token chip is still its vocabulary ID.
 
-<div>
-$$ \underbrace{ \color[RGB]{59,130,246}\text{“the} \ \color[RGB]{55,135,235}\text{way} \ \color[RGB]{51,140,225}\text{up} \ \color[RGB]{47,145,214}\text{and} \ \color[RGB]{43,150,203}\text{the} \ \color[RGB]{39,155,193}\text{way} \ \color[RGB]{36,160,182}\text{down} \ \color[RGB]{32,165,172}\text{are} \ \color[RGB]{28,170,161}\text{one} \ \color[RGB]{24,175,150}\text{and} \ \color[RGB]{20,180,140}\text{the} \ \color[RGB]{16,185,129}\text{same”} }_{\text{first word blue, last word green}} $$
-</div>
+The sample below is the sentence in the training box, live. Change the text and watch the scale follow the new word order:
 
-(\cite[Heraclitus, frag. B60]{heraclitus500fragments})
+<div id="tm-color-sample" class="tm-color-sample" aria-live="polite"></div>
 </div>
 
 <div class="tm-step-grid lg-widescroll" id="transformer-step-visuals">
@@ -1071,6 +1065,12 @@ render_gem_tabs($transformercodetabs, "transformer");
 
 <div class="md">
 `GPT.forward` in the code tabs chains the embedding, the `n_layer` blocks, the final `LayerNorm`, and the `lm_head` projection, and returns the logits — a score for every token in the vocabulary. Run any of the files and it walks a two-token prompt through the machine and prints the logits and the predicted next token. The interactive demo above skips the final norm and ties the output to the token embeddings; the modern-block note explains why that is the simplified path.
+</div>
+
+<div class="md" id="layer-stack-intro">
+## Every layer makes the same move
+
+Read the sentence through the stack. Each layer **recontextualizes** every token: attention lets it read the other tokens, so its vector moves toward the meaning of its context. A small neural network then chooses a direction for that token's next step in the space. The signal below shows, layer by layer, how much the vector changes for each token and dimension. Click a layer's signal to open its attention, feed-forward and feature-migration details; the arrow plots and the logit lens sit one level deeper.
 </div>
 
 <div id="ffn-equations-container"></div>

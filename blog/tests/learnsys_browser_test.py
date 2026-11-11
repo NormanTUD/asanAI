@@ -322,6 +322,155 @@ def check_focus_and_inline(driver, results):
     results.check("no right glossary panel", not js(driver, "!!document.querySelector('#ls-panel')"))
 
 
+def check_day_back(driver, results):
+    js(driver, "LearnSys.go(2, 0)")
+    time.sleep(0.7)
+    results.check(
+        "back test starts on day 3",
+        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day')") == "2",
+    )
+    js(driver, "document.querySelector('[data-day-nav=\"-1\"]').click()")
+    time.sleep(0.7)
+    results.check(
+        "bottom rail goes back one day",
+        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day')") == "1",
+    )
+    js(driver, "document.querySelector('[data-day-nav=\"-1\"]').click()")
+    time.sleep(0.7)
+    results.check(
+        "bottom rail goes back to the first day",
+        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day')") == "0",
+    )
+    results.check(
+        "back is disabled on the first day",
+        js(driver, "document.querySelector('[data-day-nav=\"-1\"]').disabled"),
+    )
+    js(driver, "document.querySelector('[data-day-nav=\"1\"]').click()")
+    time.sleep(0.6)
+    results.check(
+        "forward re-enables back",
+        not js(driver, "document.querySelector('[data-day-nav=\"-1\"]').disabled"),
+    )
+
+
+def check_glossary(driver, results):
+    js(driver, "LearnSys.go(0, 0)")
+    time.sleep(0.6)
+    js(driver, "(function(){var t=document.querySelector('.ls-term');t.dispatchEvent(new MouseEvent('mouseenter'));return true;})()")
+    time.sleep(0.25)
+    results.check("term hover shows the tip", not js(driver, "document.querySelector('#ls-tip').hidden"))
+    results.check(
+        "tip invites a click",
+        "Klicken für ein Beispiel" in js(driver, "document.querySelector('#ls-tip').textContent"),
+    )
+    js(driver, "document.querySelector('#ls-tip').click()")
+    time.sleep(0.3)
+    results.check("clicking the tip opens the inline note", not js(driver, "document.querySelector('.ls-term-note').hidden"))
+    results.check("clicking the tip closes the tooltip", js(driver, "document.querySelector('#ls-tip').hidden"))
+    js(driver, "document.querySelector('.ls-term').click()")
+    time.sleep(0.2)
+    results.check("clicking the term toggles the note", js(driver, "document.querySelector('.ls-term-note').hidden"))
+
+    js(driver, "(function(){var t=document.querySelector('.ls-term');t.dispatchEvent(new MouseEvent('mouseenter'));return true;})()")
+    time.sleep(0.25)
+    results.check("tip is back before navigation", not js(driver, "document.querySelector('#ls-tip').hidden"))
+    js(driver, "document.querySelectorAll('.ls-day')[1].click()")
+    time.sleep(0.7)
+    results.check("navigation removes a stale tooltip", js(driver, "document.querySelector('#ls-tip').hidden"))
+
+
+def check_personas(driver, results):
+    # The hurried reader: compact depth, but the door to detail remains.
+    js(driver, "document.querySelector('[data-depth=\"short\"]').click()")
+    js(driver, "LearnSys.go(0, 0)")
+    time.sleep(0.6)
+    results.check("skim starts with the depth door closed", not js(driver, "document.querySelector('.ls-deepbox--root').open"))
+    results.check(
+        "skim still sees the depth door",
+        js(driver, "!!document.querySelector('.ls-deepbox--root > summary')"),
+    )
+    results.check(
+        "skim sees a short body",
+        len(js(driver, "document.querySelector('#ls-body').innerText").strip()) > 40,
+    )
+    results.check("skim sees all seven days", js(driver, "document.querySelectorAll('.ls-day').length") == 7)
+    js(driver, "document.querySelector('.ls-deepbox--root > summary').click()")
+    time.sleep(0.2)
+    results.check("skim can open the depth door", js(driver, "document.querySelector('.ls-deepbox--root').open"))
+    results.check(
+        "skim can reach real context",
+        "Kontext" in js(driver, "document.querySelector('#ls-extras').innerText"),
+    )
+
+    # The deep reader: every step, every detail, every formula.
+    js(driver, "document.querySelector('[data-depth=\"deep\"]').click()")
+    time.sleep(0.4)
+    js(driver, "document.querySelector('#ls-all').click()")
+    time.sleep(0.6)
+    results.check(
+        "deep mode opens every detail",
+        js(driver, "document.querySelectorAll('#ls-extras details[open]').length") == js(driver, "document.querySelectorAll('#ls-extras details').length"),
+    )
+
+    bad = []
+    formulas = 0
+    checked = 0
+    for day in range(7):
+        js(driver, f"LearnSys.go({day}, 0)")
+        time.sleep(0.25)
+        steps = int(js(driver, "document.querySelectorAll('.ls-dot').length"))
+        for step in range(steps):
+            js(driver, f"LearnSys.go({day}, {step})")
+            time.sleep(0.18)
+            snap = js(
+                driver,
+                "(function(){var e=document.querySelector('#ls-extras');var b=document.querySelector('#ls-body');"
+                "var ds=[...e.querySelectorAll('details.ls-deepbox')];"
+                "return {count:ds.length, text:e.textContent, body:b.innerText,"
+                "summaries:ds.map(function(d){return d.querySelector('summary').textContent;}),"
+                "contents:ds.map(function(d){var p=d.querySelector('p');return p?p.textContent.trim().length:0;})};})()",
+            )
+            checked += 1
+            if len(snap["body"].strip()) < 25 or snap["count"] < 3:
+                bad.append(f"{day}/{step}")
+            if "Kontext" not in snap["summaries"] or not any("Eine Ebene tiefer" in x for x in snap["summaries"]):
+                bad.append(f"{day}/{step}:context")
+            if "Lorem ipsum" in snap["text"]:
+                bad.append(f"{day}/{step}:lorem")
+            if any(n < 12 for n in snap["contents"]):
+                bad.append(f"{day}/{step}:empty")
+            formulas += sum("Mathematik" in x for x in snap["summaries"])
+    results.check("every step has real depth content", not bad, ", ".join(bad[:4]))
+    results.check("deep walk covers every step", checked >= 20, str(checked))
+    results.check("math details are reachable", formulas > 0, str(formulas))
+
+
+def check_resume(driver, results):
+    js(driver, "LearnSys.go(3, 2)")
+    time.sleep(0.6)
+    js(driver, "document.querySelector('[data-depth=\"deep\"]').click()")
+    js(driver, "document.querySelector('#ls-font-plus').click()")
+    time.sleep(0.4)
+    driver.refresh()
+    wait_ready(driver)
+    results.check(
+        "resume restores the day",
+        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day')") == "3",
+    )
+    results.check(
+        "resume restores the step",
+        js(driver, "document.querySelector('.ls-dot.is-on').getAttribute('data-step')") == "2",
+    )
+    results.check(
+        "resume restores the depth",
+        js(driver, "document.querySelector('[data-depth=\"deep\"]').classList.contains('is-on')"),
+    )
+    results.check(
+        "resume restores the font size",
+        js(driver, "parseFloat(getComputedStyle(document.querySelector('.ls-body')).fontSize)") > 17.5,
+    )
+
+
 def check_mobile(driver, results):
     driver.set_window_size(390, 844)
     time.sleep(0.6)
@@ -364,6 +513,14 @@ def main():
             check_font(driver, results)
             reset_prefs(driver, base)
             check_days(driver, results)
+            reset_prefs(driver, base)
+            check_day_back(driver, results)
+            reset_prefs(driver, base)
+            check_glossary(driver, results)
+            reset_prefs(driver, base)
+            check_personas(driver, results)
+            reset_prefs(driver, base)
+            check_resume(driver, results)
             reset_prefs(driver, base)
             check_spacemorph(driver, results)
             reset_prefs(driver, base)

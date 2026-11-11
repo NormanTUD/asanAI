@@ -2224,7 +2224,7 @@
 		var tokens = tokenList();
 		ctx.clearRect(0, 0, w, h);
 		if (!trace || !tokens.length) {
-			return drawPlaceholder(ctx, w, h, DE() ? "Öffne eine Schicht, um ihr Signal zu sehen." : "Open a layer to see its signal.");
+			return drawPlaceholder(ctx, w, h, DE() ? "Das Signal erscheint nach dem ersten Forward-Pass." : "The signal appears after the first forward pass.");
 		}
 		mode = mode || "attention";
 		var n = tokens.length;
@@ -4056,10 +4056,12 @@
 			if (!body) return;
 			if (!card.getAttribute("data-tm-opened-default")) {
 				card.setAttribute("data-tm-opened-default", "1");
-				body.hidden = false;
+				body.hidden = true;
 				var headBtn = card.querySelector(".tm-layer-head");
-				if (headBtn) headBtn.setAttribute("aria-expanded", "true");
-				card.classList.add("is-open");
+				if (headBtn) headBtn.setAttribute("aria-expanded", "false");
+				var previewBtn = card.querySelector(".tm-layer-preview");
+				if (previewBtn) previewBtn.setAttribute("aria-expanded", "false");
+				card.classList.remove("is-open");
 			}
 			var isDe = DE();
 			var prefix = "unified-layer-" + idx;
@@ -4070,24 +4072,13 @@
 				Array.prototype.slice.call(preview.querySelectorAll(".layer-signal-canvas--ffn")).forEach(function (el) { el.remove(); });
 			}
 			var stack = body.querySelector(".tm-layer-subbox-stack") || body;
-			if (!document.getElementById("tm-pre-layer-signal")) {
-				var layerStack = card.parentNode;
-				var firstCard = layerStack ? layerStack.querySelector(":scope > .tm-layer-card") : null;
-				if (firstCard) {
-					var preWrap = document.createElement("div");
-					preWrap.className = "tm-layer-signal-between tm-layer-signal-before";
-					preWrap.innerHTML = "<div class='tm-signal-between-label'>" + (isDe ? "Residual-Stream vor/nach Schicht 1" : "Residual stream before/after layer 1") + " · " + ((window.__tmLayerTrace && window.__tmLayerTrace[0] && window.__tmLayerTrace[0].tokenStrings) ? window.__tmLayerTrace[0].tokenStrings.length : 0) + (isDe ? " Tokens" : " tokens") + "</div><canvas id='tm-pre-layer-signal' class='layer-signal-canvas' data-layer-idx='0' data-signal-mode='pre'></canvas>";
-					layerStack.insertBefore(preWrap, firstCard);
-				}
-			}
-			if (idx === 0 && firstSignal) {
-				firstSignal.style.display = "none";
-			} else if (firstSignal && firstSignal.parentNode && !firstSignal.closest(".tm-layer-signal-between")) {
-				var sigWrap = document.createElement("div");
-				sigWrap.className = "tm-layer-signal-between tm-layer-signal-after";
-				sigWrap.innerHTML = "<div class='tm-signal-between-label'>" + (isDe ? "Residual-Stream nach Schicht " : "Residual stream after layer ") + (idx + 1) + " · " + ((window.__tmLayerTrace && window.__tmLayerTrace[idx] && window.__tmLayerTrace[idx].tokenStrings) ? window.__tmLayerTrace[idx].tokenStrings.length : 0) + (isDe ? " Tokens" : " tokens") + "</div>";
-				sigWrap.appendChild(firstSignal);
-				card.parentNode.insertBefore(sigWrap, card.nextSibling);
+			if (preview && !preview.querySelector(".tm-layer-minimal-text")) {
+				var minimal = document.createElement("p");
+				minimal.className = "tm-layer-minimal-text";
+				minimal.textContent = isDe
+					? "Diese Schicht verschiebt jedes Token so, dass es im Kontext steht; danach wählt ein kleines neuronales Netz die Richtung des nächsten Schritts im Raum."
+					: "This layer moves every token into its context; a small neural network then chooses the direction of the next step in the space.";
+				preview.appendChild(minimal);
 			}
 			if (window.TransformerSteps && window.TransformerSteps.renderLayerSignal) {
 				Array.prototype.slice.call(document.querySelectorAll(".layer-signal-canvas")).forEach(function (c) {
@@ -4171,8 +4162,6 @@
 				else if (!prelnBlock && normStep && normStep.parentNode !== attentionBody) attentionBody.insertBefore(normStep, headsHost);
 				if (outStep && outStep.parentNode !== attentionBody) attentionBody.appendChild(outStep);
 			}
-			var logitHost = sb.querySelector(".tm-logit-lens-host");
-			if (logitHost && logitHost.parentNode !== stack) stack.appendChild(logitHost);
 			var attentionLead = card.querySelector('.tm-layer-subbox[data-sub="attention"] .tm-level-text');
 			if (attentionLead) {
 				attentionLead.textContent = isDe
@@ -4201,21 +4190,6 @@
 						renderLayerLogitLens(idx);
 					}, 60);
 				});
-			}
-			if (preview) {
-				var migrationDefault = preview.querySelector(".tm-migration-default");
-				if (!migrationDefault) {
-					migrationDefault = document.createElement("div");
-					migrationDefault.className = "tm-migration-default";
-					preview.appendChild(migrationDefault);
-				}
-				while (sb.firstChild) migrationDefault.appendChild(sb.firstChild);
-				if (sub.parentNode) sub.remove();
-				setTimeout(function () {
-					renderLayerTripleResiduals(idx);
-					scheduleLayerFeaturePlot(idx);
-					renderLayerLogitLens(idx);
-				}, 80);
 			}
 			wireRevealHeads(card);
 			wireFFNViewSwitches(card);

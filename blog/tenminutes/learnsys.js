@@ -17,12 +17,12 @@
   var currentDemoDay = null;
   var els = {};
   var tipTimer = 0;
+  var tipTerm = null;
   var cueObserver = null;
   var cueSuppressUntil = 0;
   var cuesArmed = false;
   var ignoreScroll = false;
 
-  var LOREM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. Donec ullamcorper nulla non metus auctor fringilla.";
   var FONT_LEVELS = [
     { id: "s", label: "Klein", body: 15, title: 24, small: 11 },
     { id: "m", label: "Normal", body: 17, title: 28, small: 12 },
@@ -170,7 +170,7 @@
       '</span>';
     }).join("");
   }
-  function loremBlock(text) { return '<p>' + termHTML(text) + '</p>'; }
+  function proseBlock(text) { return '<p>' + termHTML(text) + '</p>'; }
 
   function activeDay() {
     return cfg.days[state.day] || cfg.days[0];
@@ -239,7 +239,7 @@
           '</section>' +
         '</main>' +
         '<footer class="ls-bottom">' +
-          '<div class="ls-day-row"><button type="button" class="ls-day-nav" data-day-nav="-1" aria-label="Vorheriger Tag">‹</button><div class="ls-days" id="ls-days" role="tablist" aria-label="Tage"></div><button type="button" class="ls-day-nav" data-day-nav="1" aria-label="Nächster Tag">›</button></div>' +
+          '<div class="ls-day-row"><button type="button" class="ls-day-nav" data-day-nav="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">←<span class="ls-day-nav-word">Zurück</span></button><div class="ls-days" id="ls-days" role="tablist" aria-label="Tage"></div><button type="button" class="ls-day-nav" data-day-nav="1" aria-label="Nächster Tag" title="Nächster Tag"><span class="ls-day-nav-word">Weiter</span>→</button></div>' +
           '<div class="ls-progress"><div class="ls-progress-bar"><span id="ls-progress-fill"></span></div><div class="ls-steps" id="ls-steps"></div></div>' +
         '</footer>' +
         '<div class="ls-tip" id="ls-tip" role="tooltip" hidden></div>' +
@@ -299,6 +299,7 @@
     save();
   }
   function toggleFocus() {
+    hideTip();
     var on = els.app.classList.toggle("is-demo-focus");
     els.focus.setAttribute("aria-pressed", on ? "true" : "false");
     els.focus.textContent = on ? "Text zeigen" : "Demo groß";
@@ -328,7 +329,10 @@
   }
   function renderDays() {
     var all = cfg.days;
-    els.dayNav.forEach(function (b) { b.disabled = all.length < 2; });
+    els.dayNav.forEach(function (b) {
+      var dir = parseInt(b.getAttribute("data-day-nav"), 10);
+      b.disabled = all.length < 2 || (dir < 0 && state.day <= 0) || (dir > 0 && state.day >= all.length - 1);
+    });
     if (!all.length) {
       els.days.innerHTML = '<div class="ls-empty">Noch keine Tage.</div>';
       return;
@@ -352,26 +356,31 @@
     els.progress.style.width = ((state.step + 1) / d.steps.length * 100).toFixed(1) + "%";
   }
 
-  function depthTree() {
+  function depthTree(s, d) {
+    var ctx = s.context || "";
+    var deep = s.deep || "";
+    var boxes = (s.boxes || []).concat(state.step === 0 ? (d.boxes || []) : []);
+    var count = (ctx ? 1 : 0) + (deep ? 1 : 0) + boxes.length;
+    if (!count) return "";
     var rootOpen = state.depth === "standard" || state.depth === "deep" ? " open" : "";
     var firstOpen = state.depth === "deep" ? " open" : "";
-    return '<div class="ls-depth-tree">' +
+    var html = '<div class="ls-depth-tree">' +
       '<details class="ls-deepbox ls-deepbox--root"' + rootOpen + '>' +
-        '<summary>Tiefer eintauchen <span class="ls-depth-count">3 Fragen</span></summary>' +
-        '<details class="ls-deepbox"' + firstOpen + '>' +
-          '<summary>Kontext (lorem ipsum)</summary>' +
-          '<p>' + LOREM + '</p>' +
-          '<details class="ls-deepbox">' +
-            '<summary>Eine Ebene tiefer</summary>' +
-            '<p>' + LOREM + '</p>' +
-            '<details class="ls-deepbox">' +
-              '<summary>Die letzte Frage</summary>' +
-              '<p>' + LOREM + '</p>' +
-            '</details>' +
-          '</details>' +
-        '</details>' +
-      '</details>' +
-    '</div>';
+        '<summary>Tiefer eintauchen <span class="ls-depth-count">' + count + (count === 1 ? " Frage" : " Fragen") + '</span></summary>';
+    if (ctx) {
+      html += '<details class="ls-deepbox"' + firstOpen + '>' +
+        '<summary>Kontext</summary><p>' + termHTML(ctx) + '</p></details>';
+    }
+    if (deep) {
+      html += '<details class="ls-deepbox">' +
+        '<summary>Eine Ebene tiefer</summary><p>' + termHTML(deep) + '</p></details>';
+    }
+    boxes.forEach(function (b) {
+      html += '<details class="ls-deepbox">' +
+        '<summary>' + esc(b.lens ? b.lens + " · " : "") + esc(b.title || "Detail") + '</summary>' +
+        '<p>' + termHTML(b.body || "") + '</p></details>';
+    });
+    return html + '</details></div>';
   }
   function openDepth() {
     var wasDeep = state.depth === "deep";
@@ -444,10 +453,11 @@
     var s = activeStep();
     els.kicker.textContent = s.kicker || d.kicker;
     els.title.textContent = s.title;
-    els.body.innerHTML = loremBlock(s.body || "");
+    els.body.innerHTML = proseBlock(s.body || "");
     renderCues(s);
-    els.extras.innerHTML = depthTree();
-    els.extras.hidden = false;
+    var depth = depthTree(s, d);
+    els.extras.innerHTML = depth;
+    els.extras.hidden = !depth;
     els.watch.innerHTML = s.watch ? '<b>Beobachte</b> ' + termHTML(s.watch) : "";
     els.watch.hidden = !s.watch;
     bindTerms(els.body);
@@ -500,6 +510,7 @@
   }
 
   function renderAll() {
+    hideTip();
     renderTop();
     renderDays();
     renderSteps();
@@ -686,6 +697,7 @@
     }, 30);
   }
   function go(day, step) {
+    hideTip();
     var oldDay = state.day;
     var oldStep = state.step;
     var oldDemo = cfg.days[oldDay] ? cfg.days[oldDay].demo : null;
@@ -731,6 +743,7 @@
   }
 
   function setTrack(id) {
+    hideTip();
     var oldDay = state.day;
     var oldDemo = cfg.days[oldDay] ? cfg.days[oldDay].demo : null;
     state.track = id;
@@ -752,6 +765,7 @@
     setTimeout(function () { centerActiveDay(true); }, 80);
   }
   function setDepth(d) {
+    hideTip();
     state.depth = d;
     renderTop();
     renderText();
@@ -783,6 +797,7 @@
     var g = GLOSSARY[id];
     if (!g) return;
     clearTimeout(tipTimer);
+    tipTerm = btn;
     els.tip.innerHTML = '<div class="ls-tip-kicker">' + esc(g.label) + '</div><p>' + esc(g.short) + '</p><span class="ls-tip-more">Klicken für ein Beispiel</span>';
     els.tip.hidden = false;
     var r = btn.getBoundingClientRect();
@@ -795,7 +810,16 @@
     els.tip.style.top = top + "px";
   }
   function hideTipSoon() { tipTimer = setTimeout(hideTip, 140); }
-  function hideTip() { els.tip.hidden = true; }
+  function hideTip() { if (els.tip) els.tip.hidden = true; tipTerm = null; }
+  function openTermNote(btn) {
+    if (!btn) return;
+    var wrap = btn.parentNode;
+    var note = wrap ? wrap.querySelector(".ls-term-note") : null;
+    if (!note) return;
+    note.hidden = false;
+    wrap.classList.add("is-open");
+    if (note.scrollIntoView) note.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
 
   function bindDayRail() {
     var el = els.days;
@@ -849,6 +873,15 @@
 
   function bind() {
     bindDayRail();
+    if (els.tip) {
+      els.tip.addEventListener("mouseenter", function () { clearTimeout(tipTimer); });
+      els.tip.addEventListener("mouseleave", hideTipSoon);
+      els.tip.addEventListener("click", function () {
+        var btn = tipTerm;
+        hideTip();
+        openTermNote(btn);
+      });
+    }
     els.track.addEventListener("change", function () { setTrack(els.track.value); });
     els.depth.addEventListener("click", function (e) {
       var b = e.target.closest("button[data-depth]");
@@ -869,6 +902,7 @@
     els.next.addEventListener("click", next);
     if (els.textScroll) {
       els.textScroll.addEventListener("scroll", function () {
+        hideTip();
         if (ignoreScroll || cuesArmed) return;
         cuesArmed = true;
         setupCues();
@@ -913,6 +947,7 @@
       else if (e.key === "0") { e.preventDefault(); setFont(1); }
     });
     window.addEventListener("resize", function () {
+      hideTip();
       if (demo && demo.resize) demo.resize();
       lastCenteredDay = -1;
       requestAnimationFrame(function () { updateRailOverflow(); centerActiveDay(true); });

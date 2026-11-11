@@ -59,3 +59,7 @@ Status: in Arbeit
 - DONE: Fokusmodus und Touch-Hinweise
 - DONE: Vertiefungsfragen flach und normaler Text
 - DONE: Tag-Leiste mit Safe-Area-Padding
+- DONE: Vertiefung zeigt echte Kontext-/Tiefe-/Formelboxen
+- DONE: Unten Zurueck/Weiter fuer Tage
+- DONE: Glossar-Tooltip klickbar, verschwindet bei Navigation
+- DONE: Persona-Tests fuer eilig, tief, Wiederkehrer, Mobil
