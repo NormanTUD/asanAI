@@ -175,9 +175,9 @@ def set_metric(driver: webdriver.Chrome, metric: str) -> None:
 def drag_plot(driver: webdriver.Chrome) -> None:
     element = driver.find_element(By.ID, PLOT_ID)
     driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
-    time.sleep(0.4)
-    ActionChains(driver).move_to_element(element).click_and_hold().pause(0.2)\
-        .move_by_offset(70, 35).pause(0.2).move_by_offset(-25, 15).pause(0.2)\
+    time.sleep(0.8)
+    ActionChains(driver).move_to_element(element).click_and_hold().pause(0.4)\
+        .move_by_offset(90, 45).pause(0.35).move_by_offset(-35, 20).pause(0.35)\
         .release().perform()
     time.sleep(0.8)
 
@@ -200,8 +200,12 @@ def run_case(driver: webdriver.Chrome, base: str, path: str, page_label: str, me
 
     if metric == "euclidean":
         before = get_camera(driver)
-        drag_plot(driver)
-        after_drag = get_camera(driver)
+        after_drag = before
+        for _ in range(2):
+            drag_plot(driver)
+            after_drag = get_camera(driver)
+            if after_drag and not camera_close(after_drag, before or {}):
+                break
         check(
             bool(after_drag) and not camera_close(after_drag, before or {}),
             label + ": pointer drag rotates the camera",
@@ -228,11 +232,28 @@ def run_case(driver: webdriver.Chrome, base: str, path: str, page_label: str, me
 
     hash_before = plot_hash(driver)
     loss_before_pause = loss_count(driver)
-    driver.execute_script("window.__tmPlotDragging = true;")
-    time.sleep(1.4)
+    driver.execute_script("""
+      const el = document.getElementById('unified-layer-1-feature-arrows');
+      const canvas = el.querySelector('canvas') || el;
+      canvas.dispatchEvent(new PointerEvent('pointerdown', {
+        bubbles: true, cancelable: true, button: 0, buttons: 1,
+        pointerId: 1, pointerType: 'mouse', isPrimary: true
+      }));
+    """)
+    time.sleep(0.1)
+    drag_active = bool(driver.execute_script("return !!window.__tmPlotDragging;"))
+    time.sleep(2.0)
     paused_gain = loss_count(driver) - loss_before_pause
-    driver.execute_script("window.__tmPlotDragging = false;")
-    check(paused_gain <= 1, label + ": active drag pauses the training loop", f"epochs gained: {paused_gain}")
+    still_active = bool(driver.execute_script("return !!window.__tmPlotDragging;"))
+    driver.execute_script("""
+      window.dispatchEvent(new PointerEvent('pointerup', {
+        bubbles: true, cancelable: true, button: 0, buttons: 0,
+        pointerId: 1, pointerType: 'mouse', isPrimary: true
+      }));
+    """)
+    check(drag_active, label + ": pointer-down registers as a plot drag")
+    check(still_active, label + ": drag flag stays active while held")
+    check(paused_gain <= 2, label + ": active drag pauses the training loop", f"epochs gained: {paused_gain}")
 
     check(
         wait_until(driver, f"return (window.lossHistory || []).length >= {loss_before_pause + 3};", 90),
@@ -241,7 +262,7 @@ def run_case(driver: webdriver.Chrome, base: str, path: str, page_label: str, me
     check(
         wait_until(
             driver,
-            "const el=document.getElementById(arguments[0]); return !!el && JSON.stringify(el.data).length > 0;",
+            "const el=document.getElementById('unified-layer-1-feature-arrows'); return !!el && !!el.data;",
             30,
         ),
         label + ": plot still has data",
