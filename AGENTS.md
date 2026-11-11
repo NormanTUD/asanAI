@@ -93,10 +93,8 @@ again before reporting done.
   finish or new work appears. Mark an item `completed` only after the change
   is verified. When the user supplies a `todo*` file, also keep its `DONE` /
   `[in work]` markers in sync with the todo list. For work that spans more
-  than one session, also write the full checklist to a `todo_<task>.md` — Every behavior change needs automated
-  coverage: the happy path, boundaries, malformed input, and failure modes.
-  A bug fix comes with a regression test that fails without the fix. Do not
-  rely on manual clicking as proof.
+  than one session, also write the full checklist to a `todo_<task>.md` next
+
 - Run the real suite, not a guess. — Execute the relevant validators and the
   in-browser suite; include the raw output in the final report. A green run
   you did not observe is not evidence.
