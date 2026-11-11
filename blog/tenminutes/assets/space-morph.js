@@ -262,7 +262,7 @@
 		const el = document.getElementById("ism-separation-box");
 		if (!el) return;
 		const info = separationInfo();
-		el.textContent = separationStatusLines().join(" ");
+		el.textContent = (info.separated ? "✓ " : "") + separationStatusLines().join(" ");
 		el.classList.toggle("is-ok", info.separated);
 	}
 
@@ -289,10 +289,22 @@
 		ctx.textAlign = "left";
 		ctx.fillStyle = info.separated ? C.green : C.muted;
 		ctx.font = "700 10px system-ui, sans-serif";
-		ctx.fillText(DE ? "TRENNUNG" : "SEPARATION", x + 10, y + 15);
-		ctx.fillStyle = C.ink;
-		ctx.font = "500 12px system-ui, sans-serif";
-		lines.forEach(function (line, i) { ctx.fillText(line, x + 10, y + 32 + i * lineH); });
+		ctx.fillText(info.separated ? "✓ " + (DE ? "TRENNUNG" : "SEPARATION") : (DE ? "TRENNUNG" : "SEPARATION"), x + 10, y + 15);
+		lines.forEach(function (line, i) {
+			const ty = y + 32 + i * lineH;
+			if (i === 0 && info.separated) {
+				ctx.fillStyle = C.green;
+				ctx.font = "700 13px system-ui, sans-serif";
+				ctx.fillText("✓", x + 10, ty);
+				ctx.fillStyle = C.ink;
+				ctx.font = "500 12px system-ui, sans-serif";
+				ctx.fillText(line, x + 28, ty);
+			} else {
+				ctx.fillStyle = C.ink;
+				ctx.font = "500 12px system-ui, sans-serif";
+				ctx.fillText(line, x + 10, ty);
+			}
+		});
 		ctx.restore();
 	}
 
