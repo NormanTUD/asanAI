@@ -649,6 +649,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																	<div class="ism-stage" id="ism-stage">
 																		<div id="ism-wrap" class="ism-wrap" style="height:clamp(360px, 55vw, 480px)">
 																			<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
+																		<div id="ism-canvas-status" class="ism-canvas-status" aria-live="polite" hidden></div>
 																		</div>
 																		<aside id="ism-side" class="ism-side">
 																			<div id="ism-dense-controls" class="ism-dense-controls" hidden></div>
@@ -659,7 +660,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																		<button type="button" id="ism-prev" data-arrow-prev class="ism-btn" aria-label="Previous step">←</button>
 																		<button type="button" id="ism-next" data-arrow-next class="ism-btn" aria-label="Next step">→</button>
 																		<button type="button" id="ism-reset-camera" class="ism-btn" aria-label="Reset view" title="Reset view">⟲</button>
-																		<div id="ism-dots" class="ism-dots" aria-hidden="true"></div>
+																		<div id="ism-dots" class="ism-dots" role="group" aria-label="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Folien' : 'Slides'; ?>"></div>
 																		<span id="ism-counter" class="ism-counter">1 / 9</span>
 																	</div>
 																</div>

@@ -9004,3 +9004,56 @@ html[lang="de"] .tm-lang-only-de { display: inline !important; }
 	color: var(--tm-green-deep);
 	background: color-mix(in srgb, var(--tm-green) 8%, var(--tm-card));
 }
+
+/* Dense-demo status: an HTML overlay inside the canvas, always top-left. */
+.ism-canvas-status {
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	z-index: 3;
+	max-width: min(300px, calc(100% - 24px));
+	padding: 7px 10px;
+	border: 1px solid var(--tm-line);
+	background: color-mix(in srgb, var(--tm-card) 92%, transparent);
+	color: var(--tm-ink-soft);
+	font: 600 0.76rem/1.4 var(--tm-ui);
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+	pointer-events: none;
+}
+.ism-canvas-status.is-ok {
+	border-color: var(--tm-green);
+	color: var(--tm-green-deep);
+	background: color-mix(in srgb, var(--tm-green) 10%, var(--tm-card));
+}
+.ism-canvas-status[hidden] { display: none !important; }
+
+/* Prev/Next are ScaDS-green text buttons, not icon circles. */
+#ism-prev,
+#ism-next {
+	width: auto;
+	min-width: 92px;
+	height: 38px;
+	padding: 0 12px;
+	border-radius: 8px;
+	border: 1px solid var(--tm-green);
+	background: var(--tm-green);
+	color: #ffffff;
+	font: 700 0.78rem/1 var(--tm-ui);
+}
+#ism-prev:hover,
+#ism-next:hover {
+	background: color-mix(in srgb, var(--tm-green) 84%, #000000);
+	border-color: color-mix(in srgb, var(--tm-green) 84%, #000000);
+}
+#ism-next:disabled {
+	background: var(--tm-muted);
+	border-color: var(--tm-muted);
+	color: #ffffff;
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+.ism-dot {
+	cursor: pointer;
+	min-width: 12px;
+	min-height: 12px;
+}

@@ -259,11 +259,34 @@
 	}
 
 	function updateSeparationBox() {
-		const el = document.getElementById("ism-separation-box");
-		if (!el) return;
 		const info = separationInfo();
-		el.textContent = (info.separated ? "✓ " : "") + separationStatusLines().join(" ");
-		el.classList.toggle("is-ok", info.separated);
+		const text = (info.separated ? "✓ " : "") + separationStatusLines().join(" ");
+		const el = document.getElementById("ism-separation-box");
+		if (el) {
+			el.textContent = text;
+			el.classList.toggle("is-ok", info.separated);
+		}
+		const overlay = document.getElementById("ism-canvas-status");
+		if (overlay) {
+			const visible = cur === 7 || cur === 8;
+			overlay.hidden = !visible;
+			overlay.textContent = text;
+			overlay.classList.toggle("is-ok", info.separated);
+		}
+		updateNextButtonGate();
+	}
+
+	function updateNextButtonGate() {
+		const nextBtn = copyEl("ism-next");
+		if (!nextBtn) return;
+		const blocked = (cur === 7 && !separationInfo().separated) || cur === SCENES.length - 1;
+		nextBtn.disabled = blocked;
+		nextBtn.setAttribute("aria-disabled", String(blocked));
+		if (cur === 7 && !separationInfo().separated) {
+			nextBtn.title = DE ? "Erst wenn linear trennbar" : "Only when linearly separable";
+		} else {
+			nextBtn.removeAttribute("title");
+		}
 	}
 
 	function drawSeparationStatus(C) {
@@ -279,7 +302,7 @@
 		const w = Math.min(280, W * 0.36);
 		const lineH = 15;
 		const h = 26 + lines.length * lineH;
-		const y = Math.max(74, H * 0.46 - h / 2);
+		const y = 14;
 		ctx.save();
 		ctx.fillStyle = C.dark ? "rgba(7,26,34,.86)" : "rgba(255,255,255,.9)";
 		ctx.strokeStyle = info.separated ? C.green : C.line;
@@ -506,6 +529,7 @@
 		const stage = document.getElementById("ism-stage");
 		if (stage) stage.classList.toggle("is-dense", cur === 7 || cur === 8);
 		if (cur === 7) renderDenseFormulas();
+		updateSeparationBox();
 
 		const dots = copyEl("ism-dots");
 		if (!dots) return;
@@ -527,6 +551,7 @@
 	}
 
 	function next() {
+		if (cur === 7 && !separationInfo().separated) return;
 		setStep(cur + 1);
 	}
 
@@ -537,10 +562,14 @@
 	function buildDots() {
 		const dots = copyEl("ism-dots");
 		if (!dots) return;
-		SCENES.forEach(scene => {
-			const dot = document.createElement("span");
+		SCENES.forEach((scene, i) => {
+			const dot = document.createElement("button");
+			dot.type = "button";
 			dot.className = "ism-dot";
-			dot.title = scene.title;
+			const label = (DE && scene.titleDe) ? scene.titleDe : scene.title;
+			dot.title = label;
+			dot.setAttribute("aria-label", (DE ? "Folie " : "Slide ") + (i + 1) + ": " + label);
+			dot.addEventListener("click", function () { setStep(i); });
 			dots.appendChild(dot);
 		});
 	}
@@ -1102,8 +1131,16 @@
 
 		const nextBtn = copyEl("ism-next");
 		const prevBtn = copyEl("ism-prev");
-		if (nextBtn) nextBtn.addEventListener("click", next);
-		if (prevBtn) prevBtn.addEventListener("click", prev);
+		if (nextBtn) {
+			nextBtn.textContent = DE ? "Weiter →" : "Next →";
+			nextBtn.setAttribute("aria-label", DE ? "Nächster Schritt" : "Next step");
+			nextBtn.addEventListener("click", next);
+		}
+		if (prevBtn) {
+			prevBtn.textContent = DE ? "← Zurück" : "← Back";
+			prevBtn.setAttribute("aria-label", DE ? "Vorheriger Schritt" : "Previous step");
+			prevBtn.addEventListener("click", prev);
+		}
 		const resetCamera = copyEl("ism-reset-camera");
 		if (resetCamera) resetCamera.addEventListener("click", function () { dragA = 0; dragB = 0; requestDraw(); });
 		window.addEventListener("tm:resetcamera", function () { dragA = 0; dragB = 0; requestDraw(); });
