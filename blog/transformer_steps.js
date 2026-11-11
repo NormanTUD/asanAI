@@ -2651,40 +2651,40 @@
 		var type = "content", score = f.max, threshold = 0.35, reason = "";
 		if (f.induction >= 0.25 && f.induction >= f.prev * 0.8) {
 			type = "induction"; score = f.induction; threshold = 0.25;
-			reason = de ? "Ein früheres Vorkommen des vorherigen Tokens wird kopiert (Schwelle 25 %)."
-				: "It copies the token after an earlier occurrence of the previous token (threshold 25%).";
+			reason = de ? "Ein Induktionsmuster dominiert: Ein früheres Vorkommen des vorherigen Tokens wird kopiert (Schwelle 25 %)."
+				: "An induction pattern dominates: it copies the token after an earlier occurrence of the previous token (threshold 25%).";
 		} else if (f.duplicate >= 0.30 && f.duplicate >= f.prev * 0.9) {
 			type = "duplicate"; score = f.duplicate; threshold = 0.30;
-			reason = de ? "Aufmerksamkeit liegt auf einem früheren Vorkommen desselben Tokens (Schwelle 30 %)."
-				: "Attention sits on an earlier occurrence of the same token (threshold 30%).";
+			reason = de ? "Ein Duplikat-Muster dominiert: Die Attention liegt auf einem früheren Vorkommen desselben Tokens (Schwelle 30 %)."
+				: "A duplicate-token pattern dominates: attention sits on an earlier occurrence of the same token (threshold 30%).";
 		} else if (f.prev >= 0.45) {
 			type = "previous"; score = f.prev; threshold = 0.45;
-			reason = de ? "Aufmerksamkeit liegt auf dem unmittelbar vorherigen Token (Schwelle 45 %)."
-				: "Attention sits on the immediately previous token (threshold 45%).";
+			reason = de ? "Das Vorgänger-Muster dominiert: Die Attention liegt auf dem unmittelbar vorherigen Token (Schwelle 45 %)."
+				: "The previous-token pattern dominates: attention sits on the immediately previous token (threshold 45%).";
 		} else if (f.self >= 0.5) {
 			type = "self"; score = f.self; threshold = 0.5;
-			reason = de ? "Aufmerksamkeit liegt auf dem Query-Token selbst (Schwelle 50 %)."
-				: "Attention sits on the query token itself (threshold 50%).";
+			reason = de ? "Selbstattention dominiert: Die Attention liegt auf dem Query-Token selbst (Schwelle 50 %)."
+				: "Self-attention dominates: attention sits on the query token itself (threshold 50%).";
 		} else if (f.first >= 0.4) {
 			type = "first"; score = f.first; threshold = 0.4;
-			reason = de ? "Aufmerksamkeit sammelt sich auf Position 0 (Schwelle 40 %)."
-				: "Attention collects on position 0 (threshold 40%).";
+			reason = de ? "Das Erst-Token-Muster dominiert: Die Attention sammelt sich auf Position 0 (Schwelle 40 %)."
+				: "The first-token pattern dominates: attention collects on position 0 (threshold 40%).";
 		} else if (f.bestOffset >= 0.35 && f.bestOffsetK > 3) {
 			type = "positional"; score = f.bestOffset; threshold = 0.35;
 			reason = de ? "Ein fester Positions-Offset von " + f.bestOffsetK + " dominiert (Schwelle 35 %)."
 				: "A fixed positional offset of " + f.bestOffsetK + " dominates (threshold 35%).";
 		} else if (f.local >= 0.45) {
 			type = "local"; score = f.local; threshold = 0.45;
-			reason = de ? "Aufmerksamkeit bleibt in den letzten drei Positionen (Schwelle 45 %)."
-				: "Attention stays within the previous three positions (threshold 45%).";
+			reason = de ? "Ein lokales Fenster dominiert: Die Attention bleibt in den letzten drei Positionen (Schwelle 45 %)."
+				: "A local-window pattern dominates: attention stays within the previous three positions (threshold 45%).";
 		} else if (f.rare >= 0.50) {
 			type = "rare"; score = f.rare; threshold = 0.50;
-			reason = de ? "Aufmerksamkeit sammelt sich auf seltene Tokens (Schwelle 50 %)."
-				: "Attention collects on rare tokens (threshold 50%).";
+			reason = de ? "Ein Selten-Token-Muster dominiert: Die Attention sammelt sich auf seltene Tokens (Schwelle 50 %)."
+				: "A rare-token pattern dominates: attention collects on rare tokens (threshold 50%).";
 		} else if (f.entropy >= 0.72) {
 			type = "broad"; score = f.entropy; threshold = 0.72;
-			reason = de ? "Die normalisierte Attention-Entropie ist hoch (Schwelle 0,72)."
-				: "Normalized attention entropy is high (threshold 0.72).";
+			reason = de ? "Kein einzelnes Token dominiert: Die normalisierte Attention-Entropie ist hoch (Schwelle 0,72)."
+				: "No single token dominates: the normalized attention entropy is high (threshold 0.72).";
 		} else {
 			reason = de ? "Kein einzelnes Token dominiert (stärkstes mittleres Zeilengewicht unter 35 %); die Attention verteilt sich auf mehrere Tokens und mischt so den Kontext."
 				: "No single token dominates (the strongest mean row weight is below 35%); attention is spread across several tokens, so the head mixes context.";
