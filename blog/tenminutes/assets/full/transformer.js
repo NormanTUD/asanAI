@@ -644,7 +644,7 @@ function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers, recor
 }
 
 function tmSyncFeatureTrace(tokens, weights, d_model, n_heads, n_layers) {
-	if (window.__tmPlotDragging) { window.__tmFeatureDeferred = true; window.__tmGuardHitTrace = (window.__tmGuardHitTrace || 0) + 1; return; }
+	if (window.__tmPlotDragging) { window.__tmFeatureDeferred = true; return; }
 	if (!tokens || !tokens.length || !weights || !weights.length) return;
 	var current = (window.__tmFeatureTrace && window.__tmFeatureTrace[0]) ||
 		(window.__tmLayerTrace && window.__tmLayerTrace[0]);
@@ -1870,7 +1870,6 @@ function _execute_positional_waves_render(d_model, tokens) {
 function run_transformer_demo(activeId = null) {
 	if (window.__tmPlotDragging) {
 		window.__tmVisualDeferred = true;
-		window.__tmGuardHitRTD = (window.__tmGuardHitRTD || 0) + 1;
 		return;
 	}
 	const trainingInput = document.getElementById('transformer-training-data');
@@ -2848,7 +2847,6 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	if (window.__tmPlotDragging) {
 		window.__tmVisualDeferred = true;
 		window.__tmFeatureDeferred = true;
-		window.__tmGuardHitRTV = (window.__tmGuardHitRTV || 0) + 1;
 		return;
 	}
 	window.__tmLayerTrace = [];
