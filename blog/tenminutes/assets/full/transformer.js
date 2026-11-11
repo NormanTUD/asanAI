@@ -486,6 +486,29 @@ function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers, recor
 	return h;
 }
 
+function tmSyncFeatureTrace(tokens, weights, d_model, n_heads, n_layers) {
+	if (!tokens || !tokens.length || !weights || !weights.length) return;
+	var current = (window.__tmFeatureTrace && window.__tmFeatureTrace[0]) ||
+		(window.__tmLayerTrace && window.__tmLayerTrace[0]);
+	var visTokens = (current && current.tokenStrings && current.tokenStrings.length) ? current.tokenStrings : tokens;
+	var trace = [];
+	var h = embedTokensWithPE(visTokens, d_model);
+	for (var l = 0; l < n_layers; l++) {
+		var h_in = h;
+		var result = forwardOneLayer(h_in, weights[l], d_model, n_heads, visTokens, null);
+		h = result.h_out;
+		trace[l] = { h_in: h_in, h_out: h, tokenStrings: visTokens };
+	}
+	/* Keep the full trace intact: the formula cards and head analysis still
+	   use it. Only the feature-migration plots read this lightweight copy. */
+	window.__tmFeatureTrace = trace;
+	window.__tmTraceVersion = (window.__tmTraceVersion || 0) + 1;
+	if (typeof window.tmRefreshFeaturePlots === "function") {
+		window.tmRefreshFeaturePlots({ visibleOnly: true });
+	}
+}
+window.tmSyncFeatureTrace = tmSyncFeatureTrace;
+
 function embedTokensWithPE(tokens, d_model, embSpace = window.persistentEmbeddingSpace) {
 	return tokens.map((token, pos) => {
 		const emb = (embSpace && embSpace[token]) || new Array(d_model).fill(0);
@@ -2028,6 +2051,13 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 			});
 		}
 		window.dispatchEvent(new CustomEvent("tm:training-tick", { detail: { epoch: epochIdx + 1 } }));
+	} else if (typeof window.tmFeaturePlotsVisible === "function" && window.tmFeaturePlotsVisible()) {
+		/* Keep the visible feature-migration plots in step with every epoch
+		   without rebuilding the whole visualization. */
+		window.currentWeights = await convert_tensors_to_weights(weightVars);
+		if (typeof window.tmSyncFeatureTrace === "function") {
+			window.tmSyncFeatureTrace(tokens, window.currentWeights, d_model, n_heads, n_layers);
+		}
 	}
 
 	dispose(cost);
@@ -2643,6 +2673,7 @@ function pruneOrphanedMigrationPlots() {
 function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	window.__tmLayerTrace = [];
 	window.__tmFFNTrace = [];
+	window.__tmFeatureTrace = null;
 	window.__tmTraceVersion = (window.__tmTraceVersion || 0) + 1;
 	const config = getTransformerConfig();
 	const { d_model, n_heads, temperature, n_layers } = config;

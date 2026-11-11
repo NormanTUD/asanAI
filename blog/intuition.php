@@ -2,1426 +2,877 @@
 <!--
 COURSE_METADATA:
 title: An Intuition of how Large Language Models (LLMs) work
-description: Large Language Models are next-word prediction machines. See the autoregressive loop in action.
+description: Large Language Models are next-word prediction machines. Follow one token through the whole machine, from text to a probability and back.
 icon: &#128161;
 part: 1
 order: 1
 color: accent
-topics: history, philosophy, society
+topics: history, philosophy, society, architecture, math-i
 tags: interested-layman
+math: 35
 -->
+
+<?php css("intuition_tm"); ?>
+<?php js("intuition_tm"); ?>
 <?php js("intuition_space_morph"); ?>
-<style>
-#autoregressive-viz .ar-math { display:flex; justify-content:center; align-items:center; min-height:96px; padding:6px 10px; background:var(--mn-bg-subtle); border-radius:8px; overflow-x:auto; color:var(--mn-text); }
-#autoregressive-viz .ar-math math { font-size:1.05em; }
-#autoregressive-viz .ar-fallback { font-family:var(--mn-font-mono); font-size:0.8em; color:var(--mn-text-muted); white-space:pre-wrap; }
-
-/* === Embedding demo (full-width plot + equations) === */
-#embedding-demo {
-	width: 100%;
-	max-width: 100%;
-	margin: 16px 0;
-	padding: 20px 22px 18px;
-	box-sizing: border-box;
-	background: var(--mn-surface);
-	border: 1px solid var(--mn-border);
-	border-radius: 16px;
-	box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 14px 38px -20px rgba(0,0,0,.22);
-	transition: background .3s ease, border-color .3s ease;
-}
-html.dark #embedding-demo {
-	background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-	border-color: #334155;
-	box-shadow: 0 1px 0 rgba(255,255,255,.04), 0 18px 48px -16px rgba(0,0,0,.7);
-}
-#embedding-demo .emb-head {
-	text-align: center;
-	font-size: 1.05rem;
-	font-weight: 700;
-	color: var(--mn-text);
-	margin-bottom: 14px;
-	letter-spacing: .01em;
-}
-#embedding-demo .emb-quick {
-	display: flex;
-	flex-wrap: nowrap;
-	justify-content: center;
-	gap: 5px;
-	margin-bottom: 2px;
-	padding: 8px 2px 6px;
-	overflow-x: auto;
-}
-#embedding-demo .emb-chip {
-	background: var(--mn-bg-subtle);
-	border: 1px solid var(--mn-border-light);
-	border-radius: 999px;
-	padding: 4px 10px;
-	font-size: .78em;
-	font-weight: 600;
-	color: var(--mn-text-secondary);
-	cursor: pointer;
-	transition: all .15s ease;
-	font-family: inherit;
-	white-space: nowrap;
-	flex: 0 0 auto;
-}
-@media (max-width: 720px) {
-	#embedding-demo .emb-quick { justify-content: flex-start; }
-}
-#embedding-demo .emb-chip:hover {
-	background: linear-gradient(135deg, rgba(99,102,241,.12), rgba(99,102,241,.04));
-	border-color: #6366f1;
-	color: #4f46e5;
-	transform: translateY(-1px);
-}
-html.dark #embedding-demo .emb-chip:hover {
-	background: rgba(99,102,241,.2);
-	color: #c7d2fe;
-}
-#embedding-demo .emb-chip.active {
-	background: linear-gradient(135deg, #6366f1, #4f46e5);
-	border-color: #4f46e5;
-	color: #fff;
-	box-shadow: 0 4px 12px -4px rgba(99,102,241,.6);
-}
-#embedding-demo #embedding-viz-plot {
-	width: 100%;
-	height: 460px;
-	background: var(--mn-bg);
-	border-radius: 12px;
-	border: 1px solid var(--mn-border-light);
-	user-select: none;
-	transition: background .3s ease, border-color .3s ease;
-}
-html.dark #embedding-demo #embedding-viz-plot {
-	background: rgba(15,23,42,.55);
-	border-color: rgba(148,163,184,.18);
-}
-#embedding-demo #embedding-equations {
-	height: 330px;
-	margin-top: 14px;
-	padding: 10px 14px;
-	box-sizing: border-box;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	overflow: auto;
-	background: var(--mn-bg-subtle);
-	border: 1px solid var(--mn-border-light);
-	border-radius: 10px;
-	color: var(--mn-text);
-	transition: background .3s ease, border-color .3s ease;
-}
-#embedding-demo #embedding-equations math { color: var(--mn-text); }
-html.dark #embedding-demo #embedding-equations {
-	background: rgba(15,23,42,.55);
-	border-color: rgba(148,163,184,.18);
-}
-#embedding-demo .emb-hint {
-	margin: 14px 0 0;
-	padding: 10px 14px;
-	background: var(--mn-bg);
-	border-radius: 10px;
-	border: 1px dashed var(--mn-border);
-	color: var(--mn-text-secondary);
-	font-size: .9em;
-	line-height: 1.55;
-	text-align: center;
-	transition: background .3s, color .3s, border-color .3s;
-}
-#embedding-demo .emb-hint b { color: var(--mn-text); }
-html.dark #embedding-demo .emb-hint {
-	background: rgba(15,23,42,.4);
-	color: #cbd5e1;
-	border-color: rgba(148,163,184,.3);
-}
-
-#pe-addition-demo {
-	margin-top: 4px;
-	padding: 14px 16px;
-	background: var(--mn-bg-subtle);
-	border: 1px solid var(--mn-border-light);
-	border-radius: 10px;
-	text-align: center;
-	overflow-x: auto;
-	color: var(--mn-text);
-}
-#pe-addition-demo math { color: var(--mn-text); }
-.pe-traj-grid {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 12px;
-}
-@media (min-width: 900px) {
-	.pe-traj-grid { grid-template-columns: 1fr 1fr; }
-}
-.pe-traj-grid > div {
-	height: 420px;
-	background: var(--mn-surface);
-	border: 1px solid var(--mn-border);
-	border-radius: 8px;
-}
-
-/* === Attention bank/river/money demo (lndw style) === */
-#attn-demo {
-	background: var(--mn-surface);
-	border: 1px solid var(--mn-border);
-	border-radius: 14px;
-	padding: 18px 22px;
-	margin: 16px auto;
-	max-width: 760px;
-	box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 10px 30px -18px rgba(0,0,0,.18);
-}
-html.dark #attn-demo { box-shadow: 0 1px 0 rgba(0,0,0,.4), 0 14px 36px -16px rgba(0,0,0,.6); }
-#attn-demo .attn-sentence {
-	text-align: center;
-	padding: 14px 20px;
-	background: var(--mn-bg-subtle);
-	border-radius: 10px;
-	border: 1px solid var(--mn-border-light);
-	margin-bottom: 12px;
-	font-size: 1.15em;
-	color: var(--mn-text);
-	font-weight: 500;
-	min-height: 1.5em;
-	line-height: 1.7;
-	display: block;
-	transition: background .35s, border-color .35s, color .35s;
-}
-#attn-demo .attn-sentence .attn-word-bank { color: #3b82f6; font-weight: 700; }
-#attn-demo .attn-sentence .attn-word-river { color: #10b981; font-weight: 700; }
-#attn-demo .attn-sentence .attn-word-money { color: #f59e0b; font-weight: 700; }
-#attn-demo .attn-sentence .attn-word-both  { color: #8b5cf6; font-weight: 700; }
-#attn-demo .attn-stepper {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 14px;
-	margin-bottom: 10px;
-}
-#attn-demo .attn-step-btn {
-	cursor: pointer;
-	background: var(--mn-bg-subtle);
-	border: 1px solid var(--mn-border);
-	border-radius: 8px;
-	width: 34px;
-	height: 34px;
-	font-size: 1.2em;
-	font-weight: 700;
-	color: var(--mn-text);
-	transition: background .15s, transform .15s, border-color .15s;
-}
-#attn-demo .attn-step-btn:hover:not(:disabled) { background: var(--mn-surface-raised); border-color: #6366f1; color: #6366f1; }
-#attn-demo .attn-step-btn:disabled { opacity: .35; cursor: default; }
-#attn-demo .attn-step-label {
-	font-weight: 700;
-	font-size: .98em;
-	color: var(--mn-text);
-	white-space: nowrap;
-	min-width: 140px;
-	text-align: center;
-}
-#attn-demo .attn-step-label .em { color: #6366f1; }
-#attn-demo .attn-caption {
-	margin-top: 4px;
-	text-align: center;
-	font-size: .92em;
-	color: var(--mn-text-secondary);
-	min-height: 1.6em;
-	line-height: 1.55;
-}
-#attn-demo .attn-caption b { color: var(--mn-text); }
-#attn-demo #transformer-plot {
-	height: 420px;
-	background: var(--mn-surface);
-	border-radius: 10px;
-	border: 1px solid var(--mn-border-light);
-}
-
-/* === FFN Apple demo (gorgeous dark mode) === */
-#ffn-demo {
-	background: var(--mn-surface);
-	border: 1px solid var(--mn-border);
-	border-radius: 16px;
-	padding: 22px 22px 18px;
-	margin: 18px auto;
-	max-width: 880px;
-	box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 14px 38px -20px rgba(0,0,0,.22);
-}
-html.dark #ffn-demo {
-	background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-	border-color: #334155;
-	box-shadow: 0 1px 0 rgba(255,255,255,.04), 0 18px 48px -16px rgba(0,0,0,.7);
-}
-#ffn-demo .ffn-ctl-row {
-	display: flex;
-	gap: 10px;
-	justify-content: center;
-	margin-bottom: 18px;
-	flex-wrap: wrap;
-}
-#ffn-demo .ffn-ctl {
-	padding: 9px 18px;
-	border-radius: 10px;
-	border: 1px solid var(--mn-border);
-	background: var(--mn-bg);
-	color: var(--mn-text);
-	cursor: pointer;
-	font-weight: 600;
-	font-size: .95em;
-	transition: all .2s ease;
-}
-#ffn-demo .ffn-ctl:hover {
-	border-color: #6366f1;
-	color: #6366f1;
-	transform: translateY(-1px);
-}
-#ffn-demo .ffn-ctl.active-fruit {
-	background: linear-gradient(135deg, #fef3c7, #fde68a);
-	border-color: #f59e0b;
-	color: #92400e;
-	box-shadow: 0 0 0 1px rgba(245,158,11,.4), 0 8px 22px -10px rgba(245,158,11,.55);
-}
-#ffn-demo .ffn-ctl.active-tech {
-	background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-	border-color: #6366f1;
-	color: #312e81;
-	box-shadow: 0 0 0 1px rgba(99,102,241,.45), 0 8px 22px -10px rgba(99,102,241,.55);
-}
-html.dark #ffn-demo .ffn-ctl.active-fruit {
-	background: linear-gradient(135deg, rgba(245,158,11,.22), rgba(217,119,6,.32));
-	border-color: #f59e0b;
-	color: #fde68a;
-	box-shadow: 0 0 0 1px rgba(245,158,11,.55), 0 10px 30px -10px rgba(245,158,11,.45);
-}
-html.dark #ffn-demo .ffn-ctl.active-tech {
-	background: linear-gradient(135deg, rgba(99,102,241,.25), rgba(67,56,202,.35));
-	border-color: #818cf8;
-	color: #c7d2fe;
-	box-shadow: 0 0 0 1px rgba(99,102,241,.55), 0 10px 30px -10px rgba(99,102,241,.5);
-}
-
-#ffn-demo #ffn-viz-container {
-	position: relative;
-	height: 360px;
-	background: var(--mn-bg);
-	border-radius: 12px;
-	border: 1px solid var(--mn-border-light);
-	padding: 24px 20px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	overflow: hidden;
-	transition: background .3s ease, border-color .3s ease;
-}
-html.dark #ffn-demo #ffn-viz-container {
-	background: rgba(15,23,42,.55);
-	border-color: rgba(148,163,184,.18);
-}
-#ffn-demo .ffn-col-head {
-	font-weight: 700;
-	color: var(--mn-text-secondary);
-	margin-bottom: 10px;
-	font-size: .92em;
-	letter-spacing: .02em;
-}
-#ffn-demo #ffn-input-box {
-	background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-	border: 2px solid #818cf8;
-	color: #312e81;
-	box-shadow: 0 8px 22px -10px rgba(99,102,241,.55), inset 0 1px 0 rgba(255,255,255,.4);
-}
-html.dark #ffn-demo #ffn-input-box {
-	background: linear-gradient(135deg, rgba(99,102,241,.28), rgba(67,56,202,.42));
-	border-color: #818cf8;
-	color: #e0e7ff;
-	box-shadow: 0 10px 28px -10px rgba(99,102,241,.55), inset 0 1px 0 rgba(255,255,255,.08);
-}
-#ffn-demo #ffn-output-box {
-	background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-	border: 2px solid #34d399;
-	color: #065f46;
-	box-shadow: 0 8px 22px -10px rgba(16,185,129,.55), inset 0 1px 0 rgba(255,255,255,.4);
-}
-html.dark #ffn-demo #ffn-output-box {
-	background: linear-gradient(135deg, rgba(16,185,129,.28), rgba(5,150,105,.42));
-	border-color: #34d399;
-	color: #bbf7d0;
-	box-shadow: 0 10px 28px -10px rgba(16,185,129,.55), inset 0 1px 0 rgba(255,255,255,.08);
-}
-#ffn-demo .ffn-pill {
-	padding: 11px 13px;
-	border-radius: 10px;
-	font-size: .88em;
-	font-weight: 700;
-	transition: all .4s cubic-bezier(.2,.8,.2,1);
-	text-align: center;
-}
-#ffn-demo .ffn-pill.idle {
-	background: var(--mn-bg-subtle);
-	border: 1px solid var(--mn-border-light);
-	color: var(--mn-text-muted);
-	opacity: .7;
-}
-#ffn-demo .ffn-pill.fire {
-	background: linear-gradient(135deg, #fef3c7, #fde68a);
-	border: 1px solid #f59e0b;
-	color: #92400e;
-	box-shadow: 0 0 0 1px rgba(245,158,11,.4), 0 8px 20px -8px rgba(245,158,11,.6);
-}
-html.dark #ffn-demo .ffn-pill.fire {
-	background: linear-gradient(135deg, rgba(245,158,11,.3), rgba(217,119,6,.4));
-	border-color: #f59e0b;
-	color: #fde68a;
-	box-shadow: 0 0 0 1px rgba(245,158,11,.5), 0 10px 28px -8px rgba(245,158,11,.45);
-}
-#ffn-demo .ffn-pill.fire-tech {
-	background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-	border: 1px solid #6366f1;
-	color: #312e81;
-	box-shadow: 0 0 0 1px rgba(99,102,241,.4), 0 8px 20px -8px rgba(99,102,241,.6);
-}
-html.dark #ffn-demo .ffn-pill.fire-tech {
-	background: linear-gradient(135deg, rgba(99,102,241,.32), rgba(67,56,202,.42));
-	border-color: #818cf8;
-	color: #e0e7ff;
-	box-shadow: 0 0 0 1px rgba(99,102,241,.55), 0 10px 28px -8px rgba(99,102,241,.5);
-}
-#ffn-demo .ffn-pill .ffn-sub {
-	font-size: .78em;
-	font-weight: 600;
-	margin-top: 4px;
-	opacity: .85;
-}
-#ffn-demo .ffn-pill.idle .ffn-sub { color: var(--mn-text-muted); }
-#ffn-demo .ffn-pill.fire .ffn-sub { color: #b45309; }
-#ffn-demo .ffn-pill.fire-tech .ffn-sub { color: #4338ca; }
-html.dark #ffn-demo .ffn-pill.fire .ffn-sub { color: #fcd34d; }
-html.dark #ffn-demo .ffn-pill.fire-tech .ffn-sub { color: #c7d2fe; }
-
-#ffn-demo #ffn-explanation {
-	margin-top: 16px;
-	padding: 12px 16px;
-	background: var(--mn-bg);
-	border-radius: 10px;
-	border: 1px dashed var(--mn-border);
-	color: var(--mn-text-secondary);
-	font-size: .92em;
-	text-align: center;
-	line-height: 1.6;
-	transition: background .3s ease, color .3s ease;
-}
-#ffn-demo #ffn-explanation b { color: var(--mn-text); }
-html.dark #ffn-demo #ffn-explanation {
-	background: rgba(15,23,42,.55);
-	color: #cbd5e1;
-	border-color: rgba(148,163,184,.3);
-}
-html.dark #ffn-demo #ffn-explanation b { color: #f1f5f9; }
-#ffn-demo svg#ffn-lines path { transition: stroke .35s ease, stroke-width .35s ease; }
-
-/* === Simplified isosurface ("truth tunnel") — ported from foam_of_meaning === */
-.mn-iso {
-	margin: 18px 0;
-	padding: clamp(12px, 2.5vw, 18px);
-	border-radius: var(--mn-radius-lg);
-	border: 1px solid var(--mn-border);
-	background: var(--mn-surface);
-	box-shadow: var(--mn-shadow-md);
-}
-.mn-iso-grid {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) 190px;
-	gap: 14px;
-	align-items: start;
-}
-@media (max-width: 640px) {
-	.mn-iso-grid { grid-template-columns: 1fr; }
-}
-#mn-iso-canvas {
-	display: block;
-	width: 100%;
-	height: clamp(340px, 46vw, 470px);
-	background: #0f172a;
-	border-radius: var(--mn-radius-md);
-	border: 1px solid #1e293b;
-}
-.mn-iso-side {
-	padding: 14px;
-	border-radius: var(--mn-radius-md);
-	border: 1px solid var(--mn-border);
-	background: var(--mn-bg-subtle);
-}
-.mn-iso-kicker {
-	font: 700 .62rem/1 var(--mn-font-mono);
-	letter-spacing: .14em;
-	text-transform: uppercase;
-	color: var(--mn-text-muted);
-}
-.mn-iso-next {
-	margin: .5em 0 .15em;
-	font: 700 clamp(1.35rem, 1rem + 1.2vw, 1.9rem)/1.1 var(--mn-font-heading);
-	color: var(--mn-heading);
-	word-break: break-word;
-}
-.mn-iso-next.is-end { font-size: 1.15rem; color: var(--mn-text-muted); }
-.mn-iso-meta {
-	margin-top: .6em;
-	font-size: .78rem;
-	line-height: 1.5;
-	color: var(--mn-text-secondary);
-}
-.mn-iso-meta b { color: var(--mn-text); font-family: var(--mn-font-mono); }
-.mn-iso-conf {
-	display: inline-block;
-	padding: .22em .6em;
-	border-radius: 999px;
-	font: 700 .66rem/1 var(--mn-font-mono);
-	letter-spacing: .06em;
-	text-transform: uppercase;
-	border: 1px solid transparent;
-}
-.mn-iso-conf.is-certain { color: var(--mn-sky); background: color-mix(in srgb, var(--mn-sky) 14%, transparent); border-color: color-mix(in srgb, var(--mn-sky) 35%, transparent); }
-.mn-iso-conf.is-likely { color: var(--mn-emerald); background: color-mix(in srgb, var(--mn-emerald) 14%, transparent); border-color: color-mix(in srgb, var(--mn-emerald) 35%, transparent); }
-.mn-iso-conf.is-open { color: var(--mn-coral); background: color-mix(in srgb, var(--mn-coral) 14%, transparent); border-color: color-mix(in srgb, var(--mn-coral) 35%, transparent); }
-.mn-iso-conf.is-wide { color: var(--mn-rose); background: color-mix(in srgb, var(--mn-rose) 14%, transparent); border-color: color-mix(in srgb, var(--mn-rose) 35%, transparent); }
-.mn-iso-controls {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 14px 22px;
-	align-items: center;
-	margin-top: 14px;
-}
-.mn-iso-btn {
-	appearance: none;
-	cursor: pointer;
-	padding: .55em 1.05em;
-	border-radius: 10px;
-	border: 1px solid var(--mn-border);
-	background: var(--mn-bg-subtle);
-	color: var(--mn-text);
-	font: 700 .85rem var(--mn-font-body);
-	transition: border-color .15s ease, color .15s ease, transform .15s ease;
-}
-.mn-iso-btn:hover { border-color: var(--mn-accent); color: var(--mn-accent); transform: translateY(-1px); }
-.mn-iso-btn:active { transform: translateY(0); }
-.mn-iso-temp {
-	display: flex;
-	align-items: center;
-	gap: .6em;
-	font-size: .82rem;
-	font-weight: 600;
-	color: var(--mn-text-secondary);
-}
-.mn-iso-temp input[type="range"] { width: min(230px, 42vw); accent-color: var(--mn-coral); }
-.mn-iso-temp b { min-width: 2.6em; color: var(--mn-heading); font-family: var(--mn-font-mono); text-align: right; }
-</style>
-<div class="md mn-mathstack">
-We can think of LLMs as machines that predict the next most likely word, given a context — only one word at a time. That word is appended to the input and fed back in, and the loop repeats until a special `|endoftext|` token signals the end.
-
-In the example below, the user enters the text “Once upon a” and lets the LLM continue.
-
-**Step 1.** The text is put into the LLM:
-
-$$\text{Next Word} = \text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}}) \rightarrow \text{time}$$
-
-**Step 2.** The predicted word is attached, and the whole new text is fed back in:
-
-$$\text{New Input} = \underbrace{\text{Once upon a}}_{\text{User Input}} + \underbrace{\text{time}}_{\text{Word 1}} = \text{Once upon a time}$$
-
-**Step 3.** It repeats — each answer becomes part of the next question — until the model emits the stop signal:
-
-$$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\text{time}}_{\text{Word 1}}) \rightarrow \underbrace{\text{there}}_{\text{Word 2}}$$
-
-$$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\text{time there}}_{\text{Words 1–2}}) \rightarrow \underbrace{\text{was}}_{\text{Word 3}}$$
-
-$$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\text{time there was}}_{\text{Words 1–3}}) \rightarrow \underbrace{\text{a}}_{\text{Word 4}}$$
-
-$$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\text{time there was a}}_{\text{Words 1–4}}) \rightarrow \underbrace{\text{dragon.}}_{\text{Word 5}}$$
-
-$$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\text{time there was a dragon.}}_{\text{Words 1–5}}) \rightarrow \underbrace{\texttt{|endoftext|}}_{\text{Stop}}$$
-
-**Final output: “Once upon a time there was a dragon.”**
-</div>
-
-<!-- ============================================================ -->
-<!-- STEP 0: AUTOREGRESSIVE LOOP VISUALIZATION -->
-<!-- ============================================================ -->
-<div class="mn-demo-panel">
-	<div class="mn-demo-title">🔄 The Autoregressive Loop: One Word at a Time</div>
-	<div class="mn-demo-sub">Each word is appended and fed back in — the sentence builds one token at a time.</div>
-	<div id="autoregressive-viz" style="min-height:120px;"></div>
-	<div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
-		<button id="autoregressive-play" onclick="AutoregressiveViz.animate()"
-			style="background:#3b82f6; color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
-			▶ Play Generation
-		</button>
-		<button onclick="AutoregressiveViz.reset()"
-			style="background:#64748b; color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
-			↺ Reset
-		</button>
-	</div>
-</div>
-
-<div class="mn-aha">
-	<div class="mn-aha-kicker">The aha</div>
-	<p class="mn-aha-big">It writes by reading itself.</p>
-	<p class="mn-aha-sub">Its output is appended to its input, the whole new text is fed back in, and the next token is predicted from that — again and again, until it emits <code>|endoftext|</code>.</p>
-</div>
-
-<div class="mn-hook">
-	<span class="mn-hook-kicker">Still curious?</span>
-	<p class="mn-hook-q">Fine. But how does a string of words turn into a <em>probability</em> for the next one?</p>
-	<div class="mn-hook-tease">The machine has five steps. Let us open it up and follow a single word through <span class="mn-hook-arrow" aria-hidden="true">↓</span></div>
-</div>
-
-<div class="md">
-## How does the computer find the next word?
-
-The LLM learned to predict the next word by reading **massive** amounts of text — books, websites, articles — noticing the patterns in how language works, and picking up facts along the way. But how does it get from a string of words to a single prediction? It happens in five steps. We will follow one word through all of them.
-
-### Step 1: Tokenization
-
-Computers don't understand words. They understand numbers. So the very first thing an LLM does is **chop the input into small pieces called tokens**. We can first think of these tokens as words, but they don't have to be. They can be sub-words, numbers, or any part of a text. While we humans think in words, the LLM “thinks” in tokens.
-
-$$\text{“Once upon a time”} \quad \rightarrow \quad [\ \text{“Once”}, \ \text{“␣”}, \ \text{“upon”}, \ \text{“␣”}, \ \text{“a”}, \ \text{“␣”}, \ \text{“time”}\ ]$$
-
-Behind this sits **Byte Pair Encoding (BPE)** — and its origin is surprising. \citeauthor{gage1994bpe} invented it in \citeyear{gage1994bpe} as a **data-compression** algorithm, not for language at all. The rule is simple: repeatedly merge the most frequent neighbouring pair of symbols into one new symbol. Frequent patterns collapse into short IDs, so a large body of text can be written with as few tokens as possible — a shorter, *lossless* encoding. The learned merge table is the codebook; a tokenizer is that compressor repurposed (\cite[Sennrich et al., 2016]{sennrich2016subword}).
-
-The **vocabulary size** is a hyperparameter. A hyperparameter is a setting you have to choose yourself before training — the model does not learn it from the data. Here, you decide how many slots the tokenizer may use. The algorithm then decides which pieces fill them by merging the most frequent neighbours; the only entries normally added by hand are special tokens such as `|endoftext|`.
-</div>
-
-<div class="md">
-Byte-level tokenizers (\cite[GPT-2]{gpt2}) start with all 256 bytes — space (`0x20`) is just one of them — so every UTF-8 character is representable, even unseen ones. The main emoji region (`U+1F300`–`U+1FAFF`) always begins with the UTF-8 bytes `F0 9F` (\cite[Unicode Blocks]{unicodeblocks}; \cite[RFC 3629]{rfc3629}), so even a new emoji there shares bytes with ones the tokenizer has already seen.
-
-Production tokenizers learn their merge table once, on a huge corpus. What follows is a toy example: we trained a real byte-level BPE library (HuggingFace `tokenizers`) on just this sentence with a 260-token budget. It learns merges such as `at` and `the`, and its actual output — every token replaced by a letter — is:
-
-$$\textcolor{#6366f1}{\underbrace{\ \texttt{the}\ }_{A}}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{c}\ }_{C}\textcolor{#059669}{\underbrace{\ \texttt{at}\ }_{D}}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{s}\ }_{E}\textcolor{#059669}{\underbrace{\ \texttt{at}\ }_{D}}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{o}\ }_{F}\underbrace{\ \texttt{n}\ }_{G}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\textcolor{#6366f1}{\underbrace{\ \texttt{the}\ }_{A}}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{m}\ }_{H}\textcolor{#059669}{\underbrace{\ \texttt{at}\ }_{D}}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{a}\ }_{I}\underbrace{\ \texttt{n}\ }_{G}\underbrace{\ \texttt{d}\ }_{J}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{w}\ }_{K}\underbrace{\ \texttt{o}\ }_{F}\underbrace{\ \texttt{r}\ }_{L}\underbrace{\ \texttt{e}\ }_{M}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{a}\ }_{I}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{h}\ }_{N}\textcolor{#059669}{\underbrace{\ \texttt{at}\ }_{D}}$$
-
-Every byte starts as its own token — space (`0x20`), `a`, `t`, all 256. So why does `cat` become `c` + `at` instead of `c` + `a` + `t`? The tokenizer does not split anything: it starts from the bytes and applies its learned merges in a fixed order, round after round. If `a+t → at` exists, `a` joins `t`; new tokens can merge again, as in `h+e → he`, then `t+he → the`. A byte stays alone only when no merge uses it.
-
-$$\begin{aligned}
-\texttt{c a t} &\;\longrightarrow\; \texttt{c}\,\textcolor{#059669}{\underbrace{\texttt{at}}_{\texttt{a+t}}}\\
-\texttt{t h e} &\;\longrightarrow\; \texttt{t}\,\textcolor{#6366f1}{\underbrace{\texttt{he}}_{\texttt{h+e}}} \;\longrightarrow\; \textcolor{#6366f1}{\underbrace{\texttt{the}}_{\texttt{t+he}}}\\
-\texttt{w o r e} &\;\longrightarrow\; \texttt{w o r e}\quad\text{(no merge)}
-\end{aligned}$$
-
-Merged tokens are coloured; the rest are single-character tokens or spaces. In a tokenizer trained on real text, frequent pieces such as `and` or `wore` would often be single tokens of their own.
-
-That economy is also why the vocabulary never has to grow. Because tokens are reusable fragments rather than whole words, an unfamiliar word is not a dead end: it can be rebuilt by combining pieces the compressor already knows. Most tokens are common words or word fragments. `"understanding"` might split into `"under"` + `"standing"` — two tokens. That is the quiet genius of it: a word the model has never seen can still be assembled from pieces it knows by heart.
-
-Where a word splits depends on the data the model was trained on. It chooses that automatically, and once chosen, the vocabulary stays fixed for the life of the model — a fixedness with strange consequences for the rare tokens almost nobody ever trained on (\cite[Li et al., 2024]{glitchtokens}).
-</div>
-
-<div class="optional md" data-headline="Which strange consequences?">
-Some tokens are almost never seen in training, so their embeddings stay nearly arbitrary. Feed one to a model and it can spill nonsense or start reciting its training data — the “understanding” only reaches as far as the text it happened to read. Researchers call them **glitch tokens** (\cite[Land &amp; Bartolo, 2024]{land2024fishing}; \cite[Li et al., 2024]{glitchtokens}).
-
-The most famous example is `SolidGoldMagikarp`. It is not a word and not a random string: it is the Reddit handle of a user who posted repeatedly in *r/counting*, a subreddit where people count upward, one number per comment. Such names appeared so often in that corner of the web that the tokenizer gave some of them their own tokens. But the vocabulary was built from a broader scrape of the web than the curated text used to train the model, so the model barely ever met them. Ask it to repeat `SolidGoldMagikarp` and it may answer “distribute”, refuse, or insult you. Other counter names such as `davidjl` can make a model start reciting numbers (\cite[Rumbelow &amp; Watkins, 2023]{rumbelow2023solidgold}).
-
-That is the lesson in miniature. A token is not a concept the model knows; it is a slot the model had to fill from data. If the slot was filled with almost nothing, there is almost nothing behind it — and what comes out is whatever the surrounding statistics happen to drag along.
-</div>
-
-<div class="mn-aha">
-	<div class="mn-aha-kicker">The aha</div>
-	<p class="mn-aha-big">It can read words it has never seen.</p>
-	<p class="mn-aha-sub">Break every unfamiliar word into familiar pieces and nothing is truly new. The vocabulary never has to grow — <code>transformer</code> is just <code>trans</code> + <code>form</code> + <code>er</code>, three pieces the model already knows.</p>
-</div>
-
-<!-- ============================================================ -->
-<!-- STEP 1: TOKENIZATION VISUALIZATION -->
-<!-- ============================================================ -->
-<div class="mn-demo-panel">
-	<div class="mn-demo-title">✂️ Step 1: Tokenization — chopping text into pieces</div>
-	<div class="mn-demo-sub">Type a word and watch it break into the pieces the model actually reads.</div>
-	<input type="text" id="tokenizer-input" class="mn-demo-input"
-	   placeholder="Type something... e.g., 'The transformer is playing greatly'"
-	   value="The transformer is playing greatly">
-	<div id="tokenizer-output" style="min-height:60px; margin-top:12px;"></div>
-	<div id="tokenizer-stats" style="margin-top:10px;"></div>
-	<div class="mn-demo-hint">
-	💡 Try typing <b>“understanding”</b> or <b>“unbreakable”</b> to see subword splitting in action.
-	The model breaks unknown words into known pieces it learned during training.
-	Spaces are tokens too — the <b>␣</b> chips are the whitespace between words.
-	</div>
-</div>
-
-<div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="tokenizerlab.php"><span class="mn-thread-label">Go deeper</span>Tokenization: How Words become Numbers</a>
-</div>
-
-<div class="mn-hook">
-	<span class="mn-hook-kicker">Next</span>
-	<p class="mn-hook-q">By itself, a number means nothing. So how does <em>“time”</em> come to mean something — and <em>“truth”</em> come to mean something nearby?</p>
-	<div class="mn-hook-tease">Every token gets a place in space <span class="mn-hook-arrow" aria-hidden="true">↓</span></div>
-</div>
-
-<div class="md" data-mathlevel="45">
-### Step 2: Embedding
-
-A raw token tells the model nothing about what a word *means*. So the model replaces each token with a **long list of numbers** — a vector — that stands for its meaning.
-
-$$\text{“King”} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$
-
-These vectors live in a high-dimensional space where **words with similar meanings end up close together**. To make this tangible, the demo below plots a tiny slice of that space — just two semantic axes the model might discover: **Power** and **Gender**. “Man” and “Prince” sit close on the Power axis; “Man” and “Woman” sit close on the Gender axis. Nobody hand-designs these positions. The model learns them automatically during training, purely from seeing which words turn up in similar company across billions of sentences.
-
-And the space doesn't just capture similarity — it captures **relationships**. The most famous example:
-
-$$\vec{\text{King}} - \vec{\text{Man}} + \vec{\text{Woman}} \approx \vec{\text{Queen}}$$
-
-The direction from “Man” to “Woman” stands for the concept of gender. Carry that same direction from “King” and you land right next to “Queen.” Nobody typed that rule in — it fell out of the statistics of the text (\cite[Word2Vec]{mikolov2013word2vec}).
-
-Real networks don't use two dimensions but **thousands** — far too many to picture. The principle stays the same: position encodes meaning, direction encodes relationship.
-</div>
-
-<!-- ============================================================ -->
-<!-- STEP 2: EMBEDDING VISUALIZATION (lndw style — Power / Gender) -->
-<!-- ============================================================ -->
-<div id="embedding-demo">
-    <div class="emb-head">📍 Step 2: Embedding — Words as Points in Space</div>
-
-    <div class="emb-quick">
-	<button class="emb-chip" data-ex="King - Man + Woman" type="button">King − Man + Woman</button>
-	<button class="emb-chip" data-ex="Man + Power" type="button">Man + Power</button>
-	<button class="emb-chip" data-ex="Woman + 2*Power" type="button">Woman + 2·Power</button>
-	<button class="emb-chip" data-ex="Prince + Power" type="button">Prince + Power</button>
-	<button class="emb-chip" data-ex="directions" type="button">↗ Directions</button>
-    </div>
-
-    <div id="embedding-viz-plot" data-plot-theme="self"></div>
-    <div id="embedding-equations" aria-live="polite"></div>
-
-    <p class="emb-hint">
-	💡 <b>Directions encode meaning.</b>
-	The vector <i>Man → Woman</i> points in a direction that's the same wherever you take it —
-	and so does <i>Man → Prince</i>.
-	The model was never taught this — it emerged from the texts themselves.
-    </p>
-</div>
-
-<div class="mn-aha">
-	<div class="mn-aha-kicker">The aha</div>
-	<p class="mn-aha-big">Meaning became arithmetic.</p>
-	<p class="mn-aha-sub">Nobody told the model that <em>Man → Woman</em> is the same arrow as <em>King → Queen</em>. The relationship simply <b>is</b> a direction in the space — and arithmetic on directions turns out to be arithmetic on ideas.</p>
-</div>
-
-<div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="embeddinglab.php"><span class="mn-thread-label">Go deeper</span>Embeddings: The Geometry of Meaning</a>
-</div>
-
-<div class="mn-hook">
-	<span class="mn-hook-kicker">Next</span>
-	<p class="mn-hook-q">There is still a blind spot: to the model, <em>“dog bites man”</em> and <em>“man bites dog”</em> look exactly the same.</p>
-	<div class="mn-hook-tease">So how does <em>order</em> get back in? <span class="mn-hook-arrow" aria-hidden="true">↓</span></div>
-</div>
-
-<div class="md">
-### Step 3: Positional Encoding
-
-“The dog bites man” means something very different from “The man bites dog.” Same words, different order. So a **positional encoding** is added to each token's embedding — a unique signal that says “I'm the 1st word,” “I'm the 2nd word,” and so on.
-
-$$\text{Final Input} = \text{Embedding}(\text{token}) + \text{Position}(\text{index})$$
-
-Now each token carries two pieces of information: **what it is** and **where it is**. This is not a nicety — the embedding and attention operations have no built-in notion of sequence order, so without it, the two sentences above would be indistinguishable to the model.
-</div>
-
-<div class="mn-aha">
-	<div class="mn-aha-kicker">The aha</div>
-	<p class="mn-aha-big">Without it, word order does not exist.</p>
-	<p class="mn-aha-sub">Strip the positional signal out and <em>“dog bites man”</em> and <em>“man bites dog”</em> collapse into the identical, unordered bag of tokens — the same thing to the model, opposite things to you.</p>
-</div>
-
-<!-- ============================================================ -->
-<!-- STEP 3: POSITIONAL ENCODING VISUALIZATION -->
-<!-- ============================================================ -->
-<div class="mn-demo-panel">
-	<div class="mn-demo-title">📐 Step 3: Positional Encoding — where am I in the sentence?</div>
-	<div class="mn-demo-sub">Each position gets its own wave-like fingerprint, added onto the token's vector.</div>
-
-	<div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-		<label style="font-size:0.85em; color:var(--mn-text-secondary); font-weight:bold;">Dimensions to show:</label>
-		<input type="range" id="pe-num-dims" min="2" max="200" step="1" value="8" style="flex:1; accent-color:#8b5cf6;">
-		<span id="pe-dims-value" style="font-weight:bold; color:#8b5cf6; min-width:34px; text-align:right;">8</span>
-	</div>
-
-	<!-- Heatmap -->
-	<div style="font-weight:bold; color:var(--mn-heading); margin-bottom:6px;">Positional Encoding Heatmap</div>
-	<div id="positional-encoding-heatmap" data-plot-theme="self" style="height:520px; background:var(--mn-surface); border-radius:8px; border:1px solid var(--mn-border); margin-bottom:12px;"></div>
-
-	<!-- Same word, different positions demo -->
-	<div style="font-weight:bold; color:var(--mn-heading); margin-bottom:6px; margin-top:14px;">Same Word, Different Positions</div>
-	<div id="pe-addition-demo"></div>
-</div>
-
-<div class="mn-demo-panel">
-	<div class="mn-demo-title">🧭 The positional rail — one point, many positions</div>
-	<div class="mn-demo-sub">The grey × is the original token vector. Each coloured dot is that same vector plus PE(position); the line is its trajectory as the position grows.</div>
-
-	<div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
-		<label style="font-size:0.85em; color:var(--mn-text-secondary); font-weight:bold;">Positions to show:</label>
-		<input type="range" id="pe-traj-count" min="2" max="40" step="1" value="12" style="flex:1; accent-color:#8b5cf6;">
-		<span id="pe-traj-count-value" style="font-weight:bold; color:#8b5cf6; min-width:34px; text-align:right;">12</span>
-	</div>
-
-	<div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-		<label style="font-size:0.85em; color:var(--mn-text-secondary); font-weight:bold;">Start dimension:</label>
-		<input type="range" id="pe-traj-dim" min="0" max="62" step="2" value="0" style="flex:1; accent-color:#8b5cf6;">
-		<span id="pe-traj-dim-value" style="font-weight:bold; color:#8b5cf6; min-width:34px; text-align:right;">0</span>
-	</div>
-
-	<div class="pe-traj-grid">
-		<div id="pe-trajectory-2d" data-plot-theme="self"></div>
-		<div id="pe-trajectory-3d" data-plot-theme="self"></div>
-	</div>
-
-	<div class="mn-demo-hint">The 2D view uses the chosen dimension and its partner — a circle. The 3D view adds the next dimension. Higher dimensions turn faster, so the rail tightens; the 2D circle repeats, while the 3D helix keeps moving.</div>
-</div>
-
-<div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="positionalembeddingslab.php"><span class="mn-thread-label">Go deeper</span>Positional Embeddings</a>
-</div>
-
-<div class="mn-hook">
-	<span class="mn-hook-kicker">Next</span>
-	<p class="mn-hook-q">Now every token knows <em>what</em> it is and <em>where</em> it is. But not one of them has spoken to another yet.</p>
-	<div class="mn-hook-tease">Time to open the transformer <span class="mn-hook-arrow" aria-hidden="true">↓</span></div>
-</div>
-
-<div class="md">
-### Step 4: The Transformer Layers
-
-This is the heart of the model — the **Transformer architecture** (\cite[Vaswani et al., 2017]{vaswani2017attention}). The token vectors flow through **many layers** stacked on top of each other (modern LLMs can have 80+ layers), each one refining the model's understanding a little more.
-
-Call the vector a token starts with $\mathbf{x}_{0}$. Every layer *adds* its output to what is already there instead of overwriting it, so that nothing learned earlier is ever thrown away. If layer $l$ reads $\mathbf{h}_{l}$ and writes back its own contribution, the rule is:
-
-$$\mathbf{h}_{1} = \mathbf{x}_{0} + \text{Layer}(\mathbf{x}_{0}), \qquad \mathbf{h}_{2} = \mathbf{h}_{1} + \text{Layer}(\mathbf{h}_{1}), \qquad \ldots$$
-
-In general $\mathbf{h}_{l+1} = \mathbf{h}_{l} + \text{Layer}(\mathbf{h}_{l})$, starting from $\mathbf{h}_{0} = \mathbf{x}_{0}$.
-
-This running vector is called the **residual stream**. It was originally invented to prevent the **vanishing gradient problem**, but it also acts as a **shared notebook**: each layer reads from the notebook, does some thinking, and **writes its findings back** to it.
-
-#### 4a: Attention - “Which other words matter for *this* word?”
-
-Attention lets the model **look at other tokens** to understand context. In *“The cat sat on the mat because **it** was tired”*, what does “it” refer to? An **attention head** figures this out by comparing “it” to every other word and deciding that “it” is most related to “cat”.
-
-Attention Heads solve what linguists call **Long Distance Dependencies**: a word at the beginning of a long text may influence the meaning of a word at the very end. Attention allows to find out which word attends to which other word over short or even very long texts, and it can do so over the whole **context length** of the LLM model.
-
-It does so by moving the Embedding of a word in dependence of the context it's used in to a place called **contextualized Embedding** that looks not only at the word, but at the context the word is used in.
-
-This is best exemplified when using words that have multiple meanings, like “bank”, which could be a **river bank**, or a **bank** where you put your **money**.
-
-Cycle through the examples below. Notice how the diamond — the contextualized “Bank” — leaps toward the neighbor that defines it. This is what **Attention** does: it looks at the context a word is used in, and moves the **Embedding** of a word in the **Embedding Space** to a point closer to its meaning in the context it's used in.
-
-</div>
-
-<div id="attn-demo">
-	<div class="attn-stepper">
-		<button class="attn-step-btn" id="attn-prev" type="button" title="Previous example">‹</button>
-		<span class="attn-step-label" id="attn-step-label">1 / 4</span>
-		<button class="attn-step-btn" id="attn-next" type="button" title="Next example">›</button>
-	</div>
-	<div class="attn-sentence" id="attn-sentence">I walk to the <span class="attn-word-bank">bank</span>.</div>
-	<div id="transformer-plot" data-plot-theme="self"></div>
-	<div class="attn-caption" id="attn-caption">No context word — <b>Bank</b> stays in the middle, ambiguous.</div>
-</div>
-
-<div class="md">
-LLM models have **many attention heads** running in parallel, each a tiny specialist. One might track which noun a pronoun refers to, another might connect verbs to their objects, another might notice adjectives describing nearby nouns.
-
-It matters, though, that not every head does something a human can read off. A head may look like it reacts to nouns or verbs while in reality it is just a pattern learned from statistics — not programmed to react to those words, and not "knowing" what they are (\cite[Elhage et al., 2021]{elhage2021mathematical}).
-</div>
-
-<div class="mn-aha">
-	<div class="mn-aha-kicker">The aha</div>
-	<p class="mn-aha-big">Context physically moves the word.</p>
-	<p class="mn-aha-sub">“Bank” is not one fixed point. In the context of <em>water</em> it slides toward the river sense; in the context of <em>money</em>, toward finance. Attention does not care how far away the clue is — it reads the <b>context</b> and moves the vector wherever the context points.</p>
-</div>
-
-<div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="attentionlab.php"><span class="mn-thread-label">Go deeper</span>The Semantic Tug-of-War: How Transformers 'Think'</a>
-</div>
-
-<details class="mn-psst">
-	<summary><span class="mn-psst-key" aria-hidden="true">+</span>A detour: the head that means nothing<span class="mn-psst-hint">open</span></summary>
-	<div class="mn-psst-body">
-		<p>Some heads do have a crisp job a human can name — but many fire on patterns no one would ever write down, and the model works perfectly well anyway. A head is a filter the training process stumbled onto, not a job description written by a designer; even the readable ones are usually understood only after the fact.</p>
-	</div>
-</details>
-
-<div class="mn-hook">
-	<span class="mn-hook-kicker">Next</span>
-	<p class="mn-hook-q">Attention has gathered the clues. So where does the model keep all the facts it is about to bring to bear?</p>
-	<div class="mn-hook-tease">It looks inward, into the feed-forward network <span class="mn-hook-arrow" aria-hidden="true">↓</span></div>
-</div>
-
-<div class="md">
-#### 4b: Feed-Forward Network - “What do I conclude?”
-
-After attention has gathered context, a small **neural network** processes each token on its own. Unlike attention, it does not look at other tokens — it looks at one token's vector and transforms it. In a modern LLM this block holds about **two-thirds of all the parameters**, which is why most of the model's stored knowledge lives here (\cite[Geva et al., 2021]{geva2021kv}).
-
-The usual cartoon says three things happen: pattern detectors fire, a filter zeroes the weak ones, and knowledge is added back. That is a useful first picture — but the modern version is sharper and a little stranger:
-
-- **It is a key → value memory.** The first matrix holds thousands of *keys*: patterns in the token's vector. When a key matches, the second matrix writes a *value* — not a stored sentence, but a **distribution over the next tokens** that this kind of pattern tends to be followed by. Lower layers key on shallow patterns (word forms, syntax); upper layers key on meaning.
-- **It is where facts are recalled.** In the middle layers the FFN behaves like an associative memory for subject → attribute facts. Researchers can locate a single fact there and edit the weights to change it: the ROME method can make a model “believe” a different capital of France without retraining it (\cite[Meng et al., 2022]{meng2022locating}).
-- **The clean little cards are a convenient lie.** Real neurons are mostly *polysemantic* — one neuron responds to several unrelated things — because the model packs far more features than it has neurons, a phenomenon called superposition (\cite[Elhage et al., 2022]{elhage2022superposition}). Sparse autoencoders can untangle those activations into features a human can actually read (\cite[Bricken et al., 2023]{bricken2023monosemanticity}; \cite[Cunningham et al., 2023]{cunningham2023sparse}).
-- **Modern FFNs are often gated, and sometimes replaced.** Many current models swap the hard ReLU for a gated activation such as SwiGLU, where one branch controls how much of another passes through (\cite[Shazeer, 2020]{shazeer2020glu}). And because this block is so large, some models replace it with a **mixture of experts** — many FFNs, with each token routed to only a few of them (\cite[Fedus et al., 2022]{fedus2022switch}).
-
-Let us follow the word **“Apple”**. Thanks to attention, its vector already carries clues about its context. Depending on whether those clues say *eating* or *buying*, a different set of keys matches — and a different value distribution is written into the stream.
-</div>
-
-<div id="ffn-demo">
-    <div class="ffn-ctl-row">
-        <button class="ffn-ctl" id="btn-ffn-fruit" type="button" onclick="FFNViz.setScenario('apple_fruit')">
-            🍎 Context: “eating an apple”
-        </button>
-        <button class="ffn-ctl" id="btn-ffn-tech" type="button" onclick="FFNViz.setScenario('apple_tech')">
-            💻 Context: “buying an apple”
-        </button>
-    </div>
-
-    <div id="ffn-viz-container">
-
-        <div style="width: 120px; text-align: center; z-index: 2;">
-            <div class="ffn-col-head">Residual stream</div>
-            <div id="ffn-input-box" class="ffn-pill">
-                “Apple” + context
-            </div>
-        </div>
-
-        <div style="width: 180px; text-align: center; z-index: 2;">
-            <div class="ffn-col-head">Keys · patterns in W₁</div>
-            <div id="ffn-detectors" style="display: flex; flex-direction: column; gap: 10px;">
-                </div>
-        </div>
-
-        <div style="width: 200px; text-align: center; z-index: 2;">
-            <div class="ffn-col-head">Values · next-token hints</div>
-            <div id="ffn-facts" style="display: flex; flex-direction: column; gap: 10px;">
-                </div>
-        </div>
-
-        <div style="width: 120px; text-align: center; z-index: 2;">
-            <div class="ffn-col-head">Written back</div>
-            <div id="ffn-output-box" class="ffn-pill">
-                richer vector
-            </div>
-        </div>
-
-        <svg id="ffn-lines" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;">
-            </svg>
-
-    </div>
-
-    <div id="ffn-explanation">
-        Choose a context: the same word meets a different set of keys.
-    </div>
-</div>
-
-<div class="mn-aha">
-	<div class="mn-aha-kicker">The aha</div>
-	<p class="mn-aha-big">The same word, two different meanings.</p>
-	<p class="mn-aha-sub">“Apple” is one vector, but a different set of keys matches depending on the company it keeps — and each key writes a different value: pie and juice, or Mac and iPhone. The model did not look a fact up; a pattern matched, and a distribution over the next words shifted.</p>
-</div>
-
-<div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="fact_lookup.php"><span class="mn-thread-label">Go deeper</span>Where 'Paris' Lives — How an LLM Retrieves a Fact</a>
-</div>
-
-<div class="md" data-mathlevel="55">
-Technically, this is expressed with the formula:
-
-$$ \text{FFN}(x) = W_2 \cdot \max(0, W_1 \cdot x + b_1) + b_2 $$
-
-Here $W_1$ holds the keys, the $\max(0, \ldots)$ keeps only the strong matches (many modern models replace it with a gated activation), and $W_2$ writes the values — the shift in the next-token distribution.
-
-#### 4c: All together
-
-The outputs of the attention heads, and then of the feed-forward network, are added straight back to the **residual stream** — nothing is overwritten, every layer only adds.
-
-And crucially, neither the attention heads nor the feed-forward network are configured by hand. They learn what to look for by looking at massive amounts of data.
-</div>
-
-<!-- ============================================================ -->
-<!-- STEP 4: TRANSFORMER LAYERS - RESIDUAL STREAM -->
-<!-- ============================================================ -->
-<div class="mn-demo-panel">
-	<div class="mn-demo-title">Step 4: The Residual Stream — one shared notebook</div>
-	<div class="mn-demo-sub">Step through the layers and watch the running representation build up, one write at a time.</div>
-	<div id="residual-stream-plot"></div>
-
-	<div style="display:flex; align-items:center; gap:14px; margin-top:14px; justify-content:center; flex-wrap:wrap;">
-		<button id="residual-stream-prev" onclick="ResidualStreamViz.prevLayer()"
-			style="padding:9px 18px; border-radius:8px; border:1px solid var(--mn-border); background:var(--mn-bg-subtle); color:var(--mn-text); cursor:pointer; font-size:14px;">
-			← Prev
-		</button>
-		<span id="residual-stream-layer-label"
-			style="font-weight:bold; font-size:15px; min-width:110px; text-align:center; color:var(--mn-heading);">
-			x₀ · Embedding
-		</span>
-		<button id="residual-stream-next" onclick="ResidualStreamViz.nextLayer()"
-			style="padding:9px 22px; border-radius:8px; border:none; background:#3b82f6; color:#fff; cursor:pointer; font-size:14px; font-weight:600;">
-			Next Layer →
-		</button>
-		<input type="range" id="residual-stream-layer" min="0" max="3" value="0"
-			oninput="ResidualStreamViz.setLayer(parseInt(this.value))"
-			style="width:140px; margin-left:8px;">
-		<button onclick="ResidualStreamViz.reset()"
-			style="padding:9px 14px; border-radius:8px; border:1px solid var(--mn-border); background:var(--mn-bg-subtle); color:var(--mn-text-secondary); cursor:pointer; font-size:13px;">
-			Reset
-		</button>
-	</div>
-
-	<div id="residual-stream-info" style="margin-top:14px;"></div>
-</div>
-
-<div class="mn-aha">
-	<div class="mn-aha-kicker">The aha</div>
-	<p class="mn-aha-big">Nothing is ever overwritten.</p>
-	<p class="mn-aha-sub">Every layer reads the same running stream — “what the sentence means so far” — thinks for a moment, and writes its finding back, added on top. Eighty layers deep, the original word is still in there. The network is less a pipeline than one <b>shared notebook</b>, passed hand to hand and annotated by everyone.</p>
-</div>
-
-<div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="transformer.php"><span class="mn-thread-label">Go deeper</span>The Architecture of Meaning: A Deep Dive into Transformers</a>
-</div>
-
-<div class="md" data-mathlevel="55">
-#### 4d: A layer is a bend in space
-
-The residual stream shows *what* a layer writes. It leaves open *where* it writes it. Read the layer's output as a new coordinate system and the operation looks like a bend of the whole space: a smooth, reversible map that lifts the inside of a ring and lowers its outside, opening a gap for a flat classifier. This is the geometric picture behind the "origami" view of feed-forward layers \cite{keup2022origami} — except that here the bend is smooth, so no point is torn or glued. The hard ReLU crease is the subject of [Origami in N dimensions](origami.php).
-
-The demo starts with a red core inside a blue ring, a configuration no straight line can separate. Step through it: add a dimension, bend the plane into a bowl, slide a flat plane into the gap, then squash the whole picture onto a one-dimensional score.
-</div>
-
-<style>
-.ism-copy {
-	max-width: 640px;
-	min-height: 5.6em;
-	margin: 0 auto 14px;
-	text-align: center;
-}
-.ism-title {
-	font: 700 1rem/1.3 var(--mn-font-heading);
-	color: var(--mn-heading);
-	margin-bottom: 4px;
-}
-.ism-body {
-	font-size: .84rem;
-	line-height: 1.55;
-	color: var(--mn-text-secondary);
-}
-.ism-wrap {
-	position: relative;
-	height: 480px;
-	overflow: hidden;
-	border: 1px solid var(--mn-border);
-	border-radius: var(--mn-radius-md);
-	background: var(--mn-bg);
-}
-#ism-canvas {
-	display: block;
-	width: 100%;
-	height: 100%;
-	cursor: grab;
-	touch-action: none;
-}
-#ism-canvas.is-dragging { cursor: grabbing; }
-.ism-controls {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	justify-content: center;
-	gap: 8px;
-	margin-top: 12px;
-}
-.ism-btn {
-	padding: 6px 12px;
-	border: 1px solid var(--mn-border);
-	border-radius: var(--mn-radius-sm);
-	background: var(--mn-bg-subtle);
-	color: var(--mn-text);
-	font: 600 .78rem/1.2 inherit;
-	cursor: pointer;
-	transition: border-color .15s ease, background .15s ease;
-}
-.ism-btn:hover {
-	border-color: var(--mn-accent);
-	background: color-mix(in srgb, var(--mn-accent) 10%, var(--mn-bg-subtle));
-}
-.ism-dots {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	padding: 0 4px;
-}
-.ism-dot {
-	width: 9px;
-	height: 9px;
-	padding: 0;
-	border: 1px solid var(--mn-border);
-	border-radius: 50%;
-	background: transparent;
-	transition: transform .15s ease, background .15s ease, border-color .15s ease;
-}
-.ism-dot.is-active {
-	background: var(--mn-accent);
-	border-color: var(--mn-accent);
-	transform: scale(1.3);
-}
-.ism-counter {
-	min-width: 3.2em;
-	color: var(--mn-text-muted);
-	font: 600 .72rem/1 var(--mn-font-mono);
-	text-align: center;
-}
-@media (max-width: 640px) {
-	.ism-wrap { height: 360px; }
-	.ism-copy { min-height: 6.8em; }
-}
-</style>
-
-<div class="mn-demo-panel ism-panel">
-	<div class="mn-demo-title">A layer bends the space it writes into</div>
-	<div class="mn-demo-sub">Seven steps from an inseparable ring to a single threshold on a one-dimensional score.</div>
-
-	<div id="ism-copy" class="ism-copy" aria-live="polite">
-		<div id="ism-title" class="ism-title"></div>
-		<div id="ism-body" class="ism-body"></div>
-	</div>
-
-	<div id="ism-wrap" class="ism-wrap">
-		<canvas id="ism-canvas" aria-label="An animated point cloud: a red core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a red core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
-	</div>
-
-	<div class="ism-controls">
-		<button type="button" id="ism-prev" class="ism-btn" aria-label="Previous step">←</button>
-		<div id="ism-dots" class="ism-dots" aria-hidden="true"></div>
-		<button type="button" id="ism-next" class="ism-btn" aria-label="Next step">→</button>
-		<span id="ism-counter" class="ism-counter">1 / 7</span>
-	</div>
-
-	<div class="mn-demo-hint">Use <b>←</b> and <b>→</b> to step through the seven stages. Drag the canvas to rotate.</div>
-</div>
-
-<div class="md">
-The important shift is not that the layer moves points. It changes the coordinate system the next layer reads. Stack many such bends and the representation can be arranged so that a final linear readout — one flat cut — is enough. That is the trick behind deep networks: depth buys a sequence of space bends, and the last layer gets to stay simple.
-</div>
-
-<div class="mn-hook">
-	<span class="mn-hook-kicker">Next</span>
-	<p class="mn-hook-q">After eighty layers, one vector is left standing in the stream. How does a list of numbers become an actual <em>word</em>?</p>
-	<div class="mn-hook-tease">The last step turns geometry back into language <span class="mn-hook-arrow" aria-hidden="true">↓</span></div>
-</div>
-
-<div class="md">
-### Step 5: The Final Prediction
-
-After all the layers, the model takes the **last token's vector** and produces a **score for every word in its vocabulary** (often 50,000+ words). Those scores are turned into probabilities:
-
-$$P(\text{“time”}) = 0.72, \quad P(\text{“day”}) = 0.08, \quad P(\text{“hill”}) = 0.002, \quad \ldots$$
-
-Then it **picks a word** — usually one of the top candidates, but with a little randomness, so it doesn't say the exact same thing every time. And then, as in the very first example, that word is appended to the input and the whole process begins again, one word at a time, until the model decides it is done.
-</div>
-
-<!-- ============================================================ -->
-<!-- STEP 5: FINAL PREDICTION -->
-<!-- ============================================================ -->
-<div class="mn-demo-panel">
-	<div class="mn-demo-title">🎯 Step 5: The Final Prediction — a probability over the whole vocabulary</div>
-	<div class="mn-demo-sub">Input: “Once upon a” → what comes next? Drag the temperature to change the model's mood.</div>
-
-	<div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-		<span style="font-size:0.85em; color:#3b82f6; font-weight:bold;">🎯 Greedy</span>
-		<input type="range" id="prediction-temperature" min="0.1" max="3.0" step="0.05" value="1.0" style="flex:1; accent-color:#f59e0b;">
-		<span style="font-size:0.85em; color:#ef4444; font-weight:bold;">🎲 Creative</span>
-		<span id="prediction-temp-val" style="font-size:0.9em; font-weight:bold; color:var(--mn-heading); min-width:120px; text-align:right;">1.00 (balanced)</span>
-	</div>
-
-	<div id="prediction-plot" data-plot-theme="self" style="height:350px; background:var(--mn-surface); border-radius:8px; border:1px solid var(--mn-border); margin-bottom:10px;"></div>
-	<div id="prediction-info"></div>
-
-	<div class="mn-demo-hint">
-	💡 <b>Temperature</b> controls randomness. At T→0 the model always picks the top word (greedy); at high T the distribution flattens and rare words get a chance — that is where LLM “creativity” comes from. The model does not <b>know</b> the answer. It assigns probabilities and <b>samples</b>.
-	</div>
-</div>
-
-<div class="md">
-### The truth tunnel
-
-A single prediction is one slice through a tube of plausible continuations. Step through the sentence and watch the tube narrow as the context closes the options — then turn up the temperature and watch it inflate again.
-</div>
-
-<div class="mn-iso">
-	<div class="mn-iso-grid">
-		<canvas id="mn-iso-canvas" aria-label="A path through embedding space wrapped in a glowing probability isosurface"></canvas>
-		<aside class="mn-iso-side">
-			<div class="mn-iso-kicker">Next word</div>
-			<div class="mn-iso-next" id="mn-iso-next">capital</div>
-			<div class="mn-iso-meta" id="mn-iso-meta"></div>
-		</aside>
-	</div>
-	<div class="mn-iso-controls">
-		<button type="button" class="mn-iso-btn" id="mn-iso-advance">Next word →</button>
-		<label class="mn-iso-temp">
-			<span>Temperature</span>
-			<input type="range" id="mn-iso-temp" min="0.05" max="2.0" step="0.05" value="0.8">
-			<b id="mn-iso-temp-val">0.80</b>
-		</label>
-	</div>
-</div>
-
-<div class="mn-aha">
-	<div class="mn-aha-kicker">The aha</div>
-	<p class="mn-aha-big">It does not know the answer. It rolls dice.</p>
-	<p class="mn-aha-sub">The model never decides that something <em>is</em> right. It builds a distribution over the entire vocabulary and draws from it — so the very thing we call creativity is a controlled amount of randomness in the draw.</p>
-</div>
-
-<div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="samplinglab.php"><span class="mn-thread-label">Go deeper</span>Temperature &amp; Sampling</a>
-</div>
-
-<div class="md" data-mathlevel="55">
-## The key insight
-
-There is no “understanding” module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
-
-### Why next-token prediction is so powerful
-
-The goal of minimizing cross-entropy loss is not a shallow objective. There is a deep connection between **prediction** and **compression**. The Kolmogorov complexity $K(x)$ of a string $x$ is the length of the shortest program that produces it. Solomonoff's theory of inductive inference proves that the optimal predictor for any sequence is the one that finds the shortest description (maximum compression) of the data seen so far. Cross-entropy loss, which LLMs minimize, is an upper bound on the compressibility of the text. A model that achieves low cross-entropy has found a short description of the statistical structure of language.
-
-The hypothesis that drives much of modern scaling research goes further: to compress natural language well, you must model the **causal structure of the world** that generates language. When the training text says “I dropped the glass and it ___,” predicting “shattered” requires an implicit model of gravity, material properties, and causation. The model does not need to be explicitly taught physics; the compression objective pushes it to discover physical regularities because they reduce prediction error. This is the dominant interpretation of why scaling works: more parameters allow more compression, which requires more accurate world models, which produces more “intelligent” behavior. **From this perspective, intelligence and optimal compression go hand in hand** — intelligence is not a separate objective that has to be optimized directly.
-
-This framing is best read as a productive working hypothesis, not a proved identity. Solomonoff's theorem is a result about *prediction*, not about *understanding*: an optimal predictor must be a compressor, but it does not settle whether a *particular* predictor, including a modern LLM, has anything resembling genuine world knowledge — or whether fluent prediction can arise from large-scale surface pattern-matching alone, the position associated with \citeauthor{bender2021stochasticparrots}'s stochastic-parrots critique. The empirical evidence does not yet fully adjudicate the question; the practical success of scaling makes the compression-as-intelligence view hard to dismiss, but it remains a contested and deeply philosophical claim rather than a settled fact.
-</div>
-
-<div class="mn-aha">
-	<div class="mn-aha-kicker">The aha</div>
-	<p class="mn-aha-big">Prediction and compression are the same goal.</p>
-	<p class="mn-aha-sub">To predict the next word well, a model has to find the shortest description of the data — and the shortest description of language keeps requiring a model of the <b>world</b> that produced it. Push prediction far enough and it presses into understanding.</p>
-</div>
-
-
-<!-- ============================================================ -->
-<!-- THE MEADOW OF WORDS — a Voronoi field over the vocabulary     -->
-<!-- ============================================================ -->
-<style>
-#word-meadow-wrap .wm-tour {
-	display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;
-	margin: 0 0 14px;
-	padding: 5px;
-	background: color-mix(in srgb, var(--mn-bg-subtle) 65%, transparent);
-	border: 1px solid var(--mn-border-light);
-	border-radius: 14px;
-}
-#word-meadow-wrap .wm-step {
-	appearance: none; cursor: pointer;
-	padding: 7px 13px; border-radius: 10px;
-	border: 1px solid transparent;
-	background: transparent;
-	color: var(--mn-text-secondary);
-	font: 600 .73rem/1.2 inherit;
-	transition: background .16s ease, color .16s ease, border-color .16s ease, transform .16s ease, box-shadow .16s ease;
-}
-#word-meadow-wrap .wm-step:hover {
-	background: var(--mn-surface);
-	border-color: var(--mn-border);
-	color: var(--mn-text);
-	transform: translateY(-1px);
-}
-#word-meadow-wrap .wm-step.is-active {
-	background: linear-gradient(135deg, var(--mn-accent), color-mix(in srgb, var(--mn-accent) 72%, #7c3aed));
-	border-color: transparent;
-	color: #fff;
-	box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--mn-accent) 70%, transparent);
-}
-#word-meadow-wrap .wm-canvas {
-	display: block; width: 100%; height: 460px;
-	border-radius: var(--mn-radius-md);
-	border: 1px solid var(--mn-border);
-	background: var(--mn-surface);
-	cursor: crosshair;
-	touch-action: none;
-}
-#word-meadow-wrap .wm-legend {
-	display: flex; flex-wrap: wrap; gap: 8px 16px;
-	margin: 9px 2px 0; font-size: .72rem; color: var(--mn-text-muted);
-}
-#word-meadow-wrap .wm-legend span { display: inline-flex; align-items: center; gap: 6px; }
-#word-meadow-wrap .wm-legend i {
-	width: 12px; height: 12px; border-radius: 50%;
-	display: inline-block; flex: 0 0 auto;
-}
-#word-meadow-wrap .wm-legend .wm-dot { background: var(--mn-surface); border: 2px solid var(--mn-text-secondary); }
-#word-meadow-wrap .wm-legend .wm-seam { width: 14px; height: 3px; border-radius: 2px; background: var(--mn-text-secondary); }
-#word-meadow-wrap .wm-legend .wm-band { background: color-mix(in srgb, #d97706 45%, transparent); border-radius: 3px; }
-#word-meadow-wrap .wm-legend .wm-thought { background: #0f766e; }
-#word-meadow-wrap .wm-controls {
-	display: grid; grid-template-columns: 1fr 1fr; gap: 12px 22px;
-	margin-top: 14px; align-items: start;
-}
-#word-meadow-wrap .wm-ctl { display: block; font-size: .76rem; color: var(--mn-text-secondary); }
-#word-meadow-wrap .wm-ctl b { color: var(--mn-text); font-variant-numeric: tabular-nums; }
-#word-meadow-wrap .wm-ctl input[type=range] {
-	display: block; width: 100%; margin-top: 6px;
-	accent-color: var(--mn-accent); cursor: pointer;
-}
-#word-meadow-wrap .wm-ctl.wm-temp input[type=range] { accent-color: #b45309; }
-#word-meadow-wrap .wm-ctl.wm-temp b { color: #b45309; }
-#word-meadow-wrap .wm-nav {
-	display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
-	margin-top: 14px;
-}
-#word-meadow-wrap .wm-nav button {
-	appearance: none; cursor: pointer;
-	padding: 8px 18px; border-radius: 999px;
-	border: 1px solid color-mix(in srgb, var(--mn-accent) 35%, var(--mn-border));
-	background: var(--mn-bg);
-	color: var(--mn-text);
-	font: 650 .8rem/1.2 inherit;
-	transition: border-color .16s ease, background .16s ease, color .16s ease, transform .16s ease, box-shadow .16s ease;
-}
-#word-meadow-wrap .wm-nav button:hover {
-	border-color: var(--mn-accent);
-	background: color-mix(in srgb, var(--mn-accent) 10%, var(--mn-bg));
-	color: var(--mn-heading);
-	transform: translateY(-1px);
-	box-shadow: 0 6px 16px -10px color-mix(in srgb, var(--mn-accent) 60%, transparent);
-}
-#word-meadow-wrap .wm-nav button:active { transform: translateY(0); }
-#word-meadow-wrap .wm-nav button:disabled {
-	opacity: .45; cursor: default; border-color: var(--mn-border);
-	background: var(--mn-bg); color: var(--mn-text-muted);
-	transform: none; box-shadow: none;
-}
-#word-meadow-wrap .wm-readouts {
-	display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 10px; margin-top: 13px;
-}
-#word-meadow-wrap .wm-box {
-	padding: 9px 12px; border-radius: 10px;
-	background: var(--mn-bg);
-	border: 1px solid var(--mn-border);
-	min-width: 0;
-}
-#word-meadow-wrap .wm-box .wm-k { font-size: .67rem; color: var(--mn-text-muted); line-height: 1.25; }
-#word-meadow-wrap .wm-box .wm-v {
-	font: 700 1.02rem/1.3 var(--mn-font-heading);
-	color: var(--mn-heading); margin-top: 2px;
-	overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-#word-meadow-wrap .wm-box .wm-s { font-size: .68rem; color: var(--mn-text-secondary); margin-top: 1px; }
-#word-meadow-wrap .wm-box.amber { background: color-mix(in srgb, #d97706 9%, var(--mn-bg)); border-color: color-mix(in srgb, #d97706 30%, var(--mn-border)); }
-#word-meadow-wrap .wm-box.amber .wm-v { color: #b45309; }
-#word-meadow-wrap .wm-box.rose { background: color-mix(in srgb, #be185d 8%, var(--mn-bg)); border-color: color-mix(in srgb, #be185d 26%, var(--mn-border)); }
-#word-meadow-wrap .wm-box.rose .wm-v { color: #be185d; }
-#word-meadow-wrap .wm-caption {
-	margin-top: 11px; padding: 10px 14px;
-	border-left: 3px solid var(--mn-accent);
-	border-radius: 0 var(--mn-radius-md) var(--mn-radius-md) 0;
-	background: var(--mn-bg);
-	color: var(--mn-text-secondary);
-	font-size: .84rem; line-height: 1.55;
-	min-height: 3.1em;
-}
-#word-meadow-wrap .wm-caption b { color: var(--mn-text); }
-@media (max-width: 620px) {
-	#word-meadow-wrap .wm-controls { grid-template-columns: 1fr; }
-	#word-meadow-wrap .wm-readouts { grid-template-columns: 1fr; }
-}
-</style>
-
-<div class="md">
-## The Meadow of Words
-
-A model thinks in a continuous space, yet it must speak in a **finite** vocabulary. This meadow shows how a thought becomes a word: every word is a pin in the field, every point of the field is a possible next-thought, and the thought simply falls into the cell of the **nearest** word. The seams between cells are exactly the places where two words are equally near — where language runs out.
-
-> **In one line:** a language model is a finite vocabulary laid over an infinite space of meaning — and a loop that keeps falling from one point in that space to the next word.
-</div>
-
-<div id="word-meadow-wrap" class="mn-demo-panel">
-	<div class="mn-demo-title">The geometry of choosing a word</div>
-	<div class="mn-demo-sub">Words are pins; each one owns the region of thoughts closest to it. The line between two regions is a seam where the thought could tip either way. A cell's area is how broad that word's meaning is.</div>
-
-	<div class="wm-tour" role="group" aria-label="Guided tour">
-		<button type="button" class="wm-step is-active" data-wstep="0">1 · The meadow</button>
-		<button type="button" class="wm-step" data-wstep="1">2 · A clear thought</button>
-		<button type="button" class="wm-step" data-wstep="2">3 · On the seam</button>
-		<button type="button" class="wm-step" data-wstep="3">4 · More words</button>
-		<button type="button" class="wm-step" data-wstep="4">5 · Temperature</button>
-		<button type="button" class="wm-step" data-wstep="5">6 · Expressibility gap</button>
-	</div>
-
-	<canvas id="wm-canvas" class="wm-canvas" aria-label="A two-dimensional meadow partitioned into the cells of a finite vocabulary">A meadow of words: every word owns a cell, and every thought falls into the nearest word's cell.</canvas>
-
-	<div class="wm-legend" aria-hidden="true">
-		<span><i class="wm-dot"></i>word (pin)</span>
-		<span><i class="wm-seam"></i>seam: here the winner changes</span>
-		<span><i class="wm-band"></i>ambiguous band</span>
-		<span><i class="wm-thought"></i>thought</span>
-	</div>
-
-	<div class="wm-controls">
-		<label class="wm-ctl" for="wm-sN"><span>Dictionary size</span> <b id="wm-rN">12</b>
-			<input type="range" id="wm-sN" min="4" max="40" step="1" value="12">
-		</label>
-		<label class="wm-ctl wm-temp" for="wm-sT"><span>Temperature (how open the draw is)</span> <b id="wm-rT">0.80</b>
-			<input type="range" id="wm-sT" min="10" max="300" step="1" value="80">
-		</label>
-	</div>
-
-	<div class="wm-nav">
-		<button type="button" id="wm-prev">← Previous</button>
-		<button type="button" id="wm-next">Next →</button>
-	</div>
-
-	<div class="wm-readouts">
-		<div class="wm-box">
-			<div class="wm-k">Thought falls into the cell of</div>
-			<div class="wm-v" id="wm-rWord">—</div>
-			<div class="wm-s" id="wm-rCell">move the pointer across the field</div>
-		</div>
-		<div class="wm-box amber">
-			<div class="wm-k">Winning chance</div>
-			<div class="wm-v" id="wm-rProb">—</div>
-			<div class="wm-s" id="wm-rRunner">runner-up: —</div>
-		</div>
-		<div class="wm-box rose">
-			<div class="wm-k">Margin to the nearest seam (0 = on it)</div>
-			<div class="wm-v" id="wm-rEdge">—</div>
-			<div class="wm-s" id="wm-rGap">ambiguous zone: —</div>
-		</div>
-	</div>
-
-	<div id="wm-caption" class="wm-caption"></div>
-
-</div>
-
-<div class="mn-aha">
-	<div class="mn-aha-kicker">The aha</div>
-	<p class="mn-aha-big">The vocabulary tiles the space of thoughts.</p>
-	<p class="mn-aha-sub">Every word owns a cell; every thought falls into exactly one. Choosing a word is not a lookup but a <b>partition</b> — and the seams, where two cells meet, are where the model is genuinely unsure. Grow the dictionary and the cells shrink; the seams never vanish.</p>
-</div>
-
-<div class="md">
-### Two ideas behind the meadow
-
-The geometry has a formal version. \cite[Mabrok (2026)]{mabrok2026latent} calls the lead of the winning token over the runner-up the **Voronoi margin**, and the band where that lead is smaller than a threshold the **expressibility gap**. In the demo, "Margin to the nearest seam" is the margin, and the amber band is a slice of the gap.
-
-Cell size carries meaning as well. The **semantic volume** of a token is the area of its Voronoi region, so a broad or polysemous word owns a large cell and a precise word a small one. More tokens make the cells smaller, but the average distortion of a finite vocabulary falls only as a power law set by the intrinsic dimension of the semantic manifold. With an intrinsic dimension of about 50, halving that distortion demands a vocabulary about $2^{25}\approx 3\times10^{7}$ times larger. That is why the seams shrink but never close.
-</div>
-
-<div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="foam_of_meaning.php"><span class="mn-thread-label">Go deeper</span>The Foam of Meaning — the geometry of ambiguity</a>
-</div>
-
-<div class="md">
-## The loop, all the way down
-
-A language model is a loop that turns geometry into words, and words back into geometry.
-
-Text arrives as **tokens** and becomes **vectors**. Position is folded in. Layer after layer, **attention** lets every vector look at its neighbours while the **residual stream** carries all earlier findings forward untouched. The last vector is then scored against the entire **vocabulary** and turned into a probability distribution — and one word is drawn. That word is appended to the input, and the loop starts again.
-
-Nowhere in that loop is a shelf of stored facts, and nowhere is a little module labelled "understanding". Meaning lives in the **geometry** — in directions, distances, and regions — and the model's only task at each step is to place the next thought somewhere in that space. The meadow is that last step seen up close: a finite vocabulary cutting an infinite space of possible thoughts into cells, with a seam wherever two words are equally near. Prediction is the walk; language is the trail it leaves.
-
-> **In one line:** a large language model is a next-word predictor trained on a vast slice of human text — and at scale, that simple loop starts to behave like a model of language, of reasoning, and of the world behind them.
-</div>
+<?php js("manifold_scenes"); ?>
+
+<div id="tm-intuition">
+<article class="lesson-main">
+					<section class="section-block" id="idea" data-chapter="The loop">
+						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
+						<h2 class="section-title">A first intuition: predict the next word.</h2>
+						<div class="prose">
+							<p>Ask your phone a question. The answer appears one word at a time. Under the hood, the model is doing one thing: predicting the next token.</p>
+							<p>A large language model is a program trained on text. It returns a probability for every possible next token. Pick one, append it, and run again. That is the autoregressive loop: auto because the model feeds its own output back in, regressive because each prediction is a regression on the sequence so far. How does a pile of numbers become a sentence? Follow one token through the machine.</p>
+						</div>
+
+						<div class="demo demo--paper demo--interactive" id="phone-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The model in your pocket <span>· demo 01a</span></p>
+									<p class="demo-sub">A search box, a voice query, an AI answer and the links below it. The animation runs once when the demo comes into view.</p>
+								</div>
+								
+							</div>
+							<div class="demo-body">
+								<div class="ia-stage">
+									<div class="ia-phone" id="ia-phone">
+										<div class="ia-phone-frame"></div>
+										<div class="ia-phone-notch"></div>
+										<div class="ia-phone-screen">
+											<div class="ia-app-logo" id="ia-logo" aria-hidden="true"></div>
+											<div class="ia-search-bar" id="ia-search-bar">
+												<div class="ia-search-icon" aria-hidden="true"></div>
+												<div class="ia-search-text" id="ia-search-text"></div>
+												<div class="ia-mic-btn" id="ia-mic-btn" aria-hidden="true">
+													<div class="ia-mic-icon"></div>
+												</div>
+											</div>
+											<div class="ia-ai-card" id="ia-ai-card">
+												<div class="ia-ai-text" id="ia-ai-text"></div>
+												<div class="ia-ai-thinking" id="ia-ai-thinking" aria-hidden="true">
+													<span></span><span></span><span></span>
+												</div>
+											</div>
+											<div class="ia-serp" id="ia-serp"></div>
+										</div>
+									</div>
+									<div class="ia-waveform" id="ia-waveform" aria-hidden="true">
+										<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>
+										<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>
+										<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>
+										<div class="ia-bar"></div><div class="ia-bar"></div>
+									</div>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>The search engine does not look up a stored answer. The summary is written one token at a time, and the same loop runs in the data centre behind it.</span></div>
+						</div>
+
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">At its heart, it is a loop: one word after another.</p>
+							<p class="aha-sub">Pick a likely next word, append it to the input, and run the whole thing again. A sentence, an answer, or a program emerges from that repeated step.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="code" data-chapter="The loop">
+						<div class="section-kicker">Next step · code</div>
+						<h2 class="section-title">It writes text and code.</h2>
+						<div class="prose">
+							<p>The same loop writes prose and code; Python runs the program.</p>
+						</div>
+
+						<div class="demo demo--paper demo--interactive code-demo--console" id="code-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">From a request to a program <span>· demo 01a · code</span></p>
+									<p class="demo-sub">The model writes the code; Python runs it.</p>
+								</div>
+							</div>
+							<div class="demo-body">
+								<div class="code-demo-grid">
+									<div class="code-demo-window">
+										<div class="code-demo-bar"><span class="code-demo-dot is-green"></span><span class="code-demo-dot is-gold"></span><span class="code-demo-dot is-sky"></span><span class="code-demo-name">sky.py</span></div>
+										<div class="code-demo-chat">
+											<div class="code-demo-msg is-user">Write a Python program that calculates how strongly blue and red light are scattered in the atmosphere.</div>
+											<div class="code-demo-msg is-ai">Sure. The program computes the Rayleigh scattering ratio for 450 nm and 650 nm.</div>
+										</div>
+										<pre class="code-demo-code" aria-label="Generated Python program"><code><span class="cd-com"># Rayleigh scattering in air</span>
+k_B = <span class="cd-num">1.380649e-23</span>   <span class="cd-com"># J/K</span>
+
+<span class="cd-kw">def</span> <span class="cd-fn">scattering</span>(wavelength, pressure, temperature):
+    density = pressure / (k_B * temperature)
+    <span class="cd-kw">return</span> density / wavelength ** <span class="cd-num">4</span>
+
+blue = <span class="cd-fn">scattering</span>(<span class="cd-num">450e-9</span>, <span class="cd-num">1e5</span>, <span class="cd-num">293</span>)
+red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>, <span class="cd-num">1e5</span>, <span class="cd-num">293</span>)
+<span class="cd-fn">print</span>(f<span class="cd-str">"Blue is {blue / red:.2f}x more strongly scattered than red"</span>)</code></pre>
+									</div>
+									<div class="code-demo-terminal" id="code-demo-terminal" aria-live="polite">
+										<div class="code-demo-bar"><span class="code-demo-dot is-green"></span><span class="code-demo-dot is-gold"></span><span class="code-demo-dot is-sky"></span><span class="code-demo-name">Terminal</span></div>
+										<div class="code-demo-term-body" id="code-demo-term">
+											<div class="code-demo-cmd"><span class="code-demo-dollar">$</span> <span id="code-demo-command">python3 sky.py</span></div>
+											<div class="code-demo-output" id="code-demo-output">Blue is 4.35× more strongly scattered than red.</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>The model wrote the program; the program computed the ratio. Code is another sequence the loop can predict, one token at a time.</span></div>
+						</div>
+					</section>
+
+					<section class="section-block" id="loop" data-chapter="The loop">
+						<div class="section-kicker"><span class="sk-num">02</span> Play the loop</div>
+						<h2 class="section-title">One Word After Another</h2>
+						<div class="prose">
+							<p>Context is everything the model can see when it predicts the next token: the text in the input field, the conversation so far, and the instructions or examples that frame the exchange. Training taught it how to read such a frame, so a prompt can bring out a role, a tone, or a way of answering. The model has no other working memory.</p>
+							<p>One word after another is a slow feeling-forward in a complex world. At every step very much is possible, but not all of it makes sense; the loop is how the model narrows that space.</p>
+							<p>The demo shows the idea, not a trained model. The next token is drawn from a distribution, appended, and the loop repeats. Temperature controls how far the model drifts from the most likely path.</p>
+							<p>Why not always take the top token? Greedy does. Top-p keeps the smallest set whose cumulative probability reaches p, then samples. Low temperature sharpens the distribution; high temperature flattens it.</p>
+						</div>
+
+						<div class="demo demo--generative" id="next-token-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The autoregressive loop <span>· demo 01</span></p>
+									<p class="demo-sub">Let the demo choose the next word, or switch between sampling, greedy, and top-p. Each choice opens only the continuations that make sense from there, so the tree narrows as you go.</p>
+								</div>
+								<span class="demo-badge">live</span>
+							</div>
+							<div class="demo-body">
+								<div class="prediction">
+									<div class="prediction-sentence" id="nt-sentence" aria-live="polite"></div>
+									<div class="nt-tree" id="nt-tree" aria-live="polite"></div>
+									<div class="bars" id="nt-bars" role="group" aria-label="Next word probabilities"></div>
+									<p class="meadow-caption" id="nt-why" style="color:var(--tm-muted)">Sampling draws from the whole distribution; temperature controls how concentrated it is.</p>
+								</div>
+								<div class="demo-controls">
+									<div class="chip-row" id="nt-modes">
+										<button class="chip is-on" type="button" data-decode="sample">Sample</button>
+										<button class="chip" type="button" data-decode="greedy">Greedy</button>
+										<button class="chip" type="button" data-decode="topp">Top-p 0.9</button>
+									</div>
+								</div>
+								<div class="demo-controls" style="margin-top:6px">
+									<button class="btn-demo btn-demo--green" type="button" id="nt-step">Let it choose →</button>
+									<button class="btn-demo" type="button" id="nt-reset">Reset</button>
+									<label>Temperature
+										<input type="range" id="nt-temp" min="0.05" max="1.8" step="0.05" value="0.8" aria-describedby="nt-temp-note">
+										<output id="nt-temp-out">0.80</output>
+									</label>
+								</div>
+								<p class="meadow-caption nt-temp-note" id="nt-temp-note">
+									<b>Why "temperature"?</b> In a gas, temperature sets how widely molecular
+									speeds are spread (Maxwell-Boltzmann). Here it plays the same role for
+									logits: <span class="nt-formula" data-tex="p_i \propto \exp(z_i / T)" data-tex-display="false"></span>. High T flattens the
+									distribution; low T sharpens it; greedy is the limit T → 0, and exact
+									zero is handled by taking the top token directly. The name is a
+									metaphor: there is no gas inside the model.
+								</p>
+								<div class="demo-readout demo-readout--4">
+									<div><b>Step</b><span id="nt-step-count">0 / 6</span></div>
+									<div><b>Context length</b><span id="nt-len">7 words</span></div>
+									<div><b>Top choice</b><span id="nt-top">dragon</span></div>
+									<div><b>Choice</b><span id="nt-mode">sample</span></div>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>The distribution is the model; the choice is how you draw from it. Greedy, sampling, and top-p all read the same probabilities differently.</span></div>
+						</div>
+
+						<div class="demo demo--paper demo--canvas" id="truth-tunnel-demo">
+								<div class="demo-head">
+									<div>
+										<p class="demo-title">The probability tunnel <span>· demo 01b</span></p>
+										<p class="demo-sub">A single prediction is one slice through a landscape of plausible continuations. The main path is the deepest blue valley, the route the model finds most likely. Every other option sits in its own side basin, close enough to remain possible. Step through the sentence and watch the valley narrow as context closes options; turn up the temperature and watch it widen again. Drag to rotate.</p>
+									</div>
+									<span class="demo-badge">live</span>
+								</div>
+								<div class="demo-body">
+									<p class="iso-note">Think of every point in this landscape as an embedding: a vector that stands for a word or a continuation. Neighbouring points are similar in meaning, and the depth of a valley is the probability the model gives that continuation. The blue path is only one possible route through this space. The other paths are the alternatives the model has learned to consider; they are its experience compressed into the geometry of the space. The context is the part of the landscape the model can see right now: it shifts the valleys and closes routes that no longer fit. This picture is an abstraction. A real model works in thousands of dimensions, with far more paths than can be drawn here. The energy-landscape view follows the energy-based learning framework of <a href="http://yann.lecun.com/exdb/publis/pdf/lecun-06.pdf" target="_blank" rel="noopener">LeCun et al., A Tutorial on Energy-Based Learning (2006)</a>.</p>
+									<div class="iso-grid">
+										<div class="iso-main">
+											<div class="tt-plot-wrap">
+												<div id="tt-3d" class="tt-echarts-host" role="img" aria-label="A three-dimensional landscape of plausible continuations, with the most likely path carved as a deep blue valley"></div>
+												<div id="tt-ball" class="tt-ball" aria-hidden="true"><span class="tt-ball-label" id="tt-ball-label">context</span></div>
+												<div id="tt-labels" class="tt-labels" aria-hidden="true"></div>
+											</div>
+											<div class="tt-legend">
+												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--deep"></i><span>deep blue = likely path</span></span>
+												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--side"></i><span>gold = possible exits</span></span>
+												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--base"></i><span>gold plane = all other tokens</span></span>
+												<span class="tt-legend-item"><i class="tt-swatch tt-swatch--filler"></i><span>small dots = other plausible tokens</span></span>
+											</div>
+											<div class="tt-token-row" id="tt-token-row" aria-label="Jump to a token"></div>
+										</div>
+										<aside class="iso-side">
+											<div class="iso-kicker">Next word</div>
+											<div class="iso-next" id="tt-next">capital</div>
+											<div class="iso-alt" id="tt-alt"></div>
+											<div class="iso-meta" id="tt-meta"></div>
+										</aside>
+									</div>
+									<div class="demo-controls">
+										<button class="btn-demo btn-demo--green" type="button" id="tt-advance">Next word →</button>
+										<label>Temperature
+											<input type="range" id="tt-temp" min="0.05" max="5.0" step="0.05" value="0.8">
+											<output id="tt-temp-out">0.80</output>
+										</label>
+									</div>
+								</div>
+								<div class="demo-foot">The green ball is the current context. Each token gives it direction and momentum; it rolls into the deepest valley, the path of least resistance. The gold dashed lines are plausible exits out of the main valley. Raise the temperature and the ridges flatten, so even more of those exits become reachable.</div>
+								<div class="demo-insight"><b>Takeaway</b><span>The model never decides that something is right. It builds a distribution from its training data and draws from it; the landscape shows how context narrows that distribution.</span></div>
+							</div>
+						<p class="step-note">The model does not jump to an answer. It feels its way through this space, one token at a time. Click a word below the landscape, or use Next word, to jump to that step.</p>
+						<div class="prose">
+							<p>Training is the process that shapes this landscape. The model moves its coarse points, the token and context representations, into relations with one another so that meaning can be stored in compressed form inside the network. Attention and dense layers are trained together. In the high-dimensional space behind the projection, the loss makes the ball move faster along paths that continue the training text and slower along paths that do not. The landscape is therefore learned, not given: what counts as plausible is defined entirely by the training data.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="inside" data-chapter="Inside the transformer">
+						<div class="section-kicker"><span class="sk-num">03</span> Inside the model</div>
+						<h2 class="section-title">A model is a stack of functions.</h2>
+						<div class="prose">
+														<p>A neural network is built by applying functions one after another. One layer transforms its input, the next layer transforms that result, and the stack turns a small operation into a deep model. The depth is composition: many simple steps, each feeding the next.</p>
+							<p>Classical programming starts with the procedure: you write down every step, and the computer executes it. AI reverses that: you provide enough examples with matching outputs, and training searches for the function in between. The layers are the shape that function takes; the data decides what it does.</p>
+														<div class="prose-math layer-stack-formula" data-tex="\underbrace{ \text{output} = \text{layer}_3\!\left( \underbrace{ \text{layer}_2\!\left( \underbrace{\text{layer}_1(\text{input})}_{\text{first transformation}} \right) }_{\text{second transformation}} \right) }_{\text{a stack of functions, each feeding the next}}" data-tex-display="true"></div>
+							
+						</div>
+						<h2 class="section-title">The transformer: six steps, one running vector.</h2>
+						<div class="prose">
+							<p>The stack of functions above is the transformer. For every token, it runs the same six steps, again and again. The model moves points in a high-dimensional space. Training shapes those points so that the final context vector has smaller angles to words that plausibly come next than to words that do not. Because the decision is about angles, not straight-line distances, this page uses the great-circle metric by default. The model works on a hypersphere of directions; to draw it, we project that sphere down to three dimensions. Plausible here means the continuation occurred in the training data; it does not mean that the model has a separate notion of truth.</p>
+							<p>For every token, again and again, it asks how that token stands in context to all the other tokens right now. Attention lets it look around, a dense layer and an activation function transform each token, and LayerNorm keeps the numbers in a stable range. A few other parts do their jobs along the way.</p>
+							<p>Each pass shifts the token's point in the space. The directions follow meaning paths and become clearer, so the last token ends up at a small angle to the tokens that are likely next in this context. That is the trick.</p>
+						</div>
+						<div class="prose">
+														<p>Now we explain these building blocks step by step: tokenize, embed, add position, attend, feed-forward, and the residual stream. The order is the real architecture; the demos are simplified.</p>
+													</div>
+					</section>
+
+
+					<section class="section-block" id="step-tokenize-section" data-chapter="Inside the transformer">
+						<div class="section-kicker">Step 1 · Tokenize</div>
+						<h2 class="section-title">Tokenize: text becomes a sequence of IDs</h2>
+						<div class="prose">
+							<p>A token is not a word. Text is encoded as numbers: every character has a code point, and a byte-level tokenizer starts from 256 bytes, so every string is representable. Rare words split into subwords: “unbelievable” becomes “un”, “believ”, “able”, and the same “un” appears in “unhappy” and “unmarried”. A space can be a token too.</p>
+						</div>
+						<div class="step-pane" id="step-tokenize">
+															<div class="step-stage">
+																<div class="step-toolbar">
+																	<div class="step-chips">
+																		<button class="chip" type="button" data-tok="understanding">understanding</button>
+																		<button class="chip" type="button" data-tok="unbreakable">unbreakable</button>
+																		<button class="chip is-on" type="button" data-tok="sentence">The transformer is playing greatly</button>
+																	</div>
+																</div>
+																<div class="token-chips" id="itok-out" aria-live="polite"></div>
+																<div class="demo-readout demo-readout--4" id="itok-stats"></div>
+															</div>
+															<p class="step-note">A real tokenizer learns its merge table from text. IDs are addresses into an embedding table.</p>
+														</div>
+					</section>
+
+					<section class="section-block" id="step-embed-section" data-chapter="Inside the transformer">
+						<div class="section-kicker">Step 2 · Embed</div>
+						<h2 class="section-title">Embed: IDs become points in meaning space</h2>
+						<h3 class="layer-subhead">Meaning becomes geometry</h4>
+						<div class="prose">
+							<p>Each token ID points to a learned vector. A real model uses thousands of dimensions; the demo uses two so you can see it. Similar words sit close, and a direction can carry a relationship: man → woman is the same arrow as king → queen. The axes here are labelled for humans; a real model's axes are unlabelled. Sometimes the relation does not come out exactly; an approximate direction is already enough to be useful.</p>
+						</div>
+						<div class="demo demo--paper demo--plot" id="oned-twod-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">From one axis to two <span>· demo</span></p>
+									<p class="demo-sub">One axis orders words by temperature. Pick two words and see where their midpoint lands; the embedding demo below adds a second direction, so the same words can carry more relations.</p>
+								</div>
+							</div>
+							<div class="demo-body">
+								<div class="oned-twod-grid">
+									<div>
+										<canvas id="i1d-canvas" class="demo-canvas" style="height:210px" aria-label="A temperature line with Freezing at -30, Cold at 5, Lukewarm at 30, Warm at 55, and Hot at 100"></canvas>
+										<p class="meadow-caption" style="color:var(--tm-muted)">1D: temperature</p>
+									</div>
+
+								</div>
+								<div class="chip-row" id="oned-examples" aria-label="Temperature examples"></div>
+								<div class="prose-math oned-formula" id="oned-formula" data-tex-display="true" aria-live="polite"></div>
+							</div>
+						</div>
+						<div class="prose">
+							<p>In the same space, word vectors add and subtract. Treat each word as an arrow from the origin: add two arrows and the result lands near the word that combines their meanings.</p>
+						</div>
+						<div class="demo demo--paper demo--canvas" id="step-embed">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Embedding arithmetic <span>· demo</span></p>
+									<p class="demo-sub">Pick an example. The vectors add and subtract in the same two-dimensional space, and the result lands near a word.</p>
+								</div>
+							</div>
+							<div class="demo-body">
+								<div class="step-toolbar">
+									<div class="step-chips">
+										<button class="chip is-on" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
+										<button class="chip" type="button" data-emb="Man + 2 * Power">Man + 2 · Power</button>
+										<button class="chip" type="button" data-emb="Prince + Power">Prince + Power</button>
+										<button class="chip" type="button" data-emb="gender">male ↔ female</button>
+										<button class="chip" type="button" data-emb="power">power</button>
+										<button class="chip" type="button" data-emb="directions">all directions</button>
+									</div>
+								</div>
+								<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with two learned directions"></canvas>
+								<div class="step-out" id="iemb-out">The space has two learned directions in this demo. Choose an example to see where it lands.</div>
+							</div>
+						</div>
+						<h3 class="layer-subhead">From relations to translation</h4>
+						<div class="prose-demo-split">
+							<div class="prose">
+								<p>The points form a manifold: locally flat, globally curved. The relations are similar enough to translate: the path from one word to another can be transformed into the corresponding path in another language. Feed-forward networks learn such transformations. This is an approximation. In a real model the geometry is much messier: relations overlap, exceptions are common, and translation is learned from huge amounts of text rather than read off a clean map. The intuition still points in the right direction.</p>
+							</div>
+							<div class="demo demo--paper demo--canvas" id="tm-dual-manifold-demo">
+								<div class="demo-body">
+									<div id="tm-dual-manifolds" style="width:100%;height:360px;">
+										<div class="tm-manifold-loading">
+											<span class="tm-spinner" aria-hidden="true"></span>
+											<span>Loading the manifolds …</span>
+										</div>
+									</div>
+									<div id="tm-dual-controls" style="max-width:520px;margin:8px auto 0;min-height:118px;"></div>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<section class="section-block" id="step-position-section" data-chapter="Inside the transformer">
+						<div class="section-kicker">Step 3 · Positional embedding</div>
+						<h2 class="section-title">Position: every slot gets its own fingerprint</h2>
+						<div class="prose">
+							<p>Attention has no sense of order. Without a position signal, “man bites dog” and “dog bites man” are the same bag of vectors. A sinusoidal encoding adds a fingerprint to every slot: each pair of dimensions oscillates at a different frequency.</p>
+						</div>
+						<div class="prose-math pos-formula" data-tex="\underbrace{\begin{aligned} PE_{(\text{pos},2i)} &amp;= \sin\left(\frac{\underbrace{\text{pos}}_{\text{position}}}{\underbrace{10000^{2i/d}}_{\text{frequency}}}\right) \\ PE_{(\text{pos},2i+1)} &amp;= \cos\left(\frac{\text{pos}}{10000^{2i/d}}\right) \end{aligned}}_{\text{each dimension gets its own wave}}" data-tex-display="true"></div>
+						<div class="step-pane" id="step-position">
+							<div class="step-stage">
+								<div class="step-toolbar">
+									<label>Context length
+										<input type="range" id="ipe-heat-context" min="16" max="128" step="8" value="64">
+										<output id="ipe-heat-context-out">64</output>
+									</label>
+									<label>Visible dimensions
+										<input type="range" id="ipe-heat-dims" min="2" max="64" step="2" value="24">
+										<output id="ipe-heat-dims-out">24</output>
+									</label>
+								</div>
+								<p class="step-note">Each position gets a fingerprint built from slow and fast waves.</p>
+								<canvas class="step-canvas" id="ipe-heatmap" style="height:220px" aria-label="A heatmap of classic sinusoidal positional encodings for a long context"></canvas>
+								<div class="pos-legend" aria-hidden="true">
+									<span><i class="pl-neg"></i>−1</span>
+									<span><i class="pl-zero"></i>0</span>
+									<span><i class="pl-pos"></i>+1</span>
+								</div>
+								<div class="step-out" id="ipe-heat-out">Each row is one position; each column is one dimension.</div>
+							</div>
+							<div class="prose">
+								<p class="pos-bridge-kicker">Same pattern, one dimension higher</p>
+								<h3>From the flat slice to the 3D curve</h3>
+								<p>The curve is a small, readable slice of that geometry. A real model is far more complex, but it follows the same geometric principles in thousands of dimensions.</p>
+								<p>In the first three dimensions the curve is a spiral: the first two dimensions turn in a circle, while the third drifts slowly. The Euclidean view measures the straight-line chord from the token to the current point on that spiral. Switch to the angle view and the same points are projected onto the unit sphere, and in a real model onto a hypersphere: the distance is now the great-circle arc, the angle between the token direction and the position direction. The spiral stays, but the question changes from how far apart the two points are to how far their directions have turned.</p>
+								<p class="pos-bridge-flow" aria-hidden="true"><span>position × dimension</span><i>→</i><span>3D curve</span><i>→</i><span>N dimensions</span></p>
+							</div>
+							<div class="step-stage">
+								<div class="step-toolbar">
+									<label>Position
+										<input type="range" id="ipe-pos" min="0" max="10000" step="1" value="7">
+										<output id="ipe-pos-out">7</output>
+									</label>
+									<div class="step-chips" id="ipe-metric" aria-label="Distance metric">
+										<button class="chip is-on" type="button" data-pos-metric="euclid" aria-pressed="true">Euclidean length</button>
+										<button class="chip" type="button" data-pos-metric="angle" aria-pressed="false">Angle to the word</button>
+									</div>
+									<button class="chip is-on" type="button" id="ipe-autorotate" aria-pressed="true">Auto-rotate view</button>
+								</div>
+								<p class="step-note pos-drag-hint">Move the slider to travel along the curve; drag the view to rotate it. The switch shows the straight chord between token and position, or normalizes both to the unit sphere and measures the great-circle arc.</p>
+								<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A single sinusoidal positional-encoding vector for one token: three dimensions as axes, one point on the curve"></canvas>
+								<div class="step-out" id="ipe-out">One token at position <b>7</b>.</div>
+							</div>
+							<p class="step-note">The three axes are the first three dimensions; the blue sphere is the word, the arrow its position. Drag to rotate. A real model adds the position vector to the token embedding and compares the resulting context vectors; the demo keeps the two vectors separate so the angle stays visible. A real model uses thousands of dimensions.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="step-attention-section" data-chapter="Inside the transformer">
+						<div class="section-kicker">Step 4 · Attend</div>
+						<h2 class="section-title">Self-attention: context pulls the word into place</h2>
+						<div class="prose">
+							<p>How does a word know which neighbours matter? Self-attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the river or money reading. A real layer has many heads; the demo shows one.</p>
+						</div>
+						<div class="step-pane" id="step-attention">
+															<div class="step-stage">
+																<div class="step-toolbar">
+																	<div class="step-chips" id="iatt-examples">
+																		<button class="chip is-on" type="button" data-att="0">no unambiguous context</button>
+																		<button class="chip" type="button" data-att="1">river in context</button>
+																		<button class="chip" type="button" data-att="2">money in context</button>
+																		<button class="chip" type="button" data-att="3">both in context</button>
+																	</div>
+																</div>
+																<div class="attn-sentence" id="iatt-sentence">I walk to the <span class="aw-bank">bank</span>.</div>
+																<canvas class="step-canvas" id="iatt-canvas" aria-label="Self-attention moving the embedding of bank toward the context"></canvas>
+																<div class="step-out" id="iatt-out">No unambiguous context: bank stays in the middle, ambiguous.</div>
+																<div class="attn-matrix" id="iatt-matrix" aria-live="polite"></div>
+																<div class="prose-math attn-sum" id="iatt-sum" data-tex-display="true"></div>
+															</div>
+															<p class="step-note"><b>This is an intuition, not a real head.</b> A real head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the value vectors.</p>
+															<p class="step-note">Each head has one unit of attention. If it puts 80% on one word, only 20% remains for the others. Many heads can attend to different things.</p>
+														</div>
+					</section>
+
+					<section class="section-block" id="layer-detail-section" data-chapter="Inside the transformer">
+						<div class="section-kicker">The layer in detail · the MLP</div>
+						<h2 class="section-title">FFN: a projection, a bias, a bend</h2>
+						<div class="prose">
+							<p>After attention, each token passes through its own small network, the MLP. It projects the vector, applies a nonlinearity, and projects back. The bend is what lets a straight cut separate what was inseparable.</p>
+						</div>
+						<div class="step-pane layer-pane" id="layer-detail">
+															<div class="layer-formula-grid">
+																<div class="layer-formula-card">
+																	<div class="layer-card-title">Dense unit</div>
+																	<div class="prose-math" data-tex="\underbrace{\text{dense}(x) = \text{activation}\!\left(\underbrace{W x + b}_{\text{learned linear map}}\right)}_{\text{a function with parameters } W,\ b}" data-tex-display="true"></div>
+																</div>
+																<div class="layer-formula-card">
+																	<div class="layer-card-title">FFN</div>
+																	<div class="prose-math" data-tex="\underbrace{\text{FFN}(x) = \text{dense}_2(\text{activation}(\text{dense}_1(x)))}_{\text{two dense units with an activation between them}}" data-tex-display="true"></div>
+																</div>
+															</div>
+																														<details class="collapse-card">
+																<summary class="cc-label">Worked example · 2 inputs, 2 outputs</summary>
+																<div class="collapse-math" data-tex="\begin{aligned} W &amp;= \begin{pmatrix} 1 &amp; 2 \\ 0 &amp; -1 \end{pmatrix}, \quad x = \begin{pmatrix} 3 \\ 1 \end{pmatrix}, \quad b = \begin{pmatrix} 0 \\ -2 \end{pmatrix} \\[6pt] Wx &amp;= \begin{pmatrix} 1\cdot 3 + 2\cdot 1 \\ 0\cdot 3 + (-1)\cdot 1 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \end{pmatrix} \\[6pt] z = Wx + b &amp;= \begin{pmatrix} 5 \\ -1 \end{pmatrix} + \begin{pmatrix} 0 \\ -2 \end{pmatrix} = \begin{pmatrix} 5 \\ -3 \end{pmatrix} \\[6pt] \operatorname{ReLU}(z) &amp;= \begin{pmatrix} 5 \\ 0 \end{pmatrix} \end{aligned}"></div>
+																<p>Each output is a dot product plus a bias, then the activation. The matrix above shows the arithmetic.</p>
+															</details>
+															<h3 class="layer-subhead">Depth without a nonlinearity</h4>
+																														<details class="collapse-card">
+																<summary class="cc-label">two dense layers without a nonlinearity</summary>
+																<div class="collapse-math" id="collapse-math" data-tex="\begin{aligned} \operatorname{dense}_2(\operatorname{dense}_1(x)) &amp;= W_2(W_1 x + b_1) + b_2 \\ &amp;= (W_2 W_1)x + (W_2 b_1 + b_2) \\ &amp;= Wx + b \\[4pt] W &amp;= W_2 W_1, \qquad b = W_2 b_1 + b_2 \end{aligned}"></div>
+																<p>Without a nonlinearity, two layers collapse into one. Depth adds no expressive power.</p>
+															</details>
+															<h3 class="layer-subhead">Nonlinear activation functions</h4>
+															<div class="activation-card">
+																<div class="activation-copy">
+																	<p>A nonlinearity is applied to each coordinate after the projection. ReLU folds at zero; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic.</p>
+																</div>
+																<div class="activation-plots" id="activation-plots">
+																	<figure class="ap ap-relu">
+																		<svg viewBox="0 0 60 44" role="img" aria-label="ReLU: zero for negative inputs, then a straight rise">
+																			<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
+																			<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
+																			<path class="ap-curve" d="M2.00,28.67 L6.67,28.67 L11.33,28.67 L16.00,28.67 L20.67,28.67 L25.33,28.67 L30.00,28.67 L34.67,24.22 L39.33,19.78 L44.00,15.33 L48.67,10.89 L53.33,6.44 L58.00,2.00"></path>
+																		</svg>
+																		<figcaption><b>ReLU</b><span>flat, then a rise</span></figcaption>
+																	</figure>
+																	<figure class="ap ap-gelu">
+																		<svg viewBox="0 0 60 44" role="img" aria-label="GELU: a smooth curve that dips slightly below zero">
+																			<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
+																			<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
+																			<path class="ap-curve" d="M2.00,28.70 L6.67,28.80 L11.33,29.07 L16.00,29.56 L20.67,30.08 L25.33,30.04 L30.00,28.67 L34.67,25.59 L39.33,21.19 L44.00,16.22 L48.67,11.29 L53.33,6.58 L58.00,2.04"></path>
+																		</svg>
+																		<figcaption><b>GELU</b><span>smooth, small dip</span></figcaption>
+																	</figure>
+																	<figure class="ap ap-sigmoid">
+																		<svg viewBox="0 0 60 44" role="img" aria-label="Sigmoid: an S-shaped curve between zero and one">
+																			<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
+																			<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
+																			<path class="ap-curve" d="M2.00,28.25 L6.67,27.99 L11.33,27.61 L16.00,27.05 L20.67,26.28 L25.33,25.31 L30.00,24.22 L34.67,23.13 L39.33,22.17 L44.00,21.40 L48.67,20.84 L53.33,20.45 L58.00,20.20"></path>
+																		</svg>
+																		<figcaption><b>Sigmoid</b><span>S-shape, 0 to 1</span></figcaption>
+																	</figure>
+																	<figure class="ap ap-tanh">
+																		<svg viewBox="0 0 60 44" role="img" aria-label="Tanh: an S-shaped curve between minus one and one">
+																			<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
+																			<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
+																			<path class="ap-curve" d="M2.00,37.51 L6.67,37.44 L11.33,37.24 L16.00,36.71 L20.67,35.44 L25.33,32.77 L30.00,28.67 L34.67,24.56 L39.33,21.90 L44.00,20.62 L48.67,20.10 L53.33,19.90 L58.00,19.82"></path>
+																		</svg>
+																		<figcaption><b>tanh</b><span>S-shape, -1 to 1</span></figcaption>
+																	</figure>
+																</div>
+															</div>
+															<h3 class="layer-subhead">Where the bend happens</h4>
+															<p class="step-note curve-intro">After attention, the MLP moves the token toward a region where the next token is easier to separate.</p>
+															<div class="demo demo--paper demo--canvas ism-panel" data-arrow-nav style="margin-top:14px">
+																<div class="demo-head">
+																	<div>
+																		<p class="demo-title">Watch the MLP bend the space <span>· demo 07</span></p>
+																		<p class="demo-sub">A straight line is the easiest separator, but it is not always possible in the original space. The MLP lifts the points into a new plane where it becomes possible. In an LLM the same idea runs in thousands of dimensions and helps the model isolate and represent internal states.</p>
+																	</div>
+										</div>
+																<div class="demo-body">
+																	<div id="ism-copy" class="ism-copy" aria-live="polite">
+																		<div id="ism-title" class="ism-title"></div>
+																		<div id="ism-body" class="ism-body"></div>
+																	</div>
+																	<div class="ism-stage" id="ism-stage">
+																		<div id="ism-wrap" class="ism-wrap" style="height:clamp(360px, 55vw, 480px)">
+																			<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
+																		<div id="ism-canvas-status" class="ism-canvas-status" aria-live="polite" hidden></div>
+																		</div>
+																		<aside id="ism-side" class="ism-side">
+																			<div id="ism-dense-controls" class="ism-dense-controls" hidden></div>
+																			<div id="ism-formulas" class="ism-formulas" aria-live="polite"></div>
+																		</aside>
+																	</div>
+																	<div class="ism-controls">
+																		<button type="button" id="ism-prev" data-arrow-prev class="ism-btn ism-btn--nav" aria-label="Previous step">← Back</button>
+																		<button type="button" id="ism-next" data-arrow-next class="ism-btn ism-btn--nav" disabled aria-label="Next step">Next →</button>
+																		<button type="button" id="ism-reset-camera" class="ism-btn" aria-label="Reset view" title="Reset view">⟲</button>
+																		<div id="ism-dots" class="ism-dots" role="group" aria-label="Slides"></div>
+																		<span id="ism-counter" class="ism-counter">1 / 9</span>
+																	</div>
+																</div>
+																<div class="demo-insight"><b>Takeaway</b><span>The layers in an MLP lift the points into a higher-dimensional space where a straight line can separate what was inseparable before. They change the space in which the cut is made.</span></div>
+															</div>
+															<p class="step-note">Real models do this in thousands of dimensions. Separation and translation are two views of the same learned transformation.</p>
+															<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>).</p>
+														</div>
+					</section>
+
+					<section class="section-block" id="step-ffn-section" data-chapter="Inside the transformer">
+						<div class="section-kicker">Step 5 · Feed-forward</div>
+						<h2 class="section-title">FFN: a pattern matches, a value is written</h2>
+						<div class="prose">
+							<p>The feed-forward network works on each token separately. It expands the vector, applies an activation, and projects back. Attention mixes tokens; the FFN computes within a token.</p>
+						</div>
+						<div class="step-pane" id="step-ffn">
+															<div class="step-stage">
+																<div class="step-toolbar">
+																	<div class="step-chips" id="iffn-scenarios">
+																		<button class="chip is-on" type="button" data-ffn="fruit">I ate the apple</button>
+																		<button class="chip" type="button" data-ffn="tech">I bought an Apple laptop</button>
+																	</div>
+																</div>
+																<div class="ffn-grid">
+																	<div class="ffn-col">
+																		<div class="ffn-col-head">Residual stream</div>
+																		<div class="ffn-pill is-fire">“Apple” + context</div>
+																	</div>
+																	<div class="ffn-col">
+																		<div class="ffn-col-head">Patterns in W₁</div>
+																		<div class="ffn-list" id="iffn-keys"></div>
+																	</div>
+																	<div class="ffn-col">
+																		<div class="ffn-col-head">Next-token pull in W₂</div>
+																		<div class="ffn-list" id="iffn-values"></div>
+																	</div>
+																	<div class="ffn-col">
+																		<div class="ffn-col-head">Written back</div>
+																		<div class="ffn-pill is-fire">richer or more specific vector</div>
+																	</div>
+																</div>
+																<div class="step-out" id="iffn-out"></div>
+																<p class="step-note ffn-caveat"><b>What is simplified:</b> a real FFN has no labelled keys or values. The patterns are learned directions in W₁; the pull is a learned direction in W₂.</p>
+															</div>
+														</div>
+						<div class="prose">
+							<h3 class="layer-subhead">One layer is a small function</h4>
+														<p>A simple layer does not need to be complicated. It multiplies its input by a learned matrix W, adds a learned vector b, and passes the result through an activation function. The activation adds a bend, a nonlinearity. Without it, any number of dense units would collapse into one linear map.</p>
+							<p>A simple layer can look like this: one matrix, one bias, one activation. That is a dense unit. It is the basic building block; a transformer layer later combines self-attention and an FFN.</p>
+							<p>Real networks combine building blocks differently. A convolutional layer is built for images, an attention layer for sequences, a dense layer for tables of numbers. A transformer layer is not one dense unit: it combines self-attention, which mixes information between tokens, with an FFN, which is itself a small stack of dense units. They share the same idea: functions with parameters, trained on data so that their output gets closer to the right answer.</p>
+														<div class="layer-formula-dense">
+								<div class="layer-card-title">Dense unit</div>
+								<div class="prose-math" data-tex="\underbrace{\text{dense}(x) = \text{activation}\!\left(\underbrace{W x + b}_{\text{learned linear map}}\right)}_{\text{a function with parameters } W,\ b}" data-tex-display="true"></div>
+							</div>
+						</div>
+					</section>
+
+					<section class="section-block" id="layer-stack" data-chapter="Inside the transformer">
+						<div class="section-kicker"><span class="sk-num">04</span> The stack</div>
+						<h2 class="section-title">One layer, then the stack.</h2>
+						<div class="prose-math layer-stack-formula" data-tex="\underbrace{ \text{next word} = \text{unembed}\!\left( \underbrace{ \text{layer}_n\!\left(\cdots \text{layer}_2\!\left(\text{layer}_1\!\left( \underbrace{\text{embedding}(\text{tokenizer}(\text{context}))}_{\text{text becomes vectors}} \right)\right)\cdots\right) }_{\text{each layer mixes and rewrites the vectors}} \right) }_{\text{the whole model: text in, next token out}}" data-tex-display="true"></div>
+						<div class="prose-math layer-stack-formula" data-tex="\underbrace{X_{\text{out}} = \text{layer}_n(\cdots \text{layer}_1(\underbrace{X_{\text{in}}}_{\text{one row per token}}))}_{\text{same shape, new values}}" data-tex-display="true"></div>
+						<div class="layer-flow" role="img" aria-label="The model as a stack: tokenizer, embedding, N transformer layers, unembedding">
+							<div class="lf-stage lf-stage--token"><span class="lf-num">01</span><b>Tokenizer</b><span>context → tokens</span></div>
+							<span class="lf-arrow" aria-hidden="true">→</span>
+							<div class="lf-stage lf-stage--embed"><span class="lf-num">02</span><b>Embedding</b><span>tokens → vectors</span></div>
+							<span class="lf-arrow" aria-hidden="true">→</span>
+							<div class="lf-stage lf-stage--layers"><span class="lf-num">03</span><b>Layers × N</b><span>Self-attention + FFN</span><span class="lf-stack-bars" aria-hidden="true"><i></i><i></i><i></i></span></div>
+							<span class="lf-arrow" aria-hidden="true">→</span>
+							<div class="lf-stage lf-stage--unembed"><span class="lf-num">04</span><b>Unembedding</b><span>vector → scores</span></div>
+						</div>
+						<div class="prose">
+														<ol class="layer-flow-walk">
+								<li><b>01 Tokenizer.</b> The context is split into tokens, and each token gets an ID. The <a href="#step-tokenize-section">tokenize demo</a> shows the step.</li>
+								<li><b>02 Embedding.</b> Each ID points to a learned vector. The <a href="#step-embed-section">embedding demo</a> shows how meaning becomes geometry.</li>
+								<li><b>03 Layers × N.</b> One layer is self-attention plus an FFN: attention mixes tokens, the FFN rewrites each vector. The same shape runs N times, each layer with its own weights. The <a href="#step-attention-section">attention demo</a> shows one head; the composition below shows the whole layer.</li>
+								<li><b>04 Unembedding.</b> The last vector becomes scores over the vocabulary, and softmax turns them into a distribution. <a href="#last-step">The last step</a> shows the move from vector to word.</li>
+							</ol>
+													</div>
+						<div class="prose">
+							<h3 class="layer-subhead">Why scores become probabilities</h4>
+														<p>Softmax turns arbitrary scores into something that behaves like a probability distribution. It exponentiates every score, so all values become positive, then divides by the sum. The exponential is monotone, so the largest score stays the largest; the division makes the results sum to one. Shifting every score by the same constant cancels in the ratio, so the absolute range of the scores does not matter. The base <span data-tex="e" data-tex-display="false"></span> is a convention: any positive base gives a valid distribution, but with <span data-tex="e" data-tex-display="false"></span> the derivative stays clean and the training signal well behaved. The name “softmax” comes from <a href="https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html" target="_blank" rel="noopener">Bridle (1990)</a>.</p>
+														<div class="layer-formula-grid layer-formula-grid--three">
+								<div class="layer-formula-card">
+									<div class="layer-card-title">Self-attention</div>
+									<div class="prose-math" data-tex="\underbrace{\text{self-attention}(X)_i = \sum_{\underbrace{j}_{\text{visible token }j}} \underbrace{\alpha_{ij}}_{\substack{\text{self-attention}\\\text{from }j\text{ to }i}} \underbrace{v_j}_{\text{value of token }j}}_{\text{token with number }i\text{ mixes in all visible tokens }j}" data-tex-display="true"></div>
+									<div class="prose-math" data-tex="\alpha_{ij}\in[0,1], \qquad \sum_j \alpha_{ij}=1" data-tex-display="true"></div>
+								</div>
+								<div class="layer-formula-card">
+									<div class="layer-card-title">FFN</div>
+									<div class="prose-math" data-tex="\underbrace{\text{FFN}(x) = \text{dense}_2(\text{activation}(\text{dense}_1(x)))}_{\text{the simplest view: two dense units with an activation between them}}" data-tex-display="true"></div>
+								</div>
+								<div class="layer-formula-card">
+									<div class="layer-card-title">Softmax</div>
+									<div class="prose-math" data-tex="\underbrace{p_i = \frac{\exp(z_i)}{\sum_{j=1}^{V}\exp(z_j)}}_{\text{a positive distribution over the vocabulary}}" data-tex-display="true"></div>
+								</div>
+							</div>
+							<p class="layer-formula-note">W, b, W1, and W2 are parameters; training adjusts them. activation() is a nonlinearity such as ReLU or GELU. Self-attention takes the whole matrix X (one row per token) and returns A with one row per token. The weights α_ij lie in [0,1] and sum to 1 for each i. The FFN then transforms each row A_i separately; it never receives the whole matrix. Softmax turns the final scores into a distribution over the vocabulary; it preserves their ranking.</p>
+														<p>This is a coarse picture. Underneath, every step is a matrix of numbers; the formulas show the shape of the computation, not the implementation.</p>
+														<div class="layer-formula-card layer-formula-card--layer layer-formula-wide">
+								<div class="layer-card-title">The layer is the whole composition</div>
+								<p class="layer-formula-wide-intro">A layer is not just attention and not just an FFN. It is the composition: attention mixes the tokens into A, then the FFN rewrites each row of A. The result is the next matrix X with the same shape. In a real block, residual connections and normalization wrap both steps; the formula keeps the shape visible.</p>
+								<div class="prose-math" data-tex="\underbrace{\begin{aligned} A &= \text{self-attention}(X) \\ \text{layer}(X) &= \left. \begin{pmatrix} \text{FFN}(A_1) \\ \text{FFN}(A_2) \\ \text{FFN}(A_3) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix} \right\} \begin{matrix} \text{token 1} \\ \text{token 2} \\ \text{token 3} \\ \vdots \\ \text{token }n \end{matrix} \end{aligned}}_{\text{self-attention turns X into A; the FFN works on one row at a time}}" data-tex-display="true"></div>
+							</div>
+							<h3 class="layer-subhead">A language model combines these and other building blocks</h4>
+														<p>A language model combines these building blocks into a transformer block: self-attention first asks how strongly each word is connected to every other word in the context, and the model learns those connections from data. An FFN then untangles the result: it folds the vectors into a higher-dimensional space, separates features, and folds them back. A real transformer layer also contains layer normalization, residual connections, and other pieces. They are left out here so the picture stays readable; the <a href="#step-residual-section">residual section</a> at the end of this chapter covers them in detail.</p>
+							<p>At the start, a matrix X goes in: one row per token, each row a vector. At the end, a matrix of the same shape comes out, but the values have changed. The last token has absorbed the meaning of the whole context. The unembedding turns its vector into scores for every vocabulary token; those scores point to a region of token directions with small angles, and softmax draws one.</p>
+														<h3 class="layer-subhead">How the context is mixed</h4>
+														<p>Inside a layer, self-attention looks at the whole context. For every token, it scores how much that token should take from every other visible token. The scores form a token-by-token matrix: one row for the token asking, one column for the token answering. The <a href="#step-attention-section">self-attention demo below</a> shows one head doing this.</p>
+														<div class="layer-mix">
+								<div class="layer-matrix-card">
+									<div class="layer-card-title">Causal self-attention</div>
+																		<div class="layer-attn-matrix" role="img" aria-label="Token-by-token attention matrix with a masked upper triangle">
+										<div class="lam-corner">Token</div>
+																				<div class="lam-head">The</div>
+																				<div class="lam-head">capital</div>
+																				<div class="lam-head">of</div>
+																				<div class="lam-head">France</div>
+																														<div class="lam-label">The</div>
+																																								<div class="lam-cell" style="--w:1">100%</div>
+																																																		<div class="lam-cell is-masked" aria-hidden="true">—</div>
+																																																		<div class="lam-cell is-masked" aria-hidden="true">—</div>
+																																																		<div class="lam-cell is-masked" aria-hidden="true">—</div>
+																																								<div class="lam-label">capital</div>
+																																								<div class="lam-cell" style="--w:0.8">80%</div>
+																																																		<div class="lam-cell" style="--w:0.2">20%</div>
+																																																		<div class="lam-cell is-masked" aria-hidden="true">—</div>
+																																																		<div class="lam-cell is-masked" aria-hidden="true">—</div>
+																																								<div class="lam-label">of</div>
+																																								<div class="lam-cell" style="--w:0.1">10%</div>
+																																																		<div class="lam-cell" style="--w:0.3">30%</div>
+																																																		<div class="lam-cell" style="--w:0.6">60%</div>
+																																																		<div class="lam-cell is-masked" aria-hidden="true">—</div>
+																																								<div class="lam-label">France</div>
+																																								<div class="lam-cell" style="--w:0.05">5%</div>
+																																																		<div class="lam-cell" style="--w:0.45">45%</div>
+																																																		<div class="lam-cell" style="--w:0.1">10%</div>
+																																																		<div class="lam-cell" style="--w:0.4">40%</div>
+																																							</div>
+									<div class="layer-matrix-legend">
+										<span><i></i>row = token asking</span>
+										<span><i></i>column = token answering</span>
+										<span><i class="is-mask"></i>masked = future token</span>
+									</div>
+								</div>
+								<div class="layer-mix-card">
+									<div class="layer-card-title">The mix</div>
+									<div class="prose-math" data-tex="\underbrace{ \text{new}_2 = \underbrace{0.2 \cdot \text{token}_2 + 0.8 \cdot \text{token}_1}_{\text{weighted mix of visible vectors}} }_{\text{token 2 after attention}}" data-tex-display="true"></div>
+									<p class="layer-mix-note">Token 2 reads token 1 and itself. It cannot read token 3, because token 3 comes later. The upper triangle is masked.</p>
+								</div>
+							</div>
+							<h3 class="layer-subhead">Each head looks from a different perspective</h4>
+														<p>Attention does not choose its weights from a fixed list. It learns, from the loss, which aspects of the visible tokens help predict the next token. With enough data, memorizing every training sentence is not an option, so the model is pushed toward reusable structure: gender, age, syntactic role, topic, or whatever else lowers the loss. Each head can look at the same tokens from a different perspective: one head can track a pronoun, another a verb, another the topic, and each can ignore what the others use.</p>
+														<div class="attention-aspects" role="img" aria-label="Three heads look at the same tokens from different perspectives: pronoun, verb, and topic">
+								<div class="attention-aspect"><span class="aa-head">Head 1</span><b>pronoun</b><span>“it” → “bank”</span></div>
+								<div class="attention-aspect"><span class="aa-head">Head 2</span><b>verb</b><span>“sat” → “bank”</span></div>
+								<div class="attention-aspect"><span class="aa-head">Head 3</span><b>topic</b><span>“river” → “bank”</span></div>
+							</div>
+							<p class="attention-aspects-note">A sketch, not measured weights: the heads see the same tokens, but each can attend to something else.</p>
+														<div class="pullquote">
+								“To think is to forget a difference, to generalize, to abstract. In the overly replete world of Funes there were nothing but details, almost contiguous details.”
+								<cite>Jorge Luis Borges, “Funes the Memorious” (1942) · <a href="https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf" target="_blank" rel="noopener">Spanish original</a></cite>
+							</div>
+							<p>Borges's Funes remembers everything and therefore cannot think. To think, he has to forget differences, generalize, and abstract; the story's point is not that memory is bad, but that thinking needs a cut. An LLM does the same at two scales. The model as a whole does not store every fact; it learns compressed regularities. A single head does not need to represent everything at once; it can focus on one aspect and ignore the rest. The stack then recombines the cuts into a rich context.</p>
+																					<p>The first layer mixes the original token vectors. Later layers mix vectors that earlier layers have already changed, so every pass sees a different context. In an autoregressive model the matrix is lower-triangular: a token can attend to itself and earlier tokens, never to tokens that come later. That causal mask is what lets the model train on every prefix of a sentence and predict the next token without seeing the future.</p>
+							<p>After attention, each token's new vector goes through a feed-forward network. The FFN works on one token at a time: it separates features and rewrites the vector. Attention moves information between tokens; the FFN transforms what each token carries. The <a href="#step-ffn-section">FFN section</a> opens that step.</p>
+							<h3 class="layer-subhead">Local meaning, then wider context</h4>
+							<p>Early layers can learn local patterns. One layer may notice that “new” and “york” belong together; a later layer can use that combined meaning as a new unit and mix it with a wider context. A single layer can solve a small task, or several layers can solve one together. Deep models work by composing these small transformations.</p>
+							<p>The stack repeats. Each layer has its own learned weights, so the structure is shared but the parameters are not. After the last layer, the unembedding reads the last token's vector and produces a distribution over the next token. The <a href="#block-repeat">real GPT-2 trajectories below</a> show the movement through 12 of these blocks; <a href="#last-step">the last step</a> turns the final vector into a word.</p>
+														<div class="prose-math layer-stack-formula" data-tex="\underbrace{p(\text{next} \mid \text{context}) = \text{softmax}(\underbrace{W_U\, h_{\text{last}}}_{\text{scores for every token}})}_{\text{the vector points to a region of token directions, then one is drawn}}" data-tex-display="true"></div>
+						</div>
+						<div id="step-residual-section">
+							<div class="section-kicker">Step 6 · Residual</div>
+							<h3 class="section-title">Residual stream: every layer adds to the same stream</h3>
+							<div class="prose">
+								<p>Every layer reads the same running vector, computes an update, and adds it back. Think of a shared notebook: earlier notes stay, later layers read them and add more. The new state is the old state plus a change.</p>
+							</div>
+							<div class="prose-math" data-tex="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{token vector}})}_{\text{what layer 1 adds}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{running vector}})}_{\text{what layer 2 adds}} \end{aligned}" data-tex-display="true"></div>
+							<p>The new state is the old state plus what the layer adds. The demos are simplified; the order is the real architecture.</p>
+							<div class="step-pane" id="step-residual">
+								<div class="step-stage">
+									<figure class="res-notebook">
+										<div class="res-nb-page">
+											<p class="res-nb-sentence"><span class="res-nb-emb">The</span> <span class="res-nb-emb res-nb-att">cat</span> <span class="res-nb-emb res-nb-mlp">sat</span> on the <span class="res-nb-emb">mat</span> because <span class="res-nb-emb res-nb-att">she</span> was <span class="res-nb-emb res-nb-mlp">tired</span>.</p>
+											<p class="res-nb-note res-nb-note--emb"><b>Embedding</b> every word becomes a vector.</p>
+											<p class="res-nb-note res-nb-note--att"><b>Attention</b> “she” points back to “cat”.</p>
+											<p class="res-nb-note res-nb-note--mlp"><b>MLP</b> “tired” explains why the cat sat.</p>
+										</div>
+										<figcaption>One shared page. Each layer writes in its own color, and earlier notes stay readable.</figcaption>
+									</figure>
+									<div class="res-stream">
+										<div class="res-layers" id="ires-layers"></div>
+										<div class="res-panel">
+											<div class="res-bars" id="ires-bars"></div>
+											<div class="res-vector" id="ires-vector" aria-live="polite"></div>
+											<div class="res-legend"><span><i></i> running stream</span><span id="ires-out"></span></div>
+											<div class="prose-math" data-tex="\underbrace{x_{n+1}}_{\text{new stream}} = \underbrace{x_n}_{\text{running stream}} + \underbrace{\operatorname{layer}_{n+1}(x_n)}_{\text{what this layer writes}}" data-tex-display="true"></div>
+										</div>
+									</div>
+								</div>
+								<p class="step-note">Nothing is overwritten, so the original signal survives and gradients have a short path back. That is why deep networks train.</p>
+							</div>
+						</div>
+					</section>
+
+					<section class="section-block" id="block-repeat" data-chapter="Inside the transformer">
+						<div class="section-kicker"><span class="sk-num">05</span> The block repeats</div>
+						<h2 class="section-title">The whole block: attention + FFN, again and again</h2>
+						<div class="prose">
+							<p>Attention and the FFN are one transformer block. The same architecture runs again and again, but each layer has its own learned weights and its own learned vectors. The block repeats in structure, not in parameters. Each pass lets every token look at the context, then moves it through its own MLP.</p>
+							<p>Below, real GPT-2 trajectories show the same movement. Each line is one token, each bend is one block. The vectors live in 768 dimensions, too many to picture, so the plot projects them down to three. What you see is not the real motion but its PCA shadow. The angular view is the default because the model compares directions, and “plausible” means the continuation is frequent in its training data, not that it is true.</p>
+						</div>
+
+						<div class="demo demo--paper demo--canvas" id="block-trajectory-real">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Token trajectories through GPT-2 <span>· real PCA</span></p>
+									<p class="demo-sub">Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. Each state has 768 dimensions, too many to picture, so this is not the real motion: PCA keeps the three directions where the states change most and flattens everything onto them. The 3D points are a shadow. Lines that cross here need not touch in the full space, and a flat-looking bend can hide a large move.</p>
+								</div>
+								<span class="demo-badge">GPT-2 · PCA</span>
+							</div>
+							<div class="demo-body">
+								<div id="real-trajectory-3d" class="traj-plotly-host" role="img" aria-label="3D token trajectories through GPT-2, PCA-reduced to three dimensions"><div class="traj-loading"><span class="traj-loader-spinner" aria-hidden="true"></span><span>Loading GPT-2 trajectories …</span></div></div>
+								<div class="demo-controls traj-step-controls">
+									<label class="traj-slider-label" for="traj-layer-slider">Layer
+										<input type="range" id="traj-layer-slider" min="0" max="12" step="1" value="0">
+										<output id="traj-layer-label">Embedding</output>
+									</label>
+									<div class="seg traj-metric-switch" id="traj-metric" role="group" aria-label="Distance metric">
+										<button type="button" data-metric="euclidean" aria-pressed="false">Euclidean (PCA)</button>
+										<button class="is-on" type="button" data-metric="angular" aria-pressed="true">Great-circle / angle</button>
+									</div>
+									<button class="btn-demo btn-demo--green traj-next-btn" type="button" id="traj-next-layer">Next layer →</button>
+								</div>
+								<p class="traj-metric-note">Euclidean distance measures the straight-line gap, like a tape measure. The model compares directions: in the angular view every vector is normalized to the unit sphere, where the angle is the metric that matters. The real model does this in 768 dimensions; the 3D sphere is its PCA shadow.</p>
+								<div class="traj-candidates" id="traj-candidates" aria-live="polite"></div>
+							</div>
+							<div class="demo-foot">Real GPT-2 small hidden states, normalized per layer and PCA-reduced to 3D. Drag the slider to move through the layers. The next-token candidates appear at the final layer; the highlighted one is the model's top choice.</div>
+						</div>
+					</section>
+
+					<section class="section-block" id="last-step" data-chapter="From vector to word">
+						<div class="section-kicker"><span class="sk-num">06</span> The last step</div>
+						<h2 class="section-title">The final vector picks a word.</h2>
+						<div class="prose">
+																					<p>The last token carries the whole context in its final vector <span class="nt-formula" data-tex="\mathbf{h}" data-tex-display="false"></span>. A learned unembedding matrix <span class="nt-formula" data-tex="W_U" data-tex-display="false"></span> turns it into one score per vocabulary token.</p>
+							<p><span class="nt-formula" data-tex="W_U" data-tex-display="false"></span> has one row <span class="nt-formula" data-tex="\mathbf{w}_i" data-tex-display="false"></span> per token. The dot product <span class="nt-formula" data-tex="\mathbf{h} \cdot \mathbf{w}_i" data-tex-display="false"></span> is the logit <span class="nt-formula" data-tex="z_i" data-tex-display="false"></span>; the vector <span class="nt-formula" data-tex="\mathbf{z}" data-tex-display="false"></span> collects all logits. After normalization, that dot product is the cosine of the angle between <span class="nt-formula" data-tex="\mathbf{h}" data-tex-display="false"></span> and <span class="nt-formula" data-tex="\mathbf{w}_i" data-tex-display="false"></span>; the great-circle view shows that angle.</p>
+							<p>In GPT-2 <span class="nt-formula" data-tex="W_U" data-tex-display="false"></span> is often tied to the input embedding matrix, but it is still a learned matrix.</p>
+														<div class="prose-math" data-tex="\underbrace{ \underbrace{\mathbf{z}}_{\text{all vocabulary logits}} = \underbrace{\mathbf{h}}_{\text{final context vector}} \underbrace{W_U^{\top}}_{\substack{\text{transpose of }W_U\\\text{the learned unembedding matrix}}} }_{\text{one matrix-vector product gives a score for every token}}" data-tex-display="true"></div>
+							<div class="prose-math" data-tex="\underbrace{z_i = \underbrace{\mathbf{h}}_{\text{final context vector}} \cdot \underbrace{\mathbf{w}_i}_{\text{row }i\text{ of }W_U}}_{\text{logit for token }i}" data-tex-display="true"></div>
+														<p>Softmax turns the logits into probabilities: <span class="nt-formula" data-tex="p_i = \exp(z_i)/Z" data-tex-display="false"></span>, where <span class="nt-formula" data-tex="Z" data-tex-display="false"></span> sums over the whole vocabulary. Why not simply divide each logit by the sum? Logits can be negative or zero, so the result would not be a probability. The exponential makes every value positive and preserves the order; dividing by the sum gives numbers between 0 and 1 that add to 1. It also turns differences into ratios: adding the same constant to every logit changes nothing. The largest score gets the most mass, but the alternatives keep some.</p>
+														<div class="prose-math" data-tex="\underbrace{p_i = \frac{\exp(z_i)}{\underbrace{Z}_{\text{normalizer}}}, \qquad \underbrace{Z = \sum_{j=1}^{V} \exp(z_j)}_{\text{sum over all }V\text{ vocabulary entries}}}_{\text{softmax: a distribution over the vocabulary}}" data-tex-display="true"></div>
+														<p>Geometrically, <span class="nt-formula" data-tex="\mathbf{h}" data-tex-display="false"></span> points to a region of token directions. Each token owns a region; near a seam two words are almost equally likely. More tokens shrink the cells, but the seams never close. <a href="https://arxiv.org/abs/2603.22301" rel="noopener">Mabrok (2026)</a> calls the band around a seam the expressibility gap.</p>
+													</div>
+
+						<div class="demo demo--paper demo--canvas" id="meadow-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The map of words <span>· demo 08</span></p>
+									<p class="demo-sub">Every word owns a cell. Move the pointer; the thought falls into the nearest cell. The golden seams are where two words are equally near.</p>
+								</div>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas" id="meadow-canvas" style="aspect-ratio:560/196;height:auto" aria-label="A Voronoi field of words. Move the pointer to place a thought."></canvas>
+								<div class="demo-controls">
+									<label>Words <input type="range" id="md-n" min="12" max="30" step="6" value="12"><output id="md-n-out">12</output></label>
+									<label>Temperature <input type="range" id="md-temp" min="0.2" max="2.6" step="0.05" value="0.8"><output id="md-temp-out">0.80</output></label>
+									<label>Top-k <input type="range" id="md-k" min="1" max="10" step="1" value="5"><output id="md-k-out">5</output></label>
+								</div>
+								<div class="demo-readout demo-readout--4">
+									<div><b>Nearest word</b><span id="md-word">Dog</span></div>
+									<div><b>Wins with</b><span id="md-chance">—</span></div>
+									<div><b>Margin to seam</b><span id="md-margin">—</span></div>
+									<div><b>Ambiguous share</b><span id="md-gap">—</span></div>
+								</div>
+								<p class="meadow-caption" id="md-caption">Move the pointer across the map.</p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Words divide the space of thoughts into cells. Certainty is being deep inside a cell; uncertainty is standing on a seam or right at the edge. The model can think more finely than one word can say.</span></div>
+							<div class="demo-foot">More words make smaller cells and thinner seams, but the ambiguous share never reaches zero. In a real model the space has thousands of dimensions and the vocabulary has tens of thousands of tokens.</div>
+						</div>
+
+						<div class="demo demo--paper demo--plot softmax-demo" id="softmax-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">From logits to a probability distribution <span>· demo 09</span></p>
+									<p class="demo-sub">Real GPT-2 small scores for two prompts. The left side is the raw logit from each dot product; the right side is what softmax makes of it. Switch the context and watch the whole distribution change.</p>
+								</div>
+								<span class="demo-badge">real GPT-2</span>
+							</div>
+							<div class="demo-body">
+								<div class="chip-row softmax-prompts" id="softmax-prompts">
+									<button class="chip is-on" type="button" data-softmax-prompt="spaceship">spaceship</button>
+									<button class="chip" type="button" data-softmax-prompt="planet">deserted planet</button>
+								</div>
+								<p class="softmax-context"><span class="softmax-context-label">context</span> <span id="softmax-context-text">“As the spaceship was approaching <b>the</b>”</span></p>
+								<div class="prose-math softmax-logit-matrix" id="softmax-logit-matrix" data-tex-display="true"></div>
+								<div class="softmax-stage" id="softmax-stage">
+									<div class="softmax-col softmax-col--logits">
+										<div class="softmax-col-head"><span>token</span><span>logit</span></div>
+										<div id="softmax-logits"></div>
+									</div>
+									<svg class="softmax-ribbons" id="softmax-ribbons" aria-hidden="true">
+										<defs>
+											<linearGradient id="softmax-ribbon-grad" x1="0" y1="0" x2="1" y2="0">
+												<stop offset="0%" style="stop-color:var(--tm-green)"></stop>
+												<stop offset="100%" style="stop-color:var(--tm-petrol-mid)"></stop>
+											</linearGradient>
+										</defs>
+									</svg>
+									<div class="softmax-col softmax-col--probs">
+										<div class="softmax-col-head"><span>probability</span><span>softmax</span></div>
+										<div id="softmax-probs"></div>
+									</div>
+								</div>
+								<div class="demo-controls">
+									<label>Temperature <input type="range" id="softmax-temp" min="0.2" max="2" step="0.05" value="1"><output id="softmax-temp-out">1.00</output></label>
+								</div>
+								<div class="demo-readout demo-readout--4">
+									<div><b>Hovered token</b><span id="softmax-token">—</span></div>
+									<div><b>Logit</b><span id="softmax-logit">—</span></div>
+									<div><b>exp((logit − max) / T)</b><span id="softmax-exp">—</span></div>
+									<div><b>Probability</b><span id="softmax-prob">—</span></div>
+								</div>
+								<p class="demo-hint">Hover a token. The ribbon shows how its score becomes probability. The temperature slider changes only the softmax, not the logits.</p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Softmax does not create the ranking; the dot products do. It turns scores into a distribution that sums to one, and temperature decides how sharply the winner is favoured.</span></div>
+							<div class="demo-foot">Real GPT-2 small logits for “As the spaceship was approaching the”, from the <a href="https://poloclub.github.io/transformer-explainer/" rel="noopener">Transformer Explainer</a> (Polo Club, Georgia Tech). The absolute logit offset is arbitrary; softmax depends only on differences.</div>
+						</div>
+					</section>
+
+					<section class="section-block" id="whole" data-chapter="From vector to word">
+						<div class="section-kicker"><span class="sk-num">07</span> The whole loop</div>
+						<h2 class="section-title">Text in, geometry, one word out.</h2>
+												<div class="prose">
+														<p>The pieces fit in a fixed order: <strong>text → tokens → vectors → position → attention + residual → FFN → distribution → draw → append</strong>. The loop ends when the model emits the special token <strong>&lt;|endoftext|&gt;</strong>.</p>
+							<p>No step has a tidy fact database. Knowledge is distributed across the weights, and meaning lives in the geometry. A pile of numbers becomes a sentence one token at a time.</p>
+													</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>What it is</b><span>A next-token predictor: one distribution, one draw, one append, repeated.</span></div>
+							<div class="keypoint"><b>Why it works</b><span>More context and more layers narrow the distribution, so the next token becomes easier to choose.</span></div>
+							<div class="keypoint"><b>Its limits</b><span>It predicts plausible text. It can be fluent and wrong, and it offers no guarantee of truth.</span></div>
+														<div class="keypoint"><b>The fixed order</b><span><strong>text → tokens → vectors → position → attention + residual → FFN → distribution → draw → append</strong>. The loop ends when the model emits <strong>&lt;|endoftext|&gt;</strong>.</span></div>
+													</div>
+					</section>
 
 <div class="mn-quiz" data-quiz="intuition"><script type="application/json">{"title": "How an LLM writes", "questions": [{"q": "At its core, what does a large language model do at every step?", "options": ["Predict a probability for every possible next token", "Look the likely answer up in a large text database", "Plan the entire answer first, then write it down", "Translate the question into formal logic and solve it"], "answer": 0, "explain": "An LLM is a next-token predictor: it outputs a probability distribution over its vocabulary, picks one token, and repeats."}, {"q": "What happens to a token right after the model has produced it?", "options": ["It is appended to the input as context for the next prediction", "It is discarded once the next token has been chosen by the model", "It is checked against a dictionary of allowed words and meanings", "It is sent back into the training data for another update pass"], "answer": 0, "explain": "This is the autoregressive loop: the output becomes part of the input, one step later."}, {"q": "What is the first step that turns raw text into something the network can compute with?", "options": ["Tokenization — splitting the text into pieces with numeric ids", "Attention — weighting each word by its relevance to the query", "Sampling — drawing the most likely next word from the distribution", "Back-propagation — adjusting the weights from the loss gradient"], "answer": 0, "explain": "Text is first cut into tokens; each token id is then mapped to an embedding vector."}, {"q": "Inside each transformer layer, which part lets a word take information from the *other* words in the context?", "options": ["The attention mechanism", "The feed-forward network", "The input tokenizer stage", "The final softmax layer"], "answer": 0, "explain": "Attention asks “which other words matter for this word?”; the feed-forward part then works on each position separately."}]}</script></div>
+
+</article>
+</div>
+
+<script type="application/json" id="gpt2-pca-data">{"sentence": "The capital of France is", "tokens": ["The", " capital", " of", " France", " is"], "ids": [464, 3139, 286, 4881, 318], "layers": ["Embedding + position", "Block 1", "Block 2", "Block 3", "Block 4", "Block 5", "Block 6", "Block 7", "Block 8", "Block 9", "Block 10", "Block 11", "Block 12"], "points": [[[-0.3471, -0.8096, 0.2115], [-0.6593, -0.211, -0.0394], [-0.6764, -0.2625, -0.0394], [-0.6951, 0.2452, -0.1424], [-0.6972, 0.2442, -0.1426], [-0.696, 0.2454, -0.1423], [-0.6931, 0.2477, -0.1418], [-0.6907, 0.2495, -0.1408], [-0.6888, 0.2513, -0.1391], [-0.6866, 0.2531, -0.1371], [-0.6848, 0.2545, -0.1361], [-0.682, 0.2568, -0.1333], [-0.6187, 0.2614, -0.1182]], [[-0.195, -0.9765, 0.1725], [0.2369, -0.2199, -0.21], [0.3837, -0.3651, -0.166], [0.3464, -0.2752, -0.1477], [0.3655, -0.287, -0.1155], [0.3446, -0.2389, -0.1081], [0.2728, -0.1175, -0.0563], [0.245, -0.0504, 0.0138], [0.2098, 0.0315, 0.1633], [0.1878, 0.0924, 0.246], [0.1908, 0.1183, 0.3141], [0.1422, 0.1851, 0.4405], [0.1004, 0.1329, 0.5923]], [[-0.3086, -0.9404, 0.2736], [0.1635, -0.0193, -0.3349], [0.2698, -0.0905, -0.386], [0.2752, -0.0491, -0.4003], [0.2486, -0.019, -0.3708], [0.2426, 0.001, -0.3648], [0.2252, 0.0445, -0.3008], [0.2276, 0.106, -0.1669], [0.1847, 0.1751, -0.0311], [0.1776, 0.2134, 0.1308], [0.1543, 0.2291, 0.2199], [0.1041, 0.2664, 0.3978], [0.0668, 0.1677, 0.5828]], [[-0.2823, -1.0, 0.2055], [0.1891, -0.1032, -0.2037], [0.2811, -0.1456, -0.1811], [0.2504, -0.0774, -0.1711], [0.267, -0.074, -0.1515], [0.2118, 0.0111, -0.1282], [0.1711, 0.0978, -0.065], [0.1564, 0.164, 0.0575], [0.1507, 0.1971, 0.169], [0.1315, 0.2047, 0.2125], [0.1408, 0.2132, 0.2665], [0.1317, 0.2466, 0.4238], [0.0686, 0.1452, 0.6055]], [[-0.3328, -0.9319, 0.2659], [0.1792, 0.0099, -0.3359], [0.2581, -0.0296, -0.3701], [0.2418, 0.0081, -0.3782], [0.1909, 0.0754, -0.3472], [0.1545, 0.137, -0.2952], [0.1915, 0.1396, -0.2517], [0.2004, 0.2089, -0.073], [0.1698, 0.2453, 0.0444], [0.1587, 0.264, 0.1754], [0.1483, 0.2599, 0.2912], [0.1308, 0.2486, 0.462], [0.0943, 0.1445, 0.6255]]], "explained": [0.225, 0.1785, 0.1349], "landmarks": [{"word": " the", "value": [-0.3445, -0.2858, 0.2668], "p": 0.084654}, {"word": " now", "value": [-0.2676, -0.4073, 0.1668], "p": 0.047577}, {"word": " a", "value": [-0.3457, -0.3141, 0.2525], "p": 0.04621}, {"word": " France", "value": [-0.2629, -0.5878, 0.1754], "p": 0.031875}, {"word": " Paris", "value": [-0.2537, -0.5461, 0.1589], "p": 0.031726}, {"word": " in", "value": [-0.362, -0.3362, 0.3113], "p": 0.02672}, {"word": " also", "value": [-0.291, -0.4294, 0.1881], "p": 0.026292}, {"word": " not", "value": [-0.3338, -0.3821, 0.1969], "p": 0.023788}], "top": [{"id": 262, "token": " the", "p": 0.084654}, {"id": 783, "token": " now", "p": 0.047577}, {"id": 257, "token": " a", "p": 0.04621}, {"id": 4881, "token": " France", "p": 0.031875}, {"id": 6342, "token": " Paris", "p": 0.031726}, {"id": 287, "token": " in", "p": 0.02672}, {"id": 635, "token": " also", "p": 0.026292}, {"id": 407, "token": " not", "p": 0.023788}], "chosen": " the"}
+</script>
+<?php js("intuition_word_meadow"); ?>
+<?php js("intuition_tm_page"); ?>

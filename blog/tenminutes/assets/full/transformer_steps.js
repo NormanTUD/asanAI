@@ -77,6 +77,29 @@
 		});
 	};
 
+	/* The live feature-migration refresh gets its own queue. During training
+	   the shared heavy queue is busy with the full-visualization rebuild, and
+	   a feature job parked there would only run every few epochs. This queue
+	   keeps the visible feature plots on the newest epoch. */
+	function tmQueueFeature(fn) {
+		if (typeof fn !== "function") return;
+		if (!tmQueueFeature._q) { tmQueueFeature._q = []; tmQueueFeature._running = false; }
+		tmQueueFeature._q.push(fn);
+		tmQueueFeature._pump();
+	}
+	tmQueueFeature._pump = function () {
+		if (tmQueueFeature._running || tmQueueFeature._q.length === 0) return;
+		tmQueueFeature._running = true;
+		requestAnimationFrame(function () {
+			setTimeout(function () {
+				tmQueueFeature._running = false;
+				var job = tmQueueFeature._q.shift();
+				try { if (job) job(); } catch (e) { console.error("[transformer_steps] feature plot render failed", e); }
+				if (tmQueueFeature._q.length) tmQueueFeature._pump();
+			}, 0);
+		});
+	};
+
 	function markerTrace(points, name) {
 		return {
 			type: "scatter3d", mode: "markers",
@@ -3178,8 +3201,14 @@
 		layout2D: plotlyLayout2D
 	};
 
+	function featureTraceAt(layerIdx) {
+		var live = (window.__tmFeatureTrace || [])[layerIdx];
+		if (live && live.h_in && live.h_out) return live;
+		return (window.__tmLayerTrace || [])[layerIdx];
+	}
+
 	function featureData(layerIdx) {
-		var trace = (window.__tmLayerTrace || [])[layerIdx];
+		var trace = featureTraceAt(layerIdx);
 		if (!trace || !trace.h_in || !trace.h_out) return null;
 		var tokens = trace.tokenStrings || tokenList();
 		var n = Math.min(tokens.length, trace.h_in.length, trace.h_out.length);
@@ -3524,7 +3553,7 @@
 	}
 
 	function featureSignature(layerIdx) {
-		var trace = (window.__tmLayerTrace || [])[layerIdx];
+		var trace = featureTraceAt(layerIdx);
 		var n = trace && trace.h_in ? trace.h_in.length : 0;
 		var d = trace && trace.h_in && trace.h_in[0] ? trace.h_in[0].length : 0;
 		return (window.__tmTraceVersion | 0) + "|" + featureMetric() + "|" + d + "|" + n;
@@ -3552,7 +3581,11 @@
 			arrowsEl._tmFeatureRendered = !!arrowsEl.data;
 			arrowsEl._tmFeatureSig = currentSignature;
 		};
-		tmQueueHeavy(run);
+		if (window.isTraining) {
+			try { run(); } catch (e) { console.error("[transformer_steps] live feature plot render failed", e); }
+			return;
+		}
+		tmQueueFeature(run);
 	}
 
 	function observeDirtyFeaturePlot(layerIdx, arrowsEl) {
@@ -3589,6 +3622,11 @@
 		});
 	}
 	window.tmRefreshFeaturePlots = refreshFeaturePlots;
+	window.tmFeaturePlotsVisible = function () {
+		return Array.prototype.some.call(document.querySelectorAll('[id$="-feature-arrows"]'), function (el) {
+			return metricIsVisible(el);
+		});
+	};
 
 	function scheduleLayerFeaturePlot(layerIdx, force) {
 		var arrowsEl = document.getElementById("unified-layer-" + layerIdx + "-feature-arrows");
