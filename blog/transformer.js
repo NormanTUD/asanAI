@@ -2682,7 +2682,10 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	}
 	if (window.__tmFullVizLoaded) {
 		if (_fullVizNear()) _runFullTransformerVisualization(window.__tmFullVizPending);
-		else _markFullVizDirty();
+		else {
+			_renderDeferredPreAttentionVisualizations(window.__tmFullVizPending);
+			_markFullVizDirty();
+		}
 	} else {
 		_renderDeferredPreAttentionVisualizations(window.__tmFullVizPending);
 		ensureFullTransformerVisualization();
@@ -2690,19 +2693,23 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	}
 }
 
+function _fullVizAnchor() {
+	return document.getElementById('ffn-equations-container') ||
+		document.querySelector('.unified-layer-stack') ||
+		document.getElementById('transformer-step-visuals');
+}
+
 function _fullVizNear() {
-	const anchor = document.getElementById('transformer-step-visuals') ||
-		document.getElementById('ffn-equations-container');
+	const anchor = _fullVizAnchor();
 	if (!anchor) return true;
 	const rect = anchor.getBoundingClientRect();
-	return rect.top < window.innerHeight + 700 && rect.bottom > -700;
+	return rect.top < window.innerHeight + 500 && rect.bottom > -500;
 }
 
 function _markFullVizDirty() {
 	window.__tmFullVizDirty = true;
 	if (window.__tmFullVizDirtyObserver) return;
-	const anchor = document.getElementById('transformer-step-visuals') ||
-		document.getElementById('ffn-equations-container');
+	const anchor = _fullVizAnchor();
 	if (!anchor) return;
 	if (!('IntersectionObserver' in window)) {
 		window.__tmFullVizDirty = false;
