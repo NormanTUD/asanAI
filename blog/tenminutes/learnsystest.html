@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>LearnSys Prototype — Ten Minutes</title>
+<link rel="stylesheet" href="assets/site.css">
+<style>
+:root{
+  --ls-paper:#ffffff;
+  --ls-paper-2:#f7f9f8;
+  --ls-line:#dbe3e0;
+  --ls-line-strong:#b9c8c3;
+  --ls-ink:#000000;
+  --ls-soft:#2c464d;
+  --ls-muted:#627476;
+  --ls-petrol:#004b6f;
+  --ls-blue:#1275ac;
+  --ls-green:#63a44b;
+  --ls-lime:#869b55;
+  --ls-gold:#9f9700;
+  --ls-lilac:#9185be;
+  --ls-sky:#5c9baf;
+  --ls-shadow:0 18px 50px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--ls-paper);overflow:hidden}
+body{font-family:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:300;color:var(--ls-ink)}
+h1,h2,h3,h4,.ls-title,.ls-brand b,.ls-stage-head b,.ls-day-num,.ls-kicker{font-family:"Barlow",system-ui,sans-serif;font-weight:700;letter-spacing:-.01em}
+button,input,select{font:inherit}
+button{color:inherit}
+.ls-app{position:fixed;inset:0;display:grid;grid-template-rows:64px minmax(0,1fr) 76px;background:var(--ls-paper);z-index:1}
+.ls-top{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 22px;border-bottom:1px solid var(--ls-line);background:rgba(255,255,255,.96);backdrop-filter:blur(8px);z-index:10}
+.ls-brand{display:flex;align-items:center;gap:11px;min-width:0}
+.ls-mark{width:34px;height:34px;border:1px solid var(--ls-line-strong);display:grid;place-items:center;font-family:"Barlow";font-weight:700;background:var(--ls-paper-2);color:var(--ls-petrol)}
+.ls-brand b{display:block;font-size:15px;line-height:1.1}
+.ls-brand span{display:block;font-size:10px;color:var(--ls-muted);letter-spacing:.02em}
+.ls-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.ls-field{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.08em}
+.ls-field--inline{text-transform:none;letter-spacing:0;font-size:10px}
+.ls-select{border:1px solid var(--ls-line-strong);background:#fff;color:var(--ls-ink);padding:5px 7px;font-size:11px;border-radius:0}
+.ls-seg{display:flex;border:1px solid var(--ls-line-strong);background:#fff}
+.ls-seg button{border:0;border-right:1px solid var(--ls-line);background:transparent;padding:5px 9px;font-size:10px;cursor:pointer;color:var(--ls-soft)}
+.ls-seg button:last-child{border-right:0}
+.ls-seg button:hover{color:var(--ls-petrol)}
+.ls-seg button.is-on{background:var(--ls-petrol);color:#fff}
+.ls-btn{border:1px solid var(--ls-line-strong);background:#fff;color:var(--ls-ink);padding:6px 10px;font-size:11px;cursor:pointer;border-radius:0}
+.ls-btn:hover{border-color:var(--ls-petrol);color:var(--ls-petrol)}
+.ls-btn--primary{background:var(--ls-petrol);border-color:var(--ls-petrol);color:#fff}
+.ls-btn--primary:hover{background:#003a56;color:#fff}
+.ls-btn--ghost{background:transparent}
+.ls-btn--tiny{padding:4px 8px;font-size:10px}
+.ls-main{display:grid;grid-template-columns:minmax(330px,37%) minmax(0,1fr);min-height:0}
+.ls-text{min-width:0;min-height:0;border-right:1px solid var(--ls-line);background:var(--ls-paper);overflow:hidden}
+.ls-text-scroll{height:100%;overflow:auto;padding:clamp(24px,4.2vw,58px) clamp(22px,3.6vw,52px);max-width:680px}
+.ls-kicker{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--ls-petrol);margin-bottom:10px}
+.ls-title{font-size:clamp(26px,2.9vw,42px);line-height:1.05;margin:0 0 16px;max-width:18ch}
+.ls-body{font-size:clamp(15px,1.15vw,18px);line-height:1.65;color:var(--ls-soft);max-width:64ch}
+.ls-body p{margin:0 0 1.05em}
+.ls-body p:last-child{margin-bottom:0}
+.ls-body b,.ls-context b,.ls-deep b{color:var(--ls-ink);font-weight:600}
+.ls-context,.ls-deep{border-left:3px solid var(--ls-green);background:#f6faf5;padding:12px 14px;margin:16px 0;font-size:13px;line-height:1.55;color:var(--ls-soft)}
+.ls-deep{border-left-color:var(--ls-lilac);background:#faf8fd}
+.ls-context b,.ls-deep b{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;color:var(--ls-muted)}
+.ls-context p,.ls-deep p{margin:0}
+.ls-watch{border-top:1px solid var(--ls-line);margin-top:20px;padding-top:12px;font-size:13px;line-height:1.55;color:var(--ls-soft)}
+.ls-watch b{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--ls-green);margin-bottom:3px}
+.ls-actions{display:flex;gap:8px;align-items:center;margin-top:20px;flex-wrap:wrap}
+.ls-footnote{margin-top:18px;font-size:10px;color:var(--ls-muted);letter-spacing:.02em}
+.ls-term{display:inline;border:0;border-bottom:1px dotted var(--ls-blue);background:none;padding:0;margin:0;color:var(--ls-petrol);font:inherit;font-weight:600;cursor:help;text-align:left}
+.ls-term:hover,.ls-term:focus-visible{color:var(--ls-blue);border-bottom-color:var(--ls-blue);outline:none}
+.ls-stage{position:relative;min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--ls-paper-2);overflow:hidden}
+.ls-stage:before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--ls-line) 1px,transparent 1px),linear-gradient(90deg,var(--ls-line) 1px,transparent 1px);background-size:48px 48px;opacity:.28;pointer-events:none}
+.ls-stage-head{position:relative;z-index:2;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:14px 22px 8px;border-bottom:1px solid var(--ls-line);background:rgba(247,249,248,.86)}
+.ls-stage-head span{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-muted)}
+.ls-stage-head b{font-size:14px}
+.ls-demo{position:relative;z-index:1;flex:1;min-height:0;padding:12px 16px 8px}
+.ls-stage-foot{position:relative;z-index:2;display:flex;justify-content:space-between;gap:14px;padding:8px 22px 12px;border-top:1px solid var(--ls-line);font-size:10px;color:var(--ls-muted);background:rgba(247,249,248,.86)}
+.ls-credit{text-align:right;white-space:nowrap}
+.ls-bottom{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(240px,1fr);gap:18px;align-items:center;padding:0 22px;border-top:1px solid var(--ls-line);background:#fff;z-index:10}
+.ls-days{display:flex;gap:6px;overflow:auto;padding:8px 0;min-width:0}
+.ls-day{display:flex;flex-direction:column;gap:1px;min-width:112px;border:1px solid var(--ls-line);background:#fff;padding:6px 8px;text-align:left;cursor:pointer}
+.ls-day:hover{border-color:var(--ls-line-strong)}
+.ls-day.is-on{border-color:var(--ls-petrol);box-shadow:0 0 0 1px var(--ls-petrol) inset}
+.ls-day-num{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol);white-space:nowrap}
+.ls-day-name{font-size:10px;color:var(--ls-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ls-progress{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ls-progress-bar{height:3px;background:var(--ls-line);position:relative;overflow:hidden}
+.ls-progress-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ls-green),var(--ls-blue));transition:width .35s ease}
+.ls-steps{display:flex;gap:5px}
+.ls-dot{width:22px;height:22px;border:1px solid var(--ls-line);background:#fff;font-size:9px;color:var(--ls-muted);cursor:pointer;padding:0}
+.ls-dot.is-on{background:var(--ls-petrol);border-color:var(--ls-petrol);color:#fff}
+.ls-backdrop{position:fixed;inset:0;background:rgba(0,20,30,.18);z-index:40;backdrop-filter:blur(1px)}
+.ls-drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,94vw);background:#fff;border-left:1px solid var(--ls-line-strong);box-shadow:var(--ls-shadow);z-index:50;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .24s ease}
+.ls-drawer.is-open{transform:none}
+.ls-drawer-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:18px 20px 12px;border-bottom:1px solid var(--ls-line)}
+.ls-drawer-head h2{font-size:18px;margin:0}
+.ls-lenses{display:flex;gap:5px;flex-wrap:wrap;padding:10px 20px;border-bottom:1px solid var(--ls-line)}
+.ls-drawer-body{flex:1;overflow:auto;padding:14px 20px 24px;display:grid;gap:8px;align-content:start}
+.ls-drawer-foot{padding:10px 20px;border-top:1px solid var(--ls-line);font-size:10px;color:var(--ls-muted)}
+.ls-box{border:1px solid var(--ls-line);background:#fff}
+.ls-box summary{cursor:pointer;padding:9px 11px;font-size:12px;font-weight:600;color:var(--ls-ink);list-style:none}
+.ls-box summary::-webkit-details-marker{display:none}
+.ls-box summary:before{content:"+ ";color:var(--ls-petrol);font-weight:700}
+.ls-box[open] summary:before{content:"− "}
+.ls-box p{margin:0;padding:0 11px 12px;font-size:12px;line-height:1.6;color:var(--ls-soft)}
+.ls-box-lens{display:inline-block;border:1px solid var(--ls-line);background:var(--ls-paper-2);color:var(--ls-muted);font-size:8px;text-transform:uppercase;letter-spacing:.09em;padding:1px 4px;margin-right:6px}
+.ls-inline-boxes{display:grid;gap:8px;margin-top:16px}
+.ls-tip{position:fixed;z-index:70;background:#fff;border:1px solid var(--ls-line-strong);box-shadow:var(--ls-shadow);padding:10px 12px;font-size:11px;line-height:1.5;color:var(--ls-soft);pointer-events:none}
+.ls-tip-kicker{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol);margin-bottom:3px}
+.ls-tip p{margin:0 0 4px}
+.ls-tip-more{font-size:9px;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.08em}
+.ls-panel{position:fixed;right:18px;bottom:18px;width:min(390px,92vw);max-height:min(560px,84vh);overflow:auto;background:#fff;border:1px solid var(--ls-line-strong);box-shadow:var(--ls-shadow);z-index:75;padding:20px;transform:translateY(16px);opacity:0;transition:.2s ease}
+.ls-panel.is-open{transform:none;opacity:1}
+.ls-panel-close{position:absolute;top:8px;right:10px;border:0;background:none;font-size:20px;line-height:1;cursor:pointer;color:var(--ls-muted)}
+.ls-panel-kicker{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol);margin-bottom:4px}
+.ls-panel h2{font-size:22px;margin:0 0 10px}
+.ls-panel-visual{border:1px solid var(--ls-line);background:var(--ls-paper-2);display:grid;place-items:center;padding:12px;margin-bottom:12px}
+.ls-panel-visual svg{width:100%;max-width:220px;height:auto}
+.ls-panel p{font-size:12px;line-height:1.65;color:var(--ls-soft);margin:0 0 12px}
+.ls-panel-link{font-size:11px;color:var(--ls-petrol);font-weight:600;text-decoration:none}
+.ls-panel-link:hover{color:var(--ls-blue)}
+.ls-chips{display:flex;gap:5px;flex-wrap:wrap}
+.ls-chips--sub{opacity:.92}
+.ls-chip{border:1px solid var(--ls-line-strong);background:#fff;color:var(--ls-soft);font-size:9px;padding:4px 7px;cursor:pointer;border-radius:0;white-space:nowrap}
+.ls-chip:hover{border-color:var(--ls-petrol);color:var(--ls-petrol)}
+.ls-chip.is-on{background:var(--ls-petrol);border-color:var(--ls-petrol);color:#fff}
+.ls-canvas{display:block;width:100%;height:100%;min-height:0}
+.ls-att,.ls-embed,.ls-conv,.ls-tr,.ls-hyper{display:grid;grid-template-rows:minmax(0,1fr) auto;height:100%;min-height:0}
+.ls-att-ui,.ls-embed-ui,.ls-conv-ui,.ls-tr-ui,.ls-hyper-ui{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:7px 10px 2px;min-height:0}
+.ls-range{display:flex;align-items:center;gap:6px;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--ls-muted);white-space:nowrap}
+.ls-range input{width:120px;accent-color:var(--ls-green)}
+.ls-range output{font-size:10px;color:var(--ls-ink);min-width:34px;text-align:right}
+.ls-range--hyper{display:none}
+.ls-tr-range{width:150px;accent-color:var(--ls-green)}
+.ls-sampling{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:10px;padding:4px 2px}
+.ls-samp-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.ls-samp-head .ls-kicker{margin:0}
+.ls-samp-prompt{font-family:"Barlow",sans-serif;font-weight:700;font-size:16px;color:var(--ls-ink)}
+.ls-samp-bars{display:grid;gap:4px;align-content:start;overflow:auto;padding-right:4px}
+.ls-bar-row{display:grid;grid-template-columns:90px minmax(0,1fr) 52px;gap:8px;align-items:center;font-size:10px;color:var(--ls-soft)}
+.ls-bar-row.is-cut{opacity:.35}
+.ls-bar-row.is-sampled{color:var(--ls-green);font-weight:600}
+.ls-bar-track{display:block;height:16px;background:var(--ls-line);position:relative;overflow:hidden}
+.ls-bar-fill{display:block;height:100%;background:linear-gradient(90deg,var(--ls-green),var(--ls-sky));transition:width .25s ease}
+.ls-bar-row.is-cut .ls-bar-fill{background:var(--ls-line-strong)}
+.ls-bar-row.is-sampled .ls-bar-fill{background:var(--ls-gold)}
+.ls-bar-val{text-align:right;font-size:9px;color:var(--ls-muted)}
+.ls-samp-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--ls-line);padding-top:8px}
+.ls-samp-readout{display:flex;gap:14px;flex-wrap:wrap;font-size:9px;color:var(--ls-muted)}
+.ls-samp-readout b{color:var(--ls-ink);font-weight:600}
+.ls-empty{padding:20px;font-size:12px;color:var(--ls-muted)}
+@media (max-width:980px){
+  .ls-app{grid-template-rows:auto minmax(0,1fr) auto}
+  .ls-top{padding:8px 12px;align-items:flex-start}
+  .ls-brand span{display:none}
+  .ls-controls{gap:6px}
+  .ls-main{grid-template-columns:1fr;grid-template-rows:minmax(0,44%) minmax(0,56%)}
+  .ls-text{border-right:0;border-bottom:1px solid var(--ls-line)}
+  .ls-text-scroll{padding:18px 18px 14px;max-width:none}
+  .ls-title{font-size:26px;max-width:22ch}
+  .ls-body{font-size:14px;line-height:1.55}
+  .ls-bottom{grid-template-columns:1fr;gap:4px;padding:0 12px}
+  .ls-days{padding:4px 0}
+  .ls-day{min-width:96px}
+  .ls-stage-head{padding:8px 12px 6px}
+  .ls-stage-foot{padding:5px 12px 7px}
+  .ls-demo{padding:6px 8px 2px}
+  .ls-drawer{width:100vw}
+  .ls-panel{right:8px;bottom:8px;width:calc(100vw - 16px)}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+/* ── smooth, transparent flow ─────────────────────────────── */
+.ls-app{background:transparent}
+.ls-app:before{
+  content:"";position:fixed;inset:-20%;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(38% 42% at 22% 32%, rgba(99,164,75,.13), transparent 70%),
+    radial-gradient(34% 38% at 76% 60%, rgba(18,117,172,.12), transparent 72%),
+    radial-gradient(30% 34% at 58% 18%, rgba(145,133,190,.10), transparent 74%),
+    radial-gradient(26% 30% at 40% 82%, rgba(0,146,153,.08), transparent 72%);
+  filter:blur(28px);
+  animation:ls-flow 26s ease-in-out infinite alternate;
+}
+@keyframes ls-flow{
+  0%{transform:translate3d(-1.5%,-1%,0) scale(1)}
+  50%{transform:translate3d(1.8%,1.4%,0) scale(1.04)}
+  100%{transform:translate3d(-.6%,2%,0) scale(1.01)}
+}
+.ls-top,.ls-bottom{background:rgba(255,255,255,.68);backdrop-filter:blur(16px) saturate(1.2);border-color:rgba(0,75,111,.06)}
+.ls-main{position:relative;z-index:1}
+.ls-text{background:transparent;border-right:0;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 86%,transparent 100%);mask-image:linear-gradient(90deg,#000 0%,#000 86%,transparent 100%)}
+.ls-stage{background:transparent}
+.ls-stage:before{display:none}
+.ls-stage:after{content:"";position:absolute;inset:6% 4% 8% 4%;z-index:0;pointer-events:none;background:radial-gradient(circle at 52% 46%,rgba(99,164,75,.07),rgba(18,117,172,.045) 42%,transparent 72%);filter:blur(24px)}
+.ls-demo{z-index:1}
+.ls-stage-head,.ls-stage-foot{background:transparent;border-color:rgba(0,75,111,.06)}
+.ls-demo{background:transparent}
+.ls-canvas{background:transparent}
+.ls-text-scroll,.ls-demo{transition:opacity .32s ease,filter .32s ease,transform .32s ease}
+.ls-text-scroll.is-out,.ls-demo.is-out{opacity:0;filter:blur(8px);transform:translateY(7px)}
+.ls-title{letter-spacing:-.025em}
+.ls-body{color:#2c464d}
+.ls-watch{border-top:1px solid rgba(0,75,111,.08)}
+.ls-btn,.ls-seg,.ls-select,.ls-day{background:rgba(255,255,255,.62);border-color:rgba(0,75,111,.10);box-shadow:0 1px 2px rgba(0,20,30,.035)}
+.ls-btn:hover,.ls-day:hover{border-color:rgba(0,75,111,.24);box-shadow:0 2px 8px rgba(0,20,30,.06)}
+.ls-btn--primary{background:var(--ls-petrol);border-color:transparent;box-shadow:0 2px 10px rgba(0,75,111,.16)}
+.ls-seg button.is-on{background:var(--ls-petrol);box-shadow:0 1px 6px rgba(0,75,111,.18)}
+.ls-day.is-on{border-color:rgba(99,164,75,.45);box-shadow:0 0 0 1px rgba(99,164,75,.25) inset,0 2px 10px rgba(99,164,75,.10)}
+.ls-dot{border-color:rgba(0,75,111,.10);background:rgba(255,255,255,.62)}
+.ls-progress-bar{background:rgba(0,75,111,.08)}
+.ls-progress-bar span{background:linear-gradient(90deg,var(--ls-green),var(--ls-blue));box-shadow:0 0 10px rgba(99,164,75,.25)}
+.ls-chip{border-color:rgba(0,75,111,.10);background:rgba(255,255,255,.62)}
+.ls-chip.is-on{background:var(--ls-petrol);border-color:transparent;box-shadow:0 1px 6px rgba(0,75,111,.18)}
+.ls-bar-track{background:rgba(0,75,111,.07)}
+.ls-bar-fill{background:linear-gradient(90deg,rgba(99,164,75,.95),rgba(92,155,175,.95));box-shadow:0 0 8px rgba(99,164,75,.18)}
+.ls-term{border-bottom-color:rgba(18,117,172,.45)}
+.ls-depth-tree{margin-top:18px;border-top:1px solid rgba(0,75,111,.08);padding-top:8px}
+.ls-deepbox{border:0;background:transparent;margin:0;padding:0}
+.ls-deepbox>summary{cursor:pointer;list-style:none;padding:9px 0;font-family:"Barlow",sans-serif;font-weight:700;font-size:14px;color:var(--ls-petrol);border-bottom:1px solid rgba(0,75,111,.07)}
+.ls-deepbox>summary::-webkit-details-marker{display:none}
+.ls-deepbox>summary:before{content:"+ ";color:var(--ls-green);font-weight:700}
+.ls-deepbox[open]>summary:before{content:"− "}
+.ls-deepbox>p{font-size:13px;line-height:1.65;color:var(--ls-soft);margin:10px 0 6px;max-width:62ch}
+.ls-deepbox .ls-deepbox{margin-left:14px;padding-left:14px;border-left:1px solid rgba(0,75,111,.08)}
+.ls-deepbox .ls-deepbox>summary{font-size:12px;color:var(--ls-soft)}
+.ls-deepbox .ls-deepbox .ls-deepbox>summary{font-size:11px;color:var(--ls-muted)}
+.ls-depth-hint{font-size:10px;color:var(--ls-muted);letter-spacing:.02em;margin-top:14px}
+.ls-depth-hint button{border:0;background:none;color:var(--ls-petrol);font:inherit;font-weight:600;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px}
+.ls-text-scroll{transition:opacity .08s ease,filter .08s ease}
+.ls-text-scroll.is-out{opacity:0;filter:blur(3px);transform:none}
+.ls-demo{view-transition-name:ls-demo}
+::view-transition-old(root),::view-transition-new(root){animation:none}
+::view-transition-old(ls-demo){animation:ls-demo-out .42s cubic-bezier(.2,.8,.2,1) both}
+::view-transition-new(ls-demo){animation:ls-demo-in .42s cubic-bezier(.2,.8,.2,1) both}
+@keyframes ls-demo-out{to{opacity:0;transform:scale(1.03);filter:blur(3px)}}
+@keyframes ls-demo-in{from{opacity:0;transform:scale(.97);filter:blur(3px)}}
+.ls-cues{margin-top:26px}
+.ls-cue{padding:6px 0 6px 16px;border-left:1px solid rgba(0,75,111,.10);margin:18px 0;transition:border-color .3s ease,opacity .3s ease}
+.ls-cue.is-active{border-left-color:var(--ls-green)}
+.ls-cue--reset{height:1px;margin:0;padding:0;border:0}
+.ls-cue-kicker{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-green);margin-bottom:4px}
+.ls-cue h3{font-size:18px;margin:0 0 6px}
+.ls-cue p{font-size:13px;line-height:1.65;color:var(--ls-soft);margin:0;max-width:62ch}
+.ls-morph-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
+.ls-term-wrap{display:inline}
+.ls-term-note{display:block;margin:8px 0 12px;padding:10px 13px;border-left:2px solid var(--ls-green);background:rgba(255,255,255,.55);font-size:12px;line-height:1.6;color:var(--ls-soft)}
+.ls-term-note[hidden]{display:none}
+.ls-term-def{display:block;margin-bottom:8px}
+.ls-term-visual{display:block;margin:8px 0}
+.ls-term-visual svg{width:100%;max-width:180px;height:auto}
+.ls-term-link{font-size:10px;font-weight:600;color:var(--ls-petrol);text-decoration:none}
+.ls-term-wrap.is-open .ls-term{color:var(--ls-blue);border-bottom-style:solid}
+@media (prefers-reduced-motion:reduce){
+  .ls-app:before{animation:none}
+  ::view-transition-old(ls-demo),::view-transition-new(ls-demo){animation:none}
+}
+</style>
+</head>
+<body>
+<div id="learnsys"></div>
+<script src="learnsys.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var L = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum.";
+
+  function box(id, lens, title, body) {
+    return { id: id, lens: lens, title: title, body: body };
+  }
+
+  var days = [
+    {
+      id: "embedding",
+      track: "idea",
+      label: "Tag 05",
+      kicker: "Die Idee · Tag 05",
+      title: "Bedeutung wird Geometrie",
+      demo: "embedding",
+      steps: [
+        {
+          kicker: "01 / Die Karte",
+          title: "1D: Eine Achse",
+          body: L + " Zuerst ist Bedeutung nur eine Zahl auf einer Linie: Temperatur. Ein [[Vektor]] ist eine Liste von Zahlen; mit einer Dimension ist er ein Punkt auf einer Achse. ",
+          watch: "Beobachte, wie die Wörter im Raum liegen. Nähe ist Ähnlichkeit, nicht Wahrheit.",
+          demoState: { dim: 0, mode: "line" },
+          context: "Die Karte ist gelernt, nicht gegeben: Jede Position kommt aus dem Trainingstext.",
+          deep: "Eine [[Embedding]]-Tabelle ist eine gelernte Matrix. Jede Zeile ist der Startvektor eines Tokens; die Geometrie entsteht erst durch das Training.",
+          boxes: [box("emb-1", "Mathematik", "Was ist ein Vektor?", "Ein Vektor ist ein Element eines Vektorraums. In der Praxis: eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt.")],
+          cues: [
+            { label: "1D → 2D", title: "Die zweite Achse", text: L + " Eine zweite Dimension ist kein neuer Inhalt, sondern ein neuer Freiheitsgrad. Die Punkte heben sich aus der Linie und finden Nachbarn in zwei Richtungen. ", state: { dim: 1, mode: "neighbors", selected: "king" } },
+            { label: "2D → 3D", title: "Die dritte Achse", text: L + " Jetzt kommt Tiefe dazu. Dieselben Wörter liegen nicht mehr auf einem Blatt; sie bilden einen Raum, in dem Richtungen Beziehungen tragen. ", state: { dim: 2, mode: "arrows", selected: "king" } },
+            { label: "3D → Kontext", title: "Kontext verschiebt den Punkt", text: L + " Der Raum ist gelernt und bleibt statistisch. Kontext verschiebt den Punkt, ohne die Karte neu zu zeichnen. ", state: { dim: 2, mode: "context", selected: "bank" } }
+          ]
+        },
+        {
+          kicker: "02 / Die Nachbarn",
+          title: "2D: Eine Ebene",
+          body: L + " Jetzt kommt eine zweite Achse dazu. Die Punkte heben sich aus der Linie in eine Ebene; plötzlich gibt es Nähe in zwei Richtungen. ",
+          watch: "Fahre über einen Punkt. Welche Nachbarn erscheinen? Passen sie zu deiner Intuition?",
+          demoState: { dim: 1, mode: "neighbors", selected: "king" },
+          context: "Die Nachbarschaft ist ein statistisches Signal, keine Definition. Sie kann Stereotype tragen.",
+          deep: "Die Ähnlichkeit wird meist über den Winkel gemessen, nicht über den Abstand. [[Softmax]] ist etwas anderes: Es macht aus Scores eine Verteilung.",
+          boxes: [box("emb-2", "Geschichte", "Woher kommt die Idee?", "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert.")]
+        },
+        {
+          kicker: "03 / Die Richtungen",
+          title: "3D: Ein Raum",
+          body: L + " Eine dritte Achse hebt die Ebene in einen Raum. Jetzt tragen Richtungen Beziehungen: Geschlecht, Hauptstadt, Alter. ",
+          watch: "Schalte die Pfeile ein. Welche Richtungen wirken konsistent, welche nicht?",
+          demoState: { dim: 2, mode: "arrows", selected: "king" },
+          context: "Die berühmte Analogie ist eine Illustration. In echten Embeddings ist sie noisy und nicht immer wahr.",
+          deep: "Die Geometrie ist eine Projektion. Was du siehst, ist ein Schatten eines viel höherdimensionalen Raums.",
+          boxes: [box("emb-3", "Technik", "Warum funktioniert die Analogie?", "Weil ähnliche Wörter in ähnlichen grammatischen Slots auftreten. Der Unterschied zwischen Mann und Frau wird zu einer wiederverwendbaren Richtung.")]
+        },
+        {
+          kicker: "04 / Die Grenze",
+          title: "Kontext: Die Karte verschiebt sich",
+          body: L + " Auch im 3D-Raum ist die Karte nicht das Territorium. Achsen haben meist keine Namen, und Kontext verschiebt den Punkt. ",
+          watch: "Öffne die Tiefe. Welche Aussage würdest du einem Freund in einem Satz sagen?",
+          demoState: { dim: 2, mode: "context", selected: "bank" },
+          context: "Kontext ist der Teil der Karte, den das Modell gerade sieht. Er verschiebt die Täler.",
+          deep: "Superposition und Polysemantik erklären, warum ein Neuron mehrere Bedeutungen tragen kann. Die Karte ist nützlich, aber sie ist statistisch.",
+          boxes: [box("emb-4", "Anwendung", "Wofür ist das gut?", "Suche, Empfehlungen, Clustering und RAG nutzen genau diese Geometrie: semantische Nähe wird zur Abfrage.")]
+        }
+      ],
+      boxes: [box("emb-day", "Mathematik", "Die ganze Rechnung", "Ein Embedding ist eine Matrix E mit einer Zeile pro Token. Der Startvektor ist E[id]. Die Ähnlichkeit ist cos(E[a], E[b]).")]
+    },
+    {
+      id: "attention",
+      track: "transformer",
+      label: "Tag 16",
+      kicker: "Im Transformer · Tag 16",
+      title: "Aufmerksamkeit ist ein Budget",
+      demo: "attention",
+      steps: [
+        {
+          kicker: "01 / Die Frage",
+          title: "Wem gehört „sie“?",
+          body: L + " Ein Wort ist nicht allein bedeutsam. [[Attention]] lässt jedes Token die anderen lesen und gewichten. ",
+          watch: "Lies den Satz. Welches Wort muss „sie“ auflösen? Rate, bevor du klickst.",
+          demoState: { query: 5, head: "coreference", showArcs: false, showBudget: false },
+          context: "Ein statisches Embedding gibt jedem „sie“ denselben Vektor. Attention macht ihn kontextabhängig.",
+          deep: "Query, Key und Value sind drei gelernte Projektionen. Der Query fragt, der Key antwortet, der Value reist.",
+          boxes: [box("att-1", "Technik", "Warum drei Vektoren?", "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen.")],
+          cues: [
+            { label: "Koreferenz", title: "Ein Kopf liest zurück", text: L + " Der Kopf verbindet das Pronomen mit dem Namen. Die Bögen sind keine Erklärung, sondern ein Routing-Signal. ", state: { query: 5, head: "coreference", showArcs: true, showBudget: false } },
+            { label: "Budget", title: "Aufmerksamkeit ist zero-sum", text: L + " Jede Zeile hat genau 1,00 zu vergeben. Mehr für ein Token heißt weniger für alle anderen. ", state: { query: 5, head: "coreference", showArcs: true, showBudget: true } },
+            { label: "Syntax", title: "Ein anderer Kopf, eine andere Frage", text: L + " Wechsle den Kopf. Derselbe Satz sieht plötzlich anders aus, weil ein anderer Aspekt gelernt wurde. ", state: { query: 5, head: "syntax", showArcs: true, showBudget: true } }
+          ]
+        },
+        {
+          kicker: "02 / Der Blick",
+          title: "Ein Kopf liest zurück",
+          body: L + " Klicke auf „sie“. Die Bögen zeigen, wohin der Query schaut. ",
+          watch: "Klicke auf „sie“ und dann auf „Maria“. Was passiert mit dem Budget?",
+          demoState: { query: 5, head: "coreference", showArcs: true, showBudget: false },
+          context: "Die Gewichte einer Zeile summieren zu 1. Mehr für ein Token heißt weniger für alle anderen.",
+          deep: "Das Skalarprodukt wird durch √d_k geteilt, damit die Scores nicht mit der Kopfdimension explodieren.",
+          boxes: [box("att-2", "Mathematik", "Warum Softmax?", "Softmax macht aus Scores eine Verteilung: positiv, summiert zu 1, Reihenfolge bleibt. Deshalb ist Attention ein endliches Budget.")]
+        },
+        {
+          kicker: "03 / Das Budget",
+          title: "Aufmerksamkeit ist zero-sum",
+          body: L + " Jede Zeile hat genau 1,00 zu vergeben. Das ist die wichtigste Zahl der Seite. ",
+          watch: "Beobachte den Balken unten. Wenn ein Token mehr bekommt, verliert jedes andere.",
+          demoState: { query: 5, head: "coreference", showArcs: true, showBudget: true },
+          context: "Mehrere Heads haben getrennte Budgets. Sie konkurrieren nicht miteinander, nur innerhalb eines Heads.",
+          deep: "Die Zeile ist eine Wahrscheinlichkeitsverteilung. Das macht Attention zu einem weichen, differenzierbaren Routing.",
+          boxes: [box("att-3", "Anwendung", "Warum ist das nützlich?", "Weil ein Modell dadurch Informationen zwischen Positionen bewegen kann, ohne eine feste Baumstruktur zu brauchen.")]
+        },
+        {
+          kicker: "04 / Die Grenze",
+          title: "Die Karte ist keine Erklärung",
+          body: L + " Attention zeigt, wohin Information geroutet wurde. Sie zeigt nicht, was das FFN damit tut. ",
+          watch: "Vergleiche die Heads. Welcher Zusammenhang wird sichtbar, welcher nicht?",
+          demoState: { query: 5, head: "syntax", showArcs: true, showBudget: true },
+          context: "Attention-Gewichte sind kein Geständnis. Sie sind ein Routing-Signal auf einer Schicht.",
+          deep: "Der Residual Stream und das FFN entscheiden, was mit der gerouteten Information passiert.",
+          boxes: [box("att-4", "Geschichte", "Woher kommt Attention?", "Bahdanau et al. (2014) für Übersetzung; Vaswani et al. (2017) machten Self-Attention zum Kern des Transformers.")]
+        }
+      ],
+      boxes: [box("att-day", "Technik", "Ein Head, viele Rollen", "Ein Head kann Koreferenz, Syntax oder Thema verfolgen. Welche Rolle er lernt, entscheidet der Loss, nicht der Entwickler.")]
+    },
+    {
+      id: "transformer",
+      track: "transformer",
+      label: "Tag 20",
+      kicker: "Im Transformer · Tag 20",
+      title: "Die Maschine schreibt in einen Stream",
+      demo: "transformer",
+      steps: [
+        {
+          kicker: "01 / Der Stream",
+          title: "Ein Vektor, viele Hände",
+          body: L + " Der [[Residual Stream]] ist der laufende Vektor jedes Tokens. Jede Schicht liest ihn und schreibt ein Update. ",
+          watch: "Beobachte den Balken. Wird der Vektor ersetzt oder addiert?",
+          demoState: { layer: 0, mode: "residual" },
+          context: "Nichts wird überschrieben. Deshalb kann eine späte Schicht noch die ursprüngliche Bedeutung sehen.",
+          deep: "Die Addition gibt dem Gradienten einen kurzen Pfad zurück. Ohne Residualverbindung müsste jede Schicht die gesamte Information neu schreiben.",
+          boxes: [box("tr-1", "Mathematik", "Warum Addition?", "x ← x + f(x). Die Identität bleibt erhalten; die Schicht lernt nur die Änderung. Das macht tiefe Stapel trainierbar.")],
+          cues: [
+            { label: "Layer 0", title: "Der Stream beginnt", text: L + " Am Anfang ist der Vektor nur ein Token plus Position. Noch hat keine Schicht etwas hinzugefügt. ", state: { layer: 0, mode: "residual" } },
+            { label: "Layer 2", title: "Attention schreibt", text: L + " Die ersten Blöcke mischen Kontext in den Vektor. Der Stream wird reicher, ohne dass etwas überschrieben wird. ", state: { layer: 2, mode: "lens" } },
+            { label: "Layer 4", title: "Die Antwort wird sichtbar", text: L + " Die Logit-Linse zeigt, wie sich die Wahrscheinlichkeiten verschieben. Früh ist die Antwort unscharf. ", state: { layer: 4, mode: "lens" } },
+            { label: "Layer 6", title: "Die Ausgabe", text: L + " Am Ende steht eine Verteilung. Der Streaming-Pfad ist zu Ende, die Wahl beginnt. ", state: { layer: 6, mode: "lens" } }
+          ]
+        },
+        {
+          kicker: "02 / Die Updates",
+          title: "Attention und FFN schreiben",
+          body: L + " Attention mischt Information zwischen Positionen. Das FFN rechnet innerhalb eines Tokens. ",
+          watch: "Klicke die Blöcke durch. Welcher Block ändert den Vektor stärker?",
+          demoState: { layer: 2, mode: "residual" },
+          context: "Attention entscheidet, was gelesen wird. Das FFN entscheidet, was damit gerechnet wird.",
+          deep: "Die meisten Parameter liegen in den FFN-Matrizen. Wissen ist trotzdem verteilt, nicht in einer Zeile gespeichert.",
+          boxes: [box("tr-2", "Technik", "Wo sind die Parameter?", "In den Attention-Projektionen und FFN-Matrizen. Ein 7B-Modell ist kein Container mit 7 Milliarden Fakten.")]
+        },
+        {
+          kicker: "03 / Die Linse",
+          title: "Die Antwort entsteht schrittweise",
+          body: L + " Die Logit-Linse liest den Stream in jeder Schicht. Früh ist die Antwort unscharf, spät konzentriert. ",
+          watch: "Bewege den Layer-Regler. Ab wann wird „Paris“ wahrscheinlich?",
+          demoState: { layer: 4, mode: "lens" },
+          context: "Die Zwischenstände sind keine fertigen Antworten. Sie sind lesbare Projektionen eines Zwischenzustands.",
+          deep: "Die Logit-Linse ist ein diagnostisches Werkzeug, kein Beweis, dass das Modell „in Worten denkt“.",
+          boxes: [box("tr-3", "Anwendung", "Warum ist das nützlich?", "Weil man sieht, wo eine Antwort entsteht, und weil man Fehler lokalisieren kann, statt nur das Endergebnis zu bewerten.")]
+        },
+        {
+          kicker: "04 / Die Grenze",
+          title: "Kein Stop-Button",
+          body: L + " Das Modell stoppt, weil EOS wahrscheinlich wird. Es gibt keinen separaten Detektor. ",
+          watch: "Beobachte die Verteilung am Ausgang. Was bedeutet es, wenn EOS gewinnt?",
+          demoState: { layer: 6, mode: "lens" },
+          context: "EOS ist ein normales Vokabular-Token. Die Verteilung lernt, wann ein natürlicher Schluss erreicht ist.",
+          deep: "Instruktionsgetunte Modelle haben eine grobe gelernte Längenvorstellung, aber keinen Odometer.",
+          boxes: [box("tr-4", "Geschichte", "Warum war das ein Bruch?", "Vor 2017 musste ein rekurrentes Modell die Vergangenheit durch eine Kette tragen. Attention macht den Pfad zwischen zwei Tokens zu einem Schritt.")]
+        }
+      ],
+      boxes: [box("tr-day", "Technik", "Der ganze Block", "Attention, FFN, Residual und Normalisierung sind eine Arbeitsteilung. Entferne einen Teil, und die Maschine ändert sich.")]
+    },
+    {
+      id: "convolution",
+      track: "senses",
+      label: "Tag 12",
+      kicker: "Sinne und Signale · Tag 12",
+      title: "Sehen ist ein Filter, der gleitet",
+      demo: "convolution",
+      steps: [
+        {
+          kicker: "01 / Das Bild",
+          title: "Ein Bild ist eine Tabelle",
+          body: L + " Ein Bild ist ein Gitter aus Zahlen. Ein [[Kernel]] ist ein kleines Fenster gelernter Gewichte. ",
+          watch: "Fahre über das Bild. Welche Zahlen stehen unter dem Fenster?",
+          demoState: { mode: "pixels" },
+          context: "Das Netz bekommt kein Bild, sondern eine Matrix aus Helligkeiten oder Farbvektoren.",
+          deep: "Ein RGB-Bild ist ein Tensor der Form Höhe × Breite × 3. Ein Batch fügt eine vierte Dimension hinzu.",
+          boxes: [box("cv-1", "Mathematik", "Was ist eine Faltung?", "Ein Kernel gleitet über das Bild. An jeder Position werden die neun Pixel mit den neun Gewichten multipliziert und summiert.")],
+          cues: [
+            { label: "Pixel", title: "Das Bild als Tabelle", text: L + " Jede Zelle ist ein Zahlenvektor. Das Netz bekommt kein Bild, sondern eine Matrix. ", state: { mode: "pixels" } },
+            { label: "Kernel", title: "Ein Muster, überall", text: L + " Derselbe Kernel gleitet über das Bild. Ein Muster wird einmal gelernt und überall angewendet. ", state: { mode: "kernel", kernel: "edge" } },
+            { label: "Feature-Map", title: "Was der Filter sieht", text: L + " Die Feature-Map zeigt, wo das Muster vorkommt. Sie ist das Ergebnis der Faltung. ", state: { mode: "feature", kernel: "edge" } },
+            { label: "Hierarchie", title: "Kanten werden Objekte", text: L + " Tiefe stapelt Filter. Aus Kanten werden Teile, aus Teilen Objekte. ", state: { mode: "hierarchy", kernel: "sharpen" } }
+          ]
+        },
+        {
+          kicker: "02 / Der Filter",
+          title: "Ein Muster, überall",
+          body: L + " Derselbe Kernel wird an jeder Position wiederverwendet. Das ist die eingebaute Annahme: Nähe zählt. ",
+          watch: "Wechsle den Kernel. Welcher reagiert auf Kanten, welcher auf Flächen?",
+          demoState: { mode: "kernel", kernel: "edge" },
+          context: "Geteilte Gewichte sparen Parameter. Ein Muster wird einmal gelernt und überall angewendet.",
+          deep: "Pooling vergrößert später das rezeptive Feld. Es tauscht räumliche Details gegen Robustheit.",
+          boxes: [box("cv-2", "Technik", "Warum nicht jedes Pixel verbinden?", "Weil das enorm viele Gewichte bräuchte und denselben Kantendetektor an jeder Stelle neu lernen müsste.")]
+        },
+        {
+          kicker: "03 / Die Feature-Map",
+          title: "Was der Filter sieht",
+          body: L + " Die Feature-Map ist das Ergebnis der Faltung. Sie zeigt, wo das Muster im Bild vorkommt. ",
+          watch: "Scanne das Bild. Wo leuchtet die Feature-Map?",
+          demoState: { mode: "feature", kernel: "edge" },
+          context: "Frühe Schichten sehen Kanten und Texturen. Spätere Schichten kombinieren sie zu Teilen und Objekten.",
+          deep: "Die Feature-Map hat weniger Pixel als das Eingabebild, weil der Kernel am Rand nicht vollständig aufliegt.",
+          boxes: [box("cv-3", "Geschichte", "Woher kommt die Idee?", "Hubel und Wiesel fanden orientierungsselektive Neuronen im Katzenkortex. Fukushima baute daraus das Neocognitron.")]
+        },
+        {
+          kicker: "04 / Die Hierarchie",
+          title: "Kanten werden Objekte",
+          body: L + " Tiefe stapelt Filter. Aus Kanten werden Teile, aus Teilen Objekte. ",
+          watch: "Öffne die Tiefe. Welche Stufe würdest du einem Kind zeigen?",
+          demoState: { mode: "hierarchy", kernel: "sharpen" },
+          context: "Die Hierarchie ist keine gespeicherte Katze. Sie ist eine gelernte Komposition von Merkmalen.",
+          deep: "Ein kleines Pixelrauschen kann eine Entscheidung kippen. Die Entscheidungsgrenze ist geometrisch, nicht semantisch.",
+          boxes: [box("cv-4", "Anwendung", "Wo wird das gebraucht?", "Detektion, Segmentierung, Pose, medizinische Bildanalyse. Meist als Backbone mit einem kleinen Task-Kopf.")]
+        }
+      ],
+      boxes: [box("cv-day", "Technik", "CNN und ViT", "Ein CNN bringt Lokalität als Annahme mit. Ein ViT schneidet das Bild in Patches und lernt die Beziehungen selbst.")]
+    },
+    {
+      id: "sampling",
+      track: "assistant",
+      label: "Tag 21",
+      kicker: "Vom Modell zum Assistenten · Tag 21",
+      title: "Die Verteilung ist nicht die Antwort",
+      demo: "sampling",
+      steps: [
+        {
+          kicker: "01 / Die Verteilung",
+          title: "Das Modell liefert Möglichkeiten",
+          body: L + " Das Modell endet mit einer Wahrscheinlichkeit für jedes Token. Decoding wählt eines aus. ",
+          watch: "Beobachte die Balken. Welches Token hat die größte Masse?",
+          demoState: { prompt: "story", temp: 0.9, topP: 1.0, filter: "topp" },
+          context: "Eine hohe Wahrscheinlichkeit ist keine Garantie für Wahrheit. Sie ist eine Aussage über den Trainingskorpus.",
+          deep: "Logits sind unnormalisierte Scores. [[Softmax]] macht daraus eine Verteilung; Temperatur skaliert die Logits vorher.",
+          boxes: [box("sa-1", "Mathematik", "Was macht Temperatur?", "Sie teilt die Logits vor dem Softmax. T < 1 schärft, T > 1 flacht ab. Bei T → 0 wird daraus Greedy.")],
+          cues: [
+            { label: "Verteilung", title: "Das Modell liefert Möglichkeiten", text: L + " Eine hohe Wahrscheinlichkeit ist keine Garantie. Sie ist eine Aussage über den Trainingskorpus. ", state: { prompt: "story", temp: 0.9, topP: 1.0, filter: "topp" } },
+            { label: "Temperatur", title: "Die Schärfe", text: L + " Temperatur verändert nicht das Wissen. Sie verändert, wie breit der vorhandene Raum erkundet wird. ", state: { prompt: "story", temp: 1.6, topP: 1.0, filter: "topp" } },
+            { label: "Top-p", title: "Der Schnitt", text: L + " Top-p behält die kleinste Menge, die zusammen p erreicht. Der Pool atmet mit der Konfidenz. ", state: { prompt: "story", temp: 0.9, topP: 0.55, filter: "topp" } },
+            { label: "Fakten", title: "Eine andere Verteilung", text: L + " Bei einer Faktenfrage ist die Verteilung schärfer. Derselbe Decoder, eine andere Landschaft. ", state: { prompt: "fact", temp: 0.2, topP: 0.9, filter: "topp" } }
+          ]
+        },
+        {
+          kicker: "02 / Die Schärfe",
+          title: "Temperatur ist ein Regler",
+          body: L + " Niedrige Temperatur macht den wahrscheinlichsten Token dominanter. Hohe Temperatur öffnet den Tail. ",
+          watch: "Ziehe die Temperatur. Wie verändert sich die Form der Verteilung?",
+          demoState: { prompt: "story", temp: 1.6, topP: 1.0, filter: "topp" },
+          context: "Temperatur ändert nicht das Wissen des Modells. Sie ändert, wie breit es den vorhandenen Raum erkundet.",
+          deep: "Bei T = 0 wäre die Formel eine Division durch null. Implementierungen nehmen dann direkt das Top-Token.",
+          boxes: [box("sa-2", "Technik", "Warum nicht immer Greedy?", "Greedy ist deterministisch und kann in Schleifen laufen. Sampling kann vielfältiger sein, aber auch inkohärenter.")]
+        },
+        {
+          kicker: "03 / Der Schnitt",
+          title: "Top-p schneidet den Tail",
+          body: L + " Top-p behält die kleinste Menge, die zusammen p erreicht. Der Kandidatenpool atmet mit der Konfidenz. ",
+          watch: "Senke Top-p. Welche Tokens verschwinden zuerst?",
+          demoState: { prompt: "story", temp: 0.9, topP: 0.55, filter: "topp" },
+          context: "Top-k ist eine feste Anzahl, Top-p eine feste Masse. Min-p skaliert mit dem Top-Token.",
+          deep: "Nach dem Schnitt werden die verbleibenden Wahrscheinlichkeiten renormalisiert. Die grauen Balken zählen nicht mehr.",
+          boxes: [box("sa-3", "Anwendung", "Welche Einstellung wofür?", "Code und Fakten: niedrige Temperatur, enger Filter. Brainstorming: höhere Temperatur, weiterer Filter. Es gibt keine universelle Regel.")]
+        },
+        {
+          kicker: "04 / Die Entscheidung",
+          title: "Ziehen ist eine Policy",
+          body: L + " Das Modell liefert die Verteilung. Der Decoder entscheidet, wie daraus eine Sequenz wird. ",
+          watch: "Klicke „Ziehen“. Welches Token kommt? Wie hättest du entschieden?",
+          demoState: { prompt: "fact", temp: 0.2, topP: 0.9, filter: "topp" },
+          context: "Ein anderer früher Token schickt den Text auf einen anderen Pfad. Decoding ist eine politische Entscheidung.",
+          deep: "Beam Search hält mehrere Pfade am Leben. Speculative Sampling beschleunigt die Prüfung, ohne die Zielverteilung zu ändern.",
+          boxes: [box("sa-4", "Geschichte", "Warum wurde Sampling wichtig?", "Weil ein Modell ohne Sampling immer denselben Text liefert. Die Vielfalt kommt aus der Verteilung, nicht aus dem Modell allein.")]
+        }
+      ],
+      boxes: [box("sa-day", "Technik", "Entropie", "Entropie ist ein Maß dafür, wie breit die Verteilung ist. Niedrige Entropie heißt: Die Wahl ist fast erzwungen.")]
+    },
+    {
+      id: "hyper",
+      track: "failure",
+      label: "Tag 11",
+      kicker: "Fehler, Daten, Lernen · Tag 11",
+      title: "Der Hyperparameterraum",
+      demo: "hyper",
+      steps: [
+        {
+          kicker: "01 / Zwei Regler",
+          title: "Zwei Gewichte, eine Fläche",
+          body: L + " Ein Modell mit zwei Gewichten hat einen zweidimensionalen Parameterraum. Jede Wahl von a und b ist ein Punkt; der [[Loss]] ist die Höhe. ",
+          watch: "Beobachte die Kontur. Wo liegt das Tal? Wo liegt der Ball?",
+          demoState: { mode: "2d" },
+          context: "Der Loss ist kein einzelner Wert, sondern eine Funktion über alle Parameter. Training ist die Suche nach einem guten Punkt.",
+          deep: "Die Landschaft ist selten eine runde Schale. Sie hat Täler, Plateaus und Sattelpunkte; deshalb zählen Initialisierung, Lernrate und Optimizer.",
+          boxes: [box("hy-1", "Mathematik", "Warum ist die Landschaft krumm?", "Weil der Loss aus vielen nichtlinearen Schichten zusammengesetzt ist. Zwei Gewichte können gemeinsam wirken; die Fläche ist dann gekrümmt.")],
+          cues: [
+            { label: "2D", title: "Zwei Regler", text: L + " Zwei Gewichte, eine Karte. Der Ball liegt auf einer Fläche, die du von oben siehst. ", state: { mode: "2d" } },
+            { label: "3D", title: "Die Landschaft hebt sich", text: L + " Dieselben Punkte, eine Dimension mehr. Jetzt siehst du die Höhe des Loss. ", state: { mode: "3d" } },
+            { label: "4D", title: "Ein Schnitt durch vier Dimensionen", text: L + " Mit c wird der Raum vierdimensional. Wir zeichnen einen Schnitt und färben ihn nach c. ", state: { mode: "4d", c: 0.35 } }
+          ]
+        },
+        {
+          kicker: "02 / Die Höhe",
+          title: "Der Raum hebt sich",
+          body: L + " Dieselben Punkte, eine Dimension mehr: Aus der Karte wird eine Landschaft. Nichts an den Daten hat sich geändert, nur die Darstellung. ",
+          watch: "Drehe die Fläche. Wo ist der Gradient steil, wo flach?",
+          demoState: { mode: "3d" },
+          context: "Die dritte Achse ist der Loss. Der Ball rollt nicht auf der Karte, er rollt auf der Fläche.",
+          deep: "Der Gradient zeigt bergauf. Der Optimizer geht in die Gegenrichtung. Die Lernrate entscheidet, wie weit.",
+          boxes: [box("hy-2", "Technik", "Warum 3D?", "Weil zwei Parameter plus der Loss drei Achsen ergeben. Mehr Parameter kann man nicht direkt zeichnen; man projiziert oder schneidet.")]
+        },
+        {
+          kicker: "03 / Der dritte Regler",
+          title: "Ein Schnitt durch vier Dimensionen",
+          body: L + " Mit einem dritten Parameter c wird der Raum vierdimensional. Wir zeichnen einen dreidimensionalen Schnitt und färben ihn nach c. ",
+          watch: "Ziehe c. Wie verändert sich die Form? Was bleibt gleich?",
+          demoState: { mode: "4d", c: 0.35 },
+          context: "Ein 4D-Schnitt ist eine ehrliche Projektion: Du siehst nicht alle vier Achsen, sondern eine Fläche plus eine Farbe.",
+          deep: "Hyperparameter wie Lernrate oder Regularisierung sind selbst Achsen dieses Raums. Man optimiert sie oft auf einer äußeren Schleife.",
+          boxes: [box("hy-3", "Anwendung", "Was ist ein Hyperparameter?", "Ein Wert, den das Training nicht selbst lernt: Lernrate, Batch Size, Regularisierung. Er verändert die Landschaft, in der der Optimizer arbeitet.")]
+        },
+        {
+          kicker: "04 / Der Weg",
+          title: "Der Ball rollt",
+          body: L + " Der Gradient zeigt die Richtung. Der Ball folgt ihr, Schritt für Schritt. ",
+          watch: "Starte das Training. Wo bleibt der Ball hängen? Was sagt dir das über die Lernrate?",
+          demoState: { mode: "3d" },
+          context: "Ein guter Lauf ist kein Beweis für Generalisierung. Die Landschaft ist nur ein Teil der Geschichte.",
+          deep: "Momentum mittelt das Rauschen weg, Adam skaliert jede Richtung. Beide nutzen denselben lokalen Gradienten, aber unterschiedlich.",
+          boxes: [box("hy-4", "Geschichte", "Warum wurde die Landschaft wichtig?", "Weil tiefe Netze viele Parameter haben und der Loss nicht konvex ist. Die Geometrie erklärt, warum Optimizer und Initialisierung so viel ausmachen.")]
+        }
+      ],
+      boxes: [box("hy-day", "Technik", "Mehr als zwei Achsen", "Für viele Parameter projiziert man die Landschaft auf zwei zufällige Richtungen. Das ist eine Diagnose, keine vollständige Karte.")]
+    }
+  ];
+
+  LearnSys.mount(document.getElementById("learnsys"), {
+    lang: "de",
+    days: days,
+    tracks: [
+      { id: "idea", label: "Die Idee", days: "1–5" },
+      { id: "failure", label: "Fehler, Daten, Lernen", days: "6–11" },
+      { id: "senses", label: "Sinne und Signale", days: "12–15" },
+      { id: "transformer", label: "Im Transformer", days: "16–20" },
+      { id: "assistant", label: "Vom Modell zum Assistenten", days: "21–27" },
+      { id: "questions", label: "Die großen Fragen", days: "28–31" }
+    ]
+  });
+})();
+</script>
+</body>
+</html>
