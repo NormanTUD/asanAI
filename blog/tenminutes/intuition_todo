@@ -30,3 +30,6 @@ DONE — Die Statusbox der Dense-Demo zeigt jetzt auch den erfolgreichen Trennfa
 DONE — Die Statusbox zeigt den erfolgreichen Trennfall jetzt auch auf Deutsch, der Text ist in beiden Fällen kürzer, die editierbaren Gewichte sind breiter (4 Nachkommastellen) und haben jeweils einen eigenen Slider.
 
 DONE — Der erfolgreiche Trennfall steht jetzt mit grünem Haken auch im Canvas-Status und in der Statusbox.
+
+DONE — Prev/Next sind grüne Textbuttons; „Weiter“ ist auf Folie 8 gesperrt, bis die Klassen linear trennbar sind; die Folienpunkte sind klickbar und springen direkt zur Folie.
+DONE — Der Trennstatus steht zusätzlich als HTML-Overlay oben links im ism-Canvas (mit grünem Haken), im Canvas selbst, in der Seitenbox und in den data-/aria-Attributen.
