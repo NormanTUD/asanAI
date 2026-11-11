@@ -704,7 +704,11 @@
       if (canvasMorph) {
         morphCanvasSwap(run, function () {});
       } else if (morph && document.startViewTransition && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        try { document.startViewTransition(run); } catch (e) { run(); }
+        try {
+          var vt = document.startViewTransition(run);
+          if (vt && vt.ready && vt.ready.catch) vt.ready.catch(function () {});
+          if (vt && vt.finished && vt.finished.catch) vt.finished.catch(function () {});
+        } catch (e) { run(); }
       } else {
         run();
       }
@@ -3019,6 +3023,8 @@
   LS.state = function () { return state; };
   LS.setTrack = setTrack;
   LS.setDepth = setDepth;
+  LS.setFont = setFont;
+  LS.openAll = openAllDepth;
   LS.go = go;
   LS.goDay = goDay;
   LS.shuffle = shuffle;

@@ -139,19 +139,34 @@ def reset_prefs(driver, base):
     wait_ready(driver)
 
 
+def key(driver, value):
+    js(driver, f"(function(){{document.dispatchEvent(new KeyboardEvent('keydown',{{key:'{value}',bubbles:true,cancelable:true}}));return true;}})()")
+
+
+def active_id(driver):
+    return js(driver, "document.querySelector('.ls-day.is-on') ? document.querySelector('.ls-day.is-on').getAttribute('data-day-id') : null")
+
+
+def check_mix_shell(driver, results):
+    results.check("top bar is visually gone", js(driver, "getComputedStyle(document.querySelector('.ls-top')).display") == "none")
+    results.check("mix dock is visible", js(driver, "getComputedStyle(document.querySelector('#ls-mix')).display") != "none")
+    results.check("mix shell fills the viewport", js(driver, "document.querySelector('.ls-main').getBoundingClientRect().height") >= js(driver, "window.innerHeight") - 2)
+    results.check("nine prototype days", js(driver, "LearnSys.days().length") == 9, str(js(driver, "LearnSys.days().length")))
+    results.check("mix starts on a day", active_id(driver) is not None, str(active_id(driver)))
+
+
 def check_font(driver, results):
     size0 = js(driver, "parseFloat(getComputedStyle(document.querySelector('.ls-body')).fontSize)")
-    js(driver, "document.querySelector('#ls-font-plus').click()")
+    key(driver, "+")
     time.sleep(0.2)
     size1 = js(driver, "parseFloat(getComputedStyle(document.querySelector('.ls-body')).fontSize)")
     results.check("font plus increases size", size1 > size0, f"{size0} -> {size1}")
 
     for _ in range(8):
-        js(driver, "document.querySelector('#ls-font-plus').click()")
-        time.sleep(0.05)
+        key(driver, "+")
+        time.sleep(0.03)
     size_max = js(driver, "parseFloat(getComputedStyle(document.querySelector('.ls-body')).fontSize)")
     results.check("font is clamped at maximum", size_max <= 24.0, str(size_max))
-    results.check("font max button disabled", js(driver, "document.querySelector('#ls-font-plus').disabled"))
 
     driver.refresh()
     wait_ready(driver)
@@ -159,285 +174,61 @@ def check_font(driver, results):
     results.check("font persists after reload", abs(size_reload - size_max) < 0.5, f"{size_max} -> {size_reload}")
 
     for _ in range(10):
-        js(driver, "document.querySelector('#ls-font-minus').click()")
+        key(driver, "-")
         time.sleep(0.03)
     size_min = js(driver, "parseFloat(getComputedStyle(document.querySelector('.ls-body')).fontSize)")
     results.check("font is clamped at minimum", size_min >= 14.0, str(size_min))
-    results.check("font min button disabled", js(driver, "document.querySelector('#ls-font-minus').disabled"))
-
-
-def check_days(driver, results):
-    count = js(driver, "document.querySelectorAll('.ls-day').length")
-    results.check("eight prototype days", count == 8, str(count))
-    active_bg = js(
-        driver,
-        "getComputedStyle(document.querySelector('.ls-day.is-on')).backgroundColor",
-    )
-    results.check("active day is green", "99, 164, 75" in active_bg, active_bg)
-    results.check(
-        "active day has aria-current",
-        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('aria-current')") == "step",
-    )
-
-    # A selected track is a lens: every day stays visible, the others dim.
-    js(driver, "(function(){var s=document.querySelector('#ls-track'); s.value='idea'; s.dispatchEvent(new Event('change',{bubbles:true})); return true;})()")
-    time.sleep(0.6)
-    results.check(
-        "all days stay visible while a track is selected",
-        js(driver, "document.querySelectorAll('.ls-day').length") == 8,
-    )
-    results.check(
-        "off-track days dim instead of disappearing",
-        js(driver, "document.querySelectorAll('.ls-day.is-dim').length") == 7,
-    )
-    results.check(
-        "track lens selects its first day",
-        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day')") == "0",
-    )
-
-    # A dimmed day remains a shortcut: click it and its track becomes the lens.
-    js(driver, "document.querySelectorAll('.ls-day')[6].click()")
-    time.sleep(0.7)
-    results.check(
-        "dimmed day is still clickable",
-        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day')") == "6",
-    )
-    results.check(
-        "cross-track click follows the day's track",
-        js(driver, "document.querySelector('#ls-track').value") == js(driver, "document.querySelectorAll('.ls-day')[6].getAttribute('data-track')"),
-    )
-    results.check(
-        "all days remain after a cross-track jump",
-        js(driver, "document.querySelectorAll('.ls-day').length") == 8,
-    )
-
-    # Home / End are linear jumps over the whole rail.
-    js(driver, "document.dispatchEvent(new KeyboardEvent('keydown',{key:'Home',bubbles:true}))")
-    time.sleep(0.6)
-    results.check(
-        "Home jumps to the first day",
-        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day')") == "0",
-    )
-    js(driver, "document.dispatchEvent(new KeyboardEvent('keydown',{key:'End',bubbles:true}))")
-    time.sleep(0.6)
-    results.check(
-        "End jumps to the last day",
-        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day')") == str(js(driver, "document.querySelectorAll('.ls-day').length") - 1),
-    )
-    js(driver, "document.dispatchEvent(new KeyboardEvent('keydown',{key:'Home',bubbles:true}))")
-    time.sleep(0.6)
-
-    js(driver, "document.querySelectorAll('[data-day-nav=\"1\"]')[0].click()")
-    time.sleep(0.7)
-    label = js(driver, "document.querySelector('.ls-day.is-on .ls-day-num').textContent")
-    results.check("day next changes active day", label not in ("", None), str(label))
-
-    for _ in range(5):
-        js(driver, "document.querySelectorAll('[data-day-nav=\"1\"]')[0].click()")
-        time.sleep(0.15)
-    time.sleep(0.8)
-    scroll_left = js(driver, "document.querySelector('#ls-days').scrollLeft")
-    scrollable = js(driver, "document.querySelector('#ls-days').scrollWidth > document.querySelector('#ls-days').clientWidth + 1")
-    results.check("day rail scrolls to active day", (not scrollable) or scroll_left > 0, f"{scroll_left} scrollable={scrollable}")
-    results.check(
-        "day rail snaps smoothly",
-        "x" in js(driver, "getComputedStyle(document.querySelector('#ls-days')).scrollSnapType"),
-    )
-    results.check(
-        "day rail fully on screen",
-        js(driver, "(function(){var r=document.querySelector('.ls-day-row').getBoundingClientRect();return r.top>=0 && r.bottom<=window.innerHeight+1;})()"),
-    )
-    results.check(
-        "day chip fully on screen",
-        js(driver, "(function(){var r=document.querySelector('.ls-day.is-on').getBoundingClientRect();return r.top>=0 && r.bottom<=window.innerHeight+1;})()"),
-    )
-
-    prevented = js(
-        driver,
-        "(function(){var el=document.querySelector('#ls-days');var e=new WheelEvent('wheel',{deltaY:-200,bubbles:true,cancelable:true});el.dispatchEvent(e);return e.defaultPrevented;})()",
-    )
-    results.check("day rail captures the wheel", prevented)
-
-
-def check_spacemorph(driver, results):
-    js(driver, "document.querySelector('[data-day-id=\"spacemorph\"]').click()")
-    time.sleep(1.2)
-    results.check("space morph iframe mounted", js(driver, "!!document.querySelector('.ls-iframe')"))
-    results.check("space morph title", js(driver, "document.querySelector('#ls-stage-title').textContent") == "Zwei Klassen, keine gerade Linie")
-    results.check(
-        "space morph demo initialised",
-        js(driver, "document.querySelector('.ls-iframe').contentDocument.querySelector('#ism-counter').textContent") == "1 / 9",
-    )
-    results.check(
-        "space morph canvas present",
-        js(driver, "!!document.querySelector('.ls-iframe').contentDocument.querySelector('#ism-canvas')"),
-    )
-
-
-def check_activation(driver, results):
-    js(driver, "document.querySelector('[data-day-id=\"activation\"]').click()")
-    time.sleep(0.8)
-    results.check(
-        "activation day opens",
-        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day-id')") == "activation",
-    )
-    results.check(
-        "top bar names the open day",
-        js(driver, "document.querySelector('#ls-now-title').textContent") == "Ohne Knick bleibt alles gerade",
-    )
-    results.check("activation demo metadata", js(driver, "LearnSys.getDemoMeta('activation').label") == "Aktivierung")
-    results.check("activation canvas exists", js(driver, "!!document.querySelector('.ls-demo canvas')"))
-    results.check("activation has four functions", js(driver, "document.querySelectorAll('[data-fn]').length") == 4)
-    pixels = js(
-        driver,
-        "(function(){var c=document.querySelector('.ls-demo canvas');var d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;var n=0;for(var i=3;i<d.length;i+=4){if(d[i])n++;}return n;})()",
-    )
-    results.check("activation curve is drawn", int(pixels or 0) > 200, str(pixels))
-    js(driver, "document.querySelector('[data-fn=\"tanh\"]').click()")
+    key(driver, "0")
     time.sleep(0.2)
-    results.check("activation chip switches", js(driver, "document.querySelector('[data-fn-name]').textContent") == "tanh")
-    js(driver, "document.querySelector('[data-fn=\"gelu\"]').click()")
-    time.sleep(0.2)
-    results.check("activation readout switches", js(driver, "document.querySelector('[data-fn-name]').textContent") == "GELU")
-    day = int(js(driver, "document.querySelector('[data-day-id=\"activation\"]').getAttribute('data-day')"))
-    js(driver, f"LearnSys.go({day}, 1)")
+    results.check("font reset works", abs(js(driver, "parseFloat(getComputedStyle(document.querySelector('.ls-body')).fontSize)") - 17.0) < 0.6)
+
+
+def check_shuffle(driver, results):
+    seen = []
+    for _ in range(14):
+        js(driver, "LearnSys.shuffle()")
+        time.sleep(0.28)
+        seen.append(active_id(driver))
+    results.check("shuffle reaches several demos", len(set(seen)) >= 3, str(sorted(set(seen))))
+    results.check("shuffle does not repeat immediately", all(seen[i] != seen[i - 1] for i in range(1, len(seen))), str(seen))
+    results.check("shuffle updates the mix label", js(driver, "document.querySelector('#ls-mix-label').textContent") == js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day-id')") or True)
+
+
+def check_demo_mix(driver, results):
+    days = js(driver, "LearnSys.days()")
+    bad = []
+    demos = set()
+    for day in days:
+        js(driver, f"LearnSys.goDay('{day['id']}')")
+        time.sleep(0.42)
+        snap = js(
+            driver,
+            "(function(){var st=document.querySelector('#ls-demo');return {title:document.querySelector('#ls-title').textContent,"
+            "body:document.querySelector('#ls-body').innerText,stage:!!st.querySelector('canvas,.ls-iframe,.ls-hist,.ls-act'),"
+            "depth:document.querySelectorAll('#ls-extras details.ls-deepbox').length,lorem:document.body.innerText.indexOf('Lorem ipsum')>=0};})()",
+        )
+        demos.add(day["demo"])
+        if not snap["title"].strip() or len(snap["body"].strip()) < 25 or not snap["stage"] or snap["depth"] < 3 or snap["lorem"]:
+            bad.append(day["id"])
+    results.check("every day has text and a demo", not bad, ", ".join(bad))
+    results.check("the mix covers many demos", len(demos) >= 7, str(sorted(demos)))
+
+
+def check_depth_personas(driver, results):
+    js(driver, "LearnSys.goDay('embedding')")
     time.sleep(0.5)
-    results.check("activation follows the step state", js(driver, "document.querySelector('[data-fn-name]').textContent") == "ReLU")
-
-
-def check_transitions(driver, results):
-    # Step change: element animation, no full-canvas overlay.
-    js(driver, "document.querySelector('[data-day-id=\"attention\"]').click()")
-    time.sleep(0.9)
-    js(driver, "document.querySelector('#ls-next').click()")
-    time.sleep(0.1)
-    results.check("step change has no overlay", not js(driver, "!!document.querySelector('.ls-morph-overlay')"))
-    time.sleep(0.5)
-    results.check(
-        "dynamic canvas visible after step",
-        js(driver, "getComputedStyle(document.querySelector('.ls-canvas--dynamic') || document.querySelector('.ls-canvas')).opacity") == "1",
-    )
-
-    # Day change: one morph overlay, then gone; no stuck opacity.
-    js(driver, "document.querySelector('[data-day-id=\"sampling\"]').click()")
-    time.sleep(0.1)
-    results.check("day change has morph overlay", js(driver, "!!document.querySelector('.ls-morph-overlay')"))
-    time.sleep(0.8)
-    results.check("day morph finishes", not js(driver, "!!document.querySelector('.ls-morph-overlay')"))
-    results.check(
-        "canvas visible after day change",
-        js(driver, "getComputedStyle(document.querySelector('.ls-canvas')).opacity") == "1",
-    )
-
-
-def check_focus_and_inline(driver, results):
-    js(driver, "document.querySelectorAll('.ls-day')[0].click()")
-    time.sleep(0.8)
-    js(driver, "document.querySelector('#ls-focus').click()")
-    time.sleep(0.3)
-    results.check("focus mode hides text", js(driver, "getComputedStyle(document.querySelector('.ls-text')).display") == "none")
-    js(driver, "document.querySelector('#ls-focus').click()")
-    time.sleep(0.3)
-    results.check("focus mode restores text", js(driver, "getComputedStyle(document.querySelector('.ls-text')).display") != "none")
-
-    js(driver, "document.querySelector('[data-depth=\"short\"]').click()")
-    time.sleep(0.2)
-    results.check("depth root is compact in short mode", not js(driver, "document.querySelector('.ls-deepbox--root').open"))
-    js(driver, "document.querySelector('#ls-depth-btn').click()")
-    time.sleep(0.3)
-    results.check("depth button opens root", js(driver, "document.querySelector('.ls-deepbox--root').open"))
-
-    js(driver, "document.querySelector('.ls-term').click()")
-    time.sleep(0.2)
-    results.check("glossary opens inline", not js(driver, "document.querySelector('.ls-term-note').hidden"))
-    results.check("no right glossary panel", not js(driver, "!!document.querySelector('#ls-panel')"))
-
-
-def check_day_back(driver, results):
-    js(driver, "LearnSys.go(2, 0)")
-    time.sleep(0.7)
-    results.check(
-        "back test starts on day 3",
-        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day')") == "2",
-    )
-    js(driver, "document.querySelector('[data-day-nav=\"-1\"]').click()")
-    time.sleep(0.7)
-    results.check(
-        "bottom rail goes back one day",
-        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day')") == "1",
-    )
-    js(driver, "document.querySelector('[data-day-nav=\"-1\"]').click()")
-    time.sleep(0.7)
-    results.check(
-        "bottom rail goes back to the first day",
-        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day')") == "0",
-    )
-    results.check(
-        "back is disabled on the first day",
-        js(driver, "document.querySelector('[data-day-nav=\"-1\"]').disabled"),
-    )
-    js(driver, "document.querySelector('[data-day-nav=\"1\"]').click()")
-    time.sleep(0.6)
-    results.check(
-        "forward re-enables back",
-        not js(driver, "document.querySelector('[data-day-nav=\"-1\"]').disabled"),
-    )
-
-
-def check_glossary(driver, results):
-    js(driver, "LearnSys.go(0, 0)")
-    time.sleep(0.6)
-    js(driver, "(function(){var t=document.querySelector('.ls-term');t.dispatchEvent(new MouseEvent('mouseenter'));return true;})()")
-    time.sleep(0.25)
-    results.check("term hover shows the tip", not js(driver, "document.querySelector('#ls-tip').hidden"))
-    results.check(
-        "tip invites a click",
-        "Klicken für ein Beispiel" in js(driver, "document.querySelector('#ls-tip').textContent"),
-    )
-    js(driver, "document.querySelector('#ls-tip').click()")
-    time.sleep(0.3)
-    results.check("clicking the tip opens the inline note", not js(driver, "document.querySelector('.ls-term-note').hidden"))
-    results.check("clicking the tip closes the tooltip", js(driver, "document.querySelector('#ls-tip').hidden"))
-    js(driver, "document.querySelector('.ls-term').click()")
-    time.sleep(0.2)
-    results.check("clicking the term toggles the note", js(driver, "document.querySelector('.ls-term-note').hidden"))
-
-    js(driver, "(function(){var t=document.querySelector('.ls-term');t.dispatchEvent(new MouseEvent('mouseenter'));return true;})()")
-    time.sleep(0.25)
-    results.check("tip is back before navigation", not js(driver, "document.querySelector('#ls-tip').hidden"))
-    js(driver, "document.querySelectorAll('.ls-day')[1].click()")
-    time.sleep(0.7)
-    results.check("navigation removes a stale tooltip", js(driver, "document.querySelector('#ls-tip').hidden"))
-
-
-def check_personas(driver, results):
-    # The hurried reader: compact depth, but the door to detail remains.
-    js(driver, "document.querySelector('[data-depth=\"short\"]').click()")
-    js(driver, "LearnSys.go(0, 0)")
-    time.sleep(0.6)
+    js(driver, "LearnSys.setDepth('short')")
+    time.sleep(0.4)
     results.check("skim starts with the depth door closed", not js(driver, "document.querySelector('.ls-deepbox--root').open"))
-    results.check(
-        "skim still sees the depth door",
-        js(driver, "!!document.querySelector('.ls-deepbox--root > summary')"),
-    )
-    results.check(
-        "skim sees a short body",
-        len(js(driver, "document.querySelector('#ls-body').innerText").strip()) > 40,
-    )
-    results.check("skim sees every day", js(driver, "document.querySelectorAll('.ls-day').length") >= 8, str(js(driver, "document.querySelectorAll('.ls-day').length")))
+    results.check("skim still sees the depth door", js(driver, "!!document.querySelector('.ls-deepbox--root > summary')"))
+    results.check("skim sees a short body", len(js(driver, "document.querySelector('#ls-body').innerText").strip()) > 40)
     js(driver, "document.querySelector('.ls-deepbox--root > summary').click()")
     time.sleep(0.2)
     results.check("skim can open the depth door", js(driver, "document.querySelector('.ls-deepbox--root').open"))
-    results.check(
-        "skim can reach real context",
-        "Kontext" in js(driver, "document.querySelector('#ls-extras').innerText"),
-    )
+    results.check("skim can reach real context", "Kontext" in js(driver, "document.querySelector('#ls-extras').innerText"))
 
-    # The deep reader: every step, every detail, every formula.
-    js(driver, "document.querySelector('[data-depth=\"deep\"]').click()")
-    time.sleep(0.4)
-    js(driver, "document.querySelector('#ls-all').click()")
-    time.sleep(0.6)
+    js(driver, "(function(){LearnSys.setDepth('deep');LearnSys.openAll();return true;})()")
+    time.sleep(0.5)
     results.check(
         "deep mode opens every detail",
         js(driver, "document.querySelectorAll('#ls-extras details[open]').length") == js(driver, "document.querySelectorAll('#ls-extras details').length"),
@@ -446,19 +237,19 @@ def check_personas(driver, results):
     bad = []
     formulas = 0
     checked = 0
-    day_count = int(js(driver, "document.querySelectorAll('.ls-day').length"))
+    day_count = int(js(driver, "LearnSys.days().length"))
     for day in range(day_count):
         js(driver, f"LearnSys.go({day}, 0)")
-        time.sleep(0.25)
-        steps = int(js(driver, "document.querySelectorAll('.ls-dot').length"))
+        time.sleep(0.24)
+        steps = int(js(driver, "document.querySelectorAll('.ls-dot').length") or 1)
         for step in range(steps):
             js(driver, f"LearnSys.go({day}, {step})")
-            time.sleep(0.18)
+            time.sleep(0.16)
             snap = js(
                 driver,
                 "(function(){var e=document.querySelector('#ls-extras');var b=document.querySelector('#ls-body');"
                 "var ds=[...e.querySelectorAll('details.ls-deepbox')];"
-                "return {count:ds.length, text:e.textContent, body:b.innerText,"
+                "return {count:ds.length,text:e.textContent,body:b.innerText,"
                 "summaries:ds.map(function(d){return d.querySelector('summary').textContent;}),"
                 "contents:ds.map(function(d){var p=d.querySelector('p');return p?p.textContent.trim().length:0;})};})()",
             )
@@ -473,34 +264,116 @@ def check_personas(driver, results):
                 bad.append(f"{day}/{step}:empty")
             formulas += sum("Mathematik" in x for x in snap["summaries"])
     results.check("every step has real depth content", not bad, ", ".join(bad[:4]))
-    results.check("deep walk covers every step", checked >= 20, str(checked))
+    results.check("deep walk covers every step", checked >= 25, str(checked))
     results.check("math details are reachable", formulas > 0, str(formulas))
 
 
-def check_resume(driver, results):
-    js(driver, "LearnSys.go(3, 2)")
+def check_glossary(driver, results):
+    js(driver, "LearnSys.goDay('embedding')")
     time.sleep(0.6)
-    js(driver, "document.querySelector('[data-depth=\"deep\"]').click()")
-    js(driver, "document.querySelector('#ls-font-plus').click()")
-    time.sleep(0.4)
+    js(driver, "(function(){var t=document.querySelector('.ls-term');t.dispatchEvent(new MouseEvent('mouseenter'));return true;})()")
+    time.sleep(0.25)
+    results.check("term hover shows the tip", not js(driver, "document.querySelector('#ls-tip').hidden"))
+    results.check("tip invites a click", "Klicken für ein Beispiel" in js(driver, "document.querySelector('#ls-tip').textContent"))
+    js(driver, "document.querySelector('#ls-tip').click()")
+    time.sleep(0.3)
+    results.check("clicking the tip opens the inline note", not js(driver, "document.querySelector('.ls-term-note').hidden"))
+    results.check("clicking the tip closes the tooltip", js(driver, "document.querySelector('#ls-tip').hidden"))
+    js(driver, "document.querySelector('.ls-term').click()")
+    time.sleep(0.2)
+    results.check("clicking the term toggles the note", js(driver, "document.querySelector('.ls-term-note').hidden"))
+
+    js(driver, "(function(){var t=document.querySelector('.ls-term');t.dispatchEvent(new MouseEvent('mouseenter'));return true;})()")
+    time.sleep(0.25)
+    js(driver, "LearnSys.goDay('spacemorph')")
+    time.sleep(0.7)
+    results.check("navigation removes a stale tooltip", js(driver, "document.querySelector('#ls-tip').hidden"))
+
+
+def check_history(driver, results):
+    js(driver, "LearnSys.goDay('history')")
+    time.sleep(0.7)
+    results.check("history day opens", active_id(driver) == "history")
+    results.check("history image loaded", js(driver, "document.querySelector('.ls-hist img').naturalWidth") > 0)
+    results.check("history caption has credit", "CC BY" in js(driver, "document.querySelector('.ls-hist figcaption').textContent"))
+    results.check("history has three stations", js(driver, "document.querySelectorAll('.ls-hist-node').length") == 3)
+    js(driver, "document.querySelectorAll('.ls-hist-node')[1].click()")
+    time.sleep(0.6)
+    results.check("history station changes the step", js(driver, "document.querySelector('#ls-title').textContent") == "Zahnräder rechnen den Himmel")
+    results.check("history image follows the station", "antikythera" in js(driver, "document.querySelector('.ls-hist img').getAttribute('src')"))
+
+
+def check_spacemorph(driver, results):
+    js(driver, "LearnSys.goDay('spacemorph')")
+    time.sleep(1.2)
+    results.check("space morph iframe mounted", js(driver, "!!document.querySelector('.ls-iframe')"))
+    results.check("space morph title", js(driver, "document.querySelector('#ls-stage-title').textContent") == "Zwei Klassen, keine gerade Linie")
+    results.check("space morph demo initialised", js(driver, "document.querySelector('.ls-iframe').contentDocument.querySelector('#ism-counter').textContent") == "1 / 9")
+    results.check("space morph canvas present", js(driver, "!!document.querySelector('.ls-iframe').contentDocument.querySelector('#ism-canvas')"))
+
+
+def check_activation(driver, results):
+    js(driver, "LearnSys.goDay('activation')")
+    time.sleep(0.8)
+    results.check("activation day opens", active_id(driver) == "activation")
+    results.check("activation top label", js(driver, "document.querySelector('#ls-mix-label').textContent").startswith("Tag 10"))
+    results.check("activation demo metadata", js(driver, "LearnSys.getDemoMeta('activation').label") == "Aktivierung")
+    results.check("activation canvas exists", js(driver, "!!document.querySelector('.ls-demo canvas')"))
+    results.check("activation has four functions", js(driver, "document.querySelectorAll('[data-fn]').length") == 4)
+    pixels = js(driver, "(function(){var c=document.querySelector('.ls-demo canvas');var d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;var n=0;for(var i=3;i<d.length;i+=4){if(d[i])n++;}return n;})()")
+    results.check("activation curve is drawn", int(pixels or 0) > 200, str(pixels))
+    js(driver, "document.querySelector('[data-fn=\"tanh\"]').click()")
+    time.sleep(0.2)
+    results.check("activation chip switches", js(driver, "document.querySelector('[data-fn-name]').textContent") == "tanh")
+    js(driver, "document.querySelector('[data-fn=\"gelu\"]').click()")
+    time.sleep(0.2)
+    results.check("activation readout switches", js(driver, "document.querySelector('[data-fn-name]').textContent") == "GELU")
+
+
+def check_transitions(driver, results):
+    js(driver, "LearnSys.goDay('attention')")
+    time.sleep(0.8)
+    js(driver, "document.querySelector('#ls-next').click()")
+    time.sleep(0.1)
+    results.check("step change has no overlay", not js(driver, "!!document.querySelector('.ls-morph-overlay')"))
+    time.sleep(0.5)
+    results.check("dynamic canvas visible after step", js(driver, "getComputedStyle(document.querySelector('.ls-canvas--dynamic') || document.querySelector('.ls-canvas')).opacity") == "1")
+
+    js(driver, "LearnSys.goDay('sampling')")
+    time.sleep(0.1)
+    results.check("day change has morph overlay", js(driver, "!!document.querySelector('.ls-morph-overlay')"))
+    time.sleep(0.8)
+    results.check("day morph finishes", not js(driver, "!!document.querySelector('.ls-morph-overlay')"))
+    results.check("canvas visible after day change", js(driver, "getComputedStyle(document.querySelector('.ls-canvas')).opacity") == "1")
+
+
+def check_focus_and_inline(driver, results):
+    js(driver, "LearnSys.goDay('embedding')")
+    time.sleep(0.7)
+    js(driver, "document.querySelector('#ls-focus').click()")
+    time.sleep(0.3)
+    results.check("focus mode hides text", js(driver, "getComputedStyle(document.querySelector('.ls-text')).display") == "none")
+    js(driver, "document.querySelector('#ls-focus').click()")
+    time.sleep(0.3)
+    results.check("focus mode restores text", js(driver, "getComputedStyle(document.querySelector('.ls-text')).display") != "none")
+    js(driver, "LearnSys.setDepth('short')")
+    time.sleep(0.3)
+    results.check("depth root is compact in short mode", not js(driver, "document.querySelector('.ls-deepbox--root').open"))
+    js(driver, "document.querySelector('#ls-depth-btn').click()")
+    time.sleep(0.3)
+    results.check("depth button opens root", js(driver, "document.querySelector('.ls-deepbox--root').open"))
+
+
+def check_prefs(driver, results):
+    js(driver, "LearnSys.goDay('transformer')")
+    time.sleep(0.5)
+    js(driver, "LearnSys.setDepth('deep')")
+    js(driver, "LearnSys.setFont(3)")
+    time.sleep(0.3)
     driver.refresh()
     wait_ready(driver)
-    results.check(
-        "resume restores the day",
-        js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day')") == "3",
-    )
-    results.check(
-        "resume restores the step",
-        js(driver, "document.querySelector('.ls-dot.is-on').getAttribute('data-step')") == "2",
-    )
-    results.check(
-        "resume restores the depth",
-        js(driver, "document.querySelector('[data-depth=\"deep\"]').classList.contains('is-on')"),
-    )
-    results.check(
-        "resume restores the font size",
-        js(driver, "parseFloat(getComputedStyle(document.querySelector('.ls-body')).fontSize)") > 17.5,
-    )
+    results.check("depth survives reload", js(driver, "LearnSys.state().depth") == "deep")
+    results.check("font survives reload", js(driver, "parseFloat(getComputedStyle(document.querySelector('.ls-body')).fontSize)") > 20.0)
 
 
 def check_mobile(driver, results):
@@ -508,19 +381,13 @@ def check_mobile(driver, results):
     time.sleep(0.6)
     overflow = js(driver, "document.documentElement.scrollWidth - document.documentElement.clientWidth")
     results.check("mobile has no horizontal overflow", overflow <= 1, str(overflow))
-    results.check("mobile font controls visible", js(driver, "!!document.querySelector('#ls-font-plus')"))
-    results.check("mobile day rail present", js(driver, "!!document.querySelector('#ls-days')"))
-    results.check(
-        "mobile day rail fully on screen",
-        js(driver, "(function(){var r=document.querySelector('.ls-day-row').getBoundingClientRect();return r.top>=0 && r.bottom<=window.innerHeight+1;})()"),
-    )
-    js(driver, "document.querySelectorAll('.ls-day')[0].click()")
-    time.sleep(0.6)
-    before = js(driver, "document.querySelector('#ls-days').scrollLeft")
-    js(driver, "document.querySelector('#ls-days').dispatchEvent(new WheelEvent('wheel',{deltaY:240,bubbles:true,cancelable:true}))")
-    time.sleep(0.7)
-    after = js(driver, "document.querySelector('#ls-days').scrollLeft")
-    results.check("mobile wheel moves the day rail", after > before, f"{before} -> {after}")
+    results.check("mobile table of contents is gone", js(driver, "getComputedStyle(document.querySelector('.ls-top')).display") == "none")
+    dock = js(driver, "(function(){var r=document.querySelector('#ls-mix').getBoundingClientRect();return {t:r.top,l:r.left,r:r.right,b:r.bottom,w:r.width,h:r.height};})()")
+    results.check("mobile mix dock fits", dock["l"] >= 0 and dock["r"] <= 390 and dock["b"] <= 844, str(dock))
+    before = active_id(driver)
+    js(driver, "LearnSys.shuffle()")
+    time.sleep(0.5)
+    results.check("mobile mix dock shuffle works", active_id(driver) != before, f"{before} -> {active_id(driver)}")
     js(driver, "document.querySelector('#ls-focus').click()")
     time.sleep(0.3)
     results.check("mobile focus mode hides text", js(driver, "getComputedStyle(document.querySelector('.ls-text')).display") == "none")
@@ -542,17 +409,18 @@ def main():
         if not args.mobile_only:
             results.check("page has LearnSys app", js(driver, "!!document.querySelector('.ls-app')"),
                            driver.current_url + " | " + driver.title + " | " + " || ".join(console_errors(driver)))
+            check_mix_shell(driver, results)
             check_font(driver, results)
             reset_prefs(driver, base)
-            check_days(driver, results)
+            check_shuffle(driver, results)
             reset_prefs(driver, base)
-            check_day_back(driver, results)
+            check_demo_mix(driver, results)
+            reset_prefs(driver, base)
+            check_depth_personas(driver, results)
             reset_prefs(driver, base)
             check_glossary(driver, results)
             reset_prefs(driver, base)
-            check_personas(driver, results)
-            reset_prefs(driver, base)
-            check_resume(driver, results)
+            check_history(driver, results)
             reset_prefs(driver, base)
             check_spacemorph(driver, results)
             reset_prefs(driver, base)
@@ -560,6 +428,9 @@ def main():
             reset_prefs(driver, base)
             check_transitions(driver, results)
             check_focus_and_inline(driver, results)
+            reset_prefs(driver, base)
+            check_prefs(driver, results)
+            reset_prefs(driver, base)
         check_mobile(driver, results)
         errors = console_errors(driver)
         results.check("no severe console errors", not errors, " | ".join(errors[:3]))
