@@ -21559,7 +21559,6 @@
    "fact_lookup",
    "geometry_ii",
    "history",
-   "intuition",
    "math_iv",
    "music_video_generation",
    "origami",
@@ -21578,7 +21577,6 @@
    "transformer"
   ],
   "shazeer2020glu": [
-   "intuition",
    "people_of_ai",
    "transformer"
   ],
@@ -21796,7 +21794,6 @@
    "embeddinglab",
    "geometry_ii",
    "history",
-   "intuition",
    "people_of_ai"
   ],
   "pennington2014glove": [
@@ -21806,7 +21803,6 @@
   "sennrich2016subword": [
    "embeddinglab",
    "history",
-   "intuition",
    "people_of_ai",
    "tokenizerlab"
   ],
@@ -21842,7 +21838,6 @@
   ],
   "fedus2022switch": [
    "frontier",
-   "intuition",
    "people_of_ai"
   ],
   "dao2022flashattention": [
@@ -21864,7 +21859,6 @@
    "attentionlab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "transformer"
@@ -21872,7 +21866,6 @@
   "elhage2022superposition": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -21881,7 +21874,6 @@
   ],
   "bricken2023monosemanticity": [
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering"
@@ -22160,7 +22152,6 @@
    "attentionlab",
    "embeddinglab",
    "history",
-   "intuition",
    "philosophy",
    "tokenizerlab",
    "training_data",
@@ -22178,7 +22169,6 @@
   "gpt2": [
    "history",
    "initializers",
-   "intuition",
    "philosophy",
    "positionalembeddingslab",
    "tokenizerlab",
@@ -22191,16 +22181,13 @@
    "tokenizerlab"
   ],
   "rumbelow2023solidgold": [
-   "intuition",
    "tokenizerlab"
   ],
   "land2024fishing": [
-   "intuition",
    "tokenizerlab"
   ],
   "glitchtokens": [
    "embeddinglab",
-   "intuition",
    "tokenizerlab"
   ],
   "glitchprober2024": [
@@ -23109,7 +23096,6 @@
   ],
   "meng2022locating": [
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability"
   ],
   "meng2022memit": [
@@ -23141,7 +23127,6 @@
   ],
   "cunningham2023sparse": [
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability"
   ],
   "elhage2022solu": [
@@ -24249,7 +24234,6 @@
    "math_iv"
   ],
   "keup2022origami": [
-   "intuition",
    "math_iv",
    "origami",
    "topology"
@@ -25612,7 +25596,6 @@
   "bender2021stochasticparrots": [
    "ai_existential_risk",
    "hallucinations",
-   "intuition",
    "losslab",
    "philosophy"
   ],
@@ -25801,20 +25784,6 @@
   ],
   "weidinger2023sociotechnical": [
    "reliability"
-  ],
-  "unicodeblocks": [
-   "intuition"
-  ],
-  "rfc3629": [
-   "intuition",
-   "untold_history_iii"
-  ],
-  "geva2021kv": [
-   "intuition"
-  ],
-  "mabrok2026latent": [
-   "foam_of_meaning",
-   "intuition"
   ],
   "mccarthy1956dartmouth": [
    "ai_and_society"
@@ -27700,6 +27669,9 @@
   "rfc2279": [
    "untold_history_iii"
   ],
+  "rfc3629": [
+   "untold_history_iii"
+  ],
   "unicode_tr15": [
    "untold_history_iii"
   ],
@@ -28533,6 +28505,9 @@
    "foam_of_meaning"
   ],
   "lymanalphaforest": [
+   "foam_of_meaning"
+  ],
+  "mabrok2026latent": [
    "foam_of_meaning"
   ],
   "gardenfors2000conceptual": [

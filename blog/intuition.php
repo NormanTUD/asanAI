@@ -275,7 +275,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 					<section class="section-block" id="step-embed-section" data-chapter="Inside the transformer">
 						<div class="section-kicker">Step 2 · Embed</div>
 						<h2 class="section-title">Embed: IDs become points in meaning space</h2>
-						<h3 class="layer-subhead">Meaning becomes geometry</h4>
+						<h3 class="layer-subhead">Meaning becomes geometry</h3>
 						<div class="prose">
 							<p>Each token ID points to a learned vector. A real model uses thousands of dimensions; the demo uses two so you can see it. Similar words sit close, and a direction can carry a relationship: man → woman is the same arrow as king → queen. The axes here are labelled for humans; a real model's axes are unlabelled. Sometimes the relation does not come out exactly; an approximate direction is already enough to be useful.</p>
 						</div>
@@ -323,7 +323,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<div class="step-out" id="iemb-out">The space has two learned directions in this demo. Choose an example to see where it lands.</div>
 							</div>
 						</div>
-						<h3 class="layer-subhead">From relations to translation</h4>
+						<h3 class="layer-subhead">From relations to translation</h3>
 						<div class="prose-demo-split">
 							<div class="prose">
 								<p>The points form a manifold: locally flat, globally curved. The relations are similar enough to translate: the path from one word to another can be transformed into the corresponding path in another language. Feed-forward networks learn such transformations. This is an approximation. In a real model the geometry is much messier: relations overlap, exceptions are common, and translation is learned from huge amounts of text rather than read off a clean map. The intuition still points in the right direction.</p>
@@ -446,13 +446,13 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																<div class="collapse-math" data-tex="\begin{aligned} W &amp;= \begin{pmatrix} 1 &amp; 2 \\ 0 &amp; -1 \end{pmatrix}, \quad x = \begin{pmatrix} 3 \\ 1 \end{pmatrix}, \quad b = \begin{pmatrix} 0 \\ -2 \end{pmatrix} \\[6pt] Wx &amp;= \begin{pmatrix} 1\cdot 3 + 2\cdot 1 \\ 0\cdot 3 + (-1)\cdot 1 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \end{pmatrix} \\[6pt] z = Wx + b &amp;= \begin{pmatrix} 5 \\ -1 \end{pmatrix} + \begin{pmatrix} 0 \\ -2 \end{pmatrix} = \begin{pmatrix} 5 \\ -3 \end{pmatrix} \\[6pt] \operatorname{ReLU}(z) &amp;= \begin{pmatrix} 5 \\ 0 \end{pmatrix} \end{aligned}"></div>
 																<p>Each output is a dot product plus a bias, then the activation. The matrix above shows the arithmetic.</p>
 															</details>
-															<h3 class="layer-subhead">Depth without a nonlinearity</h4>
+															<h3 class="layer-subhead">Depth without a nonlinearity</h3>
 																														<details class="collapse-card">
 																<summary class="cc-label">two dense layers without a nonlinearity</summary>
 																<div class="collapse-math" id="collapse-math" data-tex="\begin{aligned} \operatorname{dense}_2(\operatorname{dense}_1(x)) &amp;= W_2(W_1 x + b_1) + b_2 \\ &amp;= (W_2 W_1)x + (W_2 b_1 + b_2) \\ &amp;= Wx + b \\[4pt] W &amp;= W_2 W_1, \qquad b = W_2 b_1 + b_2 \end{aligned}"></div>
 																<p>Without a nonlinearity, two layers collapse into one. Depth adds no expressive power.</p>
 															</details>
-															<h3 class="layer-subhead">Nonlinear activation functions</h4>
+															<h3 class="layer-subhead">Nonlinear activation functions</h3>
 															<div class="activation-card">
 																<div class="activation-copy">
 																	<p>A nonlinearity is applied to each coordinate after the projection. ReLU folds at zero; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic.</p>
@@ -492,7 +492,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																	</figure>
 																</div>
 															</div>
-															<h3 class="layer-subhead">Where the bend happens</h4>
+															<h3 class="layer-subhead">Where the bend happens</h3>
 															<p class="step-note curve-intro">After attention, the MLP moves the token toward a region where the next token is easier to separate.</p>
 															<div class="demo demo--paper demo--canvas ism-panel" data-arrow-nav style="margin-top:14px">
 																<div class="demo-head">
@@ -568,7 +568,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 															</div>
 														</div>
 						<div class="prose">
-							<h3 class="layer-subhead">One layer is a small function</h4>
+							<h3 class="layer-subhead">One layer is a small function</h3>
 														<p>A simple layer does not need to be complicated. It multiplies its input by a learned matrix W, adds a learned vector b, and passes the result through an activation function. The activation adds a bend, a nonlinearity. Without it, any number of dense units would collapse into one linear map.</p>
 							<p>A simple layer can look like this: one matrix, one bias, one activation. That is a dense unit. It is the basic building block; a transformer layer later combines self-attention and an FFN.</p>
 							<p>Real networks combine building blocks differently. A convolutional layer is built for images, an attention layer for sequences, a dense layer for tables of numbers. A transformer layer is not one dense unit: it combines self-attention, which mixes information between tokens, with an FFN, which is itself a small stack of dense units. They share the same idea: functions with parameters, trained on data so that their output gets closer to the right answer.</p>
@@ -602,7 +602,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							</ol>
 													</div>
 						<div class="prose">
-							<h3 class="layer-subhead">Why scores become probabilities</h4>
+							<h3 class="layer-subhead">Why scores become probabilities</h3>
 														<p>Softmax turns arbitrary scores into something that behaves like a probability distribution. It exponentiates every score, so all values become positive, then divides by the sum. The exponential is monotone, so the largest score stays the largest; the division makes the results sum to one. Shifting every score by the same constant cancels in the ratio, so the absolute range of the scores does not matter. The base <span data-tex="e" data-tex-display="false"></span> is a convention: any positive base gives a valid distribution, but with <span data-tex="e" data-tex-display="false"></span> the derivative stays clean and the training signal well behaved. The name “softmax” comes from <a href="https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html" target="_blank" rel="noopener">Bridle (1990)</a>.</p>
 														<div class="layer-formula-grid layer-formula-grid--three">
 								<div class="layer-formula-card">
@@ -626,10 +626,10 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 								<p class="layer-formula-wide-intro">A layer is not just attention and not just an FFN. It is the composition: attention mixes the tokens into A, then the FFN rewrites each row of A. The result is the next matrix X with the same shape. In a real block, residual connections and normalization wrap both steps; the formula keeps the shape visible.</p>
 								<div class="prose-math" data-tex="\underbrace{\begin{aligned} A &= \text{self-attention}(X) \\ \text{layer}(X) &= \left. \begin{pmatrix} \text{FFN}(A_1) \\ \text{FFN}(A_2) \\ \text{FFN}(A_3) \\ \vdots \\ \text{FFN}(A_n) \end{pmatrix} \right\} \begin{matrix} \text{token 1} \\ \text{token 2} \\ \text{token 3} \\ \vdots \\ \text{token }n \end{matrix} \end{aligned}}_{\text{self-attention turns X into A; the FFN works on one row at a time}}" data-tex-display="true"></div>
 							</div>
-							<h3 class="layer-subhead">A language model combines these and other building blocks</h4>
+							<h3 class="layer-subhead">A language model combines these and other building blocks</h3>
 														<p>A language model combines these building blocks into a transformer block: self-attention first asks how strongly each word is connected to every other word in the context, and the model learns those connections from data. An FFN then untangles the result: it folds the vectors into a higher-dimensional space, separates features, and folds them back. A real transformer layer also contains layer normalization, residual connections, and other pieces. They are left out here so the picture stays readable; the <a href="#step-residual-section">residual section</a> at the end of this chapter covers them in detail.</p>
 							<p>At the start, a matrix X goes in: one row per token, each row a vector. At the end, a matrix of the same shape comes out, but the values have changed. The last token has absorbed the meaning of the whole context. The unembedding turns its vector into scores for every vocabulary token; those scores point to a region of token directions with small angles, and softmax draws one.</p>
-														<h3 class="layer-subhead">How the context is mixed</h4>
+														<h3 class="layer-subhead">How the context is mixed</h3>
 														<p>Inside a layer, self-attention looks at the whole context. For every token, it scores how much that token should take from every other visible token. The scores form a token-by-token matrix: one row for the token asking, one column for the token answering. The <a href="#step-attention-section">self-attention demo below</a> shows one head doing this.</p>
 														<div class="layer-mix">
 								<div class="layer-matrix-card">
@@ -673,7 +673,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 									<p class="layer-mix-note">Token 2 reads token 1 and itself. It cannot read token 3, because token 3 comes later. The upper triangle is masked.</p>
 								</div>
 							</div>
-							<h3 class="layer-subhead">Each head looks from a different perspective</h4>
+							<h3 class="layer-subhead">Each head looks from a different perspective</h3>
 														<p>Attention does not choose its weights from a fixed list. It learns, from the loss, which aspects of the visible tokens help predict the next token. With enough data, memorizing every training sentence is not an option, so the model is pushed toward reusable structure: gender, age, syntactic role, topic, or whatever else lowers the loss. Each head can look at the same tokens from a different perspective: one head can track a pronoun, another a verb, another the topic, and each can ignore what the others use.</p>
 														<div class="attention-aspects" role="img" aria-label="Three heads look at the same tokens from different perspectives: pronoun, verb, and topic">
 								<div class="attention-aspect"><span class="aa-head">Head 1</span><b>pronoun</b><span>“it” → “bank”</span></div>
@@ -688,7 +688,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<p>Borges's Funes remembers everything and therefore cannot think. To think, he has to forget differences, generalize, and abstract; the story's point is not that memory is bad, but that thinking needs a cut. An LLM does the same at two scales. The model as a whole does not store every fact; it learns compressed regularities. A single head does not need to represent everything at once; it can focus on one aspect and ignore the rest. The stack then recombines the cuts into a rich context.</p>
 																					<p>The first layer mixes the original token vectors. Later layers mix vectors that earlier layers have already changed, so every pass sees a different context. In an autoregressive model the matrix is lower-triangular: a token can attend to itself and earlier tokens, never to tokens that come later. That causal mask is what lets the model train on every prefix of a sentence and predict the next token without seeing the future.</p>
 							<p>After attention, each token's new vector goes through a feed-forward network. The FFN works on one token at a time: it separates features and rewrites the vector. Attention moves information between tokens; the FFN transforms what each token carries. The <a href="#step-ffn-section">FFN section</a> opens that step.</p>
-							<h3 class="layer-subhead">Local meaning, then wider context</h4>
+							<h3 class="layer-subhead">Local meaning, then wider context</h3>
 							<p>Early layers can learn local patterns. One layer may notice that “new” and “york” belong together; a later layer can use that combined meaning as a new unit and mix it with a wider context. A single layer can solve a small task, or several layers can solve one together. Deep models work by composing these small transformations.</p>
 							<p>The stack repeats. Each layer has its own learned weights, so the structure is shared but the parameters are not. After the last layer, the unembedding reads the last token's vector and produces a distribution over the next token. The <a href="#block-repeat">real GPT-2 trajectories below</a> show the movement through 12 of these blocks; <a href="#last-step">the last step</a> turns the final vector into a word.</p>
 														<div class="prose-math layer-stack-formula" data-tex="\underbrace{p(\text{next} \mid \text{context}) = \text{softmax}(\underbrace{W_U\, h_{\text{last}}}_{\text{scores for every token}})}_{\text{the vector points to a region of token directions, then one is drawn}}" data-tex-display="true"></div>

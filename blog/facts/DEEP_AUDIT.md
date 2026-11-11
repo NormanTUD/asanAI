@@ -1,14 +1,14 @@
 # Deep fact audit
 
 - lessons: 100
-- claims: 7396
-- statements: 17436
-- relations: 52798
-- uncovered years: 71
-- uncovered quantities: 8
-- uncited specific claims: 307
+- claims: 7377
+- statements: 17532
+- relations: 52881
+- uncovered years: 70
+- uncovered quantities: 11
+- uncited specific claims: 312
 - citation keys not found in lesson: 0
-- relation grounding issues: 87
+- relation grounding issues: 86
 - numeric range issues: 0
 - normalised year conflicts: 0
 
@@ -60,7 +60,7 @@
 | information_market | 27 | 63 | 159 | 0 | 0 |
 | initializers | 8 | 17 | 63 | 5 | 0 |
 | intro | 17 | 40 | 121 | 0 | 0 |
-| intuition | 32 | 261 | 750 | 1 | 0 |
+| intuition | 13 | 357 | 833 | 0 | 3 |
 | knowledge_map | 15 | 0 | 14 | 0 | 0 |
 | language | 86 | 367 | 878 | 7 | 0 |
 | law_regulation | 28 | 61 | 236 | 0 | 0 |
@@ -138,7 +138,6 @@
 - initializers.php: 2014
 - initializers.php: 2015
 - initializers.php: 2019
-- intuition.php: 2016
 - language.php: 1971
 - language.php: 1979
 - language.php: 2001
@@ -154,13 +153,17 @@
 - reliability.php: 2022
 - reliability.php: 2023
 - reliability.php: 2024
-- … and 36 more
+- speech_audio.php: 2016
+- … and 35 more
 
 ## Uncovered quantities
 
 - alternative_architectures.php: 8B
 - deeplearninglab.php: 0 parameters
 - diffusion.php: 1.4 M
+- intuition.php: 01b
+- intuition.php: 03 Layers
+- intuition.php: 03 Layers
 - running_locally.php: 0.7 PARAMETER
 - topology.php: 2 layer
 - transformer.php: 170 MB
@@ -204,7 +207,7 @@
 - beyond_llms.php: beyond_llms-gap-11 sat-solver year=1962.0
 - beyond_llms.php: beyond_llms-gap-12 hierarchical-clustering year=1963.0
 - beyond_llms.php: beyond_llms-gap-14 hidden-markov-model year=1966.0
-- … and 272 more
+- … and 277 more
 
 ## Bad citations
 
@@ -240,12 +243,12 @@
 - history.php: rel-history-weizenbaum-eliza: endpoint not near quote: joseph-weizenbaum
 - history.php: rel-history-schmidhuber-nplm: endpoint not near quote: jurgen-schmidhuber
 - history.php: rel-history-mccarthy-lisp: endpoint not near quote: john-mccarthy
-- intuition.php: intuition-expressibility-gap-related-finite-vocabulary: endpoint not near quote: expressibility-gap
 - language.php: rel-language-chomsky-hierarchy-syntactic: no quote
 - people_of_ai.php: rel-people-amodei-instructgpt: no quote
 - people_of_ai.php: rel-people-vapnik-svm: endpoint not near quote: vladimir-vapnik
 - philosophy.php: rel-phil-hard-problem-mary: endpoint not near quote: phil-hard-problem
 - philosophy.php: rel-phil-hard-problem-mary: endpoint not near quote: phil-mary-room
+- philosophy.php: rel-phil-sheaf-gluing: endpoint not near quote: phil-sheaf-gluing
 
 ## Range issues
 

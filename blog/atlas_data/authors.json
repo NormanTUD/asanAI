@@ -518,7 +518,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -825,7 +824,6 @@
    "embeddinglab",
    "fact_lookup",
    "frontier",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -1172,7 +1170,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -1198,7 +1195,6 @@
    "fact_lookup",
    "geometry_ii",
    "history",
-   "intuition",
    "math_iv",
    "music_video_generation",
    "origami",
@@ -1795,7 +1791,6 @@
    "history",
    "hyperparameters",
    "initializers",
-   "intuition",
    "mechanistic_interpretability",
    "multimodal",
    "music_video_generation",
@@ -1970,7 +1965,6 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -2172,7 +2166,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -2602,7 +2595,6 @@
   "cited_in": [
    "embeddinglab",
    "history",
-   "intuition",
    "people_of_ai",
    "tokenizerlab",
    "untold_history_iii"
@@ -3200,7 +3192,6 @@
    "frontier",
    "hallucinations",
    "history",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
@@ -4621,7 +4612,6 @@
   "cited_in": [
    "ai_existential_risk",
    "hallucinations",
-   "intuition",
    "losslab",
    "philosophy"
   ]
@@ -4856,7 +4846,6 @@
    "attentionlab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "reliability",
@@ -6157,7 +6146,6 @@
    "fact_lookup",
    "geometry_ii",
    "history",
-   "intuition",
    "math_iv",
    "music_video_generation",
    "origami",
@@ -6758,7 +6746,6 @@
   "cited_in": [
    "activationlab",
    "frontier",
-   "intuition",
    "origami",
    "people_of_ai",
    "unexpected_capabilities"
@@ -6781,7 +6768,6 @@
   "cited_in": [
    "embeddinglab",
    "history",
-   "intuition",
    "people_of_ai",
    "tokenizerlab",
    "untold_history_iii"
@@ -7038,7 +7024,6 @@
    "attentionlab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "reliability",
@@ -8334,7 +8319,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -9147,7 +9131,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -9266,7 +9249,6 @@
    "ai_existential_risk",
    "alignment",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -9324,7 +9306,6 @@
    "deeplearninglab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -9418,7 +9399,6 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
@@ -10300,7 +10280,6 @@
    "embeddinglab",
    "fact_lookup",
    "history",
-   "intuition",
    "losslab",
    "math_ii",
    "math_iii",
@@ -10366,8 +10345,7 @@
    "mabrok2026latent"
   ],
   "cited_in": [
-   "foam_of_meaning",
-   "intuition"
+   "foam_of_meaning"
   ]
  },
  {
@@ -19078,7 +19056,6 @@
    "land2024fishing"
   ],
   "cited_in": [
-   "intuition",
    "tokenizerlab"
   ]
  },
@@ -19096,7 +19073,6 @@
    "land2024fishing"
   ],
   "cited_in": [
-   "intuition",
    "tokenizerlab"
   ]
  },
@@ -19114,7 +19090,6 @@
    "rumbelow2023solidgold"
   ],
   "cited_in": [
-   "intuition",
    "tokenizerlab"
   ]
  },
@@ -19132,7 +19107,6 @@
    "rumbelow2023solidgold"
   ],
   "cited_in": [
-   "intuition",
    "tokenizerlab"
   ]
  },
@@ -24077,7 +24051,6 @@
    "unicode_tr15"
   ],
   "cited_in": [
-   "intuition",
    "untold_history_iii"
   ]
  },
@@ -24096,7 +24069,6 @@
    "rfc2279"
   ],
   "cited_in": [
-   "intuition",
    "untold_history_iii"
   ]
  },
@@ -27153,7 +27125,6 @@
    "keup2022origami"
   ],
   "cited_in": [
-   "intuition",
    "math_iv",
    "origami",
    "topology"
@@ -27553,7 +27524,6 @@
    "embeddinglab",
    "fact_lookup",
    "inceptionism",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -29339,7 +29309,6 @@
    "history",
    "hyperparameters",
    "initializers",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -29583,7 +29552,6 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "unexpected_capabilities"
@@ -30304,7 +30272,6 @@
    "beyond_llms",
    "history",
    "initializers",
-   "intuition",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -30686,7 +30653,6 @@
    "attentionlab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -30799,7 +30765,6 @@
    "attentionlab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "reliability",
@@ -33017,7 +32982,6 @@
   "cited_in": [
    "ai_existential_risk",
    "hallucinations",
-   "intuition",
    "losslab",
    "philosophy"
   ]
@@ -36058,7 +36022,6 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition",
    "tokenizerlab"
   ]
  },
@@ -37359,7 +37322,6 @@
    "embeddinglab",
    "geometry_ii",
    "history",
-   "intuition",
    "people_of_ai"
   ]
  },
@@ -38781,7 +38743,6 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition",
    "tokenizerlab"
   ]
  },
@@ -39749,7 +39710,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability"
   ]
@@ -40841,7 +40801,6 @@
    "fact_lookup",
    "geometry_ii",
    "history",
-   "intuition",
    "math_iv",
    "music_video_generation",
    "origami",
@@ -40909,7 +40868,6 @@
    "finetuninglab",
    "history",
    "initializers",
-   "intuition",
    "overandunderfittinglab",
    "people_of_ai",
    "philosophy",
@@ -42076,7 +42034,6 @@
    "embeddinglab",
    "fact_lookup",
    "frontier",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -42179,7 +42136,6 @@
    "attentionlab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "reliability",
@@ -42509,7 +42465,6 @@
    "fact_lookup",
    "geometry_ii",
    "history",
-   "intuition",
    "math_iv",
    "music_video_generation",
    "origami",
@@ -43263,7 +43218,6 @@
    "embeddinglab",
    "fact_lookup",
    "hyperparameters",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -44046,7 +44000,6 @@
    "embeddinglab",
    "geometry_ii",
    "history",
-   "intuition",
    "people_of_ai"
   ]
  },
@@ -44125,7 +44078,6 @@
    "history",
    "hyperparameters",
    "initializers",
-   "intuition",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -46388,7 +46340,6 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "intuition",
    "origami",
    "transformer"
   ]
@@ -47089,7 +47040,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -47839,7 +47789,6 @@
    "embeddinglab",
    "geometry_ii",
    "history",
-   "intuition",
    "people_of_ai"
   ]
  },
@@ -47994,7 +47943,6 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition",
    "tokenizerlab"
   ]
  },
@@ -48085,7 +48033,6 @@
    "attentionlab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "reliability",
@@ -48270,7 +48217,6 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
@@ -48920,7 +48866,6 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -50077,7 +50022,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -50570,7 +50514,6 @@
    "attentionlab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "reliability",
@@ -50731,7 +50674,6 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition",
    "tokenizerlab"
   ]
  },
@@ -50911,7 +50853,6 @@
    "fact_lookup",
    "geometry_ii",
    "history",
-   "intuition",
    "math_iv",
    "music_video_generation",
    "origami",
@@ -50974,7 +50915,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -52467,7 +52407,6 @@
   "cited_in": [
    "ai_existential_risk",
    "hallucinations",
-   "intuition",
    "losslab",
    "philosophy"
   ]
@@ -53322,7 +53261,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -56065,7 +56003,6 @@
    "algorithms",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "origami",
    "transformer"
   ]
@@ -56906,7 +56843,6 @@
    "deeplearninglab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "transformer",
@@ -57028,7 +56964,6 @@
    "deeplearninglab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -57165,7 +57100,6 @@
    "attentionlab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
@@ -57321,7 +57255,6 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -57464,7 +57397,6 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering"
@@ -57721,7 +57653,6 @@
    "fact_lookup",
    "geometry_ii",
    "history",
-   "intuition",
    "math_iv",
    "music_video_generation",
    "origami",
@@ -58203,7 +58134,6 @@
    "geometry_ii",
    "history",
    "inference_optimization",
-   "intuition",
    "math_iv",
    "mixture_of_experts",
    "music_video_generation",
@@ -58424,7 +58354,6 @@
    "attentionlab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "reliability",
@@ -58657,7 +58586,6 @@
    "attentionlab",
    "evaluation",
    "fact_lookup",
-   "intuition",
    "origami",
    "philosophy",
    "transformer",
@@ -60356,7 +60284,6 @@
    "attentionlab",
    "embeddinglab",
    "history",
-   "intuition",
    "philosophy",
    "tokenizerlab",
    "training_data",
@@ -62432,7 +62359,6 @@
    "history",
    "hyperparameters",
    "initializers",
-   "intuition",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -62847,7 +62773,6 @@
    "attentionlab",
    "embeddinglab",
    "history",
-   "intuition",
    "normalizationlab",
    "people_of_ai",
    "tokenizerlab",
@@ -63246,7 +63171,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -63357,7 +63281,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -63770,7 +63693,6 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "intuition",
    "origami",
    "transformer"
   ]
@@ -63842,7 +63764,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -65106,7 +65027,6 @@
    "embeddinglab",
    "fact_lookup",
    "hyperparameters",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -65969,7 +65889,6 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering"
@@ -66820,7 +66739,6 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -70909,7 +70827,6 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
@@ -70993,7 +70910,6 @@
   "cited_in": [
    "ai_existential_risk",
    "hallucinations",
-   "intuition",
    "losslab",
    "philosophy",
    "statistics",
@@ -71233,7 +71149,6 @@
    "fact_lookup",
    "history",
    "hyperparameters",
-   "intuition",
    "mechanistic_interpretability",
    "optimizerlab",
    "people_of_ai",
@@ -71301,7 +71216,6 @@
    "embeddinglab",
    "fact_lookup",
    "frontier",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -71331,7 +71245,6 @@
    "deeplearninglab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "loss_landscape",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -71389,7 +71302,6 @@
    "embeddinglab",
    "fact_lookup",
    "hyperparameters",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -71561,7 +71473,6 @@
    "embeddinglab",
    "geometry_ii",
    "history",
-   "intuition",
    "people_of_ai"
   ]
  },
@@ -71747,7 +71658,6 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -71890,7 +71800,6 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -73653,7 +73562,6 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition",
    "tokenizerlab"
   ]
  },
@@ -74539,7 +74447,6 @@
   ],
   "cited_in": [
    "frontier",
-   "intuition",
    "people_of_ai",
    "unexpected_capabilities"
   ]
@@ -76088,7 +75995,6 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition",
    "tokenizerlab",
    "transformer"
   ]
@@ -76621,7 +76527,6 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition",
    "tokenizerlab"
   ]
  },
@@ -76892,7 +76797,6 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition",
    "tokenizerlab"
   ]
  },
@@ -77156,7 +77060,6 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -77672,7 +77575,6 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition",
    "tokenizerlab"
   ]
  },
@@ -77924,7 +77826,6 @@
    "attentionlab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
@@ -78143,7 +78044,6 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition",
    "tokenizerlab"
   ]
  },
@@ -78326,7 +78226,6 @@
    "attentionlab",
    "embeddinglab",
    "fact_lookup",
-   "intuition",
    "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -79241,7 +79140,6 @@
    "fact_lookup",
    "geometry_ii",
    "history",
-   "intuition",
    "math_iv",
    "music_video_generation",
    "origami",
