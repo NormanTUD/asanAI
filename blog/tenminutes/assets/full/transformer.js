@@ -188,6 +188,16 @@ window.__tmFullVizObserver = null;
 		var originalReact = Plotly.react;
 		var originalNewPlot = Plotly.newPlot;
 		var originalPurge = Plotly.purge;
+		var originalRelayout = Plotly.relayout;
+
+		function rememberAfter(result, el) {
+			if (result && typeof result.then === "function") {
+				result.then(function () { saveCamera(el); }, function () {});
+			} else {
+				saveCamera(el);
+			}
+			return result;
+		}
 
 		Plotly.purge = function (el) {
 			saveCamera(el);
@@ -195,12 +205,17 @@ window.__tmFullVizObserver = null;
 		};
 		Plotly.react = function (el, traces, layout, config) {
 			applyCamera(el, layout);
-			return originalReact.apply(this, arguments);
+			return rememberAfter(originalReact.apply(this, arguments), el);
 		};
 		if (typeof originalNewPlot === "function") {
 			Plotly.newPlot = function (el, data, layout, config) {
 				applyCamera(el, layout);
-				return originalNewPlot.apply(this, arguments);
+				return rememberAfter(originalNewPlot.apply(this, arguments), el);
+			};
+		}
+		if (typeof originalRelayout === "function") {
+			Plotly.relayout = function (el, update) {
+				return rememberAfter(originalRelayout.apply(this, arguments), el);
 			};
 		}
 
@@ -2195,7 +2210,7 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 		await syncTrainingState(weightVars);
 
 		// TDA live: capture residual stream + weight deltas for this epoch
-		if (window.TDALive) {
+		if (window.TDALive && !window.__tmPlotDragging) {
 			window.TDALive.captureEpoch({
 				epoch: epochIdx,
 				tokens,
@@ -2228,6 +2243,7 @@ function updateEpochProgress(epochIdx, totalEpochs, loss, startTime, status) {
 }
 
 async function syncTrainingState(weightVars) {
+	if (window.__tmPlotDragging) { window.__tmVisualDeferred = true; return; }
 	renderLossGraph();
 	window.currentWeights = await convert_tensors_to_weights(weightVars);
 	run_transformer_demo();
@@ -2459,6 +2475,7 @@ async function convert_tensors_to_weights(vars) {
 }
 
 function renderLossGraph() {
+	if (window.__tmPlotDragging) return;
 	if (!window.lossHistory || window.lossHistory.length === 0) {
 		drawTrainingPlaceholder();
 		return;
