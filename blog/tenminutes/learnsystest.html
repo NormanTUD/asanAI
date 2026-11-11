@@ -28,15 +28,25 @@
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--ls-paper);overflow:hidden}
 body{font-family:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:300;color:var(--ls-ink)}
-h1,h2,h3,h4,.ls-title,.ls-brand b,.ls-stage-head b,.ls-day-num,.ls-kicker{font-family:"Barlow",system-ui,sans-serif;font-weight:700;letter-spacing:-.01em}
+h1,h2,h3,h4,.ls-title,.ls-stage-head b,.ls-day-num,.ls-kicker{font-family:"Barlow",system-ui,sans-serif;font-weight:700;letter-spacing:-.01em}
 button,input,select{font:inherit}
 button{color:inherit}
-.ls-app{position:fixed;inset:0;display:grid;grid-template-rows:64px minmax(0,1fr) auto;background:var(--ls-paper);z-index:1}
-.ls-top{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 22px;border-bottom:1px solid var(--ls-line);background:rgba(255,255,255,.96);backdrop-filter:blur(8px);z-index:10}
-.ls-brand{display:flex;align-items:center;gap:11px;min-width:0}
-.ls-brand b{display:block;font-size:15px;line-height:1.1}
-.ls-brand span{display:block;font-size:10px;color:var(--ls-muted);letter-spacing:.02em}
-.ls-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.ls-app{position:fixed;inset:0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);background:var(--ls-paper);z-index:1}
+.ls-app--mix{grid-template-rows:minmax(0,1fr)}
+.ls-app--mix .ls-top{display:none}
+.ls-mix{position:fixed;right:14px;bottom:14px;z-index:60;display:flex;align-items:center;gap:5px;padding:6px;background:rgba(255,255,255,.92);border:1px solid var(--ls-line-strong);box-shadow:var(--ls-shadow);backdrop-filter:blur(8px)}
+.ls-mix-label{max-width:230px;font-size:9px;line-height:1.25;color:var(--ls-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 4px}
+@media (max-width:640px){.ls-mix{left:10px;right:10px;bottom:10px;justify-content:space-between}.ls-mix-label{max-width:none;flex:1 1 auto}}
+.ls-top{display:flex;flex-direction:column;align-items:stretch;gap:5px;min-width:0;padding:5px 16px 6px;border-bottom:1px solid var(--ls-line);background:rgba(255,255,255,.96);backdrop-filter:blur(8px);z-index:10}
+.ls-top-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;min-width:0;max-width:100%}
+.ls-now{display:flex;flex-direction:column;gap:1px;min-width:0;max-width:38ch}
+.ls-now-kicker{font-size:9px;line-height:1.2;text-transform:uppercase;letter-spacing:.12em;color:var(--ls-petrol);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ls-now-title{display:block;font-family:"Barlow",sans-serif;font-size:14px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ls-top-nav{display:flex;align-items:center;gap:12px;min-width:0;max-width:100%}
+.ls-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;min-width:0;max-width:100%}
+.ls-top .ls-btn{padding:4px 8px;font-size:10px}
+.ls-top .ls-seg button{padding:4px 7px;font-size:9px}
+.ls-top .ls-select{padding:4px 6px;font-size:10px}
 .ls-field{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.08em}
 .ls-field--inline{text-transform:none;letter-spacing:0;font-size:10px}
 .ls-select{border:1px solid var(--ls-line-strong);background:#fff;color:var(--ls-ink);padding:5px 7px;font-size:11px;border-radius:0}
@@ -78,18 +88,17 @@ button{color:inherit}
 .ls-demo{position:relative;z-index:1;flex:1;min-height:0;padding:12px 16px 8px}
 .ls-stage-foot{position:relative;z-index:2;display:flex;justify-content:space-between;gap:14px;padding:8px 22px 12px;border-top:1px solid var(--ls-line);font-size:10px;color:var(--ls-muted);background:rgba(247,249,248,.86)}
 .ls-credit{text-align:right;white-space:nowrap}
-.ls-bottom{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(240px,1fr);gap:18px;align-items:center;padding:6px 22px max(6px, env(safe-area-inset-bottom));min-height:76px;overflow:visible;border-top:1px solid var(--ls-line);background:#fff;z-index:10}
 .ls-day-row{display:flex;align-items:center;gap:4px;min-width:0;min-height:0}
-.ls-day-nav{flex:0 0 auto;min-width:50px;height:38px;display:inline-flex;align-items:center;justify-content:center;gap:4px;border:1px solid var(--ls-line);background:#fff;color:var(--ls-petrol);font-size:13px;line-height:1;cursor:pointer;padding:0 7px}
+.ls-day-nav{flex:0 0 auto;min-width:50px;height:32px;display:inline-flex;align-items:center;justify-content:center;gap:4px;border:1px solid var(--ls-line);background:#fff;color:var(--ls-petrol);font-size:13px;line-height:1;cursor:pointer;padding:0 7px}
 .ls-day-nav-word{font-size:9px;text-transform:uppercase;letter-spacing:.07em}
 .ls-day-nav:disabled{opacity:.35;cursor:not-allowed}
-.ls-days{display:flex;flex:1 1 0;gap:6px;overflow-x:auto;overflow-y:hidden;padding:6px 2px;min-width:0;scroll-snap-type:x proximity;scroll-behavior:smooth;overscroll-behavior-x:contain;scrollbar-width:thin;cursor:grab;touch-action:pan-x;-webkit-overflow-scrolling:touch}
+.ls-days{display:flex;flex:1 1 0;gap:6px;overflow-x:auto;overflow-y:hidden;padding:3px 2px;min-width:0;scroll-snap-type:x proximity;scroll-behavior:smooth;overscroll-behavior-x:contain;scrollbar-width:thin;cursor:grab;touch-action:pan-x;-webkit-overflow-scrolling:touch}
 .ls-days.is-scrollable{mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 10px),transparent 100%)}
 .ls-days.is-dragging{cursor:grabbing;scroll-behavior:auto;scroll-snap-type:none;user-select:none;mask-image:none}
 .ls-days::-webkit-scrollbar{height:5px}
 .ls-days::-webkit-scrollbar-track{background:transparent}
 .ls-days::-webkit-scrollbar-thumb{background:var(--ls-line-strong);border-radius:0}
-.ls-day{position:relative;display:flex;flex-direction:column;gap:1px;min-width:76px;min-height:42px;flex:1 1 76px;scroll-snap-align:center;border:1px solid var(--ls-line);background:#fff;padding:6px 8px;text-align:left;cursor:pointer;--ls-day-accent:var(--ls-line-strong)}
+.ls-day{position:relative;display:flex;flex-direction:column;gap:1px;min-width:76px;min-height:34px;flex:1 1 76px;scroll-snap-align:center;border:1px solid var(--ls-line);background:#fff;padding:3px 7px;text-align:left;cursor:pointer;--ls-day-accent:var(--ls-line-strong)}
 .ls-day:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--ls-day-accent)}
 .ls-day[data-track="idea"]{--ls-day-accent:var(--ls-green)}
 .ls-day[data-track="failure"]{--ls-day-accent:var(--ls-lilac)}
@@ -103,9 +112,11 @@ button{color:inherit}
 .ls-day.is-dim:hover{opacity:.78}
 .ls-day:hover{border-color:var(--ls-line-strong)}
 .ls-day.is-on{border-color:var(--ls-petrol);box-shadow:0 0 0 1px var(--ls-petrol) inset}
-.ls-day-num{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol);white-space:nowrap}
-.ls-day-name{font-size:10px;line-height:1.25;color:var(--ls-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ls-progress{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ls-day-num{font-size:9px;line-height:1.2;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol);white-space:nowrap}
+.ls-day-name{font-size:10px;line-height:1.2;color:var(--ls-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ls-progress{display:flex;flex-direction:column;gap:4px;flex:0 0 200px;min-width:0}
+.ls-step-row{display:flex;align-items:center;gap:8px;min-width:0}
+.ls-step-count{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted);white-space:nowrap}
 .ls-progress-bar{height:3px;background:var(--ls-line);position:relative;overflow:hidden}
 .ls-progress-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ls-green),var(--ls-blue));transition:width .35s ease}
 .ls-steps{display:flex;gap:5px}
@@ -174,27 +185,56 @@ button{color:inherit}
 .ls-samp-readout{display:flex;gap:14px;flex-wrap:wrap;font-size:9px;color:var(--ls-muted)}
 .ls-samp-readout b{color:var(--ls-ink);font-weight:600}
 .ls-empty{padding:20px;font-size:12px;color:var(--ls-muted)}
+.ls-act{height:100%;min-height:0;display:flex;flex-direction:column;gap:8px}
+.ls-act-plot{position:relative;flex:1;min-height:170px;background:#fff;border:1px solid var(--ls-line)}
+.ls-act-plot canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
+.ls-act-chips{display:flex;gap:5px;flex-wrap:wrap}
+.ls-act-readout{display:flex;gap:14px;flex-wrap:wrap;font-size:9px;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.06em}
+.ls-act-readout b{color:var(--ls-ink);font-weight:600;text-transform:none;letter-spacing:0}
+.ls-hist{height:100%;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8px}
+.ls-hist-track{display:flex;gap:4px;overflow-x:auto;padding:1px 0}
+.ls-hist-node{display:flex;flex-direction:column;gap:1px;min-width:126px;border:1px solid var(--ls-line);background:#fff;padding:5px 7px;text-align:left;cursor:pointer}
+.ls-hist-node span{font-size:9px;color:var(--ls-petrol);white-space:nowrap}
+.ls-hist-node b{font-size:10px;color:var(--ls-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ls-hist-node.is-on{background:var(--ls-green);border-color:var(--ls-green)}
+.ls-hist-node.is-on span,.ls-hist-node.is-on b{color:#fff}
+.ls-hist-card{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(190px,.85fr);min-height:0;background:#fff;border:1px solid var(--ls-line)}
+.ls-hist figure{margin:0;min-height:0;display:flex;flex-direction:column;background:var(--ls-paper-2)}
+.ls-hist img{display:block;width:100%;height:100%;min-height:160px;max-height:100%;object-fit:contain}
+.ls-hist figcaption{font-size:9px;line-height:1.35;color:var(--ls-muted);padding:5px 8px;border-top:1px solid var(--ls-line);background:#fff}
+.ls-hist figcaption a{color:var(--ls-petrol)}
+.ls-hist-meta{min-height:0;overflow:auto;padding:12px 14px;border-left:1px solid var(--ls-line)}
+.ls-hist-date{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-petrol)}
+.ls-hist-name{display:block;font-family:"Barlow",sans-serif;font-size:16px;line-height:1.15;margin:3px 0 8px}
+.ls-hist-note{margin:0;font-size:12px;line-height:1.55;color:var(--ls-soft)}
+@media (max-width:980px){.ls-hist-card{grid-template-columns:1fr;grid-template-rows:minmax(150px,46%) minmax(0,1fr)}.ls-hist-meta{border-left:0;border-top:1px solid var(--ls-line)}}
 @media (max-width:980px){
   .ls-app{grid-template-rows:auto minmax(0,1fr) auto}
-  .ls-top{padding:8px 12px;align-items:flex-start}
-  .ls-brand span{display:none}
-  .ls-controls{gap:6px}
+  .ls-top{padding:8px 12px;align-items:stretch}
+  .ls-top-head{align-items:flex-start}
+  .ls-now{max-width:100%}
+  .ls-top-nav{flex-direction:column;align-items:stretch;gap:6px}
+  .ls-progress{flex:1 1 auto}
+  .ls-controls{width:100%;justify-content:flex-start;gap:6px}
   .ls-main{grid-template-columns:1fr;grid-template-rows:minmax(0,44%) minmax(0,56%)}
   .ls-text{border-right:0;border-bottom:1px solid var(--ls-line)}
   .ls-text-scroll{padding:18px 18px 14px;max-width:none}
   .ls-title{font-size:calc(var(--ls-fs-title,28px) * 0.86);max-width:22ch}
   .ls-body{font-size:calc(var(--ls-fs-body,17px) * 0.88);line-height:1.55}
-  .ls-bottom{grid-template-columns:1fr;gap:2px;padding:4px 12px max(6px, env(safe-area-inset-bottom));min-height:0}
-  .ls-days{padding:4px 2px}
+  .ls-days{padding:3px 2px}
   .ls-day-nav{min-width:30px;padding:0 6px}
   .ls-day-nav-word{display:none}
-  .ls-day{flex:0 0 auto;min-width:96px;min-height:40px}
+  .ls-day{flex:0 0 auto;min-width:88px;min-height:34px}
   .ls-stage-head{padding:8px 12px 6px}
   .ls-stage-foot{padding:5px 12px 7px}
   .ls-demo{padding:6px 8px 2px}
   .ls-drawer{width:100vw}
   .ls-panel{right:8px;bottom:8px;width:calc(100vw - 16px)}
 }
+@keyframes lsDayNext{from{opacity:.62;transform:translateX(6px)}to{opacity:1;transform:none}}
+@keyframes lsDayPrev{from{opacity:.62;transform:translateX(-6px)}to{opacity:1;transform:none}}
+.ls-app.is-day-next .ls-text-scroll,.ls-app.is-day-next .ls-stage{animation:lsDayNext .24s ease-out}
+.ls-app.is-day-prev .ls-text-scroll,.ls-app.is-day-prev .ls-stage{animation:lsDayPrev .24s ease-out}
 @media (prefers-reduced-motion:reduce){
   *,*:before,*:after{animation-duration:.001ms!important;transition-duration:.001ms!important}
 }
@@ -215,7 +255,7 @@ button{color:inherit}
   50%{transform:translate3d(1.8%,1.4%,0) scale(1.04)}
   100%{transform:translate3d(-.6%,2%,0) scale(1.01)}
 }
-.ls-top,.ls-bottom{background:rgba(255,255,255,.68);backdrop-filter:blur(16px) saturate(1.2);border-color:rgba(0,75,111,.06)}
+.ls-top{background:rgba(255,255,255,.68);backdrop-filter:blur(16px) saturate(1.2);border-color:rgba(0,75,111,.06)}
 .ls-main{position:relative;z-index:1}
 .ls-text{background:transparent;border-right:0;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 86%,transparent 100%);mask-image:linear-gradient(90deg,#000 0%,#000 86%,transparent 100%)}
 .ls-stage{background:transparent}
@@ -294,6 +334,10 @@ button{color:inherit}
 .ls-term-visual svg{width:100%;max-width:180px;height:auto}
 .ls-term-link{font-size:10px;font-weight:600;color:var(--ls-petrol);text-decoration:none}
 .ls-term-wrap.is-open .ls-term{color:var(--ls-blue);border-bottom-style:solid}
+@keyframes lsDayNext{from{opacity:.62;transform:translateX(6px)}to{opacity:1;transform:none}}
+@keyframes lsDayPrev{from{opacity:.62;transform:translateX(-6px)}to{opacity:1;transform:none}}
+.ls-app.is-day-next .ls-text-scroll,.ls-app.is-day-next .ls-stage{animation:lsDayNext .24s ease-out}
+.ls-app.is-day-prev .ls-text-scroll,.ls-app.is-day-prev .ls-stage{animation:lsDayPrev .24s ease-out}
 @media (prefers-reduced-motion:reduce){
   .ls-app:before{animation:none}
   ::view-transition-old(ls-demo),::view-transition-new(ls-demo){animation:none}
@@ -629,6 +673,48 @@ button{color:inherit}
       boxes: [box("sa-day", "Technik", "Entropie", "Entropie ist ein Maß dafür, wie breit die Verteilung ist. Niedrige Entropie heißt: Die Wahl ist fast erzwungen.")]
     },
     {
+      id: "activation",
+      track: "failure",
+      label: "Tag 10",
+      kicker: "Fehler, Daten, Lernen · Tag 10",
+      title: "Ohne Knick bleibt alles gerade",
+      demo: "activation",
+      credit: "Eigene Demo · Ten Minutes",
+      steps: [
+        {
+          kicker: "01 / Die lineare Falle",
+          title: "Zwei Schichten, eine Linie",
+          body: "Eine Dense-Schicht rechnet Ax + b. Verkettest du zwei davon ohne Knick, bleibt die Komposition eine einzige affine Abbildung: W2(W1x + b1) + b2 = (W2W1)x + (W2b1 + b2). Tiefe ändert dann nichts an der Form der Entscheidung. ",
+          watch: "Schalte zwischen den Aktivierungen. Wo beginnt die Kurve?",
+          demoState: { fn: "relu" },
+          context: "Ohne Aktivierung ist ein tiefes Netz nur eine andere Matrix.",
+          deep: "Die Produkte der Gewichte bleiben affin. Erst die Aktivierung nach jeder Schicht bricht die Komposition.",
+          boxes: [box("ac-1", "Mathematik", "Was ist affin?", "Eine Abbildung ist affin, wenn sie aus einer linearen Abbildung plus einer Verschiebung besteht: f(x) = Ax + b. Die Komposition zweier affiner Abbildungen ist wieder affin.")]
+        },
+        {
+          kicker: "02 / Der Knick",
+          title: "ReLU schneidet ab",
+          body: "ReLU(x) = max(0, x) setzt alle negativen Werte auf null. Das ist ein harter Knick: Die Abbildung ist nicht mehr umkehrbar, und genau das kann einen Ring aufschneiden. ",
+          watch: "Klicke ReLU, tanh und sigmoid. Welche Kurve hat einen Knick?",
+          demoState: { fn: "relu" },
+          context: "Der Knick ist die Stelle, an der die lineare Komposition endet.",
+          deep: "ReLU ist nicht injektiv: Alle negativen Eingaben landen bei 0. Diese Informationsverluste können beim Entwirren helfen.",
+          boxes: [box("ac-2", "Technik", "Warum ist ein Knick nützlich?", "Weil eine stückweise lineare Grenze entsteht. Viele ReLU-Einheiten zusammengesetzt ergeben eine flexible, aber immer noch stückweise lineare Funktion.")]
+        },
+        {
+          kicker: "03 / Die weiche Variante",
+          title: "Weiche Kurven, weniger Risse",
+          body: "tanh und sigmoid sind glatt und für endliche Eingaben umkehrbar. Sie biegen den Raum, ohne ihn hart zu zerschneiden; GELU ist ein glatter Durchlass, der kleine negative Werte noch passieren lässt. ",
+          watch: "Wechsle zu GELU. Wo liegt der Unterschied zu ReLU?",
+          demoState: { fn: "gelu" },
+          context: "Weiche Aktivierungen bewahren die Topologie, solange sie umkehrbar bleiben.",
+          deep: "Sättigung und niedrige Präzision können auch eine weiche Aktivierung zu einer Treppe machen; dann geht die Umkehrbarkeit verloren.",
+          boxes: [box("ac-3", "Geschichte", "Woher kommt das Bild?", "Keup und Helias (2022) beschreiben Schichten als Falten einer Datenmannigfaltigkeit: ReLU faltet hart, glatte Aktivierungen biegen weich.")]
+        }
+      ],
+      boxes: [box("ac-day", "Mathematik", "Die eine Formel", "ReLU(x) = max(0, x). tanh(x) = (e^{2x} − 1) / (e^{2x} + 1). Beide werden nach der linearen Schicht auf jede Koordinate angewendet.")]
+    },
+    {
       id: "hyper",
       track: "failure",
       label: "Tag 11",
@@ -683,6 +769,48 @@ button{color:inherit}
         }
       ],
       boxes: [box("hy-day", "Technik", "Mehr als zwei Achsen", "Für viele Parameter projiziert man die Landschaft auf zwei zufällige Richtungen. Das ist eine Diagnose, keine vollständige Karte.")]
+    },
+    {
+      id: "history",
+      track: "history",
+      label: "Kapitel 1",
+      kicker: "Geschichte · Testkapitel",
+      title: "Vom Zählen zum Rechnen",
+      demo: "history",
+      credit: "Bilder: Wikimedia Commons · Lizenz in der Bildunterschrift",
+      steps: [
+        {
+          kicker: "01 / Externes Gedächtnis",
+          title: "Zählen wird ein Ding",
+          body: "Der Ishango-Knochen trägt gruppierte Kerben. Ob sie Primzahlen, eine Mondzählung oder Vorräte bedeuten, ist nicht entschieden. Sicher ist nur: Die Zahl liegt nicht mehr im Kopf, sondern in einem Objekt. ",
+          watch: "Klicke die drei Stationen über der Karte an. Was ändert sich am Träger der Rechnung?",
+          demoState: { history: 0 },
+          context: "Die Kerben sind ein früher Speicher. Die Gruppe ist ein Hinweis, kein entschlüsselter Text.",
+          deep: "Externes Gedächtnis ist die Voraussetzung für Schrift, Tabellen und schließlich für Programme. Der Knochen ist ein Anfang, kein Beweis für Mathematik.",
+          boxes: [box("hi-1", "Geschichte", "Was ist gesichert?", "Die Kerben und ihre Gruppierung sind am Objekt sichtbar. Die Deutung als Primzahlenliste ist eine Lesart, keine gesicherte Übersetzung.")]
+        },
+        {
+          kicker: "02 / Mechanik",
+          title: "Zahnräder rechnen den Himmel",
+          body: "Der Antikythera-Mechanismus bildet mit Zahnrädern den Lauf von Sonne und Mond nach. Das Modell ist kein allgemeiner Computer, aber es zeigt: Ein Mechanismus kann eine Regel übernehmen. ",
+          watch: "Vergleiche die Station mit dem Knochen: Wer trägt jetzt die Regel?",
+          demoState: { history: 1 },
+          context: "Die Regel steckt im Getriebe, nicht in einer schriftlichen Formel.",
+          deep: "Ein Analogrechner speichert seinen Zustand in der Stellung der Räder. Die Genauigkeit hängt von der Mechanik ab, nicht von einer Zahlendarstellung.",
+          boxes: [box("hi-2", "Technik", "Was ist ein Analogrechner?", "Ein Gerät, dessen physischer Zustand (Winkel, Länge, Spannung) die Rechnung trägt. Der Antikythera-Mechanismus ist ein frühes Beispiel.")]
+        },
+        {
+          kicker: "03 / Programm",
+          title: "Eine Maschine für Anweisungen",
+          body: "Babbages Analytical Engine trennt Rechenwerk, Speicher und Anweisung. Ada Lovelace beschreibt 1843, dass eine solche Maschine nicht nur Zahlen, sondern auch Musik oder Text verarbeiten könnte, wenn man die Operationen passend wählt. ",
+          watch: "Klicke die dritte Station. Was ist neu gegenüber dem Zahnradmodell?",
+          demoState: { history: 2 },
+          context: "Die Anweisung wird vom Mechanismus getrennt. Das ist der Schritt zum Programm.",
+          deep: "Lovelace betont, dass die Maschine keine eigenen Ideen hat: Sie führt aus, was ihr gesagt wird. Der Unterschied zwischen Rechnen und Denken bleibt offen.",
+          boxes: [box("hi-3", "Geschichte", "Was macht Ada Lovelace?", "Sie beschreibt 1843 ein Programm für die Analytical Engine und unterscheidet zwischen einer Maschine, die rechnet, und einer, die denkt. Die Quelle ist ihre Note G zu Menabreas Aufsatz.")]
+        }
+      ],
+      boxes: [box("hi-day", "Geschichte", "Warum diese drei?", "Knochen, Getriebe und Programm zeigen drei Träger derselben Idee: Eine Regel wird aus dem Kopf in ein Objekt verschoben. Die Bilder und ihre Lizenzen stehen in der Bildunterschrift.")]
     }
   ];
 
@@ -695,8 +823,10 @@ button{color:inherit}
       { id: "senses", label: "Sinne und Signale", days: "12–15" },
       { id: "transformer", label: "Im Transformer", days: "16–20" },
       { id: "assistant", label: "Vom Modell zum Assistenten", days: "21–27" },
-      { id: "questions", label: "Die großen Fragen", days: "28–31" }
-    ]
+      { id: "questions", label: "Die großen Fragen", days: "28–31" },
+      { id: "history", label: "Geschichte", days: "Testkapitel" }
+    ],
+    mix: true
   });
 })();
 </script>

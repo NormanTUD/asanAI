@@ -200,19 +200,24 @@
 
   function buildUI() {
     root.innerHTML =
-      '<div class="ls-app">' +
+      '<div class="ls-app' + (cfg.mix ? ' ls-app--mix' : '') + '">' +
         '<header class="ls-top">' +
-          '<div class="ls-brand"><div><b>LearnSys</b><span>Prototyp · ein Thema, jede Tiefe</span></div></div>' +
-          '<div class="ls-controls">' +
-            '<label class="ls-field"><span>Weg</span><select class="ls-select" id="ls-track"></select></label>' +
-            '<div class="ls-field"><span>Tiefe</span><div class="ls-seg" id="ls-depth">' +
-              '<button type="button" data-depth="short">Kurz</button>' +
-              '<button type="button" data-depth="standard">Standard</button>' +
-              '<button type="button" data-depth="deep">Tief</button>' +
-            '</div></div>' +
-            '<div class="ls-field ls-font" aria-label="Textgröße"><span>Text</span><button type="button" class="ls-btn ls-btn--tiny" data-font-step="-1" id="ls-font-minus" aria-label="Text kleiner">A−</button><output id="ls-font-out" aria-live="polite">100%</output><button type="button" class="ls-btn ls-btn--tiny" data-font-step="1" id="ls-font-plus" aria-label="Text größer">A+</button></div>' +
-            '<button type="button" class="ls-btn ls-btn--ghost" id="ls-all">Alles</button>' +
-            '<button type="button" class="ls-btn ls-btn--primary" id="ls-open-depth">Tiefe öffnen</button>' +
+          '<div class="ls-top-head">' +
+            '<div class="ls-now"><span class="ls-now-kicker" id="ls-now-kicker"></span><b class="ls-now-title" id="ls-now-title"></b></div>' +
+            '<div class="ls-controls">' +
+              '<label class="ls-field"><span>Weg</span><select class="ls-select" id="ls-track"></select></label>' +
+              '<div class="ls-field"><span>Tiefe</span><div class="ls-seg" id="ls-depth">' +
+                '<button type="button" data-depth="short">Kurz</button>' +
+                '<button type="button" data-depth="standard">Standard</button>' +
+                '<button type="button" data-depth="deep">Tief</button>' +
+              '</div></div>' +
+              '<div class="ls-field ls-font" aria-label="Textgröße"><span>Text</span><button type="button" class="ls-btn ls-btn--tiny" data-font-step="-1" id="ls-font-minus" aria-label="Text kleiner">A−</button><output id="ls-font-out" aria-live="polite">100%</output><button type="button" class="ls-btn ls-btn--tiny" data-font-step="1" id="ls-font-plus" aria-label="Text größer">A+</button></div>' +
+              '<button type="button" class="ls-btn ls-btn--ghost" id="ls-all">Alles</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ls-top-nav">' +
+            '<div class="ls-day-row"><button type="button" class="ls-day-nav" data-day-nav="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">←<span class="ls-day-nav-word">Zurück</span></button><div class="ls-days" id="ls-days" role="tablist" aria-label="Tage"></div><button type="button" class="ls-day-nav" data-day-nav="1" aria-label="Nächster Tag" title="Nächster Tag"><span class="ls-day-nav-word">Weiter</span>→</button></div>' +
+            '<div class="ls-progress"><div class="ls-progress-bar"><span id="ls-progress-fill"></span></div><div class="ls-step-row"><span class="ls-step-count" id="ls-step-count"></span><div class="ls-steps" id="ls-steps"></div></div></div>' +
           '</div>' +
         '</header>' +
         '<main class="ls-main">' +
@@ -238,11 +243,8 @@
             '<div class="ls-stage-foot"><span id="ls-stage-hint"></span><span class="ls-credit" id="ls-credit"></span></div>' +
           '</section>' +
         '</main>' +
-        '<footer class="ls-bottom">' +
-          '<div class="ls-day-row"><button type="button" class="ls-day-nav" data-day-nav="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">←<span class="ls-day-nav-word">Zurück</span></button><div class="ls-days" id="ls-days" role="tablist" aria-label="Tage"></div><button type="button" class="ls-day-nav" data-day-nav="1" aria-label="Nächster Tag" title="Nächster Tag"><span class="ls-day-nav-word">Weiter</span>→</button></div>' +
-          '<div class="ls-progress"><div class="ls-progress-bar"><span id="ls-progress-fill"></span></div><div class="ls-steps" id="ls-steps"></div></div>' +
-        '</footer>' +
         '<div class="ls-tip" id="ls-tip" role="tooltip" hidden></div>' +
+        (cfg.mix ? '<div class="ls-mix" id="ls-mix"><span class="ls-mix-label" id="ls-mix-label"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny" id="ls-mix-shuffle">Mix</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-depth">Tiefe</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-all">Alles</button></div>' : '') +
       '</div>';
 
     els.app = root.querySelector(".ls-app");
@@ -251,6 +253,13 @@
     els.depth = root.querySelector("#ls-depth");
     els.all = root.querySelector("#ls-all");
     els.openDepth = root.querySelector("#ls-open-depth");
+    els.nowKicker = root.querySelector("#ls-now-kicker");
+    els.nowTitle = root.querySelector("#ls-now-title");
+    els.stepCount = root.querySelector("#ls-step-count");
+    els.mixLabel = root.querySelector("#ls-mix-label");
+    els.mixShuffle = root.querySelector("#ls-mix-shuffle");
+    els.mixDepth = root.querySelector("#ls-mix-depth");
+    els.mixAll = root.querySelector("#ls-mix-all");
     els.fontOut = root.querySelector("#ls-font-out");
     els.fontMinus = root.querySelector("#ls-font-minus");
     els.fontPlus = root.querySelector("#ls-font-plus");
@@ -342,7 +351,7 @@
       var dim = state.track !== "all" && d.track !== state.track;
       var track = TRACK_LABEL[d.track] ? TRACK_LABEL[d.track].label : d.track;
       var cls = "ls-day" + (on ? " is-on" : "") + (dim ? " is-dim" : "") + (i > 0 && all[i - 1].track !== d.track ? " is-track-start" : "");
-      return '<button type="button" class="' + cls + '" data-day="' + i + '" data-track="' + esc(d.track) + '" role="tab" aria-selected="' + on + '"' + (on ? ' aria-current="step"' : '') +
+      return '<button type="button" class="' + cls + '" data-day="' + i + '" data-day-id="' + esc(d.id) + '" data-track="' + esc(d.track) + '" role="tab" aria-selected="' + on + '"' + (on ? ' aria-current="step"' : '') +
         ' aria-label="' + esc(track + ": " + d.label + " " + d.title) + '" title="' + esc(track + " · " + d.title) + '">' +
         '<span class="ls-day-num">' + esc(d.label) + '</span><span class="ls-day-name">' + esc(d.title) + '</span></button>';
     }).join("");
@@ -354,6 +363,7 @@
       return '<button type="button" class="ls-dot' + (i === state.step ? " is-on" : "") + '" data-step="' + i + '" aria-label="Schritt ' + (i + 1) + '">' + (i + 1) + '</button>';
     }).join("");
     els.progress.style.width = ((state.step + 1) / d.steps.length * 100).toFixed(1) + "%";
+    if (els.stepCount) els.stepCount.textContent = "Schritt " + (state.step + 1) + " / " + d.steps.length;
   }
 
   function depthTree(s, d) {
@@ -451,6 +461,9 @@
   function renderText() {
     var d = activeDay();
     var s = activeStep();
+    if (els.nowKicker) els.nowKicker.textContent = d.label + " · " + (TRACK_LABEL[d.track] ? TRACK_LABEL[d.track].label : d.track);
+    if (els.nowTitle) els.nowTitle.textContent = d.title;
+    if (els.mixLabel) els.mixLabel.textContent = d.label + " · " + d.title;
     els.kicker.textContent = s.kicker || d.kicker;
     els.title.textContent = s.title;
     els.body.innerHTML = proseBlock(s.body || "");
@@ -504,7 +517,8 @@
       scene: LS.scene,
       util: LS.util,
       onHint: function (t) { els.stageHint.textContent = t; },
-      go: go
+      go: go,
+      goStep: function (step) { go(state.day, step); }
     });
     if (demo && demo.update) demo.update(s.demoState || {});
   }
@@ -719,6 +733,13 @@
     }
     cueSuppressUntil = performance.now() + 500;
     swap(renderAll, changed && !INTERNAL_MORPH[d.demo] && !elementStep, canvasMorph);
+    if (dayChanged && els.app) {
+      var dir = state.day > oldDay ? "next" : "prev";
+      els.app.classList.remove("is-day-next", "is-day-prev");
+      void els.app.offsetWidth;
+      els.app.classList.add("is-day-" + dir);
+      setTimeout(function () { els.app.classList.remove("is-day-next", "is-day-prev"); }, 260);
+    }
   }
   function next() {
     var d = activeDay();
@@ -740,6 +761,20 @@
         go(pos - 1, p.steps.length - 1);
       }
     }
+  }
+
+  function shuffle() {
+    if (!cfg.days.length) return;
+    var next = state.day;
+    if (cfg.days.length > 1) {
+      while (next === state.day) next = Math.floor(Math.random() * cfg.days.length);
+    }
+    go(next, 0);
+  }
+  function goDay(id) {
+    var i = cfg.days.map(function (d) { return d.id; }).indexOf(id);
+    if (i >= 0) go(i, 0);
+    return i;
   }
 
   function setTrack(id) {
@@ -893,8 +928,11 @@
       renderAll();
       openAllDepth();
     });
-    els.openDepth.addEventListener("click", openDepth);
+    if (els.openDepth) els.openDepth.addEventListener("click", openDepth);
     els.depthBtn.addEventListener("click", openDepth);
+    if (els.mixShuffle) els.mixShuffle.addEventListener("click", function () { shuffle(); });
+    if (els.mixDepth) els.mixDepth.addEventListener("click", openDepth);
+    if (els.mixAll) els.mixAll.addEventListener("click", function () { state.track = "all"; state.depth = "deep"; renderAll(); openAllDepth(); });
     if (els.fontMinus) els.fontMinus.addEventListener("click", function () { setFont(state.font - 1); });
     if (els.fontPlus) els.fontPlus.addEventListener("click", function () { setFont(state.font + 1); });
     if (els.focus) els.focus.addEventListener("click", toggleFocus);
@@ -2608,10 +2646,163 @@
     };
   }
 
-  var CANVAS_DEMOS = { attention: 1, embedding: 1, transformer: 1, convolution: 1, sampling: 1, hyper: 1 };
+  function demoHistory(root, api) {
+    var POINTS = [
+      {
+        date: "ca. 18.000 v. Chr.",
+        name: "Ishango-Knochen",
+        img: "../ishango.jpg",
+        alt: "Der Ishango-Knochen mit gruppierten Kerben",
+        cap: "Ishango-Knochen. Bild: Ben2, <a href=\"https://commons.wikimedia.org/wiki/File:Os_d%27Ishango_IRSNB.JPG\" rel=\"noopener\">CC BY-SA 3.0</a>.",
+        note: "Kerben speichern Zahlen außerhalb des Kopfes. Die Gruppen sind ein Hinweis, kein entschlüsselter Text."
+      },
+      {
+        date: "ca. 200–60 v. Chr.",
+        name: "Antikythera",
+        img: "../antikythera.jpg",
+        alt: "Fragmente des Antikythera-Mechanismus",
+        cap: "Fragmente des Antikythera-Mechanismus. Bild: Therese Clutario, <a href=\"https://commons.wikimedia.org/wiki/File:Fragments_of_the_Antikythera_Mechanism.jpg\" rel=\"noopener\">CC BY 2.0</a>.",
+        note: "Zahnräder bilden den Lauf von Himmelskörpern nach. Rechnen wird ein Mechanismus."
+      },
+      {
+        date: "1833–1843",
+        name: "Babbage & Ada",
+        img: "../babbage.jpg",
+        alt: "Babbages Analytical Engine",
+        cap: "Babbages Analytical Engine. Bild: John Cummings, <a href=\"https://commons.wikimedia.org/wiki/File:Babbages_Analytical_Engine,_1834-1871._(9660574685).jpg\" rel=\"noopener\">CC BY-SA 2.0</a>.",
+        note: "Die Analytical Engine trennt Rechenwerk und Anweisung. Ada Lovelace beschreibt, was ein Programm sein könnte."
+      }
+    ];
+    root.innerHTML = '<div class="ls-hist"><div class="ls-hist-track"></div><div class="ls-hist-card"><figure><img alt=""><figcaption></figcaption></figure><div class="ls-hist-meta"><span class="ls-hist-date"></span><b class="ls-hist-name"></b><p class="ls-hist-note"></p></div></div></div>';
+    var track = root.querySelector(".ls-hist-track");
+    var img = root.querySelector("img");
+    var cap = root.querySelector("figcaption");
+    var date = root.querySelector(".ls-hist-date");
+    var name = root.querySelector(".ls-hist-name");
+    var note = root.querySelector(".ls-hist-note");
+    track.innerHTML = POINTS.map(function (p, i) {
+      return '<button type="button" class="ls-hist-node" data-hist="' + i + '"><span>' + api.esc(p.date) + '</span><b>' + api.esc(p.name) + '</b></button>';
+    }).join("");
+    var nodes = track.querySelectorAll("[data-hist]");
+    var current = 0;
+    function render(i) {
+      current = Math.max(0, Math.min(POINTS.length - 1, i));
+      var p = POINTS[current];
+      nodes.forEach(function (b) { b.classList.toggle("is-on", parseInt(b.getAttribute("data-hist"), 10) === current); });
+      img.src = p.img;
+      img.alt = p.alt;
+      cap.innerHTML = p.cap;
+      date.textContent = p.date;
+      name.textContent = p.name;
+      note.textContent = p.note;
+    }
+    nodes.forEach(function (b) {
+      b.addEventListener("click", function () { api.goStep(parseInt(b.getAttribute("data-hist"), 10)); });
+    });
+    render(0);
+    return {
+      update: function (s) { render(s && typeof s.history === "number" ? s.history : 0); },
+      resize: function () {},
+      destroy: function () { root.innerHTML = ""; }
+    };
+  }
+
+  function demoActivation(root, api) {
+    var C = api.colors();
+    var st = { fn: "relu" };
+    root.innerHTML =
+      '<div class="ls-act">' +
+        '<div class="ls-act-plot"><canvas class="ls-canvas"></canvas></div>' +
+        '<div class="ls-act-chips">' +
+          '<button type="button" class="ls-chip is-on" data-fn="relu">ReLU</button>' +
+          '<button type="button" class="ls-chip" data-fn="tanh">tanh</button>' +
+          '<button type="button" class="ls-chip" data-fn="sigmoid">sigmoid</button>' +
+          '<button type="button" class="ls-chip" data-fn="gelu">GELU</button>' +
+        '</div>' +
+        '<div class="ls-act-readout"><span>Form <b data-fn-name>ReLU</b></span><span>Werte <b data-fn-range>0 … ∞</b></span><span><b data-fn-shape>harter Knick</b></span></div>' +
+      '</div>';
+    var canvas = root.querySelector("canvas");
+    var chips = root.querySelectorAll("[data-fn]");
+    var nameEl = root.querySelector("[data-fn-name]");
+    var rangeEl = root.querySelector("[data-fn-range]");
+    var shapeEl = root.querySelector("[data-fn-shape]");
+    function fn(name, x) {
+      if (name === "relu") return Math.max(0, x);
+      if (name === "tanh") return Math.tanh(x);
+      if (name === "sigmoid") return 1 / (1 + Math.exp(-x));
+      return 0.5 * x * (1 + Math.tanh(Math.sqrt(2 / Math.PI) * (x + 0.044715 * x * x * x)));
+    }
+    var META = {
+      relu: ["ReLU", "0 … ∞", "harter Knick"],
+      tanh: ["tanh", "−1 … 1", "weiche S-Kurve"],
+      sigmoid: ["sigmoid", "0 … 1", "weiche S-Kurve"],
+      gelu: ["GELU", "≈ −0,17 … ∞", "glatter Durchlass"]
+    };
+    function draw() {
+      var f = api.fit(canvas, canvas.parentNode);
+      var w = f.w, h = f.h, ctx = f.ctx;
+      var pad = 28;
+      var x0 = pad, x1 = w - pad, y0 = h - pad, y1 = pad;
+      var X0 = -4, X1 = 4, Y0 = -1.5, Y1 = 2.5;
+      function px(x) { return x0 + (x - X0) / (X1 - X0) * (x1 - x0); }
+      function py(y) { return y0 - (y - Y0) / (Y1 - Y0) * (y0 - y1); }
+      ctx.clearRect(0, 0, w, h);
+      ctx.strokeStyle = C.line;
+      ctx.lineWidth = 1;
+      for (var gx = -4; gx <= 4; gx++) {
+        ctx.beginPath(); ctx.moveTo(px(gx), y0); ctx.lineTo(px(gx), y1); ctx.stroke();
+      }
+      for (var gy = -1; gy <= 2; gy++) {
+        ctx.beginPath(); ctx.moveTo(x0, py(gy)); ctx.lineTo(x1, py(gy)); ctx.stroke();
+      }
+      ctx.strokeStyle = C.petrol;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(x0, py(0)); ctx.lineTo(x1, py(0)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px(0), y0); ctx.lineTo(px(0), y1); ctx.stroke();
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 10px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText("x", x1 - 8, py(0) + 14);
+      ctx.textAlign = "center";
+      ctx.fillText("f(x)", px(0) + 18, y1 + 6);
+      ctx.strokeStyle = C.green;
+      ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      for (var i = 0; i <= 180; i++) {
+        var x = X0 + (X1 - X0) * i / 180;
+        var y = Math.max(Y0, Math.min(Y1, fn(st.fn, x)));
+        if (i === 0) ctx.moveTo(px(x), py(y));
+        else ctx.lineTo(px(x), py(y));
+      }
+      ctx.stroke();
+      ctx.fillStyle = C.ink;
+      ctx.font = '700 12px "Barlow", sans-serif';
+      ctx.textAlign = "right";
+      ctx.fillText(META[st.fn][0], x1 - 4, y1 + 14);
+    }
+    function setFn(name) {
+      if (!META[name]) return;
+      st.fn = name;
+      chips.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-fn") === name); });
+      nameEl.textContent = META[name][0];
+      rangeEl.textContent = META[name][1];
+      shapeEl.textContent = META[name][2];
+      draw();
+    }
+    chips.forEach(function (b) {
+      b.addEventListener("click", function () { setFn(b.getAttribute("data-fn")); });
+    });
+    return {
+      update: function (s) { if (s && s.fn) setFn(s.fn); },
+      resize: draw,
+      destroy: function () { root.innerHTML = ""; }
+    };
+  }
+
+  var CANVAS_DEMOS = { attention: 1, embedding: 1, transformer: 1, convolution: 1, sampling: 1, hyper: 1, activation: 1 };
   var INTERNAL_MORPH = { embedding: 1, hyper: 1, spacemorph: 1 };
   var FLOW_ON_STEP = {};
-  var ELEMENT_ANIM = { attention: 1, transformer: 1, convolution: 1, sampling: 1 };
+  var ELEMENT_ANIM = { attention: 1, transformer: 1, convolution: 1, sampling: 1, activation: 1 };
   var DEMOS = {
     attention: demoAttention,
     embedding: demoEmbedding,
@@ -2619,6 +2810,8 @@
     convolution: demoConvolution,
     sampling: demoSampling,
     hyper: demoHyper,
+    activation: demoActivation,
+    history: demoHistory,
     spacemorph: demoSpaceMorph
   };
 
@@ -2777,6 +2970,8 @@
   DEMO_META.convolution = { tier: 2, label: "Convolution", staticLayer: true };
   DEMO_META.sampling = { tier: 1, label: "Sampling", staticLayer: false };
   DEMO_META.hyper = { tier: 2, label: "Hyperparameter", staticLayer: false };
+  DEMO_META.activation = { tier: 1, label: "Aktivierung", staticLayer: false };
+  DEMO_META.history = { tier: 1, label: "Geschichte", staticLayer: false };
   DEMO_META.spacemorph = { tier: 0, label: "Space Morph", staticLayer: false, iframe: true };
   function defineDemo(name, factory, meta) {
     DEMOS[name] = factory;
@@ -2805,6 +3000,11 @@
     cfg.tracks.forEach(function (t) { TRACK_LABEL[t.id] = t; });
     if (state.track !== "all" && !TRACK_LABEL[state.track]) state.track = "all";
     if (state.day >= cfg.days.length) state.day = 0;
+    if (cfg.mix && cfg.days.length) {
+      state.track = "all";
+      state.day = Math.floor(Math.random() * cfg.days.length);
+      state.step = 0;
+    }
     if (state.track !== "all") {
       var trackDays = cfg.days.filter(function (d) { return d.track === state.track; });
       if (trackDays.length && trackDays.indexOf(cfg.days[state.day]) === -1) {
@@ -2820,6 +3020,9 @@
   LS.setTrack = setTrack;
   LS.setDepth = setDepth;
   LS.go = go;
+  LS.goDay = goDay;
+  LS.shuffle = shuffle;
+  LS.days = function () { return cfg.days.map(function (d) { return { id: d.id, label: d.label, title: d.title, track: d.track, demo: d.demo, steps: d.steps.length }; }); };
   if (typeof module !== "undefined" && module.exports) module.exports = LS;
   if (typeof window !== "undefined") window.LearnSys = LS;
 })();

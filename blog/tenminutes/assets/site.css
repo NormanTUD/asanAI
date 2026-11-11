@@ -8370,9 +8370,13 @@ body.has-toc h4[id] { scroll-margin-top: 84px; }
 }
 .hl-echarts-host canvas { display: block; width: 100%; height: 100%; }
 .hl-controls {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
 	align-items: center;
-	gap: 14px;
-	flex-wrap: wrap;
+	gap: 10px 14px;
+}
+@media (max-width: 600px) {
+	.hl-controls { grid-template-columns: 1fr; }
 }
 .hl-choice {
 	color: var(--tm-muted);
