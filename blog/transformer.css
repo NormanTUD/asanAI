@@ -614,7 +614,8 @@ html.wide-math #contents .tm-hyper-body .md {
 #tda-live-betti,
 #tda-live-topo,
 #tda-live-weights {
-	max-width: 100%;
+	width: 100% !important;
+	max-width: 100% !important;
 	box-sizing: border-box;
 }
 

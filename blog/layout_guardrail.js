@@ -526,6 +526,7 @@
 	// / load paths are deliberately NOT gated.
 	var trainPoll = null;
 	function isSuspended() {
+		if (window.__layoutGuardrailHold === true) return true;
 		return typeof window.isTraining === 'boolean' && window.isTraining === true;
 	}
 	function startTrainPoll() {

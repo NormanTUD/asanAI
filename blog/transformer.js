@@ -1933,15 +1933,12 @@ async function _runTrainingSession(lr, epochs, optType, tokens, d_model, n_layer
 	// page keeps responding to hover/scroll/slider input while it runs. Longer
 	// contexts make the rebuild more expensive, so the interval scales with it.
 	const _ctx = getContextSize();
-	const VISUAL_INTERVAL_MS = Math.max(180, Math.min(1200, 120 + _ctx * 4));
-	let lastVisualSync = 0;
 
 	for (let i = 0; i < epochs; i++) {
 		if (!window.isTraining) { completedAll = false; break; }
 		const isLast = (i === epochs - 1);
-		const doVisualSync = isLast || (performance.now() - lastVisualSync >= VISUAL_INTERVAL_MS);
-		await runSingleEpoch(i, epochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime, doVisualSync);
-		if (doVisualSync) lastVisualSync = performance.now();
+		// Every epoch must reach the plots: the reader sees the weights move.
+		await runSingleEpoch(i, epochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime, true);
 		// Yield a frame even when the visual sync was skipped.
 		await tf.nextFrame();
 	}
@@ -2044,9 +2041,18 @@ async function syncTrainingState(weightVars) {
 	renderLossGraph();
 	window.currentWeights = await convert_tensors_to_weights(weightVars);
 	run_transformer_demo();
+	await awaitVisualQueue();
 	await tf.nextFrame();
 	calculate_vector_math();
 	tled_syncTableFromSpace();
+}
+
+async function awaitVisualQueue() {
+	if (!window.tmScheduleHeavyRender || typeof window.tmScheduleHeavyRender.pending !== "function") return;
+	const deadline = performance.now() + 1500;
+	while (performance.now() < deadline && window.tmScheduleHeavyRender.pending() > 0) {
+		await tf.nextFrame();
+	}
 }
 
 function convert_weights_to_tensors(weights) {

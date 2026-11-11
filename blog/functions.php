@@ -700,11 +700,13 @@ if(!server_php_self_ends_with_index_php()) {
 				}
 			} catch (e) {}
 		})();
+<?php if (pathinfo((string) ($_SERVER['SCRIPT_FILENAME'] ?? ''), PATHINFO_FILENAME) === 'transformer'): ?>
 		// Full-width math/demo mode: widen the content shell so plots,
 		// formulas and labs can use the page width, while prose keeps
 		// its readable measure. Pure UI preference, localStorage-backed.
 		function toggleWideMath() {
 			var html = document.documentElement;
+			window.__layoutGuardrailHold = true;
 			var on = !html.classList.contains('wide-math');
 			if (on) html.classList.add('wide-math');
 			else html.classList.remove('wide-math');
@@ -721,10 +723,12 @@ if(!server_php_self_ends_with_index_php()) {
 				}
 			}, 180);
 			setTimeout(function () {
+				window.__layoutGuardrailHold = false;
+				window.dispatchEvent(new Event('resize'));
 				if (typeof window.__layoutGuardrailCheck === 'function') {
 					window.__layoutGuardrailCheck();
 				}
-			}, 700);
+			}, 1400);
 		}
 		(function() {
 			try {
@@ -737,6 +741,7 @@ if(!server_php_self_ends_with_index_php()) {
 				if (btn) btn.setAttribute('aria-pressed', document.documentElement.classList.contains('wide-math') ? 'true' : 'false');
 			});
 		})();
+<?php endif; ?>
 		// Keyboard shortcut: `r` toggles reader mode (ignored while
 		// typing in inputs / textareas).
 		document.addEventListener('keydown', function (ev) {
@@ -1020,6 +1025,7 @@ function render_reader_toggle(): void {
  * formula grids, tables and labs; prose stays at its reading measure.
  */
 function render_wide_toggle(): void {
+	if (pathinfo((string) ($_SERVER['SCRIPT_FILENAME'] ?? ''), PATHINFO_FILENAME) !== 'transformer') return;
 	echo '<button id="wide-toggle" type="button" aria-label="Toggle full-width math and demos" aria-pressed="false" title="Full-width math and demos" onclick="toggleWideMath()">';
 	echo '<span class="ti-wide" aria-hidden="true">';
 	echo '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';

@@ -140,14 +140,17 @@ def run_capture(driver: webdriver.Chrome, setup_script: str, capture_script: str
     driver.execute_script("document.querySelector('.train-btn').click();")
 
     hashes = {}
-    for epoch in (50, 100):
+    for epoch in (50, 51, 100):
         if not wait_until(driver, f"return (window.lossHistory||[]).length >= {epoch};", 180):
             check(False, label + f" reaches epoch {epoch}")
             return
-        time.sleep(1.4)
+        time.sleep(0.4)
         hashes[epoch] = capture_plot(driver, capture_script)
         check(bool(hashes[epoch]), label + f" plot has data at epoch {epoch}")
 
+    check(hashes[50] != hashes[51],
+          label + " plot changes on the very next epoch (50 -> 51)",
+          hashes[50][:12] + " / " + hashes[51][:12])
     check(hashes[50] != hashes[100],
           label + " plot changes between epochs 50 and 100",
           hashes[50][:12] + " / " + hashes[100][:12])
