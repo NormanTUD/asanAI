@@ -210,6 +210,53 @@ def open_migration_plot(driver: webdriver.Chrome) -> bool:
     )
 
 
+def run_start_label_case(driver: webdriver.Chrome, base: str) -> None:
+    load_page(driver, base)
+    driver.execute_script(
+        "if (window.ensureFullTransformerVisualization) window.ensureFullTransformerVisualization(true);"
+        "if (window.run_transformer_demo) window.run_transformer_demo();"
+    )
+    time.sleep(0.5)
+    scroll_to(driver, "transformer-pe-shift-plot")
+    check(wait_until(driver,
+                     "const el=document.getElementById('transformer-pe-shift-plot'); return !!(el && el.data && el.data.length);",
+                     60),
+          "positional shift plot has data")
+    labels = driver.execute_script(
+        """
+        const el = document.getElementById('transformer-pe-shift-plot');
+        const out = [];
+        ((el && el.data) || []).forEach(function (trace) {
+            if (trace && trace.mode && trace.mode.indexOf('text') !== -1 && Array.isArray(trace.text)) {
+                trace.text.forEach(function (value) { if (value) out.push(value); });
+            }
+        });
+        return out;
+        """
+    )
+    check(bool(labels), "positional-shift start nodes carry visible token labels", str(labels[:5]))
+
+    scroll_to(driver, "transformer-trajectory-full-path-wrapper")
+    check(wait_until(driver,
+                     "const el=document.getElementById('transformer-trajectory-full-path'); return !!(el && el.data && el.data.length);",
+                     60),
+          "trajectory plot has data")
+    trajectory_labels = driver.execute_script(
+        """
+        const el = document.getElementById('transformer-trajectory-full-path');
+        const out = [];
+        ((el && el.data) || []).forEach(function (trace) {
+            if (trace && trace.mode === 'text' && Array.isArray(trace.text)) {
+                trace.text.forEach(function (value) { if (value) out.push(value); });
+            }
+        });
+        return out;
+        """
+    )
+    check(bool(trajectory_labels), "trajectory start nodes carry visible token labels",
+          str(trajectory_labels[:5]))
+
+
 def run_plotly_3d_case(driver: webdriver.Chrome, base: str) -> None:
     load_page(driver, base)
     scroll_to(driver, EMBEDDING_ID)
@@ -331,6 +378,7 @@ def main() -> int:
     try:
         time.sleep(1)
         driver = make_driver()
+        run_start_label_case(driver, base)
         run_plotly_3d_case(driver, base)
         run_plotly_2d_case(driver, base)
         run_echarts_case(driver, base)

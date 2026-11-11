@@ -6187,11 +6187,11 @@ function _traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dat
 	const pIdx = isStart ? 0 : dataPoints.length - 1;
 	const logitWord = _traj_get_logit_word((dataPoints[pIdx].rawData || dataPoints[pIdx].data)[tIdx], embSnap, snapVocab);
 	const label = isStart ? 'Start' : 'End';
-	return {
+	const marker = {
 		type: 'scatter',
 		x: [isStart ? x[0] : x[x.length - 1]],
 		y: [isStart ? y[0] : y[y.length - 1]],
-		mode: 'markers',
+		mode: isStart ? 'markers+text' : 'markers',
 		marker: {
 			size: isStart ? 10 : 14,
 			symbol: isStart ? 0 : 17,
@@ -6201,9 +6201,15 @@ function _traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dat
 		legendgroup: tokenLabel,
 		showlegend: false,
 		hoverinfo: 'text',
-		hovertemplate: '%{text}<extra></extra>',
-		text: [`Token: ${labels[tIdx]} — ${label}<br>Stage: ${dataPoints[pIdx].name}<br>Nearest logit: <b>${logitWord}</b>`]
+		hovertemplate: '%{hovertext}<extra></extra>',
+		hovertext: [`Token: ${labels[tIdx]} — ${label}<br>Stage: ${dataPoints[pIdx].name}<br>Nearest logit: <b>${logitWord}</b>`]
 	};
+	if (isStart) {
+		marker.text = [labels[tIdx]];
+		marker.textposition = 'bottom center';
+		marker.textfont = { size: 10, color: tColor };
+	}
+	return marker;
 }
 
 // ─── 9. Build stage-label annotations (only for the first token) ───
@@ -6483,6 +6489,14 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 			type: 'scatter3d', mode: 'markers', x: xs, y: ys, z: zs,
 			marker: { size: 5, color: color },
 			hovertext: hover, hovertemplate: '%{hovertext}<extra></extra>', name: labels[tIdx], showlegend: false
+		});
+		/* The first stage is the raw token embedding, before any position
+		   vector is added. Keep its token label visible, not only on hover. */
+		traces.push({
+			type: 'scatter3d', mode: 'text', x: [xs[0]], y: [ys[0]], z: [zs[0]],
+			text: [labels[tIdx]], textposition: 'top center',
+			textfont: { color: color, size: 11 },
+			hoverinfo: 'skip', showlegend: false
 		});
 		const cones = [];
 		for (let pIdx = 1; pIdx < points.length; pIdx++) {
@@ -6890,8 +6904,10 @@ function _shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, 
 			hovertext: arc2.map(() => tip), hovertemplate: '%{hovertext}<extra></extra>', showlegend: false
 		});
 		traces.push({
-			type: 'scatter', mode: 'markers', x: [from[0]], y: [from[1] || 0],
+			type: 'scatter', mode: 'markers+text', x: [from[0]], y: [from[1] || 0],
 			marker: { size: 7, color: color, line: { color: themeColor('#1e293b'), width: 1 } },
+			text: [displayToken(token)], textposition: 'bottom center',
+			textfont: { size: 10, color: themeColor('#334155') },
 			hovertext: [tip], hovertemplate: '%{hovertext}<extra></extra>', showlegend: false
 		});
 	});
@@ -6922,7 +6938,7 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 		const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
 		const cone = window.tmPlotly.coneTrace([{ x: last3[0], y: last3[1] || 0, z: last3[2] || 0, u: dx / len, v: dy / len, w: dz / len, tip: tip }], color, token, 0.044);
 		if (cone) traces.push(cone);
-		markerPoints.push({ x: from[0], y: from[1] || 0, z: from[2] || 0, size: 6, color: color, symbol: 'circle', hover: tip });
+		markerPoints.push({ x: from[0], y: from[1] || 0, z: from[2] || 0, size: 6, color: color, symbol: 'circle', hover: tip, label: displayToken(token) });
 		markerPoints.push({ x: to[0], y: to[1] || 0, z: to[2] || 0, size: 8, color: color, symbol: 'diamond', hover: tip });
 	});
 	if (markerPoints.length) traces.push(_tmMarkerTrace(markerPoints));
@@ -6935,14 +6951,18 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 }
 
 function _tmMarkerTrace(points, name) {
+	const hasLabels = points.some(p => p.label);
 	return {
-		type: 'scatter3d', mode: 'markers',
+		type: 'scatter3d', mode: hasLabels ? 'markers+text' : 'markers',
 		x: points.map(p => p.x), y: points.map(p => p.y), z: points.map(p => p.z),
 		marker: {
 			size: points.map(p => p.size),
 			color: points.map(p => p.color),
 			symbol: points.map(p => p.symbol)
 		},
+		text: hasLabels ? points.map(p => p.label || '') : undefined,
+		textposition: hasLabels ? 'bottom center' : undefined,
+		textfont: hasLabels ? { size: 10, color: themeColor('#334155') } : undefined,
 		hovertext: points.map(p => p.hover || ''),
 		hovertemplate: '%{hovertext}<extra></extra>',
 		showlegend: false,
