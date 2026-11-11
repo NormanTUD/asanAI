@@ -112,21 +112,89 @@ window.__tmFullVizObserver = null;
 /* Cooperative queue for heavy WebGL/Plotly renders.
    Each job gets its own frame so the browser can paint placeholders and
    keep the page responsive between plots instead of doing one long burst. */
-/* Keep the user's 3D camera while training redraws the plots. Plotly.react
-   replaces the scene unless the current resolved camera is fed back into the
-   new layout. This wrapper does that for every 3D chart on the page. */
+/* Keep every 3D camera across Plotly redraws, purges and theme/metric
+   changes. The store is updated continuously while the reader drags, so a
+   redraw cannot snap the view back to the default. */
 (function () {
+	var cameraStore = Object.create(null);
+	var dragTracker = null;
+	var deferredCatchUp = null;
+
+	function resolveEl(el) {
+		if (el && typeof el === "string") return document.getElementById(el);
+		return el || null;
+	}
+
+	function saveCamera(el) {
+		el = resolveEl(el);
+		if (!el || !el.id) return;
+		var scene = el._fullLayout && el._fullLayout.scene;
+		var camera = scene && scene.camera;
+		if ((!camera || !camera.eye) && scene && scene._scene && scene._scene.camera) {
+			camera = scene._scene.camera;
+		}
+		if (camera && camera.eye) cameraStore[el.id] = JSON.parse(JSON.stringify(camera));
+	}
+
+	function applyCamera(el, layout) {
+		if (!layout || !layout.scene || layout.__tmSkipCameraRestore) return;
+		el = resolveEl(el);
+		var id = el && el.id;
+		if (id && cameraStore[id]) {
+			layout.scene.camera = JSON.parse(JSON.stringify(cameraStore[id]));
+		} else if (el && el._fullLayout && el._fullLayout.scene && el._fullLayout.scene.camera) {
+			layout.scene.camera = JSON.parse(JSON.stringify(el._fullLayout.scene.camera));
+		}
+		if (id && !layout.__tmAllowUirevisionChange) {
+			layout.uirevision = "tm-camera-" + id;
+		}
+	}
+
+	function trackCamera(el) {
+		el = resolveEl(el);
+		if (!el) return;
+		dragTracker = el;
+		var tick = function () {
+			if (!dragTracker || dragTracker !== el) return;
+			saveCamera(el);
+			requestAnimationFrame(tick);
+		};
+		requestAnimationFrame(tick);
+	}
+
+	function stopTracking() {
+		if (dragTracker) saveCamera(dragTracker);
+		dragTracker = null;
+	}
+
 	function installCameraGuard() {
 		if (!window.Plotly || window.__tmPlotlyCameraGuard) return;
 		window.__tmPlotlyCameraGuard = true;
 		var originalReact = Plotly.react;
+		var originalNewPlot = Plotly.newPlot;
+		var originalPurge = Plotly.purge;
+
+		Plotly.purge = function (el) {
+			saveCamera(el);
+			return originalPurge.apply(this, arguments);
+		};
 		Plotly.react = function (el, traces, layout, config) {
-			if (layout && layout.scene && !layout.__tmSkipCameraRestore &&
-				el && el._fullLayout && el._fullLayout.scene && el._fullLayout.scene.camera) {
-				layout.scene.camera = JSON.parse(JSON.stringify(el._fullLayout.scene.camera));
-			}
+			applyCamera(el, layout);
 			return originalReact.apply(this, arguments);
 		};
+		if (typeof originalNewPlot === "function") {
+			Plotly.newPlot = function (el, data, layout, config) {
+				applyCamera(el, layout);
+				return originalNewPlot.apply(this, arguments);
+			};
+		}
+
+		document.addEventListener("plotly_relayout", function (ev) {
+			if (ev && ev.target && ev.target.id) saveCamera(ev.target);
+		}, true);
+		document.addEventListener("plotly_relayouting", function (ev) {
+			if (ev && ev.target && ev.target.id) saveCamera(ev.target);
+		}, true);
 
 		if (!window.__tmPlotInteractionGuard) {
 			window.__tmPlotInteractionGuard = true;
@@ -136,16 +204,27 @@ window.__tmFullVizObserver = null;
 				if (ev.pointerType === "mouse" && ev.button !== 0) return;
 				var target = ev.target;
 				if (!target || !target.closest) return;
-				if (!target.closest(".js-plotly-plot")) return;
+				var plot = target.closest(".js-plotly-plot");
+				if (!plot) return;
 				plotDragging = true;
 				window.__tmPlotDragging = true;
+				window.__tmDraggedPlot = plot;
+				trackCamera(plot);
 			};
 			var onPlotPointerUp = function () {
 				if (!plotDragging) return;
 				plotDragging = false;
 				window.__tmPlotDragging = false;
-				window.__tmVisualDeferred = false;
-				window.__tmFeatureDeferred = false;
+				window.__tmDraggedPlot = null;
+				stopTracking();
+				if (window.__tmVisualDeferred || window.__tmFeatureDeferred) {
+					window.__tmVisualDeferred = false;
+					window.__tmFeatureDeferred = false;
+					clearTimeout(deferredCatchUp);
+					deferredCatchUp = setTimeout(function () {
+						if (typeof window.run_transformer_demo === "function") window.run_transformer_demo();
+					}, 90);
+				}
 			};
 			document.addEventListener("pointerdown", onPlotPointerDown, true);
 			window.addEventListener("pointerup", onPlotPointerUp, true);
@@ -1688,6 +1767,7 @@ function render_positional_waves(d_model, tokens) {
 }
 
 function _execute_positional_waves_render(d_model, tokens) {
+	if (window.__tmPlotDragging) { window.__tmVisualDeferred = true; return; }
 	const containerId = 'transformer-pe-wave-plot';
 	const container = document.getElementById(containerId);
 	if (!container) return;
@@ -3658,6 +3738,7 @@ function _embedding_render_highdim_pca(container, tokens, dimensions, highlightP
 }
 
 function _execute_embedding_render(dimensions, highlightPos = null, steps = []) {
+	if (window.__tmPlotDragging) { window.__tmVisualDeferred = true; return; }
 	const container = document.getElementById('transformer-plotly-space');
 	if (!container) return;
 
@@ -4765,6 +4846,7 @@ function _renderMigrationError(plotDiv) {
 }
 
 function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
+	if (window.__tmPlotDragging) { window.__tmVisualDeferred = true; return; }
 	document.querySelectorAll('.weight-grid-viz').forEach(el => el.remove());
 	const plotDiv = document.getElementById(id);
 	if (!plotDiv) return;
@@ -6361,6 +6443,7 @@ function _traj_ec3d_option(series, legendData) {
 
 // ─── Main function: now a clean orchestrator ───
 function tlab_render_trajectory_plot(d_model) {
+	if (window.__tmPlotDragging) { window.__tmVisualDeferred = true; return; }
 	const mainContainer = document.getElementById('transformer-migration-plots-container');
 	if (!mainContainer || !window.tlab_trajectory_collector) return;
 
@@ -6569,6 +6652,7 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 }
 
 function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
+	if (window.__tmPlotDragging) { window.__tmVisualDeferred = true; return; }
 	const container = document.getElementById('transformer-pe-shift-plot');
 	if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
 		console.error("Plotting requires an array of string tokens.");
@@ -8603,6 +8687,7 @@ function renderLayerAttention(layerIdx) {
 }
 
 function renderLayerMigrationPlot(layerIdx) {
+	if (window.__tmPlotDragging) { window.__tmVisualDeferred = true; return; }
 	const migrationId = `migration-layer-${layerIdx + 1}`;
 	const migrationData = transformerLabVisMigrationDataRegistry.get(migrationId);
 	if (!migrationData) return;

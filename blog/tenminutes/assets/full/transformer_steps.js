@@ -3520,6 +3520,7 @@
 	}
 
 	function renderLayerFeaturePlots(layerIdx) {
+		if (window.__tmPlotDragging) { window.__tmFeatureDeferred = true; return; }
 		var data = featureData(layerIdx);
 		var prefix = "unified-layer-" + layerIdx;
 		var arrowsEl = document.getElementById(prefix + "-feature-arrows");

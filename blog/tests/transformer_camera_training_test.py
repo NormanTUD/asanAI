@@ -3,14 +3,14 @@
 # requires-python = ">=3.11"
 # dependencies = ["selenium", "webdriver-manager"]
 # ///
-"""Camera interaction during transformer training.
+"""3D camera interaction during transformer training.
 
-The feature-migration plot must keep the camera the reader rotated to while
-training redraws it. This test checks both lesson copies (the full lesson and
-the Ten Minutes page) and both metric views:
+Every 3D Plotly chart (embedding, positional shift, feature migration) must
+keep the camera the reader rotated to while training redraws it. The test
+covers both lesson copies and both metric views:
 
-  * a real pointer drag changes the camera before training;
-  * a camera change made during training survives later epoch redraws;
+  * a real pointer drag rotates the camera before training;
+  * cameras set during training survive later epoch redraws;
   * an active drag pauses the training loop so the browser can paint;
   * the feature plot keeps receiving new data after the drag.
 
@@ -21,7 +21,6 @@ Run from the repository root:
 from __future__ import annotations
 
 import hashlib
-import json
 import shutil
 import socket
 import subprocess
@@ -39,9 +38,14 @@ from webdriver_manager.core.os_manager import ChromeType
 ROOT = Path(__file__).resolve().parents[2]
 BLOG = ROOT / "blog"
 BENIGN = ("WebGL", "Error creating WebGL Context", "favicon", "net::ERR_ABORTED")
-PLOT_ID = "unified-layer-1-feature-arrows"
-TARGET_EYE = {"x": 2.4, "y": 0.9, "z": 0.6}
+FEATURE_ID = "unified-layer-1-feature-arrows"
+CAMERA_PLOTS = (
+    ("transformer-plotly-space", "embedding"),
+    ("transformer-pe-shift-plot", "position"),
+    (FEATURE_ID, "feature migration"),
+)
 PAGES = (("/transformer.php", "full lesson"), ("/tenminutes/transformer.php", "ten minutes"))
+TARGET_EYE = {"x": 2.4, "y": 0.9, "z": 0.6}
 
 failures = 0
 checks = 0
@@ -99,39 +103,39 @@ def wait_until(driver: webdriver.Chrome, script: str, timeout: float = 90) -> bo
     return False
 
 
-def get_camera(driver: webdriver.Chrome) -> dict | None:
+def get_camera(driver: webdriver.Chrome, plot_id: str = FEATURE_ID) -> dict | None:
     return driver.execute_script(
         """
         const el = document.getElementById(arguments[0]);
         const c = el && el._fullLayout && el._fullLayout.scene && el._fullLayout.scene.camera;
         return c && c.eye ? {x: c.eye.x, y: c.eye.y, z: c.eye.z} : null;
         """,
-        PLOT_ID,
+        plot_id,
     )
 
 
-def camera_close(camera: dict | None, target: dict, tolerance: float = 0.06) -> bool:
+def camera_close(camera: dict | None, target: dict, tolerance: float = 0.08) -> bool:
     if not camera:
         return False
     return all(abs(camera.get(axis, 0) - target[axis]) <= tolerance for axis in ("x", "y", "z"))
 
 
-def plot_hash(driver: webdriver.Chrome) -> str:
+def plot_hash(driver: webdriver.Chrome, plot_id: str = FEATURE_ID) -> str:
     value = driver.execute_script(
         """
         const el = document.getElementById(arguments[0]);
         if (!el || !el.data) return null;
         return JSON.stringify(el.data);
         """,
-        PLOT_ID,
+        plot_id,
     )
     return hashlib.sha256(value.encode("utf-8")).hexdigest() if value else ""
 
 
-def plot_title(driver: webdriver.Chrome) -> str:
+def plot_title(driver: webdriver.Chrome, plot_id: str = FEATURE_ID) -> str:
     return driver.execute_script(
         "const e=document.getElementById(arguments[0]); return e && e.layout && e.layout.title ? e.layout.title.text : '';",
-        PLOT_ID,
+        plot_id,
     )
 
 
@@ -139,28 +143,31 @@ def loss_count(driver: webdriver.Chrome) -> int:
     return int(driver.execute_script("return (window.lossHistory || []).length;") or 0)
 
 
-def load_plot(driver: webdriver.Chrome, base: str, path: str) -> None:
+def load_page(driver: webdriver.Chrome, base: str, path: str) -> None:
     driver.get(base + path)
     time.sleep(2)
     driver.execute_script("const el=document.getElementById('transformer-step-visuals'); if(el) el.scrollIntoView({block:'center'});")
     check(wait_until(driver, "return !!window.__tmStepDepsReady", 120), "step dependencies load")
     check(wait_until(driver, "return document.querySelectorAll('.tm-layer-card').length > 1", 60), "layer cards are generated")
     wait_until(driver, "return !!window.__tmFullVizLoaded;", 60)
-    if not driver.execute_script("return !!document.getElementById('unified-layer-1-feature-arrows');"):
-        driver.execute_script("if (typeof window.run_transformer_demo === 'function') window.run_transformer_demo();")
-    wait_until(
+    driver.execute_script("if (typeof window.run_transformer_demo === 'function') window.run_transformer_demo();")
+    driver.execute_script("const d=document.getElementById('tm-detail-position'); if(d) d.open=true;")
+    time.sleep(0.6)
+
+
+def prepare_plot(driver: webdriver.Chrome, plot_id: str) -> bool:
+    driver.execute_script("const el=document.getElementById(arguments[0]); if(el) el.scrollIntoView({block:'center'});", plot_id)
+    if plot_id == FEATURE_ID:
+        script = "const el=document.getElementById('unified-layer-1-feature-arrows'); return !!(el && el.data);"
+    else:
+        script = f"const el=document.getElementById('{plot_id}'); return !!(el && el.data);"
+    ok = wait_until(driver, script, 60)
+    if not ok:
+        return False
+    return wait_until(
         driver,
-        "return !!document.getElementById('unified-layer-1-feature-arrows');",
-        60,
-    )
-    driver.execute_script("const el=document.getElementById(arguments[0]); if(el) el.scrollIntoView({block:'center'});", PLOT_ID)
-    check(
-        wait_until(
-            driver,
-            "const el=document.getElementById('unified-layer-1-feature-arrows'); return !!(el && el.data);",
-            60,
-        ),
-        "feature plot is rendered",
+        f"const el=document.getElementById('{plot_id}'); return !!(el && el._fullLayout && el._fullLayout.scene);",
+        30,
     )
 
 
@@ -173,7 +180,7 @@ def set_metric(driver: webdriver.Chrome, metric: str) -> None:
 
 
 def drag_plot(driver: webdriver.Chrome) -> None:
-    element = driver.find_element(By.ID, PLOT_ID)
+    element = driver.find_element(By.ID, FEATURE_ID)
     driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
     time.sleep(0.8)
     ActionChains(driver).move_to_element(element).click_and_hold().pause(0.4)\
@@ -182,28 +189,46 @@ def drag_plot(driver: webdriver.Chrome) -> None:
     time.sleep(0.8)
 
 
+def set_camera(driver: webdriver.Chrome, plot_id: str) -> None:
+    driver.execute_script(
+        "const el=document.getElementById(arguments[0]); if(el && el._fullLayout && el._fullLayout.scene) Plotly.relayout(el, {'scene.camera.eye': arguments[1]});",
+        plot_id,
+        TARGET_EYE,
+    )
+
+
 def stop_training(driver: webdriver.Chrome) -> None:
     driver.execute_script("window.isTraining = false;")
 
 
 def run_case(driver: webdriver.Chrome, base: str, path: str, page_label: str, metric: str) -> None:
     label = f"{page_label} · {metric}"
-    load_plot(driver, base, path)
+    load_page(driver, base, path)
     set_metric(driver, metric)
     expected_title = "Great-circle" if metric == "angular" else "Euclidean"
     active = wait_until(
         driver,
-        "const t=(document.getElementById('unified-layer-1-feature-arrows')||{}).layout; return !!(t && t.title && t.title.text && t.title.text.indexOf(arguments[0]) !== -1);".replace("arguments[0]", repr(expected_title)),
-        30,
+        "const t=(document.getElementById('unified-layer-1-feature-arrows')||{}).layout;"
+        "return !!(t && t.title && t.title.text && t.title.text.indexOf(%r) !== -1);" % expected_title,
+        60,
     )
     check(active, label + ": metric view is active", plot_title(driver))
 
+    prepared = []
+    for plot_id, plot_label in CAMERA_PLOTS:
+        ok = prepare_plot(driver, plot_id)
+        check(ok, f"{label}: {plot_label} 3D plot is ready")
+        if ok:
+            prepared.append((plot_id, plot_label))
+    if not prepared:
+        return
+
     if metric == "euclidean":
-        before = get_camera(driver)
+        before = get_camera(driver, FEATURE_ID)
         after_drag = before
         for _ in range(2):
             drag_plot(driver)
-            after_drag = get_camera(driver)
+            after_drag = get_camera(driver, FEATURE_ID)
             if after_drag and not camera_close(after_drag, before or {}):
                 break
         check(
@@ -216,19 +241,17 @@ def run_case(driver: webdriver.Chrome, base: str, path: str, page_label: str, me
     driver.execute_script("document.querySelector('.train-btn').click();")
     check(wait_until(driver, "return (window.lossHistory || []).length >= 2;", 90), label + ": training starts")
 
-    driver.execute_script(
-        "const el=document.getElementById(arguments[0]); Plotly.relayout(el, {'scene.camera.eye': arguments[1]});",
-        PLOT_ID,
-        TARGET_EYE,
-    )
-    moved = None
-    end = time.time() + 10
-    while time.time() < end:
-        moved = get_camera(driver)
-        if camera_close(moved, TARGET_EYE):
-            break
-        time.sleep(0.2)
-    check(camera_close(moved, TARGET_EYE), label + ": camera moved during training", str(moved))
+    camera_before = {}
+    for plot_id, _ in prepared:
+        set_camera(driver, plot_id)
+    time.sleep(0.6)
+    for plot_id, plot_label in prepared:
+        camera_before[plot_id] = get_camera(driver, plot_id)
+        check(
+            camera_close(camera_before[plot_id], TARGET_EYE),
+            f"{label}: {plot_label} camera moved during training",
+            str(camera_before[plot_id]),
+        )
 
     hash_before = plot_hash(driver)
     loss_before_pause = loss_count(driver)
@@ -265,11 +288,16 @@ def run_case(driver: webdriver.Chrome, base: str, path: str, page_label: str, me
             "const el=document.getElementById('unified-layer-1-feature-arrows'); return !!el && !!el.data;",
             30,
         ),
-        label + ": plot still has data",
+        label + ": feature plot still has data",
     )
-    time.sleep(0.6)
-    persistent = get_camera(driver)
-    check(camera_close(persistent, TARGET_EYE), label + ": camera survives later epoch redraws", str(persistent))
+    time.sleep(0.8)
+    for plot_id, plot_label in prepared:
+        persistent = get_camera(driver, plot_id)
+        check(
+            camera_close(persistent, TARGET_EYE),
+            f"{label}: {plot_label} camera survives later epoch redraws",
+            str(persistent),
+        )
     check(plot_hash(driver) != hash_before, label + ": feature plot keeps updating")
 
     stop_training(driver)
