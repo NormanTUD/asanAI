@@ -199,6 +199,10 @@
   }
 
   function buildUI() {
+    var posHtml = "";
+    for (var pi = 0; pi <= 9; pi++) {
+      posHtml += '<button type="button" data-pos="' + pi + '" title="Position ' + pi + ' von 9" aria-label="Position ' + pi + ' von 9">' + pi + '</button>';
+    }
     root.innerHTML =
       '<div class="ls-app' + (cfg.mix ? ' ls-app--mix' : '') + '">' +
         '<header class="ls-top">' +
@@ -244,7 +248,8 @@
           '</section>' +
         '</main>' +
         '<div class="ls-tip" id="ls-tip" role="tooltip" hidden></div>' +
-        (cfg.mix ? '<div class="ls-mix" id="ls-mix"><span class="ls-mix-label" id="ls-mix-label"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny" id="ls-mix-shuffle">Mix</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-depth">Tiefe</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-all">Alles</button></div>' : '') +
+        (cfg.mix ? '<div class="ls-mix" id="ls-mix"><div class="ls-mix-pos" id="ls-mix-pos" aria-label="Position 0 bis 9">' + posHtml + '</div><div class="ls-mix-row"><span class="ls-mix-label" id="ls-mix-label"></span><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-prev" title="Vorheriger Schritt" aria-label="Vorheriger Schritt">←</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-next" title="Nächster Schritt" aria-label="Nächster Schritt">→</button><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny" id="ls-mix-shuffle" title="Anderer Tag (R)" aria-label="Anderer Tag">Mix</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-depth" title="Tiefe öffnen (D)" aria-label="Tiefe öffnen">Tiefe</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-all" title="Alles öffnen" aria-label="Alles öffnen">Alles</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-mix-help" aria-expanded="false" title="Tastatur (?)" aria-label="Tastaturhilfe">?</button></div></div>' : '') +
+        '<div class="ls-help" id="ls-help" hidden><b>Tastatur und Position</b><div class="ls-help-grid"><span><kbd>←</kbd><kbd>→</kbd></span><span>Schritt zurück / vor</span><span><kbd>Shift</kbd> + <kbd>←</kbd><kbd>→</kbd></span><span>Tag zurück / vor</span><span><kbd>0</kbd> … <kbd>9</kbd></span><span>Anfang, Mitte, Ende</span><span><kbd>Home</kbd> / <kbd>End</kbd></span><span>Erster / letzter Tag</span><span><kbd>R</kbd></span><span>Anderer Mix</span><span><kbd>D</kbd></span><span>Tiefe öffnen</span><span><kbd>F</kbd></span><span>Demo groß</span><span><kbd>+</kbd> / <kbd>−</kbd></span><span>Text größer / kleiner</span><span><kbd>?</kbd> / <kbd>Esc</kbd></span><span>Hilfe öffnen / schließen</span></div></div>' +
       '</div>';
 
     els.app = root.querySelector(".ls-app");
@@ -257,9 +262,14 @@
     els.nowTitle = root.querySelector("#ls-now-title");
     els.stepCount = root.querySelector("#ls-step-count");
     els.mixLabel = root.querySelector("#ls-mix-label");
+    els.mixPos = root.querySelectorAll("#ls-mix-pos [data-pos]");
+    els.mixPrev = root.querySelector("#ls-mix-prev");
+    els.mixNext = root.querySelector("#ls-mix-next");
     els.mixShuffle = root.querySelector("#ls-mix-shuffle");
     els.mixDepth = root.querySelector("#ls-mix-depth");
     els.mixAll = root.querySelector("#ls-mix-all");
+    els.mixHelp = root.querySelector("#ls-mix-help");
+    els.help = root.querySelector("#ls-help");
     els.fontOut = root.querySelector("#ls-font-out");
     els.fontMinus = root.querySelector("#ls-font-minus");
     els.fontPlus = root.querySelector("#ls-font-plus");
@@ -463,7 +473,8 @@
     var s = activeStep();
     if (els.nowKicker) els.nowKicker.textContent = d.label + " · " + (TRACK_LABEL[d.track] ? TRACK_LABEL[d.track].label : d.track);
     if (els.nowTitle) els.nowTitle.textContent = d.title;
-    if (els.mixLabel) els.mixLabel.textContent = d.label + " · " + d.title;
+    if (els.mixLabel) els.mixLabel.textContent = d.label + " · " + (state.step + 1) + "/" + d.steps.length + " · " + d.title;
+    updatePosRail();
     els.kicker.textContent = s.kicker || d.kicker;
     els.title.textContent = s.title;
     els.body.innerHTML = proseBlock(s.body || "");
@@ -775,6 +786,31 @@
     }
     go(next, 0);
   }
+  function prevDay() { if (state.day > 0) go(state.day - 1, 0); }
+  function nextDay() { if (state.day < cfg.days.length - 1) go(state.day + 1, 0); }
+  function goPosition(n) {
+    if (!cfg.days.length) return;
+    var last = cfg.days.length - 1;
+    var day = Math.round(clamp(n, 0, 9) / 9 * last);
+    go(day, 0);
+  }
+  function updatePosRail() {
+    if (!els.mixPos || !els.mixPos.length) return;
+    var last = cfg.days.length - 1;
+    var pos = last > 0 ? Math.round(state.day / last * 9) : 0;
+    els.mixPos.forEach(function (b) {
+      var on = parseInt(b.getAttribute("data-pos"), 10) === pos;
+      b.classList.toggle("is-on", on);
+      if (on) b.setAttribute("aria-current", "step");
+      else b.removeAttribute("aria-current");
+    });
+  }
+  function toggleHelp(force) {
+    if (!els.help) return;
+    var show = typeof force === "boolean" ? force : els.help.hidden;
+    els.help.hidden = !show;
+    if (els.mixHelp) els.mixHelp.setAttribute("aria-expanded", show ? "true" : "false");
+  }
   function goDay(id) {
     var i = cfg.days.map(function (d) { return d.id; }).indexOf(id);
     if (i >= 0) go(i, 0);
@@ -935,8 +971,14 @@
     if (els.openDepth) els.openDepth.addEventListener("click", openDepth);
     els.depthBtn.addEventListener("click", openDepth);
     if (els.mixShuffle) els.mixShuffle.addEventListener("click", function () { shuffle(); });
+    if (els.mixPrev) els.mixPrev.addEventListener("click", prev);
+    if (els.mixNext) els.mixNext.addEventListener("click", next);
     if (els.mixDepth) els.mixDepth.addEventListener("click", openDepth);
     if (els.mixAll) els.mixAll.addEventListener("click", function () { state.track = "all"; state.depth = "deep"; renderAll(); openAllDepth(); });
+    if (els.mixHelp) els.mixHelp.addEventListener("click", function () { toggleHelp(); });
+    els.mixPos.forEach(function (b) {
+      b.addEventListener("click", function () { goPosition(parseInt(b.getAttribute("data-pos"), 10)); });
+    });
     if (els.fontMinus) els.fontMinus.addEventListener("click", function () { setFont(state.font - 1); });
     if (els.fontPlus) els.fontPlus.addEventListener("click", function () { setFont(state.font + 1); });
     if (els.focus) els.focus.addEventListener("click", toggleFocus);
@@ -977,16 +1019,24 @@
       });
     });
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") { hideTip(); return; }
+      if (e.key === "Escape") { hideTip(); toggleHelp(false); return; }
       if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
+      if (e.key === "?" || e.key === "h" || e.key === "H") { e.preventDefault(); toggleHelp(); return; }
+      if (/^[0-9]$/.test(e.key) && !e.altKey) { e.preventDefault(); goPosition(parseInt(e.key, 10)); return; }
+      if (e.shiftKey && e.key === "ArrowRight") { e.preventDefault(); nextDay(); return; }
+      if (e.shiftKey && e.key === "ArrowLeft") { e.preventDefault(); prevDay(); return; }
+      if (e.key === "PageDown") { e.preventDefault(); nextDay(); return; }
+      if (e.key === "PageUp") { e.preventDefault(); prevDay(); return; }
       if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
       else if (e.key === "Home") { e.preventDefault(); go(0, 0); }
       else if (e.key === "End") { e.preventDefault(); go(cfg.days.length - 1, 0); }
+      else if (e.key === "r" || e.key === "R") { e.preventDefault(); shuffle(); }
+      else if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFocus(); }
       else if (e.key === "d" || e.key === "D") { e.preventDefault(); openDepth(); }
+      else if (e.altKey && e.key === "0") { e.preventDefault(); setFont(1); }
       else if (e.key === "+" || e.key === "=") { e.preventDefault(); setFont(state.font + 1); }
       else if (e.key === "-") { e.preventDefault(); setFont(state.font - 1); }
-      else if (e.key === "0") { e.preventDefault(); setFont(1); }
     });
     window.addEventListener("resize", function () {
       hideTip();
@@ -1413,19 +1463,57 @@
       ctx.fillRect(0, 0, w, h);
 
       var tilt = clamp(mix - 1, 0, 1);
-      ctx.save();
-      ctx.globalAlpha = clamp((mix - 0.2) / 1.8, 0, 1) * 0.08;
-      ctx.strokeStyle = C.petrol;
-      ctx.lineWidth = 0.8;
-      for (var g = -1; g <= 1; g += 0.5) {
-        var a = project({ t: g, x: g, y: -1.1, z: 0 }, w, h);
-        var b = project({ t: g, x: g, y: 1.1, z: 0 }, w, h);
-        ctx.beginPath(); ctx.moveTo(a.X, a.Y); ctx.lineTo(b.X, b.Y); ctx.stroke();
-        var c1 = project({ t: g, x: -1.1, y: g, z: 0 }, w, h);
-        var c2 = project({ t: g, x: 1.1, y: g, z: 0 }, w, h);
-        ctx.beginPath(); ctx.moveTo(c1.X, c1.Y); ctx.lineTo(c2.X, c2.Y); ctx.stroke();
+      var planeAlpha = clamp((mix - 0.3) / 0.5, 0, 1) * (1 - tilt) * 0.38;
+      if (planeAlpha > 0.004) {
+        ctx.save();
+        ctx.globalAlpha = planeAlpha;
+        ctx.strokeStyle = C.petrol;
+        ctx.lineWidth = 1;
+        for (var g = -1; g <= 1; g += 0.5) {
+          var a = project({ t: g, x: g, y: -1.1, z: 0 }, w, h);
+          var b = project({ t: g, x: g, y: 1.1, z: 0 }, w, h);
+          ctx.beginPath(); ctx.moveTo(a.X, a.Y); ctx.lineTo(b.X, b.Y); ctx.stroke();
+          var c1 = project({ t: g, x: -1.1, y: g, z: 0 }, w, h);
+          var c2 = project({ t: g, x: 1.1, y: g, z: 0 }, w, h);
+          ctx.beginPath(); ctx.moveTo(c1.X, c1.Y); ctx.lineTo(c2.X, c2.Y); ctx.stroke();
+        }
+        ctx.restore();
       }
-      ctx.restore();
+      var cubeAlpha = tilt * 0.30;
+      if (cubeAlpha > 0.004) {
+        function line3(ax, ay, az, bx, by, bz) {
+          var p1 = project({ t: ax, x: ax, y: ay, z: az }, w, h);
+          var p2 = project({ t: bx, x: bx, y: by, z: bz }, w, h);
+          ctx.beginPath(); ctx.moveTo(p1.X, p1.Y); ctx.lineTo(p2.X, p2.Y); ctx.stroke();
+        }
+        ctx.save();
+        ctx.globalAlpha = cubeAlpha;
+        ctx.strokeStyle = C.petrol;
+        ctx.lineWidth = 0.9;
+        for (var q = -1; q <= 1; q += 0.5) {
+          line3(-1.1, q, -1.1, 1.1, q, -1.1);
+          line3(q, -1.1, -1.1, q, 1.1, -1.1);
+          line3(-1.1, 1.1, q, 1.1, 1.1, q);
+          line3(-1.1, q, -1.1, -1.1, q, 1.1);
+          line3(-1.1, -1.1, q, -1.1, 1.1, q);
+        }
+        ctx.globalAlpha = Math.min(0.72, cubeAlpha * 2.2);
+        ctx.strokeStyle = C.green;
+        ctx.lineWidth = 1.3;
+        line3(0, 0, 0, 1.35, 0, 0);
+        line3(0, 0, 0, 0, 1.35, 0);
+        line3(0, 0, 0, 0, 0, 1.35);
+        ctx.fillStyle = C.muted;
+        ctx.font = '700 10px "Open Sans", sans-serif';
+        ctx.textAlign = "left";
+        var ax = project({ t: 1.42, x: 1.42, y: 0, z: 0 }, w, h);
+        var ay = project({ t: 0, x: 0, y: 1.42, z: 0 }, w, h);
+        var az = project({ t: 0, x: 0, y: 0, z: 1.42 }, w, h);
+        ctx.fillText("x", ax.X + 3, ax.Y + 3);
+        ctx.fillText("y", ay.X + 3, ay.Y + 3);
+        ctx.fillText("z", az.X + 3, az.Y + 3);
+        ctx.restore();
+      }
 
       if (mix < 0.55) {
         var l0 = project({ t: -1.15, x: -1.15, y: 0, z: 0 }, w, h);
@@ -1530,11 +1618,19 @@
         ctx.globalAlpha = 1;
       });
 
+      var label = mix < 0.5 ? "1D · Linie" : (mix < 1.5 ? "2D · Ebene" : "3D · Raum");
+      ctx.font = '700 11px "Barlow", sans-serif';
+      var bw = ctx.measureText(label).width + 18;
+      ctx.fillStyle = "rgba(255,255,255,.92)";
+      ctx.fillRect(14, 12, bw, 24);
+      ctx.strokeStyle = C.line;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(14.5, 12.5, bw - 1, 23);
+      ctx.fillStyle = C.petrol;
+      ctx.textAlign = "left";
+      ctx.fillText(label, 23, 28);
       ctx.fillStyle = C.muted;
       ctx.font = '600 9px "Open Sans", sans-serif';
-      ctx.textAlign = "left";
-      var label = mix < 0.5 ? "1D · eine Achse" : (mix < 1.5 ? "2D · eine Ebene" : "3D · ein Raum");
-      ctx.fillText(label, 20, 24);
       ctx.textAlign = "right";
       ctx.fillText("Temperatur → Ähnlichkeit → Beziehungen", w - 20, 24);
     }
@@ -1598,6 +1694,10 @@
         ui.querySelectorAll(".ls-chip").forEach(function (b, i) {
           b.classList.toggle("is-on", i === st.target);
         });
+        if (api.onHint) {
+          var mode = st.target < 0.5 ? "1D · Linie" : (st.target < 1.5 ? "2D · Ebene" : "3D · Raum");
+          api.onHint(mode + " · klicke 1D / 2D / 3D oder drehe den Raum");
+        }
         draw();
       },
       resize: resize,
@@ -3028,6 +3128,9 @@
   LS.go = go;
   LS.goDay = goDay;
   LS.shuffle = shuffle;
+  LS.goPosition = goPosition;
+  LS.prevDay = prevDay;
+  LS.nextDay = nextDay;
   LS.days = function () { return cfg.days.map(function (d) { return { id: d.id, label: d.label, title: d.title, track: d.track, demo: d.demo, steps: d.steps.length }; }); };
   if (typeof module !== "undefined" && module.exports) module.exports = LS;
   if (typeof window !== "undefined") window.LearnSys = LS;

@@ -178,9 +178,56 @@ def check_font(driver, results):
         time.sleep(0.03)
     size_min = js(driver, "parseFloat(getComputedStyle(document.querySelector('.ls-body')).fontSize)")
     results.check("font is clamped at minimum", size_min >= 14.0, str(size_min))
-    key(driver, "0")
+    js(driver, "LearnSys.setFont(1)")
     time.sleep(0.2)
     results.check("font reset works", abs(js(driver, "parseFloat(getComputedStyle(document.querySelector('.ls-body')).fontSize)") - 17.0) < 0.6)
+
+
+def check_navigation(driver, results):
+    ids = js(driver, "LearnSys.days().map(function(d){return d.id;})")
+    results.check("ten position ticks", js(driver, "document.querySelectorAll('#ls-mix-pos [data-pos]').length") == 10)
+    key(driver, "0")
+    time.sleep(0.6)
+    results.check("0 jumps to the first day", active_id(driver) == ids[0], str(active_id(driver)))
+    key(driver, "9")
+    time.sleep(0.6)
+    results.check("9 jumps to the last day", active_id(driver) == ids[-1], str(active_id(driver)))
+    key(driver, "5")
+    time.sleep(0.6)
+    results.check("5 jumps to the middle", active_id(driver) == ids[round(5 / 9 * (len(ids) - 1))], str(active_id(driver)))
+    results.check("position rail marks the middle", js(driver, "document.querySelector('#ls-mix-pos [data-pos=\"5\"]').classList.contains('is-on')"))
+
+    js(driver, "document.querySelector('#ls-mix-pos [data-pos=\"9\"]').click()")
+    time.sleep(0.6)
+    results.check("clicking 9 on the scale jumps to the end", active_id(driver) == ids[-1])
+    js(driver, "document.querySelector('#ls-mix-pos [data-pos=\"0\"]').click()")
+    time.sleep(0.6)
+    results.check("clicking 0 on the scale jumps to the start", active_id(driver) == ids[0])
+
+    js(driver, "LearnSys.goDay('embedding')")
+    time.sleep(0.5)
+    js(driver, "(function(){document.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',shiftKey:true,bubbles:true,cancelable:true}));return true;})()")
+    time.sleep(0.6)
+    results.check("shift+right goes one day forward", active_id(driver) == ids[1], str(active_id(driver)))
+    js(driver, "(function(){document.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',shiftKey:true,bubbles:true,cancelable:true}));return true;})()")
+    time.sleep(0.6)
+    results.check("shift+left goes one day back", active_id(driver) == ids[0])
+
+    js(driver, "LearnSys.goDay('embedding')")
+    time.sleep(0.5)
+    js(driver, "document.querySelector('#ls-mix-next').click()")
+    time.sleep(0.4)
+    results.check("dock forward moves one step", js(driver, "document.querySelector('.ls-dot.is-on').getAttribute('data-step')") == "1")
+    js(driver, "document.querySelector('#ls-mix-prev').click()")
+    time.sleep(0.4)
+    results.check("dock back moves one step", js(driver, "document.querySelector('.ls-dot.is-on').getAttribute('data-step')") == "0")
+
+    js(driver, "document.querySelector('#ls-mix-help').click()")
+    time.sleep(0.2)
+    results.check("help opens", not js(driver, "document.querySelector('#ls-help').hidden"))
+    key(driver, "Escape")
+    time.sleep(0.2)
+    results.check("escape closes help", js(driver, "document.querySelector('#ls-help').hidden"))
 
 
 def check_shuffle(driver, results):
@@ -410,6 +457,8 @@ def main():
             results.check("page has LearnSys app", js(driver, "!!document.querySelector('.ls-app')"),
                            driver.current_url + " | " + driver.title + " | " + " || ".join(console_errors(driver)))
             check_mix_shell(driver, results)
+            check_navigation(driver, results)
+            reset_prefs(driver, base)
             check_font(driver, results)
             reset_prefs(driver, base)
             check_shuffle(driver, results)
