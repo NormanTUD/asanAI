@@ -1419,6 +1419,10 @@
     ], "0", function (id) {
       st.target = parseInt(id, 10);
       st.dim = st.target;
+      if (api.onHint) {
+        var mode = st.target < 0.5 ? "1D · Linie" : (st.target < 1.5 ? "2D · Ebene" : "3D · Raum");
+        api.onHint(mode + " · klicke 1D / 2D / 3D oder drehe den Raum");
+      }
     });
 
     function coords(w) {

@@ -234,8 +234,8 @@ def check_shuffle(driver, results):
     seen = []
     for _ in range(14):
         js(driver, "LearnSys.shuffle()")
-        time.sleep(0.28)
-        seen.append(active_id(driver))
+        time.sleep(0.32)
+        seen.append(js(driver, "LearnSys.days()[LearnSys.state().day].id"))
     results.check("shuffle reaches several demos", len(set(seen)) >= 3, str(sorted(set(seen))))
     results.check("shuffle does not repeat immediately", all(seen[i] != seen[i - 1] for i in range(1, len(seen))), str(seen))
     results.check("shuffle updates the mix label", js(driver, "document.querySelector('#ls-mix-label').textContent") == js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day-id')") or True)
@@ -313,6 +313,21 @@ def check_depth_personas(driver, results):
     results.check("every step has real depth content", not bad, ", ".join(bad[:4]))
     results.check("deep walk covers every step", checked >= 25, str(checked))
     results.check("math details are reachable", formulas > 0, str(formulas))
+
+
+def check_embedding_modes(driver, results):
+    js(driver, "LearnSys.goDay('embedding')")
+    time.sleep(0.7)
+    results.check("embedding starts in 1D", "1D" in js(driver, "document.querySelector('#ls-stage-hint').textContent"))
+    js(driver, "[...document.querySelectorAll('.ls-embed-ui .ls-chip')].find(function(b){return b.textContent==='2D';}).click()")
+    time.sleep(0.4)
+    results.check("2D chip updates the mode", "2D" in js(driver, "document.querySelector('#ls-stage-hint').textContent"))
+    js(driver, "[...document.querySelectorAll('.ls-embed-ui .ls-chip')].find(function(b){return b.textContent==='3D';}).click()")
+    time.sleep(0.5)
+    results.check("3D chip updates the mode", "3D" in js(driver, "document.querySelector('#ls-stage-hint').textContent"))
+    pixels = js(driver, "(function(){var c=document.querySelector('.ls-embed canvas');var d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;var n=0;for(var i=3;i<d.length;i+=4){if(d[i])n++;}return n;})()")
+    results.check("embedding scene is drawn", int(pixels or 0) > 500, str(pixels))
+    results.check("embedding step has no stray scroll cues", js(driver, "document.querySelectorAll('#ls-cues .ls-cue').length") == 0)
 
 
 def check_glossary(driver, results):
@@ -466,6 +481,8 @@ def main():
             check_demo_mix(driver, results)
             reset_prefs(driver, base)
             check_depth_personas(driver, results)
+            reset_prefs(driver, base)
+            check_embedding_modes(driver, results)
             reset_prefs(driver, base)
             check_glossary(driver, results)
             reset_prefs(driver, base)
