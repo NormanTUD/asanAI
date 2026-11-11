@@ -303,54 +303,15 @@
 		}
 	}
 
-	function drawSeparationStatus(C) {
+	function updateCanvasStatusAttributes() {
 		if (!(cur >= 7 || prevIdx >= 7)) return;
-		let lines = separationStatusLines();
+		const lines = separationStatusLines();
 		const info = separationInfo();
-		if (!lines || !lines.length) {
-			lines = [info.separated ? (DE ? "Linear trennbar: ja." : "Linearly separable: yes.") : (DE ? "Noch nicht linear trennbar." : "Not linearly separable yet.")];
-		}
 		const canvasEl = document.getElementById("ism-canvas");
-		if (canvasEl) {
-			canvasEl.setAttribute("data-separation", info.separated ? "ok" : "fail");
-			canvasEl.setAttribute("data-separation-message", lines.join(" "));
-		}
-		const x = 16;
-		const w = Math.min(280, W * 0.36);
-		const lineH = 15;
-		const h = 26 + lines.length * lineH;
-		const y = 14;
-		ctx.save();
-		ctx.globalAlpha = 1;
-		ctx.setLineDash([]);
-		ctx.textBaseline = "alphabetic";
-		ctx.fillStyle = C.dark ? "rgba(7,26,34,.86)" : "rgba(255,255,255,.9)";
-		ctx.strokeStyle = info.separated ? C.green : C.line;
-		ctx.lineWidth = 1;
-		if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, y, w, h, 8); ctx.fill(); ctx.stroke(); }
-		else { ctx.fillRect(x, y, w, h); ctx.strokeRect(x, y, w, h); }
-		ctx.textAlign = "left";
-		ctx.fillStyle = info.separated ? C.green : C.muted;
-		ctx.font = "700 10px system-ui, sans-serif";
-		ctx.fillText(info.separated ? "✓ " + (DE ? "TRENNUNG" : "SEPARATION") : (DE ? "TRENNUNG" : "SEPARATION"), x + 10, y + 15);
-		lines.forEach(function (line, i) {
-			const ty = y + 32 + i * lineH;
-			if (i === 0 && info.separated) {
-				ctx.fillStyle = C.green;
-				ctx.font = "700 13px system-ui, sans-serif";
-				ctx.fillText("✓", x + 10, ty);
-				ctx.fillStyle = C.ink;
-				ctx.font = "500 12px system-ui, sans-serif";
-				ctx.fillText(line, x + 28, ty);
-			} else {
-				ctx.fillStyle = C.ink;
-				ctx.font = "500 12px system-ui, sans-serif";
-				ctx.fillText(line, x + 10, ty);
-			}
-		});
-		ctx.restore();
+		if (!canvasEl) return;
+		canvasEl.setAttribute("data-separation", info.separated ? "ok" : "fail");
+		canvasEl.setAttribute("data-separation-message", lines.join(" "));
 	}
-
 	function liftPoint(x, y, lift) {
 		const p = LIFT(x, y, lift);
 		if (denseMix > 0.0001) p.z += denseMix * denseHeight(x, y);
@@ -965,7 +926,7 @@
 
 		drawClassLabels(labels, C);
 		drawDenseContour(C, project, clamp(denseMix, 0, 1));
-		drawSeparationStatus(C);
+		updateCanvasStatusAttributes();
 	}
 
 	function resizeCanvas() {

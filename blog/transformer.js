@@ -2041,19 +2041,11 @@ async function syncTrainingState(weightVars) {
 	renderLossGraph();
 	window.currentWeights = await convert_tensors_to_weights(weightVars);
 	run_transformer_demo();
-	await awaitVisualQueue();
 	await tf.nextFrame();
 	calculate_vector_math();
 	tled_syncTableFromSpace();
 }
 
-async function awaitVisualQueue() {
-	if (!window.tmScheduleHeavyRender || typeof window.tmScheduleHeavyRender.pending !== "function") return;
-	const deadline = performance.now() + 1500;
-	while (performance.now() < deadline && window.tmScheduleHeavyRender.pending() > 0) {
-		await tf.nextFrame();
-	}
-}
 
 function convert_weights_to_tensors(weights) {
 	const vocab = Object.keys(window.persistentEmbeddingSpace);
