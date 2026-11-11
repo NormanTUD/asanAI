@@ -24,3 +24,5 @@ DONE — Neue Folie 9: Rückprojektion s(x,y) auf 1D, Status „getrennt / nicht
 DONE — Die unklare Sonde entfernt; die Rückprojektion selbst ist jetzt der Testpunkt.
 DONE — Status im Canvas statt außerhalb; die höchste Szene wird reserviert, damit die Demo nicht in der Höhe springt.
 DONE — Kamera-Reset-Button für die ism-Ansicht.
+
+DONE — Die Statusbox der Dense-Demo zeigt jetzt auch den erfolgreichen Trennfall; die Szenen 1–7 und die Reset-Ansicht sind deutsch.

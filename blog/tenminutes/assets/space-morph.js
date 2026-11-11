@@ -44,37 +44,51 @@
 	const SCENES = [
 		{
 			title: "Two classes, no straight line",
+			titleDe: "Zwei Klassen, keine gerade Linie",
 			body: "An inner core of red points sits inside a blue ring. No straight line separates them: any line drawn across the plane has to cut through the ring.",
+			bodyDe: "Ein innerer Kern roter Punkte sitzt in einem blauen Ring. Keine gerade Linie trennt sie: Jede Linie quer durch die Ebene muss den Ring schneiden.",
 			lift: 0, camA: 0, camB: -Math.PI / 2, persp: 0, plane: 0, squash: 0, fail: 0, labels: 0, project: 0, box: 0
 		},
 		{
 			title: "Every straight cut fails",
+			titleDe: "Jeder gerade Schnitt scheitert",
 			body: "A linear classifier draws a straight line. Around a closed ring, every line leaves points of both classes on both sides. The obstruction is topological, not a matter of finding a better angle.",
+			bodyDe: "Ein linearer Klassifikator zieht eine gerade Linie. Rund um einen geschlossenen Ring lässt jede Linie Punkte beider Klassen auf beiden Seiten. Das Hindernis ist topologisch, keine Frage eines besseren Winkels.",
 			lift: 0, camA: 0, camB: -Math.PI / 2, persp: 0, plane: 0, squash: 0, fail: 1, labels: 0, project: 0, box: 0
 		},
 		{
 			title: "One more dimension of room",
+			titleDe: "Eine Dimension mehr Raum",
 			body: "Keep the old plane as a floor and open a third axis above it. The data has not changed; the space it lives in has. That extra room is the raw material every layer works with.",
+			bodyDe: "Behalte die alte Ebene als Boden und öffne eine dritte Achse darüber. Die Daten haben sich nicht geändert; der Raum, in dem sie leben, hat sich geändert. Dieser zusätzliche Raum ist der Rohstoff, mit dem jede Schicht arbeitet.",
 			lift: 0, camA: 0.38, camB: -0.62, persp: 1, plane: 0, squash: 0, fail: 0, labels: 0, project: 0, box: 1
 		},
 		{
 			title: "The layer bends space",
+			titleDe: "Die Schicht biegt den Raum",
 			body: "The layer lifts the grid into a bowl: z = r². Inside the ring sinks, outside it rises. The bend is smooth and reversible. It stretches the space without tearing it or gluing distinct points together.",
+			bodyDe: "Die Schicht hebt das Gitter in eine Schale: z = r². Innerhalb des Rings sinkt es, außerhalb steigt es. Die Biegung ist glatt und umkehrbar. Sie dehnt den Raum, ohne ihn zu zerreißen oder verschiedene Punkte zu verkleben.",
 			lift: 1, camA: 0, camB: 0, persp: 1, plane: 0, squash: 0, fail: 0, labels: 0, project: 0, box: 0
 		},
 		{
 			title: "A flat plane fits between",
+			titleDe: "Eine flache Ebene passt dazwischen",
 			body: "Nothing was added to the data and no class was moved. The curved space now has a gap, and one flat plane slides cleanly between the two classes.",
+			bodyDe: "Den Daten wurde nichts hinzugefügt und keine Klasse bewegt. Der gekrümmte Raum hat jetzt eine Lücke, und eine flache Ebene gleitet sauber zwischen die beiden Klassen.",
 			lift: 1, camA: 0, camB: 0, persp: 1, plane: 1, squash: 0, fail: 0, labels: 0, project: 0, box: 0
 		},
 		{
 			title: "The plane becomes a line",
+			titleDe: "Die Ebene wird zu einer Linie",
 			body: "Look edge-on and squeeze the separating plane along the view direction. The sheet collapses to a line without changing which points lie on which side.",
+			bodyDe: "Schau von der Kante und drücke die trennende Ebene entlang der Blickrichtung zusammen. Das Blatt kollabiert zu einer Linie, ohne zu ändern, welche Punkte auf welcher Seite liegen.",
 			lift: 1, camA: 0, camB: 0, persp: 1, plane: 1, squash: 1, fail: 0, labels: 1, project: 0, box: 0
 		},
 		{
 			title: "Space collapses to a line",
+			titleDe: "Der Raum kollabiert zu einer Linie",
 			body: "Now collapse the whole space the same way. Every point keeps its side of the boundary, and the classifier becomes one threshold on a one-dimensional score: s = 0.",
+			bodyDe: "Kollabiere jetzt den ganzen Raum auf dieselbe Weise. Jeder Punkt behält seine Seite der Grenze, und der Klassifikator wird zu einer Schwelle auf einem eindimensionalen Score: s = 0.",
 			lift: 1, camA: 0, camB: 0, persp: 1, plane: 0, squash: 1, fail: 0, labels: 0, project: 1, box: 0
 		},
 		{
@@ -244,6 +258,14 @@
 			: ["Linearly separable: no.", "Best threshold s = " + threshold + ".", info.wrong + " of " + info.total + " points wrong.", "Play with the neurons, weights,", "scale, bias, or a preset."];
 	}
 
+	function updateSeparationBox() {
+		const el = document.getElementById("ism-separation-box");
+		if (!el) return;
+		const info = separationInfo();
+		el.textContent = separationStatusLines().join(" ");
+		el.classList.toggle("is-ok", info.separated);
+	}
+
 	function drawSeparationStatus(C) {
 		if (!(cur >= 7 || prevIdx >= 7)) return;
 		const lines = separationStatusLines();
@@ -303,7 +325,7 @@
 	function weightInput(kind, i, j, value, label) {
 		return '<input class="ism-weight-input" type="number" step="0.01" data-w="' + kind +
 			'" data-i="' + i + '" data-j="' + j + '" value="' + value.toFixed(2) +
-			'" aria-label="' + label + '">';
+			'" aria-label="' + (DE ? ("Gewicht " + label) : label) + '">';
 	}
 
 	function weightEditorHtml() {
@@ -343,6 +365,7 @@
 				else if (kind === "b2") denseWeights.b2 = value;
 				const preset = document.getElementById("ism-dense-preset");
 				if (preset) preset.value = "custom";
+				updateSeparationBox();
 				requestDraw();
 			});
 		});
@@ -371,8 +394,13 @@
 		editor.innerHTML = weightEditorHtml();
 		host.appendChild(editor);
 		addFormula(formulas[1]);
+		const status = document.createElement("p");
+		status.className = "ism-separation-box";
+		status.id = "ism-separation-box";
+		host.appendChild(status);
 		bindWeightEditor(editor);
 		if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(host);
+		updateSeparationBox();
 	}
 
 	const ease = u => u * u * u * (u * (u * 6 - 15) + 10);
@@ -1003,6 +1031,7 @@
 			scale.nextElementSibling.textContent = denseState.scale.toFixed(1);
 			bias.nextElementSibling.textContent = denseState.bias.toFixed(1);
 			scheduleDenseFormulas();
+			updateSeparationBox();
 			requestDraw();
 		};
 		const markCustom = function () { preset.value = "custom"; };

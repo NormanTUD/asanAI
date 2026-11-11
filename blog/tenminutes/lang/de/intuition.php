@@ -508,6 +508,7 @@ return [
 		'Next word probabilities' => 'Wahrscheinlichkeiten für das nächste Wort',
 		'Previous step' => 'Vorheriger Schritt',
 		'Next step' => 'Nächster Schritt',
+		'Reset view' => 'Ansicht zurücksetzen',
 		'A two-dimensional embedding space with power and gender axes' => 'Ein zweidimensionaler Embedding-Raum mit Achsen für Macht und Geschlecht',
 		'A path through embedding space wrapped in a glowing probability isosurface' => 'Ein Pfad durch den Embedding-Raum, umhüllt von einer leuchtenden Wahrscheinlichkeits-Isosurface',
 		'An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.' => 'Eine animierte Punktwolke zeigt einen Korallenkern in einem blauen Ring, der zu einer gekrümmten Schale gebogen wird, bis eine flache Ebene sie trennt.',

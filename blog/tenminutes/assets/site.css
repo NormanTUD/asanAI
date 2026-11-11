@@ -8977,3 +8977,17 @@ html[lang="de"] .tm-lang-only-de { display: inline !important; }
 	font: 400 0.7rem/1.4 var(--tm-ui);
 	color: var(--tm-muted);
 }
+
+.ism-separation-box {
+	margin: 4px 0 0;
+	padding: 6px 8px;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-card);
+	color: var(--tm-muted);
+	font: 600 0.72rem/1.35 var(--tm-ui);
+}
+.ism-separation-box.is-ok {
+	border-color: var(--tm-green);
+	color: var(--tm-green-deep);
+	background: color-mix(in srgb, var(--tm-green) 8%, var(--tm-card));
+}
