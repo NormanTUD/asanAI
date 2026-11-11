@@ -90,7 +90,6 @@ class Results:
 def test_static(results):
     print("\n[static]")
     php = text("blog/transformer.php")
-    tda = text("blog/tda_live.js")
     river = text("blog/llm_river.js")
     quiz = text("blog/modules/quiz.js")
     attn = text("blog/attention_engine.js")
@@ -102,12 +101,10 @@ def test_static(results):
         "transformer_layer_summary.js" not in php,
     )
     results.check(
-        "attractor summary wraps",
-        "overflow-wrap: anywhere" in php,
-    )
-    results.check(
-        "attractor entries separated by breakable spaces",
-        'parts.join(" · ")' in tda,
+        "TDA live attractor block stays removed",
+        'id="tda-live-section"' not in php
+        and "TDA Live, Attractors in the Residual Stream" not in php
+        and "tda_live.js" not in php,
     )
     results.check(
         "residual-write chart container exists",

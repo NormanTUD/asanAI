@@ -6993,16 +6993,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-213-related_to-transformer-block-191",
-      "from": "transformer-block-213",
-      "to": "transformer-block-191",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-transformer-block-214-part_of-transformer",
       "from": "transformer-block-214",
       "to": "transformer",
@@ -7023,9 +7013,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-214-related_to-transformer-block-191",
+      "id": "struct-transformer-block-214-related_to-transformer-block-213",
       "from": "transformer-block-214",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7053,9 +7043,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-215-related_to-transformer-block-191",
+      "id": "struct-transformer-block-215-related_to-transformer-block-213",
       "from": "transformer-block-215",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7083,9 +7073,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-216-related_to-transformer-block-191",
+      "id": "struct-transformer-block-216-related_to-transformer-block-213",
       "from": "transformer-block-216",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7113,9 +7103,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-217-related_to-transformer-block-191",
+      "id": "struct-transformer-block-217-related_to-transformer-block-213",
       "from": "transformer-block-217",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7143,9 +7133,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-218-related_to-transformer-block-191",
+      "id": "struct-transformer-block-218-related_to-transformer-block-213",
       "from": "transformer-block-218",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7173,9 +7163,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-219-related_to-transformer-block-191",
+      "id": "struct-transformer-block-219-related_to-transformer-block-213",
       "from": "transformer-block-219",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7203,9 +7193,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-220-related_to-transformer-block-191",
+      "id": "struct-transformer-block-220-related_to-transformer-block-213",
       "from": "transformer-block-220",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7233,9 +7223,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-221-related_to-transformer-block-191",
+      "id": "struct-transformer-block-221-related_to-transformer-block-213",
       "from": "transformer-block-221",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7263,9 +7253,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-222-related_to-transformer-block-191",
+      "id": "struct-transformer-block-222-related_to-transformer-block-213",
       "from": "transformer-block-222",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7293,9 +7283,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-223-related_to-transformer-block-191",
+      "id": "struct-transformer-block-223-related_to-transformer-block-213",
       "from": "transformer-block-223",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7323,9 +7313,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-224-related_to-transformer-block-191",
+      "id": "struct-transformer-block-224-related_to-transformer-block-213",
       "from": "transformer-block-224",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7353,9 +7343,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-225-related_to-transformer-block-191",
+      "id": "struct-transformer-block-225-related_to-transformer-block-213",
       "from": "transformer-block-225",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7383,9 +7373,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-226-related_to-transformer-block-191",
+      "id": "struct-transformer-block-226-related_to-transformer-block-213",
       "from": "transformer-block-226",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7413,9 +7403,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-227-related_to-transformer-block-191",
+      "id": "struct-transformer-block-227-related_to-transformer-block-213",
       "from": "transformer-block-227",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7443,9 +7433,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-228-related_to-transformer-block-191",
+      "id": "struct-transformer-block-228-related_to-transformer-block-213",
       "from": "transformer-block-228",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7473,9 +7463,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-229-related_to-transformer-block-191",
+      "id": "struct-transformer-block-229-related_to-transformer-block-213",
       "from": "transformer-block-229",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7503,9 +7493,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-230-related_to-transformer-block-191",
+      "id": "struct-transformer-block-230-related_to-transformer-block-213",
       "from": "transformer-block-230",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7533,9 +7523,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-231-related_to-transformer-block-191",
+      "id": "struct-transformer-block-231-related_to-transformer-block-213",
       "from": "transformer-block-231",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7563,9 +7553,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-232-related_to-transformer-block-191",
+      "id": "struct-transformer-block-232-related_to-transformer-block-213",
       "from": "transformer-block-232",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7593,9 +7583,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-233-related_to-transformer-block-191",
+      "id": "struct-transformer-block-233-related_to-transformer-block-213",
       "from": "transformer-block-233",
-      "to": "transformer-block-191",
+      "to": "transformer-block-213",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7623,16 +7613,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-234-related_to-transformer-block-191",
-      "from": "transformer-block-234",
-      "to": "transformer-block-191",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-transformer-block-235-part_of-transformer",
       "from": "transformer-block-235",
       "to": "transformer",
@@ -7653,9 +7633,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-235-related_to-transformer-block-191",
+      "id": "struct-transformer-block-235-related_to-transformer-block-234",
       "from": "transformer-block-235",
-      "to": "transformer-block-191",
+      "to": "transformer-block-234",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7683,9 +7663,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-236-related_to-transformer-block-191",
+      "id": "struct-transformer-block-236-related_to-transformer-block-234",
       "from": "transformer-block-236",
-      "to": "transformer-block-191",
+      "to": "transformer-block-234",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7713,6 +7693,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-transformer-block-237-related_to-transformer-block-234",
+      "from": "transformer-block-237",
+      "to": "transformer-block-234",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-transformer-block-238-part_of-transformer",
       "from": "transformer-block-238",
       "to": "transformer",
@@ -7733,9 +7723,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-238-related_to-transformer-block-237",
+      "id": "struct-transformer-block-238-related_to-transformer-block-234",
       "from": "transformer-block-238",
-      "to": "transformer-block-237",
+      "to": "transformer-block-234",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7763,9 +7753,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-239-related_to-transformer-block-237",
+      "id": "struct-transformer-block-239-related_to-transformer-block-234",
       "from": "transformer-block-239",
-      "to": "transformer-block-237",
+      "to": "transformer-block-234",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7793,9 +7783,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-240-related_to-transformer-block-237",
+      "id": "struct-transformer-block-240-related_to-transformer-block-234",
       "from": "transformer-block-240",
-      "to": "transformer-block-237",
+      "to": "transformer-block-234",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7823,16 +7813,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-241-related_to-transformer-block-237",
-      "from": "transformer-block-241",
-      "to": "transformer-block-237",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-transformer-block-242-part_of-transformer",
       "from": "transformer-block-242",
       "to": "transformer",
@@ -7853,9 +7833,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-242-related_to-transformer-block-237",
+      "id": "struct-transformer-block-242-related_to-transformer-block-241",
       "from": "transformer-block-242",
-      "to": "transformer-block-237",
+      "to": "transformer-block-241",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7883,9 +7863,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-243-related_to-transformer-block-237",
+      "id": "struct-transformer-block-243-related_to-transformer-block-241",
       "from": "transformer-block-243",
-      "to": "transformer-block-237",
+      "to": "transformer-block-241",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7913,9 +7893,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-244-related_to-transformer-block-237",
+      "id": "struct-transformer-block-244-related_to-transformer-block-241",
       "from": "transformer-block-244",
-      "to": "transformer-block-237",
+      "to": "transformer-block-241",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7943,9 +7923,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-245-related_to-transformer-block-237",
+      "id": "struct-transformer-block-245-related_to-transformer-block-241",
       "from": "transformer-block-245",
-      "to": "transformer-block-237",
+      "to": "transformer-block-241",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7973,9 +7953,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-246-related_to-transformer-block-237",
+      "id": "struct-transformer-block-246-related_to-transformer-block-241",
       "from": "transformer-block-246",
-      "to": "transformer-block-237",
+      "to": "transformer-block-241",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8003,9 +7983,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-247-related_to-transformer-block-237",
+      "id": "struct-transformer-block-247-related_to-transformer-block-241",
       "from": "transformer-block-247",
-      "to": "transformer-block-237",
+      "to": "transformer-block-241",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8033,9 +8013,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-248-related_to-transformer-block-237",
+      "id": "struct-transformer-block-248-related_to-transformer-block-241",
       "from": "transformer-block-248",
-      "to": "transformer-block-237",
+      "to": "transformer-block-241",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8063,9 +8043,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-249-related_to-transformer-block-237",
+      "id": "struct-transformer-block-249-related_to-transformer-block-241",
       "from": "transformer-block-249",
-      "to": "transformer-block-237",
+      "to": "transformer-block-241",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8093,16 +8073,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-250-related_to-transformer-block-237",
-      "from": "transformer-block-250",
-      "to": "transformer-block-237",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-transformer-block-251-part_of-transformer",
       "from": "transformer-block-251",
       "to": "transformer",
@@ -8123,9 +8093,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-251-related_to-transformer-block-237",
+      "id": "struct-transformer-block-251-related_to-transformer-block-250",
       "from": "transformer-block-251",
-      "to": "transformer-block-237",
+      "to": "transformer-block-250",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8153,9 +8123,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-252-related_to-transformer-block-237",
+      "id": "struct-transformer-block-252-related_to-transformer-block-250",
       "from": "transformer-block-252",
-      "to": "transformer-block-237",
+      "to": "transformer-block-250",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8183,9 +8153,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-253-related_to-transformer-block-237",
+      "id": "struct-transformer-block-253-related_to-transformer-block-250",
       "from": "transformer-block-253",
-      "to": "transformer-block-237",
+      "to": "transformer-block-250",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8213,9 +8183,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-254-related_to-transformer-block-237",
+      "id": "struct-transformer-block-254-related_to-transformer-block-250",
       "from": "transformer-block-254",
-      "to": "transformer-block-237",
+      "to": "transformer-block-250",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8243,9 +8213,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-255-related_to-transformer-block-237",
+      "id": "struct-transformer-block-255-related_to-transformer-block-250",
       "from": "transformer-block-255",
-      "to": "transformer-block-237",
+      "to": "transformer-block-250",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8273,9 +8243,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-256-related_to-transformer-block-237",
+      "id": "struct-transformer-block-256-related_to-transformer-block-250",
       "from": "transformer-block-256",
-      "to": "transformer-block-237",
+      "to": "transformer-block-250",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8303,9 +8273,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-257-related_to-transformer-block-237",
+      "id": "struct-transformer-block-257-related_to-transformer-block-250",
       "from": "transformer-block-257",
-      "to": "transformer-block-237",
+      "to": "transformer-block-250",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8333,6 +8303,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-transformer-block-258-related_to-transformer-block-250",
+      "from": "transformer-block-258",
+      "to": "transformer-block-250",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-transformer-block-259-part_of-transformer",
       "from": "transformer-block-259",
       "to": "transformer",
@@ -8347,16 +8327,6 @@
       "from": "transformer-block-258",
       "to": "transformer-block-259",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-259-related_to-transformer-block-258",
-      "from": "transformer-block-259",
-      "to": "transformer-block-258",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -8383,9 +8353,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-260-related_to-transformer-block-258",
+      "id": "struct-transformer-block-260-related_to-transformer-block-259",
       "from": "transformer-block-260",
-      "to": "transformer-block-258",
+      "to": "transformer-block-259",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8413,9 +8383,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-261-related_to-transformer-block-258",
+      "id": "struct-transformer-block-261-related_to-transformer-block-259",
       "from": "transformer-block-261",
-      "to": "transformer-block-258",
+      "to": "transformer-block-259",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8443,9 +8413,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-262-related_to-transformer-block-258",
+      "id": "struct-transformer-block-262-related_to-transformer-block-259",
       "from": "transformer-block-262",
-      "to": "transformer-block-258",
+      "to": "transformer-block-259",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8473,9 +8443,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-263-related_to-transformer-block-258",
+      "id": "struct-transformer-block-263-related_to-transformer-block-259",
       "from": "transformer-block-263",
-      "to": "transformer-block-258",
+      "to": "transformer-block-259",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8503,9 +8473,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-264-related_to-transformer-block-258",
+      "id": "struct-transformer-block-264-related_to-transformer-block-259",
       "from": "transformer-block-264",
-      "to": "transformer-block-258",
+      "to": "transformer-block-259",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8533,6 +8503,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-transformer-block-265-related_to-transformer-block-259",
+      "from": "transformer-block-265",
+      "to": "transformer-block-259",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-transformer-block-266-part_of-transformer",
       "from": "transformer-block-266",
       "to": "transformer",
@@ -8553,9 +8533,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-266-related_to-transformer-block-265",
+      "id": "struct-transformer-block-266-related_to-transformer-block-259",
       "from": "transformer-block-266",
-      "to": "transformer-block-265",
+      "to": "transformer-block-259",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8583,709 +8563,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-block-267-related_to-transformer-block-265",
+      "id": "struct-transformer-block-267-related_to-transformer-block-259",
       "from": "transformer-block-267",
-      "to": "transformer-block-265",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-268-part_of-transformer",
-      "from": "transformer-block-268",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-267-before-transformer-block-268",
-      "from": "transformer-block-267",
-      "to": "transformer-block-268",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-268-related_to-transformer-block-265",
-      "from": "transformer-block-268",
-      "to": "transformer-block-265",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-269-part_of-transformer",
-      "from": "transformer-block-269",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-268-before-transformer-block-269",
-      "from": "transformer-block-268",
-      "to": "transformer-block-269",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-269-related_to-transformer-block-265",
-      "from": "transformer-block-269",
-      "to": "transformer-block-265",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-270-part_of-transformer",
-      "from": "transformer-block-270",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-269-before-transformer-block-270",
-      "from": "transformer-block-269",
-      "to": "transformer-block-270",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-270-related_to-transformer-block-265",
-      "from": "transformer-block-270",
-      "to": "transformer-block-265",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-271-part_of-transformer",
-      "from": "transformer-block-271",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-270-before-transformer-block-271",
-      "from": "transformer-block-270",
-      "to": "transformer-block-271",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-271-related_to-transformer-block-265",
-      "from": "transformer-block-271",
-      "to": "transformer-block-265",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-272-part_of-transformer",
-      "from": "transformer-block-272",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-271-before-transformer-block-272",
-      "from": "transformer-block-271",
-      "to": "transformer-block-272",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-272-related_to-transformer-block-265",
-      "from": "transformer-block-272",
-      "to": "transformer-block-265",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-273-part_of-transformer",
-      "from": "transformer-block-273",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-272-before-transformer-block-273",
-      "from": "transformer-block-272",
-      "to": "transformer-block-273",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-273-related_to-transformer-block-265",
-      "from": "transformer-block-273",
-      "to": "transformer-block-265",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-274-part_of-transformer",
-      "from": "transformer-block-274",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-273-before-transformer-block-274",
-      "from": "transformer-block-273",
-      "to": "transformer-block-274",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-275-part_of-transformer",
-      "from": "transformer-block-275",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-274-before-transformer-block-275",
-      "from": "transformer-block-274",
-      "to": "transformer-block-275",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-275-related_to-transformer-block-274",
-      "from": "transformer-block-275",
-      "to": "transformer-block-274",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-276-part_of-transformer",
-      "from": "transformer-block-276",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-275-before-transformer-block-276",
-      "from": "transformer-block-275",
-      "to": "transformer-block-276",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-276-related_to-transformer-block-274",
-      "from": "transformer-block-276",
-      "to": "transformer-block-274",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-277-part_of-transformer",
-      "from": "transformer-block-277",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-276-before-transformer-block-277",
-      "from": "transformer-block-276",
-      "to": "transformer-block-277",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-277-related_to-transformer-block-274",
-      "from": "transformer-block-277",
-      "to": "transformer-block-274",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-278-part_of-transformer",
-      "from": "transformer-block-278",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-277-before-transformer-block-278",
-      "from": "transformer-block-277",
-      "to": "transformer-block-278",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-278-related_to-transformer-block-274",
-      "from": "transformer-block-278",
-      "to": "transformer-block-274",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-279-part_of-transformer",
-      "from": "transformer-block-279",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-278-before-transformer-block-279",
-      "from": "transformer-block-278",
-      "to": "transformer-block-279",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-279-related_to-transformer-block-274",
-      "from": "transformer-block-279",
-      "to": "transformer-block-274",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-280-part_of-transformer",
-      "from": "transformer-block-280",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-279-before-transformer-block-280",
-      "from": "transformer-block-279",
-      "to": "transformer-block-280",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-280-related_to-transformer-block-274",
-      "from": "transformer-block-280",
-      "to": "transformer-block-274",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-281-part_of-transformer",
-      "from": "transformer-block-281",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-280-before-transformer-block-281",
-      "from": "transformer-block-280",
-      "to": "transformer-block-281",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-281-related_to-transformer-block-274",
-      "from": "transformer-block-281",
-      "to": "transformer-block-274",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-282-part_of-transformer",
-      "from": "transformer-block-282",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-281-before-transformer-block-282",
-      "from": "transformer-block-281",
-      "to": "transformer-block-282",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-282-related_to-transformer-block-274",
-      "from": "transformer-block-282",
-      "to": "transformer-block-274",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-283-part_of-transformer",
-      "from": "transformer-block-283",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-282-before-transformer-block-283",
-      "from": "transformer-block-282",
-      "to": "transformer-block-283",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-284-part_of-transformer",
-      "from": "transformer-block-284",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-283-before-transformer-block-284",
-      "from": "transformer-block-283",
-      "to": "transformer-block-284",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-284-related_to-transformer-block-283",
-      "from": "transformer-block-284",
-      "to": "transformer-block-283",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-285-part_of-transformer",
-      "from": "transformer-block-285",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-284-before-transformer-block-285",
-      "from": "transformer-block-284",
-      "to": "transformer-block-285",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-285-related_to-transformer-block-283",
-      "from": "transformer-block-285",
-      "to": "transformer-block-283",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-286-part_of-transformer",
-      "from": "transformer-block-286",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-285-before-transformer-block-286",
-      "from": "transformer-block-285",
-      "to": "transformer-block-286",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-286-related_to-transformer-block-283",
-      "from": "transformer-block-286",
-      "to": "transformer-block-283",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-287-part_of-transformer",
-      "from": "transformer-block-287",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-286-before-transformer-block-287",
-      "from": "transformer-block-286",
-      "to": "transformer-block-287",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-287-related_to-transformer-block-283",
-      "from": "transformer-block-287",
-      "to": "transformer-block-283",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-288-part_of-transformer",
-      "from": "transformer-block-288",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-287-before-transformer-block-288",
-      "from": "transformer-block-287",
-      "to": "transformer-block-288",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-288-related_to-transformer-block-283",
-      "from": "transformer-block-288",
-      "to": "transformer-block-283",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-289-part_of-transformer",
-      "from": "transformer-block-289",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-288-before-transformer-block-289",
-      "from": "transformer-block-288",
-      "to": "transformer-block-289",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-289-related_to-transformer-block-283",
-      "from": "transformer-block-289",
-      "to": "transformer-block-283",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-290-part_of-transformer",
-      "from": "transformer-block-290",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-289-before-transformer-block-290",
-      "from": "transformer-block-289",
-      "to": "transformer-block-290",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-290-related_to-transformer-block-283",
-      "from": "transformer-block-290",
-      "to": "transformer-block-283",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-291-part_of-transformer",
-      "from": "transformer-block-291",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-290-before-transformer-block-291",
-      "from": "transformer-block-290",
-      "to": "transformer-block-291",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-block-291-related_to-transformer-block-283",
-      "from": "transformer-block-291",
-      "to": "transformer-block-283",
+      "to": "transformer-block-259",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -12353,9 +11633,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-307-part_of-transformer-block-211",
+      "id": "struct-transformer-stmt-307-part_of-transformer-block-212",
       "from": "transformer-stmt-307",
-      "to": "transformer-block-211",
+      "to": "transformer-block-212",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -12363,9 +11643,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-308-part_of-transformer-block-211",
+      "id": "struct-transformer-stmt-308-part_of-transformer-block-212",
       "from": "transformer-stmt-308",
-      "to": "transformer-block-211",
+      "to": "transformer-block-212",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -12393,8 +11673,28 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-311-part_of-transformer-block-218",
+      "id": "struct-transformer-stmt-311-part_of-transformer-block-214",
       "from": "transformer-stmt-311",
+      "to": "transformer-block-214",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-312-part_of-transformer-block-216",
+      "from": "transformer-stmt-312",
+      "to": "transformer-block-216",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-313-part_of-transformer-block-218",
+      "from": "transformer-stmt-313",
       "to": "transformer-block-218",
       "kind": "part_of",
       "qualifiers": {},
@@ -12403,18 +11703,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-312-part_of-transformer-block-219",
-      "from": "transformer-stmt-312",
-      "to": "transformer-block-219",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-313-part_of-transformer-block-220",
-      "from": "transformer-stmt-313",
+      "id": "struct-transformer-stmt-314-part_of-transformer-block-220",
+      "from": "transformer-stmt-314",
       "to": "transformer-block-220",
       "kind": "part_of",
       "qualifiers": {},
@@ -12423,8 +11713,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-314-part_of-transformer-block-224",
-      "from": "transformer-stmt-314",
+      "id": "struct-transformer-stmt-315-part_of-transformer-block-222",
+      "from": "transformer-stmt-315",
+      "to": "transformer-block-222",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-316-part_of-transformer-block-224",
+      "from": "transformer-stmt-316",
       "to": "transformer-block-224",
       "kind": "part_of",
       "qualifiers": {},
@@ -12433,18 +11733,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-315-part_of-transformer-block-225",
-      "from": "transformer-stmt-315",
-      "to": "transformer-block-225",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-316-part_of-transformer-block-226",
-      "from": "transformer-stmt-316",
+      "id": "struct-transformer-stmt-317-part_of-transformer-block-226",
+      "from": "transformer-stmt-317",
       "to": "transformer-block-226",
       "kind": "part_of",
       "qualifiers": {},
@@ -12453,19 +11743,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-317-part_of-transformer-block-228",
-      "from": "transformer-stmt-317",
-      "to": "transformer-block-228",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-318-part_of-transformer-block-229",
+      "id": "struct-transformer-stmt-318-part_of-transformer-block-230",
       "from": "transformer-stmt-318",
-      "to": "transformer-block-229",
+      "to": "transformer-block-230",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -12473,9 +11753,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-319-part_of-transformer-block-230",
+      "id": "struct-transformer-stmt-319-part_of-transformer-block-231",
       "from": "transformer-stmt-319",
-      "to": "transformer-block-230",
+      "to": "transformer-block-231",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -12503,178 +11783,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-322-part_of-transformer-block-232",
+      "id": "struct-transformer-stmt-322-part_of-transformer-block-235",
       "from": "transformer-stmt-322",
-      "to": "transformer-block-232",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-323-part_of-transformer-block-232",
-      "from": "transformer-stmt-323",
-      "to": "transformer-block-232",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-324-part_of-transformer-block-232",
-      "from": "transformer-stmt-324",
-      "to": "transformer-block-232",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-325-part_of-transformer-block-232",
-      "from": "transformer-stmt-325",
-      "to": "transformer-block-232",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-326-part_of-transformer-block-232",
-      "from": "transformer-stmt-326",
-      "to": "transformer-block-232",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-327-part_of-transformer-block-232",
-      "from": "transformer-stmt-327",
-      "to": "transformer-block-232",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-328-part_of-transformer-block-232",
-      "from": "transformer-stmt-328",
-      "to": "transformer-block-232",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-329-part_of-transformer-block-232",
-      "from": "transformer-stmt-329",
-      "to": "transformer-block-232",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-330-part_of-transformer-block-232",
-      "from": "transformer-stmt-330",
-      "to": "transformer-block-232",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-331-part_of-transformer-block-232",
-      "from": "transformer-stmt-331",
-      "to": "transformer-block-232",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-332-part_of-transformer-block-232",
-      "from": "transformer-stmt-332",
-      "to": "transformer-block-232",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-333-part_of-transformer-block-232",
-      "from": "transformer-stmt-333",
-      "to": "transformer-block-232",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-334-part_of-transformer-block-233",
-      "from": "transformer-stmt-334",
-      "to": "transformer-block-233",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-335-part_of-transformer-block-233",
-      "from": "transformer-stmt-335",
-      "to": "transformer-block-233",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-336-part_of-transformer-block-233",
-      "from": "transformer-stmt-336",
-      "to": "transformer-block-233",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-337-part_of-transformer-block-233",
-      "from": "transformer-stmt-337",
-      "to": "transformer-block-233",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-338-part_of-transformer-block-234",
-      "from": "transformer-stmt-338",
-      "to": "transformer-block-234",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-339-part_of-transformer-block-235",
-      "from": "transformer-stmt-339",
       "to": "transformer-block-235",
       "kind": "part_of",
       "qualifiers": {},
@@ -12683,9 +11793,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-340-part_of-transformer-block-236",
-      "from": "transformer-stmt-340",
-      "to": "transformer-block-236",
+      "id": "struct-transformer-stmt-323-part_of-transformer-block-235",
+      "from": "transformer-stmt-323",
+      "to": "transformer-block-235",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -12693,9 +11803,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-341-part_of-transformer-block-236",
-      "from": "transformer-stmt-341",
-      "to": "transformer-block-236",
+      "id": "struct-transformer-stmt-324-part_of-transformer-block-235",
+      "from": "transformer-stmt-324",
+      "to": "transformer-block-235",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -12703,9 +11813,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-342-part_of-transformer-block-236",
-      "from": "transformer-stmt-342",
-      "to": "transformer-block-236",
+      "id": "struct-transformer-stmt-325-part_of-transformer-block-235",
+      "from": "transformer-stmt-325",
+      "to": "transformer-block-235",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -12713,9 +11823,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-343-part_of-transformer-block-238",
-      "from": "transformer-stmt-343",
-      "to": "transformer-block-238",
+      "id": "struct-transformer-stmt-326-part_of-transformer-block-235",
+      "from": "transformer-stmt-326",
+      "to": "transformer-block-235",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -12723,18 +11833,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-344-part_of-transformer-block-238",
-      "from": "transformer-stmt-344",
-      "to": "transformer-block-238",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-345-part_of-transformer-block-240",
-      "from": "transformer-stmt-345",
+      "id": "struct-transformer-stmt-327-part_of-transformer-block-240",
+      "from": "transformer-stmt-327",
       "to": "transformer-block-240",
       "kind": "part_of",
       "qualifiers": {},
@@ -12743,8 +11843,38 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-346-part_of-transformer-block-242",
-      "from": "transformer-stmt-346",
+      "id": "struct-transformer-stmt-328-part_of-transformer-block-240",
+      "from": "transformer-stmt-328",
+      "to": "transformer-block-240",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-329-part_of-transformer-block-240",
+      "from": "transformer-stmt-329",
+      "to": "transformer-block-240",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-330-part_of-transformer-block-240",
+      "from": "transformer-stmt-330",
+      "to": "transformer-block-240",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-331-part_of-transformer-block-242",
+      "from": "transformer-stmt-331",
       "to": "transformer-block-242",
       "kind": "part_of",
       "qualifiers": {},
@@ -12753,8 +11883,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-347-part_of-transformer-block-244",
-      "from": "transformer-stmt-347",
+      "id": "struct-transformer-stmt-332-part_of-transformer-block-243",
+      "from": "transformer-stmt-332",
+      "to": "transformer-block-243",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-333-part_of-transformer-block-244",
+      "from": "transformer-stmt-333",
       "to": "transformer-block-244",
       "kind": "part_of",
       "qualifiers": {},
@@ -12763,8 +11903,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-348-part_of-transformer-block-246",
-      "from": "transformer-stmt-348",
+      "id": "struct-transformer-stmt-334-part_of-transformer-block-245",
+      "from": "transformer-stmt-334",
+      "to": "transformer-block-245",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-335-part_of-transformer-block-246",
+      "from": "transformer-stmt-335",
       "to": "transformer-block-246",
       "kind": "part_of",
       "qualifiers": {},
@@ -12773,8 +11923,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-349-part_of-transformer-block-248",
-      "from": "transformer-stmt-349",
+      "id": "struct-transformer-stmt-336-part_of-transformer-block-247",
+      "from": "transformer-stmt-336",
+      "to": "transformer-block-247",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-337-part_of-transformer-block-248",
+      "from": "transformer-stmt-337",
       "to": "transformer-block-248",
       "kind": "part_of",
       "qualifiers": {},
@@ -12783,9 +11943,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-350-part_of-transformer-block-250",
-      "from": "transformer-stmt-350",
-      "to": "transformer-block-250",
+      "id": "struct-transformer-stmt-338-part_of-transformer-block-249",
+      "from": "transformer-stmt-338",
+      "to": "transformer-block-249",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -12793,8 +11953,58 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-351-part_of-transformer-block-254",
-      "from": "transformer-stmt-351",
+      "id": "struct-transformer-stmt-339-part_of-transformer-block-249",
+      "from": "transformer-stmt-339",
+      "to": "transformer-block-249",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-340-part_of-transformer-block-251",
+      "from": "transformer-stmt-340",
+      "to": "transformer-block-251",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-341-part_of-transformer-block-251",
+      "from": "transformer-stmt-341",
+      "to": "transformer-block-251",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-342-part_of-transformer-block-252",
+      "from": "transformer-stmt-342",
+      "to": "transformer-block-252",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-343-part_of-transformer-block-253",
+      "from": "transformer-stmt-343",
+      "to": "transformer-block-253",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-344-part_of-transformer-block-254",
+      "from": "transformer-stmt-344",
       "to": "transformer-block-254",
       "kind": "part_of",
       "qualifiers": {},
@@ -12803,9 +12013,79 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-352-part_of-transformer-block-255",
+      "id": "struct-transformer-stmt-345-part_of-transformer-block-255",
+      "from": "transformer-stmt-345",
+      "to": "transformer-block-255",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-346-part_of-transformer-block-256",
+      "from": "transformer-stmt-346",
+      "to": "transformer-block-256",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-347-part_of-transformer-block-257",
+      "from": "transformer-stmt-347",
+      "to": "transformer-block-257",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-348-part_of-transformer-block-258",
+      "from": "transformer-stmt-348",
+      "to": "transformer-block-258",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-349-part_of-transformer-block-260",
+      "from": "transformer-stmt-349",
+      "to": "transformer-block-260",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-350-part_of-transformer-block-261",
+      "from": "transformer-stmt-350",
+      "to": "transformer-block-261",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-351-part_of-transformer-block-262",
+      "from": "transformer-stmt-351",
+      "to": "transformer-block-262",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-transformer-stmt-352-part_of-transformer-block-263",
       "from": "transformer-stmt-352",
-      "to": "transformer-block-255",
+      "to": "transformer-block-263",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -12813,9 +12093,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-353-part_of-transformer-block-255",
+      "id": "struct-transformer-stmt-353-part_of-transformer-block-264",
       "from": "transformer-stmt-353",
-      "to": "transformer-block-255",
+      "to": "transformer-block-264",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -12823,9 +12103,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-354-part_of-transformer-block-255",
+      "id": "struct-transformer-stmt-354-part_of-transformer-block-265",
       "from": "transformer-stmt-354",
-      "to": "transformer-block-255",
+      "to": "transformer-block-265",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -12833,98 +12113,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-355-part_of-transformer-block-259",
+      "id": "struct-transformer-stmt-355-part_of-transformer-block-266",
       "from": "transformer-stmt-355",
-      "to": "transformer-block-259",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-356-part_of-transformer-block-259",
-      "from": "transformer-stmt-356",
-      "to": "transformer-block-259",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-357-part_of-transformer-block-259",
-      "from": "transformer-stmt-357",
-      "to": "transformer-block-259",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-358-part_of-transformer-block-259",
-      "from": "transformer-stmt-358",
-      "to": "transformer-block-259",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-359-part_of-transformer-block-259",
-      "from": "transformer-stmt-359",
-      "to": "transformer-block-259",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-360-part_of-transformer-block-264",
-      "from": "transformer-stmt-360",
-      "to": "transformer-block-264",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-361-part_of-transformer-block-264",
-      "from": "transformer-stmt-361",
-      "to": "transformer-block-264",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-362-part_of-transformer-block-264",
-      "from": "transformer-stmt-362",
-      "to": "transformer-block-264",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-363-part_of-transformer-block-264",
-      "from": "transformer-stmt-363",
-      "to": "transformer-block-264",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-364-part_of-transformer-block-266",
-      "from": "transformer-stmt-364",
       "to": "transformer-block-266",
       "kind": "part_of",
       "qualifiers": {},
@@ -12933,249 +12123,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-transformer-stmt-365-part_of-transformer-block-267",
-      "from": "transformer-stmt-365",
+      "id": "struct-transformer-stmt-356-part_of-transformer-block-267",
+      "from": "transformer-stmt-356",
       "to": "transformer-block-267",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-366-part_of-transformer-block-268",
-      "from": "transformer-stmt-366",
-      "to": "transformer-block-268",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-367-part_of-transformer-block-269",
-      "from": "transformer-stmt-367",
-      "to": "transformer-block-269",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-368-part_of-transformer-block-270",
-      "from": "transformer-stmt-368",
-      "to": "transformer-block-270",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-369-part_of-transformer-block-271",
-      "from": "transformer-stmt-369",
-      "to": "transformer-block-271",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-370-part_of-transformer-block-272",
-      "from": "transformer-stmt-370",
-      "to": "transformer-block-272",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-371-part_of-transformer-block-273",
-      "from": "transformer-stmt-371",
-      "to": "transformer-block-273",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-372-part_of-transformer-block-273",
-      "from": "transformer-stmt-372",
-      "to": "transformer-block-273",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-373-part_of-transformer-block-275",
-      "from": "transformer-stmt-373",
-      "to": "transformer-block-275",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-374-part_of-transformer-block-275",
-      "from": "transformer-stmt-374",
-      "to": "transformer-block-275",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-375-part_of-transformer-block-276",
-      "from": "transformer-stmt-375",
-      "to": "transformer-block-276",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-376-part_of-transformer-block-277",
-      "from": "transformer-stmt-376",
-      "to": "transformer-block-277",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-377-part_of-transformer-block-278",
-      "from": "transformer-stmt-377",
-      "to": "transformer-block-278",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-378-part_of-transformer-block-279",
-      "from": "transformer-stmt-378",
-      "to": "transformer-block-279",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-379-part_of-transformer-block-280",
-      "from": "transformer-stmt-379",
-      "to": "transformer-block-280",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-380-part_of-transformer-block-281",
-      "from": "transformer-stmt-380",
-      "to": "transformer-block-281",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-381-part_of-transformer-block-282",
-      "from": "transformer-stmt-381",
-      "to": "transformer-block-282",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-382-part_of-transformer-block-284",
-      "from": "transformer-stmt-382",
-      "to": "transformer-block-284",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-383-part_of-transformer-block-285",
-      "from": "transformer-stmt-383",
-      "to": "transformer-block-285",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-384-part_of-transformer-block-286",
-      "from": "transformer-stmt-384",
-      "to": "transformer-block-286",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-385-part_of-transformer-block-287",
-      "from": "transformer-stmt-385",
-      "to": "transformer-block-287",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-386-part_of-transformer-block-288",
-      "from": "transformer-stmt-386",
-      "to": "transformer-block-288",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-387-part_of-transformer-block-289",
-      "from": "transformer-stmt-387",
-      "to": "transformer-block-289",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-388-part_of-transformer-block-290",
-      "from": "transformer-stmt-388",
-      "to": "transformer-block-290",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-transformer-stmt-389-part_of-transformer-block-291",
-      "from": "transformer-stmt-389",
-      "to": "transformer-block-291",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -15314,596 +14264,365 @@
     },
     {
       "id": "transformer-stmt-305",
-      "quote": "🧭 TDA Live, Attractors in the Residual Stream",
+      "quote": "Parameter breakdown Where the parameters of this model live: attention projections, feed-forward matrices, and the embedding table.",
       "block_id": "transformer-block-210",
       "section": "Inference vs. Training: Two Modes of Operation",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-306",
-      "quote": "A topological data analysis of the residual stream and the weight deltas (weights minus their previous values).",
+      "quote": "Computing the next token…",
       "block_id": "transformer-block-211",
       "section": "Inference vs. Training: Two Modes of Operation",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-307",
-      "quote": "Tokens drift through a phase space; over epochs the drift field reorganizes into attractors (stable sinks where states settle, blue) and repellers (unstable points the flow pushes away from, red, not necessarily sources of the flow, just points of locally positive divergence).",
-      "block_id": "transformer-block-211",
+      "quote": "Modern Transformer Lab One forward pass, many design choices.",
+      "block_id": "transformer-block-212",
       "section": "Inference vs. Training: Two Modes of Operation",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-308",
-      "quote": "The phase diagram shows the flow vectors, the basin of attraction, and the persistence (shape) of the resulting structures via H₀ components and H₁ loops.",
-      "block_id": "transformer-block-211",
+      "quote": "Switch the block components that separate the 2017 Transformer from a modern LLaMA/Qwen/DeepSeek-style model, then look at the same sentence through each setting.",
+      "block_id": "transformer-block-212",
       "section": "Inference vs. Training: Two Modes of Operation",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-309",
-      "quote": "Residual stream Weight deltas (ΔW) Weights (W)",
+      "quote": "The weights are random and fixed; this page is for seeing the computation, not for training a useful model.",
       "block_id": "transformer-block-212",
       "section": "Inference vs. Training: Two Modes of Operation",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-310",
-      "quote": "Auto (native / PCA) Force PCA Native dims Slice dims (choose axes)",
+      "quote": "The 2017 baseline is the original Transformer (\\cite[Vaswani et al., 2017]{vaswani2017attention}); modern open-weight models keep its residual skeleton but replace several parts: RMSNorm instead of LayerNorm, RoPE instead of additive position vectors, SwiGLU instead of GELU, grouped-query attention instead of full MHA, and usually a final normalization with a separate output head.",
       "block_id": "transformer-block-214",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "section": "The block is no longer just attention plus an MLP",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-311",
-      "quote": "Token Layer Density (attractor) Flow magnitude",
-      "block_id": "transformer-block-218",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "The controls below change one forward pass of a four-token sentence.",
+      "block_id": "transformer-block-214",
+      "section": "The block is no longer just attention plus an MLP",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-312",
-      "quote": "Solo point (phase map) In context (sentence)",
-      "block_id": "transformer-block-219",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "RMSNorm (modern) LayerNorm (2017 / GPT-2)",
+      "block_id": "transformer-block-216",
+      "section": "The block is no longer just attention plus an MLP",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-313",
-      "quote": "Vector field Streamlines Epoch trails Attractor / repeller Basins (2D) Attention flow Auto-update",
-      "block_id": "transformer-block-220",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "RoPE (rotary) Sinusoidal absolute",
+      "block_id": "transformer-block-218",
+      "section": "The block is no longer just attention plus an MLP",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-314",
-      "quote": "⟳ Recompute ↺ Trace from now Clear history",
-      "block_id": "transformer-block-224",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "GQA (shared K/V heads) MHA (one K/V per query head)",
+      "block_id": "transformer-block-220",
+      "section": "The block is no longer just attention plus an MLP",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-315",
-      "quote": "Attractor & repeller emergence across layers",
-      "block_id": "transformer-block-225",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "SwiGLU (gated) GELU dense MoE, 2 experts (toy)",
+      "block_id": "transformer-block-222",
+      "section": "The block is no longer just attention plus an MLP",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-316",
-      "quote": "Persistence diagram, shape of attractors (H₀ red, H₁ blue)",
-      "block_id": "transformer-block-226",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "On (production) Off (toy demo)",
+      "block_id": "transformer-block-224",
+      "section": "The block is no longer just attention plus an MLP",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-317",
-      "quote": "Betti curves β₀ / β₁ over scale ε",
-      "block_id": "transformer-block-228",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "Separate (modern) Tied to embeddings (GPT-2)",
+      "block_id": "transformer-block-226",
+      "section": "The block is no longer just attention plus an MLP",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-318",
-      "quote": "Topology by layer, β₀ / β₁",
-      "block_id": "transformer-block-229",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "Off (Llama/Qwen3/DeepSeek) On (GPT-2/Qwen2)",
+      "block_id": "transformer-block-230",
+      "section": "The block is no longer just attention plus an MLP",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-319",
-      "quote": "Learning field, ‖ΔW‖ per matrix (weight deltas)",
-      "block_id": "transformer-block-230",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "The settings are independent.",
+      "block_id": "transformer-block-231",
+      "section": "The block is no longer just attention plus an MLP",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-320",
-      "quote": "❓ How to read the phase diagram The idea: run a point (a token's hidden state) through one more transformer layer and look at the “push” it gets.",
+      "quote": "“Modern” below means the first option in every select: RMSNorm + RoPE + GQA + SwiGLU + final norm + separate head + QK norm + no attention bias.",
       "block_id": "transformer-block-231",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "section": "The block is no longer just attention plus an MLP",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-321",
-      "quote": "Repeat this on a grid of points and you get a vector field , a map of how the network moves states around.",
+      "quote": "That is the modern block used in this lab; the scale (4 tokens, d_model = 8) is deliberately tiny.",
       "block_id": "transformer-block-231",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "section": "The block is no longer just attention plus an MLP",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-322",
-      "quote": "Blue cones / arrows = the state is pulled in (negative divergence → an attractor ).",
-      "block_id": "transformer-block-232",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "Sinusoidal and learned schemes *add* a position vector to the token embedding.",
+      "block_id": "transformer-block-235",
+      "section": "RoPE: position is a rotation, not an addition",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-323",
-      "quote": "Hidden states that get pulled in and stay = the “meanings” the model converges to.",
-      "block_id": "transformer-block-232",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "RoPE adds **nothing** to the token or to the residual stream.",
+      "block_id": "transformer-block-235",
+      "section": "RoPE: position is a rotation, not an addition",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-324",
-      "quote": "Red cones / arrows = the state is pushed away (positive divergence → a repeller ).",
-      "block_id": "transformer-block-232",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "It computes the query and key projections first, then rotates those vectors by an angle proportional to their position, inside attention.",
+      "block_id": "transformer-block-235",
+      "section": "RoPE: position is a rotation, not an addition",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-325",
-      "quote": "Unstable points the model keeps everything away from.",
-      "block_id": "transformer-block-232",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "The value vectors and the running hidden state stay untouched.",
+      "block_id": "transformer-block-235",
+      "section": "RoPE: position is a rotation, not an addition",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-326",
-      "quote": "Thin colored lines = streamlines : follow one state starting anywhere, it drifts along these lines.",
-      "block_id": "transformer-block-232",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "The dot product of two rotated query/key vectors depends on the **difference** of their angles, so the attention score becomes naturally relative (\\cite[Su et al., 2021]{su2021rope}).",
+      "block_id": "transformer-block-235",
+      "section": "RoPE: position is a rotation, not an addition",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-327",
-      "quote": "Green = it settled into an attractor.",
-      "block_id": "transformer-block-232",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "The vectors are drawn in one two-dimensional frequency plane.",
+      "block_id": "transformer-block-240",
+      "section": "RoPE: position is a rotation, not an addition",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-328",
-      "quote": "Colored dots = the actual residual states of the words in your sentence (one per token per layer, color = token).",
-      "block_id": "transformer-block-232",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "RoPE rotates the query by m·ω and the key by n·ω .",
+      "block_id": "transformer-block-240",
+      "section": "RoPE: position is a rotation, not an addition",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-329",
-      "quote": "See how they sit relative to attractors.",
-      "block_id": "transformer-block-232",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "The dot product is cos((m−n)·ω) : only the relative offset survives.",
+      "block_id": "transformer-block-240",
+      "section": "RoPE: position is a rotation, not an addition",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-330",
-      "quote": "Blue diamond = detected attractor center, red ✕ = repeller center.",
-      "block_id": "transformer-block-232",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "The second plot shows that relative score as the distance changes.",
+      "block_id": "transformer-block-240",
+      "section": "RoPE: position is a rotation, not an addition",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-331",
-      "quote": "Persistence / Barcode / Betti: the “shape” of the cloud of states.",
-      "block_id": "transformer-block-232",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "| Piece | 2017 / GPT-2-style | Modern open-weight block |",
+      "block_id": "transformer-block-242",
+      "section": "What changed, and what stayed the same",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-332",
-      "quote": "β₀ = number of separate clusters, β₁ = number of loops/holes in the structure.",
-      "block_id": "transformer-block-232",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "| Normalization | LayerNorm (mean, gamma, beta) | RMSNorm (no mean, no beta) (\\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}) |",
+      "block_id": "transformer-block-243",
+      "section": "What changed, and what stayed the same",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-333",
-      "quote": "Hover over any element in the plot for details.",
-      "block_id": "transformer-block-232",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "| Position | added sinusoidal or learned vector | RoPE applied to Q and K |",
+      "block_id": "transformer-block-244",
+      "section": "What changed, and what stayed the same",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-334",
-      "quote": "Tip: switch Projection → Slice dims to look at raw 2D/3D slices of the higher-dimensional state space (choose the axes), or Force PCA if the plot looks flat.",
-      "block_id": "transformer-block-233",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "| Attention | MHA, one K/V head per query head | GQA (\\cite[Ainslie et al., 2023]{ainslie2023gqa}); DeepSeek uses MLA instead |",
+      "block_id": "transformer-block-245",
+      "section": "What changed, and what stayed the same",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-335",
-      "quote": "To inspect one layer, pick it in the Layer menu in the controls above (or click a layer in the emergence summary), the phase plot then shows only that layer's states as an epoch trail.",
-      "block_id": "transformer-block-233",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "| Feed-forward | dense GELU, often 4× width | SwiGLU gate, no biases, narrower width (\\cite[Shazeer, 2020]{shazeer2020glu}); large models may replace it with MoE |",
+      "block_id": "transformer-block-246",
+      "section": "What changed, and what stayed the same",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-336",
-      "quote": "Toggle 2D/3D , enable Basins (2D) to color the region each attractor “owns”, and watch the Attractor & repeller emergence panel to see where each one is born across layers.",
-      "block_id": "transformer-block-233",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "| Final norm | one final LayerNorm | final RMSNorm |",
+      "block_id": "transformer-block-247",
+      "section": "What changed, and what stayed the same",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-337",
-      "quote": "The plot is interactive, drag to rotate while training runs.",
-      "block_id": "transformer-block-233",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "| Output head | often tied to embeddings | usually separate |",
+      "block_id": "transformer-block-248",
+      "section": "What changed, and what stayed the same",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-338",
-      "quote": "Parameter breakdown Where the parameters of this model live: attention projections, feed-forward matrices, and the embedding table.",
-      "block_id": "transformer-block-234",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "The residual stream, causal mask, next-token cross-entropy and the idea “attention mixes, the FFN transforms” remain the same.",
+      "block_id": "transformer-block-249",
+      "section": "What changed, and what stayed the same",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-339",
-      "quote": "Computing the next token…",
-      "block_id": "transformer-block-235",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "This is why the modern block still reads as a Transformer, even though several named parts changed.",
+      "block_id": "transformer-block-249",
+      "section": "What changed, and what stayed the same",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-340",
-      "quote": "Modern Transformer Lab One forward pass, many design choices.",
-      "block_id": "transformer-block-236",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "The interactive model is a didactic simulator.",
+      "block_id": "transformer-block-251",
+      "section": "What this demo simplifies",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-341",
-      "quote": "Switch the block components that separate the 2017 Transformer from a modern LLaMA/Qwen/DeepSeek-style model, then look at the same sentence through each setting.",
-      "block_id": "transformer-block-236",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "It implements the real computation order, but deliberately uses smaller and older components:",
+      "block_id": "transformer-block-251",
+      "section": "What this demo simplifies",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-342",
-      "quote": "The weights are random and fixed; this page is for seeing the computation, not for training a useful model.",
-      "block_id": "transformer-block-236",
-      "section": "Inference vs. Training: Two Modes of Operation",
+      "quote": "- **Tokenizer:** a word splitter by default, with character-level and corpus-trained BPE options; none is a production byte-level tokenizer.",
+      "block_id": "transformer-block-252",
+      "section": "What this demo simplifies",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-343",
-      "quote": "The 2017 baseline is the original Transformer (\\cite[Vaswani et al., 2017]{vaswani2017attention}); modern open-weight models keep its residual skeleton but replace several parts: RMSNorm instead of LayerNorm, RoPE instead of additive position vectors, SwiGLU instead of GELU, grouped-query attention instead of full MHA, and usually a final normalization with a separate output head.",
-      "block_id": "transformer-block-238",
-      "section": "The block is no longer just attention plus an MLP",
+      "quote": "- **Position:** fixed sinusoidal absolute encodings, not RoPE or learned position tables.",
+      "block_id": "transformer-block-253",
+      "section": "What this demo simplifies",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-344",
-      "quote": "The controls below change one forward pass of a four-token sentence.",
-      "block_id": "transformer-block-238",
-      "section": "The block is no longer just attention plus an MLP",
+      "quote": "- **Normalization:** LayerNorm with mean, gamma and beta, not RMSNorm; no final norm.",
+      "block_id": "transformer-block-254",
+      "section": "What this demo simplifies",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-345",
-      "quote": "RMSNorm (modern) LayerNorm (2017 / GPT-2)",
-      "block_id": "transformer-block-240",
-      "section": "The block is no longer just attention plus an MLP",
+      "quote": "- **Attention:** plain MHA with one K/V head per query head, not GQA or MLA.",
+      "block_id": "transformer-block-255",
+      "section": "What this demo simplifies",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-346",
-      "quote": "RoPE (rotary) Sinusoidal absolute",
-      "block_id": "transformer-block-242",
-      "section": "The block is no longer just attention plus an MLP",
+      "quote": "- **FFN:** a dense GELU network with biases, not SwiGLU and not MoE.",
+      "block_id": "transformer-block-256",
+      "section": "What this demo simplifies",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-347",
-      "quote": "GQA (shared K/V heads) MHA (one K/V per query head)",
-      "block_id": "transformer-block-244",
-      "section": "The block is no longer just attention plus an MLP",
+      "quote": "- **Output:** the unembedding is tied to the token embeddings.",
+      "block_id": "transformer-block-257",
+      "section": "What this demo simplifies",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-348",
-      "quote": "SwiGLU (gated) GELU dense MoE, 2 experts (toy)",
-      "block_id": "transformer-block-246",
-      "section": "The block is no longer just attention plus an MLP",
+      "quote": "- **Training:** one tiny sequence, no batches, no AdamW schedule, weight decay, mixed precision or distributed training.",
+      "block_id": "transformer-block-258",
+      "section": "What this demo simplifies",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-349",
-      "quote": "On (production) Off (toy demo)",
-      "block_id": "transformer-block-248",
-      "section": "The block is no longer just attention plus an MLP",
+      "quote": "| Component | This demo | DeepSeek-V3 | Qwen2.5 / Qwen3 | Llama 3 | GPT-2 / nanoGPT |",
+      "block_id": "transformer-block-260",
+      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-350",
-      "quote": "Separate (modern) Tied to embeddings (GPT-2)",
-      "block_id": "transformer-block-250",
-      "section": "The block is no longer just attention plus an MLP",
+      "quote": "| Positions | sinusoidal, added | decoupled RoPE | RoPE | RoPE | learned absolute |",
+      "block_id": "transformer-block-261",
+      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-351",
-      "quote": "Off (Llama/Qwen3/DeepSeek) On (GPT-2/Qwen2)",
-      "block_id": "transformer-block-254",
-      "section": "The block is no longer just attention plus an MLP",
+      "quote": "| Norm | LayerNorm, no final norm | RMSNorm + final RMSNorm | RMSNorm + final RMSNorm; Qwen3 also Q/K-norm | RMSNorm + final RMSNorm | LayerNorm + final LayerNorm |",
+      "block_id": "transformer-block-262",
+      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-352",
-      "quote": "The settings are independent.",
-      "block_id": "transformer-block-255",
-      "section": "The block is no longer just attention plus an MLP",
+      "quote": "| Attention | MHA, no attention bias | MLA, no bias | GQA; Qwen2 has Q/K/V bias, Qwen3 has QK-norm | GQA, no bias | MHA with biases |",
+      "block_id": "transformer-block-263",
+      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-353",
-      "quote": "“Modern” below means the first option in every select: RMSNorm + RoPE + GQA + SwiGLU + final norm + separate head + QK norm + no attention bias.",
-      "block_id": "transformer-block-255",
-      "section": "The block is no longer just attention plus an MLP",
+      "quote": "| FFN | dense GELU + biases | SwiGLU + MoE, no bias | SwiGLU, no bias; some variants MoE | SwiGLU, no bias | dense GELU + biases |",
+      "block_id": "transformer-block-264",
+      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-354",
-      "quote": "That is the modern block used in this lab; the scale (4 tokens, d_model = 8) is deliberately tiny.",
-      "block_id": "transformer-block-255",
-      "section": "The block is no longer just attention plus an MLP",
+      "quote": "| Output head | tied | separate | separate | separate | tied |",
+      "block_id": "transformer-block-265",
+      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-355",
-      "quote": "Sinusoidal and learned schemes *add* a position vector to the token embedding.",
-      "block_id": "transformer-block-259",
-      "section": "RoPE: position is a rotation, not an addition",
+      "quote": "| Training | one tiny sequence | large distributed pretraining | large distributed pretraining | large distributed pretraining | small/medium pretraining |",
+      "block_id": "transformer-block-266",
+      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
       "kind": "statement"
     },
     {
       "id": "transformer-stmt-356",
-      "quote": "RoPE adds **nothing** to the token or to the residual stream.",
-      "block_id": "transformer-block-259",
-      "section": "RoPE: position is a rotation, not an addition",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-357",
-      "quote": "It computes the query and key projections first, then rotates those vectors by an angle proportional to their position, inside attention.",
-      "block_id": "transformer-block-259",
-      "section": "RoPE: position is a rotation, not an addition",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-358",
-      "quote": "The value vectors and the running hidden state stay untouched.",
-      "block_id": "transformer-block-259",
-      "section": "RoPE: position is a rotation, not an addition",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-359",
-      "quote": "The dot product of two rotated query/key vectors depends on the **difference** of their angles, so the attention score becomes naturally relative (\\cite[Su et al., 2021]{su2021rope}).",
-      "block_id": "transformer-block-259",
-      "section": "RoPE: position is a rotation, not an addition",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-360",
-      "quote": "The vectors are drawn in one two-dimensional frequency plane.",
-      "block_id": "transformer-block-264",
-      "section": "RoPE: position is a rotation, not an addition",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-361",
-      "quote": "RoPE rotates the query by m·ω and the key by n·ω .",
-      "block_id": "transformer-block-264",
-      "section": "RoPE: position is a rotation, not an addition",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-362",
-      "quote": "The dot product is cos((m−n)·ω) : only the relative offset survives.",
-      "block_id": "transformer-block-264",
-      "section": "RoPE: position is a rotation, not an addition",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-363",
-      "quote": "The second plot shows that relative score as the distance changes.",
-      "block_id": "transformer-block-264",
-      "section": "RoPE: position is a rotation, not an addition",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-364",
-      "quote": "| Piece | 2017 / GPT-2-style | Modern open-weight block |",
-      "block_id": "transformer-block-266",
-      "section": "What changed, and what stayed the same",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-365",
-      "quote": "| Normalization | LayerNorm (mean, gamma, beta) | RMSNorm (no mean, no beta) (\\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}) |",
-      "block_id": "transformer-block-267",
-      "section": "What changed, and what stayed the same",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-366",
-      "quote": "| Position | added sinusoidal or learned vector | RoPE applied to Q and K |",
-      "block_id": "transformer-block-268",
-      "section": "What changed, and what stayed the same",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-367",
-      "quote": "| Attention | MHA, one K/V head per query head | GQA (\\cite[Ainslie et al., 2023]{ainslie2023gqa}); DeepSeek uses MLA instead |",
-      "block_id": "transformer-block-269",
-      "section": "What changed, and what stayed the same",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-368",
-      "quote": "| Feed-forward | dense GELU, often 4× width | SwiGLU gate, no biases, narrower width (\\cite[Shazeer, 2020]{shazeer2020glu}); large models may replace it with MoE |",
-      "block_id": "transformer-block-270",
-      "section": "What changed, and what stayed the same",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-369",
-      "quote": "| Final norm | one final LayerNorm | final RMSNorm |",
-      "block_id": "transformer-block-271",
-      "section": "What changed, and what stayed the same",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-370",
-      "quote": "| Output head | often tied to embeddings | usually separate |",
-      "block_id": "transformer-block-272",
-      "section": "What changed, and what stayed the same",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-371",
-      "quote": "The residual stream, causal mask, next-token cross-entropy and the idea “attention mixes, the FFN transforms” remain the same.",
-      "block_id": "transformer-block-273",
-      "section": "What changed, and what stayed the same",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-372",
-      "quote": "This is why the modern block still reads as a Transformer, even though several named parts changed.",
-      "block_id": "transformer-block-273",
-      "section": "What changed, and what stayed the same",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-373",
-      "quote": "The interactive model is a didactic simulator.",
-      "block_id": "transformer-block-275",
-      "section": "What this demo simplifies",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-374",
-      "quote": "It implements the real computation order, but deliberately uses smaller and older components:",
-      "block_id": "transformer-block-275",
-      "section": "What this demo simplifies",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-375",
-      "quote": "- **Tokenizer:** a word splitter by default, with character-level and corpus-trained BPE options; none is a production byte-level tokenizer.",
-      "block_id": "transformer-block-276",
-      "section": "What this demo simplifies",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-376",
-      "quote": "- **Position:** fixed sinusoidal absolute encodings, not RoPE or learned position tables.",
-      "block_id": "transformer-block-277",
-      "section": "What this demo simplifies",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-377",
-      "quote": "- **Normalization:** LayerNorm with mean, gamma and beta, not RMSNorm; no final norm.",
-      "block_id": "transformer-block-278",
-      "section": "What this demo simplifies",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-378",
-      "quote": "- **Attention:** plain MHA with one K/V head per query head, not GQA or MLA.",
-      "block_id": "transformer-block-279",
-      "section": "What this demo simplifies",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-379",
-      "quote": "- **FFN:** a dense GELU network with biases, not SwiGLU and not MoE.",
-      "block_id": "transformer-block-280",
-      "section": "What this demo simplifies",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-380",
-      "quote": "- **Output:** the unembedding is tied to the token embeddings.",
-      "block_id": "transformer-block-281",
-      "section": "What this demo simplifies",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-381",
-      "quote": "- **Training:** one tiny sequence, no batches, no AdamW schedule, weight decay, mixed precision or distributed training.",
-      "block_id": "transformer-block-282",
-      "section": "What this demo simplifies",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-382",
-      "quote": "| Component | This demo | DeepSeek-V3 | Qwen2.5 / Qwen3 | Llama 3 | GPT-2 / nanoGPT |",
-      "block_id": "transformer-block-284",
-      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-383",
-      "quote": "| Positions | sinusoidal, added | decoupled RoPE | RoPE | RoPE | learned absolute |",
-      "block_id": "transformer-block-285",
-      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-384",
-      "quote": "| Norm | LayerNorm, no final norm | RMSNorm + final RMSNorm | RMSNorm + final RMSNorm; Qwen3 also Q/K-norm | RMSNorm + final RMSNorm | LayerNorm + final LayerNorm |",
-      "block_id": "transformer-block-286",
-      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-385",
-      "quote": "| Attention | MHA, no attention bias | MLA, no bias | GQA; Qwen2 has Q/K/V bias, Qwen3 has QK-norm | GQA, no bias | MHA with biases |",
-      "block_id": "transformer-block-287",
-      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-386",
-      "quote": "| FFN | dense GELU + biases | SwiGLU + MoE, no bias | SwiGLU, no bias; some variants MoE | SwiGLU, no bias | dense GELU + biases |",
-      "block_id": "transformer-block-288",
-      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-387",
-      "quote": "| Output head | tied | separate | separate | separate | tied |",
-      "block_id": "transformer-block-289",
-      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-388",
-      "quote": "| Training | one tiny sequence | large distributed pretraining | large distributed pretraining | large distributed pretraining | small/medium pretraining |",
-      "block_id": "transformer-block-290",
-      "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
-      "kind": "statement"
-    },
-    {
-      "id": "transformer-stmt-389",
       "quote": "The code tabs follow nanoGPT: they use a learned position table, a final LayerNorm and a separate output head, so they are the same family as this demo but not the same configuration.",
-      "block_id": "transformer-block-291",
+      "block_id": "transformer-block-267",
       "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
       "kind": "statement"
     }
@@ -17165,492 +15884,348 @@
     },
     {
       "id": "transformer-block-210",
-      "quote": "🧭 TDA Live, Attractors in the Residual Stream",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-211",
-      "quote": "A topological data analysis of the residual stream and the weight deltas (weights minus their previous values). Tokens drift through a phase space; over epochs the drift field reorganizes into attractors (stable sinks where states settle, blue) and repellers (unstable points the flow pushes away from, red, not necessarily sources of the flow, just points of locally positive divergence). The phase diagram shows the flow vectors, the basin of attraction, and the persistence (shape) of the resulting structures via H₀ components and H₁ loops.",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-212",
-      "quote": "Residual stream Weight deltas (ΔW) Weights (W)",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-213",
-      "quote": "3D (drag to rotate) 2D",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-214",
-      "quote": "Auto (native / PCA) Force PCA Native dims Slice dims (choose axes)",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-215",
-      "quote": "axes",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-216",
-      "quote": ",",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-217",
-      "quote": "Layer:",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-218",
-      "quote": "Token Layer Density (attractor) Flow magnitude",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-219",
-      "quote": "Solo point (phase map) In context (sentence)",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-220",
-      "quote": "Vector field Streamlines Epoch trails Attractor / repeller Basins (2D) Attention flow Auto-update",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-221",
-      "quote": "Grid 9",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-222",
-      "quote": "Eps steps 40",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-223",
-      "quote": "History 30",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-224",
-      "quote": "⟳ Recompute ↺ Trace from now Clear history",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-225",
-      "quote": "Attractor & repeller emergence across layers",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-226",
-      "quote": "Persistence diagram, shape of attractors (H₀ red, H₁ blue)",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-227",
-      "quote": "Persistence barcode",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-228",
-      "quote": "Betti curves β₀ / β₁ over scale ε",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-229",
-      "quote": "Topology by layer, β₀ / β₁",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-230",
-      "quote": "Learning field, ‖ΔW‖ per matrix (weight deltas)",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-231",
-      "quote": "❓ How to read the phase diagram The idea: run a point (a token's hidden state) through one more transformer layer and look at the “push” it gets. Repeat this on a grid of points and you get a vector field , a map of how the network moves states around.",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-232",
-      "quote": "Blue cones / arrows = the state is pulled in (negative divergence → an attractor ). Hidden states that get pulled in and stay = the “meanings” the model converges to. Red cones / arrows = the state is pushed away (positive divergence → a repeller ). Unstable points the model keeps everything away from. Thin colored lines = streamlines : follow one state starting anywhere, it drifts along these lines. Green = it settled into an attractor. Colored dots = the actual residual states of the words in your sentence (one per token per layer, color = token). See how they sit relative to attractors. Blue diamond = detected attractor center, red ✕ = repeller center. Persistence / Barcode / Betti: the “shape” of the cloud of states. β₀ = number of separate clusters, β₁ = number of loops/holes in the structure. Hover over any element in the plot for details.",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-233",
-      "quote": "Tip: switch Projection → Slice dims to look at raw 2D/3D slices of the higher-dimensional state space (choose the axes), or Force PCA if the plot looks flat. To inspect one layer, pick it in the Layer menu in the controls above (or click a layer in the emergence summary), the phase plot then shows only that layer's states as an epoch trail. Toggle 2D/3D , enable Basins (2D) to color the region each attractor “owns”, and watch the Attractor & repeller emergence panel to see where each one is born across layers. The plot is interactive, drag to rotate while training runs.",
-      "kind": "paragraph",
-      "section": "Inference vs. Training: Two Modes of Operation"
-    },
-    {
-      "id": "transformer-block-234",
       "quote": "Parameter breakdown Where the parameters of this model live: attention projections, feed-forward matrices, and the embedding table.",
       "kind": "paragraph",
       "section": "Inference vs. Training: Two Modes of Operation"
     },
     {
-      "id": "transformer-block-235",
+      "id": "transformer-block-211",
       "quote": "Computing the next token…",
       "kind": "paragraph",
       "section": "Inference vs. Training: Two Modes of Operation"
     },
     {
-      "id": "transformer-block-236",
+      "id": "transformer-block-212",
       "quote": "Modern Transformer Lab One forward pass, many design choices. Switch the block components that separate the 2017 Transformer from a modern LLaMA/Qwen/DeepSeek-style model, then look at the same sentence through each setting. The weights are random and fixed; this page is for seeing the computation, not for training a useful model.",
       "kind": "paragraph",
       "section": "Inference vs. Training: Two Modes of Operation"
     },
     {
-      "id": "transformer-block-237",
+      "id": "transformer-block-213",
       "quote": "The block is no longer just attention plus an MLP",
       "kind": "heading",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-238",
+      "id": "transformer-block-214",
       "quote": "The 2017 baseline is the original Transformer (\\cite[Vaswani et al., 2017]{vaswani2017attention}); modern open-weight models keep its residual skeleton but replace several parts: RMSNorm instead of LayerNorm, RoPE instead of additive position vectors, SwiGLU instead of GELU, grouped-query attention instead of full MHA, and usually a final normalization with a separate output head. The controls below change one forward pass of a four-token sentence.",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-239",
+      "id": "transformer-block-215",
       "quote": "Normalization",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-240",
+      "id": "transformer-block-216",
       "quote": "RMSNorm (modern) LayerNorm (2017 / GPT-2)",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-241",
+      "id": "transformer-block-217",
       "quote": "Position",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-242",
+      "id": "transformer-block-218",
       "quote": "RoPE (rotary) Sinusoidal absolute",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-243",
+      "id": "transformer-block-219",
       "quote": "Attention",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-244",
+      "id": "transformer-block-220",
       "quote": "GQA (shared K/V heads) MHA (one K/V per query head)",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-245",
+      "id": "transformer-block-221",
       "quote": "Feed-forward",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-246",
+      "id": "transformer-block-222",
       "quote": "SwiGLU (gated) GELU dense MoE, 2 experts (toy)",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-247",
+      "id": "transformer-block-223",
       "quote": "Final normalization",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-248",
+      "id": "transformer-block-224",
       "quote": "On (production) Off (toy demo)",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-249",
+      "id": "transformer-block-225",
       "quote": "Output head",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-250",
+      "id": "transformer-block-226",
       "quote": "Separate (modern) Tied to embeddings (GPT-2)",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-251",
+      "id": "transformer-block-227",
       "quote": "Q/K normalization",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-252",
+      "id": "transformer-block-228",
       "quote": "On (Qwen3-style) Off",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-253",
+      "id": "transformer-block-229",
       "quote": "Attention bias",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-254",
+      "id": "transformer-block-230",
       "quote": "Off (Llama/Qwen3/DeepSeek) On (GPT-2/Qwen2)",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-255",
+      "id": "transformer-block-231",
       "quote": "The settings are independent. “Modern” below means the first option in every select: RMSNorm + RoPE + GQA + SwiGLU + final norm + separate head + QK norm + no attention bias. That is the modern block used in this lab; the scale (4 tokens, d_model = 8) is deliberately tiny.",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-256",
+      "id": "transformer-block-232",
       "quote": "Attention pattern",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-257",
+      "id": "transformer-block-233",
       "quote": "Final next-token scores",
       "kind": "paragraph",
       "section": "The block is no longer just attention plus an MLP"
     },
     {
-      "id": "transformer-block-258",
+      "id": "transformer-block-234",
       "quote": "RoPE: position is a rotation, not an addition",
       "kind": "heading",
       "section": "RoPE: position is a rotation, not an addition"
     },
     {
-      "id": "transformer-block-259",
+      "id": "transformer-block-235",
       "quote": "Sinusoidal and learned schemes *add* a position vector to the token embedding. RoPE adds **nothing** to the token or to the residual stream. It computes the query and key projections first, then rotates those vectors by an angle proportional to their position, inside attention. The value vectors and the running hidden state stay untouched. The dot product of two rotated query/key vectors depends on the **difference** of their angles, so the attention score becomes naturally relative (\\cite[Su et al., 2021]{su2021rope}).",
       "kind": "paragraph",
       "section": "RoPE: position is a rotation, not an addition"
     },
     {
-      "id": "transformer-block-260",
+      "id": "transformer-block-236",
       "quote": "Query position m: 3",
       "kind": "paragraph",
       "section": "RoPE: position is a rotation, not an addition"
     },
     {
-      "id": "transformer-block-261",
+      "id": "transformer-block-237",
       "quote": "Key position n: 1",
       "kind": "paragraph",
       "section": "RoPE: position is a rotation, not an addition"
     },
     {
-      "id": "transformer-block-262",
+      "id": "transformer-block-238",
       "quote": "Frequency pair: 0",
       "kind": "paragraph",
       "section": "RoPE: position is a rotation, not an addition"
     },
     {
-      "id": "transformer-block-263",
+      "id": "transformer-block-239",
       "quote": "RoPE base theta: 10000",
       "kind": "paragraph",
       "section": "RoPE: position is a rotation, not an addition"
     },
     {
-      "id": "transformer-block-264",
+      "id": "transformer-block-240",
       "quote": "The vectors are drawn in one two-dimensional frequency plane. RoPE rotates the query by m·ω and the key by n·ω . The dot product is cos((m−n)·ω) : only the relative offset survives. The second plot shows that relative score as the distance changes.",
       "kind": "paragraph",
       "section": "RoPE: position is a rotation, not an addition"
     },
     {
-      "id": "transformer-block-265",
+      "id": "transformer-block-241",
       "quote": "What changed, and what stayed the same",
       "kind": "heading",
       "section": "What changed, and what stayed the same"
     },
     {
-      "id": "transformer-block-266",
+      "id": "transformer-block-242",
       "quote": "| Piece | 2017 / GPT-2-style | Modern open-weight block |",
       "kind": "table-row",
       "section": "What changed, and what stayed the same"
     },
     {
-      "id": "transformer-block-267",
+      "id": "transformer-block-243",
       "quote": "| Normalization | LayerNorm (mean, gamma, beta) | RMSNorm (no mean, no beta) (\\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}) |",
       "kind": "table-row",
       "section": "What changed, and what stayed the same"
     },
     {
-      "id": "transformer-block-268",
+      "id": "transformer-block-244",
       "quote": "| Position | added sinusoidal or learned vector | RoPE applied to Q and K |",
       "kind": "table-row",
       "section": "What changed, and what stayed the same"
     },
     {
-      "id": "transformer-block-269",
+      "id": "transformer-block-245",
       "quote": "| Attention | MHA, one K/V head per query head | GQA (\\cite[Ainslie et al., 2023]{ainslie2023gqa}); DeepSeek uses MLA instead |",
       "kind": "table-row",
       "section": "What changed, and what stayed the same"
     },
     {
-      "id": "transformer-block-270",
+      "id": "transformer-block-246",
       "quote": "| Feed-forward | dense GELU, often 4× width | SwiGLU gate, no biases, narrower width (\\cite[Shazeer, 2020]{shazeer2020glu}); large models may replace it with MoE |",
       "kind": "table-row",
       "section": "What changed, and what stayed the same"
     },
     {
-      "id": "transformer-block-271",
+      "id": "transformer-block-247",
       "quote": "| Final norm | one final LayerNorm | final RMSNorm |",
       "kind": "table-row",
       "section": "What changed, and what stayed the same"
     },
     {
-      "id": "transformer-block-272",
+      "id": "transformer-block-248",
       "quote": "| Output head | often tied to embeddings | usually separate |",
       "kind": "table-row",
       "section": "What changed, and what stayed the same"
     },
     {
-      "id": "transformer-block-273",
+      "id": "transformer-block-249",
       "quote": "The residual stream, causal mask, next-token cross-entropy and the idea “attention mixes, the FFN transforms” remain the same. This is why the modern block still reads as a Transformer, even though several named parts changed.",
       "kind": "paragraph",
       "section": "What changed, and what stayed the same"
     },
     {
-      "id": "transformer-block-274",
+      "id": "transformer-block-250",
       "quote": "What this demo simplifies",
       "kind": "heading",
       "section": "What this demo simplifies"
     },
     {
-      "id": "transformer-block-275",
+      "id": "transformer-block-251",
       "quote": "The interactive model is a didactic simulator. It implements the real computation order, but deliberately uses smaller and older components:",
       "kind": "paragraph",
       "section": "What this demo simplifies"
     },
     {
-      "id": "transformer-block-276",
+      "id": "transformer-block-252",
       "quote": "- **Tokenizer:** a word splitter by default, with character-level and corpus-trained BPE options; none is a production byte-level tokenizer.",
       "kind": "list-item",
       "section": "What this demo simplifies"
     },
     {
-      "id": "transformer-block-277",
+      "id": "transformer-block-253",
       "quote": "- **Position:** fixed sinusoidal absolute encodings, not RoPE or learned position tables.",
       "kind": "list-item",
       "section": "What this demo simplifies"
     },
     {
-      "id": "transformer-block-278",
+      "id": "transformer-block-254",
       "quote": "- **Normalization:** LayerNorm with mean, gamma and beta, not RMSNorm; no final norm.",
       "kind": "list-item",
       "section": "What this demo simplifies"
     },
     {
-      "id": "transformer-block-279",
+      "id": "transformer-block-255",
       "quote": "- **Attention:** plain MHA with one K/V head per query head, not GQA or MLA.",
       "kind": "list-item",
       "section": "What this demo simplifies"
     },
     {
-      "id": "transformer-block-280",
+      "id": "transformer-block-256",
       "quote": "- **FFN:** a dense GELU network with biases, not SwiGLU and not MoE.",
       "kind": "list-item",
       "section": "What this demo simplifies"
     },
     {
-      "id": "transformer-block-281",
+      "id": "transformer-block-257",
       "quote": "- **Output:** the unembedding is tied to the token embeddings.",
       "kind": "list-item",
       "section": "What this demo simplifies"
     },
     {
-      "id": "transformer-block-282",
+      "id": "transformer-block-258",
       "quote": "- **Training:** one tiny sequence, no batches, no AdamW schedule, weight decay, mixed precision or distributed training.",
       "kind": "list-item",
       "section": "What this demo simplifies"
     },
     {
-      "id": "transformer-block-283",
+      "id": "transformer-block-259",
       "quote": "How it differs from DeepSeek, Qwen, Llama and GPT-2",
       "kind": "heading",
       "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2"
     },
     {
-      "id": "transformer-block-284",
+      "id": "transformer-block-260",
       "quote": "| Component | This demo | DeepSeek-V3 | Qwen2.5 / Qwen3 | Llama 3 | GPT-2 / nanoGPT |",
       "kind": "table-row",
       "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2"
     },
     {
-      "id": "transformer-block-285",
+      "id": "transformer-block-261",
       "quote": "| Positions | sinusoidal, added | decoupled RoPE | RoPE | RoPE | learned absolute |",
       "kind": "table-row",
       "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2"
     },
     {
-      "id": "transformer-block-286",
+      "id": "transformer-block-262",
       "quote": "| Norm | LayerNorm, no final norm | RMSNorm + final RMSNorm | RMSNorm + final RMSNorm; Qwen3 also Q/K-norm | RMSNorm + final RMSNorm | LayerNorm + final LayerNorm |",
       "kind": "table-row",
       "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2"
     },
     {
-      "id": "transformer-block-287",
+      "id": "transformer-block-263",
       "quote": "| Attention | MHA, no attention bias | MLA, no bias | GQA; Qwen2 has Q/K/V bias, Qwen3 has QK-norm | GQA, no bias | MHA with biases |",
       "kind": "table-row",
       "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2"
     },
     {
-      "id": "transformer-block-288",
+      "id": "transformer-block-264",
       "quote": "| FFN | dense GELU + biases | SwiGLU + MoE, no bias | SwiGLU, no bias; some variants MoE | SwiGLU, no bias | dense GELU + biases |",
       "kind": "table-row",
       "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2"
     },
     {
-      "id": "transformer-block-289",
+      "id": "transformer-block-265",
       "quote": "| Output head | tied | separate | separate | separate | tied |",
       "kind": "table-row",
       "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2"
     },
     {
-      "id": "transformer-block-290",
+      "id": "transformer-block-266",
       "quote": "| Training | one tiny sequence | large distributed pretraining | large distributed pretraining | large distributed pretraining | small/medium pretraining |",
       "kind": "table-row",
       "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2"
     },
     {
-      "id": "transformer-block-291",
+      "id": "transformer-block-267",
       "quote": "The code tabs follow nanoGPT: they use a learned position table, a final LayerNorm and a separate output head, so they are the same family as this demo but not the same configuration.",
       "kind": "paragraph",
       "section": "How it differs from DeepSeek, Qwen, Llama and GPT-2"

@@ -22,10 +22,15 @@
 		edges: [],
 		eps: 0.35,
 		options: null,
-		lastCompute: 0
+		lastCompute: 0,
+		lastComputeAt: 0,
+		computes: 0,
+		liveTrace: null,
+		dirty: false
 	};
 
-	var debounceTimer = null;
+	var LIVE_MIN_MS = 600;
+	var liveTimer = null;
 	var resizeTimer = null;
 
 	function el(id) {
@@ -75,13 +80,59 @@
 		if (label) label.textContent = state.eps.toFixed(2) + " (normalised)";
 	}
 
+	function traceList() {
+		return (state.liveTrace && state.liveTrace.length)
+			? state.liveTrace
+			: (window.__tmLayerTrace || []);
+	}
+
+	function traceTokens() {
+		var traces = traceList();
+		var base = traces[0];
+		if (base && base.tokenStrings && base.tokenStrings.length) return base.tokenStrings.slice();
+		var collector = window.tlab_trajectory_collector;
+		if (collector && collector.tokens && collector.tokens.length) return collector.tokens.slice();
+		if (typeof window.getTrainingTokens === "function") {
+			try { return window.getTrainingTokens(); } catch (e) { /* ignore */ }
+		}
+		return [];
+	}
+
+	/*
+	 * During training the full layer-card visualization is deliberately
+	 * deferred while it is far from the viewport, so __tmLayerTrace can be
+	 * stale exactly when the reader is watching this block. Rebuild a
+	 * lightweight trace from the current weights instead: it has the same
+	 * h_in/h_attn/h_out shape collect() reads, without touching the DOM.
+	 */
+	function refreshLiveTrace() {
+		state.liveTrace = null;
+		var weights = window.currentWeights;
+		var config = typeof window.getTransformerConfig === "function" ? window.getTransformerConfig() : null;
+		if (!weights || !weights.length || !config) return false;
+		if (typeof window.embedTokensWithPE !== "function" || typeof window.forwardOneLayer !== "function") return false;
+		var tokens = traceTokens();
+		if (!tokens.length) return false;
+		try {
+			var h = window.embedTokensWithPE(tokens, config.d_model);
+			var trace = [];
+			for (var l = 0; l < weights.length; l++) {
+				var result = window.forwardOneLayer(h, weights[l], config.d_model, config.n_heads, tokens, null);
+				trace[l] = { h_in: h, h_attn: result.h_attn, h_out: result.h_out, tokenStrings: tokens };
+				h = result.h_out;
+			}
+			state.liveTrace = trace;
+			return true;
+		} catch (e) {
+			return false;
+		}
+	}
+
 	function collect(options) {
-		var traces = window.__tmLayerTrace || [];
+		var traces = traceList();
 		if (!traces.length) return null;
 		var base = traces[0];
-		var tokens = (base.tokenStrings && base.tokenStrings.length)
-			? base.tokenStrings.slice()
-			: ((window.tlab_trajectory_collector && window.tlab_trajectory_collector.tokens) || []);
+		var tokens = traceTokens();
 		if (!tokens.length) return null;
 
 		var indices = tokens.map(function (_, i) { return i; });
@@ -570,6 +621,7 @@
 	}
 
 	function computeNow() {
+		state.dirty = false;
 		var options = readOptions();
 		state.options = options;
 		state.eps = readEps();
@@ -595,7 +647,9 @@
 		state.projection = project(collected.points);
 		state.eps = readEps();
 		refreshGroups();
-		state.lastCompute = performance.now() - started;
+		state.lastComputeAt = performance.now();
+		state.lastCompute = state.lastComputeAt - started;
+		state.computes += 1;
 		renderAll();
 		var message = collected.points.length + " states · " + collected.used.length + " of " +
 			collected.totalTokens + " tokens · " + collected.nLayers + " layers · " +
@@ -613,6 +667,68 @@
 		window.requestAnimationFrame(function () {
 			setTimeout(computeNow, 0);
 		});
+	}
+
+	function isOpen() {
+		var block = el("tda-sphere-optional");
+		if (!block) return false;
+		var header = block.querySelector(".optional-header");
+		var content = block.querySelector(".optional-content");
+		return !!content && content.style.display !== "none" &&
+			!!header && header.getAttribute("aria-expanded") === "true";
+	}
+
+	function panelInView() {
+		if (!isOpen()) return false;
+		var block = el("tda-sphere-optional");
+		if (!block) return false;
+		var rect = block.getBoundingClientRect();
+		if (rect.height <= 0) return false;
+		var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+		var margin = 300;
+		return rect.bottom > -margin && rect.top < vh + margin;
+	}
+
+	function maybeRecompute() {
+		if (!state.dirty || !window.__tdaSphereInit || !panelInView()) return;
+		var plot = el("tda-sphere-3d");
+		if (!plot || plot.clientWidth < 40) {
+			setTimeout(maybeRecompute, 150);
+			return;
+		}
+		requestLiveCompute(true);
+	}
+
+	function requestLiveCompute(withLiveTrace) {
+		if (liveTimer) return;
+		var wait = Math.max(0, LIVE_MIN_MS - (performance.now() - state.lastComputeAt));
+		liveTimer = setTimeout(function () {
+			liveTimer = null;
+			if (!panelInView()) {
+				state.dirty = true;
+				return;
+			}
+			state.dirty = false;
+			if (withLiveTrace) refreshLiveTrace();
+			scheduleCompute();
+		}, wait);
+	}
+
+	function onTrainingProgress() {
+		if (!panelInView()) {
+			state.dirty = true;
+			return;
+		}
+		requestLiveCompute(true);
+	}
+
+	function ensureObserver() {
+		var block = el("tda-sphere-optional");
+		if (!block || window.__tdaSphereObserver || !("IntersectionObserver" in window)) return;
+		window.__tdaSphereObserver = new IntersectionObserver(function (entries) {
+			if (entries.some(function (entry) { return entry.isIntersecting; })) maybeRecompute();
+		}, { rootMargin: "300px 0px" });
+		window.__tdaSphereObserver.observe(block);
 	}
 
 	function wire() {
@@ -653,30 +769,22 @@
 				drawBarcode();
 			}, 180);
 		});
-		window.addEventListener("tm:training-end", function () {
-			if (isOpen()) scheduleCompute();
-		});
+		window.addEventListener("tm:training-tick", onTrainingProgress);
+		window.addEventListener("tm:training-end", onTrainingProgress);
 		window.addEventListener("tm:transformer-data", function () {
-			if (window.isTraining || !isOpen()) return;
-			clearTimeout(debounceTimer);
-			debounceTimer = setTimeout(scheduleCompute, 500);
+			if (!window.isTraining) state.liveTrace = null;
+			if (!panelInView()) {
+				state.dirty = true;
+				return;
+			}
+			requestLiveCompute(false);
 		});
 		if (window.__MN_DARK && typeof window.__MN_DARK.onChange === "function") {
 			window.__MN_DARK.onChange(renderAll);
 		}
 	}
 
-	function isOpen() {
-		var block = el("tda-sphere-optional");
-		if (!block) return false;
-		var header = block.querySelector(".optional-header");
-		var content = block.querySelector(".optional-content");
-		return !!content && content.style.display !== "none" &&
-			!!header && header.getAttribute("aria-expanded") === "true";
-	}
-
 	function boot() {
-		if (window.__tdaSphereInit) return;
 		var block = el("tda-sphere-optional");
 		if (!block) return;
 		var header = block.querySelector(".optional-header");
@@ -685,7 +793,17 @@
 			setTimeout(boot, 150);
 			return;
 		}
-		if (content.style.display === "none" || !isOpen()) {
+		ensureObserver();
+		/*
+		 * Install the training/visibility listeners even while the block is
+		 * closed. Training that happens before the reader ever opens it then
+		 * still marks the data dirty instead of leaving the first view stale.
+		 */
+		if (!window.__tdaSphereWired) {
+			window.__tdaSphereWired = true;
+			wire();
+		}
+		if (!isOpen()) {
 			if (!header.__tdaSphereBound) {
 				header.__tdaSphereBound = true;
 				header.addEventListener("click", function () {
@@ -699,9 +817,16 @@
 			setTimeout(boot, 150);
 			return;
 		}
-		window.__tdaSphereInit = true;
-		wire();
-		setTimeout(scheduleCompute, 80);
+		if (!window.__tdaSphereInit) {
+			window.__tdaSphereInit = true;
+			if (state.dirty) {
+				state.dirty = false;
+				refreshLiveTrace();
+			}
+			setTimeout(scheduleCompute, 80);
+			return;
+		}
+		if (state.dirty) maybeRecompute();
 	}
 
 	window.__tdaSphereState = function () {
@@ -712,7 +837,11 @@
 			eps: state.eps,
 			h0: state.topo ? state.topo.h0.length : 0,
 			h1: state.topo ? state.topo.h1.length : 0,
-			groups: state.groups ? state.groups.groups.length : 0
+			groups: state.groups ? state.groups.groups.length : 0,
+			computes: state.computes,
+			dirty: state.dirty,
+			wired: !!window.__tdaSphereWired,
+			live: !!(state.liveTrace && state.liveTrace.length)
 		};
 	};
 	window.__tdaSphereRecompute = scheduleCompute;

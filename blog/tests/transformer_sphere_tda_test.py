@@ -133,11 +133,24 @@ def main() -> int:
         time.sleep(1)
         driver = make_driver()
         load_lesson(driver, base)
+        check(wait_until(
+            driver,
+            "return !!(window.__tdaSphereState && window.__tdaSphereState().wired);",
+            20,
+        ), "sphere module wires while the block is still closed")
+        driver.execute_script(
+            "window.dispatchEvent(new CustomEvent('tm:training-tick',{detail:{epoch:0}}));"
+        )
+        time.sleep(0.3)
+        check(bool(sphere_state(driver).get("dirty")),
+              "training before opening marks the sphere dirty", str(sphere_state(driver)))
         open_block(driver)
 
         check(wait_until(driver, "return !!(window.__tdaSphereState && window.__tdaSphereState().points > 1);", 90),
               "sphere TDA computes")
         state = sphere_state(driver)
+        check(not state.get("dirty"), "first open clears the off-screen dirty flag", str(state))
+        check(bool(state.get("live")), "first open builds a live trace", str(state))
         check(state.get("points", 0) == state.get("tokens", 0) * (state.get("layers", 0) + 1),
               "default view pools h0 plus every layer output",
               str(state))
@@ -168,6 +181,38 @@ def main() -> int:
             """
         )
         check(barcode_pixels > 1000, "barcode canvas is drawn", str(barcode_pixels))
+
+        computes_before = sphere_state(driver).get("computes", 0)
+        driver.execute_script(
+            "window.dispatchEvent(new CustomEvent('tm:training-tick',{detail:{epoch:1}}));"
+        )
+        check(wait_until(
+            driver,
+            "const s=window.__tdaSphereState && window.__tdaSphereState();"
+            f"return !!s && s.computes > {computes_before};",
+            20,
+        ), "training tick recomputes the sphere while it is in view")
+        live = sphere_state(driver)
+        check(bool(live.get("live")), "training tick builds a live layer trace", str(live))
+
+        driver.execute_script("window.scrollTo({top: 0});")
+        time.sleep(0.5)
+        driver.execute_script(
+            "window.dispatchEvent(new CustomEvent('tm:training-tick',{detail:{epoch:2}}));"
+        )
+        time.sleep(0.3)
+        offscreen = sphere_state(driver)
+        check(bool(offscreen.get("dirty")), "off-screen training marks the sphere dirty", str(offscreen))
+        stale_computes = offscreen.get("computes", 0)
+        driver.execute_script(
+            "document.getElementById('tda-sphere-optional').scrollIntoView({block:'center'});"
+        )
+        check(wait_until(
+            driver,
+            "const s=window.__tdaSphereState && window.__tdaSphereState();"
+            f"return !!s && !s.dirty && s.computes > {stale_computes};",
+            25,
+        ), "returning to view recomputes after off-screen training")
 
         driver.execute_script(
             "const s=document.getElementById('tda-sphere-states'); s.value='sublayers';"

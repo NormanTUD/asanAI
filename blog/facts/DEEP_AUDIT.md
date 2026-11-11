@@ -2,9 +2,9 @@
 
 - lessons: 100
 - claims: 7377
-- statements: 17532
-- relations: 52881
-- uncovered years: 70
+- statements: 17514
+- relations: 52833
+- uncovered years: 72
 - uncovered quantities: 11
 - uncited specific claims: 312
 - citation keys not found in lesson: 0
@@ -108,7 +108,7 @@
 | training_infrastructure | 32 | 55 | 239 | 0 | 0 |
 | trainingdynamics | 23 | 29 | 140 | 0 | 0 |
 | traininglab | 15 | 7 | 67 | 0 | 0 |
-| transformer | 37 | 374 | 1205 | 0 | 2 |
+| transformer | 37 | 356 | 1157 | 2 | 2 |
 | unexpected_capabilities | 40 | 274 | 578 | 4 | 1 |
 | untold_history_i | 520 | 458 | 1503 | 3 | 0 |
 | untold_history_ii | 672 | 643 | 2025 | 6 | 0 |
@@ -154,7 +154,7 @@
 - reliability.php: 2023
 - reliability.php: 2024
 - speech_audio.php: 2016
-- … and 35 more
+- … and 37 more
 
 ## Uncovered quantities
 
