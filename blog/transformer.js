@@ -112,6 +112,50 @@ window.__tmFullVizObserver = null;
 /* Cooperative queue for heavy WebGL/Plotly renders.
    Each job gets its own frame so the browser can paint placeholders and
    keep the page responsive between plots instead of doing one long burst. */
+/* Keep the user's 3D camera while training redraws the plots. Plotly.react
+   replaces the scene unless the current resolved camera is fed back into the
+   new layout. This wrapper does that for every 3D chart on the page. */
+(function () {
+	function installCameraGuard() {
+		if (!window.Plotly || window.__tmPlotlyCameraGuard) return;
+		window.__tmPlotlyCameraGuard = true;
+		var originalReact = Plotly.react;
+		Plotly.react = function (el, traces, layout, config) {
+			if (layout && layout.scene && !layout.__tmSkipCameraRestore &&
+				el && el._fullLayout && el._fullLayout.scene && el._fullLayout.scene.camera) {
+				layout.scene.camera = JSON.parse(JSON.stringify(el._fullLayout.scene.camera));
+			}
+			return originalReact.apply(this, arguments);
+		};
+
+		if (!window.__tmPlotInteractionGuard) {
+			window.__tmPlotInteractionGuard = true;
+			window.__tmPlotDragging = false;
+			var plotDragging = false;
+			var onPlotPointerDown = function (ev) {
+				if (ev.pointerType === "mouse" && ev.button !== 0) return;
+				var target = ev.target;
+				if (!target || !target.closest) return;
+				if (!target.closest(".js-plotly-plot")) return;
+				plotDragging = true;
+				window.__tmPlotDragging = true;
+			};
+			var onPlotPointerUp = function () {
+				if (!plotDragging) return;
+				plotDragging = false;
+				window.__tmPlotDragging = false;
+				window.__tmVisualDeferred = false;
+				window.__tmFeatureDeferred = false;
+			};
+			document.addEventListener("pointerdown", onPlotPointerDown, true);
+			window.addEventListener("pointerup", onPlotPointerUp, true);
+			window.addEventListener("pointercancel", onPlotPointerUp, true);
+		}
+	}
+	if (window.Plotly) installCameraGuard();
+	else window.addEventListener("load", installCameraGuard, { once: true });
+})();
+
 window.tmScheduleHeavyRender = (function () {
 	let queue = [];
 	let pumping = false;
@@ -501,6 +545,7 @@ function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers, recor
 }
 
 function tmSyncFeatureTrace(tokens, weights, d_model, n_heads, n_layers) {
+	if (window.__tmPlotDragging) { window.__tmFeatureDeferred = true; return; }
 	if (!tokens || !tokens.length || !weights || !weights.length) return;
 	var current = (window.__tmFeatureTrace && window.__tmFeatureTrace[0]) ||
 		(window.__tmLayerTrace && window.__tmLayerTrace[0]);
@@ -1723,6 +1768,10 @@ function _execute_positional_waves_render(d_model, tokens) {
 }
 
 function run_transformer_demo(activeId = null) {
+	if (window.__tmPlotDragging) {
+		window.__tmVisualDeferred = true;
+		return;
+	}
 	const trainingInput = document.getElementById('transformer-training-data');
 	const masterInput = document.getElementById('transformer-master-token-input');
 
@@ -1974,6 +2023,12 @@ async function _runTrainingSession(lr, epochs, optType, tokens, d_model, n_layer
 
 	for (let i = 0; i < epochs; i++) {
 		if (!window.isTraining) { completedAll = false; break; }
+		/* While the reader rotates a 3D plot, keep the main thread free:
+		   the gradient step would block the camera for hundreds of ms. */
+		while (window.__tmPlotDragging && window.isTraining) {
+			await new Promise(function (resolve) { setTimeout(resolve, 30); });
+		}
+		if (!window.isTraining) { completedAll = false; break; }
 		const isLast = (i === epochs - 1);
 		// Every epoch must reach the plots: the reader sees the weights move.
 		await runSingleEpoch(i, epochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime, true);
@@ -2062,7 +2117,7 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 			});
 		}
 		window.dispatchEvent(new CustomEvent("tm:training-tick", { detail: { epoch: epochIdx + 1 } }));
-	} else if (typeof window.tmFeaturePlotsVisible === "function" && window.tmFeaturePlotsVisible()) {
+	} else if (!window.__tmPlotDragging && typeof window.tmFeaturePlotsVisible === "function" && window.tmFeaturePlotsVisible()) {
 		/* Keep the visible feature-migration plots in step with every epoch
 		   without rebuilding the whole visualization. */
 		window.currentWeights = await convert_tensors_to_weights(weightVars);
@@ -2685,6 +2740,13 @@ function pruneOrphanedMigrationPlots() {
 }
 
 function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
+	/* A camera drag must not fight a visualization rebuild. Defer the
+	   rebuild until the pointer is released. */
+	if (window.__tmPlotDragging) {
+		window.__tmVisualDeferred = true;
+		window.__tmFeatureDeferred = true;
+		return;
+	}
 	window.__tmLayerTrace = [];
 	window.__tmFFNTrace = [];
 	window.__tmFeatureTrace = null;

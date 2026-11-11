@@ -3165,6 +3165,7 @@
 		var p = palette();
 		var axis = function (name) { return { title: { text: name }, color: c.muted, gridcolor: c.line, zerolinecolor: c.line, showbackground: false }; };
 		return {
+			uirevision: "tm-3d",
 			paper_bgcolor: c.paper, plot_bgcolor: c.plot,
 			hoverlabel: { bgcolor: p.paper, bordercolor: p.line, font: { color: p.ink, size: 12 } },
 			title: { text: title, font: { size: 13, color: c.ink } },
@@ -3560,6 +3561,7 @@
 	}
 
 	function queueLayerFeaturePlot(layerIdx, arrowsEl, force) {
+		if (window.__tmPlotDragging) { window.__tmFeatureDeferred = true; return; }
 		if (!arrowsEl || !arrowsEl.isConnected) return;
 		var signature = featureSignature(layerIdx);
 		if (!force && arrowsEl._tmFeatureRendered && arrowsEl._tmFeatureSig === signature) return;
@@ -3609,6 +3611,7 @@
 	   (no loader wipe) so their arrows actually follow the weights. */
 	function refreshFeaturePlots(opts) {
 		opts = opts || {};
+		if (window.__tmPlotDragging) { window.__tmFeatureDeferred = true; return; }
 		if (opts.refit) resetFeatureProjectionCache();
 		Array.prototype.slice.call(document.querySelectorAll('[id$="-feature-arrows"]')).forEach(function (el) {
 			var idx = featureLayerIdxForElement(el);
@@ -4007,6 +4010,7 @@
 	}
 
 	function enhanceLayerCards() {
+		if (window.__tmPlotDragging) return;
 		updateDimensionReadout();
 		if (!window.__tmLayerTrace || !window.__tmLayerTrace.length) return;
 		var headsFaq = document.querySelector('.optional[data-headline="What the heads actually react to"]');
