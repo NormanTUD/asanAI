@@ -9,9 +9,10 @@
   var currentDemoDay = null;
   var els = {};
   var tipTimer = 0;
-  var panelTerm = null;
   var cueObserver = null;
-  var activeBoxLens = "all";
+  var cueSuppressUntil = 0;
+  var cuesArmed = false;
+  var ignoreScroll = false;
 
   var LOREM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. Donec ullamcorper nulla non metus auctor fringilla.";
   var TRACK_LABEL = {};
@@ -226,18 +227,7 @@
           '<div class="ls-days" id="ls-days" role="tablist" aria-label="Tage"></div>' +
           '<div class="ls-progress"><div class="ls-progress-bar"><span id="ls-progress-fill"></span></div><div class="ls-steps" id="ls-steps"></div></div>' +
         '</footer>' +
-        '<div class="ls-backdrop" id="ls-backdrop" hidden></div>' +
-        '<aside class="ls-drawer" id="ls-drawer" role="dialog" aria-modal="true" aria-labelledby="ls-drawer-title" hidden>' +
-          '<div class="ls-drawer-head"><div><span class="ls-kicker">Tiefe</span><h2 id="ls-drawer-title">Alle Boxen</h2></div><button type="button" class="ls-btn" id="ls-close-depth" aria-label="Schließen">×</button></div>' +
-          '<div class="ls-lenses" id="ls-lenses"></div>' +
-          '<div class="ls-drawer-body" id="ls-drawer-body"></div>' +
-          '<div class="ls-drawer-foot">Der Haupttext funktioniert ohne diese Boxen. Sie sind die Zugabe, nicht der Eintrittspreis.</div>' +
-        '</aside>' +
         '<div class="ls-tip" id="ls-tip" role="tooltip" hidden></div>' +
-        '<div class="ls-panel" id="ls-panel" role="dialog" aria-modal="true" hidden>' +
-          '<button type="button" class="ls-panel-close" id="ls-panel-close" aria-label="Schließen">×</button>' +
-          '<div id="ls-panel-body"></div>' +
-        '</div>' +
       '</div>';
 
     els.app = root.querySelector(".ls-app");
@@ -263,23 +253,13 @@
     els.days = root.querySelector("#ls-days");
     els.steps = root.querySelector("#ls-steps");
     els.progress = root.querySelector("#ls-progress-fill");
-    els.drawer = root.querySelector("#ls-drawer");
-    els.drawerTitle = root.querySelector("#ls-drawer-title");
-    els.drawerBody = root.querySelector("#ls-drawer-body");
-    els.lenses = root.querySelector("#ls-lenses");
-    els.backdrop = root.querySelector("#ls-backdrop");
     els.tip = root.querySelector("#ls-tip");
-    els.panel = root.querySelector("#ls-panel");
-    els.panelBody = root.querySelector("#ls-panel-body");
 
     els.track.innerHTML = '<option value="all">Alle Wege</option>' + cfg.tracks.map(function (t) {
       return '<option value="' + esc(t.id) + '">' + esc(t.label) + ' · Tag ' + esc(t.days) + '</option>';
     }).join("");
     els.track.value = state.track;
 
-    els.lenses.innerHTML = ["all", "Anwendung", "Geschichte", "Mathematik", "Technik"].map(function (l) {
-      return '<button type="button" class="ls-chip' + (activeBoxLens === l ? " is-on" : "") + '" data-lens="' + esc(l) + '">' + (l === "all" ? "Alle" : esc(l)) + '</button>';
-    }).join("");
   }
 
   function renderTop() {
@@ -351,8 +331,9 @@
 
   function setupCues() {
     if (cueObserver) { cueObserver.disconnect(); cueObserver = null; }
-    if (!("IntersectionObserver" in window) || !els.cues || els.cues.hidden) return;
+    if (!("IntersectionObserver" in window) || !els.cues || els.cues.hidden || !cuesArmed) return;
     cueObserver = new IntersectionObserver(function (entries) {
+      if (performance.now() < cueSuppressUntil) return;
       entries.forEach(function (en) {
         if (!en.isIntersecting) return;
         var el = en.target;
@@ -362,18 +343,7 @@
         els.cues.querySelectorAll(".ls-cue").forEach(function (x) {
           x.classList.toggle("is-active", x === el);
         });
-        if (demo && demo.update) {
-          var dd = activeDay();
-          if (INTERNAL_MORPH[dd.demo]) {
-            demo.update(cue);
-          } else {
-            var oc = els.demo.querySelector("canvas");
-            var snap = oc ? copyCanvas(oc) : null;
-            demo.update(cue);
-            var nc = els.demo.querySelector("canvas");
-            if (snap && nc) runFlowMorph(snap, nc, function () {});
-          }
-        }
+        if (demo && demo.update) demo.update(cue);
       });
     }, { root: els.textScroll, rootMargin: "-46% 0px -46% 0px", threshold: 0 });
     els.cues.querySelectorAll(".ls-cue").forEach(function (el) { cueObserver.observe(el); });
@@ -430,6 +400,7 @@
   }
 
   function mountDemo(d, s) {
+    if (morphHiddenEl) { morphHiddenEl.style.opacity = ""; morphHiddenEl = null; }
     if (demo && currentDemoDay === d.id) {
       if (demo.update) demo.update(s.demoState || {});
       return;
@@ -460,13 +431,13 @@
     renderSteps();
     renderText();
     renderStage();
-    renderDrawer();
     save();
   }
 
 
   var morphRaf = 0;
   var morphOverlay = null;
+  var morphHiddenEl = null;
   function copyCanvas(src) {
     var c = document.createElement("canvas");
     c.width = src.width;
@@ -497,8 +468,9 @@
   function runFlowMorph(oldCanvas, newCanvas, done) {
     if (morphRaf) cancelAnimationFrame(morphRaf);
     if (morphOverlay && morphOverlay.parentNode) morphOverlay.parentNode.removeChild(morphOverlay);
-    var oldPts = sampleCanvas(oldCanvas, 2600);
-    var newPts = sampleCanvas(newCanvas, 2600);
+    if (morphHiddenEl) { morphHiddenEl.style.opacity = ""; morphHiddenEl = null; }
+    var oldPts = sampleCanvas(oldCanvas, 1800);
+    var newPts = sampleCanvas(newCanvas, 1800);
     if (!oldPts.length || !newPts.length) { done(); return; }
     var host = els.demo;
     var overlay = document.createElement("canvas");
@@ -508,8 +480,6 @@
     host.appendChild(overlay);
     morphOverlay = overlay;
     var ctx = overlay.getContext("2d");
-    var oldOpacity = newCanvas.style.opacity;
-    newCanvas.style.opacity = "0";
     var w = overlay.width, h = overlay.height;
     var cx = w / 2, cy = h / 2;
     function angle(p) { return Math.atan2(p.y - cy, p.x - cx); }
@@ -517,75 +487,106 @@
     oldPts.sort(function (a, b) { return angle(a) - angle(b) || radius(a) - radius(b); });
     newPts.sort(function (a, b) { return angle(a) - angle(b) || radius(a) - radius(b); });
     var N = Math.max(oldPts.length, newPts.length);
+    var pairs = [];
+    for (var i = 0; i < N; i++) {
+      pairs.push({ a: oldPts[i % oldPts.length], b: newPts[i % newPts.length] });
+    }
+    var cols = 18, rows = 12;
+    var gw = cols + 1, gh = rows + 1;
+    var field = new Array(gw * gh);
+    var sigma = Math.max(w, h) * 0.18;
+    var inv = 1 / (2 * sigma * sigma);
+    var maxD = Math.min(w, h) * 0.34;
+    for (var gy = 0; gy < gh; gy++) {
+      for (var gx = 0; gx < gw; gx++) {
+        var vx = gx * w / cols, vy = gy * h / rows;
+        var sum = 0, sx = 0, sy = 0;
+        for (var k = 0; k < pairs.length; k++) {
+          var p = pairs[k];
+          var ddx = p.a.x - vx, ddy = p.a.y - vy;
+          var wt = Math.exp(-(ddx * ddx + ddy * ddy) * inv);
+          sx += (p.b.x - p.a.x) * wt;
+          sy += (p.b.y - p.a.y) * wt;
+          sum += wt;
+        }
+        var fx = sum ? sx / sum : 0;
+        var fy = sum ? sy / sum : 0;
+        var fl = Math.hypot(fx, fy);
+        if (fl > maxD) { fx *= maxD / fl; fy *= maxD / fl; }
+        field[gy * gw + gx] = { x: fx, y: fy };
+      }
+    }
+    function drawWarp(src, alpha, k) {
+      ctx.globalAlpha = alpha;
+      var cw = w / cols, ch = h / rows;
+      for (var j = 0; j < rows; j++) {
+        for (var ii = 0; ii < cols; ii++) {
+          var x0 = ii * cw, y0 = j * ch, x1 = x0 + cw, y1 = y0 + ch;
+          var f00 = field[j * gw + ii];
+          var f10 = field[j * gw + ii + 1];
+          var f11 = field[(j + 1) * gw + ii + 1];
+          var f01 = field[(j + 1) * gw + ii];
+          var a = { x: x0 + k * f00.x, y: y0 + k * f00.y };
+          var b = { x: x1 + k * f10.x, y: y0 + k * f10.y };
+          var c = { x: x1 + k * f11.x, y: y1 + k * f11.y };
+          var d = { x: x0 + k * f01.x, y: y1 + k * f01.y };
+          var minX = Math.min(a.x, b.x, c.x, d.x) - 1;
+          var minY = Math.min(a.y, b.y, c.y, d.y) - 1;
+          var maxX = Math.max(a.x, b.x, c.x, d.x) + 1;
+          var maxY = Math.max(a.y, b.y, c.y, d.y) + 1;
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.lineTo(c.x, c.y);
+          ctx.lineTo(d.x, d.y);
+          ctx.closePath();
+          ctx.clip();
+          ctx.drawImage(src, x0, y0, cw + 1, ch + 1, minX, minY, maxX - minX, maxY - minY);
+          ctx.restore();
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
     var t0 = performance.now();
     var dur = 230;
-    var stagger = 0.12;
     function frame(now) {
       var t = clamp((now - t0) / dur, 0, 1);
+      var e = ease(t);
       ctx.clearRect(0, 0, w, h);
-      var eGlobal = ease(t);
-      ctx.globalAlpha = 0.10 * (1 - eGlobal);
-      ctx.drawImage(oldCanvas, 0, 0);
-      ctx.globalAlpha = 0.10 * eGlobal;
-      ctx.drawImage(newCanvas, 0, 0);
-      ctx.globalAlpha = 1;
       var glow = ctx.createRadialGradient(cx, cy, 10, cx, cy, Math.min(w, h) * 0.55);
-      glow.addColorStop(0, "rgba(99,164,75," + (0.055 * Math.sin(Math.PI * eGlobal)).toFixed(3) + ")");
-      glow.addColorStop(0.5, "rgba(18,117,172," + (0.035 * Math.sin(Math.PI * eGlobal)).toFixed(3) + ")");
+      glow.addColorStop(0, "rgba(99,164,75," + (0.05 * Math.sin(Math.PI * e)).toFixed(3) + ")");
+      glow.addColorStop(0.5, "rgba(18,117,172," + (0.032 * Math.sin(Math.PI * e)).toFixed(3) + ")");
       glow.addColorStop(1, "rgba(255,255,255,0)");
       ctx.fillStyle = glow;
       ctx.fillRect(0, 0, w, h);
-      for (var i = 0; i < N; i++) {
-        var a = oldPts[i % oldPts.length];
-        var b = newPts[i % newPts.length];
-        var delay = ((i * 0.61803398875) % 1) * stagger;
-        var local = clamp((t - delay) / (1 - stagger), 0, 1);
-        var e = ease(local);
-        var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-        var dx = b.x - a.x, dy = b.y - a.y;
-        var len = Math.hypot(dx, dy) || 1;
-        var swirl = Math.min(110, len * 0.38) * Math.sin(Math.PI * e);
-        var ang = Math.atan2(my - cy, mx - cx);
-        var cpx = mx + Math.cos(ang + Math.PI / 2) * swirl;
-        var cpy = my + Math.sin(ang + Math.PI / 2) * swirl;
-        var x = (1 - e) * (1 - e) * a.x + 2 * (1 - e) * e * cpx + e * e * b.x;
-        var y = (1 - e) * (1 - e) * a.y + 2 * (1 - e) * e * cpy + e * e * b.y;
-        var r = Math.round(lerp(a.r, b.r, e));
-        var g = Math.round(lerp(a.g, b.g, e));
-        var bl = Math.round(lerp(a.b, b.b, e));
-        var al = lerp(a.a, b.a, e);
-        var pulse = Math.sin(Math.PI * e);
-        var size = 1.1 + 2.3 * pulse;
-        ctx.globalAlpha = Math.max(0, al * (0.9 - 0.25 * pulse));
-        ctx.fillStyle = "rgb(" + r + "," + g + "," + bl + ")";
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fill();
-        if (size > 2.2) {
-          ctx.globalAlpha = Math.max(0, al * 0.14 * pulse);
-          ctx.beginPath();
-          ctx.arc(x, y, size * 2.8, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
+      drawWarp(oldCanvas, 1 - e, e);
+      drawWarp(newCanvas, e, 1 - e);
       ctx.globalAlpha = 1;
       if (t < 1) {
         morphRaf = requestAnimationFrame(frame);
       } else {
         morphRaf = 0;
-        newCanvas.style.opacity = oldOpacity || "";
+        if (morphHiddenEl) { morphHiddenEl.style.opacity = ""; morphHiddenEl = null; }
         if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
         morphOverlay = null;
         done();
       }
     }
+    newCanvas.style.opacity = "0";
+    morphHiddenEl = newCanvas;
     morphRaf = requestAnimationFrame(frame);
   }
+
+  function dynamicCanvas() {
+    return els.demo.querySelector(".ls-canvas--dynamic") || els.demo.querySelector(".ls-canvas");
+  }
   function morphCanvasSwap(fn, done) {
-    var oldCanvas = els.demo.querySelector("canvas");
+    if (morphHiddenEl) { morphHiddenEl.style.opacity = ""; morphHiddenEl = null; }
+    var oldCanvas = dynamicCanvas();
     var snap = oldCanvas ? copyCanvas(oldCanvas) : null;
     fn();
-    var newCanvas = els.demo.querySelector("canvas");
+    var newCanvas = dynamicCanvas();
     if (snap && newCanvas) {
       runFlowMorph(snap, newCanvas, done);
     } else {
@@ -621,9 +622,16 @@
     var demoChanged = oldDemo !== d.demo;
     var stepChanged = oldStep !== state.step;
     var changed = dayChanged || demoChanged || stepChanged;
+    var elementStep = stepChanged && !dayChanged && !demoChanged && ELEMENT_ANIM[d.demo];
     var canvasMorph = changed && CANVAS_DEMOS[oldDemo] && CANVAS_DEMOS[d.demo] && (dayChanged || demoChanged || FLOW_ON_STEP[d.demo]);
-    if (els.textScroll) els.textScroll.scrollTop = 0;
-    swap(renderAll, changed && !INTERNAL_MORPH[d.demo], canvasMorph);
+    if (els.textScroll) {
+      cuesArmed = false;
+      ignoreScroll = true;
+      els.textScroll.scrollTop = 0;
+      setTimeout(function () { ignoreScroll = false; }, 140);
+    }
+    cueSuppressUntil = performance.now() + 500;
+    swap(renderAll, changed && !INTERNAL_MORPH[d.demo] && !elementStep, canvasMorph);
   }
   function next() {
     var d = activeDay();
@@ -658,6 +666,13 @@
     }
     var d = cfg.days[state.day];
     var changed = oldDay !== state.day || oldDemo !== (d ? d.demo : null);
+    if (els.textScroll) {
+      cuesArmed = false;
+      ignoreScroll = true;
+      els.textScroll.scrollTop = 0;
+      setTimeout(function () { ignoreScroll = false; }, 140);
+    }
+    cueSuppressUntil = performance.now() + 500;
     swap(renderAll, changed, changed && CANVAS_DEMOS[oldDemo] && CANVAS_DEMOS[d ? d.demo : ""]);
   }
   function setDepth(d) {
@@ -665,58 +680,6 @@
     renderTop();
     renderText();
     save();
-  }
-
-  function allBoxes() {
-    var d = activeDay();
-    var s = activeStep();
-    var seen = {};
-    var out = [];
-    (s.boxes || []).concat(d.boxes || []).forEach(function (b) {
-      if (!b || seen[b.id]) return;
-      seen[b.id] = 1;
-      out.push(b);
-    });
-    return out;
-  }
-
-  function renderDrawer() {
-    var d = activeDay();
-    els.drawerTitle.textContent = d.title + " · Tiefe";
-    els.lenses.querySelectorAll("button").forEach(function (b) {
-      b.classList.toggle("is-on", b.getAttribute("data-lens") === activeBoxLens);
-    });
-    var boxes = allBoxes().filter(function (b) {
-      return activeBoxLens === "all" || b.lens === activeBoxLens;
-    });
-    if (!boxes.length) {
-      els.drawerBody.innerHTML = '<p class="ls-empty">Für diesen Filter gibt es in diesem Tag noch keine Box.</p>';
-      return;
-    }
-    els.drawerBody.innerHTML = boxes.map(function (b) {
-      return '<details class="ls-box"><summary><span class="ls-box-lens">' + esc(b.lens) + '</span>' + esc(b.title) + '</summary><p>' + termHTML(b.body) + '</p></details>';
-    }).join("");
-    bindTerms(els.drawerBody);
-  }
-
-  function openDrawer() {
-    renderDrawer();
-    els.backdrop.hidden = false;
-    els.drawer.hidden = false;
-    requestAnimationFrame(function () {
-      els.app.classList.add("is-drawer");
-      els.drawer.classList.add("is-open");
-    });
-    var first = els.drawer.querySelector("button, summary");
-    if (first) first.focus();
-  }
-  function closeDrawer() {
-    els.drawer.classList.remove("is-open");
-    els.app.classList.remove("is-drawer");
-    setTimeout(function () {
-      els.drawer.hidden = true;
-      els.backdrop.hidden = true;
-    }, 240);
   }
 
   function bindTerms(scope) {
@@ -758,27 +721,6 @@
   function hideTipSoon() { tipTimer = setTimeout(hideTip, 140); }
   function hideTip() { els.tip.hidden = true; }
 
-  function openPanel(id) {
-    var g = GLOSSARY[id];
-    if (!g) return;
-    panelTerm = id;
-    els.panelBody.innerHTML =
-      '<div class="ls-panel-kicker">' + esc(g.label) + '</div>' +
-      '<h2>' + esc(g.label) + '</h2>' +
-      '<div class="ls-panel-visual">' + g.svg + '</div>' +
-      '<p>' + esc(g.long) + '</p>' +
-      '<a class="ls-panel-link" href="' + esc(g.lesson) + '">Mehr in der Lektion →</a>';
-    els.panel.hidden = false;
-    requestAnimationFrame(function () { els.panel.classList.add("is-open"); });
-    var close = els.panel.querySelector("#ls-panel-close");
-    if (close) close.focus();
-  }
-  function closePanel() {
-    panelTerm = null;
-    els.panel.classList.remove("is-open");
-    setTimeout(function () { els.panel.hidden = true; }, 220);
-  }
-
   function bind() {
     els.track.addEventListener("change", function () { setTrack(els.track.value); });
     els.depth.addEventListener("click", function (e) {
@@ -795,6 +737,23 @@
     els.depthBtn.addEventListener("click", openDepth);
     els.prev.addEventListener("click", prev);
     els.next.addEventListener("click", next);
+    if (els.textScroll) {
+      els.textScroll.addEventListener("scroll", function () {
+        if (ignoreScroll || cuesArmed) return;
+        cuesArmed = true;
+        setupCues();
+      }, { passive: true });
+      els.textScroll.addEventListener("wheel", function () {
+        if (cuesArmed) return;
+        cuesArmed = true;
+        setupCues();
+      }, { passive: true });
+      els.textScroll.addEventListener("touchmove", function () {
+        if (cuesArmed) return;
+        cuesArmed = true;
+        setupCues();
+      }, { passive: true });
+    }
     els.days.addEventListener("click", function (e) {
       var b = e.target.closest("[data-day]");
       if (b) go(parseInt(b.getAttribute("data-day"), 10), 0);
@@ -803,20 +762,8 @@
       var b = e.target.closest("[data-step]");
       if (b) go(state.day, parseInt(b.getAttribute("data-step"), 10));
     });
-    els.lenses.addEventListener("click", function (e) {
-      var b = e.target.closest("[data-lens]");
-      if (!b) return;
-      activeBoxLens = b.getAttribute("data-lens");
-      renderDrawer();
-    });
-    els.drawer.querySelector("#ls-close-depth").addEventListener("click", closeDrawer);
-    els.backdrop.addEventListener("click", closeDrawer);
-    els.panel.querySelector("#ls-panel-close").addEventListener("click", closePanel);
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") {
-        if (!els.panel.hidden) { closePanel(); return; }
-        if (!els.drawer.hidden) { closeDrawer(); return; }
-      }
+      if (e.key === "Escape") { hideTip(); return; }
       if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
       if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
@@ -857,6 +804,21 @@
     var ctx = canvas.getContext("2d");
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     return { w: w, h: h, ctx: ctx };
+  }
+  function fitPair(wrap, a, b) {
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var r = wrap.getBoundingClientRect();
+    var w = Math.max(320, Math.round(r.width));
+    var h = Math.max(240, Math.round(r.height));
+    a.width = Math.round(w * dpr);
+    a.height = Math.round(h * dpr);
+    b.width = Math.round(w * dpr);
+    b.height = Math.round(h * dpr);
+    var ca = a.getContext("2d");
+    var cb = b.getContext("2d");
+    ca.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cb.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { w: w, h: h, a: ca, b: cb };
   }
   function roundRect(ctx, x, y, w, h, r) {
     r = Math.min(r, w / 2, h / 2);
@@ -916,12 +878,14 @@
       meaning: { label: "Bedeutung", row: [0.05, 0.03, 0.05, 0.30, 0.02, 0.06, 0.03, 0.02, 0.19, 0.25] }
     };
     var st = { query: 5, head: "coreference", showArcs: true, showBudget: true };
+    var curRow = null, fromRow = null, toRow = null, animT = 1, animStart = 0;
+    var arcMix = 1, arcTarget = 1, budgetMix = 1, budgetTarget = 1;
     var hover = -1, phase = 0, raf = 0, last = 0, size = null;
     var uiChips = chipRow(ui, [
       { id: "coreference", label: "Koreferenz" },
       { id: "syntax", label: "Syntax" },
       { id: "meaning", label: "Bedeutung" }
-    ], st.head, function (id) { st.head = id; draw(); });
+    ], st.head, function (id) { st.head = id; setTarget(); });
 
     function rowFor(q) {
       if (q === 5) return HEADS[st.head].row.slice();
@@ -945,13 +909,22 @@
       var idx = Math.round((x - start) / gap);
       return (idx >= 0 && idx < TOKENS.length) ? idx : -1;
     }
+    function setTarget() {
+      fromRow = curRow ? curRow.slice() : rowFor(st.query);
+      toRow = rowFor(st.query);
+      animT = 0;
+      animStart = performance.now();
+      arcTarget = st.showArcs ? 1 : 0;
+      budgetTarget = st.showBudget ? 1 : 0;
+    }
     function draw() {
       if (!size) size = fitCanvas(canvas, canvas);
       var w = size.w, h = size.h, ctx = size.ctx;
       ctx.clearRect(0, 0, w, h);
 
       var compact = w < 620;
-      var row = rowFor(st.query);
+      if (!curRow) { curRow = rowFor(st.query); fromRow = curRow.slice(); toRow = curRow.slice(); }
+      var row = curRow;
       var maxJ = row.indexOf(Math.max.apply(null, row));
       ctx.fillStyle = C.muted;
       ctx.font = '600 11px "Open Sans", sans-serif';
@@ -1022,7 +995,7 @@
         }
       }
 
-      if (st.showArcs) {
+      if (arcMix > 0.01) {
         for (var j = 0; j < TOKENS.length; j++) {
           var wj = row[j];
           if (wj < 0.012 || j === st.query) continue;
@@ -1033,23 +1006,26 @@
           ctx.moveTo(x1, ty + 16);
           ctx.quadraticCurveTo(mid, ctrlY, x2, ty + 16);
           ctx.strokeStyle = C.blue;
-          ctx.globalAlpha = 0.07;
+          ctx.globalAlpha = 0.07 * arcMix;
           ctx.lineWidth = 1.8 + 9 * wj + 7;
           ctx.stroke();
-          ctx.globalAlpha = 0.14 + 0.86 * wj;
+          ctx.globalAlpha = (0.14 + 0.86 * wj) * arcMix;
           ctx.lineWidth = 0.8 + 9 * wj;
           ctx.stroke();
           ctx.globalAlpha = 1;
           if (wj >= 0.12) {
             ctx.fillStyle = C.blue;
+            ctx.globalAlpha = arcMix;
             ctx.font = '600 10px "Open Sans", sans-serif';
             ctx.textAlign = "center";
             ctx.fillText(Math.round(wj * 100) + "%", mid, ctrlY + 10);
+            ctx.globalAlpha = 1;
           }
         }
       }
 
-      if (st.showBudget) {
+      if (budgetMix > 0.01) {
+        ctx.globalAlpha = budgetMix;
         var bx = 24, by = h - 58, bw = w - 48, bh = 18;
         ctx.fillStyle = C.paper2;
         ctx.fillRect(bx, by, bw, bh);
@@ -1058,9 +1034,9 @@
         for (var k = 0; k < TOKENS.length; k++) {
           var sw = bw * row[k];
           ctx.fillStyle = palette[k % palette.length];
-          ctx.globalAlpha = k === st.query ? 1 : 0.78;
+          ctx.globalAlpha = budgetMix * (k === st.query ? 1 : 0.78);
           ctx.fillRect(cursor, by, Math.max(0, sw - 1), bh);
-          ctx.globalAlpha = 1;
+          ctx.globalAlpha = budgetMix;
           cursor += sw;
         }
         ctx.strokeStyle = C.petrol;
@@ -1072,6 +1048,7 @@
         ctx.fillText("Ein Head, ein Budget: jede Zeile summiert zu 1.00", bx, by - 8);
         ctx.textAlign = "right";
         ctx.fillText("1.00", bx + bw, by - 8);
+        ctx.globalAlpha = 1;
       }
     }
     function loop(now) {
@@ -1079,7 +1056,16 @@
       if (now - last < 45) return;
       last = now;
       phase += 0.06;
-      draw();
+      var changed = false;
+      if (animT < 1) {
+        animT = clamp((now - animStart) / 300, 0, 1);
+        var ae = ease(animT);
+        for (var ai = 0; ai < curRow.length; ai++) curRow[ai] = lerp(fromRow[ai], toRow[ai], ae);
+        changed = true;
+      }
+      if (Math.abs(arcMix - arcTarget) > 0.005) { arcMix += (arcTarget - arcMix) * 0.16; changed = true; }
+      if (Math.abs(budgetMix - budgetTarget) > 0.005) { budgetMix += (budgetTarget - budgetMix) * 0.16; changed = true; }
+      if (changed) draw();
     }
     function onMove(e) {
       var r = canvas.getBoundingClientRect();
@@ -1090,7 +1076,7 @@
     function onClick(e) {
       var r = canvas.getBoundingClientRect();
       var idx = tokenAt(e.clientX - r.left, e.clientY - r.top, r.width, r.height);
-      if (idx >= 0) { st.query = idx; draw(); }
+      if (idx >= 0) { st.query = idx; setTarget(); }
     }
     function resize() { size = fitCanvas(canvas, canvas); draw(); }
     canvas.addEventListener("mousemove", onMove);
@@ -1109,7 +1095,8 @@
         ui.querySelectorAll(".ls-chip").forEach(function (b, i) {
           b.classList.toggle("is-on", ["coreference", "syntax", "meaning"][i] === st.head);
         });
-        draw();
+        if (!curRow) { curRow = rowFor(st.query); fromRow = curRow.slice(); toRow = curRow.slice(); }
+        setTarget();
       },
       resize: resize,
       destroy: function () {
@@ -1400,9 +1387,12 @@
     };
   }
 
+  var CONV_CACHE = null;
   function demoConvolution(root, api) {
-    root.innerHTML = '<div class="ls-conv"><canvas class="ls-canvas"></canvas><div class="ls-conv-ui"></div></div>';
-    var canvas = root.querySelector(".ls-canvas");
+    root.innerHTML = '<div class="ls-conv"><div class="ls-canvas-wrap"><canvas class="ls-canvas ls-canvas--static"></canvas><canvas class="ls-canvas ls-canvas--dynamic"></canvas></div><div class="ls-conv-ui"></div></div>';
+    var wrap = root.querySelector(".ls-canvas-wrap");
+    var staticCanvas = root.querySelector(".ls-canvas--static");
+    var canvas = root.querySelector(".ls-canvas--dynamic");
     var ui = root.querySelector(".ls-conv-ui");
     var C = api.colors();
     var KERNELS = {
@@ -1421,10 +1411,19 @@
     var feature = document.createElement("canvas");
     feature.width = S - 2; feature.height = S - 2;
     var fctx = feature.getContext("2d");
-    var img = new Image();
+    var img = CONV_CACHE && CONV_CACHE.img ? CONV_CACHE.img : new Image();
     var imgReady = false, fallbackMode = false;
     var size = null, raf = 0, last = 0, scan = { on: false, t: 0 };
     var pointer = { x: 0.5, y: 0.5, in: false };
+    if (CONV_CACHE) {
+      imgReady = true;
+      fallbackMode = !!CONV_CACHE.fallback;
+      data = new Uint8ClampedArray(CONV_CACHE.data);
+      var init = sctx.createImageData(S, S);
+      init.data.set(data);
+      sctx.putImageData(init, 0, 0);
+      computeFeature();
+    }
     var uiChips = chipRow(ui, [
       { id: "pixels", label: "Pixel" },
       { id: "kernel", label: "Kernel" },
@@ -1480,6 +1479,7 @@
       sctx.fillText("STOP", cx, cy + 2);
       try { data = sctx.getImageData(0, 0, S, S).data; } catch (e) { data = null; }
       imgReady = true;
+      if (data) CONV_CACHE = { img: null, data: data, fallback: true };
       computeFeature();
       draw();
     }
@@ -1488,15 +1488,18 @@
         sctx.drawImage(img, 0, 0, S, S);
         data = sctx.getImageData(0, 0, S, S).data;
         imgReady = true;
+        CONV_CACHE = { img: img, data: data, fallback: false };
         computeFeature();
         draw();
       } catch (e) {
         fallback();
       }
     }
-    img.onload = prepare;
-    img.onerror = fallback;
-    img.src = "../stop_sign.jpg";
+    if (!CONV_CACHE) {
+      img.onload = prepare;
+      img.onerror = fallback;
+      img.src = "../stop_sign.jpg";
+    }
 
     function computeFeature() {
       if (!data) return;
@@ -1530,8 +1533,9 @@
       return pointer;
     }
     function draw() {
-      if (!size) size = fitCanvas(canvas, canvas);
-      var w = size.w, h = size.h, ctx = size.ctx;
+      if (!size) size = fitPair(wrap, staticCanvas, canvas);
+      var w = size.w, h = size.h, stctx = size.a, ctx = size.b;
+      stctx.clearRect(0, 0, w, h);
       ctx.clearRect(0, 0, w, h);
       if (!imgReady) {
         ctx.fillStyle = C.muted;
@@ -1582,14 +1586,14 @@
         return;
       }
 
-      ctx.drawImage(imgReady && !fallbackMode ? img : sample, ix, iy, iw, ih);
-      ctx.strokeStyle = C.line;
-      ctx.lineWidth = 1;
-      ctx.strokeRect(ix, iy, iw, ih);
-      ctx.fillStyle = C.muted;
-      ctx.font = '600 10px "Open Sans", sans-serif';
-      ctx.textAlign = "left";
-      ctx.fillText("Eingabe · 96 × 96", ix, iy - 7);
+      stctx.drawImage(imgReady && !fallbackMode ? img : sample, ix, iy, iw, ih);
+      stctx.strokeStyle = C.line;
+      stctx.lineWidth = 1;
+      stctx.strokeRect(ix, iy, iw, ih);
+      stctx.fillStyle = C.muted;
+      stctx.font = '600 10px "Open Sans", sans-serif';
+      stctx.textAlign = "left";
+      stctx.fillText("Eingabe · 96 × 96", ix, iy - 7);
 
       var sp = scanPoint();
       var cx = ix + clamp(sp.x, 0, 1) * iw;
@@ -1661,10 +1665,10 @@
         ctx.fillStyle = C.green;
         ctx.fill();
       }
-      ctx.fillStyle = C.muted;
-      ctx.font = '10px "Open Sans", sans-serif';
-      ctx.textAlign = "left";
-      ctx.fillText(fallbackMode ? "Fallback-Schild (Bild nicht lesbar)" : "Foto: Matthew Paul Argall, CC0", ix, h - 22);
+      stctx.fillStyle = C.muted;
+      stctx.font = '10px "Open Sans", sans-serif';
+      stctx.textAlign = "left";
+      stctx.fillText(fallbackMode ? "Fallback-Schild (Bild nicht lesbar)" : "Foto: Matthew Paul Argall, CC0", ix, h - 22);
     }
     function loop(now) {
       raf = requestAnimationFrame(loop);
@@ -1691,7 +1695,7 @@
       pointer.in = x > ix && x < ix + iw && y > iy && y < iy + iw;
       if (pointer.in) draw();
     }
-    function resize() { size = fitCanvas(canvas, canvas); draw(); }
+    function resize() { size = fitPair(wrap, staticCanvas, canvas); draw(); }
     canvas.addEventListener("mousemove", onMove);
     canvas.addEventListener("mouseleave", function () { pointer.in = false; draw(); });
     window.addEventListener("resize", resize);
@@ -1880,8 +1884,10 @@
   }
 
   function demoTransformer(root, api) {
-    root.innerHTML = '<div class="ls-tr"><canvas class="ls-canvas"></canvas><div class="ls-tr-ui"></div></div>';
-    var canvas = root.querySelector(".ls-canvas");
+    root.innerHTML = '<div class="ls-tr"><div class="ls-canvas-wrap"><canvas class="ls-canvas ls-canvas--static"></canvas><canvas class="ls-canvas ls-canvas--dynamic"></canvas></div><div class="ls-tr-ui"></div></div>';
+    var wrap = root.querySelector(".ls-canvas-wrap");
+    var staticCanvas = root.querySelector(".ls-canvas--static");
+    var canvas = root.querySelector(".ls-canvas--dynamic");
     var ui = root.querySelector(".ls-tr-ui");
     var C = api.colors();
     var TOKENS = ["the", "city", "capital", "France", "Lyon", "Paris"];
@@ -1909,6 +1915,7 @@
     var fromP = cur.slice(), toP = cur.slice();
     var fromR = curRes.slice(), toR = curRes.slice();
     var animT = 1, animDur = 520, animStart = 0;
+    var activePos = 0, activeFrom = 0, activeTo = 0, activeT = 1, activeStart = 0;
     var size = null, raf = 0, last = 0;
     var uiChips = chipRow(ui, [
       { id: "residual", label: "Residual" },
@@ -1926,6 +1933,10 @@
       if (l === st.layer) return;
       fromP = cur.slice();
       fromR = curRes.slice();
+      activeFrom = activePos;
+      activeTo = l;
+      activeT = 0;
+      activeStart = performance.now();
       st.layer = l;
       toP = LAYERS[l].slice();
       var res = BASE.slice();
@@ -1947,33 +1958,32 @@
       return (y >= by && y <= by + bh) ? idx : -1;
     }
     function draw() {
-      if (!size) size = fitCanvas(canvas, canvas);
-      var w = size.w, h = size.h, ctx = size.ctx;
+      if (!size) size = fitPair(wrap, staticCanvas, canvas);
+      var w = size.w, h = size.h, sctx = size.a, ctx = size.b;
+      sctx.clearRect(0, 0, w, h);
       ctx.clearRect(0, 0, w, h);
       var top = 48, bh = 28, gap = 16;
       var bx = 24, bw = Math.min(150, w * 0.26);
       var cx = bx + bw + 28;
       var rx = Math.max(cx + 110, w * 0.56);
       var rw = Math.max(150, w - rx - 24);
-      ctx.strokeStyle = C.petrol;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(bx + bw + 14, top + bh / 2);
-      ctx.lineTo(bx + bw + 14, top + (NAMES.length - 1) * (bh + gap) + bh / 2);
-      ctx.stroke();
-      var activeY = top + st.layer * (bh + gap) + bh / 2;
+      sctx.strokeStyle = C.petrol;
+      sctx.lineWidth = 2;
+      sctx.beginPath();
+      sctx.moveTo(bx + bw + 14, top + bh / 2);
+      sctx.lineTo(bx + bw + 14, top + (NAMES.length - 1) * (bh + gap) + bh / 2);
+      sctx.stroke();
       for (var i = 0; i < NAMES.length; i++) {
         var by = top + i * (bh + gap);
-        var on = i === st.layer;
-        ctx.fillStyle = on ? C.green : C.paper;
-        ctx.strokeStyle = on ? C.green : C.line;
-        ctx.lineWidth = on ? 1.6 : 1;
-        ctx.fillRect(bx, by, bw, bh);
-        ctx.strokeRect(bx, by, bw, bh);
-        ctx.fillStyle = on ? "#fff" : C.ink;
-        ctx.font = '600 11px "Open Sans", sans-serif';
-        ctx.textAlign = "left";
-        ctx.fillText(NAMES[i], bx + 9, by + 18);
+        sctx.fillStyle = C.paper;
+        sctx.strokeStyle = C.line;
+        sctx.lineWidth = 1;
+        sctx.fillRect(bx, by, bw, bh);
+        sctx.strokeRect(bx, by, bw, bh);
+        sctx.fillStyle = C.ink;
+        sctx.font = '600 11px "Open Sans", sans-serif';
+        sctx.textAlign = "left";
+        sctx.fillText(NAMES[i], bx + 9, by + 18);
         var v = BASE.slice();
         for (var u = 1; u <= Math.min(i, UPDATES.length - 1); u++) {
           for (var j = 0; j < v.length; j++) v[j] += UPDATES[u][j];
@@ -1981,28 +1991,42 @@
         var maxV = Math.max.apply(null, v) * 1.15;
         for (var k = 0; k < v.length; k++) {
           var bwid = 3, bhh = Math.max(2, v[k] / maxV * 18);
-          ctx.fillStyle = on ? "rgba(255,255,255,.7)" : C.blue;
-          ctx.globalAlpha = on ? 0.8 : 0.45;
-          ctx.fillRect(bx + bw + 18 + k * 5, by + bh - 5 - bhh, bwid, bhh);
-          ctx.globalAlpha = 1;
-        }
-        if (on) {
-          ctx.beginPath();
-          ctx.arc(bx + bw + 14, by + bh / 2, 4, 0, Math.PI * 2);
-          ctx.fillStyle = C.green;
-          ctx.fill();
+          sctx.fillStyle = C.blue;
+          sctx.globalAlpha = 0.45;
+          sctx.fillRect(bx + bw + 18 + k * 5, by + bh - 5 - bhh, bwid, bhh);
+          sctx.globalAlpha = 1;
         }
       }
-      ctx.fillStyle = C.muted;
-      ctx.font = '600 10px "Open Sans", sans-serif';
+      sctx.fillStyle = C.muted;
+      sctx.font = '600 10px "Open Sans", sans-serif';
+      sctx.textAlign = "left";
+      sctx.fillText("Residual Stream · ein Vektor pro Token", bx, 28);
+      sctx.fillText("Updates", bx + bw + 12, 28);
+      if (st.mode === "lens") {
+        sctx.fillText("Nächster Token · Logit-Linse", rx, 28);
+        sctx.font = '10px "Open Sans", sans-serif';
+        sctx.fillText("The capital of France is ___", rx, h - 28);
+      } else {
+        sctx.font = '10px "Open Sans", sans-serif';
+        sctx.fillText("Die Balken zeigen den laufenden Vektor, nicht die Ausgabe.", rx, 60);
+      }
+
+      var activeY = top + activePos * (bh + gap);
+      ctx.fillStyle = C.green;
+      ctx.fillRect(bx, activeY, bw, bh);
+      ctx.strokeStyle = C.green;
+      ctx.lineWidth = 1.6;
+      ctx.strokeRect(bx, activeY, bw, bh);
+      ctx.fillStyle = "#fff";
+      ctx.font = '600 11px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText("Residual Stream · ein Vektor pro Token", bx, 28);
-      ctx.fillText("Updates", bx + bw + 12, 28);
+      ctx.fillText(NAMES[st.layer], bx + 9, activeY + 18);
+      ctx.beginPath();
+      ctx.arc(bx + bw + 14, activeY + bh / 2, 4, 0, Math.PI * 2);
+      ctx.fillStyle = C.green;
+      ctx.fill();
 
       if (st.mode === "lens") {
-        ctx.fillStyle = C.muted;
-        ctx.font = '600 10px "Open Sans", sans-serif';
-        ctx.fillText("Nächster Token · Logit-Linse", rx, 28);
         for (var t = 0; t < TOKENS.length; t++) {
           var ry = 52 + t * 38;
           var p = cur[t];
@@ -2024,15 +2048,6 @@
             ctx.strokeRect(rx - 1, ry - 1, rw + 2, 20);
           }
         }
-        ctx.fillStyle = C.muted;
-        ctx.font = '10px "Open Sans", sans-serif';
-        ctx.textAlign = "left";
-        ctx.fillText("The capital of France is ___", rx, h - 28);
-      } else {
-        ctx.fillStyle = C.muted;
-        ctx.font = '10px "Open Sans", sans-serif';
-        ctx.textAlign = "left";
-        ctx.fillText("Die Balken zeigen den laufenden Vektor, nicht die Ausgabe.", rx, 60);
       }
       ctx.fillStyle = C.muted;
       ctx.font = '10px "Open Sans", sans-serif';
@@ -2043,6 +2058,7 @@
       raf = requestAnimationFrame(loop);
       if (now - last < 33) return;
       last = now;
+      var changed = false;
       if (animT < 1) {
         animT = clamp((now - animStart) / animDur, 0, 1);
         var e = ease(animT);
@@ -2050,15 +2066,21 @@
           cur[i] = lerp(fromP[i], toP[i], e);
           curRes[i] = lerp(fromR[i], toR[i], e);
         }
-        draw();
+        changed = true;
       }
+      if (activeT < 1) {
+        activeT = clamp((now - activeStart) / 300, 0, 1);
+        activePos = lerp(activeFrom, activeTo, ease(activeT));
+        changed = true;
+      }
+      if (changed) draw();
     }
     function onClick(e) {
       var r = canvas.getBoundingClientRect();
       var idx = blockAt(e.clientX - r.left, e.clientY - r.top, r.width, r.height);
       if (idx >= 0) setLayer(idx);
     }
-    function resize() { size = fitCanvas(canvas, canvas); draw(); }
+    function resize() { size = fitPair(wrap, staticCanvas, canvas); draw(); }
     canvas.addEventListener("click", onClick);
     window.addEventListener("resize", resize);
     uiChips = uiChips;
@@ -2363,7 +2385,8 @@
 
   var CANVAS_DEMOS = { attention: 1, embedding: 1, transformer: 1, convolution: 1, sampling: 1, hyper: 1 };
   var INTERNAL_MORPH = { embedding: 1, hyper: 1 };
-  var FLOW_ON_STEP = { attention: 1, transformer: 1, convolution: 1, sampling: 1 };
+  var FLOW_ON_STEP = {};
+  var ELEMENT_ANIM = { attention: 1, transformer: 1, convolution: 1, sampling: 1 };
   var DEMOS = {
     attention: demoAttention,
     embedding: demoEmbedding,

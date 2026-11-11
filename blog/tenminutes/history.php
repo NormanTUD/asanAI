@@ -477,7 +477,9 @@
 							</div>
 							<p>
 								The slogan is <strong>“neurons that fire together, wire together.”</strong>
-								The <strong>SNARC</strong> (1951) was the first physical neural network. Then,
+								The <strong>SNARC</strong> (1951) was one of the first hardware attempts at a
+								learning network: randomly wired tubes whose paths were reinforced by reward.
+								Whether it is a neural network in today's sense depends on the definition. Then,
 								in 1958, Frank Rosenblatt introduced the <em>perceptron</em> (<a href="https://psycnet.apa.org/record/1959-09865-001" rel="noopener">Rosenblatt, 1958</a>): a system
 								that adjusted its weights in response to errors. The Mark I Perceptron was
 								constructed between 1958 and 1960 and publicly demonstrated in 1960: a 20×20
@@ -1294,8 +1296,8 @@
 				date: "1951",
 				name: "SNARC",
 				era: "Cybernetics · learning hardware",
-				title: "The first physical neural network",
-				text: "Marvin Minsky and Dean Edmonds build the SNARC, a randomly connected network of 40 vacuum-tube neurons that learns by reinforcement. It is the first physical neural network: no program, just knobs and clutches that change with success. The machine is a rat in a maze made of hardware.",
+				title: "An early learning machine",
+				text: "Marvin Minsky and Dean Edmonds build the SNARC, a randomly connected network of 40 vacuum-tube neurons that learns by reinforcement. It is one of the first hardware attempts at a learning network: no program, just knobs and clutches that change with success. Whether it counts as a neural network in today's sense depends on the definition. The machine is a rat in a maze made of hardware.",
 				img: "../marvin_minsky_portrait.jpg",
 				alt: "Marvin Minsky",
 				cap: "Marvin Minsky, who built the SNARC with Dean Edmonds. Image: Steamtalks (Flickr), <a href='https://commons.wikimedia.org/wiki/File:Marvin_Minsky.jpg' rel='noopener'>CC BY-SA 2.0</a>."

@@ -1,5 +1,5 @@
 # Ten Minutes — neues Lernerlebnis (Todo)
-Status: [ ] offen
+Status: in Arbeit
 
 ## Phase 0
 - DONE: Fragen zur GUI beantwortet
@@ -22,3 +22,21 @@ Status: [ ] offen
 - PENDING: Bilinguale Drift reparieren
 - PENDING: alle 82 Punkte aus verbesserungen.html
 - PENDING: Todo-Regel in AGENTS.md dokumentieren
+- DONE: Flow-Morph mit Kurven und Spuren
+- DONE: Morph zwischen allen Zwischenschritten
+- DONE: Flow-Morph 230ms statt 560ms
+- DONE: Kein rechtes Panel mehr
+- DONE: Tiefeboxen immer inline ausklappbar
+- DONE: Glossar oeffnet inline im Text
+- DONE: Flaechen-Morph statt nur Punkte
+- DONE: Partikel faden am Ende aus
+- DONE: Zurueck/Vorwaerts bleibt sichtbar
+- DONE: Stopschild-Bild bleibt beim Remount
+- DONE: Statische Layer morphen nicht
+- DONE: Transformer-Label bleibt stehen
+- DONE: Stopschild-Bild statisch
+- DONE: Flaechen-Warp plus Partikel
+- DONE: Zurueck/Vorwaerts ohne weisses Canvas
+- DONE: Punktknubbel faden am Ende aus
+- DONE: Convolution-Bild-Cache beim Remount
+- DONE: Cue-Unterdrueckung nach Schrittwechsel
