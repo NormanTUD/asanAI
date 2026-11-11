@@ -224,6 +224,9 @@ jobs:
       - name: Run Transformer Scale Regression Test
         run: |
           uv run blog/tests/transformer_scale_regression_test.py
+      - name: Run Transformer Camera-While-Training Test
+        run: |
+          uv run blog/tests/transformer_camera_training_test.py
 
       - name: Run Ten Minutes Pages Test
         run: |

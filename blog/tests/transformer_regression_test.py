@@ -137,8 +137,8 @@ def test_static(results):
     )
     results.check(
         "h_last is rendered one component per row",
-        "\\\\begin{bmatrix} ${hLastRows}" in main_js
-        and "\\\\begin{bmatrix} ${hLastRows}" in tm_js,
+        "\\\\begin{pmatrix} ${hLastRows}" in main_js
+        and "\\\\begin{pmatrix} ${hLastRows}" in tm_js,
     )
     results.check(
         "residual 3D chart is wired",

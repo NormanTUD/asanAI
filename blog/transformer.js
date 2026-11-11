@@ -130,9 +130,6 @@ window.__tmFullVizObserver = null;
 		if (!el || !el.id) return;
 		var scene = el._fullLayout && el._fullLayout.scene;
 		var camera = scene && scene.camera;
-		if ((!camera || !camera.eye) && scene && scene._scene && scene._scene.camera) {
-			camera = scene._scene.camera;
-		}
 		if (camera && camera.eye) cameraStore[el.id] = JSON.parse(JSON.stringify(camera));
 	}
 
@@ -150,6 +147,17 @@ window.__tmFullVizObserver = null;
 		}
 	}
 
+	function saveCameraLoop(el, duration) {
+		if (!el) return;
+		var end = performance.now() + Math.max(0, duration || 0);
+		var tick = function () {
+			if (!el || !el.isConnected) return;
+			saveCamera(el);
+			if (performance.now() < end) requestAnimationFrame(tick);
+		};
+		requestAnimationFrame(tick);
+	}
+
 	function trackCamera(el) {
 		el = resolveEl(el);
 		if (!el) return;
@@ -163,13 +171,20 @@ window.__tmFullVizObserver = null;
 	}
 
 	function stopTracking() {
-		if (dragTracker) saveCamera(dragTracker);
+		var el = dragTracker;
 		dragTracker = null;
+		if (!el) return null;
+		saveCamera(el);
+		/* Plotly applies the final 3D camera a frame or two after pointerup.
+		   Keep sampling while it settles so the store never keeps the default. */
+		saveCameraLoop(el, 700);
+		return el;
 	}
 
 	function installCameraGuard() {
 		if (!window.Plotly || window.__tmPlotlyCameraGuard) return;
 		window.__tmPlotlyCameraGuard = true;
+		window.__tmCameraStore = cameraStore;
 		var originalReact = Plotly.react;
 		var originalNewPlot = Plotly.newPlot;
 		var originalPurge = Plotly.purge;
@@ -206,6 +221,7 @@ window.__tmFullVizObserver = null;
 				if (!target || !target.closest) return;
 				var plot = target.closest(".js-plotly-plot");
 				if (!plot) return;
+				clearTimeout(deferredCatchUp);
 				plotDragging = true;
 				window.__tmPlotDragging = true;
 				window.__tmDraggedPlot = plot;
@@ -216,14 +232,17 @@ window.__tmFullVizObserver = null;
 				plotDragging = false;
 				window.__tmPlotDragging = false;
 				window.__tmDraggedPlot = null;
-				stopTracking();
+				var dragged = stopTracking();
 				if (window.__tmVisualDeferred || window.__tmFeatureDeferred) {
 					window.__tmVisualDeferred = false;
 					window.__tmFeatureDeferred = false;
 					clearTimeout(deferredCatchUp);
+					/* Wait for the camera to settle, then save it once more
+					   immediately before the deferred redraw reads the store. */
 					deferredCatchUp = setTimeout(function () {
+						if (dragged) saveCamera(dragged);
 						if (typeof window.run_transformer_demo === "function") window.run_transformer_demo();
-					}, 90);
+					}, 760);
 				}
 			};
 			document.addEventListener("pointerdown", onPlotPointerDown, true);

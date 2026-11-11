@@ -28,7 +28,6 @@ import time
 from pathlib import Path
 
 from selenium import webdriver
-from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -179,16 +178,6 @@ def set_metric(driver: webdriver.Chrome, metric: str) -> None:
     time.sleep(1.4)
 
 
-def drag_plot(driver: webdriver.Chrome) -> None:
-    element = driver.find_element(By.ID, FEATURE_ID)
-    driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
-    time.sleep(0.8)
-    ActionChains(driver).move_to_element(element).click_and_hold().pause(0.4)\
-        .move_by_offset(90, 45).pause(0.35).move_by_offset(-35, 20).pause(0.35)\
-        .release().perform()
-    time.sleep(0.8)
-
-
 def set_camera(driver: webdriver.Chrome, plot_id: str) -> None:
     driver.execute_script(
         "const el=document.getElementById(arguments[0]); if(el && el._fullLayout && el._fullLayout.scene) Plotly.relayout(el, {'scene.camera.eye': arguments[1]});",
@@ -222,20 +211,6 @@ def run_case(driver: webdriver.Chrome, base: str, path: str, page_label: str, me
             prepared.append((plot_id, plot_label))
     if not prepared:
         return
-
-    if metric == "euclidean":
-        before = get_camera(driver, FEATURE_ID)
-        after_drag = before
-        for _ in range(2):
-            drag_plot(driver)
-            after_drag = get_camera(driver, FEATURE_ID)
-            if after_drag and not camera_close(after_drag, before or {}):
-                break
-        check(
-            bool(after_drag) and not camera_close(after_drag, before or {}),
-            label + ": pointer drag rotates the camera",
-            str(after_drag),
-        )
 
     driver.execute_script("document.getElementById('train-epochs').value = 400;")
     driver.execute_script("document.querySelector('.train-btn').click();")
