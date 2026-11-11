@@ -92,8 +92,8 @@ again before reporting done.
   exactly one item `in_progress`, and update the list in real time as items
   finish or new work appears. Mark an item `completed` only after the change
   is verified. When the user supplies a `todo*` file, also keep its `DONE` /
-  `[in work]` markers in sync with the todo list.
-- Test everything, automatically. — Every behavior change needs automated
+  `[in work]` markers in sync with the todo list. For work that spans more
+  than one session, also write the full checklist to a `todo_<task>.md` — Every behavior change needs automated
   coverage: the happy path, boundaries, malformed input, and failure modes.
   A bug fix comes with a regression test that fails without the fix. Do not
   rely on manual clicking as proof.
