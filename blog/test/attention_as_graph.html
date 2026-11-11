@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attention = gewichtete Adjazenzmatrix</title>
+<style>
+  :root { --ink:#111; --dim:#a3a3a3; --bg:#fafaf7; --acc:#e4572e; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    display: flex; flex-direction: column; align-items: center; gap: 44px; padding: 56px 24px;
+  }
+  input {
+    font: inherit; font-size: 18px; width: min(560px, 90vw); padding: 6px 0;
+    border: none; border-bottom: 1px solid var(--ink); background: transparent; outline: none; text-align: center;
+  }
+  .stage { display: grid; grid-template-columns: auto auto; gap: 64px; align-items: center; }
+  @media (max-width: 860px) { .stage { grid-template-columns: 1fr; } }
+  svg { width: 420px; height: 420px; overflow: visible; }
+  .edge { fill: none; stroke: var(--ink); transition: stroke .25s, opacity .25s; }
+  .edge.on { stroke: var(--acc); }
+  .node { cursor: pointer; }
+  .node circle { fill: var(--bg); stroke: var(--ink); stroke-width: 1; transition: fill .25s; }
+  .node.on circle { fill: var(--acc); stroke: var(--acc); }
+  .node text { font-size: 14px; text-anchor: middle; dominant-baseline: middle; fill: var(--ink); pointer-events: none; }
+  .node.on text { fill: #fff; }
+  table { border-collapse: collapse; }
+  td {
+    width: 46px; height: 46px; text-align: center; font-size: 12px; cursor: pointer;
+    font-variant-numeric: tabular-nums; transition: outline .15s;
+  }
+  td:hover { outline: 1px solid var(--acc); outline-offset: -1px; }
+  th { font-weight: 400; font-size: 13px; color: var(--dim); padding: 0 12px 0 0; text-align: right; white-space: nowrap; cursor: pointer; }
+  th.top { padding: 0 0 10px; text-align: center; color: var(--dim); }
+  tr.row th { color: var(--acc); }
+  p { font-size: 13px; color: var(--dim); max-width: 560px; text-align: center; line-height: 1.7; margin: 0; }
+</style>
+</head>
+<body>
+
+<input id="t" value="Die Katze sitzt auf der Matte" spellcheck="false" autocomplete="off">
+
+<div class="stage">
+  <svg id="g" viewBox="0 0 420 420"></svg>
+  <div id="m"></div>
+</div>
+
+<p>Jeder Pfeil und jede Zelle ist dasselbe Gewicht $A_{ij}$. Zeile = Empfänger, Spalte = Sender.<br>
+Klick auf ein Token, um seine eingehenden Kanten hervorzuheben. Ändere den Text, und die Kanten werden neu berechnet.</p>
+
+<script>
+const $ = id => document.getElementById(id);
+const D = 4, C = 210, RAD = 150;
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const hash = s => [...s].reduce((h, c) => Math.imul(h ^ c.codePointAt(0), 16777619) >>> 0, 2166136261);
+
+function rng(s) {
+  return () => {
+    s = s + 0x6D2B79F5 | 0;
+    let t = Math.imul(s ^ s >>> 15, 1 | s);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+const R = rng(7);
+const mat = () => Array.from({ length: D }, () => Array.from({ length: D }, () => R() * 2 - 1));
+const Wq = mat(), Wk = mat();
+const mv = (M, x) => M.map(r => r.reduce((s, w, k) => s + w * x[k], 0));
+const dot = (a, b) => a.reduce((s, x, k) => s + x * b[k], 0);
+
+// gleiches Wort -> gleiche Basis, Position -> kleine Verschiebung
+const emb = (tok, i) => {
+  const r = rng(hash(tok));
+  return Array.from({ length: D }, (_, k) => r() * 2 - 1 + 0.5 * Math.sin((i + 1) * (k + 1)));
+};
+
+function attention(toks) {
+  const Q = toks.map((t, i) => mv(Wq, emb(t, i)));
+  const K = toks.map((t, i) => mv(Wk, emb(t, i)));
+  return Q.map(q => {
+    const s = K.map(k => dot(q, k) / Math.sqrt(D));
+    const m = Math.max(...s), e = s.map(x => Math.exp(x - m)), z = e.reduce((a, b) => a + b);
+    return e.map(x => x / z);
+  });
+}
+
+function pos(n) {
+  return Array.from({ length: n }, (_, i) => {
+    const a = -Math.PI / 2 + 2 * Math.PI * i / n;
+    return { x: C + RAD * Math.cos(a), y: C + RAD * Math.sin(a), ux: Math.cos(a), uy: Math.sin(a) };
+  });
+}
+
+let toks = [], A = [], focus = 0;
+
+function draw() {
+  const n = toks.length, P = pos(n);
+  let edges = '', nodes = '';
+
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+    const w = A[i][j];
+    if (w < 0.02) continue;
+    const a = P[j], b = P[i];
+    const cls = 'edge' + (i === focus ? ' on' : '');
+    const st = `stroke-width="${(0.5 + 9 * w).toFixed(2)}" opacity="${(0.08 + 0.92 * w).toFixed(3)}"`;
+    let d;
+    if (i === j) {                                   // Selbst-Attention als Schleife nach außen
+      const ox = a.ux * 80, oy = a.uy * 80, px = -a.uy * 40, py = a.ux * 40;
+      d = `M${a.x - a.uy * 7},${a.y + a.ux * 7} C${a.x + ox + px},${a.y + oy + py} ${a.x + ox - px},${a.y + oy - py} ${a.x + a.uy * 7},${a.y - a.ux * 7}`;
+    } else {
+      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy) || 1;
+      const sg = j < i ? 1 : -1;                     // Hin- und Rückkante gegenläufig biegen
+      const cx = mx - dy / L * 40 * sg, cy = my + dx / L * 40 * sg;
+      d = `M${a.x},${a.y} Q${cx},${cy} ${b.x},${b.y}`;
+    }
+    edges += `<path class="${cls}" d="${d}" ${st}/>`;
+  }
+
+  P.forEach((p, i) => {
+    nodes += `<g class="node${i === focus ? ' on' : ''}" data-i="${i}">
+      <circle cx="${p.x}" cy="${p.y}" r="22"/>
+      <text x="${p.x}" y="${p.y + 1}">${esc(toks[i])}</text></g>`;
+  });
+  $('g').innerHTML = edges + nodes;
+
+  let h = '<table><tr><th></th>' + toks.map(t => `<th class="top">${esc(t)}</th>`).join('') + '</tr>';
+  for (let i = 0; i < n; i++) {
+    h += `<tr class="${i === focus ? 'row' : ''}"><th data-i="${i}">${esc(toks[i])}</th>` +
+      A[i].map((w, j) => `<td data-i="${i}" style="background:rgba(17,17,17,${w.toFixed(3)});color:${w > .5 ? '#fafaf7' : '#111'}">${w.toFixed(2)}</td>`).join('') +
+      '</tr>';
+  }
+  $('m').innerHTML = h + '</table>';
+}
+
+function update() {
+  toks = $('t').value.split(/\s+/).filter(Boolean).slice(0, 10);
+  if (!toks.length) return;
+  focus = Math.min(focus, toks.length - 1);
+  A = attention(toks);
+  draw();
+}
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-i]');
+  if (el) { focus = +el.dataset.i; draw(); }
+});
+$('t').addEventListener('input', update);
+update();
+</script>
+</body>
+</html>
