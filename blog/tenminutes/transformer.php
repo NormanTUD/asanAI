@@ -255,7 +255,7 @@
 <div class="transformer-train-status" id="training-status"></div>
 <div id="training-loss-plot" role="img" aria-label="Training loss over epochs"></div>
 </div>
-<div class="tm-hyper-robot-wrap">
+<div class="tm-hyper-robot-wrap" style="opacity:0;visibility:hidden">
 	<button id="transformer-hyper-toggle" type="button" aria-label="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Hyperparameter öffnen' : 'Open hyperparameters'; ?>" aria-haspopup="dialog" aria-expanded="false" title="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Hyperparameter' : 'Hyperparameters'; ?>" onclick="toggleTransformerHyper(true)">
 		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 			<rect x="5" y="7" width="14" height="11" rx="2"/>
@@ -353,6 +353,18 @@
 	var wrap = document.querySelector('.tm-hyper-robot-wrap');
 	if (wrap && wrap.parentNode !== document.body) document.body.appendChild(wrap);
 	if (overlay.parentNode !== document.body) document.body.appendChild(overlay);
+	function revealRobot() {
+		if (!wrap) return;
+		if (document.getElementById('loader') && !document.documentElement.classList.contains('is-ready')) {
+			setTimeout(revealRobot, 150);
+			return;
+		}
+		wrap.style.opacity = '1';
+		wrap.style.visibility = 'visible';
+	}
+	if (document.readyState === 'complete') revealRobot();
+	else window.addEventListener('load', revealRobot);
+	window.addEventListener('blogPostLoadComplete', revealRobot);
 	function setOpen(open) {
 		overlay.hidden = !open;
 		toggle.setAttribute('aria-expanded', open ? 'true' : 'false');

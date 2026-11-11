@@ -2896,7 +2896,8 @@ function forceRerenderVisibleMigrationPlots() {
 		// regardless of the rendered flag
 		if (!data.rendered || window.isTraining) {
 			const el = document.getElementById(id);
-			if (el && isElementInViewport(el)) {
+			const openSub = el && el.closest('.tm-layer-subbox[open]');
+			if (el && (isElementInViewport(el) || (window.isTraining && openSub))) {
 				render_migration_logic(
 					id, data.tokens, data.start_h, data.end_h,
 					data.layerNum, data.d_model, data.h_after,
@@ -8496,7 +8497,7 @@ function renderLayerMigrationPlot(layerIdx) {
 	const plotDiv = document.getElementById(migrationId);
 	if (!plotDiv) return;
 	tlab_render_latex_matrix(migrationId, plotDiv, migrationData.tokens, migrationData.start_h, migrationData.end_h, migrationData.h_after, migrationData.d_model, migrationData.tokenStrings);
-	if (isElementInViewport(plotDiv)) {
+	if (isElementInViewport(plotDiv) || (window.isTraining && plotDiv.closest('.tm-layer-subbox[open]'))) {
 		render_migration_logic(migrationId, migrationData.tokens, migrationData.start_h, migrationData.end_h, migrationData.layerNum, migrationData.d_model, migrationData.h_after, migrationData.tokenStrings);
 		migrationData.rendered = true;
 	}

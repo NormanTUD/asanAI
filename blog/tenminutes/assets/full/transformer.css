@@ -401,6 +401,13 @@ html.dark #transformer-trajectory-full-path .js-plotly-plot .main-svg rect.bg {
 	top: 50%;
 	transform: translateY(-50%);
 	z-index: 9998;
+	opacity: 1;
+	visibility: visible;
+	transition: opacity .3s ease, visibility .3s ease;
+}
+html:has(#loader):not(.is-ready) .tm-hyper-robot-wrap {
+	opacity: 0;
+	visibility: hidden;
 }
 #transformer-hyper-toggle {
 	width: 44px;
