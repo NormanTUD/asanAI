@@ -483,7 +483,8 @@ A **hyperparameter** is a number you choose *before* training starts; the model 
 		'llm_river.js?v=<?php echo (int) @filemtime(__DIR__ . '/llm_river.js'); ?>',
 		'tda_live.js?v=<?php echo (int) @filemtime(__DIR__ . '/tda_live.js'); ?>',
 		'tda_ffn.js?v=<?php echo (int) @filemtime(__DIR__ . '/tda_ffn.js'); ?>',
-		'transformer_steps.js?v=<?php echo (int) @filemtime(__DIR__ . '/transformer_steps.js'); ?>'
+		'transformer_steps.js?v=<?php echo (int) @filemtime(__DIR__ . '/transformer_steps.js'); ?>',
+		'tda_sphere.js?v=<?php echo (int) @filemtime(__DIR__ . '/tda_sphere.js'); ?>'
 	];
 	function load(src) {
 		return new Promise(function (resolve, reject) {
@@ -1307,6 +1308,78 @@ Dropout is off in both modes. Both use the same feature-wise LayerNorm without r
 </div>
 
 <span class="glossary-tooltip" data-tooltip-id="tt-mesa-optimizer">An optimizer that emerges inside the weights of a trained model — the inner, "found" optimizer, as opposed to a meta-optimizer, the outer training process that finds or builds optimizers. It pursues its own mesa-objective, which can differ from the training loss, so aligning the outer system says nothing by itself about what the inner one will do.</span>
+
+<style>
+#tda-sphere-optional .tda-sphere-controls { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 10px 0 12px 0; font-size: 0.86rem; }
+#tda-sphere-optional .tda-sphere-controls select,
+#tda-sphere-optional .tda-sphere-controls input[type="range"] { padding: 3px 6px; border-radius: 6px; border: 1px solid var(--mn-border, #cbd5e1); background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a); }
+#tda-sphere-optional .tda-sphere-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 14px; margin-top: 12px; }
+@media (max-width: 900px) { #tda-sphere-optional .tda-sphere-grid { grid-template-columns: 1fr; } }
+#tda-sphere-optional .tda-sphere-panel { background: var(--mn-surface, #fff); border: 1px solid var(--mn-border, #e2e8f0); border-radius: 10px; padding: 8px; min-width: 0; }
+#tda-sphere-optional .tda-sphere-title { font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px; }
+#tda-sphere-optional canvas#tda-sphere-barcode { width: 100%; height: 260px; display: block; }
+#tda-sphere-optional .tda-sphere-chip { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--mn-bg-subtle, #f1f5f9); border: 1px solid var(--mn-border, #e2e8f0); margin: 0 6px 6px 0; font-size: 0.78rem; }
+#tda-sphere-optional .tda-sphere-cluster { border-left: 3px solid var(--tm-blue, #3b82f6); padding: 4px 8px; margin: 0 0 7px 0; font-size: 0.8rem; line-height: 1.45; }
+#tda-sphere-optional .tda-sphere-cluster b { font-weight: 700; }
+</style>
+
+<div class="optional" id="tda-sphere-optional" data-headline="TDA over the whole sphere: coverage, barcodes, clusters across all layers">
+	<div class="md">
+The layer cards and the live TDA panel inspect one layer, or one projection of the residual stream, at a time. This optional view pools the directions of every token state from every layer into a single point cloud on the unit sphere. Normalizing each state keeps only its direction, so the growth of the vector length does not dominate the picture. The filtration then tracks **H₀ connected components** (clusters) and **H₁ loops** across the whole feature space; the coverage map shows which directions the model actually visits. The method is standard persistent homology on a Vietoris-Rips filtration (\cite[Edelsbrunner et al., 2002]{edelsbrunner2002persistent}; \cite[Carlsson, 2009]{carlsson2009tda}).
+
+The barcode is computed on the chord distance between unit directions, which is monotone in the angle between them. A bar therefore describes a cluster or loop of directions, not of raw vector lengths. This is a small model trained on one short sentence: read the result as the shape of this model on this input, not as a general claim about transformers.
+	</div>
+	<div class="tda-sphere-controls">
+		<label>States
+			<select id="tda-sphere-states">
+				<option value="layers" selected>h₀ + layer outputs</option>
+				<option value="sublayers">h₀ + attention + FFN outputs</option>
+			</select>
+		</label>
+		<label>Tokens
+			<select id="tda-sphere-tokens">
+				<option value="all" selected>all tokens</option>
+				<option value="last">last token only</option>
+			</select>
+		</label>
+		<label>Color
+			<select id="tda-sphere-color">
+				<option value="layer" selected>by layer</option>
+				<option value="cluster">by cluster at ε</option>
+			</select>
+		</label>
+		<label><input type="checkbox" id="tda-sphere-raw"> include raw embeddings (before position)</label>
+		<label><input type="checkbox" id="tda-sphere-edges" checked> draw ε-edges</label>
+		<label>ε
+			<input type="range" id="tda-sphere-eps" min="0" max="100" value="35" style="width: 110px;">
+			<span id="tda-sphere-eps-val"></span>
+		</label>
+		<button type="button" id="tda-sphere-recompute" style="padding: 4px 12px; border-radius: 6px; border: 1px solid #3b82f6; background: #eff6ff; color: #1d4ed8; cursor: pointer; font-weight: 600;">⟳ Recompute</button>
+		<span id="tda-sphere-status" style="color: var(--mn-text-muted, #64748b); font-size: 0.8rem;"></span>
+	</div>
+	<div class="tda-sphere-grid">
+		<div class="tda-sphere-panel">
+			<div class="tda-sphere-title">Directions on the unit sphere, colored by layer (hover for token and stage)</div>
+			<div id="tda-sphere-3d" style="width: 100%; height: 520px;"></div>
+		</div>
+		<div class="tda-sphere-panel">
+			<div class="tda-sphere-title">Coverage of the sphere (latitude / longitude bins, darker = more states)</div>
+			<div id="tda-sphere-coverage" style="width: 100%; height: 280px;"></div>
+			<div id="tda-sphere-coverage-stats" style="font-size: 0.8rem; color: var(--mn-text-muted, #64748b); margin-top: 6px; line-height: 1.5;"></div>
+		</div>
+	</div>
+	<div class="tda-sphere-grid">
+		<div class="tda-sphere-panel">
+			<div class="tda-sphere-title">Persistence barcode over all layers: H₀ clusters, H₁ loops</div>
+			<canvas id="tda-sphere-barcode"></canvas>
+			<div id="tda-sphere-betti" style="font-size: 0.8rem; margin-top: 6px; line-height: 1.5;"></div>
+		</div>
+		<div class="tda-sphere-panel">
+			<div class="tda-sphere-title">Clusters at ε (connected components in the ε-graph)</div>
+			<div id="tda-sphere-clusters" style="max-height: 300px; overflow: auto;"></div>
+		</div>
+	</div>
+</div>
 
 <div id="tda-live-section" class="tda-live-section" style="margin: 20px 0; padding: 18px; background: var(--mn-bg-subtle, #f8fafc); border: 1px solid #e2e8f0; border-radius: 12px;">
 	<details id="tda-live-details">

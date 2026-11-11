@@ -23838,12 +23838,14 @@
    "beyond_llms",
    "foam_of_meaning",
    "geometry_iii",
-   "topology"
+   "topology",
+   "transformer"
   ],
   "carlsson2009tda": [
    "beyond_llms",
    "foam_of_meaning",
-   "geometry_iii"
+   "geometry_iii",
+   "transformer"
   ],
   "li2017tda": [
    "beyond_llms"
