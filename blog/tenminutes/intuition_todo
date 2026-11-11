@@ -26,3 +26,5 @@ DONE — Status im Canvas statt außerhalb; die höchste Szene wird reserviert, 
 DONE — Kamera-Reset-Button für die ism-Ansicht.
 
 DONE — Die Statusbox der Dense-Demo zeigt jetzt auch den erfolgreichen Trennfall; die Szenen 1–7 und die Reset-Ansicht sind deutsch.
+
+DONE — Die Statusbox zeigt den erfolgreichen Trennfall jetzt auch auf Deutsch, der Text ist in beiden Fällen kürzer, die editierbaren Gewichte sind breiter (4 Nachkommastellen) und haben jeweils einen eigenen Slider.

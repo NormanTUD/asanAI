@@ -250,12 +250,12 @@
 		const threshold = info.threshold.toFixed(2);
 		if (info.separated) {
 			return DE
-				? ["Linear trennbar: ja.", "Schwelle s = " + threshold + ".", "Kern und Ring liegen auf", "verschiedenen Seiten."]
-				: ["Linearly separable: yes.", "Threshold s = " + threshold + ".", "The core and the ring are on", "opposite sides."];
+				? ["Linear trennbar: ja (s = " + threshold + ")."]
+				: ["Linearly separable: yes (s = " + threshold + ")."];
 		}
 		return DE
-			? ["Linear trennbar: nein.", "Beste Schwelle s = " + threshold + ".", info.wrong + " von " + info.total + " Punkten falsch.", "Spiele mit Neuronen, Gewichten,", "Skala, Bias oder Preset."]
-			: ["Linearly separable: no.", "Best threshold s = " + threshold + ".", info.wrong + " of " + info.total + " points wrong.", "Play with the neurons, weights,", "scale, bias, or a preset."];
+			? ["Noch nicht linear trennbar: " + info.wrong + "/" + info.total + " falsch.", "Spiele mit den Reglern."]
+			: ["Not linearly separable yet: " + info.wrong + "/" + info.total + " wrong.", "Play with the controls."];
 	}
 
 	function updateSeparationBox() {
@@ -323,9 +323,15 @@
 	}
 
 	function weightInput(kind, i, j, value, label) {
-		return '<input class="ism-weight-input" type="number" step="0.01" data-w="' + kind +
-			'" data-i="' + i + '" data-j="' + j + '" value="' + value.toFixed(2) +
-			'" aria-label="' + (DE ? ("Gewicht " + label) : label) + '">';
+		const data = 'data-w="' + kind + '" data-i="' + i + '" data-j="' + j + '"';
+		const aria = DE ? ("Gewicht " + label) : label;
+		const sliderValue = Math.max(-5, Math.min(5, value)).toFixed(2);
+		return '<span class="ism-weight-cell">' +
+			'<input class="ism-weight-input" type="number" step="0.0001" ' + data +
+			'" value="' + value.toFixed(4) + '" aria-label="' + aria + '">' +
+			'<input class="ism-weight-slider" type="range" min="-5" max="5" step="0.01" ' + data +
+			'" value="' + sliderValue + '" aria-label="' + aria + '">' +
+			'</span>';
 	}
 
 	function weightEditorHtml() {
@@ -363,6 +369,11 @@
 				else if (kind === "b1") denseWeights.b1[i] = value;
 				else if (kind === "W2") denseWeights.W2[i] = value;
 				else if (kind === "b2") denseWeights.b2 = value;
+				const cell = input.closest(".ism-weight-cell");
+				const number = cell ? cell.querySelector(".ism-weight-input") : null;
+				const slider = cell ? cell.querySelector(".ism-weight-slider") : null;
+				if (input === number && slider) slider.value = String(Math.max(-5, Math.min(5, value)));
+				if (input === slider && number) number.value = value.toFixed(4);
 				const preset = document.getElementById("ism-dense-preset");
 				if (preset) preset.value = "custom";
 				updateSeparationBox();
@@ -389,15 +400,15 @@
 			host.appendChild(el);
 		};
 		addFormula(formulas[0]);
+		const status = document.createElement("p");
+		status.className = "ism-separation-box";
+		status.id = "ism-separation-box";
+		host.appendChild(status);
 		const editor = document.createElement("div");
 		editor.className = "ism-weight-editor";
 		editor.innerHTML = weightEditorHtml();
 		host.appendChild(editor);
 		addFormula(formulas[1]);
-		const status = document.createElement("p");
-		status.className = "ism-separation-box";
-		status.id = "ism-separation-box";
-		host.appendChild(status);
 		bindWeightEditor(editor);
 		if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(host);
 		updateSeparationBox();
