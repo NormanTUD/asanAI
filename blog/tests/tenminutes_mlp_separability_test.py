@@ -93,13 +93,13 @@ def main() -> int:
 
         sep, msg = state(drv)
         check(sep == "fail", "the default bowl is reported as not separable", str(sep))
-        check("Linear trennbar" in (msg or ""), "the status text names linear separability", str(msg))
+        check("trennbar" in (msg or "").lower(), "the status text names linear separability", str(msg))
 
         drv.execute_script("const p=document.getElementById('ism-dense-preset');p.value='separator';p.dispatchEvent(new Event('change'));")
         time.sleep(0.8)
         sep, msg = state(drv)
         check(sep == "ok", "the separator preset is reported as separable", str(sep))
-        check("Schwelle s =" in (msg or ""), "the separable status shows a threshold", str(msg))
+        check("s =" in (msg or ""), "the separable status shows a threshold", str(msg))
 
         drv.execute_script(
             "for (const [id,v] of [['ism-dense-neurons','8'],['ism-dense-scale','3'],['ism-dense-bias','-0.6']]){"

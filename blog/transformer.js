@@ -6146,6 +6146,16 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 	const title = 'Token Trajectory: Embedding → +Position → Layer Outputs' + (window.tmMetric && window.tmMetric.label ? ' · ' + window.tmMetric.label() : '') + (titleSuffix ? ' · ' + titleSuffix : '');
 	const layout = window.tmPlotly.layout3D(title, ['Dim 0', 'Dim 1', 'Dim 2']);
 	window.tmPlotly.equalize3D(layout, traces);
+	layout.uirevision = 'tm-trajectory';
+	if (!trajDiv._tmCameraBound && trajDiv.on) {
+		trajDiv.on('plotly_relayout', function (event) {
+			if (event && event['scene.camera']) trajDiv._tmCamera = event['scene.camera'];
+		});
+		trajDiv._tmCameraBound = true;
+	}
+	const currentCamera = trajDiv._tmCamera ||
+		(trajDiv._fullLayout && trajDiv._fullLayout.scene && trajDiv._fullLayout.scene.camera);
+	if (currentCamera) layout.scene.camera = JSON.parse(JSON.stringify(currentCamera));
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(trajDiv); if (oldChart) oldChart.dispose(); }
 	Plotly.react(trajDiv, traces, layout, { responsive: true, displayModeBar: false });
 }

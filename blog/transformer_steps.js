@@ -3103,6 +3103,7 @@
 		var p = palette();
 		var axis = function (name) { return { title: { text: name }, color: c.muted, gridcolor: c.line, zerolinecolor: c.line, showbackground: false }; };
 		return {
+			uirevision: "tm-3d",
 			paper_bgcolor: c.paper, plot_bgcolor: c.plot,
 			hoverlabel: { bgcolor: p.paper, bordercolor: p.line, font: { color: p.ink, size: 12 } },
 			title: { text: title, font: { size: 13, color: c.ink } },

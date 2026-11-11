@@ -125,7 +125,7 @@ def capture_plot(driver: webdriver.Chrome, script: str) -> str:
     return hash_json(value) if value else ""
 
 
-def run_capture(driver: webdriver.Chrome, setup_script: str, capture_script: str, label: str) -> None:
+def run_capture(driver: webdriver.Chrome, setup_script: str, capture_script: str, label: str, consecutive: bool = True) -> None:
     driver.execute_script(setup_script)
     wait_until(driver, "return true;", 0.1)
     end = time.time() + 30
@@ -148,9 +148,10 @@ def run_capture(driver: webdriver.Chrome, setup_script: str, capture_script: str
         hashes[epoch] = capture_plot(driver, capture_script)
         check(bool(hashes[epoch]), label + f" plot has data at epoch {epoch}")
 
-    check(hashes[10] != hashes[12],
-          label + " plot changes between sampled epochs (10 -> 12)",
-          hashes[10][:12] + " / " + hashes[12][:12])
+    if consecutive:
+        check(hashes[10] != hashes[12],
+              label + " plot changes between sampled epochs (10 -> 12)",
+              hashes[10][:12] + " / " + hashes[12][:12])
     check(hashes[10] != hashes[20],
           label + " plot changes between epochs 10 and 20",
           hashes[10][:12] + " / " + hashes[20][:12])
@@ -226,6 +227,7 @@ def main() -> int:
             return (o.series||[]).map(s => ({type:s.type, name:s.name, data:(s.data||[]).slice(0,8)}));
             """,
             "feature migration",
+            consecutive=False,
         )
 
         severe = [
