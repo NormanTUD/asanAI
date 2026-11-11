@@ -3,59 +3,141 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Attention = gewichtete Adjazenzmatrix</title>
+<title>Attention: Vektoren, Graph, Maske</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml/dist/temml.min.js"></script>
 <style>
-  :root { --ink:#111; --dim:#a3a3a3; --bg:#fafaf7; --acc:#e4572e; }
+  :root { --ink:#111; --dim:#8a8a84; --bg:#fafaf7; --line:#e6e4dd; --q:#e4572e; --k:#1b998b; --v:#7b4fd6; }
   * { box-sizing: border-box; }
   body {
-    margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink);
+    margin: 0; background: var(--bg); color: var(--ink);
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    display: flex; flex-direction: column; align-items: center; gap: 44px; padding: 56px 24px;
+    padding: 44px 24px; display: flex; flex-direction: column; align-items: center; gap: 22px;
   }
-  input {
-    font: inherit; font-size: 18px; width: min(560px, 90vw); padding: 6px 0;
-    border: none; border-bottom: 1px solid var(--ink); background: transparent; outline: none; text-align: center;
+  .w { width: min(1040px, 100%); }
+  h1 { font-weight: 300; font-size: 28px; margin: 0 0 4px; }
+  .sub { color: var(--dim); font-size: 14px; margin: 0; }
+  h2 { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); font-weight: 500; margin: 0 0 10px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px; min-width: 0; }
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 900px) { .g2 { grid-template-columns: 1fr; } }
+  .ctrl { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+  input#txt {
+    font: inherit; font-size: 17px; flex: 1 1 320px; border: none; border-bottom: 1px solid var(--ink);
+    background: transparent; padding: 6px 0; outline: none;
   }
-  .stage { display: grid; grid-template-columns: auto auto; gap: 64px; align-items: center; }
-  @media (max-width: 860px) { .stage { grid-template-columns: 1fr; } }
-  svg { width: 420px; height: 420px; overflow: visible; }
-  .edge { fill: none; stroke: var(--ink); transition: stroke .25s, opacity .25s; }
-  .edge.on { stroke: var(--acc); }
-  .node { cursor: pointer; }
-  .node circle { fill: var(--bg); stroke: var(--ink); stroke-width: 1; transition: fill .25s; }
-  .node.on circle { fill: var(--acc); stroke: var(--acc); }
-  .node text { font-size: 14px; text-anchor: middle; dominant-baseline: middle; fill: var(--ink); pointer-events: none; }
-  .node.on text { fill: #fff; }
-  table { border-collapse: collapse; }
-  td {
-    width: 46px; height: 46px; text-align: center; font-size: 12px; cursor: pointer;
-    font-variant-numeric: tabular-nums; transition: outline .15s;
+  label { font-size: 13px; color: var(--dim); display: flex; gap: 6px; align-items: center; cursor: pointer; }
+  button {
+    font: inherit; font-size: 13px; background: var(--ink); color: #fff; border: 0;
+    border-radius: 999px; padding: 8px 16px; cursor: pointer;
   }
-  td:hover { outline: 1px solid var(--acc); outline-offset: -1px; }
-  th { font-weight: 400; font-size: 13px; color: var(--dim); padding: 0 12px 0 0; text-align: right; white-space: nowrap; cursor: pointer; }
-  th.top { padding: 0 0 10px; text-align: center; color: var(--dim); }
-  tr.row th { color: var(--acc); }
-  p { font-size: 13px; color: var(--dim); max-width: 560px; text-align: center; line-height: 1.7; margin: 0; }
+  svg { width: 100%; height: auto; display: block; overflow: visible; touch-action: none; }
+  .pt { cursor: grab; }
+  .hint { font-size: 12px; color: var(--dim); line-height: 1.6; margin: 10px 0 0; }
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; font-size: 13px; width: 100%; }
+  th { font-weight: 400; color: var(--dim); text-align: right; padding: 4px 8px; white-space: nowrap; }
+  td { padding: 4px 8px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  th[data-i] { cursor: pointer; color: var(--ink); }
+  tr.row th { color: var(--q); font-weight: 600; }
+  td.mask {
+    color: #bbb; text-align: center;
+    background: repeating-linear-gradient(45deg, #f1f0ea 0 6px, #fff 6px 12px);
+  }
+  .dim td, .dim th { opacity: .35; }
+  .q { color: var(--q); } .k { color: var(--k); } .v { color: var(--v); }
+  .sum { color: var(--q); }
+  .sumrow th, .sumrow td { border-top: 1px solid var(--ink); }
+  .formulas { display: grid; gap: 12px; text-align: center; overflow-x: auto; }
+  .mats { display: flex; gap: 30px; justify-content: space-around; flex-wrap: wrap; margin-top: 8px; }
+  .caption { font-size: 12px; color: var(--dim); margin-top: 8px; }
 </style>
 </head>
 <body>
 
-<input id="t" value="Die Katze sitzt auf der Matte" spellcheck="false" autocomplete="off">
+<header class="w">
+  <h1>Attention: Vektoren, Graph, Maske</h1>
+  <p class="sub">Ziehe einen Punkt im Embedding-Raum. Alles darunter wird neu berechnet: Q, K, V, Scores, Maske, Softmax, Graph und Nachrichten.</p>
+</header>
 
-<div class="stage">
-  <svg id="g" viewBox="0 0 420 420"></svg>
-  <div id="m"></div>
+<div class="w card ctrl">
+  <input id="txt" value="Die Katze sitzt auf der Matte" spellcheck="false" autocomplete="off">
+  <label><input type="checkbox" id="causal"> Causal Mask</label>
+  <button id="reset">Punkte zurücksetzen</button>
 </div>
 
-<p>Jeder Pfeil und jede Zelle ist dasselbe Gewicht $A_{ij}$. Zeile = Empfänger, Spalte = Sender.<br>
-Klick auf ein Token, um seine eingehenden Kanten hervorzuheben. Ändere den Text, und die Kanten werden neu berechnet.</p>
+<section class="w card formulas">
+  <div data-tex="x_i \in \mathbb{R}^2, \qquad q_i = x_i W_Q, \quad k_i = x_i W_K, \quad v_i = x_i W_V"></div>
+  <div data-tex="s_{ij} = \frac{q_i \cdot k_j}{\sqrt{d_k}} + M_{ij}, \qquad M_{ij} = 0 \text{ für } j \le i, \quad M_{ij} = -\infty \text{ für } j > i"></div>
+  <div data-tex="A_{ij} = \frac{\exp(s_{ij})}{\sum_{l} \exp(s_{il})}, \qquad o_i = \sum_{j} A_{ij}\, v_j"></div>
+</section>
+
+<main class="w g2">
+  <section class="card">
+    <h2>1 · Graph</h2>
+    <svg id="graph" viewBox="0 0 300 300"></svg>
+    <p class="hint">Kanten sind die Gewichte A<sub>ij</sub> (Dicke und Deckkraft). Rot gestrichelt: durch die Maske entfernte Kanten. Orange: eingehende Kanten des Fokus. Die Punkte wandern von den Sendern zum Empfänger.</p>
+  </section>
+  <section class="card">
+    <h2>2 · Embedding-Raum</h2>
+    <svg id="emb" viewBox="0 0 300 300"></svg>
+    <p class="hint">Jeder Punkt ist ein Token mit x<sub>i</sub> = (x₁, x₂). Ziehen verändert den Vektor und damit alles, was daraus folgt.</p>
+  </section>
+</main>
+
+<main class="w g2">
+  <section class="card">
+    <h2>3 · Query- und Key-Raum</h2>
+    <svg id="qk" viewBox="0 0 300 300"></svg>
+    <p class="hint">Orange sind die Queries, grün die Keys. Die gestrichelte Linie zeigt die Richtung von q des Fokus. Graue Linien projizieren jeden k<sub>j</sub> auf diese Richtung. Das Skalarprodukt ist q · k = |q| × Länge der Projektion, und der Score ist q · k / √2.</p>
+  </section>
+  <section class="card">
+    <h2>4 · Gelernte Matrizen</h2>
+    <div id="xm"></div>
+    <div class="mats">
+      <div id="wq"></div><div id="wk"></div><div id="wv"></div>
+    </div>
+    <p class="hint">Jede Zeile von X wird mit derselben Matrix multipliziert: Q = X W<sub>Q</sub>, K = X W<sub>K</sub>, V = X W<sub>V</sub>.</p>
+  </section>
+</main>
+
+<section class="w card">
+  <h2>5 · Vektoren pro Token</h2>
+  <div id="vec" class="scroll"></div>
+</section>
+
+<main class="w g2">
+  <section class="card">
+    <h2>6 · Scores und Maske</h2>
+    <div id="scores" class="scroll"></div>
+    <div id="mask"></div>
+    <p class="caption" id="maskCap"></p>
+  </section>
+  <section class="card">
+    <h2>7 · Softmax-Gewichte A</h2>
+    <div id="soft" class="scroll"></div>
+    <p class="hint">Jede Zeile summiert sich zu 1. Maskierte Felder bekommen exakt 0. Zeile = Empfänger i, Spalte = Sender j.</p>
+  </section>
+</main>
+
+<section class="w card">
+  <h2>8 · Nachrichten am Fokus-Token</h2>
+  <div id="detail" class="scroll"></div>
+  <p class="hint">Klick auf einen Punkt, einen Knoten oder eine Tokenbeschriftung, um den Fokus zu wechseln.</p>
+</section>
 
 <script>
 const $ = id => document.getElementById(id);
-const D = 4, C = 210, RAD = 150;
-const esc = s => s.replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
-const hash = s => [...s].reduce((h, c) => Math.imul(h ^ c.codePointAt(0), 16777619) >>> 0, 2166136261);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const r2 = v => Math.round(v * 100) / 100;
+const fmt = v => v.toFixed(2).replace('-', '−');
+const vs = v => `(${fmt(v[0])}, ${fmt(v[1])})`;
+const pm = M => `\\begin{pmatrix}${M.map(r => r.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ')}\\end{pmatrix}`;
+const tex = (el, s, disp = true) => { if (window.temml) temml.render(s, el, { displayMode: disp }); else el.textContent = s; };
 
+const C = 150, EMB_SC = 75, GR = 100, SQDK = Math.SQRT2;   // d_k = 2
+
+const hash = s => [...s].reduce((h, c) => Math.imul(h ^ c.codePointAt(0), 16777619) >>> 0, 2166136261);
 function rng(s) {
   return () => {
     s = s + 0x6D2B79F5 | 0;
@@ -64,92 +146,285 @@ function rng(s) {
     return ((t ^ t >>> 14) >>> 0) / 4294967296;
   };
 }
+const R0 = rng(11);
+const mat = () => Array.from({ length: 2 }, () => Array.from({ length: 2 }, () => r2(R0() * 2 - 1)));
+const W = { Q: mat(), K: mat(), V: mat() };
+const vm = (x, M) => [0, 1].map(c => x[0] * M[0][c] + x[1] * M[1][c]);
+const dot = (a, b) => a[0] * b[0] + a[1] * b[1];
+const initX1 = (t, i) => { const g = rng(hash(t + '#' + i)); return [r2((g() * 2 - 1) * 1.3), r2((g() * 2 - 1) * 1.3)]; };
+const parseT = s => { const t = s.split(/\s+/).filter(Boolean).slice(0, 8); return t.length ? t : ['Die']; };
+const toPx = (v, sc) => [C + v[0] * sc, C - v[1] * sc];
 
-const R = rng(7);
-const mat = () => Array.from({ length: D }, () => Array.from({ length: D }, () => R() * 2 - 1));
-const Wq = mat(), Wk = mat();
-const mv = (M, x) => M.map(r => r.reduce((s, w, k) => s + w * x[k], 0));
-const dot = (a, b) => a.reduce((s, x, k) => s + x * b[k], 0);
+const S = { toks: [], X: [], causal: false, focus: 0, Q: [], K: [], V: [], Sc: [], A: [], O: [], particles: [] };
 
-// gleiches Wort -> gleiche Basis, Position -> kleine Verschiebung
-const emb = (tok, i) => {
-  const r = rng(hash(tok));
-  return Array.from({ length: D }, (_, k) => r() * 2 - 1 + 0.5 * Math.sin((i + 1) * (k + 1)));
-};
-
-function attention(toks) {
-  const Q = toks.map((t, i) => mv(Wq, emb(t, i)));
-  const K = toks.map((t, i) => mv(Wk, emb(t, i)));
-  return Q.map(q => {
-    const s = K.map(k => dot(q, k) / Math.sqrt(D));
-    const m = Math.max(...s), e = s.map(x => Math.exp(x - m)), z = e.reduce((a, b) => a + b);
-    return e.map(x => x / z);
-  });
+/* ---------- Rechnung ---------- */
+function compute() {
+  const n = S.toks.length;
+  S.Q = S.X.map(x => vm(x, W.Q));
+  S.K = S.X.map(x => vm(x, W.K));
+  S.V = S.X.map(x => vm(x, W.V));
+  S.Sc = []; S.A = []; S.O = [];
+  for (let i = 0; i < n; i++) {
+    const s = [];
+    for (let j = 0; j < n; j++) s.push(S.causal && j > i ? null : dot(S.Q[i], S.K[j]) / SQDK);
+    const m = Math.max(...s.filter(v => v !== null));
+    const e = s.map(v => v === null ? 0 : Math.exp(v - m));
+    const z = e.reduce((a, b) => a + b, 0);
+    S.Sc.push(s);
+    S.A.push(e.map(v => v / z));
+    S.O.push([0, 1].map(c => S.A[i].reduce((acc, a, j) => acc + a * S.V[j][c], 0)));
+  }
 }
 
-function pos(n) {
+/* ---------- Graph ---------- */
+function nodeP(n) {
   return Array.from({ length: n }, (_, i) => {
     const a = -Math.PI / 2 + 2 * Math.PI * i / n;
-    return { x: C + RAD * Math.cos(a), y: C + RAD * Math.sin(a), ux: Math.cos(a), uy: Math.sin(a) };
+    return { x: C + GR * Math.cos(a), y: C + GR * Math.sin(a), ux: Math.cos(a), uy: Math.sin(a) };
   });
 }
+function curve(P, j, i) {
+  const a = P[j], b = P[i];
+  const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy) || 1;
+  const sg = j < i ? 1 : -1;
+  return { a, b, cp: { x: (a.x + b.x) / 2 - dy / L * 30 * sg, y: (a.y + b.y) / 2 + dx / L * 30 * sg } };
+}
+const towards = (p, q, r) => {
+  const vx = q.x - p.x, vy = q.y - p.y, l = Math.hypot(vx, vy) || 1;
+  return { x: p.x + vx / l * r, y: p.y + vy / l * r };
+};
+function edgeD(P, j, i) {
+  if (i === j) {
+    const a = P[j], px = -a.uy, py = a.ux;
+    const s  = { x: a.x + a.ux * 20 + px * 9,  y: a.y + a.uy * 20 + py * 9 };
+    const e  = { x: a.x + a.ux * 20 - px * 9,  y: a.y + a.uy * 20 - py * 9 };
+    const c1 = { x: a.x + a.ux * 80 + px * 40, y: a.y + a.uy * 80 + py * 40 };
+    const c2 = { x: a.x + a.ux * 80 - px * 40, y: a.y + a.uy * 80 - py * 40 };
+    return `M${s.x},${s.y} C${c1.x},${c1.y} ${c2.x},${c2.y} ${e.x},${e.y}`;
+  }
+  const c = curve(P, j, i);
+  const p0 = towards(c.a, c.cp, 22), p1 = towards(c.b, c.cp, 24);
+  return `M${p0.x},${p0.y} Q${c.cp.x},${c.cp.y} ${p1.x},${p1.y}`;
+}
 
-let toks = [], A = [], focus = 0;
-
-function draw() {
-  const n = toks.length, P = pos(n);
-  let edges = '', nodes = '';
-
+function drawGraph() {
+  const n = S.toks.length, P = nodeP(n), f = S.focus;
+  let edges = '', parts = '', nodes = '';
+  S.particles = [];
   for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
-    const w = A[i][j];
-    if (w < 0.02) continue;
-    const a = P[j], b = P[i];
-    const cls = 'edge' + (i === focus ? ' on' : '');
-    const st = `stroke-width="${(0.5 + 9 * w).toFixed(2)}" opacity="${(0.08 + 0.92 * w).toFixed(3)}"`;
-    let d;
-    if (i === j) {                                   // Selbst-Attention als Schleife nach außen
-      const ox = a.ux * 80, oy = a.uy * 80, px = -a.uy * 40, py = a.ux * 40;
-      d = `M${a.x - a.uy * 7},${a.y + a.ux * 7} C${a.x + ox + px},${a.y + oy + py} ${a.x + ox - px},${a.y + oy - py} ${a.x + a.uy * 7},${a.y - a.ux * 7}`;
-    } else {
-      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-      const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy) || 1;
-      const sg = j < i ? 1 : -1;                     // Hin- und Rückkante gegenläufig biegen
-      const cx = mx - dy / L * 40 * sg, cy = my + dx / L * 40 * sg;
-      d = `M${a.x},${a.y} Q${cx},${cy} ${b.x},${b.y}`;
+    if (S.Sc[i][j] === null) {
+      edges += `<path d="${edgeD(P, j, i)}" fill="none" stroke="#e4572e" stroke-width="1" stroke-dasharray="3 4" opacity=".5"><title>maskiert: ${esc(S.toks[j])} → ${esc(S.toks[i])}</title></path>`;
+      continue;
     }
-    edges += `<path class="${cls}" d="${d}" ${st}/>`;
+    const w = S.A[i][j], on = i === f;
+    edges += `<path d="${edgeD(P, j, i)}" fill="none" stroke="${on ? '#e4572e' : '#111'}" stroke-width="${(0.5 + 8 * w).toFixed(2)}" stroke-linecap="round" opacity="${on ? (0.2 + 0.8 * w).toFixed(3) : (0.05 + 0.45 * w).toFixed(3)}"><title>${esc(S.toks[j])} → ${esc(S.toks[i])}: ${w.toFixed(3)}</title></path>`;
   }
-
+  for (let j = 0; j < n; j++) {
+    const w = S.A[f][j];
+    if (j === f || S.Sc[f][j] === null || w < 0.01) continue;
+    const c = curve(P, j, f);
+    parts += `<circle class="p" r="${(2 + 6 * w).toFixed(2)}" fill="#e4572e"/>`;
+    S.particles.push({ a: c.a, b: c.b, cp: c.cp, off: j / n });
+  }
   P.forEach((p, i) => {
-    nodes += `<g class="node${i === focus ? ' on' : ''}" data-i="${i}">
-      <circle cx="${p.x}" cy="${p.y}" r="22"/>
-      <text x="${p.x}" y="${p.y + 1}">${esc(toks[i])}</text></g>`;
+    const on = i === f;
+    nodes += `<g class="node" data-i="${i}">
+      <circle cx="${p.x}" cy="${p.y}" r="22" fill="${on ? '#111' : '#fafaf7'}" stroke="#111" stroke-width="1"/>
+      <text x="${p.x}" y="${p.y + 1}" text-anchor="middle" dominant-baseline="middle" font-size="12" fill="${on ? '#fafaf7' : '#111'}">${esc(S.toks[i])}</text></g>`;
   });
-  $('g').innerHTML = edges + nodes;
+  $('graph').innerHTML = edges + parts + nodes;
+  const els = $('graph').querySelectorAll('.p');
+  S.particles.forEach((p, k) => { p.el = els[k]; });
+}
 
-  let h = '<table><tr><th></th>' + toks.map(t => `<th class="top">${esc(t)}</th>`).join('') + '</tr>';
+/* ---------- Embedding-Raum ---------- */
+function grid(sc) {
+  return `<line x1="0" y1="${C}" x2="300" y2="${C}" stroke="#e6e4dd"/>
+          <line x1="${C}" y1="0" x2="${C}" y2="300" stroke="#e6e4dd"/>
+          <circle cx="${C}" cy="${C}" r="${sc}" fill="none" stroke="#efeee8" stroke-dasharray="3 4"/>`;
+}
+function drawEmb() {
+  let h = grid(EMB_SC);
+  S.X.forEach((x, i) => {
+    const [px, py] = toPx(x, EMB_SC);
+    h += `<line x1="${C}" y1="${C}" x2="${px}" y2="${py}" stroke="#d6d4cc" stroke-width="1"/>`;
+  });
+  S.X.forEach((x, i) => {
+    const [px, py] = toPx(x, EMB_SC), on = i === S.focus;
+    h += `<g class="pt" data-i="${i}">
+            <circle cx="${px}" cy="${py}" r="${on ? 9 : 7}" fill="${on ? '#111' : '#fafaf7'}" stroke="#111" stroke-width="1.5"/>
+            <text x="${px + 12}" y="${py - 10}" font-size="12" fill="#111">${esc(S.toks[i])}</text></g>`;
+  });
+  $('emb').innerHTML = h;
+}
+
+/* ---------- Query- und Key-Raum ---------- */
+function vec(v, sc, color, label, on) {
+  const [x, y] = toPx(v, sc);
+  return `<line x1="${C}" y1="${C}" x2="${x}" y2="${y}" stroke="${color}" stroke-width="${on ? 3 : 1.6}" opacity="${on ? 1 : .55}" stroke-linecap="round"/>
+          <circle cx="${x}" cy="${y}" r="${on ? 5 : 3.5}" fill="${color}" opacity="${on ? 1 : .7}"/>
+          <text x="${x + 8}" y="${y - 6}" font-size="12" fill="${color}">${esc(label)}</text>`;
+}
+function drawQK() {
+  const f = S.focus, q = S.Q[f], qq = dot(q, q) || 1e-9;
+  const m = Math.max(2.2, ...S.Q.flat().map(Math.abs), ...S.K.flat().map(Math.abs));
+  const sc = 120 / m;
+  let h = grid(sc);
+  h += `<line x1="${C - q[0] * sc * 3}" y1="${C + q[1] * sc * 3}" x2="${C + q[0] * sc * 3}" y2="${C - q[1] * sc * 3}" stroke="#e4572e" stroke-dasharray="4 4" opacity=".6"/>`;
+  S.K.forEach(k => {
+    const t = dot(k, q) / qq;
+    const [kx, ky] = toPx(k, sc), [px, py] = toPx([q[0] * t, q[1] * t], sc);
+    h += `<line x1="${kx}" y1="${ky}" x2="${px}" y2="${py}" stroke="#999" stroke-dasharray="2 3"/>
+          <circle cx="${px}" cy="${py}" r="2.5" fill="#e4572e"/>`;
+  });
+  S.K.forEach((k, j) => { h += vec(k, sc, '#1b998b', 'k ' + S.toks[j], j === f); });
+  S.Q.forEach((v, i) => { h += vec(v, sc, '#e4572e', 'q ' + S.toks[i], i === f); });
+  $('qk').innerHTML = h;
+}
+
+/* ---------- Matrizen und Vektoren ---------- */
+function drawMats() {
+  tex($('xm'), `X = ${pm(S.X)}`);
+  tex($('wq'), `W_Q = ${pm(W.Q)}`);
+  tex($('wk'), `W_K = ${pm(W.K)}`);
+  tex($('wv'), `W_V = ${pm(W.V)}`);
+}
+function drawVec() {
+  let h = `<table><thead><tr><th>Token</th><th>x<sub>i</sub></th><th class="q">q<sub>i</sub></th><th class="k">k<sub>i</sub></th><th class="v">v<sub>i</sub></th></tr></thead><tbody>`;
+  S.toks.forEach((t, i) => {
+    h += `<tr class="${i === S.focus ? 'row' : ''}"><th data-i="${i}">${esc(t)}</th>
+          <td>${vs(S.X[i])}</td><td class="q">${vs(S.Q[i])}</td><td class="k">${vs(S.K[i])}</td><td class="v">${vs(S.V[i])}</td></tr>`;
+  });
+  $('vec').innerHTML = h + '</tbody></table>';
+}
+
+/* ---------- Scores, Maske, Softmax ---------- */
+function drawScores() {
+  const t = S.toks, n = t.length;
+  let h = `<table><tr><th></th>${t.map(x => `<th>${esc(x)}</th>`).join('')}</tr>`;
   for (let i = 0; i < n; i++) {
-    h += `<tr class="${i === focus ? 'row' : ''}"><th data-i="${i}">${esc(toks[i])}</th>` +
-      A[i].map((w, j) => `<td data-i="${i}" style="background:rgba(17,17,17,${w.toFixed(3)});color:${w > .5 ? '#fafaf7' : '#111'}">${w.toFixed(2)}</td>`).join('') +
-      '</tr>';
+    h += `<tr class="${i === S.focus ? 'row' : ''}"><th data-i="${i}">${esc(t[i])}</th>`;
+    for (let j = 0; j < n; j++) {
+      const v = S.Sc[i][j];
+      h += v === null ? '<td class="mask">−∞</td>' : `<td>${fmt(v)}</td>`;
+    }
+    h += '</tr>';
   }
-  $('m').innerHTML = h + '</table>';
+  $('scores').innerHTML = h + '</table>';
+
+  const M = Array.from({ length: n }, (_, i) =>
+    Array.from({ length: n }, (_, j) => (S.causal && j > i) ? '-\\infty' : '0'));
+  tex($('mask'), `M = \\begin{pmatrix}${M.map(r => r.join(' & ')).join(' \\\\ ')}\\end{pmatrix}`);
+  $('maskCap').textContent = S.causal
+    ? 'Causal Mask aktiv: Token i sieht nur sich selbst und seine Vorgänger.'
+    : 'Keine Maske aktiv: jedes Token sieht alle anderen.';
+}
+function drawSoft() {
+  const t = S.toks, n = t.length;
+  let h = `<table><tr><th></th>${t.map(x => `<th>${esc(x)}</th>`).join('')}<th>Σ</th></tr>`;
+  for (let i = 0; i < n; i++) {
+    const sum = S.A[i].reduce((a, b) => a + b, 0);
+    h += `<tr class="${i === S.focus ? 'row' : ''}"><th data-i="${i}">${esc(t[i])}</th>`;
+    for (let j = 0; j < n; j++) {
+      if (S.Sc[i][j] === null) { h += '<td class="mask">0</td>'; continue; }
+      const w = S.A[i][j];
+      h += `<td style="background:rgba(17,17,17,${(w * 0.92).toFixed(3)});color:${w > 0.5 ? '#fafaf7' : '#111'}">${w.toFixed(2)}</td>`;
+    }
+    h += `<td class="sum">${sum.toFixed(2)}</td></tr>`;
+  }
+  $('soft').innerHTML = h + '</table>';
 }
 
-function update() {
-  toks = $('t').value.split(/\s+/).filter(Boolean).slice(0, 10);
-  if (!toks.length) return;
-  focus = Math.min(focus, toks.length - 1);
-  A = attention(toks);
-  draw();
+/* ---------- Nachrichten am Fokus ---------- */
+function drawDetail() {
+  const i = S.focus, t = S.toks, n = t.length, q = S.Q[i];
+  let rows = '';
+  for (let j = 0; j < n; j++) {
+    const masked = S.Sc[i][j] === null, k = S.K[j], v = S.V[j], a = S.A[i][j];
+    const d = dot(q, k);
+    rows += `<tr class="${masked ? 'dim' : ''}">
+      <th>${esc(t[j])}</th>
+      <td>${masked ? '–' : `${fmt(q[0])}·${fmt(k[0])} + ${fmt(q[1])}·${fmt(k[1])} = ${fmt(d)}`}</td>
+      <td>${masked ? '−∞' : fmt(S.Sc[i][j])}</td>
+      <td>${a.toFixed(3)}</td>
+      <td class="v">${vs(v)}</td>
+      <td>${vs([a * v[0], a * v[1]])}</td></tr>`;
+  }
+  const sumA = S.A[i].reduce((a, b) => a + b, 0);
+  $('detail').innerHTML = `<p class="hint" style="margin:0 0 10px">Fokus-Token: <b>${esc(t[i])}</b>. Jede Zeile ist eine Nachricht von j an i.</p>
+    <table>
+      <thead><tr><th>Sender j</th><th>q<sub>i</sub>·k<sub>j</sub></th><th>s<sub>ij</sub></th><th>A<sub>ij</sub></th><th class="v">v<sub>j</sub></th><th>A<sub>ij</sub>·v<sub>j</sub></th></tr></thead>
+      <tbody>${rows}
+        <tr class="sumrow"><th>Σ</th><td></td><td></td><td>${sumA.toFixed(3)}</td><td></td><td class="v"><b>o<sub>i</sub> = ${vs(S.O[i])}</b></td></tr>
+      </tbody></table>`;
 }
+
+/* ---------- Render ---------- */
+function renderAll() {
+  compute();
+  drawGraph(); drawEmb(); drawQK(); drawMats(); drawVec(); drawScores(); drawSoft(); drawDetail();
+}
+
+/* ---------- Animation der Nachrichten ---------- */
+let clock = 0, last = performance.now();
+function tick(now) {
+  clock += (now - last) / 1000 * 0.35;
+  last = now;
+  for (const p of S.particles) {
+    if (!p.el) continue;
+    const t = (clock + p.off) % 1, u = 1 - t;
+    p.el.setAttribute('cx', (u * u * p.a.x + 2 * u * t * p.cp.x + t * t * p.b.x).toFixed(1));
+    p.el.setAttribute('cy', (u * u * p.a.y + 2 * u * t * p.cp.y + t * t * p.b.y).toFixed(1));
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ---------- Interaktion ---------- */
+const emb = $('emb');
+let drag = -1;
+const svgPt = e => {
+  const p = emb.createSVGPoint();
+  p.x = e.clientX; p.y = e.clientY;
+  return p.matrixTransform(emb.getScreenCTM().inverse());
+};
+emb.addEventListener('pointerdown', e => {
+  const g = e.target.closest('.pt');
+  if (!g) return;
+  drag = +g.dataset.i; S.focus = drag;
+  emb.setPointerCapture(e.pointerId);
+  renderAll();
+});
+emb.addEventListener('pointermove', e => {
+  if (drag < 0) return;
+  const p = svgPt(e), clamp = v => Math.max(-2, Math.min(2, v));
+  S.X[drag] = [r2(clamp((p.x - C) / EMB_SC)), r2(clamp((C - p.y) / EMB_SC))];
+  renderAll();
+});
+const endDrag = () => { drag = -1; };
+emb.addEventListener('pointerup', endDrag);
+emb.addEventListener('pointercancel', endDrag);
 
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-i]');
-  if (el) { focus = +el.dataset.i; draw(); }
+  if (el) { S.focus = +el.dataset.i; renderAll(); }
 });
-$('t').addEventListener('input', update);
-update();
+
+$('txt').addEventListener('input', e => {
+  const old = S.toks, nt = parseT(e.target.value);
+  S.X = nt.map((t, i) => (old[i] === t && S.X[i]) ? S.X[i] : initX1(t, i));
+  S.toks = nt;
+  S.focus = Math.min(S.focus, nt.length - 1);
+  renderAll();
+});
+$('causal').addEventListener('change', e => { S.causal = e.target.checked; renderAll(); });
+$('reset').addEventListener('click', () => { S.X = S.toks.map((t, i) => initX1(t, i)); renderAll(); });
+
+/* Start */
+S.toks = parseT($('txt').value);
+S.X = S.toks.map((t, i) => initX1(t, i));
+document.querySelectorAll('[data-tex]').forEach(el => tex(el, el.dataset.tex, true));
+renderAll();
+requestAnimationFrame(tick);
 </script>
 </body>
 </html>
