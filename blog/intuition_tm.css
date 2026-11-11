@@ -9178,3 +9178,29 @@ html[lang="de"] .tm-lang-only-de { display: inline !important; }
 		}
 	
 }
+
+/* The phone demo is a light device in both themes. The blog's dark-mode
+   blanket rule for #contents divs would otherwise turn its text grey. */
+html.dark #contents #tm-intuition .ia-phone-screen {
+	color: #202124 !important;
+}
+html.dark #contents #tm-intuition .ia-phone-screen div {
+	color: inherit !important;
+}
+html.dark #contents #tm-intuition .ia-phone-screen .ia-search-text,
+html.dark #contents #tm-intuition .ia-phone-screen .ia-ai-text,
+html.dark #contents #tm-intuition .ia-phone-screen .ia-res-name {
+	color: #202124 !important;
+}
+html.dark #contents #tm-intuition .ia-phone-screen .ia-res-url {
+	color: #5f6368 !important;
+}
+html.dark #contents #tm-intuition .ia-phone-screen .ia-res-title {
+	color: #1a0dab !important;
+}
+html.dark #contents #tm-intuition .ia-phone-screen .ia-res-snippet {
+	color: #4d5156 !important;
+}
+html.dark #contents #tm-intuition .ia-phone-screen .ia-ai-text .ia-b {
+	color: #1a73e8 !important;
+}
