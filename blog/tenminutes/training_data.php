@@ -80,14 +80,14 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">The training mix <span>· demo</span></p>
-								<p class="demo-sub">A frontier corpus is a designed mixture, not a random dump. The percentages below are approximate ranges adapted from the composition discussed earlier; actual recipes vary by lab. Tap a source to see what it contributes.</p>
+								<p class="demo-sub">A frontier corpus is a designed mixture, not a random dump. The bars below use illustrative values, not any one lab's recipe; tap a source to see what it contributes.</p>
 							</div>
 							<span class="demo-badge">approximate</span>
 						</div>
 						<div class="demo-body">
 							<div class="mix-bar" data-mix-bar></div>
 							<div class="mix-legend" data-mix-legend></div>
-							<p class="mix-note" data-mix-note>Approximate ranges adapted from the composition discussed earlier: web 50-70%, code 10-15%, books 5-10%, papers 3-5%, Wikipedia 1-2%, math 2-5%, conversation 2-5%, multimodal 5-10%. Tap a source to see what it contributes.</p>
+							<p class="mix-note" data-mix-note>Illustrative values, not a published recipe: web 55%, code 13%, books 8%, papers 4%, Wikipedia 2%, math 4%, conversation 4%, multimodal 10%. Tap a source to see what it contributes.</p>
 							<div class="demo-readout">
 								<div><b>Scale</b><span>10-15T tokens</span></div>
 								<div><b>Sources</b><span>web · code · books · multimodal</span></div>
@@ -95,7 +95,7 @@
 							</div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>Architecture and data are not separate choices. A better mixture can make a smaller model competitive, but scale still matters.</span></div>
-						<div class="demo-foot">Source: the approximate composition ranges discussed earlier. Labs do not publish exact recipes.</div>
+						<div class="demo-foot">Illustrative values, not a published recipe. Anchor: GPT-3 used 60% Common Crawl, 22% WebText2, 8% Books1, 8% Books2, 3% Wikipedia (<a href="https://arxiv.org/abs/2005.14165" rel="noopener">Brown et al., 2020</a>, Table 2.2). Labs do not publish exact recipes.</div>
 					</div>
 
 					<div class="demo demo--paper" data-demo="filter">
