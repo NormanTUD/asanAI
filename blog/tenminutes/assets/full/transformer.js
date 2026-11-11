@@ -1897,6 +1897,7 @@ function finalizeTrainingSession(btn, status, completedAll) {
 	hideTrainingProgressBar();
 	if (window.TDALive) window.TDALive.endSession();
 	if (typeof render_token_picker === 'function') render_token_picker();
+	window.dispatchEvent(new CustomEvent("tm:training-end"));
 }
 
 async function tmWithCpuBackend(fn) {
@@ -2026,6 +2027,7 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 				loss: lossValue[0]
 			});
 		}
+		window.dispatchEvent(new CustomEvent("tm:training-tick", { detail: { epoch: epochIdx + 1 } }));
 	}
 
 	dispose(cost);
@@ -2044,6 +2046,12 @@ async function syncTrainingState(weightVars) {
 	renderLossGraph();
 	window.currentWeights = await convert_tensors_to_weights(weightVars);
 	run_transformer_demo();
+	/* run_transformer_demo rebuilt __tmLayerTrace synchronously; redraw the
+	   visible feature-migration plots with the fresh vectors instead of
+	   waiting for the debounced tm:transformer-data listener. */
+	if (typeof window.tmRefreshFeaturePlots === "function") {
+		window.tmRefreshFeaturePlots({ visibleOnly: true });
+	}
 	await tf.nextFrame();
 	calculate_vector_math();
 	tled_syncTableFromSpace();
@@ -2635,6 +2643,7 @@ function pruneOrphanedMigrationPlots() {
 function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	window.__tmLayerTrace = [];
 	window.__tmFFNTrace = [];
+	window.__tmTraceVersion = (window.__tmTraceVersion || 0) + 1;
 	const config = getTransformerConfig();
 	const { d_model, n_heads, temperature, n_layers } = config;
 	const valid = (d_model % n_heads === 0);

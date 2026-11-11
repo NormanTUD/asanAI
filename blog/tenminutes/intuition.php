@@ -155,7 +155,7 @@
 						<h2 class="section-title">A first intuition: predict the next word.</h2>
 						<div class="prose">
 							<p>Ask your phone a question. The answer appears one word at a time. Under the hood, the model is doing one thing: predicting the next token.</p>
-							<p>A large language model is a program trained on text. It returns a probability for every possible next token. Pick one, append it, and run again. That is the autoregressive loop. How does a pile of numbers become a sentence? Follow one token through the machine.</p>
+							<p>A large language model is a program trained on text. It returns a probability for every possible next token. Pick one, append it, and run again. That is the autoregressive loop: auto because the model feeds its own output back in, regressive because each prediction is a regression on the sequence so far. How does a pile of numbers become a sentence? Follow one token through the machine.</p>
 						</div>
 
 						<div class="demo demo--paper demo--interactive" id="phone-demo">

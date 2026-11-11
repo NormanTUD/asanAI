@@ -219,12 +219,10 @@
 		});
 	}
 
-	function pca3(vectors) {
-		if (!vectors.length) return [];
+	function pcaBasis3(vectors) {
+		if (!vectors.length) return null;
 		var d = vectors[0].length;
-		if (d <= 3) {
-			return vectors.map(function (v) { return [v[0] || 0, v[1] || 0, v[2] || 0]; });
-		}
+		if (d <= 3) return null;
 		var mean = new Array(d).fill(0);
 		vectors.forEach(function (v) { for (var i = 0; i < d; i++) mean[i] += v[i] / vectors.length; });
 		var centered = vectors.map(function (v) { return v.map(function (x, i) { return x - mean[i]; }); });
@@ -270,14 +268,60 @@
 		var m3 = deflate(m2, p2.v, p2.lambda);
 		var v3 = new Array(d).fill(0); v3[2 % d] = 1;
 		var p3 = component(m3, v3);
-		var a = sign(p1.v), b = sign(p2.v), c = sign(p3.v);
-		return centered.map(function (v) {
-			return [
-				v.reduce(function (sum, x, i) { return sum + x * a[i]; }, 0),
-				v.reduce(function (sum, x, i) { return sum + x * b[i]; }, 0),
-				v.reduce(function (sum, x, i) { return sum + x * c[i]; }, 0)
-			];
+		var axes = [sign(p1.v), sign(p2.v), sign(p3.v)];
+		var scale = 0.0001;
+		centered.forEach(function (v) {
+			axes.forEach(function (axis) {
+				var projected = 0;
+				for (var i = 0; i < d; i++) projected += v[i] * axis[i];
+				scale = Math.max(scale, Math.abs(projected));
+			});
 		});
+		return { d: d, mean: mean, axes: axes, scale: scale };
+	}
+
+	function alignPcaBasis3(next, prev) {
+		if (!next || !prev || !prev.axes) return next;
+		next.axes = next.axes.map(function (axis, k) {
+			var old = prev.axes[k] || [];
+			var dot = 0;
+			for (var i = 0; i < Math.min(axis.length, old.length); i++) dot += axis[i] * old[i];
+			return dot < 0 ? axis.map(function (x) { return -x; }) : axis;
+		});
+		return next;
+	}
+
+	function applyPcaBasis3(vectors, basis) {
+		if (!vectors.length) return [];
+		var d = vectors[0].length;
+		if (!basis || d <= 3 || basis.d !== d) {
+			return vectors.map(function (v) { return [v[0] || 0, v[1] || 0, v[2] || 0]; });
+		}
+		var mean = basis.mean, axes = basis.axes;
+		return vectors.map(function (v) {
+			return axes.map(function (axis) {
+				var projected = 0;
+				for (var i = 0; i < d; i++) projected += ((v[i] || 0) - (mean[i] || 0)) * axis[i];
+				return projected;
+			});
+		});
+	}
+
+	function pca3(vectors) { return applyPcaBasis3(vectors, pcaBasis3(vectors)); }
+
+	function pcaBasisDrift(vectors, basis) {
+		if (!basis || !vectors.length) return 0;
+		var max = 0.0001;
+		vectors.forEach(function (v) {
+			basis.axes.forEach(function (axis) {
+				var projected = 0;
+				for (var i = 0; i < Math.min(v.length, axis.length); i++) {
+					projected += ((v[i] || 0) - (basis.mean[i] || 0)) * axis[i];
+				}
+				max = Math.max(max, Math.abs(projected));
+			});
+		});
+		return max / (basis.scale || 0.0001);
 	}
 
 	window.tmPCA3 = pca3;
@@ -2799,6 +2843,18 @@
 	});
 
 	var featureState = {};
+	var featureProjectionCache = {};
+	var featureAxisRange3D = {};
+	var featureAxisRange2D = {};
+	var featureLastTraceVersion = -1;
+
+	function featureCacheKey(layerIdx, d, metric) { return layerIdx + "|" + d + "|" + metric; }
+	function resetFeatureProjectionCache() {
+		featureProjectionCache = {};
+		featureAxisRange3D = {};
+		featureAxisRange2D = {};
+	}
+	window.tmResetFeatureProjection = resetFeatureProjectionCache;
 
 	var FEATURE_METRICS = {
 		euclidean: { de: "Euklidisch (L2)", en: "Euclidean (L2)", short: "L2" },
@@ -3078,9 +3134,9 @@
 	/* Equal x/y/z spans keep the unit sphere round. Without this, Plotly's
 	   auto ranges can give the axes different spans and the sphere renders
 	   as an ellipsoid. */
-	function equalize3D(layout, traces) {
+	function equalize3D(layout, traces, minR) {
 		if (!layout || !layout.scene) return layout;
-		var R = 1;
+		var R = Math.max(1, Number(minR) || 0);
 		(traces || []).forEach(function (trace) {
 			["x", "y", "z"].forEach(function (axis) {
 				if (!trace || trace[axis] == null) return;
@@ -3151,7 +3207,7 @@
 		return { trace: trace, tokens: tokens.slice(0, n), n: n, selected: featureState[layerIdx].selected, allDims: !!featureState[layerIdx].allDims };
 	}
 
-	function featureProjection(data) {
+	function featureProjection(data, layerIdx) {
 		var metric = featureMetric();
 		var d = data.trace.h_in[0].length;
 		var rawIn = data.trace.h_in.slice(0, data.n);
@@ -3167,7 +3223,18 @@
 			return p.map(function (x) { return x / n; });
 		};
 		if (d > 3) {
-			coords = pca3(all);
+			var key = featureCacheKey(layerIdx, d, metric);
+			var basis = featureProjectionCache[key];
+			var drift = basis ? pcaBasisDrift(all, basis) : 0;
+			if (!basis || !window.isTraining || drift > 3.5) {
+				var next = pcaBasis3(all);
+				if (next) {
+					next = alignPcaBasis3(next, basis);
+					featureProjectionCache[key] = next;
+					basis = next;
+				}
+			}
+			coords = applyPcaBasis3(all, basis);
 			if (metric === "angular") coords = coords.map(normalizeProjected);
 			return {
 				in: coords.slice(0, data.n),
@@ -3292,6 +3359,34 @@
 		chart.resize();
 	}
 
+	function featureMaxAbs(traces) {
+		var max = 1;
+		(traces || []).forEach(function (trace) {
+			["x", "y", "z"].forEach(function (axis) {
+				var values = trace && trace[axis];
+				if (!Array.isArray(values)) return;
+				values.forEach(function (value) {
+					if (Array.isArray(value)) value.forEach(function (n) { if (isFinite(n)) max = Math.max(max, Math.abs(n)); });
+					else if (isFinite(value)) max = Math.max(max, Math.abs(value));
+				});
+			});
+		});
+		return max;
+	}
+
+	function featureExtent2D(points) {
+		var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+		(points || []).forEach(function (p) {
+			if (!p) return;
+			minX = Math.min(minX, p[0] || 0); maxX = Math.max(maxX, p[0] || 0);
+			minY = Math.min(minY, p[1] || 0); maxY = Math.max(maxY, p[1] || 0);
+		});
+		if (!isFinite(minX)) return { minX: -1, maxX: 1, minY: -1, maxY: 1 };
+		var padX = (maxX - minX) * 0.12 || 0.5;
+		var padY = (maxY - minY) * 0.12 || 0.5;
+		return { minX: minX - padX, maxX: maxX + padX, minY: minY - padY, maxY: maxY + padY };
+	}
+
 	function renderFeatureArrows(el, layerIdx, data, projection) {
 		if (!el || !window.Plotly || !projection || !projection.in.length) return;
 		var c = palette();
@@ -3345,7 +3440,29 @@
 		// the step text carries the long explanation.
 		var title = (DE() ? "Feature-Migration" : "Feature migration") + " · " + featureMetricLabel();
 		var layout = projection.is3d ? tmPlotly.layout3D(title, projection.axes) : tmPlotly.layout2D(title, projection.axes);
-		if (projection.is3d) tmPlotly.equalize3D(layout, traces);
+		var rangeKey = featureCacheKey(layerIdx, data.trace.h_in[0].length, metric);
+		if (projection.is3d) {
+			var minR = 0;
+			if (metric === "euclidean") {
+				var currentR = featureMaxAbs(traces);
+				var cachedR = window.isTraining ? (featureAxisRange3D[rangeKey] || 0) : 0;
+				minR = Math.max(currentR, cachedR);
+				if (window.isTraining) featureAxisRange3D[rangeKey] = minR;
+			}
+			tmPlotly.equalize3D(layout, traces, minR);
+		} else if (metric === "euclidean") {
+			var extent = featureExtent2D(projection.in.concat(projection.out));
+			var cached2 = window.isTraining ? featureAxisRange2D[rangeKey] : null;
+			if (cached2) {
+				extent.minX = Math.min(extent.minX, cached2.minX);
+				extent.maxX = Math.max(extent.maxX, cached2.maxX);
+				extent.minY = Math.min(extent.minY, cached2.minY);
+				extent.maxY = Math.max(extent.maxY, cached2.maxY);
+			}
+			if (window.isTraining) featureAxisRange2D[rangeKey] = extent;
+			if (layout.xaxis) layout.xaxis.range = [extent.minX, extent.maxX];
+			if (layout.yaxis) layout.yaxis.range = [extent.minY, extent.maxY];
+		}
 		if (window.echarts && el) { var oldChart = echarts.getInstanceByDom(el); if (oldChart) oldChart.dispose(); }
 		var loading = el.querySelector(".plot-loading");
 		if (loading) loading.remove();
@@ -3356,6 +3473,7 @@
 		Plotly.react(el, traces, layout, { responsive: true, displayModeBar: false });
 		el._tmFeatureRendered = true;
 		el._tmFeatureQueued = false;
+		el._tmFeatureSig = featureSignature(layerIdx);
 	}
 
 	function renderFeatureParallel(el, vec, label, color, title) {
@@ -3382,16 +3500,33 @@
 		chart.resize();
 	}
 
+	function featureMovementSummary(data) {
+		var n = Math.max(1, Math.min(data.n, data.trace.h_in.length, data.trace.h_out.length));
+		var l2 = 0, ang = 0;
+		for (var i = 0; i < n; i++) {
+			l2 += metricDistance(data.trace.h_in[i], data.trace.h_out[i], "euclidean");
+			ang += metricDistance(data.trace.h_in[i], data.trace.h_out[i], "angular");
+		}
+		return { l2: l2 / n, ang: ang / n };
+	}
+
 	function renderLayerFeaturePlots(layerIdx) {
 		var data = featureData(layerIdx);
 		var prefix = "unified-layer-" + layerIdx;
 		var arrowsEl = document.getElementById(prefix + "-feature-arrows");
 		var note = document.getElementById(prefix + "-feature-projection");
 		if (!data || !arrowsEl) return;
-		var proj = featureProjection(data);
+		var proj = featureProjection(data, layerIdx);
 		if (note) {
-			note.textContent = "";
-			note.style.display = "none";
+			var movement = featureMovementSummary(data);
+			var trained = (window.lossHistory || []).length;
+			var label = trained > 0
+				? (DE() ? "Epoche " : "Epoch ") + trained
+				: (DE() ? "Untrainiert" : "Untrained");
+			note.textContent = label
+				+ (DE() ? " · mittleres Update: L2 " : " · mean update: L2 ") + movement.l2.toFixed(4)
+				+ (DE() ? " · Winkel " : " · angle ") + (movement.ang * 180).toFixed(1) + "°";
+			note.style.display = "";
 		}
 		renderFeatureArrows(arrowsEl, layerIdx, data, proj);
 	}
@@ -3411,23 +3546,80 @@
 			'<div class="spinner"></div><span>' + text + '</span></div>';
 	}
 
-	function queueLayerFeaturePlot(layerIdx, arrowsEl) {
-		if (!arrowsEl || arrowsEl._tmFeatureRendered || arrowsEl._tmFeatureQueued) return;
+	function featureSignature(layerIdx) {
+		var trace = (window.__tmLayerTrace || [])[layerIdx];
+		var n = trace && trace.h_in ? trace.h_in.length : 0;
+		var d = trace && trace.h_in && trace.h_in[0] ? trace.h_in[0].length : 0;
+		return (window.__tmTraceVersion | 0) + "|" + featureMetric() + "|" + d + "|" + n;
+	}
+
+	function queueLayerFeaturePlot(layerIdx, arrowsEl, force) {
+		if (!arrowsEl || !arrowsEl.isConnected) return;
+		var signature = featureSignature(layerIdx);
+		if (!force && arrowsEl._tmFeatureRendered && arrowsEl._tmFeatureSig === signature) return;
+		if (arrowsEl._tmFeatureQueued) { arrowsEl._tmFeatureDirty = true; return; }
 		arrowsEl._tmFeatureQueued = true;
+		arrowsEl._tmFeatureDirty = true;
 		var run = function () {
 			arrowsEl._tmFeatureQueued = false;
-			if (arrowsEl._tmFeatureRendered || !arrowsEl.isConnected) return;
+			if (!arrowsEl.isConnected) return;
+			var currentSignature = featureSignature(layerIdx);
+			if (!force && arrowsEl._tmFeatureRendered && arrowsEl._tmFeatureSig === currentSignature) {
+				arrowsEl._tmFeatureDirty = false;
+				return;
+			}
+			arrowsEl._tmFeatureDirty = false;
 			var loader = arrowsEl.querySelector(".plot-loading");
 			if (loader) loader.remove();
 			renderLayerFeaturePlots(layerIdx);
 			arrowsEl._tmFeatureRendered = !!arrowsEl.data;
+			arrowsEl._tmFeatureSig = currentSignature;
 		};
 		tmQueueHeavy(run);
 	}
 
+	function observeDirtyFeaturePlot(layerIdx, arrowsEl) {
+		if (!arrowsEl || arrowsEl._tmFeatureDirtyObserver) return;
+		if (!('IntersectionObserver' in window)) { queueLayerFeaturePlot(layerIdx, arrowsEl, true); return; }
+		arrowsEl._tmFeatureDirtyObserver = new IntersectionObserver(function (entries) {
+			if (!entries.some(function (e) { return e.isIntersecting; })) return;
+			if (!arrowsEl._tmFeatureDirty) return;
+			queueLayerFeaturePlot(layerIdx, arrowsEl, true);
+		}, { rootMargin: "200px 0px" });
+		arrowsEl._tmFeatureDirtyObserver.observe(arrowsEl);
+	}
+
+	function featureLayerIdxForElement(el) {
+		var match = /^unified-layer-(\d+)-feature-arrows$/.exec(el && el.id ? el.id : "");
+		return match ? parseInt(match[1], 10) : -1;
+	}
+
+	/* Called on every training visual sync and from the event/interval
+	   fallbacks. It redraws the Plotly feature-migration plots in place
+	   (no loader wipe) so their arrows actually follow the weights. */
+	function refreshFeaturePlots(opts) {
+		opts = opts || {};
+		if (opts.refit) resetFeatureProjectionCache();
+		Array.prototype.slice.call(document.querySelectorAll('[id$="-feature-arrows"]')).forEach(function (el) {
+			var idx = featureLayerIdxForElement(el);
+			if (idx < 0) return;
+			if (opts.visibleOnly && !metricIsVisible(el)) {
+				el._tmFeatureDirty = true;
+				observeDirtyFeaturePlot(idx, el);
+				return;
+			}
+			queueLayerFeaturePlot(idx, el);
+		});
+	}
+	window.tmRefreshFeaturePlots = refreshFeaturePlots;
+
 	function scheduleLayerFeaturePlot(layerIdx, force) {
 		var arrowsEl = document.getElementById("unified-layer-" + layerIdx + "-feature-arrows");
 		if (!arrowsEl) return;
+		if (arrowsEl.data && (force || arrowsEl._tmFeatureRendered)) {
+			queueLayerFeaturePlot(layerIdx, arrowsEl, true);
+			return;
+		}
 		if (force) {
 			arrowsEl._tmFeatureRendered = false;
 			arrowsEl._tmFeatureQueued = false;
@@ -4030,10 +4222,29 @@
 				var idx = parseInt(card.getAttribute("data-layer-idx"), 10);
 				if (!isNaN(idx)) renderLayerFFNStages(idx);
 			});
+			/* The feature wrap is moved from the migration subbox into the
+			   layer preview during enhancement, so the [open] query above no
+			   longer finds it. Refresh every rendered feature plot directly. */
+			refreshFeaturePlots({ visibleOnly: true });
 		}, 350);
+	});
+	window.addEventListener("tm:training-tick", function () {
+		refreshFeaturePlots({ visibleOnly: true });
+	});
+	window.addEventListener("tm:training-end", function () {
+		refreshFeaturePlots({ visibleOnly: false, refit: true });
 	});
 	setInterval(enhanceLayerCards, 1200);
 	setInterval(classifyAttentionHeads, 1800);
+	/* Fallback independent of events: when a new layer trace was published
+	   while training, redraw the visible feature plots. */
+	setInterval(function () {
+		if (!window.isTraining) return;
+		var version = window.__tmTraceVersion | 0;
+		if (version === featureLastTraceVersion) return;
+		featureLastTraceVersion = version;
+		refreshFeaturePlots({ visibleOnly: true });
+	}, 400);
 
 	function typesetConfigMath() {
 		var cfg = document.getElementById("transformer_config");

@@ -13,6 +13,7 @@ Covered plots:
   * embedding space (Plotly data)
   * positional shift (Plotly data)
   * feature migration layer 2 (ECharts option data)
+  * feature-migration arrows (Plotly data), on the main and the Ten Minutes page
 
 Run from the repository root:
     uv run blog/tests/transformer_training_live_test.py
@@ -94,8 +95,8 @@ def wait_until(driver: webdriver.Chrome, script: str, timeout: float = 60) -> bo
     return False
 
 
-def wait_ready(driver: webdriver.Chrome, base: str) -> None:
-    driver.get(base + "/transformer.php")
+def wait_ready(driver: webdriver.Chrome, base: str, path: str = "/transformer.php") -> None:
+    driver.get(base + path)
     time.sleep(2)
     scroll_to(driver, "transformer-step-visuals")
     check(wait_until(driver, "return !!window.__tmStepDepsReady", 90),
@@ -229,6 +230,33 @@ def main() -> int:
             "feature migration",
             consecutive=False,
         )
+
+        feature_arrows_capture = """
+        const el = document.getElementById('unified-layer-1-feature-arrows');
+        if (!el || !el.data) return null;
+        return el.data.map(t => ({
+            type: t.type,
+            x: (t.x || []).slice(0, 6),
+            y: (t.y || []).slice(0, 6),
+            z: (t.z || []).slice(0, 6)
+        }));
+        """
+        for page, label in (
+            ("/transformer.php", "feature arrows"),
+            ("/tenminutes/transformer.php", "tenminutes feature arrows"),
+        ):
+            wait_ready(driver, base, page)
+            open_step_visuals(driver)
+            scroll_to(driver, "unified-layer-1-feature-arrows")
+            check(
+                wait_until(
+                    driver,
+                    "const e=document.getElementById('unified-layer-1-feature-arrows'); return !!(e && e.data);",
+                    30,
+                ),
+                label + " plot has data",
+            )
+            run_capture(driver, "1;", feature_arrows_capture, label, consecutive=False)
 
         severe = [
             entry for entry in driver.get_log("browser")
