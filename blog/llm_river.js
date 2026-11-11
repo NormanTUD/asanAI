@@ -633,7 +633,7 @@ function _themeriver_render_residual_3d() {
 	}];
 
 	try {
-		chart.setOption({
+		const option = {
 			tooltip: {
 				formatter: (p) => `Dimension ${p.value[0]}<br>Token ${labels[p.value[1]] || p.value[1]}<br>Value ${p.value[2]}`
 			},
@@ -647,7 +647,9 @@ function _themeriver_render_residual_3d() {
 				viewControl: { projection: 'perspective', autoRotate: false, distance: 220 }
 			},
 			series: series
-		}, true);
+		};
+		if (typeof window.tmEchartsPreserveView === 'function') window.tmEchartsPreserveView(chart, option);
+		chart.setOption(option, true);
 	} catch (e) {
 		try { chart.dispose(); } catch (err) { /* already gone */ }
 		container.innerHTML = '';

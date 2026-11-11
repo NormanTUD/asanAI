@@ -112,39 +112,162 @@ window.__tmFullVizObserver = null;
 /* Cooperative queue for heavy WebGL/Plotly renders.
    Each job gets its own frame so the browser can paint placeholders and
    keep the page responsive between plots instead of doing one long burst. */
-/* Keep every 3D camera across Plotly redraws, purges and theme/metric
-   changes. The store is updated continuously while the reader drags, so a
-   redraw cannot snap the view back to the default. */
+/* Keep every plot view across redraws, purges and theme/metric changes:
+   the 3D camera and the 2D axis ranges. The store is fed from the live
+   interaction events, so a training epoch cannot snap the view back. */
 (function () {
 	var cameraStore = Object.create(null);
+	var axisViewStore = Object.create(null);
 	var dragTracker = null;
 	var deferredCatchUp = null;
+	var programmatic = 0;
 
 	function resolveEl(el) {
 		if (el && typeof el === "string") return document.getElementById(el);
 		return el || null;
 	}
 
+	function normCameraVec(v) {
+		if (!v) return null;
+		if (Array.isArray(v)) {
+			return v.length >= 3
+				? { x: Number(v[0]) || 0, y: Number(v[1]) || 0, z: Number(v[2]) || 0 }
+				: null;
+		}
+		if (typeof v === "object" && v.x != null && v.y != null && v.z != null) {
+			return { x: Number(v.x) || 0, y: Number(v.y) || 0, z: Number(v.z) || 0 };
+		}
+		return null;
+	}
+
+	function normCamera(camera, fallback) {
+		var eye = camera && normCameraVec(camera.eye);
+		if (!eye) return null;
+		var base = fallback || {};
+		return {
+			eye: eye,
+			center: normCameraVec(camera.center) || normCameraVec(base.center) || { x: 0, y: 0, z: 0 },
+			up: normCameraVec(camera.up) || normCameraVec(base.up) || { x: 0, y: 0, z: 1 }
+		};
+	}
+
+	/* Plotly keeps the camera the reader actually rotated in the live
+	   scene object; `_fullLayout.scene.camera` can still hold the previous
+	   render's value while a drag is in progress. Read the live one first. */
+	function readCamera(el) {
+		el = resolveEl(el);
+		if (!el || !el._fullLayout || !el._fullLayout.scene) return null;
+		var scene = el._fullLayout.scene;
+		var live = scene._scene && scene._scene.camera;
+		var camera = (live && (live.eye || live.center || live.up)) ? live : scene.camera;
+		return normCamera(camera);
+	}
+
 	function saveCamera(el) {
 		el = resolveEl(el);
 		if (!el || !el.id) return;
-		var scene = el._fullLayout && el._fullLayout.scene;
-		var camera = scene && scene.camera;
-		if (camera && camera.eye) cameraStore[el.id] = JSON.parse(JSON.stringify(camera));
+		var camera = readCamera(el);
+		if (camera) cameraStore[el.id] = camera;
 	}
 
-	function applyCamera(el, layout) {
-		if (!layout || !layout.scene || layout.__tmSkipCameraRestore) return;
+	function saveCameraEvent(el, event) {
+		el = resolveEl(el);
+		if (!el || !el.id || !event) return false;
+		var raw = event["scene.camera"] || (event.scene && event.scene.camera);
+		var camera = normCamera(raw, readCamera(el));
+		if (!camera) return false;
+		cameraStore[el.id] = camera;
+		return true;
+	}
+
+	function saveAxisView(el, event) {
+		el = resolveEl(el);
+		if (!el || !el.id || !event) return;
+		var view = axisViewStore[el.id] ? Object.assign({}, axisViewStore[el.id]) : Object.create(null);
+		["x", "y"].forEach(function (axis) {
+			var key = axis + "axis";
+			if (event[key + ".autorange"] === true || event[key + ".autorange"] === "true") {
+				delete view[axis];
+				return;
+			}
+			var rawLo = event[key + ".range[0]"];
+			var rawHi = event[key + ".range[1]"];
+			var lo = Number(rawLo);
+			var hi = Number(rawHi);
+			if (rawLo != null && rawHi != null && isFinite(lo) && isFinite(hi)) {
+				view[axis] = [lo, hi];
+				return;
+			}
+			var pair = event[key + ".range"];
+			if (Array.isArray(pair) && pair.length >= 2 && isFinite(pair[0]) && isFinite(pair[1])) {
+				view[axis] = [Number(pair[0]), Number(pair[1])];
+			}
+		});
+		if (view.x || view.y) axisViewStore[el.id] = view;
+		else delete axisViewStore[el.id];
+	}
+
+	function applyViewState(el, layout) {
+		if (!layout || layout.__tmSkipCameraRestore) return;
 		el = resolveEl(el);
 		var id = el && el.id;
-		if (id && cameraStore[id]) {
-			layout.scene.camera = JSON.parse(JSON.stringify(cameraStore[id]));
-		} else if (el && el._fullLayout && el._fullLayout.scene && el._fullLayout.scene.camera) {
-			layout.scene.camera = JSON.parse(JSON.stringify(el._fullLayout.scene.camera));
+		if (layout.scene) {
+			var camera = id && cameraStore[id];
+			if (!camera) camera = readCamera(el);
+			if (camera) layout.scene.camera = JSON.parse(JSON.stringify(camera));
 		}
 		if (id && !layout.__tmAllowUirevisionChange) {
 			layout.uirevision = "tm-camera-" + id;
 		}
+		var view = id && axisViewStore[id];
+		if (!view) return;
+		["x", "y"].forEach(function (axis) {
+			var key = axis + "axis";
+			if (!layout[key] || !view[axis]) return;
+			layout[key].range = view[axis].slice();
+			layout[key].autorange = false;
+		});
+	}
+
+	function rememberAfter(result, el, after) {
+		var save = function () {
+			saveCamera(el);
+			if (after) after();
+		};
+		if (result && typeof result.then === "function") {
+			result.then(save, function () {});
+		} else {
+			save();
+		}
+		return result;
+	}
+
+	function syncAxisView(el) {
+		el = resolveEl(el);
+		if (!el || !el.id || !el._fullLayout) return;
+		var view = Object.create(null);
+		["x", "y"].forEach(function (axis) {
+			var ax = el._fullLayout[axis + "axis"];
+			if (!ax || !ax.range || ax.autorange === true) return;
+			view[axis] = [Number(ax.range[0]), Number(ax.range[1])];
+		});
+		if (view.x || view.y) axisViewStore[el.id] = view;
+		else delete axisViewStore[el.id];
+	}
+
+	function runProgrammatic(fn) {
+		programmatic++;
+		var result;
+		try {
+			result = fn();
+		} catch (e) {
+			if (programmatic > 0) programmatic--;
+			throw e;
+		}
+		var release = function () { if (programmatic > 0) programmatic--; };
+		if (result && typeof result.then === "function") result.then(release, release);
+		else release();
+		return result;
 	}
 
 	function saveCameraLoop(el, duration) {
@@ -185,46 +308,45 @@ window.__tmFullVizObserver = null;
 		if (!window.Plotly || window.__tmPlotlyCameraGuard) return;
 		window.__tmPlotlyCameraGuard = true;
 		window.__tmCameraStore = cameraStore;
+		window.__tmAxisViewStore = axisViewStore;
 		var originalReact = Plotly.react;
 		var originalNewPlot = Plotly.newPlot;
 		var originalPurge = Plotly.purge;
 		var originalRelayout = Plotly.relayout;
-
-		function rememberAfter(result, el) {
-			if (result && typeof result.then === "function") {
-				result.then(function () { saveCamera(el); }, function () {});
-			} else {
-				saveCamera(el);
-			}
-			return result;
-		}
 
 		Plotly.purge = function (el) {
 			saveCamera(el);
 			return originalPurge.apply(this, arguments);
 		};
 		Plotly.react = function (el, traces, layout, config) {
-			applyCamera(el, layout);
-			return rememberAfter(originalReact.apply(this, arguments), el);
+			applyViewState(el, layout);
+			return rememberAfter(runProgrammatic(function () {
+				return originalReact.call(this, el, traces, layout, config);
+			}.bind(this)), el);
 		};
 		if (typeof originalNewPlot === "function") {
 			Plotly.newPlot = function (el, data, layout, config) {
-				applyCamera(el, layout);
-				return rememberAfter(originalNewPlot.apply(this, arguments), el);
+				applyViewState(el, layout);
+				return rememberAfter(runProgrammatic(function () {
+					return originalNewPlot.call(this, el, data, layout, config);
+				}.bind(this)), el);
 			};
 		}
 		if (typeof originalRelayout === "function") {
 			Plotly.relayout = function (el, update) {
-				return rememberAfter(originalRelayout.apply(this, arguments), el);
+				return rememberAfter(runProgrammatic(function () {
+					return originalRelayout.call(this, el, update);
+				}.bind(this)), el, function () { syncAxisView(el); });
 			};
 		}
 
-		document.addEventListener("plotly_relayout", function (ev) {
-			if (ev && ev.target && ev.target.id) saveCamera(ev.target);
-		}, true);
-		document.addEventListener("plotly_relayouting", function (ev) {
-			if (ev && ev.target && ev.target.id) saveCamera(ev.target);
-		}, true);
+		var onRelayout = function (ev) {
+			if (programmatic || !ev || !ev.target) return;
+			if (!saveCameraEvent(ev.target, ev)) saveCamera(ev.target);
+			saveAxisView(ev.target, ev);
+		};
+		document.addEventListener("plotly_relayout", onRelayout, true);
+		document.addEventListener("plotly_relayouting", onRelayout, true);
 
 		if (!window.__tmPlotInteractionGuard) {
 			window.__tmPlotInteractionGuard = true;
@@ -234,13 +356,13 @@ window.__tmFullVizObserver = null;
 				if (ev.pointerType === "mouse" && ev.button !== 0) return;
 				var target = ev.target;
 				if (!target || !target.closest) return;
-				var plot = target.closest(".js-plotly-plot");
+				var plot = target.closest(".js-plotly-plot, [_echarts_instance_]");
 				if (!plot) return;
 				clearTimeout(deferredCatchUp);
 				plotDragging = true;
 				window.__tmPlotDragging = true;
 				window.__tmDraggedPlot = plot;
-				trackCamera(plot);
+				if (plot.classList && plot.classList.contains("js-plotly-plot")) trackCamera(plot);
 			};
 			var onPlotPointerUp = function () {
 				if (!plotDragging) return;
@@ -261,13 +383,87 @@ window.__tmFullVizObserver = null;
 				}
 			};
 			document.addEventListener("pointerdown", onPlotPointerDown, true);
+			document.addEventListener("pointermove", function (ev) {
+				if (!plotDragging) return;
+				if (ev.pointerType === "mouse" && ev.buttons === 0) onPlotPointerUp();
+			}, true);
 			window.addEventListener("pointerup", onPlotPointerUp, true);
 			window.addEventListener("pointercancel", onPlotPointerUp, true);
 		}
 	}
+	window.tmResetPlotViews = function (ids) {
+		var list = ids == null ? null : (Array.isArray(ids) ? ids : [ids]);
+		if (!list) {
+			cameraStore = Object.create(null);
+			axisViewStore = Object.create(null);
+			window.__tmCameraStore = cameraStore;
+			window.__tmAxisViewStore = axisViewStore;
+			return;
+		}
+		list.forEach(function (id) {
+			delete cameraStore[id];
+			delete axisViewStore[id];
+		});
+	};
+	window.tmForgetPlotView = function (id) {
+		delete cameraStore[id];
+		delete axisViewStore[id];
+	};
 	if (window.Plotly) installCameraGuard();
 	else window.addEventListener("load", installCameraGuard, { once: true });
 })();
+
+/* ECharts keeps its 3D camera in grid3D.viewControl. Carry the live value
+   into the next option so a redraw (including setOption(..., true)) cannot
+   reset a rotation or zoom the reader made during training. */
+window.tmEchartsPreserveView = function (chart, option) {
+	if (!chart || !option || typeof chart.getOption !== "function") return option;
+	var current;
+	try { current = chart.getOption(); } catch (e) { return option; }
+	var grids = current && current.grid3D;
+	var grid = grids && (Array.isArray(grids) ? grids[0] : grids);
+	var view = grid && grid.viewControl;
+	if (!view) return option;
+	var next = option.grid3D;
+	if (Array.isArray(next)) {
+		if (!next.length) next.push({});
+		next[0].viewControl = Object.assign({}, next[0].viewControl || {}, view);
+	} else {
+		option.grid3D = next || {};
+		option.grid3D.viewControl = Object.assign({}, option.grid3D.viewControl || {}, view);
+	}
+	return option;
+};
+
+/* Reuse the mounted Plotly plot while its trace family stays the same, so a
+   training epoch updates the data in place instead of purging and rebuilding
+   the whole scene. A purge still happens when the plot family changes. */
+function _tmTraceKind(trace) {
+	var type = trace && trace.type;
+	if (!type) return "";
+	if (type === "scatter3d" || type === "surface" || type === "cone" ||
+		type === "mesh3d" || type === "isosurface" || type === "volume") return "3d";
+	if (type === "parcoords" || type === "parcats") return "parcoords";
+	return "2d";
+}
+function _tmPlotKind(container) {
+	if (!container) return "";
+	if (container.data && container.data.length) return _tmTraceKind(container.data[0]);
+	return container.getAttribute ? (container.getAttribute("data-tm-plot-kind") || "") : "";
+}
+function tmPreparePlotlyFrame(container, kind) {
+	if (!container) return false;
+	var current = _tmPlotKind(container);
+	var reused = !!current && current === kind && !!container._fullLayout;
+	if (!reused) {
+		if (window.Plotly) { try { Plotly.purge(container); } catch (e) { /* not a plot */ } }
+		container.innerHTML = "";
+		if (window.tmForgetPlotView) window.tmForgetPlotView(container.id);
+	}
+	container.setAttribute("data-tm-plot-kind", kind);
+	return reused;
+}
+window.tmPreparePlotlyFrame = tmPreparePlotlyFrame;
 
 window.tmScheduleHeavyRender = (function () {
 	let queue = [];
@@ -1029,6 +1225,7 @@ function reset_graph() {
 		} else {
 			lp.innerHTML = '';
 		}
+		if (window.tmForgetPlotView) window.tmForgetPlotView('training-loss-plot');
 	}
 	drawTrainingPlaceholder();
 }
@@ -2527,6 +2724,7 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 		window.last_d_ff !== d_ff;
 
 	if (needsReinit) {
+		if (window.tmResetPlotViews) window.tmResetPlotViews();
 		window.currentWeights = get_init_weights(n_layers, d_model, d_ff);
 		window.last_d_model = d_model;
 		window.last_n_heads = n_heads;
@@ -3724,13 +3922,18 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 		return;
 	}
 
-	if (window.Plotly) { try { Plotly.purge(container); } catch (e) { /* not a Plotly node */ } }
-	container.innerHTML = '';
 	const embHeight = (typeof getTrajectoryPlotHeight === 'function')
 		? getTrajectoryPlotHeight(dimensions)
 		: (dimensions <= 3 ? 850 : 520);
+	const previousHeight = container._tmPlotHeight;
+	container._tmPlotHeight = embHeight;
 	container.style.height = embHeight + 'px';
 	container.style.minHeight = embHeight + 'px';
+
+	const kind = dimensions <= 3
+		? (dimensions === 3 ? '3d' : '2d')
+		: (window.tmHighDimMode === 'parallel' ? 'parcoords' : '3d');
+	const reused = tmPreparePlotlyFrame(container, kind);
 
 	const tokens = Object.keys(window.persistentEmbeddingSpace);
 
@@ -3740,6 +3943,11 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 		renderHighDimEmbeddingPlot(container, tokens, dimensions);
 	} else {
 		_embedding_render_highdim_pca(container, tokens, dimensions, highlightPos, steps);
+	}
+	if (reused && previousHeight !== embHeight && window.Plotly && Plotly.Plots) {
+		requestAnimationFrame(function () {
+			try { Plotly.Plots.resize(container); } catch (e) { /* plot is gone */ }
+		});
 	}
 }
 
@@ -5391,7 +5599,7 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 		if (computed) series.push(..._vf_ec3d_series(computed));
 	}
 
-	chart.setOption({
+	const option = {
 		title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center',
 			textStyle: { fontSize: 14, color: themeColor('#1e293b') } },
 		tooltip: { show: true, trigger: 'item', confine: true },
@@ -5403,7 +5611,9 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 		grid3D: _defaultGrid3DConfig({ bottom: 55 }),
 		series: series,
 		animation: false
-	}, true);
+	};
+	if (typeof window.tmEchartsPreserveView === 'function') window.tmEchartsPreserveView(chart, option);
+	chart.setOption(option, true);
 }
 
 function _traj_ec3d_line_series_with_arrows(tokenLabel, color, dataPoints, tIdx) {
@@ -6626,8 +6836,10 @@ function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
 			'No embedding space exists because <i>d<sub>model</sub></i> is not evenly divisible by <i>h</i>. Fix the configuration above to restore this visualization.');
 		return;
 	}
-	if (window.Plotly) { try { Plotly.purge(container); } catch (e) { /* not a Plotly node */ } }
-	container.innerHTML = '';
+	const kind = d_model === 3
+		? '3d'
+		: (d_model <= 2 ? '2d' : (window.tmHighDimMode === 'parallel' ? 'parcoords' : '3d'));
+	tmPreparePlotlyFrame(container, kind);
 	const rawBase = tokenStrings.map(t => window.persistentEmbeddingSpace[t] || []);
 	const rawCombined = injectedEmbeddings;
 	const base = rawBase.map(_tmTransformMetric);
