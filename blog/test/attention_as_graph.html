@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Attention: Vektoren, Graph, Maske</title>
+<title>Attention: Vektoren, Graph, Maske, Rückrechnung</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml/dist/Temml-Local.css">
 <script src="https://cdn.jsdelivr.net/npm/temml/dist/temml.min.js"></script>
 <style>
@@ -23,14 +23,18 @@
   @media (max-width: 900px) { .g2 { grid-template-columns: 1fr; } }
   .ctrl { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
   input#txt {
-    font: inherit; font-size: 17px; flex: 1 1 320px; border: none; border-bottom: 1px solid var(--ink);
+    font: inherit; font-size: 17px; flex: 1 1 300px; border: none; border-bottom: 1px solid var(--ink);
     background: transparent; padding: 6px 0; outline: none;
+  }
+  select {
+    font: inherit; font-size: 13px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
   }
   label { font-size: 13px; color: var(--dim); display: flex; gap: 6px; align-items: center; cursor: pointer; }
   button {
     font: inherit; font-size: 13px; background: var(--ink); color: #fff; border: 0;
     border-radius: 999px; padding: 8px 16px; cursor: pointer;
   }
+  button.alt { background: #e6e4dd; color: var(--ink); }
   svg { width: 100%; height: auto; display: block; overflow: visible; touch-action: none; }
   .pt { cursor: grab; }
   .hint { font-size: 12px; color: var(--dim); line-height: 1.6; margin: 10px 0 0; }
@@ -49,27 +53,41 @@
   .sum { color: var(--q); }
   .sumrow th, .sumrow td { border-top: 1px solid var(--ink); }
   .formulas { display: grid; gap: 12px; text-align: center; overflow-x: auto; }
-  .mats { display: flex; gap: 30px; justify-content: space-around; flex-wrap: wrap; margin-top: 8px; }
+  .mats { display: flex; gap: 22px; justify-content: space-around; flex-wrap: wrap; margin-top: 8px; }
+  .wbox { flex: 1 1 200px; text-align: center; }
+  .wbox .ins { margin-top: 6px; line-height: 2.1; }
   .caption { font-size: 12px; color: var(--dim); margin-top: 8px; }
+  input.num {
+    font: inherit; font-size: 12px; width: 66px; border: 1px solid var(--line); border-radius: 6px;
+    padding: 3px 5px; text-align: right; background: #fff; color: var(--ink);
+  }
+  input.tg { width: 62px; }
+  .btns { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0; }
 </style>
 </head>
 <body>
 
 <header class="w">
-  <h1>Attention: Vektoren, Graph, Maske</h1>
-  <p class="sub">Ziehe einen Punkt im Embedding-Raum. Alles darunter wird neu berechnet: Q, K, V, Scores, Maske, Softmax, Graph und Nachrichten.</p>
+  <h1>Attention: Vektoren, Graph, Maske, Rückrechnung</h1>
+  <p class="sub">Ziehe Punkte oder ändere Zahlen. Alles wird neu berechnet. Unten kannst du eine Ziel-Attention eintragen und die passenden Embeddings zurückrechnen lassen.</p>
 </header>
 
 <div class="w card ctrl">
+  <select id="preset">
+    <option value="katze">Die Katze sitzt auf der Matte</option>
+    <option value="hund">Der Hund jagt die Katze</option>
+    <option value="auto">Das Auto fährt schnell</option>
+  </select>
   <input id="txt" value="Die Katze sitzt auf der Matte" spellcheck="false" autocomplete="off">
   <label><input type="checkbox" id="causal"> Causal Mask</label>
-  <button id="reset">Punkte zurücksetzen</button>
+  <button id="reset" class="alt">Punkte zurücksetzen</button>
 </div>
 
 <section class="w card formulas">
   <div data-tex="x_i \in \mathbb{R}^2, \qquad q_i = x_i W_Q, \quad k_i = x_i W_K, \quad v_i = x_i W_V"></div>
   <div data-tex="s_{ij} = \frac{q_i \cdot k_j}{\sqrt{d_k}} + M_{ij}, \qquad M_{ij} = 0 \text{ für } j \le i, \quad M_{ij} = -\infty \text{ für } j > i"></div>
   <div data-tex="A_{ij} = \frac{\exp(s_{ij})}{\sum_{l} \exp(s_{il})}, \qquad o_i = \sum_{j} A_{ij}\, v_j"></div>
+  <div data-tex="\min_{X} \; \sum_{i,j} \bigl(A_{ij}(X) - T_{ij}\bigr)^2 \qquad \text{(Rückrechnung, } W \text{ fest)}"></div>
 </section>
 
 <main class="w g2">
@@ -81,7 +99,7 @@
   <section class="card">
     <h2>2 · Embedding-Raum</h2>
     <svg id="emb" viewBox="0 0 300 300"></svg>
-    <p class="hint">Jeder Punkt ist ein Token mit x<sub>i</sub> = (x₁, x₂). Ziehen verändert den Vektor und damit alles, was daraus folgt.</p>
+    <p class="hint">Jeder Punkt ist ein Token mit x<sub>i</sub> = (x₁, x₂). Ziehen oder die Zahlen unten ändern verschiebt den Vektor und damit alles, was daraus folgt.</p>
   </section>
 </main>
 
@@ -92,10 +110,12 @@
     <p class="hint">Orange sind die Queries, grün die Keys. Die gestrichelte Linie zeigt die Richtung von q des Fokus. Graue Linien projizieren jeden k<sub>j</sub> auf diese Richtung. Das Skalarprodukt ist q · k = |q| × Länge der Projektion, und der Score ist q · k / √2.</p>
   </section>
   <section class="card">
-    <h2>4 · Gelernte Matrizen</h2>
-    <div id="xm"></div>
+    <h2>4 · Gelernte Matrizen (editierbar)</h2>
+    <div id="xm" class="scroll"></div>
     <div class="mats">
-      <div id="wq"></div><div id="wk"></div><div id="wv"></div>
+      <div class="wbox" id="wq"><div class="tx"></div><div class="ins"></div></div>
+      <div class="wbox" id="wk"><div class="tx"></div><div class="ins"></div></div>
+      <div class="wbox" id="wv"><div class="tx"></div><div class="ins"></div></div>
     </div>
     <p class="hint">Jede Zeile von X wird mit derselben Matrix multipliziert: Q = X W<sub>Q</sub>, K = X W<sub>K</sub>, V = X W<sub>V</sub>.</p>
   </section>
@@ -104,6 +124,7 @@
 <section class="w card">
   <h2>5 · Vektoren pro Token</h2>
   <div id="vec" class="scroll"></div>
+  <p class="hint">Die Zahlen in der Spalte x<sub>i</sub> sind editierbar. Die Spalten q, k, v werden daraus berechnet.</p>
 </section>
 
 <main class="w g2">
@@ -123,7 +144,19 @@
 <section class="w card">
   <h2>8 · Nachrichten am Fokus-Token</h2>
   <div id="detail" class="scroll"></div>
-  <p class="hint">Klick auf einen Punkt, einen Knoten oder eine Tokenbeschriftung, um den Fokus zu wechseln.</p>
+</section>
+
+<section class="w card">
+  <h2>9 · Rückrechnung: Ziel-Attention eintragen</h2>
+  <p class="hint" style="margin:0 0 10px">Trage Werte für T<sub>ij</sub> ein. Jede Zeile wird auf Summe 1 normiert, maskierte Felder bleiben leer. Dann sucht die Seite Embeddings X, deren Attention möglichst nah an T liegt.</p>
+  <div id="tgt" class="scroll"></div>
+  <div class="btns">
+    <button id="fitBtn">Rückrechnen</button>
+    <button id="tgtReset" class="alt">Ziel = aktuelle A</button>
+    <button id="undo" class="alt">Embeddings vor Rückrechnung</button>
+  </div>
+  <div id="fitinfo"></div>
+  <p class="hint">Die Rückrechnung löst ein unterbestimmtes Problem. Eine Zeile von A ändert sich nicht, wenn man alle Scores der Zeile um dieselbe Konstante verschiebt. Deshalb vergleicht die Tabelle die zentrierten Logits: log T<sub>ij</sub> − Mittel, gegen s<sub>ij</sub> − Mittel. Diese Werte sind exakt vergleichbar.</p>
 </section>
 
 <script>
@@ -134,6 +167,9 @@ const fmt = v => v.toFixed(2).replace('-', '−');
 const vs = v => `(${fmt(v[0])}, ${fmt(v[1])})`;
 const pm = M => `\\begin{pmatrix}${M.map(r => r.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ')}\\end{pmatrix}`;
 const tex = (el, s, disp = true) => { if (window.temml) temml.render(s, el, { displayMode: disp }); else el.textContent = s; };
+const clampV = v => Math.max(-2, Math.min(2, v));
+const cp = M => M.map(r => r.slice());
+const avg = a => a.reduce((x, y) => x + y, 0) / a.length;
 
 const C = 150, EMB_SC = 75, GR = 100, SQDK = Math.SQRT2;   // d_k = 2
 
@@ -146,34 +182,107 @@ function rng(s) {
     return ((t ^ t >>> 14) >>> 0) / 4294967296;
   };
 }
-const R0 = rng(11);
-const mat = () => Array.from({ length: 2 }, () => Array.from({ length: 2 }, () => r2(R0() * 2 - 1)));
-const W = { Q: mat(), K: mat(), V: mat() };
-const vm = (x, M) => [0, 1].map(c => x[0] * M[0][c] + x[1] * M[1][c]);
-const dot = (a, b) => a[0] * b[0] + a[1] * b[1];
 const initX1 = (t, i) => { const g = rng(hash(t + '#' + i)); return [r2((g() * 2 - 1) * 1.3), r2((g() * 2 - 1) * 1.3)]; };
 const parseT = s => { const t = s.split(/\s+/).filter(Boolean).slice(0, 8); return t.length ? t : ['Die']; };
+const vm = (x, M) => [0, 1].map(c => x[0] * M[0][c] + x[1] * M[1][c]);
+const dot = (a, b) => a[0] * b[0] + a[1] * b[1];
 const toPx = (v, sc) => [C + v[0] * sc, C - v[1] * sc];
 
-const S = { toks: [], X: [], causal: false, focus: 0, Q: [], K: [], V: [], Sc: [], A: [], O: [], particles: [] };
+/* Gelernte Matrizen, bewusst einfach gewählt (identisch = Ähnlichkeit der Vektoren) */
+const W = { Q: [[1, 0], [0, 1]], K: [[1, 0], [0, 1]], V: [[1, 0], [0, 1]] };
+
+/* Presets mit interpretierbaren Embeddings */
+const PRESETS = {
+  katze: {
+    text: 'Die Katze sitzt auf der Matte',
+    axes: ['Ding ← → belebt', 'Ort ↓ · Handlung ↑'],
+    X: [[0, -0.4], [1.2, -0.2], [0.5, 1.2], [-0.3, 0.2], [0, -0.4], [-1.1, -0.6]]
+  },
+  hund: {
+    text: 'Der Hund jagt die Katze',
+    axes: ['Ding ← → belebt', 'Ort ↓ · Handlung ↑'],
+    X: [[0, -0.4], [1.3, -0.1], [0.9, 1.4], [0, -0.4], [1.2, -0.2]]
+  },
+  auto: {
+    text: 'Das Auto fährt schnell',
+    axes: ['Ding ← → belebt', 'Ort ↓ · Handlung ↑'],
+    X: [[0, -0.4], [-1.0, -0.5], [-0.3, 1.3], [-0.2, 1.0]]
+  }
+};
+
+const S = {
+  preset: 'katze', toks: [], X: [], causal: false, focus: 0, axes: ['x₁', 'x₂'],
+  target: null, fit: null, Xbefore: null, particles: [],
+  Q: [], K: [], V: [], Sc: [], A: [], O: []
+};
 
 /* ---------- Rechnung ---------- */
-function compute() {
-  const n = S.toks.length;
-  S.Q = S.X.map(x => vm(x, W.Q));
-  S.K = S.X.map(x => vm(x, W.K));
-  S.V = S.X.map(x => vm(x, W.V));
-  S.Sc = []; S.A = []; S.O = [];
+function forward(X, causal) {
+  const n = X.length;
+  const Q = X.map(x => vm(x, W.Q)), K = X.map(x => vm(x, W.K)), V = X.map(x => vm(x, W.V));
+  const Sc = [], A = [], O = [];
   for (let i = 0; i < n; i++) {
     const s = [];
-    for (let j = 0; j < n; j++) s.push(S.causal && j > i ? null : dot(S.Q[i], S.K[j]) / SQDK);
+    for (let j = 0; j < n; j++) s.push(causal && j > i ? null : dot(Q[i], K[j]) / SQDK);
     const m = Math.max(...s.filter(v => v !== null));
     const e = s.map(v => v === null ? 0 : Math.exp(v - m));
     const z = e.reduce((a, b) => a + b, 0);
-    S.Sc.push(s);
-    S.A.push(e.map(v => v / z));
-    S.O.push([0, 1].map(c => S.A[i].reduce((acc, a, j) => acc + a * S.V[j][c], 0)));
+    Sc.push(s);
+    A.push(e.map(v => v / z));
+    O.push([0, 1].map(c => A[i].reduce((acc, a, j) => acc + a * V[j][c], 0)));
   }
+  return { Q, K, V, Sc, A, O };
+}
+function compute() { Object.assign(S, forward(S.X, S.causal)); }
+
+function normalizeTarget() {
+  const n = S.toks.length;
+  for (let i = 0; i < n; i++) {
+    const open = [];
+    for (let j = 0; j < n; j++) if (!(S.causal && j > i)) open.push(j);
+    const sum = open.reduce((a, j) => a + Math.max(0, S.target[i][j]), 0);
+    for (let j = 0; j < n; j++) {
+      if (!open.includes(j)) { S.target[i][j] = 0; continue; }
+      S.target[i][j] = sum > 0 ? Math.max(0, S.target[i][j]) / sum : 1 / open.length;
+    }
+  }
+}
+function ensureTarget() {
+  const n = S.toks.length;
+  if (!S.target || S.target.length !== n) S.target = S.A.map(r => r.slice());
+  normalizeTarget();
+}
+
+/* ---------- Rückrechnung ---------- */
+function loss(X, T) {
+  const { A } = forward(X, S.causal);
+  let L = 0;
+  for (let i = 0; i < A.length; i++) for (let j = 0; j < A.length; j++) {
+    if (S.causal && j > i) continue;
+    L += (A[i][j] - T[i][j]) ** 2;
+  }
+  return L;
+}
+function fitEmbeddings(T, iters = 300) {
+  let X = cp(S.X), L = loss(X, T), lr = 1;
+  const hist = [L], eps = 1e-4;
+  for (let it = 0; it < iters; it++) {
+    const G = X.map(() => [0, 0]);
+    for (let i = 0; i < X.length; i++) for (let c = 0; c < 2; c++) {
+      const xp = cp(X), xm = cp(X);
+      xp[i][c] += eps; xm[i][c] -= eps;
+      G[i][c] = (loss(xp, T) - loss(xm, T)) / (2 * eps);
+    }
+    let accepted = false;
+    for (let k = 0; k < 12 && !accepted; k++) {
+      const trial = X.map((r, i) => r.map((v, c) => clampV(v - lr * G[i][c])));
+      const Lt = loss(trial, T);
+      if (Lt < L) { X = trial; L = Lt; accepted = true; } else lr *= 0.5;
+    }
+    lr = Math.min(lr * 1.5, 4);
+    hist.push(L);
+  }
+  return { X, hist };
 }
 
 /* ---------- Graph ---------- */
@@ -206,7 +315,6 @@ function edgeD(P, j, i) {
   const p0 = towards(c.a, c.cp, 22), p1 = towards(c.b, c.cp, 24);
   return `M${p0.x},${p0.y} Q${c.cp.x},${c.cp.y} ${p1.x},${p1.y}`;
 }
-
 function drawGraph() {
   const n = S.toks.length, P = nodeP(n), f = S.focus;
   let edges = '', parts = '', nodes = '';
@@ -245,7 +353,9 @@ function grid(sc) {
 }
 function drawEmb() {
   let h = grid(EMB_SC);
-  S.X.forEach((x, i) => {
+  h += `<text x="296" y="${C - 6}" text-anchor="end" font-size="11" fill="#8a8a84">${esc(S.axes[0])}</text>
+        <text x="${C + 6}" y="10" font-size="11" fill="#8a8a84">${esc(S.axes[1])}</text>`;
+  S.X.forEach(x => {
     const [px, py] = toPx(x, EMB_SC);
     h += `<line x1="${C}" y1="${C}" x2="${px}" y2="${py}" stroke="#d6d4cc" stroke-width="1"/>`;
   });
@@ -285,15 +395,21 @@ function drawQK() {
 /* ---------- Matrizen und Vektoren ---------- */
 function drawMats() {
   tex($('xm'), `X = ${pm(S.X)}`);
-  tex($('wq'), `W_Q = ${pm(W.Q)}`);
-  tex($('wk'), `W_K = ${pm(W.K)}`);
-  tex($('wv'), `W_V = ${pm(W.V)}`);
+  ['Q', 'K', 'V'].forEach(k => {
+    const box = $('w' + k.toLowerCase());
+    tex(box.querySelector('.tx'), `W_${k} = ${pm(W[k])}`);
+    box.querySelector('.ins').innerHTML = W[k].map((row, r) =>
+      row.map((v, c) => `<input class="num" type="number" step="0.1" data-w="${k}" data-r="${r}" data-c="${c}" value="${v}">`).join(' ')
+    ).join('<br>');
+  });
 }
 function drawVec() {
-  let h = `<table><thead><tr><th>Token</th><th>x<sub>i</sub></th><th class="q">q<sub>i</sub></th><th class="k">k<sub>i</sub></th><th class="v">v<sub>i</sub></th></tr></thead><tbody>`;
+  let h = `<table><thead><tr><th>Token</th><th>x<sub>i</sub> (editierbar)</th><th class="q">q<sub>i</sub></th><th class="k">k<sub>i</sub></th><th class="v">v<sub>i</sub></th></tr></thead><tbody>`;
   S.toks.forEach((t, i) => {
     h += `<tr class="${i === S.focus ? 'row' : ''}"><th data-i="${i}">${esc(t)}</th>
-          <td>${vs(S.X[i])}</td><td class="q">${vs(S.Q[i])}</td><td class="k">${vs(S.K[i])}</td><td class="v">${vs(S.V[i])}</td></tr>`;
+      <td><input class="num" type="number" step="0.05" data-xi="${i}" data-xc="0" value="${S.X[i][0].toFixed(2)}">
+          <input class="num" type="number" step="0.05" data-xi="${i}" data-xc="1" value="${S.X[i][1].toFixed(2)}"></td>
+      <td class="q">${vs(S.Q[i])}</td><td class="k">${vs(S.K[i])}</td><td class="v">${vs(S.V[i])}</td></tr>`;
   });
   $('vec').innerHTML = h + '</tbody></table>';
 }
@@ -359,10 +475,63 @@ function drawDetail() {
       </tbody></table>`;
 }
 
+/* ---------- Rückrechnung: Anzeige ---------- */
+function drawBack() {
+  const T = S.target, n = S.toks.length;
+  let h = `<table><tr><th>Empfänger ↓ · Sender →</th>${S.toks.map(t => `<th>${esc(t)}</th>`).join('')}<th>Σ</th></tr>`;
+  for (let i = 0; i < n; i++) {
+    h += `<tr class="${i === S.focus ? 'row' : ''}"><th>${esc(S.toks[i])}</th>`;
+    for (let j = 0; j < n; j++) {
+      if (S.causal && j > i) { h += '<td class="mask">−</td>'; continue; }
+      h += `<td><input class="num tg" type="number" min="0" step="0.05" data-ti="${i}" data-tj="${j}" value="${T[i][j].toFixed(2)}"></td>`;
+    }
+    h += `<td class="sum">${T[i].reduce((a, b) => a + b, 0).toFixed(2)}</td></tr>`;
+  }
+  $('tgt').innerHTML = h + '</table>';
+
+  const i = S.focus, open = [];
+  for (let j = 0; j < n; j++) if (!(S.causal && j > i)) open.push(j);
+  const lt = open.map(j => Math.log(Math.max(T[i][j], 1e-6)));
+  const ms = open.map(j => S.Sc[i][j]);
+  const mt = avg(lt), mm = avg(ms);
+  let rows = open.map((j, k) =>
+    `<tr><th>${esc(S.toks[j])}</th><td>${fmt(lt[k] - mt)}</td><td>${fmt(ms[k] - mm)}</td><td>${T[i][j].toFixed(3)}</td><td>${S.A[i][j].toFixed(3)}</td></tr>`
+  ).join('');
+  let info = `<h3 style="font-size:12px;color:#8a8a84;font-weight:500;margin:14px 0 6px">Zentrierte Logits für den Fokus „${esc(S.toks[i])}“</h3>
+    <table><thead><tr><th>Sender j</th><th>Ziel: log T − ⟨log T⟩</th><th>Modell: s − ⟨s⟩</th><th>T</th><th>A (Modell)</th></tr></thead><tbody>${rows}</tbody></table>`;
+
+  if (S.fit) {
+    const hist = S.fit.hist, start = hist[0], end = hist[hist.length - 1];
+    const lg = hist.map(v => Math.log10(v + 1e-12));
+    const mn = Math.min(...lg), mx = Math.max(...lg), span = (mx - mn) || 1;
+    const pts = lg.map((v, k) => `${(k / ((lg.length - 1) || 1) * 300).toFixed(1)},${(82 - (v - mn) / span * 70).toFixed(1)}`).join(' ');
+    info = `<p class="hint" style="margin:10px 0 0">Fehler Σ(A − T)²: <b>${start.toFixed(4)} → ${end.toFixed(4)}</b> nach ${hist.length - 1} Schritten. Die Kurve ist logarithmisch.</p>
+      <svg viewBox="0 0 300 90" style="height:90px;margin-top:6px">
+        <polyline points="${pts}" fill="none" stroke="#e4572e" stroke-width="2"/>
+        <text x="4" y="12" font-size="11" fill="#8a8a84">log₁₀ Fehler</text>
+      </svg>` + info;
+  }
+  $('fitinfo').innerHTML = info;
+}
+
 /* ---------- Render ---------- */
 function renderAll() {
   compute();
-  drawGraph(); drawEmb(); drawQK(); drawMats(); drawVec(); drawScores(); drawSoft(); drawDetail();
+  ensureTarget();
+  drawGraph(); drawEmb(); drawQK(); drawMats(); drawVec(); drawScores(); drawSoft(); drawDetail(); drawBack();
+}
+
+function loadPreset(key) {
+  const p = PRESETS[key];
+  S.preset = key;
+  S.toks = parseT(p.text);
+  S.X = p.X.map(r => r.slice());
+  S.axes = p.axes;
+  S.target = null; S.fit = null; S.Xbefore = null;
+  S.focus = 0;
+  $('txt').value = p.text;
+  $('preset').value = key;
+  renderAll();
 }
 
 /* ---------- Animation der Nachrichten ---------- */
@@ -396,34 +565,82 @@ emb.addEventListener('pointerdown', e => {
 });
 emb.addEventListener('pointermove', e => {
   if (drag < 0) return;
-  const p = svgPt(e), clamp = v => Math.max(-2, Math.min(2, v));
-  S.X[drag] = [r2(clamp((p.x - C) / EMB_SC)), r2(clamp((C - p.y) / EMB_SC))];
+  const p = svgPt(e);
+  S.X[drag] = [r2(clampV((p.x - C) / EMB_SC)), r2(clampV((C - p.y) / EMB_SC))];
+  S.fit = null;
   renderAll();
 });
 const endDrag = () => { drag = -1; };
 emb.addEventListener('pointerup', endDrag);
 emb.addEventListener('pointercancel', endDrag);
 
+/* Fokus per Klick auf Knoten, Tabellenzeile oder Punkt */
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-i]');
   if (el) { S.focus = +el.dataset.i; renderAll(); }
 });
 
+/* Tokens ändern: bekannte Tokens behalten ihre Position */
 $('txt').addEventListener('input', e => {
   const old = S.toks, nt = parseT(e.target.value);
   S.X = nt.map((t, i) => (old[i] === t && S.X[i]) ? S.X[i] : initX1(t, i));
   S.toks = nt;
   S.focus = Math.min(S.focus, nt.length - 1);
+  S.fit = null;
   renderAll();
 });
-$('causal').addEventListener('change', e => { S.causal = e.target.checked; renderAll(); });
-$('reset').addEventListener('click', () => { S.X = S.toks.map((t, i) => initX1(t, i)); renderAll(); });
+
+/* Presets, Maske, Reset */
+$('preset').addEventListener('change', e => loadPreset(e.target.value));
+$('causal').addEventListener('change', e => { S.causal = e.target.checked; S.fit = null; renderAll(); });
+$('reset').addEventListener('click', () => {
+  const p = PRESETS[S.preset];
+  S.X = (p && p.X.length === S.toks.length) ? p.X.map(r => r.slice()) : S.toks.map((t, i) => initX1(t, i));
+  S.fit = null;
+  renderAll();
+});
+
+/* Editierbare Zahlen: X, W_Q/W_K/W_V und Ziel-Attention */
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.xi !== undefined) {
+    S.X[+t.dataset.xi][+t.dataset.xc] = clampV(parseFloat(t.value) || 0);
+    S.fit = null;
+    renderAll();
+  } else if (t.dataset.w) {
+    W[t.dataset.w][+t.dataset.r][+t.dataset.c] = parseFloat(t.value) || 0;
+    renderAll();
+  } else if (t.dataset.ti !== undefined) {
+    S.target[+t.dataset.ti][+t.dataset.tj] = Math.max(0, parseFloat(t.value) || 0);
+    renderAll();
+  }
+});
+
+/* Rückrechnung */
+$('fitBtn').addEventListener('click', () => {
+  ensureTarget();
+  S.Xbefore = S.X.map(r => r.slice());
+  const res = fitEmbeddings(S.target, 300);
+  S.X = res.X.map(r => r.map(v => r2(v)));
+  S.fit = res;
+  renderAll();
+});
+$('tgtReset').addEventListener('click', () => {
+  S.target = S.A.map(r => r.slice());
+  S.fit = null;
+  renderAll();
+});
+$('undo').addEventListener('click', () => {
+  if (!S.Xbefore) return;
+  S.X = S.Xbefore.map(r => r.slice());
+  S.Xbefore = null;
+  S.fit = null;
+  renderAll();
+});
 
 /* Start */
-S.toks = parseT($('txt').value);
-S.X = S.toks.map((t, i) => initX1(t, i));
 document.querySelectorAll('[data-tex]').forEach(el => tex(el, el.dataset.tex, true));
-renderAll();
+loadPreset(S.preset);
 requestAnimationFrame(tick);
 </script>
 </body>
