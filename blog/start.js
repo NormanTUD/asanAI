@@ -133,6 +133,184 @@ function finalizeLoaderChecklist() {
 }
 
 
+const _mathRafRoots = new Set();
+let _mathRafHandle = 0;
+let _mathObserver = null;
+
+function _scheduleMathRoot(el) {
+	if (!el || el.nodeType !== 1) return;
+	_mathRafRoots.add(el);
+	if (_mathRafHandle) return;
+	_mathRafHandle = requestAnimationFrame(function() {
+		_mathRafHandle = 0;
+		const roots = Array.from(_mathRafRoots);
+		_mathRafRoots.clear();
+		roots.forEach(function(root) {
+			if (root.isConnected && root.textContent.includes('$')) {
+				render_temml(root);
+			}
+		});
+	});
+}
+
+const _mathRenderCache = new WeakMap();
+
+function _mathSource(mathEl) {
+	if (!mathEl) return '';
+	const stored = mathEl.getAttribute && mathEl.getAttribute('data-tex');
+	if (stored) return stored.trim();
+	const ann = mathEl.querySelector && mathEl.querySelector('annotation[encoding="application/x-tex"]');
+	return ann ? ann.textContent.trim() : (mathEl.textContent || '').trim();
+}
+
+function _rememberRenderedMath(el) {
+	const maths = Array.from(el.querySelectorAll('math'));
+	if (!maths.length || maths.length > 12) {
+		_mathRenderCache.delete(el);
+		return;
+	}
+	if (maths.length > 6 || el.textContent.length > 4000) {
+		_mathRenderCache.delete(el);
+	} else {
+		_mathRenderCache.set(el, maths.map(function(m) { return m.cloneNode(true); }));
+	}
+
+	const hosts = new Map();
+	maths.forEach(function(m) {
+		let host = m.parentElement;
+		while (host && host !== el && !host.id) host = host.parentElement;
+		if (!host || host === el || !host.id) return;
+		const list = hosts.get(host) || [];
+		list.push(m);
+		hosts.set(host, list);
+	});
+	hosts.forEach(function(list, host) {
+		if (list.length > 6) {
+			_mathRenderCache.delete(host);
+			return;
+		}
+		_mathRenderCache.set(host, list.map(function(m) { return m.cloneNode(true); }));
+	});
+}
+
+function _previousRenderedMath(el) {
+	const cached = _mathRenderCache.get(el);
+	if (!cached || !cached.length) return null;
+	return cached.map(function(m) { return m.cloneNode(true); });
+}
+
+function _captureRemovedMath(target, removedNodes) {
+	if (!target || target.nodeType !== 1 || !removedNodes || !removedNodes.length) return;
+	const clones = [];
+	removedNodes.forEach(function(node) {
+		if (node.nodeType !== 1) return;
+		if (node.localName === 'math') {
+			clones.push(node.cloneNode(true));
+		} else if (node.querySelectorAll) {
+			node.querySelectorAll('math').forEach(function(m) {
+				clones.push(m.cloneNode(true));
+			});
+		}
+	});
+	if (!clones.length) return;
+	_mathRenderCache.set(target, clones.slice(0, 6));
+}
+
+function _handleMathMutations(mutationsList, syncRoots) {
+	for (const mutation of mutationsList) {
+		if (mutation.type !== 'characterData' && mutation.type !== 'childList') continue;
+		const target = mutation.target.nodeType === 1
+			? mutation.target
+			: mutation.target.parentElement;
+		if (!target || !target.textContent.includes('$')) continue;
+		if (mutation.type === 'childList') {
+			_captureRemovedMath(target, mutation.removedNodes);
+		}
+		if (target.hasAttribute('data-math-rendered')) {
+			target.removeAttribute('data-math-rendered');
+		}
+		const parent = target.parentElement;
+		if (parent && parent.hasAttribute('data-math-rendered')) {
+			parent.removeAttribute('data-math-rendered');
+		}
+		if (syncRoots) {
+			syncRoots.add(target);
+		} else if (target !== document.body && target !== document.documentElement) {
+			_scheduleMathRoot(target);
+		}
+	}
+}
+
+function _prefersReducedMotion() {
+	return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+
+const _mathSwapCleanup = new WeakMap();
+
+function _finishMathSwap(el) {
+	const cleanup = _mathSwapCleanup.get(el);
+	if (cleanup) cleanup();
+}
+
+function _crossfadeRenderedMath(el, oldMaths) {
+	if (!oldMaths || !oldMaths.length || _prefersReducedMotion()) return;
+	const newMaths = Array.from(el.querySelectorAll('math'));
+	if (!newMaths.length) return;
+
+	const oldSource = oldMaths.map(_mathSource).filter(Boolean).join('\u0001');
+	const newSource = newMaths.map(_mathSource).filter(Boolean).join('\u0001');
+	if (oldSource && newSource && oldSource === newSource) return;
+
+	_finishMathSwap(el);
+	newMaths.forEach(function(m) { m.classList.remove('mn-math-swap-in'); });
+
+	const cs = getComputedStyle(el);
+	const overlay = document.createElement('div');
+	overlay.className = 'mn-math-swap-out';
+	overlay.setAttribute('aria-hidden', 'true');
+	overlay.style.position = 'absolute';
+	overlay.style.top = cs.paddingTop;
+	overlay.style.right = cs.paddingRight;
+	overlay.style.bottom = cs.paddingBottom;
+	overlay.style.left = cs.paddingLeft;
+	overlay.style.pointerEvents = 'none';
+	overlay.style.textAlign = cs.textAlign;
+	overlay.style.overflow = 'hidden';
+	oldMaths.forEach(function(m) {
+		m.classList.remove('mn-math-swap-in');
+		m.style.margin = '0';
+		overlay.appendChild(m);
+	});
+
+	const inlinePosition = el.style.position;
+	const changedPosition = cs.position === 'static';
+	if (changedPosition) el.style.position = 'relative';
+	el.appendChild(overlay);
+
+	let finished = false;
+	const cleanup = function() {
+		if (finished) return;
+		finished = true;
+		overlay.remove();
+		newMaths.forEach(function(m) { m.classList.remove('mn-math-swap-in'); });
+		if (changedPosition && el.style.position === 'relative') {
+			el.style.position = inlinePosition;
+		}
+		if (_mathSwapCleanup.get(el) === cleanup) _mathSwapCleanup.delete(el);
+	};
+	_mathSwapCleanup.set(el, cleanup);
+
+	newMaths.forEach(function(m) { m.classList.add('mn-math-swap-in'); });
+	requestAnimationFrame(function() { overlay.classList.add('mn-math-swap-out-active'); });
+	setTimeout(cleanup, 130);
+}
+
+function _finishRenderedMath(el, oldMaths) {
+	ensureDisplayMathScrollable(el);
+	_rememberRenderedMath(el);
+	_crossfadeRenderedMath(el, oldMaths);
+}
+
 function observeAndRenderMath(targetNode = document.body) {
 	if (!targetNode) {
 		console.warn("MutationObserver: Ziel-Element nicht gefunden.");
@@ -154,18 +332,12 @@ function observeAndRenderMath(targetNode = document.body) {
 	};
 
 	const callback = function(mutationsList) {
-		for (const mutation of mutationsList) {
-			if (mutation.type === 'characterData' || mutation.type === 'childList') {
-				const parent = mutation.target.parentElement;
-				if (parent && parent.hasAttribute('data-math-rendered')) {
-					parent.removeAttribute('data-math-rendered');
-				}
-			}
-		}
+		_handleMathMutations(mutationsList, null);
 		schedule();
 	};
 
 	const observer = new MutationObserver(callback);
+	_mathObserver = observer;
 	observer.observe(targetNode, config);
 }
 
@@ -436,6 +608,7 @@ const _temmlObserver = new IntersectionObserver((entries) => {
             if (el.isConnected &&
                 !el.hasAttribute('data-math-rendered') &&
                 el.textContent.includes('$')) {
+                const oldMaths = _previousRenderedMath(el);
                 // Versuche zuerst unseren Fix
                 const fixed = _fixMathInElement(el);
                 // Falls unser Fix nichts gefunden hat, Temml normal laufen lassen
@@ -444,7 +617,7 @@ const _temmlObserver = new IntersectionObserver((entries) => {
                     _stampMathTex(el);
                     el.setAttribute('data-math-rendered', 'true');
                 }
-                ensureDisplayMathScrollable(el);
+                _finishRenderedMath(el, oldMaths);
             }
             _temmlObserver.unobserve(el);
         }
@@ -454,7 +627,7 @@ const _temmlObserver = new IntersectionObserver((entries) => {
     rootMargin: rootMargin
 });
 
-function render_temml() {
+function render_temml(root) {
 
 	/* ═══════════════════════════════════════════════════════════════
 	   ONE-TIME POPUP BOOTSTRAP
@@ -1090,10 +1263,26 @@ function render_temml() {
 	/* ═══════════════════════════════════════════════════════════════
 	   NORMAL RENDERING PASS
 	   ═══════════════════════════════════════════════════════════ */
-	const elements = document.querySelectorAll(
+	const pendingRoots = new Set();
+	if (_mathObserver && _mathObserver.takeRecords) {
+		_handleMathMutations(_mathObserver.takeRecords(), pendingRoots);
+	}
+
+	const scope = (root && root.nodeType === 1) ? root : document;
+	const elements = Array.from(scope.querySelectorAll(
 		'p:not([data-math-rendered]), span:not([data-math-rendered]), ' +
 		'div:not([data-math-rendered]), li:not([data-math-rendered])'
-	);
+	));
+	if (root && root.nodeType === 1 && root.matches &&
+		root.matches('p, span, div, li') && root.textContent.includes('$')) {
+		elements.unshift(root);
+	}
+	elements.reverse();
+	pendingRoots.forEach(function(el) {
+		const index = elements.indexOf(el);
+		if (index !== -1) elements.splice(index, 1);
+		elements.unshift(el);
+	});
 
 	elements.forEach(el => {
 		if (!el.textContent.includes('$')) return;
@@ -1101,6 +1290,8 @@ function render_temml() {
 		// Skip elements that ARE code blocks or are INSIDE code blocks
 		if (el.tagName === 'PRE' || el.tagName === 'CODE') return;
 		if (el.closest('pre, code')) return;
+
+		const oldMaths = _previousRenderedMath(el);
 
 		// Try our fix first (only intervenes when there's HTML markup inside math)
 		const fixed = _fixMathInElement(el);
@@ -1113,6 +1304,7 @@ function render_temml() {
 				temml.renderMathInElement(el, _temmlOpts);
 				_stampMathTex(el);
 				el.setAttribute('data-math-rendered', 'true');
+				_finishRenderedMath(el, oldMaths);
 				return;
 			}
 
@@ -1120,16 +1312,19 @@ function render_temml() {
 				temml.renderMathInElement(el, _temmlOpts);
 				_stampMathTex(el);
 				el.setAttribute('data-math-rendered', 'true');
+				_finishRenderedMath(el, oldMaths);
 			} else {
 				_temmlObserver.observe(el);
 			}
+		} else {
+			_finishRenderedMath(el, oldMaths);
 		}
 	});
 
 
 	/* Wide equations: make sure each overflowing display math has a real
 	   horizontal scroller (see ensureDisplayMathScrollable). */
-	ensureDisplayMathScrollable(document);
+	ensureDisplayMathScrollable(scope);
 
 	/* ═══════════════════════════════════════════════════════════════
 	   LIVE UPDATE CHECK  (every render pass)
@@ -1143,7 +1338,7 @@ function render_temml() {
 	   re-parse or is leaking to the page as visible text.
 	   ═══════════════════════════════════════════════════════════════ */
 	(function mathIntegrityScan() {
-		const maths = document.querySelectorAll('math');
+		const maths = scope.querySelectorAll('math');
 		for (let i = 0; i < maths.length; i++) {
 			const m = maths[i];
 			if (m.closest && m.closest('.lp-overlay')) continue; // popup preview clone
@@ -1161,6 +1356,23 @@ function render_temml() {
 	})();
 }
 
+window.MNMath = window.MNMath || {};
+window.MNMath.afterPaint = function(fn) {
+	let frame = 0;
+	let lastArgs = null;
+	let lastThis = null;
+	return function() {
+		lastArgs = arguments;
+		lastThis = this;
+		if (frame) return;
+		frame = requestAnimationFrame(function() {
+			frame = requestAnimationFrame(function() {
+				frame = 0;
+				fn.apply(lastThis, lastArgs);
+			});
+		});
+	};
+};
 /* ════════════════════════════════════════════════════════════
    DARK MODE TOGGLE
    ════════════════════════════════════════════════════════ */

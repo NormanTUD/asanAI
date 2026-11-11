@@ -555,14 +555,8 @@ function renderELI5Math() {
 		showlegend: false,
 	};
 
-	function updatePlotLinear() {
-		const a = parseFloat(document.getElementById('slider-6-a').value);
-		const b = parseFloat(document.getElementById('slider-6-b').value);
-
-		document.getElementById('formula-6').innerHTML =
-			`$$f(x) = \\underbrace{${a}}_ax + \\underbrace{${b}}_b$$`;
-		render_temml();
-
+	const afterPaint = window.MNMath && MNMath.afterPaint ? MNMath.afterPaint : (fn) => fn;
+	const plotLinear = afterPaint((a, b) => {
 		Plotly.react(
 			'plot-step-6',
 			[
@@ -575,16 +569,21 @@ function renderELI5Math() {
 			],
 			layoutBase
 		);
+	});
+
+	function updatePlotLinear() {
+		const a = parseFloat(document.getElementById('slider-6-a').value);
+		const b = parseFloat(document.getElementById('slider-6-b').value);
+
+		const formula = document.getElementById('formula-6');
+		formula.innerHTML =
+			`$$f(x) = \\underbrace{${a}}_ax + \\underbrace{${b}}_b$$`;
+		render_temml(formula);
+
+		plotLinear(a, b);
 	}
 
-	function updatePlotSurface() {
-		const a = parseFloat(document.getElementById('slider-7-a').value);
-		const b = parseFloat(document.getElementById('slider-7-b').value);
-
-		document.getElementById('formula-7').innerHTML =
-			`$$f(x, y) = \\underbrace{${a}}_ax + \\underbrace{${b}}_by$$`;
-		render_temml();
-
+	const plotSurface = afterPaint((a, b) => {
 		lazyRender('plot-step-7', () => {
 			const zData = range.map((x) => range.map((y) => a * x + b * y));
 			Plotly.react(
@@ -613,16 +612,21 @@ function renderELI5Math() {
 				}
 			);
 		});
+	});
+
+	function updatePlotSurface() {
+		const a = parseFloat(document.getElementById('slider-7-a').value);
+		const b = parseFloat(document.getElementById('slider-7-b').value);
+
+		const formula = document.getElementById('formula-7');
+		formula.innerHTML =
+			`$$f(x, y) = \\underbrace{${a}}_ax + \\underbrace{${b}}_by$$`;
+		render_temml(formula);
+
+		plotSurface(a, b);
 	}
 
-	function updatePlotWaves() {
-		const freq = parseFloat(document.getElementById('slider-5-freq').value);
-		const amp = parseFloat(document.getElementById('slider-5-amp').value);
-
-		document.getElementById('formula-5').innerHTML =
-			`$$f(x, y) = \\underbrace{${amp}}_\\text{Amplitude} \\cdot (\\sin(\\underbrace{${freq}}_\\text{Frequence}x) + \\sin(\\underbrace{${freq}}_\\text{Frequence}y))$$`;
-		render_temml();
-
+	const plotWaves = afterPaint((freq, amp) => {
 		lazyRender('plot-step-5', () => {
 			const zWaves = range.map((x) =>
 				range.map((y) => amp * (Math.sin(x * freq) + Math.sin(y * freq)))
@@ -653,6 +657,18 @@ function renderELI5Math() {
 				}
 			);
 		});
+	});
+
+	function updatePlotWaves() {
+		const freq = parseFloat(document.getElementById('slider-5-freq').value);
+		const amp = parseFloat(document.getElementById('slider-5-amp').value);
+
+		const formula = document.getElementById('formula-5');
+		formula.innerHTML =
+			`$$f(x, y) = \\underbrace{${amp}}_\\text{Amplitude} \\cdot (\\sin(\\underbrace{${freq}}_\\text{Frequence}x) + \\sin(\\underbrace{${freq}}_\\text{Frequence}y))$$`;
+		render_temml(formula);
+
+		plotWaves(freq, amp);
 	}
 
 	function renderStep4() {
@@ -752,22 +768,8 @@ if (typeof Plotly !== 'undefined' && document.getElementById('plot-step-1')) {
 		return getComputedStyle(document.documentElement).getPropertyValue(c).trim() || '#1e293b';
 	}
 
-	function renderLog() {
-		const b = parseFloat(sliderBase.value);
-		const inputX = parseFloat(sliderX.value);
-		dispBase.textContent = b.toFixed(1);
-		dispX.textContent = inputX.toFixed(1);
-
-		const xValues = [], yValues = [];
-		for (let i = 0.1; i <= 50; i += 0.5) {
-			xValues.push(i);
-			yValues.push(Math.log(i) / Math.log(b));
-		}
-		const currentY = Math.log(inputX) / Math.log(b);
-		const minY = Math.min(...yValues, currentY);
-		const maxY = Math.max(...yValues, currentY);
-		const padding = (maxY - minY) * 0.1 || 1;
-
+	const afterPaint = window.MNMath && MNMath.afterPaint ? MNMath.afterPaint : (fn) => fn;
+	const plotLog = afterPaint((b, inputX, currentY, minY, maxY, padding, xValues, yValues) => {
 		const traceCurve = {
 			x: xValues, y: yValues, mode: 'lines',
 			name: 'log base ' + b.toFixed(1),
@@ -800,10 +802,29 @@ if (typeof Plotly !== 'undefined' && document.getElementById('plot-step-1')) {
 			hovermode: 'closest'
 		};
 		Plotly.react('log-plot', [traceCurve, traceLines, tracePoint], layout);
+	});
+
+	function renderLog() {
+		const b = parseFloat(sliderBase.value);
+		const inputX = parseFloat(sliderX.value);
+		dispBase.textContent = b.toFixed(1);
+		dispX.textContent = inputX.toFixed(1);
+
+		const xValues = [], yValues = [];
+		for (let i = 0.1; i <= 50; i += 0.5) {
+			xValues.push(i);
+			yValues.push(Math.log(i) / Math.log(b));
+		}
+		const currentY = Math.log(inputX) / Math.log(b);
+		const minY = Math.min(...yValues, currentY);
+		const maxY = Math.max(...yValues, currentY);
+		const padding = (maxY - minY) * 0.1 || 1;
 
 		const tex = `$$ \\log_{${b.toFixed(1)}}(${inputX.toFixed(1)}) = ${currentY.toFixed(2)} \\iff ${b.toFixed(1)}^{${currentY.toFixed(2)}} = ${inputX.toFixed(1)} $$`;
 		formulaContainer.innerHTML = tex;
-		if (typeof render_temml === 'function') render_temml();
+		if (typeof render_temml === 'function') render_temml(formulaContainer);
+
+		plotLog(b, inputX, currentY, minY, maxY, padding, xValues, yValues);
 	}
 
 	sliderBase.addEventListener('input', renderLog);

@@ -9573,6 +9573,24 @@ html.math-off #contents .MathJax_Display:not([data-math-opt] *):not(.math-alt *)
 math annotation {
 	display: none !important;
 }
+.mn-math-swap-in {
+	animation: mn-math-swap-in 95ms cubic-bezier(.2,.7,.25,1) both;
+}
+.mn-math-swap-out-active {
+	animation: mn-math-swap-out 95ms cubic-bezier(.4,0,.7,.3) both;
+}
+@keyframes mn-math-swap-in {
+	from { opacity: .6; filter: blur(1.5px); }
+	to   { opacity: 1; filter: blur(0); }
+}
+@keyframes mn-math-swap-out {
+	from { opacity: 1; filter: blur(0); }
+	to   { opacity: 0; filter: blur(1.5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+	.mn-math-swap-in,
+	.mn-math-swap-out-active { animation: none; }
+}
 
 /* ── 11.5. Copy-code button — appears only on hover of <pre> ── */
 .md pre {

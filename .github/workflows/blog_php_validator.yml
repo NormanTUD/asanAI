@@ -245,6 +245,10 @@ jobs:
         run: |
           uv run blog/tests/quests_browser_test.py
 
+      - name: Run Live Math Formula Browser Test
+        run: |
+          uv run blog/tests/math_live_browser_test.py
+
       - name: Run Analytics Client Tracker Test
         run: |
           uv run blog/tests/analytics_client_test.py
