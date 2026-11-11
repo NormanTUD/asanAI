@@ -416,10 +416,11 @@ window.__tmFullVizObserver = null;
 /* ECharts keeps its 3D camera in grid3D.viewControl. Carry the live value
    into the next option so a redraw (including setOption(..., true)) cannot
    reset a rotation or zoom the reader made during training. */
-window.tmEchartsPreserveView = function (chart, option) {
-	if (!chart || !option || typeof chart.getOption !== "function") return option;
-	var current;
-	try { current = chart.getOption(); } catch (e) { return option; }
+window.tmEchartsPreserveView = function (chart, option, current) {
+	if (!chart || !option || (typeof chart.getOption !== "function" && !current)) return option;
+	if (!current) {
+		try { current = chart.getOption(); } catch (e) { return option; }
+	}
 	var grids = current && current.grid3D;
 	var grid = grids && (Array.isArray(grids) ? grids[0] : grids);
 	var view = grid && grid.viewControl;
@@ -464,6 +465,86 @@ function tmPreparePlotlyFrame(container, kind) {
 	return reused;
 }
 window.tmPreparePlotlyFrame = tmPreparePlotlyFrame;
+
+/* Plotly has no 3D transition. For arrow plots that change every epoch we
+   interpolate the numeric geometry over a few frames instead of snapping to
+   the next value. A newer epoch cancels the running animation and continues
+   from the frame currently on screen, so the arrows never jump backwards. */
+window.tmAnimatePlotlyTraces = function (el, traces, layout, config, options) {
+	el = typeof el === "string" ? document.getElementById(el) : el;
+	if (!el || !window.Plotly || typeof Plotly.react !== "function" || !Array.isArray(traces)) return;
+	options = options || {};
+	if (el._tmGeoAnim) {
+		cancelAnimationFrame(el._tmGeoAnim.raf);
+		el._tmGeoAnim = null;
+	}
+	var duration = Number(options.duration) || 0;
+	var animate = duration > 0 && !!window.isTraining && !window.__tmPlotDragging &&
+		Array.isArray(el.data) && el.data.length === traces.length;
+	if (!animate) {
+		Plotly.react(el, traces, layout, config);
+		return;
+	}
+
+	var axes = ["x", "y", "z", "u", "v", "w"];
+	var from = el.data.map(function (trace) {
+		var copy = Object.assign({}, trace);
+		axes.forEach(function (axis) {
+			if (Array.isArray(trace[axis])) copy[axis] = trace[axis].slice();
+		});
+		return copy;
+	});
+	var valid = traces.every(function (target, idx) {
+		var old = from[idx];
+		if (!old || old.type !== target.type) return false;
+		return axes.every(function (axis) {
+			if (target[axis] == null) return true;
+			return Array.isArray(target[axis]) && Array.isArray(old[axis]) &&
+				old[axis].length === target[axis].length;
+		});
+	});
+	if (!valid) {
+		Plotly.react(el, traces, layout, config);
+		return;
+	}
+
+	var start = performance.now();
+	var lastPaint = 0;
+	var frameMs = Math.max(0, Number(options.frameMs) || 33);
+	var ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+	var frame = function (now) {
+		if (!el.isConnected) { el._tmGeoAnim = null; return; }
+		var t = Math.min(1, (now - start) / duration);
+		if (t < 1 && now - lastPaint < frameMs) {
+			el._tmGeoAnim = { raf: requestAnimationFrame(frame) };
+			return;
+		}
+		lastPaint = now;
+		if (t >= 1) {
+			el._tmGeoAnim = null;
+			Plotly.react(el, traces, layout, config);
+			return;
+		}
+		var e = ease(t);
+		var mixed = traces.map(function (target, idx) {
+			var old = from[idx];
+			var next = Object.assign({}, target);
+			axes.forEach(function (axis) {
+				if (!Array.isArray(target[axis]) || !Array.isArray(old[axis])) return;
+				next[axis] = target[axis].map(function (value, i) {
+					var previous = old[axis][i];
+					return typeof value === "number" && typeof previous === "number"
+						? previous + (value - previous) * e
+						: value;
+				});
+			});
+			return next;
+		});
+		el._tmGeoAnim = { raf: requestAnimationFrame(frame) };
+		Plotly.react(el, mixed, layout, config);
+	};
+	el._tmGeoAnim = { raf: requestAnimationFrame(frame) };
+};
 
 window.tmScheduleHeavyRender = (function () {
 	let queue = [];
@@ -5610,10 +5691,20 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 		zAxis3D: { type: 'value', name: 'Dim 2' },
 		grid3D: _defaultGrid3DConfig({ bottom: 55 }),
 		series: series,
-		animation: false
+		animation: true,
+		animationDuration: 0,
+		animationDurationUpdate: 320,
+		animationEasingUpdate: 'cubicOut'
 	};
-	if (typeof window.tmEchartsPreserveView === 'function') window.tmEchartsPreserveView(chart, option);
-	chart.setOption(option, true);
+	let current = null;
+	try { current = chart.getOption ? chart.getOption() : null; } catch (e) { current = null; }
+	if (typeof window.tmEchartsPreserveView === 'function') window.tmEchartsPreserveView(chart, option, current);
+	/* Merging keeps the existing series and lets ECharts GL morph the
+	   line3D arrows. A changed series count (e.g. the vector field toggle)
+	   falls back to a clean rebuild. */
+	const previousSeries = current && current.series;
+	const merge = Array.isArray(previousSeries) && previousSeries.length === series.length;
+	chart.setOption(option, !merge);
 }
 
 function _traj_ec3d_line_series_with_arrows(tokenLabel, color, dataPoints, tIdx) {
@@ -6420,7 +6511,8 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 		});
 	}
 	// Combine token traces + VF traces
-	Plotly.react(trajDiv.id, [...circleTraces, ...result.traces, ...vfTraces], layout, { responsive: true, displayModeBar: false });
+	window.tmAnimatePlotlyTraces(trajDiv.id, [...circleTraces, ...result.traces, ...vfTraces], layout,
+		{ responsive: true, displayModeBar: false }, { duration: 260 });
 }
 
 // ─── Main 3D ECharts renderer ───────────────────────────────
@@ -6528,7 +6620,8 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 	const layout = window.tmPlotly.layout3D(title, ['Dim 0', 'Dim 1', 'Dim 2']);
 	window.tmPlotly.equalize3D(layout, traces);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(trajDiv); if (oldChart) oldChart.dispose(); }
-	Plotly.react(trajDiv, traces, layout, { responsive: true, displayModeBar: false });
+	window.tmAnimatePlotlyTraces(trajDiv, traces, layout,
+		{ responsive: true, displayModeBar: false }, { duration: 260 });
 }
 
 // ─── Embedding landmark diamonds ─────────────────────────────
@@ -6913,7 +7006,8 @@ function _shift_render_2d_plotly(container, tokenStrings, rawBase, rawCombined, 
 	});
 	const layout = window.tmPlotly.layout2D('', ['Dim 0', 'Dim 1']);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
-	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
+	window.tmAnimatePlotlyTraces(container, traces, layout,
+		{ responsive: true, displayModeBar: false }, { duration: 260 });
 }
 
 function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, base, combined, modeLabel) {
@@ -6947,7 +7041,8 @@ function _shift_render_3d_plotly(container, tokenStrings, rawBase, rawCombined, 
 	const layout = window.tmPlotly.layout3D(title, ['Dim 0', 'Dim 1', 'Dim 2']);
 	window.tmPlotly.equalize3D(layout, traces);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
-	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
+	window.tmAnimatePlotlyTraces(container, traces, layout,
+		{ responsive: true, displayModeBar: false }, { duration: 260 });
 }
 
 function _tmMarkerTrace(points, name) {

@@ -210,6 +210,55 @@ def open_migration_plot(driver: webdriver.Chrome) -> bool:
     )
 
 
+def run_arrow_animation_case(driver: webdriver.Chrome, base: str) -> None:
+    load_page(driver, base)
+    driver.execute_script(
+        """
+        window.__animOrigRaf = window.requestAnimationFrame;
+        window.__animOrigCancel = window.cancelAnimationFrame;
+        window.requestAnimationFrame = function (fn) {
+            return setTimeout(function () { fn(performance.now()); }, 16);
+        };
+        window.cancelAnimationFrame = function (id) { clearTimeout(id); };
+        window.isTraining = true;
+        const host = document.createElement('div');
+        host.id = 'tm-anim-test';
+        host.style.cssText = 'width:300px;height:200px;';
+        document.body.appendChild(host);
+        Plotly.react(host, [{type:'scatter', mode:'markers', x:[0], y:[0]}], {}, {displayModeBar:false})
+            .then(function () {
+                window.tmAnimatePlotlyTraces(
+                    host,
+                    [{type:'scatter', mode:'markers', x:[1], y:[2]}],
+                    {},
+                    {displayModeBar:false},
+                    {duration: 400, frameMs: 16}
+                );
+            });
+        """
+    )
+    time.sleep(0.18)
+    mid = driver.execute_script(
+        "const el=document.getElementById('tm-anim-test');"
+        "return el && el.data && el.data[0] ? el.data[0].x[0] : null;"
+    )
+    time.sleep(0.6)
+    final = driver.execute_script(
+        "const el=document.getElementById('tm-anim-test');"
+        "return el && el.data && el.data[0] ? el.data[0].x[0] : null;"
+    )
+    driver.execute_script(
+        "window.isTraining = false;"
+        "if (window.__animOrigRaf) window.requestAnimationFrame = window.__animOrigRaf;"
+        "if (window.__animOrigCancel) window.cancelAnimationFrame = window.__animOrigCancel;"
+        "const el=document.getElementById('tm-anim-test'); if (el) el.remove();"
+    )
+    check(isinstance(mid, (int, float)) and 0.01 < mid < 0.99,
+          "arrow animation interpolates between epochs", str(mid))
+    check(isinstance(final, (int, float)) and abs(final - 1) < 1e-6,
+          "arrow animation reaches the target", str(final))
+
+
 def run_start_label_case(driver: webdriver.Chrome, base: str) -> None:
     load_page(driver, base)
     driver.execute_script(
@@ -378,6 +427,7 @@ def main() -> int:
     try:
         time.sleep(1)
         driver = make_driver()
+        run_arrow_animation_case(driver, base)
         run_start_label_case(driver, base)
         run_plotly_3d_case(driver, base)
         run_plotly_2d_case(driver, base)

@@ -3499,7 +3499,11 @@
 			if (node.nodeType === 3 && node.nodeValue.trim()) node.remove();
 		});
 		el.style.height = featurePlotHeight() + "px";
-		Plotly.react(el, traces, layout, { responsive: true, displayModeBar: false });
+		if (typeof window.tmAnimatePlotlyTraces === "function") {
+			window.tmAnimatePlotlyTraces(el, traces, layout, { responsive: true, displayModeBar: false }, { duration: 260 });
+		} else {
+			Plotly.react(el, traces, layout, { responsive: true, displayModeBar: false });
+		}
 		el._tmFeatureRendered = true;
 		el._tmFeatureQueued = false;
 		el._tmFeatureSig = featureSignature(layerIdx);
