@@ -372,7 +372,7 @@
 						try {
 							if (el._fullLayout && el._fullLayout.scene) {
 								Plotly.relayout(el, { 'scene.camera': {
-									eye: { x: 1.25, y: 1.25, z: 1.25 },
+									eye: { x: 1.6, y: 1.6, z: 1.15 },
 									center: { x: 0, y: 0, z: 0 },
 									up: { x: 0, y: 0, z: 1 }
 								} });

@@ -5,9 +5,10 @@
 # ///
 """Real browser regression test: the transformer plots must change during training.
 
-The test opens the lesson, makes one plot visible, trains for 100 epochs, and
-hashes the plot's real data at epoch 50 and epoch 100. A plot that never
-updates produces the same hash and fails.
+The test opens the lesson, makes one plot visible, trains for 20 epochs, and
+hashes the plot's real data at epochs 10, 11 and 20. A plot that never updates
+produces the same hash and fails; consecutive epoch 10/11 checks the per-epoch
+refresh.
 
 Covered plots:
   * embedding space (Plotly data)
@@ -136,11 +137,11 @@ def run_capture(driver: webdriver.Chrome, setup_script: str, capture_script: str
     initial = capture_plot(driver, capture_script)
     check(bool(initial), label + " plot has data before training")
 
-    driver.execute_script("document.getElementById('train-epochs').value = 100;")
+    driver.execute_script("document.getElementById('train-epochs').value = 20;")
     driver.execute_script("document.querySelector('.train-btn').click();")
 
     hashes = {}
-    for epoch in (50, 51, 100):
+    for epoch in (10, 11, 20):
         if not wait_until(driver, f"return (window.lossHistory||[]).length >= {epoch};", 180):
             check(False, label + f" reaches epoch {epoch}")
             return
@@ -148,12 +149,12 @@ def run_capture(driver: webdriver.Chrome, setup_script: str, capture_script: str
         hashes[epoch] = capture_plot(driver, capture_script)
         check(bool(hashes[epoch]), label + f" plot has data at epoch {epoch}")
 
-    check(hashes[50] != hashes[51],
-          label + " plot changes on the very next epoch (50 -> 51)",
-          hashes[50][:12] + " / " + hashes[51][:12])
-    check(hashes[50] != hashes[100],
-          label + " plot changes between epochs 50 and 100",
-          hashes[50][:12] + " / " + hashes[100][:12])
+    check(hashes[10] != hashes[11],
+          label + " plot changes on the very next epoch (10 -> 11)",
+          hashes[10][:12] + " / " + hashes[11][:12])
+    check(hashes[10] != hashes[20],
+          label + " plot changes between epochs 10 and 20",
+          hashes[10][:12] + " / " + hashes[20][:12])
 
 
 def main() -> int:

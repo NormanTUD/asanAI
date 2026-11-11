@@ -297,6 +297,20 @@ function registerLazyRenderable(containerId, registry, observer, data, renderFn,
 		});
 	};
 	if (entry) entry._tmQueueRender = queueRender;
+	// During training every epoch must reach the visible plot. Render it
+	// synchronously instead of waiting for the shared heavy-render queue;
+	// offscreen plots stay lazy.
+	if (window.isTraining && isElementInViewport(container)) {
+		const live = registry.get(containerId);
+		if (live) {
+			live.rendered = true;
+			live._tmScheduled = false;
+			const loader = container.querySelector('.plot-loading');
+			if (loader) loader.remove();
+			renderFn();
+			return;
+		}
+	}
 	if (isElementInViewport(container)) queueRender();
 	else tmScheduleWhenNearViewport(container, containerId, queueRender);
 }
@@ -2047,6 +2061,8 @@ async function syncTrainingState(weightVars) {
 }
 
 
+
+
 function convert_weights_to_tensors(weights) {
 	const vocab = Object.keys(window.persistentEmbeddingSpace);
 	const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
@@ -2848,16 +2864,19 @@ function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, w
 		return;
 	}
 
-	clearFFNEquationsContainer();
-	for (let l = 0; l < n_layers; l++) {
-		ensureUnifiedLayerContainer(l, n_layers, 'mha-calculation-details');
+	const trainingUpdate = !!window.isTraining && !!document.querySelector('.tm-layer-card');
+	if (!trainingUpdate) {
+		clearFFNEquationsContainer();
+		for (let l = 0; l < n_layers; l++) {
+			ensureUnifiedLayerContainer(l, n_layers, 'mha-calculation-details');
+		}
 	}
 
 	const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
 	create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
 	run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
 
-	renderAttentionDetails();
+	if (!trainingUpdate) renderAttentionDetails();
 	renderTrajectoryPlot(d_model);
 	tlab_render_themeriver(d_model);        // ← NEU
 	pruneOrphanedMigrationPlots();
