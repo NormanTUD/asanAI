@@ -751,14 +751,14 @@
 		var note = $("[data-mix-note]", root);
 		if (!bar || !legend) return;
 		var data = [
-			{ name: "Web", pct: 55, c: "var(--tm-sky)", note: "Common Crawl and similar: huge, noisy, heavily filtered." },
-			{ name: "Code", pct: 13, c: "var(--tm-green)", note: "GitHub and similar: crucial for programming and structured reasoning." },
-			{ name: "Books", pct: 8, c: "var(--tm-gold)", note: "Long-form text: structure, argument, and narrative." },
-			{ name: "Papers", pct: 4, c: "var(--tm-coral)", note: "Scientific writing: precise claims and references." },
-			{ name: "Wikipedia", pct: 2, c: "var(--tm-petrol)", note: "Reference text: compact factual prose." },
-			{ name: "Math", pct: 4, c: "var(--tm-lime)", note: "Synthetic and curated problems: symbolic reasoning." },
-			{ name: "Conversation", pct: 4, c: "var(--tm-faint)", note: "Curated dialogues and instruction data." },
-			{ name: "Multimodal", pct: 10, c: "var(--tm-blue)", note: "Image captions, alt-text, and paired media." }
+			{ name: "Web", pct: 55, c: "var(--tm-sky)", note: DEMO_DE ? "Common Crawl und Ähnliches: riesig, verrauscht, stark gefiltert." : "Common Crawl and similar: huge, noisy, heavily filtered." },
+			{ name: "Code", pct: 13, c: "var(--tm-green)", note: DEMO_DE ? "GitHub und Ähnliches: entscheidend für Programmieren und strukturiertes Denken." : "GitHub and similar: crucial for programming and structured reasoning." },
+			{ name: "Books", pct: 8, c: "var(--tm-gold)", note: DEMO_DE ? "Langtexte: Struktur, Argument und Erzählung." : "Long-form text: structure, argument, and narrative." },
+			{ name: "Papers", pct: 4, c: "var(--tm-coral)", note: DEMO_DE ? "Wissenschaftliche Texte: präzise Aussagen und Belege." : "Scientific writing: precise claims and references." },
+			{ name: "Wikipedia", pct: 2, c: "var(--tm-petrol)", note: DEMO_DE ? "Referenztexte: kompakte, faktische Prosa." : "Reference text: compact factual prose." },
+			{ name: "Math", pct: 4, c: "var(--tm-lime)", note: DEMO_DE ? "Synthetische und kuratierte Aufgaben: symbolisches Denken." : "Synthetic and curated problems: symbolic reasoning." },
+			{ name: "Conversation", pct: 4, c: "var(--tm-faint)", note: DEMO_DE ? "Kuratierte Dialoge und Instruktionsdaten." : "Curated dialogues and instruction data." },
+			{ name: "Multimodal", pct: 10, c: "var(--tm-blue)", note: DEMO_DE ? "Bildunterschriften, Alt-Text und gepaarte Medien." : "Image captions, alt-text, and paired media." }
 		];
 		bar.innerHTML = data.map(function (d, i) {
 			return '<span class="mix-seg" data-mix-i="' + i + '" style="flex:' + d.pct + ';background:' + d.c + '" title="' + escapeHtml(d.name + " · " + d.pct + "%") + '"></span>';
@@ -771,7 +771,7 @@
 			chosen = chosen === i ? -1 : i;
 			$$(".mix-seg", bar).forEach(function (seg, j) { seg.classList.toggle("is-dim", chosen !== -1 && j !== chosen); });
 			$$("button", legend).forEach(function (btn, j) { btn.classList.toggle("is-on", j === chosen); });
-			if (note) note.textContent = chosen === -1 ? "Hover or tap a source to see what it contributes. The mix is approximate; labs differ." : data[chosen].note;
+			if (note) note.textContent = chosen === -1 ? (DEMO_DE ? "Tippe auf eine Quelle, um zu sehen, was sie beiträgt. Die Mischung ist ungefähr; Labore unterscheiden sich." : "Hover or tap a source to see what it contributes. The mix is approximate; labs differ.") : data[chosen].note;
 		}
 		$$("[data-mix-i]", bar).concat($$("[data-mix-i]", legend)).forEach(function (el) {
 			el.addEventListener("click", function () { select(parseInt(el.getAttribute("data-mix-i"), 10)); });

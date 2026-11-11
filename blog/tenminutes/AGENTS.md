@@ -131,7 +131,7 @@ update its German key in the same edit and test the page with `?lang=de` and
   Transformer, Prompt, Agent, Fine-Tuning, Feature Map, Residual Stream, Head,
   Logits, Sampling, Top-p, Context Window, Query/Key/Value, Softmax, Loss,
   Batch, Gradient, Epoch, Overfitting, Underfitting, Pretraining,
-  Post-Training, Self-Attention. Translate the surrounding sentence, not the
+  Post-Training, Refusal, Self-Attention. Translate the surrounding sentence, not the
   technical noun.
 - The full-article block is translated server-side; its links carry
   `?lang=de`. `TM_FULL_LESSON_TITLES_DE` must cover every full-lesson slug used

@@ -469,8 +469,8 @@
     if (morphRaf) cancelAnimationFrame(morphRaf);
     if (morphOverlay && morphOverlay.parentNode) morphOverlay.parentNode.removeChild(morphOverlay);
     if (morphHiddenEl) { morphHiddenEl.style.opacity = ""; morphHiddenEl = null; }
-    var oldPts = sampleCanvas(oldCanvas, 1800);
-    var newPts = sampleCanvas(newCanvas, 1800);
+    var oldPts = sampleCanvas(oldCanvas, 1400);
+    var newPts = sampleCanvas(newCanvas, 1400);
     if (!oldPts.length || !newPts.length) { done(); return; }
     var host = els.demo;
     var overlay = document.createElement("canvas");
@@ -491,7 +491,7 @@
     for (var i = 0; i < N; i++) {
       pairs.push({ a: oldPts[i % oldPts.length], b: newPts[i % newPts.length] });
     }
-    var cols = 18, rows = 12;
+    var cols = 16, rows = 10;
     var gw = cols + 1, gh = rows + 1;
     var field = new Array(gw * gh);
     var sigma = Math.max(w, h) * 0.18;
@@ -549,7 +549,7 @@
       ctx.globalAlpha = 1;
     }
     var t0 = performance.now();
-    var dur = 230;
+    var dur = 180;
     function frame(now) {
       var t = clamp((now - t0) / dur, 0, 1);
       var e = ease(t);
@@ -609,7 +609,7 @@
       } else {
         run();
       }
-    }, 50);
+    }, 30);
   }
   function go(day, step) {
     var oldDay = state.day;

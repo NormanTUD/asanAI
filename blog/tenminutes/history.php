@@ -21,6 +21,7 @@
 						Modern AI grew out of counting bones, models of the sky, formal logic,
 						cybernetic feedback, a machine that learned from its mistakes, two winters, and
 						a crowd of contributors who are usually left out of the story.
+						How did a tally bone become a machine that predicts the next token?
 					</p>
 				</div>
 			</section>
@@ -136,7 +137,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">Each abstraction moves the task further from the person.</p>
-							<p class="aha-sub">The wheel abstracts movement; the computer abstracts thought. Every layer removes another implementation detail, so the person has less of the direct task to handle by hand.</p>
+							<p class="aha-sub">The wheel abstracts movement; the computer abstracts thought. Every layer removes another implementation detail, so the person has less of the direct task to handle by hand. Where it lives today: the wheel becomes the tensor operation, the stored count becomes memory, and abstraction becomes the layer.</p>
 						</div>
 					</section>
 
@@ -219,7 +220,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">Memory can live outside the mind.</p>
-							<p class="aha-sub">A notch in a bone keeps a count beyond the moment of counting. Ledgers, catalogues and databases repeat the same thought: they put the number somewhere you can come back to.</p>
+							<p class="aha-sub">A notch in a bone keeps a count beyond the moment of counting. Ledgers, catalogues and databases repeat the same thought: they put the number somewhere you can come back to. Where it lives today: the notch is a log, the ledger is a database, and the catalogue is an index.</p>
 						</div>
 					</section>
 
@@ -285,7 +286,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">Thinking becomes something you can mechanically do.</p>
-							<p class="aha-sub">A syllogism, a grammar, and a wheel of concepts are all attempts to make valid reasoning mechanical, long before there is a machine to run it.</p>
+							<p class="aha-sub">A syllogism, a grammar, and a wheel of concepts are all attempts to make valid reasoning mechanical, long before there is a machine to run it. Where it lives today: the syllogism becomes a program, grammar becomes a parser, and the wheel of concepts becomes an ontology.</p>
 						</div>
 					</section>
 
@@ -323,7 +324,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">A notation can turn an argument into arithmetic.</p>
-							<p class="aha-sub">Leibniz did not build the thinking machine. He bet that a universal notation would make disagreement a calculation, and that bet is the ancestor of every formal language since.</p>
+							<p class="aha-sub">Leibniz did not build the thinking machine. He bet that a universal notation would make disagreement a calculation, and that bet is the ancestor of every formal language since. Where it lives today: his notation becomes the loss function and the formal language of optimisation.</p>
 						</div>
 					</section>
 
@@ -395,7 +396,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">The stored program separates the machine from its behaviour.</p>
-							<p class="aha-sub">Once instructions live in the same memory as data, a computer can be changed by writing rather than by rebuilding.</p>
+							<p class="aha-sub">Once instructions live in the same memory as data, a computer can be changed by writing rather than by rebuilding. Where it lives today: the stored program is still the model of the GPU and the training loop.</p>
 						</div>
 					</section>
 
@@ -613,7 +614,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">Learning is error correction.</p>
-							<p class="aha-sub">The perceptron does not need a rule for every case. It needs an error signal and a way to change its weights. That is the seed of every trained model.</p>
+							<p class="aha-sub">The perceptron does not need a rule for every case. It needs an error signal and a way to change its weights. That is the seed of every trained model. Where it lives today: the error signal is the gradient, and the weight change is the optimizer step.</p>
 						</div>
 					</section>
 
@@ -745,7 +746,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">The return was scale plus a better learning method.</p>
-							<p class="aha-sub">Backpropagation, data, GPUs, and architectural luck compounded. The winters belonged to the story too.</p>
+							<p class="aha-sub">Backpropagation, data, GPUs, and architectural luck compounded. The winters belonged to the story too. Where it lives today: backpropagation is still the gradient, data is still the corpus, and the GPU is still the accelerator.</p>
 						</div>
 					</section>
 
@@ -952,7 +953,9 @@
 								fixed table of fragments, usually built with byte-pair encoding. Common words
 								become one token; rare words split into pieces. The table is fixed before
 								training, so it quietly decides what is cheap, what is expensive, and what
-								the model can represent at all.
+								the model can represent at all. Where it lives today: attention is the
+								block, pretraining is next-token prediction, scale is parameters and
+								tokens, and the tokenizer is the fixed table under all of it.
 							</p>
 						</div>
 					</section>

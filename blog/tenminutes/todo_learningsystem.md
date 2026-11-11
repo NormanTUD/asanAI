@@ -40,3 +40,12 @@ Status: in Arbeit
 - DONE: Punktknubbel faden am Ende aus
 - DONE: Convolution-Bild-Cache beim Remount
 - DONE: Cue-Unterdrueckung nach Schrittwechsel
+- DONE: Element-Animation statt Canvas-Morph
+- DONE: Sampling-Bars animieren nur Breiten
+- DONE: Attention-Arcs morphen intern
+- DONE: Transformer-Highlight gleitet
+- DONE: Keine Partikel mehr
+- DONE: Statische DOM-Header bleiben stehen
+- PENDING: volle Demos aus attentionlab/transformer einbinden
+- DONE: Flow-Morph 180ms
+- DONE: Keine Partikel bei Schritten
