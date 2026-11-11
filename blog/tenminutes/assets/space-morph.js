@@ -260,19 +260,33 @@
 
 	function updateSeparationBox() {
 		const info = separationInfo();
-		const text = (info.separated ? "✓ " : "") + separationStatusLines().join(" ");
+		const lines = separationStatusLines();
+		const fallback = info.separated
+			? (DE ? "Linear trennbar: ja." : "Linearly separable: yes.")
+			: (DE ? "Noch nicht linear trennbar." : "Not linearly separable yet.");
+		const body = lines && lines.length ? lines.join(" ") : fallback;
+		const text = (info.separated ? "✓ " : "") + body;
 		const el = document.getElementById("ism-separation-box");
 		if (el) {
 			el.textContent = text;
 			el.classList.toggle("is-ok", info.separated);
 		}
-		const overlay = document.getElementById("ism-canvas-status");
+		let overlay = document.getElementById("ism-canvas-status");
+		if (!overlay && wrap) {
+			overlay = document.createElement("div");
+			overlay.id = "ism-canvas-status";
+			overlay.className = "ism-canvas-status";
+			overlay.setAttribute("aria-live", "polite");
+			wrap.appendChild(overlay);
+		}
 		if (overlay) {
 			const visible = cur === 7 || cur === 8;
 			overlay.hidden = !visible;
 			overlay.textContent = text;
 			overlay.classList.toggle("is-ok", info.separated);
+			overlay.setAttribute("data-separation", info.separated ? "ok" : "fail");
 		}
+		if (wrap) wrap.setAttribute("data-separation", info.separated ? "ok" : "fail");
 		updateNextButtonGate();
 	}
 
@@ -291,8 +305,11 @@
 
 	function drawSeparationStatus(C) {
 		if (!(cur >= 7 || prevIdx >= 7)) return;
-		const lines = separationStatusLines();
+		let lines = separationStatusLines();
 		const info = separationInfo();
+		if (!lines || !lines.length) {
+			lines = [info.separated ? (DE ? "Linear trennbar: ja." : "Linearly separable: yes.") : (DE ? "Noch nicht linear trennbar." : "Not linearly separable yet.")];
+		}
 		const canvasEl = document.getElementById("ism-canvas");
 		if (canvasEl) {
 			canvasEl.setAttribute("data-separation", info.separated ? "ok" : "fail");
@@ -304,6 +321,9 @@
 		const h = 26 + lines.length * lineH;
 		const y = 14;
 		ctx.save();
+		ctx.globalAlpha = 1;
+		ctx.setLineDash([]);
+		ctx.textBaseline = "alphabetic";
 		ctx.fillStyle = C.dark ? "rgba(7,26,34,.86)" : "rgba(255,255,255,.9)";
 		ctx.strokeStyle = info.separated ? C.green : C.line;
 		ctx.lineWidth = 1;
@@ -493,7 +513,7 @@
 			if (scene.formula) {
 				const formula = document.createElement("div");
 				formula.className = "ism-formula prose-math";
-				formula.setAttribute("data-tex", scene.formula);
+				formula.setAttribute("data-tex", DE && scene.formulaDe ? scene.formulaDe : scene.formula);
 				if (scene.formulaDe) formula.setAttribute("data-tex-de", scene.formulaDe);
 				formula.setAttribute("data-tex-display", "true");
 				item.appendChild(formula);
@@ -1146,8 +1166,16 @@
 		window.addEventListener("tm:resetcamera", function () { dragA = 0; dragB = 0; requestDraw(); });
 
 		window.addEventListener("resize", fitCopyHeight);
-		window.addEventListener("resize", requestDraw);
+		window.addEventListener("resize", function () { updateSeparationBox(); requestDraw(); });
 		window.addEventListener("tm:theme", requestDraw);
+		window.addEventListener("tm:theme", updateSeparationBox);
+		window.addEventListener("tm:resetcamera", updateSeparationBox);
+		setInterval(function () {
+			if (cur === 7 || cur === 8) {
+				const overlay = document.getElementById("ism-canvas-status");
+				if (!overlay || !overlay.textContent || !overlay.textContent.trim()) updateSeparationBox();
+			}
+		}, 700);
 		if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitCopyHeight);
 		if (window.ResizeObserver) new ResizeObserver(requestDraw).observe(wrap);
 		observe();

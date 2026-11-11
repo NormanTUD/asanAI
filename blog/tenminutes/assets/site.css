@@ -9057,3 +9057,29 @@ html[lang="de"] .tm-lang-only-de { display: inline !important; }
 	min-width: 12px;
 	min-height: 12px;
 }
+
+/* Hard guard: the status must be a top-left overlay inside the ism canvas. */
+#ism-wrap .ism-canvas-status {
+	position: absolute !important;
+	top: 10px !important;
+	left: 10px !important;
+	right: auto !important;
+	bottom: auto !important;
+	transform: none !important;
+	z-index: 6 !important;
+	display: block;
+	max-width: min(320px, calc(100% - 20px));
+	padding: 7px 10px;
+	border: 1px solid var(--tm-line);
+	background: color-mix(in srgb, var(--tm-card) 94%, transparent);
+	color: var(--tm-ink-soft);
+	font: 700 0.78rem/1.4 var(--tm-ui);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	pointer-events: none;
+}
+#ism-wrap .ism-canvas-status[hidden] { display: none !important; }
+#ism-wrap .ism-canvas-status.is-ok {
+	border-color: var(--tm-green);
+	color: var(--tm-green-deep);
+	background: color-mix(in srgb, var(--tm-green) 12%, var(--tm-card));
+}

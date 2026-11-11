@@ -657,8 +657,8 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 																		</aside>
 																	</div>
 																	<div class="ism-controls">
-																		<button type="button" id="ism-prev" data-arrow-prev class="ism-btn" aria-label="Previous step">←</button>
-																		<button type="button" id="ism-next" data-arrow-next class="ism-btn" aria-label="Next step">→</button>
+																		<button type="button" id="ism-prev" data-arrow-prev class="ism-btn ism-btn--nav" aria-label="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Vorheriger Schritt' : 'Previous step'; ?>">← <?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Zurück' : 'Back'; ?></button>
+																		<button type="button" id="ism-next" data-arrow-next class="ism-btn ism-btn--nav" disabled aria-label="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Nächster Schritt' : 'Next step'; ?>"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Weiter' : 'Next'; ?> →</button>
 																		<button type="button" id="ism-reset-camera" class="ism-btn" aria-label="Reset view" title="Reset view">⟲</button>
 																		<div id="ism-dots" class="ism-dots" role="group" aria-label="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Folien' : 'Slides'; ?>"></div>
 																		<span id="ism-counter" class="ism-counter">1 / 9</span>
