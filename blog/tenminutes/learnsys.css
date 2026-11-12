@@ -272,6 +272,7 @@ button{color:inherit}
 .ls-help-grid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 12px;align-items:center}
 .ls-help-grid span:nth-child(odd){white-space:nowrap;color:var(--ls-muted)}
 .ls-help kbd{display:inline-block;min-width:17px;padding:1px 4px;border:1px solid var(--ls-line-strong);background:var(--ls-paper-2);color:var(--ls-ink);font:600 var(--ls-fs-micro) "Open Sans",sans-serif;text-align:center}
+.ls-help .ls-help-scroll{display:inline-block;min-width:17px;padding:1px 4px;border:1px solid var(--ls-line-strong);background:var(--ls-paper-2);color:var(--ls-ink);font:600 var(--ls-fs-micro) "Open Sans",sans-serif;text-align:center}
 @keyframes lsMixIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media (max-width:640px){.ls-mix{left:10px;right:10px;bottom:10px;justify-content:flex-start}.ls-mix-row{gap:3px}.ls-mix-label{flex:1 1 100%;order:-1;padding:0 1px}.ls-mix-pos button{min-width:28px;height:28px}.ls-help{left:10px;right:10px;bottom:10px;width:auto}}
 @media (prefers-reduced-motion:reduce){
