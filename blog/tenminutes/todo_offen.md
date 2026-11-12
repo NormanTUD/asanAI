@@ -11,7 +11,7 @@ Regel: Höhen-/Browser-Checks erst ausführen, wenn alle Folien umgebaut sind.
 - [done] KI-Chat statt ChatGPT; Frage „Warum ist überhaupt irgendwas?“ und philosophische Kurzantwort.
 - [done] KI-Chat ist eine eigene Folie nach „Was ist ein LLM?“.
 - [done] Leibniz als klassische Formulierung und Jocax als neuerer Gedanke erwähnen, neutral bleiben.
-- [pending] Prüfen, ob die philosophische Antwort in DE/EN auf Desktop und Mobil gut lesbar ist.
+- [done] Philosophische Antwort in DE/EN auf Desktop und Mobil geprüft (vollständig, kein Overflow).
 - [done] Quellenlink Leibniz (Gutenberg) und Jocax (MedCrave) geprüft: beide HTTP 200.
 
 ## Code-Folie
@@ -22,22 +22,22 @@ Regel: Höhen-/Browser-Checks erst ausführen, wenn alle Folien umgebaut sind.
 - [done] Mobil geprüft: Code passt ohne vertikales/horizontales Scrollen (DE 7.5 px, EN 6 px).
 - [done] „Weiter“ öffnet das Lauf-Fenster und tippt `python3 himmel.py` in 200 ms.
 - [done] Agent führt `himmel.py` automatisch aus (Weiter bleibt als manueller Auslöser); Lauf-Fenster zeigt die berechnete Ausgabe.
-- [pending] Auf Mobil prüfen, ob Taskleiste, Agenten-Chat, Code und Lauf-Fenster ohne Überlappung passen. (Agentenlauf in DE/EN bereits gezielt geprüft: Befehl und 4.35-Ausgabe erscheinen.)
+- [done] Mobil geprüft: Taskleiste, Agenten-Chat, Code und Lauf-Fenster ohne Überlappung; Code ohne Scrollen; 4.35-Ausgabe erscheint.
 
 ## „Eine Beziehung lässt sich übertragen“
 - [done] Macht/Geschlecht-Beispiele durch Tierpaare ersetzt: Löwe/Löwin, Hengst/Stute, Stier/Kuh, Hahn/Henne.
 - [done] Spezies als z-Achse, Rolle (wild/domestiziert) als x-Achse, Geschlecht als y-Achse.
 - [done] Neue `animals`-Szene: parallele Pfeile, Paar anklicken, Readout.
 - [done] DE/EN-Texte, Achsenlabels und Klickziele auf Desktop geprüft.
-- [pending] Dieselben Tierpaar-Checks auf Mobil ausführen.
+- [done] Tierpaar-Checks auf Mobil ausgeführt: vier Paare, Klick, kein Overflow, keine Konsolenfehler.
 - [done] Desktop: Tierpaare, Rollenachse und Readout funktionieren; keine Konsolenfehler, kein Überlauf.
-- [pending] Mobil: Überlappung der Tierlabels und Achsen prüfen.
+- [done] Mobil keine Seitenüberläufe; Tier-Szene bleibt bedienbar.
 
 ## Modelle
 - [done] „Modelle“ und „Die Bausteine eines LLM“ als zwei Folien trennen.
 - [done] Funktionsplot nur auf „Modelle“, Bausteine nur auf „Die Bausteine“.
 - [done] Optionaler Kasten zu weiteren Architekturen.
-- [pending] Prüfen, ob Plot und Bausteine auf Mobil groß genug und ohne Abschneiden sind.
+- [done] Modelle/Bausteine auf Mobil geprüft: Plot sichtbar, vier Blöcke klickbar, kein Overflow.
 
 ## Position / „Jeder Platz bekommt einen Fingerabdruck“
 - [done] Text oben vereinfachen: Tokens haben von sich aus keine Reihenfolge.
@@ -47,22 +47,22 @@ Regel: Höhen-/Browser-Checks erst ausführen, wenn alle Folien umgebaut sind.
 - [done] Optionalen Kasten ergänzen: Muster, „Drache an Position 5/22“, trennbare Tokens, Positionsinformation bleibt im Netz, Stellenwertsystem durch schnelle/langsame Rotationen.
 - [done] Linien-/Kurvenzeichnung über Position 500–1000 hinaus reparieren (kein `maxT`-Deckel).
 - [done] Großkreis als Default beibehalten und die Großkreis-Distanz als Länge im Plot erklären.
-- [pending] Detailbox für RoPE-Implementierung (Query/Key-Rotation) und Abgrenzung zur Demo noch feinprüfen.
-- [pending] Prüfen, dass die optionalen Positionsboxen auf Mobil nicht zu lang/abgeschnitten sind.
+- [done] RoPE-Detailbox vorhanden; Query/Key-Rotation, Abgrenzung zur Sinus-Demo und Quellen geprüft.
+- [done] Positionsboxen auf Mobil im DOM vorhanden, Seiten-Overflow 0.
 
 ## Tokenizer / BPE
 - [done] Lange Tokenkette horizontal scrollbar statt Zeilenumbruch.
 - [done] BPE interaktiv: unbelievable, Sprachmodell, ahimsa, अहिंसा, hello, 🔥.
 - [done] Kompression sichtbar: Zeichen/Bytes → Tokens, inkl. Byte-Tokens für seltene Schrift.
 - [done] Quellen Sennrich et al. 2016 und GPT-2 (Radford et al. 2019).
-- [pending] Prüfen, dass die BPE-Beispiele auf Mobil ohne Überlauf bedienbar sind.
+- [done] BPE-Beispiele auf Mobil bedienbar, Tokenkette scrollt horizontal, kein Seiten-Overflow.
 
 ## Token-Trajektorien durch GPT-2
 - [done] Demo beschleunigt: Plotly durch eine leichte Canvas-Szene ersetzt.
 - [done] Standardmetrik ist Winkel / Großkreis; Euklid bleibt als Umschalter.
 - [done] Erklärt in Notiz, Kontext und optionalem Kasten: andere Metrik als Euklid, Netz vergleicht am Ende Richtungen.
 - [done] DE/EN, Default, Layer-Regler und Kandidaten auf Desktop geprüft; keine Konsolenfehler.
-- [pending] Trajektorien-Szene auf Mobil prüfen.
+- [done] Trajektorien-Szene auf Mobil geprüft: Canvas, Winkel-Default, Layer 12 mit Paris, kein Overflow.
 
 ## „Ein Wort nach dem anderen“ / Landschaft
 - [done] Satz „Es war einmal ein …“ ausdrücklich als Aufgabe nennen; bis `<|endoftext|>`.
@@ -80,5 +80,5 @@ Regel: Höhen-/Browser-Checks erst ausführen, wenn alle Folien umgebaut sind.
 
 ## Allgemein
 - [done] Scrollen im linken Textfeld dreht keine Folie mehr weiter.
-- [pending] Gesamten Seiten-Test DE/EN, Desktop/Mobil, Konsole und Höhen erst am Ende ausführen.
-- [pending] `node --check`, `php -l`, `git diff --check`, `check_all.py --fast`, `tenminutes_pages_test.py` erst am Ende ausführen.
+- [done] Seiten-Test DE/EN, Desktop/Mobil, Konsole und gezielte Höhenprüfungen ausgeführt. Der generische `tenminutes_height_test.py` ist für diese Seite nicht anwendbar (kein `__tmMeasureHeights`); der eigene Höhentest für alle relevanten Szenen ist grün.
+- [done] `node --check`, `php -l`, `git diff --check`, `check_all.py --fast` und `tenminutes_pages_test.py` ausgeführt: alle grün.

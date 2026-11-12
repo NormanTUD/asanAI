@@ -1492,7 +1492,7 @@
         if (i >= agentText.length) { if (done) done(); return; }
         i++;
         agentMsgEl.textContent = agentText.slice(0, i);
-        later(step, 18);
+        later(step, 16);
       }
       step();
     }
@@ -1502,15 +1502,15 @@
         if (i >= spans.length) {
           phase = "ready";
           setButton(DE ? "Weiter" : "Next", false);
-          later(function () { if (phase === "ready") runProgram(); }, 900);
+          later(function () { if (phase === "ready") runProgram(); }, 300);
           return;
         }
         spans[i].classList.add("is-visible");
-        var delay = /^\s+$/.test(tokens[i].text) ? 0 : 28;
+        var delay = /^\s+$/.test(tokens[i].text) ? 0 : 24;
         i++;
         later(typeNext, delay);
       }
-      later(typeNext, 240);
+      later(typeNext, 180);
     }
     function reset() {
       clearTimers();
@@ -1525,13 +1525,13 @@
       show(runWin, false);
       setButton(DE ? "Weiter" : "Next", true);
       fitCode();
-      later(function () { if (thinkingEl) thinkingEl.classList.add("on"); }, 260);
+      later(function () { if (thinkingEl) thinkingEl.classList.add("on"); }, 300);
       later(function () {
         if (thinkingEl) thinkingEl.classList.remove("on");
         typeAgent(function () {
           typeCode();
         });
-      }, 1050);
+      }, 900);
     }
     function runProgram() {
       phase = "running";
@@ -1683,6 +1683,7 @@
     var landPoints = [];
     var landscape = true, landSize = null;
     var landYaw = -0.62, landPitch = 0.92, landZoom = 1;
+    var landCamTween = 0;
     var landDrag = null, landMoved = false, landHits = [], landOptionPoints = [];
     var landBall = { x: 0, y: 0, init: false, animating: false };
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -1696,7 +1697,8 @@
     var knownProbs = {};
     var tempShown = 0.8;
     var REVEAL_R = 0.95, REVEAL_FEATHER = 0.35;
-    var lastPath = [], lastProbs = null, lastTop = null;
+    var lastPath = [], lastProbs = null, lastTop = null, lastWells = [], lastView = null;
+    var landStaticCanvas = null, landStaticKey = "", landStaticDirty = true;
     var LAND_X = 2.95, LAND_Y = 2.05;
     var MEADOW_WORDS = DE ? ["Hund", "Katze", "Baum", "Haus", "Auto", "Buch", "Maus", "Lampe", "Blume", "Stein", "Tisch", "Stuhl", "Wasser", "Feuer", "Nacht", "Sonne", "Regen", "Mond", "Stern", "Fluss", "Berg", "Vogel", "Fisch", "Milch", "Zucker", "Tür", "Fenster", "Brücke", "Feld", "Küche", "Garten", "Schiff", "Uhr", "Straße", "Stadt", "Brot", "Apfel", "Tee", "Hut", "Glocke"] : ["Dog", "Cat", "Tree", "House", "Car", "Book", "Mouse", "Lamp", "Flower", "Stone", "Table", "Chair", "Water", "Fire", "Night", "Sun", "Rain", "Moon", "Star", "River", "Mountain", "Bird", "Fish", "Milk", "Sugar", "Door", "Window", "Bridge", "Field", "Kitchen", "Garden", "Ship", "Clock", "Road", "City", "Bread", "Apple", "Tea", "Hat", "Bell"];
 
@@ -1971,6 +1973,27 @@
       return C.green;
     }
 
+    function tweenCamera(pitch, yaw, zoom) {
+      if (reducedMotion) {
+        landPitch = pitch; landYaw = yaw; landZoom = zoom;
+        landStaticDirty = true; drawLandscape(); return;
+      }
+      if (landCamTween) cancelAnimationFrame(landCamTween);
+      var startP = landPitch, startY = landYaw, startZ = landZoom, start = performance.now();
+      var dur = (api.motion && api.motion.camera) || 280;
+      function step(now) {
+        var t = Math.min(1, (now - start) / dur);
+        var e = t * t * (3 - 2 * t);
+        landPitch = startP + (pitch - startP) * e;
+        landYaw = startY + (yaw - startY) * e;
+        landZoom = startZ + (zoom - startZ) * e;
+        landStaticDirty = true;
+        drawLandscape();
+        if (t < 1) landCamTween = requestAnimationFrame(step);
+        else landCamTween = 0;
+      }
+      landCamTween = requestAnimationFrame(step);
+    }
     function drawWordBackdrop(ctx, w, h, C) {
       var seed = 17;
       function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
@@ -2064,10 +2087,8 @@
       ctx.restore();
       ctx.globalAlpha = 1;
     }
-    function drawLandscape() {
-      if (!landscape || !landSize) return;
+    function drawLandscapeStatic(ctx, w, h) {
       var C = api.colors();
-      var ctx = landSize.ctx, w = landSize.w, h = landSize.h;
       if (w < 10 || h < 10) return;
       ctx.clearRect(0, 0, w, h);
       var sky = ctx.createRadialGradient(w * 0.5, h * 0.4, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.62);
@@ -2088,6 +2109,7 @@
       });
       liveReveal = items.filter(function (it) { return it.current; }).map(function (it) { return { x: it.x, y: it.y }; });
       var wells = landWells(items.filter(function (it) { return it.known; })).concat(pathWells, baseValleys);
+      lastWells = wells;
       var currentItems = items.filter(function (it) { return it.current; }).sort(function (a, b) { return b.p - a.p; });
       var top = currentItems[0] || null;
       lastProbs = probByToken;
@@ -2126,6 +2148,7 @@
       var oy = h / 2 - (minY + maxY) / 2 * scale;
       function sx(rx) { return rx * scale + ox; }
       function sy(ry) { return ry * scale + oy; }
+      lastView = { sx: sx, sy: sy };
       var sbx0 = Infinity, sbx1 = -Infinity, sby0 = Infinity, sby1 = -Infinity;
       for (var sbi = 0; sbi <= NX; sbi++) {
         for (var sbj = 0; sbj <= NY; sbj++) {
@@ -2506,62 +2529,6 @@
         }
       });
 
-      var ballTarget = null;
-      if (generated.length) {
-        var lastIdx = generated.length - 1;
-        var lastToken = generated[lastIdx];
-        var lastCat = catalogByToken[lastToken];
-        if (lastCat) {
-          var lastP = probByToken[lastToken];
-          if (lastP == null && pathProb[lastIdx] != null) lastP = pathProb[lastIdx];
-          ballTarget = { x: lastCat.x, y: lastCat.y, p: lastP == null ? BASE_PROB : lastP };
-        }
-      }
-      if (!ballTarget && top) ballTarget = top;
-      if (ballTarget) {
-        var ballP = landProb(ballTarget.x, ballTarget.y, wells);
-        var ballPt = landRaw(ballTarget.x, ballTarget.y, landZ(ballP));
-        var btx = sx(ballPt.x), bty = sy(ballPt.y);
-        if (!landBall.init) { landBall.x = btx; landBall.y = bty; landBall.init = true; }
-        var bdx = btx - landBall.x, bdy = bty - landBall.y;
-        if (reducedMotion) {
-          landBall.x = btx; landBall.y = bty; landBall.animating = false;
-          landTrail = [];
-        } else if (Math.abs(bdx) + Math.abs(bdy) > 1.2) {
-          landBall.x += bdx * 0.18;
-          landBall.y += bdy * 0.18;
-          landBall.animating = true;
-          landTrail.push({ x: landBall.x, y: landBall.y });
-          if (landTrail.length > 26) landTrail.shift();
-        } else {
-          landBall.x = btx; landBall.y = bty; landBall.animating = false;
-        }
-        if (landTrail.length > 1) {
-          ctx.beginPath();
-          landTrail.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
-          ctx.strokeStyle = C.green;
-          ctx.globalAlpha = 0.30;
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          ctx.globalAlpha = 1;
-        }
-        ctx.beginPath();
-        ctx.ellipse(landBall.x, landBall.y + 5, 8, 3, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(0,0,0,.18)";
-        ctx.fill();
-        var ballGrad = ctx.createRadialGradient(landBall.x - 2, landBall.y - 3, 1, landBall.x, landBall.y, 8);
-        ballGrad.addColorStop(0, "#fff");
-        ballGrad.addColorStop(0.4, C.green);
-        ballGrad.addColorStop(1, "rgba(99,164,75,.25)");
-        ctx.beginPath();
-        ctx.arc(landBall.x, landBall.y, 7, 0, Math.PI * 2);
-        ctx.fillStyle = ballGrad;
-        ctx.fill();
-        ctx.strokeStyle = C.paper;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        if (landBall.animating) requestAnimationFrame(drawLandscape);
-      }
       if (top) {
         if (readout) {
           var cells = readout.querySelectorAll("span");
@@ -2577,11 +2544,97 @@
       }
     }
 
+    function drawLandBall(ctx, w, h) {
+      var C = api.colors();
+      var top = lastTop;
+      var wells = lastWells;
+      var ballTarget = null;
+      if (generated.length) {
+        var lastIdx = generated.length - 1;
+        var lastToken = generated[lastIdx];
+        var lastCat = catalogByToken[lastToken];
+        if (lastCat) {
+          var lastP = lastProbs ? lastProbs[lastToken] : null;
+          if (lastP == null && pathProb[lastIdx] != null) lastP = pathProb[lastIdx];
+          ballTarget = { x: lastCat.x, y: lastCat.y, p: lastP == null ? BASE_PROB : lastP };
+        }
+      }
+      if (!ballTarget && top) ballTarget = top;
+      if (!ballTarget || !lastView) return;
+      var ballP = landProb(ballTarget.x, ballTarget.y, wells);
+      var ballPt = landRaw(ballTarget.x, ballTarget.y, landZ(ballP));
+      var btx = lastView.sx(ballPt.x), bty = lastView.sy(ballPt.y);
+      if (!landBall.init) { landBall.x = btx; landBall.y = bty; landBall.init = true; }
+      var bdx = btx - landBall.x, bdy = bty - landBall.y;
+      if (reducedMotion) {
+        landBall.x = btx; landBall.y = bty; landBall.animating = false;
+        landTrail = [];
+      } else if (Math.abs(bdx) + Math.abs(bdy) > 1.2) {
+        landBall.x += bdx * 0.18;
+        landBall.y += bdy * 0.18;
+        landBall.animating = true;
+        landTrail.push({ x: landBall.x, y: landBall.y });
+        if (landTrail.length > 26) landTrail.shift();
+      } else {
+        landBall.x = btx; landBall.y = bty; landBall.animating = false;
+      }
+      if (landTrail.length > 1) {
+        ctx.beginPath();
+        landTrail.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+        ctx.strokeStyle = C.green;
+        ctx.globalAlpha = 0.30;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+      ctx.beginPath();
+      ctx.ellipse(landBall.x, landBall.y + 5, 8, 3, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,0,0,.18)";
+      ctx.fill();
+      var ballGrad = ctx.createRadialGradient(landBall.x - 2, landBall.y - 3, 1, landBall.x, landBall.y, 8);
+      ballGrad.addColorStop(0, "#fff");
+      ballGrad.addColorStop(0.4, C.green);
+      ballGrad.addColorStop(1, "rgba(99,164,75,.25)");
+      ctx.beginPath();
+      ctx.arc(landBall.x, landBall.y, 7, 0, Math.PI * 2);
+      ctx.fillStyle = ballGrad;
+      ctx.fill();
+      ctx.strokeStyle = C.paper;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      if (landBall.animating) requestAnimationFrame(drawLandscape);
+    }
+    function drawLandscape() {
+      if (!landscape || !landSize) return;
+      var w = landSize.w, h = landSize.h;
+      if (w < 10 || h < 10) return;
+      var dpr = Math.min(2, window.devicePixelRatio || 1);
+      var key = w + "x" + h + "@" + dpr;
+      if (!landStaticCanvas || key !== landStaticKey) {
+        landStaticCanvas = document.createElement("canvas");
+        landStaticCanvas.width = Math.round(w * dpr);
+        landStaticCanvas.height = Math.round(h * dpr);
+        landStaticKey = key;
+        landStaticDirty = true;
+      }
+      if (landStaticDirty) {
+        var sctx = landStaticCanvas.getContext("2d");
+        sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        drawLandscapeStatic(sctx, w, h);
+        landStaticDirty = false;
+      }
+      var ctx = landSize.ctx;
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(landStaticCanvas, 0, 0, w, h);
+      drawLandBall(ctx, w, h);
+    }
+
     function landResize() {
       if (!landscape) return;
       var r = landEl.getBoundingClientRect();
       if (r.width < 10 || r.height < 10) return;
       landSize = api.fit(landCanvas, landEl);
+      landStaticDirty = true;
       drawLandscape();
     }
 
@@ -2592,6 +2645,7 @@
       if (!landscape) landBall.animating = false;
       if (landscape) {
         if (!landSize) landSize = api.fit(landCanvas, landEl);
+        landStaticDirty = true;
         drawLandscape();
         requestAnimationFrame(landResize);
       }
@@ -2638,6 +2692,7 @@
     }
 
     landCanvas.addEventListener("pointerdown", function (e) {
+      if (landCamTween) { cancelAnimationFrame(landCamTween); landCamTween = 0; }
       hideLandTip();
       landMoved = false;
       landDrag = { x: e.clientX, y: e.clientY, yaw: landYaw, pitch: landPitch };
@@ -2650,6 +2705,7 @@
         if (Math.abs(dx) + Math.abs(dy) > 3) landMoved = true;
         landYaw = landDrag.yaw + dx * 0.008;
         landPitch = Math.min(1.35, Math.max(0.18, landDrag.pitch - dy * 0.006));
+        landStaticDirty = true;
         drawLandscape();
         return;
       }
@@ -2716,6 +2772,7 @@
         if (nextBtn) { nextBtn.disabled = true; nextBtn.textContent = DE ? "Fertig" : "Done"; }
         readout.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + SEQ_LEN + ' / ' + SEQ_LEN + '</b></span><span>' + (DE ? "Ende" : "End") + ' <b>' + api.esc(EOS) + '</b></span><span>' + (DE ? "Modus" : "Mode") + ' <b>' + decodeMode + '</b></span>';
         publish();
+        landStaticDirty = true;
         if (landscape) drawLandscape();
         return;
       }
@@ -2751,6 +2808,7 @@
       readout.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + generated.length + ' / ' + MAX_STEPS + '</b></span><span>' + (DE ? "Kontext" : "Context") + ' <b>' + (base.length + generated.length) + '</b></span><span>' + (DE ? "Top" : "Top") + ' <b>' + api.esc(opts[top] ? opts[top].t : "—") + '</b></span><span>' + (DE ? "Modus" : "Mode") + ' <b>' + decodeMode + '</b></span>' +
         (atEnd ? '<span>' + (DE ? "Satzende · <|endoftext|>" : "end of sentence · <|endoftext|>") + '</span>' : '');
       publish();
+      landStaticDirty = true;
       if (landscape) drawLandscape();
     }
     function samplePath() {
@@ -2914,13 +2972,15 @@
         landscape: landscape
       };
     };
+    function onLandTheme() { landStaticDirty = true; drawLandscape(); }
+    window.addEventListener("tm:theme", onLandTheme);
     return {
       update: function (s, meta) {
         if (meta && meta.dir < 0) undo();
         else if (meta && meta.dir > 0) redo();
         if (!s) return;
-        if (s.view === "top") { landPitch = 0.30; landYaw = -0.62; landZoom = 1; }
-        else if (s.view === "default") { landPitch = 0.92; landYaw = -0.62; landZoom = 1; }
+        if (s.view === "top") tweenCamera(0.30, -0.62, 1);
+        else if (s.view === "default") tweenCamera(0.92, -0.62, 1);
         if (s.mode) setMode(s.mode);
         if (typeof s.temp === "number") {
           temp = s.temp;
@@ -2945,7 +3005,11 @@
         return true;
       },
       resize: function () { landResize(); },
-      destroy: function () { el.remove(); }
+      destroy: function () {
+        if (landCamTween) cancelAnimationFrame(landCamTween);
+        window.removeEventListener("tm:theme", onLandTheme);
+        el.remove();
+      }
     };
   }
 
@@ -5253,7 +5317,20 @@
     var drawn = false;
     function draw() {
       if (drawn) return;
-      if (!window.ManifoldScenes || !window.Plotly) { setTimeout(draw, 120); return; }
+      if (!window.ManifoldScenes) { setTimeout(draw, 120); return; }
+      if (!window.Plotly) {
+        if (!window.__tmPlotlyLoading) {
+          window.__tmPlotlyLoading = true;
+          var script = document.createElement("script");
+          script.src = "../plotly-2.24.1.min.js";
+          script.onload = function () { window.__tmPlotlyLoading = false; draw(); };
+          script.onerror = function () { window.__tmPlotlyLoading = false; };
+          document.head.appendChild(script);
+        } else {
+          setTimeout(draw, 120);
+        }
+        return;
+      }
       drawn = true;
       try { window.ManifoldScenes.renderDualPlotly("ls-dual-manifolds", "ls-dual-controls"); } catch (e) {}
     }
@@ -5326,7 +5403,7 @@
     var layerEl = el.querySelector(".ls-traj-layer");
     var layerOut = el.querySelector("output");
     var readout = el.querySelector(".ls-traj-readout");
-    var layer = 0, metric = "angular", yaw = -0.62, pitch = 0.36, zoom = 1, drag = null;
+    var layer = 0, layerTarget = 0, displayLayer = 0, layerTween = 0, metric = "angular", yaw = -0.62, pitch = 0.36, zoom = 1, drag = null;
     var size = null, ctx = null;
     var C = api.colors();
     var colors = ["green", "sky", "gold", "lilac", "lime"];
@@ -5424,8 +5501,12 @@
       });
       // current layer markers and labels
       var labelBoxes = [];
+      var li = Math.floor(displayLayer), lf = displayLayer - li;
       data.tokens.forEach(function (tok, i) {
-        var p = project(pts[i][layer] || pts[i][0], b);
+        var p0 = pts[i][Math.min(li, pts[i].length - 1)] || pts[i][0];
+        var p1 = pts[i][Math.min(li + 1, pts[i].length - 1)] || p0;
+        var pv = [p0[0] + (p1[0] - p0[0]) * lf, p0[1] + (p1[1] - p0[1]) * lf, p0[2] + (p1[2] - p0[2]) * lf];
+        var p = project(pv, b);
         ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
         ctx.fillStyle = color(i); ctx.fill();
         ctx.strokeStyle = C.paper; ctx.lineWidth = 1.5; ctx.stroke();
@@ -5457,7 +5538,7 @@
         ctx.fillText(text, chosen.x + 4, chosen.y + 7.5);
       });
       // candidates at final layer
-      if (layer === data.layers.length - 1) {
+      if (displayLayer > data.layers.length - 1.05) {
         landmarks().slice(0, 5).forEach(function (l) {
           var p = project(l.value, b);
           ctx.beginPath();
@@ -5470,36 +5551,54 @@
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
-      ctx.fillText((DE ? "Schicht: " : "Layer: ") + (data.layers[layer] || ""), 12, 18);
+      ctx.fillText((DE ? "Schicht: " : "Layer: ") + (data.layers[Math.round(displayLayer)] || ""), 12, 18);
       ctx.textAlign = "right";
       ctx.fillText(metric === "angular" ? (DE ? "Winkel / Großkreis" : "angle / great circle") : (DE ? "Euklid" : "Euclidean"), size.w - 12, 18);
       canvas.setAttribute("aria-label", DE
-        ? "3D-Token-Trajektorien durch GPT-2. Schicht " + (data.layers[layer] || "") + ", Metrik " + (metric === "angular" ? "Winkel" : "Euklid") + "."
-        : "3D token trajectories through GPT-2. Layer " + (data.layers[layer] || "") + ", metric " + (metric === "angular" ? "angle" : "Euclid") + ".");
+        ? "3D-Token-Trajektorien durch GPT-2. Schicht " + (data.layers[Math.round(displayLayer)] || "") + ", Metrik " + (metric === "angular" ? "Winkel" : "Euklid") + "."
+        : "3D token trajectories through GPT-2. Layer " + (data.layers[Math.round(displayLayer)] || "") + ", metric " + (metric === "angular" ? "angle" : "Euclid") + ".");
+      canvas.__lsTraj = { displayLayer: displayLayer, layerTarget: layerTarget, metric: metric };
     }
     function updateReadout() {
-      var cand = layer === data.layers.length - 1
+      var cand = layerTarget === data.layers.length - 1
         ? '<span>' + (DE ? "Kandidaten" : "Candidates") + '</span>' + data.top.slice(0, 5).map(function (t) { return '<span><b>' + api.esc(tokenLabel(t.token)) + '</b> ' + (t.p * 100).toFixed(1) + '%</span>'; }).join("")
         : '<span>' + (DE ? "Kandidaten erscheinen in der letzten Schicht." : "Candidates appear at the final layer.") + '</span>';
       readout.innerHTML = '<span>' + (DE ? "Satz" : "Sentence") + ' <b>' + api.esc(data.sentence) + '</b></span>' + cand;
-      layerOut.textContent = data.layers[layer] || "";
+      layerOut.textContent = data.layers[layerTarget] || "";
     }
     function resize() { size = api.fit(canvas, stage); draw(); }
     function pointer(e) {
       var r = canvas.getBoundingClientRect();
       return { x: e.clientX - r.left, y: e.clientY - r.top };
     }
-    layerEl.addEventListener("input", function () { layer = parseInt(layerEl.value, 10); updateReadout(); draw(); });
+    function setLayer(v) {
+      layerTarget = Math.min(12, Math.max(0, parseInt(v, 10) || 0));
+      layerEl.value = String(layerTarget);
+      updateReadout();
+      if (layerTween) { cancelAnimationFrame(layerTween); layerTween = 0; }
+      if (reducedMotion) { displayLayer = layerTarget; draw(); return; }
+      var from = displayLayer, start = performance.now(), dur = (api.motion && api.motion.step) || 180;
+      function step(now) {
+        var t = Math.min(1, (now - start) / dur);
+        var e = t * t * (3 - 2 * t);
+        displayLayer = from + (layerTarget - from) * e;
+        draw();
+        if (t < 1) layerTween = requestAnimationFrame(step);
+        else layerTween = 0;
+      }
+      layerTween = requestAnimationFrame(step);
+    }
+    layerEl.addEventListener("input", function () { setLayer(layerEl.value); });
     el.querySelectorAll("[data-metric]").forEach(function (bt) {
       bt.addEventListener("click", function () {
         metric = bt.getAttribute("data-metric");
         el.querySelectorAll("[data-metric]").forEach(function (x) { x.classList.toggle("is-on", x === bt); });
+        if (layerTween) { cancelAnimationFrame(layerTween); layerTween = 0; }
+        displayLayer = layerTarget;
         updateReadout(); draw();
       });
     });
-    el.querySelector(".ls-traj-next").addEventListener("click", function () {
-      layer = Math.min(12, layer + 1); layerEl.value = String(layer); updateReadout(); draw();
-    });
+    el.querySelector(".ls-traj-next").addEventListener("click", function () { setLayer(layerTarget + 1); });
     canvas.addEventListener("pointerdown", function (e) { drag = pointer(e); });
     window.addEventListener("pointermove", function (e) {
       if (!drag) return;
@@ -5522,7 +5621,7 @@
     return {
       update: function () {},
       resize: resize,
-      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
+      destroy: function () { if (layerTween) cancelAnimationFrame(layerTween); window.removeEventListener("resize", resize); el.remove(); }
     };
   }
 
@@ -6392,20 +6491,31 @@
     root.appendChild(host);
     var scenes = {};
     var scene = null, name = null;
+    function makeLayer(next) {
+      var layer = document.createElement("div");
+      layer.className = "ls-scene-layer";
+      layer.hidden = true;
+      host.appendChild(layer);
+      var inst = SCENES[next] ? SCENES[next](layer, api) : null;
+      return { layer: layer, api: inst };
+    }
     function mount(next) {
-      if (!scenes[next]) {
-        var layer = document.createElement("div");
-        layer.className = "ls-scene-layer";
-        host.appendChild(layer);
-        scenes[next] = { layer: layer, api: SCENES[next] ? SCENES[next](layer, api) : null };
-      }
+      if (!scenes[next]) scenes[next] = makeLayer(next);
       Object.keys(scenes).forEach(function (key) {
-        var hidden = key !== next;
-        scenes[key].layer.hidden = hidden;
-        if (hidden && scenes[key].api && scenes[key].api.pause) { try { scenes[key].api.pause(); } catch (e) {} }
+        if (key === next) return;
+        var other = scenes[key];
+        if (!other.layer.hidden) {
+          other.layer.classList.remove("is-active");
+          if (other.api && other.api.pause) { try { other.api.pause(); } catch (e) {} }
+          setTimeout(function () {
+            if (!other.layer.classList.contains("is-active")) other.layer.hidden = true;
+          }, 250);
+        }
       });
       var entry = scenes[next];
       entry.layer.hidden = false;
+      void entry.layer.offsetWidth;
+      entry.layer.classList.add("is-active");
       if (entry.api && entry.api.resume) { try { entry.api.resume(); } catch (e) {} }
       if (entry.api && entry.api.resize) entry.api.resize();
       name = next;
@@ -6419,6 +6529,12 @@
         var next = (s && s.scene) || "embedding";
         if (next !== name) mount(next);
         if (scene && scene.update) scene.update(s || {}, meta);
+      },
+      preload: function (nextName) {
+        if (!nextName || scenes[nextName] || !SCENES[nextName]) return;
+        var entry = makeLayer(nextName);
+        if (entry.api && entry.api.pause) { try { entry.api.pause(); } catch (e) {} }
+        scenes[nextName] = entry;
       },
       resize: function () { if (scene && scene.resize) scene.resize(); },
       pause: function () { if (scene && scene.pause) scene.pause(); },

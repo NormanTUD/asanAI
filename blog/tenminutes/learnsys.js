@@ -770,6 +770,20 @@
     mountDemo(d, s);
   }
 
+  function preloadNextScene(d) {
+    if (!demo || !demo.preload || !d || !d.steps) return;
+    var nextStep = d.steps[state.step + 1];
+    if (!nextStep || !nextStep.demoState || !nextStep.demoState.scene) return;
+    var sceneName = nextStep.demoState.scene;
+    var preloadDemo = demo, preloadDay = d.id;
+    var run = function () {
+      if (demo === preloadDemo && currentDemoDay === preloadDay) {
+        try { preloadDemo.preload(sceneName); } catch (e) {}
+      }
+    };
+    if (window.requestIdleCallback) requestIdleCallback(run, { timeout: 1200 });
+    else setTimeout(run, 400);
+  }
   function mountDemo(d, s) {
     if (morphHiddenEl) { morphHiddenEl.style.opacity = ""; morphHiddenEl = null; }
     var meta = { step: state.step, dir: 0 };
@@ -780,6 +794,7 @@
     lastDemoStep = state.step;
     if (demo && currentDemoDay === d.id) {
       if (demo.update) demo.update(s.demoState || {}, meta);
+      preloadNextScene(d);
       return;
     }
     if (demo && demo.destroy) {
@@ -810,6 +825,7 @@
       goStep: function (step) { go(state.day, step); }
     });
     if (demo && demo.update) demo.update(s.demoState || {}, meta);
+    preloadNextScene(d);
   }
 
   function renderAll() {
@@ -3516,6 +3532,29 @@
   LS.prevDay = prevDay;
   LS.nextDay = nextDay;
   LS.days = function () { return cfg.days.map(function (d) { return { id: d.id, label: d.label, title: d.title, track: d.track, demo: d.demo, steps: d.steps.length }; }); };
+  function addDebugFps() {
+    if (document.getElementById("ls-fps")) return;
+    var badge = document.createElement("div");
+    badge.id = "ls-fps";
+    badge.className = "ls-fps";
+    badge.textContent = "— fps";
+    document.body.appendChild(badge);
+    var frames = 0, last = performance.now();
+    function tick(now) {
+      frames++;
+      if (now - last >= 500) {
+        badge.textContent = Math.round(frames * 1000 / (now - last)) + " fps";
+        frames = 0;
+        last = now;
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  if (typeof window !== "undefined" && /[?&]debug=1/.test(location.search)) {
+    if (document.body) addDebugFps();
+    else document.addEventListener("DOMContentLoaded", addDebugFps);
+  }
   if (typeof module !== "undefined" && module.exports) module.exports = LS;
   if (typeof window !== "undefined") window.LearnSys = LS;
 })();
