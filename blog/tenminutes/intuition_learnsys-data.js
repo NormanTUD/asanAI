@@ -238,11 +238,11 @@
     {
       kicker: "05a / Die Übertragung",
       title: "Eine Beziehung lässt sich übertragen",
-      body: "Der Pfeil von Mann zu Frau ist fast derselbe wie der Pfeil von König zu Königin. Ein Feed-Forward-Netz kann lernen, eine solche Richtung auf eine ganze Nachbarschaft anzuwenden; das ist die geometrische Intuition hinter Übersetzung. Klicke „Alle Richtungen“ und vergleiche die Pfeile.",
-      watch: "Klicke „Alle Richtungen“. Welche Pfeile sind parallel?",
-      demoState: { scene: "embedding", mode: "space", dim: 2, selected: null, arithmetic: "directions" },
-      context: "Die Punkte formen eine Mannigfaltigkeit: lokal flach, global gekrümmt. Die Beziehungen sind ähnlich genug, um eine Richtung von einer Region in eine andere zu übertragen.",
-      deep: "Das ist eine Approximation. In einem echten Modell ist die Geometrie viel unordentlicher: Beziehungen überlappen, Ausnahmen sind häufig, und Übersetzung wird aus großen Textmengen gelernt, nicht aus einer sauberen Karte. Die Intuition zeigt trotzdem die Richtung.",
+      body: "Der Pfeil von Löwe zu Löwin ist fast derselbe wie von Hengst zu Stute, Stier zu Kuh und Hahn zu Henne. Die Tiere unterscheiden sich in der Spezies, aber die Geschlechtsrichtung bleibt. Die Rolle (wild oder domestiziert) ordnet die Paare; die Spezies bildet die dritte Ebene. Klicke ein Paar an und vergleiche die Pfeile.",
+      watch: "Klicke ein Paar an. Zeigen alle Paare denselben Pfeil?",
+      demoState: { scene: "animals" },
+      context: "Die Spezies bildet die dritte Ebene, die Rolle ordnet die Paare. Die Richtung männlich → weiblich bleibt über die Spezies hinweg gleich.",
+      deep: "Das ist eine starke Vereinfachung. In einem echten Embedding sind die Tiere nicht so sauber getrennt; die Richtung ist eine statistische Regelmäßigkeit, keine Regel. Sie zeigt die Intuition, nicht die exakte Geometrie.",
       boxes: [
         box("emb-12", "Technik", "Wie lernt ein Netz die Übertragung?", "Ein Feed-Forward-Netz kann gelernte Richtungen auf neue Vektoren anwenden. Es lernt keine Wörterbuchregel, sondern eine Transformation, die auf viele Beispiele passt. Deshalb funktioniert sie auch für Wörter, die nicht in der Trainingsmenge standen."),
         box("emb-13", "Grenze", "Warum ist die Karte nicht das Territorium?", "Weil sie nur die Unterschiede zeigt, die für den Trainings-Loss relevant waren. Sie ist eine komprimierte Statistik, kein Lexikon. Bedeutung im Kontext entsteht erst durch Attention und die folgenden Schichten.")
@@ -327,11 +327,11 @@
     {
       kicker: "05a / Transport",
       title: "A relation can be transported",
-      body: "The arrow from man to woman is almost the same as the arrow from king to queen. A feed-forward network can learn to apply such a direction to a whole neighbourhood; that is the geometric intuition behind translation. Click “All directions” and compare the arrows.",
-      watch: "Click “All directions”. Which arrows are parallel?",
-      demoState: { scene: "embedding", mode: "space", dim: 2, selected: null, arithmetic: "directions" },
-      context: "The points form a manifold: locally flat, globally curved. The relations are similar enough to transport a direction from one region to another.",
-      deep: "This is an approximation. In a real model the geometry is much messier: relations overlap, exceptions are common, and translation is learned from huge amounts of text rather than read off a clean map. The intuition still points in the right direction.",
+      body: "The arrow from lion to lioness is almost the same as from stallion to mare, bull to cow, and rooster to hen. The species differ, but the gender direction stays. Role (wild or domesticated) orders the pairs; species is the third axis. Click a pair and compare the arrows.",
+      watch: "Click a pair. Do all pairs show the same arrow?",
+      demoState: { scene: "animals" },
+      context: "Species is the third axis, role orders the pairs. The direction male → female stays the same across species.",
+      deep: "This is a strong simplification. In a real embedding the animals are not so neatly separated; the direction is a statistical regularity, not a rule. It shows the intuition, not the exact geometry.",
       boxes: [
         box("emb-12", "Technique", "How does a network learn the transport?", "A feed-forward network can apply learned directions to new vectors. It does not learn a dictionary rule but a transformation that fits many examples. That is why it can work for words that were not in the training set."),
         box("emb-13", "Limit", "Why is the map not the territory?", "Because it shows only the differences that mattered for the training loss. It is a compressed statistic, not a lexicon. Meaning in context appears only through attention and the following layers.")

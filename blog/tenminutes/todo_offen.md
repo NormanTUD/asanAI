@@ -22,6 +22,13 @@ Regel: Höhen-/Browser-Checks erst ausführen, wenn alle Folien umgebaut sind.
 - [done] Agent führt `himmel.py` automatisch aus (Weiter bleibt als manueller Auslöser); Lauf-Fenster zeigt die berechnete Ausgabe.
 - [pending] Auf Mobil prüfen, ob Taskleiste, Agenten-Chat, Code und Lauf-Fenster ohne Überlappung passen. (Agentenlauf in DE/EN bereits gezielt geprüft: Befehl und 4.35-Ausgabe erscheinen.)
 
+## „Eine Beziehung lässt sich übertragen“
+- [done] Macht/Geschlecht-Beispiele durch Tierpaare ersetzt: Löwe/Löwin, Hengst/Stute, Stier/Kuh, Hahn/Henne.
+- [done] Spezies als z-Achse, Rolle (wild/domestiziert) als x-Achse, Geschlecht als y-Achse.
+- [done] Neue `animals`-Szene: parallele Pfeile, Paar anklicken, Readout.
+- [pending] DE/EN-Texte, Achsenlabels und Klickziele auf Desktop und Mobil prüfen.
+- [pending] Prüfen, ob die Tierpaare ohne Überlappung lesbar sind und die Rollenachse verständlich bleibt.
+
 ## Modelle
 - [done] „Modelle“ und „Die Bausteine eines LLM“ als zwei Folien trennen.
 - [done] Funktionsplot nur auf „Modelle“, Bausteine nur auf „Die Bausteine“.
