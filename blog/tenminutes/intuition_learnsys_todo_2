@@ -22,4 +22,52 @@ x′ = 29%·Fluss+Geld + 2%·Ich + 2%·gehe + 3%·zur + 59%·Bank + 5%·.Summe 1
 
 DONE denke die folie "Oberfläche ist Rauschen" nochmal komplett neu. oberfläche ist das falcshe wort. sage sowas wie "attention reduziert rauschen", eben weil es dinge in kontext brignen kann. new und york als worte einzeln heißen was ganz anderes als "new york" zusammen. zeige das. zeige wie attn mit der gleichen animation wie vorher richtigung stadt tendiert. mach diesen gestrichelten kreis da weg, zeigt, dass new in der nähe von sowohl car als auch von stadt sein kann und das erst im kontext mit "york" sichtbar wird und das rauschen dadurch reduziert wird. dann kann die ki das nutzen um diese info besesr zu trennen.
 
-Verifikation: Alle acht Punkte umgesetzt. Scroll am Textrand geht vor/zurueck (Mausrad und Touch). JS-Syntax, Demo-Harness, Temml-Formeln und Manifold-Transparenz geprueft; PHP/Selenium/Index-Rebuild in dieser Umgebung nicht verfuegbar.
+STATUS: Die acht Punkte oben sind umgesetzt. Offen ist nur die vollstaendige Browser- und PHP-Validierung in einer Umgebung mit PHP/Playwright. Die folgenden Notizen sind als Uebergabe fuer den naechsten Worker gedacht.
+
+WAS JETZT GILT
+- Reihenfolge: "Eine Beziehung laesst sich uebertragen" steht vor "Tausende Dimensionen" (Kicker 05a/05b). Der Highdim-Fuss sagt, dass dieselben Regeln gelten und viel mehr Beziehungen hineinpassen.
+- Manifold: "Von Beziehungen zur Uebersetzung" hat keinen weissen Plotly-Hintergrund mehr; die Szene wird transparent gerendert und blendet ueber die Klasse is-ready weich ein.
+- Position: Der Winkel-Modus normalisiert auf die Einheitskugel und zeigt Grosskreis-Distanz und Winkel. Die Bewegung ist animiert. Der Text nennt die Hyperkugel; die Box "Hochdimensionale Geometrie" fasst Riemann, kruemmungsabhaengige Geometrie und Sattelpunkt-Minima zusammen und nennt Quellen.
+- Vor "Ein Block: Attention, dann FFN" erklaert ein Satz den schichtenweisen Aufbau neuronaler Netze.
+- Attention: Oben stehen vier volle, anklickbare Saetze in Gruen. Pfeile sitzen auf den Wortoberkanten und sind proportional zur Attention. Das Budget fuellt die Woerter und zeigt Prozentwerte. Die Vektorsumme bewegt sich weich. Die Causal Mask ist eine aufklappbare Box; sie ist standardmaessig AUS, damit die Tabelle exakt dem Beispiel des Users entspricht. Die Formel unten wird dynamisch mit Temml gerendert und hat zwei Underbrace-Ebenen.
+- 06b "Attention verschiebt Bedeutungen in Kontexte" ist deutlich verkuerzt und enthaelt die Formelbox att-5 mit Quellen.
+- Fragenindex: Die Karten oeffnen die passende Aufklappbox und scrollen dorthin. Cue-Karten sind als Buttons anklickbar und per Tastatur bedienbar.
+- Rauschen: Die Folie heisst jetzt "Attention reduziert Rauschen". Sie zeigt new/york als einzeln mehrdeutige Woerter, den Kontext-Slider, das Wandern zu Stadt/city, das Ausblenden von car/England und die Prozentanzeige. Der gestrichelte Kreis ist weg.
+- Scroll-Navigation: Am oberen und unteren Rand des Textbereichs geht Mausrad weiter zum vorigen/naechsten Schritt (mit 700 ms Sperre). Auf Touch-Geraeten loest ein Wisch am Rand aus. Die Hilfe liste den Hinweis.
+
+GEAENDERTE DATEIEN
+- tenminutes/intuition_learnsys-data.js
+- tenminutes/intuition_learnsys-demos.js
+- tenminutes/learnsys.js
+- tenminutes/learnsys.css
+- manifold_scenes.js
+- tenminutes/intuition_learnsys_todo_2 (diese Datei)
+
+BEREITS VERIFIZIERT (headless Chromium, synthetische Harnesse)
+- Syntax: new Function fuer data, demos, learnsys und manifold_scenes: OK.
+- Attention-Tabelle mit Kontext both entspricht dem User-Beispiel exakt: 29 2 2 3 59 5 / 19 50 14 3 12 3 / 3 19 50 14 12 3 / 3 3 19 50 23 3 / 19 2 1 4 70 4 / 3 3 3 3 32 56. Formel beginnt mit 19 Prozent Fluss+Geld. Maske default aus; Row 0 wird mit Maske 100 0 0 0 0 0 und schaltet danach korrekt zurueck. Keine JS-Fehler.
+- Noise: 2 + 42 + 30 + 18 + 8 = 100 Prozent bei Layer 0; 2 + 0 + 0 + 18 + 80 = 100 Prozent bei Layer 5.
+- Position: Metrik Winkel/Grosskreis; Readout Grosskreis 0.591, Winkel 33.9 Grad; bei Position 60 Grosskreis 1.042, Winkel 59.7 Grad. Keine Fehler.
+- Manifold: is-ready gesetzt, Plot-Opacity 1, scene.bgcolor rgba(0,0,0,0), kein Loader, keine Fehler.
+- Fragenindex: Box und Ziel öffnen sich, keine Fehler.
+- Scroll: Wheel am unteren Rand wechselt zum naechsten Schritt, am oberen Rand zurueck; keine Fehler.
+- Temml rendert die Attention- und die Positionsformel ohne Parse-Fehler.
+
+NOCH ZU PRUEFEN (naechster Worker)
+1. In einer Umgebung mit PHP: php -l fuer geaenderte PHP-Dateien, danach python3 blog/tools/check_all.py --fast.
+2. Browser- und Height-Tests: uv run blog/tests/tenminutes_pages_test.py --pages intuition.php und uv run blog/tests/tenminutes_height_test.py --pages intuition.php --langs en,de --viewports desktop,mobile --monkey 4. Beide Sprachen, Desktop und ca. 390 px Breite.
+3. Demo-Audit: jeden Satz, jede Tabellenzeile, Causal-Mask an/aus, Noise-Slider, Scroll-Rand und Fragenindex einmal bedienen. Konsole, Math-Rendering, horizontales Overflow und Height-Spruenge pruefen.
+4. Kontrast in light und dark pruefen: Attention-Saetze, Budget-Prozente, Formelbox, Noise-Readout, Mask-Label, Scroll-Hinweis. Keine hellen Texte auf weissen Karten.
+5. Trackpad-Gefuehl der Scroll-Navigation testen. Die 700-ms-Sperre und die 36-px-Schwelle sind bewusst konservativ; bei Bedarf nur diese beiden Werte anpassen, nicht das Randverhalten.
+6. Pruefen, ob die Formelbox und die Attention-Matrix auf Mobile die Demo-Hoehe verschieben. Falls ja, min-height reservieren statt die Demo springen zu lassen.
+7. Wenn moeglich Regressionstests ergaenzen: Attention-Matrix und Default-Maske, Noise-Summe 100, Scroll-Rand-Navigation. Sonst die manuellen Schritte oben dokumentieren.
+8. Index/RAG: tenminutes ist nicht Teil des Haupt-Ledgers; nur neu bauen, wenn eine Top-Level-Lektion, literature.js oder der Chunker geaendert wurde. Nicht wegen dieser Aenderung blind neu bauen.
+
+STOLPERSTEINE
+- intuition_learnsys-data.js enthaelt TeX mit geschweiften Klammern in Strings. Keine zeilenbasierten Brace-Swaps verwenden. Die Datei wurde einmal aus der Live-Version wiederhergestellt; Loop-Prosa danach erneut eingespielt.
+- Die Causal Mask muss default aus bleiben, sonst zeigt die Tabelle nicht das Beispiel des Users.
+- Python-Validierungen hier mit UV_EXCLUDE_NEWER=2026-01-01 ausfuehren; uv ist in dieser Umgebung nicht installiert.
+- PHP, Selenium und Node fehlen hier. Die obigen Harnesse ersetzen keinen echten Seiten-Test.
+
+NAECHSTER KONKRETER SCHRITT
+Zuerst tenminutes_pages_test.py und tenminutes_height_test.py fuer intuition.php in EN/DE starten, dann den Demo-Audit und die Kontrastpruefung durchfuehren. Wenn beides gruen ist, ist dieser Todo abgeschlossen.

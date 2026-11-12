@@ -2961,7 +2961,7 @@
     ];
     var context = "none";
     var selected = baseTokens.length - 1;
-    var causal = true;
+    var causal = false;
     var el = document.createElement("div");
     el.className = "ls-att-scene";
     el.innerHTML =
@@ -2971,7 +2971,7 @@
       '<div class="ls-att-matrix" aria-live="polite"></div>' +
       '<div class="ls-att-formula" aria-live="polite"></div>' +
       '<details class="ls-att-mask"><summary>' + (DE ? "Causal Mask" : "Causal mask") + '</summary>' +
-        '<label><input type="checkbox" class="ls-att-causal" checked> ' + (DE ? "nur vergangene Tokens beachten" : "attend only to past tokens") + '</label>' +
+        '<label><input type="checkbox" class="ls-att-causal"> ' + (DE ? "nur vergangene Tokens beachten" : "attend only to past tokens") + '</label>' +
         '<p>' + (DE ? "Wähle ein früheres Wort in der Tabelle, um den Unterschied zu sehen. Beim letzten Token ändert die Maske nichts." : "Select an earlier word in the table to see the difference. On the last token the mask changes nothing.") + '</p>' +
       '</details>' +
       '<div class="ls-att-readout" aria-live="polite"></div>';
