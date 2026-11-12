@@ -20,3 +20,23 @@ gehe bei "Weiche Kurven, ein Knick" die kurven nacheinander durch. lass sie spie
 Behalte die alte Ebene als Boden und öffne eine dritte Achse darüber. Die Daten haben sich nicht geändert; der Raum, in dem sie leben, hat sich geändert. Dieser zusätzliche Raum ist der Rohstoff, mit dem jede Schicht arbeitet." verschwindet irgendwie hinter dem canvas. jedes weitere "weiter" lässt den text weiter nach unten hinte dem canvas verschwinden der da kommen sollte obwohl der dadrüber stehen sollte.
 
 "Ein Muster passt, ein Wert wird geschrieben" mach dass die trennebene das wirklich visuell trennt aktuell sind ein paar punkte darüber. mach aber außerdem klar, dass das nur ne visualisierung der idee ist, nicht das reale was stattfindet. aber auf so eine weise kann es aufgrund von kontext einzelne sachverhalte in einem format raustrennen, mit dem er einfacher intern weiter arbeiten kann, weil dinge klarer getrennt sind.
+
+"Eine Schicht, dann der Stapel" das sollte iwo weiter an den anfang oder so. ich weiß noch nicht genau wohin.
+
+"Die kausale Matrix und die Heads" das sollte zu den attention. sachen wie "p(next | context) = softmax(W_U h_last). Der letzte Vektor zeigt auf eine Region von Token-Richtungen, dann wird eines gezogen." müssen mit latex/temml gerendert sein. 
+
+die visualisieurng von "Jede Schicht schreibt in denselben Stream" und unklar. zeige, wie man immer weitre machen kann und jeder layer in den selben stream aller tokens schreibt. der gesamtraum aller tokens und ihrer schreibvorgänge ist dann der raum indem die internen rechnungen gemacht werden [optional block]. zeige das, visualisiere das mouthwateringly gorgeous. es ist nicht das attn was in den straem schreibt, sondern jeder layer, wovon attn und ffn sublayer sind. such das nochmal klarer raus und mach das absoletly right.
+
+"Echte Hidden States aus GPT-2 small für „The capital of France is“. Jede Linie folgt einem Token durch das Embedding und 12 Blöcke. Jeder Zustand hat 768 Dimensionen, zu viele für ein Bild, deshalb ist das nicht die echte Bewegung: PCA behält die drei Richtungen, in denen sich die Zustände am stärksten ändern, und flacht alles darauf ab. Die 3D-Punkte sind ein Schatten.": sage klar dass er sagt "leerzeichen" aber schon "paris" in der nähe ist, was dann nach dem leerzeichen käme. das sind reale messungen aus gpt2.
+
+"WahrscheinlichkeitSoftmax" bei Von Logits zu einer Verteilung überlagern sich. mach diese folie wirklich so mouthwateringly gorgeous und interaktiv wie die anderen folien
+
+"Text rein, Geometrie, ein Wort raus" die ist quasi eine doppelung der layer folie die erklrät was die bausteine layer sind.
+
+"Dieselbe Schleife, viele Sprachen"
+
+da will ich per pfeiltaste alle beispiele durchgehen wenn ich weiter mache. wähle statt "Das Wetter ist heute kalt." "sonnenblumen sind die besten blumen"
+
+"Dieselbe Schleife, dieselben Gewichte: Die Schrift ändert die Tokens, nicht die Aufgabe. Manche Sprachen brauchen für denselben Inhalt mehr Tokens; der Tokenizer kann sie dadurch teurer machen (Petrov et al., 2023).": das ist wichtig aber für ne optional box. zeige da oben mehr, visualisier das wirklich. hier ist auch die chance nochmal mehr auf datenqualität einzugehen. recherchier das thema.
+
+

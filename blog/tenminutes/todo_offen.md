@@ -78,6 +78,20 @@ Regel: Höhen-/Browser-Checks erst ausführen, wenn alle Folien umgebaut sind.
 - [done] Expressivitätslücke neutral als nicht einheitlichen Begriff erklärt; Detailrecherche bleibt offen.
 - [done] Mehr Wörter in der Wiese (Default 20, bis 40), Voronoi-Seams bleiben erhalten.
 
+## Smoothness-Pass
+- [done] Szenenwechsel crossfaden statt hart mounten.
+- [done] Kamera weich auf die Top-Ansicht tweenen.
+- [done] Loop-Landschaft: statische Szene cachen, nur Ball/Trail dynamisch zeichnen.
+- [done] Trajektorien-Layer tweenen und Slider-Inputs per rAF coalescen.
+- [done] Handywechsel weich blenden.
+- [done] Nächste Szene im Idle vorladen.
+- [done] Code-Sequenz rhythmisiert (Denken, Datei, Code, kurze Pause, Terminal).
+- [done] Gemeinsame Motion-Tokens für CSS und JS.
+- [done] Readouts/Statuszeilen mit tabular-nums und reservierter Höhe.
+- [done] Plotly erst bei der Manifold-Folie nachladen.
+- [done] Debug-FPS-Anzeige unter `?debug=1`.
+- [done] DE/EN, Desktop/Mobil, Konsolen, Höhen und Lazy-Plotly geprüft.
+
 ## Allgemein
 - [done] Scrollen im linken Textfeld dreht keine Folie mehr weiter.
 - [done] Seiten-Test DE/EN, Desktop/Mobil, Konsole und gezielte Höhenprüfungen ausgeführt. Der generische `tenminutes_height_test.py` ist für diese Seite nicht anwendbar (kein `__tmMeasureHeights`); der eigene Höhentest für alle relevanten Szenen ist grün.
