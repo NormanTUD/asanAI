@@ -1525,7 +1525,7 @@
     var lastPath = [], lastProbs = null, lastTop = null;
     var LAND_X = 2.65, LAND_Y = 1.9;
 
-    var PLANE_Z = 1.04;
+    var PLANE_Z = 0.06;
     var BASE_PROB = 0.001;
 
     // At the end of the sentence the demo offers plausible next-sentence
@@ -1742,8 +1742,8 @@
       return Math.max(BASE_PROB, Math.min(0.995, blended));
     }
 
-    // z = 1 − p: hohe Wahrscheinlichkeit liegt tief, die Fläche ist eine Verlustlandschaft.
-    function landZ(p) { return Math.max(0, Math.min(1, 1 - p)); }
+    // z = −p: hohe Wahrscheinlichkeit liegt tief, die Fläche zeigt die negative Wahrscheinlichkeit.
+    function landZ(p) { return -Math.max(0, Math.min(1, p)); }
 
     function landRaw(x, y, z) {
       var cy = Math.cos(landYaw), sy = Math.sin(landYaw);
@@ -1756,10 +1756,10 @@
     }
 
     function landColor(p, C) {
-      var loss = 1 - p;
-      if (loss > 0.6) return C.lilac;
-      if (loss > 0.3) return C.sky;
-      if (loss > 0.1) return C.lime;
+      var inv = 1 - p;
+      if (inv > 0.6) return C.lilac;
+      if (inv > 0.3) return C.sky;
+      if (inv > 0.1) return C.lime;
       return C.green;
     }
 
@@ -1906,30 +1906,30 @@
       ctx.textAlign = "left";
       ctx.fillText(DE ? "Token-Ebene (2D)" : "token plane (2D)", sx(planeLabel.x) + 4, sy(planeLabel.y) - 4);
 
-      // z-Achse: Verlust von 0 bis 1.
-      var ab = landRaw(axisX, axisY, 0), at = landRaw(axisX, axisY, 1);
+      // z-Achse: negative Wahrscheinlichkeit von 0 bis −1.
+      var ab = landRaw(axisX, axisY, 0), at = landRaw(axisX, axisY, -1);
       ctx.strokeStyle = C.lineStrong;
       ctx.lineWidth = 1.2;
       ctx.beginPath(); ctx.moveTo(sx(ab.x), sy(ab.y)); ctx.lineTo(sx(at.x), sy(at.y)); ctx.stroke();
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      [0, 0.25, 0.5, 0.75, 1].forEach(function (loss) {
-        var tick = landRaw(axisX, axisY, loss);
-        var tick2 = landRaw(axisX + 0.08, axisY, loss);
+      [0, -0.25, -0.5, -0.75, -1].forEach(function (v) {
+        var tick = landRaw(axisX, axisY, v);
+        var tick2 = landRaw(axisX + 0.08, axisY, v);
         var tx = sx(tick.x), ty = sy(tick.y);
         ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(sx(tick2.x), sy(tick2.y)); ctx.stroke();
-        ctx.fillText(Math.round(loss * 100) + "%", tx + 6, ty + 3);
+        ctx.fillText(v === 0 ? "0" : v.toFixed(2).replace("-", "−"), tx + 6, ty + 3);
       });
       ctx.fillStyle = C.petrol;
       ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
-      ctx.fillText(DE ? "Verlust" : "loss", sx(at.x) + 6, sy(at.y) - 4);
+      ctx.fillText(DE ? "Wahrscheinlichkeit −p" : "probability −p", sx(at.x) + 6, sy(at.y) - 4);
 
       var atEnd = generated.length >= MAX_STEPS;
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText(DE ? "z = 1 − p · Fläche = Verlust" : "z = 1 − p · surface = loss", 10, 16);
+      ctx.fillText(DE ? "z = −p · tiefer = wahrscheinlicher" : "z = −p · lower = more likely", 10, 16);
       if (atEnd) ctx.fillText(DE ? "Satzende · <|endoftext|>" : "end of sentence · <|endoftext|>", 10, 29);
 
       var boxes = [];
@@ -2240,12 +2240,12 @@
           if (cells[2]) cells[2].innerHTML = (DE ? "Top" : "Top") + ' <b>' + api.esc(top.t) + '</b>';
         }
         landCanvas.setAttribute("aria-label", DE
-          ? "Verlustlandschaft. Token-Ebene oben, z = 1 − p. Tiefster Punkt, also höchste Wahrscheinlichkeit: " + top.t + ", " + (top.p * 100).toFixed(0) + " Prozent."
-          : "Loss landscape. Token plane above, z = 1 − p. Deepest point, meaning highest probability: " + top.t + ", " + (top.p * 100).toFixed(0) + " percent.");
+          ? "Wahrscheinlichkeitslandschaft. Token-Ebene oben, z = −p. Tiefster Punkt, also höchste Wahrscheinlichkeit: " + top.t + ", " + (top.p * 100).toFixed(0) + " Prozent."
+          : "Probability landscape. Token plane above, z = −p. Deepest point, meaning highest probability: " + top.t + ", " + (top.p * 100).toFixed(0) + " percent.");
       } else {
         landCanvas.setAttribute("aria-label", DE
-          ? "Verlustlandschaft. Der Satz ist beendet, das Modell hat <|endoftext|> ausgegeben."
-          : "Loss landscape. The sentence is finished; the model emitted <|endoftext|>.");
+          ? "Wahrscheinlichkeitslandschaft. Der Satz ist beendet, das Modell hat <|endoftext|> ausgegeben."
+          : "Probability landscape. The sentence is finished; the model emitted <|endoftext|>.");
       }
     }
 
@@ -2292,9 +2292,9 @@
       });
       if (!best) { hideLandTip(); return; }
       var pct = best.p == null ? "—" : (best.p * 100).toFixed(best.p * 100 < 1 ? 1 : 0) + "%";
-      var loss = best.p == null ? "—" : (1 - best.p).toFixed(2);
+      var z = best.p == null ? "—" : (-best.p).toFixed(2).replace("-", "−");
       landTip.innerHTML = '<b>' + api.esc(best.t) + '</b> · p = ' + pct +
-        ' · ' + (DE ? 'Verlust' : 'loss') + ' = ' + loss +
+        ' · z = ' + z +
         ' · ' + (DE ? 'Tal-Tiefe' : 'valley depth') + ' = ' + pct;
       landTip.hidden = false;
       var lw = landSize ? landSize.w : landEl.clientWidth;
