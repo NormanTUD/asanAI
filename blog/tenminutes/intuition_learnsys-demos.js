@@ -1468,9 +1468,13 @@
     };
     var loop = SHARED.loop;
     var data = loop && loop.tokens && loop.tokens.length ? loop : fallback;
-    var tokens = data.tokens.slice();
+    var baseTokens = (data.base || []).slice();
+    var genTokens = data.tokens.slice();
+    var pathTokens = baseTokens.concat(genTokens);
+    var tokens = pathTokens;
     var history = data.history.slice();
-    var base = data.base || [];
+    var base = baseTokens;
+    var baseLen = baseTokens.length;
     var el = document.createElement("div");
     el.className = "ls-tunnel-scene";
     el.innerHTML =
@@ -1488,6 +1492,7 @@
     var altEl = el.querySelector(".ls-tunnel-alts");
     var tempEl = el.querySelector(".ls-tunnel-temp");
     var tempOut = el.querySelector("output");
+    var advBtn = el.querySelector(".ls-tunnel-advance");
     var ctx = null, size = null, step = 0, temp = 0.8;
     var yaw = -0.62, pitch = 0.82, zoom = 1;
     var hits = [], drag = null, suppress = false, highlightAlt = null;
@@ -1499,8 +1504,12 @@
       var sum = exps.reduce(function (a, b) { return a + b; }, 0);
       return exps.map(function (e) { return e / sum; });
     }
-    function entryAt(i) { return history[clamp(i, 0, history.length - 1)] || history[0]; }
+    function entryAt(i) {
+      if (i < baseLen) return null;
+      return history[clamp(i - baseLen, 0, history.length - 1)] || history[0];
+    }
     function probsAt(i) {
+      if (i < baseLen) return { all: [], p: [], chosen: 1, entropy: 0.2 };
       var e = entryAt(i);
       var all = [{ token: e.chosen, logit: e.chosenLogit || 3 }].concat(e.alternatives || []);
       var p = softmax(all.map(function (o) { return o.logit; }), temp);
@@ -1511,8 +1520,9 @@
     }
     function lerp(a, b, t) { return a + (b - a) * t; }
     function sampleAt(x) {
-      var lo = clamp(Math.floor(x), 0, probsAt(0).p.length ? tokens.length - 1 : 0);
-      var hi = clamp(lo + 1, 0, tokens.length - 1);
+      var last = tokens.length - 1;
+      var lo = clamp(Math.floor(x), 0, last);
+      var hi = clamp(lo + 1, 0, last);
       var t = x - lo;
       var a = probsAt(lo), b = probsAt(hi);
       return { chosen: lerp(a.chosen, b.chosen, t), entropy: lerp(a.entropy, b.entropy, t) };
@@ -1523,17 +1533,18 @@
     }
     function heightAt(x, y) {
       var s = sampleAt(x);
-      var width = 0.18 + 0.30 * s.entropy * (0.65 + temp * 0.22);
-      var depth = 0.42 + 0.28 * (1 - s.chosen);
+      var width = 0.14 + 0.30 * s.entropy * (0.7 + temp * 0.2);
+      var depth = 0.32 + 0.32 * s.chosen;
       var h = 0.42 - depth * Math.exp(-(y * y) / (2 * width * width));
       for (var i = 0; i < history.length; i++) {
         var e = history[i];
-        var pr = probsAt(i);
+        var full = baseLen + i;
+        var pr = probsAt(full);
         (e.alternatives || []).forEach(function (alt, k) {
           var cy = sideY(k, e.alternatives.length);
-          var cx = i + 0.48 + 0.06 * Math.sin(i * 1.7 + k);
+          var cx = full + 0.48 + 0.06 * Math.sin(i * 1.7 + k);
           var d = ((x - cx) * (x - cx)) / (2 * 0.13 * 0.13) + ((y - cy) * (y - cy)) / (2 * 0.10 * 0.10);
-          h -= (0.10 + 0.22 * pr.p[k + 1]) * Math.exp(-d);
+          h -= (0.08 + 0.26 * pr.p[k + 1]) * Math.exp(-d);
         });
       }
       h += 0.018 * Math.sin(x * 2.3 + y * 3.1) + 0.012 * Math.cos(x * 1.4 - y * 4.2);
@@ -1545,7 +1556,7 @@
         var e = history[i];
         (e.alternatives || []).forEach(function (alt, k) {
           var cy = sideY(k, e.alternatives.length);
-          var cx = i + 0.48 + 0.06 * Math.sin(i * 1.7 + k);
+          var cx = baseLen + i + 0.48 + 0.06 * Math.sin(i * 1.7 + k);
           var d = Math.hypot((x - cx) / 0.16, (y - cy) / 0.12);
           best = Math.max(best, Math.exp(-d * d));
         });
@@ -1558,15 +1569,15 @@
       var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
       var x1 = x0 * cy - y * sy;
       var y1 = x0 * sy + y * cy;
-      var y2 = y1 * cp - z * sp;
+      var y2 = y1 * cp + z * sp;
       var z2 = y1 * sp + z * cp;
       return { x: x1 / (1 + z2 * 0.18), y: -y2 / (1 + z2 * 0.18), z: z2 };
     }
     function updateCamera() {
       var corners = [];
-      var xs = [-0.7, tokens.length - 0.3];
-      var ys = [-1.35, 1.35];
-      var zs = [-0.25, 0.55];
+      var xs = [-1.8, tokens.length - 0.2];
+      var ys = [-2.0, 2.0];
+      var zs = [-0.35, 0.65];
       xs.forEach(function (x) { ys.forEach(function (y) { zs.forEach(function (z) { corners.push(projectRaw(x, y, z)); }); }); });
       var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
       corners.forEach(function (p) { minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x); minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y); });
@@ -1602,14 +1613,14 @@
       ctx.fillStyle = sky;
       ctx.fillRect(0, 0, size.w, size.h);
 
-      var NX = Math.min(64, 22 + tokens.length * 6), NY = 28;
+      var NX = Math.min(96, 44 + tokens.length * 4), NY = 34;
       var cells = [];
       for (var i = 0; i < NX; i++) {
         for (var j = 0; j < NY; j++) {
-          var x0 = -0.5 + (tokens.length + 0.2) * i / NX;
-          var x1 = -0.5 + (tokens.length + 0.2) * (i + 1) / NX;
-          var y0 = -1.25 + 2.5 * j / NY;
-          var y1 = -1.25 + 2.5 * (j + 1) / NY;
+          var x0 = -2 + (tokens.length + 3.5) * i / NX;
+          var x1 = -2 + (tokens.length + 3.5) * (i + 1) / NX;
+          var y0 = -2.0 + 4.0 * j / NY;
+          var y1 = -2.0 + 4.0 * (j + 1) / NY;
           var h00 = heightAt(x0, y0), h10 = heightAt(x1, y0), h11 = heightAt(x1, y1), h01 = heightAt(x0, y1);
           var p00 = project(x0, y0, h00), p10 = project(x1, y0, h10), p11 = project(x1, y1, h11), p01 = project(x0, y1, h01);
           var hAvg = (h00 + h10 + h11 + h01) / 4;
@@ -1640,7 +1651,7 @@
           var pts = [];
           for (var s = 0; s <= 18; s++) {
             var t = s / 18;
-            var x = i + t * 0.55;
+            var x = baseLen + i + t * 0.55;
             var y = t * cy;
             pts.push(project(x, y, heightAt(x, y) + 0.035));
           }
@@ -1658,7 +1669,7 @@
           ctx.arc(end.x, end.y, 3.2, 0, Math.PI * 2);
           ctx.fillStyle = C.gold;
           ctx.fill();
-          if (i === step) {
+          if (e.index === step) {
             ctx.fillStyle = C.soft;
             ctx.font = '600 9px "Open Sans", sans-serif';
             ctx.textAlign = "center";
@@ -1669,7 +1680,7 @@
 
       var pathPts = [];
       for (var k = 0; k <= 80; k++) {
-        var x = -0.25 + k / 80 * (tokens.length - 0.5);
+        var x = -1.7 + k / 80 * (tokens.length + 2.8);
         var y = 0;
         pathPts.push(project(x, y, heightAt(x, y) + 0.04));
       }
@@ -1694,25 +1705,29 @@
       hits = [];
       tokens.forEach(function (tok, i) {
         var p = project(i, 0, heightAt(i, 0) + 0.07);
-        var on = i === step;
+        var on = i === baseLen + step;
+        var above = i % 2 === 0;
         var label = tok;
-        ctx.font = (on ? '700 ' : '600 ') + '10px "Open Sans", sans-serif';
+        var fs = tokens.length > 16 ? 9 : 10;
+        ctx.font = (on ? '700 ' : '600 ') + fs + 'px "Open Sans", sans-serif';
         var tw = ctx.measureText(label).width;
         var pw = tw + 12, ph = 17;
+        var ly = above ? p.y - 30 : p.y + 12;
         ctx.fillStyle = on ? C.green : C.paper;
         ctx.strokeStyle = on ? C.green : C.lineStrong;
         ctx.lineWidth = 1;
-        ctx.fillRect(p.x - pw / 2, p.y - 30, pw, ph);
-        ctx.strokeRect(p.x - pw / 2, p.y - 30, pw, ph);
+        ctx.fillRect(p.x - pw / 2, ly, pw, ph);
+        ctx.strokeRect(p.x - pw / 2, ly, pw, ph);
         ctx.fillStyle = on ? "#fff" : C.ink;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(label, p.x, p.y - 21);
+        ctx.fillText(label, p.x, ly + ph / 2 + 1);
         ctx.textBaseline = "alphabetic";
-        hits.push({ x: p.x, y: p.y - 22, r: Math.max(18, pw / 2), step: i });
+        hits.push({ x: p.x, y: ly + ph / 2, r: Math.max(18, pw / 2), step: clamp(i - baseLen, 0, genTokens.length - 1) });
       });
 
-      var bp = project(step, 0, heightAt(step, 0) + 0.10);
+      var fullStep = baseLen + step;
+      var bp = project(fullStep, 0, heightAt(fullStep, 0) + 0.10);
       ctx.save();
       ctx.shadowColor = "rgba(99,164,75,.65)";
       ctx.shadowBlur = 22;
@@ -1729,24 +1744,24 @@
       ctx.stroke();
       ctx.globalAlpha = 1;
 
-      var pr = probsAt(step);
-      var e = entryAt(step);
-      var full = base.concat(tokens);
+      var pr = probsAt(baseLen + step);
+      var e = entryAt(baseLen + step);
+      var full = tokens;
       var sentenceHtml = "";
       var sentenceText = "";
       full.forEach(function (tok, i) {
         var noSpace = /^[.,!?;:…]/.test(tok);
         if (i && !noSpace) { sentenceHtml += " "; sentenceText += " "; }
-        var start = base.length;
+        var start = baseLen;
         var active = i === start + step;
         var pred = i >= start;
         sentenceHtml += '<span class="' + (active ? "is-active" : pred ? "is-pred" : "is-given") + '">' + api.esc(tok) + '</span>';
         sentenceText += tok;
       });
       sentenceEl.innerHTML = sentenceHtml;
-      stepEl.textContent = (DE ? "Schritt " : "Step ") + (step + 1) + " / " + tokens.length;
+      stepEl.textContent = (DE ? "Schritt " : "Step ") + (step + 1) + " / " + genTokens.length;
       tempRead.textContent = "T " + temp.toFixed(2);
-      nextLine.innerHTML = '<span>' + (DE ? "Nächstes Wort" : "Next word") + '</span> <b>' + api.esc(tokens[step] || "—") + '</b>';
+      nextLine.innerHTML = '<span>' + (DE ? "Nächstes Wort" : "Next word") + '</span> <b>' + api.esc(genTokens[step] || "—") + '</b>';
       altEl.innerHTML = (e.alternatives || []).map(function (alt, k) {
         return '<button type="button" class="ls-tunnel-alt" data-alt="' + k + '">' + api.esc(alt.token) + '</button>';
       }).join("");
@@ -1756,17 +1771,23 @@
           draw();
         });
       });
+      advBtn.disabled = step >= genTokens.length - 1;
       canvas.setAttribute("aria-label", DE
-        ? "Wahrscheinlichkeitstunnel. Pfad: " + sentenceText + ". Aktuelles Token: " + tokens[step] + "."
-        : "Probability tunnel. Path: " + sentenceText + ". Current token: " + tokens[step] + ".");
+        ? "Wahrscheinlichkeitstunnel. Pfad: " + sentenceText + ". Aktuelles Token: " + genTokens[step] + "."
+        : "Probability tunnel. Path: " + sentenceText + ". Current token: " + genTokens[step] + ".");
     }
     function refreshData() {
       var next = SHARED.loop;
       if (!next || !next.tokens || !next.tokens.length) return;
-      if (next.tokens.join("|") === tokens.join("|")) return;
-      tokens = next.tokens.slice();
+      var nextPath = (next.base || []).concat(next.tokens);
+      if (nextPath.join("|") === tokens.join("|")) return;
+      baseTokens = (next.base || []).slice();
+      genTokens = next.tokens.slice();
+      pathTokens = baseTokens.concat(genTokens);
+      tokens = pathTokens;
       history = next.history.slice();
-      base = next.base || [];
+      base = baseTokens;
+      baseLen = baseTokens.length;
       step = 0;
       draw();
     }
@@ -1813,7 +1834,7 @@
       var hit = hitAt(p.x, p.y);
       if (hit) { step = hit.step; draw(); }
     }
-    el.querySelector(".ls-tunnel-advance").addEventListener("click", function () { step = Math.min(tokens.length - 1, step + 1); draw(); });
+    advBtn.addEventListener("click", function () { step = Math.min(genTokens.length - 1, step + 1); draw(); });
     el.querySelector(".ls-tunnel-reset").addEventListener("click", function () { step = 0; draw(); });
     tempEl.addEventListener("input", function () { temp = parseFloat(tempEl.value) || 0.8; tempOut.textContent = temp.toFixed(2); draw(); });
     canvas.addEventListener("pointermove", onMove);
@@ -1828,7 +1849,7 @@
     return {
       update: function (s) {
         refreshData();
-        if (s && typeof s.step === "number") { step = clamp(s.step, 0, tokens.length - 1); draw(); }
+        if (s && typeof s.step === "number") { step = clamp(s.step, 0, genTokens.length - 1); draw(); }
       },
       resume: refreshData,
       resize: resize,
