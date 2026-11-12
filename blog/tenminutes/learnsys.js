@@ -1370,6 +1370,7 @@
       soft: v("--tm-ink-soft", "#2c464d"),
       muted: v("--tm-muted", "#627476"),
       line: v("--tm-line", "#dbe3e0"),
+      lineStrong: v("--tm-line-strong", "#b9c8c3"),
       paper: v("--tm-paper", "#fff"),
       paper2: v("--tm-paper-2", "#f7f9f8"),
       petrol: v("--tm-petrol", "#004b6f"),

@@ -577,12 +577,19 @@ h1,h2,h3,h4{
 .ls-loop-next-label{color:var(--ls-muted);font-size:var(--ls-fs-micro);text-transform:uppercase;letter-spacing:.1em}
 .ls-loop-branch{border:1px solid rgba(0,75,111,.14);background:rgba(255,255,255,.72);color:var(--ls-petrol);font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;padding:4px 7px;cursor:pointer;border-radius:0;min-height:28px}
 .ls-loop-branch:hover{border-color:var(--ls-blue);color:var(--ls-blue)}
-.ls-loop-viz{position:relative;min-height:0;min-width:0}
-.ls-loop-viz>.ls-loop-bars{height:100%}
+.ls-loop-viz{position:relative;min-height:0;min-width:0;display:grid;grid-template-rows:minmax(0,1fr)}
+.ls-loop-viz>.ls-loop-bars{height:100%;min-height:0}
 .ls-loop-landscape{position:absolute;inset:0;min-height:0;min-width:0;border:1px solid rgba(0,75,111,.08);background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(247,249,248,.3))}
 .ls-loop-landscape[hidden]{display:none}
 .ls-loop-landscape canvas{display:block;width:100%;height:100%;touch-action:none}
-.ls-loop-scene.is-landscape .ls-loop-bars{display:none}
+.ls-loop-scene.is-landscape .ls-loop-viz{grid-template-columns:minmax(0,1.35fr) minmax(170px,.65fr);grid-template-rows:minmax(0,1fr);gap:10px}
+.ls-loop-scene.is-landscape .ls-loop-landscape{position:relative;inset:auto;min-height:260px;grid-column:1;grid-row:1}
+.ls-loop-scene.is-landscape .ls-loop-bars{display:grid;max-height:100%;overflow:auto;grid-column:2;grid-row:1}
+@media (max-width:760px){
+  .ls-loop-scene.is-landscape .ls-loop-viz{grid-template-columns:1fr;grid-template-rows:minmax(220px,1fr) auto}
+  .ls-loop-scene.is-landscape .ls-loop-landscape{min-height:200px;grid-column:1;grid-row:1}
+  .ls-loop-scene.is-landscape .ls-loop-bars{max-height:170px;grid-column:1;grid-row:2}
+}
 .ls-loop-bars{display:grid;gap:4px;align-content:start;overflow:auto;min-height:0}
 .ls-loop-bar{display:grid;grid-template-columns:78px minmax(0,1fr) 40px;gap:7px;align-items:center;border:0;background:transparent;padding:1px 0;cursor:pointer;text-align:left;font:var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-loop-bar:hover .ls-loop-bar-label{color:var(--ls-petrol)}

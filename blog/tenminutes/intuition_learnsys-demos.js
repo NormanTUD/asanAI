@@ -1361,51 +1361,79 @@
     var landDrag = null, landMoved = false, landHits = [];
     var landBall = { x: 0, y: 0, init: false, animating: false };
     var landTrail = [];
+    var lastPath = [], lastProbs = null, lastTop = null;
     var LAND_X = 2.65, LAND_Y = 1.9;
 
-    function landscapeChoices() {
-      var opts = choicesFor();
-      if (!opts.length) return CONTINUE.slice();
-      var out = opts.map(function (o) { return { t: o.t, l: o.l }; });
-      var extra = TAIL[generated.length] || [];
-      if (!extra.length && generated.length === 1 && RELATIVE_TAIL) extra = RELATIVE_TAIL[generated[0]] || [];
-      extra.forEach(function (o) {
-        if (!out.some(function (x) { return x.t === o.t; })) out.push({ t: o.t, l: o.l });
-      });
-      return out;
-    }
-
-    function layoutWords(list, probs) {
-      var items = list.map(function (o, i) { return { t: o.t, p: probs[i] }; });
-      items.sort(function (a, b) { return b.p - a.p; });
-      items.forEach(function (it, i) {
-        if (i === 0) { it.x = 0; it.y = 0; return; }
-        var ring = Math.floor((i - 1) / 6) + 1;
-        var slot = (i - 1) % 6;
-        var radius = 0.72 + ring * 0.62;
-        var angle = slot / 6 * Math.PI * 2 + ring * 0.55;
-        it.x = Math.cos(angle) * radius;
-        it.y = Math.sin(angle) * radius * 0.74;
-      });
-      return items;
-    }
-
     var PLANE_Z = 1.04;
+    var BASE_PROB = 0.001;
+
+    // At the end of the sentence the demo offers plausible next-sentence
+    // starts. Use the same list for the bars and the landscape.
+    function currentOptions() {
+      var opts = choicesFor();
+      return opts.length ? opts : CONTINUE.slice();
+    }
+
+    // One stable token plane for the whole scene: every possible token gets
+    // a fixed position once, so the map no longer rearranges itself at each
+    // step. Only the heights (the current probabilities) change.
+    var catalog = buildCatalog();
+    var catalogByToken = {};
+    catalog.forEach(function (it) { catalogByToken[it.t] = it; });
+
+    function buildCatalog() {
+      var seen = {}, list = [];
+      function add(t) {
+        if (!t || seen[t]) return;
+        seen[t] = true;
+        list.push({ t: t });
+      }
+      NOUNS.forEach(function (o) { add(o.t); });
+      if (DE) {
+        add("der"); add("das"); add("welcher"); add("welches");
+      } else {
+        add("that"); add("who"); add("which");
+      }
+      MODALS.forEach(function (o) { add(o.t); });
+      NEGATORS.forEach(function (o) { add(o.t); });
+      Object.keys(ACTIONS).forEach(function (key) {
+        ACTIONS[key].forEach(function (o) { add(o.t); });
+      });
+      Object.keys(TAIL).forEach(function (key) {
+        TAIL[key].forEach(function (o) { add(o.t); });
+      });
+      CONTINUE.forEach(function (o) { add(o.t); });
+      [".", "!", "…"].forEach(add);
+      var n = list.length;
+      list.forEach(function (it, i) {
+        var radius = Math.sqrt((i + 0.55) / n);
+        var angle = i * 2.399963229728653;
+        it.x = Math.cos(angle) * radius * LAND_X * 0.92;
+        it.y = Math.sin(angle) * radius * LAND_Y * 0.92;
+      });
+      return list;
+    }
 
     function landWells(items) {
       return items.map(function (it) { return { x: it.x, y: it.y, p: it.p }; });
     }
 
-    // Shepard-Interpolation: an jedem Token exakt p, dazwischen glatt.
+    // A fixed, gentle base terrain keeps the whole map present and stable.
+    // Each step only adds local bumps around its current options; those bumps
+    // are the areas the lantern moves to.
+    function landBase(x, y) {
+      var waves = 0.5 + 0.5 * Math.sin(0.9 * x + 0.4) * Math.cos(1.1 * y - 0.3);
+      return BASE_PROB + 0.003 * waves;
+    }
     function landProb(x, y, wells) {
-      var num = 0, den = 0;
+      var base = landBase(x, y);
+      var value = base;
+      var sigma2 = 0.04;
       wells.forEach(function (w) {
         var dx = x - w.x, dy = y - w.y;
-        var wt = 1 / Math.pow(dx * dx + dy * dy + 0.045, 1.15);
-        num += wt * w.p;
-        den += wt;
+        value += (w.p - landBase(w.x, w.y)) * Math.exp(-(dx * dx + dy * dy) / (2 * sigma2));
       });
-      return Math.max(0.002, Math.min(0.995, num / Math.max(1e-9, den)));
+      return Math.max(BASE_PROB, Math.min(0.995, value));
     }
 
     // Anzeige-Höhe; die Achse ist mit den echten p-Werten beschriftet.
@@ -1426,7 +1454,7 @@
       if (p > 0.32) return C.lime;
       if (p > 0.16) return C.sky;
       if (p > 0.07) return C.blue;
-      return C.paper2;
+      return C.line;
     }
 
     function drawLandscape() {
@@ -1442,10 +1470,18 @@
       ctx.fillStyle = sky;
       ctx.fillRect(0, 0, w, h);
 
-      var list = landscapeChoices();
-      var probs = softmax(list.map(function (o) { return o.l; }), temp);
-      var items = layoutWords(list, probs);
-      var wells = landWells(items);
+      var opts = currentOptions();
+      var probs = softmax(opts.map(function (o) { return o.l; }), temp);
+      var probByToken = {};
+      opts.forEach(function (o, i) { probByToken[o.t] = probs[i]; });
+      var items = catalog.map(function (it) {
+        var p = probByToken[it.t];
+        return { t: it.t, x: it.x, y: it.y, p: p == null ? 0 : p, current: p != null };
+      });
+      var wells = landWells(items.filter(function (it) { return it.current; }));
+      var top = items.filter(function (it) { return it.current; }).sort(function (a, b) { return b.p - a.p; })[0] || items[0];
+      lastProbs = probByToken;
+      lastTop = top;
 
       var NX = w > 700 ? 42 : 32, NY = w > 700 ? 26 : 20;
       var grid = [];
@@ -1501,14 +1537,37 @@
         ctx.lineTo(sx(q.p[3].rx), sy(q.p[3].ry));
         ctx.closePath();
         ctx.fillStyle = landColor(q.h, C);
-        ctx.globalAlpha = 0.9;
+        ctx.globalAlpha = 1;
         ctx.fill();
-        ctx.globalAlpha = 0.12;
-        ctx.strokeStyle = C.paper;
-        ctx.lineWidth = 0.55;
+        ctx.globalAlpha = 0.22;
+        ctx.strokeStyle = C.line;
+        ctx.lineWidth = 0.6;
         ctx.stroke();
         ctx.globalAlpha = 1;
       });
+
+      // This step's lantern: the map stays put, but the area of the token
+      // just chosen lights up. Moving to the next token moves the light,
+      // not the map.
+      var lastChosen = generated.length ? catalogByToken[generated[generated.length - 1]] : null;
+      var glowItem = lastChosen || top;
+      if (glowItem) {
+        var glowProb = lastChosen && probByToken[lastChosen.t] != null
+          ? probByToken[lastChosen.t]
+          : (top ? top.p : BASE_PROB);
+        var glowPt = landRaw(glowItem.x, glowItem.y, landZ(glowProb));
+        var gx = sx(glowPt.x), gy = sy(glowPt.y);
+        var glowR = Math.max(44, Math.min(w, h) * 0.19);
+        var glow = ctx.createRadialGradient(gx, gy, 2, gx, gy, glowR);
+        glow.addColorStop(0, C.gold);
+        glow.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.globalAlpha = 0.22;
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(gx, gy, glowR, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
 
       // Token-Ebene (2D), oberhalb der Wahrscheinlichkeitsfläche.
       var planeCorners = [[-LAND_X, -LAND_Y], [LAND_X, -LAND_Y], [LAND_X, LAND_Y], [-LAND_X, LAND_Y]].map(function (c) {
@@ -1577,12 +1636,63 @@
         return true;
       }
       landHits = [];
-      items.forEach(function (it) {
+
+      // The actual chosen path, drawn on the token plane at its fixed
+      // positions. Clicking a branch or stepping moves this line.
+      var pathPts = [];
+      generated.forEach(function (tok, idx) {
+        var c = catalogByToken[tok];
+        if (!c) return;
+        var planePt = landRaw(c.x, c.y, PLANE_Z);
+        var p = probByToken[tok];
+        var surfPt = landRaw(c.x, c.y, landZ(p == null ? BASE_PROB : p));
+        pathPts.push({
+          t: tok, idx: idx,
+          px: sx(planePt.x), py: sy(planePt.y),
+          sx: sx(surfPt.x), sy: sy(surfPt.y),
+          current: p != null
+        });
+      });
+      lastPath = pathPts.slice();
+      if (pathPts.length) {
+        ctx.lineJoin = "round";
+        ctx.strokeStyle = C.paper;
+        ctx.globalAlpha = 0.8;
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        pathPts.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.px, p.py); else ctx.lineTo(p.px, p.py); });
+        ctx.stroke();
+        ctx.strokeStyle = C.gold;
+        ctx.globalAlpha = 0.95;
+        ctx.lineWidth = 2.6;
+        ctx.beginPath();
+        pathPts.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.px, p.py); else ctx.lineTo(p.px, p.py); });
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        pathPts.forEach(function (p) {
+          ctx.beginPath();
+          ctx.arc(p.px, p.py, 7, 0, Math.PI * 2);
+          ctx.fillStyle = C.paper;
+          ctx.fill();
+          ctx.strokeStyle = C.gold;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.fillStyle = C.ink;
+          ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(String(p.idx + 1), p.px, p.py + 0.5);
+        });
+        ctx.textBaseline = "middle";
+      }
+
+      var currentItems = items.filter(function (it) { return it.current; });
+      currentItems.forEach(function (it) {
         var planePt = landRaw(it.x, it.y, PLANE_Z);
         var surfPt = landRaw(it.x, it.y, landZ(it.p));
         var px = sx(planePt.x), py = sy(planePt.y);
         var surfX = sx(surfPt.x), surfY = sy(surfPt.y);
-        var isTop = it === items[0];
+        var isTop = it === top;
 
         ctx.strokeStyle = isTop ? C.green : C.petrol;
         ctx.globalAlpha = 0.45;
@@ -1603,10 +1713,10 @@
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(px, py, 2.6, 0, Math.PI * 2);
+        ctx.arc(px, py, isTop ? 4 : 2.6, 0, Math.PI * 2);
         ctx.fillStyle = C.paper;
         ctx.strokeStyle = isTop ? C.green : C.petrol;
-        ctx.lineWidth = 1.4;
+        ctx.lineWidth = isTop ? 2 : 1.4;
         ctx.stroke();
         if (!atEnd) landHits.push({ x: surfX - 12, y: surfY - 12, w: 24, h: 24, t: it.t });
 
@@ -1628,7 +1738,7 @@
         boxes.push(box);
         if (!atEnd) landHits.push({ x: box.x, y: box.y, w: box.w, h: box.h, t: it.t });
 
-        ctx.strokeStyle = C.lineStrong;
+        ctx.strokeStyle = C.line;
         ctx.globalAlpha = 0.5;
         ctx.beginPath();
         ctx.moveTo(px, py);
@@ -1637,7 +1747,7 @@
         ctx.globalAlpha = 1;
         ctx.fillStyle = C.paper;
         ctx.fillRect(box.x, box.y, box.w, box.h);
-        ctx.strokeStyle = isTop ? C.green : C.lineStrong;
+        ctx.strokeStyle = isTop ? C.green : C.line;
         ctx.lineWidth = isTop ? 1.6 : 1;
         ctx.strokeRect(box.x, box.y, box.w, box.h);
         ctx.fillStyle = C.ink;
@@ -1649,7 +1759,38 @@
         ctx.fillText(pct, box.x + 6, box.y + 23);
       });
 
-      var top = items[0];
+      // Every other token stays on the map with a quiet label, so the whole
+      // plane is populated even when it is not the current choice set.
+      items.forEach(function (it) {
+        if (it.current) return;
+        var planePt = landRaw(it.x, it.y, PLANE_Z);
+        var px = sx(planePt.x), py = sy(planePt.y);
+        ctx.beginPath();
+        ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+        ctx.fillStyle = C.muted;
+        ctx.globalAlpha = 0.55;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.font = '500 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        var tw = ctx.measureText(it.t).width;
+        var bh = 14;
+        var offsets = [[0, -bh - 2], [0, 4], [-tw - 5, -bh / 2], [5, -bh / 2]];
+        for (var oi = 0; oi < offsets.length; oi++) {
+          var bx = px - tw / 2 + offsets[oi][0];
+          var by = py - bh / 2 + offsets[oi][1];
+          var cand = { x: bx, y: by, w: tw, h: bh };
+          if (bx >= 3 && by >= 3 && bx + tw <= w - 3 && by + bh <= h - 3 && freeBox(cand)) {
+            boxes.push(cand);
+            ctx.fillStyle = C.muted;
+            ctx.globalAlpha = 0.72;
+            ctx.textAlign = "left";
+            ctx.fillText(it.t, bx, by + 10);
+            ctx.globalAlpha = 1;
+            break;
+          }
+        }
+      });
+
       if (top) {
         var ballPt = landRaw(top.x, top.y, landZ(top.p));
         var btx = sx(ballPt.x), bty = sy(ballPt.y);
@@ -1800,7 +1941,8 @@
       });
     }
     function renderBars() {
-      var opts = choicesFor();
+      var opts = currentOptions();
+      var atEnd = generated.length >= MAX_STEPS;
       var probs = softmax(opts.map(function (o) { return o.l; }), temp);
       var top = 0;
       probs.forEach(function (p, i) { if (p > probs[top]) top = i; });
@@ -1813,7 +1955,8 @@
       }
       barsEl.innerHTML = opts.map(function (o, i) {
         var on = decodeMode === "greedy" ? i === top : (decodeMode === "topp" && probs[i] >= probs[cut]);
-        return '<button type="button" class="ls-loop-bar' + (on ? " is-on" : "") + '" data-bar="' + i + '">' +
+        return '<button type="button" class="ls-loop-bar' + (on ? " is-on" : "") + '" data-bar="' + i + '"' +
+          (atEnd ? ' disabled' : '') + '>' +
           '<span class="ls-loop-bar-label">' + api.esc(o.t) + '</span>' +
           '<span class="ls-loop-bar-track"><i style="width:' + (probs[i] * 100).toFixed(1) + '%"></i></span>' +
           '<span class="ls-loop-bar-val">' + (probs[i] * 100).toFixed(0) + '%</span></button>';
@@ -1822,10 +1965,11 @@
         b.addEventListener("click", function () { choose(opts[parseInt(b.getAttribute("data-bar"), 10)].t); });
       });
       if (nextBtn) {
-        nextBtn.disabled = !opts.length;
-        nextBtn.textContent = opts.length ? (DE ? "Weiter →" : "Next →") : (DE ? "Fertig" : "Done");
+        nextBtn.disabled = atEnd || !choicesFor().length;
+        nextBtn.textContent = (atEnd || !choicesFor().length) ? (DE ? "Fertig" : "Done") : (DE ? "Weiter →" : "Next →");
       }
-      readout.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + generated.length + ' / ' + MAX_STEPS + '</b></span><span>' + (DE ? "Kontext" : "Context") + ' <b>' + (base.length + generated.length) + '</b></span><span>' + (DE ? "Top" : "Top") + ' <b>' + api.esc(opts[top] ? opts[top].t : "—") + '</b></span><span>' + (DE ? "Modus" : "Mode") + ' <b>' + decodeMode + '</b></span>';
+      readout.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + generated.length + ' / ' + MAX_STEPS + '</b></span><span>' + (DE ? "Kontext" : "Context") + ' <b>' + (base.length + generated.length) + '</b></span><span>' + (DE ? "Top" : "Top") + ' <b>' + api.esc(opts[top] ? opts[top].t : "—") + '</b></span><span>' + (DE ? "Modus" : "Mode") + ' <b>' + decodeMode + '</b></span>' +
+        (atEnd ? '<span>' + (DE ? "Satzende · nächste Sätze" : "end of sentence · next sentences") + '</span>' : '');
       publish();
       if (landscape) drawLandscape();
     }
@@ -1914,6 +2058,17 @@
       renderBars();
     });
     renderSentence(); renderTree(); renderBars();
+    el.__lsLoopDebug = function () {
+      return {
+        catalog: catalog.map(function (c) { return { t: c.t, x: c.x, y: c.y }; }),
+        generated: generated.slice(),
+        path: lastPath.map(function (p) { return { t: p.t, px: p.px, py: p.py }; }),
+        probs: lastProbs,
+        top: lastTop ? lastTop.t : null,
+        topP: lastTop ? lastTop.p : null,
+        landscape: landscape
+      };
+    };
     return {
       update: function (s) {
         if (!s) return;

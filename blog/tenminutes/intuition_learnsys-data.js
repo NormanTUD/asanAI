@@ -53,10 +53,10 @@
     {
       kicker: "02b / Die Entscheidung",
       title: "Die Verteilung ist nicht die Antwort",
-      body: "Jedes Token hat zwei Koordinaten auf einer flachen Token-Ebene. Seine Wahrscheinlichkeit ist die Höhe: z = p. Die Fläche darunter ist die Verteilung über dieser Ebene, und die senkrechten Linien verbinden jedes Token mit seinem Wert. Dreh die Szene und klicke ein Wort an.",
-      watch: "Dreh die Szene. Welches Token hat den höchsten Punkt, welches den tiefsten?",
+      body: "Jedes Token hat zwei Koordinaten auf einer flachen Token-Ebene. Seine Wahrscheinlichkeit ist die Höhe: z = p. Die Fläche darunter ist die Verteilung über dieser Ebene, und die senkrechten Linien verbinden jedes Token mit seinem Wert. Die Karte bleibt stehen; nur die Höhen und das Licht wandern mit der aktuellen Verteilung. Der goldene Pfad zeigt die Tokens, die du tatsächlich gewählt hast. Dreh die Szene und klicke ein Wort an.",
+      watch: "Dreh die Szene, klicke ein Wort an und verfolge den goldenen Pfad. Welches Token hat den höchsten Punkt, welches den tiefsten?",
       demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true },
-      context: "Die Fläche interpoliert die Wahrscheinlichkeiten zwischen den Token-Positionen. An jedem Token steht sie exakt auf seinem p-Wert. Die Token-Ebene darüber ist nur der 2D-Raum, in dem die Wörter liegen; die Höhe ist die Wahrscheinlichkeit.",
+      context: "Die Karte bleibt an denselben Token-Positionen; jeder Schritt beleuchtet den Bereich seiner aktuellen Optionen. An jedem aktuellen Token steht die Fläche auf seinem p-Wert, und die Balken rechts zeigen dieselbe Verteilung. Die Token-Ebene darüber ist nur der 2D-Raum, in dem die Wörter liegen; die Höhe ist die Wahrscheinlichkeit.",
       deep: "Top-k ist eine feste Anzahl, Top-p eine feste Masse. Min-p skaliert mit dem Top-Token. Nach dem Schnitt werden die verbleibenden Wahrscheinlichkeiten renormalisiert. Beam Search hält mehrere Pfade am Leben; Speculative Sampling beschleunigt die Prüfung, ohne die Zielverteilung zu ändern.",
       boxes: [
         box("in-7", "Anwendung", "Welche Einstellung wofür?", "Code und Fakten: niedrige Temperatur, enger Filter. Brainstorming: höhere Temperatur, weiterer Filter. Es gibt keine universelle Regel."),
@@ -120,10 +120,10 @@
     {
       kicker: "02b / The choice",
       title: "The distribution is not the answer",
-      body: "Every token has two coordinates on a flat token plane. Its probability is the height: z = p. The surface below is the distribution over that plane, and the vertical lines connect each token to its value. Rotate the scene and click a word to choose it.",
-      watch: "Rotate the scene. Which token has the highest point, which the lowest?",
+      body: "Every token has two coordinates on a flat token plane. Its probability is the height: z = p. The surface below is the distribution over that plane, and the vertical lines connect each token to its value. The map stays put; only the heights and the light move with the current distribution. The gold path shows the tokens you actually chose. Rotate the scene and click a word to choose it.",
+      watch: "Rotate the scene, click a word, and follow the gold path. Which token has the highest point, which the lowest?",
       demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true },
-      context: "The surface interpolates the probabilities between the token positions. At each token it sits exactly on its p value. The token plane above is only the 2D space where the words live; the height is the probability.",
+      context: "The map keeps the same token positions; each step lights the area of its current options. At each current token the surface sits on its p value, and the bars on the right show the same distribution. The token plane above is only the 2D space where the words live; the height is the probability.",
       deep: "Top-k is a fixed number, top-p a fixed mass. Min-p scales with the top token. After the cut, the remaining probabilities are renormalised. Beam search keeps several paths alive; speculative sampling speeds up verification without changing the target distribution.",
       boxes: [
         box("in-7", "Application", "Which setting for what?", "Code and facts: low temperature, narrow filter. Brainstorming: higher temperature, wider filter. There is no universal rule."),
