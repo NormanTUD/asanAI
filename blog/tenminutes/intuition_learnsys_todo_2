@@ -21,3 +21,5 @@ Bank	19	2	1	4	70	4
 x′ = 29%·Fluss+Geld + 2%·Ich + 2%·gehe + 3%·zur + 59%·Bank + 5%·.Summe 100 % · 100 % auf ein Wort heißt 0 % für alle anderen." mit underbraces.
 
 DONE denke die folie "Oberfläche ist Rauschen" nochmal komplett neu. oberfläche ist das falcshe wort. sage sowas wie "attention reduziert rauschen", eben weil es dinge in kontext brignen kann. new und york als worte einzeln heißen was ganz anderes als "new york" zusammen. zeige das. zeige wie attn mit der gleichen animation wie vorher richtigung stadt tendiert. mach diesen gestrichelten kreis da weg, zeigt, dass new in der nähe von sowohl car als auch von stadt sein kann und das erst im kontext mit "york" sichtbar wird und das rauschen dadurch reduziert wird. dann kann die ki das nutzen um diese info besesr zu trennen.
+
+Verifikation: Alle acht Punkte umgesetzt. Scroll am Textrand geht vor/zurueck (Mausrad und Touch). JS-Syntax, Demo-Harness, Temml-Formeln und Manifold-Transparenz geprueft; PHP/Selenium/Index-Rebuild in dieser Umgebung nicht verfuegbar.
