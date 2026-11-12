@@ -53,7 +53,7 @@
     var scene = document.createElement("div");
     scene.className = "ls-embed-scene";
     scene.innerHTML =
-      '<div class="ls-embed-stage"><canvas class="ls-canvas" role="img"></canvas><div class="ls-embed-mini-table" hidden aria-hidden="true"></div></div>' +
+      '<div class="ls-embed-stage"><canvas class="ls-canvas" role="img"></canvas><div class="ls-embed-mini-table" hidden aria-hidden="true"></div><div class="ls-embed-highdim" hidden></div></div>' +
       '<div class="ls-scene-controls"></div>' +
       '<div class="ls-scene-readout ls-sr-only" aria-live="polite"></div>' +
       '<div class="ls-scene-formula"><div class="ls-math" data-tex=""></div></div>';
@@ -64,6 +64,7 @@
     var readout = scene.querySelector(".ls-scene-readout");
     var formula = scene.querySelector(".ls-scene-formula");
     var miniTable = scene.querySelector(".ls-embed-mini-table");
+    var highdimEl = scene.querySelector(".ls-embed-highdim");
     var mathEl = formula.querySelector(".ls-math");
     var ctx = null, size = null, raf = 0, last = 0, reserveTimer = 0;
     var hits = [], hover = null, drag = null, suppressClick = false;
@@ -1462,6 +1463,7 @@
     var catalog = buildCatalog();
     var catalogByToken = {};
     catalog.forEach(function (it) { catalogByToken[it.t] = it; });
+    var baseValleys = buildBaseValleys(catalog);
 
     function addReveal(x, y) { revealed.push({ x: x, y: y }); }
     function revealToken(tok) {
@@ -1610,6 +1612,33 @@
       });
     }
 
+    // Small fixed valleys between neighbouring words. They give the paths a
+    // shallow dip to cross instead of a smooth slope from one word well to
+    // the next.
+    function buildBaseValleys(list) {
+      var out = [], seen = {};
+      list.forEach(function (a, i) {
+        var best = null, bestJ = -1, bd = Infinity;
+        list.forEach(function (b, j) {
+          if (i === j) return;
+          var dx = b.x - a.x, dy = b.y - a.y;
+          var d = Math.sqrt(dx * dx + dy * dy);
+          if (d < bd) { bd = d; best = b; bestJ = j; }
+        });
+        if (!best || bd < 0.12 || bd > 0.95) return;
+        var key = [i, bestJ].sort(function (x, y) { return x - y; }).join(":");
+        if (seen[key]) return;
+        seen[key] = 1;
+        out.push({
+          x: (a.x + best.x) / 2,
+          y: (a.y + best.y) / 2,
+          p: 0.24,
+          s: 0.13
+        });
+      });
+      return out;
+    }
+
     function landWells(items) {
       return items.map(function (it) { return { x: it.x, y: it.y, p: it.p }; });
     }
@@ -1622,11 +1651,11 @@
       return BASE_PROB + 0.003 * waves;
     }
     function landProb(x, y, wells) {
-      var sigma2 = 0.04;
       var value = 0, weight = 0;
       wells.forEach(function (w) {
         var dx = x - w.x, dy = y - w.y;
-        var k = Math.exp(-(dx * dx + dy * dy) / (2 * sigma2));
+        var sigma = w.s || 0.2;
+        var k = Math.exp(-(dx * dx + dy * dy) / (2 * sigma * sigma));
         value += k * w.p;
         weight += k;
       });
@@ -1680,7 +1709,7 @@
         return { t: it.t, x: it.x, y: it.y, p: p == null ? 0 : p, current: p != null, known: p != null };
       });
       liveReveal = items.filter(function (it) { return it.current; }).map(function (it) { return { x: it.x, y: it.y }; });
-      var wells = landWells(items.filter(function (it) { return it.known; })).concat(pathWells);
+      var wells = landWells(items.filter(function (it) { return it.known; })).concat(pathWells, baseValleys);
       var currentItems = items.filter(function (it) { return it.current; }).sort(function (a, b) { return b.p - a.p; });
       var top = currentItems[0] || null;
       lastProbs = probByToken;
