@@ -1380,27 +1380,23 @@
   function codeScene(root, api) {
     var DE = api.lang === "de";
     var codeText = DE ? [
-      "# Rayleigh-Streuung in Luft",
-      "k_B = 1.380649e-23   # J/K",
-      "",
-      "def scattering(wavelength, pressure, temperature):",
-      "    density = pressure / (k_B * temperature)",
-      "    return density / wavelength ** 4",
-      "",
+      "# Rayleigh-Streuung",
+      "k_B = 1.380649e-23",
+      "def scattering(wl, p, T):",
+      "    return p / (k_B * T) / wl**4",
       "blue = scattering(450e-9, 1e5, 293)",
       "red  = scattering(650e-9, 1e5, 293)",
-      'print(f"Blau wird {blue / red:.2f}× stärker gestreut als Rot")'
+      "ratio = blue / red",
+      "print(round(ratio, 2))"
     ] : [
-      "# Rayleigh scattering in air",
-      "k_B = 1.380649e-23   # J/K",
-      "",
-      "def scattering(wavelength, pressure, temperature):",
-      "    density = pressure / (k_B * temperature)",
-      "    return density / wavelength ** 4",
-      "",
+      "# Rayleigh scattering",
+      "k_B = 1.380649e-23",
+      "def scattering(wl, p, T):",
+      "    return p / (k_B * T) / wl**4",
       "blue = scattering(450e-9, 1e5, 293)",
       "red  = scattering(650e-9, 1e5, 293)",
-      'print(f"Blue is {blue / red:.2f}x more strongly scattered than red")'
+      "ratio = blue / red",
+      "print(round(ratio, 2))"
     ];
     var kB = 1.380649e-23, pressure = 1e5, temp = 293;
     var blue = (pressure / (kB * temp)) / Math.pow(450e-9, 4);
@@ -1464,6 +1460,16 @@
       return span;
     });
     var timers = [], phase = "idle";
+    var codePre = el.querySelector(".ls-code-body");
+    function fitCode() {
+      if (!codePre) return;
+      var max = 14, min = 6;
+      for (var fs = max; fs >= min; fs -= 0.5) {
+        codePre.style.fontSize = fs + "px";
+        codePre.style.lineHeight = "1.35";
+        if (codePre.scrollHeight <= codePre.clientHeight + 1 && codePre.scrollWidth <= codePre.clientWidth + 1) break;
+      }
+    }
     function clearTimers() { timers.forEach(clearTimeout); timers = []; }
     function later(fn, ms) { var id = setTimeout(fn, ms); timers.push(id); return id; }
     function show(win, on) {
@@ -1518,6 +1524,7 @@
       show(agentWin, true);
       show(runWin, false);
       setButton(DE ? "Weiter" : "Next", true);
+      fitCode();
       later(function () { if (thinkingEl) thinkingEl.classList.add("on"); }, 260);
       later(function () {
         if (thinkingEl) thinkingEl.classList.remove("on");
@@ -1562,7 +1569,7 @@
         if (phase !== "ready" && phase !== "done") phase = "paused";
       },
       resume: function () { if (phase === "idle" || phase === "paused") reset(); },
-      resize: function () {},
+      resize: function () { fitCode(); },
       destroy: function () { clearTimers(); el.remove(); }
     };
   }
@@ -5831,7 +5838,7 @@
       canvas.setAttribute("aria-label", DE
         ? "Drei Dimensionen: Rolle, Geschlecht, Spezies. Alle Pfeile zeigen von männlich nach weiblich."
         : "Three dimensions: role, gender, species. All arrows point from male to female.");
-      canvas.__lsAnimal = { active: active, pairs: pairs.length };
+      canvas.__lsAnimal = { active: active, pairs: pairs.length, hits: hits };
     }
     function frame(now) {
       raf = requestAnimationFrame(frame);

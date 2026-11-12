@@ -18,6 +18,7 @@ Regel: Höhen-/Browser-Checks erst ausführen, wenn alle Folien umgebaut sind.
 - [done] Monitor mit opera.jpg, Taskleiste und zwei Fenstern.
 - [done] Agenten-Konsole: kurzes Nachdenken, Datei schreiben.
 - [done] Der Code steht im Agentenfenster, nicht in einem separaten Editor.
+- [done] Codefenster ohne Scrollen: Code gekürzt und Schriftgröße passt sich automatisch an.
 - [done] „Weiter“ öffnet das Lauf-Fenster und tippt `python3 himmel.py` in 200 ms.
 - [done] Agent führt `himmel.py` automatisch aus (Weiter bleibt als manueller Auslöser); Lauf-Fenster zeigt die berechnete Ausgabe.
 - [pending] Auf Mobil prüfen, ob Taskleiste, Agenten-Chat, Code und Lauf-Fenster ohne Überlappung passen. (Agentenlauf in DE/EN bereits gezielt geprüft: Befehl und 4.35-Ausgabe erscheinen.)
@@ -26,8 +27,10 @@ Regel: Höhen-/Browser-Checks erst ausführen, wenn alle Folien umgebaut sind.
 - [done] Macht/Geschlecht-Beispiele durch Tierpaare ersetzt: Löwe/Löwin, Hengst/Stute, Stier/Kuh, Hahn/Henne.
 - [done] Spezies als z-Achse, Rolle (wild/domestiziert) als x-Achse, Geschlecht als y-Achse.
 - [done] Neue `animals`-Szene: parallele Pfeile, Paar anklicken, Readout.
-- [pending] DE/EN-Texte, Achsenlabels und Klickziele auf Desktop und Mobil prüfen.
-- [pending] Prüfen, ob die Tierpaare ohne Überlappung lesbar sind und die Rollenachse verständlich bleibt.
+- [done] DE/EN-Texte, Achsenlabels und Klickziele auf Desktop geprüft.
+- [pending] Dieselben Tierpaar-Checks auf Mobil ausführen.
+- [done] Desktop: Tierpaare, Rollenachse und Readout funktionieren; keine Konsolenfehler, kein Überlauf.
+- [pending] Mobil: Überlappung der Tierlabels und Achsen prüfen.
 
 ## Modelle
 - [done] „Modelle“ und „Die Bausteine eines LLM“ als zwei Folien trennen.
@@ -58,6 +61,7 @@ Regel: Höhen-/Browser-Checks erst ausführen, wenn alle Folien umgebaut sind.
 - [done] Klarstellen, dass die Landschaft nur eine Demo ist.
 - [done] „Fluss“ und „Schloss“ als sehr unwahrscheinliche Tokens weiter links/außen platzieren.
 - [done] Landschaft über die Tokens hinaus weiterlaufen lassen und am Rand ausfransen (weicher Rand).
+- [pending] Stärkerer Videospiel-Weltrand: 5 Ideen vorstellen, eine auswählen und umsetzen.
 - [done] Fog of War: ferne Tokens werden ausgeblendet; nahe/gesehene bleiben sichtbar.
 - [done] Wiese der Wörter als sehr blasser Hintergrund hinter die Landschaft gelegt.
 - [done] Klick in die Nähe eines Tokens genügt; breite Trefferflächen um die aktuellen Tokens.
