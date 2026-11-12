@@ -578,6 +578,18 @@ Abhängigkeiten: T14, T15, T19.
 
 ## T19 — Energielandschaft am Satzende, Ball, Wortklick, Wiese
 
+### T19.0 — 3D-Achsen und Token-Ebene (neue Vorgabe)
+- [~] Tokens als 2D-Punkte auf einer flachen Token-Ebene im 3D-Raum zeigen.
+- [ ] Die Wahrscheinlichkeitsfläche darunter: z = p, an jedem Token exakt
+      dessen Wahrscheinlichkeit.
+- [ ] Senkrechte Verbindungen von jedem Token auf der Ebene zum Wert auf der
+      Fläche.
+- [ ] z-Achse mit p-Werten (0–100 %) beschriften, plus „p (Wahrscheinlichkeit)“.
+- [ ] Legende: „Token-Ebene (2D) oben · Fläche = Verteilung p(x,y)“.
+- [ ] Prosa/Readout/Aria anpassen (nicht mehr „Tiefe = wahrscheinlich“).
+- [ ] DE/EN, Desktop/Mobil, keine Überlappung.
+
+
 ### T19.1 Landschaft bleibt
 - [ ] Am Satzende Landschaft unten stehen lassen.
 - [ ] Oben weiter auswählen; unten Pfad zeigen.

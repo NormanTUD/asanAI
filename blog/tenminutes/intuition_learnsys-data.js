@@ -53,11 +53,11 @@
     {
       kicker: "02b / Die Entscheidung",
       title: "Die Verteilung ist nicht die Antwort",
-      body: "Das Modell liefert für jedes Token eine Wahrscheinlichkeit. Die Demo macht aus den Balken eine Landschaft: Jedes mögliche nächste Wort ist ein Tal, tiefer heißt wahrscheinlicher. Sie zeigt auch Wörter jenseits der Balken, mit abnehmender Tiefe. Dreh die Landschaft und klicke ein Wort an, um es zu wählen.",
-      watch: "Dreh die Landschaft. Welches Tal liegt am tiefsten, und wie verändert der Kontext die Täler?",
+      body: "Jedes Token hat zwei Koordinaten auf einer flachen Token-Ebene. Seine Wahrscheinlichkeit ist die Höhe: z = p. Die Fläche darunter ist die Verteilung über dieser Ebene, und die senkrechten Linien verbinden jedes Token mit seinem Wert. Dreh die Szene und klicke ein Wort an.",
+      watch: "Dreh die Szene. Welches Token hat den höchsten Punkt, welches den tiefsten?",
       demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true },
-      context: "Top-k ist eine feste Anzahl, Top-p eine feste Masse. Min-p skaliert mit dem Top-Token. Nach dem Schnitt werden die verbleibenden Wahrscheinlichkeiten renormalisiert.",
-      deep: "Beam Search hält mehrere Pfade am Leben. Speculative Sampling beschleunigt die Prüfung, ohne die Zielverteilung zu ändern. Die Wahl ist eine Policy, keine Eigenschaft des Modells.",
+      context: "Die Fläche interpoliert die Wahrscheinlichkeiten zwischen den Token-Positionen. An jedem Token steht sie exakt auf seinem p-Wert. Die Token-Ebene darüber ist nur der 2D-Raum, in dem die Wörter liegen; die Höhe ist die Wahrscheinlichkeit.",
+      deep: "Top-k ist eine feste Anzahl, Top-p eine feste Masse. Min-p skaliert mit dem Top-Token. Nach dem Schnitt werden die verbleibenden Wahrscheinlichkeiten renormalisiert. Beam Search hält mehrere Pfade am Leben; Speculative Sampling beschleunigt die Prüfung, ohne die Zielverteilung zu ändern.",
       boxes: [
         box("in-7", "Anwendung", "Welche Einstellung wofür?", "Code und Fakten: niedrige Temperatur, enger Filter. Brainstorming: höhere Temperatur, weiterer Filter. Es gibt keine universelle Regel."),
         box("in-8", "Geschichte", "Warum wurde Sampling wichtig?", "Weil ein Modell ohne Sampling immer denselben Text liefert. Die Vielfalt kommt aus der Verteilung, nicht aus dem Modell allein.")
@@ -120,11 +120,11 @@
     {
       kicker: "02b / The choice",
       title: "The distribution is not the answer",
-      body: "The model returns a probability for every token. The demo turns the bars into a landscape: every possible next word is a valley, and deeper means more likely. It also shows words beyond the bars, with decreasing depth. Rotate the landscape and click a word to choose it.",
-      watch: "Rotate the landscape. Which valley is deepest, and how does the context change the valleys?",
+      body: "Every token has two coordinates on a flat token plane. Its probability is the height: z = p. The surface below is the distribution over that plane, and the vertical lines connect each token to its value. Rotate the scene and click a word to choose it.",
+      watch: "Rotate the scene. Which token has the highest point, which the lowest?",
       demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true },
-      context: "Top-k is a fixed number, top-p a fixed mass. Min-p scales with the top token. After the cut, the remaining probabilities are renormalised.",
-      deep: "Beam search keeps several paths alive. Speculative sampling speeds up verification without changing the target distribution. The choice is a policy, not a property of the model.",
+      context: "The surface interpolates the probabilities between the token positions. At each token it sits exactly on its p value. The token plane above is only the 2D space where the words live; the height is the probability.",
+      deep: "Top-k is a fixed number, top-p a fixed mass. Min-p scales with the top token. After the cut, the remaining probabilities are renormalised. Beam search keeps several paths alive; speculative sampling speeds up verification without changing the target distribution.",
       boxes: [
         box("in-7", "Application", "Which setting for what?", "Code and facts: low temperature, narrow filter. Brainstorming: higher temperature, wider filter. There is no universal rule."),
         box("in-8", "History", "Why did sampling become important?", "Because a model without sampling always produces the same text. Variety comes from the distribution, not from the model alone.")

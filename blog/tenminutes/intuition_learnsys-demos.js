@@ -1333,25 +1333,26 @@
       return items;
     }
 
+    var PLANE_Z = 1.04;
+
     function landWells(items) {
-      var maxP = 0;
-      items.forEach(function (it) { if (it.p > maxP) maxP = it.p; });
-      maxP = Math.max(maxP, 1e-6);
-      return items.map(function (it) {
-        var ratio = Math.pow(it.p / maxP, 0.62);
-        return { x: it.x, y: it.y, p: it.p, depth: 0.18 + 0.78 * ratio };
-      });
+      return items.map(function (it) { return { x: it.x, y: it.y, p: it.p }; });
     }
 
-    function landHeight(x, y, wells) {
-      var h = 0.82;
+    // Shepard-Interpolation: an jedem Token exakt p, dazwischen glatt.
+    function landProb(x, y, wells) {
+      var num = 0, den = 0;
       wells.forEach(function (w) {
         var dx = x - w.x, dy = y - w.y;
-        h -= w.depth * Math.exp(-(dx * dx + dy * dy) / (2 * 0.34 * 0.34));
+        var wt = 1 / Math.pow(dx * dx + dy * dy + 0.045, 1.15);
+        num += wt * w.p;
+        den += wt;
       });
-      h += 0.012 * Math.sin(x * 1.7 + y * 2.3) + 0.008 * Math.cos(x * 2.6 - y * 1.4);
-      return Math.max(0.035, Math.min(0.96, h));
+      return Math.max(0.002, Math.min(0.995, num / Math.max(1e-9, den)));
     }
+
+    // Anzeige-Höhe; die Achse ist mit den echten p-Werten beschriftet.
+    function landZ(p) { return 0.06 + 0.90 * p; }
 
     function landRaw(x, y, z) {
       var cy = Math.cos(landYaw), sy = Math.sin(landYaw);
@@ -1363,11 +1364,11 @@
       return { x: x1, y: -y2, z: z2 };
     }
 
-    function landColor(h, C) {
-      if (h < 0.17) return C.petrol;
-      if (h < 0.31) return C.blue;
-      if (h < 0.47) return C.sky;
-      if (h < 0.64) return C.lime;
+    function landColor(p, C) {
+      if (p > 0.55) return C.green;
+      if (p > 0.32) return C.lime;
+      if (p > 0.16) return C.sky;
+      if (p > 0.07) return C.blue;
       return C.paper2;
     }
 
@@ -1392,20 +1393,30 @@
       var NX = w > 700 ? 42 : 32, NY = w > 700 ? 26 : 20;
       var grid = [];
       var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      function include(rp) {
+        if (rp.x < minX) minX = rp.x;
+        if (rp.x > maxX) maxX = rp.x;
+        if (rp.y < minY) minY = rp.y;
+        if (rp.y > maxY) maxY = rp.y;
+      }
       for (var i = 0; i <= NX; i++) {
         grid[i] = [];
         for (var j = 0; j <= NY; j++) {
           var gx = -LAND_X + 2 * LAND_X * i / NX;
           var gy = -LAND_Y + 2 * LAND_Y * j / NY;
-          var gh = landHeight(gx, gy, wells);
+          var gp = landProb(gx, gy, wells);
+          var gh = landZ(gp);
           var rp = landRaw(gx, gy, gh);
-          grid[i][j] = { x: gx, y: gy, h: gh, rx: rp.x, ry: rp.y, rz: rp.z };
-          if (rp.x < minX) minX = rp.x;
-          if (rp.x > maxX) maxX = rp.x;
-          if (rp.y < minY) minY = rp.y;
-          if (rp.y > maxY) maxY = rp.y;
+          grid[i][j] = { x: gx, y: gy, p: gp, h: gp, rx: rp.x, ry: rp.y, rz: rp.z };
+          include(rp);
         }
       }
+      [[-LAND_X, -LAND_Y], [LAND_X, -LAND_Y], [LAND_X, LAND_Y], [-LAND_X, LAND_Y]].forEach(function (c) {
+        include(landRaw(c[0], c[1], PLANE_Z));
+      });
+      var axisX = LAND_X + 0.26, axisY = LAND_Y + 0.10;
+      include(landRaw(axisX, axisY, landZ(0)));
+      include(landRaw(axisX, axisY, landZ(1)));
       var pad = Math.min(w, h) * 0.09;
       var scale = Math.min((w - pad * 2) / Math.max(0.001, maxX - minX), (h - pad * 2) / Math.max(0.001, maxY - minY)) * landZoom;
       var ox = w / 2 - (minX + maxX) / 2 * scale;
@@ -1442,11 +1453,62 @@
         ctx.globalAlpha = 1;
       });
 
+      // Token-Ebene (2D), oberhalb der Wahrscheinlichkeitsfläche.
+      var planeCorners = [[-LAND_X, -LAND_Y], [LAND_X, -LAND_Y], [LAND_X, LAND_Y], [-LAND_X, LAND_Y]].map(function (c) {
+        var rp = landRaw(c[0], c[1], PLANE_Z);
+        return { x: sx(rp.x), y: sy(rp.y) };
+      });
+      ctx.beginPath();
+      ctx.moveTo(planeCorners[0].x, planeCorners[0].y);
+      for (var pc = 1; pc < planeCorners.length; pc++) ctx.lineTo(planeCorners[pc].x, planeCorners[pc].y);
+      ctx.closePath();
+      ctx.fillStyle = C.paper;
+      ctx.globalAlpha = 0.06;
+      ctx.fill();
+      ctx.globalAlpha = 0.30;
+      ctx.strokeStyle = C.lineStrong;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      for (var pg = 1; pg < 6; pg++) {
+        var planeGx = -LAND_X + 2 * LAND_X * pg / 6;
+        var planeGy = -LAND_Y + 2 * LAND_Y * pg / 6;
+        var pa1 = landRaw(planeGx, -LAND_Y, PLANE_Z), pa2 = landRaw(planeGx, LAND_Y, PLANE_Z);
+        ctx.beginPath(); ctx.moveTo(sx(pa1.x), sy(pa1.y)); ctx.lineTo(sx(pa2.x), sy(pa2.y)); ctx.stroke();
+        var pb1 = landRaw(-LAND_X, planeGy, PLANE_Z), pb2 = landRaw(LAND_X, planeGy, PLANE_Z);
+        ctx.beginPath(); ctx.moveTo(sx(pb1.x), sy(pb1.y)); ctx.lineTo(sx(pb2.x), sy(pb2.y)); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      var planeLabel = landRaw(-LAND_X, -LAND_Y, PLANE_Z);
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(DE ? "Token-Ebene (2D)" : "token plane (2D)", sx(planeLabel.x) + 4, sy(planeLabel.y) - 4);
+
+      // z-Achse: p von 0 bis 1.
+      var ab = landRaw(axisX, axisY, landZ(0)), at = landRaw(axisX, axisY, landZ(1));
+      ctx.strokeStyle = C.lineStrong;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(sx(ab.x), sy(ab.y)); ctx.lineTo(sx(at.x), sy(at.y)); ctx.stroke();
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      [0, 0.25, 0.5, 0.75, 1].forEach(function (p) {
+        var zz = landZ(p);
+        var tick = landRaw(axisX, axisY, zz);
+        var tick2 = landRaw(axisX + 0.08, axisY, zz);
+        var tx = sx(tick.x), ty = sy(tick.y);
+        ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(sx(tick2.x), sy(tick2.y)); ctx.stroke();
+        ctx.fillText(Math.round(p * 100) + "%", tx + 6, ty + 3);
+      });
+      ctx.fillStyle = C.petrol;
+      ctx.font = '600 10px "Open Sans", sans-serif';
+      ctx.fillText("p", sx(at.x) + 6, sy(at.y) - 4);
+
       var atEnd = generated.length >= MAX_STEPS;
       ctx.fillStyle = C.muted;
       ctx.font = '600 9px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText(DE ? "Tiefe = wahrscheinlich" : "depth = likely", 10, 16);
+      ctx.fillText(DE ? "z = p · Fläche = Verteilung" : "z = p · surface = distribution", 10, 16);
       if (atEnd) ctx.fillText(DE ? "Satzende · nächste Sätze" : "end of sentence · next sentences", 10, 29);
 
       var boxes = [];
@@ -1459,16 +1521,35 @@
       }
       landHits = [];
       items.forEach(function (it) {
-        var wh = landHeight(it.x, it.y, wells);
-        var rp = landRaw(it.x, it.y, wh);
-        var px = sx(rp.x), py = sy(rp.ry);
+        var planePt = landRaw(it.x, it.y, PLANE_Z);
+        var surfPt = landRaw(it.x, it.y, landZ(it.p));
+        var px = sx(planePt.x), py = sy(planePt.y);
+        var surfX = sx(surfPt.x), surfY = sy(surfPt.y);
         var isTop = it === items[0];
+
+        ctx.strokeStyle = isTop ? C.green : C.petrol;
+        ctx.globalAlpha = 0.45;
+        ctx.setLineDash([3, 3]);
         ctx.beginPath();
-        ctx.arc(px, py, isTop ? 4.5 : 3, 0, Math.PI * 2);
+        ctx.moveTo(px, py);
+        ctx.lineTo(surfX, surfY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 1;
+
+        ctx.beginPath();
+        ctx.arc(surfX, surfY, isTop ? 4.5 : 3, 0, Math.PI * 2);
         ctx.fillStyle = isTop ? C.green : C.petrol;
         ctx.fill();
         ctx.strokeStyle = C.paper;
         ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(px, py, 2.6, 0, Math.PI * 2);
+        ctx.fillStyle = C.paper;
+        ctx.strokeStyle = isTop ? C.green : C.petrol;
+        ctx.lineWidth = 1.4;
         ctx.stroke();
 
         var pct = (it.p * 100).toFixed(it.p * 100 < 1 ? 1 : 0) + "%";
@@ -1517,8 +1598,8 @@
           if (cells[2]) cells[2].innerHTML = (DE ? "Top" : "Top") + ' <b>' + api.esc(top.t) + '</b>';
         }
         landCanvas.setAttribute("aria-label", DE
-          ? "Energie-Landschaft der nächsten Wörter. Tiefstes Tal: " + top.t + ", " + (top.p * 100).toFixed(0) + " Prozent."
-          : "Energy landscape of next words. Deepest valley: " + top.t + ", " + (top.p * 100).toFixed(0) + " percent.");
+          ? "Wahrscheinlichkeitslandschaft. Token-Ebene oben, z = p. Höchster Punkt: " + top.t + ", " + (top.p * 100).toFixed(0) + " Prozent."
+          : "Probability landscape. Token plane above, z = p. Highest point: " + top.t + ", " + (top.p * 100).toFixed(0) + " percent.");
       }
     }
 
