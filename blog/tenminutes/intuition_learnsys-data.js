@@ -53,7 +53,7 @@
     {
       kicker: "02b / Die Entscheidung",
       title: "Die Verteilung ist nicht die Antwort",
-      body: "Jedes Token hat zwei Koordinaten auf einer flachen Token-Ebene. Seine Wahrscheinlichkeit ist p; die Höhe ist der Verlust 1 − p. Die Fläche darunter ist eine Loss-Landscape: wahrscheinliche Tokens liegen in tiefen Tälern, unwahrscheinliche auf hohen Bergen. Die senkrechten Linien verbinden jedes Token mit seinem Wert. Die Karte bleibt stehen; nur die Täler und das Licht wandern mit der aktuellen Verteilung. Der goldene Pfad zeigt die Tokens, die du tatsächlich gewählt hast. Dreh die Szene und klicke ein Wort an.",
+      body: "Jedes Token hat zwei Koordinaten auf einer flachen Token-Ebene. Seine Wahrscheinlichkeit ist p; die Höhe ist der Verlust 1 − p. Die Fläche darunter ist eine Loss-Landscape: wahrscheinliche Tokens liegen in tiefen Tälern, unwahrscheinliche auf hohen Bergen. Die senkrechten Linien verbinden jedes Token mit seinem Wert. Die Karte bleibt stehen. Jeder Schritt senkt die Täler seiner Optionen; ein gewähltes Token behält sein Tal, sodass der goldene Pfad als Kette von Tälern sichtbar bleibt. Mit ← Zurück nimmst du das letzte Token wieder weg. Dreh die Szene und klicke ein Wort an.",
       watch: "Dreh die Szene, klicke ein Wort an und verfolge den goldenen Pfad. Welches Token liegt im tiefsten Tal, welches auf dem höchsten Berg?",
       demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true },
       context: "Die Karte bleibt an denselben Token-Positionen; jeder Schritt beleuchtet den Bereich seiner aktuellen Optionen. An jedem aktuellen Token steht die Fläche auf seinem Verlust 1 − p, und die Balken rechts zeigen dieselbe Verteilung. Die Token-Ebene darüber ist nur der 2D-Raum, in dem die Wörter liegen.",
@@ -106,7 +106,7 @@
     {
       kicker: "02b / The choice",
       title: "The distribution is not the answer",
-      body: "Every token has two coordinates on a flat token plane. Its probability is p; the height is the loss 1 − p. The surface below is a loss landscape: likely tokens sit in deep valleys, unlikely ones on high mountains. The vertical lines connect each token to its value. The map stays put; only the valleys and the light move with the current distribution. The gold path shows the tokens you actually chose. Rotate the scene and click a word to choose it.",
+      body: "Every token has two coordinates on a flat token plane. Its probability is p; the height is the loss 1 − p. The surface below is a loss landscape: likely tokens sit in deep valleys, unlikely ones on high mountains. The vertical lines connect each token to its value. The map stays put. Each step lowers the valleys of its options; a chosen token keeps its valley, so the gold path stays visible as a chain of valleys. Use ← Back to remove the last token. Rotate the scene and click a word to choose it.",
       watch: "Rotate the scene, click a word, and follow the gold path. Which token sits in the deepest valley, which on the highest mountain?",
       demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true },
       context: "The map keeps the same token positions; each step lights the area of its current options. At each current token the surface sits on its loss 1 − p, and the bars on the right show the same distribution. The token plane above is only the 2D space where the words live.",

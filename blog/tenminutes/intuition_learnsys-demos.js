@@ -1848,7 +1848,8 @@
         var p = probByToken[tok];
         if (p == null && pathProb[idx] != null) p = pathProb[idx];
         var hasP = p != null;
-        var surfPt = landRaw(c.x, c.y, landZ(hasP ? p : BASE_PROB));
+        var surfaceP = landProb(c.x, c.y, wells);
+        var surfPt = landRaw(c.x, c.y, landZ(surfaceP));
         pathPts.push({
           t: tok, idx: idx,
           px: sx(planePt.x), py: sy(planePt.y),
@@ -2028,7 +2029,8 @@
       }
       if (!ballTarget && top) ballTarget = top;
       if (ballTarget) {
-        var ballPt = landRaw(ballTarget.x, ballTarget.y, landZ(ballTarget.p));
+        var ballP = landProb(ballTarget.x, ballTarget.y, wells);
+        var ballPt = landRaw(ballTarget.x, ballTarget.y, landZ(ballP));
         var btx = sx(ballPt.x), bty = sy(ballPt.y);
         if (!landBall.init) { landBall.x = btx; landBall.y = bty; landBall.init = true; }
         var bdx = btx - landBall.x, bdy = bty - landBall.y;
@@ -2368,7 +2370,7 @@
       return {
         catalog: catalog.map(function (c) { return { t: c.t, x: c.x, y: c.y }; }),
         generated: generated.slice(),
-        path: lastPath.map(function (p) { return { t: p.t, px: p.px, py: p.py }; }),
+        path: lastPath.map(function (p) { return { t: p.t, px: p.px, py: p.py, sx: p.sx, sy: p.sy, p: p.p }; }),
         probs: lastProbs,
         knownProbs: knownProbs,
         top: lastTop ? lastTop.t : null,
