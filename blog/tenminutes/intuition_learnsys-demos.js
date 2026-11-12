@@ -1825,12 +1825,757 @@
     };
   }
 
+  function tokenizeScene(root, api) {
+    var DE = api.lang === "de";
+    var examples = DE ? {
+      understanding: { label: "Verständnis", value: "Verständnis" },
+      unbreakable: { label: "unzerbrechlich", value: "unzerbrechlich" },
+      sentence: { label: "Der Transformer spielt großartig", value: "Der Transformer spielt großartig" }
+    } : {
+      understanding: { label: "understanding", value: "understanding" },
+      unbreakable: { label: "unbreakable", value: "unbreakable" },
+      sentence: { label: "The transformer is playing greatly", value: "The transformer is playing greatly" }
+    };
+    var splits = DE ? {
+      "verständnis": ["ver", "ständ", "nis"],
+      "unzerbrechlich": ["un", "zerbrech", "lich"],
+      "spielt": ["spiel", "t"],
+      "großartig": ["groß", "artig"]
+    } : {
+      "understanding": ["un", "der", "stand", "ing"],
+      "unbreakable": ["un", "break", "able"],
+      "playing": ["play", "ing"],
+      "greatly": ["great", "ly"]
+    };
+    var colors = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
+    var el = document.createElement("div");
+    el.className = "ls-tokenize-scene";
+    el.innerHTML = '<div class="ls-scene-row ls-tokenize-samples"></div><div class="ls-tokenize-chips" aria-live="polite"></div><div class="ls-tokenize-stats"></div><p class="ls-tokenize-note">' + (DE ? "Ein Token ist ein Stück Text, kein Wort. Die ID ist die Adresse in der Embedding-Tabelle." : "A token is a piece of text, not a word. The ID is the address in the embedding table.") + '</p>';
+    root.appendChild(el);
+    var samples = el.querySelector(".ls-tokenize-samples");
+    var chips = el.querySelector(".ls-tokenize-chips");
+    var stats = el.querySelector(".ls-tokenize-stats");
+    var value = examples.sentence.value;
+    function idFor(word) { var h = 0; for (var i = 0; i < word.length; i++) h = (h * 31 + word.charCodeAt(i)) % 50000; return 10000 + h; }
+    function piecesFor(word) {
+      if (splits[word]) return splits[word];
+      if (word.length > 8) {
+        var out = [];
+        for (var i = 0; i < word.length; i += 4) out.push(word.slice(i, i + 4));
+        return out;
+      }
+      return [word];
+    }
+    function tokenize(text) {
+      var pieces = text.split(/(\s+|[.,!?;:])/).filter(function (p) { return p.length; });
+      var tokens = [];
+      pieces.forEach(function (piece) {
+        if (/^\s+$/.test(piece)) { tokens.push({ word: "␣", id: 220, space: true }); return; }
+        if (/^[.,!?;:]$/.test(piece)) { tokens.push({ word: piece, id: idFor(piece) }); return; }
+        var word = piece.toLowerCase();
+        piecesFor(word).forEach(function (part, idx) {
+          tokens.push({ word: part, id: idFor(part), sub: idx > 0 });
+        });
+      });
+      return tokens;
+    }
+    function render() {
+      var tokens = tokenize(value);
+      chips.innerHTML = tokens.map(function (tok, i) {
+        return '<span class="ls-token-chip' + (tok.sub ? " is-sub" : "") + (tok.space ? " is-space" : "") + '" style="--token-color:' + colors[i % colors.length] + '"><b>' + api.esc(tok.word) + '</b><small>id ' + tok.id + '</small></span>';
+      }).join("");
+      var spaces = tokens.filter(function (t) { return t.space; }).length;
+      var subs = tokens.filter(function (t) { return t.sub; }).length;
+      stats.innerHTML = '<span><b>' + tokens.length + '</b> ' + (DE ? "Tokens" : "tokens") + '</span><span><b>' + (tokens.length - spaces) + '</b> ' + (DE ? "Teile" : "pieces") + '</span><span><b>' + subs + '</b> ' + (DE ? "Subword-Splits" : "subword splits") + '</span><span><b>' + spaces + '</b> ' + (DE ? "Leerzeichen" : "whitespace") + '</span>';
+    }
+    Object.keys(examples).forEach(function (key) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "ls-chip" + (key === "sentence" ? " is-on" : "");
+      b.textContent = examples[key].label;
+      b.addEventListener("click", function () {
+        value = examples[key].value;
+        samples.querySelectorAll(".ls-chip").forEach(function (x) { x.classList.remove("is-on"); });
+        b.classList.add("is-on");
+        render();
+      });
+      samples.appendChild(b);
+    });
+    render();
+    return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
+  }
+
+  function positionScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-position-scene";
+    el.innerHTML =
+      '<div class="ls-position-grid">' +
+        '<div class="ls-position-panel"><canvas class="ls-position-heat"></canvas><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
+        '<div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div>' +
+      '</div>' +
+      '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-pos-context" min="16" max="128" step="8" value="64"><output>64</output></label><label class="ls-range">' + (DE ? "Dimensionen" : "Dimensions") + ' <input type="range" class="ls-pos-dims" min="2" max="64" step="2" value="24"><output>24</output></label><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="10000" step="1" value="7"><output>7</output></label></div>' +
+      '<div class="ls-scene-row ls-position-metric"><button type="button" class="ls-chip is-on" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button><button type="button" class="ls-chip" data-metric="angle">' + (DE ? "Winkel" : "Angle") + '</button><button type="button" class="ls-chip is-on" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
+      '<div class="ls-position-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var heat = el.querySelector(".ls-position-heat");
+    var curve = el.querySelector(".ls-position-curve");
+    var contextEl = el.querySelector(".ls-pos-context");
+    var dimsEl = el.querySelector(".ls-pos-dims");
+    var posEl = el.querySelector(".ls-pos-pos");
+    var readout = el.querySelector(".ls-position-readout");
+    var context = 64, dims = 24, pos = 7, metric = "euclid", rotate = true;
+    var heatSize = null, curveSize = null, yaw = -0.6, pitch = 0.5, drag = null, raf = 0, last = 0;
+    var C = api.colors();
+    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+    function pe(p, d, i) {
+      var freq = Math.pow(10000, (2 * i) / Math.max(2, d));
+      return i % 2 === 0 ? Math.sin(p / freq) : Math.cos(p / freq);
+    }
+    function drawHeat() {
+      if (!heatSize) return;
+      var ctx = heatSize.ctx, w = heatSize.w, h = heatSize.h;
+      ctx.clearRect(0, 0, w, h);
+      var padL = 34, padB = 22, padT = 8, padR = 8;
+      var cols = Math.min(dims, 64), rows = Math.min(context, 128);
+      var cw = (w - padL - padR) / cols, ch = (h - padT - padB) / rows;
+      for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < cols; j++) {
+          var v = pe(i, dims, j);
+          var t = (v + 1) / 2;
+          var col = t < 0.5 ? mix(C.sky, C.paper, t * 2) : mix(C.paper, C.gold, (t - 0.5) * 2);
+          ctx.fillStyle = col;
+          ctx.fillRect(padL + j * cw, padT + i * ch, Math.ceil(cw) + 0.5, Math.ceil(ch) + 0.5);
+        }
+      }
+      ctx.strokeStyle = C.line;
+      ctx.strokeRect(padL, padT, w - padL - padR, h - padT - padB);
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.textAlign = "right";
+      ctx.fillText("0", padL - 4, padT + 8);
+      ctx.fillText(String(rows - 1), padL - 4, padT + (rows - 1) * ch + ch);
+      ctx.textAlign = "center";
+      ctx.fillText(DE ? "Dimension" : "dimension", padL + (w - padL - padR) / 2, h - 5);
+    }
+    function mix(a, b, t) {
+      function rgb(h) { h = h.replace("#", ""); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
+      var A = rgb(a), B = rgb(b);
+      return "rgb(" + Math.round(A[0] + (B[0]-A[0])*t) + "," + Math.round(A[1] + (B[1]-A[1])*t) + "," + Math.round(A[2] + (B[2]-A[2])*t) + ")";
+    }
+    function project(x, y, z) {
+      var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+      var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
+      var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
+      var s = Math.min(curveSize.w, curveSize.h) * 0.33 / (1 + z2 * 0.25);
+      return { x: curveSize.w / 2 + x1 * s, y: curveSize.h / 2 - y2 * s, z: z2 };
+    }
+    function drawCurve() {
+      if (!curveSize) return;
+      var ctx = curveSize.ctx, w = curveSize.w, h = curveSize.h;
+      ctx.clearRect(0, 0, w, h);
+      var pts = [];
+      var maxP = Math.max(8, Math.min(pos, 400));
+      for (var i = 0; i <= maxP; i++) {
+        var v = [pe(i, 3, 0), pe(i, 3, 1), pe(i, 3, 2)];
+        pts.push(project(v[0], v[1], v[2]));
+      }
+      ctx.beginPath();
+      pts.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+      ctx.strokeStyle = C.blue;
+      ctx.lineWidth = 1.6;
+      ctx.globalAlpha = 0.7;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      var end = pts[pts.length - 1];
+      var chord = project(0, 0, 0);
+      if (metric === "euclid") {
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = C.gold;
+        ctx.beginPath(); ctx.moveTo(chord.x, chord.y); ctx.lineTo(end.x, end.y); ctx.stroke();
+        ctx.setLineDash([]);
+      } else {
+        var arc = [];
+        var steps = 30;
+        for (var k = 0; k <= steps; k++) {
+          var t = k / steps;
+          var a = Math.acos(Math.max(-1, Math.min(1, t))) * 0.5;
+          arc.push(project(Math.cos(a) * 1.2, Math.sin(a) * 1.2, 0));
+        }
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = C.gold;
+        ctx.beginPath();
+        arc.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.beginPath(); ctx.arc(chord.x, chord.y, 4, 0, Math.PI * 2); ctx.fillStyle = C.paper; ctx.fill(); ctx.strokeStyle = C.petrol; ctx.stroke();
+      ctx.beginPath(); ctx.arc(end.x, end.y, 6, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = C.muted; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "left";
+      ctx.fillText(DE ? "Position " + pos : "position " + pos, 12, 18);
+      ctx.fillText(DE ? "Vektor" : "vector", end.x + 8, end.y + 3);
+    }
+    function draw() {
+      drawHeat(); drawCurve();
+      var v = [pe(pos, 3, 0), pe(pos, 3, 1), pe(pos, 3, 2)];
+      var len = Math.hypot(v[0], v[1], v[2]);
+      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + pos + '</b></span><span>' + (DE ? "Vektorlänge" : "vector length") + ' <b>' + len.toFixed(3) + '</b></span><span>' + (DE ? "Metrik" : "metric") + ' <b>' + (metric === "euclid" ? (DE ? "Euklid" : "Euclidean") : (DE ? "Winkel" : "Angle")) + '</b></span>';
+    }
+    function resizeHeat() { heatSize = api.fit(heat, heat); drawHeat(); }
+    function resizeCurve() { curveSize = api.fit(curve, curve); drawCurve(); }
+    function resize() { resizeHeat(); resizeCurve(); draw(); }
+    function loop(now) {
+      raf = requestAnimationFrame(loop);
+      if (now - last < 40) return;
+      last = now;
+      if (rotate && !drag) { yaw += 0.003; drawCurve(); }
+    }
+    heat.addEventListener("pointerdown", function (e) {
+      var r = heat.getBoundingClientRect();
+      var padL = 34, padT = 8, padB = 22;
+      var y = (e.clientY - r.top - padT) / (r.height - padT - padB);
+      pos = Math.round(clamp(y, 0, 1) * (Math.min(context, 128) - 1));
+      posEl.value = String(pos); posEl.nextElementSibling.textContent = String(pos);
+      draw();
+    });
+    curve.addEventListener("pointerdown", function (e) { drag = { x: e.clientX, y: e.clientY }; });
+    window.addEventListener("pointermove", function (e) {
+      if (!drag) return;
+      yaw += (e.clientX - drag.x) * 0.008;
+      pitch = clamp(pitch + (e.clientY - drag.y) * 0.006, -1.2, 1.2);
+      drag.x = e.clientX; drag.y = e.clientY; drawCurve();
+    });
+    window.addEventListener("pointerup", function () { drag = null; });
+    contextEl.addEventListener("input", function () { context = parseInt(contextEl.value, 10); contextEl.nextElementSibling.textContent = String(context); drawHeat(); });
+    dimsEl.addEventListener("input", function () { dims = parseInt(dimsEl.value, 10); dimsEl.nextElementSibling.textContent = String(dims); drawHeat(); drawCurve(); });
+    posEl.addEventListener("input", function () { pos = parseInt(posEl.value, 10); posEl.nextElementSibling.textContent = String(pos); draw(); });
+    el.querySelectorAll("[data-metric]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        metric = b.getAttribute("data-metric");
+        el.querySelectorAll("[data-metric]").forEach(function (x) { x.classList.toggle("is-on", x === b); });
+        drawCurve();
+      });
+    });
+    var rot = el.querySelector("[data-rotate]");
+    rot.addEventListener("click", function () { rotate = !rotate; rot.classList.toggle("is-on", rotate); });
+    window.addEventListener("resize", resize);
+    resize();
+    raf = requestAnimationFrame(loop);
+    return { update: function () {}, resize: resize, destroy: function () { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
+  function attentionScene(root, api) {
+    var DE = api.lang === "de";
+    var tokens = DE ? ["Ich", "gehe", "zur", "Bank", "."] : ["I", "walk", "to", "the", "bank", "."];
+    var contexts = [
+      { id: "none", label: DE ? "kein Kontext" : "no context", color: "muted" },
+      { id: "river", label: DE ? "Fluss" : "river", color: "blue" },
+      { id: "money", label: DE ? "Geld" : "money", color: "gold" },
+      { id: "both", label: DE ? "beides" : "both", color: "lilac" }
+    ];
+    var weights = {
+      none: [0.06, 0.06, 0.04, 0.72, 0.12],
+      river: [0.05, 0.10, 0.05, 0.34, 0.46],
+      money: [0.05, 0.06, 0.04, 0.33, 0.52],
+      both: [0.05, 0.08, 0.04, 0.40, 0.43]
+    };
+    var el = document.createElement("div");
+    el.className = "ls-att-scene";
+    el.innerHTML = '<div class="ls-att-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-att-matrix" aria-live="polite"></div><div class="ls-scene-row ls-att-contexts"></div><div class="ls-att-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-att-stage");
+    var canvas = el.querySelector("canvas");
+    var ctxRow = el.querySelector(".ls-att-contexts");
+    var matrixEl = el.querySelector(".ls-att-matrix");
+    var readout = el.querySelector(".ls-att-readout");
+    var ctx = null, size = null, current = "none", hits = [];
+    var C = api.colors();
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      ctx.clearRect(0, 0, size.w, size.h);
+      var w = size.w, h = size.h;
+      var pad = 22;
+      var sentenceY = 34;
+      var tokenXs = [];
+      var gap = Math.min(104, (w - pad * 2) / tokens.length);
+      var start = (w - gap * tokens.length) / 2 + gap / 2;
+      ctx.font = '600 13px "Open Sans", sans-serif';
+      tokens.forEach(function (t, i) {
+        var x = start + i * gap;
+        tokenXs.push(x);
+        var active = i === tokens.length - 2;
+        var tw = ctx.measureText(t).width;
+        var pw = tw + 16;
+        ctx.fillStyle = active ? C.green : C.paper;
+        ctx.strokeStyle = active ? C.green : C.lineStrong;
+        ctx.fillRect(x - pw / 2, sentenceY - 13, pw, 26);
+        ctx.strokeRect(x - pw / 2, sentenceY - 13, pw, 26);
+        ctx.fillStyle = active ? "#fff" : C.ink;
+        ctx.textAlign = "center";
+        ctx.fillText(t, x, sentenceY + 4);
+      });
+      var bankX = tokenXs[tokenXs.length - 2];
+      var wts = weights[current];
+      tokens.forEach(function (t, i) {
+        if (i === tokens.length - 2) return;
+        var wt = wts[i] || 0.03;
+        var x2 = tokenXs[i];
+        var mid = (bankX + x2) / 2;
+        var ctrlY = sentenceY - 32 - 80 * wt;
+        ctx.beginPath();
+        ctx.moveTo(bankX, sentenceY + 14);
+        ctx.quadraticCurveTo(mid, ctrlY, x2, sentenceY + 14);
+        ctx.strokeStyle = C.blue;
+        ctx.globalAlpha = 0.18 + wt;
+        ctx.lineWidth = 1 + wt * 9;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      });
+      var plotX = w * 0.5, plotY = h * 0.66;
+      var scale = Math.min(w, h) * 0.18;
+      function point(x, y, col, label, on) {
+        var px = plotX + x * scale, py = plotY - y * scale;
+        ctx.beginPath(); ctx.arc(px, py, on ? 7 : 4.5, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = on ? C.ink : C.soft; ctx.font = '600 10px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(label, px, py - 11);
+        return { x: px, y: py };
+      }
+      var river = point(0.45, 0.35, C.blue, DE ? "Fluss" : "river", current === "river" || current === "both");
+      var money = point(-0.2, 0.55, C.gold, DE ? "Geld" : "money", current === "money" || current === "both");
+      var bank = point(-0.1, -0.2, C.green, DE ? "Bank" : "bank", true);
+      var tx = 0, ty = 0;
+      if (current === "river" || current === "both") { tx += 0.45; ty += 0.35; }
+      if (current === "money" || current === "both") { tx += -0.2; ty += 0.55; }
+      if (current === "both") { tx /= 2; ty /= 2; }
+      var moved = point(bank.x ? (tx * 0.5 - 0.05) : 0, ty * 0.5 - 0.1, C.green, "", true);
+      ctx.beginPath(); ctx.moveTo(bank.x, bank.y); ctx.lineTo(moved.x, moved.y); ctx.strokeStyle = C.green; ctx.lineWidth = 2; ctx.stroke();
+      hits = [];
+      contexts.forEach(function (c2, i) {
+        var x = pad + i * ((w - pad * 2) / contexts.length);
+        var y = h - 14;
+        var tw = ctx.measureText(c2.label).width;
+        var pw = tw + 16;
+        ctx.fillStyle = current === c2.id ? C.petrol : C.paper;
+        ctx.strokeStyle = current === c2.id ? C.petrol : C.lineStrong;
+        ctx.fillRect(x, y - 13, pw, 24);
+        ctx.strokeRect(x, y - 13, pw, 24);
+        ctx.fillStyle = current === c2.id ? "#fff" : C.soft;
+        ctx.font = '600 9px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(c2.label, x + pw / 2, y + 2);
+        hits.push({ x: x + pw / 2, y: y, r: pw / 2 + 8, id: c2.id });
+      });
+      var best = 0;
+      wts.forEach(function (v, i) { if (v > wts[best]) best = i; });
+      readout.innerHTML = '<span>' + (DE ? "Bank liest" : "bank reads") + ' <b>' + api.esc(tokens[best]) + '</b> ' + (wts[best] * 100).toFixed(0) + '%</span><span>' + (DE ? "Kontext" : "context") + ' <b>' + api.esc(contexts.filter(function (c2) { return c2.id === current; })[0].label) + '</b></span>';
+      canvas.setAttribute("aria-label", DE ? "Self-Attention: Bank liest " + tokens[best] : "Self-attention: bank reads " + tokens[best]);
+      renderMatrix();
+    }
+    function renderMatrix() {
+      var cols = ["I", "walk", "to", "the", "bank", "."];
+      var bankRow = weights[current];
+      var html = '<table><thead><tr><th></th>' + cols.map(function (c) { return '<th>' + api.esc(c) + '</th>'; }).join("") + '</tr></thead><tbody>';
+      cols.forEach(function (row, i) {
+        html += '<tr><th>' + api.esc(row) + '</th>';
+        cols.forEach(function (col, j) {
+          var w = i === 4 ? (bankRow[j] || 0.02) : (i === j ? 0.8 : 0.04);
+          html += '<td style="--w:' + w + '">' + (w * 100).toFixed(0) + '</td>';
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      matrixEl.innerHTML = html;
+    }
+    function resize() { size = api.fit(canvas, stage); draw(); renderMatrix(); }
+    function pointer(e) {
+      var r = canvas.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+    canvas.addEventListener("pointerup", function (e) {
+      var p = pointer(e);
+      hits.forEach(function (h) { if (Math.hypot(h.x - p.x, h.y - p.y) < h.r) { current = h.id; draw(); } });
+      ctxRow.querySelectorAll(".ls-chip").forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-ctx") === current); });
+    });
+    contexts.forEach(function (c2) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "ls-chip" + (c2.id === current ? " is-on" : "");
+      b.setAttribute("data-ctx", c2.id);
+      b.textContent = c2.label;
+      b.addEventListener("click", function () { current = c2.id; draw(); ctxRow.querySelectorAll(".ls-chip").forEach(function (x) { x.classList.toggle("is-on", x === b); }); });
+      ctxRow.appendChild(b);
+    });
+    window.addEventListener("resize", resize);
+    resize();
+    return { update: function (s) { if (s && s.context) { current = s.context; draw(); } }, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
+  function ffnScene(root, api) {
+    var DE = api.lang === "de";
+    var data = DE ? {
+      fruit: {
+        keys: [{ label: "Merkmal: Mechanik / Schlüssel", on: false }, { label: "Merkmal: Gebäude / Adel", on: true }, { label: "Merkmal: Turm / Burg", on: true }],
+        values: [{ label: "Hinweis: Schlüssel, Tür, öffnen", on: false }, { label: "Hinweis: König, Turm, Burg", on: true }, { label: "Hinweis: alt, prächtig, Garten", on: true }],
+        desc: "Der Kontext ist <b>Ich besichtige das Schloss</b>. Die Gebäude- und Burgmuster passen; das Mechanik-Muster bleibt still."
+      },
+      tech: {
+        keys: [{ label: "Merkmal: Mechanik / Schlüssel", on: true }, { label: "Merkmal: Gebäude / Adel", on: false }, { label: "Merkmal: Turm / Burg", on: false }],
+        values: [{ label: "Hinweis: Schlüssel, Tür, öffnen", on: true }, { label: "Hinweis: König, Turm, Burg", on: false }, { label: "Hinweis: alt, prächtig, Garten", on: false }],
+        desc: "Der Kontext ist <b>Ich öffne das Schloss</b>. Jetzt passt das Mechanik-Muster, und die Gebäude- und Burgmuster bleiben still."
+      }
+    } : {
+      fruit: {
+        keys: [{ label: "Feature: technology brand", on: false }, { label: "Feature: food / edible", on: true }, { label: "Feature: orchard / fruit", on: true }],
+        values: [{ label: "Pull: pie, juice, crunch", on: true }, { label: "Pull: Mac, iPhone, stock", on: false }, { label: "Pull: tree, orchard, green", on: true }],
+        desc: "The context is <b>I ate the apple</b>. The food and orchard patterns match; the technology pattern stays silent."
+      },
+      tech: {
+        keys: [{ label: "Feature: technology brand", on: true }, { label: "Feature: food / edible", on: false }, { label: "Feature: orchard / fruit", on: false }],
+        values: [{ label: "Pull: pie, juice, crunch", on: false }, { label: "Pull: Mac, iPhone, stock", on: true }, { label: "Pull: tree, orchard, green", on: false }],
+        desc: "The context is <b>I bought an Apple laptop</b>. The technology pattern matches; the food and orchard patterns stay silent."
+      }
+    };
+    var el = document.createElement("div");
+    el.className = "ls-ffn-scene";
+    el.innerHTML = '<div class="ls-scene-row ls-ffn-modes"></div><div class="ls-ffn-grid"><div class="ls-ffn-col"><div class="ls-ffn-head">' + (DE ? "Residual Stream" : "Residual stream") + '</div><div class="ls-ffn-pill is-fire">' + (DE ? "„Apple“ + Kontext" : "“Apple” + context") + '</div></div><div class="ls-ffn-col"><div class="ls-ffn-head">' + (DE ? "Muster in W₁" : "Patterns in W₁") + '</div><div class="ls-ffn-list" data-keys></div></div><div class="ls-ffn-col"><div class="ls-ffn-head">' + (DE ? "Pull in W₂" : "Pull in W₂") + '</div><div class="ls-ffn-list" data-values></div></div><div class="ls-ffn-col"><div class="ls-ffn-head">' + (DE ? "Zurückgeschrieben" : "Written back") + '</div><div class="ls-ffn-pill is-fire">' + (DE ? "reicherer Vektor" : "richer vector") + '</div></div></div><div class="ls-ffn-desc" aria-live="polite"></div><p class="ls-ffn-caveat">' + (DE ? "Vereinfachung: Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁." : "Simplification: a real FFN has no labelled keys. The patterns are learned directions in W₁.") + '</p>';
+    root.appendChild(el);
+    var modes = el.querySelector(".ls-ffn-modes");
+    var keysEl = el.querySelector("[data-keys]");
+    var valuesEl = el.querySelector("[data-values]");
+    var descEl = el.querySelector(".ls-ffn-desc");
+    function render(mode) {
+      var d = data[mode];
+      keysEl.innerHTML = d.keys.map(function (k) { return '<div class="ls-ffn-pill ' + (k.on ? "is-fire" : "is-idle") + '">' + api.esc(k.label) + '<small>' + (k.on ? (DE ? "passt" : "matches") : (DE ? "still" : "silent")) + '</small></div>'; }).join("");
+      valuesEl.innerHTML = d.values.map(function (v) { return '<div class="ls-ffn-pill ' + (v.on ? "is-fire" : "is-idle") + '">' + api.esc(v.label) + '</div>'; }).join("");
+      descEl.innerHTML = d.desc;
+      modes.querySelectorAll(".ls-chip").forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-mode") === mode); });
+    }
+    ["fruit", "tech"].forEach(function (mode) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "ls-chip" + (mode === "fruit" ? " is-on" : "");
+      b.setAttribute("data-mode", mode);
+      b.textContent = DE ? (mode === "fruit" ? "Ich besichtige das Schloss" : "Ich öffne das Schloss") : (mode === "fruit" ? "I ate the apple" : "I bought an Apple laptop");
+      b.addEventListener("click", function () { render(mode); });
+      modes.appendChild(b);
+    });
+    render("fruit");
+    return { update: function (s) { if (s && s.mode) render(s.mode); }, resize: function () {}, destroy: function () { el.remove(); } };
+  }
+
+  function residualScene(root, api) {
+    var DE = api.lang === "de";
+    var layers = DE ? ["Embedding", "Attention 1", "FFN 1", "Attention 2", "FFN 2", "Unembed"] : ["Embedding", "Attention 1", "FFN 1", "Attention 2", "FFN 2", "Unembed"];
+    var updates = [
+      [0.8, 0.3, 0.2, 0.5, 0.1, 0.4],
+      [0.2, -0.4, 0.3, 0.1, 0.5, -0.2],
+      [-0.1, 0.2, 0.4, -0.3, 0.2, 0.3],
+      [0.3, 0.1, -0.2, 0.4, -0.1, 0.2],
+      [0.1, -0.2, 0.3, 0.2, 0.4, -0.1],
+      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    ];
+    var el = document.createElement("div");
+    el.className = "ls-res-scene";
+    el.innerHTML = '<div class="ls-res-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-scene-row ls-res-layers"></div><div class="ls-res-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-res-stage");
+    var canvas = el.querySelector("canvas");
+    var layerRow = el.querySelector(".ls-res-layers");
+    var readout = el.querySelector(".ls-res-readout");
+    var ctx = null, size = null, current = 0, hits = [];
+    var C = api.colors();
+    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+    function streamAt(n) {
+      var v = [0, 0, 0, 0, 0, 0];
+      for (var i = 0; i <= n; i++) for (var j = 0; j < 6; j++) v[j] += updates[i][j];
+      return v;
+    }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      ctx.clearRect(0, 0, size.w, size.h);
+      var w = size.w, h = size.h;
+      var stream = streamAt(current);
+      var update = updates[current];
+      var pad = 24;
+      var barW = (w - pad * 2) / 6;
+      var baseY = h * 0.56;
+      var scale = Math.min(70, h * 0.2);
+      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.textAlign = "center";
+      for (var j = 0; j < 6; j++) {
+        var x = pad + j * barW + barW / 2;
+        var bh = stream[j] * scale;
+        ctx.fillStyle = C.blue;
+        ctx.globalAlpha = 0.85;
+        ctx.fillRect(x - barW * 0.22, baseY - Math.max(0, bh), barW * 0.44, Math.abs(bh));
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = C.soft;
+        ctx.fillText((DE ? "d" : "d") + (j + 1), x, baseY + 18);
+        if (update[j]) {
+          ctx.fillStyle = C.gold;
+          ctx.fillRect(x - barW * 0.12, baseY - Math.max(0, update[j] * scale), barW * 0.24, Math.abs(update[j] * scale));
+        }
+      }
+      ctx.strokeStyle = C.lineStrong;
+      ctx.beginPath(); ctx.moveTo(pad, baseY); ctx.lineTo(w - pad, baseY); ctx.stroke();
+      ctx.fillStyle = C.muted;
+      ctx.textAlign = "left";
+      ctx.fillText(DE ? "blau: laufender Stream · gold: Update" : "blue: running stream · gold: update", pad, 20);
+      hits = [];
+      for (var i = 0; i < layers.length; i++) {
+        var yy = 42 + i * 24;
+        var on = i === current;
+        ctx.fillStyle = on ? C.petrol : C.paper;
+        ctx.strokeStyle = on ? C.petrol : C.lineStrong;
+        ctx.fillRect(pad, yy - 12, 112, 20);
+        ctx.strokeRect(pad, yy - 12, 112, 20);
+        ctx.fillStyle = on ? "#fff" : C.soft;
+        ctx.font = '600 9px "Open Sans", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText(layers[i], pad + 6, yy + 2);
+        hits.push({ x: pad + 56, y: yy - 2, r: 28, layer: i });
+      }
+      readout.innerHTML = '<span>x<sub>' + current + '</sub></span><span>' + (DE ? "Stream" : "stream") + ' <b>' + stream.map(function (v) { return v.toFixed(1); }).join(" · ") + '</b></span><span>' + (DE ? "Update" : "update") + ' <b>' + update.map(function (v) { return v.toFixed(1); }).join(" · ") + '</b></span>';
+    }
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    function pick(e) {
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      hits.forEach(function (h) { if (Math.hypot(h.x - x, h.y - y) < h.r) { current = h.layer; draw(); sync(); } });
+    }
+    canvas.addEventListener("pointerup", pick);
+    function sync() { layerRow.querySelectorAll(".ls-chip").forEach(function (b, i) { b.classList.toggle("is-on", i === current); }); }
+    layers.forEach(function (l, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "ls-chip" + (i === current ? " is-on" : "");
+      b.textContent = l;
+      b.addEventListener("click", function () { current = i; draw(); sync(); });
+      layerRow.appendChild(b);
+    });
+    window.addEventListener("resize", resize);
+    resize();
+    return { update: function (s) { if (s && typeof s.layer === "number") { current = clamp(s.layer, 0, layers.length - 1); draw(); sync(); } }, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
+  function meadowScene(root, api) {
+    var DE = api.lang === "de";
+    var words = DE ? ["Hund", "Katze", "Baum", "Haus", "Auto", "Buch", "Maus", "Lampe", "Blume", "Stein", "Tisch", "Stuhl", "Wasser", "Feuer", "Nacht", "Sonne", "Regen", "Mond", "Kaffee", "Stern", "Fluss", "Berg", "Vogel", "Fisch", "Milch", "Zucker", "Tür", "Fenster", "Brücke", "Feld", "Küche", "Garten", "Schiff", "Uhr", "Straße", "Stadt", "Brot", "Apfel", "Tee", "Hut", "Glocke"] : ["Dog", "Cat", "Tree", "House", "Car", "Book", "Mouse", "Lamp", "Flower", "Stone", "Table", "Chair", "Water", "Fire", "Night", "Sun", "Rain", "Moon", "Coffee", "Star", "River", "Mountain", "Bird", "Fish", "Milk", "Sugar", "Door", "Window", "Bridge", "Field", "Kitchen", "Garden", "Ship", "Clock", "Road", "City", "Bread", "Apple", "Tea", "Hat", "Bell"];
+    var palette = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
+    var el = document.createElement("div");
+    el.className = "ls-meadow-scene";
+    el.innerHTML = '<div class="ls-meadow-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-scene-row"><label class="ls-range">' + (DE ? "Wörter" : "Words") + ' <input type="range" class="ls-md-n" min="12" max="30" step="6" value="12"><output>12</output></label><label class="ls-range">T <input type="range" class="ls-md-temp" min="0.2" max="2.6" step="0.05" value="0.8"><output>0.80</output></label><label class="ls-range">k <input type="range" class="ls-md-k" min="1" max="10" step="1" value="5"><output>5</output></label></div><div class="ls-meadow-readout" aria-live="polite"></div><p class="ls-meadow-caption">' + (DE ? "Bewege den Zeiger. Die goldene Naht ist die Unsicherheit." : "Move the pointer. The golden seam is uncertainty.") + '</p>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-meadow-stage");
+    var canvas = el.querySelector("canvas");
+    var nEl = el.querySelector(".ls-md-n"), tempEl = el.querySelector(".ls-md-temp"), kEl = el.querySelector(".ls-md-k");
+    var readout = el.querySelector(".ls-meadow-readout");
+    var ctx = null, size = null, anchors = [], pointer = { x: 0.5, y: 0.5 }, N = 12, temp = 0.8, K = 5;
+    var ambiguous = 0;
+    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+    function rnd(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+    function build() {
+      var r = rnd(42 + N * 17);
+      anchors = [];
+      for (var i = 0; i < N; i++) anchors.push({ x: 0.08 + 0.84 * r(), y: 0.1 + 0.8 * r(), w: words[i % words.length], c: palette[i % palette.length] });
+    }
+    function nearest(x, y) {
+      var best = null, second = null, bd = Infinity, sd = Infinity;
+      anchors.forEach(function (a) {
+        var d = Math.hypot(a.x - x, a.y - y);
+        if (d < bd) { sd = bd; second = best; bd = d; best = a; }
+        else if (d < sd) { sd = d; second = a; }
+      });
+      return { best: best, second: second, d: bd, sd: sd };
+    }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      var w = size.w, h = size.h;
+      ctx.clearRect(0, 0, w, h);
+      var step = 7;
+      var cells = [];
+      for (var y = 0; y < h; y += step) {
+        for (var x = 0; x < w; x += step) {
+          var nx = x / w, ny = y / h;
+          var n = nearest(nx, ny);
+          if (!n.best) continue;
+          var margin = (n.sd - n.d);
+          var ambiguousCell = margin < 0.035;
+          ctx.fillStyle = ambiguousCell ? "#9f9700" : n.best.c;
+          ctx.globalAlpha = ambiguousCell ? 0.18 : 0.10;
+          ctx.fillRect(x, y, step, step);
+        }
+      }
+      ctx.globalAlpha = 1;
+      anchors.forEach(function (a) {
+        var ax = a.x * w, ay = a.y * h;
+        ctx.beginPath(); ctx.arc(ax, ay, 4, 0, Math.PI * 2); ctx.fillStyle = a.c; ctx.fill(); ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.fillStyle = "#2c464d"; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(a.w, ax, ay - 8);
+      });
+      var px = pointer.x * w, py = pointer.y * h;
+      var n2 = nearest(pointer.x, pointer.y);
+      ctx.beginPath(); ctx.arc(px, py, 7, 0, Math.PI * 2); ctx.fillStyle = "#63a44b"; ctx.fill(); ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke();
+      var probs = anchors.map(function (a) { return Math.exp(-Math.hypot(a.x - pointer.x, a.y - pointer.y) / Math.max(0.05, temp)); });
+      var sum = probs.reduce(function (a, b) { return a + b; }, 0);
+      probs = probs.map(function (p) { return p / sum; }).sort(function (a, b) { return b - a; });
+      var top = probs.slice(0, K).reduce(function (a, b) { return a + b; }, 0);
+      readout.innerHTML = '<span>' + (DE ? "Nächstes Wort" : "Nearest word") + ' <b>' + api.esc(n2.best ? n2.best.w : "—") + '</b></span><span>' + (DE ? "Gewinnt mit" : "Wins with") + ' <b>' + (probs[0] * 100).toFixed(0) + '%</b></span><span>' + (DE ? "Rand" : "margin") + ' <b>' + Math.max(0, n2.sd - n2.d).toFixed(2) + '</b></span><span>top-<b>' + K + '</b> <b>' + (top * 100).toFixed(0) + '%</b></span>';
+      canvas.setAttribute("aria-label", DE ? "Wörterfeld. Nächstes Wort: " + (n2.best ? n2.best.w : "") : "Word field. Nearest word: " + (n2.best ? n2.best.w : ""));
+    }
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    function move(e) {
+      var r = canvas.getBoundingClientRect();
+      pointer.x = clamp((e.clientX - r.left) / r.width, 0, 1);
+      pointer.y = clamp((e.clientY - r.top) / r.height, 0, 1);
+      draw();
+    }
+    canvas.addEventListener("pointermove", move);
+    canvas.addEventListener("pointerdown", move);
+    nEl.addEventListener("input", function () { N = parseInt(nEl.value, 10); nEl.nextElementSibling.textContent = String(N); build(); draw(); });
+    tempEl.addEventListener("input", function () { temp = parseFloat(tempEl.value) || 0.8; tempEl.nextElementSibling.textContent = temp.toFixed(2); draw(); });
+    kEl.addEventListener("input", function () { K = parseInt(kEl.value, 10); kEl.nextElementSibling.textContent = String(K); draw(); });
+    window.addEventListener("resize", resize);
+    build(); resize();
+    return { update: function () {}, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
+  function softmaxScene(root, api) {
+    var DE = api.lang === "de";
+    var PROMPTS = {
+      spaceship: {
+        text: "“As the spaceship was approaching <b>the</b>”",
+        rows: [
+          { token: "planet", logit: -92.8636474609375 }, { token: "surface", logit: -94.18270874023438 },
+          { token: "station", logit: -94.41707611083984 }, { token: "moon", logit: -94.45668029785156 },
+          { token: "Earth", logit: -94.46949005126953 }, { token: "end", logit: -94.54924774169922 },
+          { token: "ship", logit: -94.74138641357422 }, { token: "edge", logit: -94.87800598144531 },
+          { token: "star", logit: -94.9022216796875 }, { token: "asteroid", logit: -94.97351837158203 }
+        ]
+      },
+      planet: {
+        text: "“On the deserted planet they discovered <b>a</b>”",
+        rows: [
+          { token: "strange", logit: -89.01858520507812 }, { token: "mysterious", logit: -89.26126861572266 },
+          { token: "planet", logit: -89.26339721679688 }, { token: "large", logit: -89.2662124633789 },
+          { token: "massive", logit: -89.29888916015625 }, { token: "small", logit: -89.4354476928711 },
+          { token: "new", logit: -89.59513092041016 }, { token: "vast", logit: -89.6324462890625 },
+          { token: "huge", logit: -89.85299682617188 }, { token: "giant", logit: -90.060302734375 }
+        ]
+      }
+    };
+    var el = document.createElement("div");
+    el.className = "ls-softmax-scene";
+    el.innerHTML = '<div class="ls-scene-row ls-softmax-prompts"></div><p class="softmax-context"><span class="softmax-context-label">' + (DE ? "Kontext" : "context") + '</span> <span class="ls-softmax-context"></span></p><div class="softmax-stage"><div class="softmax-col softmax-col--logits"><div class="softmax-col-head"><span>Token</span><span>Logit</span></div><div data-logits></div></div><svg class="softmax-ribbons" data-ribbons aria-hidden="true"></svg><div class="softmax-col softmax-col--probs"><div class="softmax-col-head"><span>' + (DE ? "Wahrscheinlichkeit" : "probability") + '</span><span>Softmax</span></div><div data-probs></div></div></div><div class="ls-scene-row"><label class="ls-range">T <input type="range" class="ls-sm-temp" min="0.2" max="2" step="0.05" value="1"><output>1.00</output></label></div><div class="ls-sm-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var prompts = el.querySelector(".ls-softmax-prompts");
+    var contextEl = el.querySelector(".ls-softmax-context");
+    var logitsEl = el.querySelector("[data-logits]");
+    var probsEl = el.querySelector("[data-probs]");
+    var ribbons = el.querySelector("[data-ribbons]");
+    var tempEl = el.querySelector(".ls-sm-temp");
+    var readout = el.querySelector(".ls-sm-readout");
+    var state = { key: "spaceship", temp: 1, hovered: 0 };
+    function calc() {
+      var rows = PROMPTS[state.key].rows;
+      var logits = rows.map(function (r) { return r.logit; });
+      var max = Math.max.apply(null, logits);
+      var ex = logits.map(function (v) { return Math.exp((v - max) / state.temp); });
+      var sum = ex.reduce(function (a, b) { return a + b; }, 0);
+      return { ex: ex, sum: sum, probs: ex.map(function (e) { return e / sum; }), max: max, min: Math.min.apply(null, logits) };
+    }
+    function build() {
+      var rows = PROMPTS[state.key].rows;
+      var c = calc();
+      contextEl.innerHTML = PROMPTS[state.key].text;
+      logitsEl.innerHTML = "";
+      probsEl.innerHTML = "";
+      rows.forEach(function (r, i) {
+        var lrow = document.createElement("div");
+        lrow.className = "softmax-row";
+        lrow.setAttribute("tabindex", "0");
+        var l1 = document.createElement("span"); l1.className = "softmax-row-label"; l1.textContent = r.token;
+        var b1 = document.createElement("span"); b1.className = "softmax-bar"; var f1 = document.createElement("i"); b1.appendChild(f1);
+        var v1 = document.createElement("span"); v1.className = "softmax-value"; v1.textContent = r.logit.toFixed(1);
+        lrow.appendChild(l1); lrow.appendChild(b1); lrow.appendChild(v1);
+        var prow = document.createElement("div");
+        prow.className = "softmax-row";
+        var v2 = document.createElement("span"); v2.className = "softmax-value"; v2.textContent = (c.probs[i] * 100).toFixed(1) + "%";
+        var b2 = document.createElement("span"); b2.className = "softmax-bar"; var f2 = document.createElement("i"); b2.appendChild(f2);
+        var l2 = document.createElement("span"); l2.className = "softmax-row-label"; l2.textContent = r.token;
+        prow.appendChild(v2); prow.appendChild(b2); prow.appendChild(l2);
+        var lt = (r.logit - c.min) / Math.max(0.001, c.max - c.min);
+        f1.style.width = (12 + lt * 88).toFixed(1) + "%";
+        f2.style.width = Math.max(1, c.probs[i] / Math.max.apply(null, c.probs) * 100).toFixed(1) + "%";
+        function hover() {
+          state.hovered = i;
+          el.querySelectorAll(".softmax-row").forEach(function (x) { x.classList.remove("is-hot"); });
+          lrow.classList.add("is-hot"); prow.classList.add("is-hot");
+          readout.innerHTML = '<span>Token <b>' + api.esc(r.token) + '</b></span><span>Logit <b>' + r.logit.toFixed(2) + '</b></span><span>exp((logit − max)/T) <b>' + c.ex[i].toFixed(4) + '</b></span><span>p <b>' + (c.probs[i] * 100).toFixed(2) + '%</b></span>';
+        }
+        lrow.addEventListener("mouseenter", hover); lrow.addEventListener("focus", hover);
+        prow.addEventListener("mouseenter", hover); prow.addEventListener("focus", hover);
+        logitsEl.appendChild(lrow); probsEl.appendChild(prow);
+      });
+      updateRibbons();
+    }
+    function updateRibbons() {
+      var stage = el.querySelector(".softmax-stage");
+      var sr = stage.getBoundingClientRect();
+      ribbons.setAttribute("viewBox", "0 0 " + sr.width + " " + sr.height);
+      ribbons.innerHTML = "";
+      var ls = logitsEl.querySelectorAll(".softmax-row");
+      var ps = probsEl.querySelectorAll(".softmax-row");
+      ls.forEach(function (l, i) {
+        if (!ps[i]) return;
+        var a = l.getBoundingClientRect(), b = ps[i].getBoundingClientRect();
+        var x1 = a.right - sr.left, y1 = a.top + a.height / 2 - sr.top;
+        var x2 = b.left - sr.left, y2 = b.top + b.height / 2 - sr.top;
+        var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        var mx = (x1 + x2) / 2;
+        path.setAttribute("d", "M" + x1 + "," + y1 + " C" + mx + "," + y1 + " " + mx + "," + y2 + " " + x2 + "," + y2);
+        path.setAttribute("fill", "none");
+        path.setAttribute("stroke", "rgba(18,117,172,.18)");
+        path.setAttribute("stroke-width", "1");
+        ribbons.appendChild(path);
+      });
+    }
+    Object.keys(PROMPTS).forEach(function (key) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "ls-chip" + (key === state.key ? " is-on" : "");
+      b.textContent = key === "spaceship" ? "spaceship" : (DE ? "verlassener Planet" : "deserted planet");
+      b.addEventListener("click", function () {
+        state.key = key;
+        prompts.querySelectorAll(".ls-chip").forEach(function (x) { x.classList.toggle("is-on", x === b); });
+        build();
+      });
+      prompts.appendChild(b);
+    });
+    tempEl.addEventListener("input", function () {
+      state.temp = parseFloat(tempEl.value) || 1;
+      tempEl.nextElementSibling.textContent = state.temp.toFixed(2);
+      build();
+    });
+    window.addEventListener("resize", updateRibbons);
+    build();
+    return { update: function () {}, resize: updateRibbons, destroy: function () { window.removeEventListener("resize", updateRibbons); el.remove(); } };
+  }
+
   var SCENES = {
     embedding: embeddingScene,
     phone: phoneScene,
     code: codeScene,
     loop: loopScene,
-    tunnel: tunnelScene
+    tunnel: tunnelScene,
+    tokenize: tokenizeScene,
+    position: positionScene,
+    attention: attentionScene,
+    ffn: ffnScene,
+    residual: residualScene,
+    meadow: meadowScene,
+    softmax: softmaxScene
   };
 
   LearnSys.defineDemo("intuition", function (root, api) {
