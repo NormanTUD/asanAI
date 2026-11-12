@@ -220,20 +220,7 @@
       sources: sources
     },
     {
-      kicker: "05a / Die Zahlen",
-      title: "Tausende Dimensionen",
-      body: "Die Demo zeigt zwei oder drei Achsen, weil Menschen nicht mehr sehen können. Ein echtes Embedding hat Tausende Dimensionen. Für den Rechner ist das eine Tabelle: eine Zeile pro Token, eine Spalte pro Dimension. Die Mathematik bleibt dieselbe; nur die Zahl der Koordinaten wächst.",
-      watch: "Scrolle durch die Tabelle. Wo würdest du eine Beziehung wie „Macht“ oder „Geschlecht“ vermuten?",
-      demoState: { scene: "highdim" },
-      context: "Mehr Dimensionen können mehr unabhängige Beziehungen tragen: Temperatur, Geschlecht, Macht, Thema, Sprache, Stil. Zwei oder drei Achsen kollidieren zu schnell.",
-      deep: "Die Zahlen sind ein Ausschnitt, keine echten GPT-Gewichte. Ein echtes Modell lernt jede Koordinate aus Text; keine einzelne Spalte hat für sich eine Bedeutung. Die Geometrie entsteht im Zusammenspiel.",
-      boxes: [
-        box("hd-1", "Technik", "Warum so viele Dimensionen?", "Jede zusätzliche Dimension kann eine weitere Richtung für einen Unterschied öffnen. Mit Tausenden Koordinaten können viele Beziehungen nebeneinander existieren, ohne sich gegenseitig zu überschreiben."),
-        box("hd-2", "Grenze", "Kann man das noch sehen?", "Nein. Menschen sehen höchstens drei Achsen. Die Tabelle ist die ehrliche Darstellung für den Rechner; die 3D-Demos sind Projektionen für uns.")
-      ]
-    },
-    {
-      kicker: "06 / Die Übertragung",
+      kicker: "05a / Die Übertragung",
       title: "Eine Beziehung lässt sich übertragen",
       body: "Der Pfeil von Mann zu Frau ist fast derselbe wie der Pfeil von König zu Königin. Ein Feed-Forward-Netz kann lernen, eine solche Richtung auf eine ganze Nachbarschaft anzuwenden; das ist die geometrische Intuition hinter Übersetzung. Klicke „Alle Richtungen“ und vergleiche die Pfeile.",
       watch: "Klicke „Alle Richtungen“. Welche Pfeile sind parallel?",
@@ -245,6 +232,19 @@
         box("emb-13", "Grenze", "Warum ist die Karte nicht das Territorium?", "Weil sie nur die Unterschiede zeigt, die für den Trainings-Loss relevant waren. Sie ist eine komprimierte Statistik, kein Lexikon. Bedeutung im Kontext entsteht erst durch Attention und die folgenden Schichten.")
       ],
       sources: sources
+    },
+    {
+      kicker: "05b / Die Zahlen",
+      title: "Tausende Dimensionen",
+      body: "Die Demo zeigt zwei oder drei Achsen, weil Menschen nicht mehr sehen können. Ein echtes Embedding hat Tausende Dimensionen. Für den Rechner ist das eine Tabelle: eine Zeile pro Token, eine Spalte pro Dimension. Die Mathematik bleibt dieselbe; nur die Zahl der Koordinaten wächst.",
+      watch: "Scrolle durch die Tabelle. Wo würdest du eine Beziehung wie „Macht“ oder „Geschlecht“ vermuten?",
+      demoState: { scene: "highdim" },
+      context: "Mehr Dimensionen können mehr unabhängige Beziehungen tragen: Temperatur, Geschlecht, Macht, Thema, Sprache, Stil. Zwei oder drei Achsen kollidieren zu schnell.",
+      deep: "Die Zahlen sind ein Ausschnitt, keine echten GPT-Gewichte. Ein echtes Modell lernt jede Koordinate aus Text; keine einzelne Spalte hat für sich eine Bedeutung. Die Geometrie entsteht im Zusammenspiel.",
+      boxes: [
+        box("hd-1", "Technik", "Warum so viele Dimensionen?", "Jede zusätzliche Dimension kann eine weitere Richtung für einen Unterschied öffnen. Mit Tausenden Koordinaten können viele Beziehungen nebeneinander existieren, ohne sich gegenseitig zu überschreiben."),
+        box("hd-2", "Grenze", "Kann man das noch sehen?", "Nein. Menschen sehen höchstens drei Achsen. Die Tabelle ist die ehrliche Darstellung für den Rechner; die 3D-Demos sind Projektionen für uns.")
+      ]
     }
   ] : [
     {
@@ -320,20 +320,7 @@
       sources: sources
     },
     {
-      kicker: "05a / The numbers",
-      title: "Thousands of dimensions",
-      body: "The demo shows two or three axes because humans cannot see more. A real embedding has thousands of dimensions. For the computer it is a table: one row per token, one column per dimension. The arithmetic stays the same; only the number of coordinates grows.",
-      watch: "Scroll through the table. Where would you expect a relation like “power” or “gender”?",
-      demoState: { scene: "highdim" },
-      context: "More dimensions can carry more independent relations: temperature, gender, power, topic, language, style. Two or three axes collide too quickly.",
-      deep: "The numbers are a slice, not real GPT weights. A real model learns every coordinate from text; no single column means anything on its own. The geometry comes from the interaction.",
-      boxes: [
-        box("hd-1", "Technique", "Why so many dimensions?", "Every extra dimension can open another direction for a difference. With thousands of coordinates many relations can exist side by side without overwriting one another."),
-        box("hd-2", "Limit", "Can we still see this?", "No. Humans see at most three axes. The table is the honest view for the computer; the 3D demos are projections for us.")
-      ]
-    },
-    {
-      kicker: "06 / Transport",
+      kicker: "05a / Transport",
       title: "A relation can be transported",
       body: "The arrow from man to woman is almost the same as the arrow from king to queen. A feed-forward network can learn to apply such a direction to a whole neighbourhood; that is the geometric intuition behind translation. Click “All directions” and compare the arrows.",
       watch: "Click “All directions”. Which arrows are parallel?",
@@ -345,6 +332,19 @@
         box("emb-13", "Limit", "Why is the map not the territory?", "Because it shows only the differences that mattered for the training loss. It is a compressed statistic, not a lexicon. Meaning in context appears only through attention and the following layers.")
       ],
       sources: sources
+    },
+    {
+      kicker: "05b / The numbers",
+      title: "Thousands of dimensions",
+      body: "The demo shows two or three axes because humans cannot see more. A real embedding has thousands of dimensions. For the computer it is a table: one row per token, one column per dimension. The arithmetic stays the same; only the number of coordinates grows.",
+      watch: "Scroll through the table. Where would you expect a relation like “power” or “gender”?",
+      demoState: { scene: "highdim" },
+      context: "More dimensions can carry more independent relations: temperature, gender, power, topic, language, style. Two or three axes collide too quickly.",
+      deep: "The numbers are a slice, not real GPT weights. A real model learns every coordinate from text; no single column means anything on its own. The geometry comes from the interaction.",
+      boxes: [
+        box("hd-1", "Technique", "Why so many dimensions?", "Every extra dimension can open another direction for a difference. With thousands of coordinates many relations can exist side by side without overwriting one another."),
+        box("hd-2", "Limit", "Can we still see this?", "No. Humans see at most three axes. The table is the honest view for the computer; the 3D demos are projections for us.")
+      ]
     }
   ];
 
@@ -382,22 +382,28 @@
     {
       kicker: "05 / Position",
       title: "Jeder Platz bekommt einen Fingerabdruck",
-      body: "Attention hat kein Gefühl für Reihenfolge. Ohne Positionssignal sind „der Mann beißt den Hund“ und „der Hund beißt den Mann“ derselbe Beutel von Vektoren. Eine sinusförmige Kodierung gibt jedem Platz einen Fingerabdruck: Jedes Dimensionenpaar schwingt mit einer anderen Frequenz.",
-      watch: "Bewege den Positionsregler und wechsle die Metrik. Was bleibt stabil?",
+      body: "Attention hat kein Gefühl für Reihenfolge. Ohne Positionssignal sind „der Mann beißt den Hund“ und „der Hund beißt den Mann“ derselbe Beutel von Vektoren. Eine sinusförmige Kodierung gibt jedem Platz einen Fingerabdruck: Jedes Dimensionenpaar schwingt mit einer anderen Frequenz. In der Winkelansicht normieren wir den Vektor und messen den Großkreis auf der Kugel; so vergleicht das Modell Richtungen, nicht Längen.",
+      watch: "Bewege den Positionsregler und wechsle zwischen Euklid und Winkel. Was bleibt stabil, was wandert auf der Kugel?",
       demoState: { scene: "position" },
-      context: "Die Position wird zum Token-Vektor addiert. Das Modell vergleicht danach Richtungen; die Winkelansicht macht diesen Unterschied sichtbar.",
+      context: "Die Position wird zum Token-Vektor addiert. Die Winkelansicht projiziert den Vektor auf die Einheitskugel und misst den Großkreis; in höheren Dimensionen ist es dieselbe Rechnung auf einer Hypersphäre.",
       deep: "Die Frequenz staffelt sich über die Dimensionen. Frühe Dimensionen drehen schnell, späte langsam. So kann das Modell relative Abstände über viele Positionen lesen, ohne jede Position einzeln zu lernen.",
       boxes: [
         box("pos-1", "Mathematik", "Die Formel", "PE(pos, 2i) = sin(pos / 10000^(2i/d)), PE(pos, 2i+1) = cos(pos / 10000^(2i/d)). Jede Dimension bekommt ihre eigene Welle.", "\\underbrace{\\begin{aligned} PE_{(\\text{pos},2i)} &= \\sin\\left(\\frac{\\text{pos}}{10000^{2i/d}}\\right) \\\\ PE_{(\\text{pos},2i+1)} &= \\cos\\left(\\frac{\\text{pos}}{10000^{2i/d}}\\right) \\end{aligned}}_{\\text{jede Dimension bekommt ihre eigene Welle}}"),
         box("pos-2", "Technik", "Warum Sinus und Cosinus?", "Das Paar erlaubt es, eine Position als Drehung zu lesen. Relative Abstände werden zu festen Drehungen, und das Modell kann sie über viele Positionen wiederverwenden."),
-        box("pos-3", "Grenze", "Was zeigt die 3D-Kurve nicht?", "Sie zeigt nur die ersten drei Dimensionen. Ein echtes Modell nutzt Tausende; die Kurve ist eine lesbare Scheibe, keine vollständige Karte.")
+        box("pos-3", "Grenze", "Was zeigt die 3D-Kurve nicht?", "Sie zeigt nur die ersten drei Dimensionen. Ein echtes Modell nutzt Tausende; die Kurve ist eine lesbare Scheibe, keine vollständige Karte."),
+        box("pos-4", "Geometrie", "Hochdimensionale Geometrie", "In höheren Dimensionen gilt dasselbe Prinzip auf einer Hypersphäre: Vektoren werden normiert, und der Abstand ist der Winkel entlang des Großkreises. Riemann verallgemeinerte gekrümmte Räume auf beliebige Dimensionen. Hochdimensionale Räume verhalten sich oft anders als die Anschauung: In einer tiefen Loss-Landschaft ist fast jeder flache Punkt ein Sattelpunkt, kein lokales Minimum, weil es in vielen Richtungen gleichzeitig bergauf und bergab geht. Öffne diese Box nur, wenn dich die Geometrie interessiert.", "\\underbrace{d_{\\text{geo}}(u,v)}_{\\substack{\\text{Großkreis-Abstand}\\\\ \\text{auf der Einheitskugel}}} = \\underbrace{\\arccos\\!\\left(\\underbrace{\\frac{u\\cdot v}{\\|u\\|\\,\\|v\\|}}_{\\text{Kosinus des Winkels}}\\right)}_{\\text{Winkel in Radiant}}")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
+        { label: "Riemann (1854), Über die Hypothesen, welche der Geometrie zu Grunde liegen", url: "https://ia800708.us.archive.org/4/items/uberdiehypothese00b_343/uberdiehypothese00b_343.pdf" },
+        { label: "Dauphin et al. (2014), Identifying and attacking the saddle point problem", url: "https://arxiv.org/abs/1406.2572" },
+        { label: "Gudmundsson (2004), An Introduction to Riemannian Geometry", url: "http://www.matematik.lu.se/matematiklu/personal/sigma/index.html" }
+      ]
     },
     {
       kicker: "05b / Der Block",
       title: "Ein Block: Attention, dann FFN",
-      body: "Ein Transformerblock hat zwei Rechenstationen. Attention mischt Information zwischen den Tokens; das FFN rechnet innerhalb jedes Tokens. Beide Ergebnisse werden über Residualverbindungen zum laufenden Vektor addiert. Die nächste Folie zoomt in die Attention.",
+      body: "Neuronale Netze sind schichtenweise aufgebaut: Jede Schicht nimmt die Ausgabe der vorherigen und reicht sie an die nächste weiter. Der Transformer ist ein Stapel solcher Schichten. Ein Block hat zwei Rechenstationen: Attention mischt Information zwischen den Tokens, das FFN rechnet innerhalb jedes Tokens. Beide Ergebnisse werden über Residualverbindungen zum laufenden Vektor addiert. Die nächste Folie zoomt in die Attention.",
       watch: "Welcher Teil mischt Tokens, welcher rechnet pro Token?",
       demoState: { scene: "stack", mode: "block" },
       context: "Der Residual Stream ist der gemeinsame Vektor eines Tokens. Jede Station liest ihn und schreibt ein Update zurück, statt ihn zu überschreiben.",
@@ -412,22 +418,28 @@
     {
       kicker: "05 / Position",
       title: "Every slot gets a fingerprint",
-      body: "Attention has no sense of order. Without a position signal, “man bites dog” and “dog bites man” are the same bag of vectors. A sinusoidal encoding adds a fingerprint to every slot: each pair of dimensions oscillates at a different frequency.",
-      watch: "Move the position slider and switch the metric. What stays stable?",
+      body: "Attention has no sense of order. Without a position signal, “man bites dog” and “dog bites man” are the same bag of vectors. A sinusoidal encoding adds a fingerprint to every slot: each pair of dimensions oscillates at a different frequency. In the angle view we normalize the vector and measure the great-circle distance on the sphere; that is how the model compares directions instead of lengths.",
+      watch: "Move the position slider and switch between Euclidean and angle. What stays stable, what moves on the sphere?",
       demoState: { scene: "position" },
-      context: "The position is added to the token vector. The model then compares directions; the angle view makes that difference visible.",
+      context: "The position is added to the token vector. The angle view projects the vector onto the unit sphere and measures the great circle; in higher dimensions the same calculation happens on a hypersphere.",
       deep: "The frequency is spread across dimensions. Early dimensions turn quickly, late ones slowly. That lets the model read relative distances over many positions without learning every position separately.",
       boxes: [
         box("pos-1", "Mathematics", "The formula", "PE(pos, 2i) = sin(pos / 10000^(2i/d)), PE(pos, 2i+1) = cos(pos / 10000^(2i/d)). Each dimension gets its own wave.", "\\underbrace{\\begin{aligned} PE_{(\\text{pos},2i)} &= \\sin\\left(\\frac{\\text{pos}}{10000^{2i/d}}\\right) \\\\ PE_{(\\text{pos},2i+1)} &= \\cos\\left(\\frac{\\text{pos}}{10000^{2i/d}}\\right) \\end{aligned}}_{\\text{each dimension gets its own wave}}"),
         box("pos-2", "Technique", "Why sine and cosine?", "The pair lets you read a position as a rotation. Relative distances become fixed rotations, and the model can reuse them across many positions."),
-        box("pos-3", "Limit", "What does the 3D curve not show?", "It shows only the first three dimensions. A real model uses thousands; the curve is a readable slice, not a complete map.")
+        box("pos-3", "Limit", "What does the 3D curve not show?", "It shows only the first three dimensions. A real model uses thousands; the curve is a readable slice, not a complete map."),
+        box("pos-4", "Geometry", "High-dimensional geometry", "In higher dimensions the same principle applies on a hypersphere: normalize the vectors, and the distance is the angle along the great circle. Riemann generalized curved spaces to any dimension. High-dimensional spaces often behave unlike our intuition: in a deep loss landscape almost every flat point is a saddle point, not a local minimum, because there are many directions that go up and down at once. Open this box only if the geometry interests you.", "\\underbrace{d_{\\text{geo}}(u,v)}_{\\substack{\\text{great-circle distance}\\\\ \\text{on the unit sphere}}} = \\underbrace{\\arccos\\!\\left(\\underbrace{\\frac{u\\cdot v}{\\|u\\|\\,\\|v\\|}}_{\\text{cosine of the angle}}\\right)}_{\\text{angle in radians}}")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
+        { label: "Riemann (1854), Über die Hypothesen, welche der Geometrie zu Grunde liegen", url: "https://ia800708.us.archive.org/4/items/uberdiehypothese00b_343/uberdiehypothese00b_343.pdf" },
+        { label: "Dauphin et al. (2014), Identifying and attacking the saddle point problem", url: "https://arxiv.org/abs/1406.2572" },
+        { label: "Gudmundsson (2004), An Introduction to Riemannian Geometry", url: "http://www.matematik.lu.se/matematiklu/personal/sigma/index.html" }
+      ]
     },
     {
       kicker: "05b / The block",
       title: "One block: attention, then FFN",
-      body: "A transformer block has two compute stations. Attention mixes information between tokens; the FFN computes inside each token. Both results are added to the running vector through residual connections. The next slide zooms into attention.",
+      body: "Neural networks are built layer by layer: each layer takes the previous layer's output and passes it to the next. A transformer is a stack of such layers. One block has two compute stations: attention mixes information between tokens, and the FFN computes inside each token. Both results are added to the running vector through residual connections. The next slide zooms into attention.",
       watch: "Which part mixes tokens, which computes per token?",
       demoState: { scene: "stack", mode: "block" },
       context: "The residual stream is a token's shared vector. Every station reads it and writes an update back instead of overwriting it.",
@@ -459,27 +471,32 @@
     {
       kicker: "06b / Der Kontext",
       title: "Attention verschiebt Bedeutungen in Kontexte",
-      body: "Derselbe Satz, ein anderer Kontext: Die Bank liest jetzt den Fluss oder das Geld. Die Gewichte verschieben sich, und der Vektor wandert in die entsprechende Richtung. Jede Zeile verteilt genau 100 % Aufmerksamkeit; 100 % auf ein Wort heißt 0 % für alle anderen. Die Tabelle ist der Graph, die gewichtete Summe verschiebt den Vektor. Klicke andere Wörter an, um ihre Zeile zu sehen.",
-      watch: "Klicke ein anderes Wort an. Welche Zeile summiert zu 100 %?",
+      body: "Derselbe Mechanismus, andere Zeile: Wähle oben einen Satz und klicke ein Wort. Die Tabelle zeigt seine 100-%-Verteilung; die gewichtete Summe darunter bewegt den Vektor. Die Formel zeigt dieselben Zahlen mit ihren Gewichten.",
+      watch: "Klicke ein anderes Wort an. Bleibt die Zeile bei 100 %?",
       demoState: { scene: "attention", context: "river" },
-      context: "Attention-Gewichte sind kein Geständnis. Sie sind ein Routing-Signal auf einer Schicht.",
-      deep: "Der Residual Stream und das FFN entscheiden, was mit der gerouteten Information passiert. Die Karte ist keine Erklärung des ganzen Modells.",
+      context: "Die Sätze oben sind die echten Kontexte; die Matrix darunter zeigt nur die Aufmerksamkeit der Zielwörter.",
+      deep: "Attention-Gewichte sind ein Routing-Signal. Was das FFN mit der gerouteten Information macht, steht nicht in dieser Matrix.",
       boxes: [
-        box("att-4", "Grenze", "Was zeigt Attention nicht?", "Sie zeigt nicht, was das FFN mit der Information macht. Sie zeigt nur, welche Tokens auf dieser Schicht Information austauschen.")
+        box("att-4", "Grenze", "Was zeigt Attention nicht?", "Sie zeigt nicht, was das FFN mit der Information macht. Sie zeigt nur, welche Tokens auf dieser Schicht Information austauschen."),
+        box("att-5", "Mathematik", "Die Formel", "Attention bildet aus Query, Key und Value eine gewichtete Summe. Die Softmax-Zeile summiert zu 100 %.", "\\underbrace{x'}_{\\substack{\\text{neuer Vektor}\\\\ \\text{für } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{Gewicht von } j\\\\ \\text{für } i}} \\underbrace{v_j}_{\\text{Value von } j}}_{\\substack{\\text{gewichtete Summe}\\\\ \\sum_j \\alpha_{ij}=100\\%}}")
       ],
-      sources: [{ label: "Attention als Graph (interaktive Zusatzseite)", url: "../test/attention_as_graph.html" }]
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
+        { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473" },
+        { label: "Attention als Graph (interaktive Zusatzseite)", url: "../test/attention_as_graph.html" }
+      ]
     },
     {
       kicker: "06c / Rauschen",
-      title: "Oberfläche ist Rauschen",
-      body: "Ein Head kann „new“ und „york“ in die Nähe von „Stadt“ schieben, weg von „car“ und „England“. Attention addiert die Wörter prozentual: 0.30·new + 0.30·york + 0.40·Stadt. Am Ende bleibt die Bedeutung übrig; die Oberfläche ist Rauschen. Genau das passiert auch mit Code: „def quicksort“ und „function quickSort“ meinen dieselbe Funktion, obwohl Schlüsselwort und Schreibweise anders sind.",
-      watch: "Ziehe den Layer-Regler. Wann wandern new und york zu Stadt?",
+      title: "Attention reduziert Rauschen",
+      body: "Wörter allein sind mehrdeutig. „new“ kann in der Nähe von „car“ und von „Stadt“ liegen; „york“ allein sagt wenig. Zusammen mit „york“ wird aus „new“ die Stadt New York. Attention gewichtet die Nachbarn: Der Kontext zieht „new“ und „york“ in Richtung „Stadt“ und schwächt „car“ und „England“ ab. Die Mehrdeutigkeit wird zum Signal, das die KI mit dem Kontext auflöst.",
+      watch: "Schiebe den Kontext-Regler. Wann gewinnt Stadt gegen car?",
       demoState: { scene: "noise", layer: 0 },
-      context: "Die ersten Layer richten den Vektor an der Bedeutung aus; Schreibweise und Schlüsselwort verlieren an Gewicht. Die Fläche ist schematisch, keine Messung eines echten Heads.",
-      deep: "Das ist eine didaktische Vereinfachung. Ein echter Head addiert Value-Vektoren mit gelernten Gewichten; die Winkel und Positionen hier sind von Hand gewählt. Die Quelle deckt die frühe Oberflächenverarbeitung, nicht die konkreten Demo-Positionen.",
+      context: "Attention verschiebt nicht die Wörter selbst, sondern ihre gelesene Bedeutung. Der Kontext entscheidet, welche Nachbarschaft zählt; die frühen Layer richten den Vektor an der Bedeutung aus.",
+      deep: "Das ist eine didaktische Vereinfachung. Ein echter Head addiert Value-Vektoren mit gelernten Gewichten; die Winkel und Positionen sind von Hand gewählt. Die Quelle deckt die frühe sprachliche Verarbeitung, nicht die konkreten Demo-Positionen.",
       boxes: [
-        box("noise-1", "Beispiel", "Zwei Schreibweisen, eine Funktion", "Ein Beispiel: „def quicksort(items):“ in Python und „function quickSort(items) {“ in JavaScript beschreiben dieselbe Sortierfunktion. Der Unterschied liegt im Schlüsselwort, im Namen und in der Interpunktion."),
-        box("noise-2", "Grenze", "Was ist hier schematisch?", "Die Demo zeigt keine echten Attention-Gewichte und keine Messung. Sie zeigt nur, welche Art von Information früh an Gewicht verlieren soll und welche bleiben muss.")
+        box("noise-1", "Beispiel", "Was heißt new allein?", "„new“ bedeutet „neu“, kann aber auch der Anfang von „New York“ sein. Erst das zweite Wort entscheidet, welche Lesart gilt."),
+        box("noise-2", "Technik", "Was macht der Kontext?", "Der Kontext gewichtet die Nachbarschaften: „york“ macht die Stadt Lesart stärker, „car“ und „England“ verlieren an Gewicht. So reduziert Attention die Mehrdeutigkeit, statt sie zu verstärken.")
       ],
       sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/" }]
     }
@@ -502,27 +519,32 @@
     {
       kicker: "06b / The context",
       title: "Attention shifts meaning into context",
-      body: "The same sentence, a different context: the bank now reads the river or the money. The weights shift, and the vector moves in that direction. Every row distributes exactly 100% attention; 100% on one word means 0% for the others. The table is the graph, and the weighted sum moves the vector. Click other words to see their rows.",
-      watch: "Click another word. Which row sums to 100%?",
+      body: "The same mechanism, another row: pick a sentence above and click a word. The table shows its 100% distribution; the weighted sum below moves the vector. The formula shows the same numbers with their weights.",
+      watch: "Click another word. Does the row still sum to 100%?",
       demoState: { scene: "attention", context: "river" },
-      context: "Attention weights are not a confession. They are a routing signal on one layer.",
-      deep: "The residual stream and the FFN decide what happens to the routed information. The map is not an explanation of the whole model.",
+      context: "The sentences above are the real contexts; the matrix below only shows the attention of the target words.",
+      deep: "Attention weights are a routing signal. What the FFN does with the routed information is not in this matrix.",
       boxes: [
-        box("att-4", "Limit", "What does attention not show?", "It does not show what the FFN does with the information. It shows only which tokens exchange information on this layer.")
+        box("att-4", "Limit", "What does attention not show?", "It does not show what the FFN does with the information. It shows only which tokens exchange information on this layer."),
+        box("att-5", "Mathematics", "The formula", "Attention builds a weighted sum from query, key, and value. The softmax row sums to 100%.", "\\underbrace{x'}_{\\substack{\\text{new vector}\\\\ \\text{for } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{weight of } j\\\\ \\text{for } i}} \\underbrace{v_j}_{\\text{value of } j}}_{\\substack{\\text{weighted sum}\\\\ \\sum_j \\alpha_{ij}=100\\%}}")
       ],
-      sources: [{ label: "Attention as a graph (interactive companion page)", url: "../test/attention_as_graph.html" }]
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
+        { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473" },
+        { label: "Attention as a graph (interactive companion page)", url: "../test/attention_as_graph.html" }
+      ]
     },
     {
       kicker: "06c / Noise",
-      title: "Surface is noise",
-      body: "A head can push “new” and “york” toward “city”, away from “car” and “England”. Attention adds the words proportionally: 0.30·new + 0.30·york + 0.40·city. In the end the meaning remains and the surface is noise. The same happens with code: “def quicksort” and “function quickSort” mean the same function, even though the keyword and spelling differ.",
-      watch: "Move the layer slider. When do new and york move toward city?",
+      title: "Attention reduces noise",
+      body: "Words alone are ambiguous. “new” can sit near “car” and near “city”; “york” alone says little. Together with “york”, “new” becomes New York. Attention weights the neighbours: the context pulls “new” and “york” toward “city” and weakens “car” and “England”. The ambiguity becomes a signal that the model resolves with context.",
+      watch: "Move the context slider. When does city win against car?",
       demoState: { scene: "noise", layer: 0 },
-      context: "The first layers align the vector with meaning; spelling and keyword lose weight. The surface is schematic, not a measurement of a real head.",
-      deep: "This is a didactic simplification. A real head adds value vectors with learned weights; the angles and positions here are chosen by hand. The source covers early surface processing, not the concrete demo positions.",
+      context: "Attention does not move the words themselves; it moves their read meaning. The context decides which neighbourhood counts; early layers align the vector with meaning.",
+      deep: "This is a didactic simplification. A real head adds value vectors with learned weights; the angles and positions are chosen by hand. The source covers early linguistic processing, not the concrete demo positions.",
       boxes: [
-        box("noise-1", "Example", "Two spellings, one function", "For example, “def quicksort(items):” in Python and “function quickSort(items) {” in JavaScript describe the same sorting function. The difference is the keyword, the name, and the punctuation."),
-        box("noise-2", "Limit", "What is schematic here?", "The demo shows no real attention weights and no measurement. It shows only which kind of information should lose weight early and which must stay.")
+        box("noise-1", "Example", "What does new mean alone?", "“new” means “not old”, but it can also be the first half of “New York”. Only the second word decides which reading applies."),
+        box("noise-2", "Technique", "What does context do?", "The context weights the neighbourhoods: “york” strengthens the city reading, while “car” and “England” lose weight. Attention reduces the ambiguity instead of amplifying it.")
       ],
       sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/" }]
     }

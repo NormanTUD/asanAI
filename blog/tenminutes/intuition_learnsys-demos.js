@@ -2599,7 +2599,7 @@
         '<div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div>' +
       '</div>' +
       '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-pos-context" min="16" max="128" step="8" value="64"><output>64</output></label><label class="ls-range">' + (DE ? "Dimensionen" : "Dimensions") + ' <input type="range" class="ls-pos-dims" min="2" max="64" step="2" value="24"><output>24</output></label><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="10000" step="1" value="7"><output>7</output></label></div>' +
-      '<div class="ls-scene-row ls-position-metric"><button type="button" class="ls-chip is-on" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button><button type="button" class="ls-chip" data-metric="angle">' + (DE ? "Winkel" : "Angle") + '</button><button type="button" class="ls-chip is-on" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
+      '<div class="ls-scene-row ls-position-metric"><button type="button" class="ls-chip" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button><button type="button" class="ls-chip is-on" data-metric="angle">' + (DE ? "Winkel / Großkreis" : "Angle / great circle") + '</button><button type="button" class="ls-chip is-on" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
       '<div class="ls-position-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var heat = el.querySelector(".ls-position-heat");
@@ -2608,7 +2608,8 @@
     var dimsEl = el.querySelector(".ls-pos-dims");
     var posEl = el.querySelector(".ls-pos-pos");
     var readout = el.querySelector(".ls-position-readout");
-    var context = 64, dims = 24, pos = 7, metric = "euclid", rotate = true;
+    var context = 64, dims = 24, pos = 7, metric = "angle", rotate = true;
+    var posAnim = pos;
     var heatSize = null, curveSize = null, yaw = -0.6, pitch = 0.5, drag = null, raf = 0, last = 0;
     var C = api.colors();
     function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
@@ -2656,6 +2657,10 @@
     }
     function curvePoint(t) {
       return [Math.sin(t), Math.cos(t), Math.sin(t / Math.pow(10000, 2 / 3))];
+    }
+    function unit3(v) {
+      var n = Math.hypot(v[0], v[1], v[2]) || 1;
+      return [v[0] / n, v[1] / n, v[2] / n];
     }
     function drawCurve() {
       if (!curveSize) return;
@@ -2711,11 +2716,12 @@
       axisLabel([1.28, 0, 0], "x", Cc.blue);
       axisLabel([0, 1.28, 0], "y", Cc.green);
       axisLabel([0, 0, 1.28], "z", Cc.gold);
-      var maxT = Math.max(1.6, Math.min(60, pos * 0.14));
+      var maxT = Math.max(1.6, Math.min(60, posAnim * 0.14));
       var prev = null;
       for (k = 0; k <= 260; k++) {
         var t = maxT * k / 260;
         var v = curvePoint(t);
+        if (metric === "angle") v = unit3(v);
         var q = P(v);
         if (prev) {
           ctx.strokeStyle = Cc.blue;
@@ -2734,18 +2740,19 @@
       ctx.beginPath(); ctx.arc(o.x, o.y, 10, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
       ctx.fillStyle = Cc.soft; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "center";
       ctx.fillText(DE ? "Wort" : "word", o.x, o.y + 22);
-      var cur = curvePoint(pos * 0.14);
+      var cur = curvePoint(posAnim * 0.14);
+      if (metric === "angle") cur = unit3(cur);
       var cp = P(cur);
       var chord = P([0, 0, 0]);
+      var theta = 0, vlen = Math.hypot(cur[0], cur[1], cur[2]);
       if (metric === "euclid") {
         ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.6;
         ctx.beginPath(); ctx.moveTo(chord.x, chord.y); ctx.lineTo(cp.x, cp.y); ctx.stroke(); ctx.restore();
       } else {
         var a0 = [1, 0, 0];
-        var len = Math.hypot(cur[0], cur[1], cur[2]) || 1;
-        var b0 = [cur[0] / len, cur[1] / len, cur[2] / len];
+        var b0 = unit3(cur);
         var dot = Math.max(-1, Math.min(1, a0[0] * b0[0] + a0[1] * b0[1] + a0[2] * b0[2]));
-        var theta = Math.acos(dot);
+        theta = Math.acos(dot);
         ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.6;
         ctx.beginPath();
         for (k = 0; k <= 40; k++) {
@@ -2768,10 +2775,16 @@
       ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.strokeStyle = Cc.paper; ctx.lineWidth = 2; ctx.stroke();
       ctx.fillStyle = Cc.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
       ctx.fillText((DE ? "Position " : "position ") + pos, 12, 18);
-      ctx.fillText(metric === "euclid" ? (DE ? "Länge" : "length") : (DE ? "Winkel" : "angle"), cp.x + 10, cp.y + 3);
-      var vlen = Math.hypot(cur[0], cur[1], cur[2]);
-      var angle = Math.acos(Math.max(-1, Math.min(1, cur[0] / (vlen || 1))));
-      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + pos + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + cur.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Länge" : "length") + ' <b>' + vlen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + (angle * 180 / Math.PI).toFixed(1) + '°</b></span>';
+      ctx.textAlign = "right";
+      ctx.fillText(metric === "euclid"
+        ? (DE ? "Gerade im Raum" : "straight line in space")
+        : (DE ? "Großkreis auf der Einheitskugel" : "great circle on the unit sphere"), w - 12, 18);
+      ctx.textAlign = "left";
+      ctx.fillText(metric === "euclid" ? (DE ? "Länge" : "length") : (DE ? "Großkreis" : "great circle"), cp.x + 10, cp.y + 3);
+      var chordLen = Math.hypot(cur[0], cur[1], cur[2]);
+      var geoLen = metric === "angle" ? theta : chordLen;
+      var angleDeg = (metric === "angle" ? theta : Math.acos(Math.max(-1, Math.min(1, cur[0] / (chordLen || 1))))) * 180 / Math.PI;
+      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + pos + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + cur.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (metric === "angle" ? (DE ? "Großkreis" : "great circle") : (DE ? "Länge" : "length")) + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span>';
     }
     function draw() {
       drawHeat(); drawCurve();
@@ -2783,7 +2796,15 @@
       raf = requestAnimationFrame(loop);
       if (now - last < 40) return;
       last = now;
-      if (rotate && !drag) { yaw += 0.003; drawCurve(); }
+      var moving = Math.abs(posAnim - pos) > 0.01;
+      if (moving) {
+        posAnim += (pos - posAnim) * 0.22;
+        if (Math.abs(posAnim - pos) < 0.01) posAnim = pos;
+      }
+      if (moving || (rotate && !drag)) {
+        if (rotate && !drag) yaw += 0.003;
+        drawCurve();
+      }
     }
     heat.addEventListener("pointerdown", function (e) {
       var r = heat.getBoundingClientRect();
@@ -2825,13 +2846,13 @@
     el.className = "ls-noise-scene";
     el.innerHTML =
       '<div class="ls-noise-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
-      '<div class="ls-scene-row"><label class="ls-range">Layer <input type="range" class="ls-noise-layer" min="0" max="5" step="1" value="0"><output>0</output></label></div>' +
+      '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-noise-layer" min="0" max="5" step="1" value="0"><output>0</output></label></div>' +
       '<div class="ls-noise-readout" aria-live="polite"></div>' +
-      '<div class="ls-noise-code">' +
-        '<div class="ls-noise-code-head">' + (DE ? "Rauschen im Code" : "Noise in code") + '</div>' +
-        '<div class="ls-noise-code-row"><span>Python</span><code>def quicksort(items):</code></div>' +
-        '<div class="ls-noise-code-row"><span>JavaScript</span><code>function quickSort(items) {</code></div>' +
-        '<p>' + (DE ? "Gleiche Funktion, andere Oberfläche. Attention addiert die Tokens, bis die Bedeutung übrig bleibt." : "Same function, different surface. Attention adds the tokens until the meaning remains.") + '</p>' +
+      '<div class="ls-noise-explain">' +
+        '<div class="ls-noise-explain-head">' + (DE ? "Wörter allein sind mehrdeutig" : "Words alone are ambiguous") + '</div>' +
+        '<div class="ls-noise-explain-row"><span>new</span><p>' + (DE ? "„neu“, aber auch der Anfang von „New York“." : "“new”, but also the start of “New York”.") + '</p></div>' +
+        '<div class="ls-noise-explain-row"><span>york</span><p>' + (DE ? "ein Ortsname, allein ohne klaren Bezug." : "a place name, without a clear reference on its own.") + '</p></div>' +
+        '<div class="ls-noise-explain-row"><span>new york</span><p>' + (DE ? "zusammen die Stadt. Der Kontext entscheidet, welche Nachbarschaft zählt." : "together, the city. The context decides which neighbourhood counts.") + '</p></div>' +
       '</div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-noise-stage");
@@ -2846,13 +2867,9 @@
       if (!size) return;
       var ctx = size.ctx, w = size.w, h = size.h;
       var t = layer / 5;
+      var easeT = t * t * (3 - 2 * t);
       ctx.clearRect(0, 0, w, h);
-      var bg = ctx.createRadialGradient(w * 0.5, h * 0.5, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.62);
-      bg.addColorStop(0, "rgba(247,250,249,.95)");
-      bg.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, w, h);
-      var pad = 26;
+      var pad = 24;
       function px(x) { return pad + (x + 1.1) / 2.2 * (w - pad * 2); }
       function py(y) { return pad + (0.9 - y) / 1.8 * (h - pad * 2); }
       ctx.strokeStyle = C.line;
@@ -2862,23 +2879,12 @@
         ctx.beginPath(); ctx.moveTo(px(g), py(-0.9)); ctx.lineTo(px(g), py(0.9)); ctx.stroke();
       }
       var anchors = [
-        { id: "car", x: -0.78, y: 0.38, label: DE ? "car" : "car", color: C.muted },
-        { id: "england", x: -0.72, y: -0.45, label: DE ? "England" : "England", color: C.muted },
-        { id: "city", x: 0.62, y: 0.02, label: DE ? "Stadt" : "city", color: C.green }
+        { id: "car", x: -0.82, y: 0.32, label: DE ? "Auto" : "car", color: C.muted },
+        { id: "england", x: -0.78, y: -0.44, label: "England", color: C.muted },
+        { id: "city", x: 0.66, y: 0.02, label: DE ? "Stadt" : "city", color: C.green }
       ];
-      var newPos = { x: lerp(-0.58, 0.48, t), y: lerp(0.50, 0.16, t) };
-      var yorkPos = { x: lerp(-0.52, 0.48, t), y: lerp(-0.38, -0.10, t) };
-      ctx.strokeStyle = C.lineStrong;
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath(); ctx.ellipse(px(0.62), py(0.02), Math.abs(px(0.35) - px(0.0)), Math.abs(py(0.35) - py(0.0)), 0, 0, Math.PI * 2); ctx.stroke();
-      ctx.beginPath(); ctx.ellipse(px(-0.75), py(0.0), Math.abs(px(0.22) - px(0.0)), Math.abs(py(0.55) - py(0.0)), 0, 0, Math.PI * 2); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillStyle = C.green;
-      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.textAlign = "center";
-      ctx.fillText(DE ? "Bedeutung: Stadt" : "meaning: city", px(0.62), py(0.62));
-      ctx.fillStyle = C.muted;
-      ctx.fillText(DE ? "Oberfläche" : "surface", px(-0.75), py(0.78));
+      var newPos = { x: lerp(-0.58, 0.40, easeT), y: lerp(0.46, 0.16, easeT) };
+      var yorkPos = { x: lerp(-0.46, 0.40, easeT), y: lerp(-0.34, -0.10, easeT) };
       function line(a, b, col, alpha, width, dash) {
         ctx.save();
         if (dash) ctx.setLineDash(dash);
@@ -2888,10 +2894,14 @@
         ctx.beginPath(); ctx.moveTo(px(a.x), py(a.y)); ctx.lineTo(px(b.x), py(b.y)); ctx.stroke();
         ctx.restore();
       }
-      line(newPos, anchors[0], C.gold, 0.55 * (1 - t), 1.2, [3, 4]);
-      line(yorkPos, anchors[1], C.gold, 0.55 * (1 - t), 1.2, [3, 4]);
-      line(newPos, anchors[2], C.green, 0.25 + 0.7 * t, 1.2 + 4 * t);
-      line(yorkPos, anchors[2], C.green, 0.25 + 0.7 * t, 1.2 + 4 * t);
+      var alt = 1 - easeT;
+      // The ambiguous alternatives fade as the context arrives.
+      line(newPos, anchors[0], C.gold, 0.15 + 0.45 * alt, 1.2 + alt * 1.4, [3, 4]);
+      line(yorkPos, anchors[1], C.gold, 0.12 + 0.38 * alt, 1.2 + alt * 1.2, [3, 4]);
+      // "new" and "york" become one phrase; both point to the city.
+      line(newPos, yorkPos, C.petrol, 0.18 + 0.55 * easeT, 1.4 + 2.4 * easeT);
+      line(newPos, anchors[2], C.green, 0.18 + 0.72 * easeT, 1.3 + 4.2 * easeT);
+      line(yorkPos, anchors[2], C.green, 0.14 + 0.68 * easeT, 1.2 + 3.8 * easeT);
       function point(p, col, label, r) {
         ctx.beginPath(); ctx.arc(px(p.x), py(p.y), r || 5, 0, Math.PI * 2);
         ctx.fillStyle = col; ctx.fill();
@@ -2904,14 +2914,19 @@
       anchors.forEach(function (a) { point(a, a.color, a.label, 4.5); });
       point(newPos, C.petrol, "new", 6);
       point(yorkPos, C.petrol, "york", 6);
-      var wCar = 0.45 * (1 - t);
-      var wCity = 0.10 + 0.30 * t;
-      var wYork = 0.30 * t;
-      var wSelf = Math.max(0, 1 - wCar - wCity - wYork);
-      readout.innerHTML = '<span>' + (DE ? "new′ =" : "new′ =") + ' <b>' + (wSelf * 100).toFixed(0) + '% new</b> + <b>' + (wCar * 100).toFixed(0) + '% car</b> + <b>' + (wYork * 100).toFixed(0) + '% york</b> + <b>' + (wCity * 100).toFixed(0) + '% ' + (DE ? "Stadt" : "city") + '</b></span><span>' + (DE ? "Summe 100 %" : "sum 100%") + '</span>';
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(DE ? "new + york → New York" : "new + york → New York", 10, 16);
+      var wCar = 0.42 * alt;
+      var wEngland = 0.30 * alt;
+      var wYork = 0.18 + 0.14 * easeT;
+      var wCity = 0.08 + 0.72 * easeT;
+      var wSelf = Math.max(0, 1 - wCar - wEngland - wYork - wCity);
+      readout.innerHTML = '<span>' + (DE ? "new′ =" : "new′ =") + ' <b>' + (wSelf * 100).toFixed(0) + '% new</b> + <b>' + (wCar * 100).toFixed(0) + '% ' + (DE ? "Auto" : "car") + '</b> + <b>' + (wEngland * 100).toFixed(0) + '% England</b> + <b>' + (wYork * 100).toFixed(0) + '% york</b> + <b>' + (wCity * 100).toFixed(0) + '% ' + (DE ? "Stadt" : "city") + '</b></span><span>' + (DE ? "Summe 100 %" : "sum 100%") + '</span>';
       canvas.setAttribute("aria-label", DE
-        ? "Attention verschiebt new und york zu Stadt, weg von car und England. Layer " + layer + "."
-        : "Attention moves new and york toward city, away from car and England. Layer " + layer + ".");
+        ? "Attention reduziert Rauschen: new und york bewegen sich mit dem Kontext zu Stadt, während Auto und England verblassen. Kontext " + layer + "."
+        : "Attention reduces noise: new and york move toward city with the context while car and England fade. Context " + layer + ".");
     }
     function resize() { size = api.fit(canvas, stage); draw(); }
     slider.addEventListener("input", function () {
@@ -2939,39 +2954,45 @@
     var DE = api.lang === "de";
     var baseTokens = DE ? ["Ich", "gehe", "zur", "Bank", "."] : ["I", "walk", "to", "the", "bank", "."];
     var contexts = [
-      { id: "none", label: DE ? "kein Kontext" : "no context", word: "·", color: "muted" },
-      { id: "river", label: DE ? "Fluss" : "river", word: DE ? "Fluss" : "river", color: "blue" },
-      { id: "money", label: DE ? "Geld" : "money", word: DE ? "Geld" : "money", color: "gold" },
-      { id: "both", label: DE ? "beides" : "both", word: DE ? "Fluss+Geld" : "money+river", color: "lilac" }
+      { id: "none", sentence: DE ? "Ich gehe zur Bank." : "I walk to the bank.", token: DE ? "∅" : "∅", color: "muted" },
+      { id: "river", sentence: DE ? "Der Fluss ist tief. Ich gehe zur Bank." : "The river is deep. I walk to the bank.", token: DE ? "Fluss" : "river", color: "blue" },
+      { id: "money", sentence: DE ? "Ich brauche Geld. Ich gehe zur Bank." : "I need money. I walk to the bank.", token: DE ? "Geld" : "money", color: "gold" },
+      { id: "both", sentence: DE ? "Der Fluss kostet Geld. Ich gehe zur Bank." : "The river costs money. I walk to the bank.", token: DE ? "Fluss+Geld" : "money+river", color: "lilac" }
     ];
     var context = "none";
     var selected = baseTokens.length - 1;
+    var causal = true;
     var el = document.createElement("div");
     el.className = "ls-att-scene";
     el.innerHTML =
+      '<div class="ls-att-sentences" role="group"></div>' +
       '<div class="ls-att-stage"><canvas class="ls-att-graph" role="img"></canvas></div>' +
       '<div class="ls-att-vector"><canvas class="ls-att-vector-canvas" role="img"></canvas></div>' +
       '<div class="ls-att-matrix" aria-live="polite"></div>' +
-      '<div class="ls-att-sum" aria-live="polite"></div>' +
-      '<div class="ls-scene-row ls-att-contexts"></div>' +
+      '<div class="ls-att-formula" aria-live="polite"></div>' +
+      '<details class="ls-att-mask"><summary>' + (DE ? "Causal Mask" : "Causal mask") + '</summary>' +
+        '<label><input type="checkbox" class="ls-att-causal" checked> ' + (DE ? "nur vergangene Tokens beachten" : "attend only to past tokens") + '</label>' +
+        '<p>' + (DE ? "Wähle ein früheres Wort in der Tabelle, um den Unterschied zu sehen. Beim letzten Token ändert die Maske nichts." : "Select an earlier word in the table to see the difference. On the last token the mask changes nothing.") + '</p>' +
+      '</details>' +
       '<div class="ls-att-readout" aria-live="polite"></div>';
     root.appendChild(el);
+    var sentEl = el.querySelector(".ls-att-sentences");
     var stage = el.querySelector(".ls-att-stage");
     var graph = el.querySelector(".ls-att-graph");
     var vectorStage = el.querySelector(".ls-att-vector");
     var vector = el.querySelector(".ls-att-vector-canvas");
     var matrixEl = el.querySelector(".ls-att-matrix");
-    var sumEl = el.querySelector(".ls-att-sum");
-    var ctxRow = el.querySelector(".ls-att-contexts");
+    var formulaEl = el.querySelector(".ls-att-formula");
+    var causalEl = el.querySelector(".ls-att-causal");
     var readout = el.querySelector(".ls-att-readout");
     var C = api.colors();
     var graphSize = null, vectorSize = null, graphHits = [];
+    var animRow = null, animFrom = null, animTo = null, animStart = 0, animRaf = 0;
 
-    function contextWord() {
-      var c = contexts.filter(function (x) { return x.id === context; })[0] || contexts[0];
-      return c.word;
+    function contextObj() {
+      return contexts.filter(function (x) { return x.id === context; })[0] || contexts[0];
     }
-    function tokens() { return [contextWord()].concat(baseTokens); }
+    function tokens() { return [contextObj().token].concat(baseTokens); }
     function bankIdx() { return tokens().length - 2; }
     function normalize(row) {
       var s = row.reduce(function (a, b) { return a + b; }, 0) || 1;
@@ -3010,13 +3031,20 @@
       row[bi] += 0.10;
       return normalize(row);
     }
+    function maskRow(row, i) {
+      if (!causal) return normalize(row);
+      var out = row.map(function (w, j) { return j <= i ? w : 0; });
+      return normalize(out);
+    }
     function matrix() {
       var ts = tokens(), n = ts.length, bi = bankIdx();
       var m = [];
       for (var i = 0; i < n; i++) {
-        if (i === 0) m.push(normalize(ctxRowFor(context)));
-        else if (i === bi) m.push(normalize(bankRow(context)));
-        else m.push(baseRow(i, n, bi));
+        var row;
+        if (i === 0) row = normalize(ctxRowFor(context));
+        else if (i === bi) row = normalize(bankRow(context));
+        else row = baseRow(i, n, bi);
+        m.push(maskRow(row, i));
       }
       return m;
     }
@@ -3025,42 +3053,70 @@
       row.forEach(function (w, j) { if (j !== i && w > bw) { bw = w; best = j; } });
       return best;
     }
+    function displayRow() {
+      if (animRow && animRow.length === tokens().length) return animRow;
+      return matrix()[selected];
+    }
+    function texText(value) {
+      return String(value == null ? "" : value).replace(/[\\{}$&#^_%~]/g, function (c) {
+        return c === "\\" ? "\\textbackslash{}" : "\\" + c;
+      });
+    }
+    function escAttr(value) {
+      return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+    function renderSentences() {
+      sentEl.innerHTML = contexts.map(function (c, i) {
+        return '<button type="button" class="ls-att-sentence' + (c.id === context ? ' is-on' : '') + '" data-ctx="' + c.id + '">' +
+          api.esc(c.sentence) + '</button>';
+      }).join("");
+      sentEl.querySelectorAll("[data-ctx]").forEach(function (b) {
+        b.addEventListener("click", function () { setContext(b.getAttribute("data-ctx")); });
+      });
+    }
     function setContext(id) {
+      if (!contexts.some(function (c) { return c.id === id; })) return;
       context = id;
-      syncChips();
+      renderSentences();
       draw();
     }
     function setSelected(i) {
-      var ts = tokens();
-      if (i < 0 || i >= ts.length) return;
+      if (i < 0 || i >= tokens().length) return;
       selected = i;
       draw();
-    }
-    function syncChips() {
-      ctxRow.querySelectorAll(".ls-chip").forEach(function (b) {
-        b.classList.toggle("is-on", b.getAttribute("data-ctx") === context);
-      });
     }
     function drawGraph() {
       if (!graphSize) return;
       var ctx = graphSize.ctx, w = graphSize.w, h = graphSize.h;
       ctx.clearRect(0, 0, w, h);
-      var ts = tokens(), n = ts.length, row = matrix()[selected];
-      var pad = 18, gap = (w - pad * 2) / n, y = 38;
+      var ts = tokens(), n = ts.length, row = displayRow();
+      var pad = 18, gap = (w - pad * 2) / n, y = h - 44;
       graphHits = [];
       var maxBox = Math.min(92, gap - 6);
+      var px = [];
       ts.forEach(function (tok, i) {
         var x = pad + gap * (i + 0.5);
-        var bw = Math.max(38, Math.min(maxBox, ctx.measureText(tok).width + 18));
+        var tw = ctx.measureText(tok).width;
+        var bw = Math.max(38, Math.min(maxBox, tw + 18));
+        px[i] = x;
         var on = i === selected;
-        ctx.fillStyle = on ? C.green : C.paper;
-        ctx.strokeStyle = on ? C.green : C.lineStrong;
+        var wt = row[i] || 0;
+        var baseCol = on ? C.green : (i === 0 && context !== "none" ? C.gold : C.blue);
+        var alpha = on ? 0.92 : Math.min(0.78, 0.08 + wt * 0.95);
+        ctx.fillStyle = baseCol;
+        ctx.globalAlpha = alpha;
         ctx.fillRect(x - bw / 2, y - 15, bw, 30);
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = on ? C.green : C.lineStrong;
+        ctx.lineWidth = on ? 2 : 1;
         ctx.strokeRect(x - bw / 2, y - 15, bw, 30);
-        ctx.fillStyle = on ? "#fff" : C.ink;
+        ctx.fillStyle = (on || (wt > 0.46 && i !== 0)) ? "#fff" : C.ink;
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center";
         ctx.fillText(tok, x, y + 3);
+        ctx.fillStyle = C.muted;
+        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+        ctx.fillText(Math.round(wt * 100) + "%", x, y + 26);
         graphHits.push({ x: x - bw / 2, y: y - 15, w: bw, h: 30, i: i });
       });
       ctx.fillStyle = C.muted;
@@ -3069,53 +3125,39 @@
       ctx.fillText(DE ? "Klicke ein Wort" : "click a word", pad, 16);
       ctx.textAlign = "right";
       ctx.fillText(DE ? "Zeile = Frage, Spalte = Antwort" : "row = query, column = key", w - pad, 16);
-      var selX = pad + gap * (selected + 0.5);
+      var selX = px[selected], y0 = y - 15;
       row.forEach(function (wt, j) {
         if (j === selected || wt < 0.005) return;
-        var x = pad + gap * (j + 0.5);
-        var mid = (selX + x) / 2;
-        var ctrlY = y - 44 - 120 * wt;
-        ctx.beginPath();
-        ctx.moveTo(selX, y + 16);
-        ctx.quadraticCurveTo(mid, ctrlY, x, y + 16);
+        var x1 = px[j];
+        var mid = (selX + x1) / 2;
+        var cy = Math.max(30, y - 38 - 115 * wt);
+        var alpha = 0.20 + Math.min(0.68, wt);
         ctx.strokeStyle = C.blue;
-        ctx.globalAlpha = 0.22 + Math.min(0.65, wt);
-        ctx.lineWidth = 1 + wt * 9;
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = 2 + wt * 16;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(selX, y0);
+        ctx.quadraticCurveTo(mid, cy, x1, y0);
         ctx.stroke();
         ctx.globalAlpha = 1;
-        var ang = Math.atan2((y + 16) - ctrlY, x - mid);
+        var ang = Math.atan2(y0 - cy, x1 - mid);
+        var ah = 7 + wt * 10;
+        var aw = 5 + wt * 7;
         ctx.beginPath();
-        ctx.moveTo(x, y + 16);
-        ctx.lineTo(x - 7 * Math.cos(ang - 0.35), y + 16 - 7 * Math.sin(ang - 0.35));
-        ctx.lineTo(x - 7 * Math.cos(ang + 0.35), y + 16 - 7 * Math.sin(ang + 0.35));
+        ctx.moveTo(x1, y0);
+        ctx.lineTo(x1 - ah * Math.cos(ang) + aw * Math.sin(ang), y0 - ah * Math.sin(ang) - aw * Math.cos(ang));
+        ctx.lineTo(x1 - ah * Math.cos(ang) - aw * Math.sin(ang), y0 - ah * Math.sin(ang) + aw * Math.cos(ang));
         ctx.closePath();
         ctx.fillStyle = C.blue;
         ctx.fill();
-        if (wt >= 0.04) {
+        if (wt >= 0.02) {
           ctx.fillStyle = C.petrol;
-          ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+          ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
           ctx.textAlign = "center";
-          ctx.fillText(Math.round(wt * 100) + "%", mid, ctrlY + 14);
+          ctx.fillText(Math.round(wt * 100) + "%", mid, Math.max(12, cy - 6));
         }
       });
-      var barY = h - 30, barW = w - pad * 2, x0 = pad;
-      ctx.fillStyle = C.paper;
-      ctx.strokeStyle = C.lineStrong;
-      ctx.fillRect(x0, barY, barW, 16);
-      ctx.strokeRect(x0, barY, barW, 16);
-      var acc = 0;
-      ts.forEach(function (tok, j) {
-        var bw = row[j] * barW;
-        if (bw > 0.1) {
-          ctx.fillStyle = j === selected ? C.green : (j === 0 && context !== "none" ? C.gold : C.sky);
-          ctx.fillRect(x0 + acc, barY, bw, 16);
-        }
-        acc += bw;
-      });
-      ctx.fillStyle = C.muted;
-      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.textAlign = "left";
-      ctx.fillText(DE ? "100 % Budget" : "100% budget", pad, barY - 5);
       graph.setAttribute("aria-label", DE
         ? "Attention-Graph. Zeile " + ts[selected] + ", Summe 100 Prozent."
         : "Attention graph. Row " + ts[selected] + ", sum 100 percent.");
@@ -3124,49 +3166,62 @@
       if (!vectorSize) return;
       var ctx = vectorSize.ctx, w = vectorSize.w, h = vectorSize.h;
       ctx.clearRect(0, 0, w, h);
-      var ts = tokens(), row = matrix()[selected], key = topKey(row, selected);
+      var ts = tokens(), row = displayRow(), n = ts.length;
       var cx = w * 0.5, cy = h * 0.54;
-      var scale = Math.min(w, h) * 0.30;
+      var scale = Math.min(w, h) * 0.34;
       ctx.strokeStyle = C.line;
       ctx.lineWidth = 1;
       for (var g = -1; g <= 1; g += 0.5) {
         ctx.beginPath(); ctx.moveTo(cx + g * scale, cy - scale); ctx.lineTo(cx + g * scale, cy + scale); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(cx - scale, cy + g * scale); ctx.lineTo(cx + scale, cy + g * scale); ctx.stroke();
       }
-      if (key < 0) return;
-      var n = ts.length;
-      var angle = -Math.PI / 2 + (key / Math.max(1, n - 1)) * Math.PI * 1.55;
-      var kx = cx + Math.cos(angle) * scale * 1.05;
-      var ky = cy + Math.sin(angle) * scale * 1.05;
-      var wt = row[key];
-      var sx = cx + Math.cos(angle) * scale * Math.min(0.95, wt * 3.2);
-      var sy = cy + Math.sin(angle) * scale * Math.min(0.95, wt * 3.2);
-      ctx.save();
-      ctx.setLineDash([4, 4]);
-      ctx.strokeStyle = C.lineStrong;
-      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(kx, ky); ctx.stroke();
-      ctx.restore();
+      var sumX = 0, sumY = 0;
+      var pts = [];
+      ts.forEach(function (tok, j) {
+        var a = -Math.PI / 2 + (j / Math.max(1, n)) * Math.PI * 2;
+        var vx = Math.cos(a), vy = Math.sin(a);
+        var wt = row[j] || 0;
+        sumX += vx * wt; sumY += vy * wt;
+        pts.push({ x: cx + vx * scale * 0.86, y: cy + vy * scale * 0.86, label: tok, wt: wt, j: j });
+      });
+      var ex = cx + sumX * scale, ey = cy + sumY * scale;
+      pts.forEach(function (pt) {
+        if (pt.wt > 0.005) {
+          ctx.strokeStyle = C.blue;
+          ctx.globalAlpha = 0.12 + Math.min(0.55, pt.wt);
+          ctx.lineWidth = 1 + pt.wt * 6;
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(pt.x, pt.y); ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+        ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.j === selected ? 5 : 3, 0, Math.PI * 2);
+        ctx.fillStyle = pt.j === selected ? C.green : (pt.wt > 0.05 ? C.blue : C.line);
+        ctx.fill();
+        ctx.strokeStyle = C.paper; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.fillStyle = C.ink;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(pt.label, pt.x, pt.y - 9);
+      });
       ctx.strokeStyle = C.green;
-      ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(sx, sy); ctx.stroke();
-      var a = Math.atan2(sy - cy, sx - cx);
-      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx - 8 * Math.cos(a - 0.4), sy - 8 * Math.sin(a - 0.4)); ctx.lineTo(sx - 8 * Math.cos(a + 0.4), sy - 8 * Math.sin(a + 0.4)); ctx.closePath(); ctx.fillStyle = C.green; ctx.fill();
-      function point(x, y, col, label, on) {
-        ctx.beginPath(); ctx.arc(x, y, on ? 7 : 4.5, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
-        ctx.fillStyle = C.ink; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(label, x, y - 11);
-      }
-      point(cx, cy, C.green, ts[selected], true);
-      point(kx, ky, C.blue, ts[key], false);
-      point(sx, sy, C.green, DE ? "x′" : "x′", true);
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ex, ey); ctx.stroke();
+      var ang = Math.atan2(ey - cy, ex - cx);
+      ctx.beginPath();
+      ctx.moveTo(ex, ey);
+      ctx.lineTo(ex - 10 * Math.cos(ang - 0.4), ey - 10 * Math.sin(ang - 0.4));
+      ctx.lineTo(ex - 10 * Math.cos(ang + 0.4), ey - 10 * Math.sin(ang + 0.4));
+      ctx.closePath(); ctx.fillStyle = C.green; ctx.fill();
+      ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI * 2); ctx.fillStyle = C.paper; ctx.fill();
+      ctx.strokeStyle = C.green; ctx.lineWidth = 2; ctx.stroke();
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       ctx.fillText(DE ? "x′ = Σ w · v" : "x′ = Σ w · v", 10, 16);
       ctx.textAlign = "right";
-      ctx.fillText(Math.round(wt * 100) + "% " + ts[key], w - 10, 16);
+      ctx.fillText(DE ? "Summe 100 %" : "sum 100%", w - 10, 16);
       vector.setAttribute("aria-label", DE
-        ? "Vektorraum. " + ts[selected] + " bewegt sich zu " + ts[key] + " mit " + Math.round(wt * 100) + " Prozent."
-        : "Vector space. " + ts[selected] + " moves toward " + ts[key] + " with " + Math.round(wt * 100) + " percent.");
+        ? "Vektorraum. Gewichtete Summe der Value-Vektoren für " + ts[selected] + "."
+        : "Vector space. Weighted sum of the value vectors for " + ts[selected] + ".");
     }
     function renderTable() {
       var ts = tokens(), m = matrix();
@@ -3187,41 +3242,50 @@
         tr.addEventListener("click", function () { setSelected(parseInt(tr.getAttribute("data-row"), 10)); });
       });
     }
-    function renderSum() {
-      var ts = tokens(), row = matrix()[selected];
-      var terms = [];
+    function renderFormula() {
+      var ts = tokens(), row = matrix()[selected], terms = [];
       row.forEach(function (wt, j) {
         if (wt < 0.005 && j !== selected) return;
-        terms.push('<span class="ls-att-term' + (j === selected ? ' is-self' : '') + '"><b>' + Math.round(wt * 100) + '%</b>·' + api.esc(ts[j]) + '</span>');
+        var label = texText(ts[j]);
+        terms.push('\\underbrace{' + Math.round(wt * 100) + '\\%}_{\\text{' + label + '}}\\cdot v_{\\text{' + label + '}}');
       });
-      sumEl.innerHTML = '<span class="ls-att-eq">x′ = </span>' + terms.join('<span class="ls-att-plus"> + </span>') +
-        '<span class="ls-att-budget">' + (DE ? "Summe 100 % · 100 % auf ein Wort heißt 0 % für alle anderen." : "sum 100% · 100% on one word means 0% for the others.") + '</span>';
+      var t = '\\underbrace{x\'}_{\\substack{\\text{' + (DE ? 'neuer Vektor' : 'new vector') + '}\\\\ \\text{' + (DE ? 'für' : 'for') + ' } \\text{' + texText(ts[selected]) + '}}} = ' +
+        '\\underbrace{' + terms.join(' + ') + '}_{\\substack{\\text{' + (DE ? 'gewichtete Summe' : 'weighted sum') + '}\\\\ \\text{' + (DE ? 'Summe der Gewichte' : 'sum of weights') + ' } = 100\\%}}';
+      formulaEl.innerHTML = '<div class="ls-math" data-tex="' + escAttr(t) + '" data-tex-display="true"><code class="ls-tex-source">' + api.esc(t) + '</code></div>';
+      if (api.typeset) { try { api.typeset(formulaEl); } catch (e) {} }
     }
     function renderReadout() {
       var ts = tokens(), row = matrix()[selected], key = topKey(row, selected);
       readout.innerHTML = '<span>' + (DE ? "Zeile" : "row") + ' <b>' + api.esc(ts[selected]) + '</b></span><span>' + (DE ? "stärkster Key" : "top key") + ' <b>' + api.esc(ts[key]) + ' ' + Math.round(row[key] * 100) + '%</b></span><span>' + (DE ? "Summe" : "sum") + ' <b>100 %</b></span>';
     }
+    function animateRow(target) {
+      if (animRaf) cancelAnimationFrame(animRaf);
+      var old = animRow && animRow.length === target.length ? animRow.slice() : target.slice();
+      animFrom = old; animTo = target.slice(); animStart = performance.now(); animRow = old;
+      function frame(now) {
+        var t = Math.min(1, (now - animStart) / 320);
+        var e = 1 - Math.pow(1 - t, 3);
+        animRow = animTo.map(function (v, j) { return animFrom[j] + (v - animFrom[j]) * e; });
+        drawGraph(); drawVector();
+        if (t < 1) animRaf = requestAnimationFrame(frame);
+        else { animRow = animTo.slice(); animRaf = 0; }
+      }
+      animRaf = requestAnimationFrame(frame);
+    }
     function draw() {
-      drawGraph();
-      drawVector();
+      renderSentences();
       renderTable();
-      renderSum();
+      renderFormula();
       renderReadout();
+      animateRow(matrix()[selected].slice());
     }
     function resize() {
       graphSize = api.fit(graph, stage);
       vectorSize = api.fit(vector, vectorStage);
-      draw();
+      animRow = matrix()[selected].slice();
+      renderSentences(); renderTable(); renderFormula(); renderReadout();
+      drawGraph(); drawVector();
     }
-    contexts.forEach(function (c) {
-      var b = document.createElement("button");
-      b.type = "button";
-      b.className = "ls-chip" + (c.id === context ? " is-on" : "");
-      b.setAttribute("data-ctx", c.id);
-      b.textContent = c.label;
-      b.addEventListener("click", function () { setContext(c.id); });
-      ctxRow.appendChild(b);
-    });
     graph.addEventListener("pointerup", function (e) {
       var r = graph.getBoundingClientRect();
       var x = e.clientX - r.left, y = e.clientY - r.top;
@@ -3235,6 +3299,7 @@
       var hit = graphHits.some(function (h) { return x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h; });
       graph.style.cursor = hit ? "pointer" : "default";
     });
+    causalEl.addEventListener("change", function () { causal = causalEl.checked; draw(); });
     window.addEventListener("resize", resize);
     resize();
     return {
@@ -3242,11 +3307,11 @@
         if (!s) return;
         if (s.context) context = s.context;
         if (typeof s.selected === "number") selected = s.selected;
-        syncChips();
+        causal = causalEl.checked;
         draw();
       },
       resize: resize,
-      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
+      destroy: function () { if (animRaf) cancelAnimationFrame(animRaf); window.removeEventListener("resize", resize); el.remove(); }
     };
   }
   function ffnScene(root, api) {
@@ -3960,7 +4025,7 @@
     el.innerHTML =
       '<div class="ls-highdim-note">' + (DE ? "Ausschnitt: 16 von 4096 Dimensionen. Jede Zeile ist ein Vektor, jede Spalte eine Dimension." : "Slice: 16 of 4096 dimensions. Each row is a vector, each column a dimension.") + '</div>' +
       '<div class="ls-highdim-scroll"><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>' +
-      '<p class="ls-highdim-foot">' + (DE ? "Die Rechnung bleibt dieselbe: Mittelpunkt, Winkel, Matrixmultiplikation. Nur die Zahl der Koordinaten wächst." : "The arithmetic stays the same: midpoint, angle, matrix multiplication. Only the number of coordinates grows.") + '</p>';
+      '<p class="ls-highdim-foot">' + (DE ? "Auch wenn wir uns 4096 Dimensionen nicht mehr vorstellen können: Es gelten dieselben Regeln. Mittelpunkt, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter. Nur die Zahl der Koordinaten wächst, und hier passen viel mehr unabhängige Beziehungen hinein als in zwei oder drei Dimensionen." : "Even though we cannot picture 4096 dimensions, the same rules apply. Midpoint, angle, and matrix multiplication still work coordinate by coordinate. Only the number of coordinates grows, and there is room for many more independent relations than in two or three dimensions.") + '</p>';
     root.appendChild(el);
     return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
   }

@@ -432,11 +432,15 @@
 						yaxis: { showgrid: true, gridcolor: isDark() ? '#1e293b' : '#f1f5f9', zeroline: false, showticklabels: false, title: '' },
 						zaxis: { showgrid: true, gridcolor: isDark() ? '#1e293b' : '#f1f5f9', zeroline: false, showticklabels: false, title: '' },
 						camera: { eye: { x: 1.5, y: 1.8, z: 1.2 } },
-						aspectmode: 'data', bgcolor: isDark() ? '#0f172a' : '#ffffff'
+						aspectmode: 'data', bgcolor: 'rgba(0,0,0,0)'
 					}
 				};
 				var done = Plotly.react(div, traces, layout, { displayModeBar: false, responsive: true });
-				function clearLoader() { var l = div.querySelector('.tm-manifold-loading'); if (l) l.remove(); }
+				function clearLoader() {
+					var l = div.querySelector('.tm-manifold-loading');
+					if (l) l.remove();
+					div.classList.add('is-ready');
+				}
 				if (done && done.then) done.then(clearLoader); else clearLoader();
 			}
 

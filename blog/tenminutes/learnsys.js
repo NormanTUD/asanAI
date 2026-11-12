@@ -681,13 +681,27 @@
     var reset = JSON.stringify(s.demoState || {});
     els.cues.innerHTML = '<div class="ls-cue ls-cue--reset" data-cue="' + esc(reset) + '" aria-hidden="true"></div>' +
       cues.map(function (c) {
-        return '<div class="ls-cue" data-cue="' + esc(JSON.stringify(c.state || {})) + '">' +
+        return '<div class="ls-cue" role="button" tabindex="0" aria-label="' + esc(c.title || c.label || "") + '" data-cue="' + esc(JSON.stringify(c.state || {})) + '">' +
           '<div class="ls-cue-kicker">' + esc(c.label || t("depth")) + '</div>' +
           '<h3>' + esc(c.title || "") + '</h3>' +
           '<p>' + termHTML(c.text || "") + '</p>' +
         '</div>';
       }).join("");
     bindTerms(els.cues);
+    els.cues.querySelectorAll(".ls-cue:not(.ls-cue--reset)").forEach(function (card) {
+      function activate() {
+        var cue = null;
+        try { cue = JSON.parse(card.getAttribute("data-cue") || "{}"); } catch (e) {}
+        if (!cue) return;
+        els.cues.querySelectorAll(".ls-cue").forEach(function (x) { x.classList.toggle("is-active", x === card); });
+        if (demo && demo.update) demo.update(cue);
+        if (els.demo) els.demo.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      card.addEventListener("click", activate);
+      card.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); activate(); }
+      });
+    });
     setupCues();
   }
 
@@ -728,10 +742,14 @@
         var rootBox = els.extras.querySelector(".ls-deepbox--root");
         if (rootBox) rootBox.open = true;
         var target = els.extras.querySelector('[data-qid="' + b.getAttribute("data-qid") + '"]');
-        if (target) {
-          target.open = true;
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+        if (!target) return;
+        target.open = true;
+        setTimeout(function () {
+          var host = els.textScroll || els.extras;
+          var top = target.getBoundingClientRect().top - host.getBoundingClientRect().top;
+          host.scrollTo({ top: host.scrollTop + top - 12, behavior: "smooth" });
+          try { target.setAttribute("tabindex", "-1"); target.focus({ preventScroll: true }); } catch (e) {}
+        }, 40);
       });
     });
     typesetText();

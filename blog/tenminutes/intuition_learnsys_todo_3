@@ -1,0 +1,9 @@
+"Dieselbe Schleife schreibt Prosa und Code. Das Modell sagt das nächste Token voraus, und Python führt das fertige Programm aus. Der Code ist eine weitere Sequenz, die das Modell vorhersagen kann.": aber wie geht das? wie kann eine maschine sinnvolle texte schreiben, oder sogar funktionierenden computer code? wir wollen diese frage aus ganz vielen winkeln betrachten in diesem blogpost. sage das auf folie 1 noch mit links.
+
+allgemein: entferne den "tiefe" button unten links, der user kann direkt selbst auf tieferklicken.
+
+auf der folie "Ein Wort nach dem anderen" soll sowohl die landschaft als auch die bars angezeigt werden. immer beides. ich will die landschaft sehen auf der er sich bewegt. die wahrscheinlichkeit zwicshen 0.9 für jedes wort ist der z-wert auf der ebene. platziere die punkte so dass die wahrscheinlichkeiten da rausfallen und dass die wege tatsächlich so sind dass es kleinere oder größere berge überwinden muss in alle richtungen, so dass der kleinste berg bei dem wort ist mit der höchsten wahrscheinlichkeit. zeige auch da drumherum andere wege. lass die kugel mit jeder entscheidung so rollen in der landschaft dass man sieht welchen pfad sie wählt.
+
+die frage ist: wie baut man diese landschaft auf? dafür gibt es den transformer. 
+
+der inhalt von "Der Wahrscheinlichkeitstunnel" sollte auf die vorherige folie mit, aber nicht die demo. mach die demo real so berechnet dass es ungefähr gleichverteilt im demo fenster ist und mit den realen wahrscheinlichkeiten korreliert. lass mich auch in die gegend von worten klicken, damit ich es als nächstes auswählen kann. 
