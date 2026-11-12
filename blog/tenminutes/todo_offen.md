@@ -19,6 +19,7 @@ Regel: Höhen-/Browser-Checks erst ausführen, wenn alle Folien umgebaut sind.
 - [done] Agenten-Konsole: kurzes Nachdenken, Datei schreiben.
 - [done] Der Code steht im Agentenfenster, nicht in einem separaten Editor.
 - [done] Codefenster ohne Scrollen: Code gekürzt und Schriftgröße passt sich automatisch an.
+- [done] Mobil geprüft: Code passt ohne vertikales/horizontales Scrollen (DE 7.5 px, EN 6 px).
 - [done] „Weiter“ öffnet das Lauf-Fenster und tippt `python3 himmel.py` in 200 ms.
 - [done] Agent führt `himmel.py` automatisch aus (Weiter bleibt als manueller Auslöser); Lauf-Fenster zeigt die berechnete Ausgabe.
 - [pending] Auf Mobil prüfen, ob Taskleiste, Agenten-Chat, Code und Lauf-Fenster ohne Überlappung passen. (Agentenlauf in DE/EN bereits gezielt geprüft: Befehl und 4.35-Ausgabe erscheinen.)
@@ -56,12 +57,20 @@ Regel: Höhen-/Browser-Checks erst ausführen, wenn alle Folien umgebaut sind.
 - [done] Quellen Sennrich et al. 2016 und GPT-2 (Radford et al. 2019).
 - [pending] Prüfen, dass die BPE-Beispiele auf Mobil ohne Überlauf bedienbar sind.
 
+## Token-Trajektorien durch GPT-2
+- [done] Demo beschleunigt: Plotly durch eine leichte Canvas-Szene ersetzt.
+- [done] Standardmetrik ist Winkel / Großkreis; Euklid bleibt als Umschalter.
+- [done] Erklärt in Notiz, Kontext und optionalem Kasten: andere Metrik als Euklid, Netz vergleicht am Ende Richtungen.
+- [done] DE/EN, Default, Layer-Regler und Kandidaten auf Desktop geprüft; keine Konsolenfehler.
+- [pending] Trajektorien-Szene auf Mobil prüfen.
+
 ## „Ein Wort nach dem anderen“ / Landschaft
 - [done] Satz „Es war einmal ein …“ ausdrücklich als Aufgabe nennen; bis `<|endoftext|>`.
 - [done] Klarstellen, dass die Landschaft nur eine Demo ist.
 - [done] „Fluss“ und „Schloss“ als sehr unwahrscheinliche Tokens weiter links/außen platzieren.
 - [done] Landschaft über die Tokens hinaus weiterlaufen lassen und am Rand ausfransen (weicher Rand).
-- [pending] Stärkerer Videospiel-Weltrand: 5 Ideen vorstellen, eine auswählen und umsetzen.
+- [done] Stärkerer Videospiel-Weltrand: „Nebel & Token-Silhouetten“ gewählt und umgesetzt (ausgefranste Kante, Nebelbänke, ferne Token-Namen).
+- [done] Weltrand in DE/EN und Desktop/Mobil ohne Konsolenfehler geprüft.
 - [done] Fog of War: ferne Tokens werden ausgeblendet; nahe/gesehene bleiben sichtbar.
 - [done] Wiese der Wörter als sehr blasser Hintergrund hinter die Landschaft gelegt.
 - [done] Klick in die Nähe eines Tokens genügt; breite Trefferflächen um die aktuellen Tokens.

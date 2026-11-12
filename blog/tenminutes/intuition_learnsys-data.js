@@ -901,11 +901,12 @@
       body: "Echte Hidden States aus GPT-2 small für „The capital of France is“. Jede Linie folgt einem Token durch das Embedding und 12 Blöcke. Jeder Zustand hat 768 Dimensionen, zu viele für ein Bild, deshalb ist das nicht die echte Bewegung: PCA behält die drei Richtungen, in denen sich die Zustände am stärksten ändern, und flacht alles darauf ab. Die 3D-Punkte sind ein Schatten.",
       watch: "Bewege den Layer-Regler. Ab wann wird „Paris“ die Top-Wahl?",
       demoState: { scene: "trajectories" },
-      context: "Die Winkelansicht ist der Standard, weil das Modell Richtungen vergleicht. „Plausibel“ heißt: Die Fortsetzung ist im Trainingstext häufig, nicht dass sie wahr ist.",
+      context: "Die Winkelansicht ist der Standard. Das ist eine andere Metrik als der gewohnte euklidische Abstand: Das Modell vergleicht am Ende Richtungen, nicht Längen, deshalb ist der Großkreis hier relevant. „Plausibel“ heißt: Die Fortsetzung ist im Trainingstext häufig, nicht dass sie wahr ist.",
       deep: "Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Eine flach aussehende Biegung kann eine große Bewegung verbergen. Die Kandidaten erscheinen erst in der letzten Schicht.",
       boxes: [
         box("traj-1", "Technik", "Was ist PCA?", "PCA projiziert die 768-dimensionalen Zustände auf die drei Richtungen mit der größten Varianz. Das ist eine lesbare Projektion, keine vollständige Rekonstruktion."),
-        box("traj-2", "Grenze", "Was zeigt die Linie nicht?", "Sie zeigt nicht den echten Weg im 768-dimensionalen Raum. Sie zeigt einen Schatten, der die größten Änderungen sichtbar macht.")
+        box("traj-2", "Grenze", "Was zeigt die Linie nicht?", "Sie zeigt nicht den echten Weg im 768-dimensionalen Raum. Sie zeigt einen Schatten, der die größten Änderungen sichtbar macht."),
+        box("traj-3", "Metrik", "Warum Winkel statt Euklid?", "Am Ende zählt die Richtung des Zustands im Vektorraum, nicht seine Länge. Die Winkelansicht projiziert die Punkte auf die Einheitskugel und misst den Großkreis. Das ist eine andere Metrik als der gewohnte euklidische Abstand.")
       ],
       sources: [{ label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }]
     }
@@ -916,11 +917,12 @@
       body: "Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. Each state has 768 dimensions, too many to picture, so this is not the real motion: PCA keeps the three directions where the states change most and flattens everything onto them. The 3D points are a shadow.",
       watch: "Move the layer slider. When does “Paris” become the top choice?",
       demoState: { scene: "trajectories" },
-      context: "The angular view is the default because the model compares directions. “Plausible” means the continuation is frequent in the training text, not that it is true.",
+      context: "The angular view is the default. This is a different metric from the usual Euclidean distance: at the end the model compares directions, not lengths, so the great circle is relevant here. “Plausible” means the continuation is frequent in the training text, not that it is true.",
       deep: "Lines that cross on screen need not touch in the full space. A flat-looking bend can hide a large move. The candidates appear only at the final layer.",
       boxes: [
         box("traj-1", "Technique", "What is PCA?", "PCA projects the 768-dimensional states onto the three directions with the most variance. It is a readable projection, not a complete reconstruction."),
-        box("traj-2", "Limit", "What does the line not show?", "It does not show the real path in the 768-dimensional space. It shows a shadow that makes the largest changes visible.")
+        box("traj-2", "Limit", "What does the line not show?", "It does not show the real path in the 768-dimensional space. It shows a shadow that makes the largest changes visible."),
+        box("traj-3", "Metric", "Why angles instead of Euclid?", "At the end, the direction of the state in the vector space matters, not its length. The angle view projects the points onto the unit sphere and measures the great circle. That is a different metric from the usual Euclidean distance.")
       ],
       sources: [{ label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }]
     }

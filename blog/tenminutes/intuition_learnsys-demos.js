@@ -1992,6 +1992,78 @@
       ctx.restore();
       ctx.globalAlpha = 1;
     }
+    function frayEdges(ctx, b) {
+      var seed = 29;
+      function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+      ctx.save();
+      ctx.globalCompositeOperation = "destination-out";
+      for (var i = 0; i < 30; i++) {
+        var side = i % 4;
+        var t = rnd();
+        var x, y;
+        if (side === 0) { x = b.x0 + t * (b.x1 - b.x0); y = b.y0 + (rnd() - 0.5) * 12; }
+        else if (side === 1) { x = b.x0 + t * (b.x1 - b.x0); y = b.y1 + (rnd() - 0.5) * 12; }
+        else if (side === 2) { x = b.x0 + (rnd() - 0.5) * 12; y = b.y0 + t * (b.y1 - b.y0); }
+        else { x = b.x1 + (rnd() - 0.5) * 12; y = b.y0 + t * (b.y1 - b.y0); }
+        var r = 18 + rnd() * 38;
+        var g = ctx.createRadialGradient(x, y, 1, x, y, r);
+        g.addColorStop(0, "rgba(0,0,0,.95)");
+        g.addColorStop(0.55, "rgba(0,0,0,.65)");
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.restore();
+    }
+    function drawEdgeFog(ctx, b, C) {
+      var seed = 41;
+      function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+      ctx.save();
+      for (var i = 0; i < 18; i++) {
+        var side = i % 4;
+        var t = rnd();
+        var x, y;
+        if (side === 0) { x = b.x0 + t * (b.x1 - b.x0); y = b.y0 + (rnd() - 0.5) * 24; }
+        else if (side === 1) { x = b.x0 + t * (b.x1 - b.x0); y = b.y1 + (rnd() - 0.5) * 24; }
+        else if (side === 2) { x = b.x0 + (rnd() - 0.5) * 24; y = b.y0 + t * (b.y1 - b.y0); }
+        else { x = b.x1 + (rnd() - 0.5) * 24; y = b.y0 + t * (b.y1 - b.y0); }
+        var r = 28 + rnd() * 58;
+        var g = ctx.createRadialGradient(x, y, 2, x, y, r);
+        g.addColorStop(0, "rgba(255,255,255,.72)");
+        g.addColorStop(0.6, "rgba(238,247,244,.45)");
+        g.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.restore();
+    }
+    function drawEdgeTokens(ctx, b, C) {
+      var seed = 53;
+      function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+      var edges = MEADOW_WORDS.slice(4, 18);
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      for (var i = 0; i < 9; i++) {
+        var side = i % 4;
+        var t = (i + 0.3) / 9;
+        var x, y;
+        if (side === 0) { x = b.x0 + t * (b.x1 - b.x0); y = b.y0 - 6 + rnd() * 10; }
+        else if (side === 1) { x = b.x0 + t * (b.x1 - b.x0); y = b.y1 + 6 - rnd() * 10; }
+        else if (side === 2) { x = b.x0 - 6 + rnd() * 10; y = b.y0 + t * (b.y1 - b.y0); }
+        else { x = b.x1 + 6 - rnd() * 10; y = b.y0 + t * (b.y1 - b.y0); }
+        var word = edges[(i * 3 + 1) % edges.length];
+        ctx.globalAlpha = 0.12 + (i % 3) * 0.035;
+        ctx.fillStyle = [C.muted, C.petrol, C.blue][i % 3];
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.fillText(word, x, y);
+        ctx.beginPath();
+        ctx.arc(x, y - 8, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1;
+    }
     function drawLandscape() {
       if (!landscape || !landSize) return;
       var C = api.colors();
@@ -2054,6 +2126,18 @@
       var oy = h / 2 - (minY + maxY) / 2 * scale;
       function sx(rx) { return rx * scale + ox; }
       function sy(ry) { return ry * scale + oy; }
+      var sbx0 = Infinity, sbx1 = -Infinity, sby0 = Infinity, sby1 = -Infinity;
+      for (var sbi = 0; sbi <= NX; sbi++) {
+        for (var sbj = 0; sbj <= NY; sbj++) {
+          var sbp = grid[sbi][sbj];
+          var sbX = sx(sbp.rx), sbY = sy(sbp.ry);
+          if (sbX < sbx0) sbx0 = sbX;
+          if (sbX > sbx1) sbx1 = sbX;
+          if (sbY < sby0) sby0 = sbY;
+          if (sbY > sby1) sby1 = sbY;
+        }
+      }
+      var sBounds = { x0: sbx0, y0: sby0, x1: sbx1, y1: sby1 };
 
       var quads = [];
       for (var qi = 0; qi < NX; qi++) {
@@ -2087,18 +2171,13 @@
         ctx.globalAlpha = 1;
       });
 
-      // The world fades out at the edge: the terrain continues a little
-      // beyond the words and frays into the paper instead of ending in a
-      // hard rectangle.
-      var edge = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.30, w / 2, h / 2, Math.max(w, h) * 0.64);
-      edge.addColorStop(0, "rgba(255,255,255,0)");
-      edge.addColorStop(1, "rgba(255,255,255,.94)");
-      ctx.fillStyle = edge;
-      ctx.fillRect(0, 0, w, h);
-
-      // The word meadow stays faintly behind the landscape, so the world does
-      // not end at the few tokens of this sentence.
+      // The world does not end in a hard rectangle. The terrain edge is
+      // nibbled away, fog banks sit in the gaps, and faint token names show
+      // that the surrounding space is full of more tokens.
+      frayEdges(ctx, sBounds);
+      drawEdgeFog(ctx, sBounds, C);
       drawWordBackdrop(ctx, w, h, C);
+      drawEdgeTokens(ctx, sBounds, C);
 
       // The lantern forecasts the next word: it sits on the deepest current
       // valley, so the plot is always one word ahead of the sentence.
@@ -5237,16 +5316,22 @@
     var data = window.TM_GPT2_DATA;
     var el = document.createElement("div");
     el.className = "ls-traj-scene";
-    el.innerHTML = '<div class="ls-traj-plot" role="img" aria-label="' + (DE ? "3D-Token-Trajektorien durch GPT-2" : "3D token trajectories through GPT-2") + '"></div><div class="ls-scene-row"><label class="ls-range">Layer <input type="range" class="ls-traj-layer" min="0" max="12" step="1" value="0"><output>Embedding</output></label><div class="ls-scene-row ls-traj-metric"><button type="button" class="ls-chip is-on" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button><button type="button" class="ls-chip" data-metric="angular">' + (DE ? "Winkel" : "Angle") + '</button></div><button type="button" class="ls-btn ls-btn--tiny ls-traj-next">' + (DE ? "Nächste Schicht →" : "Next layer →") + '</button></div><div class="ls-traj-readout" aria-live="polite"></div>';
+    el.innerHTML = '<div class="ls-traj-plot" role="img"><canvas class="ls-canvas"></canvas></div>' +
+      '<div class="ls-scene-row"><label class="ls-range">Layer <input type="range" class="ls-traj-layer" min="0" max="12" step="1" value="0"><output>Embedding</output></label><div class="ls-scene-row ls-traj-metric"><button type="button" class="ls-chip is-on" data-metric="angular">' + (DE ? "Winkel / Großkreis" : "Angle / great circle") + '</button><button type="button" class="ls-chip" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button></div><button type="button" class="ls-btn ls-btn--tiny ls-traj-next">' + (DE ? "Nächste Schicht →" : "Next layer →") + '</button></div>' +
+      '<div class="ls-traj-readout" aria-live="polite"></div>' +
+      '<p class="ls-traj-note">' + (DE ? "Standard hier: Winkel / Großkreis. Das ist eine andere Metrik als der gewohnte euklidische Abstand: Das Netz vergleicht am Ende Richtungen, nicht Längen. Deshalb ist der Großkreis hier relevant." : "Default here: angle / great circle. This is a different metric from the usual Euclidean distance: at the end the network compares directions, not lengths. That is why the great circle is relevant here.") + '</p>';
     root.appendChild(el);
-    var plot = el.querySelector(".ls-traj-plot");
+    var stage = el.querySelector(".ls-traj-plot");
+    var canvas = el.querySelector("canvas");
     var layerEl = el.querySelector(".ls-traj-layer");
     var layerOut = el.querySelector("output");
     var readout = el.querySelector(".ls-traj-readout");
-    var layer = 0, metric = "euclid";
-    var colors = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55"];
+    var layer = 0, metric = "angular", yaw = -0.62, pitch = 0.36, zoom = 1, drag = null;
+    var size = null, ctx = null;
+    var C = api.colors();
+    var colors = ["green", "sky", "gold", "lilac", "lime"];
     function tokenLabel(t) { return t.replace(/^ /, "␣"); }
-    function displayLayers() { return data.layers; }
+    function color(i) { return C[colors[i % colors.length]] || C.petrol; }
     function positions() {
       var pts = data.points;
       if (metric === "euclid") return pts;
@@ -5257,76 +5342,188 @@
         });
       });
     }
-    function build() {
-      if (!window.Plotly || !data) return;
+    function landmarks() {
+      if (metric === "euclid") return data.landmarks;
+      return data.landmarks.map(function (l) {
+        var len = Math.hypot(l.value[0], l.value[1], l.value[2]) || 1;
+        return { word: l.word, p: l.p, value: [l.value[0] / len, l.value[1] / len, l.value[2] / len] };
+      });
+    }
+    function fitBounds(pts) {
+      var min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
+      function add(v) { for (var i = 0; i < 3; i++) { if (v[i] < min[i]) min[i] = v[i]; if (v[i] > max[i]) max[i] = v[i]; } }
+      pts.forEach(function (tok) { tok.forEach(add); });
+      landmarks().forEach(function (l) { add(l.value); });
+      var c = [(min[0] + max[0]) / 2, (min[1] + max[1]) / 2, (min[2] + max[2]) / 2];
+      var ext = Math.max(max[0] - min[0], max[1] - min[1], max[2] - min[2], 0.001);
+      return { c: c, ext: ext };
+    }
+    function project(v, b) {
+      var x = (v[0] - b.c[0]) / b.ext, y = (v[1] - b.c[1]) / b.ext, z = (v[2] - b.c[2]) / b.ext;
+      var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+      var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
+      var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
+      var s = Math.min(size.w * 0.40, size.h * 0.40) / (1 + z2 * 0.22) * zoom;
+      return { x: size.w / 2 + x1 * s, y: size.h / 2 - y2 * s, z: z2 };
+    }
+    function drawLabel(x, y, text, col, align) {
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      var tw = ctx.measureText(text).width;
+      var pad = 4, h = 15;
+      var bx = align === "right" ? x - tw - pad * 2 : x;
+      var by = y - h / 2;
+      ctx.fillStyle = "rgba(255,255,255,.85)";
+      ctx.fillRect(bx, by, tw + pad * 2, h);
+      ctx.fillStyle = col;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, bx + pad, y + 0.5);
+    }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      ctx.clearRect(0, 0, size.w, size.h);
+      var bg = ctx.createRadialGradient(size.w * 0.5, size.h * 0.4, 8, size.w * 0.5, size.h * 0.5, Math.max(size.w, size.h) * 0.75);
+      bg.addColorStop(0, "rgba(247,250,249,.9)");
+      bg.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, size.w, size.h);
       var pts = positions();
-      var C = api.colors();
-      var traces = [];
+      var b = fitBounds(pts);
+      // faint PCA axes
+      var axes = [
+        { v: [1.1, 0, 0], col: C.blue, label: "PC1" },
+        { v: [0, 1.1, 0], col: C.green, label: "PC2" },
+        { v: [0, 0, 1.1], col: C.gold, label: "PC3" }
+      ];
+      axes.forEach(function (ax) {
+        var o = project([0, 0, 0], b), p = project(ax.v, b);
+        ctx.strokeStyle = ax.col; ctx.globalAlpha = 0.22; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = ax.col; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "left"; ctx.fillText(ax.label, p.x + 4, p.y - 4);
+      });
+      // trajectories
       data.tokens.forEach(function (tok, i) {
-        traces.push({
-          type: "scatter3d", mode: "lines+markers", name: tokenLabel(tok),
-          x: pts[i].map(function (p) { return p[0]; }),
-          y: pts[i].map(function (p) { return p[1]; }),
-          z: pts[i].map(function (p) { return p[2]; }),
-          line: { color: colors[i % colors.length], width: 4 },
-          marker: { size: 2.5, color: colors[i % colors.length] },
-          text: data.tokens.map(function (t) { return tokenLabel(t) + " · " + (DE ? "Schicht" : "layer") + " "; }),
-          hoverinfo: "skip", showlegend: false
-        });
+        var col = color(i);
+        var path = pts[i].map(function (p) { return project(p, b); });
+        ctx.save();
+        ctx.strokeStyle = col;
+        ctx.globalAlpha = 0.72;
+        ctx.lineWidth = 2.4;
+        ctx.lineJoin = "round";
+        ctx.beginPath();
+        path.forEach(function (p, k) { if (k === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+        ctx.stroke();
+        ctx.restore();
+        ctx.globalAlpha = 0.55;
+        for (var k = 1; k < path.length - 1; k++) {
+          ctx.beginPath(); ctx.arc(path[k].x, path[k].y, 1.8, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill();
+        }
+        ctx.globalAlpha = 1;
       });
-      var cur = [];
+      // current layer markers and labels
+      var labelBoxes = [];
       data.tokens.forEach(function (tok, i) {
-        var p = pts[i][layer] || pts[i][0];
-        cur.push({ x: p[0], y: p[1], z: p[2], text: tokenLabel(tok), color: colors[i % colors.length] });
+        var p = project(pts[i][layer] || pts[i][0], b);
+        ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = color(i); ctx.fill();
+        ctx.strokeStyle = C.paper; ctx.lineWidth = 1.5; ctx.stroke();
+        var text = tokenLabel(tok);
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        var tw = ctx.measureText(text).width + 8;
+        var offsets = [[0, -20], [0, 12], [-tw - 8, -8], [8, -8], [0, -34], [0, 26]];
+        var chosen = null;
+        for (var oi = 0; oi < offsets.length; oi++) {
+          var bx = p.x + offsets[oi][0] - (offsets[oi][0] < 0 ? tw : 0);
+          var by = p.y + offsets[oi][1];
+          var cand = { x: bx, y: by, w: tw, h: 15 };
+          var free = bx >= 3 && by >= 3 && bx + tw <= size.w - 3 && by + 15 <= size.h - 3;
+          if (free) {
+            for (var li = 0; li < labelBoxes.length; li++) {
+              var lb = labelBoxes[li];
+              if (!(cand.x + cand.w < lb.x || lb.x + lb.w < cand.x || cand.y + cand.h < lb.y || lb.y + lb.h < cand.y)) { free = false; break; }
+            }
+          }
+          if (free) { chosen = cand; break; }
+        }
+        if (!chosen) chosen = { x: Math.max(3, Math.min(size.w - tw - 3, p.x - tw / 2)), y: Math.max(3, Math.min(size.h - 18, p.y - 20)), w: tw, h: 15 };
+        labelBoxes.push(chosen);
+        ctx.fillStyle = "rgba(255,255,255,.88)";
+        ctx.fillRect(chosen.x, chosen.y, chosen.w, chosen.h);
+        ctx.fillStyle = color(i);
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "left"; ctx.textBaseline = "middle";
+        ctx.fillText(text, chosen.x + 4, chosen.y + 7.5);
       });
-      traces.push({
-        type: "scatter3d", mode: "markers+text", name: "now",
-        x: cur.map(function (p) { return p.x; }), y: cur.map(function (p) { return p.y; }), z: cur.map(function (p) { return p.z; }),
-        text: cur.map(function (p) { return p.text; }), textposition: "top center",
-        textfont: { size: 11, color: C.ink }, marker: { size: 7, color: cur.map(function (p) { return p.color; }), line: { width: 1, color: C.paper } },
-        hoverinfo: "skip", showlegend: false
-      });
+      // candidates at final layer
       if (layer === data.layers.length - 1) {
-        traces.push({
-          type: "scatter3d", mode: "markers+text", name: "candidates",
-          x: data.landmarks.map(function (l) { return l.value[0]; }), y: data.landmarks.map(function (l) { return l.value[1]; }), z: data.landmarks.map(function (l) { return l.value[2]; }),
-          text: data.landmarks.map(function (l) { return tokenLabel(l.word); }), textposition: "bottom center",
-          textfont: { size: 10, color: C.gold }, marker: { size: 5, color: C.gold, symbol: "diamond" },
-          hoverinfo: "skip", showlegend: false
+        landmarks().slice(0, 5).forEach(function (l) {
+          var p = project(l.value, b);
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y - 5); ctx.lineTo(p.x + 5, p.y); ctx.lineTo(p.x, p.y + 5); ctx.lineTo(p.x - 5, p.y);
+          ctx.closePath(); ctx.fillStyle = C.gold; ctx.fill();
+          ctx.strokeStyle = C.paper; ctx.lineWidth = 1; ctx.stroke();
+          drawLabel(p.x + 8, p.y - 10, tokenLabel(l.word), C.gold, "left");
         });
       }
-      var layout = {
-        margin: { l: 0, r: 0, b: 0, t: 0 }, showlegend: false,
-        paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)",
-        scene: {
-          xaxis: { showgrid: true, gridcolor: C.line, zeroline: false, showticklabels: false, title: "" },
-          yaxis: { showgrid: true, gridcolor: C.line, zeroline: false, showticklabels: false, title: "" },
-          zaxis: { showgrid: true, gridcolor: C.line, zeroline: false, showticklabels: false, title: "" },
-          camera: { eye: { x: 1.5, y: 1.8, z: 1.2 } },
-          aspectmode: "cube",
-          bgcolor: "rgba(0,0,0,0)"
-        }
-      };
-      Plotly.react(plot, traces, layout, { displayModeBar: false, responsive: true });
-      layerOut.textContent = displayLayers()[layer] || "";
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+      ctx.fillText((DE ? "Schicht: " : "Layer: ") + (data.layers[layer] || ""), 12, 18);
+      ctx.textAlign = "right";
+      ctx.fillText(metric === "angular" ? (DE ? "Winkel / Großkreis" : "angle / great circle") : (DE ? "Euklid" : "Euclidean"), size.w - 12, 18);
+      canvas.setAttribute("aria-label", DE
+        ? "3D-Token-Trajektorien durch GPT-2. Schicht " + (data.layers[layer] || "") + ", Metrik " + (metric === "angular" ? "Winkel" : "Euklid") + "."
+        : "3D token trajectories through GPT-2. Layer " + (data.layers[layer] || "") + ", metric " + (metric === "angular" ? "angle" : "Euclid") + ".");
+    }
+    function updateReadout() {
       var cand = layer === data.layers.length - 1
         ? '<span>' + (DE ? "Kandidaten" : "Candidates") + '</span>' + data.top.slice(0, 5).map(function (t) { return '<span><b>' + api.esc(tokenLabel(t.token)) + '</b> ' + (t.p * 100).toFixed(1) + '%</span>'; }).join("")
         : '<span>' + (DE ? "Kandidaten erscheinen in der letzten Schicht." : "Candidates appear at the final layer.") + '</span>';
       readout.innerHTML = '<span>' + (DE ? "Satz" : "Sentence") + ' <b>' + api.esc(data.sentence) + '</b></span>' + cand;
+      layerOut.textContent = data.layers[layer] || "";
     }
-    layerEl.addEventListener("input", function () { layer = parseInt(layerEl.value, 10); build(); });
-    el.querySelectorAll("[data-metric]").forEach(function (b) {
-      b.addEventListener("click", function () {
-        metric = b.getAttribute("data-metric");
-        el.querySelectorAll("[data-metric]").forEach(function (x) { x.classList.toggle("is-on", x === b); });
-        build();
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    function pointer(e) {
+      var r = canvas.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+    layerEl.addEventListener("input", function () { layer = parseInt(layerEl.value, 10); updateReadout(); draw(); });
+    el.querySelectorAll("[data-metric]").forEach(function (bt) {
+      bt.addEventListener("click", function () {
+        metric = bt.getAttribute("data-metric");
+        el.querySelectorAll("[data-metric]").forEach(function (x) { x.classList.toggle("is-on", x === bt); });
+        updateReadout(); draw();
       });
     });
-    el.querySelector(".ls-traj-next").addEventListener("click", function () { layer = Math.min(12, layer + 1); layerEl.value = String(layer); build(); });
-    window.addEventListener("resize", function () { if (window.Plotly && plot.data) Plotly.Plots.resize(plot); });
-    window.addEventListener("tm:theme", build);
-    build();
-    return { update: function () {}, resize: function () { if (window.Plotly && plot.data) Plotly.Plots.resize(plot); }, destroy: function () { el.remove(); } };
+    el.querySelector(".ls-traj-next").addEventListener("click", function () {
+      layer = Math.min(12, layer + 1); layerEl.value = String(layer); updateReadout(); draw();
+    });
+    canvas.addEventListener("pointerdown", function (e) { drag = pointer(e); });
+    window.addEventListener("pointermove", function (e) {
+      if (!drag) return;
+      var p = pointer(e);
+      yaw += (p.x - drag.x) * 0.008;
+      pitch = Math.min(1.25, Math.max(-1.25, pitch + (p.y - drag.y) * 0.006));
+      drag = p;
+      draw();
+    });
+    window.addEventListener("pointerup", function () { drag = null; });
+    canvas.addEventListener("wheel", function (e) {
+      e.preventDefault();
+      zoom = Math.min(2.2, Math.max(0.55, zoom * (e.deltaY > 0 ? 0.94 : 1.06)));
+      draw();
+    }, { passive: false });
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    updateReadout();
+    resize();
+    return {
+      update: function () {},
+      resize: resize,
+      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
+    };
   }
 
   function modelScene(root, api) {

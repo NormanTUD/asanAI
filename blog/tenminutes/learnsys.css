@@ -540,7 +540,9 @@ h1,h2,h3,h4{
   .ls-demo{padding:6px 8px 2px}
   .ls-code-body,.ls-code-term{font-size:10px;line-height:1.45}
   .ls-code-bar span{font-size:9px}
-  .ls-code-window--agent .ls-code-chat{flex:0 1 28%;min-height:38px;max-height:30%}
+  .ls-code-window--agent{left:3%;top:4%;width:94%;height:72%}
+  .ls-code-window--run{right:3%;bottom:34px;width:88%;height:30%}
+  .ls-code-window--agent .ls-code-chat{flex:0 1 26%;min-height:34px;max-height:26%}
   .ls-code-agent-prompt{display:none}
   .ls-embed-mini-table{width:min(72%,300px);max-height:68%}
   .ls-scene-row{gap:3px}
@@ -946,8 +948,10 @@ h1,h2,h3,h4{
 .ls-mlp-scene .ism-dense-controls select,.ls-mlp-scene .ism-dense-controls button{font-size:var(--ls-fs-ui-sm);min-height:30px}
 .ls-mlp-scene .ism-dense-controls select{max-width:112px;text-overflow:ellipsis}
 .ls-mlp-scene .ism-dense-hint{display:none}
-.ls-traj-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto;gap:6px}
+.ls-traj-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto auto;gap:6px;overflow-y:auto}
 .ls-traj-plot{position:relative;width:100%;height:100%;min-height:220px;border:1px solid rgba(0,75,111,.08);background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(247,249,248,.3))}
+.ls-traj-plot canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none}
+.ls-traj-note{margin:0;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-traj-readout{display:flex;gap:10px;flex-wrap:wrap;font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.06em}
 .ls-traj-readout b{color:var(--ls-ink);text-transform:none;letter-spacing:0}
 .ls-stack-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:6px}
@@ -1037,4 +1041,12 @@ h1,h2,h3,h4{
 @media (max-width:640px){
   .ls-lang-bar{grid-template-columns:78px minmax(0,1fr) 34px}
   .ls-cr-input{font-size:22px}
+}
+
+@media (max-width:640px){
+  .ls-code-monitor .ls-code-window--agent{left:3%;top:4%;width:94%;height:72%}
+  .ls-code-monitor .ls-code-window--run{right:3%;bottom:34px;width:88%;height:30%}
+  .ls-code-monitor .ls-code-window--agent .ls-code-chat{flex:0 1 18%;min-height:24px;max-height:18%}
+  .ls-code-monitor .ls-code-agent-prompt{display:none}
+  .ls-code-monitor .ls-code-filehead{display:none}
 }
