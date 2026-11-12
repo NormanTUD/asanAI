@@ -347,15 +347,16 @@
     {
       kicker: "03 / Tokenize",
       title: "Text wird zu IDs",
-      body: "Ein Token ist kein Wort. Text wird zu Zahlen: Jedes Zeichen hat einen Codepunkt, und ein byte-level Tokenizer startet bei 256 Bytes, damit jeder String darstellbar ist. BPE ist ein Kompressionsalgorithmus: Er beginnt mit kleinen Einheiten und verschmilzt häufige Paare zu längeren Tokens. Ziel ist, mit möglichst wenigen Tokens möglichst viel Text zu erfassen. Was im Trainingskorpus häufig ist, wird kurz; seltene Schriften bleiben in vielen Byte-Tokens.",
-      watch: "Gehe mit „Weiter“ oder der Pfeiltaste durch beide Beispielreihen. Welches Wort zerfällt in Subwords?",
+      body: "Ein Token ist kein Wort. Auf derselben Folie siehst du zwei Teile. Teil 1 zeigt die Trennung: Verständnis, unzerbrechlich und ein ganzer Satz werden in Tokens zerlegt. Teil 2 zeigt BPE: Der Algorithmus startet bei Zeichen und verschmilzt in mehreren Stufen das häufigste Paar. Aus häufigen Folgen werden längere Tokens; seltene Schriften bleiben teuer.",
+      watch: "Wechsle zwischen „Trennung“ und „BPE“. Welches Paar wird als Nächstes verschmolzen?",
       demoState: { scene: "tokenize" },
-      context: "Die IDs sind Adressen in der Embedding-Tabelle. BPE lernt seine Merges aus dem Trainingskorpus, nicht aus einer festen Wortliste.",
-      deep: "Ein byte-level Tokenizer startet mit 256 Bytes. Häufige Paare werden zu einem Token; ein englischer Satz braucht deshalb oft weniger Tokens als derselbe Inhalt in einer Schrift, die im Training selten war. Die gezeigten Zahlen sind ein illustratives Beispiel, keine Messung eines bestimmten Modells.",
+      context: "Teil 1: Text wird in Tokens geteilt, jede ID ist eine Adresse in der Embedding-Tabelle. Teil 2: BPE beginnt bei Zeichen und baut das Vokabular durch Merges auf. Jeder Merge ist ein neues Vokabelstück.",
+      deep: "BPE ist eine gelernte Kompression: Es zählt benachbarte Paare im Trainingskorpus und ersetzt das häufigste Paar durch ein neues Symbol. Nach mehreren Merges werden häufige Wörter kurz. Die genaue Tokenisierung hängt an den Daten und am Vokabularziel; die Demo zeigt einen kleinen Korpus, keine Messung eines bestimmten Modells.",
       boxes: [
         box("tok-1", "Technik", "Warum Subwords?", "Ein festes Wort-Vokabular müsste jedes unbekannte Wort als Sonderzeichen behandeln. Subwords erlauben es, neue Wörter aus bekannten Teilen zusammenzusetzen. Gleichzeitig bleibt das Vokabular endlich."),
         box("tok-2", "Mathematik", "Was ist eine ID?", "Eine ID ist ein Integer, der auf eine Zeile in der Embedding-Matrix zeigt. Die ID selbst hat keine Bedeutung; erst der gelernte Vektor gibt dem Token eine Position im Raum."),
-        box("tok-3", "Technik", "BPE = Kompression", "Byte Pair Encoding beginnt mit Bytes und ersetzt wiederholt das häufigste Paar durch ein neues Symbol. Nach vielen Merges wird aus häufigen Zeichenfolgen ein einzelner Token. Das ist Datenkompression, gelernt aus dem Trainingskorpus."),
+        box("tok-3", "Technik", "BPE = Kompression", "Byte Pair Encoding beginnt mit Zeichen oder Bytes und ersetzt wiederholt das häufigste Paar durch ein neues Symbol. Nach vielen Merges wird aus häufigen Zeichenfolgen ein einzelner Token. Das ist Datenkompression, gelernt aus dem Trainingskorpus."),
+        box("tok-bpe-data", "Daten", "Warum ist die Tokenisierung datenabhängig?", "Ein Tokenizer wird so optimiert, dass er möglichst viel Text mit möglichst wenigen Tokens abdeckt, ohne Information zu verlieren: Jedes Wort muss aus seinen Tokens wieder zusammensetzbar sein. Deshalb ist die exakte Zerlegung eine Folge der Trainingsdaten und des Vokabularziels, keine feste Wortliste. Seltene Schriften bleiben teurer, weil sie im Korpus seltener sind."),
         box("tok-4", "Grenze", "Warum ist Englisch kürzer?", "Weil der Trainingskorpus überwiegend englisch ist. Häufige englische Wörter bekommen lange Merges; Schriften mit wenig Text im Korpus bleiben auf Byte-Ebene. Die Demo zeigt das illustrativ, nicht als exakte Messung."),
         box("tok-utf8", "Technik", "UTF-8 und Joins", "UTF-8 kodiert Zeichen als Bytes. Ein sichtbares Emoji kann aus mehreren Codepoints bestehen: 🐈‍⬛ kombiniert 🐈, einen unsichtbaren Zero Width Joiner (ZWJ) und ⬛. Der Tokenizer sieht die Bytefolge, nicht das fertige Bild. Deshalb ist die schwarze Katze hier zwei Emoji-Bausteine und mehrere Byte-Tokens.")
       ],
@@ -368,15 +369,16 @@
     {
       kicker: "03 / Tokenize",
       title: "Text becomes IDs",
-      body: "A token is not a word. Text is encoded as numbers: every character has a code point, and a byte-level tokenizer starts from 256 bytes so every string is representable. BPE is a compression algorithm: it starts from small units and merges frequent pairs into longer tokens. The goal is to cover as much long text as possible with as few tokens as possible. What is frequent in the training corpus becomes short; rare scripts stay in many byte tokens.",
-      watch: "Walk through both example rows with “Next” or the arrow key. Which word splits into subwords?",
+      body: "A token is not a word. This slide has two parts. Part 1 shows the split: understanding, unbreakable, and a whole sentence are broken into tokens. Part 2 shows BPE: the algorithm starts from characters and merges the most frequent pair in several stages. Frequent sequences become longer tokens; rare scripts stay expensive.",
+      watch: "Switch between “Split” and “BPE”. Which pair is merged next?",
       demoState: { scene: "tokenize" },
-      context: "The IDs are addresses into the embedding table. BPE learns its merges from the training corpus, not from a fixed word list.",
-      deep: "A byte-level tokenizer starts with 256 bytes. Frequent pairs become one token; an English sentence therefore often needs fewer tokens than the same content in a script that was rare in training. The numbers shown are an illustrative example, not a measurement of a specific model.",
+      context: "Part 1: text is split into tokens, and each ID is an address in the embedding table. Part 2: BPE starts from characters and builds the vocabulary through merges. Each merge is a new vocabulary item.",
+      deep: "BPE is learned compression: it counts adjacent pairs in the training corpus and replaces the most frequent pair with a new symbol. After several merges, frequent words become short. The exact tokenization depends on the data and the vocabulary target; the demo shows a small corpus, not a measurement of a specific model.",
       boxes: [
         box("tok-1", "Technique", "Why subwords?", "A fixed word vocabulary would have to treat every unseen word as a special symbol. Subwords let the model build new words from known pieces while keeping the vocabulary finite."),
         box("tok-2", "Mathematics", "What is an ID?", "An ID is an integer that points to a row in the embedding matrix. The ID itself has no meaning; the learned vector gives the token a position in the space."),
-        box("tok-3", "Technique", "BPE = compression", "Byte pair encoding starts with bytes and repeatedly replaces the most frequent pair with a new symbol. After many merges, frequent character sequences become a single token. That is data compression learned from the training corpus."),
+        box("tok-3", "Technique", "BPE = compression", "Byte pair encoding starts with characters or bytes and repeatedly replaces the most frequent pair with a new symbol. After many merges, frequent character sequences become a single token. That is data compression learned from the training corpus."),
+        box("tok-bpe-data", "Data", "Why does tokenization depend on the data?", "A tokenizer is optimised to cover as much text as possible with as few tokens as possible, without losing information: every word must be reconstructable from its tokens. The exact split therefore follows the training data and the vocabulary target, not a fixed word list. Rare scripts stay more expensive because they are rarer in the corpus."),
         box("tok-4", "Limit", "Why is English shorter?", "Because the training corpus is mostly English. Frequent English words get long merges; scripts with little text in the corpus stay at the byte level. The demo shows this illustratively, not as an exact measurement."),
         box("tok-utf8", "Technique", "UTF-8 and joins", "UTF-8 encodes characters as bytes. A visible emoji can consist of several code points: 🐈‍⬛ combines 🐈, an invisible zero-width joiner (ZWJ), and ⬛. The tokenizer sees the byte sequence, not the finished picture. That is why the black cat is two emoji parts and several byte tokens here.")
       ],

@@ -1418,7 +1418,8 @@
     var blue = (pressure / (kB * temp)) / Math.pow(450e-9, 4);
     var red = (pressure / (kB * temp)) / Math.pow(650e-9, 4);
     var ratio = blue / red;
-    var outText = DE
+    var outText = ratio.toFixed(2);
+    var summaryText = DE
       ? "Blau wird " + ratio.toFixed(2) + "× stärker gestreut als Rot."
       : "Blue is " + ratio.toFixed(2) + "x more strongly scattered than red.";
     var agentText = DE ? "Ich denke kurz nach … Fertig. Ich schreibe himmel.py." : "Thinking briefly … done. I'll write sky.py.";
@@ -1431,9 +1432,10 @@
           '<div class="ls-code-window ls-code-window--agent">' +
             '<div class="ls-code-bar"><i></i><i></i><i></i><span>Agent</span></div>' +
             '<div class="ls-code-chat">' +
-              '<div class="ls-code-msg is-user">' + api.esc(userText) + '</div>' +
+              '<div class="ls-code-msg is-user ls-code-user-text"></div>' +
               '<div class="ls-code-msg is-agent"><span class="ls-code-agent-text"></span><span class="ls-code-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
               '<div class="ls-code-msg is-agent ls-code-run-msg" hidden>' + (DE ? "Ich führe himmel.py im Terminal aus." : "I'll run sky.py in the terminal.") + '</div>' +
+              '<div class="ls-code-msg is-agent ls-code-summary" hidden></div>' +
             '</div>' +
             '<div class="ls-code-filehead">' + (DE ? "himmel.py" : "sky.py") + '</div>' +
             '<pre class="ls-code-body"><code></code></pre>' +
@@ -1451,7 +1453,9 @@
     var codeEl = el.querySelector(".ls-code-body code");
     var commandEl = el.querySelector(".ls-code-command");
     var term = el.querySelector(".ls-code-term span");
+    var userMsgEl = el.querySelector(".ls-code-user-text");
     var agentMsgEl = el.querySelector(".ls-code-agent-text");
+    var summaryEl = el.querySelector(".ls-code-summary");
     var thinkingEl = el.querySelector(".ls-code-thinking");
     var agentWin = el.querySelector(".ls-code-window--agent");
     var runWin = el.querySelector(".ls-code-window--run");
@@ -1461,16 +1465,28 @@
     if (clockEl) {
       try { clockEl.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); } catch (e) {}
     }
+    function syntaxClass(text, lineText) {
+      var t = text.trim();
+      if (!t) return "";
+      if (lineText.trim().indexOf("#") === 0) return "is-comment";
+      if (/^(def|return|import|from|as|for|in|if|else|elif|while|with|lambda)$/.test(t)) return "is-keyword";
+      if (/^(print|round|len|range|sum|min|max)$/.test(t)) return "is-builtin";
+      if (/^-?\d/.test(t) || /e[+-]?\d+$/i.test(t)) return "is-number";
+      if (/^[A-Za-z_]\w*\(/.test(t)) return "is-function";
+      if (/^[=+\-*/%<>!]+$/.test(t) || /^[()\[\]{},.:;]+$/.test(t)) return "is-op";
+      return "";
+    }
     var tokens = [];
     codeText.forEach(function (line, li) {
       line.split(/(\s+)/).forEach(function (part) {
-        if (part) tokens.push({ text: part, line: li });
+        if (part) tokens.push({ text: part, line: li, lineText: line });
       });
-      tokens.push({ text: "\n", line: li });
+      tokens.push({ text: "\n", line: li, lineText: line });
     });
     var spans = tokens.map(function (t) {
       var span = document.createElement("span");
-      span.className = "ls-code-token";
+      var cls = syntaxClass(t.text, t.lineText);
+      span.className = "ls-code-token" + (cls ? " " + cls : "");
       span.textContent = t.text;
       codeEl.appendChild(span);
       return span;
@@ -1501,6 +1517,23 @@
       replayBtn.textContent = label;
       replayBtn.disabled = !!disabled;
     }
+    function typeUser(done) {
+      if (!userMsgEl) { if (done) done(); return; }
+      var i = 0;
+      var stepMs = Math.max(12, 2000 / Math.max(1, userText.length));
+      userMsgEl.classList.add("is-typing");
+      function step() {
+        if (i >= userText.length) {
+          userMsgEl.classList.remove("is-typing");
+          if (done) done();
+          return;
+        }
+        i++;
+        userMsgEl.textContent = userText.slice(0, i);
+        later(step, stepMs);
+      }
+      step();
+    }
     function typeAgent(done) {
       if (!agentMsgEl) { if (done) done(); return; }
       var i = 0;
@@ -1530,9 +1563,11 @@
     }
     function reset() {
       clearTimers();
-      phase = "thinking";
+      phase = "typing";
       spans.forEach(function (s) { s.classList.remove("is-visible"); });
+      if (userMsgEl) { userMsgEl.textContent = ""; userMsgEl.classList.remove("is-typing"); }
       if (agentMsgEl) agentMsgEl.textContent = "";
+      if (summaryEl) { summaryEl.hidden = true; summaryEl.textContent = ""; }
       if (thinkingEl) thinkingEl.classList.remove("on");
       if (runMsgEl) runMsgEl.hidden = true;
       if (commandEl) commandEl.textContent = "";
@@ -1541,13 +1576,18 @@
       show(runWin, false);
       setButton(DE ? "Weiter" : "Next", true);
       fitCode();
-      later(function () { if (thinkingEl) thinkingEl.classList.add("on"); }, 300);
       later(function () {
-        if (thinkingEl) thinkingEl.classList.remove("on");
-        typeAgent(function () {
-          typeCode();
+        typeUser(function () {
+          phase = "thinking";
+          if (thinkingEl) thinkingEl.classList.add("on");
+          later(function () {
+            if (thinkingEl) thinkingEl.classList.remove("on");
+            typeAgent(function () {
+              typeCode();
+            });
+          }, 750);
         });
-      }, 900);
+      }, 250);
     }
     function runProgram() {
       phase = "running";
@@ -1562,9 +1602,10 @@
         if (j >= cmd.length) {
           later(function () { if (term) term.textContent = outText; }, 260);
           later(function () {
+            if (summaryEl) { summaryEl.textContent = summaryText; summaryEl.hidden = false; }
             phase = "done";
             setButton(DE ? "Nochmal" : "Replay", false);
-          }, 420);
+          }, 620);
           return;
         }
         j++;
@@ -3484,142 +3525,102 @@
       "pieces": ["piece", "s"]
     };
     var colors = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
+    var corpus = [
+      { word: "low", count: 5 },
+      { word: "lower", count: 2 },
+      { word: "newest", count: 6 },
+      { word: "widest", count: 3 }
+    ];
     var el = document.createElement("div");
     el.className = "ls-tokenize-scene";
-    el.innerHTML = '<div class="ls-scene-row ls-tokenize-samples"><span class="ls-tokenize-label">' + (DE ? "Beispiele" : "Samples") + '</span></div>' +
-      '<div class="ls-tokenize-chips" aria-live="polite"></div>' +
-      '<p class="ls-tokenize-scroll-note">' + (DE ? "Lange Kette: seitlich scrollen." : "Long chain: scroll sideways.") + '</p>' +
-      '<div class="ls-tokenize-stats"></div>' +
-      '<p class="ls-tokenize-note">' + (DE ? "Ein Token ist ein Stück Text, kein Wort. Die ID ist die Adresse in der Embedding-Tabelle." : "A token is a piece of text, not a word. The ID is the address in the embedding table.") + '</p>' +
-      '<div class="ls-bpe">' +
-        '<div class="ls-bpe-head"><span class="ls-bpe-title">' + (DE ? "BPE = Kompression" : "BPE = compression") + '</span><span class="ls-bpe-hint">' + (DE ? "Beispiel wählen" : "Choose an example") + '</span></div>' +
-        '<div class="ls-bpe-samples" role="group" aria-label="' + (DE ? "BPE-Beispiele" : "BPE examples") + '">' +
-          '<button type="button" class="ls-chip is-on" data-bpe="unbelievable" aria-pressed="true">unbelievable</button>' +
-          '<button type="button" class="ls-chip" data-bpe="sprachmodell" aria-pressed="false">Sprachmodell</button>' +
-          '<button type="button" class="ls-chip" data-bpe="ahimsa" aria-pressed="false">ahimsa</button>' +
-          '<button type="button" class="ls-chip" data-bpe="devanagari" aria-pressed="false">अहिंसा</button>' +
-          '<button type="button" class="ls-chip" data-bpe="hello" aria-pressed="false">hello</button>' +
-          '<button type="button" class="ls-chip" data-bpe="blackcat" aria-pressed="false">🐈‍⬛</button>' +
-        '</div>' +
-        '<div class="ls-bpe-view" aria-live="polite">' +
-          '<div class="ls-bpe-row"><span class="ls-bpe-label" data-bpe-before-label></span><div class="ls-bpe-chars" data-bpe-before></div><span class="ls-bpe-arrow">→</span><div class="ls-bpe-chars" data-bpe-after></div><span class="ls-bpe-count" data-bpe-count></span></div>' +
-          '<p class="ls-bpe-explain" data-bpe-explain hidden></p>' +
-        '</div>' +
-        '<p class="ls-bpe-note">' + (DE ? "BPE lernt Merges aus dem Trainingskorpus. Häufige Wörter werden kurz; seltene Schriften bleiben auf Byte-Ebene." : "BPE learns merges from the training corpus. Frequent words become short; rare scripts stay at the byte level.") + '</p>' +
+    el.innerHTML =
+      '<div class="ls-tokenize-modes" role="tablist" aria-label="' + (DE ? "Tokenisierung" : "Tokenization") + '">' +
+        '<button type="button" class="ls-chip is-on" role="tab" data-mode="split" aria-selected="true">1 ' + (DE ? "Trennung" : "Split") + '</button>' +
+        '<button type="button" class="ls-chip" role="tab" data-mode="bpe" aria-selected="false">2 BPE</button>' +
+      '</div>' +
+      '<div class="ls-tokenize-split">' +
+        '<div class="ls-scene-row ls-tokenize-samples"><span class="ls-tokenize-label">' + (DE ? "Beispiele" : "Samples") + '</span></div>' +
+        '<div class="ls-tokenize-chips" aria-live="polite"></div>' +
+        '<div class="ls-tokenize-stats"></div>' +
+        '<p class="ls-tokenize-note">' + (DE ? "Teil 1: Ein Token ist ein Stück Text, kein Wort. Die ID ist die Adresse in der Embedding-Tabelle." : "Part 1: a token is a piece of text, not a word. The ID is the address in the embedding table.") + '</p>' +
+      '</div>' +
+      '<div class="ls-bpe" hidden>' +
+        '<div class="ls-bpe-head"><span class="ls-bpe-title">' + (DE ? "BPE = gelernte Kompression" : "BPE = learned compression") + '</span><span class="ls-bpe-hint">' + (DE ? "Start: Zeichen" : "Start: characters") + '</span></div>' +
+        '<div class="ls-bpe-corpus" aria-live="polite"></div>' +
+        '<div class="ls-bpe-stage" aria-live="polite"></div>' +
+        '<div class="ls-bpe-counts" aria-live="polite"></div>' +
+        '<p class="ls-bpe-note">' + (DE ? "Jeder Merge ersetzt ein häufiges Paar durch ein neues Symbol. Das Wort bleibt aus seinen Symbolen zusammensetzbar; der Text ist verlustfrei rekonstruierbar." : "Each merge replaces a frequent pair with a new symbol. The word remains reconstructable from its symbols; the text is lossless.") + '</p>' +
       '</div>' +
       '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-tokenize-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-tokenize-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
     var samples = el.querySelector(".ls-tokenize-samples");
     var chips = el.querySelector(".ls-tokenize-chips");
     var stats = el.querySelector(".ls-tokenize-stats");
+    var splitEl = el.querySelector(".ls-tokenize-split");
+    var bpeEl = el.querySelector(".ls-bpe");
+    var corpusEl = el.querySelector(".ls-bpe-corpus");
+    var stageEl = el.querySelector(".ls-bpe-stage");
+    var countsEl = el.querySelector(".ls-bpe-counts");
     var navPrev = el.querySelector(".ls-tokenize-prev");
     var navNext = el.querySelector(".ls-tokenize-next");
     var navProgress = el.querySelector(".ls-tokenize-progress");
     var sampleKeys = ["understanding", "unbreakable", "sentence"];
-    var bpeKeys = ["unbelievable", "sprachmodell", "ahimsa", "devanagari", "hello", "blackcat"];
-    var stepIndex = 0;
-    var value = examples.understanding.value;
-    var bpeBefore = el.querySelector("[data-bpe-before]");
-    var bpeAfter = el.querySelector("[data-bpe-after]");
-    var bpeCount = el.querySelector("[data-bpe-count]");
-    var bpeBeforeLabel = el.querySelector("[data-bpe-before-label]");
-    var bpeExplain = el.querySelector("[data-bpe-explain]");
-    var bpeView = el.querySelector(".ls-bpe-view");
-    var bpeExamples = {
-      unbelievable: { before: "unbelievable", beforeMode: "chars", after: ["un", "believ", "able"], afterMode: "tokens", de: "12 Zeichen → 3 Tokens", en: "12 characters → 3 tokens" },
-      sprachmodell: { before: "Sprachmodell", beforeMode: "chars", after: ["Spr", "ach", "mod", "ell"], afterMode: "tokens", de: "12 Zeichen → 4 Tokens", en: "12 characters → 4 tokens" },
-      ahimsa: { before: "ahimsa", beforeMode: "chars", after: ["ah", "im", "sa"], afterMode: "tokens", de: "6 Zeichen → 3 Tokens", en: "6 characters → 3 tokens" },
-      devanagari: { before: "अहिंसा", beforeMode: "word", after: ["E0", "A4", "85", "E0", "A4", "B9", "E0", "A4", "BF", "E0", "A4", "82", "E0", "A4", "B8", "E0", "A4", "BE"], afterMode: "bytes", de: "6 Zeichen → 18 Byte-Tokens", en: "6 characters → 18 byte tokens" },
-      hello: { before: "hello", beforeMode: "chars", after: ["hello"], afterMode: "tokens", de: "5 Zeichen → 1 Token", en: "5 characters → 1 token" },
-      blackcat: {
-        beforeParts: ["🐈", "⬛"], beforeMode: "parts",
-        after: ["F0", "9F", "90", "88", "E2", "80", "8D", "E2", "AC", "9B"], afterMode: "bytes",
-        de: "2 Emojis · 3 Codepoints → 11 Byte-Tokens", en: "2 emojis · 3 code points → 11 byte tokens",
-        noteDe: "Die schwarze Katze ist keine einzelne Figur: 🐈 und ⬛ werden mit einem unsichtbaren Zero Width Joiner (ZWJ) verbunden. Mehr dazu in der Box „UTF-8 und Joins“.",
-        noteEn: "The black cat is not a single shape: 🐈 and ⬛ are joined by an invisible zero-width joiner (ZWJ). More in the “UTF-8 and joins” box."
-      }
-    };
-    function bpeChips(items, mode) {
-      return items.map(function (item) {
-        return '<span class="ls-bpe-chip' + (mode === "tokens" ? " ls-bpe-chip--token" : mode === "bytes" ? " ls-bpe-chip--byte" : "") + '">' + api.esc(item) + '</span>';
-      }).join("");
+    var mode = "split";
+    var step = 0;
+    var sampleIndex = 0;
+
+    function cloneWords(words) {
+      return words.map(function (w) { return { word: w.word, count: w.count, symbols: w.symbols.slice() }; });
     }
-    function renderBpe(key) {
-      var ex = bpeExamples[key] || bpeExamples.unbelievable;
-      if (bpeBefore) {
-        if (ex.beforeMode === "chars") bpeBefore.innerHTML = bpeChips(ex.before.split(""), "chars");
-        else if (ex.beforeMode === "parts") bpeBefore.innerHTML = ex.beforeParts.map(function (p, i) {
-          return (i ? '<span class="ls-bpe-join">ZWJ</span>' : '') + '<span class="ls-bpe-chip ls-bpe-word">' + api.esc(p) + '</span>';
-        }).join("");
-        else bpeBefore.innerHTML = '<span class="ls-bpe-chip ls-bpe-word" dir="auto">' + api.esc(ex.before) + '</span>';
-      }
-      if (bpeAfter) bpeAfter.innerHTML = bpeChips(ex.after, ex.afterMode);
-      if (bpeCount) bpeCount.textContent = DE ? ex.de : ex.en;
-      if (bpeBeforeLabel) bpeBeforeLabel.textContent = ex.beforeMode === "parts" ? (DE ? "Emojis" : "emojis") : ex.beforeMode === "chars" ? (DE ? "Zeichen" : "characters") : (DE ? "Zeichen / Bytes" : "characters / bytes");
-      if (bpeExplain) {
-        var note = ex.noteDe || ex.noteEn ? (DE ? ex.noteDe : ex.noteEn) : "";
-        bpeExplain.hidden = !note;
-        bpeExplain.textContent = note;
-      }
-      if (bpeView) {
-        bpeView.classList.remove("is-swapping");
-        void bpeView.offsetWidth;
-        bpeView.classList.add("is-swapping");
-      }
-      el.querySelectorAll("[data-bpe]").forEach(function (b) {
-        var on = b.getAttribute("data-bpe") === key;
-        b.classList.toggle("is-on", on);
-        b.setAttribute("aria-pressed", on ? "true" : "false");
+    function pairCounts(words) {
+      var map = {};
+      words.forEach(function (w) {
+        for (var i = 0; i < w.symbols.length - 1; i++) {
+          var key = JSON.stringify([w.symbols[i], w.symbols[i + 1]]);
+          if (!map[key]) map[key] = { a: w.symbols[i], b: w.symbols[i + 1], count: 0 };
+          map[key].count += w.count;
+        }
+      });
+      return Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) { return b.count - a.count; });
+    }
+    function mergePair(words, pair) {
+      return words.map(function (w) {
+        var out = [];
+        for (var i = 0; i < w.symbols.length; i++) {
+          if (i < w.symbols.length - 1 && w.symbols[i] === pair.a && w.symbols[i + 1] === pair.b) {
+            out.push(pair.a + pair.b);
+            i++;
+          } else out.push(w.symbols[i]);
+        }
+        return { word: w.word, count: w.count, symbols: out };
       });
     }
-    function updateNav() {
-      var total = sampleKeys.length + bpeKeys.length;
-      navProgress.textContent = (stepIndex + 1) + ' / ' + total;
-      navPrev.disabled = stepIndex === 0;
-      navNext.textContent = stepIndex === total - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+    function totalSymbols(words) {
+      return words.reduce(function (sum, w) { return sum + w.symbols.length * w.count; }, 0);
     }
-    function applyStep() {
-      if (stepIndex < sampleKeys.length) {
-        var key = sampleKeys[stepIndex];
-        value = examples[key].value;
-        samples.querySelectorAll("[data-sample]").forEach(function (x) {
-          x.classList.toggle("is-on", x.getAttribute("data-sample") === key);
-        });
-        renderBpe("unbelievable");
-      } else {
-        renderBpe(bpeKeys[stepIndex - sampleKeys.length]);
+    function vocabSize(words) {
+      var set = {};
+      words.forEach(function (w) { w.symbols.forEach(function (s) { set[s] = 1; }); });
+      return Object.keys(set).length;
+    }
+    var stages = (function () {
+      var words = corpus.map(function (c) { return { word: c.word, count: c.count, symbols: c.word.split("") }; });
+      var out = [{ words: cloneWords(words), merge: null, pairs: pairCounts(words) }];
+      for (var s = 0; s < 4; s++) {
+        var pairs = pairCounts(words);
+        if (!pairs.length) break;
+        var top = pairs[0];
+        words = mergePair(words, top);
+        out.push({ words: cloneWords(words), merge: top, pairs: pairCounts(words) });
       }
-      render();
-      updateNav();
-    }
-    function goStep(i) {
-      stepIndex = Math.max(0, Math.min(sampleKeys.length + bpeKeys.length - 1, i));
-      applyStep();
-    }
-    function nextInternal() {
-      if (stepIndex < sampleKeys.length + bpeKeys.length - 1) { goStep(stepIndex + 1); return true; }
-      return false;
-    }
-    function prevInternal() {
-      if (stepIndex > 0) { goStep(stepIndex - 1); return true; }
-      return false;
-    }
-    function nextStep() {
-      if (nextInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
-    }
-    function prevStep() {
-      if (prevInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
-    }
-    el.querySelectorAll("[data-bpe]").forEach(function (b) {
-      b.addEventListener("click", function () {
-        var idx = bpeKeys.indexOf(b.getAttribute("data-bpe"));
-        goStep(sampleKeys.length + (idx < 0 ? 0 : idx));
-      });
-    });
-    navPrev.addEventListener("click", prevStep);
-    navNext.addEventListener("click", nextStep);
+      return out;
+    })();
+    var baseVocab = (function () {
+      var set = {};
+      corpus.forEach(function (c) { c.word.split("").forEach(function (ch) { set[ch] = 1; }); });
+      return Object.keys(set).length;
+    })();
+
     function idFor(word) { var h = 0; for (var i = 0; i < word.length; i++) h = (h * 31 + word.charCodeAt(i)) % 50000; return 10000 + h; }
     function piecesFor(word) {
       if (splits[word]) return splits[word];
@@ -3643,14 +3644,91 @@
       });
       return tokens;
     }
-    function render() {
-      var tokens = tokenize(value);
-      chips.innerHTML = tokens.map(function (tok, i) {
+    function renderSplit() {
+      var value = examples[sampleKeys[sampleIndex]].value;
+      chips.innerHTML = tokenize(value).map(function (tok, i) {
         return '<span class="ls-token-chip' + (tok.sub ? " is-sub" : "") + (tok.space ? " is-space" : "") + '" style="--token-color:' + colors[i % colors.length] + '"><b>' + api.esc(tok.word) + '</b><small>id ' + tok.id + '</small></span>';
       }).join("");
+      var tokens = tokenize(value);
       var spaces = tokens.filter(function (t) { return t.space; }).length;
       var subs = tokens.filter(function (t) { return t.sub; }).length;
       stats.innerHTML = '<span><b>' + tokens.length + '</b> ' + (DE ? "Tokens" : "tokens") + '</span><span><b>' + (tokens.length - spaces) + '</b> ' + (DE ? "Teile" : "pieces") + '</span><span><b>' + subs + '</b> ' + (DE ? "Subword-Splits" : "subword splits") + '</span><span><b>' + spaces + '</b> ' + (DE ? "Leerzeichen" : "whitespace") + '</span>';
+      samples.querySelectorAll("[data-sample]").forEach(function (b, i) { b.classList.toggle("is-on", i === sampleIndex); });
+    }
+    function renderBpe() {
+      var st = stages[step];
+      var next = stages[step + 1];
+      corpusEl.innerHTML = st.words.map(function (w) {
+        var sign = "";
+        w.symbols.forEach(function (sym) {
+          var hi = false;
+          if (next && next.merge) {
+            for (var i = 0; i < w.symbols.length - 1; i++) {
+              if (w.symbols[i] === next.merge.a && w.symbols[i + 1] === next.merge.b) {
+                if (sym === next.merge.a || sym === next.merge.b) hi = true;
+              }
+            }
+          }
+          sign += '<span class="ls-bpe-symbol' + (hi ? " is-pair" : "") + '">' + api.esc(sym) + '</span>';
+        });
+        return '<div class="ls-bpe-word"><span class="ls-bpe-word-label">' + api.esc(w.word) + '</span><span class="ls-bpe-word-count">×' + w.count + '</span><span class="ls-bpe-symbols">' + sign + '</span></div>';
+      }).join("");
+      var mergeText = st.merge
+        ? (DE ? "Stufe " + step + ": „" + st.merge.a + "“ + „" + st.merge.b + "“ → „" + st.merge.a + st.merge.b + "“ (" + st.merge.count + "×)" : "Stage " + step + ": “" + st.merge.a + "” + “" + st.merge.b + "” → “" + st.merge.a + st.merge.b + "” (" + st.merge.count + "×)")
+        : (DE ? "Start: Jedes Wort besteht aus Zeichen." : "Start: every word consists of characters.");
+      var nextText = next && next.merge
+        ? (DE ? "Nächster Merge: „" + next.merge.a + "“ + „" + next.merge.b + "“ (" + next.merge.count + "×)" : "Next merge: “" + next.merge.a + "” + “" + next.merge.b + "” (" + next.merge.count + "×)")
+        : (DE ? "Fertig: vier Merges." : "Done: four merges.");
+      stageEl.innerHTML = '<b>' + api.esc(mergeText) + '</b><span>' + api.esc(nextText) + '</span>';
+      countsEl.innerHTML = st.pairs.slice(0, 4).map(function (p) {
+        return '<span class="ls-bpe-pair"><b>' + api.esc(p.a) + '+' + api.esc(p.b) + '</b> ' + p.count + '×</span>';
+      }).join("") +
+        '<span class="ls-bpe-total">' + (DE ? "Tokens im Korpus: " : "Tokens in corpus: ") + totalSymbols(st.words) + ' · ' + (DE ? "Vokabular: " : "vocabulary: ") + (baseVocab + step) + '</span>';
+    }
+    function render() {
+      var splitMode = mode === "split";
+      splitEl.hidden = !splitMode;
+      bpeEl.hidden = splitMode;
+      el.querySelectorAll("[data-mode]").forEach(function (b) {
+        var on = b.getAttribute("data-mode") === mode;
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      if (splitMode) renderSplit(); else renderBpe();
+      var total = 3 + stages.length;
+      var pos = splitMode ? step : 3 + step;
+      navProgress.textContent = (pos + 1) + ' / ' + total;
+      navPrev.disabled = pos === 0;
+      navNext.textContent = pos === total - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+    }
+    function setMode(nextMode) {
+      mode = nextMode;
+      step = 0;
+      render();
+    }
+    function nextInternal() {
+      if (mode === "split") {
+        if (step < sampleKeys.length - 1) { step++; render(); return true; }
+        mode = "bpe"; step = 0; render(); return true;
+      }
+      if (step < stages.length - 1) { step++; render(); return true; }
+      return false;
+    }
+    function prevInternal() {
+      if (mode === "bpe") {
+        if (step > 0) { step--; render(); return true; }
+        mode = "split"; step = sampleKeys.length - 1; render(); return true;
+      }
+      if (step > 0) { step--; render(); return true; }
+      return false;
+    }
+    function nextStep() {
+      if (nextInternal()) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+    }
+    function prevStep() {
+      if (prevInternal()) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
     }
     Object.keys(examples).forEach(function (key) {
       var b = document.createElement("button");
@@ -3658,10 +3736,15 @@
       b.className = "ls-chip";
       b.setAttribute("data-sample", key);
       b.textContent = examples[key].label;
-      b.addEventListener("click", function () { goStep(sampleKeys.indexOf(key)); });
+      b.addEventListener("click", function () { mode = "split"; step = sampleKeys.indexOf(key); render(); });
       samples.appendChild(b);
     });
-    goStep(0);
+    el.querySelectorAll("[data-mode]").forEach(function (b) {
+      b.addEventListener("click", function () { setMode(b.getAttribute("data-mode")); });
+    });
+    navPrev.addEventListener("click", prevStep);
+    navNext.addEventListener("click", nextStep);
+    render();
     return {
       update: function () {},
       next: nextInternal,
@@ -5949,15 +6032,26 @@
     var DE = api.lang === "de";
     var el = document.createElement("div");
     el.className = "ls-model-scene";
-    el.innerHTML = '<div class="ls-model-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-model-readout" aria-live="polite"></div>';
+    el.innerHTML = '<div class="ls-model-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-scene-row ls-model-controls"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-model-train">' + (DE ? "Trainieren" : "Train") + '</button>' +
+        '<button type="button" class="ls-chip is-on ls-model-data">' + (DE ? "Daten" : "Data") + '</button>' +
+        '<button type="button" class="ls-chip is-on ls-model-truth">' + (DE ? "Echte Funktion" : "True function") + '</button>' +
+        '<button type="button" class="ls-chip ls-model-error">' + (DE ? "Fehler" : "Error") + '</button>' +
+      '</div>' +
+      '<div class="ls-model-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-model-stage");
     var canvas = el.querySelector("canvas");
     var readout = el.querySelector(".ls-model-readout");
+    var trainBtn = el.querySelector(".ls-model-train");
+    var dataBtn = el.querySelector(".ls-model-data");
+    var truthBtn = el.querySelector(".ls-model-truth");
+    var errorBtn = el.querySelector(".ls-model-error");
     var size = null, ctx = null, hits = [], active = -1, view = "plot";
     var C = api.colors();
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    var raf = 0, started = 0, fit = reducedMotion ? 1 : 0, time = 0;
+    var raf = 0, fit = 0, fitTarget = 0, fitFrom = 0, fitStart = 0, fitDone = false, time = 0;
+    var showData = true, showTruth = true, showError = false;
     var cards = DE ? [
       { id: "tokenizer", title: "Tokenizer", sub: "Text → Tokens", color: "lime", desc: "Zerlegt Text in Tokens: Stücke, die das Modell als Zahlen lesen kann." },
       { id: "embed", title: "Embedding", sub: "Tokens → Vektoren", color: "sky", desc: "Macht aus jeder Token-ID einen Vektor. Ähnliche Tokens landen nah beieinander." },
@@ -5987,7 +6081,9 @@
       var text;
       if (active >= 0) text = cards[active].desc;
       else if (view === "blocks") text = DE ? "Ein LLM baut aus diesen vier Bausteinen eine Funktion. Klicke einen Baustein an." : "An LLM builds a function from these four blocks. Click a block.";
-      else text = DE ? "Daten rein, Funktion geschätzt: Das ist die Idee hinter Machine Learning. Das Modell findet eine Kurve, die die echten Werte gut genug trifft." : "Data in, function estimated: that is the idea behind machine learning. The model finds a curve that fits the real values well enough.";
+      else if (showError) text = DE ? "Die senkrechten Linien sind die Fehler: der Abstand zwischen Datenpunkt und Modellkurve. Training verkleinert diese Abstände." : "The vertical lines are the errors: the distance between a data point and the model curve. Training reduces these gaps.";
+      else if (fit < 0.98) text = DE ? "Das Modell startet ohne Wissen. Es sieht die Datenpunkte und passt seine Kurve Schritt für Schritt an." : "The model starts without knowledge. It sees the data points and adjusts its curve step by step.";
+      else text = DE ? "Die grüne Kurve ist die gelernte Schätzung. Die gestrichelte Kurve ist die unbekannte Funktion, die nur in den Daten sichtbar wird." : "The green curve is the learned estimate. The dashed curve is the unknown function, visible only through the data.";
       readout.innerHTML = '<span><b>' + (DE ? "Machine Learning" : "Machine learning") + '</b> ' + api.esc(text) + '</span>';
     }
     function cardColor(c) { return color(c.color); }
@@ -6039,43 +6135,60 @@
       ctx.strokeRect(plotX, plotY, plotW, plotH);
       function px(t) { return plotX + t * plotW; }
       function py(v) { return plotY + plotH - v * plotH; }
-      ctx.setLineDash([5, 5]);
-      ctx.strokeStyle = C.muted;
-      ctx.globalAlpha = 0.55;
-      ctx.lineWidth = 1.3;
-      ctx.beginPath();
-      for (var i = 0; i <= 90; i++) {
-        var t = i / 90;
-        if (i === 0) ctx.moveTo(px(t), py(truth(t))); else ctx.lineTo(px(t), py(truth(t)));
+      if (showTruth) {
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = C.muted;
+        ctx.globalAlpha = 0.55;
+        ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        for (var i = 0; i <= 90; i++) {
+          var t = i / 90;
+          if (i === 0) ctx.moveTo(px(t), py(truth(t))); else ctx.lineTo(px(t), py(truth(t)));
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 1;
       }
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.globalAlpha = 1;
       var eased = fit * fit * (3 - 2 * fit);
       var modelPts = [];
       for (var j = 0; j <= 90; j++) {
         var tj = j / 90;
         modelPts.push({ x: px(tj), y: py(baseApprox(tj) + (approx(tj) - baseApprox(tj)) * eased) });
       }
-      var fill = ctx.createLinearGradient(0, plotY, 0, plotY + plotH);
-      fill.addColorStop(0, "rgba(99,164,75,.20)");
-      fill.addColorStop(1, "rgba(99,164,75,0)");
-      ctx.beginPath();
-      ctx.moveTo(modelPts[0].x, plotY + plotH);
-      modelPts.forEach(function (p) { ctx.lineTo(p.x, p.y); });
-      ctx.lineTo(modelPts[modelPts.length - 1].x, plotY + plotH);
-      ctx.closePath();
-      ctx.fillStyle = fill;
-      ctx.fill();
-      ctx.beginPath();
-      modelPts.forEach(function (p, i2) { if (i2 === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
-      ctx.strokeStyle = "rgba(99,164,75,.16)";
-      ctx.lineWidth = 8;
-      ctx.stroke();
-      ctx.strokeStyle = C.green;
-      ctx.lineWidth = 2.6;
-      ctx.stroke();
-      samples.forEach(function (s) {
+      if (fit > 0.01) {
+        var fill = ctx.createLinearGradient(0, plotY, 0, plotY + plotH);
+        fill.addColorStop(0, "rgba(99,164,75,.20)");
+        fill.addColorStop(1, "rgba(99,164,75,0)");
+        ctx.beginPath();
+        ctx.moveTo(modelPts[0].x, plotY + plotH);
+        modelPts.forEach(function (p) { ctx.lineTo(p.x, p.y); });
+        ctx.lineTo(modelPts[modelPts.length - 1].x, plotY + plotH);
+        ctx.closePath();
+        ctx.fillStyle = fill;
+        ctx.fill();
+        ctx.beginPath();
+        modelPts.forEach(function (p, i2) { if (i2 === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+        ctx.strokeStyle = "rgba(99,164,75,.16)";
+        ctx.lineWidth = 8;
+        ctx.stroke();
+        ctx.strokeStyle = C.green;
+        ctx.lineWidth = 2.6;
+        ctx.stroke();
+      }
+      if (showError) {
+        samples.forEach(function (s) {
+          var pred = baseApprox(s.t) + (approx(s.t) - baseApprox(s.t)) * eased;
+          ctx.beginPath();
+          ctx.moveTo(px(s.t), py(s.v));
+          ctx.lineTo(px(s.t), py(pred));
+          ctx.strokeStyle = C.coral;
+          ctx.globalAlpha = 0.62;
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        });
+      }
+      if (showData) samples.forEach(function (s) {
         ctx.beginPath();
         ctx.arc(px(s.t), py(s.v), 3.4, 0, Math.PI * 2);
         ctx.fillStyle = C.paper;
@@ -6086,13 +6199,22 @@
       });
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      ctx.beginPath(); ctx.arc(plotX + 6, plotY - 16, 3.4, 0, Math.PI * 2); ctx.fillStyle = C.paper; ctx.fill(); ctx.strokeStyle = C.blue; ctx.lineWidth = 1.5; ctx.stroke();
-      ctx.fillStyle = C.blue; ctx.fillText(DE ? "Daten" : "data", plotX + 14, plotY - 12);
-      ctx.fillStyle = C.green;
-      ctx.fillRect(plotX + 72, plotY - 18, 18, 2.8);
-      ctx.fillText(DE ? "Modell" : "model", plotX + 96, plotY - 12);
-      ctx.fillStyle = C.muted;
-      ctx.fillText(DE ? "echte Funktion" : "true function", plotX + 168, plotY - 12);
+      var legendX = plotX + 6;
+      if (showData) {
+        ctx.beginPath(); ctx.arc(legendX, plotY - 16, 3.4, 0, Math.PI * 2); ctx.fillStyle = C.paper; ctx.fill(); ctx.strokeStyle = C.blue; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.fillStyle = C.blue; ctx.fillText(DE ? "Daten" : "data", legendX + 8, plotY - 12);
+        legendX += 68;
+      }
+      if (fit > 0.01) {
+        ctx.fillStyle = C.green;
+        ctx.fillRect(legendX, plotY - 18, 18, 2.8);
+        ctx.fillText(DE ? "Modell" : "model", legendX + 24, plotY - 12);
+        legendX += 84;
+      }
+      if (showTruth) {
+        ctx.fillStyle = C.muted;
+        ctx.fillText(DE ? "echte Funktion" : "true function", legendX, plotY - 12);
+      }
     }
     function drawBlocks(w, h, pad) {
       ctx.fillStyle = C.ink;
@@ -6154,13 +6276,31 @@
     }
     function frame(now) {
       raf = requestAnimationFrame(frame);
-      if (!started) started = now;
-      fit = Math.min(1, (now - started) / 1100);
+      if (fit < fitTarget) {
+        var t = Math.min(1, (now - fitStart) / 1100);
+        fit = fitFrom + (fitTarget - fitFrom) * (t * t * (3 - 2 * t));
+        if (t >= 1) { fit = fitTarget; fitDone = true; updateReadout(); }
+      }
       time = now / 1000;
       draw();
     }
-    function start() { if (reducedMotion) { fit = 1; draw(); return; } if (!raf) raf = requestAnimationFrame(frame); }
+    function train() {
+      fitFrom = 0;
+      fit = 0;
+      fitTarget = 1;
+      fitStart = performance.now();
+      fitDone = false;
+      updateReadout();
+      if (reducedMotion) { fit = 1; fitDone = true; updateReadout(); draw(); return; }
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
+    function start() { if (reducedMotion) { fit = 1; fitTarget = 1; draw(); return; } train(); }
     function resize() { size = api.fit(canvas, stage); draw(); }
+    trainBtn.addEventListener("click", train);
+    function toggleChip(btn, on) { btn.classList.toggle("is-on", on); btn.setAttribute("aria-pressed", on ? "true" : "false"); }
+    dataBtn.addEventListener("click", function () { showData = !showData; toggleChip(dataBtn, showData); updateReadout(); draw(); });
+    truthBtn.addEventListener("click", function () { showTruth = !showTruth; toggleChip(truthBtn, showTruth); updateReadout(); draw(); });
+    errorBtn.addEventListener("click", function () { showError = !showError; toggleChip(errorBtn, showError); updateReadout(); draw(); });
     canvas.addEventListener("pointerup", function (e) {
       if (view !== "blocks") return;
       var r = canvas.getBoundingClientRect();
@@ -6183,10 +6323,12 @@
         if (s && s.view && s.view !== view) {
           view = s.view;
           active = -1;
-          started = 0;
-          fit = reducedMotion ? 1 : 0;
+          fit = 0;
+          fitTarget = 0;
+          fitDone = false;
           updateReadout();
           draw();
+          if (view === "plot") train();
         }
       },
       pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } },
@@ -6376,14 +6518,14 @@
       if (active >= 0) {
         var p = pairs[active];
         text = DE
-          ? p.male + " → " + p.female + ": derselbe Pfeil wie bei den anderen Spezies. Die Spezies ändert den Ort, nicht die Richtung."
-          : p.male + " → " + p.female + ": the same arrow as in the other species. Species changes the place, not the direction.";
+          ? p.male + " → " + p.female + ": gleiche Spezies, unterschiedliches Geschlecht. Die Rolle bleibt auf der Rollenachse."
+          : p.male + " → " + p.female + ": same species, different gender. Role stays on the role axis.";
       } else {
         text = DE
-          ? "Alle Pfeile sind parallel: männlich → weiblich. Die Spezies steht auf der z-Achse, die Rolle ordnet die Paare."
-          : "All arrows are parallel: male → female. Species sits on the z-axis, role orders the pairs.";
+          ? "Klicke ein Paar an. Die Achsen zeigen Rolle, Geschlecht und Spezies."
+          : "Click a pair. The axes show role, gender, and species.";
       }
-      readout.innerHTML = '<span><b>' + (DE ? "Übertragung" : "Transport") + '</b> ' + api.esc(text) + '</span>';
+      readout.innerHTML = '<span><b>' + (DE ? "Paar" : "Pair") + '</b> ' + api.esc(text) + '</span>';
     }
     function draw() {
       if (!size) return;
