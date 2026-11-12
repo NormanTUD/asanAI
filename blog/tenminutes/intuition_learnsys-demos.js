@@ -4937,6 +4937,194 @@
     return { update: function () {}, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
   }
 
+  function langdataScene(root, api) {
+    var DE = api.lang === "de";
+    var langs = [
+      { id: "de", label: DE ? "Deutsch" : "German", text: "Das Wetter ist heute kalt.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "en", label: DE ? "Englisch" : "English", text: "The weather is cold today.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "fr", label: DE ? "Französisch" : "French", text: "Il fait froid aujourd'hui.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "ja", label: DE ? "Japanisch" : "Japanese", text: "今日は寒いです。", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "ar", label: DE ? "Arabisch" : "Arabic", text: "الجو بارد اليوم.", gloss: DE ? "Derselbe Inhalt, von rechts nach links." : "The same content, written right to left.", rtl: true },
+      { id: "zh", label: DE ? "Chinesisch" : "Chinese", text: "今天很冷。", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." }
+    ];
+    var mix = [
+      { label: "Common Crawl", pct: 60, color: "#63a44b" },
+      { label: "WebText2", pct: 22, color: "#5c9baf" },
+      { label: "Books1", pct: 8, color: "#9f9700" },
+      { label: "Books2", pct: 8, color: "#869b55" },
+      { label: "Wikipedia", pct: 3, color: "#9185be" }
+    ];
+    var active = "de";
+    var el = document.createElement("div");
+    el.className = "ls-lang-scene";
+    el.innerHTML =
+      '<div class="ls-lang-tabs" role="group" aria-label="' + (DE ? "Sprachen" : "Languages") + '"></div>' +
+      '<div class="ls-lang-sample">' +
+        '<span class="ls-lang-tag"></span>' +
+        '<p class="ls-lang-text" lang="de"></p>' +
+        '<p class="ls-lang-gloss"></p>' +
+      '</div>' +
+      '<div class="ls-lang-mix">' +
+        '<div class="ls-lang-mix-head">' + (DE ? "Woraus GPT-3 lernte" : "What GPT-3 learned from") + '</div>' +
+        '<div class="ls-lang-bars"></div>' +
+        '<p class="ls-lang-note">' + (DE ? "GPT-3-Mix nach Brown et al. (2020), Tabelle 2.2, gerundet. Labs veröffentlichen ihre genauen Rezepte nicht." : "GPT-3 mix from Brown et al. (2020), Table 2.2, rounded. Labs do not publish their exact recipes.") + '</p>' +
+      '</div>' +
+      '<p class="ls-lang-caveat">' + (DE ? "Dieselbe Schleife, dieselben Gewichte: Die Schrift ändert die Tokens, nicht die Aufgabe. Manche Sprachen brauchen für denselben Inhalt mehr Tokens; der Tokenizer kann sie dadurch teurer machen (Petrov et al., 2023)." : "The same loop, the same weights: the script changes the tokens, not the task. Some languages need more tokens for the same content, so the tokenizer can make them more expensive (Petrov et al., 2023).") + '</p>';
+    root.appendChild(el);
+    var tabs = el.querySelector(".ls-lang-tabs");
+    var tag = el.querySelector(".ls-lang-tag");
+    var text = el.querySelector(".ls-lang-text");
+    var gloss = el.querySelector(".ls-lang-gloss");
+    var bars = el.querySelector(".ls-lang-bars");
+    function show(id) {
+      var item = langs.filter(function (l) { return l.id === id; })[0] || langs[0];
+      active = item.id;
+      Array.prototype.forEach.call(tabs.querySelectorAll("button"), function (b) {
+        b.classList.toggle("is-on", b.getAttribute("data-lang") === item.id);
+      });
+      tag.textContent = item.label;
+      text.textContent = item.text;
+      text.setAttribute("lang", item.id);
+      text.setAttribute("dir", item.rtl ? "rtl" : "ltr");
+      gloss.textContent = item.gloss;
+    }
+    langs.forEach(function (l) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "ls-chip" + (l.id === active ? " is-on" : "");
+      b.setAttribute("data-lang", l.id);
+      b.textContent = l.label;
+      b.addEventListener("click", function () { show(l.id); });
+      tabs.appendChild(b);
+    });
+    bars.innerHTML = mix.map(function (m) {
+      return '<div class="ls-lang-bar"><span class="ls-lang-bar-label">' + api.esc(m.label) + '</span>' +
+        '<span class="ls-lang-bar-track"><i style="width:' + m.pct + '%;background:' + m.color + '"></i></span>' +
+        '<span class="ls-lang-bar-val">' + m.pct + '%</span></div>';
+    }).join("");
+    show(active);
+    return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
+  }
+
+  function chineseroomScene(root, api) {
+    var DE = api.lang === "de";
+    var rounds = [
+      {
+        input: "今天天气怎么样？",
+        answer: "今天天气很冷。",
+        options: ["我喜欢喝茶。", "今天天气很冷。", "门是开着的。"],
+        rule: ["今天天气怎么样？", "今天天气很冷。"],
+        de: "Wie ist das Wetter heute? → Das Wetter ist heute kalt.",
+        en: "How is the weather today? → The weather is cold today."
+      },
+      {
+        input: "你叫什么名字？",
+        answer: "我叫小明。",
+        options: ["外面在下雨。", "我叫小明。", "他住在北京。"],
+        rule: ["你叫什么名字？", "我叫小明。"],
+        de: "Wie heißt du? → Ich heiße Xiaoming.",
+        en: "What is your name? → My name is Xiaoming."
+      }
+    ];
+    var idx = 0, score = 0, done = false;
+    var el = document.createElement("div");
+    el.className = "ls-cr-scene";
+    el.innerHTML =
+      '<div class="ls-cr-body">' +
+        '<div class="ls-cr-room">' +
+          '<div class="ls-cr-top"><span class="ls-cr-progress"></span><span class="ls-cr-score"></span></div>' +
+          '<div class="ls-cr-incoming"><span class="ls-cr-label">' + (DE ? "Eingabe" : "Input") + '</span><p class="ls-cr-input" lang="zh"></p><p class="ls-cr-sub">' + (DE ? "Du liest die Zeichen nicht." : "You cannot read the characters.") + '</p></div>' +
+          '<div class="ls-cr-book"><div class="ls-cr-book-head">' + (DE ? "Regelbuch" : "Rulebook") + '</div><table class="ls-cr-rules"><tbody></tbody></table></div>' +
+          '<div class="ls-cr-options" role="group" aria-label="' + (DE ? "Antwort wählen" : "Choose an answer") + '"></div>' +
+          '<p class="ls-cr-feedback" aria-live="polite"></p>' +
+        '</div>' +
+        '<div class="ls-cr-reveal" aria-hidden="true">' +
+          '<div class="ls-cr-reveal-head">' + (DE ? "Was du gerade getan hast" : "What you just did") + '</div>' +
+          '<table class="ls-cr-trans"><tbody></tbody></table>' +
+          '<p class="ls-cr-note">' + (DE ? "Von außen wirkte das wie Verstehen. Innen hast du Zeichen nach Regeln ersetzt. Searle (1980) nennt das den Unterschied zwischen Symbolmanipulation und Bedeutung. Ob das ganze System versteht, ist umstritten." : "From the outside this looked like understanding. Inside you replaced symbols by rules. Searle (1980) calls this the difference between symbol manipulation and meaning. Whether the whole system understands is disputed.") + '</p>' +
+          '<details class="ls-cr-systems"><summary>' + (DE ? "Ganzen Raum ansehen" : "See the whole room") + '</summary><p>' + (DE ? "Der Systems Reply sagt: Vielleicht versteht nicht die Person im Zimmer, sondern das ganze System aus Person, Regelbuch und Zimmer. Searle hält das für eine Verschiebung des Problems, nicht für eine Lösung. Die Debatte ist offen." : "The systems reply says: perhaps the person in the room does not understand, but the whole system of person, rulebook, and room does. Searle treats that as moving the problem, not solving it. The debate is open.") + '</p></details>' +
+          '<button type="button" class="ls-btn ls-btn--tiny ls-cr-restart">' + (DE ? "Neu starten" : "Restart") + '</button>' +
+        '</div>' +
+      '</div>';
+    root.appendChild(el);
+    var room = el.querySelector(".ls-cr-room");
+    var reveal = el.querySelector(".ls-cr-reveal");
+    var progress = el.querySelector(".ls-cr-progress");
+    var scoreEl = el.querySelector(".ls-cr-score");
+    var inputEl = el.querySelector(".ls-cr-input");
+    var rulesBody = el.querySelector(".ls-cr-rules tbody");
+    var optionsEl = el.querySelector(".ls-cr-options");
+    var feedback = el.querySelector(".ls-cr-feedback");
+    var transBody = el.querySelector(".ls-cr-trans tbody");
+    function setPanel(showReveal) {
+      room.classList.toggle("is-hidden", showReveal);
+      reveal.classList.toggle("is-visible", showReveal);
+      room.setAttribute("aria-hidden", showReveal ? "true" : "false");
+      reveal.setAttribute("aria-hidden", showReveal ? "false" : "true");
+    }
+    function render() {
+      var r = rounds[idx];
+      progress.textContent = (DE ? "Runde" : "Round") + " " + (idx + 1) + " / " + rounds.length;
+      scoreEl.textContent = (DE ? "Regeln befolgt: " : "Rules followed: ") + score;
+      inputEl.textContent = r.input;
+      var other = rounds[(idx + 1) % rounds.length];
+      rulesBody.innerHTML = "<tr><td>" + api.esc(r.rule[0]) + "</td><td>" + api.esc(r.rule[1]) + "</td></tr>" +
+        "<tr><td>" + api.esc(other.rule[0]) + "</td><td>" + api.esc(other.rule[1]) + "</td></tr>";
+      optionsEl.innerHTML = "";
+      r.options.forEach(function (opt) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "ls-cr-choice";
+        b.textContent = opt;
+        b.addEventListener("click", function () { choose(opt, b); });
+        optionsEl.appendChild(b);
+      });
+      feedback.textContent = "";
+      setPanel(false);
+    }
+    function choose(opt, btn) {
+      if (done) return;
+      var r = rounds[idx];
+      if (opt === r.answer) {
+        score++;
+        btn.classList.add("is-right");
+        optionsEl.querySelectorAll("button").forEach(function (b) { b.disabled = true; });
+        feedback.textContent = DE ? "Richtig. Du hast die Regel befolgt, ohne die Zeichen zu verstehen." : "Correct. You followed the rule without understanding the characters.";
+        setTimeout(function () {
+          idx++;
+          if (idx < rounds.length) render();
+          else showReveal();
+        }, 800);
+      } else {
+        btn.classList.add("is-wrong");
+        btn.disabled = true;
+        feedback.textContent = DE ? "Schau ins Regelbuch: Welche Ausgabe steht bei dieser Eingabe?" : "Check the rulebook: which output belongs to this input?";
+      }
+    }
+    function showReveal() {
+      done = true;
+      transBody.innerHTML = "";
+      rounds.forEach(function (r) {
+        var tr = document.createElement("tr");
+        [r.input, r.answer, DE ? r.de : r.en].forEach(function (val, i) {
+          var td = document.createElement("td");
+          td.textContent = val;
+          if (i === 2) td.className = "ls-cr-trans-gloss";
+          tr.appendChild(td);
+        });
+        transBody.appendChild(tr);
+      });
+      setPanel(true);
+    }
+    var restart = el.querySelector(".ls-cr-restart");
+    restart.addEventListener("click", function () {
+      idx = 0; score = 0; done = false;
+      render();
+    });
+    render();
+    return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
+  }
+
   var SCENES = {
     embedding: embeddingScene,
     phone: phoneScene,
@@ -4956,7 +5144,9 @@
     mlp: mlpScene,
     trajectories: trajectoriesScene,
     stack: stackScene,
-    activation: activationScene
+    activation: activationScene,
+    langdata: langdataScene,
+    chineseroom: chineseroomScene
   };
 
   LearnSys.defineDemo("intuition", function (root, api) {

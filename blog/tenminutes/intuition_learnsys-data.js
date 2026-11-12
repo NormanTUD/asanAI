@@ -40,7 +40,7 @@
     {
       kicker: "02 / Die Schleife",
       title: "Ein Wort nach dem anderen",
-      body: "Kontext ist alles, was das Modell gerade sieht: der bisherige Text, die Anweisung, die Beispiele. Bei jedem Schritt ist vieles möglich, aber nicht alles passt. Die Demo zieht das nächste Token aus einer Verteilung, hängt es an und wiederholt. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich.",
+      body: "Kontext ist alles, was das Modell gerade sieht: der bisherige Text, die Anweisung, die Beispiele. Bei jedem Schritt ist vieles möglich, aber nicht alles passt. Die Demo zieht das nächste Token aus einer Verteilung, hängt es an und wiederholt. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Nach dem Schlusspunkt steht das spezielle Token <|endoftext|>; sobald das Modell es zieht, endet die Schleife.",
       watch: "Klicke einen Zweig an oder lass die Demo wählen. Welche Fortsetzungen bleiben plausibel?",
       demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true },
       context: "Das Modell hat kein anderes Arbeitsgedächtnis als den Kontext. Jedes neue Token verändert, was als Nächstes wahrscheinlich ist.",
@@ -93,7 +93,7 @@
     {
       kicker: "02 / The loop",
       title: "One word after another",
-      body: "Context is everything the model can see: the text so far, the instruction, the examples. At every step much is possible, but not all of it fits. The demo draws the next token from a distribution, appends it, and repeats. Greedy, sampling, and top-p read the same probabilities differently.",
+      body: "Context is everything the model can see: the text so far, the instruction, the examples. At every step much is possible, but not all of it fits. The demo draws the next token from a distribution, appends it, and repeats. Greedy, sampling, and top-p read the same probabilities differently. After the final punctuation comes the special token <|endoftext|>; as soon as the model draws it, the loop stops.",
       watch: "Click a branch or let the demo choose. Which continuations stay plausible?",
       demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true },
       context: "The model has no working memory other than the context. Every new token changes what is likely next.",
@@ -932,7 +932,89 @@
     }
   ];
 
-  var steps = introSteps.concat(insideSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, activationSteps, mlpSteps, ffnSteps, stackSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps);
+  var languageSteps = DE ? [
+    {
+      kicker: "14 / Sprachen und Daten",
+      title: "Dieselbe Schleife, viele Sprachen",
+      body: "Ein Modell bekommt keine Sprachmodule. Es bekommt Text: viele Sprachen, viele Schriften, viel Unsinn. Dieselbe Schleife liest alle. Was sie lernt, hängt an den Daten: Menge, Qualität und Mischung. GPT-3 nannte 60 % Common Crawl, 22 % WebText2, 8 % Books1, 8 % Books2 und 3 % Wikipedia; die Werte sind gerundet (Brown et al., 2020, Tabelle 2.2). Klicke die Sprachen und vergleiche.",
+      watch: "Klicke die Sprachen. Was bleibt gleich, was ändert sich?",
+      demoState: { scene: "langdata" },
+      context: "Die Schrift ändert die Tokens, nicht die Aufgabe. Manche Sprachen brauchen für denselben Inhalt mehr Tokens; der Tokenizer kann sie teurer machen (Petrov et al., 2023).",
+      deep: "Daten sind eine Designentscheidung. Filter, Dedupe und Decontamination entscheiden mit, was das Modell sieht (Lee et al., 2021). Seltene Sprachen und seltene Themen bleiben benachteiligt, auch wenn das Modell sie grundsätzlich verarbeiten kann.",
+      boxes: [
+        box("lang-1", "Technik", "Warum mehrere Sprachen?", "Weil Text aus vielen Sprachen kommt. Ein multilinguales Modell teilt die Gewichte; gemeinsame Muster können zwischen Sprachen übertragen werden. Seltene Sprachen bleiben trotzdem benachteiligt, weil sie im Korpus seltener sind."),
+        box("lang-2", "Grenze", "Was verrät die Mischung nicht?", "Nicht, wie gut eine Sprache gelernt wird. Menge, Qualität und Tokenizer zählen zusammen. Eine große Menge schlechter Daten ist kein Vorteil."),
+        box("lang-3", "Daten", "Was wird gefiltert?", "Qualität, Duplikate und Benchmark-Leaks. Dedupe verhindert Auswendiglernen; Decontamination verhindert, dass Testfragen im Training landen.")
+      ],
+      sources: [
+        { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165" },
+        { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425" },
+        { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499" }
+      ]
+    }
+  ] : [
+    {
+      kicker: "14 / Languages and data",
+      title: "The same loop, many languages",
+      body: "A model does not get language modules. It gets text: many languages, many scripts, plenty of nonsense. The same loop reads all of it. What it learns depends on the data: amount, quality, and mix. GPT-3 reported 60% Common Crawl, 22% WebText2, 8% Books1, 8% Books2, and 3% Wikipedia; the values are rounded (Brown et al., 2020, Table 2.2). Click the languages and compare.",
+      watch: "Click the languages. What stays the same, what changes?",
+      demoState: { scene: "langdata" },
+      context: "The script changes the tokens, not the task. Some languages need more tokens for the same content; the tokenizer can make them more expensive (Petrov et al., 2023).",
+      deep: "Data is a design decision. Filtering, deduplication, and decontamination decide what the model sees (Lee et al., 2021). Rare languages and rare topics stay disadvantaged even when the model can process them in principle.",
+      boxes: [
+        box("lang-1", "Technique", "Why several languages?", "Because text comes in many languages. A multilingual model shares its weights; shared patterns can transfer between languages. Rare languages still stay disadvantaged because they are rarer in the corpus."),
+        box("lang-2", "Limit", "What does the mix not tell you?", "Not how well a language is learned. Amount, quality, and tokenizer act together. A large amount of bad data is no advantage."),
+        box("lang-3", "Data", "What is filtered?", "Quality, duplicates, and benchmark leaks. Dedupe prevents memorisation; decontamination prevents test questions from entering the training data.")
+      ],
+      sources: [
+        { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165" },
+        { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425" },
+        { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499" }
+      ]
+    }
+  ];
+
+  var philosophySteps = DE ? [
+    {
+      kicker: "15 / Philosophie",
+      title: "Du bist das Chinesische Zimmer",
+      body: "Du sitzt in einem Zimmer. Durch eine Klappe kommen Zeichen, die du nicht lesen kannst. Auf dem Tisch liegt ein Regelbuch: Es sagt dir, welche Zeichenfolge du herausschreiben sollst. Du suchst die Eingabe, kopierst die passende Antwort, und von außen sieht es aus, als würdest du die Sprache verstehen. Searle (1980) nennt das den Unterschied zwischen Regeln befolgen und Bedeutung verstehen. Folge dem Regelbuch und beobachte, was du tust.",
+      watch: "Folge dem Regelbuch. Wirkt deine Antwort von außen intelligent?",
+      demoState: { scene: "chineseroom" },
+      context: "Das Zimmer ist ein Bild für ein Programm: Symbole rein, Symbole raus, nach Regeln. Ob das ganze System versteht, ist die offene Frage.",
+      deep: "Der Systems Reply sagt: Vielleicht versteht nicht die Person im Zimmer, sondern das ganze System aus Person, Regelbuch und Zimmer. Searle hält das für eine Verschiebung des Problems, nicht für eine Lösung. Ein LLM sitzt in einer ähnlichen Lage: Es manipuliert Tokens nach gelernten Regeln, ohne den Weltbezug der Wörter zu haben. Ob daraus Verstehen wird, entscheidet der Streit, nicht die Demo.",
+      boxes: [
+        box("phil-1", "Argument", "Was zeigt das Zimmer?", "Dass Symbolmanipulation allein kein Verstehen garantieren muss. Die Antwort kann richtig aussehen, obwohl die Person die Zeichen nicht versteht."),
+        box("phil-2", "Einwand", "Was ist der Systems Reply?", "Vielleicht versteht das ganze System, nicht die Person im Zimmer. Searle bestreitet, dass das den Einwand rettet; die Debatte ist offen."),
+        box("phil-3", "LLM", "Wo steht das Modell?", "Ein LLM folgt gelernten statistischen Regeln über Tokens. Es hat keinen direkten Zugang zur Welt, auf die die Tokens zeigen. Ob daraus Verstehen wird, ist genau die Frage.")
+      ],
+      sources: [
+        { label: "Searle (1980), Minds, Brains, and Programs", url: "https://doi.org/10.1017/S0140525X00005756" },
+        { label: "Harnad (1990), The Symbol Grounding Problem", url: "https://doi.org/10.1016/0167-2789(90)90087-6" }
+      ]
+    }
+  ] : [
+    {
+      kicker: "15 / Philosophy",
+      title: "You are the Chinese Room",
+      body: "You sit in a room. Through a slot come characters you cannot read. On the table is a rulebook: it tells you which string to write back. You find the input, copy the matching answer, and from the outside it looks as if you understand the language. Searle (1980) calls this the difference between following rules and understanding meaning. Follow the rulebook and watch what you do.",
+      watch: "Follow the rulebook. Does your answer look intelligent from the outside?",
+      demoState: { scene: "chineseroom" },
+      context: "The room is a picture of a program: symbols in, symbols out, by rules. Whether the whole system understands is the open question.",
+      deep: "The systems reply says: perhaps the person in the room does not understand, but the whole system of person, rulebook, and room does. Searle treats that as moving the problem, not solving it. An LLM is in a similar position: it manipulates tokens by learned rules without having the world the words refer to. Whether that becomes understanding is what the dispute is about, not what the demo settles.",
+      boxes: [
+        box("phil-1", "Argument", "What does the room show?", "That symbol manipulation alone need not guarantee understanding. The answer can look correct even though the person does not understand the characters."),
+        box("phil-2", "Objection", "What is the systems reply?", "Perhaps the whole system understands, not the person in the room. Searle denies that this rescues the objection; the debate is open."),
+        box("phil-3", "LLM", "Where does the model stand?", "An LLM follows learned statistical rules over tokens. It has no direct access to the world the tokens point to. Whether that becomes understanding is exactly the question.")
+      ],
+      sources: [
+        { label: "Searle (1980), Minds, Brains, and Programs", url: "https://doi.org/10.1017/S0140525X00005756" },
+        { label: "Harnad (1990), The Symbol Grounding Problem", url: "https://doi.org/10.1016/0167-2789(90)90087-6" }
+      ]
+    }
+  ];
+
+  var steps = introSteps.concat(insideSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, activationSteps, mlpSteps, ffnSteps, stackSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps, languageSteps, philosophySteps);
 
   var day = {
     id: "intuition",
