@@ -2,6 +2,10 @@
   "use strict";
   if (!window.LearnSys) return;
 
+  var SHARED = {
+    loop: null
+  };
+
   var TEMP = [
     { id: "freezing", value: -30, color: "sky", label: ["Gefrierpunkt", "Freezing"] },
     { id: "cold", value: 5, color: "blue", label: ["Kalt", "Cold"] },
@@ -1082,7 +1086,7 @@
     }
     function fit() {
       var r = stage.getBoundingClientRect();
-      var scale = Math.min(1, (r.width - 18) / 360, (r.height - 18) / 600);
+      var scale = Math.min(1, (r.width - 90) / 360, (r.height - 30) / 600);
       phone.style.transform = "scale(" + scale.toFixed(3) + ")";
     }
     buildLogo();
@@ -1229,12 +1233,13 @@
     ] : [
       { t: "not", l: 3.3 }, { t: "never", l: 1.2 }, { t: "only", l: 0.8 }, { t: "still", l: 0.5 }, { t: "always", l: 0.3 }
     ];
-    function choicesFor() {
-      var n = generated.length;
+    function choicesFor(gen) {
+      gen = gen || generated;
+      var n = gen.length;
       if (n === 0) return NOUNS;
       if (n === 1) {
-        if (DE) return RELATIVE[generated[0]] || [{ t: "der", l: 3.6 }];
-        var noun = generated[0];
+        if (DE) return RELATIVE[gen[0]] || [{ t: "der", l: 3.6 }];
+        var noun = gen[0];
         if (noun === "princess") return [{ t: "that", l: 3.1 }, { t: "who", l: 1.4 }];
         if (noun === "castle" || noun === "river") return [{ t: "that", l: 3.1 }, { t: "which", l: 1.4 }];
         return [{ t: "that", l: 3.1 }, { t: "who", l: 1.4 }, { t: "which", l: 0.8 }];
@@ -1242,16 +1247,17 @@
       if (n === 2) return MODALS;
       if (n === 3) {
         if (DE) return NEGATORS;
-        var verb = generated[2];
+        var verb = gen[2];
         if (verb === "could" || verb === "would") return NEGATORS;
         return [{ t: "to", l: 4.0 }];
       }
-      if (n === 4) return ACTIONS[generated[0]] || (DE ? ACTIONS.Drache : ACTIONS.dragon);
+      if (n === 4) return ACTIONS[gen[0]] || (DE ? ACTIONS.Drache : ACTIONS.dragon);
       if (n === 5) return [{ t: ".", l: 3.2 }, { t: "!", l: 1.1 }, { t: "…", l: 0.7 }];
       return [];
     }
     var base = DE ? ["Es", "war", "einmal", "ein"] : ["Once", "upon", "a", "time", "there", "was", "a"];
     var generated = [];
+    var loopHistory = [];
     var temp = 0.8;
     var decodeMode = "sample";
     var el = document.createElement("div");
@@ -1332,9 +1338,43 @@
         b.addEventListener("click", function () { choose(opts[parseInt(b.getAttribute("data-bar"), 10)].t); });
       });
       readout.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + generated.length + ' / ' + MAX_STEPS + '</b></span><span>' + (DE ? "Kontext" : "Context") + ' <b>' + (base.length + generated.length) + '</b></span><span>' + (DE ? "Top" : "Top") + ' <b>' + api.esc(opts[top] ? opts[top].t : "—") + '</b></span><span>' + (DE ? "Modus" : "Mode") + ' <b>' + decodeMode + '</b></span>';
+      publish();
+    }
+    function samplePath() {
+      var gen = [];
+      var picks = DE ? ["Drache", "der", "konnte", "nicht", "fliegen", "."] : ["dragon", "that", "could", "not", "fly", "."];
+      var hist = [];
+      picks.forEach(function (pick) {
+        var opts = choicesFor(gen);
+        var alts = opts.map(function (o) { return { token: o.t, logit: o.l }; });
+        var chosen = alts.filter(function (a) { return a.token === pick; })[0] || alts[0];
+        hist.push({
+          index: gen.length,
+          chosen: chosen ? chosen.token : pick,
+          alternatives: alts.filter(function (a) { return a.token !== pick; })
+        });
+        gen.push(pick);
+      });
+      return { tokens: gen, history: hist };
+    }
+    function publish() {
+      var sample = samplePath();
+      SHARED.loop = {
+        lang: api.lang,
+        base: base.slice(),
+        tokens: generated.length ? generated.slice() : sample.tokens,
+        history: generated.length ? loopHistory.slice() : sample.history
+      };
     }
     function choose(token) {
-      if (!token) return;
+      if (!token || generated.length >= MAX_STEPS) return;
+      var opts = choicesFor();
+      var alts = opts.map(function (o) { return { token: o.t, logit: o.l }; });
+      loopHistory.push({
+        index: generated.length,
+        chosen: token,
+        alternatives: alts.filter(function (a) { return a.token !== token; })
+      });
       token.split(" ").forEach(function (piece) { generated.push(piece); });
       if (generated.length > MAX_STEPS) generated = generated.slice(0, MAX_STEPS);
       renderSentence(); renderTree(); renderBars();
@@ -1364,7 +1404,7 @@
       });
       renderBars();
     }
-    function reset() { generated = []; renderSentence(); renderTree(); renderBars(); }
+    function reset() { generated = []; loopHistory = []; renderSentence(); renderTree(); renderBars(); }
     [
       { id: "sample", label: "Sample" }, { id: "greedy", label: "Greedy" }, { id: "topp", label: "Top-p 0.9" }
     ].forEach(function (m) {

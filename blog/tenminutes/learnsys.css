@@ -587,6 +587,13 @@ h1,h2,h3,h4{
   .ls-loop-bar{grid-template-columns:64px minmax(0,1fr) 34px}
   .ls-tunnel-stage{min-height:180px}
 }
-.ls-phone-scene{height:100%;min-height:0;overflow:hidden}
-.ls-phone-scene .ia-stage{height:100%;min-height:0}
+.ls-phone-scene{height:100%;min-height:0;overflow:visible}
+.ls-phone-scene .ia-stage{height:100%;min-height:0;overflow:visible}
 .ls-phone-scene .ia-phone{transform-origin:center center}
+.ls-phone-scene .ia-phone-frame{
+  box-shadow:
+    0 0 0 2px #2a3040,
+    0 18px 36px rgba(0,0,0,.35),
+    0 0 28px rgba(92,155,175,.16),
+    inset 0 0 0 1px rgba(255,255,255,.06);
+}
