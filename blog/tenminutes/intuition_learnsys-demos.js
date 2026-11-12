@@ -2384,13 +2384,39 @@
       var stream = streamAt(current);
       var update = updates[current];
       var pad = 24;
-      var barW = (w - pad * 2) / 6;
-      var baseY = h * 0.56;
-      var scale = Math.min(70, h * 0.2);
+      var wide = h > 260;
+      var barX0 = wide ? pad + 124 : pad;
+      var barW = (w - barX0 - pad) / 6;
+      var baseY = wide ? h * 0.70 : h * 0.62;
+      var scale = Math.min(70, h * 0.18);
+      if (wide) {
+        var sentence = DE
+          ? [["Die", ""], ["Katze", "att"], ["saß", "mlp"], ["auf", ""], ["der", ""], ["Matte", ""], [",", ""], ["weil", ""], ["sie", "att"], ["müde", "mlp"], ["war", ""], [".", ""]]
+          : [["The", ""], ["cat", "att"], ["sat", "mlp"], ["on", ""], ["the", ""], ["mat", ""], ["because", ""], ["she", "att"], ["was", "mlp"], ["tired", ""], [".", ""]];
+        ctx.fillStyle = C.paper;
+        ctx.strokeStyle = C.line;
+        ctx.lineWidth = 1;
+        ctx.fillRect(pad, 10, w - pad * 2, 54);
+        ctx.strokeRect(pad, 10, w - pad * 2, 54);
+        ctx.font = '600 10px "Open Sans", sans-serif';
+        ctx.textAlign = "left";
+        var tx = pad + 10, ty = 34;
+        sentence.forEach(function (pair) {
+          var word = pair[0];
+          var col = pair[1] === "att" ? C.green : pair[1] === "mlp" ? C.gold : C.soft;
+          ctx.fillStyle = col;
+          ctx.fillText(word, tx, ty);
+          tx += ctx.measureText(word + " ").width;
+        });
+        ctx.font = '600 8px "Open Sans", sans-serif';
+        ctx.fillStyle = C.green; ctx.fillText(DE ? "Attention" : "attention", pad + 10, 52);
+        ctx.fillStyle = C.gold; ctx.fillText("MLP", pad + 78, 52);
+        ctx.fillStyle = C.muted; ctx.fillText("Embedding", pad + 118, 52);
+      }
       ctx.font = '600 9px "Open Sans", sans-serif';
       ctx.textAlign = "center";
       for (var j = 0; j < 6; j++) {
-        var x = pad + j * barW + barW / 2;
+        var x = barX0 + j * barW + barW / 2;
         var bh = stream[j] * scale;
         ctx.fillStyle = C.blue;
         ctx.globalAlpha = 0.85;
@@ -2404,23 +2430,37 @@
         }
       }
       ctx.strokeStyle = C.lineStrong;
-      ctx.beginPath(); ctx.moveTo(pad, baseY); ctx.lineTo(w - pad, baseY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(barX0, baseY); ctx.lineTo(w - pad, baseY); ctx.stroke();
       ctx.fillStyle = C.muted;
       ctx.textAlign = "left";
-      ctx.fillText(DE ? "blau: laufender Stream · gold: Update" : "blue: running stream · gold: update", pad, 20);
+      ctx.fillText(DE ? "blau: Stream · gold: Update" : "blue: stream · gold: update", barX0, 20);
       hits = [];
       for (var i = 0; i < layers.length; i++) {
-        var yy = 42 + i * 24;
         var on = i === current;
-        ctx.fillStyle = on ? C.petrol : C.paper;
-        ctx.strokeStyle = on ? C.petrol : C.lineStrong;
-        ctx.fillRect(pad, yy - 12, 112, 20);
-        ctx.strokeRect(pad, yy - 12, 112, 20);
-        ctx.fillStyle = on ? "#fff" : C.soft;
-        ctx.font = '600 9px "Open Sans", sans-serif';
-        ctx.textAlign = "left";
-        ctx.fillText(layers[i], pad + 6, yy + 2);
-        hits.push({ x: pad + 56, y: yy - 2, r: 28, layer: i });
+        if (wide) {
+          var yy = 84 + i * 22;
+          ctx.fillStyle = on ? C.petrol : C.paper;
+          ctx.strokeStyle = on ? C.petrol : C.lineStrong;
+          ctx.fillRect(pad, yy - 12, 112, 20);
+          ctx.strokeRect(pad, yy - 12, 112, 20);
+          ctx.fillStyle = on ? "#fff" : C.soft;
+          ctx.font = '600 9px "Open Sans", sans-serif';
+          ctx.textAlign = "left";
+          ctx.fillText(layers[i], pad + 6, yy + 2);
+          hits.push({ x: pad + 56, y: yy - 2, r: 28, layer: i });
+        } else {
+          var lw = (w - pad * 2) / 6;
+          var lx = pad + i * lw;
+          ctx.fillStyle = on ? C.petrol : C.paper;
+          ctx.strokeStyle = on ? C.petrol : C.lineStrong;
+          ctx.fillRect(lx + 1, 6, lw - 3, 18);
+          ctx.strokeRect(lx + 1, 6, lw - 3, 18);
+          ctx.fillStyle = on ? "#fff" : C.soft;
+          ctx.font = '600 8px "Open Sans", sans-serif';
+          ctx.textAlign = "center";
+          ctx.fillText(layers[i].split(" ")[0], lx + lw / 2, 18);
+          hits.push({ x: lx + lw / 2, y: 15, r: lw / 2, layer: i });
+        }
       }
       readout.innerHTML = '<span>x<sub>' + current + '</sub></span><span>' + (DE ? "Stream" : "stream") + ' <b>' + stream.map(function (v) { return v.toFixed(1); }).join(" · ") + '</b></span><span>' + (DE ? "Update" : "update") + ' <b>' + update.map(function (v) { return v.toFixed(1); }).join(" · ") + '</b></span>';
     }
@@ -2655,6 +2695,19 @@
     el.className = "ls-manifold-scene";
     el.innerHTML = '<div id="ls-dual-manifolds" class="ls-dual-manifolds"><div class="tm-manifold-loading"><span class="tm-spinner" aria-hidden="true"></span><span>' + (DE ? "Lade die Mannigfaltigkeiten …" : "Loading the manifolds …") + '</span></div></div><div id="ls-dual-controls" class="ls-dual-controls"></div>';
     root.appendChild(el);
+    var next = document.createElement("div");
+    next.className = "ls-scene-row";
+    var nextBtn = document.createElement("button");
+    nextBtn.type = "button";
+    nextBtn.className = "ls-btn ls-btn--primary ls-btn--tiny";
+    nextBtn.textContent = DE ? "Weiter →" : "Next →";
+    nextBtn.addEventListener("click", function () {
+      if (!window.LearnSys) return;
+      var st = LearnSys.state();
+      LearnSys.go(st.day, st.step + 1);
+    });
+    next.appendChild(nextBtn);
+    el.appendChild(next);
     var drawn = false;
     function draw() {
       if (drawn) return;
