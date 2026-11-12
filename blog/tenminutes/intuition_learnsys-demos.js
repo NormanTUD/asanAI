@@ -1417,7 +1417,7 @@
       '<div class="ls-loop-tree" aria-live="polite"></div>' +
       '<div class="ls-loop-viz"><div class="ls-loop-bars"></div><div class="ls-loop-landscape" hidden><canvas class="ls-canvas" role="img"></canvas></div></div>' +
       '<div class="ls-scene-row ls-loop-modes"></div>' +
-      '<div class="ls-scene-row ls-loop-actions"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loop-next">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-loop-temp" min="0.05" max="1.8" step="0.05" value="0.8"><output>0.80</output></label></div>' +
+      '<div class="ls-scene-row ls-loop-actions"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-back" aria-label="' + (DE ? "Letztes Token zurücknehmen" : "Take back the last token") + '">' + (DE ? "← Zurück" : "← Back") + '</button><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loop-next">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-loop-temp" min="0.05" max="1.8" step="0.05" value="0.8"><output>0.80</output></label></div>' +
       '<div class="ls-loop-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var sentenceEl = el.querySelector(".ls-loop-sentence");
@@ -1427,6 +1427,7 @@
     var tempEl = el.querySelector(".ls-loop-temp");
     var tempOut = el.querySelector(".ls-loop-actions output");
     var nextBtn = el.querySelector(".ls-loop-next");
+    var backBtn = el.querySelector(".ls-loop-back");
     var landEl = el.querySelector(".ls-loop-landscape");
     var landCanvas = landEl.querySelector("canvas");
     var landscape = true, landSize = null;
@@ -1434,6 +1435,10 @@
     var landDrag = null, landMoved = false, landHits = [];
     var landBall = { x: 0, y: 0, init: false, animating: false };
     var landTrail = [];
+    var pathWells = [];
+    var pathProb = [];
+    var navPast = [];
+    var navFuture = [];
     var revealed = [];
     var liveReveal = [];
     var knownProbs = {};
@@ -1675,7 +1680,7 @@
         return { t: it.t, x: it.x, y: it.y, p: p == null ? 0 : p, current: p != null, known: p != null };
       });
       liveReveal = items.filter(function (it) { return it.current; }).map(function (it) { return { x: it.x, y: it.y }; });
-      var wells = landWells(items.filter(function (it) { return it.known; }));
+      var wells = landWells(items.filter(function (it) { return it.known; })).concat(pathWells);
       var currentItems = items.filter(function (it) { return it.current; }).sort(function (a, b) { return b.p - a.p; });
       var top = currentItems[0] || null;
       lastProbs = probByToken;
@@ -1831,41 +1836,67 @@
       }
       landHits = [];
 
-      // The actual chosen path, drawn on the token plane at its fixed
-      // positions. Clicking a branch or stepping moves this line.
+      // The actual chosen path. Each chosen token keeps the probability it
+      // had when it was picked, so its valley stays in the surface and the
+      // golden line rolls through a chain of valleys instead of jumping
+      // across the plane.
       var pathPts = [];
       generated.forEach(function (tok, idx) {
         var c = catalogByToken[tok];
         if (!c) return;
         var planePt = landRaw(c.x, c.y, PLANE_Z);
         var p = probByToken[tok];
-        var surfPt = landRaw(c.x, c.y, landZ(p == null ? BASE_PROB : p));
+        if (p == null && pathProb[idx] != null) p = pathProb[idx];
+        var hasP = p != null;
+        var surfPt = landRaw(c.x, c.y, landZ(hasP ? p : BASE_PROB));
         pathPts.push({
           t: tok, idx: idx,
           px: sx(planePt.x), py: sy(planePt.y),
           sx: sx(surfPt.x), sy: sy(surfPt.y),
-          current: p != null
+          p: hasP ? p : null,
+          current: probByToken[tok] != null
         });
       });
       lastPath = pathPts.slice();
       if (pathPts.length) {
         ctx.lineJoin = "round";
+        ctx.setLineDash([2, 3]);
+        ctx.strokeStyle = C.gold;
+        ctx.globalAlpha = 0.35;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        pathPts.forEach(function (p) {
+          ctx.moveTo(p.px, p.py);
+          ctx.lineTo(p.sx, p.sy);
+        });
+        ctx.stroke();
+        ctx.setLineDash([]);
+
         ctx.strokeStyle = C.paper;
         ctx.globalAlpha = 0.8;
         ctx.lineWidth = 5;
         ctx.beginPath();
-        pathPts.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.px, p.py); else ctx.lineTo(p.px, p.py); });
+        pathPts.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.sx, p.sy); else ctx.lineTo(p.sx, p.sy); });
         ctx.stroke();
         ctx.strokeStyle = C.gold;
         ctx.globalAlpha = 0.95;
         ctx.lineWidth = 2.6;
         ctx.beginPath();
-        pathPts.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.px, p.py); else ctx.lineTo(p.px, p.py); });
+        pathPts.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.sx, p.sy); else ctx.lineTo(p.sx, p.sy); });
         ctx.stroke();
         ctx.globalAlpha = 1;
+
         pathPts.forEach(function (p) {
           ctx.beginPath();
-          ctx.arc(p.px, p.py, 7, 0, Math.PI * 2);
+          ctx.arc(p.px, p.py, 3, 0, Math.PI * 2);
+          ctx.fillStyle = C.paper;
+          ctx.fill();
+          ctx.strokeStyle = C.gold;
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(p.sx, p.sy, 7, 0, Math.PI * 2);
           ctx.fillStyle = C.paper;
           ctx.fill();
           ctx.strokeStyle = C.gold;
@@ -1875,7 +1906,7 @@
           ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          ctx.fillText(String(p.idx + 1), p.px, p.py + 0.5);
+          ctx.fillText(String(p.idx + 1), p.sx, p.sy + 0.5);
         });
         ctx.textBaseline = "middle";
       }
@@ -1984,8 +2015,20 @@
         }
       });
 
-      if (top) {
-        var ballPt = landRaw(top.x, top.y, landZ(top.p));
+      var ballTarget = null;
+      if (generated.length) {
+        var lastIdx = generated.length - 1;
+        var lastToken = generated[lastIdx];
+        var lastCat = catalogByToken[lastToken];
+        if (lastCat) {
+          var lastP = probByToken[lastToken];
+          if (lastP == null && pathProb[lastIdx] != null) lastP = pathProb[lastIdx];
+          ballTarget = { x: lastCat.x, y: lastCat.y, p: lastP == null ? BASE_PROB : lastP };
+        }
+      }
+      if (!ballTarget && top) ballTarget = top;
+      if (ballTarget) {
+        var ballPt = landRaw(ballTarget.x, ballTarget.y, landZ(ballTarget.p));
         var btx = sx(ballPt.x), bty = sy(ballPt.y);
         if (!landBall.init) { landBall.x = btx; landBall.y = bty; landBall.init = true; }
         var bdx = btx - landBall.x, bdy = bty - landBall.y;
@@ -2023,6 +2066,8 @@
         ctx.lineWidth = 1.5;
         ctx.stroke();
         if (landBall.animating) requestAnimationFrame(drawLandscape);
+      }
+      if (top) {
         if (readout) {
           var cells = readout.querySelectorAll("span");
           if (cells[2]) cells[2].innerHTML = (DE ? "Top" : "Top") + ' <b>' + api.esc(top.t) + '</b>';
@@ -2140,6 +2185,7 @@
     function renderBars() {
       var opts = currentOptions();
       var atEnd = generated.length >= MAX_STEPS;
+      if (backBtn) backBtn.disabled = !generated.length;
       if (!opts.length) {
         barsEl.innerHTML = '<p class="ls-loop-done">' + (DE ? "Satz beendet: <|endoftext|> ausgegeben. Die Schleife stoppt." : "Sentence finished: <|endoftext|> emitted. The loop stops.") + '</p>';
         if (nextBtn) { nextBtn.disabled = true; nextBtn.textContent = DE ? "Fertig" : "Done"; }
@@ -2195,6 +2241,37 @@
       });
       return { tokens: gen, history: hist };
     }
+    function snapshotState() {
+      return {
+        generated: generated.slice(),
+        loopHistory: loopHistory.slice(),
+        pathWells: pathWells.slice(),
+        pathProb: pathProb.slice(),
+        revealed: revealed.slice()
+      };
+    }
+    function restoreState(s) {
+      generated = s.generated.slice();
+      loopHistory = s.loopHistory.slice();
+      pathWells = s.pathWells.slice();
+      pathProb = s.pathProb.slice();
+      revealed = s.revealed.slice();
+      landBall.init = false;
+      landTrail = [];
+      renderSentence(); renderTree(); renderBars();
+    }
+    function undo() {
+      if (!navPast.length) return false;
+      navFuture.push(snapshotState());
+      restoreState(navPast.pop());
+      return true;
+    }
+    function redo() {
+      if (!navFuture.length) return false;
+      navPast.push(snapshotState());
+      restoreState(navFuture.pop());
+      return true;
+    }
     function publish() {
       var sample = samplePath();
       SHARED.loop = {
@@ -2207,8 +2284,14 @@
     }
     function choose(token) {
       if (!token || generated.length >= MAX_STEPS) return;
+      navPast.push(snapshotState());
+      navFuture = [];
       var opts = choicesFor();
       var alts = opts.map(function (o) { return { token: o.t, logit: o.l }; });
+      var probs = softmax(opts.map(function (o) { return o.l; }), temp);
+      var pick = -1;
+      opts.forEach(function (o, i) { if (o.t === token) pick = i; });
+      var pickP = pick >= 0 ? probs[pick] : null;
       var prev = generated.length ? generated[generated.length - 1] : null;
       loopHistory.push({
         index: generated.length,
@@ -2218,6 +2301,10 @@
       token.split(" ").forEach(function (piece) {
         revealSegment(prev, piece);
         prev = piece;
+        pathProb[generated.length] = pickP;
+        if (catalogByToken[piece] && pickP != null) {
+          pathWells.push({ x: catalogByToken[piece].x, y: catalogByToken[piece].y, p: pickP });
+        }
         generated.push(piece);
       });
       if (generated.length > MAX_STEPS) generated = generated.slice(0, MAX_STEPS);
@@ -2250,6 +2337,8 @@
     }
     function reset() {
       generated = []; loopHistory = []; revealed = []; knownProbs = {};
+      pathWells = []; pathProb = []; navPast = []; navFuture = [];
+      landBall.init = false; landTrail = [];
       tempShown = temp;
       seedReveal(); renderSentence(); renderTree(); renderBars();
     }
@@ -2265,6 +2354,7 @@
       el.querySelector(".ls-loop-modes").appendChild(b);
     });
     el.querySelector(".ls-loop-next").addEventListener("click", sample);
+    if (backBtn) backBtn.addEventListener("click", function () { undo(); });
     el.querySelector(".ls-loop-reset").addEventListener("click", reset);
     tempEl.addEventListener("input", function () {
       temp = parseFloat(tempEl.value) || 0.8;
@@ -2291,7 +2381,9 @@
       };
     };
     return {
-      update: function (s) {
+      update: function (s, meta) {
+        if (meta && meta.dir < 0) undo();
+        else if (meta && meta.dir > 0) redo();
         if (!s) return;
         if (s.mode) setMode(s.mode);
         if (typeof s.temp === "number") {
@@ -2306,6 +2398,7 @@
       },
       onKey: function (e) {
         if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (e.key === "ArrowLeft") return undo();
         if (e.key !== "ArrowRight" && e.key !== " " && e.key !== "PageDown") return false;
         var opts = choicesFor();
         if (!opts.length || generated.length >= MAX_STEPS) return false;
@@ -5179,10 +5272,10 @@
       }
     }
     return {
-      update: function (s) {
+      update: function (s, meta) {
         var next = (s && s.scene) || "embedding";
         if (next !== name) mount(next);
-        if (scene && scene.update) scene.update(s || {});
+        if (scene && scene.update) scene.update(s || {}, meta);
       },
       resize: function () { if (scene && scene.resize) scene.resize(); },
       onKey: function (e) { return scene && scene.onKey ? scene.onKey(e) : false; },

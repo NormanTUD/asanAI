@@ -82,6 +82,8 @@
   var state = { track: "all", depth: "standard", font: 1, day: 0, step: 0 };
   var demo = null;
   var currentDemoDay = null;
+  var lastDemoDay = null;
+  var lastDemoStep = null;
   var els = {};
   var tipTimer = 0;
   var tipTerm = null;
@@ -771,8 +773,14 @@
 
   function mountDemo(d, s) {
     if (morphHiddenEl) { morphHiddenEl.style.opacity = ""; morphHiddenEl = null; }
+    var meta = { step: state.step, dir: 0 };
+    if (lastDemoDay === state.day && lastDemoStep != null) {
+      meta.dir = state.step - lastDemoStep;
+    }
+    lastDemoDay = state.day;
+    lastDemoStep = state.step;
     if (demo && currentDemoDay === d.id) {
-      if (demo.update) demo.update(s.demoState || {});
+      if (demo.update) demo.update(s.demoState || {}, meta);
       return;
     }
     if (demo && demo.destroy) {
@@ -802,7 +810,7 @@
       go: go,
       goStep: function (step) { go(state.day, step); }
     });
-    if (demo && demo.update) demo.update(s.demoState || {});
+    if (demo && demo.update) demo.update(s.demoState || {}, meta);
   }
 
   function renderAll() {
