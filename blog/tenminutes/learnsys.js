@@ -1027,7 +1027,7 @@
   function pressPositionDigit(digit) {
     posBuffer += String(digit);
     clearTimeout(posTimer);
-    posTimer = setTimeout(function () { posBuffer = ""; }, 650);
+    posTimer = setTimeout(function () { posBuffer = ""; }, 500);
     var n = parseInt(posBuffer, 10);
     if (!isFinite(n)) return;
     if (posBuffer.length === 1) {
