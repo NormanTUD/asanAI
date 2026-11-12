@@ -1149,7 +1149,9 @@
     var el = document.createElement("div");
     el.className = "ls-code-scene";
     el.innerHTML =
-      '<div class="ls-code-window"><div class="ls-code-bar"><i></i><i></i><i></i><span>' + (DE ? "himmel.py" : "sky.py") + '</span></div><pre class="ls-code-body"><code></code></pre></div>' +
+      '<div class="ls-code-window"><div class="ls-code-bar"><i></i><i></i><i></i><span>' + (DE ? "himmel.py" : "sky.py") + '</span></div>' +
+        '<div class="ls-code-chat"><div class="ls-code-msg is-user">' + (DE ? "Schreibe ein Python-Programm, das berechnet, wie stark blaues und rotes Licht in der Atmosphäre gestreut werden." : "Write a Python program that calculates how strongly blue and red light are scattered in the atmosphere.") + '</div><div class="ls-code-msg is-ai">' + (DE ? "Klar. Das Programm berechnet das Rayleigh-Streuungsverhältnis für 450 nm und 650 nm." : "Sure. The program computes the Rayleigh scattering ratio for 450 nm and 650 nm.") + '</div></div>' +
+        '<pre class="ls-code-body"><code></code></pre></div>' +
       '<div class="ls-code-terminal"><div class="ls-code-bar"><i></i><i></i><i></i><span>Terminal</span></div><div class="ls-code-term"><b>$ ' + (DE ? "python3 himmel.py" : "python3 sky.py") + '</b><span></span></div></div>' +
       '<button type="button" class="ls-btn ls-btn--tiny ls-code-replay">' + (DE ? "Nochmal" : "Replay") + '</button>';
     root.appendChild(el);
