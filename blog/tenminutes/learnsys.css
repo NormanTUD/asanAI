@@ -592,6 +592,7 @@ h1,h2,h3,h4{
 .ls-loop-sentence .pred{color:var(--ls-petrol);font-weight:600}
 .ls-loop-sentence .eos{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;color:var(--ls-muted);background:rgba(0,75,111,.06);border:1px solid rgba(0,75,111,.14);padding:1px 4px;white-space:nowrap}
 .ls-loop-done{margin:0;font:var(--ls-fs-ui-sm)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-loop-eos-note{margin:6px 0 0;padding:5px 7px;border:1px solid rgba(0,75,111,.12);background:rgba(255,255,255,.74);font:var(--ls-fs-ui-sm)/1.4 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-loop-tree{font-size:var(--ls-fs-ui-sm);line-height:1.6;color:var(--ls-soft);min-height:3.2em}
 .ls-loop-line+.ls-loop-line{margin-top:4px}
 .ls-loop-base{color:var(--ls-muted)}

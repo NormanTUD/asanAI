@@ -2420,14 +2420,18 @@
         var acc = 0;
         for (var k = 0; k < order.length; k++) { acc += order[k].p; if (acc >= 0.9) { cut = order[k].i; break; } }
       }
+      var onlyEos = opts.length === 1 && opts[0].t === EOS;
       barsEl.innerHTML = opts.map(function (o, i) {
         var on = decodeMode === "greedy" ? i === top : (decodeMode === "topp" && probs[i] >= probs[cut]);
+        var label = o.t === EOS ? (DE ? "Ende" : "End") : o.t;
         return '<button type="button" class="ls-loop-bar' + (on ? " is-on" : "") + '" data-bar="' + i + '"' +
-          (atEnd ? ' disabled' : '') + '>' +
-          '<span class="ls-loop-bar-label">' + api.esc(o.t) + '</span>' +
+          (atEnd ? ' disabled' : '') + ' title="' + api.esc(o.t) + '" aria-label="' + api.esc(o.t) + '">' +
+          '<span class="ls-loop-bar-label">' + api.esc(label) + '</span>' +
           '<span class="ls-loop-bar-track"><i style="width:' + (probs[i] * 100).toFixed(1) + '%"></i></span>' +
           '<span class="ls-loop-bar-val">' + (probs[i] * 100).toFixed(0) + '%</span></button>';
-      }).join("");
+      }).join("") + (onlyEos
+        ? '<p class="ls-loop-eos-note">' + (DE ? "Mit diesem Token sagt das LLM, dass diese Antwort fertig ist." : "With this token the LLM says that this answer is finished.") + '</p>'
+        : "");
       barsEl.querySelectorAll("[data-bar]").forEach(function (b) {
         b.addEventListener("click", function () { choose(opts[parseInt(b.getAttribute("data-bar"), 10)].t); });
       });
