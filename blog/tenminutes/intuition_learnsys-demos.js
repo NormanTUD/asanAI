@@ -2541,6 +2541,7 @@
     var DE = api.lang === "de";
     var WORDS = DE ? ["Hund", "Katze", "Baum", "Haus", "Auto", "Buch", "Maus", "Lampe", "Blume", "Stein", "Tisch", "Stuhl", "Wasser", "Feuer", "Nacht", "Sonne", "Regen", "Mond", "Kaffee", "Stern", "Fluss", "Berg", "Vogel", "Fisch", "Milch", "Zucker", "Tür", "Fenster", "Brücke", "Feld", "Küche", "Garten", "Schiff", "Uhr", "Straße", "Stadt", "Brot", "Apfel", "Tee", "Hut", "Glocke"] : ["Dog", "Cat", "Tree", "House", "Car", "Book", "Mouse", "Lamp", "Flower", "Stone", "Table", "Chair", "Water", "Fire", "Night", "Sun", "Rain", "Moon", "Coffee", "Star", "River", "Mountain", "Bird", "Fish", "Milk", "Sugar", "Door", "Window", "Bridge", "Field", "Kitchen", "Garden", "Ship", "Clock", "Road", "City", "Bread", "Apple", "Tea", "Hat", "Bell"];
     var PALETTE = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
+    var HUES = [188, 220, 260, 290, 320, 350, 15, 40, 60, 90, 140, 170, 200, 240, 280, 310, 340, 25, 50, 75, 120, 155, 195, 230, 270, 300, 330, 10, 45, 100, 160, 210, 250, 295, 335, 20, 65, 130, 185, 245, 305];
     var CW = 1120, CH = 392;
     var el = document.createElement("div");
     el.className = "ls-meadow-scene";
@@ -2591,6 +2592,13 @@
       return [Math.round(c1[0] + (c2[0] - c1[0]) * t), Math.round(c1[1] + (c2[1] - c1[1]) * t), Math.round(c1[2] + (c2[2] - c1[2]) * t)];
     }
     function rgb(c) { return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")"; }
+    function hsl(h, s2, l2) {
+      s2 /= 100; l2 /= 100;
+      var k = function (n) { return (n + h / 30) % 12; };
+      var a = s2 * Math.min(l2, 1 - l2);
+      var f = function (n) { return l2 - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))); };
+      return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
+    }
     function gen2D(n) {
       var rng = mulberry32(7 + n * 13);
       var cols = Math.ceil(Math.sqrt(n * CW / CH));
@@ -2605,7 +2613,7 @@
           x: clamp((cx + 0.3 + jx) / cols * CW, 26, CW - 26),
           y: clamp((cy + 0.3 + jy) / rows * CH, 26, CH - 26),
           w: WORDS[i % WORDS.length],
-          c: PALETTE[i % PALETTE.length],
+          c: HUES[i % HUES.length],
           i: i
         });
       }
@@ -2622,8 +2630,7 @@
     }
     function colorFor(m, idx, pal, scale, arr) {
       var q = clamp(m / scale, 0, 1);
-      var base = hexToRgb(arr[idx].c);
-      var col = mix(base, pal.surface, pal.dark ? 0.62 : 0.38 + 0.22 * q);
+      var col = hsl(arr[idx].c, 34 + 16 * q, pal.dark ? 28 + 16 * q : 64 + 16 * q);
       var eps = 0.32 * scale;
       var edgePx = 4.8;
       if (m < eps) col = mix(col, pal.gold, 0.55 * (1 - smoothstep(edgePx, eps, m)));
