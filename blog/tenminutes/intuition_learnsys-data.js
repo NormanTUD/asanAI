@@ -642,35 +642,35 @@
 
   var insideSteps = DE ? [
     {
-      kicker: "04 / Das Modell",
-      title: "Ein Modell ist ein Stapel von Funktionen",
-      body: "Ein neuronales Netz entsteht, indem man Funktionen nacheinander anwendet. Eine Schicht transformiert ihre Eingabe, die nächste transformiert das Ergebnis, und der Stapel macht aus einer kleinen Operation ein tiefes Modell. Tiefe ist Komposition: viele einfache Schritte, jeder füttert den nächsten.",
-      watch: "Klicke eine Stufe an. Was geht hinein, was kommt heraus?",
-      demoState: { scene: "stack", mode: "pipeline" },
-      context: "Die Reihenfolge ist die echte Architektur: tokenisieren, einbetten, Position addieren, attenden, Feed-Forward, Residual. Die Demos sind vereinfacht.",
+      kicker: "04 / Modelle",
+      title: "Modelle",
+      body: "Ein Modell schätzt eine Funktion. Manchmal kennst du sie genau, etwa f(x) = x + 1. Manchmal kennst du sie nicht: Wie berechnet man aus dem bisherigen Text das nächste Wort? Niemand kann diese Funktion klassisch hinschreiben; sie ist viel zu kompliziert. Also geben wir dem Computer Daten. Er sieht sie sich immer wieder an und findet mit den Bausteinen, die wir ihm geben, eine Funktion, die die echte gut genug abschätzt. Das nennt sich Machine Learning. LLMs sind Machine Learning und nutzen vier Bausteine: Tokenizer, Embedding, Transformer-Blöcke aus Attention und neuronalen Netzen, und eine Unembedding-Schicht.",
+      watch: "Sieh zu, wie aus Daten eine Kurve wird, und klicke die Bausteine an. Wo wird aus Text ein Vektor, wo wieder eine Verteilung?",
+      demoState: { scene: "model" },
+      context: "Die echte Funktion ist nirgends aufgeschrieben. Das Training sucht Parameter, mit denen die Bausteine zusammen eine gute Näherung ergeben.",
       deep: "Klassisches Programmieren beginnt mit dem Verfahren: Du schreibst jeden Schritt vor, und der Computer führt ihn aus. Bei KI drehst du das um: Du gibst Beispiele mit passenden Ausgaben, und das Training sucht die Funktion dazwischen. Die Schichten sind die Form, in der diese Funktion Platz findet.",
       boxes: [
         box("in-11", "Mathematik", "Der Stapel", "output = layer₃(layer₂(layer₁(input))). Jede Schicht ist eine Funktion mit Parametern; die Komposition ist das Modell."),
-        box("in-12", "Technik", "Sechs Schritte", "Jedes Token läuft durch dieselben sechs Schritte: Tokenize, Embed, Position, Attention, FFN, Residual. Das Modell bewegt Punkte in einem hochdimensionalen Raum; das Training formt die Winkel zu plausiblen Fortsetzungen."),
+        box("mod-1", "Technik", "Die vier Bausteine", "Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Transformer-Blöcke: Attention mischt Tokens, das neuronale Netz rechnet pro Token. Unembedding: Vektor → Scores über das Vokabular."),
         box("in-13", "Grenze", "Was heißt plausibel?", "Plausibel heißt: Die Fortsetzung kam im Trainingstext vor. Es heißt nicht, dass das Modell eine eigene Vorstellung von Wahrheit hat."),
-        box("in-14", "Geometrie", "Winkel statt Abstand", "Das Modell vergleicht Richtungen. Deshalb nutzt die Seite standardmäßig den Großkreis: projiziere die Vektoren auf die Einheitskugel und miss den Winkel. Die 3D-Ansicht ist eine Projektion dieser Kugel.")
+        box("mod-extra", "Grenze", "Was fehlt hier?", "Es gibt weitere Architekturen und Details, die wir hier nicht besprechen: Mixture-of-Experts, andere Normalisierungen, Multi-Query-Attention, verschiedene Positionsverfahren und viele Trainingstricks. Hier geht es nur um die Intuition.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
     }
   ] : [
     {
-      kicker: "04 / The model",
-      title: "A model is a stack of functions",
-      body: "A neural network is built by applying functions one after another. One layer transforms its input, the next layer transforms that result, and the stack turns a small operation into a deep model. The depth is composition: many simple steps, each feeding the next.",
-      watch: "Click a stage. What goes in, what comes out?",
-      demoState: { scene: "stack", mode: "pipeline" },
-      context: "The order is the real architecture: tokenize, embed, add position, attend, feed-forward, residual. The demos are simplified.",
+      kicker: "04 / Models",
+      title: "Models",
+      body: "A model estimates a function. Sometimes you know it exactly, for example f(x) = x + 1. Sometimes you do not: how do you compute the next word from the text so far? Nobody can write that function down in the classical way; it is far too complicated. So we give the computer data. It looks at the data again and again and, with the building blocks we provide, finds a function that approximates the real one well enough. That is machine learning. LLMs are machine learning and use four building blocks: a tokenizer, an embedding, transformer blocks made of attention and neural networks, and an unembedding layer.",
+      watch: "Watch data become a curve, then click the building blocks. Where does text become a vector, and where does it become a distribution again?",
+      demoState: { scene: "model" },
+      context: "The real function is written down nowhere. Training searches for parameters that make the building blocks together a good approximation.",
       deep: "Classical programming starts with the procedure: you write down every step, and the computer executes it. AI reverses that: you provide examples with matching outputs, and training searches for the function in between. The layers are the shape that function takes.",
       boxes: [
         box("in-11", "Mathematics", "The stack", "output = layer₃(layer₂(layer₁(input))). Each layer is a function with parameters; the composition is the model."),
-        box("in-12", "Technique", "Six steps", "Every token runs through the same six steps: tokenize, embed, position, attention, FFN, residual. The model moves points in a high-dimensional space; training shapes the angles toward plausible continuations."),
+        box("mod-1", "Technique", "The four building blocks", "Tokenizer: text → tokens. Embedding: tokens → vectors. Transformer blocks: attention mixes tokens, the neural network computes per token. Unembedding: vector → scores over the vocabulary."),
         box("in-13", "Limit", "What does plausible mean?", "Plausible means the continuation occurred in the training text. It does not mean the model has its own notion of truth."),
-        box("in-14", "Geometry", "Angles, not distance", "The model compares directions. That is why the page uses the great-circle metric by default: project the vectors onto the unit sphere and measure the angle. The 3D view is a projection of that sphere.")
+        box("mod-extra", "Limit", "What is missing here?", "There are further architectures and details we do not cover here: mixture-of-experts, other normalisations, multi-query attention, different positional schemes, and many training tricks. This page is about the intuition.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
     }
