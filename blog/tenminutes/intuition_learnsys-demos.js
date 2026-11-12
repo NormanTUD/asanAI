@@ -3496,10 +3496,11 @@
       axisLabel([1.28, 0, 0], "x", Cc.blue);
       axisLabel([0, 1.28, 0], "y", Cc.green);
       axisLabel([0, 0, 1.28], "z", Cc.gold);
-      var maxT = Math.max(1.6, Math.min(60, posAnim * 0.14));
+      var maxT = Math.max(1.6, posAnim * 0.14);
+      var steps = Math.max(260, Math.min(2200, Math.ceil(maxT * 2)));
       var prev = null;
-      for (k = 0; k <= 260; k++) {
-        var t = maxT * k / 260;
+      for (k = 0; k <= steps; k++) {
+        var t = maxT * k / steps;
         var v = curvePoint(t);
         if (metric === "angle") v = unit3(v);
         var q = P(v);
@@ -3553,18 +3554,19 @@
       ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.fillStyle = Cc.green; ctx.fill();
       ctx.restore();
       ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.strokeStyle = Cc.paper; ctx.lineWidth = 2; ctx.stroke();
+      curve.__lsPosition = { pos: pos, maxT: maxT, steps: steps, metric: metric };
       ctx.fillStyle = Cc.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
       ctx.fillText((DE ? "Position " : "position ") + pos, 12, 18);
       ctx.textAlign = "right";
       ctx.fillText(metric === "euclid"
         ? (DE ? "Gerade im Raum" : "straight line in space")
-        : (DE ? "Großkreis auf der Einheitskugel" : "great circle on the unit sphere"), w - 12, 18);
+        : (DE ? "Länge im Plot = Großkreis" : "length in plot = great circle"), w - 12, 18);
       ctx.textAlign = "left";
       ctx.fillText(metric === "euclid" ? (DE ? "Länge" : "length") : (DE ? "Großkreis" : "great circle"), cp.x + 10, cp.y + 3);
       var chordLen = Math.hypot(cur[0], cur[1], cur[2]);
       var geoLen = metric === "angle" ? theta : chordLen;
       var angleDeg = (metric === "angle" ? theta : Math.acos(Math.max(-1, Math.min(1, cur[0] / (chordLen || 1))))) * 180 / Math.PI;
-      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + pos + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + cur.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (metric === "angle" ? (DE ? "Großkreis" : "great circle") : (DE ? "Länge" : "length")) + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span>';
+      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + pos + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + cur.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (metric === "angle" ? (DE ? "Distanz (Großkreis)" : "distance (great circle)") : (DE ? "Länge" : "length")) + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span>';
     }
     function draw() {
       drawHeat(); drawCurve();

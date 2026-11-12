@@ -14,7 +14,7 @@
     {
       kicker: "01 / Die Idee",
       title: "Was ist ein LLM?",
-      body: "Dieser Adventskalender öffnet jeden Tag ein Türchen und hilft dir zu verstehen, wie diese Systeme technisch funktionieren. Ein Large Language Model (LLM) macht dabei immer dieselbe Sache: Es sagt das nächste Token voraus. Früher musstest du bei einer Suche die Websites einzeln öffnen, heute bekommst du eine Zusammenfassung. In einer KI-Chat-Sitzung stellst du eine komplexe Frage und bekommst schnell eine oft nützliche Antwort. Wie geht das? Suchfeld, Sprachbefehl, Zusammenfassung und Chat sind eine Schleife, immer wieder.",
+      body: "Dieser Adventskalender öffnet jeden Tag ein Türchen und hilft dir zu verstehen, wie diese Systeme technisch funktionieren. Ein Large Language Model (LLM) macht dabei immer dieselbe Sache: Es sagt das nächste Token voraus. Trainiert werden diese Netze mit sehr großen Textmengen; wie das Training im Detail funktioniert, kommt später. Früher musstest du bei einer Suche die Websites einzeln öffnen, heute bekommst du eine Zusammenfassung. In einer KI-Chat-Sitzung stellst du eine komplexe Frage und bekommst schnell eine oft nützliche Antwort. Wie geht das? Suchfeld, Sprachbefehl, Zusammenfassung und Chat sind eine Schleife, immer wieder.",
       watch: "Klicke auf ein Handy, um die Animation neu zu starten. Woher kommt die Antwort?",
       demoState: { scene: "phone" },
       context: "Die Suchmaschine schlägt keine gespeicherte Antwort nach. Die Zusammenfassung und die Chat-Antwort werden Token für Token geschrieben, und dieselbe Schleife läuft im Rechenzentrum dahinter.",
@@ -68,7 +68,7 @@
     {
       kicker: "01 / The idea",
       title: "What is an LLM?",
-      body: "This Advent calendar opens one door every day and helps you understand how these systems work technically. A Large Language Model (LLM) always does the same thing: it predicts the next token. In the past you had to open search results one by one; today you often get a summary. In an AI chat session you ask a complex question and quickly get a useful answer. How does that work? Search box, voice command, summary, and chat are one loop, repeated.",
+      body: "This Advent calendar opens one door every day and helps you understand how these systems work technically. A Large Language Model (LLM) always does the same thing: it predicts the next token. These networks are trained on very large amounts of text; how that training works in detail comes later. In the past you had to open search results one by one; today you often get a summary. In an AI chat session you ask a complex question and quickly get a useful answer. How does that work? Search box, voice command, summary, and chat are one loop, repeated.",
       watch: "Click a phone to replay the animation. Where does the answer come from?",
       demoState: { scene: "phone" },
       context: "The search engine does not look up a stored answer. The summary and the chat answer are written token by token, and the same loop runs in the data centre behind it.",
@@ -346,22 +346,25 @@
     {
       kicker: "05 / Position",
       title: "Jeder Platz bekommt einen Fingerabdruck",
-      body: "Attention hat kein Gefühl für Reihenfolge. Ohne Positionssignal sind „der Mann beißt den Hund“ und „der Hund beißt den Mann“ derselbe Beutel von Vektoren. Eine sinusförmige Kodierung gibt jedem Platz einen Fingerabdruck: Jedes Dimensionenpaar schwingt mit einer anderen Frequenz. In der Winkelansicht normieren wir den Vektor und messen den Großkreis auf der Kugel; so vergleicht das Modell Richtungen, nicht Längen.",
-      watch: "Bewege den Positionsregler und wechsle zwischen Euklid und Winkel. Was bleibt stabil, was wandert auf der Kugel?",
+      body: "Ein Token allein weiß nicht, wo es steht: „Hund“ kann an jeder Stelle im Satz auftreten. Damit die Reihenfolge zählt, kodieren wir die Position in den Token-Vektor. Dafür gibt es viele Methoden; die Demo zeigt eine sinusförmige Variante. Viele moderne Modelle wie Llama nutzen RoPE, das die Richtung des Vektors mit der Position dreht. Wichtig ist: Die Position wird Teil des Tokens, und alle folgenden Schichten sehen diese Version.",
+      watch: "Bewege den Positionsregler. Wie verändert sich der Vektor, wie die Distanz im Plot?",
       demoState: { scene: "position" },
-      context: "Die Position wird zum Token-Vektor addiert. Die Winkelansicht projiziert den Vektor auf die Einheitskugel und misst den Großkreis; in höheren Dimensionen ist es dieselbe Rechnung auf einer Hypersphäre.",
-      deep: "Die Frequenz staffelt sich über die Dimensionen. Frühe Dimensionen drehen schnell, späte langsam. So kann das Modell relative Abstände über viele Positionen lesen, ohne jede Position einzeln zu lernen.",
+      context: "Die Position wird zum Token-Vektor addiert; bei RoPE wird stattdessen die Query-/Key-Richtung gedreht. Ab dann rechnet das Netz nur noch mit der positionsbehafteten Version.",
+      deep: "Die Demo zeigt nur die ersten drei Dimensionen. In einem echten Modell sind es Tausende; die Großkreis-Metrik macht Richtungen vergleichbar, und schnelle und langsame Rotationen bilden zusammen ein Positionsmuster, das das Modell lernen kann.",
       boxes: [
-        box("pos-1", "Mathematik", "Die Formel", "PE(pos, 2i) = sin(pos / 10000^(2i/d)), PE(pos, 2i+1) = cos(pos / 10000^(2i/d)). Jede Dimension bekommt ihre eigene Welle.", "\\underbrace{\\begin{aligned} PE_{(\\text{pos},2i)} &= \\sin\\left(\\frac{\\text{pos}}{10000^{2i/d}}\\right) \\\\ PE_{(\\text{pos},2i+1)} &= \\cos\\left(\\frac{\\text{pos}}{10000^{2i/d}}\\right) \\end{aligned}}_{\\text{jede Dimension bekommt ihre eigene Welle}}"),
-        box("pos-2", "Technik", "Warum Sinus und Cosinus?", "Das Paar erlaubt es, eine Position als Drehung zu lesen. Relative Abstände werden zu festen Drehungen, und das Modell kann sie über viele Positionen wiederverwenden."),
-        box("pos-3", "Grenze", "Was zeigt die 3D-Kurve nicht?", "Sie zeigt nur die ersten drei Dimensionen. Ein echtes Modell nutzt Tausende; die Kurve ist eine lesbare Scheibe, keine vollständige Karte."),
-        box("pos-4", "Geometrie", "Hochdimensionale Geometrie", "In höheren Dimensionen gilt dasselbe Prinzip auf einer Hypersphäre: Vektoren werden normiert, und der Abstand ist der Winkel entlang des Großkreises. Riemann verallgemeinerte gekrümmte Räume auf beliebige Dimensionen. Hochdimensionale Räume verhalten sich oft anders als die Anschauung: In einer tiefen Loss-Landschaft ist fast jeder flache Punkt ein Sattelpunkt, kein lokales Minimum, weil es in vielen Richtungen gleichzeitig bergauf und bergab geht. Öffne diese Box nur, wenn dich die Geometrie interessiert.", "\\underbrace{d_{\\text{geo}}(u,v)}_{\\substack{\\text{Großkreis-Abstand}\\\\ \\text{auf der Einheitskugel}}} = \\underbrace{\\arccos\\!\\left(\\underbrace{\\frac{u\\cdot v}{\\|u\\|\\,\\|v\\|}}_{\\text{Kosinus des Winkels}}\\right)}_{\\text{Winkel in Radiant}}")
+        box("pos-1", "Methoden", "Welche Positionsverfahren gibt es?", "Gelernte absolute Embeddings (GPT-2, BERT), sinusförmige Kodierung (Vaswani et al. 2017), relative Position Bias (T5) und ALiBi (Press et al. 2021). RoPE (Su et al. 2021) dreht Query und Key; viele moderne Modelle wie Llama nutzen es."),
+        box("pos-2", "RoPE", "Wie funktioniert RoPE?", "RoPE dreht Query- und Key-Vektoren um einen Winkel, der von der Position abhängt. Das Skalarprodukt zweier gedrehter Vektoren hängt dann von ihrer relativen Position ab: Absolute Position wird als Rotation kodiert, relative Abstände werden sichtbar."),
+        box("pos-3", "Stellenwertsystem", "Warum schnelle und langsame Rotationen?", "Verschiedene Dimensionen drehen unterschiedlich schnell. Schnelle Rotationen unterscheiden nahe Positionen, langsame unterscheiden weit entfernte. Zusammen wirkt das wie ein Stellenwertsystem aus Einern, Zehnern und Hundertern für Positionen."),
+        box("pos-4", "Geometrie", "Was zeigt der Plot?", "Die Demo nutzt die Großkreis-Metrik: Richtungen zählen, nicht Längen. Die Länge im Plot ist der Großkreis zwischen Wort und Positionsvektor. Im hochdimensionalen Raum entstehen daraus Muster, die das Modell lernen kann, um so etwas wie „Drache an Position 5“ oder „Drache an Position 22“ zu kodieren."),
+        box("pos-5", "Grenze", "Was ist vereinfacht?", "Die Demo zeigt nur wenige Dimensionen und eine sinusförmige Kodierung. RoPE rotiert Query/Key statt des Token-Vektors. Die gezeigten Muster sind eine Intuition, nicht die exakte Implementierung."),
+        box("pos-6", "Detail", "Was passiert mit der Position danach?", "Ab dem Moment, in dem die Position zum Token gehört, bekommt jede folgende Schicht nur noch diese Version. Sie wird nicht mehr herausgeworfen. Das Token ist dann nicht mehr nur „Drache“, sondern „Drache an dieser Position“; die Varianten werden für das Netz unterscheidbar.")
       ],
       sources: [
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
-        { label: "Riemann (1854), Über die Hypothesen, welche der Geometrie zu Grunde liegen", url: "https://ia800708.us.archive.org/4/items/uberdiehypothese00b_343/uberdiehypothese00b_343.pdf" },
-        { label: "Dauphin et al. (2014), Identifying and attacking the saddle point problem", url: "https://arxiv.org/abs/1406.2572" },
-        { label: "Gudmundsson (2004), An Introduction to Riemannian Geometry", url: "http://www.matematik.lu.se/matematiklu/personal/sigma/index.html" }
+        { label: "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding", url: "https://arxiv.org/abs/2104.09864" },
+        { label: "Touvron et al. (2023), Llama 2", url: "https://arxiv.org/abs/2307.09288" },
+        { label: "Press et al. (2021), Attention with Linear Biases (ALiBi)", url: "https://arxiv.org/abs/2108.12409" },
+        { label: "Raffel et al. (2020), T5", url: "https://arxiv.org/abs/1910.10683" }
       ]
     },
     {
@@ -382,22 +385,25 @@
     {
       kicker: "05 / Position",
       title: "Every slot gets a fingerprint",
-      body: "Attention has no sense of order. Without a position signal, “man bites dog” and “dog bites man” are the same bag of vectors. A sinusoidal encoding adds a fingerprint to every slot: each pair of dimensions oscillates at a different frequency. In the angle view we normalize the vector and measure the great-circle distance on the sphere; that is how the model compares directions instead of lengths.",
-      watch: "Move the position slider and switch between Euclidean and angle. What stays stable, what moves on the sphere?",
+      body: "A token on its own does not know where it stands: “dog” can appear anywhere in the sentence. For order to matter, we encode the position into the token vector. There are many methods; the demo shows a sinusoidal variant. Many modern models such as Llama use RoPE, which rotates the direction of the vector with the position. What matters is this: the position becomes part of the token, and every following layer sees that version.",
+      watch: "Move the position slider. How does the vector change, and how does the distance in the plot change?",
       demoState: { scene: "position" },
-      context: "The position is added to the token vector. The angle view projects the vector onto the unit sphere and measures the great circle; in higher dimensions the same calculation happens on a hypersphere.",
-      deep: "The frequency is spread across dimensions. Early dimensions turn quickly, late ones slowly. That lets the model read relative distances over many positions without learning every position separately.",
+      context: "The position is added to the token vector; with RoPE, the query/key direction is rotated instead. From then on the network computes only with the position-bearing version.",
+      deep: "The demo shows only the first three dimensions. A real model uses thousands; the great-circle metric makes directions comparable, and fast and slow rotations together form a position pattern the model can learn.",
       boxes: [
-        box("pos-1", "Mathematics", "The formula", "PE(pos, 2i) = sin(pos / 10000^(2i/d)), PE(pos, 2i+1) = cos(pos / 10000^(2i/d)). Each dimension gets its own wave.", "\\underbrace{\\begin{aligned} PE_{(\\text{pos},2i)} &= \\sin\\left(\\frac{\\text{pos}}{10000^{2i/d}}\\right) \\\\ PE_{(\\text{pos},2i+1)} &= \\cos\\left(\\frac{\\text{pos}}{10000^{2i/d}}\\right) \\end{aligned}}_{\\text{each dimension gets its own wave}}"),
-        box("pos-2", "Technique", "Why sine and cosine?", "The pair lets you read a position as a rotation. Relative distances become fixed rotations, and the model can reuse them across many positions."),
-        box("pos-3", "Limit", "What does the 3D curve not show?", "It shows only the first three dimensions. A real model uses thousands; the curve is a readable slice, not a complete map."),
-        box("pos-4", "Geometry", "High-dimensional geometry", "In higher dimensions the same principle applies on a hypersphere: normalize the vectors, and the distance is the angle along the great circle. Riemann generalized curved spaces to any dimension. High-dimensional spaces often behave unlike our intuition: in a deep loss landscape almost every flat point is a saddle point, not a local minimum, because there are many directions that go up and down at once. Open this box only if the geometry interests you.", "\\underbrace{d_{\\text{geo}}(u,v)}_{\\substack{\\text{great-circle distance}\\\\ \\text{on the unit sphere}}} = \\underbrace{\\arccos\\!\\left(\\underbrace{\\frac{u\\cdot v}{\\|u\\|\\,\\|v\\|}}_{\\text{cosine of the angle}}\\right)}_{\\text{angle in radians}}")
+        box("pos-1", "Methods", "Which positional methods exist?", "Learned absolute embeddings (GPT-2, BERT), sinusoidal encoding (Vaswani et al. 2017), relative position bias (T5), and ALiBi (Press et al. 2021). RoPE (Su et al. 2021) rotates query and key; many modern models such as Llama use it."),
+        box("pos-2", "RoPE", "How does RoPE work?", "RoPE rotates query and key vectors by an angle that depends on the position. The dot product of two rotated vectors then depends on their relative position: absolute position is encoded as a rotation, and relative distances become visible."),
+        box("pos-3", "Place value", "Why fast and slow rotations?", "Different dimensions rotate at different speeds. Fast rotations distinguish nearby positions, slow rotations distinguish distant ones. Together they act like a place-value system of ones, tens, and hundreds for positions."),
+        box("pos-4", "Geometry", "What does the plot show?", "The demo uses the great-circle metric: directions matter, not lengths. The length in the plot is the great circle between the word and the position vector. In high-dimensional space this creates patterns the model can learn, to encode something like “dragon at position 5” or “dragon at position 22”."),
+        box("pos-5", "Limit", "What is simplified?", "The demo shows only a few dimensions and a sinusoidal encoding. RoPE rotates query/key instead of the token vector. The patterns shown are an intuition, not the exact implementation."),
+        box("pos-6", "Detail", "What happens to the position afterwards?", "From the moment the position belongs to the token, every following layer receives only that version. It is never thrown away again. The token is no longer just “dragon”; it is “dragon at this position”, and the variants become distinguishable to the network.")
       ],
       sources: [
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
-        { label: "Riemann (1854), Über die Hypothesen, welche der Geometrie zu Grunde liegen", url: "https://ia800708.us.archive.org/4/items/uberdiehypothese00b_343/uberdiehypothese00b_343.pdf" },
-        { label: "Dauphin et al. (2014), Identifying and attacking the saddle point problem", url: "https://arxiv.org/abs/1406.2572" },
-        { label: "Gudmundsson (2004), An Introduction to Riemannian Geometry", url: "http://www.matematik.lu.se/matematiklu/personal/sigma/index.html" }
+        { label: "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding", url: "https://arxiv.org/abs/2104.09864" },
+        { label: "Touvron et al. (2023), Llama 2", url: "https://arxiv.org/abs/2307.09288" },
+        { label: "Press et al. (2021), Attention with Linear Biases (ALiBi)", url: "https://arxiv.org/abs/2108.12409" },
+        { label: "Raffel et al. (2020), T5", url: "https://arxiv.org/abs/1910.10683" }
       ]
     },
     {
