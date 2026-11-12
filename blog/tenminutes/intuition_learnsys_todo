@@ -1,43 +1,630 @@
-allgemein: das tiefer eintauchen muss alle fragen beantworten die im originaltext waren. stelle die fragen, dann gebe die antworten. nach maximal zwei drei absätzen dann wieder ne warum ist das so box die man erweitern kann oder schauen was darutner auf der übergeordneten ebene noch war weil dasn och da steht, so dass man jeden fakt bis zum ende verfolgen kann wenn man will aber dass man ads nicht muss und dass man trotzdem jede frage noch sieht am anfang, damit man quasi sich für fragerichtungen entscheiden kann die einen interessieren und welche die es nicht tun.
+# intuition_learnsys — Arbeitsliste (kleinschrittig)
 
-mach die <- 0 1 2 3 ... -> so dass es wirklich scrollbare auslassungspunkte hat wenn es zu viele sind und die aktuelle seite zentriert ist. mach das etwas größer  und fülle damit den raum ganz oben links aus der aktuell noch leer ist. die fonts der buttons sind oft zu klein, mach das einheitlich, so dass man es an einer zentralen stelle einstellen kann die fonts, das soll sowohl die visualisierungen als auch die texte und texte in den buttons usw. betreffen. andere überschriften und klassen definieren und als vielfaches dieser definieren. 
+Status: **[in Arbeit]**
+Quelle: `intuition_learnsys_todo` (Originaltext unten in den Punkten erhalten)
+Regel: Ein Häkchen `[x]` gibt es erst nach Browser-Prüfung in DE und EN auf
+Desktop (1200×900) und Mobil (390×844): keine Konsolenfehler, kein horizontaler
+Overflow, kein Höhensprung über 1 px.
 
-wenn ich buttons anklicke passiert in den grafiken manchmal dass die springen. ich hasse visuell springende elemente. mach dass jedes element in seiner finalen position so ist dass es die outlines die wenn interaktionen passieren oder die änderungen von texten in buttons und und und so ist, dass die nicht mehr unnötig rumspringen. es muss alles smooth sein. das problem habe ich zB bei der bedeutung wird zahl folie, und wenn ich da "temperatur" ausgewählt habe und dann "bedeutung" mach dann springt "bedeutung" um einen px oder so beim interagieren. solche details müssen überall stimmen. checke das.
+## Globale Arbeitsreihenfolge
 
-"Bedeutung bekommt eine zweite Achse" folie: wenn ich bedeutung + 1d mache soll klar sein dass da nicht mehr genug platz für solche komplexen relationen ist, weil man immer sachen überspringen müsste um zueinander zu kommen. es muss sozusagen "freie wege" geben, deute das visuell an, und zeigt dann, wie das in der neuen dimension möglich ist. das erlaubt dann, mehr bedeutungszusammenhang zu zeigen. zeige dann dass in diesem höheren raum
+Kurze Schritte, in dieser Reihenfolge. Jeder Schritt ist absichtlich klein genug
+für einen eigenen Durchgang mit Prüfung.
 
-zeige dass embeddings noch viel höher dimensional sind als 3d weil man so viele beziehungen darstellen will. daher nehm man da tausende dimensionen. zeige da einfach eine excel-artige liste von zahlen, wie das dann aussieht für den rechner. tausend dimensionen können wir uns nicht mehr vorstellen, die mathematik bleibt aber mehr oder weniger gleich, und der rechner kann das rechnen.
+- **Welle 0 — Messen und absichern:** P0.1 … P0.4
+- **Welle 1 — Fundament:** T02.1 … T02.6, T02b.1 … T02b.6, T17.1 … T17.4,
+  T03.1 … T03.6
+- **Welle 2 — Tiefe:** T01.1 … T01.7
+- **Welle 3 — Reihenfolge:** T15.1 … T15.5, T14.1 … T14.6
+- **Welle 4 — Inhalt:** T09.1 … T09.6, T11.1 … T11.3, T12.1 … T12.3
+- **Welle 5 — Geometrie:** T04.1 … T04.5, T05.1 … T05.4, T06.1 … T06.4,
+  T07.1 … T07.3
+- **Welle 6 — Große Demos:** T08.1 … T08.4, T13.1 … T13.10,
+  T13b.1 … T13b.3, T18.1 … T18.3, T16.1 … T16.4, T10.1 … T10.2,
+  T19.1 … T19.6
 
-"Von Beziehungen zur Übersetzung: Die Punkte bilden eine Mannigfaltigkeit: lokal flach, global gekrümmt. Die Beziehungen sind ähnlich genug, um übersetzt zu werden: Der Weg von einem Wort zum anderen lässt sich in den entsprechenden Weg einer anderen Sprache transformieren. Feed-Forward-Netze lernen solche Transformationen." ja mag sein aber das ist zu kompliziert. recherchier die details im background. schreib eher sowas wie "Beziehungen untereinander können Bedeutung enthalten". zeige dann dass wir hier japanisch und englische worte in einem (stark vereinfachtem) token-raum haben, und die so ähnlich zueinander
-sind, dass man durch drehen und verschieben sie ineinander überführen kann. so kann man sich die maschinenübersetzung in etwa vorstellen oder? ein bedeutungsmanifold wird auf ein anderes transformiert sozusagen, aber die sind so abstrakt und komplex dass es schwer für menschen nachvollziehbar ist. sage in einer optional box dass das wirklich. erkläre da auch mannigfaltigkeiten mit ihrem axiom aber erst in der dritten oder vierten ausklappungsstufe. recherchier das, schaue im blog welche quellen dazu seriös sind in .. und lese die nochmal wenn nötig.
+## Fortschrittsprotokoll
 
-bei der "Jeder Platz bekommt einen Fingerabdruck" zeigt er nur ganz klein die sachen rechts, im anderen in intuition gehts viel höher.
+- 2026-11-12: Datei strukturiert; Abhängigkeiten festgelegt; Wellen 0–6 definiert.
+- 2026-11-12: Kleinschrittige Unter-Todos ergänzt; Rückfragen geklärt; P0.1 begonnen.
 
-mach das handy größer. es soll so groß sein wie die box rechts erlaubt ohne dass die schatten an den rand gehen, natürlich der innere text exakt mitskaliert., nenne die suche außerdem "Suchmaschine" in diesen Googleartigen Farben aber nicht exakt die google farben, und Search Engine im englischen.
+---
 
-"Zwei Beispiele, ein Durchschnitt - Der Mittelpunkt zweier Werte ist ihr Durchschnitt. Kalt (5) und warm (55) ergeben 30, also ungefähr lauwarm. Im Vektorraum funktioniert dieselbe Operation auf jeder Koordinate, nicht nur auf einer. Wähle ein anderes Paar und prüfe, wann das Ergebnis exakt ist und wann nur ungefähr." mach das besser. zeige dass man damit wirklich rechnen kann sinnvolle sachen. also sagen dass man kalt + warm ist exakt das und das, aber es reicht auch, wenn es ungefähr xyz ist, also wenn kalt + heiß nur 55 grad sind aber das nächste heiß 60 ist oder so. baue das so dass es inhaltlich sinn ergibt, denke vorher darüber nach, aus sicht eines users, dem man zeigen will, dass das aufeinander aufbaut und dass man die intuition für "das ungefähre reicht" lansgam im background mit aufbaut. überarbeite auch nochmal den text. du redest schon von tokens und words. der user weiß noch gar nicht was das ist. sage hier einfach nur wir ordnen worten zahlen zu. zeige erst den zahlenstralh, dann dass man darauf worte legen kann. dann kann man damit rechnen, zeige dann die formeln. kalt + warm = lauwarm so wie das jetzt da ist. mach ein paar mehr worte auf den zahlenstrahl die passend sind zur temperatur. dan ngehe weiter und zeige, dass das nicht ausreicht
-$
-zeige bei "Ein Modell ist ein Stapel von Funktionen"
+## Welle 0 — Messen und absichern
 
-bei "Bedeutung wird eine Zahl" ist der kram unten die buttons usw zu klein
+### P0.1 Prüf-Harness anlegen
+- [~] Temporäre HTML-Version der PHP-Seite erzeugen (filemtime ersetzen).
+- [ ] Harness-Fälle: `allsteps`, `tokenize`, `math`, `noise`, `landscape`,
+      `schloss`, `tunnel`, `heights`, `controls`.
+- [ ] DE/EN und 1200×900/390×844 als Parameter.
+- [ ] Ausgabe: Fehler, Overflow, Sichtbarkeit, Canvasmaße, Höhen.
+- [ ] Harness nach der Prüfung wieder entfernen.
 
-"Im Transformer · Bedeutung wird Geometrie
-Die Verteilung ist nicht die Antwort
-Es war einmal ein Roboter, der konnte nur piepen.
-Es war einmal ein → Roboter, → der → konnte → nur → piepen → .
-Satzende
-"
+### P0.2 Demo- und Schritt-Karte
+- [ ] Aktuelle Reihenfolge der 28 Schritte mit Szene und Demo-State notieren.
+- [ ] Abhängigkeiten markieren: welche Folie braucht welche vorher.
+- [ ] Diese Karte in der Datei festhalten.
 
-"Kontext zieht die Bank an seinen Platz" sieht nicht so schön aus. die tabelle unten ist winzig, die buttons komisch vertielt. viel platz ungenutzt um den chart. die pfeile oben passen nicht denn die gehen nicht auf die worte. lass den interessierten user auch alle anderen worte anklicken und deren umgebungen sehen. zeige am ende davon die darstellung von ../test/attention_as_graph.html oder so, zeige dass die zahlen unten damit zusammenhängen wie die graphenverbindungen sind und umgekehrt.  hebe die zeile vor die man ausgewählt hat durch das wort. schreibe linsk auf der folie dass attention die worte so verteilt, dass es immer 100% attention hat und wenn es sich festlegt und sagt 100% dieses wort, dass dann nur noch 0% für andere worte da sind. sage, dass man mit diesen daten dann die worte nimmt und addiert, 0.02 * ich + 0.01 gehe ... + 0.2 * geld + 0.7 + bank oder sowas, mach das realistisch. zeige diesen schritt wirklich dass man sieht wie sich das aufteilt und wie man anhand desesn die tokens verschiebt. suche bessere überschrift: "Der Vektor folgt dem Kontext" eher sowas wie "attention verschiebt Bedeutugnen in kontexte". zeige dann dass ein head zB "new" und "york" in die nähe von stadt schieben kann, und weg vom cluster "car" oder "england", wo new und york auch liegen könnten, weil "new car" sicher oft gesucht wird, und "york" in england liegt. nutze das als erklärung und zeige das visuell auf so eine mouthwateringly gorgeous weise. mach das auf der "Oberfläche ist Rauschen", verschiebe das mit dem quicksort ans ende davon. entferne da den plot. zeige den code und sage dass das "rauschen" ist im plot noch. und dass attention hilft, das trotzdem in die richtige richtugn zu schieben, in dem es die worte prozentual addiert. zeige  das in einer absolutely stunning mouthwateringly gorgeous weise.
+### P0.3 Akzeptanzkriterien
+- [ ] Konsolenfehler: 0.
+- [ ] Horizontaler Overflow: 0.
+- [ ] Höhensprung bei Klicks: ≤ 1 px.
+- [ ] Beide Sprachen, Desktop und Mobil.
+- [ ] Jede neue Interaktion per Tastatur und Touch erreichbar.
 
-schreibe dass nach dem attention ein neuronales netz kommt. rechts dann die demo, was so ein neuronales netz macht bei "Sieh zu, wie das MLP den Raum biegt". das ist gut so. mach die buttons unten einheitlich zu den anderen buttons. der plot hat weißen background was den visuellen flow stört. der text darüber ist zu klein, erlaube hier auch mit pfeiltasten die weiter folien zu machen. 
+### P0.4 Baseline messen
+- [ ] Alle 28 Schritte einmal durchlaufen, Ist-Zustand notieren.
+- [ ] Bekannte Fehler (z. B. 1-px-Sprung, kleine Controls) als Baseline
+      festhalten, damit die Verbesserung messbar ist.
 
-"Weiche Kurven, ein Knick" bei gelu usw gehe die ganzen einzeln durch und zeige sie nicht hintereinander. erkläre, dass man mit diesen neuronalen netzen und einer nichtlinearität alle funktionen beliebig genau approximieren kann, wenn man nur genug neuronen hat. die "Weiche Kurven, ein Knick" sollten noch vor dem "Sieh zu, wie das MLP den Raum biegt" kommen. vor attention sollte eine folie mit dem transformerblock kommen, wo gezeigt wird, was der ist so dass man da shcon eine intuition kriegt und die dann optisch weiter geht. 
+---
 
-bei "Sieh zu, wie das MLP den Raum biegt" am ende mach die slider kleiner so dass das alles in eine zeile passt mit den konkreten zahlen statt darunter zu sein. checke auch den linear trennbar algorithmus nochmal. manchmal stimmt der nicht. am ende soll der weiter button weggehen und man auf die nächste folie kommen einfach intuition. oder weiter kommen. 
+## T01 — Tiefes Eintauchen: Fragen sichtbar, Antworten erreichbar, jeder Fakt weiterverfolgbar
 
-überarbeite und vereinheitliceh nochmal das weiterkommen pro folie und step. pfeiltasten sollen gehen, pgup und down soll gehen, leertaste soll gehen usw. und man muss es klicken können auch auf dem handy.
+**Original:** „allgemein: das tiefer eintauchen muss alle fragen beantworten die im
+originaltext waren. stelle die fragen, dann gebe die antworten. nach maximal zwei
+drei absätzen dann wieder ne warum ist das so box die man erweitern kann oder
+schauen was darutner auf der übergeordneten ebene noch war weil das noch da steht,
+so dass man jeden fakt bis zum ende verfolgen kann wenn man will aber dass man das
+nicht muss und dass man trotzdem jede frage noch sieht am anfang, damit man quasi
+sich für fragerichtungen entscheiden kann die einen interessieren und welche die
+es nicht tun.“
 
-"Ein Muster passt, ein Wert wird geschrieben" zeige nochmal dass das das ist was wir vorher gemacht haben: er trennt jetzt bereiche voneinander im inneren, die vorher nicht linear trennbar waren aber jetzt schon, weil der kontext immer mehr refined wird. auch durch seine eigene antwort.
+### T01.1 Originalfragen sammeln
+- [ ] `intuition.php` je Abschnitt nach Fragen durchsuchen (`?`, „Warum“,
+      „Was“, „Wie“).
+- [ ] Fragen den LearnSys-Schritten zuordnen (Tabelle in dieser Datei).
+- [ ] Fehlende Fragen als neue Boxen notieren.
 
-auf dieser folie kkann man den platz bei satzende besser nutzen mit der energielandschaft, zeige sie unten an und mach dass die bleibt wenn man weiter macht und oben die weiter macht und was auswählt und dass er da in dieser landschaft den pfad zeigt. mach das wirklich so dass es smooth ne kugel durch diese landschaft rollt, und man auch in die gegend von worten klicken kann um sie zu erreichen (foreshaodwing zur wiese der wörter). zeige auf der wiese der wörter das ganze gemappt auf diese karte aus diesem schritt hier nochmal am ende, zeige, wie das von der wiese der worte zu dem transformiert
+### T01.2 Datenmodell erweitern
+- [ ] `contextTitle` und `deepTitle` optional in `depthTree` unterstützen.
+- [ ] Fallback: bisherige Labels, damit nichts bricht.
+- [ ] Bestehende Boxen bleiben unverändert gültig.
+
+### T01.3 Fragenübersicht am Anfang
+- [ ] Im geöffneten Root eine kompakte Fragenliste rendern.
+- [ ] Jede Frage ist ein Button, der die passende `<details>`-Box öffnet.
+- [ ] Die Liste zeigt alle Fragen, ohne Antworten zu verraten.
+- [ ] Tastatur: Tab/Enter/Space; Touch: 44-px-Ziele.
+
+### T01.4 Fragetitel statt Sachlabels
+- [ ] `context`/`deep` je Schritt als echte Frage formulieren.
+- [ ] Box-Titel prüfen: Sind es Fragen? Wenn nicht, umformulieren.
+- [ ] Keine Frage doppelt; keine Antwort ohne Frage.
+
+### T01.5 „Warum ist das so?“-Ebene
+- [ ] Nach dem Kontext eine eigene aufklappbare Ebene einziehen.
+- [ ] Die vorhandenen Boxen darunter als tiefere Ebene belassen.
+- [ ] Quellen als letzte, eigene Ebene.
+
+### T01.6 Abgleich mit dem Original
+- [ ] Jede gesammelte Originalfrage hat eine Antwortbox.
+- [ ] Antworten sind inhaltlich vom Original gedeckt (Quellen prüfen).
+- [ ] Nichts wird stillschweigend weggelassen.
+
+### T01.7 Prüfen
+- [ ] Fragenliste in DE/EN lesbar.
+- [ ] Öffnen/Schließen ohne Höhensprung.
+- [ ] Quellenlinks funktionieren.
+
+Abhängigkeiten: T02 (Typografie), P0.
+
+---
+
+## T02 — Zentrale Font-Skala, größere Buttons, Überschriften als Vielfache
+
+**Original:** siehe T02b-Original.
+
+### T02.1 Skala definieren
+- [ ] In `learnsys.css`: `--ls-fs-body`, `--ls-fs-title`, `--ls-fs-small`,
+      `--ls-fs-ui`, `--ls-fs-ui-sm`, `--ls-fs-micro`, `--ls-fs-readout`,
+      `--ls-fs-canvas`, `--ls-fs-canvas-sm`.
+- [ ] Alle abgeleiteten Größen als `calc()`-Vielfache der Basis.
+- [ ] `applyFont()` setzt nur die Basis; die Vielfachen folgen automatisch.
+
+### T02.2 Buttons und Controls
+- [ ] `.ls-btn`, `.ls-btn--tiny`, `.ls-chip`, `.ls-seg button`, `.ls-select`,
+      `.ls-range`, `.ls-day-nav` auf die Skala umstellen.
+- [ ] Mindesthöhen für Touch (≥ 36 px, mobil ≥ 44 px).
+- [ ] Keine `transform`-Hüpfer beim Hover.
+
+### T02.3 Text, Micro-Labels, Readouts
+- [ ] Kicker, Watch-Label, Depth-Summaries, Stage-Kopf/-Fuß, Readouts.
+- [ ] Canvas-nahe DOM-Texte (Formeln, Legenden, Status).
+- [ ] Keine Schrift unter 9 px auf Canvas; DOM nicht unter 10 px.
+
+### T02.4 Überschriften-Klassen
+- [ ] `.ls-h1` = Titel, `.ls-h2` = 0.72×, `.ls-h3` = 0.52×, `.ls-h4` = 0.42×.
+- [ ] Depth-Summaries und Kartenüberschriften nutzen diese Klassen.
+- [ ] Keine konkurrierenden px-Systeme.
+
+### T02.5 Canvas-API
+- [ ] `api.font(role)` liefert px aus der zentralen Skala.
+- [ ] Neue/überarbeitete Demos nutzen `api.font`.
+- [ ] Bestehende Demos mindestens für die wichtigsten Labels umstellen.
+
+### T02.6 Prüfen
+- [ ] Alle fünf Font-Stufen (Klein … Maximal) ohne Overflow.
+- [ ] Buttons bleiben in allen Stufen lesbar.
+- [ ] Rail, Tiefeboxen und Demos skalieren mit.
+
+Abhängigkeiten: P0; blockiert T02b, T03, T13, T19.
+
+---
+
+## T02b — Schritt-Rail
+
+### T02b.1 Schritte statt 10 Positionen
+- [ ] Für `singleDay` `posCount = steps.length` (nicht auf 10 begrenzen).
+- [ ] Multi-Day-Skala unverändert lassen.
+- [ ] `goPosition`-Mapping prüfen.
+
+### T02b.2 Scroll und Zentrierung
+- [ ] `.ls-nav-pos` horizontal scrollbar, Scroll-Snap, dünne Scrollbar.
+- [ ] Aktiven Schritt beim Rendern/Wechsel automatisch zentrieren.
+- [ ] Scroll-Container füllt die Breite der Textspalte.
+
+### T02b.3 Auslassungs-Ränder
+- [ ] Masken an beiden Rändern, nur wenn `scrollWidth > clientWidth`.
+- [ ] Kein harter abgeschnittener Button.
+- [ ] Mobile: mindestens 24 px breite Ziele.
+
+### T02b.4 Größer und einheitlich
+- [ ] Höhe/Font aus T02.
+- [ ] Aktiver Zustand ohne Layoutänderung.
+- [ ] Hover ohne Verschieben.
+
+### T02b.5 Tastatur und Hilfe
+- [ ] 0–9 springt weiterhin auf die passende Position.
+- [ ] Hilfe nennt Schritt-Rail und Tasten.
+- [ ] Aria-Label nennt den sichtbaren Bereich.
+
+### T02b.6 Prüfen
+- [ ] 28 Schritte DE/EN, Desktop/Mobil.
+- [ ] Klick, Touch, ←/→, Shift+←/→, Home/End.
+
+Abhängigkeiten: T02.
+
+---
+
+## T03 — Kein visuelles Springen
+
+### T03.1 Hover-Transforms entfernen
+- [ ] `.ls-nav-pos button:hover`, `.ls-chip:hover`, `.ls-btn:hover` prüfen.
+- [ ] Aktive Zustände nur Farbe/Outline/Inset-Shadow.
+
+### T03.2 Feste Zeilenhöhen
+- [ ] Formel-, Readout-, Status- und Button-Zeilen reservieren ihre Maximalhöhe.
+- [ ] Kein `min-height` nur im aktiven Zustand.
+
+### T03.3 Stabile Buttonbreiten
+- [ ] Buttons mit wechselndem Text (Weiter/Fertig, Modus, Layer) bekommen
+      `min-width` oder ein festes Label.
+- [ ] Pfeil-Buttons behalten ihre Breite.
+
+### T03.4 „Bedeutung wird Zahl“
+- [ ] Reproduzieren: Temperatur → Bedeutung, 1-px-Sprung messen.
+- [ ] Ursache beheben (Border, Font-Weight, Höhe, Scrollbar).
+- [ ] Danach erneut messen: ≤ 1 px.
+
+### T03.5 Messhaken
+- [ ] Harness: Vor/Nach jedem Klick die Bounding-Boxes der Controls, der Formel
+      und des Readouts vergleichen.
+- [ ] Schwelle: ≤ 1 px; alles darüber ist ein Fehler.
+
+### T03.6 Alle Demos prüfen
+- [ ] Jede Demo einmal mit Monkey-Clicks durchlaufen.
+- [ ] DE/EN, Desktop/Mobil.
+- [ ] Auffälligkeiten als eigene kleine Todos notieren.
+
+Abhängigkeiten: T02, T09, T13.
+
+---
+
+## T04 — Zweite Achse: 1D reicht nicht, freie Wege, höherer Raum
+
+### T04.1 1D-Belegung verstehen
+- [ ] Darstellen, welche Wörter auf einer Achse kollidieren.
+- [ ] „Kein freier Weg“-Markierung entwerfen (Lücke/Überlappung).
+
+### T04.2 1D-Demo
+- [ ] Modus „Bedeutung + 1D“ mit belegter Strecke und übersprungenen Wörtern.
+- [ ] Text: komplexe Relationen brauchen Platz, sonst muss man springen.
+
+### T04.3 2D-Demo
+- [ ] Freie Wege zwischen Relationen sichtbar machen.
+- [ ] Weniger Kollisionen, mehr gleichzeitige Beziehungen.
+- [ ] Übergang 1D → 2D animiert/morphbar.
+
+### T04.4 Prosa
+- [ ] Watch-Zeile: was soll der Leser vergleichen?
+- [ ] Brücke zu T05 (noch höher).
+
+### T04.5 Prüfen
+- [ ] DE/EN, Desktop/Mobil, keine Überlappung der Labels.
+
+Abhängigkeiten: T09, T05.
+
+---
+
+## T05 — Tausende Dimensionen, Excel-artige Zahlenliste
+
+### T05.1 Folie/Box anlegen
+- [ ] Nach der 3D-Folie eine eigene Folie oder Tiefebox.
+- [ ] Titel: „Tausende Dimensionen“ / „Thousands of dimensions“.
+
+### T05.2 Zahlenliste
+- [ ] DOM-Tabelle: eine Zeile pro Token, Spalten d1 … dN.
+- [ ] Horizontal scrollbar; erste und letzte Spalten sichtbar.
+- [ ] Zahlen kompakt, tabellarisch, lesbar.
+
+### T05.3 Prosa/Formel
+- [ ] „Wir sehen 2–3 Achsen, der Rechner rechnet mit Tausenden.“
+- [ ] Die Rechnung bleibt dieselbe.
+
+### T05.4 Prüfen
+- [ ] Kein Overflow der Seite; Tabelle scrollt intern.
+- [ ] DE/EN.
+
+Abhängigkeiten: T04.
+
+---
+
+## T06 — Übersetzung: Beziehungen tragen Bedeutung, Mannigfaltigkeit
+
+### T06.1 Quellen
+- [ ] Im Blog nach seriösen Quellen zu manifolds/translation suchen.
+- [ ] Primärquellen lesen; nur belastbare Links verwenden.
+- [ ] Quellen in der Tiefebox ergänzen.
+
+### T06.2 Prosa
+- [ ] „Beziehungen untereinander können Bedeutung enthalten.“
+- [ ] Englisch/Japanisch im vereinfachten Token-Raum.
+- [ ] Drehen/Verschieben als Bild für Translation.
+- [ ] Optionale Box: echte Manifolds sind abstrakt und schwer sichtbar.
+
+### T06.3 Demo
+- [ ] EN-/JP-Cluster in einem 2D-Raum.
+- [ ] Toggle „Drehen/Verschieben“; Cluster überführen sich.
+- [ ] Achsen/Skalen bleiben stabil.
+
+### T06.4 Manifold-Axiom
+- [ ] Erst in Ausklappungsstufe 3/4.
+- [ ] Definition: lokal wie R^n, global gekrümmt, Karten/Atlanten.
+
+### T06.5 Prüfen
+- [ ] DE/EN, Desktop/Mobil.
+
+Abhängigkeiten: T04/T05, T13.
+
+---
+
+## T07 — Positionsdemo höher
+
+### T07.1 Layout
+- [ ] `.ls-position-grid` und Panels so ändern, dass sie die Höhe füllen.
+- [ ] Heatmap und Kurve bekommen mehr vertikalen Raum.
+
+### T07.2 Lesbarkeit
+- [ ] Achsen/Ticks nicht abschneiden.
+- [ ] Keine Mindesthöhe, die die Bühne sprengt.
+
+### T07.3 Prüfen
+- [ ] Desktop/Mobil, DE/EN.
+
+Abhängigkeiten: T02.
+
+---
+
+## T08 — Handy größer, „Suchmaschine“/„Search Engine“
+
+### T08.1 Größe
+- [ ] Handy an die verfügbare Bühnenhöhe koppeln.
+- [ ] Schatten bleibt vollständig sichtbar.
+- [ ] Innere Elemente skalieren mit (kein fester px-Satz).
+
+### T08.2 Branding
+- [ ] Suchfeld heißt „Suchmaschine“ / „Search Engine“.
+- [ ] Google-artige Farben aus der ScaDS-Palette (grün, blau, gelb, lilac).
+- [ ] Nicht exakt Google.
+
+### T08.3 Prüfen
+- [ ] DE/EN, Desktop/Mobil, kein Schattenanschnitt.
+
+Abhängigkeiten: T02, T03.
+
+---
+
+## T09 — „Zwei Beispiele, ein Durchschnitt“: Wörter → Zahlen → Rechnen
+
+### T09.1 Zahlengerade
+- [ ] Erste Folie: nur Zahlengerade und Wörter.
+- [ ] Keine Token-/Embedding-Sprache in diesem Schritt.
+- [ ] Mehr Temperaturwörter mit plausiblen Werten.
+
+### T09.2 Text überarbeiten
+- [ ] „Wir ordnen Wörtern Zahlen zu“ als Einstieg.
+- [ ] Erst Zahlenstrahl, dann Wörter darauf, dann rechnen.
+- [ ] Formeln erst nach der Intuition.
+
+### T09.3 Exakt vs. ungefähr
+- [ ] Kalt + warm = lauwarm exakt.
+- [ ] Kalt + heiß ≈ warm; nächstes Wort „heiß“ liegt bei 60, nicht 55.
+- [ ] „Das Ungefähre reicht“ als aufbauende Intuition.
+
+### T09.4 Demo
+- [ ] Paar-Auswahl und Formel/Readout an die neuen Werte anpassen.
+- [ ] Exakt/ungefähr klar markieren (Wort vs. Näherung).
+- [ ] Keine Sprünge (T03).
+
+### T09.5 Abschluss
+- [ ] Zeigen, dass eine Achse nicht reicht.
+- [ ] Brücke zu T04.
+
+### T09.6 Prüfen
+- [ ] DE/EN, Desktop/Mobil.
+
+Abhängigkeiten: T03, T04.
+
+---
+
+## T10 — „Ein Modell ist ein Stapel von Funktionen“
+
+### T10.1 Offene Frage klären
+- [ ] Beim Autor nachfragen, was hier zusätzlich gezeigt werden soll.
+- [ ] Bis dahin: Folie schärfen (einzelne Funktionen sichtbar).
+
+### T10.2 Umsetzen
+- [ ] Erst nach Klärung.
+
+Abhängigkeiten: T15a.
+
+---
+
+## T11 — „Bedeutung wird eine Zahl“: untere Controls zu klein
+
+### T11.1 Skala anwenden
+- [ ] Buttons/Chips/Slider/Readout auf T02-Skala.
+- [ ] Untere Reihe bekommt genug Höhe.
+
+### T11.2 Prüfen
+- [ ] Kein Overflow, keine Sprünge.
+
+Abhängigkeiten: T02, T09.
+
+---
+
+## T12 — Roboter-/Satzende-Zustand prüfen
+
+### T12.1 Reproduzieren
+- [ ] Von der Loop-Folie zur Verteilungsfolie wechseln.
+- [ ] Satz, Pfad und „Satzende“ notieren.
+
+### T12.2 Fixen
+- [ ] Zustand persistent halten.
+- [ ] Kein leerer Satzende-Zustand.
+
+### T12.3 Verbinden
+- [ ] Mit T19 (Landschaft am Satzende) verknüpfen.
+
+Abhängigkeiten: T13b, T19.
+
+---
+
+## T13 — Attention-Folie neu denken
+
+### T13.1 Heading
+- [ ] „Der Vektor folgt dem Kontext“ → „Attention verschiebt Bedeutungen in Kontexte“.
+
+### T13.2 Layout
+- [ ] Chart nutzt die freie Fläche.
+- [ ] Tabelle groß und lesbar.
+- [ ] Buttons in einer klaren Reihe.
+
+### T13.3 Trefferflächen
+- [ ] Pfeile treffen die Wörter.
+- [ ] Jedes Wort klickbar (≥ 28 px, Touch ≥ 44 px).
+
+### T13.4 Alle Wörter
+- [ ] Auswahl eines Tokens zeigt dessen Attention-Zeile/Umgebung.
+- [ ] Aktive Zeile in Tabelle und Chart hervorheben.
+
+### T13.5 100-%-Budget
+- [ ] Text: Attention verteilt immer 100 %; 100 % auf ein Wort = 0 % für andere.
+- [ ] In der Tabelle sichtbar (Summe = 100 %).
+
+### T13.6 Gewichtete Summe
+- [ ] Realistische Rechnung: 0.02·ich + 0.01·gehe + … + 0.20·Geld + 0.70·Bank.
+- [ ] Schritt für Schritt zeigen, wie die Vektoren verschoben werden.
+
+### T13.7 new/york
+- [ ] Head schiebt „new“/„york“ zu „city“, weg von „car“/„england“.
+- [ ] Visuell klar, ohne Überladung.
+
+### T13.8 Graph
+- [ ] Verweis auf `../test/attention_as_graph.html`.
+- [ ] Zahlen ↔ Graphkanten erklären.
+
+### T13.9 Prüfen
+- [ ] DE/EN, Desktop/Mobil, keine Überlappung.
+
+Abhängigkeiten: T02, T03, T15a.
+
+---
+
+## T13b — „Oberfläche ist Rauschen“: Quicksort ans Ende, Plot raus
+
+### T13b.1 Aufräumen
+- [ ] Den bisherigen Plot dort entfernen.
+- [ ] Quicksort-Code als eigenen Endabschnitt.
+
+### T13b.2 Erklärung
+- [ ] Code ist Rauschen.
+- [ ] Attention addiert Wörter prozentual und schiebt die Bedeutung.
+
+### T13b.3 Prüfen
+- [ ] DE/EN, Desktop/Mobil.
+
+Abhängigkeiten: T13.
+
+---
+
+## T14 — Brücke zu neuronalen Netzen / MLP-Demo
+
+### T14.1 Prosa
+- [ ] Nach Attention: „Jetzt kommt ein neuronales Netz.“
+- [ ] Brücke zur MLP-Folie.
+
+### T14.2 Buttons
+- [ ] MLP-Buttons auf T02-Skala.
+- [ ] Einheitlich mit den anderen Demos.
+
+### T14.3 Plot
+- [ ] Weißen Plot-Hintergrund entfernen; Stage-Wäsche nutzen.
+
+### T14.4 Text
+- [ ] Text über dem Plot größer.
+
+### T14.5 Tasten
+- [ ] ←/→ für die MLP-Folien.
+
+### T14.6 Prüfen
+- [ ] DE/EN, Desktop/Mobil.
+
+Abhängigkeiten: T02, T15b, T16.
+
+---
+
+## T15 — Aktivierungen und Transformerblock
+
+### T15.1 Reihenfolge
+- [ ] „Weiche Kurven, ein Knick“ vor „Sieh zu, wie das MLP den Raum biegt“.
+- [ ] Datenreihenfolge und `steps`-Concat anpassen.
+
+### T15.2 Aktivierungen einzeln
+- [ ] ReLU, tanh, sigmoid, GELU als einzelne Auswahl.
+- [ ] Nicht als Nacheinander-Animation.
+
+### T15.3 Universal Approximation
+- [ ] Didaktischer Absatz/Box: genug Neuronen + Nichtlinearität ≈ jede Funktion.
+- [ ] Quelle prüfen.
+
+### T15.4 Transformerblock
+- [ ] Neue Folie vor Attention: Attention + FFN + Residual.
+- [ ] Visuelle Brücke zur Attention-Folie.
+
+### T15.5 Prüfen
+- [ ] Reihenfolge, Navigation, DE/EN.
+
+Abhängigkeiten: T02, T03.
+
+---
+
+## T16 — MLP-Folie: Slider, Trennbarkeit, Weiter
+
+### T16.1 Slider-Zeile
+- [ ] Slider und konkrete Zahlen in eine Zeile.
+- [ ] Keine zweite Zahlenzeile darunter.
+
+### T16.2 Trennbarkeit
+- [ ] Algorithmus prüfen (echte lineare Trennung, nicht nur Status).
+- [ ] Status und Geometrie konsistent.
+
+### T16.3 Weiter
+- [ ] Am Ende kein toter Button; Übergang zur nächsten Folie.
+
+### T16.4 Prüfen
+- [ ] DE/EN, Desktop/Mobil.
+
+Abhängigkeiten: T14, T15.
+
+---
+
+## T17 — Navigation vereinheitlichen
+
+### T17.1 Tasten
+- [ ] ←/→ Step, Shift+←/→ Sprung, PgUp/PgDn, Leertaste, Home/End.
+- [ ] Keine Doppelbelegung mit Formularfeldern.
+
+### T17.2 Touch
+- [ ] Rail, Step-Buttons, Folien-Pager, Prev/Next ≥ 44 px.
+- [ ] Kein Hover-only.
+
+### T17.3 Hilfe
+- [ ] Hilfetext aktualisieren (Rail, PgUp/PgDn, Space).
+
+### T17.4 Prüfen
+- [ ] DE/EN, Desktop/Mobil, alle Demos.
+
+Abhängigkeiten: T02b.
+
+---
+
+## T18 — FFN: getrennte Bereiche durch verfeinerten Kontext
+
+### T18.1 Vorher/Nachher
+- [ ] Zeigen: Bereiche, die vorher nicht linear trennbar waren, sind es jetzt.
+- [ ] Kontext und eigene Antwort als Ursache.
+
+### T18.2 Prosa
+- [ ] Brücke zur MLP-/Aktivierungsfolie.
+
+### T18.3 Prüfen
+- [ ] DE/EN, Desktop/Mobil.
+
+Abhängigkeiten: T14, T15, T19.
+
+---
+
+## T19 — Energielandschaft am Satzende, Ball, Wortklick, Wiese
+
+### T19.1 Landschaft bleibt
+- [ ] Am Satzende Landschaft unten stehen lassen.
+- [ ] Oben weiter auswählen; unten Pfad zeigen.
+
+### T19.2 Kugel
+- [ ] Kugel rollt smooth durch die Landschaft.
+- [ ] Kein Ruckeln, keine Sprünge.
+
+### T19.3 Wortklick
+- [ ] Klick in Wortnähe erreicht das Wort.
+- [ ] Foreshadowing zur Wiese.
+
+### T19.4 Wiese-Mapping
+- [ ] Wiese am Ende auf dieselbe Karte mappen.
+- [ ] Transformation von Wiese → Landschaft zeigen.
+
+### T19.5 Prüfen
+- [ ] DE/EN, Desktop/Mobil, Touch.
+
+Abhängigkeiten: T13b, T17.
+
+---
+
+## Geklärte Rückfragen
+
+1. **T10:** Die einzelnen Funktionen (Attention, FFN, Residual) sollen als
+   getrennte Bausteine im Stapel sichtbar werden, mit Ein-/Ausgabe durch jeden
+   Block. Kein neues Rechenbeispiel nötig.
+2. **T12:** Der Roboter-/Satzende-Zustand ist der gewollte Endzustand. Der Satz
+   bleibt stehen; am Satzende kommt die Energielandschaft mit den möglichen
+   nächsten Sätzen.
+3. **T19:** Die Landschaft bleibt auf der Folie „Die Verteilung ist nicht die
+   Antwort“ stehen. Oben läuft der Satz weiter, unten rollt die Kugel durch den
+   Pfad; die Wiese der Wörter wird am Ende auf dieselbe Karte gemappt.
+
+## Offene Rückfragen
+
+- Keine blockierenden Fragen mehr. Bei Detailentscheidungen (Farben, japanische
+  Schreibweise, exakte Wortlisten) entscheidet die bestehende ScaDS-Palette und
+  die didaktische Klarheit.
+
+## Bekannte Notizen
+
+- Die erste große Abhängigkeit ist die Font-Skala: sie ändert fast jede
+  Demo-Oberfläche. Deshalb zuerst T02, dann alle anderen.
+- Die zweite große Abhängigkeit ist die Reihenfolge: Transformerblock vor
+  Attention und Aktivierungen vor MLP. Das muss vor den Demo-Umbauten passieren,
+  sonst werden Folien zweimal verschoben.
+- Die dritte große Abhängigkeit ist die Energielandschaft: sie verbindet
+  Loop-Folie, Rausch-Folie, FFN und Wiese. Deshalb erst nach T13b/T18.
