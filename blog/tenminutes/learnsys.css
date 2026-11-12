@@ -901,21 +901,21 @@ h1,h2,h3,h4{
 .ls-cr-top{display:flex;justify-content:space-between;gap:8px;font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-cr-incoming{display:grid;gap:3px;border-left:3px solid var(--ls-green);padding-left:9px}
 .ls-cr-label{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted)}
-.ls-cr-input{margin:0;font:600 clamp(20px,2.4vw,28px)/1.4 "Open Sans","Noto Sans CJK SC",sans-serif;color:var(--ls-ink)}
+.ls-cr-input{margin:0;font:600 clamp(20px,2.4vw,28px)/1.4 "Open Sans","Noto Sans CJK SC","Noto Sans SC","Source Han Sans SC","Microsoft YaHei",sans-serif;color:var(--ls-ink)}
 .ls-cr-sub{margin:0;font:var(--ls-fs-ui-sm)/1.4 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-cr-book{border:1px solid rgba(0,75,111,.10);background:rgba(255,255,255,.72);padding:7px 9px;display:grid;gap:4px}
 .ls-cr-book-head{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted)}
-.ls-cr-rules{width:100%;border-collapse:collapse;font:var(--ls-fs-ui-sm)/1.5 "Open Sans","Noto Sans CJK SC",sans-serif;color:var(--ls-soft)}
+.ls-cr-rules{width:100%;border-collapse:collapse;font:var(--ls-fs-ui-sm)/1.5 "Open Sans","Noto Sans CJK SC","Noto Sans SC","Source Han Sans SC","Microsoft YaHei",sans-serif;color:var(--ls-soft)}
 .ls-cr-rules td{padding:3px 6px;border-top:1px solid rgba(0,75,111,.08);vertical-align:top}
 .ls-cr-rules td:first-child{color:var(--ls-muted)}
 .ls-cr-options{display:flex;flex-wrap:wrap;gap:6px}
-.ls-cr-choice{border:1px solid rgba(0,75,111,.16);background:rgba(255,255,255,.82);color:var(--ls-ink);font:600 var(--ls-fs-ui-sm)/1.35 "Open Sans","Noto Sans CJK SC",sans-serif;padding:7px 9px;border-radius:0;cursor:pointer;min-height:34px}
+.ls-cr-choice{border:1px solid rgba(0,75,111,.16);background:rgba(255,255,255,.82);color:var(--ls-ink);font:600 var(--ls-fs-ui-sm)/1.35 "Open Sans","Noto Sans CJK SC","Noto Sans SC","Source Han Sans SC","Microsoft YaHei",sans-serif;padding:7px 9px;border-radius:0;cursor:pointer;min-height:34px}
 .ls-cr-choice:hover{border-color:var(--ls-blue);color:var(--ls-blue)}
 .ls-cr-choice.is-right{border-color:rgba(99,164,75,.55);background:rgba(246,250,245,.95);color:var(--ls-green)}
 .ls-cr-choice.is-wrong{border-color:rgba(145,133,190,.55);background:rgba(246,245,250,.95);color:var(--ls-petrol)}
 .ls-cr-feedback{margin:0;min-height:2.6em;font:var(--ls-fs-ui-sm)/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
 .ls-cr-reveal-head{font:600 var(--ls-fs-ui) "Open Sans",sans-serif;color:var(--ls-ink)}
-.ls-cr-trans{width:100%;border-collapse:collapse;font:var(--ls-fs-ui-sm)/1.5 "Open Sans","Noto Sans CJK SC",sans-serif;color:var(--ls-soft)}
+.ls-cr-trans{width:100%;border-collapse:collapse;font:var(--ls-fs-ui-sm)/1.5 "Open Sans","Noto Sans CJK SC","Noto Sans SC","Source Han Sans SC","Microsoft YaHei",sans-serif;color:var(--ls-soft)}
 .ls-cr-trans td{padding:4px 6px;border-top:1px solid rgba(0,75,111,.08);vertical-align:top}
 .ls-cr-trans-gloss{color:var(--ls-petrol)}
 .ls-cr-note{margin:0;font:var(--ls-fs-ui-sm)/1.5 "Open Sans",sans-serif;color:var(--ls-soft)}

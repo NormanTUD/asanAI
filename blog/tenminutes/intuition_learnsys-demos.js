@@ -4954,7 +4954,7 @@
       { label: "Books2", pct: 8, color: "#869b55" },
       { label: "Wikipedia", pct: 3, color: "#9185be" }
     ];
-    var active = "de";
+    var active = DE ? "de" : "en";
     var el = document.createElement("div");
     el.className = "ls-lang-scene";
     el.innerHTML =
