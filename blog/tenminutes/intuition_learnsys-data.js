@@ -96,7 +96,7 @@
       title: "One word after another",
       body: "Context is everything the model can see: the text so far, the instruction, the examples. At every step much is possible, but not all of it fits. The demo draws the next token from a distribution, appends it, and repeats. Greedy, sampling, and top-p read the same probabilities differently. After the final punctuation comes the special token <|endoftext|>; as soon as the model draws it, the loop stops.",
       watch: "Click a branch or let the demo choose. Which continuations stay plausible?",
-      demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true },
+      demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true, view: "default" },
       context: "The model has no working memory other than the context. Every new token changes what is likely next.",
       deep: "A high probability is not a guarantee of truth. It is a statement about the training corpus. Sampling makes the distribution visible; greedy always takes the most likely path.",
       boxes: [
@@ -109,7 +109,7 @@
       title: "The distribution is not the answer",
       body: "You see a probability landscape: valleys are likely, mountains unlikely. Every token is a point in a huge, high-dimensional space. At each step the model computes only the probability of the next token, then of the one after that; it sees only the immediate neighbourhood and feels its way forward step by step. The ball is the token: each choice gives it momentum so it can escape its valley into a neighbouring one; the gold path shows the tokens you chose.",
       watch: "Rotate the scene with mouse or finger. Give the ball momentum with a choice and watch which valley it rolls into.",
-      demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true },
+      demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true, view: "top" },
       context: "Each step lowers the valleys of its options; a chosen token keeps its valley. The bars show the same distribution the ball comes from.",
       deep: "Top-k is a fixed number, top-p a fixed mass. Min-p scales with the top token. After the cut, the remaining probabilities are renormalised. Beam search keeps several paths alive; speculative sampling speeds up verification without changing the target distribution.",
       boxes: [
@@ -304,28 +304,40 @@
     {
       kicker: "03 / Tokenize",
       title: "Text wird zu IDs",
-      body: "Ein Token ist kein Wort. Text wird zu Zahlen: Jedes Zeichen hat einen Codepunkt, und ein byte-level Tokenizer startet bei 256 Bytes, damit jeder String darstellbar ist. Seltene Wörter zerfallen in Subwords: „unbelievable“ wird zu „un“, „believ“, „able“. Ein Leerzeichen kann selbst ein Token sein.",
+      body: "Ein Token ist kein Wort. Text wird zu Zahlen: Jedes Zeichen hat einen Codepunkt, und ein byte-level Tokenizer startet bei 256 Bytes, damit jeder String darstellbar ist. BPE ist ein Kompressionsalgorithmus: Er beginnt mit kleinen Einheiten und verschmilzt häufige Paare zu längeren Tokens. Ziel ist, mit möglichst wenigen Tokens möglichst viel Text zu erfassen. Was im Trainingskorpus häufig ist, wird kurz; seltene Schriften bleiben in vielen Byte-Tokens.",
       watch: "Klicke die Beispiele. Welches Wort zerfällt in Subwords?",
       demoState: { scene: "tokenize" },
-      context: "Die IDs sind Adressen in der Embedding-Tabelle. Das Modell sieht keine Buchstaben, sondern Zeilenindizes.",
-      deep: "Ein echter Tokenizer lernt seine Merge-Tabelle aus Text. Häufige Paare werden zu einem Token verschmolzen, seltene Wörter bleiben in Teilen. Deshalb ist Rechtschreibung für das Modell eine Rekonstruktion.",
+      context: "Die IDs sind Adressen in der Embedding-Tabelle. BPE lernt seine Merges aus dem Trainingskorpus, nicht aus einer festen Wortliste.",
+      deep: "Ein byte-level Tokenizer startet mit 256 Bytes. Häufige Paare werden zu einem Token; ein englischer Satz braucht deshalb oft weniger Tokens als derselbe Inhalt in einer Schrift, die im Training selten war. Die gezeigten Zahlen sind ein illustratives Beispiel, keine Messung eines bestimmten Modells.",
       boxes: [
         box("tok-1", "Technik", "Warum Subwords?", "Ein festes Wort-Vokabular müsste jedes unbekannte Wort als Sonderzeichen behandeln. Subwords erlauben es, neue Wörter aus bekannten Teilen zusammenzusetzen. Gleichzeitig bleibt das Vokabular endlich."),
-        box("tok-2", "Mathematik", "Was ist eine ID?", "Eine ID ist ein Integer, der auf eine Zeile in der Embedding-Matrix zeigt. Die ID selbst hat keine Bedeutung; erst der gelernte Vektor gibt dem Token eine Position im Raum.")
+        box("tok-2", "Mathematik", "Was ist eine ID?", "Eine ID ist ein Integer, der auf eine Zeile in der Embedding-Matrix zeigt. Die ID selbst hat keine Bedeutung; erst der gelernte Vektor gibt dem Token eine Position im Raum."),
+        box("tok-3", "Technik", "BPE = Kompression", "Byte Pair Encoding beginnt mit Bytes und ersetzt wiederholt das häufigste Paar durch ein neues Symbol. Nach vielen Merges wird aus häufigen Zeichenfolgen ein einzelner Token. Das ist Datenkompression, gelernt aus dem Trainingskorpus."),
+        box("tok-4", "Grenze", "Warum ist Englisch kürzer?", "Weil der Trainingskorpus überwiegend englisch ist. Häufige englische Wörter bekommen lange Merges; Schriften mit wenig Text im Korpus bleiben auf Byte-Ebene. Die Demo zeigt das illustrativ, nicht als exakte Messung.")
+      ],
+      sources: [
+        { label: "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units", url: "https://arxiv.org/abs/1508.07909" },
+        { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }
       ]
     }
   ] : [
     {
       kicker: "03 / Tokenize",
       title: "Text becomes IDs",
-      body: "A token is not a word. Text is encoded as numbers: every character has a code point, and a byte-level tokenizer starts from 256 bytes so every string is representable. Rare words split into subwords: “unbelievable” becomes “un”, “believ”, “able”. A space can be a token too.",
+      body: "A token is not a word. Text is encoded as numbers: every character has a code point, and a byte-level tokenizer starts from 256 bytes so every string is representable. BPE is a compression algorithm: it starts from small units and merges frequent pairs into longer tokens. The goal is to cover as much long text as possible with as few tokens as possible. What is frequent in the training corpus becomes short; rare scripts stay in many byte tokens.",
       watch: "Click the samples. Which word splits into subwords?",
       demoState: { scene: "tokenize" },
-      context: "The IDs are addresses into the embedding table. The model sees row indices, not letters.",
-      deep: "A real tokenizer learns its merge table from text. Frequent pairs become one token, rare words stay in pieces. That is why spelling is a reconstruction for the model.",
+      context: "The IDs are addresses into the embedding table. BPE learns its merges from the training corpus, not from a fixed word list.",
+      deep: "A byte-level tokenizer starts with 256 bytes. Frequent pairs become one token; an English sentence therefore often needs fewer tokens than the same content in a script that was rare in training. The numbers shown are an illustrative example, not a measurement of a specific model.",
       boxes: [
         box("tok-1", "Technique", "Why subwords?", "A fixed word vocabulary would have to treat every unseen word as a special symbol. Subwords let the model build new words from known pieces while keeping the vocabulary finite."),
-        box("tok-2", "Mathematics", "What is an ID?", "An ID is an integer that points to a row in the embedding matrix. The ID itself has no meaning; the learned vector gives the token a position in the space.")
+        box("tok-2", "Mathematics", "What is an ID?", "An ID is an integer that points to a row in the embedding matrix. The ID itself has no meaning; the learned vector gives the token a position in the space."),
+        box("tok-3", "Technique", "BPE = compression", "Byte pair encoding starts with bytes and repeatedly replaces the most frequent pair with a new symbol. After many merges, frequent character sequences become a single token. That is data compression learned from the training corpus."),
+        box("tok-4", "Limit", "Why is English shorter?", "Because the training corpus is mostly English. Frequent English words get long merges; scripts with little text in the corpus stay at the byte level. The demo shows this illustratively, not as an exact measurement.")
+      ],
+      sources: [
+        { label: "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units", url: "https://arxiv.org/abs/1508.07909" },
+        { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }
       ]
     }
   ];
@@ -644,13 +656,26 @@
     {
       kicker: "04 / Modelle",
       title: "Modelle",
-      body: "Ein Modell schätzt eine Funktion. Manchmal kennst du sie genau, etwa f(x) = x + 1. Manchmal kennst du sie nicht: Wie berechnet man aus dem bisherigen Text das nächste Wort? Niemand kann diese Funktion klassisch hinschreiben; sie ist viel zu kompliziert. Also geben wir dem Computer Daten. Er sieht sie sich immer wieder an und findet mit den Bausteinen, die wir ihm geben, eine Funktion, die die echte gut genug abschätzt. Das nennt sich Machine Learning. LLMs sind Machine Learning und nutzen vier Bausteine: Tokenizer, Embedding, Transformer-Blöcke aus Attention und neuronalen Netzen, und eine Unembedding-Schicht.",
-      watch: "Sieh zu, wie aus Daten eine Kurve wird, und klicke die Bausteine an. Wo wird aus Text ein Vektor, wo wieder eine Verteilung?",
-      demoState: { scene: "model" },
+      body: "Ein Modell schätzt eine Funktion. Manchmal kennst du sie genau, etwa f(x) = x + 1. Manchmal kennst du sie nicht: Wie berechnet man aus dem bisherigen Text das nächste Wort? Niemand kann diese Funktion klassisch hinschreiben; sie ist viel zu kompliziert. Also geben wir dem Computer Daten. Er sieht sie sich immer wieder an und findet mit den Bausteinen, die wir ihm geben, eine Funktion, die die echte gut genug abschätzt. Das nennt sich Machine Learning.",
+      watch: "Sieh zu, wie aus Daten eine Kurve wird. Was schätzt das Modell hier?",
+      demoState: { scene: "model", view: "plot" },
       context: "Die echte Funktion ist nirgends aufgeschrieben. Das Training sucht Parameter, mit denen die Bausteine zusammen eine gute Näherung ergeben.",
       deep: "Klassisches Programmieren beginnt mit dem Verfahren: Du schreibst jeden Schritt vor, und der Computer führt ihn aus. Bei KI drehst du das um: Du gibst Beispiele mit passenden Ausgaben, und das Training sucht die Funktion dazwischen. Die Schichten sind die Form, in der diese Funktion Platz findet.",
       boxes: [
-        box("in-11", "Mathematik", "Der Stapel", "output = layer₃(layer₂(layer₁(input))). Jede Schicht ist eine Funktion mit Parametern; die Komposition ist das Modell."),
+        box("mod-0", "Idee", "Was ist ein Modell?", "Ein Modell ist eine parametrisierte Funktion, die aus Eingaben Ausgaben schätzt. Beim Training werden die Parameter so angepasst, dass die Ausgaben zu den Daten passen."),
+        box("in-11", "Mathematik", "Der Stapel", "output = layer₃(layer₂(layer₁(input))). Jede Schicht ist eine Funktion mit Parametern; die Komposition ist das Modell.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+    },
+    {
+      kicker: "04a / Die Bausteine",
+      title: "Die Bausteine eines LLM",
+      body: "Ein LLM ist ein Modell, das diese Schätzung mit vier Bausteinen baut: Tokenizer, Embedding, Transformer-Blöcke aus Attention und neuronalen Netzen, und eine Unembedding-Schicht. Der Tokenizer zerlegt Text, das Embedding macht Vektoren, die Transformer-Blöcke verarbeiten den Kontext, und das Unembedding erzeugt die Scores für das nächste Token.",
+      watch: "Klicke die Bausteine an. Wo wird aus Text ein Vektor, wo wieder eine Verteilung?",
+      demoState: { scene: "model", view: "blocks" },
+      context: "Die Reihenfolge ist die Architektur. Jeder Baustein verändert die Darstellung, bis am Ende eine Verteilung über das Vokabular steht.",
+      deep: "Jeder Baustein ist selbst ein gelerntes Stück Funktion. Zusammen approximieren sie die viel zu komplizierte Funktion „nächstes Token aus Kontext“.",
+      boxes: [
         box("mod-1", "Technik", "Die vier Bausteine", "Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Transformer-Blöcke: Attention mischt Tokens, das neuronale Netz rechnet pro Token. Unembedding: Vektor → Scores über das Vokabular."),
         box("in-13", "Grenze", "Was heißt plausibel?", "Plausibel heißt: Die Fortsetzung kam im Trainingstext vor. Es heißt nicht, dass das Modell eine eigene Vorstellung von Wahrheit hat."),
         box("mod-extra", "Grenze", "Was fehlt hier?", "Es gibt weitere Architekturen und Details, die wir hier nicht besprechen: Mixture-of-Experts, andere Normalisierungen, Multi-Query-Attention, verschiedene Positionsverfahren und viele Trainingstricks. Hier geht es nur um die Intuition.")
@@ -661,13 +686,26 @@
     {
       kicker: "04 / Models",
       title: "Models",
-      body: "A model estimates a function. Sometimes you know it exactly, for example f(x) = x + 1. Sometimes you do not: how do you compute the next word from the text so far? Nobody can write that function down in the classical way; it is far too complicated. So we give the computer data. It looks at the data again and again and, with the building blocks we provide, finds a function that approximates the real one well enough. That is machine learning. LLMs are machine learning and use four building blocks: a tokenizer, an embedding, transformer blocks made of attention and neural networks, and an unembedding layer.",
-      watch: "Watch data become a curve, then click the building blocks. Where does text become a vector, and where does it become a distribution again?",
-      demoState: { scene: "model" },
+      body: "A model estimates a function. Sometimes you know it exactly, for example f(x) = x + 1. Sometimes you do not: how do you compute the next word from the text so far? Nobody can write that function down in the classical way; it is far too complicated. So we give the computer data. It looks at the data again and again and, with the building blocks we provide, finds a function that approximates the real one well enough. That is machine learning.",
+      watch: "Watch data become a curve. What is the model estimating here?",
+      demoState: { scene: "model", view: "plot" },
       context: "The real function is written down nowhere. Training searches for parameters that make the building blocks together a good approximation.",
       deep: "Classical programming starts with the procedure: you write down every step, and the computer executes it. AI reverses that: you provide examples with matching outputs, and training searches for the function in between. The layers are the shape that function takes.",
       boxes: [
-        box("in-11", "Mathematics", "The stack", "output = layer₃(layer₂(layer₁(input))). Each layer is a function with parameters; the composition is the model."),
+        box("mod-0", "Idea", "What is a model?", "A model is a parameterised function that estimates outputs from inputs. Training adjusts the parameters so that the outputs fit the data."),
+        box("in-11", "Mathematics", "The stack", "output = layer₃(layer₂(layer₁(input))). Each layer is a function with parameters; the composition is the model.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+    },
+    {
+      kicker: "04a / The building blocks",
+      title: "The building blocks of an LLM",
+      body: "An LLM is a model that builds this estimate from four blocks: a tokenizer, an embedding, transformer blocks made of attention and neural networks, and an unembedding layer. The tokenizer splits text, the embedding turns tokens into vectors, the transformer blocks process the context, and the unembedding produces the scores for the next token.",
+      watch: "Click the building blocks. Where does text become a vector, and where does it become a distribution again?",
+      demoState: { scene: "model", view: "blocks" },
+      context: "The order is the architecture. Each block changes the representation until a distribution over the vocabulary remains.",
+      deep: "Each block is itself a learned piece of function. Together they approximate the far too complicated function “next token from context”.",
+      boxes: [
         box("mod-1", "Technique", "The four building blocks", "Tokenizer: text → tokens. Embedding: tokens → vectors. Transformer blocks: attention mixes tokens, the neural network computes per token. Unembedding: vector → scores over the vocabulary."),
         box("in-13", "Limit", "What does plausible mean?", "Plausible means the continuation occurred in the training text. It does not mean the model has its own notion of truth."),
         box("mod-extra", "Limit", "What is missing here?", "There are further architectures and details we do not cover here: mixture-of-experts, other normalisations, multi-query attention, different positional schemes, and many training tricks. This page is about the intuition.")

@@ -2653,6 +2653,7 @@
         tempShown: tempShown,
         revealed: revealed.length,
         valleys: baseValleys.length,
+        pitch: landPitch,
         landscape: landscape
       };
     };
@@ -3148,12 +3149,70 @@
     var colors = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
     var el = document.createElement("div");
     el.className = "ls-tokenize-scene";
-    el.innerHTML = '<div class="ls-scene-row ls-tokenize-samples"><span class="ls-tokenize-label">' + (DE ? "Beispiele" : "Samples") + '</span></div><div class="ls-tokenize-chips" aria-live="polite"></div><div class="ls-tokenize-stats"></div><p class="ls-tokenize-note">' + (DE ? "Ein Token ist ein Stück Text, kein Wort. Die ID ist die Adresse in der Embedding-Tabelle." : "A token is a piece of text, not a word. The ID is the address in the embedding table.") + '</p>';
+    el.innerHTML = '<div class="ls-scene-row ls-tokenize-samples"><span class="ls-tokenize-label">' + (DE ? "Beispiele" : "Samples") + '</span></div>' +
+      '<div class="ls-tokenize-chips" aria-live="polite"></div>' +
+      '<p class="ls-tokenize-scroll-note">' + (DE ? "Lange Kette: seitlich scrollen." : "Long chain: scroll sideways.") + '</p>' +
+      '<div class="ls-tokenize-stats"></div>' +
+      '<p class="ls-tokenize-note">' + (DE ? "Ein Token ist ein Stück Text, kein Wort. Die ID ist die Adresse in der Embedding-Tabelle." : "A token is a piece of text, not a word. The ID is the address in the embedding table.") + '</p>' +
+      '<div class="ls-bpe">' +
+        '<div class="ls-bpe-head"><span class="ls-bpe-title">' + (DE ? "BPE = Kompression" : "BPE = compression") + '</span><span class="ls-bpe-hint">' + (DE ? "Beispiel wählen" : "Choose an example") + '</span></div>' +
+        '<div class="ls-bpe-samples" role="group" aria-label="' + (DE ? "BPE-Beispiele" : "BPE examples") + '">' +
+          '<button type="button" class="ls-chip is-on" data-bpe="unbelievable" aria-pressed="true">unbelievable</button>' +
+          '<button type="button" class="ls-chip" data-bpe="sprachmodell" aria-pressed="false">Sprachmodell</button>' +
+          '<button type="button" class="ls-chip" data-bpe="ahimsa" aria-pressed="false">ahimsa</button>' +
+          '<button type="button" class="ls-chip" data-bpe="devanagari" aria-pressed="false">अहिंसा</button>' +
+          '<button type="button" class="ls-chip" data-bpe="hello" aria-pressed="false">hello</button>' +
+          '<button type="button" class="ls-chip" data-bpe="emoji" aria-pressed="false">🔥</button>' +
+        '</div>' +
+        '<div class="ls-bpe-view" aria-live="polite">' +
+          '<div class="ls-bpe-row"><span class="ls-bpe-label" data-bpe-before-label></span><div class="ls-bpe-chars" data-bpe-before></div><span class="ls-bpe-arrow">→</span><div class="ls-bpe-chars" data-bpe-after></div><span class="ls-bpe-count" data-bpe-count></span></div>' +
+        '</div>' +
+        '<p class="ls-bpe-note">' + (DE ? "BPE lernt Merges aus dem Trainingskorpus. Häufige Wörter werden kurz; seltene Schriften bleiben auf Byte-Ebene." : "BPE learns merges from the training corpus. Frequent words become short; rare scripts stay at the byte level.") + '</p>' +
+      '</div>';
     root.appendChild(el);
     var samples = el.querySelector(".ls-tokenize-samples");
     var chips = el.querySelector(".ls-tokenize-chips");
     var stats = el.querySelector(".ls-tokenize-stats");
     var value = examples.sentence.value;
+    var bpeBefore = el.querySelector("[data-bpe-before]");
+    var bpeAfter = el.querySelector("[data-bpe-after]");
+    var bpeCount = el.querySelector("[data-bpe-count]");
+    var bpeBeforeLabel = el.querySelector("[data-bpe-before-label]");
+    var bpeView = el.querySelector(".ls-bpe-view");
+    var bpeExamples = {
+      unbelievable: { before: "unbelievable", beforeMode: "chars", after: ["un", "believ", "able"], afterMode: "tokens", de: "12 Zeichen → 3 Tokens", en: "12 characters → 3 tokens" },
+      sprachmodell: { before: "Sprachmodell", beforeMode: "chars", after: ["Spr", "ach", "mod", "ell"], afterMode: "tokens", de: "12 Zeichen → 4 Tokens", en: "12 characters → 4 tokens" },
+      ahimsa: { before: "ahimsa", beforeMode: "chars", after: ["ah", "im", "sa"], afterMode: "tokens", de: "6 Zeichen → 3 Tokens", en: "6 characters → 3 tokens" },
+      devanagari: { before: "अहिंसा", beforeMode: "word", after: ["E0", "A4", "85", "E0", "A4", "B9", "E0", "A4", "BF", "E0", "A4", "82", "E0", "A4", "B8", "E0", "A4", "BE"], afterMode: "bytes", de: "6 Zeichen → 18 Byte-Tokens", en: "6 characters → 18 byte tokens" },
+      hello: { before: "hello", beforeMode: "chars", after: ["hello"], afterMode: "tokens", de: "5 Zeichen → 1 Token", en: "5 characters → 1 token" },
+      emoji: { before: "🔥", beforeMode: "word", after: ["F0", "9F", "94", "A5"], afterMode: "bytes", de: "1 Zeichen → 4 Byte-Tokens", en: "1 character → 4 byte tokens" }
+    };
+    function bpeChips(items, mode) {
+      return items.map(function (item) {
+        return '<span class="ls-bpe-chip' + (mode === "tokens" ? " ls-bpe-chip--token" : mode === "bytes" ? " ls-bpe-chip--byte" : "") + '">' + api.esc(item) + '</span>';
+      }).join("");
+    }
+    function renderBpe(key) {
+      var ex = bpeExamples[key] || bpeExamples.unbelievable;
+      if (bpeBefore) bpeBefore.innerHTML = ex.beforeMode === "chars" ? bpeChips(ex.before.split(""), "chars") : '<span class="ls-bpe-chip ls-bpe-word" dir="auto">' + api.esc(ex.before) + '</span>';
+      if (bpeAfter) bpeAfter.innerHTML = bpeChips(ex.after, ex.afterMode);
+      if (bpeCount) bpeCount.textContent = DE ? ex.de : ex.en;
+      if (bpeBeforeLabel) bpeBeforeLabel.textContent = ex.beforeMode === "chars" ? (DE ? "Zeichen" : "characters") : (DE ? "Zeichen / Bytes" : "characters / bytes");
+      if (bpeView) {
+        bpeView.classList.remove("is-swapping");
+        void bpeView.offsetWidth;
+        bpeView.classList.add("is-swapping");
+      }
+      el.querySelectorAll("[data-bpe]").forEach(function (b) {
+        var on = b.getAttribute("data-bpe") === key;
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+    }
+    el.querySelectorAll("[data-bpe]").forEach(function (b) {
+      b.addEventListener("click", function () { renderBpe(b.getAttribute("data-bpe")); });
+    });
+    renderBpe("unbelievable");
     function idFor(word) { var h = 0; for (var i = 0; i < word.length; i++) h = (h * 31 + word.charCodeAt(i)) % 50000; return 10000 + h; }
     function piecesFor(word) {
       if (splits[word]) return splits[word];
@@ -5090,6 +5149,234 @@
     return { update: function () {}, resize: function () { if (window.Plotly && plot.data) Plotly.Plots.resize(plot); }, destroy: function () { el.remove(); } };
   }
 
+  function modelScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-model-scene";
+    el.innerHTML = '<div class="ls-model-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-model-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-model-stage");
+    var canvas = el.querySelector("canvas");
+    var readout = el.querySelector(".ls-model-readout");
+    var size = null, ctx = null, hits = [], active = -1;
+    var C = api.colors();
+    var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    var raf = 0, started = 0, fit = reducedMotion ? 1 : 0, time = 0;
+    var cards = DE ? [
+      { id: "tokenizer", title: "Tokenizer", sub: "Text → Tokens", color: "lime", desc: "Zerlegt Text in Tokens: Stücke, die das Modell als Zahlen lesen kann." },
+      { id: "embed", title: "Embedding", sub: "Tokens → Vektoren", color: "sky", desc: "Macht aus jeder Token-ID einen Vektor. Ähnliche Tokens landen nah beieinander." },
+      { id: "blocks", title: "Transformer", sub: "Attention + FFN", color: "green", desc: "Attention mischt Information zwischen Tokens, das neuronale Netz rechnet pro Token. Viele Blöcke hintereinander." },
+      { id: "unembed", title: "Unembedding", sub: "Vektor → Scores", color: "gold", desc: "Projiziert den letzten Vektor auf das Vokabular. Softmax macht aus den Scores Wahrscheinlichkeiten." }
+    ] : [
+      { id: "tokenizer", title: "Tokenizer", sub: "text → tokens", color: "lime", desc: "Splits text into tokens: pieces the model can read as numbers." },
+      { id: "embed", title: "Embedding", sub: "tokens → vectors", color: "sky", desc: "Turns each token ID into a vector. Similar tokens end up close together." },
+      { id: "blocks", title: "Transformer", sub: "attention + FFN", color: "green", desc: "Attention mixes information between tokens; the neural network computes per token. Many blocks in a row." },
+      { id: "unembed", title: "Unembedding", sub: "vector → scores", color: "gold", desc: "Projects the last vector onto the vocabulary. Softmax turns the scores into probabilities." }
+    ];
+    function color(name) { return C[name] || C.petrol; }
+    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+    function truth(t) { return clamp(0.52 + 0.21 * Math.sin(2.4 * Math.PI * t) + 0.12 * Math.cos(5.1 * Math.PI * t + 0.7) + 0.06 * t, 0.08, 0.94); }
+    function approx(t) { return clamp(truth(t) + 0.016 * Math.sin(7.3 * Math.PI * t + 0.4), 0.08, 0.94); }
+    function baseApprox(t) { return clamp(0.54 + 0.045 * Math.sin(1.1 * Math.PI * t + 0.2), 0.08, 0.94); }
+    var samples = [];
+    (function () {
+      var seed = 7;
+      function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+      for (var i = 0; i < 17; i++) {
+        var t = (i + 0.5) / 17 + (rnd() - 0.5) * 0.018;
+        samples.push({ t: t, v: clamp(truth(t) + (rnd() - 0.5) * 0.075, 0.04, 0.96) });
+      }
+    })();
+    function updateReadout() {
+      var text = active >= 0
+        ? cards[active].desc
+        : (DE ? "Daten rein, Funktion geschätzt: Das ist die Idee hinter Machine Learning. Die vier Bausteine bauen daraus ein LLM." : "Data in, function estimated: that is the idea behind machine learning. The four building blocks turn it into an LLM.");
+      readout.innerHTML = '<span><b>' + (DE ? "Machine Learning" : "Machine learning") + '</b> ' + api.esc(text) + '</span>';
+    }
+    function cardColor(c) { return color(c.color); }
+    function drawCard(x, y, w, h, idx) {
+      var card = cards[idx];
+      var on = idx === active;
+      ctx.fillStyle = on ? "rgba(255,255,255,.96)" : "rgba(255,255,255,.82)";
+      ctx.strokeStyle = on ? cardColor(card) : C.lineStrong;
+      ctx.lineWidth = on ? 2 : 1;
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeRect(x, y, w, h);
+      ctx.fillStyle = cardColor(card);
+      ctx.fillRect(x, y, w, 4);
+      ctx.fillStyle = C.ink;
+      ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(card.title, x + 9, y + 23);
+      ctx.fillStyle = C.muted;
+      ctx.font = '500 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.fillText(card.sub, x + 9, y + h - 10);
+      hits.push({ x: x, y: y, w: w, h: h, idx: idx });
+    }
+    function drawArrow(x1, y1, x2, y2) {
+      ctx.strokeStyle = C.lineStrong;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      var a = Math.atan2(y2 - y1, x2 - x1);
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - 6 * Math.cos(a - 0.5), y2 - 6 * Math.sin(a - 0.5));
+      ctx.lineTo(x2 - 6 * Math.cos(a + 0.5), y2 - 6 * Math.sin(a + 0.5));
+      ctx.closePath();
+      ctx.fillStyle = C.lineStrong;
+      ctx.fill();
+    }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      hits = [];
+      ctx.clearRect(0, 0, size.w, size.h);
+      var w = size.w, h = size.h, pad = 24;
+      var bg = ctx.createRadialGradient(w * 0.5, h * 0.28, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.75);
+      bg.addColorStop(0, "rgba(247,250,249,.9)");
+      bg.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+      var plotX = pad, plotY = 30, plotW = w - pad * 2;
+      var plotH = Math.max(94, Math.min(h * 0.46, 210));
+      ctx.strokeStyle = C.line;
+      ctx.lineWidth = 1;
+      for (var gx = 0; gx <= 4; gx++) {
+        var xx = plotX + plotW * gx / 4;
+        ctx.beginPath(); ctx.moveTo(xx, plotY); ctx.lineTo(xx, plotY + plotH); ctx.stroke();
+      }
+      for (var gy = 0; gy <= 4; gy++) {
+        var yy = plotY + plotH * gy / 4;
+        ctx.beginPath(); ctx.moveTo(plotX, yy); ctx.lineTo(plotX + plotW, yy); ctx.stroke();
+      }
+      ctx.strokeStyle = C.lineStrong;
+      ctx.strokeRect(plotX, plotY, plotW, plotH);
+      function px(t) { return plotX + t * plotW; }
+      function py(v) { return plotY + plotH - v * plotH; }
+      ctx.setLineDash([5, 5]);
+      ctx.strokeStyle = C.muted;
+      ctx.globalAlpha = 0.55;
+      ctx.lineWidth = 1.3;
+      ctx.beginPath();
+      for (var i = 0; i <= 90; i++) {
+        var t = i / 90;
+        if (i === 0) ctx.moveTo(px(t), py(truth(t))); else ctx.lineTo(px(t), py(truth(t)));
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+      var eased = fit * fit * (3 - 2 * fit);
+      var modelPts = [];
+      for (var j = 0; j <= 90; j++) {
+        var tj = j / 90;
+        modelPts.push({ x: px(tj), y: py(baseApprox(tj) + (approx(tj) - baseApprox(tj)) * eased) });
+      }
+      var fill = ctx.createLinearGradient(0, plotY, 0, plotY + plotH);
+      fill.addColorStop(0, "rgba(99,164,75,.20)");
+      fill.addColorStop(1, "rgba(99,164,75,0)");
+      ctx.beginPath();
+      ctx.moveTo(modelPts[0].x, plotY + plotH);
+      modelPts.forEach(function (p) { ctx.lineTo(p.x, p.y); });
+      ctx.lineTo(modelPts[modelPts.length - 1].x, plotY + plotH);
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.beginPath();
+      modelPts.forEach(function (p, i2) { if (i2 === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+      ctx.strokeStyle = "rgba(99,164,75,.16)";
+      ctx.lineWidth = 8;
+      ctx.stroke();
+      ctx.strokeStyle = C.green;
+      ctx.lineWidth = 2.6;
+      ctx.stroke();
+      samples.forEach(function (s) {
+        ctx.beginPath();
+        ctx.arc(px(s.t), py(s.v), 3.2, 0, Math.PI * 2);
+        ctx.fillStyle = C.paper;
+        ctx.fill();
+        ctx.strokeStyle = C.blue;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillStyle = C.blue;
+      ctx.beginPath(); ctx.arc(plotX + 6, plotY - 12, 3.2, 0, Math.PI * 2); ctx.fillStyle = C.paper; ctx.fill(); ctx.strokeStyle = C.blue; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = C.blue; ctx.fillText(DE ? "Daten" : "data", plotX + 14, plotY - 8);
+      ctx.fillStyle = C.green;
+      ctx.fillRect(plotX + 72, plotY - 14, 18, 2.6);
+      ctx.fillText(DE ? "Modell" : "model", plotX + 96, plotY - 8);
+      ctx.fillStyle = C.muted;
+      ctx.fillText(DE ? "echte Funktion" : "true function", plotX + 168, plotY - 8);
+      var pipeY = plotY + plotH + 28;
+      var narrow = w < 620;
+      var gap = narrow ? 10 : 14;
+      var cw, ch = narrow ? 54 : 60;
+      var positions = [];
+      if (narrow) {
+        cw = (w - pad * 2 - gap) / 2;
+        positions = [
+          { x: pad, y: pipeY }, { x: pad + cw + gap, y: pipeY },
+          { x: pad + cw + gap, y: pipeY + ch + gap }, { x: pad, y: pipeY + ch + gap }
+        ];
+        cards.forEach(function (c, i) { drawCard(positions[i].x, positions[i].y, cw, ch, i); });
+        drawArrow(positions[0].x + cw, positions[0].y + ch / 2, positions[1].x, positions[1].y + ch / 2);
+        drawArrow(positions[1].x + cw / 2, positions[1].y + ch, positions[2].x + cw / 2, positions[2].y);
+        drawArrow(positions[2].x, positions[2].y + ch / 2, positions[3].x + cw, positions[3].y + ch / 2);
+      } else {
+        cw = Math.min(170, (w - pad * 2 - gap * 3) / 4);
+        var total = cw * 4 + gap * 3;
+        var startX = w / 2 - total / 2;
+        cards.forEach(function (c, i) { positions.push({ x: startX + i * (cw + gap), y: pipeY }); drawCard(positions[i].x, pipeY, cw, ch, i); });
+        for (var i3 = 0; i3 < 3; i3++) drawArrow(positions[i3].x + cw, pipeY + ch / 2, positions[i3 + 1].x, pipeY + ch / 2);
+      }
+      if (!reducedMotion) {
+        var path = narrow
+          ? [{ x: positions[0].x + cw / 2, y: positions[0].y + ch / 2 }, { x: positions[1].x + cw / 2, y: positions[1].y + ch / 2 }, { x: positions[2].x + cw / 2, y: positions[2].y + ch / 2 }, { x: positions[3].x + cw / 2, y: positions[3].y + ch / 2 }]
+          : positions.map(function (p) { return { x: p.x + cw / 2, y: p.y + ch / 2 }; });
+        var seg = (time * 0.7) % (path.length - 1);
+        var si = Math.floor(seg), st = seg - si;
+        var a = path[si], b = path[Math.min(path.length - 1, si + 1)] || a;
+        var dotX = a.x + (b.x - a.x) * st, dotY = a.y + (b.y - a.y) * st;
+        ctx.beginPath(); ctx.arc(dotX, dotY, 10, 0, Math.PI * 2); ctx.fillStyle = "rgba(99,164,75,.16)"; ctx.fill();
+        ctx.beginPath(); ctx.arc(dotX, dotY, 4, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill();
+        ctx.strokeStyle = C.paper; ctx.lineWidth = 1.5; ctx.stroke();
+      }
+      canvas.__lsModel = { hits: hits, active: active };
+    }
+    function frame(now) {
+      raf = requestAnimationFrame(frame);
+      if (!started) started = now;
+      fit = Math.min(1, (now - started) / 1100);
+      time = now / 1000;
+      draw();
+    }
+    function start() { if (reducedMotion) { fit = 1; draw(); return; } if (!raf) raf = requestAnimationFrame(frame); }
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    canvas.addEventListener("pointerup", function (e) {
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      hits.forEach(function (h) {
+        if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
+          active = active === h.idx ? -1 : h.idx;
+          updateReadout();
+          draw();
+        }
+      });
+    });
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    updateReadout();
+    resize();
+    start();
+    return {
+      update: function () {},
+      pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } },
+      resume: function () { start(); if (reducedMotion) draw(); },
+      resize: resize,
+      destroy: function () { if (raf) cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); }
+    };
+  }
+
   function stackScene(root, api) {
     var DE = api.lang === "de";
     var stages = DE ? [
@@ -5525,6 +5812,7 @@
     meadow: meadowScene,
     softmax: softmaxScene,
     manifold: manifoldScene,
+    model: modelScene,
     highdim: highdimScene,
     mlp: mlpScene,
     trajectories: trajectoriesScene,
