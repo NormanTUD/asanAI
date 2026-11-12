@@ -37,8 +37,8 @@ Files:
 
 - removes the top bar completely; the text and demo fill the viewport;
 - opens on a random day every load;
-- shows a compact bottom-right dock with a 0–9 position scale, step back /
-  forward, `Mix`, `Tiefe`, `Alles`, and `?` for the keyboard help;
+- shows a compact navigation bar at the top left of the text column, above the
+  step kicker and title, with a 0–9 position scale and step back / forward;
 - maps `0` to the first day, `9` to the last, `5` to the middle, and
   `1…8` evenly between them;
 - supports `←`/`→` for steps, `Shift` + `←`/`→` for days, `Home`/`End` for
@@ -231,10 +231,13 @@ removed term cannot leave a floating card behind.
 
 ## Position scale and day pages
 
-The mix page uses a ten-step position scale instead of a day rail. The scale
-is a compact snapshot of the whole prototype: `0` is the first day and `9`
-the last, so `5` sits in the middle. Clicking a tick jumps immediately; the
-active tick is green.
+The mix page uses a ten-step position scale instead of a day rail. It sits
+at the top left of the text column, above the kicker and title, so it never
+covers the reading area. `0` is the first day and `9` the last, so `5` sits
+in the middle. Clicking a tick jumps immediately; the active tick is green.
+The two arrows beside the scale move one step back or forward. There is no
+`Mix` button; the page still opens on a random day, and the scale is the
+explicit way to move.
 
 The old day rail markup remains in the engine for the coming per-day split,
 but it is not rendered in mix mode. A day page will mount one day only, so it
@@ -247,7 +250,8 @@ badge always name the active mode.
 
 ## Mobile
 
-- The mix dock spans the bottom width; its scale stays usable on a phone.
+- The top navigation bar stays above the heading and its scale stays usable
+  on a phone.
 - `Demo groß` hides the text column and gives the demo the full stage.
 - Canvases use `touch-action: none` where dragging matters.
 - The text column keeps its own vertical scroll; the stage does not jump.
@@ -293,9 +297,10 @@ Personas and behaviours exercised by the browser suite:
   opens all details, at least one maths box per walk.
 - **Navigator**: `0`/`5`/`9`, position ticks, step arrows, `Shift` + arrows,
   `Home`/`End`, and the help overlay.
-- **Mixer**: shuffle reaches several distinct demos and never repeats the
-  same state twice in a row.
-- **Embedding reader**: 1D → 2D → 3D hints and a drawn 3D scene.
+- **Mixer**: the random page still exposes every day through the scale, and
+  the API shuffle reaches several distinct demos.
+- **Embedding reader**: 1D → 2D → 3D hints, a drawn 3D scene, and reachable
+  source links.
 - **History reader**: timeline images load, captions keep their credit, and
   clicking a station changes the step.
 - **Returner**: depth and font survive a reload; the mix day stays random.

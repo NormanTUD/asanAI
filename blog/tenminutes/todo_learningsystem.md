@@ -63,3 +63,6 @@ Status: in Arbeit
 - DONE: Unten Zurueck/Weiter fuer Tage
 - DONE: Glossar-Tooltip klickbar, verschwindet bei Navigation
 - DONE: Persona-Tests fuer eilig, tief, Wiederkehrer, Mobil
+- DONE: Zahlenleiste oben links ueber der Ueberschrift
+- DONE: Mix-Button, Tiefe/Alles/? und Fusszeile entfernt
+- DONE: Quellen in den Tiefeboxen

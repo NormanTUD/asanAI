@@ -374,7 +374,8 @@
     var ctx = s.context || "";
     var deep = s.deep || "";
     var boxes = (s.boxes || []).concat(state.step === 0 ? (d.boxes || []) : []);
-    var count = (ctx ? 1 : 0) + (deep ? 1 : 0) + boxes.length;
+    var sources = (s.sources || []).concat(state.step === 0 ? (d.sources || []) : []);
+    var count = (ctx ? 1 : 0) + (deep ? 1 : 0) + boxes.length + (sources.length ? 1 : 0);
     if (!count) return "";
     var rootOpen = state.depth === "standard" || state.depth === "deep" ? " open" : "";
     var firstOpen = state.depth === "deep" ? " open" : "";
@@ -394,6 +395,12 @@
         '<summary>' + esc(b.lens ? b.lens + " · " : "") + esc(b.title || "Detail") + '</summary>' +
         '<p>' + termHTML(b.body || "") + '</p></details>';
     });
+    if (sources.length) {
+      html += '<details class="ls-deepbox"><summary>Quellen</summary><ul class="ls-sources">' +
+        sources.map(function (src) {
+          return '<li><a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.label) + '</a></li>';
+        }).join("") + '</ul></details>';
+    }
     return html + '</details></div>';
   }
   function openDepth() {

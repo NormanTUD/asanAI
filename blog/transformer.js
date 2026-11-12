@@ -8830,6 +8830,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	preview.setAttribute('role', 'button');
 	preview.tabIndex = 0;
 	preview.setAttribute('aria-expanded', 'false');
+	preview.setAttribute('aria-label', isDe ? `Signal von Schicht ${layerIndex + 1}; klicken für Details` : `Signal of layer ${layerIndex + 1}; click for details`);
 	preview.innerHTML = `<canvas id="${prefix}-signal-canvas" data-layer-idx="${layerIndex}" class="layer-signal-canvas" aria-label="${isDe ? 'Signal und Transformation dieser Schicht, pro Token und Dimension' : 'Signal and transformation in this layer, per token and dimension'}"></canvas>
 	<p class="tm-layer-minimal-text">${isDe ? 'Diese Schicht verschiebt jedes Token so, dass es im Kontext steht; danach wählt ein kleines neuronales Netz die Richtung des nächsten Schritts im Raum.' : 'This layer moves every token into its context; a small neural network then chooses the direction of the next step in the space.'}</p>`;
 	card.appendChild(preview);

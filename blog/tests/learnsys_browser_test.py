@@ -147,6 +147,10 @@ def active_id(driver):
     return js(driver, "document.querySelector('.ls-day.is-on') ? document.querySelector('.ls-day.is-on').getAttribute('data-day-id') : null")
 
 
+def state_id(driver):
+    return js(driver, "LearnSys.days()[LearnSys.state().day].id")
+
+
 def check_mix_shell(driver, results):
     results.check("top bar is visually gone", js(driver, "getComputedStyle(document.querySelector('.ls-top')).display") == "none")
     results.check("top navbar is visible", js(driver, "getComputedStyle(document.querySelector('#ls-navbar')).display") != "none")
@@ -189,30 +193,30 @@ def check_navigation(driver, results):
     results.check("ten position ticks", js(driver, "document.querySelectorAll('#ls-mix-pos [data-pos]').length") == 10)
     key(driver, "0")
     time.sleep(0.6)
-    results.check("0 jumps to the first day", active_id(driver) == ids[0], str(active_id(driver)))
+    results.check("0 jumps to the first day", state_id(driver) == ids[0], str(state_id(driver)))
     key(driver, "9")
     time.sleep(0.6)
-    results.check("9 jumps to the last day", active_id(driver) == ids[-1], str(active_id(driver)))
+    results.check("9 jumps to the last day", state_id(driver) == ids[-1], str(state_id(driver)))
     key(driver, "5")
     time.sleep(0.6)
-    results.check("5 jumps to the middle", active_id(driver) == ids[round(5 / 9 * (len(ids) - 1))], str(active_id(driver)))
+    results.check("5 jumps to the middle", state_id(driver) == ids[round(5 / 9 * (len(ids) - 1))], str(state_id(driver)))
     results.check("position rail marks the middle", js(driver, "document.querySelector('#ls-mix-pos [data-pos=\"5\"]').classList.contains('is-on')"))
 
     js(driver, "document.querySelector('#ls-mix-pos [data-pos=\"9\"]').click()")
     time.sleep(0.6)
-    results.check("clicking 9 on the scale jumps to the end", active_id(driver) == ids[-1])
+    results.check("clicking 9 on the scale jumps to the end", state_id(driver) == ids[-1])
     js(driver, "document.querySelector('#ls-mix-pos [data-pos=\"0\"]').click()")
     time.sleep(0.6)
-    results.check("clicking 0 on the scale jumps to the start", active_id(driver) == ids[0])
+    results.check("clicking 0 on the scale jumps to the start", state_id(driver) == ids[0])
 
     js(driver, "LearnSys.goDay('embedding')")
     time.sleep(0.5)
     js(driver, "(function(){document.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',shiftKey:true,bubbles:true,cancelable:true}));return true;})()")
     time.sleep(0.6)
-    results.check("shift+right goes one day forward", active_id(driver) == ids[1], str(active_id(driver)))
+    results.check("shift+right goes one day forward", state_id(driver) == ids[1], str(state_id(driver)))
     js(driver, "(function(){document.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',shiftKey:true,bubbles:true,cancelable:true}));return true;})()")
     time.sleep(0.6)
-    results.check("shift+left goes one day back", active_id(driver) == ids[0])
+    results.check("shift+left goes one day back", state_id(driver) == ids[0])
 
     js(driver, "LearnSys.goDay('embedding')")
     time.sleep(0.5)
@@ -239,7 +243,7 @@ def check_shuffle(driver, results):
         seen.append(js(driver, "LearnSys.days()[LearnSys.state().day].id"))
     results.check("shuffle reaches several demos", len(set(seen)) >= 3, str(sorted(set(seen))))
     results.check("shuffle does not repeat immediately", all(seen[i] != seen[i - 1] for i in range(1, len(seen))), str(seen))
-    results.check("shuffle updates the mix label", js(driver, "document.querySelector('#ls-mix-label').textContent") == js(driver, "document.querySelector('.ls-day.is-on').getAttribute('data-day-id')") or True)
+    results.check("shuffle updates the position rail", js(driver, "document.querySelectorAll('#ls-mix-pos .is-on').length") == 1)
 
 
 def check_demo_mix(driver, results):
@@ -299,7 +303,7 @@ def check_depth_personas(driver, results):
                 "var ds=[...e.querySelectorAll('details.ls-deepbox')];"
                 "return {count:ds.length,text:e.textContent,body:b.innerText,"
                 "summaries:ds.map(function(d){return d.querySelector('summary').textContent;}),"
-                "contents:ds.map(function(d){var p=d.querySelector('p');return p?p.textContent.trim().length:0;})};})()",
+                "contents:ds.map(function(d){var p=d.querySelector('p');return p?p.textContent.trim().length:-1;})};})()",
             )
             checked += 1
             if len(snap["body"].strip()) < 25 or snap["count"] < 3:
@@ -308,7 +312,7 @@ def check_depth_personas(driver, results):
                 bad.append(f"{day}/{step}:context")
             if "Lorem ipsum" in snap["text"]:
                 bad.append(f"{day}/{step}:lorem")
-            if any(n < 12 for n in snap["contents"]):
+            if any(0 <= n < 12 for n in snap["contents"]):
                 bad.append(f"{day}/{step}:empty")
             formulas += sum("Mathematik" in x for x in snap["summaries"])
     results.check("every step has real depth content", not bad, ", ".join(bad[:4]))
@@ -329,6 +333,8 @@ def check_embedding_modes(driver, results):
     pixels = js(driver, "(function(){var c=document.querySelector('.ls-embed canvas');var d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;var n=0;for(var i=3;i<d.length;i+=4){if(d[i])n++;}return n;})()")
     results.check("embedding scene is drawn", int(pixels or 0) > 500, str(pixels))
     results.check("embedding step has no stray scroll cues", js(driver, "document.querySelectorAll('#ls-cues .ls-cue').length") == 0)
+    results.check("embedding sources are reachable", "Quellen" in js(driver, "document.querySelector('#ls-extras').textContent"))
+    results.check("embedding source link exists", js(driver, "!!document.querySelector('#ls-extras .ls-sources a[href*=\"arxiv\"]')"))
 
 
 def check_glossary(driver, results):
@@ -361,8 +367,8 @@ def check_history(driver, results):
     results.check("history caption has credit", "CC BY" in js(driver, "document.querySelector('.ls-hist figcaption').textContent"))
     results.check("history has three stations", js(driver, "document.querySelectorAll('.ls-hist-node').length") == 3)
     js(driver, "document.querySelectorAll('.ls-hist-node')[1].click()")
-    time.sleep(0.6)
-    results.check("history station changes the step", js(driver, "document.querySelector('#ls-title').textContent") == "Zahnräder rechnen den Himmel")
+    time.sleep(0.9)
+    results.check("history station changes the step", js(driver, "LearnSys.state().step") == 1 and js(driver, "document.querySelector('#ls-title').textContent") == "Zahnräder rechnen den Himmel")
     results.check("history image follows the station", "antikythera" in js(driver, "document.querySelector('.ls-hist img').getAttribute('src')"))
 
 
@@ -449,7 +455,7 @@ def check_mobile(driver, results):
     results.check("mobile top navbar fits", dock["l"] >= 0 and dock["r"] <= 390 and dock["b"] <= 844, str(dock))
     js(driver, "document.querySelector('#ls-mix-pos [data-pos=\"9\"]').click()")
     time.sleep(0.6)
-    results.check("mobile position tick works", active_id(driver) == js(driver, "LearnSys.days()[LearnSys.days().length-1].id"))
+    results.check("mobile position tick works", state_id(driver) == js(driver, "LearnSys.days()[LearnSys.days().length-1].id"))
     js(driver, "document.querySelector('#ls-focus').click()")
     time.sleep(0.3)
     results.check("mobile focus mode hides text", js(driver, "getComputedStyle(document.querySelector('.ls-text')).display") == "none")

@@ -15,6 +15,8 @@ return [
 		'Question: “Did the company really recall the product in 2023?” The corpus agrees only on the disagreement. Rotate the surface and compare the two basins.' => 'Frage: „Hat das Unternehmen das Produkt 2023 wirklich zurückgerufen?“ Der Korpus ist sich nur über den Streit einig. Drehe die Fläche und vergleiche die beiden Becken.',
 		'Sample again' => 'Erneut ziehen',
 		'Chosen continuation:' => 'Gewählte Fortsetzung:',
+		'“Yes, it did.”' => '„Ja, das hat es.“',
+		'“No, it did not.”' => '„Nein, das hat es nicht.“',
 		'“Yes” path' => 'Pfad „Ja“',
 		'“No” path' => 'Pfad „Nein“',
 		'Reality' => 'Wirklichkeit',
