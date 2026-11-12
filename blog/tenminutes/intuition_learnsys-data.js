@@ -10,7 +10,143 @@
     { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781" },
     { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/" }
   ];
-  var steps = DE ? [
+  var introSteps = DE ? [
+    {
+      kicker: "01 / Die Idee",
+      title: "Das Modell in deiner Tasche",
+      body: "Stell deinem Handy eine Frage. Die Antwort erscheint Wort für Wort. Unter der Haube macht das Modell eine Sache: Es sagt das nächste Token voraus. Suchfeld, Sprachbefehl, Zusammenfassung und Treffer sind eine Schleife, immer wieder.",
+      watch: "Klicke auf das Handy, um die Animation erneut zu starten. Woher kommt die Antwort?",
+      demoState: { scene: "phone" },
+      context: "Die Suchmaschine schlägt keine gespeicherte Antwort nach. Die Zusammenfassung wird Token für Token geschrieben, und dieselbe Schleife läuft im Rechenzentrum dahinter.",
+      deep: "Der Satz ist eine Kette von Entscheidungen. Jedes neue Token verändert den Kontext für das nächste. Deshalb ist die Antwort nicht aus einem Archiv geholt, sondern in diesem Moment zusammengesetzt.",
+      boxes: [
+        box("in-1", "Die Schleife", "Was ist ein Token?", "Ein Token ist ein Stück Text: ein Wort, ein Wortteil, ein Satzzeichen oder ein Byte. Das Modell liest eine ID, keine Buchstaben. Aus IDs werden Vektoren, und am Ende steht wieder Text."),
+        box("in-2", "Die Idee", "Warum eine Schleife?", "Weil ein Satz länger ist als ein Token. Das Modell sagt ein Token voraus, hängt es an die Eingabe, und beginnt von vorn. Auto steht für die eigene Ausgabe, regressiv für die Vorhersage aus der bisherigen Sequenz.")
+      ]
+    },
+    {
+      kicker: "01b / Code",
+      title: "Es schreibt Text und Code",
+      body: "Dieselbe Schleife schreibt Prosa und Code. Das Modell sagt das nächste Token voraus, und Python führt das fertige Programm aus. Der Code ist eine weitere Sequenz, die das Modell vorhersagen kann.",
+      watch: "Klicke auf das Fenster, um die Animation erneut zu starten. Was hat das Modell geschrieben, was hat Python gerechnet?",
+      demoState: { scene: "code" },
+      context: "Das Modell schreibt das Programm; das Programm rechnet das Verhältnis. Die Schleife endet nicht am Text, sie kann auch eine ausführbare Anweisung erzeugen.",
+      deep: "Der Code ist nicht magisch korrekt. Er ist eine wahrscheinliche Fortsetzung, die zu den Trainingsdaten passt. Deshalb muss man ihn lesen und testen; die Schleife liefert eine Hypothese, keinen Beweis.",
+      boxes: [
+        box("in-3", "Code", "Warum funktioniert Code?", "Code hat eine strenge Syntax und viele wiederkehrende Muster. Beides ist für ein nächstes-Token-Modell leichter zu lernen als freie Prosa. Ein Programm ist eine Sequenz mit einer klaren lokalen Struktur."),
+        box("in-4", "Grenze", "Was garantiert der Code nicht?", "Dass er das Richtige tut. Das Modell optimiert auf Plausibilität, nicht auf Korrektheit. Die Ausführung zeigt, ob die Hypothese trägt.")
+      ]
+    },
+    {
+      kicker: "02 / Die Schleife",
+      title: "Ein Wort nach dem anderen",
+      body: "Kontext ist alles, was das Modell gerade sieht: der bisherige Text, die Anweisung, die Beispiele. Bei jedem Schritt ist vieles möglich, aber nicht alles passt. Die Demo zieht das nächste Token aus einer Verteilung, hängt es an und wiederholt. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich.",
+      watch: "Klicke einen Zweig an oder lass die Demo wählen. Welche Fortsetzungen bleiben plausibel?",
+      demoState: { scene: "loop", mode: "sample", temp: 0.8 },
+      context: "Das Modell hat kein anderes Arbeitsgedächtnis als den Kontext. Jedes neue Token verändert, was als Nächstes wahrscheinlich ist.",
+      deep: "Eine hohe Wahrscheinlichkeit ist keine Garantie für Wahrheit. Sie ist eine Aussage über den Trainingskorpus. Sampling macht die Verteilung sichtbar; Greedy nimmt immer den wahrscheinlichsten Pfad.",
+      boxes: [
+        box("in-5", "Mathematik", "Was macht Temperatur?", "Temperatur teilt die Logits vor dem Softmax: p_i ∝ exp(z_i / T). T < 1 schärft, T > 1 flacht ab. Bei T → 0 wird daraus Greedy; exakt null wird als Top-Token behandelt."),
+        box("in-6", "Technik", "Warum nicht immer Greedy?", "Greedy ist deterministisch und kann in Schleifen laufen. Sampling ist vielfältiger, aber auch inkohärenter. Top-p behält die kleinste Menge, deren kumulierte Wahrscheinlichkeit p erreicht.")
+      ]
+    },
+    {
+      kicker: "02b / Die Entscheidung",
+      title: "Die Verteilung ist nicht die Antwort",
+      body: "Das Modell liefert für jedes Token eine Wahrscheinlichkeit. Decoding entscheidet, wie daraus eine Sequenz wird. Greedy nimmt das Top-Token, Sampling zieht, Top-p schneidet den Tail. Ein anderer früher Token schickt den Text auf einen anderen Pfad.",
+      watch: "Wechsle den Modus. Welchen würdest du für Code nehmen, welchen für Brainstorming?",
+      demoState: { scene: "loop", mode: "greedy", temp: 0.8 },
+      context: "Top-k ist eine feste Anzahl, Top-p eine feste Masse. Min-p skaliert mit dem Top-Token. Nach dem Schnitt werden die verbleibenden Wahrscheinlichkeiten renormalisiert.",
+      deep: "Beam Search hält mehrere Pfade am Leben. Speculative Sampling beschleunigt die Prüfung, ohne die Zielverteilung zu ändern. Die Wahl ist eine Policy, keine Eigenschaft des Modells.",
+      boxes: [
+        box("in-7", "Anwendung", "Welche Einstellung wofür?", "Code und Fakten: niedrige Temperatur, enger Filter. Brainstorming: höhere Temperatur, weiterer Filter. Es gibt keine universelle Regel."),
+        box("in-8", "Geschichte", "Warum wurde Sampling wichtig?", "Weil ein Modell ohne Sampling immer denselben Text liefert. Die Vielfalt kommt aus der Verteilung, nicht aus dem Modell allein.")
+      ]
+    },
+    {
+      kicker: "03 / Der Tunnel",
+      title: "Der Wahrscheinlichkeitstunnel",
+      body: "Eine einzelne Vorhersage ist ein Schnitt durch eine Landschaft möglicher Fortsetzungen. Das blaue Tal ist der wahrscheinlichste Weg, die goldenen Nebenbecken sind die Alternativen. Gehe den Satz Schritt für Schritt und beobachte, wie der Kontext die Landschaft verengt; erhöhe die Temperatur und sie wird wieder breiter.",
+      watch: "Klicke einen Token auf dem Pfad oder nutze Weiter. Was passiert mit den Nebenbecken, wenn du T erhöhst?",
+      demoState: { scene: "tunnel", step: 0 },
+      context: "Das Modell entscheidet nie, dass etwas richtig ist. Es baut aus seinen Trainingsdaten eine Verteilung und zieht daraus. Die Landschaft zeigt, wie der Kontext diese Verteilung verengt.",
+      deep: "Die Energie-Landschaft folgt dem Energy-Based-Learning-Rahmen von LeCun et al. (2006). Tiefe bedeutet hohe Wahrscheinlichkeit; der Ball rollt in das tiefste Tal, das der Kontext gerade offen lässt. Ein echtes Modell arbeitet in Tausenden Dimensionen mit weit mehr Pfaden, als hier gezeichnet werden können.",
+      boxes: [
+        box("in-9", "Mathematik", "Warum ist das ein Tal?", "Die Höhe ist eine Energie, die Tiefe eine Wahrscheinlichkeit. Der Kontext verschiebt die Täler. Temperatur flacht die Ränder ab, sodass mehr Nebenwege erreichbar werden."),
+        box("in-10", "Grenze", "Was zeigt der Tunnel nicht?", "Er zeigt keine Wahrheit und keine vollständige Rechnung. Er ist eine Projektion der Verteilung auf zwei Achsen. Ein Kreuzungspunkt auf dem Bildschirm bedeutet nicht, dass zwei Pfade im vollen Raum zusammenfallen.")
+      ],
+      sources: [{ label: "LeCun et al. (2006), A Tutorial on Energy-Based Learning", url: "http://yann.lecun.com/exdb/publis/pdf/lecun-06.pdf" }]
+    }
+  ] : [
+    {
+      kicker: "01 / The idea",
+      title: "The model in your pocket",
+      body: "Ask your phone a question. The answer appears one word at a time. Under the hood the model does one thing: predict the next token. The search box, the voice query, the summary, and the links are one loop, repeated.",
+      watch: "Click the phone to replay the animation. Where does the answer come from?",
+      demoState: { scene: "phone" },
+      context: "The search engine does not look up a stored answer. The summary is written token by token, and the same loop runs in the data centre behind it.",
+      deep: "The sentence is a chain of decisions. Every new token changes the context for the next one. That is why the answer is not fetched from an archive but assembled in the moment.",
+      boxes: [
+        box("in-1", "The loop", "What is a token?", "A token is a piece of text: a word, a word piece, a punctuation mark, or a byte. The model reads an ID, not letters. IDs become vectors, and at the end there is text again."),
+        box("in-2", "The idea", "Why a loop?", "Because a sentence is longer than one token. The model predicts one token, appends it to the input, and starts again. Auto stands for its own output, regressive for predicting from the sequence so far.")
+      ]
+    },
+    {
+      kicker: "01b / Code",
+      title: "It writes text and code",
+      body: "The same loop writes prose and code. The model predicts the next token, and Python runs the finished program. Code is another sequence the model can predict.",
+      watch: "Click the window to replay the animation. What did the model write, what did Python compute?",
+      demoState: { scene: "code" },
+      context: "The model writes the program; the program computes the ratio. The loop does not stop at text; it can produce an executable instruction.",
+      deep: "The code is not magically correct. It is a likely continuation that fits the training data. That is why you read and test it; the loop gives a hypothesis, not a proof.",
+      boxes: [
+        box("in-3", "Code", "Why does code work?", "Code has strict syntax and many recurring patterns. Both are easier for a next-token model to learn than free prose. A program is a sequence with a clear local structure."),
+        box("in-4", "Limit", "What does the code not guarantee?", "That it does the right thing. The model optimises for plausibility, not correctness. Running it shows whether the hypothesis holds.")
+      ]
+    },
+    {
+      kicker: "02 / The loop",
+      title: "One word after another",
+      body: "Context is everything the model can see: the text so far, the instruction, the examples. At every step much is possible, but not all of it fits. The demo draws the next token from a distribution, appends it, and repeats. Greedy, sampling, and top-p read the same probabilities differently.",
+      watch: "Click a branch or let the demo choose. Which continuations stay plausible?",
+      demoState: { scene: "loop", mode: "sample", temp: 0.8 },
+      context: "The model has no working memory other than the context. Every new token changes what is likely next.",
+      deep: "A high probability is not a guarantee of truth. It is a statement about the training corpus. Sampling makes the distribution visible; greedy always takes the most likely path.",
+      boxes: [
+        box("in-5", "Mathematics", "What does temperature do?", "Temperature divides the logits before softmax: p_i ∝ exp(z_i / T). T < 1 sharpens, T > 1 flattens. At T → 0 it becomes greedy; exact zero is handled as the top token."),
+        box("in-6", "Technique", "Why not always greedy?", "Greedy is deterministic and can loop. Sampling is more varied, but also less coherent. Top-p keeps the smallest set whose cumulative probability reaches p.")
+      ]
+    },
+    {
+      kicker: "02b / The choice",
+      title: "The distribution is not the answer",
+      body: "The model returns a probability for every token. Decoding decides how a sequence becomes from it. Greedy takes the top token, sampling draws, top-p cuts the tail. A different early token sends the text down a different path.",
+      watch: "Switch modes. Which would you use for code, which for brainstorming?",
+      demoState: { scene: "loop", mode: "greedy", temp: 0.8 },
+      context: "Top-k is a fixed number, top-p a fixed mass. Min-p scales with the top token. After the cut, the remaining probabilities are renormalised.",
+      deep: "Beam search keeps several paths alive. Speculative sampling speeds up verification without changing the target distribution. The choice is a policy, not a property of the model.",
+      boxes: [
+        box("in-7", "Application", "Which setting for what?", "Code and facts: low temperature, narrow filter. Brainstorming: higher temperature, wider filter. There is no universal rule."),
+        box("in-8", "History", "Why did sampling become important?", "Because a model without sampling always produces the same text. Variety comes from the distribution, not from the model alone.")
+      ]
+    },
+    {
+      kicker: "03 / The tunnel",
+      title: "The probability tunnel",
+      body: "A single prediction is one slice through a landscape of plausible continuations. The blue valley is the likely path, the gold side basins are the alternatives. Step through the sentence and watch the context narrow the landscape; raise the temperature and it widens again.",
+      watch: "Click a token on the path or use Next. What happens to the side basins when you raise T?",
+      demoState: { scene: "tunnel", step: 0 },
+      context: "The model never decides that something is right. It builds a distribution from its training data and draws from it. The landscape shows how context narrows that distribution.",
+      deep: "The energy-landscape view follows the energy-based learning framework of LeCun et al. (2006). Deep means likely; the ball rolls into the deepest valley the context currently leaves open. A real model works in thousands of dimensions with far more paths than can be drawn here.",
+      boxes: [
+        box("in-9", "Mathematics", "Why is it a valley?", "Height is an energy, depth is a probability. Context shifts the valleys. Temperature flattens the rims, so more side paths become reachable."),
+        box("in-10", "Limit", "What does the tunnel not show?", "It shows neither truth nor the full computation. It is a projection of the distribution onto two axes. A crossing on screen does not mean two paths coincide in the full space.")
+      ],
+      sources: [{ label: "LeCun et al. (2006), A Tutorial on Energy-Based Learning", url: "http://yann.lecun.com/exdb/publis/pdf/lecun-06.pdf" }]
+    }
+  ];
+
+  var embedSteps = DE ? [
     {
       kicker: "01 / Die Linie",
       title: "Bedeutung wird eine Zahl",
@@ -183,6 +319,8 @@
       sources: sources
     }
   ];
+
+  var steps = introSteps.concat(embedSteps);
 
   var day = {
     id: "intuition",

@@ -920,18 +920,621 @@
     };
   }
 
+  function phoneScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-phone-scene";
+    el.innerHTML =
+      '<div class="ls-phone-device" role="img">' +
+        '<div class="ls-phone-screen">' +
+          '<div class="ls-phone-search"><span class="ls-phone-q"></span><span class="ls-phone-mic"></span></div>' +
+          '<div class="ls-phone-answer"></div>' +
+          '<div class="ls-phone-results"></div>' +
+        '</div>' +
+      '</div>' +
+      '<button type="button" class="ls-btn ls-btn--tiny ls-phone-replay">' + (DE ? "Nochmal" : "Replay") + '</button>';
+    root.appendChild(el);
+    var q = el.querySelector(".ls-phone-q");
+    var answer = el.querySelector(".ls-phone-answer");
+    var results = el.querySelector(".ls-phone-results");
+    var mic = el.querySelector(".ls-phone-mic");
+    var query = DE ? "Warum ist der Himmel blau?" : "Why is the sky blue?";
+    var answerText = DE ? "Kurze Lichtwellen werden in der Atmosphäre stärker gestreut als lange. Deshalb siehst du Blau." : "Short light waves scatter more strongly in the atmosphere than long ones. That is why you see blue.";
+    var resultData = DE ? [
+      { title: "Rayleigh-Streuung", url: "de.wikipedia.org", text: "Die Streuung an Molekülen ist umgekehrt proportional zur vierten Potenz der Wellenlänge." },
+      { title: "Himmelblau", url: "spektrum.de", text: "Warum der Himmel blau und der Sonnenuntergang rot ist." },
+      { title: "Atmosphäre", url: "britannica.com", text: "Aufbau und optische Eigenschaften der Erdatmosphäre." }
+    ] : [
+      { title: "Rayleigh scattering", url: "en.wikipedia.org", text: "Scattering by molecules is inversely proportional to the fourth power of wavelength." },
+      { title: "Why is the sky blue?", url: "science.nasa.gov", text: "Short wavelengths scatter more than long ones." },
+      { title: "Atmosphere", url: "britannica.com", text: "Structure and optical properties of Earth's atmosphere." }
+    ];
+    var timers = [];
+    function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+    function reset() {
+      clearTimers();
+      q.textContent = "";
+      answer.classList.remove("is-on");
+      answer.textContent = "";
+      results.classList.remove("is-on");
+      results.innerHTML = "";
+      mic.classList.remove("is-on");
+      var i = 0;
+      function typeQuery() {
+        if (i <= query.length) {
+          q.textContent = query.slice(0, i);
+          i++;
+          timers.push(setTimeout(typeQuery, 36));
+        } else {
+          timers.push(setTimeout(function () { mic.classList.add("is-on"); }, 250));
+          timers.push(setTimeout(showAnswer, 900));
+        }
+      }
+      function showAnswer() {
+        answer.classList.add("is-on");
+        var words = answerText.split(" ");
+        var j = 0;
+        function tick() {
+          if (j <= words.length) {
+            answer.textContent = words.slice(0, j).join(" ");
+            j++;
+            timers.push(setTimeout(tick, 60));
+          } else {
+            timers.push(setTimeout(showResults, 250));
+          }
+        }
+        tick();
+      }
+      function showResults() {
+        results.innerHTML = resultData.map(function (r, k) {
+          return '<div class="ls-phone-result" style="--i:' + k + '"><b>' + api.esc(r.title) + '</b><span>' + api.esc(r.url) + '</span><p>' + api.esc(r.text) + '</p></div>';
+        }).join("");
+        requestAnimationFrame(function () { results.classList.add("is-on"); });
+      }
+      typeQuery();
+    }
+    el.querySelector(".ls-phone-replay").addEventListener("click", reset);
+    el.addEventListener("click", function (e) { if (!e.target.closest("button")) reset(); });
+    reset();
+    return {
+      update: function () {},
+      resize: function () {},
+      destroy: function () { clearTimers(); el.remove(); }
+    };
+  }
+
+  function codeScene(root, api) {
+    var DE = api.lang === "de";
+    var codeText = DE ? [
+      "# Rayleigh-Streuung in Luft",
+      "k_B = 1.380649e-23   # J/K",
+      "",
+      "def scattering(wavelength, pressure, temperature):",
+      "    density = pressure / (k_B * temperature)",
+      "    return density / wavelength ** 4",
+      "",
+      "blue = scattering(450e-9, 1e5, 293)",
+      "red  = scattering(650e-9, 1e5, 293)",
+      'print(f"Blau wird {blue / red:.2f}× stärker gestreut als Rot")'
+    ] : [
+      "# Rayleigh scattering in air",
+      "k_B = 1.380649e-23   # J/K",
+      "",
+      "def scattering(wavelength, pressure, temperature):",
+      "    density = pressure / (k_B * temperature)",
+      "    return density / wavelength ** 4",
+      "",
+      "blue = scattering(450e-9, 1e5, 293)",
+      "red  = scattering(650e-9, 1e5, 293)",
+      'print(f"Blue is {blue / red:.2f}x more strongly scattered than red")'
+    ];
+    var outText = DE ? "Blau wird 4,35× stärker gestreut als Rot." : "Blue is 4.35× more strongly scattered than red.";
+    var el = document.createElement("div");
+    el.className = "ls-code-scene";
+    el.innerHTML =
+      '<div class="ls-code-window"><div class="ls-code-bar"><i></i><i></i><i></i><span>' + (DE ? "himmel.py" : "sky.py") + '</span></div><pre class="ls-code-body"><code></code></pre></div>' +
+      '<div class="ls-code-terminal"><div class="ls-code-bar"><i></i><i></i><i></i><span>Terminal</span></div><div class="ls-code-term"><b>$ ' + (DE ? "python3 himmel.py" : "python3 sky.py") + '</b><span></span></div></div>' +
+      '<button type="button" class="ls-btn ls-btn--tiny ls-code-replay">' + (DE ? "Nochmal" : "Replay") + '</button>';
+    root.appendChild(el);
+    var codeEl = el.querySelector(".ls-code-body code");
+    var term = el.querySelector(".ls-code-term span");
+    var tokens = [];
+    codeText.forEach(function (line, li) {
+      line.split(/(\s+)/).forEach(function (part) {
+        if (part) tokens.push({ text: part, line: li });
+      });
+      tokens.push({ text: "\n", line: li });
+    });
+    var spans = tokens.map(function (t) {
+      var span = document.createElement("span");
+      span.className = "ls-code-token";
+      span.textContent = t.text;
+      codeEl.appendChild(span);
+      return span;
+    });
+    var timers = [];
+    function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+    function reset() {
+      clearTimers();
+      spans.forEach(function (s) { s.classList.remove("is-visible"); });
+      term.textContent = "";
+      var i = 0;
+      function typeNext() {
+        if (i >= spans.length) {
+          timers.push(setTimeout(function () { term.textContent = outText; }, 260));
+          return;
+        }
+        spans[i].classList.add("is-visible");
+        var delay = /^\s+$/.test(tokens[i].text) ? 0 : 28;
+        i++;
+        timers.push(setTimeout(typeNext, delay));
+      }
+      timers.push(setTimeout(typeNext, 380));
+    }
+    el.querySelector(".ls-code-replay").addEventListener("click", reset);
+    el.addEventListener("click", function (e) { if (!e.target.closest("button")) reset(); });
+    reset();
+    return {
+      update: function () {},
+      resize: function () {},
+      destroy: function () { clearTimers(); el.remove(); }
+    };
+  }
+
+  function loopScene(root, api) {
+    var DE = api.lang === "de";
+    var MAX_STEPS = 6;
+    var NOUNS = DE ? [
+      { t: "Drache", l: 3.4 }, { t: "Ritter", l: 1.1 }, { t: "Roboter", l: 0.7 }, { t: "Schloss", l: 0.4 }, { t: "Fluss", l: 0.2 }
+    ] : [
+      { t: "dragon", l: 3.4 }, { t: "princess", l: 1.1 }, { t: "robot", l: 0.7 }, { t: "castle", l: 0.4 }, { t: "river", l: 0.2 }
+    ];
+    var ACTIONS = DE ? {
+      Drache: [{ t: "fliegen", l: 3.5 }, { t: "brüllen", l: 1.5 }, { t: "schlafen", l: 0.8 }, { t: "schwimmen", l: 0.5 }, { t: "singen", l: 0.3 }],
+      Ritter: [{ t: "kämpfen", l: 3.4 }, { t: "reiten", l: 1.5 }, { t: "singen", l: 0.9 }, { t: "schlafen", l: 0.5 }, { t: "tanzen", l: 0.3 }],
+      Roboter: [{ t: "fliegen", l: 3.3 }, { t: "piepen", l: 1.5 }, { t: "singen", l: 0.9 }, { t: "schlafen", l: 0.5 }, { t: "schwimmen", l: 0.3 }],
+      Schloss: [{ t: "glänzen", l: 3.2 }, { t: "leuchten", l: 1.5 }, { t: "schlafen", l: 0.8 }, { t: "singen", l: 0.4 }],
+      Fluss: [{ t: "fließen", l: 3.5 }, { t: "singen", l: 1.2 }, { t: "brüllen", l: 0.8 }, { t: "gefrieren", l: 0.5 }, { t: "glänzen", l: 0.3 }]
+    } : {
+      dragon: [{ t: "fly", l: 3.5 }, { t: "roar", l: 1.5 }, { t: "sleep", l: 0.8 }, { t: "swim", l: 0.5 }, { t: "sing", l: 0.3 }],
+      princess: [{ t: "sing", l: 3.4 }, { t: "dance", l: 1.5 }, { t: "dream", l: 0.9 }, { t: "sleep", l: 0.5 }, { t: "swim", l: 0.3 }],
+      robot: [{ t: "fly", l: 3.3 }, { t: "beep", l: 1.5 }, { t: "sing", l: 0.9 }, { t: "sleep", l: 0.5 }, { t: "swim", l: 0.3 }],
+      castle: [{ t: "stand", l: 3.2 }, { t: "glow", l: 1.5 }, { t: "sleep", l: 0.8 }, { t: "sing", l: 0.4 }],
+      river: [{ t: "flow", l: 3.5 }, { t: "sing", l: 1.2 }, { t: "roar", l: 0.8 }, { t: "freeze", l: 0.5 }, { t: "shine", l: 0.3 }]
+    };
+    var RELATIVE = DE ? {
+      Drache: [{ t: "der", l: 3.6 }], Ritter: [{ t: "der", l: 3.6 }], Roboter: [{ t: "der", l: 3.6 }],
+      Schloss: [{ t: "das", l: 3.6 }], Fluss: [{ t: "der", l: 3.6 }]
+    } : null;
+    var MODALS = DE ? [
+      { t: "konnte", l: 3.0 }, { t: "wollte", l: 1.3 }, { t: "sollte", l: 0.9 }, { t: "durfte", l: 0.6 }, { t: "musste", l: 0.3 }
+    ] : [
+      { t: "could", l: 3.0 }, { t: "would", l: 1.3 }, { t: "loved", l: 0.9 }, { t: "tried", l: 0.6 }, { t: "wanted", l: 0.3 }
+    ];
+    var NEGATORS = DE ? [
+      { t: "nicht", l: 3.3 }, { t: "nie", l: 1.2 }, { t: "nur", l: 0.8 }, { t: "noch", l: 0.5 }, { t: "immer", l: 0.3 }
+    ] : [
+      { t: "not", l: 3.3 }, { t: "never", l: 1.2 }, { t: "only", l: 0.8 }, { t: "still", l: 0.5 }, { t: "always", l: 0.3 }
+    ];
+    function choicesFor() {
+      var n = generated.length;
+      if (n === 0) return NOUNS;
+      if (n === 1) {
+        if (DE) return RELATIVE[generated[0]] || [{ t: "der", l: 3.6 }];
+        var noun = generated[0];
+        if (noun === "princess") return [{ t: "that", l: 3.1 }, { t: "who", l: 1.4 }];
+        if (noun === "castle" || noun === "river") return [{ t: "that", l: 3.1 }, { t: "which", l: 1.4 }];
+        return [{ t: "that", l: 3.1 }, { t: "who", l: 1.4 }, { t: "which", l: 0.8 }];
+      }
+      if (n === 2) return MODALS;
+      if (n === 3) {
+        if (DE) return NEGATORS;
+        var verb = generated[2];
+        if (verb === "could" || verb === "would") return NEGATORS;
+        return [{ t: "to", l: 4.0 }];
+      }
+      if (n === 4) return ACTIONS[generated[0]] || (DE ? ACTIONS.Drache : ACTIONS.dragon);
+      if (n === 5) return [{ t: ".", l: 3.2 }, { t: "!", l: 1.1 }, { t: "…", l: 0.7 }];
+      return [];
+    }
+    var base = DE ? ["Es", "war", "einmal", "ein"] : ["Once", "upon", "a", "time", "there", "was", "a"];
+    var generated = [];
+    var temp = 0.8;
+    var decodeMode = "sample";
+    var el = document.createElement("div");
+    el.className = "ls-loop-scene";
+    el.innerHTML =
+      '<div class="ls-loop-sentence" aria-live="polite"></div>' +
+      '<div class="ls-loop-tree" aria-live="polite"></div>' +
+      '<div class="ls-loop-bars"></div>' +
+      '<div class="ls-scene-row ls-loop-modes"></div>' +
+      '<div class="ls-scene-row ls-loop-actions"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loop-next">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-loop-temp" min="0.05" max="1.8" step="0.05" value="0.8"><output>0.80</output></label></div>' +
+      '<div class="ls-loop-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var sentenceEl = el.querySelector(".ls-loop-sentence");
+    var treeEl = el.querySelector(".ls-loop-tree");
+    var barsEl = el.querySelector(".ls-loop-bars");
+    var readout = el.querySelector(".ls-loop-readout");
+    var tempEl = el.querySelector(".ls-loop-temp");
+    var tempOut = el.querySelector(".ls-loop-actions output");
+    function softmax(logits, t) {
+      var max = Math.max.apply(null, logits);
+      var exps = logits.map(function (l) { return Math.exp((l - max) / Math.max(0.05, t)); });
+      var sum = exps.reduce(function (a, b) { return a + b; }, 0);
+      return exps.map(function (e) { return e / sum; });
+    }
+    function renderSentence() {
+      var html = "";
+      var all = base.map(function (tok, i) {
+        if (DE && i === base.length - 1 && generated.length) tok = "ein";
+        return { tok: tok, cls: "given" };
+      }).concat(generated.map(function (tok) { return { tok: tok, cls: "pred" }; }));
+      all.forEach(function (item, i) {
+        var noSpace = /^[.,!?;:)\]]|^…/.test(item.tok);
+        if (DE && i === base.length + 1) html += ",";
+        if (i && !noSpace) html += " ";
+        html += '<span class="' + item.cls + '">' + api.esc(item.tok) + "</span>";
+      });
+      sentenceEl.innerHTML = html;
+    }
+    function renderTree() {
+      var words = base.slice();
+      if (DE && generated.length) words[words.length - 1] = "ein";
+      var path = ['<span class="ls-loop-base">' + api.esc(words.join(" ")) + '</span>'];
+      generated.forEach(function (tok, i) {
+        path.push('<span class="ls-loop-arrow">→</span>');
+        path.push('<span class="ls-loop-node">' + api.esc(tok) + (DE && i === 0 ? "," : "") + '</span>');
+      });
+      var opts = choicesFor();
+      var next = opts.length
+        ? '<span class="ls-loop-next-label">' + (DE ? "nächstes:" : "next:") + '</span> ' + opts.map(function (o) {
+            return '<button type="button" class="ls-loop-branch" data-choice="' + api.esc(o.t) + '">' + api.esc(o.t) + '</button>';
+          }).join('<span class="ls-loop-sep">·</span>')
+        : '<span class="ls-loop-end">' + (DE ? "Satzende" : "end of sentence") + '</span>';
+      treeEl.innerHTML = '<div class="ls-loop-line">' + path.join(" ") + '</div><div class="ls-loop-line">' + next + '</div>';
+      treeEl.querySelectorAll("[data-choice]").forEach(function (b) {
+        b.addEventListener("click", function () { choose(b.getAttribute("data-choice")); });
+      });
+    }
+    function renderBars() {
+      var opts = choicesFor();
+      var probs = softmax(opts.map(function (o) { return o.l; }), temp);
+      var top = 0;
+      probs.forEach(function (p, i) { if (p > probs[top]) top = i; });
+      var order = probs.map(function (p, i) { return { i: i, p: p }; }).sort(function (a, b) { return b.p - a.p; });
+      var cut = -1;
+      if (decodeMode === "greedy") cut = top;
+      if (decodeMode === "topp") {
+        var acc = 0;
+        for (var k = 0; k < order.length; k++) { acc += order[k].p; if (acc >= 0.9) { cut = order[k].i; break; } }
+      }
+      barsEl.innerHTML = opts.map(function (o, i) {
+        var on = decodeMode === "greedy" ? i === top : (decodeMode === "topp" && probs[i] >= probs[cut]);
+        return '<button type="button" class="ls-loop-bar' + (on ? " is-on" : "") + '" data-bar="' + i + '">' +
+          '<span class="ls-loop-bar-label">' + api.esc(o.t) + '</span>' +
+          '<span class="ls-loop-bar-track"><i style="width:' + (probs[i] * 100).toFixed(1) + '%"></i></span>' +
+          '<span class="ls-loop-bar-val">' + (probs[i] * 100).toFixed(0) + '%</span></button>';
+      }).join("");
+      barsEl.querySelectorAll("[data-bar]").forEach(function (b) {
+        b.addEventListener("click", function () { choose(opts[parseInt(b.getAttribute("data-bar"), 10)].t); });
+      });
+      readout.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + generated.length + ' / ' + MAX_STEPS + '</b></span><span>' + (DE ? "Kontext" : "Context") + ' <b>' + (base.length + generated.length) + '</b></span><span>' + (DE ? "Top" : "Top") + ' <b>' + api.esc(opts[top] ? opts[top].t : "—") + '</b></span><span>' + (DE ? "Modus" : "Mode") + ' <b>' + decodeMode + '</b></span>';
+    }
+    function choose(token) {
+      if (!token) return;
+      token.split(" ").forEach(function (piece) { generated.push(piece); });
+      if (generated.length > MAX_STEPS) generated = generated.slice(0, MAX_STEPS);
+      renderSentence(); renderTree(); renderBars();
+    }
+    function sample() {
+      var opts = choicesFor();
+      if (!opts.length) return;
+      if (decodeMode === "greedy") { choose(opts[0].t); return; }
+      var probs = softmax(opts.map(function (o) { return o.l; }), temp);
+      var pool = probs.map(function (p, i) { return { i: i, p: p }; });
+      if (decodeMode === "topp") {
+        pool.sort(function (a, b) { return b.p - a.p; });
+        var acc = 0, keep = [];
+        for (var i = 0; i < pool.length; i++) { keep.push(pool[i]); acc += pool[i].p; if (acc >= 0.9) break; }
+        pool = keep;
+        var total = pool.reduce(function (s, x) { return s + x.p; }, 0);
+        pool.forEach(function (x) { x.p = x.p / total; });
+      }
+      var r = Math.random(), acc2 = 0;
+      for (var j = 0; j < pool.length; j++) { acc2 += pool[j].p; if (r <= acc2) { choose(opts[pool[j].i].t); return; } }
+      choose(opts[pool[0].i].t);
+    }
+    function setMode(mode) {
+      decodeMode = mode;
+      el.querySelectorAll(".ls-loop-modes .ls-chip").forEach(function (b) {
+        b.classList.toggle("is-on", b.getAttribute("data-mode") === mode);
+      });
+      renderBars();
+    }
+    function reset() { generated = []; renderSentence(); renderTree(); renderBars(); }
+    [
+      { id: "sample", label: "Sample" }, { id: "greedy", label: "Greedy" }, { id: "topp", label: "Top-p 0.9" }
+    ].forEach(function (m) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "ls-chip" + (m.id === decodeMode ? " is-on" : "");
+      b.setAttribute("data-mode", m.id);
+      b.textContent = m.label;
+      b.addEventListener("click", function () { setMode(m.id); });
+      el.querySelector(".ls-loop-modes").appendChild(b);
+    });
+    el.querySelector(".ls-loop-next").addEventListener("click", sample);
+    el.querySelector(".ls-loop-reset").addEventListener("click", reset);
+    tempEl.addEventListener("input", function () {
+      temp = parseFloat(tempEl.value) || 0.8;
+      tempOut.textContent = temp.toFixed(2);
+      renderBars();
+    });
+    renderSentence(); renderTree(); renderBars();
+    return {
+      update: function (s) {
+        if (!s) return;
+        if (s.mode) setMode(s.mode);
+        if (typeof s.temp === "number") { temp = s.temp; tempEl.value = String(temp); tempOut.textContent = temp.toFixed(2); renderBars(); }
+        if (s.reset) reset();
+      },
+      resize: function () {},
+      destroy: function () { el.remove(); }
+    };
+  }
+
+  function tunnelScene(root, api) {
+    var DE = api.lang === "de";
+    var tokens = DE ? ["Die", "Hauptstadt", "von", "Frankreich", "ist", "Paris", "."] : ["The", "capital", "of", "France", "is", "Paris", "."];
+    var pathY = [0.50, 0.42, 0.38, 0.35, 0.32, 0.30, 0.32];
+    var entropy = [0.95, 0.55, 0.20, 0.60, 0.15, 0.05, 0.10];
+    var branches = DE ? [
+      { step: 0, alts: [{ t: "Stadt", y: 0.22 }, { t: "Regierung", y: 0.62 }] },
+      { step: 1, alts: [{ t: "Frankreichs", y: 0.20 }, { t: "war", y: 0.58 }] },
+      { step: 2, alts: [{ t: "Deutschland", y: 0.16 }, { t: "Italien", y: 0.54 }] },
+      { step: 3, alts: [{ t: "war", y: 0.14 }, { t: "bleibt", y: 0.50 }] },
+      { step: 4, alts: [{ t: "Lyon", y: 0.13 }, { t: "Marseille", y: 0.48 }] },
+      { step: 5, alts: [{ t: ",", y: 0.15 }, { t: "und", y: 0.49 }] }
+    ] : [
+      { step: 0, alts: [{ t: "city", y: 0.22 }, { t: "government", y: 0.62 }] },
+      { step: 1, alts: [{ t: "city", y: 0.20 }, { t: "was", y: 0.58 }] },
+      { step: 2, alts: [{ t: "Germany", y: 0.16 }, { t: "Italy", y: 0.54 }] },
+      { step: 3, alts: [{ t: "was", y: 0.14 }, { t: "remains", y: 0.50 }] },
+      { step: 4, alts: [{ t: "Lyon", y: 0.13 }, { t: "Marseille", y: 0.48 }] },
+      { step: 5, alts: [{ t: ",", y: 0.15 }, { t: "and", y: 0.49 }] }
+    ];
+    var el = document.createElement("div");
+    el.className = "ls-tunnel-scene";
+    el.innerHTML = '<div class="ls-tunnel-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-tunnel-side"><div class="ls-tunnel-kicker">' + (DE ? "Nächstes Wort" : "Next word") + '</div><b class="ls-tunnel-next"></b><div class="ls-tunnel-alts"></div><div class="ls-tunnel-meta"></div></div>' +
+      '<div class="ls-scene-row"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-tunnel-advance">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-tunnel-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-tunnel-temp" min="0.05" max="5" step="0.05" value="0.8"><output>0.80</output></label></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-tunnel-stage");
+    var canvas = el.querySelector("canvas");
+    var nextEl = el.querySelector(".ls-tunnel-next");
+    var altEl = el.querySelector(".ls-tunnel-alts");
+    var metaEl = el.querySelector(".ls-tunnel-meta");
+    var tempEl = el.querySelector(".ls-tunnel-temp");
+    var tempOut = el.querySelector("output");
+    var ctx = null, size = null, step = 0, temp = 0.8, yaw = -0.55, pitch = 0.85, zoom = 1;
+    var hits = [], drag = null, suppress = false;
+    function centerAt(x) {
+      var lo = Math.max(0, Math.min(pathY.length - 1, Math.floor(x)));
+      var hi = Math.min(pathY.length - 1, lo + 1);
+      return (pathY[lo] + (pathY[hi] - pathY[lo]) * (x - lo) - 0.5) * 2;
+    }
+    function entropyAt(x) {
+      var lo = Math.max(0, Math.min(entropy.length - 1, Math.floor(x)));
+      var hi = Math.min(entropy.length - 1, lo + 1);
+      return entropy[lo] + (entropy[hi] - entropy[lo]) * (x - lo);
+    }
+    function heightAt(x, y) {
+      var center = centerAt(x);
+      var width = 0.18 + 0.45 * (0.3 + entropyAt(x)) * (0.45 + temp / (temp + 1.2));
+      var depth = 0.38 + 0.28 * (2 - temp) / 1.95;
+      var h = 0.32 - depth * Math.exp(-((y - center) * (y - center)) / (2 * width * width));
+      branches.forEach(function (b) {
+        var dx = x - b.step;
+        if (dx < -1.0 || dx > 1.0) return;
+        b.alts.forEach(function (a) {
+          var cy = (a.y - 0.5) * 2;
+          var d = Math.hypot(dx * 1.4, y - cy);
+          h -= 0.16 * Math.exp(-(d * d) / (2 * 0.16 * 0.16));
+        });
+      });
+      h += 0.02 * Math.sin(x * 2.1 + y * 3.7);
+      return h;
+    }
+    function project(x, y, z) {
+      var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+      var x1 = x * cy - y * sy;
+      var y1 = x * sy + y * cy;
+      var y2 = y1 * cp - z * sp;
+      var z2 = y1 * sp + z * cp;
+      var s = Math.min(size.w, size.h) * 0.36 * zoom / (1 + z2 * 0.35);
+      return { x: size.w * 0.5 + (x1 - 3) * s * 0.72, y: size.h * 0.54 - (y2 - 0.2) * s, z: z2 };
+    }
+    function colorFor(h) {
+      if (h < 0.05) return "#1275ac";
+      if (h < 0.16) return "#5c9baf";
+      if (h < 0.24) return "#9f9700";
+      return "#f7f9f8";
+    }
+    function draw() {
+      if (!size) resize();
+      if (!ctx || !size) return;
+      ctx.clearRect(0, 0, size.w, size.h);
+      var NX = 40, NY = 20;
+      var cells = [];
+      for (var i = 0; i < NX; i++) {
+        for (var j = 0; j < NY; j++) {
+          var x0 = i / NX * (tokens.length - 1), x1 = (i + 1) / NX * (tokens.length - 1);
+          var y0 = -1 + 2 * j / NY, y1 = -1 + 2 * (j + 1) / NY;
+          var p00 = project(x0, y0, heightAt(x0, y0));
+          var p10 = project(x1, y0, heightAt(x1, y0));
+          var p11 = project(x1, y1, heightAt(x1, y1));
+          var p01 = project(x0, y1, heightAt(x0, y1));
+          var h = (heightAt(x0, y0) + heightAt(x1, y0) + heightAt(x1, y1) + heightAt(x0, y1)) / 4;
+          cells.push({ pts: [p00, p10, p11, p01], z: (p00.z + p10.z + p11.z + p01.z) / 4, h: h });
+        }
+      }
+      cells.sort(function (a, b) { return a.z - b.z; });
+      cells.forEach(function (c) {
+        ctx.beginPath();
+        ctx.moveTo(c.pts[0].x, c.pts[0].y);
+        ctx.lineTo(c.pts[1].x, c.pts[1].y);
+        ctx.lineTo(c.pts[2].x, c.pts[2].y);
+        ctx.lineTo(c.pts[3].x, c.pts[3].y);
+        ctx.closePath();
+        ctx.fillStyle = colorFor(c.h);
+        ctx.globalAlpha = 0.72;
+        ctx.fill();
+        ctx.globalAlpha = 0.18;
+        ctx.strokeStyle = C().paper;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      });
+      var pathPts = [];
+      for (var k = 0; k <= 60; k++) {
+        var x = k / 60 * (tokens.length - 1);
+        var y = centerAt(x);
+        pathPts.push(project(x, y, heightAt(x, y) + 0.02));
+      }
+      ctx.beginPath();
+      pathPts.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+      ctx.strokeStyle = C().blue;
+      ctx.lineWidth = 4;
+      ctx.globalAlpha = 0.85;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      branches.forEach(function (b) {
+        b.alts.forEach(function (a) {
+          var x = b.step;
+          var y = (a.y - 0.5) * 2;
+          var p = project(x, y, heightAt(x, y) + 0.02);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+          ctx.fillStyle = C().gold;
+          ctx.fill();
+        });
+      });
+      hits = [];
+      tokens.forEach(function (t, i) {
+        var y = centerAt(i);
+        var p = project(i, y, heightAt(i, y) + 0.08);
+        var on = i === step;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, on ? 9 : 5, 0, Math.PI * 2);
+        ctx.fillStyle = on ? C().green : C().paper;
+        ctx.fill();
+        ctx.strokeStyle = on ? C().green : C().petrol;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = on ? C().ink : C().soft;
+        ctx.font = '600 10px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(t, p.x, p.y - 16);
+        hits.push({ x: p.x, y: p.y, r: 18, step: i });
+      });
+      var side = branches.filter(function (b) { return b.step === step; })[0];
+      var nextToken = tokens[step] || (DE ? "Ende" : "end");
+      nextEl.textContent = nextToken;
+      altEl.innerHTML = side ? side.alts.map(function (a) {
+        return '<button type="button" class="ls-tunnel-alt" data-alt="' + api.esc(a.t) + '">' + api.esc(a.t) + '</button>';
+      }).join("") : '<span class="ls-tunnel-end">' + (DE ? "Ende" : "end") + '</span>';
+      altEl.querySelectorAll("[data-alt]").forEach(function (b) {
+        b.addEventListener("click", function () { step = Math.min(tokens.length - 1, step + 1); draw(); });
+      });
+      metaEl.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + (step + 1) + ' / ' + tokens.length + '</b></span><span>' + (DE ? "Temperatur" : "Temperature") + ' <b>' + temp.toFixed(2) + '</b></span>';
+      canvas.setAttribute("aria-label", DE ? "Wahrscheinlichkeitstunnel: " + tokens.slice(0, step + 1).join(" ") : "Probability tunnel: " + tokens.slice(0, step + 1).join(" "));
+    }
+    function C() { return api.colors(); }
+    function resize() {
+      size = api.fit(canvas, stage);
+      ctx = size.ctx;
+      draw();
+    }
+    function onMove(e) {
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      if (drag) {
+        yaw += (e.clientX - drag.x) * 0.008;
+        pitch = clamp(pitch + (e.clientY - drag.y) * 0.006, 0.2, 1.3);
+        drag.x = e.clientX; drag.y = e.clientY; suppress = true; draw(); return;
+      }
+      var hit = null;
+      hits.forEach(function (h) { if (Math.hypot(h.x - x, h.y - y) < h.r) hit = h; });
+      canvas.style.cursor = hit ? "pointer" : "grab";
+    }
+    function onDown(e) {
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      var hit = null;
+      hits.forEach(function (h) { if (Math.hypot(h.x - x, h.y - y) < h.r) hit = h; });
+      if (hit) { suppress = false; return; }
+      drag = { x: e.clientX, y: e.clientY }; suppress = false;
+    }
+    function onUp(e) {
+      if (drag) { drag = null; return; }
+      if (suppress) { suppress = false; return; }
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      hits.forEach(function (h) { if (Math.hypot(h.x - x, h.y - y) < h.r) step = h.step; });
+      draw();
+    }
+    el.querySelector(".ls-tunnel-advance").addEventListener("click", function () { step = Math.min(tokens.length - 1, step + 1); draw(); });
+    el.querySelector(".ls-tunnel-reset").addEventListener("click", function () { step = 0; draw(); });
+    tempEl.addEventListener("input", function () { temp = parseFloat(tempEl.value) || 0.8; tempOut.textContent = temp.toFixed(2); draw(); });
+    canvas.addEventListener("pointermove", onMove);
+    canvas.addEventListener("pointerdown", onDown);
+    canvas.addEventListener("pointerup", onUp);
+    canvas.addEventListener("pointercancel", onUp);
+    canvas.addEventListener("pointerleave", function () { drag = null; });
+    window.addEventListener("resize", resize);
+    resize();
+    return {
+      update: function (s) { if (s && typeof s.step === "number") { step = clamp(s.step, 0, tokens.length - 1); draw(); } },
+      resize: resize,
+      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
+    };
+  }
+
+  var SCENES = {
+    embedding: embeddingScene,
+    phone: phoneScene,
+    code: codeScene,
+    loop: loopScene,
+    tunnel: tunnelScene
+  };
+
   LearnSys.defineDemo("intuition", function (root, api) {
     var host = document.createElement("div");
     host.className = "ls-scene-host";
     root.appendChild(host);
+    var scenes = {};
     var scene = null, name = null;
     function mount(next) {
-      if (scene && scene.destroy) { try { scene.destroy(); } catch (e) {} }
-      scene = null;
+      if (!scenes[next]) {
+        var layer = document.createElement("div");
+        layer.className = "ls-scene-layer";
+        host.appendChild(layer);
+        scenes[next] = { layer: layer, api: SCENES[next] ? SCENES[next](layer, api) : null };
+      }
+      Object.keys(scenes).forEach(function (key) {
+        var hidden = key !== next;
+        scenes[key].layer.hidden = hidden;
+        if (hidden && scenes[key].api && scenes[key].api.pause) { try { scenes[key].api.pause(); } catch (e) {} }
+      });
+      var entry = scenes[next];
+      entry.layer.hidden = false;
+      if (entry.api && entry.api.resume) { try { entry.api.resume(); } catch (e) {} }
+      if (entry.api && entry.api.resize) entry.api.resize();
       name = next;
-      host.innerHTML = "";
-      if (next === "embedding") scene = embeddingScene(host, api);
-      if (!scene) host.innerHTML = '<div class="ls-empty">' + (api.lang === "de" ? "Demo folgt." : "Demo follows.") + '</div>';
+      scene = entry.api;
+      if (!scene) {
+        entry.layer.innerHTML = '<div class="ls-empty">' + (api.lang === "de" ? "Demo folgt." : "Demo follows.") + '</div>';
+      }
     }
     return {
       update: function (s) {
@@ -941,7 +1544,10 @@
       },
       resize: function () { if (scene && scene.resize) scene.resize(); },
       destroy: function () {
-        if (scene && scene.destroy) { try { scene.destroy(); } catch (e) {} }
+        Object.keys(scenes).forEach(function (key) {
+          if (scenes[key].api && scenes[key].api.destroy) { try { scenes[key].api.destroy(); } catch (e) {} }
+        });
+        scenes = {};
         scene = null;
       }
     };
