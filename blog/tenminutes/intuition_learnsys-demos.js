@@ -1490,7 +1490,7 @@
     el.innerHTML =
       '<div class="ls-loop-sentence" aria-live="polite"></div>' +
       '<div class="ls-loop-tree" aria-live="polite"></div>' +
-      '<div class="ls-loop-viz"><div class="ls-loop-bars"></div><div class="ls-loop-landscape" hidden><canvas class="ls-canvas" role="img"></canvas><div class="ls-land-tip" hidden></div></div></div>' +
+      '<div class="ls-loop-viz"><div class="ls-loop-bars"></div><div class="ls-loop-landscape" hidden><canvas class="ls-canvas" role="img"></canvas><div class="ls-land-tip" hidden></div><div class="ls-land-legend" aria-hidden="true"><div class="ls-land-scale"><span>' + (DE ? "unwahrscheinlich" : "unlikely") + '</span><i></i><span>' + (DE ? "wahrscheinlich" : "likely") + '</span></div><small>' + (DE ? "Ziehen zum Drehen · Klicken zum Wählen" : "Drag to rotate · click to choose") + '</small></div></div></div>' +
       '<div class="ls-scene-row ls-loop-modes"></div>' +
       '<div class="ls-scene-row ls-loop-actions"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-back" aria-label="' + (DE ? "Letztes Token zurücknehmen" : "Take back the last token") + '">' + (DE ? "← Zurück" : "← Back") + '</button><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loop-next">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-loop-temp" min="0.05" max="1.8" step="0.05" value="0.8"><output>0.80</output></label></div>' +
       '<div class="ls-loop-readout" aria-live="polite"></div>';
@@ -1755,11 +1755,34 @@
       return { x: x1, y: -y2, z: z2 };
     }
 
+    function colorParts(v) {
+      var m = String(v).match(/^#?([0-9a-f]{6})$/i);
+      if (!m) return null;
+      var h = m[1];
+      return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+    }
+    function mixColor(a, b, t) {
+      var A = colorParts(a), B = colorParts(b);
+      if (!A || !B) return t < 0.5 ? a : b;
+      return "rgb(" + Math.round(A[0] + (B[0] - A[0]) * t) + "," +
+        Math.round(A[1] + (B[1] - A[1]) * t) + "," +
+        Math.round(A[2] + (B[2] - A[2]) * t) + ")";
+    }
     function landColor(p, C) {
-      var inv = 1 - p;
-      if (inv > 0.6) return C.lilac;
-      if (inv > 0.3) return C.sky;
-      if (inv > 0.1) return C.lime;
+      var stops = [
+        { p: 0, c: C.petrol },
+        { p: 0.30, c: C.blue },
+        { p: 0.55, c: C.sky },
+        { p: 0.78, c: C.lime },
+        { p: 1, c: C.green }
+      ];
+      p = Math.max(0, Math.min(1, p));
+      for (var i = 1; i < stops.length; i++) {
+        if (p <= stops[i].p) {
+          var t = (p - stops[i - 1].p) / Math.max(0.001, stops[i].p - stops[i - 1].p);
+          return mixColor(stops[i - 1].c, stops[i].c, t);
+        }
+      }
       return C.green;
     }
 
@@ -1923,7 +1946,8 @@
       });
       ctx.fillStyle = C.petrol;
       ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
-      ctx.fillText(DE ? "Wahrscheinlichkeit −p" : "probability −p", sx(at.x) + 6, sy(at.y) - 4);
+      ctx.textAlign = "right";
+      ctx.fillText(DE ? "Wahrscheinlichkeit −p" : "probability −p", sx(ab.x) - 6, sy(ab.y) - 10);
 
       var atEnd = generated.length >= MAX_STEPS;
       ctx.fillStyle = C.muted;
@@ -2240,8 +2264,8 @@
           if (cells[2]) cells[2].innerHTML = (DE ? "Top" : "Top") + ' <b>' + api.esc(top.t) + '</b>';
         }
         landCanvas.setAttribute("aria-label", DE
-          ? "Wahrscheinlichkeitslandschaft. Token-Ebene oben, z = −p. Tiefster Punkt, also höchste Wahrscheinlichkeit: " + top.t + ", " + (top.p * 100).toFixed(0) + " Prozent."
-          : "Probability landscape. Token plane above, z = −p. Deepest point, meaning highest probability: " + top.t + ", " + (top.p * 100).toFixed(0) + " percent.");
+          ? "Wahrscheinlichkeitslandschaft. Token-Ebene oben, z = −p. Blau ist unwahrscheinlich, Grün wahrscheinlich. Tiefster Punkt, also höchste Wahrscheinlichkeit: " + top.t + ", " + (top.p * 100).toFixed(0) + " Prozent."
+          : "Probability landscape. Token plane above, z = −p. Blue is unlikely, green likely. Deepest point, meaning highest probability: " + top.t + ", " + (top.p * 100).toFixed(0) + " percent.");
       } else {
         landCanvas.setAttribute("aria-label", DE
           ? "Wahrscheinlichkeitslandschaft. Der Satz ist beendet, das Modell hat <|endoftext|> ausgegeben."

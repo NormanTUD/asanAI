@@ -53,14 +53,15 @@
     {
       kicker: "02b / Die Entscheidung",
       title: "Die Verteilung ist nicht die Antwort",
-      body: "Jedes Token hat zwei Koordinaten auf einer flachen Token-Ebene. Seine Wahrscheinlichkeit ist p; die Höhe ist −p, also die negative Wahrscheinlichkeit. Die Fläche darunter ist eine Wahrscheinlichkeitslandschaft: wahrscheinliche Tokens liegen in tiefen Tälern, unwahrscheinliche auf hohen Bergen. Die senkrechten Linien verbinden jedes Token mit seinem Wert. Die Karte bleibt stehen. Jeder Schritt senkt die Täler seiner Optionen; ein gewähltes Token behält sein Tal, sodass der goldene Pfad als Kette von Tälern sichtbar bleibt. Mit ← Zurück nimmst du das letzte Token wieder weg. Dreh die Szene und klicke ein Wort an.",
-      watch: "Dreh die Szene, klicke ein Wort an und verfolge den goldenen Pfad. Welches Token liegt im tiefsten Tal, welches auf dem höchsten Berg?",
+      body: "Du siehst eine Wahrscheinlichkeitslandschaft: Täler sind wahrscheinlich, Berge unwahrscheinlich. Jedes Token ist ein Punkt in einem riesigen, hochdimensionalen Raum. Bei jedem Schritt berechnet das Modell nur die Wahrscheinlichkeit des nächsten Tokens, dann die des darauffolgenden; es sieht immer nur die unmittelbare Umgebung und tastet sich Schritt für Schritt weiter. Die Kugel ist das Token: Mit jeder Wahl bekommt sie Schwung und kann aus ihrem Tal in ein benachbartes entkommen; der goldene Pfad zeigt die gewählten Tokens.",
+      watch: "Dreh die Szene mit Maus oder Finger. Gib der Kugel mit einer Wahl Schwung und sieh, in welches Tal sie rollt.",
       demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true },
-      context: "Die Karte bleibt an denselben Token-Positionen; jeder Schritt beleuchtet den Bereich seiner aktuellen Optionen. An jedem aktuellen Token steht die Fläche auf seiner Wahrscheinlichkeit −p, und die Balken rechts zeigen dieselbe Verteilung. Die Token-Ebene darüber ist nur der 2D-Raum, in dem die Wörter liegen.",
+      context: "Jeder Schritt senkt die Täler seiner Optionen; ein gewähltes Token behält sein Tal. Die Balken zeigen dieselbe Verteilung, aus der die Kugel kommt.",
       deep: "Top-k ist eine feste Anzahl, Top-p eine feste Masse. Min-p skaliert mit dem Top-Token. Nach dem Schnitt werden die verbleibenden Wahrscheinlichkeiten renormalisiert. Beam Search hält mehrere Pfade am Leben; Speculative Sampling beschleunigt die Prüfung, ohne die Zielverteilung zu ändern.",
       boxes: [
         box("in-7", "Anwendung", "Welche Einstellung wofür?", "Code und Fakten: niedrige Temperatur, enger Filter. Brainstorming: höhere Temperatur, weiterer Filter. Es gibt keine universelle Regel."),
-        box("in-8", "Geschichte", "Warum wurde Sampling wichtig?", "Weil ein Modell ohne Sampling immer denselben Text liefert. Die Vielfalt kommt aus der Verteilung, nicht aus dem Modell allein.")
+        box("in-8", "Geschichte", "Warum wurde Sampling wichtig?", "Weil ein Modell ohne Sampling immer denselben Text liefert. Die Vielfalt kommt aus der Verteilung, nicht aus dem Modell allein."),
+        box("loop-1", "Grenze", "Gibt es diese Täler wirklich?", "Diese Landschaft ist stark vereinfacht. In einem echten Modell hat der Raum Tausende Dimensionen; dort ist fast jeder flache Punkt ein Sattelpunkt, kein abgeschlossenes Tal. Von dort geht es in viele Richtungen gleichzeitig bergauf und bergab. Die zwei Achsen, die Kugel und die farbigen Täler sind ein Bild für die Idee, keine Messung des echten Token-Raums.")
       ]
     }
   ] : [
@@ -106,14 +107,15 @@
     {
       kicker: "02b / The choice",
       title: "The distribution is not the answer",
-      body: "Every token has two coordinates on a flat token plane. Its probability is p; the height is −p, the negative probability. The surface below is a probability landscape: likely tokens sit in deep valleys, unlikely ones on high mountains. The vertical lines connect each token to its value. The map stays put. Each step lowers the valleys of its options; a chosen token keeps its valley, so the gold path stays visible as a chain of valleys. Use ← Back to remove the last token. Rotate the scene and click a word to choose it.",
-      watch: "Rotate the scene, click a word, and follow the gold path. Which token sits in the deepest valley, which on the highest mountain?",
+      body: "You see a probability landscape: valleys are likely, mountains unlikely. Every token is a point in a huge, high-dimensional space. At each step the model computes only the probability of the next token, then of the one after that; it sees only the immediate neighbourhood and feels its way forward step by step. The ball is the token: each choice gives it momentum so it can escape its valley into a neighbouring one; the gold path shows the tokens you chose.",
+      watch: "Rotate the scene with mouse or finger. Give the ball momentum with a choice and watch which valley it rolls into.",
       demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true },
-      context: "The map keeps the same token positions; each step lights the area of its current options. At each current token the surface sits on its probability −p, and the bars on the right show the same distribution. The token plane above is only the 2D space where the words live.",
+      context: "Each step lowers the valleys of its options; a chosen token keeps its valley. The bars show the same distribution the ball comes from.",
       deep: "Top-k is a fixed number, top-p a fixed mass. Min-p scales with the top token. After the cut, the remaining probabilities are renormalised. Beam search keeps several paths alive; speculative sampling speeds up verification without changing the target distribution.",
       boxes: [
         box("in-7", "Application", "Which setting for what?", "Code and facts: low temperature, narrow filter. Brainstorming: higher temperature, wider filter. There is no universal rule."),
-        box("in-8", "History", "Why did sampling become important?", "Because a model without sampling always produces the same text. Variety comes from the distribution, not from the model alone.")
+        box("in-8", "History", "Why did sampling become important?", "Because a model without sampling always produces the same text. Variety comes from the distribution, not from the model alone."),
+        box("loop-1", "Limit", "Do these valleys really exist?", "This landscape is strongly simplified. A real model works in thousands of dimensions; there almost every flat point is a saddle point, not a closed valley. From such a point the surface goes up and down in many directions at once. The two axes, the ball, and the coloured valleys are a picture of the idea, not a measurement of the real token space.")
       ]
     }
   ];
