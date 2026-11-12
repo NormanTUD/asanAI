@@ -3094,6 +3094,7 @@
       graphHits = [];
       var maxBox = Math.min(92, gap - 6);
       var px = [];
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ts.forEach(function (tok, i) {
         var x = pad + gap * (i + 0.5);
         var tw = ctx.measureText(tok).width;
