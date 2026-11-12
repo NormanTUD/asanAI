@@ -2071,6 +2071,7 @@
         probs: lastProbs,
         top: lastTop ? lastTop.t : null,
         topP: lastTop ? lastTop.p : null,
+        zTop: lastTop ? landZ(lastTop.p) : null,
         landscape: landscape
       };
     };
