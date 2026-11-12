@@ -85,8 +85,21 @@
     function wordLabel(id) { return text(WORDS[id].label); }
     function buildMiniTable() {
       if (!miniTable) return;
-      var ids = ["king", "queen", "man", "woman"];
-      var cols = 5;
+      var ids = ["man", "woman", "prince", "princess", "king", "queen", "power"];
+      var head = '<tr><th></th><th>' + (DE ? "Macht" : "Power") + '</th><th>' + (DE ? "Geschlecht" : "Gender") + '</th><th>' + (DE ? "Rang" : "Rank") + '</th></tr>';
+      var body = ids.map(function (id) {
+        var w = WORDS[id];
+        var x = ((w.v[0] - 12.5) / 15).toFixed(2);
+        var y = (w.v[1] / 22).toFixed(2);
+        var z = w.z.toFixed(2);
+        return "<tr><th>" + api.esc(wordLabel(id)) + "</th><td>" + x + "</td><td>" + y + "</td><td>" + z + "</td></tr>";
+      }).join("");
+      miniTable.innerHTML = '<div class="ls-embed-mini-head">' + (DE ? "Die drei Dimensionen, die du siehst" : "The three dimensions you see") + '</div><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table>';
+    }
+    function buildHighdimTable() {
+      if (!highdimEl) return;
+      var tokens = DE ? ["Bank", "Fluss", "Geld", "König", "Königin", "Bedeutung"] : ["bank", "river", "money", "king", "queen", "meaning"];
+      var cols = 16;
       function value(ti, j) {
         var x = Math.sin((ti + 1) * 12.9898 + (j + 1) * 78.233) * 43758.5453;
         x = x - Math.floor(x);
@@ -95,12 +108,15 @@
       var head = '<tr><th></th>';
       for (var j = 0; j < cols; j++) head += '<th>d' + (j + 1) + '</th>';
       head += '<th>…</th></tr>';
-      var body = ids.map(function (id, ti) {
+      var body = tokens.map(function (tok, ti) {
         var cells = "";
         for (var k = 0; k < cols; k++) cells += "<td>" + value(ti, k) + "</td>";
-        return "<tr><th>" + api.esc(wordLabel(id)) + "</th>" + cells + "<td>…</td></tr>";
+        return "<tr><th>" + api.esc(tok) + "</th>" + cells + "<td>…</td></tr>";
       }).join("");
-      miniTable.innerHTML = '<div class="ls-embed-mini-head">' + (DE ? "Ausschnitt: 5 von 4096 Dimensionen" : "Slice: 5 of 4096 dimensions") + '</div><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table>';
+      highdimEl.innerHTML =
+        '<div class="ls-highdim-note">' + (DE ? "Ausschnitt: 16 von 4096 Dimensionen. Jede Zeile ist ein Vektor, jede Spalte eine Dimension." : "Slice: 16 of 4096 dimensions. Each row is a vector, each column a dimension.") + '</div>' +
+        '<div class="ls-highdim-scroll"><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>' +
+        '<p class="ls-highdim-foot">' + (DE ? "Auch wenn wir uns 4096 Dimensionen nicht mehr vorstellen können: Es gelten dieselben Regeln. Mittelpunkt, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter. Nur die Zahl der Koordinaten wächst, und hier passen viel mehr unabhängige Beziehungen hinein als in zwei oder drei Dimensionen." : "Even though we cannot picture 4096 dimensions, the same rules apply. Midpoint, angle, and matrix multiplication still work coordinate by coordinate. Only the number of coordinates grows, and there is room for many more independent relations than in two or three dimensions.") + '</p>';
     }
     function tempById(id) {
       for (var i = 0; i < TEMP.length; i++) if (TEMP[i].id === id) return TEMP[i];
@@ -768,12 +784,18 @@
       b.addEventListener("click", handler);
       return b;
     }
+    function syncTableVisibility() {
+      var showHigh = st.mode === "space" && st.dim === 2 && !!st.showHighdim;
+      if (miniTable) miniTable.hidden = !(st.mode === "space" && st.dim === 2 && st.tables && !showHigh);
+      if (highdimEl) highdimEl.hidden = !showHigh;
+      if (stage) stage.classList.toggle("is-highdim", showHigh);
+    }
     function renderControls() {
       controls.innerHTML = "";
       var row1 = document.createElement("div");
       row1.className = "ls-scene-row";
       row1.appendChild(makeChip(DE ? "Temperatur" : "Temperature", st.mode === "temperature", function () {
-        st.mode = "temperature"; st.group = null; syncControls(); draw(); ensureLoop();
+        st.mode = "temperature"; st.group = null; st.showHighdim = false; syncControls(); draw(); ensureLoop();
       }));
       row1.appendChild(makeChip(DE ? "Bedeutung" : "Meaning", st.mode === "space", function () {
         st.mode = "space"; syncControls(); draw(); ensureLoop();
@@ -781,7 +803,9 @@
       if (st.mode === "space") {
         ["1D", "2D", "3D"].forEach(function (label, i) {
           row1.appendChild(makeChip(label, st.dim === i, function () {
-            st.dim = i; dimTarget = i; st.group = null; syncControls(); ensureLoop();
+            st.dim = i; dimTarget = i; st.group = null;
+            if (i !== 2) st.showHighdim = false;
+            syncControls(); ensureLoop();
           }));
         });
         var reset = document.createElement("button");
@@ -790,8 +814,21 @@
         reset.textContent = DE ? "Ansicht" : "View";
         reset.addEventListener("click", function () { st.yaw = -0.55; st.pitch = 0.78; st.zoom = 1; draw(); });
         row1.appendChild(reset);
+        if (st.dim === 2) {
+          var tableBtn = document.createElement("button");
+          tableBtn.type = "button";
+          tableBtn.className = "ls-btn ls-btn--ghost ls-btn--tiny";
+          tableBtn.textContent = st.showHighdim ? (DE ? "← 3D" : "← 3D") : (DE ? "4096 Dimensionen" : "4096 dimensions");
+          tableBtn.addEventListener("click", function () {
+            st.showHighdim = !st.showHighdim;
+            if (st.showHighdim) buildHighdimTable();
+            syncControls();
+            draw();
+          });
+          row1.appendChild(tableBtn);
+        }
       }
-      if (miniTable) miniTable.hidden = !st.tables;
+      syncTableVisibility();
       controls.appendChild(row1);
 
       var row2 = document.createElement("div");
@@ -843,6 +880,8 @@
       if (s.pair) st.pair = s.pair.slice();
       st.group = s.group ? s.group.slice() : null;
       st.tables = !!s.tables;
+      st.showHighdim = !!s.showHighdim;
+      if (st.dim !== 2) st.showHighdim = false;
       syncControls();
       draw();
       ensureLoop();
@@ -1015,6 +1054,7 @@
     dimMix = st.dim;
     dimTarget = st.dim;
     buildMiniTable();
+    buildHighdimTable();
     renderControls();
     resize();
     reserveHeights();
@@ -2408,6 +2448,7 @@
         temp: temp,
         tempShown: tempShown,
         revealed: revealed.length,
+        valleys: baseValleys.length,
         landscape: landscape
       };
     };

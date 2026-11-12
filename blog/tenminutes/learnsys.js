@@ -1400,6 +1400,7 @@
       if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
       if (/^[0-9]$/.test(e.key) && !e.altKey) { e.preventDefault(); pressPositionDigit(e.key); return; }
       resetPositionBuffer();
+      if (e.key === "ArrowRight" && !e.shiftKey) { e.preventDefault(); next(); return; }
       if (demo && demo.onKey && demo.onKey(e)) { e.preventDefault(); return; }
       if (e.key === "?" || e.key === "h" || e.key === "H") { e.preventDefault(); toggleHelp(); return; }
       if (e.shiftKey && e.key === "ArrowRight") { e.preventDefault(); nextDay(); return; }
@@ -1407,7 +1408,7 @@
       if (e.key === "PageDown") { e.preventDefault(); nextDay(); return; }
       if (e.key === "PageUp") { e.preventDefault(); prevDay(); return; }
       if (e.key === "ArrowDown" && openNextClosedBox()) { e.preventDefault(); return; }
-      if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
+      if (e.key === " ") { e.preventDefault(); next(); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
       else if (e.key === "Home") { e.preventDefault(); go(0, 0); }
       else if (e.key === "End") {

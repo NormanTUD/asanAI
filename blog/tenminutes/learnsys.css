@@ -465,6 +465,8 @@ h1,h2,h3,h4{
 }
 .ls-embed-stage canvas{position:absolute;inset:0;width:100%;height:100%}
 .ls-embed-mini-table{position:absolute;right:8px;bottom:8px;z-index:2;width:min(50%,260px);max-height:42%;overflow:hidden;background:rgba(255,255,255,.88);border:1px solid rgba(0,75,111,.12);padding:4px 5px;pointer-events:none}
+.ls-embed-highdim{position:absolute;inset:0;z-index:3;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding:6px 8px;background:var(--ls-paper)}
+.ls-embed-highdim[hidden]{display:none}
 .ls-embed-mini-head{font-size:max(10px,calc(var(--ls-fs-body,18px) * .5));line-height:1.2;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ls-muted);margin-bottom:2px}
 .ls-embed-mini-table table{border-collapse:collapse;width:100%;table-layout:fixed;font-family:ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;font-size:max(10px,calc(var(--ls-fs-body,18px) * .5));line-height:1.15;color:var(--ls-ink-soft)}
 .ls-embed-mini-table th,.ls-embed-mini-table td{padding:1px 2px;text-align:right;white-space:nowrap;overflow:hidden}
@@ -526,14 +528,16 @@ h1,h2,h3,h4{
   .ls-stage{border-left:0;border-top:1px solid rgba(0,75,111,.07)}
   .ls-stage-head{padding:8px 12px 6px}
   .ls-stage-foot{padding:5px 12px 7px}
-  .ls-embed-scene{grid-template-rows:minmax(0,1fr) auto auto}
+  .ls-embed-scene{grid-template-rows:minmax(220px,1fr) auto auto;overflow-y:auto}
   .ls-embed-stage{min-height:220px}
   .ls-stage-head{min-height:46px}
 }
 @media (max-width:640px){
   .ls-demo{padding:6px 8px 2px}
+  .ls-embed-mini-table{width:min(72%,300px);max-height:68%}
   .ls-scene-row{gap:3px}
   .ls-chip{font-size:var(--ls-fs-ui);padding:6px 8px;min-height:32px}
+  .ls-embed-scene{grid-template-rows:minmax(200px,1fr) auto auto}
   .ls-embed-stage{min-height:200px}
   .ls-scene-formula{max-height:132px}
   .ls-title{font-size:calc(var(--ls-fs-title,28px) * .86)}
