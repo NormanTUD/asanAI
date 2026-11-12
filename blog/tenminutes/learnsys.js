@@ -92,8 +92,6 @@
   var cuesArmed = false;
   var ignoreScroll = false;
   var scrollNavAt = 0;
-  var scrollEdgeAccum = 0;
-  var touchStartY = null;
   var posCount = 10;
   var posBuffer = "";
   var posTimer = 0;
@@ -1330,49 +1328,6 @@
         if (ignoreScroll || cuesArmed) return;
         cuesArmed = true;
         setupCues();
-      }, { passive: true });
-      els.textScroll.addEventListener("wheel", function (e) {
-        if (!cuesArmed) {
-          cuesArmed = true;
-          setupCues();
-        }
-        if (ignoreScroll || e.ctrlKey || e.metaKey) return;
-        var dir = e.deltaY > 0 ? 1 : (e.deltaY < 0 ? -1 : 0);
-        if (!dir) return;
-        var el = els.textScroll;
-        var atEdge = dir > 0
-          ? el.scrollTop + el.clientHeight >= el.scrollHeight - 3
-          : el.scrollTop <= 2;
-        if (!atEdge) {
-          scrollEdgeAccum = 0;
-          return;
-        }
-        scrollEdgeAccum += Math.abs(e.deltaY);
-        e.preventDefault();
-        if (scrollEdgeAccum < 36) return;
-        scrollEdgeAccum = 0;
-        if (performance.now() < scrollNavAt) return;
-        scrollNavAt = performance.now() + 700;
-        if (dir > 0) next(); else prev();
-      }, { passive: false });
-      els.textScroll.addEventListener("touchstart", function (e) {
-        if (e.touches.length === 1) touchStartY = e.touches[0].clientY;
-      }, { passive: true });
-      els.textScroll.addEventListener("touchend", function (e) {
-        if (touchStartY == null || !e.changedTouches.length) return;
-        var dy = e.changedTouches[0].clientY - touchStartY;
-        touchStartY = null;
-        if (ignoreScroll || Math.abs(dy) < 48 || performance.now() < scrollNavAt) return;
-        var el = els.textScroll;
-        var atTop = el.scrollTop <= 2;
-        var atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 3;
-        if (dy < 0 && atBottom) {
-          scrollNavAt = performance.now() + 700;
-          next();
-        } else if (dy > 0 && atTop) {
-          scrollNavAt = performance.now() + 700;
-          prev();
-        }
       }, { passive: true });
       els.textScroll.addEventListener("touchmove", function () {
         if (cuesArmed) return;

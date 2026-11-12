@@ -2392,7 +2392,7 @@
         var dx = e.clientX - landDrag.x, dy = e.clientY - landDrag.y;
         if (Math.abs(dx) + Math.abs(dy) > 3) landMoved = true;
         landYaw = landDrag.yaw + dx * 0.008;
-        landPitch = Math.min(1.35, Math.max(0.42, landDrag.pitch - dy * 0.006));
+        landPitch = Math.min(1.35, Math.max(0.18, landDrag.pitch - dy * 0.006));
         drawLandscape();
         return;
       }
@@ -2661,6 +2661,8 @@
         if (meta && meta.dir < 0) undo();
         else if (meta && meta.dir > 0) redo();
         if (!s) return;
+        if (s.view === "top") { landPitch = 0.30; landYaw = -0.62; landZoom = 1; }
+        else if (s.view === "default") { landPitch = 0.92; landYaw = -0.62; landZoom = 1; }
         if (s.mode) setMode(s.mode);
         if (typeof s.temp === "number") {
           temp = s.temp;
