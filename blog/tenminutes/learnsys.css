@@ -599,12 +599,12 @@ h1,h2,h3,h4{
 .ls-loop-landscape canvas{display:block;width:100%;height:100%;touch-action:none}
 .ls-loop-scene.is-landscape .ls-loop-viz{grid-template-columns:1fr;grid-template-rows:auto minmax(200px,1fr);gap:10px}
 .ls-loop-scene.is-landscape .ls-loop-landscape{position:relative;inset:auto;min-height:200px;grid-column:1;grid-row:2}
-.ls-loop-scene.is-landscape .ls-loop-bars{display:grid;height:auto;max-height:170px;overflow:auto;grid-column:1;grid-row:1}
+.ls-loop-scene.is-landscape .ls-loop-bars{display:grid;height:auto;min-height:112px;max-height:170px;overflow:auto;grid-column:1;grid-row:1}
 @media (max-width:760px){
   .ls-loop-scene{overflow-y:auto;grid-template-rows:auto auto minmax(300px,1fr) auto auto auto}
   .ls-loop-scene.is-landscape .ls-loop-viz{grid-template-columns:1fr;grid-template-rows:auto minmax(170px,1fr)}
   .ls-loop-scene.is-landscape .ls-loop-landscape{min-height:170px;grid-column:1;grid-row:2}
-  .ls-loop-scene.is-landscape .ls-loop-bars{max-height:120px;grid-column:1;grid-row:1}
+  .ls-loop-scene.is-landscape .ls-loop-bars{min-height:96px;max-height:120px;grid-column:1;grid-row:1}
 }
 .ls-loop-bars{display:grid;gap:4px;align-content:start;overflow:auto;min-height:0}
 .ls-loop-bar{display:grid;grid-template-columns:78px minmax(0,1fr) 40px;gap:7px;align-items:center;border:0;background:transparent;padding:1px 0;cursor:pointer;text-align:left;font:var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-soft)}

@@ -165,3 +165,40 @@ Noch offen (unveraendert Validierung):
    mit Maus und Tastatur, Kontrast in light/dark.
 4. Pruefen, ob die neue 3D-Landschaft auf Mobile die Demo-Hoehe verschiebt;
    die Karten/Stepper sind dafuer bereits im selben Grid-Feld.
+
+## NACHTRAG 2026-11-12: EOS, Sprachen/Daten, Chinesisches Zimmer
+
+DONE Loop-Demo: Nach dem Schlusszeichen bietet die Verteilung nur noch
+<|endoftext|> an. Waehlt der User es, haengt die Demo es sichtbar an den Satz,
+die Balken zeigen "Satz beendet: <|endoftext|> ausgegeben. Die Schleife
+stoppt." und die Landschaft faellt auf die Grundflaeche zurueck. Im DE/EN-Text
+der Folie "Ein Wort nach dem anderen" steht jetzt, dass das Modell bis zu
+diesem Spezialtoken weiter generiert. Die Folie "Die ganze Schleife" nannte
+das Token bereits.
+
+DONE Neue Folie 14 "Sprachen und Daten" / "Languages and data":
+- Demo langdata: sechs Sprachen (Deutsch, Englisch, Franzoesisch, Japanisch,
+  Arabisch, Chinesisch) mit demselben Satz, dazu der veroeffentlichte
+  GPT-3-Datenmix (60/22/8/8/3 %, Brown et al. 2020, Tabelle 2.2).
+- Text nennt Tokenizer-Kosten (Petrov et al. 2023) und Filter/Dedupe/
+  Decontamination (Lee et al. 2021); Quellen im Schritt.
+
+DONE Neue Folie 15 "Du bist das Chinesische Zimmer" / "You are the Chinese
+Room":
+- Demo chineseroom: Der User liest die Zeichen nicht, sucht die Eingabe im
+  Regelbuch und waehlt die passende Ausgabe. Zwei Runden, danach zeigt die
+  Demo die Uebersetzungen und den Punkt: von aussen wirkt es wie Verstehen,
+  innen wurden nur Zeichen nach Regeln ersetzt.
+- Aufklappbare Systems-Reply-Box und Neustart; Verweis auf Searle (1980) und
+  Harnad (1990) im Schritt.
+- Beide Panels liegen im selben Grid-Feld, damit der Wechsel Raum/Reveal
+  keine Hoehe springt.
+
+DONE Validierung (headless Chromium, temporaere statische Vollseite):
+- 31 Schritte, EN und DE; Folien 29/30 rendern langdata bzw. chineseroom.
+- Kein horizontales Overflow bei 1280 px und 390 px.
+- Keine ungerenderten TeX-Elemente, keine Konsolenfehler.
+- Loop: sieben Klicks ergeben Satz + <|endoftext|>, Balkenmeldung und Stopp.
+- Chineseroom DE/EN: zwei Runden, Reveal mit zwei Zeilen, Systembox.
+- Noch offen bleibt der echte PHP-/Playwright-Lauf und die Kontrastpruefung
+  der neuen Karten in light/dark.
