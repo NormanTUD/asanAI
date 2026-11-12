@@ -17,6 +17,23 @@ Wichtig:
 
 Details, Dateien, Harness-Ergebnisse und Prüfschritte stehen unten.
 
+## Klassifikation der acht Ursprungspunkte
+
+Alle acht sind implementiert. Sie zerfallen in vier Gruppen; offen ist nur die
+Validierung im echten Browser/PHP.
+
+| Gruppe | Punkte | Status | Prüfbar über |
+|---|---|---|---|
+| A Inhalt und Reihenfolge | 05a vor 05b; Satz zum schichtenweisen Aufbau vor dem Block | umgesetzt | Datenreihenfolge, Block-Prosa |
+| B Darstellung und Animation | Manifold ohne weißen Plot-Hintergrund, weiches Einblenden; Position mit Großkreis und Hyperkugel-Box | umgesetzt | `is-ready`, Plotly-Transparenz, Positions-Readout |
+| C Demo und Interaktion | Attention oben mit Sätzen/Pfeilen/Budget/Causal-Mask/Formel; 06b gekürzt; Rausch-Folie neu | umgesetzt | Attention-Harness, Noise-Harness |
+| D Navigation und Barrierefreiheit | Fragenindex als klickbare Cues; Scroll-Navigation an den Texträndern | umgesetzt | Tastatur-/Wheel-Test |
+| E Validierung | echter Browser, PHP-Lint, Height-Test, light/dark | offen | siehe unten |
+
+Die neuen Wünsche aus der Übergabe (FFN-Hochdimensionalität, Pfeiltasten im
+FFN-Kontext, Loop-Verteilung ein Wort voraus, Temperatur-Landschaft,
+Nachbarschafts-Layout) sind unten als NACHTRAG dokumentiert.
+
 DONE die folie "Eine Beziehung lässt sich übertragen" sollte vor der mit den 16 von 4096 dimensionen kommen. die sollte da anzeigen unter der tabelle dass da die gleichen regeln gelten, auch wenn wir uns das nicht mehr vorstellen können. hier kann man jetzt sehr viel mehr beziehungen drin speichern als noch in 2 oder 3 dimensionen.
 
 DONE die "Von Beziehungen zur Übersetzung" hat noch weißen background, fixe das. die soll auch mehr eingeblendet werden smooth statt einfach zu erscheinen.
@@ -100,3 +117,51 @@ NACHTRAG: MLP-DEMO "Sieh zu, wie das MLP den Raum biegt"
 - Der Resize-Haenger ist behoben: mlpScene.resize dispatcht kein window-resize-Event mehr. Stattdessen ruft es die neue IntuitionSpaceMorph.resize()-API auf, die fitCopyHeight und requestDraw ausfuehrt. Die alte Version loeste eine Resize-Rekursion aus, wenn LearnSys auf window resize demo.resize() rief.
 - Harness mit acht aufeinanderfolgenden Groessenwechseln: completed=true, keine JS-Fehler, computed border 0px none, radius 0px, background transparent, shadow none, Canvas 686x414 exakt gleich Wrap 686x414.
 - Noch im echten Browser testen: Fensterbreite langsam ziehen, Mobile, Folie 8/9 mit Separation-Overlay. Pruefen, dass der Canvas beim Resize nicht springt und die Demo nicht haengt.
+
+## NACHTRAG 2026-11-12: FFN-Kontexte und Loop-Landschaft
+
+DONE FFN-Folie "Ein Muster passt, ein Wert wird geschrieben": Der Schluss sagt
+jetzt, dass der reichere Vektor ein Punkt in einem hochdimensionalen Raum ist
+und die Demo-Achsen nur eine Projektion sind. Neue Box ffn-4 "Ist der reichere
+Vektor hochdimensional?" in DE/EN; Quellen Vaswani et al. (2017) und Geva et
+al. (2021) ergaenzt.
+
+DONE FFN-Demo: Die beiden Kontexte sind jetzt ein Stepper. Sichtbar sind
+"Kontext 1 / 2" und Zurueck/Weiter; die Karten liegen im selben Grid-Feld,
+damit die Hoehe nicht springt. ArrowLeft/ArrowRight wechseln den Kontext, an
+den Raendern geben sie die Taste an die Folien-Navigation zurueck. Die aktive
+Klasse wird im Biege-Canvas betont (Gebaeude vs. Mechanik).
+
+DONE Loop-Folie "Die Verteilung ist nicht die Antwort": Die Landschaft zeigt
+jetzt ausschliesslich die Verteilung des naechsten Tokens. Nach jeder Wahl
+wird sie neu berechnet, also steht der Plot immer ein Wort vor der Satzausgabe.
+Der goldene Schein und der Ball sitzen auf dem tiefsten aktuellen Tal.
+
+DONE Temperatur: Der Temperaturregler schreibt sofort in die sichtbare
+Verteilung (tempShown); die Landschaft und die Balken werden bei jeder
+Reglerbewegung neu gezeichnet. Harness: Top-Wahrscheinlichkeit 0.99999 bei
+T=0.2 und 0.538 bei T=1.8; der Canvas-Hash aendert sich.
+
+DONE Punkt-Layout: Die Token-Ebenen-Punkte werden aus dem Uebergangsgraphen
+berechnet. Startwoerter stehen links, jede Folgestufe rechts daneben; die
+y-Position zieht jedes Token zu seinen Vorgaengern. Die 13 Verben bekommen
+zusaetzlich einen kleinen x-Versatz zu ihrem Subjekt, damit sie in dessen Naehe
+bleiben. Beispiel DE: Drache y=-1.09 mit fliegen y=-0.08; Ritter y=-0.37 mit
+kaempfen/reiten y=-0.11; Schloss y=1.79 mit glaenzen/leuchten y=1.24/1.41.
+
+Bereits geprueft (headless Chromium, synthetische Harnesse):
+- Laden von learnsys.js, intuition_learnsys-demos.js und -data.js ohne
+  Syntaxfehler; die Datendatei meldet 29 Schritte.
+- FFN DE und EN: Start Kontext 1/2, ArrowRight -> 2/2, ArrowRight am Ende
+  false, ArrowLeft zurueck, ArrowLeft am Anfang false.
+- Loop DE und EN: Katalog, eine-Wort-voraus-Verteilung, Temperaturwechsel.
+- Keine JS-Fehler in den Harnessen.
+
+Noch offen (unveraendert Validierung):
+1. php -l und python3 blog/tools/check_all.py --fast in einer Umgebung mit PHP.
+2. tenminutes_pages_test.py und tenminutes_height_test.py fuer intuition.php,
+   EN/DE, Desktop und etwa 390 px.
+3. Echter Browser: FFN-Pfeiltasten auf der Folie, Stepper-Hoehe, Loop-Slider
+   mit Maus und Tastatur, Kontrast in light/dark.
+4. Pruefen, ob die neue 3D-Landschaft auf Mobile die Demo-Hoehe verschiebt;
+   die Karten/Stepper sind dafuer bereits im selben Grid-Feld.

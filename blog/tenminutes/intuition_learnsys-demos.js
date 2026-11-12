@@ -1539,13 +1539,26 @@
         if (n.depth == null) n.depth = maxDepth;
         (columns[n.depth] || (columns[n.depth] = [])).push(n);
       });
+      var nounOrder = {};
+      NOUNS.forEach(function (o, i) { nounOrder[o.t] = i; });
       var x0 = -LAND_X * 0.88, x1 = LAND_X * 0.88;
+      function stageX(d) { return maxDepth ? x0 + (d / maxDepth) * (x1 - x0) : 0; }
       Object.keys(columns).forEach(function (d) {
         var col = columns[d];
         var span = 2 * LAND_Y * 0.9;
         col.forEach(function (n, i) {
-          n.x = maxDepth ? x0 + (Number(d) / maxDepth) * (x1 - x0) : 0;
+          n.x = stageX(Number(d));
           n.y = col.length === 1 ? 0 : -span / 2 + span * i / (col.length - 1);
+          // Actions keep a small x offset toward the subject they belong to,
+          // so the landscape groups them around the words they follow.
+          if (Number(d) === 4) {
+            var idxs = Object.keys(n.ctx).map(function (k) { return nounOrder[k]; }).filter(function (v) { return v != null; });
+            var idx = idxs.length ? idxs.reduce(function (a, b) { return a + b; }, 0) / idxs.length : (NOUNS.length - 1) / 2;
+            n.x += (idx - (NOUNS.length - 1) / 2) * 0.30;
+            var hash = 0;
+            for (var ci = 0; ci < n.t.length; ci++) hash = ((hash * 33) + n.t.charCodeAt(ci)) >>> 0;
+            n.x += ((hash % 9) - 4) * 0.032;
+          }
         });
       });
       // Relax vertically so every token sits near the tokens that can come
@@ -1553,15 +1566,28 @@
       var all = Object.keys(nodes).map(function (k) { return nodes[k]; });
       for (var iter = 0; iter < 140; iter++) {
         all.forEach(function (n) {
+          if (n.depth === 4) {
+            var cs = 0, cw = 0;
+            Object.keys(n.ctx).forEach(function (c) { cs += nodes[c].y; cw += 1; });
+            if (cw) n.y = n.y * 0.4 + (cs / cw) * 0.6;
+            return;
+          }
           var sum = 0, w = 0;
           Object.keys(n.preds).forEach(function (p) { sum += nodes[p].y; w += 1; });
           Object.keys(n.succs).forEach(function (s) { sum += nodes[s].y * 0.55; w += 0.55; });
           Object.keys(n.ctx).forEach(function (c) { sum += nodes[c].y * 1.5; w += 1.5; });
           if (w > 0) n.y = n.y * 0.55 + (sum / w) * 0.45;
         });
-        Object.keys(columns).forEach(function (d) {
-          var col = columns[d].slice().sort(function (a, b) { return a.y - b.y; });
-          var gap = col.length > 1 ? Math.min(0.72, (2 * LAND_Y * 0.92) / (col.length - 1)) : 0;
+        var buckets = {};
+        all.forEach(function (n) {
+          var key = String(n.x);
+          if (!buckets[key]) buckets[key] = [];
+          buckets[key].push(n);
+        });
+        Object.keys(buckets).forEach(function (key) {
+          var col = buckets[key].slice().sort(function (a, b) { return a.y - b.y; });
+          var maxGap = col[0] && col[0].depth === 4 ? 0.34 : 0.72;
+          var gap = col.length > 1 ? Math.min(maxGap, (2 * LAND_Y * 0.92) / (col.length - 1)) : 0;
           for (var i = 1; i < col.length; i++) {
             if (col[i].y - col[i - 1].y < gap) col[i].y = col[i - 1].y + gap;
           }
@@ -3813,8 +3839,8 @@
       },
       onKey: function (e) {
         if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
-        if (e.key === "ArrowLeft" || e.key === "PageUp") return stepContext(-1);
-        if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") return stepContext(1);
+        if (e.key === "ArrowLeft") return stepContext(-1);
+        if (e.key === "ArrowRight") return stepContext(1);
         return false;
       },
       resize: resize,
