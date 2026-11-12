@@ -293,13 +293,18 @@
 	function updateNextButtonGate() {
 		const nextBtn = copyEl("ism-next");
 		if (!nextBtn) return;
-		const blocked = (cur === 7 && !separationInfo().separated) || cur === SCENES.length - 1;
+		const blocked = (cur === 7 && !separationInfo().separated);
 		nextBtn.disabled = blocked;
 		nextBtn.setAttribute("aria-disabled", String(blocked));
 		if (cur === 7 && !separationInfo().separated) {
 			nextBtn.title = DE ? "Erst wenn linear trennbar" : "Only when linearly separable";
+			nextBtn.textContent = DE ? "Weiter →" : "Next →";
+		} else if (cur === SCENES.length - 1) {
+			nextBtn.removeAttribute("title");
+			nextBtn.textContent = DE ? "Nächste Folie →" : "Next slide →";
 		} else {
 			nextBtn.removeAttribute("title");
+			nextBtn.textContent = DE ? "Weiter →" : "Next →";
 		}
 	}
 
@@ -533,6 +538,13 @@
 
 	function next() {
 		if (cur === 7 && !separationInfo().separated) return;
+		if (cur === SCENES.length - 1) {
+			if (window.LearnSys && window.LearnSys.state && window.LearnSys.go) {
+				const st = window.LearnSys.state();
+				window.LearnSys.go(st.day, st.step + 1);
+			}
+			return;
+		}
 		setStep(cur + 1);
 	}
 
@@ -1027,11 +1039,11 @@
 				<option value="separator">Trenner · 8 ReLU</option>
 				<option value="custom">Eigene</option>
 			</select></label>
-			<label>Neuronen <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="2"><output>2</output></label>
-			<label>Gewichtsskala <input id="ism-dense-scale" type="range" min="0.2" max="3" step="0.1" value="1.2"><output>1.2</output></label>
+			<label>n <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="2"><output>2</output></label>
+			<label>Skala <input id="ism-dense-scale" type="range" min="0.2" max="3" step="0.1" value="1.2"><output>1.2</output></label>
 			<label>Bias <input id="ism-dense-bias" type="range" min="-2" max="2" step="0.1" value="0"><output>0.0</output></label>
 			<label>Aktivierung <select id="ism-dense-activation"><option value="relu" selected>ReLU</option><option value="tanh">tanh</option></select></label>
-			<button type="button" id="ism-dense-resample">Neue Gewichte</button>
+			<button type="button" id="ism-dense-resample">Neu</button>
 			<span class="ism-dense-hint">Die Rückprojektion s(x,y) macht aus jedem Punkt einen Score. Eine Schwelle bei s=0 trennt die Klassen.</span>
 		` : `
 			<label>Preset <select id="ism-dense-preset">
@@ -1042,11 +1054,11 @@
 				<option value="separator">Separator · 8 ReLU</option>
 				<option value="custom">Custom</option>
 			</select></label>
-			<label>Neurons <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="2"><output>2</output></label>
-			<label>Weight scale <input id="ism-dense-scale" type="range" min="0.2" max="3" step="0.1" value="1.2"><output>1.2</output></label>
+			<label>n <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="2"><output>2</output></label>
+			<label>Scale <input id="ism-dense-scale" type="range" min="0.2" max="3" step="0.1" value="1.2"><output>1.2</output></label>
 			<label>Bias <input id="ism-dense-bias" type="range" min="-2" max="2" step="0.1" value="0"><output>0.0</output></label>
 			<label>Activation <select id="ism-dense-activation"><option value="relu" selected>ReLU</option><option value="tanh">tanh</option></select></label>
-			<button type="button" id="ism-dense-resample">New weights</button>
+			<button type="button" id="ism-dense-resample">New</button>
 			<span class="ism-dense-hint">The back-projection s(x,y) turns every point into one score. A threshold at s=0 separates the classes.</span>
 		`);
 		const neurons = box.querySelector("#ism-dense-neurons");
@@ -1142,7 +1154,13 @@
 		observe();
 	}
 
-	window.IntuitionSpaceMorph = { init: init, next: next, prev: prev, reset: () => setStep(0) };
+	window.IntuitionSpaceMorph = {
+		init: init,
+		next: next,
+		prev: prev,
+		reset: () => setStep(0),
+		state: () => ({ cur: cur, count: SCENES.length })
+	};
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 	else init();
 })();

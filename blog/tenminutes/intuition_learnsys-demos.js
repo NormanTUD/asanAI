@@ -8,7 +8,9 @@
 
   var TEMP = [
     { id: "freezing", value: -30, color: "sky", label: ["Gefrierpunkt", "Freezing"] },
+    { id: "icecold", value: -10, color: "lilac", label: ["Eiskalt", "Ice cold"] },
     { id: "cold", value: 5, color: "blue", label: ["Kalt", "Cold"] },
+    { id: "cool", value: 18, color: "petrol", label: ["Kühl", "Cool"] },
     { id: "lukewarm", value: 30, color: "green", label: ["Lauwarm", "Lukewarm"] },
     { id: "warm", value: 55, color: "lime", label: ["Warm", "Warm"] },
     { id: "hot", value: 100, color: "gold", label: ["Heiß", "Hot"] }
@@ -360,7 +362,7 @@
       drawLabel(DE ? "TEMPERATUR" : "TEMPERATURE", 24, 26, C.muted, "left", 9);
       drawLabel(DE ? "Klicke zwei Punkte" : "Click two points", size.w - 24, 26, C.muted, "right", 9);
       var sym = Math.abs(avg - near.value) < 0.5 ? "=" : "≈";
-      drawLabel(a.value + " + " + b.value + " = " + (a.value + b.value) + "  ·  " + avg.toFixed(1) + " " + sym + " " + text(near.label), size.w / 2, size.h - 22, C.soft, "center", 11);
+      drawLabel(a.value + " + " + b.value + " = " + (a.value + b.value) + "  ·  " + avg.toFixed(1) + " " + sym + " " + text(near.label) + "  ·  " + (DE ? "Fehler " : "error ") + Math.abs(avg - near.value).toFixed(1), size.w / 2, size.h - 22, C.soft, "center", 11);
       canvas.setAttribute("aria-label", DE
         ? "Temperaturlinie. " + text(a.label) + " und " + text(b.label) + ", Mittelpunkt " + avg.toFixed(1) + ", nahe " + text(near.label) + "."
         : "Temperature line. " + text(a.label) + " and " + text(b.label) + ", midpoint " + avg.toFixed(1) + ", near " + text(near.label) + ".");
@@ -442,6 +444,53 @@
         return { id: id, p: p };
       });
       drawList.sort(function (a, b) { return a.p.z - b.p.z; });
+
+      if (dimMix < 0.05) {
+        powerGroups().forEach(function (g) {
+          if (g.ids.length < 2) return;
+          var p = project(g.x, 0, 0);
+          ctx.save();
+          ctx.strokeStyle = C.lilac;
+          ctx.setLineDash([3, 3]);
+          ctx.lineWidth = 1.3;
+          ctx.beginPath();
+          ctx.moveTo(p.x - 7, p.y - 14); ctx.lineTo(p.x - 7, p.y + 14);
+          ctx.moveTo(p.x + 7, p.y - 14); ctx.lineTo(p.x + 7, p.y + 14);
+          ctx.moveTo(p.x - 7, p.y - 14); ctx.lineTo(p.x + 7, p.y - 14);
+          ctx.moveTo(p.x - 7, p.y + 14); ctx.lineTo(p.x + 7, p.y + 14);
+          ctx.stroke();
+          ctx.restore();
+          ctx.fillStyle = C.lilac;
+          ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+          ctx.textAlign = "center";
+          ctx.fillText(g.ids.length + (DE ? " Wörter teilen sich eine Stelle" : " words share one position"), p.x, p.y + 28);
+        });
+        ctx.fillStyle = C.lilac;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(DE ? "1D: kein freier Weg zwischen ihnen" : "1D: no free path between them", size.w / 2, size.h - 16);
+      }
+      if (dimMix > 0.95 && !dirMode) {
+        function freePath(fromId, toId) {
+          var wa = WORDS[fromId], wb = WORDS[toId];
+          var a = project((wa.v[0] - 12.5) / 15, wa.v[1] / 22, wa.z);
+          var b = project((wb.v[0] - 12.5) / 15, wb.v[1] / 22, wb.z);
+          var mx = (a.x + b.x) / 2, my = Math.min(a.y, b.y) - 34;
+          ctx.save();
+          ctx.setLineDash([4, 4]);
+          ctx.strokeStyle = C.green;
+          ctx.globalAlpha = 0.55;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(mx, my, b.x, b.y); ctx.stroke();
+          ctx.restore();
+        }
+        freePath("man", "woman");
+        freePath("king", "queen");
+        ctx.fillStyle = C.green;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(DE ? "2D: freie Wege" : "2D: free paths", size.w / 2, size.h - 16);
+      }
 
       if (dirMode) {
         function arrowWord(from, to, col, dash) {
@@ -594,8 +643,8 @@
         var near = nearestTemp(avg);
         var sym = Math.abs(avg - near.value) < 0.5 ? "=" : "≈";
         readout.innerHTML = '<b>' + esc(a.value) + '</b> + <b>' + esc(b.value) + '</b> = <b>' + esc(a.value + b.value) + '</b> · ' +
-          esc(avg.toFixed(1)) + ' ' + esc(sym) + ' <b>' + esc(text(near.label)) + '</b>';
-        setTex("\\underbrace{" + a.value + "}_{\\text{" + text(a.label) + "}} + \\underbrace{" + b.value + "}_{\\text{" + text(b.label) + "}} = \\underbrace{" + (a.value + b.value) + "}_{\\text{" + (DE ? "Summe" : "sum") + "}} \\qquad \\underbrace{" + avg.toFixed(1) + "}_{\\text{" + (DE ? "Mittelwert" : "midpoint") + "}} " + sym + " \\underbrace{" + near.value + "}_{\\text{" + text(near.label) + "}}");
+          esc(avg.toFixed(1)) + ' ' + esc(sym) + ' <b>' + esc(text(near.label)) + '</b> · ' + esc(DE ? 'Fehler' : 'error') + ' ' + esc(Math.abs(avg - near.value).toFixed(1));
+        setTex("\\underbrace{" + a.value + "}_{\\text{" + text(a.label) + "}} + \\underbrace{" + b.value + "}_{\\text{" + text(b.label) + "}} = \\underbrace{" + (a.value + b.value) + "}_{\\text{" + (DE ? "Summe" : "sum") + "}} \\qquad \\underbrace{" + avg.toFixed(1) + "}_{\\text{" + (DE ? "Mittelwert" : "midpoint") + "}} " + sym + " \\underbrace{" + near.value + "}_{\\text{" + text(near.label) + "}}\\;\\text{(" + (DE ? "Abweichung" : "error") + " " + Math.abs(avg - near.value).toFixed(1) + ")}");
         return;
       }
       var cr = currentResult();
@@ -990,8 +1039,14 @@
     function later(fn, ms) { var id = setTimeout(fn, ms); timers.push(id); return id; }
     function clearTimers() { timers.forEach(function (id) { clearTimeout(id); clearInterval(id); }); timers = []; }
     function buildLogo() {
-      var letters = (DE ? "Suche" : "Search").split("");
-      logo.innerHTML = letters.map(function (ch, i) { return '<span class="ia-l' + (i + 1) + '">' + ch + "</span>"; }).join("");
+      var letters = (DE ? "Suchmaschine" : "Search Engine").split("");
+      var palette = ["#63a44b", "#1275ac", "#9f9700", "#9185be", "#5c9baf", "#004b6f"];
+      logo.removeAttribute("aria-hidden");
+      logo.setAttribute("role", "img");
+      logo.setAttribute("aria-label", DE ? "Suchmaschine" : "Search Engine");
+      logo.innerHTML = letters.map(function (ch, i) {
+        return '<span style="color:' + palette[i % palette.length] + '">' + (ch === " " ? "&nbsp;" : ch) + "</span>";
+      }).join("");
     }
     function buildSerp() {
       serp.innerHTML = RESULTS.map(function (r, i) {
@@ -1086,7 +1141,7 @@
     }
     function fit() {
       var r = stage.getBoundingClientRect();
-      var scale = Math.min(1, (r.width - 90) / 360, (r.height - 30) / 600);
+      var scale = Math.min((r.width - 60) / 360, (r.height - 60) / 600);
       phone.style.transform = "scale(" + scale.toFixed(3) + ")";
     }
     buildLogo();
@@ -1304,6 +1359,8 @@
     var landscape = false, landSize = null;
     var landYaw = -0.62, landPitch = 0.92, landZoom = 1;
     var landDrag = null, landMoved = false, landHits = [];
+    var landBall = { x: 0, y: 0, init: false, animating: false };
+    var landTrail = [];
     var LAND_X = 2.65, LAND_Y = 1.9;
 
     function landscapeChoices() {
@@ -1551,6 +1608,7 @@
         ctx.strokeStyle = isTop ? C.green : C.petrol;
         ctx.lineWidth = 1.4;
         ctx.stroke();
+        if (!atEnd) landHits.push({ x: surfX - 12, y: surfY - 12, w: 24, h: 24, t: it.t });
 
         var pct = (it.p * 100).toFixed(it.p * 100 < 1 ? 1 : 0) + "%";
         ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
@@ -1593,6 +1651,44 @@
 
       var top = items[0];
       if (top) {
+        var ballPt = landRaw(top.x, top.y, landZ(top.p));
+        var btx = sx(ballPt.x), bty = sy(ballPt.y);
+        if (!landBall.init) { landBall.x = btx; landBall.y = bty; landBall.init = true; }
+        var bdx = btx - landBall.x, bdy = bty - landBall.y;
+        if (Math.abs(bdx) + Math.abs(bdy) > 1.2) {
+          landBall.x += bdx * 0.18;
+          landBall.y += bdy * 0.18;
+          landBall.animating = true;
+          landTrail.push({ x: landBall.x, y: landBall.y });
+          if (landTrail.length > 26) landTrail.shift();
+        } else {
+          landBall.x = btx; landBall.y = bty; landBall.animating = false;
+        }
+        if (landTrail.length > 1) {
+          ctx.beginPath();
+          landTrail.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+          ctx.strokeStyle = C.green;
+          ctx.globalAlpha = 0.30;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+        ctx.beginPath();
+        ctx.ellipse(landBall.x, landBall.y + 5, 8, 3, 0, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0,0,0,.18)";
+        ctx.fill();
+        var ballGrad = ctx.createRadialGradient(landBall.x - 2, landBall.y - 3, 1, landBall.x, landBall.y, 8);
+        ballGrad.addColorStop(0, "#fff");
+        ballGrad.addColorStop(0.4, C.green);
+        ballGrad.addColorStop(1, "rgba(99,164,75,.25)");
+        ctx.beginPath();
+        ctx.arc(landBall.x, landBall.y, 7, 0, Math.PI * 2);
+        ctx.fillStyle = ballGrad;
+        ctx.fill();
+        ctx.strokeStyle = C.paper;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        if (landBall.animating) requestAnimationFrame(drawLandscape);
         if (readout) {
           var cells = readout.querySelectorAll("span");
           if (cells[2]) cells[2].innerHTML = (DE ? "Top" : "Top") + ' <b>' + api.esc(top.t) + '</b>';
@@ -1615,6 +1711,7 @@
       landscape = !!on;
       el.classList.toggle("is-landscape", landscape);
       landEl.hidden = !landscape;
+      if (!landscape) landBall.animating = false;
       if (landscape) {
         if (!landSize) landSize = api.fit(landCanvas, landEl);
         drawLandscape();
@@ -2399,7 +2496,7 @@
       var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
       var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
       var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
-      var s = Math.min(curveSize.w, curveSize.h) * 0.33 / (1 + z2 * 0.25);
+      var s = Math.min(curveSize.w * 0.45, curveSize.h * 0.36) / (1 + z2 * 0.25);
       return { x: curveSize.w / 2 + x1 * s, y: curveSize.h / 2 - y2 * s, z: z2 };
     }
     function curvePoint(t) {
@@ -2574,7 +2671,13 @@
     el.innerHTML =
       '<div class="ls-noise-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
       '<div class="ls-scene-row"><label class="ls-range">Layer <input type="range" class="ls-noise-layer" min="0" max="5" step="1" value="0"><output>0</output></label></div>' +
-      '<div class="ls-noise-readout" aria-live="polite"></div>';
+      '<div class="ls-noise-readout" aria-live="polite"></div>' +
+      '<div class="ls-noise-code">' +
+        '<div class="ls-noise-code-head">' + (DE ? "Rauschen im Code" : "Noise in code") + '</div>' +
+        '<div class="ls-noise-code-row"><span>Python</span><code>def quicksort(items):</code></div>' +
+        '<div class="ls-noise-code-row"><span>JavaScript</span><code>function quickSort(items) {</code></div>' +
+        '<p>' + (DE ? "Gleiche Funktion, andere Oberfläche. Attention addiert die Tokens, bis die Bedeutung übrig bleibt." : "Same function, different surface. Attention adds the tokens until the meaning remains.") + '</p>' +
+      '</div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-noise-stage");
     var canvas = el.querySelector("canvas");
@@ -2583,166 +2686,86 @@
     var readout = el.querySelector(".ls-noise-readout");
     var layer = 0, size = null;
     var C = api.colors();
-    function ease(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
-    function mix(a, b, t) { return a + (b - a) * t; }
-    function textFor() {
-      if (layer < 1) return DE ? "Oberfläche: def und function, quicksort und quickSort stehen getrennt." : "Surface: def and function, quicksort and quickSort stand apart.";
-      if (layer < 3) return DE ? "Die ersten Layer ziehen die Schreibweisen zusammen. Schlüsselwort und Interpunktion verlieren an Gewicht." : "The first layers pull the spellings together. Keyword and punctuation lose weight.";
-      if (layer < 5) return DE ? "Fast nur noch Bedeutung: quicksort und quickSort meinen dieselbe Sortierfunktion." : "Mostly meaning now: quicksort and quickSort describe the same sorting function.";
-      return DE ? "Dieselbe Funktion. Die Oberfläche ist Rauschen, das Modell hat sie weggezogen." : "The same function. The surface is noise, and the model has pulled it away.";
-    }
+    function lerp(a, b, t) { return a + (b - a) * t; }
     function draw() {
       if (!size) return;
       var ctx = size.ctx, w = size.w, h = size.h;
-      var t = ease(layer / 5);
+      var t = layer / 5;
       ctx.clearRect(0, 0, w, h);
-      var bg = ctx.createRadialGradient(w * 0.5, h * 0.56, 8, w * 0.5, h * 0.56, Math.max(w, h) * 0.62);
+      var bg = ctx.createRadialGradient(w * 0.5, h * 0.5, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.62);
       bg.addColorStop(0, "rgba(247,250,249,.95)");
       bg.addColorStop(1, "rgba(255,255,255,0)");
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, w, h);
-
-      var codeH = Math.min(78, Math.max(58, h * 0.24));
-      ctx.fillStyle = "#071a22";
-      ctx.fillRect(12, 10, w - 24, codeH);
-      ctx.strokeStyle = "rgba(0,75,111,.25)";
-      ctx.lineWidth = 1;
-      ctx.strokeRect(12, 10, w - 24, codeH);
-      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.fillStyle = "#9db5b5";
-      ctx.textAlign = "left";
-      ctx.fillText("Python", 22, 28);
-      ctx.fillText("JavaScript", 22, 10 + codeH - 12);
-      var fs = w < 520 ? 10 : 12;
-      ctx.font = '600 ' + fs + 'px ui-monospace, Menlo, Consolas, monospace';
-      function line(x, y, parts) {
-        parts.forEach(function (p) {
-          ctx.fillStyle = p.c;
-          ctx.fillText(p.t, x, y);
-          x += ctx.measureText(p.t).width;
-        });
-      }
-      line(76, 28, [
-        { t: "def ", c: "#9db5b5" },
-        { t: "quicksort", c: C.green },
-        { t: "(items):", c: "#eef7f4" }
-      ]);
-      line(76, 10 + codeH - 12, [
-        { t: "function ", c: "#9db5b5" },
-        { t: "quickSort", c: C.sky },
-        { t: "(items) {", c: "#eef7f4" }
-      ]);
-
-      var padL = 26, padR = 26, padT = codeH + 28, padB = 14;
-      var plotW = w - padL - padR, plotH = h - padT - padB;
-      if (plotW < 40 || plotH < 40) return;
-      function px(x) { return padL + (x + 1.1) / 2.2 * plotW; }
-      function py(y) { return padT + (0.8 - y) / 1.6 * plotH; }
+      var pad = 26;
+      function px(x) { return pad + (x + 1.1) / 2.2 * (w - pad * 2); }
+      function py(y) { return pad + (0.9 - y) / 1.8 * (h - pad * 2); }
       ctx.strokeStyle = C.line;
       ctx.lineWidth = 1;
       for (var g = -1; g <= 1; g += 0.5) {
         ctx.beginPath(); ctx.moveTo(px(-1.1), py(g)); ctx.lineTo(px(1.1), py(g)); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px(g), py(-0.9)); ctx.lineTo(px(g), py(0.9)); ctx.stroke();
       }
-      for (var g2 = -1; g2 <= 1; g2 += 0.55) {
-        ctx.beginPath(); ctx.moveTo(px(g2), py(-0.8)); ctx.lineTo(px(g2), py(0.8)); ctx.stroke();
-      }
-
-      var pairs = [
-        { a: "def", b: "function", ax: -0.78, ay: 0.55, bx: 0.78, by: 0.55, tx: -0.42, ty: 0.30, kind: "meaning" },
-        { a: "quicksort", b: "quickSort", ax: -0.78, ay: 0.02, bx: 0.78, by: 0.02, tx: 0.42, ty: -0.10, kind: "meaning" },
-        { a: ":", b: "{", ax: -0.78, ay: -0.52, bx: 0.78, by: -0.52, tx: 0, ty: -0.55, kind: "noise" }
-      ];
       var anchors = [
-        { x: -0.42, y: 0.30, label: DE ? "Funktion" : "function", color: C.green },
-        { x: 0.42, y: -0.10, label: DE ? "Sortieren" : "sorting", color: C.petrol }
+        { id: "car", x: -0.78, y: 0.38, label: DE ? "car" : "car", color: C.muted },
+        { id: "england", x: -0.72, y: -0.45, label: DE ? "England" : "England", color: C.muted },
+        { id: "city", x: 0.62, y: 0.02, label: DE ? "Stadt" : "city", color: C.green }
       ];
-
-      ctx.textAlign = "center";
+      var newPos = { x: lerp(-0.58, 0.48, t), y: lerp(0.50, 0.16, t) };
+      var yorkPos = { x: lerp(-0.52, 0.48, t), y: lerp(-0.38, -0.10, t) };
+      ctx.strokeStyle = C.lineStrong;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.ellipse(px(0.62), py(0.02), Math.abs(px(0.35) - px(0.0)), Math.abs(py(0.35) - py(0.0)), 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(px(-0.75), py(0.0), Math.abs(px(0.22) - px(0.0)), Math.abs(py(0.55) - py(0.0)), 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = C.green;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center";
+      ctx.fillText(DE ? "Bedeutung: Stadt" : "meaning: city", px(0.62), py(0.62));
       ctx.fillStyle = C.muted;
-      ctx.globalAlpha = 0.15 + 0.85 * t;
-      ctx.fillText(DE ? "Bedeutung" : "meaning", px(0), py(0.74));
-      ctx.globalAlpha = 1;
-
-      anchors.forEach(function (a) {
-        ctx.globalAlpha = 0.15 + 0.8 * t;
-        ctx.strokeStyle = a.color;
-        ctx.lineWidth = 1.2;
-        ctx.setLineDash([4, 4]);
-        ctx.beginPath();
-        ctx.ellipse(px(a.x), py(a.y), (0.62 - 0.28 * t) * plotW / 2.2, (0.28 - 0.1 * t) * plotH / 1.6, 0, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.fillStyle = a.color;
-        ctx.beginPath();
-        ctx.arc(px(a.x), py(a.y), 4.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
-        ctx.fillText(a.label, px(a.x), py(a.y) - 9);
-        ctx.globalAlpha = 1;
-      });
-
-      pairs.forEach(function (p) {
-        var ax = mix(p.ax, p.tx, p.kind === "noise" ? t * 0.4 : t);
-        var ay = mix(p.ay, p.ty, p.kind === "noise" ? t * 0.4 : t);
-        var bx = mix(p.bx, p.tx, p.kind === "noise" ? t * 0.4 : t);
-        var by = mix(p.by, p.ty, p.kind === "noise" ? t * 0.4 : t);
-        var alpha = p.kind === "noise" ? 1 - t : 1 - 0.45 * t;
-        var axp = px(ax), ayp = py(ay), bxp = px(bx), byp = py(by);
-        ctx.globalAlpha = Math.max(0, alpha) * 0.55;
-        ctx.strokeStyle = C.petrol;
-        ctx.lineWidth = 1.2;
-        ctx.setLineDash([3, 4]);
-        ctx.beginPath(); ctx.moveTo(axp, ayp); ctx.lineTo(bxp, byp); ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.globalAlpha = Math.max(0, alpha);
-        ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
-        ctx.fillStyle = C.muted;
-        if (Math.abs(axp - bxp) + Math.abs(ayp - byp) > 34) ctx.fillText("≈", (axp + bxp) / 2, (ayp + byp) / 2 - 4);
-        function tag(x, y, text, color, up) {
-          ctx.beginPath();
-          ctx.arc(x, y, 4.5, 0, Math.PI * 2);
-          ctx.fillStyle = color;
-          ctx.fill();
-          ctx.strokeStyle = C.paper;
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-          ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
-          var tw = ctx.measureText(text).width;
-          var bx2 = x - tw / 2 - 4, by2 = up ? y - 24 : y + 8;
-          ctx.fillStyle = C.paper;
-          ctx.fillRect(bx2, by2, tw + 8, 16);
-          ctx.strokeStyle = color;
-          ctx.lineWidth = 1;
-          ctx.strokeRect(bx2, by2, tw + 8, 16);
-          ctx.fillStyle = C.ink;
-          ctx.textAlign = "left";
-          ctx.fillText(text, bx2 + 4, by2 + 12);
-          ctx.textAlign = "center";
-        }
-        tag(axp, ayp, p.a, C.green, true);
-        tag(bxp, byp, p.b, C.sky, false);
-        ctx.globalAlpha = 1;
-      });
-
-      ctx.fillStyle = C.muted;
-      ctx.font = api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.textAlign = "left";
-      ctx.fillText(DE ? "schematisch, keine Messung" : "schematic, not a measurement", 12, h - 4);
+      ctx.fillText(DE ? "Oberfläche" : "surface", px(-0.75), py(0.78));
+      function line(a, b, col, alpha, width, dash) {
+        ctx.save();
+        if (dash) ctx.setLineDash(dash);
+        ctx.strokeStyle = col;
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = width || 1.3;
+        ctx.beginPath(); ctx.moveTo(px(a.x), py(a.y)); ctx.lineTo(px(b.x), py(b.y)); ctx.stroke();
+        ctx.restore();
+      }
+      line(newPos, anchors[0], C.gold, 0.55 * (1 - t), 1.2, [3, 4]);
+      line(yorkPos, anchors[1], C.gold, 0.55 * (1 - t), 1.2, [3, 4]);
+      line(newPos, anchors[2], C.green, 0.25 + 0.7 * t, 1.2 + 4 * t);
+      line(yorkPos, anchors[2], C.green, 0.25 + 0.7 * t, 1.2 + 4 * t);
+      function point(p, col, label, r) {
+        ctx.beginPath(); ctx.arc(px(p.x), py(p.y), r || 5, 0, Math.PI * 2);
+        ctx.fillStyle = col; ctx.fill();
+        ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = C.ink;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(label, px(p.x), py(p.y) - 10);
+      }
+      anchors.forEach(function (a) { point(a, a.color, a.label, 4.5); });
+      point(newPos, C.petrol, "new", 6);
+      point(yorkPos, C.petrol, "york", 6);
+      var wCar = 0.45 * (1 - t);
+      var wCity = 0.10 + 0.30 * t;
+      var wYork = 0.30 * t;
+      var wSelf = Math.max(0, 1 - wCar - wCity - wYork);
+      readout.innerHTML = '<span>' + (DE ? "new′ =" : "new′ =") + ' <b>' + (wSelf * 100).toFixed(0) + '% new</b> + <b>' + (wCar * 100).toFixed(0) + '% car</b> + <b>' + (wYork * 100).toFixed(0) + '% york</b> + <b>' + (wCity * 100).toFixed(0) + '% ' + (DE ? "Stadt" : "city") + '</b></span><span>' + (DE ? "Summe 100 %" : "sum 100%") + '</span>';
+      canvas.setAttribute("aria-label", DE
+        ? "Attention verschiebt new und york zu Stadt, weg von car und England. Layer " + layer + "."
+        : "Attention moves new and york toward city, away from car and England. Layer " + layer + ".");
     }
-    function resize() {
-      size = api.fit(canvas, stage);
-      draw();
-    }
+    function resize() { size = api.fit(canvas, stage); draw(); }
     slider.addEventListener("input", function () {
       layer = parseInt(slider.value, 10) || 0;
       out.textContent = String(layer);
-      readout.textContent = textFor();
       draw();
     });
     window.addEventListener("resize", resize);
     out.textContent = "0";
-    readout.textContent = textFor();
     resize();
     return {
       update: function (s) {
@@ -2750,7 +2773,6 @@
           layer = Math.max(0, Math.min(5, s.layer));
           slider.value = String(layer);
           out.textContent = String(layer);
-          readout.textContent = textFor();
           draw();
         }
       },
@@ -2758,180 +2780,320 @@
       destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
     };
   }
-
   function attentionScene(root, api) {
     var DE = api.lang === "de";
-    var tokens = DE ? ["Ich", "gehe", "zur", "Bank", "."] : ["I", "walk", "to", "the", "bank", "."];
+    var baseTokens = DE ? ["Ich", "gehe", "zur", "Bank", "."] : ["I", "walk", "to", "the", "bank", "."];
     var contexts = [
-      { id: "none", label: DE ? "kein Kontext" : "no context", color: "muted" },
-      { id: "river", label: DE ? "Fluss" : "river", color: "blue" },
-      { id: "money", label: DE ? "Geld" : "money", color: "gold" },
-      { id: "both", label: DE ? "beides" : "both", color: "lilac" }
+      { id: "none", label: DE ? "kein Kontext" : "no context", word: "·", color: "muted" },
+      { id: "river", label: DE ? "Fluss" : "river", word: DE ? "Fluss" : "river", color: "blue" },
+      { id: "money", label: DE ? "Geld" : "money", word: DE ? "Geld" : "money", color: "gold" },
+      { id: "both", label: DE ? "beides" : "both", word: DE ? "Fluss+Geld" : "money+river", color: "lilac" }
     ];
-    var weights = {
-      none: [0.06, 0.06, 0.04, 0.72, 0.12],
-      river: [0.05, 0.10, 0.05, 0.34, 0.46],
-      money: [0.05, 0.06, 0.04, 0.33, 0.52],
-      both: [0.05, 0.08, 0.04, 0.40, 0.43]
-    };
+    var context = "none";
+    var selected = baseTokens.length - 1;
     var el = document.createElement("div");
     el.className = "ls-att-scene";
-    el.innerHTML = '<div class="ls-att-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-att-matrix" aria-live="polite"></div><div class="ls-scene-row ls-att-contexts"></div><div class="ls-att-readout" aria-live="polite"></div>';
+    el.innerHTML =
+      '<div class="ls-att-stage"><canvas class="ls-att-graph" role="img"></canvas></div>' +
+      '<div class="ls-att-vector"><canvas class="ls-att-vector-canvas" role="img"></canvas></div>' +
+      '<div class="ls-att-matrix" aria-live="polite"></div>' +
+      '<div class="ls-att-sum" aria-live="polite"></div>' +
+      '<div class="ls-scene-row ls-att-contexts"></div>' +
+      '<div class="ls-att-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-att-stage");
-    var canvas = el.querySelector("canvas");
-    var ctxRow = el.querySelector(".ls-att-contexts");
+    var graph = el.querySelector(".ls-att-graph");
+    var vectorStage = el.querySelector(".ls-att-vector");
+    var vector = el.querySelector(".ls-att-vector-canvas");
     var matrixEl = el.querySelector(".ls-att-matrix");
+    var sumEl = el.querySelector(".ls-att-sum");
+    var ctxRow = el.querySelector(".ls-att-contexts");
     var readout = el.querySelector(".ls-att-readout");
-    var ctx = null, size = null, current = "none", hits = [];
     var C = api.colors();
-    function draw() {
-      if (!size) return;
-      ctx = size.ctx;
-      ctx.clearRect(0, 0, size.w, size.h);
-      var w = size.w, h = size.h;
-      var pad = 22;
-      var sentenceY = 34;
-      var tokenXs = [];
-      var gap = Math.min(104, (w - pad * 2) / tokens.length);
-      var start = (w - gap * tokens.length) / 2 + gap / 2;
-      ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
-      tokens.forEach(function (t, i) {
-        var x = start + i * gap;
-        tokenXs.push(x);
-        var active = i === tokens.length - 2;
-        var tw = ctx.measureText(t).width;
-        var pw = tw + 16;
-        ctx.fillStyle = active ? C.green : C.paper;
-        ctx.strokeStyle = active ? C.green : C.lineStrong;
-        ctx.fillRect(x - pw / 2, sentenceY - 13, pw, 26);
-        ctx.strokeRect(x - pw / 2, sentenceY - 13, pw, 26);
-        ctx.fillStyle = active ? "#fff" : C.ink;
-        ctx.textAlign = "center";
-        ctx.fillText(t, x, sentenceY + 4);
+    var graphSize = null, vectorSize = null, graphHits = [];
+
+    function contextWord() {
+      var c = contexts.filter(function (x) { return x.id === context; })[0] || contexts[0];
+      return c.word;
+    }
+    function tokens() { return [contextWord()].concat(baseTokens); }
+    function bankIdx() { return tokens().length - 2; }
+    function normalize(row) {
+      var s = row.reduce(function (a, b) { return a + b; }, 0) || 1;
+      return row.map(function (v) { return v / s; });
+    }
+    function bankRow(ctx) {
+      if (DE) {
+        if (ctx === "none") return [0.00, 0.06, 0.06, 0.04, 0.72, 0.12];
+        if (ctx === "river") return [0.18, 0.02, 0.02, 0.04, 0.70, 0.04];
+        if (ctx === "money") return [0.20, 0.02, 0.01, 0.04, 0.70, 0.03];
+        return [0.19, 0.02, 0.01, 0.04, 0.70, 0.04];
+      }
+      if (ctx === "none") return [0.00, 0.04, 0.04, 0.03, 0.04, 0.72, 0.13];
+      if (ctx === "river") return [0.18, 0.02, 0.02, 0.03, 0.03, 0.70, 0.02];
+      if (ctx === "money") return [0.20, 0.02, 0.01, 0.02, 0.03, 0.70, 0.02];
+      return [0.19, 0.02, 0.01, 0.02, 0.03, 0.70, 0.03];
+    }
+    function ctxRowFor(ctx) {
+      if (DE) {
+        if (ctx === "none") return [0.55, 0.10, 0.08, 0.05, 0.17, 0.05];
+        if (ctx === "river") return [0.30, 0.02, 0.02, 0.03, 0.58, 0.05];
+        if (ctx === "money") return [0.28, 0.02, 0.02, 0.03, 0.60, 0.05];
+        return [0.29, 0.02, 0.02, 0.03, 0.59, 0.05];
+      }
+      if (ctx === "none") return [0.55, 0.06, 0.05, 0.04, 0.05, 0.20, 0.05];
+      if (ctx === "river") return [0.30, 0.02, 0.02, 0.02, 0.03, 0.56, 0.05];
+      if (ctx === "money") return [0.28, 0.02, 0.02, 0.02, 0.03, 0.58, 0.05];
+      return [0.29, 0.02, 0.02, 0.02, 0.03, 0.57, 0.05];
+    }
+    function baseRow(i, n, bi) {
+      var row = [];
+      for (var j = 0; j < n; j++) row[j] = 0.03;
+      row[i] += 0.52;
+      if (i > 0) row[i - 1] += 0.18;
+      if (i < n - 1) row[i + 1] += 0.12;
+      row[bi] += 0.10;
+      return normalize(row);
+    }
+    function matrix() {
+      var ts = tokens(), n = ts.length, bi = bankIdx();
+      var m = [];
+      for (var i = 0; i < n; i++) {
+        if (i === 0) m.push(normalize(ctxRowFor(context)));
+        else if (i === bi) m.push(normalize(bankRow(context)));
+        else m.push(baseRow(i, n, bi));
+      }
+      return m;
+    }
+    function topKey(row, i) {
+      var best = -1, bw = -1;
+      row.forEach(function (w, j) { if (j !== i && w > bw) { bw = w; best = j; } });
+      return best;
+    }
+    function setContext(id) {
+      context = id;
+      syncChips();
+      draw();
+    }
+    function setSelected(i) {
+      var ts = tokens();
+      if (i < 0 || i >= ts.length) return;
+      selected = i;
+      draw();
+    }
+    function syncChips() {
+      ctxRow.querySelectorAll(".ls-chip").forEach(function (b) {
+        b.classList.toggle("is-on", b.getAttribute("data-ctx") === context);
       });
-      var bankX = tokenXs[tokenXs.length - 2];
-      var wts = weights[current];
-      tokens.forEach(function (t, i) {
-        if (i === tokens.length - 2) return;
-        var wt = wts[i] || 0.03;
-        var x2 = tokenXs[i];
-        var mid = (bankX + x2) / 2;
-        var ctrlY = sentenceY - 32 - 80 * wt;
+    }
+    function drawGraph() {
+      if (!graphSize) return;
+      var ctx = graphSize.ctx, w = graphSize.w, h = graphSize.h;
+      ctx.clearRect(0, 0, w, h);
+      var ts = tokens(), n = ts.length, row = matrix()[selected];
+      var pad = 18, gap = (w - pad * 2) / n, y = 38;
+      graphHits = [];
+      var maxBox = Math.min(92, gap - 6);
+      ts.forEach(function (tok, i) {
+        var x = pad + gap * (i + 0.5);
+        var bw = Math.max(38, Math.min(maxBox, ctx.measureText(tok).width + 18));
+        var on = i === selected;
+        ctx.fillStyle = on ? C.green : C.paper;
+        ctx.strokeStyle = on ? C.green : C.lineStrong;
+        ctx.fillRect(x - bw / 2, y - 15, bw, 30);
+        ctx.strokeRect(x - bw / 2, y - 15, bw, 30);
+        ctx.fillStyle = on ? "#fff" : C.ink;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(tok, x, y + 3);
+        graphHits.push({ x: x - bw / 2, y: y - 15, w: bw, h: 30, i: i });
+      });
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(DE ? "Klicke ein Wort" : "click a word", pad, 16);
+      ctx.textAlign = "right";
+      ctx.fillText(DE ? "Zeile = Frage, Spalte = Antwort" : "row = query, column = key", w - pad, 16);
+      var selX = pad + gap * (selected + 0.5);
+      row.forEach(function (wt, j) {
+        if (j === selected || wt < 0.005) return;
+        var x = pad + gap * (j + 0.5);
+        var mid = (selX + x) / 2;
+        var ctrlY = y - 44 - 120 * wt;
         ctx.beginPath();
-        ctx.moveTo(bankX, sentenceY + 14);
-        ctx.quadraticCurveTo(mid, ctrlY, x2, sentenceY + 14);
+        ctx.moveTo(selX, y + 16);
+        ctx.quadraticCurveTo(mid, ctrlY, x, y + 16);
         ctx.strokeStyle = C.blue;
-        ctx.globalAlpha = 0.18 + wt;
+        ctx.globalAlpha = 0.22 + Math.min(0.65, wt);
         ctx.lineWidth = 1 + wt * 9;
         ctx.stroke();
         ctx.globalAlpha = 1;
+        var ang = Math.atan2((y + 16) - ctrlY, x - mid);
+        ctx.beginPath();
+        ctx.moveTo(x, y + 16);
+        ctx.lineTo(x - 7 * Math.cos(ang - 0.35), y + 16 - 7 * Math.sin(ang - 0.35));
+        ctx.lineTo(x - 7 * Math.cos(ang + 0.35), y + 16 - 7 * Math.sin(ang + 0.35));
+        ctx.closePath();
+        ctx.fillStyle = C.blue;
+        ctx.fill();
+        if (wt >= 0.04) {
+          ctx.fillStyle = C.petrol;
+          ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+          ctx.textAlign = "center";
+          ctx.fillText(Math.round(wt * 100) + "%", mid, ctrlY + 14);
+        }
       });
-      var plotX = w * 0.55, plotY = h * 0.56;
-      var scale = Math.min(w * 0.18, h * 0.24, 110);
-      var gx0 = plotX - scale * 1.15, gx1 = plotX + scale * 1.15;
-      var gy0 = plotY - scale * 1.15, gy1 = plotY + scale * 1.15;
+      var barY = h - 30, barW = w - pad * 2, x0 = pad;
+      ctx.fillStyle = C.paper;
+      ctx.strokeStyle = C.lineStrong;
+      ctx.fillRect(x0, barY, barW, 16);
+      ctx.strokeRect(x0, barY, barW, 16);
+      var acc = 0;
+      ts.forEach(function (tok, j) {
+        var bw = row[j] * barW;
+        if (bw > 0.1) {
+          ctx.fillStyle = j === selected ? C.green : (j === 0 && context !== "none" ? C.gold : C.sky);
+          ctx.fillRect(x0 + acc, barY, bw, 16);
+        }
+        acc += bw;
+      });
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(DE ? "100 % Budget" : "100% budget", pad, barY - 5);
+      graph.setAttribute("aria-label", DE
+        ? "Attention-Graph. Zeile " + ts[selected] + ", Summe 100 Prozent."
+        : "Attention graph. Row " + ts[selected] + ", sum 100 percent.");
+    }
+    function drawVector() {
+      if (!vectorSize) return;
+      var ctx = vectorSize.ctx, w = vectorSize.w, h = vectorSize.h;
+      ctx.clearRect(0, 0, w, h);
+      var ts = tokens(), row = matrix()[selected], key = topKey(row, selected);
+      var cx = w * 0.5, cy = h * 0.54;
+      var scale = Math.min(w, h) * 0.30;
       ctx.strokeStyle = C.line;
       ctx.lineWidth = 1;
-      for (var gg = -1; gg <= 1; gg += 0.25) {
-        ctx.beginPath(); ctx.moveTo(plotX + gg * scale, gy0); ctx.lineTo(plotX + gg * scale, gy1); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(gx0, plotY - gg * scale); ctx.lineTo(gx1, plotY - gg * scale); ctx.stroke();
+      for (var g = -1; g <= 1; g += 0.5) {
+        ctx.beginPath(); ctx.moveTo(cx + g * scale, cy - scale); ctx.lineTo(cx + g * scale, cy + scale); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx - scale, cy + g * scale); ctx.lineTo(cx + scale, cy + g * scale); ctx.stroke();
       }
-      ctx.strokeStyle = C.lineStrong;
-      ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.moveTo(gx0, plotY); ctx.lineTo(gx1, plotY); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(plotX, gy0); ctx.lineTo(plotX, gy1); ctx.stroke();
-      function point(x, y, col, label, on) {
-        var px = plotX + x * scale, py = plotY - y * scale;
-        ctx.beginPath(); ctx.arc(px, py, on ? 7 : 4.5, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
-        ctx.fillStyle = on ? C.ink : C.soft; ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(label, px, py - 11);
-        return { x: px, y: py, dx: x, dy: y };
-      }
-      var river = point(0.55, 0.35, C.blue, DE ? "Fluss" : "river", current === "river" || current === "both");
-      var money = point(-0.45, 0.55, C.gold, DE ? "Geld" : "money", current === "money" || current === "both");
-      var bank = point(0, 0, C.green, DE ? "Bank" : "bank", true);
-      var tx = 0, ty = 0;
-      if (current === "river" || current === "both") { tx += river.dx * 0.8; ty += river.dy * 0.8; }
-      if (current === "money" || current === "both") { tx += money.dx * 0.8; ty += money.dy * 0.8; }
-      if (current === "both") { tx /= 2; ty /= 2; }
-      var moved = point(tx, ty, C.green, "", true);
+      if (key < 0) return;
+      var n = ts.length;
+      var angle = -Math.PI / 2 + (key / Math.max(1, n - 1)) * Math.PI * 1.55;
+      var kx = cx + Math.cos(angle) * scale * 1.05;
+      var ky = cy + Math.sin(angle) * scale * 1.05;
+      var wt = row[key];
+      var sx = cx + Math.cos(angle) * scale * Math.min(0.95, wt * 3.2);
+      var sy = cy + Math.sin(angle) * scale * Math.min(0.95, wt * 3.2);
       ctx.save();
       ctx.setLineDash([4, 4]);
-      ctx.strokeStyle = C.green;
-      ctx.lineWidth = 1.6;
-      ctx.beginPath(); ctx.moveTo(bank.x, bank.y); ctx.lineTo(moved.x, moved.y); ctx.stroke();
+      ctx.strokeStyle = C.lineStrong;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(kx, ky); ctx.stroke();
       ctx.restore();
-      var ang = Math.atan2(moved.y - bank.y, moved.x - bank.x);
-      ctx.beginPath();
-      ctx.moveTo(moved.x, moved.y);
-      ctx.lineTo(moved.x - 8 * Math.cos(ang - 0.4), moved.y - 8 * Math.sin(ang - 0.4));
-      ctx.lineTo(moved.x - 8 * Math.cos(ang + 0.4), moved.y - 8 * Math.sin(ang + 0.4));
-      ctx.closePath();
-      ctx.fillStyle = C.green;
-      ctx.fill();
-      ctx.fillStyle = C.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
-      ctx.fillText(DE ? "Bank-Vektor" : "bank vector", gx0, gy0 - 6);
-      hits = [];
-      contexts.forEach(function (c2, i) {
-        var x = pad + i * ((w - pad * 2) / contexts.length);
-        var y = h - 14;
-        var tw = ctx.measureText(c2.label).width;
-        var pw = tw + 16;
-        ctx.fillStyle = current === c2.id ? C.petrol : C.paper;
-        ctx.strokeStyle = current === c2.id ? C.petrol : C.lineStrong;
-        ctx.fillRect(x, y - 13, pw, 24);
-        ctx.strokeRect(x, y - 13, pw, 24);
-        ctx.fillStyle = current === c2.id ? "#fff" : C.soft;
-        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-        ctx.textAlign = "center";
-        ctx.fillText(c2.label, x + pw / 2, y + 2);
-        hits.push({ x: x + pw / 2, y: y, r: pw / 2 + 8, id: c2.id });
-      });
-      var best = 0;
-      wts.forEach(function (v, i) { if (v > wts[best]) best = i; });
-      readout.innerHTML = '<span>' + (DE ? "Bank liest" : "bank reads") + ' <b>' + api.esc(tokens[best]) + '</b> ' + (wts[best] * 100).toFixed(0) + '%</span><span>' + (DE ? "Kontext" : "context") + ' <b>' + api.esc(contexts.filter(function (c2) { return c2.id === current; })[0].label) + '</b></span>';
-      canvas.setAttribute("aria-label", DE ? "Self-Attention: Bank liest " + tokens[best] : "Self-attention: bank reads " + tokens[best]);
-      renderMatrix();
+      ctx.strokeStyle = C.green;
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(sx, sy); ctx.stroke();
+      var a = Math.atan2(sy - cy, sx - cx);
+      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx - 8 * Math.cos(a - 0.4), sy - 8 * Math.sin(a - 0.4)); ctx.lineTo(sx - 8 * Math.cos(a + 0.4), sy - 8 * Math.sin(a + 0.4)); ctx.closePath(); ctx.fillStyle = C.green; ctx.fill();
+      function point(x, y, col, label, on) {
+        ctx.beginPath(); ctx.arc(x, y, on ? 7 : 4.5, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = C.ink; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(label, x, y - 11);
+      }
+      point(cx, cy, C.green, ts[selected], true);
+      point(kx, ky, C.blue, ts[key], false);
+      point(sx, sy, C.green, DE ? "x′" : "x′", true);
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(DE ? "x′ = Σ w · v" : "x′ = Σ w · v", 10, 16);
+      ctx.textAlign = "right";
+      ctx.fillText(Math.round(wt * 100) + "% " + ts[key], w - 10, 16);
+      vector.setAttribute("aria-label", DE
+        ? "Vektorraum. " + ts[selected] + " bewegt sich zu " + ts[key] + " mit " + Math.round(wt * 100) + " Prozent."
+        : "Vector space. " + ts[selected] + " moves toward " + ts[key] + " with " + Math.round(wt * 100) + " percent.");
     }
-    function renderMatrix() {
-      var cols = ["I", "walk", "to", "the", "bank", "."];
-      var bankRow = weights[current];
-      var html = '<table><thead><tr><th></th>' + cols.map(function (c) { return '<th>' + api.esc(c) + '</th>'; }).join("") + '</tr></thead><tbody>';
-      cols.forEach(function (row, i) {
-        html += '<tr><th>' + api.esc(row) + '</th>';
-        cols.forEach(function (col, j) {
-          var w = i === 4 ? (bankRow[j] || 0.02) : (i === j ? 0.8 : 0.04);
-          html += '<td style="--w:' + w + '">' + (w * 100).toFixed(0) + '</td>';
+    function renderTable() {
+      var ts = tokens(), m = matrix();
+      var html = '<table><thead><tr><th></th>' + ts.map(function (t) { return '<th>' + api.esc(t) + '</th>'; }).join("") + '</tr></thead><tbody>';
+      m.forEach(function (row, i) {
+        html += '<tr data-row="' + i + '"' + (i === selected ? ' class="is-on"' : '') + '><th>' + api.esc(ts[i]) + '</th>';
+        row.forEach(function (wt) {
+          var pct = Math.round(wt * 100);
+          var alpha = Math.min(0.80, 0.10 + wt * 0.95);
+          var ink = wt > 0.48 ? "#fff" : C.ink;
+          html += '<td style="background:rgba(18,117,172,' + alpha.toFixed(2) + ');color:' + ink + '">' + pct + '</td>';
         });
         html += '</tr>';
       });
       html += '</tbody></table>';
       matrixEl.innerHTML = html;
+      matrixEl.querySelectorAll("tr[data-row]").forEach(function (tr) {
+        tr.addEventListener("click", function () { setSelected(parseInt(tr.getAttribute("data-row"), 10)); });
+      });
     }
-    function resize() { size = api.fit(canvas, stage); draw(); renderMatrix(); }
-    function pointer(e) {
-      var r = canvas.getBoundingClientRect();
-      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    function renderSum() {
+      var ts = tokens(), row = matrix()[selected];
+      var terms = [];
+      row.forEach(function (wt, j) {
+        if (wt < 0.005 && j !== selected) return;
+        terms.push('<span class="ls-att-term' + (j === selected ? ' is-self' : '') + '"><b>' + Math.round(wt * 100) + '%</b>·' + api.esc(ts[j]) + '</span>');
+      });
+      sumEl.innerHTML = '<span class="ls-att-eq">x′ = </span>' + terms.join('<span class="ls-att-plus"> + </span>') +
+        '<span class="ls-att-budget">' + (DE ? "Summe 100 % · 100 % auf ein Wort heißt 0 % für alle anderen." : "sum 100% · 100% on one word means 0% for the others.") + '</span>';
     }
-    canvas.addEventListener("pointerup", function (e) {
-      var p = pointer(e);
-      hits.forEach(function (h) { if (Math.hypot(h.x - p.x, h.y - p.y) < h.r) { current = h.id; draw(); } });
-      ctxRow.querySelectorAll(".ls-chip").forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-ctx") === current); });
-    });
-    contexts.forEach(function (c2) {
+    function renderReadout() {
+      var ts = tokens(), row = matrix()[selected], key = topKey(row, selected);
+      readout.innerHTML = '<span>' + (DE ? "Zeile" : "row") + ' <b>' + api.esc(ts[selected]) + '</b></span><span>' + (DE ? "stärkster Key" : "top key") + ' <b>' + api.esc(ts[key]) + ' ' + Math.round(row[key] * 100) + '%</b></span><span>' + (DE ? "Summe" : "sum") + ' <b>100 %</b></span>';
+    }
+    function draw() {
+      drawGraph();
+      drawVector();
+      renderTable();
+      renderSum();
+      renderReadout();
+    }
+    function resize() {
+      graphSize = api.fit(graph, stage);
+      vectorSize = api.fit(vector, vectorStage);
+      draw();
+    }
+    contexts.forEach(function (c) {
       var b = document.createElement("button");
       b.type = "button";
-      b.className = "ls-chip" + (c2.id === current ? " is-on" : "");
-      b.setAttribute("data-ctx", c2.id);
-      b.textContent = c2.label;
-      b.addEventListener("click", function () { current = c2.id; draw(); ctxRow.querySelectorAll(".ls-chip").forEach(function (x) { x.classList.toggle("is-on", x === b); }); });
+      b.className = "ls-chip" + (c.id === context ? " is-on" : "");
+      b.setAttribute("data-ctx", c.id);
+      b.textContent = c.label;
+      b.addEventListener("click", function () { setContext(c.id); });
       ctxRow.appendChild(b);
+    });
+    graph.addEventListener("pointerup", function (e) {
+      var r = graph.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      graphHits.forEach(function (h) {
+        if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) setSelected(h.i);
+      });
+    });
+    graph.addEventListener("pointermove", function (e) {
+      var r = graph.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      var hit = graphHits.some(function (h) { return x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h; });
+      graph.style.cursor = hit ? "pointer" : "default";
     });
     window.addEventListener("resize", resize);
     resize();
-    return { update: function (s) { if (s && s.context) { current = s.context; draw(); } }, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
+    return {
+      update: function (s) {
+        if (!s) return;
+        if (s.context) context = s.context;
+        if (typeof s.selected === "number") selected = s.selected;
+        syncChips();
+        draw();
+      },
+      resize: resize,
+      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
+    };
   }
-
   function ffnScene(root, api) {
     var DE = api.lang === "de";
     var data = DE ? {
@@ -3129,7 +3291,7 @@
     var CW = 1120, CH = 392;
     var el = document.createElement("div");
     el.className = "ls-meadow-scene";
-    el.innerHTML = '<div class="ls-meadow-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-scene-row"><label class="ls-range">' + (DE ? "Wörter" : "Words") + ' <input type="range" class="ls-md-n" min="12" max="30" step="6" value="12"><output>12</output></label><label class="ls-range">T <input type="range" class="ls-md-temp" min="0.2" max="2.6" step="0.05" value="0.8"><output>0.80</output></label><label class="ls-range">k <input type="range" class="ls-md-k" min="1" max="10" step="1" value="5"><output>5</output></label></div><div class="ls-meadow-readout" aria-live="polite"></div><p class="ls-meadow-caption"></p>';
+    el.innerHTML = '<div class="ls-meadow-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-scene-row"><label class="ls-range">' + (DE ? "Wörter" : "Words") + ' <input type="range" class="ls-md-n" min="12" max="30" step="6" value="12"><output>12</output></label><label class="ls-range">T <input type="range" class="ls-md-temp" min="0.2" max="2.6" step="0.05" value="0.8"><output>0.80</output></label><label class="ls-range">k <input type="range" class="ls-md-k" min="1" max="10" step="1" value="5"><output>5</output></label><button type="button" class="ls-btn ls-btn--tiny ls-md-landscape">' + (DE ? "Landschaft" : "Landscape") + '</button></div><div class="ls-meadow-readout" aria-live="polite"></div><p class="ls-meadow-caption"></p>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-meadow-stage");
     var canvas = el.querySelector("canvas");
@@ -3137,6 +3299,7 @@
     var readout = el.querySelector(".ls-meadow-readout");
     var caption = el.querySelector(".ls-meadow-caption");
     var ctx = null, size = null, N = 12, T = 0.8, K = 5;
+    var modeMix = 0, modeTarget = 0, modeTimer = 0;
     var anchors = [], fieldCache = {}, gapFrac = 0, pointer = { x: CW / 2, y: CH / 2 };
     function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
     function hexToRgb(hex) {
@@ -3349,6 +3512,96 @@
       }
       canvas.setAttribute("aria-label", DE ? "Wörterfeld. Nächstes Wort: " + (winner ? anchors[winner.i].w : "") : "Word field. Nearest word: " + (winner ? anchors[winner.i].w : ""));
     }
+    function drawMeadowLandscape(g, w, h, pal) {
+      var scale = scaleFor(anchors);
+      var yaw = -0.55, pitch = 0.92;
+      function norm(a) { return { x: a.x / CW * 2 - 1, y: (1 - a.y / CH) * 1.8 - 0.9 }; }
+      function raw(x, y, z) {
+        var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+        var x1 = x * cy - y * sy;
+        var y1 = x * sy + y * cy;
+        var y2 = y1 * cp + z * sp;
+        var z2 = y1 * sp + z * cp;
+        return { x: x1, y: -y2, z: z2 };
+      }
+      var NX = 32, NY = 22, grid = [];
+      var minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+      function include(p) { if (p.x < minX) minX = p.x; if (p.x > maxX) maxX = p.x; if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y; }
+      for (var i = 0; i <= NX; i++) {
+        grid[i] = [];
+        for (var j = 0; j <= NY; j++) {
+          var nx = -1 + 2 * i / NX, ny = -0.9 + 1.8 * j / NY;
+          var mx = (nx + 1) / 2 * CW;
+          var my = (1 - (ny + 0.9) / 1.8) * CH;
+          var n2 = nearestTwo(mx, my, anchors);
+          var p = 1 - clamp(n2.m / scale, 0, 1);
+          var z = 0.06 + 0.9 * p;
+          var rp = raw(nx, ny, z);
+          grid[i][j] = { x: nx, y: ny, p: p, rx: rp.x, ry: rp.y, rz: rp.z };
+          include(rp);
+        }
+      }
+      [[-1, -0.9], [1, -0.9], [1, 0.9], [-1, 0.9]].forEach(function (c) { include(raw(c[0], c[1], 1.05)); });
+      var pad = Math.min(w, h) * 0.08;
+      var sc = Math.min((w - pad * 2) / Math.max(0.001, maxX - minX), (h - pad * 2) / Math.max(0.001, maxY - minY));
+      var ox = w / 2 - (minX + maxX) / 2 * sc;
+      var oy = h / 2 - (minY + maxY) / 2 * sc;
+      function sx2(v) { return v * sc + ox; }
+      function sy2(v) { return v * sc + oy; }
+      g.save();
+      g.globalAlpha = modeMix;
+      g.fillStyle = rgb(pal.surface);
+      g.fillRect(0, 0, w, h);
+      var quads = [];
+      for (var qi = 0; qi < NX; qi++) {
+        for (var qj = 0; qj < NY; qj++) {
+          var a = grid[qi][qj], b = grid[qi + 1][qj], c = grid[qi + 1][qj + 1], d = grid[qi][qj + 1];
+          quads.push({ p: [a, b, c, d], pv: (a.p + b.p + c.p + d.p) / 4, z: (a.rz + b.rz + c.rz + d.rz) / 4 });
+        }
+      }
+      quads.sort(function (a, b) { return a.z - b.z; });
+      quads.forEach(function (q) {
+        g.beginPath();
+        g.moveTo(sx2(q.p[0].rx), sy2(q.p[0].ry));
+        g.lineTo(sx2(q.p[1].rx), sy2(q.p[1].ry));
+        g.lineTo(sx2(q.p[2].rx), sy2(q.p[2].ry));
+        g.lineTo(sx2(q.p[3].rx), sy2(q.p[3].ry));
+        g.closePath();
+        g.fillStyle = q.pv > 0.72 ? rgb(pal.thought) : q.pv > 0.46 ? "#869b55" : q.pv > 0.24 ? "#5c9baf" : rgb(pal.card);
+        g.globalAlpha = modeMix * 0.9;
+        g.fill();
+        g.globalAlpha = modeMix * 0.12;
+        g.strokeStyle = rgb(pal.surface);
+        g.lineWidth = 0.5;
+        g.stroke();
+        g.globalAlpha = modeMix;
+      });
+      var plane = [[-1, -0.9], [1, -0.9], [1, 0.9], [-1, 0.9]].map(function (c) { var p = raw(c[0], c[1], 1.05); return { x: sx2(p.x), y: sy2(p.y) }; });
+      g.beginPath(); g.moveTo(plane[0].x, plane[0].y);
+      for (var pi = 1; pi < plane.length; pi++) g.lineTo(plane[pi].x, plane[pi].y);
+      g.closePath(); g.globalAlpha = modeMix * 0.28; g.strokeStyle = rgb(pal.border); g.lineWidth = 1; g.stroke();
+      anchors.forEach(function (a) {
+        var na = norm(a);
+        var pp = raw(na.x, na.y, 1.05);
+        var sp = raw(na.x, na.y, 0.96);
+        g.globalAlpha = modeMix * 0.5;
+        g.strokeStyle = rgb(pal.thought); g.setLineDash([3, 3]); g.lineWidth = 1;
+        g.beginPath(); g.moveTo(sx2(pp.x), sy2(pp.y)); g.lineTo(sx2(sp.x), sy2(sp.y)); g.stroke(); g.setLineDash([]);
+        g.globalAlpha = modeMix;
+        g.fillStyle = rgb(pal.surface); g.strokeStyle = rgb(pal.thought); g.lineWidth = 1.4;
+        g.beginPath(); g.arc(sx2(pp.x), sy2(pp.y), 3, 0, Math.PI * 2); g.fill(); g.stroke();
+        g.fillStyle = rgb(pal.ink);
+        g.font = "600 " + api.font("canvas-sm") + "px 'Open Sans', sans-serif";
+        g.textAlign = "center";
+        g.fillText(a.w, sx2(pp.x), sy2(pp.y) - 8);
+      });
+      g.fillStyle = rgb(pal.muted);
+      g.font = "600 " + api.font("canvas-sm") + "px 'Open Sans', sans-serif";
+      g.textAlign = "left";
+      g.fillText(DE ? "Wiese → Landschaft · Höhe = Nähe" : "meadow → landscape · height = closeness", 10, 16);
+      g.restore();
+      g.globalAlpha = 1;
+    }
     function draw() {
       if (!size) return;
       ctx = size.ctx;
@@ -3361,6 +3614,13 @@
       ctx.drawImage(f.canvas, 0, 0, size.w, size.h);
       drawWordPins(ctx, size.w / CW, size.h / CH, pal);
       drawThought(ctx, size.w, size.h, pal);
+      if (modeMix > 0.01) {
+        drawMeadowLandscape(ctx, size.w, size.h, pal);
+        if (modeMix > 0.5) {
+          readout.innerHTML = '<span>' + (DE ? "Landschaft" : "landscape") + ' <b>' + (DE ? "Höhe = Nähe" : "height = closeness") + '</b></span><span>' + (DE ? "Wörter auf der Token-Ebene" : "words on the token plane") + '</span>';
+          caption.textContent = DE ? "Dieselben Wörter, jetzt als Wahrscheinlichkeitslandschaft: Jedes Wort ist ein Gipfel, die Täler dazwischen sind unsicher." : "The same words as a probability landscape: every word is a peak, the valleys between them are uncertain.";
+        }
+      }
       nEl.nextElementSibling.textContent = N;
       tempEl.nextElementSibling.textContent = T.toFixed(2);
       kEl.nextElementSibling.textContent = K;
@@ -3377,6 +3637,19 @@
     nEl.addEventListener("input", function () { setN(parseInt(nEl.value, 10) || 12); draw(); });
     tempEl.addEventListener("input", function () { T = clamp(parseFloat(tempEl.value) || 0.8, 0.2, 2.6); draw(); });
     kEl.addEventListener("input", function () { K = clamp(parseInt(kEl.value, 10) || 5, 1, 10); draw(); });
+    var landscapeBtn = el.querySelector(".ls-md-landscape");
+    function animateMode() {
+      modeMix += (modeTarget - modeMix) * 0.22;
+      if (Math.abs(modeTarget - modeMix) < 0.02) modeMix = modeTarget;
+      draw();
+      if (modeMix !== modeTarget) modeTimer = setTimeout(animateMode, 16);
+    }
+    landscapeBtn.addEventListener("click", function () {
+      modeTarget = modeTarget ? 0 : 1;
+      el.setAttribute("data-landscape", String(modeTarget));
+      if (modeTimer) clearTimeout(modeTimer);
+      animateMode();
+    });
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { fieldCache = {}; setN(N); draw(); });
     setN(N);
@@ -3510,6 +3783,33 @@
     return { update: function () {}, resize: updateRibbons, destroy: function () { window.removeEventListener("resize", updateRibbons); el.remove(); } };
   }
 
+  function highdimScene(root, api) {
+    var DE = api.lang === "de";
+    var tokens = DE ? ["Bank", "Fluss", "Geld", "König", "Königin", "Bedeutung"] : ["bank", "river", "money", "king", "queen", "meaning"];
+    var cols = 16;
+    function value(ti, j) {
+      var x = Math.sin((ti + 1) * 12.9898 + (j + 1) * 78.233) * 43758.5453;
+      x = x - Math.floor(x);
+      return (x * 2 - 1).toFixed(2);
+    }
+    var head = '<tr><th></th>';
+    for (var j = 0; j < cols; j++) head += '<th>d' + (j + 1) + '</th>';
+    head += '<th>…</th></tr>';
+    var body = tokens.map(function (tok, ti) {
+      var cells = '';
+      for (var k = 0; k < cols; k++) cells += '<td>' + value(ti, k) + '</td>';
+      return '<tr><th>' + api.esc(tok) + '</th>' + cells + '<td>…</td></tr>';
+    }).join("");
+    var el = document.createElement("div");
+    el.className = "ls-highdim-scene";
+    el.innerHTML =
+      '<div class="ls-highdim-note">' + (DE ? "Ausschnitt: 16 von 4096 Dimensionen. Jede Zeile ist ein Vektor, jede Spalte eine Dimension." : "Slice: 16 of 4096 dimensions. Each row is a vector, each column a dimension.") + '</div>' +
+      '<div class="ls-highdim-scroll"><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>' +
+      '<p class="ls-highdim-foot">' + (DE ? "Die Rechnung bleibt dieselbe: Mittelpunkt, Winkel, Matrixmultiplikation. Nur die Zahl der Koordinaten wächst." : "The arithmetic stays the same: midpoint, angle, matrix multiplication. Only the number of coordinates grows.") + '</p>';
+    root.appendChild(el);
+    return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
+  }
+
   function manifoldScene(root, api) {
     var DE = api.lang === "de";
     var el = document.createElement("div");
@@ -3554,10 +3854,11 @@
     el.innerHTML =
       '<div class="ism-panel">' +
         '<div id="ism-copy" class="ism-copy" aria-live="polite"><div id="ism-title" class="ism-title"></div><div id="ism-body" class="ism-body"></div></div>' +
+        '<div id="ism-dense-controls" class="ism-dense-controls" hidden></div>' +
         '<div class="ism-stage" id="ism-stage"><div id="ism-wrap" class="ism-wrap">' +
           '<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="' + (DE ? "Eine Punktwolke: ein Kern in einem Ring wird angehoben, bis eine flache Ebene trennt" : "A point cloud: a core inside a ring is lifted until a flat plane separates them") + '"></canvas>' +
           '<div id="ism-canvas-status" class="ism-canvas-status" aria-live="polite" hidden></div>' +
-        '</div><aside id="ism-side" class="ism-side"><div id="ism-dense-controls" class="ism-dense-controls" hidden></div><div id="ism-formulas" class="ism-formulas" aria-live="polite"></div></aside></div>' +
+        '</div><aside id="ism-side" class="ism-side"><div id="ism-formulas" class="ism-formulas" aria-live="polite"></div></aside></div>' +
         '<div class="ism-controls"><button type="button" id="ism-prev" class="ism-btn ism-btn--nav">← ' + (DE ? "Zurück" : "Back") + '</button><button type="button" id="ism-next" class="ism-btn ism-btn--nav" disabled>' + (DE ? "Weiter" : "Next") + ' →</button><button type="button" id="ism-reset-camera" class="ism-btn" aria-label="' + (DE ? "Ansicht zurücksetzen" : "Reset view") + '" title="' + (DE ? "Ansicht zurücksetzen" : "Reset view") + '">⟲</button><div id="ism-dots" class="ism-dots" role="group" aria-label="' + (DE ? "Folien" : "Slides") + '"></div><span id="ism-counter" class="ism-counter">1 / 9</span></div>' +
       '</div>';
     root.appendChild(el);
@@ -3572,6 +3873,19 @@
     return {
       update: function () {},
       resize: function () { window.dispatchEvent(new Event("resize")); },
+      onKey: function (e) {
+        var st = window.IntuitionSpaceMorph && window.IntuitionSpaceMorph.state ? window.IntuitionSpaceMorph.state() : null;
+        if (!st) return false;
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+          if (st.cur < st.count - 1) { window.IntuitionSpaceMorph.next(); return true; }
+          return false;
+        }
+        if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          if (st.cur > 0) { window.IntuitionSpaceMorph.prev(); return true; }
+          return false;
+        }
+        return false;
+      },
       destroy: function () { el.remove(); }
     };
   }
@@ -3724,6 +4038,57 @@
         readout.innerHTML = '<span>' + (DE ? "Maskiert" : "Masked") + ' <b>' + (DE ? "oberes Dreieck" : "upper triangle") + '</b></span><span>' + (DE ? "Jede Zeile summiert zu 1" : "Every row sums to 1") + '</span>';
         return;
       }
+      if (mode === "block") {
+        var by = h * 0.40;
+        var bw = Math.min(126, (w - pad * 2) / 5 - 10);
+        var stepX = (w - pad * 2 - bw) / 4;
+        var startX = pad + bw / 2;
+        function blockNode(i, title, sub, fill, stroke, ink) {
+          var x = startX + i * stepX;
+          ctx.fillStyle = fill;
+          ctx.strokeStyle = stroke;
+          ctx.lineWidth = 1.4;
+          ctx.fillRect(x - bw / 2, by - 28, bw, 56);
+          ctx.strokeRect(x - bw / 2, by - 28, bw, 56);
+          ctx.fillStyle = ink || C.ink;
+          ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif';
+          ctx.textAlign = "center";
+          ctx.fillText(title, x, by - 2);
+          if (sub) {
+            ctx.fillStyle = C.muted;
+            ctx.font = api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+            ctx.fillText(sub, x, by + 14);
+          }
+          return x;
+        }
+        var x0 = blockNode(0, DE ? "x" : "x", DE ? "Token + Position" : "token + position", "rgba(247,249,248,.92)", C.lineStrong, C.ink);
+        var x1 = blockNode(1, "Attention", DE ? "mischt Tokens" : "mixes tokens", "rgba(99,164,75,.14)", C.green, C.petrol);
+        var x2 = blockNode(2, "+", "", "rgba(255,255,255,.9)", C.lineStrong, C.green);
+        var x3 = blockNode(3, "FFN", DE ? "rechnet pro Token" : "computes per token", "rgba(255,255,255,.72)", C.lineStrong, C.ink);
+        var x4 = blockNode(4, DE ? "x′" : "x′", DE ? "nächster Block" : "next block", "rgba(247,249,248,.92)", C.lineStrong, C.ink);
+        function link(a, b, col) {
+          ctx.strokeStyle = col || C.lineStrong;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.moveTo(a + bw / 2, by); ctx.lineTo(b - bw / 2, by); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(b - bw / 2, by); ctx.lineTo(b - bw / 2 - 6, by - 4); ctx.lineTo(b - bw / 2 - 6, by + 4); ctx.closePath(); ctx.fillStyle = col || C.lineStrong; ctx.fill();
+        }
+        link(x0, x1); link(x1, x2); link(x2, x3); link(x3, x4);
+        ctx.strokeStyle = C.gold;
+        ctx.lineWidth = 1.3;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath(); ctx.moveTo(x0, by + 28); ctx.quadraticCurveTo((x0 + x2) / 2, by + 96, x2, by + 28); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x2, by + 28); ctx.quadraticCurveTo((x2 + x3) / 2, by + 72, x3, by + 28); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = C.gold;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(DE ? "Residual +" : "residual +", (x0 + x2) / 2, by + 88);
+        ctx.fillStyle = C.green;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.fillText(DE ? "hier zoomt die nächste Folie hinein" : "the next slide zooms in here", x1, by - 42);
+        readout.innerHTML = '<span>' + (DE ? "Block" : "Block") + ' <b>Attention + FFN</b></span><span>' + (DE ? "beide mit Residual" : "both with residual") + '</span><span>' + (DE ? "Attention mischt Tokens, FFN rechnet pro Token" : "attention mixes tokens, FFN computes per token") + '</span>';
+        return;
+      }
       var gap = Math.min(150, (w - pad * 2) / 4);
       var start = w / 2 - gap * 1.5;
       var y = h * 0.5;
@@ -3868,6 +4233,7 @@
     meadow: meadowScene,
     softmax: softmaxScene,
     manifold: manifoldScene,
+    highdim: highdimScene,
     mlp: mlpScene,
     trajectories: trajectoriesScene,
     stack: stackScene,
@@ -3909,6 +4275,7 @@
         if (scene && scene.update) scene.update(s || {});
       },
       resize: function () { if (scene && scene.resize) scene.resize(); },
+      onKey: function (e) { return scene && scene.onKey ? scene.onKey(e) : false; },
       destroy: function () {
         Object.keys(scenes).forEach(function (key) {
           if (scenes[key].api && scenes[key].api.destroy) { try { scenes[key].api.destroy(); } catch (e) {} }

@@ -1,6 +1,6 @@
 # intuition_learnsys — Arbeitsliste (kleinschrittig)
 
-Status: **[in Arbeit]**
+Status: **[in Arbeit — Hauptpunkte umgesetzt, 13 bewusst teiloffene Feinschliff-Punkte]**
 Quelle: `intuition_learnsys_todo` (Originaltext unten in den Punkten erhalten)
 Regel: Ein Häkchen `[x]` gibt es erst nach Browser-Prüfung in DE und EN auf
 Desktop (1200×900) und Mobil (390×844): keine Konsolenfehler, kein horizontaler
@@ -27,34 +27,38 @@ für einen eigenen Durchgang mit Prüfung.
 
 - 2026-11-12: Datei strukturiert; Abhängigkeiten festgelegt; Wellen 0–6 definiert.
 - 2026-11-12: Kleinschrittige Unter-Todos ergänzt; Rückfragen geklärt; P0.1 begonnen.
+- 2026-11-12: P0 abgeschlossen; T02-Font-Skala, T02b-Rail und T19.0 (Token-Ebene/z-Achse) umgesetzt und im Harness geprüft.
+- 2026-11-12: T03-Sprung (Hover-Transform + 5-px-Zeilenversatz) behoben; T09 (Zahlengerade, exakt/ungefähr, Fehleranzeige) umgesetzt; T11-Controls und T17-Tastatur/Touch geprüft.
+- 2026-11-12: T04 (1D/2D freie Wege), T05 (Tausende Dimensionen, Zahlentabelle), T06 (Übersetzung/Manifold-Text + Quellen), T07 (Position höher), T08 (Handy/Suchmaschine), T13/T13b (Attention-Redesign, Graph/Tabelle/100%, new-york-Rauschdemo), T14/T16 (MLP-Slider, Buttons, Pfeiltasten, Ende), T15 (Aktivierung vor MLP, Transformatorblock, Universal Approximation), T18 (FFN-Trennbarkeit) und T01-Fragenindex umgesetzt. T19: Ball mit Trail, Wortklick auf der Oberfläche und Wiese→Landschaft-Umschalter ergänzt. Offen bleiben nur der vollständige T01-Originalfragenabgleich, der Monkey-Click-Audit (T03.6) und Feinschliff/visuelle Kontrolle.
+- Selbstkritik: Die Wiese→Landschaft ist ein Crossfade mit denselben Ankern, keine echte geometrische Deformation. Der Ball-Trail ist eine Bildschirmspur, kein semantischer Pfad durch alle gewählten Tokens. T01 ist strukturell (Fragenindex, Fragetitel, Warum-Ebene) umgesetzt, aber noch nicht jede Frage aus intuition.php einzeln zugeordnet.
 
 ---
 
 ## Welle 0 — Messen und absichern
 
 ### P0.1 Prüf-Harness anlegen
-- [~] Temporäre HTML-Version der PHP-Seite erzeugen (filemtime ersetzen).
-- [ ] Harness-Fälle: `allsteps`, `tokenize`, `math`, `noise`, `landscape`,
+- [x] Temporäre HTML-Version der PHP-Seite erzeugen (filemtime ersetzen).
+- [x] Harness-Fälle: `allsteps`, `tokenize`, `math`, `noise`, `landscape`,
       `schloss`, `tunnel`, `heights`, `controls`.
-- [ ] DE/EN und 1200×900/390×844 als Parameter.
-- [ ] Ausgabe: Fehler, Overflow, Sichtbarkeit, Canvasmaße, Höhen.
-- [ ] Harness nach der Prüfung wieder entfernen.
+- [x] DE/EN und 1200×900/390×844 als Parameter.
+- [x] Ausgabe: Fehler, Overflow, Sichtbarkeit, Canvasmaße, Höhen.
+- [x] Harness nach der Prüfung wieder entfernen.
 
 ### P0.2 Demo- und Schritt-Karte
-- [ ] Aktuelle Reihenfolge der 28 Schritte mit Szene und Demo-State notieren.
-- [ ] Abhängigkeiten markieren: welche Folie braucht welche vorher.
-- [ ] Diese Karte in der Datei festhalten.
+- [x] Aktuelle Reihenfolge der 28 Schritte mit Szene und Demo-State notieren.
+- [x] Abhängigkeiten markieren: welche Folie braucht welche vorher.
+- [x] Diese Karte in der Datei festhalten.
 
 ### P0.3 Akzeptanzkriterien
-- [ ] Konsolenfehler: 0.
-- [ ] Horizontaler Overflow: 0.
-- [ ] Höhensprung bei Klicks: ≤ 1 px.
-- [ ] Beide Sprachen, Desktop und Mobil.
-- [ ] Jede neue Interaktion per Tastatur und Touch erreichbar.
+- [x] Konsolenfehler: 0.
+- [x] Horizontaler Overflow: 0.
+- [x] Höhensprung bei Klicks: ≤ 1 px.
+- [x] Beide Sprachen, Desktop und Mobil.
+- [x] Jede neue Interaktion per Tastatur und Touch erreichbar.
 
 ### P0.4 Baseline messen
-- [ ] Alle 28 Schritte einmal durchlaufen, Ist-Zustand notieren.
-- [ ] Bekannte Fehler (z. B. 1-px-Sprung, kleine Controls) als Baseline
+- [x] Alle 28 Schritte einmal durchlaufen, Ist-Zustand notieren.
+- [x] Bekannte Fehler (z. B. 1-px-Sprung, kleine Controls) als Baseline
       festhalten, damit die Verbesserung messbar ist.
 
 ---
@@ -71,41 +75,41 @@ sich für fragerichtungen entscheiden kann die einen interessieren und welche di
 es nicht tun.“
 
 ### T01.1 Originalfragen sammeln
-- [ ] `intuition.php` je Abschnitt nach Fragen durchsuchen (`?`, „Warum“,
+- [~] `intuition.php` je Abschnitt nach Fragen durchsuchen (`?`, „Warum“,
       „Was“, „Wie“).
-- [ ] Fragen den LearnSys-Schritten zuordnen (Tabelle in dieser Datei).
-- [ ] Fehlende Fragen als neue Boxen notieren.
+- [~] Fragen den LearnSys-Schritten zuordnen (Tabelle in dieser Datei).
+- [~] Fehlende Fragen als neue Boxen notieren.
 
 ### T01.2 Datenmodell erweitern
-- [ ] `contextTitle` und `deepTitle` optional in `depthTree` unterstützen.
-- [ ] Fallback: bisherige Labels, damit nichts bricht.
-- [ ] Bestehende Boxen bleiben unverändert gültig.
+- [x] `contextTitle` und `deepTitle` optional in `depthTree` unterstützen.
+- [x] Fallback: bisherige Labels, damit nichts bricht.
+- [x] Bestehende Boxen bleiben unverändert gültig.
 
 ### T01.3 Fragenübersicht am Anfang
-- [ ] Im geöffneten Root eine kompakte Fragenliste rendern.
-- [ ] Jede Frage ist ein Button, der die passende `<details>`-Box öffnet.
-- [ ] Die Liste zeigt alle Fragen, ohne Antworten zu verraten.
-- [ ] Tastatur: Tab/Enter/Space; Touch: 44-px-Ziele.
+- [x] Im geöffneten Root eine kompakte Fragenliste rendern.
+- [x] Jede Frage ist ein Button, der die passende `<details>`-Box öffnet.
+- [x] Die Liste zeigt alle Fragen, ohne Antworten zu verraten.
+- [x] Tastatur: Tab/Enter/Space; Touch: 44-px-Ziele.
 
 ### T01.4 Fragetitel statt Sachlabels
-- [ ] `context`/`deep` je Schritt als echte Frage formulieren.
-- [ ] Box-Titel prüfen: Sind es Fragen? Wenn nicht, umformulieren.
-- [ ] Keine Frage doppelt; keine Antwort ohne Frage.
+- [~] `context`/`deep` je Schritt als echte Frage formulieren.
+- [~] Box-Titel prüfen: Sind es Fragen? Wenn nicht, umformulieren.
+- [~] Keine Frage doppelt; keine Antwort ohne Frage.
 
 ### T01.5 „Warum ist das so?“-Ebene
-- [ ] Nach dem Kontext eine eigene aufklappbare Ebene einziehen.
-- [ ] Die vorhandenen Boxen darunter als tiefere Ebene belassen.
-- [ ] Quellen als letzte, eigene Ebene.
+- [x] Nach dem Kontext eine eigene aufklappbare Ebene einziehen.
+- [x] Die vorhandenen Boxen darunter als tiefere Ebene belassen.
+- [x] Quellen als letzte, eigene Ebene.
 
 ### T01.6 Abgleich mit dem Original
-- [ ] Jede gesammelte Originalfrage hat eine Antwortbox.
-- [ ] Antworten sind inhaltlich vom Original gedeckt (Quellen prüfen).
-- [ ] Nichts wird stillschweigend weggelassen.
+- [~] Jede gesammelte Originalfrage hat eine Antwortbox.
+- [~] Antworten sind inhaltlich vom Original gedeckt (Quellen prüfen).
+- [~] Nichts wird stillschweigend weggelassen.
 
 ### T01.7 Prüfen
-- [ ] Fragenliste in DE/EN lesbar.
-- [ ] Öffnen/Schließen ohne Höhensprung.
-- [ ] Quellenlinks funktionieren.
+- [x] Fragenliste in DE/EN lesbar.
+- [x] Öffnen/Schließen ohne Höhensprung.
+- [x] Quellenlinks funktionieren.
 
 Abhängigkeiten: T02 (Typografie), P0.
 
@@ -116,37 +120,37 @@ Abhängigkeiten: T02 (Typografie), P0.
 **Original:** siehe T02b-Original.
 
 ### T02.1 Skala definieren
-- [ ] In `learnsys.css`: `--ls-fs-body`, `--ls-fs-title`, `--ls-fs-small`,
+- [x] In `learnsys.css`: `--ls-fs-body`, `--ls-fs-title`, `--ls-fs-small`,
       `--ls-fs-ui`, `--ls-fs-ui-sm`, `--ls-fs-micro`, `--ls-fs-readout`,
       `--ls-fs-canvas`, `--ls-fs-canvas-sm`.
-- [ ] Alle abgeleiteten Größen als `calc()`-Vielfache der Basis.
-- [ ] `applyFont()` setzt nur die Basis; die Vielfachen folgen automatisch.
+- [x] Alle abgeleiteten Größen als `calc()`-Vielfache der Basis.
+- [x] `applyFont()` setzt nur die Basis; die Vielfachen folgen automatisch.
 
 ### T02.2 Buttons und Controls
-- [ ] `.ls-btn`, `.ls-btn--tiny`, `.ls-chip`, `.ls-seg button`, `.ls-select`,
+- [x] `.ls-btn`, `.ls-btn--tiny`, `.ls-chip`, `.ls-seg button`, `.ls-select`,
       `.ls-range`, `.ls-day-nav` auf die Skala umstellen.
-- [ ] Mindesthöhen für Touch (≥ 36 px, mobil ≥ 44 px).
-- [ ] Keine `transform`-Hüpfer beim Hover.
+- [x] Mindesthöhen für Touch (≥ 36 px, mobil ≥ 44 px).
+- [x] Keine `transform`-Hüpfer beim Hover.
 
 ### T02.3 Text, Micro-Labels, Readouts
-- [ ] Kicker, Watch-Label, Depth-Summaries, Stage-Kopf/-Fuß, Readouts.
-- [ ] Canvas-nahe DOM-Texte (Formeln, Legenden, Status).
-- [ ] Keine Schrift unter 9 px auf Canvas; DOM nicht unter 10 px.
+- [x] Kicker, Watch-Label, Depth-Summaries, Stage-Kopf/-Fuß, Readouts.
+- [x] Canvas-nahe DOM-Texte (Formeln, Legenden, Status).
+- [x] Keine Schrift unter 9 px auf Canvas; DOM nicht unter 10 px.
 
 ### T02.4 Überschriften-Klassen
-- [ ] `.ls-h1` = Titel, `.ls-h2` = 0.72×, `.ls-h3` = 0.52×, `.ls-h4` = 0.42×.
-- [ ] Depth-Summaries und Kartenüberschriften nutzen diese Klassen.
-- [ ] Keine konkurrierenden px-Systeme.
+- [x] `.ls-h1` = Titel, `.ls-h2` = 0.72×, `.ls-h3` = 0.52×, `.ls-h4` = 0.42×.
+- [x] Depth-Summaries und Kartenüberschriften nutzen diese Klassen.
+- [x] Keine konkurrierenden px-Systeme.
 
 ### T02.5 Canvas-API
-- [ ] `api.font(role)` liefert px aus der zentralen Skala.
-- [ ] Neue/überarbeitete Demos nutzen `api.font`.
-- [ ] Bestehende Demos mindestens für die wichtigsten Labels umstellen.
+- [x] `api.font(role)` liefert px aus der zentralen Skala.
+- [x] Neue/überarbeitete Demos nutzen `api.font`.
+- [x] Bestehende Demos mindestens für die wichtigsten Labels umstellen.
 
 ### T02.6 Prüfen
-- [ ] Alle fünf Font-Stufen (Klein … Maximal) ohne Overflow.
-- [ ] Buttons bleiben in allen Stufen lesbar.
-- [ ] Rail, Tiefeboxen und Demos skalieren mit.
+- [x] Alle fünf Font-Stufen (Klein … Maximal) ohne Overflow.
+- [x] Buttons bleiben in allen Stufen lesbar.
+- [x] Rail, Tiefeboxen und Demos skalieren mit.
 
 Abhängigkeiten: P0; blockiert T02b, T03, T13, T19.
 
@@ -155,33 +159,33 @@ Abhängigkeiten: P0; blockiert T02b, T03, T13, T19.
 ## T02b — Schritt-Rail
 
 ### T02b.1 Schritte statt 10 Positionen
-- [ ] Für `singleDay` `posCount = steps.length` (nicht auf 10 begrenzen).
-- [ ] Multi-Day-Skala unverändert lassen.
-- [ ] `goPosition`-Mapping prüfen.
+- [x] Für `singleDay` `posCount = steps.length` (nicht auf 10 begrenzen).
+- [x] Multi-Day-Skala unverändert lassen.
+- [x] `goPosition`-Mapping prüfen.
 
 ### T02b.2 Scroll und Zentrierung
-- [ ] `.ls-nav-pos` horizontal scrollbar, Scroll-Snap, dünne Scrollbar.
-- [ ] Aktiven Schritt beim Rendern/Wechsel automatisch zentrieren.
-- [ ] Scroll-Container füllt die Breite der Textspalte.
+- [x] `.ls-nav-pos` horizontal scrollbar, Scroll-Snap, dünne Scrollbar.
+- [x] Aktiven Schritt beim Rendern/Wechsel automatisch zentrieren.
+- [x] Scroll-Container füllt die Breite der Textspalte.
 
 ### T02b.3 Auslassungs-Ränder
-- [ ] Masken an beiden Rändern, nur wenn `scrollWidth > clientWidth`.
-- [ ] Kein harter abgeschnittener Button.
-- [ ] Mobile: mindestens 24 px breite Ziele.
+- [x] Masken an beiden Rändern, nur wenn `scrollWidth > clientWidth`.
+- [x] Kein harter abgeschnittener Button.
+- [x] Mobile: mindestens 24 px breite Ziele.
 
 ### T02b.4 Größer und einheitlich
-- [ ] Höhe/Font aus T02.
-- [ ] Aktiver Zustand ohne Layoutänderung.
-- [ ] Hover ohne Verschieben.
+- [x] Höhe/Font aus T02.
+- [x] Aktiver Zustand ohne Layoutänderung.
+- [x] Hover ohne Verschieben.
 
 ### T02b.5 Tastatur und Hilfe
-- [ ] 0–9 springt weiterhin auf die passende Position.
-- [ ] Hilfe nennt Schritt-Rail und Tasten.
-- [ ] Aria-Label nennt den sichtbaren Bereich.
+- [x] 0–9 springt weiterhin auf die passende Position.
+- [x] Hilfe nennt Schritt-Rail und Tasten.
+- [x] Aria-Label nennt den sichtbaren Bereich.
 
 ### T02b.6 Prüfen
-- [ ] 28 Schritte DE/EN, Desktop/Mobil.
-- [ ] Klick, Touch, ←/→, Shift+←/→, Home/End.
+- [x] 28 Schritte DE/EN, Desktop/Mobil.
+- [x] Klick, Touch, ←/→, Shift+←/→, Home/End.
 
 Abhängigkeiten: T02.
 
@@ -190,32 +194,32 @@ Abhängigkeiten: T02.
 ## T03 — Kein visuelles Springen
 
 ### T03.1 Hover-Transforms entfernen
-- [ ] `.ls-nav-pos button:hover`, `.ls-chip:hover`, `.ls-btn:hover` prüfen.
-- [ ] Aktive Zustände nur Farbe/Outline/Inset-Shadow.
+- [x] `.ls-nav-pos button:hover`, `.ls-chip:hover`, `.ls-btn:hover` prüfen.
+- [x] Aktive Zustände nur Farbe/Outline/Inset-Shadow.
 
 ### T03.2 Feste Zeilenhöhen
-- [ ] Formel-, Readout-, Status- und Button-Zeilen reservieren ihre Maximalhöhe.
-- [ ] Kein `min-height` nur im aktiven Zustand.
+- [x] Formel-, Readout-, Status- und Button-Zeilen reservieren ihre Maximalhöhe.
+- [x] Kein `min-height` nur im aktiven Zustand.
 
 ### T03.3 Stabile Buttonbreiten
-- [ ] Buttons mit wechselndem Text (Weiter/Fertig, Modus, Layer) bekommen
+- [~] Buttons mit wechselndem Text (Weiter/Fertig, Modus, Layer) bekommen
       `min-width` oder ein festes Label.
-- [ ] Pfeil-Buttons behalten ihre Breite.
+- [x] Pfeil-Buttons behalten ihre Breite.
 
 ### T03.4 „Bedeutung wird Zahl“
-- [ ] Reproduzieren: Temperatur → Bedeutung, 1-px-Sprung messen.
-- [ ] Ursache beheben (Border, Font-Weight, Höhe, Scrollbar).
-- [ ] Danach erneut messen: ≤ 1 px.
+- [x] Reproduzieren: Temperatur → Bedeutung, 1-px-Sprung messen.
+- [x] Ursache beheben (Border, Font-Weight, Höhe, Scrollbar).
+- [x] Danach erneut messen: ≤ 1 px.
 
 ### T03.5 Messhaken
-- [ ] Harness: Vor/Nach jedem Klick die Bounding-Boxes der Controls, der Formel
+- [x] Harness: Vor/Nach jedem Klick die Bounding-Boxes der Controls, der Formel
       und des Readouts vergleichen.
-- [ ] Schwelle: ≤ 1 px; alles darüber ist ein Fehler.
+- [x] Schwelle: ≤ 1 px; alles darüber ist ein Fehler.
 
 ### T03.6 Alle Demos prüfen
-- [ ] Jede Demo einmal mit Monkey-Clicks durchlaufen.
-- [ ] DE/EN, Desktop/Mobil.
-- [ ] Auffälligkeiten als eigene kleine Todos notieren.
+- [~] Jede Demo einmal mit Monkey-Clicks durchlaufen.
+- [~] DE/EN, Desktop/Mobil.
+- [~] Auffälligkeiten als eigene kleine Todos notieren.
 
 Abhängigkeiten: T02, T09, T13.
 
@@ -224,24 +228,24 @@ Abhängigkeiten: T02, T09, T13.
 ## T04 — Zweite Achse: 1D reicht nicht, freie Wege, höherer Raum
 
 ### T04.1 1D-Belegung verstehen
-- [ ] Darstellen, welche Wörter auf einer Achse kollidieren.
-- [ ] „Kein freier Weg“-Markierung entwerfen (Lücke/Überlappung).
+- [x] Darstellen, welche Wörter auf einer Achse kollidieren.
+- [x] „Kein freier Weg“-Markierung entwerfen (Lücke/Überlappung).
 
 ### T04.2 1D-Demo
-- [ ] Modus „Bedeutung + 1D“ mit belegter Strecke und übersprungenen Wörtern.
-- [ ] Text: komplexe Relationen brauchen Platz, sonst muss man springen.
+- [x] Modus „Bedeutung + 1D“ mit belegter Strecke und übersprungenen Wörtern.
+- [x] Text: komplexe Relationen brauchen Platz, sonst muss man springen.
 
 ### T04.3 2D-Demo
-- [ ] Freie Wege zwischen Relationen sichtbar machen.
-- [ ] Weniger Kollisionen, mehr gleichzeitige Beziehungen.
-- [ ] Übergang 1D → 2D animiert/morphbar.
+- [x] Freie Wege zwischen Relationen sichtbar machen.
+- [x] Weniger Kollisionen, mehr gleichzeitige Beziehungen.
+- [x] Übergang 1D → 2D animiert/morphbar.
 
 ### T04.4 Prosa
-- [ ] Watch-Zeile: was soll der Leser vergleichen?
-- [ ] Brücke zu T05 (noch höher).
+- [x] Watch-Zeile: was soll der Leser vergleichen?
+- [x] Brücke zu T05 (noch höher).
 
 ### T04.5 Prüfen
-- [ ] DE/EN, Desktop/Mobil, keine Überlappung der Labels.
+- [x] DE/EN, Desktop/Mobil, keine Überlappung der Labels.
 
 Abhängigkeiten: T09, T05.
 
@@ -250,21 +254,21 @@ Abhängigkeiten: T09, T05.
 ## T05 — Tausende Dimensionen, Excel-artige Zahlenliste
 
 ### T05.1 Folie/Box anlegen
-- [ ] Nach der 3D-Folie eine eigene Folie oder Tiefebox.
-- [ ] Titel: „Tausende Dimensionen“ / „Thousands of dimensions“.
+- [x] Nach der 3D-Folie eine eigene Folie oder Tiefebox.
+- [x] Titel: „Tausende Dimensionen“ / „Thousands of dimensions“.
 
 ### T05.2 Zahlenliste
-- [ ] DOM-Tabelle: eine Zeile pro Token, Spalten d1 … dN.
-- [ ] Horizontal scrollbar; erste und letzte Spalten sichtbar.
-- [ ] Zahlen kompakt, tabellarisch, lesbar.
+- [x] DOM-Tabelle: eine Zeile pro Token, Spalten d1 … dN.
+- [x] Horizontal scrollbar; erste und letzte Spalten sichtbar.
+- [x] Zahlen kompakt, tabellarisch, lesbar.
 
 ### T05.3 Prosa/Formel
-- [ ] „Wir sehen 2–3 Achsen, der Rechner rechnet mit Tausenden.“
-- [ ] Die Rechnung bleibt dieselbe.
+- [x] „Wir sehen 2–3 Achsen, der Rechner rechnet mit Tausenden.“
+- [x] Die Rechnung bleibt dieselbe.
 
 ### T05.4 Prüfen
-- [ ] Kein Overflow der Seite; Tabelle scrollt intern.
-- [ ] DE/EN.
+- [x] Kein Overflow der Seite; Tabelle scrollt intern.
+- [x] DE/EN.
 
 Abhängigkeiten: T04.
 
@@ -273,27 +277,27 @@ Abhängigkeiten: T04.
 ## T06 — Übersetzung: Beziehungen tragen Bedeutung, Mannigfaltigkeit
 
 ### T06.1 Quellen
-- [ ] Im Blog nach seriösen Quellen zu manifolds/translation suchen.
-- [ ] Primärquellen lesen; nur belastbare Links verwenden.
-- [ ] Quellen in der Tiefebox ergänzen.
+- [x] Im Blog nach seriösen Quellen zu manifolds/translation suchen.
+- [x] Primärquellen lesen; nur belastbare Links verwenden.
+- [x] Quellen in der Tiefebox ergänzen.
 
 ### T06.2 Prosa
-- [ ] „Beziehungen untereinander können Bedeutung enthalten.“
-- [ ] Englisch/Japanisch im vereinfachten Token-Raum.
-- [ ] Drehen/Verschieben als Bild für Translation.
-- [ ] Optionale Box: echte Manifolds sind abstrakt und schwer sichtbar.
+- [x] „Beziehungen untereinander können Bedeutung enthalten.“
+- [x] Englisch/Japanisch im vereinfachten Token-Raum.
+- [x] Drehen/Verschieben als Bild für Translation.
+- [x] Optionale Box: echte Manifolds sind abstrakt und schwer sichtbar.
 
 ### T06.3 Demo
-- [ ] EN-/JP-Cluster in einem 2D-Raum.
-- [ ] Toggle „Drehen/Verschieben“; Cluster überführen sich.
-- [ ] Achsen/Skalen bleiben stabil.
+- [x] EN-/JP-Cluster in einem 2D-Raum.
+- [x] Toggle „Drehen/Verschieben“; Cluster überführen sich.
+- [x] Achsen/Skalen bleiben stabil.
 
 ### T06.4 Manifold-Axiom
-- [ ] Erst in Ausklappungsstufe 3/4.
-- [ ] Definition: lokal wie R^n, global gekrümmt, Karten/Atlanten.
+- [x] Erst in Ausklappungsstufe 3/4.
+- [x] Definition: lokal wie R^n, global gekrümmt, Karten/Atlanten.
 
 ### T06.5 Prüfen
-- [ ] DE/EN, Desktop/Mobil.
+- [x] DE/EN, Desktop/Mobil.
 
 Abhängigkeiten: T04/T05, T13.
 
@@ -302,15 +306,15 @@ Abhängigkeiten: T04/T05, T13.
 ## T07 — Positionsdemo höher
 
 ### T07.1 Layout
-- [ ] `.ls-position-grid` und Panels so ändern, dass sie die Höhe füllen.
-- [ ] Heatmap und Kurve bekommen mehr vertikalen Raum.
+- [x] `.ls-position-grid` und Panels so ändern, dass sie die Höhe füllen.
+- [x] Heatmap und Kurve bekommen mehr vertikalen Raum.
 
 ### T07.2 Lesbarkeit
-- [ ] Achsen/Ticks nicht abschneiden.
-- [ ] Keine Mindesthöhe, die die Bühne sprengt.
+- [x] Achsen/Ticks nicht abschneiden.
+- [x] Keine Mindesthöhe, die die Bühne sprengt.
 
 ### T07.3 Prüfen
-- [ ] Desktop/Mobil, DE/EN.
+- [x] Desktop/Mobil, DE/EN.
 
 Abhängigkeiten: T02.
 
@@ -319,17 +323,17 @@ Abhängigkeiten: T02.
 ## T08 — Handy größer, „Suchmaschine“/„Search Engine“
 
 ### T08.1 Größe
-- [ ] Handy an die verfügbare Bühnenhöhe koppeln.
-- [ ] Schatten bleibt vollständig sichtbar.
-- [ ] Innere Elemente skalieren mit (kein fester px-Satz).
+- [x] Handy an die verfügbare Bühnenhöhe koppeln.
+- [x] Schatten bleibt vollständig sichtbar.
+- [x] Innere Elemente skalieren mit (kein fester px-Satz).
 
 ### T08.2 Branding
-- [ ] Suchfeld heißt „Suchmaschine“ / „Search Engine“.
-- [ ] Google-artige Farben aus der ScaDS-Palette (grün, blau, gelb, lilac).
-- [ ] Nicht exakt Google.
+- [x] Suchfeld heißt „Suchmaschine“ / „Search Engine“.
+- [x] Google-artige Farben aus der ScaDS-Palette (grün, blau, gelb, lilac).
+- [x] Nicht exakt Google.
 
 ### T08.3 Prüfen
-- [ ] DE/EN, Desktop/Mobil, kein Schattenanschnitt.
+- [x] DE/EN, Desktop/Mobil, kein Schattenanschnitt.
 
 Abhängigkeiten: T02, T03.
 
@@ -338,31 +342,31 @@ Abhängigkeiten: T02, T03.
 ## T09 — „Zwei Beispiele, ein Durchschnitt“: Wörter → Zahlen → Rechnen
 
 ### T09.1 Zahlengerade
-- [ ] Erste Folie: nur Zahlengerade und Wörter.
-- [ ] Keine Token-/Embedding-Sprache in diesem Schritt.
-- [ ] Mehr Temperaturwörter mit plausiblen Werten.
+- [x] Erste Folie: nur Zahlengerade und Wörter.
+- [x] Keine Token-/Embedding-Sprache in diesem Schritt.
+- [x] Mehr Temperaturwörter mit plausiblen Werten.
 
 ### T09.2 Text überarbeiten
-- [ ] „Wir ordnen Wörtern Zahlen zu“ als Einstieg.
-- [ ] Erst Zahlenstrahl, dann Wörter darauf, dann rechnen.
-- [ ] Formeln erst nach der Intuition.
+- [x] „Wir ordnen Wörtern Zahlen zu“ als Einstieg.
+- [x] Erst Zahlenstrahl, dann Wörter darauf, dann rechnen.
+- [x] Formeln erst nach der Intuition.
 
 ### T09.3 Exakt vs. ungefähr
-- [ ] Kalt + warm = lauwarm exakt.
-- [ ] Kalt + heiß ≈ warm; nächstes Wort „heiß“ liegt bei 60, nicht 55.
-- [ ] „Das Ungefähre reicht“ als aufbauende Intuition.
+- [x] Kalt + warm = lauwarm exakt.
+- [x] Kalt + heiß ≈ warm; nächstes Wort „heiß“ liegt bei 60, nicht 55.
+- [x] „Das Ungefähre reicht“ als aufbauende Intuition.
 
 ### T09.4 Demo
-- [ ] Paar-Auswahl und Formel/Readout an die neuen Werte anpassen.
-- [ ] Exakt/ungefähr klar markieren (Wort vs. Näherung).
-- [ ] Keine Sprünge (T03).
+- [x] Paar-Auswahl und Formel/Readout an die neuen Werte anpassen.
+- [x] Exakt/ungefähr klar markieren (Wort vs. Näherung).
+- [x] Keine Sprünge (T03).
 
 ### T09.5 Abschluss
-- [ ] Zeigen, dass eine Achse nicht reicht.
-- [ ] Brücke zu T04.
+- [x] Zeigen, dass eine Achse nicht reicht.
+- [x] Brücke zu T04.
 
 ### T09.6 Prüfen
-- [ ] DE/EN, Desktop/Mobil.
+- [x] DE/EN, Desktop/Mobil.
 
 Abhängigkeiten: T03, T04.
 
@@ -371,11 +375,11 @@ Abhängigkeiten: T03, T04.
 ## T10 — „Ein Modell ist ein Stapel von Funktionen“
 
 ### T10.1 Offene Frage klären
-- [ ] Beim Autor nachfragen, was hier zusätzlich gezeigt werden soll.
-- [ ] Bis dahin: Folie schärfen (einzelne Funktionen sichtbar).
+- [x] Beim Autor nachfragen, was hier zusätzlich gezeigt werden soll.
+- [x] Bis dahin: Folie schärfen (einzelne Funktionen sichtbar).
 
 ### T10.2 Umsetzen
-- [ ] Erst nach Klärung.
+- [x] Erst nach Klärung.
 
 Abhängigkeiten: T15a.
 
@@ -384,11 +388,11 @@ Abhängigkeiten: T15a.
 ## T11 — „Bedeutung wird eine Zahl“: untere Controls zu klein
 
 ### T11.1 Skala anwenden
-- [ ] Buttons/Chips/Slider/Readout auf T02-Skala.
-- [ ] Untere Reihe bekommt genug Höhe.
+- [x] Buttons/Chips/Slider/Readout auf T02-Skala.
+- [x] Untere Reihe bekommt genug Höhe.
 
 ### T11.2 Prüfen
-- [ ] Kein Overflow, keine Sprünge.
+- [x] Kein Overflow, keine Sprünge.
 
 Abhängigkeiten: T02, T09.
 
@@ -397,15 +401,15 @@ Abhängigkeiten: T02, T09.
 ## T12 — Roboter-/Satzende-Zustand prüfen
 
 ### T12.1 Reproduzieren
-- [ ] Von der Loop-Folie zur Verteilungsfolie wechseln.
-- [ ] Satz, Pfad und „Satzende“ notieren.
+- [x] Von der Loop-Folie zur Verteilungsfolie wechseln.
+- [x] Satz, Pfad und „Satzende“ notieren.
 
 ### T12.2 Fixen
-- [ ] Zustand persistent halten.
-- [ ] Kein leerer Satzende-Zustand.
+- [x] Zustand persistent halten.
+- [x] Kein leerer Satzende-Zustand.
 
 ### T12.3 Verbinden
-- [ ] Mit T19 (Landschaft am Satzende) verknüpfen.
+- [x] Mit T19 (Landschaft am Satzende) verknüpfen.
 
 Abhängigkeiten: T13b, T19.
 
@@ -414,39 +418,39 @@ Abhängigkeiten: T13b, T19.
 ## T13 — Attention-Folie neu denken
 
 ### T13.1 Heading
-- [ ] „Der Vektor folgt dem Kontext“ → „Attention verschiebt Bedeutungen in Kontexte“.
+- [x] „Der Vektor folgt dem Kontext“ → „Attention verschiebt Bedeutungen in Kontexte“.
 
 ### T13.2 Layout
-- [ ] Chart nutzt die freie Fläche.
-- [ ] Tabelle groß und lesbar.
-- [ ] Buttons in einer klaren Reihe.
+- [x] Chart nutzt die freie Fläche.
+- [x] Tabelle groß und lesbar.
+- [x] Buttons in einer klaren Reihe.
 
 ### T13.3 Trefferflächen
-- [ ] Pfeile treffen die Wörter.
-- [ ] Jedes Wort klickbar (≥ 28 px, Touch ≥ 44 px).
+- [x] Pfeile treffen die Wörter.
+- [x] Jedes Wort klickbar (≥ 28 px, Touch ≥ 44 px).
 
 ### T13.4 Alle Wörter
-- [ ] Auswahl eines Tokens zeigt dessen Attention-Zeile/Umgebung.
-- [ ] Aktive Zeile in Tabelle und Chart hervorheben.
+- [x] Auswahl eines Tokens zeigt dessen Attention-Zeile/Umgebung.
+- [x] Aktive Zeile in Tabelle und Chart hervorheben.
 
 ### T13.5 100-%-Budget
-- [ ] Text: Attention verteilt immer 100 %; 100 % auf ein Wort = 0 % für andere.
-- [ ] In der Tabelle sichtbar (Summe = 100 %).
+- [x] Text: Attention verteilt immer 100 %; 100 % auf ein Wort = 0 % für andere.
+- [x] In der Tabelle sichtbar (Summe = 100 %).
 
 ### T13.6 Gewichtete Summe
-- [ ] Realistische Rechnung: 0.02·ich + 0.01·gehe + … + 0.20·Geld + 0.70·Bank.
-- [ ] Schritt für Schritt zeigen, wie die Vektoren verschoben werden.
+- [x] Realistische Rechnung: 0.02·ich + 0.01·gehe + … + 0.20·Geld + 0.70·Bank.
+- [x] Schritt für Schritt zeigen, wie die Vektoren verschoben werden.
 
 ### T13.7 new/york
-- [ ] Head schiebt „new“/„york“ zu „city“, weg von „car“/„england“.
-- [ ] Visuell klar, ohne Überladung.
+- [x] Head schiebt „new“/„york“ zu „city“, weg von „car“/„england“.
+- [x] Visuell klar, ohne Überladung.
 
 ### T13.8 Graph
-- [ ] Verweis auf `../test/attention_as_graph.html`.
-- [ ] Zahlen ↔ Graphkanten erklären.
+- [x] Verweis auf `../test/attention_as_graph.html`.
+- [x] Zahlen ↔ Graphkanten erklären.
 
 ### T13.9 Prüfen
-- [ ] DE/EN, Desktop/Mobil, keine Überlappung.
+- [x] DE/EN, Desktop/Mobil, keine Überlappung.
 
 Abhängigkeiten: T02, T03, T15a.
 
@@ -455,15 +459,15 @@ Abhängigkeiten: T02, T03, T15a.
 ## T13b — „Oberfläche ist Rauschen“: Quicksort ans Ende, Plot raus
 
 ### T13b.1 Aufräumen
-- [ ] Den bisherigen Plot dort entfernen.
-- [ ] Quicksort-Code als eigenen Endabschnitt.
+- [x] Den bisherigen Plot dort entfernen.
+- [x] Quicksort-Code als eigenen Endabschnitt.
 
 ### T13b.2 Erklärung
-- [ ] Code ist Rauschen.
-- [ ] Attention addiert Wörter prozentual und schiebt die Bedeutung.
+- [x] Code ist Rauschen.
+- [x] Attention addiert Wörter prozentual und schiebt die Bedeutung.
 
 ### T13b.3 Prüfen
-- [ ] DE/EN, Desktop/Mobil.
+- [x] DE/EN, Desktop/Mobil.
 
 Abhängigkeiten: T13.
 
@@ -472,24 +476,24 @@ Abhängigkeiten: T13.
 ## T14 — Brücke zu neuronalen Netzen / MLP-Demo
 
 ### T14.1 Prosa
-- [ ] Nach Attention: „Jetzt kommt ein neuronales Netz.“
-- [ ] Brücke zur MLP-Folie.
+- [x] Nach Attention: „Jetzt kommt ein neuronales Netz.“
+- [x] Brücke zur MLP-Folie.
 
 ### T14.2 Buttons
-- [ ] MLP-Buttons auf T02-Skala.
-- [ ] Einheitlich mit den anderen Demos.
+- [x] MLP-Buttons auf T02-Skala.
+- [x] Einheitlich mit den anderen Demos.
 
 ### T14.3 Plot
-- [ ] Weißen Plot-Hintergrund entfernen; Stage-Wäsche nutzen.
+- [x] Weißen Plot-Hintergrund entfernen; Stage-Wäsche nutzen.
 
 ### T14.4 Text
-- [ ] Text über dem Plot größer.
+- [x] Text über dem Plot größer.
 
 ### T14.5 Tasten
-- [ ] ←/→ für die MLP-Folien.
+- [x] ←/→ für die MLP-Folien.
 
 ### T14.6 Prüfen
-- [ ] DE/EN, Desktop/Mobil.
+- [x] DE/EN, Desktop/Mobil.
 
 Abhängigkeiten: T02, T15b, T16.
 
@@ -498,23 +502,23 @@ Abhängigkeiten: T02, T15b, T16.
 ## T15 — Aktivierungen und Transformerblock
 
 ### T15.1 Reihenfolge
-- [ ] „Weiche Kurven, ein Knick“ vor „Sieh zu, wie das MLP den Raum biegt“.
-- [ ] Datenreihenfolge und `steps`-Concat anpassen.
+- [x] „Weiche Kurven, ein Knick“ vor „Sieh zu, wie das MLP den Raum biegt“.
+- [x] Datenreihenfolge und `steps`-Concat anpassen.
 
 ### T15.2 Aktivierungen einzeln
-- [ ] ReLU, tanh, sigmoid, GELU als einzelne Auswahl.
-- [ ] Nicht als Nacheinander-Animation.
+- [x] ReLU, tanh, sigmoid, GELU als einzelne Auswahl.
+- [x] Nicht als Nacheinander-Animation.
 
 ### T15.3 Universal Approximation
-- [ ] Didaktischer Absatz/Box: genug Neuronen + Nichtlinearität ≈ jede Funktion.
-- [ ] Quelle prüfen.
+- [x] Didaktischer Absatz/Box: genug Neuronen + Nichtlinearität ≈ jede Funktion.
+- [x] Quelle prüfen.
 
 ### T15.4 Transformerblock
-- [ ] Neue Folie vor Attention: Attention + FFN + Residual.
-- [ ] Visuelle Brücke zur Attention-Folie.
+- [x] Neue Folie vor Attention: Attention + FFN + Residual.
+- [x] Visuelle Brücke zur Attention-Folie.
 
 ### T15.5 Prüfen
-- [ ] Reihenfolge, Navigation, DE/EN.
+- [x] Reihenfolge, Navigation, DE/EN.
 
 Abhängigkeiten: T02, T03.
 
@@ -523,18 +527,18 @@ Abhängigkeiten: T02, T03.
 ## T16 — MLP-Folie: Slider, Trennbarkeit, Weiter
 
 ### T16.1 Slider-Zeile
-- [ ] Slider und konkrete Zahlen in eine Zeile.
-- [ ] Keine zweite Zahlenzeile darunter.
+- [x] Slider und konkrete Zahlen in eine Zeile.
+- [x] Keine zweite Zahlenzeile darunter.
 
 ### T16.2 Trennbarkeit
-- [ ] Algorithmus prüfen (echte lineare Trennung, nicht nur Status).
-- [ ] Status und Geometrie konsistent.
+- [x] Algorithmus prüfen (echte lineare Trennung, nicht nur Status).
+- [x] Status und Geometrie konsistent.
 
 ### T16.3 Weiter
-- [ ] Am Ende kein toter Button; Übergang zur nächsten Folie.
+- [x] Am Ende kein toter Button; Übergang zur nächsten Folie.
 
 ### T16.4 Prüfen
-- [ ] DE/EN, Desktop/Mobil.
+- [x] DE/EN, Desktop/Mobil.
 
 Abhängigkeiten: T14, T15.
 
@@ -543,18 +547,18 @@ Abhängigkeiten: T14, T15.
 ## T17 — Navigation vereinheitlichen
 
 ### T17.1 Tasten
-- [ ] ←/→ Step, Shift+←/→ Sprung, PgUp/PgDn, Leertaste, Home/End.
-- [ ] Keine Doppelbelegung mit Formularfeldern.
+- [x] ←/→ Step, Shift+←/→ Sprung, PgUp/PgDn, Leertaste, Home/End.
+- [x] Keine Doppelbelegung mit Formularfeldern.
 
 ### T17.2 Touch
-- [ ] Rail, Step-Buttons, Folien-Pager, Prev/Next ≥ 44 px.
-- [ ] Kein Hover-only.
+- [x] Rail, Step-Buttons, Folien-Pager, Prev/Next ≥ 44 px.
+- [x] Kein Hover-only.
 
 ### T17.3 Hilfe
-- [ ] Hilfetext aktualisieren (Rail, PgUp/PgDn, Space).
+- [x] Hilfetext aktualisieren (Rail, PgUp/PgDn, Space).
 
 ### T17.4 Prüfen
-- [ ] DE/EN, Desktop/Mobil, alle Demos.
+- [x] DE/EN, Desktop/Mobil, alle Demos.
 
 Abhängigkeiten: T02b.
 
@@ -563,14 +567,14 @@ Abhängigkeiten: T02b.
 ## T18 — FFN: getrennte Bereiche durch verfeinerten Kontext
 
 ### T18.1 Vorher/Nachher
-- [ ] Zeigen: Bereiche, die vorher nicht linear trennbar waren, sind es jetzt.
-- [ ] Kontext und eigene Antwort als Ursache.
+- [x] Zeigen: Bereiche, die vorher nicht linear trennbar waren, sind es jetzt.
+- [x] Kontext und eigene Antwort als Ursache.
 
 ### T18.2 Prosa
-- [ ] Brücke zur MLP-/Aktivierungsfolie.
+- [x] Brücke zur MLP-/Aktivierungsfolie.
 
 ### T18.3 Prüfen
-- [ ] DE/EN, Desktop/Mobil.
+- [x] DE/EN, Desktop/Mobil.
 
 Abhängigkeiten: T14, T15, T19.
 
@@ -579,39 +583,41 @@ Abhängigkeiten: T14, T15, T19.
 ## T19 — Energielandschaft am Satzende, Ball, Wortklick, Wiese
 
 ### T19.0 — 3D-Achsen und Token-Ebene (neue Vorgabe)
-- [~] Tokens als 2D-Punkte auf einer flachen Token-Ebene im 3D-Raum zeigen.
-- [ ] Die Wahrscheinlichkeitsfläche darunter: z = p, an jedem Token exakt
+- [x] Tokens als 2D-Punkte auf einer flachen Token-Ebene im 3D-Raum zeigen.
+- [x] Die Wahrscheinlichkeitsfläche darunter: z = p, an jedem Token exakt
       dessen Wahrscheinlichkeit.
-- [ ] Senkrechte Verbindungen von jedem Token auf der Ebene zum Wert auf der
+- [x] Senkrechte Verbindungen von jedem Token auf der Ebene zum Wert auf der
       Fläche.
-- [ ] z-Achse mit p-Werten (0–100 %) beschriften, plus „p (Wahrscheinlichkeit)“.
-- [ ] Legende: „Token-Ebene (2D) oben · Fläche = Verteilung p(x,y)“.
-- [ ] Prosa/Readout/Aria anpassen (nicht mehr „Tiefe = wahrscheinlich“).
-- [ ] DE/EN, Desktop/Mobil, keine Überlappung.
+- [x] z-Achse mit p-Werten (0–100 %) beschriften, plus „p (Wahrscheinlichkeit)“.
+- [x] Legende: „Token-Ebene (2D) oben · Fläche = Verteilung p(x,y)“.
+- [x] Prosa/Readout/Aria anpassen (nicht mehr „Tiefe = wahrscheinlich“).
+- [x] DE/EN, Desktop/Mobil, keine Überlappung.
 
 
 ### T19.1 Landschaft bleibt
-- [ ] Am Satzende Landschaft unten stehen lassen.
-- [ ] Oben weiter auswählen; unten Pfad zeigen.
+- [x] Am Satzende Landschaft unten stehen lassen.
+- [x] Oben weiter auswählen; unten Pfad zeigen.
 
 ### T19.2 Kugel
-- [ ] Kugel rollt smooth durch die Landschaft.
-- [ ] Kein Ruckeln, keine Sprünge.
+- [x] Kugel rollt smooth durch die Landschaft.
+- [x] Kein Ruckeln, keine Sprünge.
 
 ### T19.3 Wortklick
-- [ ] Klick in Wortnähe erreicht das Wort.
-- [ ] Foreshadowing zur Wiese.
+- [x] Klick in Wortnähe erreicht das Wort.
+- [x] Foreshadowing zur Wiese.
 
 ### T19.4 Wiese-Mapping
-- [ ] Wiese am Ende auf dieselbe Karte mappen.
-- [ ] Transformation von Wiese → Landschaft zeigen.
+- [x] Wiese am Ende auf dieselbe Karte mappen.
+- [x] Transformation von Wiese → Landschaft zeigen.
 
 ### T19.5 Prüfen
-- [ ] DE/EN, Desktop/Mobil, Touch.
+- [x] DE/EN, Desktop/Mobil, Touch.
 
 Abhängigkeiten: T13b, T17.
 
 ---
+
+- 2026-11-12: Abschlussdurchlauf: alle 30 Folien in DE/EN, Desktop (1200×900) und Mobil (390×844), Font 1 und 4 ohne JS-Fehler und ohne horizontalen Overflow; Attention-Tabelle/Graph, MLP-Pfeiltasten/Ende, Rausch-Demo, Energielandschaft mit Ball/Trail und Wiese→Landschaft geprüft. Nur T01-Originalfragenabgleich, T03.3 (dynamische Buttonbreiten) und T03.6 (Monkey-Click-Audit) bleiben bewusst offen. Test-Harness danach entfernt.
 
 ## Geklärte Rückfragen
 

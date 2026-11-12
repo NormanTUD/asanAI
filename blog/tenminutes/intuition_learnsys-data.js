@@ -150,11 +150,11 @@
     {
       kicker: "01 / Die Linie",
       title: "Bedeutung wird eine Zahl",
-      body: "Ein Token ist kein Wort, sondern ein Textstück mit einer ID. Die ID zeigt auf einen gelernten Vektor, und ähnliche Kontexte ziehen Vektoren nah zusammen. Diese Demo nutzt zwei Dimensionen, damit du die Geometrie siehst; ein echtes Modell nutzt Tausende. Klicke zwei Temperaturpunkte an und beobachte, wo ihr Mittelpunkt landet.",
-      watch: "Klicke zwei Punkte auf der Linie. Wo liegt der Mittelpunkt?",
+      body: "Wir ordnen Wörtern Zahlen zu. Auf einer Zahlengeraden liegt jedes Wort an einer Stelle: Gefrierpunkt ganz links, heiß ganz rechts. Der Abstand sagt, wie ähnlich zwei Wörter in dieser einen Eigenschaft sind. Klicke zwei Punkte an und beobachte, wo ihr Mittelpunkt landet.",
+      watch: "Klicke zwei Punkte auf der Linie. Wo landet ihr Mittelpunkt?",
       demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
-      context: "Ein Vektor ist eine geordnete Liste von Zahlen. Als Punkt gelesen sagt er, wo etwas liegt; als Pfeil gelesen, wohin es zeigt.",
-      deep: "Die Karte ist gelernt, nicht gegeben: Jede Position kommt aus dem Trainingstext. Eine Embedding-Tabelle ist eine gelernte Matrix; jede Zeile ist der Startvektor eines Tokens. Die Geometrie entsteht erst durch das Training.",
+      context: "Die Zahlengerade ist die einfachste Form eines Vektorraums: eine Koordinate pro Wort. Später kommen weitere Koordinaten hinzu.",
+      deep: "Die Positionen sind hier von Hand gewählt, damit du die Rechnung siehst. In einem Modell werden sie aus vielen Beispielen gelernt. Die Rechnung bleibt dieselbe.",
       boxes: [
         box("emb-1", "Mathematik", "Was ist ein Vektor?", "Ein Vektor ist ein Element eines Vektorraums. In der Praxis ist er eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt. Die Richtung ist oft wichtiger als die Länge."),
         box("emb-2", "Geschichte", "Woher kommt die Idee?", "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert. Wörter, die in ähnlichen Kontexten auftreten, bekommen ähnliche Vektoren."),
@@ -165,25 +165,26 @@
     {
       kicker: "02 / Der Mittelpunkt",
       title: "Zwei Beispiele, ein Durchschnitt",
-      body: "Der Mittelpunkt zweier Werte ist ihr Durchschnitt. Kalt (5) und warm (55) ergeben 30, also ungefähr lauwarm. Im Vektorraum funktioniert dieselbe Operation auf jeder Koordinate, nicht nur auf einer. Wähle ein anderes Paar und prüfe, wann das Ergebnis exakt ist und wann nur ungefähr.",
-      watch: "Wähle ein anderes Paar. Wann ist das Ergebnis exakt, wann nur ungefähr?",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["freezing", "hot"] },
-      context: "Der Mittelpunkt ist kein neues Wort. Er ist eine Position, die zwischen zwei gelernten Positionen liegt und deshalb einem nahen Wort zugeordnet werden kann.",
-      deep: "Die Ähnlichkeit wird meist über den Winkel gemessen, nicht über den Abstand. Softmax ist etwas anderes: Es macht aus Scores eine Verteilung. Ein Mittelpunkt ist eine geometrische Operation, keine Wahrscheinlichkeit.",
+      body: "Der Mittelpunkt zweier Zahlen ist ihr Durchschnitt. Kalt (5) und warm (55) ergeben 30, und 30 ist genau lauwarm. Kalt und heiß ergeben 52,5; das liegt nahe bei warm (55), aber kein Wort sitzt exakt auf 52,5. Für die Bedeutung reicht oft die Nähe: Du landest im richtigen Bereich, auch wenn der exakte Wert fehlt.",
+      watch: "Wähle ein Paar. Wann ist das Ergebnis exakt, wann nur ungefähr?",
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "hot"] },
+      context: "Die Abweichung ist der Abstand zwischen Mittelwert und nächstem Wort. Bei kalt + heiß sind das 2,5 Grad; bei Gefrierpunkt + heiß sind es 5 Grad.",
+      deep: "Die Rechnung funktioniert in jeder Dimension gleich: (a+b)/2. In höheren Dimensionen mittelst du jede Koordinate einzeln. Die Nähe wird meist über den Winkel gemessen, nicht über den Abstand.",
       boxes: [
         box("emb-4", "Mathematik", "Warum funktioniert das?", "Weil Vektoren koordinatenweise addiert werden. Der Mittelpunkt (a + b) / 2 liegt auf der Verbindungslinie. In höheren Dimensionen gilt dieselbe Rechnung; du siehst nur eine Projektion davon."),
-        box("emb-5", "Grenze", "Ist der Mittelpunkt ein Wort?", "Nein. Er ist eine Position im Raum. Dass sie nahe an einem Wort liegt, ist eine Eigenschaft der gelernten Geometrie, keine Definition. Bei seltenen Wörtern und mehrdeutigen Begriffen kann der nächste Nachbar überraschen.")
+        box("emb-5", "Grenze", "Ist der Mittelpunkt ein Wort?", "Nein. Er ist eine Position im Raum. Dass sie nahe an einem Wort liegt, ist eine Eigenschaft der gelernten Geometrie, keine Definition. Bei seltenen Wörtern und mehrdeutigen Begriffen kann der nächste Nachbar überraschen."),
+        box("emb-approx", "Grenze", "Was heißt „ungefähr“?", "Der Mittelwert 52,5 liegt 2,5 Grad von warm entfernt. Es gibt kein Wort exakt bei 52,5. Die Nähe reicht, weil das Modell später mit Winkeln und Nachbarn arbeitet, nicht mit einer Wortliste.")
       ],
       sources: sources.slice(2, 4)
     },
     {
       kicker: "03 / Die Ebene",
       title: "Bedeutung bekommt eine zweite Achse",
-      body: "Eine Achse kann Wörter nach einer einzigen Eigenschaft ordnen. Eine zweite Achse trennt, was die erste zusammenfallen lässt: Mann und Frau teilen die Machtposition, unterscheiden sich aber im Geschlecht. Derselbe Pfeil erscheint wieder zwischen König und Königin. Klicke die Wörter an und vergleiche ihre Positionen.",
-      watch: "Klicke Wörter an. Welche Paare liegen auf derselben Höhe?",
+      body: "Eine Achse kann Wörter nach einer einzigen Eigenschaft ordnen. Mann und Frau teilen die Machtposition und fallen deshalb auf derselben Stelle zusammen: Um von einem zum anderen zu kommen, müsstest du andere Wörter überspringen. Eine zweite Achse schafft freie Wege: Jetzt liegen Mann und Frau nebeneinander, ohne dass die Machtposition verloren geht. Derselbe Pfeil erscheint wieder zwischen König und Königin. Vergleiche 1D und 2D.",
+      watch: "Vergleiche 1D und 2D. Wo gibt es freie Wege, wo fallen Wörter zusammen?",
       demoState: { scene: "embedding", mode: "space", dim: 1, selected: "king", arithmetic: null },
-      context: "Die Achsen sind für Menschen beschriftet. In einem echten Modell haben die Achsen keine Namen; die Richtungen entstehen aus dem Training und sind nur relativ zueinander lesbar.",
-      deep: "Die Nachbarschaft ist ein statistisches Signal, keine Definition. Sie kann Stereotype tragen. Ein Wort liegt nicht „wahr“ im Raum, sondern an der Stelle, die den Loss auf den Trainingsdaten senkt.",
+      context: "In 1D ist die Strecke belegt; mehrere Wörter teilen sich eine Position. In 2D kann jede zusätzliche Eigenschaft eine eigene Richtung bekommen.",
+      deep: "Freie Wege sind der Kern: Bedeutung braucht Platz für mehrere unabhängige Unterschiede. Jede zusätzliche Achse kann eine weitere Beziehung tragen, ohne eine andere zu überschreiben. Die Nachbarschaft ist ein statistisches Signal, keine Definition.",
       boxes: [
         box("emb-6", "Technik", "Warum zwei Achsen?", "Zwei Achsen machen zwei unabhängige Unterschiede sichtbar. Die erste Achse ordnet nach Macht, die zweite nach Geschlecht. Erst dadurch werden Mann und Frau unterscheidbar, obwohl sie auf der Machtachse denselben Wert haben."),
         box("emb-7", "Geschichte", "Woher kommt die Analogie?", "Mikolov et al. (2013) zeigten, dass Differenzen wie König − Mann + Frau nahe bei Königin landen. Das ist eine Approximation, keine exakte Regel. Sie funktioniert, weil ähnliche Wörter in ähnlichen grammatischen Slots auftreten.")
@@ -219,6 +220,19 @@
       sources: sources
     },
     {
+      kicker: "05a / Die Zahlen",
+      title: "Tausende Dimensionen",
+      body: "Die Demo zeigt zwei oder drei Achsen, weil Menschen nicht mehr sehen können. Ein echtes Embedding hat Tausende Dimensionen. Für den Rechner ist das eine Tabelle: eine Zeile pro Token, eine Spalte pro Dimension. Die Mathematik bleibt dieselbe; nur die Zahl der Koordinaten wächst.",
+      watch: "Scrolle durch die Tabelle. Wo würdest du eine Beziehung wie „Macht“ oder „Geschlecht“ vermuten?",
+      demoState: { scene: "highdim" },
+      context: "Mehr Dimensionen können mehr unabhängige Beziehungen tragen: Temperatur, Geschlecht, Macht, Thema, Sprache, Stil. Zwei oder drei Achsen kollidieren zu schnell.",
+      deep: "Die Zahlen sind ein Ausschnitt, keine echten GPT-Gewichte. Ein echtes Modell lernt jede Koordinate aus Text; keine einzelne Spalte hat für sich eine Bedeutung. Die Geometrie entsteht im Zusammenspiel.",
+      boxes: [
+        box("hd-1", "Technik", "Warum so viele Dimensionen?", "Jede zusätzliche Dimension kann eine weitere Richtung für einen Unterschied öffnen. Mit Tausenden Koordinaten können viele Beziehungen nebeneinander existieren, ohne sich gegenseitig zu überschreiben."),
+        box("hd-2", "Grenze", "Kann man das noch sehen?", "Nein. Menschen sehen höchstens drei Achsen. Die Tabelle ist die ehrliche Darstellung für den Rechner; die 3D-Demos sind Projektionen für uns.")
+      ]
+    },
+    {
       kicker: "06 / Die Übertragung",
       title: "Eine Beziehung lässt sich übertragen",
       body: "Der Pfeil von Mann zu Frau ist fast derselbe wie der Pfeil von König zu Königin. Ein Feed-Forward-Netz kann lernen, eine solche Richtung auf eine ganze Nachbarschaft anzuwenden; das ist die geometrische Intuition hinter Übersetzung. Klicke „Alle Richtungen“ und vergleiche die Pfeile.",
@@ -236,11 +250,11 @@
     {
       kicker: "01 / The line",
       title: "Meaning becomes a number",
-      body: "A token is not a word; it is a piece of text with an ID. The ID points to a learned vector, and similar contexts pull vectors close together. This demo uses two dimensions so you can see the geometry; a real model uses thousands. Click two temperature points and watch where their midpoint lands.",
-      watch: "Click two points on the line. Where does the midpoint land?",
+      body: "We assign numbers to words. On a number line every word sits at one position: freezing on the far left, hot on the far right. The distance says how similar two words are in this one property. Click two points and watch where their midpoint lands.",
+      watch: "Click two points on the line. Where does their midpoint land?",
       demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
-      context: "A vector is an ordered list of numbers. Read as a point, it says where something is; read as an arrow, it says where it points.",
-      deep: "The map is learned, not given: every position comes from the training text. An embedding table is a learned matrix; each row is the starting vector of a token. The geometry appears only through training.",
+      context: "The number line is the simplest form of a vector space: one coordinate per word. More coordinates come later.",
+      deep: "The positions are chosen by hand here so you can see the arithmetic. In a model they are learned from many examples. The arithmetic stays the same.",
       boxes: [
         box("emb-1", "Mathematics", "What is a vector?", "A vector is an element of a vector space. In practice it is an ordered list of numbers that describes a point or a direction. Direction often matters more than length."),
         box("emb-2", "History", "Where does the idea come from?", "Firth (1957): “You shall know a word by the company it keeps.” Harris (1954) formulated the distributional idea earlier. Words that appear in similar contexts receive similar vectors."),
@@ -251,25 +265,26 @@
     {
       kicker: "02 / The midpoint",
       title: "Two examples, one average",
-      body: "The midpoint of two values is their average. Cold (5) and warm (55) average to 30, which lands near lukewarm. In a vector space the same operation works on every coordinate, not just one. Choose another pair and check when the result is exact and when it is only approximate.",
-      watch: "Choose another pair. When is the result exact, when only approximate?",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["freezing", "hot"] },
-      context: "The midpoint is not a new word. It is a position between two learned positions, and that is why it can be assigned to a nearby word.",
-      deep: "Similarity is usually measured by angle, not distance. Softmax is something else: it turns scores into a distribution. A midpoint is a geometric operation, not a probability.",
+      body: "The midpoint of two numbers is their average. Cold (5) and warm (55) give 30, and 30 is exactly lukewarm. Cold and hot give 52.5; that is close to warm (55), but no word sits exactly at 52.5. For meaning, closeness is often enough: you land in the right region even when the exact value is missing.",
+      watch: "Choose a pair. When is the result exact, when only approximate?",
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "hot"] },
+      context: "The error is the distance between the midpoint and the nearest word. For cold + hot it is 2.5 degrees; for freezing + hot it is 5 degrees.",
+      deep: "The arithmetic works the same in every dimension: (a+b)/2. In higher dimensions you average each coordinate separately. Similarity is usually measured by angle, not distance.",
       boxes: [
         box("emb-4", "Mathematics", "Why does this work?", "Because vectors are added coordinate by coordinate. The midpoint (a + b) / 2 lies on the line between them. The same arithmetic works in higher dimensions; you only see a projection."),
-        box("emb-5", "Limit", "Is the midpoint a word?", "No. It is a position in the space. That it lands near a word is a property of the learned geometry, not a definition. For rare or ambiguous words the nearest neighbour can surprise you.")
+        box("emb-5", "Limit", "Is the midpoint a word?", "No. It is a position in the space. That it lands near a word is a property of the learned geometry, not a definition. For rare or ambiguous words the nearest neighbour can surprise you."),
+        box("emb-approx", "Limit", "What does “approximate” mean?", "The midpoint 52.5 is 2.5 degrees away from warm. No word sits exactly at 52.5. Closeness is enough because the model later works with angles and neighbours, not with a word list.")
       ],
       sources: sources.slice(2, 4)
     },
     {
       kicker: "03 / The plane",
       title: "Meaning gets a second axis",
-      body: "One axis can order words by a single property. A second axis separates what the first axis collapses: man and woman share a power position, but differ in gender. The same arrow appears again between king and queen. Click the words and compare their positions.",
-      watch: "Click words. Which pairs sit at the same height?",
+      body: "One axis can order words by a single property. Man and woman share the power position, so they collapse onto the same point: to get from one to the other you would have to skip other words. A second axis creates free paths: now man and woman sit side by side without losing the power position. The same arrow appears again between king and queen. Compare 1D and 2D.",
+      watch: "Compare 1D and 2D. Where are there free paths, where do words collapse?",
       demoState: { scene: "embedding", mode: "space", dim: 1, selected: "king", arithmetic: null },
-      context: "The axes are labelled for humans. In a real model the axes have no names; the directions emerge from training and are readable only relative to one another.",
-      deep: "Neighbourhood is a statistical signal, not a definition. It can carry stereotypes. A word is not “truly” in the space; it sits where the loss on the training data is lowest.",
+      context: "In 1D the line is occupied; several words share one position. In 2D every extra property can get its own direction.",
+      deep: "Free paths are the point: meaning needs room for several independent differences. Every extra axis can carry another relation without overwriting one. Neighbourhood is a statistical signal, not a definition.",
       boxes: [
         box("emb-6", "Technique", "Why two axes?", "Two axes make two independent differences visible. The first axis orders by power, the second by gender. Only then do man and woman become distinguishable even though they share a value on the power axis."),
         box("emb-7", "History", "Where does the analogy come from?", "Mikolov et al. (2013) showed that differences such as king − man + woman land near queen. It is an approximation, not an exact rule. It works because similar words appear in similar grammatical slots.")
@@ -303,6 +318,19 @@
         box("emb-11", "History", "Where does the picture come from?", "The idea of reading meaning as geometry connects distributional semantics with conceptual spaces. The concrete demo is a simplification, not a measurement of a real model.")
       ],
       sources: sources
+    },
+    {
+      kicker: "05a / The numbers",
+      title: "Thousands of dimensions",
+      body: "The demo shows two or three axes because humans cannot see more. A real embedding has thousands of dimensions. For the computer it is a table: one row per token, one column per dimension. The arithmetic stays the same; only the number of coordinates grows.",
+      watch: "Scroll through the table. Where would you expect a relation like “power” or “gender”?",
+      demoState: { scene: "highdim" },
+      context: "More dimensions can carry more independent relations: temperature, gender, power, topic, language, style. Two or three axes collide too quickly.",
+      deep: "The numbers are a slice, not real GPT weights. A real model learns every coordinate from text; no single column means anything on its own. The geometry comes from the interaction.",
+      boxes: [
+        box("hd-1", "Technique", "Why so many dimensions?", "Every extra dimension can open another direction for a difference. With thousands of coordinates many relations can exist side by side without overwriting one another."),
+        box("hd-2", "Limit", "Can we still see this?", "No. Humans see at most three axes. The table is the honest view for the computer; the 3D demos are projections for us.")
+      ]
     },
     {
       kicker: "06 / Transport",
@@ -365,6 +393,20 @@
         box("pos-3", "Grenze", "Was zeigt die 3D-Kurve nicht?", "Sie zeigt nur die ersten drei Dimensionen. Ein echtes Modell nutzt Tausende; die Kurve ist eine lesbare Scheibe, keine vollständige Karte.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+    },
+    {
+      kicker: "05b / Der Block",
+      title: "Ein Block: Attention, dann FFN",
+      body: "Ein Transformerblock hat zwei Rechenstationen. Attention mischt Information zwischen den Tokens; das FFN rechnet innerhalb jedes Tokens. Beide Ergebnisse werden über Residualverbindungen zum laufenden Vektor addiert. Die nächste Folie zoomt in die Attention.",
+      watch: "Welcher Teil mischt Tokens, welcher rechnet pro Token?",
+      demoState: { scene: "stack", mode: "block" },
+      context: "Der Residual Stream ist der gemeinsame Vektor eines Tokens. Jede Station liest ihn und schreibt ein Update zurück, statt ihn zu überschreiben.",
+      deep: "Ein Block ist Attention + FFN + zwei Residualverbindungen + Normalisierung. Ein Modell stapelt viele solcher Blöcke; die Gewichte sind pro Block verschieden.",
+      boxes: [
+        box("block-1", "Technik", "Warum zwei Stationen?", "Attention bewegt Information zwischen Tokens. Das FFN transformiert, was ein einzelnes Token trägt. Zusammen können sie Kontext aufnehmen und verarbeiten."),
+        box("block-2", "Grenze", "Was zeigt der Block nicht?", "Er zeigt die Reihenfolge, nicht die gelernten Gewichte. Ein echter Block hat viele Heads, Normalisierung und oft eine andere FFN-Breite.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
     }
   ] : [
     {
@@ -381,6 +423,20 @@
         box("pos-3", "Limit", "What does the 3D curve not show?", "It shows only the first three dimensions. A real model uses thousands; the curve is a readable slice, not a complete map.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+    },
+    {
+      kicker: "05b / The block",
+      title: "One block: attention, then FFN",
+      body: "A transformer block has two compute stations. Attention mixes information between tokens; the FFN computes inside each token. Both results are added to the running vector through residual connections. The next slide zooms into attention.",
+      watch: "Which part mixes tokens, which computes per token?",
+      demoState: { scene: "stack", mode: "block" },
+      context: "The residual stream is a token's shared vector. Every station reads it and writes an update back instead of overwriting it.",
+      deep: "A block is attention + FFN + two residual connections + normalisation. A model stacks many such blocks; each block has its own weights.",
+      boxes: [
+        box("block-1", "Technique", "Why two stations?", "Attention moves information between tokens. The FFN transforms what a single token carries. Together they can take in context and process it."),
+        box("block-2", "Limit", "What does the block not show?", "It shows the order, not the learned weights. A real block has many heads, normalisation, and often a different FFN width.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
     }
   ];
 
@@ -388,8 +444,8 @@
     {
       kicker: "06 / Attend",
       title: "Kontext zieht die Bank an seinen Platz",
-      body: "Woher weiß ein Wort, welche Nachbarn wichtig sind? Self-Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen. So bewegt sich „Bank“ in Richtung Fluss oder Geld. Ein echter Layer hat viele Heads; die Demo zeigt einen.",
-      watch: "Wechsle den Kontext. Wohin bewegt sich der Bank-Vektor?",
+      body: "Woher weiß ein Wort, welche Nachbarn wichtig sind? Self-Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen. So bewegt sich „Bank“ in Richtung Fluss oder Geld. Klicke ein beliebiges Wort an, um seine Zeile zu sehen. Ein echter Layer hat viele Heads; die Demo zeigt einen.",
+      watch: "Klicke ein Wort an. Welche Nachbarn bekommen Aufmerksamkeit?",
       demoState: { scene: "attention", context: "none" },
       context: "Ohne eindeutigen Kontext bleibt die Bank in der Mitte, mehrdeutig. Mit Fluss oder Geld verschiebt sich der Vektor.",
       deep: "Ein echter Head berechnet Query-, Key- und Value-Vektoren, macht aus den Skalarprodukten mit Softmax Gewichte und summiert die Values. Die Demo zeigt die Bewegung, nicht die volle Rechnung.",
@@ -402,24 +458,25 @@
     },
     {
       kicker: "06b / Der Kontext",
-      title: "Der Vektor folgt dem Kontext",
-      body: "Derselbe Satz, ein anderer Kontext: Die Bank liest jetzt den Fluss oder das Geld. Die Gewichte verschieben sich, und der Vektor wandert in die entsprechende Richtung. Attention zeigt, wohin Information geroutet wurde, nicht was das FFN damit tut.",
-      watch: "Vergleiche Fluss und Geld. Welcher Unterschied wird sichtbar, welcher nicht?",
+      title: "Attention verschiebt Bedeutungen in Kontexte",
+      body: "Derselbe Satz, ein anderer Kontext: Die Bank liest jetzt den Fluss oder das Geld. Die Gewichte verschieben sich, und der Vektor wandert in die entsprechende Richtung. Jede Zeile verteilt genau 100 % Aufmerksamkeit; 100 % auf ein Wort heißt 0 % für alle anderen. Die Tabelle ist der Graph, die gewichtete Summe verschiebt den Vektor. Klicke andere Wörter an, um ihre Zeile zu sehen.",
+      watch: "Klicke ein anderes Wort an. Welche Zeile summiert zu 100 %?",
       demoState: { scene: "attention", context: "river" },
       context: "Attention-Gewichte sind kein Geständnis. Sie sind ein Routing-Signal auf einer Schicht.",
       deep: "Der Residual Stream und das FFN entscheiden, was mit der gerouteten Information passiert. Die Karte ist keine Erklärung des ganzen Modells.",
       boxes: [
         box("att-4", "Grenze", "Was zeigt Attention nicht?", "Sie zeigt nicht, was das FFN mit der Information macht. Sie zeigt nur, welche Tokens auf dieser Schicht Information austauschen.")
-      ]
+      ],
+      sources: [{ label: "Attention als Graph (interaktive Zusatzseite)", url: "../test/attention_as_graph.html" }]
     },
     {
       kicker: "06c / Rauschen",
       title: "Oberfläche ist Rauschen",
-      body: "Bevor ein Modell Bedeutung vergleicht, muss es Oberfläche wegdenken. „def quicksort“ und „function quickSort“ meinen dieselbe Funktion, obwohl Schlüsselwort, Schreibweise und Satzzeichen anders sind. Die ersten Layer ziehen die Bedeutung heraus und lassen diese Unterschiede fallen. Für die Aufgabe ist das Rauschen irrelevant; beachten muss das Modell es trotzdem, weil genau solche Varianten in dem Code stehen, den du ihm gibst.",
-      watch: "Ziehe den Layer-Regler. Wann liegen die beiden Schreibweisen auf demselben Punkt?",
+      body: "Ein Head kann „new“ und „york“ in die Nähe von „Stadt“ schieben, weg von „car“ und „England“. Attention addiert die Wörter prozentual: 0.30·new + 0.30·york + 0.40·Stadt. Am Ende bleibt die Bedeutung übrig; die Oberfläche ist Rauschen. Genau das passiert auch mit Code: „def quicksort“ und „function quickSort“ meinen dieselbe Funktion, obwohl Schlüsselwort und Schreibweise anders sind.",
+      watch: "Ziehe den Layer-Regler. Wann wandern new und york zu Stadt?",
       demoState: { scene: "noise", layer: 0 },
-      context: "Zum Rauschen gehören Schlüsselwort, Schreibweise und Interpunktion. Bedeutung ist die Funktion, die beide Varianten beschreiben.",
-      deep: "Die Demo ist schematisch. Sie zeigt die Idee, nicht die Messung eines echten Modells: Oberflächenmerkmale werden früh verarbeitet, semantische Unterschiede später. Ein echter Layer rechnet mit Vektoren, nicht mit Wörtern.",
+      context: "Die ersten Layer richten den Vektor an der Bedeutung aus; Schreibweise und Schlüsselwort verlieren an Gewicht. Die Fläche ist schematisch, keine Messung eines echten Heads.",
+      deep: "Das ist eine didaktische Vereinfachung. Ein echter Head addiert Value-Vektoren mit gelernten Gewichten; die Winkel und Positionen hier sind von Hand gewählt. Die Quelle deckt die frühe Oberflächenverarbeitung, nicht die konkreten Demo-Positionen.",
       boxes: [
         box("noise-1", "Beispiel", "Zwei Schreibweisen, eine Funktion", "Ein Beispiel: „def quicksort(items):“ in Python und „function quickSort(items) {“ in JavaScript beschreiben dieselbe Sortierfunktion. Der Unterschied liegt im Schlüsselwort, im Namen und in der Interpunktion."),
         box("noise-2", "Grenze", "Was ist hier schematisch?", "Die Demo zeigt keine echten Attention-Gewichte und keine Messung. Sie zeigt nur, welche Art von Information früh an Gewicht verlieren soll und welche bleiben muss.")
@@ -430,8 +487,8 @@
     {
       kicker: "06 / Attend",
       title: "Context pulls the bank into place",
-      body: "How does a word know which neighbours matter? Self-attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the river or money reading. A real layer has many heads; the demo shows one.",
-      watch: "Switch the context. Where does the bank vector move?",
+      body: "How does a word know which neighbours matter? Self-attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the river or money reading. Click any word to see its row. A real layer has many heads; the demo shows one.",
+      watch: "Click a word. Which neighbours receive attention?",
       demoState: { scene: "attention", context: "none" },
       context: "With no unambiguous context, the bank stays in the middle, ambiguous. With river or money, the vector shifts.",
       deep: "A real head computes query, key, and value vectors, turns their dot products into weights with softmax, and sums the values. The demo shows the movement, not the full arithmetic.",
@@ -444,24 +501,25 @@
     },
     {
       kicker: "06b / The context",
-      title: "The vector follows the context",
-      body: "The same sentence, a different context: the bank now reads the river or the money. The weights shift, and the vector moves in that direction. Attention shows where information was routed, not what the FFN does with it.",
-      watch: "Compare river and money. Which difference becomes visible, which does not?",
+      title: "Attention shifts meaning into context",
+      body: "The same sentence, a different context: the bank now reads the river or the money. The weights shift, and the vector moves in that direction. Every row distributes exactly 100% attention; 100% on one word means 0% for the others. The table is the graph, and the weighted sum moves the vector. Click other words to see their rows.",
+      watch: "Click another word. Which row sums to 100%?",
       demoState: { scene: "attention", context: "river" },
       context: "Attention weights are not a confession. They are a routing signal on one layer.",
       deep: "The residual stream and the FFN decide what happens to the routed information. The map is not an explanation of the whole model.",
       boxes: [
         box("att-4", "Limit", "What does attention not show?", "It does not show what the FFN does with the information. It shows only which tokens exchange information on this layer.")
-      ]
+      ],
+      sources: [{ label: "Attention as a graph (interactive companion page)", url: "../test/attention_as_graph.html" }]
     },
     {
       kicker: "06c / Noise",
       title: "Surface is noise",
-      body: "Before a model can compare meaning, it has to look past surface form. “def quicksort” and “function quickSort” mean the same function, even though the keyword, spelling, and punctuation differ. The first layers pull out the meaning and let those differences fall away. For the task this noise is irrelevant; the model still has to process it, because exactly such variants appear in the code you give it.",
-      watch: "Move the layer slider. When do the two spellings land on the same point?",
+      body: "A head can push “new” and “york” toward “city”, away from “car” and “England”. Attention adds the words proportionally: 0.30·new + 0.30·york + 0.40·city. In the end the meaning remains and the surface is noise. The same happens with code: “def quicksort” and “function quickSort” mean the same function, even though the keyword and spelling differ.",
+      watch: "Move the layer slider. When do new and york move toward city?",
       demoState: { scene: "noise", layer: 0 },
-      context: "Noise is keyword, spelling, and punctuation. Meaning is the function both variants describe.",
-      deep: "The demo is schematic. It shows the idea, not a measurement of a real model: surface features are processed early, semantic differences later. A real layer computes with vectors, not words.",
+      context: "The first layers align the vector with meaning; spelling and keyword lose weight. The surface is schematic, not a measurement of a real head.",
+      deep: "This is a didactic simplification. A real head adds value vectors with learned weights; the angles and positions here are chosen by hand. The source covers early surface processing, not the concrete demo positions.",
       boxes: [
         box("noise-1", "Example", "Two spellings, one function", "For example, “def quicksort(items):” in Python and “function quickSort(items) {” in JavaScript describe the same sorting function. The difference is the keyword, the name, and the punctuation."),
         box("noise-2", "Limit", "What is schematic here?", "The demo shows no real attention weights and no measurement. It shows only which kind of information should lose weight early and which must stay.")
@@ -474,14 +532,15 @@
     {
       kicker: "08 / Feed-forward",
       title: "Ein Muster passt, ein Wert wird geschrieben",
-      body: "Das Feed-Forward-Netz arbeitet auf jedem Token einzeln. Es dehnt den Vektor, wendet eine Aktivierung an und projiziert zurück. Attention mischt Tokens; das FFN rechnet innerhalb eines Tokens.",
+      body: "Das Feed-Forward-Netz arbeitet auf jedem Token einzeln. Es dehnt den Vektor, wendet eine Aktivierung an und projiziert zurück. Attention mischt Tokens; das FFN rechnet innerhalb eines Tokens. Es macht mit dem Kontext, was das MLP mit den Punkten gemacht hat: Bereiche, die vorher nicht linear trennbar waren, werden trennbar, weil der Kontext den Vektor immer weiter verfeinert. Auch die eigene Antwort wird Teil des Kontexts; jede neue Entscheidung verschiebt die Grenze.",
       watch: "Wechsle zwischen Apfel als Obst und Apple als Firma. Welche Muster feuern?",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁; der Pull ist eine gelernte Richtung in W₂.",
       deep: "Die meisten Parameter eines Transformers liegen in den FFN-Matrizen. Wissen ist trotzdem verteilt, nicht in einer Zeile gespeichert.",
       boxes: [
         box("ffn-1", "Mathematik", "Die Dense-Einheit", "dense(x) = activation(Wx + b). Das FFN ist dense₂(activation(dense₁(x))). Die Aktivierung bringt die Nichtlinearität."),
-        box("ffn-2", "Technik", "Warum das FFN?", "Attention bewegt Information zwischen Tokens. Das FFN transformiert, was jedes Token trägt. Beide zusammen bilden einen Block.")
+        box("ffn-2", "Technik", "Warum das FFN?", "Attention bewegt Information zwischen Tokens. Das FFN transformiert, was jedes Token trägt. Beide zusammen bilden einen Block."),
+        box("ffn-3", "Verbindung", "Was hat das mit dem MLP zu tun?", "Das FFN ist ein kleines MLP pro Token. Es biegt den Vektor so, dass Muster trennbar werden. Attention liefert den Kontext, das FFN rechnet ihn in eine neue Richtung.")
       ]
     }
   ] : [
@@ -495,7 +554,8 @@
       deep: "Most parameters of a transformer live in the FFN matrices. Knowledge is still distributed, not stored in one row.",
       boxes: [
         box("ffn-1", "Mathematics", "The dense unit", "dense(x) = activation(Wx + b). The FFN is dense₂(activation(dense₁(x))). The activation supplies the nonlinearity."),
-        box("ffn-2", "Technique", "Why the FFN?", "Attention moves information between tokens. The FFN transforms what each token carries. Together they form one block.")
+        box("ffn-2", "Technique", "Why the FFN?", "Attention moves information between tokens. The FFN transforms what each token carries. Together they form one block."),
+        box("ffn-3", "Connection", "What does this have to do with the MLP?", "The FFN is a small MLP per token. It bends the vector so that patterns become separable. Attention supplies the context; the FFN computes it into a new direction.")
       ]
     }
   ];
@@ -636,39 +696,43 @@
     {
       kicker: "07 / Die Übertragung",
       title: "Von Beziehungen zur Übersetzung",
-      body: "Die Punkte bilden eine Mannigfaltigkeit: lokal flach, global gekrümmt. Die Beziehungen sind ähnlich genug, um übersetzt zu werden: Der Weg von einem Wort zum anderen lässt sich in den entsprechenden Weg einer anderen Sprache transformieren. Feed-Forward-Netze lernen solche Transformationen.",
-      watch: "Drehe die beiden Flächen. Welche Korrespondenzlinien bleiben parallel?",
+      body: "Beziehungen untereinander können Bedeutung enthalten. Im vereinfachten Token-Raum liegen englische und japanische Wörter so ähnlich zueinander, dass man die eine Fläche durch Drehen und Verschieben in die andere überführen kann. So kann man sich Maschinenübersetzung grob vorstellen: Eine Bedeutungsfläche wird auf eine andere abgebildet. In einem echten Modell sind diese Flächen abstrakt und viel komplexer.",
+      watch: "Drehe und verschiebe die Flächen. Welche Wörter bleiben in Korrespondenz?",
       demoState: { scene: "manifold" },
-      context: "Die Karte ist eine Approximation. In einem echten Modell überlappen Beziehungen, Ausnahmen sind häufig, und Übersetzung wird aus großen Textmengen gelernt.",
-      deep: "Die Geometrie ist viel unordentlicher als die saubere Fläche. Die Intuition zeigt trotzdem die Richtung: Eine gelernte Transformation kann eine Beziehung von einer Region in eine andere tragen.",
+      context: "Die Demo ist stark vereinfacht: zwei glatte Flächen, wenige Wörter, saubere Linien. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen.",
+      deep: "Eine Mannigfaltigkeit ist lokal flach und global gekrümmt: In kleinen Ausschnitten sieht sie aus wie eine Ebene, als Ganzes kann sie sich biegen. Die Übersetzung entspricht einer Abbildung zwischen zwei solchen Flächen.",
       boxes: [
-        box("man-1", "Technik", "Was zeigt die Demo?", "Zwei gekrümmte Flächen für zwei Sprachen, Korrespondenzlinien zwischen Wörtern und Übersetzungspfade. Die Kontrollen drehen, trennen und richten die Flächen aus."),
-        box("man-2", "Grenze", "Was ist vereinfacht?", "Die Flächen sind glatt und die Wörter sauber platziert. Ein echtes Embedding hat Tausende Dimensionen und viele überlappende Beziehungen.")
+        box("man-1", "Technik", "Was zeigt die Demo?", "Zwei gekrümmte Flächen für Englisch und Japanisch, Korrespondenzlinien zwischen Wörtern und Übersetzungspfade. Die Kontrollen drehen, trennen und richten die Flächen aus."),
+        box("man-2", "Grenze", "Was ist vereinfacht?", "Die Flächen sind glatt und die Wörter sauber platziert. Ein echtes Embedding hat Tausende Dimensionen und viele überlappende Beziehungen."),
+        box("man-3", "Grenze", "Wie echt ist die Übersetzung?", "Die Demo zeigt eine Idee, keine Messung. Ein echtes Modell lernt die Abbildung aus Text; die Flächen sind abstrakt und für Menschen schwer zu sehen."),
+        box("man-4", "Mathematik", "Was ist eine Mannigfaltigkeit?", "Eine Mannigfaltigkeit ist ein Raum, der lokal wie R^n aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im R^n abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus.")
       ],
-      sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781" }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/" }]
+      sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781" }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/" }, { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087" }, { label: "Morris (2007), Topology Without Tears", url: "https://archive.org/details/topbook" }]
     }
   ] : [
     {
       kicker: "07 / Transport",
       title: "From relations to translation",
-      body: "The points form a manifold: locally flat, globally curved. The relations are similar enough to translate: the path from one word to another can be transformed into the corresponding path in another language. Feed-forward networks learn such transformations.",
-      watch: "Rotate the two surfaces. Which correspondence lines stay parallel?",
+      body: "Relations among each other can carry meaning. In the simplified token space, English and Japanese words sit so similarly that one surface can be turned and shifted into the other. That is a rough picture of machine translation: a meaning surface is mapped onto another. In a real model these surfaces are abstract and much more complex.",
+      watch: "Rotate and shift the surfaces. Which words stay in correspondence?",
       demoState: { scene: "manifold" },
-      context: "The map is an approximation. In a real model relations overlap, exceptions are common, and translation is learned from huge amounts of text.",
-      deep: "The geometry is much messier than the clean surface. The intuition still points in the right direction: a learned transformation can carry a relation from one region to another.",
+      context: "The demo is strongly simplified: two smooth surfaces, few words, clean lines. The real geometry has thousands of dimensions and overlapping relations.",
+      deep: "A manifold is locally flat and globally curved: in small patches it looks like a plane, as a whole it can bend. Translation corresponds to a map between two such surfaces.",
       boxes: [
-        box("man-1", "Technique", "What does the demo show?", "Two curved surfaces for two languages, correspondence lines between words, and translation paths. The controls rotate, separate, and align the surfaces."),
-        box("man-2", "Limit", "What is simplified?", "The surfaces are smooth and the words are neatly placed. A real embedding has thousands of dimensions and many overlapping relations.")
+        box("man-1", "Technique", "What does the demo show?", "Two curved surfaces for English and Japanese, correspondence lines between words, and translation paths. The controls rotate, separate, and align the surfaces."),
+        box("man-2", "Limit", "What is simplified?", "The surfaces are smooth and the words are neatly placed. A real embedding has thousands of dimensions and many overlapping relations."),
+        box("man-3", "Limit", "How real is the translation?", "The demo shows an idea, not a measurement. A real model learns the map from text; the surfaces are abstract and hard for humans to see."),
+        box("man-4", "Mathematics", "What is a manifold?", "A manifold is a space that locally looks like R^n: every point has a chart that maps a neighbourhood onto an open set in R^n, and the charts change smoothly. Globally the space can be curved, for example a sphere or a torus.")
       ],
-      sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781" }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/" }]
+      sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781" }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/" }, { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087" }, { label: "Morris (2007), Topology Without Tears", url: "https://archive.org/details/topbook" }]
     }
   ];
 
   var mlpSteps = DE ? [
     {
-      kicker: "08a / Das MLP",
+      kicker: "08b / Das MLP",
       title: "Sieh zu, wie das MLP den Raum biegt",
-      body: "Eine gerade Linie ist der einfachste Trenner, aber im ursprünglichen Raum nicht immer möglich. Das MLP hebt die Punkte in eine neue Ebene, in der die Trennung gelingt. In einem LLM läuft dieselbe Idee in Tausenden Dimensionen und hilft dem Modell, interne Zustände zu isolieren.",
+      body: "Nach der Attention folgt ein kleines neuronales Netz: das FFN. Es rechnet auf jedem Token einzeln und kann den Raum so biegen, dass Muster trennbar werden. Eine gerade Linie ist der einfachste Trenner, aber im ursprünglichen Raum nicht immer möglich. Das MLP hebt die Punkte in eine neue Ebene, in der die Trennung gelingt. In einem LLM läuft dieselbe Idee in Tausenden Dimensionen und hilft dem Modell, interne Zustände zu isolieren.",
       watch: "Klicke dich durch die neun Folien. Wo biegt sich der Raum, wo erscheint der Schnitt?",
       demoState: { scene: "mlp" },
       context: "Die Biegung ist eine Dense-Schicht: Sie hebt die Punkte in eine zusätzliche Dimension, bis ein flacher Schnitt reicht.",
@@ -681,9 +745,9 @@
     }
   ] : [
     {
-      kicker: "08a / The MLP",
+      kicker: "08b / The MLP",
       title: "Watch the MLP bend the space",
-      body: "A straight line is the easiest separator, but it is not always possible in the original space. The MLP lifts the points into a new plane where it becomes possible. In an LLM the same idea runs in thousands of dimensions and helps the model isolate internal states.",
+      body: "After attention comes a small neural network: the FFN. It computes on each token separately and can bend the space so that patterns become separable. A straight line is the easiest separator, but it is not always possible in the original space. The MLP lifts the points into a new plane where it becomes possible. In an LLM the same idea runs in thousands of dimensions and helps the model isolate internal states.",
       watch: "Click through the nine slides. Where does the space bend, where does the cut appear?",
       demoState: { scene: "mlp" },
       context: "The bend is a dense layer: it lifts the points into an extra dimension until a flat cut is enough.",
@@ -830,7 +894,7 @@
 
   var activationSteps = DE ? [
     {
-      kicker: "08b / Aktivierung",
+      kicker: "08a / Aktivierung",
       title: "Weiche Kurven, ein Knick",
       body: "Eine Nichtlinearität wird nach der Projektion auf jede Koordinate angewendet. ReLU faltet bei null; Sigmoid und tanh biegen glatt; GELU ist glatt, aber nicht monoton. Der Knick ist das, was einen geraden Schnitt durch etwas führt, das vorher untrennbar war.",
       watch: "Klicke die Funktionen. Wo ist der Knick, wo ist die Kurve glatt?",
@@ -840,13 +904,14 @@
       boxes: [
         box("act-1", "Beispiel", "2 Eingänge, 2 Ausgänge", "W = [[1,2],[0,-1]], x = (3,1), b = (0,-2). Wx = (5,-1), z = (5,-3), ReLU(z) = (5,0). Jede Ausgabe ist ein Skalarprodukt plus Bias, dann die Aktivierung.", "\\begin{aligned} W &= \\begin{pmatrix} 1 & 2 \\\\ 0 & -1 \\end{pmatrix}, \\quad x = \\begin{pmatrix} 3 \\\\ 1 \\end{pmatrix}, \\quad b = \\begin{pmatrix} 0 \\\\ -2 \\end{pmatrix} \\\\ Wx &= \\begin{pmatrix} 5 \\\\ -1 \\end{pmatrix}, \\quad z = Wx+b = \\begin{pmatrix} 5 \\\\ -3 \\end{pmatrix} \\\\ \\operatorname{ReLU}(z) &= \\begin{pmatrix} 5 \\\\ 0 \\end{pmatrix} \\end{aligned}"),
         box("act-2", "Ohne Knick", "Zwei Dense-Schichten ohne Nichtlinearität", "dense₂(dense₁(x)) = W₂(W₁x+b₁)+b₂ = (W₂W₁)x + (W₂b₁+b₂). Zwei lineare Schichten kollabieren zu einer. Tiefe bringt ohne Aktivierung keine zusätzliche Ausdruckskraft.", "\\begin{aligned} \\operatorname{dense}_2(\\operatorname{dense}_1(x)) &= W_2(W_1 x + b_1) + b_2 \\\\ &= (W_2 W_1)x + (W_2 b_1 + b_2) \\\\ &= Wx + b \\end{aligned}"),
-        box("act-3", "Formeln", "Die vier Funktionen", "ReLU(x) = max(0,x). tanh(x) = (e^{2x} − 1)/(e^{2x} + 1). sigmoid(x) = 1/(1+e^{−x}). GELU ist ein glatter Durchlass, der kleine negative Werte noch passieren lässt.")
+        box("act-3", "Formeln", "Die vier Funktionen", "ReLU(x) = max(0,x). tanh(x) = (e^{2x} − 1)/(e^{2x} + 1). sigmoid(x) = 1/(1+e^{−x}). GELU ist ein glatter Durchlass, der kleine negative Werte noch passieren lässt."),
+        box("act-4", "Satz", "Beliebig genau?", "Mit genügend Neuronen und einer nichtlinearen Aktivierung kann ein Netz jede stetige Funktion auf einem begrenzten Bereich beliebig genau annähern. Tiefe hilft, weil sie dieselbe Zahl von Neuronen effizienter nutzt.")
       ],
-      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355" }]
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355" }, { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274" }]
     }
   ] : [
     {
-      kicker: "08b / Activation",
+      kicker: "08a / Activation",
       title: "Smooth curves, one bend",
       body: "A nonlinearity is applied to each coordinate after the projection. ReLU folds at zero; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic. The bend is what lets a straight cut pass through something that was inseparable before.",
       watch: "Click the functions. Where is the bend, where is the curve smooth?",
@@ -856,13 +921,14 @@
       boxes: [
         box("act-1", "Example", "2 inputs, 2 outputs", "W = [[1,2],[0,-1]], x = (3,1), b = (0,-2). Wx = (5,-1), z = (5,-3), ReLU(z) = (5,0). Each output is a dot product plus bias, then the activation.", "\\begin{aligned} W &= \\begin{pmatrix} 1 & 2 \\\\ 0 & -1 \\end{pmatrix}, \\quad x = \\begin{pmatrix} 3 \\\\ 1 \\end{pmatrix}, \\quad b = \\begin{pmatrix} 0 \\\\ -2 \\end{pmatrix} \\\\ Wx &= \\begin{pmatrix} 5 \\\\ -1 \\end{pmatrix}, \\quad z = Wx+b = \\begin{pmatrix} 5 \\\\ -3 \\end{pmatrix} \\\\ \\operatorname{ReLU}(z) &= \\begin{pmatrix} 5 \\\\ 0 \\end{pmatrix} \\end{aligned}"),
         box("act-2", "Without a bend", "Two dense layers without a nonlinearity", "dense₂(dense₁(x)) = W₂(W₁x+b₁)+b₂ = (W₂W₁)x + (W₂b₁+b₂). Two linear layers collapse into one. Depth adds no expressive power without an activation.", "\\begin{aligned} \\operatorname{dense}_2(\\operatorname{dense}_1(x)) &= W_2(W_1 x + b_1) + b_2 \\\\ &= (W_2 W_1)x + (W_2 b_1 + b_2) \\\\ &= Wx + b \\end{aligned}"),
-        box("act-3", "Formulas", "The four functions", "ReLU(x) = max(0,x). tanh(x) = (e^{2x} − 1)/(e^{2x} + 1). sigmoid(x) = 1/(1+e^{−x}). GELU is a smooth gate that still lets small negative values through.")
+        box("act-3", "Formulas", "The four functions", "ReLU(x) = max(0,x). tanh(x) = (e^{2x} − 1)/(e^{2x} + 1). sigmoid(x) = 1/(1+e^{−x}). GELU is a smooth gate that still lets small negative values through."),
+        box("act-4", "Theorem", "Arbitrarily close?", "With enough neurons and a nonlinear activation, a network can approximate any continuous function on a bounded region arbitrarily closely. Depth helps because it uses the same number of neurons more efficiently.")
       ],
-      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355" }]
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355" }, { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274" }]
     }
   ];
 
-  var steps = introSteps.concat(insideSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, mlpSteps, activationSteps, ffnSteps, stackSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps);
+  var steps = introSteps.concat(insideSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, activationSteps, mlpSteps, ffnSteps, stackSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps);
 
   var day = {
     id: "intuition",

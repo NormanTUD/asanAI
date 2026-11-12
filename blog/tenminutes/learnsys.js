@@ -35,8 +35,8 @@
       helpHome: "Erster / letzter Tag", helpMix: "Anderer Mix",
       helpDepth: "Tiefe öffnen", helpDown: "Nächste zugeklappte Box öffnen", helpFocus: "Demo groß",
       helpFont: "Text größer / kleiner", helpHelp: "Hilfe öffnen / schließen",
-      interactiveDemo: "Interaktive Demo", stepRail: "Schritt 0 bis 9",
-      depthQuestions: "{n} Fragen", depthQuestion: "{n} Frage",
+      interactiveDemo: "Interaktive Demo", stepRail: "Schrittleiste",
+      depthQuestions: "{n} Fragen", depthQuestion: "{n} Frage", questionIndex: "Fragen", questionContext: "Was ist der Kontext?", questionDeep: "Warum ist das so?",
       textSize: "Textgröße", mixLabel: "Mix"
     },
     en: {
@@ -61,8 +61,8 @@
       helpHome: "First / last day", helpMix: "Another mix",
       helpDepth: "Open depth", helpDown: "Open the next collapsed box", helpFocus: "Large demo",
       helpFont: "Text larger / smaller", helpHelp: "Open / close help",
-      interactiveDemo: "Interactive demo", stepRail: "Step 0 to 9",
-      depthQuestions: "{n} questions", depthQuestion: "{n} question",
+      interactiveDemo: "Interactive demo", stepRail: "Step rail",
+      depthQuestions: "{n} questions", depthQuestion: "{n} question", questionIndex: "Questions", questionContext: "What is the context?", questionDeep: "Why is that so?",
       textSize: "Text size", mixLabel: "Mix"
     }
   };
@@ -559,25 +559,37 @@
     if (!count) return "";
     var rootOpen = state.depth === "standard" || state.depth === "deep" ? " open" : "";
     var firstOpen = state.depth === "deep" ? " open" : "";
-    var html = '<div class="ls-depth-tree">' +
+    var contextQ = s.contextTitle || t("questionContext");
+    var deepQ = s.deepTitle || t("questionDeep");
+    var qItems = [];
+    if (ctx || ctxTex) qItems.push({ id: "q-context", label: contextQ });
+    if (deep || deepTex) qItems.push({ id: "q-deep", label: deepQ });
+    boxes.forEach(function (b) {
+      qItems.push({ id: "q-box-" + b.id, label: (b.lens ? b.lens + " · " : "") + (b.title || "Detail") });
+    });
+    var indexHtml = '<div class="ls-question-index" aria-label="' + esc(t("questionIndex")) + '">' +
+      qItems.map(function (q) {
+        return '<button type="button" data-qid="' + esc(q.id) + '">' + esc(q.label) + '</button>';
+      }).join("") + '</div>';
+    var html = '<div class="ls-depth-tree">' + indexHtml +
       '<details class="ls-deepbox ls-deepbox--root"' + rootOpen + '>' +
         '<summary>' + esc(t("deepDive")) + ' <span class="ls-depth-count">' + esc(t(count === 1 ? "depthQuestion" : "depthQuestions", { n: count })) + '</span></summary>';
     if (ctx || ctxTex) {
-      html += '<details class="ls-deepbox"' + firstOpen + '>' +
-        '<summary>' + esc(t("context")) + '</summary>' +
+      html += '<details class="ls-deepbox" data-qid="q-context"' + firstOpen + '>' +
+        '<summary>' + esc(contextQ) + '</summary>' +
         (ctx ? '<p>' + termHTML(ctx) + '</p>' : '') +
         (ctxTex ? mathBlock(ctxTex) : '') +
         '</details>';
     }
     if (deep || deepTex) {
-      html += '<details class="ls-deepbox">' +
-        '<summary>' + esc(t("oneLevel")) + '</summary>' +
+      html += '<details class="ls-deepbox" data-qid="q-deep">' +
+        '<summary>' + esc(deepQ) + '</summary>' +
         (deep ? '<p>' + termHTML(deep) + '</p>' : '') +
         (deepTex ? mathBlock(deepTex) : '') +
         '</details>';
     }
     boxes.forEach(function (b) {
-      html += '<details class="ls-deepbox">' +
+      html += '<details class="ls-deepbox" data-qid="q-box-' + esc(b.id) + '">' +
         '<summary>' + esc(b.lens ? b.lens + " · " : "") + esc(b.title || "Detail") + '</summary>' +
         (b.body ? '<p>' + termHTML(b.body || "") + '</p>' : '') +
         (b.tex ? mathBlock(b.tex) : '') +
@@ -711,6 +723,17 @@
     bindTerms(els.extras);
     var openBtn = els.extras.querySelector("[data-open-depth]");
     if (openBtn) openBtn.addEventListener("click", openDepth);
+    els.extras.querySelectorAll(".ls-question-index button").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var rootBox = els.extras.querySelector(".ls-deepbox--root");
+        if (rootBox) rootBox.open = true;
+        var target = els.extras.querySelector('[data-qid="' + b.getAttribute("data-qid") + '"]');
+        if (target) {
+          target.open = true;
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+    });
     typesetText();
   }
 
@@ -1309,6 +1332,7 @@
       if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
       if (/^[0-9]$/.test(e.key) && !e.altKey) { e.preventDefault(); pressPositionDigit(e.key); return; }
       resetPositionBuffer();
+      if (demo && demo.onKey && demo.onKey(e)) { e.preventDefault(); return; }
       if (e.key === "?" || e.key === "h" || e.key === "H") { e.preventDefault(); toggleHelp(); return; }
       if (e.shiftKey && e.key === "ArrowRight") { e.preventDefault(); nextDay(); return; }
       if (e.shiftKey && e.key === "ArrowLeft") { e.preventDefault(); prevDay(); return; }
