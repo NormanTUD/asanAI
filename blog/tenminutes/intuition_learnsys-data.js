@@ -5,10 +5,10 @@
     return { id: id, lens: lens, title: title, body: body, tex: tex || "" };
   }
   var sources = [
-    { label: "Harris (1954), Distributional Structure", url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf" },
-    { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt" },
-    { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781" },
-    { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/" }
+    { label: "Harris (1954), Distributional Structure", url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf", why: { de: "Begründet Bedeutung aus dem sprachlichen Kontext.", en: "Grounds meaning in linguistic context." } },
+    { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt", why: { de: "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.", en: "Classic formula: meaning shows in a word's company." } },
+    { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
+    { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }
   ];
   var introSteps = DE ? [
     {
@@ -38,8 +38,8 @@
         box("chat-3", "Neutral", "Was die Antwort nicht ist", "Der KI-Chat gibt eine kurze Übersicht, keine Entscheidung. Die Frage ist philosophisch offen; die Antwort ist eine Landkarte der Positionen.")
       ],
       sources: [
-        { label: "Leibniz (1714), Monadologie", url: "https://www.gutenberg.org/ebooks/17641" },
-        { label: "Barcellos (Jocax), The Jocaxian Nothingness", url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html" }
+        { label: "Leibniz (1714), Monadologie", url: "https://www.gutenberg.org/ebooks/17641", why: { de: "Leibniz' klassische Formulierung der Frage nach dem Etwas statt Nichts.", en: "Leibniz's classic formulation of the something-rather-than-nothing question." } },
+        { label: "Barcellos (Jocax), The Jocaxian Nothingness", url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html", why: { de: "Neuere, ungewöhnliche Antwort: ein Nichts ohne Regeln.", en: "A more recent, unusual answer: a nothing without rules." } }
       ]
     },
     {
@@ -112,8 +112,8 @@
         box("chat-3", "Neutral", "What the answer is not", "The AI chat gives a short overview, not a decision. The question is philosophically open; the answer is a map of positions.")
       ],
       sources: [
-        { label: "Leibniz (1714), Monadology", url: "https://www.gutenberg.org/ebooks/17641" },
-        { label: "Barcellos (Jocax), The Jocaxian Nothingness", url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html" }
+        { label: "Leibniz (1714), Monadology", url: "https://www.gutenberg.org/ebooks/17641", why: { de: "Leibniz' klassische Formulierung der Frage nach dem Etwas statt Nichts.", en: "Leibniz's classic formulation of the something-rather-than-nothing question." } },
+        { label: "Barcellos (Jocax), The Jocaxian Nothingness", url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html", why: { de: "Neuere, ungewöhnliche Antwort: ein Nichts ohne Regeln.", en: "A more recent, unusual answer: a nothing without rules." } }
       ]
     },
     {
@@ -172,7 +172,8 @@
       boxes: [
         box("emb-1", "Mathematik", "Was ist ein Vektor?", "Ein Vektor ist ein Element eines Vektorraums. In der Praxis ist er eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt. Die Richtung ist oft wichtiger als die Länge."),
         box("emb-2", "Geschichte", "Woher kommt die Idee?", "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert. Wörter, die in ähnlichen Kontexten auftreten, bekommen ähnliche Vektoren."),
-        box("emb-3", "Technik", "Warum reicht eine Achse nicht?", "Eine Achse kann nur eine Eigenschaft ordnen. Bedeutung hat viele Eigenschaften gleichzeitig: Temperatur, Geschlecht, Macht, Thema. Jede zusätzliche Achse kann eine weitere Unterscheidung tragen.")
+        box("emb-3", "Technik", "Warum reicht eine Achse nicht?", "Eine Achse kann nur eine Eigenschaft ordnen. Bedeutung hat viele Eigenschaften gleichzeitig: Temperatur, Geschlecht, Macht, Thema. Jede zusätzliche Achse kann eine weitere Unterscheidung tragen."),
+        box("emb-mis", "Grenze", "Ist ein Embedding ein Wörterbuch?", "Nein. Ein Embedding ist eine gelernte Tabelle von Vektoren, keine Definition. Nähe bedeutet ähnlicher Kontext im Training, nicht Synonymie. Die Richtung ist eine statistische Regelmäßigkeit, kein Lexikoneintrag.")
       ],
       sources: sources.slice(0, 3)
     },
@@ -261,7 +262,8 @@
       boxes: [
         box("emb-1", "Mathematics", "What is a vector?", "A vector is an element of a vector space. In practice it is an ordered list of numbers that describes a point or a direction. Direction often matters more than length."),
         box("emb-2", "History", "Where does the idea come from?", "Firth (1957): “You shall know a word by the company it keeps.” Harris (1954) formulated the distributional idea earlier. Words that appear in similar contexts receive similar vectors."),
-        box("emb-3", "Technique", "Why is one axis not enough?", "One axis can order only one property. Meaning has many properties at once: temperature, gender, power, topic. Every extra axis can carry another distinction.")
+        box("emb-3", "Technique", "Why is one axis not enough?", "One axis can order only one property. Meaning has many properties at once: temperature, gender, power, topic. Every extra axis can carry another distinction."),
+        box("emb-mis", "Limit", "Is an embedding a dictionary?", "No. An embedding is a learned table of vectors, not a definition. Closeness means similar training context, not synonymy. The direction is a statistical regularity, not a dictionary entry.")
       ],
       sources: sources.slice(0, 3)
     },
@@ -345,7 +347,7 @@
       kicker: "03 / Tokenize",
       title: "Text wird zu IDs",
       body: "Ein Token ist kein Wort. Text wird zu Zahlen: Jedes Zeichen hat einen Codepunkt, und ein byte-level Tokenizer startet bei 256 Bytes, damit jeder String darstellbar ist. BPE ist ein Kompressionsalgorithmus: Er beginnt mit kleinen Einheiten und verschmilzt häufige Paare zu längeren Tokens. Ziel ist, mit möglichst wenigen Tokens möglichst viel Text zu erfassen. Was im Trainingskorpus häufig ist, wird kurz; seltene Schriften bleiben in vielen Byte-Tokens.",
-      watch: "Klicke die Beispiele. Welches Wort zerfällt in Subwords?",
+      watch: "Gehe mit „Weiter“ oder der Pfeiltaste durch beide Beispielreihen. Welches Wort zerfällt in Subwords?",
       demoState: { scene: "tokenize" },
       context: "Die IDs sind Adressen in der Embedding-Tabelle. BPE lernt seine Merges aus dem Trainingskorpus, nicht aus einer festen Wortliste.",
       deep: "Ein byte-level Tokenizer startet mit 256 Bytes. Häufige Paare werden zu einem Token; ein englischer Satz braucht deshalb oft weniger Tokens als derselbe Inhalt in einer Schrift, die im Training selten war. Die gezeigten Zahlen sind ein illustratives Beispiel, keine Messung eines bestimmten Modells.",
@@ -353,11 +355,12 @@
         box("tok-1", "Technik", "Warum Subwords?", "Ein festes Wort-Vokabular müsste jedes unbekannte Wort als Sonderzeichen behandeln. Subwords erlauben es, neue Wörter aus bekannten Teilen zusammenzusetzen. Gleichzeitig bleibt das Vokabular endlich."),
         box("tok-2", "Mathematik", "Was ist eine ID?", "Eine ID ist ein Integer, der auf eine Zeile in der Embedding-Matrix zeigt. Die ID selbst hat keine Bedeutung; erst der gelernte Vektor gibt dem Token eine Position im Raum."),
         box("tok-3", "Technik", "BPE = Kompression", "Byte Pair Encoding beginnt mit Bytes und ersetzt wiederholt das häufigste Paar durch ein neues Symbol. Nach vielen Merges wird aus häufigen Zeichenfolgen ein einzelner Token. Das ist Datenkompression, gelernt aus dem Trainingskorpus."),
-        box("tok-4", "Grenze", "Warum ist Englisch kürzer?", "Weil der Trainingskorpus überwiegend englisch ist. Häufige englische Wörter bekommen lange Merges; Schriften mit wenig Text im Korpus bleiben auf Byte-Ebene. Die Demo zeigt das illustrativ, nicht als exakte Messung.")
+        box("tok-4", "Grenze", "Warum ist Englisch kürzer?", "Weil der Trainingskorpus überwiegend englisch ist. Häufige englische Wörter bekommen lange Merges; Schriften mit wenig Text im Korpus bleiben auf Byte-Ebene. Die Demo zeigt das illustrativ, nicht als exakte Messung."),
+        box("tok-utf8", "Technik", "UTF-8 und Joins", "UTF-8 kodiert Zeichen als Bytes. Ein sichtbares Emoji kann aus mehreren Codepoints bestehen: 🐈‍⬛ kombiniert 🐈, einen unsichtbaren Zero Width Joiner (ZWJ) und ⬛. Der Tokenizer sieht die Bytefolge, nicht das fertige Bild. Deshalb ist die schwarze Katze hier zwei Emoji-Bausteine und mehrere Byte-Tokens.")
       ],
       sources: [
-        { label: "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units", url: "https://arxiv.org/abs/1508.07909" },
-        { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }
+        { label: "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units", url: "https://arxiv.org/abs/1508.07909", why: { de: "BPE als Subword-Kompression für seltene Wörter.", en: "BPE as subword compression for rare words." } },
+        { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: byte-level BPE und die hier gezeigten Hidden States.", en: "GPT-2: byte-level BPE and the hidden states shown here." } }
       ]
     }
   ] : [
@@ -365,7 +368,7 @@
       kicker: "03 / Tokenize",
       title: "Text becomes IDs",
       body: "A token is not a word. Text is encoded as numbers: every character has a code point, and a byte-level tokenizer starts from 256 bytes so every string is representable. BPE is a compression algorithm: it starts from small units and merges frequent pairs into longer tokens. The goal is to cover as much long text as possible with as few tokens as possible. What is frequent in the training corpus becomes short; rare scripts stay in many byte tokens.",
-      watch: "Click the samples. Which word splits into subwords?",
+      watch: "Walk through both example rows with “Next” or the arrow key. Which word splits into subwords?",
       demoState: { scene: "tokenize" },
       context: "The IDs are addresses into the embedding table. BPE learns its merges from the training corpus, not from a fixed word list.",
       deep: "A byte-level tokenizer starts with 256 bytes. Frequent pairs become one token; an English sentence therefore often needs fewer tokens than the same content in a script that was rare in training. The numbers shown are an illustrative example, not a measurement of a specific model.",
@@ -373,11 +376,12 @@
         box("tok-1", "Technique", "Why subwords?", "A fixed word vocabulary would have to treat every unseen word as a special symbol. Subwords let the model build new words from known pieces while keeping the vocabulary finite."),
         box("tok-2", "Mathematics", "What is an ID?", "An ID is an integer that points to a row in the embedding matrix. The ID itself has no meaning; the learned vector gives the token a position in the space."),
         box("tok-3", "Technique", "BPE = compression", "Byte pair encoding starts with bytes and repeatedly replaces the most frequent pair with a new symbol. After many merges, frequent character sequences become a single token. That is data compression learned from the training corpus."),
-        box("tok-4", "Limit", "Why is English shorter?", "Because the training corpus is mostly English. Frequent English words get long merges; scripts with little text in the corpus stay at the byte level. The demo shows this illustratively, not as an exact measurement.")
+        box("tok-4", "Limit", "Why is English shorter?", "Because the training corpus is mostly English. Frequent English words get long merges; scripts with little text in the corpus stay at the byte level. The demo shows this illustratively, not as an exact measurement."),
+        box("tok-utf8", "Technique", "UTF-8 and joins", "UTF-8 encodes characters as bytes. A visible emoji can consist of several code points: 🐈‍⬛ combines 🐈, an invisible zero-width joiner (ZWJ), and ⬛. The tokenizer sees the byte sequence, not the finished picture. That is why the black cat is two emoji parts and several byte tokens here.")
       ],
       sources: [
-        { label: "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units", url: "https://arxiv.org/abs/1508.07909" },
-        { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }
+        { label: "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units", url: "https://arxiv.org/abs/1508.07909", why: { de: "BPE als Subword-Kompression für seltene Wörter.", en: "BPE as subword compression for rare words." } },
+        { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: byte-level BPE und die hier gezeigten Hidden States.", en: "GPT-2: byte-level BPE and the hidden states shown here." } }
       ]
     }
   ];
@@ -397,14 +401,15 @@
         box("pos-3", "Stellenwertsystem", "Warum schnelle und langsame Rotationen?", "Verschiedene Dimensionen drehen unterschiedlich schnell. Schnelle Rotationen unterscheiden nahe Positionen, langsame unterscheiden weit entfernte. Zusammen wirkt das wie ein Stellenwertsystem aus Einern, Zehnern und Hundertern für Positionen."),
         box("pos-4", "Geometrie", "Was zeigt der Plot?", "Die Demo nutzt die Großkreis-Metrik: Richtungen zählen, nicht Längen. Die Länge im Plot ist der Großkreis zwischen Wort und Positionsvektor. Im hochdimensionalen Raum entstehen daraus Muster, die das Modell lernen kann, um so etwas wie „Drache an Position 5“ oder „Drache an Position 22“ zu kodieren."),
         box("pos-5", "Grenze", "Was ist vereinfacht?", "Die Demo zeigt nur wenige Dimensionen und eine sinusförmige Kodierung. RoPE rotiert Query/Key statt des Token-Vektors. Die gezeigten Muster sind eine Intuition, nicht die exakte Implementierung."),
-        box("pos-6", "Detail", "Was passiert mit der Position danach?", "Ab dem Moment, in dem die Position zum Token gehört, bekommt jede folgende Schicht nur noch diese Version. Sie wird nicht mehr herausgeworfen. Das Token ist dann nicht mehr nur „Drache“, sondern „Drache an dieser Position“; die Varianten werden für das Netz unterscheidbar.")
+        box("pos-6", "Detail", "Was passiert mit der Position danach?", "Ab dem Moment, in dem die Position zum Token gehört, bekommt jede folgende Schicht nur noch diese Version. Sie wird nicht mehr herausgeworfen. Das Token ist dann nicht mehr nur „Drache“, sondern „Drache an dieser Position“; die Varianten werden für das Netz unterscheidbar."),
+        box("pos-7", "Vergleich", "Sinus, gelernt, ALiBi, RoPE", "Sinus nutzt feste Wellen; gelernte absolute Positionen sind flexibel, aber an Trainingspositionen gebunden; ALiBi bestraft Distanz linear; RoPE dreht Query/Key und macht relative Abstände als Rotation sichtbar. Das Diagramm ist schematisch, keine Messung eines bestimmten Modells.")
       ],
       sources: [
-        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
-        { label: "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding", url: "https://arxiv.org/abs/2104.09864" },
-        { label: "Touvron et al. (2023), Llama 2", url: "https://arxiv.org/abs/2307.09288" },
-        { label: "Press et al. (2021), Attention with Linear Biases (ALiBi)", url: "https://arxiv.org/abs/2108.12409" },
-        { label: "Raffel et al. (2020), T5", url: "https://arxiv.org/abs/1910.10683" }
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+        { label: "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding", url: "https://arxiv.org/abs/2104.09864", why: { de: "RoPE: Positionskodierung als Rotation von Query und Key.", en: "RoPE: position encoding as a rotation of query and key." } },
+        { label: "Touvron et al. (2023), Llama 2", url: "https://arxiv.org/abs/2307.09288", why: { de: "Llama 2 nutzt RoPE; Beispiel für ein modernes Modell.", en: "Llama 2 uses RoPE; an example of a modern model." } },
+        { label: "Press et al. (2021), Attention with Linear Biases (ALiBi)", url: "https://arxiv.org/abs/2108.12409", why: { de: "ALiBi: linearer Distanz-Bias statt Positions-Embedding.", en: "ALiBi: a linear distance bias instead of position embeddings." } },
+        { label: "Raffel et al. (2020), T5", url: "https://arxiv.org/abs/1910.10683", why: { de: "T5: relative Position Bias als Alternative.", en: "T5: relative position bias as an alternative." } }
       ]
     }
   ] : [
@@ -422,14 +427,15 @@
         box("pos-3", "Place value", "Why fast and slow rotations?", "Different dimensions rotate at different speeds. Fast rotations distinguish nearby positions, slow rotations distinguish distant ones. Together they act like a place-value system of ones, tens, and hundreds for positions."),
         box("pos-4", "Geometry", "What does the plot show?", "The demo uses the great-circle metric: directions matter, not lengths. The length in the plot is the great circle between the word and the position vector. In high-dimensional space this creates patterns the model can learn, to encode something like “dragon at position 5” or “dragon at position 22”."),
         box("pos-5", "Limit", "What is simplified?", "The demo shows only a few dimensions and a sinusoidal encoding. RoPE rotates query/key instead of the token vector. The patterns shown are an intuition, not the exact implementation."),
-        box("pos-6", "Detail", "What happens to the position afterwards?", "From the moment the position belongs to the token, every following layer receives only that version. It is never thrown away again. The token is no longer just “dragon”; it is “dragon at this position”, and the variants become distinguishable to the network.")
+        box("pos-6", "Detail", "What happens to the position afterwards?", "From the moment the position belongs to the token, every following layer receives only that version. It is never thrown away again. The token is no longer just “dragon”; it is “dragon at this position”, and the variants become distinguishable to the network."),
+        box("pos-7", "Comparison", "Sinus, learned, ALiBi, RoPE", "Sinus uses fixed waves; learned absolute positions are flexible but tied to training positions; ALiBi penalises distance linearly; RoPE rotates query/key and makes relative distances visible as rotation. The chart is schematic, not a measurement of a specific model.")
       ],
       sources: [
-        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
-        { label: "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding", url: "https://arxiv.org/abs/2104.09864" },
-        { label: "Touvron et al. (2023), Llama 2", url: "https://arxiv.org/abs/2307.09288" },
-        { label: "Press et al. (2021), Attention with Linear Biases (ALiBi)", url: "https://arxiv.org/abs/2108.12409" },
-        { label: "Raffel et al. (2020), T5", url: "https://arxiv.org/abs/1910.10683" }
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+        { label: "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding", url: "https://arxiv.org/abs/2104.09864", why: { de: "RoPE: Positionskodierung als Rotation von Query und Key.", en: "RoPE: position encoding as a rotation of query and key." } },
+        { label: "Touvron et al. (2023), Llama 2", url: "https://arxiv.org/abs/2307.09288", why: { de: "Llama 2 nutzt RoPE; Beispiel für ein modernes Modell.", en: "Llama 2 uses RoPE; an example of a modern model." } },
+        { label: "Press et al. (2021), Attention with Linear Biases (ALiBi)", url: "https://arxiv.org/abs/2108.12409", why: { de: "ALiBi: linearer Distanz-Bias statt Positions-Embedding.", en: "ALiBi: a linear distance bias instead of position embeddings." } },
+        { label: "Raffel et al. (2020), T5", url: "https://arxiv.org/abs/1910.10683", why: { de: "T5: relative Position Bias als Alternative.", en: "T5: relative position bias as an alternative." } }
       ]
     }
   ];
@@ -446,9 +452,10 @@
       boxes: [
         box("att-1", "Technik", "Warum drei Vektoren?", "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen."),
         box("att-2", "Mathematik", "Warum Softmax?", "Softmax macht aus Scores eine Verteilung: positiv, summiert zu 1, Reihenfolge bleibt. Deshalb ist Attention ein endliches Budget."),
-        box("att-3", "Budget", "Ein Head, ein Budget", "Jede Zeile hat genau 1,00 zu vergeben. Mehr für ein Token heißt weniger für alle anderen. Viele Heads haben getrennte Budgets.")
+        box("att-3", "Budget", "Ein Head, ein Budget", "Jede Zeile hat genau 1,00 zu vergeben. Mehr für ein Token heißt weniger für alle anderen. Viele Heads haben getrennte Budgets."),
+        box("att-mis", "Grenze", "Ist Attention eine Datenbank?", "Nein. Attention schlägt keine Fakten nach. Es berechnet Gewichte über Value-Vektoren und mischt sie zu einer neuen Repräsentation. Das Ergebnis ist keine gespeicherte Zeile, sondern eine kontextabhängige Mischung.")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473" }]
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } }]
     },
     {
       kicker: "06b / Der Kontext",
@@ -463,9 +470,9 @@
         box("att-5", "Mathematik", "Die Formel", "Attention bildet aus Query, Key und Value eine gewichtete Summe. Die Softmax-Zeile summiert zu 100 %.", "\\underbrace{x'}_{\\substack{\\text{neuer Vektor}\\\\ \\text{für } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{Gewicht von } j\\\\ \\text{für } i}} \\underbrace{v_j}_{\\text{Value von } j}}_{\\substack{\\text{gewichtete Summe}\\\\ \\sum_j \\alpha_{ij}=100\\%}}")
       ],
       sources: [
-        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
-        { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473" },
-        { label: "Attention als Graph (interaktive Zusatzseite)", url: "../test/attention_as_graph.html" }
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+        { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } },
+        { label: "Attention als Graph (interaktive Zusatzseite)", url: "../test/attention_as_graph.html", why: { de: "Interaktive Zusatzseite zur Attention-Grafik.", en: "Interactive companion page for the attention graph." } }
       ]
     },
     {
@@ -480,7 +487,7 @@
         box("noise-1", "Beispiel", "Was heißt new allein?", "„new“ bedeutet „neu“, kann aber auch der Anfang von „New York“ sein. Erst das zweite Wort entscheidet, welche Lesart gilt."),
         box("noise-2", "Technik", "Was macht der Kontext?", "Der Kontext gewichtet die Nachbarschaften: „york“ macht die Stadt Lesart stärker, „car“ und „England“ verlieren an Gewicht. So reduziert Attention die Mehrdeutigkeit, statt sie zu verstärken.")
       ],
-      sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/" }]
+      sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "BERT-Schichten zeigen eine linguistische Pipeline.", en: "BERT layers reveal a linguistic pipeline." } }]
     },
     {
       kicker: "06d / Die Matrix",
@@ -495,7 +502,7 @@
         box("st-6", "Technik", "Lokale Bedeutung, dann Kontext", "Frühe Schichten lernen lokale Muster. Spätere Schichten kombinieren sie mit einem breiteren Kontext. Jede Schicht hat eigene Gewichte; die Struktur ist geteilt, die Parameter nicht."),
         box("st-7", "Mathematik", "Unembedding", "p(next | context) = softmax(W_U h_last). Der letzte Vektor zeigt auf eine Region von Token-Richtungen, dann wird eines gezogen.")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf" }]
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf", why: { de: "Funes als Bild für Vergessen, Abstraktion und Denken.", en: "Funes as an image of forgetting, abstraction, and thought." } }]
     }
   ] : [
     {
@@ -511,7 +518,7 @@
         box("att-2", "Mathematics", "Why softmax?", "Softmax turns scores into a distribution: positive, sum to one, order preserved. That is why attention is a finite budget."),
         box("att-3", "Budget", "One head, one budget", "Every row has exactly 1.00 to give. More for one token means less for the others. Many heads have separate budgets.")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473" }]
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } }]
     },
     {
       kicker: "06b / The context",
@@ -526,9 +533,9 @@
         box("att-5", "Mathematics", "The formula", "Attention builds a weighted sum from query, key, and value. The softmax row sums to 100%.", "\\underbrace{x'}_{\\substack{\\text{new vector}\\\\ \\text{for } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{weight of } j\\\\ \\text{for } i}} \\underbrace{v_j}_{\\text{value of } j}}_{\\substack{\\text{weighted sum}\\\\ \\sum_j \\alpha_{ij}=100\\%}}")
       ],
       sources: [
-        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
-        { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473" },
-        { label: "Attention as a graph (interactive companion page)", url: "../test/attention_as_graph.html" }
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+        { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } },
+        { label: "Attention as a graph (interactive companion page)", url: "../test/attention_as_graph.html", why: { de: "Interaktive Zusatzseite zur Attention-Grafik.", en: "Interactive companion page for the attention graph." } }
       ]
     },
     {
@@ -543,7 +550,7 @@
         box("noise-1", "Example", "What does new mean alone?", "“new” means “not old”, but it can also be the first half of “New York”. Only the second word decides which reading applies."),
         box("noise-2", "Technique", "What does context do?", "The context weights the neighbourhoods: “york” strengthens the city reading, while “car” and “England” lose weight. Attention reduces the ambiguity instead of amplifying it.")
       ],
-      sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/" }]
+      sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "BERT-Schichten zeigen eine linguistische Pipeline.", en: "BERT layers reveal a linguistic pipeline." } }]
     },
     {
       kicker: "06d / The matrix",
@@ -558,7 +565,7 @@
         box("st-6", "Technique", "Local meaning, then context", "Early layers learn local patterns. Later layers combine them with a wider context. Each layer has its own weights; the structure is shared, the parameters are not."),
         box("st-7", "Mathematics", "Unembedding", "p(next | context) = softmax(W_U h_last). The last vector points to a region of token directions, then one is drawn.")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf" }]
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf", why: { de: "Funes als Bild für Vergessen, Abstraktion und Denken.", en: "Funes as an image of forgetting, abstraction, and thought." } }]
     }
   ];
 
@@ -578,8 +585,8 @@
         box("ffn-4", "Geometrie", "Ist der reichere Vektor hochdimensional?", "Ja. Jeder Punkt in diesen Demos steht für einen Vektor mit Tausenden Dimensionen. Die zwei oder drei Achsen sind nur eine Projektion für uns; das FFN rechnet im vollen Raum. Die Muster in W₁ und der Pull in W₂ sind Richtungen in diesem hochdimensionalen Raum.")
       ],
       sources: [
-        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
-        { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2010.01019" }
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+        { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2010.01019", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
       ]
     }
   ] : [
@@ -598,8 +605,8 @@
         box("ffn-4", "Geometry", "Is the richer vector high-dimensional?", "Yes. Every point in these demos stands for a vector with thousands of dimensions. The two or three axes are only a projection for us; the FFN computes in the full space. The patterns in W₁ and the pull in W₂ are directions in that high-dimensional space.")
       ],
       sources: [
-        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
-        { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2010.01019" }
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+        { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2010.01019", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
       ]
     }
   ];
@@ -648,7 +655,7 @@
         box("md-2", "Technik", "Was machen Temperatur und Top-k?", "Temperatur macht die Auswahl breiter oder schärfer. Top-k begrenzt die Auswahl auf die k nächsten Wörter. Beides verändert die Verteilung, nicht die Karte."),
         box("md-3", "Geometrie", "Großkreis und Naht", "Der letzte Vektor zeigt auf eine Region von Token-Richtungen. Nahe einer Naht sind zwei Wörter fast gleich wahrscheinlich. Mehr Tokens verkleinern die Zellen, aber die Nähte schließen sich nie. Mabrok (2026) nennt das Band um eine Naht die Expressibility Gap.")
       ],
-      sources: [{ label: "Mabrok (2026), arXiv:2603.22301", url: "https://arxiv.org/abs/2603.22301" }]
+      sources: [{ label: "Mabrok (2026), arXiv:2603.22301", url: "https://arxiv.org/abs/2603.22301", why: { de: "Quelle der zugehörigen Aktivierungs-/Geometrie-Aussagen.", en: "Source for the related activation/geometry claims." } }]
     }
   ] : [
     {
@@ -664,7 +671,7 @@
         box("md-2", "Technique", "What do temperature and top-k do?", "Temperature makes the choice wider or sharper. Top-k limits it to the k nearest words. Both change the distribution, not the map."),
         box("md-3", "Geometry", "Great circle and seam", "The final vector points to a region of token directions. Near a seam two words are almost equally likely. More tokens shrink the cells, but the seams never close. Mabrok (2026) calls the band around a seam the expressibility gap.")
       ],
-      sources: [{ label: "Mabrok (2026), arXiv:2603.22301", url: "https://arxiv.org/abs/2603.22301" }]
+      sources: [{ label: "Mabrok (2026), arXiv:2603.22301", url: "https://arxiv.org/abs/2603.22301", why: { de: "Quelle der zugehörigen Aktivierungs-/Geometrie-Aussagen.", en: "Source for the related activation/geometry claims." } }]
     }
   ];
 
@@ -681,7 +688,7 @@
         box("sm-1", "Mathematik", "Die Formel", "p_i = exp(z_i) / Σ_j exp(z_j). Vorher wird oft das Maximum abgezogen, damit die Exponentialfunktion stabil bleibt."),
         box("sm-2", "Temperatur", "Was macht T?", "p_i ∝ exp(z_i / T). T < 1 schärft, T > 1 flacht ab. Die Rangfolge bleibt, die Masse verschiebt sich.")
       ],
-      sources: [{ label: "Transformer Explainer (Polo Club, Georgia Tech)", url: "https://poloclub.github.io/transformer-explainer/" }]
+      sources: [{ label: "Transformer Explainer (Polo Club, Georgia Tech)", url: "https://poloclub.github.io/transformer-explainer/", why: { de: "Interaktive Quelle für die GPT-2-Logits und Softmax-Demo.", en: "Interactive source for the GPT-2 logits and softmax demo." } }]
     }
   ] : [
     {
@@ -694,9 +701,10 @@
       deep: "Why exp and not logit divided by the sum? Logits can be negative. The exponential makes every value positive and preserves the order; dividing by the sum gives probabilities. The absolute offset is arbitrary; softmax depends only on differences.",
       boxes: [
         box("sm-1", "Mathematics", "The formula", "p_i = exp(z_i) / Σ_j exp(z_j). The maximum is often subtracted first so the exponential stays stable."),
-        box("sm-2", "Temperature", "What does T do?", "p_i ∝ exp(z_i / T). T < 1 sharpens, T > 1 flattens. The ranking stays, the mass shifts.")
+        box("sm-2", "Temperature", "What does T do?", "p_i ∝ exp(z_i / T). T < 1 sharpens, T > 1 flattens. The ranking stays, the mass shifts."),
+        box("sm-mis", "Limit", "Does softmax create the ranking?", "No. The order comes from the logits. Softmax turns scores into a positive distribution that sums to 1; temperature changes the sharpness, not the order.")
       ],
-      sources: [{ label: "Transformer Explainer (Polo Club, Georgia Tech)", url: "https://poloclub.github.io/transformer-explainer/" }]
+      sources: [{ label: "Transformer Explainer (Polo Club, Georgia Tech)", url: "https://poloclub.github.io/transformer-explainer/", why: { de: "Interaktive Quelle für die GPT-2-Logits und Softmax-Demo.", en: "Interactive source for the GPT-2 logits and softmax demo." } }]
     }
   ];
 
@@ -713,22 +721,24 @@
         box("mod-0", "Idee", "Was ist ein Modell?", "Ein Modell ist eine parametrisierte Funktion, die aus Eingaben Ausgaben schätzt. Beim Training werden die Parameter so angepasst, dass die Ausgaben zu den Daten passen."),
         box("in-11", "Mathematik", "Der Stapel", "output = layer₃(layer₂(layer₁(input))). Jede Schicht ist eine Funktion mit Parametern; die Komposition ist das Modell.")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }]
     },
     {
       kicker: "04a / Die Bausteine",
       title: "Die Bausteine eines LLM",
-      body: "Ein LLM ist ein Modell, das diese Schätzung mit vier Bausteinen baut: Tokenizer, Embedding, Transformer-Blöcke aus Attention und neuronalen Netzen, und eine Unembedding-Schicht. Der Tokenizer zerlegt Text, das Embedding macht Vektoren, die Transformer-Blöcke verarbeiten den Kontext, und das Unembedding erzeugt die Scores für das nächste Token.",
-      watch: "Klicke die Bausteine an. Wo wird aus Text ein Vektor, wo wieder eine Verteilung?",
-      demoState: { scene: "model", view: "blocks" },
-      context: "Die Reihenfolge ist die Architektur. Jeder Baustein verändert die Darstellung, bis am Ende eine Verteilung über das Vokabular steht.",
-      deep: "Jeder Baustein ist selbst ein gelerntes Stück Funktion. Zusammen approximieren sie die viel zu komplizierte Funktion „nächstes Token aus Kontext“.",
+      body: "Ein LLM ist eine Kette von Stationen, keine einzelne Zauberformel. Gehe die fünf Stationen mit „Weiter“ durch: Tokenizer, Embedding, Transformer-Block, Wiederholen und Unembedding. Links siehst du den Block, rechts, was er tut.",
+      watch: "Gehe die Stationen mit „Weiter“ oder der Pfeiltaste durch. Was macht jeder Block?",
+      demoState: { scene: "blocks" },
+      context: "Die Reihenfolge ist die Architektur: Text → Tokens → Vektoren → Kontext → Verteilung. Jeder Schritt verändert die Darstellung, bis am Ende ein Token gezogen wird.",
+      deep: "Jeder Block ist selbst ein gelerntes Stück Funktion. Zusammen approximieren sie die viel zu komplizierte Funktion „nächstes Token aus Kontext“. Die Details der Attention und des FFN kommen auf den nächsten Folien.",
       boxes: [
-        box("mod-1", "Technik", "Die vier Bausteine", "Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Transformer-Blöcke: Attention mischt Tokens, das neuronale Netz rechnet pro Token. Unembedding: Vektor → Scores über das Vokabular."),
+        box("mod-1", "Technik", "Die fünf Stationen", "Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Transformer-Block: Attention kontextualisiert, das FFN verschiebt pro Token. Wiederholen: viele Blöcke hintereinander. Unembedding: Vektor → Scores und Softmax."),
+        box("mod-norm", "Technik", "LayerNorm und andere Blöcke", "Ein echter Transformer-Block enthält zusätzlich LayerNorm, Residualverbindungen und mehrere Attention-Heads. Es gibt auch andere Architekturen und Details wie Mixture-of-Experts, Multi-Query-Attention und verschiedene Positionsverfahren. Wir lassen sie hier weg, um bei der Intuition zu bleiben."),
+        box("mod-angle", "Mathematik", "Warum Winkel?", "Am Ende werden Richtungen verglichen, nicht Längen. Der Winkel zwischen zwei Vektoren ändert sich in hohen Dimensionen weniger stark als ihre Länge. Deshalb ist die Großkreis-Metrik hier nützlich; für den Einstieg reicht die Intuition."),
         box("in-13", "Grenze", "Was heißt plausibel?", "Plausibel heißt: Die Fortsetzung kam im Trainingstext vor. Es heißt nicht, dass das Modell eine eigene Vorstellung von Wahrheit hat."),
         box("mod-extra", "Grenze", "Was fehlt hier?", "Es gibt weitere Architekturen und Details, die wir hier nicht besprechen: Mixture-of-Experts, andere Normalisierungen, Multi-Query-Attention, verschiedene Positionsverfahren und viele Trainingstricks. Hier geht es nur um die Intuition.")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }]
     }
   ] : [
     {
@@ -743,22 +753,24 @@
         box("mod-0", "Idea", "What is a model?", "A model is a parameterised function that estimates outputs from inputs. Training adjusts the parameters so that the outputs fit the data."),
         box("in-11", "Mathematics", "The stack", "output = layer₃(layer₂(layer₁(input))). Each layer is a function with parameters; the composition is the model.")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }]
     },
     {
       kicker: "04a / The building blocks",
       title: "The building blocks of an LLM",
-      body: "An LLM is a model that builds this estimate from four blocks: a tokenizer, an embedding, transformer blocks made of attention and neural networks, and an unembedding layer. The tokenizer splits text, the embedding turns tokens into vectors, the transformer blocks process the context, and the unembedding produces the scores for the next token.",
-      watch: "Click the building blocks. Where does text become a vector, and where does it become a distribution again?",
-      demoState: { scene: "model", view: "blocks" },
-      context: "The order is the architecture. Each block changes the representation until a distribution over the vocabulary remains.",
-      deep: "Each block is itself a learned piece of function. Together they approximate the far too complicated function “next token from context”.",
+      body: "An LLM is a chain of stations, not a single magic formula. Walk through the five stations with “Next”: tokenizer, embedding, transformer block, repeat, and unembedding. The block is on the left, what it does on the right.",
+      watch: "Walk through the stations with “Next” or the arrow key. What does each block do?",
+      demoState: { scene: "blocks" },
+      context: "The order is the architecture: text → tokens → vectors → context → distribution. Each step changes the representation until a token is drawn.",
+      deep: "Each block is itself a learned piece of function. Together they approximate the far too complicated function “next token from context”. The details of attention and the FFN come on the next slides.",
       boxes: [
-        box("mod-1", "Technique", "The four building blocks", "Tokenizer: text → tokens. Embedding: tokens → vectors. Transformer blocks: attention mixes tokens, the neural network computes per token. Unembedding: vector → scores over the vocabulary."),
+        box("mod-1", "Technique", "The five stations", "Tokenizer: text → tokens. Embedding: tokens → vectors. Transformer block: attention contextualises, the FFN shifts per token. Repeat: many blocks in a row. Unembedding: vector → scores and softmax."),
+        box("mod-norm", "Technique", "LayerNorm and other blocks", "A real transformer block also contains LayerNorm, residual connections, and several attention heads. There are further architectures and details such as mixture-of-experts, multi-query attention, and different positional schemes. We leave them out here to keep the intuition in focus."),
+        box("mod-angle", "Mathematics", "Why angles?", "At the end, directions are compared, not lengths. The angle between two vectors changes less in high dimensions than their length. That is why the great-circle metric is useful here; for a first pass the intuition is enough."),
         box("in-13", "Limit", "What does plausible mean?", "Plausible means the continuation occurred in the training text. It does not mean the model has its own notion of truth."),
         box("mod-extra", "Limit", "What is missing here?", "There are further architectures and details we do not cover here: mixture-of-experts, other normalisations, multi-query attention, different positional schemes, and many training tricks. This page is about the intuition.")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }]
     }
   ];
 
@@ -777,7 +789,7 @@
         box("man-3", "Grenze", "Wie echt ist die Übersetzung?", "Die Demo zeigt eine Idee, keine Messung. Ein echtes Modell lernt die Abbildung aus Text; die Flächen sind abstrakt und für Menschen schwer zu sehen."),
         box("man-4", "Mathematik", "Was ist eine Mannigfaltigkeit?", "Eine Mannigfaltigkeit ist ein Raum, der lokal wie R^n aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im R^n abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus.")
       ],
-      sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781" }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/" }, { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087" }, { label: "Morris (2007), Topology Without Tears", url: "https://archive.org/details/topbook" }]
+      sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }, { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087", why: { de: "Übertragung zwischen Worträumen ohne parallele Daten.", en: "Transport between word spaces without parallel data." } }, { label: "Morris (2007), Topology Without Tears", url: "https://archive.org/details/topbook", why: { de: "Topologische Grundlage für Mannigfaltigkeiten.", en: "Topological background for manifolds." } }]
     }
   ] : [
     {
@@ -794,7 +806,7 @@
         box("man-3", "Limit", "How real is the translation?", "The demo shows an idea, not a measurement. A real model learns the map from text; the surfaces are abstract and hard for humans to see."),
         box("man-4", "Mathematics", "What is a manifold?", "A manifold is a space that locally looks like R^n: every point has a chart that maps a neighbourhood onto an open set in R^n, and the charts change smoothly. Globally the space can be curved, for example a sphere or a torus.")
       ],
-      sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781" }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/" }, { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087" }, { label: "Morris (2007), Topology Without Tears", url: "https://archive.org/details/topbook" }]
+      sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }, { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087", why: { de: "Übertragung zwischen Worträumen ohne parallele Daten.", en: "Transport between word spaces without parallel data." } }, { label: "Morris (2007), Topology Without Tears", url: "https://archive.org/details/topbook", why: { de: "Topologische Grundlage für Mannigfaltigkeiten.", en: "Topological background for manifolds." } }]
     }
   ];
 
@@ -811,7 +823,7 @@
         box("mlp-1", "Mathematik", "Die Dense-Schicht", "x = (x₁, x₂), h = act(W₁x + b₁), z = W₂h + b₂. Die Schicht dehnt auf n verborgene Werte, biegt jeden mit einer Aktivierung und projiziert auf eine Höhe."),
         box("mlp-2", "Grenze", "Warum sieht man das im LLM nicht?", "Weil die Räume zu hochdimensional sind. Die Demo ist eine Projektion auf drei Achsen. Ein echtes Modell arbeitet mit Tausenden Dimensionen.")
       ],
-      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355" }]
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } }]
     }
   ] : [
     {
@@ -826,7 +838,7 @@
         box("mlp-1", "Mathematics", "The dense layer", "x = (x₁, x₂), h = act(W₁x + b₁), z = W₂h + b₂. The layer expands to n hidden values, bends each with an activation, and projects to one height."),
         box("mlp-2", "Limit", "Why don't we see this in an LLM?", "Because the spaces are too high-dimensional. The demo is a projection onto three axes. A real model works with thousands of dimensions.")
       ],
-      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355" }]
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } }]
     }
   ];
 
@@ -845,7 +857,7 @@
         box("st-3", "Mathematik", "Softmax", "p_i = exp(z_i) / Σ_j exp(z_j). Eine positive Verteilung über das Vokabular; die Reihenfolge bleibt."),
         box("st-4", "Technik", "Die Schicht", "layer(X) = Spalte der FFN(A_i). In einem echten Block umschließen Residualverbindungen und Normalisierung beide Schritte.")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Bridle (1990), Probabilistic Interpretation of Feedforward Classification", url: "https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html" }]
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bridle (1990), Probabilistic Interpretation of Feedforward Classification", url: "https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html", why: { de: "Softmax als probabilistische Klassifikation.", en: "Softmax as probabilistic classification." } }]
     }
 
   ] : [
@@ -863,7 +875,7 @@
         box("st-3", "Mathematics", "Softmax", "p_i = exp(z_i) / Σ_j exp(z_j). A positive distribution over the vocabulary; the order stays."),
         box("st-4", "Technique", "The layer", "layer(X) = column of FFN(A_i). In a real block, residual connections and normalization wrap both steps.")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Bridle (1990), Probabilistic Interpretation of Feedforward Classification", url: "https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html" }]
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bridle (1990), Probabilistic Interpretation of Feedforward Classification", url: "https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html", why: { de: "Softmax als probabilistische Klassifikation.", en: "Softmax as probabilistic classification." } }]
     }
 
   ];
@@ -882,7 +894,7 @@
         box("traj-2", "Grenze", "Was zeigt die Linie nicht?", "Sie zeigt nicht den echten Weg im 768-dimensionalen Raum. Sie zeigt einen Schatten, der die größten Änderungen sichtbar macht."),
         box("traj-3", "Metrik", "Warum Winkel statt Euklid?", "Am Ende zählt die Richtung des Zustands im Vektorraum, nicht seine Länge. Die Winkelansicht projiziert die Punkte auf die Einheitskugel und misst den Großkreis. Das ist eine andere Metrik als der gewohnte euklidische Abstand.")
       ],
-      sources: [{ label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }]
+      sources: [{ label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: byte-level BPE und die hier gezeigten Hidden States.", en: "GPT-2: byte-level BPE and the hidden states shown here." } }]
     }
   ] : [
     {
@@ -898,7 +910,7 @@
         box("traj-2", "Limit", "What does the line not show?", "It does not show the real path in the 768-dimensional space. It shows a shadow that makes the largest changes visible."),
         box("traj-3", "Metric", "Why angles instead of Euclid?", "At the end, the direction of the state in the vector space matters, not its length. The angle view projects the points onto the unit sphere and measures the great circle. That is a different metric from the usual Euclidean distance.")
       ],
-      sources: [{ label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }]
+      sources: [{ label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: byte-level BPE und die hier gezeigten Hidden States.", en: "GPT-2: byte-level BPE and the hidden states shown here." } }]
     }
   ];
 
@@ -919,7 +931,7 @@
         box("act-3", "Formeln", "Die vier Funktionen", "ReLU(x) = max(0,x). tanh(x) = (e^{2x} − 1)/(e^{2x} + 1). sigmoid(x) = 1/(1+e^{−x}). GELU ist ein glatter Durchlass, der kleine negative Werte noch passieren lässt."),
         box("act-4", "Satz", "Beliebig genau?", "Mit genügend Neuronen und einer nichtlinearen Aktivierung kann ein Netz jede stetige Funktion auf einem begrenzten Bereich beliebig genau annähern. Tiefe hilft, weil sie dieselbe Zahl von Neuronen effizienter nutzt.")
       ],
-      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355" }, { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274" }]
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } }, { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274", why: { de: "Universal Approximation für neuronale Netze.", en: "Universal approximation for neural networks." } }]
     }
   ] : [
     {
@@ -936,7 +948,7 @@
         box("act-3", "Formulas", "The four functions", "ReLU(x) = max(0,x). tanh(x) = (e^{2x} − 1)/(e^{2x} + 1). sigmoid(x) = 1/(1+e^{−x}). GELU is a smooth gate that still lets small negative values through."),
         box("act-4", "Theorem", "Arbitrarily close?", "With enough neurons and a nonlinear activation, a network can approximate any continuous function on a bounded region arbitrarily closely. Depth helps because it uses the same number of neurons more efficiently.")
       ],
-      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355" }, { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274" }]
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355", why: { de: "Origami in N dimensions: Grundlage für die MLP-Biege-Demo.", en: "Origami in N dimensions: background for the MLP bending demo." } }, { label: "Cybenko (1989), Approximation by Superpositions of a Sigmoidal Function", url: "https://doi.org/10.1007/BF02551274", why: { de: "Universal Approximation für neuronale Netze.", en: "Universal approximation for neural networks." } }]
     }
   ];
 
@@ -955,9 +967,9 @@
         box("lang-3", "Daten", "Was wird gefiltert?", "Qualität, Duplikate und Benchmark-Leaks. Dedupe verhindert Auswendiglernen; Decontamination verhindert, dass Testfragen im Training landen.")
       ],
       sources: [
-        { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165" },
-        { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425" },
-        { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499" }
+        { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", en: "GPT-3 data mix and few-shot results." } },
+        { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425", why: { de: "Tokenisierung kann Sprachen unterschiedlich teuer machen.", en: "Tokenization can make languages differently expensive." } },
+        { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499", why: { de: "Deduplizierung verbessert Sprachmodelle.", en: "Deduplication improves language models." } }
       ]
     }
   ] : [
@@ -975,9 +987,9 @@
         box("lang-3", "Data", "What is filtered?", "Quality, duplicates, and benchmark leaks. Dedupe prevents memorisation; decontamination prevents test questions from entering the training data.")
       ],
       sources: [
-        { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165" },
-        { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425" },
-        { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499" }
+        { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", en: "GPT-3 data mix and few-shot results." } },
+        { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425", why: { de: "Tokenisierung kann Sprachen unterschiedlich teuer machen.", en: "Tokenization can make languages differently expensive." } },
+        { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499", why: { de: "Deduplizierung verbessert Sprachmodelle.", en: "Deduplication improves language models." } }
       ]
     }
   ];
@@ -997,8 +1009,8 @@
         box("phil-3", "LLM", "Wo steht das Modell?", "Ein LLM folgt gelernten statistischen Regeln über Tokens. Es hat keinen direkten Zugang zur Welt, auf die die Tokens zeigen. Ob daraus Verstehen wird, ist genau die Frage.")
       ],
       sources: [
-        { label: "Searle (1980), Minds, Brains, and Programs", url: "https://doi.org/10.1017/S0140525X00005756" },
-        { label: "Harnad (1990), The Symbol Grounding Problem", url: "https://doi.org/10.1016/0167-2789(90)90087-6" }
+        { label: "Searle (1980), Minds, Brains, and Programs", url: "https://doi.org/10.1017/S0140525X00005756", why: { de: "Chinesisches Zimmer: Regeln befolgen vs. verstehen.", en: "Chinese Room: following rules vs. understanding." } },
+        { label: "Harnad (1990), The Symbol Grounding Problem", url: "https://doi.org/10.1016/0167-2789(90)90087-6", why: { de: "Symbol Grounding Problem.", en: "The symbol grounding problem." } }
       ]
     }
   ] : [
@@ -1016,8 +1028,8 @@
         box("phil-3", "LLM", "Where does the model stand?", "An LLM follows learned statistical rules over tokens. It has no direct access to the world the tokens point to. Whether that becomes understanding is exactly the question.")
       ],
       sources: [
-        { label: "Searle (1980), Minds, Brains, and Programs", url: "https://doi.org/10.1017/S0140525X00005756" },
-        { label: "Harnad (1990), The Symbol Grounding Problem", url: "https://doi.org/10.1016/0167-2789(90)90087-6" }
+        { label: "Searle (1980), Minds, Brains, and Programs", url: "https://doi.org/10.1017/S0140525X00005756", why: { de: "Chinesisches Zimmer: Regeln befolgen vs. verstehen.", en: "Chinese Room: following rules vs. understanding." } },
+        { label: "Harnad (1990), The Symbol Grounding Problem", url: "https://doi.org/10.1016/0167-2789(90)90087-6", why: { de: "Symbol Grounding Problem.", en: "The symbol grounding problem." } }
       ]
     }
   ];

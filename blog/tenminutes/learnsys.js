@@ -603,7 +603,9 @@
     if (sources.length) {
       html += '<details class="ls-deepbox"><summary>' + esc(t("sources")) + '</summary><ul class="ls-sources">' +
         sources.map(function (src) {
-          return '<li><a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.label) + '</a></li>';
+          var why = src.why && typeof src.why === "object" ? src.why[LANG] : src.why;
+          return '<li><a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.label) + '</a>' +
+            (why ? '<span class="ls-src-why">' + esc(why) + '</span>' : '') + '</li>';
         }).join("") + '</ul></details>';
     }
     return html + '</details></div>';

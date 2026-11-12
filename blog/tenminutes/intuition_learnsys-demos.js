@@ -3483,22 +3483,31 @@
           '<button type="button" class="ls-chip" data-bpe="ahimsa" aria-pressed="false">ahimsa</button>' +
           '<button type="button" class="ls-chip" data-bpe="devanagari" aria-pressed="false">अहिंसा</button>' +
           '<button type="button" class="ls-chip" data-bpe="hello" aria-pressed="false">hello</button>' +
-          '<button type="button" class="ls-chip" data-bpe="emoji" aria-pressed="false">🔥</button>' +
+          '<button type="button" class="ls-chip" data-bpe="blackcat" aria-pressed="false">🐈‍⬛</button>' +
         '</div>' +
         '<div class="ls-bpe-view" aria-live="polite">' +
           '<div class="ls-bpe-row"><span class="ls-bpe-label" data-bpe-before-label></span><div class="ls-bpe-chars" data-bpe-before></div><span class="ls-bpe-arrow">→</span><div class="ls-bpe-chars" data-bpe-after></div><span class="ls-bpe-count" data-bpe-count></span></div>' +
+          '<p class="ls-bpe-explain" data-bpe-explain hidden></p>' +
         '</div>' +
         '<p class="ls-bpe-note">' + (DE ? "BPE lernt Merges aus dem Trainingskorpus. Häufige Wörter werden kurz; seltene Schriften bleiben auf Byte-Ebene." : "BPE learns merges from the training corpus. Frequent words become short; rare scripts stay at the byte level.") + '</p>' +
-      '</div>';
+      '</div>' +
+      '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-tokenize-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-tokenize-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
     var samples = el.querySelector(".ls-tokenize-samples");
     var chips = el.querySelector(".ls-tokenize-chips");
     var stats = el.querySelector(".ls-tokenize-stats");
-    var value = examples.sentence.value;
+    var navPrev = el.querySelector(".ls-tokenize-prev");
+    var navNext = el.querySelector(".ls-tokenize-next");
+    var navProgress = el.querySelector(".ls-tokenize-progress");
+    var sampleKeys = ["understanding", "unbreakable", "sentence"];
+    var bpeKeys = ["unbelievable", "sprachmodell", "ahimsa", "devanagari", "hello", "blackcat"];
+    var stepIndex = 0;
+    var value = examples.understanding.value;
     var bpeBefore = el.querySelector("[data-bpe-before]");
     var bpeAfter = el.querySelector("[data-bpe-after]");
     var bpeCount = el.querySelector("[data-bpe-count]");
     var bpeBeforeLabel = el.querySelector("[data-bpe-before-label]");
+    var bpeExplain = el.querySelector("[data-bpe-explain]");
     var bpeView = el.querySelector(".ls-bpe-view");
     var bpeExamples = {
       unbelievable: { before: "unbelievable", beforeMode: "chars", after: ["un", "believ", "able"], afterMode: "tokens", de: "12 Zeichen → 3 Tokens", en: "12 characters → 3 tokens" },
@@ -3506,7 +3515,13 @@
       ahimsa: { before: "ahimsa", beforeMode: "chars", after: ["ah", "im", "sa"], afterMode: "tokens", de: "6 Zeichen → 3 Tokens", en: "6 characters → 3 tokens" },
       devanagari: { before: "अहिंसा", beforeMode: "word", after: ["E0", "A4", "85", "E0", "A4", "B9", "E0", "A4", "BF", "E0", "A4", "82", "E0", "A4", "B8", "E0", "A4", "BE"], afterMode: "bytes", de: "6 Zeichen → 18 Byte-Tokens", en: "6 characters → 18 byte tokens" },
       hello: { before: "hello", beforeMode: "chars", after: ["hello"], afterMode: "tokens", de: "5 Zeichen → 1 Token", en: "5 characters → 1 token" },
-      emoji: { before: "🔥", beforeMode: "word", after: ["F0", "9F", "94", "A5"], afterMode: "bytes", de: "1 Zeichen → 4 Byte-Tokens", en: "1 character → 4 byte tokens" }
+      blackcat: {
+        beforeParts: ["🐈", "⬛"], beforeMode: "parts",
+        after: ["F0", "9F", "90", "88", "E2", "80", "8D", "E2", "AC", "9B"], afterMode: "bytes",
+        de: "2 Emojis · 3 Codepoints → 11 Byte-Tokens", en: "2 emojis · 3 code points → 11 byte tokens",
+        noteDe: "Die schwarze Katze ist keine einzelne Figur: 🐈 und ⬛ werden mit einem unsichtbaren Zero Width Joiner (ZWJ) verbunden. Mehr dazu in der Box „UTF-8 und Joins“.",
+        noteEn: "The black cat is not a single shape: 🐈 and ⬛ are joined by an invisible zero-width joiner (ZWJ). More in the “UTF-8 and joins” box."
+      }
     };
     function bpeChips(items, mode) {
       return items.map(function (item) {
@@ -3515,10 +3530,21 @@
     }
     function renderBpe(key) {
       var ex = bpeExamples[key] || bpeExamples.unbelievable;
-      if (bpeBefore) bpeBefore.innerHTML = ex.beforeMode === "chars" ? bpeChips(ex.before.split(""), "chars") : '<span class="ls-bpe-chip ls-bpe-word" dir="auto">' + api.esc(ex.before) + '</span>';
+      if (bpeBefore) {
+        if (ex.beforeMode === "chars") bpeBefore.innerHTML = bpeChips(ex.before.split(""), "chars");
+        else if (ex.beforeMode === "parts") bpeBefore.innerHTML = ex.beforeParts.map(function (p, i) {
+          return (i ? '<span class="ls-bpe-join">ZWJ</span>' : '') + '<span class="ls-bpe-chip ls-bpe-word">' + api.esc(p) + '</span>';
+        }).join("");
+        else bpeBefore.innerHTML = '<span class="ls-bpe-chip ls-bpe-word" dir="auto">' + api.esc(ex.before) + '</span>';
+      }
       if (bpeAfter) bpeAfter.innerHTML = bpeChips(ex.after, ex.afterMode);
       if (bpeCount) bpeCount.textContent = DE ? ex.de : ex.en;
-      if (bpeBeforeLabel) bpeBeforeLabel.textContent = ex.beforeMode === "chars" ? (DE ? "Zeichen" : "characters") : (DE ? "Zeichen / Bytes" : "characters / bytes");
+      if (bpeBeforeLabel) bpeBeforeLabel.textContent = ex.beforeMode === "parts" ? (DE ? "Emojis" : "emojis") : ex.beforeMode === "chars" ? (DE ? "Zeichen" : "characters") : (DE ? "Zeichen / Bytes" : "characters / bytes");
+      if (bpeExplain) {
+        var note = ex.noteDe || ex.noteEn ? (DE ? ex.noteDe : ex.noteEn) : "";
+        bpeExplain.hidden = !note;
+        bpeExplain.textContent = note;
+      }
       if (bpeView) {
         bpeView.classList.remove("is-swapping");
         void bpeView.offsetWidth;
@@ -3530,10 +3556,48 @@
         b.setAttribute("aria-pressed", on ? "true" : "false");
       });
     }
+    function updateNav() {
+      var total = sampleKeys.length + bpeKeys.length;
+      navProgress.textContent = (stepIndex + 1) + ' / ' + total;
+      navPrev.disabled = stepIndex === 0;
+      navNext.textContent = stepIndex === total - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+    }
+    function applyStep() {
+      if (stepIndex < sampleKeys.length) {
+        var key = sampleKeys[stepIndex];
+        value = examples[key].value;
+        samples.querySelectorAll("[data-sample]").forEach(function (x) {
+          x.classList.toggle("is-on", x.getAttribute("data-sample") === key);
+        });
+        renderBpe("unbelievable");
+      } else {
+        renderBpe(bpeKeys[stepIndex - sampleKeys.length]);
+      }
+      render();
+      updateNav();
+    }
+    function goStep(i) {
+      stepIndex = Math.max(0, Math.min(sampleKeys.length + bpeKeys.length - 1, i));
+      applyStep();
+    }
+    function nextStep() {
+      if (stepIndex < sampleKeys.length + bpeKeys.length - 1) { goStep(stepIndex + 1); return true; }
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+      return false;
+    }
+    function prevStep() {
+      if (stepIndex > 0) { goStep(stepIndex - 1); return true; }
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
+      return false;
+    }
     el.querySelectorAll("[data-bpe]").forEach(function (b) {
-      b.addEventListener("click", function () { renderBpe(b.getAttribute("data-bpe")); });
+      b.addEventListener("click", function () {
+        var idx = bpeKeys.indexOf(b.getAttribute("data-bpe"));
+        goStep(sampleKeys.length + (idx < 0 ? 0 : idx));
+      });
     });
-    renderBpe("unbelievable");
+    navPrev.addEventListener("click", prevStep);
+    navNext.addEventListener("click", nextStep);
     function idFor(word) { var h = 0; for (var i = 0; i < word.length; i++) h = (h * 31 + word.charCodeAt(i)) % 50000; return 10000 + h; }
     function piecesFor(word) {
       if (splits[word]) return splits[word];
@@ -3569,18 +3633,24 @@
     Object.keys(examples).forEach(function (key) {
       var b = document.createElement("button");
       b.type = "button";
-      b.className = "ls-chip" + (key === "sentence" ? " is-on" : "");
+      b.className = "ls-chip";
+      b.setAttribute("data-sample", key);
       b.textContent = examples[key].label;
-      b.addEventListener("click", function () {
-        value = examples[key].value;
-        samples.querySelectorAll(".ls-chip").forEach(function (x) { x.classList.remove("is-on"); });
-        b.classList.add("is-on");
-        render();
-      });
+      b.addEventListener("click", function () { goStep(sampleKeys.indexOf(key)); });
       samples.appendChild(b);
     });
-    render();
-    return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
+    goStep(0);
+    return {
+      update: function () {},
+      onKey: function (e) {
+        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextStep();
+        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevStep();
+        return false;
+      },
+      resize: function () {},
+      destroy: function () { el.remove(); }
+    };
   }
 
   function positionScene(root, api) {
@@ -3592,12 +3662,14 @@
         '<div class="ls-position-panel"><canvas class="ls-position-heat"></canvas><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
         '<div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div>' +
       '</div>' +
+      '<div class="ls-position-compare"><div class="ls-compare-head">' + (DE ? "Relativer Abstand im selben Satz" : "Relative distance in the same sentence") + '</div><div class="ls-compare-plot"><canvas class="ls-position-methods"></canvas></div><p class="ls-compare-note">' + (DE ? "Sinus, gelernt, ALiBi, RoPE · schematisch, keine gelernten Gewichte." : "Sinus, learned, ALiBi, RoPE · schematic, not learned weights.") + '</p></div>' +
       '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-pos-context" min="16" max="128" step="8" value="64"><output>64</output></label><label class="ls-range">' + (DE ? "Dimensionen" : "Dimensions") + ' <input type="range" class="ls-pos-dims" min="2" max="64" step="2" value="24"><output>24</output></label><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="10000" step="1" value="7"><output>7</output></label></div>' +
       '<div class="ls-scene-row ls-position-metric"><button type="button" class="ls-chip" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button><button type="button" class="ls-chip is-on" data-metric="angle">' + (DE ? "Winkel / Großkreis" : "Angle / great circle") + '</button><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
       '<div class="ls-position-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var heat = el.querySelector(".ls-position-heat");
     var curve = el.querySelector(".ls-position-curve");
+    var methodsCanvas = el.querySelector(".ls-position-methods");
     var contextEl = el.querySelector(".ls-pos-context");
     var dimsEl = el.querySelector(".ls-pos-dims");
     var posEl = el.querySelector(".ls-pos-pos");
@@ -3605,7 +3677,7 @@
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var context = 64, dims = 24, pos = 7, metric = "angle", rotate = !reducedMotion;
     var posAnim = pos;
-    var heatSize = null, curveSize = null, yaw = -0.6, pitch = 0.5, drag = null, raf = 0, last = 0;
+    var heatSize = null, curveSize = null, methodsSize = null, yaw = -0.6, pitch = 0.5, drag = null, raf = 0, last = 0;
     var C = api.colors();
     function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
     function pe(p, d, i) {
@@ -3783,12 +3855,50 @@
       var angleDeg = (metric === "angle" ? theta : Math.acos(Math.max(-1, Math.min(1, cur[0] / (chordLen || 1))))) * 180 / Math.PI;
       readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + pos + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + cur.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (metric === "angle" ? (DE ? "Distanz (Großkreis)" : "distance (great circle)") : (DE ? "Länge" : "length")) + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span>';
     }
+    function drawMethods() {
+      if (!methodsSize) return;
+      var ctx = methodsSize.ctx, w = methodsSize.w, h = methodsSize.h;
+      var Cc = api.colors();
+      ctx.clearRect(0, 0, w, h);
+      var padL = 28, padR = 12, padT = 22, padB = 20;
+      var plotW = Math.max(10, w - padL - padR), plotH = Math.max(10, h - padT - padB);
+      ctx.strokeStyle = Cc.line; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + plotH); ctx.lineTo(padL + plotW, padT + plotH); ctx.stroke();
+      var series = [
+        { name: "Sinus", color: Cc.blue, f: function (d) { return 0.5 + 0.5 * Math.cos(2 * Math.PI * d / 16); } },
+        { name: DE ? "gelernt" : "learned", color: Cc.lime, f: function (d) { return Math.exp(-d / 10); } },
+        { name: "ALiBi", color: Cc.gold, f: function (d) { return 1 - d / 32; } },
+        { name: "RoPE", color: Cc.green, f: function (d) { return 0.5 + 0.25 * Math.cos(2 * Math.PI * d / 32) + 0.25 * Math.cos(2 * Math.PI * d / 16); } }
+      ];
+      series.forEach(function (ser) {
+        ctx.strokeStyle = ser.color; ctx.lineWidth = 2; ctx.beginPath();
+        for (var d = 0; d <= 32; d++) {
+          var x = padL + d / 32 * plotW;
+          var y = padT + (1 - Math.max(0, Math.min(1, ser.f(d)))) * plotH;
+          if (d === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      });
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left"; ctx.textBaseline = "middle";
+      var lx = padL;
+      series.forEach(function (ser) {
+        ctx.strokeStyle = ser.color; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(lx, 11); ctx.lineTo(lx + 12, 11); ctx.stroke();
+        ctx.fillStyle = Cc.soft; ctx.fillText(ser.name, lx + 16, 11);
+        lx += 16 + ctx.measureText(ser.name).width + 12;
+      });
+      ctx.fillStyle = Cc.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+      ctx.fillText(DE ? "relativer Abstand" : "relative distance", padL + plotW / 2, h - 4);
+    }
     function draw() {
-      drawHeat(); drawCurve();
+      drawHeat(); drawCurve(); drawMethods();
     }
     function resizeHeat() { heatSize = api.fit(heat, heat); drawHeat(); }
     function resizeCurve() { curveSize = api.fit(curve, curve); drawCurve(); }
-    function resize() { resizeHeat(); resizeCurve(); draw(); }
+    function resizeMethods() { methodsSize = api.fit(methodsCanvas, methodsCanvas.parentNode); drawMethods(); }
+    function resize() { resizeHeat(); resizeCurve(); resizeMethods(); draw(); }
     function loop(now) {
       raf = requestAnimationFrame(loop);
       if (now - last < 40) return;
@@ -3832,6 +3942,8 @@
     var rot = el.querySelector("[data-rotate]");
     rot.addEventListener("click", function () { rotate = !rotate; rot.classList.toggle("is-on", rotate); });
     window.addEventListener("resize", resize);
+    function onTheme() { C = api.colors(); draw(); }
+    window.addEventListener("tm:theme", onTheme);
     resize();
     raf = requestAnimationFrame(loop);
     return {
@@ -3839,7 +3951,7 @@
       pause: function () { cancelAnimationFrame(raf); raf = 0; },
       resume: function () { if (!raf) raf = requestAnimationFrame(loop); },
       resize: resize,
-      destroy: function () { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); }
+      destroy: function () { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); window.removeEventListener("tm:theme", onTheme); el.remove(); }
     };
   }
 
@@ -5626,6 +5738,157 @@
     };
   }
 
+  function blocksScene(root, api) {
+    var DE = api.lang === "de";
+    var blocks = DE ? [
+      {
+        id: "tokenizer", label: "Tokenizer", short: "Text → Tokens", icon: "T", color: "lime",
+        title: "Tokenizer",
+        body: "Der Tokenizer nimmt den Text und teilt ihn in kleine Textbausteine auf: Tokens. Das können Wörter, Teilwörter, Leerzeichen, Sonderzeichen oder Codefragmente sein.",
+        points: ["Jedes Token bekommt eine ID.", "Die ID ist eine Adresse, keine Bedeutung.", "Seltene Wörter zerfallen oft in mehrere Tokens."]
+      },
+      {
+        id: "embedding", label: "Embedding", short: "Tokens → Vektoren", icon: "E", color: "sky",
+        title: "Embedding",
+        body: "Das Embedding weist jedem Token einen Punkt in einem hochdimensionalen Raum zu. Der Punkt ist ein Vektor, keine Definition.",
+        points: ["Ähnliche Kontexte führen zu ähnlichen Vektoren.", "Die Richtung trägt Bedeutung.", "Die Tabelle wird im Training gelernt."]
+      },
+      {
+        id: "transformer", label: "Transformer-Block", short: "Attention + FFN", icon: "A", color: "green",
+        title: "Transformer-Block",
+        body: "Der Transformer-Block zerfällt in zwei große Teile: Attention und FFN. Attention setzt jedes Token in Beziehung zu allen Tokens im bisherigen Kontext und verschiebt es. Das FFN faltet die Tokens in einen höheren Raum, trennt Muster und faltet sie zurück.",
+        points: ["Attention kontextualisiert über alle sichtbaren Tokens.", "Das FFN arbeitet danach pro Token.", "Die Details kommen in den späteren Demos."],
+        sub: [
+          { title: "Attention", text: "Jedes Token schaut, wie stark es mit jedem anderen Token zusammenhängt, und nimmt Information auf. So bekommt es seine Bedeutung im Kontext." },
+          { title: "FFN", text: "Das Feed-Forward-Netz verschiebt jedes Token einzeln in einen höheren Raum, trennt Muster und projiziert zurück. Das macht die internen Zustände leichter unterscheidbar." }
+        ]
+      },
+      {
+        id: "repeat", label: "Wiederholen", short: "viele Blöcke", icon: "↻", color: "gold",
+        title: "Wiederholen",
+        body: "Attention und FFN werden viele Male hintereinander ausgeführt, teilweise bis hunderte Male. Jeder Block liest denselben laufenden Vektor und schreibt ein Update zurück; nichts wird überschrieben.",
+        points: ["Jeder Block hat eigene Gewichte.", "Die Struktur ist gleich, die Parameter nicht.", "Der Kontext wird mit jeder Schicht weiter verfeinert."]
+      },
+      {
+        id: "unembed", label: "Unembedding", short: "Vektor → Verteilung", icon: "U", color: "lilac",
+        title: "Unembedding",
+        body: "Nach allen Blöcken wird der letzte Vektor mit den Richtungen der Tokens verglichen. Der Winkel entscheidet, welches Token wahrscheinlich ist: je kleiner der Winkel, desto höher die Wahrscheinlichkeit. Softmax macht daraus eine Verteilung, und eines wird gezogen.",
+        points: ["Verglichen werden Richtungen, nicht Längen.", "Softmax erzeugt die Wahrscheinlichkeitsverteilung.", "Der absolute Logit-Wert ist willkürlich; nur Unterschiede zählen."]
+      }
+    ] : [
+      {
+        id: "tokenizer", label: "Tokenizer", short: "text → tokens", icon: "T", color: "lime",
+        title: "Tokenizer",
+        body: "The tokenizer takes the text and splits it into small pieces: tokens. They can be words, subwords, spaces, punctuation, or code fragments.",
+        points: ["Every token gets an ID.", "The ID is an address, not meaning.", "Rare words often split into several tokens."]
+      },
+      {
+        id: "embedding", label: "Embedding", short: "tokens → vectors", icon: "E", color: "sky",
+        title: "Embedding",
+        body: "The embedding assigns every token a point in a high-dimensional space. The point is a vector, not a definition.",
+        points: ["Similar contexts produce similar vectors.", "Direction carries meaning.", "The table is learned during training."]
+      },
+      {
+        id: "transformer", label: "Transformer block", short: "attention + FFN", icon: "A", color: "green",
+        title: "Transformer block",
+        body: "The transformer block splits into two large parts: attention and FFN. Attention relates each token to all tokens in the context so far and shifts it. The FFN folds the tokens into a higher space, separates patterns, and folds them back.",
+        points: ["Attention contextualises over all visible tokens.", "The FFN then works per token.", "The details come in the later demos."],
+        sub: [
+          { title: "Attention", text: "Each token checks how strongly it relates to every other token and takes in information. That is how it gets its meaning in context." },
+          { title: "FFN", text: "The feed-forward network shifts each token individually into a higher space, separates patterns, and projects back. That makes the internal states easier to distinguish." }
+        ]
+      },
+      {
+        id: "repeat", label: "Repeat", short: "many blocks", icon: "↻", color: "gold",
+        title: "Repeat",
+        body: "Attention and FFN run many times in a row, sometimes hundreds of times. Each block reads the same running vector and writes an update back; nothing is overwritten.",
+        points: ["Each block has its own weights.", "The structure is shared, the parameters are not.", "The context is refined with every layer."]
+      },
+      {
+        id: "unembed", label: "Unembedding", short: "vector → distribution", icon: "U", color: "lilac",
+        title: "Unembedding",
+        body: "After all blocks, the last vector is compared with the directions of the tokens. The angle decides which token is likely: the smaller the angle, the higher the probability. Softmax turns that into a distribution, and one token is drawn.",
+        points: ["Directions are compared, not lengths.", "Softmax creates the probability distribution.", "The absolute logit value is arbitrary; only differences matter."]
+      }
+    ];
+    var index = 0;
+    var el = document.createElement("div");
+    el.className = "ls-blocks-scene";
+    el.innerHTML = '<div class="ls-blocks-list" role="list"></div>' +
+      '<div class="ls-blocks-detail" aria-live="polite"></div>' +
+      '<div class="ls-blocks-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-blocks-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-blocks-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-blocks-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
+    root.appendChild(el);
+    var list = el.querySelector(".ls-blocks-list");
+    var detail = el.querySelector(".ls-blocks-detail");
+    var progress = el.querySelector(".ls-blocks-progress");
+    var prevBtn = el.querySelector(".ls-blocks-prev");
+    var nextBtn = el.querySelector(".ls-blocks-next");
+    function color(name) { var C = api.colors(); return C[name] || C.petrol; }
+    blocks.forEach(function (b, i) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ls-block-btn" + (i === index ? " is-on" : "");
+      btn.setAttribute("data-block", b.id);
+      btn.style.setProperty("--block-color", color(b.color));
+      btn.innerHTML = '<span class="ls-block-icon">' + api.esc(b.icon) + '</span><span><b>' + api.esc(b.label) + '</b><small>' + api.esc(b.short) + '</small></span>';
+      btn.addEventListener("click", function () { setIndex(i); });
+      list.appendChild(btn);
+    });
+    function renderDetail() {
+      var b = blocks[index];
+      var html = '<div class="ls-blocks-kicker">' + (DE ? "Station " : "Station ") + (index + 1) + ' / ' + blocks.length + '</div>' +
+        '<h3 class="ls-blocks-title">' + api.esc(b.title) + '</h3>' +
+        '<p class="ls-blocks-body">' + api.esc(b.body) + '</p>' +
+        '<ul class="ls-blocks-points">' + b.points.map(function (p) { return '<li>' + api.esc(p) + '</li>'; }).join("") + '</ul>';
+      if (b.sub) {
+        html += '<div class="ls-block-subgrid">' + b.sub.map(function (s) {
+          return '<div class="ls-block-sub"><b>' + api.esc(s.title) + '</b><p>' + api.esc(s.text) + '</p></div>';
+        }).join("") + '</div>';
+      }
+      detail.innerHTML = html;
+      progress.textContent = (index + 1) + ' / ' + blocks.length;
+      prevBtn.disabled = index === 0;
+      nextBtn.textContent = index === blocks.length - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+      list.querySelectorAll(".ls-block-btn").forEach(function (btn, i) {
+        btn.classList.toggle("is-on", i === index);
+      });
+    }
+    function setIndex(i) {
+      index = Math.max(0, Math.min(blocks.length - 1, i));
+      renderDetail();
+    }
+    function nextStep() {
+      if (index < blocks.length - 1) { setIndex(index + 1); return true; }
+      if (window.LearnSys) {
+        var st = LearnSys.state();
+        LearnSys.go(st.day, st.step + 1);
+      }
+      return false;
+    }
+    function prevStep() {
+      if (index > 0) { setIndex(index - 1); return true; }
+      if (window.LearnSys) {
+        var st = LearnSys.state();
+        LearnSys.go(st.day, st.step - 1);
+      }
+      return false;
+    }
+    prevBtn.addEventListener("click", prevStep);
+    nextBtn.addEventListener("click", nextStep);
+    renderDetail();
+    return {
+      update: function () {},
+      onKey: function (e) {
+        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextStep();
+        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevStep();
+        return false;
+      },
+      resize: function () {},
+      destroy: function () { el.remove(); }
+    };
+  }
+
   function modelScene(root, api) {
     var DE = api.lang === "de";
     var el = document.createElement("div");
@@ -6495,6 +6758,7 @@
     manifold: manifoldScene,
     animals: animalScene,
     model: modelScene,
+    blocks: blocksScene,
     highdim: highdimScene,
     mlp: mlpScene,
     trajectories: trajectoriesScene,
