@@ -564,7 +564,237 @@
     }
   ];
 
-  var steps = introSteps.concat(tokenizeSteps, embedSteps, positionSteps, attentionSteps, ffnSteps, residualSteps, meadowSteps, softmaxSteps);
+  var insideSteps = DE ? [
+    {
+      kicker: "04 / Das Modell",
+      title: "Ein Modell ist ein Stapel von Funktionen",
+      body: "Ein neuronales Netz entsteht, indem man Funktionen nacheinander anwendet. Eine Schicht transformiert ihre Eingabe, die nächste transformiert das Ergebnis, und der Stapel macht aus einer kleinen Operation ein tiefes Modell. Tiefe ist Komposition: viele einfache Schritte, jeder füttert den nächsten.",
+      watch: "Klicke eine Stufe an. Was geht hinein, was kommt heraus?",
+      demoState: { scene: "stack", mode: "pipeline" },
+      context: "Die Reihenfolge ist die echte Architektur: tokenisieren, einbetten, Position addieren, attenden, Feed-Forward, Residual. Die Demos sind vereinfacht.",
+      deep: "Klassisches Programmieren beginnt mit dem Verfahren: Du schreibst jeden Schritt vor, und der Computer führt ihn aus. Bei KI drehst du das um: Du gibst Beispiele mit passenden Ausgaben, und das Training sucht die Funktion dazwischen. Die Schichten sind die Form, in der diese Funktion Platz findet.",
+      boxes: [
+        box("in-11", "Mathematik", "Der Stapel", "output = layer₃(layer₂(layer₁(input))). Jede Schicht ist eine Funktion mit Parametern; die Komposition ist das Modell."),
+        box("in-12", "Technik", "Sechs Schritte", "Jedes Token läuft durch dieselben sechs Schritte: Tokenize, Embed, Position, Attention, FFN, Residual. Das Modell bewegt Punkte in einem hochdimensionalen Raum; das Training formt die Winkel zu plausiblen Fortsetzungen."),
+        box("in-13", "Grenze", "Was heißt plausibel?", "Plausibel heißt: Die Fortsetzung kam im Trainingstext vor. Es heißt nicht, dass das Modell eine eigene Vorstellung von Wahrheit hat.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+    }
+  ] : [
+    {
+      kicker: "04 / The model",
+      title: "A model is a stack of functions",
+      body: "A neural network is built by applying functions one after another. One layer transforms its input, the next layer transforms that result, and the stack turns a small operation into a deep model. The depth is composition: many simple steps, each feeding the next.",
+      watch: "Click a stage. What goes in, what comes out?",
+      demoState: { scene: "stack", mode: "pipeline" },
+      context: "The order is the real architecture: tokenize, embed, add position, attend, feed-forward, residual. The demos are simplified.",
+      deep: "Classical programming starts with the procedure: you write down every step, and the computer executes it. AI reverses that: you provide examples with matching outputs, and training searches for the function in between. The layers are the shape that function takes.",
+      boxes: [
+        box("in-11", "Mathematics", "The stack", "output = layer₃(layer₂(layer₁(input))). Each layer is a function with parameters; the composition is the model."),
+        box("in-12", "Technique", "Six steps", "Every token runs through the same six steps: tokenize, embed, position, attention, FFN, residual. The model moves points in a high-dimensional space; training shapes the angles toward plausible continuations."),
+        box("in-13", "Limit", "What does plausible mean?", "Plausible means the continuation occurred in the training text. It does not mean the model has its own notion of truth.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+    }
+  ];
+
+  var manifoldSteps = DE ? [
+    {
+      kicker: "07 / Die Übertragung",
+      title: "Von Beziehungen zur Übersetzung",
+      body: "Die Punkte bilden eine Mannigfaltigkeit: lokal flach, global gekrümmt. Die Beziehungen sind ähnlich genug, um übersetzt zu werden: Der Weg von einem Wort zum anderen lässt sich in den entsprechenden Weg einer anderen Sprache transformieren. Feed-Forward-Netze lernen solche Transformationen.",
+      watch: "Drehe die beiden Flächen. Welche Korrespondenzlinien bleiben parallel?",
+      demoState: { scene: "manifold" },
+      context: "Die Karte ist eine Approximation. In einem echten Modell überlappen Beziehungen, Ausnahmen sind häufig, und Übersetzung wird aus großen Textmengen gelernt.",
+      deep: "Die Geometrie ist viel unordentlicher als die saubere Fläche. Die Intuition zeigt trotzdem die Richtung: Eine gelernte Transformation kann eine Beziehung von einer Region in eine andere tragen.",
+      boxes: [
+        box("man-1", "Technik", "Was zeigt die Demo?", "Zwei gekrümmte Flächen für zwei Sprachen, Korrespondenzlinien zwischen Wörtern und Übersetzungspfade. Die Kontrollen drehen, trennen und richten die Flächen aus."),
+        box("man-2", "Grenze", "Was ist vereinfacht?", "Die Flächen sind glatt und die Wörter sauber platziert. Ein echtes Embedding hat Tausende Dimensionen und viele überlappende Beziehungen.")
+      ],
+      sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781" }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/" }]
+    }
+  ] : [
+    {
+      kicker: "07 / Transport",
+      title: "From relations to translation",
+      body: "The points form a manifold: locally flat, globally curved. The relations are similar enough to translate: the path from one word to another can be transformed into the corresponding path in another language. Feed-forward networks learn such transformations.",
+      watch: "Rotate the two surfaces. Which correspondence lines stay parallel?",
+      demoState: { scene: "manifold" },
+      context: "The map is an approximation. In a real model relations overlap, exceptions are common, and translation is learned from huge amounts of text.",
+      deep: "The geometry is much messier than the clean surface. The intuition still points in the right direction: a learned transformation can carry a relation from one region to another.",
+      boxes: [
+        box("man-1", "Technique", "What does the demo show?", "Two curved surfaces for two languages, correspondence lines between words, and translation paths. The controls rotate, separate, and align the surfaces."),
+        box("man-2", "Limit", "What is simplified?", "The surfaces are smooth and the words are neatly placed. A real embedding has thousands of dimensions and many overlapping relations.")
+      ],
+      sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781" }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/" }]
+    }
+  ];
+
+  var mlpSteps = DE ? [
+    {
+      kicker: "08a / Das MLP",
+      title: "Sieh zu, wie das MLP den Raum biegt",
+      body: "Eine gerade Linie ist der einfachste Trenner, aber im ursprünglichen Raum nicht immer möglich. Das MLP hebt die Punkte in eine neue Ebene, in der die Trennung gelingt. In einem LLM läuft dieselbe Idee in Tausenden Dimensionen und hilft dem Modell, interne Zustände zu isolieren.",
+      watch: "Klicke dich durch die neun Folien. Wo biegt sich der Raum, wo erscheint der Schnitt?",
+      demoState: { scene: "mlp" },
+      context: "Die Biegung ist eine Dense-Schicht: Sie hebt die Punkte in eine zusätzliche Dimension, bis ein flacher Schnitt reicht.",
+      deep: "Das ist keine Animation über den Daten, sondern eine Animation der Daten selbst: Jeder Punkt behält seine Nachbarschaft, während der Raum sich krümmt. Die Form hängt von Gewichten, Bias und Aktivierung ab.",
+      boxes: [
+        box("mlp-1", "Mathematik", "Die Dense-Schicht", "x = (x₁, x₂), h = act(W₁x + b₁), z = W₂h + b₂. Die Schicht dehnt auf n verborgene Werte, biegt jeden mit einer Aktivierung und projiziert auf eine Höhe."),
+        box("mlp-2", "Grenze", "Warum sieht man das im LLM nicht?", "Weil die Räume zu hochdimensional sind. Die Demo ist eine Projektion auf drei Achsen. Ein echtes Modell arbeitet mit Tausenden Dimensionen.")
+      ],
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355" }]
+    }
+  ] : [
+    {
+      kicker: "08a / The MLP",
+      title: "Watch the MLP bend the space",
+      body: "A straight line is the easiest separator, but it is not always possible in the original space. The MLP lifts the points into a new plane where it becomes possible. In an LLM the same idea runs in thousands of dimensions and helps the model isolate internal states.",
+      watch: "Click through the nine slides. Where does the space bend, where does the cut appear?",
+      demoState: { scene: "mlp" },
+      context: "The bend is a dense layer: it lifts the points into an extra dimension until a flat cut is enough.",
+      deep: "This is not an animation over the data; it is an animation of the data itself. Every point keeps its neighbourhood while the space bends. The shape depends on weights, bias, and activation.",
+      boxes: [
+        box("mlp-1", "Mathematics", "The dense layer", "x = (x₁, x₂), h = act(W₁x + b₁), z = W₂h + b₂. The layer expands to n hidden values, bends each with an activation, and projects to one height."),
+        box("mlp-2", "Limit", "Why don't we see this in an LLM?", "Because the spaces are too high-dimensional. The demo is a projection onto three axes. A real model works with thousands of dimensions.")
+      ],
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355" }]
+    }
+  ];
+
+  var stackSteps = DE ? [
+    {
+      kicker: "10 / Der Stapel",
+      title: "Eine Schicht, dann der Stapel",
+      body: "Eine Schicht ist nicht nur Attention und nicht nur ein FFN. Sie ist die Komposition: Attention mischt die Tokens zu A, dann schreibt das FFN jede Zeile von A um. Das Ergebnis ist die nächste Matrix X mit derselben Form.",
+      watch: "Klicke eine Stufe an. Wo bleibt die Form gleich?",
+      demoState: { scene: "stack", mode: "pipeline" },
+      context: "W, b, W₁ und W₂ sind Parameter; das Training passt sie an. Self-Attention nimmt die ganze Matrix X und liefert A mit einer Zeile pro Token. Das FFN transformiert jede Zeile A_i einzeln.",
+      deep: "Softmax macht aus den finalen Scores eine Verteilung über das Vokabular. Die Exponentialfunktion macht jeden Wert positiv und erhält die Reihenfolge; die Division durch die Summe ergibt Wahrscheinlichkeiten. Der absolute Offset ist willkürlich.",
+      boxes: [
+        box("st-1", "Mathematik", "Self-Attention", "A_i = Σ_j α_ij v_j, mit α_ij ∈ [0,1] und Σ_j α_ij = 1. Die Gewichte sind ein endliches Budget."),
+        box("st-2", "Mathematik", "Das FFN", "FFN(x) = dense₂(activation(dense₁(x))). Es arbeitet auf einer Zeile auf einmal, nie auf der ganzen Matrix."),
+        box("st-3", "Mathematik", "Softmax", "p_i = exp(z_i) / Σ_j exp(z_j). Eine positive Verteilung über das Vokabular; die Reihenfolge bleibt."),
+        box("st-4", "Technik", "Die Schicht", "layer(X) = Spalte der FFN(A_i). In einem echten Block umschließen Residualverbindungen und Normalisierung beide Schritte.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Bridle (1990), Probabilistic Interpretation of Feedforward Classification", url: "https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html" }]
+    },
+    {
+      kicker: "10b / Die Matrix",
+      title: "Die kausale Matrix und die Heads",
+      body: "In einer Schicht schaut Self-Attention auf den ganzen Kontext. Für jedes Token bewertet sie, wie viel es von jedem anderen sichtbaren Token übernehmen soll. Die Scores bilden eine Token-für-Token-Matrix: eine Zeile für das fragende Token, eine Spalte für das antwortende. Die Kausalmaske verbirgt die Zukunft.",
+      watch: "Klicke die Matrix an. Welche Zellen sind maskiert?",
+      demoState: { scene: "stack", mode: "layer" },
+      context: "Jede Zeile summiert zu 1. Ein Token kann auf sich und frühere Tokens achten, nie auf spätere. Das obere Dreieck ist maskiert.",
+      deep: "Attention wählt seine Gewichte nicht aus einer festen Liste. Es lernt aus dem Loss, welche Aspekte der sichtbaren Tokens helfen. Jeder Head kann dieselben Tokens aus einer anderen Perspektive sehen: Pronomen, Verb, Thema.",
+      boxes: [
+        box("st-5", "Geschichte", "Borges, Funes", "„Denken heißt Unterschiede vergessen, verallgemeinern, abstrahieren.“ Funes erinnert sich an alles und kann deshalb nicht denken. Ein LLM macht dasselbe auf zwei Ebenen: Das Modell speichert nicht jeden Fakt, und ein Head muss nicht alles auf einmal repräsentieren."),
+        box("st-6", "Technik", "Lokale Bedeutung, dann Kontext", "Frühe Schichten lernen lokale Muster. Spätere Schichten kombinieren sie mit einem breiteren Kontext. Jede Schicht hat eigene Gewichte; die Struktur ist geteilt, die Parameter nicht."),
+        box("st-7", "Mathematik", "Unembedding", "p(next | context) = softmax(W_U h_last). Der letzte Vektor zeigt auf eine Region von Token-Richtungen, dann wird eines gezogen.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf" }]
+    }
+  ] : [
+    {
+      kicker: "10 / The stack",
+      title: "One layer, then the stack",
+      body: "A layer is not just attention and not just an FFN. It is the composition: attention mixes the tokens into A, then the FFN rewrites each row of A. The result is the next matrix X with the same shape.",
+      watch: "Click a stage. Where does the shape stay the same?",
+      demoState: { scene: "stack", mode: "pipeline" },
+      context: "W, b, W₁, and W₂ are parameters; training adjusts them. Self-attention takes the whole matrix X and returns A with one row per token. The FFN transforms each row A_i separately.",
+      deep: "Softmax turns the final scores into a distribution over the vocabulary. The exponential makes every value positive and preserves the order; dividing by the sum gives probabilities. The absolute offset is arbitrary.",
+      boxes: [
+        box("st-1", "Mathematics", "Self-attention", "A_i = Σ_j α_ij v_j, with α_ij ∈ [0,1] and Σ_j α_ij = 1. The weights are a finite budget."),
+        box("st-2", "Mathematics", "The FFN", "FFN(x) = dense₂(activation(dense₁(x))). It works on one row at a time, never on the whole matrix."),
+        box("st-3", "Mathematics", "Softmax", "p_i = exp(z_i) / Σ_j exp(z_j). A positive distribution over the vocabulary; the order stays."),
+        box("st-4", "Technique", "The layer", "layer(X) = column of FFN(A_i). In a real block, residual connections and normalization wrap both steps.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Bridle (1990), Probabilistic Interpretation of Feedforward Classification", url: "https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html" }]
+    },
+    {
+      kicker: "10b / The matrix",
+      title: "The causal matrix and the heads",
+      body: "Inside a layer, self-attention looks at the whole context. For every token, it scores how much that token should take from every other visible token. The scores form a token-by-token matrix: one row for the token asking, one column for the token answering. The causal mask hides the future.",
+      watch: "Click the matrix. Which cells are masked?",
+      demoState: { scene: "stack", mode: "layer" },
+      context: "Every row sums to one. A token can attend to itself and earlier tokens, never to later ones. The upper triangle is masked.",
+      deep: "Attention does not choose its weights from a fixed list. It learns from the loss which aspects of the visible tokens help. Each head can look at the same tokens from a different perspective: pronoun, verb, topic.",
+      boxes: [
+        box("st-5", "History", "Borges, Funes", "“To think is to forget a difference, to generalize, to abstract.” Funes remembers everything and therefore cannot think. An LLM does the same at two scales: the model does not store every fact, and a head does not need to represent everything at once."),
+        box("st-6", "Technique", "Local meaning, then context", "Early layers learn local patterns. Later layers combine them with a wider context. Each layer has its own weights; the structure is shared, the parameters are not."),
+        box("st-7", "Mathematics", "Unembedding", "p(next | context) = softmax(W_U h_last). The last vector points to a region of token directions, then one is drawn.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf" }]
+    }
+  ];
+
+  var trajectorySteps = DE ? [
+    {
+      kicker: "11a / GPT-2",
+      title: "Token-Trajektorien durch GPT-2",
+      body: "Echte Hidden States aus GPT-2 small für „The capital of France is“. Jede Linie folgt einem Token durch das Embedding und 12 Blöcke. Jeder Zustand hat 768 Dimensionen, zu viele für ein Bild, deshalb ist das nicht die echte Bewegung: PCA behält die drei Richtungen, in denen sich die Zustände am stärksten ändern, und flacht alles darauf ab. Die 3D-Punkte sind ein Schatten.",
+      watch: "Bewege den Layer-Regler. Ab wann wird „Paris“ die Top-Wahl?",
+      demoState: { scene: "trajectories" },
+      context: "Die Winkelansicht ist der Standard, weil das Modell Richtungen vergleicht. „Plausibel“ heißt: Die Fortsetzung ist im Trainingstext häufig, nicht dass sie wahr ist.",
+      deep: "Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Eine flach aussehende Biegung kann eine große Bewegung verbergen. Die Kandidaten erscheinen erst in der letzten Schicht.",
+      boxes: [
+        box("traj-1", "Technik", "Was ist PCA?", "PCA projiziert die 768-dimensionalen Zustände auf die drei Richtungen mit der größten Varianz. Das ist eine lesbare Projektion, keine vollständige Rekonstruktion."),
+        box("traj-2", "Grenze", "Was zeigt die Linie nicht?", "Sie zeigt nicht den echten Weg im 768-dimensionalen Raum. Sie zeigt einen Schatten, der die größten Änderungen sichtbar macht.")
+      ],
+      sources: [{ label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }]
+    }
+  ] : [
+    {
+      kicker: "11a / GPT-2",
+      title: "Token trajectories through GPT-2",
+      body: "Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. Each state has 768 dimensions, too many to picture, so this is not the real motion: PCA keeps the three directions where the states change most and flattens everything onto them. The 3D points are a shadow.",
+      watch: "Move the layer slider. When does “Paris” become the top choice?",
+      demoState: { scene: "trajectories" },
+      context: "The angular view is the default because the model compares directions. “Plausible” means the continuation is frequent in the training text, not that it is true.",
+      deep: "Lines that cross on screen need not touch in the full space. A flat-looking bend can hide a large move. The candidates appear only at the final layer.",
+      boxes: [
+        box("traj-1", "Technique", "What is PCA?", "PCA projects the 768-dimensional states onto the three directions with the most variance. It is a readable projection, not a complete reconstruction."),
+        box("traj-2", "Limit", "What does the line not show?", "It does not show the real path in the 768-dimensional space. It shows a shadow that makes the largest changes visible.")
+      ],
+      sources: [{ label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }]
+    }
+  ];
+
+  var wholeSteps = DE ? [
+    {
+      kicker: "13 / Die ganze Schleife",
+      title: "Text rein, Geometrie, ein Wort raus",
+      body: "Die Teile fügen sich in fester Reihenfolge zusammen: Text → Tokens → Vektoren → Position → Attention + Residual → FFN → Verteilung → Ziehen → Anhängen. Die Schleife endet, wenn das Modell das spezielle Token <|endoftext|> ausgibt. Kein Schritt hat eine ordentliche Fakten-Datenbank; Wissen ist über die Gewichte verteilt, und Bedeutung lebt in der Geometrie.",
+      watch: "Klicke die Schleife an. Wo schließt sie sich?",
+      demoState: { scene: "stack", mode: "loop" },
+      context: "Das Modell ist ein Next-Token-Predictor: eine Verteilung, ein Zug, ein Anhängen, wiederholt. Mehr Kontext und mehr Schichten verengen die Verteilung.",
+      deep: "Es sagt plausiblen Text voraus. Es kann fließend und falsch sein, und es gibt keine Garantie für Wahrheit. Die feste Reihenfolge ist die Architektur; die Demos sind vereinfacht.",
+      boxes: [
+        box("whole-1", "Keypoint", "Was es ist", "Ein Next-Token-Predictor: eine Verteilung, ein Zug, ein Anhängen, wiederholt."),
+        box("whole-2", "Keypoint", "Warum es funktioniert", "Mehr Kontext und mehr Schichten verengen die Verteilung, sodass das nächste Token leichter zu wählen ist."),
+        box("whole-3", "Keypoint", "Seine Grenzen", "Es sagt plausiblen Text voraus. Es kann fließend und falsch sein, und es bietet keine Garantie für Wahrheit.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+    }
+  ] : [
+    {
+      kicker: "13 / The whole loop",
+      title: "Text in, geometry, one word out",
+      body: "The pieces fit in a fixed order: text → tokens → vectors → position → attention + residual → FFN → distribution → draw → append. The loop ends when the model emits the special token <|endoftext|>. No step has a tidy fact database; knowledge is distributed across the weights, and meaning lives in the geometry.",
+      watch: "Click the loop. Where does it close?",
+      demoState: { scene: "stack", mode: "loop" },
+      context: "The model is a next-token predictor: one distribution, one draw, one append, repeated. More context and more layers narrow the distribution.",
+      deep: "It predicts plausible text. It can be fluent and wrong, and it offers no guarantee of truth. The fixed order is the architecture; the demos are simplified.",
+      boxes: [
+        box("whole-1", "Keypoint", "What it is", "A next-token predictor: one distribution, one draw, one append, repeated."),
+        box("whole-2", "Keypoint", "Why it works", "More context and more layers narrow the distribution, so the next token becomes easier to choose."),
+        box("whole-3", "Keypoint", "Its limits", "It predicts plausible text. It can be fluent and wrong, and it offers no guarantee of truth.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+    }
+  ];
+
+  var steps = introSteps.concat(insideSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, mlpSteps, ffnSteps, stackSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps);
 
   var day = {
     id: "intuition",
