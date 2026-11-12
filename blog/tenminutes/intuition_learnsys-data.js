@@ -526,7 +526,7 @@
     {
       kicker: "08 / Feed-forward",
       title: "Ein Muster passt, ein Wert wird geschrieben",
-      body: "Das Feed-Forward-Netz arbeitet auf jedem Token einzeln. Es dehnt den Vektor, wendet eine Aktivierung an und projiziert zurück. Attention mischt Tokens; das FFN rechnet innerhalb eines Tokens. Es macht mit dem Kontext, was das MLP mit den Punkten gemacht hat: Bereiche, die vorher nicht linear trennbar waren, werden trennbar, weil der Kontext den Vektor immer weiter verfeinert. Auch die eigene Antwort wird Teil des Kontexts; jede neue Entscheidung verschiebt die Grenze.",
+      body: "Das Feed-Forward-Netz arbeitet auf jedem Token einzeln. Es dehnt den Vektor, wendet eine Aktivierung an und projiziert zurück. Attention mischt Tokens; das FFN rechnet innerhalb eines Tokens. Es macht mit dem Kontext, was das MLP mit den Punkten gemacht hat: Bereiche, die vorher nicht linear trennbar waren, werden trennbar, weil der Kontext den Vektor immer weiter verfeinert. Auch die eigene Antwort wird Teil des Kontexts; jede neue Entscheidung verschiebt die Grenze. Der reichere Vektor ist dabei ein Punkt in einem hochdimensionalen Raum: Im Modell hat er Tausende Koordinaten, die zwei Achsen der Demo sind nur eine Projektion.",
       watch: "Vergleiche „Ich besichtige das Schloss“ und „Ich öffne das Schloss“. Welche Muster feuern?",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁; der Pull ist eine gelernte Richtung in W₂.",
@@ -534,14 +534,19 @@
       boxes: [
         box("ffn-1", "Mathematik", "Die Dense-Einheit", "dense(x) = activation(Wx + b). Das FFN ist dense₂(activation(dense₁(x))). Die Aktivierung bringt die Nichtlinearität."),
         box("ffn-2", "Technik", "Warum das FFN?", "Attention bewegt Information zwischen Tokens. Das FFN transformiert, was jedes Token trägt. Beide zusammen bilden einen Block."),
-        box("ffn-3", "Verbindung", "Was hat das mit dem MLP zu tun?", "Das FFN ist ein kleines MLP pro Token. Es biegt den Vektor so, dass Muster trennbar werden. Attention liefert den Kontext, das FFN rechnet ihn in eine neue Richtung.")
+        box("ffn-3", "Verbindung", "Was hat das mit dem MLP zu tun?", "Das FFN ist ein kleines MLP pro Token. Es biegt den Vektor so, dass Muster trennbar werden. Attention liefert den Kontext, das FFN rechnet ihn in eine neue Richtung."),
+        box("ffn-4", "Geometrie", "Ist der reichere Vektor hochdimensional?", "Ja. Jeder Punkt in diesen Demos steht für einen Vektor mit Tausenden Dimensionen. Die zwei oder drei Achsen sind nur eine Projektion für uns; das FFN rechnet im vollen Raum. Die Muster in W₁ und der Pull in W₂ sind Richtungen in diesem hochdimensionalen Raum.")
+      ],
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
+        { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2010.01019" }
       ]
     }
   ] : [
     {
       kicker: "08 / Feed-forward",
       title: "A pattern matches, a value is written",
-      body: "The feed-forward network works on each token separately. It expands the vector, applies an activation, and projects back. Attention mixes tokens; the FFN computes within a token. It does with the context what the MLP did with the points: regions that were not linearly separable become separable as the context refines the vector. The model's own answer also becomes part of the context; every new decision shifts the boundary.",
+      body: "The feed-forward network works on each token separately. It expands the vector, applies an activation, and projects back. Attention mixes tokens; the FFN computes within a token. It does with the context what the MLP did with the points: regions that were not linearly separable become separable as the context refines the vector. The model's own answer also becomes part of the context; every new decision shifts the boundary. The richer vector is a point in a high-dimensional space: in the model it has thousands of coordinates, and the two axes in the demo are only a projection.",
       watch: "Compare “I ate the apple” and “I bought an Apple laptop”. Which patterns fire?",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "A real FFN has no labelled keys. The patterns are learned directions in W₁; the pull is a learned direction in W₂.",
@@ -549,7 +554,12 @@
       boxes: [
         box("ffn-1", "Mathematics", "The dense unit", "dense(x) = activation(Wx + b). The FFN is dense₂(activation(dense₁(x))). The activation supplies the nonlinearity."),
         box("ffn-2", "Technique", "Why the FFN?", "Attention moves information between tokens. The FFN transforms what each token carries. Together they form one block."),
-        box("ffn-3", "Connection", "What does this have to do with the MLP?", "The FFN is a small MLP per token. It bends the vector so that patterns become separable. Attention supplies the context; the FFN computes it into a new direction.")
+        box("ffn-3", "Connection", "What does this have to do with the MLP?", "The FFN is a small MLP per token. It bends the vector so that patterns become separable. Attention supplies the context; the FFN computes it into a new direction."),
+        box("ffn-4", "Geometry", "Is the richer vector high-dimensional?", "Yes. Every point in these demos stands for a vector with thousands of dimensions. The two or three axes are only a projection for us; the FFN computes in the full space. The patterns in W₁ and the pull in W₂ are directions in that high-dimensional space.")
+      ],
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" },
+        { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2010.01019" }
       ]
     }
   ];

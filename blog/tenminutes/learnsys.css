@@ -737,9 +737,13 @@ h1,h2,h3,h4{
   .ls-att-readout{grid-column:1;grid-row:7}
   .ls-att-stage,.ls-att-vector{min-height:200px}
 }
-.ls-ffn-scene{height:100%;min-height:0;display:grid;grid-template-rows:auto minmax(160px,1fr) auto;gap:8px;padding:2px;overflow-y:auto}
-.ls-ffn-contexts{display:grid;gap:6px;min-height:0}
-.ls-ffn-context{border:1px solid rgba(0,75,111,.10);background:rgba(255,255,255,.55);padding:7px 9px;display:grid;gap:5px}
+.ls-ffn-scene{height:100%;min-height:0;display:grid;grid-template-rows:auto auto minmax(160px,1fr) auto;gap:8px;padding:2px;overflow-y:auto}
+.ls-ffn-stepper{display:flex;align-items:center;gap:8px;font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-ffn-step-label{color:var(--ls-muted)}
+.ls-ffn-stepper .ls-btn[disabled]{opacity:.4;cursor:default}
+.ls-ffn-contexts{display:grid;min-height:0}
+.ls-ffn-context{border:1px solid rgba(0,75,111,.10);background:rgba(255,255,255,.55);padding:7px 9px;display:grid;gap:5px;grid-area:1/1;opacity:0;pointer-events:none;transition:opacity .28s ease}
+.ls-ffn-context.is-active{opacity:1;pointer-events:auto}
 .ls-ffn-context-head{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .ls-ffn-stream-pill{border:1px solid rgba(0,75,111,.14);background:rgba(255,255,255,.82);padding:2px 6px;font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-petrol);white-space:nowrap}
 .ls-ffn-context-title{font:600 var(--ls-fs-ui) "Open Sans",sans-serif;color:var(--ls-ink);line-height:1.25}

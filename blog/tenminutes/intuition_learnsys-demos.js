@@ -1432,7 +1432,9 @@
     var landBall = { x: 0, y: 0, init: false, animating: false };
     var landTrail = [];
     var revealed = [];
+    var liveReveal = [];
     var knownProbs = {};
+    var tempShown = 0.8, tempRaf = 0;
     var REVEAL_R = 0.95, REVEAL_FEATHER = 0.35;
     var lastPath = [], lastProbs = null, lastTop = null;
     var LAND_X = 2.65, LAND_Y = 1.9;
@@ -1477,12 +1479,16 @@
     }
     function revealFactor(x, y) {
       var best = 0;
-      for (var i = 0; i < revealed.length; i++) {
-        var r = revealed[i];
-        var dx = x - r.x, dy = y - r.y;
-        var f = revealSmooth((REVEAL_R - Math.sqrt(dx * dx + dy * dy)) / REVEAL_FEATHER);
-        if (f > best) best = f;
+      function scan(list) {
+        for (var i = 0; i < list.length; i++) {
+          var r = list[i];
+          var dx = x - r.x, dy = y - r.y;
+          var f = revealSmooth((REVEAL_R - Math.sqrt(dx * dx + dy * dy)) / REVEAL_FEATHER);
+          if (f > best) best = f;
+        }
       }
+      scan(revealed);
+      scan(liveReveal);
       return best;
     }
     function seedReveal() {
@@ -1495,36 +1501,80 @@
     }
 
     function buildCatalog() {
-      var seen = {}, list = [];
-      function add(t) {
-        if (!t || seen[t]) return;
-        seen[t] = true;
-        list.push({ t: t });
+      var nodes = {};
+      function node(t) {
+        if (!nodes[t]) nodes[t] = { t: t, depth: null, preds: {}, succs: {}, ctx: {} };
+        return nodes[t];
       }
-      NOUNS.forEach(function (o) { add(o.t); });
-      if (DE) {
-        add("der"); add("das"); add("welcher"); add("welches");
-      } else {
-        add("that"); add("who"); add("which");
+      function link(from, to) {
+        if (!from || from === to) return;
+        node(from).succs[to] = 1;
+        node(to).preds[from] = 1;
       }
-      MODALS.forEach(function (o) { add(o.t); });
-      NEGATORS.forEach(function (o) { add(o.t); });
-      Object.keys(ACTIONS).forEach(function (key) {
-        ACTIONS[key].forEach(function (o) { add(o.t); });
+      var seen = {};
+      function walk(gen) {
+        var key = gen.join("\u0001");
+        if (seen[key]) return;
+        seen[key] = true;
+        var p = gen.length;
+        var opts = p < MAX_STEPS ? choicesFor(gen) : CONTINUE;
+        if (!opts || !opts.length) return;
+        var prev = p ? gen[p - 1] : null;
+        opts.forEach(function (o) {
+          var v = node(o.t);
+          if (v.depth == null) v.depth = p;
+          if (prev) link(prev, o.t);
+          if (p === 4) v.ctx[gen[0]] = 1;
+          if (p < MAX_STEPS) walk(gen.concat(o.t));
+        });
+      }
+      walk([]);
+      var maxDepth = 0;
+      Object.keys(nodes).forEach(function (k) {
+        if (nodes[k].depth != null && nodes[k].depth > maxDepth) maxDepth = nodes[k].depth;
       });
-      Object.keys(TAIL).forEach(function (key) {
-        TAIL[key].forEach(function (o) { add(o.t); });
+      var columns = {};
+      Object.keys(nodes).forEach(function (k) {
+        var n = nodes[k];
+        if (n.depth == null) n.depth = maxDepth;
+        (columns[n.depth] || (columns[n.depth] = [])).push(n);
       });
-      CONTINUE.forEach(function (o) { add(o.t); });
-      [".", "!", "…"].forEach(add);
-      var n = list.length;
-      list.forEach(function (it, i) {
-        var radius = Math.sqrt((i + 0.55) / n);
-        var angle = i * 2.399963229728653;
-        it.x = Math.cos(angle) * radius * LAND_X * 0.92;
-        it.y = Math.sin(angle) * radius * LAND_Y * 0.92;
+      var x0 = -LAND_X * 0.88, x1 = LAND_X * 0.88;
+      Object.keys(columns).forEach(function (d) {
+        var col = columns[d];
+        var span = 2 * LAND_Y * 0.9;
+        col.forEach(function (n, i) {
+          n.x = maxDepth ? x0 + (Number(d) / maxDepth) * (x1 - x0) : 0;
+          n.y = col.length === 1 ? 0 : -span / 2 + span * i / (col.length - 1);
+        });
       });
-      return list;
+      // Relax vertically so every token sits near the tokens that can come
+      // before or after it. The x position keeps the sentence stages apart.
+      var all = Object.keys(nodes).map(function (k) { return nodes[k]; });
+      for (var iter = 0; iter < 140; iter++) {
+        all.forEach(function (n) {
+          var sum = 0, w = 0;
+          Object.keys(n.preds).forEach(function (p) { sum += nodes[p].y; w += 1; });
+          Object.keys(n.succs).forEach(function (s) { sum += nodes[s].y * 0.55; w += 0.55; });
+          Object.keys(n.ctx).forEach(function (c) { sum += nodes[c].y * 0.4; w += 0.4; });
+          if (w > 0) n.y = n.y * 0.55 + (sum / w) * 0.45;
+        });
+        Object.keys(columns).forEach(function (d) {
+          var col = columns[d].slice().sort(function (a, b) { return a.y - b.y; });
+          var gap = col.length > 1 ? Math.min(0.32, (2 * LAND_Y * 0.92) / (col.length - 1)) : 0;
+          for (var i = 1; i < col.length; i++) {
+            if (col[i].y - col[i - 1].y < gap) col[i].y = col[i - 1].y + gap;
+          }
+          var limit = LAND_Y * 0.94;
+          var top = col[col.length - 1].y;
+          if (top > limit) { var shift = top - limit; col.forEach(function (n) { n.y -= shift; }); }
+          var bottom = col[0].y;
+          if (bottom < -limit) { var shift2 = -limit - bottom; col.forEach(function (n) { n.y += shift2; }); }
+        });
+      }
+      return Object.keys(nodes).map(function (k) {
+        return { t: k, x: nodes[k].x, y: nodes[k].y };
+      });
     }
 
     function landWells(items) {
@@ -1588,14 +1638,15 @@
       ctx.fillRect(0, 0, w, h);
 
       var opts = currentOptions();
-      var probs = softmax(opts.map(function (o) { return o.l; }), temp);
+      var probs = softmax(opts.map(function (o) { return o.l; }), tempShown);
       var probByToken = {};
+      knownProbs = {};
       opts.forEach(function (o, i) { probByToken[o.t] = probs[i]; knownProbs[o.t] = probs[i]; });
       var items = catalog.map(function (it) {
         var p = probByToken[it.t];
-        var known = p != null ? p : knownProbs[it.t];
-        return { t: it.t, x: it.x, y: it.y, p: known == null ? 0 : known, current: p != null, known: known != null };
+        return { t: it.t, x: it.x, y: it.y, p: p == null ? 0 : p, current: p != null, known: p != null };
       });
+      liveReveal = items.filter(function (it) { return it.current; }).map(function (it) { return { x: it.x, y: it.y }; });
       var wells = landWells(items.filter(function (it) { return it.known; }));
       var top = items.filter(function (it) { return it.current; }).sort(function (a, b) { return b.p - a.p; })[0] || items[0];
       lastProbs = probByToken;
@@ -1667,16 +1718,10 @@
         ctx.globalAlpha = 1;
       });
 
-      // This step's lantern: the map stays put, but the area of the token
-      // just chosen lights up. Moving to the next token moves the light,
-      // not the map.
-      var lastChosen = generated.length ? catalogByToken[generated[generated.length - 1]] : null;
-      var glowItem = lastChosen || top;
-      if (glowItem) {
-        var glowProb = lastChosen && probByToken[lastChosen.t] != null
-          ? probByToken[lastChosen.t]
-          : (top ? top.p : BASE_PROB);
-        var glowPt = landRaw(glowItem.x, glowItem.y, landZ(glowProb));
+      // The lantern forecasts the next word: it sits on the deepest current
+      // valley, so the plot is always one word ahead of the sentence.
+      if (top) {
+        var glowPt = landRaw(top.x, top.y, landZ(top.p));
         var gx = sx(glowPt.x), gy = sy(glowPt.y);
         var glowR = Math.max(44, Math.min(w, h) * 0.19);
         var glow = ctx.createRadialGradient(gx, gy, 2, gx, gy, glowR);
@@ -2063,7 +2108,7 @@
     function renderBars() {
       var opts = currentOptions();
       var atEnd = generated.length >= MAX_STEPS;
-      var probs = softmax(opts.map(function (o) { return o.l; }), temp);
+      var probs = softmax(opts.map(function (o) { return o.l; }), tempShown);
       var top = 0;
       probs.forEach(function (p, i) { if (p > probs[top]) top = i; });
       var order = probs.map(function (p, i) { return { i: i, p: p }; }).sort(function (a, b) { return b.p - a.p; });
@@ -2163,7 +2208,12 @@
       });
       renderBars();
     }
-    function reset() { generated = []; loopHistory = []; revealed = []; knownProbs = {}; seedReveal(); renderSentence(); renderTree(); renderBars(); }
+    function reset() {
+      generated = []; loopHistory = []; revealed = []; knownProbs = {};
+      if (tempRaf) { cancelAnimationFrame(tempRaf); tempRaf = 0; }
+      tempShown = temp;
+      seedReveal(); renderSentence(); renderTree(); renderBars();
+    }
     [
       { id: "sample", label: "Sample" }, { id: "greedy", label: "Greedy" }, { id: "topp", label: "Top-p 0.9" }
     ].forEach(function (m) {
@@ -2177,10 +2227,23 @@
     });
     el.querySelector(".ls-loop-next").addEventListener("click", sample);
     el.querySelector(".ls-loop-reset").addEventListener("click", reset);
+    function animateTemp(target) {
+      if (tempRaf) cancelAnimationFrame(tempRaf);
+      var from = tempShown, t0 = performance.now(), dur = 260;
+      function frame(now) {
+        var t = Math.min(1, (now - t0) / dur);
+        var e = 1 - Math.pow(1 - t, 3);
+        tempShown = from + (target - from) * e;
+        renderBars();
+        if (t < 1) tempRaf = requestAnimationFrame(frame);
+        else tempRaf = 0;
+      }
+      tempRaf = requestAnimationFrame(frame);
+    }
     tempEl.addEventListener("input", function () {
       temp = parseFloat(tempEl.value) || 0.8;
       tempOut.textContent = temp.toFixed(2);
-      renderBars();
+      animateTemp(temp);
     });
     reset();
     setLandscape(true);
@@ -3524,7 +3587,10 @@
       separated: "getrennt",
       notSeparated: "noch nicht getrennt",
       plane: "Trennebene",
-      hint: "Wie im MLP: Bereich anheben, bis eine Ebene trennt."
+      hint: "Wie im MLP: Bereich anheben, bis eine Ebene trennt.",
+      prev: "Voriger Kontext",
+      next: "Nächster Kontext",
+      step: "Kontext"
     } : {
       fruitTitle: "I ate the apple",
       techTitle: "I bought an Apple laptop",
@@ -3537,11 +3603,19 @@
       separated: "separated",
       notSeparated: "not separated",
       plane: "separating plane",
-      hint: "Like the MLP: lift the region until a plane separates it."
+      hint: "Like the MLP: lift the region until a plane separates it.",
+      prev: "Previous context",
+      next: "Next context",
+      step: "Context"
     };
     var el = document.createElement("div");
     el.className = "ls-ffn-scene";
     el.innerHTML =
+      '<div class="ls-ffn-stepper">' +
+        '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-prev" aria-label="' + api.esc(labels.prev) + '">←</button>' +
+        '<span class="ls-ffn-step-label" aria-live="polite"></span>' +
+        '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-next" aria-label="' + api.esc(labels.next) + '">→</button>' +
+      '</div>' +
       '<div class="ls-ffn-contexts"></div>' +
       '<div class="ls-ffn-bend">' +
         '<div class="ls-ffn-bend-legend"><span><i class="is-core"></i>' + labels.core + '</span><span><i class="is-ring"></i>' + labels.ring + '</span></div>' +
@@ -3555,6 +3629,10 @@
       '<p class="ls-ffn-caveat">' + (DE ? "Vereinfachung: Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁." : "Simplification: a real FFN has no labelled keys. The patterns are learned directions in W₁.") + '</p>';
     root.appendChild(el);
     var contextsEl = el.querySelector(".ls-ffn-contexts");
+    var stepperEl = el.querySelector(".ls-ffn-stepper");
+    var prevBtn = el.querySelector(".ls-ffn-prev");
+    var nextBtn = el.querySelector(".ls-ffn-next");
+    var stepLabel = el.querySelector(".ls-ffn-step-label");
     var bendStage = el.querySelector(".ls-ffn-bend-stage");
     var bendCanvas = el.querySelector(".ls-ffn-bend-canvas");
     var bendRange = el.querySelector(".ls-ffn-bend-range");
@@ -3562,6 +3640,8 @@
     var bendReadout = el.querySelector(".ls-ffn-bend-readout");
     var bendToggle = el.querySelector(".ls-ffn-bend-toggle");
     var bend = 0.65, bendRaf = 0, size = null, ctx = null;
+    var modeOrder = ["fruit", "tech"];
+    var activeMode = "fruit";
     function pill(item, withState) {
       return '<span class="ls-ffn-pill ' + (item.on ? "is-fire" : "is-idle") + '">' + api.esc(item.label) +
         (withState ? '<small>' + (item.on ? (DE ? "passt" : "matches") : (DE ? "still" : "silent")) + '</small>' : '') + '</span>';
@@ -3569,7 +3649,7 @@
     function contextCard(mode, title) {
       var d = data[mode];
       var card = document.createElement("article");
-      card.className = "ls-ffn-context";
+      card.className = "ls-ffn-context" + (mode === "fruit" ? " is-active" : "");
       card.setAttribute("data-mode", mode);
       card.innerHTML =
         '<div class="ls-ffn-context-head"><span class="ls-ffn-stream-pill">' + labels.stream + '</span><span class="ls-ffn-context-title">' + api.esc(title) + '</span></div>' +
@@ -3584,6 +3664,29 @@
     }
     contextCard("fruit", labels.fruitTitle);
     contextCard("tech", labels.techTitle);
+    function setContext(mode) {
+      if (modeOrder.indexOf(mode) < 0) return;
+      activeMode = mode;
+      var cards = contextsEl.querySelectorAll(".ls-ffn-context");
+      Array.prototype.forEach.call(cards, function (card) {
+        var on = card.getAttribute("data-mode") === mode;
+        card.classList.toggle("is-active", on);
+        card.setAttribute("aria-hidden", on ? "false" : "true");
+      });
+      var idx = modeOrder.indexOf(mode);
+      stepLabel.textContent = labels.step + " " + (idx + 1) + " / " + modeOrder.length;
+      prevBtn.disabled = idx <= 0;
+      nextBtn.disabled = idx >= modeOrder.length - 1;
+      drawBend();
+    }
+    function stepContext(delta) {
+      var idx = modeOrder.indexOf(activeMode) + delta;
+      if (idx < 0 || idx >= modeOrder.length) return false;
+      setContext(modeOrder[idx]);
+      return true;
+    }
+    prevBtn.addEventListener("click", function () { stepContext(-1); });
+    nextBtn.addEventListener("click", function () { stepContext(1); });
     function drawBend() {
       if (!size) return;
       var C = api.colors();
@@ -3621,19 +3724,20 @@
       }
       ctx.globalAlpha = 1;
       function drawClass(cls, color) {
+        var active = (cls === 0 && activeMode === "fruit") || (cls === 1 && activeMode === "tech");
         for (var k = 0; k < 36; k++) {
           var a = k * 2.399963229728653;
           var r = cls === 0 ? 0.28 * Math.sqrt((k + 0.5) / 36) : 0.55 + 0.32 * Math.sqrt((k + 0.5) / 36);
           var wp = warp(Math.cos(a) * r, Math.sin(a) * r);
           var p = project(wp.x, wp.y, wp.z);
           ctx.beginPath();
-          ctx.arc(p.x, p.y, cls === 0 ? 3.4 : 3, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, (cls === 0 ? 3.4 : 3) * (active ? 1.15 : 1), 0, Math.PI * 2);
           ctx.fillStyle = color;
-          ctx.globalAlpha = 0.9;
+          ctx.globalAlpha = active ? 0.92 : 0.26;
           ctx.fill();
           ctx.strokeStyle = C.paper;
           ctx.lineWidth = 1;
-          ctx.globalAlpha = 1;
+          ctx.globalAlpha = active ? 1 : 0.45;
           ctx.stroke();
         }
       }
@@ -3705,8 +3809,17 @@
     window.addEventListener("tm:theme", onTheme);
     updateBendReadout();
     resize();
+    setContext(activeMode);
     return {
-      update: function () {},
+      update: function (s) {
+        if (s && s.mode) setContext(s.mode);
+      },
+      onKey: function (e) {
+        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (e.key === "ArrowLeft" || e.key === "PageUp") return stepContext(-1);
+        if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") return stepContext(1);
+        return false;
+      },
       resize: resize,
       destroy: function () {
         if (bendRaf) cancelAnimationFrame(bendRaf);
