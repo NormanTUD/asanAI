@@ -106,6 +106,17 @@
     if (!isFinite(v)) return 1;
     return clamp(v, FONT_MIN, FONT_MAX);
   }
+  function fontPx(role) {
+    var body = FONT_LEVELS[normalizeFont(state.font)].body;
+    var px = body;
+    if (role === "micro") px = body * .58;
+    else if (role === "ui") px = body * .82;
+    else if (role === "ui-sm") px = body * .72;
+    else if (role === "readout") px = body * .95;
+    else if (role === "canvas") px = body * .68;
+    else if (role === "canvas-sm") px = body * .58;
+    return Math.max(9, Math.round(px * 10) / 10);
+  }
   var TRACK_LABEL = {};
   var GLOSSARY = {
     matrix: {
@@ -344,7 +355,7 @@
     if (cfg.singleDay) {
       var sd = activeDay();
       var stepCount = sd ? sd.steps.length : 1;
-      tickTotal = stepCount <= 12 ? stepCount : 10;
+      tickTotal = stepCount;
     }
     posCount = tickTotal;
     var posHtml = "";
@@ -735,6 +746,7 @@
       colors: colors,
       esc: esc,
       termHTML: termHTML,
+      font: fontPx,
       fit: fitCanvas,
       fitPair: fitPair,
       typeset: typesetScope,
@@ -1028,6 +1040,13 @@
     else day = posCount > 1 ? Math.round(n / (posCount - 1) * last) : 0;
     go(clamp(day, 0, last), 0);
   }
+  function centerRail(rail, active) {
+    if (!rail || !active) return;
+    var railRect = rail.getBoundingClientRect();
+    var activeRect = active.getBoundingClientRect();
+    var target = rail.scrollLeft + activeRect.left - railRect.left - (rail.clientWidth - activeRect.width) / 2;
+    rail.scrollLeft = Math.max(0, target);
+  }
   function updatePosRail() {
     if (!els.mixPos || !els.mixPos.length) return;
     var total, pos;
@@ -1040,12 +1059,23 @@
       pos = total > 1 ? Math.round(state.day / (total - 1) * (posCount - 1)) : 0;
     }
     pos = clamp(pos, 0, posCount - 1);
+    var active = null;
+    var rail = els.mixPos[0] ? els.mixPos[0].parentNode : null;
     els.mixPos.forEach(function (b) {
       var on = parseInt(b.getAttribute("data-pos"), 10) === pos;
       b.classList.toggle("is-on", on);
-      if (on) b.setAttribute("aria-current", "step");
-      else b.removeAttribute("aria-current");
+      if (on) {
+        b.setAttribute("aria-current", "step");
+        active = b;
+      } else b.removeAttribute("aria-current");
     });
+    if (rail) {
+      rail.classList.toggle("is-scrollable", rail.scrollWidth > rail.clientWidth + 1);
+      if (active) {
+        centerRail(rail, active);
+        requestAnimationFrame(function () { centerRail(rail, active); });
+      }
+    }
   }
   function pressPositionDigit(digit) {
     posBuffer += String(digit);

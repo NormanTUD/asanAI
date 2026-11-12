@@ -1480,7 +1480,7 @@
       ctx.globalAlpha = 1;
       var planeLabel = landRaw(-LAND_X, -LAND_Y, PLANE_Z);
       ctx.fillStyle = C.muted;
-      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       ctx.fillText(DE ? "Token-Ebene (2D)" : "token plane (2D)", sx(planeLabel.x) + 4, sy(planeLabel.y) - 4);
 
@@ -1490,7 +1490,7 @@
       ctx.lineWidth = 1.2;
       ctx.beginPath(); ctx.moveTo(sx(ab.x), sy(ab.y)); ctx.lineTo(sx(at.x), sy(at.y)); ctx.stroke();
       ctx.fillStyle = C.muted;
-      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       [0, 0.25, 0.5, 0.75, 1].forEach(function (p) {
         var zz = landZ(p);
@@ -1501,12 +1501,12 @@
         ctx.fillText(Math.round(p * 100) + "%", tx + 6, ty + 3);
       });
       ctx.fillStyle = C.petrol;
-      ctx.font = '600 10px "Open Sans", sans-serif';
+      ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
       ctx.fillText("p", sx(at.x) + 6, sy(at.y) - 4);
 
       var atEnd = generated.length >= MAX_STEPS;
       ctx.fillStyle = C.muted;
-      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       ctx.fillText(DE ? "z = p · Fläche = Verteilung" : "z = p · surface = distribution", 10, 16);
       if (atEnd) ctx.fillText(DE ? "Satzende · nächste Sätze" : "end of sentence · next sentences", 10, 29);
@@ -1553,7 +1553,7 @@
         ctx.stroke();
 
         var pct = (it.p * 100).toFixed(it.p * 100 < 1 ? 1 : 0) + "%";
-        ctx.font = '600 11px "Open Sans", sans-serif';
+        ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
         var tw = Math.max(ctx.measureText(it.t).width, ctx.measureText(pct).width) + 12;
         var bh = 28;
         var offsets = [[0, -bh - 8], [0, 10], [-tw / 2 - 10, -bh / 2], [tw / 2 + 10, -bh / 2], [0, -bh - 24], [0, 24]];
@@ -1583,11 +1583,11 @@
         ctx.lineWidth = isTop ? 1.6 : 1;
         ctx.strokeRect(box.x, box.y, box.w, box.h);
         ctx.fillStyle = C.ink;
-        ctx.font = '600 11px "Open Sans", sans-serif';
+        ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "left";
         ctx.fillText(it.t, box.x + 6, box.y + 13);
         ctx.fillStyle = C.muted;
-        ctx.font = '9px "Open Sans", sans-serif';
+        ctx.font = api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.fillText(pct, box.x + 6, box.y + 23);
       });
 
@@ -2062,7 +2062,7 @@
           ctx.fill();
           if (e.index === step) {
             ctx.fillStyle = C.soft;
-            ctx.font = '600 9px "Open Sans", sans-serif';
+            ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
             ctx.textAlign = "center";
             ctx.fillText(alt.token, end.x, end.y - 8);
           }
@@ -2383,7 +2383,7 @@
       ctx.strokeStyle = C.line;
       ctx.strokeRect(padL, padT, w - padL - padR, h - padT - padB);
       ctx.fillStyle = C.muted;
-      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "right";
       ctx.fillText("0", padL - 4, padT + 8);
       ctx.fillText(String(rows - 1), padL - 4, padT + (rows - 1) * ch + ch);
@@ -2452,7 +2452,7 @@
       function axisLabel(v, text, col) {
         var q = P(v);
         ctx.fillStyle = col;
-        ctx.font = '700 10px "Barlow", sans-serif';
+        ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif';
         ctx.textAlign = "left";
         ctx.fillText(text, q.x + 4, q.y - 3);
       }
@@ -2480,7 +2480,7 @@
       g.addColorStop(0.45, Cc.blue);
       g.addColorStop(1, "rgba(18,117,172,.15)");
       ctx.beginPath(); ctx.arc(o.x, o.y, 10, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
-      ctx.fillStyle = Cc.soft; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "center";
+      ctx.fillStyle = Cc.soft; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "center";
       ctx.fillText(DE ? "Wort" : "word", o.x, o.y + 22);
       var cur = curvePoint(pos * 0.14);
       var cp = P(cur);
@@ -2514,7 +2514,7 @@
       ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.fillStyle = Cc.green; ctx.fill();
       ctx.restore();
       ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.strokeStyle = Cc.paper; ctx.lineWidth = 2; ctx.stroke();
-      ctx.fillStyle = Cc.muted; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "left";
+      ctx.fillStyle = Cc.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
       ctx.fillText((DE ? "Position " : "position ") + pos, 12, 18);
       ctx.fillText(metric === "euclid" ? (DE ? "Länge" : "length") : (DE ? "Winkel" : "angle"), cp.x + 10, cp.y + 3);
       var vlen = Math.hypot(cur[0], cur[1], cur[2]);
@@ -2608,7 +2608,7 @@
       ctx.strokeStyle = "rgba(0,75,111,.25)";
       ctx.lineWidth = 1;
       ctx.strokeRect(12, 10, w - 24, codeH);
-      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.fillStyle = "#9db5b5";
       ctx.textAlign = "left";
       ctx.fillText("Python", 22, 28);
@@ -2658,7 +2658,7 @@
       ];
 
       ctx.textAlign = "center";
-      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.fillStyle = C.muted;
       ctx.globalAlpha = 0.15 + 0.85 * t;
       ctx.fillText(DE ? "Bedeutung" : "meaning", px(0), py(0.74));
@@ -2677,7 +2677,7 @@
         ctx.beginPath();
         ctx.arc(px(a.x), py(a.y), 4.5, 0, Math.PI * 2);
         ctx.fill();
-        ctx.font = '600 11px "Open Sans", sans-serif';
+        ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
         ctx.fillText(a.label, px(a.x), py(a.y) - 9);
         ctx.globalAlpha = 1;
       });
@@ -2696,7 +2696,7 @@
         ctx.beginPath(); ctx.moveTo(axp, ayp); ctx.lineTo(bxp, byp); ctx.stroke();
         ctx.setLineDash([]);
         ctx.globalAlpha = Math.max(0, alpha);
-        ctx.font = '600 10px "Open Sans", sans-serif';
+        ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
         ctx.fillStyle = C.muted;
         if (Math.abs(axp - bxp) + Math.abs(ayp - byp) > 34) ctx.fillText("≈", (axp + bxp) / 2, (ayp + byp) / 2 - 4);
         function tag(x, y, text, color, up) {
@@ -2707,7 +2707,7 @@
           ctx.strokeStyle = C.paper;
           ctx.lineWidth = 1.5;
           ctx.stroke();
-          ctx.font = '600 10px "Open Sans", sans-serif';
+          ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
           var tw = ctx.measureText(text).width;
           var bx2 = x - tw / 2 - 4, by2 = up ? y - 24 : y + 8;
           ctx.fillStyle = C.paper;
@@ -2726,7 +2726,7 @@
       });
 
       ctx.fillStyle = C.muted;
-      ctx.font = '9px "Open Sans", sans-serif';
+      ctx.font = api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       ctx.fillText(DE ? "schematisch, keine Messung" : "schematic, not a measurement", 12, h - 4);
     }
@@ -2795,7 +2795,7 @@
       var tokenXs = [];
       var gap = Math.min(104, (w - pad * 2) / tokens.length);
       var start = (w - gap * tokens.length) / 2 + gap / 2;
-      ctx.font = '600 13px "Open Sans", sans-serif';
+      ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
       tokens.forEach(function (t, i) {
         var x = start + i * gap;
         tokenXs.push(x);
@@ -2844,7 +2844,7 @@
       function point(x, y, col, label, on) {
         var px = plotX + x * scale, py = plotY - y * scale;
         ctx.beginPath(); ctx.arc(px, py, on ? 7 : 4.5, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
-        ctx.fillStyle = on ? C.ink : C.soft; ctx.font = '600 10px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(label, px, py - 11);
+        ctx.fillStyle = on ? C.ink : C.soft; ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(label, px, py - 11);
         return { x: px, y: py, dx: x, dy: y };
       }
       var river = point(0.55, 0.35, C.blue, DE ? "Fluss" : "river", current === "river" || current === "both");
@@ -2869,7 +2869,7 @@
       ctx.closePath();
       ctx.fillStyle = C.green;
       ctx.fill();
-      ctx.fillStyle = C.muted; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "left";
+      ctx.fillStyle = C.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
       ctx.fillText(DE ? "Bank-Vektor" : "bank vector", gx0, gy0 - 6);
       hits = [];
       contexts.forEach(function (c2, i) {
@@ -2882,7 +2882,7 @@
         ctx.fillRect(x, y - 13, pw, 24);
         ctx.strokeRect(x, y - 13, pw, 24);
         ctx.fillStyle = current === c2.id ? "#fff" : C.soft;
-        ctx.font = '600 9px "Open Sans", sans-serif';
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center";
         ctx.fillText(c2.label, x + pw / 2, y + 2);
         hits.push({ x: x + pw / 2, y: y, r: pw / 2 + 8, id: c2.id });
@@ -3034,7 +3034,7 @@
         ctx.lineWidth = 1;
         ctx.fillRect(pad, 10, w - pad * 2, 54);
         ctx.strokeRect(pad, 10, w - pad * 2, 54);
-        ctx.font = '600 10px "Open Sans", sans-serif';
+        ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "left";
         var tx = pad + 10, ty = 34;
         sentence.forEach(function (pair) {
@@ -3044,12 +3044,12 @@
           ctx.fillText(word, tx, ty);
           tx += ctx.measureText(word + " ").width;
         });
-        ctx.font = '600 8px "Open Sans", sans-serif';
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.fillStyle = C.green; ctx.fillText(DE ? "Attention" : "attention", pad + 10, 52);
         ctx.fillStyle = C.gold; ctx.fillText("MLP", pad + 78, 52);
         ctx.fillStyle = C.muted; ctx.fillText("Embedding", pad + 118, 52);
       }
-      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "center";
       for (var j = 0; j < 6; j++) {
         var x = barX0 + j * barW + barW / 2;
@@ -3080,7 +3080,7 @@
           ctx.fillRect(pad, yy - 12, 112, 20);
           ctx.strokeRect(pad, yy - 12, 112, 20);
           ctx.fillStyle = on ? "#fff" : C.soft;
-          ctx.font = '600 9px "Open Sans", sans-serif';
+          ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
           ctx.textAlign = "left";
           ctx.fillText(layers[i], pad + 6, yy + 2);
           hits.push({ x: pad + 56, y: yy - 2, r: 28, layer: i });
@@ -3092,7 +3092,7 @@
           ctx.fillRect(lx + 1, 6, lw - 3, 18);
           ctx.strokeRect(lx + 1, 6, lw - 3, 18);
           ctx.fillStyle = on ? "#fff" : C.soft;
-          ctx.font = '600 8px "Open Sans", sans-serif';
+          ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
           ctx.textAlign = "center";
           ctx.fillText(layers[i].split(" ")[0], lx + lw / 2, 18);
           hits.push({ x: lx + lw / 2, y: 15, r: lw / 2, layer: i });
@@ -3705,7 +3705,7 @@
         var n = 5;
         var cell = Math.min((w - pad * 2) / n, (h - pad * 2 - 30) / n);
         var x0 = w / 2 - cell * n / 2, y0 = 44;
-        ctx.font = '600 9px "Open Sans", sans-serif';
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center";
         var labels = DE ? ["Die", "Hauptstadt", "von", "Frankreich", "ist"] : ["The", "capital", "of", "France", "is"];
         labels.forEach(function (l, i) {
@@ -3717,9 +3717,9 @@
           var wgt = on ? (1 / (i + 1)) : 0;
           ctx.fillStyle = on ? "rgba(18,117,172," + (0.15 + wgt * 0.7) + ")" : "rgba(0,75,111,.04)";
           ctx.fillRect(x0 + j * cell, y0 + i * cell, cell - 1, cell - 1);
-          if (on) { ctx.fillStyle = "#fff"; ctx.font = '600 8px "Open Sans", sans-serif'; ctx.fillText((wgt * 100).toFixed(0), x0 + j * cell + cell / 2, y0 + i * cell + cell / 2 + 3); }
+          if (on) { ctx.fillStyle = "#fff"; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.fillText((wgt * 100).toFixed(0), x0 + j * cell + cell / 2, y0 + i * cell + cell / 2 + 3); }
         }
-        ctx.fillStyle = C.soft; ctx.font = '600 10px "Open Sans", sans-serif'; ctx.textAlign = "left";
+        ctx.fillStyle = C.soft; ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
         ctx.fillText(DE ? "Kausale Self-Attention: Zeile fragt, Spalte antwortet" : "Causal self-attention: row asks, column answers", pad, 22);
         readout.innerHTML = '<span>' + (DE ? "Maskiert" : "Masked") + ' <b>' + (DE ? "oberes Dreieck" : "upper triangle") + '</b></span><span>' + (DE ? "Jede Zeile summiert zu 1" : "Every row sums to 1") + '</span>';
         return;
@@ -3734,9 +3734,9 @@
         ctx.strokeStyle = i === 2 ? C.green : C.lineStrong;
         ctx.fillRect(x - 58, y - 26, 116, 52);
         ctx.strokeRect(x - 58, y - 26, 116, 52);
-        ctx.fillStyle = C.ink; ctx.font = '700 12px "Barlow", sans-serif'; ctx.textAlign = "center";
+        ctx.fillStyle = C.ink; ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif'; ctx.textAlign = "center";
         ctx.fillText(s.label, x, y - 2);
-        ctx.fillStyle = C.muted; ctx.font = '9px "Open Sans", sans-serif';
+        ctx.fillStyle = C.muted; ctx.font = api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.fillText(s.sub, x, y + 13);
         hits.push({ id: s.id, x: x, y: y, r: 62, on: false });
         if (i < stages.length - 1) {
@@ -3749,7 +3749,7 @@
         ctx.strokeStyle = C.green; ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]);
         ctx.beginPath(); ctx.moveTo(start + 58, y + 26); ctx.lineTo(start + 58, y + 58); ctx.lineTo(start + 3 * gap - 58, y + 58); ctx.lineTo(start + 3 * gap - 58, y + 26); ctx.stroke();
         ctx.setLineDash([]);
-        ctx.fillStyle = C.green; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "center";
+        ctx.fillStyle = C.green; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "center";
         ctx.fillText(DE ? "Token anhängen und wiederholen" : "append token and repeat", w / 2, y + 76);
       }
       readout.innerHTML = '<span>' + (DE ? "Stufen" : "Stages") + ' <b>' + stages.map(function (s) { return s.label; }).join(" → ") + '</b></span>';
@@ -3803,7 +3803,7 @@
       ctx.strokeStyle = C.lineStrong; ctx.lineWidth = 1.4;
       ctx.beginPath(); ctx.moveTo(x0, sy(0)); ctx.lineTo(x1, sy(0)); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(sx(0), y0); ctx.lineTo(sx(0), y1); ctx.stroke();
-      ctx.fillStyle = C.muted; ctx.font = '600 8px "Open Sans", sans-serif'; ctx.textAlign = "center";
+      ctx.fillStyle = C.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "center";
       ctx.fillText("x", x1 - 4, sy(0) - 6); ctx.fillText("y", sx(0) + 8, y1 + 8);
       hits = [];
       fns.forEach(function (fn) {
@@ -3821,7 +3821,7 @@
         ctx.globalAlpha = 1;
         var end = sy(f(fn.id, 2.6));
         ctx.fillStyle = on ? C[fn.color] : C.muted;
-        ctx.font = (on ? '700 ' : '600 ') + '9px "Open Sans", sans-serif';
+        ctx.font = (on ? '700 ' : '600 ') + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "left";
         ctx.fillText(fn.label, sx(2.65), end + 3);
         hits.push({ id: fn.id, x: sx(2.65) + 12, y: end, r: 18 });
