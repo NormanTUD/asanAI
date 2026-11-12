@@ -925,81 +925,194 @@
     var el = document.createElement("div");
     el.className = "ls-phone-scene";
     el.innerHTML =
-      '<div class="ls-phone-device" role="img">' +
-        '<div class="ls-phone-screen">' +
-          '<div class="ls-phone-search"><span class="ls-phone-q"></span><span class="ls-phone-mic"></span></div>' +
-          '<div class="ls-phone-answer"></div>' +
-          '<div class="ls-phone-results"></div>' +
+      '<div class="ia-stage">' +
+        '<div class="ia-phone" id="ia-phone">' +
+          '<div class="ia-phone-frame"></div>' +
+          '<div class="ia-phone-notch"></div>' +
+          '<div class="ia-phone-screen">' +
+            '<div class="ia-app-logo" id="ia-logo" aria-hidden="true"></div>' +
+            '<div class="ia-search-bar" id="ia-search-bar">' +
+              '<div class="ia-search-icon" aria-hidden="true"></div>' +
+              '<div class="ia-search-text" id="ia-search-text"></div>' +
+              '<div class="ia-mic-btn" id="ia-mic-btn" aria-hidden="true"><div class="ia-mic-icon"></div></div>' +
+            '</div>' +
+            '<div class="ia-ai-card" id="ia-ai-card">' +
+              '<div class="ia-ai-text" id="ia-ai-text"></div>' +
+              '<div class="ia-ai-thinking" id="ia-ai-thinking" aria-hidden="true"><span></span><span></span><span></span></div>' +
+            '</div>' +
+            '<div class="ia-serp" id="ia-serp"></div>' +
+          '</div>' +
         '</div>' +
-      '</div>' +
-      '<button type="button" class="ls-btn ls-btn--tiny ls-phone-replay">' + (DE ? "Nochmal" : "Replay") + '</button>';
+        '<div class="ia-waveform" id="ia-waveform" aria-hidden="true">' +
+          '<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>' +
+          '<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>' +
+          '<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>' +
+          '<div class="ia-bar"></div><div class="ia-bar"></div>' +
+        '</div>' +
+      '</div>';
     root.appendChild(el);
-    var q = el.querySelector(".ls-phone-q");
-    var answer = el.querySelector(".ls-phone-answer");
-    var results = el.querySelector(".ls-phone-results");
-    var mic = el.querySelector(".ls-phone-mic");
-    var query = DE ? "Warum ist der Himmel blau?" : "Why is the sky blue?";
-    var answerText = DE ? "Kurze Lichtwellen werden in der Atmosphäre stärker gestreut als lange. Deshalb siehst du Blau." : "Short light waves scatter more strongly in the atmosphere than long ones. That is why you see blue.";
-    var resultData = DE ? [
-      { title: "Rayleigh-Streuung", url: "de.wikipedia.org", text: "Die Streuung an Molekülen ist umgekehrt proportional zur vierten Potenz der Wellenlänge." },
-      { title: "Himmelblau", url: "spektrum.de", text: "Warum der Himmel blau und der Sonnenuntergang rot ist." },
-      { title: "Atmosphäre", url: "britannica.com", text: "Aufbau und optische Eigenschaften der Erdatmosphäre." }
+    var stage = el.querySelector(".ia-stage");
+    var phone = el.querySelector(".ia-phone");
+    var logo = el.querySelector("#ia-logo");
+    var searchBar = el.querySelector("#ia-search-bar");
+    var searchText = el.querySelector("#ia-search-text");
+    var mic = el.querySelector("#ia-mic-btn");
+    var wave = el.querySelector("#ia-waveform");
+    var card = el.querySelector("#ia-ai-card");
+    var aiText = el.querySelector("#ia-ai-text");
+    var thinking = el.querySelector("#ia-ai-thinking");
+    var serp = el.querySelector("#ia-serp");
+    var SATZ = DE ? "warum ist der himmel blau?" : "why is the sky blue?";
+    var AI = DE ? [
+      { t: "Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm): " },
+      { t: "Rayleigh-Streuung", c: "b" },
+      { t: "." }
     ] : [
-      { title: "Rayleigh scattering", url: "en.wikipedia.org", text: "Scattering by molecules is inversely proportional to the fourth power of wavelength." },
-      { title: "Why is the sky blue?", url: "science.nasa.gov", text: "Short wavelengths scatter more than long ones." },
-      { title: "Atmosphere", url: "britannica.com", text: "Structure and optical properties of Earth's atmosphere." }
+      { t: "The sky is blue because air molecules scatter short-wavelength light more strongly than long-wavelength light. Blue (450 nm) is scattered about 4× more than red (650 nm): " },
+      { t: "Rayleigh scattering", c: "b" },
+      { t: "." }
+    ];
+    var RESULTS = DE ? [
+      { name: "Wikipedia", url: "de.wikipedia.org › Rayleigh-Jeans-Gesetz", title: "Rayleigh-Jeans-Gesetz", snippet: "Das Plancksche Strahlungsgesetz ist eine Interpolationsformel der beiden anderen Gesetze.", icon: "assets/favicon_wikipedia.ico" },
+      { name: "Wikipedia", url: "de.wikipedia.org › Rayleigh-Streuung", title: "Rayleigh-Streuung", snippet: "Die Streuung von Licht an Teilchen, die kleiner sind als seine Wellenlänge.", icon: "assets/favicon_wikipedia.ico" },
+      { name: "Leifi Physik", url: "www.leifiphysik.de › optik › streuung", title: "Warum ist der Himmel blau?", snippet: "Kurzwelliges blaues Licht wird stärker gestreut als langwelliges rotes Licht.", icon: "assets/favicon_leifiphysik.ico" }
+    ] : [
+      { name: "Wikipedia", url: "en.wikipedia.org › Rayleigh–Jeans law", title: "Rayleigh–Jeans law", snippet: "The Planck law interpolates between the Rayleigh–Jeans law and Wien's law.", icon: "assets/favicon_wikipedia.ico" },
+      { name: "Wikipedia", url: "en.wikipedia.org › Rayleigh scattering", title: "Rayleigh scattering", snippet: "Scattering of light by particles smaller than its wavelength.", icon: "assets/favicon_wikipedia.ico" },
+      { name: "Wikipedia", url: "en.wikipedia.org › Diffuse sky radiation", title: "Diffuse sky radiation", snippet: "Short-wavelength blue light is scattered more strongly than long-wavelength red light.", icon: "assets/favicon_wikipedia.ico" }
     ];
     var timers = [];
-    function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function later(fn, ms) { var id = setTimeout(fn, ms); timers.push(id); return id; }
+    function clearTimers() { timers.forEach(function (id) { clearTimeout(id); clearInterval(id); }); timers = []; }
+    function buildLogo() {
+      var letters = (DE ? "Suche" : "Search").split("");
+      logo.innerHTML = letters.map(function (ch, i) { return '<span class="ia-l' + (i + 1) + '">' + ch + "</span>"; }).join("");
+    }
+    function buildSerp() {
+      serp.innerHTML = RESULTS.map(function (r, i) {
+        return '<div class="ia-result r' + (i + 1) + '">' +
+          '<div class="ia-res-head"><img class="ia-res-fav" src="' + r.icon + '" alt=""><div class="ia-res-lines"><span class="ia-res-name">' + r.name + '</span><span class="ia-res-url">' + r.url + '</span></div></div>' +
+          '<div class="ia-res-title">' + r.title + '</div><div class="ia-res-snippet">' + r.snippet + '</div></div>';
+      }).join("");
+    }
+    function setCentered(on) { searchBar.classList.toggle("centered", !!on); }
     function reset() {
       clearTimers();
-      q.textContent = "";
-      answer.classList.remove("is-on");
-      answer.textContent = "";
-      results.classList.remove("is-on");
-      results.innerHTML = "";
-      mic.classList.remove("is-on");
-      var i = 0;
-      function typeQuery() {
-        if (i <= query.length) {
-          q.textContent = query.slice(0, i);
-          i++;
-          timers.push(setTimeout(typeQuery, 36));
-        } else {
-          timers.push(setTimeout(function () { mic.classList.add("is-on"); }, 250));
-          timers.push(setTimeout(showAnswer, 900));
-        }
-      }
-      function showAnswer() {
-        answer.classList.add("is-on");
-        var words = answerText.split(" ");
-        var j = 0;
-        function tick() {
-          if (j <= words.length) {
-            answer.textContent = words.slice(0, j).join(" ");
-            j++;
-            timers.push(setTimeout(tick, 60));
-          } else {
-            timers.push(setTimeout(showResults, 250));
-          }
-        }
-        tick();
-      }
-      function showResults() {
-        results.innerHTML = resultData.map(function (r, k) {
-          return '<div class="ls-phone-result" style="--i:' + k + '"><b>' + api.esc(r.title) + '</b><span>' + api.esc(r.url) + '</span><p>' + api.esc(r.text) + '</p></div>';
-        }).join("");
-        requestAnimationFrame(function () { results.classList.add("is-on"); });
-      }
-      typeQuery();
+      setCentered(true);
+      searchText.textContent = "";
+      searchText.classList.remove("typing");
+      mic.classList.remove("listening");
+      wave.classList.remove("active");
+      card.classList.remove("on");
+      aiText.innerHTML = "";
+      thinking.classList.remove("on");
+      serp.classList.remove("on");
     }
-    el.querySelector(".ls-phone-replay").addEventListener("click", reset);
-    el.addEventListener("click", function (e) { if (!e.target.closest("button")) reset(); });
+    function typeSearch(text, done) {
+      if (reduce) { searchText.textContent = text; done(); return; }
+      searchText.classList.add("typing");
+      searchText.innerHTML = '<span class="ia-caret"></span>';
+      var i = 0;
+      var timer = setInterval(function () {
+        if (i < text.length) {
+          i += 1;
+          searchText.innerHTML = text.slice(0, i) + '<span class="ia-caret"></span>';
+        } else {
+          clearInterval(timer);
+          searchText.classList.remove("typing");
+          searchText.textContent = text;
+          later(done, 120);
+        }
+      }, 13);
+      timers.push(timer);
+    }
+    function typeAnswer() {
+      var spans = AI.map(function (seg) {
+        var span = document.createElement("span");
+        if (seg.c) span.className = "ia-" + seg.c;
+        aiText.appendChild(span);
+        return span;
+      });
+      if (reduce) { spans.forEach(function (span, i) { span.textContent = AI[i].t; }); return; }
+      var si = 0, ci = 0;
+      function tick() {
+        var remaining = 8;
+        while (remaining > 0 && si < spans.length) {
+          var seg = AI[si];
+          var take = Math.min(remaining, seg.t.length - ci);
+          ci += take;
+          remaining -= take;
+          spans[si].textContent = seg.t.slice(0, ci);
+          if (ci >= seg.t.length) { si += 1; ci = 0; }
+        }
+        if (si < spans.length) later(tick, 16);
+      }
+      tick();
+    }
+    function play() {
+      reset();
+      buildLogo();
+      buildSerp();
+      if (reduce) {
+        searchText.textContent = SATZ;
+        setCentered(false);
+        card.classList.add("on");
+        typeAnswer();
+        serp.classList.add("on");
+        return;
+      }
+      mic.classList.add("listening");
+      wave.classList.add("active");
+      typeSearch(SATZ, function () {
+        searchText.textContent = SATZ;
+        setCentered(false);
+        later(function () {
+          card.classList.add("on");
+          thinking.classList.add("on");
+          later(function () {
+            thinking.classList.remove("on");
+            mic.classList.remove("listening");
+            wave.classList.remove("active");
+            typeAnswer();
+            serp.classList.add("on");
+          }, 240);
+        }, 320);
+      });
+    }
+    function fit() {
+      var r = stage.getBoundingClientRect();
+      var scale = Math.min(1, (r.width - 18) / 360, (r.height - 18) / 600);
+      phone.style.transform = "scale(" + scale.toFixed(3) + ")";
+    }
+    buildLogo();
+    buildSerp();
     reset();
+    var started = false, shownOnce = false;
+    function startOnce() { if (started) return; started = true; play(); }
+    if (reduce) startOnce();
+    else if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) return;
+        io.disconnect();
+        requestAnimationFrame(function () { requestAnimationFrame(function () { later(startOnce, 180); }); });
+      }, { threshold: 0.2 });
+      io.observe(stage);
+    } else startOnce();
+    var ro = null;
+    if (window.ResizeObserver) { ro = new ResizeObserver(fit); ro.observe(stage); }
+    window.addEventListener("resize", fit);
+    fit();
     return {
       update: function () {},
-      resize: function () {},
-      destroy: function () { clearTimers(); el.remove(); }
+      resume: function () { if (shownOnce && started) play(); shownOnce = true; fit(); },
+      resize: fit,
+      destroy: function () {
+        clearTimers();
+        if (ro) ro.disconnect();
+        window.removeEventListener("resize", fit);
+        el.remove();
+      }
     };
   }
 

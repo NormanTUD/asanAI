@@ -587,3 +587,6 @@ h1,h2,h3,h4{
   .ls-loop-bar{grid-template-columns:64px minmax(0,1fr) 34px}
   .ls-tunnel-stage{min-height:180px}
 }
+.ls-phone-scene{height:100%;min-height:0;overflow:hidden}
+.ls-phone-scene .ia-stage{height:100%;min-height:0}
+.ls-phone-scene .ia-phone{transform-origin:center center}
