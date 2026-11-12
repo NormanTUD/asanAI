@@ -2563,6 +2563,248 @@
     return { update: function () {}, resize: updateRibbons, destroy: function () { window.removeEventListener("resize", updateRibbons); el.remove(); } };
   }
 
+  function manifoldScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-manifold-scene";
+    el.innerHTML = '<div id="ls-dual-manifolds" class="ls-dual-manifolds"><div class="tm-manifold-loading"><span class="tm-spinner" aria-hidden="true"></span><span>' + (DE ? "Lade die Mannigfaltigkeiten …" : "Loading the manifolds …") + '</span></div></div><div id="ls-dual-controls" class="ls-dual-controls"></div>';
+    root.appendChild(el);
+    var drawn = false;
+    function draw() {
+      if (drawn) return;
+      if (!window.ManifoldScenes || !window.Plotly) { setTimeout(draw, 120); return; }
+      drawn = true;
+      try { window.ManifoldScenes.renderDualPlotly("ls-dual-manifolds", "ls-dual-controls"); } catch (e) {}
+    }
+    setTimeout(draw, 30);
+    return {
+      update: function () {},
+      resize: function () {
+        var d = document.getElementById("ls-dual-manifolds");
+        if (d && window.Plotly && d.data) { try { Plotly.Plots.resize(d); } catch (e) {} }
+      },
+      destroy: function () { el.remove(); }
+    };
+  }
+
+  function mlpScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-mlp-scene";
+    el.innerHTML =
+      '<div class="ism-panel">' +
+        '<div id="ism-copy" class="ism-copy" aria-live="polite"><div id="ism-title" class="ism-title"></div><div id="ism-body" class="ism-body"></div></div>' +
+        '<div class="ism-stage" id="ism-stage"><div id="ism-wrap" class="ism-wrap">' +
+          '<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="' + (DE ? "Eine Punktwolke: ein Kern in einem Ring wird angehoben, bis eine flache Ebene trennt" : "A point cloud: a core inside a ring is lifted until a flat plane separates them") + '"></canvas>' +
+          '<div id="ism-canvas-status" class="ism-canvas-status" aria-live="polite" hidden></div>' +
+        '</div><aside id="ism-side" class="ism-side"><div id="ism-dense-controls" class="ism-dense-controls" hidden></div><div id="ism-formulas" class="ism-formulas" aria-live="polite"></div></aside></div>' +
+        '<div class="ism-controls"><button type="button" id="ism-prev" class="ism-btn ism-btn--nav">← ' + (DE ? "Zurück" : "Back") + '</button><button type="button" id="ism-next" class="ism-btn ism-btn--nav" disabled>' + (DE ? "Weiter" : "Next") + ' →</button><button type="button" id="ism-reset-camera" class="ism-btn" aria-label="' + (DE ? "Ansicht zurücksetzen" : "Reset view") + '" title="' + (DE ? "Ansicht zurücksetzen" : "Reset view") + '">⟲</button><div id="ism-dots" class="ism-dots" role="group" aria-label="' + (DE ? "Folien" : "Slides") + '"></div><span id="ism-counter" class="ism-counter">1 / 9</span></div>' +
+      '</div>';
+    root.appendChild(el);
+    var started = false;
+    function init() {
+      if (started) return;
+      if (!window.IntuitionSpaceMorph) { setTimeout(init, 100); return; }
+      started = true;
+      try { window.IntuitionSpaceMorph.init(); } catch (e) {}
+    }
+    setTimeout(init, 30);
+    return {
+      update: function () {},
+      resize: function () { window.dispatchEvent(new Event("resize")); },
+      destroy: function () { el.remove(); }
+    };
+  }
+
+  function trajectoriesScene(root, api) {
+    var DE = api.lang === "de";
+    var data = window.TM_GPT2_DATA;
+    var el = document.createElement("div");
+    el.className = "ls-traj-scene";
+    el.innerHTML = '<div class="ls-traj-plot" role="img" aria-label="' + (DE ? "3D-Token-Trajektorien durch GPT-2" : "3D token trajectories through GPT-2") + '"></div><div class="ls-scene-row"><label class="ls-range">Layer <input type="range" class="ls-traj-layer" min="0" max="12" step="1" value="0"><output>Embedding</output></label><div class="ls-scene-row ls-traj-metric"><button type="button" class="ls-chip is-on" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button><button type="button" class="ls-chip" data-metric="angular">' + (DE ? "Winkel" : "Angle") + '</button></div><button type="button" class="ls-btn ls-btn--tiny ls-traj-next">' + (DE ? "Nächste Schicht →" : "Next layer →") + '</button></div><div class="ls-traj-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var plot = el.querySelector(".ls-traj-plot");
+    var layerEl = el.querySelector(".ls-traj-layer");
+    var layerOut = el.querySelector("output");
+    var readout = el.querySelector(".ls-traj-readout");
+    var layer = 0, metric = "euclid";
+    var colors = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55"];
+    function tokenLabel(t) { return t.replace(/^ /, "␣"); }
+    function displayLayers() { return data.layers; }
+    function positions() {
+      var pts = data.points;
+      if (metric === "euclid") return pts;
+      return pts.map(function (token) {
+        return token.map(function (p) {
+          var len = Math.hypot(p[0], p[1], p[2]) || 1;
+          return [p[0] / len, p[1] / len, p[2] / len];
+        });
+      });
+    }
+    function build() {
+      if (!window.Plotly || !data) return;
+      var pts = positions();
+      var C = api.colors();
+      var traces = [];
+      data.tokens.forEach(function (tok, i) {
+        traces.push({
+          type: "scatter3d", mode: "lines+markers", name: tokenLabel(tok),
+          x: pts[i].map(function (p) { return p[0]; }),
+          y: pts[i].map(function (p) { return p[1]; }),
+          z: pts[i].map(function (p) { return p[2]; }),
+          line: { color: colors[i % colors.length], width: 4 },
+          marker: { size: 2.5, color: colors[i % colors.length] },
+          text: data.tokens.map(function (t) { return tokenLabel(t) + " · " + (DE ? "Schicht" : "layer") + " "; }),
+          hoverinfo: "skip", showlegend: false
+        });
+      });
+      var cur = [];
+      data.tokens.forEach(function (tok, i) {
+        var p = pts[i][layer] || pts[i][0];
+        cur.push({ x: p[0], y: p[1], z: p[2], text: tokenLabel(tok), color: colors[i % colors.length] });
+      });
+      traces.push({
+        type: "scatter3d", mode: "markers+text", name: "now",
+        x: cur.map(function (p) { return p.x; }), y: cur.map(function (p) { return p.y; }), z: cur.map(function (p) { return p.z; }),
+        text: cur.map(function (p) { return p.text; }), textposition: "top center",
+        textfont: { size: 11, color: C.ink }, marker: { size: 7, color: cur.map(function (p) { return p.color; }), line: { width: 1, color: C.paper } },
+        hoverinfo: "skip", showlegend: false
+      });
+      if (layer === data.layers.length - 1) {
+        traces.push({
+          type: "scatter3d", mode: "markers+text", name: "candidates",
+          x: data.landmarks.map(function (l) { return l.value[0]; }), y: data.landmarks.map(function (l) { return l.value[1]; }), z: data.landmarks.map(function (l) { return l.value[2]; }),
+          text: data.landmarks.map(function (l) { return tokenLabel(l.word); }), textposition: "bottom center",
+          textfont: { size: 10, color: C.gold }, marker: { size: 5, color: C.gold, symbol: "diamond" },
+          hoverinfo: "skip", showlegend: false
+        });
+      }
+      var layout = {
+        margin: { l: 0, r: 0, b: 0, t: 0 }, showlegend: false,
+        paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)",
+        scene: {
+          xaxis: { showgrid: true, gridcolor: C.line, zeroline: false, showticklabels: false, title: "" },
+          yaxis: { showgrid: true, gridcolor: C.line, zeroline: false, showticklabels: false, title: "" },
+          zaxis: { showgrid: true, gridcolor: C.line, zeroline: false, showticklabels: false, title: "" },
+          camera: { eye: { x: 1.5, y: 1.8, z: 1.2 } },
+          aspectmode: "cube",
+          bgcolor: "rgba(0,0,0,0)"
+        }
+      };
+      Plotly.react(plot, traces, layout, { displayModeBar: false, responsive: true });
+      layerOut.textContent = displayLayers()[layer] || "";
+      var cand = layer === data.layers.length - 1
+        ? '<span>' + (DE ? "Kandidaten" : "Candidates") + '</span>' + data.top.slice(0, 5).map(function (t) { return '<span><b>' + api.esc(tokenLabel(t.token)) + '</b> ' + (t.p * 100).toFixed(1) + '%</span>'; }).join("")
+        : '<span>' + (DE ? "Kandidaten erscheinen in der letzten Schicht." : "Candidates appear at the final layer.") + '</span>';
+      readout.innerHTML = '<span>' + (DE ? "Satz" : "Sentence") + ' <b>' + api.esc(data.sentence) + '</b></span>' + cand;
+    }
+    layerEl.addEventListener("input", function () { layer = parseInt(layerEl.value, 10); build(); });
+    el.querySelectorAll("[data-metric]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        metric = b.getAttribute("data-metric");
+        el.querySelectorAll("[data-metric]").forEach(function (x) { x.classList.toggle("is-on", x === b); });
+        build();
+      });
+    });
+    el.querySelector(".ls-traj-next").addEventListener("click", function () { layer = Math.min(12, layer + 1); layerEl.value = String(layer); build(); });
+    window.addEventListener("resize", function () { if (window.Plotly && plot.data) Plotly.Plots.resize(plot); });
+    window.addEventListener("tm:theme", build);
+    build();
+    return { update: function () {}, resize: function () { if (window.Plotly && plot.data) Plotly.Plots.resize(plot); }, destroy: function () { el.remove(); } };
+  }
+
+  function stackScene(root, api) {
+    var DE = api.lang === "de";
+    var stages = DE ? [
+      { id: "tokenizer", label: "Tokenizer", sub: "Kontext → Tokens" },
+      { id: "embed", label: "Embedding", sub: "Tokens → Vektoren" },
+      { id: "layers", label: "Schichten × N", sub: "Attention + FFN" },
+      { id: "unembed", label: "Unembedding", sub: "Vektor → Scores" }
+    ] : [
+      { id: "tokenizer", label: "Tokenizer", sub: "context → tokens" },
+      { id: "embed", label: "Embedding", sub: "tokens → vectors" },
+      { id: "layers", label: "Layers × N", sub: "attention + FFN" },
+      { id: "unembed", label: "Unembedding", sub: "vector → scores" }
+    ];
+    var el = document.createElement("div");
+    el.className = "ls-stack-scene";
+    el.innerHTML = '<div class="ls-stack-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-stack-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-stack-stage");
+    var canvas = el.querySelector("canvas");
+    var readout = el.querySelector(".ls-stack-readout");
+    var ctx = null, size = null, mode = "pipeline", hits = [];
+    var C = api.colors();
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      ctx.clearRect(0, 0, size.w, size.h);
+      var w = size.w, h = size.h, pad = 24;
+      hits = [];
+      if (mode === "layer") {
+        var n = 5;
+        var cell = Math.min((w - pad * 2) / n, (h - pad * 2 - 30) / n);
+        var x0 = w / 2 - cell * n / 2, y0 = 44;
+        ctx.font = '600 9px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        var labels = DE ? ["Die", "Hauptstadt", "von", "Frankreich", "ist"] : ["The", "capital", "of", "France", "is"];
+        labels.forEach(function (l, i) {
+          ctx.fillStyle = C.muted; ctx.fillText(l, x0 + i * cell + cell / 2, y0 - 8);
+          ctx.fillText(l, x0 - 8, y0 + i * cell + cell / 2 + 3);
+        });
+        for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) {
+          var on = j <= i;
+          var wgt = on ? (1 / (i + 1)) : 0;
+          ctx.fillStyle = on ? "rgba(18,117,172," + (0.15 + wgt * 0.7) + ")" : "rgba(0,75,111,.04)";
+          ctx.fillRect(x0 + j * cell, y0 + i * cell, cell - 1, cell - 1);
+          if (on) { ctx.fillStyle = "#fff"; ctx.font = '600 8px "Open Sans", sans-serif'; ctx.fillText((wgt * 100).toFixed(0), x0 + j * cell + cell / 2, y0 + i * cell + cell / 2 + 3); }
+        }
+        ctx.fillStyle = C.soft; ctx.font = '600 10px "Open Sans", sans-serif'; ctx.textAlign = "left";
+        ctx.fillText(DE ? "Kausale Self-Attention: Zeile fragt, Spalte antwortet" : "Causal self-attention: row asks, column answers", pad, 22);
+        readout.innerHTML = '<span>' + (DE ? "Maskiert" : "Masked") + ' <b>' + (DE ? "oberes Dreieck" : "upper triangle") + '</b></span><span>' + (DE ? "Jede Zeile summiert zu 1" : "Every row sums to 1") + '</span>';
+        return;
+      }
+      var gap = Math.min(150, (w - pad * 2) / 4);
+      var start = w / 2 - gap * 1.5;
+      var y = h * 0.5;
+      stages.forEach(function (s, i) {
+        var x = start + i * gap;
+        var on = hits.some(function (h2) { return h2.id === s.id && h2.on; });
+        ctx.fillStyle = i === 2 ? "rgba(99,164,75,.12)" : "rgba(255,255,255,.72)";
+        ctx.strokeStyle = i === 2 ? C.green : C.lineStrong;
+        ctx.fillRect(x - 58, y - 26, 116, 52);
+        ctx.strokeRect(x - 58, y - 26, 116, 52);
+        ctx.fillStyle = C.ink; ctx.font = '700 12px "Barlow", sans-serif'; ctx.textAlign = "center";
+        ctx.fillText(s.label, x, y - 2);
+        ctx.fillStyle = C.muted; ctx.font = '9px "Open Sans", sans-serif';
+        ctx.fillText(s.sub, x, y + 13);
+        hits.push({ id: s.id, x: x, y: y, r: 62, on: false });
+        if (i < stages.length - 1) {
+          ctx.strokeStyle = C.lineStrong; ctx.lineWidth = 1.4;
+          ctx.beginPath(); ctx.moveTo(x + 58, y); ctx.lineTo(x + gap - 58, y); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(x + gap - 58, y); ctx.lineTo(x + gap - 64, y - 4); ctx.lineTo(x + gap - 64, y + 4); ctx.closePath(); ctx.fillStyle = C.lineStrong; ctx.fill();
+        }
+      });
+      if (mode === "loop") {
+        ctx.strokeStyle = C.green; ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]);
+        ctx.beginPath(); ctx.moveTo(start + 58, y + 26); ctx.lineTo(start + 58, y + 58); ctx.lineTo(start + 3 * gap - 58, y + 58); ctx.lineTo(start + 3 * gap - 58, y + 26); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = C.green; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "center";
+        ctx.fillText(DE ? "Token anhängen und wiederholen" : "append token and repeat", w / 2, y + 76);
+      }
+      readout.innerHTML = '<span>' + (DE ? "Stufen" : "Stages") + ' <b>' + stages.map(function (s) { return s.label; }).join(" → ") + '</b></span>';
+    }
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    canvas.addEventListener("pointerup", function (e) {
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      hits.forEach(function (h2) { if (Math.hypot(h2.x - x, h2.y - y) < h2.r) { h2.on = true; readout.innerHTML = '<span><b>' + api.esc(stages.filter(function (s) { return s.id === h2.id; })[0].label) + '</b> ' + (DE ? "ist eine Stufe im Stapel." : "is one stage in the stack.") + '</span>'; } });
+    });
+    window.addEventListener("resize", resize);
+    resize();
+    return { update: function (s) { if (s && s.mode) { mode = s.mode; draw(); } }, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
   var SCENES = {
     embedding: embeddingScene,
     phone: phoneScene,
@@ -2575,7 +2817,11 @@
     ffn: ffnScene,
     residual: residualScene,
     meadow: meadowScene,
-    softmax: softmaxScene
+    softmax: softmaxScene,
+    manifold: manifoldScene,
+    mlp: mlpScene,
+    trajectories: trajectoriesScene,
+    stack: stackScene
   };
 
   LearnSys.defineDemo("intuition", function (root, api) {

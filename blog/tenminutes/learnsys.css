@@ -678,3 +678,32 @@ h1,h2,h3,h4{
   .ls-tunnel-hud{padding:4px 6px}
   .ls-position-grid{grid-template-rows:minmax(140px,1fr) minmax(140px,1fr)}
 }
+.ls-manifold-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:6px}
+.ls-dual-manifolds{position:relative;width:100%;height:100%;min-height:200px}
+.ls-dual-controls{min-height:36px;overflow:auto}
+.ls-mlp-scene{height:100%;min-height:0;overflow:hidden}
+.ls-mlp-scene .ism-panel{height:100%;display:flex;flex-direction:column;border:0;background:transparent;box-shadow:none;margin:0;padding:0}
+.ls-mlp-scene .ism-copy{min-height:0;max-height:84px;overflow:auto;text-align:left;margin:0 0 6px;display:block}
+.ls-mlp-scene .ism-title{font-size:13px;text-align:left}
+.ls-mlp-scene .ism-body{font-size:11px;text-align:left}
+.ls-mlp-scene .ism-stage{flex:1;min-height:0;gap:10px}
+.ls-mlp-scene .ism-wrap{height:100%;min-height:180px;border-radius:0}
+.ls-mlp-scene .ism-side{max-height:100%}
+.ls-mlp-scene .ism-controls{margin-top:6px;flex-wrap:wrap}
+.ls-traj-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto;gap:6px}
+.ls-traj-plot{position:relative;width:100%;height:100%;min-height:220px;border:1px solid rgba(0,75,111,.08);background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(247,249,248,.3))}
+.ls-traj-readout{display:flex;gap:10px;flex-wrap:wrap;font:9px "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.06em}
+.ls-traj-readout b{color:var(--ls-ink);text-transform:none;letter-spacing:0}
+.ls-stack-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:6px}
+.ls-stack-stage{position:relative;min-height:180px;border:1px solid rgba(0,75,111,.08);background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(247,249,248,.3))}
+.ls-stack-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.ls-stack-readout{display:flex;gap:10px;flex-wrap:wrap;font:9px "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.06em}
+.ls-stack-readout b{color:var(--ls-ink);text-transform:none;letter-spacing:0}
+@media (max-width:980px){
+  .ls-mlp-scene .ism-copy{max-height:70px}
+  .ls-mlp-scene .ism-wrap{min-height:160px}
+}
+@media (max-width:640px){
+  .ls-mlp-scene .ism-copy{max-height:62px}
+  .ls-mlp-scene .ism-body{font-size:10px}
+}

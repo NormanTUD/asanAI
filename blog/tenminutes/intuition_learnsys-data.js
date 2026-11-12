@@ -1,8 +1,8 @@
 (function () {
   "use strict";
   var DE = window.TM && typeof TM.lang === "function" && TM.lang() === "de";
-  function box(id, lens, title, body) {
-    return { id: id, lens: lens, title: title, body: body };
+  function box(id, lens, title, body, tex) {
+    return { id: id, lens: lens, title: title, body: body, tex: tex || "" };
   }
   var sources = [
     { label: "Harris (1954), Distributional Structure", url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf" },
@@ -320,7 +320,251 @@
     }
   ];
 
-  var steps = introSteps.concat(embedSteps);
+  var tokenizeSteps = DE ? [
+    {
+      kicker: "03 / Tokenize",
+      title: "Text wird zu IDs",
+      body: "Ein Token ist kein Wort. Text wird zu Zahlen: Jedes Zeichen hat einen Codepunkt, und ein byte-level Tokenizer startet bei 256 Bytes, damit jeder String darstellbar ist. Seltene Wörter zerfallen in Subwords: „unbelievable“ wird zu „un“, „believ“, „able“. Ein Leerzeichen kann selbst ein Token sein.",
+      watch: "Klicke die Beispiele. Welches Wort zerfällt in Subwords?",
+      demoState: { scene: "tokenize" },
+      context: "Die IDs sind Adressen in der Embedding-Tabelle. Das Modell sieht keine Buchstaben, sondern Zeilenindizes.",
+      deep: "Ein echter Tokenizer lernt seine Merge-Tabelle aus Text. Häufige Paare werden zu einem Token verschmolzen, seltene Wörter bleiben in Teilen. Deshalb ist Rechtschreibung für das Modell eine Rekonstruktion.",
+      boxes: [
+        box("tok-1", "Technik", "Warum Subwords?", "Ein festes Wort-Vokabular müsste jedes unbekannte Wort als Sonderzeichen behandeln. Subwords erlauben es, neue Wörter aus bekannten Teilen zusammenzusetzen. Gleichzeitig bleibt das Vokabular endlich."),
+        box("tok-2", "Mathematik", "Was ist eine ID?", "Eine ID ist ein Integer, der auf eine Zeile in der Embedding-Matrix zeigt. Die ID selbst hat keine Bedeutung; erst der gelernte Vektor gibt dem Token eine Position im Raum.")
+      ]
+    }
+  ] : [
+    {
+      kicker: "03 / Tokenize",
+      title: "Text becomes IDs",
+      body: "A token is not a word. Text is encoded as numbers: every character has a code point, and a byte-level tokenizer starts from 256 bytes so every string is representable. Rare words split into subwords: “unbelievable” becomes “un”, “believ”, “able”. A space can be a token too.",
+      watch: "Click the samples. Which word splits into subwords?",
+      demoState: { scene: "tokenize" },
+      context: "The IDs are addresses into the embedding table. The model sees row indices, not letters.",
+      deep: "A real tokenizer learns its merge table from text. Frequent pairs become one token, rare words stay in pieces. That is why spelling is a reconstruction for the model.",
+      boxes: [
+        box("tok-1", "Technique", "Why subwords?", "A fixed word vocabulary would have to treat every unseen word as a special symbol. Subwords let the model build new words from known pieces while keeping the vocabulary finite."),
+        box("tok-2", "Mathematics", "What is an ID?", "An ID is an integer that points to a row in the embedding matrix. The ID itself has no meaning; the learned vector gives the token a position in the space.")
+      ]
+    }
+  ];
+
+  var positionSteps = DE ? [
+    {
+      kicker: "05 / Position",
+      title: "Jeder Platz bekommt einen Fingerabdruck",
+      body: "Attention hat kein Gefühl für Reihenfolge. Ohne Positionssignal sind „der Mann beißt den Hund“ und „der Hund beißt den Mann“ derselbe Beutel von Vektoren. Eine sinusförmige Kodierung gibt jedem Platz einen Fingerabdruck: Jedes Dimensionenpaar schwingt mit einer anderen Frequenz.",
+      watch: "Bewege den Positionsregler und wechsle die Metrik. Was bleibt stabil?",
+      demoState: { scene: "position" },
+      context: "Die Position wird zum Token-Vektor addiert. Das Modell vergleicht danach Richtungen; die Winkelansicht macht diesen Unterschied sichtbar.",
+      deep: "Die Frequenz staffelt sich über die Dimensionen. Frühe Dimensionen drehen schnell, späte langsam. So kann das Modell relative Abstände über viele Positionen lesen, ohne jede Position einzeln zu lernen.",
+      boxes: [
+        box("pos-1", "Mathematik", "Die Formel", "PE(pos, 2i) = sin(pos / 10000^(2i/d)), PE(pos, 2i+1) = cos(pos / 10000^(2i/d)). Jede Dimension bekommt ihre eigene Welle.", "\\underbrace{\\begin{aligned} PE_{(\\text{pos},2i)} &= \\sin\\left(\\frac{\\text{pos}}{10000^{2i/d}}\\right) \\\\ PE_{(\\text{pos},2i+1)} &= \\cos\\left(\\frac{\\text{pos}}{10000^{2i/d}}\\right) \\end{aligned}}_{\\text{jede Dimension bekommt ihre eigene Welle}}"),
+        box("pos-2", "Technik", "Warum Sinus und Cosinus?", "Das Paar erlaubt es, eine Position als Drehung zu lesen. Relative Abstände werden zu festen Drehungen, und das Modell kann sie über viele Positionen wiederverwenden."),
+        box("pos-3", "Grenze", "Was zeigt die 3D-Kurve nicht?", "Sie zeigt nur die ersten drei Dimensionen. Ein echtes Modell nutzt Tausende; die Kurve ist eine lesbare Scheibe, keine vollständige Karte.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+    }
+  ] : [
+    {
+      kicker: "05 / Position",
+      title: "Every slot gets a fingerprint",
+      body: "Attention has no sense of order. Without a position signal, “man bites dog” and “dog bites man” are the same bag of vectors. A sinusoidal encoding adds a fingerprint to every slot: each pair of dimensions oscillates at a different frequency.",
+      watch: "Move the position slider and switch the metric. What stays stable?",
+      demoState: { scene: "position" },
+      context: "The position is added to the token vector. The model then compares directions; the angle view makes that difference visible.",
+      deep: "The frequency is spread across dimensions. Early dimensions turn quickly, late ones slowly. That lets the model read relative distances over many positions without learning every position separately.",
+      boxes: [
+        box("pos-1", "Mathematics", "The formula", "PE(pos, 2i) = sin(pos / 10000^(2i/d)), PE(pos, 2i+1) = cos(pos / 10000^(2i/d)). Each dimension gets its own wave.", "\\underbrace{\\begin{aligned} PE_{(\\text{pos},2i)} &= \\sin\\left(\\frac{\\text{pos}}{10000^{2i/d}}\\right) \\\\ PE_{(\\text{pos},2i+1)} &= \\cos\\left(\\frac{\\text{pos}}{10000^{2i/d}}\\right) \\end{aligned}}_{\\text{each dimension gets its own wave}}"),
+        box("pos-2", "Technique", "Why sine and cosine?", "The pair lets you read a position as a rotation. Relative distances become fixed rotations, and the model can reuse them across many positions."),
+        box("pos-3", "Limit", "What does the 3D curve not show?", "It shows only the first three dimensions. A real model uses thousands; the curve is a readable slice, not a complete map.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+    }
+  ];
+
+  var attentionSteps = DE ? [
+    {
+      kicker: "06 / Attend",
+      title: "Kontext zieht die Bank an seinen Platz",
+      body: "Woher weiß ein Wort, welche Nachbarn wichtig sind? Self-Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen. So bewegt sich „Bank“ in Richtung Fluss oder Geld. Ein echter Layer hat viele Heads; die Demo zeigt einen.",
+      watch: "Wechsle den Kontext. Wohin bewegt sich der Bank-Vektor?",
+      demoState: { scene: "attention", context: "none" },
+      context: "Ohne eindeutigen Kontext bleibt die Bank in der Mitte, mehrdeutig. Mit Fluss oder Geld verschiebt sich der Vektor.",
+      deep: "Ein echter Head berechnet Query-, Key- und Value-Vektoren, macht aus den Skalarprodukten mit Softmax Gewichte und summiert die Values. Die Demo zeigt die Bewegung, nicht die volle Rechnung.",
+      boxes: [
+        box("att-1", "Technik", "Warum drei Vektoren?", "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen."),
+        box("att-2", "Mathematik", "Warum Softmax?", "Softmax macht aus Scores eine Verteilung: positiv, summiert zu 1, Reihenfolge bleibt. Deshalb ist Attention ein endliches Budget."),
+        box("att-3", "Budget", "Ein Head, ein Budget", "Jede Zeile hat genau 1,00 zu vergeben. Mehr für ein Token heißt weniger für alle anderen. Viele Heads haben getrennte Budgets.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473" }]
+    },
+    {
+      kicker: "06b / Der Kontext",
+      title: "Der Vektor folgt dem Kontext",
+      body: "Derselbe Satz, ein anderer Kontext: Die Bank liest jetzt den Fluss oder das Geld. Die Gewichte verschieben sich, und der Vektor wandert in die entsprechende Richtung. Attention zeigt, wohin Information geroutet wurde, nicht was das FFN damit tut.",
+      watch: "Vergleiche Fluss und Geld. Welcher Unterschied wird sichtbar, welcher nicht?",
+      demoState: { scene: "attention", context: "river" },
+      context: "Attention-Gewichte sind kein Geständnis. Sie sind ein Routing-Signal auf einer Schicht.",
+      deep: "Der Residual Stream und das FFN entscheiden, was mit der gerouteten Information passiert. Die Karte ist keine Erklärung des ganzen Modells.",
+      boxes: [
+        box("att-4", "Grenze", "Was zeigt Attention nicht?", "Sie zeigt nicht, was das FFN mit der Information macht. Sie zeigt nur, welche Tokens auf dieser Schicht Information austauschen.")
+      ]
+    }
+  ] : [
+    {
+      kicker: "06 / Attend",
+      title: "Context pulls the bank into place",
+      body: "How does a word know which neighbours matter? Self-attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the river or money reading. A real layer has many heads; the demo shows one.",
+      watch: "Switch the context. Where does the bank vector move?",
+      demoState: { scene: "attention", context: "none" },
+      context: "With no unambiguous context, the bank stays in the middle, ambiguous. With river or money, the vector shifts.",
+      deep: "A real head computes query, key, and value vectors, turns their dot products into weights with softmax, and sums the values. The demo shows the movement, not the full arithmetic.",
+      boxes: [
+        box("att-1", "Technique", "Why three vectors?", "Because searching and describing are two different roles. A pronoun can look for a noun without itself looking like a noun."),
+        box("att-2", "Mathematics", "Why softmax?", "Softmax turns scores into a distribution: positive, sum to one, order preserved. That is why attention is a finite budget."),
+        box("att-3", "Budget", "One head, one budget", "Every row has exactly 1.00 to give. More for one token means less for the others. Many heads have separate budgets.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473" }]
+    },
+    {
+      kicker: "06b / The context",
+      title: "The vector follows the context",
+      body: "The same sentence, a different context: the bank now reads the river or the money. The weights shift, and the vector moves in that direction. Attention shows where information was routed, not what the FFN does with it.",
+      watch: "Compare river and money. Which difference becomes visible, which does not?",
+      demoState: { scene: "attention", context: "river" },
+      context: "Attention weights are not a confession. They are a routing signal on one layer.",
+      deep: "The residual stream and the FFN decide what happens to the routed information. The map is not an explanation of the whole model.",
+      boxes: [
+        box("att-4", "Limit", "What does attention not show?", "It does not show what the FFN does with the information. It shows only which tokens exchange information on this layer.")
+      ]
+    }
+  ];
+
+  var ffnSteps = DE ? [
+    {
+      kicker: "08 / Feed-forward",
+      title: "Ein Muster passt, ein Wert wird geschrieben",
+      body: "Das Feed-Forward-Netz arbeitet auf jedem Token einzeln. Es dehnt den Vektor, wendet eine Aktivierung an und projiziert zurück. Attention mischt Tokens; das FFN rechnet innerhalb eines Tokens.",
+      watch: "Wechsle zwischen Apfel als Obst und Apple als Firma. Welche Muster feuern?",
+      demoState: { scene: "ffn", mode: "fruit" },
+      context: "Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁; der Pull ist eine gelernte Richtung in W₂.",
+      deep: "Die meisten Parameter eines Transformers liegen in den FFN-Matrizen. Wissen ist trotzdem verteilt, nicht in einer Zeile gespeichert.",
+      boxes: [
+        box("ffn-1", "Mathematik", "Die Dense-Einheit", "dense(x) = activation(Wx + b). Das FFN ist dense₂(activation(dense₁(x))). Die Aktivierung bringt die Nichtlinearität."),
+        box("ffn-2", "Technik", "Warum das FFN?", "Attention bewegt Information zwischen Tokens. Das FFN transformiert, was jedes Token trägt. Beide zusammen bilden einen Block.")
+      ]
+    }
+  ] : [
+    {
+      kicker: "08 / Feed-forward",
+      title: "A pattern matches, a value is written",
+      body: "The feed-forward network works on each token separately. It expands the vector, applies an activation, and projects back. Attention mixes tokens; the FFN computes within a token.",
+      watch: "Switch between apple the fruit and Apple the company. Which patterns fire?",
+      demoState: { scene: "ffn", mode: "fruit" },
+      context: "A real FFN has no labelled keys. The patterns are learned directions in W₁; the pull is a learned direction in W₂.",
+      deep: "Most parameters of a transformer live in the FFN matrices. Knowledge is still distributed, not stored in one row.",
+      boxes: [
+        box("ffn-1", "Mathematics", "The dense unit", "dense(x) = activation(Wx + b). The FFN is dense₂(activation(dense₁(x))). The activation supplies the nonlinearity."),
+        box("ffn-2", "Technique", "Why the FFN?", "Attention moves information between tokens. The FFN transforms what each token carries. Together they form one block.")
+      ]
+    }
+  ];
+
+  var residualSteps = DE ? [
+    {
+      kicker: "09 / Residual",
+      title: "Jede Schicht schreibt in denselben Stream",
+      body: "Jede Schicht liest denselben laufenden Vektor, berechnet ein Update und addiert es zurück. Nichts wird überschrieben. Frühere Notizen bleiben lesbar; spätere Schichten lesen sie und schreiben mehr.",
+      watch: "Klicke die Schichten durch. Wann ändert sich der Stream am stärksten?",
+      demoState: { scene: "residual", layer: 0 },
+      context: "Die Addition gibt dem Gradienten einen kurzen Pfad zurück. Ohne Residualverbindung müsste jede Schicht die gesamte Information neu schreiben.",
+      deep: "Der Stream ist das gemeinsame Notizbuch. Attention und FFN schreiben Updates hinein; die Identität bleibt erhalten. Deshalb lassen sich tiefe Stapel trainieren.",
+      boxes: [
+        box("res-1", "Mathematik", "Warum Addition?", "x ← x + f(x). Die Identität bleibt erhalten; die Schicht lernt nur die Änderung. Das macht tiefe Stapel trainierbar."),
+        box("res-2", "Grenze", "Was ist das nicht?", "Kein Speicher im Sinne einer Datenbank. Der Stream ist ein Vektor pro Token, der durch die Schichten getragen wird.")
+      ]
+    }
+  ] : [
+    {
+      kicker: "09 / Residual",
+      title: "Every layer writes into the same stream",
+      body: "Every layer reads the same running vector, computes an update, and adds it back. Nothing is overwritten. Earlier notes stay readable; later layers read them and add more.",
+      watch: "Click through the layers. When does the stream change most?",
+      demoState: { scene: "residual", layer: 0 },
+      context: "The addition gives gradients a short path back. Without a residual connection, every layer would have to rewrite all information.",
+      deep: "The stream is the shared notebook. Attention and the FFN write updates into it; the identity survives. That is why deep stacks can be trained.",
+      boxes: [
+        box("res-1", "Mathematics", "Why addition?", "x ← x + f(x). The identity stays; the layer learns only the change. That makes deep stacks trainable."),
+        box("res-2", "Limit", "What is it not?", "Not a database. The stream is one vector per token carried through the layers.")
+      ]
+    }
+  ];
+
+  var meadowSteps = DE ? [
+    {
+      kicker: "11 / Die Wiese",
+      title: "Die Karte der Wörter",
+      body: "Jedes Wort besitzt eine Zelle. Bewege den Zeiger; der Gedanke fällt in die nächste Zelle. Die goldenen Nähte sind die Stellen, an denen zwei Wörter fast gleich nah sind. Je mehr Wörter, desto kleiner die Zellen, aber die Naht verschwindet nie.",
+      watch: "Bewege den Zeiger. Wann sind zwei Wörter fast gleich wahrscheinlich?",
+      demoState: { scene: "meadow" },
+      context: "Nähe zum Zentrum ist Wahrscheinlichkeit. Am Rand und an der Naht ist die Entscheidung unsicher; mehr Wörter machen die Zellen feiner, nicht die Unsicherheit null.",
+      deep: "In einem echten Modell hat der Raum Tausende Dimensionen und das Vokabular Zehntausende Tokens. Die Wiese ist eine Projektion auf zwei Achsen; die Nähte sind die Grenzen zwischen benachbarten Token-Regionen.",
+      boxes: [
+        box("md-1", "Mathematik", "Was ist eine Voronoi-Zelle?", "Die Menge aller Punkte, die einem Wort näher sind als jedem anderen. Die Grenze zwischen zwei Zellen ist die Menge der Punkte mit gleichem Abstand."),
+        box("md-2", "Technik", "Was machen Temperatur und Top-k?", "Temperatur macht die Auswahl breiter oder schärfer. Top-k begrenzt die Auswahl auf die k nächsten Wörter. Beides verändert die Verteilung, nicht die Karte.")
+      ]
+    }
+  ] : [
+    {
+      kicker: "11 / The meadow",
+      title: "The map of words",
+      body: "Every word owns a cell. Move the pointer; the thought falls into the nearest cell. The golden seams are where two words are almost equally near. More words make smaller cells, but the seam never disappears.",
+      watch: "Move the pointer. When are two words almost equally likely?",
+      demoState: { scene: "meadow" },
+      context: "Closeness to the centre is probability. At the edge and on a seam the decision is uncertain; more words make the cells finer, not the uncertainty zero.",
+      deep: "In a real model the space has thousands of dimensions and the vocabulary tens of thousands of tokens. The meadow is a projection onto two axes; the seams are the borders between neighbouring token regions.",
+      boxes: [
+        box("md-1", "Mathematics", "What is a Voronoi cell?", "The set of all points closer to one word than to every other. The border between two cells is the set of points at equal distance."),
+        box("md-2", "Technique", "What do temperature and top-k do?", "Temperature makes the choice wider or sharper. Top-k limits it to the k nearest words. Both change the distribution, not the map.")
+      ]
+    }
+  ];
+
+  var softmaxSteps = DE ? [
+    {
+      kicker: "12 / Softmax",
+      title: "Von Logits zu einer Verteilung",
+      body: "Echte GPT-2-small-Scores für zwei Prompts. Links steht der rohe Logit aus dem Skalarprodukt, rechts das, was Softmax daraus macht. Wechsle den Kontext und beobachte, wie sich die ganze Verteilung verschiebt. Die Temperatur entscheidet, wie scharf der Gewinner bevorzugt wird.",
+      watch: "Fahre über ein Token und ändere die Temperatur. Was ändert sich, was bleibt?",
+      demoState: { scene: "softmax" },
+      context: "Softmax erzeugt nicht die Reihenfolge; die Skalarprodukte tun das. Es macht aus Scores eine Verteilung, die zu eins summiert.",
+      deep: "Warum exp und nicht Logit durch Summe? Logits können negativ sein. Die Exponentialfunktion macht jeden Wert positiv und erhält die Reihenfolge; die Division durch die Summe ergibt Wahrscheinlichkeiten. Der absolute Offset ist willkürlich; Softmax hängt nur von Unterschieden ab.",
+      boxes: [
+        box("sm-1", "Mathematik", "Die Formel", "p_i = exp(z_i) / Σ_j exp(z_j). Vorher wird oft das Maximum abgezogen, damit die Exponentialfunktion stabil bleibt."),
+        box("sm-2", "Temperatur", "Was macht T?", "p_i ∝ exp(z_i / T). T < 1 schärft, T > 1 flacht ab. Die Rangfolge bleibt, die Masse verschiebt sich.")
+      ],
+      sources: [{ label: "Transformer Explainer (Polo Club, Georgia Tech)", url: "https://poloclub.github.io/transformer-explainer/" }]
+    }
+  ] : [
+    {
+      kicker: "12 / Softmax",
+      title: "From logits to a distribution",
+      body: "Real GPT-2 small scores for two prompts. The left side is the raw logit from the dot product, the right side is what softmax makes of it. Switch the context and watch the whole distribution shift. Temperature decides how sharply the winner is favoured.",
+      watch: "Hover a token and change the temperature. What changes, what stays?",
+      demoState: { scene: "softmax" },
+      context: "Softmax does not create the ranking; the dot products do. It turns scores into a distribution that sums to one.",
+      deep: "Why exp and not logit divided by the sum? Logits can be negative. The exponential makes every value positive and preserves the order; dividing by the sum gives probabilities. The absolute offset is arbitrary; softmax depends only on differences.",
+      boxes: [
+        box("sm-1", "Mathematics", "The formula", "p_i = exp(z_i) / Σ_j exp(z_j). The maximum is often subtracted first so the exponential stays stable."),
+        box("sm-2", "Temperature", "What does T do?", "p_i ∝ exp(z_i / T). T < 1 sharpens, T > 1 flattens. The ranking stays, the mass shifts.")
+      ],
+      sources: [{ label: "Transformer Explainer (Polo Club, Georgia Tech)", url: "https://poloclub.github.io/transformer-explainer/" }]
+    }
+  ];
+
+  var steps = introSteps.concat(tokenizeSteps, embedSteps, positionSteps, attentionSteps, ffnSteps, residualSteps, meadowSteps, softmaxSteps);
 
   var day = {
     id: "intuition",
