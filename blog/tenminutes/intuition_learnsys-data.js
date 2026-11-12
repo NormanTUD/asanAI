@@ -34,7 +34,7 @@
       deep: "Der Code ist nicht magisch korrekt. Er ist eine wahrscheinliche Fortsetzung, die zu den Trainingsdaten passt. Deshalb muss man ihn lesen und testen; die Schleife liefert eine Hypothese, keinen Beweis.",
       boxes: [
         box("in-3", "Code", "Warum funktioniert Code?", "Code hat eine strenge Syntax und viele wiederkehrende Muster. Beides ist für ein nächstes-Token-Modell leichter zu lernen als freie Prosa. Ein Programm ist eine Sequenz mit einer klaren lokalen Struktur."),
-        box("in-4", "Grenze", "Was garantiert der Code nicht?", "Dass er das Richtige tut. Das Modell optimiert auf Plausibilität, nicht auf Korrektheit. Die Ausführung zeigt, ob die Hypothese trägt.")
+        box("in-4", "Grenze", "Was garantiert der Code nicht?", "Dass er das Richtige tut. Das Modell optimiert auf Plausibilität, nicht auf Korrektheit. Die Ausführung zeigt, ob er passend ist.")
       ]
     },
     {
@@ -53,9 +53,9 @@
     {
       kicker: "02b / Die Entscheidung",
       title: "Die Verteilung ist nicht die Antwort",
-      body: "Das Modell liefert für jedes Token eine Wahrscheinlichkeit. Decoding entscheidet, wie daraus eine Sequenz wird. Greedy nimmt das Top-Token, Sampling zieht, Top-p schneidet den Tail. Ein anderer früher Token schickt den Text auf einen anderen Pfad.",
-      watch: "Wechsle den Modus. Welchen würdest du für Code nehmen, welchen für Brainstorming?",
-      demoState: { scene: "loop", mode: "greedy", temp: 0.8 },
+      body: "Das Modell liefert für jedes Token eine Wahrscheinlichkeit. Die Demo macht aus den Balken eine Landschaft: Jedes mögliche nächste Wort ist ein Tal, tiefer heißt wahrscheinlicher. Sie zeigt auch Wörter jenseits der Balken, mit abnehmender Tiefe. Dreh die Landschaft und klicke ein Wort an, um es zu wählen.",
+      watch: "Dreh die Landschaft. Welches Tal liegt am tiefsten, und wie verändert der Kontext die Täler?",
+      demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true },
       context: "Top-k ist eine feste Anzahl, Top-p eine feste Masse. Min-p skaliert mit dem Top-Token. Nach dem Schnitt werden die verbleibenden Wahrscheinlichkeiten renormalisiert.",
       deep: "Beam Search hält mehrere Pfade am Leben. Speculative Sampling beschleunigt die Prüfung, ohne die Zielverteilung zu ändern. Die Wahl ist eine Policy, keine Eigenschaft des Modells.",
       boxes: [
@@ -101,7 +101,7 @@
       deep: "The code is not magically correct. It is a likely continuation that fits the training data. That is why you read and test it; the loop gives a hypothesis, not a proof.",
       boxes: [
         box("in-3", "Code", "Why does code work?", "Code has strict syntax and many recurring patterns. Both are easier for a next-token model to learn than free prose. A program is a sequence with a clear local structure."),
-        box("in-4", "Limit", "What does the code not guarantee?", "That it does the right thing. The model optimises for plausibility, not correctness. Running it shows whether the hypothesis holds.")
+        box("in-4", "Limit", "What does the code not guarantee?", "That it does the right thing. The model optimises for plausibility, not correctness. Running it shows whether it fits.")
       ]
     },
     {
@@ -120,9 +120,9 @@
     {
       kicker: "02b / The choice",
       title: "The distribution is not the answer",
-      body: "The model returns a probability for every token. Decoding decides how a sequence becomes from it. Greedy takes the top token, sampling draws, top-p cuts the tail. A different early token sends the text down a different path.",
-      watch: "Switch modes. Which would you use for code, which for brainstorming?",
-      demoState: { scene: "loop", mode: "greedy", temp: 0.8 },
+      body: "The model returns a probability for every token. The demo turns the bars into a landscape: every possible next word is a valley, and deeper means more likely. It also shows words beyond the bars, with decreasing depth. Rotate the landscape and click a word to choose it.",
+      watch: "Rotate the landscape. Which valley is deepest, and how does the context change the valleys?",
+      demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true },
       context: "Top-k is a fixed number, top-p a fixed mass. Min-p scales with the top token. After the cut, the remaining probabilities are renormalised.",
       deep: "Beam search keeps several paths alive. Speculative sampling speeds up verification without changing the target distribution. The choice is a policy, not a property of the model.",
       boxes: [
@@ -411,6 +411,20 @@
       boxes: [
         box("att-4", "Grenze", "Was zeigt Attention nicht?", "Sie zeigt nicht, was das FFN mit der Information macht. Sie zeigt nur, welche Tokens auf dieser Schicht Information austauschen.")
       ]
+    },
+    {
+      kicker: "06c / Rauschen",
+      title: "Oberfläche ist Rauschen",
+      body: "Bevor ein Modell Bedeutung vergleicht, muss es Oberfläche wegdenken. „def quicksort“ und „function quickSort“ meinen dieselbe Funktion, obwohl Schlüsselwort, Schreibweise und Satzzeichen anders sind. Die ersten Layer ziehen die Bedeutung heraus und lassen diese Unterschiede fallen. Für die Aufgabe ist das Rauschen irrelevant; beachten muss das Modell es trotzdem, weil genau solche Varianten in dem Code stehen, den du ihm gibst.",
+      watch: "Ziehe den Layer-Regler. Wann liegen die beiden Schreibweisen auf demselben Punkt?",
+      demoState: { scene: "noise", layer: 0 },
+      context: "Zum Rauschen gehören Schlüsselwort, Schreibweise und Interpunktion. Bedeutung ist die Funktion, die beide Varianten beschreiben.",
+      deep: "Die Demo ist schematisch. Sie zeigt die Idee, nicht die Messung eines echten Modells: Oberflächenmerkmale werden früh verarbeitet, semantische Unterschiede später. Ein echter Layer rechnet mit Vektoren, nicht mit Wörtern.",
+      boxes: [
+        box("noise-1", "Beispiel", "Zwei Schreibweisen, eine Funktion", "Ein Beispiel: „def quicksort(items):“ in Python und „function quickSort(items) {“ in JavaScript beschreiben dieselbe Sortierfunktion. Der Unterschied liegt im Schlüsselwort, im Namen und in der Interpunktion."),
+        box("noise-2", "Grenze", "Was ist hier schematisch?", "Die Demo zeigt keine echten Attention-Gewichte und keine Messung. Sie zeigt nur, welche Art von Information früh an Gewicht verlieren soll und welche bleiben muss.")
+      ],
+      sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/" }]
     }
   ] : [
     {
@@ -439,6 +453,20 @@
       boxes: [
         box("att-4", "Limit", "What does attention not show?", "It does not show what the FFN does with the information. It shows only which tokens exchange information on this layer.")
       ]
+    },
+    {
+      kicker: "06c / Noise",
+      title: "Surface is noise",
+      body: "Before a model can compare meaning, it has to look past surface form. “def quicksort” and “function quickSort” mean the same function, even though the keyword, spelling, and punctuation differ. The first layers pull out the meaning and let those differences fall away. For the task this noise is irrelevant; the model still has to process it, because exactly such variants appear in the code you give it.",
+      watch: "Move the layer slider. When do the two spellings land on the same point?",
+      demoState: { scene: "noise", layer: 0 },
+      context: "Noise is keyword, spelling, and punctuation. Meaning is the function both variants describe.",
+      deep: "The demo is schematic. It shows the idea, not a measurement of a real model: surface features are processed early, semantic differences later. A real layer computes with vectors, not words.",
+      boxes: [
+        box("noise-1", "Example", "Two spellings, one function", "For example, “def quicksort(items):” in Python and “function quickSort(items) {” in JavaScript describe the same sorting function. The difference is the keyword, the name, and the punctuation."),
+        box("noise-2", "Limit", "What is schematic here?", "The demo shows no real attention weights and no measurement. It shows only which kind of information should lose weight early and which must stay.")
+      ],
+      sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/" }]
     }
   ];
 
@@ -848,7 +876,8 @@
     boxes: [
       box("emb-day", DE ? "Mathematik" : "Mathematics",
         DE ? "Die ganze Rechnung" : "The whole calculation",
-        DE ? "Ein Embedding ist eine Matrix E mit einer Zeile pro Token. Der Startvektor ist E[id]. Die Ähnlichkeit ist cos(E[a], E[b]). Die Demo zeigt nur zwei oder drei Achsen; ein echtes Modell nutzt Tausende." : "An embedding is a matrix E with one row per token. The starting vector is E[id]. Similarity is cos(E[a], E[b]). The demo shows only two or three axes; a real model uses thousands.")
+        DE ? "Ein Embedding ist eine gelernte Tabelle: eine Zeile pro Token. Der Startvektor eines Tokens ist die Zeile zu seiner ID. Zwei Vektoren sind sich ähnlich, wenn der Winkel zwischen ihnen klein ist. Die Demo zeigt nur zwei oder drei Achsen; ein echtes Modell nutzt Tausende." : "An embedding is a learned table: one row per token. A token's starting vector is the row for its ID. Two vectors are similar when the angle between them is small. The demo shows only two or three axes; a real model uses thousands.",
+        DE ? "\\underbrace{\\begin{aligned} E &\\in \\mathbb{R}^{|V|\\times d} \\\\ e_t &= \\underbrace{E[\\,\\mathrm{id}(t)\\,]}_{\\text{Zeile des Tokens}} \\\\ \\operatorname{sim}(a,b) &= \\underbrace{\\cos(e_a,e_b)}_{\\text{Winkel zwischen den Vektoren}} \\end{aligned}}_{\\substack{\\text{so wird aus einer ID ein Vektor}\\\\ \\text{und aus zwei Vektoren eine Ähnlichkeit}}}" : "\\underbrace{\\begin{aligned} E &\\in \\mathbb{R}^{|V|\\times d} \\\\ e_t &= \\underbrace{E[\\,\\mathrm{id}(t)\\,]}_{\\text{row of the token}} \\\\ \\operatorname{sim}(a,b) &= \\underbrace{\\cos(e_a,e_b)}_{\\text{angle between the vectors}} \\end{aligned}}_{\\substack{\\text{an ID becomes a vector}\\\\ \\text{and two vectors become a similarity}}}")
     ],
     sources: sources
   };

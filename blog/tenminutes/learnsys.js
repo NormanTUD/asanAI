@@ -33,7 +33,7 @@
       helpDay: "Tag zurück / vor", helpJump: "Fünf Schritte zurück / vor",
       helpPos: "Position, auch mehrstellig (z. B. 1 1)",
       helpHome: "Erster / letzter Tag", helpMix: "Anderer Mix",
-      helpDepth: "Tiefe öffnen", helpFocus: "Demo groß",
+      helpDepth: "Tiefe öffnen", helpDown: "Nächste zugeklappte Box öffnen", helpFocus: "Demo groß",
       helpFont: "Text größer / kleiner", helpHelp: "Hilfe öffnen / schließen",
       interactiveDemo: "Interaktive Demo", stepRail: "Schritt 0 bis 9",
       depthQuestions: "{n} Fragen", depthQuestion: "{n} Frage",
@@ -59,7 +59,7 @@
       helpDay: "Day back / forward", helpJump: "Five steps back / forward",
       helpPos: "Position, multi-digit (e.g. 1 1)",
       helpHome: "First / last day", helpMix: "Another mix",
-      helpDepth: "Open depth", helpFocus: "Large demo",
+      helpDepth: "Open depth", helpDown: "Open the next collapsed box", helpFocus: "Large demo",
       helpFont: "Text larger / smaller", helpHelp: "Open / close help",
       interactiveDemo: "Interactive demo", stepRail: "Step 0 to 9",
       depthQuestions: "{n} questions", depthQuestion: "{n} question",
@@ -359,6 +359,7 @@
       ['<kbd>Home</kbd> / <kbd>End</kbd>', t("helpHome")],
       ['<kbd>R</kbd>', t("helpMix")],
       ['<kbd>D</kbd>', t("helpDepth")],
+      ['<kbd>↓</kbd>', t("helpDown")],
       ['<kbd>F</kbd>', t("helpFocus")],
       ['<kbd>+</kbd> / <kbd>−</kbd>', t("helpFont")],
       ['<kbd>?</kbd> / <kbd>Esc</kbd>', t("helpHelp")]
@@ -601,6 +602,28 @@
     els.extras.querySelectorAll("details").forEach(function (d) { d.open = true; });
     els.extras.scrollIntoView({ behavior: "smooth", block: "start" });
     save();
+  }
+  function openNextClosedBox() {
+    if (!els.extras) return false;
+    var all = els.extras.querySelectorAll("details");
+    var candidates = Array.prototype.filter.call(all, function (d) {
+      if (d.open) return false;
+      var p = d.parentElement;
+      while (p) {
+        if (p.tagName === "DETAILS" && !p.open) return false;
+        p = p.parentElement;
+      }
+      return true;
+    });
+    if (!candidates.length) return false;
+    var host = els.textScroll || els.extras;
+    var hostTop = host.getBoundingClientRect().top;
+    var next = candidates.filter(function (d) {
+      return d.getBoundingClientRect().top > hostTop + 8;
+    })[0] || candidates[0];
+    next.open = true;
+    next.scrollIntoView({ behavior: "smooth", block: "start" });
+    return true;
   }
 
   function setupCues() {
@@ -1261,6 +1284,7 @@
       if (e.shiftKey && e.key === "ArrowLeft") { e.preventDefault(); prevDay(); return; }
       if (e.key === "PageDown") { e.preventDefault(); nextDay(); return; }
       if (e.key === "PageUp") { e.preventDefault(); prevDay(); return; }
+      if (e.key === "ArrowDown" && openNextClosedBox()) { e.preventDefault(); return; }
       if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
       else if (e.key === "Home") { e.preventDefault(); go(0, 0); }

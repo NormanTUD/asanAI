@@ -69,3 +69,13 @@ Status: in Arbeit
 - DONE: intuition_learnsys.php + Daten + CSS angelegt
 - PENDING: intuition_learnsys voll bilingual machen
 - PENDING: restliche intuition.php-Demos in LearnSys nachziehen
+
+## Nachtrag (12. November 2026)
+- DONE: Die Embedding-Box „Die ganze Rechnung“ rendert E, E[id] und cos(E[a], E[b]) jetzt als Temml-Formelblock mit zwei underbrace-Ebenen (DE/EN).
+- DONE: Die Code-Garantie-Box sagt jetzt „Die Ausführung zeigt, ob er passend ist.“ statt „ob die Hypothese trägt.“ (EN: „whether it fits“).
+- DONE: Pfeil runter öffnet die nächste zugeklappte Vertiefungsbox und scrollt sie in den Blick; die Hilfe nennt die Taste.
+- DONE: Neuer Schritt 06c „Oberfläche ist Rauschen“ mit eigener Demo: „def quicksort“ vs. „function quickSort“, Layer-Regler, semantische Anker und Quelle Tenney et al. (2019).
+- DONE: Folie „Die Verteilung ist nicht die Antwort“ zeigt eine dynamische 3D-Energie-Landschaft aus den Balkendaten, mit Wörtern, Prozentwerten und Platz für jede Beschriftung.
+- DONE: Der Wahrscheinlichkeitstunnel initialisiert `temp` jetzt vor dem ersten `toFixed` und stürzt nicht mehr ab; er übernimmt den Schloss-Satz inklusive Komma.
+- DONE: Die Tokenize-Beispielbuttons sind größer, die Chips und Statistiken ebenfalls, der gestreckte Leerraum ist weg; die Klicks wurden im Browser mit DE/EN und Desktop/Mobil geprüft.
+- Selbstkritik: Die Rausch-Demo und die aus den Balken erweiterte Wortliste sind schematisch, keine Messung eines echten Modells. Die Quelle deckt die frühe Oberflächenverarbeitung, nicht die konkreten Demo-Positionen. Die 3D-Landschaft zeigt die Verteilung als didaktisches Bild, nicht die volle hochdimensionale Geometrie.

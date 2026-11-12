@@ -1225,6 +1225,10 @@
       Drache: [{ t: "der", l: 3.6 }], Ritter: [{ t: "der", l: 3.6 }], Roboter: [{ t: "der", l: 3.6 }],
       Schloss: [{ t: "das", l: 3.6 }], Fluss: [{ t: "der", l: 3.6 }]
     } : null;
+    var RELATIVE_TAIL = DE ? {
+      Drache: [{ t: "welcher", l: 0.4 }], Ritter: [{ t: "welcher", l: 0.4 }], Roboter: [{ t: "welcher", l: 0.4 }],
+      Schloss: [{ t: "welches", l: 0.4 }], Fluss: [{ t: "welcher", l: 0.4 }]
+    } : null;
     var MODALS = DE ? [
       { t: "konnte", l: 3.0 }, { t: "wollte", l: 1.3 }, { t: "sollte", l: 0.9 }, { t: "durfte", l: 0.6 }, { t: "musste", l: 0.3 }
     ] : [
@@ -1234,6 +1238,22 @@
       { t: "nicht", l: 3.3 }, { t: "nie", l: 1.2 }, { t: "nur", l: 0.8 }, { t: "noch", l: 0.5 }, { t: "immer", l: 0.3 }
     ] : [
       { t: "not", l: 3.3 }, { t: "never", l: 1.2 }, { t: "only", l: 0.8 }, { t: "still", l: 0.5 }, { t: "always", l: 0.3 }
+    ];
+    var TAIL = DE ? {
+      0: [{ t: "Berg", l: 0.05 }, { t: "Garten", l: -0.15 }, { t: "Vogel", l: -0.35 }],
+      2: [{ t: "möchte", l: 0.0 }, { t: "würde", l: -0.2 }],
+      3: [{ t: "kaum", l: 0.0 }, { t: "auch", l: -0.2 }],
+      4: [{ t: "warten", l: 0.0 }, { t: "dastehen", l: -0.2 }, { t: "wirken", l: -0.4 }]
+    } : {
+      0: [{ t: "mountain", l: 0.05 }, { t: "garden", l: -0.15 }, { t: "bird", l: -0.35 }],
+      2: [{ t: "might", l: 0.0 }, { t: "should", l: -0.2 }],
+      3: [{ t: "hardly", l: 0.0 }, { t: "also", l: -0.2 }],
+      4: [{ t: "wait", l: 0.0 }, { t: "stand", l: -0.2 }, { t: "seem", l: -0.4 }]
+    };
+    var CONTINUE = DE ? [
+      { t: "Doch", l: 3.0 }, { t: "Dann", l: 1.8 }, { t: "Der", l: 1.1 }, { t: "Ein", l: 0.7 }, { t: "Später", l: 0.4 }, { t: "Niemand", l: 0.2 }
+    ] : [
+      { t: "But", l: 3.0 }, { t: "Then", l: 1.8 }, { t: "The", l: 1.1 }, { t: "A", l: 0.7 }, { t: "Later", l: 0.4 }, { t: "Nobody", l: 0.2 }
     ];
     function choicesFor(gen) {
       gen = gen || generated;
@@ -1267,7 +1287,7 @@
     el.innerHTML =
       '<div class="ls-loop-sentence" aria-live="polite"></div>' +
       '<div class="ls-loop-tree" aria-live="polite"></div>' +
-      '<div class="ls-loop-bars"></div>' +
+      '<div class="ls-loop-viz"><div class="ls-loop-bars"></div><div class="ls-loop-landscape" hidden><canvas class="ls-canvas" role="img"></canvas></div></div>' +
       '<div class="ls-scene-row ls-loop-modes"></div>' +
       '<div class="ls-scene-row ls-loop-actions"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loop-next">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-loop-temp" min="0.05" max="1.8" step="0.05" value="0.8"><output>0.80</output></label></div>' +
       '<div class="ls-loop-readout" aria-live="polite"></div>';
@@ -1279,6 +1299,289 @@
     var tempEl = el.querySelector(".ls-loop-temp");
     var tempOut = el.querySelector(".ls-loop-actions output");
     var nextBtn = el.querySelector(".ls-loop-next");
+    var landEl = el.querySelector(".ls-loop-landscape");
+    var landCanvas = landEl.querySelector("canvas");
+    var landscape = false, landSize = null;
+    var landYaw = -0.62, landPitch = 0.92, landZoom = 1;
+    var landDrag = null, landMoved = false, landHits = [];
+    var LAND_X = 2.65, LAND_Y = 1.9;
+
+    function landscapeChoices() {
+      var opts = choicesFor();
+      if (!opts.length) return CONTINUE.slice();
+      var out = opts.map(function (o) { return { t: o.t, l: o.l }; });
+      var extra = TAIL[generated.length] || [];
+      if (!extra.length && generated.length === 1 && RELATIVE_TAIL) extra = RELATIVE_TAIL[generated[0]] || [];
+      extra.forEach(function (o) {
+        if (!out.some(function (x) { return x.t === o.t; })) out.push({ t: o.t, l: o.l });
+      });
+      return out;
+    }
+
+    function layoutWords(list, probs) {
+      var items = list.map(function (o, i) { return { t: o.t, p: probs[i] }; });
+      items.sort(function (a, b) { return b.p - a.p; });
+      items.forEach(function (it, i) {
+        if (i === 0) { it.x = 0; it.y = 0; return; }
+        var ring = Math.floor((i - 1) / 6) + 1;
+        var slot = (i - 1) % 6;
+        var radius = 0.72 + ring * 0.62;
+        var angle = slot / 6 * Math.PI * 2 + ring * 0.55;
+        it.x = Math.cos(angle) * radius;
+        it.y = Math.sin(angle) * radius * 0.74;
+      });
+      return items;
+    }
+
+    function landWells(items) {
+      var maxP = 0;
+      items.forEach(function (it) { if (it.p > maxP) maxP = it.p; });
+      maxP = Math.max(maxP, 1e-6);
+      return items.map(function (it) {
+        var ratio = Math.pow(it.p / maxP, 0.62);
+        return { x: it.x, y: it.y, p: it.p, depth: 0.18 + 0.78 * ratio };
+      });
+    }
+
+    function landHeight(x, y, wells) {
+      var h = 0.82;
+      wells.forEach(function (w) {
+        var dx = x - w.x, dy = y - w.y;
+        h -= w.depth * Math.exp(-(dx * dx + dy * dy) / (2 * 0.34 * 0.34));
+      });
+      h += 0.012 * Math.sin(x * 1.7 + y * 2.3) + 0.008 * Math.cos(x * 2.6 - y * 1.4);
+      return Math.max(0.035, Math.min(0.96, h));
+    }
+
+    function landRaw(x, y, z) {
+      var cy = Math.cos(landYaw), sy = Math.sin(landYaw);
+      var cp = Math.cos(landPitch), sp = Math.sin(landPitch);
+      var x1 = x * cy - y * sy;
+      var y1 = x * sy + y * cy;
+      var y2 = y1 * cp + z * sp;
+      var z2 = y1 * sp + z * cp;
+      return { x: x1, y: -y2, z: z2 };
+    }
+
+    function landColor(h, C) {
+      if (h < 0.17) return C.petrol;
+      if (h < 0.31) return C.blue;
+      if (h < 0.47) return C.sky;
+      if (h < 0.64) return C.lime;
+      return C.paper2;
+    }
+
+    function drawLandscape() {
+      if (!landscape || !landSize) return;
+      var C = api.colors();
+      var ctx = landSize.ctx, w = landSize.w, h = landSize.h;
+      if (w < 10 || h < 10) return;
+      ctx.clearRect(0, 0, w, h);
+      var sky = ctx.createRadialGradient(w * 0.5, h * 0.4, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.62);
+      sky.addColorStop(0, "rgba(247,250,249,.9)");
+      sky.addColorStop(0.6, "rgba(238,247,244,.55)");
+      sky.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, h);
+
+      var list = landscapeChoices();
+      var probs = softmax(list.map(function (o) { return o.l; }), temp);
+      var items = layoutWords(list, probs);
+      var wells = landWells(items);
+
+      var NX = w > 700 ? 42 : 32, NY = w > 700 ? 26 : 20;
+      var grid = [];
+      var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      for (var i = 0; i <= NX; i++) {
+        grid[i] = [];
+        for (var j = 0; j <= NY; j++) {
+          var gx = -LAND_X + 2 * LAND_X * i / NX;
+          var gy = -LAND_Y + 2 * LAND_Y * j / NY;
+          var gh = landHeight(gx, gy, wells);
+          var rp = landRaw(gx, gy, gh);
+          grid[i][j] = { x: gx, y: gy, h: gh, rx: rp.x, ry: rp.y, rz: rp.z };
+          if (rp.x < minX) minX = rp.x;
+          if (rp.x > maxX) maxX = rp.x;
+          if (rp.y < minY) minY = rp.y;
+          if (rp.y > maxY) maxY = rp.y;
+        }
+      }
+      var pad = Math.min(w, h) * 0.09;
+      var scale = Math.min((w - pad * 2) / Math.max(0.001, maxX - minX), (h - pad * 2) / Math.max(0.001, maxY - minY)) * landZoom;
+      var ox = w / 2 - (minX + maxX) / 2 * scale;
+      var oy = h / 2 - (minY + maxY) / 2 * scale;
+      function sx(rx) { return rx * scale + ox; }
+      function sy(ry) { return ry * scale + oy; }
+
+      var quads = [];
+      for (var qi = 0; qi < NX; qi++) {
+        for (var qj = 0; qj < NY; qj++) {
+          var a = grid[qi][qj], b = grid[qi + 1][qj], c = grid[qi + 1][qj + 1], d = grid[qi][qj + 1];
+          quads.push({
+            p: [a, b, c, d],
+            h: (a.h + b.h + c.h + d.h) / 4,
+            z: (a.rz + b.rz + c.rz + d.rz) / 4
+          });
+        }
+      }
+      quads.sort(function (a, b) { return a.z - b.z; });
+      quads.forEach(function (q) {
+        ctx.beginPath();
+        ctx.moveTo(sx(q.p[0].rx), sy(q.p[0].ry));
+        ctx.lineTo(sx(q.p[1].rx), sy(q.p[1].ry));
+        ctx.lineTo(sx(q.p[2].rx), sy(q.p[2].ry));
+        ctx.lineTo(sx(q.p[3].rx), sy(q.p[3].ry));
+        ctx.closePath();
+        ctx.fillStyle = landColor(q.h, C);
+        ctx.globalAlpha = 0.9;
+        ctx.fill();
+        ctx.globalAlpha = 0.12;
+        ctx.strokeStyle = C.paper;
+        ctx.lineWidth = 0.55;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      });
+
+      var atEnd = generated.length >= MAX_STEPS;
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(DE ? "Tiefe = wahrscheinlich" : "depth = likely", 10, 16);
+      if (atEnd) ctx.fillText(DE ? "Satzende · nächste Sätze" : "end of sentence · next sentences", 10, 29);
+
+      var boxes = [];
+      function freeBox(box) {
+        for (var k = 0; k < boxes.length; k++) {
+          var b2 = boxes[k];
+          if (!(box.x + box.w < b2.x || b2.x + b2.w < box.x || box.y + box.h < b2.y || b2.y + b2.h < box.y)) return false;
+        }
+        return true;
+      }
+      landHits = [];
+      items.forEach(function (it) {
+        var wh = landHeight(it.x, it.y, wells);
+        var rp = landRaw(it.x, it.y, wh);
+        var px = sx(rp.x), py = sy(rp.ry);
+        var isTop = it === items[0];
+        ctx.beginPath();
+        ctx.arc(px, py, isTop ? 4.5 : 3, 0, Math.PI * 2);
+        ctx.fillStyle = isTop ? C.green : C.petrol;
+        ctx.fill();
+        ctx.strokeStyle = C.paper;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        var pct = (it.p * 100).toFixed(it.p * 100 < 1 ? 1 : 0) + "%";
+        ctx.font = '600 11px "Open Sans", sans-serif';
+        var tw = Math.max(ctx.measureText(it.t).width, ctx.measureText(pct).width) + 12;
+        var bh = 28;
+        var offsets = [[0, -bh - 8], [0, 10], [-tw / 2 - 10, -bh / 2], [tw / 2 + 10, -bh / 2], [0, -bh - 24], [0, 24]];
+        var box = null;
+        for (var oi = 0; oi < offsets.length; oi++) {
+          var bx = px - tw / 2 + offsets[oi][0];
+          var by = py - bh / 2 + offsets[oi][1];
+          var cand = { x: bx, y: by, w: tw, h: bh };
+          if (bx >= 4 && by >= 4 && bx + tw <= w - 4 && by + bh <= h - 4 && freeBox(cand)) { box = cand; break; }
+        }
+        if (!box) {
+          box = { x: Math.max(4, Math.min(w - tw - 4, px - tw / 2)), y: Math.max(4, Math.min(h - bh - 4, py - bh - 8)), w: tw, h: bh };
+        }
+        boxes.push(box);
+        if (!atEnd) landHits.push({ x: box.x, y: box.y, w: box.w, h: box.h, t: it.t });
+
+        ctx.strokeStyle = C.lineStrong;
+        ctx.globalAlpha = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(box.x + box.w / 2, box.y + box.h / 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = C.paper;
+        ctx.fillRect(box.x, box.y, box.w, box.h);
+        ctx.strokeStyle = isTop ? C.green : C.lineStrong;
+        ctx.lineWidth = isTop ? 1.6 : 1;
+        ctx.strokeRect(box.x, box.y, box.w, box.h);
+        ctx.fillStyle = C.ink;
+        ctx.font = '600 11px "Open Sans", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText(it.t, box.x + 6, box.y + 13);
+        ctx.fillStyle = C.muted;
+        ctx.font = '9px "Open Sans", sans-serif';
+        ctx.fillText(pct, box.x + 6, box.y + 23);
+      });
+
+      var top = items[0];
+      if (top) {
+        if (readout) {
+          var cells = readout.querySelectorAll("span");
+          if (cells[2]) cells[2].innerHTML = (DE ? "Top" : "Top") + ' <b>' + api.esc(top.t) + '</b>';
+        }
+        landCanvas.setAttribute("aria-label", DE
+          ? "Energie-Landschaft der nächsten Wörter. Tiefstes Tal: " + top.t + ", " + (top.p * 100).toFixed(0) + " Prozent."
+          : "Energy landscape of next words. Deepest valley: " + top.t + ", " + (top.p * 100).toFixed(0) + " percent.");
+      }
+    }
+
+    function landResize() {
+      if (!landscape) return;
+      var r = landEl.getBoundingClientRect();
+      if (r.width < 10 || r.height < 10) return;
+      landSize = api.fit(landCanvas, landEl);
+      drawLandscape();
+    }
+
+    function setLandscape(on) {
+      landscape = !!on;
+      el.classList.toggle("is-landscape", landscape);
+      landEl.hidden = !landscape;
+      if (landscape) {
+        if (!landSize) landSize = api.fit(landCanvas, landEl);
+        drawLandscape();
+        requestAnimationFrame(landResize);
+      }
+    }
+
+    function landHitAt(x, y) {
+      for (var i = 0; i < landHits.length; i++) {
+        var b = landHits[i];
+        if (x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h) return b;
+      }
+      return null;
+    }
+
+    function landPointer(e) {
+      var r = landCanvas.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    landCanvas.addEventListener("pointerdown", function (e) {
+      landMoved = false;
+      landDrag = { x: e.clientX, y: e.clientY, yaw: landYaw, pitch: landPitch };
+      if (landCanvas.setPointerCapture) { try { landCanvas.setPointerCapture(e.pointerId); } catch (err) {} }
+    });
+    landCanvas.addEventListener("pointermove", function (e) {
+      var p = landPointer(e);
+      if (landDrag) {
+        var dx = e.clientX - landDrag.x, dy = e.clientY - landDrag.y;
+        if (Math.abs(dx) + Math.abs(dy) > 3) landMoved = true;
+        landYaw = landDrag.yaw + dx * 0.008;
+        landPitch = Math.min(1.35, Math.max(0.42, landDrag.pitch - dy * 0.006));
+        drawLandscape();
+        return;
+      }
+      landCanvas.style.cursor = landHitAt(p.x, p.y) ? "pointer" : "grab";
+    });
+    landCanvas.addEventListener("pointerup", function (e) {
+      if (landDrag && !landMoved) {
+        var p = landPointer(e);
+        var hit = landHitAt(p.x, p.y);
+        if (hit) choose(hit.t);
+      }
+      landDrag = null;
+    });
+    landCanvas.addEventListener("pointercancel", function () { landDrag = null; });
+    landCanvas.addEventListener("pointerleave", function () { if (!landDrag) landCanvas.style.cursor = "grab"; });
+
     function softmax(logits, t) {
       var max = Math.max.apply(null, logits);
       var exps = logits.map(function (l) { return Math.exp((l - max) / Math.max(0.05, t)); });
@@ -1346,6 +1649,7 @@
       }
       readout.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + generated.length + ' / ' + MAX_STEPS + '</b></span><span>' + (DE ? "Kontext" : "Context") + ' <b>' + (base.length + generated.length) + '</b></span><span>' + (DE ? "Top" : "Top") + ' <b>' + api.esc(opts[top] ? opts[top].t : "—") + '</b></span><span>' + (DE ? "Modus" : "Mode") + ' <b>' + decodeMode + '</b></span>';
       publish();
+      if (landscape) drawLandscape();
     }
     function samplePath() {
       var gen = [];
@@ -1437,9 +1741,10 @@
         if (!s) return;
         if (s.mode) setMode(s.mode);
         if (typeof s.temp === "number") { temp = s.temp; tempEl.value = String(temp); tempOut.textContent = temp.toFixed(2); renderBars(); }
+        setLandscape(!!s.landscape);
         if (s.reset) reset();
       },
-      resize: function () {},
+      resize: function () { landResize(); },
       destroy: function () { el.remove(); }
     };
   }
@@ -1496,9 +1801,9 @@
     var tempEl = el.querySelector(".ls-tunnel-temp");
     var tempOut = el.querySelector("output");
     var advBtn = el.querySelector(".ls-tunnel-advance");
+    var ctx = null, size = null, step = 0, temp = (data.temp != null ? data.temp : 0.8);
     tempEl.value = String(temp);
     tempOut.textContent = temp.toFixed(2);
-    var ctx = null, size = null, step = 0, temp = (data.temp != null ? data.temp : 0.8);
     var yaw = -0.62, pitch = 0.82, zoom = 1;
     var hits = [], drag = null, suppress = false, highlightAlt = null;
     var camera = { scale: 1, ox: 0, oy: 0 };
@@ -1756,6 +2061,7 @@
       var sentenceText = "";
       full.forEach(function (tok, i) {
         var noSpace = /^[.,!?;:…]/.test(tok);
+        if (DE && i === baseLen + 1) { sentenceHtml += ","; sentenceText += ","; }
         if (i && !noSpace) { sentenceHtml += " "; sentenceText += " "; }
         var start = baseLen;
         var active = i === start + step;
@@ -1779,9 +2085,10 @@
       advBtn.disabled = step >= genTokens.length - 1;
       canvas.__lsHits = hits;
       canvas.__lsInfo = { path: tokens.length, generated: genTokens.length, step: step };
+      var sentenceEnd = /[.!?…]$/.test(sentenceText) ? "" : ".";
       canvas.setAttribute("aria-label", DE
-        ? "Wahrscheinlichkeitstunnel. Pfad: " + sentenceText + ". Aktuelles Token: " + genTokens[step] + "."
-        : "Probability tunnel. Path: " + sentenceText + ". Current token: " + genTokens[step] + ".");
+        ? "Wahrscheinlichkeitstunnel. Pfad: " + sentenceText + sentenceEnd + " Aktuelles Token: " + genTokens[step] + "."
+        : "Probability tunnel. Path: " + sentenceText + sentenceEnd + " Current token: " + genTokens[step] + ".");
     }
     function refreshData() {
       var next = SHARED.loop;
@@ -1894,7 +2201,7 @@
     var colors = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
     var el = document.createElement("div");
     el.className = "ls-tokenize-scene";
-    el.innerHTML = '<div class="ls-scene-row ls-tokenize-samples"></div><div class="ls-tokenize-chips" aria-live="polite"></div><div class="ls-tokenize-stats"></div><p class="ls-tokenize-note">' + (DE ? "Ein Token ist ein Stück Text, kein Wort. Die ID ist die Adresse in der Embedding-Tabelle." : "A token is a piece of text, not a word. The ID is the address in the embedding table.") + '</p>';
+    el.innerHTML = '<div class="ls-scene-row ls-tokenize-samples"><span class="ls-tokenize-label">' + (DE ? "Beispiele" : "Samples") + '</span></div><div class="ls-tokenize-chips" aria-live="polite"></div><div class="ls-tokenize-stats"></div><p class="ls-tokenize-note">' + (DE ? "Ein Token ist ein Stück Text, kein Wort. Die ID ist die Adresse in der Embedding-Tabelle." : "A token is a piece of text, not a word. The ID is the address in the embedding table.") + '</p>';
     root.appendChild(el);
     var samples = el.querySelector(".ls-tokenize-samples");
     var chips = el.querySelector(".ls-tokenize-chips");
@@ -2177,6 +2484,198 @@
     resize();
     raf = requestAnimationFrame(loop);
     return { update: function () {}, resize: resize, destroy: function () { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
+  function noiseScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-noise-scene";
+    el.innerHTML =
+      '<div class="ls-noise-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-scene-row"><label class="ls-range">Layer <input type="range" class="ls-noise-layer" min="0" max="5" step="1" value="0"><output>0</output></label></div>' +
+      '<div class="ls-noise-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-noise-stage");
+    var canvas = el.querySelector("canvas");
+    var slider = el.querySelector(".ls-noise-layer");
+    var out = el.querySelector(".ls-noise-scene output");
+    var readout = el.querySelector(".ls-noise-readout");
+    var layer = 0, size = null;
+    var C = api.colors();
+    function ease(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+    function mix(a, b, t) { return a + (b - a) * t; }
+    function textFor() {
+      if (layer < 1) return DE ? "Oberfläche: def und function, quicksort und quickSort stehen getrennt." : "Surface: def and function, quicksort and quickSort stand apart.";
+      if (layer < 3) return DE ? "Die ersten Layer ziehen die Schreibweisen zusammen. Schlüsselwort und Interpunktion verlieren an Gewicht." : "The first layers pull the spellings together. Keyword and punctuation lose weight.";
+      if (layer < 5) return DE ? "Fast nur noch Bedeutung: quicksort und quickSort meinen dieselbe Sortierfunktion." : "Mostly meaning now: quicksort and quickSort describe the same sorting function.";
+      return DE ? "Dieselbe Funktion. Die Oberfläche ist Rauschen, das Modell hat sie weggezogen." : "The same function. The surface is noise, and the model has pulled it away.";
+    }
+    function draw() {
+      if (!size) return;
+      var ctx = size.ctx, w = size.w, h = size.h;
+      var t = ease(layer / 5);
+      ctx.clearRect(0, 0, w, h);
+      var bg = ctx.createRadialGradient(w * 0.5, h * 0.56, 8, w * 0.5, h * 0.56, Math.max(w, h) * 0.62);
+      bg.addColorStop(0, "rgba(247,250,249,.95)");
+      bg.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      var codeH = Math.min(78, Math.max(58, h * 0.24));
+      ctx.fillStyle = "#071a22";
+      ctx.fillRect(12, 10, w - 24, codeH);
+      ctx.strokeStyle = "rgba(0,75,111,.25)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(12, 10, w - 24, codeH);
+      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.fillStyle = "#9db5b5";
+      ctx.textAlign = "left";
+      ctx.fillText("Python", 22, 28);
+      ctx.fillText("JavaScript", 22, 10 + codeH - 12);
+      var fs = w < 520 ? 10 : 12;
+      ctx.font = '600 ' + fs + 'px ui-monospace, Menlo, Consolas, monospace';
+      function line(x, y, parts) {
+        parts.forEach(function (p) {
+          ctx.fillStyle = p.c;
+          ctx.fillText(p.t, x, y);
+          x += ctx.measureText(p.t).width;
+        });
+      }
+      line(76, 28, [
+        { t: "def ", c: "#9db5b5" },
+        { t: "quicksort", c: C.green },
+        { t: "(items):", c: "#eef7f4" }
+      ]);
+      line(76, 10 + codeH - 12, [
+        { t: "function ", c: "#9db5b5" },
+        { t: "quickSort", c: C.sky },
+        { t: "(items) {", c: "#eef7f4" }
+      ]);
+
+      var padL = 26, padR = 26, padT = codeH + 28, padB = 14;
+      var plotW = w - padL - padR, plotH = h - padT - padB;
+      if (plotW < 40 || plotH < 40) return;
+      function px(x) { return padL + (x + 1.1) / 2.2 * plotW; }
+      function py(y) { return padT + (0.8 - y) / 1.6 * plotH; }
+      ctx.strokeStyle = C.line;
+      ctx.lineWidth = 1;
+      for (var g = -1; g <= 1; g += 0.5) {
+        ctx.beginPath(); ctx.moveTo(px(-1.1), py(g)); ctx.lineTo(px(1.1), py(g)); ctx.stroke();
+      }
+      for (var g2 = -1; g2 <= 1; g2 += 0.55) {
+        ctx.beginPath(); ctx.moveTo(px(g2), py(-0.8)); ctx.lineTo(px(g2), py(0.8)); ctx.stroke();
+      }
+
+      var pairs = [
+        { a: "def", b: "function", ax: -0.78, ay: 0.55, bx: 0.78, by: 0.55, tx: -0.42, ty: 0.30, kind: "meaning" },
+        { a: "quicksort", b: "quickSort", ax: -0.78, ay: 0.02, bx: 0.78, by: 0.02, tx: 0.42, ty: -0.10, kind: "meaning" },
+        { a: ":", b: "{", ax: -0.78, ay: -0.52, bx: 0.78, by: -0.52, tx: 0, ty: -0.55, kind: "noise" }
+      ];
+      var anchors = [
+        { x: -0.42, y: 0.30, label: DE ? "Funktion" : "function", color: C.green },
+        { x: 0.42, y: -0.10, label: DE ? "Sortieren" : "sorting", color: C.petrol }
+      ];
+
+      ctx.textAlign = "center";
+      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.fillStyle = C.muted;
+      ctx.globalAlpha = 0.15 + 0.85 * t;
+      ctx.fillText(DE ? "Bedeutung" : "meaning", px(0), py(0.74));
+      ctx.globalAlpha = 1;
+
+      anchors.forEach(function (a) {
+        ctx.globalAlpha = 0.15 + 0.8 * t;
+        ctx.strokeStyle = a.color;
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.ellipse(px(a.x), py(a.y), (0.62 - 0.28 * t) * plotW / 2.2, (0.28 - 0.1 * t) * plotH / 1.6, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = a.color;
+        ctx.beginPath();
+        ctx.arc(px(a.x), py(a.y), 4.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.font = '600 11px "Open Sans", sans-serif';
+        ctx.fillText(a.label, px(a.x), py(a.y) - 9);
+        ctx.globalAlpha = 1;
+      });
+
+      pairs.forEach(function (p) {
+        var ax = mix(p.ax, p.tx, p.kind === "noise" ? t * 0.4 : t);
+        var ay = mix(p.ay, p.ty, p.kind === "noise" ? t * 0.4 : t);
+        var bx = mix(p.bx, p.tx, p.kind === "noise" ? t * 0.4 : t);
+        var by = mix(p.by, p.ty, p.kind === "noise" ? t * 0.4 : t);
+        var alpha = p.kind === "noise" ? 1 - t : 1 - 0.45 * t;
+        var axp = px(ax), ayp = py(ay), bxp = px(bx), byp = py(by);
+        ctx.globalAlpha = Math.max(0, alpha) * 0.55;
+        ctx.strokeStyle = C.petrol;
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath(); ctx.moveTo(axp, ayp); ctx.lineTo(bxp, byp); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha = Math.max(0, alpha);
+        ctx.font = '600 10px "Open Sans", sans-serif';
+        ctx.fillStyle = C.muted;
+        if (Math.abs(axp - bxp) + Math.abs(ayp - byp) > 34) ctx.fillText("≈", (axp + bxp) / 2, (ayp + byp) / 2 - 4);
+        function tag(x, y, text, color, up) {
+          ctx.beginPath();
+          ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = color;
+          ctx.fill();
+          ctx.strokeStyle = C.paper;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.font = '600 10px "Open Sans", sans-serif';
+          var tw = ctx.measureText(text).width;
+          var bx2 = x - tw / 2 - 4, by2 = up ? y - 24 : y + 8;
+          ctx.fillStyle = C.paper;
+          ctx.fillRect(bx2, by2, tw + 8, 16);
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(bx2, by2, tw + 8, 16);
+          ctx.fillStyle = C.ink;
+          ctx.textAlign = "left";
+          ctx.fillText(text, bx2 + 4, by2 + 12);
+          ctx.textAlign = "center";
+        }
+        tag(axp, ayp, p.a, C.green, true);
+        tag(bxp, byp, p.b, C.sky, false);
+        ctx.globalAlpha = 1;
+      });
+
+      ctx.fillStyle = C.muted;
+      ctx.font = '9px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(DE ? "schematisch, keine Messung" : "schematic, not a measurement", 12, h - 4);
+    }
+    function resize() {
+      size = api.fit(canvas, stage);
+      draw();
+    }
+    slider.addEventListener("input", function () {
+      layer = parseInt(slider.value, 10) || 0;
+      out.textContent = String(layer);
+      readout.textContent = textFor();
+      draw();
+    });
+    window.addEventListener("resize", resize);
+    out.textContent = "0";
+    readout.textContent = textFor();
+    resize();
+    return {
+      update: function (s) {
+        if (s && typeof s.layer === "number") {
+          layer = Math.max(0, Math.min(5, s.layer));
+          slider.value = String(layer);
+          out.textContent = String(layer);
+          readout.textContent = textFor();
+          draw();
+        }
+      },
+      resize: resize,
+      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
+    };
   }
 
   function attentionScene(root, api) {
@@ -3282,6 +3781,7 @@
     tokenize: tokenizeScene,
     position: positionScene,
     attention: attentionScene,
+    noise: noiseScene,
     ffn: ffnScene,
     residual: residualScene,
     meadow: meadowScene,
