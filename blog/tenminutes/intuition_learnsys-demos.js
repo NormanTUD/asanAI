@@ -53,7 +53,7 @@
     var scene = document.createElement("div");
     scene.className = "ls-embed-scene";
     scene.innerHTML =
-      '<div class="ls-embed-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-embed-stage"><canvas class="ls-canvas" role="img"></canvas><div class="ls-embed-mini-table" hidden aria-hidden="true"></div></div>' +
       '<div class="ls-scene-controls"></div>' +
       '<div class="ls-scene-readout ls-sr-only" aria-live="polite"></div>' +
       '<div class="ls-scene-formula"><div class="ls-math" data-tex=""></div></div>';
@@ -63,13 +63,14 @@
     var controls = scene.querySelector(".ls-scene-controls");
     var readout = scene.querySelector(".ls-scene-readout");
     var formula = scene.querySelector(".ls-scene-formula");
+    var miniTable = scene.querySelector(".ls-embed-mini-table");
     var mathEl = formula.querySelector(".ls-math");
     var ctx = null, size = null, raf = 0, last = 0, reserveTimer = 0;
     var hits = [], hover = null, drag = null, suppressClick = false;
     var dimMix = 0, dimTarget = 0;
     var st = {
       mode: "space", dim: 1, selected: "king", arithmetic: "King - Man + Woman",
-      pair: ["cold", "warm"], group: null, yaw: -0.55, pitch: 0.78, zoom: 1
+      pair: ["cold", "warm"], group: null, yaw: -0.55, pitch: 0.78, zoom: 1, tables: false
     };
 
     function color(name) { return C[name] || C.ink; }
@@ -81,6 +82,25 @@
     }
     function text(loc) { return DE ? loc[0] : loc[1]; }
     function wordLabel(id) { return text(WORDS[id].label); }
+    function buildMiniTable() {
+      if (!miniTable) return;
+      var ids = ["king", "queen", "man", "woman"];
+      var cols = 5;
+      function value(ti, j) {
+        var x = Math.sin((ti + 1) * 12.9898 + (j + 1) * 78.233) * 43758.5453;
+        x = x - Math.floor(x);
+        return (x * 2 - 1).toFixed(2);
+      }
+      var head = '<tr><th></th>';
+      for (var j = 0; j < cols; j++) head += '<th>d' + (j + 1) + '</th>';
+      head += '<th>…</th></tr>';
+      var body = ids.map(function (id, ti) {
+        var cells = "";
+        for (var k = 0; k < cols; k++) cells += "<td>" + value(ti, k) + "</td>";
+        return "<tr><th>" + api.esc(wordLabel(id)) + "</th>" + cells + "<td>…</td></tr>";
+      }).join("");
+      miniTable.innerHTML = '<div class="ls-embed-mini-head">' + (DE ? "Ausschnitt: 5 von 4096 Dimensionen" : "Slice: 5 of 4096 dimensions") + '</div><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table>';
+    }
     function tempById(id) {
       for (var i = 0; i < TEMP.length; i++) if (TEMP[i].id === id) return TEMP[i];
       return TEMP[0];
@@ -445,6 +465,34 @@
       });
       drawList.sort(function (a, b) { return a.p.z - b.p.z; });
 
+      if (individualAlpha > 0.05 && dimMix > 0.5) {
+        ctx.save();
+        ctx.strokeStyle = C.blue;
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = individualAlpha * 0.18;
+        drawList.forEach(function (item) {
+          if (item.id === st.selected) return;
+          ctx.beginPath();
+          ctx.moveTo(origin.x, origin.y);
+          ctx.lineTo(item.p.x, item.p.y);
+          ctx.stroke();
+        });
+        if (st.selected && WORDS[st.selected]) {
+          var selectedWord = WORDS[st.selected];
+          var selectedPoint = project((selectedWord.v[0] - 12.5) / 15, selectedWord.v[1] / 22, selectedWord.z);
+          ctx.strokeStyle = C.green;
+          ctx.globalAlpha = individualAlpha * 0.7;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(origin.x, origin.y);
+          ctx.lineTo(selectedPoint.x, selectedPoint.y);
+          ctx.stroke();
+        }
+        ctx.restore();
+        ctx.globalAlpha = 1;
+        drawLabel(DE ? "Ursprung" : "origin", origin.x + 6, origin.y + 14, C.muted, "left", 9);
+      }
+
       if (dimMix < 0.05) {
         powerGroups().forEach(function (g) {
           if (g.ids.length < 2) return;
@@ -490,6 +538,13 @@
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center";
         ctx.fillText(DE ? "2D: freie Wege" : "2D: free paths", size.w / 2, size.h - 16);
+      }
+
+      if (dimMix > 1.5) {
+        ctx.fillStyle = C.green;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(DE ? "Jedes Wort ist eine Richtung vom Ursprung" : "Every word is a direction from the origin", size.w / 2, size.h - 16);
       }
 
       if (dirMode) {
@@ -735,6 +790,7 @@
         reset.addEventListener("click", function () { st.yaw = -0.55; st.pitch = 0.78; st.zoom = 1; draw(); });
         row1.appendChild(reset);
       }
+      if (miniTable) miniTable.hidden = !st.tables;
       controls.appendChild(row1);
 
       var row2 = document.createElement("div");
@@ -785,6 +841,7 @@
       if (s.arithmetic !== undefined) st.arithmetic = s.arithmetic;
       if (s.pair) st.pair = s.pair.slice();
       st.group = s.group ? s.group.slice() : null;
+      st.tables = !!s.tables;
       syncControls();
       draw();
       ensureLoop();
@@ -956,6 +1013,7 @@
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
     dimMix = st.dim;
     dimTarget = st.dim;
+    buildMiniTable();
     renderControls();
     resize();
     reserveHeights();
@@ -1259,7 +1317,6 @@
       timers.push(setTimeout(typeNext, 380));
     }
     el.querySelector(".ls-code-replay").addEventListener("click", reset);
-    el.addEventListener("click", function (e) { if (!e.target.closest("button")) reset(); });
     reset();
     return {
       update: function () {},
@@ -1375,6 +1432,7 @@
     var landBall = { x: 0, y: 0, init: false, animating: false };
     var landTrail = [];
     var revealed = [];
+    var knownProbs = {};
     var REVEAL_R = 0.95, REVEAL_FEATHER = 0.35;
     var lastPath = [], lastProbs = null, lastTop = null;
     var LAND_X = 2.65, LAND_Y = 1.9;
@@ -1532,12 +1590,13 @@
       var opts = currentOptions();
       var probs = softmax(opts.map(function (o) { return o.l; }), temp);
       var probByToken = {};
-      opts.forEach(function (o, i) { probByToken[o.t] = probs[i]; });
+      opts.forEach(function (o, i) { probByToken[o.t] = probs[i]; knownProbs[o.t] = probs[i]; });
       var items = catalog.map(function (it) {
         var p = probByToken[it.t];
-        return { t: it.t, x: it.x, y: it.y, p: p == null ? 0 : p, current: p != null };
+        var known = p != null ? p : knownProbs[it.t];
+        return { t: it.t, x: it.x, y: it.y, p: known == null ? 0 : known, current: p != null, known: known != null };
       });
-      var wells = landWells(items.filter(function (it) { return it.current; }));
+      var wells = landWells(items.filter(function (it) { return it.known; }));
       var top = items.filter(function (it) { return it.current; }).sort(function (a, b) { return b.p - a.p; })[0] || items[0];
       lastProbs = probByToken;
       lastTop = top;
@@ -2105,7 +2164,7 @@
       });
       renderBars();
     }
-    function reset() { generated = []; loopHistory = []; revealed = []; seedReveal(); renderSentence(); renderTree(); renderBars(); }
+    function reset() { generated = []; loopHistory = []; revealed = []; knownProbs = {}; seedReveal(); renderSentence(); renderTree(); renderBars(); }
     [
       { id: "sample", label: "Sample" }, { id: "greedy", label: "Greedy" }, { id: "topp", label: "Top-p 0.9" }
     ].forEach(function (m) {
@@ -2132,6 +2191,7 @@
         generated: generated.slice(),
         path: lastPath.map(function (p) { return { t: p.t, px: p.px, py: p.py }; }),
         probs: lastProbs,
+        knownProbs: knownProbs,
         top: lastTop ? lastTop.t : null,
         topP: lastTop ? lastTop.p : null,
         zTop: lastTop ? landZ(lastTop.p) : null,
@@ -3434,51 +3494,229 @@
       fruit: {
         keys: [{ label: "Merkmal: Mechanik / Schlüssel", on: false }, { label: "Merkmal: Gebäude / Adel", on: true }, { label: "Merkmal: Turm / Burg", on: true }],
         values: [{ label: "Hinweis: Schlüssel, Tür, öffnen", on: false }, { label: "Hinweis: König, Turm, Burg", on: true }, { label: "Hinweis: alt, prächtig, Garten", on: true }],
-        desc: "Der Kontext ist <b>Ich besichtige das Schloss</b>. Die Gebäude- und Burgmuster passen; das Mechanik-Muster bleibt still."
+        desc: "Die Gebäude- und Burgmuster passen; das Mechanik-Muster bleibt still."
       },
       tech: {
         keys: [{ label: "Merkmal: Mechanik / Schlüssel", on: true }, { label: "Merkmal: Gebäude / Adel", on: false }, { label: "Merkmal: Turm / Burg", on: false }],
         values: [{ label: "Hinweis: Schlüssel, Tür, öffnen", on: true }, { label: "Hinweis: König, Turm, Burg", on: false }, { label: "Hinweis: alt, prächtig, Garten", on: false }],
-        desc: "Der Kontext ist <b>Ich öffne das Schloss</b>. Jetzt passt das Mechanik-Muster, und die Gebäude- und Burgmuster bleiben still."
+        desc: "Jetzt passt das Mechanik-Muster; die Gebäude- und Burgmuster bleiben still."
       }
     } : {
       fruit: {
         keys: [{ label: "Feature: technology brand", on: false }, { label: "Feature: food / edible", on: true }, { label: "Feature: orchard / fruit", on: true }],
         values: [{ label: "Pull: pie, juice, crunch", on: true }, { label: "Pull: Mac, iPhone, stock", on: false }, { label: "Pull: tree, orchard, green", on: true }],
-        desc: "The context is <b>I ate the apple</b>. The food and orchard patterns match; the technology pattern stays silent."
+        desc: "The food and orchard patterns match; the technology pattern stays silent."
       },
       tech: {
         keys: [{ label: "Feature: technology brand", on: true }, { label: "Feature: food / edible", on: false }, { label: "Feature: orchard / fruit", on: false }],
         values: [{ label: "Pull: pie, juice, crunch", on: false }, { label: "Pull: Mac, iPhone, stock", on: true }, { label: "Pull: tree, orchard, green", on: false }],
-        desc: "The context is <b>I bought an Apple laptop</b>. The technology pattern matches; the food and orchard patterns stay silent."
+        desc: "The technology pattern matches; the food and orchard patterns stay silent."
       }
+    };
+    var labels = DE ? {
+      fruitTitle: "Ich besichtige das Schloss",
+      techTitle: "Ich öffne das Schloss",
+      stream: "„Schloss“ + Kontext",
+      output: "reicherer Vektor",
+      core: "Schloss: Gebäude",
+      ring: "Schloss: Mechanik",
+      bend: "Biegung",
+      bendButton: "Raum biegen",
+      separated: "getrennt",
+      notSeparated: "noch nicht getrennt",
+      plane: "Trennebene",
+      hint: "Wie im MLP: Bereich anheben, bis eine Ebene trennt."
+    } : {
+      fruitTitle: "I ate the apple",
+      techTitle: "I bought an Apple laptop",
+      stream: "“apple” + context",
+      output: "richer vector",
+      core: "apple: fruit",
+      ring: "apple: company",
+      bend: "Bend",
+      bendButton: "Bend space",
+      separated: "separated",
+      notSeparated: "not separated",
+      plane: "separating plane",
+      hint: "Like the MLP: lift the region until a plane separates it."
     };
     var el = document.createElement("div");
     el.className = "ls-ffn-scene";
-    el.innerHTML = '<div class="ls-scene-row ls-ffn-modes"></div><div class="ls-ffn-grid"><div class="ls-ffn-col"><div class="ls-ffn-head">' + (DE ? "Residual Stream" : "Residual stream") + '</div><div class="ls-ffn-pill is-fire">' + (DE ? "„Apple“ + Kontext" : "“Apple” + context") + '</div></div><div class="ls-ffn-col"><div class="ls-ffn-head">' + (DE ? "Muster in W₁" : "Patterns in W₁") + '</div><div class="ls-ffn-list" data-keys></div></div><div class="ls-ffn-col"><div class="ls-ffn-head">' + (DE ? "Pull in W₂" : "Pull in W₂") + '</div><div class="ls-ffn-list" data-values></div></div><div class="ls-ffn-col"><div class="ls-ffn-head">' + (DE ? "Zurückgeschrieben" : "Written back") + '</div><div class="ls-ffn-pill is-fire">' + (DE ? "reicherer Vektor" : "richer vector") + '</div></div></div><div class="ls-ffn-desc" aria-live="polite"></div><p class="ls-ffn-caveat">' + (DE ? "Vereinfachung: Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁." : "Simplification: a real FFN has no labelled keys. The patterns are learned directions in W₁.") + '</p>';
+    el.innerHTML =
+      '<div class="ls-ffn-contexts"></div>' +
+      '<div class="ls-ffn-bend">' +
+        '<div class="ls-ffn-bend-legend"><span><i class="is-core"></i>' + labels.core + '</span><span><i class="is-ring"></i>' + labels.ring + '</span></div>' +
+        '<div class="ls-ffn-bend-stage"><canvas class="ls-ffn-bend-canvas" role="img"></canvas></div>' +
+        '<div class="ls-ffn-bend-bar">' +
+          '<label class="ls-range">' + labels.bend + ' <input type="range" class="ls-ffn-bend-range" min="0" max="1" step="0.01" value="0.65"><output>0.65</output></label>' +
+          '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-bend-toggle">' + labels.bendButton + '</button>' +
+          '<span class="ls-ffn-bend-readout" aria-live="polite"></span>' +
+        '</div>' +
+      '</div>' +
+      '<p class="ls-ffn-caveat">' + (DE ? "Vereinfachung: Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁." : "Simplification: a real FFN has no labelled keys. The patterns are learned directions in W₁.") + '</p>';
     root.appendChild(el);
-    var modes = el.querySelector(".ls-ffn-modes");
-    var keysEl = el.querySelector("[data-keys]");
-    var valuesEl = el.querySelector("[data-values]");
-    var descEl = el.querySelector(".ls-ffn-desc");
-    function render(mode) {
-      var d = data[mode];
-      keysEl.innerHTML = d.keys.map(function (k) { return '<div class="ls-ffn-pill ' + (k.on ? "is-fire" : "is-idle") + '">' + api.esc(k.label) + '<small>' + (k.on ? (DE ? "passt" : "matches") : (DE ? "still" : "silent")) + '</small></div>'; }).join("");
-      valuesEl.innerHTML = d.values.map(function (v) { return '<div class="ls-ffn-pill ' + (v.on ? "is-fire" : "is-idle") + '">' + api.esc(v.label) + '</div>'; }).join("");
-      descEl.innerHTML = d.desc;
-      modes.querySelectorAll(".ls-chip").forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-mode") === mode); });
+    var contextsEl = el.querySelector(".ls-ffn-contexts");
+    var bendStage = el.querySelector(".ls-ffn-bend-stage");
+    var bendCanvas = el.querySelector(".ls-ffn-bend-canvas");
+    var bendRange = el.querySelector(".ls-ffn-bend-range");
+    var bendOut = el.querySelector(".ls-ffn-bend-bar output");
+    var bendReadout = el.querySelector(".ls-ffn-bend-readout");
+    var bendToggle = el.querySelector(".ls-ffn-bend-toggle");
+    var bend = 0.65, bendRaf = 0, size = null, ctx = null;
+    function pill(item, withState) {
+      return '<span class="ls-ffn-pill ' + (item.on ? "is-fire" : "is-idle") + '">' + api.esc(item.label) +
+        (withState ? '<small>' + (item.on ? (DE ? "passt" : "matches") : (DE ? "still" : "silent")) + '</small>' : '') + '</span>';
     }
-    ["fruit", "tech"].forEach(function (mode) {
-      var b = document.createElement("button");
-      b.type = "button";
-      b.className = "ls-chip" + (mode === "fruit" ? " is-on" : "");
-      b.setAttribute("data-mode", mode);
-      b.textContent = DE ? (mode === "fruit" ? "Ich besichtige das Schloss" : "Ich öffne das Schloss") : (mode === "fruit" ? "I ate the apple" : "I bought an Apple laptop");
-      b.addEventListener("click", function () { render(mode); });
-      modes.appendChild(b);
-    });
-    render("fruit");
-    return { update: function (s) { if (s && s.mode) render(s.mode); }, resize: function () {}, destroy: function () { el.remove(); } };
+    function contextCard(mode, title) {
+      var d = data[mode];
+      var card = document.createElement("article");
+      card.className = "ls-ffn-context";
+      card.setAttribute("data-mode", mode);
+      card.innerHTML =
+        '<div class="ls-ffn-context-head"><span class="ls-ffn-stream-pill">' + labels.stream + '</span><span class="ls-ffn-context-title">' + api.esc(title) + '</span></div>' +
+        '<div class="ls-ffn-flow">' +
+          '<div class="ls-ffn-group"><div class="ls-ffn-head">' + (DE ? "Muster in W₁" : "Patterns in W₁") + '</div><div class="ls-ffn-chips">' + d.keys.map(function (k) { return pill(k, true); }).join("") + '</div></div>' +
+          '<span class="ls-ffn-arrow" aria-hidden="true">→</span>' +
+          '<div class="ls-ffn-group"><div class="ls-ffn-head">' + (DE ? "Pull in W₂" : "Pull in W₂") + '</div><div class="ls-ffn-chips">' + d.values.map(function (v) { return pill(v, false); }).join("") + '</div></div>' +
+          '<span class="ls-ffn-out-pill">' + labels.output + '</span>' +
+        '</div>' +
+        '<p class="ls-ffn-desc">' + d.desc + '</p>';
+      contextsEl.appendChild(card);
+    }
+    contextCard("fruit", labels.fruitTitle);
+    contextCard("tech", labels.techTitle);
+    function drawBend() {
+      if (!size) return;
+      var C = api.colors();
+      ctx = size.ctx;
+      var w = size.w, h = size.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * 0.5, cy = h * 0.56;
+      var scale = Math.min(w * 0.38, h * 0.34);
+      function warp(x, y) {
+        var r2 = x * x + y * y;
+        return { x: x, y: y, z: bend * 1.35 * Math.exp(-r2 / 0.18) };
+      }
+      function project(x, y, z) {
+        return { x: cx + x * scale + z * scale * 0.25, y: cy + y * scale * 0.35 - z * scale * 0.95 };
+      }
+      ctx.strokeStyle = C.line;
+      ctx.globalAlpha = 0.45;
+      ctx.lineWidth = 1;
+      var N = 10;
+      for (var i = 0; i <= N; i++) {
+        ctx.beginPath();
+        for (var j = 0; j <= N; j++) {
+          var wp = warp(-1 + 2 * i / N, -1 + 2 * j / N);
+          var p = project(wp.x, wp.y, wp.z);
+          if (j === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        }
+        ctx.stroke();
+        ctx.beginPath();
+        for (var j2 = 0; j2 <= N; j2++) {
+          var wp2 = warp(-1 + 2 * j2 / N, -1 + 2 * i / N);
+          var p2 = project(wp2.x, wp2.y, wp2.z);
+          if (j2 === 0) ctx.moveTo(p2.x, p2.y); else ctx.lineTo(p2.x, p2.y);
+        }
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      function drawClass(cls, color) {
+        for (var k = 0; k < 36; k++) {
+          var a = k * 2.399963229728653;
+          var r = cls === 0 ? 0.28 * Math.sqrt((k + 0.5) / 36) : 0.55 + 0.32 * Math.sqrt((k + 0.5) / 36);
+          var wp = warp(Math.cos(a) * r, Math.sin(a) * r);
+          var p = project(wp.x, wp.y, wp.z);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, cls === 0 ? 3.4 : 3, 0, Math.PI * 2);
+          ctx.fillStyle = color;
+          ctx.globalAlpha = 0.9;
+          ctx.fill();
+          ctx.strokeStyle = C.paper;
+          ctx.lineWidth = 1;
+          ctx.globalAlpha = 1;
+          ctx.stroke();
+        }
+      }
+      drawClass(0, C.green);
+      drawClass(1, C.gold);
+      var lineAlpha = Math.max(0, Math.min(1, (bend - 0.45) / 0.25));
+      if (lineAlpha > 0.01) {
+        var ly = cy - 0.6 * scale * 0.95;
+        ctx.save();
+        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = C.petrol;
+        ctx.globalAlpha = lineAlpha;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(16, ly);
+        ctx.lineTo(w - 16, ly);
+        ctx.stroke();
+        ctx.restore();
+        ctx.fillStyle = C.petrol;
+        ctx.globalAlpha = lineAlpha;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "right";
+        ctx.fillText(labels.plane, w - 18, ly - 6);
+        ctx.globalAlpha = 1;
+      }
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(labels.bend + " " + bend.toFixed(2), 14, 18);
+      ctx.textAlign = "center";
+      ctx.fillText(labels.hint, w / 2, h - 10);
+      bendCanvas.setAttribute("aria-label", (DE ? "Symbolische Biegung des FFN-Raums. " : "Symbolic bend of the FFN space. ") + labels.hint + " " + (bend > 0.6 ? labels.separated : labels.notSeparated) + ".");
+    }
+    function updateBendReadout() {
+      bendOut.textContent = bend.toFixed(2);
+      bendReadout.textContent = labels.bend + " " + bend.toFixed(2) + " · " + (bend > 0.6 ? labels.separated : labels.notSeparated);
+    }
+    function setBend(v) {
+      bend = Math.max(0, Math.min(1, v));
+      bendRange.value = String(bend);
+      updateBendReadout();
+      drawBend();
+    }
+    function animateBend(target) {
+      if (bendRaf) cancelAnimationFrame(bendRaf);
+      var from = bend, t0 = performance.now(), dur = 620;
+      function frame(now) {
+        var t = Math.min(1, (now - t0) / dur);
+        var e = 1 - Math.pow(1 - t, 3);
+        bend = from + (target - from) * e;
+        bendRange.value = String(bend);
+        updateBendReadout();
+        drawBend();
+        if (t < 1) bendRaf = requestAnimationFrame(frame);
+        else bendRaf = 0;
+      }
+      bendRaf = requestAnimationFrame(frame);
+    }
+    bendRange.addEventListener("input", function () { setBend(parseFloat(bendRange.value) || 0); });
+    bendToggle.addEventListener("click", function () { animateBend(bend > 0.5 ? 0 : 1); });
+    function resize() {
+      size = api.fit(bendCanvas, bendStage);
+      drawBend();
+    }
+    var ro = null;
+    if (window.ResizeObserver) { ro = new ResizeObserver(resize); ro.observe(bendStage); }
+    function onTheme() { drawBend(); }
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", onTheme);
+    updateBendReadout();
+    resize();
+    return {
+      update: function () {},
+      resize: resize,
+      destroy: function () {
+        if (bendRaf) cancelAnimationFrame(bendRaf);
+        if (ro) ro.disconnect();
+        window.removeEventListener("resize", resize);
+        window.removeEventListener("tm:theme", onTheme);
+        el.remove();
+      }
+    };
   }
 
   function residualScene(root, api) {

@@ -180,9 +180,9 @@
     {
       kicker: "05 / Der Raum",
       title: "Drei Dimensionen, ein Schatten",
-      body: "Eine dritte Achse hebt die Ebene in einen Raum. Jetzt können dieselben Punkte neben Macht und Geschlecht auch Rang tragen. Jede Ansicht ist eine Projektion: Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Ziehe die Ansicht und beobachte, welche Richtung stabil bleibt.",
+      body: "Eine dritte Achse hebt die Ebene in einen Raum. Jetzt können dieselben Punkte neben Macht und Geschlecht auch Rang tragen. Jede Ansicht ist eine Projektion: Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Jedes Wort ist ein Pfeil vom Ursprung: Die Richtung trägt die Bedeutung, die Länge ist Nebensache. Ziehe die Ansicht und beobachte, welche Richtung stabil bleibt.",
       watch: "Ziehe die Ansicht. Welche Richtung bleibt stabil?",
-      demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "directions" },
+      demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "directions", tables: true },
       context: "Ein echtes Modell arbeitet in Tausenden Dimensionen. Die drei Achsen sind eine Projektion, kein vollständiges Bild. Die Perspektive kann Relationen zeigen, die in der Projektion verdeckt sind.",
       deep: "Superposition und Polysemantik erklären, warum ein Neuron mehrere Bedeutungen tragen kann. Die Karte ist nützlich, aber sie ist statistisch. Sie zeigt, was im Training häufig war, nicht was wahr ist.",
       boxes: [
@@ -280,9 +280,9 @@
     {
       kicker: "05 / The space",
       title: "Three dimensions, one shadow",
-      body: "A third axis lifts the plane into a space. Now the same points can carry rank as well as power and gender. Every view is a projection: lines that cross on screen need not touch in the full space. Drag the view and watch which direction stays stable.",
+      body: "A third axis lifts the plane into a space. Now the same points can carry rank as well as power and gender. Every view is a projection: lines that cross on screen need not touch in the full space. Every word is an arrow from the origin: the direction carries the meaning, the length is secondary. Drag the view and watch which direction stays stable.",
       watch: "Drag the view. Which direction stays stable?",
-      demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "directions" },
+      demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "directions", tables: true },
       context: "A real model works in thousands of dimensions. The three axes are a projection, not a complete picture. Perspective can show relations that the projection hides.",
       deep: "Superposition and polysemy explain why a neuron can carry several meanings. The map is useful, but it is statistical. It shows what was frequent in training, not what is true.",
       boxes: [
@@ -527,7 +527,7 @@
       kicker: "08 / Feed-forward",
       title: "Ein Muster passt, ein Wert wird geschrieben",
       body: "Das Feed-Forward-Netz arbeitet auf jedem Token einzeln. Es dehnt den Vektor, wendet eine Aktivierung an und projiziert zurück. Attention mischt Tokens; das FFN rechnet innerhalb eines Tokens. Es macht mit dem Kontext, was das MLP mit den Punkten gemacht hat: Bereiche, die vorher nicht linear trennbar waren, werden trennbar, weil der Kontext den Vektor immer weiter verfeinert. Auch die eigene Antwort wird Teil des Kontexts; jede neue Entscheidung verschiebt die Grenze.",
-      watch: "Wechsle zwischen Apfel als Obst und Apple als Firma. Welche Muster feuern?",
+      watch: "Vergleiche „Ich besichtige das Schloss“ und „Ich öffne das Schloss“. Welche Muster feuern?",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁; der Pull ist eine gelernte Richtung in W₂.",
       deep: "Die meisten Parameter eines Transformers liegen in den FFN-Matrizen. Wissen ist trotzdem verteilt, nicht in einer Zeile gespeichert.",
@@ -541,8 +541,8 @@
     {
       kicker: "08 / Feed-forward",
       title: "A pattern matches, a value is written",
-      body: "The feed-forward network works on each token separately. It expands the vector, applies an activation, and projects back. Attention mixes tokens; the FFN computes within a token.",
-      watch: "Switch between apple the fruit and Apple the company. Which patterns fire?",
+      body: "The feed-forward network works on each token separately. It expands the vector, applies an activation, and projects back. Attention mixes tokens; the FFN computes within a token. It does with the context what the MLP did with the points: regions that were not linearly separable become separable as the context refines the vector. The model's own answer also becomes part of the context; every new decision shifts the boundary.",
+      watch: "Compare “I ate the apple” and “I bought an Apple laptop”. Which patterns fire?",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "A real FFN has no labelled keys. The patterns are learned directions in W₁; the pull is a learned direction in W₂.",
       deep: "Most parameters of a transformer live in the FFN matrices. Knowledge is still distributed, not stored in one row.",
