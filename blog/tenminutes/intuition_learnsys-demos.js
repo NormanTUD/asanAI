@@ -1556,12 +1556,12 @@
           var sum = 0, w = 0;
           Object.keys(n.preds).forEach(function (p) { sum += nodes[p].y; w += 1; });
           Object.keys(n.succs).forEach(function (s) { sum += nodes[s].y * 0.55; w += 0.55; });
-          Object.keys(n.ctx).forEach(function (c) { sum += nodes[c].y * 0.4; w += 0.4; });
+          Object.keys(n.ctx).forEach(function (c) { sum += nodes[c].y * 1.5; w += 1.5; });
           if (w > 0) n.y = n.y * 0.55 + (sum / w) * 0.45;
         });
         Object.keys(columns).forEach(function (d) {
           var col = columns[d].slice().sort(function (a, b) { return a.y - b.y; });
-          var gap = col.length > 1 ? Math.min(0.32, (2 * LAND_Y * 0.92) / (col.length - 1)) : 0;
+          var gap = col.length > 1 ? Math.min(0.72, (2 * LAND_Y * 0.92) / (col.length - 1)) : 0;
           for (var i = 1; i < col.length; i++) {
             if (col[i].y - col[i - 1].y < gap) col[i].y = col[i - 1].y + gap;
           }
@@ -2227,23 +2227,11 @@
     });
     el.querySelector(".ls-loop-next").addEventListener("click", sample);
     el.querySelector(".ls-loop-reset").addEventListener("click", reset);
-    function animateTemp(target) {
-      if (tempRaf) cancelAnimationFrame(tempRaf);
-      var from = tempShown, t0 = performance.now(), dur = 260;
-      function frame(now) {
-        var t = Math.min(1, (now - t0) / dur);
-        var e = 1 - Math.pow(1 - t, 3);
-        tempShown = from + (target - from) * e;
-        renderBars();
-        if (t < 1) tempRaf = requestAnimationFrame(frame);
-        else tempRaf = 0;
-      }
-      tempRaf = requestAnimationFrame(frame);
-    }
     tempEl.addEventListener("input", function () {
       temp = parseFloat(tempEl.value) || 0.8;
+      tempShown = temp;
       tempOut.textContent = temp.toFixed(2);
-      animateTemp(temp);
+      renderBars();
     });
     reset();
     setLandscape(true);
@@ -2257,6 +2245,8 @@
         top: lastTop ? lastTop.t : null,
         topP: lastTop ? lastTop.p : null,
         zTop: lastTop ? landZ(lastTop.p) : null,
+        temp: temp,
+        tempShown: tempShown,
         revealed: revealed.length,
         landscape: landscape
       };
@@ -2265,7 +2255,14 @@
       update: function (s) {
         if (!s) return;
         if (s.mode) setMode(s.mode);
-        if (typeof s.temp === "number") { temp = s.temp; tempEl.value = String(temp); tempOut.textContent = temp.toFixed(2); renderBars(); }
+        if (typeof s.temp === "number") {
+          temp = s.temp;
+          tempShown = s.temp;
+          if (tempRaf) { cancelAnimationFrame(tempRaf); tempRaf = 0; }
+          tempEl.value = String(temp);
+          tempOut.textContent = temp.toFixed(2);
+          renderBars();
+        }
         setLandscape(true);
         if (s.reset) reset();
       },
@@ -2280,7 +2277,7 @@
         return true;
       },
       resize: function () { landResize(); },
-      destroy: function () { el.remove(); }
+      destroy: function () { if (tempRaf) cancelAnimationFrame(tempRaf); el.remove(); }
     };
   }
 
@@ -3785,7 +3782,7 @@
       if (bendRaf) cancelAnimationFrame(bendRaf);
       var from = bend, t0 = performance.now(), dur = 620;
       function frame(now) {
-        var t = Math.min(1, (now - t0) / dur);
+        var t = Math.max(0, Math.min(1, (now - t0) / dur));
         var e = 1 - Math.pow(1 - t, 3);
         bend = from + (target - from) * e;
         bendRange.value = String(bend);
