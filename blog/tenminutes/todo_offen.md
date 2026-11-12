@@ -7,20 +7,20 @@ Regel: Höhen-/Browser-Checks erst ausführen, wenn alle Folien umgebaut sind.
 - [done] Titel „Was ist ein LLM?“ und „Large Language Model“ ausschreiben.
 - [done] Adventskalender-Satz ergänzen.
 - [done] Satz ergänzen: Diese Netze werden mit großen Datenmengen trainiert; das Training im Detail kommt später.
-- [done] Zwei Handys nacheinander statt nebeneinander; Umschalter Suche / KI-Chat.
+- [done] Zwei Handys als aufeinanderfolgende Folien (Suche, dann KI-Chat), kein Toggle mehr.
 - [done] KI-Chat statt ChatGPT; Frage „Warum ist überhaupt irgendwas?“ und philosophische Kurzantwort.
 - [done] KI-Chat ist eine eigene Folie nach „Was ist ein LLM?“.
 - [done] Leibniz als klassische Formulierung und Jocax als neuerer Gedanke erwähnen, neutral bleiben.
 - [pending] Prüfen, ob die philosophische Antwort in DE/EN auf Desktop und Mobil gut lesbar ist.
-- [pending] Quellenlink Leibniz (Gutenberg) und Jocax (MedCrave) auf Erreichbarkeit prüfen.
+- [done] Quellenlink Leibniz (Gutenberg) und Jocax (MedCrave) geprüft: beide HTTP 200.
 
 ## Code-Folie
 - [done] Monitor mit opera.jpg, Taskleiste und zwei Fenstern.
 - [done] Agenten-Konsole: kurzes Nachdenken, Datei schreiben.
 - [done] Der Code steht im Agentenfenster, nicht in einem separaten Editor.
 - [done] „Weiter“ öffnet das Lauf-Fenster und tippt `python3 himmel.py` in 200 ms.
-- [done] Agent führt `himmel.py` aus; Lauf-Fenster zeigt die Ausgabe.
-- [pending] Auf Mobil prüfen, ob Taskleiste, Agenten-Chat, Code und Lauf-Fenster ohne Überlappung passen.
+- [done] Agent führt `himmel.py` automatisch aus (Weiter bleibt als manueller Auslöser); Lauf-Fenster zeigt die berechnete Ausgabe.
+- [pending] Auf Mobil prüfen, ob Taskleiste, Agenten-Chat, Code und Lauf-Fenster ohne Überlappung passen. (Agentenlauf in DE/EN bereits gezielt geprüft: Befehl und 4.35-Ausgabe erscheinen.)
 
 ## Modelle
 - [done] „Modelle“ und „Die Bausteine eines LLM“ als zwei Folien trennen.
@@ -52,11 +52,11 @@ Regel: Höhen-/Browser-Checks erst ausführen, wenn alle Folien umgebaut sind.
 - [done] „Fluss“ und „Schloss“ als sehr unwahrscheinliche Tokens weiter links/außen platzieren.
 - [done] Landschaft über die Tokens hinaus weiterlaufen lassen und am Rand ausfransen (weicher Rand).
 - [done] Fog of War: ferne Tokens werden ausgeblendet; nahe/gesehene bleiben sichtbar.
-- [pending] Wiese der Wörter als Hintergrund hinter die Landschaft verschieben.
+- [done] Wiese der Wörter als sehr blasser Hintergrund hinter die Landschaft gelegt.
 - [done] Klick in die Nähe eines Tokens genügt; breite Trefferflächen um die aktuellen Tokens.
-- [pending] Blasen als 2D-Darstellung eines höherdimensionalen Raums erklären.
-- [pending] Expressivitätslücke („expressivity gap“) recherchieren und neutral erklären.
-- [pending] Mehr Wörter in der Wiese, ohne die Seams zu verlieren; Seams bleiben sichtbar.
+- [done] Blasen als 2D-Darstellung eines höherdimensionalen Raums erklären.
+- [done] Expressivitätslücke neutral als nicht einheitlichen Begriff erklärt; Detailrecherche bleibt offen.
+- [done] Mehr Wörter in der Wiese (Default 20, bis 40), Voronoi-Seams bleiben erhalten.
 
 ## Allgemein
 - [done] Scrollen im linken Textfeld dreht keine Folie mehr weiter.

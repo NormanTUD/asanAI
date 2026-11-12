@@ -1402,7 +1402,13 @@
       "red  = scattering(650e-9, 1e5, 293)",
       'print(f"Blue is {blue / red:.2f}x more strongly scattered than red")'
     ];
-    var outText = DE ? "Blau wird 4,35× stärker gestreut als Rot." : "Blue is 4.35× more strongly scattered than red.";
+    var kB = 1.380649e-23, pressure = 1e5, temp = 293;
+    var blue = (pressure / (kB * temp)) / Math.pow(450e-9, 4);
+    var red = (pressure / (kB * temp)) / Math.pow(650e-9, 4);
+    var ratio = blue / red;
+    var outText = DE
+      ? "Blau wird " + ratio.toFixed(2) + "× stärker gestreut als Rot."
+      : "Blue is " + ratio.toFixed(2) + "x more strongly scattered than red.";
     var agentText = DE ? "Ich denke kurz nach … Fertig. Ich schreibe himmel.py." : "Thinking briefly … done. I'll write sky.py.";
     var userText = DE ? "Schreibe ein Python-Programm, das die Rayleigh-Streuung berechnet." : "Write a Python program that computes Rayleigh scattering.";
     var el = document.createElement("div");
@@ -1490,6 +1496,7 @@
         if (i >= spans.length) {
           phase = "ready";
           setButton(DE ? "Weiter" : "Next", false);
+          later(function () { if (phase === "ready") runProgram(); }, 900);
           return;
         }
         spans[i].classList.add("is-visible");
@@ -1684,6 +1691,7 @@
     var REVEAL_R = 0.95, REVEAL_FEATHER = 0.35;
     var lastPath = [], lastProbs = null, lastTop = null;
     var LAND_X = 2.95, LAND_Y = 2.05;
+    var MEADOW_WORDS = DE ? ["Hund", "Katze", "Baum", "Haus", "Auto", "Buch", "Maus", "Lampe", "Blume", "Stein", "Tisch", "Stuhl", "Wasser", "Feuer", "Nacht", "Sonne", "Regen", "Mond", "Stern", "Fluss", "Berg", "Vogel", "Fisch", "Milch", "Zucker", "Tür", "Fenster", "Brücke", "Feld", "Küche", "Garten", "Schiff", "Uhr", "Straße", "Stadt", "Brot", "Apfel", "Tee", "Hut", "Glocke"] : ["Dog", "Cat", "Tree", "House", "Car", "Book", "Mouse", "Lamp", "Flower", "Stone", "Table", "Chair", "Water", "Fire", "Night", "Sun", "Rain", "Moon", "Star", "River", "Mountain", "Bird", "Fish", "Milk", "Sugar", "Door", "Window", "Bridge", "Field", "Kitchen", "Garden", "Ship", "Clock", "Road", "City", "Bread", "Apple", "Tea", "Hat", "Bell"];
 
     var PLANE_Z = 0.06;
     var BASE_PROB = 0.001;
@@ -1956,6 +1964,27 @@
       return C.green;
     }
 
+    function drawWordBackdrop(ctx, w, h, C) {
+      var seed = 17;
+      function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      var palette = [C.green, C.sky, C.lime, C.gold, C.lilac, C.blue];
+      MEADOW_WORDS.forEach(function (word, i) {
+        var x = (0.06 + rnd() * 0.88) * w;
+        var y = (0.08 + rnd() * 0.84) * h;
+        ctx.globalAlpha = 0.035 + (i % 3) * 0.012;
+        ctx.fillStyle = palette[i % palette.length];
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.fillText(word, x, y);
+        ctx.beginPath();
+        ctx.arc(x, y - 9, 1.4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.restore();
+      ctx.globalAlpha = 1;
+    }
     function drawLandscape() {
       if (!landscape || !landSize) return;
       var C = api.colors();
@@ -2059,6 +2088,10 @@
       edge.addColorStop(1, "rgba(255,255,255,.94)");
       ctx.fillStyle = edge;
       ctx.fillRect(0, 0, w, h);
+
+      // The word meadow stays faintly behind the landscape, so the world does
+      // not end at the few tokens of this sentence.
+      drawWordBackdrop(ctx, w, h, C);
 
       // The lantern forecasts the next word: it sits on the deepest current
       // valley, so the plot is always one word ahead of the sentence.
@@ -4593,14 +4626,14 @@
     var CW = 1120, CH = 392;
     var el = document.createElement("div");
     el.className = "ls-meadow-scene";
-    el.innerHTML = '<div class="ls-meadow-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-scene-row"><label class="ls-range">' + (DE ? "Wörter" : "Words") + ' <input type="range" class="ls-md-n" min="12" max="30" step="6" value="12"><output>12</output></label><label class="ls-range">T <input type="range" class="ls-md-temp" min="0.2" max="2.6" step="0.05" value="0.8"><output>0.80</output></label><label class="ls-range">k <input type="range" class="ls-md-k" min="1" max="10" step="1" value="5"><output>5</output></label><button type="button" class="ls-btn ls-btn--tiny ls-md-landscape">' + (DE ? "Landschaft" : "Landscape") + '</button></div><div class="ls-meadow-readout" aria-live="polite"></div><p class="ls-meadow-caption"></p>';
+    el.innerHTML = '<div class="ls-meadow-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-scene-row"><label class="ls-range">' + (DE ? "Wörter" : "Words") + ' <input type="range" class="ls-md-n" min="12" max="40" step="4" value="20"><output>20</output></label><label class="ls-range">T <input type="range" class="ls-md-temp" min="0.2" max="2.6" step="0.05" value="0.8"><output>0.80</output></label><label class="ls-range">k <input type="range" class="ls-md-k" min="1" max="10" step="1" value="5"><output>5</output></label><button type="button" class="ls-btn ls-btn--tiny ls-md-landscape">' + (DE ? "Landschaft" : "Landscape") + '</button></div><div class="ls-meadow-readout" aria-live="polite"></div><p class="ls-meadow-caption"></p>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-meadow-stage");
     var canvas = el.querySelector("canvas");
     var nEl = el.querySelector(".ls-md-n"), tempEl = el.querySelector(".ls-md-temp"), kEl = el.querySelector(".ls-md-k");
     var readout = el.querySelector(".ls-meadow-readout");
     var caption = el.querySelector(".ls-meadow-caption");
-    var ctx = null, size = null, N = 12, T = 0.8, K = 5;
+    var ctx = null, size = null, N = 20, T = 0.8, K = 5;
     var modeMix = 0, modeTarget = 0, modeTimer = 0;
     var anchors = [], fieldCache = {}, gapFrac = 0, pointer = { x: CW / 2, y: CH / 2 };
     function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
