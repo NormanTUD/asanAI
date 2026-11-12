@@ -1207,10 +1207,11 @@
       '<div class="ls-code-window"><div class="ls-code-bar"><i></i><i></i><i></i><span>' + (DE ? "himmel.py" : "sky.py") + '</span></div>' +
         '<div class="ls-code-chat"><div class="ls-code-msg is-user">' + (DE ? "Schreibe ein Python-Programm, das berechnet, wie stark blaues und rotes Licht in der Atmosphäre gestreut werden." : "Write a Python program that calculates how strongly blue and red light are scattered in the atmosphere.") + '</div><div class="ls-code-msg is-ai">' + (DE ? "Klar. Das Programm berechnet das Rayleigh-Streuungsverhältnis für 450 nm und 650 nm." : "Sure. The program computes the Rayleigh scattering ratio for 450 nm and 650 nm.") + '</div></div>' +
         '<pre class="ls-code-body"><code></code></pre></div>' +
-      '<div class="ls-code-terminal"><div class="ls-code-bar"><i></i><i></i><i></i><span>Terminal</span></div><div class="ls-code-term"><b>$ ' + (DE ? "python3 himmel.py" : "python3 sky.py") + '</b><span></span></div></div>' +
+      '<div class="ls-code-terminal"><div class="ls-code-bar"><i></i><i></i><i></i><span>Terminal</span></div><div class="ls-code-term"><b class="ls-code-command"></b><span></span></div></div>' +
       '<button type="button" class="ls-btn ls-btn--tiny ls-code-replay">' + (DE ? "Nochmal" : "Replay") + '</button>';
     root.appendChild(el);
     var codeEl = el.querySelector(".ls-code-body code");
+    var commandEl = el.querySelector(".ls-code-command");
     var term = el.querySelector(".ls-code-term span");
     var tokens = [];
     codeText.forEach(function (line, li) {
@@ -1231,11 +1232,23 @@
     function reset() {
       clearTimers();
       spans.forEach(function (s) { s.classList.remove("is-visible"); });
+      commandEl.textContent = "";
       term.textContent = "";
+      function typeCommand() {
+        var cmd = "$ " + (DE ? "python3 himmel.py" : "python3 sky.py");
+        var j = 0;
+        function step() {
+          j += 1;
+          commandEl.textContent = cmd.slice(0, j);
+          if (j < cmd.length) timers.push(setTimeout(step, 16));
+          else timers.push(setTimeout(function () { term.textContent = outText; }, 220));
+        }
+        step();
+      }
       var i = 0;
       function typeNext() {
         if (i >= spans.length) {
-          timers.push(setTimeout(function () { term.textContent = outText; }, 260));
+          timers.push(setTimeout(typeCommand, 180));
           return;
         }
         spans[i].classList.add("is-visible");
@@ -1361,6 +1374,8 @@
     var landDrag = null, landMoved = false, landHits = [];
     var landBall = { x: 0, y: 0, init: false, animating: false };
     var landTrail = [];
+    var revealed = [];
+    var REVEAL_R = 0.95, REVEAL_FEATHER = 0.35;
     var lastPath = [], lastProbs = null, lastTop = null;
     var LAND_X = 2.65, LAND_Y = 1.9;
 
@@ -1380,6 +1395,46 @@
     var catalog = buildCatalog();
     var catalogByToken = {};
     catalog.forEach(function (it) { catalogByToken[it.t] = it; });
+
+    function addReveal(x, y) { revealed.push({ x: x, y: y }); }
+    function revealToken(tok) {
+      var c = catalogByToken[tok];
+      if (c) addReveal(c.x, c.y);
+    }
+    function revealSegment(fromTok, toTok) {
+      var to = catalogByToken[toTok];
+      if (!to) return;
+      var from = fromTok ? catalogByToken[fromTok] : null;
+      if (!from) { addReveal(to.x, to.y); return; }
+      var dx = to.x - from.x, dy = to.y - from.y;
+      var steps = Math.max(1, Math.ceil(Math.sqrt(dx * dx + dy * dy) / 0.35));
+      for (var i = 1; i <= steps; i++) {
+        var t = i / steps;
+        addReveal(from.x + dx * t, from.y + dy * t);
+      }
+    }
+    function revealSmooth(t) {
+      t = Math.max(0, Math.min(1, t));
+      return t * t * (3 - 2 * t);
+    }
+    function revealFactor(x, y) {
+      var best = 0;
+      for (var i = 0; i < revealed.length; i++) {
+        var r = revealed[i];
+        var dx = x - r.x, dy = y - r.y;
+        var f = revealSmooth((REVEAL_R - Math.sqrt(dx * dx + dy * dy)) / REVEAL_FEATHER);
+        if (f > best) best = f;
+      }
+      return best;
+    }
+    function seedReveal() {
+      var opts = choicesFor();
+      if (!opts.length) return;
+      var probs = softmax(opts.map(function (o) { return o.l; }), temp);
+      var top = 0;
+      probs.forEach(function (p, i) { if (p > probs[top]) top = i; });
+      revealToken(opts[top].t);
+    }
 
     function buildCatalog() {
       var seen = {}, list = [];
@@ -1534,6 +1589,9 @@
       }
       quads.sort(function (a, b) { return a.z - b.z; });
       quads.forEach(function (q) {
+        var qx = (q.p[0].x + q.p[1].x + q.p[2].x + q.p[3].x) / 4;
+        var qy = (q.p[0].y + q.p[1].y + q.p[2].y + q.p[3].y) / 4;
+        var rf = revealFactor(qx, qy);
         ctx.beginPath();
         ctx.moveTo(sx(q.p[0].rx), sy(q.p[0].ry));
         ctx.lineTo(sx(q.p[1].rx), sy(q.p[1].ry));
@@ -1541,9 +1599,9 @@
         ctx.lineTo(sx(q.p[3].rx), sy(q.p[3].ry));
         ctx.closePath();
         ctx.fillStyle = landColor(q.h, C);
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha = 0.14 + 0.86 * rf;
         ctx.fill();
-        ctx.globalAlpha = 0.22;
+        ctx.globalAlpha = 0.05 + 0.17 * rf;
         ctx.strokeStyle = C.line;
         ctx.lineWidth = 0.6;
         ctx.stroke();
@@ -2008,12 +2066,17 @@
       if (!token || generated.length >= MAX_STEPS) return;
       var opts = choicesFor();
       var alts = opts.map(function (o) { return { token: o.t, logit: o.l }; });
+      var prev = generated.length ? generated[generated.length - 1] : null;
       loopHistory.push({
         index: generated.length,
         chosen: token,
         alternatives: alts.filter(function (a) { return a.token !== token; })
       });
-      token.split(" ").forEach(function (piece) { generated.push(piece); });
+      token.split(" ").forEach(function (piece) {
+        revealSegment(prev, piece);
+        prev = piece;
+        generated.push(piece);
+      });
       if (generated.length > MAX_STEPS) generated = generated.slice(0, MAX_STEPS);
       renderSentence(); renderTree(); renderBars();
     }
@@ -2042,7 +2105,7 @@
       });
       renderBars();
     }
-    function reset() { generated = []; loopHistory = []; renderSentence(); renderTree(); renderBars(); }
+    function reset() { generated = []; loopHistory = []; revealed = []; seedReveal(); renderSentence(); renderTree(); renderBars(); }
     [
       { id: "sample", label: "Sample" }, { id: "greedy", label: "Greedy" }, { id: "topp", label: "Top-p 0.9" }
     ].forEach(function (m) {
@@ -2061,7 +2124,7 @@
       tempOut.textContent = temp.toFixed(2);
       renderBars();
     });
-    renderSentence(); renderTree(); renderBars();
+    reset();
     setLandscape(true);
     el.__lsLoopDebug = function () {
       return {
@@ -2072,6 +2135,7 @@
         top: lastTop ? lastTop.t : null,
         topP: lastTop ? lastTop.p : null,
         zTop: lastTop ? landZ(lastTop.p) : null,
+        revealed: revealed.length,
         landscape: landscape
       };
     };
@@ -2082,6 +2146,16 @@
         if (typeof s.temp === "number") { temp = s.temp; tempEl.value = String(temp); tempOut.textContent = temp.toFixed(2); renderBars(); }
         setLandscape(true);
         if (s.reset) reset();
+      },
+      onKey: function (e) {
+        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (e.key !== "ArrowRight" && e.key !== " " && e.key !== "PageDown") return false;
+        var opts = choicesFor();
+        if (!opts.length || generated.length >= MAX_STEPS) return false;
+        var top = opts[0];
+        opts.forEach(function (o) { if (o.l > top.l) top = o; });
+        choose(top.t);
+        return true;
       },
       resize: function () { landResize(); },
       destroy: function () { el.remove(); }
@@ -2965,6 +3039,28 @@
       { id: "money", sentence: DE ? "Ich brauche Geld. Ich gehe zur Bank." : "I need money. I walk to the bank.", token: DE ? "Geld" : "money", color: "gold" },
       { id: "both", sentence: DE ? "Der Fluss kostet Geld. Ich gehe zur Bank." : "The river costs money. I walk to the bank.", token: DE ? "Fluss+Geld" : "money+river", color: "lilac" }
     ];
+    var EMB = DE ? {
+      "∅": [-0.45, 0.22],
+      "Fluss": [1.8, 1.0],
+      "Geld": [1.8, -1.0],
+      "Fluss+Geld": [1.8, 0],
+      "Ich": [-1.05, 0.55],
+      "gehe": [-0.55, -0.2],
+      "zur": [-0.1, -0.7],
+      "Bank": [0.25, 0],
+      ".": [-1.05, -0.8]
+    } : {
+      "∅": [-0.45, 0.22],
+      "river": [1.8, 1.0],
+      "money": [1.8, -1.0],
+      "money+river": [1.8, 0],
+      "I": [-1.05, 0.55],
+      "walk": [-0.55, -0.2],
+      "to": [-0.1, -0.75],
+      "the": [-0.45, -0.9],
+      "bank": [0.25, 0],
+      ".": [-1.05, -0.8]
+    };
     var context = "none";
     var selected = baseTokens.length - 1;
     var causal = false;
@@ -3067,6 +3163,12 @@
       return String(value == null ? "" : value).replace(/[\\{}$&#^_%~]/g, function (c) {
         return c === "\\" ? "\\textbackslash{}" : "\\" + c;
       });
+    }
+    function formulaLabel(tok) {
+      if (DE && tok === "Fluss+Geld") return "Fluss + Geld";
+      if (!DE && tok === "money+river") return "money + river";
+      if (tok === ".") return DE ? "Satzzeichen" : "period";
+      return tok;
     }
     function escAttr(value) {
       return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -3173,30 +3275,29 @@
       if (!vectorSize) return;
       var ctx = vectorSize.ctx, w = vectorSize.w, h = vectorSize.h;
       ctx.clearRect(0, 0, w, h);
-      var ts = tokens(), row = displayRow(), n = ts.length;
+      var ts = tokens(), row = displayRow();
       var cx = w * 0.5, cy = h * 0.54;
-      var scale = Math.min(w, h) * 0.34;
+      var scale = Math.min((w - 90) / 3, (h - 70) / 2.2);
       ctx.strokeStyle = C.line;
+      ctx.globalAlpha = 0.55;
       ctx.lineWidth = 1;
-      for (var g = -1; g <= 1; g += 0.5) {
-        ctx.beginPath(); ctx.moveTo(cx + g * scale, cy - scale); ctx.lineTo(cx + g * scale, cy + scale); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(cx - scale, cy + g * scale); ctx.lineTo(cx + scale, cy + g * scale); ctx.stroke();
-      }
+      ctx.beginPath(); ctx.moveTo(cx - scale * 1.9, cy); ctx.lineTo(cx + scale * 1.9, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy - scale * 1.15); ctx.lineTo(cx, cy + scale * 1.15); ctx.stroke();
+      ctx.globalAlpha = 1;
       var sumX = 0, sumY = 0;
       var pts = [];
       ts.forEach(function (tok, j) {
-        var a = -Math.PI / 2 + (j / Math.max(1, n)) * Math.PI * 2;
-        var vx = Math.cos(a), vy = Math.sin(a);
+        var e = EMB[tok] || [0, 0];
         var wt = row[j] || 0;
-        sumX += vx * wt; sumY += vy * wt;
-        pts.push({ x: cx + vx * scale * 0.86, y: cy + vy * scale * 0.86, label: tok, wt: wt, j: j });
+        sumX += e[0] * wt; sumY += e[1] * wt;
+        pts.push({ x: cx + e[0] * scale, y: cy - e[1] * scale, label: tok, wt: wt, j: j });
       });
-      var ex = cx + sumX * scale, ey = cy + sumY * scale;
+      var ex = cx + sumX * scale, ey = cy - sumY * scale;
       pts.forEach(function (pt) {
         if (pt.wt > 0.005) {
-          ctx.strokeStyle = C.blue;
-          ctx.globalAlpha = 0.12 + Math.min(0.55, pt.wt);
-          ctx.lineWidth = 1 + pt.wt * 6;
+          ctx.strokeStyle = pt.j === selected ? C.green : C.blue;
+          ctx.globalAlpha = 0.10 + Math.min(0.55, pt.wt);
+          ctx.lineWidth = 1 + pt.wt * 5;
           ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(pt.x, pt.y); ctx.stroke();
           ctx.globalAlpha = 1;
         }
@@ -3206,8 +3307,10 @@
         ctx.strokeStyle = C.paper; ctx.lineWidth = 1.5; ctx.stroke();
         ctx.fillStyle = C.ink;
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-        ctx.textAlign = "center";
-        ctx.fillText(pt.label, pt.x, pt.y - 9);
+        var right = pt.x > cx + scale * 0.75;
+        var left = pt.x < cx - scale * 0.75;
+        ctx.textAlign = right ? "right" : (left ? "left" : "center");
+        ctx.fillText(pt.label, right ? pt.x - 6 : (left ? pt.x + 6 : pt.x), right || left ? pt.y + 4 : pt.y - 9);
       });
       ctx.strokeStyle = C.green;
       ctx.lineWidth = 3;
@@ -3220,15 +3323,19 @@
       ctx.closePath(); ctx.fillStyle = C.green; ctx.fill();
       ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI * 2); ctx.fillStyle = C.paper; ctx.fill();
       ctx.strokeStyle = C.green; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = C.green;
+      ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText("x′", ex + 7, ey - 6);
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText(DE ? "x′ = Σ w · v" : "x′ = Σ w · v", 10, 16);
+      ctx.fillText("x′ = Σ w · v", 10, 16);
       ctx.textAlign = "right";
       ctx.fillText(DE ? "Summe 100 %" : "sum 100%", w - 10, 16);
       vector.setAttribute("aria-label", DE
-        ? "Vektorraum. Gewichtete Summe der Value-Vektoren für " + ts[selected] + "."
-        : "Vector space. Weighted sum of the value vectors for " + ts[selected] + ".");
+        ? "2D-Embeddings. Gewichtete Summe der Value-Vektoren für " + ts[selected] + "; x′ = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ")."
+        : "2-D embeddings. Weighted sum of the value vectors for " + ts[selected] + "; x′ = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ").");
     }
     function renderTable() {
       var ts = tokens(), m = matrix();
@@ -3253,10 +3360,10 @@
       var ts = tokens(), row = matrix()[selected], terms = [];
       row.forEach(function (wt, j) {
         if (wt < 0.005 && j !== selected) return;
-        var label = texText(ts[j]);
+        var label = texText(formulaLabel(ts[j]));
         terms.push('\\underbrace{' + Math.round(wt * 100) + '\\%}_{\\text{' + label + '}}\\cdot v_{\\text{' + label + '}}');
       });
-      var t = '\\underbrace{x\'}_{\\substack{\\text{' + (DE ? 'neuer Vektor' : 'new vector') + '}\\\\ \\text{' + (DE ? 'für' : 'for') + ' } \\text{' + texText(ts[selected]) + '}}} = ' +
+      var t = '\\underbrace{x\'}_{\\substack{\\text{' + (DE ? 'neuer Vektor' : 'new vector') + '}\\\\ \\text{' + (DE ? 'für' : 'for') + ' } \\text{' + texText(formulaLabel(ts[selected])) + '}}} = ' +
         '\\underbrace{' + terms.join(' + ') + '}_{\\substack{\\text{' + (DE ? 'gewichtete Summe' : 'weighted sum') + '}\\\\ \\text{' + (DE ? 'Summe der Gewichte' : 'sum of weights') + ' } = 100\\%}}';
       formulaEl.innerHTML = '<div class="ls-math" data-tex="' + escAttr(t) + '" data-tex-display="true"><code class="ls-tex-source">' + api.esc(t) + '</code></div>';
       if (api.typeset) { try { api.typeset(formulaEl); } catch (e) {} }

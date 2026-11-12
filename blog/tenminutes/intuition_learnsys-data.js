@@ -62,20 +62,6 @@
         box("in-7", "Anwendung", "Welche Einstellung wofür?", "Code und Fakten: niedrige Temperatur, enger Filter. Brainstorming: höhere Temperatur, weiterer Filter. Es gibt keine universelle Regel."),
         box("in-8", "Geschichte", "Warum wurde Sampling wichtig?", "Weil ein Modell ohne Sampling immer denselben Text liefert. Die Vielfalt kommt aus der Verteilung, nicht aus dem Modell allein.")
       ]
-    },
-    {
-      kicker: "03 / Der Tunnel",
-      title: "Der Wahrscheinlichkeitstunnel",
-      body: "Eine einzelne Vorhersage ist ein Schnitt durch eine Landschaft möglicher Fortsetzungen. Das blaue Tal ist der wahrscheinlichste Weg, die goldenen Nebenbecken sind die Alternativen. Gehe den Satz Schritt für Schritt und beobachte, wie der Kontext die Landschaft verengt; erhöhe die Temperatur und sie wird wieder breiter.",
-      watch: "Klicke einen Token auf dem Pfad oder nutze Weiter. Was passiert mit den Nebenbecken, wenn du T erhöhst?",
-      demoState: { scene: "tunnel", step: 0 },
-      context: "Das Modell entscheidet nie, dass etwas richtig ist. Es baut aus seinen Trainingsdaten eine Verteilung und zieht daraus. Die Landschaft zeigt, wie der Kontext diese Verteilung verengt.",
-      deep: "Die Energie-Landschaft folgt dem Energy-Based-Learning-Rahmen von LeCun et al. (2006). Tiefe bedeutet hohe Wahrscheinlichkeit; der Ball rollt in das tiefste Tal, das der Kontext gerade offen lässt. Ein echtes Modell arbeitet in Tausenden Dimensionen mit weit mehr Pfaden, als hier gezeichnet werden können.",
-      boxes: [
-        box("in-9", "Mathematik", "Warum ist das ein Tal?", "Die Höhe ist eine Energie, die Tiefe eine Wahrscheinlichkeit. Der Kontext verschiebt die Täler. Temperatur flacht die Ränder ab, sodass mehr Nebenwege erreichbar werden."),
-        box("in-10", "Grenze", "Was zeigt der Tunnel nicht?", "Er zeigt keine Wahrheit und keine vollständige Rechnung. Er ist eine Projektion der Verteilung auf zwei Achsen. Ein Kreuzungspunkt auf dem Bildschirm bedeutet nicht, dass zwei Pfade im vollen Raum zusammenfallen.")
-      ],
-      sources: [{ label: "LeCun et al. (2006), A Tutorial on Energy-Based Learning", url: "http://yann.lecun.com/exdb/publis/pdf/lecun-06.pdf" }]
     }
   ] : [
     {
@@ -129,20 +115,6 @@
         box("in-7", "Application", "Which setting for what?", "Code and facts: low temperature, narrow filter. Brainstorming: higher temperature, wider filter. There is no universal rule."),
         box("in-8", "History", "Why did sampling become important?", "Because a model without sampling always produces the same text. Variety comes from the distribution, not from the model alone.")
       ]
-    },
-    {
-      kicker: "03 / The tunnel",
-      title: "The probability tunnel",
-      body: "A single prediction is one slice through a landscape of plausible continuations. The blue valley is the likely path, the gold side basins are the alternatives. Step through the sentence and watch the context narrow the landscape; raise the temperature and it widens again.",
-      watch: "Click a token on the path or use Next. What happens to the side basins when you raise T?",
-      demoState: { scene: "tunnel", step: 0 },
-      context: "The model never decides that something is right. It builds a distribution from its training data and draws from it. The landscape shows how context narrows that distribution.",
-      deep: "The energy-landscape view follows the energy-based learning framework of LeCun et al. (2006). Deep means likely; the ball rolls into the deepest valley the context currently leaves open. A real model works in thousands of dimensions with far more paths than can be drawn here.",
-      boxes: [
-        box("in-9", "Mathematics", "Why is it a valley?", "Height is an energy, depth is a probability. Context shifts the valleys. Temperature flattens the rims, so more side paths become reachable."),
-        box("in-10", "Limit", "What does the tunnel not show?", "It shows neither truth nor the full computation. It is a projection of the distribution onto two axes. A crossing on screen does not mean two paths coincide in the full space.")
-      ],
-      sources: [{ label: "LeCun et al. (2006), A Tutorial on Energy-Based Learning", url: "http://yann.lecun.com/exdb/publis/pdf/lecun-06.pdf" }]
     }
   ];
 

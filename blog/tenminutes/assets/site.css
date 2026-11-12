@@ -1752,9 +1752,15 @@ input[type="range"]::-moz-range-thumb {
 	transform: translateY(10px);
 	transition: opacity 0.5s ease, transform 0.6s ease;
 	filter: blur(0.3px);
+	padding: 0 6px;
+	margin: 0 -6px;
 }
 .ia-result.r2 { filter: blur(1px); }
 .ia-result.r3 { filter: blur(1.8px); }
+.ia-result.r2, .ia-result.r3 {
+	-webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6px, #000 calc(100% - 6px), transparent 100%);
+	mask-image: linear-gradient(90deg, transparent 0, #000 6px, #000 calc(100% - 6px), transparent 100%);
+}
 .ia-serp.on .ia-result.r1 { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
 .ia-serp.on .ia-result.r2 { opacity: 0.82; transform: translateY(0); transition-delay: 0.5s; }
 .ia-serp.on .ia-result.r3 { opacity: 0.6; transform: translateY(0); transition-delay: 0.7s; }
