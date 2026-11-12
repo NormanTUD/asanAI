@@ -582,6 +582,8 @@ h1,h2,h3,h4{
 .ls-loop-sentence{font-size:clamp(14px,1.4vw,18px);line-height:1.5;color:var(--ls-soft);min-height:2.8em}
 .ls-loop-sentence .given{color:var(--ls-muted)}
 .ls-loop-sentence .pred{color:var(--ls-petrol);font-weight:600}
+.ls-loop-sentence .eos{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;color:var(--ls-muted);background:rgba(0,75,111,.06);border:1px solid rgba(0,75,111,.14);padding:1px 4px;white-space:nowrap}
+.ls-loop-done{margin:0;font:var(--ls-fs-ui-sm)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-loop-tree{font-size:var(--ls-fs-ui-sm);line-height:1.6;color:var(--ls-soft);min-height:3.2em}
 .ls-loop-line+.ls-loop-line{margin-top:4px}
 .ls-loop-base{color:var(--ls-muted)}

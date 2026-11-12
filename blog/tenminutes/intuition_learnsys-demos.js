@@ -1327,7 +1327,9 @@
 
   function loopScene(root, api) {
     var DE = api.lang === "de";
-    var MAX_STEPS = 6;
+    var SEQ_LEN = 6;
+    var MAX_STEPS = 7;
+    var EOS = "<|endoftext|>";
     var NOUNS = DE ? [
       { t: "Drache", l: 3.4 }, { t: "Ritter", l: 1.1 }, { t: "Roboter", l: 0.7 }, { t: "Schloss", l: 0.4 }, { t: "Fluss", l: 0.2 }
     ] : [
@@ -1400,6 +1402,7 @@
       }
       if (n === 4) return ACTIONS[gen[0]] || (DE ? ACTIONS.Drache : ACTIONS.dragon);
       if (n === 5) return [{ t: ".", l: 3.2 }, { t: "!", l: 1.1 }, { t: "…", l: 0.7 }];
+      if (n === 6) return [{ t: EOS, l: 4.0 }];
       return [];
     }
     var base = DE ? ["Es", "war", "einmal", "ein"] : ["Once", "upon", "a", "time", "there", "was", "a"];
@@ -1445,8 +1448,7 @@
     // At the end of the sentence the demo offers plausible next-sentence
     // starts. Use the same list for the bars and the landscape.
     function currentOptions() {
-      var opts = choicesFor();
-      return opts.length ? opts : CONTINUE.slice();
+      return choicesFor();
     }
 
     // One stable token plane for the whole scene: every possible token gets
@@ -1517,7 +1519,7 @@
         if (seen[key]) return;
         seen[key] = true;
         var p = gen.length;
-        var opts = p < MAX_STEPS ? choicesFor(gen) : CONTINUE;
+        var opts = p < MAX_STEPS ? choicesFor(gen) : [];
         if (!opts || !opts.length) return;
         var prev = p ? gen[p - 1] : null;
         opts.forEach(function (o) {
@@ -1674,7 +1676,8 @@
       });
       liveReveal = items.filter(function (it) { return it.current; }).map(function (it) { return { x: it.x, y: it.y }; });
       var wells = landWells(items.filter(function (it) { return it.known; }));
-      var top = items.filter(function (it) { return it.current; }).sort(function (a, b) { return b.p - a.p; })[0] || items[0];
+      var currentItems = items.filter(function (it) { return it.current; }).sort(function (a, b) { return b.p - a.p; });
+      var top = currentItems[0] || null;
       lastProbs = probByToken;
       lastTop = top;
 
@@ -1816,7 +1819,7 @@
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       ctx.fillText(DE ? "z = 1 − p · Fläche = Verlust" : "z = 1 − p · surface = loss", 10, 16);
-      if (atEnd) ctx.fillText(DE ? "Satzende · nächste Sätze" : "end of sentence · next sentences", 10, 29);
+      if (atEnd) ctx.fillText(DE ? "Satzende · <|endoftext|>" : "end of sentence · <|endoftext|>", 10, 29);
 
       var boxes = [];
       function freeBox(box) {
@@ -1877,7 +1880,6 @@
         ctx.textBaseline = "middle";
       }
 
-      var currentItems = items.filter(function (it) { return it.current; });
       currentItems.forEach(function (it) {
         var planePt = landRaw(it.x, it.y, PLANE_Z);
         var surfPt = landRaw(it.x, it.y, landZ(it.p));
@@ -2028,6 +2030,10 @@
         landCanvas.setAttribute("aria-label", DE
           ? "Verlustlandschaft. Token-Ebene oben, z = 1 − p. Tiefster Punkt, also höchste Wahrscheinlichkeit: " + top.t + ", " + (top.p * 100).toFixed(0) + " Prozent."
           : "Loss landscape. Token plane above, z = 1 − p. Deepest point, meaning highest probability: " + top.t + ", " + (top.p * 100).toFixed(0) + " percent.");
+      } else {
+        landCanvas.setAttribute("aria-label", DE
+          ? "Verlustlandschaft. Der Satz ist beendet, das Modell hat <|endoftext|> ausgegeben."
+          : "Loss landscape. The sentence is finished; the model emitted <|endoftext|>.");
       }
     }
 
@@ -2103,7 +2109,7 @@
       var all = base.map(function (tok, i) {
         if (DE && i === base.length - 1 && generated.length) tok = "ein";
         return { tok: tok, cls: "given" };
-      }).concat(generated.map(function (tok) { return { tok: tok, cls: "pred" }; }));
+      }).concat(generated.map(function (tok) { return { tok: tok, cls: tok === EOS ? "eos" : "pred" }; }));
       all.forEach(function (item, i) {
         var noSpace = /^[.,!?;:)\]]|^…/.test(item.tok);
         if (DE && i === base.length + 1) html += ",";
@@ -2134,6 +2140,14 @@
     function renderBars() {
       var opts = currentOptions();
       var atEnd = generated.length >= MAX_STEPS;
+      if (!opts.length) {
+        barsEl.innerHTML = '<p class="ls-loop-done">' + (DE ? "Satz beendet: <|endoftext|> ausgegeben. Die Schleife stoppt." : "Sentence finished: <|endoftext|> emitted. The loop stops.") + '</p>';
+        if (nextBtn) { nextBtn.disabled = true; nextBtn.textContent = DE ? "Fertig" : "Done"; }
+        readout.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + SEQ_LEN + ' / ' + SEQ_LEN + '</b></span><span>' + (DE ? "Ende" : "End") + ' <b>' + api.esc(EOS) + '</b></span><span>' + (DE ? "Modus" : "Mode") + ' <b>' + decodeMode + '</b></span>';
+        publish();
+        if (landscape) drawLandscape();
+        return;
+      }
       var probs = softmax(opts.map(function (o) { return o.l; }), tempShown);
       var top = 0;
       probs.forEach(function (p, i) { if (p > probs[top]) top = i; });
@@ -2160,7 +2174,7 @@
         nextBtn.textContent = (atEnd || !choicesFor().length) ? (DE ? "Fertig" : "Done") : (DE ? "Weiter →" : "Next →");
       }
       readout.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + generated.length + ' / ' + MAX_STEPS + '</b></span><span>' + (DE ? "Kontext" : "Context") + ' <b>' + (base.length + generated.length) + '</b></span><span>' + (DE ? "Top" : "Top") + ' <b>' + api.esc(opts[top] ? opts[top].t : "—") + '</b></span><span>' + (DE ? "Modus" : "Mode") + ' <b>' + decodeMode + '</b></span>' +
-        (atEnd ? '<span>' + (DE ? "Satzende · nächste Sätze" : "end of sentence · next sentences") + '</span>' : '');
+        (atEnd ? '<span>' + (DE ? "Satzende · <|endoftext|>" : "end of sentence · <|endoftext|>") + '</span>' : '');
       publish();
       if (landscape) drawLandscape();
     }
