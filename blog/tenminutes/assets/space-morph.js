@@ -1158,6 +1158,11 @@
 		init: init,
 		next: next,
 		prev: prev,
+		resize: function () {
+			if (!inited) return;
+			fitCopyHeight();
+			requestDraw();
+		},
 		reset: () => setStep(0),
 		state: () => ({ cur: cur, count: SCENES.length })
 	};

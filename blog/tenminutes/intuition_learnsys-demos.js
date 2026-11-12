@@ -4093,7 +4093,7 @@
     setTimeout(init, 30);
     return {
       update: function () {},
-      resize: function () { window.dispatchEvent(new Event("resize")); },
+      resize: function () { if (window.IntuitionSpaceMorph && window.IntuitionSpaceMorph.resize) window.IntuitionSpaceMorph.resize(); },
       onKey: function (e) {
         var st = window.IntuitionSpaceMorph && window.IntuitionSpaceMorph.state ? window.IntuitionSpaceMorph.state() : null;
         if (!st) return false;

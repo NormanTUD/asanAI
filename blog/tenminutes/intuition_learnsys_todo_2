@@ -1,3 +1,22 @@
+AKTUELLER STAND (2026-11-12, Übergabe an den nächsten Agenten)
+Fertig:
+- Alle acht Punkte der ursprünglichen Liste sind umgesetzt und unten mit DONE markiert.
+- Scroll-Navigation am Textrand: Mausrad und Touch gehen zum vorigen/naechsten Schritt, mit 700-ms-Sperre und Hilfe-Eintrag.
+- MLP-Demo "Sieh zu, wie das MLP den Raum biegt": Canvas-Box entfernt, Resize-Rekursion behoben und durch IntuitionSpaceMorph.resize() ersetzt.
+- Attention-Default passt zum User-Beispiel: Causal Mask standardmaessig aus, Tabelle 29 2 2 3 59 5 / 19 50 14 3 12 3 / ... / 19 2 1 4 70 4.
+- Formeln in Attention und Position rendern mit Temml und zwei Underbrace-Ebenen.
+
+Offen (nur Validierung, keine bekannte offene Implementierung):
+- Echter Browser-/PHP-Lauf: tenminutes_pages_test.py und tenminutes_height_test.py fuer intuition.php in EN/DE, Desktop und Mobile.
+- Fensterbreite im echten Browser ziehen, besonders Folie 8/9 des MLP; Mobile und Kontrast in light/dark pruefen.
+- Demo-Audit: alle Saetze, Tabellenzeilen, Mask an/aus, Noise-Slider, Fragenindex und Scroll-Raender einmal bedienen.
+
+Wichtig:
+- PHP, Selenium und Node fehlen in dieser Umgebung. Die Harnesse unten sind Headless-Chromium-Ersatz, kein vollstaendiger Seitentest.
+- intuition_learnsys-data.js enthaelt TeX mit geschweiften Klammern in Strings; keine zeilenbasierten Brace-Swaps verwenden.
+
+Details, Dateien, Harness-Ergebnisse und Prüfschritte stehen unten.
+
 DONE die folie "Eine Beziehung lässt sich übertragen" sollte vor der mit den 16 von 4096 dimensionen kommen. die sollte da anzeigen unter der tabelle dass da die gleichen regeln gelten, auch wenn wir uns das nicht mehr vorstellen können. hier kann man jetzt sehr viel mehr beziehungen drin speichern als noch in 2 oder 3 dimensionen.
 
 DONE die "Von Beziehungen zur Übersetzung" hat noch weißen background, fixe das. die soll auch mehr eingeblendet werden smooth statt einfach zu erscheinen.
@@ -40,28 +59,31 @@ GEAENDERTE DATEIEN
 - tenminutes/intuition_learnsys-demos.js
 - tenminutes/learnsys.js
 - tenminutes/learnsys.css
+- tenminutes/assets/space-morph.js
 - manifold_scenes.js
 - tenminutes/intuition_learnsys_todo_2 (diese Datei)
 
 BEREITS VERIFIZIERT (headless Chromium, synthetische Harnesse)
-- Syntax: new Function fuer data, demos, learnsys und manifold_scenes: OK.
+- Syntax: new Function fuer data, demos, learnsys, manifold_scenes und assets/space-morph.js: OK.
 - Attention-Tabelle mit Kontext both entspricht dem User-Beispiel exakt: 29 2 2 3 59 5 / 19 50 14 3 12 3 / 3 19 50 14 12 3 / 3 3 19 50 23 3 / 19 2 1 4 70 4 / 3 3 3 3 32 56. Formel beginnt mit 19 Prozent Fluss+Geld. Maske default aus; Row 0 wird mit Maske 100 0 0 0 0 0 und schaltet danach korrekt zurueck. Keine JS-Fehler.
 - Noise: 2 + 42 + 30 + 18 + 8 = 100 Prozent bei Layer 0; 2 + 0 + 0 + 18 + 80 = 100 Prozent bei Layer 5.
 - Position: Metrik Winkel/Grosskreis; Readout Grosskreis 0.591, Winkel 33.9 Grad; bei Position 60 Grosskreis 1.042, Winkel 59.7 Grad. Keine Fehler.
 - Manifold: is-ready gesetzt, Plot-Opacity 1, scene.bgcolor rgba(0,0,0,0), kein Loader, keine Fehler.
 - Fragenindex: Box und Ziel öffnen sich, keine Fehler.
 - Scroll: Wheel am unteren Rand wechselt zum naechsten Schritt, am oberen Rand zurueck; keine Fehler.
+- MLP: acht aufeinanderfolgende Groessenwechsel, completed=true, keine JS-Fehler, computed border 0px none, radius 0px, background transparent, shadow none, Canvas 686x414 exakt gleich Wrap 686x414.
 - Temml rendert die Attention- und die Positionsformel ohne Parse-Fehler.
 
 NOCH ZU PRUEFEN (naechster Worker)
 1. In einer Umgebung mit PHP: php -l fuer geaenderte PHP-Dateien, danach python3 blog/tools/check_all.py --fast.
 2. Browser- und Height-Tests: uv run blog/tests/tenminutes_pages_test.py --pages intuition.php und uv run blog/tests/tenminutes_height_test.py --pages intuition.php --langs en,de --viewports desktop,mobile --monkey 4. Beide Sprachen, Desktop und ca. 390 px Breite.
-3. Demo-Audit: jeden Satz, jede Tabellenzeile, Causal-Mask an/aus, Noise-Slider, Scroll-Rand und Fragenindex einmal bedienen. Konsole, Math-Rendering, horizontales Overflow und Height-Spruenge pruefen.
-4. Kontrast in light und dark pruefen: Attention-Saetze, Budget-Prozente, Formelbox, Noise-Readout, Mask-Label, Scroll-Hinweis. Keine hellen Texte auf weissen Karten.
-5. Trackpad-Gefuehl der Scroll-Navigation testen. Die 700-ms-Sperre und die 36-px-Schwelle sind bewusst konservativ; bei Bedarf nur diese beiden Werte anpassen, nicht das Randverhalten.
-6. Pruefen, ob die Formelbox und die Attention-Matrix auf Mobile die Demo-Hoehe verschieben. Falls ja, min-height reservieren statt die Demo springen zu lassen.
-7. Wenn moeglich Regressionstests ergaenzen: Attention-Matrix und Default-Maske, Noise-Summe 100, Scroll-Rand-Navigation. Sonst die manuellen Schritte oben dokumentieren.
-8. Index/RAG: tenminutes ist nicht Teil des Haupt-Ledgers; nur neu bauen, wenn eine Top-Level-Lektion, literature.js oder der Chunker geaendert wurde. Nicht wegen dieser Aenderung blind neu bauen.
+3. Demo-Audit: jeden Satz, jede Tabellenzeile, Causal-Mask an/aus, Noise-Slider, MLP-Folien 1 bis 9, Scroll-Rand und Fragenindex einmal bedienen. Konsole, Math-Rendering, horizontales Overflow und Height-Spruenge pruefen.
+4. MLP im echten Browser: Fensterbreite langsam ziehen, Mobile und Folie 8/9 mit Separation-Overlay. Canvas darf nicht springen und die Demo darf nicht haengen; die entfernte Box muss auch in light/dark weg bleiben.
+5. Kontrast in light und dark pruefen: Attention-Saetze, Budget-Prozente, Formelbox, Noise-Readout, Mask-Label, Scroll-Hinweis. Keine hellen Texte auf weissen Karten.
+6. Trackpad-Gefuehl der Scroll-Navigation testen. Die 700-ms-Sperre und die 36-px-Schwelle sind bewusst konservativ; bei Bedarf nur diese beiden Werte anpassen, nicht das Randverhalten.
+7. Pruefen, ob die Formelbox und die Attention-Matrix auf Mobile die Demo-Hoehe verschieben. Falls ja, min-height reservieren statt die Demo springen zu lassen.
+8. Wenn moeglich Regressionstests ergaenzen: Attention-Matrix und Default-Maske, Noise-Summe 100, Scroll-Rand-Navigation. Sonst die manuellen Schritte oben dokumentieren.
+9. Index/RAG: tenminutes ist nicht Teil des Haupt-Ledgers; nur neu bauen, wenn eine Top-Level-Lektion, literature.js oder der Chunker geaendert wurde. Nicht wegen dieser Aenderung blind neu bauen.
 
 STOLPERSTEINE
 - intuition_learnsys-data.js enthaelt TeX mit geschweiften Klammern in Strings. Keine zeilenbasierten Brace-Swaps verwenden. Die Datei wurde einmal aus der Live-Version wiederhergestellt; Loop-Prosa danach erneut eingespielt.
@@ -70,4 +92,11 @@ STOLPERSTEINE
 - PHP, Selenium und Node fehlen hier. Die obigen Harnesse ersetzen keinen echten Seiten-Test.
 
 NAECHSTER KONKRETER SCHRITT
-Zuerst tenminutes_pages_test.py und tenminutes_height_test.py fuer intuition.php in EN/DE starten, dann den Demo-Audit und die Kontrastpruefung durchfuehren. Wenn beides gruen ist, ist dieser Todo abgeschlossen.
+Zuerst tenminutes_pages_test.py und tenminutes_height_test.py fuer intuition.php in EN/DE starten, dann den Demo-Audit, den echten MLP-Resize-Test und die Kontrastpruefung durchfuehren. Wenn alles gruen ist, ist dieser Todo abgeschlossen.
+
+
+NACHTRAG: MLP-DEMO "Sieh zu, wie das MLP den Raum biegt"
+- Die Box um den Canvas ist entfernt: .ls-mlp-scene .ism-wrap hat jetzt border:0, box-shadow:none, transparenten Hintergrund und keinen Radius.
+- Der Resize-Haenger ist behoben: mlpScene.resize dispatcht kein window-resize-Event mehr. Stattdessen ruft es die neue IntuitionSpaceMorph.resize()-API auf, die fitCopyHeight und requestDraw ausfuehrt. Die alte Version loeste eine Resize-Rekursion aus, wenn LearnSys auf window resize demo.resize() rief.
+- Harness mit acht aufeinanderfolgenden Groessenwechseln: completed=true, keine JS-Fehler, computed border 0px none, radius 0px, background transparent, shadow none, Canvas 686x414 exakt gleich Wrap 686x414.
+- Noch im echten Browser testen: Fensterbreite langsam ziehen, Mobile, Folie 8/9 mit Separation-Overlay. Pruefen, dass der Canvas beim Resize nicht springt und die Demo nicht haengt.

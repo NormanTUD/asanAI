@@ -789,7 +789,7 @@ h1,h2,h3,h4{
 .ls-mlp-scene .ism-title{font-size:var(--ls-fs-readout);line-height:1.15;text-align:left}
 .ls-mlp-scene .ism-body{font-size:var(--ls-fs-ui);line-height:1.5;text-align:left}
 .ls-mlp-scene .ism-stage{flex:1;min-height:0;gap:10px}
-.ls-mlp-scene .ism-wrap{height:100%;min-height:220px;border-radius:0;background:transparent;border-color:rgba(0,75,111,.08)}
+.ls-mlp-scene .ism-wrap{height:100%;min-height:220px;border:0;border-radius:0;background:transparent;box-shadow:none}
 .ls-mlp-scene .ism-side{max-height:100%}
 .ls-mlp-scene .ism-controls{margin-top:6px;flex-wrap:wrap;gap:8px}
 .ls-mlp-scene .ism-btn{width:auto;height:auto;min-height:34px;padding:7px 11px;border-radius:0;background:#fff;color:var(--ls-ink);font-size:var(--ls-fs-ui);font-family:"Open Sans",sans-serif}
