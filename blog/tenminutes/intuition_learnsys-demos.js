@@ -5404,6 +5404,7 @@
     var layerOut = el.querySelector("output");
     var readout = el.querySelector(".ls-traj-readout");
     var layer = 0, layerTarget = 0, displayLayer = 0, layerTween = 0, metric = "angular", yaw = -0.62, pitch = 0.36, zoom = 1, drag = null;
+    var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var size = null, ctx = null;
     var C = api.colors();
     var colors = ["green", "sky", "gold", "lilac", "lime"];
