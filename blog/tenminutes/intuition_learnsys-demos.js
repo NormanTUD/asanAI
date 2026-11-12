@@ -1434,7 +1434,7 @@
     var revealed = [];
     var liveReveal = [];
     var knownProbs = {};
-    var tempShown = 0.8, tempRaf = 0;
+    var tempShown = 0.8;
     var REVEAL_R = 0.95, REVEAL_FEATHER = 0.35;
     var lastPath = [], lastProbs = null, lastTop = null;
     var LAND_X = 2.65, LAND_Y = 1.9;
@@ -2236,7 +2236,6 @@
     }
     function reset() {
       generated = []; loopHistory = []; revealed = []; knownProbs = {};
-      if (tempRaf) { cancelAnimationFrame(tempRaf); tempRaf = 0; }
       tempShown = temp;
       seedReveal(); renderSentence(); renderTree(); renderBars();
     }
@@ -2284,7 +2283,6 @@
         if (typeof s.temp === "number") {
           temp = s.temp;
           tempShown = s.temp;
-          if (tempRaf) { cancelAnimationFrame(tempRaf); tempRaf = 0; }
           tempEl.value = String(temp);
           tempOut.textContent = temp.toFixed(2);
           renderBars();
@@ -2303,7 +2301,7 @@
         return true;
       },
       resize: function () { landResize(); },
-      destroy: function () { if (tempRaf) cancelAnimationFrame(tempRaf); el.remove(); }
+      destroy: function () { el.remove(); }
     };
   }
 
