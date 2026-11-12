@@ -5034,8 +5034,8 @@
         '<div class="ls-cr-room">' +
           '<div class="ls-cr-top"><span class="ls-cr-progress"></span><span class="ls-cr-score"></span></div>' +
           '<div class="ls-cr-incoming"><span class="ls-cr-label">' + (DE ? "Eingabe" : "Input") + '</span><p class="ls-cr-input" lang="zh"></p><p class="ls-cr-sub">' + (DE ? "Du liest die Zeichen nicht." : "You cannot read the characters.") + '</p></div>' +
-          '<div class="ls-cr-book"><div class="ls-cr-book-head">' + (DE ? "Regelbuch" : "Rulebook") + '</div><table class="ls-cr-rules"><tbody></tbody></table></div>' +
-          '<div class="ls-cr-options" role="group" aria-label="' + (DE ? "Antwort wählen" : "Choose an answer") + '"></div>' +
+          '<div class="ls-cr-book"><div class="ls-cr-book-head">' + (DE ? "Regelbuch" : "Rulebook") + '</div><table class="ls-cr-rules" lang="zh"><tbody></tbody></table></div>' +
+          '<div class="ls-cr-options" role="group" lang="zh" aria-label="' + (DE ? "Antwort wählen" : "Choose an answer") + '"></div>' +
           '<p class="ls-cr-feedback" aria-live="polite"></p>' +
         '</div>' +
         '<div class="ls-cr-reveal" aria-hidden="true">' +
@@ -5109,6 +5109,7 @@
         [r.input, r.answer, DE ? r.de : r.en].forEach(function (val, i) {
           var td = document.createElement("td");
           td.textContent = val;
+          if (i < 2) td.setAttribute("lang", "zh");
           if (i === 2) td.className = "ls-cr-trans-gloss";
           tr.appendChild(td);
         });
