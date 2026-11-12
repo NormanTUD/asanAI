@@ -1370,7 +1370,8 @@
         lang: api.lang,
         base: base.slice(),
         tokens: generated.length ? generated.slice() : sample.tokens,
-        history: generated.length ? loopHistory.slice() : sample.history
+        history: generated.length ? loopHistory.slice() : sample.history,
+        temp: temp
       };
     }
     function choose(token) {
@@ -1495,7 +1496,9 @@
     var tempEl = el.querySelector(".ls-tunnel-temp");
     var tempOut = el.querySelector("output");
     var advBtn = el.querySelector(".ls-tunnel-advance");
-    var ctx = null, size = null, step = 0, temp = 0.8;
+    tempEl.value = String(temp);
+    tempOut.textContent = temp.toFixed(2);
+    var ctx = null, size = null, step = 0, temp = (data.temp != null ? data.temp : 0.8);
     var yaw = -0.62, pitch = 0.82, zoom = 1;
     var hits = [], drag = null, suppress = false, highlightAlt = null;
     var camera = { scale: 1, ox: 0, oy: 0 };
@@ -1792,6 +1795,7 @@
       history = next.history.slice();
       base = baseTokens;
       baseLen = baseTokens.length;
+      if (next.temp != null) { temp = next.temp; tempEl.value = String(temp); tempOut.textContent = temp.toFixed(2); }
       step = 0;
       draw();
     }
