@@ -1173,7 +1173,7 @@
     var serp = el.querySelector("#ia-serp");
     var SATZ = DE ? "warum ist der himmel blau?" : "why is the sky blue?";
     var CHAT_Q = DE ? "Gibt es Neuigkeiten bei der Frage, warum es überhaupt irgendwas gibt?" : "Any news on the question of why there is anything at all?";
-    var CHAT_A = DE ? "Die Frage ist offen. Leibniz hat sie zuerst so zugespitzt: Warum ist etwas und nicht vielmehr nichts? Der kosmologische Gottesbeweis sagt, das Universum braucht eine erste, notwendige Ursache. Der Naturalismus hält die Existenz für ein faktisches Grunddatum; „Gott“ verschiebe die Frage nur. Kant und Hume sehen hier die Grenze der Vernunft und empfehlen ehrliche Agnosis. Existenzialisten wie Sartre und Camus antworten praktisch: Bedeutung wird gewählt, nicht im Weltgrund gefunden. Ein neuerer Gedanke von Jocax dreht die Frage um: Ein „Nichts“ ohne Regeln könnte sich selbst auflösen, sodass Existenz der Normalzustand ist; ob das stimmt, ist offen." : "The question is open. Leibniz first sharpened it: why is there something rather than nothing? The cosmological argument says the universe needs a first, necessary cause. Naturalism treats existence as a brute fact; “God” only pushes the question back. Kant and Hume see the limit of reason here and recommend honest agnosticism. Existentialists such as Sartre and Camus answer practically: meaning is chosen, not found in the ground of the world. A more recent idea from Jocax turns the question around: a “nothing” without rules could dissolve itself, so existence would be the normal state; whether that is true is open.";
+    var CHAT_A = DE ? "Die Frage ist offen. Leibniz hat sie 1714 klassisch zugespitzt: Warum ist etwas und nicht vielmehr nichts? Der kosmologische Gottesbeweis sagt, das Universum braucht eine erste, notwendige Ursache. Der Naturalismus hält die Existenz für ein faktisches Grunddatum; „Gott“ verschiebe die Frage nur. Kant und Hume sehen hier die Grenze der Vernunft und empfehlen ehrliche Agnosis. Existenzialisten wie Sartre und Camus antworten praktisch: Bedeutung wird gewählt, nicht im Weltgrund gefunden. Ein neuerer Gedanke von Jocax dreht die Frage um: Ein „Nichts“ ohne Regeln könnte sich selbst auflösen, sodass Existenz der Normalzustand ist; ob das stimmt, ist offen." : "The question is open. Leibniz gave the classic formulation in 1714: why is there something rather than nothing? The cosmological argument says the universe needs a first, necessary cause. Naturalism treats existence as a brute fact; “God” only pushes the question back. Kant and Hume see the limit of reason here and recommend honest agnosticism. Existentialists such as Sartre and Camus answer practically: meaning is chosen, not found in the ground of the world. A more recent idea from Jocax turns the question around: a “nothing” without rules could dissolve itself, so existence would be the normal state; whether that is true is open.";
     var AI = DE ? [
       { t: "Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm): " },
       { t: "Rayleigh-Streuung", c: "b" },
@@ -3580,15 +3580,21 @@
       stepIndex = Math.max(0, Math.min(sampleKeys.length + bpeKeys.length - 1, i));
       applyStep();
     }
-    function nextStep() {
+    function nextInternal() {
       if (stepIndex < sampleKeys.length + bpeKeys.length - 1) { goStep(stepIndex + 1); return true; }
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
       return false;
     }
-    function prevStep() {
+    function prevInternal() {
       if (stepIndex > 0) { goStep(stepIndex - 1); return true; }
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
       return false;
+    }
+    function nextStep() {
+      if (nextInternal()) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+    }
+    function prevStep() {
+      if (prevInternal()) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
     }
     el.querySelectorAll("[data-bpe]").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -3644,8 +3650,8 @@
       update: function () {},
       onKey: function (e) {
         if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
-        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextStep();
-        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevStep();
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
+        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
         return false;
       },
       resize: function () {},
@@ -5857,21 +5863,21 @@
       index = Math.max(0, Math.min(blocks.length - 1, i));
       renderDetail();
     }
-    function nextStep() {
+    function nextInternal() {
       if (index < blocks.length - 1) { setIndex(index + 1); return true; }
-      if (window.LearnSys) {
-        var st = LearnSys.state();
-        LearnSys.go(st.day, st.step + 1);
-      }
       return false;
     }
-    function prevStep() {
+    function prevInternal() {
       if (index > 0) { setIndex(index - 1); return true; }
-      if (window.LearnSys) {
-        var st = LearnSys.state();
-        LearnSys.go(st.day, st.step - 1);
-      }
       return false;
+    }
+    function nextStep() {
+      if (nextInternal()) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+    }
+    function prevStep() {
+      if (prevInternal()) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
     }
     prevBtn.addEventListener("click", prevStep);
     nextBtn.addEventListener("click", nextStep);
@@ -5880,8 +5886,8 @@
       update: function () {},
       onKey: function (e) {
         if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
-        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextStep();
-        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevStep();
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
+        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
         return false;
       },
       resize: function () {},

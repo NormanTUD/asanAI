@@ -27,7 +27,7 @@
     {
       kicker: "01a / KI-Chat",
       title: "KI-Chat",
-      body: "Im KI-Chat stellst du die Frage: „Gibt es Neuigkeiten bei der Frage, warum es überhaupt irgendwas gibt?“ Die Antwort ist keine Messung, sondern eine kurze Landkarte der Debatte. Leibniz hat die Frage als Erster so zugespitzt; der brasilianische Denker Jocax (João Carlos Holland de Barcellos) ist ein neuerer, ungewöhnlicher Gedanke in dieser Richtung. Bleib neutral: Es gibt keine Einigung.",
+      body: "Im KI-Chat stellst du die Frage: „Gibt es Neuigkeiten bei der Frage, warum es überhaupt irgendwas gibt?“ Die Antwort ist keine Messung, sondern eine kurze Landkarte der Debatte. Leibniz hat die Frage 1714 klassisch zugespitzt; der brasilianische Denker Jocax (João Carlos Holland de Barcellos) ist ein neuerer, ungewöhnlicher Gedanke in dieser Richtung. Bleib neutral: Es gibt keine Einigung.",
       watch: "Lies die Antwort. Welche Positionen erkennst du?",
       demoState: { scene: "phone", view: "chat" },
       context: "Der KI-Chat fasst Positionen zusammen; er entscheidet die Frage nicht. Die Antwort ist eine Orientierung, keine Messung.",
@@ -101,7 +101,7 @@
     {
       kicker: "01a / AI chat",
       title: "AI chat",
-      body: "In the AI chat you ask: “Any news on the question of why there is anything at all?” The answer is not a measurement but a short map of the debate. Leibniz first sharpened the question this way; the Brazilian thinker Jocax (João Carlos Holland de Barcellos) is a more recent, unusual idea in this direction. Stay neutral: there is no agreement.",
+      body: "In the AI chat you ask: “Any news on the question of why there is anything at all?” The answer is not a measurement but a short map of the debate. Leibniz gave the classic formulation in 1714; the Brazilian thinker Jocax (João Carlos Holland de Barcellos) is a more recent, unusual idea in this direction. Stay neutral: there is no agreement.",
       watch: "Read the answer. Which positions do you recognise?",
       demoState: { scene: "phone", view: "chat" },
       context: "The AI chat summarises positions; it does not decide the question. The answer is orientation, not a measurement.",
@@ -516,7 +516,8 @@
       boxes: [
         box("att-1", "Technique", "Why three vectors?", "Because searching and describing are two different roles. A pronoun can look for a noun without itself looking like a noun."),
         box("att-2", "Mathematics", "Why softmax?", "Softmax turns scores into a distribution: positive, sum to one, order preserved. That is why attention is a finite budget."),
-        box("att-3", "Budget", "One head, one budget", "Every row has exactly 1.00 to give. More for one token means less for the others. Many heads have separate budgets.")
+        box("att-3", "Budget", "One head, one budget", "Every row has exactly 1.00 to give. More for one token means less for the others. Many heads have separate budgets."),
+        box("att-mis", "Limit", "Is attention a database?", "No. Attention does not look up facts. It computes weights over value vectors and mixes them into a new representation. The result is not a stored row but a context-dependent mixture.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } }]
     },
@@ -577,7 +578,7 @@
       watch: "Vergleiche „Ich besichtige das Schloss“ und „Ich öffne das Schloss“. Welche Muster feuern?",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁; der Pull ist eine gelernte Richtung in W₂.",
-      deep: "Die meisten Parameter eines Transformers liegen in den FFN-Matrizen. Wissen ist trotzdem verteilt, nicht in einer Zeile gespeichert.",
+      deep: "In den hier besprochenen Transformer-Modellen liegen typischerweise die meisten Parameter in den FFN-Matrizen. Wissen ist trotzdem verteilt, nicht in einer Zeile gespeichert.",
       boxes: [
         box("ffn-1", "Mathematik", "Die Dense-Einheit", "dense(x) = activation(Wx + b). Das FFN ist dense₂(activation(dense₁(x))). Die Aktivierung bringt die Nichtlinearität."),
         box("ffn-2", "Technik", "Warum das FFN?", "Attention bewegt Information zwischen Tokens. Das FFN transformiert, was jedes Token trägt. Beide zusammen bilden einen Block."),
@@ -597,7 +598,7 @@
       watch: "Compare “I ate the apple” and “I bought an Apple laptop”. Which patterns fire?",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "A real FFN has no labelled keys. The patterns are learned directions in W₁; the pull is a learned direction in W₂.",
-      deep: "Most parameters of a transformer live in the FFN matrices. Knowledge is still distributed, not stored in one row.",
+      deep: "In the transformer models discussed here, most parameters typically live in the FFN matrices. Knowledge is still distributed, not stored in one row.",
       boxes: [
         box("ffn-1", "Mathematics", "The dense unit", "dense(x) = activation(Wx + b). The FFN is dense₂(activation(dense₁(x))). The activation supplies the nonlinearity."),
         box("ffn-2", "Technique", "Why the FFN?", "Attention moves information between tokens. The FFN transforms what each token carries. Together they form one block."),
@@ -686,7 +687,8 @@
       deep: "Warum exp und nicht Logit durch Summe? Logits können negativ sein. Die Exponentialfunktion macht jeden Wert positiv und erhält die Reihenfolge; die Division durch die Summe ergibt Wahrscheinlichkeiten. Der absolute Offset ist willkürlich; Softmax hängt nur von Unterschieden ab.",
       boxes: [
         box("sm-1", "Mathematik", "Die Formel", "p_i = exp(z_i) / Σ_j exp(z_j). Vorher wird oft das Maximum abgezogen, damit die Exponentialfunktion stabil bleibt."),
-        box("sm-2", "Temperatur", "Was macht T?", "p_i ∝ exp(z_i / T). T < 1 schärft, T > 1 flacht ab. Die Rangfolge bleibt, die Masse verschiebt sich.")
+        box("sm-2", "Temperatur", "Was macht T?", "p_i ∝ exp(z_i / T). T < 1 schärft, T > 1 flacht ab. Die Rangfolge bleibt, die Masse verschiebt sich."),
+        box("sm-mis", "Grenze", "Erzeugt Softmax das Ranking?", "Nein. Die Reihenfolge kommt aus den Logits. Softmax macht aus Scores eine positive Verteilung, die zu 1 summiert; Temperatur ändert die Schärfe, nicht die Reihenfolge.")
       ],
       sources: [{ label: "Transformer Explainer (Polo Club, Georgia Tech)", url: "https://poloclub.github.io/transformer-explainer/", why: { de: "Interaktive Quelle für die GPT-2-Logits und Softmax-Demo.", en: "Interactive source for the GPT-2 logits and softmax demo." } }]
     }
