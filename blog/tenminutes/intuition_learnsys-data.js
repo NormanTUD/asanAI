@@ -16,12 +16,30 @@
       title: "Was ist ein LLM?",
       body: "Dieser Adventskalender öffnet jeden Tag ein Türchen und hilft dir zu verstehen, wie diese Systeme technisch funktionieren. Ein Large Language Model (LLM) macht dabei immer dieselbe Sache: Es sagt das nächste Token voraus. Trainiert werden diese Netze mit sehr großen Textmengen; wie das Training im Detail funktioniert, kommt später. Früher musstest du bei einer Suche die Websites einzeln öffnen, heute bekommst du eine Zusammenfassung. In einer KI-Chat-Sitzung stellst du eine komplexe Frage und bekommst schnell eine oft nützliche Antwort. Wie geht das? Suchfeld, Sprachbefehl, Zusammenfassung und Chat sind eine Schleife, immer wieder.",
       watch: "Klicke auf ein Handy, um die Animation neu zu starten. Woher kommt die Antwort?",
-      demoState: { scene: "phone" },
+      demoState: { scene: "phone", view: "search" },
       context: "Die Suchmaschine schlägt keine gespeicherte Antwort nach. Die Zusammenfassung und die Chat-Antwort werden Token für Token geschrieben, und dieselbe Schleife läuft im Rechenzentrum dahinter.",
       deep: "Der Satz ist eine Kette von Entscheidungen. Jedes neue Token verändert den Kontext für das nächste. Deshalb ist die Antwort nicht aus einem Archiv geholt, sondern in diesem Moment zusammengesetzt.",
       boxes: [
         box("in-1", "Die Schleife", "Was ist ein Token?", "Ein Token ist ein Stück Text: ein Wort, ein Wortteil, ein Satzzeichen oder ein Byte. Das Modell liest eine ID, keine Buchstaben. Aus IDs werden Vektoren, und am Ende steht wieder Text."),
         box("in-2", "Die Idee", "Warum eine Schleife?", "Weil ein Satz länger ist als ein Token. Das Modell sagt ein Token voraus, hängt es an die Eingabe, und beginnt von vorn. Auto steht für die eigene Ausgabe, regressiv für die Vorhersage aus der bisherigen Sequenz.")
+      ]
+    },
+    {
+      kicker: "01a / KI-Chat",
+      title: "KI-Chat",
+      body: "Im KI-Chat stellst du die Frage: „Gibt es Neuigkeiten bei der Frage, warum es überhaupt irgendwas gibt?“ Die Antwort ist keine Messung, sondern eine kurze Landkarte der Debatte. Leibniz hat die Frage als Erster so zugespitzt; der brasilianische Denker Jocax (João Carlos Holland de Barcellos) ist ein neuerer, ungewöhnlicher Gedanke in dieser Richtung. Bleib neutral: Es gibt keine Einigung.",
+      watch: "Lies die Antwort. Welche Positionen erkennst du?",
+      demoState: { scene: "phone", view: "chat" },
+      context: "Der KI-Chat fasst Positionen zusammen; er entscheidet die Frage nicht. Die Antwort ist eine Orientierung, keine Messung.",
+      deep: "Leibniz fragte 1714, warum etwas und nicht vielmehr nichts existiert. Jocax schlägt ein „Nichts“ ohne Regeln vor, das sich selbst auflösen könnte. Kant und Hume sehen die Grenze der Vernunft; Naturalisten halten Existenz für ein Grunddatum; Existenzialisten verlagern die Antwort ins gelebte Leben. Die Frage bleibt offen.",
+      boxes: [
+        box("chat-1", "Leibniz", "Warum etwas statt nichts?", "Leibniz formulierte 1714 die Frage, warum überhaupt etwas existiert und nicht vielmehr nichts. Sie ist der Ausgangspunkt der modernen Debatte."),
+        box("chat-2", "Jocax", "Das Jocaxsche Nichts", "João Carlos Holland de Barcellos (Jocax) schlägt ein „Nichts“ ohne Regeln vor: Wenn keine Regel etwas verbietet, kann etwas entstehen. Das ist ein neuer Gedanke, keine gesicherte Antwort."),
+        box("chat-3", "Neutral", "Was die Antwort nicht ist", "Der KI-Chat gibt eine kurze Übersicht, keine Entscheidung. Die Frage ist philosophisch offen; die Antwort ist eine Landkarte der Positionen.")
+      ],
+      sources: [
+        { label: "Leibniz (1714), Monadologie", url: "https://www.gutenberg.org/ebooks/17641" },
+        { label: "Barcellos (Jocax), The Jocaxian Nothingness", url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html" }
       ]
     },
     {
@@ -40,8 +58,8 @@
     {
       kicker: "02 / Die Schleife",
       title: "Ein Wort nach dem anderen",
-      body: "Kontext ist alles, was das Modell gerade sieht: der bisherige Text, die Anweisung, die Beispiele. Bei jedem Schritt ist vieles möglich, aber nicht alles passt. Die Demo zieht das nächste Token aus einer Verteilung, hängt es an und wiederholt. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Nach dem Schlusspunkt steht das spezielle Token <|endoftext|>; sobald das Modell es zieht, endet die Schleife.",
-      watch: "Klicke einen Zweig an oder lass die Demo wählen. Welche Fortsetzungen bleiben plausibel?",
+      body: "Kontext ist alles, was das Modell gerade sieht: der bisherige Text, die Anweisung, die Beispiele. Vervollständige „Es war einmal ein …“ Wort für Wort: Bei jedem Schritt zieht die Demo das nächste Token aus einer Verteilung, hängt es an und wiederholt. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Am Ende steht <|endoftext|>; sobald das Modell es zieht, endet die Schleife. Die Landschaft ist eine vereinfachte Demo.",
+      watch: "Vervollständige „Es war einmal ein …“ Wort für Wort, bis <|endoftext|> kommt. Die Landschaft ist nur ein vereinfachtes Bild.",
       demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true, view: "default" },
       context: "Das Modell hat kein anderes Arbeitsgedächtnis als den Kontext. Jedes neue Token verändert, was als Nächstes wahrscheinlich ist.",
       deep: "Eine hohe Wahrscheinlichkeit ist keine Garantie für Wahrheit. Sie ist eine Aussage über den Trainingskorpus. Sampling macht die Verteilung sichtbar; Greedy nimmt immer den wahrscheinlichsten Pfad.",
@@ -70,12 +88,30 @@
       title: "What is an LLM?",
       body: "This Advent calendar opens one door every day and helps you understand how these systems work technically. A Large Language Model (LLM) always does the same thing: it predicts the next token. These networks are trained on very large amounts of text; how that training works in detail comes later. In the past you had to open search results one by one; today you often get a summary. In an AI chat session you ask a complex question and quickly get a useful answer. How does that work? Search box, voice command, summary, and chat are one loop, repeated.",
       watch: "Click a phone to replay the animation. Where does the answer come from?",
-      demoState: { scene: "phone" },
+      demoState: { scene: "phone", view: "search" },
       context: "The search engine does not look up a stored answer. The summary and the chat answer are written token by token, and the same loop runs in the data centre behind it.",
       deep: "The sentence is a chain of decisions. Every new token changes the context for the next one. That is why the answer is not fetched from an archive but assembled in the moment.",
       boxes: [
         box("in-1", "The loop", "What is a token?", "A token is a piece of text: a word, a word piece, a punctuation mark, or a byte. The model reads an ID, not letters. IDs become vectors, and at the end there is text again."),
         box("in-2", "The idea", "Why a loop?", "Because a sentence is longer than one token. The model predicts one token, appends it to the input, and starts again. Auto stands for its own output, regressive for predicting from the sequence so far.")
+      ]
+    },
+    {
+      kicker: "01a / AI chat",
+      title: "AI chat",
+      body: "In the AI chat you ask: “Any news on the question of why there is anything at all?” The answer is not a measurement but a short map of the debate. Leibniz first sharpened the question this way; the Brazilian thinker Jocax (João Carlos Holland de Barcellos) is a more recent, unusual idea in this direction. Stay neutral: there is no agreement.",
+      watch: "Read the answer. Which positions do you recognise?",
+      demoState: { scene: "phone", view: "chat" },
+      context: "The AI chat summarises positions; it does not decide the question. The answer is orientation, not a measurement.",
+      deep: "Leibniz asked in 1714 why there is something rather than nothing. Jocax proposes a “nothing” without rules that could dissolve itself. Kant and Hume see the limit of reason; naturalists treat existence as a basic fact; existentialists move the answer into lived life. The question remains open.",
+      boxes: [
+        box("chat-1", "Leibniz", "Why something rather than nothing?", "Leibniz formulated the question in 1714: why is there anything at all, and not rather nothing? It is the starting point of the modern debate."),
+        box("chat-2", "Jocax", "The Jocaxian nothingness", "João Carlos Holland de Barcellos (Jocax) proposes a “nothing” without rules: if no rule forbids something, something can appear. That is a new idea, not a settled answer."),
+        box("chat-3", "Neutral", "What the answer is not", "The AI chat gives a short overview, not a decision. The question is philosophically open; the answer is a map of positions.")
+      ],
+      sources: [
+        { label: "Leibniz (1714), Monadology", url: "https://www.gutenberg.org/ebooks/17641" },
+        { label: "Barcellos (Jocax), The Jocaxian Nothingness", url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html" }
       ]
     },
     {
@@ -94,8 +130,8 @@
     {
       kicker: "02 / The loop",
       title: "One word after another",
-      body: "Context is everything the model can see: the text so far, the instruction, the examples. At every step much is possible, but not all of it fits. The demo draws the next token from a distribution, appends it, and repeats. Greedy, sampling, and top-p read the same probabilities differently. After the final punctuation comes the special token <|endoftext|>; as soon as the model draws it, the loop stops.",
-      watch: "Click a branch or let the demo choose. Which continuations stay plausible?",
+      body: "Context is everything the model can see: the text so far, the instruction, the examples. Complete “Once upon a time there was …” word by word: at each step the demo draws the next token from a distribution, appends it, and repeats. Greedy, sampling, and top-p read the same probabilities differently. At the end comes <|endoftext|>; as soon as the model draws it, the loop stops. The landscape is a simplified demo.",
+      watch: "Complete “Once upon a time there was …” word by word until <|endoftext|> appears. The landscape is only a simplified picture.",
       demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true, view: "default" },
       context: "The model has no working memory other than the context. Every new token changes what is likely next.",
       deep: "A high probability is not a guarantee of truth. It is a statement about the training corpus. Sampling makes the distribution visible; greedy always takes the most likely path.",

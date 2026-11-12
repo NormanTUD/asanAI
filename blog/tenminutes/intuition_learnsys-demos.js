@@ -1148,32 +1148,20 @@
             '</div>' +
           '</div>' +
         '</div>' +
-        '<div class="ia-phone-switch" role="group" aria-label="' + (DE ? "Ansicht wählen" : "Choose view") + '">' +
-          '<button type="button" class="is-on" data-phone="search" aria-pressed="true">' + (DE ? "Suche" : "Search") + '</button>' +
-          '<button type="button" data-phone="chat" aria-pressed="false">' + (DE ? "KI-Chat" : "AI chat") + '</button>' +
-        '</div>' +
       '</div>';
     root.appendChild(el);
     var stage = el.querySelector(".ia-stage");
     var phonesWrap = el.querySelector(".ia-phones");
     var chatPhone = el.querySelector("#ia-chat-phone");
     var searchPhone = el.querySelector("#ia-phone");
-    var phoneSwitch = el.querySelectorAll(".ia-phone-switch [data-phone]");
     var chatQuestionEl = el.querySelector(".ia-chat-question");
     var chatAnswerEl = el.querySelector(".ia-chat-answer");
+    var view = "search", chatStarted = false;
     function setPhone(which) {
       var isChat = which === "chat";
       if (searchPhone) searchPhone.classList.toggle("is-active", !isChat);
       if (chatPhone) chatPhone.classList.toggle("is-active", isChat);
-      phoneSwitch.forEach(function (b) {
-        var on = b.getAttribute("data-phone") === which;
-        b.classList.toggle("is-on", on);
-        b.setAttribute("aria-pressed", on ? "true" : "false");
-      });
     }
-    phoneSwitch.forEach(function (b) {
-      b.addEventListener("click", function () { setPhone(b.getAttribute("data-phone")); });
-    });
     var logo = el.querySelector("#ia-logo");
     var searchBar = el.querySelector("#ia-search-bar");
     var searchText = el.querySelector("#ia-search-text");
@@ -1184,8 +1172,8 @@
     var thinking = el.querySelector("#ia-ai-thinking");
     var serp = el.querySelector("#ia-serp");
     var SATZ = DE ? "warum ist der himmel blau?" : "why is the sky blue?";
-    var CHAT_Q = DE ? "Warum ist überhaupt irgendwas?" : "Why is there anything at all?";
-    var CHAT_A = DE ? "Die Frage ist offen. Der kosmologische Gottesbeweis sagt, das Universum braucht eine erste, notwendige Ursache. Der Naturalismus hält die Existenz für ein faktisches Grunddatum; „Gott“ verschiebe die Frage nur. Kant und Hume sehen hier die Grenze der Vernunft und empfehlen ehrliche Agnosis. Existenzialisten wie Sartre und Camus antworten praktisch: Bedeutung wird gewählt, nicht im Weltgrund gefunden." : "The question is open. The cosmological argument says the universe needs a first, necessary cause. Naturalism treats existence as a brute fact; “God” only pushes the question back. Kant and Hume see the limit of reason here and recommend honest agnosticism. Existentialists such as Sartre and Camus answer practically: meaning is chosen, not found in the ground of the world.";
+    var CHAT_Q = DE ? "Gibt es Neuigkeiten bei der Frage, warum es überhaupt irgendwas gibt?" : "Any news on the question of why there is anything at all?";
+    var CHAT_A = DE ? "Die Frage ist offen. Leibniz hat sie zuerst so zugespitzt: Warum ist etwas und nicht vielmehr nichts? Der kosmologische Gottesbeweis sagt, das Universum braucht eine erste, notwendige Ursache. Der Naturalismus hält die Existenz für ein faktisches Grunddatum; „Gott“ verschiebe die Frage nur. Kant und Hume sehen hier die Grenze der Vernunft und empfehlen ehrliche Agnosis. Existenzialisten wie Sartre und Camus antworten praktisch: Bedeutung wird gewählt, nicht im Weltgrund gefunden. Ein neuerer Gedanke von Jocax dreht die Frage um: Ein „Nichts“ ohne Regeln könnte sich selbst auflösen, sodass Existenz der Normalzustand ist; ob das stimmt, ist offen." : "The question is open. Leibniz first sharpened it: why is there something rather than nothing? The cosmological argument says the universe needs a first, necessary cause. Naturalism treats existence as a brute fact; “God” only pushes the question back. Kant and Hume see the limit of reason here and recommend honest agnosticism. Existentialists such as Sartre and Camus answer practically: meaning is chosen, not found in the ground of the world. A more recent idea from Jocax turns the question around: a “nothing” without rules could dissolve itself, so existence would be the normal state; whether that is true is open.";
     var AI = DE ? [
       { t: "Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm): " },
       { t: "Rayleigh-Streuung", c: "b" },
@@ -1240,7 +1228,8 @@
       if (chatPhone) chatPhone.classList.remove("is-thinking", "is-answered");
       if (chatQuestionEl) chatQuestionEl.textContent = "";
       if (chatAnswerEl) chatAnswerEl.textContent = "";
-      setPhone("search");
+      chatStarted = false;
+      setPhone(view);
     }
     function typeChat(el, text, speed, done) {
       if (reduce) { el.textContent = text; if (done) done(); return; }
@@ -1292,32 +1281,41 @@
       }
       tick();
     }
+    function startChat() {
+      if (chatStarted) return;
+      chatStarted = true;
+      if (chatPhone) chatPhone.classList.remove("is-thinking", "is-answered");
+      if (chatQuestionEl) chatQuestionEl.textContent = "";
+      if (chatAnswerEl) chatAnswerEl.textContent = "";
+      if (reduce) {
+        if (chatQuestionEl) chatQuestionEl.textContent = CHAT_Q;
+        if (chatAnswerEl) chatAnswerEl.textContent = CHAT_A;
+        if (chatPhone) chatPhone.classList.add("is-answered");
+        return;
+      }
+      typeChat(chatQuestionEl, CHAT_Q, 14, function () {
+        if (chatPhone) chatPhone.classList.add("is-thinking");
+        later(function () {
+          if (chatPhone) chatPhone.classList.remove("is-thinking");
+          if (chatPhone) chatPhone.classList.add("is-answered");
+          typeChat(chatAnswerEl, CHAT_A, 5, null);
+        }, 360);
+      });
+    }
     function play() {
       reset();
       buildLogo();
       buildSerp();
+      if (view === "chat") startChat();
       if (reduce) {
         searchText.textContent = SATZ;
         setCentered(false);
         card.classList.add("on");
         typeAnswer();
         serp.classList.add("on");
-        if (chatQuestionEl) chatQuestionEl.textContent = CHAT_Q;
-        if (chatAnswerEl) chatAnswerEl.textContent = CHAT_A;
-        if (chatPhone) chatPhone.classList.add("is-answered");
+        if (view === "chat") startChat();
         return;
       }
-      later(function () {
-        typeChat(chatQuestionEl, CHAT_Q, 14, function () {
-          chatPhone.classList.add("is-thinking");
-          later(function () {
-            chatPhone.classList.remove("is-thinking");
-            chatPhone.classList.add("is-answered");
-            typeChat(chatAnswerEl, CHAT_A, 5, null);
-          }, 360);
-        });
-      }, 240);
-      later(function () { setPhone("chat"); }, 5200);
       mic.classList.add("listening");
       wave.classList.add("active");
       typeSearch(SATZ, function () {
@@ -1360,7 +1358,13 @@
     window.addEventListener("resize", fit);
     fit();
     return {
-      update: function () {},
+      update: function (s) {
+        if (s && s.view) {
+          view = s.view;
+          setPhone(view);
+          if (view === "chat") startChat();
+        }
+      },
       pause: clearTimers,
       resume: function () { if (shownOnce && started) play(); shownOnce = true; fit(); },
       resize: fit,
@@ -1406,16 +1410,15 @@
     el.innerHTML =
       '<div class="ls-code-frame"><div class="ls-code-screen">' +
         '<div class="ls-code-desktop" style="background-image:url(\'opera.jpg\')">' +
-          '<div class="ls-code-window ls-code-window--editor" hidden>' +
-            '<div class="ls-code-bar"><i></i><i></i><i></i><span>' + (DE ? "himmel.py" : "sky.py") + '</span></div>' +
-            '<pre class="ls-code-body"><code></code></pre>' +
-          '</div>' +
           '<div class="ls-code-window ls-code-window--agent">' +
-            '<div class="ls-code-bar"><i></i><i></i><i></i><span>' + (DE ? "Agent" : "Agent") + '</span></div>' +
+            '<div class="ls-code-bar"><i></i><i></i><i></i><span>Agent</span></div>' +
             '<div class="ls-code-chat">' +
               '<div class="ls-code-msg is-user">' + api.esc(userText) + '</div>' +
               '<div class="ls-code-msg is-agent"><span class="ls-code-agent-text"></span><span class="ls-code-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
+              '<div class="ls-code-msg is-agent ls-code-run-msg" hidden>' + (DE ? "Ich führe himmel.py im Terminal aus." : "I'll run sky.py in the terminal.") + '</div>' +
             '</div>' +
+            '<div class="ls-code-filehead">' + (DE ? "himmel.py" : "sky.py") + '</div>' +
+            '<pre class="ls-code-body"><code></code></pre>' +
             '<div class="ls-code-agent-prompt"><b>$</b><span></span></div>' +
           '</div>' +
           '<div class="ls-code-window ls-code-window--run" hidden>' +
@@ -1432,9 +1435,9 @@
     var term = el.querySelector(".ls-code-term span");
     var agentMsgEl = el.querySelector(".ls-code-agent-text");
     var thinkingEl = el.querySelector(".ls-code-thinking");
-    var editorWin = el.querySelector(".ls-code-window--editor");
     var agentWin = el.querySelector(".ls-code-window--agent");
     var runWin = el.querySelector(".ls-code-window--run");
+    var runMsgEl = el.querySelector(".ls-code-run-msg");
     var replayBtn = el.querySelector(".ls-code-replay");
     var clockEl = el.querySelector(".ls-code-clock");
     if (clockEl) {
@@ -1502,24 +1505,23 @@
       spans.forEach(function (s) { s.classList.remove("is-visible"); });
       if (agentMsgEl) agentMsgEl.textContent = "";
       if (thinkingEl) thinkingEl.classList.remove("on");
+      if (runMsgEl) runMsgEl.hidden = true;
       if (commandEl) commandEl.textContent = "";
       if (term) term.textContent = "";
       show(agentWin, true);
-      show(editorWin, false);
       show(runWin, false);
       setButton(DE ? "Weiter" : "Next", true);
       later(function () { if (thinkingEl) thinkingEl.classList.add("on"); }, 260);
       later(function () {
         if (thinkingEl) thinkingEl.classList.remove("on");
         typeAgent(function () {
-          show(editorWin, true);
           typeCode();
         });
       }, 1050);
     }
     function runProgram() {
       phase = "running";
-      show(agentWin, false);
+      if (runMsgEl) runMsgEl.hidden = false;
       show(runWin, true);
       if (commandEl) commandEl.textContent = "";
       if (term) term.textContent = "";
@@ -1667,7 +1669,7 @@
     var landPoints = [];
     var landscape = true, landSize = null;
     var landYaw = -0.62, landPitch = 0.92, landZoom = 1;
-    var landDrag = null, landMoved = false, landHits = [];
+    var landDrag = null, landMoved = false, landHits = [], landOptionPoints = [];
     var landBall = { x: 0, y: 0, init: false, animating: false };
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var landTrail = [];
@@ -1681,7 +1683,7 @@
     var tempShown = 0.8;
     var REVEAL_R = 0.95, REVEAL_FEATHER = 0.35;
     var lastPath = [], lastProbs = null, lastTop = null;
-    var LAND_X = 2.65, LAND_Y = 1.9;
+    var LAND_X = 2.95, LAND_Y = 2.05;
 
     var PLANE_Z = 0.06;
     var BASE_PROB = 0.001;
@@ -1804,6 +1806,16 @@
             n.x += ((hash % 9) - 4) * 0.032;
           }
         });
+      });
+      // Keep the very unlikely nouns at the far left edge so the demo shows
+      // that they are distant, but still close enough to stay on the map.
+      var rareOut = {
+        "Fluss": [-0.28, 0.42], "Schloss": [-0.24, -0.42],
+        "river": [-0.28, 0.42], "castle": [-0.24, -0.42]
+      };
+      Object.keys(nodes).forEach(function (k) {
+        var off = rareOut[k];
+        if (off) { nodes[k].x += off[0]; nodes[k].y += off[1]; }
       });
       // Relax vertically so every token sits near the tokens that can come
       // before or after it. The x position keeps the sentence stages apart.
@@ -2039,6 +2051,15 @@
         ctx.globalAlpha = 1;
       });
 
+      // The world fades out at the edge: the terrain continues a little
+      // beyond the words and frays into the paper instead of ending in a
+      // hard rectangle.
+      var edge = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.30, w / 2, h / 2, Math.max(w, h) * 0.64);
+      edge.addColorStop(0, "rgba(255,255,255,0)");
+      edge.addColorStop(1, "rgba(255,255,255,.94)");
+      ctx.fillStyle = edge;
+      ctx.fillRect(0, 0, w, h);
+
       // The lantern forecasts the next word: it sits on the deepest current
       // valley, so the plot is always one word ahead of the sentence.
       if (top) {
@@ -2123,6 +2144,7 @@
         return true;
       }
       landHits = [];
+      landOptionPoints = [];
 
       // The runner-up at every step stays as a faint side path, so the
       // alternative routes remain visible next to the golden one.
@@ -2287,7 +2309,10 @@
         ctx.strokeStyle = isTop ? C.green : C.petrol;
         ctx.lineWidth = isTop ? 2 : 1.4;
         ctx.stroke();
-        if (!atEnd) landHits.push({ x: surfX - 12, y: surfY - 12, w: 24, h: 24, t: it.t });
+        if (!atEnd) {
+          landHits.push({ x: surfX - 12, y: surfY - 12, w: 24, h: 24, t: it.t });
+          landOptionPoints.push({ x: surfX, y: surfY, t: it.t });
+        }
 
         var pct = (it.p * 100).toFixed(it.p * 100 < 1 ? 1 : 0) + "%";
         ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif';
@@ -2350,8 +2375,10 @@
           var cand = { x: bx, y: by, w: tw, h: bh };
           if (bx >= 3 && by >= 3 && bx + tw <= w - 3 && by + bh <= h - 3 && freeBox(cand)) {
             boxes.push(cand);
+            var fog = revealFactor(it.x, it.y);
+            if (fog < 0.04) { ctx.globalAlpha = 1; break; }
             ctx.fillStyle = C.muted;
-            ctx.globalAlpha = 0.72;
+            ctx.globalAlpha = 0.10 + 0.62 * fog;
             ctx.textAlign = "left";
             ctx.fillText(it.t, bx, by + 10);
             ctx.globalAlpha = 1;
@@ -2456,7 +2483,12 @@
         var b = landHits[i];
         if (x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h) return b;
       }
-      return null;
+      var best = null, bd = 66;
+      landOptionPoints.forEach(function (p) {
+        var d = Math.hypot(x - p.x, y - p.y);
+        if (d < bd) { bd = d; best = p; }
+      });
+      return best ? { t: best.t } : null;
     }
 
     function landPointer(e) {
