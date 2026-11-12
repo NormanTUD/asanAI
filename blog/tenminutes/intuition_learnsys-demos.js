@@ -53,7 +53,7 @@
     var scene = document.createElement("div");
     scene.className = "ls-embed-scene";
     scene.innerHTML =
-      '<div class="ls-embed-stage"><canvas class="ls-canvas" role="img"></canvas><div class="ls-embed-mini-table" hidden aria-hidden="true"></div><div class="ls-embed-highdim" hidden></div></div>' +
+      '<div class="ls-embed-stage"><canvas class="ls-canvas" role="img"></canvas><div class="ls-embed-mini-table" hidden></div><div class="ls-embed-highdim" hidden></div></div>' +
       '<div class="ls-scene-controls"></div>' +
       '<div class="ls-scene-readout ls-sr-only" aria-live="polite"></div>' +
       '<div class="ls-scene-formula"><div class="ls-math" data-tex=""></div></div>';
@@ -92,9 +92,26 @@
         var x = ((w.v[0] - 12.5) / 15).toFixed(2);
         var y = (w.v[1] / 22).toFixed(2);
         var z = w.z.toFixed(2);
-        return "<tr><th>" + api.esc(wordLabel(id)) + "</th><td>" + x + "</td><td>" + y + "</td><td>" + z + "</td></tr>";
+        return '<tr data-word="' + id + '" tabindex="0" aria-selected="false"><th>' + api.esc(wordLabel(id)) + '</th><td>' + x + '</td><td>' + y + '</td><td>' + z + '</td></tr>';
       }).join("");
+      miniTable.setAttribute("role", "group");
+      miniTable.setAttribute("aria-label", DE ? "Tabelle der drei Dimensionen" : "Table of the three dimensions");
       miniTable.innerHTML = '<div class="ls-embed-mini-head">' + (DE ? "Die drei Dimensionen, die du siehst" : "The three dimensions you see") + '</div><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table>';
+    }
+    function syncMiniSelection() {
+      if (!miniTable) return;
+      miniTable.querySelectorAll("tr[data-word]").forEach(function (tr) {
+        var on = tr.getAttribute("data-word") === st.selected;
+        tr.classList.toggle("is-selected", on);
+        tr.setAttribute("aria-selected", on ? "true" : "false");
+      });
+    }
+    function selectWord(id) {
+      if (!WORDS[id]) return;
+      st.selected = id;
+      st.group = null;
+      syncControls();
+      draw();
     }
     function buildHighdimTable() {
       if (!highdimEl) return;
@@ -706,6 +723,7 @@
       else drawSpace();
       canvas.__lsHits = hits;
       canvas.__lsState = st;
+      syncMiniSelection();
     }
 
     function updateReadout() {
@@ -1055,12 +1073,27 @@
     dimTarget = st.dim;
     buildMiniTable();
     buildHighdimTable();
+    if (miniTable) {
+      miniTable.addEventListener("click", function (e) {
+        var tr = e.target.closest("tr[data-word]");
+        if (tr) selectWord(tr.getAttribute("data-word"));
+      });
+      miniTable.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        var tr = e.target.closest("tr[data-word]");
+        if (!tr) return;
+        e.preventDefault();
+        selectWord(tr.getAttribute("data-word"));
+      });
+    }
     renderControls();
     resize();
     reserveHeights();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(reserveHeights);
     return {
       update: function (s) { applyState(s || {}); },
+      pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } },
+      resume: function () { ensureLoop(); },
       resize: resize,
       destroy: function () {
         if (raf) cancelAnimationFrame(raf);
@@ -1263,6 +1296,7 @@
     fit();
     return {
       update: function () {},
+      pause: clearTimers,
       resume: function () { if (shownOnce && started) play(); shownOnce = true; fit(); },
       resize: fit,
       destroy: function () {
@@ -1456,7 +1490,7 @@
     el.innerHTML =
       '<div class="ls-loop-sentence" aria-live="polite"></div>' +
       '<div class="ls-loop-tree" aria-live="polite"></div>' +
-      '<div class="ls-loop-viz"><div class="ls-loop-bars"></div><div class="ls-loop-landscape" hidden><canvas class="ls-canvas" role="img"></canvas></div></div>' +
+      '<div class="ls-loop-viz"><div class="ls-loop-bars"></div><div class="ls-loop-landscape" hidden><canvas class="ls-canvas" role="img"></canvas><div class="ls-land-tip" hidden></div></div></div>' +
       '<div class="ls-scene-row ls-loop-modes"></div>' +
       '<div class="ls-scene-row ls-loop-actions"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-back" aria-label="' + (DE ? "Letztes Token zurücknehmen" : "Take back the last token") + '">' + (DE ? "← Zurück" : "← Back") + '</button><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loop-next">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-loop-temp" min="0.05" max="1.8" step="0.05" value="0.8"><output>0.80</output></label></div>' +
       '<div class="ls-loop-readout" aria-live="polite"></div>';
@@ -1471,10 +1505,13 @@
     var backBtn = el.querySelector(".ls-loop-back");
     var landEl = el.querySelector(".ls-loop-landscape");
     var landCanvas = landEl.querySelector("canvas");
+    var landTip = landEl.querySelector(".ls-land-tip");
+    var landPoints = [];
     var landscape = true, landSize = null;
     var landYaw = -0.62, landPitch = 0.92, landZoom = 1;
     var landDrag = null, landMoved = false, landHits = [];
     var landBall = { x: 0, y: 0, init: false, animating: false };
+    var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var landTrail = [];
     var pathWells = [];
     var pathProb = [];
@@ -1905,6 +1942,53 @@
       }
       landHits = [];
 
+      // The runner-up at every step stays as a faint side path, so the
+      // alternative routes remain visible next to the golden one.
+      var altPts = [];
+      loopHistory.forEach(function (entry) {
+        var alts = (entry.alternatives || []).filter(function (a) {
+          return a.p != null && catalogByToken[a.token];
+        });
+        if (!alts.length) return;
+        alts.sort(function (a, b) { return b.p - a.p; });
+        var alt = alts[0];
+        var c = catalogByToken[alt.token];
+        var prevTok = entry.index > 0 ? generated[entry.index - 1] : null;
+        var from = prevTok && catalogByToken[prevTok] ? catalogByToken[prevTok] : null;
+        var sp = landRaw(c.x, c.y, landZ(landProb(c.x, c.y, wells)));
+        var fp = from ? landRaw(from.x, from.y, landZ(landProb(from.x, from.y, wells))) : null;
+        altPts.push({
+          t: alt.token,
+          sx: sx(sp.x), sy: sy(sp.y),
+          fx: fp ? sx(fp.x) : null,
+          fy: fp ? sy(fp.y) : null
+        });
+      });
+      if (altPts.length) {
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = C.sky;
+        ctx.globalAlpha = 0.38;
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        altPts.forEach(function (p) {
+          if (p.fx == null) return;
+          ctx.moveTo(p.fx, p.fy);
+          ctx.lineTo(p.sx, p.sy);
+        });
+        ctx.stroke();
+        ctx.setLineDash([]);
+        altPts.forEach(function (p) {
+          ctx.beginPath();
+          ctx.arc(p.sx, p.sy, 4, 0, Math.PI * 2);
+          ctx.fillStyle = C.paper;
+          ctx.fill();
+          ctx.strokeStyle = C.sky;
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+        });
+        ctx.globalAlpha = 1;
+      }
+
       // The actual chosen path. Each chosen token keeps the probability it
       // had when it was picked, so its valley stays in the surface and the
       // golden line rolls through a chain of valleys instead of jumping
@@ -1928,6 +2012,15 @@
         });
       });
       lastPath = pathPts.slice();
+      var pathPByToken = {};
+      pathPts.forEach(function (p) { if (p.p != null) pathPByToken[p.t] = p.p; });
+      landPoints = catalog.map(function (c) {
+        var p = probByToken[c.t];
+        if (p == null && pathPByToken[c.t] != null) p = pathPByToken[c.t];
+        var pp = landRaw(c.x, c.y, PLANE_Z);
+        var sp = landRaw(c.x, c.y, landZ(landProb(c.x, c.y, wells)));
+        return { t: c.t, px: sx(pp.x), py: sy(pp.y), sx: sx(sp.x), sy: sy(sp.y), p: p };
+      });
       if (pathPts.length) {
         ctx.lineJoin = "round";
         ctx.setLineDash([2, 3]);
@@ -2103,7 +2196,10 @@
         var btx = sx(ballPt.x), bty = sy(ballPt.y);
         if (!landBall.init) { landBall.x = btx; landBall.y = bty; landBall.init = true; }
         var bdx = btx - landBall.x, bdy = bty - landBall.y;
-        if (Math.abs(bdx) + Math.abs(bdy) > 1.2) {
+        if (reducedMotion) {
+          landBall.x = btx; landBall.y = bty; landBall.animating = false;
+          landTrail = [];
+        } else if (Math.abs(bdx) + Math.abs(bdy) > 1.2) {
           landBall.x += bdx * 0.18;
           landBall.y += bdy * 0.18;
           landBall.animating = true;
@@ -2186,7 +2282,30 @@
       return { x: e.clientX - r.left, y: e.clientY - r.top };
     }
 
+    function hideLandTip() { if (landTip) landTip.hidden = true; }
+    function updateLandTip(x, y) {
+      if (!landTip) return;
+      var best = null, bd = 18;
+      landPoints.forEach(function (pt) {
+        var d = Math.min(Math.hypot(x - pt.sx, y - pt.sy), Math.hypot(x - pt.px, y - pt.py));
+        if (d < bd) { bd = d; best = pt; }
+      });
+      if (!best) { hideLandTip(); return; }
+      var pct = best.p == null ? "—" : (best.p * 100).toFixed(best.p * 100 < 1 ? 1 : 0) + "%";
+      var loss = best.p == null ? "—" : (1 - best.p).toFixed(2);
+      landTip.innerHTML = '<b>' + api.esc(best.t) + '</b> · p = ' + pct +
+        ' · ' + (DE ? 'Verlust' : 'loss') + ' = ' + loss +
+        ' · ' + (DE ? 'Tal-Tiefe' : 'valley depth') + ' = ' + pct;
+      landTip.hidden = false;
+      var lw = landSize ? landSize.w : landEl.clientWidth;
+      var lh = landSize ? landSize.h : landEl.clientHeight;
+      var tw = landTip.offsetWidth, th = landTip.offsetHeight;
+      landTip.style.left = Math.max(6, Math.min(lw - tw - 6, x + 12)) + "px";
+      landTip.style.top = Math.max(6, Math.min(lh - th - 6, y - th - 10)) + "px";
+    }
+
     landCanvas.addEventListener("pointerdown", function (e) {
+      hideLandTip();
       landMoved = false;
       landDrag = { x: e.clientX, y: e.clientY, yaw: landYaw, pitch: landPitch };
       if (landCanvas.setPointerCapture) { try { landCanvas.setPointerCapture(e.pointerId); } catch (err) {} }
@@ -2202,6 +2321,7 @@
         return;
       }
       landCanvas.style.cursor = landHitAt(p.x, p.y) ? "pointer" : "grab";
+      updateLandTip(p.x, p.y);
     });
     landCanvas.addEventListener("pointerup", function (e) {
       if (landDrag && !landMoved) {
@@ -2210,9 +2330,10 @@
         if (hit) choose(hit.t);
       }
       landDrag = null;
+      hideLandTip();
     });
-    landCanvas.addEventListener("pointercancel", function () { landDrag = null; });
-    landCanvas.addEventListener("pointerleave", function () { if (!landDrag) landCanvas.style.cursor = "grab"; });
+    landCanvas.addEventListener("pointercancel", function () { landDrag = null; hideLandTip(); });
+    landCanvas.addEventListener("pointerleave", function () { hideLandTip(); if (!landDrag) landCanvas.style.cursor = "grab"; });
 
     function softmax(logits, t) {
       var max = Math.max.apply(null, logits);
@@ -2358,8 +2479,8 @@
       navPast.push(snapshotState());
       navFuture = [];
       var opts = choicesFor();
-      var alts = opts.map(function (o) { return { token: o.t, logit: o.l }; });
       var probs = softmax(opts.map(function (o) { return o.l; }), temp);
+      var alts = opts.map(function (o, i) { return { token: o.t, logit: o.l, p: probs[i] }; });
       var pick = -1;
       opts.forEach(function (o, i) { if (o.t === token) pick = i; });
       var pickP = pick >= 0 ? probs[pick] : null;
@@ -2439,6 +2560,9 @@
       return {
         catalog: catalog.map(function (c) { return { t: c.t, x: c.x, y: c.y }; }),
         generated: generated.slice(),
+        history: loopHistory.map(function (h) {
+          return { index: h.index, chosen: h.chosen, alts: (h.alternatives || []).map(function (a) { return { token: a.token, p: a.p }; }) };
+        }),
         path: lastPath.map(function (p) { return { t: p.t, px: p.px, py: p.py, sx: p.sx, sy: p.sy, p: p.p }; }),
         probs: lastProbs,
         knownProbs: knownProbs,
@@ -2469,6 +2593,7 @@
         if (s.reset) reset();
       },
       onKey: function (e) {
+        if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === "z" || e.key === "Z")) { undo(); return true; }
         if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
         if (e.key === "ArrowLeft") return undo();
         if (e.key !== "ArrowRight" && e.key !== " " && e.key !== "PageDown") return false;
@@ -2916,22 +3041,27 @@
     var examples = DE ? {
       understanding: { label: "Verständnis", value: "Verständnis" },
       unbreakable: { label: "unzerbrechlich", value: "unzerbrechlich" },
-      sentence: { label: "Der Transformer spielt großartig", value: "Der Transformer spielt großartig" }
+      sentence: { label: "Sprachmodelle zerlegen Wörter in Teile", value: "Sprachmodelle zerlegen Wörter in Teile" }
     } : {
       understanding: { label: "understanding", value: "understanding" },
       unbreakable: { label: "unbreakable", value: "unbreakable" },
-      sentence: { label: "The transformer is playing greatly", value: "The transformer is playing greatly" }
+      sentence: { label: "Language models split words into pieces", value: "Language models split words into pieces" }
     };
     var splits = DE ? {
       "verständnis": ["ver", "ständ", "nis"],
       "unzerbrechlich": ["un", "zerbrech", "lich"],
-      "spielt": ["spiel", "t"],
-      "großartig": ["groß", "artig"]
+      "sprachmodelle": ["sprach", "modell", "e"],
+      "zerlegen": ["zer", "leg", "en"],
+      "wörter": ["wör", "ter"],
+      "teile": ["teil", "e"]
     } : {
       "understanding": ["un", "der", "stand", "ing"],
       "unbreakable": ["un", "break", "able"],
-      "playing": ["play", "ing"],
-      "greatly": ["great", "ly"]
+      "language": ["lang", "uage"],
+      "models": ["mod", "els"],
+      "split": ["split"],
+      "words": ["word", "s"],
+      "pieces": ["piece", "s"]
     };
     var colors = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
     var el = document.createElement("div");
@@ -3001,7 +3131,7 @@
         '<div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div>' +
       '</div>' +
       '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-pos-context" min="16" max="128" step="8" value="64"><output>64</output></label><label class="ls-range">' + (DE ? "Dimensionen" : "Dimensions") + ' <input type="range" class="ls-pos-dims" min="2" max="64" step="2" value="24"><output>24</output></label><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="10000" step="1" value="7"><output>7</output></label></div>' +
-      '<div class="ls-scene-row ls-position-metric"><button type="button" class="ls-chip" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button><button type="button" class="ls-chip is-on" data-metric="angle">' + (DE ? "Winkel / Großkreis" : "Angle / great circle") + '</button><button type="button" class="ls-chip is-on" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
+      '<div class="ls-scene-row ls-position-metric"><button type="button" class="ls-chip" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button><button type="button" class="ls-chip is-on" data-metric="angle">' + (DE ? "Winkel / Großkreis" : "Angle / great circle") + '</button><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
       '<div class="ls-position-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var heat = el.querySelector(".ls-position-heat");
@@ -3010,7 +3140,8 @@
     var dimsEl = el.querySelector(".ls-pos-dims");
     var posEl = el.querySelector(".ls-pos-pos");
     var readout = el.querySelector(".ls-position-readout");
-    var context = 64, dims = 24, pos = 7, metric = "angle", rotate = true;
+    var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    var context = 64, dims = 24, pos = 7, metric = "angle", rotate = !reducedMotion;
     var posAnim = pos;
     var heatSize = null, curveSize = null, yaw = -0.6, pitch = 0.5, drag = null, raf = 0, last = 0;
     var C = api.colors();
@@ -3239,7 +3370,13 @@
     window.addEventListener("resize", resize);
     resize();
     raf = requestAnimationFrame(loop);
-    return { update: function () {}, resize: resize, destroy: function () { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); } };
+    return {
+      update: function () {},
+      pause: function () { cancelAnimationFrame(raf); raf = 0; },
+      resume: function () { if (!raf) raf = requestAnimationFrame(loop); },
+      resize: resize,
+      destroy: function () { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); }
+    };
   }
 
   function noiseScene(root, api) {
@@ -4567,7 +4704,7 @@
     };
     var el = document.createElement("div");
     el.className = "ls-softmax-scene";
-    el.innerHTML = '<div class="ls-scene-row ls-softmax-prompts"></div><p class="softmax-context"><span class="softmax-context-label">' + (DE ? "Kontext" : "context") + '</span> <span class="ls-softmax-context"></span></p><div class="softmax-stage"><div class="softmax-col softmax-col--logits"><div class="softmax-col-head"><span>Token</span><span>Logit</span></div><div data-logits></div></div><svg class="softmax-ribbons" data-ribbons aria-hidden="true"><defs><linearGradient id="softmax-ribbon-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#63a44b"></stop><stop offset="100%" stop-color="#009299"></stop></linearGradient></defs></svg><div class="softmax-col softmax-col--probs"><div class="softmax-col-head"><span>' + (DE ? "Wahrscheinlichkeit" : "probability") + '</span><span>Softmax</span></div><div data-probs></div></div></div><div class="ls-scene-row"><label class="ls-range">T <input type="range" class="ls-sm-temp" min="0.2" max="2" step="0.05" value="1"><output>1.00</output></label></div><div class="ls-sm-readout" aria-live="polite"></div>';
+    el.innerHTML = '<div class="ls-scene-row ls-softmax-prompts"></div><p class="softmax-context"><span class="softmax-context-label">' + (DE ? "Kontext · echte GPT-2-Logits (englisch)" : "context · real GPT-2 logits (English)") + '</span> <span class="ls-softmax-context"></span></p><div class="softmax-stage"><div class="softmax-col softmax-col--logits"><div class="softmax-col-head"><span>Token</span><span>Logit</span></div><div data-logits></div></div><svg class="softmax-ribbons" data-ribbons aria-hidden="true"><defs><linearGradient id="softmax-ribbon-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#63a44b"></stop><stop offset="100%" stop-color="#009299"></stop></linearGradient></defs></svg><div class="softmax-col softmax-col--probs"><div class="softmax-col-head"><span>' + (DE ? "Wahrscheinlichkeit" : "probability") + '</span><span>Softmax</span></div><div data-probs></div></div></div><div class="ls-scene-row"><label class="ls-range">T <input type="range" class="ls-sm-temp" min="0.2" max="2" step="0.05" value="1"><output>1.00</output></label></div><div class="ls-sm-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var prompts = el.querySelector(".ls-softmax-prompts");
     var contextEl = el.querySelector(".ls-softmax-context");
@@ -4649,7 +4786,7 @@
       var b = document.createElement("button");
       b.type = "button";
       b.className = "ls-chip" + (key === state.key ? " is-on" : "");
-      b.textContent = key === "spaceship" ? "spaceship" : (DE ? "verlassener Planet" : "deserted planet");
+      b.textContent = key === "spaceship" ? (DE ? "Raumschiff" : "spaceship") : (DE ? "verlassener Planet" : "deserted planet");
       b.addEventListener("click", function () {
         state.key = key;
         prompts.querySelectorAll(".ls-chip").forEach(function (x) { x.classList.toggle("is-on", x === b); });
@@ -5350,6 +5487,8 @@
         if (scene && scene.update) scene.update(s || {}, meta);
       },
       resize: function () { if (scene && scene.resize) scene.resize(); },
+      pause: function () { if (scene && scene.pause) scene.pause(); },
+      resume: function () { if (scene && scene.resume) scene.resume(); },
       onKey: function (e) { return scene && scene.onKey ? scene.onKey(e) : false; },
       destroy: function () {
         Object.keys(scenes).forEach(function (key) {

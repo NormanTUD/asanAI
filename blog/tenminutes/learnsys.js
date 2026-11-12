@@ -30,7 +30,7 @@
       moreInLesson: "Mehr in der Lektion →", clickExample: "Klicken für ein Beispiel",
       watch: "Beobachte", defaultHint: "Klicken, ziehen, beobachten.",
       helpTitle: "Tastatur und Position", helpStep: "Schritt zurück / vor",
-      helpDay: "Tag zurück / vor", helpJump: "Fünf Schritte zurück / vor",
+      helpDay: "Tag zurück / vor", helpJump: "Fünf Schritte zurück / vor", helpUndo: "Letztes Token zurücknehmen (Demo)",
       helpPos: "Position, auch mehrstellig (z. B. 1 1)",
       helpHome: "Erster / letzter Tag", helpMix: "Anderer Mix",
       helpDepth: "Tiefe öffnen", helpDown: "Nächste zugeklappte Box öffnen", helpFocus: "Demo groß",
@@ -56,7 +56,7 @@
       moreInLesson: "More in the lesson →", clickExample: "Click for an example",
       watch: "Watch", defaultHint: "Click, drag, observe.",
       helpTitle: "Keyboard and position", helpStep: "Step back / forward",
-      helpDay: "Day back / forward", helpJump: "Five steps back / forward",
+      helpDay: "Day back / forward", helpJump: "Five steps back / forward", helpUndo: "Undo the last token (demo)",
       helpPos: "Position, multi-digit (e.g. 1 1)",
       helpHome: "First / last day", helpMix: "Another mix",
       helpDepth: "Open depth", helpDown: "Open the next collapsed box", helpFocus: "Large demo",
@@ -370,6 +370,7 @@
     }
     var helpRows = [
       ['<kbd>←</kbd><kbd>→</kbd>', t("helpStep")],
+      ['<kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>Z</kbd>', t("helpUndo")],
       ['<kbd>Shift</kbd> + <kbd>←</kbd><kbd>→</kbd>', cfg.singleDay ? t("helpJump") : t("helpDay")],
       ['<kbd>0</kbd> … <kbd>9</kbd>', t("helpPos")],
       ['<kbd>Home</kbd> / <kbd>End</kbd>', t("helpHome")],
@@ -1379,6 +1380,25 @@
         setupCues();
       }, { passive: true });
     }
+    var swipeStart = null;
+    function swipeExcluded(t) {
+      return !!(t && t.closest && t.closest("input,textarea,select,button,a,canvas,.ls-text,.ls-help,.ls-navbar,.ls-mix,.ls-days,.ls-steps,[role=button]"));
+    }
+    els.app.addEventListener("touchstart", function (e) {
+      if (e.touches.length !== 1 || swipeExcluded(e.target)) { swipeStart = null; return; }
+      swipeStart = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: performance.now() };
+    }, { passive: true });
+    els.app.addEventListener("touchend", function (e) {
+      if (!swipeStart || !e.changedTouches.length) { swipeStart = null; return; }
+      var dx = e.changedTouches[0].clientX - swipeStart.x;
+      var dy = e.changedTouches[0].clientY - swipeStart.y;
+      var dt = performance.now() - swipeStart.t;
+      swipeStart = null;
+      if (dt > 700 || Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.4) return;
+      if (performance.now() < scrollNavAt) return;
+      scrollNavAt = performance.now() + 450;
+      if (dx < 0) next(); else prev();
+    }, { passive: true });
     els.days.addEventListener("click", function (e) {
       var b = e.target.closest("[data-day]");
       if (b) go(parseInt(b.getAttribute("data-day"), 10), 0);
@@ -1395,12 +1415,26 @@
         if (next >= 0 && next < list.length) go(next, 0);
       });
     });
+    document.addEventListener("visibilitychange", function () {
+      if (!demo) return;
+      if (document.hidden) { if (demo.pause) demo.pause(); }
+      else if (demo.resume) demo.resume();
+    });
+    if (window.IntersectionObserver) {
+      var demoObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!demo) return;
+          if (entry.isIntersecting) { if (demo.resume) demo.resume(); }
+          else if (demo.pause) demo.pause();
+        });
+      }, { threshold: 0.01 });
+      demoObserver.observe(els.demo);
+    }
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") { resetPositionBuffer(); hideTip(); toggleHelp(false); return; }
       if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
       if (/^[0-9]$/.test(e.key) && !e.altKey) { e.preventDefault(); pressPositionDigit(e.key); return; }
       resetPositionBuffer();
-      if (e.key === "ArrowRight" && !e.shiftKey) { e.preventDefault(); next(); return; }
       if (demo && demo.onKey && demo.onKey(e)) { e.preventDefault(); return; }
       if (e.key === "?" || e.key === "h" || e.key === "H") { e.preventDefault(); toggleHelp(); return; }
       if (e.shiftKey && e.key === "ArrowRight") { e.preventDefault(); nextDay(); return; }
@@ -1408,7 +1442,7 @@
       if (e.key === "PageDown") { e.preventDefault(); nextDay(); return; }
       if (e.key === "PageUp") { e.preventDefault(); prevDay(); return; }
       if (e.key === "ArrowDown" && openNextClosedBox()) { e.preventDefault(); return; }
-      if (e.key === " ") { e.preventDefault(); next(); }
+      if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
       else if (e.key === "Home") { e.preventDefault(); go(0, 0); }
       else if (e.key === "End") {
