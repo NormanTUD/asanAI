@@ -14,7 +14,7 @@
     {
       kicker: "01 / Die Idee",
       title: "Was ist ein LLM?",
-      body: "Dieser Adventskalender öffnet jeden Tag ein Türchen und hilft dir zu verstehen, wie diese Systeme technisch funktionieren. Ein Large Language Model (LLM) macht dabei immer dieselbe Sache: Es sagt das nächste Token voraus. Früher musstest du bei einer Suche die Websites einzeln öffnen, heute bekommst du eine Zusammenfassung. In einer ChatGPT-Sitzung stellst du eine komplexe Frage und bekommst schnell eine oft nützliche Antwort. Wie geht das? Suchfeld, Sprachbefehl, Zusammenfassung und Chat sind eine Schleife, immer wieder.",
+      body: "Dieser Adventskalender öffnet jeden Tag ein Türchen und hilft dir zu verstehen, wie diese Systeme technisch funktionieren. Ein Large Language Model (LLM) macht dabei immer dieselbe Sache: Es sagt das nächste Token voraus. Früher musstest du bei einer Suche die Websites einzeln öffnen, heute bekommst du eine Zusammenfassung. In einer KI-Chat-Sitzung stellst du eine komplexe Frage und bekommst schnell eine oft nützliche Antwort. Wie geht das? Suchfeld, Sprachbefehl, Zusammenfassung und Chat sind eine Schleife, immer wieder.",
       watch: "Klicke auf ein Handy, um die Animation neu zu starten. Woher kommt die Antwort?",
       demoState: { scene: "phone" },
       context: "Die Suchmaschine schlägt keine gespeicherte Antwort nach. Die Zusammenfassung und die Chat-Antwort werden Token für Token geschrieben, und dieselbe Schleife läuft im Rechenzentrum dahinter.",
@@ -68,7 +68,7 @@
     {
       kicker: "01 / The idea",
       title: "What is an LLM?",
-      body: "This Advent calendar opens one door every day and helps you understand how these systems work technically. A Large Language Model (LLM) always does the same thing: it predicts the next token. In the past you had to open search results one by one; today you often get a summary. In a ChatGPT session you ask a complex question and quickly get a useful answer. How does that work? Search box, voice command, summary, and chat are one loop, repeated.",
+      body: "This Advent calendar opens one door every day and helps you understand how these systems work technically. A Large Language Model (LLM) always does the same thing: it predicts the next token. In the past you had to open search results one by one; today you often get a summary. In an AI chat session you ask a complex question and quickly get a useful answer. How does that work? Search box, voice command, summary, and chat are one loop, repeated.",
       watch: "Click a phone to replay the animation. Where does the answer come from?",
       demoState: { scene: "phone" },
       context: "The search engine does not look up a stored answer. The summary and the chat answer are written token by token, and the same loop runs in the data centre behind it.",

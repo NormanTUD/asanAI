@@ -1112,7 +1112,7 @@
     el.innerHTML =
       '<div class="ia-stage">' +
         '<div class="ia-phones">' +
-          '<div class="ia-phone" id="ia-phone">' +
+          '<div class="ia-phone is-active" id="ia-phone">' +
             '<div class="ia-phone-frame"></div>' +
             '<div class="ia-phone-notch"></div>' +
             '<div class="ia-phone-screen">' +
@@ -1139,7 +1139,7 @@
             '<div class="ia-phone-frame"></div>' +
             '<div class="ia-phone-notch"></div>' +
             '<div class="ia-phone-screen ia-chat-screen">' +
-              '<div class="ia-chat-appbar"><span>ChatGPT</span><i class="ia-chat-live" aria-hidden="true"></i></div>' +
+              '<div class="ia-chat-appbar"><span>' + (DE ? "KI-Chat" : "AI chat") + '</span><i class="ia-chat-live" aria-hidden="true"></i></div>' +
               '<div class="ia-chat-thread" aria-live="polite">' +
                 '<div class="ia-chat-msg is-user"><span class="ia-chat-role">' + (DE ? "Du" : "You") + '</span><span class="ia-chat-bubble ia-chat-question"></span></div>' +
                 '<div class="ia-chat-msg is-ai"><span class="ia-chat-role">LLM</span><span class="ia-chat-bubble ia-chat-answer"></span><span class="ia-chat-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
@@ -1148,13 +1148,32 @@
             '</div>' +
           '</div>' +
         '</div>' +
+        '<div class="ia-phone-switch" role="group" aria-label="' + (DE ? "Ansicht wählen" : "Choose view") + '">' +
+          '<button type="button" class="is-on" data-phone="search" aria-pressed="true">' + (DE ? "Suche" : "Search") + '</button>' +
+          '<button type="button" data-phone="chat" aria-pressed="false">' + (DE ? "KI-Chat" : "AI chat") + '</button>' +
+        '</div>' +
       '</div>';
     root.appendChild(el);
     var stage = el.querySelector(".ia-stage");
     var phonesWrap = el.querySelector(".ia-phones");
     var chatPhone = el.querySelector("#ia-chat-phone");
+    var searchPhone = el.querySelector("#ia-phone");
+    var phoneSwitch = el.querySelectorAll(".ia-phone-switch [data-phone]");
     var chatQuestionEl = el.querySelector(".ia-chat-question");
     var chatAnswerEl = el.querySelector(".ia-chat-answer");
+    function setPhone(which) {
+      var isChat = which === "chat";
+      if (searchPhone) searchPhone.classList.toggle("is-active", !isChat);
+      if (chatPhone) chatPhone.classList.toggle("is-active", isChat);
+      phoneSwitch.forEach(function (b) {
+        var on = b.getAttribute("data-phone") === which;
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+    }
+    phoneSwitch.forEach(function (b) {
+      b.addEventListener("click", function () { setPhone(b.getAttribute("data-phone")); });
+    });
     var logo = el.querySelector("#ia-logo");
     var searchBar = el.querySelector("#ia-search-bar");
     var searchText = el.querySelector("#ia-search-text");
@@ -1165,8 +1184,8 @@
     var thinking = el.querySelector("#ia-ai-thinking");
     var serp = el.querySelector("#ia-serp");
     var SATZ = DE ? "warum ist der himmel blau?" : "why is the sky blue?";
-    var CHAT_Q = DE ? "Erkläre den Treibhauseffekt und schreibe ein Python-Programm, das die CO₂-Konzentration für 2050 abschätzt." : "Explain the greenhouse effect and write a Python program that estimates the CO₂ concentration for 2050.";
-    var CHAT_A = DE ? "Der Treibhauseffekt entsteht, weil Gase wie CO₂ die Wärmestrahlung der Erde zurückhalten. Das Programm interpoliert die Messreihe und schätzt einen Wert für 2050. Das ist eine Extrapolation, keine Prognose." : "The greenhouse effect exists because gases such as CO₂ hold back Earth's thermal radiation. The program interpolates the measurement series and estimates a value for 2050. That is an extrapolation, not a forecast.";
+    var CHAT_Q = DE ? "Warum ist überhaupt irgendwas?" : "Why is there anything at all?";
+    var CHAT_A = DE ? "Die Frage ist offen. Der kosmologische Gottesbeweis sagt, das Universum braucht eine erste, notwendige Ursache. Der Naturalismus hält die Existenz für ein faktisches Grunddatum; „Gott“ verschiebe die Frage nur. Kant und Hume sehen hier die Grenze der Vernunft und empfehlen ehrliche Agnosis. Existenzialisten wie Sartre und Camus antworten praktisch: Bedeutung wird gewählt, nicht im Weltgrund gefunden." : "The question is open. The cosmological argument says the universe needs a first, necessary cause. Naturalism treats existence as a brute fact; “God” only pushes the question back. Kant and Hume see the limit of reason here and recommend honest agnosticism. Existentialists such as Sartre and Camus answer practically: meaning is chosen, not found in the ground of the world.";
     var AI = DE ? [
       { t: "Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm): " },
       { t: "Rayleigh-Streuung", c: "b" },
@@ -1221,6 +1240,7 @@
       if (chatPhone) chatPhone.classList.remove("is-thinking", "is-answered");
       if (chatQuestionEl) chatQuestionEl.textContent = "";
       if (chatAnswerEl) chatAnswerEl.textContent = "";
+      setPhone("search");
     }
     function typeChat(el, text, speed, done) {
       if (reduce) { el.textContent = text; if (done) done(); return; }
@@ -1297,6 +1317,7 @@
           }, 360);
         });
       }, 240);
+      later(function () { setPhone("chat"); }, 5200);
       mic.classList.add("listening");
       wave.classList.add("active");
       typeSearch(SATZ, function () {
@@ -1317,7 +1338,7 @@
     }
     function fit() {
       var r = stage.getBoundingClientRect();
-      var scale = Math.min((r.width - 40) / 744, (r.height - 40) / 600);
+      var scale = Math.min((r.width - 50) / 360, (r.height - 90) / 600);
       if (phonesWrap) phonesWrap.style.transform = "translate(-50%, -50%) scale(" + Math.max(0.24, scale).toFixed(3) + ")";
     }
     buildLogo();
@@ -1378,26 +1399,47 @@
       'print(f"Blue is {blue / red:.2f}x more strongly scattered than red")'
     ];
     var outText = DE ? "Blau wird 4,35× stärker gestreut als Rot." : "Blue is 4.35× more strongly scattered than red.";
+    var agentText = DE ? "Ich denke kurz nach … Fertig. Ich schreibe himmel.py." : "Thinking briefly … done. I'll write sky.py.";
+    var userText = DE ? "Schreibe ein Python-Programm, das die Rayleigh-Streuung berechnet." : "Write a Python program that computes Rayleigh scattering.";
     var el = document.createElement("div");
     el.className = "ls-code-monitor";
     el.innerHTML =
       '<div class="ls-code-frame"><div class="ls-code-screen">' +
         '<div class="ls-code-desktop" style="background-image:url(\'opera.jpg\')">' +
-          '<div class="ls-code-window ls-code-window--editor">' +
+          '<div class="ls-code-window ls-code-window--editor" hidden>' +
             '<div class="ls-code-bar"><i></i><i></i><i></i><span>' + (DE ? "himmel.py" : "sky.py") + '</span></div>' +
             '<pre class="ls-code-body"><code></code></pre>' +
           '</div>' +
-          '<div class="ls-code-window ls-code-window--terminal">' +
+          '<div class="ls-code-window ls-code-window--agent">' +
+            '<div class="ls-code-bar"><i></i><i></i><i></i><span>' + (DE ? "Agent" : "Agent") + '</span></div>' +
+            '<div class="ls-code-chat">' +
+              '<div class="ls-code-msg is-user">' + api.esc(userText) + '</div>' +
+              '<div class="ls-code-msg is-agent"><span class="ls-code-agent-text"></span><span class="ls-code-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
+            '</div>' +
+            '<div class="ls-code-agent-prompt"><b>$</b><span></span></div>' +
+          '</div>' +
+          '<div class="ls-code-window ls-code-window--run" hidden>' +
             '<div class="ls-code-bar"><i></i><i></i><i></i><span>Terminal</span></div>' +
             '<div class="ls-code-term"><b class="ls-code-command"></b><span></span></div>' +
           '</div>' +
+          '<div class="ls-code-taskbar"><span class="ls-code-start" aria-hidden="true">▦</span><i class="ls-code-task" style="--task:#63a44b"></i><i class="ls-code-task" style="--task:#1275ac"></i><span class="ls-code-clock">14:32</span></div>' +
         '</div>' +
       '</div></div>' +
-      '<button type="button" class="ls-btn ls-btn--tiny ls-code-replay">' + (DE ? "Nochmal" : "Replay") + '</button>';
+      '<button type="button" class="ls-btn ls-btn--tiny ls-code-replay" disabled>' + (DE ? "Weiter" : "Next") + '</button>';
     root.appendChild(el);
     var codeEl = el.querySelector(".ls-code-body code");
     var commandEl = el.querySelector(".ls-code-command");
     var term = el.querySelector(".ls-code-term span");
+    var agentMsgEl = el.querySelector(".ls-code-agent-text");
+    var thinkingEl = el.querySelector(".ls-code-thinking");
+    var editorWin = el.querySelector(".ls-code-window--editor");
+    var agentWin = el.querySelector(".ls-code-window--agent");
+    var runWin = el.querySelector(".ls-code-window--run");
+    var replayBtn = el.querySelector(".ls-code-replay");
+    var clockEl = el.querySelector(".ls-code-clock");
+    if (clockEl) {
+      try { clockEl.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); } catch (e) {}
+    }
     var tokens = [];
     codeText.forEach(function (line, li) {
       line.split(/(\s+)/).forEach(function (part) {
@@ -1412,41 +1454,105 @@
       codeEl.appendChild(span);
       return span;
     });
-    var timers = [];
+    var timers = [], phase = "idle";
     function clearTimers() { timers.forEach(clearTimeout); timers = []; }
-    function reset() {
-      clearTimers();
-      spans.forEach(function (s) { s.classList.remove("is-visible"); });
-      commandEl.textContent = "";
-      term.textContent = "";
-      function typeCommand() {
-        var cmd = "$ " + (DE ? "python3 himmel.py" : "python3 sky.py");
-        var j = 0;
-        function step() {
-          j += 1;
-          commandEl.textContent = cmd.slice(0, j);
-          if (j < cmd.length) timers.push(setTimeout(step, 16));
-          else timers.push(setTimeout(function () { term.textContent = outText; }, 220));
-        }
-        step();
+    function later(fn, ms) { var id = setTimeout(fn, ms); timers.push(id); return id; }
+    function show(win, on) {
+      if (!win) return;
+      win.hidden = !on;
+      if (on) {
+        win.classList.remove("is-open");
+        void win.offsetWidth;
+        win.classList.add("is-open");
       }
+    }
+    function setButton(label, disabled) {
+      replayBtn.textContent = label;
+      replayBtn.disabled = !!disabled;
+    }
+    function typeAgent(done) {
+      if (!agentMsgEl) { if (done) done(); return; }
+      var i = 0;
+      function step() {
+        if (i >= agentText.length) { if (done) done(); return; }
+        i++;
+        agentMsgEl.textContent = agentText.slice(0, i);
+        later(step, 18);
+      }
+      step();
+    }
+    function typeCode() {
       var i = 0;
       function typeNext() {
         if (i >= spans.length) {
-          timers.push(setTimeout(typeCommand, 180));
+          phase = "ready";
+          setButton(DE ? "Weiter" : "Next", false);
           return;
         }
         spans[i].classList.add("is-visible");
         var delay = /^\s+$/.test(tokens[i].text) ? 0 : 28;
         i++;
-        timers.push(setTimeout(typeNext, delay));
+        later(typeNext, delay);
       }
-      timers.push(setTimeout(typeNext, 380));
+      later(typeNext, 240);
     }
-    el.querySelector(".ls-code-replay").addEventListener("click", reset);
+    function reset() {
+      clearTimers();
+      phase = "thinking";
+      spans.forEach(function (s) { s.classList.remove("is-visible"); });
+      if (agentMsgEl) agentMsgEl.textContent = "";
+      if (thinkingEl) thinkingEl.classList.remove("on");
+      if (commandEl) commandEl.textContent = "";
+      if (term) term.textContent = "";
+      show(agentWin, true);
+      show(editorWin, false);
+      show(runWin, false);
+      setButton(DE ? "Weiter" : "Next", true);
+      later(function () { if (thinkingEl) thinkingEl.classList.add("on"); }, 260);
+      later(function () {
+        if (thinkingEl) thinkingEl.classList.remove("on");
+        typeAgent(function () {
+          show(editorWin, true);
+          typeCode();
+        });
+      }, 1050);
+    }
+    function runProgram() {
+      phase = "running";
+      show(agentWin, false);
+      show(runWin, true);
+      if (commandEl) commandEl.textContent = "";
+      if (term) term.textContent = "";
+      var cmd = "$ " + (DE ? "python3 himmel.py" : "python3 sky.py");
+      var stepMs = 200 / Math.max(1, cmd.length);
+      var j = 0;
+      function typeCommand() {
+        if (j >= cmd.length) {
+          later(function () { if (term) term.textContent = outText; }, 260);
+          later(function () {
+            phase = "done";
+            setButton(DE ? "Nochmal" : "Replay", false);
+          }, 420);
+          return;
+        }
+        j++;
+        if (commandEl) commandEl.textContent = cmd.slice(0, j);
+        later(typeCommand, stepMs);
+      }
+      typeCommand();
+    }
+    replayBtn.addEventListener("click", function () {
+      if (phase === "ready") runProgram();
+      else if (phase === "done") reset();
+    });
     reset();
     return {
       update: function () {},
+      pause: function () {
+        clearTimers();
+        if (phase !== "ready" && phase !== "done") phase = "paused";
+      },
+      resume: function () { if (phase === "idle" || phase === "paused") reset(); },
       resize: function () {},
       destroy: function () { clearTimers(); el.remove(); }
     };
@@ -5158,7 +5264,7 @@
     var stage = el.querySelector(".ls-model-stage");
     var canvas = el.querySelector("canvas");
     var readout = el.querySelector(".ls-model-readout");
-    var size = null, ctx = null, hits = [], active = -1;
+    var size = null, ctx = null, hits = [], active = -1, view = "plot";
     var C = api.colors();
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var raf = 0, started = 0, fit = reducedMotion ? 1 : 0, time = 0;
@@ -5188,16 +5294,17 @@
       }
     })();
     function updateReadout() {
-      var text = active >= 0
-        ? cards[active].desc
-        : (DE ? "Daten rein, Funktion geschätzt: Das ist die Idee hinter Machine Learning. Die vier Bausteine bauen daraus ein LLM." : "Data in, function estimated: that is the idea behind machine learning. The four building blocks turn it into an LLM.");
+      var text;
+      if (active >= 0) text = cards[active].desc;
+      else if (view === "blocks") text = DE ? "Ein LLM baut aus diesen vier Bausteinen eine Funktion. Klicke einen Baustein an." : "An LLM builds a function from these four blocks. Click a block.";
+      else text = DE ? "Daten rein, Funktion geschätzt: Das ist die Idee hinter Machine Learning. Das Modell findet eine Kurve, die die echten Werte gut genug trifft." : "Data in, function estimated: that is the idea behind machine learning. The model finds a curve that fits the real values well enough.";
       readout.innerHTML = '<span><b>' + (DE ? "Machine Learning" : "Machine learning") + '</b> ' + api.esc(text) + '</span>';
     }
     function cardColor(c) { return color(c.color); }
     function drawCard(x, y, w, h, idx) {
       var card = cards[idx];
       var on = idx === active;
-      ctx.fillStyle = on ? "rgba(255,255,255,.96)" : "rgba(255,255,255,.82)";
+      ctx.fillStyle = on ? "rgba(255,255,255,.96)" : "rgba(255,255,255,.86)";
       ctx.strokeStyle = on ? cardColor(card) : C.lineStrong;
       ctx.lineWidth = on ? 2 : 1;
       ctx.fillRect(x, y, w, h);
@@ -5226,18 +5333,8 @@
       ctx.fillStyle = C.lineStrong;
       ctx.fill();
     }
-    function draw() {
-      if (!size) return;
-      ctx = size.ctx;
-      hits = [];
-      ctx.clearRect(0, 0, size.w, size.h);
-      var w = size.w, h = size.h, pad = 24;
-      var bg = ctx.createRadialGradient(w * 0.5, h * 0.28, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.75);
-      bg.addColorStop(0, "rgba(247,250,249,.9)");
-      bg.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
-      var plotX = pad, plotY = 30, plotW = w - pad * 2;
-      var plotH = Math.max(94, Math.min(h * 0.46, 210));
+    function drawPlot(w, h, pad) {
+      var plotX = pad, plotY = 42, plotW = w - pad * 2, plotH = Math.max(120, h - 96);
       ctx.strokeStyle = C.line;
       ctx.lineWidth = 1;
       for (var gx = 0; gx <= 4; gx++) {
@@ -5290,7 +5387,7 @@
       ctx.stroke();
       samples.forEach(function (s) {
         ctx.beginPath();
-        ctx.arc(px(s.t), py(s.v), 3.2, 0, Math.PI * 2);
+        ctx.arc(px(s.t), py(s.v), 3.4, 0, Math.PI * 2);
         ctx.fillStyle = C.paper;
         ctx.fill();
         ctx.strokeStyle = C.blue;
@@ -5299,19 +5396,28 @@
       });
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillStyle = C.blue;
-      ctx.beginPath(); ctx.arc(plotX + 6, plotY - 12, 3.2, 0, Math.PI * 2); ctx.fillStyle = C.paper; ctx.fill(); ctx.strokeStyle = C.blue; ctx.lineWidth = 1.5; ctx.stroke();
-      ctx.fillStyle = C.blue; ctx.fillText(DE ? "Daten" : "data", plotX + 14, plotY - 8);
+      ctx.beginPath(); ctx.arc(plotX + 6, plotY - 16, 3.4, 0, Math.PI * 2); ctx.fillStyle = C.paper; ctx.fill(); ctx.strokeStyle = C.blue; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = C.blue; ctx.fillText(DE ? "Daten" : "data", plotX + 14, plotY - 12);
       ctx.fillStyle = C.green;
-      ctx.fillRect(plotX + 72, plotY - 14, 18, 2.6);
-      ctx.fillText(DE ? "Modell" : "model", plotX + 96, plotY - 8);
+      ctx.fillRect(plotX + 72, plotY - 18, 18, 2.8);
+      ctx.fillText(DE ? "Modell" : "model", plotX + 96, plotY - 12);
       ctx.fillStyle = C.muted;
-      ctx.fillText(DE ? "echte Funktion" : "true function", plotX + 168, plotY - 8);
-      var pipeY = plotY + plotH + 28;
+      ctx.fillText(DE ? "echte Funktion" : "true function", plotX + 168, plotY - 12);
+    }
+    function drawBlocks(w, h, pad) {
+      ctx.fillStyle = C.ink;
+      ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif';
+      ctx.textAlign = "center";
+      ctx.fillText(DE ? "Ein LLM aus vier Bausteinen" : "An LLM from four building blocks", w / 2, 32);
+      ctx.fillStyle = C.muted;
+      ctx.font = '500 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.fillText(DE ? "Machine Learning + Architektur" : "machine learning + architecture", w / 2, 52);
       var narrow = w < 620;
       var gap = narrow ? 10 : 14;
-      var cw, ch = narrow ? 54 : 60;
+      var ch = narrow ? 64 : 76;
+      var pipeY = h * 0.44;
       var positions = [];
+      var cw;
       if (narrow) {
         cw = (w - pad * 2 - gap) / 2;
         positions = [
@@ -5323,7 +5429,7 @@
         drawArrow(positions[1].x + cw / 2, positions[1].y + ch, positions[2].x + cw / 2, positions[2].y);
         drawArrow(positions[2].x, positions[2].y + ch / 2, positions[3].x + cw, positions[3].y + ch / 2);
       } else {
-        cw = Math.min(170, (w - pad * 2 - gap * 3) / 4);
+        cw = Math.min(180, (w - pad * 2 - gap * 3) / 4);
         var total = cw * 4 + gap * 3;
         var startX = w / 2 - total / 2;
         cards.forEach(function (c, i) { positions.push({ x: startX + i * (cw + gap), y: pipeY }); drawCard(positions[i].x, pipeY, cw, ch, i); });
@@ -5337,11 +5443,24 @@
         var si = Math.floor(seg), st = seg - si;
         var a = path[si], b = path[Math.min(path.length - 1, si + 1)] || a;
         var dotX = a.x + (b.x - a.x) * st, dotY = a.y + (b.y - a.y) * st;
-        ctx.beginPath(); ctx.arc(dotX, dotY, 10, 0, Math.PI * 2); ctx.fillStyle = "rgba(99,164,75,.16)"; ctx.fill();
-        ctx.beginPath(); ctx.arc(dotX, dotY, 4, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill();
+        ctx.beginPath(); ctx.arc(dotX, dotY, 11, 0, Math.PI * 2); ctx.fillStyle = "rgba(99,164,75,.16)"; ctx.fill();
+        ctx.beginPath(); ctx.arc(dotX, dotY, 4.5, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill();
         ctx.strokeStyle = C.paper; ctx.lineWidth = 1.5; ctx.stroke();
       }
-      canvas.__lsModel = { hits: hits, active: active };
+    }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      hits = [];
+      ctx.clearRect(0, 0, size.w, size.h);
+      var w = size.w, h = size.h, pad = 24;
+      var bg = ctx.createRadialGradient(w * 0.5, h * 0.30, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.78);
+      bg.addColorStop(0, "rgba(247,250,249,.92)");
+      bg.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+      if (view === "blocks") drawBlocks(w, h, pad);
+      else drawPlot(w, h, pad);
+      canvas.__lsModel = { hits: hits, active: active, view: view };
     }
     function frame(now) {
       raf = requestAnimationFrame(frame);
@@ -5353,6 +5472,7 @@
     function start() { if (reducedMotion) { fit = 1; draw(); return; } if (!raf) raf = requestAnimationFrame(frame); }
     function resize() { size = api.fit(canvas, stage); draw(); }
     canvas.addEventListener("pointerup", function (e) {
+      if (view !== "blocks") return;
       var r = canvas.getBoundingClientRect();
       var x = e.clientX - r.left, y = e.clientY - r.top;
       hits.forEach(function (h) {
@@ -5369,7 +5489,16 @@
     resize();
     start();
     return {
-      update: function () {},
+      update: function (s) {
+        if (s && s.view && s.view !== view) {
+          view = s.view;
+          active = -1;
+          started = 0;
+          fit = reducedMotion ? 1 : 0;
+          updateReadout();
+          draw();
+        }
+      },
       pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } },
       resume: function () { start(); if (reducedMotion) draw(); },
       resize: resize,
