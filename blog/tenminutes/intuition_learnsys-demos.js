@@ -1166,7 +1166,7 @@
     var serp = el.querySelector("#ia-serp");
     var SATZ = DE ? "warum ist der himmel blau?" : "why is the sky blue?";
     var CHAT_Q = DE ? "Erkläre den Treibhauseffekt und schreibe ein Python-Programm, das die CO₂-Konzentration für 2050 abschätzt." : "Explain the greenhouse effect and write a Python program that estimates the CO₂ concentration for 2050.";
-    var CHAT_A = DE ? "Der Treibhauseffekt entsteht, weil Gase wie CO₂ die Wärmestrahlung der Erde zurückhalten. Das Programm interpoliert die Messreihe und schätzt für 2050 etwa 520 ppm. Das ist eine Extrapolation, keine Prognose." : "The greenhouse effect exists because gases such as CO₂ hold back Earth's thermal radiation. The program interpolates the measurement series and estimates about 520 ppm for 2050. That is an extrapolation, not a forecast.";
+    var CHAT_A = DE ? "Der Treibhauseffekt entsteht, weil Gase wie CO₂ die Wärmestrahlung der Erde zurückhalten. Das Programm interpoliert die Messreihe und schätzt einen Wert für 2050. Das ist eine Extrapolation, keine Prognose." : "The greenhouse effect exists because gases such as CO₂ hold back Earth's thermal radiation. The program interpolates the measurement series and estimates a value for 2050. That is an extrapolation, not a forecast.";
     var AI = DE ? [
       { t: "Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm): " },
       { t: "Rayleigh-Streuung", c: "b" },
