@@ -2218,23 +2218,50 @@
         ctx.stroke();
         ctx.globalAlpha = 1;
       });
-      var plotX = w * 0.5, plotY = h * 0.66;
-      var scale = Math.min(w, h) * 0.18;
+      var plotX = w * 0.55, plotY = h * 0.56;
+      var scale = Math.min(w * 0.18, h * 0.24, 110);
+      var gx0 = plotX - scale * 1.15, gx1 = plotX + scale * 1.15;
+      var gy0 = plotY - scale * 1.15, gy1 = plotY + scale * 1.15;
+      ctx.strokeStyle = C.line;
+      ctx.lineWidth = 1;
+      for (var gg = -1; gg <= 1; gg += 0.25) {
+        ctx.beginPath(); ctx.moveTo(plotX + gg * scale, gy0); ctx.lineTo(plotX + gg * scale, gy1); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(gx0, plotY - gg * scale); ctx.lineTo(gx1, plotY - gg * scale); ctx.stroke();
+      }
+      ctx.strokeStyle = C.lineStrong;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(gx0, plotY); ctx.lineTo(gx1, plotY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(plotX, gy0); ctx.lineTo(plotX, gy1); ctx.stroke();
       function point(x, y, col, label, on) {
         var px = plotX + x * scale, py = plotY - y * scale;
         ctx.beginPath(); ctx.arc(px, py, on ? 7 : 4.5, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
         ctx.fillStyle = on ? C.ink : C.soft; ctx.font = '600 10px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(label, px, py - 11);
-        return { x: px, y: py };
+        return { x: px, y: py, dx: x, dy: y };
       }
-      var river = point(0.45, 0.35, C.blue, DE ? "Fluss" : "river", current === "river" || current === "both");
-      var money = point(-0.2, 0.55, C.gold, DE ? "Geld" : "money", current === "money" || current === "both");
-      var bank = point(-0.1, -0.2, C.green, DE ? "Bank" : "bank", true);
+      var river = point(0.55, 0.35, C.blue, DE ? "Fluss" : "river", current === "river" || current === "both");
+      var money = point(-0.45, 0.55, C.gold, DE ? "Geld" : "money", current === "money" || current === "both");
+      var bank = point(0, 0, C.green, DE ? "Bank" : "bank", true);
       var tx = 0, ty = 0;
-      if (current === "river" || current === "both") { tx += 0.45; ty += 0.35; }
-      if (current === "money" || current === "both") { tx += -0.2; ty += 0.55; }
+      if (current === "river" || current === "both") { tx += river.dx * 0.8; ty += river.dy * 0.8; }
+      if (current === "money" || current === "both") { tx += money.dx * 0.8; ty += money.dy * 0.8; }
       if (current === "both") { tx /= 2; ty /= 2; }
-      var moved = point(bank.x ? (tx * 0.5 - 0.05) : 0, ty * 0.5 - 0.1, C.green, "", true);
-      ctx.beginPath(); ctx.moveTo(bank.x, bank.y); ctx.lineTo(moved.x, moved.y); ctx.strokeStyle = C.green; ctx.lineWidth = 2; ctx.stroke();
+      var moved = point(tx, ty, C.green, "", true);
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = C.green;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(bank.x, bank.y); ctx.lineTo(moved.x, moved.y); ctx.stroke();
+      ctx.restore();
+      var ang = Math.atan2(moved.y - bank.y, moved.x - bank.x);
+      ctx.beginPath();
+      ctx.moveTo(moved.x, moved.y);
+      ctx.lineTo(moved.x - 8 * Math.cos(ang - 0.4), moved.y - 8 * Math.sin(ang - 0.4));
+      ctx.lineTo(moved.x - 8 * Math.cos(ang + 0.4), moved.y - 8 * Math.sin(ang + 0.4));
+      ctx.closePath();
+      ctx.fillStyle = C.green;
+      ctx.fill();
+      ctx.fillStyle = C.muted; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "left";
+      ctx.fillText(DE ? "Bank-Vektor" : "bank vector", gx0, gy0 - 6);
       hits = [];
       contexts.forEach(function (c2, i) {
         var x = pad + i * ((w - pad * 2) / contexts.length);
@@ -2767,7 +2794,7 @@
     };
     var el = document.createElement("div");
     el.className = "ls-softmax-scene";
-    el.innerHTML = '<div class="ls-scene-row ls-softmax-prompts"></div><p class="softmax-context"><span class="softmax-context-label">' + (DE ? "Kontext" : "context") + '</span> <span class="ls-softmax-context"></span></p><div class="softmax-stage"><div class="softmax-col softmax-col--logits"><div class="softmax-col-head"><span>Token</span><span>Logit</span></div><div data-logits></div></div><svg class="softmax-ribbons" data-ribbons aria-hidden="true"></svg><div class="softmax-col softmax-col--probs"><div class="softmax-col-head"><span>' + (DE ? "Wahrscheinlichkeit" : "probability") + '</span><span>Softmax</span></div><div data-probs></div></div></div><div class="ls-scene-row"><label class="ls-range">T <input type="range" class="ls-sm-temp" min="0.2" max="2" step="0.05" value="1"><output>1.00</output></label></div><div class="ls-sm-readout" aria-live="polite"></div>';
+    el.innerHTML = '<div class="ls-scene-row ls-softmax-prompts"></div><p class="softmax-context"><span class="softmax-context-label">' + (DE ? "Kontext" : "context") + '</span> <span class="ls-softmax-context"></span></p><div class="softmax-stage"><div class="softmax-col softmax-col--logits"><div class="softmax-col-head"><span>Token</span><span>Logit</span></div><div data-logits></div></div><svg class="softmax-ribbons" data-ribbons aria-hidden="true"><defs><linearGradient id="softmax-ribbon-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#63a44b"></stop><stop offset="100%" stop-color="#009299"></stop></linearGradient></defs></svg><div class="softmax-col softmax-col--probs"><div class="softmax-col-head"><span>' + (DE ? "Wahrscheinlichkeit" : "probability") + '</span><span>Softmax</span></div><div data-probs></div></div></div><div class="ls-scene-row"><label class="ls-range">T <input type="range" class="ls-sm-temp" min="0.2" max="2" step="0.05" value="1"><output>1.00</output></label></div><div class="ls-sm-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var prompts = el.querySelector(".ls-softmax-prompts");
     var contextEl = el.querySelector(".ls-softmax-context");
@@ -2777,6 +2804,7 @@
     var tempEl = el.querySelector(".ls-sm-temp");
     var readout = el.querySelector(".ls-sm-readout");
     var state = { key: "spaceship", temp: 1, hovered: 0 };
+    var pathEls = [];
     function calc() {
       var rows = PROMPTS[state.key].rows;
       var logits = rows.map(function (r) { return r.logit; });
@@ -2812,6 +2840,7 @@
           state.hovered = i;
           el.querySelectorAll(".softmax-row").forEach(function (x) { x.classList.remove("is-hot"); });
           lrow.classList.add("is-hot"); prow.classList.add("is-hot");
+          pathEls.forEach(function (p, k) { if (p) p.classList.toggle("is-hot", k === i); });
           readout.innerHTML = '<span>Token <b>' + api.esc(r.token) + '</b></span><span>Logit <b>' + r.logit.toFixed(2) + '</b></span><span>exp((logit − max)/T) <b>' + c.ex[i].toFixed(4) + '</b></span><span>p <b>' + (c.probs[i] * 100).toFixed(2) + '%</b></span>';
         }
         lrow.addEventListener("mouseenter", hover); lrow.addEventListener("focus", hover);
@@ -2824,7 +2853,9 @@
       var stage = el.querySelector(".softmax-stage");
       var sr = stage.getBoundingClientRect();
       ribbons.setAttribute("viewBox", "0 0 " + sr.width + " " + sr.height);
-      ribbons.innerHTML = "";
+      var defs = '<defs><linearGradient id="softmax-ribbon-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#63a44b"></stop><stop offset="100%" stop-color="#009299"></stop></linearGradient></defs>';
+      ribbons.innerHTML = defs;
+      pathEls = [];
       var ls = logitsEl.querySelectorAll(".softmax-row");
       var ps = probsEl.querySelectorAll(".softmax-row");
       ls.forEach(function (l, i) {
@@ -2836,9 +2867,9 @@
         var mx = (x1 + x2) / 2;
         path.setAttribute("d", "M" + x1 + "," + y1 + " C" + mx + "," + y1 + " " + mx + "," + y2 + " " + x2 + "," + y2);
         path.setAttribute("fill", "none");
-        path.setAttribute("stroke", "rgba(18,117,172,.18)");
         path.setAttribute("stroke-width", "1");
         ribbons.appendChild(path);
+        pathEls[i] = path;
       });
     }
     Object.keys(PROMPTS).forEach(function (key) {
