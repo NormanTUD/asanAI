@@ -13,11 +13,11 @@
   var introSteps = DE ? [
     {
       kicker: "01 / Die Idee",
-      title: "Das Modell in deiner Tasche",
-      body: "Stell deinem Handy eine Frage. Die Antwort erscheint Wort für Wort. Unter der Haube macht das Modell eine Sache: Es sagt das nächste Token voraus. Suchfeld, Sprachbefehl, Zusammenfassung und Treffer sind eine Schleife, immer wieder.",
-      watch: "Klicke auf das Handy, um die Animation erneut zu starten. Woher kommt die Antwort?",
+      title: "Was ist ein LLM?",
+      body: "Dieser Adventskalender öffnet jeden Tag ein Türchen und hilft dir zu verstehen, wie diese Systeme technisch funktionieren. Ein Large Language Model (LLM) macht dabei immer dieselbe Sache: Es sagt das nächste Token voraus. Früher musstest du bei einer Suche die Websites einzeln öffnen, heute bekommst du eine Zusammenfassung. In einer ChatGPT-Sitzung stellst du eine komplexe Frage und bekommst schnell eine oft nützliche Antwort. Wie geht das? Suchfeld, Sprachbefehl, Zusammenfassung und Chat sind eine Schleife, immer wieder.",
+      watch: "Klicke auf ein Handy, um die Animation neu zu starten. Woher kommt die Antwort?",
       demoState: { scene: "phone" },
-      context: "Die Suchmaschine schlägt keine gespeicherte Antwort nach. Die Zusammenfassung wird Token für Token geschrieben, und dieselbe Schleife läuft im Rechenzentrum dahinter.",
+      context: "Die Suchmaschine schlägt keine gespeicherte Antwort nach. Die Zusammenfassung und die Chat-Antwort werden Token für Token geschrieben, und dieselbe Schleife läuft im Rechenzentrum dahinter.",
       deep: "Der Satz ist eine Kette von Entscheidungen. Jedes neue Token verändert den Kontext für das nächste. Deshalb ist die Antwort nicht aus einem Archiv geholt, sondern in diesem Moment zusammengesetzt.",
       boxes: [
         box("in-1", "Die Schleife", "Was ist ein Token?", "Ein Token ist ein Stück Text: ein Wort, ein Wortteil, ein Satzzeichen oder ein Byte. Das Modell liest eine ID, keine Buchstaben. Aus IDs werden Vektoren, und am Ende steht wieder Text."),
@@ -26,9 +26,9 @@
     },
     {
       kicker: "01b / Code",
-      title: "Es schreibt Text und Code",
-      body: "Dieselbe Schleife schreibt Prosa und Code. Das Modell sagt das nächste Token voraus, und Python führt das fertige Programm aus. Der Code ist eine weitere Sequenz, die das Modell vorhersagen kann.",
-      watch: "Klicke auf das Fenster, um die Animation erneut zu starten. Was hat das Modell geschrieben, was hat Python gerechnet?",
+      title: "LLM können nicht nur Texte, sie sind gute Programmierer",
+      body: "Dieselbe Schleife schreibt Prosa und Code. Auf dem Monitor links oben steht das Programm himmel.py, rechts unten läuft das Terminal. Das Modell sagt das nächste Token voraus, und Python führt den fertigen Code aus. Code ist eine weitere Sequenz, die das Modell vorhersagen kann.",
+      watch: "Klicke auf den Monitor, um die Animation erneut zu starten. Was hat das Modell geschrieben, was hat Python gerechnet?",
       demoState: { scene: "code" },
       context: "Das Modell schreibt das Programm; das Programm rechnet das Verhältnis. Die Schleife endet nicht am Text, sie kann auch eine ausführbare Anweisung erzeugen.",
       deep: "Der Code ist nicht magisch korrekt. Er ist eine wahrscheinliche Fortsetzung, die zu den Trainingsdaten passt. Deshalb muss man ihn lesen und testen; die Schleife liefert eine Hypothese, keinen Beweis.",
@@ -67,11 +67,11 @@
   ] : [
     {
       kicker: "01 / The idea",
-      title: "The model in your pocket",
-      body: "Ask your phone a question. The answer appears one word at a time. Under the hood the model does one thing: predict the next token. The search box, the voice query, the summary, and the links are one loop, repeated.",
-      watch: "Click the phone to replay the animation. Where does the answer come from?",
+      title: "What is an LLM?",
+      body: "This Advent calendar opens one door every day and helps you understand how these systems work technically. A Large Language Model (LLM) always does the same thing: it predicts the next token. In the past you had to open search results one by one; today you often get a summary. In a ChatGPT session you ask a complex question and quickly get a useful answer. How does that work? Search box, voice command, summary, and chat are one loop, repeated.",
+      watch: "Click a phone to replay the animation. Where does the answer come from?",
       demoState: { scene: "phone" },
-      context: "The search engine does not look up a stored answer. The summary is written token by token, and the same loop runs in the data centre behind it.",
+      context: "The search engine does not look up a stored answer. The summary and the chat answer are written token by token, and the same loop runs in the data centre behind it.",
       deep: "The sentence is a chain of decisions. Every new token changes the context for the next one. That is why the answer is not fetched from an archive but assembled in the moment.",
       boxes: [
         box("in-1", "The loop", "What is a token?", "A token is a piece of text: a word, a word piece, a punctuation mark, or a byte. The model reads an ID, not letters. IDs become vectors, and at the end there is text again."),
@@ -80,9 +80,9 @@
     },
     {
       kicker: "01b / Code",
-      title: "It writes text and code",
-      body: "The same loop writes prose and code. The model predicts the next token, and Python runs the finished program. Code is another sequence the model can predict.",
-      watch: "Click the window to replay the animation. What did the model write, what did Python compute?",
+      title: "LLMs can do more than text; they are good programmers",
+      body: "The same loop writes prose and code. On the monitor, the program sky.py is top left and the terminal runs bottom right. The model predicts the next token, and Python executes the finished code. Code is just another sequence the model can predict.",
+      watch: "Click the monitor to replay the animation. What did the model write, what did Python compute?",
       demoState: { scene: "code" },
       context: "The model writes the program; the program computes the ratio. The loop does not stop at text; it can produce an executable instruction.",
       deep: "The code is not magically correct. It is a likely continuation that fits the training data. That is why you read and test it; the loop gives a hypothesis, not a proof.",

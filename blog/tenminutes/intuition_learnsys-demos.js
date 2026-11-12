@@ -1111,33 +1111,50 @@
     el.className = "ls-phone-scene";
     el.innerHTML =
       '<div class="ia-stage">' +
-        '<div class="ia-phone" id="ia-phone">' +
-          '<div class="ia-phone-frame"></div>' +
-          '<div class="ia-phone-notch"></div>' +
-          '<div class="ia-phone-screen">' +
-            '<div class="ia-app-logo" id="ia-logo" aria-hidden="true"></div>' +
-            '<div class="ia-search-bar" id="ia-search-bar">' +
-              '<div class="ia-search-icon" aria-hidden="true"></div>' +
-              '<div class="ia-search-text" id="ia-search-text"></div>' +
-              '<div class="ia-mic-btn" id="ia-mic-btn" aria-hidden="true"><div class="ia-mic-icon"></div></div>' +
+        '<div class="ia-phones">' +
+          '<div class="ia-phone" id="ia-phone">' +
+            '<div class="ia-phone-frame"></div>' +
+            '<div class="ia-phone-notch"></div>' +
+            '<div class="ia-phone-screen">' +
+              '<div class="ia-app-logo" id="ia-logo" aria-hidden="true"></div>' +
+              '<div class="ia-search-bar" id="ia-search-bar">' +
+                '<div class="ia-search-icon" aria-hidden="true"></div>' +
+                '<div class="ia-search-text" id="ia-search-text"></div>' +
+                '<div class="ia-mic-btn" id="ia-mic-btn" aria-hidden="true"><div class="ia-mic-icon"></div></div>' +
+              '</div>' +
+              '<div class="ia-ai-card" id="ia-ai-card">' +
+                '<div class="ia-ai-text" id="ia-ai-text"></div>' +
+                '<div class="ia-ai-thinking" id="ia-ai-thinking" aria-hidden="true"><span></span><span></span><span></span></div>' +
+              '</div>' +
+              '<div class="ia-serp" id="ia-serp"></div>' +
             '</div>' +
-            '<div class="ia-ai-card" id="ia-ai-card">' +
-              '<div class="ia-ai-text" id="ia-ai-text"></div>' +
-              '<div class="ia-ai-thinking" id="ia-ai-thinking" aria-hidden="true"><span></span><span></span><span></span></div>' +
+            '<div class="ia-waveform" id="ia-waveform" aria-hidden="true">' +
+              '<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>' +
+              '<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>' +
+              '<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>' +
+              '<div class="ia-bar"></div><div class="ia-bar"></div>' +
             '</div>' +
-            '<div class="ia-serp" id="ia-serp"></div>' +
           '</div>' +
-        '</div>' +
-        '<div class="ia-waveform" id="ia-waveform" aria-hidden="true">' +
-          '<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>' +
-          '<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>' +
-          '<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>' +
-          '<div class="ia-bar"></div><div class="ia-bar"></div>' +
+          '<div class="ia-phone ia-phone--chat" id="ia-chat-phone">' +
+            '<div class="ia-phone-frame"></div>' +
+            '<div class="ia-phone-notch"></div>' +
+            '<div class="ia-phone-screen ia-chat-screen">' +
+              '<div class="ia-chat-appbar"><span>ChatGPT</span><i class="ia-chat-live" aria-hidden="true"></i></div>' +
+              '<div class="ia-chat-thread" aria-live="polite">' +
+                '<div class="ia-chat-msg is-user"><span class="ia-chat-role">' + (DE ? "Du" : "You") + '</span><span class="ia-chat-bubble ia-chat-question"></span></div>' +
+                '<div class="ia-chat-msg is-ai"><span class="ia-chat-role">LLM</span><span class="ia-chat-bubble ia-chat-answer"></span><span class="ia-chat-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
+              '</div>' +
+              '<div class="ia-chat-compose"><span>' + (DE ? "Nachricht" : "Message") + '</span><i class="ia-chat-send" aria-hidden="true"></i></div>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
       '</div>';
     root.appendChild(el);
     var stage = el.querySelector(".ia-stage");
-    var phone = el.querySelector(".ia-phone");
+    var phonesWrap = el.querySelector(".ia-phones");
+    var chatPhone = el.querySelector("#ia-chat-phone");
+    var chatQuestionEl = el.querySelector(".ia-chat-question");
+    var chatAnswerEl = el.querySelector(".ia-chat-answer");
     var logo = el.querySelector("#ia-logo");
     var searchBar = el.querySelector("#ia-search-bar");
     var searchText = el.querySelector("#ia-search-text");
@@ -1148,6 +1165,8 @@
     var thinking = el.querySelector("#ia-ai-thinking");
     var serp = el.querySelector("#ia-serp");
     var SATZ = DE ? "warum ist der himmel blau?" : "why is the sky blue?";
+    var CHAT_Q = DE ? "Erkläre den Treibhauseffekt und schreibe ein Python-Programm, das die CO₂-Konzentration für 2050 abschätzt." : "Explain the greenhouse effect and write a Python program that estimates the CO₂ concentration for 2050.";
+    var CHAT_A = DE ? "Der Treibhauseffekt entsteht, weil Gase wie CO₂ die Wärmestrahlung der Erde zurückhalten. Das Programm interpoliert die Messreihe und schätzt für 2050 etwa 520 ppm. Das ist eine Extrapolation, keine Prognose." : "The greenhouse effect exists because gases such as CO₂ hold back Earth's thermal radiation. The program interpolates the measurement series and estimates about 520 ppm for 2050. That is an extrapolation, not a forecast.";
     var AI = DE ? [
       { t: "Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm): " },
       { t: "Rayleigh-Streuung", c: "b" },
@@ -1199,6 +1218,18 @@
       aiText.innerHTML = "";
       thinking.classList.remove("on");
       serp.classList.remove("on");
+      if (chatPhone) chatPhone.classList.remove("is-thinking", "is-answered");
+      if (chatQuestionEl) chatQuestionEl.textContent = "";
+      if (chatAnswerEl) chatAnswerEl.textContent = "";
+    }
+    function typeChat(el, text, speed, done) {
+      if (reduce) { el.textContent = text; if (done) done(); return; }
+      var i = 0;
+      var timer = setInterval(function () {
+        if (i < text.length) { i += 1; el.textContent = text.slice(0, i); }
+        else { clearInterval(timer); if (done) done(); }
+      }, speed);
+      timers.push(timer);
     }
     function typeSearch(text, done) {
       if (reduce) { searchText.textContent = text; done(); return; }
@@ -1251,8 +1282,21 @@
         card.classList.add("on");
         typeAnswer();
         serp.classList.add("on");
+        if (chatQuestionEl) chatQuestionEl.textContent = CHAT_Q;
+        if (chatAnswerEl) chatAnswerEl.textContent = CHAT_A;
+        if (chatPhone) chatPhone.classList.add("is-answered");
         return;
       }
+      later(function () {
+        typeChat(chatQuestionEl, CHAT_Q, 14, function () {
+          chatPhone.classList.add("is-thinking");
+          later(function () {
+            chatPhone.classList.remove("is-thinking");
+            chatPhone.classList.add("is-answered");
+            typeChat(chatAnswerEl, CHAT_A, 5, null);
+          }, 360);
+        });
+      }, 240);
       mic.classList.add("listening");
       wave.classList.add("active");
       typeSearch(SATZ, function () {
@@ -1273,8 +1317,8 @@
     }
     function fit() {
       var r = stage.getBoundingClientRect();
-      var scale = Math.min((r.width - 60) / 360, (r.height - 60) / 600);
-      phone.style.transform = "scale(" + scale.toFixed(3) + ")";
+      var scale = Math.min((r.width - 40) / 744, (r.height - 40) / 600);
+      if (phonesWrap) phonesWrap.style.transform = "translate(-50%, -50%) scale(" + Math.max(0.24, scale).toFixed(3) + ")";
     }
     buildLogo();
     buildSerp();
@@ -1335,12 +1379,20 @@
     ];
     var outText = DE ? "Blau wird 4,35× stärker gestreut als Rot." : "Blue is 4.35× more strongly scattered than red.";
     var el = document.createElement("div");
-    el.className = "ls-code-scene";
+    el.className = "ls-code-monitor";
     el.innerHTML =
-      '<div class="ls-code-window"><div class="ls-code-bar"><i></i><i></i><i></i><span>' + (DE ? "himmel.py" : "sky.py") + '</span></div>' +
-        '<div class="ls-code-chat"><div class="ls-code-msg is-user">' + (DE ? "Schreibe ein Python-Programm, das berechnet, wie stark blaues und rotes Licht in der Atmosphäre gestreut werden." : "Write a Python program that calculates how strongly blue and red light are scattered in the atmosphere.") + '</div><div class="ls-code-msg is-ai">' + (DE ? "Klar. Das Programm berechnet das Rayleigh-Streuungsverhältnis für 450 nm und 650 nm." : "Sure. The program computes the Rayleigh scattering ratio for 450 nm and 650 nm.") + '</div></div>' +
-        '<pre class="ls-code-body"><code></code></pre></div>' +
-      '<div class="ls-code-terminal"><div class="ls-code-bar"><i></i><i></i><i></i><span>Terminal</span></div><div class="ls-code-term"><b class="ls-code-command"></b><span></span></div></div>' +
+      '<div class="ls-code-frame"><div class="ls-code-screen">' +
+        '<div class="ls-code-desktop" style="background-image:url(\'opera.jpg\')">' +
+          '<div class="ls-code-window ls-code-window--editor">' +
+            '<div class="ls-code-bar"><i></i><i></i><i></i><span>' + (DE ? "himmel.py" : "sky.py") + '</span></div>' +
+            '<pre class="ls-code-body"><code></code></pre>' +
+          '</div>' +
+          '<div class="ls-code-window ls-code-window--terminal">' +
+            '<div class="ls-code-bar"><i></i><i></i><i></i><span>Terminal</span></div>' +
+            '<div class="ls-code-term"><b class="ls-code-command"></b><span></span></div>' +
+          '</div>' +
+        '</div>' +
+      '</div></div>' +
       '<button type="button" class="ls-btn ls-btn--tiny ls-code-replay">' + (DE ? "Nochmal" : "Replay") + '</button>';
     root.appendChild(el);
     var codeEl = el.querySelector(".ls-code-body code");
