@@ -2920,9 +2920,9 @@
       ctx.fillText(DE ? "new + york → New York" : "new + york → New York", 10, 16);
       var wCar = 0.42 * alt;
       var wEngland = 0.30 * alt;
-      var wYork = 0.18 + 0.14 * easeT;
+      var wYork = 0.18;
       var wCity = 0.08 + 0.72 * easeT;
-      var wSelf = Math.max(0, 1 - wCar - wEngland - wYork - wCity);
+      var wSelf = Math.max(0.02, 1 - wCar - wEngland - wYork - wCity);
       readout.innerHTML = '<span>' + (DE ? "new′ =" : "new′ =") + ' <b>' + (wSelf * 100).toFixed(0) + '% new</b> + <b>' + (wCar * 100).toFixed(0) + '% ' + (DE ? "Auto" : "car") + '</b> + <b>' + (wEngland * 100).toFixed(0) + '% England</b> + <b>' + (wYork * 100).toFixed(0) + '% york</b> + <b>' + (wCity * 100).toFixed(0) + '% ' + (DE ? "Stadt" : "city") + '</b></span><span>' + (DE ? "Summe 100 %" : "sum 100%") + '</span>';
       canvas.setAttribute("aria-label", DE
         ? "Attention reduziert Rauschen: new und york bewegen sich mit dem Kontext zu Stadt, während Auto und England verblassen. Kontext " + layer + "."
