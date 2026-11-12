@@ -42,7 +42,7 @@
       title: "Ein Wort nach dem anderen",
       body: "Kontext ist alles, was das Modell gerade sieht: der bisherige Text, die Anweisung, die Beispiele. Bei jedem Schritt ist vieles möglich, aber nicht alles passt. Die Demo zieht das nächste Token aus einer Verteilung, hängt es an und wiederholt. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich.",
       watch: "Klicke einen Zweig an oder lass die Demo wählen. Welche Fortsetzungen bleiben plausibel?",
-      demoState: { scene: "loop", mode: "sample", temp: 0.8 },
+      demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true },
       context: "Das Modell hat kein anderes Arbeitsgedächtnis als den Kontext. Jedes neue Token verändert, was als Nächstes wahrscheinlich ist.",
       deep: "Eine hohe Wahrscheinlichkeit ist keine Garantie für Wahrheit. Sie ist eine Aussage über den Trainingskorpus. Sampling macht die Verteilung sichtbar; Greedy nimmt immer den wahrscheinlichsten Pfad.",
       boxes: [
@@ -109,7 +109,7 @@
       title: "One word after another",
       body: "Context is everything the model can see: the text so far, the instruction, the examples. At every step much is possible, but not all of it fits. The demo draws the next token from a distribution, appends it, and repeats. Greedy, sampling, and top-p read the same probabilities differently.",
       watch: "Click a branch or let the demo choose. Which continuations stay plausible?",
-      demoState: { scene: "loop", mode: "sample", temp: 0.8 },
+      demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true },
       context: "The model has no working memory other than the context. Every new token changes what is likely next.",
       deep: "A high probability is not a guarantee of truth. It is a statement about the training corpus. Sampling makes the distribution visible; greedy always takes the most likely path.",
       boxes: [

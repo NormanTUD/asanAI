@@ -1356,7 +1356,7 @@
     var nextBtn = el.querySelector(".ls-loop-next");
     var landEl = el.querySelector(".ls-loop-landscape");
     var landCanvas = landEl.querySelector("canvas");
-    var landscape = false, landSize = null;
+    var landscape = true, landSize = null;
     var landYaw = -0.62, landPitch = 0.92, landZoom = 1;
     var landDrag = null, landMoved = false, landHits = [];
     var landBall = { x: 0, y: 0, init: false, animating: false };
@@ -1426,18 +1426,22 @@
       return BASE_PROB + 0.003 * waves;
     }
     function landProb(x, y, wells) {
-      var base = landBase(x, y);
-      var value = base;
       var sigma2 = 0.04;
+      var value = 0, weight = 0;
       wells.forEach(function (w) {
         var dx = x - w.x, dy = y - w.y;
-        value += (w.p - landBase(w.x, w.y)) * Math.exp(-(dx * dx + dy * dy) / (2 * sigma2));
+        var k = Math.exp(-(dx * dx + dy * dy) / (2 * sigma2));
+        value += k * w.p;
+        weight += k;
       });
-      return Math.max(BASE_PROB, Math.min(0.995, value));
+      var base = landBase(x, y);
+      var coverage = Math.min(1, weight);
+      var blended = (value + base * (1 - coverage)) / (weight + (1 - coverage));
+      return Math.max(BASE_PROB, Math.min(0.995, blended));
     }
 
-    // Anzeige-Höhe; die Achse ist mit den echten p-Werten beschriftet.
-    function landZ(p) { return 0.06 + 0.90 * p; }
+    // z = p: Die Höhe ist die Wahrscheinlichkeit selbst, nicht eine Anzeige-Skala.
+    function landZ(p) { return Math.max(0, Math.min(1, p)); }
 
     function landRaw(x, y, z) {
       var cy = Math.cos(landYaw), sy = Math.sin(landYaw);
@@ -2058,6 +2062,7 @@
       renderBars();
     });
     renderSentence(); renderTree(); renderBars();
+    setLandscape(true);
     el.__lsLoopDebug = function () {
       return {
         catalog: catalog.map(function (c) { return { t: c.t, x: c.x, y: c.y }; }),
@@ -2074,7 +2079,7 @@
         if (!s) return;
         if (s.mode) setMode(s.mode);
         if (typeof s.temp === "number") { temp = s.temp; tempEl.value = String(temp); tempOut.textContent = temp.toFixed(2); renderBars(); }
-        setLandscape(!!s.landscape);
+        setLandscape(true);
         if (s.reset) reset();
       },
       resize: function () { landResize(); },
