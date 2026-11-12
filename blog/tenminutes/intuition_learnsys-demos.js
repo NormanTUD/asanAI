@@ -276,8 +276,9 @@
     function project(x, y, z) {
       var yMix = smoothstep(0, 1, dimMix);
       var zMix = smoothstep(1, 2, dimMix);
-      var yaw = st.yaw * zMix;
-      var pitch = st.pitch * zMix;
+      var planeTilt = 0.18 * yMix;
+      var yaw = st.yaw * (planeTilt + (1 - planeTilt) * zMix);
+      var pitch = st.pitch * (planeTilt + (1 - planeTilt) * zMix);
       var cy = Math.cos(yaw), sy = Math.sin(yaw);
       var cp = Math.cos(pitch), sp = Math.sin(pitch);
       var x1 = x * cy - y * sy * yMix;
@@ -1188,8 +1189,8 @@
     var thinking = el.querySelector("#ia-ai-thinking");
     var serp = el.querySelector("#ia-serp");
     var SATZ = DE ? "warum ist der himmel blau?" : "why is the sky blue?";
-    var CHAT_Q = DE ? "Gibt es Neuigkeiten bei der Frage, warum es überhaupt irgendwas gibt?" : "Any news on the question of why there is anything at all?";
-    var CHAT_A = DE ? "Die Frage ist offen. Leibniz hat sie 1714 klassisch zugespitzt: Warum ist etwas und nicht vielmehr nichts? Der kosmologische Gottesbeweis sagt, das Universum braucht eine erste, notwendige Ursache. Der Naturalismus hält die Existenz für ein faktisches Grunddatum; „Gott“ verschiebe die Frage nur. Kant und Hume sehen hier die Grenze der Vernunft und empfehlen ehrliche Agnosis. Existenzialisten wie Sartre und Camus antworten praktisch: Bedeutung wird gewählt, nicht im Weltgrund gefunden. Ein neuerer Gedanke von Jocax dreht die Frage um: Ein „Nichts“ ohne Regeln könnte sich selbst auflösen, sodass Existenz der Normalzustand ist; ob das stimmt, ist offen." : "The question is open. Leibniz gave the classic formulation in 1714: why is there something rather than nothing? The cosmological argument says the universe needs a first, necessary cause. Naturalism treats existence as a brute fact; “God” only pushes the question back. Kant and Hume see the limit of reason here and recommend honest agnosticism. Existentialists such as Sartre and Camus answer practically: meaning is chosen, not found in the ground of the world. A more recent idea from Jocax turns the question around: a “nothing” without rules could dissolve itself, so existence would be the normal state; whether that is true is open.";
+    var CHAT_Q = DE ? "Was passiert, wenn ich bei Google eine Zusammenfassung bekomme?" : "What happens when I get a summary in Google Search?";
+    var CHAT_A = DE ? "Dieselbe Technik steckt in beiden: Ein Sprachmodell sagt Token für Token voraus. Die Suche zeigt zusätzlich Links und einen Index; der Chat führt ein Gespräch. Die Oberfläche unterscheidet sich, die Schleife dahinter ist dieselbe." : "The same technology sits behind both: a language model predicts token by token. Search adds links and an index; the chat holds a conversation. The surface differs, the loop behind it is the same.";
     var AI = DE ? [
       { t: "Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm): " },
       { t: "Rayleigh-Streuung", c: "b" },
@@ -4175,36 +4176,28 @@
   function attentionScene(root, api) {
     var DE = api.lang === "de";
     var contexts = DE ? [
-      { id: "none", sentence: "Ich gehe zur Bank. Das ist mein Plan.", tokens: ["Ich", "gehe", "zur", "Bank", ".", "Das", "ist", "mein", "Plan", "."], bank: 3, anchor: null, color: "muted" },
-      { id: "river", sentence: "Der Fluss ist tief. Ich gehe zur Bank.", tokens: ["Der", "Fluss", "ist", "tief", ".", "Ich", "gehe", "zur", "Bank", "."], bank: 8, anchor: "Fluss", color: "blue" },
-      { id: "money", sentence: "Ich brauche das Geld. Ich gehe zur Bank.", tokens: ["Ich", "brauche", "das", "Geld", ".", "Ich", "gehe", "zur", "Bank", "."], bank: 8, anchor: "Geld", color: "gold" },
-      { id: "bench", sentence: "Die Bank ist aus Holz. Ich sitze hier.", tokens: ["Die", "Bank", "ist", "aus", "Holz", ".", "Ich", "sitze", "hier", "."], bank: 1, anchor: "Holz", color: "lilac" }
+      { id: "none", sentence: "Ich gehe zur Bank.", tokens: ["Ich", "gehe", "zur", "Bank", "."], bank: 3, anchor: null, color: "muted" },
+      { id: "money", sentence: "Ich bringe mein Geld auf die Bank.", tokens: ["Ich", "bringe", "mein", "Geld", "auf", "die", "Bank", "."], bank: 6, anchor: "Geld", color: "gold" },
+      { id: "bench", sentence: "Ich sitze im Park auf der Bank.", tokens: ["Ich", "sitze", "im", "Park", "auf", "der", "Bank", "."], bank: 6, anchor: "Park", color: "lilac" }
     ] : [
-      { id: "none", sentence: "I walk to the bank. That is my plan.", tokens: ["I", "walk", "to", "the", "bank", ".", "That", "is", "my", "plan", "."], bank: 4, anchor: null, color: "muted" },
-      { id: "river", sentence: "The river is deep. I walk to the bank.", tokens: ["The", "river", "is", "deep", ".", "I", "walk", "to", "the", "bank", "."], bank: 9, anchor: "river", color: "blue" },
-      { id: "money", sentence: "I need the money. I walk to the bank.", tokens: ["I", "need", "the", "money", ".", "I", "walk", "to", "the", "bank", "."], bank: 9, anchor: "money", color: "gold" },
-      { id: "bench", sentence: "The bench is wood. I sit down here.", tokens: ["The", "bench", "is", "wood", ".", "I", "sit", "down", "here", "."], bank: 1, anchor: "wood", color: "lilac" }
+      { id: "none", sentence: "I walk to the bank.", tokens: ["I", "walk", "to", "the", "bank", "."], bank: 4, anchor: null, color: "muted" },
+      { id: "money", sentence: "I bring my money to the bank.", tokens: ["I", "bring", "my", "money", "to", "the", "bank", "."], bank: 6, anchor: "money", color: "gold" },
+      { id: "bench", sentence: "I sit on the river bank in the park.", tokens: ["I", "sit", "on", "the", "river", "bank", "in", "the", "park", "."], bank: 5, anchor: "river", color: "lilac" }
     ];
     var EMB = DE ? {
       "Ich": [-1.05, 0.55],
       "gehe": [-0.55, -0.2],
       "zur": [-0.1, -0.7],
       "Bank": [0.25, 0],
-      "Der": [-1.2, 0.8],
-      "Fluss": [1.8, 1.0],
-      "ist": [-0.35, 0.15],
-      "tief": [0.9, 0.95],
-      "brauche": [-0.2, 0.35],
-      "das": [-0.8, -0.35],
-      "Geld": [1.8, -1.0],
-      "Die": [-1.15, 0.7],
-      "aus": [-0.55, -0.45],
-      "Holz": [0.55, 1.35],
-      "sitze": [-0.25, -0.1],
-      "hier": [-0.9, -0.55],
-      "Das": [-1.0, 0.3],
+      "bringe": [-0.2, 0.35],
       "mein": [-0.75, -0.15],
-      "Plan": [0.45, -0.75],
+      "Geld": [1.8, -1.0],
+      "auf": [-0.1, -0.75],
+      "die": [-0.45, -0.9],
+      "sitze": [-0.25, -0.1],
+      "im": [-0.8, -0.35],
+      "Park": [1.8, 1.0],
+      "der": [-0.45, -0.9],
       ".": [-1.05, -0.8]
     } : {
       "I": [-1.05, 0.55],
@@ -4212,20 +4205,14 @@
       "to": [-0.1, -0.75],
       "the": [-0.45, -0.9],
       "bank": [0.25, 0],
-      "The": [-1.2, 0.8],
-      "river": [1.8, 1.0],
-      "is": [-0.35, 0.15],
-      "deep": [0.9, 0.95],
-      "need": [-0.2, 0.35],
-      "money": [1.8, -1.0],
-      "bench": [0.55, 1.35],
-      "wood": [0.9, -0.85],
-      "sit": [-0.25, -0.1],
-      "down": [-0.9, -0.55],
-      "here": [0.45, -0.75],
-      "That": [-1.0, 0.3],
+      "bring": [-0.2, 0.35],
       "my": [-0.75, -0.15],
-      "plan": [0.45, -0.75],
+      "money": [1.8, -1.0],
+      "sit": [-0.25, -0.1],
+      "on": [-0.8, -0.35],
+      "river": [1.8, 1.0],
+      "in": [-0.55, -0.45],
+      "park": [0.55, 1.35],
       ".": [-1.05, -0.8]
     };
     var context = "none";
@@ -4588,25 +4575,25 @@
     var DE = api.lang === "de";
     var data = DE ? {
       fruit: {
-        keys: [{ label: "Merkmal: Mechanik / Schlüssel", on: false }, { label: "Merkmal: Gebäude / Adel", on: true }, { label: "Merkmal: Turm / Burg", on: true }],
+        keys: [{ label: "Mechanik · Tür · öffnen", on: false }, { label: "Burg · Turm · König", on: true }, { label: "alt · prächtig · Garten", on: true }],
         values: [{ label: "Hinweis: Schlüssel, Tür, öffnen", on: false }, { label: "Hinweis: König, Turm, Burg", on: true }, { label: "Hinweis: alt, prächtig, Garten", on: true }],
-        desc: "Die Gebäude- und Burgmuster passen; das Mechanik-Muster bleibt still."
+        desc: "Die Burg-, Turm- und Königs-Muster passen; das Mechanik-Muster bleibt still."
       },
       tech: {
-        keys: [{ label: "Merkmal: Mechanik / Schlüssel", on: true }, { label: "Merkmal: Gebäude / Adel", on: false }, { label: "Merkmal: Turm / Burg", on: false }],
+        keys: [{ label: "Mechanik · Tür · öffnen", on: true }, { label: "Burg · Turm · König", on: false }, { label: "alt · prächtig · Garten", on: false }],
         values: [{ label: "Hinweis: Schlüssel, Tür, öffnen", on: true }, { label: "Hinweis: König, Turm, Burg", on: false }, { label: "Hinweis: alt, prächtig, Garten", on: false }],
-        desc: "Jetzt passt das Mechanik-Muster; die Gebäude- und Burgmuster bleiben still."
+        desc: "Jetzt passt das Mechanik-Muster; die Burg-, Turm- und Königs-Muster bleiben still."
       }
     } : {
       fruit: {
-        keys: [{ label: "Feature: technology brand", on: false }, { label: "Feature: food / edible", on: true }, { label: "Feature: orchard / fruit", on: true }],
-        values: [{ label: "Pull: pie, juice, crunch", on: true }, { label: "Pull: Mac, iPhone, stock", on: false }, { label: "Pull: tree, orchard, green", on: true }],
-        desc: "The food and orchard patterns match; the technology pattern stays silent."
+        keys: [{ label: "mechanism · door · open", on: false }, { label: "castle · tower · king", on: true }, { label: "old · grand · garden", on: true }],
+        values: [{ label: "Pull: key, door, open", on: false }, { label: "Pull: king, tower, castle", on: true }, { label: "Pull: old, grand, garden", on: true }],
+        desc: "The castle, tower, and king patterns match; the mechanism pattern stays silent."
       },
       tech: {
-        keys: [{ label: "Feature: technology brand", on: true }, { label: "Feature: food / edible", on: false }, { label: "Feature: orchard / fruit", on: false }],
-        values: [{ label: "Pull: pie, juice, crunch", on: false }, { label: "Pull: Mac, iPhone, stock", on: true }, { label: "Pull: tree, orchard, green", on: false }],
-        desc: "The technology pattern matches; the food and orchard patterns stay silent."
+        keys: [{ label: "mechanism · door · open", on: true }, { label: "castle · tower · king", on: false }, { label: "old · grand · garden", on: false }],
+        values: [{ label: "Pull: key, door, open", on: true }, { label: "Pull: king, tower, castle", on: false }, { label: "Pull: old, grand, garden", on: false }],
+        desc: "Now the mechanism pattern matches; the castle, tower, and king patterns stay silent."
       }
     };
     var labels = DE ? {
@@ -4614,14 +4601,14 @@
       techTitle: "Ich öffne das Schloss",
       stream: "„Schloss“ + Kontext",
       output: "reicherer Vektor",
-      core: "Schloss: Gebäude",
-      ring: "Schloss: Mechanik",
+      core: "Burg · Turm · König",
+      ring: "Mechanik · Tür · öffnen",
       bend: "Biegung",
       bendButton: "Raum biegen",
       separated: "getrennt",
       notSeparated: "noch nicht getrennt",
       plane: "Trennebene",
-      hint: "Wie im MLP: Bereich anheben, bis eine Ebene trennt.",
+      hint: "Das ist ein MLP: Bereich anheben, bis eine Ebene trennt.",
       prev: "Voriger Kontext",
       next: "Nächster Kontext",
       step: "Kontext"
@@ -4630,14 +4617,14 @@
       techTitle: "I bought an Apple laptop",
       stream: "“apple” + context",
       output: "richer vector",
-      core: "apple: fruit",
-      ring: "apple: company",
+      core: "castle · tower · king",
+      ring: "mechanism · door · open",
       bend: "Bend",
       bendButton: "Bend space",
       separated: "separated",
       notSeparated: "not separated",
       plane: "separating plane",
-      hint: "Like the MLP: lift the region until a plane separates it.",
+      hint: "This is an MLP: lift the region until a plane separates it.",
       prev: "Previous context",
       next: "Next context",
       step: "Context"
@@ -4660,7 +4647,7 @@
           '<span class="ls-ffn-bend-readout" aria-live="polite"></span>' +
         '</div>' +
       '</div>' +
-      '<p class="ls-ffn-caveat">' + (DE ? "Vereinfachung: Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁." : "Simplification: a real FFN has no labelled keys. The patterns are learned directions in W₁.") + '</p>';
+      '<p class="ls-ffn-caveat">' + (DE ? "Das FFN ist ein kleines MLP pro Token. Im LLM trennt es verworrene Strukturen, damit die nächste Schicht sie leichter lesen kann. Die Beschriftungen sind eine didaktische Hilfe; die Muster sind gelernte Richtungen in W₁." : "The FFN is a small MLP per token. In the LLM it separates entangled structures so the next layer can read them more easily. The labels are a teaching aid; the patterns are learned directions in W₁.") + '</p>';
     root.appendChild(el);
     var contextsEl = el.querySelector(".ls-ffn-contexts");
     var stepperEl = el.querySelector(".ls-ffn-stepper");

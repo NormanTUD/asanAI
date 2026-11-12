@@ -27,19 +27,19 @@
     {
       kicker: "01a / KI-Chat",
       title: "KI-Chat",
-      body: "Im KI-Chat stellst du die Frage: „Gibt es Neuigkeiten bei der Frage, warum es überhaupt irgendwas gibt?“ Die Antwort ist keine Messung, sondern eine kurze Landkarte der Debatte. Leibniz hat die Frage 1714 klassisch zugespitzt; der brasilianische Denker Jocax (João Carlos Holland de Barcellos) ist ein neuerer, ungewöhnlicher Gedanke in dieser Richtung. Bleib neutral: Es gibt keine Einigung.",
-      watch: "Lies die Antwort. Welche Positionen erkennst du?",
+      body: "Im KI-Chat fragst du: „Was passiert, wenn ich bei Google eine Zusammenfassung bekomme?“ Die Antwort: Dieselbe Technik steckt in beiden. Ein Sprachmodell sagt Token für Token voraus; die Suche zeigt zusätzlich Links, der Chat führt ein Gespräch. Die Oberfläche unterscheidet sich, die Schleife dahinter ist dieselbe.",
+      watch: "Vergleiche Suchfeld und Chat. Wo siehst du dieselbe Schleife?",
       demoState: { scene: "phone", view: "chat" },
-      context: "Der KI-Chat fasst Positionen zusammen; er entscheidet die Frage nicht. Die Antwort ist eine Orientierung, keine Messung.",
-      deep: "Leibniz fragte 1714, warum etwas und nicht vielmehr nichts existiert. Jocax schlägt ein „Nichts“ ohne Regeln vor, das sich selbst auflösen könnte. Kant und Hume sehen die Grenze der Vernunft; Naturalisten halten Existenz für ein Grunddatum; Existenzialisten verlagern die Antwort ins gelebte Leben. Die Frage bleibt offen.",
+      context: "Google-Zusammenfassung und KI-Chat sind zwei Oberflächen für dieselbe Art von Modell. Beide schreiben die Antwort Token für Token; die Suche ergänzt einen Index und Links.",
+      deep: "Die Suchmaschine hat zusätzlich einen Index und ein Ranking; der Chat hat einen Dialogverlauf. Der generative Teil ist bei beiden ein LLM. Deshalb können beide falsch liegen; die Quelle unterscheidet sich.",
       boxes: [
-        box("chat-1", "Leibniz", "Warum etwas statt nichts?", "Leibniz formulierte 1714 die Frage, warum überhaupt etwas existiert und nicht vielmehr nichts. Sie ist der Ausgangspunkt der modernen Debatte."),
-        box("chat-2", "Jocax", "Das Jocaxsche Nichts", "João Carlos Holland de Barcellos (Jocax) schlägt ein „Nichts“ ohne Regeln vor: Wenn keine Regel etwas verbietet, kann etwas entstehen. Das ist ein neuer Gedanke, keine gesicherte Antwort."),
-        box("chat-3", "Neutral", "Was die Antwort nicht ist", "Der KI-Chat gibt eine kurze Übersicht, keine Entscheidung. Die Frage ist philosophisch offen; die Antwort ist eine Landkarte der Positionen.")
+        box("chat-1", "Gleiche Technik", "Was haben beide gemeinsam?", "Die Zusammenfassung in der Suche und die Chat-Antwort werden von einem Sprachmodell Token für Token geschrieben. Beide nutzen dieselbe Schleife."),
+        box("chat-2", "Unterschied", "Was ist anders?", "Die Suche zeigt zusätzlich Links und einen Index; der Chat führt den Dialog. Der generative Kern ist derselbe."),
+        box("chat-3", "Prüfen", "Was heißt das für dich?", "Beide können plausibel klingen und falsch liegen. Prüfe die Quelle, nicht nur die Oberfläche.")
       ],
       sources: [
-        { label: "Leibniz (1714), Monadologie", url: "https://www.gutenberg.org/ebooks/17641", why: { de: "Leibniz' klassische Formulierung der Frage nach dem Etwas statt Nichts.", en: "Leibniz's classic formulation of the something-rather-than-nothing question." } },
-        { label: "Barcellos (Jocax), The Jocaxian Nothingness", url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html", why: { de: "Neuere, ungewöhnliche Antwort: ein Nichts ohne Regeln.", en: "A more recent, unusual answer: a nothing without rules." } }
+        { label: "Google Search Help (2024), AI Overviews", url: "https://support.google.com/websearch/answer/14901683?hl=en", why: { de: "Google beschreibt die generierten Zusammenfassungen in der Suche.", en: "Google describes the generated summaries in Search." } },
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Grundlage moderner Sprachmodelle.", en: "The transformer as the basis of modern language models." } }
       ]
     },
     {
@@ -101,19 +101,19 @@
     {
       kicker: "01a / AI chat",
       title: "AI chat",
-      body: "In the AI chat you ask: “Any news on the question of why there is anything at all?” The answer is not a measurement but a short map of the debate. Leibniz gave the classic formulation in 1714; the Brazilian thinker Jocax (João Carlos Holland de Barcellos) is a more recent, unusual idea in this direction. Stay neutral: there is no agreement.",
-      watch: "Read the answer. Which positions do you recognise?",
+      body: "In the AI chat you ask: “What happens when I get a summary in Google Search?” The answer: the same technology sits behind both. A language model predicts token by token; Search adds links, the chat holds a conversation. The surface differs, the loop behind it is the same.",
+      watch: "Compare the search box and the chat. Where do you see the same loop?",
       demoState: { scene: "phone", view: "chat" },
-      context: "The AI chat summarises positions; it does not decide the question. The answer is orientation, not a measurement.",
-      deep: "Leibniz asked in 1714 why there is something rather than nothing. Jocax proposes a “nothing” without rules that could dissolve itself. Kant and Hume see the limit of reason; naturalists treat existence as a basic fact; existentialists move the answer into lived life. The question remains open.",
+      context: "Google's summary and the AI chat are two surfaces for the same kind of model. Both write the answer token by token; Search adds an index and links.",
+      deep: "The search engine also has an index and a ranking; the chat has a dialogue history. The generative part is an LLM in both. That is why both can sound plausible and be wrong; the source is what differs.",
       boxes: [
-        box("chat-1", "Leibniz", "Why something rather than nothing?", "Leibniz formulated the question in 1714: why is there anything at all, and not rather nothing? It is the starting point of the modern debate."),
-        box("chat-2", "Jocax", "The Jocaxian nothingness", "João Carlos Holland de Barcellos (Jocax) proposes a “nothing” without rules: if no rule forbids something, something can appear. That is a new idea, not a settled answer."),
-        box("chat-3", "Neutral", "What the answer is not", "The AI chat gives a short overview, not a decision. The question is philosophically open; the answer is a map of positions.")
+        box("chat-1", "Same technology", "What do they share?", "The summary in Search and the chat answer are written by a language model token by token. Both use the same loop."),
+        box("chat-2", "Difference", "What is different?", "Search also shows links and an index; the chat holds a dialogue. The generative core is the same."),
+        box("chat-3", "Check", "What does that mean for you?", "Both can sound plausible and be wrong. Check the source, not only the surface.")
       ],
       sources: [
-        { label: "Leibniz (1714), Monadology", url: "https://www.gutenberg.org/ebooks/17641", why: { de: "Leibniz' klassische Formulierung der Frage nach dem Etwas statt Nichts.", en: "Leibniz's classic formulation of the something-rather-than-nothing question." } },
-        { label: "Barcellos (Jocax), The Jocaxian Nothingness", url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html", why: { de: "Neuere, ungewöhnliche Antwort: ein Nichts ohne Regeln.", en: "A more recent, unusual answer: a nothing without rules." } }
+        { label: "Google Search Help (2024), AI Overviews", url: "https://support.google.com/websearch/answer/14901683?hl=en", why: { de: "Google beschreibt die generierten Zusammenfassungen in der Suche.", en: "Google describes the generated summaries in Search." } },
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Grundlage moderner Sprachmodelle.", en: "The transformer as the basis of modern language models." } }
       ]
     },
     {
@@ -236,20 +236,6 @@
         box("hd-2", "Grenze", "Kann man das noch sehen?", "Nein. Menschen sehen höchstens drei Achsen. Die Tabelle ist die ehrliche Darstellung für den Rechner; die 3D-Demos sind Projektionen für uns.")
       ],
       sources: sources
-    },
-    {
-      kicker: "05a / Die Achsen",
-      title: "Vier Paare, drei Achsen",
-      body: "Die vier Paare sitzen auf drei Achsen: Rolle, Geschlecht und Spezies. Die Rolle ordnet die Paare, die Spezies legt den Ort fest, das Geschlecht trennt die beiden Wörter eines Paares. Klicke ein Paar an und sieh, wo es im Raum liegt.",
-      watch: "Klicke ein Paar an. Welche Achse trennt die beiden Wörter?",
-      demoState: { scene: "animals" },
-      context: "Die Spezies bildet die dritte Ebene, die Rolle ordnet die Paare, das Geschlecht trennt die Wörter innerhalb eines Paares.",
-      deep: "Die Demo zeigt die Achsen, nicht die exakte Geometrie eines echten Modells. In einem echten Embedding liegen die Tiere nicht so sauber getrennt.",
-      boxes: [
-        box("emb-12", "Technik", "Welche Achse trennt was?", "Die Rollenachse unterscheidet wild und domestiziert. Die Speziesachse trennt Löwe, Pferd, Rind und Huhn. Die Geschlechtsachse trennt männlich und weiblich innerhalb eines Paares."),
-        box("emb-13", "Grenze", "Warum ist die Karte nicht das Territorium?", "Weil sie nur die Unterschiede zeigt, die für den Trainings-Loss relevant waren. Sie ist eine komprimierte Statistik, kein Lexikon. Bedeutung im Kontext entsteht erst durch Attention und die folgenden Schichten.")
-      ],
-      sources: sources
     }
   ] : [
     {
@@ -326,21 +312,7 @@
         box("hd-2", "Limit", "Can we still see this?", "No. Humans see at most three axes. The table is the honest view for the computer; the 3D demos are projections for us.")
       ],
       sources: sources
-    },
-    {
-      kicker: "05a / The axes",
-      title: "Four pairs, three axes",
-      body: "The four pairs sit on three axes: role, gender, and species. Role orders the pairs, species fixes the place, gender separates the two words in a pair. Click a pair and see where it sits in the space.",
-      watch: "Click a pair. Which axis separates the two words?",
-      demoState: { scene: "animals" },
-      context: "Species is the third axis, role orders the pairs, gender separates the words within a pair.",
-      deep: "The demo shows the axes, not the exact geometry of a real model. In a real embedding the animals are not so neatly separated.",
-      boxes: [
-        box("emb-12", "Technique", "Which axis separates what?", "The role axis distinguishes wild and domesticated. The species axis separates lion, horse, cattle, and chicken. The gender axis separates male and female within a pair."),
-        box("emb-13", "Limit", "Why is the map not the territory?", "Because it shows only the differences that mattered for the training loss. It is a compressed statistic, not a lexicon. Meaning in context appears only through attention and the following layers.")
-      ],
-      sources: sources
-    },
+    }
   ];
 
   var tokenizeSteps = DE ? [
@@ -447,10 +419,10 @@
     {
       kicker: "06 / Attend",
       title: "Kontext zieht die Bank an seinen Platz",
-      body: "Woher weiß ein Wort, welche Nachbarn wichtig sind? Self-Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen. So bewegt sich „Bank“ in Richtung Fluss oder Geld. Klicke ein beliebiges Wort an, um seine Zeile zu sehen. Ein echter Layer hat viele Heads; die Demo zeigt einen.",
+      body: "Woher weiß ein Wort, welche Nachbarn wichtig sind? Self-Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen. So bewegt sich „Bank“ in Richtung Geld oder Park. Klicke ein beliebiges Wort an, um seine Zeile zu sehen. Ein echter Layer hat viele Heads; die Demo zeigt einen.",
       watch: "Klicke ein Wort an. Welche Nachbarn bekommen Aufmerksamkeit?",
       demoState: { scene: "attention", context: "none" },
-      context: "Ohne eindeutigen Kontext bleibt die Bank in der Mitte, mehrdeutig. Mit Fluss oder Geld verschiebt sich der Vektor.",
+      context: "Ohne eindeutigen Kontext bleibt die Bank in der Mitte, mehrdeutig. Mit Geld oder Park verschiebt sich der Vektor.",
       deep: "Ein echter Head berechnet Query-, Key- und Value-Vektoren, macht aus den Skalarprodukten mit Softmax Gewichte und summiert die Values. Die Demo zeigt die Bewegung, nicht die volle Rechnung.",
       boxes: [
         box("att-1", "Technik", "Warum drei Vektoren?", "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen."),
@@ -463,13 +435,13 @@
     {
       kicker: "06b / Der Kontext",
       title: "Attention verschiebt Bedeutungen in Kontexte",
-      body: "Derselbe Mechanismus, andere Zeile: Wähle oben einen Satz und klicke ein Wort. Die Tabelle zeigt seine 100-%-Verteilung; die gewichtete Summe darunter bewegt den Vektor. Die Formel zeigt dieselben Zahlen mit ihren Gewichten.",
-      watch: "Klicke ein anderes Wort an. Bleibt die Zeile bei 100 %?",
-      demoState: { scene: "attention", context: "river" },
-      context: "Die Sätze oben sind die echten Kontexte; die Matrix darunter zeigt nur die Aufmerksamkeit der Zielwörter.",
-      deep: "Attention-Gewichte sind ein Routing-Signal. Was das FFN mit der gerouteten Information macht, steht nicht in dieser Matrix.",
+      body: "Drei Sätze, dasselbe Wort: Bank am Fluss, Bank für Geld, Bank im Park. Klicke einen Satz und ein Wort. Die Matrix zeigt, wohin die Bank schaut; die Formel zeigt dieselben Gewichte.",
+      watch: "Klicke die drei Sätze. Welches Wort zieht die Bank?",
+      demoState: { scene: "attention", context: "money" },
+      context: "Der Kontext verschiebt den Vektor, nicht das Wort. Die Bank bleibt dasselbe Token; ihre Nachbarn ändern ihre Bedeutung.",
+      deep: "Attention mischt Information aus dem Kontext. Bei „Geld“ zeigt die Bank-Zeile auf Geld, bei „Park“ auf Park. Die Gewichte sind ein Routing-Signal, keine Definition.",
       boxes: [
-        box("att-4", "Grenze", "Was zeigt Attention nicht?", "Sie zeigt nicht, was das FFN mit der Information macht. Sie zeigt nur, welche Tokens auf dieser Schicht Information austauschen."),
+        box("att-4", "Grenze", "Was zeigt Attention nicht?", "Nicht, was das FFN mit der Information macht. Sie zeigt nur, welche Tokens auf dieser Schicht Information austauschen."),
         box("att-5", "Mathematik", "Die Formel", "Attention bildet aus Query, Key und Value eine gewichtete Summe. Die Softmax-Zeile summiert zu 100 %.", "\\underbrace{x'}_{\\substack{\\text{neuer Vektor}\\\\ \\text{für } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{Gewicht von } j\\\\ \\text{für } i}} \\underbrace{v_j}_{\\text{Value von } j}}_{\\substack{\\text{gewichtete Summe}\\\\ \\sum_j \\alpha_{ij}=100\\%}}")
       ],
       sources: [
@@ -511,10 +483,10 @@
     {
       kicker: "06 / Attend",
       title: "Context pulls the bank into place",
-      body: "How does a word know which neighbours matter? Self-attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the river or money reading. Click any word to see its row. A real layer has many heads; the demo shows one.",
+      body: "How does a word know which neighbours matter? Self-attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the money or park reading. Click any word to see its row. A real layer has many heads; the demo shows one.",
       watch: "Click a word. Which neighbours receive attention?",
       demoState: { scene: "attention", context: "none" },
-      context: "With no unambiguous context, the bank stays in the middle, ambiguous. With river or money, the vector shifts.",
+      context: "With no unambiguous context, the bank stays in the middle, ambiguous. With money or park, the vector shifts.",
       deep: "A real head computes query, key, and value vectors, turns their dot products into weights with softmax, and sums the values. The demo shows the movement, not the full arithmetic.",
       boxes: [
         box("att-1", "Technique", "Why three vectors?", "Because searching and describing are two different roles. A pronoun can look for a noun without itself looking like a noun."),
@@ -527,13 +499,13 @@
     {
       kicker: "06b / The context",
       title: "Attention shifts meaning into context",
-      body: "The same mechanism, another row: pick a sentence above and click a word. The table shows its 100% distribution; the weighted sum below moves the vector. The formula shows the same numbers with their weights.",
-      watch: "Click another word. Does the row still sum to 100%?",
-      demoState: { scene: "attention", context: "river" },
-      context: "The sentences above are the real contexts; the matrix below only shows the attention of the target words.",
-      deep: "Attention weights are a routing signal. What the FFN does with the routed information is not in this matrix.",
+      body: "Three sentences, one word: a bank by the river, a bank for money, a bank in the park. Click a sentence and a word. The matrix shows where the bank looks; the formula shows the same weights.",
+      watch: "Click the three sentences. Which word pulls the bank?",
+      demoState: { scene: "attention", context: "money" },
+      context: "The context shifts the vector, not the word. The bank stays the same token; its neighbours change what it means.",
+      deep: "Attention mixes information from the context. With “money” the bank row points to money, with “park” to park. The weights are a routing signal, not a definition.",
       boxes: [
-        box("att-4", "Limit", "What does attention not show?", "It does not show what the FFN does with the information. It shows only which tokens exchange information on this layer."),
+        box("att-4", "Limit", "What does attention not show?", "Not what the FFN does with the information. It shows only which tokens exchange information on this layer."),
         box("att-5", "Mathematics", "The formula", "Attention builds a weighted sum from query, key, and value. The softmax row sums to 100%.", "\\underbrace{x'}_{\\substack{\\text{new vector}\\\\ \\text{for } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{weight of } j\\\\ \\text{for } i}} \\underbrace{v_j}_{\\text{value of } j}}_{\\substack{\\text{weighted sum}\\\\ \\sum_j \\alpha_{ij}=100\\%}}")
       ],
       sources: [
@@ -577,15 +549,15 @@
     {
       kicker: "08 / Feed-forward",
       title: "Ein Muster passt, ein Wert wird geschrieben",
-      body: "Das Feed-Forward-Netz arbeitet auf jedem Token einzeln. Es dehnt den Vektor, wendet eine Aktivierung an und projiziert zurück. Attention mischt Tokens; das FFN rechnet innerhalb eines Tokens. Es macht mit dem Kontext, was das MLP mit den Punkten gemacht hat: Bereiche, die vorher nicht linear trennbar waren, werden trennbar, weil der Kontext den Vektor immer weiter verfeinert. Auch die eigene Antwort wird Teil des Kontexts; jede neue Entscheidung verschiebt die Grenze. Der reichere Vektor ist dabei ein Punkt in einem hochdimensionalen Raum: Im Modell hat er Tausende Koordinaten, die zwei Achsen der Demo sind nur eine Projektion.",
-      watch: "Vergleiche „Ich besichtige das Schloss“ und „Ich öffne das Schloss“. Welche Muster feuern?",
+      body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Es hebt den Vektor in einen höheren Raum, trennt die Muster und projiziert zurück. Attention mischt Tokens; das FFN trennt die verworrenen Strukturen innerhalb eines Tokens. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.",
+      watch: "Klicke die Kontexte. Welche Muster feuern? Biege den Raum, bis die Ebene trennt.",
       demoState: { scene: "ffn", mode: "fruit" },
-      context: "Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁; der Pull ist eine gelernte Richtung in W₂.",
-      deep: "In den hier besprochenen Transformer-Modellen liegen typischerweise die meisten Parameter in den FFN-Matrizen. Wissen ist trotzdem verteilt, nicht in einer Zeile gespeichert.",
+      context: "Das FFN ist ein MLP: Dense, Aktivierung, Dense. Es arbeitet auf jedem Token einzeln. Seine Rolle im LLM: verworrene Muster trennbar machen.",
+      deep: "Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁; der Pull ist eine gelernte Richtung in W₂. Die Demo zeigt die Idee, nicht die exakten Gewichte.",
       boxes: [
         box("ffn-1", "Mathematik", "Die Dense-Einheit", "dense(x) = activation(Wx + b). Das FFN ist dense₂(activation(dense₁(x))). Die Aktivierung bringt die Nichtlinearität."),
-        box("ffn-2", "Technik", "Warum das FFN?", "Attention bewegt Information zwischen Tokens. Das FFN transformiert, was jedes Token trägt. Beide zusammen bilden einen Block."),
-        box("ffn-3", "Verbindung", "Was hat das mit dem MLP zu tun?", "Das FFN ist ein kleines MLP pro Token. Es biegt den Vektor so, dass Muster trennbar werden. Attention liefert den Kontext, das FFN rechnet ihn in eine neue Richtung."),
+        box("ffn-2", "Technik", "Warum das FFN?", "Attention bewegt Information zwischen Tokens. Das FFN ist ein MLP pro Token und trennt Muster, die sonst verworren bleiben. Beide zusammen bilden einen Block."),
+        box("ffn-3", "Verbindung", "Ist das ein MLP?", "Ja. Das FFN ist dense₂(activation(dense₁(x))). Es arbeitet auf jedem Token einzeln und macht verworrene Strukturen trennbar. Attention liefert den Kontext; das FFN formt ihn."),
         box("ffn-4", "Geometrie", "Ist der reichere Vektor hochdimensional?", "Ja. Jeder Punkt in diesen Demos steht für einen Vektor mit Tausenden Dimensionen. Die zwei oder drei Achsen sind nur eine Projektion für uns; das FFN rechnet im vollen Raum. Die Muster in W₁ und der Pull in W₂ sind Richtungen in diesem hochdimensionalen Raum.")
       ],
       sources: [
@@ -597,15 +569,15 @@
     {
       kicker: "08 / Feed-forward",
       title: "A pattern matches, a value is written",
-      body: "The feed-forward network works on each token separately. It expands the vector, applies an activation, and projects back. Attention mixes tokens; the FFN computes within a token. It does with the context what the MLP did with the points: regions that were not linearly separable become separable as the context refines the vector. The model's own answer also becomes part of the context; every new decision shifts the boundary. The richer vector is a point in a high-dimensional space: in the model it has thousands of coordinates, and the two axes in the demo are only a projection.",
-      watch: "Compare “I ate the apple” and “I bought an Apple laptop”. Which patterns fire?",
+      body: "The FFN is a small MLP per token: dense, activation, dense. It lifts the vector into a higher space, separates the patterns, and projects back. Attention mixes tokens; the FFN separates the entangled structures inside one token. Click the two contexts and bend the space until a plane separates them.",
+      watch: "Click the contexts. Which patterns fire? Bend the space until the plane separates them.",
       demoState: { scene: "ffn", mode: "fruit" },
-      context: "A real FFN has no labelled keys. The patterns are learned directions in W₁; the pull is a learned direction in W₂.",
-      deep: "In the transformer models discussed here, most parameters typically live in the FFN matrices. Knowledge is still distributed, not stored in one row.",
+      context: "The FFN is an MLP: dense, activation, dense. It works on each token separately. Its role in the LLM: make entangled patterns separable.",
+      deep: "A real FFN has no labelled keys. The patterns are learned directions in W₁; the pull is a learned direction in W₂. The demo shows the idea, not the exact weights.",
       boxes: [
         box("ffn-1", "Mathematics", "The dense unit", "dense(x) = activation(Wx + b). The FFN is dense₂(activation(dense₁(x))). The activation supplies the nonlinearity."),
-        box("ffn-2", "Technique", "Why the FFN?", "Attention moves information between tokens. The FFN transforms what each token carries. Together they form one block."),
-        box("ffn-3", "Connection", "What does this have to do with the MLP?", "The FFN is a small MLP per token. It bends the vector so that patterns become separable. Attention supplies the context; the FFN computes it into a new direction."),
+        box("ffn-2", "Technique", "Why the FFN?", "Attention moves information between tokens. The FFN is an MLP per token and separates patterns that would otherwise stay entangled. Together they form one block."),
+        box("ffn-3", "Connection", "Is this an MLP?", "Yes. The FFN is dense₂(activation(dense₁(x))). It works on each token separately and makes entangled structures separable. Attention supplies the context; the FFN shapes it."),
         box("ffn-4", "Geometry", "Is the richer vector high-dimensional?", "Yes. Every point in these demos stands for a vector with thousands of dimensions. The two or three axes are only a projection for us; the FFN computes in the full space. The patterns in W₁ and the pull in W₂ are directions in that high-dimensional space.")
       ],
       sources: [
