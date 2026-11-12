@@ -1772,6 +1772,8 @@
         });
       });
       advBtn.disabled = step >= genTokens.length - 1;
+      canvas.__lsHits = hits;
+      canvas.__lsInfo = { path: tokens.length, generated: genTokens.length, step: step };
       canvas.setAttribute("aria-label", DE
         ? "Wahrscheinlichkeitstunnel. Pfad: " + sentenceText + ". Aktuelles Token: " + genTokens[step] + "."
         : "Probability tunnel. Path: " + sentenceText + ". Current token: " + genTokens[step] + ".");
