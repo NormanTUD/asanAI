@@ -3106,7 +3106,7 @@
     if (state.day >= cfg.days.length) state.day = 0;
     if (cfg.mix && cfg.days.length) {
       state.track = "all";
-      state.day = Math.floor(Math.random() * cfg.days.length);
+      state.day = typeof cfg.startDay === "number" ? clamp(cfg.startDay, 0, cfg.days.length - 1) : Math.floor(Math.random() * cfg.days.length);
       state.step = 0;
     }
     if (state.track !== "all") {

@@ -7,10 +7,15 @@ demo changes only the objects that actually change.
 
 Files:
 
-- `learnsystest.html` — the random demo-mix test page and the day/step data.
-  The top chrome is intentionally hidden here; each day becomes its own file
-  in the next step.
+- `intuition_learnsys.php` — the real intuition page. It loads `learnsys.js`,
+  `intuition_learnsys-data.js`, and `learnsys.css`; it is the first production
+  shell for the new system.
+- `intuition_learnsys-data.js` — the day/step data used by the real page
+  (currently the tested nine-demo set).
+- `learnsystest.html` — the random demo-mix test page. It shares the same
+  engine and data shape but keeps its inline copy for experiments.
 - `learnsys.js` — the engine, the public API, and the built-in demos.
+- `learnsys.css` — the shared LearnSys stylesheet extracted from the test page.
 - `spacemorph_demo.html` — the most complex demo (MLP bends space), embedded
   as a self-contained iframe.
 - `todo_learningsystem.md` — the working checklist.
@@ -239,9 +244,9 @@ The two arrows beside the scale move one step back or forward. There is no
 `Mix` button; the page still opens on a random day, and the scale is the
 explicit way to move.
 
-The old day rail markup remains in the engine for the coming per-day split,
-but it is not rendered in mix mode. A day page will mount one day only, so it
-needs no cross-day rail; navigation belongs to the page around it.
+The real page uses the same mix shell with `startDay: 0`, so it opens on the
+first day and keeps the 0–9 scale. The old day rail markup remains in the
+engine for the coming per-day split, but it is not rendered in mix mode.
 
 The embedding day is deliberately stepwise: 1D, 2D, 3D, then context. It has
 no scroll cues anymore, so scrolling cannot silently change the dimension

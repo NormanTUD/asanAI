@@ -66,3 +66,6 @@ Status: in Arbeit
 - DONE: Zahlenleiste oben links ueber der Ueberschrift
 - DONE: Mix-Button, Tiefe/Alles/? und Fusszeile entfernt
 - DONE: Quellen in den Tiefeboxen
+- DONE: intuition_learnsys.php + Daten + CSS angelegt
+- PENDING: intuition_learnsys voll bilingual machen
+- PENDING: restliche intuition.php-Demos in LearnSys nachziehen
