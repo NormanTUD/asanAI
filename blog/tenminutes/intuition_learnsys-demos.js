@@ -2487,83 +2487,257 @@
 
   function meadowScene(root, api) {
     var DE = api.lang === "de";
-    var words = DE ? ["Hund", "Katze", "Baum", "Haus", "Auto", "Buch", "Maus", "Lampe", "Blume", "Stein", "Tisch", "Stuhl", "Wasser", "Feuer", "Nacht", "Sonne", "Regen", "Mond", "Kaffee", "Stern", "Fluss", "Berg", "Vogel", "Fisch", "Milch", "Zucker", "Tür", "Fenster", "Brücke", "Feld", "Küche", "Garten", "Schiff", "Uhr", "Straße", "Stadt", "Brot", "Apfel", "Tee", "Hut", "Glocke"] : ["Dog", "Cat", "Tree", "House", "Car", "Book", "Mouse", "Lamp", "Flower", "Stone", "Table", "Chair", "Water", "Fire", "Night", "Sun", "Rain", "Moon", "Coffee", "Star", "River", "Mountain", "Bird", "Fish", "Milk", "Sugar", "Door", "Window", "Bridge", "Field", "Kitchen", "Garden", "Ship", "Clock", "Road", "City", "Bread", "Apple", "Tea", "Hat", "Bell"];
-    var palette = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
+    var WORDS = DE ? ["Hund", "Katze", "Baum", "Haus", "Auto", "Buch", "Maus", "Lampe", "Blume", "Stein", "Tisch", "Stuhl", "Wasser", "Feuer", "Nacht", "Sonne", "Regen", "Mond", "Kaffee", "Stern", "Fluss", "Berg", "Vogel", "Fisch", "Milch", "Zucker", "Tür", "Fenster", "Brücke", "Feld", "Küche", "Garten", "Schiff", "Uhr", "Straße", "Stadt", "Brot", "Apfel", "Tee", "Hut", "Glocke"] : ["Dog", "Cat", "Tree", "House", "Car", "Book", "Mouse", "Lamp", "Flower", "Stone", "Table", "Chair", "Water", "Fire", "Night", "Sun", "Rain", "Moon", "Coffee", "Star", "River", "Mountain", "Bird", "Fish", "Milk", "Sugar", "Door", "Window", "Bridge", "Field", "Kitchen", "Garden", "Ship", "Clock", "Road", "City", "Bread", "Apple", "Tea", "Hat", "Bell"];
+    var PALETTE = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
+    var CW = 1120, CH = 392;
     var el = document.createElement("div");
     el.className = "ls-meadow-scene";
-    el.innerHTML = '<div class="ls-meadow-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-scene-row"><label class="ls-range">' + (DE ? "Wörter" : "Words") + ' <input type="range" class="ls-md-n" min="12" max="30" step="6" value="12"><output>12</output></label><label class="ls-range">T <input type="range" class="ls-md-temp" min="0.2" max="2.6" step="0.05" value="0.8"><output>0.80</output></label><label class="ls-range">k <input type="range" class="ls-md-k" min="1" max="10" step="1" value="5"><output>5</output></label></div><div class="ls-meadow-readout" aria-live="polite"></div><p class="ls-meadow-caption">' + (DE ? "Bewege den Zeiger. Die goldene Naht ist die Unsicherheit." : "Move the pointer. The golden seam is uncertainty.") + '</p>';
+    el.innerHTML = '<div class="ls-meadow-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-scene-row"><label class="ls-range">' + (DE ? "Wörter" : "Words") + ' <input type="range" class="ls-md-n" min="12" max="30" step="6" value="12"><output>12</output></label><label class="ls-range">T <input type="range" class="ls-md-temp" min="0.2" max="2.6" step="0.05" value="0.8"><output>0.80</output></label><label class="ls-range">k <input type="range" class="ls-md-k" min="1" max="10" step="1" value="5"><output>5</output></label></div><div class="ls-meadow-readout" aria-live="polite"></div><p class="ls-meadow-caption"></p>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-meadow-stage");
     var canvas = el.querySelector("canvas");
     var nEl = el.querySelector(".ls-md-n"), tempEl = el.querySelector(".ls-md-temp"), kEl = el.querySelector(".ls-md-k");
     var readout = el.querySelector(".ls-meadow-readout");
-    var ctx = null, size = null, anchors = [], pointer = { x: 0.5, y: 0.5 }, N = 12, temp = 0.8, K = 5;
-    var ambiguous = 0;
+    var caption = el.querySelector(".ls-meadow-caption");
+    var ctx = null, size = null, N = 12, T = 0.8, K = 5;
+    var anchors = [], fieldCache = {}, gapFrac = 0, pointer = { x: CW / 2, y: CH / 2 };
     function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
-    function rnd(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-    function build() {
-      var r = rnd(42 + N * 17);
-      anchors = [];
-      for (var i = 0; i < N; i++) anchors.push({ x: 0.08 + 0.84 * r(), y: 0.1 + 0.8 * r(), w: words[i % words.length], c: palette[i % palette.length] });
+    function hexToRgb(hex) {
+      var h = String(hex || "").replace("#", "");
+      if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+      return [parseInt(h.slice(0, 2), 16) || 0, parseInt(h.slice(2, 4), 16) || 0, parseInt(h.slice(4, 6), 16) || 0];
     }
-    function nearest(x, y) {
-      var best = null, second = null, bd = Infinity, sd = Infinity;
-      anchors.forEach(function (a) {
-        var d = Math.hypot(a.x - x, a.y - y);
-        if (d < bd) { sd = bd; second = best; bd = d; best = a; }
-        else if (d < sd) { sd = d; second = a; }
-      });
-      return { best: best, second: second, d: bd, sd: sd };
+    function palette() {
+      var c = api.colors();
+      return {
+        dark: c.dark || (document.documentElement.getAttribute("data-theme") === "dark"),
+        surface: hexToRgb(c.paper),
+        card: hexToRgb(c.paper2),
+        ink: hexToRgb(c.ink),
+        muted: hexToRgb(c.muted),
+        border: hexToRgb(c.lineStrong || c.line),
+        edge: hexToRgb(c.soft),
+        gold: hexToRgb(c.gold),
+        thought: hexToRgb(c.green),
+        thoughtFill: "rgba(99,164,75,.13)"
+      };
+    }
+    function mulberry32(a) {
+      return function () {
+        a |= 0; a = a + 0x6D2B79F5 | 0;
+        var t = Math.imul(a ^ a >>> 15, 1 | a);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+    function smoothstep(a, b, t) {
+      if (a === b) return t < a ? 0 : 1;
+      t = clamp((t - a) / (b - a), 0, 1);
+      return t * t * (3 - 2 * t);
+    }
+    function mix(c1, c2, t) {
+      return [Math.round(c1[0] + (c2[0] - c1[0]) * t), Math.round(c1[1] + (c2[1] - c1[1]) * t), Math.round(c1[2] + (c2[2] - c1[2]) * t)];
+    }
+    function rgb(c) { return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")"; }
+    function gen2D(n) {
+      var rng = mulberry32(7 + n * 13);
+      var cols = Math.ceil(Math.sqrt(n * CW / CH));
+      var rows = Math.ceil(n / cols);
+      var pts = [];
+      for (var i = 0; i < n; i++) {
+        var cx = i % cols;
+        var cy = Math.floor(i / cols);
+        var jx = (rng() - 0.5) * 0.72;
+        var jy = (rng() - 0.5) * 0.72;
+        pts.push({
+          x: clamp((cx + 0.3 + jx) / cols * CW, 26, CW - 26),
+          y: clamp((cy + 0.3 + jy) / rows * CH, 26, CH - 26),
+          w: WORDS[i % WORDS.length],
+          c: PALETTE[i % PALETTE.length],
+          i: i
+        });
+      }
+      return pts;
+    }
+    function scaleFor(a) { return Math.sqrt(CW * CH / Math.max(1, a.length)) * 0.52; }
+    function nearestTwo(x, y, a) {
+      var d1 = 1e18, d2 = 1e18, i1 = 0;
+      for (var i = 0; i < a.length; i++) {
+        var dx = x - a[i].x, dy = y - a[i].y, d = dx * dx + dy * dy;
+        if (d < d1) { d2 = d1; i1 = i; d1 = d; } else if (d < d2) { d2 = d; }
+      }
+      return { i1: i1, d1: Math.sqrt(d1), d2: Math.sqrt(d2), m: Math.sqrt(d2) - Math.sqrt(d1) };
+    }
+    function colorFor(m, idx, pal, scale, arr) {
+      var q = clamp(m / scale, 0, 1);
+      var base = hexToRgb(arr[idx].c);
+      var col = mix(base, pal.surface, pal.dark ? 0.62 : 0.38 + 0.22 * q);
+      var eps = 0.32 * scale;
+      var edgePx = 4.8;
+      if (m < eps) col = mix(col, pal.gold, 0.55 * (1 - smoothstep(edgePx, eps, m)));
+      if (m < edgePx) col = mix(pal.edge, col, smoothstep(0, edgePx * 0.75, m));
+      return col;
+    }
+    function makeField(n, pal) {
+      var a = gen2D(n);
+      var scale = scaleFor(a);
+      var c = document.createElement("canvas");
+      c.width = CW; c.height = CH;
+      var cctx = c.getContext("2d");
+      var img = cctx.createImageData(CW, CH);
+      var cnt = 0, eps = 0.32 * scale;
+      for (var y = 0; y < CH; y++) {
+        for (var x = 0; x < CW; x++) {
+          var n2 = nearestTwo(x, y, a);
+          var col = colorFor(n2.m, n2.i1, pal, scale, a);
+          var p = (y * CW + x) * 4;
+          img.data[p] = col[0]; img.data[p + 1] = col[1]; img.data[p + 2] = col[2]; img.data[p + 3] = 255;
+          if (n2.m < eps) cnt++;
+        }
+      }
+      cctx.putImageData(img, 0, 0);
+      return { canvas: c, gapFrac: cnt / (CW * CH) };
+    }
+    function fieldKey(n, pal) { return n + "|" + (pal.dark ? "d" : "l"); }
+    function ensureField(n, pal) {
+      var key = fieldKey(n, pal);
+      if (!fieldCache[key]) fieldCache[key] = makeField(n, pal);
+      return fieldCache[key];
+    }
+    function setN(n) { N = n; anchors = gen2D(n); gapFrac = ensureField(n, palette()).gapFrac; }
+    function roundRect(g, x, y, w, h, r) {
+      r = Math.min(r, w / 2, h / 2);
+      g.beginPath();
+      g.moveTo(x + r, y);
+      g.arcTo(x + w, y, x + w, y + h, r);
+      g.arcTo(x + w, y + h, x, y + h, r);
+      g.arcTo(x, y + h, x, y, r);
+      g.arcTo(x, y, x + w, y, r);
+      g.closePath();
+    }
+    function drawWordPins(g, sx, sy, pal) {
+      var n = anchors.length;
+      var scale = clamp(sx * CW / 560, 0.8, 1.35);
+      var fs = (n <= 20 ? 11 : n <= 30 ? 9.5 : 8.5) * scale;
+      for (var i = 0; i < n; i++) {
+        var a = anchors[i];
+        var ax = a.x * sx, ay = a.y * sy;
+        var r = 6 * scale;
+        g.save();
+        g.shadowColor = "rgba(0,0,0,.18)"; g.shadowBlur = 6; g.shadowOffsetY = 1;
+        g.beginPath(); g.arc(ax, ay, r, 0, Math.PI * 2);
+        g.fillStyle = rgb(pal.surface); g.fill();
+        g.restore();
+        g.beginPath(); g.arc(ax, ay, r, 0, Math.PI * 2);
+        g.strokeStyle = rgb(pal.ink); g.globalAlpha = 0.55; g.lineWidth = 1.5; g.stroke();
+        g.globalAlpha = 1;
+        var ly = ay + r + 5;
+        g.font = "600 " + fs + "px 'Open Sans', sans-serif";
+        g.textAlign = "center"; g.textBaseline = "top";
+        var tw = g.measureText(a.w).width;
+        g.globalAlpha = 0.88;
+        g.fillStyle = rgb(pal.surface);
+        g.fillRect(ax - tw / 2 - 3, ly - 2, tw + 6, fs + 5);
+        g.globalAlpha = 1;
+        g.fillStyle = rgb(pal.ink);
+        g.fillText(a.w, ax, ly + 1);
+      }
+    }
+    function drawThought(g, w, h, pal) {
+      var scale = scaleFor(anchors);
+      var px = clamp(pointer.x, 0, CW - 1), py = clamp(pointer.y, 0, CH - 1);
+      var mx = px * w / CW, my = py * h / CH;
+      var radiusPx = T * scale * 1.2 * (w / CW);
+      g.beginPath(); g.arc(mx, my, radiusPx, 0, Math.PI * 2);
+      g.strokeStyle = rgb(pal.thought); g.globalAlpha = 0.55; g.lineWidth = 2; g.setLineDash([6, 4]); g.stroke(); g.setLineDash([]);
+      g.globalAlpha = 1; g.fillStyle = pal.thoughtFill; g.fill();
+      var allD = [];
+      for (var i = 0; i < anchors.length; i++) allD.push({ i: i, d: Math.hypot(anchors[i].x - px, anchors[i].y - py) });
+      allD.sort(function (a, b) { return a.d - b.d; });
+      var near = allD.slice(0, Math.min(K, allD.length));
+      var sigma = Math.max(1e-6, T * scale * 0.5);
+      var scores = near.map(function (cd) { return { i: cd.i, d: cd.d, s: Math.exp(-cd.d / sigma) }; });
+      var sum = scores.reduce(function (a, b) { return a + b.s; }, 0) || 1;
+      var panelW = Math.min(190, w * 0.46);
+      var rowH = 22;
+      var panelH = near.length * rowH + 24;
+      var right = mx + radiusPx + 16;
+      var panelX = (right + panelW > w - 8) ? clamp(mx - radiusPx - panelW - 16, 4, w - panelW - 8) : clamp(right, 4, w - panelW - 8);
+      var panelY = clamp(my - panelH / 2, 8, h - panelH - 8);
+      g.globalAlpha = 0.96;
+      g.fillStyle = rgb(pal.surface);
+      g.fillRect(panelX, panelY, panelW, panelH);
+      g.globalAlpha = 1;
+      g.strokeStyle = rgb(pal.border); g.lineWidth = 1; g.strokeRect(panelX, panelY, panelW, panelH);
+      g.font = "700 9px 'Open Sans', sans-serif"; g.fillStyle = rgb(pal.muted); g.textAlign = "left"; g.textBaseline = "middle";
+      g.fillText(DE ? "CHANCEN" : "CHANCES", panelX + 9, panelY + 11);
+      var barX = panelX + 64;
+      var barMax = panelW - 64 - 42;
+      for (var k = 0; k < scores.length; k++) {
+        var cd = scores[k];
+        var prob = cd.s / sum;
+        var rowY = panelY + 28 + k * rowH;
+        g.font = (k === 0 ? "700" : "400") + " 11px 'Open Sans', sans-serif";
+        g.fillStyle = k === 0 ? rgb(pal.thought) : rgb(pal.ink);
+        g.textAlign = "left"; g.fillText(anchors[cd.i].w, panelX + 9, rowY);
+        var bw = Math.max(3, prob * barMax);
+        g.fillStyle = rgb(pal.border); g.fillRect(barX, rowY - 4, barMax, 8);
+        g.fillStyle = k === 0 ? rgb(pal.thought) : rgb(pal.muted); g.globalAlpha = k === 0 ? 1 : 0.5;
+        g.fillRect(barX, rowY - 4, bw, 8); g.globalAlpha = 1;
+        g.font = "600 9px ui-monospace, monospace"; g.fillStyle = k === 0 ? rgb(pal.thought) : rgb(pal.muted); g.textAlign = "right";
+        g.fillText(Math.round(prob * 100) + "%", panelX + panelW - 7, rowY);
+      }
+      g.beginPath(); g.arc(mx, my, 7, 0, Math.PI * 2); g.fillStyle = rgb(pal.surface); g.fill();
+      g.strokeStyle = rgb(pal.thought); g.lineWidth = 2.5; g.stroke();
+      var winner = scores[0], runner = scores[1];
+      var seamGap = near.length > 1 ? near[1].d - near[0].d : 0;
+      if (winner) {
+        var winProb = winner.s / sum;
+        readout.innerHTML = '<span>' + (DE ? "Nächstes Wort" : "Nearest word") + ' <b>' + api.esc(anchors[winner.i].w) + '</b></span><span>' + (DE ? "Gewinnt mit" : "Wins with") + ' <b>' + Math.round(winProb * 100) + '%</b></span><span>' + (DE ? "Rand" : "margin") + ' <b>' + (seamGap / scale).toFixed(2) + '</b></span><span>' + (DE ? "Mehrdeutig" : "ambiguous") + ' <b>' + Math.round(gapFrac * 100) + '%</b></span>';
+        if (seamGap / scale < 0.01) caption.textContent = DE
+          ? "Du stehst auf einer goldenen Naht: „" + anchors[winner.i].w + "“ und „" + (runner ? anchors[runner.i].w : "?") + "“ sind fast gleich nah."
+          : "You are on a golden seam: “" + anchors[winner.i].w + "” and “" + (runner ? anchors[runner.i].w : "?") + "” are almost equally near.";
+        else if (winProb > 0.8) caption.textContent = DE
+          ? "Tief in der Zelle von „" + anchors[winner.i].w + "“. Die nächste Naht ist weit weg."
+          : "Deep inside the cell of “" + anchors[winner.i].w + "”. The nearest seam is far away.";
+        else caption.textContent = DE
+          ? "In der Nähe des Territoriums von „" + anchors[winner.i].w + "“, aber „" + (runner ? anchors[runner.i].w : "?") + "“ ist nah."
+          : "Near the territory of “" + anchors[winner.i].w + "”, but “" + (runner ? anchors[runner.i].w : "?") + "” is close.";
+      }
+      canvas.setAttribute("aria-label", DE ? "Wörterfeld. Nächstes Wort: " + (winner ? anchors[winner.i].w : "") : "Word field. Nearest word: " + (winner ? anchors[winner.i].w : ""));
     }
     function draw() {
       if (!size) return;
       ctx = size.ctx;
-      var w = size.w, h = size.h;
-      ctx.clearRect(0, 0, w, h);
-      var step = 7;
-      var cells = [];
-      for (var y = 0; y < h; y += step) {
-        for (var x = 0; x < w; x += step) {
-          var nx = x / w, ny = y / h;
-          var n = nearest(nx, ny);
-          if (!n.best) continue;
-          var margin = (n.sd - n.d);
-          var ambiguousCell = margin < 0.035;
-          ctx.fillStyle = ambiguousCell ? "#9f9700" : n.best.c;
-          ctx.globalAlpha = ambiguousCell ? 0.18 : 0.10;
-          ctx.fillRect(x, y, step, step);
-        }
-      }
-      ctx.globalAlpha = 1;
-      anchors.forEach(function (a) {
-        var ax = a.x * w, ay = a.y * h;
-        ctx.beginPath(); ctx.arc(ax, ay, 4, 0, Math.PI * 2); ctx.fillStyle = a.c; ctx.fill(); ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.stroke();
-        ctx.fillStyle = "#2c464d"; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(a.w, ax, ay - 8);
-      });
-      var px = pointer.x * w, py = pointer.y * h;
-      var n2 = nearest(pointer.x, pointer.y);
-      ctx.beginPath(); ctx.arc(px, py, 7, 0, Math.PI * 2); ctx.fillStyle = "#63a44b"; ctx.fill(); ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke();
-      var probs = anchors.map(function (a) { return Math.exp(-Math.hypot(a.x - pointer.x, a.y - pointer.y) / Math.max(0.05, temp)); });
-      var sum = probs.reduce(function (a, b) { return a + b; }, 0);
-      probs = probs.map(function (p) { return p / sum; }).sort(function (a, b) { return b - a; });
-      var top = probs.slice(0, K).reduce(function (a, b) { return a + b; }, 0);
-      readout.innerHTML = '<span>' + (DE ? "Nächstes Wort" : "Nearest word") + ' <b>' + api.esc(n2.best ? n2.best.w : "—") + '</b></span><span>' + (DE ? "Gewinnt mit" : "Wins with") + ' <b>' + (probs[0] * 100).toFixed(0) + '%</b></span><span>' + (DE ? "Rand" : "margin") + ' <b>' + Math.max(0, n2.sd - n2.d).toFixed(2) + '</b></span><span>top-<b>' + K + '</b> <b>' + (top * 100).toFixed(0) + '%</b></span>';
-      canvas.setAttribute("aria-label", DE ? "Wörterfeld. Nächstes Wort: " + (n2.best ? n2.best.w : "") : "Word field. Nearest word: " + (n2.best ? n2.best.w : ""));
+      var pal = palette();
+      var f = ensureField(N, pal);
+      gapFrac = f.gapFrac;
+      ctx.clearRect(0, 0, size.w, size.h);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(f.canvas, 0, 0, size.w, size.h);
+      drawWordPins(ctx, size.w / CW, size.h / CH, pal);
+      drawThought(ctx, size.w, size.h, pal);
+      nEl.nextElementSibling.textContent = N;
+      tempEl.nextElementSibling.textContent = T.toFixed(2);
+      kEl.nextElementSibling.textContent = K;
     }
     function resize() { size = api.fit(canvas, stage); draw(); }
     function move(e) {
       var r = canvas.getBoundingClientRect();
-      pointer.x = clamp((e.clientX - r.left) / r.width, 0, 1);
-      pointer.y = clamp((e.clientY - r.top) / r.height, 0, 1);
+      pointer.x = clamp((e.clientX - r.left) / r.width * CW, 0, CW - 1);
+      pointer.y = clamp((e.clientY - r.top) / r.height * CH, 0, CH - 1);
       draw();
     }
     canvas.addEventListener("pointermove", move);
     canvas.addEventListener("pointerdown", move);
-    nEl.addEventListener("input", function () { N = parseInt(nEl.value, 10); nEl.nextElementSibling.textContent = String(N); build(); draw(); });
-    tempEl.addEventListener("input", function () { temp = parseFloat(tempEl.value) || 0.8; tempEl.nextElementSibling.textContent = temp.toFixed(2); draw(); });
-    kEl.addEventListener("input", function () { K = parseInt(kEl.value, 10); kEl.nextElementSibling.textContent = String(K); draw(); });
+    nEl.addEventListener("input", function () { setN(parseInt(nEl.value, 10) || 12); draw(); });
+    tempEl.addEventListener("input", function () { T = clamp(parseFloat(tempEl.value) || 0.8, 0.2, 2.6); draw(); });
+    kEl.addEventListener("input", function () { K = clamp(parseInt(kEl.value, 10) || 5, 1, 10); draw(); });
     window.addEventListener("resize", resize);
-    build(); resize();
+    window.addEventListener("tm:theme", function () { fieldCache = {}; setN(N); draw(); });
+    setN(N);
+    resize();
     return { update: function () {}, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
   }
 
