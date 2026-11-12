@@ -1732,12 +1732,18 @@
       var pr = probsAt(step);
       var e = entryAt(step);
       var full = base.concat(tokens);
-      sentenceEl.innerHTML = full.map(function (tok, i) {
+      var sentenceHtml = "";
+      var sentenceText = "";
+      full.forEach(function (tok, i) {
+        var noSpace = /^[.,!?;:…]/.test(tok);
+        if (i && !noSpace) { sentenceHtml += " "; sentenceText += " "; }
         var start = base.length;
         var active = i === start + step;
         var pred = i >= start;
-        return '<span class="' + (active ? "is-active" : pred ? "is-pred" : "is-given") + '">' + api.esc(tok) + '</span>';
-      }).join(" ");
+        sentenceHtml += '<span class="' + (active ? "is-active" : pred ? "is-pred" : "is-given") + '">' + api.esc(tok) + '</span>';
+        sentenceText += tok;
+      });
+      sentenceEl.innerHTML = sentenceHtml;
       stepEl.textContent = (DE ? "Schritt " : "Step ") + (step + 1) + " / " + tokens.length;
       tempRead.textContent = "T " + temp.toFixed(2);
       nextLine.innerHTML = '<span>' + (DE ? "Nächstes Wort" : "Next word") + '</span> <b>' + api.esc(tokens[step] || "—") + '</b>';
@@ -1751,8 +1757,8 @@
         });
       });
       canvas.setAttribute("aria-label", DE
-        ? "Wahrscheinlichkeitstunnel. Pfad: " + full.join(" ") + ". Aktuelles Token: " + tokens[step] + "."
-        : "Probability tunnel. Path: " + full.join(" ") + ". Current token: " + tokens[step] + ".");
+        ? "Wahrscheinlichkeitstunnel. Pfad: " + sentenceText + ". Aktuelles Token: " + tokens[step] + "."
+        : "Probability tunnel. Path: " + sentenceText + ". Current token: " + tokens[step] + ".");
     }
     function refreshData() {
       var next = SHARED.loop;
@@ -1979,56 +1985,127 @@
       var s = Math.min(curveSize.w, curveSize.h) * 0.33 / (1 + z2 * 0.25);
       return { x: curveSize.w / 2 + x1 * s, y: curveSize.h / 2 - y2 * s, z: z2 };
     }
+    function curvePoint(t) {
+      return [Math.sin(t), Math.cos(t), Math.sin(t / Math.pow(10000, 2 / 3))];
+    }
     function drawCurve() {
       if (!curveSize) return;
       var ctx = curveSize.ctx, w = curveSize.w, h = curveSize.h;
+      var Cc = api.colors();
       ctx.clearRect(0, 0, w, h);
-      var pts = [];
-      var maxP = Math.max(8, Math.min(pos, 400));
-      for (var i = 0; i <= maxP; i++) {
-        var v = [pe(i, 3, 0), pe(i, 3, 1), pe(i, 3, 2)];
-        pts.push(project(v[0], v[1], v[2]));
+      function P(v) { return project(v[0], v[1], v[2]); }
+      function line(a, b, col, alpha, width, dash) {
+        var pa = P(a), pb = P(b);
+        ctx.save();
+        if (dash) ctx.setLineDash(dash);
+        ctx.strokeStyle = col;
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = width || 1;
+        ctx.beginPath(); ctx.moveTo(pa.x, pa.y); ctx.lineTo(pb.x, pb.y); ctx.stroke();
+        ctx.restore();
       }
-      ctx.beginPath();
-      pts.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
-      ctx.strokeStyle = C.blue;
-      ctx.lineWidth = 1.6;
-      ctx.globalAlpha = 0.7;
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-      var end = pts[pts.length - 1];
-      var chord = project(0, 0, 0);
-      if (metric === "euclid") {
-        ctx.setLineDash([4, 4]);
-        ctx.strokeStyle = C.gold;
-        ctx.beginPath(); ctx.moveTo(chord.x, chord.y); ctx.lineTo(end.x, end.y); ctx.stroke();
-        ctx.setLineDash([]);
-      } else {
-        var arc = [];
-        var steps = 30;
-        for (var k = 0; k <= steps; k++) {
-          var t = k / steps;
-          var a = Math.acos(Math.max(-1, Math.min(1, t))) * 0.5;
-          arc.push(project(Math.cos(a) * 1.2, Math.sin(a) * 1.2, 0));
-        }
-        ctx.setLineDash([4, 4]);
-        ctx.strokeStyle = C.gold;
+      var lat, lon, k, a, p;
+      ctx.strokeStyle = Cc.line;
+      ctx.globalAlpha = 0.32;
+      ctx.lineWidth = 0.8;
+      for (lat = -60; lat <= 60; lat += 30) {
+        var yy = Math.sin(lat * Math.PI / 180), rr = Math.cos(lat * Math.PI / 180);
         ctx.beginPath();
-        arc.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+        for (k = 0; k <= 60; k++) {
+          a = k / 60 * Math.PI * 2;
+          p = P([Math.cos(a) * rr, yy, Math.sin(a) * rr]);
+          if (k === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        }
         ctx.stroke();
-        ctx.setLineDash([]);
       }
-      ctx.beginPath(); ctx.arc(chord.x, chord.y, 4, 0, Math.PI * 2); ctx.fillStyle = C.paper; ctx.fill(); ctx.strokeStyle = C.petrol; ctx.stroke();
-      ctx.beginPath(); ctx.arc(end.x, end.y, 6, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
-      ctx.fillStyle = C.muted; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "left";
-      ctx.fillText(DE ? "Position " + pos : "position " + pos, 12, 18);
-      ctx.fillText(DE ? "Vektor" : "vector", end.x + 8, end.y + 3);
+      for (lon = 0; lon < 180; lon += 30) {
+        var lr = lon * Math.PI / 180;
+        ctx.beginPath();
+        for (k = 0; k <= 60; k++) {
+          a = k / 60 * Math.PI * 2;
+          p = P([Math.cos(a) * Math.cos(lr), Math.sin(a), Math.cos(a) * Math.sin(lr)]);
+          if (k === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        }
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      line([0, 0, 0], [1.25, 0, 0], Cc.blue, 0.65, 1.2);
+      line([0, 0, 0], [0, 1.25, 0], Cc.green, 0.65, 1.2);
+      line([0, 0, 0], [0, 0, 1.25], Cc.gold, 0.65, 1.2);
+      function axisLabel(v, text, col) {
+        var q = P(v);
+        ctx.fillStyle = col;
+        ctx.font = '700 10px "Barlow", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText(text, q.x + 4, q.y - 3);
+      }
+      axisLabel([1.28, 0, 0], "x", Cc.blue);
+      axisLabel([0, 1.28, 0], "y", Cc.green);
+      axisLabel([0, 0, 1.28], "z", Cc.gold);
+      var maxT = Math.max(1.6, Math.min(60, pos * 0.14));
+      var prev = null;
+      for (k = 0; k <= 260; k++) {
+        var t = maxT * k / 260;
+        var v = curvePoint(t);
+        var q = P(v);
+        if (prev) {
+          ctx.strokeStyle = Cc.blue;
+          ctx.globalAlpha = 0.20 + 0.55 * (1 - (q.z + 1) / 2);
+          ctx.lineWidth = 1.4 + 0.8 * (1 - (q.z + 1) / 2);
+          ctx.beginPath(); ctx.moveTo(prev.x, prev.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+        }
+        prev = q;
+      }
+      ctx.globalAlpha = 1;
+      var o = P([0, 0, 0]);
+      var g = ctx.createRadialGradient(o.x - 2, o.y - 2, 1, o.x, o.y, 11);
+      g.addColorStop(0, "rgba(255,255,255,.95)");
+      g.addColorStop(0.45, Cc.blue);
+      g.addColorStop(1, "rgba(18,117,172,.15)");
+      ctx.beginPath(); ctx.arc(o.x, o.y, 10, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
+      ctx.fillStyle = Cc.soft; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "center";
+      ctx.fillText(DE ? "Wort" : "word", o.x, o.y + 22);
+      var cur = curvePoint(pos * 0.14);
+      var cp = P(cur);
+      var chord = P([0, 0, 0]);
+      if (metric === "euclid") {
+        ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.moveTo(chord.x, chord.y); ctx.lineTo(cp.x, cp.y); ctx.stroke(); ctx.restore();
+      } else {
+        var a0 = [1, 0, 0];
+        var len = Math.hypot(cur[0], cur[1], cur[2]) || 1;
+        var b0 = [cur[0] / len, cur[1] / len, cur[2] / len];
+        var dot = Math.max(-1, Math.min(1, a0[0] * b0[0] + a0[1] * b0[1] + a0[2] * b0[2]));
+        var theta = Math.acos(dot);
+        ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        for (k = 0; k <= 40; k++) {
+          var tt = k / 40;
+          var s0 = theta === 0 ? 1 : Math.sin((1 - tt) * theta) / Math.sin(theta);
+          var s1 = theta === 0 ? 0 : Math.sin(tt * theta) / Math.sin(theta);
+          var vv = [a0[0] * s0 + b0[0] * s1, a0[1] * s0 + b0[1] * s1, a0[2] * s0 + b0[2] * s1];
+          var pp = P(vv);
+          if (k === 0) ctx.moveTo(pp.x, pp.y); else ctx.lineTo(pp.x, pp.y);
+        }
+        ctx.stroke(); ctx.restore();
+        var wp = P(a0);
+        ctx.beginPath(); ctx.arc(wp.x, wp.y, 3, 0, Math.PI * 2); ctx.fillStyle = Cc.blue; ctx.fill();
+      }
+      ctx.save();
+      ctx.shadowColor = "rgba(99,164,75,.55)";
+      ctx.shadowBlur = 14;
+      ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.fillStyle = Cc.green; ctx.fill();
+      ctx.restore();
+      ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.strokeStyle = Cc.paper; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = Cc.muted; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "left";
+      ctx.fillText((DE ? "Position " : "position ") + pos, 12, 18);
+      ctx.fillText(metric === "euclid" ? (DE ? "Länge" : "length") : (DE ? "Winkel" : "angle"), cp.x + 10, cp.y + 3);
+      var vlen = Math.hypot(cur[0], cur[1], cur[2]);
+      var angle = Math.acos(Math.max(-1, Math.min(1, cur[0] / (vlen || 1))));
+      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + pos + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + cur.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Länge" : "length") + ' <b>' + vlen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + (angle * 180 / Math.PI).toFixed(1) + '°</b></span>';
     }
     function draw() {
       drawHeat(); drawCurve();
-      var v = [pe(pos, 3, 0), pe(pos, 3, 1), pe(pos, 3, 2)];
-      var len = Math.hypot(v[0], v[1], v[2]);
-      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + pos + '</b></span><span>' + (DE ? "Vektorlänge" : "vector length") + ' <b>' + len.toFixed(3) + '</b></span><span>' + (DE ? "Metrik" : "metric") + ' <b>' + (metric === "euclid" ? (DE ? "Euklid" : "Euclidean") : (DE ? "Winkel" : "Angle")) + '</b></span>';
     }
     function resizeHeat() { heatSize = api.fit(heat, heat); drawHeat(); }
     function resizeCurve() { curveSize = api.fit(curve, curve); drawCurve(); }
