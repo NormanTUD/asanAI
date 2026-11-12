@@ -1276,6 +1276,7 @@
     var readout = el.querySelector(".ls-loop-readout");
     var tempEl = el.querySelector(".ls-loop-temp");
     var tempOut = el.querySelector(".ls-loop-actions output");
+    var nextBtn = el.querySelector(".ls-loop-next");
     function softmax(logits, t) {
       var max = Math.max.apply(null, logits);
       var exps = logits.map(function (l) { return Math.exp((l - max) / Math.max(0.05, t)); });
@@ -1337,6 +1338,10 @@
       barsEl.querySelectorAll("[data-bar]").forEach(function (b) {
         b.addEventListener("click", function () { choose(opts[parseInt(b.getAttribute("data-bar"), 10)].t); });
       });
+      if (nextBtn) {
+        nextBtn.disabled = !opts.length;
+        nextBtn.textContent = opts.length ? (DE ? "Weiter →" : "Next →") : (DE ? "Fertig" : "Done");
+      }
       readout.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + generated.length + ' / ' + MAX_STEPS + '</b></span><span>' + (DE ? "Kontext" : "Context") + ' <b>' + (base.length + generated.length) + '</b></span><span>' + (DE ? "Top" : "Top") + ' <b>' + api.esc(opts[top] ? opts[top].t : "—") + '</b></span><span>' + (DE ? "Modus" : "Mode") + ' <b>' + decodeMode + '</b></span>';
       publish();
     }
@@ -1438,97 +1443,180 @@
 
   function tunnelScene(root, api) {
     var DE = api.lang === "de";
-    var tokens = DE ? ["Die", "Hauptstadt", "von", "Frankreich", "ist", "Paris", "."] : ["The", "capital", "of", "France", "is", "Paris", "."];
-    var pathY = [0.50, 0.42, 0.38, 0.35, 0.32, 0.30, 0.32];
-    var entropy = [0.95, 0.55, 0.20, 0.60, 0.15, 0.05, 0.10];
-    var branches = DE ? [
-      { step: 0, alts: [{ t: "Stadt", y: 0.22 }, { t: "Regierung", y: 0.62 }] },
-      { step: 1, alts: [{ t: "Frankreichs", y: 0.20 }, { t: "war", y: 0.58 }] },
-      { step: 2, alts: [{ t: "Deutschland", y: 0.16 }, { t: "Italien", y: 0.54 }] },
-      { step: 3, alts: [{ t: "war", y: 0.14 }, { t: "bleibt", y: 0.50 }] },
-      { step: 4, alts: [{ t: "Lyon", y: 0.13 }, { t: "Marseille", y: 0.48 }] },
-      { step: 5, alts: [{ t: ",", y: 0.15 }, { t: "und", y: 0.49 }] }
-    ] : [
-      { step: 0, alts: [{ t: "city", y: 0.22 }, { t: "government", y: 0.62 }] },
-      { step: 1, alts: [{ t: "city", y: 0.20 }, { t: "was", y: 0.58 }] },
-      { step: 2, alts: [{ t: "Germany", y: 0.16 }, { t: "Italy", y: 0.54 }] },
-      { step: 3, alts: [{ t: "was", y: 0.14 }, { t: "remains", y: 0.50 }] },
-      { step: 4, alts: [{ t: "Lyon", y: 0.13 }, { t: "Marseille", y: 0.48 }] },
-      { step: 5, alts: [{ t: ",", y: 0.15 }, { t: "and", y: 0.49 }] }
-    ];
+    var fallback = DE ? {
+      base: ["Es", "war", "einmal", "ein"],
+      tokens: ["Drache", "der", "konnte", "nicht", "fliegen", "."],
+      history: [
+        { index: 0, chosen: "Drache", chosenLogit: 3.4, alternatives: [{ token: "Ritter", logit: 1.1 }, { token: "Roboter", logit: 0.7 }, { token: "Schloss", logit: 0.4 }, { token: "Fluss", logit: 0.2 }] },
+        { index: 1, chosen: "der", chosenLogit: 3.6, alternatives: [{ token: "das", logit: 0.7 }] },
+        { index: 2, chosen: "konnte", chosenLogit: 3.0, alternatives: [{ token: "wollte", logit: 1.3 }, { token: "sollte", logit: 0.9 }, { token: "durfte", logit: 0.6 }, { token: "musste", logit: 0.3 }] },
+        { index: 3, chosen: "nicht", chosenLogit: 3.3, alternatives: [{ token: "nie", logit: 1.2 }, { token: "nur", logit: 0.8 }, { token: "noch", logit: 0.5 }, { token: "immer", logit: 0.3 }] },
+        { index: 4, chosen: "fliegen", chosenLogit: 3.5, alternatives: [{ token: "brüllen", logit: 1.5 }, { token: "schlafen", logit: 0.8 }, { token: "schwimmen", logit: 0.5 }, { token: "singen", logit: 0.3 }] },
+        { index: 5, chosen: ".", chosenLogit: 3.2, alternatives: [{ token: "!", logit: 1.1 }, { token: "…", logit: 0.7 }] }
+      ]
+    } : {
+      base: ["Once", "upon", "a", "time", "there", "was", "a"],
+      tokens: ["dragon", "that", "could", "not", "fly", "."],
+      history: [
+        { index: 0, chosen: "dragon", chosenLogit: 3.4, alternatives: [{ token: "princess", logit: 1.1 }, { token: "robot", logit: 0.7 }, { token: "castle", logit: 0.4 }, { token: "river", logit: 0.2 }] },
+        { index: 1, chosen: "that", chosenLogit: 3.1, alternatives: [{ token: "who", logit: 1.4 }, { token: "which", logit: 0.8 }] },
+        { index: 2, chosen: "could", chosenLogit: 3.0, alternatives: [{ token: "would", logit: 1.3 }, { token: "loved", logit: 0.9 }, { token: "tried", logit: 0.6 }, { token: "wanted", logit: 0.3 }] },
+        { index: 3, chosen: "not", chosenLogit: 3.3, alternatives: [{ token: "never", logit: 1.2 }, { token: "only", logit: 0.8 }, { token: "still", logit: 0.5 }, { token: "always", logit: 0.3 }] },
+        { index: 4, chosen: "fly", chosenLogit: 3.5, alternatives: [{ token: "roar", logit: 1.5 }, { token: "sleep", logit: 0.8 }, { token: "swim", logit: 0.5 }, { token: "sing", logit: 0.3 }] },
+        { index: 5, chosen: ".", chosenLogit: 3.2, alternatives: [{ token: "!", logit: 1.1 }, { token: "…", logit: 0.7 }] }
+      ]
+    };
+    var loop = SHARED.loop;
+    var data = loop && loop.tokens && loop.tokens.length ? loop : fallback;
+    var tokens = data.tokens.slice();
+    var history = data.history.slice();
+    var base = data.base || [];
     var el = document.createElement("div");
     el.className = "ls-tunnel-scene";
-    el.innerHTML = '<div class="ls-tunnel-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
-      '<div class="ls-tunnel-side"><div class="ls-tunnel-kicker">' + (DE ? "Nächstes Wort" : "Next word") + '</div><b class="ls-tunnel-next"></b><div class="ls-tunnel-alts"></div><div class="ls-tunnel-meta"></div></div>' +
-      '<div class="ls-scene-row"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-tunnel-advance">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-tunnel-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-tunnel-temp" min="0.05" max="5" step="0.05" value="0.8"><output>0.80</output></label></div>';
+    el.innerHTML =
+      '<div class="ls-tunnel-stage">' +
+        '<canvas class="ls-canvas" role="img"></canvas>' +
+        '<div class="ls-tunnel-hud ls-tunnel-hud--tl"><div class="ls-tunnel-sentence"></div></div>' +
+        '<div class="ls-tunnel-hud ls-tunnel-hud--tr"><span class="ls-tunnel-step"></span><span class="ls-tunnel-temp-read"></span></div>' +
+        '<div class="ls-tunnel-hud ls-tunnel-hud--bl"><div class="ls-tunnel-next-line"></div><div class="ls-tunnel-alts"></div></div>' +
+      '</div>' +
+      '<div class="ls-scene-row ls-tunnel-controls"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-tunnel-advance">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-tunnel-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-tunnel-temp" min="0.05" max="5" step="0.05" value="0.8"><output>0.80</output></label></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-tunnel-stage");
     var canvas = el.querySelector("canvas");
-    var nextEl = el.querySelector(".ls-tunnel-next");
+    var sentenceEl = el.querySelector(".ls-tunnel-sentence");
+    var stepEl = el.querySelector(".ls-tunnel-step");
+    var tempRead = el.querySelector(".ls-tunnel-temp-read");
+    var nextLine = el.querySelector(".ls-tunnel-next-line");
     var altEl = el.querySelector(".ls-tunnel-alts");
-    var metaEl = el.querySelector(".ls-tunnel-meta");
     var tempEl = el.querySelector(".ls-tunnel-temp");
     var tempOut = el.querySelector("output");
-    var ctx = null, size = null, step = 0, temp = 0.8, yaw = -0.55, pitch = 0.85, zoom = 1;
-    var hits = [], drag = null, suppress = false;
-    function centerAt(x) {
-      var lo = Math.max(0, Math.min(pathY.length - 1, Math.floor(x)));
-      var hi = Math.min(pathY.length - 1, lo + 1);
-      return (pathY[lo] + (pathY[hi] - pathY[lo]) * (x - lo) - 0.5) * 2;
+    var ctx = null, size = null, step = 0, temp = 0.8;
+    var yaw = -0.62, pitch = 0.82, zoom = 1;
+    var hits = [], drag = null, suppress = false, highlightAlt = null;
+    var camera = { scale: 1, ox: 0, oy: 0 };
+    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+    function softmax(logits, t) {
+      var max = Math.max.apply(null, logits);
+      var exps = logits.map(function (l) { return Math.exp((l - max) / Math.max(0.05, t)); });
+      var sum = exps.reduce(function (a, b) { return a + b; }, 0);
+      return exps.map(function (e) { return e / sum; });
     }
-    function entropyAt(x) {
-      var lo = Math.max(0, Math.min(entropy.length - 1, Math.floor(x)));
-      var hi = Math.min(entropy.length - 1, lo + 1);
-      return entropy[lo] + (entropy[hi] - entropy[lo]) * (x - lo);
+    function entryAt(i) { return history[clamp(i, 0, history.length - 1)] || history[0]; }
+    function probsAt(i) {
+      var e = entryAt(i);
+      var all = [{ token: e.chosen, logit: e.chosenLogit || 3 }].concat(e.alternatives || []);
+      var p = softmax(all.map(function (o) { return o.logit; }), temp);
+      var chosen = p[0];
+      var entropy = 0;
+      p.forEach(function (v) { if (v > 0) entropy -= v * Math.log(v); });
+      return { all: all, p: p, chosen: chosen, entropy: entropy };
+    }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function sampleAt(x) {
+      var lo = clamp(Math.floor(x), 0, probsAt(0).p.length ? tokens.length - 1 : 0);
+      var hi = clamp(lo + 1, 0, tokens.length - 1);
+      var t = x - lo;
+      var a = probsAt(lo), b = probsAt(hi);
+      return { chosen: lerp(a.chosen, b.chosen, t), entropy: lerp(a.entropy, b.entropy, t) };
+    }
+    function sideY(index, count) {
+      var side = index % 2 === 0 ? 1 : -1;
+      return side * (0.62 + 0.22 * Math.floor(index / 2));
     }
     function heightAt(x, y) {
-      var center = centerAt(x);
-      var width = 0.18 + 0.45 * (0.3 + entropyAt(x)) * (0.45 + temp / (temp + 1.2));
-      var depth = 0.38 + 0.28 * (2 - temp) / 1.95;
-      var h = 0.32 - depth * Math.exp(-((y - center) * (y - center)) / (2 * width * width));
-      branches.forEach(function (b) {
-        var dx = x - b.step;
-        if (dx < -1.0 || dx > 1.0) return;
-        b.alts.forEach(function (a) {
-          var cy = (a.y - 0.5) * 2;
-          var d = Math.hypot(dx * 1.4, y - cy);
-          h -= 0.16 * Math.exp(-(d * d) / (2 * 0.16 * 0.16));
+      var s = sampleAt(x);
+      var width = 0.18 + 0.30 * s.entropy * (0.65 + temp * 0.22);
+      var depth = 0.42 + 0.28 * (1 - s.chosen);
+      var h = 0.42 - depth * Math.exp(-(y * y) / (2 * width * width));
+      for (var i = 0; i < history.length; i++) {
+        var e = history[i];
+        var pr = probsAt(i);
+        (e.alternatives || []).forEach(function (alt, k) {
+          var cy = sideY(k, e.alternatives.length);
+          var cx = i + 0.48 + 0.06 * Math.sin(i * 1.7 + k);
+          var d = ((x - cx) * (x - cx)) / (2 * 0.13 * 0.13) + ((y - cy) * (y - cy)) / (2 * 0.10 * 0.10);
+          h -= (0.10 + 0.22 * pr.p[k + 1]) * Math.exp(-d);
         });
-      });
-      h += 0.02 * Math.sin(x * 2.1 + y * 3.7);
+      }
+      h += 0.018 * Math.sin(x * 2.3 + y * 3.1) + 0.012 * Math.cos(x * 1.4 - y * 4.2);
       return h;
     }
-    function project(x, y, z) {
+    function sideInfluence(x, y) {
+      var best = 0;
+      for (var i = 0; i < history.length; i++) {
+        var e = history[i];
+        (e.alternatives || []).forEach(function (alt, k) {
+          var cy = sideY(k, e.alternatives.length);
+          var cx = i + 0.48 + 0.06 * Math.sin(i * 1.7 + k);
+          var d = Math.hypot((x - cx) / 0.16, (y - cy) / 0.12);
+          best = Math.max(best, Math.exp(-d * d));
+        });
+      }
+      return best;
+    }
+    function projectRaw(x, y, z) {
+      var cx = (tokens.length - 1) / 2;
+      var x0 = x - cx;
       var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
-      var x1 = x * cy - y * sy;
-      var y1 = x * sy + y * cy;
+      var x1 = x0 * cy - y * sy;
+      var y1 = x0 * sy + y * cy;
       var y2 = y1 * cp - z * sp;
       var z2 = y1 * sp + z * cp;
-      var s = Math.min(size.w, size.h) * 0.36 * zoom / (1 + z2 * 0.35);
-      return { x: size.w * 0.5 + (x1 - 3) * s * 0.72, y: size.h * 0.54 - (y2 - 0.2) * s, z: z2 };
+      return { x: x1 / (1 + z2 * 0.18), y: -y2 / (1 + z2 * 0.18), z: z2 };
     }
-    function colorFor(h) {
-      if (h < 0.05) return "#1275ac";
-      if (h < 0.16) return "#5c9baf";
-      if (h < 0.24) return "#9f9700";
-      return "#f7f9f8";
+    function updateCamera() {
+      var corners = [];
+      var xs = [-0.7, tokens.length - 0.3];
+      var ys = [-1.35, 1.35];
+      var zs = [-0.25, 0.55];
+      xs.forEach(function (x) { ys.forEach(function (y) { zs.forEach(function (z) { corners.push(projectRaw(x, y, z)); }); }); });
+      var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      corners.forEach(function (p) { minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x); minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y); });
+      var pad = Math.min(28, size.w * 0.05);
+      var scale = Math.min((size.w - pad * 2) / Math.max(0.001, maxX - minX), (size.h - pad * 2) / Math.max(0.001, maxY - minY));
+      scale *= zoom;
+      camera.scale = scale;
+      camera.ox = size.w / 2 - (minX + maxX) / 2 * scale;
+      camera.oy = size.h / 2 - (minY + maxY) / 2 * scale;
+    }
+    function project(x, y, z) {
+      var p = projectRaw(x, y, z);
+      return { x: p.x * camera.scale + camera.ox, y: p.y * camera.scale + camera.oy, z: p.z };
+    }
+    function colorFor(h, side) {
+      var C = api.colors();
+      if (side > 0.45 && h < 0.25) return C.gold;
+      if (h < 0.05) return C.blue;
+      if (h < 0.15) return C.sky;
+      if (h < 0.26) return C.lime;
+      return C.paper2;
     }
     function draw() {
       if (!size) resize();
       if (!ctx || !size) return;
+      var C = api.colors();
+      updateCamera();
       ctx.clearRect(0, 0, size.w, size.h);
-      var NX = 40, NY = 20;
+      var sky = ctx.createRadialGradient(size.w * 0.5, size.h * 0.42, 10, size.w * 0.5, size.h * 0.5, Math.max(size.w, size.h) * 0.62);
+      sky.addColorStop(0, "rgba(247,250,249,.9)");
+      sky.addColorStop(0.55, "rgba(238,247,244,.7)");
+      sky.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, size.w, size.h);
+
+      var NX = Math.min(64, 22 + tokens.length * 6), NY = 28;
       var cells = [];
       for (var i = 0; i < NX; i++) {
         for (var j = 0; j < NY; j++) {
-          var x0 = i / NX * (tokens.length - 1), x1 = (i + 1) / NX * (tokens.length - 1);
-          var y0 = -1 + 2 * j / NY, y1 = -1 + 2 * (j + 1) / NY;
-          var p00 = project(x0, y0, heightAt(x0, y0));
-          var p10 = project(x1, y0, heightAt(x1, y0));
-          var p11 = project(x1, y1, heightAt(x1, y1));
-          var p01 = project(x0, y1, heightAt(x0, y1));
-          var h = (heightAt(x0, y0) + heightAt(x1, y0) + heightAt(x1, y1) + heightAt(x0, y1)) / 4;
-          cells.push({ pts: [p00, p10, p11, p01], z: (p00.z + p10.z + p11.z + p01.z) / 4, h: h });
+          var x0 = -0.5 + (tokens.length + 0.2) * i / NX;
+          var x1 = -0.5 + (tokens.length + 0.2) * (i + 1) / NX;
+          var y0 = -1.25 + 2.5 * j / NY;
+          var y1 = -1.25 + 2.5 * (j + 1) / NY;
+          var h00 = heightAt(x0, y0), h10 = heightAt(x1, y0), h11 = heightAt(x1, y1), h01 = heightAt(x0, y1);
+          var p00 = project(x0, y0, h00), p10 = project(x1, y0, h10), p11 = project(x1, y1, h11), p01 = project(x0, y1, h01);
+          var hAvg = (h00 + h10 + h11 + h01) / 4;
+          cells.push({ pts: [p00, p10, p11, p01], z: (p00.z + p10.z + p11.z + p01.z) / 4, h: hAvg, side: sideInfluence((x0 + x1) / 2, (y0 + y1) / 2) });
         }
       }
       cells.sort(function (a, b) { return a.z - b.z; });
@@ -1539,102 +1627,178 @@
         ctx.lineTo(c.pts[2].x, c.pts[2].y);
         ctx.lineTo(c.pts[3].x, c.pts[3].y);
         ctx.closePath();
-        ctx.fillStyle = colorFor(c.h);
-        ctx.globalAlpha = 0.72;
+        ctx.fillStyle = colorFor(c.h, c.side);
+        ctx.globalAlpha = 0.78;
         ctx.fill();
-        ctx.globalAlpha = 0.18;
-        ctx.strokeStyle = C().paper;
-        ctx.lineWidth = 0.5;
+        ctx.globalAlpha = 0.14;
+        ctx.strokeStyle = C.paper;
+        ctx.lineWidth = 0.55;
         ctx.stroke();
         ctx.globalAlpha = 1;
       });
-      var pathPts = [];
-      for (var k = 0; k <= 60; k++) {
-        var x = k / 60 * (tokens.length - 1);
-        var y = centerAt(x);
-        pathPts.push(project(x, y, heightAt(x, y) + 0.02));
-      }
-      ctx.beginPath();
-      pathPts.forEach(function (p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
-      ctx.strokeStyle = C().blue;
-      ctx.lineWidth = 4;
-      ctx.globalAlpha = 0.85;
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-      branches.forEach(function (b) {
-        b.alts.forEach(function (a) {
-          var x = b.step;
-          var y = (a.y - 0.5) * 2;
-          var p = project(x, y, heightAt(x, y) + 0.02);
+
+      history.forEach(function (e, i) {
+        (e.alternatives || []).forEach(function (alt, k) {
+          var cy = sideY(k, e.alternatives.length);
+          var pts = [];
+          for (var s = 0; s <= 18; s++) {
+            var t = s / 18;
+            var x = i + t * 0.55;
+            var y = t * cy;
+            pts.push(project(x, y, heightAt(x, y) + 0.035));
+          }
           ctx.beginPath();
-          ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-          ctx.fillStyle = C().gold;
+          pts.forEach(function (p, k2) { if (k2 === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+          ctx.setLineDash([4, 4]);
+          ctx.strokeStyle = C.gold;
+          ctx.globalAlpha = 0.68;
+          ctx.lineWidth = 1.6;
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.globalAlpha = 1;
+          var end = pts[pts.length - 1];
+          ctx.beginPath();
+          ctx.arc(end.x, end.y, 3.2, 0, Math.PI * 2);
+          ctx.fillStyle = C.gold;
           ctx.fill();
+          if (i === step) {
+            ctx.fillStyle = C.soft;
+            ctx.font = '600 9px "Open Sans", sans-serif';
+            ctx.textAlign = "center";
+            ctx.fillText(alt.token, end.x, end.y - 8);
+          }
         });
       });
+
+      var pathPts = [];
+      for (var k = 0; k <= 80; k++) {
+        var x = -0.25 + k / 80 * (tokens.length - 0.5);
+        var y = 0;
+        pathPts.push(project(x, y, heightAt(x, y) + 0.04));
+      }
+      ctx.save();
+      ctx.shadowColor = "rgba(18,117,172,.55)";
+      ctx.shadowBlur = 16;
+      ctx.beginPath();
+      pathPts.forEach(function (p, i2) { if (i2 === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+      ctx.strokeStyle = C.blue;
+      ctx.lineWidth = 5;
+      ctx.globalAlpha = 0.85;
+      ctx.stroke();
+      ctx.restore();
+      ctx.beginPath();
+      pathPts.forEach(function (p, i2) { if (i2 === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+      ctx.strokeStyle = C.paper;
+      ctx.lineWidth = 1.6;
+      ctx.globalAlpha = 0.9;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
       hits = [];
-      tokens.forEach(function (t, i) {
-        var y = centerAt(i);
-        var p = project(i, y, heightAt(i, y) + 0.08);
+      tokens.forEach(function (tok, i) {
+        var p = project(i, 0, heightAt(i, 0) + 0.07);
         var on = i === step;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, on ? 9 : 5, 0, Math.PI * 2);
-        ctx.fillStyle = on ? C().green : C().paper;
-        ctx.fill();
-        ctx.strokeStyle = on ? C().green : C().petrol;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.fillStyle = on ? C().ink : C().soft;
-        ctx.font = '600 10px "Open Sans", sans-serif';
+        var label = tok;
+        ctx.font = (on ? '700 ' : '600 ') + '10px "Open Sans", sans-serif';
+        var tw = ctx.measureText(label).width;
+        var pw = tw + 12, ph = 17;
+        ctx.fillStyle = on ? C.green : C.paper;
+        ctx.strokeStyle = on ? C.green : C.lineStrong;
+        ctx.lineWidth = 1;
+        ctx.fillRect(p.x - pw / 2, p.y - 30, pw, ph);
+        ctx.strokeRect(p.x - pw / 2, p.y - 30, pw, ph);
+        ctx.fillStyle = on ? "#fff" : C.ink;
         ctx.textAlign = "center";
-        ctx.fillText(t, p.x, p.y - 16);
-        hits.push({ x: p.x, y: p.y, r: 18, step: i });
+        ctx.textBaseline = "middle";
+        ctx.fillText(label, p.x, p.y - 21);
+        ctx.textBaseline = "alphabetic";
+        hits.push({ x: p.x, y: p.y - 22, r: Math.max(18, pw / 2), step: i });
       });
-      var side = branches.filter(function (b) { return b.step === step; })[0];
-      var nextToken = tokens[step] || (DE ? "Ende" : "end");
-      nextEl.textContent = nextToken;
-      altEl.innerHTML = side ? side.alts.map(function (a) {
-        return '<button type="button" class="ls-tunnel-alt" data-alt="' + api.esc(a.t) + '">' + api.esc(a.t) + '</button>';
-      }).join("") : '<span class="ls-tunnel-end">' + (DE ? "Ende" : "end") + '</span>';
+
+      var bp = project(step, 0, heightAt(step, 0) + 0.10);
+      ctx.save();
+      ctx.shadowColor = "rgba(99,164,75,.65)";
+      ctx.shadowBlur = 22;
+      ctx.beginPath();
+      ctx.arc(bp.x, bp.y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = C.green;
+      ctx.fill();
+      ctx.restore();
+      ctx.beginPath();
+      ctx.arc(bp.x, bp.y, 12, 0, Math.PI * 2);
+      ctx.strokeStyle = C.green;
+      ctx.globalAlpha = 0.35;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      var pr = probsAt(step);
+      var e = entryAt(step);
+      var full = base.concat(tokens);
+      sentenceEl.innerHTML = full.map(function (tok, i) {
+        var start = base.length;
+        var active = i === start + step;
+        var pred = i >= start;
+        return '<span class="' + (active ? "is-active" : pred ? "is-pred" : "is-given") + '">' + api.esc(tok) + '</span>';
+      }).join(" ");
+      stepEl.textContent = (DE ? "Schritt " : "Step ") + (step + 1) + " / " + tokens.length;
+      tempRead.textContent = "T " + temp.toFixed(2);
+      nextLine.innerHTML = '<span>' + (DE ? "Nächstes Wort" : "Next word") + '</span> <b>' + api.esc(tokens[step] || "—") + '</b>';
+      altEl.innerHTML = (e.alternatives || []).map(function (alt, k) {
+        return '<button type="button" class="ls-tunnel-alt" data-alt="' + k + '">' + api.esc(alt.token) + '</button>';
+      }).join("");
       altEl.querySelectorAll("[data-alt]").forEach(function (b) {
-        b.addEventListener("click", function () { step = Math.min(tokens.length - 1, step + 1); draw(); });
+        b.addEventListener("click", function () {
+          highlightAlt = parseInt(b.getAttribute("data-alt"), 10);
+          draw();
+        });
       });
-      metaEl.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + (step + 1) + ' / ' + tokens.length + '</b></span><span>' + (DE ? "Temperatur" : "Temperature") + ' <b>' + temp.toFixed(2) + '</b></span>';
-      canvas.setAttribute("aria-label", DE ? "Wahrscheinlichkeitstunnel: " + tokens.slice(0, step + 1).join(" ") : "Probability tunnel: " + tokens.slice(0, step + 1).join(" "));
+      canvas.setAttribute("aria-label", DE
+        ? "Wahrscheinlichkeitstunnel. Pfad: " + full.join(" ") + ". Aktuelles Token: " + tokens[step] + "."
+        : "Probability tunnel. Path: " + full.join(" ") + ". Current token: " + tokens[step] + ".");
     }
-    function C() { return api.colors(); }
     function resize() {
       size = api.fit(canvas, stage);
       ctx = size.ctx;
       draw();
     }
-    function onMove(e) {
+    function hitAt(x, y) {
+      var best = null, bd = 24;
+      hits.forEach(function (h) {
+        var d = Math.hypot(h.x - x, h.y - y);
+        if (d < Math.max(bd, h.r)) { bd = d; best = h; }
+      });
+      return best;
+    }
+    function pointerPos(e) {
       var r = canvas.getBoundingClientRect();
-      var x = e.clientX - r.left, y = e.clientY - r.top;
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+    function onMove(e) {
+      var p = pointerPos(e);
       if (drag) {
         yaw += (e.clientX - drag.x) * 0.008;
-        pitch = clamp(pitch + (e.clientY - drag.y) * 0.006, 0.2, 1.3);
-        drag.x = e.clientX; drag.y = e.clientY; suppress = true; draw(); return;
+        pitch = clamp(pitch + (e.clientY - drag.y) * 0.006, 0.22, 1.28);
+        drag.x = e.clientX;
+        drag.y = e.clientY;
+        suppress = true;
+        draw();
+        return;
       }
-      var hit = null;
-      hits.forEach(function (h) { if (Math.hypot(h.x - x, h.y - y) < h.r) hit = h; });
-      canvas.style.cursor = hit ? "pointer" : "grab";
+      canvas.style.cursor = hitAt(p.x, p.y) ? "pointer" : "grab";
     }
     function onDown(e) {
-      var r = canvas.getBoundingClientRect();
-      var x = e.clientX - r.left, y = e.clientY - r.top;
-      var hit = null;
-      hits.forEach(function (h) { if (Math.hypot(h.x - x, h.y - y) < h.r) hit = h; });
-      if (hit) { suppress = false; return; }
-      drag = { x: e.clientX, y: e.clientY }; suppress = false;
+      var p = pointerPos(e);
+      if (hitAt(p.x, p.y)) { suppress = false; return; }
+      drag = { x: e.clientX, y: e.clientY };
+      suppress = false;
     }
     function onUp(e) {
       if (drag) { drag = null; return; }
       if (suppress) { suppress = false; return; }
-      var r = canvas.getBoundingClientRect();
-      var x = e.clientX - r.left, y = e.clientY - r.top;
-      hits.forEach(function (h) { if (Math.hypot(h.x - x, h.y - y) < h.r) step = h.step; });
-      draw();
+      var p = pointerPos(e);
+      var hit = hitAt(p.x, p.y);
+      if (hit) { step = hit.step; draw(); }
     }
     el.querySelector(".ls-tunnel-advance").addEventListener("click", function () { step = Math.min(tokens.length - 1, step + 1); draw(); });
     el.querySelector(".ls-tunnel-reset").addEventListener("click", function () { step = 0; draw(); });
@@ -1644,12 +1808,20 @@
     canvas.addEventListener("pointerup", onUp);
     canvas.addEventListener("pointercancel", onUp);
     canvas.addEventListener("pointerleave", function () { drag = null; });
+    var ro = null;
+    if (window.ResizeObserver) { ro = new ResizeObserver(resize); ro.observe(stage); }
     window.addEventListener("resize", resize);
     resize();
     return {
-      update: function (s) { if (s && typeof s.step === "number") { step = clamp(s.step, 0, tokens.length - 1); draw(); } },
+      update: function (s) {
+        if (s && typeof s.step === "number") { step = clamp(s.step, 0, tokens.length - 1); draw(); }
+      },
       resize: resize,
-      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
+      destroy: function () {
+        if (ro) ro.disconnect();
+        window.removeEventListener("resize", resize);
+        el.remove();
+      }
     };
   }
 
