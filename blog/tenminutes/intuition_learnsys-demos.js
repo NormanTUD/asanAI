@@ -6274,12 +6274,12 @@
   function langdataScene(root, api) {
     var DE = api.lang === "de";
     var langs = [
-      { id: "de", label: DE ? "Deutsch" : "German", text: "Das Wetter ist heute kalt.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
-      { id: "en", label: DE ? "Englisch" : "English", text: "The weather is cold today.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
-      { id: "fr", label: DE ? "Französisch" : "French", text: "Il fait froid aujourd'hui.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
-      { id: "ja", label: DE ? "Japanisch" : "Japanese", text: "今日は寒いです。", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
-      { id: "ar", label: DE ? "Arabisch" : "Arabic", text: "الجو بارد اليوم.", gloss: DE ? "Derselbe Inhalt, von rechts nach links." : "The same content, written right to left.", rtl: true },
-      { id: "zh", label: DE ? "Chinesisch" : "Chinese", text: "今天很冷。", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." }
+      { id: "de", label: DE ? "Deutsch" : "German", text: "Sonnenblumen sind die besten Blumen.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "en", label: DE ? "Englisch" : "English", text: "Sunflowers are the best flowers.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "fr", label: DE ? "Französisch" : "French", text: "Les tournesols sont les meilleures fleurs.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "ja", label: DE ? "Japanisch" : "Japanese", text: "ひまわりは最高の花です。", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "ar", label: DE ? "Arabisch" : "Arabic", text: "زهور عباد الشمس هي الأفضل.", gloss: DE ? "Derselbe Inhalt, von rechts nach links." : "The same content, written right to left.", rtl: true },
+      { id: "zh", label: DE ? "Chinesisch" : "Chinese", text: "向日葵是最好的花。", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." }
     ];
     var mix = [
       { label: "Common Crawl", pct: 60, color: "#63a44b" },
@@ -6337,7 +6337,25 @@
         '<span class="ls-lang-bar-val">' + m.pct + '%</span></div>';
     }).join("");
     show(active);
-    return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
+    function stepLanguage(dir) {
+      var idx = -1;
+      langs.forEach(function (l, i) { if (l.id === active) idx = i; });
+      var next = idx + dir;
+      if (next < 0 || next >= langs.length) return false;
+      show(langs[next].id);
+      return true;
+    }
+    return {
+      update: function () {},
+      onKey: function (e) {
+        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return stepLanguage(1);
+        if (e.key === "ArrowLeft" || e.key === "PageUp") return stepLanguage(-1);
+        return false;
+      },
+      resize: function () {},
+      destroy: function () { el.remove(); }
+    };
   }
 
   function chineseroomScene(root, api) {

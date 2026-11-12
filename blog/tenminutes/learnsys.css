@@ -1059,3 +1059,11 @@ h1,h2,h3,h4{
 }
 
 .ls-fps{position:fixed;right:10px;bottom:10px;z-index:9999;padding:3px 7px;background:rgba(0,0,0,.72);color:#fff;font:600 11px/1 "Open Sans",sans-serif;letter-spacing:.04em;pointer-events:none}
+
+/* Chinese Room: larger, readable glyphs */
+.ls-cr-input{font-size:clamp(28px,3.2vw,40px)}
+.ls-cr-rules{font-size:calc(var(--ls-fs-ui-sm) * 1.15)}
+.ls-cr-choice{font-size:calc(var(--ls-fs-ui-sm) * 1.12)}
+@media (max-width:640px){
+  .ls-cr-input{font-size:28px}
+}

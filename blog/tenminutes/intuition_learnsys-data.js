@@ -406,20 +406,6 @@
         { label: "Press et al. (2021), Attention with Linear Biases (ALiBi)", url: "https://arxiv.org/abs/2108.12409" },
         { label: "Raffel et al. (2020), T5", url: "https://arxiv.org/abs/1910.10683" }
       ]
-    },
-    {
-      kicker: "05b / Der Block",
-      title: "Ein Block: Attention, dann FFN",
-      body: "Neuronale Netze sind schichtenweise aufgebaut: Jede Schicht nimmt die Ausgabe der vorherigen und reicht sie an die nächste weiter. Der Transformer ist ein Stapel solcher Schichten. Ein Block hat zwei Rechenstationen: Attention mischt Information zwischen den Tokens, das FFN rechnet innerhalb jedes Tokens. Beide Ergebnisse werden über Residualverbindungen zum laufenden Vektor addiert. Die nächste Folie zoomt in die Attention.",
-      watch: "Welcher Teil mischt Tokens, welcher rechnet pro Token?",
-      demoState: { scene: "stack", mode: "block" },
-      context: "Der Residual Stream ist der gemeinsame Vektor eines Tokens. Jede Station liest ihn und schreibt ein Update zurück, statt ihn zu überschreiben.",
-      deep: "Ein Block ist Attention + FFN + zwei Residualverbindungen + Normalisierung. Ein Modell stapelt viele solcher Blöcke; die Gewichte sind pro Block verschieden.",
-      boxes: [
-        box("block-1", "Technik", "Warum zwei Stationen?", "Attention bewegt Information zwischen Tokens. Das FFN transformiert, was ein einzelnes Token trägt. Zusammen können sie Kontext aufnehmen und verarbeiten."),
-        box("block-2", "Grenze", "Was zeigt der Block nicht?", "Er zeigt die Reihenfolge, nicht die gelernten Gewichte. Ein echter Block hat viele Heads, Normalisierung und oft eine andere FFN-Breite.")
-      ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
     }
   ] : [
     {
@@ -445,20 +431,6 @@
         { label: "Press et al. (2021), Attention with Linear Biases (ALiBi)", url: "https://arxiv.org/abs/2108.12409" },
         { label: "Raffel et al. (2020), T5", url: "https://arxiv.org/abs/1910.10683" }
       ]
-    },
-    {
-      kicker: "05b / The block",
-      title: "One block: attention, then FFN",
-      body: "Neural networks are built layer by layer: each layer takes the previous layer's output and passes it to the next. A transformer is a stack of such layers. One block has two compute stations: attention mixes information between tokens, and the FFN computes inside each token. Both results are added to the running vector through residual connections. The next slide zooms into attention.",
-      watch: "Which part mixes tokens, which computes per token?",
-      demoState: { scene: "stack", mode: "block" },
-      context: "The residual stream is a token's shared vector. Every station reads it and writes an update back instead of overwriting it.",
-      deep: "A block is attention + FFN + two residual connections + normalisation. A model stacks many such blocks; each block has its own weights.",
-      boxes: [
-        box("block-1", "Technique", "Why two stations?", "Attention moves information between tokens. The FFN transforms what a single token carries. Together they can take in context and process it."),
-        box("block-2", "Limit", "What does the block not show?", "It shows the order, not the learned weights. A real block has many heads, normalisation, and often a different FFN width.")
-      ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
     }
   ];
 
@@ -509,6 +481,21 @@
         box("noise-2", "Technik", "Was macht der Kontext?", "Der Kontext gewichtet die Nachbarschaften: „york“ macht die Stadt Lesart stärker, „car“ und „England“ verlieren an Gewicht. So reduziert Attention die Mehrdeutigkeit, statt sie zu verstärken.")
       ],
       sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/" }]
+    },
+    {
+      kicker: "06d / Die Matrix",
+      title: "Die kausale Matrix und die Heads",
+      body: "In einer Schicht schaut Self-Attention auf den ganzen Kontext. Für jedes Token bewertet sie, wie viel es von jedem anderen sichtbaren Token übernehmen soll. Die Scores bilden eine Token-für-Token-Matrix: eine Zeile für das fragende Token, eine Spalte für das antwortende. Die Kausalmaske verbirgt die Zukunft.",
+      watch: "Klicke die Matrix an. Welche Zellen sind maskiert?",
+      demoState: { scene: "stack", mode: "layer" },
+      context: "Jede Zeile summiert zu 1. Ein Token kann auf sich und frühere Tokens achten, nie auf spätere. Das obere Dreieck ist maskiert.",
+      deep: "Attention wählt seine Gewichte nicht aus einer festen Liste. Es lernt aus dem Loss, welche Aspekte der sichtbaren Tokens helfen. Jeder Head kann dieselben Tokens aus einer anderen Perspektive sehen: Pronomen, Verb, Thema.",
+      boxes: [
+        box("st-5", "Geschichte", "Borges, Funes", "„Denken heißt Unterschiede vergessen, verallgemeinern, abstrahieren.“ Funes erinnert sich an alles und kann deshalb nicht denken. Ein LLM macht dasselbe auf zwei Ebenen: Das Modell speichert nicht jeden Fakt, und ein Head muss nicht alles auf einmal repräsentieren."),
+        box("st-6", "Technik", "Lokale Bedeutung, dann Kontext", "Frühe Schichten lernen lokale Muster. Spätere Schichten kombinieren sie mit einem breiteren Kontext. Jede Schicht hat eigene Gewichte; die Struktur ist geteilt, die Parameter nicht."),
+        box("st-7", "Mathematik", "Unembedding", "p(next | context) = softmax(W_U h_last). Der letzte Vektor zeigt auf eine Region von Token-Richtungen, dann wird eines gezogen.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf" }]
     }
   ] : [
     {
@@ -557,6 +544,21 @@
         box("noise-2", "Technique", "What does context do?", "The context weights the neighbourhoods: “york” strengthens the city reading, while “car” and “England” lose weight. Attention reduces the ambiguity instead of amplifying it.")
       ],
       sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/" }]
+    },
+    {
+      kicker: "06d / The matrix",
+      title: "The causal matrix and the heads",
+      body: "Inside a layer, self-attention looks at the whole context. For every token, it scores how much that token should take from every other visible token. The scores form a token-by-token matrix: one row for the token asking, one column for the token answering. The causal mask hides the future.",
+      watch: "Click the matrix. Which cells are masked?",
+      demoState: { scene: "stack", mode: "layer" },
+      context: "Every row sums to one. A token can attend to itself and earlier tokens, never to later ones. The upper triangle is masked.",
+      deep: "Attention does not choose its weights from a fixed list. It learns from the loss which aspects of the visible tokens help. Each head can look at the same tokens from a different perspective: pronoun, verb, topic.",
+      boxes: [
+        box("st-5", "History", "Borges, Funes", "“To think is to forget a difference, to generalize, to abstract.” Funes remembers everything and therefore cannot think. An LLM does the same at two scales: the model does not store every fact, and a head does not need to represent everything at once."),
+        box("st-6", "Technique", "Local meaning, then context", "Early layers learn local patterns. Later layers combine them with a wider context. Each layer has its own weights; the structure is shared, the parameters are not."),
+        box("st-7", "Mathematics", "Unembedding", "p(next | context) = softmax(W_U h_last). The last vector points to a region of token directions, then one is drawn.")
+      ],
+      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf" }]
     }
   ];
 
@@ -830,7 +832,7 @@
 
   var stackSteps = DE ? [
     {
-      kicker: "10 / Der Stapel",
+      kicker: "04b / Der Stapel",
       title: "Eine Schicht, dann der Stapel",
       body: "Eine Schicht ist nicht nur Attention und nicht nur ein FFN. Sie ist die Komposition: Attention mischt die Tokens zu A, dann schreibt das FFN jede Zeile von A um. Das Ergebnis ist die nächste Matrix X mit derselben Form.",
       watch: "Klicke eine Stufe an. Wo bleibt die Form gleich?",
@@ -844,25 +846,11 @@
         box("st-4", "Technik", "Die Schicht", "layer(X) = Spalte der FFN(A_i). In einem echten Block umschließen Residualverbindungen und Normalisierung beide Schritte.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Bridle (1990), Probabilistic Interpretation of Feedforward Classification", url: "https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html" }]
-    },
-    {
-      kicker: "10b / Die Matrix",
-      title: "Die kausale Matrix und die Heads",
-      body: "In einer Schicht schaut Self-Attention auf den ganzen Kontext. Für jedes Token bewertet sie, wie viel es von jedem anderen sichtbaren Token übernehmen soll. Die Scores bilden eine Token-für-Token-Matrix: eine Zeile für das fragende Token, eine Spalte für das antwortende. Die Kausalmaske verbirgt die Zukunft.",
-      watch: "Klicke die Matrix an. Welche Zellen sind maskiert?",
-      demoState: { scene: "stack", mode: "layer" },
-      context: "Jede Zeile summiert zu 1. Ein Token kann auf sich und frühere Tokens achten, nie auf spätere. Das obere Dreieck ist maskiert.",
-      deep: "Attention wählt seine Gewichte nicht aus einer festen Liste. Es lernt aus dem Loss, welche Aspekte der sichtbaren Tokens helfen. Jeder Head kann dieselben Tokens aus einer anderen Perspektive sehen: Pronomen, Verb, Thema.",
-      boxes: [
-        box("st-5", "Geschichte", "Borges, Funes", "„Denken heißt Unterschiede vergessen, verallgemeinern, abstrahieren.“ Funes erinnert sich an alles und kann deshalb nicht denken. Ein LLM macht dasselbe auf zwei Ebenen: Das Modell speichert nicht jeden Fakt, und ein Head muss nicht alles auf einmal repräsentieren."),
-        box("st-6", "Technik", "Lokale Bedeutung, dann Kontext", "Frühe Schichten lernen lokale Muster. Spätere Schichten kombinieren sie mit einem breiteren Kontext. Jede Schicht hat eigene Gewichte; die Struktur ist geteilt, die Parameter nicht."),
-        box("st-7", "Mathematik", "Unembedding", "p(next | context) = softmax(W_U h_last). Der letzte Vektor zeigt auf eine Region von Token-Richtungen, dann wird eines gezogen.")
-      ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf" }]
     }
+
   ] : [
     {
-      kicker: "10 / The stack",
+      kicker: "04b / The stack",
       title: "One layer, then the stack",
       body: "A layer is not just attention and not just an FFN. It is the composition: attention mixes the tokens into A, then the FFN rewrites each row of A. The result is the next matrix X with the same shape.",
       watch: "Click a stage. Where does the shape stay the same?",
@@ -876,29 +864,15 @@
         box("st-4", "Technique", "The layer", "layer(X) = column of FFN(A_i). In a real block, residual connections and normalization wrap both steps.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Bridle (1990), Probabilistic Interpretation of Feedforward Classification", url: "https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html" }]
-    },
-    {
-      kicker: "10b / The matrix",
-      title: "The causal matrix and the heads",
-      body: "Inside a layer, self-attention looks at the whole context. For every token, it scores how much that token should take from every other visible token. The scores form a token-by-token matrix: one row for the token asking, one column for the token answering. The causal mask hides the future.",
-      watch: "Click the matrix. Which cells are masked?",
-      demoState: { scene: "stack", mode: "layer" },
-      context: "Every row sums to one. A token can attend to itself and earlier tokens, never to later ones. The upper triangle is masked.",
-      deep: "Attention does not choose its weights from a fixed list. It learns from the loss which aspects of the visible tokens help. Each head can look at the same tokens from a different perspective: pronoun, verb, topic.",
-      boxes: [
-        box("st-5", "History", "Borges, Funes", "“To think is to forget a difference, to generalize, to abstract.” Funes remembers everything and therefore cannot think. An LLM does the same at two scales: the model does not store every fact, and a head does not need to represent everything at once."),
-        box("st-6", "Technique", "Local meaning, then context", "Early layers learn local patterns. Later layers combine them with a wider context. Each layer has its own weights; the structure is shared, the parameters are not."),
-        box("st-7", "Mathematics", "Unembedding", "p(next | context) = softmax(W_U h_last). The last vector points to a region of token directions, then one is drawn.")
-      ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }, { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf" }]
     }
+
   ];
 
   var trajectorySteps = DE ? [
     {
       kicker: "11a / GPT-2",
       title: "Token-Trajektorien durch GPT-2",
-      body: "Echte Hidden States aus GPT-2 small für „The capital of France is“. Jede Linie folgt einem Token durch das Embedding und 12 Blöcke. Jeder Zustand hat 768 Dimensionen, zu viele für ein Bild, deshalb ist das nicht die echte Bewegung: PCA behält die drei Richtungen, in denen sich die Zustände am stärksten ändern, und flacht alles darauf ab. Die 3D-Punkte sind ein Schatten.",
+      body: "Echte Hidden States aus GPT-2 small für „The capital of France is“. Jede Linie folgt einem Token durch das Embedding und 12 Blöcke. Jeder Zustand hat 768 Dimensionen, zu viele für ein Bild, deshalb ist das nicht die echte Bewegung: PCA behält die drei Richtungen, in denen sich die Zustände am stärksten ändern, und flacht alles darauf ab. Die 3D-Punkte sind ein Schatten. Die Top-Vorhersage ist „ the“ (Leerzeichen plus the), aber „Paris“ liegt schon in der Nähe, obwohl es erst nach dem Leerzeichen käme. Das sind echte Messungen aus GPT-2 small, keine erfundenen Punkte.",
       watch: "Bewege den Layer-Regler. Ab wann wird „Paris“ die Top-Wahl?",
       demoState: { scene: "trajectories" },
       context: "Die Winkelansicht ist der Standard. Das ist eine andere Metrik als der gewohnte euklidische Abstand: Das Modell vergleicht am Ende Richtungen, nicht Längen, deshalb ist der Großkreis hier relevant. „Plausibel“ heißt: Die Fortsetzung ist im Trainingstext häufig, nicht dass sie wahr ist.",
@@ -914,7 +888,7 @@
     {
       kicker: "11a / GPT-2",
       title: "Token trajectories through GPT-2",
-      body: "Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. Each state has 768 dimensions, too many to picture, so this is not the real motion: PCA keeps the three directions where the states change most and flattens everything onto them. The 3D points are a shadow.",
+      body: "Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. Each state has 768 dimensions, too many to picture, so this is not the real motion: PCA keeps the three directions where the states change most and flattens everything onto them. The 3D points are a shadow. The top prediction is “ the” (space plus the), but “Paris” is already nearby, even though it would only come after the space. These are real measurements from GPT-2 small, not invented points.",
       watch: "Move the layer slider. When does “Paris” become the top choice?",
       demoState: { scene: "trajectories" },
       context: "The angular view is the default. This is a different metric from the usual Euclidean distance: at the end the model compares directions, not lengths, so the great circle is relevant here. “Plausible” means the continuation is frequent in the training text, not that it is true.",
@@ -928,39 +902,7 @@
     }
   ];
 
-  var wholeSteps = DE ? [
-    {
-      kicker: "13 / Die ganze Schleife",
-      title: "Text rein, Geometrie, ein Wort raus",
-      body: "Die Teile fügen sich in fester Reihenfolge zusammen: Text → Tokens → Vektoren → Position → Attention + Residual → FFN → Verteilung → Ziehen → Anhängen. Die Schleife endet, wenn das Modell das spezielle Token <|endoftext|> ausgibt. Kein Schritt hat eine ordentliche Fakten-Datenbank; Wissen ist über die Gewichte verteilt, und Bedeutung lebt in der Geometrie.",
-      watch: "Klicke die Schleife an. Wo schließt sie sich?",
-      demoState: { scene: "stack", mode: "loop" },
-      context: "Das Modell ist ein Next-Token-Predictor: eine Verteilung, ein Zug, ein Anhängen, wiederholt. Mehr Kontext und mehr Schichten verengen die Verteilung.",
-      deep: "Es sagt plausiblen Text voraus. Es kann fließend und falsch sein, und es gibt keine Garantie für Wahrheit. Die feste Reihenfolge ist die Architektur; die Demos sind vereinfacht.",
-      boxes: [
-        box("whole-1", "Keypoint", "Was es ist", "Ein Next-Token-Predictor: eine Verteilung, ein Zug, ein Anhängen, wiederholt."),
-        box("whole-2", "Keypoint", "Warum es funktioniert", "Mehr Kontext und mehr Schichten verengen die Verteilung, sodass das nächste Token leichter zu wählen ist."),
-        box("whole-3", "Keypoint", "Seine Grenzen", "Es sagt plausiblen Text voraus. Es kann fließend und falsch sein, und es bietet keine Garantie für Wahrheit.")
-      ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
-    }
-  ] : [
-    {
-      kicker: "13 / The whole loop",
-      title: "Text in, geometry, one word out",
-      body: "The pieces fit in a fixed order: text → tokens → vectors → position → attention + residual → FFN → distribution → draw → append. The loop ends when the model emits the special token <|endoftext|>. No step has a tidy fact database; knowledge is distributed across the weights, and meaning lives in the geometry.",
-      watch: "Click the loop. Where does it close?",
-      demoState: { scene: "stack", mode: "loop" },
-      context: "The model is a next-token predictor: one distribution, one draw, one append, repeated. More context and more layers narrow the distribution.",
-      deep: "It predicts plausible text. It can be fluent and wrong, and it offers no guarantee of truth. The fixed order is the architecture; the demos are simplified.",
-      boxes: [
-        box("whole-1", "Keypoint", "What it is", "A next-token predictor: one distribution, one draw, one append, repeated."),
-        box("whole-2", "Keypoint", "Why it works", "More context and more layers narrow the distribution, so the next token becomes easier to choose."),
-        box("whole-3", "Keypoint", "Its limits", "It predicts plausible text. It can be fluent and wrong, and it offers no guarantee of truth.")
-      ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
-    }
-  ];
+  var wholeSteps = [];
 
   var activationSteps = DE ? [
     {
@@ -1080,7 +1022,7 @@
     }
   ];
 
-  var steps = introSteps.concat(insideSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, activationSteps, mlpSteps, ffnSteps, stackSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps, languageSteps, philosophySteps);
+  var steps = introSteps.concat(insideSteps, stackSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, activationSteps, mlpSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps, languageSteps, philosophySteps);
 
   var day = {
     id: "intuition",
