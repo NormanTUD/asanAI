@@ -1039,6 +1039,7 @@
     }
   }
   function next() {
+    if (demo && typeof demo.next === "function" && demo.next()) return;
     var d = activeDay();
     if (state.step < d.steps.length - 1) go(state.day, state.step + 1);
     else {
@@ -1048,6 +1049,7 @@
     }
   }
   function prev() {
+    if (demo && typeof demo.prev === "function" && demo.prev()) return;
     var d = activeDay();
     if (state.step > 0) go(state.day, state.step - 1);
     else {

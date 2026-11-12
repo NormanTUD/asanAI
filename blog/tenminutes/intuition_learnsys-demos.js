@@ -82,6 +82,10 @@
       return color("muted");
     }
     function text(loc) { return DE ? loc[0] : loc[1]; }
+    function smoothstep(a, b, x) {
+      var t = clamp((x - a) / (b - a), 0, 1);
+      return t * t * (3 - 2 * t);
+    }
     function wordLabel(id) { return text(WORDS[id].label); }
     function buildMiniTable() {
       if (!miniTable) return;
@@ -270,8 +274,8 @@
       return { x: (v[0] - 12.5) / 15, y: v[1] / 22, z: 0 };
     }
     function project(x, y, z) {
-      var yMix = clamp(dimMix, 0, 1);
-      var zMix = clamp(dimMix - 1, 0, 1);
+      var yMix = smoothstep(0, 1, dimMix);
+      var zMix = smoothstep(1, 2, dimMix);
       var yaw = st.yaw * zMix;
       var pitch = st.pitch * zMix;
       var cy = Math.cos(yaw), sy = Math.sin(yaw);
@@ -455,18 +459,22 @@
     }
     function drawSpace() {
       hits = [];
-      var yMix = clamp(dimMix, 0, 1);
-      var zMix = clamp(dimMix - 1, 0, 1);
+      var yMix = smoothstep(0, 1, dimMix);
+      var zMix = smoothstep(1, 2, dimMix);
       if (zMix > 0.02) drawRoomGrid(zMix);
-      if (dimMix > 0.05 && zMix < 0.98) {
-        ctx.globalAlpha = 1 - zMix;
+      var planeAlpha = smoothstep(0.02, 0.72, yMix) * (1 - zMix);
+      if (planeAlpha > 0.01) {
+        ctx.globalAlpha = planeAlpha;
         drawPlaneGrid();
         ctx.globalAlpha = 1;
       }
-      if (dimMix < 0.05) {
+      var axisAlpha = 1 - smoothstep(0.04, 0.42, yMix);
+      if (axisAlpha > 0.01) {
+        ctx.globalAlpha = axisAlpha;
         var axisA = project(-1.15, 0, 0);
         var axisB = project(1.15, 0, 0);
         drawLine3D(axisA, axisB, .16);
+        ctx.globalAlpha = 1;
       }
       var origin = project(0, 0, 0);
       var xEnd = project(1.15, 0, 0);
@@ -489,8 +497,8 @@
 
       var cr = currentResult();
       var result = cr.result, steps = cr.steps, dirMode = cr.dirMode;
-      var groupAlpha = 1 - clamp(dimMix / 0.5, 0, 1);
-      var individualAlpha = clamp(dimMix / 0.5, 0, 1);
+      var groupAlpha = 1 - smoothstep(0, 0.5, dimMix);
+      var individualAlpha = smoothstep(0, 0.5, dimMix);
 
       var drawList = WORD_IDS.map(function (id) {
         var w = WORDS[id];
@@ -527,7 +535,8 @@
         drawLabel(DE ? "Ursprung" : "origin", origin.x + 6, origin.y + 14, C.muted, "left", 9);
       }
 
-      if (dimMix < 0.05) {
+      if (groupAlpha > 0.01) {
+        ctx.globalAlpha = groupAlpha;
         powerGroups().forEach(function (g) {
           if (g.ids.length < 2) return;
           var p = project(g.x, 0, 0);
@@ -551,8 +560,10 @@
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center";
         ctx.fillText(DE ? "1D: kein freier Weg zwischen ihnen" : "1D: no free path between them", size.w / 2, size.h - 16);
+        ctx.globalAlpha = 1;
       }
-      if (dimMix > 0.95 && !dirMode) {
+      var pathAlpha = smoothstep(0.55, 1, dimMix);
+      if (pathAlpha > 0.01 && !dirMode) {
         function freePath(fromId, toId) {
           var wa = WORDS[fromId], wb = WORDS[toId];
           var a = project((wa.v[0] - 12.5) / 15, wa.v[1] / 22, wa.z);
@@ -566,19 +577,24 @@
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(mx, my, b.x, b.y); ctx.stroke();
           ctx.restore();
         }
+        ctx.globalAlpha = pathAlpha;
         freePath("man", "woman");
         freePath("king", "queen");
         ctx.fillStyle = C.green;
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center";
         ctx.fillText(DE ? "2D: freie Wege" : "2D: free paths", size.w / 2, size.h - 16);
+        ctx.globalAlpha = 1;
       }
 
-      if (dimMix > 1.5) {
+      var roomAlpha = smoothstep(1.5, 2, dimMix);
+      if (roomAlpha > 0.01) {
+        ctx.globalAlpha = roomAlpha;
         ctx.fillStyle = C.green;
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center";
         ctx.fillText(DE ? "Jedes Wort ist eine Richtung vom Ursprung" : "Every word is a direction from the origin", size.w / 2, size.h - 16);
+        ctx.globalAlpha = 1;
       }
 
       if (dirMode) {
@@ -1048,7 +1064,7 @@
       last = now;
       var changed = false;
       if (Math.abs(dimMix - dimTarget) > 0.002) {
-        dimMix += (dimTarget - dimMix) * 0.18;
+        dimMix += (dimTarget - dimMix) * 0.13;
         if (Math.abs(dimMix - dimTarget) < 0.002) dimMix = dimTarget;
         changed = true;
       }
@@ -3648,6 +3664,8 @@
     goStep(0);
     return {
       update: function () {},
+      next: nextInternal,
+      prev: prevInternal,
       onKey: function (e) {
         if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
         if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
@@ -4073,37 +4091,62 @@
   }
   function attentionScene(root, api) {
     var DE = api.lang === "de";
-    var baseTokens = DE ? ["Ich", "gehe", "zur", "Bank", "."] : ["I", "walk", "to", "the", "bank", "."];
-    var contexts = [
-      { id: "none", sentence: DE ? "Ich gehe zur Bank." : "I walk to the bank.", token: DE ? "∅" : "∅", color: "muted" },
-      { id: "river", sentence: DE ? "Der Fluss ist tief. Ich gehe zur Bank." : "The river is deep. I walk to the bank.", token: DE ? "Fluss" : "river", color: "blue" },
-      { id: "money", sentence: DE ? "Ich brauche Geld. Ich gehe zur Bank." : "I need money. I walk to the bank.", token: DE ? "Geld" : "money", color: "gold" },
-      { id: "both", sentence: DE ? "Der Fluss kostet Geld. Ich gehe zur Bank." : "The river costs money. I walk to the bank.", token: DE ? "Fluss+Geld" : "money+river", color: "lilac" }
+    var contexts = DE ? [
+      { id: "none", sentence: "Ich gehe zur Bank. Das ist mein Plan.", tokens: ["Ich", "gehe", "zur", "Bank", ".", "Das", "ist", "mein", "Plan", "."], bank: 3, anchor: null, color: "muted" },
+      { id: "river", sentence: "Der Fluss ist tief. Ich gehe zur Bank.", tokens: ["Der", "Fluss", "ist", "tief", ".", "Ich", "gehe", "zur", "Bank", "."], bank: 8, anchor: "Fluss", color: "blue" },
+      { id: "money", sentence: "Ich brauche das Geld. Ich gehe zur Bank.", tokens: ["Ich", "brauche", "das", "Geld", ".", "Ich", "gehe", "zur", "Bank", "."], bank: 8, anchor: "Geld", color: "gold" },
+      { id: "bench", sentence: "Die Bank ist aus Holz. Ich sitze hier.", tokens: ["Die", "Bank", "ist", "aus", "Holz", ".", "Ich", "sitze", "hier", "."], bank: 1, anchor: "Holz", color: "lilac" }
+    ] : [
+      { id: "none", sentence: "I walk to the bank. That is my plan.", tokens: ["I", "walk", "to", "the", "bank", ".", "That", "is", "my", "plan", "."], bank: 4, anchor: null, color: "muted" },
+      { id: "river", sentence: "The river is deep. I walk to the bank.", tokens: ["The", "river", "is", "deep", ".", "I", "walk", "to", "the", "bank", "."], bank: 9, anchor: "river", color: "blue" },
+      { id: "money", sentence: "I need the money. I walk to the bank.", tokens: ["I", "need", "the", "money", ".", "I", "walk", "to", "the", "bank", "."], bank: 9, anchor: "money", color: "gold" },
+      { id: "bench", sentence: "The bench is wood. I sit down here.", tokens: ["The", "bench", "is", "wood", ".", "I", "sit", "down", "here", "."], bank: 1, anchor: "wood", color: "lilac" }
     ];
     var EMB = DE ? {
-      "∅": [-0.45, 0.22],
-      "Fluss": [1.8, 1.0],
-      "Geld": [1.8, -1.0],
-      "Fluss+Geld": [1.8, 0],
       "Ich": [-1.05, 0.55],
       "gehe": [-0.55, -0.2],
       "zur": [-0.1, -0.7],
       "Bank": [0.25, 0],
+      "Der": [-1.2, 0.8],
+      "Fluss": [1.8, 1.0],
+      "ist": [-0.35, 0.15],
+      "tief": [0.9, 0.95],
+      "brauche": [-0.2, 0.35],
+      "das": [-0.8, -0.35],
+      "Geld": [1.8, -1.0],
+      "Die": [-1.15, 0.7],
+      "aus": [-0.55, -0.45],
+      "Holz": [0.55, 1.35],
+      "sitze": [-0.25, -0.1],
+      "hier": [-0.9, -0.55],
+      "Das": [-1.0, 0.3],
+      "mein": [-0.75, -0.15],
+      "Plan": [0.45, -0.75],
       ".": [-1.05, -0.8]
     } : {
-      "∅": [-0.45, 0.22],
-      "river": [1.8, 1.0],
-      "money": [1.8, -1.0],
-      "money+river": [1.8, 0],
       "I": [-1.05, 0.55],
       "walk": [-0.55, -0.2],
       "to": [-0.1, -0.75],
       "the": [-0.45, -0.9],
       "bank": [0.25, 0],
+      "The": [-1.2, 0.8],
+      "river": [1.8, 1.0],
+      "is": [-0.35, 0.15],
+      "deep": [0.9, 0.95],
+      "need": [-0.2, 0.35],
+      "money": [1.8, -1.0],
+      "bench": [0.55, 1.35],
+      "wood": [0.9, -0.85],
+      "sit": [-0.25, -0.1],
+      "down": [-0.9, -0.55],
+      "here": [0.45, -0.75],
+      "That": [-1.0, 0.3],
+      "my": [-0.75, -0.15],
+      "plan": [0.45, -0.75],
       ".": [-1.05, -0.8]
     };
     var context = "none";
-    var selected = baseTokens.length - 1;
+    var selected = contexts[0].bank;
     var causal = false;
     var el = document.createElement("div");
     el.className = "ls-att-scene";
@@ -4135,35 +4178,24 @@
     function contextObj() {
       return contexts.filter(function (x) { return x.id === context; })[0] || contexts[0];
     }
-    function tokens() { return [contextObj().token].concat(baseTokens); }
-    function bankIdx() { return tokens().length - 2; }
+    function tokens() { return contextObj().tokens; }
+    function bankIdx() { return contextObj().bank; }
     function normalize(row) {
       var s = row.reduce(function (a, b) { return a + b; }, 0) || 1;
       return row.map(function (v) { return v / s; });
     }
-    function bankRow(ctx) {
-      if (DE) {
-        if (ctx === "none") return [0.00, 0.06, 0.06, 0.04, 0.72, 0.12];
-        if (ctx === "river") return [0.18, 0.02, 0.02, 0.04, 0.70, 0.04];
-        if (ctx === "money") return [0.20, 0.02, 0.01, 0.04, 0.70, 0.03];
-        return [0.19, 0.02, 0.01, 0.04, 0.70, 0.04];
+    function bankRowFor() {
+      var ts = tokens(), n = ts.length, bi = bankIdx(), row = [];
+      for (var j = 0; j < n; j++) row[j] = 0.01;
+      row[bi] = 0.66;
+      var anchor = contextObj().anchor;
+      if (anchor) {
+        var ai = ts.indexOf(anchor);
+        if (ai >= 0) row[ai] += 0.22;
       }
-      if (ctx === "none") return [0.00, 0.04, 0.04, 0.03, 0.04, 0.72, 0.13];
-      if (ctx === "river") return [0.18, 0.02, 0.02, 0.03, 0.03, 0.70, 0.02];
-      if (ctx === "money") return [0.20, 0.02, 0.01, 0.02, 0.03, 0.70, 0.02];
-      return [0.19, 0.02, 0.01, 0.02, 0.03, 0.70, 0.03];
-    }
-    function ctxRowFor(ctx) {
-      if (DE) {
-        if (ctx === "none") return [0.55, 0.10, 0.08, 0.05, 0.17, 0.05];
-        if (ctx === "river") return [0.30, 0.02, 0.02, 0.03, 0.58, 0.05];
-        if (ctx === "money") return [0.28, 0.02, 0.02, 0.03, 0.60, 0.05];
-        return [0.29, 0.02, 0.02, 0.03, 0.59, 0.05];
-      }
-      if (ctx === "none") return [0.55, 0.06, 0.05, 0.04, 0.05, 0.20, 0.05];
-      if (ctx === "river") return [0.30, 0.02, 0.02, 0.02, 0.03, 0.56, 0.05];
-      if (ctx === "money") return [0.28, 0.02, 0.02, 0.02, 0.03, 0.58, 0.05];
-      return [0.29, 0.02, 0.02, 0.02, 0.03, 0.57, 0.05];
+      if (bi > 0) row[bi - 1] += 0.05;
+      if (bi < n - 1) row[bi + 1] += 0.05;
+      return normalize(row);
     }
     function baseRow(i, n, bi) {
       var row = [];
@@ -4183,10 +4215,7 @@
       var ts = tokens(), n = ts.length, bi = bankIdx();
       var m = [];
       for (var i = 0; i < n; i++) {
-        var row;
-        if (i === 0) row = normalize(ctxRowFor(context));
-        else if (i === bi) row = normalize(bankRow(context));
-        else row = baseRow(i, n, bi);
+        var row = i === bi ? bankRowFor() : baseRow(i, n, bi);
         m.push(maskRow(row, i));
       }
       return m;
@@ -4226,6 +4255,7 @@
     function setContext(id) {
       if (!contexts.some(function (c) { return c.id === id; })) return;
       context = id;
+      selected = contextObj().bank;
       renderSentences();
       draw();
     }
@@ -4460,8 +4490,10 @@
     return {
       update: function (s) {
         if (!s) return;
+        var ctxChanged = !!s.context && s.context !== context;
         if (s.context) context = s.context;
         if (typeof s.selected === "number") selected = s.selected;
+        else if (ctxChanged) selected = contextObj().bank;
         causal = causalEl.checked;
         draw();
       },
@@ -4733,6 +4765,8 @@
       update: function (s) {
         if (s && s.mode) setContext(s.mode);
       },
+      next: function () { return stepContext(1); },
+      prev: function () { return stepContext(-1); },
       onKey: function (e) {
         if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
         if (e.key === "ArrowLeft") return stepContext(-1);
@@ -5488,6 +5522,18 @@
     setTimeout(init, 30);
     return {
       update: function () {},
+      next: function () {
+        var st = window.IntuitionSpaceMorph && window.IntuitionSpaceMorph.state ? window.IntuitionSpaceMorph.state() : null;
+        if (!st || st.cur >= st.count - 1) return false;
+        window.IntuitionSpaceMorph.next();
+        return true;
+      },
+      prev: function () {
+        var st = window.IntuitionSpaceMorph && window.IntuitionSpaceMorph.state ? window.IntuitionSpaceMorph.state() : null;
+        if (!st || st.cur <= 0) return false;
+        window.IntuitionSpaceMorph.prev();
+        return true;
+      },
       resize: function () { if (window.IntuitionSpaceMorph && window.IntuitionSpaceMorph.resize) window.IntuitionSpaceMorph.resize(); },
       onKey: function (e) {
         var st = window.IntuitionSpaceMorph && window.IntuitionSpaceMorph.state ? window.IntuitionSpaceMorph.state() : null;
@@ -5739,6 +5785,8 @@
     resize();
     return {
       update: function () {},
+      next: function () { if (layerTarget >= 12) return false; setLayer(layerTarget + 1); return true; },
+      prev: function () { if (layerTarget <= 0) return false; setLayer(layerTarget - 1); return true; },
       resize: resize,
       destroy: function () { if (layerTween) cancelAnimationFrame(layerTween); window.removeEventListener("resize", resize); el.remove(); }
     };
@@ -5884,6 +5932,8 @@
     renderDetail();
     return {
       update: function () {},
+      next: nextInternal,
+      prev: prevInternal,
       onKey: function (e) {
         if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
         if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
@@ -6572,13 +6622,24 @@
         '<div class="ls-lang-bars"></div>' +
         '<p class="ls-lang-note">' + (DE ? "GPT-3-Mix nach Brown et al. (2020), Tabelle 2.2, gerundet. Labs veröffentlichen ihre genauen Rezepte nicht." : "GPT-3 mix from Brown et al. (2020), Table 2.2, rounded. Labs do not publish their exact recipes.") + '</p>' +
       '</div>' +
-      '<p class="ls-lang-caveat">' + (DE ? "Dieselbe Schleife, dieselben Gewichte: Die Schrift ändert die Tokens, nicht die Aufgabe. Manche Sprachen brauchen für denselben Inhalt mehr Tokens; der Tokenizer kann sie dadurch teurer machen (Petrov et al., 2023)." : "The same loop, the same weights: the script changes the tokens, not the task. Some languages need more tokens for the same content, so the tokenizer can make them more expensive (Petrov et al., 2023).") + '</p>';
+      '<p class="ls-lang-caveat">' + (DE ? "Dieselbe Schleife, dieselben Gewichte: Die Schrift ändert die Tokens, nicht die Aufgabe. Manche Sprachen brauchen für denselben Inhalt mehr Tokens; der Tokenizer kann sie dadurch teurer machen (Petrov et al., 2023)." : "The same loop, the same weights: the script changes the tokens, not the task. Some languages need more tokens for the same content, so the tokenizer can make them more expensive (Petrov et al., 2023).") + '</p>' +
+      '<div class="ls-tokenize-nav ls-lang-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-lang-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-lang-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-lang-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
     var tabs = el.querySelector(".ls-lang-tabs");
     var tag = el.querySelector(".ls-lang-tag");
     var text = el.querySelector(".ls-lang-text");
     var gloss = el.querySelector(".ls-lang-gloss");
     var bars = el.querySelector(".ls-lang-bars");
+    var navPrev = el.querySelector(".ls-lang-prev");
+    var navNext = el.querySelector(".ls-lang-next");
+    var navProgress = el.querySelector(".ls-lang-progress");
+    function updateNav() {
+      var idx = 0;
+      langs.forEach(function (l, i) { if (l.id === active) idx = i; });
+      navProgress.textContent = (idx + 1) + ' / ' + langs.length;
+      navPrev.disabled = idx === 0;
+      navNext.textContent = idx === langs.length - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+    }
     function show(id) {
       var item = langs.filter(function (l) { return l.id === id; })[0] || langs[0];
       active = item.id;
@@ -6590,6 +6651,7 @@
       text.setAttribute("lang", item.id);
       text.setAttribute("dir", item.rtl ? "rtl" : "ltr");
       gloss.textContent = item.gloss;
+      updateNav();
     }
     langs.forEach(function (l) {
       var b = document.createElement("button");
@@ -6614,8 +6676,20 @@
       show(langs[next].id);
       return true;
     }
+    function nextStep() {
+      if (stepLanguage(1)) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+    }
+    function prevStep() {
+      if (stepLanguage(-1)) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
+    }
+    navPrev.addEventListener("click", prevStep);
+    navNext.addEventListener("click", nextStep);
     return {
       update: function () {},
+      next: function () { return stepLanguage(1); },
+      prev: function () { return stepLanguage(-1); },
       onKey: function (e) {
         if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
         if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return stepLanguage(1);
@@ -6747,6 +6821,204 @@
     return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
   }
 
+  function historyScene(root, api) {
+    var DE = api.lang === "de";
+    var data = DE ? {
+      language: {
+        label: "Sprache und Aufmerksamkeit",
+        events: [
+          {
+            year: "1966", label: "ELIZA",
+            title: "ELIZA antwortet nach Regeln",
+            text: "Weizenbaums Programm suchte Muster im Text und gab eine vorbereitete Antwort zurück. Es hatte kein probabilistisches Sprachmodell und keine Vorstellung von Bedeutung.",
+            source: { label: "HNF (2023), Joseph Weizenbaum and ELIZA", url: "https://blog.hnf.de/joseph-weizenbaum-1923-2008/" }
+          },
+          {
+            year: "2014", label: "Attention",
+            title: "Der Decoder darf zurückblicken",
+            text: "Bahdanau, Cho und Bengio ließen den Decoder bei jedem Ausgabeschritt auf die Eingabewörter schauen. Statt den ganzen Satz in einen festen Vektor zu pressen, bekam jedes Wort ein eigenes Gewicht.",
+            source: { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473" }
+          },
+          {
+            year: "2017", label: "Transformer",
+            title: "Self-Attention ersetzt die Schleife",
+            text: "Vaswani und Kollegen ersetzten die wiederkehrende Verarbeitung durch Self-Attention und fügten Positionsinformationen hinzu. Damit ließ sich ein Satz parallel verarbeiten, ohne die Wortreihenfolge zu verlieren.",
+            source: { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }
+          }
+        ]
+      },
+      scale: {
+        label: "Skalierung und Anweisungen",
+        events: [
+          {
+            year: "2018", label: "GPT-1",
+            title: "Pretraining für viele Aufgaben",
+            text: "GPT-1 hatte rund 117 Millionen Parameter. Das Modell lernte zuerst auf einem großen Textkorpus das nächste Token vorherzusagen und wurde danach für einzelne Aufgaben feinabgestimmt.",
+            source: { label: "Radford et al. (2018), GPT-1", url: "https://papers.baulab.info/papers/also/Radford-2018a.pdf" }
+          },
+          {
+            year: "2019", label: "GPT-2",
+            title: "Prompting statt nur Fine-Tuning",
+            text: "GPT-2 wuchs auf 1,5 Milliarden Parameter. Ohne zusätzliches Training konnte es Aufgaben bearbeiten, wenn die Aufgabe im Prompt stand oder mit wenigen Beispielen gezeigt wurde.",
+            source: { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }
+          },
+          {
+            year: "2020", label: "GPT-3",
+            title: "Few-Shot lernt im Kontext",
+            text: "GPT-3 hatte 175 Milliarden Parameter. Wenige Beispiele im Prompt reichten oft, um eine neue Aufgabe zu beschreiben; die Gewichte blieben dabei unverändert.",
+            source: { label: "Brown et al. (2020), GPT-3", url: "https://arxiv.org/abs/2005.14165" }
+          },
+          {
+            year: "2022", label: "Chinchilla",
+            title: "Mehr Daten pro Parameter",
+            text: "Die Chinchilla-Skalierungsgesetze zeigten, dass viele große Modelle zu lange auf zu wenig Text trainiert wurden. Für ein festes Rechenbudget war ein kleineres Modell mit mehr Tokens oft die bessere Wahl, grob etwa 20 Tokens pro Parameter.",
+            source: { label: "Hoffmann et al. (2022), Chinchilla", url: "https://arxiv.org/abs/2203.15556" }
+          },
+          {
+            year: "2022", label: "ChatGPT",
+            title: "Aus Vorhersage wird Dialog",
+            text: "ChatGPT verband das vortrainierte Modell mit Instruction-Tuning und Reinforcement Learning from Human Feedback. Die Antwort wurde dadurch auf eine Anfrage ausgerichtet, nicht nur auf den wahrscheinlichsten nächsten Token.",
+            source: { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155" }
+          }
+        ]
+      }
+    } : {
+      language: {
+        label: "Language and attention",
+        events: [
+          {
+            year: "1966", label: "ELIZA",
+            title: "ELIZA answers by rules",
+            text: "Weizenbaum's program matched patterns in the text and returned a prepared answer. It had no probabilistic language model and no notion of meaning.",
+            source: { label: "HNF (2023), Joseph Weizenbaum and ELIZA", url: "https://blog.hnf.de/joseph-weizenbaum-1923-2008/" }
+          },
+          {
+            year: "2014", label: "Attention",
+            title: "The decoder can look back",
+            text: "Bahdanau, Cho, and Bengio let the decoder look at the input words at every output step. Instead of squeezing the whole sentence into one fixed vector, each word got its own weight.",
+            source: { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473" }
+          },
+          {
+            year: "2017", label: "Transformer",
+            title: "Self-attention replaces the loop",
+            text: "Vaswani and colleagues replaced recurrent processing with self-attention and added positional information. A sentence could now be processed in parallel without losing word order.",
+            source: { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }
+          }
+        ]
+      },
+      scale: {
+        label: "Scale and instructions",
+        events: [
+          {
+            year: "2018", label: "GPT-1",
+            title: "Pretraining for many tasks",
+            text: "GPT-1 had about 117 million parameters. The model first learned to predict the next token on a large text corpus, then was fine-tuned for individual tasks.",
+            source: { label: "Radford et al. (2018), GPT-1", url: "https://papers.baulab.info/papers/also/Radford-2018a.pdf" }
+          },
+          {
+            year: "2019", label: "GPT-2",
+            title: "Prompting, not only fine-tuning",
+            text: "GPT-2 grew to 1.5 billion parameters. Without additional training it could handle a task when the task was named in the prompt or shown with a few examples.",
+            source: { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }
+          },
+          {
+            year: "2020", label: "GPT-3",
+            title: "Few-shot learning in context",
+            text: "GPT-3 had 175 billion parameters. A few examples in the prompt were often enough to describe a new task; the weights stayed unchanged.",
+            source: { label: "Brown et al. (2020), GPT-3", url: "https://arxiv.org/abs/2005.14165" }
+          },
+          {
+            year: "2022", label: "Chinchilla",
+            title: "More data per parameter",
+            text: "The Chinchilla scaling laws showed that many large models were trained on too little text. For a fixed compute budget, a smaller model with more tokens was often the better choice, roughly 20 tokens per parameter.",
+            source: { label: "Hoffmann et al. (2022), Chinchilla", url: "https://arxiv.org/abs/2203.15556" }
+          },
+          {
+            year: "2022", label: "ChatGPT",
+            title: "Prediction becomes dialogue",
+            text: "ChatGPT combined the pretrained model with instruction tuning and reinforcement learning from human feedback. The answer was aligned with a request, not only with the most likely next token.",
+            source: { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155" }
+          }
+        ]
+      }
+    };
+    var era = "language";
+    var index = 0;
+    var el = document.createElement("div");
+    el.className = "ls-history-scene";
+    el.innerHTML = '<div class="ls-history-head"><span class="ls-history-kicker"></span><span class="ls-history-hint"></span></div>' +
+      '<div class="ls-history-track" role="group"></div>' +
+      '<div class="ls-history-panel" aria-live="polite"></div>' +
+      '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-history-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-history-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-history-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
+    root.appendChild(el);
+    var kicker = el.querySelector(".ls-history-kicker");
+    var hint = el.querySelector(".ls-history-hint");
+    var track = el.querySelector(".ls-history-track");
+    var panel = el.querySelector(".ls-history-panel");
+    var prevBtn = el.querySelector(".ls-history-prev");
+    var nextBtn = el.querySelector(".ls-history-next");
+    var progress = el.querySelector(".ls-history-progress");
+    function events() { return (data[era] || data.language).events; }
+    function render() {
+      var evs = events();
+      index = Math.max(0, Math.min(evs.length - 1, index));
+      kicker.textContent = (data[era] || data.language).label;
+      hint.textContent = DE ? "Jahr wählen" : "Choose a year";
+      track.innerHTML = evs.map(function (e, i) {
+        return '<button type="button" class="ls-history-node' + (i === index ? ' is-on' : '') + '" data-history="' + i + '">' +
+          '<b>' + api.esc(e.year) + '</b><span>' + api.esc(e.label) + '</span></button>';
+      }).join("");
+      track.querySelectorAll("[data-history]").forEach(function (b) {
+        b.addEventListener("click", function () { setIndex(parseInt(b.getAttribute("data-history"), 10)); });
+      });
+      var e = evs[index];
+      panel.innerHTML = '<div class="ls-history-year">' + api.esc(e.year) + '</div>' +
+        '<h3 class="ls-history-title">' + api.esc(e.title) + '</h3>' +
+        '<p class="ls-history-text">' + api.esc(e.text) + '</p>' +
+        '<a class="ls-history-source" href="' + api.esc(e.source.url) + '" target="_blank" rel="noopener">' + api.esc(e.source.label) + '</a>';
+      progress.textContent = (index + 1) + ' / ' + evs.length;
+      prevBtn.disabled = index === 0;
+      nextBtn.textContent = index === evs.length - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+      track.querySelectorAll("[data-history]").forEach(function (b, i) { b.classList.toggle("is-on", i === index); });
+    }
+    function setIndex(i) {
+      index = Math.max(0, Math.min(events().length - 1, i));
+      render();
+    }
+    function nextInternal() { if (index < events().length - 1) { setIndex(index + 1); return true; } return false; }
+    function prevInternal() { if (index > 0) { setIndex(index - 1); return true; } return false; }
+    function nextStep() {
+      if (nextInternal()) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+    }
+    function prevStep() {
+      if (prevInternal()) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
+    }
+    prevBtn.addEventListener("click", prevStep);
+    nextBtn.addEventListener("click", nextStep);
+    render();
+    return {
+      update: function (s) {
+        if (s && s.era && s.era !== era) {
+          era = s.era;
+          index = 0;
+          render();
+        }
+      },
+      next: nextInternal,
+      prev: prevInternal,
+      onKey: function (e) {
+        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
+        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
+        return false;
+      },
+      resize: function () {},
+      destroy: function () { el.remove(); }
+    };
+  }
+
   var SCENES = {
     embedding: embeddingScene,
     phone: phoneScene,
@@ -6771,6 +7043,7 @@
     stack: stackScene,
     activation: activationScene,
     langdata: langdataScene,
+    history: historyScene,
     chineseroom: chineseroomScene
   };
 
@@ -6828,6 +7101,8 @@
       resize: function () { if (scene && scene.resize) scene.resize(); },
       pause: function () { if (scene && scene.pause) scene.pause(); },
       resume: function () { if (scene && scene.resume) scene.resume(); },
+      next: function () { return scene && scene.next ? scene.next() : false; },
+      prev: function () { return scene && scene.prev ? scene.prev() : false; },
       onKey: function (e) { return scene && scene.onKey ? scene.onKey(e) : false; },
       destroy: function () {
         Object.keys(scenes).forEach(function (key) {

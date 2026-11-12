@@ -996,6 +996,92 @@
     }
   ];
 
+  var historySteps = DE ? [
+    {
+      kicker: "16a / Geschichte",
+      title: "Von ELIZA zur Attention",
+      body: "1966 beantwortete ELIZA Sätze mit Mustern, nicht mit Wahrscheinlichkeiten. 2014 durfte der Decoder bei jedem Schritt auf die Eingabewörter zurückblicken. 2017 ersetzte der Transformer die wiederkehrende Schleife durch Self-Attention. Klicke die Jahre und verfolge, was jeweils neu wurde.",
+      watch: "Klicke die Jahre. Welches Problem löst jeder Schritt?",
+      demoState: { scene: "history", era: "language" },
+      context: "ELIZA wirkte wie ein Gespräch, weil Menschen Bedeutung hineinlasen. Attention und Transformer ändern daran nichts Grundsätzliches: Sie machen die Gewichtung sichtbar und lernbar.",
+      deep: "Bahdanau et al. (2014) gaben dem Decoder pro Ausgabeschritt eigene Gewichte über die Eingabewörter. Vaswani et al. (2017) wandten dieselbe Idee auf die Eingabe selbst an: Self-Attention. Erst die Positionsinformation verhindert, dass der Satz zu einer ungeordneten Menge von Tokens wird.",
+      boxes: [
+        box("hist-1", "Geschichte", "ELIZA", "Weizenbaum (1966) verglich Textmuster mit einem Skript. Das Programm hatte kein Sprachmodell und keine Repräsentation von Bedeutung."),
+        box("hist-2", "Geschichte", "Attention", "Bahdanau et al. (2014) ließen den Decoder bei jedem Schritt auf die Eingabe schauen. Das löste den Engpass eines einzelnen festen Kontextvektors."),
+        box("hist-3", "Geschichte", "Transformer", "Vaswani et al. (2017) verarbeiteten die Tokens parallel mit Self-Attention und fügten Positionsinformation hinzu.")
+      ],
+      sources: [
+        { label: "HNF (2023), Joseph Weizenbaum and ELIZA", url: "https://blog.hnf.de/joseph-weizenbaum-1923-2008/", why: { de: "ELIZA als früher regelbasierter Chatbot.", en: "ELIZA as an early rule-based chatbot." } },
+        { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention im Encoder-Decoder-Modell.", en: "Attention in the encoder-decoder model." } },
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Self-Attention und der Transformer-Block.", en: "Self-attention and the transformer block." } }
+      ]
+    },
+    {
+      kicker: "16b / Geschichte",
+      title: "Von GPT-1 zu ChatGPT",
+      body: "2018 zeigte GPT-1 mit 117 Millionen Parametern, dass Pretraining plus Fine-Tuning viele Aufgaben trägt. 2019 kam GPT-2 mit 1,5 Milliarden Parametern und Prompting. 2020 folgte GPT-3 mit 175 Milliarden Parametern und Few-Shot-Lernen. 2022 zeigte Chinchilla, dass mehr Daten pro Parameter oft besser sind, und ChatGPT machte aus der Vorhersage einen Dialog.",
+      watch: "Klicke die Jahre. Was wächst, was wird gezielt trainiert?",
+      demoState: { scene: "history", era: "scale" },
+      context: "Die Kurve ist keine reine Parameterzählung. Datenmenge, Rechenbudget und Nachtraining entscheiden mit, was ein Modell kann. Ein größeres Modell ist nicht automatisch das bessere.",
+      deep: "Chinchilla änderte die Faustregel: Für ein festes Rechenbudget ist ein kleineres Modell mit mehr Tokens oft günstiger als ein sehr großes Modell mit wenigen Tokens. ChatGPT setzt zusätzlich auf Instruction-Tuning und RLHF, also auf menschliche Präferenzen als Trainingssignal.",
+      boxes: [
+        box("hist-4", "Geschichte", "GPT-1", "2018: rund 117 Millionen Parameter. Pretraining auf Text, danach Fine-Tuning für einzelne Aufgaben."),
+        box("hist-5", "Geschichte", "GPT-2 und GPT-3", "2019: 1,5 Milliarden Parameter und Prompting. 2020: 175 Milliarden Parameter und Few-Shot-Lernen im Kontext."),
+        box("hist-6", "Geschichte", "Chinchilla", "2022: mehr Tokens pro Parameter. Für ein festes Rechenbudget oft ein kleineres Modell mit mehr Daten."),
+        box("hist-7", "Geschichte", "ChatGPT", "2022: Instruction-Tuning und Reinforcement Learning from Human Feedback richten die Antwort auf eine Anfrage aus.")
+      ],
+      sources: [
+        { label: "Radford et al. (2018), GPT-1", url: "https://papers.baulab.info/papers/also/Radford-2018a.pdf", why: { de: "GPT-1: Pretraining plus Fine-Tuning.", en: "GPT-1: pretraining plus fine-tuning." } },
+        { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: 1,5 Milliarden Parameter und Prompting.", en: "GPT-2: 1.5 billion parameters and prompting." } },
+        { label: "Brown et al. (2020), GPT-3", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3: 175 Milliarden Parameter und Few-Shot-Lernen.", en: "GPT-3: 175 billion parameters and few-shot learning." } },
+        { label: "Hoffmann et al. (2022), Chinchilla", url: "https://arxiv.org/abs/2203.15556", why: { de: "Rechenoptimales Training mit mehr Tokens pro Parameter.", en: "Compute-optimal training with more tokens per parameter." } },
+        { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155", why: { de: "Instruction-Tuning und RLHF.", en: "Instruction tuning and RLHF." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "16a / History",
+      title: "From ELIZA to attention",
+      body: "In 1966 ELIZA answered sentences with patterns, not probabilities. In 2014 the decoder could look back at the input words at every step. In 2017 the transformer replaced the recurrent loop with self-attention. Click the years and follow what changed.",
+      watch: "Click the years. Which problem does each step solve?",
+      demoState: { scene: "history", era: "language" },
+      context: "ELIZA felt like a conversation because people read meaning into it. Attention and the transformer do not settle that question: they make the weighting visible and learnable.",
+      deep: "Bahdanau et al. (2014) gave the decoder its own weights over the input words at every output step. Vaswani et al. (2017) applied the same idea to the input itself: self-attention. Positional information is what keeps the sentence from becoming an unordered bag of tokens.",
+      boxes: [
+        box("hist-1", "History", "ELIZA", "Weizenbaum (1966) matched text patterns against a script. The program had no language model and no representation of meaning."),
+        box("hist-2", "History", "Attention", "Bahdanau et al. (2014) let the decoder look at the input at every step. That removed the bottleneck of a single fixed context vector."),
+        box("hist-3", "History", "Transformer", "Vaswani et al. (2017) processed tokens in parallel with self-attention and added positional information.")
+      ],
+      sources: [
+        { label: "HNF (2023), Joseph Weizenbaum and ELIZA", url: "https://blog.hnf.de/joseph-weizenbaum-1923-2008/", why: { de: "ELIZA als früher regelbasierter Chatbot.", en: "ELIZA as an early rule-based chatbot." } },
+        { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention im Encoder-Decoder-Modell.", en: "Attention in the encoder-decoder model." } },
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Self-Attention und der Transformer-Block.", en: "Self-attention and the transformer block." } }
+      ]
+    },
+    {
+      kicker: "16b / History",
+      title: "From GPT-1 to ChatGPT",
+      body: "In 2018 GPT-1 showed with 117 million parameters that pretraining plus fine-tuning carries many tasks. In 2019 GPT-2 followed with 1.5 billion parameters and prompting. In 2020 GPT-3 had 175 billion parameters and few-shot learning. In 2022 Chinchilla showed that more data per parameter often helps, and ChatGPT turned prediction into dialogue.",
+      watch: "Click the years. What grows, what is trained on purpose?",
+      demoState: { scene: "history", era: "scale" },
+      context: "The curve is not just a parameter count. Data, compute, and post-training decide what a model can do. A larger model is not automatically the better one.",
+      deep: "Chinchilla changed the rule of thumb: for a fixed compute budget, a smaller model with more tokens is often cheaper than a very large model with few tokens. ChatGPT adds instruction tuning and RLHF, which use human preferences as a training signal.",
+      boxes: [
+        box("hist-4", "History", "GPT-1", "2018: about 117 million parameters. Pretraining on text, then fine-tuning for individual tasks."),
+        box("hist-5", "History", "GPT-2 and GPT-3", "2019: 1.5 billion parameters and prompting. 2020: 175 billion parameters and few-shot learning in context."),
+        box("hist-6", "History", "Chinchilla", "2022: more tokens per parameter. For a fixed compute budget, often a smaller model with more data."),
+        box("hist-7", "History", "ChatGPT", "2022: instruction tuning and reinforcement learning from human feedback align the answer with a request.")
+      ],
+      sources: [
+        { label: "Radford et al. (2018), GPT-1", url: "https://papers.baulab.info/papers/also/Radford-2018a.pdf", why: { de: "GPT-1: Pretraining plus Fine-Tuning.", en: "GPT-1: pretraining plus fine-tuning." } },
+        { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: 1,5 Milliarden Parameter und Prompting.", en: "GPT-2: 1.5 billion parameters and prompting." } },
+        { label: "Brown et al. (2020), GPT-3", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3: 175 Milliarden Parameter und Few-Shot-Lernen.", en: "GPT-3: 175 billion parameters and few-shot learning." } },
+        { label: "Hoffmann et al. (2022), Chinchilla", url: "https://arxiv.org/abs/2203.15556", why: { de: "Rechenoptimales Training mit mehr Tokens pro Parameter.", en: "Compute-optimal training with more tokens per parameter." } },
+        { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155", why: { de: "Instruction-Tuning und RLHF.", en: "Instruction tuning and RLHF." } }
+      ]
+    }
+  ];
+
   var philosophySteps = DE ? [
     {
       kicker: "15 / Philosophie",
@@ -1036,7 +1122,7 @@
     }
   ];
 
-  var steps = introSteps.concat(insideSteps, stackSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, activationSteps, mlpSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps, languageSteps, philosophySteps);
+  var steps = introSteps.concat(insideSteps, stackSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, activationSteps, mlpSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps, languageSteps, historySteps, philosophySteps);
 
   var day = {
     id: "intuition",
