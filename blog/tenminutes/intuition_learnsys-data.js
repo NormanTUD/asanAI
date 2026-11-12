@@ -209,13 +209,14 @@
     {
       kicker: "04 / Die Rechnung",
       title: "Eine Richtung trägt eine Beziehung",
-      body: "Behandle jedes Wort als Pfeil vom Ursprung. Addiere und subtrahiere die Pfeile, und das Ergebnis landet nahe bei einem anderen Wort: König − Mann + Frau liegt nahe bei Königin. Die Beziehung ist eine Richtung, keine benannte Regel. Klicke die Beispiele durch und beobachte, welche Richtung wiederverwendet wird.",
+      body: "Behandle jedes Wort als Pfeil vom Ursprung. Addiere und subtrahiere die Pfeile, und das Ergebnis landet nahe bei einem anderen Wort: König − Mann + Frau liegt nahe bei Königin. Dieselbe Richtung erscheint zwischen Mann und Frau und zwischen König und Königin; du kannst sie auf ein neues Paar übertragen. Klicke die Beispiele durch und beobachte, welche Richtung wiederverwendet wird.",
       watch: "Klicke die Beispiele durch. Welches Ergebnis überrascht dich?",
       demoState: { scene: "embedding", mode: "space", dim: 1, selected: null, arithmetic: "king-man-woman" },
-      context: "Die berühmte Analogie ist eine Illustration. In echten Embeddings ist sie noisy und nicht immer wahr. Eine ungefähre Richtung ist trotzdem nützlich.",
+      context: "Die Richtung ist wiederverwendbar: Mann → Frau und König → Königin zeigen denselben Schritt. Die berühmte Analogie ist eine Illustration; in echten Embeddings ist sie noisy und nicht immer wahr.",
       deep: "Die Geometrie ist eine Projektion. Was du siehst, ist ein Schatten eines viel höherdimensionalen Raums. Die Rechnung findet im vollen Raum statt; die zwei Achsen sind nur eine lesbare Auswahl.",
       boxes: [
         box("emb-8", "Mathematik", "Warum funktioniert die Analogie?", "Weil ähnliche Wörter in ähnlichen grammatischen Slots auftreten. Der Unterschied zwischen Mann und Frau wird zu einer wiederverwendbaren Richtung. Dieselbe Richtung erscheint zwischen König und Königin."),
+        box("emb-14", "Technik", "Was wird übertragen?", "Mann → Frau und König → Königin sind parallel. Die Richtung ist eine gelernte Beziehung, die auf ein neues Paar angewendet wird. Deshalb landet König − Mann + Frau nahe bei Königin."),
         box("emb-9", "Anwendung", "Wofür ist das gut?", "Suche, Empfehlungen, Clustering und RAG nutzen genau diese Geometrie: semantische Nähe wird zur Abfrage. Die Vektorarithmetik ist eher eine Diagnose als ein Produktmerkmal.")
       ],
       sources: sources.slice(2, 4)
@@ -237,15 +238,15 @@
       sources: sources
     },
     {
-      kicker: "05a / Die Übertragung",
-      title: "Eine Beziehung lässt sich übertragen",
-      body: "Der Pfeil von Löwe zu Löwin ist fast derselbe wie von Hengst zu Stute, Stier zu Kuh und Hahn zu Henne. Die Tiere unterscheiden sich in der Spezies, aber die Geschlechtsrichtung bleibt. Die Rolle (wild oder domestiziert) ordnet die Paare; die Spezies bildet die dritte Ebene. Klicke ein Paar an und vergleiche die Pfeile.",
-      watch: "Klicke ein Paar an. Zeigen alle Paare denselben Pfeil?",
+      kicker: "05a / Die Achsen",
+      title: "Vier Paare, drei Achsen",
+      body: "Die vier Paare sitzen auf drei Achsen: Rolle, Geschlecht und Spezies. Die Rolle ordnet die Paare, die Spezies legt den Ort fest, das Geschlecht trennt die beiden Wörter eines Paares. Klicke ein Paar an und sieh, wo es im Raum liegt.",
+      watch: "Klicke ein Paar an. Welche Achse trennt die beiden Wörter?",
       demoState: { scene: "animals" },
-      context: "Die Spezies bildet die dritte Ebene, die Rolle ordnet die Paare. Die Richtung männlich → weiblich bleibt über die Spezies hinweg gleich.",
-      deep: "Das ist eine starke Vereinfachung. In einem echten Embedding sind die Tiere nicht so sauber getrennt; die Richtung ist eine statistische Regelmäßigkeit, keine Regel. Sie zeigt die Intuition, nicht die exakte Geometrie.",
+      context: "Die Spezies bildet die dritte Ebene, die Rolle ordnet die Paare, das Geschlecht trennt die Wörter innerhalb eines Paares.",
+      deep: "Die Demo zeigt die Achsen, nicht die exakte Geometrie eines echten Modells. In einem echten Embedding liegen die Tiere nicht so sauber getrennt.",
       boxes: [
-        box("emb-12", "Technik", "Wie lernt ein Netz die Übertragung?", "Ein Feed-Forward-Netz kann gelernte Richtungen auf neue Vektoren anwenden. Es lernt keine Wörterbuchregel, sondern eine Transformation, die auf viele Beispiele passt. Deshalb funktioniert sie auch für Wörter, die nicht in der Trainingsmenge standen."),
+        box("emb-12", "Technik", "Welche Achse trennt was?", "Die Rollenachse unterscheidet wild und domestiziert. Die Speziesachse trennt Löwe, Pferd, Rind und Huhn. Die Geschlechtsachse trennt männlich und weiblich innerhalb eines Paares."),
         box("emb-13", "Grenze", "Warum ist die Karte nicht das Territorium?", "Weil sie nur die Unterschiede zeigt, die für den Trainings-Loss relevant waren. Sie ist eine komprimierte Statistik, kein Lexikon. Bedeutung im Kontext entsteht erst durch Attention und die folgenden Schichten.")
       ],
       sources: sources
@@ -327,15 +328,15 @@
       sources: sources
     },
     {
-      kicker: "05a / Transport",
-      title: "A relation can be transported",
-      body: "The arrow from lion to lioness is almost the same as from stallion to mare, bull to cow, and rooster to hen. The species differ, but the gender direction stays. Role (wild or domesticated) orders the pairs; species is the third axis. Click a pair and compare the arrows.",
-      watch: "Click a pair. Do all pairs show the same arrow?",
+      kicker: "05a / The axes",
+      title: "Four pairs, three axes",
+      body: "The four pairs sit on three axes: role, gender, and species. Role orders the pairs, species fixes the place, gender separates the two words in a pair. Click a pair and see where it sits in the space.",
+      watch: "Click a pair. Which axis separates the two words?",
       demoState: { scene: "animals" },
-      context: "Species is the third axis, role orders the pairs. The direction male → female stays the same across species.",
-      deep: "This is a strong simplification. In a real embedding the animals are not so neatly separated; the direction is a statistical regularity, not a rule. It shows the intuition, not the exact geometry.",
+      context: "Species is the third axis, role orders the pairs, gender separates the words within a pair.",
+      deep: "The demo shows the axes, not the exact geometry of a real model. In a real embedding the animals are not so neatly separated.",
       boxes: [
-        box("emb-12", "Technique", "How does a network learn the transport?", "A feed-forward network can apply learned directions to new vectors. It does not learn a dictionary rule but a transformation that fits many examples. That is why it can work for words that were not in the training set."),
+        box("emb-12", "Technique", "Which axis separates what?", "The role axis distinguishes wild and domesticated. The species axis separates lion, horse, cattle, and chicken. The gender axis separates male and female within a pair."),
         box("emb-13", "Limit", "Why is the map not the territory?", "Because it shows only the differences that mattered for the training loss. It is a compressed statistic, not a lexicon. Meaning in context appears only through attention and the following layers.")
       ],
       sources: sources
@@ -998,80 +999,44 @@
 
   var historySteps = DE ? [
     {
-      kicker: "16a / Geschichte",
-      title: "Vom Perzeptron zur XOR-Krise",
-      body: "1958 stellte Rosenblatt das Perzeptron vor: eine Maschine, die ihre Gewichte aus Fehlern anpasste. Die Mark-I-Maschine las ein 20×20-Feld aus 400 Photozellen und lernte linear trennbare Muster. 1969 zeigten Minsky und Papert, dass eine einzelne Schicht XOR nicht lösen kann, weil sich die vier Punkte nicht mit einer geraden Linie trennen lassen. 1973 kam der Lighthill-Bericht und mit ihm der erste KI-Winter. Klicke die Jahre und verfolge, warum aus einer Grenze eine Krise wurde.",
-      watch: "Klicke die Jahre. Warum reicht eine Linie für XOR nicht?",
-      demoState: { scene: "history", era: "perceptron" },
-      context: "Das Perzeptron war ein Lernmodell, keine allgemeine Intelligenz. Seine Grenze war geometrisch: Eine einzelne lineare Grenze kann nur Klassen trennen, die linear trennbar sind. XOR ist der kleinste Fall, in dem das scheitert.",
-      deep: "Minsky und Papert wussten, dass ein mehrschichtiges Netz XOR lösen könnte. Ihr Argument war, dass niemand wusste, wie man solche Netze effizient trainiert. Backpropagation war 1970 bereits als Verfahren bekannt, brauchte aber fast zwei Jahrzehnte, bis es praktisch wurde. Der erste KI-Winter war deshalb nicht nur eine Folge des XOR-Problems, sondern auch eine Folge der nicht eingelösten Versprechen.",
+      kicker: "16 / Geschichte",
+      title: "Geschichte in zehn Schritten",
+      body: "Von den Kerben im Wolfsknochen bis zu GPT: Zehn Tabs folgen dem roten Faden aus `history.php`. Ganz früh beginnt Rechnen als Zählen mit Steinen und Kerben. Dann kommen Logik, Rechenmaschinen, das Neuron, das Perzeptron, die XOR-Krise, Backpropagation, Deep Learning, der Transformer und die LLMs. Klicke die Tabs und sieh, welche Idee jeweils weitergetragen wird.",
+      watch: "Klicke die zehn Tabs. Welche Idee trägt bis zum Transformer?",
+      demoState: { scene: "history", tab: 0 },
+      context: "Die Geschichte ist keine gerade Linie. Mehrere Stränge laufen parallel: formale Logik, mechanisches Rechnen, statistisches Lernen und Hardware. Der Transformer ist ein Knoten, an dem viele davon zusammenkommen.",
+      deep: "Jeder Tab nennt eine Primärquelle oder ein Museum, das den Gegenstand dokumentiert. Die Bilder stammen aus `history.php`; die Credits stehen direkt an den Figuren. Die zwei Schemata für XOR und Backpropagation sind eigene Zeichnungen, weil das Original ein interaktives Plotly-Diagramm beziehungsweise ein Fließbild ist.",
       boxes: [
-        box("hist-1", "Geschichte", "Perzeptron", "Rosenblatt (1958) passte Gewichte mit einer Fehlerkorrektur an. Die Mark-I-Maschine hatte 400 Photozellen und motorgetriebene Potentiometer als Gewichte."),
-        box("hist-2", "Geschichte", "XOR", "Minsky und Papert (1969) zeigten: Ein einschichtiges Perzeptron kann XOR nicht lösen. Die vier XOR-Punkte sind nicht linear trennbar."),
-        box("hist-3", "Geschichte", "Erster KI-Winter", "Der Lighthill-Bericht (1973) führte zu Mittelkürzungen in Großbritannien. Die sichtbare Förderung der Connectionisten brach weg.")
+        box("hist-1", "Geschichte", "Zehn Tabs", "Ganz früh: Wolfsknochen, Salamis-Tafel, Llull, Leibniz, Neuron, Perzeptron, Backprop, Deep Learning, Transformer, GPT."),
+        box("hist-2", "Geschichte", "Roter Faden", "Jede Station macht einen Schritt von gegenständlichem Zählen zu lernenden Vektoren: Regeln, Maschinen, Neuronen, Gradienten, Aufmerksamkeit."),
+        box("hist-3", "Geschichte", "Was die Tabs nicht zeigen", "Sie sind eine Auswahl. Die vollständige Erzählung mit allen Quellen und Bildern steht in `history.php`; hier geht es um die Linie, die zum LLM führt.")
       ],
       sources: [
-        { label: "HNF (2019), Frank Rosenblatt und das Perzeptron", url: "https://blog.hnf.de/frank-rosenblatt/", why: { de: "Rosenblatt, Mark I und die frühe Perzeptron-Geschichte.", en: "Rosenblatt, the Mark I, and the early perceptron story." } },
-        { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins", why: { de: "Die XOR-Grenze des einschichtigen Perzeptrons.", en: "The XOR limit of the single-layer perceptron." } },
-        { label: "Lighthill (1973), Artificial Intelligence: A General Survey", url: "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf", why: { de: "Der Bericht hinter dem ersten KI-Winter.", en: "The report behind the first AI winter." } }
-      ]
-    },
-    {
-      kicker: "16b / Geschichte",
-      title: "Backpropagation und die Rückkehr",
-      body: "1961 beschrieb Rosenblatt bereits eine „back-propagating error correction“: Der Fehler der Ausgabe sollte auf frühere Schichten verteilt werden. Es fehlten aber die Kettenregel und ein brauchbarer Gradient. 1970 entwickelte Linnainmaa die reverse mode der automatischen Differentiation, den mathematischen Unterbau für effiziente Gradienten. 1986 popularisierten Rumelhart, Hinton und Williams Backpropagation; verborgene Schichten wurden trainierbar. Klicke die Jahre und sieh, wie aus einer Idee ein trainierbares Verfahren wurde.",
-      watch: "Klicke die Jahre. Was fehlte Rosenblatt noch, und was kam 1970 und 1986 dazu?",
-      demoState: { scene: "history", era: "backprop" },
-      context: "Backpropagation ist die Kettenregel, angewendet auf ein Netz: Der Fehler wird von der Ausgabe rückwärts durch die Schichten geschickt, und jede Schicht bekommt ihren Anteil. Ohne differenzierbare Aktivierungen funktioniert das nicht.",
-      deep: "Rosenblatts Verfahren von 1961 war keine moderne Backpropagation: Es gab keinen Gradienten und keine Kettenregel, die Fehlerzuordnung war stochastisch. Linnainmaa lieferte 1970 die effiziente reverse mode der automatischen Differentiation. Rumelhart, Hinton und Williams zeigten 1986, dass sich damit brauchbare interne Repräsentationen lernen lassen. Erst diese Kombination machte mehrschichtige Netze praktisch.",
-      boxes: [
-        box("hist-4", "Geschichte", "1961", "Rosenblatt beschrieb eine rückwärts gerichtete Fehlerkorrektur, aber ohne Gradient und Kettenregel. Die Schrittfunktion der Neuronen machte das Verfahren unzuverlässig."),
-        box("hist-5", "Geschichte", "1970", "Linnainmaa entwickelte die reverse mode der automatischen Differentiation. Sie berechnet partielle Ableitungen verschachtelter Funktionen effizient rückwärts."),
-        box("hist-6", "Geschichte", "1986", "Rumelhart, Hinton und Williams popularisierten Backpropagation. Der Fehler läuft rückwärts durch die Schichten; die Gewichte werden mit der Kettenregel angepasst.")
-      ],
-      sources: [
-        { label: "Rosenblatt (1961), CAL Report on Back-Propagating Errors", url: "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up", why: { de: "Rosenblatts frühe, noch nicht gradientenbasierte Fehlerkorrektur.", en: "Rosenblatt's early error correction before gradients." } },
-        { label: "Linnainmaa (1970/1976), Cumulative Rounding Error", url: "https://papers.baulab.info/papers/also/Linnainmaa-1976.pdf", why: { de: "Reverse-mode Automatic Differentiation als mathematischer Unterbau.", en: "Reverse-mode automatic differentiation as the mathematical backbone." } },
-        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Backpropagation wird als trainierbares Verfahren populär.", en: "Backpropagation becomes popular as a trainable method." } }
+        { label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg", why: { de: "Der früheste Gegenstand im Geschichts-Tab.", en: "The earliest object in the history tab." } },
+        { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins", why: { de: "Die XOR-Grenze und der erste KI-Winter.", en: "The XOR limit and the first AI winter." } },
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Backpropagation macht tiefe Netze trainierbar.", en: "Backpropagation makes deep networks trainable." } },
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Self-Attention und der Transformer-Block.", en: "Self-attention and the transformer block." } }
       ]
     }
   ] : [
     {
-      kicker: "16a / History",
-      title: "From the perceptron to the XOR crisis",
-      body: "In 1958 Rosenblatt presented the perceptron: a machine that adjusted its weights from errors. The Mark I read a 20×20 grid of 400 photocells and learned linearly separable patterns. In 1969 Minsky and Papert showed that a single layer cannot solve XOR, because the four points cannot be separated by a straight line. In 1973 the Lighthill report brought the first AI winter. Click the years and follow how a boundary became a crisis.",
-      watch: "Click the years. Why is one line not enough for XOR?",
-      demoState: { scene: "history", era: "perceptron" },
-      context: "The perceptron was a learning model, not general intelligence. Its limit was geometric: a single linear boundary can only separate classes that are linearly separable. XOR is the smallest case where that fails.",
-      deep: "Minsky and Papert knew that a multilayer network could solve XOR. Their argument was that nobody knew how to train such networks efficiently. Backpropagation was already known as a procedure in 1970, but it took almost two decades to become practical. The first AI winter was therefore not only a consequence of XOR, but also of promises that were not delivered.",
+      kicker: "16 / History",
+      title: "History in ten steps",
+      body: "From the notches in a wolf bone to GPT: ten tabs follow the thread from `history.php`. Arithmetic starts as counting with stones and notches. Then come logic, calculating machines, the neuron, the perceptron, the XOR crisis, backpropagation, deep learning, the transformer, and LLMs. Click the tabs and see which idea is carried forward.",
+      watch: "Click the ten tabs. Which idea carries through to the transformer?",
+      demoState: { scene: "history", tab: 0 },
+      context: "History is not a straight line. Several strands run in parallel: formal logic, mechanical calculation, statistical learning, and hardware. The transformer is a node where many of them meet.",
+      deep: "Each tab names a primary source or a museum that documents the object. The images come from `history.php`; credits sit directly on the figures. The XOR and backpropagation diagrams are original drawings, because the original is an interactive Plotly chart or a flow diagram.",
       boxes: [
-        box("hist-1", "History", "Perceptron", "Rosenblatt (1958) adjusted weights with an error correction. The Mark I machine had 400 photocells and motor-driven potentiometers as weights."),
-        box("hist-2", "History", "XOR", "Minsky and Papert (1969) showed that a single-layer perceptron cannot solve XOR. The four XOR points are not linearly separable."),
-        box("hist-3", "History", "First AI winter", "The Lighthill report (1973) led to funding cuts in Britain. Visible support for connectionists collapsed.")
+        box("hist-1", "History", "Ten tabs", "Deep past: wolf bone, Salamis tablet, Llull, Leibniz, neuron, perceptron, backprop, deep learning, transformer, GPT."),
+        box("hist-2", "History", "The thread", "Each station moves from embodied counting toward learned vectors: rules, machines, neurons, gradients, attention."),
+        box("hist-3", "History", "What the tabs leave out", "They are a selection. The full story with all sources and images is in `history.php`; this page follows the line that leads to the LLM.")
       ],
       sources: [
-        { label: "HNF (2019), Frank Rosenblatt and the Perceptron", url: "https://blog.hnf.de/frank-rosenblatt/", why: { de: "Rosenblatt, Mark I und die frühe Perzeptron-Geschichte.", en: "Rosenblatt, the Mark I, and the early perceptron story." } },
-        { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins", why: { de: "Die XOR-Grenze des einschichtigen Perzeptrons.", en: "The XOR limit of the single-layer perceptron." } },
-        { label: "Lighthill (1973), Artificial Intelligence: A General Survey", url: "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf", why: { de: "Der Bericht hinter dem ersten KI-Winter.", en: "The report behind the first AI winter." } }
-      ]
-    },
-    {
-      kicker: "16b / History",
-      title: "Backpropagation and the return",
-      body: "In 1961 Rosenblatt already described a “back-propagating error correction”: the output error should be spread back to earlier layers. But the chain rule and a usable gradient were missing. In 1970 Linnainmaa developed reverse-mode automatic differentiation, the mathematical backbone for efficient gradients. In 1986 Rumelhart, Hinton, and Williams popularised backpropagation; hidden layers became trainable. Click the years and see how an idea became a trainable method.",
-      watch: "Click the years. What was still missing in Rosenblatt's version, and what arrived in 1970 and 1986?",
-      demoState: { scene: "history", era: "backprop" },
-      context: "Backpropagation is the chain rule applied to a network: the error is sent backward from the output through the layers, and each layer gets its share. Without differentiable activations, it does not work.",
-      deep: "Rosenblatt's 1961 procedure was not modern backpropagation: there was no gradient and no chain rule, and the error assignment was stochastic. Linnainmaa supplied the efficient reverse mode of automatic differentiation in 1970. Rumelhart, Hinton, and Williams showed in 1986 that it can learn useful internal representations. Only that combination made multilayer networks practical.",
-      boxes: [
-        box("hist-4", "History", "1961", "Rosenblatt described a backward error correction, but without a gradient and chain rule. The neurons' step function made the procedure unreliable."),
-        box("hist-5", "History", "1970", "Linnainmaa developed reverse-mode automatic differentiation. It computes partial derivatives of nested functions efficiently by running backward."),
-        box("hist-6", "History", "1986", "Rumelhart, Hinton, and Williams popularised backpropagation. The error runs backward through the layers; the weights are adjusted with the chain rule.")
-      ],
-      sources: [
-        { label: "Rosenblatt (1961), CAL Report on Back-Propagating Errors", url: "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up", why: { de: "Rosenblatts frühe, noch nicht gradientenbasierte Fehlerkorrektur.", en: "Rosenblatt's early error correction before gradients." } },
-        { label: "Linnainmaa (1970/1976), Cumulative Rounding Error", url: "https://papers.baulab.info/papers/also/Linnainmaa-1976.pdf", why: { de: "Reverse-mode Automatic Differentiation als mathematischer Unterbau.", en: "Reverse-mode automatic differentiation as the mathematical backbone." } },
-        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Backpropagation wird als trainierbares Verfahren populär.", en: "Backpropagation becomes popular as a trainable method." } }
+        { label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg", why: { de: "Der früheste Gegenstand im Geschichts-Tab.", en: "The earliest object in the history tab." } },
+        { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins", why: { de: "Die XOR-Grenze und der erste KI-Winter.", en: "The XOR limit and the first AI winter." } },
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Backpropagation macht tiefe Netze trainierbar.", en: "Backpropagation makes deep networks trainable." } },
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Self-Attention und der Transformer-Block.", en: "Self-attention and the transformer block." } }
       ]
     }
   ];

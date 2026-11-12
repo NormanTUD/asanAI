@@ -1142,3 +1142,14 @@ h1,h2,h3,h4{
 .ls-history-figure img{display:block;width:100%;max-height:150px;object-fit:contain;background:#fff}
 .ls-history-figure figcaption{display:block;margin-top:4px;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-history-figure figcaption a{color:var(--ls-petrol);text-decoration:underline;text-underline-offset:2px}
+
+.ls-history-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.ls-history-tabs .ls-history-node{min-width:0;padding:6px 7px}
+.ls-history-tabs .ls-history-node b{font-size:var(--ls-fs-micro)}
+.ls-history-tabs .ls-history-node span{font-size:calc(var(--ls-fs-micro) * .92)}
+.ls-history-figures{display:flex;flex-direction:column;gap:6px}
+.ls-history-figures .ls-history-figure{max-width:100%}
+.ls-history-sources{display:flex;flex-direction:column;gap:3px}
+@media (max-width:720px){
+  .ls-history-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
