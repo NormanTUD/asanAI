@@ -418,6 +418,13 @@ Treat these as hard behaviour:
   Set `window.__tmHeightReserving` around animated demos and jump to the final
   state while it is true; skip measuring a demo that is currently visible.
   Without this, the attention word visibly cycles through every context on load.
+- **No height jumps.** A demo must reserve the maximum height of everything
+  that can change before the first paint: controls, readout, formula, stage
+  head, stage foot. Measure all reachable states (or use fixed max
+  `min-height`/`max-height`) and keep those heights when a step, mode, or
+  formula changes. The canvas above must not move. A formula area stays
+  reserved even when the current step has no formula. Never let a step change
+  resize the canvas.
 - 3-D scenes: draw axes, token vectors, rings, and projection lines as
   depth-sorted primitives. Split long lines into segments with their own `z`
   values; drawing axes first and then a vector on top breaks occlusion. The

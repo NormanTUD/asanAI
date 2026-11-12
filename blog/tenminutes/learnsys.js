@@ -10,6 +10,73 @@
 (function () {
   var LS = {};
   var KEY = "tm_learnsys_pref_v1";
+  var LANG = "de";
+  var S = null;
+  var STRINGS = {
+    de: {
+      position: "Position", positionOf: "Position {n} von 9",
+      of: "von", step: "Schritt", stepOf: "Schritt {n} / {total}",
+      prevStep: "Vorheriger Schritt", nextStep: "Nächster Schritt",
+      prevDay: "Vorheriger Tag", nextDay: "Nächster Tag",
+      back: "Zurück", forward: "Weiter", depth: "Tiefe",
+      short: "Kurz", standard: "Standard", deep: "Tief", all: "Alles",
+      path: "Weg", allPaths: "Alle Wege", text: "Text",
+      textSmaller: "Text kleiner", textLarger: "Text größer",
+      demoLarge: "Demo groß", showText: "Text zeigen",
+      day: "Tag", days: "Tage", noDays: "Noch keine Tage.",
+      demoNotFound: "Demo nicht gefunden: ",
+      deepDive: "Tiefer eintauchen", question: "Frage", questions: "Fragen",
+      context: "Kontext", oneLevel: "Eine Ebene tiefer", sources: "Quellen",
+      moreInLesson: "Mehr in der Lektion →", clickExample: "Klicken für ein Beispiel",
+      watch: "Beobachte", defaultHint: "Klicken, ziehen, beobachten.",
+      helpTitle: "Tastatur und Position", helpStep: "Schritt zurück / vor",
+      helpDay: "Tag zurück / vor", helpJump: "Fünf Schritte zurück / vor",
+      helpPos: "Position, auch mehrstellig (z. B. 1 1)",
+      helpHome: "Erster / letzter Tag", helpMix: "Anderer Mix",
+      helpDepth: "Tiefe öffnen", helpFocus: "Demo groß",
+      helpFont: "Text größer / kleiner", helpHelp: "Hilfe öffnen / schließen",
+      interactiveDemo: "Interaktive Demo", stepRail: "Schritt 0 bis 9",
+      depthQuestions: "{n} Fragen", depthQuestion: "{n} Frage",
+      textSize: "Textgröße", mixLabel: "Mix"
+    },
+    en: {
+      position: "Position", positionOf: "Position {n} of 9",
+      of: "of", step: "Step", stepOf: "Step {n} / {total}",
+      prevStep: "Previous step", nextStep: "Next step",
+      prevDay: "Previous day", nextDay: "Next day",
+      back: "Back", forward: "Next", depth: "Depth",
+      short: "Short", standard: "Standard", deep: "Deep", all: "All",
+      path: "Path", allPaths: "All paths", text: "Text",
+      textSmaller: "Smaller text", textLarger: "Larger text",
+      demoLarge: "Large demo", showText: "Show text",
+      day: "Day", days: "Days", noDays: "No days yet.",
+      demoNotFound: "Demo not found: ",
+      deepDive: "Go deeper", question: "question", questions: "questions",
+      context: "Context", oneLevel: "One level deeper", sources: "Sources",
+      moreInLesson: "More in the lesson →", clickExample: "Click for an example",
+      watch: "Watch", defaultHint: "Click, drag, observe.",
+      helpTitle: "Keyboard and position", helpStep: "Step back / forward",
+      helpDay: "Day back / forward", helpJump: "Five steps back / forward",
+      helpPos: "Position, multi-digit (e.g. 1 1)",
+      helpHome: "First / last day", helpMix: "Another mix",
+      helpDepth: "Open depth", helpFocus: "Large demo",
+      helpFont: "Text larger / smaller", helpHelp: "Open / close help",
+      interactiveDemo: "Interactive demo", stepRail: "Step 0 to 9",
+      depthQuestions: "{n} questions", depthQuestion: "{n} question",
+      textSize: "Text size", mixLabel: "Mix"
+    }
+  };
+  function setLang(lang) {
+    LANG = lang === "en" ? "en" : "de";
+    S = STRINGS[LANG];
+  }
+  function t(key, vars) {
+    var out = (S && S[key]) || STRINGS.de[key] || key;
+    if (vars) Object.keys(vars).forEach(function (k) {
+      out = out.replace(new RegExp("\\{" + k + "\\}", "g"), vars[k]);
+    });
+    return out;
+  }
   var root = null;
   var cfg = null;
   var state = { track: "all", depth: "standard", font: 1, day: 0, step: 0 };
@@ -22,6 +89,9 @@
   var cueSuppressUntil = 0;
   var cuesArmed = false;
   var ignoreScroll = false;
+  var posCount = 10;
+  var posBuffer = "";
+  var posTimer = 0;
 
   var FONT_LEVELS = [
     { id: "s", label: "Klein", body: 15, title: 24, small: 11 },
@@ -126,7 +196,7 @@
 
   var GLOSSARY_ALIASES = {
     "matrix": "matrix", "matrizen": "matrix", "matrixen": "matrix",
-    "vektor": "vektor", "vektoren": "vektor",
+    "vektor": "vektor", "vektoren": "vektor", "vector": "vektor", "vectors": "vektor",
     "token": "token", "tokens": "token",
     "attention": "attention", "aufmerksamkeit": "attention",
     "softmax": "softmax",
@@ -135,9 +205,80 @@
     "kernel": "kernel", "filter": "kernel",
     "gradient": "gradient", "gradienten": "gradient",
     "loss": "loss", "fehler": "loss",
-    "parameter": "parameter", "gewichte": "parameter",
+    "parameter": "parameter", "gewichte": "parameter", "weights": "parameter",
     "layer": "layer", "schicht": "layer", "schichten": "layer"
   };
+  var GLOSSARY_EN = {
+    matrix: {
+      label: "Matrix",
+      short: "A grid of numbers. Each row and column has a meaning.",
+      long: "A matrix is a rectangular grid of numbers. A 3×3 matrix can be a small pixel patch; in a network a weight matrix is a learned map from one vector to another. The shape says what goes in and what comes out: a 3×3 matrix maps three numbers to three numbers."
+    },
+    vektor: {
+      label: "Vector",
+      short: "A list of numbers that describes a point or a direction.",
+      long: "A vector is an ordered list of numbers. Read as a point, it says where something is; read as an arrow, it says where it points. A token becomes a vector because the model can only compute with numbers. Direction often matters more than length: two vectors can differ in length and still point the same way."
+    },
+    token: {
+      label: "Token",
+      short: "A piece of text that the model reads as a number.",
+      long: "A token is a piece of text from a fixed vocabulary: a word, a word piece, a punctuation mark, or a byte. The model sees the token ID, not the letters. That is why it can build unseen words from known pieces, and why spelling is a reconstruction."
+    },
+    attention: {
+      label: "Attention",
+      short: "A mechanism that weights tokens and moves information between them.",
+      long: "Attention lets every token read the others. A query and the keys produce scores; softmax turns them into weights that sum to one. The output is a weighted mix of the values. It is a finite budget: more for one token means less for the others."
+    },
+    softmax: {
+      label: "Softmax",
+      short: "Turns scores into a distribution that sums to one.",
+      long: "Softmax exponentiates every score so all values become positive, then divides by the sum. The order is preserved, and the largest score gets the most mass. Shifting all scores by the same constant changes nothing, so the maximum is often subtracted first. The base e is a convention."
+    },
+    residual: {
+      label: "Residual Stream",
+      short: "A running vector that every layer writes an update into.",
+      long: "The residual stream is a token's shared vector. Every layer reads it, computes an update, and adds it. Nothing is overwritten. That gives gradients a short path back and lets late layers still see the original signal."
+    },
+    embedding: {
+      label: "Embedding",
+      short: "A learned vector for a token.",
+      long: "An embedding is a row in a learned table: token ID in, vector out. Words with similar contexts get similar vectors. The table is only the start; attention and the FFN rewrite the vector afterwards."
+    },
+    kernel: {
+      label: "Kernel",
+      short: "A small window of learned weights that slides over an image.",
+      long: "A kernel is a small matrix, for example 3×3. At every image position the pixels under the window are multiplied by the kernel weights and summed. The same kernel is reused everywhere, so a pattern is learned once and recognised in many places."
+    },
+    gradient: {
+      label: "Gradient",
+      short: "The direction in which the loss rises most steeply.",
+      long: "The gradient points uphill. The optimizer walks the other way to make the loss smaller. The learning rate decides how far it goes. In a deep network the gradient is computed backwards from the output to every parameter with the chain rule."
+    },
+    loss: {
+      label: "Loss",
+      short: "A number that says how wrong the model is.",
+      long: "The loss turns a prediction into a learning signal. For a line it is often mean squared error; for a classifier, cross-entropy. The loss defines a surface: each parameter choice is a point, the height is the error."
+    },
+    parameter: {
+      label: "Parameter",
+      short: "A number the model may change during training.",
+      long: "Parameters are the model's knobs: weights and biases. Training searches for values that lower the loss. A large model has billions of them; no single one means anything on its own, only their interplay creates the behaviour."
+    },
+    layer: {
+      label: "Layer",
+      short: "A stage that transforms the vector.",
+      long: "A layer takes a vector, changes it, and passes it on. In a transformer a layer is attention, FFN, residual connection, and normalization. The structure repeats; each layer has its own learned weights."
+    }
+  };
+  function glossary(id) {
+    var g = GLOSSARY[id];
+    if (!g) return null;
+    if (LANG === "en" && GLOSSARY_EN[id]) {
+      var e = GLOSSARY_EN[id];
+      return { label: e.label, short: e.short, long: e.long, lesson: g.lesson, svg: g.svg };
+    }
+    return g;
+  }
 
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -158,14 +299,14 @@
       if (!m) return esc(part);
       var id = termId(m[1]);
       var label = m[1];
-      if (!GLOSSARY[id]) return esc(label);
-      var g = GLOSSARY[id];
+      var g = glossary(id);
+      if (!g) return esc(label);
       return '<span class="ls-term-wrap">' +
         '<button type="button" class="ls-term" data-term="' + esc(id) + '">' + esc(label) + '</button>' +
         '<span class="ls-term-note" hidden>' +
           '<span class="ls-term-def">' + esc(g.long) + '</span>' +
           '<span class="ls-term-visual">' + g.svg + '</span>' +
-          '<a class="ls-term-link" href="' + esc(g.lesson) + '">Mehr in der Lektion →</a>' +
+          '<a class="ls-term-link" href="' + esc(g.lesson) + '">' + esc(t("moreInLesson")) + '</a>' +
         '</span>' +
       '</span>';
     }).join("");
@@ -199,35 +340,56 @@
   }
 
   function buildUI() {
-    var posHtml = "";
-    for (var pi = 0; pi <= 9; pi++) {
-      posHtml += '<button type="button" data-pos="' + pi + '" title="Position ' + pi + ' von 9" aria-label="Position ' + pi + ' von 9">' + pi + '</button>';
+    var tickTotal = 10;
+    if (cfg.singleDay) {
+      var sd = activeDay();
+      var stepCount = sd ? sd.steps.length : 1;
+      tickTotal = stepCount <= 12 ? stepCount : 10;
     }
+    posCount = tickTotal;
+    var posHtml = "";
+    for (var pi = 0; pi < posCount; pi++) {
+      var posLabel = t("positionOf", { n: pi, total: Math.max(1, posCount - 1) });
+      posHtml += '<button type="button" data-pos="' + pi + '" title="' + esc(posLabel) + '" aria-label="' + esc(posLabel) + '">' + pi + '</button>';
+    }
+    var helpRows = [
+      ['<kbd>←</kbd><kbd>→</kbd>', t("helpStep")],
+      ['<kbd>Shift</kbd> + <kbd>←</kbd><kbd>→</kbd>', cfg.singleDay ? t("helpJump") : t("helpDay")],
+      ['<kbd>0</kbd> … <kbd>9</kbd>', t("helpPos")],
+      ['<kbd>Home</kbd> / <kbd>End</kbd>', t("helpHome")],
+      ['<kbd>R</kbd>', t("helpMix")],
+      ['<kbd>D</kbd>', t("helpDepth")],
+      ['<kbd>F</kbd>', t("helpFocus")],
+      ['<kbd>+</kbd> / <kbd>−</kbd>', t("helpFont")],
+      ['<kbd>?</kbd> / <kbd>Esc</kbd>', t("helpHelp")]
+    ].map(function (row) {
+      return '<span>' + row[0] + '</span><span>' + esc(row[1]) + '</span>';
+    }).join("");
     root.innerHTML =
       '<div class="ls-app' + (cfg.mix ? ' ls-app--mix' : '') + '">' +
         '<header class="ls-top">' +
           '<div class="ls-top-head">' +
             '<div class="ls-now"><span class="ls-now-kicker" id="ls-now-kicker"></span><b class="ls-now-title" id="ls-now-title"></b></div>' +
             '<div class="ls-controls">' +
-              '<label class="ls-field"><span>Weg</span><select class="ls-select" id="ls-track"></select></label>' +
-              '<div class="ls-field"><span>Tiefe</span><div class="ls-seg" id="ls-depth">' +
-                '<button type="button" data-depth="short">Kurz</button>' +
-                '<button type="button" data-depth="standard">Standard</button>' +
-                '<button type="button" data-depth="deep">Tief</button>' +
+              '<label class="ls-field"><span>' + esc(t("path")) + '</span><select class="ls-select" id="ls-track"></select></label>' +
+              '<div class="ls-field"><span>' + esc(t("depth")) + '</span><div class="ls-seg" id="ls-depth">' +
+                '<button type="button" data-depth="short">' + esc(t("short")) + '</button>' +
+                '<button type="button" data-depth="standard">' + esc(t("standard")) + '</button>' +
+                '<button type="button" data-depth="deep">' + esc(t("deep")) + '</button>' +
               '</div></div>' +
-              '<div class="ls-field ls-font" aria-label="Textgröße"><span>Text</span><button type="button" class="ls-btn ls-btn--tiny" data-font-step="-1" id="ls-font-minus" aria-label="Text kleiner">A−</button><output id="ls-font-out" aria-live="polite">100%</output><button type="button" class="ls-btn ls-btn--tiny" data-font-step="1" id="ls-font-plus" aria-label="Text größer">A+</button></div>' +
-              '<button type="button" class="ls-btn ls-btn--ghost" id="ls-all">Alles</button>' +
+              '<div class="ls-field ls-font" aria-label="' + esc(t("textSize")) + '"><span>' + esc(t("text")) + '</span><button type="button" class="ls-btn ls-btn--tiny" data-font-step="-1" id="ls-font-minus" aria-label="' + esc(t("textSmaller")) + '">A−</button><output id="ls-font-out" aria-live="polite">100%</output><button type="button" class="ls-btn ls-btn--tiny" data-font-step="1" id="ls-font-plus" aria-label="' + esc(t("textLarger")) + '">A+</button></div>' +
+              '<button type="button" class="ls-btn ls-btn--ghost" id="ls-all">' + esc(t("all")) + '</button>' +
             '</div>' +
           '</div>' +
           '<div class="ls-top-nav">' +
-            '<div class="ls-day-row"><button type="button" class="ls-day-nav" data-day-nav="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">←<span class="ls-day-nav-word">Zurück</span></button><div class="ls-days" id="ls-days" role="tablist" aria-label="Tage"></div><button type="button" class="ls-day-nav" data-day-nav="1" aria-label="Nächster Tag" title="Nächster Tag"><span class="ls-day-nav-word">Weiter</span>→</button></div>' +
+            '<div class="ls-day-row"><button type="button" class="ls-day-nav" data-day-nav="-1" aria-label="' + esc(t("prevDay")) + '" title="' + esc(t("prevDay")) + '">←<span class="ls-day-nav-word">' + esc(t("back")) + '</span></button><div class="ls-days" id="ls-days" role="tablist" aria-label="' + esc(t("days")) + '"></div><button type="button" class="ls-day-nav" data-day-nav="1" aria-label="' + esc(t("nextDay")) + '" title="' + esc(t("nextDay")) + '"><span class="ls-day-nav-word">' + esc(t("forward")) + '</span>→</button></div>' +
             '<div class="ls-progress"><div class="ls-progress-bar"><span id="ls-progress-fill"></span></div><div class="ls-step-row"><span class="ls-step-count" id="ls-step-count"></span><div class="ls-steps" id="ls-steps"></div></div></div>' +
           '</div>' +
         '</header>' +
         '<main class="ls-main">' +
           '<section class="ls-text" aria-live="polite">' +
             '<div class="ls-text-scroll">' +
-              (cfg.mix ? '<div class="ls-navbar" id="ls-navbar"><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-prev" title="Vorheriger Schritt" aria-label="Vorheriger Schritt">←</button><div class="ls-nav-pos ls-mix-pos" id="ls-mix-pos" aria-label="Position 0 bis 9">' + posHtml + '</div><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-next" title="Nächster Schritt" aria-label="Nächster Schritt">→</button></div>' : '') +
+              (cfg.mix ? '<div class="ls-navbar" id="ls-navbar"><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-prev" title="' + esc(t("prevStep")) + '" aria-label="' + esc(t("prevStep")) + '">←</button><div class="ls-nav-pos ls-mix-pos" id="ls-mix-pos" aria-label="' + esc(cfg.singleDay ? t("stepRail") : t("position") + " 0 … " + (posCount - 1)) + '">' + posHtml + '</div><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-next" title="' + esc(t("nextStep")) + '" aria-label="' + esc(t("nextStep")) + '">→</button></div>' : '') +
               '<div class="ls-kicker" id="ls-kicker"></div>' +
               '<h1 class="ls-title" id="ls-title"></h1>' +
               '<div class="ls-body" id="ls-body"></div>' +
@@ -235,20 +397,20 @@
               '<div class="ls-cues" id="ls-cues"></div>' +
               '<div class="ls-extras" id="ls-extras"></div>' +
               '<div class="ls-actions">' +
-                '<button type="button" class="ls-btn" id="ls-prev" aria-label="Vorheriger Schritt">←</button>' +
-                '<button type="button" class="ls-btn ls-btn--primary" id="ls-next">Weiter →</button>' +
-                '<button type="button" class="ls-btn ls-btn--ghost" id="ls-depth-btn">Tiefe</button>' +
+                '<button type="button" class="ls-btn" id="ls-prev" aria-label="' + esc(t("prevStep")) + '">←</button>' +
+                '<button type="button" class="ls-btn ls-btn--primary" id="ls-next">' + esc(t("forward")) + ' →</button>' +
+                '<button type="button" class="ls-btn ls-btn--ghost" id="ls-depth-btn">' + esc(t("depth")) + '</button>' +
               '</div>' +
             '</div>' +
           '</section>' +
-          '<section class="ls-stage" id="ls-stage" aria-label="Interaktive Demo">' +
-            '<div class="ls-stage-head"><span id="ls-stage-kicker"></span><b id="ls-stage-title"></b><button type="button" class="ls-btn ls-btn--tiny ls-focus-btn" id="ls-focus" aria-pressed="false">Demo groß</button></div>' +
+          '<section class="ls-stage" id="ls-stage" aria-label="' + esc(t("interactiveDemo")) + '">' +
+            '<div class="ls-stage-head"><span id="ls-stage-kicker"></span><b id="ls-stage-title"></b><button type="button" class="ls-btn ls-btn--tiny ls-focus-btn" id="ls-focus" aria-pressed="false">' + esc(t("demoLarge")) + '</button></div>' +
             '<div class="ls-demo" id="ls-demo"></div>' +
             '<div class="ls-stage-foot"><span id="ls-stage-hint"></span><span class="ls-credit" id="ls-credit"></span></div>' +
           '</section>' +
         '</main>' +
         '<div class="ls-tip" id="ls-tip" role="tooltip" hidden></div>' +
-        '<div class="ls-help" id="ls-help" hidden><b>Tastatur und Position</b><div class="ls-help-grid"><span><kbd>←</kbd><kbd>→</kbd></span><span>Schritt zurück / vor</span><span><kbd>Shift</kbd> + <kbd>←</kbd><kbd>→</kbd></span><span>Tag zurück / vor</span><span><kbd>0</kbd> … <kbd>9</kbd></span><span>Anfang, Mitte, Ende</span><span><kbd>Home</kbd> / <kbd>End</kbd></span><span>Erster / letzter Tag</span><span><kbd>R</kbd></span><span>Anderer Mix</span><span><kbd>D</kbd></span><span>Tiefe öffnen</span><span><kbd>F</kbd></span><span>Demo groß</span><span><kbd>+</kbd> / <kbd>−</kbd></span><span>Text größer / kleiner</span><span><kbd>?</kbd> / <kbd>Esc</kbd></span><span>Hilfe öffnen / schließen</span></div></div>' +
+        '<div class="ls-help" id="ls-help" hidden><b>' + esc(t("helpTitle")) + '</b><div class="ls-help-grid">' + helpRows + '</div></div>' +
       '</div>';
 
     els.app = root.querySelector(".ls-app");
@@ -288,8 +450,8 @@
     els.progress = root.querySelector("#ls-progress-fill");
     els.tip = root.querySelector("#ls-tip");
 
-    els.track.innerHTML = '<option value="all">Alle Wege</option>' + cfg.tracks.map(function (t) {
-      return '<option value="' + esc(t.id) + '">' + esc(t.label) + ' · Tag ' + esc(t.days) + '</option>';
+    els.track.innerHTML = '<option value="all">' + esc(t("allPaths")) + '</option>' + cfg.tracks.map(function (tr) {
+      return '<option value="' + esc(tr.id) + '">' + esc(tr.label) + ' · ' + esc(t("day")) + ' ' + esc(tr.days) + '</option>';
     }).join("");
     els.track.value = state.track;
 
@@ -315,7 +477,7 @@
     hideTip();
     var on = els.app.classList.toggle("is-demo-focus");
     els.focus.setAttribute("aria-pressed", on ? "true" : "false");
-    els.focus.textContent = on ? "Text zeigen" : "Demo groß";
+    els.focus.textContent = on ? t("showText") : t("demoLarge");
     if (demo && demo.resize) setTimeout(function () { demo.resize(); }, 260);
   }
   function renderTop() {
@@ -347,7 +509,7 @@
       b.disabled = all.length < 2 || (dir < 0 && state.day <= 0) || (dir > 0 && state.day >= all.length - 1);
     });
     if (!all.length) {
-      els.days.innerHTML = '<div class="ls-empty">Noch keine Tage.</div>';
+      els.days.innerHTML = '<div class="ls-empty">' + esc(t("noDays")) + '</div>';
       return;
     }
     els.days.innerHTML = all.map(function (d, i) {
@@ -364,39 +526,53 @@
   function renderSteps() {
     var d = activeDay();
     els.steps.innerHTML = d.steps.map(function (s, i) {
-      return '<button type="button" class="ls-dot' + (i === state.step ? " is-on" : "") + '" data-step="' + i + '" aria-label="Schritt ' + (i + 1) + '">' + (i + 1) + '</button>';
+      var stepLabel = t("step") + " " + (i + 1);
+      return '<button type="button" class="ls-dot' + (i === state.step ? " is-on" : "") + '" data-step="' + i + '" aria-label="' + esc(stepLabel) + '">' + (i + 1) + '</button>';
     }).join("");
     els.progress.style.width = ((state.step + 1) / d.steps.length * 100).toFixed(1) + "%";
-    if (els.stepCount) els.stepCount.textContent = "Schritt " + (state.step + 1) + " / " + d.steps.length;
+    if (els.stepCount) els.stepCount.textContent = t("stepOf", { n: state.step + 1, total: d.steps.length });
   }
 
+  function mathBlock(tex, display) {
+    return '<div class="ls-math" data-tex="' + esc(tex) + '" data-tex-display="' + (display === false ? "false" : "true") + '"><code class="ls-tex-source">' + esc(tex) + '</code></div>';
+  }
   function depthTree(s, d) {
     var ctx = s.context || "";
+    var ctxTex = s.contextTex || "";
     var deep = s.deep || "";
+    var deepTex = s.deepTex || "";
     var boxes = (s.boxes || []).concat(state.step === 0 ? (d.boxes || []) : []);
     var sources = (s.sources || []).concat(state.step === 0 ? (d.sources || []) : []);
-    var count = (ctx ? 1 : 0) + (deep ? 1 : 0) + boxes.length + (sources.length ? 1 : 0);
+    var count = (ctx || ctxTex ? 1 : 0) + (deep || deepTex ? 1 : 0) + boxes.length + (sources.length ? 1 : 0);
     if (!count) return "";
     var rootOpen = state.depth === "standard" || state.depth === "deep" ? " open" : "";
     var firstOpen = state.depth === "deep" ? " open" : "";
     var html = '<div class="ls-depth-tree">' +
       '<details class="ls-deepbox ls-deepbox--root"' + rootOpen + '>' +
-        '<summary>Tiefer eintauchen <span class="ls-depth-count">' + count + (count === 1 ? " Frage" : " Fragen") + '</span></summary>';
-    if (ctx) {
+        '<summary>' + esc(t("deepDive")) + ' <span class="ls-depth-count">' + esc(t(count === 1 ? "depthQuestion" : "depthQuestions", { n: count })) + '</span></summary>';
+    if (ctx || ctxTex) {
       html += '<details class="ls-deepbox"' + firstOpen + '>' +
-        '<summary>Kontext</summary><p>' + termHTML(ctx) + '</p></details>';
+        '<summary>' + esc(t("context")) + '</summary>' +
+        (ctx ? '<p>' + termHTML(ctx) + '</p>' : '') +
+        (ctxTex ? mathBlock(ctxTex) : '') +
+        '</details>';
     }
-    if (deep) {
+    if (deep || deepTex) {
       html += '<details class="ls-deepbox">' +
-        '<summary>Eine Ebene tiefer</summary><p>' + termHTML(deep) + '</p></details>';
+        '<summary>' + esc(t("oneLevel")) + '</summary>' +
+        (deep ? '<p>' + termHTML(deep) + '</p>' : '') +
+        (deepTex ? mathBlock(deepTex) : '') +
+        '</details>';
     }
     boxes.forEach(function (b) {
       html += '<details class="ls-deepbox">' +
         '<summary>' + esc(b.lens ? b.lens + " · " : "") + esc(b.title || "Detail") + '</summary>' +
-        '<p>' + termHTML(b.body || "") + '</p></details>';
+        (b.body ? '<p>' + termHTML(b.body || "") + '</p>' : '') +
+        (b.tex ? mathBlock(b.tex) : '') +
+        '</details>';
     });
     if (sources.length) {
-      html += '<details class="ls-deepbox"><summary>Quellen</summary><ul class="ls-sources">' +
+      html += '<details class="ls-deepbox"><summary>' + esc(t("sources")) + '</summary><ul class="ls-sources">' +
         sources.map(function (src) {
           return '<li><a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.label) + '</a></li>';
         }).join("") + '</ul></details>';
@@ -460,7 +636,7 @@
     els.cues.innerHTML = '<div class="ls-cue ls-cue--reset" data-cue="' + esc(reset) + '" aria-hidden="true"></div>' +
       cues.map(function (c) {
         return '<div class="ls-cue" data-cue="' + esc(JSON.stringify(c.state || {})) + '">' +
-          '<div class="ls-cue-kicker">' + esc(c.label || "Tiefe") + '</div>' +
+          '<div class="ls-cue-kicker">' + esc(c.label || t("depth")) + '</div>' +
           '<h3>' + esc(c.title || "") + '</h3>' +
           '<p>' + termHTML(c.text || "") + '</p>' +
         '</div>';
@@ -468,6 +644,18 @@
     bindTerms(els.cues);
     setupCues();
   }
+
+  function typesetScope(scope) {
+    if (!scope) return;
+    if (cfg && typeof cfg.typeset === "function") {
+      try { cfg.typeset(scope); } catch (e) {}
+      return;
+    }
+    if (window.TM && typeof window.TM.typesetMath === "function") {
+      try { window.TM.typesetMath(scope); } catch (e) {}
+    }
+  }
+  function typesetText() { typesetScope(els.textScroll); }
 
   function renderText() {
     var d = activeDay();
@@ -482,13 +670,14 @@
     var depth = depthTree(s, d);
     els.extras.innerHTML = depth;
     els.extras.hidden = !depth;
-    els.watch.innerHTML = s.watch ? '<b>Beobachte</b> ' + termHTML(s.watch) : "";
+    els.watch.innerHTML = s.watch ? '<b>' + esc(t("watch")) + '</b> ' + termHTML(s.watch) : "";
     els.watch.hidden = !s.watch;
     bindTerms(els.body);
     bindTerms(els.watch);
     bindTerms(els.extras);
     var openBtn = els.extras.querySelector("[data-open-depth]");
     if (openBtn) openBtn.addEventListener("click", openDepth);
+    typesetText();
   }
 
   function renderStage() {
@@ -496,7 +685,7 @@
     var s = activeStep();
     els.stageKicker.textContent = d.kicker;
     els.stageTitle.textContent = s.title;
-    els.stageHint.textContent = s.watch || "Klicken, ziehen, beobachten.";
+    els.stageHint.textContent = s.watch || t("defaultHint");
     els.credit.textContent = d.credit || "";
     mountDemo(d, s);
   }
@@ -515,19 +704,21 @@
     els.demo.innerHTML = "";
     var fn = DEMOS[d.demo];
     if (!fn) {
-      els.demo.innerHTML = '<div class="ls-empty">Demo nicht gefunden: ' + esc(d.demo) + '</div>';
+      els.demo.innerHTML = '<div class="ls-empty">' + esc(t("demoNotFound")) + esc(d.demo) + '</div>';
       return;
     }
     demo = fn(els.demo, {
+      lang: LANG,
       colors: colors,
       esc: esc,
       termHTML: termHTML,
       fit: fitCanvas,
       fitPair: fitPair,
+      typeset: typesetScope,
       motion: LS.motion,
       scene: LS.scene,
       util: LS.util,
-      onHint: function (t) { els.stageHint.textContent = t; },
+      onHint: function (text) { els.stageHint.textContent = text; },
       go: go,
       goStep: function (step) { go(state.day, step); }
     });
@@ -705,25 +896,11 @@
   }
 
   function swap(fn, morph, canvasMorph) {
-    if (!els.textScroll) { fn(); return; }
-    els.textScroll.classList.add("is-out");
-    setTimeout(function () {
-      var run = function () {
-        fn();
-        setTimeout(function () { els.textScroll.classList.remove("is-out"); }, 40);
-      };
-      if (canvasMorph) {
-        morphCanvasSwap(run, function () {});
-      } else if (morph && document.startViewTransition && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        try {
-          var vt = document.startViewTransition(run);
-          if (vt && vt.ready && vt.ready.catch) vt.ready.catch(function () {});
-          if (vt && vt.finished && vt.finished.catch) vt.finished.catch(function () {});
-        } catch (e) { run(); }
-      } else {
-        run();
-      }
-    }, 30);
+    if (canvasMorph) {
+      morphCanvasSwap(fn, function () {});
+      return;
+    }
+    fn();
   }
   function go(day, step) {
     hideTip();
@@ -780,30 +957,90 @@
 
   function shuffle() {
     if (!cfg.days.length) return;
+    if (cfg.singleDay) {
+      var sd = activeDay();
+      var pick = sd.steps.length > 1 ? Math.floor(Math.random() * sd.steps.length) : 0;
+      if (pick === state.step) pick = (pick + 1) % sd.steps.length;
+      go(state.day, pick);
+      return;
+    }
     var next = state.day;
     if (cfg.days.length > 1) {
       while (next === state.day) next = Math.floor(Math.random() * cfg.days.length);
     }
     go(next, 0);
   }
-  function prevDay() { if (state.day > 0) go(state.day - 1, 0); }
-  function nextDay() { if (state.day < cfg.days.length - 1) go(state.day + 1, 0); }
+  function prevDay() {
+    if (cfg.singleDay) {
+      var sd = activeDay();
+      go(state.day, clamp(state.step - 5, 0, sd.steps.length - 1));
+      return;
+    }
+    if (state.day > 0) go(state.day - 1, 0);
+  }
+  function nextDay() {
+    if (cfg.singleDay) {
+      var sd = activeDay();
+      go(state.day, clamp(state.step + 5, 0, sd.steps.length - 1));
+      return;
+    }
+    if (state.day < cfg.days.length - 1) go(state.day + 1, 0);
+  }
   function goPosition(n) {
     if (!cfg.days.length) return;
+    n = Math.max(0, parseInt(n, 10) || 0);
+    if (cfg.singleDay) {
+      var d = activeDay();
+      var lastStep = d.steps.length - 1;
+      var step;
+      if (n >= posCount) step = n;
+      else if (posCount === d.steps.length) step = n;
+      else step = posCount > 1 ? Math.round(n / (posCount - 1) * lastStep) : 0;
+      go(state.day, clamp(step, 0, lastStep));
+      return;
+    }
     var last = cfg.days.length - 1;
-    var day = Math.round(clamp(n, 0, 9) / 9 * last);
-    go(day, 0);
+    var day;
+    if (n >= posCount) day = n;
+    else day = posCount > 1 ? Math.round(n / (posCount - 1) * last) : 0;
+    go(clamp(day, 0, last), 0);
   }
   function updatePosRail() {
     if (!els.mixPos || !els.mixPos.length) return;
-    var last = cfg.days.length - 1;
-    var pos = last > 0 ? Math.round(state.day / last * 9) : 0;
+    var total, pos;
+    if (cfg.singleDay) {
+      total = activeDay().steps.length;
+      if (posCount === total) pos = state.step;
+      else pos = total > 1 ? Math.round(state.step / (total - 1) * (posCount - 1)) : 0;
+    } else {
+      total = cfg.days.length;
+      pos = total > 1 ? Math.round(state.day / (total - 1) * (posCount - 1)) : 0;
+    }
+    pos = clamp(pos, 0, posCount - 1);
     els.mixPos.forEach(function (b) {
       var on = parseInt(b.getAttribute("data-pos"), 10) === pos;
       b.classList.toggle("is-on", on);
       if (on) b.setAttribute("aria-current", "step");
       else b.removeAttribute("aria-current");
     });
+  }
+  function pressPositionDigit(digit) {
+    posBuffer += String(digit);
+    clearTimeout(posTimer);
+    posTimer = setTimeout(function () { posBuffer = ""; }, 650);
+    var n = parseInt(posBuffer, 10);
+    if (!isFinite(n)) return;
+    if (posBuffer.length === 1) {
+      goPosition(n);
+    } else {
+      goPosition(n);
+      posBuffer = "";
+      clearTimeout(posTimer);
+    }
+  }
+  function resetPositionBuffer() {
+    posBuffer = "";
+    clearTimeout(posTimer);
   }
   function toggleHelp(force) {
     if (!els.help) return;
@@ -869,11 +1106,11 @@
 
   function showTip(btn) {
     var id = btn.getAttribute("data-term");
-    var g = GLOSSARY[id];
+    var g = glossary(id);
     if (!g) return;
     clearTimeout(tipTimer);
     tipTerm = btn;
-    els.tip.innerHTML = '<div class="ls-tip-kicker">' + esc(g.label) + '</div><p>' + esc(g.short) + '</p><span class="ls-tip-more">Klicken für ein Beispiel</span>';
+    els.tip.innerHTML = '<div class="ls-tip-kicker">' + esc(g.label) + '</div><p>' + esc(g.short) + '</p><span class="ls-tip-more">' + esc(t("clickExample")) + '</span>';
     els.tip.hidden = false;
     var r = btn.getBoundingClientRect();
     var w = 300;
@@ -1015,10 +1252,11 @@
       });
     });
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") { hideTip(); toggleHelp(false); return; }
+      if (e.key === "Escape") { resetPositionBuffer(); hideTip(); toggleHelp(false); return; }
       if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
+      if (/^[0-9]$/.test(e.key) && !e.altKey) { e.preventDefault(); pressPositionDigit(e.key); return; }
+      resetPositionBuffer();
       if (e.key === "?" || e.key === "h" || e.key === "H") { e.preventDefault(); toggleHelp(); return; }
-      if (/^[0-9]$/.test(e.key) && !e.altKey) { e.preventDefault(); goPosition(parseInt(e.key, 10)); return; }
       if (e.shiftKey && e.key === "ArrowRight") { e.preventDefault(); nextDay(); return; }
       if (e.shiftKey && e.key === "ArrowLeft") { e.preventDefault(); prevDay(); return; }
       if (e.key === "PageDown") { e.preventDefault(); nextDay(); return; }
@@ -1026,7 +1264,11 @@
       if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
       else if (e.key === "Home") { e.preventDefault(); go(0, 0); }
-      else if (e.key === "End") { e.preventDefault(); go(cfg.days.length - 1, 0); }
+      else if (e.key === "End") {
+        e.preventDefault();
+        var endDay = cfg.singleDay ? activeDay() : cfg.days[cfg.days.length - 1];
+        go(cfg.singleDay ? state.day : cfg.days.length - 1, (endDay && endDay.steps.length ? endDay.steps.length - 1 : 0));
+      }
       else if (e.key === "r" || e.key === "R") { e.preventDefault(); shuffle(); }
       else if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFocus(); }
       else if (e.key === "d" || e.key === "D") { e.preventDefault(); openDepth(); }
@@ -3082,6 +3324,8 @@
     DEMO_META[name] = meta || {};
   }
   LS.version = "2.0";
+  LS.lang = function () { return LANG; };
+  LS.t = t;
   LS.motion = { step: 180, day: 180, camera: 240, text: 70, enter: 160, exit: 120, stagger: 40 };
   LS.util = {
     clamp: clamp, lerp: lerp, ease: ease, normSpace: normSpace,
@@ -3099,6 +3343,7 @@
   LS.mount = function (el, config) {
     root = el;
     cfg = config;
+    setLang(cfg.lang);
     load();
     if (!cfg.tracks) cfg.tracks = [];
     cfg.tracks.forEach(function (t) { TRACK_LABEL[t.id] = t; });
@@ -3107,8 +3352,10 @@
     if (cfg.mix && cfg.days.length) {
       state.track = "all";
       state.day = typeof cfg.startDay === "number" ? clamp(cfg.startDay, 0, cfg.days.length - 1) : Math.floor(Math.random() * cfg.days.length);
+      if (cfg.singleDay) state.day = typeof cfg.startDay === "number" ? clamp(cfg.startDay, 0, cfg.days.length - 1) : 0;
       state.step = 0;
     }
+    if (cfg.singleDay && cfg.days.length === 1 && state.step >= cfg.days[0].steps.length) state.step = 0;
     if (state.track !== "all") {
       var trackDays = cfg.days.filter(function (d) { return d.track === state.track; });
       if (trackDays.length && trackDays.indexOf(cfg.days[state.day]) === -1) {
