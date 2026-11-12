@@ -999,85 +999,79 @@
   var historySteps = DE ? [
     {
       kicker: "16a / Geschichte",
-      title: "Von ELIZA zur Attention",
-      body: "1966 beantwortete ELIZA Sätze mit Mustern, nicht mit Wahrscheinlichkeiten. 2014 durfte der Decoder bei jedem Schritt auf die Eingabewörter zurückblicken. 2017 ersetzte der Transformer die wiederkehrende Schleife durch Self-Attention. Klicke die Jahre und verfolge, was jeweils neu wurde.",
-      watch: "Klicke die Jahre. Welches Problem löst jeder Schritt?",
-      demoState: { scene: "history", era: "language" },
-      context: "ELIZA wirkte wie ein Gespräch, weil Menschen Bedeutung hineinlasen. Attention und Transformer ändern daran nichts Grundsätzliches: Sie machen die Gewichtung sichtbar und lernbar.",
-      deep: "Bahdanau et al. (2014) gaben dem Decoder pro Ausgabeschritt eigene Gewichte über die Eingabewörter. Vaswani et al. (2017) wandten dieselbe Idee auf die Eingabe selbst an: Self-Attention. Erst die Positionsinformation verhindert, dass der Satz zu einer ungeordneten Menge von Tokens wird.",
+      title: "Vom Perzeptron zur XOR-Krise",
+      body: "1958 stellte Rosenblatt das Perzeptron vor: eine Maschine, die ihre Gewichte aus Fehlern anpasste. Die Mark-I-Maschine las ein 20×20-Feld aus 400 Photozellen und lernte linear trennbare Muster. 1969 zeigten Minsky und Papert, dass eine einzelne Schicht XOR nicht lösen kann, weil sich die vier Punkte nicht mit einer geraden Linie trennen lassen. 1973 kam der Lighthill-Bericht und mit ihm der erste KI-Winter. Klicke die Jahre und verfolge, warum aus einer Grenze eine Krise wurde.",
+      watch: "Klicke die Jahre. Warum reicht eine Linie für XOR nicht?",
+      demoState: { scene: "history", era: "perceptron" },
+      context: "Das Perzeptron war ein Lernmodell, keine allgemeine Intelligenz. Seine Grenze war geometrisch: Eine einzelne lineare Grenze kann nur Klassen trennen, die linear trennbar sind. XOR ist der kleinste Fall, in dem das scheitert.",
+      deep: "Minsky und Papert wussten, dass ein mehrschichtiges Netz XOR lösen könnte. Ihr Argument war, dass niemand wusste, wie man solche Netze effizient trainiert. Backpropagation war 1970 bereits als Verfahren bekannt, brauchte aber fast zwei Jahrzehnte, bis es praktisch wurde. Der erste KI-Winter war deshalb nicht nur eine Folge des XOR-Problems, sondern auch eine Folge der nicht eingelösten Versprechen.",
       boxes: [
-        box("hist-1", "Geschichte", "ELIZA", "Weizenbaum (1966) verglich Textmuster mit einem Skript. Das Programm hatte kein Sprachmodell und keine Repräsentation von Bedeutung."),
-        box("hist-2", "Geschichte", "Attention", "Bahdanau et al. (2014) ließen den Decoder bei jedem Schritt auf die Eingabe schauen. Das löste den Engpass eines einzelnen festen Kontextvektors."),
-        box("hist-3", "Geschichte", "Transformer", "Vaswani et al. (2017) verarbeiteten die Tokens parallel mit Self-Attention und fügten Positionsinformation hinzu.")
+        box("hist-1", "Geschichte", "Perzeptron", "Rosenblatt (1958) passte Gewichte mit einer Fehlerkorrektur an. Die Mark-I-Maschine hatte 400 Photozellen und motorgetriebene Potentiometer als Gewichte."),
+        box("hist-2", "Geschichte", "XOR", "Minsky und Papert (1969) zeigten: Ein einschichtiges Perzeptron kann XOR nicht lösen. Die vier XOR-Punkte sind nicht linear trennbar."),
+        box("hist-3", "Geschichte", "Erster KI-Winter", "Der Lighthill-Bericht (1973) führte zu Mittelkürzungen in Großbritannien. Die sichtbare Förderung der Connectionisten brach weg.")
       ],
       sources: [
-        { label: "HNF (2023), Joseph Weizenbaum and ELIZA", url: "https://blog.hnf.de/joseph-weizenbaum-1923-2008/", why: { de: "ELIZA als früher regelbasierter Chatbot.", en: "ELIZA as an early rule-based chatbot." } },
-        { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention im Encoder-Decoder-Modell.", en: "Attention in the encoder-decoder model." } },
-        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Self-Attention und der Transformer-Block.", en: "Self-attention and the transformer block." } }
+        { label: "HNF (2019), Frank Rosenblatt und das Perzeptron", url: "https://blog.hnf.de/frank-rosenblatt/", why: { de: "Rosenblatt, Mark I und die frühe Perzeptron-Geschichte.", en: "Rosenblatt, the Mark I, and the early perceptron story." } },
+        { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins", why: { de: "Die XOR-Grenze des einschichtigen Perzeptrons.", en: "The XOR limit of the single-layer perceptron." } },
+        { label: "Lighthill (1973), Artificial Intelligence: A General Survey", url: "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf", why: { de: "Der Bericht hinter dem ersten KI-Winter.", en: "The report behind the first AI winter." } }
       ]
     },
     {
       kicker: "16b / Geschichte",
-      title: "Von GPT-1 zu ChatGPT",
-      body: "2018 zeigte GPT-1 mit 117 Millionen Parametern, dass Pretraining plus Fine-Tuning viele Aufgaben trägt. 2019 kam GPT-2 mit 1,5 Milliarden Parametern und Prompting. 2020 folgte GPT-3 mit 175 Milliarden Parametern und Few-Shot-Lernen. 2022 zeigte Chinchilla, dass mehr Daten pro Parameter oft besser sind, und ChatGPT machte aus der Vorhersage einen Dialog.",
-      watch: "Klicke die Jahre. Was wächst, was wird gezielt trainiert?",
-      demoState: { scene: "history", era: "scale" },
-      context: "Die Kurve ist keine reine Parameterzählung. Datenmenge, Rechenbudget und Nachtraining entscheiden mit, was ein Modell kann. Ein größeres Modell ist nicht automatisch das bessere.",
-      deep: "Chinchilla änderte die Faustregel: Für ein festes Rechenbudget ist ein kleineres Modell mit mehr Tokens oft günstiger als ein sehr großes Modell mit wenigen Tokens. ChatGPT setzt zusätzlich auf Instruction-Tuning und RLHF, also auf menschliche Präferenzen als Trainingssignal.",
+      title: "Backpropagation und die Rückkehr",
+      body: "1961 beschrieb Rosenblatt bereits eine „back-propagating error correction“: Der Fehler der Ausgabe sollte auf frühere Schichten verteilt werden. Es fehlten aber die Kettenregel und ein brauchbarer Gradient. 1970 entwickelte Linnainmaa die reverse mode der automatischen Differentiation, den mathematischen Unterbau für effiziente Gradienten. 1986 popularisierten Rumelhart, Hinton und Williams Backpropagation; verborgene Schichten wurden trainierbar. Klicke die Jahre und sieh, wie aus einer Idee ein trainierbares Verfahren wurde.",
+      watch: "Klicke die Jahre. Was fehlte Rosenblatt noch, und was kam 1970 und 1986 dazu?",
+      demoState: { scene: "history", era: "backprop" },
+      context: "Backpropagation ist die Kettenregel, angewendet auf ein Netz: Der Fehler wird von der Ausgabe rückwärts durch die Schichten geschickt, und jede Schicht bekommt ihren Anteil. Ohne differenzierbare Aktivierungen funktioniert das nicht.",
+      deep: "Rosenblatts Verfahren von 1961 war keine moderne Backpropagation: Es gab keinen Gradienten und keine Kettenregel, die Fehlerzuordnung war stochastisch. Linnainmaa lieferte 1970 die effiziente reverse mode der automatischen Differentiation. Rumelhart, Hinton und Williams zeigten 1986, dass sich damit brauchbare interne Repräsentationen lernen lassen. Erst diese Kombination machte mehrschichtige Netze praktisch.",
       boxes: [
-        box("hist-4", "Geschichte", "GPT-1", "2018: rund 117 Millionen Parameter. Pretraining auf Text, danach Fine-Tuning für einzelne Aufgaben."),
-        box("hist-5", "Geschichte", "GPT-2 und GPT-3", "2019: 1,5 Milliarden Parameter und Prompting. 2020: 175 Milliarden Parameter und Few-Shot-Lernen im Kontext."),
-        box("hist-6", "Geschichte", "Chinchilla", "2022: mehr Tokens pro Parameter. Für ein festes Rechenbudget oft ein kleineres Modell mit mehr Daten."),
-        box("hist-7", "Geschichte", "ChatGPT", "2022: Instruction-Tuning und Reinforcement Learning from Human Feedback richten die Antwort auf eine Anfrage aus.")
+        box("hist-4", "Geschichte", "1961", "Rosenblatt beschrieb eine rückwärts gerichtete Fehlerkorrektur, aber ohne Gradient und Kettenregel. Die Schrittfunktion der Neuronen machte das Verfahren unzuverlässig."),
+        box("hist-5", "Geschichte", "1970", "Linnainmaa entwickelte die reverse mode der automatischen Differentiation. Sie berechnet partielle Ableitungen verschachtelter Funktionen effizient rückwärts."),
+        box("hist-6", "Geschichte", "1986", "Rumelhart, Hinton und Williams popularisierten Backpropagation. Der Fehler läuft rückwärts durch die Schichten; die Gewichte werden mit der Kettenregel angepasst.")
       ],
       sources: [
-        { label: "Radford et al. (2018), GPT-1", url: "https://papers.baulab.info/papers/also/Radford-2018a.pdf", why: { de: "GPT-1: Pretraining plus Fine-Tuning.", en: "GPT-1: pretraining plus fine-tuning." } },
-        { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: 1,5 Milliarden Parameter und Prompting.", en: "GPT-2: 1.5 billion parameters and prompting." } },
-        { label: "Brown et al. (2020), GPT-3", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3: 175 Milliarden Parameter und Few-Shot-Lernen.", en: "GPT-3: 175 billion parameters and few-shot learning." } },
-        { label: "Hoffmann et al. (2022), Chinchilla", url: "https://arxiv.org/abs/2203.15556", why: { de: "Rechenoptimales Training mit mehr Tokens pro Parameter.", en: "Compute-optimal training with more tokens per parameter." } },
-        { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155", why: { de: "Instruction-Tuning und RLHF.", en: "Instruction tuning and RLHF." } }
+        { label: "Rosenblatt (1961), CAL Report on Back-Propagating Errors", url: "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up", why: { de: "Rosenblatts frühe, noch nicht gradientenbasierte Fehlerkorrektur.", en: "Rosenblatt's early error correction before gradients." } },
+        { label: "Linnainmaa (1970/1976), Cumulative Rounding Error", url: "https://papers.baulab.info/papers/also/Linnainmaa-1976.pdf", why: { de: "Reverse-mode Automatic Differentiation als mathematischer Unterbau.", en: "Reverse-mode automatic differentiation as the mathematical backbone." } },
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Backpropagation wird als trainierbares Verfahren populär.", en: "Backpropagation becomes popular as a trainable method." } }
       ]
     }
   ] : [
     {
       kicker: "16a / History",
-      title: "From ELIZA to attention",
-      body: "In 1966 ELIZA answered sentences with patterns, not probabilities. In 2014 the decoder could look back at the input words at every step. In 2017 the transformer replaced the recurrent loop with self-attention. Click the years and follow what changed.",
-      watch: "Click the years. Which problem does each step solve?",
-      demoState: { scene: "history", era: "language" },
-      context: "ELIZA felt like a conversation because people read meaning into it. Attention and the transformer do not settle that question: they make the weighting visible and learnable.",
-      deep: "Bahdanau et al. (2014) gave the decoder its own weights over the input words at every output step. Vaswani et al. (2017) applied the same idea to the input itself: self-attention. Positional information is what keeps the sentence from becoming an unordered bag of tokens.",
+      title: "From the perceptron to the XOR crisis",
+      body: "In 1958 Rosenblatt presented the perceptron: a machine that adjusted its weights from errors. The Mark I read a 20×20 grid of 400 photocells and learned linearly separable patterns. In 1969 Minsky and Papert showed that a single layer cannot solve XOR, because the four points cannot be separated by a straight line. In 1973 the Lighthill report brought the first AI winter. Click the years and follow how a boundary became a crisis.",
+      watch: "Click the years. Why is one line not enough for XOR?",
+      demoState: { scene: "history", era: "perceptron" },
+      context: "The perceptron was a learning model, not general intelligence. Its limit was geometric: a single linear boundary can only separate classes that are linearly separable. XOR is the smallest case where that fails.",
+      deep: "Minsky and Papert knew that a multilayer network could solve XOR. Their argument was that nobody knew how to train such networks efficiently. Backpropagation was already known as a procedure in 1970, but it took almost two decades to become practical. The first AI winter was therefore not only a consequence of XOR, but also of promises that were not delivered.",
       boxes: [
-        box("hist-1", "History", "ELIZA", "Weizenbaum (1966) matched text patterns against a script. The program had no language model and no representation of meaning."),
-        box("hist-2", "History", "Attention", "Bahdanau et al. (2014) let the decoder look at the input at every step. That removed the bottleneck of a single fixed context vector."),
-        box("hist-3", "History", "Transformer", "Vaswani et al. (2017) processed tokens in parallel with self-attention and added positional information.")
+        box("hist-1", "History", "Perceptron", "Rosenblatt (1958) adjusted weights with an error correction. The Mark I machine had 400 photocells and motor-driven potentiometers as weights."),
+        box("hist-2", "History", "XOR", "Minsky and Papert (1969) showed that a single-layer perceptron cannot solve XOR. The four XOR points are not linearly separable."),
+        box("hist-3", "History", "First AI winter", "The Lighthill report (1973) led to funding cuts in Britain. Visible support for connectionists collapsed.")
       ],
       sources: [
-        { label: "HNF (2023), Joseph Weizenbaum and ELIZA", url: "https://blog.hnf.de/joseph-weizenbaum-1923-2008/", why: { de: "ELIZA als früher regelbasierter Chatbot.", en: "ELIZA as an early rule-based chatbot." } },
-        { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention im Encoder-Decoder-Modell.", en: "Attention in the encoder-decoder model." } },
-        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Self-Attention und der Transformer-Block.", en: "Self-attention and the transformer block." } }
+        { label: "HNF (2019), Frank Rosenblatt and the Perceptron", url: "https://blog.hnf.de/frank-rosenblatt/", why: { de: "Rosenblatt, Mark I und die frühe Perzeptron-Geschichte.", en: "Rosenblatt, the Mark I, and the early perceptron story." } },
+        { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins", why: { de: "Die XOR-Grenze des einschichtigen Perzeptrons.", en: "The XOR limit of the single-layer perceptron." } },
+        { label: "Lighthill (1973), Artificial Intelligence: A General Survey", url: "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf", why: { de: "Der Bericht hinter dem ersten KI-Winter.", en: "The report behind the first AI winter." } }
       ]
     },
     {
       kicker: "16b / History",
-      title: "From GPT-1 to ChatGPT",
-      body: "In 2018 GPT-1 showed with 117 million parameters that pretraining plus fine-tuning carries many tasks. In 2019 GPT-2 followed with 1.5 billion parameters and prompting. In 2020 GPT-3 had 175 billion parameters and few-shot learning. In 2022 Chinchilla showed that more data per parameter often helps, and ChatGPT turned prediction into dialogue.",
-      watch: "Click the years. What grows, what is trained on purpose?",
-      demoState: { scene: "history", era: "scale" },
-      context: "The curve is not just a parameter count. Data, compute, and post-training decide what a model can do. A larger model is not automatically the better one.",
-      deep: "Chinchilla changed the rule of thumb: for a fixed compute budget, a smaller model with more tokens is often cheaper than a very large model with few tokens. ChatGPT adds instruction tuning and RLHF, which use human preferences as a training signal.",
+      title: "Backpropagation and the return",
+      body: "In 1961 Rosenblatt already described a “back-propagating error correction”: the output error should be spread back to earlier layers. But the chain rule and a usable gradient were missing. In 1970 Linnainmaa developed reverse-mode automatic differentiation, the mathematical backbone for efficient gradients. In 1986 Rumelhart, Hinton, and Williams popularised backpropagation; hidden layers became trainable. Click the years and see how an idea became a trainable method.",
+      watch: "Click the years. What was still missing in Rosenblatt's version, and what arrived in 1970 and 1986?",
+      demoState: { scene: "history", era: "backprop" },
+      context: "Backpropagation is the chain rule applied to a network: the error is sent backward from the output through the layers, and each layer gets its share. Without differentiable activations, it does not work.",
+      deep: "Rosenblatt's 1961 procedure was not modern backpropagation: there was no gradient and no chain rule, and the error assignment was stochastic. Linnainmaa supplied the efficient reverse mode of automatic differentiation in 1970. Rumelhart, Hinton, and Williams showed in 1986 that it can learn useful internal representations. Only that combination made multilayer networks practical.",
       boxes: [
-        box("hist-4", "History", "GPT-1", "2018: about 117 million parameters. Pretraining on text, then fine-tuning for individual tasks."),
-        box("hist-5", "History", "GPT-2 and GPT-3", "2019: 1.5 billion parameters and prompting. 2020: 175 billion parameters and few-shot learning in context."),
-        box("hist-6", "History", "Chinchilla", "2022: more tokens per parameter. For a fixed compute budget, often a smaller model with more data."),
-        box("hist-7", "History", "ChatGPT", "2022: instruction tuning and reinforcement learning from human feedback align the answer with a request.")
+        box("hist-4", "History", "1961", "Rosenblatt described a backward error correction, but without a gradient and chain rule. The neurons' step function made the procedure unreliable."),
+        box("hist-5", "History", "1970", "Linnainmaa developed reverse-mode automatic differentiation. It computes partial derivatives of nested functions efficiently by running backward."),
+        box("hist-6", "History", "1986", "Rumelhart, Hinton, and Williams popularised backpropagation. The error runs backward through the layers; the weights are adjusted with the chain rule.")
       ],
       sources: [
-        { label: "Radford et al. (2018), GPT-1", url: "https://papers.baulab.info/papers/also/Radford-2018a.pdf", why: { de: "GPT-1: Pretraining plus Fine-Tuning.", en: "GPT-1: pretraining plus fine-tuning." } },
-        { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", why: { de: "GPT-2: 1,5 Milliarden Parameter und Prompting.", en: "GPT-2: 1.5 billion parameters and prompting." } },
-        { label: "Brown et al. (2020), GPT-3", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3: 175 Milliarden Parameter und Few-Shot-Lernen.", en: "GPT-3: 175 billion parameters and few-shot learning." } },
-        { label: "Hoffmann et al. (2022), Chinchilla", url: "https://arxiv.org/abs/2203.15556", why: { de: "Rechenoptimales Training mit mehr Tokens pro Parameter.", en: "Compute-optimal training with more tokens per parameter." } },
-        { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155", why: { de: "Instruction-Tuning und RLHF.", en: "Instruction tuning and RLHF." } }
+        { label: "Rosenblatt (1961), CAL Report on Back-Propagating Errors", url: "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up", why: { de: "Rosenblatts frühe, noch nicht gradientenbasierte Fehlerkorrektur.", en: "Rosenblatt's early error correction before gradients." } },
+        { label: "Linnainmaa (1970/1976), Cumulative Rounding Error", url: "https://papers.baulab.info/papers/also/Linnainmaa-1976.pdf", why: { de: "Reverse-mode Automatic Differentiation als mathematischer Unterbau.", en: "Reverse-mode automatic differentiation as the mathematical backbone." } },
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Backpropagation wird als trainierbares Verfahren populär.", en: "Backpropagation becomes popular as a trainable method." } }
       ]
     }
   ];

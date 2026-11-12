@@ -6824,125 +6824,111 @@
   function historyScene(root, api) {
     var DE = api.lang === "de";
     var data = DE ? {
-      language: {
-        label: "Sprache und Aufmerksamkeit",
+      perceptron: {
+        label: "Perzeptron und XOR-Krise",
         events: [
           {
-            year: "1966", label: "ELIZA",
-            title: "ELIZA antwortet nach Regeln",
-            text: "Weizenbaums Programm suchte Muster im Text und gab eine vorbereitete Antwort zurück. Es hatte kein probabilistisches Sprachmodell und keine Vorstellung von Bedeutung.",
-            source: { label: "HNF (2023), Joseph Weizenbaum and ELIZA", url: "https://blog.hnf.de/joseph-weizenbaum-1923-2008/" }
+            year: "1958", label: "Perzeptron",
+            title: "Rosenblatts lernende Maschine",
+            text: "Rosenblatts Perzeptron war ein Modell, das seine Gewichte aus Fehlern anpasste. Die Mark-I-Maschine hatte ein 20×20-Feld aus 400 Photozellen; elektrische Motoren drehten die Potentiometer, die die Gewichte hielten. Sie lernte linear trennbare Muster, nicht beliebige Funktionen.",
+            source: { label: "HNF (2019), Frank Rosenblatt und das Perzeptron", url: "https://blog.hnf.de/frank-rosenblatt/" },
+            image: { src: "../mark_i_perceptron_manual.png", alt: "Mark I Perceptron, Figur 2 aus dem Bedienhandbuch", cap: "Mark I Perceptron, Figur 2 aus dem Bedienhandbuch. John C. Hay und Albert E. Murray, Public Domain.", href: "https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png" }
           },
           {
-            year: "2014", label: "Attention",
-            title: "Der Decoder darf zurückblicken",
-            text: "Bahdanau, Cho und Bengio ließen den Decoder bei jedem Ausgabeschritt auf die Eingabewörter schauen. Statt den ganzen Satz in einen festen Vektor zu pressen, bekam jedes Wort ein eigenes Gewicht.",
-            source: { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473" }
+            year: "1969", label: "XOR",
+            title: "Eine Linie reicht nicht",
+            text: "Minsky und Papert zeigten, dass ein einschichtiges Perzeptron XOR nicht lösen kann: Die vier XOR-Punkte lassen sich nicht mit einer geraden Linie in zwei Klassen teilen. Sie wussten, dass ein mehrschichtiges Netz das könnte; offen war, wie man es effizient trainiert.",
+            source: { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins" },
+            image: { src: "../marvin_minsky_portrait.jpg", alt: "Marvin Minsky", cap: "Marvin Minsky. Steamtalks (Flickr), CC BY-SA 2.0.", href: "https://commons.wikimedia.org/wiki/File:Marvin_Minsky.jpg" },
+            diagram: "xor"
           },
           {
-            year: "2017", label: "Transformer",
-            title: "Self-Attention ersetzt die Schleife",
-            text: "Vaswani und Kollegen ersetzten die wiederkehrende Verarbeitung durch Self-Attention und fügten Positionsinformationen hinzu. Damit ließ sich ein Satz parallel verarbeiten, ohne die Wortreihenfolge zu verlieren.",
-            source: { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }
+            year: "1973", label: "Winter",
+            title: "Der Lighthill-Bericht",
+            text: "Der Lighthill-Bericht kam zu dem Schluss, dass die KI ihre Versprechen nicht eingelöst hatte. In Großbritannien wurden die Mittel gekürzt; die Connectionisten gerieten in den ersten KI-Winter. Die mathematische Arbeit hörte nicht überall auf, aber die sichtbare Förderung brach weg.",
+            source: { label: "Lighthill (1973), Artificial Intelligence: A General Survey", url: "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf" }
           }
         ]
       },
-      scale: {
-        label: "Skalierung und Anweisungen",
+      backprop: {
+        label: "Backpropagation und die Rückkehr",
         events: [
           {
-            year: "2018", label: "GPT-1",
-            title: "Pretraining für viele Aufgaben",
-            text: "GPT-1 hatte rund 117 Millionen Parameter. Das Modell lernte zuerst auf einem großen Textkorpus das nächste Token vorherzusagen und wurde danach für einzelne Aufgaben feinabgestimmt.",
-            source: { label: "Radford et al. (2018), GPT-1", url: "https://papers.baulab.info/papers/also/Radford-2018a.pdf" }
+            year: "1961", label: "Rosenblatt",
+            title: "Fehler rückwärts, noch ohne Gradient",
+            text: "Rosenblatt beschrieb 1961 bereits eine „back-propagating error correction“: Der Fehler der Ausgabe sollte auf frühere Schichten verteilt werden. Es fehlten aber die Kettenregel und ein brauchbarer Gradient; die Schrittfunktion der Neuronen machte das Verfahren unzuverlässig.",
+            source: { label: "Rosenblatt (1961), CAL Report on Back-Propagating Errors", url: "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up" },
+            image: { src: "../frank_rosenblatt_portrait.jpg", alt: "Frank Rosenblatt", cap: "Frank Rosenblatt. Anonymous (Heinz Nixdorf MuseumsForum), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" }
           },
           {
-            year: "2019", label: "GPT-2",
-            title: "Prompting statt nur Fine-Tuning",
-            text: "GPT-2 wuchs auf 1,5 Milliarden Parameter. Ohne zusätzliches Training konnte es Aufgaben bearbeiten, wenn die Aufgabe im Prompt stand oder mit wenigen Beispielen gezeigt wurde.",
-            source: { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }
+            year: "1970", label: "Linnainmaa",
+            title: "Reverse-Mode Automatic Differentiation",
+            text: "Linnainmaa entwickelte 1970 die reverse mode der automatischen Differentiation. Damit ließen sich partielle Ableitungen verschachtelter Funktionen effizient rückwärts berechnen. Das war der mathematische Unterbau, den mehrschichtige Netze zum Trainieren brauchten.",
+            source: { label: "Linnainmaa (1970/1976), Cumulative Rounding Error", url: "https://papers.baulab.info/papers/also/Linnainmaa-1976.pdf" }
           },
           {
-            year: "2020", label: "GPT-3",
-            title: "Few-Shot lernt im Kontext",
-            text: "GPT-3 hatte 175 Milliarden Parameter. Wenige Beispiele im Prompt reichten oft, um eine neue Aufgabe zu beschreiben; die Gewichte blieben dabei unverändert.",
-            source: { label: "Brown et al. (2020), GPT-3", url: "https://arxiv.org/abs/2005.14165" }
-          },
-          {
-            year: "2022", label: "Chinchilla",
-            title: "Mehr Daten pro Parameter",
-            text: "Die Chinchilla-Skalierungsgesetze zeigten, dass viele große Modelle zu lange auf zu wenig Text trainiert wurden. Für ein festes Rechenbudget war ein kleineres Modell mit mehr Tokens oft die bessere Wahl, grob etwa 20 Tokens pro Parameter.",
-            source: { label: "Hoffmann et al. (2022), Chinchilla", url: "https://arxiv.org/abs/2203.15556" }
-          },
-          {
-            year: "2022", label: "ChatGPT",
-            title: "Aus Vorhersage wird Dialog",
-            text: "ChatGPT verband das vortrainierte Modell mit Instruction-Tuning und Reinforcement Learning from Human Feedback. Die Antwort wurde dadurch auf eine Anfrage ausgerichtet, nicht nur auf den wahrscheinlichsten nächsten Token.",
-            source: { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155" }
+            year: "1986", label: "Backprop",
+            title: "Mehrschichtige Netze werden trainierbar",
+            text: "Rumelhart, Hinton und Williams popularisierten Backpropagation: Der Fehler wird rückwärts durch die Schichten geschickt, und die Gewichte werden mit der Kettenregel angepasst. Damit wurden verborgene Schichten praktisch trainierbar; XOR war kein grundsätzliches Hindernis mehr.",
+            source: { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0" },
+            diagram: "backprop"
           }
         ]
       }
     } : {
-      language: {
-        label: "Language and attention",
+      perceptron: {
+        label: "Perceptron and the XOR crisis",
         events: [
           {
-            year: "1966", label: "ELIZA",
-            title: "ELIZA answers by rules",
-            text: "Weizenbaum's program matched patterns in the text and returned a prepared answer. It had no probabilistic language model and no notion of meaning.",
-            source: { label: "HNF (2023), Joseph Weizenbaum and ELIZA", url: "https://blog.hnf.de/joseph-weizenbaum-1923-2008/" }
+            year: "1958", label: "Perceptron",
+            title: "Rosenblatt's learning machine",
+            text: "Rosenblatt's perceptron adjusted its weights from errors. The Mark I machine had a 20×20 grid of 400 photocells; electric motors turned the potentiometers that held the weights. It learned linearly separable patterns, not arbitrary functions.",
+            source: { label: "HNF (2019), Frank Rosenblatt and the Perceptron", url: "https://blog.hnf.de/frank-rosenblatt/" },
+            image: { src: "../mark_i_perceptron_manual.png", alt: "Mark I Perceptron, figure 2 from the operator's manual", cap: "Mark I Perceptron, figure 2 from the operator's manual. John C. Hay and Albert E. Murray, public domain.", href: "https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png" }
           },
           {
-            year: "2014", label: "Attention",
-            title: "The decoder can look back",
-            text: "Bahdanau, Cho, and Bengio let the decoder look at the input words at every output step. Instead of squeezing the whole sentence into one fixed vector, each word got its own weight.",
-            source: { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473" }
+            year: "1969", label: "XOR",
+            title: "One line is not enough",
+            text: "Minsky and Papert showed that a single-layer perceptron cannot solve XOR: the four XOR points cannot be split into two classes by a straight line. They knew a multilayer network could; what was missing was an efficient way to train one.",
+            source: { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins" },
+            image: { src: "../marvin_minsky_portrait.jpg", alt: "Marvin Minsky", cap: "Marvin Minsky. Steamtalks (Flickr), CC BY-SA 2.0.", href: "https://commons.wikimedia.org/wiki/File:Marvin_Minsky.jpg" },
+            diagram: "xor"
           },
           {
-            year: "2017", label: "Transformer",
-            title: "Self-attention replaces the loop",
-            text: "Vaswani and colleagues replaced recurrent processing with self-attention and added positional information. A sentence could now be processed in parallel without losing word order.",
-            source: { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }
+            year: "1973", label: "Winter",
+            title: "The Lighthill report",
+            text: "The Lighthill report concluded that AI had not delivered on its promises. Funding was cut in Britain, and connectionists entered the first AI winter. The mathematical work did not stop everywhere, but visible support collapsed.",
+            source: { label: "Lighthill (1973), Artificial Intelligence: A General Survey", url: "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf" }
           }
         ]
       },
-      scale: {
-        label: "Scale and instructions",
+      backprop: {
+        label: "Backpropagation and the return",
         events: [
           {
-            year: "2018", label: "GPT-1",
-            title: "Pretraining for many tasks",
-            text: "GPT-1 had about 117 million parameters. The model first learned to predict the next token on a large text corpus, then was fine-tuned for individual tasks.",
-            source: { label: "Radford et al. (2018), GPT-1", url: "https://papers.baulab.info/papers/also/Radford-2018a.pdf" }
+            year: "1961", label: "Rosenblatt",
+            title: "Errors backward, still without a gradient",
+            text: "Rosenblatt described a “back-propagating error correction” in 1961: the output error should be spread back to earlier layers. But the chain rule and a usable gradient were missing; the neurons' step function made the procedure unreliable.",
+            source: { label: "Rosenblatt (1961), CAL Report on Back-Propagating Errors", url: "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up" },
+            image: { src: "../frank_rosenblatt_portrait.jpg", alt: "Frank Rosenblatt", cap: "Frank Rosenblatt. Anonymous (Heinz Nixdorf MuseumsForum), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" }
           },
           {
-            year: "2019", label: "GPT-2",
-            title: "Prompting, not only fine-tuning",
-            text: "GPT-2 grew to 1.5 billion parameters. Without additional training it could handle a task when the task was named in the prompt or shown with a few examples.",
-            source: { label: "Radford et al. (2019), GPT-2", url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" }
+            year: "1970", label: "Linnainmaa",
+            title: "Reverse-mode automatic differentiation",
+            text: "Linnainmaa developed reverse-mode automatic differentiation in 1970. It computed partial derivatives of nested functions efficiently by running backward. That was the mathematical backbone multilayer networks needed for training.",
+            source: { label: "Linnainmaa (1970/1976), Cumulative Rounding Error", url: "https://papers.baulab.info/papers/also/Linnainmaa-1976.pdf" }
           },
           {
-            year: "2020", label: "GPT-3",
-            title: "Few-shot learning in context",
-            text: "GPT-3 had 175 billion parameters. A few examples in the prompt were often enough to describe a new task; the weights stayed unchanged.",
-            source: { label: "Brown et al. (2020), GPT-3", url: "https://arxiv.org/abs/2005.14165" }
-          },
-          {
-            year: "2022", label: "Chinchilla",
-            title: "More data per parameter",
-            text: "The Chinchilla scaling laws showed that many large models were trained on too little text. For a fixed compute budget, a smaller model with more tokens was often the better choice, roughly 20 tokens per parameter.",
-            source: { label: "Hoffmann et al. (2022), Chinchilla", url: "https://arxiv.org/abs/2203.15556" }
-          },
-          {
-            year: "2022", label: "ChatGPT",
-            title: "Prediction becomes dialogue",
-            text: "ChatGPT combined the pretrained model with instruction tuning and reinforcement learning from human feedback. The answer was aligned with a request, not only with the most likely next token.",
-            source: { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155" }
+            year: "1986", label: "Backprop",
+            title: "Multilayer networks become trainable",
+            text: "Rumelhart, Hinton, and Williams popularised backpropagation: the error is sent backward through the layers, and the weights are adjusted with the chain rule. Hidden layers became practical to train; XOR was no longer a fundamental obstacle.",
+            source: { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0" },
+            diagram: "backprop"
           }
         ]
       }
     };
-    var era = "language";
+    var era = "perceptron";
     var index = 0;
     var el = document.createElement("div");
     el.className = "ls-history-scene";
@@ -6958,11 +6944,41 @@
     var prevBtn = el.querySelector(".ls-history-prev");
     var nextBtn = el.querySelector(".ls-history-next");
     var progress = el.querySelector(".ls-history-progress");
-    function events() { return (data[era] || data.language).events; }
+    function events() { return (data[era] || data.perceptron).events; }
+    function diagramHTML(kind) {
+      if (kind === "xor") {
+        return '<svg viewBox="0 0 240 150" role="img" aria-label="' + (DE ? "XOR-Punkte: 0 und 1 wechseln sich ab; keine Gerade trennt sie." : "XOR points: 0 and 1 alternate; no straight line separates them.") + '">' +
+          '<line x1="38" y1="122" x2="220" y2="122" stroke="#b9c8c3" stroke-width="1"/>' +
+          '<line x1="38" y1="122" x2="38" y2="22" stroke="#b9c8c3" stroke-width="1"/>' +
+          '<line x1="62" y1="28" x2="198" y2="118" stroke="#9f9700" stroke-width="1.5" stroke-dasharray="5 4"/>' +
+          '<circle cx="70" cy="104" r="7" fill="#5c9baf"/><text x="70" y="132" text-anchor="middle" font-size="10" fill="#627476">0</text>' +
+          '<circle cx="70" cy="38" r="7" fill="#63a44b"/><text x="70" y="20" text-anchor="middle" font-size="10" fill="#627476">1</text>' +
+          '<circle cx="190" cy="104" r="7" fill="#63a44b"/><text x="190" y="132" text-anchor="middle" font-size="10" fill="#627476">1</text>' +
+          '<circle cx="190" cy="38" r="7" fill="#5c9baf"/><text x="190" y="20" text-anchor="middle" font-size="10" fill="#627476">0</text>' +
+          '<text x="122" y="144" text-anchor="middle" font-size="9" fill="#627476">' + (DE ? "keine Gerade trennt 0 und 1" : "no line separates 0 and 1") + '</text>' +
+          '</svg>';
+      }
+      if (kind === "backprop") {
+        function node(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="8" fill="#fff" stroke="#1275ac" stroke-width="1.6"/>'; }
+        function arrow(x1, y1, x2, y2, col, dash) {
+          return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + col + '" stroke-width="1.4"' + (dash ? ' stroke-dasharray="4 3"' : '') + '/>' +
+            '<path d="M' + x2 + ' ' + y2 + ' l-4 -5 l6 1 z" fill="' + col + '"/>';
+        }
+        var html = '<svg viewBox="0 0 260 116" role="img" aria-label="' + (DE ? "Vorwärts durch das Netz, Fehler rückwärts durch Backpropagation." : "Forward through the network, error backward through backpropagation.") + '">';
+        [30, 70, 100].forEach(function (y) { html += node(48, y); html += node(130, y); html += node(212, y); });
+        [30, 70, 100].forEach(function (y) { html += arrow(58, y, 120, y, "#1275ac"); });
+        [30, 70, 100].forEach(function (y) { html += arrow(202, y + 16, 140, y + 16, "#63a44b", true); });
+        html += '<text x="130" y="14" text-anchor="middle" font-size="9" fill="#1275ac">' + (DE ? "Forward" : "Forward") + ' →</text>';
+        html += '<text x="130" y="112" text-anchor="middle" font-size="9" fill="#63a44b">← ' + (DE ? "Fehler rückwärts" : "error backward") + '</text>';
+        html += '</svg>';
+        return html;
+      }
+      return "";
+    }
     function render() {
       var evs = events();
       index = Math.max(0, Math.min(evs.length - 1, index));
-      kicker.textContent = (data[era] || data.language).label;
+      kicker.textContent = (data[era] || data.perceptron).label;
       hint.textContent = DE ? "Jahr wählen" : "Choose a year";
       track.innerHTML = evs.map(function (e, i) {
         return '<button type="button" class="ls-history-node' + (i === index ? ' is-on' : '') + '" data-history="' + i + '">' +
@@ -6975,6 +6991,8 @@
       panel.innerHTML = '<div class="ls-history-year">' + api.esc(e.year) + '</div>' +
         '<h3 class="ls-history-title">' + api.esc(e.title) + '</h3>' +
         '<p class="ls-history-text">' + api.esc(e.text) + '</p>' +
+        (e.image ? '<figure class="ls-history-figure"><img src="' + api.esc(e.image.src) + '" alt="' + api.esc(e.image.alt) + '"><figcaption>' + api.esc(e.image.cap) + ' <a href="' + api.esc(e.image.href) + '" target="_blank" rel="noopener">' + (DE ? "Quelle" : "Source") + '</a></figcaption></figure>' : '') +
+        (e.diagram ? '<div class="ls-history-diagram">' + diagramHTML(e.diagram) + '</div>' : '') +
         '<a class="ls-history-source" href="' + api.esc(e.source.url) + '" target="_blank" rel="noopener">' + api.esc(e.source.label) + '</a>';
       progress.textContent = (index + 1) + ' / ' + evs.length;
       prevBtn.disabled = index === 0;

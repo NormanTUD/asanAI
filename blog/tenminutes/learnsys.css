@@ -1134,3 +1134,11 @@ h1,h2,h3,h4{
   .ls-history-track{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible}
   .ls-history-node{min-width:0}
 }
+
+.ls-history-diagram{display:block;border:1px solid var(--ls-line);background:#fff;padding:6px 8px;max-width:360px}
+.ls-history-diagram svg{display:block;width:100%;height:auto;max-height:160px}
+
+.ls-history-figure{margin:0;border:1px solid var(--ls-line);background:#fff;padding:6px;max-width:320px}
+.ls-history-figure img{display:block;width:100%;max-height:150px;object-fit:contain;background:#fff}
+.ls-history-figure figcaption{display:block;margin-top:4px;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-history-figure figcaption a{color:var(--ls-petrol);text-decoration:underline;text-underline-offset:2px}
