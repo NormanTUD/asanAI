@@ -1534,7 +1534,7 @@
     function heightAt(x, y) {
       var s = sampleAt(x);
       var width = 0.14 + 0.30 * s.entropy * (0.7 + temp * 0.2);
-      var depth = 0.32 + 0.32 * s.chosen;
+      var depth = 0.12 + 0.52 * s.chosen;
       var h = 0.42 - depth * Math.exp(-(y * y) / (2 * width * width));
       for (var i = 0; i < history.length; i++) {
         var e = history[i];
@@ -1544,7 +1544,7 @@
           var cy = sideY(k, e.alternatives.length);
           var cx = full + 0.48 + 0.06 * Math.sin(i * 1.7 + k);
           var d = ((x - cx) * (x - cx)) / (2 * 0.13 * 0.13) + ((y - cy) * (y - cy)) / (2 * 0.10 * 0.10);
-          h -= (0.08 + 0.26 * pr.p[k + 1]) * Math.exp(-d);
+          h -= (0.12 + 0.52 * pr.p[k + 1]) * Math.exp(-d);
         });
       }
       h += 0.018 * Math.sin(x * 2.3 + y * 3.1) + 0.012 * Math.cos(x * 1.4 - y * 4.2);
