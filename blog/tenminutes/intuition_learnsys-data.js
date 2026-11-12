@@ -513,8 +513,10 @@
       deep: "In einem echten Modell hat der Raum Tausende Dimensionen und das Vokabular Zehntausende Tokens. Die Wiese ist eine Projektion auf zwei Achsen; die Nähte sind die Grenzen zwischen benachbarten Token-Regionen.",
       boxes: [
         box("md-1", "Mathematik", "Was ist eine Voronoi-Zelle?", "Die Menge aller Punkte, die einem Wort näher sind als jedem anderen. Die Grenze zwischen zwei Zellen ist die Menge der Punkte mit gleichem Abstand."),
-        box("md-2", "Technik", "Was machen Temperatur und Top-k?", "Temperatur macht die Auswahl breiter oder schärfer. Top-k begrenzt die Auswahl auf die k nächsten Wörter. Beides verändert die Verteilung, nicht die Karte.")
-      ]
+        box("md-2", "Technik", "Was machen Temperatur und Top-k?", "Temperatur macht die Auswahl breiter oder schärfer. Top-k begrenzt die Auswahl auf die k nächsten Wörter. Beides verändert die Verteilung, nicht die Karte."),
+        box("md-3", "Geometrie", "Großkreis und Naht", "Der letzte Vektor zeigt auf eine Region von Token-Richtungen. Nahe einer Naht sind zwei Wörter fast gleich wahrscheinlich. Mehr Tokens verkleinern die Zellen, aber die Nähte schließen sich nie. Mabrok (2026) nennt das Band um eine Naht die Expressibility Gap.")
+      ],
+      sources: [{ label: "Mabrok (2026), arXiv:2603.22301", url: "https://arxiv.org/abs/2603.22301" }]
     }
   ] : [
     {
@@ -527,8 +529,10 @@
       deep: "In a real model the space has thousands of dimensions and the vocabulary tens of thousands of tokens. The meadow is a projection onto two axes; the seams are the borders between neighbouring token regions.",
       boxes: [
         box("md-1", "Mathematics", "What is a Voronoi cell?", "The set of all points closer to one word than to every other. The border between two cells is the set of points at equal distance."),
-        box("md-2", "Technique", "What do temperature and top-k do?", "Temperature makes the choice wider or sharper. Top-k limits it to the k nearest words. Both change the distribution, not the map.")
-      ]
+        box("md-2", "Technique", "What do temperature and top-k do?", "Temperature makes the choice wider or sharper. Top-k limits it to the k nearest words. Both change the distribution, not the map."),
+        box("md-3", "Geometry", "Great circle and seam", "The final vector points to a region of token directions. Near a seam two words are almost equally likely. More tokens shrink the cells, but the seams never close. Mabrok (2026) calls the band around a seam the expressibility gap.")
+      ],
+      sources: [{ label: "Mabrok (2026), arXiv:2603.22301", url: "https://arxiv.org/abs/2603.22301" }]
     }
   ];
 
@@ -576,7 +580,8 @@
       boxes: [
         box("in-11", "Mathematik", "Der Stapel", "output = layer₃(layer₂(layer₁(input))). Jede Schicht ist eine Funktion mit Parametern; die Komposition ist das Modell."),
         box("in-12", "Technik", "Sechs Schritte", "Jedes Token läuft durch dieselben sechs Schritte: Tokenize, Embed, Position, Attention, FFN, Residual. Das Modell bewegt Punkte in einem hochdimensionalen Raum; das Training formt die Winkel zu plausiblen Fortsetzungen."),
-        box("in-13", "Grenze", "Was heißt plausibel?", "Plausibel heißt: Die Fortsetzung kam im Trainingstext vor. Es heißt nicht, dass das Modell eine eigene Vorstellung von Wahrheit hat.")
+        box("in-13", "Grenze", "Was heißt plausibel?", "Plausibel heißt: Die Fortsetzung kam im Trainingstext vor. Es heißt nicht, dass das Modell eine eigene Vorstellung von Wahrheit hat."),
+        box("in-14", "Geometrie", "Winkel statt Abstand", "Das Modell vergleicht Richtungen. Deshalb nutzt die Seite standardmäßig den Großkreis: projiziere die Vektoren auf die Einheitskugel und miss den Winkel. Die 3D-Ansicht ist eine Projektion dieser Kugel.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
     }
@@ -592,7 +597,8 @@
       boxes: [
         box("in-11", "Mathematics", "The stack", "output = layer₃(layer₂(layer₁(input))). Each layer is a function with parameters; the composition is the model."),
         box("in-12", "Technique", "Six steps", "Every token runs through the same six steps: tokenize, embed, position, attention, FFN, residual. The model moves points in a high-dimensional space; training shapes the angles toward plausible continuations."),
-        box("in-13", "Limit", "What does plausible mean?", "Plausible means the continuation occurred in the training text. It does not mean the model has its own notion of truth.")
+        box("in-13", "Limit", "What does plausible mean?", "Plausible means the continuation occurred in the training text. It does not mean the model has its own notion of truth."),
+        box("in-14", "Geometry", "Angles, not distance", "The model compares directions. That is why the page uses the great-circle metric by default: project the vectors onto the unit sphere and measure the angle. The 3D view is a projection of that sphere.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
     }
@@ -794,7 +800,41 @@
     }
   ];
 
-  var steps = introSteps.concat(insideSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, mlpSteps, ffnSteps, stackSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps);
+  var activationSteps = DE ? [
+    {
+      kicker: "08b / Aktivierung",
+      title: "Weiche Kurven, ein Knick",
+      body: "Eine Nichtlinearität wird nach der Projektion auf jede Koordinate angewendet. ReLU faltet bei null; Sigmoid und tanh biegen glatt; GELU ist glatt, aber nicht monoton. Der Knick ist das, was einen geraden Schnitt durch etwas führt, das vorher untrennbar war.",
+      watch: "Klicke die Funktionen. Wo ist der Knick, wo ist die Kurve glatt?",
+      demoState: { scene: "activation" },
+      context: "Ohne Aktivierung ist ein tiefes Netz nur eine andere Matrix. Die Aktivierung nach jeder Schicht bricht die lineare Komposition.",
+      deep: "ReLU ist nicht injektiv: Alle negativen Eingaben landen bei 0. Dieser Informationsverlust kann beim Entwirren helfen. Glatte Aktivierungen bleiben für endliche Eingaben umkehrbar; Sättigung und niedrige Präzision können auch sie zu einer Treppe machen.",
+      boxes: [
+        box("act-1", "Beispiel", "2 Eingänge, 2 Ausgänge", "W = [[1,2],[0,-1]], x = (3,1), b = (0,-2). Wx = (5,-1), z = (5,-3), ReLU(z) = (5,0). Jede Ausgabe ist ein Skalarprodukt plus Bias, dann die Aktivierung.", "\\begin{aligned} W &= \\begin{pmatrix} 1 & 2 \\\\ 0 & -1 \\end{pmatrix}, \\quad x = \\begin{pmatrix} 3 \\\\ 1 \\end{pmatrix}, \\quad b = \\begin{pmatrix} 0 \\\\ -2 \\end{pmatrix} \\\\ Wx &= \\begin{pmatrix} 5 \\\\ -1 \\end{pmatrix}, \\quad z = Wx+b = \\begin{pmatrix} 5 \\\\ -3 \\end{pmatrix} \\\\ \\operatorname{ReLU}(z) &= \\begin{pmatrix} 5 \\\\ 0 \\end{pmatrix} \\end{aligned}"),
+        box("act-2", "Ohne Knick", "Zwei Dense-Schichten ohne Nichtlinearität", "dense₂(dense₁(x)) = W₂(W₁x+b₁)+b₂ = (W₂W₁)x + (W₂b₁+b₂). Zwei lineare Schichten kollabieren zu einer. Tiefe bringt ohne Aktivierung keine zusätzliche Ausdruckskraft.", "\\begin{aligned} \\operatorname{dense}_2(\\operatorname{dense}_1(x)) &= W_2(W_1 x + b_1) + b_2 \\\\ &= (W_2 W_1)x + (W_2 b_1 + b_2) \\\\ &= Wx + b \\end{aligned}"),
+        box("act-3", "Formeln", "Die vier Funktionen", "ReLU(x) = max(0,x). tanh(x) = (e^{2x} − 1)/(e^{2x} + 1). sigmoid(x) = 1/(1+e^{−x}). GELU ist ein glatter Durchlass, der kleine negative Werte noch passieren lässt.")
+      ],
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355" }]
+    }
+  ] : [
+    {
+      kicker: "08b / Activation",
+      title: "Smooth curves, one bend",
+      body: "A nonlinearity is applied to each coordinate after the projection. ReLU folds at zero; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic. The bend is what lets a straight cut pass through something that was inseparable before.",
+      watch: "Click the functions. Where is the bend, where is the curve smooth?",
+      demoState: { scene: "activation" },
+      context: "Without an activation, a deep network is just another matrix. The activation after each layer breaks the linear composition.",
+      deep: "ReLU is not injective: all negative inputs land at 0. That loss of information can help untangle. Smooth activations stay invertible for finite inputs; saturation and low precision can turn even a smooth activation into a staircase.",
+      boxes: [
+        box("act-1", "Example", "2 inputs, 2 outputs", "W = [[1,2],[0,-1]], x = (3,1), b = (0,-2). Wx = (5,-1), z = (5,-3), ReLU(z) = (5,0). Each output is a dot product plus bias, then the activation.", "\\begin{aligned} W &= \\begin{pmatrix} 1 & 2 \\\\ 0 & -1 \\end{pmatrix}, \\quad x = \\begin{pmatrix} 3 \\\\ 1 \\end{pmatrix}, \\quad b = \\begin{pmatrix} 0 \\\\ -2 \\end{pmatrix} \\\\ Wx &= \\begin{pmatrix} 5 \\\\ -1 \\end{pmatrix}, \\quad z = Wx+b = \\begin{pmatrix} 5 \\\\ -3 \\end{pmatrix} \\\\ \\operatorname{ReLU}(z) &= \\begin{pmatrix} 5 \\\\ 0 \\end{pmatrix} \\end{aligned}"),
+        box("act-2", "Without a bend", "Two dense layers without a nonlinearity", "dense₂(dense₁(x)) = W₂(W₁x+b₁)+b₂ = (W₂W₁)x + (W₂b₁+b₂). Two linear layers collapse into one. Depth adds no expressive power without an activation.", "\\begin{aligned} \\operatorname{dense}_2(\\operatorname{dense}_1(x)) &= W_2(W_1 x + b_1) + b_2 \\\\ &= (W_2 W_1)x + (W_2 b_1 + b_2) \\\\ &= Wx + b \\end{aligned}"),
+        box("act-3", "Formulas", "The four functions", "ReLU(x) = max(0,x). tanh(x) = (e^{2x} − 1)/(e^{2x} + 1). sigmoid(x) = 1/(1+e^{−x}). GELU is a smooth gate that still lets small negative values through.")
+      ],
+      sources: [{ label: "Keup & Helias (2022), Origami in N dimensions", url: "https://arxiv.org/abs/2203.11355" }]
+    }
+  ];
+
+  var steps = introSteps.concat(insideSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, mlpSteps, activationSteps, ffnSteps, stackSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps);
 
   var day = {
     id: "intuition",

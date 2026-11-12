@@ -1474,12 +1474,9 @@
     var el = document.createElement("div");
     el.className = "ls-tunnel-scene";
     el.innerHTML =
-      '<div class="ls-tunnel-stage">' +
-        '<canvas class="ls-canvas" role="img"></canvas>' +
-        '<div class="ls-tunnel-hud ls-tunnel-hud--tl"><div class="ls-tunnel-sentence"></div></div>' +
-        '<div class="ls-tunnel-hud ls-tunnel-hud--tr"><span class="ls-tunnel-step"></span><span class="ls-tunnel-temp-read"></span></div>' +
-        '<div class="ls-tunnel-hud ls-tunnel-hud--bl"><div class="ls-tunnel-next-line"></div><div class="ls-tunnel-alts"></div></div>' +
-      '</div>' +
+      '<div class="ls-tunnel-top"><div class="ls-tunnel-sentence"></div><div class="ls-tunnel-meta-top"><span class="ls-tunnel-step"></span><span class="ls-tunnel-temp-read"></span></div></div>' +
+      '<div class="ls-tunnel-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-tunnel-info"><div class="ls-tunnel-next-line"></div><div class="ls-tunnel-alts"></div></div>' +
       '<div class="ls-scene-row ls-tunnel-controls"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-tunnel-advance">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-tunnel-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-tunnel-temp" min="0.05" max="5" step="0.05" value="0.8"><output>0.80</output></label></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-tunnel-stage");
@@ -1757,6 +1754,16 @@
         ? "Wahrscheinlichkeitstunnel. Pfad: " + full.join(" ") + ". Aktuelles Token: " + tokens[step] + "."
         : "Probability tunnel. Path: " + full.join(" ") + ". Current token: " + tokens[step] + ".");
     }
+    function refreshData() {
+      var next = SHARED.loop;
+      if (!next || !next.tokens || !next.tokens.length) return;
+      if (next.tokens.join("|") === tokens.join("|")) return;
+      tokens = next.tokens.slice();
+      history = next.history.slice();
+      base = next.base || [];
+      step = 0;
+      draw();
+    }
     function resize() {
       size = api.fit(canvas, stage);
       ctx = size.ctx;
@@ -1814,8 +1821,10 @@
     resize();
     return {
       update: function (s) {
+        refreshData();
         if (s && typeof s.step === "number") { step = clamp(s.step, 0, tokens.length - 1); draw(); }
       },
+      resume: refreshData,
       resize: resize,
       destroy: function () {
         if (ro) ro.disconnect();
@@ -2805,6 +2814,94 @@
     return { update: function (s) { if (s && s.mode) { mode = s.mode; draw(); } }, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
   }
 
+  function activationScene(root, api) {
+    var DE = api.lang === "de";
+    var fns = [
+      { id: "relu", label: "ReLU", color: "green", desc: DE ? "flat, dann ein Anstieg" : "flat, then a rise" },
+      { id: "gelu", label: "GELU", color: "gold", desc: DE ? "glatt, kleiner Dip" : "smooth, small dip" },
+      { id: "sigmoid", label: "Sigmoid", color: "blue", desc: DE ? "S-Kurve, 0 bis 1" : "S-shape, 0 to 1" },
+      { id: "tanh", label: "tanh", color: "lilac", desc: DE ? "S-Kurve, -1 bis 1" : "S-shape, -1 to 1" }
+    ];
+    var el = document.createElement("div");
+    el.className = "ls-act-scene";
+    el.innerHTML = '<div class="ls-act-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-scene-row ls-act-chips"></div><div class="ls-act-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-act-stage");
+    var canvas = el.querySelector("canvas");
+    var chips = el.querySelector(".ls-act-chips");
+    var readout = el.querySelector(".ls-act-readout");
+    var ctx = null, size = null, active = "relu", hits = [];
+    var C = api.colors();
+    function f(id, x) {
+      if (id === "relu") return Math.max(0, x);
+      if (id === "gelu") return 0.5 * x * (1 + Math.tanh(Math.sqrt(2 / Math.PI) * (x + 0.044715 * x * x * x)));
+      if (id === "sigmoid") return 1 / (1 + Math.exp(-x));
+      return Math.tanh(x);
+    }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      ctx.clearRect(0, 0, size.w, size.h);
+      var pad = 34, w = size.w, h = size.h;
+      var x0 = pad, x1 = w - pad, y0 = h - pad, y1 = pad;
+      function sx(x) { return x0 + (x + 3) / 6 * (x1 - x0); }
+      function sy(y) { return y0 - (y + 1.2) / 4.4 * (y0 - y1); }
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1;
+      for (var g = -3; g <= 3; g++) { ctx.beginPath(); ctx.moveTo(sx(g), y1); ctx.lineTo(sx(g), y0); ctx.stroke(); }
+      for (var gy = -1; gy <= 3; gy++) { ctx.beginPath(); ctx.moveTo(x0, sy(gy)); ctx.lineTo(x1, sy(gy)); ctx.stroke(); }
+      ctx.strokeStyle = C.lineStrong; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.moveTo(x0, sy(0)); ctx.lineTo(x1, sy(0)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(sx(0), y0); ctx.lineTo(sx(0), y1); ctx.stroke();
+      ctx.fillStyle = C.muted; ctx.font = '600 8px "Open Sans", sans-serif'; ctx.textAlign = "center";
+      ctx.fillText("x", x1 - 4, sy(0) - 6); ctx.fillText("y", sx(0) + 8, y1 + 8);
+      hits = [];
+      fns.forEach(function (fn) {
+        var on = fn.id === active;
+        ctx.beginPath();
+        for (var i = 0; i <= 120; i++) {
+          var x = -3 + 6 * i / 120;
+          var px = sx(x), py = sy(f(x ? fn.id : fn.id, x));
+          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.strokeStyle = on ? C[fn.color] : C.lineStrong;
+        ctx.globalAlpha = on ? 1 : 0.35;
+        ctx.lineWidth = on ? 2.6 : 1.4;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        var end = sy(f(fn.id, 2.6));
+        ctx.fillStyle = on ? C[fn.color] : C.muted;
+        ctx.font = (on ? '700 ' : '600 ') + '9px "Open Sans", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText(fn.label, sx(2.65), end + 3);
+        hits.push({ id: fn.id, x: sx(2.65) + 12, y: end, r: 18 });
+      });
+      var info = fns.filter(function (fn) { return fn.id === active; })[0];
+      readout.innerHTML = '<span><b>' + info.label + '</b> ' + info.desc + '</span><span>' + (DE ? "ReLU ist nicht injektiv; glatte Aktivierungen bleiben für endliche Eingaben umkehrbar." : "ReLU is not injective; smooth activations stay invertible for finite inputs.") + '</span>';
+      canvas.setAttribute("aria-label", DE ? "Aktivierungsfunktionen: ReLU, GELU, Sigmoid, tanh" : "Activation functions: ReLU, GELU, sigmoid, tanh");
+    }
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    fns.forEach(function (fn) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "ls-chip" + (fn.id === active ? " is-on" : "");
+      b.textContent = fn.label;
+      b.addEventListener("click", function () {
+        active = fn.id;
+        chips.querySelectorAll(".ls-chip").forEach(function (x) { x.classList.toggle("is-on", x === b); });
+        draw();
+      });
+      chips.appendChild(b);
+    });
+    canvas.addEventListener("pointerup", function (e) {
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      hits.forEach(function (h) { if (Math.hypot(h.x - x, h.y - y) < h.r) { active = h.id; chips.querySelectorAll(".ls-chip").forEach(function (b) { b.classList.toggle("is-on", b.textContent === fns.filter(function (f2) { return f2.id === h.id; })[0].label); }); draw(); } });
+    });
+    window.addEventListener("resize", resize);
+    resize();
+    return { update: function () {}, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
   var SCENES = {
     embedding: embeddingScene,
     phone: phoneScene,
@@ -2821,7 +2918,8 @@
     manifold: manifoldScene,
     mlp: mlpScene,
     trajectories: trajectoriesScene,
-    stack: stackScene
+    stack: stackScene,
+    activation: activationScene
   };
 
   LearnSys.defineDemo("intuition", function (root, api) {
