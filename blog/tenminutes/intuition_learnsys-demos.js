@@ -1567,11 +1567,11 @@
     }
 
     function landColor(p, C) {
-      if (p > 0.55) return C.green;
-      if (p > 0.32) return C.lime;
-      if (p > 0.16) return C.sky;
-      if (p > 0.07) return C.blue;
-      return C.line;
+      var loss = 1 - p;
+      if (loss > 0.6) return C.lilac;
+      if (loss > 0.3) return C.sky;
+      if (loss > 0.1) return C.lime;
+      return C.green;
     }
 
     function drawLandscape() {

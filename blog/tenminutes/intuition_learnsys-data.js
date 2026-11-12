@@ -53,10 +53,10 @@
     {
       kicker: "02b / Die Entscheidung",
       title: "Die Verteilung ist nicht die Antwort",
-      body: "Jedes Token hat zwei Koordinaten auf einer flachen Token-Ebene. Seine Wahrscheinlichkeit ist die Höhe: z = p. Die Fläche darunter ist die Verteilung über dieser Ebene, und die senkrechten Linien verbinden jedes Token mit seinem Wert. Die Karte bleibt stehen; nur die Höhen und das Licht wandern mit der aktuellen Verteilung. Der goldene Pfad zeigt die Tokens, die du tatsächlich gewählt hast. Dreh die Szene und klicke ein Wort an.",
-      watch: "Dreh die Szene, klicke ein Wort an und verfolge den goldenen Pfad. Welches Token hat den höchsten Punkt, welches den tiefsten?",
+      body: "Jedes Token hat zwei Koordinaten auf einer flachen Token-Ebene. Seine Wahrscheinlichkeit ist p; die Höhe ist der Verlust 1 − p. Die Fläche darunter ist eine Loss-Landscape: wahrscheinliche Tokens liegen in tiefen Tälern, unwahrscheinliche auf hohen Bergen. Die senkrechten Linien verbinden jedes Token mit seinem Wert. Die Karte bleibt stehen; nur die Täler und das Licht wandern mit der aktuellen Verteilung. Der goldene Pfad zeigt die Tokens, die du tatsächlich gewählt hast. Dreh die Szene und klicke ein Wort an.",
+      watch: "Dreh die Szene, klicke ein Wort an und verfolge den goldenen Pfad. Welches Token liegt im tiefsten Tal, welches auf dem höchsten Berg?",
       demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true },
-      context: "Die Karte bleibt an denselben Token-Positionen; jeder Schritt beleuchtet den Bereich seiner aktuellen Optionen. An jedem aktuellen Token steht die Fläche auf seinem p-Wert, und die Balken rechts zeigen dieselbe Verteilung. Die Token-Ebene darüber ist nur der 2D-Raum, in dem die Wörter liegen; die Höhe ist die Wahrscheinlichkeit.",
+      context: "Die Karte bleibt an denselben Token-Positionen; jeder Schritt beleuchtet den Bereich seiner aktuellen Optionen. An jedem aktuellen Token steht die Fläche auf seinem Verlust 1 − p, und die Balken rechts zeigen dieselbe Verteilung. Die Token-Ebene darüber ist nur der 2D-Raum, in dem die Wörter liegen.",
       deep: "Top-k ist eine feste Anzahl, Top-p eine feste Masse. Min-p skaliert mit dem Top-Token. Nach dem Schnitt werden die verbleibenden Wahrscheinlichkeiten renormalisiert. Beam Search hält mehrere Pfade am Leben; Speculative Sampling beschleunigt die Prüfung, ohne die Zielverteilung zu ändern.",
       boxes: [
         box("in-7", "Anwendung", "Welche Einstellung wofür?", "Code und Fakten: niedrige Temperatur, enger Filter. Brainstorming: höhere Temperatur, weiterer Filter. Es gibt keine universelle Regel."),
@@ -106,10 +106,10 @@
     {
       kicker: "02b / The choice",
       title: "The distribution is not the answer",
-      body: "Every token has two coordinates on a flat token plane. Its probability is the height: z = p. The surface below is the distribution over that plane, and the vertical lines connect each token to its value. The map stays put; only the heights and the light move with the current distribution. The gold path shows the tokens you actually chose. Rotate the scene and click a word to choose it.",
-      watch: "Rotate the scene, click a word, and follow the gold path. Which token has the highest point, which the lowest?",
+      body: "Every token has two coordinates on a flat token plane. Its probability is p; the height is the loss 1 − p. The surface below is a loss landscape: likely tokens sit in deep valleys, unlikely ones on high mountains. The vertical lines connect each token to its value. The map stays put; only the valleys and the light move with the current distribution. The gold path shows the tokens you actually chose. Rotate the scene and click a word to choose it.",
+      watch: "Rotate the scene, click a word, and follow the gold path. Which token sits in the deepest valley, which on the highest mountain?",
       demoState: { scene: "loop", mode: "greedy", temp: 0.8, landscape: true },
-      context: "The map keeps the same token positions; each step lights the area of its current options. At each current token the surface sits on its p value, and the bars on the right show the same distribution. The token plane above is only the 2D space where the words live; the height is the probability.",
+      context: "The map keeps the same token positions; each step lights the area of its current options. At each current token the surface sits on its loss 1 − p, and the bars on the right show the same distribution. The token plane above is only the 2D space where the words live.",
       deep: "Top-k is a fixed number, top-p a fixed mass. Min-p scales with the top token. After the cut, the remaining probabilities are renormalised. Beam search keeps several paths alive; speculative sampling speeds up verification without changing the target distribution.",
       boxes: [
         box("in-7", "Application", "Which setting for what?", "Code and facts: low temperature, narrow filter. Brainstorming: higher temperature, wider filter. There is no universal rule."),
