@@ -1169,3 +1169,29 @@ Marked as todo; work through carefully, one block at a time.
   syntax/diff.
 - [ ] Final quality pass: mouthwateringly gorgeous, minimalist, real takeaway.
 - [ ] Commit and push only with explicit approval.
+
+## Final quality and robustness requests (2026-11-13)
+
+- [ ] **Right arrow must reach every demo.** On every slide, pressing Weiter
+  repeatedly must step through every demo/sub-demo the slide contains, so the
+  reader can see all of them even without touching every slider. Verify this
+  on every base slide and every substep.
+- [ ] **Intuitive, smooth, fun.** Review the whole sequence for intuitiveness,
+  smooth transitions, and a coherent flow; nothing should jump, stutter, or
+  feel disconnected. Make it fun because everything flows into the next.
+- [ ] **Gremlins.js monkey test.** At the very end, obtain gremlins.js and run
+  it with many workers. Provoke failures deliberately, analyze every error
+  precisely, and fix it at the root. The software must survive 50 monkeys:
+  every control clickable, arbitrary text/numbers in every field, sliders
+  moved anywhere, no crash.
+- [ ] **Move “Die Karte der Wörter” after “Ein Wort nach dem anderen”.**
+  The meadow slide moves directly after the loop slide.
+
+### Ordering notes
+- Current order after the latest merges: media, compression, Bausteine, Gauss/
+  data (substeps), tokenizer, embeddings, highdim, manifold, position,
+  attention (substeps), neural (substeps), FFN, residual, trajectories,
+  meadow, unembedding, softmax, loop, distribution, post-training, eval, RAG,
+  history, philosophy.
+- Move trajectories and meadow to directly after the loop slide. Recheck the
+  final order after the move.

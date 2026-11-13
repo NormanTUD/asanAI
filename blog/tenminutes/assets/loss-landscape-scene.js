@@ -169,7 +169,7 @@
     }
     function setStatus(text) { statusEl.textContent = text; }
     function setOpt(name) {
-      optimizer = name; step = 0;
+      optimizer = name; step = 0; started = false; finished = false;
       optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === name); });
       formulaKey = ""; draw();
     }
@@ -181,10 +181,11 @@
       worker = new Worker("assets/loss-landscape-worker.js?v=4");
       worker.onmessage = function (e) {
         data = e.data;
-        setStatus(DE ? "Bereit · das Training startet gleich." : "Ready · training starts shortly.");
+        started = false;
+        finished = false;
+        setStatus(DE ? "Bereit · Weiter startet SGD." : "Ready · Next starts SGD.");
         setOpt("sgd");
         draw();
-        setTimeout(function () { if (visible && !started) startTraining(); }, 520);
       };
       worker.onerror = function () { setStatus(DE ? "Worker-Fehler" : "Worker error"); };
       worker.postMessage({
@@ -197,21 +198,22 @@
       if (!playing || !data) return;
       var tr = trajectory();
       if (step < tr.length - 1) { step++; draw(); timer = setTimeout(tick, 55); return; }
+      playing = false;
+      started = true;
+      finished = optimizer === "momentum";
       var oi = optOrder.indexOf(optimizer);
-      if (oi < optOrder.length - 1) {
-        optimizer = optOrder[oi + 1]; step = 0; formulaKey = "";
-        optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === optimizer); });
-        draw(); timer = setTimeout(tick, 420); return;
-      }
-      playing = false; finished = true; started = true; setStatus(DE ? "Fertig · SGD, Adam und Momentum." : "Done · SGD, Adam and Momentum.");
+      var nextName = oi < optOrder.length - 1 ? optOrder[oi + 1].toUpperCase() : null;
+      setStatus(finished
+        ? (DE ? "Fertig · SGD, Adam und Momentum." : "Done · SGD, Adam and Momentum.")
+        : (DE ? optimizer.toUpperCase() + " fertig · Weiter für " + nextName + "." : optimizer.toUpperCase() + " done · Next for " + nextName + "."));
       pauseBtn.textContent = DE ? "Nochmal" : "Again";
     }
     function startTraining() {
       if (!data) { startWorker(); return; }
       playing = true; finished = false; started = true; clearTimeout(timer); timer = 0;
-      optimizer = "sgd"; step = 0; formulaKey = "";
-      optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === "sgd"); });
-      setStatus(DE ? "Training läuft: SGD → Adam → Momentum." : "Training: SGD → Adam → Momentum.");
+      step = 0; formulaKey = "";
+      optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === optimizer); });
+      setStatus(DE ? "Training läuft: " + optimizer.toUpperCase() + "." : "Training: " + optimizer.toUpperCase() + ".");
       pauseBtn.textContent = DE ? "Pause" : "Pause";
       draw(); timer = setTimeout(tick, 140);
     }
@@ -223,13 +225,22 @@
       pauseBtn.textContent = DE ? "Pause" : "Pause";
       timer = setTimeout(tick, 120);
     }
-    function reset() { playing = false; finished = false; started = false; clearTimeout(timer); timer = 0; step = 0; optimizer = "sgd"; formulaKey = ""; pauseBtn.textContent = DE ? "Pause" : "Pause"; if (data) draw(); }
+    function reset() {
+      playing = false; finished = false; started = false; clearTimeout(timer); timer = 0;
+      step = 0; optimizer = "sgd"; formulaKey = "";
+      optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === "sgd"); });
+      pauseBtn.textContent = DE ? "Pause" : "Pause";
+      setStatus(DE ? "Bereit · Weiter startet SGD." : "Ready · Next starts SGD.");
+      if (data) draw();
+    }
     trainBtn.addEventListener("click", startTraining);
     pauseBtn.addEventListener("click", function () {
       if (playing) { pause(); return; }
       if (!data) { startWorker(); return; }
-      if (step >= trajectory().length - 1 && optimizer === "momentum") reset();
-      playing = true; pauseBtn.textContent = DE ? "Pause" : "Pause"; timer = setTimeout(tick, 160);
+      if (step >= trajectory().length - 1) { startTraining(); return; }
+      playing = true;
+      pauseBtn.textContent = DE ? "Pause" : "Pause";
+      timer = setTimeout(tick, 160);
     });
     resetBtn.addEventListener("click", reset);
     optEls.forEach(function (b) { b.addEventListener("click", function () { if (!data) return; pause(); setOpt(b.getAttribute("data-opt")); }); });
@@ -257,14 +268,27 @@
       update: function () {},
       next: function () {
         if (!data) { startWorker(); return true; }
-        if (playing) return true;
-        if (finished) return false;
-        resumeTraining();
-        return true;
+        if (playing) {
+          pause();
+          if (optimizer === "momentum") return false;
+          var oi = optOrder.indexOf(optimizer);
+          setOpt(optOrder[oi + 1]);
+          startTraining();
+          return true;
+        }
+        if (!started) { startTraining(); return true; }
+        if (optimizer === "momentum" && step >= trajectory().length - 1) return false;
+        var ci = optOrder.indexOf(optimizer);
+        if (ci < optOrder.length - 1) {
+          setOpt(optOrder[ci + 1]);
+          startTraining();
+          return true;
+        }
+        return false;
       },
       prev: function () { return false; },
       pause: pause,
-      resume: function () { visible = true; if (!data) return; if (!finished && !playing) resumeTraining(); else draw(); },
+      resume: function () { visible = true; if (data) draw(); },
       resize: resize,
       destroy: function () { playing = false; clearTimeout(timer); if (worker) worker.terminate(); worker = null; window.removeEventListener("resize", resize); el.remove(); }
     };
