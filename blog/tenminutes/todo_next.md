@@ -224,3 +224,10 @@ Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still
 - [x] Neutral-neighbourhood examples added.
 - [x] New York landmark labels added.
 - [x] Bilingual copy updated.
+
+## Correction batch status
+- [x] Position math rewritten: start-relative Euclidean distance and unit-vector great-circle angle; removed methods plot and “Gerade im Raum”; circular-wave note added.
+- [x] Demo credit removed.
+- [x] Causal mask distinction added.
+- [x] Ambiguity slide now uses inline LaTeX tokens, neutral neighbourhoods, York variants, and New York landmarks.
+- [~] Browser visual check of the position scene still pending; full tests remain for the end.
