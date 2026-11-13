@@ -1261,3 +1261,18 @@ h1,h2,h3,h4{
   .ls-loop-actions{justify-content:flex-start}
   .ls-loop-scene{grid-template-rows:auto auto minmax(220px,1fr) auto}
 }
+
+.ls-text-toggle,.ls-text-mobile-head{display:none}
+@media (max-width:720px){
+  .ls-main{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr);position:relative}
+  .ls-stage{border-left:0;border-top:0}
+  .ls-text{display:none}
+  .ls-app.is-text-open .ls-text{display:block;position:absolute;inset:0;z-index:30;background:var(--ls-paper);border:0;overflow:hidden}
+  .ls-app.is-text-open .ls-text-scroll{height:100%;padding:44px 16px 16px;overflow:auto}
+  .ls-text-mobile-head{display:flex;position:absolute;top:8px;right:10px;z-index:2}
+  .ls-text-toggle{display:inline-flex;margin-left:auto}
+  .ls-focus-btn{display:none}
+  .ls-stage-head{flex-wrap:wrap;gap:6px}
+}
+
+.ls-tokenize-split[hidden],.ls-bpe[hidden]{display:none}

@@ -405,6 +405,7 @@
         '</header>' +
         '<main class="ls-main">' +
           '<section class="ls-text" aria-live="polite">' +
+            '<div class="ls-text-mobile-head"><button type="button" class="ls-btn ls-btn--tiny ls-text-close" id="ls-text-close" aria-label="' + (LANG === "de" ? "Zur Demo" : "Back to demo") + '">← Demo</button></div>' +
             '<div class="ls-text-scroll">' +
               (cfg.mix ? '<div class="ls-navbar" id="ls-navbar"><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-prev" title="' + esc(t("prevStep")) + '" aria-label="' + esc(t("prevStep")) + '">←</button><div class="ls-nav-pos ls-mix-pos" id="ls-mix-pos" aria-label="' + esc(cfg.singleDay ? t("stepRail") : t("position") + " 0 … " + (posCount - 1)) + '">' + posHtml + '</div><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-next" title="' + esc(t("nextStep")) + '" aria-label="' + esc(t("nextStep")) + '">→</button></div>' : '') +
               '<div class="ls-kicker" id="ls-kicker"></div>' +
@@ -421,7 +422,7 @@
             '</div>' +
           '</section>' +
           '<section class="ls-stage" id="ls-stage" aria-label="' + esc(t("interactiveDemo")) + '">' +
-            '<div class="ls-stage-head"><span id="ls-stage-kicker"></span><b id="ls-stage-title"></b><button type="button" class="ls-btn ls-btn--tiny ls-focus-btn" id="ls-focus" aria-pressed="false">' + esc(t("demoLarge")) + '</button></div>' +
+            '<div class="ls-stage-head"><span id="ls-stage-kicker"></span><b id="ls-stage-title"></b><button type="button" class="ls-btn ls-btn--tiny ls-text-toggle" id="ls-text-toggle" aria-expanded="false">' + (LANG === "de" ? "Text" : "Text") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-focus-btn" id="ls-focus" aria-pressed="false">' + esc(t("demoLarge")) + '</button></div>' +
             '<div class="ls-demo" id="ls-demo"></div>' +
             '<div class="ls-stage-foot"><span id="ls-stage-hint"></span><span class="ls-credit" id="ls-credit"></span></div>' +
           '</section>' +
@@ -447,6 +448,8 @@
     els.fontMinus = root.querySelector("#ls-font-minus");
     els.fontPlus = root.querySelector("#ls-font-plus");
     els.focus = root.querySelector("#ls-focus");
+    els.textToggle = root.querySelector("#ls-text-toggle");
+    els.textClose = root.querySelector("#ls-text-close");
     els.kicker = root.querySelector("#ls-kicker");
     els.title = root.querySelector("#ls-title");
     els.body = root.querySelector("#ls-body");
@@ -496,6 +499,12 @@
     els.focus.setAttribute("aria-pressed", on ? "true" : "false");
     els.focus.textContent = on ? t("showText") : t("demoLarge");
     if (demo && demo.resize) setTimeout(function () { demo.resize(); }, 260);
+  }
+  function setTextOpen(on) {
+    if (!els.app) return;
+    els.app.classList.toggle("is-text-open", !!on);
+    if (els.textToggle) els.textToggle.setAttribute("aria-expanded", on ? "true" : "false");
+    if (on && els.textClose) setTimeout(function () { try { els.textClose.focus({ preventScroll: true }); } catch (e) {} }, 60);
   }
   function renderTop() {
     applyFont();
@@ -1340,6 +1349,8 @@
     if (els.fontMinus) els.fontMinus.addEventListener("click", function () { setFont(state.font - 1); });
     if (els.fontPlus) els.fontPlus.addEventListener("click", function () { setFont(state.font + 1); });
     if (els.focus) els.focus.addEventListener("click", toggleFocus);
+    if (els.textToggle) els.textToggle.addEventListener("click", function () { setTextOpen(true); });
+    if (els.textClose) els.textClose.addEventListener("click", function () { setTextOpen(false); });
     els.prev.addEventListener("click", prev);
     els.next.addEventListener("click", next);
     if (els.textScroll) {
@@ -1406,7 +1417,10 @@
       demoObserver.observe(els.demo);
     }
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") { resetPositionBuffer(); hideTip(); toggleHelp(false); return; }
+      if (e.key === "Escape") {
+        if (els.app && els.app.classList.contains("is-text-open")) { setTextOpen(false); return; }
+        resetPositionBuffer(); hideTip(); toggleHelp(false); return;
+      }
       if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
       if (/^[0-9]$/.test(e.key) && !e.altKey) { e.preventDefault(); pressPositionDigit(e.key); return; }
       resetPositionBuffer();

@@ -270,7 +270,7 @@
       kicker: "03 / Tokenize",
       title: "Text wird zu IDs",
       body: "Ein Token ist kein Wort. Auf derselben Folie siehst du zwei Teile. Teil 1 zeigt die Trennung: Verständnis, unzerbrechlich und ein ganzer Satz werden in Tokens zerlegt. Teil 2 zeigt BPE: Der Algorithmus startet bei Zeichen und verschmilzt in mehreren Stufen das häufigste Paar. Aus häufigen Folgen werden längere Tokens; seltene Schriften bleiben teuer.",
-      watch: "Wechsle zwischen „Trennung“ und „BPE“. Welches Paar wird als Nächstes verschmolzen?",
+      watch: "Gehe mit „Weiter“ von den Beispielen zu BPE. Welches Paar wird als Nächstes verschmolzen?",
       demoState: { scene: "tokenize" },
       context: "Teil 1: Text wird in Tokens geteilt, jede ID ist eine Adresse in der Embedding-Tabelle. Teil 2: BPE beginnt bei Zeichen und baut das Vokabular durch Merges auf. Jeder Merge ist ein neues Vokabelstück.",
       deep: "BPE ist eine gelernte Kompression: Es zählt benachbarte Paare im Trainingskorpus und ersetzt das häufigste Paar durch ein neues Symbol. Nach mehreren Merges werden häufige Wörter kurz. Die genaue Tokenisierung hängt an den Daten und am Vokabularziel; die Demo zeigt einen kleinen Korpus, keine Messung eines bestimmten Modells.",
@@ -292,7 +292,7 @@
       kicker: "03 / Tokenize",
       title: "Text becomes IDs",
       body: "A token is not a word. This slide has two parts. Part 1 shows the split: understanding, unbreakable, and a whole sentence are broken into tokens. Part 2 shows BPE: the algorithm starts from characters and merges the most frequent pair in several stages. Frequent sequences become longer tokens; rare scripts stay expensive.",
-      watch: "Switch between “Split” and “BPE”. Which pair is merged next?",
+      watch: "Use “Next” to go from the examples to BPE. Which pair is merged next?",
       demoState: { scene: "tokenize" },
       context: "Part 1: text is split into tokens, and each ID is an address in the embedding table. Part 2: BPE starts from characters and builds the vocabulary through merges. Each merge is a new vocabulary item.",
       deep: "BPE is learned compression: it counts adjacent pairs in the training corpus and replaces the most frequent pair with a new symbol. After several merges, frequent words become short. The exact tokenization depends on the data and the vocabulary target; the demo shows a small corpus, not a measurement of a specific model.",
@@ -771,43 +771,7 @@
     }
   ];
 
-  var stackSteps = DE ? [
-    {
-      kicker: "04b / Der Stapel",
-      title: "Eine Schicht, dann der Stapel",
-      body: "Eine Schicht ist nicht nur Attention und nicht nur ein FFN. Sie ist die Komposition: Attention mischt die Tokens zu A, dann schreibt das FFN jede Zeile von A um. Das Ergebnis ist die nächste Matrix X mit derselben Form.",
-      watch: "Klicke eine Stufe an. Wo bleibt die Form gleich?",
-      demoState: { scene: "stack", mode: "pipeline" },
-      context: "W, b, W₁ und W₂ sind Parameter; das Training passt sie an. Self-Attention nimmt die ganze Matrix X und liefert A mit einer Zeile pro Token. Das FFN transformiert jede Zeile A_i einzeln.",
-      deep: "Softmax macht aus den finalen Scores eine Verteilung über das Vokabular. Die Exponentialfunktion macht jeden Wert positiv und erhält die Reihenfolge; die Division durch die Summe ergibt Wahrscheinlichkeiten. Der absolute Offset ist willkürlich.",
-      boxes: [
-        box("st-1", "Mathematik", "Self-Attention", "A_i = Σ_j α_ij v_j, mit α_ij ∈ [0,1] und Σ_j α_ij = 1. Die Gewichte sind ein endliches Budget."),
-        box("st-2", "Mathematik", "Das FFN", "FFN(x) = dense₂(activation(dense₁(x))). Es arbeitet auf einer Zeile auf einmal, nie auf der ganzen Matrix."),
-        box("st-3", "Mathematik", "Softmax", "p_i = exp(z_i) / Σ_j exp(z_j). Eine positive Verteilung über das Vokabular; die Reihenfolge bleibt."),
-        box("st-4", "Technik", "Die Schicht", "layer(X) = Spalte der FFN(A_i). In einem echten Block umschließen Residualverbindungen und Normalisierung beide Schritte.")
-      ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bridle (1990), Probabilistic Interpretation of Feedforward Classification", url: "https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html", why: { de: "Softmax als probabilistische Klassifikation.", en: "Softmax as probabilistic classification." } }]
-    }
-
-  ] : [
-    {
-      kicker: "04b / The stack",
-      title: "One layer, then the stack",
-      body: "A layer is not just attention and not just an FFN. It is the composition: attention mixes the tokens into A, then the FFN rewrites each row of A. The result is the next matrix X with the same shape.",
-      watch: "Click a stage. Where does the shape stay the same?",
-      demoState: { scene: "stack", mode: "pipeline" },
-      context: "W, b, W₁, and W₂ are parameters; training adjusts them. Self-attention takes the whole matrix X and returns A with one row per token. The FFN transforms each row A_i separately.",
-      deep: "Softmax turns the final scores into a distribution over the vocabulary. The exponential makes every value positive and preserves the order; dividing by the sum gives probabilities. The absolute offset is arbitrary.",
-      boxes: [
-        box("st-1", "Mathematics", "Self-attention", "A_i = Σ_j α_ij v_j, with α_ij ∈ [0,1] and Σ_j α_ij = 1. The weights are a finite budget."),
-        box("st-2", "Mathematics", "The FFN", "FFN(x) = dense₂(activation(dense₁(x))). It works on one row at a time, never on the whole matrix."),
-        box("st-3", "Mathematics", "Softmax", "p_i = exp(z_i) / Σ_j exp(z_j). A positive distribution over the vocabulary; the order stays."),
-        box("st-4", "Technique", "The layer", "layer(X) = column of FFN(A_i). In a real block, residual connections and normalization wrap both steps.")
-      ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bridle (1990), Probabilistic Interpretation of Feedforward Classification", url: "https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html", why: { de: "Softmax als probabilistische Klassifikation.", en: "Softmax as probabilistic classification." } }]
-    }
-
-  ];
+  var stackSteps = [];
 
   var trajectorySteps = DE ? [
     {

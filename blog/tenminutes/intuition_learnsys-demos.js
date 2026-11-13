@@ -3583,10 +3583,6 @@
     var el = document.createElement("div");
     el.className = "ls-tokenize-scene";
     el.innerHTML =
-      '<div class="ls-tokenize-modes" role="tablist" aria-label="' + (DE ? "Tokenisierung" : "Tokenization") + '">' +
-        '<button type="button" class="ls-chip is-on" role="tab" data-mode="split" aria-selected="true">1 ' + (DE ? "Trennung" : "Split") + '</button>' +
-        '<button type="button" class="ls-chip" role="tab" data-mode="bpe" aria-selected="false">2 BPE</button>' +
-      '</div>' +
       '<div class="ls-tokenize-split">' +
         '<div class="ls-scene-row ls-tokenize-samples"><span class="ls-tokenize-label">' + (DE ? "Beispiele" : "Samples") + '</span></div>' +
         '<div class="ls-tokenize-chips" aria-live="polite"></div>' +
@@ -3738,22 +3734,12 @@
       var splitMode = mode === "split";
       splitEl.hidden = !splitMode;
       bpeEl.hidden = splitMode;
-      el.querySelectorAll("[data-mode]").forEach(function (b) {
-        var on = b.getAttribute("data-mode") === mode;
-        b.classList.toggle("is-on", on);
-        b.setAttribute("aria-selected", on ? "true" : "false");
-      });
       if (splitMode) renderSplit(); else renderBpe();
       var total = 3 + stages.length;
       var pos = splitMode ? step : 3 + step;
       navProgress.textContent = (pos + 1) + ' / ' + total;
       navPrev.disabled = pos === 0;
       navNext.textContent = pos === total - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
-    }
-    function setMode(nextMode) {
-      mode = nextMode;
-      step = 0;
-      render();
     }
     function nextInternal() {
       if (mode === "split") {
@@ -3787,9 +3773,6 @@
       b.textContent = examples[key].label;
       b.addEventListener("click", function () { mode = "split"; step = sampleKeys.indexOf(key); render(); });
       samples.appendChild(b);
-    });
-    el.querySelectorAll("[data-mode]").forEach(function (b) {
-      b.addEventListener("click", function () { setMode(b.getAttribute("data-mode")); });
     });
     navPrev.addEventListener("click", prevStep);
     navNext.addEventListener("click", nextStep);
