@@ -1707,3 +1707,6 @@ h1,h2,h3,h4{
 .ls-cal-kicker{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.07em;color:var(--ls-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .ls-cal-card b{font:600 var(--ls-fs-ui-sm)/1.25 "Open Sans",sans-serif;color:var(--ls-ink)}
 @media (max-width:760px){.ls-cal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ls-cal-panel{max-height:90vh}}
+
+.ls-box-control{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-petrol);cursor:pointer}
+.ls-box-control input{accent-color:var(--ls-green)}

@@ -623,6 +623,7 @@
         '<summary>' + esc(b.lens ? b.lens + " · " : "") + esc(b.title || "Detail") + '</summary>' +
         (b.body ? '<p>' + termHTML(b.body || "") + '</p>' : '') +
         (b.tex ? mathBlock(b.tex) : '') +
+        (b.control ? '<label class="ls-box-control"><input type="checkbox" data-control="' + esc(b.control) + '" checked> ' + esc(b.controlLabel || "") + '</label>' : '') +
         '</details>';
     });
     if (sources.length) {
@@ -769,6 +770,11 @@
     bindTerms(els.body);
     bindTerms(els.watch);
     bindTerms(els.extras);
+    els.extras.querySelectorAll("[data-control]").forEach(function (input) {
+      input.addEventListener("change", function () {
+        if (LS.control) LS.control(input.getAttribute("data-control"), input.checked);
+      });
+    });
     var openBtn = els.extras.querySelector("[data-open-depth]");
     if (openBtn) openBtn.addEventListener("click", openDepth);
     els.extras.querySelectorAll(".ls-question-index button").forEach(function (b) {
