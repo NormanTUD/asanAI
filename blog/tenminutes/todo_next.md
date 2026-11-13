@@ -101,4 +101,14 @@ Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still
 - [x] Red “Kamera erfassen (temporär)” button under the loop demo.
 - [x] Button writes a copyable `camera: { yaw, pitch, zoom }` line from the current rotated view.
 - [x] `loopScene` accepts `demoState.camera` so the captured values can be installed as the default later.
-- [ ] Wait for the user’s captured camera line, then set it as the default for the “Ein Wort nach dem anderen” slide.
+- [x] Captured camera installed as default: `camera: { yaw: -0.86, pitch: 0.918, zoom: 1 }`; temporary red capture button removed.
+
+
+## Newest requests — taxonomy, blocks, tokenizer
+1. [~] **Compression taxonomy.** Replace the abstract 144-node example with a named biological taxonomy ladder: Hauskatze/Katzenartige → Säugetiere → Wirbeltiere → Bilaterien → Tiere → Eukaryoten → Lebewesen → Etwas. Show objects, mathematical facts, and thoughts joining at the top. Make the structure visibly emerge as details are forgotten.
+2. [~] **Blocks earlier + mini demos.** Move “Die Bausteine eines LLM” before the neural-network details. Show T, E, then many repeated A/FFN layers indented, then U. Add tiny demos for Tokenizer, Embedding, Attention, FFN, Repeat, Unembedding. Make it gorgeous.
+3. [~] **Tokenizer slide.** Center “Text wird zu IDs”. Fix “Beispiele”: Weiter must step through the examples, not do nothing. Add the advantage below: subwords let the model read new words from context and word parts.
+3b. [ ] **Camera bleed:** at the end, “Die Verteilung ist nicht die Antwort” changes the camera; keep its top view independent from the default camera on “Ein Wort nach dem anderen”.
+4. [ ] **Token trajectories.** Verify/fix Weiter advancing one GPT-2 layer per click.
+5. [ ] **Whole-system generalisation.**
+6. [ ] **Final gate.**
