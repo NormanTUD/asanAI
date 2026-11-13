@@ -1048,3 +1048,24 @@ These are queued. Do not start them until the current final gate is closed.
     neuronale Netze? · Loss-Landschaft” into one slide that shows the
     different left-hand texts one after another. Move it before “Ein Muster
     passt, ein Wert wird geschrieben” (FFN).
+
+13. [ ] **Global native responsive graphics.** Every canvas/graphic must
+    re-render natively at the current container width, not be CSS-scaled or
+    stretched. Add a shared `ResizeObserver` path (or equivalent) so that
+    layout changes (not only window resizes) trigger `api.fit` + redraw for
+    all scenes. This explicitly covers the loss charts during training, the
+    TF.js sine scene, the loss landscape, the Ceres two-panel plot, the
+    manifold, the position sphere, the compression graph, and any other
+    canvas. Fonts, labels, axes, and line widths must be recalculated at the
+    new pixel size.
+
+14. [ ] **Calendar overview top-left.** Add a calendar icon in the top-left
+    chrome. Clicking it opens a calendar/overview of the slides: what comes
+    when, in which order, with the current slide marked.
+
+15. [ ] **Remove the KV-cache slide, add a short optional box.** Delete the
+    standalone “Der KV-Cache wächst mit dem Kontext” slide. Add an optional
+    box to an attention slide that explains the KV cache briefly: keys and
+    values of earlier tokens are reused instead of recomputed, which turns
+    the quadratic generation cost into a linear one. Research the exact
+    mechanism and cite a primary source.
