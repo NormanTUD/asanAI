@@ -1093,3 +1093,79 @@ queued items are still open and will be handled in order:
     clean spacing, typography, colour, transitions, and no clutter. The page
     must still teach something real on every slide; beauty must serve the
     takeaway, not replace it.
+
+## Latest large request — training, MLP, residual, unembedding (2026-11-13)
+
+Marked as todo; work through carefully, one block at a time.
+
+### Training and optimizers
+- [ ] Loss landscape: do not auto-start. Start only on “Training starten” or
+  “Weiter”. The optimizers must go through one after another when the reader
+  presses Weiter, instead of starting automatically.
+- [ ] Neural networks (1 neuron and 32×32×32): do not auto-start. Start only
+  on “Weiter” or the Start button.
+- [ ] “Weiter” while training must **stop the training and go to the next
+  slide** (not stay on the training slide).
+- [ ] “Matrizen zeigen” must work in both the 1-neuron and the 32×32×32
+  variants, show the correct matrices for the active phase, and explain
+  briefly what the reader sees. The 1-neuron button must not switch to the
+  big network.
+
+### MLP / “Raum biegen”
+- [ ] Remove the `watch` text “Klicke dich durch die neun Folien. Wo biegt
+  sich der Raum, wo erscheint der Schnitt?”.
+- [ ] In “Die Dense-Schicht in Zahlen”, remove the top “Skala”, “n”, etc.
+  labels/controls and put the controls into the demo itself.
+- [ ] Repair the linear-separation check; on the “Eigene” slide show where
+  the separating plane really is; verify the algorithm from different angles.
+- [ ] Remove the formulas `s(x,y)=…` and `L … = 0.5563`. Remove the duplicate
+  `a=W1…, z=W2…` formula; keep the existing top formula
+  `x=(x1,x2) → h=act(W1x+b1) → z=W2h+b2`.
+- [ ] Remove the second “✓ Linear trennbar: ja (s = 0.00)” text on the right;
+  keep the one in the canvas.
+- [ ] Fix `CanvasRenderingContext2D.arc: Negative radius` in
+  `assets/space-morph.js` when sliders are moved.
+- [ ] Fix the weight number inputs at 8 neurons: they are too wide and
+  overlap; make the matrix editor fit and stay readable.
+- [ ] Keep all current information but make the MLP page clearer and less
+  cluttered.
+
+### Residual stream
+- [ ] Make “Jede Schicht schreibt in denselben Stream” step through the
+  layers on Weiter.
+- [ ] Attention and FFN belong together: both write into the residual stream;
+  the output after the projection keeps the same size, so layers can only add
+  to the signal.
+- [ ] Import the shared-notebook demo from `blog/lndw/index.html` as the
+  intuition at the beginning of the residual slide. German exactly like the
+  source; English must translate and keep all annotations fitting and equally
+  good.
+
+### Order and blocks
+- [ ] Move “Token-Trajektorien durch GPT-2” to directly after “Ein Wort nach
+  dem anderen”.
+- [ ] Add the data at the very beginning of “Die Bausteine eines LLM”; then
+  put the data slide after the Bausteine slide and move the content there.
+- [ ] Fix “unzerbrechlich” in the Bausteine tokenizer mini: the ID texts
+  overlap, and the parts (`un`/`zer`, `e`/`b`-like neighbours) overlap.
+  Increase the space and keep the boxes exactly on the split.
+
+### Unembedding / “Ähnliche Worte finden”
+- [ ] Rename “Aus einem Vektor wird ein Wort” to something like “Ähnliche
+  Worte finden”.
+- [ ] Remove the first “Winkel” step.
+- [ ] Start by explaining/showning why angle is better than Euclidean
+  distance in high dimensions; research the topic and write it briefly.
+- [ ] New gorgeous demo: two words that are almost the same (small angle),
+  unrelated (about 90°), and opposite words. Use researched approximate
+  values that fit; make it mouthwateringly beautiful.
+- [ ] Remove the fifth step with the triangle (GPU demo).
+- [ ] On the last step, show the resulting percentages at the words
+  themselves.
+- [ ] Keep all information that is currently there, but clearer.
+
+### Finish
+- [ ] Re-run page test, height test, php_validator, check_all --fast,
+  syntax/diff.
+- [ ] Final quality pass: mouthwateringly gorgeous, minimalist, real takeaway.
+- [ ] Commit and push only with explicit approval.

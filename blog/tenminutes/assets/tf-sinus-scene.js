@@ -407,7 +407,6 @@
       draw();
       updateMatrixCanvases();
       trainBtn.textContent = DE ? "Training starten" : "Start training";
-      setTimeout(function () { if (visible && phase === next) resumeTraining(); }, 260);
     }
     function startTf() {
       makePoints();
@@ -418,7 +417,6 @@
       predict();
       draw();
       trainBtn.textContent = DE ? "Training starten" : "Start training";
-      setTimeout(function () { if (visible) resumeTraining(); }, 420);
     }
     function initTf() {
       if (!window.tf) {
@@ -482,9 +480,13 @@
       }, { threshold: 0.05 }).observe(stage);
     }
     function nextInternal() {
-      if (phase === "linear") return false;
-      if (training) return true;
-      if (active().epochs < TARGET_EPOCHS) { resumeTraining(); return true; }
+      var a = active();
+      if (training) {
+        pauseTraining();
+        if (a.model) a.model.stopTraining = true;
+        return false;
+      }
+      if (a.epochs === 0) { resumeTraining(); return true; }
       return false;
     }
     function prevInternal() {
