@@ -998,3 +998,50 @@ Remaining:
   `php_validator.py`, `check_all.py --fast`, `node --check`, `php -l`,
   `git diff --check`.
 - [ ] Commit/push only on explicit request.
+
+## Newest queue — added, not started (2026-11-13)
+
+These are queued. Do not start them until the current final gate is closed.
+
+1. [ ] **Phone transition Search → Chat.** The phone currently disappears and
+   reappears; the phone frame itself must stay and only the screen content
+   should cross-fade smoothly.
+2. [ ] **Reset demos on return.** When the reader goes back to a slide that was
+   already visited (media slide 1, “Verstehen heißt komprimieren”, etc.), the
+   demo must restart from the beginning. Same for other scenes.
+3. [ ] **Bausteine tokenizer mini.** In the `unzerbrechlich` graphic the token
+   boxes are all over the place; align them exactly to the split positions.
+4. [ ] **Bausteine neural text.** Add that the individual components
+   (Attention, FFN, etc.) are explained in more detail later.
+5. [ ] **Ceres responsive canvas.** When the window is very small, the Ceres
+   plots keep their old text size and look squashed. Re-render fonts and
+   labels at the new canvas size.
+6. [ ] **Merge Gauss/Ceres with the data slide.** “Dieselbe Schleife, viele
+   Sprachen” should be called something like “Daten”. Merge “Gauß, Ceres und
+   die Methode der kleinsten Quadrate” with “Daten” into one slide with two
+   sub-slides and different left-hand texts. Show that data are not exact:
+   different people describe the same situation differently, sometimes
+   contradictorily, but in sum the real result hopefully shines through, as
+   with Gauss.
+7. [ ] **Manifold reset.** After visiting “Von Beziehungen zur Übersetzung”,
+   going back to slide 1 and returning must show the two manifolds unaligned
+   again (no remembered translation/rotation).
+8. [ ] **Attention context demo.** In “Kontext zieht die Bank an seinen Platz”:
+   remove “Summe 100%” from the right context, recompute the token position,
+   show `x' = Σ w·v` above the matrix, and remove “Zeile = Frage, Spalte =
+   Antwort” from the plot.
+9. [ ] **Causal-mask text.** Move the “Causal Mask · nur vergangene Tokens
+   beachten …” explanation into an optional box on the left text side, not
+   inside the demo, while the left text still controls the right demo.
+10. [ ] **New noise demo.** “Attention reduziert Rauschen” needs a completely
+    new, mouthwateringly gorgeous demo: use `function` vs `def` in code,
+    camelCase vs snake_case, `quickSort` vs `quick_sort`, or similar surface
+    noise. Move this demo into “Attention verschiebt Bedeutungen in Kontexte”.
+11. [ ] **Remove duplicate causal-matrix slide.** “Die kausale Matrix und die
+    Heads” is duplicated; remove it. Keep its content on “Attention
+    verschiebt Bedeutungen in Kontexte”.
+12. [ ] **Merge activation + 1 neuron + loss landscape.** Merge “Weiche
+    Kurven, ein Knick”, “Was sind neuronale Netze? · 1 Neuron” and “Was sind
+    neuronale Netze? · Loss-Landschaft” into one slide that shows the
+    different left-hand texts one after another. Move it before “Ein Muster
+    passt, ein Wert wird geschrieben” (FFN).
