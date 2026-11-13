@@ -1766,9 +1766,11 @@
       '<div class="ls-loop-sentence" aria-live="polite"></div>' +
       '<div class="ls-loop-tree" aria-live="polite"></div>' +
       '<div class="ls-loop-viz"><div class="ls-loop-bars"></div><div class="ls-loop-landscape" hidden><canvas class="ls-canvas" role="img"></canvas><div class="ls-land-tip" hidden></div><div class="ls-land-legend" aria-hidden="true"><div class="ls-land-scale"><span>' + (DE ? "unwahrscheinlich" : "unlikely") + '</span><i></i><span>' + (DE ? "wahrscheinlich" : "likely") + '</span></div><small>' + (DE ? "Ziehen zum Drehen · Klicken zum Wählen" : "Drag to rotate · click to choose") + '</small></div></div></div>' +
-      '<div class="ls-scene-row ls-loop-modes"></div>' +
-      '<div class="ls-scene-row ls-loop-actions"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-back" aria-label="' + (DE ? "Letztes Token zurücknehmen" : "Take back the last token") + '">' + (DE ? "← Zurück" : "← Back") + '</button><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loop-next">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-loop-temp" min="0.05" max="1.8" step="0.05" value="0.8"><output>0.80</output></label></div>' +
-      '<div class="ls-loop-readout" aria-live="polite"></div>';
+      '<div class="ls-loop-bottom">' +
+        '<div class="ls-loop-modes" role="group" aria-label="' + (DE ? "Auswahlmodus" : "Decoding mode") + '"></div>' +
+        '<div class="ls-loop-actions"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-back" aria-label="' + (DE ? "Letztes Token zurücknehmen" : "Take back the last token") + '">' + (DE ? "← Zurück" : "← Back") + '</button><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loop-next">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-loop-temp" min="0.05" max="1.8" step="0.05" value="0.8"><output>0.80</output></label></div>' +
+        '<div class="ls-loop-readout" aria-live="polite"></div>' +
+      '</div>';
     root.appendChild(el);
     var sentenceEl = el.querySelector(".ls-loop-sentence");
     var treeEl = el.querySelector(".ls-loop-tree");
@@ -1783,7 +1785,7 @@
     var landTip = landEl.querySelector(".ls-land-tip");
     var landPoints = [];
     var landscape = true, landSize = null;
-    var landYaw = -0.62, landPitch = 1.16, landZoom = 1;
+    var landYaw = -0.62, landPitch = 1.16, landZoom = 1, landSteep = 1;
     var landCamTween = 0;
     var landDrag = null, landMoved = false, landHits = [], landOptionPoints = [];
     var landBall = { x: 0, y: 0, init: false, animating: false };
@@ -2031,7 +2033,7 @@
     }
 
     // z = −p: hohe Wahrscheinlichkeit liegt tief, die Fläche zeigt die negative Wahrscheinlichkeit.
-    function landZ(p) { return -Math.max(0, Math.min(1, p)); }
+    function landZ(p) { return -Math.max(0, Math.min(1, p)) * landSteep; }
 
     function landRaw(x, y, z) {
       var cy = Math.cos(landYaw), sy = Math.sin(landYaw);
@@ -2906,7 +2908,10 @@
         nextBtn.disabled = atEnd || !choicesFor().length;
         nextBtn.textContent = (atEnd || !choicesFor().length) ? (DE ? "Fertig" : "Done") : (DE ? "Weiter →" : "Next →");
       }
-      readout.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + generated.length + ' / ' + MAX_STEPS + '</b></span><span>' + (DE ? "Kontext" : "Context") + ' <b>' + (base.length + generated.length) + '</b></span><span>' + (DE ? "Top" : "Top") + ' <b>' + api.esc(opts[top] ? opts[top].t : "—") + '</b></span><span>' + (DE ? "Modus" : "Mode") + ' <b>' + decodeMode + '</b></span>' +
+      var topP = opts[top] ? probs[top] : 0;
+      var loss = -Math.log(Math.max(1e-9, topP));
+      landSteep = 0.55 + 0.45 * topP;
+      readout.innerHTML = '<span>' + (DE ? "Schritt" : "Step") + ' <b>' + generated.length + ' / ' + MAX_STEPS + '</b></span><span>' + (DE ? "Kontext" : "Context") + ' <b>' + (base.length + generated.length) + '</b></span><span>' + (DE ? "Top" : "Top") + ' <b>' + api.esc(opts[top] ? opts[top].t : "—") + ' ' + Math.round(topP * 100) + '%</b></span><span>Loss <b>' + loss.toFixed(2) + '</b></span><span>' + (DE ? "Modus" : "Mode") + ' <b>' + decodeMode + '</b></span>' +
         (atEnd ? '<span>' + (DE ? "Satzende · <|endoftext|>" : "end of sentence · <|endoftext|>") + '</span>' : '');
       publish();
       landStaticDirty = true;
