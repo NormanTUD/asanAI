@@ -1662,3 +1662,11 @@ h1,h2,h3,h4{
   .ls-gauss-side .ls-gauss-fig{flex:0 0 178px}
   .ls-gauss-side .ls-gauss-fig img{height:64px}
 }
+
+/* Agent demo: submitted prompt top-right in blue, compact prompt row, fitting taskbar */
+.ls-code-msg.is-user{background:rgba(18,117,172,.38);border-right:2px solid var(--ls-blue);border-left:0;color:#eef7f4}
+.ls-code-user-msg[hidden]{display:none}
+.ls-code-agent-prompt.is-sent{padding-top:2px;padding-bottom:2px;margin-bottom:1.2em;transition:padding .18s ease,margin .18s ease}
+.ls-code-taskbar{gap:5px;padding:0 6px}
+.ls-code-task{width:auto;min-width:46px;justify-content:center;white-space:nowrap}
+.ls-code-term span{overflow-wrap:anywhere}

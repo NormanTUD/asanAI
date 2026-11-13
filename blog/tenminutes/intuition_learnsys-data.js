@@ -269,7 +269,7 @@
       body: "Ein Token allein weiß nicht, wo es steht: „Hund“ kann an jeder Stelle im Satz auftreten. Damit die Reihenfolge zählt, kodieren wir die Position in den Token-Vektor. Dafür gibt es viele Methoden; die Demo zeigt eine sinusförmige Variante. Viele moderne Modelle wie Llama nutzen RoPE, das die Richtung des Vektors mit der Position dreht. Wichtig ist: Die Position wird Teil des Tokens, und alle folgenden Schichten sehen diese Version.",
       watch: "Bewege den Positionsregler. Wie verändert sich der Vektor, und wie wächst der Abstand auf der Kreisbahn?",
       demoState: { scene: "position" },
-      context: "Die Position wird als Summe von Wellen auf Kreisbahnen kodiert: Jede Dimension hat eine andere Frequenz. Euklidisch misst du den Abstand zwischen zwei Positionsvektoren; im Winkelbild den Großkreis zwischen ihren Richtungen. Beides zeigt denselben Fingerabdruck aus verschiedenen Blickwinkeln.",
+      context: "Die Position wird als Summe von Wellen auf Kreisbahnen kodiert: Jede Dimension hat eine andere Frequenz. Gemessen wird der Großkreis zwischen den Richtungen, nicht der euklidische Abstand: Längen zählen nicht, nur der Winkel. So zeigt der Fingerabdruck, wie nah zwei Positionen in ihrer Richtung liegen.",
       deep: "Die Demo zeigt nur die ersten drei Dimensionen. In einem echten Modell sind es Tausende; die Großkreis-Metrik macht Richtungen vergleichbar, und schnelle und langsame Rotationen bilden zusammen ein Positionsmuster, das das Modell lernen kann.",
       boxes: [
         box("pos-1", "Methoden", "Welche Positionsverfahren gibt es?", "Gelernte absolute Embeddings (GPT-2, BERT), sinusförmige Kodierung (Vaswani et al. 2017), relative Position Bias (T5) und ALiBi (Press et al. 2021). RoPE (Su et al. 2021) dreht Query und Key; viele moderne Modelle wie Llama nutzen es."),
@@ -295,7 +295,7 @@
       body: "A token on its own does not know where it stands: “dog” can appear anywhere in the sentence. For order to matter, we encode the position into the token vector. There are many methods; the demo shows a sinusoidal variant. Many modern models such as Llama use RoPE, which rotates the direction of the vector with the position. What matters is this: the position becomes part of the token, and every following layer sees that version.",
       watch: "Move the position slider. How does the vector change, and how does the distance in the plot change?",
       demoState: { scene: "position" },
-      context: "The position is added to the token vector; with RoPE, the query/key direction is rotated instead. From then on the network computes only with the position-bearing version.",
+      context: "The position is encoded as a sum of waves on circular orbits: every dimension has a different frequency. We measure the great circle between the directions, not the Euclidean distance: lengths do not count, only the angle. The fingerprint shows how close two positions are in direction.",
       deep: "The demo shows only the first three dimensions. A real model uses thousands; the great-circle metric makes directions comparable, and fast and slow rotations together form a position pattern the model can learn.",
       boxes: [
         box("pos-1", "Methods", "Which positional methods exist?", "Learned absolute embeddings (GPT-2, BERT), sinusoidal encoding (Vaswani et al. 2017), relative position bias (T5), and ALiBi (Press et al. 2021). RoPE (Su et al. 2021) rotates query and key; many modern models such as Llama use it."),

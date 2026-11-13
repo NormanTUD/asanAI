@@ -953,3 +953,48 @@ items are a human visual review and an explicit commit/push decision.
    (`terminal`).
 6. [ ] Re-run the page test, height test, `php_validator.py`,
    `check_all.py --fast`, syntax checks, and `git diff --check`.
+
+## Latest corrections implemented (2026-11-13, final pass)
+
+- [x] **Ceres visualization now matches the statistics page.** The
+  orbit/ellipse and Fourier fit were replaced with the two-panel
+  `renderCeresAstronomy` visual: left = green true sine path + 150 noisy blue
+  observations; right = histogram of actual residuals + red/lilac
+  theoretical bell curve; Better/Worse telescope slider (σ 0.1–2.0). The
+  Ceres image and the coloured Flammarion image are now a compact horizontal
+  strip below the plot, so the plot has the full width and is no longer
+  squeezed. The synthetic-data note and credits remain.
+- [x] **Agent chat roles.** The submitted prompt
+  “Schreibe ein Python-Programm, das die Rayleigh-Streuung berechnet.” now
+  appears as a blue, right-aligned bubble at the top of the agent chat. The
+  LLM text stays left/green. After submit, the bottom prompt row clears to
+  `$` and moves up one line.
+- [x] **Rayleigh output.** The terminal prints exactly
+  `Blau wird 4.35× stärker gestreut als Rot.`
+- [x] **Taskbar.** `Agent` and `Terminal` now fit; the old 12 px width that
+  clipped them to `age`/`terminal` was removed.
+- [x] **Manifold rotation + surfaces.** “Von Beziehungen zur Übersetzung” has
+  three controls: Drehung (yaw), Rotation (roll), Verschiebung
+  (translation). “Übersetzung finden” animates all three to zero. The two
+  Pringle sheets now have lightly translucent surface faces under the
+  Vietoris–Rips edges.
+- [x] **Manifold permanent labels.** Five anchor words are labelled in both
+  languages without hovering (English on the English cloud, Japanese on the
+  Japanese cloud, combined `en · jp` chips when aligned). Hover still works
+  for all 49 words.
+- [x] **Position great-circle only.** The Euclidean toggle and path were
+  removed. The right plot is now a clean unit sphere with the start/current
+  vectors and the great-circle arc. The left copy says that only the angle
+  counts, not Euclidean distance.
+- [x] **Position 3D formula.** The sinusoidal encoding now uses the standard
+  pair formula: even dimension `sin(pos / 10000^(2⌊i/2⌋/d))`, odd dimension
+  `cos(pos / 10000^(2⌊i/2⌋/d))`. The first three dimensions feed the 3D
+  vector; the angle is `acos` of the dot product of the normalized vectors,
+  and the arc length is that angle. Checked numerically.
+
+Remaining:
+
+- [ ] Final gate after these edits: page test, height test,
+  `php_validator.py`, `check_all.py --fast`, `node --check`, `php -l`,
+  `git diff --check`.
+- [ ] Commit/push only on explicit request.

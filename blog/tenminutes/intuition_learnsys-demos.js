@@ -1478,6 +1478,7 @@
           '<div class="ls-code-window ls-code-window--agent">' +
             '<div class="ls-code-bar"><i></i><i></i><i></i><span>Agent</span></div>' +
             '<div class="ls-code-chat">' +
+              '<div class="ls-code-msg is-user ls-code-user-msg" hidden><span class="ls-code-user-text"></span></div>' +
               '<div class="ls-code-msg is-agent"><span class="ls-code-agent-text"></span><span class="ls-code-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
               '<div class="ls-code-msg is-agent ls-code-run-msg" hidden>' + (DE ? "Ich führe himmel.py im Terminal aus." : "I'll run sky.py in the terminal.") + '</div>' +
             '</div>' +
@@ -1499,6 +1500,9 @@
     var commandEl = el.querySelector(".ls-code-command");
     var term = el.querySelector(".ls-code-term span");
     var userPromptEl = el.querySelector(".ls-code-agent-prompt span");
+    var userMsgEl = el.querySelector(".ls-code-user-msg");
+    var userTextEl = el.querySelector(".ls-code-user-text");
+    var promptRow = el.querySelector(".ls-code-agent-prompt");
     var agentMsgEl = el.querySelector(".ls-code-agent-text");
     var thinkingEl = el.querySelector(".ls-code-thinking");
     var agentWin = el.querySelector(".ls-code-window--agent");
@@ -1570,7 +1574,14 @@
       var i = 0;
       var stepMs = Math.max(12, 2000 / Math.max(1, userText.length));
       function step() {
-        if (i >= userText.length) { if (done) done(); return; }
+        if (i >= userText.length) {
+          if (userTextEl) userTextEl.textContent = userText;
+          if (userMsgEl) userMsgEl.hidden = false;
+          userPromptEl.textContent = "";
+          if (promptRow) promptRow.classList.add("is-sent");
+          if (done) done();
+          return;
+        }
         i++;
         userPromptEl.textContent = userText.slice(0, i);
         later(step, stepMs);
@@ -1610,6 +1621,9 @@
       phase = "typing";
       spans.forEach(function (s) { s.classList.remove("is-visible"); });
       if (userPromptEl) userPromptEl.textContent = "";
+      if (userMsgEl) userMsgEl.hidden = true;
+      if (userTextEl) userTextEl.textContent = "";
+      if (promptRow) promptRow.classList.remove("is-sent");
       if (agentMsgEl) agentMsgEl.textContent = "";
       if (agentWin) agentWin.classList.remove("is-coding");
       if (thinkingEl) thinkingEl.classList.remove("on");
@@ -3880,7 +3894,8 @@
     var C = api.colors();
     var clamp = api.util.clamp;
     function pe(p, d, i) {
-      var freq = Math.pow(10000, (2 * i) / Math.max(2, d));
+      var pair = Math.floor(i / 2);
+      var freq = Math.pow(10000, (2 * pair) / Math.max(2, d));
       return i % 2 === 0 ? Math.sin(p / freq) : Math.cos(p / freq);
     }
     function drawHeat() {
