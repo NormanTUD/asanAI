@@ -1,8 +1,8 @@
 # Offene Arbeiten aus `intuition_learnsys_todo2`
 
 Status: `[done]` erledigt, `[in work]` aktuell, `[pending]` offen.
-Aktueller Stand: 30 Folien. Die Geschichte ist eine Folie mit zehn Tabs; die Tier-Folie
-„Vier Paare, drei Achsen“ wurde entfernt. Das Auffüllen auf 31 bleibt offen.
+Aktueller Stand: 29 Folien. „Was ist ein LLM?“ und „KI-Chat“ sind eine Folie mit
+aufeinanderfolgender Suche-und-Chat-Demo; die Tier-Folie wurde entfernt. Das Auffüllen auf 31 bleibt offen.
 
 ## Bereits erledigt (schnelle Schritte)
 - [done] „Ein Block: Attention, dann FFN“ entfernt.
@@ -26,6 +26,8 @@ Aktueller Stand: 30 Folien. Die Geschichte ist eine Folie mit zehn Tabs; die Tie
 - [done] „Modelle“ zeigt Daten, echte Funktion, Modellfit, Fehlerlinien und einen Trainieren-Button.
 - [done] „Text wird zu IDs“ hat zwei Modi auf einer Folie: Trennung und echtes BPE über vier Merge-Stufen; Datenabhängigkeits-Box ergänzt.
 - [done] Performance: Modell-Loop stoppt nach dem Fit, Höhenmessung läuft idle, Geschichtsbilder lazy; Chromium-Profil erstellt.
+- [done] „Was ist ein LLM?“ und „KI-Chat“ zu einer Folie zusammengeführt; die Phone-Demo zeigt erst die Suche, dann den Chat.
+- [done] „Modelle“ zeigt sechs Schritte: Daten, Modell, Loss, Update 1, Update 2, Fit; mit Loss-Inset, Fehlerlinien und Vorhersage-Sonde.
 
 ## Als Nächstes (schnell → langsam)
 1. [pending] „Jeder Platz bekommt einen Fingerabdruck“: grünen „Großkreis“-Punkt entfernen, Euklid entfernen, klarstellen, dass das „Wort“ ein hochdimensionaler Vektor ist; mit Weiter durch Dimensionen und Kontext gehen.
@@ -46,4 +48,4 @@ Aktueller Stand: 30 Folien. Die Geschichte ist eine Folie mit zehn Tabs; die Tie
 
 ## Später / bewusst zurückgestellt
 - [pending] Weitere Geschichtsbilder aus `history.php` prüfen und Credits ergänzen; die aktuelle Fassung nutzt Wolfsknochen, Salamis-Tafel, Llull, Leibniz, Pitts, Mark I, Minsky, Rosenblatt und Transformer.
-- [pending] Finale Folienzahl 31 festlegen (aktuell 30).
+- [pending] Finale Folienzahl 31 festlegen (aktuell 29).

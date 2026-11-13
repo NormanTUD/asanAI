@@ -12,27 +12,16 @@
   ];
   var introSteps = DE ? [
     {
-      kicker: "01 / Die Idee",
-      title: "Was ist ein LLM?",
-      body: "Dieser Adventskalender öffnet jeden Tag ein Türchen und hilft dir zu verstehen, wie diese Systeme technisch funktionieren. Ein Large Language Model (LLM) macht dabei immer dieselbe Sache: Es sagt das nächste Token voraus. Trainiert werden diese Netze mit sehr großen Textmengen; wie das Training im Detail funktioniert, kommt später. Früher musstest du bei einer Suche die Websites einzeln öffnen, heute bekommst du eine Zusammenfassung. In einer KI-Chat-Sitzung stellst du eine komplexe Frage und bekommst schnell eine oft nützliche Antwort. Wie geht das? Suchfeld, Sprachbefehl, Zusammenfassung und Chat sind eine Schleife, immer wieder.",
-      watch: "Klicke auf ein Handy, um die Animation neu zu starten. Woher kommt die Antwort?",
-      demoState: { scene: "phone", view: "search" },
-      context: "Die Suchmaschine schlägt keine gespeicherte Antwort nach. Die Zusammenfassung und die Chat-Antwort werden Token für Token geschrieben, und dieselbe Schleife läuft im Rechenzentrum dahinter.",
-      deep: "Der Satz ist eine Kette von Entscheidungen. Jedes neue Token verändert den Kontext für das nächste. Deshalb ist die Antwort nicht aus einem Archiv geholt, sondern in diesem Moment zusammengesetzt.",
+      kicker: "01 / Suche und Chat",
+      title: "Was ist ein LLM? Suche und Chat",
+      body: "Ein Large Language Model (LLM) sagt das nächste Token voraus. Das siehst du zuerst in der Suche: Eine Zusammenfassung wird Token für Token geschrieben, darunter stehen Links. Dann im KI-Chat: Dieselbe Schleife, aber als Gespräch. Die Oberfläche unterscheidet sich, die Technik dahinter ist dieselbe.",
+      watch: "Sieh dir zuerst die Suche an, dann den Chat. Wo steckt dieselbe Schleife?",
+      demoState: { scene: "phone", view: "sequence" },
+      context: "Google-Zusammenfassung und KI-Chat sind zwei Oberflächen für dasselbe Modell. Beide schreiben die Antwort Token für Token; die Suche ergänzt Index und Links.",
+      deep: "Die Suchmaschine hat zusätzlich einen Index und ein Ranking; der Chat hat einen Dialogverlauf. Der generative Teil ist bei beiden ein LLM. Deshalb können beide plausibel klingen und falsch liegen; prüfe die Quelle.",
       boxes: [
         box("in-1", "Die Schleife", "Was ist ein Token?", "Ein Token ist ein Stück Text: ein Wort, ein Wortteil, ein Satzzeichen oder ein Byte. Das Modell liest eine ID, keine Buchstaben. Aus IDs werden Vektoren, und am Ende steht wieder Text."),
-        box("in-2", "Die Idee", "Warum eine Schleife?", "Weil ein Satz länger ist als ein Token. Das Modell sagt ein Token voraus, hängt es an die Eingabe, und beginnt von vorn. Auto steht für die eigene Ausgabe, regressiv für die Vorhersage aus der bisherigen Sequenz.")
-      ]
-    },
-    {
-      kicker: "01a / KI-Chat",
-      title: "KI-Chat",
-      body: "Im KI-Chat fragst du: „Was passiert, wenn ich bei Google eine Zusammenfassung bekomme?“ Die Antwort: Dieselbe Technik steckt in beiden. Ein Sprachmodell sagt Token für Token voraus; die Suche zeigt zusätzlich Links, der Chat führt ein Gespräch. Die Oberfläche unterscheidet sich, die Schleife dahinter ist dieselbe.",
-      watch: "Vergleiche Suchfeld und Chat. Wo siehst du dieselbe Schleife?",
-      demoState: { scene: "phone", view: "chat" },
-      context: "Google-Zusammenfassung und KI-Chat sind zwei Oberflächen für dieselbe Art von Modell. Beide schreiben die Antwort Token für Token; die Suche ergänzt einen Index und Links.",
-      deep: "Die Suchmaschine hat zusätzlich einen Index und ein Ranking; der Chat hat einen Dialogverlauf. Der generative Teil ist bei beiden ein LLM. Deshalb können beide falsch liegen; die Quelle unterscheidet sich.",
-      boxes: [
+        box("in-2", "Die Idee", "Warum eine Schleife?", "Weil ein Satz länger ist als ein Token. Das Modell sagt ein Token voraus, hängt es an die Eingabe, und beginnt von vorn. Auto steht für die eigene Ausgabe, regressiv für die Vorhersage aus der bisherigen Sequenz."),
         box("chat-1", "Gleiche Technik", "Was haben beide gemeinsam?", "Die Zusammenfassung in der Suche und die Chat-Antwort werden von einem Sprachmodell Token für Token geschrieben. Beide nutzen dieselbe Schleife."),
         box("chat-2", "Unterschied", "Was ist anders?", "Die Suche zeigt zusätzlich Links und einen Index; der Chat führt den Dialog. Der generative Kern ist derselbe."),
         box("chat-3", "Prüfen", "Was heißt das für dich?", "Beide können plausibel klingen und falsch liegen. Prüfe die Quelle, nicht nur die Oberfläche.")
@@ -86,27 +75,16 @@
     }
   ] : [
     {
-      kicker: "01 / The idea",
-      title: "What is an LLM?",
-      body: "This Advent calendar opens one door every day and helps you understand how these systems work technically. A Large Language Model (LLM) always does the same thing: it predicts the next token. These networks are trained on very large amounts of text; how that training works in detail comes later. In the past you had to open search results one by one; today you often get a summary. In an AI chat session you ask a complex question and quickly get a useful answer. How does that work? Search box, voice command, summary, and chat are one loop, repeated.",
-      watch: "Click a phone to replay the animation. Where does the answer come from?",
-      demoState: { scene: "phone", view: "search" },
-      context: "The search engine does not look up a stored answer. The summary and the chat answer are written token by token, and the same loop runs in the data centre behind it.",
-      deep: "The sentence is a chain of decisions. Every new token changes the context for the next one. That is why the answer is not fetched from an archive but assembled in the moment.",
+      kicker: "01 / Search and chat",
+      title: "What is an LLM? Search and chat",
+      body: "A Large Language Model (LLM) predicts the next token. You see it first in Search: a summary is written token by token, with links underneath. Then in the AI chat: the same loop, but as a conversation. The surface differs, the technology behind it is the same.",
+      watch: "Watch Search first, then the chat. Where do you see the same loop?",
+      demoState: { scene: "phone", view: "sequence" },
+      context: "Google's summary and the AI chat are two surfaces for the same model. Both write the answer token by token; Search adds an index and links.",
+      deep: "The search engine also has an index and a ranking; the chat has a dialogue history. The generative part is an LLM in both. That is why both can sound plausible and be wrong; check the source.",
       boxes: [
         box("in-1", "The loop", "What is a token?", "A token is a piece of text: a word, a word piece, a punctuation mark, or a byte. The model reads an ID, not letters. IDs become vectors, and at the end there is text again."),
-        box("in-2", "The idea", "Why a loop?", "Because a sentence is longer than one token. The model predicts one token, appends it to the input, and starts again. Auto stands for its own output, regressive for predicting from the sequence so far.")
-      ]
-    },
-    {
-      kicker: "01a / AI chat",
-      title: "AI chat",
-      body: "In the AI chat you ask: “What happens when I get a summary in Google Search?” The answer: the same technology sits behind both. A language model predicts token by token; Search adds links, the chat holds a conversation. The surface differs, the loop behind it is the same.",
-      watch: "Compare the search box and the chat. Where do you see the same loop?",
-      demoState: { scene: "phone", view: "chat" },
-      context: "Google's summary and the AI chat are two surfaces for the same kind of model. Both write the answer token by token; Search adds an index and links.",
-      deep: "The search engine also has an index and a ranking; the chat has a dialogue history. The generative part is an LLM in both. That is why both can sound plausible and be wrong; the source is what differs.",
-      boxes: [
+        box("in-2", "The idea", "Why a loop?", "Because a sentence is longer than one token. The model predicts one token, appends it to the input, and starts again. Auto stands for its own output, regressive for predicting from the sequence so far."),
         box("chat-1", "Same technology", "What do they share?", "The summary in Search and the chat answer are written by a language model token by token. Both use the same loop."),
         box("chat-2", "Difference", "What is different?", "Search also shows links and an index; the chat holds a dialogue. The generative core is the same."),
         box("chat-3", "Check", "What does that mean for you?", "Both can sound plausible and be wrong. Check the source, not only the surface.")

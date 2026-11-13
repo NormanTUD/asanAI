@@ -1344,6 +1344,7 @@
         typeAnswer();
         serp.classList.add("on");
         if (view === "chat") startChat();
+        if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1200);
         return;
       }
       mic.classList.add("listening");
@@ -1360,6 +1361,7 @@
             wave.classList.remove("active");
             typeAnswer();
             serp.classList.add("on");
+            if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1500);
           }, 240);
         }, 320);
       });
@@ -1386,11 +1388,19 @@
     var ro = null;
     if (window.ResizeObserver) { ro = new ResizeObserver(fit); ro.observe(stage); }
     window.addEventListener("resize", fit);
+    [searchPhone, chatPhone].forEach(function (p) {
+      if (p) p.addEventListener("click", function () { started = true; play(); });
+    });
     fit();
     return {
       update: function (s) {
         if (s && s.view) {
           view = s.view;
+          if (view === "sequence") {
+            setPhone("search");
+            if (started) play();
+            return;
+          }
           setPhone(view);
           if (view === "chat") startChat();
         }
