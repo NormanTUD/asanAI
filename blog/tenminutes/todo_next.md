@@ -1023,9 +1023,12 @@ These are queued. Do not start them until the current final gate is closed.
    different people describe the same situation differently, sometimes
    contradictorily, but in sum the real result hopefully shines through, as
    with Gauss.
-7. [ ] **Manifold reset.** After visiting “Von Beziehungen zur Übersetzung”,
-   going back to slide 1 and returning must show the two manifolds unaligned
-   again (no remembered translation/rotation).
+7. [ ] **Manifold Back behavior (preferred over reset-on-entry).** Instead of
+   resetting the slide whenever it is entered, pressing Back should undo the
+   manifold alignment/translation step by step, so the two clouds return to
+   their unaligned state. This is the user's preferred option; the
+   reset-on-entry idea is only an alternative. Confirm the exact step order
+   (e.g. first undo the found translation, then the manual yaw/roll).
 8. [ ] **Attention context demo.** In “Kontext zieht die Bank an seinen Platz”:
    remove “Summe 100%” from the right context, recompute the token position,
    show `x' = Σ w·v` above the matrix, and remove “Zeile = Frage, Spalte =
