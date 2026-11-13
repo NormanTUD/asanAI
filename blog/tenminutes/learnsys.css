@@ -1676,3 +1676,34 @@ h1,h2,h3,h4{
 .ls-phone-scene .ia-screen-layer{opacity:0;pointer-events:none;transition:opacity calc(var(--ls-motion-enter) - 40ms) ease}
 .ls-phone-scene .ia-screen-layer.is-active{opacity:1;pointer-events:auto}
 .ls-phone-scene .ia-phone-screen.ia-phone--chat{padding:46px 14px 16px;align-items:stretch;background:linear-gradient(180deg,#fbfcfe 0%,#eef2f8 100%)}
+
+/* Attention lab: Bank / Code tabs and the code-surface noise demo */
+.ls-attlab-scene{height:100%;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:6px}
+.ls-attlab-tabs{display:flex;gap:5px;flex-wrap:wrap}
+.ls-attlab-layer{min-height:0;height:100%}
+.ls-attlab-layer[hidden]{display:none}
+.ls-codenoise-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(190px,1fr) auto auto;gap:8px}
+.ls-codenoise-stage{position:relative;border:1px solid var(--ls-line);background:#fff;overflow:hidden;min-height:210px}
+.ls-codenoise-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.ls-codenoise-modes{display:flex;gap:5px;flex-wrap:wrap}
+.ls-codenoise-readout{display:flex;gap:12px;flex-wrap:wrap;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted);min-height:2.2em}
+.ls-codenoise-readout b{color:var(--ls-ink);font-weight:600}
+.ls-att-causal-box{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-weight:600;color:var(--ls-petrol)}
+.ls-att-causal-box input{accent-color:var(--ls-green)}
+
+/* Slide calendar */
+.ls-cal-open{display:inline-flex;align-items:center;justify-content:center;padding:5px 7px}
+.ls-cal-open svg{display:block}
+.ls-cal-overlay{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(7,26,34,.28);backdrop-filter:blur(4px)}
+.ls-cal-overlay[hidden]{display:none}
+.ls-cal-panel{width:min(980px,100%);max-height:84vh;overflow:auto;background:var(--ls-paper);border:1px solid var(--ls-line);box-shadow:0 24px 70px rgba(0,0,0,.18);padding:14px 16px 18px}
+.ls-cal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--ls-line);padding-bottom:8px;margin-bottom:10px}
+.ls-cal-head b{font:700 var(--ls-fs-h3) "Barlow",sans-serif;color:var(--ls-petrol)}
+.ls-cal-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.ls-cal-card{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:1px solid var(--ls-line);background:#fff;padding:7px 8px;cursor:pointer;color:var(--ls-ink);min-height:74px}
+.ls-cal-card:hover{border-color:var(--ls-blue);box-shadow:0 2px 10px rgba(0,20,30,.06)}
+.ls-cal-card.is-on{border-color:var(--ls-green);box-shadow:inset 3px 0 0 var(--ls-green);background:rgba(246,250,245,.94)}
+.ls-cal-num{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol)}
+.ls-cal-kicker{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.07em;color:var(--ls-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.ls-cal-card b{font:600 var(--ls-fs-ui-sm)/1.25 "Open Sans",sans-serif;color:var(--ls-ink)}
+@media (max-width:760px){.ls-cal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ls-cal-panel{max-height:90vh}}

@@ -37,7 +37,8 @@
       helpFont: "Text größer / kleiner", helpScroll: "Am Textende scrollen: nächster / voriger Schritt", helpHelp: "Hilfe öffnen / schließen",
       interactiveDemo: "Interaktive Demo", stepRail: "Schrittleiste",
       depthQuestions: "{n} Fragen", depthQuestion: "{n} Frage", questionIndex: "Fragen", questionContext: "Was ist der Kontext?", questionDeep: "Warum ist das so?",
-      textSize: "Textgröße", mixLabel: "Mix"
+      textSize: "Textgröße", mixLabel: "Mix",
+      calendar: "Alle Folien", calendarTitle: "Folienübersicht", close: "Schließen"
     },
     en: {
       position: "Position", positionOf: "Position {n} of {total}",
@@ -63,7 +64,8 @@
       helpFont: "Text larger / smaller", helpScroll: "Scroll at the text edge: next / previous step", helpHelp: "Open / close help",
       interactiveDemo: "Interactive demo", stepRail: "Step rail",
       depthQuestions: "{n} questions", depthQuestion: "{n} question", questionIndex: "Questions", questionContext: "What is the context?", questionDeep: "Why is that so?",
-      textSize: "Text size", mixLabel: "Mix"
+      textSize: "Text size", mixLabel: "Mix",
+      calendar: "All slides", calendarTitle: "Slide overview", close: "Close"
     }
   };
   function setLang(lang) {
@@ -412,7 +414,7 @@
           '<section class="ls-text" aria-live="polite">' +
             '<div class="ls-text-mobile-head"><button type="button" class="ls-btn ls-btn--tiny ls-text-close" id="ls-text-close" aria-label="' + (LANG === "de" ? "Zur Demo" : "Back to demo") + '">← Demo</button></div>' +
             '<div class="ls-text-scroll">' +
-              (cfg.mix ? '<div class="ls-navbar" id="ls-navbar"><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-prev" data-no-height-test="1" title="' + esc(t("prevStep")) + '" aria-label="' + esc(t("prevStep")) + '">←</button><div class="ls-nav-pos ls-mix-pos" id="ls-mix-pos" aria-label="' + esc(cfg.singleDay ? t("stepRail") : t("position") + " 0 … " + (posCount - 1)) + '">' + posHtml + '</div><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-next" data-no-height-test="1" title="' + esc(t("nextStep")) + '" aria-label="' + esc(t("nextStep")) + '">→</button></div>' : '') +
+              (cfg.mix ? '<div class="ls-navbar" id="ls-navbar"><button type="button" class="ls-btn ls-btn--tiny ls-cal-open" id="ls-calendar-btn" data-no-height-test="1" title="' + esc(t("calendarTitle")) + '" aria-label="' + esc(t("calendarTitle")) + '"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="10" fill="none" stroke="currentColor" stroke-width="1.2"></rect><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3" fill="none" stroke="currentColor" stroke-width="1.2"></path></svg></button><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-prev" data-no-height-test="1" title="' + esc(t("prevStep")) + '" aria-label="' + esc(t("prevStep")) + '">←</button><div class="ls-nav-pos ls-mix-pos" id="ls-mix-pos" aria-label="' + esc(cfg.singleDay ? t("stepRail") : t("position") + " 0 … " + (posCount - 1)) + '">' + posHtml + '</div><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-next" data-no-height-test="1" title="' + esc(t("nextStep")) + '" aria-label="' + esc(t("nextStep")) + '">→</button></div>' : '') +
               '<div class="ls-kicker" id="ls-kicker"></div>' +
               '<h1 class="ls-title" id="ls-title"></h1>' +
               '<div class="ls-body" id="ls-body"></div>' +
@@ -433,6 +435,7 @@
           '</section>' +
         '</main>' +
         '<div class="ls-global-nav"><button type="button" class="ls-global-prev" id="ls-global-prev" data-no-height-test="1" aria-label="' + (LANG === "de" ? "Zurück" : "Back") + '">←</button><button type="button" class="ls-global-next" id="ls-global-next" data-no-height-test="1" aria-label="' + (LANG === "de" ? "Weiter" : "Next") + '">→</button></div>' +
+        '<div class="ls-cal-overlay" id="ls-calendar" hidden><div class="ls-cal-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("calendarTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("calendarTitle")) + '</b><button type="button" class="ls-btn ls-btn--tiny" id="ls-calendar-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></div><div class="ls-cal-grid" id="ls-calendar-grid"></div></div></div>' +
         '<div class="ls-tip" id="ls-tip" role="tooltip" hidden></div>' +
         '<div class="ls-help" id="ls-help" hidden><b>' + esc(t("helpTitle")) + '</b><div class="ls-help-grid">' + helpRows + '</div></div>' +
       '</div>';
@@ -477,6 +480,10 @@
     els.steps = root.querySelector("#ls-steps");
     els.progress = root.querySelector("#ls-progress-fill");
     els.tip = root.querySelector("#ls-tip");
+    els.calBtn = root.querySelector("#ls-calendar-btn");
+    els.calOverlay = root.querySelector("#ls-calendar");
+    els.calGrid = root.querySelector("#ls-calendar-grid");
+    els.calClose = root.querySelector("#ls-calendar-close");
 
     els.track.innerHTML = '<option value="all">' + esc(t("allPaths")) + '</option>' + cfg.tracks.map(function (tr) {
       return '<option value="' + esc(tr.id) + '">' + esc(tr.label) + ' · ' + esc(t("day")) + ' ' + esc(tr.days) + '</option>';
@@ -868,6 +875,31 @@
     preloadNextScene(d);
   }
 
+  function renderCalendar() {
+    if (!els.calGrid) return;
+    var d = activeDay();
+    els.calGrid.innerHTML = d.steps.map(function (s, i) {
+      var stepTitle = s.title || t("step") + " " + (i + 1);
+      var kicker = s.kicker || "";
+      return '<button type="button" class="ls-cal-card' + (i === state.step ? ' is-on' : '') + '" data-step="' + i + '" data-no-height-test="1"><span class="ls-cal-num">' + (i + 1) + '</span><span class="ls-cal-kicker">' + esc(kicker) + '</span><b>' + esc(stepTitle) + '</b></button>';
+    }).join("");
+    els.calGrid.querySelectorAll("[data-step]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        go(state.day, parseInt(b.getAttribute("data-step"), 10));
+        closeCalendar();
+      });
+    });
+  }
+  function openCalendar() {
+    if (!els.calOverlay) return;
+    renderCalendar();
+    els.calOverlay.hidden = false;
+    if (els.calClose) setTimeout(function () { try { els.calClose.focus({ preventScroll: true }); } catch (e) {} }, 40);
+  }
+  function closeCalendar() {
+    if (els.calOverlay) els.calOverlay.hidden = true;
+  }
+
   function renderAll() {
     hideTip();
     renderTop();
@@ -875,6 +907,7 @@
     renderSteps();
     renderText();
     renderStage();
+    renderCalendar();
     save();
   }
 
@@ -1380,6 +1413,12 @@
     if (els.focus) els.focus.addEventListener("click", toggleFocus);
     if (els.globalPrev) els.globalPrev.addEventListener("click", prev);
     if (els.globalNext) els.globalNext.addEventListener("click", next);
+    if (els.calBtn) els.calBtn.addEventListener("click", openCalendar);
+    if (els.calClose) els.calClose.addEventListener("click", closeCalendar);
+    if (els.calOverlay) els.calOverlay.addEventListener("click", function (e) { if (e.target === els.calOverlay) closeCalendar(); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && els.calOverlay && !els.calOverlay.hidden) { closeCalendar(); e.preventDefault(); }
+    });
     if (els.textToggle) els.textToggle.addEventListener("click", function () { setTextOpen(true); });
     if (els.textClose) els.textClose.addEventListener("click", function () { setTextOpen(false); });
     els.prev.addEventListener("click", prev);
@@ -1517,8 +1556,8 @@
   function fitCanvas(canvas, host) {
     var dpr = Math.min(2, window.devicePixelRatio || 1);
     var r = (host || canvas).getBoundingClientRect();
-    var w = Math.max(320, Math.round(r.width));
-    var h = Math.max(240, Math.round(r.height));
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
     var ctx = canvas.getContext("2d");
@@ -1528,8 +1567,8 @@
   function fitPair(wrap, a, b) {
     var dpr = Math.min(2, window.devicePixelRatio || 1);
     var r = wrap.getBoundingClientRect();
-    var w = Math.max(320, Math.round(r.width));
-    var h = Math.max(240, Math.round(r.height));
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
     a.width = Math.round(w * dpr);
     a.height = Math.round(h * dpr);
     b.width = Math.round(w * dpr);
@@ -3599,6 +3638,10 @@
   LS.setTrack = setTrack;
   LS.setDepth = setDepth;
   LS.setFont = setFont;
+  LS.control = function (name, value) {
+    if (demo && demo.setControl) { try { return demo.setControl(name, value); } catch (e) {} }
+    return false;
+  };
   LS.openAll = openAllDepth;
   LS.go = go;
   LS.goDay = goDay;

@@ -336,18 +336,21 @@
     {
       kicker: "Der Kontext",
       title: "Attention verschiebt Bedeutungen in Kontexte",
-      body: "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz und ein Wort. Die Matrix zeigt, wohin die Bank schaut; die Formel zeigt dieselben Gewichte.",
-      watch: "Klicke die drei Sätze. Welches Wort zieht die Bank?",
-      demoState: { scene: "attention", context: "money" },
+      body: "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz und ein Wort. Die Matrix zeigt, wohin die Bank schaut; die Formel zeigt dieselben Gewichte. Wechsle oben auf „Code“: Dieselbe Bedeutung kann als function, def, quickSort oder quick_sort auftauchen; Attention gewichtet den Kontext und zieht die Formen zusammen.",
+      watch: "Klicke die drei Sätze und wechsle auf „Code“. Welches Wort zieht die Bank, welche Formen rücken zusammen?",
+      demoState: { scene: "attentionlab", context: "money", mode: "bank" },
       context: "Der Kontext verschiebt den Vektor, nicht das Wort. Die Bank bleibt dasselbe Token; ihre Nachbarn ändern ihre Bedeutung.",
       deep: "Attention mischt Information aus dem Kontext. Bei „Geld“ zeigt die Bank-Zeile auf Geld, bei „Park“ auf Park. Die Gewichte sind ein Routing-Signal, keine Definition.",
       boxes: [
         box("att-4", "Grenze", "Was zeigt Attention nicht?", "Nicht, was das FFN mit der Information macht. Sie zeigt nur, welche Tokens auf dieser Schicht Information austauschen."),
-        box("att-5", "Mathematik", "Die Formel", "Attention bildet aus Query, Key und Value eine gewichtete Summe. Die Softmax-Zeile summiert zu 100 %.", "\\underbrace{x'}_{\\substack{\\text{neuer Vektor}\\\\ \\text{für } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{Gewicht von } j\\\\ \\text{für } i}} \\underbrace{v_j}_{\\text{Value von } j}}_{\\substack{\\text{gewichtete Summe}\\\\ \\sum_j \\alpha_{ij}=100\\%}}")
+        box("att-5", "Mathematik", "Die Formel", "Attention bildet aus Query, Key und Value eine gewichtete Summe. Die Softmax-Zeile summiert zu 100 %.", "\\underbrace{x'}_{\\substack{\\text{neuer Vektor}\\\\ \\text{für } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{Gewicht von } j\\\\ \\text{für } i}} \\underbrace{v_j}_{\\text{Value von } j}}_{\\substack{\\text{gewichtete Summe}\\\\ \\sum_j \\alpha_{ij}=100\\%}}"),
+        box("att-causal", "Optional", "Causal Mask", "Das obere Dreieck in der Matrix ist die kausale Maske. Sie sorgt dafür, dass Tokens nur die Vergangenheit sehen können, damit sie lernen, Sätze zu vervollständigen, deren Ende sie noch nicht kennen. Generative Modelle brauchen sie. Modelle, die fertigen Text bewerten, brauchen sie nicht und dürfen in beide Richtungen schauen. <label class='ls-att-causal-box'><input type='checkbox' checked onchange=\"LearnSys.control('causal', this.checked)\"> nur vergangene Tokens beachten</label>"),
+        box("att-kv", "Optional", "KV-Cache", "Beim Generieren muss das Modell die Keys und Values der bisherigen Tokens nicht neu berechnen, wenn es sie im KV-Cache behält. Es berechnet nur die neuen Keys/Values und lässt das neue Query gegen die gespeicherten Keys laufen. Die wiederholte K/V-Projektion wächst ohne Cache quadratisch mit der Sequenz und mit Cache nur linear; die Attention-Scores selbst bleiben quadratisch (Shazeer, 2019).")
       ],
       sources: [
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
         { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } },
+        { label: "Shazeer (2019), Fast Transformer Decoding", url: "https://arxiv.org/abs/1911.02150", why: { de: "Inkrementelles Decoding mit gespeicherten Keys und Values.", en: "Incremental decoding with cached keys and values." } },
         { label: "Attention als Graph (interaktive Zusatzseite)", url: "../test/attention_as_graph.html", why: { de: "Interaktive Zusatzseite zur Attention-Grafik.", en: "Interactive companion page for the attention graph." } }
       ]
     },
@@ -400,18 +403,21 @@
     {
       kicker: "The context",
       title: "Attention shifts meaning into context",
-      body: "Three sentences, one word: a bank without context, a bank for money, a bank in the park. Click a sentence and a word. The matrix shows where the bank looks; the formula shows the same weights.",
-      watch: "Click the three sentences. Which word pulls the bank?",
-      demoState: { scene: "attention", context: "money" },
+      body: "Three sentences, one word: a bank without context, a bank for money, a bank in the park. Click a sentence and a word. The matrix shows where the bank looks; the formula shows the same weights. Switch to “Code” above: the same meaning can appear as function, def, quickSort, or quick_sort; attention weights the context and pulls the forms together.",
+      watch: "Click the three sentences and switch to “Code”. Which word pulls the bank, which forms move together?",
+      demoState: { scene: "attentionlab", context: "money", mode: "bank" },
       context: "The context shifts the vector, not the word. The bank stays the same token; its neighbours change what it means.",
       deep: "Attention mixes information from the context. With “money” the bank row points to money, with “park” to park. The weights are a routing signal, not a definition.",
       boxes: [
         box("att-4", "Limit", "What does attention not show?", "Not what the FFN does with the information. It shows only which tokens exchange information on this layer."),
-        box("att-5", "Mathematics", "The formula", "Attention builds a weighted sum from query, key, and value. The softmax row sums to 100%.", "\\underbrace{x'}_{\\substack{\\text{new vector}\\\\ \\text{for } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{weight of } j\\\\ \\text{for } i}} \\underbrace{v_j}_{\\text{value of } j}}_{\\substack{\\text{weighted sum}\\\\ \\sum_j \\alpha_{ij}=100\\%}}")
+        box("att-5", "Mathematics", "The formula", "Attention builds a weighted sum from query, key, and value. The softmax row sums to 100%.", "\\underbrace{x'}_{\\substack{\\text{new vector}\\\\ \\text{for } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{weight of } j\\\\ \\text{for } i}} \\underbrace{v_j}_{\\text{value of } j}}_{\\substack{\\text{weighted sum}\\\\ \\sum_j \\alpha_{ij}=100\\%}}"),
+        box("att-causal", "Optional", "Causal mask", "The upper triangle in the matrix is the causal mask. It makes tokens see only the past, so they learn to complete sentences whose end they do not yet know. Generative models need it. Models that score finished text do not, and may look in both directions. <label class='ls-att-causal-box'><input type='checkbox' checked onchange=\"LearnSys.control('causal', this.checked)\"> attend only to past tokens</label>"),
+        box("att-kv", "Optional", "KV cache", "During generation the model does not have to recompute the keys and values of earlier tokens if it keeps them in the KV cache. It computes only the new keys/values and lets the new query run against the cached keys. Without the cache the repeated K/V projection grows quadratically with the sequence; with the cache it grows linearly. The attention scores themselves stay quadratic (Shazeer, 2019).")
       ],
       sources: [
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
         { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } },
+        { label: "Shazeer (2019), Fast Transformer Decoding", url: "https://arxiv.org/abs/1911.02150", why: { de: "Inkrementelles Decoding mit gespeicherten Keys und Values.", en: "Incremental decoding with cached keys and values." } },
         { label: "Attention as a graph (interactive companion page)", url: "../test/attention_as_graph.html", why: { de: "Interaktive Zusatzseite zur Attention-Grafik.", en: "Interactive companion page for the attention graph." } }
       ]
     },
@@ -642,7 +648,7 @@
 
     {
       kicker: "1 Neuron",
-      title: "Was sind neuronale Netze? · 1 Neuron",
+      title: "Was sind neuronale Netze?",
       body: "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein Neuron: ŷ = w·x + b. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nicht biegen. Die vertikalen Striche sind die Fehler. Im nächsten Schritt wird aus diesen Fehlern eine Loss-Landschaft.",
       watch: "Starte das Training. Wie reagiert die Gerade? Warum bleiben die Fehler groß?",
       demoState: { scene: "model", phase: "linear" },
@@ -664,7 +670,7 @@
     {
       kicker: "Die Bausteine",
       title: "Die Bausteine eines LLM",
-      body: "Ein neuronales Netz ist der gelernte Teil eines modernen LLM. Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Gehe die vier Ebenen mit „Weiter“ durch: Tokenizer, Embedding, Transformer-Blöcke und Unembedding. Die Transformer-Blöcke werden dutzende bis hunderte Male wiederholt; links siehst du die Ebene, rechts, was sie tut.",
+      body: "Ein neuronales Netz ist der gelernte Teil eines modernen LLM. Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Gehe die vier Ebenen mit „Weiter“ durch: Tokenizer, Embedding, Transformer-Blöcke und Unembedding. Die Transformer-Blöcke werden dutzende bis hunderte Male wiederholt; links siehst du die Ebene, rechts, was sie tut. Später gehen wir die einzelnen Bestandteile genauer durch.",
       watch: "Gehe die Ebenen mit „Weiter“ oder der Pfeiltaste durch. Was macht jede Ebene?",
       demoState: { scene: "blocks" },
       context: "Die Reihenfolge ist die Architektur: Text → Tokens → Vektoren → Transformer-Blöcke → Verteilung. Jeder Schritt verändert die Darstellung, bis am Ende ein Token gezogen wird.",
@@ -682,7 +688,7 @@
   ] : [
     {
       kicker: "1 neuron",
-      title: "What are neural networks? · 1 neuron",
+      title: "What are neural networks?",
       body: "A neural network is first a parameterised function. The smallest example is one neuron: ŷ = w·x + b. It has two parameters and can draw only a straight line. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. The vertical strokes are the errors. In the next step those errors become a loss landscape.",
       watch: "Start training. How does the line react? Why do the errors stay large?",
       demoState: { scene: "model", phase: "linear" },
@@ -704,7 +710,7 @@
     {
       kicker: "The building blocks",
       title: "The building blocks of an LLM",
-      body: "A neural network is the learned part of a modern LLM. An LLM is a chain of levels, not a single magic formula. Walk through the four levels with “Next”: tokenizer, embedding, transformer blocks, and unembedding. The transformer blocks repeat dozens to hundreds of times; the level is on the left, what it does on the right.",
+      body: "A neural network is the learned part of a modern LLM. An LLM is a chain of levels, not a single magic formula. Walk through the four levels with “Next”: tokenizer, embedding, transformer blocks, and unembedding. The transformer blocks repeat dozens to hundreds of times; the level is on the left, what it does on the right. Later we go through the individual components in more detail.",
       watch: "Walk through the levels with “Next” or the arrow key. What does each level do?",
       demoState: { scene: "blocks" },
       context: "The order is the architecture: text → tokens → vectors → transformer blocks → distribution. Each step changes the representation until a token is drawn.",
@@ -760,7 +766,7 @@
   var mlpSteps = DE ? [
     {
       kicker: "Raum biegen",
-      title: "Was sind neuronale Netze? · Raum biegen",
+      title: "Was sind neuronale Netze?",
       body: "Neuronale Netze können mehr als Geraden. Dasselbe Prinzip kann den Raum falten: Eine Schicht hebt die Punkte in eine höhere Dimension, eine Aktivierung biegt sie, und eine flache Ebene trennt die Klassen. Im LLM macht das FFN pro Token genau diese Art von Biegung. Klicke dich durch die neun Folien: Wo biegt sich der Raum, wo erscheint der Schnitt?",
       watch: "Klicke dich durch die neun Folien. Wo biegt sich der Raum, wo erscheint der Schnitt?",
       demoState: { scene: "mlp" },
@@ -775,7 +781,7 @@
   ] : [
     {
       kicker: "Bending space",
-      title: "What are neural networks? · Bending space",
+      title: "What are neural networks?",
       body: "Neural networks can do more than straight lines. The same principle can fold space: a layer lifts the points into a higher dimension, an activation bends them, and a flat plane separates the classes. In an LLM the FFN performs exactly this kind of bend per token. Click through the nine slides: where does the space bend, where does the cut appear?",
       watch: "Click through the nine slides. Where does the space bend, where does the cut appear?",
       demoState: { scene: "mlp" },
@@ -830,7 +836,7 @@
   var activationSteps = DE ? [
     {
       kicker: "Aktivierung",
-      title: "Weiche Kurven, ein Knick",
+      title: "Was sind neuronale Netze?",
       body: "Eine Nichtlinearität wird nach der Projektion auf jede Koordinate angewendet. ReLU faltet bei null; Sigmoid und tanh biegen glatt; GELU ist glatt, aber nicht monoton. Der Knick ist das, was einen geraden Schnitt durch etwas führt, das vorher untrennbar war. Ohne Knick bleibt Tiefe wirkungslos: Zwei Dense-Schichten kollabieren zu einer Matrix.",
       watch: "Klicke die Funktionen. Wo ist der Knick, wo ist die Kurve glatt?",
       demoState: { scene: "activation" },
@@ -848,7 +854,7 @@
   ] : [
     {
       kicker: "Activation",
-      title: "Smooth curves, one bend",
+      title: "What are neural networks?",
       body: "A nonlinearity is applied to each coordinate after the projection. ReLU folds at zero; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic. The bend is what lets a straight cut pass through something that was inseparable before. Without a bend, depth does nothing: two dense layers collapse into one matrix.",
       watch: "Click the functions. Where is the bend, where is the curve smooth?",
       demoState: { scene: "activation" },
@@ -867,9 +873,9 @@
 
   var languageSteps = DE ? [
     {
-      kicker: "Sprachen und Daten",
-      title: "Dieselbe Schleife, viele Sprachen",
-      body: "Ein Modell bekommt keine Sprachmodule. Es bekommt Text: viele Sprachen, viele Schriften, viel Unsinn, und davon enorm viel. Erst seit etwa 2016, dem Beginn der Zettabyte-Ära, standen zum ersten Mal mehr als ein Zettabyte digitale Daten zur Verfügung, also 10²¹ Byte. Diesen Text kuratiert man im besten Fall: Wikipedia ist schon gut gepflegt, peer-reviewte wissenschaftliche Paper sind noch besser. Auch sie können falsch sein, nur seltener. Menschen irren sich, Messungen haben Fehler, Menschen lügen. Die Idee ist, dass man über die Masse im Schnitt an die realen Daten herankommt: „Nil“ und „Ägypten“ liest man häufiger zusammen als „Nil“ und „Paraguay“, auch wenn im Internet jemand das Gegenteil behauptet. Klicke die Sprachen und vergleiche.",
+      kicker: "Daten",
+      title: "Gauß, Ceres und die Daten",
+      body: "Daten sind nicht exakt: Menschen beschreiben dieselbe Situation unterschiedlich, manchmal widersprüchlich. Über viele Beschreibungen hofft man, dass das reale Ergebnis durchscheint, wie bei Gauß. Ein Modell bekommt keine Sprachmodule. Es bekommt Text: viele Sprachen, viele Schriften, viel Unsinn, und davon enorm viel. Erst seit etwa 2016, dem Beginn der Zettabyte-Ära, standen zum ersten Mal mehr als ein Zettabyte digitale Daten zur Verfügung, also 10²¹ Byte. Diesen Text kuratiert man im besten Fall: Wikipedia ist schon gut gepflegt, peer-reviewte wissenschaftliche Paper sind noch besser. Auch sie können falsch sein, nur seltener. Menschen irren sich, Messungen haben Fehler, Menschen lügen. Die Idee ist, dass man über die Masse im Schnitt an die realen Daten herankommt: „Nil“ und „Ägypten“ liest man häufiger zusammen als „Nil“ und „Paraguay“, auch wenn im Internet jemand das Gegenteil behauptet. Klicke die Sprachen und vergleiche.",
       watch: "Klicke die Sprachen. Was bleibt gleich, was ändert sich?",
       demoState: { scene: "langdata" },
       context: "Die Schrift ändert die Tokens, nicht die Aufgabe. Manche Sprachen brauchen für denselben Inhalt mehr Tokens; der Tokenizer kann sie teurer machen (Petrov et al., 2023). Die Datenmischung von GPT-3 war 60 % Common Crawl, 22 % WebText2, 8 % Books1, 8 % Books2 und 3 % Wikipedia; die Werte sind gerundet (Brown et al., 2020, Tabelle 2.2).",
@@ -880,6 +886,7 @@
         box("lang-3", "Daten", "Was wird gefiltert?", "Qualität, Duplikate und Benchmark-Leaks. Dedupe verhindert Auswendiglernen; Decontamination verhindert, dass Testfragen im Training landen."),
         box("lang-4", "Daten", "Wie viel Daten?", "Erst seit etwa 2016, dem Beginn der Zettabyte-Ära, standen mehr als ein Zettabyte digitale Daten zur Verfügung: 10²¹ Byte. Das ist die Größenordnung, aus der heutige Modelle schöpfen (Cisco, 2016)."),
         box("lang-5", "Daten", "Kuration und Fehler", "Wikipedia ist gut gepflegt; peer-reviewte Paper sind oft besser geprüft, aber auch sie können falsch sein. Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über die Masse nähert sich das Modell den realen Häufigkeiten an: Nil und Ägypten kommen häufiger zusammen vor als Nil und Paraguay."),
+        box("lang-7", "Daten", "Widersprüchliche Beschreibungen", "Menschen beschreiben dieselbe Situation oft anders, manchmal gegensätzlich. Ein einzelner Text kann irren; über viele Texte mitteln sich zufällige Fehler, und das reale Ergebnis scheint durch. Das ist dieselbe Hoffnung wie bei Gauß' verrauschten Beobachtungen."),
         box("lang-6", "Daten", "Die Mischung von GPT-3", "GPT-3 nannte 60 % Common Crawl, 22 % WebText2, 8 % Books1, 8 % Books2 und 3 % Wikipedia; die Werte sind gerundet (Brown et al., 2020, Tabelle 2.2).")
       ],
       sources: [
@@ -891,9 +898,9 @@
     }
   ] : [
     {
-      kicker: "Languages and data",
-      title: "The same loop, many languages",
-      body: "A model does not get language modules. It gets text: many languages, many scripts, plenty of nonsense, and an enormous amount of it. Only since about 2016, the beginning of the zettabyte era, has more than a zettabyte of digital data been available, that is 10²¹ bytes. In the best case this text is curated: Wikipedia is already well maintained, peer-reviewed scientific papers are even better. They can be wrong too, only less often. People make mistakes, measurements have errors, people lie. The idea is that through sheer mass the model approaches the real data on average: “Nile” and “Egypt” occur together more often than “Nile” and “Paraguay”, even if someone on the internet claims otherwise. Click the languages and compare.",
+      kicker: "Data",
+      title: "Gauss, Ceres, and the data",
+      body: "Data are not exact: people describe the same situation differently, sometimes contradictorily. Across many descriptions one hopes that the real result shines through, as with Gauss. A model does not get language modules. It gets text: many languages, many scripts, plenty of nonsense, and an enormous amount of it. Only since about 2016, the beginning of the zettabyte era, has more than a zettabyte of digital data been available, that is 10²¹ bytes. In the best case this text is curated: Wikipedia is already well maintained, peer-reviewed scientific papers are even better. They can be wrong too, only less often. People make mistakes, measurements have errors, people lie. The idea is that through sheer mass the model approaches the real data on average: “Nile” and “Egypt” occur together more often than “Nile” and “Paraguay”, even if someone on the internet claims otherwise. Click the languages and compare.",
       watch: "Click the languages. What stays the same, what changes?",
       demoState: { scene: "langdata" },
       context: "The script changes the tokens, not the task. Some languages need more tokens for the same content; the tokenizer can make them more expensive (Petrov et al., 2023). GPT-3 reported 60% Common Crawl, 22% WebText2, 8% Books1, 8% Books2, and 3% Wikipedia; the values are rounded (Brown et al., 2020, Table 2.2).",
@@ -904,6 +911,7 @@
         box("lang-3", "Data", "What is filtered?", "Quality, duplicates, and benchmark leaks. Dedupe prevents memorisation; decontamination prevents test questions from entering the training data."),
         box("lang-4", "Data", "How much data?", "Only since about 2016, the beginning of the zettabyte era, has more than a zettabyte of digital data been available: 10²¹ bytes. That is the scale from which today's models draw (Cisco, 2016)."),
         box("lang-5", "Data", "Curation and errors", "Wikipedia is well maintained; peer-reviewed papers are often checked better, but they can be wrong too. People make mistakes, measurements have errors, people lie. Through mass the model approaches the real frequencies: Nile and Egypt occur together more often than Nile and Paraguay."),
+        box("lang-7", "Data", "Contradictory descriptions", "People often describe the same situation differently, sometimes in opposite ways. A single text can be wrong; across many texts random errors average out and the real result shines through. It is the same hope as with Gauss's noisy observations."),
         box("lang-6", "Data", "The GPT-3 mix", "GPT-3 reported 60% Common Crawl, 22% WebText2, 8% Books1, 8% Books2, and 3% Wikipedia; the values are rounded (Brown et al., 2020, Table 2.2).")
       ],
       sources: [
@@ -998,7 +1006,7 @@
   var gradientSteps = DE ? [
     {
       kicker: "Loss-Landschaft",
-      title: "Was sind neuronale Netze? · Loss-Landschaft",
+      title: "Was sind neuronale Netze?",
       body: "Jetzt wird der Fehler zur Landschaft. Für das 1-Neuron-Modell gibt es nur zwei Parameter: w und b. Die Fläche zeigt den Loss über w und b; die Beispiele in der Seitenleiste sind die Daten. Das Training startet automatisch, sobald die Folie sichtbar ist; mit Pause hältst du es an, mit „Weiter“ verlässt du die Folie erst, wenn SGD, Adam und Momentum durch sind. Die Formel darunter setzt die aktuellen Werte ein.",
       watch: "Beobachte das Training. Wie verändern sich w und b, und wo im Tal endet der Punkt?",
       demoState: { scene: "gradient" },
@@ -1023,7 +1031,7 @@
   ] : [
     {
       kicker: "Loss landscape",
-      title: "What are neural networks? · Loss landscape",
+      title: "What are neural networks?",
       body: "Now the error becomes a landscape. The one-neuron model has only two parameters: w and b. The surface shows the loss over w and b; the examples in the side panel are the data. Training starts automatically as soon as the slide is visible; Pause stops it, and “Next” leaves the slide only after SGD, Adam, and Momentum have finished. The formula below substitutes the current values.",
       watch: "Watch the training. How do w and b change, and where in the valley does the point end?",
       demoState: { scene: "gradient" },
@@ -1299,7 +1307,7 @@
   var neuralLargeSteps = DE ? [
     {
       kicker: "Großes Netz",
-      title: "Was sind neuronale Netze? · Großes Netz",
+      title: "Was sind neuronale Netze?",
       body: "Jetzt ein größeres Netz: 1 → 32 → 32 → 32 → 1, Dense plus ReLU. Es hat viel mehr Parameter und Richtungen, als wir zeichnen können; das Prinzip bleibt dasselbe: Parameter, Loss, Gradient. Beobachte, wie die grüne Kurve den Sinus biegt. Ziehe Punkte, pausiere oder starte neu. Die Matrizen kannst du live öffnen.",
       watch: "Starte das Training. Wann biegt die Kurve den Sinus? Was passiert außerhalb der Trainingsdaten?",
       demoState: { scene: "model", phase: "net" },
@@ -1319,7 +1327,7 @@
   ] : [
     {
       kicker: "Larger network",
-      title: "What are neural networks? · Larger network",
+      title: "What are neural networks?",
       body: "Now a larger network: 1 → 32 → 32 → 32 → 1, dense with ReLU. It has far more parameters and directions than we can draw; the principle stays the same: parameters, loss, gradient. Watch the green curve bend the sine. Drag points, pause, or restart. You can open the matrices live.",
       watch: "Start training. When does the curve bend the sine? What happens outside the training data?",
       demoState: { scene: "model", phase: "net" },
@@ -1340,8 +1348,8 @@
 
   var gaussSteps = DE ? [
     {
-      kicker: "Die Daten",
-      title: "Gauß, Ceres und die Methode der kleinsten Quadrate",
+      kicker: "Ceres",
+      title: "Gauß, Ceres und die Daten",
       body: "Am 1. Januar 1801 entdeckte Giuseppe Piazzi Ceres, den ersten Asteroiden, und verlor ihn nach 41 Tagen Beobachtung hinter der Sonne. Carl Friedrich Gauß behandelte die verrauschten Positionen als ein Ganzes und nahm an, dass die wahre Bahn in der Mitte der Fehler liegt. Seine Methode der kleinsten Quadrate minimierte den quadrierten Abstand zwischen Beobachtungen und Bahn und sagte voraus, wo Ceres wieder auftauchen würde (Stigler, 1981). Drehe am Teleskop: Je besser die Messung, desto enger die Glockenkurve. Der Ausgleich glaubt keiner einzelnen Messung; er wählt die Kurve, die allen zugleich am nächsten bleibt. Dieselbe Regel trainiert noch moderne Modelle.",
       watch: "Bewege den Teleskop-Regler. Wie verändert sich die Wolke, und wie eng wird die Glockenkurve?",
       demoState: { scene: "gauss" },
@@ -1361,8 +1369,8 @@
     }
   ] : [
     {
-      kicker: "Data",
-      title: "Gauss, Ceres, and the method of least squares",
+      kicker: "Ceres",
+      title: "Gauss, Ceres, and the data",
       body: "On 1 January 1801 Giuseppe Piazzi discovered Ceres, the first asteroid, and lost it behind the Sun after 41 days of observation. Carl Friedrich Gauss treated the noisy positions as a whole and assumed that the true orbit lies in the middle of the errors. His method of least squares minimised the squared distance between observations and orbit and predicted where Ceres would reappear (Stigler, 1981). Turn the telescope: the better the measurement, the narrower the bell curve. The fit believes no single measurement; it chooses the curve that stays closest to all of them at once. The same rule still trains modern models.",
       watch: "Move the telescope slider. How does the cloud change, and how narrow does the bell curve become?",
       demoState: { scene: "gauss" },
@@ -1382,7 +1390,7 @@
     }
   ];
 
-  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussSteps[0], languageSteps[0], tokenizeSteps[0], embedSteps[0], embedSteps[1], embedSteps[2], highdimSteps[0], manifoldSteps[0], positionSteps[0], attentionSteps[0], attentionSteps[1], attentionSteps[2], attentionSteps[3], ffnSteps[0], residualSteps[0], trajectorySteps[0], activationSteps[0], insideSteps[0], gradientSteps[0], neuralLargeSteps[0], mlpSteps[0], meadowSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], introSteps[2], posttrainSteps[0], evalSteps[0], kvcacheSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
+  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussSteps[0], languageSteps[0], tokenizeSteps[0], embedSteps[0], embedSteps[1], embedSteps[2], highdimSteps[0], manifoldSteps[0], positionSteps[0], attentionSteps[0], attentionSteps[1], activationSteps[0], insideSteps[0], gradientSteps[0], neuralLargeSteps[0], mlpSteps[0], ffnSteps[0], residualSteps[0], trajectorySteps[0], meadowSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], introSteps[2], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
 
   var day = {
     id: "intuition",

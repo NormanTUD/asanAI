@@ -4211,6 +4211,7 @@
   }
   function attentionScene(root, api) {
     var DE = api.lang === "de";
+    var V = window.LearnSysVisuals;
     var contexts = DE ? [
       { id: "none", sentence: "Ich gehe zur Bank.", tokens: ["Ich", "gehe", "zur", "Bank", "."], bank: 3, anchor: null, color: "muted" },
       { id: "money", sentence: "Ich bringe mein Geld auf die Bank.", tokens: ["Ich", "bringe", "mein", "Geld", "auf", "die", "Bank", "."], bank: 6, anchor: "Geld", color: "gold" },
@@ -4262,11 +4263,6 @@
       '<div class="ls-att-vector"><canvas class="ls-att-vector-canvas" role="img"></canvas></div>' +
       '<div class="ls-att-matrix" aria-live="polite"></div>' +
       '<div class="ls-att-formula" aria-live="polite"></div>' +
-      '<details class="ls-att-mask" open><summary>' + (DE ? "Causal Mask" : "Causal mask") + '</summary>' +
-        '<label><input type="checkbox" class="ls-att-causal" checked> ' + (DE ? "nur vergangene Tokens beachten" : "attend only to past tokens") + '</label>' +
-        '<p>' + (DE ? "Das obere Dreieck in der Matrix ist die kausale Maske. Sie sorgt dafür, dass Tokens nur die Vergangenheit sehen können, damit sie lernen, Sätze zu vervollständigen, deren Ende sie noch nicht kennen." : "The upper triangle in the matrix is the causal mask. It makes tokens see only the past, so they learn to complete sentences whose end they do not yet know.") + '</p>' +
-        '<p>' + (DE ? "Generative Modelle brauchen sie. Modelle, die fertigen Text bewerten, brauchen sie nicht und dürfen in beide Richtungen schauen." : "Generative models need it. Models that score finished text do not, and may look in both directions.") + '</p>' +
-      '</details>' +
       '<div class="ls-att-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var sentEl = el.querySelector(".ls-att-sentences");
@@ -4276,8 +4272,6 @@
     var vector = el.querySelector(".ls-att-vector-canvas");
     var matrixEl = el.querySelector(".ls-att-matrix");
     var formulaEl = el.querySelector(".ls-att-formula");
-    var causalEl = el.querySelector(".ls-att-causal");
-    causalEl.checked = true;
     var readout = el.querySelector(".ls-att-readout");
     var C = api.colors();
     var graphSize = null, vectorSize = null, graphHits = [];
@@ -4411,8 +4405,6 @@
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       ctx.fillText(DE ? "Klicke ein Wort" : "click a word", pad, 16);
-      ctx.textAlign = "right";
-      ctx.fillText(DE ? "Zeile = Frage, Spalte = Antwort" : "row = query, column = key", w - pad, 16);
       var selX = px[selected], y0 = y - 15;
       row.forEach(function (wt, j) {
         if (wt < 0.005) return;
@@ -4458,8 +4450,8 @@
         }
       });
       graph.setAttribute("aria-label", DE
-        ? "Attention-Graph. Zeile " + ts[selected] + ", Summe 100 Prozent."
-        : "Attention graph. Row " + ts[selected] + ", sum 100 percent.");
+        ? "Attention-Graph. Zeile " + ts[selected] + "."
+        : "Attention graph. Row " + ts[selected] + ".");
     }
     function drawVector() {
       if (!vectorSize) return;
@@ -4491,10 +4483,10 @@
           ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(pt.x, pt.y); ctx.stroke();
           ctx.globalAlpha = 1;
         }
-        ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.j === selected ? 5 : 3, 0, Math.PI * 2);
-        ctx.fillStyle = pt.j === selected ? C.green : (pt.wt > 0.05 ? C.blue : C.line);
+        ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.j === selected ? 4.5 : 3, 0, Math.PI * 2);
+        ctx.fillStyle = pt.j === selected ? C.paper : (pt.wt > 0.05 ? C.blue : C.line);
         ctx.fill();
-        ctx.strokeStyle = C.paper; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.strokeStyle = pt.j === selected ? C.green : C.paper; ctx.lineWidth = 1.6; ctx.stroke();
         ctx.fillStyle = C.ink;
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         var right = pt.x > cx + scale * 0.75;
@@ -4502,9 +4494,19 @@
         ctx.textAlign = right ? "right" : (left ? "left" : "center");
         ctx.fillText(pt.label, right ? pt.x - 6 : (left ? pt.x + 6 : pt.x), right || left ? pt.y + 4 : pt.y - 9);
       });
+      var selPt = pts.filter(function (pt) { return pt.j === selected; })[0];
+      if (selPt) {
+        ctx.save();
+        ctx.setLineDash([3, 3]);
+        ctx.strokeStyle = V.alpha(C.green, 0.6);
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(selPt.x, selPt.y); ctx.lineTo(ex, ey); ctx.stroke();
+        ctx.restore();
+      }
       ctx.strokeStyle = C.green;
       ctx.lineWidth = 3;
       ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ex, ey); ctx.stroke();
+      ctx.beginPath(); ctx.arc(ex, ey, 6, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
       var ang = Math.atan2(ey - cy, ex - cx);
       ctx.beginPath();
       ctx.moveTo(ex, ey);
@@ -4521,8 +4523,6 @@
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       ctx.fillText("x′ = Σ w · v", 10, 16);
-      ctx.textAlign = "right";
-      ctx.fillText(DE ? "Summe 100 %" : "sum 100%", w - 10, 16);
       vector.setAttribute("aria-label", DE
         ? "2D-Embeddings. Gewichtete Summe der Value-Vektoren für " + ts[selected] + "; x′ = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ")."
         : "2-D embeddings. Weighted sum of the value vectors for " + ts[selected] + "; x′ = (" + sumX.toFixed(2) + ", " + sumY.toFixed(2) + ").");
@@ -4560,7 +4560,7 @@
     }
     function renderReadout() {
       var ts = tokens(), row = matrix()[selected], key = topKey(row, selected);
-      readout.innerHTML = '<span>' + (DE ? "Zeile" : "row") + ' <b>' + api.esc(ts[selected]) + '</b></span><span>' + (DE ? "stärkster Key" : "top key") + ' <b>' + api.esc(ts[key]) + ' ' + Math.round(row[key] * 100) + '%</b></span><span>' + (DE ? "Summe" : "sum") + ' <b>100 %</b></span>';
+      readout.innerHTML = '<span>' + (DE ? "Zeile" : "row") + ' <b>' + api.esc(ts[selected]) + '</b></span><span>' + (DE ? "stärkster Key" : "top key") + ' <b>' + api.esc(ts[key]) + ' ' + Math.round(row[key] * 100) + '%</b></span><span><b>x′</b> ' + 'x′ = Σ w · v</span>';
     }
     function animateRow(target) {
       if (animRaf) cancelAnimationFrame(animRaf);
@@ -4603,7 +4603,6 @@
       var hit = graphHits.some(function (h) { return x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h; });
       graph.style.cursor = hit ? "pointer" : "default";
     });
-    causalEl.addEventListener("change", function () { causal = causalEl.checked; draw(); });
     window.addEventListener("resize", resize);
     resize();
     return {
@@ -4613,8 +4612,11 @@
         if (s.context) context = s.context;
         if (typeof s.selected === "number") selected = s.selected;
         else if (ctxChanged) selected = contextObj().bank;
-        causal = causalEl.checked;
         draw();
+      },
+      setControl: function (name, value) {
+        if (name === "causal") { causal = !!value; draw(); return true; }
+        return false;
       },
       resize: resize,
       destroy: function () { if (animRaf) cancelAnimationFrame(animRaf); window.removeEventListener("resize", resize); el.remove(); }
@@ -6483,26 +6485,36 @@
       var word = DE ? "unzerbrechlich" : "unbreakable";
       var parts = DE ? ["un", "zer", "brech", "lich"] : ["un", "break", "able"];
       var cols = [C.lime, C.sky, C.gold, C.green];
-      var total = parts.reduce(function (a, p) { return a + ctx.measureText(p).width; }, 0);
-      ctx.font = '700 ' + Math.max(14, api.font("canvas") * 0.9) + 'px "Barlow", sans-serif';
+      var wordSize = Math.max(18, api.font("canvas") * 1.15);
+      ctx.font = '700 ' + wordSize + 'px "Barlow", sans-serif';
       var widths = parts.map(function (p) { return ctx.measureText(p).width; });
-      total = widths.reduce(function (a, p) { return a + p; }, 0);
-      var x = (w - total) / 2, y = h * 0.40;
-      parts.forEach(function (p, i) {
-        ctx.fillStyle = V.alpha(cols[i % cols.length], 0.18);
-        ctx.fillRect(x - 3, y - 24, widths[i] + 6, 34);
-        ctx.strokeStyle = cols[i % cols.length];
-        ctx.lineWidth = 1.2;
-        ctx.strokeRect(x - 3, y - 24, widths[i] + 6, 34);
+      var total = widths.reduce(function (a, p) { return a + p; }, 0);
+      var x = (w - total) / 2, y = h * 0.38;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "alphabetic";
+      parts.forEach(function (part, i) {
+        ctx.font = '700 ' + wordSize + 'px "Barlow", sans-serif';
         ctx.fillStyle = C.ink;
-        ctx.fillText(p, x, y);
-        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
+        ctx.fillText(part, x, y);
+        ctx.fillStyle = V.alpha(cols[i % cols.length], 0.22);
+        ctx.fillRect(x - 2, y + 6, widths[i] + 4, 7);
+        if (i > 0) {
+          ctx.strokeStyle = V.alpha(C.line, 0.9);
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(x, y - 8);
+          ctx.lineTo(x, y + 16);
+          ctx.stroke();
+        }
+        ctx.textAlign = "center";
+        ctx.font = '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
+        ctx.fillStyle = cols[i % cols.length];
+        ctx.fillText(part, x + widths[i] / 2, y + 30);
         ctx.fillStyle = C.muted;
-        ctx.fillText("id " + (1200 + i * 41), x, y + 26);
-        ctx.font = '700 ' + Math.max(14, api.font("canvas") * 0.9) + 'px "Barlow", sans-serif';
+        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+        ctx.fillText("id " + (1200 + i * 41), x + widths[i] / 2, y + 44);
         x += widths[i];
       });
-      V.label(ctx, word, w / 2, h * 0.83, { font: '600 ' + Math.max(10, api.font("canvas-sm")) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
       V.heading(ctx, "Text → Tokens → IDs", 12, 16, C.petrol, 10, 1);
     }
     function miniEmbedding(ctx, w, h) {
@@ -8417,6 +8429,196 @@
     };
   }
 
+  function codeNoiseScene(root, api) {
+    var DE = api.lang === "de";
+    var V = window.LearnSysVisuals;
+    var el = document.createElement("div");
+    el.className = "ls-codenoise-scene";
+    el.innerHTML = '<div class="ls-codenoise-stage"><canvas class="ls-codenoise-canvas" role="img"></canvas></div>' +
+      '<div class="ls-codenoise-modes" role="group" aria-label="' + (DE ? "Code-Kontext" : "Code context") + '">' +
+        '<button type="button" class="ls-chip is-on" data-code-mode="neutral">' + (DE ? "Neutral" : "Neutral") + '</button>' +
+        '<button type="button" class="ls-chip" data-code-mode="js">JavaScript</button>' +
+        '<button type="button" class="ls-chip" data-code-mode="py">Python</button>' +
+      '</div>' +
+      '<div class="ls-codenoise-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-codenoise-stage");
+    var canvas = el.querySelector(".ls-codenoise-canvas");
+    var readout = el.querySelector(".ls-codenoise-readout");
+    var buttons = Array.prototype.slice.call(el.querySelectorAll("[data-code-mode]"));
+    var C = api.colors();
+    var size = null, ctx = null, mode = "neutral";
+    var TOKENS = [
+      { t: "function", lang: "js", base: [-0.82, 0.44], color: C.blue },
+      { t: "def", lang: "py", base: [-0.78, -0.42], color: C.green },
+      { t: "quickSort", lang: "js", base: [0.74, 0.54], color: C.blue },
+      { t: "quick_sort", lang: "py", base: [0.78, -0.48], color: C.green },
+      { t: "quicksort", lang: "neutral", base: [0.06, 0.88], color: C.gold },
+      { t: "quick sort", lang: "neutral", base: [0.02, -0.86], color: C.gold }
+    ];
+    function chip(ctx, text, x, y, color, alpha, active) {
+      ctx.save();
+      ctx.font = '700 ' + Math.max(10, api.font("canvas-sm") + 1) + 'px ui-monospace,"Cascadia Code",Menlo,Consolas,monospace';
+      var tw = ctx.measureText(text).width;
+      var w = tw + 16, h = 26;
+      var bx = x - w / 2, by = y - h / 2;
+      ctx.globalAlpha = alpha;
+      if (active) {
+        ctx.shadowColor = V.alpha(color, 0.45);
+        ctx.shadowBlur = 14;
+      }
+      ctx.fillStyle = C.paper;
+      ctx.fillRect(bx, by, w, h);
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = active ? color : V.alpha(color, 0.55);
+      ctx.lineWidth = active ? 2 : 1;
+      ctx.strokeRect(bx + 0.5, by + 0.5, w - 1, h - 1);
+      ctx.fillStyle = active ? color : V.alpha(color, 0.72);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, x, y + 1);
+      ctx.restore();
+    }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      var w = size.w, h = size.h;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = C.paper;
+      ctx.fillRect(0, 0, w, h);
+      var bg = ctx.createRadialGradient(w * 0.5, h * 0.46, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.75);
+      bg.addColorStop(0, V.alpha(C.paper2, 0.86));
+      bg.addColorStop(1, V.alpha(C.paper, 0));
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+      V.grid(ctx, w, h, C, 28, 0.13);
+      var cx = w * 0.5, cy = h * 0.48;
+      var scale = Math.min(w * 0.33, h * 0.34);
+      var activeMode = mode === "js" || mode === "py";
+      var centerGlow = ctx.createRadialGradient(cx, cy, 2, cx, cy, 42);
+      centerGlow.addColorStop(0, V.alpha(C.green, 0.26));
+      centerGlow.addColorStop(0.55, V.alpha(C.gold, 0.10));
+      centerGlow.addColorStop(1, V.alpha(C.paper, 0));
+      ctx.fillStyle = centerGlow;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 42, 0, Math.PI * 2);
+      ctx.fill();
+      TOKENS.forEach(function (tok, i) {
+        var active = activeMode && tok.lang === mode;
+        var neutral = mode === "neutral";
+        var pull = active ? 0.34 : 0;
+        var x = cx + tok.base[0] * (1 - pull) * scale;
+        var y = cy - tok.base[1] * (1 - pull) * scale;
+        var weight = neutral ? 0.16 : (active ? 0.42 : 0.035);
+        var alpha = neutral ? 0.78 : (active ? 1 : 0.28);
+        ctx.save();
+        ctx.globalAlpha = 0.10 + weight;
+        ctx.strokeStyle = tok.color;
+        ctx.lineWidth = 1 + weight * 12;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.quadraticCurveTo((cx + x) / 2 + (i % 2 ? 18 : -18), (cy + y) / 2 - 22, x, y);
+        ctx.stroke();
+        ctx.restore();
+        chip(ctx, tok.t, x, y, tok.color, alpha, active);
+      });
+      ctx.beginPath();
+      ctx.arc(cx, cy, 9, 0, Math.PI * 2);
+      ctx.fillStyle = C.green;
+      ctx.fill();
+      ctx.strokeStyle = C.paper;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      V.label(ctx, DE ? "Bedeutung" : "meaning", cx, cy - 26, { font: '700 ' + Math.max(11, api.font("canvas-sm") + 1) + 'px "Barlow", sans-serif', color: C.petrol, align: "center" });
+      V.label(ctx, DE ? "sortieren" : "sort", cx, cy + 26, { font: '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
+      V.heading(ctx, DE ? "Code-Oberfläche ist Rauschen" : "Code surface is noise", 14, 18, C.petrol, 10, 1);
+      V.heading(ctx, mode === "neutral" ? (DE ? "Neutral" : "Neutral") : (mode === "js" ? "JavaScript" : "Python"), w - 14, 18, C.muted, 10, 1);
+      canvas.setAttribute("aria-label", DE
+        ? "Code-Oberfläche: function, def, quickSort, quick_sort und Varianten; Attention zieht die Formen der aktiven Sprache zur Bedeutung."
+        : "Code surface: function, def, quickSort, quick_sort, and variants; attention pulls the active language's forms toward the meaning.");
+      updateReadout();
+    }
+    function updateReadout() {
+      if (mode === "js") {
+        readout.innerHTML = '<span><b>JavaScript</b> function + quickSort</span><span><b>Attention</b> 42% + 42%</span><span>' + (DE ? "Die Formen rücken zur Bedeutung." : "The forms move toward the meaning.") + '</span>';
+      } else if (mode === "py") {
+        readout.innerHTML = '<span><b>Python</b> def + quick_sort</span><span><b>Attention</b> 42% + 42%</span><span>' + (DE ? "Die Formen rücken zur Bedeutung." : "The forms move toward the meaning.") + '</span>';
+      } else {
+        readout.innerHTML = '<span><b>' + (DE ? "Neutral" : "Neutral") + '</b> ' + (DE ? "alle Formen streuen" : "all forms scatter") + '</span><span><b>Attention</b> ' + (DE ? "schwach" : "weak") + '</span><span>' + (DE ? "Wähle JavaScript oder Python." : "Choose JavaScript or Python.") + '</span>';
+      }
+    }
+    function setMode(next) {
+      mode = next === "js" || next === "py" ? next : "neutral";
+      buttons.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-code-mode") === mode); });
+      draw();
+    }
+    buttons.forEach(function (b) {
+      b.addEventListener("click", function () { setMode(b.getAttribute("data-code-mode")); });
+    });
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    resize();
+    return {
+      update: function (s) { if (s && s.codeMode) setMode(s.codeMode); },
+      setMode: setMode,
+      next: function () { return false; },
+      prev: function () { return false; },
+      resize: resize,
+      pause: function () {},
+      resume: function () { draw(); },
+      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
+    };
+  }
+
+  function attentionLabScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-attlab-scene";
+    el.innerHTML = '<div class="ls-attlab-tabs" role="tablist">' +
+        '<button type="button" class="ls-chip is-on" data-attlab="bank" role="tab" aria-selected="true">' + (DE ? "Bank" : "Bank") + '</button>' +
+        '<button type="button" class="ls-chip" data-attlab="code" role="tab" aria-selected="false">' + (DE ? "Code" : "Code") + '</button>' +
+      '</div>' +
+      '<div class="ls-attlab-layer" data-attlab-layer="bank"></div>' +
+      '<div class="ls-attlab-layer" data-attlab-layer="code" hidden></div>';
+    root.appendChild(el);
+    var bankLayer = el.querySelector('[data-attlab-layer="bank"]');
+    var codeLayer = el.querySelector('[data-attlab-layer="code"]');
+    var tabs = Array.prototype.slice.call(el.querySelectorAll("[data-attlab]"));
+    var bankApi = attentionScene(bankLayer, api);
+    var codeApi = codeNoiseScene(codeLayer, api);
+    var mode = "bank";
+    function show(next) {
+      mode = next === "code" ? "code" : "bank";
+      bankLayer.hidden = mode !== "bank";
+      codeLayer.hidden = mode !== "code";
+      if (mode === "bank") bankApi.resize(); else codeApi.resize();
+      tabs.forEach(function (b) {
+        var on = b.getAttribute("data-attlab") === mode;
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-selected", on ? "true" : "false");
+      });
+    }
+    tabs.forEach(function (b) {
+      b.addEventListener("click", function () { show(b.getAttribute("data-attlab")); });
+    });
+    return {
+      update: function (s) {
+        if (s && s.mode && s.mode !== mode) show(s.mode);
+        if (s && s.context) bankApi.update({ context: s.context });
+        if (s && s.codeMode) codeApi.setMode(s.codeMode);
+      },
+      setControl: function (name, value) { return bankApi.setControl ? bankApi.setControl(name, value) : false; },
+      resize: function () { bankApi.resize(); codeApi.resize(); },
+      pause: function () {},
+      resume: function () { show(mode); },
+      next: function () { return false; },
+      prev: function () { return false; },
+      destroy: function () { bankApi.destroy(); codeApi.destroy(); el.remove(); }
+    };
+  }
+
   var SCENES = {
 
 
@@ -8434,6 +8636,7 @@
     tokenize: tokenizeScene,
     position: positionScene,
     attention: attentionScene,
+    attentionlab: attentionLabScene,
     noise: noiseScene,
     ffn: ffnScene,
     residual: residualScene,
@@ -8530,6 +8733,7 @@
         scenes[nextName] = entry;
       },
       resize: function () { if (scene && scene.resize) scene.resize(); },
+      setControl: function (name, value) { return scene && scene.setControl ? scene.setControl(name, value) : false; },
       pause: function () { if (scene && scene.pause) scene.pause(); },
       resume: function () { if (scene && scene.resume) scene.resume(); },
       next: function () { return scene && scene.next ? scene.next() : false; },

@@ -1087,3 +1087,9 @@ queued items are still open and will be handled in order:
 8. Calendar overview
 9. KV-cache removal + attention KV box
 10. Full test gate again
+
+16. [ ] **Final quality pass (the last point).** Make everything
+    mouthwateringly gorgeous: as minimalist and beautiful as possible, with
+    clean spacing, typography, colour, transitions, and no clutter. The page
+    must still teach something real on every slide; beauty must serve the
+    takeaway, not replace it.
