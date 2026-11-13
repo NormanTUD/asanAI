@@ -84,7 +84,7 @@
       title: "One word after another",
       body: "Context is everything the model can see: the text so far, the instruction, the examples. Complete “Once upon a time there was …” word by word: at each step the demo draws the next token from a distribution, appends it, and repeats. Greedy, sampling, and top-p read the same probabilities differently. At the end comes <|endoftext|>; as soon as the model draws it, the loop stops. The landscape is a simplified demo.",
       watch: "Complete “Once upon a time there was …” word by word until <|endoftext|> appears. The landscape is only a simplified picture.",
-      demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true, view: "default" },
+      demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true, view: "default", camera: { yaw: -0.86, pitch: 0.918, zoom: 1 } },
       context: "The model has no working memory other than the context. Every new token changes what is likely next.",
       deep: "A high probability is not a guarantee of truth. It is a statement about the training corpus. Sampling makes the distribution visible; greedy always takes the most likely path.",
       boxes: [
@@ -590,10 +590,10 @@
     {
       kicker: "02c / Kompression",
       title: "Verstehen heißt komprimieren",
-      body: "Ein Modell, das alles speichert, kann nicht verallgemeinern. Kompression behält die Struktur und wirft Details weg. Es gibt verlustfreie und verlustbehaftete Kompression: Tokenization ist verlustfrei, der Transformer als Ganzes ist verlustbehaftet. Ziehe den Regler: Aus vielen Einzelheiten werden Muster; der Fehler steigt, aber das Modell kann neue Fälle einordnen.",
-      watch: "Ziehe die Kompression. Was gewinnt, was verliert?",
+      body: "Ein Modell, das alles speichert, kann nicht verallgemeinern. Kompression behält die Struktur und wirft Details weg. Es gibt verlustfreie und verlustbehaftete Kompression: Tokenization ist verlustfrei, der Transformer als Ganzes ist verlustbehaftet. Ziehe den Regler: Aus 144 Einzelfällen werden erst 12 Gruppen, dann 4, dann 2, dann 1. Die Taxonomie macht das sichtbar: Hauskatze → Katzenartige → Säugetiere → Wirbeltiere → Bilaterien → Tiere → Eukaryoten → Lebewesen → Etwas. Am Ende fallen auch Gegenstände, Mathematik und Gedanken unter dasselbe Etwas.",
+      watch: "Ziehe die Kompression. Ab wann werden aus Einzelfällen Gruppen, und wann verschwindet der Unterschied zwischen Tier, Pflanze und Gegenstand?",
       demoState: { scene: "compress" },
-      context: "Abstraktion ist verlustbehaftete Kompression. Beim Training passen Modelle auf teilweise widersprüchliche oder unvollständige Daten. Im Schnitt ist ein realistisches Weltmodell die beste Kompression: Es erlaubt Vorhersagen über viele Fälle, nicht nur über die Trainingspunkte.",
+      context: "Abstraktion ist verlustbehaftete Kompression. Die Namen an den Knoten zeigen, was auf jeder Stufe übrig bleibt: Katzenartige, Menschenaffen und Säugetiere werden zu Wirbeltieren, dann zu Lebewesen, dann zu Etwas. Gleichzeitig verschwinden die Details, die die einzelnen Fälle unterschieden haben. Im Schnitt ist ein realistisches Weltmodell die beste Kompression: Es erlaubt Vorhersagen über viele Fälle, nicht nur über die Trainingspunkte.",
       deep: "Lindsey et al. (2025) finden Planung im Modell: Vor dem Reimwort sind mehrere Kandidaten aktiv, und der Satz wird auf einen von ihnen hin gebaut. Othello-GPT entwickelt aus Zugfolgen ein inneres Brettmodell. Ein gutes inneres Modell ist die einfachste Art, gut vorherzusagen.",
       boxes: [
         box("book-borges", "Geschichte", "Borges' Funes", "Funes erinnert sich an jeden Stein, jede Wolke, jede Münze. Weil er nichts vergisst, kann er nicht abstrahieren; Borges schreibt, Denken heiße Unterschiede vergessen, verallgemeinern, abstrahieren."),
@@ -602,7 +602,8 @@
         box("book-3", "Weltmodell", "Was zeigt Othello-GPT?", "Ein Modell, das nur Zugfolgen sieht, entwickelt eine innere Repräsentation des Bretts. Vorhersage kann ein Weltmodell erzwingen."),
         box("book-lossless", "Grenze", "Verlustfrei oder verlustbehaftet?", "Tokenization ist verlustfrei: Text → Tokens → Text. Der Transformer ist verlustbehaftet: Er behält ein statistisches Modell, nicht den Text selbst."),
         box("book-world", "Training", "Warum ein Weltmodell?", "Training sieht unvollständige und widersprüchliche Daten. Das beste, was ein Modell im Schnitt tun kann, ist ein realistisches Weltmodell, das viele Fälle abdeckt und Vorhersagen erlaubt."),
-        box("book-gravity", "Beispiel", "Schwerkraft verstehen", "Ein Neugeborenes merkt: Dinge fallen. Ein Erwachsener komprimiert das zu: Dinge fallen, egal welches Objekt. Eine physikalische Theorie komprimiert weiter: Fallen ist Beschleunigung im gekrümmten Raum. Jede Stufe deckt mehr Fälle mit besseren Vorhersagen ab.")
+        box("book-gravity", "Beispiel", "Schwerkraft verstehen", "Ein Neugeborenes merkt: Dinge fallen. Ein Erwachsener komprimiert das zu: Dinge fallen, egal welches Objekt. Eine physikalische Theorie komprimiert weiter: Fallen ist Beschleunigung im gekrümmten Raum. Jede Stufe deckt mehr Fälle mit besseren Vorhersagen ab."),
+        box("book-taxonomy", "Beispiel", "Taxonomie als Kompression", "Hauskatze und Löwe werden zu Katzenartige, dann zu Säugetiere, Wirbeltiere, Bilaterien, Tiere, Eukaryoten, Lebewesen. Auf jeder Stufe bleiben weniger Unterschiede übrig, aber die Gruppe deckt mehr Fälle ab. Ganz oben steht Etwas: Auch Gegenstände, mathematische Tatsachen, Gedanken und Träume fallen darunter.")
       ],
       sources: [
         { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf", why: { de: "Funes als Bild für Erinnern ohne Abstraktion.", en: "Funes as an image of memory without abstraction." } },
@@ -614,10 +615,10 @@
     {
       kicker: "02c / Compression",
       title: "Understanding is compression",
-      body: "A model that stores everything cannot generalise. Compression keeps structure and throws details away. There is lossless and lossy compression: tokenization is lossless; the transformer as a whole is lossy. Drag the slider: many individual details become patterns; the error rises, but the model can place new cases.",
-      watch: "Drag the compression. What is gained, what is lost?",
+      body: "A model that stores everything cannot generalise. Compression keeps structure and throws details away. There is lossless and lossy compression: tokenization is lossless; the transformer as a whole is lossy. Drag the slider: 144 individual cases become 12 groups, then 4, then 2, then 1. Taxonomy makes this visible: house cat → cats → mammals → vertebrates → bilaterians → animals → eukaryotes → living things → something. At the top, objects, mathematics, and thoughts fall under the same something.",
+      watch: "Drag the compression. When do individual cases become groups, and when does the difference between animal, plant, and object disappear?",
       demoState: { scene: "compress" },
-      context: "Abstraction is lossy compression. During training, models fit partly contradictory or incomplete data. On average, a realistic world model is the best compression: it allows predictions about many cases, not only the training points.",
+      context: "Abstraction is lossy compression. The names on the nodes show what survives at each level: cats, great apes, and mammals become vertebrates, then living things, then something. At the same time, the details that separated the individual cases disappear. On average, a realistic world model is the best compression: it allows predictions about many cases, not only the training points.",
       deep: "Lindsey et al. (2025) find planning in the model: before the rhyme word, several candidates are active, and the sentence is built toward one of them. Othello-GPT develops an internal board model from move sequences. A good internal model is the simplest way to predict well.",
       boxes: [
         box("book-borges", "History", "Borges' Funes", "Funes remembers every stone, every cloud, every coin. Because he forgets nothing, he cannot abstract; Borges writes that thinking means forgetting differences, generalising, abstracting."),
@@ -626,7 +627,8 @@
         box("book-3", "World model", "What does Othello-GPT show?", "A model that sees only move sequences develops an internal representation of the board. Prediction can force a world model."),
         box("book-lossless", "Limit", "Lossless or lossy?", "Tokenization is lossless: text → tokens → text. The transformer is lossy: it keeps a statistical model, not the text itself."),
         box("book-world", "Training", "Why a world model?", "Training sees incomplete and contradictory data. On average, the best a model can do is a realistic world model that covers many cases and allows predictions."),
-        box("book-gravity", "Example", "Understanding gravity", "A newborn notices: things fall. An adult compresses this to: things fall, whatever the object. A physical theory compresses further: falling is acceleration in curved space. Each level covers more cases with better predictions.")
+        box("book-gravity", "Example", "Understanding gravity", "A newborn notices: things fall. An adult compresses this to: things fall, whatever the object. A physical theory compresses further: falling is acceleration in curved space. Each level covers more cases with better predictions."),
+        box("book-taxonomy", "Example", "Taxonomy as compression", "House cat and lion become cats, then mammals, vertebrates, bilaterians, animals, eukaryotes, living things. At each level fewer differences survive, but the group covers more cases. At the very top is something: objects, mathematical facts, thoughts, and dreams fall under it too.")
       ],
       sources: [
         { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf", why: { de: "Funes als Bild für Erinnern ohne Abstraktion.", en: "Funes as an image of memory without abstraction." } },
@@ -1202,7 +1204,7 @@
     }
   ];
 
-  var steps = introSteps.slice(0, 2).concat(introSteps.slice(2), bookSteps, insideSteps.slice(0, 1), activationSteps, mlpSteps, gradientSteps, insideSteps.slice(1, 2), tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, languageSteps, posttrainSteps, evalSteps, kvcacheSteps, ragSteps, historySteps, philosophySteps);
+  var steps = introSteps.slice(0, 2).concat(introSteps.slice(2), bookSteps, insideSteps.slice(1, 2), insideSteps.slice(0, 1), activationSteps, mlpSteps, gradientSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, languageSteps, posttrainSteps, evalSteps, kvcacheSteps, ragSteps, historySteps, philosophySteps);
 
   var day = {
     id: "intuition",

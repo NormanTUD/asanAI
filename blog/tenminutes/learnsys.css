@@ -1405,3 +1405,26 @@ h1,h2,h3,h4{
 .ls-loss-data-wrap canvas{display:block;width:100%;height:100%}
 .ls-loss-formula{grid-column:1/-1;grid-row:2;max-height:104px;min-height:58px;overflow:auto;padding:4px 6px;border:1px solid rgba(0,75,111,.08);background:rgba(255,255,255,.6);font-size:var(--ls-fs-micro);color:var(--ls-soft)}
 .ls-loss-formula .ls-math{font-size:var(--ls-fs-micro)}
+
+/* Building blocks: named layer stack and mini demos */
+.ls-block-layers{display:flex;flex-direction:column;gap:4px;margin:2px 0 4px 9px;padding-left:9px;border-left:1px solid var(--ls-line)}
+.ls-layer-row{display:flex;align-items:center;gap:4px;min-width:0}
+.ls-layer-num{width:12px;flex:0 0 12px;font:600 8px/1 "Open Sans",sans-serif;color:var(--ls-muted);text-align:right}
+.ls-layer-pill{display:flex;align-items:center;gap:3px;min-width:0;border:1px solid var(--ls-line);background:#fff;color:var(--ls-ink);padding:4px 5px;cursor:pointer;font:600 var(--ls-fs-micro)/1.1 "Open Sans",sans-serif;text-align:left}
+.ls-layer-pill b{color:var(--block-color,var(--ls-petrol));font:700 9px/1 "Barlow",sans-serif}
+.ls-layer-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ls-layer-attn{flex:1 1 0}
+.ls-layer-ffn{flex:1 1 0;margin-left:7px;border-style:dashed}
+.ls-layer-pill.is-live,.ls-layer-pill:hover{border-color:var(--block-color,var(--ls-green));background:rgba(246,250,245,.9)}
+.ls-layer-more{display:flex;align-items:center;gap:5px;padding:2px 5px;color:var(--ls-muted);font:600 var(--ls-fs-micro)/1 "Open Sans",sans-serif}
+.ls-layer-more span{font-size:14px;line-height:.7}
+.ls-layer-more b{color:var(--ls-gold);font:700 10px/1 "Barlow",sans-serif}
+.ls-layer-more small{font:600 8px/1 "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.06em}
+.ls-block-mini-wrap{border:1px solid var(--ls-line);background:var(--ls-paper-2);padding:5px}
+.ls-block-mini{display:block;width:100%;height:92px}
+.ls-block-subcan{display:block;width:100%;height:84px;margin:4px 0 6px;border:1px solid var(--ls-line);background:#fff}
+@media (max-width:640px){
+  .ls-block-layers{min-width:214px}
+  .ls-block-mini{height:84px}
+  .ls-block-subgrid{grid-template-columns:1fr}
+}
