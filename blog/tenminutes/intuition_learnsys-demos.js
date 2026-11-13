@@ -5899,13 +5899,15 @@
       if (findRaf) cancelAnimationFrame(findRaf);
       findRaf = 0;
     }
-    function find() {
+    var INITIAL_ANGLE = 62, INITIAL_ROLL = 26, INITIAL_SHIFT = 1.8;
+    function animateTo(ta, tr, ts) {
       stopFind();
       if (reduced) {
-        angle = 0; roll = 0; shift = 0; found = true;
-        rotateEl.value = "0"; rotateOut.textContent = "0°";
-        rollEl.value = "0"; rollOut.textContent = "0°";
-        shiftEl.value = "0"; shiftOut.textContent = "0.00";
+        angle = ta; roll = tr; shift = ts;
+        rotateEl.value = String(angle); rotateOut.textContent = Math.round(angle) + "°";
+        rollEl.value = String(roll); rollOut.textContent = Math.round(roll) + "°";
+        shiftEl.value = String(shift); shiftOut.textContent = V.fmt(shift);
+        found = score() >= 92;
         updateButton(); draw();
         return;
       }
@@ -5915,9 +5917,9 @@
         if (!finding) return;
         var u = Math.min(1, (now - t0) / dur);
         var e = V.ease(u);
-        angle = a0 * (1 - e);
-        roll = r0 * (1 - e);
-        shift = s0 * (1 - e);
+        angle = a0 + (ta - a0) * e;
+        roll = r0 + (tr - r0) * e;
+        shift = s0 + (ts - s0) * e;
         rotateEl.value = String(angle);
         rollEl.value = String(roll);
         shiftEl.value = String(shift);
@@ -5927,16 +5929,18 @@
         draw();
         if (u < 1) findRaf = requestAnimationFrame(step);
         else {
-          finding = false; findRaf = 0; found = true;
-          angle = 0; roll = 0; shift = 0;
-          rotateEl.value = "0"; rotateOut.textContent = "0°";
-          rollEl.value = "0"; rollOut.textContent = "0°";
-          shiftEl.value = "0"; shiftOut.textContent = "0.00";
+          finding = false; findRaf = 0;
+          angle = ta; roll = tr; shift = ts;
+          rotateEl.value = String(angle); rotateOut.textContent = Math.round(angle) + "°";
+          rollEl.value = String(roll); rollOut.textContent = Math.round(roll) + "°";
+          shiftEl.value = String(shift); shiftOut.textContent = V.fmt(shift);
+          found = score() >= 92;
           updateButton(); draw();
         }
       }
       findRaf = requestAnimationFrame(step);
     }
+    function find() { animateTo(0, 0, 0); }
     function pointer(e) {
       var r = canvas.getBoundingClientRect();
       return { x: e.clientX - r.left, y: e.clientY - r.top };
@@ -5996,7 +6000,16 @@
       find();
       return true;
     }
-    function prevInternal() { return false; }
+    function prevInternal() {
+      var atInitial = Math.abs(angle - INITIAL_ANGLE) < 0.5 &&
+        Math.abs(roll - INITIAL_ROLL) < 0.5 &&
+        Math.abs(shift - INITIAL_SHIFT) < 0.01;
+      if (finding || !atInitial) {
+        animateTo(INITIAL_ANGLE, INITIAL_ROLL, INITIAL_SHIFT);
+        return true;
+      }
+      return false;
+    }
     canvas.__lsManifold = {
       pairs: WORDS,
       point: function (side, i) { var pts = side === "jp" ? targetPoints() : source; var q = project(pts[i]); return { x: q.x, y: q.y }; },
@@ -8457,7 +8470,17 @@
     host.className = "ls-scene-host";
     root.appendChild(host);
     var scenes = {};
-    var scene = null, name = null;
+    var scene = null, name = null, visited = {}, ro = null, roRaf = 0;
+    if (window.ResizeObserver) {
+      ro = new ResizeObserver(function () {
+        if (roRaf) return;
+        roRaf = requestAnimationFrame(function () {
+          roRaf = 0;
+          if (scene && scene.resize) { try { scene.resize(); } catch (e) {} }
+        });
+      });
+      ro.observe(host);
+    }
     function makeLayer(next) {
       var layer = document.createElement("div");
       layer.className = "ls-scene-layer";
@@ -8468,6 +8491,12 @@
       return { layer: layer, api: inst };
     }
     function mount(next) {
+      if (visited[next] && scenes[next] && next !== "manifold") {
+        var old = scenes[next];
+        if (old.api && old.api.destroy) { try { old.api.destroy(); } catch (e) {} }
+        if (old.layer && old.layer.parentNode) old.layer.parentNode.removeChild(old.layer);
+        delete scenes[next];
+      }
       if (!scenes[next]) scenes[next] = makeLayer(next);
       Object.keys(scenes).forEach(function (key) {
         if (key === next) return;
@@ -8488,6 +8517,7 @@
       if (entry.api && entry.api.resize) entry.api.resize();
       name = next;
       scene = entry.api;
+      visited[next] = true;
       if (!scene) {
         entry.layer.innerHTML = '<div class="ls-empty">' + (api.lang === "de" ? "Demo folgt." : "Demo follows.") + '</div>';
       }
@@ -8511,6 +8541,8 @@
       prev: function () { return scene && scene.prev ? scene.prev() : false; },
       onKey: function (e) { return scene && scene.onKey ? scene.onKey(e) : false; },
       destroy: function () {
+        if (ro) ro.disconnect();
+        if (roRaf) cancelAnimationFrame(roRaf);
         Object.keys(scenes).forEach(function (key) {
           if (scenes[key].api && scenes[key].api.destroy) { try { scenes[key].api.destroy(); } catch (e) {} }
         });

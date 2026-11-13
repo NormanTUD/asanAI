@@ -1069,3 +1069,21 @@ These are queued. Do not start them until the current final gate is closed.
     values of earlier tokens are reused instead of recomputed, which turns
     the quadratic generation cost into a linear one. Research the exact
     mechanism and cite a primary source.
+
+## Implementation status (2026-11-13, latest)
+
+The remaining queue is fully listed above. Work started with the **global
+native responsive canvas system** (a shared `ResizeObserver` path so every
+scene redraws at its real pixel size, not a CSS-scaled bitmap). The other
+queued items are still open and will be handled in order:
+
+1. Phone Search → Chat transition
+2. Scene reset on re-entry (manifold uses Back-to-undo instead)
+3. Bausteine tokenizer alignment + neural text note
+4. Ceres/global responsive verification
+5. Gauss/Ceres + data merge
+6. Attention context, causal-mask box, new noise demo, duplicate removal
+7. Activation + 1-neuron + loss merge
+8. Calendar overview
+9. KV-cache removal + attention KV box
+10. Full test gate again
