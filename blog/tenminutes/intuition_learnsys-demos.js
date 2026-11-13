@@ -4750,25 +4750,50 @@
     }
     prevBtn.addEventListener("click", function () { stepContext(-1); });
     nextBtn.addEventListener("click", function () { stepContext(1); });
+    var ffnPoints = null, ffnEdges = null;
+    function buildFfnGraph() {
+      if (ffnPoints) return;
+      var seed = 17;
+      function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+      ffnPoints = [];
+      for (var c = 0; c < 2; c++) {
+        var n = c === 0 ? 90 : 150;
+        for (var k = 0; k < n; k++) {
+          var a = k * 2.399963229728653 + rnd() * 0.25;
+          var r = c === 0 ? 0.32 * Math.sqrt((k + 0.5) / n) : 0.55 + 0.34 * Math.sqrt((k + 0.5) / n);
+          ffnPoints.push({ x: Math.cos(a) * r + (rnd() - 0.5) * 0.025, y: Math.sin(a) * r + (rnd() - 0.5) * 0.025, c: c });
+        }
+      }
+      ffnEdges = [];
+      var lim = 0.15;
+      for (var i = 0; i < ffnPoints.length; i++) {
+        for (var j = i + 1; j < ffnPoints.length; j++) {
+          if (ffnPoints[i].c !== ffnPoints[j].c) continue;
+          var dx = ffnPoints[i].x - ffnPoints[j].x, dy = ffnPoints[i].y - ffnPoints[j].y;
+          if (dx * dx + dy * dy < lim * lim) ffnEdges.push({ a: i, b: j });
+        }
+      }
+    }
     function drawBend() {
       if (!size) return;
+      buildFfnGraph();
       var C = api.colors();
       ctx = size.ctx;
       var w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
-      var cx = w * 0.5, cy = h * 0.56;
+      var cx = w * 0.5, cy = h * 0.58;
       var scale = Math.min(w * 0.38, h * 0.34);
       function warp(x, y) {
         var r2 = x * x + y * y;
-        return { x: x, y: y, z: bend * 1.35 * Math.exp(-r2 / 0.18) };
+        return { x: x, y: y, z: bend * 1.45 * Math.exp(-r2 / 0.20) };
       }
       function project(x, y, z) {
-        return { x: cx + x * scale + z * scale * 0.25, y: cy + y * scale * 0.35 - z * scale * 0.95 };
+        return { x: cx + x * scale + z * scale * 0.25, y: cy + y * scale * 0.35 - z * scale * 0.98, z: z };
       }
       ctx.strokeStyle = C.line;
-      ctx.globalAlpha = 0.45;
+      ctx.globalAlpha = 0.16;
       ctx.lineWidth = 1;
-      var N = 10;
+      var N = 12;
       for (var i = 0; i <= N; i++) {
         ctx.beginPath();
         for (var j = 0; j <= N; j++) {
@@ -4786,38 +4811,42 @@
         ctx.stroke();
       }
       ctx.globalAlpha = 1;
-      function drawClass(cls, color) {
-        var active = (cls === 0 && activeMode === "fruit") || (cls === 1 && activeMode === "tech");
-        for (var k = 0; k < 36; k++) {
-          var a = k * 2.399963229728653;
-          var r = cls === 0 ? 0.28 * Math.sqrt((k + 0.5) / 36) : 0.55 + 0.32 * Math.sqrt((k + 0.5) / 36);
-          var wp = warp(Math.cos(a) * r, Math.sin(a) * r);
-          var p = project(wp.x, wp.y, wp.z);
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, (cls === 0 ? 3.4 : 3) * (active ? 1.15 : 1), 0, Math.PI * 2);
-          ctx.fillStyle = color;
-          ctx.globalAlpha = active ? 0.92 : 0.26;
-          ctx.fill();
-          ctx.strokeStyle = C.paper;
-          ctx.lineWidth = 1;
-          ctx.globalAlpha = active ? 1 : 0.45;
-          ctx.stroke();
-        }
-      }
-      drawClass(0, C.green);
-      drawClass(1, C.gold);
+      var projected = ffnPoints.map(function (pt) {
+        var wp = warp(pt.x, pt.y);
+        var p = project(wp.x, wp.y, wp.z);
+        return { x: p.x, y: p.y, z: p.z, c: pt.c };
+      });
+      ffnEdges.forEach(function (e) {
+        var a = projected[e.a], b = projected[e.b];
+        ctx.strokeStyle = a.c === 0 ? C.green : C.gold;
+        ctx.globalAlpha = 0.16 + 0.12 * (1 - Math.max(0, Math.min(1, bend)));
+        ctx.lineWidth = 0.65;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+      projected.sort(function (a, b) { return a.z - b.z; });
+      projected.forEach(function (p) {
+        var active = (p.c === 0 && activeMode === "fruit") || (p.c === 1 && activeMode === "tech");
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, (p.c === 0 ? 2.6 : 2.3) * (active ? 1.12 : 1), 0, Math.PI * 2);
+        ctx.fillStyle = p.c === 0 ? C.green : C.gold;
+        ctx.globalAlpha = active ? 0.9 : 0.22;
+        ctx.fill();
+        ctx.strokeStyle = C.paper;
+        ctx.lineWidth = 0.8;
+        ctx.globalAlpha = active ? 1 : 0.4;
+        ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
       var lineAlpha = Math.max(0, Math.min(1, (bend - 0.45) / 0.25));
       if (lineAlpha > 0.01) {
-        var ly = cy - 0.6 * scale * 0.95;
+        var ly = cy - 0.62 * scale * 0.98;
         ctx.save();
         ctx.setLineDash([6, 4]);
         ctx.strokeStyle = C.petrol;
         ctx.globalAlpha = lineAlpha;
         ctx.lineWidth = 1.6;
-        ctx.beginPath();
-        ctx.moveTo(16, ly);
-        ctx.lineTo(w - 16, ly);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(16, ly); ctx.lineTo(w - 16, ly); ctx.stroke();
         ctx.restore();
         ctx.fillStyle = C.petrol;
         ctx.globalAlpha = lineAlpha;
@@ -4831,8 +4860,8 @@
       ctx.textAlign = "left";
       ctx.fillText(labels.bend + " " + bend.toFixed(2), 14, 18);
       ctx.textAlign = "center";
-      ctx.fillText(labels.hint, w / 2, h - 10);
-      bendCanvas.setAttribute("aria-label", (DE ? "Symbolische Biegung des FFN-Raums. " : "Symbolic bend of the FFN space. ") + labels.hint + " " + (bend > 0.6 ? labels.separated : labels.notSeparated) + ".");
+      ctx.fillText(DE ? "feine Punktwolke · Kanten = Nachbarschaft" : "fine point cloud · edges = neighbourhood", w / 2, h - 10);
+      bendCanvas.setAttribute("aria-label", (DE ? "Feine Punktwolke des FFN-Raums. " : "Fine point cloud of the FFN space. ") + labels.hint + " " + (bend > 0.6 ? labels.separated : labels.notSeparated) + ".");
     }
     function updateBendReadout() {
       bendOut.textContent = bend.toFixed(2);
@@ -4877,12 +4906,15 @@
       update: function (s) {
         if (s && s.mode) setContext(s.mode);
       },
-      next: function () { return stepContext(1); },
+      next: function () {
+        if (bend < 0.94) { animateBend(1); return true; }
+        return stepContext(1);
+      },
       prev: function () { return stepContext(-1); },
       onKey: function (e) {
         if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
         if (e.key === "ArrowLeft") return stepContext(-1);
-        if (e.key === "ArrowRight") return stepContext(1);
+        if (e.key === "ArrowRight") { if (bend < 0.94) { animateBend(1); return true; } return stepContext(1); }
         return false;
       },
       resize: resize,
