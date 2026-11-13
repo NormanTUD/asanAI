@@ -1811,8 +1811,7 @@
         '<div class="ls-loop-modes" role="group" aria-label="' + (DE ? "Auswahlmodus" : "Decoding mode") + '"></div>' +
         '<div class="ls-loop-actions"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-back" aria-label="' + (DE ? "Letztes Token zurücknehmen" : "Take back the last token") + '">' + (DE ? "← Zurück" : "← Back") + '</button><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loop-next">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-loop-temp" min="0.05" max="1.8" step="0.05" value="0.8"><output>0.80</output></label></div>' +
         '<div class="ls-loop-readout" aria-live="polite"></div>' +
-      '</div>' +
-      '<div class="ls-camera-capture"><button type="button" class="ls-btn ls-btn--tiny ls-camera-btn">' + (DE ? "Kamera erfassen (temporär)" : "Capture camera (temporary)") + '</button><textarea class="ls-camera-out" readonly hidden aria-label="' + (DE ? "Aktuelle Kameraposition" : "Current camera position") + '" placeholder="' + (DE ? "Drehe die Szene und klicke auf den roten Button." : "Rotate the scene and click the red button.") + '"></textarea></div>';
+      '</div>';
     root.appendChild(el);
     var sentenceEl = el.querySelector(".ls-loop-sentence");
     var treeEl = el.querySelector(".ls-loop-tree");
@@ -1822,15 +1821,12 @@
     var tempOut = el.querySelector(".ls-loop-actions output");
     var nextBtn = el.querySelector(".ls-loop-next");
     var backBtn = el.querySelector(".ls-loop-back");
-    var cameraRow = el.querySelector(".ls-camera-capture");
-    var cameraBtn = el.querySelector(".ls-camera-btn");
-    var cameraOut = el.querySelector(".ls-camera-out");
     var landEl = el.querySelector(".ls-loop-landscape");
     var landCanvas = landEl.querySelector("canvas");
     var landTip = landEl.querySelector(".ls-land-tip");
     var landPoints = [];
     var landscape = true, landSize = null;
-    var landYaw = -0.62, landPitch = 1.42, landZoom = 1, landSteep = 1;
+    var landYaw = -0.86, landPitch = 0.918, landZoom = 1, landSteep = 1;
     var landCamTween = 0;
     var landDrag = null, landMoved = false, landHits = [], landOptionPoints = [];
     var landBall = { x: 0, y: 0, init: false, animating: false };
@@ -3087,19 +3083,6 @@
     });
     el.querySelector(".ls-loop-next").addEventListener("click", sample);
     if (backBtn) backBtn.addEventListener("click", function () { undo(); });
-    if (cameraBtn) cameraBtn.addEventListener("click", function () {
-      var yaw = Number(landYaw.toFixed(3));
-      var pitch = Number(landPitch.toFixed(3));
-      var zoom = Number(landZoom.toFixed(3));
-      var text = 'camera: { yaw: ' + yaw + ', pitch: ' + pitch + ', zoom: ' + zoom + ' }';
-      cameraOut.value = text;
-      cameraOut.hidden = false;
-      cameraOut.focus();
-      cameraOut.select();
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).catch(function () {});
-      }
-    });
     el.querySelector(".ls-loop-reset").addEventListener("click", reset);
     tempEl.addEventListener("input", function () {
       temp = parseFloat(tempEl.value) || 0.8;
@@ -3137,7 +3120,6 @@
         if (meta && meta.dir < 0) undo();
         else if (meta && meta.dir > 0) redo();
         if (!s) return;
-        if (cameraRow) cameraRow.hidden = s.view === "top";
         if (s.camera) {
           var cp = Number(s.camera.pitch), cy = Number(s.camera.yaw), cz = Number(s.camera.zoom);
           tweenCamera(isFinite(cp) ? cp : 1.4, isFinite(cy) ? cy : -0.62, isFinite(cz) ? cz : 1);
