@@ -588,16 +588,19 @@
     {
       kicker: "02c / Kompression",
       title: "Verstehen heißt komprimieren",
-      body: "Ein Modell, das alles speichert, kann nicht verallgemeinern. Kompression behält die Struktur und wirft Details weg. Ziehe den Regler: Aus vielen Einzelheiten werden Muster; der Fehler steigt, aber das Modell kann neue Fälle einordnen.",
+      body: "Ein Modell, das alles speichert, kann nicht verallgemeinern. Kompression behält die Struktur und wirft Details weg. Es gibt verlustfreie und verlustbehaftete Kompression: Tokenization ist verlustfrei, der Transformer als Ganzes ist verlustbehaftet. Ziehe den Regler: Aus vielen Einzelheiten werden Muster; der Fehler steigt, aber das Modell kann neue Fälle einordnen.",
       watch: "Ziehe die Kompression. Was gewinnt, was verliert?",
       demoState: { scene: "compress" },
-      context: "Abstraktion ist verlustbehaftete Kompression. Wer nur Einzelfälle behält, kann sie nicht vergleichen. Wer Strukturen behält, kann neue Fälle einordnen.",
+      context: "Abstraktion ist verlustbehaftete Kompression. Beim Training passen Modelle auf teilweise widersprüchliche oder unvollständige Daten. Im Schnitt ist ein realistisches Weltmodell die beste Kompression: Es erlaubt Vorhersagen über viele Fälle, nicht nur über die Trainingspunkte.",
       deep: "Lindsey et al. (2025) finden Planung im Modell: Vor dem Reimwort sind mehrere Kandidaten aktiv, und der Satz wird auf einen von ihnen hin gebaut. Othello-GPT entwickelt aus Zugfolgen ein inneres Brettmodell. Ein gutes inneres Modell ist die einfachste Art, gut vorherzusagen.",
       boxes: [
         box("book-borges", "Geschichte", "Borges' Funes", "Funes erinnert sich an jeden Stein, jede Wolke, jede Münze. Weil er nichts vergisst, kann er nicht abstrahieren; Borges schreibt, Denken heiße Unterschiede vergessen, verallgemeinern, abstrahieren."),
         box("book-1", "Idee", "Warum komprimieren?", "Ein Modell, das jeden Einzelfall speichert, kann nicht verallgemeinern. Kompression behält die Unterschiede, die für viele Fälle zählen."),
         box("book-2", "Planung", "Plant ein LLM?", "Lindsey et al. (2025) finden Kandidaten für das Reimwort, bevor die Zeile beginnt. Das Modell hält mehrere Möglichkeiten und baut den Satz auf eine zu."),
-        box("book-3", "Weltmodell", "Was zeigt Othello-GPT?", "Ein Modell, das nur Zugfolgen sieht, entwickelt eine innere Repräsentation des Bretts. Vorhersage kann ein Weltmodell erzwingen.")
+        box("book-3", "Weltmodell", "Was zeigt Othello-GPT?", "Ein Modell, das nur Zugfolgen sieht, entwickelt eine innere Repräsentation des Bretts. Vorhersage kann ein Weltmodell erzwingen."),
+        box("book-lossless", "Grenze", "Verlustfrei oder verlustbehaftet?", "Tokenization ist verlustfrei: Text → Tokens → Text. Der Transformer ist verlustbehaftet: Er behält ein statistisches Modell, nicht den Text selbst."),
+        box("book-world", "Training", "Warum ein Weltmodell?", "Training sieht unvollständige und widersprüchliche Daten. Das beste, was ein Modell im Schnitt tun kann, ist ein realistisches Weltmodell, das viele Fälle abdeckt und Vorhersagen erlaubt."),
+        box("book-gravity", "Beispiel", "Schwerkraft verstehen", "Ein Neugeborenes merkt: Dinge fallen. Ein Erwachsener komprimiert das zu: Dinge fallen, egal welches Objekt. Eine physikalische Theorie komprimiert weiter: Fallen ist Beschleunigung im gekrümmten Raum. Jede Stufe deckt mehr Fälle mit besseren Vorhersagen ab.")
       ],
       sources: [
         { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf", why: { de: "Funes als Bild für Erinnern ohne Abstraktion.", en: "Funes as an image of memory without abstraction." } },
@@ -609,16 +612,19 @@
     {
       kicker: "02c / Compression",
       title: "Understanding is compression",
-      body: "A model that stores everything cannot generalise. Compression keeps structure and throws details away. Drag the slider: many individual details become patterns; the error rises, but the model can place new cases.",
+      body: "A model that stores everything cannot generalise. Compression keeps structure and throws details away. There is lossless and lossy compression: tokenization is lossless; the transformer as a whole is lossy. Drag the slider: many individual details become patterns; the error rises, but the model can place new cases.",
       watch: "Drag the compression. What is gained, what is lost?",
       demoState: { scene: "compress" },
-      context: "Abstraction is lossy compression. Keeping only individual cases prevents comparison. Keeping structures lets the model place new cases.",
+      context: "Abstraction is lossy compression. During training, models fit partly contradictory or incomplete data. On average, a realistic world model is the best compression: it allows predictions about many cases, not only the training points.",
       deep: "Lindsey et al. (2025) find planning in the model: before the rhyme word, several candidates are active, and the sentence is built toward one of them. Othello-GPT develops an internal board model from move sequences. A good internal model is the simplest way to predict well.",
       boxes: [
         box("book-borges", "History", "Borges' Funes", "Funes remembers every stone, every cloud, every coin. Because he forgets nothing, he cannot abstract; Borges writes that thinking means forgetting differences, generalising, abstracting."),
         box("book-1", "Idea", "Why compress?", "A model that stores every case cannot generalise. Compression keeps the differences that matter across many cases."),
         box("book-2", "Planning", "Does an LLM plan?", "Lindsey et al. (2025) find candidates for the rhyme word before the line begins. The model holds several possibilities and builds the sentence toward one."),
-        box("book-3", "World model", "What does Othello-GPT show?", "A model that sees only move sequences develops an internal representation of the board. Prediction can force a world model.")
+        box("book-3", "World model", "What does Othello-GPT show?", "A model that sees only move sequences develops an internal representation of the board. Prediction can force a world model."),
+        box("book-lossless", "Limit", "Lossless or lossy?", "Tokenization is lossless: text → tokens → text. The transformer is lossy: it keeps a statistical model, not the text itself."),
+        box("book-world", "Training", "Why a world model?", "Training sees incomplete and contradictory data. On average, the best a model can do is a realistic world model that covers many cases and allows predictions."),
+        box("book-gravity", "Example", "Understanding gravity", "A newborn notices: things fall. An adult compresses this to: things fall, whatever the object. A physical theory compresses further: falling is acceleration in curved space. Each level covers more cases with better predictions.")
       ],
       sources: [
         { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf", why: { de: "Funes als Bild für Erinnern ohne Abstraktion.", en: "Funes as an image of memory without abstraction." } },
@@ -633,8 +639,8 @@
     {
       kicker: "04 / Neuronale Netze",
       title: "Ein kleines Netz lernt den Sinus",
-      body: "Ein echtes kleines Netz: x → 32 → 32 → 32 → 1, Dense plus ReLU. Es trainiert live auf 18 Punkten im Trainingsbereich. Die grüne Kurve passt innen; außerhalb extrapoliert sie. Ziehe Punkte, pausiere das Training oder starte neu.",
-      watch: "Ziehe einen Punkt. Wie reagiert die grüne Kurve?",
+      body: "Ein echtes kleines Netz: x → 32 → 32 → 32 → 1, Dense plus ReLU. Jeder Punkt ist ein Paar (x, y) = (input, output). Starte das Training selbst und beobachte den Loss. Ziehe Punkte, pausiere oder starte neu. Die grüne Kurve passt innen; links und rechts außerhalb extrapoliert sie.",
+      watch: "Starte das Training. Wie reagiert die grüne Kurve auf einen gezogenen Punkt?",
       demoState: { scene: "model", view: "plot" },
       context: "Der Loss wird nur auf den Trainingspunkten berechnet. Außerhalb gibt es keine Daten; die Kurve ist eine Extrapolation.",
       deep: "Das Netz hat drei versteckte Schichten mit je 32 ReLU-Neuronen. Der Loss wird nur auf den Trainingspunkten berechnet; außerhalb gibt es keine Daten. Deshalb kann es innen gut und außen schlecht sein. Das ist der Unterschied zwischen Approximation und Verstehen.",
@@ -672,8 +678,8 @@
     {
       kicker: "04 / Neural networks",
       title: "A small network learns the sine",
-      body: "A real small network: x → 32 → 32 → 32 → 1, dense with ReLU. It trains live on 18 points in the training range. The green curve fits inside; outside it extrapolates. Drag points, pause training, or restart.",
-      watch: "Drag a point. How does the green curve react?",
+      body: "A real small network: x → 32 → 32 → 32 → 1, dense with ReLU. Every point is a pair (x, y) = (input, output). Start training yourself and watch the loss. Drag points, pause, or restart. The green curve fits inside; left and right outside it extrapolates.",
+      watch: "Start training. How does the green curve react to a dragged point?",
       demoState: { scene: "model", view: "plot" },
       context: "The loss is computed only on the training points. Outside there is no data; the curve is an extrapolation.",
       deep: "The network has three hidden layers with 32 ReLU neurons each. The loss is computed only on the training points; outside there is no data. That is why it can be good inside and bad outside. This is the difference between approximation and understanding.",

@@ -6,6 +6,7 @@
     var el = document.createElement("div");
     el.className = "ls-sinus-scene";
     el.innerHTML = '<div class="ls-sinus-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-sinus-losschart"><canvas class="ls-sinus-loss-canvas" aria-label="Loss curve"></canvas></div>' +
       '<div class="ls-sinus-controls"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-sinus-train">' + (DE ? "Training pausieren" : "Pause training") + '</button>' +
         '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-sinus-reset">' + (DE ? "Neu starten" : "Restart") + '</button>' +
         '<span class="ls-sinus-loss" aria-live="polite"></span></div>' +
@@ -15,13 +16,15 @@
     var canvas = el.querySelector("canvas");
     var trainBtn = el.querySelector(".ls-sinus-train");
     var resetBtn = el.querySelector(".ls-sinus-reset");
+    var lossCanvas = el.querySelector(".ls-sinus-loss-canvas");
+    var lossCtx = null, lossSize = null;
     var lossEl = el.querySelector(".ls-sinus-loss");
     var readout = el.querySelector(".ls-sinus-readout");
     var C = api.colors();
     var size = null, ctx = null, model = null, xsTensor = null, ysTensor = null;
-    var points = [], curve = [], trainLoss = 0, epochs = 0, training = true, visible = true, timer = 0;
+    var points = [], curve = [], trainLoss = 0, epochs = 0, training = false, visible = true, timer = 0, lossHistory = [];
     var drag = null, fitReady = false;
-    var TRAIN_END = 0.68, X_MIN = -0.05, X_MAX = 1.05, Y_MIN = -0.45, Y_MAX = 1.15;
+    var TRAIN_END = 0.70, X_MIN = -0.20, X_MAX = 1.20, Y_MIN = -0.45, Y_MAX = 1.15;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
     function truth(x) { return 0.5 + 0.42 * Math.sin(2 * Math.PI * x); }
@@ -30,7 +33,7 @@
       var seed = 11;
       function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
       for (var i = 0; i < 18; i++) {
-        var x = 0.06 + 0.56 * i / 17;
+        var x = 0.10 + 0.60 * i / 17;
         points.push({ x: x, y: truth(x) + (rnd() - 0.5) * 0.035 });
       }
     }
@@ -107,22 +110,47 @@
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText(DE ? "Trainingsbereich" : "training range", 38, 16);
+      ctx.fillText(DE ? "links außerhalb" : "left outside", 38, 16);
       ctx.textAlign = "right";
-      ctx.fillText(DE ? "außerhalb" : "outside", size.w - 24, 16);
+      ctx.fillText(DE ? "rechts außerhalb" : "right outside", size.w - 24, 16);
       ctx.textAlign = "left";
-      ctx.fillText("x → 32 → 32 → 32 → 1", 38, size.h - 18);
+      ctx.fillText("x → 32 → 32 → 32 → 1 · " + (DE ? "Punkte = (x, y)" : "points = (x, y)"), 38, size.h - 18);
+      drawLossChart();
       updateReadout();
+    }
+    function drawLossChart() {
+      if (!lossCanvas) return;
+      lossSize = api.fit(lossCanvas, lossCanvas.parentNode);
+      lossCtx = lossSize.ctx;
+      var w = lossSize.w, h = lossSize.h;
+      lossCtx.clearRect(0, 0, w, h);
+      lossCtx.fillStyle = C.paper; lossCtx.fillRect(0, 0, w, h);
+      if (!lossHistory.length) return;
+      var max = Math.max.apply(null, lossHistory.concat([1e-6]));
+      lossCtx.strokeStyle = C.line; lossCtx.lineWidth = 1;
+      lossCtx.beginPath(); lossCtx.moveTo(8, h - 8); lossCtx.lineTo(w - 8, h - 8); lossCtx.stroke();
+      lossCtx.strokeStyle = C.gold; lossCtx.lineWidth = 1.8;
+      lossCtx.beginPath();
+      lossHistory.forEach(function (v, i) {
+        var x = 8 + i / Math.max(1, lossHistory.length - 1) * (w - 16);
+        var y = h - 8 - (v / max) * (h - 16);
+        if (i === 0) lossCtx.moveTo(x, y); else lossCtx.lineTo(x, y);
+      });
+      lossCtx.stroke();
+      lossCtx.fillStyle = C.muted; lossCtx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; lossCtx.textAlign = "left";
+      lossCtx.fillText("Loss", 8, 12);
     }
     function updateReadout() {
       lossEl.textContent = "Loss " + (trainLoss || 0).toFixed(4);
-      readout.innerHTML = '<span><b>' + (DE ? "Epochen" : "epochs") + '</b> ' + epochs + '</span><span><b>' + (DE ? "Trainings-Loss" : "training loss") + '</b> ' + (trainLoss || 0).toFixed(4) + '</span><span><b>' + (DE ? "außen" : "outside") + '</b> ' + outsideError().toFixed(3) + '</span><span><b>' + (DE ? "Modell" : "model") + '</b> 1 → 32 → 32 → 32 → 1</span>';
+      readout.innerHTML = '<span><b>' + (DE ? "Epochen" : "epochs") + '</b> ' + epochs + '</span><span><b>' + (DE ? "Trainings-Loss" : "training loss") + '</b> ' + (trainLoss || 0).toFixed(4) + '</span><span><b>' + (DE ? "außen" : "outside") + '</b> ' + outsideError().toFixed(3) + '</span><span><b>' + (DE ? "Modell" : "model") + '</b> 1 → 32 → 32 → 32 → 1</span><span><b>(x, y)</b> ' + (DE ? "input, output" : "input, output") + '</span>';
     }
     function trainTick() {
       if (!visible || !training || !model) { timer = 0; return; }
       model.fit(xsTensor, ysTensor, { epochs: 1, batchSize: points.length, shuffle: true, verbose: 0 }).then(function (h) {
         trainLoss = h.history.loss[0];
         epochs++;
+        lossHistory.push(trainLoss);
+        if (lossHistory.length > 80) lossHistory.shift();
         predict();
         draw();
         if (visible && training) timer = setTimeout(trainTick, reduced ? 600 : 90);
@@ -140,14 +168,16 @@
     }
     function resetAll() {
       if (timer) clearTimeout(timer); timer = 0;
-      makePoints(); makeTensors(); buildModel(); predict(); draw(); resumeTraining();
+      training = false; lossHistory = []; makePoints(); makeTensors(); buildModel(); predict(); draw();
+      trainBtn.textContent = DE ? "Training starten" : "Start training";
     }
     function initTf() {
       if (!window.tf) {
         readout.textContent = DE ? "TF.js konnte nicht geladen werden." : "TF.js could not be loaded.";
         return;
       }
-      makePoints(); makeTensors(); buildModel(); predict(); draw(); resumeTraining();
+      makePoints(); makeTensors(); buildModel(); predict(); draw();
+      trainBtn.textContent = DE ? "Training starten" : "Start training";
     }
     function pointerPos(e) {
       var r = canvas.getBoundingClientRect();
@@ -181,7 +211,7 @@
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (entries) {
         visible = entries.some(function (en) { return en.isIntersecting; });
-        if (visible) resumeTraining(); else pauseTraining();
+        if (!visible) pauseTraining(); else if (training && !timer) trainTick();
       }, { threshold: 0.05 }).observe(stage);
     }
     window.addEventListener("resize", resize);
@@ -192,7 +222,7 @@
       update: function () {},
       resize: resize,
       pause: pauseTraining,
-      resume: function () { visible = true; resumeTraining(); },
+      resume: function () { visible = true; if (training && !timer) trainTick(); },
       destroy: function () {
         if (timer) clearTimeout(timer);
         if (model) model.dispose();

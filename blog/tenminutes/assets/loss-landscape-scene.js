@@ -7,7 +7,7 @@
     el.className = "ls-loss-scene";
     el.innerHTML =
       '<div class="ls-loss-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
-      '<div class="ls-loss-side"><div class="ls-loss-net"></div><div class="ls-loss-status" aria-live="polite"></div></div>' +
+      '<div class="ls-loss-side"><div class="ls-loss-net"></div><div class="ls-loss-data-wrap"><canvas class="ls-loss-data"></canvas></div><div class="ls-loss-formula"></div><div class="ls-loss-status" aria-live="polite"></div></div>' +
       '<div class="ls-loss-controls">' +
         '<label class="ls-range">' + (DE ? "Lernrate" : "Learning rate") + ' <input type="range" class="ls-loss-lr" min="0.01" max="0.25" step="0.01" value="0.06"><output>0.06</output></label>' +
         '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loss-train">' + (DE ? "Im Worker trainieren" : "Train in worker") + '</button>' +
@@ -20,6 +20,8 @@
     var stage = el.querySelector(".ls-loss-stage");
     var canvas = el.querySelector("canvas");
     var netEl = el.querySelector(".ls-loss-net");
+    var dataCanvas = el.querySelector(".ls-loss-data");
+    var formulaEl = el.querySelector(".ls-loss-formula");
     var statusEl = el.querySelector(".ls-loss-status");
     var readout = el.querySelector(".ls-loss-readout");
     var lrEl = el.querySelector(".ls-loss-lr");
@@ -75,6 +77,30 @@
       html += '</svg>';
       netEl.innerHTML = '<div class="ls-loss-net-title">' + (DE ? "Das echte Modell" : "The real model") + '</div>' + html +
         '<div class="ls-loss-net-meta">1 → 4 → 1 · ' + (data.params || 13) + ' ' + (DE ? "Parameter" : "parameters") + '</div>';
+    }
+    function drawData() {
+      if (!data || !dataCanvas) return;
+      var ds = api.fit(dataCanvas, dataCanvas.parentNode);
+      var c = ds.ctx, w = ds.w, h = ds.h;
+      c.clearRect(0, 0, w, h);
+      c.fillStyle = C.paper; c.fillRect(0, 0, w, h);
+      c.strokeStyle = C.line; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(8, h - 8); c.lineTo(w - 8, h - 8); c.stroke();
+      var minX = Math.min.apply(null, data.xs), maxX = Math.max.apply(null, data.xs);
+      var minY = Math.min.apply(null, data.ys), maxY = Math.max.apply(null, data.ys);
+      data.xs.forEach(function (x, i) {
+        var px = 10 + (x - minX) / Math.max(1e-9, maxX - minX) * (w - 20);
+        var py = h - 10 - (data.ys[i] - minY) / Math.max(1e-9, maxY - minY) * (h - 20);
+        c.beginPath(); c.arc(px, py, 2.2, 0, Math.PI * 2); c.fillStyle = C.green; c.fill();
+      });
+      c.fillStyle = C.muted; c.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      c.fillText(DE ? "Daten (x, y)" : "data (x, y)", 8, 12);
+    }
+    function renderFormula() {
+      if (!formulaEl) return;
+      var tex = '\\underbrace{\\hat y}_{\\text{' + (DE ? 'Ausgabe' : 'output') + '}} = \\underbrace{\\sum_j v_j\\tanh(w_j x+b_j)+c}_{\\text{' + (DE ? '1 \\to 4 \\to 1' : '1 \\to 4 \\to 1') + '}} \\qquad \\underbrace{L}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_i(\\hat y_i-y_i)^2}_{\\text{MSE}}';
+      formulaEl.innerHTML = '<div class="ls-math" data-tex="' + tex + '" data-tex-display="true"><code class="ls-tex-source">' + api.esc(tex) + '</code></div>';
+      if (api.typeset) { try { api.typeset(formulaEl); } catch (e) {} }
     }
     function draw() {
       if (!size || !data) return;
@@ -156,6 +182,8 @@
         minL = Infinity; maxL = -Infinity;
         updateStatus(DE ? "Fertig · Modell trainiert" : "Done · model trained");
         drawNet();
+        drawData();
+        renderFormula();
         draw();
       };
       worker.onerror = function () {
@@ -204,6 +232,23 @@
     startWorker();
     return {
       update: function () {},
+      next: function () {
+        if (!data) { startWorker(); return true; }
+        if (!data.trajectory.length) return false;
+        if (ball >= data.trajectory.length - 1) return false;
+        pause();
+        ball++;
+        draw();
+        return true;
+      },
+      prev: function () {
+        if (!data || !data.trajectory.length) return false;
+        if (ball <= 0) return false;
+        pause();
+        ball--;
+        draw();
+        return true;
+      },
       resize: resize,
       pause: pause,
       resume: function () { draw(); },

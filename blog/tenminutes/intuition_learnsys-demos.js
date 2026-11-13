@@ -1826,7 +1826,7 @@
     var landTip = landEl.querySelector(".ls-land-tip");
     var landPoints = [];
     var landscape = true, landSize = null;
-    var landYaw = -0.62, landPitch = 1.16, landZoom = 1, landSteep = 1;
+    var landYaw = -0.62, landPitch = 1.42, landZoom = 1, landSteep = 1;
     var landCamTween = 0;
     var landDrag = null, landMoved = false, landHits = [], landOptionPoints = [];
     var landBall = { x: 0, y: 0, init: false, animating: false };
@@ -2311,7 +2311,7 @@
           });
         }
       }
-      quads.sort(function (a, b) { return a.z - b.z; });
+      quads.sort(function (a, b) { return b.z - a.z; });
       quads.forEach(function (q) {
         var qx = (q.p[0].x + q.p[1].x + q.p[2].x + q.p[3].x) / 4;
         var qy = (q.p[0].y + q.p[1].y + q.p[2].y + q.p[3].y) / 4;
@@ -2842,7 +2842,7 @@
         var dx = e.clientX - landDrag.x, dy = e.clientY - landDrag.y;
         if (Math.abs(dx) + Math.abs(dy) > 3) landMoved = true;
         landYaw = landDrag.yaw + dx * 0.008;
-        landPitch = Math.min(1.35, Math.max(0.55, landDrag.pitch - dy * 0.006));
+        landPitch = Math.min(1.52, Math.max(0.9, landDrag.pitch - dy * 0.006));
         landStaticDirty = true;
         drawLandscape();
         return;
@@ -3120,8 +3120,8 @@
         if (meta && meta.dir < 0) undo();
         else if (meta && meta.dir > 0) redo();
         if (!s) return;
-        if (s.view === "top") tweenCamera(1.30, -0.62, 1);
-        else if (s.view === "default") tweenCamera(1.16, -0.62, 1);
+        if (s.view === "top") tweenCamera(1.50, -0.62, 1);
+        else if (s.view === "default") tweenCamera(1.40, -0.62, 1);
         if (s.mode) setMode(s.mode);
         if (typeof s.temp === "number") {
           temp = s.temp;

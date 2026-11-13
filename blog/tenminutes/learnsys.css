@@ -1391,3 +1391,12 @@ h1,h2,h3,h4{
 
 .ia-chat-compose{align-items:flex-end}
 .ia-chat-input{flex:1;min-width:0;color:#202124;font:var(--ls-fs-ui-sm)/1.35 "Open Sans",sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;max-height:4.5em;overflow-y:auto}
+
+.ls-sinus-scene{grid-template-rows:minmax(200px,1fr) 54px auto auto}
+.ls-sinus-losschart{position:relative;height:54px;border:1px solid var(--ls-line);background:#fff;overflow:hidden}
+.ls-sinus-losschart canvas{display:block;width:100%;height:100%}
+
+.ls-loss-data-wrap{position:relative;height:54px;border:1px solid var(--ls-line);background:#fff;overflow:hidden}
+.ls-loss-data-wrap canvas{display:block;width:100%;height:100%}
+.ls-loss-formula{max-height:88px;overflow:auto;font-size:var(--ls-fs-micro);color:var(--ls-soft)}
+.ls-loss-formula .ls-math{font-size:var(--ls-fs-micro)}
