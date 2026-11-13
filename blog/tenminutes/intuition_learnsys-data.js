@@ -12,36 +12,22 @@
   ];
   var introSteps = DE ? [
     {
-      kicker: "01 / Suche und Chat",
-      title: "Was ist ein LLM? Suche und Chat",
-      body: "Ein Large Language Model (LLM) sagt das nächste Token voraus. Das siehst du zuerst in der Suche: Eine Zusammenfassung wird Token für Token geschrieben, darunter stehen Links. Dann im KI-Chat: Dieselbe Schleife, aber als Gespräch. Die Oberfläche unterscheidet sich, die Technik dahinter ist dieselbe.",
-      watch: "Sieh dir zuerst die Suche an, dann den Chat. Wo steckt dieselbe Schleife?",
-      demoState: { scene: "phone", view: "sequence" },
-      context: "Google-Zusammenfassung und KI-Chat sind zwei Oberflächen für dasselbe Modell. Beide schreiben die Antwort Token für Token; die Suche ergänzt Index und Links.",
-      deep: "Die Suchmaschine hat zusätzlich einen Index und ein Ranking; der Chat hat einen Dialogverlauf. Der generative Teil ist bei beiden ein LLM. Deshalb können beide plausibel klingen und falsch liegen; prüfe die Quelle.",
+      kicker: "01 / Chat und Code",
+      title: "Was ist ein LLM? Chat und Code",
+      body: "Ein Large Language Model (LLM) sagt das nächste Token voraus. Zuerst siehst du Suche und Chat: Beide schreiben die Antwort Token für Token. Dann Code: Dieselbe Schleife schreibt ein Python-Programm, das rechnet. Die Oberfläche wechselt, die Schleife bleibt.",
+      demoState: { scene: "media", step: 0 },
+      context: "Suche, Chat und Code sind drei Oberflächen für dasselbe Modell. Jede Antwort ist eine Sequenz von Tokens; Code wird zusätzlich ausgeführt.",
+      deep: "Die Suche ergänzt Index und Links; der Chat führt einen Dialog; der Code wird von Python ausgeführt. Der generative Kern ist bei allen ein LLM. Deshalb kann Code plausibel aussehen und trotzdem falsch sein.",
       boxes: [
         box("in-1", "Die Schleife", "Was ist ein Token?", "Ein Token ist ein Stück Text: ein Wort, ein Wortteil, ein Satzzeichen oder ein Byte. Das Modell liest eine ID, keine Buchstaben. Aus IDs werden Vektoren, und am Ende steht wieder Text."),
         box("in-2", "Die Idee", "Warum eine Schleife?", "Weil ein Satz länger ist als ein Token. Das Modell sagt ein Token voraus, hängt es an die Eingabe, und beginnt von vorn. Auto steht für die eigene Ausgabe, regressiv für die Vorhersage aus der bisherigen Sequenz."),
-        box("chat-1", "Gleiche Technik", "Was haben beide gemeinsam?", "Die Zusammenfassung in der Suche und die Chat-Antwort werden von einem Sprachmodell Token für Token geschrieben. Beide nutzen dieselbe Schleife."),
-        box("chat-2", "Unterschied", "Was ist anders?", "Die Suche zeigt zusätzlich Links und einen Index; der Chat führt den Dialog. Der generative Kern ist derselbe."),
-        box("chat-3", "Prüfen", "Was heißt das für dich?", "Beide können plausibel klingen und falsch liegen. Prüfe die Quelle, nicht nur die Oberfläche.")
+        box("chat-1", "Gleiche Technik", "Was haben Chat und Code gemeinsam?", "Die Chat-Antwort und das Programm werden von einem Sprachmodell Token für Token geschrieben. Beide nutzen dieselbe Schleife."),
+        box("in-3", "Code", "Warum funktioniert Code?", "Code hat eine strenge Syntax und viele wiederkehrende Muster. Beides ist für ein nächstes-Token-Modell leichter zu lernen als freie Prosa. Ein Programm ist eine Sequenz mit einer klaren lokalen Struktur."),
+        box("in-4", "Grenze", "Was garantiert der Code nicht?", "Dass er das Richtige tut. Das Modell optimiert auf Plausibilität, nicht auf Korrektheit. Die Ausführung zeigt, ob er passend ist.")
       ],
       sources: [
         { label: "Google Search Help (2024), AI Overviews", url: "https://support.google.com/websearch/answer/14901683?hl=en", why: { de: "Google beschreibt die generierten Zusammenfassungen in der Suche.", en: "Google describes the generated summaries in Search." } },
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Grundlage moderner Sprachmodelle.", en: "The transformer as the basis of modern language models." } }
-      ]
-    },
-    {
-      kicker: "01b / Code",
-      title: "LLM können nicht nur Texte, sie sind gute Programmierer",
-      body: "Dieselbe Schleife schreibt Prosa und Code. Auf dem Monitor links oben steht das Programm himmel.py, rechts unten läuft das Terminal. Das Modell sagt das nächste Token voraus, und Python führt den fertigen Code aus. Code ist eine weitere Sequenz, die das Modell vorhersagen kann.",
-      watch: "Klicke auf den Monitor, um die Animation erneut zu starten. Was hat das Modell geschrieben, was hat Python gerechnet?",
-      demoState: { scene: "code" },
-      context: "Das Modell schreibt das Programm; das Programm rechnet das Verhältnis. Die Schleife endet nicht am Text, sie kann auch eine ausführbare Anweisung erzeugen.",
-      deep: "Der Code ist nicht magisch korrekt. Er ist eine wahrscheinliche Fortsetzung, die zu den Trainingsdaten passt. Deshalb muss man ihn lesen und testen; die Schleife liefert eine Hypothese, keinen Beweis.",
-      boxes: [
-        box("in-3", "Code", "Warum funktioniert Code?", "Code hat eine strenge Syntax und viele wiederkehrende Muster. Beides ist für ein nächstes-Token-Modell leichter zu lernen als freie Prosa. Ein Programm ist eine Sequenz mit einer klaren lokalen Struktur."),
-        box("in-4", "Grenze", "Was garantiert der Code nicht?", "Dass er das Richtige tut. Das Modell optimiert auf Plausibilität, nicht auf Korrektheit. Die Ausführung zeigt, ob er passend ist.")
       ]
     },
     {
@@ -75,36 +61,22 @@
     }
   ] : [
     {
-      kicker: "01 / Search and chat",
-      title: "What is an LLM? Search and chat",
-      body: "A Large Language Model (LLM) predicts the next token. You see it first in Search: a summary is written token by token, with links underneath. Then in the AI chat: the same loop, but as a conversation. The surface differs, the technology behind it is the same.",
-      watch: "Watch Search first, then the chat. Where do you see the same loop?",
-      demoState: { scene: "phone", view: "sequence" },
-      context: "Google's summary and the AI chat are two surfaces for the same model. Both write the answer token by token; Search adds an index and links.",
-      deep: "The search engine also has an index and a ranking; the chat has a dialogue history. The generative part is an LLM in both. That is why both can sound plausible and be wrong; check the source.",
+      kicker: "01 / Chat and code",
+      title: "What is an LLM? Chat and code",
+      body: "A Large Language Model (LLM) predicts the next token. First you see Search and chat: both write the answer token by token. Then code: the same loop writes a Python program that computes. The surface changes, the loop stays.",
+      demoState: { scene: "media", step: 0 },
+      context: "Search, chat, and code are three surfaces for the same model. Every answer is a sequence of tokens; code is also executed.",
+      deep: "Search adds an index and links; the chat holds a dialogue; the code is run by Python. The generative core is an LLM in all three. That is why code can look plausible and still be wrong.",
       boxes: [
         box("in-1", "The loop", "What is a token?", "A token is a piece of text: a word, a word piece, a punctuation mark, or a byte. The model reads an ID, not letters. IDs become vectors, and at the end there is text again."),
         box("in-2", "The idea", "Why a loop?", "Because a sentence is longer than one token. The model predicts one token, appends it to the input, and starts again. Auto stands for its own output, regressive for predicting from the sequence so far."),
-        box("chat-1", "Same technology", "What do they share?", "The summary in Search and the chat answer are written by a language model token by token. Both use the same loop."),
-        box("chat-2", "Difference", "What is different?", "Search also shows links and an index; the chat holds a dialogue. The generative core is the same."),
-        box("chat-3", "Check", "What does that mean for you?", "Both can sound plausible and be wrong. Check the source, not only the surface.")
+        box("chat-1", "Same technology", "What do chat and code share?", "The chat answer and the program are written by a language model token by token. Both use the same loop."),
+        box("in-3", "Code", "Why does code work?", "Code has strict syntax and many repeating patterns. Both are easier for a next-token model to learn than free prose. A program is a sequence with clear local structure."),
+        box("in-4", "Limit", "What does code not guarantee?", "That it does the right thing. The model optimises for plausibility, not correctness. Execution shows whether it fits.")
       ],
       sources: [
         { label: "Google Search Help (2024), AI Overviews", url: "https://support.google.com/websearch/answer/14901683?hl=en", why: { de: "Google beschreibt die generierten Zusammenfassungen in der Suche.", en: "Google describes the generated summaries in Search." } },
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Grundlage moderner Sprachmodelle.", en: "The transformer as the basis of modern language models." } }
-      ]
-    },
-    {
-      kicker: "01b / Code",
-      title: "LLMs can do more than text; they are good programmers",
-      body: "The same loop writes prose and code. On the monitor, the program sky.py is top left and the terminal runs bottom right. The model predicts the next token, and Python executes the finished code. Code is just another sequence the model can predict.",
-      watch: "Click the monitor to replay the animation. What did the model write, what did Python compute?",
-      demoState: { scene: "code" },
-      context: "The model writes the program; the program computes the ratio. The loop does not stop at text; it can produce an executable instruction.",
-      deep: "The code is not magically correct. It is a likely continuation that fits the training data. That is why you read and test it; the loop gives a hypothesis, not a proof.",
-      boxes: [
-        box("in-3", "Code", "Why does code work?", "Code has strict syntax and many recurring patterns. Both are easier for a next-token model to learn than free prose. A program is a sequence with a clear local structure."),
-        box("in-4", "Limit", "What does the code not guarantee?", "That it does the right thing. The model optimises for plausibility, not correctness. Running it shows whether it fits.")
       ]
     },
     {
@@ -1031,10 +1003,91 @@
     }
   ];
 
+  var gradientSteps = DE ? [
+    {
+      kicker: "17 / Training",
+      title: "Der Gradient zeigt bergab",
+      body: "Training ist Bergabgehen. Der Gradient zeigt, in welche Richtung der Loss steigt; ein Schritt geht in die Gegenrichtung. Klicke Schritt und ändere die Lernrate. Der Loss sollte sinken; eine zu große Lernrate kann überspringen.",
+      watch: "Klicke Schritt. Sinkt der Loss? Was passiert bei großer Lernrate?",
+      demoState: { scene: "gradient" },
+      context: "Der Gradient ist die Steigung des Loss. Die Lernrate bestimmt die Schrittweite. Zu klein ist langsam, zu groß kann instabil werden.",
+      deep: "In echten Netzen gibt Backpropagation den Gradienten für Millionen Parameter. Der Optimierer macht daraus einen Schritt. Die Demo ist eine Dimension.",
+      boxes: [
+        box("grad-1", "Prototyp", "Was zeigt die Demo?", "Eine eindimensionale Loss-Kurve. Der Punkt ist das Gewicht; die gestrichelte Linie zeigt die lokale Steigung. Jeder Schritt bewegt das Gewicht gegen den Gradienten."),
+        box("grad-2", "Technik", "Was macht die Lernrate?", "Sie skaliert den Schritt. Klein: sicher, aber langsam. Groß: schnell, aber der Punkt kann über das Minimum springen."),
+        box("grad-3", "Grenze", "Warum ist das nicht das ganze Training?", "Echte Netze haben Millionen Dimensionen und viele lokale Strukturen. Die Demo zeigt die Idee, nicht die Landschaft eines LLM.")
+      ],
+      sources: [
+        { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } },
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten für mehrschichtige Netze.", en: "Gradients for multilayer networks." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "17 / Training",
+      title: "The gradient points downhill",
+      body: "Training is walking downhill. The gradient points in the direction where the loss rises; a step goes the other way. Click Step and change the learning rate. The loss should fall; too large a rate can overshoot.",
+      watch: "Click Step. Does the loss fall? What happens with a large learning rate?",
+      demoState: { scene: "gradient" },
+      context: "The gradient is the slope of the loss. The learning rate sets the step size. Too small is slow, too large can become unstable.",
+      deep: "In real networks, backpropagation gives the gradient for millions of parameters. The optimiser turns it into a step. The demo is one dimension.",
+      boxes: [
+        box("grad-1", "Prototype", "What does the demo show?", "A one-dimensional loss curve. The point is the weight; the dashed line shows the local slope. Each step moves the weight against the gradient."),
+        box("grad-2", "Technique", "What does the learning rate do?", "It scales the step. Small: safe but slow. Large: fast, but the point can jump over the minimum."),
+        box("grad-3", "Limit", "Why is this not all of training?", "Real networks have millions of dimensions and many local structures. The demo shows the idea, not the landscape of an LLM.")
+      ],
+      sources: [
+        { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } },
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten für mehrschichtige Netze.", en: "Gradients for multilayer networks." } }
+      ]
+    }
+  ];
+
+  var kvcacheSteps = DE ? [
+    {
+      kicker: "18 / Inferenz",
+      title: "Der KV-Cache wächst mit dem Kontext",
+      body: "Beim Generieren speichert das Modell Key und Value für jedes Token. Der KV-Cache wächst mit Kontextlänge, Schichten, Heads und Kopfdimension. Deshalb kostet ein langer Chat Speicher, obwohl das Modell nicht neu trainiert wird.",
+      watch: "Ziehe den Kontext nach oben. Wann passt der Cache nicht mehr in 24 GB?",
+      demoState: { scene: "kvcache" },
+      context: "Der Cache vermeidet, K und V für alte Tokens neu zu berechnen. Er wächst linear mit der Kontextlänge.",
+      deep: "Die Rechnung ist eine Näherung: 2 Bytes pro Wert (FP16), K und V, alle Schichten und Heads. Echte Systeme nutzen weitere Tricks wie Paging oder Quantisierung.",
+      boxes: [
+        box("kv-1", "Prototyp", "Was ist der KV-Cache?", "Beim Generieren werden Key- und Value-Vektoren aller bisherigen Tokens gespeichert. So muss das Modell sie nicht bei jedem neuen Token neu berechnen."),
+        box("kv-2", "Rechnung", "Wie groß wird er?", "2 Bytes pro Wert, K und V, mal Schichten, Heads, Kopfdimension und Tokens. Die Demo zeigt eine Näherung für FP16."),
+        box("kv-3", "Grenze", "Was fehlt in der Rechnung?", "Aktivierungen, temporäre Puffer, Fragmentierung und den Modellgraph. Die echte Speichernutzung kann höher liegen.")
+      ],
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Key- und Value-Vektoren der Attention.", en: "Key and value vectors in attention." } },
+        { label: "Dao et al. (2022), FlashAttention", url: "https://arxiv.org/abs/2205.14135", why: { de: "Speichereffiziente Attention.", en: "Memory-efficient attention." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "18 / Inference",
+      title: "The KV cache grows with context",
+      body: "During generation the model stores keys and values for every token. The KV cache grows with context length, layers, heads, and head dimension. That is why a long chat costs memory even though the model is not retrained.",
+      watch: "Drag the context up. When does the cache no longer fit in 24 GB?",
+      demoState: { scene: "kvcache" },
+      context: "The cache avoids recomputing K and V for old tokens. It grows linearly with context length.",
+      deep: "The calculation is an approximation: 2 bytes per value (FP16), K and V, all layers and heads. Real systems use further tricks such as paging or quantisation.",
+      boxes: [
+        box("kv-1", "Prototype", "What is the KV cache?", "During generation, key and value vectors for all previous tokens are stored. The model does not have to recompute them for every new token."),
+        box("kv-2", "Calculation", "How large does it get?", "2 bytes per value, K and V, times layers, heads, head dimension, and tokens. The demo shows an FP16 approximation."),
+        box("kv-3", "Limit", "What is missing?", "Activations, temporary buffers, fragmentation, and the model graph. Real memory use can be higher.")
+      ],
+      sources: [
+        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Key- und Value-Vektoren der Attention.", en: "Key and value vectors in attention." } },
+        { label: "Dao et al. (2022), FlashAttention", url: "https://arxiv.org/abs/2205.14135", why: { de: "Speichereffiziente Attention.", en: "Memory-efficient attention." } }
+      ]
+    }
+  ];
+
   var historySteps = DE ? [
 
+
     {
-      kicker: "17 / Geschichte",
+      kicker: "19 / Geschichte",
       title: "Geschichte in zehn Schritten",
       body: "Von den Kerben im Wolfsknochen bis zu GPT: Zehn Tabs folgen dem roten Faden aus `history.php`. Ganz früh beginnt Rechnen als Zählen mit Steinen und Kerben. Dann kommen Logik, Rechenmaschinen, das Neuron, das Perzeptron, die XOR-Krise, Backpropagation, Deep Learning, der Transformer und die LLMs. Klicke die Tabs und sieh, welche Idee jeweils weitergetragen wird.",
       watch: "Klicke die zehn Tabs. Welche Idee trägt bis zum Transformer?",
@@ -1055,7 +1108,7 @@
     }
   ] : [
     {
-      kicker: "17 / History",
+      kicker: "19 / History",
       title: "History in ten steps",
       body: "From the notches in a wolf bone to GPT: ten tabs follow the thread from `history.php`. Arithmetic starts as counting with stones and notches. Then come logic, calculating machines, the neuron, the perceptron, the XOR crisis, backpropagation, deep learning, the transformer, and LLMs. Click the tabs and see which idea is carried forward.",
       watch: "Click the ten tabs. Which idea carries through to the transformer?",
@@ -1078,7 +1131,7 @@
 
   var philosophySteps = DE ? [
     {
-      kicker: "18 / Philosophie",
+      kicker: "20 / Philosophie",
       title: "Du bist das Chinesische Zimmer",
       body: "Du sitzt in einem Zimmer. Durch eine Klappe kommen Zeichen, die du nicht lesen kannst. Auf dem Tisch liegt ein Regelbuch: Es sagt dir, welche Zeichenfolge du herausschreiben sollst. Du suchst die Eingabe, kopierst die passende Antwort, und von außen sieht es aus, als würdest du die Sprache verstehen. Searle (1980) nennt das den Unterschied zwischen Regeln befolgen und Bedeutung verstehen. Folge dem Regelbuch und beobachte, was du tust.",
       watch: "Folge dem Regelbuch. Wirkt deine Antwort von außen intelligent?",
@@ -1097,7 +1150,7 @@
     }
   ] : [
     {
-      kicker: "18 / Philosophy",
+      kicker: "20 / Philosophy",
       title: "You are the Chinese Room",
       body: "You sit in a room. Through a slot come characters you cannot read. On the table is a rulebook: it tells you which string to write back. You find the input, copy the matching answer, and from the outside it looks as if you understand the language. Searle (1980) calls this the difference between following rules and understanding meaning. Follow the rulebook and watch what you do.",
       watch: "Follow the rulebook. Does your answer look intelligent from the outside?",
@@ -1116,7 +1169,7 @@
     }
   ];
 
-  var steps = introSteps.concat(insideSteps, stackSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, activationSteps, mlpSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps, languageSteps, posttrainSteps, evalSteps, historySteps, philosophySteps);
+  var steps = introSteps.concat(insideSteps, stackSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, activationSteps, mlpSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps, languageSteps, posttrainSteps, evalSteps, gradientSteps, kvcacheSteps, historySteps, philosophySteps);
 
   var day = {
     id: "intuition",

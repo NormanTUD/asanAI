@@ -1,8 +1,8 @@
 # Offene Arbeiten aus `intuition_learnsys_todo2`
 
 Status: `[done]` erledigt, `[in work]` aktuell, `[pending]` offen.
-Aktueller Stand: 31 Folien. „Was ist ein LLM?“ und „KI-Chat“ sind eine Folie mit
-Suche-und-Chat-Demo; Post-Training und Evaluation sind ergänzt; die Tier-Folie wurde entfernt.
+Aktueller Stand: 32 Folien. Chat/Handy und Code sind eine Folie; Post-Training,
+Evaluation, Gradient und KV-Cache sind ergänzt; die Tier-Folie wurde entfernt.
 
 ## Bereits erledigt (schnelle Schritte)
 - [done] „Ein Block: Attention, dann FFN“ entfernt.
@@ -30,7 +30,9 @@ Suche-und-Chat-Demo; Post-Training und Evaluation sind ergänzt; die Tier-Folie 
 - [done] „Modelle“ zeigt sechs Schritte: Daten, Modell, Loss, Update 1, Update 2, Fit; mit Loss-Inset, Fehlerlinien und Vorhersage-Sonde.
 - [done] Die Handy-Folie zeigt Suche und Chat in einer Demo, mit manuellen Tabs und automatischem Übergang.
 - [done] Zwei neue Folien: „Vom Basismodell zum Assistenten“ (SFT/RLHF/Präferenzwahl) und „Wie gut ist das Modell?“ (MMLU/HumanEval/GSM8K, Kontamination).
-- [done] Folienzahl auf 31 gebracht.
+- [done] Chat/Handy und Code zu einer Folie mit zwei Tabs und Weiter-Navigation zusammengelegt.
+- [done] Zwei technische Prototypen ergänzt: Gradienten-Schritt mit Lernrate und KV-Cache-Rechner.
+- [done] Folienzahl auf 32 gebracht.
 
 ## Als Nächstes (schnell → langsam)
 1. [pending] „Jeder Platz bekommt einen Fingerabdruck“: grünen „Großkreis“-Punkt entfernen, Euklid entfernen, klarstellen, dass das „Wort“ ein hochdimensionaler Vektor ist; mit Weiter durch Dimensionen und Kontext gehen.
@@ -47,8 +49,8 @@ Suche-und-Chat-Demo; Post-Training und Evaluation sind ergänzt; die Tier-Folie 
 12. [pending] „Von Logits zu einer Verteilung“: Overlay beheben; interaktiv und visuell auf das Niveau der anderen Folien bringen.
 13. [pending] Sprachfolie: Datenqualität visualisieren, Caveat in Optionalbox, mehr zu Filtern/Dedupe/Decontamination recherchieren.
 14. [pending] Chinesisches Zimmer: mehr Philosophie ergänzen (Searle, Systems Reply, Symbol Grounding, LLM-Bezug).
-15. [done] Die Geschichte ist als Zehn-Tab-Folie umgesetzt; die Folienzahl ist 31.
+15. [done] Die Geschichte ist als Zehn-Tab-Folie umgesetzt; die Folienzahl ist 32.
 
 ## Später / bewusst zurückgestellt
 - [pending] Weitere Geschichtsbilder aus `history.php` prüfen und Credits ergänzen; die aktuelle Fassung nutzt Wolfsknochen, Salamis-Tafel, Llull, Leibniz, Pitts, Mark I, Minsky, Rosenblatt und Transformer.
-- [done] Finale Folienzahl 31 festgelegt.
+- [done] Aktuelle Folienzahl 32 festgelegt (31 plus zwei Prototypen minus eine Zusammenlegung).

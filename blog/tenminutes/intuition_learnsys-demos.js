@@ -1142,8 +1142,8 @@
     el.innerHTML =
       '<div class="ia-stage">' +
         '<div class="ia-phone-switch" role="tablist" aria-label="' + (DE ? "Suche oder Chat" : "Search or chat") + '">' +
-          '<button type="button" class="is-on" data-phone="search" role="tab" aria-selected="true">1 ' + (DE ? "Suche" : "Search") + '</button>' +
-          '<button type="button" data-phone="chat" role="tab" aria-selected="false">2 ' + (DE ? "Chat" : "Chat") + '</button>' +
+          '<button type="button" class="is-on" data-phone="search" role="tab" aria-selected="true">' + (DE ? "Suche" : "Search") + '</button>' +
+          '<button type="button" data-phone="chat" role="tab" aria-selected="false">' + (DE ? "Chat" : "Chat") + '</button>' +
         '</div>' +
         '<div class="ia-phones">' +
           '<div class="ia-phone is-active" id="ia-phone">' +
@@ -1190,7 +1190,7 @@
     var searchPhone = el.querySelector("#ia-phone");
     var chatQuestionEl = el.querySelector(".ia-chat-question");
     var chatAnswerEl = el.querySelector(".ia-chat-answer");
-    var view = "search", chatStarted = false;
+    var view = "search", chatStarted = false, sequenceDone = null;
     var modeBtns = el.querySelectorAll("[data-phone]");
     function setPhone(which) {
       var isChat = which === "chat";
@@ -1331,6 +1331,7 @@
         if (chatQuestionEl) chatQuestionEl.textContent = CHAT_Q;
         if (chatAnswerEl) chatAnswerEl.textContent = CHAT_A;
         if (chatPhone) chatPhone.classList.add("is-answered");
+        if (sequenceDone) later(function () { sequenceDone(); }, 900);
         return;
       }
       typeChat(chatQuestionEl, CHAT_Q, 14, function () {
@@ -1338,7 +1339,7 @@
         later(function () {
           if (chatPhone) chatPhone.classList.remove("is-thinking");
           if (chatPhone) chatPhone.classList.add("is-answered");
-          typeChat(chatAnswerEl, CHAT_A, 5, null);
+          typeChat(chatAnswerEl, CHAT_A, 5, function () { if (sequenceDone) sequenceDone(); });
         }, 360);
       });
     }
@@ -1426,6 +1427,8 @@
           if (view === "chat") startChat();
         }
       },
+      start: function () { started = true; shownOnce = true; play(); },
+      onSequenceDone: function (fn) { sequenceDone = fn; },
       pause: clearTimers,
       resume: function () { if (shownOnce && started) play(); shownOnce = true; fit(); },
       resize: fit,
@@ -1661,6 +1664,7 @@
     reset();
     return {
       update: function () {},
+      start: function () { reset(); },
       pause: function () {
         clearTimers();
         if (phase !== "ready" && phase !== "done") phase = "paused";
@@ -1779,7 +1783,7 @@
     var landTip = landEl.querySelector(".ls-land-tip");
     var landPoints = [];
     var landscape = true, landSize = null;
-    var landYaw = -0.62, landPitch = 0.92, landZoom = 1;
+    var landYaw = -0.62, landPitch = 1.16, landZoom = 1;
     var landCamTween = 0;
     var landDrag = null, landMoved = false, landHits = [], landOptionPoints = [];
     var landBall = { x: 0, y: 0, init: false, animating: false };
@@ -2801,7 +2805,7 @@
         var dx = e.clientX - landDrag.x, dy = e.clientY - landDrag.y;
         if (Math.abs(dx) + Math.abs(dy) > 3) landMoved = true;
         landYaw = landDrag.yaw + dx * 0.008;
-        landPitch = Math.min(1.35, Math.max(0.18, landDrag.pitch - dy * 0.006));
+        landPitch = Math.min(1.35, Math.max(0.55, landDrag.pitch - dy * 0.006));
         landStaticDirty = true;
         drawLandscape();
         return;
@@ -3076,8 +3080,8 @@
         if (meta && meta.dir < 0) undo();
         else if (meta && meta.dir > 0) redo();
         if (!s) return;
-        if (s.view === "top") tweenCamera(0.30, -0.62, 1);
-        else if (s.view === "default") tweenCamera(0.92, -0.62, 1);
+        if (s.view === "top") tweenCamera(1.30, -0.62, 1);
+        else if (s.view === "default") tweenCamera(1.16, -0.62, 1);
         if (s.mode) setMode(s.mode);
         if (typeof s.temp === "number") {
           temp = s.temp;
@@ -7672,11 +7676,233 @@
     };
   }
 
+  function mediaScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-media-scene";
+    el.innerHTML = '<div class="ls-media-tabs" role="tablist">' +
+        '<button type="button" class="ls-chip is-on" data-media="phone" role="tab" aria-selected="true">' + (DE ? "Suche & Chat" : "Search & chat") + '</button>' +
+        '<button type="button" class="ls-chip" data-media="code" role="tab" aria-selected="false">Code</button>' +
+      '</div>' +
+      '<div class="ls-media-stage"><div class="ls-media-layer" data-layer="phone"></div><div class="ls-media-layer" data-layer="code" hidden></div></div>' +
+      '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-media-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-media-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-media-next">' + (DE ? "Weiter" : "Next") + ' →</button></div>';
+    root.appendChild(el);
+    var phoneLayer = el.querySelector('[data-layer="phone"]');
+    var codeLayer = el.querySelector('[data-layer="code"]');
+    var phoneApi = phoneScene(phoneLayer, api);
+    var codeApi = codeScene(codeLayer, api);
+    phoneApi.update({ view: "sequence" });
+    phoneApi.onSequenceDone(function () { if (step === 0) show("code"); });
+    var tabs = el.querySelectorAll("[data-media]");
+    var prevBtn = el.querySelector(".ls-media-prev");
+    var nextBtn = el.querySelector(".ls-media-next");
+    var progress = el.querySelector(".ls-media-progress");
+    var step = 0;
+    codeApi.pause();
+    function show(mode) {
+      var isPhone = mode !== "code";
+      step = isPhone ? 0 : 1;
+      phoneLayer.hidden = !isPhone;
+      codeLayer.hidden = isPhone;
+      tabs.forEach(function (b) {
+        var on = b.getAttribute("data-media") === (isPhone ? "phone" : "code");
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      if (isPhone) {
+        codeApi.pause();
+        phoneApi.start();
+      } else {
+        phoneApi.pause();
+        codeApi.resize();
+        codeApi.start();
+      }
+      progress.textContent = isPhone ? (DE ? "Suche → Chat → Code" : "Search → chat → code") : "Code";
+      prevBtn.disabled = step === 0;
+      nextBtn.textContent = step === 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+    }
+    function nextInternal() {
+      if (step < 1) { show("code"); return true; }
+      return false;
+    }
+    function prevInternal() {
+      if (step > 0) { show("phone"); return true; }
+      return false;
+    }
+    function nextStep() {
+      if (nextInternal()) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+    }
+    function prevStep() {
+      if (prevInternal()) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
+    }
+    tabs.forEach(function (b) {
+      b.addEventListener("click", function () { show(b.getAttribute("data-media")); });
+    });
+    prevBtn.addEventListener("click", prevStep);
+    nextBtn.addEventListener("click", nextStep);
+    show("phone");
+    return {
+      update: function (s) {
+        if (s && s.mode) show(s.mode);
+        else if (s && typeof s.step === "number") show(s.step === 0 ? "phone" : "code");
+      },
+      next: nextInternal,
+      prev: prevInternal,
+      onKey: function (e) {
+        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
+        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
+        return false;
+      },
+      pause: function () { phoneApi.pause(); codeApi.pause(); },
+      resume: function () { show(step === 0 ? "phone" : "code"); },
+      resize: function () { phoneApi.resize(); codeApi.resize(); },
+      destroy: function () { phoneApi.destroy(); codeApi.destroy(); el.remove(); }
+    };
+  }
+
+  function gradientScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-gradient-scene";
+    el.innerHTML = '<div class="ls-gradient-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-scene-row"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-grad-step">' + (DE ? "Schritt" : "Step") + '</button>' +
+        '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-grad-reset">' + (DE ? "Zurücksetzen" : "Reset") + '</button>' +
+        '<label class="ls-range">' + (DE ? "Lernrate" : "Learning rate") + ' <input type="range" class="ls-grad-lr" min="0.01" max="0.6" step="0.01" value="0.12"><output>0.12</output></label>' +
+      '</div>' +
+      '<div class="ls-gradient-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-gradient-stage");
+    var canvas = el.querySelector("canvas");
+    var readout = el.querySelector(".ls-gradient-readout");
+    var lrEl = el.querySelector(".ls-grad-lr");
+    var lrOut = lrEl.nextElementSibling;
+    var w = 3.2, lr = 0.12, steps = 0, size = null, ctx = null;
+    var C = api.colors();
+    function loss(x) { return 0.14 * Math.pow(x - 1.1, 2) + 0.12 * Math.cos(4 * x) + 0.55; }
+    function grad(x) { var e = 0.001; return (loss(x + e) - loss(x - e)) / (2 * e); }
+    function px(x) { return 30 + (x + 2) / 6 * (size.w - 50); }
+    function py(y) { return size.h - 40 - Math.min(1, Math.max(0, y)) * (size.h - 80); }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      ctx.clearRect(0, 0, size.w, size.h);
+      var bg = ctx.createRadialGradient(size.w * 0.5, size.h * 0.3, 8, size.w * 0.5, size.h * 0.5, Math.max(size.w, size.h) * 0.7);
+      bg.addColorStop(0, "rgba(247,250,249,.9)"); bg.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, size.w, size.h);
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(30, size.h - 40); ctx.lineTo(size.w - 20, size.h - 40); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(30, 20); ctx.lineTo(30, size.h - 40); ctx.stroke();
+      ctx.strokeStyle = C.petrol; ctx.lineWidth = 2.4; ctx.beginPath();
+      for (var i = 0; i <= 100; i++) {
+        var x = -2 + 6 * i / 100, y = loss(x);
+        if (i === 0) ctx.moveTo(px(x), py(y)); else ctx.lineTo(px(x), py(y));
+      }
+      ctx.stroke();
+      var g = grad(w);
+      var lineY = py(loss(w));
+      ctx.strokeStyle = C.gold; ctx.lineWidth = 1.5; ctx.setLineDash([5, 4]);
+      ctx.beginPath(); ctx.moveTo(px(w), py(loss(w))); ctx.lineTo(px(w + 0.8), py(loss(w) - g * 0.8)); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(px(w), lineY, 7, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = C.ink; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
+      ctx.fillText("w = " + w.toFixed(3), px(w) + 10, lineY - 10);
+      ctx.fillStyle = C.muted; ctx.textAlign = "center";
+      ctx.fillText(DE ? "Gewicht w" : "weight w", size.w / 2, size.h - 16);
+      updateReadout();
+    }
+    function updateReadout() {
+      var g = grad(w);
+      readout.innerHTML = '<span><b>w</b> ' + w.toFixed(3) + '</span><span><b>Loss</b> ' + loss(w).toFixed(3) + '</span><span><b>' + (DE ? "Gradient" : "gradient") + '</b> ' + g.toFixed(3) + '</span><span><b>' + (DE ? "Schritte" : "steps") + '</b> ' + steps + '</span>';
+    }
+    function step() { w = Math.max(-2, Math.min(4, w - lr * grad(w))); steps++; draw(); }
+    function reset() { w = 3.2; steps = 0; draw(); }
+    el.querySelector(".ls-grad-step").addEventListener("click", step);
+    el.querySelector(".ls-grad-reset").addEventListener("click", reset);
+    lrEl.addEventListener("input", function () { lr = parseFloat(lrEl.value) || 0.12; lrOut.textContent = lr.toFixed(2); });
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    resize();
+    return { update: function () {}, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
+  function kvcacheScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-kv-scene";
+    el.innerHTML = '<div class="ls-kv-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-kv-tokens" min="512" max="32768" step="512" value="4096"><output>4096</output></label>' +
+        '<label class="ls-range">' + (DE ? "Schichten" : "Layers") + ' <input type="range" class="ls-kv-layers" min="12" max="96" step="4" value="32"><output>32</output></label>' +
+        '<label class="ls-range">Heads <input type="range" class="ls-kv-heads" min="12" max="128" step="4" value="32"><output>32</output></label>' +
+        '<label class="ls-range">Head-Dim <input type="range" class="ls-kv-dim" min="64" max="128" step="64" value="128"><output>128</output></label>' +
+      '</div>' +
+      '<div class="ls-kv-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-kv-stage");
+    var canvas = el.querySelector("canvas");
+    var readout = el.querySelector(".ls-kv-readout");
+    var tokensEl = el.querySelector(".ls-kv-tokens");
+    var layersEl = el.querySelector(".ls-kv-layers");
+    var headsEl = el.querySelector(".ls-kv-heads");
+    var dimEl = el.querySelector(".ls-kv-dim");
+    var tokens = 4096, layers = 32, heads = 32, dim = 128, size = null, ctx = null;
+    var C = api.colors();
+    function gb(bytes) { return bytes / 1e9; }
+    function cacheGB() { return gb(tokens * layers * heads * dim * 2 * 2); }
+    function weightGB() { return 14; }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      ctx.clearRect(0, 0, size.w, size.h);
+      var w = size.w, h = size.h, pad = 28;
+      ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
+      var total = 24;
+      var cache = cacheGB(), weights = weightGB();
+      var y = h * 0.36;
+      ctx.fillStyle = C.line; ctx.fillRect(pad, y, w - pad * 2, 26);
+      var cw = Math.min(1, cache / total) * (w - pad * 2);
+      var ww = Math.min(1, weights / total) * (w - pad * 2);
+      ctx.save();
+      ctx.beginPath(); ctx.rect(pad, y, w - pad * 2, 26); ctx.clip();
+      ctx.fillStyle = C.green; ctx.fillRect(pad, y, ww, 26);
+      ctx.fillStyle = C.gold; ctx.fillRect(pad + ww, y, cw, 26);
+      ctx.restore();
+      ctx.strokeStyle = C.lineStrong; ctx.strokeRect(pad, y, w - pad * 2, 26);
+      ctx.fillStyle = C.ink; ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif'; ctx.textAlign = "left";
+      ctx.fillText(DE ? "24 GB GPU" : "24 GB GPU", pad, y - 14);
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.fillStyle = C.green; ctx.fillText(DE ? "Gewichte " + weights.toFixed(1) + " GB" : "weights " + weights.toFixed(1) + " GB", pad, y + 44);
+      ctx.fillStyle = C.gold; ctx.fillText("KV-Cache " + cache.toFixed(1) + " GB", pad + ww + 8, y + 44);
+      var fits = cache + weights <= total;
+      ctx.fillStyle = fits ? C.green : C.coral;
+      ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif';
+      ctx.fillText(fits ? (DE ? "passt" : "fits") : (DE ? "passt nicht" : "does not fit"), pad, h - 24);
+      updateReadout();
+    }
+    function updateReadout() {
+      var cache = cacheGB(), total = cache + weightGB();
+      readout.innerHTML = '<span><b>KV</b> ' + cache.toFixed(1) + ' GB</span><span><b>' + (DE ? "Gewichte" : "weights") + '</b> ' + weightGB().toFixed(1) + ' GB</span><span><b>' + (DE ? "gesamt" : "total") + '</b> ' + total.toFixed(1) + ' GB / 24 GB</span>';
+    }
+    function sync() { tokens = parseInt(tokensEl.value, 10); layers = parseInt(layersEl.value, 10); heads = parseInt(headsEl.value, 10); dim = parseInt(dimEl.value, 10); [tokensEl,layersEl,headsEl,dimEl].forEach(function (x) { x.nextElementSibling.textContent = x.value; }); draw(); }
+    [tokensEl,layersEl,headsEl,dimEl].forEach(function (x) { x.addEventListener("input", sync); });
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    resize();
+    return { update: function () {}, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
   var SCENES = {
+
+
 
     embedding: embeddingScene,
     phone: phoneScene,
     code: codeScene,
+    media: mediaScene,
     loop: loopScene,
     tunnel: tunnelScene,
     tokenize: tokenizeScene,
@@ -7699,6 +7925,8 @@
     langdata: langdataScene,
     posttrain: posttrainScene,
     eval: evalScene,
+    gradient: gradientScene,
+    kvcache: kvcacheScene,
     history: historyScene,
     chineseroom: chineseroomScene
   };

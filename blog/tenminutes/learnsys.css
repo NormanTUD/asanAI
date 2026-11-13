@@ -1217,3 +1217,16 @@ h1,h2,h3,h4{
 .ls-eval-contam{display:flex;gap:7px;align-items:center;font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-soft);cursor:pointer}
 .ls-eval-caveat{margin:0;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}
 @media (max-width:640px){.ls-post-pref-grid{grid-template-columns:1fr}}
+
+.ls-media-scene{height:100%;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding:2px;overflow:hidden}
+.ls-media-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.ls-media-stage{position:relative;min-height:0}
+.ls-media-layer{position:absolute;inset:0;min-height:0}
+.ls-media-layer[hidden]{display:none}
+
+.ls-gradient-scene,.ls-kv-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(220px,1fr) auto auto;gap:8px;padding:2px;overflow-y:auto}
+.ls-gradient-stage,.ls-kv-stage{position:relative;min-height:220px;border:1px solid rgba(0,75,111,.08);background:#fff;overflow:hidden}
+.ls-gradient-stage canvas,.ls-kv-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.ls-gradient-readout,.ls-kv-readout{display:flex;gap:12px;flex-wrap:wrap;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted);min-height:2.6em}
+.ls-gradient-readout b,.ls-kv-readout b{color:var(--ls-ink);font-weight:600}
+.ls-kv-readout b{color:var(--ls-petrol)}
