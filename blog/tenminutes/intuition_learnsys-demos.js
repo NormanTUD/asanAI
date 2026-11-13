@@ -3577,19 +3577,23 @@
 
   function tokenizeScene(root, api) {
     var DE = api.lang === "de";
+    var C = api.colors();
     var examples = DE ? {
       understanding: { label: "Verständnis", value: "Verständnis" },
       unbreakable: { label: "unzerbrechlich", value: "unzerbrechlich" },
-      sentence: { label: "Sprachmodelle zerlegen Wörter in Teile", value: "Sprachmodelle zerlegen Wörter in Teile" }
+      sentence: { label: "Sprachmodell liest Text", value: "Sprachmodell liest Text" }
     } : {
       understanding: { label: "understanding", value: "understanding" },
       unbreakable: { label: "unbreakable", value: "unbreakable" },
-      sentence: { label: "Language models split words into pieces", value: "Language models split words into pieces" }
+      sentence: { label: "Models read text", value: "Models read text" }
     };
     var splits = DE ? {
       "verständnis": ["ver", "ständ", "nis"],
       "unzerbrechlich": ["un", "zerbrech", "lich"],
       "sprachmodelle": ["sprach", "modell", "e"],
+      "sprachmodell": ["sprach", "modell"],
+      "liest": ["lies", "t"],
+      "text": ["text"],
       "zerlegen": ["zer", "leg", "en"],
       "wörter": ["wör", "ter"],
       "teile": ["teil", "e"]
@@ -3598,6 +3602,8 @@
       "unbreakable": ["un", "break", "able"],
       "language": ["lang", "uage"],
       "models": ["mod", "els"],
+      "read": ["read"],
+      "text": ["text"],
       "split": ["split"],
       "words": ["word", "s"],
       "pieces": ["piece", "s"]
@@ -3621,8 +3627,10 @@
       '</div>' +
       '<div class="ls-bpe" hidden>' +
         '<div class="ls-bpe-head"><span class="ls-bpe-title">' + (DE ? "BPE = gelernte Kompression" : "BPE = learned compression") + '</span><span class="ls-bpe-hint">' + (DE ? "Start: Zeichen" : "Start: characters") + '</span></div>' +
+        '<div class="ls-bpe-equation" aria-live="polite"></div>' +
         '<div class="ls-bpe-corpus" aria-live="polite"></div>' +
         '<div class="ls-bpe-stage" aria-live="polite"></div>' +
+        '<div class="ls-bpe-meters" aria-live="polite"></div>' +
         '<div class="ls-bpe-counts" aria-live="polite"></div>' +
         '<p class="ls-bpe-note">' + (DE ? "Jeder Merge ersetzt ein häufiges Paar durch ein neues Symbol. Das Wort bleibt aus seinen Symbolen zusammensetzbar; der Text ist verlustfrei rekonstruierbar." : "Each merge replaces a frequent pair with a new symbol. The word remains reconstructable from its symbols; the text is lossless.") + '</p>' +
       '</div>' +
@@ -3634,7 +3642,9 @@
     var splitEl = el.querySelector(".ls-tokenize-split");
     var bpeEl = el.querySelector(".ls-bpe");
     var corpusEl = el.querySelector(".ls-bpe-corpus");
+    var equationEl = el.querySelector(".ls-bpe-equation");
     var stageEl = el.querySelector(".ls-bpe-stage");
+    var metersEl = el.querySelector(".ls-bpe-meters");
     var countsEl = el.querySelector(".ls-bpe-counts");
     var navPrev = el.querySelector(".ls-tokenize-prev");
     var navNext = el.querySelector(".ls-tokenize-next");
@@ -3643,6 +3653,7 @@
     var mode = "split";
     var step = 0;
     var sampleIndex = 0;
+    var bpeChip = null;
 
     function cloneWords(words) {
       return words.map(function (w) { return { word: w.word, count: w.count, symbols: w.symbols.slice() }; });
@@ -3730,6 +3741,7 @@
       var subs = tokens.filter(function (t) { return t.sub; }).length;
       stats.innerHTML = '<span><b>' + tokens.length + '</b> ' + (DE ? "Tokens" : "tokens") + '</span><span><b>' + (tokens.length - spaces) + '</b> ' + (DE ? "Teile" : "pieces") + '</span><span><b>' + subs + '</b> ' + (DE ? "Subword-Splits" : "subword splits") + '</span><span><b>' + spaces + '</b> ' + (DE ? "Leerzeichen" : "whitespace") + '</span>';
       samples.querySelectorAll("[data-sample]").forEach(function (b, i) { b.classList.toggle("is-on", i === sampleIndex); });
+      if (bpeChip) bpeChip.classList.remove("is-on");
     }
     function renderBpe() {
       var st = stages[step];
@@ -3755,11 +3767,26 @@
       var nextText = next && next.merge
         ? (DE ? "Nächster Merge: „" + next.merge.a + "“ + „" + next.merge.b + "“ (" + next.merge.count + "×)" : "Next merge: “" + next.merge.a + "” + “" + next.merge.b + "” (" + next.merge.count + "×)")
         : (DE ? "Fertig: vier Merges." : "Done: four merges.");
+      var eq = st.merge
+        ? '<span class="ls-bpe-eq-part">' + api.esc(st.merge.a) + '</span><span class="ls-bpe-eq-op">+</span><span class="ls-bpe-eq-part">' + api.esc(st.merge.b) + '</span><span class="ls-bpe-eq-op">→</span><span class="ls-bpe-eq-part is-new">' + api.esc(st.merge.a + st.merge.b) + '</span><span class="ls-bpe-eq-count">' + st.merge.count + '×</span>'
+        : '<span class="ls-bpe-eq-note">' + (DE ? "Start: Jedes Wort besteht aus Zeichen." : "Start: every word consists of characters.") + '</span>';
+      equationEl.innerHTML = eq;
+      var tokensNow = totalSymbols(st.words);
+      var tokensStart = totalSymbols(stages[0].words);
+      var vocabNow = vocabSize(st.words);
+      var vocabMax = baseVocab + stages.length - 1;
+      function meter(label, value, max, color) {
+        var pct = max ? Math.round(value / max * 100) : 100;
+        return '<div class="ls-bpe-meter"><span>' + label + '</span><i><b style="width:' + pct + '%;background:' + color + '"></b></i><em>' + value + '</em></div>';
+      }
+      metersEl.innerHTML = meter(DE ? "Tokens im Korpus" : "tokens in corpus", tokensNow, tokensStart, C.green) +
+        meter(DE ? "Vokabular" : "vocabulary", vocabNow, vocabMax, C.sky);
       stageEl.innerHTML = '<b>' + api.esc(mergeText) + '</b><span>' + api.esc(nextText) + '</span>';
       countsEl.innerHTML = st.pairs.slice(0, 4).map(function (p) {
         return '<span class="ls-bpe-pair"><b>' + api.esc(p.a) + '+' + api.esc(p.b) + '</b> ' + p.count + '×</span>';
-      }).join("") +
-        '<span class="ls-bpe-total">' + (DE ? "Tokens im Korpus: " : "Tokens in corpus: ") + totalSymbols(st.words) + ' · ' + (DE ? "Vokabular: " : "vocabulary: ") + (baseVocab + step) + '</span>';
+      }).join("");
+      samples.querySelectorAll("[data-sample]").forEach(function (b) { b.classList.remove("is-on"); });
+      if (bpeChip) bpeChip.classList.add("is-on");
     }
     function render() {
       var splitMode = mode === "split";
@@ -3805,6 +3832,12 @@
       b.addEventListener("click", function () { mode = "split"; step = sampleKeys.indexOf(key); sampleIndex = step; render(); });
       samples.appendChild(b);
     });
+    bpeChip = document.createElement("button");
+    bpeChip.type = "button";
+    bpeChip.className = "ls-chip ls-chip--bpe";
+    bpeChip.textContent = "BPE";
+    bpeChip.addEventListener("click", function () { mode = "bpe"; step = 1; render(); });
+    samples.appendChild(bpeChip);
     navPrev.addEventListener("click", prevStep);
     navNext.addEventListener("click", nextStep);
     render();
@@ -4077,9 +4110,9 @@
       '<div class="ls-noise-readout" aria-live="polite"></div>' +
       '<div class="ls-noise-explain">' +
         '<div class="ls-noise-explain-head">' + (DE ? "Wörter sind neutral; Nachbarschaften tragen Bedeutung" : "Words are neutral; neighbourhoods carry meaning") + '</div>' +
-        '<div class="ls-noise-explain-row"><span data-tex="\\text{new}" data-tex-display="false">new</span><p>' + (DE ? "steht zwischen Auto, Zukunft, Neubeginn, Neujahr und Neugier." : "sits between car, future, new beginning, New Year, and curiosity.") + '</p></div>' +
-        '<div class="ls-noise-explain-row"><span data-tex="\\text{york}" data-tex-display="false">york</span><p>' + (DE ? "steht zwischen York (Western Australia), York (England) und York Chocolate, einer Katzenrasse." : "sits between York (Western Australia), York (England), and York Chocolate, a cat breed.") + '</p></div>' +
-        '<div class="ls-noise-explain-row"><span data-tex="\\text{new york}" data-tex-display="false">new york</span><p>' + (DE ? "zusammen in der Nähe von Empire State Building, Freiheitsstatue und der US-Großstadt." : "together near the Empire State Building, the Statue of Liberty, and the US metropolis.") + '</p></div>' +
+        '<p class="ls-noise-explain-row"><span data-tex="\\text{new}" data-tex-display="false">new</span><span class="ls-noise-explain-text">' + (DE ? "steht zwischen Auto, Zukunft, Neubeginn, Neujahr und Neugier." : "sits between car, future, new beginning, New Year, and curiosity.") + '</span></p>' +
+        '<p class="ls-noise-explain-row"><span data-tex="\\text{york}" data-tex-display="false">york</span><span class="ls-noise-explain-text">' + (DE ? "steht zwischen York (Western Australia), York (England) und York Chocolate, einer Katzenrasse." : "sits between York (Western Australia), York (England), and York Chocolate, a cat breed.") + '</span></p>' +
+        '<p class="ls-noise-explain-row"><span data-tex="\\text{new york}" data-tex-display="false">new york</span><span class="ls-noise-explain-text">' + (DE ? "zusammen in der Nähe von Empire State Building, Freiheitsstatue und der US-Großstadt." : "together near the Empire State Building, the Statue of Liberty, and the US metropolis.") + '</span></p>' +
       '</div>';
     root.appendChild(el);
     if (api.typeset) { try { api.typeset(el); } catch (err) {} }
@@ -5576,20 +5609,46 @@
     var el = document.createElement("div");
     el.className = "ls-manifold-scene";
     el.innerHTML = '<div class="ls-dual-manifolds"><canvas class="ls-canvas" role="img"></canvas></div>' +
-      '<p class="ls-vr-note">' + (DE ? "Vietoris–Rips: zwei Punkte sind verbunden, wenn ihr Abstand unter dem Radius liegt. Die Form entsteht aus den Punkten, nicht aus einer Fläche." : "Vietoris–Rips: two points are connected when their distance is below the radius. The shape comes from the points, not from a surface.") + '</p>' +
-      '<div class="ls-manifold-controls"><label class="ls-range">' + (DE ? "Radius" : "Radius") + ' <input type="range" min="0.22" max="0.78" step="0.01" value="0.48"><output>0.48</output></label><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-manifold-spin">' + (DE ? "Drehen" : "Rotate") + '</button></div>';
+      '<p class="ls-vr-note">' + (DE ? "Vietoris–Rips: Punkte sind verbunden, wenn ihr Abstand unter der Schwelle liegt. Drehe und verschiebe die japanische Wolke, bis sie auf der englischen liegt. Fahre über einen Punkt, um das Wort zu sehen." : "Vietoris–Rips: points are connected when their distance is below the threshold. Rotate and translate the Japanese cloud until it sits on the English one. Hover a point to see its word.") + '</p>' +
+      '<div class="ls-manifold-controls">' +
+        '<label class="ls-range">' + (DE ? "Drehung" : "Rotation") + ' <input type="range" class="ls-manifold-rotate" min="-180" max="180" step="1" value="62"><output>62°</output></label>' +
+        '<label class="ls-range">' + (DE ? "Verschiebung" : "Translation") + ' <input type="range" class="ls-manifold-shift" min="-0.2" max="2.4" step="0.01" value="1.8"><output>1.80</output></label>' +
+        '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-manifold-find">' + (DE ? "Übersetzung finden" : "Find translation") + '</button>' +
+      '</div>' +
+      '<div class="ls-manifold-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-dual-manifolds");
     var canvas = el.querySelector("canvas");
-    var radiusEl = el.querySelector(".ls-range input");
-    var radiusOut = radiusEl.nextElementSibling;
-    var spinBtn = el.querySelector(".ls-manifold-spin");
+    var rotateEl = el.querySelector(".ls-manifold-rotate");
+    var rotateOut = rotateEl.nextElementSibling;
+    var shiftEl = el.querySelector(".ls-manifold-shift");
+    var shiftOut = shiftEl.nextElementSibling;
+    var findBtn = el.querySelector(".ls-manifold-find");
+    var readout = el.querySelector(".ls-manifold-readout");
     var C = api.colors();
-    var size = null, yaw = -0.58, pitch = 0.42, zoom = 1, drag = null;
-    var radius = parseFloat(radiusEl.value) || 0.48;
-    var raf = 0, last = 0, visible = true, auto = true;
+    var size = null, ctx = null, yaw = -0.62, pitch = 0.44, zoom = 1, drag = null;
+    var angle = 62, shift = 1.8;
+    var found = false, finding = false, findRaf = 0;
+    var hover = null;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    if (reduced) auto = false;
+    var N = 7, COUNT = N * N;
+    var PAIRS = [
+      ["bank", "銀行"], ["river", "川"], ["money", "お金"], ["water", "水"], ["city", "都市"],
+      ["cat", "猫"], ["dog", "犬"], ["bird", "鳥"], ["fish", "魚"], ["horse", "馬"],
+      ["cow", "牛"], ["tree", "木"], ["flower", "花"], ["fire", "火"], ["earth", "土"],
+      ["air", "空気"], ["sun", "太陽"], ["moon", "月"], ["star", "星"], ["sky", "空"],
+      ["sea", "海"], ["mountain", "山"], ["house", "家"], ["road", "道"], ["car", "車"],
+      ["train", "電車"], ["ship", "船"], ["book", "本"], ["word", "言葉"], ["language", "言語"],
+      ["friend", "友達"], ["family", "家族"], ["child", "子供"], ["mother", "母"], ["father", "父"],
+      ["hand", "手"], ["eye", "目"], ["heart", "心"], ["bread", "パン"], ["apple", "りんご"],
+      ["milk", "牛乳"], ["tea", "お茶"], ["coffee", "コーヒー"], ["morning", "朝"], ["night", "夜"],
+      ["day", "日"], ["year", "年"], ["time", "時間"], ["light", "光"]
+    ];
+    var ANCHORS = [8, 14, 22, 30, 40];
+    var WORDS = new Array(COUNT);
+    ANCHORS.forEach(function (idx, k) { WORDS[idx] = PAIRS[k]; });
+    var rest = PAIRS.slice(5), ri = 0;
+    for (var wi = 0; wi < COUNT; wi++) if (!WORDS[wi]) WORDS[wi] = rest[ri++];
     function rng(seed) {
       return function () {
         seed |= 0; seed = seed + 0x6D2B79F5 | 0;
@@ -5598,201 +5657,294 @@
         return ((t ^ t >>> 14) >>> 0) / 4294967296;
       };
     }
-    function rotate(p, roll, pitch, yaw) {
-      var x = p[0], y = p[1], z = p[2];
-      var cr = Math.cos(roll), sr = Math.sin(roll);
-      var x1 = x * cr - y * sr, y1 = x * sr + y * cr;
-      var cp = Math.cos(pitch), sp = Math.sin(pitch);
-      var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
-      var cy = Math.cos(yaw), sy = Math.sin(yaw);
-      return [x1 * cy - y2 * sy, x1 * sy + y2 * cy, z2];
-    }
-    function cloud(seed, cx, cy, cz, roll, pitch, yaw, amp) {
-      var pts = [];
-      var rand = rng(seed);
-      for (var iu = 0; iu < 10; iu++) {
-        for (var iv = 0; iv < 10; iv++) {
-          var u = -1 + 2 * iu / 9, v = -1 + 2 * iv / 9;
-          var x = u * 1.22;
-          var y = v * 0.94;
-          var z = amp * (u * u - v * v) + 0.08 * Math.sin(2.2 * u + 0.4) * Math.cos(2.0 * v - 0.2);
-          x += (rand() - 0.5) * 0.035;
-          y += (rand() - 0.5) * 0.035;
-          z += (rand() - 0.5) * 0.045;
-          var p = rotate([x, y, z], roll, pitch, yaw);
-          pts.push({ p: [p[0] + cx, p[1] + cy, p[2] + cz], u: u, v: v });
+    var base = [];
+    var source = [], targetLocal = [];
+    var jitterS = [], jitterT = [];
+    (function build() {
+      for (var iu = 0; iu < N; iu++) {
+        for (var iv = 0; iv < N; iv++) {
+          var u = -1 + 2 * iu / (N - 1), v = -1 + 2 * iv / (N - 1);
+          base.push([u * 1.15, v * 0.88, 0.56 * (u * u - v * v) + 0.07 * Math.sin(2.2 * u + 0.4) * Math.cos(2.0 * v - 0.2)]);
         }
       }
-      return pts;
+      var rs = rng(17), rt = rng(41);
+      base.forEach(function (p) {
+        jitterS.push([(rs() - 0.5) * 0.024, (rs() - 0.5) * 0.024, (rs() - 0.5) * 0.030]);
+        jitterT.push([(rt() - 0.5) * 0.034, (rt() - 0.5) * 0.034, (rt() - 0.5) * 0.042]);
+      });
+      base.forEach(function (p, i) {
+        source.push([p[0] + jitterS[i][0], p[1] + jitterS[i][1], p[2] + jitterS[i][2]]);
+        targetLocal.push([p[0] + jitterT[i][0], p[1] + jitterT[i][1], p[2] + jitterT[i][2]]);
+      });
+    })();
+    function rotateY(p, a) {
+      var c = Math.cos(a), s = Math.sin(a);
+      return [p[0] * c + p[2] * s, p[1], -p[0] * s + p[2] * c];
     }
-    var en = cloud(11, -1.05, 0.02, 0.05, 0.0, 0.0, 0.0, 0.58);
-    var jp = cloud(29, 1.05, -0.02, -0.05, 0.52, -0.26, 0.38, 0.54);
-    var labels = [
-      { a: 22, b: 22, ea: "bank", eb: "銀行" },
-      { a: 24, b: 24, ea: "river", eb: "川" },
-      { a: 45, b: 45, ea: "money", eb: "お金" },
-      { a: 66, b: 66, ea: "water", eb: "水" },
-      { a: 78, b: 78, ea: "city", eb: "都市" }
-    ];
-    function project(p) {
-      return V.project(p, yaw, pitch, Math.min(size.w * 0.20, size.h * 0.36) * zoom, size.w / 2, size.h / 2 - 4);
+    function targetPoints() {
+      var a = V.rad(angle), out = [];
+      for (var i = 0; i < targetLocal.length; i++) {
+        var p = rotateY(targetLocal[i], a);
+        out.push([p[0] + shift, p[1], p[2]]);
+      }
+      return out;
     }
-    function edgeCache(pts, r) {
+    function edges(pts, radius) {
       var out = [];
       for (var i = 0; i < pts.length; i++) {
         for (var j = i + 1; j < pts.length; j++) {
-          var a = pts[i].p, b = pts[j].p;
-          var d = Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
-          if (d <= r) out.push({ a: a, b: b, z: (a[2] + b[2]) / 2 });
+          var a = pts[i], b = pts[j];
+          if (Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) <= radius) out.push([i, j]);
         }
       }
       return out;
     }
-    var enEdges = edgeCache(en, radius), jpEdges = edgeCache(jp, radius);
-    function drawCloud(ctx, pts, edges, col) {
-      edges.sort(function (a, b) { return a.z - b.z; });
-      edges.forEach(function (e) {
-        var a = project(e.a), b = project(e.b);
+    var sourceEdges = edges(source, 0.48);
+    var targetEdges = edges(targetLocal, 0.48);
+    var cam = [0, 0, 0];
+    function centroid(pts) {
+      var s = [0, 0, 0];
+      pts.forEach(function (p) { s[0] += p[0]; s[1] += p[1]; s[2] += p[2]; });
+      return [s[0] / pts.length, s[1] / pts.length, s[2] / pts.length];
+    }
+    function project(p) {
+      var q = [p[0] - cam[0], p[1] - cam[1], p[2] - cam[2]];
+      return V.project(q, yaw, pitch, Math.min(size.w * 0.19, size.h * 0.33) * zoom, size.w / 2, size.h / 2);
+    }
+    function drawCloud(ctx, pts, edgeList, col) {
+      var projected = pts.map(function (p) { return project(p); });
+      var es = edgeList.map(function (e) {
+        var a = projected[e[0]], b = projected[e[1]];
+        return { a: a, b: b, z: (a.z + b.z) / 2 };
+      }).sort(function (a, b) { return a.z - b.z; });
+      es.forEach(function (e) {
         ctx.strokeStyle = col;
-        ctx.globalAlpha = 0.08 + 0.22 * (1 - (e.z + 1) / 2);
-        ctx.lineWidth = 0.8;
+        ctx.globalAlpha = 0.07 + 0.18 * (1 - (e.z + 1) / 2);
+        ctx.lineWidth = 0.7;
         ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
+        ctx.moveTo(e.a.x, e.a.y);
+        ctx.lineTo(e.b.x, e.b.y);
         ctx.stroke();
       });
       ctx.globalAlpha = 1;
-      var ps = pts.map(function (q) { return { p: q.p, q: project(q.p) }; }).sort(function (a, b) { return a.q.z - b.q.z; });
+      var ps = pts.map(function (p, i) { return { i: i, q: projected[i] }; }).sort(function (a, b) { return a.q.z - b.q.z; });
       ps.forEach(function (o) {
-        var r = 2.6 + Math.max(0, 1 - (o.q.z + 1) / 2) * 1.3;
+        var r = 2.4 + Math.max(0, 1 - (o.q.z + 1) / 2) * 1.2;
         ctx.beginPath();
         ctx.arc(o.q.x, o.q.y, r, 0, Math.PI * 2);
         ctx.fillStyle = col;
         ctx.fill();
         ctx.strokeStyle = C.paper;
-        ctx.lineWidth = 0.9;
+        ctx.lineWidth = 0.8;
         ctx.stroke();
       });
+      return projected;
     }
-    function drawLabels(ctx) {
-      labels.forEach(function (l) {
-        var pe = en[l.a], pj = jp[l.b];
-        if (!pe || !pj) return;
-        var a = project(pe.p), b = project(pj.p);
+    function drawLabelAt(pts, i, text, color, align, alpha) {
+      var q = project(pts[i]);
+      var dx = align === "right" ? -9 : 9;
+      V.label(ctx, text, q.x + dx, q.y - 9, {
+        font: '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif',
+        color: color, align: align, alpha: alpha
+      });
+    }
+    function score() {
+      var rs = 1 - Math.min(1, Math.abs(angle) / 62);
+      var ss = 1 - Math.min(1, Math.abs(shift) / 1.8);
+      return Math.round((rs * 0.5 + ss * 0.5) * 100);
+    }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      var w = size.w, h = size.h;
+      var tPts = targetPoints();
+      var sc = centroid(source), tc = centroid(tPts);
+      cam = [(sc[0] + tc[0]) / 2, (sc[1] + tc[1]) / 2, (sc[2] + tc[2]) / 2];
+      ctx.clearRect(0, 0, w, h);
+      var bg = ctx.createRadialGradient(w * 0.5, h * 0.44, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.72);
+      bg.addColorStop(0, V.alpha(C.paper2, 0.94));
+      bg.addColorStop(1, V.alpha(C.paper, 0));
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+      V.grid(ctx, w, h, C, 32, 0.13);
+      var sProj = drawCloud(ctx, source, sourceEdges, C.blue);
+      var tProj = drawCloud(ctx, tPts, targetEdges, C.green);
+      var aligned = score() / 100;
+      ANCHORS.forEach(function (idx) {
+        var pair = WORDS[idx];
+        drawLabelAt(source, idx, pair[0], C.blue, "right", 0.62 * (1 - aligned) + 0.08);
+        drawLabelAt(tPts, idx, pair[1], C.green, "left", 0.62 * (1 - aligned) + 0.08);
+      });
+      if (hover) {
+        var pair = WORDS[hover.index];
+        var sp = source[hover.index], tp = tPts[hover.index];
+        var a = project(sp), b = project(tp);
         ctx.save();
         ctx.setLineDash([4, 4]);
-        ctx.strokeStyle = V.alpha(C.gold, 0.72);
+        ctx.strokeStyle = V.alpha(C.gold, 0.85);
         ctx.lineWidth = 1.3;
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
         ctx.stroke();
         ctx.restore();
-        V.label(ctx, l.ea, a.x, a.y - 10, {
-          font: '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif',
-          color: C.ink, align: "center", alpha: 1
-        });
-        V.label(ctx, l.eb, b.x, b.y - 10, {
-          font: '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif',
-          color: C.ink, align: "center", alpha: 1
-        });
-      });
-    }
-    function draw() {
-      if (!size) return;
-      var ctx = size.ctx, w = size.w, h = size.h;
-      ctx.clearRect(0, 0, w, h);
-      var bg = ctx.createRadialGradient(w * 0.5, h * 0.42, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.72);
-      bg.addColorStop(0, V.alpha(C.paper2, 0.92));
-      bg.addColorStop(1, V.alpha(C.paper, 0));
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, w, h);
-      V.grid(ctx, w, h, C, 32, 0.14);
-      drawCloud(ctx, en, enEdges, C.blue);
-      drawCloud(ctx, jp, jpEdges, C.green);
-      drawLabels(ctx);
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, 7, 0, Math.PI * 2);
+        ctx.strokeStyle = C.blue;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, 7, 0, Math.PI * 2);
+        ctx.strokeStyle = C.green;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        drawLabelAt(source, hover.index, pair[0], C.blue, "right", 1);
+        drawLabelAt(tPts, hover.index, pair[1], C.green, "left", 1);
+        V.tokenChip(ctx, pair[0] + " · " + pair[1], w / 2, 16, C.gold, C, { size: 11, align: "center" });
+      }
       V.heading(ctx, DE ? "Englisch" : "English", 14, 16, C.muted, 10, 1);
       V.heading(ctx, DE ? "Japanisch" : "Japanese", w - 14, 16, C.muted, 10, 1);
-      V.label(ctx, (DE ? "Radius " : "radius ") + V.fmt(radius), w - 14, h - 12, {
-        font: '600 ' + Math.max(9, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif',
-        color: C.muted, align: "right", alpha: 1
-      });
       canvas.setAttribute("aria-label", DE
-        ? "Zwei Punktwolken mit Vietoris–Rips-Kanten: englische Wörter links, japanische rechts. Radius " + V.fmt(radius) + "."
-        : "Two point clouds with Vietoris–Rips edges: English words left, Japanese right. Radius " + V.fmt(radius) + ".");
+        ? "Zwei Punktwolken mit Vietoris–Rips-Kanten. Drehe und verschiebe die japanische Wolke, bis sie auf der englischen liegt. Ausrichtung " + score() + " Prozent."
+        : "Two point clouds with Vietoris–Rips edges. Rotate and translate the Japanese cloud until it sits on the English one. Alignment " + score() + " percent.");
+      updateReadout();
     }
-    function loop(now) {
-      if (!visible || !auto || drag) { raf = 0; return; }
-      if (!last) last = now;
-      var dt = Math.min(48, now - last);
-      last = now;
-      yaw += dt * 0.00018;
+    function updateReadout() {
+      var pair = hover ? WORDS[hover.index] : null;
+      readout.innerHTML = '<span><b>' + (DE ? "Ausrichtung" : "alignment") + '</b> ' + score() + '%</span>' +
+        '<span><b>' + (DE ? "Drehung" : "rotation") + '</b> ' + Math.round(angle) + '°</span>' +
+        '<span><b>' + (DE ? "Verschiebung" : "translation") + '</b> ' + V.fmt(shift) + '</span>' +
+        (pair ? '<span><b>' + (DE ? "Wort" : "word") + '</b> ' + api.esc(pair[0]) + ' · ' + api.esc(pair[1]) + '</span>' : '<span>' + (DE ? "Fahre über einen Punkt." : "Hover a point.") + '</span>');
+    }
+    function updateButton() {
+      findBtn.textContent = found ? (DE ? "Übersetzung gefunden" : "Translation found") : (DE ? "Übersetzung finden" : "Find translation");
+    }
+    function setAngle(v) {
+      stopFind();
+      angle = Math.max(-180, Math.min(180, parseFloat(v) || 0));
+      rotateEl.value = String(angle);
+      rotateOut.textContent = Math.round(angle) + "°";
+      found = score() >= 92;
+      updateButton();
       draw();
-      raf = requestAnimationFrame(loop);
     }
-    function startLoop() {
-      if (reduced || raf) return;
-      last = 0;
-      raf = requestAnimationFrame(loop);
-    }
-    function stopLoop() {
-      if (raf) cancelAnimationFrame(raf);
-      raf = 0;
-    }
-    function rebuildEdges() {
-      enEdges = edgeCache(en, radius);
-      jpEdges = edgeCache(jp, radius);
-    }
-    function resize() {
-      size = api.fit(canvas, stage);
+    function setShift(v) {
+      stopFind();
+      shift = Math.max(-0.2, Math.min(2.4, parseFloat(v) || 0));
+      shiftEl.value = String(shift);
+      shiftOut.textContent = V.fmt(shift);
+      found = score() >= 92;
+      updateButton();
       draw();
+    }
+    function stopFind() {
+      finding = false;
+      if (findRaf) cancelAnimationFrame(findRaf);
+      findRaf = 0;
+    }
+    function find() {
+      stopFind();
+      if (reduced) {
+        angle = 0; shift = 0; found = true;
+        rotateEl.value = "0"; rotateOut.textContent = "0°";
+        shiftEl.value = "0"; shiftOut.textContent = "0.00";
+        updateButton(); draw();
+        return;
+      }
+      finding = true;
+      var a0 = angle, s0 = shift, t0 = performance.now(), dur = 920;
+      function step(now) {
+        if (!finding) return;
+        var u = Math.min(1, (now - t0) / dur);
+        var e = V.ease(u);
+        angle = a0 * (1 - e);
+        shift = s0 * (1 - e);
+        rotateEl.value = String(angle);
+        shiftEl.value = String(shift);
+        rotateOut.textContent = Math.round(angle) + "°";
+        shiftOut.textContent = V.fmt(shift);
+        draw();
+        if (u < 1) findRaf = requestAnimationFrame(step);
+        else {
+          finding = false; findRaf = 0; found = true;
+          angle = 0; shift = 0;
+          rotateEl.value = "0"; rotateOut.textContent = "0°";
+          shiftEl.value = "0"; shiftOut.textContent = "0.00";
+          updateButton(); draw();
+        }
+      }
+      findRaf = requestAnimationFrame(step);
+    }
+    function pointer(e) {
+      var r = canvas.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+    function nearest(mx, my) {
+      var best = null, bd = 16 * 16;
+      function test(pts, side) {
+        for (var i = 0; i < pts.length; i++) {
+          var q = project(pts[i]);
+          var d = (q.x - mx) * (q.x - mx) + (q.y - my) * (q.y - my);
+          if (d < bd) { bd = d; best = { side: side, index: i }; }
+        }
+      }
+      test(source, "en");
+      test(targetPoints(), "jp");
+      return best;
     }
     canvas.addEventListener("pointerdown", function (e) {
-      drag = { x: e.clientX, y: e.clientY };
+      drag = pointer(e);
       canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId);
-      stopLoop();
+      canvas.style.cursor = "grabbing";
     });
     canvas.addEventListener("pointermove", function (e) {
-      if (!drag) return;
-      yaw += (e.clientX - drag.x) * 0.008;
-      pitch = Math.max(-1.2, Math.min(1.2, pitch + (e.clientY - drag.y) * 0.006));
-      drag = { x: e.clientX, y: e.clientY };
-      draw();
+      var p = pointer(e);
+      if (drag) {
+        yaw += (p.x - drag.x) * 0.008;
+        pitch = Math.max(-1.2, Math.min(1.2, pitch + (p.y - drag.y) * 0.006));
+        drag = p;
+        draw();
+        return;
+      }
+      var h = nearest(p.x, p.y);
+      if ((h && (!hover || h.side !== hover.side || h.index !== hover.index)) || (!h && hover)) {
+        hover = h;
+        canvas.style.cursor = h ? "pointer" : "grab";
+        draw();
+      }
     });
-    canvas.addEventListener("pointerup", function () { drag = null; startLoop(); });
-    canvas.addEventListener("pointercancel", function () { drag = null; startLoop(); });
+    canvas.addEventListener("pointerup", function () { drag = null; canvas.style.cursor = hover ? "pointer" : "grab"; });
+    canvas.addEventListener("pointercancel", function () { drag = null; });
+    canvas.addEventListener("pointerleave", function () { if (hover) { hover = null; draw(); } });
     canvas.addEventListener("wheel", function (e) {
       e.preventDefault();
-      zoom = Math.max(0.6, Math.min(2.1, zoom * (e.deltaY > 0 ? 0.94 : 1.06)));
+      zoom = Math.max(0.62, Math.min(2.2, zoom * (e.deltaY > 0 ? 0.94 : 1.06)));
       draw();
     }, { passive: false });
-    radiusEl.addEventListener("input", function () {
-      radius = parseFloat(radiusEl.value) || 0.48;
-      radiusOut.textContent = V.fmt(radius);
-      rebuildEdges();
-      draw();
-    });
-    spinBtn.addEventListener("click", function () {
-      auto = !auto;
-      spinBtn.textContent = auto ? (DE ? "Anhalten" : "Pause") : (DE ? "Drehen" : "Rotate");
-      if (auto) startLoop(); else stopLoop();
-    });
+    rotateEl.addEventListener("input", function () { setAngle(rotateEl.value); });
+    shiftEl.addEventListener("input", function () { setShift(shiftEl.value); });
+    findBtn.addEventListener("click", find);
+    function resize() { size = api.fit(canvas, stage); draw(); }
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
-    if ("IntersectionObserver" in window) {
-      new IntersectionObserver(function (entries) {
-        visible = entries.some(function (en) { return en.isIntersecting; });
-        if (!visible) stopLoop(); else startLoop();
-      }, { threshold: 0.05 }).observe(stage);
+    function nextInternal() {
+      if (finding) return true;
+      if (found) return false;
+      find();
+      return true;
     }
+    function prevInternal() { return false; }
+    updateButton();
     resize();
-    startLoop();
     return {
       update: function () {},
+      next: nextInternal,
+      prev: prevInternal,
+      onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
       resize: resize,
-      pause: stopLoop,
-      resume: function () { visible = true; startLoop(); },
-      destroy: function () { stopLoop(); window.removeEventListener("resize", resize); el.remove(); }
+      pause: function () { stopFind(); },
+      resume: function () { draw(); },
+      destroy: function () { stopFind(); window.removeEventListener("resize", resize); el.remove(); }
     };
   }
 
@@ -6191,7 +6343,7 @@
     el.className = "ls-blocks-scene";
     el.innerHTML = '<div class="ls-bs-stack" role="list"></div>' +
       '<div class="ls-bs-detail" aria-live="polite"></div>' +
-      '<div class="ls-bs-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-bs-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-bs-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-bs-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
+      '<div class="ls-bs-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-bs-prev" data-no-height-test="1">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-bs-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-bs-next" data-no-height-test="1">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
     var stack = el.querySelector(".ls-bs-stack");
     var detail = el.querySelector(".ls-bs-detail");

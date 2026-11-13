@@ -11,9 +11,9 @@
       '<div class="ls-unembed-controls">' +
         '<label class="ls-range ls-unembed-angle">' + (DE ? "Winkel" : "Angle") + ' <input type="range" min="5" max="135" step="1" value="38"><output>38°</output></label>' +
         '<div class="ls-unembed-nav">' +
-          '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-unembed-prev">← ' + (DE ? "Zurück" : "Back") + '</button>' +
+          '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-unembed-prev" data-no-height-test="1">← ' + (DE ? "Zurück" : "Back") + '</button>' +
           '<span class="ls-unembed-progress" aria-live="polite"></span>' +
-          '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-unembed-next">' + (DE ? "Weiter →" : "Next →") + '</button>' +
+          '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-unembed-next" data-no-height-test="1">' + (DE ? "Weiter →" : "Next →") + '</button>' +
         '</div>' +
       '</div>' +
       '<div class="ls-unembed-readout" aria-live="polite"></div>';

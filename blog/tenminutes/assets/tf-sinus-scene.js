@@ -477,13 +477,12 @@
       }, { threshold: 0.05 }).observe(stage);
     }
     function nextInternal() {
-      if (phase === "linear") { switchPhase("net"); return true; }
+      if (phase === "linear") return false;
       if (training) return true;
       if (active().epochs < TARGET_EPOCHS) { resumeTraining(); return true; }
       return false;
     }
     function prevInternal() {
-      if (phase === "net") { switchPhase("linear"); return true; }
       return false;
     }
     window.addEventListener("resize", resize);

@@ -367,7 +367,7 @@
       var posStep = cfg.singleDay && posDay && posDay.steps[pi];
       var posLabel = posStep && posStep.title ? posStep.title : t("positionOf", { n: pi + 1, total: Math.max(1, posCount) });
       var posAria = posStep && posStep.title ? t("step") + " " + (pi + 1) + ": " + posStep.title : posLabel;
-      posHtml += '<button type="button" data-pos="' + pi + '" title="' + esc(posLabel) + '" aria-label="' + esc(posAria) + '">' + pi + '</button>';
+      posHtml += '<button type="button" data-pos="' + pi + '" data-no-height-test="1" title="' + esc(posLabel) + '" aria-label="' + esc(posAria) + '">' + pi + '</button>';
     }
     var helpRows = [
       ['<kbd>←</kbd><kbd>→</kbd>', t("helpStep")],
@@ -402,7 +402,7 @@
             '</div>' +
           '</div>' +
           '<div class="ls-top-nav">' +
-            '<div class="ls-day-row"><button type="button" class="ls-day-nav" data-day-nav="-1" aria-label="' + esc(t("prevDay")) + '" title="' + esc(t("prevDay")) + '">←<span class="ls-day-nav-word">' + esc(t("back")) + '</span></button><div class="ls-days" id="ls-days" role="tablist" aria-label="' + esc(t("days")) + '"></div><button type="button" class="ls-day-nav" data-day-nav="1" aria-label="' + esc(t("nextDay")) + '" title="' + esc(t("nextDay")) + '"><span class="ls-day-nav-word">' + esc(t("forward")) + '</span>→</button></div>' +
+            '<div class="ls-day-row"><button type="button" class="ls-day-nav" data-day-nav="-1" data-no-height-test="1" aria-label="' + esc(t("prevDay")) + '" title="' + esc(t("prevDay")) + '">←<span class="ls-day-nav-word">' + esc(t("back")) + '</span></button><div class="ls-days" id="ls-days" role="tablist" aria-label="' + esc(t("days")) + '"></div><button type="button" class="ls-day-nav" data-day-nav="1" data-no-height-test="1" aria-label="' + esc(t("nextDay")) + '" title="' + esc(t("nextDay")) + '"><span class="ls-day-nav-word">' + esc(t("forward")) + '</span>→</button></div>' +
             '<div class="ls-progress"><div class="ls-progress-bar"><span id="ls-progress-fill"></span></div><div class="ls-step-row"><span class="ls-step-count" id="ls-step-count"></span><div class="ls-steps" id="ls-steps"></div></div></div>' +
           '</div>' +
         '</header>' +
@@ -410,7 +410,7 @@
           '<section class="ls-text" aria-live="polite">' +
             '<div class="ls-text-mobile-head"><button type="button" class="ls-btn ls-btn--tiny ls-text-close" id="ls-text-close" aria-label="' + (LANG === "de" ? "Zur Demo" : "Back to demo") + '">← Demo</button></div>' +
             '<div class="ls-text-scroll">' +
-              (cfg.mix ? '<div class="ls-navbar" id="ls-navbar"><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-prev" title="' + esc(t("prevStep")) + '" aria-label="' + esc(t("prevStep")) + '">←</button><div class="ls-nav-pos ls-mix-pos" id="ls-mix-pos" aria-label="' + esc(cfg.singleDay ? t("stepRail") : t("position") + " 0 … " + (posCount - 1)) + '">' + posHtml + '</div><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-next" title="' + esc(t("nextStep")) + '" aria-label="' + esc(t("nextStep")) + '">→</button></div>' : '') +
+              (cfg.mix ? '<div class="ls-navbar" id="ls-navbar"><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-prev" data-no-height-test="1" title="' + esc(t("prevStep")) + '" aria-label="' + esc(t("prevStep")) + '">←</button><div class="ls-nav-pos ls-mix-pos" id="ls-mix-pos" aria-label="' + esc(cfg.singleDay ? t("stepRail") : t("position") + " 0 … " + (posCount - 1)) + '">' + posHtml + '</div><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-next" data-no-height-test="1" title="' + esc(t("nextStep")) + '" aria-label="' + esc(t("nextStep")) + '">→</button></div>' : '') +
               '<div class="ls-kicker" id="ls-kicker"></div>' +
               '<h1 class="ls-title" id="ls-title"></h1>' +
               '<div class="ls-body" id="ls-body"></div>' +
@@ -418,8 +418,8 @@
               '<div class="ls-cues" id="ls-cues"></div>' +
               '<div class="ls-extras" id="ls-extras"></div>' +
               '<div class="ls-actions">' +
-                '<button type="button" class="ls-btn" id="ls-prev" aria-label="' + esc(t("prevStep")) + '">←</button>' +
-                '<button type="button" class="ls-btn ls-btn--primary" id="ls-next">' + esc(t("forward")) + ' →</button>' +
+                '<button type="button" class="ls-btn" id="ls-prev" data-no-height-test="1" aria-label="' + esc(t("prevStep")) + '">←</button>' +
+                '<button type="button" class="ls-btn ls-btn--primary" id="ls-next" data-no-height-test="1">' + esc(t("forward")) + ' →</button>' +
                 '<button type="button" class="ls-btn ls-btn--ghost" id="ls-depth-btn">' + esc(t("depth")) + '</button>' +
               '</div>' +
             '</div>' +
@@ -430,7 +430,7 @@
             '<div class="ls-stage-foot"><span id="ls-stage-hint"></span><span class="ls-credit" id="ls-credit"></span></div>' +
           '</section>' +
         '</main>' +
-        '<div class="ls-global-nav"><button type="button" class="ls-global-prev" id="ls-global-prev" aria-label="' + (LANG === "de" ? "Zurück" : "Back") + '">←</button><button type="button" class="ls-global-next" id="ls-global-next" aria-label="' + (LANG === "de" ? "Weiter" : "Next") + '">→</button></div>' +
+        '<div class="ls-global-nav"><button type="button" class="ls-global-prev" id="ls-global-prev" data-no-height-test="1" aria-label="' + (LANG === "de" ? "Zurück" : "Back") + '">←</button><button type="button" class="ls-global-next" id="ls-global-next" data-no-height-test="1" aria-label="' + (LANG === "de" ? "Weiter" : "Next") + '">→</button></div>' +
         '<div class="ls-tip" id="ls-tip" role="tooltip" hidden></div>' +
         '<div class="ls-help" id="ls-help" hidden><b>' + esc(t("helpTitle")) + '</b><div class="ls-help-grid">' + helpRows + '</div></div>' +
       '</div>';
@@ -549,7 +549,7 @@
       var dim = state.track !== "all" && d.track !== state.track;
       var track = TRACK_LABEL[d.track] ? TRACK_LABEL[d.track].label : d.track;
       var cls = "ls-day" + (on ? " is-on" : "") + (dim ? " is-dim" : "") + (i > 0 && all[i - 1].track !== d.track ? " is-track-start" : "");
-      return '<button type="button" class="' + cls + '" data-day="' + i + '" data-day-id="' + esc(d.id) + '" data-track="' + esc(d.track) + '" role="tab" aria-selected="' + on + '"' + (on ? ' aria-current="step"' : '') +
+      return '<button type="button" class="' + cls + '" data-no-height-test="1" data-day="' + i + '" data-day-id="' + esc(d.id) + '" data-track="' + esc(d.track) + '" role="tab" aria-selected="' + on + '"' + (on ? ' aria-current="step"' : '') +
         ' aria-label="' + esc(track + ": " + d.label + " " + d.title) + '" title="' + esc(track + " · " + d.title) + '">' +
         '<span class="ls-day-num">' + esc(d.label) + '</span><span class="ls-day-name">' + esc(d.title) + '</span></button>';
     }).join("");
@@ -560,7 +560,7 @@
     els.steps.innerHTML = d.steps.map(function (s, i) {
       var stepLabel = t("step") + " " + (i + 1);
       var stepTitle = s.title || stepLabel;
-      return '<button type="button" class="ls-dot' + (i === state.step ? " is-on" : "") + '" data-step="' + i + '" title="' + esc(stepTitle) + '" aria-label="' + esc(stepLabel + ": " + stepTitle) + '">' + (i + 1) + '</button>';
+      return '<button type="button" class="ls-dot' + (i === state.step ? " is-on" : "") + '" data-no-height-test="1" data-step="' + i + '" title="' + esc(stepTitle) + '" aria-label="' + esc(stepLabel + ": " + stepTitle) + '">' + (i + 1) + '</button>';
     }).join("");
     els.progress.style.width = ((state.step + 1) / d.steps.length * 100).toFixed(1) + "%";
     if (els.stepCount) els.stepCount.textContent = t("stepOf", { n: state.step + 1, total: d.steps.length });

@@ -449,5 +449,301 @@ already occupied; pick a free port. Chromium CDP allowed:
   logged as verify-only rather than rewrite: two-parameter loss landscape,
   Bausteine stack/details, compression taxonomy, MLP loss formula, token
   trajectories, causal mask, position math, ambiguity slide.
-- Opencode todo list created and kept in sync with this file. Work is paused
-  before the first code edit to confirm scope, slide order, and design choices.
+- Opencode todo list created and kept in sync with this file.
+
+### Implementation pass 2026-11-13 (afternoon)
+
+Done:
+
+- **Shared visual layer.** Added `assets/learnsys-visuals.js` with palette
+  mixing, arrows, labels, grid, 2D/3D projection, heatmaps, and token chips.
+  The new Unembedding scene is its own file, so scenes no longer have to grow
+  inside the 8k-line demo file.
+- **New Unembedding slide** (`assets/learnsys-unembed-scene.js`): five steps
+  (dot product/MAC, angle/cosine/arccos, W_U rows and logits, softmax and
+  token draw, GPU shading). Includes the high-dimensional angle argument and
+  verified sources (Aggarwal 2001, NVIDIA CUDA, Tensor Cores, CUDA guide,
+  GeForce 256).
+- **Slide order** now has 32 steps. “Ein Wort nach dem anderen” and “Die
+  Verteilung ist nicht die Antwort” moved after the transformer material,
+  immediately after the new Unembedding slide and the real GPT-2 softmax
+  slide. The loop copy now closes the circle back to W_U and softmax.
+- **Kicker numbers removed** from every step so the old thematic numbering
+  cannot contradict the new order.
+- **Neural-network slide** renamed to “Was sind neuronale Netze?”. The scene
+  now starts with one linear neuron (`ŷ = w x + b`), draws the vertical
+  errors, shows the line cannot bend the sine, then switches to
+  `1 → 32 → 32 → 32 → 1`. The four weight matrices are a live overlay
+  (behind “Matrizen zeigen”), training runs on CPU, starts automatically,
+  pauses offscreen, and the loss chart is logarithmic.
+- **Bausteine** rebuilt as one clean vertical stack (T → E → transformer
+  group → U), with clickable stations, a green brace and `× N` badge,
+  larger 16:9 mini demos, and the `new` + `york` FFN example.
+- **Manifold** rebuilt as two 10×10 Pringle point sheets, one twisted
+  relative to the other, with Vietoris–Rips edges, a radius slider, five
+  bilingual word correspondences, drag/zoom, and slow idle rotation.
+- **Compression** polished: phase pill, Barlow category labels with colour
+  dots, softer paper glow, final “Seiendes” halo, and an unseen-case arrow
+  into the universal hub. Category/Yoneda is still never named.
+- **Loss landscape** starts training automatically when visible, pauses
+  offscreen, and “Next” only leaves after SGD → Adam → Momentum finish.
+- **Navigation** reserves a safe area above the fixed bottom arrows, and the
+  height test now ignores slide-navigation controls and the language switch.
+
+Tests so far:
+
+- `uv run blog/tests/tenminutes_pages_test.py --pages intuition_learnsys.php
+  --langs en,de` → **10/10 checks passed, 0 failed**.
+- First `tenminutes_height_test.py` run reported 6 height changes and a
+  crash. The changes came from the step-rail buttons (`9`, `10`) navigating
+  between slides, and the crash came from the DE/EN language button
+  reloading the page. Both now carry `data-no-height-test`.
+- Targeted headless checks: all 32 steps render, no severe console errors,
+  no horizontal overflow at 1400×1000; Unembedding steps 1–5 update readouts;
+  sinus linear → net training and live matrices work; blocks stations and
+  minis switch; manifold radius and auto-rotation change the canvas; loss
+  landscape auto-starts and `Next` stays while training.
+
+Still open:
+
+- Rerun the height test after the navigation exclusions.
+- Browser visual pass at 390 px and 1280 px, both languages.
+- Final gate: `check_all.py --fast`, `php_validator.py`, `php -l`,
+  `node --check`, `git diff --check`.
+- Commit and push only after the gate and only with explicit approval.
+
+## Latest user requests (2026-11-13 evening)
+
+Status: implementation pass above is done and the page/height tests pass;
+the following reorder and scene changes are the new active work.
+
+### Slide order after “Die Bausteine eines LLM”
+- [ ] Keep “Die Bausteine eines LLM” exactly where it is.
+- [ ] Immediately after it: **Tokenizer** (“Text wird zu IDs”).
+- [ ] Then **Embedding**: “Bedeutung wird eine Zahl” (1D), the 2D slide,
+  the 3D slide, and an explicit **high-dimensional excerpt** (4096/10k
+  dimensions or similar). The 1D slide must come before the 3D material.
+- [ ] Then the **transformer**: position, attention (all four steps), FFN,
+  residual, token trajectories.
+- [ ] Then **“Weiche Kurven, ein Knick”** (activation) **before** the neural
+  network material.
+- [ ] Then the **neural-network section**:
+  - “Was sind neuronale Netze?” with the one-neuron linear example first;
+  - “Die Parameter leben auf einer Loss-Landschaft” directly after that;
+  - then the larger network that fits the sine;
+  - merge in “Sieh zu, wie das MLP den Raum biegt”: networks can fit lines
+    *and* fold the space into higher dimensions and back.
+- [ ] Then the output/assistant block: unembedding, softmax, loop,
+  distribution, languages, post-training, evaluation, KV cache, RAG,
+  history, philosophy.
+
+### Tokenizer and embedding
+- [ ] The tokenizer example
+  `sprach / id 39281 / modell / id 27907 / e / … / teil / id 16180 / e`
+  is too long. Shorten it and make the token blocks readable.
+- [ ] Show **BPE = learned compression** properly: start from characters,
+  merge the most frequent pair step by step, show the vocabulary growing and
+  the token count dropping.
+- [ ] Move “Bedeutung wird eine Zahl” directly after the tokenizer.
+- [ ] Add the 10k/4096-dimensional excerpt explicitly; do not hide it only
+  inside the 3D table.
+
+### Neural networks, loss landscape, MLP
+- [ ] The loss surface looks upside down: the smallest loss appears at the
+  top. Flip the projection so low loss is at the bottom and high loss at the
+  top.
+- [ ] Label the axes correctly: `a` becomes `w`, `b` stays `b`.
+- [ ] Move the loss landscape into the neural-network section, after the
+  one-neuron example and before the larger sine network.
+- [ ] Say that the larger network has too many directions to draw, but the
+  principle (parameters, loss, gradient) is the same.
+- [ ] Merge “Was sind neuronale Netze?” with “Sieh zu, wie das MLP den Raum
+  biegt”: a network can fit a line *and* bend the space so a flat cut
+  separates the classes.
+
+### “Von Beziehungen zur Übersetzung”
+- [ ] Remove the radius slider.
+- [ ] Add rotation and translation controls instead.
+- [ ] Add a **“Übersetzung finden”** button that rotates and translates the
+  two point clouds onto each other and reveals the token translations from
+  positions alone. “Weiter” should trigger the same translation.
+- [ ] The other points are words too: allow hover to reveal their labels.
+- [ ] Verify every translation; make the two manifolds slightly different but
+  still visibly match; make the motion smooth and beautiful.
+
+### “Wörter sind neutral; Nachbarschaften tragen Bedeutung”
+- [ ] The inline LaTeX for `\text{new}`, `\text{york}`, and
+  `\text{new york}` is still on its own line, far from the explanation.
+  Put each token inline with its sentence and remove the block gaps.
+
+### Shared system pass (after the reorder)
+- [ ] Central live palette so all scenes update on theme change without each
+  scene re-reading colours.
+- [ ] Central theme refresh in the engine; generic scene CSS for readouts,
+  controls, outputs, range labels, and nav rows.
+- [ ] A small scene kit (canvas sizing, visibility/reduced motion, nav,
+  readout, range, chips) for future demos. Do not rewrite every existing
+  demo; wrap and style them.
+
+### Verification after these changes
+- [ ] Page test and height test in EN/DE, desktop and mobile.
+- [ ] Visual check of every reordered slide and every new control.
+- [ ] `check_all.py --fast`, `php_validator.py`, `php -l`, `node --check`,
+  `git diff --check`.
+
+## Full state after the latest user round (2026-11-13, evening)
+
+This section supersedes the older checklists for the current work. It records
+what is already in the code, what is partially edited, and what is still open.
+
+### Working files
+
+- `intuition_learnsys-data.js` — slide content and the `steps` order.
+- `intuition_learnsys-demos.js` — the `SCENES` registry and most demos.
+- `learnsys.js` — engine, public API, navigation, theme handling.
+- `learnsys.css` — shared scene and page styling.
+- `assets/learnsys-visuals.js` — shared canvas helpers.
+- `assets/learnsys-unembed-scene.js` — new Unembedding scene.
+- `assets/tf-sinus-scene.js` — one-neuron / large-net sine scene.
+- `assets/loss-landscape-scene.js` — two-parameter loss landscape.
+- `assets/loss-landscape-worker.js` — worker for the landscape.
+
+### Already done and tested
+
+- [x] Shared visual helpers: palette mixing, arrows, labels, grids, 2D/3D
+  projection, heatmaps, token chips.
+- [x] New Unembedding slide with dot product, angle, `W_U`, logits, softmax,
+  token draw, and GPU lineage. Sources: Aggarwal 2001, NVIDIA CUDA, Tensor
+  Cores, CUDA guide, GeForce 256.
+- [x] First big reorder pass: loop and distribution moved after the
+  transformer material, new Unembedding slide inserted, 32 steps, kicker
+  numbers removed.
+- [x] Neural slide rewritten: one-neuron line, errors, large sine network,
+  live matrix overlay, CPU training, auto-start, offscreen pause, log loss.
+- [x] Bausteine rewritten: clean T → E → transformer → U stack, clickable
+  stations, brace and ×N badge, large 16:9 minis, `new` + `york` example.
+- [x] Compression polished: phase pill, Barlow category labels, halo,
+  unseen-case arrow into the universal hub.
+- [x] Loss landscape starts automatically, pauses offscreen, “Next” stays
+  while training.
+- [x] Manifold rebuilt with two 10×10 Pringle point sheets, Rips edges,
+  radius slider, five bilingual pairs, drag/zoom, idle rotation.
+- [x] Height-test false positives fixed with `data-no-height-test` on
+  navigation controls and the language switch.
+- [x] `uv run blog/tests/tenminutes_pages_test.py --pages
+  intuition_learnsys.php --langs en,de` → 10/10 checks passed.
+- [x] `uv run blog/tests/tenminutes_height_test.py --pages
+  intuition_learnsys_page.php --langs en,de --viewports desktop,mobile
+  --monkey 4` → 48 interactions, 0 height changes.
+- [x] `php_validator.py blog/` → all clean.
+- [x] `python3 blog/tools/check_all.py --fast` → all 33 stages passed.
+- [x] `node --check` on every changed JS, `php -l` on the page,
+  `git diff --check` → clean.
+
+### Partially edited right now (do not assume the page is consistent)
+
+- [~] The first neural object in `insideSteps` (DE and EN) has been replaced
+  with the new “1 Neuron” step (`demoState: { scene: "model", phase:
+  "linear" }`). The rest of the slide order still uses the older `steps`
+  array. The page will look inconsistent until the next pass finishes.
+- [~] The new `neuralLargeSteps` and `highdimSteps` arrays are planned but
+  not yet inserted.
+- [~] `gradientSteps` still uses `a` in its copy and still needs the `w`
+  rename and the flipped loss surface.
+- [~] `mlpSteps` still has the old title/body; it has not yet been merged
+  into the neural-network section.
+- [~] `manifoldSteps` copy still mentions the radius slider; the scene still
+  has the radius interaction instead of rotation/translation.
+- [~] `tokenizeScene` still uses the long sentence and the old BPE layout.
+- [~] `noiseScene` still renders the `new` / `york` rows as separate blocks.
+
+### Final intended slide order
+
+0. Was ist ein LLM? Chat und Code
+1. Verstehen heißt komprimieren
+2. **Die Bausteine eines LLM** (stays exactly here)
+3. **Gauß / Ceres** (new; before the data slide)
+4. **Dieselbe Schleife, viele Sprachen** (early; data situation clear)
+5. Text wird zu IDs (tokenizer)
+6. Bedeutung wird eine Zahl (embedding 1D)
+7. Bedeutung bekommt eine zweite Achse (2D)
+8. Drei Dimensionen, ein Schatten (3D)
+9. **Tausende Dimensionen** (new high-dimensional excerpt)
+10. Von Beziehungen zur Übersetzung (manifold translation)
+11. Jeder Platz bekommt einen Fingerabdruck (position)
+12. Kontext zieht die Bank an seinen Platz (attention 1)
+13. Attention verschiebt Bedeutungen in Kontexte (attention 2)
+14. Attention reduziert Rauschen (attention 3)
+15. Die kausale Matrix und die Heads (attention 4)
+16. Ein Muster passt, ein Wert wird geschrieben (FFN)
+17. Jede Schicht schreibt in denselben Stream (residual)
+18. Token-Trajektorien durch GPT-2
+19. Weiche Kurven, ein Knick (activation; before neural networks)
+20. Was sind neuronale Netze? · 1 Neuron
+21. Was sind neuronale Netze? · Loss-Landschaft
+22. Was sind neuronale Netze? · Großes Netz
+23. Was sind neuronale Netze? · Raum biegen (MLP merged in)
+24. Die Karte der Wörter (meadow)
+25. Aus einem Vektor wird ein Wort (unembedding)
+26. Von Logits zu einer Verteilung (real GPT-2 softmax)
+27. Ein Wort nach dem anderen (loop)
+28. Die Verteilung ist nicht die Antwort
+29. Dieselbe Schleife, viele Sprachen? No: this is moved to step 4.
+30. Vom Basismodell zum Assistenten
+31. Wie gut ist das Modell?
+32. Der KV-Cache wächst mit dem Kontext
+33. Suchen, lesen, einsetzen
+34. Geschichte in zehn Schritten
+35. Du bist das Chinesische Zimmer
+
+(Slide 29 in this sketch is intentionally empty after moving the language
+slide; the final array should have 35 slides. Renumber the kickers only by
+content labels, not by these numbers.)
+
+### Open work, in order
+
+1. [ ] Finish the `steps` array for the order above and add
+   `neuralLargeSteps` and `highdimSteps`.
+2. [ ] Tokenizer: shorter sentence example, new split map, BPE merge
+   equation, token/vocabulary counters, prominent “BPE = gelernte
+   Kompression”.
+3. [ ] Embedding: keep 1D directly after the tokenizer; add the highdim
+   excerpt slide.
+4. [ ] Neural networks: finish the 1-neuron → loss → large-net → MLP
+   sequence; adjust `TfSinusScene.next()`/`prev()` so the step order drives
+   the phase, not an internal auto-switch.
+5. [ ] Loss landscape: flip the projection so low loss is at the bottom,
+   rename `a` → `w`, label axes and formula `ŷ = w x + b`, `L(w,b)`.
+6. [ ] Manifold: remove radius; add rotation + translation; add
+   “Übersetzung finden”; hover labels for every point; verify all 49 word
+   pairs; smooth animation; “Weiter” also finds the translation.
+7. [ ] Noise slide: inline `\text{new}`, `\text{york}`, `\text{new york}`;
+   place Empire State Building and Statue of Liberty near the New York
+   cluster; `new york` around width 4; Statue of Liberty above at
+   neighbourhood 4 height.
+8. [ ] Data/language slide: move early (step 4), add the zettabyte era
+   (since about 2016, 10^21 bytes), curation, Wikipedia vs peer-reviewed,
+   wrong data, lies, Nile/Egypt vs Nile/Paraguay, and the averaging argument.
+9. [ ] New Gauss/Ceres slide (step 3): true orbit, noisy observations,
+   Gaussian error curve, telescope-quality slider, Ceres image, Flammarion
+   image, least squares, Stigler 1981, synthetic-data disclaimer,
+   “no single measurement is believed” conclusion, and the history text
+   about least squares returning in modern training.
+10. [ ] Shared-system pass: live shared palette, central theme refresh,
+    generic scene CSS for readouts/controls/outputs/ranges/nav, and a small
+    scene kit for future demos.
+11. [ ] Re-run page test, height test, `check_all.py --fast`, PHP/JS syntax,
+    `git diff --check`; fix regressions.
+12. [ ] Commit and push only after the final gate and only with explicit
+    approval.
+
+### Visual bar for the remaining work
+
+The page should feel like one continuous, calm, premium visual essay:
+square surfaces, thin lines, Open Sans body, Barlow display, the ScaDS
+palette, no clutter, no jumpy heights, no white-on-white or lime-on-white.
+Every scene should have one clear idea, a large readable canvas, a small
+readout, and a smooth transition. The Ceres/Gauss demo especially should be
+stunning: a quiet astronomical plate, a true orbit, a cloud of noisy
+measurements, a Gaussian error curve, and a telescope slider that visibly
+narrows the uncertainty while the fitted curve stays near the truth.

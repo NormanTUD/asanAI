@@ -58,8 +58,8 @@
       var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
       var x1 = x * cy - y * sy;
       var y1 = x * sy + y * cy;
-      var y2 = y1 * cp - z * 0.9 * sp;
-      var z2 = y1 * sp + z * 0.9 * cp;
+      var y2 = y1 * cp + z * 0.9 * sp;
+      var z2 = -y1 * sp + z * 0.9 * cp;
       var s = Math.min(size.w * 0.36, size.h * 0.44) * zoom / (1 + z2 * 0.18);
       return { x: size.w * 0.5 + x1 * s, y: size.h * 0.56 - y2 * s, z: z2 };
     }
@@ -101,8 +101,8 @@
       var key = optimizer + "|" + step + "|" + cur.a.toFixed(4) + "|" + cur.b.toFixed(4);
       if (key === formulaKey) return;
       formulaKey = key;
-      var tex = '\\underbrace{\\hat y}_{\\text{' + (DE ? 'Ausgabe' : 'output') + '}} = \\underbrace{a x + b}_{\\text{' + (DE ? 'lineares Modell' : 'linear model') + '}},\\quad a=' + cur.a.toFixed(3) + ',\\ b=' + cur.b.toFixed(3) +
-        '\\qquad \\underbrace{L(a,b)}_{\\text{' + (DE ? 'Fehler' : 'loss') + '}} = \\underbrace{\\frac{1}{n}\\sum_i(\\hat y_i-y_i)^2}_{\\text{MSE}} = ' + cur.loss.toFixed(4);
+      var tex = '\\underbrace{\\hat y}_{\\text{' + (DE ? 'Ausgabe' : 'output') + '}} = \\underbrace{w x + b}_{\\text{' + (DE ? 'lineares Modell' : 'linear model') + '}},\\quad w=' + cur.a.toFixed(3) + ',\\ b=' + cur.b.toFixed(3) +
+        '\\qquad \\underbrace{L(w,b)}_{\\text{' + (DE ? 'Fehler' : 'loss') + '}} = \\underbrace{\\frac{1}{n}\\sum_i(\\hat y_i-y_i)^2}_{\\text{MSE}} = ' + cur.loss.toFixed(4);
       formulaEl.innerHTML = '<div class="ls-math" data-tex="' + api.esc(tex) + '" data-tex-display="true"><code class="ls-tex-source">' + api.esc(tex) + '</code></div>';
       if (api.typeset) { try { api.typeset(formulaEl); } catch (e) {} }
     }
@@ -157,7 +157,7 @@
       ctx.strokeStyle = C.petrol; ctx.globalAlpha = .7; ctx.lineWidth = 1.2;
       ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(ea.x, ea.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(eb.x, eb.y); ctx.stroke();
       ctx.fillStyle = C.petrol; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.fillText("a", ea.x + 4, ea.y); ctx.fillText("b", eb.x + 4, eb.y);
+      ctx.fillText("w", ea.x + 4, ea.y); ctx.fillText("b", eb.x + 4, eb.y);
       ctx.fillStyle = C.muted; ctx.textAlign = "left"; ctx.fillText(DE ? "Loss" : "loss", 18, 20);
       ctx.textAlign = "right"; ctx.fillText(DE ? "Ziehen zum Drehen" : "drag to rotate", size.w - 18, 20);
       updateReadout(); drawExamples(); drawData(); renderFormula();
@@ -165,7 +165,7 @@
     function updateReadout() {
       if (!data) { readout.innerHTML = '<span>' + (DE ? "Training wird vorbereitet …" : "Preparing training …") + '</span>'; return; }
       var cur = current() || { a: 0, b: 0, loss: 0 };
-      readout.innerHTML = '<span><b>a</b> ' + cur.a.toFixed(3) + '</span><span><b>b</b> ' + cur.b.toFixed(3) + '</span><span><b>Loss</b> ' + cur.loss.toFixed(4) + '</span><span><b>' + (DE ? "Optimierer" : "optimizer") + '</b> ' + optimizer.toUpperCase() + '</span><span><b>' + (DE ? "Schritt" : "step") + '</b> ' + step + ' / ' + (trajectory().length - 1) + '</span>';
+      readout.innerHTML = '<span><b>w</b> ' + cur.a.toFixed(3) + '</span><span><b>b</b> ' + cur.b.toFixed(3) + '</span><span><b>Loss</b> ' + cur.loss.toFixed(4) + '</span><span><b>' + (DE ? "Optimierer" : "optimizer") + '</b> ' + optimizer.toUpperCase() + '</span><span><b>' + (DE ? "Schritt" : "step") + '</b> ' + step + ' / ' + (trajectory().length - 1) + '</span>';
     }
     function setStatus(text) { statusEl.textContent = text; }
     function setOpt(name) {

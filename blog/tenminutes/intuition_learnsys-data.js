@@ -641,13 +641,13 @@
   var insideSteps = DE ? [
 
     {
-      kicker: "Neuronale Netze",
-      title: "Was sind neuronale Netze?",
-      body: "Ein neuronales Netz ist eine parametrisierte Funktion. Fange klein an: ein einziges Neuron mit zwei Parametern, ŷ = w·x + b. Es kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nicht biegen. Mehr Neuronen und Schichten ändern das. Schalte mit „Weiter“ oder dem Tab auf das größere Netz: 1 → 32 → 32 → 32 → 1, Dense plus ReLU. Beobachte den Loss und die Kurve; die Matrizen kannst du live öffnen.",
-      watch: "Starte das Training. Wie reagiert die Gerade? Wann biegt das größere Netz den Sinus?",
-      demoState: { scene: "model" },
+      kicker: "1 Neuron",
+      title: "Was sind neuronale Netze? · 1 Neuron",
+      body: "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein Neuron: ŷ = w·x + b. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nicht biegen. Die vertikalen Striche sind die Fehler. Im nächsten Schritt wird aus diesen Fehlern eine Loss-Landschaft.",
+      watch: "Starte das Training. Wie reagiert die Gerade? Warum bleiben die Fehler groß?",
+      demoState: { scene: "model", phase: "linear" },
       context: "Der Loss wird nur auf den Trainingspunkten berechnet. Außerhalb gibt es keine Daten; die Kurve ist eine Extrapolation.",
-      deep: "Ein Neuron rechnet z = w x + b. Das größere Netz hat drei versteckte Schichten mit je 32 ReLU-Neuronen. Der Loss ist der mittlere quadratische Fehler. Die Gerade hat nur zwei Parameter und kann eine nichtlineare Funktion nicht approximieren. Das größere Netz kann es, braucht aber Daten und Training.",
+      deep: "Ein Neuron rechnet z = w x + b. Die Gerade hat nur zwei Parameter. Sie kann eine nichtlineare Funktion nicht approximieren, egal wie lange sie trainiert. Erst Aktivierungen und mehrere Schichten erzeugen Knicke und Kurven.",
       boxes: [
         box("mod-0", "Idee", "Was ist ein Modell?", "Ein Modell ist eine parametrisierte Funktion, die aus Eingaben Ausgaben schätzt. Beim Training werden die Parameter so angepasst, dass die Ausgaben zu den Daten passen."),
         box("mod-layer", "Mathematik", "Das Neuron", "Ein Input, ein Neuron: z = w x + b; a = activation(z); Ausgabe = v a + c. w, b, v und c sind Parameter. Mehr Neuronen und Schichten komponieren solche Funktionen.", "\\underbrace{z}_{\\text{Input des Neurons}} = \\underbrace{w x + b}_{\\text{lineare Schicht}} \\qquad \\underbrace{a}_{\\text{Aktivierung}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{Knick oder Kurve}}"),
@@ -681,13 +681,13 @@
     }
   ] : [
     {
-      kicker: "Neural networks",
-      title: "What are neural networks?",
-      body: "A neural network is a parameterised function. Start small: a single neuron with two parameters, ŷ = w·x + b. It can draw only a straight line. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. More neurons and layers change that. Switch with “Next” or the tab to the larger network: 1 → 32 → 32 → 32 → 1, dense with ReLU. Watch the loss and the curve; you can open the matrices live.",
-      watch: "Start training. How does the line react? When does the larger network bend the sine?",
-      demoState: { scene: "model" },
+      kicker: "1 neuron",
+      title: "What are neural networks? · 1 neuron",
+      body: "A neural network is first a parameterised function. The smallest example is one neuron: ŷ = w·x + b. It has two parameters and can draw only a straight line. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. The vertical strokes are the errors. In the next step those errors become a loss landscape.",
+      watch: "Start training. How does the line react? Why do the errors stay large?",
+      demoState: { scene: "model", phase: "linear" },
       context: "The loss is computed only on the training points. Outside there is no data; the curve is an extrapolation.",
-      deep: "One neuron computes z = w x + b. The larger network has three hidden layers with 32 ReLU neurons each. The loss is mean squared error. The line has only two parameters and cannot approximate a nonlinear function. The larger network can, but it needs data and training.",
+      deep: "One neuron computes z = w x + b. The line has only two parameters. It cannot approximate a nonlinear function, no matter how long it trains. Only activations and several layers create bends and curves.",
       boxes: [
         box("mod-0", "Idea", "What is a model?", "A model is a parameterised function that estimates outputs from inputs. Training adjusts the parameters so that the outputs fit the data."),
         box("mod-layer", "Mathematics", "The neuron", "One input, one neuron: z = w x + b; a = activation(z); output = v a + c. w, b, v, and c are parameters. More neurons and layers compose such functions.", "\\underbrace{z}_{\\text{input to the neuron}} = \\underbrace{w x + b}_{\\text{linear layer}} \\qquad \\underbrace{a}_{\\text{activation}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{bend or curve}}"),
@@ -725,13 +725,13 @@
     {
       kicker: "Die Übertragung",
       title: "Von Beziehungen zur Übersetzung",
-      body: "Beziehungen untereinander können Bedeutung enthalten. Im vereinfachten Token-Raum liegen englische und japanische Wörter so ähnlich zueinander, dass man die eine Punktwolke in die andere überführen kann. Die Form entsteht aus den Punkten: Zwei Punkte werden verbunden, wenn ihr Abstand unter einer Schwelle liegt (Vietoris–Rips). So kann man sich Maschinenübersetzung grob vorstellen: Eine Bedeutungsform wird auf eine andere abgebildet. In einem echten Modell sind diese Formen abstrakt und viel komplexer.",
-      watch: "Drehe die Punktwolke und ziehe den Radius. Welche Punkte sind verbunden, welche Wörter bleiben in Korrespondenz?",
+      body: "Beziehungen untereinander können Bedeutung enthalten. Zwei Punktwolken zeigen dieselben Wörter in Englisch und Japanisch. Die Form entsteht aus den Punkten: Zwei Punkte werden verbunden, wenn ihr Abstand unter einer Schwelle liegt (Vietoris–Rips). Drehe und verschiebe die japanische Wolke, bis sie auf der englischen liegt: Dann sitzt jedes Wort auf seiner Übersetzung, allein durch seine Position. Fahre mit der Maus über einen Punkt, um das Wort zu sehen. Klicke „Übersetzung finden“ oder „Weiter“, um die Translation und Rotation zu finden.",
+      watch: "Drehe und verschiebe die japanische Wolke. Fahre über die Punkte, um die Wörter zu sehen. Klicke „Übersetzung finden“ oder „Weiter“.",
       demoState: { scene: "manifold" },
-      context: "Die Demo ist stark vereinfacht: zwei Punktwolken, wenige Wörter, saubere Kanten. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen; der Vietoris–Rips-Komplex macht nur die Nachbarschaften sichtbar.",
-      deep: "Eine Mannigfaltigkeit ist lokal flach und global gekrümmt: In kleinen Ausschnitten sieht sie aus wie eine Ebene, als Ganzes kann sie sich biegen. Die Übersetzung entspricht einer Abbildung zwischen zwei solchen Flächen.",
+      context: "Die Demo ist stark vereinfacht: zwei Punktwolken, viele Wörter, saubere Kanten. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen; der Vietoris–Rips-Komplex macht nur die Nachbarschaften sichtbar.",
+      deep: "Eine Mannigfaltigkeit ist lokal flach und global gekrümmt. Die Übersetzung entspricht einer Abbildung zwischen zwei solchen Flächen. Hier ist die Abbildung eine Rotation plus Translation: Wenn beide Wolken zur Deckung kommen, liegen die Wörter ihrer Bedeutung nach übereinander.",
       boxes: [
-        box("man-1", "Technik", "Was zeigt die Demo?", "Zwei Punktwolken für Englisch und Japanisch. Innerhalb jeder Wolke sind Punkte verbunden, wenn ihr Abstand unter der Schwelle liegt; gestrichelte Linien markieren Wortkorrespondenzen. Du kannst die Ansicht drehen und zoomen."),
+        box("man-1", "Technik", "Was zeigt die Demo?", "Zwei Punktwolken für Englisch und Japanisch. Innerhalb jeder Wolke sind Punkte verbunden, wenn ihr Abstand unter der Schwelle liegt; gestrichelte Linien markieren Wortkorrespondenzen. Du kannst die Ansicht drehen und zoomen, die japanische Wolke drehen und verschieben und mit der Maus über jeden Punkt fahren."),
         box("man-2", "Grenze", "Was ist vereinfacht?", "Die Punktwolken sind klein und die Wörter sauber platziert. Ein echtes Embedding hat Tausende Dimensionen und viele überlappende Beziehungen; die Kanten zeigen nur eine Nachbarschaft, nicht die ganze Geometrie."),
         box("man-3", "Grenze", "Wie echt ist die Übersetzung?", "Die Demo zeigt eine Idee, keine Messung. Ein echtes Modell lernt die Abbildung aus Text; die Formen sind abstrakt und für Menschen schwer zu sehen."),
         box("man-4", "Mathematik", "Was ist eine Mannigfaltigkeit?", "Eine Mannigfaltigkeit ist ein Raum, der lokal wie R^n aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im R^n abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus. Der Vietoris–Rips-Komplex ist eine diskrete Näherung: Er verbindet Punkte bis zu einem Radius und macht so Nachbarschaften sichtbar.")
@@ -742,13 +742,13 @@
     {
       kicker: "Transport",
       title: "From relations to translation",
-      body: "Relations among each other can carry meaning. In the simplified token space, English and Japanese words sit so similarly that one point cloud can be carried into the other. The shape comes from the points: two points are connected when their distance is below a threshold (Vietoris–Rips). That is a rough picture of machine translation: one meaning shape is mapped onto another. In a real model these shapes are abstract and much more complex.",
-      watch: "Rotate the point cloud and drag the radius. Which points are connected, and which words stay in correspondence?",
+      body: "Relations among each other can carry meaning. Two point clouds show the same words in English and Japanese. The shape comes from the points: two points are connected when their distance is below a threshold (Vietoris–Rips). Rotate and translate the Japanese cloud until it sits on the English one: then every word sits on its translation, from position alone. Hover over a point to see its word. Click “Find translation” or “Next” to find the rotation and translation.",
+      watch: "Rotate and translate the Japanese cloud. Hover the points to see the words. Click “Find translation” or “Next”.",
       demoState: { scene: "manifold" },
-      context: "The demo is strongly simplified: two point clouds, few words, clean edges. The real geometry has thousands of dimensions and overlapping relations; the Vietoris–Rips complex only makes neighbourhoods visible.",
-      deep: "A manifold is locally flat and globally curved: in small patches it looks like a plane, as a whole it can bend. Translation corresponds to a map between two such surfaces.",
+      context: "The demo is strongly simplified: two point clouds, many words, clean edges. The real geometry has thousands of dimensions and overlapping relations; the Vietoris–Rips complex only makes neighbourhoods visible.",
+      deep: "A manifold is locally flat and globally curved. Translation corresponds to a map between two such surfaces. Here the map is a rotation plus translation: when the clouds coincide, words of the same meaning lie on top of each other.",
       boxes: [
-        box("man-1", "Technique", "What does the demo show?", "Two point clouds for English and Japanese. Inside each cloud, points are connected when their distance is below the threshold; dashed lines mark word correspondences. You can rotate and zoom the view."),
+        box("man-1", "Technique", "What does the demo show?", "Two point clouds for English and Japanese. Inside each cloud, points are connected when their distance is below the threshold; dashed lines mark word correspondences. You can rotate and zoom the view, rotate and translate the Japanese cloud, and hover over every point."),
         box("man-2", "Limit", "What is simplified?", "The point clouds are small and the words are neatly placed. A real embedding has thousands of dimensions and many overlapping relations; the edges show one neighbourhood, not the whole geometry."),
         box("man-3", "Limit", "How real is the translation?", "The demo shows an idea, not a measurement. A real model learns the map from text; the shapes are abstract and hard for humans to see."),
         box("man-4", "Mathematics", "What is a manifold?", "A manifold is a space that locally looks like R^n: every point has a chart that maps a neighbourhood onto an open set in R^n, and the charts change smoothly. Globally the space can be curved, for example a sphere or a torus. The Vietoris–Rips complex is a discrete approximation: it connects points up to a radius and makes neighbourhoods visible.")
@@ -759,9 +759,9 @@
 
   var mlpSteps = DE ? [
     {
-      kicker: "Das MLP",
-      title: "Sieh zu, wie das MLP den Raum biegt",
-      body: "Nach der Attention folgt ein kleines neuronales Netz: das FFN. Es rechnet auf jedem Token einzeln und kann den Raum so biegen, dass Muster trennbar werden. Eine gerade Linie ist der einfachste Trenner, aber im ursprünglichen Raum nicht immer möglich. Das MLP hebt die Punkte in eine neue Ebene, in der die Trennung gelingt. In einem LLM läuft dieselbe Idee in Tausenden Dimensionen und hilft dem Modell, interne Zustände zu isolieren.",
+      kicker: "Raum biegen",
+      title: "Was sind neuronale Netze? · Raum biegen",
+      body: "Neuronale Netze können mehr als Geraden. Dasselbe Prinzip kann den Raum falten: Eine Schicht hebt die Punkte in eine höhere Dimension, eine Aktivierung biegt sie, und eine flache Ebene trennt die Klassen. Im LLM macht das FFN pro Token genau diese Art von Biegung. Klicke dich durch die neun Folien: Wo biegt sich der Raum, wo erscheint der Schnitt?",
       watch: "Klicke dich durch die neun Folien. Wo biegt sich der Raum, wo erscheint der Schnitt?",
       demoState: { scene: "mlp" },
       context: "Die Biegung ist eine Dense-Schicht: Sie hebt die Punkte in eine zusätzliche Dimension, bis ein flacher Schnitt reicht.",
@@ -774,9 +774,9 @@
     }
   ] : [
     {
-      kicker: "The MLP",
-      title: "Watch the MLP bend the space",
-      body: "After attention comes a small neural network: the FFN. It computes on each token separately and can bend the space so that patterns become separable. A straight line is the easiest separator, but it is not always possible in the original space. The MLP lifts the points into a new plane where it becomes possible. In an LLM the same idea runs in thousands of dimensions and helps the model isolate internal states.",
+      kicker: "Bending space",
+      title: "What are neural networks? · Bending space",
+      body: "Neural networks can do more than straight lines. The same principle can fold space: a layer lifts the points into a higher dimension, an activation bends them, and a flat plane separates the classes. In an LLM the FFN performs exactly this kind of bend per token. Click through the nine slides: where does the space bend, where does the cut appear?",
       watch: "Click through the nine slides. Where does the space bend, where does the cut appear?",
       demoState: { scene: "mlp" },
       context: "The bend is a dense layer: it lifts the points into an extra dimension until a flat cut is enough.",
@@ -989,16 +989,16 @@
 
   var gradientSteps = DE ? [
     {
-      kicker: "Training",
-      title: "Die Parameter leben auf einer Loss-Landschaft",
-      body: "Hier ist ein echtes kleines Modell: ŷ = a·x + b, mit genau zwei Parametern. Die Fläche zeigt den Loss über a und b; die Beispiele in der Seitenleiste sind die Daten. Das Training startet automatisch, sobald die Folie sichtbar ist; mit Pause hältst du es an, mit „Weiter“ verlässt du die Folie erst, wenn SGD, Adam und Momentum durch sind. Die Formel darunter setzt die aktuellen Werte ein.",
-      watch: "Beobachte das Training. Wie verändern sich a und b, und wo im Tal endet der Punkt?",
+      kicker: "Loss-Landschaft",
+      title: "Was sind neuronale Netze? · Loss-Landschaft",
+      body: "Jetzt wird der Fehler zur Landschaft. Für das 1-Neuron-Modell gibt es nur zwei Parameter: w und b. Die Fläche zeigt den Loss über w und b; die Beispiele in der Seitenleiste sind die Daten. Das Training startet automatisch, sobald die Folie sichtbar ist; mit Pause hältst du es an, mit „Weiter“ verlässt du die Folie erst, wenn SGD, Adam und Momentum durch sind. Die Formel darunter setzt die aktuellen Werte ein.",
+      watch: "Beobachte das Training. Wie verändern sich w und b, und wo im Tal endet der Punkt?",
       demoState: { scene: "gradient" },
-      context: "Die Fläche ist diesmal kein Schnitt durch Hunderte Dimensionen: a und b sind die beiden echten Parameter. Jedes Beispiel (x, y) links erzeugt einen Fehler; der Loss ist der Mittelwert dieser quadratischen Fehler. Die Formel darunter zeigt das Modell und den aktuellen Loss.",
-      deep: "Der Gradient zeigt, wie der Loss auf eine Änderung von a und b reagiert. Der Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite. In einem LLM gibt es Milliarden solcher Parameter; die Landschaft ist nicht mehr sichtbar, die Regel bleibt dieselbe.",
+      context: "Die Fläche ist diesmal kein Schnitt durch Hunderte Dimensionen: w und b sind die beiden echten Parameter. Jedes Beispiel (x, y) links erzeugt einen Fehler; der Loss ist der Mittelwert dieser quadratischen Fehler. Die Formel darunter zeigt das Modell und den aktuellen Loss.",
+      deep: "Der Gradient zeigt, wie der Loss auf eine Änderung von w und b reagiert. Der Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite. In einem LLM gibt es Milliarden solcher Parameter; die Landschaft ist nicht mehr sichtbar, die Regel bleibt dieselbe.",
       boxes: [
-        box("grad-1", "Mathematik", "Das echte Modell", "Ein lineares Modell mit zwei Parametern: ŷ = a·x + b. a ist die Steigung, b der y-Achsenabschnitt. Mehr nicht.", "\\underbrace{\\hat y}_{\\text{Ausgabe}} = \\underbrace{a x + b}_{\\text{zwei Parameter}}"),
-        box("grad-2", "Mathematik", "Die Loss-Fläche", "L(a,b) = 1/n Σ (a·x_i + b − y_i)². Die beiden Achsen sind a und b, nicht zwei beliebige Richtungen.", "\\underbrace{L(a,b)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_i (a x_i+b-y_i)^2}_{\\text{mittlerer Fehler}}"),
+        box("grad-1", "Mathematik", "Das echte Modell", "Ein lineares Modell mit zwei Parametern: ŷ = w·x + b. w ist die Steigung, b der y-Achsenabschnitt. Mehr nicht.", "\\underbrace{\\hat y}_{\\text{Ausgabe}} = \\underbrace{w x + b}_{\\text{zwei Parameter}}"),
+        box("grad-2", "Mathematik", "Die Loss-Fläche", "L(w,b) = 1/n Σ (w·x_i + b − y_i)². Die beiden Achsen sind w und b, nicht zwei beliebige Richtungen.", "\\underbrace{L(w,b)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mittlerer Fehler}}"),
         box("grad-3", "Technik", "Der Schritt", "θ ← θ − η ∇L. Der Gradient zeigt bergauf; der Ball geht bergab. Der Worker führt die Schritte aus und schickt die Projektion zurück.", "\\underbrace{\\theta_{t+1}}_{\\text{neu}} = \\underbrace{\\theta_t}_{\\text{alt}} - \\underbrace{\\eta}_{\\text{Lernrate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{Gradient}}"),
         box("grad-4", "Grenze", "Warum ist das nicht das ganze LLM?", "Echte Netze haben Milliarden Dimensionen. Die zwei Richtungen sind ein lesbarer Schnitt, keine vollständige Landschaft."),
         box("grad-opt", "Technik", "SGD, Adam, Momentum", "SGD folgt dem Gradienten direkt. Momentum sammelt Geschwindigkeit und schießt über kleine Täler hinaus. Adam führt ein Gedächtnis für Gradient und Gradientenquadrat: häufig aktualisierte Parameter werden gedämpft, selten aktualisierte stärker gewichtet. Die Demo zeigt alle drei Pfade auf derselben Fläche."),
@@ -1014,16 +1014,16 @@
     }
   ] : [
     {
-      kicker: "Training",
-      title: "Parameters live on a loss landscape",
-      body: "This is a real small model: ŷ = a·x + b, with exactly two parameters. The surface shows the loss over a and b; the examples in the side panel are the data. Training starts automatically as soon as the slide is visible; Pause stops it, and “Next” leaves the slide only after SGD, Adam, and Momentum have finished. The formula below substitutes the current values.",
-      watch: "Watch the training. How do a and b change, and where in the valley does the point end?",
+      kicker: "Loss landscape",
+      title: "What are neural networks? · Loss landscape",
+      body: "Now the error becomes a landscape. The one-neuron model has only two parameters: w and b. The surface shows the loss over w and b; the examples in the side panel are the data. Training starts automatically as soon as the slide is visible; Pause stops it, and “Next” leaves the slide only after SGD, Adam, and Momentum have finished. The formula below substitutes the current values.",
+      watch: "Watch the training. How do w and b change, and where in the valley does the point end?",
       demoState: { scene: "gradient" },
-      context: "This surface is not a slice through hundreds of dimensions: a and b are the two real parameters. Every example (x, y) on the left produces an error; the loss is the mean squared error. The formula below shows the model and the current loss.",
-      deep: "The gradient shows how the loss reacts to a change in a and b. The optimiser moves in the opposite direction. The learning rate sets the step size. In an LLM there are billions of such parameters; the landscape is no longer visible, but the rule stays the same.",
+      context: "This surface is not a slice through hundreds of dimensions: w and b are the two real parameters. Every example (x, y) on the left produces an error; the loss is the mean squared error. The formula below shows the model and the current loss.",
+      deep: "The gradient shows how the loss reacts to a change in w and b. The optimiser moves in the opposite direction. The learning rate sets the step size. In an LLM there are billions of such parameters; the landscape is no longer visible, but the rule stays the same.",
       boxes: [
-        box("grad-1", "Mathematics", "The real model", "A linear model with two parameters: ŷ = a·x + b. a is the slope, b is the intercept. Nothing else.", "\\underbrace{\\hat y}_{\\text{output}} = \\underbrace{a x + b}_{\\text{two parameters}}"),
-        box("grad-2", "Mathematics", "The loss surface", "L(a,b) = 1/n Σ (a·x_i + b − y_i)². The two axes are a and b, not two arbitrary directions.", "\\underbrace{L(a,b)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_i (a x_i+b-y_i)^2}_{\\text{mean error}}"),
+        box("grad-1", "Mathematics", "The real model", "A linear model with two parameters: ŷ = w·x + b. w is the slope, b is the intercept. Nothing else.", "\\underbrace{\\hat y}_{\\text{output}} = \\underbrace{w x + b}_{\\text{two parameters}}"),
+        box("grad-2", "Mathematics", "The loss surface", "L(w,b) = 1/n Σ (w·x_i + b − y_i)². The two axes are w and b, not two arbitrary directions.", "\\underbrace{L(w,b)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mean error}}"),
         box("grad-3", "Technique", "The step", "θ ← θ − η ∇L. The gradient points uphill; the ball goes downhill. The worker runs the steps and sends the projection back.", "\\underbrace{\\theta_{t+1}}_{\\text{new}} = \\underbrace{\\theta_t}_{\\text{old}} - \\underbrace{\\eta}_{\\text{learning rate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{gradient}}"),
         box("grad-4", "Limit", "Why is this not the whole LLM?", "Real networks have billions of dimensions. The two directions are a readable slice, not the full landscape."),
         box("grad-opt", "Technique", "SGD, Adam, Momentum", "SGD follows the gradient directly. Momentum accumulates velocity and overshoots small valleys. Adam keeps a memory of the gradient and its square: frequently updated parameters are damped, rarely updated ones get more weight. The demo shows all three paths on the same surface."),
@@ -1256,7 +1256,81 @@
     }
   ];
 
-  var steps = [introSteps[0]].concat(bookSteps, insideSteps.slice(1, 2), insideSteps.slice(0, 1), activationSteps, mlpSteps, gradientSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, unembedSteps, softmaxSteps, [introSteps[1]], [introSteps[2]], languageSteps, posttrainSteps, evalSteps, kvcacheSteps, ragSteps, historySteps, philosophySteps);
+  var highdimSteps = DE ? [
+    {
+      kicker: "Der Raum",
+      title: "Tausende Dimensionen",
+      body: "Die 3D-Bilder sind nur ein Schatten. Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt: 16 von 4096 Dimensionen. Jede Zeile ist ein Wort, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Mittelpunkt, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
+      watch: "Scrolle durch die Tabelle. Jede Spalte ist eine Dimension; die Zahlen sind ein Ausschnitt, keine echten GPT-Gewichte.",
+      demoState: { scene: "highdim" },
+      context: "Mehr Dimensionen erlauben mehr unabhängige Unterschiede. Die 3D-Demos sind Projektionen; die Tabelle ist die ehrliche Darstellung für den Rechner.",
+      deep: "Die Zahlen sind didaktisch, keine echten GPT-Gewichte. In einem echten Modell wird jede Koordinate aus Text gelernt; keine einzelne Spalte hat für sich eine Bedeutung. Die Geometrie entsteht im Zusammenspiel.",
+      boxes: [
+        box("hd-new-1", "Technik", "Warum so viele Dimensionen?", "Jede zusätzliche Dimension kann eine weitere Richtung für einen Unterschied öffnen. Mit Tausenden Koordinaten können viele Beziehungen nebeneinander existieren, ohne sich gegenseitig zu überschreiben."),
+        box("hd-new-2", "Grenze", "Was zeigt die Tabelle nicht?", "Sie zeigt einen Ausschnitt, keine echten Gewichte. Ein echtes Modell lernt jede Koordinate aus Text; die Tabelle ist eine didaktische Darstellung.")
+      ],
+      sources: sources
+    }
+  ] : [
+    {
+      kicker: "The space",
+      title: "Thousands of dimensions",
+      body: "The 3D pictures are only a shadow. A real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice: 16 of 4096 dimensions. Each row is a word, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: midpoint, angle, and matrix multiplication work coordinate by coordinate.",
+      watch: "Scroll through the table. Each column is a dimension; the numbers are a slice, not real GPT weights.",
+      demoState: { scene: "highdim" },
+      context: "More dimensions allow more independent differences. The 3D demos are projections; the table is the honest view for the computer.",
+      deep: "The numbers are didactic, not real GPT weights. In a real model every coordinate is learned from text; no single column means anything on its own. The geometry comes from the interaction.",
+      boxes: [
+        box("hd-new-1", "Technique", "Why so many dimensions?", "Every extra dimension can open another direction for a difference. With thousands of coordinates many relations can exist side by side without overwriting one another."),
+        box("hd-new-2", "Limit", "What does the table not show?", "It shows a slice, not real weights. A real model learns every coordinate from text; the table is a didactic view.")
+      ],
+      sources: sources
+    }
+  ];
+
+  var neuralLargeSteps = DE ? [
+    {
+      kicker: "Großes Netz",
+      title: "Was sind neuronale Netze? · Großes Netz",
+      body: "Jetzt ein größeres Netz: 1 → 32 → 32 → 32 → 1, Dense plus ReLU. Es hat viel mehr Parameter und Richtungen, als wir zeichnen können; das Prinzip bleibt dasselbe: Parameter, Loss, Gradient. Beobachte, wie die grüne Kurve den Sinus biegt. Ziehe Punkte, pausiere oder starte neu. Die Matrizen kannst du live öffnen.",
+      watch: "Starte das Training. Wann biegt die Kurve den Sinus? Was passiert außerhalb der Trainingsdaten?",
+      demoState: { scene: "model", phase: "net" },
+      context: "Der Loss wird nur auf den Trainingspunkten berechnet. Außerhalb gibt es keine Daten; die Kurve ist eine Extrapolation.",
+      deep: "Das Netz hat drei versteckte Schichten mit je 32 ReLU-Neuronen. Jede Schicht hat eigene Gewichte. Der Loss ist der mittlere quadratische Fehler. Ein kleiner Trainings-Loss garantiert keine gute Extrapolation.",
+      boxes: [
+        box("mod-width", "Technik", "Warum größer?", "Mehr Neuronen und Schichten geben dem Netz mehr Richtungen und Knicke. Es kann den Sinus biegen, braucht aber Daten und Training."),
+        box("mod-loss", "Mathematik", "Was ist der Loss?", "Der Loss misst den Abstand zwischen Modell und Daten. Beim quadratischen Fehler wird jeder Abstand quadriert, gemittelt und minimiert. Training sucht Parameter, die diesen Wert senken.", "\\underbrace{L(\\theta)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mittlerer quadratischer Fehler}}"),
+        box("mod-train", "Technik", "Wie wird trainiert?", "Der Gradient zeigt, wie der Loss auf jede Parameteränderung reagiert. Ein Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite."),
+        box("mod-extra", "Grenze", "Warum außerhalb falsch?", "Im Trainingsbereich gibt es Daten. Außerhalb extrapoliert das Netz. Ein kleiner Trainings-Loss garantiert keine gute Extrapolation.")
+      ],
+      sources: [
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten und Backpropagation für mehrschichtige Netze.", en: "Gradients and backpropagation for multilayer networks." } },
+        { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "Larger network",
+      title: "What are neural networks? · Larger network",
+      body: "Now a larger network: 1 → 32 → 32 → 32 → 1, dense with ReLU. It has far more parameters and directions than we can draw; the principle stays the same: parameters, loss, gradient. Watch the green curve bend the sine. Drag points, pause, or restart. You can open the matrices live.",
+      watch: "Start training. When does the curve bend the sine? What happens outside the training data?",
+      demoState: { scene: "model", phase: "net" },
+      context: "The loss is computed only on the training points. Outside there is no data; the curve is an extrapolation.",
+      deep: "The network has three hidden layers with 32 ReLU neurons each. Every layer has its own weights. The loss is mean squared error. A small training loss does not guarantee good extrapolation.",
+      boxes: [
+        box("mod-width", "Technique", "Why larger?", "More neurons and layers give the network more directions and bends. It can bend the sine, but it needs data and training."),
+        box("mod-loss", "Mathematics", "What is the loss?", "The loss measures the distance between model and data. With squared error, every gap is squared, averaged, and minimised. Training looks for parameters that lower this value.", "\\underbrace{L(\\theta)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mean squared error}}"),
+        box("mod-train", "Technique", "How is it trained?", "The gradient shows how the loss reacts to every parameter change. An optimiser moves in the opposite direction. The learning rate sets the step size."),
+        box("mod-extra", "Limit", "Why wrong outside?", "Inside the training range there is data. Outside the network extrapolates. A small training loss does not guarantee good extrapolation.")
+      ],
+      sources: [
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten und Backpropagation für mehrschichtige Netze.", en: "Gradients and backpropagation for multilayer networks." } },
+        { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } }
+      ]
+    }
+  ];
+
+  var steps = [introSteps[0], bookSteps[0], insideSteps[1], languageSteps[0], tokenizeSteps[0], embedSteps[0], embedSteps[1], embedSteps[2], highdimSteps[0], manifoldSteps[0], positionSteps[0], attentionSteps[0], attentionSteps[1], attentionSteps[2], attentionSteps[3], ffnSteps[0], residualSteps[0], trajectorySteps[0], activationSteps[0], insideSteps[0], gradientSteps[0], neuralLargeSteps[0], mlpSteps[0], meadowSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], introSteps[2], posttrainSteps[0], evalSteps[0], kvcacheSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
 
   var day = {
     id: "intuition",
@@ -1294,6 +1368,7 @@
     lang.className = "ls-btn ls-btn--tiny ls-lang-btn";
     lang.textContent = DE ? "EN" : "DE";
     lang.setAttribute("aria-label", DE ? "Switch to English" : "Auf Deutsch wechseln");
+    lang.setAttribute("data-no-height-test", "1");
     lang.addEventListener("click", function () {
       if (window.TM && typeof TM.setLang === "function") TM.setLang(DE ? "en" : "de");
     });
