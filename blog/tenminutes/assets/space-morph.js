@@ -191,7 +191,7 @@
 		let z = denseWeights.b2;
 		for (let i = 0; i < denseWeights.W1.length; i++) {
 			const pre = denseWeights.W1[i][0] * x + denseWeights.W1[i][1] * y + denseWeights.b1[i];
-			const h = denseState.activation === "relu" ? Math.max(0, pre) : Math.tanh(pre);
+			const h = denseState.activation === "relu" ? Math.max(0, pre) : (denseState.activation === "sigmoid" ? 1 / (1 + Math.exp(-pre)) : Math.tanh(pre));
 			z += denseWeights.W2[i] * h;
 		}
 		return z;
@@ -323,6 +323,7 @@
 		return p;
 	}
 
+	const PRESET_ORDER = ["bowl", "ridge", "saddle", "smooth", "separator"];
 	const DENSE_PRESETS = {
 		bowl: { neurons: 2, scale: 1.2, bias: 0, activation: "relu", seed: 7, w2Scale: 1.25, b2: 0 },
 		ridge: { neurons: 1, scale: 1.6, bias: -0.2, activation: "relu", seed: 3, w2Scale: 1.25, b2: 0 },
@@ -334,7 +335,7 @@
 	function denseFormulas() {
 		if (!denseWeights) buildDenseWeights();
 		const n = denseWeights.W1.length;
-		const act = denseState.activation === "relu" ? "\\operatorname{ReLU}" : "\\tanh";
+		const act = denseState.activation === "relu" ? "\\operatorname{ReLU}" : (denseState.activation === "sigmoid" ? "\\operatorname{sigmoid}" : "\\tanh");
 		const xvec = "\\begin{pmatrix}x_1\\\\x_2\\end{pmatrix}";
 		const layer = DE
 			? "\\underbrace{\\begin{aligned} a &= \\underbrace{W_1 " + xvec + " + b_1}_{\\text{Schicht 1}} \\\\ h &= \\underbrace{" + act + "(a)}_{\\text{Aktivierung}} \\\\ z &= \\underbrace{W_2 h + b_2}_{\\text{Schicht 2, eine Dimension}} \\end{aligned}}_{\\text{das MLP macht aus einem Punkt eine Höhe}}"
@@ -537,6 +538,18 @@
 	}
 
 	function next() {
+		if (cur === 7 || cur === 8) {
+			const presetEl = document.getElementById("ism-dense-preset");
+			if (presetEl) {
+				const at = PRESET_ORDER.indexOf(presetEl.value);
+				const nextPreset = at < 0 ? "separator" : PRESET_ORDER[at + 1];
+				if (nextPreset) {
+					presetEl.value = nextPreset;
+					presetEl.dispatchEvent(new Event("change", { bubbles: true }));
+					return;
+				}
+			}
+		}
 		if (cur === 7 && !separationInfo().separated) return;
 		if (cur === SCENES.length - 1) {
 			if (window.LearnSys && window.LearnSys.state && window.LearnSys.go) {
@@ -1042,7 +1055,7 @@
 			<label>n <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="2"><output>2</output></label>
 			<label>Skala <input id="ism-dense-scale" type="range" min="0.2" max="3" step="0.1" value="1.2"><output>1.2</output></label>
 			<label>Bias <input id="ism-dense-bias" type="range" min="-2" max="2" step="0.1" value="0"><output>0.0</output></label>
-			<label>Aktivierung <select id="ism-dense-activation"><option value="relu" selected>ReLU</option><option value="tanh">tanh</option></select></label>
+			<label>Aktivierung <select id="ism-dense-activation"><option value="relu" selected>ReLU</option><option value="tanh">tanh</option><option value="sigmoid">sigmoid</option></select></label>
 			<button type="button" id="ism-dense-resample">Neu</button>
 			<span class="ism-dense-hint">Die Rückprojektion s(x,y) macht aus jedem Punkt einen Score. Eine Schwelle bei s=0 trennt die Klassen.</span>
 		` : `
@@ -1057,7 +1070,7 @@
 			<label>n <input id="ism-dense-neurons" type="range" min="1" max="8" step="1" value="2"><output>2</output></label>
 			<label>Scale <input id="ism-dense-scale" type="range" min="0.2" max="3" step="0.1" value="1.2"><output>1.2</output></label>
 			<label>Bias <input id="ism-dense-bias" type="range" min="-2" max="2" step="0.1" value="0"><output>0.0</output></label>
-			<label>Activation <select id="ism-dense-activation"><option value="relu" selected>ReLU</option><option value="tanh">tanh</option></select></label>
+			<label>Activation <select id="ism-dense-activation"><option value="relu" selected>ReLU</option><option value="tanh">tanh</option><option value="sigmoid">sigmoid</option></select></label>
 			<button type="button" id="ism-dense-resample">New</button>
 			<span class="ism-dense-hint">The back-projection s(x,y) turns every point into one score. A threshold at s=0 separates the classes.</span>
 		`);
@@ -1118,6 +1131,9 @@
 		buildDots();
 		buildSceneStack();
 		buildDenseControls();
+		const panel = document.querySelector(".ism-panel");
+		const denseBox = document.getElementById("ism-dense-controls");
+		if (panel && denseBox && denseBox.parentNode !== panel) panel.appendChild(denseBox);
 		renderCopy();
 		fitCopyHeight();
 		bindDrag();

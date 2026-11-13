@@ -1187,6 +1187,7 @@
     var stage = el.querySelector(".ia-stage");
     var phonesWrap = el.querySelector(".ia-phones");
     var chatPhone = el.querySelector("#ia-chat-phone");
+    var chatScreen = el.querySelector(".ia-chat-screen");
     var searchPhone = el.querySelector("#ia-phone");
     var chatQuestionEl = el.querySelector(".ia-chat-question");
     var chatAnswerEl = el.querySelector(".ia-chat-answer");
@@ -1266,6 +1267,7 @@
       thinking.classList.remove("on");
       serp.classList.remove("on");
       if (chatPhone) chatPhone.classList.remove("is-thinking", "is-answered");
+      if (chatScreen) chatScreen.classList.remove("is-answering");
       if (chatQuestionEl) chatQuestionEl.textContent = "";
       if (chatAnswerEl) chatAnswerEl.textContent = "";
       chatStarted = false;
@@ -1331,6 +1333,7 @@
         if (chatQuestionEl) chatQuestionEl.textContent = CHAT_Q;
         if (chatAnswerEl) chatAnswerEl.textContent = CHAT_A;
         if (chatPhone) chatPhone.classList.add("is-answered");
+        if (chatScreen) chatScreen.classList.add("is-answering");
         if (sequenceDone) later(function () { sequenceDone(); }, 900);
         return;
       }
@@ -1339,6 +1342,7 @@
         later(function () {
           if (chatPhone) chatPhone.classList.remove("is-thinking");
           if (chatPhone) chatPhone.classList.add("is-answered");
+          if (chatScreen) chatScreen.classList.add("is-answering");
           typeChat(chatAnswerEl, CHAT_A, 5, function () { if (sequenceDone) sequenceDone(); });
         }, 360);
       });
@@ -1479,7 +1483,6 @@
           '<div class="ls-code-window ls-code-window--agent">' +
             '<div class="ls-code-bar"><i></i><i></i><i></i><span>Agent</span></div>' +
             '<div class="ls-code-chat">' +
-              '<div class="ls-code-msg is-user ls-code-user-text"></div>' +
               '<div class="ls-code-msg is-agent"><span class="ls-code-agent-text"></span><span class="ls-code-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
               '<div class="ls-code-msg is-agent ls-code-run-msg" hidden>' + (DE ? "Ich führe himmel.py im Terminal aus." : "I'll run sky.py in the terminal.") + '</div>' +
             '</div>' +
@@ -1499,7 +1502,7 @@
     var codeEl = el.querySelector(".ls-code-body code");
     var commandEl = el.querySelector(".ls-code-command");
     var term = el.querySelector(".ls-code-term span");
-    var userMsgEl = el.querySelector(".ls-code-user-text");
+    var userPromptEl = el.querySelector(".ls-code-agent-prompt span");
     var agentMsgEl = el.querySelector(".ls-code-agent-text");
     var thinkingEl = el.querySelector(".ls-code-thinking");
     var agentWin = el.querySelector(".ls-code-window--agent");
@@ -1563,18 +1566,13 @@
       replayBtn.disabled = !!disabled;
     }
     function typeUser(done) {
-      if (!userMsgEl) { if (done) done(); return; }
+      if (!userPromptEl) { if (done) done(); return; }
       var i = 0;
       var stepMs = Math.max(12, 2000 / Math.max(1, userText.length));
-      userMsgEl.classList.add("is-typing");
       function step() {
-        if (i >= userText.length) {
-          userMsgEl.classList.remove("is-typing");
-          if (done) done();
-          return;
-        }
+        if (i >= userText.length) { if (done) done(); return; }
         i++;
-        userMsgEl.textContent = userText.slice(0, i);
+        userPromptEl.textContent = userText.slice(0, i);
         later(step, stepMs);
       }
       step();
@@ -1610,7 +1608,7 @@
       clearTimers();
       phase = "typing";
       spans.forEach(function (s) { s.classList.remove("is-visible"); });
-      if (userMsgEl) { userMsgEl.textContent = ""; userMsgEl.classList.remove("is-typing"); }
+      if (userPromptEl) userPromptEl.textContent = "";
       if (agentMsgEl) agentMsgEl.textContent = "";
       if (thinkingEl) thinkingEl.classList.remove("on");
       if (runMsgEl) runMsgEl.hidden = true;
@@ -7852,7 +7850,55 @@
     return { update: function () {}, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
   }
 
+  function bookScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-book-scene";
+    el.innerHTML = '<div class="ls-book-art"><canvas class="ls-book-canvas" role="img" aria-label="' + (DE ? "Ein aufgeschlagenes Buch mit einem Labyrinth" : "An open book with a labyrinth") + '"></canvas></div>' +
+      '<div class="ls-book-page">' +
+        '<div class="ls-book-kicker">Borges · Funes el memorioso</div>' +
+        '<p class="ls-book-drop">' + (DE ? "Funes erinnert sich an alles: an jeden Stein, jede Wolke, jede Münze. Weil er nichts vergisst, kann er nicht abstrahieren. Borges schreibt, Denken heiße Unterschiede vergessen, verallgemeinern, abstrahieren." : "Funes remembers everything: every stone, every cloud, every coin. Because he forgets nothing, he cannot abstract. Borges writes that thinking means forgetting differences, generalising, abstracting.") + '</p>' +
+        '<p>' + (DE ? "Ein Sprachmodell muss nicht alles speichern. Es lernt Strukturen, die viele Fälle zusammenfassen. Wer das nächste Token gut vorhersagt, trägt ein Modell der Daten in sich: Vorhersage wird Kompression." : "A language model does not store everything. It learns structures that summarise many cases. A model that predicts the next token well carries a model of the data inside it: prediction becomes compression.") + '</p>' +
+        '<p>' + (DE ? "Lindsey et al. (2025) finden sogar Planung: Vor dem Reimwort hält das Modell mehrere Kandidaten bereit und baut den Satz auf sie zu. Othello-GPT entwickelt aus reinen Zugfolgen ein inneres Brettmodell. Die einfachste Art, richtig vorherzusagen, ist ein gutes inneres Modell." : "Lindsey et al. (2025) even find planning: before the rhyme word, the model holds several candidates and builds the sentence toward one. Othello-GPT develops an internal board model from move sequences alone. The simplest way to predict well is to have a good internal model.") + '</p>' +
+      '</div>';
+    root.appendChild(el);
+    var canvas = el.querySelector(".ls-book-canvas");
+    var size = null, ctx = null, C = api.colors();
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      var w = size.w, h = size.h;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#f7f1e3"; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = C.petrol; ctx.fillRect(w * .08, h * .10, w * .84, h * .80);
+      ctx.fillStyle = "#efe4ca"; ctx.fillRect(w * .12, h * .14, w * .76, h * .72);
+      ctx.strokeStyle = C.gold; ctx.lineWidth = 2; ctx.strokeRect(w * .15, h * .17, w * .70, h * .66);
+      ctx.strokeStyle = C.petrol; ctx.lineWidth = 1;
+      for (var i = 0; i < 8; i++) {
+        var y = h * .25 + i * h * .055;
+        ctx.beginPath(); ctx.moveTo(w * .22, y); ctx.lineTo(w * .78, y); ctx.stroke();
+      }
+      ctx.strokeStyle = C.gold; ctx.lineWidth = 2.2;
+      var cx = w * .5, cy = h * .54;
+      ctx.beginPath();
+      for (var k = 0; k < 90; k++) {
+        var a = k * .31, r = 5 + k * 1.1;
+        var x = cx + Math.cos(a) * r, yy = cy + Math.sin(a) * r * .62;
+        if (k === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+      }
+      ctx.stroke();
+      ctx.fillStyle = C.green;
+      ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI * 2); ctx.fill();
+    }
+    function resize() { size = api.fit(canvas, canvas.parentNode); draw(); }
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    resize();
+    return { update: function () {}, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
   var SCENES = {
+
 
 
 
@@ -7860,6 +7906,7 @@
     phone: phoneScene,
     code: codeScene,
     media: mediaScene,
+    book: bookScene,
     loop: loopScene,
     tunnel: tunnelScene,
     tokenize: tokenizeScene,
@@ -7884,6 +7931,7 @@
     eval: evalScene,
     gradient: gradientScene,
     kvcache: kvcacheScene,
+    rag: function (root, api) { return window.RagScene(root, api); },
     history: historyScene,
     chineseroom: chineseroomScene
   };

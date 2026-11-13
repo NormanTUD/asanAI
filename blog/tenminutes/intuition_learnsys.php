@@ -23,6 +23,7 @@
 	<script src="assets/space-morph.js?v=<?php echo filemtime(__DIR__.'/assets/space-morph.js'); ?>"></script>
 	<script src="intuition_gpt2_data.js?v=<?php echo filemtime(__DIR__.'/intuition_gpt2_data.js'); ?>"></script>
 	<script src="assets/loss-landscape-scene.js?v=<?php echo filemtime(__DIR__.'/assets/loss-landscape-scene.js'); ?>"></script>
+	<script src="assets/rag-scene.js?v=<?php echo filemtime(__DIR__.'/assets/rag-scene.js'); ?>"></script>
 	<script src="intuition_learnsys-demos.js?v=<?php echo filemtime(__DIR__.'/intuition_learnsys-demos.js'); ?>"></script>
 	<script src="intuition_learnsys-data.js?v=<?php echo filemtime(__DIR__.'/intuition_learnsys-data.js'); ?>"></script>
 </body>

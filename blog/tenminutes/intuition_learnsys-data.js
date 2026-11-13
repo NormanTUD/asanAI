@@ -114,57 +114,31 @@
     {
       kicker: "01 / Die Linie",
       title: "Bedeutung wird eine Zahl",
-      body: "Wir ordnen Wörtern Zahlen zu. Auf einer Zahlengeraden liegt jedes Wort an einer Stelle: Gefrierpunkt ganz links, heiß ganz rechts. Der Abstand sagt, wie ähnlich zwei Wörter in dieser einen Eigenschaft sind. Klicke zwei Punkte an und beobachte, wo ihr Mittelpunkt landet.",
-      watch: "Klicke zwei Punkte auf der Linie. Wo landet ihr Mittelpunkt?",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
-      context: "Die Zahlengerade ist die einfachste Form eines Vektorraums: eine Koordinate pro Wort. Später kommen weitere Koordinaten hinzu.",
-      deep: "Die Positionen sind hier von Hand gewählt, damit du die Rechnung siehst. In einem Modell werden sie aus vielen Beispielen gelernt. Die Rechnung bleibt dieselbe.",
+      body: "Wir ordnen Wörtern Zahlen zu. Auf einer Linie liegt jedes Wort an einer Stelle; der Abstand sagt, wie ähnlich zwei Wörter in dieser Eigenschaft sind. Klicke zwei Punkte: Der Mittelpunkt ist ihr Durchschnitt. Kalt (5) und warm (55) ergeben 30; kalt und heiß ergeben 52,5. Das liegt nahe bei warm, aber nicht exakt. Bedeutung ist oft eine Nähe, kein exakter Wert.",
+      watch: "Klicke zwei Punkte. Wann ist der Mittelpunkt exakt, wann ungefähr?",
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "hot"] },
+      context: "Eine Achse ist die einfachste Form eines Vektorraums: eine Koordinate pro Wort. Der Mittelpunkt (a + b) / 2 funktioniert in jeder Dimension gleich.",
+      deep: "Die Positionen sind hier von Hand gewählt, damit du die Rechnung siehst. In einem Modell werden sie aus vielen Beispielen gelernt. Die Abweichung ist der Abstand zwischen Mittelwert und nächstem Wort; bei kalt + heiß sind das 2,5 Grad.",
       boxes: [
         box("emb-1", "Mathematik", "Was ist ein Vektor?", "Ein Vektor ist ein Element eines Vektorraums. In der Praxis ist er eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt. Die Richtung ist oft wichtiger als die Länge."),
         box("emb-2", "Geschichte", "Woher kommt die Idee?", "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert. Wörter, die in ähnlichen Kontexten auftreten, bekommen ähnliche Vektoren."),
-        box("emb-3", "Technik", "Warum reicht eine Achse nicht?", "Eine Achse kann nur eine Eigenschaft ordnen. Bedeutung hat viele Eigenschaften gleichzeitig: Temperatur, Geschlecht, Macht, Thema. Jede zusätzliche Achse kann eine weitere Unterscheidung tragen."),
-        box("emb-mis", "Grenze", "Ist ein Embedding ein Wörterbuch?", "Nein. Ein Embedding ist eine gelernte Tabelle von Vektoren, keine Definition. Nähe bedeutet ähnlicher Kontext im Training, nicht Synonymie. Die Richtung ist eine statistische Regelmäßigkeit, kein Lexikoneintrag.")
+        box("emb-4", "Mathematik", "Warum funktioniert der Mittelpunkt?", "Weil Vektoren koordinatenweise addiert werden. Der Mittelpunkt (a + b) / 2 liegt auf der Verbindungslinie. In höheren Dimensionen gilt dieselbe Rechnung; du siehst nur eine Projektion."),
+        box("emb-5", "Grenze", "Ist der Mittelpunkt ein Wort?", "Nein. Er ist eine Position im Raum. Dass sie nahe an einem Wort liegt, ist eine Eigenschaft der gelernten Geometrie, keine Definition."),
+        box("emb-approx", "Grenze", "Was heißt „ungefähr“?", "Der Mittelwert 52,5 liegt 2,5 Grad von warm entfernt. Es gibt kein Wort exakt bei 52,5. Die Nähe reicht, weil das Modell mit Winkeln und Nachbarn arbeitet, nicht mit einer Wortliste.")
       ],
-      sources: sources.slice(0, 3)
+      sources: sources.slice(0, 4)
     },
     {
-      kicker: "02 / Der Mittelpunkt",
-      title: "Zwei Beispiele, ein Durchschnitt",
-      body: "Der Mittelpunkt zweier Zahlen ist ihr Durchschnitt. Kalt (5) und warm (55) ergeben 30, und 30 ist genau lauwarm. Kalt und heiß ergeben 52,5; das liegt nahe bei warm (55), aber kein Wort sitzt exakt auf 52,5. Für die Bedeutung reicht oft die Nähe: Du landest im richtigen Bereich, auch wenn der exakte Wert fehlt.",
-      watch: "Wähle ein Paar. Wann ist das Ergebnis exakt, wann nur ungefähr?",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "hot"] },
-      context: "Die Abweichung ist der Abstand zwischen Mittelwert und nächstem Wort. Bei kalt + heiß sind das 2,5 Grad; bei Gefrierpunkt + heiß sind es 5 Grad.",
-      deep: "Die Rechnung funktioniert in jeder Dimension gleich: (a+b)/2. In höheren Dimensionen mittelst du jede Koordinate einzeln. Die Nähe wird meist über den Winkel gemessen, nicht über den Abstand.",
-      boxes: [
-        box("emb-4", "Mathematik", "Warum funktioniert das?", "Weil Vektoren koordinatenweise addiert werden. Der Mittelpunkt (a + b) / 2 liegt auf der Verbindungslinie. In höheren Dimensionen gilt dieselbe Rechnung; du siehst nur eine Projektion davon."),
-        box("emb-5", "Grenze", "Ist der Mittelpunkt ein Wort?", "Nein. Er ist eine Position im Raum. Dass sie nahe an einem Wort liegt, ist eine Eigenschaft der gelernten Geometrie, keine Definition. Bei seltenen Wörtern und mehrdeutigen Begriffen kann der nächste Nachbar überraschen."),
-        box("emb-approx", "Grenze", "Was heißt „ungefähr“?", "Der Mittelwert 52,5 liegt 2,5 Grad von warm entfernt. Es gibt kein Wort exakt bei 52,5. Die Nähe reicht, weil das Modell später mit Winkeln und Nachbarn arbeitet, nicht mit einer Wortliste.")
-      ],
-      sources: sources.slice(2, 4)
-    },
-    {
-      kicker: "03 / Die Ebene",
+      kicker: "02 / Die Ebene",
       title: "Bedeutung bekommt eine zweite Achse",
-      body: "Eine Achse kann Wörter nach einer einzigen Eigenschaft ordnen. Mann und Frau teilen die Machtposition und fallen deshalb auf derselben Stelle zusammen: Um von einem zum anderen zu kommen, müsstest du andere Wörter überspringen. Eine zweite Achse schafft freie Wege: Jetzt liegen Mann und Frau nebeneinander, ohne dass die Machtposition verloren geht. Derselbe Pfeil erscheint wieder zwischen König und Königin. Vergleiche 1D und 2D.",
-      watch: "Vergleiche 1D und 2D. Wo gibt es freie Wege, wo fallen Wörter zusammen?",
-      demoState: { scene: "embedding", mode: "space", dim: 1, selected: "king", arithmetic: null },
-      context: "In 1D ist die Strecke belegt; mehrere Wörter teilen sich eine Position. In 2D kann jede zusätzliche Eigenschaft eine eigene Richtung bekommen.",
+      body: "Eine Achse kann Wörter nach einer einzigen Eigenschaft ordnen. Mann und Frau teilen die Machtposition und fallen deshalb auf derselben Stelle zusammen. Eine zweite Achse schafft freie Wege: Jetzt liegen sie nebeneinander, ohne die Machtposition zu verlieren. Derselbe Richtungsschritt erscheint zwischen König und Königin: König − Mann + Frau liegt nahe bei Königin. Die Beziehung ist eine Richtung, keine benannte Regel.",
+      watch: "Vergleiche 1D und 2D. Welche Richtung wird wiederverwendet?",
+      demoState: { scene: "embedding", mode: "space", dim: 1, selected: null, arithmetic: "king-man-woman" },
+      context: "In 1D ist die Strecke belegt; mehrere Wörter teilen sich eine Position. In 2D bekommt jede zusätzliche Eigenschaft eine eigene Richtung. Die Analogie ist eine Approximation, keine exakte Regel.",
       deep: "Freie Wege sind der Kern: Bedeutung braucht Platz für mehrere unabhängige Unterschiede. Jede zusätzliche Achse kann eine weitere Beziehung tragen, ohne eine andere zu überschreiben. Die Nachbarschaft ist ein statistisches Signal, keine Definition.",
       boxes: [
         box("emb-6", "Technik", "Warum zwei Achsen?", "Zwei Achsen machen zwei unabhängige Unterschiede sichtbar. Die erste Achse ordnet nach Macht, die zweite nach Geschlecht. Erst dadurch werden Mann und Frau unterscheidbar, obwohl sie auf der Machtachse denselben Wert haben."),
-        box("emb-7", "Geschichte", "Woher kommt die Analogie?", "Mikolov et al. (2013) zeigten, dass Differenzen wie König − Mann + Frau nahe bei Königin landen. Das ist eine Approximation, keine exakte Regel. Sie funktioniert, weil ähnliche Wörter in ähnlichen grammatischen Slots auftreten.")
-      ],
-      sources: sources.slice(2, 4)
-    },
-    {
-      kicker: "04 / Die Rechnung",
-      title: "Eine Richtung trägt eine Beziehung",
-      body: "Behandle jedes Wort als Pfeil vom Ursprung. Addiere und subtrahiere die Pfeile, und das Ergebnis landet nahe bei einem anderen Wort: König − Mann + Frau liegt nahe bei Königin. Dieselbe Richtung erscheint zwischen Mann und Frau und zwischen König und Königin; du kannst sie auf ein neues Paar übertragen. Klicke die Beispiele durch und beobachte, welche Richtung wiederverwendet wird.",
-      watch: "Klicke die Beispiele durch. Welches Ergebnis überrascht dich?",
-      demoState: { scene: "embedding", mode: "space", dim: 1, selected: null, arithmetic: "king-man-woman" },
-      context: "Die Richtung ist wiederverwendbar: Mann → Frau und König → Königin zeigen denselben Schritt. Die berühmte Analogie ist eine Illustration; in echten Embeddings ist sie noisy und nicht immer wahr.",
-      deep: "Die Geometrie ist eine Projektion. Was du siehst, ist ein Schatten eines viel höherdimensionalen Raums. Die Rechnung findet im vollen Raum statt; die zwei Achsen sind nur eine lesbare Auswahl.",
-      boxes: [
+        box("emb-7", "Geschichte", "Woher kommt die Analogie?", "Mikolov et al. (2013) zeigten, dass Differenzen wie König − Mann + Frau nahe bei Königin landen. Das ist eine Approximation, keine exakte Regel. Sie funktioniert, weil ähnliche Wörter in ähnlichen grammatischen Slots auftreten."),
         box("emb-8", "Mathematik", "Warum funktioniert die Analogie?", "Weil ähnliche Wörter in ähnlichen grammatischen Slots auftreten. Der Unterschied zwischen Mann und Frau wird zu einer wiederverwendbaren Richtung. Dieselbe Richtung erscheint zwischen König und Königin."),
         box("emb-14", "Technik", "Was wird übertragen?", "Mann → Frau und König → Königin sind parallel. Die Richtung ist eine gelernte Beziehung, die auf ein neues Paar angewendet wird. Deshalb landet König − Mann + Frau nahe bei Königin."),
         box("emb-9", "Anwendung", "Wofür ist das gut?", "Suche, Empfehlungen, Clustering und RAG nutzen genau diese Geometrie: semantische Nähe wird zur Abfrage. Die Vektorarithmetik ist eher eine Diagnose als ein Produktmerkmal.")
@@ -191,59 +165,34 @@
     {
       kicker: "01 / The line",
       title: "Meaning becomes a number",
-      body: "We assign numbers to words. On a number line every word sits at one position: freezing on the far left, hot on the far right. The distance says how similar two words are in this one property. Click two points and watch where their midpoint lands.",
-      watch: "Click two points on the line. Where does their midpoint land?",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
-      context: "The number line is the simplest form of a vector space: one coordinate per word. The idea stays the same; a real model has many coordinates.",
-      deep: "The positions are chosen by hand here so you can see the arithmetic. In a model they are learned from many examples. The arithmetic stays the same.",
+      body: "We assign numbers to words. On a line every word sits at one position; the distance says how similar two words are in this property. Click two points: the midpoint is their average. Cold (5) and warm (55) give 30; cold and hot give 52.5. That is close to warm, but not exact. Meaning is often closeness, not an exact value.",
+      watch: "Click two points. When is the midpoint exact, when approximate?",
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "hot"] },
+      context: "One axis is the simplest form of a vector space: one coordinate per word. The midpoint (a + b) / 2 works the same in every dimension.",
+      deep: "The positions are chosen by hand here so you can see the arithmetic. In a model they are learned from many examples. The error is the distance between the midpoint and the nearest word; for cold + hot it is 2.5 degrees.",
       boxes: [
         box("emb-1", "Mathematics", "What is a vector?", "A vector is an element of a vector space. In practice it is an ordered list of numbers that describes a point or a direction. Direction often matters more than length."),
         box("emb-2", "History", "Where does the idea come from?", "Firth (1957): “You shall know a word by the company it keeps.” Harris (1954) formulated the distributional idea earlier. Words that appear in similar contexts receive similar vectors."),
-        box("emb-3", "Technique", "Why is one axis not enough?", "One axis can order only one property. Meaning has many properties at once: temperature, gender, power, topic. Every extra axis can carry another distinction."),
-        box("emb-mis", "Limit", "Is an embedding a dictionary?", "No. An embedding is a learned table of vectors, not a definition. Closeness means similar training context, not synonymy. The direction is a statistical regularity, not a dictionary entry.")
+        box("emb-4", "Mathematics", "Why does the midpoint work?", "Because vectors are added coordinate by coordinate. The midpoint (a + b) / 2 lies on the line between them. The same arithmetic works in higher dimensions; you only see a projection."),
+        box("emb-5", "Limit", "Is the midpoint a word?", "No. It is a position in the space. That it lands near a word is a property of the learned geometry, not a definition."),
+        box("emb-approx", "Limit", "What does “approximate” mean?", "The midpoint 52.5 is 2.5 degrees away from warm. No word sits exactly at 52.5. Closeness is enough because the model works with angles and neighbours, not with a word list.")
       ],
-      sources: sources.slice(0, 3)
+      sources: sources.slice(0, 4)
     },
     {
-      kicker: "02 / The midpoint",
-      title: "Two examples, one average",
-      body: "The midpoint of two numbers is their average. Cold (5) and warm (55) give 30, and 30 is exactly lukewarm. Cold and hot give 52.5; that is close to warm (55), but no word sits exactly at 52.5. For meaning, closeness is often enough: you land in the right region even when the exact value is missing.",
-      watch: "Choose a pair. When is the result exact, when only approximate?",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "hot"] },
-      context: "The error is the distance between the midpoint and the nearest word. For cold + hot it is 2.5 degrees; for freezing + hot it is 5 degrees.",
-      deep: "The arithmetic works the same in every dimension: (a+b)/2. In higher dimensions you average each coordinate separately. Similarity is usually measured by angle, not distance.",
-      boxes: [
-        box("emb-4", "Mathematics", "Why does this work?", "Because vectors are added coordinate by coordinate. The midpoint (a + b) / 2 lies on the line between them. The same arithmetic works in higher dimensions; you only see a projection."),
-        box("emb-5", "Limit", "Is the midpoint a word?", "No. It is a position in the space. That it lands near a word is a property of the learned geometry, not a definition. For rare or ambiguous words the nearest neighbour can surprise you."),
-        box("emb-approx", "Limit", "What does “approximate” mean?", "The midpoint 52.5 is 2.5 degrees away from warm. No word sits exactly at 52.5. Closeness is enough because the model later works with angles and neighbours, not with a word list.")
-      ],
-      sources: sources.slice(2, 4)
-    },
-    {
-      kicker: "03 / The plane",
+      kicker: "02 / The plane",
       title: "Meaning gets a second axis",
-      body: "One axis can order words by a single property. Man and woman share the power position, so they collapse onto the same point: to get from one to the other you would have to skip other words. A second axis creates free paths: now man and woman sit side by side without losing the power position. The same arrow appears again between king and queen. Compare 1D and 2D.",
-      watch: "Compare 1D and 2D. Where are there free paths, where do words collapse?",
-      demoState: { scene: "embedding", mode: "space", dim: 1, selected: "king", arithmetic: null },
-      context: "In 1D the line is occupied; several words share one position. In 2D every extra property can get its own direction.",
+      body: "One axis can order words by a single property. Man and woman share the power position, so they collapse onto the same point. A second axis creates free paths: they now sit side by side without losing the power position. The same direction step appears between king and queen: king − man + woman is near queen. The relation is a direction, not a named rule.",
+      watch: "Compare 1D and 2D. Which direction is reused?",
+      demoState: { scene: "embedding", mode: "space", dim: 1, selected: null, arithmetic: "king-man-woman" },
+      context: "In 1D the line is occupied; several words share one position. In 2D every extra property gets its own direction. The analogy is an approximation, not an exact rule.",
       deep: "Free paths are the point: meaning needs room for several independent differences. Every extra axis can carry another relation without overwriting one. Neighbourhood is a statistical signal, not a definition.",
       boxes: [
         box("emb-6", "Technique", "Why two axes?", "Two axes make two independent differences visible. The first axis orders by power, the second by gender. Only then do man and woman become distinguishable even though they share a value on the power axis."),
-        box("emb-7", "History", "Where does the analogy come from?", "Mikolov et al. (2013) showed that differences such as king − man + woman land near queen. It is an approximation, not an exact rule. It works because similar words appear in similar grammatical slots.")
-      ],
-      sources: sources.slice(2, 4)
-    },
-    {
-      kicker: "04 / The arithmetic",
-      title: "A direction carries a relation",
-      body: "Treat every word as an arrow from the origin. Add and subtract the arrows, and the result lands near another word: king − man + woman is close to queen. The relation is a direction, not a named rule. Click through the examples and watch which direction is reused.",
-      watch: "Click through the examples. Which result surprises you?",
-      demoState: { scene: "embedding", mode: "space", dim: 1, selected: null, arithmetic: "king-man-woman" },
-      context: "The famous analogy is an illustration. In real embeddings it is noisy and not always true. An approximate direction is still useful.",
-      deep: "The geometry is a projection. What you see is a shadow of a much higher-dimensional space. The arithmetic happens in the full space; the two axes are only a readable selection.",
-      boxes: [
+        box("emb-7", "History", "Where does the analogy come from?", "Mikolov et al. (2013) showed that differences such as king − man + woman land near queen. It is an approximation, not an exact rule. It works because similar words appear in similar grammatical slots."),
         box("emb-8", "Mathematics", "Why does the analogy work?", "Because similar words appear in similar grammatical slots. The difference between man and woman becomes a reusable direction. The same direction appears between king and queen."),
-        box("emb-9", "Application", "What is it good for?", "Search, recommendations, clustering, and RAG all use this geometry: semantic closeness becomes a query. Vector arithmetic is more of a diagnostic than a product feature.")
+        box("emb-14", "Technique", "What is carried over?", "Man → woman and king → queen are parallel. The direction is a learned relation applied to a new pair. That is why king − man + woman lands near queen."),
+        box("emb-9", "Application", "What is it good for?", "Search, recommendations, clustering, and RAG use exactly this geometry: semantic closeness becomes a query. Vector arithmetic is more a diagnostic than a product feature.")
       ],
       sources: sources.slice(2, 4)
     },
@@ -635,7 +584,50 @@
     }
   ];
 
+  var bookSteps = DE ? [
+    {
+      kicker: "02a / Kompression",
+      title: "Verstehen heißt komprimieren",
+      body: "Borges' Funes erinnert sich an alles und kann deshalb nicht denken. Ein LLM muss nicht alles speichern; es lernt Strukturen, die viele Fälle zusammenfassen. Vorhersage wird Kompression. Manchmal plant es sogar voraus.",
+      watch: "Lies die Seite. Warum ist Vergessen eine Fähigkeit?",
+      demoState: { scene: "book" },
+      context: "Abstraktion ist verlustbehaftete Kompression. Wer nur Einzelfälle behält, kann sie nicht vergleichen. Wer Strukturen behält, kann neue Fälle einordnen.",
+      deep: "Lindsey et al. (2025) finden Planung im Modell: Vor dem Reimwort sind mehrere Kandidaten aktiv, und der Satz wird auf einen von ihnen hin gebaut. Othello-GPT entwickelt aus Zugfolgen ein inneres Brettmodell. Ein gutes inneres Modell ist die einfachste Art, gut vorherzusagen.",
+      boxes: [
+        box("book-1", "Idee", "Warum komprimieren?", "Ein Modell, das jeden Einzelfall speichert, kann nicht verallgemeinern. Kompression behält die Unterschiede, die für viele Fälle zählen."),
+        box("book-2", "Planung", "Plant ein LLM?", "Lindsey et al. (2025) finden Kandidaten für das Reimwort, bevor die Zeile beginnt. Das Modell hält mehrere Möglichkeiten und baut den Satz auf eine zu."),
+        box("book-3", "Weltmodell", "Was zeigt Othello-GPT?", "Ein Modell, das nur Zugfolgen sieht, entwickelt eine innere Repräsentation des Bretts. Vorhersage kann ein Weltmodell erzwingen.")
+      ],
+      sources: [
+        { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf", why: { de: "Funes als Bild für Erinnern ohne Abstraktion.", en: "Funes as an image of memory without abstraction." } },
+        { label: "Lindsey et al. (2025), On the Biology of a Large Language Model", url: "https://transformer-circuits.pub/2025/attribution-graphs/biology.html", why: { de: "Planung und innere Zwischenschritte im Modell.", en: "Planning and internal intermediate steps in the model." } },
+        { label: "Li et al. (2022), Othello-GPT", url: "https://arxiv.org/abs/2210.13382", why: { de: "Ein Weltmodell aus reinen Zugfolgen.", en: "A world model learned from move sequences alone." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "02a / Compression",
+      title: "Understanding is compression",
+      body: "Borges' Funes remembers everything and therefore cannot think. An LLM does not store everything; it learns structures that summarise many cases. Prediction becomes compression. Sometimes it even plans ahead.",
+      watch: "Read the page. Why is forgetting a capability?",
+      demoState: { scene: "book" },
+      context: "Abstraction is lossy compression. Keeping only individual cases prevents comparison. Keeping structures lets the model place new cases.",
+      deep: "Lindsey et al. (2025) find planning in the model: before the rhyme word, several candidates are active, and the sentence is built toward one of them. Othello-GPT develops an internal board model from move sequences. A good internal model is the simplest way to predict well.",
+      boxes: [
+        box("book-1", "Idea", "Why compress?", "A model that stores every case cannot generalise. Compression keeps the differences that matter across many cases."),
+        box("book-2", "Planning", "Does an LLM plan?", "Lindsey et al. (2025) find candidates for the rhyme word before the line begins. The model holds several possibilities and builds the sentence toward one."),
+        box("book-3", "World model", "What does Othello-GPT show?", "A model that sees only move sequences develops an internal representation of the board. Prediction can force a world model.")
+      ],
+      sources: [
+        { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf", why: { de: "Funes als Bild für Erinnern ohne Abstraktion.", en: "Funes as an image of memory without abstraction." } },
+        { label: "Lindsey et al. (2025), On the Biology of a Large Language Model", url: "https://transformer-circuits.pub/2025/attribution-graphs/biology.html", why: { de: "Planung und innere Zwischenschritte im Modell.", en: "Planning and internal intermediate steps in the model." } },
+        { label: "Li et al. (2022), Othello-GPT", url: "https://arxiv.org/abs/2210.13382", why: { de: "Ein Weltmodell aus reinen Zugfolgen.", en: "A world model learned from move sequences alone." } }
+      ]
+    }
+  ];
+
   var insideSteps = DE ? [
+
     {
       kicker: "04 / Neuronale Netze",
       title: "Ein kleines Netz lernt den Sinus",
@@ -1065,11 +1057,52 @@
     }
   ];
 
+  var ragSteps = DE ? [
+    {
+      kicker: "19 / RAG und Agents",
+      title: "Suchen, lesen, einsetzen",
+      body: "Ein Modell allein hat nur seine Gewichte. RAG gibt ihm Werkzeuge: Es zerlegt Quellen in Chunks, vergleicht ihre Vektoren mit der Frage und setzt die besten Chunks in den Kontext. Ein Agent kann diesen loop selbst auslösen, im Web suchen, lesen und die Antwort mit Quellen stützen.",
+      watch: "Klicke Chunks an und gehe die Schritte durch. Wann landen Quellen im Kontext?",
+      demoState: { scene: "rag", step: 0 },
+      context: "Ähnlichkeit ist ein Winkel zwischen Vektoren. Die Suche findet Chunks, das Modell liest sie im Kontext und kann sich mit Attention auf sie beziehen. Das senkt Halluzinationen, weil die Antwort eine Quelle hat.",
+      deep: "RAG ist keine Garantie: Der Retriever kann den falschen Chunk finden, der Chunk kann falsch sein, und das Modell kann ihn falsch lesen. Ein Agent macht daraus einen loop: suchen, lesen, prüfen, erneut suchen. Das gesamte Web wird so zu einem riesigen, durchsuchbaren Korpus.",
+      boxes: [
+        box("rag-1", "Technik", "Was ist ein Chunk?", "Ein kurzer Textabschnitt aus einer Quelle. Er wird zu einem Vektor; ähnliche Chunks liegen nah beieinander."),
+        box("rag-2", "Technik", "Was macht der Retriever?", "Er vergleicht die Frage mit vielen Chunk-Vektoren und gibt die besten zurück. Danach landen sie im Kontext des Modells."),
+        box("rag-3", "Agent", "Was macht ein Agent?", "Er kann den Retrieval-loop selbst steuern: suchen, lesen, entscheiden, erneut suchen. Werkzeuge wie eine Suchmaschine erweitern den Korpus auf das Internet.")
+      ],
+      sources: [
+        { label: "Lewis et al. (2020), Retrieval-Augmented Generation", url: "https://arxiv.org/abs/2005.11401", why: { de: "RAG verbindet Retrieval mit Generation.", en: "RAG combines retrieval with generation." } },
+        { label: "Karpukhin et al. (2020), Dense Passage Retrieval", url: "https://arxiv.org/abs/2004.04906", why: { de: "Dichte Vektoren für die Passagensuche.", en: "Dense vectors for passage retrieval." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "19 / RAG and agents",
+      title: "Search, read, insert",
+      body: "A model on its own has only its weights. RAG gives it tools: split sources into chunks, compare their vectors with the question, and put the best chunks into the context. An agent can trigger this loop itself, search the web, read, and ground the answer in sources.",
+      watch: "Click chunks and walk through the steps. When do sources enter the context?",
+      demoState: { scene: "rag", step: 0 },
+      context: "Similarity is an angle between vectors. Retrieval finds chunks, the model reads them in context and can attend to them. That lowers hallucinations because the answer has a source.",
+      deep: "RAG is not a guarantee: the retriever may find the wrong chunk, the chunk may be wrong, and the model may misread it. An agent turns this into a loop: search, read, check, search again. The whole web becomes a huge searchable corpus.",
+      boxes: [
+        box("rag-1", "Technique", "What is a chunk?", "A short passage from a source. It becomes a vector; similar chunks sit close together."),
+        box("rag-2", "Technique", "What does the retriever do?", "It compares the question with many chunk vectors and returns the best. They then enter the model's context."),
+        box("rag-3", "Agent", "What does an agent do?", "It can steer the retrieval loop: search, read, decide, search again. Tools such as a search engine extend the corpus to the internet.")
+      ],
+      sources: [
+        { label: "Lewis et al. (2020), Retrieval-Augmented Generation", url: "https://arxiv.org/abs/2005.11401", why: { de: "RAG verbindet Retrieval mit Generation.", en: "RAG combines retrieval with generation." } },
+        { label: "Karpukhin et al. (2020), Dense Passage Retrieval", url: "https://arxiv.org/abs/2004.04906", why: { de: "Dichte Vektoren für die Passagensuche.", en: "Dense vectors for passage retrieval." } }
+      ]
+    }
+  ];
+
   var historySteps = DE ? [
 
 
+
     {
-      kicker: "19 / Geschichte",
+      kicker: "20 / Geschichte",
       title: "Geschichte in zehn Schritten",
       body: "Von den Kerben im Wolfsknochen bis zu GPT: Zehn Tabs folgen dem roten Faden aus `history.php`. Ganz früh beginnt Rechnen als Zählen mit Steinen und Kerben. Dann kommen Logik, Rechenmaschinen, das Neuron, das Perzeptron, die XOR-Krise, Backpropagation, Deep Learning, der Transformer und die LLMs. Klicke die Tabs und sieh, welche Idee jeweils weitergetragen wird.",
       watch: "Klicke die zehn Tabs. Welche Idee trägt bis zum Transformer?",
@@ -1090,7 +1123,7 @@
     }
   ] : [
     {
-      kicker: "19 / History",
+      kicker: "20 / History",
       title: "History in ten steps",
       body: "From the notches in a wolf bone to GPT: ten tabs follow the thread from `history.php`. Arithmetic starts as counting with stones and notches. Then come logic, calculating machines, the neuron, the perceptron, the XOR crisis, backpropagation, deep learning, the transformer, and LLMs. Click the tabs and see which idea is carried forward.",
       watch: "Click the ten tabs. Which idea carries through to the transformer?",
@@ -1113,7 +1146,7 @@
 
   var philosophySteps = DE ? [
     {
-      kicker: "20 / Philosophie",
+      kicker: "21 / Philosophie",
       title: "Du bist das Chinesische Zimmer",
       body: "Du sitzt in einem Zimmer. Durch eine Klappe kommen Zeichen, die du nicht lesen kannst. Auf dem Tisch liegt ein Regelbuch: Es sagt dir, welche Zeichenfolge du herausschreiben sollst. Du suchst die Eingabe, kopierst die passende Antwort, und von außen sieht es aus, als würdest du die Sprache verstehen. Searle (1980) nennt das den Unterschied zwischen Regeln befolgen und Bedeutung verstehen. Folge dem Regelbuch und beobachte, was du tust.",
       watch: "Folge dem Regelbuch. Wirkt deine Antwort von außen intelligent?",
@@ -1132,7 +1165,7 @@
     }
   ] : [
     {
-      kicker: "20 / Philosophy",
+      kicker: "21 / Philosophy",
       title: "You are the Chinese Room",
       body: "You sit in a room. Through a slot come characters you cannot read. On the table is a rulebook: it tells you which string to write back. You find the input, copy the matching answer, and from the outside it looks as if you understand the language. Searle (1980) calls this the difference between following rules and understanding meaning. Follow the rulebook and watch what you do.",
       watch: "Follow the rulebook. Does your answer look intelligent from the outside?",
@@ -1151,7 +1184,7 @@
     }
   ];
 
-  var steps = introSteps.concat(insideSteps.slice(0, 1), activationSteps, mlpSteps, gradientSteps, insideSteps.slice(1, 2), tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, languageSteps, posttrainSteps, evalSteps, kvcacheSteps, historySteps, philosophySteps);
+  var steps = introSteps.slice(0, 2).concat(bookSteps, introSteps.slice(2), insideSteps.slice(0, 1), activationSteps, mlpSteps, gradientSteps, insideSteps.slice(1, 2), tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, languageSteps, posttrainSteps, evalSteps, kvcacheSteps, ragSteps, historySteps, philosophySteps);
 
   var day = {
     id: "intuition",

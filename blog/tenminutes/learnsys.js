@@ -430,6 +430,7 @@
             '<div class="ls-stage-foot"><span id="ls-stage-hint"></span><span class="ls-credit" id="ls-credit"></span></div>' +
           '</section>' +
         '</main>' +
+        '<div class="ls-global-nav"><button type="button" class="ls-global-prev" id="ls-global-prev" aria-label="' + (LANG === "de" ? "Zurück" : "Back") + '">←</button><button type="button" class="ls-global-next" id="ls-global-next" aria-label="' + (LANG === "de" ? "Weiter" : "Next") + '">→</button></div>' +
         '<div class="ls-tip" id="ls-tip" role="tooltip" hidden></div>' +
         '<div class="ls-help" id="ls-help" hidden><b>' + esc(t("helpTitle")) + '</b><div class="ls-help-grid">' + helpRows + '</div></div>' +
       '</div>';
@@ -453,6 +454,8 @@
     els.focus = root.querySelector("#ls-focus");
     els.textToggle = root.querySelector("#ls-text-toggle");
     els.textClose = root.querySelector("#ls-text-close");
+    els.globalPrev = root.querySelector("#ls-global-prev");
+    els.globalNext = root.querySelector("#ls-global-next");
     els.kicker = root.querySelector("#ls-kicker");
     els.title = root.querySelector("#ls-title");
     els.body = root.querySelector("#ls-body");
@@ -1353,6 +1356,8 @@
     if (els.fontMinus) els.fontMinus.addEventListener("click", function () { setFont(state.font - 1); });
     if (els.fontPlus) els.fontPlus.addEventListener("click", function () { setFont(state.font + 1); });
     if (els.focus) els.focus.addEventListener("click", toggleFocus);
+    if (els.globalPrev) els.globalPrev.addEventListener("click", prev);
+    if (els.globalNext) els.globalNext.addEventListener("click", next);
     if (els.textToggle) els.textToggle.addEventListener("click", function () { setTextOpen(true); });
     if (els.textClose) els.textClose.addEventListener("click", function () { setTextOpen(false); });
     els.prev.addEventListener("click", prev);
