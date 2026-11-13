@@ -1151,7 +1151,6 @@
               '<div class="ia-search-bar" id="ia-search-bar">' +
                 '<div class="ia-search-icon" aria-hidden="true"></div>' +
                 '<div class="ia-search-text" id="ia-search-text"></div>' +
-                '<div class="ia-mic-btn" id="ia-mic-btn" aria-hidden="true"><div class="ia-mic-icon"></div></div>' +
               '</div>' +
               '<div class="ia-ai-card" id="ia-ai-card">' +
                 '<div class="ia-ai-text" id="ia-ai-text"></div>' +
@@ -1159,12 +1158,7 @@
               '</div>' +
               '<div class="ia-serp" id="ia-serp"></div>' +
             '</div>' +
-            '<div class="ia-waveform" id="ia-waveform" aria-hidden="true">' +
-              '<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>' +
-              '<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>' +
-              '<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>' +
-              '<div class="ia-bar"></div><div class="ia-bar"></div>' +
-            '</div>' +
+
           '</div>' +
           '<div class="ia-phone ia-phone--chat" id="ia-chat-phone">' +
             '<div class="ia-phone-frame"></div>' +
@@ -1205,8 +1199,6 @@
     var logo = el.querySelector("#ia-logo");
     var searchBar = el.querySelector("#ia-search-bar");
     var searchText = el.querySelector("#ia-search-text");
-    var mic = el.querySelector("#ia-mic-btn");
-    var wave = el.querySelector("#ia-waveform");
     var card = el.querySelector("#ia-ai-card");
     var aiText = el.querySelector("#ia-ai-text");
     var thinking = el.querySelector("#ia-ai-thinking");
@@ -1259,8 +1251,6 @@
       setCentered(true);
       searchText.textContent = "";
       searchText.classList.remove("typing");
-      mic.classList.remove("listening");
-      wave.classList.remove("active");
       card.classList.remove("on");
       aiText.innerHTML = "";
       thinking.classList.remove("on");
@@ -1371,8 +1361,6 @@
         if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1200);
         return;
       }
-      mic.classList.add("listening");
-      wave.classList.add("active");
       typeSearch(SATZ, function () {
         searchText.textContent = SATZ;
         setCentered(false);
@@ -1381,8 +1369,6 @@
           thinking.classList.add("on");
           later(function () {
             thinking.classList.remove("on");
-            mic.classList.remove("listening");
-            wave.classList.remove("active");
             typeAnswer();
             serp.classList.add("on");
             if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1500);
@@ -2686,6 +2672,11 @@
       var C = api.colors();
       var top = lastTop;
       var wells = lastWells;
+      var atEnd = generated.length > 0 && generated[generated.length - 1] === EOS;
+      if (atEnd) {
+        landBall.animating = false;
+        landTrail = [];
+      }
       var ballTarget = null;
       if (generated.length) {
         var lastIdx = generated.length - 1;
@@ -2704,7 +2695,7 @@
       var btx = lastView.sx(ballPt.x), bty = lastView.sy(ballPt.y);
       if (!landBall.init) { landBall.x = btx; landBall.y = bty; landBall.init = true; }
       var bdx = btx - landBall.x, bdy = bty - landBall.y;
-      if (reducedMotion) {
+      if (reducedMotion || atEnd) {
         landBall.x = btx; landBall.y = bty; landBall.animating = false;
         landTrail = [];
       } else if (Math.abs(bdx) + Math.abs(bdy) > 1.2) {
@@ -5853,6 +5844,8 @@
     var layerEl = el.querySelector(".ls-traj-layer");
     var layerOut = el.querySelector("output");
     var readout = el.querySelector(".ls-traj-readout");
+    var maxLayer = data && data.points && data.points[0] ? data.points[0].length - 1 : 12;
+    layerEl.max = String(maxLayer);
     var layer = 0, layerTarget = 0, displayLayer = 0, layerTween = 0, metric = "angular", yaw = -0.62, pitch = 0.36, zoom = 1, drag = null;
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var size = null, ctx = null;
@@ -5985,8 +5978,8 @@
           var cand = { x: bx, y: by, w: tw, h: 15 };
           var free = bx >= 3 && by >= 3 && bx + tw <= size.w - 3 && by + 15 <= size.h - 3;
           if (free) {
-            for (var li = 0; li < labelBoxes.length; li++) {
-              var lb = labelBoxes[li];
+            for (var lbi = 0; lbi < labelBoxes.length; lbi++) {
+              var lb = labelBoxes[lbi];
               if (!(cand.x + cand.w < lb.x || lb.x + lb.w < cand.x || cand.y + cand.h < lb.y || lb.y + lb.h < cand.y)) { free = false; break; }
             }
           }
@@ -6027,7 +6020,7 @@
       var cand = layerTarget === data.layers.length - 1
         ? '<span>' + (DE ? "Kandidaten" : "Candidates") + '</span>' + data.top.slice(0, 5).map(function (t) { return '<span><b>' + api.esc(tokenLabel(t.token)) + '</b> ' + (t.p * 100).toFixed(1) + '%</span>'; }).join("")
         : '<span>' + (DE ? "Kandidaten erscheinen in der letzten Schicht." : "Candidates appear at the final layer.") + '</span>';
-      readout.innerHTML = '<span>' + (DE ? "Satz" : "Sentence") + ' <b>' + api.esc(data.sentence) + '</b></span><span>' + (DE ? "Schicht" : "Layer") + ' <b>' + Math.round(displayLayer) + ' / ' + (data.layers.length - 1) + '</b></span>' + cand;
+      readout.innerHTML = '<span>' + (DE ? "Satz" : "Sentence") + ' <b>' + api.esc(data.sentence) + '</b></span><span>' + (DE ? "Schicht" : "Layer") + ' <b>' + Math.round(displayLayer) + ' / ' + maxLayer + '</b></span>' + cand;
       layerOut.textContent = data.layers[layerTarget] || "";
     }
     function resize() { size = api.fit(canvas, stage); draw(); }
@@ -6036,16 +6029,17 @@
       return { x: e.clientX - r.left, y: e.clientY - r.top };
     }
     function setLayer(v) {
-      layerTarget = Math.min(12, Math.max(0, parseInt(v, 10) || 0));
+      layerTarget = Math.min(maxLayer, Math.max(0, parseInt(v, 10) || 0));
       layerEl.value = String(layerTarget);
       updateReadout();
       if (layerTween) { cancelAnimationFrame(layerTween); layerTween = 0; }
-      if (reducedMotion) { displayLayer = layerTarget; draw(); return; }
+      if (reducedMotion) { displayLayer = layerTarget; updateReadout(); draw(); return; }
       var from = displayLayer, start = performance.now(), dur = (api.motion && api.motion.step) || 180;
       function step(now) {
         var t = Math.min(1, (now - start) / dur);
         var e = t * t * (3 - 2 * t);
         displayLayer = from + (layerTarget - from) * e;
+        updateReadout();
         draw();
         if (t < 1) layerTween = requestAnimationFrame(step);
         else layerTween = 0;
@@ -6084,7 +6078,7 @@
     resize();
     return {
       update: function () {},
-      next: function () { if (layerTarget >= 12) return false; setLayer(layerTarget + 1); return true; },
+      next: function () { if (layerTarget >= maxLayer) return false; setLayer(layerTarget + 1); return true; },
       prev: function () { if (layerTarget <= 0) return false; setLayer(layerTarget - 1); return true; },
       resize: resize,
       destroy: function () { if (layerTween) cancelAnimationFrame(layerTween); window.removeEventListener("resize", resize); el.remove(); }
@@ -7697,8 +7691,8 @@
         var cy = (Math.floor(c / 4) + 0.5) / 3;
         for (var k = 0; k < per; k++) {
           var a = k / per * Math.PI * 2 + rnd() * 0.5;
-          var r = 0.08 + rnd() * 0.16;
-          nodes.push({ c: c, x0: rnd(), y0: rnd(), cx: cx + Math.cos(a) * r * 0.55, cy: cy + Math.sin(a) * r * 0.42, col: palette[c % palette.length] });
+          var r = 0.05 + rnd() * 0.09;
+          nodes.push({ c: c, x0: cx + Math.cos(a) * r * 0.75, y0: cy + Math.sin(a) * r * 0.55, cx: cx, cy: cy, col: palette[c % palette.length] });
         }
       }
       for (var i = 0; i < nodes.length; i++) {
@@ -7744,25 +7738,29 @@
       "plants", "fungi", "objects", "mathematics", "thoughts", "dreams"
     ];
     var nodeNames = DE ? [
-      "Hauskatze", "Schimpanse", "Pferd", "Amsel", "Lachs", "Biene",
-      "Eiche", "Steinpilz", "Stuhl", "Zahl 7", "Idee", "Traum"
+      ["Hauskatze", "Löwe", "Tiger"], ["Schimpanse", "Mensch", "Gorilla"], ["Pferd", "Hund", "Wal"],
+      ["Amsel", "Meise", "Adler"], ["Lachs", "Hai"], ["Biene", "Käfer"],
+      ["Eiche", "Rose"], ["Steinpilz", "Hefe"],
+      ["Stuhl", "Stein"], ["Zahl 7", "Primzahl"], ["Idee", "Satz"], ["Traum", "Albtraum"]
     ] : [
-      "house cat", "chimpanzee", "horse", "blackbird", "salmon", "bee",
-      "oak", "mushroom", "chair", "number 7", "idea", "dream"
+      ["house cat", "lion", "tiger"], ["chimpanzee", "human", "gorilla"], ["horse", "dog", "whale"],
+      ["blackbird", "tit", "eagle"], ["salmon", "shark"], ["bee", "beetle"],
+      ["oak", "rose"], ["mushroom", "yeast"],
+      ["chair", "stone"], ["number 7", "prime"], ["idea", "sentence"], ["dream", "nightmare"]
     ];
     var superNames = DE ? ["Wirbeltiere", "Wirbellose", "Pflanzen & Pilze", "Nicht-Leben"] : ["vertebrates", "invertebrates", "plants & fungi", "non-living"];
     var phaseLabels = DE ? [
-      "12 Einzelfälle · noch keine Gruppen",
-      "12 Gruppen · Katzenartige, Menschenaffen, Säugetiere, Vögel, Fische, Insekten …",
-      "4 Gruppen · Wirbeltiere, Wirbellose, Pflanzen & Pilze, Nicht-Leben",
-      "Lebewesen · Bilaterien, Eukaryoten  |  Nicht-Leben",
-      "Etwas · alles"
+      "Einzelfälle · schon in lokalen Gruppen",
+      "8 lebende Gruppen · Katzenartige, Menschenaffen, Säugetiere, Vögel, Fische, Insekten …",
+      "3 Gruppen · Wirbeltiere, Wirbellose, Pflanzen & Pilze",
+      "Lebewesen · Bilaterien, Eukaryoten",
+      "Seiendes · Lebewesen, Gegenstände, Mathematik, Gedanken, Träume"
     ] : [
-      "12 individual cases · no groups yet",
-      "12 groups · cats, great apes, mammals, birds, fish, insects …",
-      "4 groups · vertebrates, invertebrates, plants & fungi, non-living",
-      "living things · bilaterians, eukaryotes  |  non-living",
-      "something · everything"
+      "individual cases · already in local groups",
+      "8 living groups · cats, great apes, mammals, birds, fish, insects …",
+      "3 groups · vertebrates, invertebrates, plants & fungi",
+      "living things · bilaterians, eukaryotes",
+      "what exists · living things, objects, mathematics, thoughts, dreams"
     ];
     function lerp(a, b, u) { return a + (b - a) * u; }
     function clamp01(v) { return Math.max(0, Math.min(1, v)); }
@@ -7837,6 +7835,7 @@
       }
       // fibres: the same structure survives every compression level
       nodes.forEach(function (n) {
+        if (n.c >= 8 && tt < 3.15) return;
         var x0 = X({ x: n.x0 }), y0 = Y({ y: n.y0 });
         var cc = clusterCenters[n.c];
         var sc = superCenters[Math.floor(n.c / 3)];
@@ -7856,6 +7855,7 @@
         var crossAlpha = Math.max(0, 0.28 * (1 - tt));
         edges.forEach(function (e) {
           var a = nodes[e.a], b = nodes[e.b];
+          if ((a.c >= 8 || b.c >= 8) && tt < 3.15) return;
           var ax = lerp(a.x0, clusterCenters[a.c].x, u0), ay = lerp(a.y0, clusterCenters[a.c].y, u0);
           var bx = lerp(b.x0, clusterCenters[b.c].x, u0), by = lerp(b.y0, clusterCenters[b.c].y, u0);
           var pa = { x: X({x:ax}), y: Y({y:ay}) }, pb = { x: X({x:bx}), y: Y({y:by}) };
@@ -7869,12 +7869,14 @@
         });
         ctx.globalAlpha = 1;
         if (a0 > 0.01) nodes.forEach(function (n) {
+          if (n.c >= 8) return;
           var x = lerp(n.x0, clusterCenters[n.c].x, u0), y = lerp(n.y0, clusterCenters[n.c].y, u0);
           glow(X({x:x}), Y({y:y}), 2.4, n.col, a0 * 0.9);
         });
       }
       if (a1 > 0.01) {
         clusterCenters.forEach(function (cc, i) {
+          if (i >= 8 && tt < 3.15) return;
           var x = lerp(cc.x, superCenters[Math.floor(i / 3)].x, u1);
           var y = lerp(cc.y, superCenters[Math.floor(i / 3)].y, u1);
           ring(X({x:x}), Y({y:y}), 8, palette[i % palette.length], a1 * 0.6);
@@ -7882,7 +7884,8 @@
         });
       }
       if (a2 > 0.01) {
-        superCenters.forEach(function (sp) {
+        superCenters.forEach(function (sp, i) {
+          if (i === 3 && tt < 3.15) return;
           var x = lerp(sp.x, center.x, u2), y = lerp(sp.y, center.y, u2);
           ring(X({x:x}), Y({y:y}), 12, C.petrol, a2 * 0.55);
           glow(X({x:x}), Y({y:y}), 7.5, C.petrol, a2);
@@ -7898,14 +7901,17 @@
       var nodeAlpha = clamp01(0.82 - tt * 1.15);
       if (nodeAlpha > 0.01) {
         nodes.forEach(function (n, idx) {
-          if (idx !== n.c * 12) return;
+          if (n.c >= 8) return;
+          var local = idx - n.c * 12;
+          if (local > 1) return;
           var x = lerp(n.x0, clusterCenters[n.c].x, u0), y = lerp(n.y0, clusterCenters[n.c].y, u0);
-          labelAt(nodeNames[n.c], X({x:x}), Y({y:y}) - 6, C.ink, nodeAlpha, Math.max(8, api.font("canvas-sm") - 1));
+          labelAt(nodeNames[n.c][local] || "", X({x:x}), Y({y:y}) - 6, C.ink, nodeAlpha, Math.max(8, api.font("canvas-sm") - 1));
         });
       }
       var clusterAlpha = clamp01(Math.min(tt - 0.45, 2.35 - tt));
       if (clusterAlpha > 0.01) {
         clusterCenters.forEach(function (cc, i) {
+          if (i >= 8 && tt < 3.15) return;
           var x = lerp(cc.x, superCenters[Math.floor(i / 3)].x, u1);
           var y = lerp(cc.y, superCenters[Math.floor(i / 3)].y, u1);
           labelAt(clusterNames[i], X({x:x}), Y({y:y}) - 9, palette[i % palette.length], clusterAlpha, Math.max(8, api.font("canvas-sm") - 1));
@@ -7914,45 +7920,47 @@
       var superAlpha = clamp01(Math.min(tt - 1.35, 3.35 - tt));
       if (superAlpha > 0.01) {
         superCenters.forEach(function (sp, i) {
+          if (i === 3 && tt < 3.15) return;
           var x = lerp(sp.x, center.x, u2), y = lerp(sp.y, center.y, u2);
           labelAt(superNames[i], X({x:x}), Y({y:y}) - 12, C.petrol, superAlpha, api.font("canvas-sm"));
         });
       }
       if (tt > 2.55) {
         var ca = clamp01(Math.min(tt - 2.55, 1));
-        labelAt(tt < 3.6 ? (DE ? "Lebewesen" : "living things") : (DE ? "Etwas" : "something"), X(center), Y(center) - 18, C.green, ca, api.font("canvas"));
+        labelAt(tt < 3.6 ? (DE ? "Lebewesen" : "living things") : (DE ? "Seiendes" : "what exists"), X(center), Y(center) - 18, C.green, ca, api.font("canvas"));
       }
       if (a4 > 0.01) {
         var cx = X(center), cy = Y(center);
         ring(cx, cy, 20, C.gold, a4 * 0.55);
         ring(cx, cy, 31, C.gold, a4 * 0.28);
-        ctx.save();
-        ctx.strokeStyle = C.gold; ctx.globalAlpha = a4 * 0.52; ctx.lineWidth = 1.3;
-        ctx.setLineDash([4, 4]);
-        outer.forEach(function (op) {
-          var ox = X(op), oy = Y(op);
-          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.quadraticCurveTo((cx + ox) / 2, (cy + oy) / 2 - 10, ox, oy); ctx.stroke();
-        });
-        ctx.restore();
-        outer.forEach(function (op) { glow(X(op), Y(op), 4.2, C.gold, a4); });
-        // one unseen case: the compressed rule reaches a point that was never stored
-        var nw = { x: center.x + 0.30, y: center.y + 0.24 };
-        var nx = X(nw), ny = Y(nw);
-        ctx.save();
-        ctx.strokeStyle = C.green; ctx.globalAlpha = a4 * 0.8; ctx.lineWidth = 1.6;
-        ctx.setLineDash([5, 4]);
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.quadraticCurveTo((cx + nx) / 2, (cy + ny) / 2 - 14, nx, ny); ctx.stroke();
-        ctx.restore();
-        glow(nx, ny, 6, C.green, a4);
-        ctx.fillStyle = C.green; ctx.globalAlpha = a4;
-        ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-        ctx.textAlign = "center";
-        ctx.fillText(DE ? "neuer Fall" : "new case", nx, ny + 22);
-        ctx.globalAlpha = 1;
+        // non-living cases appear only now and join the same top category
+        var appear = clamp01((tt - 3.15) / 0.85);
+        if (appear > 0.01) {
+          nodes.forEach(function (n) {
+            if (n.c < 8) return;
+            var u = clamp01((tt - 3.15) / 0.85);
+            var x = lerp(n.x0, center.x, u), y = lerp(n.y0, center.y, u);
+            glow(X({x:x}), Y({y:y}), 2.8, n.col, appear * 0.9);
+          });
+          clusterCenters.forEach(function (cc, i) {
+            if (i < 8) return;
+            var u = clamp01((tt - 3.15) / 0.85);
+            var x = lerp(cc.x, center.x, u), y = lerp(cc.y, center.y, u);
+            labelAt(clusterNames[i], X({x:x}), Y({y:y}) - 9, palette[i % palette.length], clamp01((3.92 - tt) / 0.6) * appear, Math.max(8, api.font("canvas-sm") - 1));
+          });
+          nodes.forEach(function (n) {
+            if (n.c < 8 || tt > 3.75) return;
+            var local = nodes.indexOf(n) - n.c * 12;
+            if (local > 1) return;
+            var u = clamp01((tt - 3.15) / 0.85);
+            var x = lerp(n.x0, center.x, u), y = lerp(n.y0, center.y, u);
+            labelAt(nodeNames[n.c][local] || "", X({x:x}), Y({y:y}) + 15, C.ink, appear * clamp01((3.75 - tt) / 0.5), Math.max(8, api.font("canvas-sm") - 1));
+          });
+        }
         ctx.fillStyle = C.muted;
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center";
-        ctx.fillText(DE ? "eine Regel, viele Fälle" : "one rule, many cases", cx, cy + 46);
+        ctx.fillText(DE ? "alles, was ist" : "everything that is", cx, cy + 46);
       }
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
@@ -7964,7 +7972,7 @@
       ctx.fillText(DE ? "Weiter = verdichten" : "next = compress", w - pad, 18);
       ctx.textAlign = "left";
       ctx.fillStyle = C.petrol;
-      ctx.fillText(DE ? "Struktur bleibt · Details fallen" : "structure stays · details fall", pad, h - 8);
+      ctx.fillText(DE ? "Verstehen = in Zusammenhang bringen · Einzelheiten vergessen" : "understanding = relating · forgetting details", pad, h - 8);
       updateReadout();
     }
     function updateReadout() {

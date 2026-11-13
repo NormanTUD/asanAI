@@ -108,7 +108,7 @@ Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still
 2. [x] **Blocks earlier + mini demos.** Move “Die Bausteine eines LLM” before the neural-network details. Show T, E, then many repeated A/FFN layers indented, then U. Add tiny demos for Tokenizer, Embedding, Attention, FFN, Repeat, Unembedding. Make it gorgeous.
 3. [x] **Tokenizer slide.** Center “Text wird zu IDs”. Fix “Beispiele”: Weiter must step through the examples, not do nothing. Add the advantage below: subwords let the model read new words from context and word parts.
 3b. [x] **Camera bleed:** at the end, “Die Verteilung ist nicht die Antwort” changes the camera; keep its top view independent from the default camera on “Ein Wort nach dem anderen”.
-4. [ ] **Token trajectories.** Verify/fix Weiter advancing one GPT-2 layer per click.
+4. [~] **Token trajectories.** Fixed the `li` shadowing bug and made the max layer dynamic; readout now updates during the tween. Browser click check still open.
 5. [ ] **Whole-system generalisation.**
 6. [ ] **Final gate.**
 
@@ -128,3 +128,40 @@ Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still
 - [~] Token trajectories still need the end-to-end click check.
 - [ ] Whole-system generalisation.
 - [ ] Final gate.
+
+## Current status after regression + follow-ups
+- [x] Removed the microphone and the bottom waveform from the phone demo.
+- [x] Landscape stops after `<|endoftext|>`; the ball snaps to its final point and no further animation loop runs.
+- [x] Compression starts with living things already grouped in local regions; non-living cases (number 7, dreams, …) appear only at the end and then fall under **Seiendes**.
+- [x] Restored missing scene functions; all `SCENES` entries are defined.
+- [~] Token trajectories still need the end-to-end click check.
+- [ ] Whole-system generalisation.
+- [ ] Final gate.
+
+## Detailed next work — Bausteine and loss landscape
+### Bausteine eines LLM
+- [ ] Replace the 7 repeated A/FFN rows with one vertical `Attention` row and one `FFN` row, enclosed by a bracket/arrow labelled `diese n mal` / `these n times`.
+- [ ] Stack hierarchy must be: `T` tokenizer → `E` embedding → `Transformer-Blöcke` → `U` unembedding. The transformer group contains Attention first, then FFN. Attention/FFN must not sit under Embedding.
+- [ ] The transformer-level detail must say: this block runs dozens to hundreds of times in a row; each block has its own weights; the running vector is updated, not overwritten.
+- [ ] The Attention detail must say: it determines how important every word is for every other word, then mixes the token information according to those weights.
+- [ ] The FFN detail must use the `new` + `york` example: separately “new” is like “neu” (Neuwagen) and “york” is a place in England; directly together they mean the US metropolis. The FFN shifts the tokens so that the unembedding gets the right angle. FFN comes after Attention.
+- [ ] Add the roadmap note: from this slide we will go into Attention and FFN on the next days, one after the other, each explained intuitively: what it does and why.
+- [ ] Redesign every mini demo image in the Bausteine slide: consistent size/aspect ratio, crisp alignment, no stretching, mouthwateringly gorgeous. This is its own large point.
+- [ ] Fix navigation: the Back/Next buttons must sit fixed at the edge and never overlap content; add reserved padding/scrolling so the detail area cannot slide under them.
+
+### Loss landscape — two-parameter linear model
+- [ ] Replace the 13-parameter 1→4→1 model with `ŷ = a·x + b`: exactly two parameters, weight `a` and bias `b`.
+- [ ] Plot the loss surface with `a` on the x-axis and `b` on the y-axis; compute `L(a,b) = 1/n Σ (a·x_i + b − y_i)²` from a visible list of predefined example pairs `(x_i, y_i)`.
+- [ ] Show the example list in the demo (values visible to the reader), and mark the current `a`, `b`, loss, and predictions.
+- [ ] Training starts automatically when the slide opens or via the offered train button; the user must not have to press Weiter for every training step. Weiter should only leave the slide when training/demo is done.
+- [ ] Animate the real trajectory on the surface for SGD, Adam, and Momentum; keep the direct-vs-adaptive comparison and the saddle-point optional box.
+- [ ] The Temml formula below the plot must be the actual network/loss: `ŷ = a x + b`, `L = 1/n Σ (ŷ_i − y_i)²`, with live values substituted for `a`, `b`, and `L`.
+- [ ] Ensure axes, labels, contour/height colours, and the formula stay readable in EN/DE and both themes.
+
+
+## Token trajectory fix
+- [x] The layer label collision loop reused the variable `li`, overwriting the active layer index for every later token. Renamed it to `lbi`.
+- [x] `setLayer` now updates the readout during the tween, not only before it.
+- [x] Max layer is derived from `data.points[0].length`; slider/next/readout use it.
+- [x] Added a dashed segment from the previous layer position to the current marker.
+- [~] Still needs a real browser click check.

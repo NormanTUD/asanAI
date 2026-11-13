@@ -4672,7 +4672,13 @@
    "title": "A fast learning algorithm for deep belief nets",
    "author": "Geoffrey E. Hinton, Simon Osindero, Yee-Whye Teh",
    "year": "2006",
-   "url": "https://papers.baulab.info/papers/also/Hinton-2006a.pdf"
+   "url": "https://www.cs.toronto.edu/~hinton/absps/fastnc.pdf"
+  },
+  "hinton2006reducing": {
+   "title": "Reducing the Dimensionality of Data with Neural Networks",
+   "author": "Geoffrey E. Hinton, Ruslan R. Salakhutdinov",
+   "year": "2006",
+   "url": "https://www.cs.toronto.edu/~hinton/absps/science.pdf"
   },
   "polyak": {
    "title": "Some Methods of Speeding up the Convergence of Iteration Methods",
@@ -10624,7 +10630,25 @@
    "title": "A quantitative description of membrane current and its application to conduction and excitation in nerve",
    "author": "Alan L. Hodgkin, Andrew F. Huxley",
    "year": "1952",
-   "url": "https://www.semanticscholar.org/paper/A-quantitative-description-of-membrane-current-and-Hodgkin-Huxley/3a93d2f7e2fba8b2b9c1a5a6b1b6d3f3f2e2e2e2"
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1392413/"
+  },
+  "fitzhugh1961impulses": {
+   "title": "Impulses and Physiological States in Theoretical Models of Nerve Membrane",
+   "author": "Richard FitzHugh",
+   "year": "1961",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1366333/"
+  },
+  "nagumo1962active": {
+   "title": "An Active Pulse Transmission Line Simulating Nerve Axon",
+   "author": "Jin-Ichi Nagumo, Suguru Arimoto, Shunsuke Yoshizawa",
+   "year": "1962",
+   "url": "https://doi.org/10.1109/JRPROC.1962.288235"
+  },
+  "hopfield1982neural": {
+   "title": "Neural networks and physical systems with emergent collective computational abilities",
+   "author": "John J. Hopfield",
+   "year": "1982",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC346238/"
   },
   "bi1998stdp": {
    "title": "Synaptic modifications in cultured hippocampal neurons: dependence on spike timing, synaptic strength, and postsynaptic cell type",
@@ -24781,6 +24805,7 @@
    "samplinglab"
   ],
   "ackley1985boltzmann": [
+   "history",
    "people_of_ai",
    "samplinglab"
   ],
@@ -25730,6 +25755,7 @@
   "hinton2006": [
    "deeplearninglab",
    "geometry_i",
+   "history",
    "people_of_ai"
   ],
   "cybenko1989": [
@@ -26178,6 +26204,9 @@
   "amari1972": [
    "history"
   ],
+  "hopfield1982neural": [
+   "history"
+  ],
   "walter_pitts_photo": [
    "history"
   ],
@@ -26426,6 +26455,16 @@
    "history"
   ],
   "bain": [
+   "history"
+  ],
+  "hodgkin1952hh": [
+   "beyond_llms",
+   "history"
+  ],
+  "fitzhugh1961impulses": [
+   "history"
+  ],
+  "nagumo1962active": [
    "history"
   ],
   "farleyclark1954": [
@@ -26764,6 +26803,9 @@
    "history"
   ],
   "karpathy2019recipe": [
+   "history"
+  ],
+  "hinton2006reducing": [
    "history"
   ],
   "hooker2020": [
@@ -27872,9 +27914,6 @@
    "mechanistic_interpretability"
   ],
   "maass1997spiking": [
-   "beyond_llms"
-  ],
-  "hodgkin1952hh": [
    "beyond_llms"
   ],
   "merolla2014truenorth": [
@@ -33333,7 +33372,7 @@
    ]
   },
   "Geoffrey E. Hinton": {
-   "count": 14,
+   "count": 15,
    "minyear": 1985,
    "maxyear": 2017,
    "keys": [
@@ -33342,6 +33381,7 @@
     "jacobs1991moe",
     "relupaper",
     "hinton2006",
+    "hinton2006reducing",
     "hinton2012dropout",
     "hinton2007baby",
     "rumelhart1986",
@@ -44946,6 +44986,15 @@
     "hinton2006"
    ]
   },
+  "Ruslan R. Salakhutdinov": {
+   "count": 2,
+   "minyear": 2006,
+   "maxyear": 2012,
+   "keys": [
+    "hinton2006reducing",
+    "hinton2012dropout"
+   ]
+  },
   "B. T. Polyak": {
    "count": 1,
    "minyear": 1964,
@@ -46671,14 +46720,6 @@
     "krizhevsky2012imagenet",
     "hinton2011capsules",
     "krizhevsky2009cifar"
-   ]
-  },
-  "Ruslan R. Salakhutdinov": {
-   "count": 1,
-   "minyear": 2012,
-   "maxyear": 2012,
-   "keys": [
-    "hinton2012dropout"
    ]
   },
   "Li Wan": {
@@ -58188,6 +58229,47 @@
     "hodgkin1952hh"
    ]
   },
+  "Richard FitzHugh": {
+   "count": 1,
+   "minyear": 1961,
+   "maxyear": 1961,
+   "keys": [
+    "fitzhugh1961impulses"
+   ]
+  },
+  "Jin-Ichi Nagumo": {
+   "count": 1,
+   "minyear": 1962,
+   "maxyear": 1962,
+   "keys": [
+    "nagumo1962active"
+   ]
+  },
+  "Suguru Arimoto": {
+   "count": 1,
+   "minyear": 1962,
+   "maxyear": 1962,
+   "keys": [
+    "nagumo1962active"
+   ]
+  },
+  "Shunsuke Yoshizawa": {
+   "count": 1,
+   "minyear": 1962,
+   "maxyear": 1962,
+   "keys": [
+    "nagumo1962active"
+   ]
+  },
+  "John J. Hopfield": {
+   "count": 2,
+   "minyear": 1982,
+   "maxyear": 1982,
+   "keys": [
+    "hopfield1982neural",
+    "hopfield1982"
+   ]
+  },
   "Guo-qiang Bi": {
    "count": 1,
    "minyear": 1998,
@@ -64439,14 +64521,6 @@
    "maxyear": 2016,
    "keys": [
     "chaudhari2016entropysgd"
-   ]
-  },
-  "John J. Hopfield": {
-   "count": 1,
-   "minyear": 1982,
-   "maxyear": 1982,
-   "keys": [
-    "hopfield1982"
    ]
   },
   "Stephan Mandt": {

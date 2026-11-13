@@ -1518,7 +1518,8 @@
    "hodgkin1952hh"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "history"
   ]
  },
  {
@@ -3978,7 +3979,8 @@
    "hodgkin1952hh"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "history"
   ]
  },
  {
@@ -29908,6 +29910,7 @@
    "boltzmannlearning"
   ],
   "cited_in": [
+   "history",
    "people_of_ai",
    "samplinglab"
   ]
@@ -36089,13 +36092,14 @@
   "city": "Toronto, Canada",
   "year": 2007.0,
   "conf": 1,
-  "works": 14,
+  "works": 15,
   "keys": [
    "ackley1985boltzmann",
    "boltzmannlearning",
    "jacobs1991moe",
    "relupaper",
    "hinton2006",
+   "hinton2006reducing",
    "hinton2012dropout",
    "hinton2007baby",
    "rumelhart1986",
@@ -45567,12 +45571,14 @@
   "city": "Princeton, United States",
   "year": 1982.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "hopfield1982neural",
    "hopfield1982"
   ],
   "cited_in": [
    "fact_lookup",
+   "history",
    "loss_landscape",
    "people_of_ai",
    "recurrent_networks"
@@ -67589,6 +67595,7 @@
   "cited_in": [
    "deeplearninglab",
    "geometry_i",
+   "history",
    "hyperparameters",
    "people_of_ai"
   ]
@@ -69681,6 +69688,7 @@
    "boltzmannlearning"
   ],
   "cited_in": [
+   "history",
    "people_of_ai",
    "samplinglab"
   ]
@@ -76399,6 +76407,7 @@
   "cited_in": [
    "deeplearninglab",
    "geometry_i",
+   "history",
    "people_of_ai"
   ]
  },
@@ -81853,6 +81862,25 @@
   ]
  },
  {
+  "name": "Ruslan R. Salakhutdinov",
+  "canon": "Ruslan R. Salakhutdinov",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2006,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "hinton2006reducing",
+   "hinton2012dropout"
+  ],
+  "cited_in": [
+   "history",
+   "overandunderfittinglab"
+  ]
+ },
+ {
   "name": "Tom Standage",
   "canon": "Tom Standage",
   "alias": null,
@@ -82039,23 +82067,6 @@
    "atlas",
    "history",
    "intro"
-  ]
- },
- {
-  "name": "Ruslan R. Salakhutdinov",
-  "canon": "Ruslan R. Salakhutdinov",
-  "alias": null,
-  "lat": null,
-  "lng": null,
-  "city": "",
-  "year": 2012,
-  "conf": 0,
-  "works": 1,
-  "keys": [
-   "hinton2012dropout"
-  ],
-  "cited_in": [
-   "overandunderfittinglab"
   ]
  },
  {
@@ -82598,6 +82609,74 @@
   ],
   "cited_in": [
    "reasoning"
+  ]
+ },
+ {
+  "name": "Richard FitzHugh",
+  "canon": "Richard FitzHugh",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1961,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "fitzhugh1961impulses"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Jin-Ichi Nagumo",
+  "canon": "Jin-Ichi Nagumo",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1962,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "nagumo1962active"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Suguru Arimoto",
+  "canon": "Suguru Arimoto",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1962,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "nagumo1962active"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Shunsuke Yoshizawa",
+  "canon": "Shunsuke Yoshizawa",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1962,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "nagumo1962active"
+  ],
+  "cited_in": [
+   "history"
   ]
  },
  {
