@@ -1404,7 +1404,7 @@
       "blue = scattering(450e-9, 1e5, 293)",
       "red  = scattering(650e-9, 1e5, 293)",
       "ratio = blue / red",
-      "print(round(ratio, 2))"
+      'print(f"Blau wird {round(ratio, 2)}× stärker gestreut als Rot.")'
     ] : [
       "# Rayleigh scattering",
       "k_B = 1.380649e-23",
@@ -1413,14 +1413,13 @@
       "blue = scattering(450e-9, 1e5, 293)",
       "red  = scattering(650e-9, 1e5, 293)",
       "ratio = blue / red",
-      "print(round(ratio, 2))"
+      'print(f"Blue is {round(ratio, 2)}x more strongly scattered than red.")'
     ];
     var kB = 1.380649e-23, pressure = 1e5, temp = 293;
     var blue = (pressure / (kB * temp)) / Math.pow(450e-9, 4);
     var red = (pressure / (kB * temp)) / Math.pow(650e-9, 4);
     var ratio = blue / red;
-    var outText = ratio.toFixed(2);
-    var summaryText = DE
+    var outText = DE
       ? "Blau wird " + ratio.toFixed(2) + "× stärker gestreut als Rot."
       : "Blue is " + ratio.toFixed(2) + "x more strongly scattered than red.";
     var agentText = DE ? "Ich denke kurz nach … Fertig. Ich schreibe himmel.py." : "Thinking briefly … done. I'll write sky.py.";
@@ -1436,7 +1435,6 @@
               '<div class="ls-code-msg is-user ls-code-user-text"></div>' +
               '<div class="ls-code-msg is-agent"><span class="ls-code-agent-text"></span><span class="ls-code-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
               '<div class="ls-code-msg is-agent ls-code-run-msg" hidden>' + (DE ? "Ich führe himmel.py im Terminal aus." : "I'll run sky.py in the terminal.") + '</div>' +
-              '<div class="ls-code-msg is-agent ls-code-summary" hidden></div>' +
             '</div>' +
             '<div class="ls-code-filehead">' + (DE ? "himmel.py" : "sky.py") + '</div>' +
             '<pre class="ls-code-body"><code></code></pre>' +
@@ -1456,7 +1454,6 @@
     var term = el.querySelector(".ls-code-term span");
     var userMsgEl = el.querySelector(".ls-code-user-text");
     var agentMsgEl = el.querySelector(".ls-code-agent-text");
-    var summaryEl = el.querySelector(".ls-code-summary");
     var thinkingEl = el.querySelector(".ls-code-thinking");
     var agentWin = el.querySelector(".ls-code-window--agent");
     var runWin = el.querySelector(".ls-code-window--run");
@@ -1568,7 +1565,6 @@
       spans.forEach(function (s) { s.classList.remove("is-visible"); });
       if (userMsgEl) { userMsgEl.textContent = ""; userMsgEl.classList.remove("is-typing"); }
       if (agentMsgEl) agentMsgEl.textContent = "";
-      if (summaryEl) { summaryEl.hidden = true; summaryEl.textContent = ""; }
       if (thinkingEl) thinkingEl.classList.remove("on");
       if (runMsgEl) runMsgEl.hidden = true;
       if (commandEl) commandEl.textContent = "";
@@ -1603,7 +1599,6 @@
         if (j >= cmd.length) {
           later(function () { if (term) term.textContent = outText; }, 260);
           later(function () {
-            if (summaryEl) { summaryEl.textContent = summaryText; summaryEl.hidden = false; }
             phase = "done";
             setButton(DE ? "Nochmal" : "Replay", false);
           }, 620);

@@ -435,7 +435,7 @@
     {
       kicker: "06b / Der Kontext",
       title: "Attention verschiebt Bedeutungen in Kontexte",
-      body: "Drei Sätze, dasselbe Wort: Bank am Fluss, Bank für Geld, Bank im Park. Klicke einen Satz und ein Wort. Die Matrix zeigt, wohin die Bank schaut; die Formel zeigt dieselben Gewichte.",
+      body: "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz und ein Wort. Die Matrix zeigt, wohin die Bank schaut; die Formel zeigt dieselben Gewichte.",
       watch: "Klicke die drei Sätze. Welches Wort zieht die Bank?",
       demoState: { scene: "attention", context: "money" },
       context: "Der Kontext verschiebt den Vektor, nicht das Wort. Die Bank bleibt dasselbe Token; ihre Nachbarn ändern ihre Bedeutung.",
@@ -499,7 +499,7 @@
     {
       kicker: "06b / The context",
       title: "Attention shifts meaning into context",
-      body: "Three sentences, one word: a bank by the river, a bank for money, a bank in the park. Click a sentence and a word. The matrix shows where the bank looks; the formula shows the same weights.",
+      body: "Three sentences, one word: a bank without context, a bank for money, a bank in the park. Click a sentence and a word. The matrix shows where the bank looks; the formula shows the same weights.",
       watch: "Click the three sentences. Which word pulls the bank?",
       demoState: { scene: "attention", context: "money" },
       context: "The context shifts the vector, not the word. The bank stays the same token; its neighbours change what it means.",
