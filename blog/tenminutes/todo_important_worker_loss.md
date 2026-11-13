@@ -2,7 +2,7 @@
 Status: in progress
 
 
-[ ] [TODO] Network diagram
+
 [ ] [TODO] 3D surface and trajectory
 [ ] [TODO] Controls: train/play/step/reset/lr
 [ ] [TODO] Worker errors and fallback
