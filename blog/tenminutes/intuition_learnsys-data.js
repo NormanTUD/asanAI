@@ -951,9 +951,90 @@
     }
   ];
 
-  var historySteps = DE ? [
+  var posttrainSteps = DE ? [
     {
-      kicker: "16 / Geschichte",
+      kicker: "15 / Post-Training",
+      title: "Vom Basismodell zum Assistenten",
+      body: "Ein Basismodell setzt Text fort. Eine Anweisung beantwortet es nicht zuverlässig. SFT zeigt ihm gute Antworten; RLHF lernt aus menschlichen Vergleichen. Aus der Vorhersage wird ein Assistent. Klicke die drei Stufen und wähle eine Antwort.",
+      watch: "Klicke Basismodell, SFT und RLHF. Welche Antwort würdest du wählen?",
+      demoState: { scene: "posttrain", step: 0 },
+      context: "Pretraining lernt aus Text. SFT lernt aus Beispielantworten. RLHF lernt aus Präferenzen: Menschen vergleichen zwei Antworten, ein Reward-Modell lernt daraus.",
+      deep: "RLHF ist kein Verstehen. Es verschiebt die Verteilung in Richtung Antworten, die Menschen bevorzugen. Deshalb kann ein Modell hilfreicher und gleichzeitig falsch sein. Die Präferenzdaten sind ein Designentscheid.",
+      boxes: [
+        box("post-1", "Technik", "Was ist SFT?", "Supervised Fine-Tuning: Das Modell lernt auf Paaren aus Anweisung und guter Antwort. Es übernimmt Format und Stil, nicht automatisch neue Fakten."),
+        box("post-2", "Technik", "Was ist RLHF?", "Menschen vergleichen Antworten; ein Reward-Modell lernt die Präferenz; die Policy wird so optimiert, dass sie höhere Belohnung bekommt."),
+        box("post-3", "Grenze", "Was garantiert RLHF?", "Nicht Wahrheit. Es optimiert auf menschliche Präferenzen. Ein plausibler, selbstsicherer Ton kann belohnt werden, auch wenn der Inhalt falsch ist.")
+      ],
+      sources: [
+        { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155", why: { de: "Instruction-Tuning und RLHF für Sprachmodelle.", en: "Instruction tuning and RLHF for language models." } },
+        { label: "Christiano et al. (2017), Deep RL from Human Preferences", url: "https://arxiv.org/abs/1706.03741", why: { de: "Präferenzen als Trainingssignal.", en: "Preferences as a training signal." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "15 / Post-training",
+      title: "From base model to assistant",
+      body: "A base model continues text. It does not reliably answer an instruction. SFT shows it good answers; RLHF learns from human comparisons. Prediction becomes an assistant. Click the three stages and choose an answer.",
+      watch: "Click base model, SFT, and RLHF. Which answer would you choose?",
+      demoState: { scene: "posttrain", step: 0 },
+      context: "Pretraining learns from text. SFT learns from example answers. RLHF learns from preferences: humans compare two answers, and a reward model learns from that.",
+      deep: "RLHF is not understanding. It shifts the distribution toward answers people prefer. That is why a model can be more helpful and still wrong. Preference data is a design decision.",
+      boxes: [
+        box("post-1", "Technique", "What is SFT?", "Supervised fine-tuning: the model learns from instruction-answer pairs. It picks up format and style, not automatically new facts."),
+        box("post-2", "Technique", "What is RLHF?", "Humans compare answers; a reward model learns the preference; the policy is optimised to receive a higher reward."),
+        box("post-3", "Limit", "What does RLHF guarantee?", "Not truth. It optimises for human preferences. A plausible, confident tone can be rewarded even when the content is wrong.")
+      ],
+      sources: [
+        { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155", why: { de: "Instruction-Tuning und RLHF für Sprachmodelle.", en: "Instruction tuning and RLHF for language models." } },
+        { label: "Christiano et al. (2017), Deep RL from Human Preferences", url: "https://arxiv.org/abs/1706.03741", why: { de: "Präferenzen als Trainingssignal.", en: "Preferences as a training signal." } }
+      ]
+    }
+  ];
+
+  var evalSteps = DE ? [
+    {
+      kicker: "16 / Evaluation",
+      title: "Wie gut ist das Modell?",
+      body: "Ein Loss sagt, wie gut das nächste Token passt. Ein Benchmark sagt, ob das Modell Aufgaben löst. Beides ist messbar, aber nicht dasselbe. Klicke eine Aufgabe und schalte die Kontamination um.",
+      watch: "Klicke MMLU, HumanEval und GSM8K. Was misst der Score, was nicht?",
+      demoState: { scene: "eval", task: 0 },
+      context: "Ein hoher Score kann bedeuten, dass das Modell die Aufgabe versteht, oder dass der Test im Training war. Prüfe die Daten, nicht nur die Zahl.",
+      deep: "Loss und Perplexity messen die Wahrscheinlichkeit von Testtext. Benchmarks messen Aufgaben. Kontamination, Formatierung und Auswertungsregeln können den Score verändern. Ein Benchmark ist ein Messinstrument, keine Definition von Intelligenz.",
+      boxes: [
+        box("eval-1", "Technik", "Was ist MMLU?", "Ein Multiple-Choice-Benchmark über viele Fächer. Er misst Faktenwissen und Schlussfolgern, nicht Alltagskönnen."),
+        box("eval-2", "Technik", "Was ist HumanEval?", "Ein Code-Benchmark: Funktionen aus Docstrings schreiben; Unit-Tests prüfen die Ausführung."),
+        box("eval-3", "Grenze", "Was ist Kontamination?", "Wenn Testaufgaben im Training waren, misst der Score teilweise Erinnerung statt Lösung. Ein hoher Score ist dann kein Beweis für Generalisierung.")
+      ],
+      sources: [
+        { label: "Hendrycks et al. (2021), MMLU", url: "https://arxiv.org/abs/2009.03300", why: { de: "MMLU als Multi-Task-Benchmark.", en: "MMLU as a multi-task benchmark." } },
+        { label: "Chen et al. (2021), HumanEval", url: "https://arxiv.org/abs/2107.03374", why: { de: "HumanEval prüft Code mit Unit-Tests.", en: "HumanEval checks code with unit tests." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "16 / Evaluation",
+      title: "How good is the model?",
+      body: "A loss says how well the next token fits. A benchmark says whether the model solves tasks. Both are measurable, but they are not the same. Click a task and toggle contamination.",
+      watch: "Click MMLU, HumanEval, and GSM8K. What does the score measure, and what does it not?",
+      demoState: { scene: "eval", task: 0 },
+      context: "A high score can mean the model understands the task, or that the test was in training. Check the data, not only the number.",
+      deep: "Loss and perplexity measure the probability of test text. Benchmarks measure tasks. Contamination, formatting, and scoring rules can change the score. A benchmark is a measuring instrument, not a definition of intelligence.",
+      boxes: [
+        box("eval-1", "Technique", "What is MMLU?", "A multiple-choice benchmark across many subjects. It measures factual knowledge and reasoning, not everyday skill."),
+        box("eval-2", "Technique", "What is HumanEval?", "A code benchmark: write functions from docstrings; unit tests check execution."),
+        box("eval-3", "Limit", "What is contamination?", "If test items were in training, the score partly measures memory instead of solving. A high score is then no proof of generalisation.")
+      ],
+      sources: [
+        { label: "Hendrycks et al. (2021), MMLU", url: "https://arxiv.org/abs/2009.03300", why: { de: "MMLU als Multi-Task-Benchmark.", en: "MMLU as a multi-task benchmark." } },
+        { label: "Chen et al. (2021), HumanEval", url: "https://arxiv.org/abs/2107.03374", why: { de: "HumanEval prüft Code mit Unit-Tests.", en: "HumanEval checks code with unit tests." } }
+      ]
+    }
+  ];
+
+  var historySteps = DE ? [
+
+    {
+      kicker: "17 / Geschichte",
       title: "Geschichte in zehn Schritten",
       body: "Von den Kerben im Wolfsknochen bis zu GPT: Zehn Tabs folgen dem roten Faden aus `history.php`. Ganz früh beginnt Rechnen als Zählen mit Steinen und Kerben. Dann kommen Logik, Rechenmaschinen, das Neuron, das Perzeptron, die XOR-Krise, Backpropagation, Deep Learning, der Transformer und die LLMs. Klicke die Tabs und sieh, welche Idee jeweils weitergetragen wird.",
       watch: "Klicke die zehn Tabs. Welche Idee trägt bis zum Transformer?",
@@ -974,7 +1055,7 @@
     }
   ] : [
     {
-      kicker: "16 / History",
+      kicker: "17 / History",
       title: "History in ten steps",
       body: "From the notches in a wolf bone to GPT: ten tabs follow the thread from `history.php`. Arithmetic starts as counting with stones and notches. Then come logic, calculating machines, the neuron, the perceptron, the XOR crisis, backpropagation, deep learning, the transformer, and LLMs. Click the tabs and see which idea is carried forward.",
       watch: "Click the ten tabs. Which idea carries through to the transformer?",
@@ -997,7 +1078,7 @@
 
   var philosophySteps = DE ? [
     {
-      kicker: "15 / Philosophie",
+      kicker: "18 / Philosophie",
       title: "Du bist das Chinesische Zimmer",
       body: "Du sitzt in einem Zimmer. Durch eine Klappe kommen Zeichen, die du nicht lesen kannst. Auf dem Tisch liegt ein Regelbuch: Es sagt dir, welche Zeichenfolge du herausschreiben sollst. Du suchst die Eingabe, kopierst die passende Antwort, und von außen sieht es aus, als würdest du die Sprache verstehen. Searle (1980) nennt das den Unterschied zwischen Regeln befolgen und Bedeutung verstehen. Folge dem Regelbuch und beobachte, was du tust.",
       watch: "Folge dem Regelbuch. Wirkt deine Antwort von außen intelligent?",
@@ -1016,7 +1097,7 @@
     }
   ] : [
     {
-      kicker: "15 / Philosophy",
+      kicker: "18 / Philosophy",
       title: "You are the Chinese Room",
       body: "You sit in a room. Through a slot come characters you cannot read. On the table is a rulebook: it tells you which string to write back. You find the input, copy the matching answer, and from the outside it looks as if you understand the language. Searle (1980) calls this the difference between following rules and understanding meaning. Follow the rulebook and watch what you do.",
       watch: "Follow the rulebook. Does your answer look intelligent from the outside?",
@@ -1035,7 +1116,7 @@
     }
   ];
 
-  var steps = introSteps.concat(insideSteps, stackSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, activationSteps, mlpSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps, languageSteps, historySteps, philosophySteps);
+  var steps = introSteps.concat(insideSteps, stackSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, activationSteps, mlpSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps, languageSteps, posttrainSteps, evalSteps, historySteps, philosophySteps);
 
   var day = {
     id: "intuition",
