@@ -6364,6 +6364,1105 @@
     };
   }
 
+  function stackScene(root, api) {
+    var DE = api.lang === "de";
+    var stages = DE ? [
+      { id: "tokenizer", label: "Tokenizer", sub: "Kontext → Tokens" },
+      { id: "embed", label: "Embedding", sub: "Tokens → Vektoren" },
+      { id: "layers", label: "Schichten × N", sub: "Attention + FFN" },
+      { id: "unembed", label: "Unembedding", sub: "Vektor → Scores" }
+    ] : [
+      { id: "tokenizer", label: "Tokenizer", sub: "context → tokens" },
+      { id: "embed", label: "Embedding", sub: "tokens → vectors" },
+      { id: "layers", label: "Layers × N", sub: "attention + FFN" },
+      { id: "unembed", label: "Unembedding", sub: "vector → scores" }
+    ];
+    var el = document.createElement("div");
+    el.className = "ls-stack-scene";
+    el.innerHTML = '<div class="ls-stack-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-stack-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-stack-stage");
+    var canvas = el.querySelector("canvas");
+    var readout = el.querySelector(".ls-stack-readout");
+    var ctx = null, size = null, mode = "pipeline", hits = [];
+    var C = api.colors();
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      ctx.clearRect(0, 0, size.w, size.h);
+      var w = size.w, h = size.h, pad = 24;
+      hits = [];
+      if (mode === "layer") {
+        var n = 5;
+        var cell = Math.min((w - pad * 2) / n, (h - pad * 2 - 30) / n);
+        var x0 = w / 2 - cell * n / 2, y0 = 44;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        var labels = DE ? ["Die", "Hauptstadt", "von", "Frankreich", "ist"] : ["The", "capital", "of", "France", "is"];
+        labels.forEach(function (l, i) {
+          ctx.fillStyle = C.muted; ctx.fillText(l, x0 + i * cell + cell / 2, y0 - 8);
+          ctx.fillText(l, x0 - 8, y0 + i * cell + cell / 2 + 3);
+        });
+        for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) {
+          var on = j <= i;
+          var wgt = on ? (1 / (i + 1)) : 0;
+          ctx.fillStyle = on ? "rgba(18,117,172," + (0.15 + wgt * 0.7) + ")" : "rgba(0,75,111,.04)";
+          ctx.fillRect(x0 + j * cell, y0 + i * cell, cell - 1, cell - 1);
+          if (on) { ctx.fillStyle = "#fff"; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.fillText((wgt * 100).toFixed(0), x0 + j * cell + cell / 2, y0 + i * cell + cell / 2 + 3); }
+        }
+        ctx.fillStyle = C.soft; ctx.font = '600 ' + api.font("canvas") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
+        ctx.fillText(DE ? "Kausale Self-Attention: Zeile fragt, Spalte antwortet" : "Causal self-attention: row asks, column answers", pad, 22);
+        readout.innerHTML = '<span>' + (DE ? "Maskiert" : "Masked") + ' <b>' + (DE ? "oberes Dreieck" : "upper triangle") + '</b></span><span>' + (DE ? "Jede Zeile summiert zu 1" : "Every row sums to 1") + '</span>';
+        return;
+      }
+      if (mode === "block") {
+        var by = h * 0.40;
+        var bw = Math.min(126, (w - pad * 2) / 5 - 10);
+        var stepX = (w - pad * 2 - bw) / 4;
+        var startX = pad + bw / 2;
+        function blockNode(i, title, sub, fill, stroke, ink) {
+          var x = startX + i * stepX;
+          ctx.fillStyle = fill;
+          ctx.strokeStyle = stroke;
+          ctx.lineWidth = 1.4;
+          ctx.fillRect(x - bw / 2, by - 28, bw, 56);
+          ctx.strokeRect(x - bw / 2, by - 28, bw, 56);
+          ctx.fillStyle = ink || C.ink;
+          ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif';
+          ctx.textAlign = "center";
+          ctx.fillText(title, x, by - 2);
+          if (sub) {
+            ctx.fillStyle = C.muted;
+            ctx.font = api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+            ctx.fillText(sub, x, by + 14);
+          }
+          return x;
+        }
+        var x0 = blockNode(0, DE ? "x" : "x", DE ? "Token + Position" : "token + position", "rgba(247,249,248,.92)", C.lineStrong, C.ink);
+        var x1 = blockNode(1, "Attention", DE ? "mischt Tokens" : "mixes tokens", "rgba(99,164,75,.14)", C.green, C.petrol);
+        var x2 = blockNode(2, "+", "", "rgba(255,255,255,.9)", C.lineStrong, C.green);
+        var x3 = blockNode(3, "FFN", DE ? "rechnet pro Token" : "computes per token", "rgba(255,255,255,.72)", C.lineStrong, C.ink);
+        var x4 = blockNode(4, DE ? "x′" : "x′", DE ? "nächster Block" : "next block", "rgba(247,249,248,.92)", C.lineStrong, C.ink);
+        function link(a, b, col) {
+          ctx.strokeStyle = col || C.lineStrong;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.moveTo(a + bw / 2, by); ctx.lineTo(b - bw / 2, by); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(b - bw / 2, by); ctx.lineTo(b - bw / 2 - 6, by - 4); ctx.lineTo(b - bw / 2 - 6, by + 4); ctx.closePath(); ctx.fillStyle = col || C.lineStrong; ctx.fill();
+        }
+        link(x0, x1); link(x1, x2); link(x2, x3); link(x3, x4);
+        ctx.strokeStyle = C.gold;
+        ctx.lineWidth = 1.3;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath(); ctx.moveTo(x0, by + 28); ctx.quadraticCurveTo((x0 + x2) / 2, by + 96, x2, by + 28); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x2, by + 28); ctx.quadraticCurveTo((x2 + x3) / 2, by + 72, x3, by + 28); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = C.gold;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(DE ? "Residual +" : "residual +", (x0 + x2) / 2, by + 88);
+        ctx.fillStyle = C.green;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.fillText(DE ? "hier zoomt die nächste Folie hinein" : "the next slide zooms in here", x1, by - 42);
+        readout.innerHTML = '<span>' + (DE ? "Block" : "Block") + ' <b>Attention + FFN</b></span><span>' + (DE ? "beide mit Residual" : "both with residual") + '</span><span>' + (DE ? "Attention mischt Tokens, FFN rechnet pro Token" : "attention mixes tokens, FFN computes per token") + '</span>';
+        return;
+      }
+      var gap = Math.min(150, (w - pad * 2) / 4);
+      var start = w / 2 - gap * 1.5;
+      var y = h * 0.5;
+      stages.forEach(function (s, i) {
+        var x = start + i * gap;
+        var on = hits.some(function (h2) { return h2.id === s.id && h2.on; });
+        ctx.fillStyle = i === 2 ? "rgba(99,164,75,.12)" : "rgba(255,255,255,.72)";
+        ctx.strokeStyle = i === 2 ? C.green : C.lineStrong;
+        ctx.fillRect(x - 58, y - 26, 116, 52);
+        ctx.strokeRect(x - 58, y - 26, 116, 52);
+        ctx.fillStyle = C.ink; ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif'; ctx.textAlign = "center";
+        ctx.fillText(s.label, x, y - 2);
+        ctx.fillStyle = C.muted; ctx.font = api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.fillText(s.sub, x, y + 13);
+        hits.push({ id: s.id, x: x, y: y, r: 62, on: false });
+        if (i < stages.length - 1) {
+          ctx.strokeStyle = C.lineStrong; ctx.lineWidth = 1.4;
+          ctx.beginPath(); ctx.moveTo(x + 58, y); ctx.lineTo(x + gap - 58, y); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(x + gap - 58, y); ctx.lineTo(x + gap - 64, y - 4); ctx.lineTo(x + gap - 64, y + 4); ctx.closePath(); ctx.fillStyle = C.lineStrong; ctx.fill();
+        }
+      });
+      if (mode === "loop") {
+        ctx.strokeStyle = C.green; ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]);
+        ctx.beginPath(); ctx.moveTo(start + 58, y + 26); ctx.lineTo(start + 58, y + 58); ctx.lineTo(start + 3 * gap - 58, y + 58); ctx.lineTo(start + 3 * gap - 58, y + 26); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = C.green; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "center";
+        ctx.fillText(DE ? "Token anhängen und wiederholen" : "append token and repeat", w / 2, y + 76);
+      }
+      readout.innerHTML = '<span>' + (DE ? "Stufen" : "Stages") + ' <b>' + stages.map(function (s) { return s.label; }).join(" → ") + '</b></span>';
+    }
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    canvas.addEventListener("pointerup", function (e) {
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      hits.forEach(function (h2) { if (Math.hypot(h2.x - x, h2.y - y) < h2.r) { h2.on = true; readout.innerHTML = '<span><b>' + api.esc(stages.filter(function (s) { return s.id === h2.id; })[0].label) + '</b> ' + (DE ? "ist eine Stufe im Stapel." : "is one stage in the stack.") + '</span>'; } });
+    });
+    window.addEventListener("resize", resize);
+    resize();
+    return { update: function (s) { if (s && s.mode) { mode = s.mode; draw(); } }, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
+  function animalScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-animal-scene";
+    el.innerHTML = '<div class="ls-animal-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-animal-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-animal-stage");
+    var canvas = el.querySelector("canvas");
+    var readout = el.querySelector(".ls-animal-readout");
+    var size = null, ctx = null, yaw = -0.62, pitch = 0.46, zoom = 1, drag = null, active = -1, hits = [], raf = 0, last = 0;
+    var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    var C = api.colors();
+    var pairs = DE ? [
+      { id: "lion", male: "Löwe", female: "Löwin", species: "Löwe", role: "wild", x: -0.78, z: -1.00, color: "green" },
+      { id: "horse", male: "Hengst", female: "Stute", species: "Pferd", role: "domestiziert", x: 0.72, z: -0.33, color: "sky" },
+      { id: "cattle", male: "Stier", female: "Kuh", species: "Rind", role: "domestiziert", x: 0.72, z: 0.33, color: "gold" },
+      { id: "chicken", male: "Hahn", female: "Henne", species: "Huhn", role: "domestiziert", x: 0.72, z: 1.00, color: "lilac" }
+    ] : [
+      { id: "lion", male: "Lion", female: "Lioness", species: "lion", role: "wild", x: -0.78, z: -1.00, color: "green" },
+      { id: "horse", male: "Stallion", female: "Mare", species: "horse", role: "domesticated", x: 0.72, z: -0.33, color: "sky" },
+      { id: "cattle", male: "Bull", female: "Cow", species: "cattle", role: "domesticated", x: 0.72, z: 0.33, color: "gold" },
+      { id: "chicken", male: "Rooster", female: "Hen", species: "chicken", role: "domesticated", x: 0.72, z: 1.00, color: "lilac" }
+    ];
+    function color(name) { return C[name] || C.petrol; }
+    var clamp = api.util.clamp;
+    function project(x, y, z) {
+      var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+      var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
+      var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
+      var s = Math.min(size.w * 0.40, size.h * 0.36) / (1 + z2 * 0.22) * zoom;
+      return { x: size.w / 2 + x1 * s, y: size.h / 2 - y2 * s, z: z2 };
+    }
+    function updateReadout() {
+      var text;
+      if (active >= 0) {
+        var p = pairs[active];
+        text = DE
+          ? p.male + " → " + p.female + ": gleiche Spezies, unterschiedliches Geschlecht. Die Rolle bleibt auf der Rollenachse."
+          : p.male + " → " + p.female + ": same species, different gender. Role stays on the role axis.";
+      } else {
+        text = DE
+          ? "Klicke ein Paar an. Die Achsen zeigen Rolle, Geschlecht und Spezies."
+          : "Click a pair. The axes show role, gender, and species.";
+      }
+      readout.innerHTML = '<span><b>' + (DE ? "Paar" : "Pair") + '</b> ' + api.esc(text) + '</span>';
+    }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      hits = [];
+      ctx.clearRect(0, 0, size.w, size.h);
+      var bg = ctx.createRadialGradient(size.w * 0.5, size.h * 0.42, 8, size.w * 0.5, size.h * 0.5, Math.max(size.w, size.h) * 0.72);
+      bg.addColorStop(0, "rgba(247,250,249,.9)");
+      bg.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, size.w, size.h);
+      var axes = [
+        { a: [-1.12, 0, 0], b: [1.12, 0, 0], col: C.blue, label: DE ? "Rolle" : "role", end: [1.20, 0, 0] },
+        { a: [0, -1.12, 0], b: [0, 1.12, 0], col: C.green, label: DE ? "Geschlecht" : "gender", end: [0, 1.20, 0] },
+        { a: [0, 0, -1.18], b: [0, 0, 1.18], col: C.gold, label: DE ? "Spezies" : "species", end: [0, 0, 1.26] }
+      ];
+      axes.forEach(function (ax) {
+        var pa = project(ax.a[0], ax.a[1], ax.a[2]), pb = project(ax.b[0], ax.b[1], ax.b[2]);
+        ctx.strokeStyle = ax.col; ctx.globalAlpha = 0.35; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(pa.x, pa.y); ctx.lineTo(pb.x, pb.y); ctx.stroke();
+        ctx.globalAlpha = 1;
+        var le = project(ax.end[0], ax.end[1], ax.end[2]);
+        ctx.fillStyle = ax.col;
+        ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText(ax.label, le.x + 5, le.y - 3);
+      });
+      // role labels on the x-axis
+      var wild = project(-0.78, -1.22, 0), dom = project(0.72, -1.22, 0);
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center";
+      ctx.fillText(DE ? "wild" : "wild", wild.x, wild.y);
+      ctx.fillText(DE ? "domestiziert" : "domesticated", dom.x, dom.y);
+      pairs.forEach(function (p, i) {
+        var on = i === active;
+        var col = color(p.color);
+        var m = project(p.x, -0.78, p.z), f = project(p.x, 0.78, p.z);
+        var mx = m.x, my = m.y, fx = f.x, fy = f.y;
+        ctx.save();
+        ctx.strokeStyle = col;
+        ctx.globalAlpha = on ? 1 : 0.72;
+        ctx.lineWidth = on ? 3.2 : 2.2;
+        ctx.beginPath(); ctx.moveTo(mx, my); ctx.lineTo(fx, fy); ctx.stroke();
+        var ang = Math.atan2(fy - my, fx - mx);
+        ctx.beginPath();
+        ctx.moveTo(fx, fy);
+        ctx.lineTo(fx - 8 * Math.cos(ang - 0.45), fy - 8 * Math.sin(ang - 0.45));
+        ctx.lineTo(fx - 8 * Math.cos(ang + 0.45), fy - 8 * Math.sin(ang + 0.45));
+        ctx.closePath(); ctx.fillStyle = col; ctx.fill();
+        ctx.restore();
+        ctx.globalAlpha = 1;
+        [[mx, my, p.male, true], [fx, fy, p.female, false]].forEach(function (pt) {
+          ctx.beginPath(); ctx.arc(pt[0], pt[1], on ? 6 : 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = col; ctx.fill();
+          ctx.strokeStyle = C.paper; ctx.lineWidth = 1.5; ctx.stroke();
+          ctx.fillStyle = C.ink;
+          ctx.font = (on ? '700 ' : '600 ') + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+          ctx.textAlign = "center";
+          ctx.fillText(pt[2], pt[0], pt[1] + (pt[3] ? -10 : 16));
+          hits.push({ x: pt[0], y: pt[1], r: 24, pair: i });
+        });
+        hits.push({ x: (mx + fx) / 2, y: (my + fy) / 2, r: 26, pair: i });
+      });
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(DE ? "Ziehen zum Drehen · Paar anklicken" : "Drag to rotate · click a pair", 12, 18);
+      canvas.setAttribute("aria-label", DE
+        ? "Drei Dimensionen: Rolle, Geschlecht, Spezies. Alle Pfeile zeigen von männlich nach weiblich."
+        : "Three dimensions: role, gender, species. All arrows point from male to female.");
+      canvas.__lsAnimal = { active: active, pairs: pairs.length, hits: hits };
+    }
+    function frame(now) {
+      raf = requestAnimationFrame(frame);
+      if (now - last < 40) return;
+      last = now;
+      if (!drag) yaw += 0.0025;
+      draw();
+    }
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    function pointer(e) {
+      var r = canvas.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+    canvas.addEventListener("pointerdown", function (e) { drag = pointer(e); });
+    window.addEventListener("pointermove", function (e) {
+      if (!drag) return;
+      yaw += (e.clientX - drag.x) * 0.008;
+      pitch = clamp(pitch + (e.clientY - drag.y) * 0.006, -1.1, 1.1);
+      drag = pointer(e);
+      draw();
+    });
+    window.addEventListener("pointerup", function (e) {
+      if (drag) {
+        var p = pointer(e);
+        var moved = Math.abs(p.x - drag.x) + Math.abs(p.y - drag.y);
+        drag = null;
+        if (moved > 8) return;
+      }
+      var p = pointer(e);
+      var best = -1, bd = 30;
+      hits.forEach(function (h) { var d = Math.hypot(h.x - p.x, h.y - p.y); if (d < Math.max(18, h.r)) { if (d < bd) { bd = d; best = h.pair; } } });
+      if (best >= 0) { active = active === best ? -1 : best; updateReadout(); draw(); }
+    });
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    updateReadout();
+    resize();
+    if (!reducedMotion) raf = requestAnimationFrame(frame);
+    return {
+      update: function () {},
+      pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } },
+      resume: function () { if (!reducedMotion && !raf) raf = requestAnimationFrame(frame); else draw(); },
+      resize: resize,
+      destroy: function () { if (raf) cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); }
+    };
+  }
+
+  function activationScene(root, api) {
+    var DE = api.lang === "de";
+    var fns = [
+      { id: "relu", label: "ReLU", color: "green", desc: DE ? "flat, dann ein Anstieg" : "flat, then a rise" },
+      { id: "gelu", label: "GELU", color: "gold", desc: DE ? "glatt, kleiner Dip" : "smooth, small dip" },
+      { id: "sigmoid", label: "Sigmoid", color: "blue", desc: DE ? "S-Kurve, 0 bis 1" : "S-shape, 0 to 1" },
+      { id: "tanh", label: "tanh", color: "lilac", desc: DE ? "S-Kurve, -1 bis 1" : "S-shape, -1 to 1" }
+    ];
+    var el = document.createElement("div");
+    el.className = "ls-act-scene";
+    el.innerHTML = '<div class="ls-act-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-scene-row ls-act-chips"></div><div class="ls-act-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-act-stage");
+    var canvas = el.querySelector("canvas");
+    var chips = el.querySelector(".ls-act-chips");
+    var readout = el.querySelector(".ls-act-readout");
+    var ctx = null, size = null, active = "relu", hits = [];
+    var C = api.colors();
+    function f(id, x) {
+      if (id === "relu") return Math.max(0, x);
+      if (id === "gelu") return 0.5 * x * (1 + Math.tanh(Math.sqrt(2 / Math.PI) * (x + 0.044715 * x * x * x)));
+      if (id === "sigmoid") return 1 / (1 + Math.exp(-x));
+      return Math.tanh(x);
+    }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      ctx.clearRect(0, 0, size.w, size.h);
+      var pad = 34, w = size.w, h = size.h;
+      var x0 = pad, x1 = w - pad, y0 = h - pad, y1 = pad;
+      function sx(x) { return x0 + (x + 3) / 6 * (x1 - x0); }
+      function sy(y) { return y0 - (y + 1.2) / 4.4 * (y0 - y1); }
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1;
+      for (var g = -3; g <= 3; g++) { ctx.beginPath(); ctx.moveTo(sx(g), y1); ctx.lineTo(sx(g), y0); ctx.stroke(); }
+      for (var gy = -1; gy <= 3; gy++) { ctx.beginPath(); ctx.moveTo(x0, sy(gy)); ctx.lineTo(x1, sy(gy)); ctx.stroke(); }
+      ctx.strokeStyle = C.lineStrong; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.moveTo(x0, sy(0)); ctx.lineTo(x1, sy(0)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(sx(0), y0); ctx.lineTo(sx(0), y1); ctx.stroke();
+      ctx.fillStyle = C.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "center";
+      ctx.fillText("x", x1 - 4, sy(0) - 6); ctx.fillText("y", sx(0) + 8, y1 + 8);
+      hits = [];
+      var front = fns.filter(function (fn) { return fn.id === active; })[0];
+      if (front) {
+        var fn = front;
+        ctx.beginPath();
+        for (var i = 0; i <= 120; i++) {
+          var x = -3 + 6 * i / 120;
+          var px = sx(x), py = sy(f(x ? fn.id : fn.id, x));
+          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.strokeStyle = C[fn.color];
+        ctx.globalAlpha = 1;
+        ctx.lineWidth = 2.6;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        var end = sy(f(fn.id, 2.6));
+        ctx.fillStyle = C[fn.color];
+        ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText(fn.label, sx(2.65), end + 3);
+        hits.push({ id: fn.id, x: sx(2.65) + 12, y: end, r: 18 });
+      }
+      var info = fns.filter(function (fn) { return fn.id === active; })[0];
+      readout.innerHTML = '<span><b>' + info.label + '</b> ' + info.desc + '</span><span>' + (DE ? "Schritt " : "Step ") + (fns.indexOf(info) + 1) + " / " + fns.length + '</span><span>' + (DE ? "ReLU ist nicht injektiv; glatte Aktivierungen bleiben für endliche Eingaben umkehrbar." : "ReLU is not injective; smooth activations stay invertible for finite inputs.") + '</span>';
+      canvas.setAttribute("aria-label", DE ? "Aktivierungsfunktionen: ReLU, GELU, Sigmoid, tanh" : "Activation functions: ReLU, GELU, sigmoid, tanh");
+    }
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    fns.forEach(function (fn) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "ls-chip" + (fn.id === active ? " is-on" : "");
+      b.textContent = fn.label;
+      b.addEventListener("click", function () {
+        active = fn.id;
+        chips.querySelectorAll(".ls-chip").forEach(function (x) { x.classList.toggle("is-on", x === b); });
+        draw();
+      });
+      chips.appendChild(b);
+    });
+    canvas.addEventListener("pointerup", function (e) {
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      hits.forEach(function (h) { if (Math.hypot(h.x - x, h.y - y) < h.r) { active = h.id; chips.querySelectorAll(".ls-chip").forEach(function (b) { b.classList.toggle("is-on", b.textContent === fns.filter(function (f2) { return f2.id === h.id; })[0].label); }); draw(); } });
+    });
+    function stepFn(delta) {
+      var idx = fns.map(function (fn) { return fn.id; }).indexOf(active) + delta;
+      if (idx < 0 || idx >= fns.length) return false;
+      active = fns[idx].id;
+      chips.querySelectorAll(".ls-chip").forEach(function (x, i) { x.classList.toggle("is-on", i === idx); });
+      draw();
+      return true;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+    return {
+      update: function () {},
+      next: function () { return stepFn(1); },
+      prev: function () { return stepFn(-1); },
+      onKey: function (e) { return api.util.arrowKey(e, function () { return stepFn(1); }, function () { return stepFn(-1); }); },
+      resize: resize,
+      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
+    };
+  }
+
+  function langdataScene(root, api) {
+    var DE = api.lang === "de";
+    var langs = [
+      { id: "de", label: DE ? "Deutsch" : "German", text: "Sonnenblumen sind die besten Blumen.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "en", label: DE ? "Englisch" : "English", text: "Sunflowers are the best flowers.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "fr", label: DE ? "Französisch" : "French", text: "Les tournesols sont les meilleures fleurs.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "ja", label: DE ? "Japanisch" : "Japanese", text: "ひまわりは最高の花です。", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "ar", label: DE ? "Arabisch" : "Arabic", text: "زهور عباد الشمس هي الأفضل.", gloss: DE ? "Derselbe Inhalt, von rechts nach links." : "The same content, written right to left.", rtl: true },
+      { id: "zh", label: DE ? "Chinesisch" : "Chinese", text: "向日葵是最好的花。", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." }
+    ];
+    var mix = [
+      { label: "Common Crawl", pct: 60, color: "#63a44b" },
+      { label: "WebText2", pct: 22, color: "#5c9baf" },
+      { label: "Books1", pct: 8, color: "#9f9700" },
+      { label: "Books2", pct: 8, color: "#869b55" },
+      { label: "Wikipedia", pct: 3, color: "#9185be" }
+    ];
+    var active = DE ? "de" : "en";
+    var el = document.createElement("div");
+    el.className = "ls-lang-scene";
+    el.innerHTML =
+      '<div class="ls-lang-tabs" role="group" aria-label="' + (DE ? "Sprachen" : "Languages") + '"></div>' +
+      '<div class="ls-lang-sample">' +
+        '<span class="ls-lang-tag"></span>' +
+        '<p class="ls-lang-text" lang="de"></p>' +
+        '<p class="ls-lang-gloss"></p>' +
+      '</div>' +
+      '<div class="ls-lang-mix">' +
+        '<div class="ls-lang-mix-head">' + (DE ? "Woraus GPT-3 lernte" : "What GPT-3 learned from") + '</div>' +
+        '<div class="ls-lang-bars"></div>' +
+        '<p class="ls-lang-note">' + (DE ? "GPT-3-Mix nach Brown et al. (2020), Tabelle 2.2, gerundet. Labs veröffentlichen ihre genauen Rezepte nicht." : "GPT-3 mix from Brown et al. (2020), Table 2.2, rounded. Labs do not publish their exact recipes.") + '</p>' +
+      '</div>' +
+      '<p class="ls-lang-caveat">' + (DE ? "Dieselbe Schleife, dieselben Gewichte: Die Schrift ändert die Tokens, nicht die Aufgabe. Manche Sprachen brauchen für denselben Inhalt mehr Tokens; der Tokenizer kann sie dadurch teurer machen (Petrov et al., 2023)." : "The same loop, the same weights: the script changes the tokens, not the task. Some languages need more tokens for the same content, so the tokenizer can make them more expensive (Petrov et al., 2023).") + '</p>' +
+      '<div class="ls-tokenize-nav ls-lang-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-lang-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-lang-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-lang-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
+    root.appendChild(el);
+    var tabs = el.querySelector(".ls-lang-tabs");
+    var tag = el.querySelector(".ls-lang-tag");
+    var text = el.querySelector(".ls-lang-text");
+    var gloss = el.querySelector(".ls-lang-gloss");
+    var bars = el.querySelector(".ls-lang-bars");
+    var navPrev = el.querySelector(".ls-lang-prev");
+    var navNext = el.querySelector(".ls-lang-next");
+    var navProgress = el.querySelector(".ls-lang-progress");
+    function updateNav() {
+      var idx = 0;
+      langs.forEach(function (l, i) { if (l.id === active) idx = i; });
+      navProgress.textContent = (idx + 1) + ' / ' + langs.length;
+      navPrev.disabled = idx === 0;
+      navNext.textContent = idx === langs.length - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+    }
+    function show(id) {
+      var item = langs.filter(function (l) { return l.id === id; })[0] || langs[0];
+      active = item.id;
+      Array.prototype.forEach.call(tabs.querySelectorAll("button"), function (b) {
+        b.classList.toggle("is-on", b.getAttribute("data-lang") === item.id);
+      });
+      tag.textContent = item.label;
+      text.textContent = item.text;
+      text.setAttribute("lang", item.id);
+      text.setAttribute("dir", item.rtl ? "rtl" : "ltr");
+      gloss.textContent = item.gloss;
+      updateNav();
+    }
+    langs.forEach(function (l) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "ls-chip" + (l.id === active ? " is-on" : "");
+      b.setAttribute("data-lang", l.id);
+      b.textContent = l.label;
+      b.addEventListener("click", function () { show(l.id); });
+      tabs.appendChild(b);
+    });
+    bars.innerHTML = mix.map(function (m) {
+      return '<div class="ls-lang-bar"><span class="ls-lang-bar-label">' + api.esc(m.label) + '</span>' +
+        '<span class="ls-lang-bar-track"><i style="width:' + m.pct + '%;background:' + m.color + '"></i></span>' +
+        '<span class="ls-lang-bar-val">' + m.pct + '%</span></div>';
+    }).join("");
+    show(active);
+    function stepLanguage(dir) {
+      var idx = -1;
+      langs.forEach(function (l, i) { if (l.id === active) idx = i; });
+      var next = idx + dir;
+      if (next < 0 || next >= langs.length) return false;
+      show(langs[next].id);
+      return true;
+    }
+    function nextStep() {
+      if (stepLanguage(1)) return;
+      api.goNext();
+    }
+    function prevStep() {
+      if (stepLanguage(-1)) return;
+      api.goPrev();
+    }
+    navPrev.addEventListener("click", prevStep);
+    navNext.addEventListener("click", nextStep);
+    return {
+      update: function () {},
+      next: function () { return stepLanguage(1); },
+      prev: function () { return stepLanguage(-1); },
+      onKey: function (e) {
+        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return stepLanguage(1);
+        if (e.key === "ArrowLeft" || e.key === "PageUp") return stepLanguage(-1);
+        return false;
+      },
+      resize: function () {},
+      destroy: function () { el.remove(); }
+    };
+  }
+
+  function chineseroomScene(root, api) {
+    var DE = api.lang === "de";
+    var rounds = [
+      {
+        input: "今天天气怎么样？",
+        answer: "今天天气很冷。",
+        options: ["我喜欢喝茶。", "今天天气很冷。", "门是开着的。"],
+        rule: ["今天天气怎么样？", "今天天气很冷。"],
+        de: "Wie ist das Wetter heute? → Das Wetter ist heute kalt.",
+        en: "How is the weather today? → The weather is cold today."
+      },
+      {
+        input: "你叫什么名字？",
+        answer: "我叫小明。",
+        options: ["外面在下雨。", "我叫小明。", "他住在北京。"],
+        rule: ["你叫什么名字？", "我叫小明。"],
+        de: "Wie heißt du? → Ich heiße Xiaoming.",
+        en: "What is your name? → My name is Xiaoming."
+      }
+    ];
+    var idx = 0, score = 0, done = false;
+    var el = document.createElement("div");
+    el.className = "ls-cr-scene";
+    el.innerHTML =
+      '<div class="ls-cr-body">' +
+        '<div class="ls-cr-room">' +
+          '<div class="ls-cr-top"><span class="ls-cr-progress"></span><span class="ls-cr-score"></span></div>' +
+          '<div class="ls-cr-incoming"><span class="ls-cr-label">' + (DE ? "Eingabe" : "Input") + '</span><p class="ls-cr-input" lang="zh"></p><p class="ls-cr-sub">' + (DE ? "Du liest die Zeichen nicht." : "You cannot read the characters.") + '</p></div>' +
+          '<div class="ls-cr-book"><div class="ls-cr-book-head">' + (DE ? "Regelbuch" : "Rulebook") + '</div><table class="ls-cr-rules" lang="zh"><tbody></tbody></table></div>' +
+          '<div class="ls-cr-options" role="group" lang="zh" aria-label="' + (DE ? "Antwort wählen" : "Choose an answer") + '"></div>' +
+          '<p class="ls-cr-feedback" aria-live="polite"></p>' +
+        '</div>' +
+        '<div class="ls-cr-reveal" aria-hidden="true">' +
+          '<div class="ls-cr-reveal-head">' + (DE ? "Was du gerade getan hast" : "What you just did") + '</div>' +
+          '<table class="ls-cr-trans"><tbody></tbody></table>' +
+          '<p class="ls-cr-note">' + (DE ? "Von außen wirkte das wie Verstehen. Innen hast du Zeichen nach Regeln ersetzt. Searle (1980) nennt das den Unterschied zwischen Symbolmanipulation und Bedeutung. Ob das ganze System versteht, ist umstritten." : "From the outside this looked like understanding. Inside you replaced symbols by rules. Searle (1980) calls this the difference between symbol manipulation and meaning. Whether the whole system understands is disputed.") + '</p>' +
+          '<details class="ls-cr-systems"><summary>' + (DE ? "Ganzen Raum ansehen" : "See the whole room") + '</summary><p>' + (DE ? "Der Systems Reply sagt: Vielleicht versteht nicht die Person im Zimmer, sondern das ganze System aus Person, Regelbuch und Zimmer. Searle hält das für eine Verschiebung des Problems, nicht für eine Lösung. Die Debatte ist offen." : "The systems reply says: perhaps the person in the room does not understand, but the whole system of person, rulebook, and room does. Searle treats that as moving the problem, not solving it. The debate is open.") + '</p></details>' +
+          '<button type="button" class="ls-btn ls-btn--tiny ls-cr-restart">' + (DE ? "Neu starten" : "Restart") + '</button>' +
+        '</div>' +
+      '</div>';
+    root.appendChild(el);
+    var room = el.querySelector(".ls-cr-room");
+    var reveal = el.querySelector(".ls-cr-reveal");
+    var progress = el.querySelector(".ls-cr-progress");
+    var scoreEl = el.querySelector(".ls-cr-score");
+    var inputEl = el.querySelector(".ls-cr-input");
+    var rulesBody = el.querySelector(".ls-cr-rules tbody");
+    var optionsEl = el.querySelector(".ls-cr-options");
+    var feedback = el.querySelector(".ls-cr-feedback");
+    var transBody = el.querySelector(".ls-cr-trans tbody");
+    function setPanel(showReveal) {
+      room.classList.toggle("is-hidden", showReveal);
+      reveal.classList.toggle("is-visible", showReveal);
+      room.setAttribute("aria-hidden", showReveal ? "true" : "false");
+      reveal.setAttribute("aria-hidden", showReveal ? "false" : "true");
+    }
+    function render() {
+      var r = rounds[idx];
+      progress.textContent = (DE ? "Runde" : "Round") + " " + (idx + 1) + " / " + rounds.length;
+      scoreEl.textContent = (DE ? "Regeln befolgt: " : "Rules followed: ") + score;
+      inputEl.textContent = r.input;
+      var other = rounds[(idx + 1) % rounds.length];
+      rulesBody.innerHTML = "<tr><td>" + api.esc(r.rule[0]) + "</td><td>" + api.esc(r.rule[1]) + "</td></tr>" +
+        "<tr><td>" + api.esc(other.rule[0]) + "</td><td>" + api.esc(other.rule[1]) + "</td></tr>";
+      optionsEl.innerHTML = "";
+      r.options.forEach(function (opt) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "ls-cr-choice";
+        b.textContent = opt;
+        b.addEventListener("click", function () { choose(opt, b); });
+        optionsEl.appendChild(b);
+      });
+      feedback.textContent = "";
+      setPanel(false);
+    }
+    function choose(opt, btn) {
+      if (done) return;
+      var r = rounds[idx];
+      if (opt === r.answer) {
+        score++;
+        btn.classList.add("is-right");
+        optionsEl.querySelectorAll("button").forEach(function (b) { b.disabled = true; });
+        feedback.textContent = DE ? "Richtig. Du hast die Regel befolgt, ohne die Zeichen zu verstehen." : "Correct. You followed the rule without understanding the characters.";
+        setTimeout(function () {
+          idx++;
+          if (idx < rounds.length) render();
+          else showReveal();
+        }, 800);
+      } else {
+        btn.classList.add("is-wrong");
+        btn.disabled = true;
+        feedback.textContent = DE ? "Schau ins Regelbuch: Welche Ausgabe steht bei dieser Eingabe?" : "Check the rulebook: which output belongs to this input?";
+      }
+    }
+    function showReveal() {
+      done = true;
+      transBody.innerHTML = "";
+      rounds.forEach(function (r) {
+        var tr = document.createElement("tr");
+        [r.input, r.answer, DE ? r.de : r.en].forEach(function (val, i) {
+          var td = document.createElement("td");
+          td.textContent = val;
+          if (i < 2) td.setAttribute("lang", "zh");
+          if (i === 2) td.className = "ls-cr-trans-gloss";
+          tr.appendChild(td);
+        });
+        transBody.appendChild(tr);
+      });
+      setPanel(true);
+    }
+    var restart = el.querySelector(".ls-cr-restart");
+    restart.addEventListener("click", function () {
+      idx = 0; score = 0; done = false;
+      render();
+    });
+    render();
+    return { update: function () {}, resize: function () {}, destroy: function () { el.remove(); } };
+  }
+
+  function historyScene(root, api) {
+    var DE = api.lang === "de";
+    var tabs = DE ? [
+      {
+        year: "~27.000 v. Chr.", label: "Ganz früh", title: "Kerben im Wolfsknochen",
+        text: "Der Wolfsknochen von Dolní Věstonice trägt 55 Kerben in zwei Gruppen von 30 und 25. Die Kerben sind keine Schrift, aber sie halten Zählschritte fest. Rechnen beginnt als gegenständliches Zählen, lange bevor es Computer gibt.",
+        images: [{ src: "../vestonice_wolf_bone.jpg", alt: "Der Wolfsknochen von Dolní Věstonice mit 55 Kerben", cap: "Der Wolfsknochen von Dolní Věstonice. J3n6 (2012), CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }],
+        sources: [{ label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }]
+      },
+      {
+        year: "~300 v. Chr.", label: "Antike", title: "Tafeln und Zählbretter",
+        text: "Die Salamis-Tafel ist das älteste erhaltene Zählbrett, etwa 300 v. Chr. Der Abakus macht Stellenwerte körperlich: Steine auf Linien, nicht Ziffern auf Papier. Rechnen wird ein Verfahren mit Regeln.",
+        images: [{ src: "../salamic_table.jpg", alt: "Die Salamis-Tafel, das älteste erhaltene Zählbrett", cap: "Die Salamis-Tafel, ca. 300 v. Chr. Wilhelm Kubitschek (1899), Public Domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }],
+        sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }]
+      },
+      {
+        year: "Antike–1305", label: "Logik", title: "Denken als Regelwerk",
+        text: "Aristoteles ordnet Schlüsse in Formen. Pāṇini beschreibt Sanskrit-Grammatik als Regelsystem. Llull kombiniert Begriffe auf drehenden Scheiben. Die Idee dahinter: Denken lässt sich als Regelwerk schreiben, nicht nur als Erfahrung.",
+        images: [{ src: "../FigurScheiben.jpg", alt: "Llulls Ars Magna mit drehenden Begriffsscheiben", cap: "Llulls Ars Magna, 1305. Ramon Llull, Public Domain.", href: "https://blog.hnf.de/das-universum-des-ramon-llull/" }],
+        sources: [{ label: "Ramon Llull (1305), Ars Magna", url: "https://blog.hnf.de/das-universum-des-ramon-llull/" }]
+      },
+      {
+        year: "1673–1854", label: "Maschinen", title: "Rechnen wird mechanisch",
+        text: "Leibniz baut eine Rechenmaschine für alle vier Grundrechenarten und träumt von einer universalen Zeichensprache. Babbage entwirft die Analytical Engine. Boole schreibt Logik als Algebra. Mechanik und formale Regeln rücken zusammen.",
+        images: [{ src: "../Leibnizrechenmaschine.jpg", alt: "Nachbau der Leibniz-Rechenmaschine", cap: "Leibniz-Rechenmaschine, Nachbau. Eremeev (2016), CC BY-SA 4.0.", href: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }],
+        sources: [{ label: "Eremeev (2016), Leibniz Rechenmaschine", url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }]
+      },
+      {
+        year: "1943–1958", label: "Neuron", title: "Das Neuron als Recheneinheit",
+        text: "McCulloch und Pitts modellieren 1943 ein Neuron als logische Schwelle. Hebb formuliert 1949, dass gemeinsames Feuern Verbindungen stärkt. 1958 baut Rosenblatt das Perzeptron, das Gewichte aus Fehlern anpasst. Das Gehirn wird zum Vorbild für lernende Maschinen.",
+        images: [{ src: "../walter_pitts_1954.jpg", alt: "Walter Pitts an einer Tafel, 1954", cap: "Walter Pitts, 1954. Francis Bello, Public Domain.", href: "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg" }],
+        sources: [{ label: "HNF (2023), McCulloch und Pitts", url: "https://blog.hnf.de/mcculloch-und-pitts-das-erste-neuronale-netz/" }]
+      },
+      {
+        year: "1958–1973", label: "Perzeptron", title: "Eine Linie reicht nicht",
+        text: "1958 präsentiert Rosenblatt das Perzeptron; die Mark-I-Maschine liest 400 Photozellen und lernt linear trennbare Muster. 1969 zeigen Minsky und Papert, dass eine einzelne Schicht XOR nicht lösen kann: Die vier Punkte lassen sich nicht mit einer Geraden trennen. Sie wissen, dass ein mehrschichtiges Netz das könnte; offen ist das Training. 1973 verstärkt der Lighthill-Bericht den ersten KI-Winter.",
+        images: [
+          { src: "../mark_i_perceptron_manual.png", alt: "Mark I Perceptron, Figur 2 aus dem Bedienhandbuch", cap: "Mark I Perceptron, Figur 2 aus dem Bedienhandbuch. John C. Hay und Albert E. Murray, Public Domain.", href: "https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png" },
+          { src: "../marvin_minsky_portrait.jpg", alt: "Marvin Minsky", cap: "Marvin Minsky. Steamtalks (Flickr), CC BY-SA 2.0.", href: "https://commons.wikimedia.org/wiki/File:Marvin_Minsky.jpg" }
+        ],
+        diagram: "xor",
+        sources: [
+          { label: "HNF (2019), Frank Rosenblatt und das Perzeptron", url: "https://blog.hnf.de/frank-rosenblatt/" },
+          { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins" },
+          { label: "Lighthill (1973), Artificial Intelligence: A General Survey", url: "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf" }
+        ]
+      },
+      {
+        year: "1961–1986", label: "Backprop", title: "Fehler rückwärts",
+        text: "Rosenblatt beschreibt 1961 eine rückwärts gerichtete Fehlerkorrektur, aber ohne Gradient und Kettenregel. Linnainmaa entwickelt 1970 die reverse mode der automatischen Differentiation. 1986 popularisieren Rumelhart, Hinton und Williams Backpropagation; verborgene Schichten werden trainierbar.",
+        images: [{ src: "../frank_rosenblatt_portrait.jpg", alt: "Frank Rosenblatt", cap: "Frank Rosenblatt. Anonymous (Heinz Nixdorf MuseumsForum), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" }],
+        diagram: "backprop",
+        sources: [
+          { label: "Rosenblatt (1961), CAL Report on Back-Propagating Errors", url: "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up" },
+          { label: "Linnainmaa (1970/1976), Cumulative Rounding Error", url: "https://papers.baulab.info/papers/also/Linnainmaa-1976.pdf" },
+          { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0" }
+        ]
+      },
+      {
+        year: "1989–2012", label: "Deep Learning", title: "Bilder, GPUs, tiefe Netze",
+        text: "LeCun kombiniert 1989 Backpropagation mit Faltungen für handgeschriebene Postleitzahlen. Fukushima, Waibel und Zhang liefern frühe Bausteine. 2012 gewinnt AlexNet mit tiefen CNNs und GPUs die ImageNet-Challenge. Tiefe Netze werden praktisch.",
+        sources: [{ label: "Krizhevsky, Sutskever & Hinton (2012), AlexNet", url: "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" }]
+      },
+      {
+        year: "2014–2017", label: "Transformer", title: "Attention ersetzt die Schleife",
+        text: "Bahdanau, Cho und Bengio lassen 2014 den Decoder auf die Eingabewörter zurückblicken. 2017 ersetzt der Transformer die wiederkehrende Verarbeitung durch Self-Attention und fügt Positionsinformation hinzu. Sätze lassen sich parallel verarbeiten, ohne die Wortreihenfolge zu verlieren.",
+        images: [{ src: "../transformer_architecture.png", alt: "Die Encoder-Decoder-Architektur des Transformers", cap: "Transformer-Architektur, Figur 1 aus Attention Is All You Need. Ashish Vaswani et al. (Google), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Encoder-decoder_Architecture.png" }],
+        sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+      },
+      {
+        year: "2018–2022", label: "GPT", title: "Vorhersage wird Dialog",
+        text: "2018 zeigt GPT-1 mit 117 Millionen Parametern Pretraining plus Fine-Tuning. 2019 folgt GPT-2 mit 1,5 Milliarden und Prompting, 2020 GPT-3 mit 175 Milliarden und Few-Shot. 2022 zeigt Chinchilla, dass mehr Daten pro Parameter oft besser sind; ChatGPT verbindet Instruction-Tuning und RLHF.",
+        sources: [
+          { label: "Brown et al. (2020), GPT-3", url: "https://arxiv.org/abs/2005.14165" },
+          { label: "Hoffmann et al. (2022), Chinchilla", url: "https://arxiv.org/abs/2203.15556" },
+          { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155" }
+        ]
+      }
+    ] : [
+      {
+        year: "~27,000 BCE", label: "Deep past", title: "Notches in a wolf bone",
+        text: "The wolf bone from Dolní Věstonice carries 55 notches in two groups of 30 and 25. The notches are not writing, but they record counting steps. Arithmetic begins as embodied counting, long before computers.",
+        images: [{ src: "../vestonice_wolf_bone.jpg", alt: "The Dolní Věstonice wolf bone with 55 notches", cap: "The Dolní Věstonice wolf bone. J3n6 (2012), CC BY-SA 3.0.", href: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }],
+        sources: [{ label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg" }]
+      },
+      {
+        year: "~300 BCE", label: "Antiquity", title: "Tablets and counting boards",
+        text: "The Salamis tablet is the oldest surviving counting board, from about 300 BCE. The abacus makes place value physical: stones on lines, not digits on paper. Calculation becomes a procedure with rules.",
+        images: [{ src: "../salamic_table.jpg", alt: "The Salamis tablet, the oldest surviving counting board", cap: "The Salamis tablet, ca. 300 BCE. Wilhelm Kubitschek (1899), public domain.", href: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }],
+        sources: [{ label: "Wilhelm Kubitschek (1899), Salamis Tablet", url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" }]
+      },
+      {
+        year: "Antiquity–1305", label: "Logic", title: "Thought as a rulebook",
+        text: "Aristotle arranges inferences into forms. Pāṇini describes Sanskrit grammar as a rule system. Llull combines concepts on rotating wheels. The idea: thought can be written as a rulebook, not only lived as experience.",
+        images: [{ src: "../FigurScheiben.jpg", alt: "Llull's Ars Magna with rotating concept wheels", cap: "Llull's Ars Magna, 1305. Ramon Llull, public domain.", href: "https://blog.hnf.de/das-universum-des-ramon-llull/" }],
+        sources: [{ label: "Ramon Llull (1305), Ars Magna", url: "https://blog.hnf.de/das-universum-des-ramon-llull/" }]
+      },
+      {
+        year: "1673–1854", label: "Machines", title: "Calculation becomes mechanical",
+        text: "Leibniz builds a calculator for all four arithmetic operations and dreams of a universal symbol language. Babbage designs the Analytical Engine. Boole writes logic as algebra. Mechanism and formal rules move closer together.",
+        images: [{ src: "../Leibnizrechenmaschine.jpg", alt: "A replica of Leibniz's calculating machine", cap: "Leibniz calculating machine, replica. Eremeev (2016), CC BY-SA 4.0.", href: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }],
+        sources: [{ label: "Eremeev (2016), Leibniz Calculating Machine", url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg" }]
+      },
+      {
+        year: "1943–1958", label: "Neuron", title: "The neuron as a computing unit",
+        text: "McCulloch and Pitts model a neuron as a logical threshold in 1943. Hebb formulates in 1949 that neurons that fire together strengthen their connection. In 1958 Rosenblatt builds the perceptron, which adjusts weights from errors. The brain becomes the model for learning machines.",
+        images: [{ src: "../walter_pitts_1954.jpg", alt: "Walter Pitts at a blackboard, 1954", cap: "Walter Pitts, 1954. Francis Bello, public domain.", href: "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg" }],
+        sources: [{ label: "HNF (2023), McCulloch and Pitts", url: "https://blog.hnf.de/mcculloch-und-pitts-das-erste-neuronale-netz/" }]
+      },
+      {
+        year: "1958–1973", label: "Perceptron", title: "One line is not enough",
+        text: "In 1958 Rosenblatt presents the perceptron; the Mark I machine reads 400 photocells and learns linearly separable patterns. In 1969 Minsky and Papert show that a single layer cannot solve XOR: the four points cannot be separated by a straight line. They know a multilayer network could; what is missing is training. In 1973 the Lighthill report deepens the first AI winter.",
+        images: [
+          { src: "../mark_i_perceptron_manual.png", alt: "Mark I Perceptron, figure 2 from the operator's manual", cap: "Mark I Perceptron, figure 2 from the operator's manual. John C. Hay and Albert E. Murray, public domain.", href: "https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png" },
+          { src: "../marvin_minsky_portrait.jpg", alt: "Marvin Minsky", cap: "Marvin Minsky. Steamtalks (Flickr), CC BY-SA 2.0.", href: "https://commons.wikimedia.org/wiki/File:Marvin_Minsky.jpg" }
+        ],
+        diagram: "xor",
+        sources: [
+          { label: "HNF (2019), Frank Rosenblatt and the Perceptron", url: "https://blog.hnf.de/frank-rosenblatt/" },
+          { label: "Minsky & Papert (1969), Perceptrons", url: "https://archive.org/details/perceptronsintro0000mins" },
+          { label: "Lighthill (1973), Artificial Intelligence: A General Survey", url: "https://rodsmith.nz/wp-content/uploads/Lighthill_1973_Report.pdf" }
+        ]
+      },
+      {
+        year: "1961–1986", label: "Backprop", title: "Errors backward",
+        text: "Rosenblatt describes a backward error correction in 1961, but without a gradient and chain rule. Linnainmaa develops reverse-mode automatic differentiation in 1970. In 1986 Rumelhart, Hinton, and Williams popularise backpropagation; hidden layers become trainable.",
+        images: [{ src: "../frank_rosenblatt_portrait.jpg", alt: "Frank Rosenblatt", cap: "Frank Rosenblatt. Anonymous (Heinz Nixdorf MuseumsForum), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" }],
+        diagram: "backprop",
+        sources: [
+          { label: "Rosenblatt (1961), CAL Report on Back-Propagating Errors", url: "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up" },
+          { label: "Linnainmaa (1970/1976), Cumulative Rounding Error", url: "https://papers.baulab.info/papers/also/Linnainmaa-1976.pdf" },
+          { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0" }
+        ]
+      },
+      {
+        year: "1989–2012", label: "Deep Learning", title: "Images, GPUs, deep networks",
+        text: "LeCun combines backpropagation with convolutions in 1989 for handwritten ZIP codes. Fukushima, Waibel, and Zhang supply early building blocks. In 2012 AlexNet wins ImageNet with deep CNNs and GPUs. Deep networks become practical.",
+        sources: [{ label: "Krizhevsky, Sutskever & Hinton (2012), AlexNet", url: "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" }]
+      },
+      {
+        year: "2014–2017", label: "Transformer", title: "Attention replaces the loop",
+        text: "Bahdanau, Cho, and Bengio let the decoder look back at the input words in 2014. In 2017 the transformer replaces recurrent processing with self-attention and adds positional information. Sentences can be processed in parallel without losing word order.",
+        images: [{ src: "../transformer_architecture.png", alt: "The transformer encoder-decoder architecture", cap: "Transformer architecture, figure 1 from Attention Is All You Need. Ashish Vaswani et al. (Google), CC BY-SA 4.0.", href: "https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Encoder-decoder_Architecture.png" }],
+        sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762" }]
+      },
+      {
+        year: "2018–2022", label: "GPT", title: "Prediction becomes dialogue",
+        text: "In 2018 GPT-1 shows with 117 million parameters that pretraining plus fine-tuning works. In 2019 GPT-2 follows with 1.5 billion and prompting; in 2020 GPT-3 has 175 billion and few-shot learning. In 2022 Chinchilla shows that more data per parameter often helps, and ChatGPT combines instruction tuning with RLHF.",
+        sources: [
+          { label: "Brown et al. (2020), GPT-3", url: "https://arxiv.org/abs/2005.14165" },
+          { label: "Hoffmann et al. (2022), Chinchilla", url: "https://arxiv.org/abs/2203.15556" },
+          { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155" }
+        ]
+      }
+    ];
+    var index = 0;
+    var el = document.createElement("div");
+    el.className = "ls-history-scene";
+    el.innerHTML = '<div class="ls-history-head"><span class="ls-history-kicker">' + (DE ? "Geschichte in zehn Schritten" : "History in ten steps") + '</span><span class="ls-history-hint">' + (DE ? "Tab wählen" : "Choose a tab") + '</span></div>' +
+      '<div class="ls-history-tabs" role="tablist" aria-label="' + (DE ? "Geschichte" : "History") + '"></div>' +
+      '<div class="ls-history-panel" role="tabpanel" aria-live="polite"></div>' +
+      '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-history-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-history-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-history-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
+    root.appendChild(el);
+    var track = el.querySelector(".ls-history-tabs");
+    var panel = el.querySelector(".ls-history-panel");
+    var prevBtn = el.querySelector(".ls-history-prev");
+    var nextBtn = el.querySelector(".ls-history-next");
+    var progress = el.querySelector(".ls-history-progress");
+    function diagramHTML(kind) {
+      if (kind === "xor") {
+        return '<svg viewBox="0 0 240 150" role="img" aria-label="' + (DE ? "XOR-Punkte: 0 und 1 wechseln sich ab; keine Gerade trennt sie." : "XOR points: 0 and 1 alternate; no straight line separates them.") + '">' +
+          '<line x1="38" y1="122" x2="220" y2="122" stroke="#b9c8c3" stroke-width="1"/>' +
+          '<line x1="38" y1="122" x2="38" y2="22" stroke="#b9c8c3" stroke-width="1"/>' +
+          '<line x1="62" y1="28" x2="198" y2="118" stroke="#9f9700" stroke-width="1.5" stroke-dasharray="5 4"/>' +
+          '<circle cx="70" cy="104" r="7" fill="#5c9baf"/><text x="70" y="132" text-anchor="middle" font-size="10" fill="#627476">0</text>' +
+          '<circle cx="70" cy="38" r="7" fill="#63a44b"/><text x="70" y="20" text-anchor="middle" font-size="10" fill="#627476">1</text>' +
+          '<circle cx="190" cy="104" r="7" fill="#63a44b"/><text x="190" y="132" text-anchor="middle" font-size="10" fill="#627476">1</text>' +
+          '<circle cx="190" cy="38" r="7" fill="#5c9baf"/><text x="190" y="20" text-anchor="middle" font-size="10" fill="#627476">0</text>' +
+          '<text x="122" y="144" text-anchor="middle" font-size="9" fill="#627476">' + (DE ? "keine Gerade trennt 0 und 1" : "no line separates 0 and 1") + '</text>' +
+          '</svg>';
+      }
+      if (kind === "backprop") {
+        function node(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="8" fill="#fff" stroke="#1275ac" stroke-width="1.6"/>'; }
+        function arrow(x1, y1, x2, y2, col, dash) {
+          return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + col + '" stroke-width="1.4"' + (dash ? ' stroke-dasharray="4 3"' : '') + '/>' +
+            '<path d="M' + x2 + ' ' + y2 + ' l-4 -5 l6 1 z" fill="' + col + '"/>';
+        }
+        var html = '<svg viewBox="0 0 260 116" role="img" aria-label="' + (DE ? "Vorwärts durch das Netz, Fehler rückwärts durch Backpropagation." : "Forward through the network, error backward through backpropagation.") + '">';
+        [30, 70, 100].forEach(function (y) { html += node(48, y); html += node(130, y); html += node(212, y); });
+        [30, 70, 100].forEach(function (y) { html += arrow(58, y, 120, y, "#1275ac"); });
+        [30, 70, 100].forEach(function (y) { html += arrow(202, y + 16, 140, y + 16, "#63a44b", true); });
+        html += '<text x="130" y="14" text-anchor="middle" font-size="9" fill="#1275ac">Forward →</text>';
+        html += '<text x="130" y="112" text-anchor="middle" font-size="9" fill="#63a44b">← ' + (DE ? "Fehler rückwärts" : "error backward") + '</text>';
+        html += '</svg>';
+        return html;
+      }
+      return "";
+    }
+    function figuresHTML(e) {
+      if (!e.images || !e.images.length) return "";
+      return '<div class="ls-history-figures">' + e.images.map(function (im) {
+        return '<figure class="ls-history-figure"><img src="' + api.esc(im.src) + '" alt="' + api.esc(im.alt) + '" loading="lazy" decoding="async"><figcaption>' + api.esc(im.cap) + ' <a href="' + api.esc(im.href) + '" target="_blank" rel="noopener">' + (DE ? "Quelle" : "Source") + '</a></figcaption></figure>';
+      }).join("") + '</div>';
+    }
+    function sourcesHTML(e) {
+      var ss = e.sources || (e.source ? [e.source] : []);
+      if (!ss.length) return "";
+      return '<div class="ls-history-sources">' + ss.map(function (s) {
+        return '<a class="ls-history-source" href="' + api.esc(s.url) + '" target="_blank" rel="noopener">' + api.esc(s.label) + '</a>';
+      }).join("") + '</div>';
+    }
+    function render() {
+      index = Math.max(0, Math.min(tabs.length - 1, index));
+      track.innerHTML = tabs.map(function (t, i) {
+        return '<button type="button" class="ls-history-node' + (i === index ? ' is-on' : '') + '" role="tab" aria-selected="' + (i === index ? 'true' : 'false') + '" data-history="' + i + '"><b>' + api.esc(t.year) + '</b><span>' + api.esc(t.label) + '</span></button>';
+      }).join("");
+      track.querySelectorAll("[data-history]").forEach(function (b) {
+        b.addEventListener("click", function () { setIndex(parseInt(b.getAttribute("data-history"), 10)); });
+      });
+      var e = tabs[index];
+      panel.innerHTML = '<div class="ls-history-year">' + api.esc(e.year) + '</div>' +
+        '<h3 class="ls-history-title">' + api.esc(e.title) + '</h3>' +
+        '<p class="ls-history-text">' + api.esc(e.text) + '</p>' +
+        figuresHTML(e) +
+        (e.diagram ? '<div class="ls-history-diagram">' + diagramHTML(e.diagram) + '</div>' : '') +
+        sourcesHTML(e);
+      progress.textContent = (index + 1) + ' / ' + tabs.length;
+      prevBtn.disabled = index === 0;
+      nextBtn.textContent = index === tabs.length - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+      track.querySelectorAll("[data-history]").forEach(function (b, i) { b.classList.toggle("is-on", i === index); b.setAttribute("aria-selected", i === index ? "true" : "false"); });
+    }
+    function setIndex(i) {
+      index = Math.max(0, Math.min(tabs.length - 1, i));
+      render();
+    }
+    function nextInternal() { if (index < tabs.length - 1) { setIndex(index + 1); return true; } return false; }
+    function prevInternal() { if (index > 0) { setIndex(index - 1); return true; } return false; }
+    function nextStep() {
+      if (nextInternal()) return;
+      api.goNext();
+    }
+    function prevStep() {
+      if (prevInternal()) return;
+      api.goPrev();
+    }
+    prevBtn.addEventListener("click", prevStep);
+    nextBtn.addEventListener("click", nextStep);
+    render();
+    return {
+      update: function (s) {
+        if (s && typeof s.tab === "number" && s.tab !== index) {
+          index = s.tab;
+          render();
+        }
+      },
+      next: nextInternal,
+      prev: prevInternal,
+      onKey: function (e) {
+        return api.util.arrowKey(e, nextInternal, prevInternal);
+      },
+      resize: function () {},
+      destroy: function () { el.remove(); }
+    };
+  }
+
+  function posttrainScene(root, api) {
+    var DE = api.lang === "de";
+    var prompt = DE ? "Erkläre in einem Satz, warum der Himmel blau ist." : "Explain in one sentence why the sky is blue.";
+    var stages = DE ? [
+      {
+        id: "base", label: "Basismodell", note: "Pretraining: Das Modell setzt Text fort.",
+        text: "Der Himmel ist blau. Das ist eine Frage, die sich viele stellen. Man könnte auch fragen, warum Wasser nass ist, und dann kommt man schnell zu Regen, Wolken, Wetter und ..."
+      },
+      {
+        id: "sft", label: "SFT", note: "Supervised Fine-Tuning: Menschen zeigen gute Antworten.",
+        text: "Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges."
+      },
+      {
+        id: "rlhf", label: "RLHF", note: "Menschen vergleichen Antworten; das Modell lernt die Präferenz.",
+        text: "Kurz: Luftmoleküle streuen blaues Licht stärker als rotes. Deshalb wirkt der Himmel blau."
+      }
+    ] : [
+      {
+        id: "base", label: "Base model", note: "Pretraining: the model continues text.",
+        text: "The sky is blue. That is a question many people ask. One could also ask why water is wet, and then you quickly get to rain, clouds, weather, and ..."
+      },
+      {
+        id: "sft", label: "SFT", note: "Supervised fine-tuning: humans show good answers.",
+        text: "The sky is blue because air molecules scatter short-wavelength light more strongly than long-wavelength light."
+      },
+      {
+        id: "rlhf", label: "RLHF", note: "Humans compare answers; the model learns the preference.",
+        text: "In short: air molecules scatter blue light more strongly than red. That is why the sky looks blue."
+      }
+    ];
+    var step = 0, pref = null;
+    var el = document.createElement("div");
+    el.className = "ls-post-scene";
+    el.innerHTML = '<div class="ls-post-prompt"><span>' + (DE ? "Prompt" : "Prompt") + '</span><p>' + api.esc(prompt) + '</p></div>' +
+      '<div class="ls-post-tabs" role="tablist"></div>' +
+      '<div class="ls-post-answer"><div class="ls-post-answer-head"><span class="ls-post-label"></span><span class="ls-post-note"></span></div><p class="ls-post-text"></p></div>' +
+      '<div class="ls-post-pref" hidden><div class="ls-post-pref-head">' + (DE ? "Welche Antwort ist besser?" : "Which answer is better?") + '</div>' +
+        '<div class="ls-post-pref-grid"><button type="button" data-pref="a"><b>A</b><span class="ls-post-pref-text"></span></button><button type="button" data-pref="b"><b>B</b><span class="ls-post-pref-text"></span></button></div>' +
+        '<p class="ls-post-feedback" aria-live="polite"></p>' +
+      '</div>' +
+      '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-post-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-post-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-post-next">' + (DE ? "Weiter" : "Next") + ' →</button></div>';
+    root.appendChild(el);
+    var tabs = el.querySelector(".ls-post-tabs");
+    var label = el.querySelector(".ls-post-label");
+    var note = el.querySelector(".ls-post-note");
+    var text = el.querySelector(".ls-post-text");
+    var prefBox = el.querySelector(".ls-post-pref");
+    var prefButtons = el.querySelectorAll("[data-pref]");
+    var prefTexts = el.querySelectorAll(".ls-post-pref-text");
+    var feedback = el.querySelector(".ls-post-feedback");
+    var prevBtn = el.querySelector(".ls-post-prev");
+    var nextBtn = el.querySelector(".ls-post-next");
+    var progress = el.querySelector(".ls-post-progress");
+    function render() {
+      var st = stages[step];
+      tabs.innerHTML = stages.map(function (s, i) {
+        return '<button type="button" class="ls-chip' + (i === step ? ' is-on' : '') + '" data-stage="' + s.id + '" role="tab" aria-selected="' + (i === step ? 'true' : 'false') + '">' + api.esc(s.label) + '</button>';
+      }).join("");
+      tabs.querySelectorAll("[data-stage]").forEach(function (b) {
+        b.addEventListener("click", function () { setStep(stages.map(function (x) { return x.id; }).indexOf(b.getAttribute("data-stage"))); });
+      });
+      label.textContent = st.label;
+      note.textContent = st.note;
+      text.textContent = st.text;
+      prefBox.hidden = step !== 2;
+      if (step === 2) {
+        prefTexts[0].textContent = stages[1].text;
+        prefTexts[1].textContent = stages[2].text;
+        prefButtons.forEach(function (b) {
+          b.classList.toggle("is-on", pref === b.getAttribute("data-pref"));
+          b.setAttribute("aria-pressed", pref === b.getAttribute("data-pref") ? "true" : "false");
+        });
+        feedback.textContent = pref === "a"
+          ? (DE ? "Kürzer und direkter ist hier oft besser. Menschen wählen B häufiger; daraus lernt das Reward-Modell." : "Shorter and more direct is often better here. People pick B more often; the reward model learns from that.")
+          : pref === "b"
+            ? (DE ? "Richtig. Aus vielen Vergleichen lernt ein Reward-Modell; RLHF verschiebt die Antworten in diese Richtung." : "Correct. From many comparisons a reward model learns; RLHF shifts answers in this direction.")
+            : (DE ? "Wähle A oder B." : "Choose A or B.");
+      } else {
+        feedback.textContent = "";
+      }
+      progress.textContent = (step + 1) + " / " + stages.length;
+      prevBtn.disabled = step === 0;
+      nextBtn.textContent = step === stages.length - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+    }
+    function setStep(i) {
+      step = Math.max(0, Math.min(stages.length - 1, i));
+      pref = null;
+      render();
+    }
+    function nextInternal() { if (step < stages.length - 1) { setStep(step + 1); return true; } return false; }
+    function prevInternal() { if (step > 0) { setStep(step - 1); return true; } return false; }
+    function nextStep() {
+      if (nextInternal()) return;
+      api.goNext();
+    }
+    function prevStep() {
+      if (prevInternal()) return;
+      api.goPrev();
+    }
+    prefButtons.forEach(function (b) {
+      b.addEventListener("click", function () { pref = b.getAttribute("data-pref"); render(); });
+    });
+    prevBtn.addEventListener("click", prevStep);
+    nextBtn.addEventListener("click", nextStep);
+    render();
+    return {
+      update: function (s) { if (s && typeof s.step === "number") setStep(s.step); },
+      next: nextInternal,
+      prev: prevInternal,
+      onKey: function (e) {
+        return api.util.arrowKey(e, nextInternal, prevInternal);
+      },
+      resize: function () {},
+      destroy: function () { el.remove(); }
+    };
+  }
+
+  function evalScene(root, api) {
+    var DE = api.lang === "de";
+    var tasks = DE ? [
+      { id: "mmlu", label: "MMLU", title: "MMLU · 57 Fächer", clean: 68, dirty: 92, sample: "Welche Aussage über Photosynthese ist richtig?", note: "Multiple Choice über Faktenwissen und Schlussfolgern." },
+      { id: "humaneval", label: "HumanEval", title: "HumanEval · Code", clean: 55, dirty: 88, sample: "Schreibe eine Funktion, die eine Liste umdreht.", note: "Unit-Tests prüfen, ob der Code läuft." },
+      { id: "gsm8k", label: "GSM8K", title: "GSM8K · Mathe", clean: 72, dirty: 95, sample: "Ein Zug fährt 60 km/h. Wie weit kommt er in 2,5 Stunden?", note: "Mehrschrittige Textaufgaben mit Zahlen." }
+    ] : [
+      { id: "mmlu", label: "MMLU", title: "MMLU · 57 subjects", clean: 68, dirty: 92, sample: "Which statement about photosynthesis is correct?", note: "Multiple choice over facts and reasoning." },
+      { id: "humaneval", label: "HumanEval", title: "HumanEval · code", clean: 55, dirty: 88, sample: "Write a function that reverses a list.", note: "Unit tests check whether the code runs." },
+      { id: "gsm8k", label: "GSM8K", title: "GSM8K · math", clean: 72, dirty: 95, sample: "A train travels 60 km/h. How far does it go in 2.5 hours?", note: "Multi-step word problems with numbers." }
+    ];
+    var step = 0, dirty = false;
+    var el = document.createElement("div");
+    el.className = "ls-eval-scene";
+    el.innerHTML = '<div class="ls-eval-tabs" role="tablist"></div>' +
+      '<div class="ls-eval-card"><div class="ls-eval-head"><span class="ls-eval-title"></span><span class="ls-eval-score"></span></div><div class="ls-eval-bar"><i></i></div><p class="ls-eval-sample"></p><p class="ls-eval-note"></p></div>' +
+      '<label class="ls-eval-contam"><input type="checkbox" class="ls-eval-dirty"> <span>' + (DE ? "Benchmark war im Training" : "Benchmark was in training") + '</span></label>' +
+      '<p class="ls-eval-caveat">' + (DE ? "Schematische Demo, keine Messung. Ein hoher Score kann aus einem Datenleck kommen." : "Schematic demo, not a measurement. A high score can come from a data leak.") + '</p>' +
+      '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-eval-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-eval-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-eval-next">' + (DE ? "Weiter" : "Next") + ' →</button></div>';
+    root.appendChild(el);
+    var tabs = el.querySelector(".ls-eval-tabs");
+    var title = el.querySelector(".ls-eval-title");
+    var scoreEl = el.querySelector(".ls-eval-score");
+    var bar = el.querySelector(".ls-eval-bar i");
+    var sample = el.querySelector(".ls-eval-sample");
+    var note = el.querySelector(".ls-eval-note");
+    var dirtyEl = el.querySelector(".ls-eval-dirty");
+    var prevBtn = el.querySelector(".ls-eval-prev");
+    var nextBtn = el.querySelector(".ls-eval-next");
+    var progress = el.querySelector(".ls-eval-progress");
+    function render() {
+      var t = tasks[step];
+      tabs.innerHTML = tasks.map(function (task, i) {
+        return '<button type="button" class="ls-chip' + (i === step ? ' is-on' : '') + '" data-eval="' + task.id + '" role="tab" aria-selected="' + (i === step ? 'true' : 'false') + '">' + api.esc(task.label) + '</button>';
+      }).join("");
+      tabs.querySelectorAll("[data-eval]").forEach(function (b) {
+        b.addEventListener("click", function () { setStep(tasks.map(function (x) { return x.id; }).indexOf(b.getAttribute("data-eval"))); });
+      });
+      var score = dirty ? t.dirty : t.clean;
+      title.textContent = t.title;
+      scoreEl.textContent = score + "%";
+      bar.style.width = score + "%";
+      sample.textContent = t.sample;
+      note.textContent = t.note;
+      dirtyEl.checked = dirty;
+      progress.textContent = (step + 1) + " / " + tasks.length;
+      prevBtn.disabled = step === 0;
+      nextBtn.textContent = step === tasks.length - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+    }
+    function setStep(i) { step = Math.max(0, Math.min(tasks.length - 1, i)); render(); }
+    function nextInternal() { if (step < tasks.length - 1) { setStep(step + 1); return true; } return false; }
+    function prevInternal() { if (step > 0) { setStep(step - 1); return true; } return false; }
+    function nextStep() {
+      if (nextInternal()) return;
+      api.goNext();
+    }
+    function prevStep() {
+      if (prevInternal()) return;
+      api.goPrev();
+    }
+    dirtyEl.addEventListener("change", function () { dirty = dirtyEl.checked; render(); });
+    prevBtn.addEventListener("click", prevStep);
+    nextBtn.addEventListener("click", nextStep);
+    render();
+    return {
+      update: function (s) { if (s && typeof s.task === "number") setStep(s.task); },
+      next: nextInternal,
+      prev: prevInternal,
+      onKey: function (e) {
+        return api.util.arrowKey(e, nextInternal, prevInternal);
+      },
+      resize: function () {},
+      destroy: function () { el.remove(); }
+    };
+  }
+
   function mediaScene(root, api) {
     var DE = api.lang === "de";
     var el = document.createElement("div");

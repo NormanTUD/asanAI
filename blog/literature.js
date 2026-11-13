@@ -5375,10 +5375,26 @@ window.bibData = {
 		url: "https://papers.baulab.info/papers/also/Nair-2010.pdf"
 	},
 	"hinton2006": {
-		url: "https://papers.baulab.info/papers/also/Hinton-2006a.pdf",
+		url: "https://www.cs.toronto.edu/~hinton/absps/fastnc.pdf",
 		title: "A fast learning algorithm for deep belief nets",
 		year: 2006,
-		author: "Geoffrey E. Hinton, Simon Osindero, Yee-Whye Teh"
+		author: "Geoffrey E. Hinton, Simon Osindero, Yee-Whye Teh",
+		journal: "Neural Computation",
+		volume: 18,
+		number: 7,
+		pages: "1527–1554",
+		alternativetitle: "Hinton, Osindero & Teh, 2006"
+	},
+	"hinton2006reducing": {
+		url: "https://www.cs.toronto.edu/~hinton/absps/science.pdf",
+		title: "Reducing the Dimensionality of Data with Neural Networks",
+		year: 2006,
+		author: "Geoffrey E. Hinton, Ruslan R. Salakhutdinov",
+		journal: "Science",
+		volume: 313,
+		number: 5786,
+		pages: "504–507",
+		alternativetitle: "Hinton & Salakhutdinov, 2006"
 	},
 	"polyak": {
 		title: "Some Methods of Speeding up the Convergence of Iteration Methods",
@@ -12384,8 +12400,45 @@ window.bibData = {
 		title: "A quantitative description of membrane current and its application to conduction and excitation in nerve",
 		author: "Alan L. Hodgkin, Andrew F. Huxley",
 		year: 1952,
-		url: "https://www.semanticscholar.org/paper/A-quantitative-description-of-membrane-current-and-Hodgkin-Huxley/3a93d2f7e2fba8b2b9c1a5a6b1b6d3f3f2e2e2e2",
-		alternativetitle: "Hodgkin-Huxley"
+		journal: "The Journal of Physiology",
+		volume: 117,
+		number: 4,
+		pages: "500–544",
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC1392413/",
+		alternativetitle: "Hodgkin & Huxley, 1952"
+	},
+	"fitzhugh1961impulses": {
+		title: "Impulses and Physiological States in Theoretical Models of Nerve Membrane",
+		author: "Richard FitzHugh",
+		year: 1961,
+		journal: "Biophysical Journal",
+		volume: 1,
+		number: 6,
+		pages: "445–466",
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC1366333/",
+		alternativetitle: "FitzHugh, 1961"
+	},
+	"nagumo1962active": {
+		title: "An Active Pulse Transmission Line Simulating Nerve Axon",
+		author: "Jin-Ichi Nagumo, Suguru Arimoto, Shunsuke Yoshizawa",
+		year: 1962,
+		journal: "Proceedings of the IRE",
+		volume: 50,
+		number: 10,
+		pages: "2061–2070",
+		url: "https://doi.org/10.1109/JRPROC.1962.288235",
+		alternativetitle: "Nagumo, Arimoto & Yoshizawa, 1962"
+	},
+	"hopfield1982neural": {
+		title: "Neural networks and physical systems with emergent collective computational abilities",
+		author: "John J. Hopfield",
+		year: 1982,
+		journal: "Proceedings of the National Academy of Sciences",
+		volume: 79,
+		number: 8,
+		pages: "2554–2558",
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC346238/",
+		alternativetitle: "Hopfield, 1982"
 	},
 	"bi1998stdp": {
 		title: "Synaptic modifications in cultured hippocampal neurons: dependence on spike timing, synaptic strength, and postsynaptic cell type",
