@@ -434,3 +434,20 @@ already occupied; pick a free port. Chromium CDP allowed:
   overwrite it.
 - Full tests are intentionally deferred until the page work is done, but
   static syntax checks and targeted headless checks are allowed.
+
+## Agent session log (2026-11-13)
+
+- Read this file completely and audited the current implementation:
+  `intuition_learnsys.php`, `intuition_learnsys-data.js`,
+  `intuition_learnsys-demos.js`, `learnsys.js`, `learnsys.css`,
+  `assets/tf-sinus-scene.js`, `assets/loss-landscape-*.js`, `assets/rag-scene.js`.
+- Canonical open work set used for planning: whole-system generalisation,
+  new Unembedding slide, move/reframe “Ein Wort nach dem anderen”,
+  neural-network restructure, Bausteine overhaul, manifold and compression
+  visual passes, browser visual checks, final bilingual/test gate.
+- Several earlier unchecked boxes are already implemented in code and are
+  logged as verify-only rather than rewrite: two-parameter loss landscape,
+  Bausteine stack/details, compression taxonomy, MLP loss formula, token
+  trajectories, causal mask, position math, ambiguity slide.
+- Opencode todo list created and kept in sync with this file. Work is paused
+  before the first code edit to confirm scope, slide order, and design choices.
