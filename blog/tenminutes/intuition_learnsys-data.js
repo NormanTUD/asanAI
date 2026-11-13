@@ -194,7 +194,7 @@
       body: "We assign numbers to words. On a number line every word sits at one position: freezing on the far left, hot on the far right. The distance says how similar two words are in this one property. Click two points and watch where their midpoint lands.",
       watch: "Click two points on the line. Where does their midpoint land?",
       demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
-      context: "The number line is the simplest form of a vector space: one coordinate per word. More coordinates come later.",
+      context: "The number line is the simplest form of a vector space: one coordinate per word. The idea stays the same; a real model has many coordinates.",
       deep: "The positions are chosen by hand here so you can see the arithmetic. In a model they are learned from many examples. The arithmetic stays the same.",
       boxes: [
         box("emb-1", "Mathematics", "What is a vector?", "A vector is an element of a vector space. In practice it is an ordered list of numbers that describes a point or a direction. Direction often matters more than length."),
@@ -663,7 +663,7 @@
       watch: "Gehe die Stationen mit „Weiter“ oder der Pfeiltaste durch. Was macht jeder Block?",
       demoState: { scene: "blocks" },
       context: "Die Reihenfolge ist die Architektur: Text → Tokens → Vektoren → Kontext → Verteilung. Jeder Schritt verändert die Darstellung, bis am Ende ein Token gezogen wird.",
-      deep: "Jeder Block ist selbst ein gelerntes Stück Funktion. Zusammen approximieren sie die viel zu komplizierte Funktion „nächstes Token aus Kontext“. Die Details der Attention und des FFN kommen auf den nächsten Folien.",
+      deep: "Jeder Block ist selbst ein gelerntes Stück Funktion. Zusammen approximieren sie die viel zu komplizierte Funktion „nächstes Token aus Kontext“.",
       boxes: [
         box("mod-1", "Technik", "Die fünf Stationen", "Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Transformer-Block: Attention kontextualisiert, das FFN verschiebt pro Token. Wiederholen: viele Blöcke hintereinander. Unembedding: Vektor → Scores und Softmax."),
         box("mod-dense", "Optional", "Dense = alle mit allen", "Eine Dense-Schicht verbindet jede Eingabe mit jeder Ausgabe. Die Gewichte sind die Kanten eines vollständigen gewichteten Graphen. In der Matrix W steht W_ij für die Kante von Eingang j zu Ausgang i. Daher kommen die üblichen Netzdiagramme.", "\\underbrace{y_i}_{\\text{Ausgang }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{alle Eingänge}}"),
@@ -702,7 +702,7 @@
       watch: "Walk through the stations with “Next” or the arrow key. What does each block do?",
       demoState: { scene: "blocks" },
       context: "The order is the architecture: text → tokens → vectors → context → distribution. Each step changes the representation until a token is drawn.",
-      deep: "Each block is itself a learned piece of function. Together they approximate the far too complicated function “next token from context”. The details of attention and the FFN come on the next slides.",
+      deep: "Each block is itself a learned piece of function. Together they approximate the far too complicated function “next token from context”.",
       boxes: [
         box("mod-1", "Technique", "The five stations", "Tokenizer: text → tokens. Embedding: tokens → vectors. Transformer block: attention contextualises, the FFN shifts per token. Repeat: many blocks in a row. Unembedding: vector → scores and softmax."),
         box("mod-dense", "Optional", "Dense = all to all", "A dense layer connects every input to every output. The weights are the edges of a complete weighted graph. In the matrix W, W_ij is the edge from input j to output i. That is where the usual network diagrams come from.", "\\underbrace{y_i}_{\\text{output }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{all inputs}}"),

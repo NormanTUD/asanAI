@@ -7850,6 +7850,7 @@
     }
     function draw() {
       if (!size) return;
+      ctx = size.ctx;
       if (!geo) setup();
       ctx.clearRect(0, 0, size.w, size.h);
       ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, size.w, size.h);
