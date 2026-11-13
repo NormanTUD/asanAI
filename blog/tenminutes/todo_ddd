@@ -1,0 +1,7 @@
+"Jeder Platz bekommt einen Fingerabdruck": sowohl die großkreis als auch die euklidansicht sind falsch. bestimme das nochmal. diese grafik bei "Relativer Abstand im selben Satz" ist ultra ugly entferne die. sage was da passiert, dass man auf kreisbahnen in verschiedenen dimensionen verschiedene wellen hinzufügt. checke nochmal wirklich den plot. entferne oben "gerade im raum".
+
+entferne das "Interaktive Demo · Ten Minutes" unten rechts
+
+"Das obere Dreieck in der Matrix ist die kausale Maske. Sie sorgt dafür, dass Tokens nur die Vergangenheit sehen können, damit sie lernen, Sätze zu vervollständigen, deren Ende sie noch nicht kennen." ist richtig, aber was untersscheidet die modelle? die einen bewerten text, die anderen generieren ihn. wenn sie fertigen text bewerten, brauchen sie keine causal mask.
+
+der text "Wörter allein sind mehrdeutig "new „neu“, aber auch der Anfang von „New York“. york ein Ortsname, allein ohne klaren Bezug. new york zusammen die Stadt. Der Kontext entscheidet, welche Nachbarschaft zählt." sollte mit  latex inline formeln sein für die \text{new} und \text{york}. ich will dass das nicht "kontext" heißt oben sondern iwie anders. beschreibe dass die tokens an sich da eher neutral zwischen den punkten stehen, "new" bei auto aber auch "zukunft", "neubeginn", "neujahr", "neugier" usw. das gleiche für york in der nähe von "York (Western Australia)", york england, york chocolate (katzenrasse) usw. cluster in die nähe von new york dann "empire state building", "freiheitsstatue" usw. 
