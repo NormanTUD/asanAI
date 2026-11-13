@@ -3626,6 +3626,7 @@
         '<div class="ls-tokenize-chips" aria-live="polite"></div>' +
         '<div class="ls-tokenize-stats"></div>' +
         '<p class="ls-tokenize-note">' + (DE ? "Teil 1: Ein Token ist ein Stück Text, kein Wort. Die ID ist die Adresse in der Embedding-Tabelle." : "Part 1: a token is a piece of text, not a word. The ID is the address in the embedding table.") + '</p>' +
+        '<p class="ls-tokenize-advantage">' + (DE ? "Der Vorteil: Ein neues Wort muss nicht im Vokabular stehen. Das Modell setzt es aus bekannten Teilwörtern zusammen und liest die Bedeutung aus dem Kontext." : "The advantage: a new word does not need to be in the vocabulary. The model builds it from known subwords and reads its meaning from the context.") + '</p>' +
       '</div>' +
       '<div class="ls-bpe" hidden>' +
         '<div class="ls-bpe-head"><span class="ls-bpe-title">' + (DE ? "BPE = gelernte Kompression" : "BPE = learned compression") + '</span><span class="ls-bpe-hint">' + (DE ? "Start: Zeichen" : "Start: characters") + '</span></div>' +
@@ -3728,6 +3729,7 @@
       return tokens;
     }
     function renderSplit() {
+      sampleIndex = step;
       var value = examples[sampleKeys[sampleIndex]].value;
       chips.innerHTML = tokenize(value).map(function (tok, i) {
         return '<span class="ls-token-chip' + (tok.sub ? " is-sub" : "") + (tok.space ? " is-space" : "") + '" style="--token-color:' + colors[i % colors.length] + '"><b>' + api.esc(tok.word) + '</b><small>id ' + tok.id + '</small></span>';
@@ -3809,7 +3811,7 @@
       b.className = "ls-chip";
       b.setAttribute("data-sample", key);
       b.textContent = examples[key].label;
-      b.addEventListener("click", function () { mode = "split"; step = sampleKeys.indexOf(key); render(); });
+      b.addEventListener("click", function () { mode = "split"; step = sampleKeys.indexOf(key); sampleIndex = step; render(); });
       samples.appendChild(b);
     });
     navPrev.addEventListener("click", prevStep);

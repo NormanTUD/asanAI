@@ -221,6 +221,7 @@
       body: "Ein Token ist kein Wort. Auf derselben Folie siehst du zwei Teile. Teil 1 zeigt die Trennung: Verständnis, unzerbrechlich und ein ganzer Satz werden in Tokens zerlegt. Teil 2 zeigt BPE: Der Algorithmus startet bei Zeichen und verschmilzt in mehreren Stufen das häufigste Paar. Aus häufigen Folgen werden längere Tokens; seltene Schriften bleiben teuer.",
       watch: "Gehe mit „Weiter“ von den Beispielen zu BPE. Welches Paar wird als Nächstes verschmolzen?",
       demoState: { scene: "tokenize" },
+      centerTitle: true,
       context: "Teil 1: Text wird in Tokens geteilt, jede ID ist eine Adresse in der Embedding-Tabelle. Teil 2: BPE beginnt bei Zeichen und baut das Vokabular durch Merges auf. Jeder Merge ist ein neues Vokabelstück.",
       deep: "BPE ist eine gelernte Kompression: Es zählt benachbarte Paare im Trainingskorpus und ersetzt das häufigste Paar durch ein neues Symbol. Nach mehreren Merges werden häufige Wörter kurz. Die genaue Tokenisierung hängt an den Daten und am Vokabularziel; die Demo zeigt einen kleinen Korpus, keine Messung eines bestimmten Modells.",
       boxes: [
@@ -243,6 +244,7 @@
       body: "A token is not a word. This slide has two parts. Part 1 shows the split: understanding, unbreakable, and a whole sentence are broken into tokens. Part 2 shows BPE: the algorithm starts from characters and merges the most frequent pair in several stages. Frequent sequences become longer tokens; rare scripts stay expensive.",
       watch: "Use “Next” to go from the examples to BPE. Which pair is merged next?",
       demoState: { scene: "tokenize" },
+      centerTitle: true,
       context: "Part 1: text is split into tokens, and each ID is an address in the embedding table. Part 2: BPE starts from characters and builds the vocabulary through merges. Each merge is a new vocabulary item.",
       deep: "BPE is learned compression: it counts adjacent pairs in the training corpus and replaces the most frequent pair with a new symbol. After several merges, frequent words become short. The exact tokenization depends on the data and the vocabulary target; the demo shows a small corpus, not a measurement of a specific model.",
       boxes: [

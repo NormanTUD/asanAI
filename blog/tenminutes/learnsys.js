@@ -748,6 +748,8 @@
     updatePosRail();
     els.kicker.textContent = s.kicker || d.kicker;
     els.title.textContent = s.title;
+    els.kicker.classList.toggle("is-centered", !!s.centerTitle);
+    els.title.classList.toggle("is-centered", !!s.centerTitle);
     els.body.innerHTML = proseBlock(s.body || "");
     renderCues(s);
     var depth = depthTree(s, d);
