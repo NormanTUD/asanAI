@@ -7897,7 +7897,108 @@
     return { update: function () {}, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
   }
 
+  function compressScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-compress-scene";
+    el.innerHTML = '<div class="ls-compress-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-compress-side"><div class="ls-compress-metrics"><span><b>' + (DE ? "Details" : "details") + '</b><i data-detail></i></span><span><b>' + (DE ? "Muster" : "patterns") + '</b><i data-pattern></i></span><span><b>' + (DE ? "Fehler" : "error") + '</b><i data-error></i></span></div><div class="ls-compress-readout" aria-live="polite"></div></div>' +
+      '<div class="ls-compress-controls"><label class="ls-range">' + (DE ? "Kompression" : "Compression") + ' <input type="range" class="ls-compress-range" min="0" max="1" step="0.01" value="0"><output>0.00</output></label><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-compress-auto">' + (DE ? "Automatisch" : "Auto") + '</button></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-compress-stage");
+    var canvas = el.querySelector("canvas");
+    var side = el.querySelector(".ls-compress-side");
+    var range = el.querySelector(".ls-compress-range");
+    var out = range.nextElementSibling;
+    var readout = el.querySelector(".ls-compress-readout");
+    var detailBar = el.querySelector("[data-detail]");
+    var patternBar = el.querySelector("[data-pattern]");
+    var errorBar = el.querySelector("[data-error]");
+    var C = api.colors();
+    var palette = [C.green, C.sky, C.gold, C.lilac, C.lime, C.blue, C.teal || C.petrol, C.muted];
+    var size = null, ctx = null, t = 0, raf = 0, playing = false;
+    function mix(a, b, k) {
+      function rgb(h) { h = h.replace("#", ""); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
+      var A = rgb(a), B = rgb(b);
+      return "rgb(" + Math.round(A[0] + (B[0]-A[0])*k) + "," + Math.round(A[1] + (B[1]-A[1])*k) + "," + Math.round(A[2] + (B[2]-A[2])*k) + ")";
+    }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      var w = size.w, h = size.h;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
+      var n = 12, gap = 3, pad = 22;
+      var cell = Math.min((w - pad * 2 - gap * (n - 1)) / n, (h - pad * 2 - gap * (n - 1)) / n);
+      var ox = (w - (cell * n + gap * (n - 1))) / 2;
+      var oy = (h - (cell * n + gap * (n - 1))) / 2;
+      for (var gy = 0; gy < n; gy++) {
+        for (var gx = 0; gx < n; gx++) {
+          var cluster = Math.floor(gy / 3) * 4 + Math.floor(gx / 3);
+          var base = palette[cluster % palette.length];
+          var individual = mix(base, (gx + gy) % 2 ? "#ffffff" : "#000000", 0.10 + ((gx * 7 + gy * 11) % 7) * 0.035);
+          var col = mix(individual, base, t);
+          var inset = (1 - t) * 2.2;
+          var x = ox + gx * (cell + gap) + inset;
+          var y = oy + gy * (cell + gap) + inset;
+          var s = cell - inset * 2;
+          ctx.fillStyle = col;
+          ctx.globalAlpha = 0.88;
+          ctx.fillRect(x, y, s, s);
+          ctx.globalAlpha = 1;
+        }
+      }
+      ctx.strokeStyle = C.line;
+      ctx.lineWidth = 1;
+      for (var cy = 0; cy < 4; cy++) for (var cx = 0; cx < 4; cx++) {
+        var bx = ox + cx * 3 * (cell + gap) - gap / 2;
+        var by = oy + cy * 3 * (cell + gap) - gap / 2;
+        ctx.globalAlpha = t * 0.75;
+        ctx.strokeRect(bx, by, 3 * cell + 2 * gap + gap, 3 * cell + 2 * gap + gap);
+      }
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(DE ? "144 einzelne Erinnerungen" : "144 individual memories", pad, 16);
+      ctx.textAlign = "right";
+      ctx.fillText(DE ? "16 Muster" : "16 patterns", w - pad, 16);
+      updateReadout();
+    }
+    function updateReadout() {
+      var details = Math.round(144 * (1 - t));
+      var patterns = Math.round(16 * t);
+      var error = Math.pow(t, 1.7) * 0.35;
+      readout.innerHTML = '<span><b>' + (DE ? "Kompression" : "compression") + '</b> ' + t.toFixed(2) + '</span><span><b>' + (DE ? "Details" : "details") + '</b> ' + details + '</span><span><b>' + (DE ? "Muster" : "patterns") + '</b> ' + patterns + '</span>';
+      detailBar.style.width = ((1 - t) * 100).toFixed(0) + '%';
+      patternBar.style.width = (t * 100).toFixed(0) + '%';
+      errorBar.style.width = Math.min(100, error / 0.35 * 100).toFixed(0) + '%';
+    }
+    range.addEventListener("input", function () { t = parseFloat(range.value) || 0; out.textContent = t.toFixed(2); draw(); });
+    el.querySelector(".ls-compress-auto").addEventListener("click", function () {
+      if (playing) { playing = false; if (raf) cancelAnimationFrame(raf); raf = 0; return; }
+      playing = true;
+      var start = performance.now(), from = t;
+      function step(now) {
+        if (!playing) return;
+        var k = Math.min(1, (now - start) / 1800);
+        t = from + (1 - from) * k;
+        range.value = String(t);
+        out.textContent = t.toFixed(2);
+        draw();
+        if (k < 1) raf = requestAnimationFrame(step); else playing = false;
+      }
+      raf = requestAnimationFrame(step);
+    });
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    resize();
+    return { update: function () {}, resize: resize, pause: function () { playing = false; if (raf) cancelAnimationFrame(raf); raf = 0; }, destroy: function () { if (raf) cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
   var SCENES = {
+
 
 
 
@@ -7907,6 +8008,7 @@
     code: codeScene,
     media: mediaScene,
     book: bookScene,
+    compress: compressScene,
     loop: loopScene,
     tunnel: tunnelScene,
     tokenize: tokenizeScene,
