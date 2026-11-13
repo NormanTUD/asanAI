@@ -34,7 +34,7 @@
     var C = api.colors();
     var optOrder = ["sgd", "adam", "momentum"];
     var data = null, worker = null;
-    var optimizer = "sgd", step = 0, playing = false, timer = 0, formulaKey = "";
+    var optimizer = "sgd", step = 0, playing = false, finished = false, visible = true, started = false, timer = 0, formulaKey = "";
     var yaw = -0.72, pitch = 0.86, zoom = 1, drag = null;
     var size = null, minL = 0, maxL = 1;
 
@@ -175,15 +175,16 @@
     }
     function startWorker() {
       if (worker) { worker.terminate(); worker = null; }
-      data = null; step = 0; playing = false; clearTimeout(timer); timer = 0;
+      data = null; step = 0; playing = false; finished = false; started = false; clearTimeout(timer); timer = 0;
       setStatus(DE ? "Berechne die Loss-Fläche …" : "Computing the loss surface …");
       readout.innerHTML = '<span>' + (DE ? "Die Fläche wird im Hintergrund berechnet." : "The surface is computed in the background.") + '</span>';
       worker = new Worker("assets/loss-landscape-worker.js?v=4");
       worker.onmessage = function (e) {
         data = e.data;
-        setStatus(DE ? "Bereit · Training starten oder Weiter." : "Ready · start training or press Next.");
+        setStatus(DE ? "Bereit · das Training startet gleich." : "Ready · training starts shortly.");
         setOpt("sgd");
         draw();
+        setTimeout(function () { if (visible && !started) startTraining(); }, 520);
       };
       worker.onerror = function () { setStatus(DE ? "Worker-Fehler" : "Worker error"); };
       worker.postMessage({ cmd: "train", lr: parseFloat(lrEl.value) || 0.08 });
@@ -198,12 +199,12 @@
         optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === optimizer); });
         draw(); timer = setTimeout(tick, 420); return;
       }
-      playing = false; setStatus(DE ? "Fertig · SGD, Adam und Momentum." : "Done · SGD, Adam and Momentum.");
+      playing = false; finished = true; started = true; setStatus(DE ? "Fertig · SGD, Adam und Momentum." : "Done · SGD, Adam and Momentum.");
       pauseBtn.textContent = DE ? "Nochmal" : "Again";
     }
     function startTraining() {
       if (!data) { startWorker(); return; }
-      playing = true; clearTimeout(timer); timer = 0;
+      playing = true; finished = false; started = true; clearTimeout(timer); timer = 0;
       optimizer = "sgd"; step = 0; formulaKey = "";
       optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === "sgd"); });
       setStatus(DE ? "Training läuft: SGD → Adam → Momentum." : "Training: SGD → Adam → Momentum.");
@@ -211,7 +212,14 @@
       draw(); timer = setTimeout(tick, 140);
     }
     function pause() { playing = false; clearTimeout(timer); timer = 0; pauseBtn.textContent = DE ? "Weiter" : "Resume"; }
-    function reset() { playing = false; clearTimeout(timer); timer = 0; step = 0; optimizer = "sgd"; formulaKey = ""; pauseBtn.textContent = DE ? "Pause" : "Pause"; if (data) draw(); }
+    function resumeTraining() {
+      if (!data) { startWorker(); return; }
+      if (finished) { startTraining(); return; }
+      playing = true; clearTimeout(timer); timer = 0;
+      pauseBtn.textContent = DE ? "Pause" : "Pause";
+      timer = setTimeout(tick, 120);
+    }
+    function reset() { playing = false; finished = false; started = false; clearTimeout(timer); timer = 0; step = 0; optimizer = "sgd"; formulaKey = ""; pauseBtn.textContent = DE ? "Pause" : "Pause"; if (data) draw(); }
     trainBtn.addEventListener("click", startTraining);
     pauseBtn.addEventListener("click", function () {
       if (playing) { pause(); return; }
@@ -231,6 +239,13 @@
     });
     window.addEventListener("pointerup", function () { drag = null; });
     function resize() { size = api.fit(canvas, stage); if (data) draw(); else drawData(); }
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        visible = entries.some(function (en) { return en.isIntersecting; });
+        if (!visible) { pause(); return; }
+        if (data && !finished && !playing) resumeTraining();
+      }, { threshold: 0.05 }).observe(stage);
+    }
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); if (data) draw(); });
     resize(); startWorker();
@@ -239,12 +254,13 @@
       next: function () {
         if (!data) { startWorker(); return true; }
         if (playing) return true;
-        if (step === 0) { startTraining(); return true; }
-        return false;
+        if (finished) return false;
+        resumeTraining();
+        return true;
       },
       prev: function () { return false; },
       pause: pause,
-      resume: function () { if (data) draw(); },
+      resume: function () { visible = true; if (!data) return; if (!finished && !playing) resumeTraining(); else draw(); },
       resize: resize,
       destroy: function () { playing = false; clearTimeout(timer); if (worker) worker.terminate(); worker = null; window.removeEventListener("resize", resize); el.remove(); }
     };

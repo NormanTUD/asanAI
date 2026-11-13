@@ -5572,16 +5572,24 @@
 
   function manifoldScene(root, api) {
     var DE = api.lang === "de";
+    var V = window.LearnSysVisuals;
     var el = document.createElement("div");
     el.className = "ls-manifold-scene";
     el.innerHTML = '<div class="ls-dual-manifolds"><canvas class="ls-canvas" role="img"></canvas></div>' +
-      '<p class="ls-vr-note">' + (DE ? "Vietoris–Rips: zwei Punkte sind verbunden, wenn ihr Abstand unter der Schwelle liegt. Die Form entsteht aus den Punkten, nicht aus einer Fläche." : "Vietoris–Rips: two points are connected when their distance is below the threshold. The shape comes from the points, not from a surface.") + '</p>';
+      '<p class="ls-vr-note">' + (DE ? "Vietoris–Rips: zwei Punkte sind verbunden, wenn ihr Abstand unter dem Radius liegt. Die Form entsteht aus den Punkten, nicht aus einer Fläche." : "Vietoris–Rips: two points are connected when their distance is below the radius. The shape comes from the points, not from a surface.") + '</p>' +
+      '<div class="ls-manifold-controls"><label class="ls-range">' + (DE ? "Radius" : "Radius") + ' <input type="range" min="0.22" max="0.78" step="0.01" value="0.48"><output>0.48</output></label><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-manifold-spin">' + (DE ? "Drehen" : "Rotate") + '</button></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-dual-manifolds");
     var canvas = el.querySelector("canvas");
+    var radiusEl = el.querySelector(".ls-range input");
+    var radiusOut = radiusEl.nextElementSibling;
+    var spinBtn = el.querySelector(".ls-manifold-spin");
     var C = api.colors();
     var size = null, yaw = -0.58, pitch = 0.42, zoom = 1, drag = null;
-    var radius = 0.52;
+    var radius = parseFloat(radiusEl.value) || 0.48;
+    var raf = 0, last = 0, visible = true, auto = true;
+    var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    if (reduced) auto = false;
     function rng(seed) {
       return function () {
         seed |= 0; seed = seed + 0x6D2B79F5 | 0;
@@ -5590,65 +5598,80 @@
         return ((t ^ t >>> 14) >>> 0) / 4294967296;
       };
     }
-    function cloud(seed, cx, twist) {
+    function rotate(p, roll, pitch, yaw) {
+      var x = p[0], y = p[1], z = p[2];
+      var cr = Math.cos(roll), sr = Math.sin(roll);
+      var x1 = x * cr - y * sr, y1 = x * sr + y * cr;
+      var cp = Math.cos(pitch), sp = Math.sin(pitch);
+      var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
+      var cy = Math.cos(yaw), sy = Math.sin(yaw);
+      return [x1 * cy - y2 * sy, x1 * sy + y2 * cy, z2];
+    }
+    function cloud(seed, cx, cy, cz, roll, pitch, yaw, amp) {
       var pts = [];
-      for (var iu = 0; iu < 8; iu++) {
-        for (var iv = 0; iv < 8; iv++) {
-          var u = -1 + 2 * iu / 7, v = -1 + 2 * iv / 7;
-          var x = u * 1.18, y = v * 0.78;
-          var z = 0.62 * (u * u - v * v) + 0.11 * Math.sin(Math.PI * 2 * u) * Math.cos(Math.PI * 2 * v);
-          if (twist) {
-            var ca = Math.cos(0.72), sa = Math.sin(0.72);
-            var x1 = x * ca - z * sa, z1 = x * sa + z * ca;
-            var cb = Math.cos(-0.48), sb = Math.sin(-0.48);
-            x = x1; z = z1 * cb - y * sb; y = z1 * sb + y * cb;
-            z += 0.16 * Math.sin(2.4 * u + 1.2) * Math.cos(2.0 * v);
-          }
-          pts.push({ p: [cx + x, y, z], u: u, v: v });
+      var rand = rng(seed);
+      for (var iu = 0; iu < 10; iu++) {
+        for (var iv = 0; iv < 10; iv++) {
+          var u = -1 + 2 * iu / 9, v = -1 + 2 * iv / 9;
+          var x = u * 1.22;
+          var y = v * 0.94;
+          var z = amp * (u * u - v * v) + 0.08 * Math.sin(2.2 * u + 0.4) * Math.cos(2.0 * v - 0.2);
+          x += (rand() - 0.5) * 0.035;
+          y += (rand() - 0.5) * 0.035;
+          z += (rand() - 0.5) * 0.045;
+          var p = rotate([x, y, z], roll, pitch, yaw);
+          pts.push({ p: [p[0] + cx, p[1] + cy, p[2] + cz], u: u, v: v });
         }
       }
       return pts;
     }
-    var en = cloud(11, -0.9, false);
-    var jp = cloud(29, 0.9, true);
+    var en = cloud(11, -1.05, 0.02, 0.05, 0.0, 0.0, 0.0, 0.58);
+    var jp = cloud(29, 1.05, -0.02, -0.05, 0.52, -0.26, 0.38, 0.54);
     var labels = [
-      { a: 10, b: 12, ea: "bank", eb: "銀行" },
-      { a: 27, b: 29, ea: "river", eb: "川" },
-      { a: 45, b: 47, ea: "money", eb: "お金" }
+      { a: 22, b: 22, ea: "bank", eb: "銀行" },
+      { a: 24, b: 24, ea: "river", eb: "川" },
+      { a: 45, b: 45, ea: "money", eb: "お金" },
+      { a: 66, b: 66, ea: "water", eb: "水" },
+      { a: 78, b: 78, ea: "city", eb: "都市" }
     ];
     function project(p) {
-      var x = p[0], y = p[1], z = p[2];
-      var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
-      var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
-      var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
-      var s = Math.min(size.w * 0.22, size.h * 0.36) / (1 + z2 * 0.22) * zoom;
-      return { x: size.w / 2 + x1 * s, y: size.h / 2 - y2 * s, z: z2 };
+      return V.project(p, yaw, pitch, Math.min(size.w * 0.20, size.h * 0.36) * zoom, size.w / 2, size.h / 2 - 4);
     }
-    function edgeSet(pts) {
+    function edgeCache(pts, r) {
       var out = [];
       for (var i = 0; i < pts.length; i++) {
         for (var j = i + 1; j < pts.length; j++) {
           var a = pts[i].p, b = pts[j].p;
-          if (Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) <= radius) out.push({ a: a, b: b, z: (a[2] + b[2]) / 2 });
+          var d = Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+          if (d <= r) out.push({ a: a, b: b, z: (a[2] + b[2]) / 2 });
         }
       }
       return out;
     }
+    var enEdges = edgeCache(en, radius), jpEdges = edgeCache(jp, radius);
     function drawCloud(ctx, pts, edges, col) {
       edges.sort(function (a, b) { return a.z - b.z; });
       edges.forEach(function (e) {
         var a = project(e.a), b = project(e.b);
         ctx.strokeStyle = col;
-        ctx.globalAlpha = 0.10 + 0.26 * (1 - (e.z + 1) / 2);
+        ctx.globalAlpha = 0.08 + 0.22 * (1 - (e.z + 1) / 2);
         ctx.lineWidth = 0.8;
-        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
       });
       ctx.globalAlpha = 1;
       var ps = pts.map(function (q) { return { p: q.p, q: project(q.p) }; }).sort(function (a, b) { return a.q.z - b.q.z; });
       ps.forEach(function (o) {
-        ctx.beginPath(); ctx.arc(o.q.x, o.q.y, 3.1, 0, Math.PI * 2);
-        ctx.fillStyle = col; ctx.fill();
-        ctx.strokeStyle = C.paper; ctx.lineWidth = 1; ctx.stroke();
+        var r = 2.6 + Math.max(0, 1 - (o.q.z + 1) / 2) * 1.3;
+        ctx.beginPath();
+        ctx.arc(o.q.x, o.q.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = col;
+        ctx.fill();
+        ctx.strokeStyle = C.paper;
+        ctx.lineWidth = 0.9;
+        ctx.stroke();
       });
     }
     function drawLabels(ctx) {
@@ -5658,42 +5681,77 @@
         var a = project(pe.p), b = project(pj.p);
         ctx.save();
         ctx.setLineDash([4, 4]);
-        ctx.strokeStyle = C.gold;
-        ctx.globalAlpha = 0.72;
-        ctx.lineWidth = 1.4;
-        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        ctx.strokeStyle = V.alpha(C.gold, 0.72);
+        ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
         ctx.restore();
-        ctx.fillStyle = C.ink;
-        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-        ctx.textAlign = "center";
-        ctx.fillText(l.ea, a.x, a.y - 8);
-        ctx.fillText(l.eb, b.x, b.y - 8);
+        V.label(ctx, l.ea, a.x, a.y - 10, {
+          font: '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif',
+          color: C.ink, align: "center", alpha: 1
+        });
+        V.label(ctx, l.eb, b.x, b.y - 10, {
+          font: '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif',
+          color: C.ink, align: "center", alpha: 1
+        });
       });
     }
     function draw() {
       if (!size) return;
       var ctx = size.ctx, w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
-      var bg = ctx.createRadialGradient(w * 0.5, h * 0.42, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.7);
-      bg.addColorStop(0, "rgba(247,250,249,.92)");
-      bg.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
-      var enE = edgeSet(en), jpE = edgeSet(jp);
-      drawCloud(ctx, en, enE, C.blue);
-      drawCloud(ctx, jp, jpE, C.green);
+      var bg = ctx.createRadialGradient(w * 0.5, h * 0.42, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.72);
+      bg.addColorStop(0, V.alpha(C.paper2, 0.92));
+      bg.addColorStop(1, V.alpha(C.paper, 0));
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+      V.grid(ctx, w, h, C, 32, 0.14);
+      drawCloud(ctx, en, enEdges, C.blue);
+      drawCloud(ctx, jp, jpEdges, C.green);
       drawLabels(ctx);
-      ctx.fillStyle = C.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.textAlign = "left"; ctx.fillText(DE ? "Englisch" : "English", 12, 18);
-      ctx.textAlign = "right"; ctx.fillStyle = C.muted; ctx.fillText(DE ? "Japanisch" : "Japanese", w - 12, 18);
+      V.heading(ctx, DE ? "Englisch" : "English", 14, 16, C.muted, 10, 1);
+      V.heading(ctx, DE ? "Japanisch" : "Japanese", w - 14, 16, C.muted, 10, 1);
+      V.label(ctx, (DE ? "Radius " : "radius ") + V.fmt(radius), w - 14, h - 12, {
+        font: '600 ' + Math.max(9, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif',
+        color: C.muted, align: "right", alpha: 1
+      });
       canvas.setAttribute("aria-label", DE
-        ? "Zwei Punktwolken mit Vietoris–Rips-Kanten: englische Wörter links, japanische rechts, Korrespondenzen als gestrichelte Linien."
-        : "Two point clouds with Vietoris–Rips edges: English words left, Japanese right, correspondences as dashed lines.");
+        ? "Zwei Punktwolken mit Vietoris–Rips-Kanten: englische Wörter links, japanische rechts. Radius " + V.fmt(radius) + "."
+        : "Two point clouds with Vietoris–Rips edges: English words left, Japanese right. Radius " + V.fmt(radius) + ".");
+    }
+    function loop(now) {
+      if (!visible || !auto || drag) { raf = 0; return; }
+      if (!last) last = now;
+      var dt = Math.min(48, now - last);
+      last = now;
+      yaw += dt * 0.00018;
+      draw();
+      raf = requestAnimationFrame(loop);
+    }
+    function startLoop() {
+      if (reduced || raf) return;
+      last = 0;
+      raf = requestAnimationFrame(loop);
+    }
+    function stopLoop() {
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+    }
+    function rebuildEdges() {
+      enEdges = edgeCache(en, radius);
+      jpEdges = edgeCache(jp, radius);
     }
     function resize() {
       size = api.fit(canvas, stage);
       draw();
     }
-    canvas.addEventListener("pointerdown", function (e) { drag = { x: e.clientX, y: e.clientY }; canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId); });
+    canvas.addEventListener("pointerdown", function (e) {
+      drag = { x: e.clientX, y: e.clientY };
+      canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId);
+      stopLoop();
+    });
     canvas.addEventListener("pointermove", function (e) {
       if (!drag) return;
       yaw += (e.clientX - drag.x) * 0.008;
@@ -5701,19 +5759,40 @@
       drag = { x: e.clientX, y: e.clientY };
       draw();
     });
-    canvas.addEventListener("pointerup", function () { drag = null; });
+    canvas.addEventListener("pointerup", function () { drag = null; startLoop(); });
+    canvas.addEventListener("pointercancel", function () { drag = null; startLoop(); });
     canvas.addEventListener("wheel", function (e) {
       e.preventDefault();
       zoom = Math.max(0.6, Math.min(2.1, zoom * (e.deltaY > 0 ? 0.94 : 1.06)));
       draw();
     }, { passive: false });
+    radiusEl.addEventListener("input", function () {
+      radius = parseFloat(radiusEl.value) || 0.48;
+      radiusOut.textContent = V.fmt(radius);
+      rebuildEdges();
+      draw();
+    });
+    spinBtn.addEventListener("click", function () {
+      auto = !auto;
+      spinBtn.textContent = auto ? (DE ? "Anhalten" : "Pause") : (DE ? "Drehen" : "Rotate");
+      if (auto) startLoop(); else stopLoop();
+    });
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        visible = entries.some(function (en) { return en.isIntersecting; });
+        if (!visible) stopLoop(); else startLoop();
+      }, { threshold: 0.05 }).observe(stage);
+    }
     resize();
+    startLoop();
     return {
       update: function () {},
       resize: resize,
-      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
+      pause: stopLoop,
+      resume: function () { visible = true; startLoop(); },
+      destroy: function () { stopLoop(); window.removeEventListener("resize", resize); el.remove(); }
     };
   }
 
@@ -6037,239 +6116,298 @@
 
   function blocksScene(root, api) {
     var DE = api.lang === "de";
+    var V = window.LearnSysVisuals;
     var blocks = DE ? [
       {
         id: "tokenizer", label: "Tokenizer", short: "Text → Tokens", icon: "T", color: "lime",
         title: "Tokenizer",
-        body: "Der Tokenizer nimmt den Text und teilt ihn in kleine Textbausteine auf: Tokens. Das können Wörter, Teilwörter, Leerzeichen, Sonderzeichen oder Codefragmente sein.",
-        points: ["Jedes Token bekommt eine ID.", "Die ID ist eine Adresse, keine Bedeutung.", "Seltene Wörter zerfallen oft in mehrere Tokens."]
+        body: "Text wird in Tokens zerlegt. Jedes Token bekommt eine ID, die auf eine Zeile im Embedding zeigt.",
+        points: ["Token ist nicht Wort", "ID ist eine Adresse"],
+        mini: "tokenizer"
       },
       {
         id: "embedding", label: "Embedding", short: "Tokens → Vektoren", icon: "E", color: "sky",
         title: "Embedding",
-        body: "Das Embedding weist jedem Token einen Punkt in einem hochdimensionalen Raum zu. Der Punkt ist ein Vektor, keine Definition.",
-        points: ["Ähnliche Kontexte führen zu ähnlichen Vektoren.", "Die Richtung trägt Bedeutung.", "Die Tabelle wird im Training gelernt."]
+        body: "Jede ID wird zu einem Vektor. Ähnliche Kontexte landen in ähnlichen Richtungen.",
+        points: ["Richtung trägt Bedeutung", "Tabelle wird gelernt"],
+        mini: "embedding"
       },
       {
-        id: "transformer", label: "Transformer-Blöcke", short: "Attention → FFN, × N", icon: "A", color: "green",
+        id: "transformer", label: "Transformer-Blöcke", short: "Attention → FFN, × N", icon: "×N", color: "green",
         title: "Transformer-Blöcke",
-        body: "Diesen Block macht ein LLM dutzende bis hunderte Male hintereinander. Jeder Block hat zwei Teile. Zuerst Attention: Sie bestimmt für jedes Wort, wie wichtig jedes andere Wort ist, und mischt die Tokens mit diesen Gewichten. Danach das FFN: Es verschiebt jedes Token einzeln, damit am Ende beim Unembedding der richtige Winkel herauskommt.",
-        points: ["Attention: Gewichte zwischen allen Wörtern.", "Mischen: Tokens ziehen Information aus dem Kontext.", "FFN: verschiebt danach jedes Token einzeln.", "Der ganze Block wird viele Male wiederholt."],
-        roadmap: "In den nächsten Tagen gehen wir Attention und FFN nacheinander durch, jeweils so, dass du intuitiv siehst, was der Teil macht und warum.",
+        body: "Attention mischt Information zwischen Wörtern. Das FFN formt jedes Token einzeln. Der Block läuft dutzende bis hunderte Male.",
+        points: ["Attention: wer liest wen?", "FFN: Muster trennen"],
+        roadmap: "In den nächsten Folien gehen wir Attention und FFN nacheinander durch: was sie tun und warum.",
+        mini: "transformer",
         sub: [
-          { title: "Attention", text: "Attention bestimmt, wie wichtig jedes Wort für jedes andere Wort ist. Mit diesen Gewichten werden die Tokens gemischt: Jedes Token zieht Information aus den Wörtern, die für es zählen." },
-          { title: "FFN", text: "Das FFN kommt danach und arbeitet pro Token. Beispiel: „new“ allein heißt eher „neu“ wie in Neuwagen, „york“ allein ist ein Ort in England. Direkt hintereinander bedeutet „new york“ die Großstadt in den USA. Das FFN verschiebt die Token so, dass am Ende beim Unembedding der richtige Winkel herauskommt." }
+          { title: "Attention", text: "Jedes Token bewertet, wie wichtig jedes andere sichtbare Token ist, und zieht Information aus den wichtigen." },
+          { title: "FFN", text: "Das FFN arbeitet pro Token. „new“ allein heißt „neu“, „york“ allein ist ein Ort. Zusammen ergibt sich New York." }
         ]
       },
       {
         id: "unembed", label: "Unembedding", short: "Vektor → Verteilung", icon: "U", color: "lilac",
         title: "Unembedding",
-        body: "Nach allen Blöcken wird der letzte Vektor mit den Richtungen der Tokens verglichen. Der Winkel entscheidet, welches Token wahrscheinlich ist: je kleiner der Winkel, desto höher die Wahrscheinlichkeit. Softmax macht daraus eine Verteilung, und eines wird gezogen.",
-        points: ["Verglichen werden Richtungen, nicht Längen.", "Softmax erzeugt die Wahrscheinlichkeitsverteilung.", "Der absolute Logit-Wert ist willkürlich; nur Unterschiede zählen."]
+        body: "Der letzte Vektor wird mit den gelernten Richtungen aller Tokens verglichen. Der Winkel wird zum Logit, Softmax macht daraus eine Verteilung.",
+        points: ["Richtung statt Länge", "ein Token wird gezogen"],
+        mini: "unembed"
       }
     ] : [
       {
         id: "tokenizer", label: "Tokenizer", short: "text → tokens", icon: "T", color: "lime",
         title: "Tokenizer",
-        body: "The tokenizer takes the text and splits it into small pieces: tokens. They can be words, subwords, spaces, punctuation, or code fragments.",
-        points: ["Every token gets an ID.", "The ID is an address, not meaning.", "Rare words often split into several tokens."]
+        body: "Text is split into tokens. Every token gets an ID that points to a row in the embedding.",
+        points: ["token is not word", "ID is an address"],
+        mini: "tokenizer"
       },
       {
         id: "embedding", label: "Embedding", short: "tokens → vectors", icon: "E", color: "sky",
         title: "Embedding",
-        body: "The embedding assigns every token a point in a high-dimensional space. The point is a vector, not a definition.",
-        points: ["Similar contexts produce similar vectors.", "Direction carries meaning.", "The table is learned during training."]
+        body: "Every ID becomes a vector. Similar contexts land in similar directions.",
+        points: ["direction carries meaning", "the table is learned"],
+        mini: "embedding"
       },
       {
-        id: "transformer", label: "Transformer blocks", short: "attention → FFN, × N", icon: "A", color: "green",
+        id: "transformer", label: "Transformer blocks", short: "attention → FFN, × N", icon: "×N", color: "green",
         title: "Transformer blocks",
-        body: "An LLM runs this block dozens to hundreds of times in a row. Each block has two parts. First attention: it determines how important every word is for every other word, then mixes the tokens with those weights. Then the FFN: it shifts each token individually so that the unembedding gets the right angle at the end.",
-        points: ["Attention: weights between all words.", "Mixing: tokens take information from the context.", "FFN: then shifts each token individually.", "The whole block repeats many times."],
-        roadmap: "Over the next days we will go through attention and FFN one after the other, each explained so that you intuitively see what it does and why.",
+        body: "Attention mixes information between words. The FFN shapes each token separately. The block runs dozens to hundreds of times.",
+        points: ["attention: who reads whom?", "FFN: separate patterns"],
+        roadmap: "In the next slides we go through attention and FFN one after the other: what they do and why.",
+        mini: "transformer",
         sub: [
-          { title: "Attention", text: "Attention determines how important every word is for every other word. Those weights mix the tokens: each token takes information from the words that matter to it." },
-          { title: "FFN", text: "The FFN comes afterwards and works per token. Example: “new” alone means “not old”, while “york” alone is a place in England. Directly together, “new york” is the US metropolis. The FFN shifts the tokens so that the unembedding gets the right angle at the end." }
+          { title: "Attention", text: "Every token scores how important every other visible token is, then pulls information from the important ones." },
+          { title: "FFN", text: "The FFN works per token. “new” alone means “not old”, “york” alone is a place. Together they give New York." }
         ]
       },
       {
         id: "unembed", label: "Unembedding", short: "vector → distribution", icon: "U", color: "lilac",
         title: "Unembedding",
-        body: "After all blocks, the last vector is compared with the directions of the tokens. The angle decides which token is likely: the smaller the angle, the higher the probability. Softmax turns that into a distribution, and one token is drawn.",
-        points: ["Directions are compared, not lengths.", "Softmax creates the probability distribution.", "The absolute logit value is arbitrary; only differences matter."]
+        body: "The last vector is compared with the learned directions of all tokens. The angle becomes a logit, softmax turns it into a distribution.",
+        points: ["direction, not length", "one token is drawn"],
+        mini: "unembed"
       }
     ];
     var index = 0;
     var el = document.createElement("div");
     el.className = "ls-blocks-scene";
-    el.innerHTML = '<div class="ls-blocks-list" role="list"></div>' +
-      '<div class="ls-blocks-detail" aria-live="polite"></div>' +
-      '<div class="ls-blocks-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-blocks-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-blocks-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-blocks-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
+    el.innerHTML = '<div class="ls-bs-stack" role="list"></div>' +
+      '<div class="ls-bs-detail" aria-live="polite"></div>' +
+      '<div class="ls-bs-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-bs-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-bs-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-bs-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
-    var list = el.querySelector(".ls-blocks-list");
-    var detail = el.querySelector(".ls-blocks-detail");
-    var progress = el.querySelector(".ls-blocks-progress");
-    var prevBtn = el.querySelector(".ls-blocks-prev");
-    var nextBtn = el.querySelector(".ls-blocks-next");
+    var stack = el.querySelector(".ls-bs-stack");
+    var detail = el.querySelector(".ls-bs-detail");
+    var progress = el.querySelector(".ls-bs-progress");
+    var prevBtn = el.querySelector(".ls-bs-prev");
+    var nextBtn = el.querySelector(".ls-bs-next");
     var C = api.colors();
     function color(name) { return C[name] || C.petrol; }
-    function stationButton(i) {
-      var b = blocks[i];
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "ls-block-btn";
-      btn.setAttribute("data-index", String(i));
-      btn.style.setProperty("--block-color", color(b.color));
-      btn.innerHTML = '<span class="ls-block-icon">' + api.esc(b.icon) + '</span><span><b>' + api.esc(b.label) + '</b><small>' + api.esc(b.short) + '</small></span>';
-      btn.addEventListener("click", function () { setIndex(i); });
-      return btn;
-    }
-    var layerButtons = [];
-    function renderStack() {
-      list.innerHTML = "";
-      list.appendChild(stationButton(0));
-      list.appendChild(stationButton(1));
-      var group = document.createElement("div");
-      group.className = "ls-block-repeat";
-      var head = document.createElement("button");
-      head.type = "button";
-      head.className = "ls-block-group-head";
-      head.setAttribute("data-index", "2");
-      head.style.setProperty("--block-color", color("green"));
-      head.innerHTML = '<b>' + (DE ? "Transformer-Blöcke" : "Transformer blocks") + '</b><span>× N · ' + (DE ? "diese n mal" : "these n times") + '</span>';
-      head.addEventListener("click", function () { setIndex(2); });
-      group.appendChild(head);
-      var brace = document.createElement("div");
-      brace.className = "ls-block-brace";
-      brace.setAttribute("aria-hidden", "true");
-      var items = document.createElement("div");
-      items.className = "ls-block-repeat-items";
-      var attn = document.createElement("button");
-      attn.type = "button";
-      attn.className = "ls-layer-pill ls-layer-attn";
-      attn.setAttribute("data-index", "2");
-      attn.style.setProperty("--block-color", color("green"));
-      attn.innerHTML = '<b>A</b><span>' + (DE ? "Attention" : "Attention") + '</span>';
-      attn.addEventListener("click", function () { setIndex(2); });
-      var ffn = document.createElement("button");
-      ffn.type = "button";
-      ffn.className = "ls-layer-pill ls-layer-ffn";
-      ffn.setAttribute("data-index", "2");
-      ffn.style.setProperty("--block-color", color("lime"));
-      ffn.innerHTML = '<b>FFN</b><span>' + (DE ? "Feed-forward" : "Feed-forward") + '</span>';
-      ffn.addEventListener("click", function () { setIndex(2); });
-      layerButtons.push(attn, ffn);
-      items.appendChild(attn);
-      items.appendChild(ffn);
-      group.appendChild(brace);
-      group.appendChild(items);
-      list.appendChild(group);
-      list.appendChild(stationButton(3));
+    function esc(s) { return api.esc(s); }
+    function buildStack() {
+      stack.innerHTML = "";
+      blocks.forEach(function (b, i) {
+        var step = document.createElement("div");
+        step.className = "ls-bs-step";
+        var card = document.createElement("button");
+        card.type = "button";
+        card.className = "ls-bs-card" + (b.id === "transformer" ? " ls-bs-card--group" : "");
+        card.setAttribute("data-index", String(i));
+        card.style.setProperty("--c", color(b.color));
+        if (b.id === "transformer") {
+          card.innerHTML = '<span class="ls-bs-group-head"><span class="ls-bs-icon">×N</span><span class="ls-bs-label"><b>' + esc(b.label) + '</b><small>' + esc(b.short) + '</small></span><span class="ls-bs-badge">' + (DE ? "diese n mal" : "these n times") + '</span></span>' +
+            '<span class="ls-bs-brace" aria-hidden="true"></span>' +
+            '<span class="ls-bs-pills"><span class="ls-bs-pill">A · Attention</span><span class="ls-bs-pill">FFN</span></span>';
+        } else {
+          card.innerHTML = '<span class="ls-bs-icon">' + esc(b.icon) + '</span><span class="ls-bs-label"><b>' + esc(b.label) + '</b><small>' + esc(b.short) + '</small></span>';
+        }
+        card.addEventListener("click", function () { setIndex(i); });
+        step.appendChild(card);
+        if (i < blocks.length - 1) {
+          var conn = document.createElement("span");
+          conn.className = "ls-bs-connector";
+          conn.setAttribute("aria-hidden", "true");
+          step.appendChild(conn);
+        }
+        stack.appendChild(step);
+      });
     }
     function fitMini(canvas) {
       if (!canvas) return null;
       var r = canvas.getBoundingClientRect();
       if (r.width < 4 || r.height < 4) return null;
-      return api.fit(canvas, canvas);
+      var dpr = Math.min(2, window.devicePixelRatio || 1);
+      var w = Math.round(r.width), h = Math.round(r.height);
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      var c = canvas.getContext("2d");
+      c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { w: w, h: h, ctx: c };
     }
-    function miniFrame(canvas, kind) {
+    function miniBg(ctx, w, h) {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = C.paper;
+      ctx.fillRect(0, 0, w, h);
+      V.grid(ctx, w, h, C, 26, 0.16);
+    }
+    function miniTokenizer(ctx, w, h) {
+      var word = DE ? "unzerbrechlich" : "unbreakable";
+      var parts = DE ? ["un", "zer", "brech", "lich"] : ["un", "break", "able"];
+      var cols = [C.lime, C.sky, C.gold, C.green];
+      var total = parts.reduce(function (a, p) { return a + ctx.measureText(p).width; }, 0);
+      ctx.font = '700 ' + Math.max(14, api.font("canvas") * 0.9) + 'px "Barlow", sans-serif';
+      var widths = parts.map(function (p) { return ctx.measureText(p).width; });
+      total = widths.reduce(function (a, p) { return a + p; }, 0);
+      var x = (w - total) / 2, y = h * 0.40;
+      parts.forEach(function (p, i) {
+        ctx.fillStyle = V.alpha(cols[i % cols.length], 0.18);
+        ctx.fillRect(x - 3, y - 24, widths[i] + 6, 34);
+        ctx.strokeStyle = cols[i % cols.length];
+        ctx.lineWidth = 1.2;
+        ctx.strokeRect(x - 3, y - 24, widths[i] + 6, 34);
+        ctx.fillStyle = C.ink;
+        ctx.fillText(p, x, y);
+        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
+        ctx.fillStyle = C.muted;
+        ctx.fillText("id " + (1200 + i * 41), x, y + 26);
+        ctx.font = '700 ' + Math.max(14, api.font("canvas") * 0.9) + 'px "Barlow", sans-serif';
+        x += widths[i];
+      });
+      V.label(ctx, word, w / 2, h * 0.83, { font: '600 ' + Math.max(10, api.font("canvas-sm")) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
+      V.heading(ctx, "Text → Tokens → IDs", 12, 16, C.petrol, 10, 1);
+    }
+    function miniEmbedding(ctx, w, h) {
+      var ox = w * 0.18, oy = h * 0.78, s = Math.min(w * 0.24, h * 0.48);
+      ctx.strokeStyle = C.line;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(ox, oy);
+      ctx.lineTo(ox + s * 1.5, oy);
+      ctx.moveTo(ox, oy);
+      ctx.lineTo(ox, oy - s * 1.3);
+      ctx.stroke();
+      var pts = [{ p: [0.55, 0.55], t: DE ? "Bank" : "bank", c: C.blue }, { p: [0.95, 0.85], t: DE ? "Geld" : "money", c: C.green }, { p: [1.18, 0.35], t: DE ? "Fluss" : "river", c: C.sky }];
+      pts.forEach(function (q) {
+        var tip = { x: ox + q.p[0] * s, y: oy - q.p[1] * s };
+        V.arrow(ctx, ox, oy, tip.x, tip.y, q.c, 2.2, 6);
+        V.tokenChip(ctx, q.t, tip.x + 6, tip.y - 8, q.c, C, { size: 9 });
+      });
+      V.heading(ctx, "ID → Vektor", 12, 16, C.petrol, 10, 1);
+      V.label(ctx, "id 1001 → [0.2, −0.4, 0.7, …]", w * 0.62, h * 0.82, {
+        font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif',
+        color: C.soft, align: "center"
+      });
+    }
+    function miniAttention(ctx, w, h) {
+      var words = DE ? ["Die", "Bank", "am", "Fluss"] : ["The", "bank", "by", "river"];
+      var xs = [w * 0.14, w * 0.38, w * 0.62, w * 0.86];
+      var y = h * 0.40;
+      var weights = [0.18, 0.32, 0.22, 0.28];
+      var source = 1;
+      ctx.save();
+      ctx.strokeStyle = V.alpha(C.blue, 0.65);
+      words.forEach(function (t, i) {
+        if (i === source) return;
+        ctx.lineWidth = 0.6 + weights[i] * 5;
+        ctx.beginPath();
+        ctx.moveTo(xs[source], y - 10);
+        ctx.quadraticCurveTo((xs[source] + xs[i]) / 2, y - 34, xs[i], y - 10);
+        ctx.stroke();
+      });
+      ctx.restore();
+      words.forEach(function (t, i) {
+        ctx.beginPath();
+        ctx.arc(xs[i], y, i === source ? 8 : 6, 0, Math.PI * 2);
+        ctx.fillStyle = i === source ? C.gold : C.paper;
+        ctx.fill();
+        ctx.strokeStyle = i === source ? C.gold : C.blue;
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+        V.label(ctx, t, xs[i], y + 20, { font: '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif', color: C.ink, align: "center" });
+      });
+      var mx = w * 0.62, my = h * 0.58, mw = w * 0.30, mh = h * 0.34;
+      var n = 4, cell = Math.min(mw / n, mh / n);
+      for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) {
+        var on = j <= i;
+        ctx.fillStyle = on ? V.alpha(C.blue, 0.14 + 0.16 * ((i + j) % 3)) : V.alpha(C.line, 0.35);
+        ctx.fillRect(mx + j * cell, my + i * cell, cell - 1, cell - 1);
+      }
+      V.heading(ctx, "kausale Maske", mx, my - 8, C.petrol, 9, 1);
+      V.heading(ctx, "Attention: wer liest wen?", 12, 16, C.petrol, 10, 1);
+    }
+    function miniFFN(ctx, w, h) {
+      var left = [{ x: w * 0.12, y: h * 0.40 }, { x: w * 0.12, y: h * 0.60 }];
+      var mid = [{ x: w * 0.38, y: h * 0.28 }, { x: w * 0.38, y: h * 0.43 }, { x: w * 0.38, y: h * 0.58 }, { x: w * 0.38, y: h * 0.73 }];
+      var right = [{ x: w * 0.64, y: h * 0.40 }, { x: w * 0.64, y: h * 0.60 }];
+      ctx.save();
+      ctx.strokeStyle = V.alpha(C.line, 0.95);
+      ctx.lineWidth = 1;
+      left.forEach(function (a) { mid.forEach(function (b) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }); });
+      mid.forEach(function (a) { right.forEach(function (b) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }); });
+      ctx.restore();
+      left.forEach(function (p, i) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.sky; ctx.fill(); });
+      mid.forEach(function (p, i) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill(); });
+      right.forEach(function (p, i) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.gold; ctx.fill(); });
+      V.tokenChip(ctx, "new", w * 0.05, h * 0.16, C.blue, C, { size: 9 });
+      V.tokenChip(ctx, "york", w * 0.05, h * 0.16 + 22, C.blue, C, { size: 9 });
+      V.tokenChip(ctx, DE ? "New York" : "New York", w * 0.82, h * 0.16, C.green, C, { size: 9 });
+      V.heading(ctx, "FFN: Muster trennen", 12, 16, C.petrol, 10, 1);
+      V.label(ctx, DE ? "pro Token" : "per token", w * 0.50, h * 0.88, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
+    }
+    function miniUnembed(ctx, w, h) {
+      var ox = w * 0.16, oy = h * 0.70, s = Math.min(w * 0.22, h * 0.40);
+      var H = [0.90, 0.35];
+      var rows = [{ t: " the", w: [0.86, 0.50], c: C.green }, { t: " Paris", w: [0.98, 0.08], c: C.blue }, { t: " a", w: [0.20, 0.98], c: C.sky }, { t: " city", w: [0.58, -0.82], c: C.gold }];
+      rows.forEach(function (row) {
+        var tip = { x: ox + row.w[0] * s, y: oy - row.w[1] * s };
+        V.arrow(ctx, ox, oy, tip.x, tip.y, row.c, 1.4, 5);
+      });
+      var ht = { x: ox + H[0] * s, y: oy - H[1] * s };
+      V.arrow(ctx, ox, oy, ht.x, ht.y, C.petrol, 3.2, 8);
+      V.tokenChip(ctx, "h", ht.x + 5, ht.y - 8, C.petrol, C, { size: 10 });
+      var bx = w * 0.55, bw = w * 0.34, top = 0.95;
+      rows.forEach(function (row, i) {
+        var y = h * 0.30 + i * h * 0.14;
+        var len = Math.max(2, V.dot(H, row.w) / top * bw);
+        ctx.fillStyle = i === 0 ? C.green : V.alpha(row.c, 0.55);
+        ctx.fillRect(bx, y - 5, len, 10);
+        V.label(ctx, row.t, bx - 5, y, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: i === 0 ? C.green : C.soft, align: "right" });
+      });
+      V.heading(ctx, "h · W_U → logits", 12, 16, C.petrol, 10, 1);
+    }
+    function drawMini(canvas, kind) {
       var f = fitMini(canvas);
       if (!f) return;
       var ctx = f.ctx, w = f.w, h = f.h;
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
-      var p = 8;
-      if (kind === "tokenizer") {
-        ctx.fillStyle = C.ink; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
-        ctx.fillText(DE ? "Sprachmodelle" : "language models", p, 17);
-        var toks = DE ? ["Sprach", "modell", "e"] : ["language", "model", "s"];
-        var cols = [C.lime, C.sky, C.gold];
-        var x = p;
-        toks.forEach(function (t, i) {
-          ctx.fillStyle = cols[i]; ctx.globalAlpha = 0.18; ctx.fillRect(x, 28, 58, 25); ctx.globalAlpha = 1;
-          ctx.strokeStyle = cols[i]; ctx.strokeRect(x, 28, 58, 25);
-          ctx.fillStyle = C.ink; ctx.font = '700 11px "Open Sans", sans-serif'; ctx.fillText(t, x + 5, 44);
-          ctx.fillStyle = C.muted; ctx.font = '600 8px "Open Sans", sans-serif'; ctx.fillText("id " + (1001 + i * 37), x + 5, 63);
-          if (i < toks.length - 1) { ctx.strokeStyle = C.line; ctx.beginPath(); ctx.moveTo(x + 60, 40); ctx.lineTo(x + 68, 40); ctx.stroke(); }
-          x += 70;
-        });
-      } else if (kind === "embedding") {
-        ctx.strokeStyle = C.line; ctx.beginPath(); ctx.moveTo(p, h - p); ctx.lineTo(w - p, h - p); ctx.moveTo(p, h - p); ctx.lineTo(p, p); ctx.stroke();
-        var pts = [{ x: 0.28, y: 0.62, t: DE ? "Bank" : "bank", c: C.blue }, { x: 0.58, y: 0.42, t: DE ? "Geld" : "money", c: C.green }, { x: 0.76, y: 0.72, t: DE ? "Fluss" : "river", c: C.sky }];
-        var ox = p + 18, oy = h - p - 10;
-        pts.forEach(function (q) {
-          var x = p + q.x * (w - 2 * p), y = h - p - q.y * (h - 2 * p);
-          ctx.strokeStyle = q.c; ctx.globalAlpha = .45; ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(x, y); ctx.stroke(); ctx.globalAlpha = 1;
-          ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fillStyle = q.c; ctx.fill();
-          ctx.fillStyle = C.ink; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.fillText(q.t, x + 6, y + 3);
-        });
-      } else if (kind === "attention") {
-        var xs = [w * .22, w * .5, w * .78], ys = [h * .72, h * .3, h * .66], cols2 = [C.blue, C.gold, C.green];
-        for (var i = 0; i < 3; i++) for (var j = 0; j < 3; j++) {
-          if (i === j) continue;
-          ctx.strokeStyle = C.blue; ctx.globalAlpha = .16 + .18 * ((i + j) % 3); ctx.lineWidth = 1.2;
-          ctx.beginPath(); ctx.moveTo(xs[i], ys[i]); ctx.quadraticCurveTo((xs[i] + xs[j]) / 2, Math.min(ys[i], ys[j]) - 18, xs[j], ys[j]); ctx.stroke();
-        }
-        ctx.globalAlpha = 1;
-        for (var k = 0; k < 3; k++) { ctx.beginPath(); ctx.arc(xs[k], ys[k], 7, 0, Math.PI * 2); ctx.fillStyle = cols2[k]; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 1.5; ctx.stroke(); }
-        ctx.fillStyle = C.muted; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(DE ? "jedes Token liest alle" : "each token reads all", w / 2, h - 4);
-      } else if (kind === "ffn") {
-        var lx = [w * .18, w * .5, w * .82];
-        for (var l = 0; l < 2; l++) for (var a = 0; a < 3; a++) for (var b = 0; b < 3; b++) {
-          ctx.strokeStyle = C.line; ctx.globalAlpha = .7; ctx.beginPath(); ctx.moveTo(lx[l], h * .25 + a * 15); ctx.lineTo(lx[l + 1], h * .25 + b * 15); ctx.stroke();
-        }
-        ctx.globalAlpha = 1;
-        for (var n = 0; n < 3; n++) {
-          ctx.beginPath(); ctx.arc(lx[0], h * .25 + n * 15, 4, 0, Math.PI * 2); ctx.fillStyle = C.sky; ctx.fill();
-          ctx.beginPath(); ctx.arc(lx[1], h * .25 + n * 15, 4, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill();
-          ctx.beginPath(); ctx.arc(lx[2], h * .25 + n * 15, 4, 0, Math.PI * 2); ctx.fillStyle = C.gold; ctx.fill();
-        }
-        ctx.fillStyle = C.muted; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(DE ? "pro Token: Muster trennen" : "per token: separate patterns", w / 2, h - 4);
-      } else if (kind === "repeat") {
-        for (var r = 0; r < 5; r++) {
-          var y = h - 18 - r * 13;
-          ctx.fillStyle = r === 0 ? C.gold : C.paper; ctx.globalAlpha = r === 0 ? .28 : 1;
-          ctx.fillRect(w * .16 + r * 3, y, w * .68, 8);
-          ctx.globalAlpha = 1; ctx.strokeStyle = r === 0 ? C.gold : C.line; ctx.strokeRect(w * .16 + r * 3, y, w * .68, 8);
-        }
-        ctx.fillStyle = C.ink; ctx.font = '700 10px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText("A → FFN  × 80", w / 2, h - 4);
-      } else if (kind === "unembed") {
-        var bars = [{ t: " the", p: .84, c: C.green }, { t: " Paris", p: .62, c: C.blue }, { t: " a", p: .46, c: C.sky }];
-        bars.forEach(function (q, i) {
-          var y = 12 + i * 18;
-          ctx.fillStyle = q.c; ctx.globalAlpha = .24; ctx.fillRect(8, y, (w - 48) * q.p, 10); ctx.globalAlpha = 1;
-          ctx.strokeStyle = q.c; ctx.strokeRect(8, y, (w - 48) * q.p, 10);
-          ctx.fillStyle = C.ink; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.fillText(q.t, 12, y + 8);
-          ctx.fillStyle = C.muted; ctx.fillText(Math.round(q.p * 100) + "%", w - 30, y + 8);
-        });
-        ctx.fillStyle = C.muted; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.fillText("softmax", 8, h - 5);
-      }
+      miniBg(ctx, w, h);
+      if (kind === "tokenizer") miniTokenizer(ctx, w, h);
+      else if (kind === "embedding") miniEmbedding(ctx, w, h);
+      else if (kind === "attention") miniAttention(ctx, w, h);
+      else if (kind === "ffn") miniFFN(ctx, w, h);
+      else if (kind === "unembed") miniUnembed(ctx, w, h);
     }
     function drawMinis() {
-      detail.querySelectorAll("canvas[data-mini]").forEach(function (cv) { miniFrame(cv, cv.getAttribute("data-mini")); });
+      detail.querySelectorAll("canvas[data-mini]").forEach(function (cv) { drawMini(cv, cv.getAttribute("data-mini")); });
     }
     function renderDetail() {
       var b = blocks[index];
-      var html = '<div class="ls-blocks-kicker">' + (DE ? "Station " : "Station ") + (index + 1) + ' / ' + blocks.length + '</div>' +
-        '<h3 class="ls-blocks-title">' + api.esc(b.title) + '</h3>' +
-        '<p class="ls-blocks-body">' + api.esc(b.body) + '</p>' +
-        '<ul class="ls-blocks-points">' + b.points.map(function (p) { return '<li>' + api.esc(p) + '</li>'; }).join("") + '</ul>' +
-        (b.roadmap ? '<p class="ls-block-roadmap">' + api.esc(b.roadmap) + '</p>' : '');
+      var html = '<div class="ls-bs-kicker">' + (DE ? "Station " : "Station ") + (index + 1) + ' / ' + blocks.length + '</div>' +
+        '<h3 class="ls-bs-title">' + esc(b.title) + '</h3>' +
+        '<p class="ls-bs-body">' + esc(b.body) + '</p>' +
+        '<div class="ls-bs-points">' + b.points.map(function (p) { return '<span>' + esc(p) + '</span>'; }).join("") + '</div>';
       if (b.sub) {
-        html += '<div class="ls-block-subgrid">' + b.sub.map(function (s, i) {
-          return '<div class="ls-block-sub"><b>' + api.esc(s.title) + '</b><canvas class="ls-block-subcan" data-mini="' + (i === 0 ? "attention" : "ffn") + '"></canvas><p>' + api.esc(s.text) + '</p></div>';
+        html += '<div class="ls-bs-subgrid">' + b.sub.map(function (s, i) {
+          return '<div class="ls-bs-sub"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + (i === 0 ? "attention" : "ffn") + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
         }).join("") + '</div>';
       } else {
-        html += '<div class="ls-block-mini-wrap"><canvas class="ls-block-mini" data-mini="' + b.id + '"></canvas></div>';
+        html += '<div class="ls-bs-canvas-wrap"><canvas data-mini="' + b.mini + '"></canvas></div>';
       }
+      if (b.roadmap) html += '<p class="ls-bs-roadmap">' + esc(b.roadmap) + '</p>';
       detail.innerHTML = html;
+      detail.scrollTop = 0;
       progress.textContent = (index + 1) + ' / ' + blocks.length;
       prevBtn.disabled = index === 0;
       nextBtn.textContent = index === blocks.length - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
-      list.querySelectorAll("[data-index]").forEach(function (btn) {
-        var i = parseInt(btn.getAttribute("data-index"), 10);
-        btn.classList.toggle("is-on", i === index);
+      stack.querySelectorAll(".ls-bs-card").forEach(function (btn) {
+        btn.classList.toggle("is-on", parseInt(btn.getAttribute("data-index"), 10) === index);
       });
-      layerButtons.forEach(function (btn) { btn.classList.toggle("is-live", index === 2); });
       requestAnimationFrame(drawMinis);
     }
     function setIndex(i) {
@@ -6284,7 +6422,7 @@
       if (index > 0) { setIndex(index - 1); return true; }
       return false;
     }
-    renderStack();
+    buildStack();
     renderDetail();
     prevBtn.addEventListener("click", function () { if (!prevInternal()) api.goPrev(); });
     nextBtn.addEventListener("click", function () { if (!nextInternal()) api.goNext(); });
@@ -7604,6 +7742,7 @@
 
   function compressScene(root, api) {
     var DE = api.lang === "de";
+    var V = window.LearnSysVisuals;
     var el = document.createElement("div");
     el.className = "ls-compress-scene";
     el.innerHTML = '<div class="ls-compress-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
@@ -7720,19 +7859,12 @@
       function X(n) { return pad + n.x * (w - pad * 2); }
       function Y(n) { return pad + n.y * (h - pad * 2); }
       ctx.clearRect(0, 0, w, h);
-      var bg = ctx.createRadialGradient(w * 0.5, h * 0.48, 10, w * 0.5, h * 0.5, Math.max(w, h) * 0.75);
-      bg.addColorStop(0, "rgba(252,253,252,1)");
-      bg.addColorStop(0.62, "rgba(247,250,249,.96)");
-      bg.addColorStop(1, "rgba(255,255,255,.72)");
+      var bg = ctx.createRadialGradient(w * 0.5, h * 0.48, 10, w * 0.5, h * 0.5, Math.max(w, h) * 0.78);
+      bg.addColorStop(0, V.alpha(C.paper2, 0.92));
+      bg.addColorStop(0.58, V.alpha(C.paper, 0.55));
+      bg.addColorStop(1, V.alpha(C.paper, 0.96));
       ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = C.line;
-      for (var gx = pad; gx < w - pad; gx += 26) {
-        for (var gy = pad; gy < h - pad; gy += 26) {
-          ctx.globalAlpha = 0.22;
-          ctx.fillRect(gx, gy, 1.1, 1.1);
-        }
-      }
-      ctx.globalAlpha = 1;
+      V.grid(ctx, w, h, C, 28, 0.16);
       var tt = t;
       var a0 = clamp01(1 - Math.abs(tt - 0));
       var a1 = clamp01(1 - Math.abs(tt - 1));
@@ -7773,6 +7905,26 @@
         ctx.globalAlpha = Math.min(1, alpha);
         ctx.fillStyle = col;
         ctx.fillText(text, x, y);
+        ctx.globalAlpha = 1;
+      }
+      function labelCat(text, x, y, col, alpha, size) {
+        if (alpha <= 0.01) return;
+        var fs = size || api.font("canvas-sm") + 1;
+        ctx.font = '700 ' + fs + 'px "Barlow", sans-serif';
+        var tw = ctx.measureText(text).width;
+        var bx = x - tw / 2 - 9;
+        ctx.globalAlpha = Math.min(1, alpha) * 0.9;
+        ctx.fillStyle = C.paper;
+        ctx.fillRect(bx, y - fs - 2, tw + 18, fs + 7);
+        ctx.beginPath();
+        ctx.arc(bx + 5, y - fs / 2 - 1, 2.6, 0, Math.PI * 2);
+        ctx.fillStyle = col;
+        ctx.fill();
+        ctx.globalAlpha = Math.min(1, alpha);
+        ctx.fillStyle = col;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "alphabetic";
+        ctx.fillText(text, bx + 11, y);
         ctx.globalAlpha = 1;
       }
       // fibres: the same structure survives every compression level
@@ -7856,7 +8008,7 @@
           if (i >= 8 && tt < 3.15) return;
           var x = lerp(cc.x, superCenters[Math.floor(i / 3)].x, u1);
           var y = lerp(cc.y, superCenters[Math.floor(i / 3)].y, u1);
-          labelAt(clusterNames[i], X({x:x}), Y({y:y}) - 9, palette[i % palette.length], clusterAlpha, Math.max(8, api.font("canvas-sm") - 1));
+          labelCat(clusterNames[i], X({x:x}), Y({y:y}) - 10, palette[i % palette.length], clusterAlpha);
         });
       }
       var superAlpha = clamp01(Math.min(tt - 1.35, 3.35 - tt));
@@ -7864,12 +8016,12 @@
         superCenters.forEach(function (sp, i) {
           if (i === 3 && tt < 3.15) return;
           var x = lerp(sp.x, center.x, u2), y = lerp(sp.y, center.y, u2);
-          labelAt(superNames[i], X({x:x}), Y({y:y}) - 12, C.petrol, superAlpha, api.font("canvas-sm"));
+          labelCat(superNames[i], X({x:x}), Y({y:y}) - 13, C.petrol, superAlpha);
         });
       }
       if (tt > 2.55) {
         var ca = clamp01(Math.min(tt - 2.55, 1));
-        labelAt(tt < 3.6 ? (DE ? "Lebewesen" : "living things") : (DE ? "Seiendes" : "what exists"), X(center), Y(center) - 18, C.green, ca, api.font("canvas"));
+        labelCat(tt < 3.6 ? (DE ? "Lebewesen" : "living things") : (DE ? "Seiendes" : "what exists"), X(center), Y(center) - 22, C.green, ca, api.font("canvas"));
       }
       if (a4 > 0.01) {
         var cx = X(center), cy = Y(center);
@@ -7888,7 +8040,7 @@
             if (i < 8) return;
             var u = clamp01((tt - 3.15) / 0.85);
             var x = lerp(cc.x, center.x, u), y = lerp(cc.y, center.y, u);
-            labelAt(clusterNames[i], X({x:x}), Y({y:y}) - 9, palette[i % palette.length], clamp01((3.92 - tt) / 0.6) * appear, Math.max(8, api.font("canvas-sm") - 1));
+            labelCat(clusterNames[i], X({x:x}), Y({y:y}) - 10, palette[i % palette.length], clamp01((3.92 - tt) / 0.6) * appear);
           });
           nodes.forEach(function (n) {
             if (n.c < 8 || tt > 3.75) return;
@@ -7904,14 +8056,66 @@
         ctx.textAlign = "center";
         ctx.fillText(DE ? "alles, was ist" : "everything that is", cx, cy + 46);
       }
-      ctx.fillStyle = C.muted;
-      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.textAlign = "left";
+      if (tt > 3.55) {
+        var hubA = clamp01((tt - 3.55) / 0.45);
+        var cxh = X(center), cyh = Y(center);
+        var halo = ctx.createRadialGradient(cxh, cyh, 4, cxh, cyh, 96);
+        halo.addColorStop(0, V.alpha(C.green, 0.20 * hubA));
+        halo.addColorStop(0.48, V.alpha(C.gold, 0.10 * hubA));
+        halo.addColorStop(1, V.alpha(C.paper, 0));
+        ctx.fillStyle = halo;
+        ctx.beginPath();
+        ctx.arc(cxh, cyh, 96, 0, Math.PI * 2);
+        ctx.fill();
+        var ux = cxh + 76, uy = cyh - 54;
+        var ua = clamp01((tt - 3.66) / 0.34);
+        if (ua > 0.01) {
+          ctx.save();
+          ctx.globalAlpha = ua;
+          ctx.setLineDash([4, 4]);
+          ctx.strokeStyle = V.alpha(C.gold, 0.86);
+          ctx.lineWidth = 1.4;
+          ctx.beginPath();
+          ctx.moveTo(ux, uy);
+          ctx.quadraticCurveTo(cxh + 36, cyh - 32, cxh + 10, cyh - 11);
+          ctx.stroke();
+          ctx.restore();
+          ctx.beginPath();
+          ctx.arc(ux, uy, 9, 0, Math.PI * 2);
+          ctx.fillStyle = V.alpha(C.paper, 0.95);
+          ctx.fill();
+          ctx.strokeStyle = C.gold;
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+          ctx.fillStyle = C.gold;
+          ctx.font = '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Barlow", sans-serif';
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("?", ux, uy + 0.5);
+          ctx.textBaseline = "alphabetic";
+          V.label(ctx, DE ? "neuer Fall" : "unseen case", ux, uy - 17, {
+            font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif',
+            color: C.gold, align: "center", alpha: ua
+          });
+        }
+      }
       var phase = tt < 0.45 ? 0 : tt < 1.45 ? 1 : tt < 2.55 ? 2 : tt < 3.55 ? 3 : 4;
+      var pl = phaseLabels[phase];
       ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
-      ctx.fillText(phaseLabels[phase], pad, 18);
+      var pw = ctx.measureText(pl).width + 18;
+      ctx.fillStyle = V.alpha(C.paper, 0.92);
+      ctx.fillRect(pad, 7, pw, 20);
+      ctx.strokeStyle = V.alpha(C.line, 0.9);
+      ctx.lineWidth = 1;
+      ctx.strokeRect(pad + 0.5, 7.5, pw - 1, 19);
+      ctx.fillStyle = C.petrol;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText(pl, pad + 9, 18);
+      ctx.textBaseline = "alphabetic";
       ctx.textAlign = "right";
-      ctx.fillText(DE ? "Weiter = verdichten" : "next = compress", w - pad, 18);
+      ctx.fillStyle = C.muted;
+      ctx.fillText(DE ? "Weiter = verdichten" : "next = compress", w - pad, 20);
       ctx.textAlign = "left";
       ctx.fillStyle = C.petrol;
       ctx.fillText(DE ? "Verstehen = in Zusammenhang bringen · Einzelheiten vergessen" : "understanding = relating · forgetting details", pad, h - 8);
@@ -8002,6 +8206,7 @@
     meadow: meadowScene,
     softmax: softmaxScene,
     manifold: manifoldScene,
+    unembed: function (root, api) { return window.UnembedScene(root, api); },
     animals: animalScene,
     model: function (root, api) { return window.TfSinusScene(root, api); },
     blocks: blocksScene,

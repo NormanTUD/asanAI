@@ -12,7 +12,7 @@
   ];
   var introSteps = DE ? [
     {
-      kicker: "01 / Chat und Code",
+      kicker: "Chat und Code",
       title: "Was ist ein LLM? Chat und Code",
       body: "Drei Unterfolien, eine Schleife: Suche, Chat und Code. Jede zeigt eine andere Oberfläche; das Modell schreibt Token für Token. Klicke Suche, Chat oder Code.",
       demoState: { scene: "media", step: 0 },
@@ -31,20 +31,20 @@
       ]
     },
     {
-      kicker: "02 / Die Schleife",
+      kicker: "Die Schleife",
       title: "Ein Wort nach dem anderen",
-      body: "Kontext ist alles, was das Modell gerade sieht: der bisherige Text, die Anweisung, die Beispiele. Vervollständige „Es war einmal ein …“ Wort für Wort: Bei jedem Schritt zieht die Demo das nächste Token aus einer Verteilung, hängt es an und wiederholt. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Am Ende steht <|endoftext|>; sobald das Modell es zieht, endet die Schleife. Die Landschaft ist eine vereinfachte Demo.",
+      body: "Jetzt schließt sich der Kreis. Der letzte Vektor h wird über W_U zu Logits, Softmax macht daraus eine Verteilung, und ein Token wird gezogen. Dann hängst du es an den Kontext, und Attention, FFN und Unembedding laufen von vorn. Vervollständige „Es war einmal ein …“ Wort für Wort: Bei jedem Schritt zieht die Demo das nächste Token aus der Verteilung. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Am Ende steht <|endoftext|>; sobald das Modell es zieht, endet die Schleife. Die Landschaft ist eine vereinfachte Demo.",
       watch: "Vervollständige „Es war einmal ein …“ Wort für Wort, bis <|endoftext|> kommt. Die Landschaft ist nur ein vereinfachtes Bild.",
       demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true, view: "default", camera: { yaw: -0.86, pitch: 0.918, zoom: 1 } },
       context: "Das Modell hat kein anderes Arbeitsgedächtnis als den Kontext. Jedes neue Token verändert, was als Nächstes wahrscheinlich ist.",
-      deep: "Eine hohe Wahrscheinlichkeit ist keine Garantie für Wahrheit. Sie ist eine Aussage über den Trainingskorpus. Sampling macht die Verteilung sichtbar; Greedy nimmt immer den wahrscheinlichsten Pfad.",
+      deep: "Eine hohe Wahrscheinlichkeit ist keine Garantie für Wahrheit. Sie ist eine Aussage über den Trainingskorpus. Sampling macht die Verteilung sichtbar; Greedy nimmt immer den wahrscheinlichsten Pfad. Jedes neue Token läuft wieder durch alle Blöcke. Der KV-Cache spart nur die Neuberechnung der Keys und Values, nicht die Schleife.",
       boxes: [
         box("in-5", "Mathematik", "Was macht Temperatur?", "Temperatur teilt die Logits vor dem Softmax: p_i ∝ exp(z_i / T). T < 1 schärft, T > 1 flacht ab. Bei T → 0 wird daraus Greedy; exakt null wird als Top-Token behandelt."),
         box("in-6", "Technik", "Warum nicht immer Greedy?", "Greedy ist deterministisch und kann in Schleifen laufen. Sampling ist vielfältiger, aber auch inkohärenter. Top-p behält die kleinste Menge, deren kumulierte Wahrscheinlichkeit p erreicht.")
       ]
     },
     {
-      kicker: "02b / Die Entscheidung",
+      kicker: "Die Wahl",
       title: "Die Verteilung ist nicht die Antwort",
       body: "Du siehst eine Wahrscheinlichkeitslandschaft: Täler sind wahrscheinlich, Berge unwahrscheinlich. Jedes Token ist ein Punkt in einem riesigen, hochdimensionalen Raum. Bei jedem Schritt berechnet das Modell nur die Wahrscheinlichkeit des nächsten Tokens, dann die des darauffolgenden; es sieht immer nur die unmittelbare Umgebung und tastet sich Schritt für Schritt weiter. Die Kugel ist das Token: Mit jeder Wahl bekommt sie Schwung und kann aus ihrem Tal in ein benachbartes entkommen; der goldene Pfad zeigt die gewählten Tokens.",
       watch: "Dreh die Szene mit Maus oder Finger. Gib der Kugel mit einer Wahl Schwung und sieh, in welches Tal sie rollt.",
@@ -61,7 +61,7 @@
     }
   ] : [
     {
-      kicker: "01 / Chat and code",
+      kicker: "Chat and code",
       title: "What is an LLM? Chat and code",
       body: "Three sub-slides, one loop: Search, chat, and code. Each shows a different surface; the model writes token by token. Click Search, Chat, or Code.",
       demoState: { scene: "media", step: 0 },
@@ -80,20 +80,20 @@
       ]
     },
     {
-      kicker: "02 / The loop",
+      kicker: "The loop",
       title: "One word after another",
-      body: "Context is everything the model can see: the text so far, the instruction, the examples. Complete “Once upon a time there was …” word by word: at each step the demo draws the next token from a distribution, appends it, and repeats. Greedy, sampling, and top-p read the same probabilities differently. At the end comes <|endoftext|>; as soon as the model draws it, the loop stops. The landscape is a simplified demo.",
+      body: "Now the circle closes. The last vector h becomes logits through W_U, softmax turns them into a distribution, and one token is drawn. Then you append it to the context, and attention, FFN, and unembedding run again. Complete “Once upon a time there was …” word by word: at each step the demo draws the next token from the distribution. Greedy, sampling, and top-p read the same probabilities differently. At the end comes <|endoftext|>; as soon as the model draws it, the loop stops. The landscape is a simplified demo.",
       watch: "Complete “Once upon a time there was …” word by word until <|endoftext|> appears. The landscape is only a simplified picture.",
       demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true, view: "default", camera: { yaw: -0.86, pitch: 0.918, zoom: 1 } },
       context: "The model has no working memory other than the context. Every new token changes what is likely next.",
-      deep: "A high probability is not a guarantee of truth. It is a statement about the training corpus. Sampling makes the distribution visible; greedy always takes the most likely path.",
+      deep: "A high probability is not a guarantee of truth. It is a statement about the training corpus. Sampling makes the distribution visible; greedy always takes the most likely path. Every new token runs through all blocks again. The KV cache only saves recomputing keys and values, not the loop.",
       boxes: [
         box("in-5", "Mathematics", "What does temperature do?", "Temperature divides the logits before softmax: p_i ∝ exp(z_i / T). T < 1 sharpens, T > 1 flattens. At T → 0 it becomes greedy; exact zero is handled as the top token."),
         box("in-6", "Technique", "Why not always greedy?", "Greedy is deterministic and can loop. Sampling is more varied, but also less coherent. Top-p keeps the smallest set whose cumulative probability reaches p.")
       ]
     },
     {
-      kicker: "02b / The choice",
+      kicker: "The choice",
       title: "The distribution is not the answer",
       body: "You see a probability landscape: valleys are likely, mountains unlikely. Every token is a point in a huge, high-dimensional space. At each step the model computes only the probability of the next token, then of the one after that; it sees only the immediate neighbourhood and feels its way forward step by step. The ball is the token: each choice gives it momentum so it can escape its valley into a neighbouring one; the gold path shows the tokens you chose.",
       watch: "Rotate the scene with mouse or finger. Give the ball momentum with a choice and watch which valley it rolls into.",
@@ -112,7 +112,7 @@
 
   var embedSteps = DE ? [
     {
-      kicker: "01 / Die Linie",
+      kicker: "Die Linie",
       title: "Bedeutung wird eine Zahl",
       body: "Wir ordnen Wörtern Zahlen zu. Auf einer Linie liegt jedes Wort an einer Stelle; der Abstand sagt, wie ähnlich zwei Wörter in dieser Eigenschaft sind. Klicke zwei Punkte: Der Mittelpunkt ist ihr Durchschnitt. Kalt (5) und warm (55) ergeben 30; kalt und heiß ergeben 52,5. Das liegt nahe bei warm, aber nicht exakt. Bedeutung ist oft eine Nähe, kein exakter Wert.",
       watch: "Klicke zwei Punkte. Wann ist der Mittelpunkt exakt, wann ungefähr?",
@@ -129,7 +129,7 @@
       sources: sources.slice(0, 4)
     },
     {
-      kicker: "02 / Die Ebene",
+      kicker: "Die Ebene",
       title: "Bedeutung bekommt eine zweite Achse",
       body: "Eine Achse kann Wörter nach einer einzigen Eigenschaft ordnen. Mann und Frau teilen die Machtposition und fallen deshalb auf derselben Stelle zusammen. Eine zweite Achse schafft freie Wege: Jetzt liegen sie nebeneinander, ohne die Machtposition zu verlieren. Derselbe Richtungsschritt erscheint zwischen König und Königin: König − Mann + Frau liegt nahe bei Königin. Die Beziehung ist eine Richtung, keine benannte Regel.",
       watch: "Vergleiche 1D und 2D. Welche Richtung wird wiederverwendet?",
@@ -146,7 +146,7 @@
       sources: sources.slice(2, 4)
     },
     {
-      kicker: "05 / Der Raum",
+      kicker: "Der Raum",
       title: "Drei Dimensionen, ein Schatten",
       body: "Eine dritte Achse hebt die Ebene in einen Raum. Jetzt können dieselben Punkte neben Macht und Geschlecht auch Rang tragen. Jede Ansicht ist eine Projektion: Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Jedes Wort ist ein Pfeil vom Ursprung: Die Richtung trägt die Bedeutung, die Länge ist Nebensache. Ziehe die Ansicht und beobachte, welche Richtung stabil bleibt. Die Tabelle zeigt zuerst die drei Dimensionen, die du siehst; ein Klick auf „4096 Dimensionen“ wechselt direkt zur vollen Rechner-Tabelle.",
       watch: "Ziehe die Ansicht. Welche Richtung bleibt stabil? Öffne am Ende die Tabelle der drei Dimensionen und danach die 4096-Dimensionen-Tabelle.",
@@ -163,7 +163,7 @@
     }
   ] : [
     {
-      kicker: "01 / The line",
+      kicker: "The line",
       title: "Meaning becomes a number",
       body: "We assign numbers to words. On a line every word sits at one position; the distance says how similar two words are in this property. Click two points: the midpoint is their average. Cold (5) and warm (55) give 30; cold and hot give 52.5. That is close to warm, but not exact. Meaning is often closeness, not an exact value.",
       watch: "Click two points. When is the midpoint exact, when approximate?",
@@ -180,7 +180,7 @@
       sources: sources.slice(0, 4)
     },
     {
-      kicker: "02 / The plane",
+      kicker: "The plane",
       title: "Meaning gets a second axis",
       body: "One axis can order words by a single property. Man and woman share the power position, so they collapse onto the same point. A second axis creates free paths: they now sit side by side without losing the power position. The same direction step appears between king and queen: king − man + woman is near queen. The relation is a direction, not a named rule.",
       watch: "Compare 1D and 2D. Which direction is reused?",
@@ -197,7 +197,7 @@
       sources: sources.slice(2, 4)
     },
     {
-      kicker: "05 / The space",
+      kicker: "The space",
       title: "Three dimensions, one shadow",
       body: "A third axis lifts the plane into a space. Now the same points can carry rank as well as power and gender. Every view is a projection: lines that cross on screen need not touch in the full space. Every word is an arrow from the origin: the direction carries the meaning, the length is secondary. Drag the view and watch which direction stays stable. The table first shows the three dimensions you see; one click on “4096 dimensions” switches straight to the full table for the computer.",
       watch: "Drag the view. Which direction stays stable? At the end, open the table of the three dimensions and then the 4096-dimension table.",
@@ -216,7 +216,7 @@
 
   var tokenizeSteps = DE ? [
     {
-      kicker: "03 / Tokenize",
+      kicker: "Tokenize",
       title: "Text wird zu IDs",
       body: "Ein Token ist kein Wort. Auf derselben Folie siehst du zwei Teile. Teil 1 zeigt die Trennung: Verständnis, unzerbrechlich und ein ganzer Satz werden in Tokens zerlegt. Teil 2 zeigt BPE: Der Algorithmus startet bei Zeichen und verschmilzt in mehreren Stufen das häufigste Paar. Aus häufigen Folgen werden längere Tokens; seltene Schriften bleiben teuer.",
       watch: "Gehe mit „Weiter“ von den Beispielen zu BPE. Welches Paar wird als Nächstes verschmolzen?",
@@ -239,7 +239,7 @@
     }
   ] : [
     {
-      kicker: "03 / Tokenize",
+      kicker: "Tokenize",
       title: "Text becomes IDs",
       body: "A token is not a word. This slide has two parts. Part 1 shows the split: understanding, unbreakable, and a whole sentence are broken into tokens. Part 2 shows BPE: the algorithm starts from characters and merges the most frequent pair in several stages. Frequent sequences become longer tokens; rare scripts stay expensive.",
       watch: "Use “Next” to go from the examples to BPE. Which pair is merged next?",
@@ -264,7 +264,7 @@
 
   var positionSteps = DE ? [
     {
-      kicker: "05 / Position",
+      kicker: "Position",
       title: "Jeder Platz bekommt einen Fingerabdruck",
       body: "Ein Token allein weiß nicht, wo es steht: „Hund“ kann an jeder Stelle im Satz auftreten. Damit die Reihenfolge zählt, kodieren wir die Position in den Token-Vektor. Dafür gibt es viele Methoden; die Demo zeigt eine sinusförmige Variante. Viele moderne Modelle wie Llama nutzen RoPE, das die Richtung des Vektors mit der Position dreht. Wichtig ist: Die Position wird Teil des Tokens, und alle folgenden Schichten sehen diese Version.",
       watch: "Bewege den Positionsregler. Wie verändert sich der Vektor, und wie wächst der Abstand auf der Kreisbahn?",
@@ -290,7 +290,7 @@
     }
   ] : [
     {
-      kicker: "05 / Position",
+      kicker: "Position",
       title: "Every slot gets a fingerprint",
       body: "A token on its own does not know where it stands: “dog” can appear anywhere in the sentence. For order to matter, we encode the position into the token vector. There are many methods; the demo shows a sinusoidal variant. Many modern models such as Llama use RoPE, which rotates the direction of the vector with the position. What matters is this: the position becomes part of the token, and every following layer sees that version.",
       watch: "Move the position slider. How does the vector change, and how does the distance in the plot change?",
@@ -318,7 +318,7 @@
 
   var attentionSteps = DE ? [
     {
-      kicker: "06 / Attend",
+      kicker: "Attend",
       title: "Kontext zieht die Bank an seinen Platz",
       body: "Woher weiß ein Wort, welche Nachbarn wichtig sind? Self-Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen. So bewegt sich „Bank“ in Richtung Geld oder Park. Klicke ein beliebiges Wort an, um seine Zeile zu sehen. Ein echter Layer hat viele Heads; die Demo zeigt einen.",
       watch: "Klicke ein Wort an. Welche Nachbarn bekommen Aufmerksamkeit?",
@@ -334,7 +334,7 @@
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } }]
     },
     {
-      kicker: "06b / Der Kontext",
+      kicker: "Der Kontext",
       title: "Attention verschiebt Bedeutungen in Kontexte",
       body: "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz und ein Wort. Die Matrix zeigt, wohin die Bank schaut; die Formel zeigt dieselben Gewichte.",
       watch: "Klicke die drei Sätze. Welches Wort zieht die Bank?",
@@ -352,7 +352,7 @@
       ]
     },
     {
-      kicker: "06c / Rauschen",
+      kicker: "Rauschen",
       title: "Attention reduziert Rauschen",
       body: "Wörter allein sind mehrdeutig. „new“ kann in der Nähe von „car“ und von „Stadt“ liegen; „york“ allein sagt wenig. Zusammen mit „york“ wird aus „new“ die Stadt New York. Attention gewichtet die Nachbarn: Die Nachbarschaft zieht „new“ und „york“ in Richtung „Stadt“ und schwächt „car“ und „England“ ab. Die Mehrdeutigkeit wird zum Signal, das die KI mit dem Kontext auflöst.",
       watch: "Schiebe den Kontext-Regler. Wann gewinnt Stadt gegen car?",
@@ -366,7 +366,7 @@
       sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "BERT-Schichten zeigen eine linguistische Pipeline.", en: "BERT layers reveal a linguistic pipeline." } }]
     },
     {
-      kicker: "06d / Die Matrix",
+      kicker: "Die Matrix",
       title: "Die kausale Matrix und die Heads",
       body: "In einer Schicht schaut Self-Attention auf den ganzen Kontext. Für jedes Token bewertet sie, wie viel es von jedem anderen sichtbaren Token übernehmen soll. Die Scores bilden eine Token-für-Token-Matrix: eine Zeile für das fragende Token, eine Spalte für das antwortende. Die Kausalmaske verbirgt die Zukunft.",
       watch: "Klicke die Matrix an. Welche Zellen sind maskiert?",
@@ -382,7 +382,7 @@
     }
   ] : [
     {
-      kicker: "06 / Attend",
+      kicker: "Attend",
       title: "Context pulls the bank into place",
       body: "How does a word know which neighbours matter? Self-attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the money or park reading. Click any word to see its row. A real layer has many heads; the demo shows one.",
       watch: "Click a word. Which neighbours receive attention?",
@@ -398,7 +398,7 @@
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } }]
     },
     {
-      kicker: "06b / The context",
+      kicker: "The context",
       title: "Attention shifts meaning into context",
       body: "Three sentences, one word: a bank without context, a bank for money, a bank in the park. Click a sentence and a word. The matrix shows where the bank looks; the formula shows the same weights.",
       watch: "Click the three sentences. Which word pulls the bank?",
@@ -416,7 +416,7 @@
       ]
     },
     {
-      kicker: "06c / Noise",
+      kicker: "Noise",
       title: "Attention reduces noise",
       body: "Words alone are ambiguous. “new” can sit near “car” and near “city”; “york” alone says little. Together with “york”, “new” becomes New York. Attention weights the neighbours: the neighbourhood pulls “new” and “york” toward “city” and weakens “car” and “England”. The ambiguity becomes a signal that the model resolves with context.",
       watch: "Move the context slider. When does city win against car?",
@@ -430,7 +430,7 @@
       sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "BERT-Schichten zeigen eine linguistische Pipeline.", en: "BERT layers reveal a linguistic pipeline." } }]
     },
     {
-      kicker: "06d / The matrix",
+      kicker: "The matrix",
       title: "The causal matrix and the heads",
       body: "Inside a layer, self-attention looks at the whole context. For every token, it scores how much that token should take from every other visible token. The scores form a token-by-token matrix: one row for the token asking, one column for the token answering. The causal mask hides the future.",
       watch: "Click the matrix. Which cells are masked?",
@@ -448,7 +448,7 @@
 
   var ffnSteps = DE ? [
     {
-      kicker: "08 / Feed-forward",
+      kicker: "Feed-forward",
       title: "Ein Muster passt, ein Wert wird geschrieben",
       body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Es hebt den Vektor in einen höheren Raum, trennt die Muster und projiziert zurück. Attention mischt Tokens; das FFN trennt die verworrenen Strukturen innerhalb eines Tokens. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.",
       watch: "Klicke die Kontexte. Welche Muster feuern? Biege den Raum, bis die Ebene trennt.",
@@ -468,7 +468,7 @@
     }
   ] : [
     {
-      kicker: "08 / Feed-forward",
+      kicker: "Feed-forward",
       title: "A pattern matches, a value is written",
       body: "The FFN is a small MLP per token: dense, activation, dense. It lifts the vector into a higher space, separates the patterns, and projects back. Attention mixes tokens; the FFN separates the entangled structures inside one token. Click the two contexts and bend the space until a plane separates them.",
       watch: "Click the contexts. Which patterns fire? Bend the space until the plane separates them.",
@@ -490,7 +490,7 @@
 
   var residualSteps = DE ? [
     {
-      kicker: "09 / Residual",
+      kicker: "Residual",
       title: "Jede Schicht schreibt in denselben Stream",
       body: "Jede Schicht liest denselben laufenden Vektor, berechnet ein Update und addiert es zurück. Nichts wird überschrieben. Frühere Notizen bleiben lesbar; spätere Schichten lesen sie und schreiben mehr.",
       watch: "Klicke die Schichten durch. Wann ändert sich der Stream am stärksten?",
@@ -504,7 +504,7 @@
     }
   ] : [
     {
-      kicker: "09 / Residual",
+      kicker: "Residual",
       title: "Every layer writes into the same stream",
       body: "Every layer reads the same running vector, computes an update, and adds it back. Nothing is overwritten. Earlier notes stay readable; later layers read them and add more.",
       watch: "Click through the layers. When does the stream change most?",
@@ -520,7 +520,7 @@
 
   var meadowSteps = DE ? [
     {
-      kicker: "11 / Die Wiese",
+      kicker: "Die Wiese",
       title: "Die Karte der Wörter",
       body: "Jedes Wort besitzt eine Zelle. Bewege den Zeiger; der Gedanke fällt in die nächste Zelle. Die goldenen Nähte sind die Stellen, an denen zwei Wörter fast gleich nah sind. Je mehr Wörter, desto kleiner die Zellen, aber die Naht verschwindet nie.",
       watch: "Bewege den Zeiger. Wann sind zwei Wörter fast gleich wahrscheinlich?",
@@ -536,7 +536,7 @@
     }
   ] : [
     {
-      kicker: "11 / The meadow",
+      kicker: "The meadow",
       title: "The map of words",
       body: "Every word owns a cell. Move the pointer; the thought falls into the nearest cell. The golden seams are where two words are almost equally near. More words make smaller cells, but the seam never disappears.",
       watch: "Move the pointer. When are two words almost equally likely?",
@@ -554,7 +554,7 @@
 
   var softmaxSteps = DE ? [
     {
-      kicker: "12 / Softmax",
+      kicker: "Softmax",
       title: "Von Logits zu einer Verteilung",
       body: "Echte GPT-2-small-Scores für zwei Prompts. Links steht der rohe Logit aus dem Skalarprodukt, rechts das, was Softmax daraus macht. Wechsle den Kontext und beobachte, wie sich die ganze Verteilung verschiebt. Die Temperatur entscheidet, wie scharf der Gewinner bevorzugt wird.",
       watch: "Fahre über ein Token und ändere die Temperatur. Was ändert sich, was bleibt?",
@@ -570,7 +570,7 @@
     }
   ] : [
     {
-      kicker: "12 / Softmax",
+      kicker: "Softmax",
       title: "From logits to a distribution",
       body: "Real GPT-2 small scores for two prompts. The left side is the raw logit from the dot product, the right side is what softmax makes of it. Switch the context and watch the whole distribution shift. Temperature decides how sharply the winner is favoured.",
       watch: "Hover a token and change the temperature. What changes, what stays?",
@@ -588,7 +588,7 @@
 
   var bookSteps = DE ? [
     {
-      kicker: "02c / Kompression",
+      kicker: "Kompression",
       title: "Verstehen heißt komprimieren",
       body: "Ein Modell, das alles speichert, kann nicht verallgemeinern. Kompression behält die Struktur und wirft Details weg. Es gibt verlustfreie und verlustbehaftete Kompression: Tokenization ist verlustfrei, der Transformer als Ganzes ist verlustbehaftet. Ziehe den Regler: Aus 144 Einzelfällen werden erst 12 Gruppen, dann 4, dann 2, dann 1. Die Taxonomie macht das sichtbar: Hauskatze → Katzenartige → Säugetiere → Wirbeltiere → Bilaterien → Tiere → Eukaryoten → Lebewesen → Etwas. Am Ende sind alle Lebewesen unter Lebewesen subsumiert; erst dann tauchen Gegenstände, die Zahl 7 und Träume auf und fallen mit allem anderen unter Seiendes.",
       watch: "Ziehe die Kompression. Ab wann werden aus Einzelfällen Gruppen, und wann verschwindet der Unterschied zwischen Tier, Pflanze und Gegenstand?",
@@ -613,7 +613,7 @@
     }
   ] : [
     {
-      kicker: "02c / Compression",
+      kicker: "Compression",
       title: "Understanding is compression",
       body: "A model that stores everything cannot generalise. Compression keeps structure and throws details away. There is lossless and lossy compression: tokenization is lossless; the transformer as a whole is lossy. Drag the slider: 144 individual cases become 12 groups, then 4, then 2, then 1. Taxonomy makes this visible: house cat → cats → mammals → vertebrates → bilaterians → animals → eukaryotes → living things → something. At the end all living things are subsumed under living things; only then do objects, the number 7, and dreams appear and fall under what exists.",
       watch: "Drag the compression. When do individual cases become groups, and when does the difference between animal, plant, and object disappear?",
@@ -641,16 +641,17 @@
   var insideSteps = DE ? [
 
     {
-      kicker: "04 / Neuronale Netze",
-      title: "Ein kleines Netz lernt den Sinus",
-      body: "Ein echtes kleines Netz: x → 32 → 32 → 32 → 1, Dense plus ReLU. Jeder Punkt ist ein Paar (x, y) = (input, output). Starte das Training mit „Weiter“ oder dem Button und beobachte den Loss. Ziehe Punkte, pausiere oder starte neu. Die grüne Kurve passt innen; links und rechts außerhalb extrapoliert sie.",
-      watch: "Starte das Training. Wie reagiert die grüne Kurve auf einen gezogenen Punkt?",
-      demoState: { scene: "model", view: "plot" },
+      kicker: "Neuronale Netze",
+      title: "Was sind neuronale Netze?",
+      body: "Ein neuronales Netz ist eine parametrisierte Funktion. Fange klein an: ein einziges Neuron mit zwei Parametern, ŷ = w·x + b. Es kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nicht biegen. Mehr Neuronen und Schichten ändern das. Schalte mit „Weiter“ oder dem Tab auf das größere Netz: 1 → 32 → 32 → 32 → 1, Dense plus ReLU. Beobachte den Loss und die Kurve; die Matrizen kannst du live öffnen.",
+      watch: "Starte das Training. Wie reagiert die Gerade? Wann biegt das größere Netz den Sinus?",
+      demoState: { scene: "model" },
       context: "Der Loss wird nur auf den Trainingspunkten berechnet. Außerhalb gibt es keine Daten; die Kurve ist eine Extrapolation.",
-      deep: "Das Netz hat drei versteckte Schichten mit je 32 ReLU-Neuronen. Der Loss wird nur auf den Trainingspunkten berechnet; außerhalb gibt es keine Daten. Deshalb kann es innen gut und außen schlecht sein. Das ist der Unterschied zwischen Approximation und Verstehen.",
+      deep: "Ein Neuron rechnet z = w x + b. Das größere Netz hat drei versteckte Schichten mit je 32 ReLU-Neuronen. Der Loss ist der mittlere quadratische Fehler. Die Gerade hat nur zwei Parameter und kann eine nichtlineare Funktion nicht approximieren. Das größere Netz kann es, braucht aber Daten und Training.",
       boxes: [
         box("mod-0", "Idee", "Was ist ein Modell?", "Ein Modell ist eine parametrisierte Funktion, die aus Eingaben Ausgaben schätzt. Beim Training werden die Parameter so angepasst, dass die Ausgaben zu den Daten passen."),
-        box("mod-layer", "Mathematik", "Die Dense-Schicht", "Ein Input, ein Neuron: z = w x + b; a = activation(z); Ausgabe = v a + c. w, b, v und c sind Parameter. Mehr Neuronen und Schichten komponieren solche Funktionen.", "\\underbrace{z}_{\\text{Input des Neurons}} = \\underbrace{w x + b}_{\\text{lineare Schicht}} \\qquad \\underbrace{a}_{\\text{Aktivierung}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{Knick oder Kurve}}"),
+        box("mod-layer", "Mathematik", "Das Neuron", "Ein Input, ein Neuron: z = w x + b; a = activation(z); Ausgabe = v a + c. w, b, v und c sind Parameter. Mehr Neuronen und Schichten komponieren solche Funktionen.", "\\underbrace{z}_{\\text{Input des Neurons}} = \\underbrace{w x + b}_{\\text{lineare Schicht}} \\qquad \\underbrace{a}_{\\text{Aktivierung}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{Knick oder Kurve}}"),
+        box("mod-line", "Grenze", "Warum reicht eine Gerade nicht?", "Ein einzelnes Neuron ist eine lineare Funktion. Es kann den Sinus nicht biegen, egal wie lange es trainiert. Erst die Aktivierung zwischen mehreren Schichten erzeugt Knicke und Kurven."),
         box("mod-loss", "Mathematik", "Was ist der Loss?", "Der Loss misst den Abstand zwischen Modell und Daten. Beim quadratischen Fehler wird jeder Abstand quadriert, gemittelt und minimiert. Training sucht Parameter, die diesen Wert senken.", "\\underbrace{L(\\theta)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mittlerer quadratischer Fehler}}"),
         box("mod-train", "Technik", "Wie wird trainiert?", "Der Gradient zeigt, wie der Loss auf jede Parameteränderung reagiert. Ein Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite."),
         box("mod-extra", "Grenze", "Warum außerhalb falsch?", "Im Trainingsbereich gibt es Daten. Außerhalb extrapoliert das Netz. Ein kleiner Trainings-Loss garantiert keine gute Extrapolation.")
@@ -661,7 +662,7 @@
       ]
     },
     {
-      kicker: "04a / Die Bausteine",
+      kicker: "Die Bausteine",
       title: "Die Bausteine eines LLM",
       body: "Ein neuronales Netz ist der gelernte Teil eines modernen LLM. Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Gehe die vier Ebenen mit „Weiter“ durch: Tokenizer, Embedding, Transformer-Blöcke und Unembedding. Die Transformer-Blöcke werden dutzende bis hunderte Male wiederholt; links siehst du die Ebene, rechts, was sie tut.",
       watch: "Gehe die Ebenen mit „Weiter“ oder der Pfeiltaste durch. Was macht jede Ebene?",
@@ -680,16 +681,17 @@
     }
   ] : [
     {
-      kicker: "04 / Neural networks",
-      title: "A small network learns the sine",
-      body: "A real small network: x → 32 → 32 → 32 → 1, dense with ReLU. Every point is a pair (x, y) = (input, output). Start training with “Next” or the button and watch the loss. Drag points, pause, or restart. The green curve fits inside; left and right outside it extrapolates.",
-      watch: "Start training. How does the green curve react to a dragged point?",
-      demoState: { scene: "model", view: "plot" },
+      kicker: "Neural networks",
+      title: "What are neural networks?",
+      body: "A neural network is a parameterised function. Start small: a single neuron with two parameters, ŷ = w·x + b. It can draw only a straight line. The demo shows exactly that: the line adapts to the points, but it cannot bend the sine. More neurons and layers change that. Switch with “Next” or the tab to the larger network: 1 → 32 → 32 → 32 → 1, dense with ReLU. Watch the loss and the curve; you can open the matrices live.",
+      watch: "Start training. How does the line react? When does the larger network bend the sine?",
+      demoState: { scene: "model" },
       context: "The loss is computed only on the training points. Outside there is no data; the curve is an extrapolation.",
-      deep: "The network has three hidden layers with 32 ReLU neurons each. The loss is computed only on the training points; outside there is no data. That is why it can be good inside and bad outside. This is the difference between approximation and understanding.",
+      deep: "One neuron computes z = w x + b. The larger network has three hidden layers with 32 ReLU neurons each. The loss is mean squared error. The line has only two parameters and cannot approximate a nonlinear function. The larger network can, but it needs data and training.",
       boxes: [
         box("mod-0", "Idea", "What is a model?", "A model is a parameterised function that estimates outputs from inputs. Training adjusts the parameters so that the outputs fit the data."),
-        box("mod-layer", "Mathematics", "The dense layer", "One input, one neuron: z = w x + b; a = activation(z); output = v a + c. w, b, v, and c are parameters. More neurons and layers compose such functions.", "\\underbrace{z}_{\\text{input to the neuron}} = \\underbrace{w x + b}_{\\text{linear layer}} \\qquad \\underbrace{a}_{\\text{activation}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{bend or curve}}"),
+        box("mod-layer", "Mathematics", "The neuron", "One input, one neuron: z = w x + b; a = activation(z); output = v a + c. w, b, v, and c are parameters. More neurons and layers compose such functions.", "\\underbrace{z}_{\\text{input to the neuron}} = \\underbrace{w x + b}_{\\text{linear layer}} \\qquad \\underbrace{a}_{\\text{activation}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{bend or curve}}"),
+        box("mod-line", "Limit", "Why is a line not enough?", "A single neuron is a linear function. It cannot bend the sine, no matter how long it trains. Only the activation between several layers creates bends and curves."),
         box("mod-loss", "Mathematics", "What is the loss?", "The loss measures the distance between model and data. With squared error, every gap is squared, averaged, and minimised. Training looks for parameters that lower this value.", "\\underbrace{L(\\theta)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mean squared error}}"),
         box("mod-train", "Technique", "How is it trained?", "The gradient shows how the loss reacts to every parameter change. An optimiser moves in the opposite direction. The learning rate sets the step size."),
         box("mod-extra", "Limit", "Why wrong outside?", "Inside the training range there is data. Outside the network extrapolates. A small training loss does not guarantee good extrapolation.")
@@ -700,7 +702,7 @@
       ]
     },
     {
-      kicker: "04a / The building blocks",
+      kicker: "The building blocks",
       title: "The building blocks of an LLM",
       body: "A neural network is the learned part of a modern LLM. An LLM is a chain of levels, not a single magic formula. Walk through the four levels with “Next”: tokenizer, embedding, transformer blocks, and unembedding. The transformer blocks repeat dozens to hundreds of times; the level is on the left, what it does on the right.",
       watch: "Walk through the levels with “Next” or the arrow key. What does each level do?",
@@ -721,10 +723,10 @@
 
   var manifoldSteps = DE ? [
     {
-      kicker: "07 / Die Übertragung",
+      kicker: "Die Übertragung",
       title: "Von Beziehungen zur Übersetzung",
       body: "Beziehungen untereinander können Bedeutung enthalten. Im vereinfachten Token-Raum liegen englische und japanische Wörter so ähnlich zueinander, dass man die eine Punktwolke in die andere überführen kann. Die Form entsteht aus den Punkten: Zwei Punkte werden verbunden, wenn ihr Abstand unter einer Schwelle liegt (Vietoris–Rips). So kann man sich Maschinenübersetzung grob vorstellen: Eine Bedeutungsform wird auf eine andere abgebildet. In einem echten Modell sind diese Formen abstrakt und viel komplexer.",
-      watch: "Drehe die Punktwolke. Welche Punkte sind verbunden, welche Wörter bleiben in Korrespondenz?",
+      watch: "Drehe die Punktwolke und ziehe den Radius. Welche Punkte sind verbunden, welche Wörter bleiben in Korrespondenz?",
       demoState: { scene: "manifold" },
       context: "Die Demo ist stark vereinfacht: zwei Punktwolken, wenige Wörter, saubere Kanten. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen; der Vietoris–Rips-Komplex macht nur die Nachbarschaften sichtbar.",
       deep: "Eine Mannigfaltigkeit ist lokal flach und global gekrümmt: In kleinen Ausschnitten sieht sie aus wie eine Ebene, als Ganzes kann sie sich biegen. Die Übersetzung entspricht einer Abbildung zwischen zwei solchen Flächen.",
@@ -738,10 +740,10 @@
     }
   ] : [
     {
-      kicker: "07 / Transport",
+      kicker: "Transport",
       title: "From relations to translation",
       body: "Relations among each other can carry meaning. In the simplified token space, English and Japanese words sit so similarly that one point cloud can be carried into the other. The shape comes from the points: two points are connected when their distance is below a threshold (Vietoris–Rips). That is a rough picture of machine translation: one meaning shape is mapped onto another. In a real model these shapes are abstract and much more complex.",
-      watch: "Rotate the point cloud. Which points are connected, and which words stay in correspondence?",
+      watch: "Rotate the point cloud and drag the radius. Which points are connected, and which words stay in correspondence?",
       demoState: { scene: "manifold" },
       context: "The demo is strongly simplified: two point clouds, few words, clean edges. The real geometry has thousands of dimensions and overlapping relations; the Vietoris–Rips complex only makes neighbourhoods visible.",
       deep: "A manifold is locally flat and globally curved: in small patches it looks like a plane, as a whole it can bend. Translation corresponds to a map between two such surfaces.",
@@ -757,7 +759,7 @@
 
   var mlpSteps = DE ? [
     {
-      kicker: "08b / Das MLP",
+      kicker: "Das MLP",
       title: "Sieh zu, wie das MLP den Raum biegt",
       body: "Nach der Attention folgt ein kleines neuronales Netz: das FFN. Es rechnet auf jedem Token einzeln und kann den Raum so biegen, dass Muster trennbar werden. Eine gerade Linie ist der einfachste Trenner, aber im ursprünglichen Raum nicht immer möglich. Das MLP hebt die Punkte in eine neue Ebene, in der die Trennung gelingt. In einem LLM läuft dieselbe Idee in Tausenden Dimensionen und hilft dem Modell, interne Zustände zu isolieren.",
       watch: "Klicke dich durch die neun Folien. Wo biegt sich der Raum, wo erscheint der Schnitt?",
@@ -772,7 +774,7 @@
     }
   ] : [
     {
-      kicker: "08b / The MLP",
+      kicker: "The MLP",
       title: "Watch the MLP bend the space",
       body: "After attention comes a small neural network: the FFN. It computes on each token separately and can bend the space so that patterns become separable. A straight line is the easiest separator, but it is not always possible in the original space. The MLP lifts the points into a new plane where it becomes possible. In an LLM the same idea runs in thousands of dimensions and helps the model isolate internal states.",
       watch: "Click through the nine slides. Where does the space bend, where does the cut appear?",
@@ -791,7 +793,7 @@
 
   var trajectorySteps = DE ? [
     {
-      kicker: "11a / GPT-2",
+      kicker: "GPT-2",
       title: "Token-Trajektorien durch GPT-2",
       body: "Echte Hidden States aus GPT-2 small für „The capital of France is“. Jede Linie folgt einem Token durch das Embedding und 12 Blöcke. Jeder Zustand hat 768 Dimensionen, zu viele für ein Bild, deshalb ist das nicht die echte Bewegung: PCA behält die drei Richtungen, in denen sich die Zustände am stärksten ändern, und flacht alles darauf ab. Die 3D-Punkte sind ein Schatten. Die Top-Vorhersage ist „ the“ (Leerzeichen plus the), aber „Paris“ liegt schon in der Nähe, obwohl es erst nach dem Leerzeichen käme. Das sind echte Messungen aus GPT-2 small, keine erfundenen Punkte.",
       watch: "Bewege den Layer-Regler. Ab wann wird „Paris“ die Top-Wahl?",
@@ -807,7 +809,7 @@
     }
   ] : [
     {
-      kicker: "11a / GPT-2",
+      kicker: "GPT-2",
       title: "Token trajectories through GPT-2",
       body: "Real hidden states from GPT-2 small for “The capital of France is”. Each line follows one token through the embedding and 12 blocks. Each state has 768 dimensions, too many to picture, so this is not the real motion: PCA keeps the three directions where the states change most and flattens everything onto them. The 3D points are a shadow. The top prediction is “ the” (space plus the), but “Paris” is already nearby, even though it would only come after the space. These are real measurements from GPT-2 small, not invented points.",
       watch: "Move the layer slider. When does “Paris” become the top choice?",
@@ -827,7 +829,7 @@
 
   var activationSteps = DE ? [
     {
-      kicker: "08a / Aktivierung",
+      kicker: "Aktivierung",
       title: "Weiche Kurven, ein Knick",
       body: "Eine Nichtlinearität wird nach der Projektion auf jede Koordinate angewendet. ReLU faltet bei null; Sigmoid und tanh biegen glatt; GELU ist glatt, aber nicht monoton. Der Knick ist das, was einen geraden Schnitt durch etwas führt, das vorher untrennbar war. Ohne Knick bleibt Tiefe wirkungslos: Zwei Dense-Schichten kollabieren zu einer Matrix.",
       watch: "Klicke die Funktionen. Wo ist der Knick, wo ist die Kurve glatt?",
@@ -845,7 +847,7 @@
     }
   ] : [
     {
-      kicker: "08a / Activation",
+      kicker: "Activation",
       title: "Smooth curves, one bend",
       body: "A nonlinearity is applied to each coordinate after the projection. ReLU folds at zero; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic. The bend is what lets a straight cut pass through something that was inseparable before. Without a bend, depth does nothing: two dense layers collapse into one matrix.",
       watch: "Click the functions. Where is the bend, where is the curve smooth?",
@@ -865,7 +867,7 @@
 
   var languageSteps = DE ? [
     {
-      kicker: "14 / Sprachen und Daten",
+      kicker: "Sprachen und Daten",
       title: "Dieselbe Schleife, viele Sprachen",
       body: "Ein Modell bekommt keine Sprachmodule. Es bekommt Text: viele Sprachen, viele Schriften, viel Unsinn. Dieselbe Schleife liest alle. Was sie lernt, hängt an den Daten: Menge, Qualität und Mischung. GPT-3 nannte 60 % Common Crawl, 22 % WebText2, 8 % Books1, 8 % Books2 und 3 % Wikipedia; die Werte sind gerundet (Brown et al., 2020, Tabelle 2.2). Klicke die Sprachen und vergleiche.",
       watch: "Klicke die Sprachen. Was bleibt gleich, was ändert sich?",
@@ -885,7 +887,7 @@
     }
   ] : [
     {
-      kicker: "14 / Languages and data",
+      kicker: "Languages and data",
       title: "The same loop, many languages",
       body: "A model does not get language modules. It gets text: many languages, many scripts, plenty of nonsense. The same loop reads all of it. What it learns depends on the data: amount, quality, and mix. GPT-3 reported 60% Common Crawl, 22% WebText2, 8% Books1, 8% Books2, and 3% Wikipedia; the values are rounded (Brown et al., 2020, Table 2.2). Click the languages and compare.",
       watch: "Click the languages. What stays the same, what changes?",
@@ -907,7 +909,7 @@
 
   var posttrainSteps = DE ? [
     {
-      kicker: "15 / Post-Training",
+      kicker: "Post-Training",
       title: "Vom Basismodell zum Assistenten",
       body: "Ein Basismodell setzt Text fort. Eine Anweisung beantwortet es nicht zuverlässig. SFT zeigt ihm gute Antworten; RLHF lernt aus menschlichen Vergleichen. Aus der Vorhersage wird ein Assistent. Klicke die drei Stufen und wähle eine Antwort.",
       watch: "Klicke Basismodell, SFT und RLHF. Welche Antwort würdest du wählen?",
@@ -926,7 +928,7 @@
     }
   ] : [
     {
-      kicker: "15 / Post-training",
+      kicker: "Post-training",
       title: "From base model to assistant",
       body: "A base model continues text. It does not reliably answer an instruction. SFT shows it good answers; RLHF learns from human comparisons. Prediction becomes an assistant. Click the three stages and choose an answer.",
       watch: "Click base model, SFT, and RLHF. Which answer would you choose?",
@@ -947,7 +949,7 @@
 
   var evalSteps = DE ? [
     {
-      kicker: "16 / Evaluation",
+      kicker: "Evaluation",
       title: "Wie gut ist das Modell?",
       body: "Ein Loss sagt, wie gut das nächste Token passt. Ein Benchmark sagt, ob das Modell Aufgaben löst. Beides ist messbar, aber nicht dasselbe. Klicke eine Aufgabe und schalte die Kontamination um.",
       watch: "Klicke MMLU, HumanEval und GSM8K. Was misst der Score, was nicht?",
@@ -966,7 +968,7 @@
     }
   ] : [
     {
-      kicker: "16 / Evaluation",
+      kicker: "Evaluation",
       title: "How good is the model?",
       body: "A loss says how well the next token fits. A benchmark says whether the model solves tasks. Both are measurable, but they are not the same. Click a task and toggle contamination.",
       watch: "Click MMLU, HumanEval, and GSM8K. What does the score measure, and what does it not?",
@@ -987,10 +989,10 @@
 
   var gradientSteps = DE ? [
     {
-      kicker: "17 / Training",
+      kicker: "Training",
       title: "Die Parameter leben auf einer Loss-Landschaft",
-      body: "Hier ist ein echtes kleines Modell: ŷ = a·x + b, mit genau zwei Parametern. Die Fläche zeigt den Loss über a und b; die Beispiele in der Seitenleiste sind die Daten. Starte das Training mit dem Button oder mit „Weiter“: Es läuft automatisch durch SGD, Adam und Momentum, ohne dass du jeden Schritt selbst auslösen musst. Die Formel darunter setzt die aktuellen Werte ein.",
-      watch: "Starte das Training. Wie verändern sich a und b, und wo im Tal endet der Punkt?",
+      body: "Hier ist ein echtes kleines Modell: ŷ = a·x + b, mit genau zwei Parametern. Die Fläche zeigt den Loss über a und b; die Beispiele in der Seitenleiste sind die Daten. Das Training startet automatisch, sobald die Folie sichtbar ist; mit Pause hältst du es an, mit „Weiter“ verlässt du die Folie erst, wenn SGD, Adam und Momentum durch sind. Die Formel darunter setzt die aktuellen Werte ein.",
+      watch: "Beobachte das Training. Wie verändern sich a und b, und wo im Tal endet der Punkt?",
       demoState: { scene: "gradient" },
       context: "Die Fläche ist diesmal kein Schnitt durch Hunderte Dimensionen: a und b sind die beiden echten Parameter. Jedes Beispiel (x, y) links erzeugt einen Fehler; der Loss ist der Mittelwert dieser quadratischen Fehler. Die Formel darunter zeigt das Modell und den aktuellen Loss.",
       deep: "Der Gradient zeigt, wie der Loss auf eine Änderung von a und b reagiert. Der Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite. In einem LLM gibt es Milliarden solcher Parameter; die Landschaft ist nicht mehr sichtbar, die Regel bleibt dieselbe.",
@@ -1012,10 +1014,10 @@
     }
   ] : [
     {
-      kicker: "17 / Training",
+      kicker: "Training",
       title: "Parameters live on a loss landscape",
-      body: "This is a real small model: ŷ = a·x + b, with exactly two parameters. The surface shows the loss over a and b; the examples in the side panel are the data. Start training with the button or with “Next”: it runs through SGD, Adam, and Momentum automatically, without a click for every step. The formula below substitutes the current values.",
-      watch: "Start training. How do a and b change, and where in the valley does the point end?",
+      body: "This is a real small model: ŷ = a·x + b, with exactly two parameters. The surface shows the loss over a and b; the examples in the side panel are the data. Training starts automatically as soon as the slide is visible; Pause stops it, and “Next” leaves the slide only after SGD, Adam, and Momentum have finished. The formula below substitutes the current values.",
+      watch: "Watch the training. How do a and b change, and where in the valley does the point end?",
       demoState: { scene: "gradient" },
       context: "This surface is not a slice through hundreds of dimensions: a and b are the two real parameters. Every example (x, y) on the left produces an error; the loss is the mean squared error. The formula below shows the model and the current loss.",
       deep: "The gradient shows how the loss reacts to a change in a and b. The optimiser moves in the opposite direction. The learning rate sets the step size. In an LLM there are billions of such parameters; the landscape is no longer visible, but the rule stays the same.",
@@ -1039,7 +1041,7 @@
 
   var kvcacheSteps = DE ? [
     {
-      kicker: "18 / Inferenz",
+      kicker: "Inferenz",
       title: "Der KV-Cache wächst mit dem Kontext",
       body: "Beim Generieren speichert das Modell Key und Value für jedes Token. Der KV-Cache wächst mit Kontextlänge, Schichten, Heads und Kopfdimension. Deshalb kostet ein langer Chat Speicher, obwohl das Modell nicht neu trainiert wird.",
       watch: "Ziehe den Kontext nach oben. Wann passt der Cache nicht mehr in 24 GB?",
@@ -1058,7 +1060,7 @@
     }
   ] : [
     {
-      kicker: "18 / Inference",
+      kicker: "Inference",
       title: "The KV cache grows with context",
       body: "During generation the model stores keys and values for every token. The KV cache grows with context length, layers, heads, and head dimension. That is why a long chat costs memory even though the model is not retrained.",
       watch: "Drag the context up. When does the cache no longer fit in 24 GB?",
@@ -1079,7 +1081,7 @@
 
   var ragSteps = DE ? [
     {
-      kicker: "19 / RAG und Agents",
+      kicker: "RAG und Agents",
       title: "Suchen, lesen, einsetzen",
       body: "Ein Modell allein hat nur seine Gewichte. RAG gibt ihm Werkzeuge: Es zerlegt Quellen in Chunks, vergleicht ihre Vektoren mit der Frage und setzt die besten Chunks in den Kontext. Ein Agent kann diesen loop selbst auslösen, im Web suchen, lesen und die Antwort mit Quellen stützen.",
       watch: "Klicke Chunks an und gehe die Schritte durch. Wann landen Quellen im Kontext?",
@@ -1098,7 +1100,7 @@
     }
   ] : [
     {
-      kicker: "19 / RAG and agents",
+      kicker: "RAG and agents",
       title: "Search, read, insert",
       body: "A model on its own has only its weights. RAG gives it tools: split sources into chunks, compare their vectors with the question, and put the best chunks into the context. An agent can trigger this loop itself, search the web, read, and ground the answer in sources.",
       watch: "Click chunks and walk through the steps. When do sources enter the context?",
@@ -1122,7 +1124,7 @@
 
 
     {
-      kicker: "20 / Geschichte",
+      kicker: "Geschichte",
       title: "Geschichte in zehn Schritten",
       body: "Von den Kerben im Wolfsknochen bis zu GPT: Zehn Tabs folgen dem roten Faden aus `history.php`. Ganz früh beginnt Rechnen als Zählen mit Steinen und Kerben. Dann kommen Logik, Rechenmaschinen, das Neuron, das Perzeptron, die XOR-Krise, Backpropagation, Deep Learning, der Transformer und die LLMs. Klicke die Tabs und sieh, welche Idee jeweils weitergetragen wird.",
       watch: "Klicke die zehn Tabs. Welche Idee trägt bis zum Transformer?",
@@ -1143,7 +1145,7 @@
     }
   ] : [
     {
-      kicker: "20 / History",
+      kicker: "History",
       title: "History in ten steps",
       body: "From the notches in a wolf bone to GPT: ten tabs follow the thread from `history.php`. Arithmetic starts as counting with stones and notches. Then come logic, calculating machines, the neuron, the perceptron, the XOR crisis, backpropagation, deep learning, the transformer, and LLMs. Click the tabs and see which idea is carried forward.",
       watch: "Click the ten tabs. Which idea carries through to the transformer?",
@@ -1166,7 +1168,7 @@
 
   var philosophySteps = DE ? [
     {
-      kicker: "21 / Philosophie",
+      kicker: "Philosophie",
       title: "Du bist das Chinesische Zimmer",
       body: "Du sitzt in einem Zimmer. Durch eine Klappe kommen Zeichen, die du nicht lesen kannst. Auf dem Tisch liegt ein Regelbuch: Es sagt dir, welche Zeichenfolge du herausschreiben sollst. Du suchst die Eingabe, kopierst die passende Antwort, und von außen sieht es aus, als würdest du die Sprache verstehen. Searle (1980) nennt das den Unterschied zwischen Regeln befolgen und Bedeutung verstehen. Folge dem Regelbuch und beobachte, was du tust.",
       watch: "Folge dem Regelbuch. Wirkt deine Antwort von außen intelligent?",
@@ -1185,7 +1187,7 @@
     }
   ] : [
     {
-      kicker: "21 / Philosophy",
+      kicker: "Philosophy",
       title: "You are the Chinese Room",
       body: "You sit in a room. Through a slot come characters you cannot read. On the table is a rulebook: it tells you which string to write back. You find the input, copy the matching answer, and from the outside it looks as if you understand the language. Searle (1980) calls this the difference between following rules and understanding meaning. Follow the rulebook and watch what you do.",
       watch: "Follow the rulebook. Does your answer look intelligent from the outside?",
@@ -1204,7 +1206,57 @@
     }
   ];
 
-  var steps = introSteps.slice(0, 2).concat(introSteps.slice(2), bookSteps, insideSteps.slice(1, 2), insideSteps.slice(0, 1), activationSteps, mlpSteps, gradientSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, languageSteps, posttrainSteps, evalSteps, kvcacheSteps, ragSteps, historySteps, philosophySteps);
+  var unembedSteps = DE ? [
+    {
+      kicker: "Unembedding",
+      title: "Aus einem Vektor wird ein Wort",
+      body: "Am Ende bleibt ein einziger Vektor h. Wie wird daraus ein Wort? Das Modell vergleicht h mit den gelernten Richtungen aller Tokens. Jede Zeile von W_U ist eine solche Richtung. Das Skalarprodukt multipliziert die Koordinaten paarweise und summiert sie: Es misst, wie gut h zu einer Richtung passt. Aus den Logits macht Softmax eine Verteilung, dann wird ein Token gezogen. Drehe den Winkel und klicke dich bis zur Tokenwahl.",
+      watch: "Drehe den Winkel. Beobachte Dot-Produkt, Cosinus und Logits. Klicke Weiter bis zur Tokenwahl.",
+      demoState: { scene: "unembed" },
+      context: "Winkel statt Abstand: In hohen Dimensionen liegen fast alle Punkte ähnlich weit auseinander. Richtungen unterscheiden besser. Das Skalarprodukt ist genau die Operation, die auch eine GPU beim Shading millionenfach ausführt.",
+      deep: "W_U ist eine gelernte Matrix mit einer Zeile pro Token. logits = W_U h. Softmax: p_i = exp(z_i/T) / Σ exp(z_j/T). Der absolute Offset der Logits ist willkürlich, nur Unterschiede zählen. Danach wird ein Token gezogen, an den Kontext gehängt, und die Schleife beginnt von vorn.",
+      boxes: [
+        box("un-1", "Mathematik", "Das Skalarprodukt", "Jede Koordinate wird multipliziert, dann wird summiert. Das ist eine Multiply-Accumulate-Kette: genau das, was eine GPU parallel für Millionen Pixel rechnet.", "\\underbrace{u\\cdot v}_{\\text{Skalarprodukt}} = \\underbrace{\\sum_i \\underbrace{u_i v_i}_{\\text{paarweise Produkte}}}_{\\text{Summe}}"),
+        box("un-2", "Mathematik", "Logits und Softmax", "Jede Zeile von W_U erzeugt einen Logit. Softmax macht daraus eine Verteilung; ein Token wird gezogen.", "\\underbrace{p_i}_{\\text{Wahrscheinlichkeit}} = \\underbrace{\\frac{\\exp(z_i/T)}{\\sum_j \\exp(z_j/T)}}_{\\text{Softmax der Logits}}"),
+        box("un-3", "Technik", "Warum Winkel?", "In hohen Dimensionen verliert der euklidische Abstand an Kontrast; die meisten Punkte sind ähnlich weit entfernt. Der Winkel bleibt informativer, deshalb vergleicht das Unembedding Richtungen."),
+        box("un-4", "Geschichte", "GPU-Herkunft", "3D-Gaming brauchte Massen von Matrix- und Vektoroperationen: 4×4-Transformationen, Beleuchtung per Dot-Produkt, Shader. GeForce 256 (1999) brachte Transform and Lighting in Hardware; programmierbare Shader, CUDA (2007), SIMT und Tensor Cores (Volta, 2017) machten dieselbe Hardware für Transformer nutzbar."),
+        box("un-5", "Grenze", "Was ist vereinfacht?", "Die Demo ist klein und zweidimensional. W_U ist gelernt; die Zahlen sind didaktisch. Die echte Matrix hat Tausende Dimensionen und Zehntausende Zeilen.")
+      ],
+      sources: [
+        { label: "Aggarwal et al. (2001), On the Surprising Behavior of Distance Metrics in High Dimensional Space", url: "https://doi.org/10.1007/3-540-44503-X_27", why: { de: "Distanzen verlieren in hohen Dimensionen an Kontrast; Winkel bleiben informativ.", en: "Distances lose contrast in high dimensions; angles stay informative." } },
+        { label: "NVIDIA, CUDA", url: "https://developer.nvidia.com/cuda", why: { de: "CUDA macht die parallele Rechenleistung der GPU für allgemeine Mathematik nutzbar.", en: "CUDA exposes GPU parallelism for general mathematics." } },
+        { label: "NVIDIA, Tensor Cores", url: "https://www.nvidia.com/en-us/data-center/tensor-cores/", why: { de: "Tensor Cores beschleunigen Matrix-Multiply-Accumulate.", en: "Tensor Cores accelerate matrix multiply-accumulate." } },
+        { label: "NVIDIA, CUDA C Programming Guide", url: "https://docs.nvidia.com/cuda/cuda-programming-guide/index.html", why: { de: "SIMT-Ausführung: derselbe Befehl über viele Threads.", en: "SIMT execution: the same instruction across many threads." } },
+        { label: "GeForce 256 (Wikipedia)", url: "https://en.wikipedia.org/wiki/GeForce_256", why: { de: "Dokumentiert die erste GPU mit Hardware-Transform-and-Lighting (1999); die NVIDIA-Originalseite ist nicht mehr erreichbar.", en: "Documents the first GPU with hardware transform and lighting (1999); the original NVIDIA page is no longer reachable." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "Unembedding",
+      title: "From a vector to a word",
+      body: "In the end one vector remains: h. How does it become a word? The model compares h with the learned directions of all tokens. Every row of W_U is such a direction. The dot product multiplies the coordinates pairwise and sums them: it measures how well h fits a direction. Softmax turns the logits into a distribution, then one token is drawn. Turn the angle and click through to the token choice.",
+      watch: "Turn the angle. Watch the dot product, cosine, and logits. Click Next until the token is drawn.",
+      demoState: { scene: "unembed" },
+      context: "Angle instead of distance: in high dimensions almost all points lie at similar distances. Directions distinguish better. The dot product is exactly the operation a GPU performs millions of times while shading.",
+      deep: "W_U is a learned matrix with one row per token. logits = W_U h. Softmax: p_i = exp(z_i/T) / Σ exp(z_j/T). The absolute offset of the logits is arbitrary; only differences matter. Then one token is drawn, appended to the context, and the loop starts again.",
+      boxes: [
+        box("un-1", "Mathematics", "The dot product", "Each coordinate is multiplied, then summed. That is a multiply-accumulate chain: exactly what a GPU computes in parallel for millions of pixels.", "\\underbrace{u\\cdot v}_{\\text{dot product}} = \\underbrace{\\sum_i \\underbrace{u_i v_i}_{\\text{pairwise products}}}_{\\text{sum}}"),
+        box("un-2", "Mathematics", "Logits and softmax", "Every row of W_U produces one logit. Softmax turns the logits into a distribution; one token is drawn.", "\\underbrace{p_i}_{\\text{probability}} = \\underbrace{\\frac{\\exp(z_i/T)}{\\sum_j \\exp(z_j/T)}}_{\\text{softmax of the logits}}"),
+        box("un-3", "Technique", "Why angles?", "In high dimensions Euclidean distance loses contrast; most points are similarly far apart. Angles stay informative, which is why the unembedding compares directions."),
+        box("un-4", "History", "GPU lineage", "3D gaming needed masses of matrix and vector operations: 4×4 transforms, lighting by dot product, shaders. GeForce 256 (1999) brought transform and lighting into hardware; programmable shaders, CUDA (2007), SIMT, and Tensor Cores (Volta, 2017) made the same hardware usable for transformers."),
+        box("un-5", "Limit", "What is simplified?", "The demo is small and two-dimensional. W_U is learned; the numbers are didactic. The real matrix has thousands of dimensions and tens of thousands of rows.")
+      ],
+      sources: [
+        { label: "Aggarwal et al. (2001), On the Surprising Behavior of Distance Metrics in High Dimensional Space", url: "https://doi.org/10.1007/3-540-44503-X_27", why: { de: "Distanzen verlieren in hohen Dimensionen an Kontrast; Winkel bleiben informativ.", en: "Distances lose contrast in high dimensions; angles stay informative." } },
+        { label: "NVIDIA, CUDA", url: "https://developer.nvidia.com/cuda", why: { de: "CUDA macht die parallele Rechenleistung der GPU für allgemeine Mathematik nutzbar.", en: "CUDA exposes GPU parallelism for general mathematics." } },
+        { label: "NVIDIA, Tensor Cores", url: "https://www.nvidia.com/en-us/data-center/tensor-cores/", why: { de: "Tensor Cores beschleunigen Matrix-Multiply-Accumulate.", en: "Tensor Cores accelerate matrix multiply-accumulate." } },
+        { label: "NVIDIA, CUDA C Programming Guide", url: "https://docs.nvidia.com/cuda/cuda-programming-guide/index.html", why: { de: "SIMT-Ausführung: derselbe Befehl über viele Threads.", en: "SIMT execution: the same instruction across many threads." } },
+        { label: "GeForce 256 (Wikipedia)", url: "https://en.wikipedia.org/wiki/GeForce_256", why: { de: "Dokumentiert die erste GPU mit Hardware-Transform-and-Lighting (1999); die NVIDIA-Originalseite ist nicht mehr erreichbar.", en: "Documents the first GPU with hardware transform and lighting (1999); the original NVIDIA page is no longer reachable." } }
+      ]
+    }
+  ];
+
+  var steps = [introSteps[0]].concat(bookSteps, insideSteps.slice(1, 2), insideSteps.slice(0, 1), activationSteps, mlpSteps, gradientSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, unembedSteps, softmaxSteps, [introSteps[1]], [introSteps[2]], languageSteps, posttrainSteps, evalSteps, kvcacheSteps, ragSteps, historySteps, philosophySteps);
 
   var day = {
     id: "intuition",
