@@ -1180,3 +1180,11 @@ h1,h2,h3,h4{
 .ls-bpe-pair b{color:var(--ls-petrol);font-family:ui-monospace,monospace}
 .ls-bpe-total{margin-left:auto;color:var(--ls-ink-soft)}
 @media (max-width:640px){.ls-bpe-word{grid-template-columns:56px 26px minmax(0,1fr)}.ls-bpe-total{margin-left:0;width:100%}}
+
+.ls-model-steps{position:absolute;top:8px;left:10px;right:10px;z-index:1;display:flex;gap:5px;flex-wrap:wrap;pointer-events:none}
+.ls-model-steps span{padding:3px 7px;border:1px solid var(--ls-line);background:rgba(255,255,255,.88);font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-model-steps span.is-active{background:var(--ls-green);border-color:var(--ls-green);color:#fff}
+.ls-model-metrics{margin-left:auto;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-petrol);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+.ls-model-steps span.is-done{background:rgba(99,164,75,.14);border-color:var(--ls-green);color:var(--ls-petrol)}
+.ls-model-steps span.is-active{background:var(--ls-green);border-color:var(--ls-green);color:#fff}

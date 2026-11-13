@@ -6027,17 +6027,29 @@
     var DE = api.lang === "de";
     var el = document.createElement("div");
     el.className = "ls-model-scene";
-    el.innerHTML = '<div class="ls-model-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
-      '<div class="ls-scene-row ls-model-controls"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-model-train">' + (DE ? "Trainieren" : "Train") + '</button>' +
+    el.innerHTML = '<div class="ls-model-stage"><canvas class="ls-canvas" role="img"></canvas>' +
+        '<div class="ls-model-steps" aria-hidden="true">' +
+          '<span class="is-active" data-step="data">1 ' + (DE ? "Daten" : "Data") + '</span>' +
+          '<span data-step="model">2 ' + (DE ? "Modell" : "Model") + '</span>' +
+          '<span data-step="loss">3 Loss</span>' +
+          '<span data-step="update">4 ' + (DE ? "Update" : "Update") + '</span>' +
+          '<span data-step="fit">5 ' + (DE ? "Fit" : "Fit") + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ls-scene-row ls-model-controls"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-model-next">' + (DE ? "Weiter" : "Next") + ' →</button>' +
+        '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-model-train">' + (DE ? "Modell trainieren" : "Train model") + '</button>' +
         '<button type="button" class="ls-chip is-on ls-model-data">' + (DE ? "Daten" : "Data") + '</button>' +
         '<button type="button" class="ls-chip is-on ls-model-truth">' + (DE ? "Echte Funktion" : "True function") + '</button>' +
         '<button type="button" class="ls-chip ls-model-error">' + (DE ? "Fehler" : "Error") + '</button>' +
       '</div>' +
-      '<div class="ls-model-readout" aria-live="polite"></div>';
+      '<div class="ls-model-readout" aria-live="polite"><span class="ls-model-text"></span><span class="ls-model-metrics"></span></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-model-stage");
     var canvas = el.querySelector("canvas");
-    var readout = el.querySelector(".ls-model-readout");
+    var readout = el.querySelector(".ls-model-text");
+    var metricEl = el.querySelector(".ls-model-metrics");
+    var steps = el.querySelectorAll(".ls-model-steps [data-step]");
+    var nextBtn = el.querySelector(".ls-model-next");
     var trainBtn = el.querySelector(".ls-model-train");
     var dataBtn = el.querySelector(".ls-model-data");
     var truthBtn = el.querySelector(".ls-model-truth");
@@ -6046,7 +6058,10 @@
     var C = api.colors();
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var raf = 0, fit = 0, fitTarget = 0, fitFrom = 0, fitStart = 0, fitDone = false, time = 0;
-    var showData = true, showTruth = true, showError = false;
+    var showData = true, showTruth = true, showError = false, showModel = false;
+    var phase = 0;
+    var phaseFit = [0, 0, 0, 0.28, 0.62, 1];
+    var probeT = 0.72, plotBounds = null;
     var cards = DE ? [
       { id: "tokenizer", title: "Tokenizer", sub: "Text → Tokens", color: "lime", desc: "Zerlegt Text in Tokens: Stücke, die das Modell als Zahlen lesen kann." },
       { id: "embed", title: "Embedding", sub: "Tokens → Vektoren", color: "sky", desc: "Macht aus jeder Token-ID einen Vektor. Ähnliche Tokens landen nah beieinander." },
@@ -6072,14 +6087,79 @@
         samples.push({ t: t, v: clamp(truth(t) + (rnd() - 0.5) * 0.075, 0.04, 0.96) });
       }
     })();
+    function modelValueAt(t, f) {
+      var eased = f * f * (3 - 2 * f);
+      return baseApprox(t) + (approx(t) - baseApprox(t)) * eased;
+    }
+    function modelValue(t) { return modelValueAt(t, fit); }
+    function lossAt(f) {
+      if (!samples.length) return 0;
+      var sum = samples.reduce(function (acc, s) {
+        var d = modelValueAt(s.t, f) - s.v;
+        return acc + d * d;
+      }, 0);
+      return sum / samples.length;
+    }
+    function meanError() {
+      if (!samples.length) return 0;
+      var sum = samples.reduce(function (acc, s) { return acc + Math.abs(modelValue(s.t) - s.v); }, 0);
+      return sum / samples.length;
+    }
+    function updateMetrics() {
+      if (!metricEl) return;
+      var loss = lossAt(fit);
+      metricEl.textContent = (DE ? "Daten " : "Data ") + samples.length + ' · Loss ' + loss.toFixed(3);
+    }
+    function updateStatus() {
+      var order = ["data", "model", "loss", "update", "fit"];
+      steps.forEach(function (s) {
+        var key = s.getAttribute("data-step");
+        var i = order.indexOf(key);
+        s.classList.toggle("is-active", i === phase);
+        s.classList.toggle("is-done", i < phase);
+      });
+    }
     function updateReadout() {
       var text;
       if (active >= 0) text = cards[active].desc;
       else if (view === "blocks") text = DE ? "Ein LLM baut aus diesen vier Bausteinen eine Funktion. Klicke einen Baustein an." : "An LLM builds a function from these four blocks. Click a block.";
-      else if (showError) text = DE ? "Die senkrechten Linien sind die Fehler: der Abstand zwischen Datenpunkt und Modellkurve. Training verkleinert diese Abstände." : "The vertical lines are the errors: the distance between a data point and the model curve. Training reduces these gaps.";
-      else if (fit < 0.98) text = DE ? "Das Modell startet ohne Wissen. Es sieht die Datenpunkte und passt seine Kurve Schritt für Schritt an." : "The model starts without knowledge. It sees the data points and adjusts its curve step by step.";
-      else text = DE ? "Die grüne Kurve ist die gelernte Schätzung. Die gestrichelte Kurve ist die unbekannte Funktion, die nur in den Daten sichtbar wird." : "The green curve is the learned estimate. The dashed curve is the unknown function, visible only through the data.";
-      readout.innerHTML = '<span><b>' + (DE ? "Machine Learning" : "Machine learning") + '</b> ' + api.esc(text) + '</span>';
+      else if (phase === 0) text = DE ? "Daten sammeln: 17 Beispiele. Die echte Funktion ist unbekannt; nur die Punkte sind sichtbar." : "Collect data: 17 examples. The true function is unknown; only the points are visible.";
+      else if (phase === 1) text = DE ? "Startmodell: eine erste Schätzung. Die Parameter sind noch nicht an die Daten angepasst." : "Start model: a first estimate. The parameters are not yet fitted to the data.";
+      else if (phase === 2) text = DE ? "Loss: Die senkrechten Linien sind die Fehler. Der Loss fasst sie zu einer Zahl zusammen." : "Loss: the vertical lines are the errors. The loss turns them into one number.";
+      else if (phase < 5) text = DE ? "Update: Die Parameter bewegen die Kurve. Der Loss sinkt mit jedem Schritt." : "Update: the parameters move the curve. The loss drops with each step.";
+      else if (fit < 0.98) text = DE ? "Training: Die Kurve passt sich weiter an die Daten an." : "Training: the curve keeps fitting the data.";
+      else text = DE ? "Fertig: Die grüne Kurve approximiert die unbekannte Funktion. Der Loss ist klein, aber nicht null." : "Done: the green curve approximates the unknown function. The loss is small, but not zero.";
+      readout.innerHTML = '<b>' + (DE ? "Machine Learning" : "Machine learning") + '</b> ' + api.esc(text);
+      updateMetrics();
+      updateStatus();
+    }
+    function setPhase(i) {
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      phase = clamp(i, 0, 5);
+      fit = phaseFit[phase];
+      fitFrom = fit;
+      fitTarget = fit;
+      fitDone = phase === 5;
+      showModel = phase >= 1;
+      showError = phase >= 2;
+      updateReadout();
+      draw();
+    }
+    function nextInternal() {
+      if (phase < 5) { setPhase(phase + 1); return true; }
+      return false;
+    }
+    function prevInternal() {
+      if (phase > 0) { setPhase(phase - 1); return true; }
+      return false;
+    }
+    function nextStep() {
+      if (nextInternal()) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+    }
+    function prevStep() {
+      if (prevInternal()) return;
+      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
     }
     function cardColor(c) { return color(c.color); }
     function drawCard(x, y, w, h, idx) {
@@ -6114,8 +6194,59 @@
       ctx.fillStyle = C.lineStrong;
       ctx.fill();
     }
+    function drawLossInset(plotX, plotY, plotW) {
+      var iw = 146, ih = 64, ix = plotX + plotW - iw - 8, iy = plotY + 8;
+      ctx.fillStyle = "rgba(255,255,255,.94)";
+      ctx.fillRect(ix, iy, iw, ih);
+      ctx.strokeStyle = C.lineStrong;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(ix, iy, iw, ih);
+      ctx.fillStyle = C.petrol;
+      ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText("Loss", ix + 7, iy + 13);
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + Math.max(7, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.fillText("MSE", ix + 38, iy + 13);
+      var pts = [];
+      for (var i = 1; i <= 5; i++) pts.push({ i: i, v: lossAt(phaseFit[i]) });
+      var vals = pts.map(function (p) { return p.v; });
+      var max = Math.max.apply(null, vals.concat([0.001]));
+      var min = Math.min.apply(null, vals);
+      var span = Math.max(0.0001, max - min);
+      var gx0 = ix + 10, gy0 = iy + 22, gw = iw - 20, gh = 30;
+      ctx.strokeStyle = C.line;
+      ctx.beginPath(); ctx.moveTo(gx0, gy0 + gh); ctx.lineTo(gx0 + gw, gy0 + gh); ctx.stroke();
+      function lx(i) { return gx0 + (i - 1) / 4 * gw; }
+      function ly(v) { return gy0 + gh - (v - min) / span * gh; }
+      ctx.strokeStyle = C.petrol;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      pts.forEach(function (p, k) { if (k === 0) ctx.moveTo(lx(p.i), ly(p.v)); else ctx.lineTo(lx(p.i), ly(p.v)); });
+      ctx.stroke();
+      pts.forEach(function (p) {
+        var on = p.i === phase;
+        ctx.beginPath();
+        ctx.arc(lx(p.i), ly(p.v), on ? 3.4 : 2.2, 0, Math.PI * 2);
+        ctx.fillStyle = on ? C.green : C.paper;
+        ctx.fill();
+        ctx.strokeStyle = on ? C.green : C.petrol;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      });
+      ctx.fillStyle = C.ink;
+      ctx.font = '700 ' + Math.max(7, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "right";
+      ctx.fillText(lossAt(fit).toFixed(3), ix + iw - 7, iy + 13);
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + Math.max(6, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center";
+      ctx.fillText("1", lx(1), iy + 58);
+      ctx.fillText("5", lx(5), iy + 58);
+    }
     function drawPlot(w, h, pad) {
-      var plotX = pad, plotY = 42, plotW = w - pad * 2, plotH = Math.max(120, h - 96);
+      var plotX = pad, plotY = 58, plotW = w - pad * 2, plotH = Math.max(120, h - 112);
+      plotBounds = { x: plotX, y: plotY, w: plotW, h: plotH };
       ctx.strokeStyle = C.line;
       ctx.lineWidth = 1;
       for (var gx = 0; gx <= 4; gx++) {
@@ -6144,13 +6275,12 @@
         ctx.setLineDash([]);
         ctx.globalAlpha = 1;
       }
-      var eased = fit * fit * (3 - 2 * fit);
       var modelPts = [];
       for (var j = 0; j <= 90; j++) {
         var tj = j / 90;
-        modelPts.push({ x: px(tj), y: py(baseApprox(tj) + (approx(tj) - baseApprox(tj)) * eased) });
+        modelPts.push({ x: px(tj), y: py(modelValue(tj)) });
       }
-      if (fit > 0.01) {
+      if (showModel) {
         var fill = ctx.createLinearGradient(0, plotY, 0, plotY + plotH);
         fill.addColorStop(0, "rgba(99,164,75,.20)");
         fill.addColorStop(1, "rgba(99,164,75,0)");
@@ -6171,27 +6301,76 @@
         ctx.stroke();
       }
       if (showError) {
-        samples.forEach(function (s) {
-          var pred = baseApprox(s.t) + (approx(s.t) - baseApprox(s.t)) * eased;
+        samples.forEach(function (s, si) {
+          var pred = modelValue(s.t);
           ctx.beginPath();
           ctx.moveTo(px(s.t), py(s.v));
           ctx.lineTo(px(s.t), py(pred));
           ctx.strokeStyle = C.coral;
-          ctx.globalAlpha = 0.62;
-          ctx.lineWidth = 1.4;
+          ctx.globalAlpha = 0.68;
+          ctx.lineWidth = 1.5;
           ctx.stroke();
           ctx.globalAlpha = 1;
+          if (si === 8) {
+            ctx.fillStyle = C.coral;
+            ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+            ctx.textAlign = "left";
+            ctx.fillText(DE ? "Fehler" : "error", px(s.t) + 4, (py(s.v) + py(pred)) / 2 + 3);
+          }
         });
       }
       if (showData) samples.forEach(function (s) {
         ctx.beginPath();
-        ctx.arc(px(s.t), py(s.v), 3.4, 0, Math.PI * 2);
+        ctx.arc(px(s.t), py(s.v), 4, 0, Math.PI * 2);
         ctx.fillStyle = C.paper;
         ctx.fill();
         ctx.strokeStyle = C.blue;
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 1.6;
         ctx.stroke();
       });
+      if (showModel) {
+        ctx.fillStyle = C.green;
+        ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText(DE ? "Modell" : "model", px(0.84), py(modelValue(0.84)) + 15);
+      }
+      if (showTruth) {
+        ctx.fillStyle = C.muted;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText(DE ? "unbekannt" : "unknown", px(0.84), py(truth(0.84)) - 8);
+      }
+      var probeX = px(probeT), trueY = py(truth(probeT)), predY = py(modelValue(probeT));
+      ctx.save();
+      ctx.setLineDash([3, 4]);
+      ctx.strokeStyle = C.lineStrong;
+      ctx.globalAlpha = 0.55;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(probeX, plotY);
+      ctx.lineTo(probeX, plotY + plotH);
+      ctx.stroke();
+      ctx.restore();
+      ctx.beginPath();
+      ctx.arc(probeX, trueY, 5, 0, Math.PI * 2);
+      ctx.fillStyle = C.paper;
+      ctx.fill();
+      ctx.strokeStyle = C.muted;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      if (showModel) {
+        ctx.beginPath();
+        ctx.arc(probeX, predY, 5.5, 0, Math.PI * 2);
+        ctx.fillStyle = C.green;
+        ctx.fill();
+        ctx.strokeStyle = C.paper;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+      ctx.fillStyle = C.petrol;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center";
+      ctx.fillText(DE ? "Vorhersage" : "prediction", probeX, Math.min(h - 4, plotY + plotH + 14));
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
       var legendX = plotX + 6;
@@ -6200,7 +6379,7 @@
         ctx.fillStyle = C.blue; ctx.fillText(DE ? "Daten" : "data", legendX + 8, plotY - 12);
         legendX += 68;
       }
-      if (fit > 0.01) {
+      if (showModel) {
         ctx.fillStyle = C.green;
         ctx.fillRect(legendX, plotY - 18, 18, 2.8);
         ctx.fillText(DE ? "Modell" : "model", legendX + 24, plotY - 12);
@@ -6210,6 +6389,7 @@
         ctx.fillStyle = C.muted;
         ctx.fillText(DE ? "echte Funktion" : "true function", legendX, plotY - 12);
       }
+      if (phase >= 1) drawLossInset(plotX, plotY, plotW);
     }
     function drawBlocks(w, h, pad) {
       ctx.fillStyle = C.ink;
@@ -6281,19 +6461,30 @@
       if (fit < fitTarget) {
         var t = Math.min(1, (now - fitStart) / 1100);
         fit = fitFrom + (fitTarget - fitFrom) * (t * t * (3 - 2 * t));
-        if (t >= 1) { fit = fitTarget; fitDone = true; updateReadout(); }
+        if (t >= 1) {
+          fit = fitTarget;
+          fitDone = true;
+          phase = 5;
+          showModel = true;
+          showError = true;
+          updateReadout();
+        }
+        updateMetrics();
       }
       time = now / 1000;
       draw();
     }
     function train() {
-      fitFrom = 0;
-      fit = 0;
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      phase = 3;
+      showModel = true;
+      showError = true;
+      fitFrom = fit;
       fitTarget = 1;
       fitStart = performance.now();
       fitDone = false;
       updateReadout();
-      if (reducedMotion) { fit = 1; fitDone = true; updateReadout(); draw(); return; }
+      if (reducedMotion) { fit = 1; phase = 5; fitDone = true; updateReadout(); draw(); return; }
       if (!raf) raf = requestAnimationFrame(frame);
     }
     function start() {
@@ -6304,10 +6495,19 @@
     }
     function resize() { size = api.fit(canvas, stage); draw(); }
     trainBtn.addEventListener("click", train);
+    nextBtn.addEventListener("click", nextStep);
     function toggleChip(btn, on) { btn.classList.toggle("is-on", on); btn.setAttribute("aria-pressed", on ? "true" : "false"); }
     dataBtn.addEventListener("click", function () { showData = !showData; toggleChip(dataBtn, showData); updateReadout(); draw(); });
     truthBtn.addEventListener("click", function () { showTruth = !showTruth; toggleChip(truthBtn, showTruth); updateReadout(); draw(); });
     errorBtn.addEventListener("click", function () { showError = !showError; toggleChip(errorBtn, showError); updateReadout(); draw(); });
+    canvas.addEventListener("pointermove", function (e) {
+      if (view !== "plot" || !plotBounds) return;
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left;
+      if (x < plotBounds.x || x > plotBounds.x + plotBounds.w) return;
+      probeT = clamp((x - plotBounds.x) / plotBounds.w, 0, 1);
+      draw();
+    });
     canvas.addEventListener("pointerup", function (e) {
       if (view !== "blocks") return;
       var r = canvas.getBoundingClientRect();
@@ -6330,13 +6530,16 @@
         if (s && s.view && s.view !== view) {
           view = s.view;
           active = -1;
-          fit = 0;
-          fitTarget = 0;
-          fitDone = false;
-          updateReadout();
-          draw();
-          if (view === "plot") train();
+          setPhase(0);
         }
+      },
+      next: nextInternal,
+      prev: prevInternal,
+      onKey: function (e) {
+        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
+        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
+        return false;
       },
       pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } },
       resume: function () { start(); if (reducedMotion) draw(); },

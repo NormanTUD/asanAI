@@ -696,6 +696,7 @@
       deep: "Klassisches Programmieren beginnt mit dem Verfahren: Du schreibst jeden Schritt vor, und der Computer führt ihn aus. Bei KI drehst du das um: Du gibst Beispiele mit passenden Ausgaben, und das Training sucht die Funktion dazwischen. Die Schichten sind die Form, in der diese Funktion Platz findet.",
       boxes: [
         box("mod-0", "Idee", "Was ist ein Modell?", "Ein Modell ist eine parametrisierte Funktion, die aus Eingaben Ausgaben schätzt. Beim Training werden die Parameter so angepasst, dass die Ausgaben zu den Daten passen."),
+        box("mod-loss", "Mathematik", "Was ist der Loss?", "Der Loss misst den Abstand zwischen Modell und Daten. Beim quadratischen Fehler wird jeder Abstand quadriert, gemittelt und minimiert. Training sucht Parameter, die diesen Wert senken.", "\\underbrace{L(\\theta)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mittlerer quadratischer Fehler}}"),
         box("in-11", "Mathematik", "Der Stapel", "output = layer₃(layer₂(layer₁(input))). Jede Schicht ist eine Funktion mit Parametern; die Komposition ist das Modell.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }]
@@ -728,6 +729,7 @@
       deep: "Classical programming starts with the procedure: you write down every step, and the computer executes it. AI reverses that: you provide examples with matching outputs, and training searches for the function in between. The layers are the shape that function takes.",
       boxes: [
         box("mod-0", "Idea", "What is a model?", "A model is a parameterised function that estimates outputs from inputs. Training adjusts the parameters so that the outputs fit the data."),
+        box("mod-loss", "Mathematics", "What is the loss?", "The loss measures the distance between model and data. With squared error, every gap is squared, averaged, and minimised. Training looks for parameters that lower this value.", "\\underbrace{L(\\theta)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mean squared error}}"),
         box("in-11", "Mathematics", "The stack", "output = layer₃(layer₂(layer₁(input))). Each layer is a function with parameters; the composition is the model.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }]
