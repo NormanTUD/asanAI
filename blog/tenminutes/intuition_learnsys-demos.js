@@ -66,7 +66,7 @@
     var miniTable = scene.querySelector(".ls-embed-mini-table");
     var highdimEl = scene.querySelector(".ls-embed-highdim");
     var mathEl = formula.querySelector(".ls-math");
-    var ctx = null, size = null, raf = 0, last = 0, reserveTimer = 0;
+    var ctx = null, size = null, raf = 0, last = 0, reserveTimer = 0, reserveIdle = 0;
     var hits = [], hover = null, drag = null, suppressClick = false;
     var dimMix = 0, dimTarget = 0;
     var st = {
@@ -1046,9 +1046,21 @@
         formula.style.maxHeight = fH + "px";
       }
     }
+    function runReserve() {
+      reserveTimer = 0;
+      if (reserveIdle && window.cancelIdleCallback) { try { window.cancelIdleCallback(reserveIdle); } catch (e) {} }
+      reserveIdle = 0;
+      if (window.requestIdleCallback) {
+        reserveIdle = window.requestIdleCallback(reserveHeights, { timeout: 1200 });
+      } else {
+        reserveHeights();
+      }
+    }
     function scheduleReserve() {
       clearTimeout(reserveTimer);
-      reserveTimer = setTimeout(reserveHeights, 140);
+      if (reserveIdle && window.cancelIdleCallback) { try { window.cancelIdleCallback(reserveIdle); } catch (e) {} }
+      reserveIdle = 0;
+      reserveTimer = setTimeout(runReserve, 140);
     }
     function resize() {
       size = api.fit(canvas, stage);
@@ -1105,8 +1117,8 @@
     }
     renderControls();
     resize();
-    reserveHeights();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(reserveHeights);
+    scheduleReserve();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleReserve);
     return {
       update: function (s) { applyState(s || {}); },
       pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } },
@@ -1115,6 +1127,7 @@
       destroy: function () {
         if (raf) cancelAnimationFrame(raf);
         clearTimeout(reserveTimer);
+        if (reserveIdle && window.cancelIdleCallback) { try { window.cancelIdleCallback(reserveIdle); } catch (e) {} }
         if (ro) ro.disconnect();
         window.removeEventListener("resize", resize);
         scene.parentNode.removeChild(scene);
@@ -1493,9 +1506,9 @@
     var codePre = el.querySelector(".ls-code-body");
     function fitCode() {
       if (!codePre) return;
-      var max = 14, min = 6;
-      for (var fs = max; fs >= min; fs -= 0.5) {
-        codePre.style.fontSize = fs + "px";
+      var sizes = [14, 12, 10, 8, 7, 6];
+      for (var i = 0; i < sizes.length; i++) {
+        codePre.style.fontSize = sizes[i] + "px";
         codePre.style.lineHeight = "1.35";
         if (codePre.scrollHeight <= codePre.clientHeight + 1 && codePre.scrollWidth <= codePre.clientWidth + 1) break;
       }
@@ -6257,6 +6270,13 @@
       canvas.__lsModel = { hits: hits, active: active, view: view };
     }
     function frame(now) {
+      var active = view === "blocks" || fit < fitTarget;
+      if (!active) {
+        raf = 0;
+        draw();
+        updateReadout();
+        return;
+      }
       raf = requestAnimationFrame(frame);
       if (fit < fitTarget) {
         var t = Math.min(1, (now - fitStart) / 1100);
@@ -6276,7 +6296,12 @@
       if (reducedMotion) { fit = 1; fitDone = true; updateReadout(); draw(); return; }
       if (!raf) raf = requestAnimationFrame(frame);
     }
-    function start() { if (reducedMotion) { fit = 1; fitTarget = 1; draw(); return; } train(); }
+    function start() {
+      if (reducedMotion) { fit = 1; fitTarget = 1; draw(); return; }
+      if (view === "blocks") { if (!raf) raf = requestAnimationFrame(frame); return; }
+      if (fit < fitTarget) { if (!raf) raf = requestAnimationFrame(frame); return; }
+      draw();
+    }
     function resize() { size = api.fit(canvas, stage); draw(); }
     trainBtn.addEventListener("click", train);
     function toggleChip(btn, on) { btn.classList.toggle("is-on", on); btn.setAttribute("aria-pressed", on ? "true" : "false"); }
@@ -7146,7 +7171,7 @@
     function figuresHTML(e) {
       if (!e.images || !e.images.length) return "";
       return '<div class="ls-history-figures">' + e.images.map(function (im) {
-        return '<figure class="ls-history-figure"><img src="' + api.esc(im.src) + '" alt="' + api.esc(im.alt) + '"><figcaption>' + api.esc(im.cap) + ' <a href="' + api.esc(im.href) + '" target="_blank" rel="noopener">' + (DE ? "Quelle" : "Source") + '</a></figcaption></figure>';
+        return '<figure class="ls-history-figure"><img src="' + api.esc(im.src) + '" alt="' + api.esc(im.alt) + '" loading="lazy" decoding="async"><figcaption>' + api.esc(im.cap) + ' <a href="' + api.esc(im.href) + '" target="_blank" rel="noopener">' + (DE ? "Quelle" : "Source") + '</a></figcaption></figure>';
       }).join("") + '</div>';
     }
     function sourcesHTML(e) {
