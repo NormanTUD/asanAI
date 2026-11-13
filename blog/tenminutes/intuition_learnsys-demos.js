@@ -5759,7 +5759,7 @@
       var q = project(pts[i]);
       var dx = align === "right" ? -9 : 9;
       V.label(ctx, text, q.x + dx, q.y - 9, {
-        font: '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif',
+        font: '700 ' + Math.max(11, api.font("canvas-sm") + 1) + 'px "Open Sans", sans-serif',
         color: color, align: align, alpha: alpha
       });
     }
@@ -5785,10 +5785,25 @@
       var sProj = drawCloud(ctx, source, sourceEdges, C.blue);
       var tProj = drawCloud(ctx, tPts, targetEdges, C.green);
       var aligned = score() / 100;
-      ANCHORS.forEach(function (idx) {
+      var combined = aligned > 0.70;
+      ANCHORS.forEach(function (idx, ai) {
+        if (hover && hover.index === idx) return;
         var pair = WORDS[idx];
-        drawLabelAt(source, idx, pair[0], C.blue, "right", 0.62 * (1 - aligned) + 0.08);
-        drawLabelAt(tPts, idx, pair[1], C.green, "left", 0.62 * (1 - aligned) + 0.08);
+        if (combined) {
+          var a = project(source[idx]);
+          var b = project(tPts[idx]);
+          var mx = (a.x + b.x) / 2;
+          var my = (a.y + b.y) / 2 + (ai % 2 ? 9 : -9);
+          V.tokenChip(ctx, pair[0] + " · " + pair[1], mx, my, C.gold, C, {
+            size: Math.max(10, api.font("canvas-sm") + 1),
+            align: "center",
+            fill: V.alpha(C.gold, 0.12),
+            width: 1.1
+          });
+        } else {
+          drawLabelAt(source, idx, pair[0], C.blue, "right", 0.92);
+          drawLabelAt(tPts, idx, pair[1], C.green, "left", 0.92);
+        }
       });
       if (hover) {
         var pair = WORDS[hover.index];

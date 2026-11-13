@@ -725,7 +725,7 @@
     {
       kicker: "Die Übertragung",
       title: "Von Beziehungen zur Übersetzung",
-      body: "Beziehungen untereinander können Bedeutung enthalten. Zwei Punktwolken zeigen dieselben Wörter in Englisch und Japanisch. Die Form entsteht aus den Punkten: Zwei Punkte werden verbunden, wenn ihr Abstand unter einer Schwelle liegt (Vietoris–Rips). Drehe und verschiebe die japanische Wolke, bis sie auf der englischen liegt: Dann sitzt jedes Wort auf seiner Übersetzung, allein durch seine Position. Fahre mit der Maus über einen Punkt, um das Wort zu sehen. Klicke „Übersetzung finden“ oder „Weiter“, um die Translation und Rotation zu finden.",
+      body: "Beziehungen untereinander können Bedeutung enthalten. Zwei Punktwolken zeigen dieselben Wörter in Englisch und Japanisch. Die Form entsteht aus den Punkten: Zwei Punkte werden verbunden, wenn ihr Abstand unter einer Schwelle liegt (Vietoris–Rips). Drehe und verschiebe die japanische Wolke, bis sie auf der englischen liegt: Dann sitzt jedes Wort auf seiner Übersetzung, allein durch seine Position. Einige Ankerwörter sind in beiden Sprachen beschriftet; über jeden Punkt kannst du mit der Maus fahren, um mehr zu sehen. Klicke „Übersetzung finden“ oder „Weiter“, um die Translation und Rotation zu finden.",
       watch: "Drehe und verschiebe die japanische Wolke. Fahre über die Punkte, um die Wörter zu sehen. Klicke „Übersetzung finden“ oder „Weiter“.",
       demoState: { scene: "manifold" },
       context: "Die Demo ist stark vereinfacht: zwei Punktwolken, viele Wörter, saubere Kanten. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen; der Vietoris–Rips-Komplex macht nur die Nachbarschaften sichtbar.",
@@ -742,7 +742,7 @@
     {
       kicker: "Transport",
       title: "From relations to translation",
-      body: "Relations among each other can carry meaning. Two point clouds show the same words in English and Japanese. The shape comes from the points: two points are connected when their distance is below a threshold (Vietoris–Rips). Rotate and translate the Japanese cloud until it sits on the English one: then every word sits on its translation, from position alone. Hover over a point to see its word. Click “Find translation” or “Next” to find the rotation and translation.",
+      body: "Relations among each other can carry meaning. Two point clouds show the same words in English and Japanese. The shape comes from the points: two points are connected when their distance is below a threshold (Vietoris–Rips). Rotate and translate the Japanese cloud until it sits on the English one: then every word sits on its translation, from position alone. A few anchor words are labelled in both languages; hover over any point to see more. Click “Find translation” or “Next” to find the rotation and translation.",
       watch: "Rotate and translate the Japanese cloud. Hover the points to see the words. Click “Find translation” or “Next”.",
       demoState: { scene: "manifold" },
       context: "The demo is strongly simplified: two point clouds, many words, clean edges. The real geometry has thousands of dimensions and overlapping relations; the Vietoris–Rips complex only makes neighbourhoods visible.",
@@ -1343,9 +1343,9 @@
       kicker: "Die Daten",
       title: "Gauß, Ceres und die Methode der kleinsten Quadrate",
       body: "Am 1. Januar 1801 entdeckte Giuseppe Piazzi Ceres, den ersten Asteroiden, und verlor ihn nach 41 Tagen Beobachtung hinter der Sonne. Carl Friedrich Gauß behandelte die verrauschten Positionen als ein Ganzes und nahm an, dass die wahre Bahn in der Mitte der Fehler liegt. Seine Methode der kleinsten Quadrate minimierte den quadrierten Abstand zwischen Beobachtungen und Bahn und sagte voraus, wo Ceres wieder auftauchen würde (Stigler, 1981). Drehe am Teleskop: Je besser die Messung, desto enger die Glockenkurve. Der Ausgleich glaubt keiner einzelnen Messung; er wählt die Kurve, die allen zugleich am nächsten bleibt. Dieselbe Regel trainiert noch moderne Modelle.",
-      watch: "Bewege den Teleskop-Regler. Wie verändert sich die Streuung, und wie nah bleibt die Ausgleichskurve an der wahren Bahn?",
+      watch: "Bewege den Teleskop-Regler. Wie verändert sich die Wolke, und wie eng wird die Glockenkurve?",
       demoState: { scene: "gauss" },
-      context: "Die Beobachtungen sind synthetisch, nicht Piazzis originale Messungen. Der Plot zeigt das Prinzip: eine wahre Bahn, eine Wolke verrauschter Messungen und die Glockenkurve ihrer Fehler. Die Ausgleichskurve ist eine Kleinste-Quadrate-Anpassung.",
+      context: "Die Beobachtungen sind synthetisch, nicht Piazzis originale Messungen. Der Plot zeigt das Prinzip: eine wahre Bahn (grün), eine Wolke verrauschter Messungen (blau) und die Glockenkurve ihrer Fehler. Die Methode der kleinsten Quadrate sucht die Bahn, die allen Beobachtungen zugleich am nächsten liegt.",
       deep: "Gauß veröffentlichte die Methode 1809. Sie wählt die Parameter, die die Summe der quadrierten Abstände minimieren. Ein einzelner Ausreißer zählt quadriert, aber viele kleine Fehler mitteln sich. Dieselbe Arithmetik erscheint in jedem trainierten Netz: Ein Modell ist eine Kurve, die Daten sind verrauschte Punkte, und das Training wählt die Gewichte, deren Vorhersagen im Durchschnitt am nächsten an den Beobachtungen liegen.",
       boxes: [
         box("gauss-1", "Geschichte", "Ceres und Piazzi", "Piazzi entdeckte Ceres am 1. Januar 1801 und verlor sie nach 41 Tagen hinter der Sonne. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981)."),
@@ -1364,9 +1364,9 @@
       kicker: "Data",
       title: "Gauss, Ceres, and the method of least squares",
       body: "On 1 January 1801 Giuseppe Piazzi discovered Ceres, the first asteroid, and lost it behind the Sun after 41 days of observation. Carl Friedrich Gauss treated the noisy positions as a whole and assumed that the true orbit lies in the middle of the errors. His method of least squares minimised the squared distance between observations and orbit and predicted where Ceres would reappear (Stigler, 1981). Turn the telescope: the better the measurement, the narrower the bell curve. The fit believes no single measurement; it chooses the curve that stays closest to all of them at once. The same rule still trains modern models.",
-      watch: "Move the telescope slider. How does the scatter change, and how close does the fit stay to the true orbit?",
+      watch: "Move the telescope slider. How does the cloud change, and how narrow does the bell curve become?",
       demoState: { scene: "gauss" },
-      context: "The observations are synthetic, not Piazzi's original measurements. The plot shows the principle: a true orbit, a cloud of noisy measurements, and the bell curve of their errors. The fitted curve is a least-squares fit.",
+      context: "The observations are synthetic, not Piazzi's original measurements. The plot shows the principle: a true orbit (green), a cloud of noisy measurements (blue), and the bell curve of their errors. The method of least squares looks for the orbit that stays closest to all observations at once.",
       deep: "Gauss published the method in 1809. It chooses the parameters that minimise the sum of squared distances. A single outlier counts squared, but many small errors average out. The same arithmetic appears in every trained network: a model is a curve, the data are noisy points, and training chooses the weights whose predictions are closest to the observations on average.",
       boxes: [
         box("gauss-1", "History", "Ceres and Piazzi", "Piazzi discovered Ceres on 1 January 1801 and lost it behind the Sun after 41 days. Gauss predicted with least squares where it would reappear (Stigler, 1981)."),

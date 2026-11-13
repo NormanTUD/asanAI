@@ -1573,11 +1573,6 @@ h1,h2,h3,h4{
 
 /* Gauss, Ceres, and least squares */
 .ls-gauss-scene{height:100%;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 228px;grid-template-rows:minmax(0,1fr) auto auto auto;gap:8px;padding:2px;overflow-y:auto}
-.ls-gauss-main{display:grid;grid-template-rows:minmax(220px,1fr) 104px;gap:8px;min-height:0}
-.ls-gauss-plot{position:relative;border:1px solid var(--ls-line);background:#fff;overflow:hidden;min-height:220px}
-.ls-gauss-plot canvas{position:absolute;inset:0;width:100%;height:100%}
-.ls-gauss-error{position:relative;border:1px solid var(--ls-line);background:#fff;overflow:hidden;height:104px}
-.ls-gauss-error canvas{position:absolute;inset:0;width:100%;height:100%}
 .ls-gauss-side{display:flex;flex-direction:column;gap:8px;min-height:0;overflow:auto}
 .ls-gauss-fig{margin:0;border:1px solid var(--ls-line);background:#fff;display:flex;flex-direction:column;min-height:0}
 .ls-gauss-fig img{display:block;width:100%;height:116px;object-fit:cover}
@@ -1590,7 +1585,6 @@ h1,h2,h3,h4{
 .ls-gauss-note{grid-column:1/-1;margin:0;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
 @media (max-width:760px){
   .ls-gauss-scene{grid-template-columns:1fr;grid-template-rows:auto auto auto auto auto}
-  .ls-gauss-main{grid-template-rows:minmax(240px,1fr) 96px}
   .ls-gauss-side{flex-direction:row;overflow-x:auto}
   .ls-gauss-fig{flex:1 1 50%;min-width:150px}
   .ls-gauss-fig img{height:96px}
@@ -1641,3 +1635,19 @@ h1,h2,h3,h4{
   color:var(--ls-scene-muted);
 }
 :where(.ls-scene-host) :where(canvas){max-width:100%}
+
+/* Ceres: the statistics-page two-panel plot (scatter + error histogram) */
+.ls-gauss-plots{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto minmax(0,1fr);gap:8px;min-height:0}
+.ls-gauss-plot-title{grid-column:1/-1;font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol);padding:0 2px 1px}
+.ls-gauss-panel{position:relative;border:1px solid var(--ls-line);background:#fff;overflow:hidden;min-height:200px}
+.ls-gauss-panel canvas{position:absolute;inset:0;width:100%;height:100%}
+.ls-gauss-telescope{display:grid;grid-template-columns:auto minmax(110px,1fr) auto auto;gap:8px;align-items:center;flex:1 1 380px;min-width:0;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-gauss-telescope input{width:100%}
+.ls-gauss-telescope output{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol);white-space:nowrap}
+@media (max-width:760px){
+  .ls-gauss-plots{grid-template-columns:1fr;grid-template-rows:auto 220px 220px}
+  .ls-gauss-panel{min-height:220px}
+  .ls-gauss-telescope{grid-template-columns:1fr;gap:3px}
+  .ls-gauss-telescope span{display:block}
+  .ls-gauss-telescope span:last-of-type{text-align:right}
+}
