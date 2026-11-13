@@ -903,3 +903,31 @@ items are a human visual review and an explicit commit/push decision.
   says it is a didactic simplification.
 - The “year 2016 / zettabyte era” is sourced to Cisco (2016), “The
   Zettabyte Era Officially Begins”; 10²¹ bytes is the definition used there.
+
+## Correction after visual review (2026-11-13, latest)
+
+1. [~] **Gauss/Ceres visualization must match the statistics page.**
+   The current orbit/ellipse + Fourier-fit canvas is not the wanted visual.
+   Replace it with the visualization from `blog/statistics_i.php` /
+   `statistics.js` (`renderCeresAstronomy`):
+   - left panel: a green “True Orbit” spline over time / arc, with about 150
+     blue/indigo noisy observations;
+   - right panel: a histogram of the actual residual errors plus the red
+     theoretical bell curve;
+   - one slider from “Better Telescopes” to “Worse Telescopes” (sigma about
+     0.1–2.0);
+   - title “Ceres: Wahrheit gegen verrauschte Beobachtungen”;
+   - synthetic-data note: “Synthetische Daten, nicht Piazzis Messungen.”
+   Keep the Ceres image and the **coloured Flammarion** image with their
+   credits. Simulate the same two-panel look in the LearnSys canvas instead
+   of the current orbit/ellipse scene.
+
+2. [ ] **Manifold permanent bilingual labels.**
+   On “Von Beziehungen zur Übersetzung”, a few anchor words must be visible
+   in both languages without hovering: English label on the English cloud,
+   Japanese label on the Japanese cloud, and both together when the clouds
+   are aligned. Keep the hover for all 49 words.
+
+3. [ ] Re-run the page test, height test, `php_validator.py`,
+   `check_all.py --fast`, `node --check`, `php -l`, and `git diff --check`
+   after both changes.
