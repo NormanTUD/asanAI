@@ -985,40 +985,42 @@
     {
       kicker: "17 / Training",
       title: "Die Parameter leben auf einer Loss-Landschaft",
-      body: "Ein kleines Netz mit einem Input, einem Neuron und einem Output hat zwei Parameter: w und b. Für jede Kombination berechnet der Loss den Fehler. Die Fläche zeigt x = w, y = b, z = Loss. Der grüne Ball ist der aktuelle Zustand; der Gradient zeigt bergab. Klicke Schritt und sieh, wie der Ball ins Tal rollt.",
-      watch: "Klicke Schritt. Wo rollt der Ball hin? Was passiert bei großer Lernrate?",
+      body: "Hier ist ein echtes kleines Netz: ein Eingang, vier versteckte tanh-Neuronen, ein Ausgang, 13 Parameter. Der Worker trainiert es und tastet die Loss-Fläche entlang zweier Richtungen ab. Der grüne Ball folgt der Trainings-Trajektorie. Ziehe die Fläche, spiele die Schritte ab und ändere die Lernrate.",
+      watch: "Spiele die Trajektorie ab. Wo rollt der Ball hin? Was passiert bei großer Lernrate?",
       demoState: { scene: "gradient" },
-      context: "Die echte Landschaft ist hochdimensional; hier siehst du zwei Parameter. Der Ball tastet sich an die richtigen Werte heran, weil jeder Schritt den Loss senkt.",
+      context: "Die Fläche ist ein zweidimensionaler Schnitt durch eine viel höherdimensionale Landschaft: θ = θ* + α d₁ + β d₂. Der Worker berechnet jeden Punkt und die Trajektorie im Hintergrund.",
       deep: "Der Gradient ist die Steigung des Loss. Der Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite. In einem LLM gibt es Milliarden solcher Parameter; die Landschaft ist nicht mehr sichtbar, die Regel bleibt dieselbe.",
       boxes: [
-        box("grad-1", "Mathematik", "Das kleine Netz", "ŷ = w x + b. Ein Input, ein Neuron, ein Output. Die Parameter w und b spannen die Loss-Fläche auf.", "\\underbrace{\\hat y}_{\\text{Vorhersage}} = \\underbrace{w x + b}_{\\text{ein Neuron}}"),
-        box("grad-2", "Mathematik", "Der Loss", "L(w,b) = 1/n Σ (ŷ_i − y_i)². Die Fläche ist die Höhe des Loss über der w-b-Ebene.", "\\underbrace{L(w,b)}_{\\text{Loss-Fläche}} = \\underbrace{\\frac{1}{n}\\sum_i (\\hat y_i-y_i)^2}_{\\text{mittlerer Fehler}}"),
-        box("grad-3", "Technik", "Der Schritt", "w ← w − η ∂L/∂w, b ← b − η ∂L/∂b. Der Gradient zeigt bergauf; der Ball geht bergab.", "\\underbrace{\\begin{pmatrix}w\\\\b\\end{pmatrix}_{t+1}}_{\\text{neue Parameter}} = \\underbrace{\\begin{pmatrix}w\\\\b\\end{pmatrix}_t}_{\\text{alte Parameter}} - \\underbrace{\\eta}_{\\text{Lernrate}} \\underbrace{\\nabla L}_{\\text{Gradient}}"),
-        box("grad-4", "Grenze", "Warum ist das nicht das ganze LLM?", "Echte Netze haben Millionen Dimensionen und viele lokale Strukturen. Die Demo zeigt die Idee, nicht die Landschaft eines LLM.")
+        box("grad-1", "Mathematik", "Das echte Modell", "Ein Eingang, vier tanh-Neuronen, ein Ausgang: h_j = tanh(w_j x + b_j), ŷ = Σ_j v_j h_j + c. Das sind 13 Parameter.", "\\underbrace{h_j}_{\\text{versteckt}} = \\underbrace{\\tanh(w_j x + b_j)}_{\\text{Neuron }j} \\qquad \\underbrace{\\hat y}_{\\text{Ausgang}} = \\underbrace{\\sum_j v_j h_j + c}_{\\text{lineare Ausgabe}}"),
+        box("grad-2", "Mathematik", "Die Loss-Fläche", "L(θ) = 1/n Σ (ŷ_i − y_i)². Die Fläche zeigt einen Schnitt: θ = θ* + α d₁ + β d₂.", "\\underbrace{L(\\theta)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_i (\\hat y_i-y_i)^2}_{\\text{mittlerer Fehler}}"),
+        box("grad-3", "Technik", "Der Schritt", "θ ← θ − η ∇L. Der Gradient zeigt bergauf; der Ball geht bergab. Der Worker führt die Schritte aus und schickt die Projektion zurück.", "\\underbrace{\\theta_{t+1}}_{\\text{neu}} = \\underbrace{\\theta_t}_{\\text{alt}} - \\underbrace{\\eta}_{\\text{Lernrate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{Gradient}}"),
+        box("grad-4", "Grenze", "Warum ist das nicht das ganze LLM?", "Echte Netze haben Milliarden Dimensionen. Die zwei Richtungen sind ein lesbarer Schnitt, keine vollständige Landschaft.")
       ],
       sources: [
         { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } },
-        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten für mehrschichtige Netze.", en: "Gradients for multilayer networks." } }
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten für mehrschichtige Netze.", en: "Gradients for multilayer networks." } },
+        { label: "Li et al. (2018), Visualizing the Loss Landscape", url: "https://arxiv.org/abs/1712.09913", why: { de: "Zweidimensionale Schnitte durch Loss-Landschaften.", en: "Two-dimensional slices through loss landscapes." } }
       ]
     }
   ] : [
     {
       kicker: "17 / Training",
       title: "Parameters live on a loss landscape",
-      body: "A small network with one input, one neuron, and one output has two parameters: w and b. For every combination, the loss measures the error. The surface shows x = w, y = b, z = loss. The green ball is the current state; the gradient points downhill. Click Step and watch the ball roll into the valley.",
-      watch: "Click Step. Where does the ball roll? What happens with a large learning rate?",
+      body: "This is a real small network: one input, four hidden tanh neurons, one output, 13 parameters. The worker trains it and samples the loss surface along two directions. The green ball follows the training trajectory. Drag the surface, play the steps, and change the learning rate.",
+      watch: "Play the trajectory. Where does the ball roll? What happens with a large learning rate?",
       demoState: { scene: "gradient" },
-      context: "The real landscape is high-dimensional; here you see two parameters. The ball approaches the right values because every step lowers the loss.",
+      context: "The surface is a two-dimensional slice through a much higher-dimensional landscape: θ = θ* + α d₁ + β d₂. The worker computes every point and the trajectory in the background.",
       deep: "The gradient is the slope of the loss. The optimiser moves in the opposite direction. The learning rate sets the step size. In an LLM there are billions of such parameters; the landscape is no longer visible, but the rule stays the same.",
       boxes: [
-        box("grad-1", "Mathematics", "The small network", "ŷ = w x + b. One input, one neuron, one output. The parameters w and b span the loss surface.", "\\underbrace{\\hat y}_{\\text{prediction}} = \\underbrace{w x + b}_{\\text{one neuron}}"),
-        box("grad-2", "Mathematics", "The loss", "L(w,b) = 1/n Σ (ŷ_i − y_i)². The surface is the height of the loss over the w-b plane.", "\\underbrace{L(w,b)}_{\\text{loss surface}} = \\underbrace{\\frac{1}{n}\\sum_i (\\hat y_i-y_i)^2}_{\\text{mean error}}"),
-        box("grad-3", "Technique", "The step", "w ← w − η ∂L/∂w, b ← b − η ∂L/∂b. The gradient points uphill; the ball goes downhill.", "\\underbrace{\\begin{pmatrix}w\\\\b\\end{pmatrix}_{t+1}}_{\\text{new parameters}} = \\underbrace{\\begin{pmatrix}w\\\\b\\end{pmatrix}_t}_{\\text{old parameters}} - \\underbrace{\\eta}_{\\text{learning rate}} \\underbrace{\\nabla L}_{\\text{gradient}}"),
-        box("grad-4", "Limit", "Why is this not the whole LLM?", "Real networks have millions of dimensions and many local structures. The demo shows the idea, not the landscape of an LLM.")
+        box("grad-1", "Mathematics", "The real model", "One input, four tanh neurons, one output: h_j = tanh(w_j x + b_j), ŷ = Σ_j v_j h_j + c. That is 13 parameters.", "\\underbrace{h_j}_{\\text{hidden}} = \\underbrace{\\tanh(w_j x + b_j)}_{\\text{neuron }j} \\qquad \\underbrace{\\hat y}_{\\text{output}} = \\underbrace{\\sum_j v_j h_j + c}_{\\text{linear output}}"),
+        box("grad-2", "Mathematics", "The loss surface", "L(θ) = 1/n Σ (ŷ_i − y_i)². The surface shows a slice: θ = θ* + α d₁ + β d₂.", "\\underbrace{L(\\theta)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_i (\\hat y_i-y_i)^2}_{\\text{mean error}}"),
+        box("grad-3", "Technique", "The step", "θ ← θ − η ∇L. The gradient points uphill; the ball goes downhill. The worker runs the steps and sends the projection back.", "\\underbrace{\\theta_{t+1}}_{\\text{new}} = \\underbrace{\\theta_t}_{\\text{old}} - \\underbrace{\\eta}_{\\text{learning rate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{gradient}}"),
+        box("grad-4", "Limit", "Why is this not the whole LLM?", "Real networks have billions of dimensions. The two directions are a readable slice, not the full landscape.")
       ],
       sources: [
         { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } },
-        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten für mehrschichtige Netze.", en: "Gradients for multilayer networks." } }
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten für mehrschichtige Netze.", en: "Gradients for multilayer networks." } },
+        { label: "Li et al. (2018), Visualizing the Loss Landscape", url: "https://arxiv.org/abs/1712.09913", why: { de: "Zweidimensionale Schnitte durch Loss-Landschaften.", en: "Two-dimensional slices through loss landscapes." } }
       ]
     }
   ];

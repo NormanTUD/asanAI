@@ -1283,3 +1283,17 @@ h1,h2,h3,h4{
 }
 
 .ls-media-scene .ia-phone-switch{display:none}
+
+.ls-loss-scene{height:100%;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 220px;grid-template-rows:minmax(220px,1fr) auto auto;gap:8px;padding:2px;overflow-y:auto}
+.ls-loss-stage{position:relative;min-height:220px;border:1px solid rgba(0,75,111,.08);background:#fff;overflow:hidden}
+.ls-loss-stage canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+.ls-loss-side{display:flex;flex-direction:column;gap:6px;min-height:0;border:1px solid rgba(0,75,111,.08);background:#fff;padding:8px}
+.ls-loss-net{min-height:0;display:flex;flex-direction:column;gap:4px}
+.ls-loss-net-title{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol)}
+.ls-loss-net svg{display:block;width:100%;height:auto;max-height:160px}
+.ls-loss-net-meta{font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-loss-status{font:600 var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-petrol);margin-top:auto}
+.ls-loss-controls{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ls-loss-readout{grid-column:1/-1;display:flex;gap:12px;flex-wrap:wrap;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted);min-height:2.6em}
+.ls-loss-readout b{color:var(--ls-ink);font-weight:600}
+@media (max-width:720px){.ls-loss-scene{grid-template-columns:1fr;grid-template-rows:minmax(250px,1fr) auto auto auto}.ls-loss-side{flex-direction:row;align-items:center}.ls-loss-net{flex:1}.ls-loss-net svg{max-height:110px}.ls-loss-status{margin-top:0}}
