@@ -1,13 +1,13 @@
 # Important TODO
-Status: in progress
+Status: worker done; next polish, bilingual QA, commit
 
 
 
-[ ] [TODO] 3D surface and trajectory
-[ ] [TODO] Controls: train/play/step/reset/lr
-[ ] [TODO] Worker errors and fallback
-[ ] [TODO] Colors, desktop/mobile
-[ ] [TODO] Slide text, formulas, sources
+
+
+
+
+
 [ ] [TODO] EN/DE tests, check_all
 [ ] [TODO] Commit and push
 [ ] [TODO] Final 31-day order summary
