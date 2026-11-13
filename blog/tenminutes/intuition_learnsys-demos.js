@@ -7982,6 +7982,24 @@
           if (same ? rnd() < 0.42 : rnd() < 0.022) edges.push({ a: i, b: j, same: same });
         }
       }
+      clusterCenters = [];
+      for (var cc = 0; cc < 12; cc++) {
+        var group = nodes.filter(function (n) { return n.c === cc; });
+        var sx = 0, sy = 0;
+        group.forEach(function (n) { sx += n.x0; sy += n.y0; });
+        clusterCenters.push({ x: sx / group.length, y: sy / group.length });
+      }
+      superCenters = [];
+      for (var sg = 0; sg < 4; sg++) {
+        var sc = clusterCenters.slice(sg * 3, sg * 3 + 3);
+        superCenters.push({ x: (sc[0].x + sc[1].x + sc[2].x) / 3, y: (sc[0].y + sc[1].y + sc[2].y) / 3 });
+      }
+      center = { x: superCenters.reduce(function (a, p) { return a + p.x; }, 0) / 4, y: superCenters.reduce(function (a, p) { return a + p.y; }, 0) / 4 };
+      outer = [];
+      for (var oo = 0; oo < 8; oo++) {
+        var oa2 = oo / 8 * Math.PI * 2;
+        outer.push({ x: center.x + Math.cos(oa2) * 0.34, y: center.y + Math.sin(oa2) * 0.34 });
+      }
     })();
     var clusterCenters = [], superCenters = [
       { x: 0.30, y: 0.30 }, { x: 0.70, y: 0.30 }, { x: 0.30, y: 0.70 }, { x: 0.70, y: 0.70 }
@@ -8065,7 +8083,7 @@
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      var label = tt < 0.5 ? (DE ? "144 Knoten · dichtes Netz" : "144 nodes · dense graph") : tt < 1.5 ? (DE ? "12 Subcluster" : "12 subclusters") : tt < 2.5 ? (DE ? "4 Gruppen" : "4 groups") : tt < 3.5 ? (DE ? "1 Punkt" : "1 point") : (DE ? "wieder eingebettet" : "embedded again");
+      var label = tt < 0.5 ? (DE ? "144 Knoten · dichtes Netz" : "144 nodes · dense graph") : tt < 1.5 ? (DE ? "12 Subcluster" : "12 subclusters") : tt < 2.5 ? (DE ? "4 Gruppen" : "4 groups") : tt < 3.5 ? (DE ? "1 Punkt" : "1 point") : (DE ? "wieder Punkte, wieder verbunden" : "points again, connected");
       ctx.fillText(label, pad, 18);
       ctx.textAlign = "right";
       ctx.fillText(DE ? "Weiter = verdichten" : "next = compress", w - pad, 18);
@@ -8080,21 +8098,16 @@
       patternBar.style.width = (Math.min(1, t / 4) * 100).toFixed(0) + '%';
       errorBar.style.width = Math.min(100, error / 0.35 * 100).toFixed(0) + '%';
     }
-    range.addEventListener("input", function () { t = parseFloat(range.value) || 0; out.textContent = t.toFixed(2); draw(); });
+    range.addEventListener("input", function () { stopAuto(); if (raf) cancelAnimationFrame(raf); raf = 0; playing = false; t = parseFloat(range.value) || 0; out.textContent = t.toFixed(2); draw(); });
+    var autoTimers = [];
+    function stopAuto() { autoTimers.forEach(clearTimeout); autoTimers = []; }
     el.querySelector(".ls-compress-auto").addEventListener("click", function () {
-      if (playing) { playing = false; if (raf) cancelAnimationFrame(raf); raf = 0; return; }
-      playing = true;
-      var start = performance.now(), from = t;
-      function step(now) {
-        if (!playing) return;
-        var k = Math.min(1, (now - start) / 2400);
-        t = from + (4 - from) * k;
-        range.value = String(t);
-        out.textContent = t.toFixed(2);
-        draw();
-        if (k < 1) raf = requestAnimationFrame(step); else playing = false;
-      }
-      raf = requestAnimationFrame(step);
+      stopAuto();
+      if (t >= 3.99) t = 0;
+      [1, 2, 3, 4].forEach(function (lvl, i) {
+        if (lvl <= t) return;
+        autoTimers.push(setTimeout(function () { animateTo(lvl); }, i * 1500));
+      });
     });
     function resize() { size = api.fit(canvas, stage); draw(); }
     window.addEventListener("resize", resize);
@@ -8116,10 +8129,12 @@
       raf = requestAnimationFrame(step);
     }
     function nextInternal() {
+      stopAuto();
       if (t < 3.99) { animateTo(Math.floor(t + 0.001) + 1); return true; }
       return false;
     }
     function prevInternal() {
+      stopAuto();
       if (t > 0.01) { animateTo(Math.ceil(t - 0.001) - 1); return true; }
       return false;
     }
