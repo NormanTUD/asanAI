@@ -8,8 +8,8 @@ Status: worker done; next polish, bilingual QA, commit
 
 
 
-[ ] [TODO] EN/DE tests, check_all
-[ ] [TODO] Commit and push
+
+[ ] [TODO] TF.js real net training x-32-32-32-1 + draggable function
 [ ] [TODO] Final 31-day order summary
 
 Worker: blog/tenminutes/assets/loss-landscape-worker.js
