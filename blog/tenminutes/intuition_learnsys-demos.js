@@ -6032,8 +6032,9 @@
           '<span class="is-active" data-step="data">1 ' + (DE ? "Daten" : "Data") + '</span>' +
           '<span data-step="model">2 ' + (DE ? "Modell" : "Model") + '</span>' +
           '<span data-step="loss">3 Loss</span>' +
-          '<span data-step="update">4 ' + (DE ? "Update" : "Update") + '</span>' +
-          '<span data-step="fit">5 ' + (DE ? "Fit" : "Fit") + '</span>' +
+          '<span data-step="update">4 ' + (DE ? "Update 1" : "Update 1") + '</span>' +
+          '<span data-step="update2">5 ' + (DE ? "Update 2" : "Update 2") + '</span>' +
+          '<span data-step="fit">6 ' + (DE ? "Fit" : "Fit") + '</span>' +
         '</div>' +
       '</div>' +
       '<div class="ls-scene-row ls-model-controls"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-model-next">' + (DE ? "Weiter" : "Next") + ' →</button>' +
@@ -6111,7 +6112,7 @@
       metricEl.textContent = (DE ? "Daten " : "Data ") + samples.length + ' · Loss ' + loss.toFixed(3);
     }
     function updateStatus() {
-      var order = ["data", "model", "loss", "update", "fit"];
+      var order = ["data", "model", "loss", "update", "update2", "fit"];
       steps.forEach(function (s) {
         var key = s.getAttribute("data-step");
         var i = order.indexOf(key);
