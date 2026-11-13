@@ -14,7 +14,8 @@
       '<div class="ls-sinus-stage">' +
         '<canvas class="ls-sinus-canvas" role="img"></canvas>' +
         '<div class="ls-sinus-matrices" hidden>' +
-          '<div class="ls-sinus-matrices-head"><b>' + (DE ? "Gewichte live" : "Live weights") + '</b><span>' + (DE ? "ohne Bias" : "without bias") + '</span><button type="button" class="ls-btn ls-btn--tiny ls-sinus-matrices-close" aria-label="' + (DE ? "Schließen" : "Close") + '">×</button></div>' +
+          '<div class="ls-sinus-matrices-head"><b>' + (DE ? "Gewichte live" : "Live weights") + '</b><span>' + (DE ? "live" : "live") + '</span><button type="button" class="ls-btn ls-btn--tiny ls-sinus-matrices-close" aria-label="' + (DE ? "Schließen" : "Close") + '">×</button></div>' +
+          '<p class="ls-sinus-matrices-note"></p>' +
           '<div class="ls-sinus-matrix-grid">' +
             '<figure><canvas data-matrix="0"></canvas><figcaption>W₁ · 1×32</figcaption></figure>' +
             '<figure><canvas data-matrix="1"></canvas><figcaption>W₂ · 32×32</figcaption></figure>' +
@@ -27,7 +28,7 @@
       '<div class="ls-sinus-losschart"><canvas class="ls-sinus-loss-canvas" aria-label="Loss curve"></canvas></div>' +
       '<div class="ls-sinus-controls">' +
         '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-sinus-train">' + (DE ? "Training pausieren" : "Pause training") + '</button>' +
-        '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-sinus-reset">' + (DE ? "Neu starten" : "Restart") + '</button>' +
+        '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-sinus-reset">' + (DE ? "Zurücksetzen" : "Reset") + '</button>' +
         '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-sinus-matrix-btn">' + (DE ? "Matrizen zeigen" : "Show matrices") + '</button>' +
         '<span class="ls-sinus-loss" aria-live="polite"></span>' +
       '</div>' +
@@ -41,6 +42,8 @@
     var matrixClose = el.querySelector(".ls-sinus-matrices-close");
     var matrixOverlay = el.querySelector(".ls-sinus-matrices");
     var matrixCanvases = Array.prototype.slice.call(el.querySelectorAll("[data-matrix]"));
+    var matrixFigures = Array.prototype.slice.call(el.querySelectorAll(".ls-sinus-matrix-grid figure"));
+    var matrixNote = el.querySelector(".ls-sinus-matrices-note");
     var tabs = Array.prototype.slice.call(el.querySelectorAll("[data-phase]"));
     var lossCanvas = el.querySelector(".ls-sinus-loss-canvas");
     var lossCtx = null, lossSize = null;
@@ -52,7 +55,7 @@
     var points = [];
     var phase = "linear";
     var training = false, visible = true, timer = 0;
-    var drag = null, fitReady = false;
+    var drag = null, fitReady = false, userStarted = false;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var TRAIN_END = 0.70, X_MIN = -0.20, X_MAX = 1.20, Y_MIN = -0.45, Y_MAX = 1.15;
     var TARGET_EPOCHS = 180;
@@ -332,8 +335,38 @@
         (params ? '<span><b>w</b> ' + V.fmt(params.w) + '</span><span><b>b</b> ' + V.fmt(params.b) + '</span>' : '') +
         '<span><b>(x, y)</b> ' + (DE ? "input, output" : "input, output") + '</span>';
     }
+    function drawMatrixCell(cv, value) {
+      var fit = fitSmall(cv, cv);
+      if (!fit) return;
+      fit.ctx.clearRect(0, 0, fit.w, fit.h);
+      fit.ctx.fillStyle = C.paper;
+      fit.ctx.fillRect(0, 0, fit.w, fit.h);
+      V.matrix(fit.ctx, [value], 1, 1, 6, 6, fit.w - 12, fit.h - 12, C);
+      fit.ctx.fillStyle = C.ink;
+      fit.ctx.font = '700 ' + Math.max(11, api.font("canvas") * 0.9) + 'px "Barlow", sans-serif';
+      fit.ctx.textAlign = "center";
+      fit.ctx.textBaseline = "middle";
+      fit.ctx.fillText(value.toFixed(3), fit.w / 2, fit.h / 2);
+    }
     function updateMatrixCanvases() {
-      if (matrixOverlay.hidden || phase !== "net" || !data.net.model) return;
+      if (matrixOverlay.hidden) return;
+      var isLinear = phase === "linear";
+      matrixFigures.forEach(function (fig, i) { fig.hidden = isLinear ? i > 1 : false; });
+      if (matrixNote) {
+        matrixNote.textContent = isLinear
+          ? (DE ? "1 Neuron: W ist 1×1, b ein Skalar. Die Gerade ist ŷ = w·x + b." : "1 neuron: W is 1×1, b is a scalar. The line is ŷ = w·x + b.")
+          : (DE ? "Drei versteckte Schichten: W1 1×32, W2 32×32, W3 32×32, W4 32×1. Jede Zelle ist ein Gewicht; grün positiv, blau negativ, weiß null. Ohne Bias." : "Three hidden layers: W1 1×32, W2 32×32, W3 32×32, W4 32×1. Each cell is a weight; green positive, blue negative, white zero. Without bias.");
+      }
+      if (isLinear) {
+        if (!data.linear.model) return;
+        var p = linearParams();
+        drawMatrixCell(matrixCanvases[0], p.w);
+        drawMatrixCell(matrixCanvases[1], p.b);
+        if (matrixFigures[0]) matrixFigures[0].querySelector("figcaption").textContent = "W · 1×1";
+        if (matrixFigures[1]) matrixFigures[1].querySelector("figcaption").textContent = "b · 1";
+        return;
+      }
+      if (!data.net.model) return;
       matrixCanvases.forEach(function (cv, li) {
         var layer = data.net.model.layers[li];
         if (!layer) return;
@@ -350,10 +383,12 @@
         fit.ctx.fillRect(0, 0, fit.w, fit.h);
         V.matrix(fit.ctx, Array.prototype.slice.call(vals), rows, cols, 4, 4, fit.w - 8, fit.h - 8, C);
       });
+      var labels = ["W₁ · 1×32", "W₂ · 32×32", "W₃ · 32×32", "W₄ · 32×1"];
+      matrixFigures.forEach(function (fig, i) { if (fig) fig.querySelector("figcaption").textContent = labels[i]; });
     }
     function trainTick() {
       var a = active();
-      if (!visible || !training || !a.model) { timer = 0; return; }
+      if (!userStarted || !visible || !training || !a.model) { timer = 0; return; }
       var g = gen, p = phase, m = a.model;
       var epochsPer = p === "linear" ? 6 : 2;
       m.fit(xsTensor, ysTensor, { epochs: epochsPer, batchSize: points.length, shuffle: true, verbose: 0 }).then(function (h) {
@@ -370,19 +405,21 @@
       }).catch(function () { timer = 0; });
     }
     function resumeTraining() {
+      userStarted = true;
       training = true;
       trainBtn.textContent = DE ? "Training pausieren" : "Pause training";
       if (!timer && visible && active().model) trainTick();
     }
     function pauseTraining() {
       training = false;
-      trainBtn.textContent = DE ? "Training fortsetzen" : "Resume training";
+      trainBtn.textContent = DE ? (active().epochs ? "Training fortsetzen" : "Training starten") : (active().epochs ? "Resume training" : "Start training");
       if (timer) { clearTimeout(timer); timer = 0; }
     }
     function resetActive() {
       if (timer) { clearTimeout(timer); timer = 0; }
       if (active().model) active().model.stopTraining = true;
       training = false;
+      userStarted = false;
       gen++;
       var p = phase;
       setTimeout(function () {
@@ -392,11 +429,11 @@
         draw();
         updateMatrixCanvases();
         trainBtn.textContent = DE ? "Training starten" : "Start training";
-        if (visible) resumeTraining();
       }, 140);
     }
     function switchPhase(next) {
       if (next === phase) return;
+      userStarted = false;
       pauseTraining();
       phase = next;
       tabs.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-phase") === phase); });
@@ -409,6 +446,7 @@
       trainBtn.textContent = DE ? "Training starten" : "Start training";
     }
     function startTf() {
+      userStarted = false;
       makePoints();
       makeTensors();
       buildLinear();
@@ -463,7 +501,6 @@
     trainBtn.addEventListener("click", function () { if (training) pauseTraining(); else resumeTraining(); });
     resetBtn.addEventListener("click", resetActive);
     matrixBtn.addEventListener("click", function () {
-      if (phase !== "net") switchPhase("net");
       matrixOverlay.hidden = !matrixOverlay.hidden;
       matrixBtn.textContent = matrixOverlay.hidden ? (DE ? "Matrizen zeigen" : "Show matrices") : (DE ? "Matrizen schließen" : "Hide matrices");
       updateMatrixCanvases();

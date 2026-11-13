@@ -1195,3 +1195,25 @@ Marked as todo; work through carefully, one block at a time.
   history, philosophy.
 - Move trajectories and meadow to directly after the loop slide. Recheck the
   final order after the move.
+
+## Final extras (2026-11-13, very end)
+
+- [ ] **Fireworks on 31 December and 1 January.** When the page is opened on
+  31.12 or 1.1, show a tasteful fireworks effect (no sound, no blocking of
+  the lesson, theme-aware, reduced-motion friendly).
+- [ ] **Position sweep to 10000.** On “Every slot gets a fingerprint”, pressing
+  Weiter must sweep the position quickly from the current value up to 10000
+  (about 5 seconds), leave a visible point at every visited position in the
+  space, and show exactly where the sweep currently is.
+- [ ] **Slide count check at the very end.** Count the total slides. If there
+  are fewer than 31, split e.g. the merged Gauss/data slide back into a Gauss
+  slide and a data slide so the count is at least 31. Recheck the order and
+  the calendar afterwards.
+- [ ] **Gauss and MSE.** Explicitly name MSE (mean squared error / mittlerer
+  quadratischer Fehler) on the Gauss slide. On the neural-network loss slide,
+  say that the loss is MSE and that this is how the model is judged; add an
+  optional box explaining that other problem types use other loss functions
+  (cross-entropy, MAE, etc.), with sources.
+- [ ] **Snow on 24 December.** When the page is opened on 24.12, show a brief
+  tasteful snow effect (no sound, does not block the lesson, theme-aware,
+  reduced-motion friendly).

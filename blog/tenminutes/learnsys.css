@@ -1738,3 +1738,6 @@ h1,h2,h3,h4{
 .ls-codesem-modes{display:flex;gap:5px;flex-wrap:wrap}
 .ls-codesem-readout{display:flex;gap:12px;flex-wrap:wrap;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted);min-height:2.2em}
 .ls-codesem-readout b{color:var(--ls-ink);font-weight:600}
+
+.ls-sinus-matrix-grid figure[hidden]{display:none}
+.ls-sinus-matrices-note{margin:0;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}

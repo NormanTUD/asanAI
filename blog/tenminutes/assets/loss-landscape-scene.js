@@ -258,7 +258,7 @@
       new IntersectionObserver(function (entries) {
         visible = entries.some(function (en) { return en.isIntersecting; });
         if (!visible) { pause(); return; }
-        if (data && !finished && !playing) resumeTraining();
+        if (data) draw();
       }, { threshold: 0.05 }).observe(stage);
     }
     window.addEventListener("resize", resize);
