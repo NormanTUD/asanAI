@@ -931,3 +931,25 @@ items are a human visual review and an explicit commit/push decision.
 3. [ ] Re-run the page test, height test, `php_validator.py`,
    `check_all.py --fast`, `node --check`, `php -l`, and `git diff --check`
    after both changes.
+
+## Queued corrections after the latest review (2026-11-13)
+
+1. [~] **Ceres layout is squeezed.** The two-panel statistics visual is much
+   better, but it is compressed on screen. Remove the narrow side column;
+   give the two-panel plot the full width and move the Ceres/Flammarion
+   images into a compact horizontal strip so the scatter and histogram stay
+   legible. Keep the credits visible.
+2. [ ] **Agent window chat roles.** When
+   “Schreibe ein Python-Programm, das die Rayleigh-Streuung berechnet.” is
+   submitted, it must appear in the agent window at the **top right**, with a
+   blue background. The LLM answer stays **left**, green, as now.
+3. [ ] **Agent input row.** After submitting, the input row moves up one line
+   and keeps only the `$` on the left.
+4. [ ] **Rayleigh output.** The provided code must produce
+   `Blau wird 4.35× stärker gestreut als Rot.` (currently the demo shows a
+   different/missing result).
+5. [ ] **Agent taskbar.** `Agent` and `Terminal` must fit; currently the last
+   two letters of `Agent` are clipped (`age`) and `Terminal` is cut
+   (`terminal`).
+6. [ ] Re-run the page test, height test, `php_validator.py`,
+   `check_all.py --fast`, syntax checks, and `git diff --check`.

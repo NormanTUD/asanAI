@@ -5626,7 +5626,8 @@
     el.innerHTML = '<div class="ls-dual-manifolds"><canvas class="ls-canvas" role="img"></canvas></div>' +
       '<p class="ls-vr-note">' + (DE ? "Vietoris–Rips: Punkte sind verbunden, wenn ihr Abstand unter der Schwelle liegt. Drehe und verschiebe die japanische Wolke, bis sie auf der englischen liegt. Fahre über einen Punkt, um das Wort zu sehen." : "Vietoris–Rips: points are connected when their distance is below the threshold. Rotate and translate the Japanese cloud until it sits on the English one. Hover a point to see its word.") + '</p>' +
       '<div class="ls-manifold-controls">' +
-        '<label class="ls-range">' + (DE ? "Drehung" : "Rotation") + ' <input type="range" class="ls-manifold-rotate" min="-180" max="180" step="1" value="62"><output>62°</output></label>' +
+        '<label class="ls-range">' + (DE ? "Drehung" : "Yaw") + ' <input type="range" class="ls-manifold-rotate" min="-180" max="180" step="1" value="62"><output>62°</output></label>' +
+        '<label class="ls-range">' + (DE ? "Rotation" : "Roll") + ' <input type="range" class="ls-manifold-roll" min="-180" max="180" step="1" value="26"><output>26°</output></label>' +
         '<label class="ls-range">' + (DE ? "Verschiebung" : "Translation") + ' <input type="range" class="ls-manifold-shift" min="-0.2" max="2.4" step="0.01" value="1.8"><output>1.80</output></label>' +
         '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-manifold-find">' + (DE ? "Übersetzung finden" : "Find translation") + '</button>' +
       '</div>' +
@@ -5636,13 +5637,15 @@
     var canvas = el.querySelector("canvas");
     var rotateEl = el.querySelector(".ls-manifold-rotate");
     var rotateOut = rotateEl.nextElementSibling;
+    var rollEl = el.querySelector(".ls-manifold-roll");
+    var rollOut = rollEl.nextElementSibling;
     var shiftEl = el.querySelector(".ls-manifold-shift");
     var shiftOut = shiftEl.nextElementSibling;
     var findBtn = el.querySelector(".ls-manifold-find");
     var readout = el.querySelector(".ls-manifold-readout");
     var C = api.colors();
     var size = null, ctx = null, yaw = -0.62, pitch = 0.44, zoom = 1, drag = null;
-    var angle = 62, shift = 1.8;
+    var angle = 62, roll = 26, shift = 1.8;
     var found = false, finding = false, findRaf = 0;
     var hover = null;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -5696,10 +5699,14 @@
       var c = Math.cos(a), s = Math.sin(a);
       return [p[0] * c + p[2] * s, p[1], -p[0] * s + p[2] * c];
     }
+    function rotateZ(p, a) {
+      var c = Math.cos(a), s = Math.sin(a);
+      return [p[0] * c - p[1] * s, p[0] * s + p[1] * c, p[2]];
+    }
     function targetPoints() {
-      var a = V.rad(angle), out = [];
+      var a = V.rad(angle), r = V.rad(roll), out = [];
       for (var i = 0; i < targetLocal.length; i++) {
-        var p = rotateY(targetLocal[i], a);
+        var p = rotateY(rotateZ(targetLocal[i], r), a);
         out.push([p[0] + shift, p[1], p[2]]);
       }
       return out;
@@ -5725,6 +5732,28 @@
     function project(p) {
       var q = [p[0] - cam[0], p[1] - cam[1], p[2] - cam[2]];
       return V.project(q, yaw, pitch, Math.min(size.w * 0.19, size.h * 0.33) * zoom, size.w / 2, size.h / 2);
+    }
+    var faces = [];
+    for (var fu = 0; fu < N - 1; fu++) {
+      for (var fv = 0; fv < N - 1; fv++) {
+        faces.push([fu * N + fv, fu * N + fv + 1, (fu + 1) * N + fv + 1, (fu + 1) * N + fv]);
+      }
+    }
+    function drawFaces(ctx, pts, faceList, col) {
+      var fs = faceList.map(function (f) {
+        var q = f.map(function (i) { return project(pts[i]); });
+        return { p: q, z: (q[0].z + q[1].z + q[2].z + q[3].z) / 4 };
+      }).sort(function (a, b) { return a.z - b.z; });
+      fs.forEach(function (f) {
+        ctx.fillStyle = V.alpha(col, 0.06);
+        ctx.beginPath();
+        ctx.moveTo(f.p[0].x, f.p[0].y);
+        ctx.lineTo(f.p[1].x, f.p[1].y);
+        ctx.lineTo(f.p[2].x, f.p[2].y);
+        ctx.lineTo(f.p[3].x, f.p[3].y);
+        ctx.closePath();
+        ctx.fill();
+      });
     }
     function drawCloud(ctx, pts, edgeList, col) {
       var projected = pts.map(function (p) { return project(p); });
@@ -5765,8 +5794,9 @@
     }
     function score() {
       var rs = 1 - Math.min(1, Math.abs(angle) / 62);
+      var rr = 1 - Math.min(1, Math.abs(roll) / 26);
       var ss = 1 - Math.min(1, Math.abs(shift) / 1.8);
-      return Math.round((rs * 0.5 + ss * 0.5) * 100);
+      return Math.round((rs + rr + ss) / 3 * 100);
     }
     function draw() {
       if (!size) return;
@@ -5782,8 +5812,10 @@
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, w, h);
       V.grid(ctx, w, h, C, 32, 0.13);
-      var sProj = drawCloud(ctx, source, sourceEdges, C.blue);
-      var tProj = drawCloud(ctx, tPts, targetEdges, C.green);
+      drawFaces(ctx, source, faces, C.blue);
+      drawFaces(ctx, tPts, faces, C.green);
+      drawCloud(ctx, source, sourceEdges, C.blue);
+      drawCloud(ctx, tPts, targetEdges, C.green);
       var aligned = score() / 100;
       var combined = aligned > 0.70;
       ANCHORS.forEach(function (idx, ai) {
@@ -5842,7 +5874,8 @@
     function updateReadout() {
       var pair = hover ? WORDS[hover.index] : null;
       readout.innerHTML = '<span><b>' + (DE ? "Ausrichtung" : "alignment") + '</b> ' + score() + '%</span>' +
-        '<span><b>' + (DE ? "Drehung" : "rotation") + '</b> ' + Math.round(angle) + '°</span>' +
+        '<span><b>' + (DE ? "Drehung" : "yaw") + '</b> ' + Math.round(angle) + '°</span>' +
+        '<span><b>' + (DE ? "Rotation" : "roll") + '</b> ' + Math.round(roll) + '°</span>' +
         '<span><b>' + (DE ? "Verschiebung" : "translation") + '</b> ' + V.fmt(shift) + '</span>' +
         (pair ? '<span><b>' + (DE ? "Wort" : "word") + '</b> ' + api.esc(pair[0]) + ' · ' + api.esc(pair[1]) + '</span>' : '<span>' + (DE ? "Fahre über einen Punkt." : "Hover a point.") + '</span>');
     }
@@ -5867,6 +5900,15 @@
       updateButton();
       draw();
     }
+    function setRoll(v) {
+      stopFind();
+      roll = Math.max(-180, Math.min(180, parseFloat(v) || 0));
+      rollEl.value = String(roll);
+      rollOut.textContent = Math.round(roll) + "°";
+      found = score() >= 92;
+      updateButton();
+      draw();
+    }
     function stopFind() {
       finding = false;
       if (findRaf) cancelAnimationFrame(findRaf);
@@ -5875,30 +5917,35 @@
     function find() {
       stopFind();
       if (reduced) {
-        angle = 0; shift = 0; found = true;
+        angle = 0; roll = 0; shift = 0; found = true;
         rotateEl.value = "0"; rotateOut.textContent = "0°";
+        rollEl.value = "0"; rollOut.textContent = "0°";
         shiftEl.value = "0"; shiftOut.textContent = "0.00";
         updateButton(); draw();
         return;
       }
       finding = true;
-      var a0 = angle, s0 = shift, t0 = performance.now(), dur = 920;
+      var a0 = angle, r0 = roll, s0 = shift, t0 = performance.now(), dur = 920;
       function step(now) {
         if (!finding) return;
         var u = Math.min(1, (now - t0) / dur);
         var e = V.ease(u);
         angle = a0 * (1 - e);
+        roll = r0 * (1 - e);
         shift = s0 * (1 - e);
         rotateEl.value = String(angle);
+        rollEl.value = String(roll);
         shiftEl.value = String(shift);
         rotateOut.textContent = Math.round(angle) + "°";
+        rollOut.textContent = Math.round(roll) + "°";
         shiftOut.textContent = V.fmt(shift);
         draw();
         if (u < 1) findRaf = requestAnimationFrame(step);
         else {
           finding = false; findRaf = 0; found = true;
-          angle = 0; shift = 0;
+          angle = 0; roll = 0; shift = 0;
           rotateEl.value = "0"; rotateOut.textContent = "0°";
+          rollEl.value = "0"; rollOut.textContent = "0°";
           shiftEl.value = "0"; shiftOut.textContent = "0.00";
           updateButton(); draw();
         }
@@ -5952,6 +5999,7 @@
       draw();
     }, { passive: false });
     rotateEl.addEventListener("input", function () { setAngle(rotateEl.value); });
+    rollEl.addEventListener("input", function () { setRoll(rollEl.value); });
     shiftEl.addEventListener("input", function () { setShift(shiftEl.value); });
     findBtn.addEventListener("click", find);
     function resize() { size = api.fit(canvas, stage); draw(); }
@@ -5970,6 +6018,7 @@
       score: score,
       get hover() { return hover; },
       get angle() { return angle; },
+      get roll() { return roll; },
       get shift() { return shift; }
     };
     updateButton();
