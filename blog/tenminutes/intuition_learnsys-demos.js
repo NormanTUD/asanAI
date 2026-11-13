@@ -6364,6 +6364,572 @@
     };
   }
 
+  function mediaScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-media-scene";
+    el.innerHTML = '<div class="ls-media-tabs" role="tablist">' +
+        '<button type="button" class="ls-chip is-on" data-media="search" role="tab" aria-selected="true">' + (DE ? "Suche" : "Search") + '</button>' +
+        '<button type="button" class="ls-chip" data-media="chat" role="tab" aria-selected="false">' + (DE ? "Chat" : "Chat") + '</button>' +
+        '<button type="button" class="ls-chip" data-media="code" role="tab" aria-selected="false">Code</button>' +
+      '</div>' +
+      '<div class="ls-media-stage"><div class="ls-media-layer" data-layer="phone"></div><div class="ls-media-layer" data-layer="code" hidden></div></div>' +
+      '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-media-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-media-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-media-next">' + (DE ? "Weiter" : "Next") + ' →</button></div>';
+    root.appendChild(el);
+    var phoneLayer = el.querySelector('[data-layer="phone"]');
+    var codeLayer = el.querySelector('[data-layer="code"]');
+    var phoneApi = phoneScene(phoneLayer, api);
+    var codeApi = codeScene(codeLayer, api);
+    phoneApi.update({ view: "search" });
+    var tabs = el.querySelectorAll("[data-media]");
+    var prevBtn = el.querySelector(".ls-media-prev");
+    var nextBtn = el.querySelector(".ls-media-next");
+    var progress = el.querySelector(".ls-media-progress");
+    var step = 0;
+    codeApi.pause();
+    function show(mode) {
+      var modeName = mode === "chat" ? "chat" : (mode === "code" ? "code" : "search");
+      var isPhone = modeName !== "code";
+      step = modeName === "search" ? 0 : (modeName === "chat" ? 1 : 2);
+      phoneLayer.hidden = !isPhone;
+      codeLayer.hidden = isPhone;
+      tabs.forEach(function (b) {
+        var on = b.getAttribute("data-media") === modeName;
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      if (isPhone) {
+        codeApi.pause();
+        phoneApi.update({ view: modeName });
+        phoneApi.start();
+      } else {
+        phoneApi.pause();
+        codeApi.resize();
+        codeApi.start();
+      }
+      progress.textContent = modeName === "search" ? (DE ? "Suche" : "Search") : (modeName === "chat" ? (DE ? "Chat" : "Chat") : "Code");
+      prevBtn.disabled = step === 0;
+      nextBtn.textContent = step === 2 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+    }
+    function nextInternal() {
+      if (step < 2) { show(step === 0 ? "chat" : "code"); return true; }
+      return false;
+    }
+    function prevInternal() {
+      if (step > 0) { show(step === 2 ? "chat" : "search"); return true; }
+      return false;
+    }
+    function nextStep() {
+      if (nextInternal()) return;
+      api.goNext();
+    }
+    function prevStep() {
+      if (prevInternal()) return;
+      api.goPrev();
+    }
+    tabs.forEach(function (b) {
+      b.addEventListener("click", function () { show(b.getAttribute("data-media")); });
+    });
+    prevBtn.addEventListener("click", prevStep);
+    nextBtn.addEventListener("click", nextStep);
+    show("phone");
+    return {
+      update: function (s) {
+        if (s && s.mode) show(s.mode);
+        else if (s && typeof s.step === "number") show(s.step === 0 ? "search" : (s.step === 1 ? "chat" : "code"));
+      },
+      next: nextInternal,
+      prev: prevInternal,
+      onKey: function (e) {
+        return api.util.arrowKey(e, nextInternal, prevInternal);
+      },
+      pause: function () { phoneApi.pause(); codeApi.pause(); },
+      resume: function () { show(step === 0 ? "phone" : "code"); },
+      resize: function () { phoneApi.resize(); codeApi.resize(); },
+      destroy: function () { phoneApi.destroy(); codeApi.destroy(); el.remove(); }
+    };
+  }
+
+  function gradientScene(root, api) {
+    return window.LossLandscapeScene(root, api);
+  }
+
+  function kvcacheScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-kv-scene";
+    el.innerHTML = '<div class="ls-kv-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-kv-tokens" min="512" max="32768" step="512" value="4096"><output>4096</output></label>' +
+        '<label class="ls-range">' + (DE ? "Schichten" : "Layers") + ' <input type="range" class="ls-kv-layers" min="12" max="96" step="4" value="32"><output>32</output></label>' +
+        '<label class="ls-range">Heads <input type="range" class="ls-kv-heads" min="12" max="128" step="4" value="32"><output>32</output></label>' +
+        '<label class="ls-range">Head-Dim <input type="range" class="ls-kv-dim" min="64" max="128" step="64" value="128"><output>128</output></label>' +
+      '</div>' +
+      '<div class="ls-kv-readout" aria-live="polite"></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-kv-stage");
+    var canvas = el.querySelector("canvas");
+    var readout = el.querySelector(".ls-kv-readout");
+    var tokensEl = el.querySelector(".ls-kv-tokens");
+    var layersEl = el.querySelector(".ls-kv-layers");
+    var headsEl = el.querySelector(".ls-kv-heads");
+    var dimEl = el.querySelector(".ls-kv-dim");
+    var tokens = 4096, layers = 32, heads = 32, dim = 128, size = null, ctx = null;
+    var C = api.colors();
+    function gb(bytes) { return bytes / 1e9; }
+    function cacheGB() { return gb(tokens * layers * heads * dim * 2 * 2); }
+    function weightGB() { return 14; }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      ctx.clearRect(0, 0, size.w, size.h);
+      var w = size.w, h = size.h, pad = 28;
+      ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
+      var total = 24;
+      var cache = cacheGB(), weights = weightGB();
+      var y = h * 0.36;
+      ctx.fillStyle = C.line; ctx.fillRect(pad, y, w - pad * 2, 26);
+      var cw = Math.min(1, cache / total) * (w - pad * 2);
+      var ww = Math.min(1, weights / total) * (w - pad * 2);
+      ctx.save();
+      ctx.beginPath(); ctx.rect(pad, y, w - pad * 2, 26); ctx.clip();
+      ctx.fillStyle = C.green; ctx.fillRect(pad, y, ww, 26);
+      ctx.fillStyle = C.gold; ctx.fillRect(pad + ww, y, cw, 26);
+      ctx.restore();
+      ctx.strokeStyle = C.lineStrong; ctx.strokeRect(pad, y, w - pad * 2, 26);
+      ctx.fillStyle = C.ink; ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif'; ctx.textAlign = "left";
+      ctx.fillText(DE ? "24 GB GPU" : "24 GB GPU", pad, y - 14);
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.fillStyle = C.green; ctx.fillText(DE ? "Gewichte " + weights.toFixed(1) + " GB" : "weights " + weights.toFixed(1) + " GB", pad, y + 44);
+      ctx.fillStyle = C.gold; ctx.fillText("KV-Cache " + cache.toFixed(1) + " GB", pad + ww + 8, y + 44);
+      var fits = cache + weights <= total;
+      ctx.fillStyle = fits ? C.green : C.coral;
+      ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif';
+      ctx.fillText(fits ? (DE ? "passt" : "fits") : (DE ? "passt nicht" : "does not fit"), pad, h - 24);
+      updateReadout();
+    }
+    function updateReadout() {
+      var cache = cacheGB(), total = cache + weightGB();
+      readout.innerHTML = '<span><b>KV</b> ' + cache.toFixed(1) + ' GB</span><span><b>' + (DE ? "Gewichte" : "weights") + '</b> ' + weightGB().toFixed(1) + ' GB</span><span><b>' + (DE ? "gesamt" : "total") + '</b> ' + total.toFixed(1) + ' GB / 24 GB</span>';
+    }
+    function sync() { tokens = parseInt(tokensEl.value, 10); layers = parseInt(layersEl.value, 10); heads = parseInt(headsEl.value, 10); dim = parseInt(dimEl.value, 10); [tokensEl,layersEl,headsEl,dimEl].forEach(function (x) { x.nextElementSibling.textContent = x.value; }); draw(); }
+    [tokensEl,layersEl,headsEl,dimEl].forEach(function (x) { x.addEventListener("input", sync); });
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    resize();
+    return { update: function () {}, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
+  function bookScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-book-scene";
+    el.innerHTML = '<div class="ls-book-art"><canvas class="ls-book-canvas" role="img" aria-label="' + (DE ? "Ein aufgeschlagenes Buch mit einem Labyrinth" : "An open book with a labyrinth") + '"></canvas></div>' +
+      '<div class="ls-book-page">' +
+        '<div class="ls-book-kicker">Borges · Funes el memorioso</div>' +
+        '<p class="ls-book-drop">' + (DE ? "Funes erinnert sich an alles: an jeden Stein, jede Wolke, jede Münze. Weil er nichts vergisst, kann er nicht abstrahieren. Borges schreibt, Denken heiße Unterschiede vergessen, verallgemeinern, abstrahieren." : "Funes remembers everything: every stone, every cloud, every coin. Because he forgets nothing, he cannot abstract. Borges writes that thinking means forgetting differences, generalising, abstracting.") + '</p>' +
+        '<p>' + (DE ? "Ein Sprachmodell muss nicht alles speichern. Es lernt Strukturen, die viele Fälle zusammenfassen. Wer das nächste Token gut vorhersagt, trägt ein Modell der Daten in sich: Vorhersage wird Kompression." : "A language model does not store everything. It learns structures that summarise many cases. A model that predicts the next token well carries a model of the data inside it: prediction becomes compression.") + '</p>' +
+        '<p>' + (DE ? "Lindsey et al. (2025) finden sogar Planung: Vor dem Reimwort hält das Modell mehrere Kandidaten bereit und baut den Satz auf sie zu. Othello-GPT entwickelt aus reinen Zugfolgen ein inneres Brettmodell. Die einfachste Art, richtig vorherzusagen, ist ein gutes inneres Modell." : "Lindsey et al. (2025) even find planning: before the rhyme word, the model holds several candidates and builds the sentence toward one. Othello-GPT develops an internal board model from move sequences alone. The simplest way to predict well is to have a good internal model.") + '</p>' +
+      '</div>';
+    root.appendChild(el);
+    var canvas = el.querySelector(".ls-book-canvas");
+    var size = null, ctx = null, C = api.colors();
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      var w = size.w, h = size.h;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#f7f1e3"; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = C.petrol; ctx.fillRect(w * .08, h * .10, w * .84, h * .80);
+      ctx.fillStyle = "#efe4ca"; ctx.fillRect(w * .12, h * .14, w * .76, h * .72);
+      ctx.strokeStyle = C.gold; ctx.lineWidth = 2; ctx.strokeRect(w * .15, h * .17, w * .70, h * .66);
+      ctx.strokeStyle = C.petrol; ctx.lineWidth = 1;
+      for (var i = 0; i < 8; i++) {
+        var y = h * .25 + i * h * .055;
+        ctx.beginPath(); ctx.moveTo(w * .22, y); ctx.lineTo(w * .78, y); ctx.stroke();
+      }
+      ctx.strokeStyle = C.gold; ctx.lineWidth = 2.2;
+      var cx = w * .5, cy = h * .54;
+      ctx.beginPath();
+      for (var k = 0; k < 90; k++) {
+        var a = k * .31, r = 5 + k * 1.1;
+        var x = cx + Math.cos(a) * r, yy = cy + Math.sin(a) * r * .62;
+        if (k === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+      }
+      ctx.stroke();
+      ctx.fillStyle = C.green;
+      ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI * 2); ctx.fill();
+    }
+    function resize() { size = api.fit(canvas, canvas.parentNode); draw(); }
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    resize();
+    return { update: function () {}, resize: resize, destroy: function () { window.removeEventListener("resize", resize); el.remove(); } };
+  }
+
+  function compressScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-compress-scene";
+    el.innerHTML = '<div class="ls-compress-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-compress-side"><div class="ls-compress-metrics"><span><b>' + (DE ? "Details" : "details") + '</b><i data-detail></i></span><span><b>' + (DE ? "Muster" : "patterns") + '</b><i data-pattern></i></span><span><b>' + (DE ? "Fehler" : "error") + '</b><i data-error></i></span></div><div class="ls-compress-readout" aria-live="polite"></div></div>' +
+      '<div class="ls-compress-controls"><label class="ls-range">' + (DE ? "Kompression" : "Compression") + ' <input type="range" class="ls-compress-range" min="0" max="4" step="0.01" value="0"><output>0.00</output></label><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-compress-auto">' + (DE ? "Automatisch" : "Auto") + '</button></div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ls-compress-stage");
+    var canvas = el.querySelector("canvas");
+    var side = el.querySelector(".ls-compress-side");
+    var range = el.querySelector(".ls-compress-range");
+    var out = range.nextElementSibling;
+    var readout = el.querySelector(".ls-compress-readout");
+    var detailBar = el.querySelector("[data-detail]");
+    var patternBar = el.querySelector("[data-pattern]");
+    var errorBar = el.querySelector("[data-error]");
+    var C = api.colors();
+    var palette = [C.green, C.sky, C.gold, C.lilac, C.lime, C.blue, C.teal || C.petrol, C.muted];
+    var size = null, ctx = null, t = 0, raf = 0, playing = false;
+    var mix = api.util.hexMix;
+    var seed = 19;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    var nodes = [], edges = [];
+    (function build() {
+      var per = 12, clusters = 12;
+      for (var c = 0; c < clusters; c++) {
+        var cx = (c % 4 + 0.5) / 4;
+        var cy = (Math.floor(c / 4) + 0.5) / 3;
+        for (var k = 0; k < per; k++) {
+          var a = k / per * Math.PI * 2 + rnd() * 0.5;
+          var r = 0.08 + rnd() * 0.16;
+          nodes.push({ c: c, x0: rnd(), y0: rnd(), cx: cx + Math.cos(a) * r * 0.55, cy: cy + Math.sin(a) * r * 0.42, col: palette[c % palette.length] });
+        }
+      }
+      for (var i = 0; i < nodes.length; i++) {
+        for (var j = i + 1; j < nodes.length; j++) {
+          var same = nodes[i].c === nodes[j].c;
+          if (same ? rnd() < 0.42 : rnd() < 0.022) edges.push({ a: i, b: j, same: same });
+        }
+      }
+      clusterCenters = [];
+      for (var cc = 0; cc < 12; cc++) {
+        var group = nodes.filter(function (n) { return n.c === cc; });
+        var sx = 0, sy = 0;
+        group.forEach(function (n) { sx += n.x0; sy += n.y0; });
+        clusterCenters.push({ x: sx / group.length, y: sy / group.length });
+      }
+      superCenters = [];
+      for (var sg = 0; sg < 4; sg++) {
+        var sc = clusterCenters.slice(sg * 3, sg * 3 + 3);
+        superCenters.push({ x: (sc[0].x + sc[1].x + sc[2].x) / 3, y: (sc[0].y + sc[1].y + sc[2].y) / 3 });
+      }
+      center = { x: superCenters.reduce(function (a, p) { return a + p.x; }, 0) / 4, y: superCenters.reduce(function (a, p) { return a + p.y; }, 0) / 4 };
+      outer = [];
+      for (var oo = 0; oo < 8; oo++) {
+        var oa2 = oo / 8 * Math.PI * 2;
+        outer.push({ x: center.x + Math.cos(oa2) * 0.34, y: center.y + Math.sin(oa2) * 0.34 });
+      }
+    })();
+    var clusterCenters = [], superCenters = [
+      { x: 0.30, y: 0.30 }, { x: 0.70, y: 0.30 }, { x: 0.30, y: 0.70 }, { x: 0.70, y: 0.70 }
+    ];
+    for (var c = 0; c < 12; c++) clusterCenters.push({ x: 0.18 + (c % 4) * 0.22, y: 0.22 + Math.floor(c / 4) * 0.28 });
+    var center = { x: 0.5, y: 0.5 };
+    var outer = [];
+    for (var o = 0; o < 8; o++) {
+      var oa = o / 8 * Math.PI * 2;
+      outer.push({ x: 0.5 + Math.cos(oa) * 0.36, y: 0.5 + Math.sin(oa) * 0.36 });
+    }
+    var clusterNames = DE ? [
+      "Katzenartige", "Menschenaffen", "andere Säugetiere", "Vögel", "Fische", "Insekten",
+      "Pflanzen", "Pilze", "Gegenstände", "Mathematik", "Gedanken", "Träume"
+    ] : [
+      "cats", "great apes", "other mammals", "birds", "fish", "insects",
+      "plants", "fungi", "objects", "mathematics", "thoughts", "dreams"
+    ];
+    var nodeNames = DE ? [
+      "Hauskatze", "Schimpanse", "Pferd", "Amsel", "Lachs", "Biene",
+      "Eiche", "Steinpilz", "Stuhl", "Zahl 7", "Idee", "Traum"
+    ] : [
+      "house cat", "chimpanzee", "horse", "blackbird", "salmon", "bee",
+      "oak", "mushroom", "chair", "number 7", "idea", "dream"
+    ];
+    var superNames = DE ? ["Wirbeltiere", "Wirbellose", "Pflanzen & Pilze", "Nicht-Leben"] : ["vertebrates", "invertebrates", "plants & fungi", "non-living"];
+    var phaseLabels = DE ? [
+      "12 Einzelfälle · noch keine Gruppen",
+      "12 Gruppen · Katzenartige, Menschenaffen, Säugetiere, Vögel, Fische, Insekten …",
+      "4 Gruppen · Wirbeltiere, Wirbellose, Pflanzen & Pilze, Nicht-Leben",
+      "Lebewesen · Bilaterien, Eukaryoten  |  Nicht-Leben",
+      "Etwas · alles"
+    ] : [
+      "12 individual cases · no groups yet",
+      "12 groups · cats, great apes, mammals, birds, fish, insects …",
+      "4 groups · vertebrates, invertebrates, plants & fungi, non-living",
+      "living things · bilaterians, eukaryotes  |  non-living",
+      "something · everything"
+    ];
+    function lerp(a, b, u) { return a + (b - a) * u; }
+    function clamp01(v) { return Math.max(0, Math.min(1, v)); }
+    function point(x, y, r, col, alpha) {
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = col; ctx.globalAlpha = alpha; ctx.fill();
+      ctx.strokeStyle = C.paper; ctx.lineWidth = 1; ctx.globalAlpha = alpha; ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+    function draw() {
+      if (!size) return;
+      ctx = size.ctx;
+      var w = size.w, h = size.h;
+      var pad = 28;
+      function X(n) { return pad + n.x * (w - pad * 2); }
+      function Y(n) { return pad + n.y * (h - pad * 2); }
+      ctx.clearRect(0, 0, w, h);
+      var bg = ctx.createRadialGradient(w * 0.5, h * 0.48, 10, w * 0.5, h * 0.5, Math.max(w, h) * 0.75);
+      bg.addColorStop(0, "rgba(252,253,252,1)");
+      bg.addColorStop(0.62, "rgba(247,250,249,.96)");
+      bg.addColorStop(1, "rgba(255,255,255,.72)");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = C.line;
+      for (var gx = pad; gx < w - pad; gx += 26) {
+        for (var gy = pad; gy < h - pad; gy += 26) {
+          ctx.globalAlpha = 0.22;
+          ctx.fillRect(gx, gy, 1.1, 1.1);
+        }
+      }
+      ctx.globalAlpha = 1;
+      var tt = t;
+      var a0 = clamp01(1 - Math.abs(tt - 0));
+      var a1 = clamp01(1 - Math.abs(tt - 1));
+      var a2 = clamp01(1 - Math.abs(tt - 2));
+      var a3 = clamp01(1 - Math.abs(tt - 3));
+      var a4 = clamp01(1 - Math.abs(tt - 4));
+      var u0 = clamp01(tt);
+      var u1 = clamp01(tt - 1);
+      var u2 = clamp01(tt - 2);
+      var u3 = clamp01(tt - 3);
+      function glow(x, y, r, col, alpha) {
+        ctx.save();
+        ctx.shadowColor = col;
+        ctx.shadowBlur = r * 2.6;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = col; ctx.globalAlpha = alpha; ctx.fill();
+        ctx.restore();
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(255,255,255,.9)"; ctx.lineWidth = 1; ctx.globalAlpha = alpha; ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+      function ring(x, y, r, col, alpha) {
+        ctx.save();
+        ctx.strokeStyle = col; ctx.globalAlpha = alpha; ctx.lineWidth = 1.1;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      }
+      function labelAt(text, x, y, col, alpha, size, align) {
+        if (alpha <= 0.01) return;
+        var fs = size || api.font("canvas-sm");
+        ctx.font = '600 ' + fs + 'px "Open Sans", sans-serif';
+        ctx.textAlign = align || "center";
+        var tw = ctx.measureText(text).width;
+        var bx = align === "left" ? x - 3 : align === "right" ? x - tw - 3 : x - tw / 2;
+        ctx.globalAlpha = Math.min(1, alpha) * 0.88;
+        ctx.fillStyle = C.paper;
+        ctx.fillRect(bx + 1, y - fs - 1, tw + 4, fs + 4);
+        ctx.globalAlpha = Math.min(1, alpha);
+        ctx.fillStyle = col;
+        ctx.fillText(text, x, y);
+        ctx.globalAlpha = 1;
+      }
+      // fibres: the same structure survives every compression level
+      nodes.forEach(function (n) {
+        var x0 = X({ x: n.x0 }), y0 = Y({ y: n.y0 });
+        var cc = clusterCenters[n.c];
+        var sc = superCenters[Math.floor(n.c / 3)];
+        var x1 = X(cc), y1 = Y(cc), x2 = X(sc), y2 = Y(sc), x3 = X(center), y3 = Y(center);
+        ctx.strokeStyle = n.col;
+        ctx.globalAlpha = 0.045 + 0.035 * (1 - Math.min(1, tt / 4));
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);
+        ctx.quadraticCurveTo((x0 + x1) / 2, (y0 + y1) / 2 - 6, x1, y1);
+        ctx.quadraticCurveTo((x1 + x2) / 2, (y1 + y2) / 2 - 8, x2, y2);
+        ctx.quadraticCurveTo((x2 + x3) / 2, (y2 + y3) / 2 - 6, x3, y3);
+        ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+      if (tt < 1.4) {
+        var crossAlpha = Math.max(0, 0.28 * (1 - tt));
+        edges.forEach(function (e) {
+          var a = nodes[e.a], b = nodes[e.b];
+          var ax = lerp(a.x0, clusterCenters[a.c].x, u0), ay = lerp(a.y0, clusterCenters[a.c].y, u0);
+          var bx = lerp(b.x0, clusterCenters[b.c].x, u0), by = lerp(b.y0, clusterCenters[b.c].y, u0);
+          var pa = { x: X({x:ax}), y: Y({y:ay}) }, pb = { x: X({x:bx}), y: Y({y:by}) };
+          ctx.strokeStyle = e.same ? a.col : C.muted;
+          ctx.globalAlpha = e.same ? 0.26 * a0 : crossAlpha;
+          ctx.lineWidth = e.same ? 1 : 0.55;
+          ctx.beginPath();
+          ctx.moveTo(pa.x, pa.y);
+          ctx.quadraticCurveTo((pa.x + pb.x) / 2 + (e.same ? 0 : 5), (pa.y + pb.y) / 2 - 4, pb.x, pb.y);
+          ctx.stroke();
+        });
+        ctx.globalAlpha = 1;
+        if (a0 > 0.01) nodes.forEach(function (n) {
+          var x = lerp(n.x0, clusterCenters[n.c].x, u0), y = lerp(n.y0, clusterCenters[n.c].y, u0);
+          glow(X({x:x}), Y({y:y}), 2.4, n.col, a0 * 0.9);
+        });
+      }
+      if (a1 > 0.01) {
+        clusterCenters.forEach(function (cc, i) {
+          var x = lerp(cc.x, superCenters[Math.floor(i / 3)].x, u1);
+          var y = lerp(cc.y, superCenters[Math.floor(i / 3)].y, u1);
+          ring(X({x:x}), Y({y:y}), 8, palette[i % palette.length], a1 * 0.6);
+          glow(X({x:x}), Y({y:y}), 5.2, palette[i % palette.length], a1);
+        });
+      }
+      if (a2 > 0.01) {
+        superCenters.forEach(function (sp) {
+          var x = lerp(sp.x, center.x, u2), y = lerp(sp.y, center.y, u2);
+          ring(X({x:x}), Y({y:y}), 12, C.petrol, a2 * 0.55);
+          glow(X({x:x}), Y({y:y}), 7.5, C.petrol, a2);
+        });
+      }
+      if (a3 > 0.01) {
+        var cx0 = X(center), cy0 = Y(center);
+        ring(cx0, cy0, 17, C.gold, a3 * 0.62);
+        ring(cx0, cy0, 24, C.gold, a3 * 0.26);
+        glow(cx0, cy0, 10, C.green, a3);
+      }
+      // named taxonomy: individual examples are visible only before grouping starts
+      var nodeAlpha = clamp01(0.82 - tt * 1.15);
+      if (nodeAlpha > 0.01) {
+        nodes.forEach(function (n, idx) {
+          if (idx !== n.c * 12) return;
+          var x = lerp(n.x0, clusterCenters[n.c].x, u0), y = lerp(n.y0, clusterCenters[n.c].y, u0);
+          labelAt(nodeNames[n.c], X({x:x}), Y({y:y}) - 6, C.ink, nodeAlpha, Math.max(8, api.font("canvas-sm") - 1));
+        });
+      }
+      var clusterAlpha = clamp01(Math.min(tt - 0.45, 2.35 - tt));
+      if (clusterAlpha > 0.01) {
+        clusterCenters.forEach(function (cc, i) {
+          var x = lerp(cc.x, superCenters[Math.floor(i / 3)].x, u1);
+          var y = lerp(cc.y, superCenters[Math.floor(i / 3)].y, u1);
+          labelAt(clusterNames[i], X({x:x}), Y({y:y}) - 9, palette[i % palette.length], clusterAlpha, Math.max(8, api.font("canvas-sm") - 1));
+        });
+      }
+      var superAlpha = clamp01(Math.min(tt - 1.35, 3.35 - tt));
+      if (superAlpha > 0.01) {
+        superCenters.forEach(function (sp, i) {
+          var x = lerp(sp.x, center.x, u2), y = lerp(sp.y, center.y, u2);
+          labelAt(superNames[i], X({x:x}), Y({y:y}) - 12, C.petrol, superAlpha, api.font("canvas-sm"));
+        });
+      }
+      if (tt > 2.55) {
+        var ca = clamp01(Math.min(tt - 2.55, 1));
+        labelAt(tt < 3.6 ? (DE ? "Lebewesen" : "living things") : (DE ? "Etwas" : "something"), X(center), Y(center) - 18, C.green, ca, api.font("canvas"));
+      }
+      if (a4 > 0.01) {
+        var cx = X(center), cy = Y(center);
+        ring(cx, cy, 20, C.gold, a4 * 0.55);
+        ring(cx, cy, 31, C.gold, a4 * 0.28);
+        ctx.save();
+        ctx.strokeStyle = C.gold; ctx.globalAlpha = a4 * 0.52; ctx.lineWidth = 1.3;
+        ctx.setLineDash([4, 4]);
+        outer.forEach(function (op) {
+          var ox = X(op), oy = Y(op);
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.quadraticCurveTo((cx + ox) / 2, (cy + oy) / 2 - 10, ox, oy); ctx.stroke();
+        });
+        ctx.restore();
+        outer.forEach(function (op) { glow(X(op), Y(op), 4.2, C.gold, a4); });
+        // one unseen case: the compressed rule reaches a point that was never stored
+        var nw = { x: center.x + 0.30, y: center.y + 0.24 };
+        var nx = X(nw), ny = Y(nw);
+        ctx.save();
+        ctx.strokeStyle = C.green; ctx.globalAlpha = a4 * 0.8; ctx.lineWidth = 1.6;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.quadraticCurveTo((cx + nx) / 2, (cy + ny) / 2 - 14, nx, ny); ctx.stroke();
+        ctx.restore();
+        glow(nx, ny, 6, C.green, a4);
+        ctx.fillStyle = C.green; ctx.globalAlpha = a4;
+        ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(DE ? "neuer Fall" : "new case", nx, ny + 22);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = C.muted;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(DE ? "eine Regel, viele Fälle" : "one rule, many cases", cx, cy + 46);
+      }
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      var phase = tt < 0.45 ? 0 : tt < 1.45 ? 1 : tt < 2.55 ? 2 : tt < 3.55 ? 3 : 4;
+      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.fillText(phaseLabels[phase], pad, 18);
+      ctx.textAlign = "right";
+      ctx.fillText(DE ? "Weiter = verdichten" : "next = compress", w - pad, 18);
+      ctx.textAlign = "left";
+      ctx.fillStyle = C.petrol;
+      ctx.fillText(DE ? "Struktur bleibt · Details fallen" : "structure stays · details fall", pad, h - 8);
+      updateReadout();
+    }
+    function updateReadout() {
+      var details = Math.round(nodes.length * Math.max(0, 1 - t / 4));
+      var patterns = Math.round(12 * Math.min(1, t / 4));
+      var error = Math.pow(t / 4, 1.7) * 0.35;
+      readout.innerHTML = '<span><b>' + (DE ? "Stufe" : "level") + '</b> ' + t.toFixed(2) + '</span><span><b>' + (DE ? "Knoten" : "nodes") + '</b> ' + details + '</span><span><b>' + (DE ? "Gruppen" : "groups") + '</b> ' + patterns + '</span>';
+      detailBar.style.width = (Math.max(0, 1 - t / 4) * 100).toFixed(0) + '%';
+      patternBar.style.width = (Math.min(1, t / 4) * 100).toFixed(0) + '%';
+      errorBar.style.width = Math.min(100, error / 0.35 * 100).toFixed(0) + '%';
+    }
+    range.addEventListener("input", function () { stopAuto(); if (raf) cancelAnimationFrame(raf); raf = 0; playing = false; t = parseFloat(range.value) || 0; out.textContent = t.toFixed(2); draw(); });
+    var autoTimers = [];
+    function stopAuto() { autoTimers.forEach(clearTimeout); autoTimers = []; }
+    el.querySelector(".ls-compress-auto").addEventListener("click", function () {
+      stopAuto();
+      if (t >= 3.99) t = 0;
+      [1, 2, 3, 4].forEach(function (lvl, i) {
+        if (lvl <= t) return;
+        autoTimers.push(setTimeout(function () { animateTo(lvl); }, i * 1500));
+      });
+    });
+    function resize() { size = api.fit(canvas, stage); draw(); }
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    resize();
+    function animateTo(target) {
+      if (playing) { playing = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
+      playing = true;
+      var start = performance.now(), from = t;
+      function step(now) {
+        if (!playing) return;
+        var k = Math.min(1, (now - start) / 650);
+        t = from + (target - from) * k;
+        range.value = String(t);
+        out.textContent = t.toFixed(2);
+        draw();
+        if (k < 1) raf = requestAnimationFrame(step); else playing = false;
+      }
+      raf = requestAnimationFrame(step);
+    }
+    function nextInternal() {
+      stopAuto();
+      if (t < 3.99) { animateTo(Math.floor(t + 0.001) + 1); return true; }
+      return false;
+    }
+    function prevInternal() {
+      stopAuto();
+      if (t > 0.01) { animateTo(Math.ceil(t - 0.001) - 1); return true; }
+      return false;
+    }
+    return {
+      update: function () {},
+      next: nextInternal,
+      prev: prevInternal,
+      onKey: function (e) {
+        return api.util.arrowKey(e, nextInternal, prevInternal);
+      },
+      resize: resize,
+      pause: function () { playing = false; if (raf) cancelAnimationFrame(raf); raf = 0; },
+      destroy: function () { if (raf) cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); }
+    };
+  }
+
   var SCENES = {
 
 
