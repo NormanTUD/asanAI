@@ -633,11 +633,11 @@
     {
       kicker: "04 / Neuronale Netze",
       title: "Ein kleines Netz lernt den Sinus",
-      body: "Ein neuronales Netz ist eine parametrisierte Funktion. Hier lernt ein kleines Netz den Sinus aus 14 Punkten im Trainingsbereich. Der Loss sinkt, die Kurve passt innen. Außerhalb des Trainingsbereichs wird sie falsch: Das Netz hat den Bereich approximiert, nicht die Funktion verstanden. Klicke die Schritte und beobachte Loss und Extrapolation.",
-      watch: "Klicke die Schritte. Wo passt das Modell, wo nicht?",
+      body: "Ein echtes kleines Netz: x → 32 → 32 → 32 → 1, Dense plus ReLU. Es trainiert live auf 18 Punkten im Trainingsbereich. Die grüne Kurve passt innen; außerhalb extrapoliert sie. Ziehe Punkte, pausiere das Training oder starte neu.",
+      watch: "Ziehe einen Punkt. Wie reagiert die grüne Kurve?",
       demoState: { scene: "model", view: "plot" },
       context: "Der Loss wird nur auf den Trainingspunkten berechnet. Außerhalb gibt es keine Daten; die Kurve ist eine Extrapolation.",
-      deep: "Das Netz sieht nur den Trainingsbereich. Es minimiert dort den Loss und wird außerhalb nicht belohnt. Deshalb kann es innen gut und außen schlecht sein. Das ist der Unterschied zwischen Approximation und Verstehen.",
+      deep: "Das Netz hat drei versteckte Schichten mit je 32 ReLU-Neuronen. Der Loss wird nur auf den Trainingspunkten berechnet; außerhalb gibt es keine Daten. Deshalb kann es innen gut und außen schlecht sein. Das ist der Unterschied zwischen Approximation und Verstehen.",
       boxes: [
         box("mod-0", "Idee", "Was ist ein Modell?", "Ein Modell ist eine parametrisierte Funktion, die aus Eingaben Ausgaben schätzt. Beim Training werden die Parameter so angepasst, dass die Ausgaben zu den Daten passen."),
         box("mod-layer", "Mathematik", "Die Dense-Schicht", "Ein Input, ein Neuron: z = w x + b; a = activation(z); Ausgabe = v a + c. w, b, v und c sind Parameter. Mehr Neuronen und Schichten komponieren solche Funktionen.", "\\underbrace{z}_{\\text{Input des Neurons}} = \\underbrace{w x + b}_{\\text{lineare Schicht}} \\qquad \\underbrace{a}_{\\text{Aktivierung}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{Knick oder Kurve}}"),
@@ -672,11 +672,11 @@
     {
       kicker: "04 / Neural networks",
       title: "A small network learns the sine",
-      body: "A neural network is a parameterised function. Here a small network learns the sine from 14 points in the training range. The loss falls and the curve fits inside. Outside the training range it goes wrong: the network approximated the range, not the function. Click the steps and watch the loss and the extrapolation.",
-      watch: "Click the steps. Where does the model fit, and where does it fail?",
+      body: "A real small network: x → 32 → 32 → 32 → 1, dense with ReLU. It trains live on 18 points in the training range. The green curve fits inside; outside it extrapolates. Drag points, pause training, or restart.",
+      watch: "Drag a point. How does the green curve react?",
       demoState: { scene: "model", view: "plot" },
       context: "The loss is computed only on the training points. Outside there is no data; the curve is an extrapolation.",
-      deep: "The network sees only the training range. It minimises the loss there and gets no reward outside. That is why it can be good inside and bad outside. This is the difference between approximation and understanding.",
+      deep: "The network has three hidden layers with 32 ReLU neurons each. The loss is computed only on the training points; outside there is no data. That is why it can be good inside and bad outside. This is the difference between approximation and understanding.",
       boxes: [
         box("mod-0", "Idea", "What is a model?", "A model is a parameterised function that estimates outputs from inputs. Training adjusts the parameters so that the outputs fit the data."),
         box("mod-layer", "Mathematics", "The dense layer", "One input, one neuron: z = w x + b; a = activation(z); output = v a + c. w, b, v, and c are parameters. More neurons and layers compose such functions.", "\\underbrace{z}_{\\text{input to the neuron}} = \\underbrace{w x + b}_{\\text{linear layer}} \\qquad \\underbrace{a}_{\\text{activation}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{bend or curve}}"),

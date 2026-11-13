@@ -7948,7 +7948,7 @@
     el.className = "ls-compress-scene";
     el.innerHTML = '<div class="ls-compress-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
       '<div class="ls-compress-side"><div class="ls-compress-metrics"><span><b>' + (DE ? "Details" : "details") + '</b><i data-detail></i></span><span><b>' + (DE ? "Muster" : "patterns") + '</b><i data-pattern></i></span><span><b>' + (DE ? "Fehler" : "error") + '</b><i data-error></i></span></div><div class="ls-compress-readout" aria-live="polite"></div></div>' +
-      '<div class="ls-compress-controls"><label class="ls-range">' + (DE ? "Kompression" : "Compression") + ' <input type="range" class="ls-compress-range" min="0" max="1" step="0.01" value="0"><output>0.00</output></label><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-compress-auto">' + (DE ? "Automatisch" : "Auto") + '</button></div>';
+      '<div class="ls-compress-controls"><label class="ls-range">' + (DE ? "Kompression" : "Compression") + ' <input type="range" class="ls-compress-range" min="0" max="4" step="0.01" value="0"><output>0.00</output></label><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-compress-auto">' + (DE ? "Automatisch" : "Auto") + '</button></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-compress-stage");
     var canvas = el.querySelector("canvas");
@@ -7988,46 +7988,101 @@
         }
       }
     })();
+    var clusterCenters = [], superCenters = [
+      { x: 0.30, y: 0.30 }, { x: 0.70, y: 0.30 }, { x: 0.30, y: 0.70 }, { x: 0.70, y: 0.70 }
+    ];
+    for (var c = 0; c < 12; c++) clusterCenters.push({ x: 0.18 + (c % 4) * 0.22, y: 0.22 + Math.floor(c / 4) * 0.28 });
+    var center = { x: 0.5, y: 0.5 };
+    var outer = [];
+    for (var o = 0; o < 8; o++) {
+      var oa = o / 8 * Math.PI * 2;
+      outer.push({ x: 0.5 + Math.cos(oa) * 0.36, y: 0.5 + Math.sin(oa) * 0.36 });
+    }
+    function lerp(a, b, u) { return a + (b - a) * u; }
+    function clamp01(v) { return Math.max(0, Math.min(1, v)); }
+    function point(x, y, r, col, alpha) {
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = col; ctx.globalAlpha = alpha; ctx.fill();
+      ctx.strokeStyle = C.paper; ctx.lineWidth = 1; ctx.globalAlpha = alpha; ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
     function draw() {
       if (!size) return;
       ctx = size.ctx;
       var w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
-      var pad = 24;
-      function X(n) { return pad + (n.x0 + (n.cx - n.x0) * t) * (w - pad * 2); }
-      function Y(n) { return pad + (n.y0 + (n.cy - n.y0) * t) * (h - pad * 2); }
-      var crossAlpha = (1 - t) * 0.24;
-      edges.forEach(function (e) {
-        var a = nodes[e.a], b = nodes[e.b];
-        ctx.strokeStyle = e.same ? a.col : C.muted;
-        ctx.globalAlpha = e.same ? 0.22 : crossAlpha;
-        ctx.lineWidth = e.same ? 0.9 : 0.55;
-        ctx.beginPath(); ctx.moveTo(X(a), Y(a)); ctx.lineTo(X(b), Y(b)); ctx.stroke();
-      });
-      ctx.globalAlpha = 1;
-      nodes.forEach(function (n) {
-        var x = X(n), y = Y(n);
-        var r = 2.4 + (1 - t) * 0.8;
-        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fillStyle = n.col; ctx.globalAlpha = 0.9; ctx.fill();
+      var pad = 28;
+      function X(n) { return pad + n.x * (w - pad * 2); }
+      function Y(n) { return pad + n.y * (h - pad * 2); }
+      var tt = t;
+      var a0 = clamp01(1 - Math.abs(tt - 0));
+      var a1 = clamp01(1 - Math.abs(tt - 1));
+      var a2 = clamp01(1 - Math.abs(tt - 2));
+      var a3 = clamp01(1 - Math.abs(tt - 3));
+      var a4 = clamp01(1 - Math.abs(tt - 4));
+      var u0 = clamp01(tt);
+      var u1 = clamp01(tt - 1);
+      var u2 = clamp01(tt - 2);
+      var u3 = clamp01(tt - 3);
+      if (tt < 1.4) {
+        var crossAlpha = Math.max(0, 0.24 * (1 - tt));
+        edges.forEach(function (e) {
+          var a = nodes[e.a], b = nodes[e.b];
+          var ax = lerp(a.x0, clusterCenters[a.c].x, u0), ay = lerp(a.y0, clusterCenters[a.c].y, u0);
+          var bx = lerp(b.x0, clusterCenters[b.c].x, u0), by = lerp(b.y0, clusterCenters[b.c].y, u0);
+          ctx.strokeStyle = e.same ? a.col : C.muted;
+          ctx.globalAlpha = e.same ? 0.22 * a0 : crossAlpha;
+          ctx.lineWidth = e.same ? 0.9 : 0.55;
+          ctx.beginPath(); ctx.moveTo(X({x:ax}), Y({y:ay})); ctx.lineTo(X({x:bx}), Y({y:by})); ctx.stroke();
+        });
         ctx.globalAlpha = 1;
-      });
+        if (a0 > 0.01) nodes.forEach(function (n) {
+          var x = lerp(n.x0, clusterCenters[n.c].x, u0), y = lerp(n.y0, clusterCenters[n.c].y, u0);
+          point(X({x:x}), Y({y:y}), 2.4, n.col, a0 * 0.9);
+        });
+      }
+      if (a1 > 0.01) {
+        clusterCenters.forEach(function (cc, i) {
+          var x = lerp(cc.x, superCenters[Math.floor(i / 3)].x, u1);
+          var y = lerp(cc.y, superCenters[Math.floor(i / 3)].y, u1);
+          point(X({x:x}), Y({y:y}), 5.2, palette[i % palette.length], a1);
+        });
+      }
+      if (a2 > 0.01) {
+        superCenters.forEach(function (sp) {
+          var x = lerp(sp.x, center.x, u2), y = lerp(sp.y, center.y, u2);
+          point(X({x:x}), Y({y:y}), 7.5, C.petrol, a2);
+        });
+      }
+      if (a3 > 0.01) point(X(center), Y(center), 10, C.green, a3);
+      if (a4 > 0.01) {
+        outer.forEach(function (op) {
+          ctx.strokeStyle = C.gold;
+          ctx.globalAlpha = a4 * 0.5;
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(X(center), Y(center)); ctx.lineTo(X(op), Y(op)); ctx.stroke();
+          point(X(op), Y(op), 4.2, C.gold, a4);
+        });
+        ctx.globalAlpha = 1;
+        point(X(center), Y(center), 10, C.green, a4);
+      }
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText(DE ? "144 Knoten · dichtes Netz" : "144 nodes · dense graph", pad, 16);
+      var label = tt < 0.5 ? (DE ? "144 Knoten · dichtes Netz" : "144 nodes · dense graph") : tt < 1.5 ? (DE ? "12 Subcluster" : "12 subclusters") : tt < 2.5 ? (DE ? "4 Gruppen" : "4 groups") : tt < 3.5 ? (DE ? "1 Punkt" : "1 point") : (DE ? "wieder eingebettet" : "embedded again");
+      ctx.fillText(label, pad, 18);
       ctx.textAlign = "right";
-      ctx.fillText(DE ? "12 Inseln" : "12 islands", w - pad, 16);
+      ctx.fillText(DE ? "Weiter = verdichten" : "next = compress", w - pad, 18);
       updateReadout();
     }
     function updateReadout() {
-      var details = Math.round(nodes.length * (1 - t));
-      var patterns = Math.round(12 * t);
-      var error = Math.pow(t, 1.7) * 0.35;
-      readout.innerHTML = '<span><b>' + (DE ? "Kompression" : "compression") + '</b> ' + t.toFixed(2) + '</span><span><b>' + (DE ? "Knoten" : "nodes") + '</b> ' + details + '</span><span><b>' + (DE ? "Inseln" : "islands") + '</b> ' + patterns + '</span>';
-      detailBar.style.width = ((1 - t) * 100).toFixed(0) + '%';
-      patternBar.style.width = (t * 100).toFixed(0) + '%';
+      var details = Math.round(nodes.length * Math.max(0, 1 - t / 4));
+      var patterns = Math.round(12 * Math.min(1, t / 4));
+      var error = Math.pow(t / 4, 1.7) * 0.35;
+      readout.innerHTML = '<span><b>' + (DE ? "Stufe" : "level") + '</b> ' + t.toFixed(2) + '</span><span><b>' + (DE ? "Knoten" : "nodes") + '</b> ' + details + '</span><span><b>' + (DE ? "Gruppen" : "groups") + '</b> ' + patterns + '</span>';
+      detailBar.style.width = (Math.max(0, 1 - t / 4) * 100).toFixed(0) + '%';
+      patternBar.style.width = (Math.min(1, t / 4) * 100).toFixed(0) + '%';
       errorBar.style.width = Math.min(100, error / 0.35 * 100).toFixed(0) + '%';
     }
     range.addEventListener("input", function () { t = parseFloat(range.value) || 0; out.textContent = t.toFixed(2); draw(); });
@@ -8037,8 +8092,8 @@
       var start = performance.now(), from = t;
       function step(now) {
         if (!playing) return;
-        var k = Math.min(1, (now - start) / 1800);
-        t = from + (1 - from) * k;
+        var k = Math.min(1, (now - start) / 2400);
+        t = from + (4 - from) * k;
         range.value = String(t);
         out.textContent = t.toFixed(2);
         draw();
@@ -8050,7 +8105,43 @@
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
     resize();
-    return { update: function () {}, resize: resize, pause: function () { playing = false; if (raf) cancelAnimationFrame(raf); raf = 0; }, destroy: function () { if (raf) cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); } };
+    function animateTo(target) {
+      if (playing) { playing = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
+      playing = true;
+      var start = performance.now(), from = t;
+      function step(now) {
+        if (!playing) return;
+        var k = Math.min(1, (now - start) / 650);
+        t = from + (target - from) * k;
+        range.value = String(t);
+        out.textContent = t.toFixed(2);
+        draw();
+        if (k < 1) raf = requestAnimationFrame(step); else playing = false;
+      }
+      raf = requestAnimationFrame(step);
+    }
+    function nextInternal() {
+      if (t < 3.99) { animateTo(Math.floor(t + 0.001) + 1); return true; }
+      return false;
+    }
+    function prevInternal() {
+      if (t > 0.01) { animateTo(Math.ceil(t - 0.001) - 1); return true; }
+      return false;
+    }
+    return {
+      update: function () {},
+      next: nextInternal,
+      prev: prevInternal,
+      onKey: function (e) {
+        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
+        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
+        return false;
+      },
+      resize: resize,
+      pause: function () { playing = false; if (raf) cancelAnimationFrame(raf); raf = 0; },
+      destroy: function () { if (raf) cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); }
+    };
   }
 
   var SCENES = {
@@ -8077,7 +8168,7 @@
     softmax: softmaxScene,
     manifold: manifoldScene,
     animals: animalScene,
-    model: modelScene,
+    model: function (root, api) { return window.TfSinusScene(root, api); },
     blocks: blocksScene,
     highdim: highdimScene,
     mlp: mlpScene,
