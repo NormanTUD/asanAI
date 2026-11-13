@@ -1143,10 +1143,10 @@
           '<button type="button" data-phone="chat" role="tab" aria-selected="false">' + (DE ? "Chat" : "Chat") + '</button>' +
         '</div>' +
         '<div class="ia-phones">' +
-          '<div class="ia-phone is-active" id="ia-phone">' +
+          '<div class="ia-phone">' +
             '<div class="ia-phone-frame"></div>' +
             '<div class="ia-phone-notch"></div>' +
-            '<div class="ia-phone-screen">' +
+            '<div class="ia-phone-screen ia-screen-layer ia-search-screen is-active" id="ia-phone">' +
               '<div class="ia-app-logo" id="ia-logo" aria-hidden="true"></div>' +
               '<div class="ia-search-bar" id="ia-search-bar">' +
                 '<div class="ia-search-icon" aria-hidden="true"></div>' +
@@ -1158,12 +1158,7 @@
               '</div>' +
               '<div class="ia-serp" id="ia-serp"></div>' +
             '</div>' +
-
-          '</div>' +
-          '<div class="ia-phone ia-phone--chat" id="ia-chat-phone">' +
-            '<div class="ia-phone-frame"></div>' +
-            '<div class="ia-phone-notch"></div>' +
-            '<div class="ia-phone-screen ia-chat-screen">' +
+            '<div class="ia-phone-screen ia-screen-layer ia-phone--chat ia-chat-screen" id="ia-chat-phone">' +
               '<div class="ia-chat-appbar"><span>' + (DE ? "KI-Chat" : "AI chat") + '</span><i class="ia-chat-live" aria-hidden="true"></i></div>' +
               '<div class="ia-chat-thread" aria-live="polite">' +
                 '<div class="ia-chat-msg is-user"><span class="ia-chat-role">' + (DE ? "Du" : "You") + '</span><span class="ia-chat-bubble ia-chat-question"></span></div>' +

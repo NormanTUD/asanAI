@@ -1670,3 +1670,9 @@ h1,h2,h3,h4{
 .ls-code-taskbar{gap:5px;padding:0 6px}
 .ls-code-task{width:auto;min-width:46px;justify-content:center;white-space:nowrap}
 .ls-code-term span{overflow-wrap:anywhere}
+
+/* Phone stays fixed while Search/Chat screens cross-fade inside it */
+.ls-phone-scene .ia-phones > .ia-phone{opacity:1;pointer-events:auto;transform:none;transition:none}
+.ls-phone-scene .ia-screen-layer{opacity:0;pointer-events:none;transition:opacity calc(var(--ls-motion-enter) - 40ms) ease}
+.ls-phone-scene .ia-screen-layer.is-active{opacity:1;pointer-events:auto}
+.ls-phone-scene .ia-phone-screen.ia-phone--chat{padding:46px 14px 16px;align-items:stretch;background:linear-gradient(180deg,#fbfcfe 0%,#eef2f8 100%)}
