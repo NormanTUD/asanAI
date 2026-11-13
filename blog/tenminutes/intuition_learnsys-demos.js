@@ -6085,7 +6085,7 @@
     var showData = true, showTruth = true, showError = false, showModel = false;
     var phase = 0;
     var phaseFit = [0, 0, 0, 0.28, 0.62, 1];
-    var probeT = 0.72, plotBounds = null;
+    var probeT = 0.82, plotBounds = null;
     var cards = DE ? [
       { id: "tokenizer", title: "Tokenizer", sub: "Text → Tokens", color: "lime", desc: "Zerlegt Text in Tokens: Stücke, die das Modell als Zahlen lesen kann." },
       { id: "embed", title: "Embedding", sub: "Tokens → Vektoren", color: "sky", desc: "Macht aus jeder Token-ID einen Vektor. Ähnliche Tokens landen nah beieinander." },
@@ -6099,21 +6099,25 @@
     ];
     function color(name) { return C[name] || C.petrol; }
     function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
-    function truth(t) { return clamp(0.52 + 0.21 * Math.sin(2.4 * Math.PI * t) + 0.12 * Math.cos(5.1 * Math.PI * t + 0.7) + 0.06 * t, 0.08, 0.94); }
-    function approx(t) { return clamp(truth(t) + 0.016 * Math.sin(7.3 * Math.PI * t + 0.4), 0.08, 0.94); }
-    function baseApprox(t) { return clamp(0.54 + 0.045 * Math.sin(1.1 * Math.PI * t + 0.2), 0.08, 0.94); }
+    var TRAIN_END = 0.66;
+    function truth(t) { return 0.5 + 0.3 * Math.sin(2 * Math.PI * t); }
+    function polyModel(t) {
+      var y = 0.46209673 + 3.08660053 * t - 8.18539554 * t * t + 4.43281224 * t * t * t;
+      return clamp(y, 0.02, 0.98);
+    }
+    function baseApprox() { return 0.5; }
     var samples = [];
     (function () {
       var seed = 7;
       function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
-      for (var i = 0; i < 17; i++) {
-        var t = (i + 0.5) / 17 + (rnd() - 0.5) * 0.018;
-        samples.push({ t: t, v: clamp(truth(t) + (rnd() - 0.5) * 0.075, 0.04, 0.96) });
+      for (var i = 0; i < 14; i++) {
+        var t = 0.04 + (0.58 * i / 13) + (rnd() - 0.5) * 0.018;
+        samples.push({ t: t, v: truth(t) + (rnd() - 0.5) * 0.045 });
       }
     })();
     function modelValueAt(t, f) {
       var eased = f * f * (3 - 2 * f);
-      return baseApprox(t) + (approx(t) - baseApprox(t)) * eased;
+      return baseApprox() + (polyModel(t) - baseApprox()) * eased;
     }
     function modelValue(t) { return modelValueAt(t, fit); }
     function lossAt(f) {
@@ -6129,10 +6133,20 @@
       var sum = samples.reduce(function (acc, s) { return acc + Math.abs(modelValue(s.t) - s.v); }, 0);
       return sum / samples.length;
     }
+    function outsideError() {
+      var sum = 0, n = 0;
+      for (var i = 0; i <= 30; i++) {
+        var t = 0.7 + 0.3 * i / 30;
+        var d = modelValueAt(t, fit) - truth(t);
+        sum += d * d;
+        n++;
+      }
+      return Math.sqrt(sum / n);
+    }
     function updateMetrics() {
       if (!metricEl) return;
       var loss = lossAt(fit);
-      metricEl.textContent = (DE ? "Daten " : "Data ") + samples.length + ' · Loss ' + loss.toFixed(3);
+      metricEl.textContent = (DE ? "Daten " : "Data ") + samples.length + ' · Loss ' + loss.toFixed(3) + ' · ' + (DE ? "außen " : "outside ") + outsideError().toFixed(3);
     }
     function updateStatus() {
       var order = ["data", "model", "loss", "update", "update2", "fit"];
@@ -6147,12 +6161,12 @@
       var text;
       if (active >= 0) text = cards[active].desc;
       else if (view === "blocks") text = DE ? "Ein LLM baut aus diesen vier Bausteinen eine Funktion. Klicke einen Baustein an." : "An LLM builds a function from these four blocks. Click a block.";
-      else if (phase === 0) text = DE ? "Daten sammeln: 17 Beispiele. Die echte Funktion ist unbekannt; nur die Punkte sind sichtbar." : "Collect data: 17 examples. The true function is unknown; only the points are visible.";
-      else if (phase === 1) text = DE ? "Startmodell: eine erste Schätzung. Die Parameter sind noch nicht an die Daten angepasst." : "Start model: a first estimate. The parameters are not yet fitted to the data.";
-      else if (phase === 2) text = DE ? "Loss: Die senkrechten Linien sind die Fehler. Der Loss fasst sie zu einer Zahl zusammen." : "Loss: the vertical lines are the errors. The loss turns them into one number.";
+      else if (phase === 0) text = DE ? "Daten sammeln: 14 Punkte im Trainingsbereich. Die Sinusfunktion ist unbekannt; nur die Punkte sind sichtbar." : "Collect data: 14 points in the training range. The sine function is unknown; only the points are visible.";
+      else if (phase === 1) text = DE ? "Startmodell: eine flache Schätzung. Die Parameter sind noch nicht an die Daten angepasst." : "Start model: a flat estimate. The parameters are not yet fitted to the data.";
+      else if (phase === 2) text = DE ? "Loss: Die senkrechten Linien sind die Fehler im Trainingsbereich. Der Loss fasst sie zu einer Zahl zusammen." : "Loss: the vertical lines are the errors in the training range. The loss turns them into one number.";
       else if (phase < 5) text = DE ? "Update: Die Parameter bewegen die Kurve. Der Loss sinkt mit jedem Schritt." : "Update: the parameters move the curve. The loss drops with each step.";
       else if (fit < 0.98) text = DE ? "Training: Die Kurve passt sich weiter an die Daten an." : "Training: the curve keeps fitting the data.";
-      else text = DE ? "Fertig: Die grüne Kurve approximiert die unbekannte Funktion. Der Loss ist klein, aber nicht null." : "Done: the green curve approximates the unknown function. The loss is small, but not zero.";
+      else text = DE ? "Fertig: Im Trainingsbereich passt die grüne Kurve. Außerhalb extrapoliert sie falsch: Das Netz hat den Bereich approximiert, nicht die Sinusfunktion verstanden." : "Done: the green curve fits inside the training range. Outside it extrapolates badly: the network approximated the range, not the sine function.";
       readout.innerHTML = '<b>' + (DE ? "Machine Learning" : "Machine learning") + '</b> ' + api.esc(text);
       updateMetrics();
       updateStatus();
@@ -6285,6 +6299,21 @@
       ctx.strokeRect(plotX, plotY, plotW, plotH);
       function px(t) { return plotX + t * plotW; }
       function py(v) { return plotY + plotH - v * plotH; }
+      var splitX = px(TRAIN_END);
+      ctx.fillStyle = "rgba(159,151,0,.07)";
+      ctx.fillRect(splitX, plotY, plotX + plotW - splitX, plotH);
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = C.gold;
+      ctx.globalAlpha = .65;
+      ctx.beginPath(); ctx.moveTo(splitX, plotY); ctx.lineTo(splitX, plotY + plotH); ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(DE ? "Trainingsbereich" : "training range", plotX + 6, plotY + 14);
+      ctx.textAlign = "right";
+      ctx.fillText(DE ? "außerhalb" : "outside", plotX + plotW - 6, plotY + 14);
       if (showTruth) {
         ctx.setLineDash([5, 5]);
         ctx.strokeStyle = C.muted;
@@ -6362,7 +6391,7 @@
         ctx.fillStyle = C.muted;
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "left";
-        ctx.fillText(DE ? "unbekannt" : "unknown", px(0.84), py(truth(0.84)) - 8);
+        ctx.fillText(DE ? "Sinus" : "sine", px(0.84), py(truth(0.84)) - 8);
       }
       var probeX = px(probeT), trueY = py(truth(probeT)), predY = py(modelValue(probeT));
       ctx.save();
@@ -7760,7 +7789,7 @@
     el.innerHTML = '<div class="ls-gradient-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
       '<div class="ls-scene-row"><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-grad-step">' + (DE ? "Schritt" : "Step") + '</button>' +
         '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-grad-reset">' + (DE ? "Zurücksetzen" : "Reset") + '</button>' +
-        '<label class="ls-range">' + (DE ? "Lernrate" : "Learning rate") + ' <input type="range" class="ls-grad-lr" min="0.01" max="0.6" step="0.01" value="0.12"><output>0.12</output></label>' +
+        '<label class="ls-range">' + (DE ? "Lernrate" : "Learning rate") + ' <input type="range" class="ls-grad-lr" min="0.01" max="0.35" step="0.01" value="0.12"><output>0.12</output></label>' +
       '</div>' +
       '<div class="ls-gradient-readout" aria-live="polite"></div>';
     root.appendChild(el);
@@ -7769,50 +7798,118 @@
     var readout = el.querySelector(".ls-gradient-readout");
     var lrEl = el.querySelector(".ls-grad-lr");
     var lrOut = lrEl.nextElementSibling;
-    var w = 3.2, lr = 0.12, steps = 0, size = null, ctx = null;
+    var xs = [0, 0.25, 0.5, 0.75, 1];
+    var ys = [0.15, 0.38, 0.5, 0.72, 0.9];
+    var w = 1.45, b = -0.45, lr = 0.12, steps = 0;
+    var wMin = -0.4, wMax = 1.8, bMin = -0.8, bMax = 0.8;
+    var size = null, ctx = null, geo = null;
     var C = api.colors();
-    function loss(x) { return 0.14 * Math.pow(x - 1.1, 2) + 0.12 * Math.cos(4 * x) + 0.55; }
-    function grad(x) { var e = 0.001; return (loss(x + e) - loss(x - e)) / (2 * e); }
-    function px(x) { return 30 + (x + 2) / 6 * (size.w - 50); }
-    function py(y) { return size.h - 40 - Math.min(1, Math.max(0, y)) * (size.h - 80); }
+    function loss(wv, bv) {
+      var s = 0;
+      for (var i = 0; i < xs.length; i++) {
+        var d = wv * xs[i] + bv - ys[i];
+        s += d * d;
+      }
+      return s / xs.length;
+    }
+    function grads(wv, bv) {
+      var gw = 0, gb = 0;
+      for (var i = 0; i < xs.length; i++) {
+        var d = wv * xs[i] + bv - ys[i];
+        gw += 2 * d * xs[i];
+        gb += 2 * d;
+      }
+      return { w: gw / xs.length, b: gb / xs.length };
+    }
+    function mix(a, b, t) {
+      function rgb(h) { h = h.replace("#", ""); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
+      var A = rgb(a), B = rgb(b);
+      return "rgb(" + Math.round(A[0] + (B[0]-A[0])*t) + "," + Math.round(A[1] + (B[1]-A[1])*t) + "," + Math.round(A[2] + (B[2]-A[2])*t) + ")";
+    }
+    function setup() {
+      var yaw = -0.72, pitch = 0.78;
+      var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+      var scale = Math.min(size.w * 0.38, size.h * 0.42);
+      var cx = size.w * 0.52, cy0 = size.h * 0.58;
+      geo = { yaw: yaw, pitch: pitch, cy: cy, sy: sy, cp: cp, sp: sp, scale: scale, cx: cx, cy0: cy0 };
+      var maxL = 0;
+      for (var wi = 0; wi <= 24; wi++) for (var bi = 0; bi <= 24; bi++) {
+        maxL = Math.max(maxL, loss(wMin + (wMax-wMin)*wi/24, bMin + (bMax-bMin)*bi/24));
+      }
+      geo.maxL = Math.max(0.001, maxL);
+      geo.project = function(wv, bv, L) {
+        var x = (wv - wMin) / (wMax - wMin) - 0.5;
+        var y = (bv - bMin) / (bMax - bMin) - 0.5;
+        var z = (L / geo.maxL) * 0.9;
+        var x1 = x * cy - y * sy;
+        var y1 = x * sy + y * cy;
+        var y2 = y1 * cp - z * sp;
+        var z2 = y1 * sp + z * cp;
+        return { x: cx + x1 * scale, y: cy0 - y2 * scale, z: z2 };
+      };
+    }
     function draw() {
       if (!size) return;
-      ctx = size.ctx;
+      if (!geo) setup();
       ctx.clearRect(0, 0, size.w, size.h);
-      var bg = ctx.createRadialGradient(size.w * 0.5, size.h * 0.3, 8, size.w * 0.5, size.h * 0.5, Math.max(size.w, size.h) * 0.7);
-      bg.addColorStop(0, "rgba(247,250,249,.9)"); bg.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, size.w, size.h);
-      ctx.strokeStyle = C.line; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(30, size.h - 40); ctx.lineTo(size.w - 20, size.h - 40); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(30, 20); ctx.lineTo(30, size.h - 40); ctx.stroke();
-      ctx.strokeStyle = C.petrol; ctx.lineWidth = 2.4; ctx.beginPath();
-      for (var i = 0; i <= 100; i++) {
-        var x = -2 + 6 * i / 100, y = loss(x);
-        if (i === 0) ctx.moveTo(px(x), py(y)); else ctx.lineTo(px(x), py(y));
+      ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, size.w, size.h);
+      var cells = [];
+      var N = 24;
+      for (var wi = 0; wi < N; wi++) {
+        for (var bi = 0; bi < N; bi++) {
+          var w0 = wMin + (wMax-wMin)*wi/N, w1 = wMin + (wMax-wMin)*(wi+1)/N;
+          var b0 = bMin + (bMax-bMin)*bi/N, b1 = bMin + (bMax-bMin)*(bi+1)/N;
+          var l0 = loss(w0,b0), l1 = loss(w1,b0), l2 = loss(w1,b1), l3 = loss(w0,b1);
+          var p0 = geo.project(w0,b0,l0), p1 = geo.project(w1,b0,l1), p2 = geo.project(w1,b1,l2), p3 = geo.project(w0,b1,l3);
+          cells.push({ p: [p0,p1,p2,p3], z: (p0.z+p1.z+p2.z+p3.z)/4, l: (l0+l1+l2+l3)/4 });
+        }
       }
-      ctx.stroke();
-      var g = grad(w);
-      var lineY = py(loss(w));
-      ctx.strokeStyle = C.gold; ctx.lineWidth = 1.5; ctx.setLineDash([5, 4]);
-      ctx.beginPath(); ctx.moveTo(px(w), py(loss(w))); ctx.lineTo(px(w + 0.8), py(loss(w) - g * 0.8)); ctx.stroke();
+      cells.sort(function (a,b) { return a.z - b.z; });
+      cells.forEach(function (c) {
+        var t = Math.min(1, c.l / geo.maxL);
+        ctx.fillStyle = mix(C.green, C.lilac, Math.min(1, Math.pow(t, 0.7)));
+        ctx.globalAlpha = .78;
+        ctx.beginPath(); ctx.moveTo(c.p[0].x,c.p[0].y); ctx.lineTo(c.p[1].x,c.p[1].y); ctx.lineTo(c.p[2].x,c.p[2].y); ctx.lineTo(c.p[3].x,c.p[3].y); ctx.closePath(); ctx.fill();
+        ctx.globalAlpha = .18;
+        ctx.strokeStyle = C.paper; ctx.lineWidth = .6; ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+      var p = geo.project(w, b, loss(w,b));
+      var grad = grads(w,b);
+      var arrow = geo.project(w - grad.w * 0.18, b - grad.b * 0.18, loss(w,b));
+      ctx.strokeStyle = C.gold; ctx.lineWidth = 2; ctx.setLineDash([4,3]);
+      ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(arrow.x,arrow.y); ctx.stroke();
       ctx.setLineDash([]);
-      ctx.beginPath(); ctx.arc(px(w), lineY, 7, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
-      ctx.fillStyle = C.ink; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
-      ctx.fillText("w = " + w.toFixed(3), px(w) + 10, lineY - 10);
-      ctx.fillStyle = C.muted; ctx.textAlign = "center";
-      ctx.fillText(DE ? "Gewicht w" : "weight w", size.w / 2, size.h - 16);
+      ctx.beginPath(); ctx.arc(p.x,p.y-8,9,0,Math.PI*2); ctx.fillStyle = "rgba(0,0,0,.14)"; ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x,p.y,8,0,Math.PI*2); ctx.fillStyle = C.green; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = C.ink;
+      ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
+      ctx.fillText("w = " + w.toFixed(2) + " · b = " + b.toFixed(2), p.x + 12, p.y - 10);
+      var o = geo.project(wMin, bMin, 0), ew = geo.project(wMax, bMin, 0), eb = geo.project(wMin, bMax, 0), ez = geo.project(wMin, bMin, geo.maxL);
+      ctx.strokeStyle = C.petrol; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(o.x,o.y); ctx.lineTo(ew.x,ew.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(o.x,o.y); ctx.lineTo(eb.x,eb.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(o.x,o.y); ctx.lineTo(ez.x,ez.y); ctx.stroke();
+      ctx.fillStyle = C.petrol; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.fillText("w", ew.x + 4, ew.y); ctx.fillText("b", eb.x + 4, eb.y); ctx.fillText("Loss", ez.x + 4, ez.y);
       updateReadout();
     }
     function updateReadout() {
-      var g = grad(w);
-      readout.innerHTML = '<span><b>w</b> ' + w.toFixed(3) + '</span><span><b>Loss</b> ' + loss(w).toFixed(3) + '</span><span><b>' + (DE ? "Gradient" : "gradient") + '</b> ' + g.toFixed(3) + '</span><span><b>' + (DE ? "Schritte" : "steps") + '</b> ' + steps + '</span>';
+      var grad = grads(w,b);
+      readout.innerHTML = '<span><b>w</b> ' + w.toFixed(3) + '</span><span><b>b</b> ' + b.toFixed(3) + '</span><span><b>Loss</b> ' + loss(w,b).toFixed(4) + '</span><span><b>|∇|</b> ' + Math.hypot(grad.w, grad.b).toFixed(3) + '</span><span><b>' + (DE ? "Schritte" : "steps") + '</b> ' + steps + '</span>';
     }
-    function step() { w = Math.max(-2, Math.min(4, w - lr * grad(w))); steps++; draw(); }
-    function reset() { w = 3.2; steps = 0; draw(); }
+    function step() {
+      var g = grads(w,b);
+      w = Math.max(wMin, Math.min(wMax, w - lr * g.w));
+      b = Math.max(bMin, Math.min(bMax, b - lr * g.b));
+      steps++;
+      draw();
+    }
+    function reset() { w = 1.45; b = -0.45; steps = 0; draw(); }
     el.querySelector(".ls-grad-step").addEventListener("click", step);
     el.querySelector(".ls-grad-reset").addEventListener("click", reset);
     lrEl.addEventListener("input", function () { lr = parseFloat(lrEl.value) || 0.12; lrOut.textContent = lr.toFixed(2); });
-    function resize() { size = api.fit(canvas, stage); draw(); }
+    function resize() { size = api.fit(canvas, stage); setup(); draw(); }
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
     resize();

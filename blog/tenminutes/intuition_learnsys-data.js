@@ -637,19 +637,24 @@
 
   var insideSteps = DE ? [
     {
-      kicker: "04 / Modelle",
-      title: "Modelle",
-      body: "Ein Modell schätzt eine Funktion. Manchmal kennst du sie genau, etwa f(x) = x + 1. Manchmal kennst du sie nicht: Wie berechnet man aus dem bisherigen Text das nächste Wort? Niemand kann diese Funktion klassisch hinschreiben; sie ist viel zu kompliziert. Also geben wir dem Computer Daten. Er sieht sie sich immer wieder an und findet mit den Bausteinen, die wir ihm geben, eine Funktion, die die echte gut genug abschätzt. Das nennt sich Machine Learning.",
-      watch: "Sieh zu, wie aus Daten eine Kurve wird. Was schätzt das Modell hier?",
+      kicker: "04 / Neuronale Netze",
+      title: "Ein kleines Netz lernt den Sinus",
+      body: "Ein neuronales Netz ist eine parametrisierte Funktion. Hier lernt ein kleines Netz den Sinus aus 14 Punkten im Trainingsbereich. Der Loss sinkt, die Kurve passt innen. Außerhalb des Trainingsbereichs wird sie falsch: Das Netz hat den Bereich approximiert, nicht die Funktion verstanden. Klicke die Schritte und beobachte Loss und Extrapolation.",
+      watch: "Klicke die Schritte. Wo passt das Modell, wo nicht?",
       demoState: { scene: "model", view: "plot" },
-      context: "Die echte Funktion ist nirgends aufgeschrieben. Das Training sucht Parameter, mit denen die Bausteine zusammen eine gute Näherung ergeben.",
-      deep: "Klassisches Programmieren beginnt mit dem Verfahren: Du schreibst jeden Schritt vor, und der Computer führt ihn aus. Bei KI drehst du das um: Du gibst Beispiele mit passenden Ausgaben, und das Training sucht die Funktion dazwischen. Die Schichten sind die Form, in der diese Funktion Platz findet.",
+      context: "Der Loss wird nur auf den Trainingspunkten berechnet. Außerhalb gibt es keine Daten; die Kurve ist eine Extrapolation.",
+      deep: "Das Netz sieht nur den Trainingsbereich. Es minimiert dort den Loss und wird außerhalb nicht belohnt. Deshalb kann es innen gut und außen schlecht sein. Das ist der Unterschied zwischen Approximation und Verstehen.",
       boxes: [
         box("mod-0", "Idee", "Was ist ein Modell?", "Ein Modell ist eine parametrisierte Funktion, die aus Eingaben Ausgaben schätzt. Beim Training werden die Parameter so angepasst, dass die Ausgaben zu den Daten passen."),
+        box("mod-layer", "Mathematik", "Die Dense-Schicht", "Ein Input, ein Neuron: z = w x + b; a = activation(z); Ausgabe = v a + c. w, b, v und c sind Parameter. Mehr Neuronen und Schichten komponieren solche Funktionen.", "\\underbrace{z}_{\\text{Input des Neurons}} = \\underbrace{w x + b}_{\\text{lineare Schicht}} \\qquad \\underbrace{a}_{\\text{Aktivierung}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{Knick oder Kurve}}"),
         box("mod-loss", "Mathematik", "Was ist der Loss?", "Der Loss misst den Abstand zwischen Modell und Daten. Beim quadratischen Fehler wird jeder Abstand quadriert, gemittelt und minimiert. Training sucht Parameter, die diesen Wert senken.", "\\underbrace{L(\\theta)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mittlerer quadratischer Fehler}}"),
-        box("in-11", "Mathematik", "Der Stapel", "output = layer₃(layer₂(layer₁(input))). Jede Schicht ist eine Funktion mit Parametern; die Komposition ist das Modell.")
+        box("mod-train", "Technik", "Wie wird trainiert?", "Der Gradient zeigt, wie der Loss auf jede Parameteränderung reagiert. Ein Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite."),
+        box("mod-extra", "Grenze", "Warum außerhalb falsch?", "Im Trainingsbereich gibt es Daten. Außerhalb extrapoliert das Netz. Ein kleiner Trainings-Loss garantiert keine gute Extrapolation.")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }]
+      sources: [
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten und Backpropagation für mehrschichtige Netze.", en: "Gradients and backpropagation for multilayer networks." } },
+        { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } }
+      ]
     },
     {
       kicker: "04a / Die Bausteine",
@@ -670,19 +675,24 @@
     }
   ] : [
     {
-      kicker: "04 / Models",
-      title: "Models",
-      body: "A model estimates a function. Sometimes you know it exactly, for example f(x) = x + 1. Sometimes you do not: how do you compute the next word from the text so far? Nobody can write that function down in the classical way; it is far too complicated. So we give the computer data. It looks at the data again and again and, with the building blocks we provide, finds a function that approximates the real one well enough. That is machine learning.",
-      watch: "Watch data become a curve. What is the model estimating here?",
+      kicker: "04 / Neural networks",
+      title: "A small network learns the sine",
+      body: "A neural network is a parameterised function. Here a small network learns the sine from 14 points in the training range. The loss falls and the curve fits inside. Outside the training range it goes wrong: the network approximated the range, not the function. Click the steps and watch the loss and the extrapolation.",
+      watch: "Click the steps. Where does the model fit, and where does it fail?",
       demoState: { scene: "model", view: "plot" },
-      context: "The real function is written down nowhere. Training searches for parameters that make the building blocks together a good approximation.",
-      deep: "Classical programming starts with the procedure: you write down every step, and the computer executes it. AI reverses that: you provide examples with matching outputs, and training searches for the function in between. The layers are the shape that function takes.",
+      context: "The loss is computed only on the training points. Outside there is no data; the curve is an extrapolation.",
+      deep: "The network sees only the training range. It minimises the loss there and gets no reward outside. That is why it can be good inside and bad outside. This is the difference between approximation and understanding.",
       boxes: [
         box("mod-0", "Idea", "What is a model?", "A model is a parameterised function that estimates outputs from inputs. Training adjusts the parameters so that the outputs fit the data."),
+        box("mod-layer", "Mathematics", "The dense layer", "One input, one neuron: z = w x + b; a = activation(z); output = v a + c. w, b, v, and c are parameters. More neurons and layers compose such functions.", "\\underbrace{z}_{\\text{input to the neuron}} = \\underbrace{w x + b}_{\\text{linear layer}} \\qquad \\underbrace{a}_{\\text{activation}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{bend or curve}}"),
         box("mod-loss", "Mathematics", "What is the loss?", "The loss measures the distance between model and data. With squared error, every gap is squared, averaged, and minimised. Training looks for parameters that lower this value.", "\\underbrace{L(\\theta)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mean squared error}}"),
-        box("in-11", "Mathematics", "The stack", "output = layer₃(layer₂(layer₁(input))). Each layer is a function with parameters; the composition is the model.")
+        box("mod-train", "Technique", "How is it trained?", "The gradient shows how the loss reacts to every parameter change. An optimiser moves in the opposite direction. The learning rate sets the step size."),
+        box("mod-extra", "Limit", "Why wrong outside?", "Inside the training range there is data. Outside the network extrapolates. A small training loss does not guarantee good extrapolation.")
       ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }]
+      sources: [
+        { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten und Backpropagation für mehrschichtige Netze.", en: "Gradients and backpropagation for multilayer networks." } },
+        { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } }
+      ]
     },
     {
       kicker: "04a / The building blocks",
@@ -970,16 +980,17 @@
   var gradientSteps = DE ? [
     {
       kicker: "17 / Training",
-      title: "Der Gradient zeigt bergab",
-      body: "Training ist Bergabgehen. Der Gradient zeigt, in welche Richtung der Loss steigt; ein Schritt geht in die Gegenrichtung. Klicke Schritt und ändere die Lernrate. Der Loss sollte sinken; eine zu große Lernrate kann überspringen.",
-      watch: "Klicke Schritt. Sinkt der Loss? Was passiert bei großer Lernrate?",
+      title: "Die Parameter leben auf einer Loss-Landschaft",
+      body: "Ein kleines Netz mit einem Input, einem Neuron und einem Output hat zwei Parameter: w und b. Für jede Kombination berechnet der Loss den Fehler. Die Fläche zeigt x = w, y = b, z = Loss. Der grüne Ball ist der aktuelle Zustand; der Gradient zeigt bergab. Klicke Schritt und sieh, wie der Ball ins Tal rollt.",
+      watch: "Klicke Schritt. Wo rollt der Ball hin? Was passiert bei großer Lernrate?",
       demoState: { scene: "gradient" },
-      context: "Der Gradient ist die Steigung des Loss. Die Lernrate bestimmt die Schrittweite. Zu klein ist langsam, zu groß kann instabil werden.",
-      deep: "In echten Netzen gibt Backpropagation den Gradienten für Millionen Parameter. Der Optimierer macht daraus einen Schritt. Die Demo ist eine Dimension.",
+      context: "Die echte Landschaft ist hochdimensional; hier siehst du zwei Parameter. Der Ball tastet sich an die richtigen Werte heran, weil jeder Schritt den Loss senkt.",
+      deep: "Der Gradient ist die Steigung des Loss. Der Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite. In einem LLM gibt es Milliarden solcher Parameter; die Landschaft ist nicht mehr sichtbar, die Regel bleibt dieselbe.",
       boxes: [
-        box("grad-1", "Prototyp", "Was zeigt die Demo?", "Eine eindimensionale Loss-Kurve. Der Punkt ist das Gewicht; die gestrichelte Linie zeigt die lokale Steigung. Jeder Schritt bewegt das Gewicht gegen den Gradienten."),
-        box("grad-2", "Technik", "Was macht die Lernrate?", "Sie skaliert den Schritt. Klein: sicher, aber langsam. Groß: schnell, aber der Punkt kann über das Minimum springen."),
-        box("grad-3", "Grenze", "Warum ist das nicht das ganze Training?", "Echte Netze haben Millionen Dimensionen und viele lokale Strukturen. Die Demo zeigt die Idee, nicht die Landschaft eines LLM.")
+        box("grad-1", "Mathematik", "Das kleine Netz", "ŷ = w x + b. Ein Input, ein Neuron, ein Output. Die Parameter w und b spannen die Loss-Fläche auf.", "\\underbrace{\\hat y}_{\\text{Vorhersage}} = \\underbrace{w x + b}_{\\text{ein Neuron}}"),
+        box("grad-2", "Mathematik", "Der Loss", "L(w,b) = 1/n Σ (ŷ_i − y_i)². Die Fläche ist die Höhe des Loss über der w-b-Ebene.", "\\underbrace{L(w,b)}_{\\text{Loss-Fläche}} = \\underbrace{\\frac{1}{n}\\sum_i (\\hat y_i-y_i)^2}_{\\text{mittlerer Fehler}}"),
+        box("grad-3", "Technik", "Der Schritt", "w ← w − η ∂L/∂w, b ← b − η ∂L/∂b. Der Gradient zeigt bergauf; der Ball geht bergab.", "\\underbrace{\\begin{pmatrix}w\\\\b\\end{pmatrix}_{t+1}}_{\\text{neue Parameter}} = \\underbrace{\\begin{pmatrix}w\\\\b\\end{pmatrix}_t}_{\\text{alte Parameter}} - \\underbrace{\\eta}_{\\text{Lernrate}} \\underbrace{\\nabla L}_{\\text{Gradient}}"),
+        box("grad-4", "Grenze", "Warum ist das nicht das ganze LLM?", "Echte Netze haben Millionen Dimensionen und viele lokale Strukturen. Die Demo zeigt die Idee, nicht die Landschaft eines LLM.")
       ],
       sources: [
         { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } },
@@ -989,16 +1000,17 @@
   ] : [
     {
       kicker: "17 / Training",
-      title: "The gradient points downhill",
-      body: "Training is walking downhill. The gradient points in the direction where the loss rises; a step goes the other way. Click Step and change the learning rate. The loss should fall; too large a rate can overshoot.",
-      watch: "Click Step. Does the loss fall? What happens with a large learning rate?",
+      title: "Parameters live on a loss landscape",
+      body: "A small network with one input, one neuron, and one output has two parameters: w and b. For every combination, the loss measures the error. The surface shows x = w, y = b, z = loss. The green ball is the current state; the gradient points downhill. Click Step and watch the ball roll into the valley.",
+      watch: "Click Step. Where does the ball roll? What happens with a large learning rate?",
       demoState: { scene: "gradient" },
-      context: "The gradient is the slope of the loss. The learning rate sets the step size. Too small is slow, too large can become unstable.",
-      deep: "In real networks, backpropagation gives the gradient for millions of parameters. The optimiser turns it into a step. The demo is one dimension.",
+      context: "The real landscape is high-dimensional; here you see two parameters. The ball approaches the right values because every step lowers the loss.",
+      deep: "The gradient is the slope of the loss. The optimiser moves in the opposite direction. The learning rate sets the step size. In an LLM there are billions of such parameters; the landscape is no longer visible, but the rule stays the same.",
       boxes: [
-        box("grad-1", "Prototype", "What does the demo show?", "A one-dimensional loss curve. The point is the weight; the dashed line shows the local slope. Each step moves the weight against the gradient."),
-        box("grad-2", "Technique", "What does the learning rate do?", "It scales the step. Small: safe but slow. Large: fast, but the point can jump over the minimum."),
-        box("grad-3", "Limit", "Why is this not all of training?", "Real networks have millions of dimensions and many local structures. The demo shows the idea, not the landscape of an LLM.")
+        box("grad-1", "Mathematics", "The small network", "ŷ = w x + b. One input, one neuron, one output. The parameters w and b span the loss surface.", "\\underbrace{\\hat y}_{\\text{prediction}} = \\underbrace{w x + b}_{\\text{one neuron}}"),
+        box("grad-2", "Mathematics", "The loss", "L(w,b) = 1/n Σ (ŷ_i − y_i)². The surface is the height of the loss over the w-b plane.", "\\underbrace{L(w,b)}_{\\text{loss surface}} = \\underbrace{\\frac{1}{n}\\sum_i (\\hat y_i-y_i)^2}_{\\text{mean error}}"),
+        box("grad-3", "Technique", "The step", "w ← w − η ∂L/∂w, b ← b − η ∂L/∂b. The gradient points uphill; the ball goes downhill.", "\\underbrace{\\begin{pmatrix}w\\\\b\\end{pmatrix}_{t+1}}_{\\text{new parameters}} = \\underbrace{\\begin{pmatrix}w\\\\b\\end{pmatrix}_t}_{\\text{old parameters}} - \\underbrace{\\eta}_{\\text{learning rate}} \\underbrace{\\nabla L}_{\\text{gradient}}"),
+        box("grad-4", "Limit", "Why is this not the whole LLM?", "Real networks have millions of dimensions and many local structures. The demo shows the idea, not the landscape of an LLM.")
       ],
       sources: [
         { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } },
@@ -1133,7 +1145,7 @@
     }
   ];
 
-  var steps = introSteps.concat(insideSteps, stackSteps, tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, activationSteps, mlpSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, wholeSteps, languageSteps, posttrainSteps, evalSteps, gradientSteps, kvcacheSteps, historySteps, philosophySteps);
+  var steps = introSteps.concat(insideSteps.slice(0, 1), activationSteps, mlpSteps, gradientSteps, insideSteps.slice(1, 2), tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, languageSteps, posttrainSteps, evalSteps, kvcacheSteps, historySteps, philosophySteps);
 
   var day = {
     id: "intuition",
