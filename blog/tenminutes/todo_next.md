@@ -231,3 +231,206 @@ Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still
 - [x] Causal mask distinction added.
 - [x] Ambiguity slide now uses inline LaTeX tokens, neutral neighbourhoods, York variants, and New York landmarks.
 - [~] Browser visual check of the position scene still pending; full tests remain for the end.
+
+## New ordering + unembedding slide + Bausteine overhaul
+### Slide order
+- [ ] Move “Ein Wort nach dem anderen” far to the end, after the transformer/attention/FFN material.
+- [ ] Insert a new Unembedding slide immediately before “Ein Wort nach dem anderen”.
+
+### New Unembedding slide
+- [ ] Show how the angle between two vectors is computed: dot product, norms, `cos θ = (u·v)/(|u||v|)`, then `θ = arccos(...)`.
+- [ ] Show how the angle is measured in space with two embedding vectors and a visible arc between them.
+- [ ] Explain why angle instead of distance: in high dimensions Euclidean distances lose contrast; most points are roughly similarly far apart, while directions remain informative. The network’s distances can also vary strongly.
+- [ ] Show the learned Unembedding matrix `W_U` and the multiplication `logits = h · W_U^T` (or `W_U h` depending on layout), with a concrete small matrix.
+- [ ] Show how logits become a probability distribution via softmax, and how one token is chosen.
+- [ ] Make this a mouthwateringly gorgeous canvas/SVG demo in the same visual language as the other scenes: vector pair, angle arc, matrix multiply, scores, softmax bars.
+- [ ] Bilingual EN/DE, informal du, LaTeX for formulas.
+
+### “Ein Wort nach dem anderen”
+- [ ] Reframe it as the repeated loop after unembedding: choose a token, append it, run attention/FFN again, compute the next distribution, and crawl through the high-dimensional space step by step.
+- [ ] Keep the camera default and the existing landscape; make the repetition explicit in the copy.
+
+### Bausteine eines LLM — full overhaul
+- [ ] Reduce clutter substantially: fewer simultaneous labels, cleaner hierarchy, stronger visual focus.
+- [ ] Redraw the mini graphics consistently, with correct aspect ratios and no stretching/distortion.
+- [ ] Keep the T → E → Transformer-Blöcke (Attention → FFN, × N) → U structure and the new Attention/FFN explanations.
+- [ ] Ensure the redesigned graphics are gorgeous and readable on desktop and mobile.
+
+## Unembedding: dot product + GPU lineage
+- [ ] In the new Unembedding slide, show the **dot product** explicitly and as a per-component multiply-accumulate: `u·v = Σ u_i v_i`, then the norms, cosine, and `arccos`.
+- [ ] Show the learned unembedding matrix multiplication as a stack of dot products: every row of `W_U` is compared with the final vector `h`; each row produces one logit.
+- [ ] Add the GPU/hardware point: 3D gaming and real-time graphics already required massive parallel matrix/vector math, lighting dot products, and 4×4 transforms. GPUs evolved for that workload (hardware transform-and-lighting, programmable shaders, SIMT execution, CUDA, tensor cores), so transformer matrix multiplication could reuse existing parallel hardware.
+- [ ] Technical details to check and cite before writing:
+  - GeForce 256 (1999) marketed as the first GPU with hardware transform and lighting; 4×4 matrix-vector transforms and lighting dot products.
+  - Programmable vertex/pixel shaders (DirectX 8/9 era) made GPUs general-purpose enough for non-graphics math.
+  - CUDA (2007) exposed massive data-parallel compute; OpenCL followed.
+  - SIMT/SIMD execution: the same multiply-accumulate runs across many lanes/pixels/vertices.
+  - Tensor Cores (Volta, 2017) added dedicated matrix multiply-accumulate units, later used directly by transformer training/inference.
+- [ ] Keep it short and vivid: the same dot-product/MAC operation that shades a 3D scene also computes logits.
+- [ ] Add named sources with working links in the slide sources, EN and DE.
+
+# AGENT HANDOFF — read this before touching the LearnSys lesson
+
+## 1. What this page is
+- Files live in `blog/tenminutes/`.
+- `intuition_learnsys.php` is the shell. It loads, in order:
+  `../temml.min.js`, `assets/site.js`, `learnsys.js`, `../manifold_scenes.js`,
+  `assets/space-morph.js`, `intuition_gpt2_data.js`,
+  `assets/loss-landscape-scene.js`, `assets/rag-scene.js`, `assets/tf.min.js`,
+  `assets/tf-sinus-scene.js`, `intuition_learnsys-demos.js`,
+  `intuition_learnsys-data.js`.
+- `intuition_learnsys-data.js` owns slide content and `steps` order.
+- `intuition_learnsys-demos.js` owns the `SCENES` registry and most demos.
+- `learnsys.js` is the generic engine: mount, next/prev, text, arrows. Do not
+  change its public API without checking every lesson that loads it.
+- `intuition_learnsys-demos.js` ends with
+  `LearnSys.defineDemo("intuition", function (root, api) { ... })`. That wrapper
+  mounts the scene named in `demoState.scene` and forwards `.next()` / `.prev()`.
+
+## 2. Hard-won traps
+### Do not replace a range up to `var SCENES` blindly
+A previous edit replaced everything from `function blocksScene` to `var SCENES = {`.
+That silently deleted `mediaScene`, `bookScene`, `compressScene`, `stackScene`,
+`animalScene`, `activationScene`, `langdataScene`, `chineseroomScene`,
+`historyScene`, `posttrainScene`, `evalScene`, etc. The page then failed with
+`Demo nicht gefunden: intuition` and `ReferenceError: mediaScene is not defined`.
+After every scene edit, run this check:
+
+```bash
+node - <<'NODE'
+const fs=require('fs'); const s=fs.readFileSync('blog/tenminutes/intuition_learnsys-demos.js','utf8');
+const m=s.match(/var SCENES = \{([\s\S]*?)\n  \};/); const body=m?m[1]:'';
+const re=/^\s*(\w+):\s*([A-Za-z0-9_]+),/gm; let x, undef=[];
+while((x=re.exec(body))){ const name=x[2];
+  if(!new RegExp('function\\s+'+name+'\\s*\\(').test(s)) undef.push(x[1]+':'+name);
+}
+console.log(undef.length ? undef : 'all SCENES functions defined');
+NODE
+```
+
+### Token trajectories
+- The real bug was variable shadowing in `draw()`: the label collision loop used
+  `var li` and overwrote the current layer index. It is now `lbi`.
+- The readout now updates inside the tween, max layer is derived from
+  `data.points[0].length`, and a dashed segment shows the previous→current move.
+- Verified with headless Chromium: step 21 is the slide, and Weiter moves
+  Layer 0/12 → 1/12.
+- Do not revert the `li`/`lbi` rename.
+
+### Camera
+- “Ein Wort nach dem anderen” default camera:
+  `camera: { yaw: -0.86, pitch: 0.918, zoom: 1 }` in both EN/DE step data.
+- The temporary red capture button was removed. Do not re-add it.
+- “Die Verteilung ist nicht die Antwort” uses `view: "top"` and must stay
+  independent of the default camera. `loopScene.update` applies `s.camera`
+  first, then `view`.
+- After `<|endoftext|>` the ball must stop; `drawLandBall` now snaps on EOS and
+  clears `landTrail`. Do not reintroduce an auto rAF after EOS.
+
+### Loss landscape
+- `assets/loss-landscape-worker.js` and `assets/loss-landscape-scene.js` were
+  rewritten for the requested **two-parameter** linear model:
+  `ŷ = a·x + b`, axes `a` and `b`, visible examples, real MSE.
+- Worker cache bust is important: the scene loads
+  `assets/loss-landscape-worker.js?v=4`. Bump it when changing the worker.
+- `next()` starts training if idle; while training it returns true (stay);
+  after completion it returns false (leave slide). Do not restore per-step Next.
+- Training auto-runs SGD → Adam → Momentum. `R`/pause/reset are present.
+- Verified: examples render, formula renders, training advances and ends.
+
+### Blocks
+- `blocks` is now 4 stations: Tokenizer, Embedding, Transformer blocks,
+  Unembedding. The old separate “Repeat” station was removed.
+- Stack is T → E → Transformer blocks → U. The transformer group has one
+  Attention pill and one FFN pill inside a green brace, head says
+  `× N · diese n mal`.
+- Transformer detail must keep: repetition dozens–hundreds, attention weights
+  and mixing, FFN after, `new`+`york` → US metropolis, unembedding angle,
+  roadmap for the next days.
+- Mini canvases use the shared `api.fit`; keep aspect ratio and no stretching.
+- Nav is a grid row with a top border; do not turn it into an overlay.
+
+### Position
+- The old “Relativer Abstand im selben Satz” canvas and `drawMethods` are gone.
+- Euclidean: distance between `p(t)` and `p(0)`.
+- Angle: unit vectors, `arccos(dot)`, great-circle arc; start is `p(0)`, not
+  `[1,0,0]`.
+- Top label “Gerade im Raum” removed. `curve.__lsPosition` exposes
+  `{pos, metric, start, current, distance, angle}` for checks.
+- `positionScene` keeps a `ls-position-note` explaining circular waves and
+  different frequencies.
+
+### Causal mask / ambiguity
+- Causal mask is on by default and visible.
+- Copy distinguishes generative models from models that score finished text.
+- Ambiguity slide uses inline Temml `data-tex="\\text{new}"` etc.; it calls
+  `api.typeset(el)` after mount. Slider/heading use “Nachbarschaft”, not
+  “Kontext”. The text names car/future/New Year/curiosity, York variants, and
+  Empire State Building/Statue of Liberty.
+
+### Manifold
+- `manifoldScene` is a canvas 3D Vietoris–Rips demo: two 8×8 Pringle point
+  sheets, target twisted in 3D, edges within radius, correspondence lines,
+  drag/zoom.
+- Canvas renders at ~756×240 in Chromium. Human visual judgement is still
+  pending; it may need point/edge density tuning.
+
+### Credit
+- The `credit` field was removed from the day object. Do not restore
+  “Interaktive Demo · Ten Minutes”.
+
+## 3. Current open work (priority order)
+1. **Unembedding slide** before “Ein Wort nach dem anderen”:
+   - dot product `u·v = Σ u_i v_i`, norms, cosine, arccos;
+   - two vectors + visible angle arc;
+   - why angle beats Euclidean distance in high dimensions;
+   - learned `W_U`, row-wise dot products, logits, softmax, token choice;
+   - GPU lineage: 3D transform/lighting dot products, programmable shaders,
+     SIMT, CUDA, tensor cores. Cite sources.
+2. Move “Ein Wort nach dem anderen” after transformer/attention/FFN; reframe as
+   the repeated unembedding loop.
+3. Bausteine full visual overhaul: less clutter, better undistorted graphics.
+4. Rename/extend “Ein kleines Netz lernt den Sinus” to “Was sind neuronale
+   Netze?”:
+   - one neuron `ŷ = w·x + b`, vertical errors, line-only limit;
+   - then sine and larger matrices; matrices live during training, larger ones
+     behind an optional disclosure.
+5. Position browser visual check, manifold visual check, mini-demo polish.
+6. Final bilingual/test gate.
+
+## 4. Useful verification commands
+```bash
+node --check blog/tenminutes/intuition_learnsys-demos.js
+node --check blog/tenminutes/intuition_learnsys-data.js
+node --check blog/tenminutes/assets/loss-landscape-scene.js
+node --check blog/tenminutes/assets/loss-landscape-worker.js
+git diff --check -- blog/tenminutes
+
+php -l blog/tenminutes/intuition_learnsys.php
+uv run blog/tests/php_validator.py blog/
+
+# full page audit at the end
+uv run blog/tests/tenminutes_pages_test.py --pages intuition_learnsys.php --langs en,de
+uv run blog/tests/tenminutes_height_test.py --pages intuition_learnsys.php --langs en,de --viewports desktop,mobile --monkey 4
+python3 blog/tools/check_all.py --fast
+```
+
+### Headless debugging that worked
+A PHP server plus Chromium remote debugging was used. Port 8099/8101/8123 were
+already occupied; pick a free port. Chromium CDP allowed:
+`Runtime.evaluate` → `LearnSys.go(0, n)` to find a slide by its title, then
+`document.querySelector('#ls-next').click()` and inspect
+`canvas.__lsTraj` / `.ls-traj-readout`.
+
+## 5. Rules that will bite you
+- Every EN string needs its DE counterpart. Test both.
+- No em/en dashes in lesson prose; use commas/colons/parentheses.
+- No new accent colours; use the existing palette.
+- Display equations get two levels of `\underbrace`.
+- Do not add CDN scripts. TF.js and Temml are vendored.
+- `git` may auto-commit mid-session. Check `git status`; never use
+  `git stash`/`git stash pop` as a daily tool.
+- There is an untracked `todo_ddd` file with the user’s raw notes. Do not
+  overwrite it.
+- Full tests are intentionally deferred until the page work is done, but
+  static syntax checks and targeted headless checks are allowed.
