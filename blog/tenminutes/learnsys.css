@@ -1346,3 +1346,9 @@ h1,h2,h3,h4{
 .ls-compress-readout{font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted);margin-top:auto}
 .ls-compress-controls{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 @media (max-width:720px){.ls-compress-scene{grid-template-columns:1fr;grid-template-rows:minmax(240px,1fr) auto auto}.ls-compress-side{flex-direction:row;align-items:center}.ls-compress-metrics{flex:1}.ls-compress-readout{margin-top:0}}
+
+.ls-code-window--agent:not(.is-coding) .ls-code-filehead{visibility:hidden}
+.ls-code-task{display:inline-flex;align-items:center;height:18px;padding:0 7px;border:1px solid rgba(238,247,244,.22);background:rgba(255,255,255,.06);color:rgba(238,247,244,.75);font:600 9px/1 "Open Sans",sans-serif;cursor:pointer}
+.ls-code-task.is-on{background:var(--ls-green);border-color:var(--ls-green);color:#fff}
+.ia-chat-msg.is-ai{display:none}
+.ia-chat-screen.is-answering .ia-chat-msg.is-ai{display:flex}

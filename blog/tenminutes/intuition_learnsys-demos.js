@@ -1494,7 +1494,7 @@
             '<div class="ls-code-bar"><i></i><i></i><i></i><span>Terminal</span></div>' +
             '<div class="ls-code-term"><b class="ls-code-command"></b><span></span></div>' +
           '</div>' +
-          '<div class="ls-code-taskbar"><span class="ls-code-start" aria-hidden="true">▦</span><i class="ls-code-task" style="--task:#63a44b"></i><i class="ls-code-task" style="--task:#1275ac"></i><span class="ls-code-clock">14:32</span></div>' +
+          '<div class="ls-code-taskbar"><span class="ls-code-start" aria-hidden="true">▦</span><button type="button" class="ls-code-task is-on" data-task="agent">Agent</button><button type="button" class="ls-code-task" data-task="run">Terminal</button><span class="ls-code-clock">14:32</span></div>' +
         '</div>' +
       '</div></div>' +
       '<button type="button" class="ls-btn ls-btn--tiny ls-code-replay" disabled>' + (DE ? "Weiter" : "Next") + '</button>';
@@ -1509,6 +1509,7 @@
     var runWin = el.querySelector(".ls-code-window--run");
     var runMsgEl = el.querySelector(".ls-code-run-msg");
     var replayBtn = el.querySelector(".ls-code-replay");
+    var taskButtons = el.querySelectorAll("[data-task]");
     var clockEl = el.querySelector(".ls-code-clock");
     if (clockEl) {
       try { clockEl.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); } catch (e) {}
@@ -1589,6 +1590,7 @@
       step();
     }
     function typeCode() {
+      if (agentWin) agentWin.classList.add("is-coding");
       var i = 0;
       function typeNext() {
         if (i >= spans.length) {
@@ -1610,12 +1612,14 @@
       spans.forEach(function (s) { s.classList.remove("is-visible"); });
       if (userPromptEl) userPromptEl.textContent = "";
       if (agentMsgEl) agentMsgEl.textContent = "";
+      if (agentWin) agentWin.classList.remove("is-coding");
       if (thinkingEl) thinkingEl.classList.remove("on");
       if (runMsgEl) runMsgEl.hidden = true;
       if (commandEl) commandEl.textContent = "";
       if (term) term.textContent = "";
       show(agentWin, true);
       show(runWin, false);
+      taskButtons.forEach(function (x) { x.classList.toggle("is-on", x.getAttribute("data-task") === "agent"); });
       setButton(DE ? "Weiter" : "Next", true);
       fitCode();
       later(function () {
@@ -1635,6 +1639,7 @@
       phase = "running";
       if (runMsgEl) runMsgEl.hidden = false;
       show(runWin, true);
+      taskButtons.forEach(function (x) { x.classList.toggle("is-on", x.getAttribute("data-task") === "run"); });
       if (commandEl) commandEl.textContent = "";
       if (term) term.textContent = "";
       var cmd = "$ " + (DE ? "python3 himmel.py" : "python3 sky.py");
@@ -1655,6 +1660,14 @@
       }
       typeCommand();
     }
+    taskButtons.forEach(function (b) {
+      b.addEventListener("click", function () {
+        var which = b.getAttribute("data-task");
+        if (which === "agent") show(agentWin, true);
+        else show(runWin, true);
+        taskButtons.forEach(function (x) { x.classList.toggle("is-on", x === b); });
+      });
+    });
     replayBtn.addEventListener("click", function () {
       if (phase === "ready") runProgram();
       else if (phase === "done") reset();
@@ -7922,54 +7935,65 @@
       var A = rgb(a), B = rgb(b);
       return "rgb(" + Math.round(A[0] + (B[0]-A[0])*k) + "," + Math.round(A[1] + (B[1]-A[1])*k) + "," + Math.round(A[2] + (B[2]-A[2])*k) + ")";
     }
+    var seed = 19;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    var nodes = [], edges = [];
+    (function build() {
+      var per = 12, clusters = 12;
+      for (var c = 0; c < clusters; c++) {
+        var cx = (c % 4 + 0.5) / 4;
+        var cy = (Math.floor(c / 4) + 0.5) / 3;
+        for (var k = 0; k < per; k++) {
+          var a = k / per * Math.PI * 2 + rnd() * 0.5;
+          var r = 0.08 + rnd() * 0.16;
+          nodes.push({ c: c, x0: rnd(), y0: rnd(), cx: cx + Math.cos(a) * r * 0.55, cy: cy + Math.sin(a) * r * 0.42, col: palette[c % palette.length] });
+        }
+      }
+      for (var i = 0; i < nodes.length; i++) {
+        for (var j = i + 1; j < nodes.length; j++) {
+          var same = nodes[i].c === nodes[j].c;
+          if (same ? rnd() < 0.42 : rnd() < 0.022) edges.push({ a: i, b: j, same: same });
+        }
+      }
+    })();
     function draw() {
       if (!size) return;
       ctx = size.ctx;
       var w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
-      var n = 12, gap = 3, pad = 22;
-      var cell = Math.min((w - pad * 2 - gap * (n - 1)) / n, (h - pad * 2 - gap * (n - 1)) / n);
-      var ox = (w - (cell * n + gap * (n - 1))) / 2;
-      var oy = (h - (cell * n + gap * (n - 1))) / 2;
-      for (var gy = 0; gy < n; gy++) {
-        for (var gx = 0; gx < n; gx++) {
-          var cluster = Math.floor(gy / 3) * 4 + Math.floor(gx / 3);
-          var base = palette[cluster % palette.length];
-          var individual = mix(base, (gx + gy) % 2 ? "#ffffff" : "#000000", 0.10 + ((gx * 7 + gy * 11) % 7) * 0.035);
-          var col = mix(individual, base, t);
-          var inset = (1 - t) * 2.2;
-          var x = ox + gx * (cell + gap) + inset;
-          var y = oy + gy * (cell + gap) + inset;
-          var s = cell - inset * 2;
-          ctx.fillStyle = col;
-          ctx.globalAlpha = 0.88;
-          ctx.fillRect(x, y, s, s);
-          ctx.globalAlpha = 1;
-        }
-      }
-      ctx.strokeStyle = C.line;
-      ctx.lineWidth = 1;
-      for (var cy = 0; cy < 4; cy++) for (var cx = 0; cx < 4; cx++) {
-        var bx = ox + cx * 3 * (cell + gap) - gap / 2;
-        var by = oy + cy * 3 * (cell + gap) - gap / 2;
-        ctx.globalAlpha = t * 0.75;
-        ctx.strokeRect(bx, by, 3 * cell + 2 * gap + gap, 3 * cell + 2 * gap + gap);
-      }
+      var pad = 24;
+      function X(n) { return pad + (n.x0 + (n.cx - n.x0) * t) * (w - pad * 2); }
+      function Y(n) { return pad + (n.y0 + (n.cy - n.y0) * t) * (h - pad * 2); }
+      var crossAlpha = (1 - t) * 0.24;
+      edges.forEach(function (e) {
+        var a = nodes[e.a], b = nodes[e.b];
+        ctx.strokeStyle = e.same ? a.col : C.muted;
+        ctx.globalAlpha = e.same ? 0.22 : crossAlpha;
+        ctx.lineWidth = e.same ? 0.9 : 0.55;
+        ctx.beginPath(); ctx.moveTo(X(a), Y(a)); ctx.lineTo(X(b), Y(b)); ctx.stroke();
+      });
       ctx.globalAlpha = 1;
+      nodes.forEach(function (n) {
+        var x = X(n), y = Y(n);
+        var r = 2.4 + (1 - t) * 0.8;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = n.col; ctx.globalAlpha = 0.9; ctx.fill();
+        ctx.globalAlpha = 1;
+      });
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText(DE ? "144 einzelne Erinnerungen" : "144 individual memories", pad, 16);
+      ctx.fillText(DE ? "144 Knoten · dichtes Netz" : "144 nodes · dense graph", pad, 16);
       ctx.textAlign = "right";
-      ctx.fillText(DE ? "16 Muster" : "16 patterns", w - pad, 16);
+      ctx.fillText(DE ? "12 Inseln" : "12 islands", w - pad, 16);
       updateReadout();
     }
     function updateReadout() {
-      var details = Math.round(144 * (1 - t));
-      var patterns = Math.round(16 * t);
+      var details = Math.round(nodes.length * (1 - t));
+      var patterns = Math.round(12 * t);
       var error = Math.pow(t, 1.7) * 0.35;
-      readout.innerHTML = '<span><b>' + (DE ? "Kompression" : "compression") + '</b> ' + t.toFixed(2) + '</span><span><b>' + (DE ? "Details" : "details") + '</b> ' + details + '</span><span><b>' + (DE ? "Muster" : "patterns") + '</b> ' + patterns + '</span>';
+      readout.innerHTML = '<span><b>' + (DE ? "Kompression" : "compression") + '</b> ' + t.toFixed(2) + '</span><span><b>' + (DE ? "Knoten" : "nodes") + '</b> ' + details + '</span><span><b>' + (DE ? "Inseln" : "islands") + '</b> ' + patterns + '</span>';
       detailBar.style.width = ((1 - t) * 100).toFixed(0) + '%';
       patternBar.style.width = (t * 100).toFixed(0) + '%';
       errorBar.style.width = Math.min(100, error / 0.35 * 100).toFixed(0) + '%';
