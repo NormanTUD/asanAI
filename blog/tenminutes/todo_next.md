@@ -1,74 +1,68 @@
-# LearnSys — complete requested work
+# LearnSys — status after the latest pass
 
-Legend: `[x]` done, `[~]` partially done / verify, `[ ]` todo.
+Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still todo.
 
-## Structure and story
-- [x] 31 slides, reordered: intro → compression → neural nets → tokenizer → transformer → assistant/eval/RAG → history/philosophy.
-- [x] “Was ist ein LLM?” + “KI-Chat” + code merged into one slide with three sub-slides: Suche, Chat, Code.
-- [x] “Eine Schicht, dann der Stapel” removed as a duplicate.
-- [x] Embedding pairs merged; total remains 31.
-- [x] Mobile demo-first layout with collapsible text overlay; desktop unchanged.
+## Structure, mobile, centralisation
+- [x] 31-slide story: intro → compression → neural nets → tokenizer → transformer → assistant/eval/RAG → history/philosophy.
+- [x] Intro merge: Suche / Chat / Code on one slide, no auto-advance.
+- [x] Removed the duplicate “Eine Schicht, dann der Stapel”; merged embedding pairs.
+- [x] Mobile demo-first layout; text overlays the demo and closes again.
 - [x] Global bottom-left/back and bottom-right/next arrows.
-- [x] Repeated helpers centralised in `LS.util` / demo API: `clamp`, `smoothstep`, `hexMix`, `arrowKey`, `goNext`, `goPrev`.
+- [x] Repeated helpers centralised: `clamp`, `smoothstep`, `hexMix`, `arrowKey`, `goNext`, `goPrev`.
 
 ## Phone / chat
-- [x] User types the message at the bottom and “Enter” is simulated; message appears above in the chat.
+- [x] User types at the bottom; Enter is simulated; message appears above.
 - [x] LLM label and answer bubble appear only with the first answer token.
-- [x] Answer says the Google summary is written by a language model, very similar to this chat, which is also an LLM.
-- [x] Answer says the next word is appended to the text and the whole text goes back as context.
-- [~] Input field grows while typing; typing speed is about half the old speed.
-- [x] Chat compose box appears smoothly when the user types / the LLM answers.
+- [x] Answer explains Google summary ≈ language model ≈ this chat, and that the next word is appended and the text returns as context.
+- [~] Input grows while typing; speed halved. Verify on the phone.
+- [x] Compose box appears smoothly for typing and answering.
 
 ## Agent / code slide
-- [x] Prompt is typed into the bottom `$` shell, not the top chat.
-- [x] `himmel.py` header and code block appear only when code typing starts; window is uniform before.
-- [x] Taskbar windows: Agent and Terminal are clickable.
-- [x] Removed minimize/maximize buttons and taskbar minimize behaviour.
-- [x] Start menu / start-bar buttons do something playful.
-- [x] `python3 himmel.py` types letter by letter in about 300 ms with randomised delays.
+- [x] Prompt is typed into the bottom `$` shell.
+- [x] `himmel.py` and code appear only when code typing starts; window is uniform before.
+- [x] Taskbar Agent/Terminal buttons focus windows; no minimize/maximize buttons.
+- [x] Start menu has a playful local joke.
+- [x] `python3 himmel.py` types in about 300 ms with randomised delays.
 
-## Compression slide
-- [x] Borges/book layout removed; Borges in an optional box.
-- [x] Dense 144-node graph: cross-edges disappear, groups become islands.
-- [x] Hierarchical levels 0–4: nodes → subclusters → groups → one point → larger connected whole.
-- [~] Auto mode is too fast; needs slower pacing.
-- [~] “Weiter” should advance exactly one level; verify and fix.
-- [ ] Cluster points must keep the position of the individual points they replace, in this exact visual order.
-- [ ] Add lossless vs lossy compression text: tokenization is lossless; the transformer as a whole is lossy.
-- [ ] Add the training argument: models fit partly contradictory/incomplete data; the best average strategy is a realistic world model.
-- [ ] Make the slide mouthwateringly gorgeous and truly visual: structures stay, details are forgotten; this is generalisation.
-- [ ] Use the gravity example: newborn notices falling objects; adult compresses to “things fall, whatever the object”; scientific theory compresses further to acceleration/curved spacetime, covering more cases with better predictions.
-- [ ] Final zoom-out: larger connected structures become points again, and those points are connected.
+## Compression
+- [x] Dense 144-node graph; cross-edges disappear into groups.
+- [x] Hierarchical levels: nodes → subclusters at their centroids → groups → one point → larger connected whole.
+- [x] Auto mode now steps one level at a time, slower.
+- [x] “Weiter” advances exactly one level.
+- [x] Lossless vs lossy text: tokenization lossless, transformer lossy.
+- [x] Training text: incomplete/contradictory data, realistic world model, prediction over many cases.
+- [x] Gravity example: newborn → adult → physical theory.
+- [~] Final zoom-out connected-points visual: verify the level-4 look.
+- [ ] Still make the whole slide mouthwateringly gorgeous; current graph is functional, not the final visual.
 
 ## Sinus neural network
-- [x] Real TF.js model: x → 32 → 32 → 32 → 1, Dense + ReLU, live points, draggable points, loss.
-- [ ] Training must start only when the user presses start, not automatically.
-- [ ] Show a clear loss chart/curve below the canvas.
-- [ ] Show the sinus both left and right outside the training data.
-- [ ] Label points explicitly as (x, y) / (input, output) pairs.
-- [ ] Pause training when the slide is not visible; keep CPU low.
+- [x] Real TF.js model x → 32 → 32 → 32 → 1, Dense + ReLU.
+- [x] User must press “Training starten”; no auto-start.
+- [x] Loss curve below the canvas.
+- [x] Sinus visible left and right outside the training range.
+- [x] Data points labelled as (x, y) = (input, output).
+- [x] Dragging points changes the training data; pause when not visible.
 
 ## Loss landscape (parameters)
-- [x] Real worker-based 1 → 4 → 1 model, 13 parameters, 21×21 loss surface, network diagram, trajectory, ball, play/step, lr.
-- [ ] “Weiter” should train/advance the ball on the loss landscape.
-- [ ] Show the real data points used by the model.
-- [ ] Show the real network formula (1 → 4 → 1, tanh, output, MSE).
+- [x] Real worker model 1 → 4 → 1, 13 parameters, 21×21 surface, network diagram, ball/trajectory.
+- [x] “Weiter” advances the ball/training; at the end it goes to the next slide.
+- [x] Real data points shown in the side panel.
+- [x] Real network and loss formula shown and typeset.
 
-## MLP / manifold slide
-- [x] Fine point-cloud / neighbourhood graph, auto-bend on “Weiter”.
-- [x] Old controls, dots, duplicates hidden; dense controls moved to the bottom.
-- [x] Sigmoid activation added; presets walk to “Trenner” and skip custom.
-- [x] Weight sliders half width.
-- [~] Copy text no longer stacks/moves under canvas; verify all 9 steps.
-- [ ] Real one-layer network formula and real losses as in `../../loss_landscape.html`; show real loss values, not only schematic text.
+## Loop landscape
+- [~] Camera raised to a near-top isometric view; quads depth-sorted back-to-front.
+- [ ] Visual check that rear valleys no longer overlap front valleys.
 
-## RAG and agents
-- [x] New chapter/slide: chunks, vectors/angles, retrieval, context insertion, cited answer.
-- [x] Agent loop: search → read → insert → answer; internet as a RAG corpus.
-- [ ] Final wording/source polish if needed.
+## MLP / manifold
+- [x] Fine point-cloud/neighbourhood graph; “Weiter” raises the bend.
+- [x] Old controls/dots hidden; dense controls at the bottom; sigmoid; preset walk; half-width weight sliders.
+- [~] Copy block no longer stacks; verify all 9 steps.
+- [ ] Real one-layer network formula and real loss values from the `loss_landscape` reference (currently still schematic).
 
-## Validation and delivery
-- [x] Page test 10/10 EN/DE; check_all --fast 33/33; syntax/diff checks.
-- [x] Centralisation refactor verified on worker, compression, FFN, TF sinus, chat/code, RAG.
-- [ ] Re-run bilingual audit and height test after the latest UI edits.
-- [ ] Commit and push the final batch.
+## RAG / agents
+- [x] Chunks, scores, context insertion, cited answer, agent loop.
+- [ ] Final wording/source polish only if needed.
+
+## Final gate (do only when everything is done)
+- [ ] Bilingual EN/DE audit, height test, page test, `check_all.py --fast`.
+- [ ] Commit and push.
