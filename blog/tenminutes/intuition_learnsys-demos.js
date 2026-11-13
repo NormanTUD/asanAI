@@ -3864,7 +3864,7 @@
       '</div>' +
       '<p class="ls-position-note">' + (DE ? "Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position." : "Positions are added as waves on circular orbits in different dimensions. Each dimension has a different frequency; together they form the position fingerprint.") + '</p>' +
       '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-pos-context" min="16" max="128" step="8" value="64"><output>64</output></label><label class="ls-range">' + (DE ? "Dimensionen" : "Dimensions") + ' <input type="range" class="ls-pos-dims" min="2" max="64" step="2" value="24"><output>24</output></label><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="10000" step="1" value="7"><output>7</output></label></div>' +
-      '<div class="ls-scene-row ls-position-metric"><button type="button" class="ls-chip" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button><button type="button" class="ls-chip is-on" data-metric="angle">' + (DE ? "Winkel / Großkreis" : "Angle / great circle") + '</button><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
+      '<div class="ls-scene-row ls-position-metric"><span class="ls-position-metric-label">' + (DE ? "Großkreis / Winkel" : "Great circle / angle") + '</span><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
       '<div class="ls-position-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var heat = el.querySelector(".ls-position-heat");
@@ -3874,7 +3874,7 @@
     var posEl = el.querySelector(".ls-pos-pos");
     var readout = el.querySelector(".ls-position-readout");
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    var context = 64, dims = 24, pos = 7, metric = "angle", rotate = !reducedMotion;
+    var context = 64, dims = 24, pos = 7, rotate = !reducedMotion;
     var posAnim = pos;
     var heatSize = null, curveSize = null, yaw = -0.6, pitch = 0.5, drag = null, raf = 0, last = 0;
     var C = api.colors();
@@ -3979,46 +3979,24 @@
       axisLabel([1.28, 0, 0], "x", Cc.blue);
       axisLabel([0, 1.28, 0], "y", Cc.green);
       axisLabel([0, 0, 1.28], "z", Cc.gold);
-      var maxT = Math.max(1.6, posAnim);
-      var steps = Math.max(260, Math.min(2200, Math.ceil(maxT * 2)));
       var startVec = curvePoint(0);
       var curVec = curvePoint(posAnim);
-      var startP = metric === "angle" ? unit3(startVec) : startVec;
-      var curP = metric === "angle" ? unit3(curVec) : curVec;
-      var prev = null;
-      for (k = 0; k <= steps; k++) {
-        var t = maxT * k / steps;
-        var v = curvePoint(t);
-        if (metric === "angle") v = unit3(v);
-        var q = P(v);
-        if (prev) {
-          ctx.strokeStyle = Cc.blue;
-          ctx.globalAlpha = 0.20 + 0.55 * (1 - (q.z + 1) / 2);
-          ctx.lineWidth = 1.4 + 0.8 * (1 - (q.z + 1) / 2);
-          ctx.beginPath(); ctx.moveTo(prev.x, prev.y); ctx.lineTo(q.x, q.y); ctx.stroke();
-        }
-        prev = q;
-      }
-      ctx.globalAlpha = 1;
+      var startP = unit3(startVec);
+      var curP = unit3(curVec);
       var sp = P(startP), cp = P(curP);
       var dot = Math.max(-1, Math.min(1, startP[0] * curP[0] + startP[1] * curP[1] + startP[2] * curP[2]));
       var theta = Math.acos(dot);
-      if (metric === "euclid") {
-        ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.6;
-        ctx.beginPath(); ctx.moveTo(sp.x, sp.y); ctx.lineTo(cp.x, cp.y); ctx.stroke(); ctx.restore();
-      } else {
-        ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.6;
-        ctx.beginPath();
-        for (k = 0; k <= 48; k++) {
-          var tt = k / 48;
-          var s0 = theta < 1e-6 ? 1 : Math.sin((1 - tt) * theta) / Math.sin(theta);
-          var s1 = theta < 1e-6 ? 0 : Math.sin(tt * theta) / Math.sin(theta);
-          var vv = [startP[0] * s0 + curP[0] * s1, startP[1] * s0 + curP[1] * s1, startP[2] * s0 + curP[2] * s1];
-          var pp = P(vv);
-          if (k === 0) ctx.moveTo(pp.x, pp.y); else ctx.lineTo(pp.x, pp.y);
-        }
-        ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      for (k = 0; k <= 64; k++) {
+        var tt = k / 64;
+        var s0 = theta < 1e-6 ? 1 : Math.sin((1 - tt) * theta) / Math.sin(theta);
+        var s1 = theta < 1e-6 ? 0 : Math.sin(tt * theta) / Math.sin(theta);
+        var vv = [startP[0] * s0 + curP[0] * s1, startP[1] * s0 + curP[1] * s1, startP[2] * s0 + curP[2] * s1];
+        var pp = P(vv);
+        if (k === 0) ctx.moveTo(pp.x, pp.y); else ctx.lineTo(pp.x, pp.y);
       }
+      ctx.stroke(); ctx.restore();
       ctx.beginPath(); ctx.arc(sp.x, sp.y, 4, 0, Math.PI * 2); ctx.fillStyle = Cc.blue; ctx.fill();
       ctx.fillStyle = Cc.blue; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
       ctx.fillText(DE ? "Start" : "start", sp.x + 7, sp.y - 5);
@@ -4027,16 +4005,15 @@
       ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.fillStyle = Cc.green; ctx.fill();
       ctx.restore();
       ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.strokeStyle = Cc.paper; ctx.lineWidth = 2; ctx.stroke();
-      var chordLen = Math.hypot(curVec[0] - startVec[0], curVec[1] - startVec[1], curVec[2] - startVec[2]);
-      var geoLen = metric === "angle" ? theta : chordLen;
+      var geoLen = theta;
       var angleDeg = theta * 180 / Math.PI;
-      curve.__lsPosition = { pos: pos, maxT: maxT, steps: steps, metric: metric, start: startVec, current: curVec, distance: geoLen, angle: theta };
+      curve.__lsPosition = { pos: pos, metric: "angle", start: startVec, current: curVec, distance: geoLen, angle: theta };
       ctx.fillStyle = Cc.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
       ctx.fillText((DE ? "Position " : "position ") + pos, 12, 18);
       ctx.textAlign = "right";
-      ctx.fillText(metric === "euclid" ? (DE ? "Euklidischer Abstand" : "Euclidean distance") : (DE ? "Großkreiswinkel" : "great-circle angle"), w - 12, 18);
+      ctx.fillText(DE ? "Großkreiswinkel" : "great-circle angle", w - 12, 18);
       ctx.textAlign = "left";
-      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + pos + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + curVec.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (metric === "angle" ? (DE ? "Bogenlänge" : "arc length") : (DE ? "Distanz" : "distance")) + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span>';
+      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + pos + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + curVec.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span>';
     }
     function draw() {
       drawHeat(); drawCurve();
@@ -4077,13 +4054,6 @@
     contextEl.addEventListener("input", function () { context = parseInt(contextEl.value, 10); contextEl.nextElementSibling.textContent = String(context); drawHeat(); });
     dimsEl.addEventListener("input", function () { dims = parseInt(dimsEl.value, 10); dimsEl.nextElementSibling.textContent = String(dims); drawHeat(); drawCurve(); });
     posEl.addEventListener("input", function () { pos = parseInt(posEl.value, 10); posEl.nextElementSibling.textContent = String(pos); draw(); });
-    el.querySelectorAll("[data-metric]").forEach(function (b) {
-      b.addEventListener("click", function () {
-        metric = b.getAttribute("data-metric");
-        el.querySelectorAll("[data-metric]").forEach(function (x) { x.classList.toggle("is-on", x === b); });
-        drawCurve();
-      });
-    });
     var rot = el.querySelector("[data-rotate]");
     rot.addEventListener("click", function () { rotate = !rotate; rot.classList.toggle("is-on", rotate); });
     window.addEventListener("resize", resize);
