@@ -14,7 +14,7 @@
     {
       kicker: "01 / Chat und Code",
       title: "Was ist ein LLM? Chat und Code",
-      body: "Ein Large Language Model (LLM) sagt das nächste Token voraus. Zuerst siehst du Suche und Chat: Beide schreiben die Antwort Token für Token. Dann Code: Dieselbe Schleife schreibt ein Python-Programm, das rechnet. Die Oberfläche wechselt, die Schleife bleibt.",
+      body: "Drei Unterfolien, eine Schleife: Suche, Chat und Code. Jede zeigt eine andere Oberfläche; das Modell schreibt Token für Token. Klicke Suche, Chat oder Code.",
       demoState: { scene: "media", step: 0 },
       context: "Suche, Chat und Code sind drei Oberflächen für dasselbe Modell. Jede Antwort ist eine Sequenz von Tokens; Code wird zusätzlich ausgeführt.",
       deep: "Die Suche ergänzt Index und Links; der Chat führt einen Dialog; der Code wird von Python ausgeführt. Der generative Kern ist bei allen ein LLM. Deshalb kann Code plausibel aussehen und trotzdem falsch sein.",
@@ -63,7 +63,7 @@
     {
       kicker: "01 / Chat and code",
       title: "What is an LLM? Chat and code",
-      body: "A Large Language Model (LLM) predicts the next token. First you see Search and chat: both write the answer token by token. Then code: the same loop writes a Python program that computes. The surface changes, the loop stays.",
+      body: "Three sub-slides, one loop: Search, chat, and code. Each shows a different surface; the model writes token by token. Click Search, Chat, or Code.",
       demoState: { scene: "media", step: 0 },
       context: "Search, chat, and code are three surfaces for the same model. Every answer is a sequence of tokens; code is also executed.",
       deep: "Search adds an index and links; the chat holds a dialogue; the code is run by Python. The generative core is an LLM in all three. That is why code can look plausible and still be wrong.",

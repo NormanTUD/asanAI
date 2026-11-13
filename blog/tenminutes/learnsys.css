@@ -1276,3 +1276,10 @@ h1,h2,h3,h4{
 }
 
 .ls-tokenize-split[hidden],.ls-bpe[hidden]{display:none}
+
+@media (max-width:720px){
+  body[data-page="lesson"] .ls-app{grid-template-rows:minmax(0,1fr)}
+  body[data-page="lesson"] .ls-main{grid-row:1}
+}
+
+.ls-media-scene .ia-phone-switch{display:none}

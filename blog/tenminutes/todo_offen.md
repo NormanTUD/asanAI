@@ -1,8 +1,8 @@
 # Offene Arbeiten aus `intuition_learnsys_todo2`
 
 Status: `[done]` erledigt, `[in work]` aktuell, `[pending]` offen.
-Aktueller Stand: 32 Folien. Chat/Handy und Code sind eine Folie; Post-Training,
-Evaluation, Gradient und KV-Cache sind ergänzt; die Tier-Folie wurde entfernt.
+Aktueller Stand: 31 Folien. Chat/Handy und Code sind eine Folie mit drei Unterfolien;
+Post-Training, Evaluation, Gradient und KV-Cache sind ergänzt; die Dopplung „Eine Schicht, dann der Stapel“ und die Tier-Folie wurden entfernt.
 
 ## Bereits erledigt (schnelle Schritte)
 - [done] „Ein Block: Attention, dann FFN“ entfernt.
@@ -30,9 +30,12 @@ Evaluation, Gradient und KV-Cache sind ergänzt; die Tier-Folie wurde entfernt.
 - [done] „Modelle“ zeigt sechs Schritte: Daten, Modell, Loss, Update 1, Update 2, Fit; mit Loss-Inset, Fehlerlinien und Vorhersage-Sonde.
 - [done] Die Handy-Folie zeigt Suche und Chat in einer Demo, mit manuellen Tabs und automatischem Übergang.
 - [done] Zwei neue Folien: „Vom Basismodell zum Assistenten“ (SFT/RLHF/Präferenzwahl) und „Wie gut ist das Modell?“ (MMLU/HumanEval/GSM8K, Kontamination).
-- [done] Chat/Handy und Code zu einer Folie mit zwei Tabs und Weiter-Navigation zusammengelegt.
+- [done] Chat/Handy und Code zu einer Folie mit drei Unterfolien (Suche, Chat, Code) ohne Auto-Weiter zusammengelegt.
 - [done] Zwei technische Prototypen ergänzt: Gradienten-Schritt mit Lernrate und KV-Cache-Rechner.
-- [done] Folienzahl auf 32 gebracht.
+- [done] Dopplung „Eine Schicht, dann der Stapel“ entfernt; Folienzahl 31.
+- [done] Mobile: Demo füllt den Bildschirm, Text liegt als aufklappbares Overlay darüber.
+- [done] Tokenizer zeigt zuerst die Beispiele, BPE erst nach Weiter; nicht mehr gleichzeitig.
+- [done] Loss-Steuerung im Loop: Loss-Readout und Landschaftssteilheit folgen der Konfidenz.
 
 ## Als Nächstes (schnell → langsam)
 1. [pending] „Jeder Platz bekommt einen Fingerabdruck“: grünen „Großkreis“-Punkt entfernen, Euklid entfernen, klarstellen, dass das „Wort“ ein hochdimensionaler Vektor ist; mit Weiter durch Dimensionen und Kontext gehen.
@@ -49,8 +52,8 @@ Evaluation, Gradient und KV-Cache sind ergänzt; die Tier-Folie wurde entfernt.
 12. [pending] „Von Logits zu einer Verteilung“: Overlay beheben; interaktiv und visuell auf das Niveau der anderen Folien bringen.
 13. [pending] Sprachfolie: Datenqualität visualisieren, Caveat in Optionalbox, mehr zu Filtern/Dedupe/Decontamination recherchieren.
 14. [pending] Chinesisches Zimmer: mehr Philosophie ergänzen (Searle, Systems Reply, Symbol Grounding, LLM-Bezug).
-15. [done] Die Geschichte ist als Zehn-Tab-Folie umgesetzt; die Folienzahl ist 32.
+15. [done] Die Geschichte ist als Zehn-Tab-Folie umgesetzt; die Folienzahl ist 31.
 
 ## Später / bewusst zurückgestellt
 - [pending] Weitere Geschichtsbilder aus `history.php` prüfen und Credits ergänzen; die aktuelle Fassung nutzt Wolfsknochen, Salamis-Tafel, Llull, Leibniz, Pitts, Mark I, Minsky, Rosenblatt und Transformer.
-- [done] Aktuelle Folienzahl 32 festgelegt (31 plus zwei Prototypen minus eine Zusammenlegung).
+- [done] Aktuelle Folienzahl 31 festgelegt.

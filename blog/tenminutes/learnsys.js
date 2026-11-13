@@ -14,7 +14,7 @@
   var S = null;
   var STRINGS = {
     de: {
-      position: "Position", positionOf: "Position {n} von 9",
+      position: "Position", positionOf: "Position {n} von {total}",
       of: "von", step: "Schritt", stepOf: "Schritt {n} / {total}",
       prevStep: "Vorheriger Schritt", nextStep: "Nächster Schritt",
       prevDay: "Vorheriger Tag", nextDay: "Nächster Tag",
@@ -40,7 +40,7 @@
       textSize: "Textgröße", mixLabel: "Mix"
     },
     en: {
-      position: "Position", positionOf: "Position {n} of 9",
+      position: "Position", positionOf: "Position {n} of {total}",
       of: "of", step: "Step", stepOf: "Step {n} / {total}",
       prevStep: "Previous step", nextStep: "Next step",
       prevDay: "Previous day", nextDay: "Next day",
@@ -361,10 +361,13 @@
       tickTotal = stepCount;
     }
     posCount = tickTotal;
+    var posDay = activeDay();
     var posHtml = "";
     for (var pi = 0; pi < posCount; pi++) {
-      var posLabel = t("positionOf", { n: pi, total: Math.max(1, posCount - 1) });
-      posHtml += '<button type="button" data-pos="' + pi + '" title="' + esc(posLabel) + '" aria-label="' + esc(posLabel) + '">' + pi + '</button>';
+      var posStep = cfg.singleDay && posDay && posDay.steps[pi];
+      var posLabel = posStep && posStep.title ? posStep.title : t("positionOf", { n: pi + 1, total: Math.max(1, posCount) });
+      var posAria = posStep && posStep.title ? t("step") + " " + (pi + 1) + ": " + posStep.title : posLabel;
+      posHtml += '<button type="button" data-pos="' + pi + '" title="' + esc(posLabel) + '" aria-label="' + esc(posAria) + '">' + pi + '</button>';
     }
     var helpRows = [
       ['<kbd>←</kbd><kbd>→</kbd>', t("helpStep")],
@@ -553,7 +556,8 @@
     var d = activeDay();
     els.steps.innerHTML = d.steps.map(function (s, i) {
       var stepLabel = t("step") + " " + (i + 1);
-      return '<button type="button" class="ls-dot' + (i === state.step ? " is-on" : "") + '" data-step="' + i + '" aria-label="' + esc(stepLabel) + '">' + (i + 1) + '</button>';
+      var stepTitle = s.title || stepLabel;
+      return '<button type="button" class="ls-dot' + (i === state.step ? " is-on" : "") + '" data-step="' + i + '" title="' + esc(stepTitle) + '" aria-label="' + esc(stepLabel + ": " + stepTitle) + '">' + (i + 1) + '</button>';
     }).join("");
     els.progress.style.width = ((state.step + 1) / d.steps.length * 100).toFixed(1) + "%";
     if (els.stepCount) els.stepCount.textContent = t("stepOf", { n: state.step + 1, total: d.steps.length });

@@ -1347,7 +1347,7 @@
       reset();
       buildLogo();
       buildSerp();
-      if (view === "chat") startChat();
+      if (view === "chat") { startChat(); return; }
       if (reduce) {
         searchText.textContent = SATZ;
         setCentered(false);
@@ -7669,7 +7669,8 @@
     var el = document.createElement("div");
     el.className = "ls-media-scene";
     el.innerHTML = '<div class="ls-media-tabs" role="tablist">' +
-        '<button type="button" class="ls-chip is-on" data-media="phone" role="tab" aria-selected="true">' + (DE ? "Suche & Chat" : "Search & chat") + '</button>' +
+        '<button type="button" class="ls-chip is-on" data-media="search" role="tab" aria-selected="true">' + (DE ? "Suche" : "Search") + '</button>' +
+        '<button type="button" class="ls-chip" data-media="chat" role="tab" aria-selected="false">' + (DE ? "Chat" : "Chat") + '</button>' +
         '<button type="button" class="ls-chip" data-media="code" role="tab" aria-selected="false">Code</button>' +
       '</div>' +
       '<div class="ls-media-stage"><div class="ls-media-layer" data-layer="phone"></div><div class="ls-media-layer" data-layer="code" hidden></div></div>' +
@@ -7679,8 +7680,7 @@
     var codeLayer = el.querySelector('[data-layer="code"]');
     var phoneApi = phoneScene(phoneLayer, api);
     var codeApi = codeScene(codeLayer, api);
-    phoneApi.update({ view: "sequence" });
-    phoneApi.onSequenceDone(function () { if (step === 0) show("code"); });
+    phoneApi.update({ view: "search" });
     var tabs = el.querySelectorAll("[data-media]");
     var prevBtn = el.querySelector(".ls-media-prev");
     var nextBtn = el.querySelector(".ls-media-next");
@@ -7688,33 +7688,35 @@
     var step = 0;
     codeApi.pause();
     function show(mode) {
-      var isPhone = mode !== "code";
-      step = isPhone ? 0 : 1;
+      var modeName = mode === "chat" ? "chat" : (mode === "code" ? "code" : "search");
+      var isPhone = modeName !== "code";
+      step = modeName === "search" ? 0 : (modeName === "chat" ? 1 : 2);
       phoneLayer.hidden = !isPhone;
       codeLayer.hidden = isPhone;
       tabs.forEach(function (b) {
-        var on = b.getAttribute("data-media") === (isPhone ? "phone" : "code");
+        var on = b.getAttribute("data-media") === modeName;
         b.classList.toggle("is-on", on);
         b.setAttribute("aria-selected", on ? "true" : "false");
       });
       if (isPhone) {
         codeApi.pause();
+        phoneApi.update({ view: modeName });
         phoneApi.start();
       } else {
         phoneApi.pause();
         codeApi.resize();
         codeApi.start();
       }
-      progress.textContent = isPhone ? (DE ? "Suche → Chat → Code" : "Search → chat → code") : "Code";
+      progress.textContent = modeName === "search" ? (DE ? "Suche" : "Search") : (modeName === "chat" ? (DE ? "Chat" : "Chat") : "Code");
       prevBtn.disabled = step === 0;
-      nextBtn.textContent = step === 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+      nextBtn.textContent = step === 2 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
     }
     function nextInternal() {
-      if (step < 1) { show("code"); return true; }
+      if (step < 2) { show(step === 0 ? "chat" : "code"); return true; }
       return false;
     }
     function prevInternal() {
-      if (step > 0) { show("phone"); return true; }
+      if (step > 0) { show(step === 2 ? "chat" : "search"); return true; }
       return false;
     }
     function nextStep() {
@@ -7734,7 +7736,7 @@
     return {
       update: function (s) {
         if (s && s.mode) show(s.mode);
-        else if (s && typeof s.step === "number") show(s.step === 0 ? "phone" : "code");
+        else if (s && typeof s.step === "number") show(s.step === 0 ? "search" : (s.step === 1 ? "chat" : "code"));
       },
       next: nextInternal,
       prev: prevInternal,
