@@ -1338,7 +1338,51 @@
     }
   ];
 
-  var steps = [introSteps[0], bookSteps[0], insideSteps[1], languageSteps[0], tokenizeSteps[0], embedSteps[0], embedSteps[1], embedSteps[2], highdimSteps[0], manifoldSteps[0], positionSteps[0], attentionSteps[0], attentionSteps[1], attentionSteps[2], attentionSteps[3], ffnSteps[0], residualSteps[0], trajectorySteps[0], activationSteps[0], insideSteps[0], gradientSteps[0], neuralLargeSteps[0], mlpSteps[0], meadowSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], introSteps[2], posttrainSteps[0], evalSteps[0], kvcacheSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
+  var gaussSteps = DE ? [
+    {
+      kicker: "Die Daten",
+      title: "Gauß, Ceres und die Methode der kleinsten Quadrate",
+      body: "Am 1. Januar 1801 entdeckte Giuseppe Piazzi Ceres, den ersten Asteroiden, und verlor ihn nach 41 Tagen Beobachtung hinter der Sonne. Carl Friedrich Gauß behandelte die verrauschten Positionen als ein Ganzes und nahm an, dass die wahre Bahn in der Mitte der Fehler liegt. Seine Methode der kleinsten Quadrate minimierte den quadrierten Abstand zwischen Beobachtungen und Bahn und sagte voraus, wo Ceres wieder auftauchen würde (Stigler, 1981). Drehe am Teleskop: Je besser die Messung, desto enger die Glockenkurve. Der Ausgleich glaubt keiner einzelnen Messung; er wählt die Kurve, die allen zugleich am nächsten bleibt. Dieselbe Regel trainiert noch moderne Modelle.",
+      watch: "Bewege den Teleskop-Regler. Wie verändert sich die Streuung, und wie nah bleibt die Ausgleichskurve an der wahren Bahn?",
+      demoState: { scene: "gauss" },
+      context: "Die Beobachtungen sind synthetisch, nicht Piazzis originale Messungen. Der Plot zeigt das Prinzip: eine wahre Bahn, eine Wolke verrauschter Messungen und die Glockenkurve ihrer Fehler. Die Ausgleichskurve ist eine Kleinste-Quadrate-Anpassung.",
+      deep: "Gauß veröffentlichte die Methode 1809. Sie wählt die Parameter, die die Summe der quadrierten Abstände minimieren. Ein einzelner Ausreißer zählt quadriert, aber viele kleine Fehler mitteln sich. Dieselbe Arithmetik erscheint in jedem trainierten Netz: Ein Modell ist eine Kurve, die Daten sind verrauschte Punkte, und das Training wählt die Gewichte, deren Vorhersagen im Durchschnitt am nächsten an den Beobachtungen liegen.",
+      boxes: [
+        box("gauss-1", "Geschichte", "Ceres und Piazzi", "Piazzi entdeckte Ceres am 1. Januar 1801 und verlor sie nach 41 Tagen hinter der Sonne. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981)."),
+        box("gauss-2", "Mathematik", "Was macht die Methode?", "Sie minimiert die Summe der quadrierten Abstände zwischen Beobachtungen und Modell. Der quadratische Fehler bestraft große Abweichungen stärker als kleine.", "\\underbrace{\\min_{\\theta}\\underbrace{\\sum_i (y_i - f_\\theta(x_i))^2}_{\\text{quadratische Fehler}}}_{\\text{kleinste Summe}}"),
+        box("gauss-3", "Daten", "Warum im Schnitt richtig?", "Einzelne Messungen können falsch sein: Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über viele Messungen mitteln sich zufällige Fehler; die Anpassung landet in der Mitte. Systematische Fehler bleiben, deshalb ist Kuration wichtig."),
+        box("gauss-4", "Geschichte", "Die Rückkehr in die KI", "Die Methode kam aus der Astronomie und fand in das maschinelle Lernen, weil dasselbe Problem wiederkehrte: eine einfache Kurve durch unvollkommene Messungen legen. Dieselbe Regel trainiert noch moderne Netze.")
+      ],
+      sources: [
+        { label: "Stigler (1981), Gauss and the Invention of Least Squares", url: "https://doi.org/10.1214/aos/1176345451", why: { de: "Gauß, Ceres und die Methode der kleinsten Quadrate.", en: "Gauss, Ceres, and the method of least squares." } },
+        { label: "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), via Wikimedia Commons", url: "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691).jpg", why: { de: "Bild von Ceres, Public Domain.", en: "Image of Ceres, public domain." } },
+        { label: "The Flammarion Engraving (1888), via Wikimedia Commons", url: "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg", why: { de: "Kolorierter Flammarion-Holzschnitt, Public Domain.", en: "Coloured Flammarion engraving, public domain." } }
+      ]
+    }
+  ] : [
+    {
+      kicker: "Data",
+      title: "Gauss, Ceres, and the method of least squares",
+      body: "On 1 January 1801 Giuseppe Piazzi discovered Ceres, the first asteroid, and lost it behind the Sun after 41 days of observation. Carl Friedrich Gauss treated the noisy positions as a whole and assumed that the true orbit lies in the middle of the errors. His method of least squares minimised the squared distance between observations and orbit and predicted where Ceres would reappear (Stigler, 1981). Turn the telescope: the better the measurement, the narrower the bell curve. The fit believes no single measurement; it chooses the curve that stays closest to all of them at once. The same rule still trains modern models.",
+      watch: "Move the telescope slider. How does the scatter change, and how close does the fit stay to the true orbit?",
+      demoState: { scene: "gauss" },
+      context: "The observations are synthetic, not Piazzi's original measurements. The plot shows the principle: a true orbit, a cloud of noisy measurements, and the bell curve of their errors. The fitted curve is a least-squares fit.",
+      deep: "Gauss published the method in 1809. It chooses the parameters that minimise the sum of squared distances. A single outlier counts squared, but many small errors average out. The same arithmetic appears in every trained network: a model is a curve, the data are noisy points, and training chooses the weights whose predictions are closest to the observations on average.",
+      boxes: [
+        box("gauss-1", "History", "Ceres and Piazzi", "Piazzi discovered Ceres on 1 January 1801 and lost it behind the Sun after 41 days. Gauss predicted with least squares where it would reappear (Stigler, 1981)."),
+        box("gauss-2", "Mathematics", "What does the method do?", "It minimises the sum of squared distances between observations and model. The squared error punishes large deviations more than small ones.", "\\underbrace{\\min_{\\theta}\\underbrace{\\sum_i (y_i - f_\\theta(x_i))^2}_{\\text{squared errors}}}_{\\text{smallest sum}}"),
+        box("gauss-3", "Data", "Why right on average?", "Individual measurements can be wrong: people make mistakes, measurements have errors, people lie. Over many measurements random errors average out; the fit lands in the middle. Systematic errors remain, which is why curation matters."),
+        box("gauss-4", "History", "The return to AI", "The method came from astronomy and entered machine learning because the same problem returned: putting a simple curve through imperfect measurements. The same rule still trains modern networks.")
+      ],
+      sources: [
+        { label: "Stigler (1981), Gauss and the Invention of Least Squares", url: "https://doi.org/10.1214/aos/1176345451", why: { de: "Gauß, Ceres und die Methode der kleinsten Quadrate.", en: "Gauss, Ceres, and the method of least squares." } },
+        { label: "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), via Wikimedia Commons", url: "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691).jpg", why: { de: "Bild von Ceres, Public Domain.", en: "Image of Ceres, public domain." } },
+        { label: "The Flammarion Engraving (1888), via Wikimedia Commons", url: "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg", why: { de: "Kolorierter Flammarion-Holzschnitt, Public Domain.", en: "Coloured Flammarion engraving, public domain." } }
+      ]
+    }
+  ];
+
+  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussSteps[0], languageSteps[0], tokenizeSteps[0], embedSteps[0], embedSteps[1], embedSteps[2], highdimSteps[0], manifoldSteps[0], positionSteps[0], attentionSteps[0], attentionSteps[1], attentionSteps[2], attentionSteps[3], ffnSteps[0], residualSteps[0], trajectorySteps[0], activationSteps[0], insideSteps[0], gradientSteps[0], neuralLargeSteps[0], mlpSteps[0], meadowSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], introSteps[2], posttrainSteps[0], evalSteps[0], kvcacheSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
 
   var day = {
     id: "intuition",
