@@ -1366,3 +1366,13 @@ h1,h2,h3,h4{
 .ls-sinus-loss{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol)}
 .ls-sinus-readout{display:flex;gap:12px;flex-wrap:wrap;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted);min-height:2.6em}
 .ls-sinus-readout b{color:var(--ls-ink);font-weight:600}
+
+.ia-chat-msg.is-user{display:none}
+.ia-chat-screen.is-sent .ia-chat-msg.is-user{display:flex}
+.ia-chat-screen.is-composing .ia-chat-compose,.ia-chat-screen.is-answering .ia-chat-compose{opacity:1;transform:none;pointer-events:auto}
+.ia-chat-input{min-height:1em}
+.ia-chat-input:empty+.ia-chat-send{opacity:.5}
+
+.ia-chat-placeholder{color:#9aa3ad}
+.ia-chat-input{flex:1;min-width:0;color:#202124;font:var(--ls-fs-ui-sm)/1.2 "Open Sans",sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ia-chat-compose:has(.ia-chat-input:not(:empty)) .ia-chat-placeholder{display:none}
