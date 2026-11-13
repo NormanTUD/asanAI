@@ -4142,7 +4142,7 @@
       var anchors = [
         { id: "car", x: -0.82, y: 0.32, label: DE ? "Auto" : "car", color: C.muted },
         { id: "england", x: -0.78, y: -0.44, label: "England", color: C.muted },
-        { id: "city", x: 0.66, y: 0.02, label: DE ? "Stadt" : "city", color: C.green }
+        { id: "city", x: 0.40, y: 0.02, label: DE ? "Stadt · New York" : "city · New York", color: C.green }
       ];
       var newPos = { x: lerp(-0.58, 0.40, easeT), y: lerp(0.46, 0.16, easeT) };
       var yorkPos = { x: lerp(-0.46, 0.40, easeT), y: lerp(-0.34, -0.10, easeT) };
@@ -4163,19 +4163,34 @@
       line(newPos, yorkPos, C.petrol, 0.18 + 0.55 * easeT, 1.4 + 2.4 * easeT);
       line(newPos, anchors[2], C.green, 0.18 + 0.72 * easeT, 1.3 + 4.2 * easeT);
       line(yorkPos, anchors[2], C.green, 0.14 + 0.68 * easeT, 1.2 + 3.8 * easeT);
-      function point(p, col, label, r) {
+      function point(p, col, label, r, opt) {
+        var o = opt || {};
         ctx.beginPath(); ctx.arc(px(p.x), py(p.y), r || 5, 0, Math.PI * 2);
         ctx.fillStyle = col; ctx.fill();
         ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
         ctx.fillStyle = C.ink;
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-        ctx.textAlign = "center";
-        ctx.fillText(label, px(p.x), py(p.y) - 10);
+        ctx.textAlign = o.align || "center";
+        var dx = o.align === "left" ? 8 : o.align === "right" ? -8 : 0;
+        ctx.fillText(label, px(p.x) + dx, py(p.y) + (o.dy || -10));
       }
-      anchors.forEach(function (a) { point(a, a.color, a.label, 4.5); });
-      ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
-      ctx.fillText(DE ? "Empire State Building" : "Empire State Building", px(0.38), py(0.20));
-      ctx.fillText(DE ? "Freiheitsstatue" : "Statue of Liberty", px(0.38), py(0.10));
+      anchors.forEach(function (a, i) {
+        point(a, a.color, a.label, 4.5, i === 2 ? { align: "left", dy: 4 } : null);
+      });
+      var landmarks = [
+        { x: 0.58, y: 0.26, label: "Empire State Building" },
+        { x: 0.58, y: 0.46, label: DE ? "Freiheitsstatue" : "Statue of Liberty" }
+      ];
+      landmarks.forEach(function (l) {
+        ctx.beginPath();
+        ctx.arc(px(l.x), py(l.y), 3, 0, Math.PI * 2);
+        ctx.fillStyle = C.lineStrong || C.muted;
+        ctx.fill();
+        ctx.fillStyle = C.muted;
+        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText(l.label, px(l.x) + 7, py(l.y) + 3);
+      });
       point(newPos, C.petrol, "new", 6);
       point(yorkPos, C.petrol, "york", 6);
       ctx.fillStyle = C.muted;
@@ -7037,6 +7052,8 @@
       '</div>' +
       '<div class="ls-lang-mix">' +
         '<div class="ls-lang-mix-head">' + (DE ? "Woraus GPT-3 lernte" : "What GPT-3 learned from") + '</div>' +
+        '<div class="ls-lang-scale"><span class="ls-lang-scale-label">' + (DE ? "Datenmenge" : "data scale") + '</span><span class="ls-lang-scale-unit">KB</span><span class="ls-lang-scale-unit">MB</span><span class="ls-lang-scale-unit">GB</span><span class="ls-lang-scale-unit">TB</span><span class="ls-lang-scale-unit">PB</span><span class="ls-lang-scale-unit">EB</span><span class="ls-lang-scale-unit is-on">ZB</span><span class="ls-lang-scale-year">2016</span></div>' +
+        '<div class="ls-lang-scale-note">' + (DE ? "1 ZB = 10²¹ Byte. Erst seit der Zettabyte-Ära gibt es genug Text für diese Modelle." : "1 ZB = 10²¹ bytes. Only since the zettabyte era has there been enough text for these models.") + '</div>' +
         '<div class="ls-lang-bars"></div>' +
         '<p class="ls-lang-note">' + (DE ? "GPT-3-Mix nach Brown et al. (2020), Tabelle 2.2, gerundet. Labs veröffentlichen ihre genauen Rezepte nicht." : "GPT-3 mix from Brown et al. (2020), Table 2.2, rounded. Labs do not publish their exact recipes.") + '</p>' +
       '</div>' +

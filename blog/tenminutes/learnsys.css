@@ -1562,3 +1562,11 @@ h1,h2,h3,h4{
 .ls-noise-explain-row{display:flex;align-items:baseline;gap:5px;margin:0;min-width:0}
 .ls-noise-explain-row [data-tex]{flex:0 0 auto;font-weight:600;color:var(--ls-petrol);white-space:nowrap}
 .ls-noise-explain-text{min-width:0}
+
+/* Data scale in the language slide */
+.ls-lang-scale{display:flex;align-items:center;gap:3px;flex-wrap:wrap;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-lang-scale-label{text-transform:uppercase;letter-spacing:.08em;margin-right:2px}
+.ls-lang-scale-unit{padding:2px 4px;border:1px solid var(--ls-line);background:#fff;font:600 9px/1 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-lang-scale-unit.is-on{background:var(--ls-green);border-color:var(--ls-green);color:#fff}
+.ls-lang-scale-year{color:var(--ls-gold);font-weight:700;margin-left:3px}
+.ls-lang-scale-note{font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
