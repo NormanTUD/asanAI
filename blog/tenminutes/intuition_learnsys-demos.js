@@ -82,10 +82,7 @@
       return color("muted");
     }
     function text(loc) { return DE ? loc[0] : loc[1]; }
-    function smoothstep(a, b, x) {
-      var t = clamp((x - a) / (b - a), 0, 1);
-      return t * t * (3 - 2 * t);
-    }
+    var smoothstep = api.util.smoothstep;
     function wordLabel(id) { return text(WORDS[id].label); }
     function buildMiniTable() {
       if (!miniTable) return;
@@ -2062,13 +2059,7 @@
       var h = m[1];
       return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
     }
-    function mixColor(a, b, t) {
-      var A = colorParts(a), B = colorParts(b);
-      if (!A || !B) return t < 0.5 ? a : b;
-      return "rgb(" + Math.round(A[0] + (B[0] - A[0]) * t) + "," +
-        Math.round(A[1] + (B[1] - A[1]) * t) + "," +
-        Math.round(A[2] + (B[2] - A[2]) * t) + ")";
-    }
+    var mixColor = api.util.hexMix;
     function landColor(p, C) {
       var stops = [
         { p: 0, c: C.petrol },
@@ -3188,7 +3179,7 @@
     var yaw = -0.62, pitch = 0.82, zoom = 1;
     var hits = [], drag = null, suppress = false, highlightAlt = null;
     var camera = { scale: 1, ox: 0, oy: 0 };
-    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+    var clamp = api.util.clamp;
     function softmax(logits, t) {
       var max = Math.max.apply(null, logits);
       var exps = logits.map(function (l) { return Math.exp((l - max) / Math.max(0.05, t)); });
@@ -3770,11 +3761,11 @@
     }
     function nextStep() {
       if (nextInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+      api.goNext();
     }
     function prevStep() {
       if (prevInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
+      api.goPrev();
     }
     Object.keys(examples).forEach(function (key) {
       var b = document.createElement("button");
@@ -3793,10 +3784,7 @@
       next: nextInternal,
       prev: prevInternal,
       onKey: function (e) {
-        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
-        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
-        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
-        return false;
+        return api.util.arrowKey(e, nextInternal, prevInternal);
       },
       resize: function () {},
       destroy: function () { el.remove(); }
@@ -3829,7 +3817,7 @@
     var posAnim = pos;
     var heatSize = null, curveSize = null, methodsSize = null, yaw = -0.6, pitch = 0.5, drag = null, raf = 0, last = 0;
     var C = api.colors();
-    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+    var clamp = api.util.clamp;
     function pe(p, d, i) {
       var freq = Math.pow(10000, (2 * i) / Math.max(2, d));
       return i % 2 === 0 ? Math.sin(p / freq) : Math.cos(p / freq);
@@ -3860,11 +3848,7 @@
       ctx.textAlign = "center";
       ctx.fillText(DE ? "Dimension" : "dimension", padL + (w - padL - padR) / 2, h - 5);
     }
-    function mix(a, b, t) {
-      function rgb(h) { h = h.replace("#", ""); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
-      var A = rgb(a), B = rgb(b);
-      return "rgb(" + Math.round(A[0] + (B[0]-A[0])*t) + "," + Math.round(A[1] + (B[1]-A[1])*t) + "," + Math.round(A[2] + (B[2]-A[2])*t) + ")";
-    }
+    var mix = api.util.hexMix;
     function project(x, y, z) {
       var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
       var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
@@ -4949,7 +4933,7 @@
     var readout = el.querySelector(".ls-res-readout");
     var ctx = null, size = null, current = 0, hits = [];
     var C = api.colors();
-    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+    var clamp = api.util.clamp;
     function streamAt(n) {
       var v = [0, 0, 0, 0, 0, 0];
       for (var i = 0; i <= n; i++) for (var j = 0; j < 6; j++) v[j] += updates[i][j];
@@ -5082,7 +5066,7 @@
     var ctx = null, size = null, N = 20, T = 0.8, K = 5;
     var modeMix = 0, modeTarget = 0, modeTimer = 0;
     var anchors = [], fieldCache = {}, gapFrac = 0, pointer = { x: CW / 2, y: CH / 2 };
-    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+    var clamp = api.util.clamp;
     function hexToRgb(hex) {
       var h = String(hex || "").replace("#", "");
       if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
@@ -6065,11 +6049,11 @@
     }
     function nextStep() {
       if (nextInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+      api.goNext();
     }
     function prevStep() {
       if (prevInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
+      api.goPrev();
     }
     prevBtn.addEventListener("click", prevStep);
     nextBtn.addEventListener("click", nextStep);
@@ -6079,10 +6063,7 @@
       next: nextInternal,
       prev: prevInternal,
       onKey: function (e) {
-        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
-        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
-        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
-        return false;
+        return api.util.arrowKey(e, nextInternal, prevInternal);
       },
       resize: function () {},
       destroy: function () { el.remove(); }
@@ -6141,7 +6122,7 @@
       { id: "unembed", title: "Unembedding", sub: "vector → scores", color: "gold", desc: "Projects the last vector onto the vocabulary. Softmax turns the scores into probabilities." }
     ];
     function color(name) { return C[name] || C.petrol; }
-    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+    var clamp = api.util.clamp;
     var TRAIN_END = 0.66;
     function truth(t) { return 0.5 + 0.3 * Math.sin(2 * Math.PI * t); }
     function polyModel(t) {
@@ -6236,11 +6217,11 @@
     }
     function nextStep() {
       if (nextInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+      api.goNext();
     }
     function prevStep() {
       if (prevInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
+      api.goPrev();
     }
     function cardColor(c) { return color(c.color); }
     function drawCard(x, y, w, h, idx) {
@@ -6632,10 +6613,7 @@
       next: nextInternal,
       prev: prevInternal,
       onKey: function (e) {
-        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
-        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
-        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
-        return false;
+        return api.util.arrowKey(e, nextInternal, prevInternal);
       },
       pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } },
       resume: function () { start(); if (reducedMotion) draw(); },
@@ -6811,7 +6789,7 @@
       { id: "chicken", male: "Rooster", female: "Hen", species: "chicken", role: "domesticated", x: 0.72, z: 1.00, color: "lilac" }
     ];
     function color(name) { return C[name] || C.petrol; }
-    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+    var clamp = api.util.clamp;
     function project(x, y, z) {
       var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
       var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
@@ -7126,11 +7104,11 @@
     }
     function nextStep() {
       if (stepLanguage(1)) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+      api.goNext();
     }
     function prevStep() {
       if (stepLanguage(-1)) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
+      api.goPrev();
     }
     navPrev.addEventListener("click", prevStep);
     navNext.addEventListener("click", nextStep);
@@ -7508,11 +7486,11 @@
     function prevInternal() { if (index > 0) { setIndex(index - 1); return true; } return false; }
     function nextStep() {
       if (nextInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+      api.goNext();
     }
     function prevStep() {
       if (prevInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
+      api.goPrev();
     }
     prevBtn.addEventListener("click", prevStep);
     nextBtn.addEventListener("click", nextStep);
@@ -7527,10 +7505,7 @@
       next: nextInternal,
       prev: prevInternal,
       onKey: function (e) {
-        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
-        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
-        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
-        return false;
+        return api.util.arrowKey(e, nextInternal, prevInternal);
       },
       resize: function () {},
       destroy: function () { el.remove(); }
@@ -7630,11 +7605,11 @@
     function prevInternal() { if (step > 0) { setStep(step - 1); return true; } return false; }
     function nextStep() {
       if (nextInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+      api.goNext();
     }
     function prevStep() {
       if (prevInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
+      api.goPrev();
     }
     prefButtons.forEach(function (b) {
       b.addEventListener("click", function () { pref = b.getAttribute("data-pref"); render(); });
@@ -7647,10 +7622,7 @@
       next: nextInternal,
       prev: prevInternal,
       onKey: function (e) {
-        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
-        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
-        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
-        return false;
+        return api.util.arrowKey(e, nextInternal, prevInternal);
       },
       resize: function () {},
       destroy: function () { el.remove(); }
@@ -7711,11 +7683,11 @@
     function prevInternal() { if (step > 0) { setStep(step - 1); return true; } return false; }
     function nextStep() {
       if (nextInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+      api.goNext();
     }
     function prevStep() {
       if (prevInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
+      api.goPrev();
     }
     dirtyEl.addEventListener("change", function () { dirty = dirtyEl.checked; render(); });
     prevBtn.addEventListener("click", prevStep);
@@ -7726,10 +7698,7 @@
       next: nextInternal,
       prev: prevInternal,
       onKey: function (e) {
-        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
-        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
-        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
-        return false;
+        return api.util.arrowKey(e, nextInternal, prevInternal);
       },
       resize: function () {},
       destroy: function () { el.remove(); }
@@ -7793,11 +7762,11 @@
     }
     function nextStep() {
       if (nextInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); }
+      api.goNext();
     }
     function prevStep() {
       if (prevInternal()) return;
-      if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); }
+      api.goPrev();
     }
     tabs.forEach(function (b) {
       b.addEventListener("click", function () { show(b.getAttribute("data-media")); });
@@ -7813,10 +7782,7 @@
       next: nextInternal,
       prev: prevInternal,
       onKey: function (e) {
-        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
-        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
-        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
-        return false;
+        return api.util.arrowKey(e, nextInternal, prevInternal);
       },
       pause: function () { phoneApi.pause(); codeApi.pause(); },
       resume: function () { show(step === 0 ? "phone" : "code"); },
@@ -7962,11 +7928,7 @@
     var C = api.colors();
     var palette = [C.green, C.sky, C.gold, C.lilac, C.lime, C.blue, C.teal || C.petrol, C.muted];
     var size = null, ctx = null, t = 0, raf = 0, playing = false;
-    function mix(a, b, k) {
-      function rgb(h) { h = h.replace("#", ""); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
-      var A = rgb(a), B = rgb(b);
-      return "rgb(" + Math.round(A[0] + (B[0]-A[0])*k) + "," + Math.round(A[1] + (B[1]-A[1])*k) + "," + Math.round(A[2] + (B[2]-A[2])*k) + ")";
-    }
+    var mix = api.util.hexMix;
     var seed = 19;
     function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
     var nodes = [], edges = [];
@@ -8133,10 +8095,7 @@
       next: nextInternal,
       prev: prevInternal,
       onKey: function (e) {
-        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
-        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return nextInternal();
-        if (e.key === "ArrowLeft" || e.key === "PageUp") return prevInternal();
-        return false;
+        return api.util.arrowKey(e, nextInternal, prevInternal);
       },
       resize: resize,
       pause: function () { playing = false; if (raf) cancelAnimationFrame(raf); raf = 0; },

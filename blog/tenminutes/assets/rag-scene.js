@@ -48,8 +48,8 @@
     function setStep(i) { step = Math.max(0, Math.min(3, i)); render(); }
     function nextInternal() { if (step < 3) { setStep(step + 1); return true; } return false; }
     function prevInternal() { if (step > 0) { setStep(step - 1); return true; } return false; }
-    function nextStep() { if (nextInternal()) return; if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step + 1); } }
-    function prevStep() { if (prevInternal()) return; if (window.LearnSys) { var st = LearnSys.state(); LearnSys.go(st.day, st.step - 1); } }
+    function nextStep() { if (nextInternal()) return; api.goNext(); }
+    function prevStep() { if (prevInternal()) return; api.goPrev(); }
     prevBtn.addEventListener("click", prevStep);
     nextBtn.addEventListener("click", nextStep);
     render();

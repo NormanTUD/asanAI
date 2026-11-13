@@ -840,7 +840,22 @@
       util: LS.util,
       onHint: function (text) { els.stageHint.textContent = text; },
       go: go,
-      goStep: function (step) { go(state.day, step); }
+      goStep: function (step) { go(state.day, step); },
+      goNext: function () {
+        var day = cfg.days[state.day];
+        if (!day) return;
+        if (state.step < day.steps.length - 1) go(state.day, state.step + 1);
+        else if (state.day < cfg.days.length - 1) go(state.day + 1, 0);
+      },
+      goPrev: function () {
+        var day = cfg.days[state.day];
+        if (!day) return;
+        if (state.step > 0) go(state.day, state.step - 1);
+        else if (state.day > 0) {
+          var prevDay = cfg.days[state.day - 1];
+          go(state.day - 1, prevDay.steps.length - 1);
+        }
+      }
     });
     if (demo && demo.update) demo.update(s.demoState || {}, meta);
     preloadNextScene(d);
@@ -3507,8 +3522,23 @@
   LS.lang = function () { return LANG; };
   LS.t = t;
   LS.motion = { step: 180, day: 180, camera: 240, text: 70, enter: 160, exit: 120, stagger: 40 };
+  function smoothstep(a, b, x) {
+    var t = clamp((x - a) / (b - a), 0, 1);
+    return t * t * (3 - 2 * t);
+  }
+  function hexMix(a, b, t) {
+    function rgb(h) { h = String(h).replace("#", ""); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
+    var A = rgb(a), B = rgb(b);
+    return "rgb(" + Math.round(A[0] + (B[0] - A[0]) * t) + "," + Math.round(A[1] + (B[1] - A[1]) * t) + "," + Math.round(A[2] + (B[2] - A[2]) * t) + ")";
+  }
+  function arrowKey(e, next, prev) {
+    if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+    if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return !!next();
+    if (e.key === "ArrowLeft" || e.key === "PageUp") return !!prev();
+    return false;
+  }
   LS.util = {
-    clamp: clamp, lerp: lerp, ease: ease, normSpace: normSpace,
+    clamp: clamp, lerp: lerp, ease: ease, smoothstep: smoothstep, hexMix: hexMix, arrowKey: arrowKey, normSpace: normSpace,
     normalizeFont: normalizeFont, fontLevels: FONT_LEVELS, fontMin: FONT_MIN, fontMax: FONT_MAX,
     filterDays: filterDays, normalizePrefs: normalizePrefs
   };
