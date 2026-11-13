@@ -74,13 +74,17 @@
       return { w: w, h: h, ctx: c };
     }
     function truth(x) { return 0.5 + 0.42 * Math.sin(2 * Math.PI * x); }
-    function makePoints() {
-      points = [];
-      var seed = 11;
-      function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
-      for (var i = 0; i < 18; i++) {
-        var x = 0.10 + 0.60 * i / 17;
-        points.push({ x: x, y: truth(x) + (rnd() - 0.5) * 0.035 });
+    function makePoints(reset) {
+      if (reset && window.TM_SINUS_DATA) window.TM_SINUS_DATA.reset();
+      var src = window.TM_SINUS_DATA && window.TM_SINUS_DATA.points;
+      points = src ? src.map(function (p) { return { x: p.x, y: p.y }; }) : [];
+      if (!points.length) {
+        var seed = 11;
+        function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+        for (var i = 0; i < 18; i++) {
+          var x = 0.10 + 0.60 * i / 17;
+          points.push({ x: x, y: truth(x) + (rnd() - 0.5) * 0.035 });
+        }
       }
     }
     function makeTensors() {
@@ -448,6 +452,7 @@
       var p = pointerPos(e);
       var y = Y_MIN + (size.h - 40 - p.y) / (size.h - 74) * (Y_MAX - Y_MIN);
       points[drag].y = V.clamp(y, Y_MIN, Y_MAX);
+      if (window.TM_SINUS_DATA && window.TM_SINUS_DATA.points[drag]) window.TM_SINUS_DATA.points[drag].y = points[drag].y;
       makeTensors();
       predict();
       draw();

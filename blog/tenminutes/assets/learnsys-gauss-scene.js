@@ -221,7 +221,17 @@
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
     resize();
     return {
-      update: function () {},
+      update: function (s) {
+        if (!s) return;
+        if (s.phase === "intro") { el.classList.add("is-intro"); return; }
+        el.classList.remove("is-intro");
+        if (typeof s.sigma === "number") {
+          sigma = Math.max(0.1, Math.min(2, s.sigma));
+          qualityEl.value = String(sigma);
+          qualityOut.textContent = "σ " + sigma.toFixed(1);
+        }
+        resize();
+      },
       resize: resize,
       pause: function () {},
       resume: function () { draw(); },

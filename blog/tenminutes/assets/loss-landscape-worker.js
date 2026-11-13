@@ -80,6 +80,12 @@ function surface(n, a0, a1, b0, b1) {
 
 self.onmessage = function (e) {
   if (!e.data || e.data.cmd !== "train") return;
+  if (e.data.points && e.data.points.length) {
+    DATA = {
+      xs: e.data.points.map(function (p) { return p.x; }),
+      ys: e.data.points.map(function (p) { return p.y; })
+    };
+  }
   var lr = Math.max(0.01, Math.min(0.3, Number(e.data.lr) || 0.08));
   var startA = -1.55, startB = 1.62, steps = 38;
   var sgd = trajectory("sgd", lr, startA, startB, steps);

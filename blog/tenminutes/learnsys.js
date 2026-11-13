@@ -82,7 +82,7 @@
   }
   var root = null;
   var cfg = null;
-  var state = { track: "all", depth: "standard", font: 1, day: 0, step: 0 };
+  var state = { track: "all", depth: "standard", font: 1, day: 0, step: 0, substep: 0 };
   var demo = null;
   var palette = null;
   var currentDemoDay = null;
@@ -338,11 +338,16 @@
     var d = activeDay();
     return d.steps[clamp(state.step, 0, d.steps.length - 1)];
   }
+  function activeView() {
+    var base = activeStep();
+    if (base && base.substeps && base.substeps[state.substep]) return base.substeps[state.substep];
+    return base;
+  }
 
   function save() {
     try {
       localStorage.setItem(KEY, JSON.stringify({
-        track: state.track, depth: state.depth, font: state.font, day: state.day, step: state.step
+        track: state.track, depth: state.depth, font: state.font, day: state.day, step: state.step, substep: state.substep
       }));
     } catch (e) {}
   }
@@ -354,6 +359,7 @@
       state.font = normalizeFont(p.font);
       if (typeof p.day === "number") state.day = p.day;
       if (typeof p.step === "number") state.step = p.step;
+      if (typeof p.substep === "number") state.substep = p.substep;
     } catch (e) {}
   }
 
@@ -591,17 +597,7 @@
     var firstOpen = state.depth === "deep" ? " open" : "";
     var contextQ = s.contextTitle || t("questionContext");
     var deepQ = s.deepTitle || t("questionDeep");
-    var qItems = [];
-    if (ctx || ctxTex) qItems.push({ id: "q-context", label: contextQ });
-    if (deep || deepTex) qItems.push({ id: "q-deep", label: deepQ });
-    boxes.forEach(function (b) {
-      qItems.push({ id: "q-box-" + b.id, label: (b.lens ? b.lens + " · " : "") + (b.title || "Detail") });
-    });
-    var indexHtml = '<div class="ls-question-index" aria-label="' + esc(t("questionIndex")) + '">' +
-      qItems.map(function (q) {
-        return '<button type="button" data-qid="' + esc(q.id) + '">' + esc(q.label) + '</button>';
-      }).join("") + '</div>';
-    var html = '<div class="ls-depth-tree">' + indexHtml +
+    var html = '<div class="ls-depth-tree">' +
       '<details class="ls-deepbox ls-deepbox--root"' + rootOpen + '>' +
         '<summary>' + esc(t("deepDive")) + ' <span class="ls-depth-count">' + esc(t(count === 1 ? "depthQuestion" : "depthQuestions", { n: count })) + '</span></summary>';
     if (ctx || ctxTex) {
@@ -752,11 +748,12 @@
 
   function renderText() {
     var d = activeDay();
-    var s = activeStep();
+    var base = activeStep();
+    var s = activeView();
     if (els.nowKicker) els.nowKicker.textContent = d.label + " · " + (TRACK_LABEL[d.track] ? TRACK_LABEL[d.track].label : d.track);
     if (els.nowTitle) els.nowTitle.textContent = d.title;
     updatePosRail();
-    els.kicker.textContent = s.kicker || d.kicker;
+    els.kicker.textContent = (s.kicker || d.kicker) + (base.substeps ? " · " + (state.substep + 1) + " / " + base.substeps.length : "");
     els.title.textContent = s.title;
     els.kicker.classList.toggle("is-centered", !!s.centerTitle);
     els.title.classList.toggle("is-centered", !!s.centerTitle);
@@ -797,8 +794,9 @@
 
   function renderStage() {
     var d = activeDay();
-    var s = activeStep();
-    els.stageKicker.textContent = d.kicker;
+    var base = activeStep();
+    var s = activeView();
+    els.stageKicker.textContent = base.substeps ? s.kicker : d.kicker;
     els.stageTitle.textContent = s.title;
     els.stageHint.textContent = s.watch || t("defaultHint");
     els.credit.textContent = d.credit || "";
@@ -807,7 +805,8 @@
 
   function preloadNextScene(d) {
     if (!demo || !demo.preload || !d || !d.steps) return;
-    var nextStep = d.steps[state.step + 1];
+    var base = d.steps[state.step];
+    var nextStep = base && base.substeps ? base.substeps[state.substep + 1] : d.steps[state.step + 1];
     if (!nextStep || !nextStep.demoState || !nextStep.demoState.scene) return;
     var sceneName = nextStep.demoState.scene;
     var preloadDemo = demo, preloadDay = d.id;
@@ -884,10 +883,23 @@
   function renderCalendar() {
     if (!els.calGrid) return;
     var d = activeDay();
-    els.calGrid.innerHTML = d.steps.map(function (s, i) {
+    function card(i, s, compact) {
       var stepTitle = s.title || t("step") + " " + (i + 1);
       var kicker = s.kicker || "";
-      return '<button type="button" class="ls-cal-card' + (i === state.step ? ' is-on' : '') + '" data-step="' + i + '" data-no-height-test="1"><span class="ls-cal-num">' + (i + 1) + '</span><span class="ls-cal-kicker">' + esc(kicker) + '</span><b>' + esc(stepTitle) + '</b></button>';
+      return '<button type="button" class="ls-cal-card' + (compact ? ' ls-cal-card--sub' : '') + (i === state.step ? ' is-on' : '') + '" data-step="' + i + '" data-no-height-test="1"><span class="ls-cal-num">' + (i + 1) + '</span><span class="ls-cal-kicker">' + esc(compact ? t("step") + " " + (i + 1) : kicker) + '</span><b>' + esc(compact ? (kicker || stepTitle) : stepTitle) + '</b></button>';
+    }
+    var groups = [];
+    d.steps.forEach(function (s, i) {
+      var title = s.title || t("step") + " " + (i + 1);
+      var last = groups[groups.length - 1];
+      if (last && last.title === title) last.items.push({ s: s, i: i });
+      else groups.push({ title: title, items: [{ s: s, i: i }] });
+    });
+    els.calGrid.innerHTML = groups.map(function (g) {
+      if (g.items.length === 1) return card(g.items[0].i, g.items[0].s, false);
+      return '<div class="ls-cal-group"><div class="ls-cal-group-title">' + esc(g.title) + '</div><div class="ls-cal-group-cards">' +
+        g.items.map(function (x) { return card(x.i, x.s, true); }).join("") +
+        '</div></div>';
     }).join("");
     els.calGrid.querySelectorAll("[data-step]").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -1096,6 +1108,7 @@
     var dayChanged = oldDay !== state.day;
     var demoChanged = oldDemo !== d.demo;
     var stepChanged = oldStep !== state.step;
+    if (dayChanged || stepChanged) state.substep = 0;
     var changed = dayChanged || demoChanged || stepChanged;
     var elementStep = stepChanged && !dayChanged && !demoChanged && ELEMENT_ANIM[d.demo];
     var canvasMorph = changed && CANVAS_DEMOS[oldDemo] && CANVAS_DEMOS[d.demo] && (dayChanged || demoChanged || FLOW_ON_STEP[d.demo]);
@@ -1118,6 +1131,14 @@
   function next() {
     if (demo && typeof demo.next === "function" && demo.next()) return;
     var d = activeDay();
+    var base = d.steps[state.step];
+    if (base && base.substeps && state.substep < base.substeps.length - 1) {
+      state.substep++;
+      cueSuppressUntil = performance.now() + 500;
+      if (els.textScroll) { els.textScroll.scrollTop = 0; }
+      renderAll();
+      return;
+    }
     if (state.step < d.steps.length - 1) go(state.day, state.step + 1);
     else {
       var list = cfg.days;
@@ -1128,6 +1149,14 @@
   function prev() {
     if (demo && typeof demo.prev === "function" && demo.prev()) return;
     var d = activeDay();
+    var base = d.steps[state.step];
+    if (base && base.substeps && state.substep > 0) {
+      state.substep--;
+      cueSuppressUntil = performance.now() + 500;
+      if (els.textScroll) { els.textScroll.scrollTop = 0; }
+      renderAll();
+      return;
+    }
     if (state.step > 0) go(state.day, state.step - 1);
     else {
       var list = cfg.days;

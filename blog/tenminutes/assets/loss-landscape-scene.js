@@ -187,7 +187,11 @@
         setTimeout(function () { if (visible && !started) startTraining(); }, 520);
       };
       worker.onerror = function () { setStatus(DE ? "Worker-Fehler" : "Worker error"); };
-      worker.postMessage({ cmd: "train", lr: parseFloat(lrEl.value) || 0.08 });
+      worker.postMessage({
+        cmd: "train",
+        lr: parseFloat(lrEl.value) || 0.08,
+        points: (window.TM_SINUS_DATA && window.TM_SINUS_DATA.points) || []
+      });
     }
     function tick() {
       if (!playing || !data) return;

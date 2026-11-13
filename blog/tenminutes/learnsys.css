@@ -1710,3 +1710,31 @@ h1,h2,h3,h4{
 
 .ls-box-control{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-petrol);cursor:pointer}
 .ls-box-control input{accent-color:var(--ls-green)}
+
+.ls-cal-group{grid-column:1/-1;border:1px solid var(--ls-line);background:rgba(247,249,248,.55);padding:8px}
+.ls-cal-group-title{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol);margin-bottom:6px}
+.ls-cal-group-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.ls-cal-card--sub{min-height:64px}
+.ls-cal-card--sub .ls-cal-kicker{color:var(--ls-faint)}
+@media (max-width:760px){.ls-cal-group-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Ceres intro: two large images before the interactive plot */
+.ls-gauss-scene.is-intro{grid-template-rows:minmax(0,1fr) auto}
+.ls-gauss-scene.is-intro .ls-gauss-plots{display:none}
+.ls-gauss-scene.is-intro .ls-gauss-side{grid-row:1;display:grid;grid-template-columns:1fr 1fr;gap:10px;overflow:visible;align-items:stretch}
+.ls-gauss-scene.is-intro .ls-gauss-side .ls-gauss-fig{height:100%;min-height:0}
+.ls-gauss-scene.is-intro .ls-gauss-side .ls-gauss-fig img{width:100%;height:calc(100% - 44px);min-height:140px;object-fit:contain;background:#fff}
+.ls-gauss-scene.is-intro .ls-gauss-controls,.ls-gauss-scene.is-intro .ls-gauss-readout{display:none}
+.ls-gauss-scene.is-intro .ls-gauss-note{grid-row:2}
+@media (max-width:760px){
+  .ls-gauss-scene.is-intro .ls-gauss-side{grid-template-columns:1fr 1fr;gap:6px}
+  .ls-gauss-scene.is-intro .ls-gauss-side .ls-gauss-fig img{height:calc(100% - 52px);min-height:120px}
+}
+
+/* Abstract representation: surface forms → shared meaning */
+.ls-codesem-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(190px,1fr) auto auto;gap:8px}
+.ls-codesem-stage{position:relative;border:1px solid var(--ls-line);background:#fff;overflow:hidden;min-height:210px}
+.ls-codesem-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.ls-codesem-modes{display:flex;gap:5px;flex-wrap:wrap}
+.ls-codesem-readout{display:flex;gap:12px;flex-wrap:wrap;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted);min-height:2.2em}
+.ls-codesem-readout b{color:var(--ls-ink);font-weight:600}

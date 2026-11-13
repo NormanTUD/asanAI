@@ -336,14 +336,15 @@
     {
       kicker: "Der Kontext",
       title: "Attention verschiebt Bedeutungen in Kontexte",
-      body: "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz und ein Wort. Die Matrix zeigt, wohin die Bank schaut; die Formel zeigt dieselben Gewichte. Wechsle oben auf „Code“: Dieselbe Bedeutung kann als function, def, quickSort oder quick_sort auftauchen; Attention gewichtet den Kontext und zieht die Formen zusammen.",
-      watch: "Klicke die drei Sätze und wechsle auf „Code“. Welches Wort zieht die Bank, welche Formen rücken zusammen?",
-      demoState: { scene: "attentionlab", context: "money", mode: "bank" },
+      body: "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz und ein Wort. Die Matrix zeigt, wohin die Bank schaut; die Formel zeigt dieselben Gewichte. Drücke Weiter: Die nächste Unterfolie zeigt, wie dieselbe Bedeutung in Code-Oberflächen aussieht.",
+      watch: "Klicke die drei Sätze. Welches Wort zieht die Bank? Drücke danach Weiter.",
+      demoState: { scene: "attention", context: "money" },
       context: "Der Kontext verschiebt den Vektor, nicht das Wort. Die Bank bleibt dasselbe Token; ihre Nachbarn ändern ihre Bedeutung.",
       deep: "Attention mischt Information aus dem Kontext. Bei „Geld“ zeigt die Bank-Zeile auf Geld, bei „Park“ auf Park. Die Gewichte sind ein Routing-Signal, keine Definition.",
       boxes: [
         box("att-4", "Grenze", "Was zeigt Attention nicht?", "Nicht, was das FFN mit der Information macht. Sie zeigt nur, welche Tokens auf dieser Schicht Information austauschen."),
         box("att-5", "Mathematik", "Die Formel", "Attention bildet aus Query, Key und Value eine gewichtete Summe. Die Softmax-Zeile summiert zu 100 %.", "\\underbrace{x'}_{\\substack{\\text{neuer Vektor}\\\\ \\text{für } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{Gewicht von } j\\\\ \\text{für } i}} \\underbrace{v_j}_{\\text{Value von } j}}_{\\substack{\\text{gewichtete Summe}\\\\ \\sum_j \\alpha_{ij}=100\\%}}"),
+        box("att-heads", "Technik", "Mehrere Heads", "Ein echter Layer hat viele Heads. Jeder kann dieselben Tokens aus einer anderen Perspektive sehen: Pronomen, Verb, Thema. Die Struktur ist geteilt, die Parameter sind pro Head gelernt."),
         box("att-causal", "Optional", "Causal Mask", "Das obere Dreieck in der Matrix ist die kausale Maske. Sie sorgt dafür, dass Tokens nur die Vergangenheit sehen können, damit sie lernen, Sätze zu vervollständigen, deren Ende sie noch nicht kennen. Generative Modelle brauchen sie. Modelle, die fertigen Text bewerten, brauchen sie nicht und dürfen in beide Richtungen schauen.", "", "causal", "nur vergangene Tokens beachten"),
         box("att-kv", "Optional", "KV-Cache", "Beim Generieren muss das Modell die Keys und Values der bisherigen Tokens nicht neu berechnen, wenn es sie im KV-Cache behält. Es berechnet nur die neuen Keys/Values und lässt das neue Query gegen die gespeicherten Keys laufen. Die wiederholte K/V-Projektion wächst ohne Cache quadratisch mit der Sequenz und mit Cache nur linear; die Attention-Scores selbst bleiben quadratisch (Shazeer, 2019).")
       ],
@@ -403,14 +404,15 @@
     {
       kicker: "The context",
       title: "Attention shifts meaning into context",
-      body: "Three sentences, one word: a bank without context, a bank for money, a bank in the park. Click a sentence and a word. The matrix shows where the bank looks; the formula shows the same weights. Switch to “Code” above: the same meaning can appear as function, def, quickSort, or quick_sort; attention weights the context and pulls the forms together.",
-      watch: "Click the three sentences and switch to “Code”. Which word pulls the bank, which forms move together?",
-      demoState: { scene: "attentionlab", context: "money", mode: "bank" },
+      body: "Three sentences, one word: a bank without context, a bank for money, a bank in the park. Click a sentence and a word. The matrix shows where the bank looks; the formula shows the same weights. Press Next: the next sub-slide shows how the same meaning appears in code surfaces.",
+      watch: "Click the three sentences. Which word pulls the bank? Then press Next.",
+      demoState: { scene: "attention", context: "money" },
       context: "The context shifts the vector, not the word. The bank stays the same token; its neighbours change what it means.",
       deep: "Attention mixes information from the context. With “money” the bank row points to money, with “park” to park. The weights are a routing signal, not a definition.",
       boxes: [
         box("att-4", "Limit", "What does attention not show?", "Not what the FFN does with the information. It shows only which tokens exchange information on this layer."),
         box("att-5", "Mathematics", "The formula", "Attention builds a weighted sum from query, key, and value. The softmax row sums to 100%.", "\\underbrace{x'}_{\\substack{\\text{new vector}\\\\ \\text{for } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{weight of } j\\\\ \\text{for } i}} \\underbrace{v_j}_{\\text{value of } j}}_{\\substack{\\text{weighted sum}\\\\ \\sum_j \\alpha_{ij}=100\\%}}"),
+        box("att-heads", "Technique", "Several heads", "A real layer has many heads. Each can look at the same tokens from a different perspective: pronoun, verb, topic. The structure is shared; the parameters are learned per head."),
         box("att-causal", "Optional", "Causal mask", "The upper triangle in the matrix is the causal mask. It makes tokens see only the past, so they learn to complete sentences whose end they do not yet know. Generative models need it. Models that score finished text do not, and may look in both directions.", "", "causal", "attend only to past tokens"),
         box("att-kv", "Optional", "KV cache", "During generation the model does not have to recompute the keys and values of earlier tokens if it keeps them in the KV cache. It computes only the new keys/values and lets the new query run against the cached keys. Without the cache the repeated K/V projection grows quadratically with the sequence; with the cache it grows linearly. The attention scores themselves stay quadratic (Shazeer, 2019).")
       ],
@@ -1007,10 +1009,10 @@
     {
       kicker: "Loss-Landschaft",
       title: "Was sind neuronale Netze?",
-      body: "Jetzt wird der Fehler zur Landschaft. Für das 1-Neuron-Modell gibt es nur zwei Parameter: w und b. Die Fläche zeigt den Loss über w und b; die Beispiele in der Seitenleiste sind die Daten. Das Training startet automatisch, sobald die Folie sichtbar ist; mit Pause hältst du es an, mit „Weiter“ verlässt du die Folie erst, wenn SGD, Adam und Momentum durch sind. Die Formel darunter setzt die aktuellen Werte ein.",
+      body: "Jetzt wird der Fehler zur Landschaft. Für das 1-Neuron-Modell gibt es nur zwei Parameter: w und b. Die Fläche zeigt den Loss über w und b; die Beispiele in der Seitenleiste sind dieselben 18 Sinus-Punkte wie im 1-Neuron- und im großen Netz. Das Training startet automatisch, sobald die Folie sichtbar ist; mit Pause hältst du es an, mit „Weiter“ verlässt du die Folie erst, wenn SGD, Adam und Momentum durch sind. Die Formel darunter setzt die aktuellen Werte ein.",
       watch: "Beobachte das Training. Wie verändern sich w und b, und wo im Tal endet der Punkt?",
       demoState: { scene: "gradient" },
-      context: "Die Fläche ist diesmal kein Schnitt durch Hunderte Dimensionen: w und b sind die beiden echten Parameter. Jedes Beispiel (x, y) links erzeugt einen Fehler; der Loss ist der Mittelwert dieser quadratischen Fehler. Die Formel darunter zeigt das Modell und den aktuellen Loss.",
+      context: "Die Fläche ist diesmal kein Schnitt durch Hunderte Dimensionen: w und b sind die beiden echten Parameter. Jedes dieser 18 Beispiele (x, y) erzeugt einen Fehler; der Loss ist der Mittelwert dieser quadratischen Fehler. Die Formel darunter zeigt das Modell und den aktuellen Loss.",
       deep: "Der Gradient zeigt, wie der Loss auf eine Änderung von w und b reagiert. Der Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite. In einem LLM gibt es Milliarden solcher Parameter; die Landschaft ist nicht mehr sichtbar, die Regel bleibt dieselbe.",
       boxes: [
         box("grad-1", "Mathematik", "Das echte Modell", "Ein lineares Modell mit zwei Parametern: ŷ = w·x + b. w ist die Steigung, b der y-Achsenabschnitt. Mehr nicht.", "\\underbrace{\\hat y}_{\\text{Ausgabe}} = \\underbrace{w x + b}_{\\text{zwei Parameter}}"),
@@ -1032,10 +1034,10 @@
     {
       kicker: "Loss landscape",
       title: "What are neural networks?",
-      body: "Now the error becomes a landscape. The one-neuron model has only two parameters: w and b. The surface shows the loss over w and b; the examples in the side panel are the data. Training starts automatically as soon as the slide is visible; Pause stops it, and “Next” leaves the slide only after SGD, Adam, and Momentum have finished. The formula below substitutes the current values.",
+      body: "Now the error becomes a landscape. The one-neuron model has only two parameters: w and b. The surface shows the loss over w and b; the examples in the side panel are the same 18 sine points as in the one-neuron and larger networks. Training starts automatically as soon as the slide is visible; Pause stops it, and “Next” leaves the slide only after SGD, Adam, and Momentum have finished. The formula below substitutes the current values.",
       watch: "Watch the training. How do w and b change, and where in the valley does the point end?",
       demoState: { scene: "gradient" },
-      context: "This surface is not a slice through hundreds of dimensions: w and b are the two real parameters. Every example (x, y) on the left produces an error; the loss is the mean squared error. The formula below shows the model and the current loss.",
+      context: "This surface is not a slice through hundreds of dimensions: w and b are the two real parameters. Each of these 18 examples (x, y) produces an error; the loss is the mean squared error. The formula below shows the model and the current loss.",
       deep: "The gradient shows how the loss reacts to a change in w and b. The optimiser moves in the opposite direction. The learning rate sets the step size. In an LLM there are billions of such parameters; the landscape is no longer visible, but the rule stays the same.",
       boxes: [
         box("grad-1", "Mathematics", "The real model", "A linear model with two parameters: ŷ = w·x + b. w is the slope, b is the intercept. Nothing else.", "\\underbrace{\\hat y}_{\\text{output}} = \\underbrace{w x + b}_{\\text{two parameters}}"),
@@ -1390,7 +1392,86 @@
     }
   ];
 
-  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussSteps[0], languageSteps[0], tokenizeSteps[0], embedSteps[0], embedSteps[1], embedSteps[2], highdimSteps[0], manifoldSteps[0], positionSteps[0], attentionSteps[0], attentionSteps[1], activationSteps[0], insideSteps[0], gradientSteps[0], neuralLargeSteps[0], mlpSteps[0], ffnSteps[0], residualSteps[0], trajectorySteps[0], meadowSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], introSteps[2], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
+  var gaussDataStep = {
+    title: "Gauß, Ceres und die Daten",
+    kicker: "Ceres → Daten",
+    substeps: [
+      {
+        kicker: "Die Bilder",
+        title: "Gauß, Ceres und die Daten",
+        body: "Am 1. Januar 1801 entdeckte Giuseppe Piazzi Ceres, den ersten Asteroiden, und verlor ihn nach 41 Tagen Beobachtung hinter der Sonne. Das linke Bild zeigt Ceres, aufgenommen von der NASA-Sonde Dawn; rechts steht der Flammarion-Holzschnitt von 1888, ein Bild für den Blick über den bekannten Himmel hinaus. Carl Friedrich Gauß behandelte die verrauschten Positionen als ein Ganzes und nahm an, dass die wahre Bahn in der Mitte der Fehler liegt. Drücke Weiter: Zuerst kommen die Beobachtungen, dann wird das Teleskop Schritt für Schritt besser.",
+        watch: "Drücke Weiter. Zuerst kommen die Beobachtungen, dann wird das Teleskop besser.",
+        demoState: { scene: "gauss", phase: "intro" },
+        context: "Die Bilder sind eine Einladung: Ceres war ein realer Himmelskörper, und Gauß' Methode war ein realer Umgang mit unsicheren Daten. Die Demo zeigt das Prinzip mit synthetischen Daten.",
+        deep: "Piazzi verlor Ceres nach 41 Tagen im Sonnenlicht. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981).",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Verrauschte Beobachtungen",
+        title: "Gauß, Ceres und die Daten",
+        body: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
+        watch: "Drücke Weiter und beobachte, wie die Wolke enger wird.",
+        demoState: { scene: "gauss", phase: "demo", sigma: 2 },
+        context: "Die grüne Linie ist die wahre Bahn; die blauen Punkte sind Beobachtungen; die Glockenkurve rechts zeigt die Fehlerverteilung. Die Daten sind synthetisch, nicht Piazzis originale Messungen.",
+        deep: "Ohne Ausgleich müsste man eine Bahn durch einen einzelnen Punkt legen. Gauß nutzte alle Beobachtungen zusammen.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Bessere Teleskope",
+        title: "Gauß, Ceres und die Daten",
+        body: "Das Teleskop ist besser: Die Wolke zieht sich zusammen, die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte der Fehler. Drücke Weiter für das beste Teleskop.",
+        watch: "Drücke Weiter. Wie schmal wird die Glockenkurve?",
+        demoState: { scene: "gauss", phase: "demo", sigma: 1 },
+        context: "Je kleiner die Streuung, desto enger liegt die Glockenkurve um die wahre Bahn. Die Beobachtungen bleiben fehlerhaft, aber der Ausgleich wird stabiler.",
+        deep: "Die Methode der kleinsten Quadrate minimiert die Summe der quadrierten Abstände. Viele kleine Fehler mitteln sich; ein einzelner Ausreißer zählt quadriert.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Ausgleich",
+        title: "Gauß, Ceres und die Daten",
+        body: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Dieselbe Regel trainiert noch moderne Modelle. Drücke Weiter zu den Daten.",
+        watch: "Drücke Weiter. Was passiert, wenn die Beobachtungen nicht mehr exakt sind?",
+        demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
+        context: "Die Glockenkurve ist eng; die wahre Bahn liegt in der Mitte. Der Ausgleich glaubt keiner einzelnen Messung, sondern wählt die Kurve, die allen zugleich am nächsten bleibt.",
+        deep: "Dieselbe Arithmetik erscheint in jedem trainierten Netz: Ein Modell ist eine Kurve, die Daten sind verrauschte Punkte, und das Training wählt die Gewichte, deren Vorhersagen im Durchschnitt am nächsten an den Beobachtungen liegen.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      languageSteps[0]
+    ]
+  };
+
+  var codeAttentionSubstep = {
+    kicker: "Code",
+    title: "Attention verschiebt Bedeutungen in Kontexte",
+    body: "„def quick_sort“ und „function quickSort“ sehen verschieden aus, meinen aber dasselbe: einen abstrakten Funktionsaufruf, der auf einen abstrakten Quicksort-Knoten zeigt. Die Unterschiede sind Oberflächenrauschen: Sprache, Schreibweise, Satzzeichen. Attention liest den Kontext, erkennt, was relevant ist, und verschiebt die Tokens auf die gemeinsame abstrakte Repräsentation. Klicke Beide, Python oder JavaScript.",
+    watch: "Klicke die drei Modi. Landen def und function auf demselben Knoten?",
+    demoState: { scene: "codesemantic", semMode: "both" },
+    context: "Die linke Seite ist die Oberfläche: verschiedene Schreibweisen. Die rechte Seite ist die abstrakte Bedeutung: Funktionsaufruf → Quicksort. Attention entfernt nicht die Wörter, sondern verschiebt ihre Repräsentation.",
+    deep: "Dasselbe Muster gilt für andere Paare: class/struct, return/yield, if/when. Die Oberfläche variiert mit Sprache und Stil; die abstrakte Rolle bleibt. In einem echten Modell sind diese Richtungen gelernt und viel komplexer.",
+    boxes: [
+      box("sem-1", "Technik", "Oberfläche und Bedeutung", "def und function sind verschiedene Oberflächen für dieselbe Rolle: eine Funktionsdefinition. quick_sort und quickSort sind verschiedene Oberflächen für dieselbe Rolle: Quicksort. Attention gewichtet den Kontext und verschiebt die Tokens auf gemeinsame Richtungen."),
+      box("sem-2", "Beispiel", "Andere Paare", "class/struct, return/yield, if/when: Die Schreibweise ändert sich, die abstrakte Rolle nicht. Das Modell lernt diese gemeinsamen Richtungen aus vielen Kontexten."),
+      box("sem-3", "Grenze", "Was ist vereinfacht?", "Die Demo zeigt wenige Wörter und zwei abstrakte Knoten. Ein echtes Modell hat Tausende Dimensionen und viele überlappende Rollen. Die Pfeile sind eine didaktische Vereinfachung, keine Messung.")
+    ],
+    sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "Schichten bilden linguistische Rollen heraus.", en: "Layers develop linguistic roles." } }]
+  };
+  var attentionContextStep = {
+    title: "Attention verschiebt Bedeutungen in Kontexte",
+    kicker: "Bank → Code",
+    substeps: [attentionSteps[1], codeAttentionSubstep]
+  };
+
+  var neuralStep = {
+    title: "Was sind neuronale Netze?",
+    kicker: "Aktivierung → Raum",
+    substeps: [activationSteps[0], insideSteps[0], gradientSteps[0], neuralLargeSteps[0], mlpSteps[0]]
+  };
+
+  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, tokenizeSteps[0], embedSteps[0], embedSteps[1], embedSteps[2], highdimSteps[0], manifoldSteps[0], positionSteps[0], attentionSteps[0], attentionContextStep, neuralStep, ffnSteps[0], residualSteps[0], trajectorySteps[0], meadowSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], introSteps[2], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
 
   var day = {
     id: "intuition",
