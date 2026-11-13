@@ -218,7 +218,7 @@
       optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === optimizer); });
       updateStatus(DE ? "Trainiere im Worker …" : "Training in worker …");
       readout.innerHTML = '<span>' + (DE ? "Die Fläche wird im Hintergrund berechnet." : "The surface is computed in the background.") + '</span>';
-      worker = new Worker("assets/loss-landscape-worker.js");
+      worker = new Worker("assets/loss-landscape-worker.js?v=3");
       worker.onmessage = function (e) {
         data = e.data;
         minL = Infinity; maxL = -Infinity;

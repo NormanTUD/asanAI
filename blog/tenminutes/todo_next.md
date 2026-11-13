@@ -76,14 +76,14 @@ Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still
 - [ ] Still verify the activation sequence and sinus loss chart in the browser at the end.
 
 ## Latest queue — sorted fastest first
-1. [ ] **Causal mask (quick).** Default on; checkbox visible left; text left says the upper triangle is the causal mask and why: tokens see only the past so they learn to complete sentences whose end they do not yet know. Rename `vSatzzeichen` → `v_Punkt`; draw the self-connection.
-2. [ ] **Trajectory “Weiter” (quick).** Make every Weiter step advance one GPT-2 layer visibly; verify it does not jump to the next slide.
-3. [ ] **Position demos real height data (medium).** “Relativer Abstand im selben Satz” and “Jeder Platz bekommt einen Fingerabdruck” are distorted like the loss; use the real positional height data where each belongs.
-4. [ ] **Manifold Vietoris–Rips (medium).** “Von Beziehungen zur Übersetzung”: build the shapes from their points as a Vietoris–Rips complex, not heavy surfaces; reuse the “Die Verteilung ist nicht die Antwort” canvas framework; keep it light.
-5. [ ] **Loss landscape rebuild (large).** Replace the broken surface with a real computed loss landscape like `../../loss_landscape.html`; real training; live Temml formula below showing the current point; optimizer sequence on Weiter: SGD → Adam → Momentum; show SGD’s direct path, Adam’s variation and damping of frequently updated parameters / strengthening of rarely updated ones; add an optional box on local minima vs high-dimensional saddle points (research/verify claim).
-6. [ ] **Compression gorgeous (large).** Make “Verstehen heißt komprimieren” mouthwateringly beautiful; internal category-theory/Yoneda intuition, never named on the page.
+1. [x] **Causal mask (quick).** Default on; checkbox visible left; text left says the upper triangle is the causal mask and why: tokens see only the past so they learn to complete sentences whose end they do not yet know. Rename `vSatzzeichen` → `v_Punkt`; draw the self-connection.
+2. [~] **Trajectory “Weiter” (quick).** Make every Weiter step advance one GPT-2 layer visibly; verify it does not jump to the next slide.
+3. [x] **Position demos real height data (medium).** “Relativer Abstand im selben Satz” and “Jeder Platz bekommt einen Fingerabdruck” are distorted like the loss; use the real positional height data where each belongs.
+4. [x] **Manifold Vietoris–Rips (medium).** “Von Beziehungen zur Übersetzung”: build the shapes from their points as a Vietoris–Rips complex, not heavy surfaces; reuse the “Die Verteilung ist nicht die Antwort” canvas framework; keep it light.
+5. [x] **Loss landscape rebuild (large).** Replace the broken surface with a real computed loss landscape like `../../loss_landscape.html`; real training; live Temml formula below showing the current point; optimizer sequence on Weiter: SGD → Adam → Momentum; show SGD’s direct path, Adam’s variation and damping of frequently updated parameters / strengthening of rarely updated ones; add an optional box on local minima vs high-dimensional saddle points (research/verify claim).
+6. [x] **Compression gorgeous (large).** Make “Verstehen heißt komprimieren” mouthwateringly beautiful; internal category-theory/Yoneda intuition, never named on the page.
 7. [ ] **Whole system generalisation (large).** Rework the system and generalise shared scene/nav/tool utilities.
-8. [ ] **MLP real formula/loss (medium, after loss landscape).** Real one-layer formula and real loss values from the verified reference.
+8. [x] **MLP real formula/loss (medium, after loss landscape).** Real one-layer formula and real loss values from the verified reference.
 9. [ ] **Final gate.** Bilingual audit, height test, page test, `check_all.py --fast`, syntax/diff checks; commit and push only then.
 
 ## Progress after implementation pass

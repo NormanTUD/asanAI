@@ -4386,7 +4386,7 @@
     function formulaLabel(tok) {
       if (DE && tok === "Fluss+Geld") return "Fluss + Geld";
       if (!DE && tok === "money+river") return "money + river";
-      if (tok === ".") return "v_Punkt";
+      if (tok === ".") return "Punkt";
       return tok;
     }
     function escAttr(value) {
@@ -5711,7 +5711,6 @@
         ctx.fillStyle = col; ctx.fill();
         ctx.strokeStyle = C.paper; ctx.lineWidth = 1; ctx.stroke();
       });
-      return pts.map(function (q) { return project(q.p); });
     }
     function drawLabels(ctx) {
       labels.forEach(function (l) {
