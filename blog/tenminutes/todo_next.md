@@ -160,8 +160,46 @@ Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still
 
 
 ## Token trajectory fix
+- [x] Verified in headless Chromium: Weiter moved Layer 0/12 → 1/12 and updated the readout.
 - [x] The layer label collision loop reused the variable `li`, overwriting the active layer index for every later token. Renamed it to `lbi`.
 - [x] `setLayer` now updates the readout during the tween, not only before it.
 - [x] Max layer is derived from `data.points[0].length`; slider/next/readout use it.
 - [x] Added a dashed segment from the previous layer position to the current marker.
-- [~] Still needs a real browser click check.
+- [x] Browser click check passed.
+
+
+## Newest requests — linear network, matrices, 3D manifold
+### Rename and expand “Ein kleines Netz lernt den Sinus”
+- [ ] Rename the slide to “Was sind neuronale Netze?” / “What are neural networks?”.
+- [ ] First demo: a single linear layer with **one neuron** fitting a line: `ŷ = w·x + b`. Show the network formula, the current line, and the vertical distances/errors to the data points live during training.
+- [ ] Show explicitly that this one-neuron network can only approximate a line, never a more complex function such as a sine. Conclude that more neurons and larger networks are needed.
+- [ ] Only then show the sine example.
+- [ ] In both examples, show the weight matrices live during training so the reader sees them improve; hide the larger sine matrices behind an optional “show matrices” disclosure.
+- [ ] Keep the one-neuron linear example simple enough to be unintimidating; it is the entry point.
+
+### “Von Beziehungen zur Übersetzung”
+- [ ] Rebuild the demo as a true 3D Vietoris–Rips complex of two **Pringle-shaped manifolds** that are twisted relative to each other in space.
+- [ ] Keep it lightweight: points plus Rips edges, genuine 3D projection/rotation, no broken surface or flat fake.
+- [ ] Preserve the correspondence lines, drag/zoom, and bilingual labels.
+
+### Token trajectories
+- [x] Verified in headless Chromium: step 21 is the slide; clicking Weiter moves Layer 0/12 → 1/12 and updates the readout.
+
+
+## Verification pass
+- [x] Headless Chromium: page loads, no fatal scene errors; token trajectories step 0→1.
+- [x] Blocks slide: Transformer group has one Attention + FFN, roadmap, 2 sub-demos; next reaches Unembedding.
+- [x] Loss landscape: 2-parameter model, examples list, live formula, training runs SGD→Adam→Momentum automatically.
+- [~] Mini-demo polish and fixed navigation still open.
+- [~] Manifold: Pringle-style 3D point clouds with Rips edges implemented; browser visual check still open.
+- [ ] Sinus/linear-network restructure.
+
+
+## Latest verified state
+- [x] Token trajectories: headless Chromium moved Layer 0/12 → 1/12.
+- [x] Bausteine: group stack, detail text, new+york, roadmap, sub-demos; page loads.
+- [x] Loss landscape: two-parameter model, examples, live formula, automatic SGD→Adam→Momentum.
+- [~] Manifold: two 8×8 Pringle point surfaces, target rotated in 3D, Rips edges; canvas renders. Visual quality still needs a human look.
+- [ ] Mini-demo visual polish and fixed navigation check.
+- [ ] Linear-network slide restructure (one neuron, errors, linear limit, then sine; live/hidden matrices).
+- [ ] Whole-system pass and final test gate.

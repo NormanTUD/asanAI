@@ -1,175 +1,104 @@
 "use strict";
 
-function rng(seed) {
-  var a = seed >>> 0;
-  return function () {
-    a |= 0; a = a + 0x6D2B79F5 | 0;
-    var t = Math.imul(a ^ a >>> 15, 1 | a);
-    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
-  };
-}
+var DATA = {
+  xs: [-3, -2, -1, 0, 1, 2, 3],
+  ys: [-1.25, -0.72, -0.18, 0.22, 0.58, 1.06, 1.48]
+};
 
-function makeData() {
-  var xs = [], ys = [];
-  for (var i = 0; i < 32; i++) {
-    var x = -1 + 2 * i / 31;
-    xs.push(x);
-    ys.push(0.5 + 0.4 * Math.sin(2 * Math.PI * x));
-  }
-  return { xs: xs, ys: ys };
-}
-
-function pack(o) {
-  return o.W1.concat(o.b1, o.W2, [o.b2]);
-}
-function unpack(f) {
-  return {
-    W1: f.slice(0, 4),
-    b1: f.slice(4, 8),
-    W2: f.slice(8, 12),
-    b2: f[12]
-  };
-}
-function forward(o, x) {
-  var h = [], y = o.b2;
-  for (var j = 0; j < 4; j++) {
-    h[j] = Math.tanh(o.W1[j] * x + o.b1[j]);
-    y += o.W2[j] * h[j];
-  }
-  return { h: h, y: y };
-}
-function lossOf(o, data) {
+function loss(a, b) {
   var s = 0;
-  for (var i = 0; i < data.xs.length; i++) {
-    var d = forward(o, data.xs[i]).y - data.ys[i];
+  for (var i = 0; i < DATA.xs.length; i++) {
+    var d = a * DATA.xs[i] + b - DATA.ys[i];
     s += d * d;
   }
-  return s / data.xs.length;
+  return s / DATA.xs.length;
 }
-function grads(o, data) {
-  var g = { W1: [0, 0, 0, 0], b1: [0, 0, 0, 0], W2: [0, 0, 0, 0], b2: 0 };
-  var n = data.xs.length;
+
+function grad(a, b) {
+  var ga = 0, gb = 0, n = DATA.xs.length;
   for (var i = 0; i < n; i++) {
-    var x = data.xs[i], y = data.ys[i];
-    var f = forward(o, x);
-    var d = f.y - y;
-    g.b2 += 2 * d / n;
-    for (var j = 0; j < 4; j++) {
-      g.W2[j] += 2 * d * f.h[j] / n;
-      var dz = 2 * d * o.W2[j] * (1 - f.h[j] * f.h[j]);
-      g.W1[j] += dz * x / n;
-      g.b1[j] += dz / n;
+    var d = a * DATA.xs[i] + b - DATA.ys[i];
+    ga += 2 * d * DATA.xs[i] / n;
+    gb += 2 * d / n;
+  }
+  return { a: ga, b: gb };
+}
+
+function optimum() {
+  var n = DATA.xs.length, sx = 0, sy = 0, sxx = 0, sxy = 0;
+  for (var i = 0; i < n; i++) {
+    var x = DATA.xs[i], y = DATA.ys[i];
+    sx += x; sy += y; sxx += x * x; sxy += x * y;
+  }
+  var a = (n * sxy - sx * sy) / (n * sxx - sx * sx);
+  return { a: a, b: (sy - a * sx) / n };
+}
+
+function trajectory(opt, lr, startA, startB, steps) {
+  var a = startA, b = startB;
+  var va = 0, vb = 0, ma = 0, mb = 0, sa = 0, sb = 0;
+  var out = [];
+  for (var k = 0; k <= steps; k++) {
+    out.push({ a: a, b: b, loss: loss(a, b) });
+    var g = grad(a, b);
+    if (opt === "sgd") {
+      a -= lr * g.a;
+      b -= lr * g.b;
+    } else if (opt === "momentum") {
+      va = 0.9 * va - lr * g.a;
+      vb = 0.9 * vb - lr * g.b;
+      a += va;
+      b += vb;
+    } else {
+      ma = 0.9 * ma + 0.1 * g.a;
+      mb = 0.9 * mb + 0.1 * g.b;
+      sa = 0.999 * sa + 0.001 * g.a * g.a;
+      sb = 0.999 * sb + 0.001 * g.b * g.b;
+      var mha = ma / (1 - Math.pow(0.9, k + 1));
+      var mhb = mb / (1 - Math.pow(0.9, k + 1));
+      var vha = sa / (1 - Math.pow(0.999, k + 1));
+      var vhb = sb / (1 - Math.pow(0.999, k + 1));
+      a -= lr * 1.8 * mha / (Math.sqrt(vha) + 1e-8);
+      b -= lr * 1.8 * mhb / (Math.sqrt(vhb) + 1e-8);
     }
   }
-  return pack(g);
+  return out;
 }
-function train(data, lr, seed) {
-  var rand = rng(seed);
-  var f = [];
-  for (var k = 0; k < 13; k++) f[k] = (rand() * 2 - 1) * 0.6;
-  var vel = f.map(function () { return 0; });
-  for (var epoch = 0; epoch < 3200; epoch++) {
-    var g = grads(unpack(f), data);
-    var step = lr * (1 - 0.55 * epoch / 3200);
-    for (var i = 0; i < f.length; i++) {
-      vel[i] = 0.9 * vel[i] - step * g[i];
-      f[i] += vel[i];
-    }
-  }
-  return f;
-}
-function normalize(v) {
-  var s = 0;
-  for (var i = 0; i < v.length; i++) s += v[i] * v[i];
-  s = Math.sqrt(s) || 1;
-  return v.map(function (x) { return x / s; });
-}
-function dot(a, b) {
-  var s = 0;
-  for (var i = 0; i < a.length; i++) s += a[i] * b[i];
-  return s;
-}
-function weightsAt(center, d1, d2, a, b) {
-  return center.map(function (v, i) { return v + a * d1[i] + b * d2[i]; });
-}
-function sample(flat, d1, d2, data, n, range) {
+
+function surface(n, a0, a1, b0, b1) {
   var z = [];
   for (var i = 0; i < n; i++) {
-    var row = [];
+    var row = [], b = b0 + (b1 - b0) * i / (n - 1);
     for (var j = 0; j < n; j++) {
-      var a = -range + 2 * range * j / (n - 1);
-      var b = -range + 2 * range * i / (n - 1);
-      row.push(lossOf(unpack(weightsAt(flat, d1, d2, a, b)), data));
+      var a = a0 + (a1 - a0) * j / (n - 1);
+      row.push(loss(a, b));
     }
     z.push(row);
   }
   return z;
 }
-function trajectoryFor(opt, flat, d1, d2, data, lr) {
-  var f = weightsAt(flat, d1, d2, 1.8, -1.55);
-  var vel = f.map(function () { return 0; });
-  var m = f.map(function () { return 0; });
-  var v = f.map(function () { return 0; });
-  var out = [];
-  for (var step = 0; step < 32; step++) {
-    var p = f.map(function (val, i) { return val - flat[i]; });
-    out.push({ a: dot(p, d1), b: dot(p, d2), loss: lossOf(unpack(f), data), w: f.slice() });
-    var g = grads(unpack(f), data);
-    for (var i = 0; i < f.length; i++) {
-      if (opt === "sgd") {
-        f[i] -= lr * g[i];
-      } else if (opt === "momentum") {
-        vel[i] = 0.9 * vel[i] - lr * g[i];
-        f[i] += vel[i];
-      } else {
-        m[i] = 0.9 * m[i] + 0.1 * g[i];
-        v[i] = 0.999 * v[i] + 0.001 * g[i] * g[i];
-        var mh = m[i] / (1 - Math.pow(0.9, step + 1));
-        var vh = v[i] / (1 - Math.pow(0.999, step + 1));
-        f[i] -= lr * 1.6 * mh / (Math.sqrt(vh) + 1e-8);
-      }
-    }
-  }
-  var p = f.map(function (val, i) { return val - flat[i]; });
-  out.push({ a: dot(p, d1), b: dot(p, d2), loss: lossOf(unpack(f), data), w: f.slice() });
-  return out;
-}
-function trajectory(flat, d1, d2, data, lr) {
-  return trajectoryFor("sgd", flat, d1, d2, data, lr);
-}
+
 self.onmessage = function (e) {
   if (!e.data || e.data.cmd !== "train") return;
-  var data = makeData();
-  var lr = Math.max(0.005, Math.min(0.3, Number(e.data.lr) || 0.06));
-  var seed = (Number(e.data.seed) || Date.now()) >>> 0;
-  var flat = train(data, lr, seed);
-  var rand = rng(seed ^ 0x9E3779B9);
-  var d1 = normalize(flat.map(function () { return rand() * 2 - 1; }));
-  var d2 = normalize(flat.map(function () { return rand() * 2 - 1; }));
-  var proj = dot(d2, d1);
-  d2 = normalize(d2.map(function (v, i) { return v - proj * d1[i]; }));
-  var z = sample(flat, d1, d2, data, 21, 2.8);
-  var sgd = trajectoryFor("sgd", flat, d1, d2, data, lr);
-  var adam = trajectoryFor("adam", flat, d1, d2, data, lr);
-  var momentum = trajectoryFor("momentum", flat, d1, d2, data, lr);
-  var best = Infinity, bestRow = 0, bestCol = 0;
-  for (var i = 0; i < z.length; i++) for (var j = 0; j < z[i].length; j++) {
-    if (z[i][j] < best) { best = z[i][j]; bestRow = i; bestCol = j; }
-  }
-  var o = unpack(flat);
+  var lr = Math.max(0.01, Math.min(0.3, Number(e.data.lr) || 0.08));
+  var startA = -1.55, startB = 1.62, steps = 38;
+  var sgd = trajectory("sgd", lr, startA, startB, steps);
+  var adam = trajectory("adam", lr, startA, startB, steps);
+  var momentum = trajectory("momentum", lr, startA, startB, steps);
+  var opt = optimum();
+  var range = { a0: -2.2, a1: 2.2, b0: -2.2, b1: 2.2 };
+  // keep the optimum and both starts inside the slice
+  range.a0 = Math.min(range.a0, opt.a - 0.4);
+  range.a1 = Math.max(range.a1, opt.a + 0.4);
+  range.b0 = Math.min(range.b0, opt.b - 0.4);
+  range.b1 = Math.max(range.b1, opt.b + 0.4);
+  var z = surface(25, range.a0, range.a1, range.b0, range.b1);
   self.postMessage({
     lr: lr,
-    seed: seed,
-    params: flat.length,
-    loss: lossOf(o, data),
+    examples: DATA,
+    optimum: opt,
+    range: range,
     z: z,
-    range: 2.8,
-    best: { i: bestRow, j: bestCol, loss: best },
-    trajectory: sgd,
-    trajectories: { sgd: sgd, adam: adam, momentum: momentum },
-    net: o,
-    xs: data.xs,
-    ys: data.ys
+    trajectories: { sgd: sgd, adam: adam, momentum: momentum }
   });
 };

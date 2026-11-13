@@ -5646,7 +5646,7 @@
     var canvas = el.querySelector("canvas");
     var C = api.colors();
     var size = null, yaw = -0.58, pitch = 0.42, zoom = 1, drag = null;
-    var radius = 0.62;
+    var radius = 0.52;
     function rng(seed) {
       return function () {
         seed |= 0; seed = seed + 0x6D2B79F5 | 0;
@@ -5655,30 +5655,38 @@
         return ((t ^ t >>> 14) >>> 0) / 4294967296;
       };
     }
-    function cloud(seed, cx, flip) {
-      var r = rng(seed), pts = [];
-      for (var i = 0; i < 26; i++) {
-        var u = r() * 2 - 1, v = r() * 2 - 1;
-        if (u * u + v * v > 1) { i--; continue; }
-        var z = 0.22 * Math.sin(2.2 * u + 0.7) + 0.16 * Math.cos(2.4 * v - 0.5);
-        if (flip) z = -z * 0.9 + 0.16 * u * v;
-        pts.push({ p: [cx + u * 1.18, v * 0.72, z], u: u, v: v });
+    function cloud(seed, cx, twist) {
+      var pts = [];
+      for (var iu = 0; iu < 8; iu++) {
+        for (var iv = 0; iv < 8; iv++) {
+          var u = -1 + 2 * iu / 7, v = -1 + 2 * iv / 7;
+          var x = u * 1.18, y = v * 0.78;
+          var z = 0.62 * (u * u - v * v) + 0.11 * Math.sin(Math.PI * 2 * u) * Math.cos(Math.PI * 2 * v);
+          if (twist) {
+            var ca = Math.cos(0.72), sa = Math.sin(0.72);
+            var x1 = x * ca - z * sa, z1 = x * sa + z * ca;
+            var cb = Math.cos(-0.48), sb = Math.sin(-0.48);
+            x = x1; z = z1 * cb - y * sb; y = z1 * sb + y * cb;
+            z += 0.16 * Math.sin(2.4 * u + 1.2) * Math.cos(2.0 * v);
+          }
+          pts.push({ p: [cx + x, y, z], u: u, v: v });
+        }
       }
       return pts;
     }
-    var en = cloud(11, -0.84, false);
-    var jp = cloud(29, 0.84, true);
+    var en = cloud(11, -0.9, false);
+    var jp = cloud(29, 0.9, true);
     var labels = [
-      { a: 4, b: 3, ea: "bank", eb: "銀行" },
-      { a: 11, b: 9, ea: "river", eb: "川" },
-      { a: 18, b: 17, ea: "money", eb: "お金" }
+      { a: 10, b: 12, ea: "bank", eb: "銀行" },
+      { a: 27, b: 29, ea: "river", eb: "川" },
+      { a: 45, b: 47, ea: "money", eb: "お金" }
     ];
     function project(p) {
       var x = p[0], y = p[1], z = p[2];
       var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
       var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
       var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
-      var s = Math.min(size.w * 0.44, size.h * 0.46) / (1 + z2 * 0.22) * zoom;
+      var s = Math.min(size.w * 0.22, size.h * 0.36) / (1 + z2 * 0.22) * zoom;
       return { x: size.w / 2 + x1 * s, y: size.h / 2 - y2 * s, z: z2 };
     }
     function edgeSet(pts) {
@@ -6045,6 +6053,13 @@
         else layerTween = 0;
       }
       layerTween = requestAnimationFrame(step);
+      setTimeout(function () {
+        if (Math.abs(displayLayer - layerTarget) > 0.01) {
+          displayLayer = layerTarget;
+          updateReadout();
+          draw();
+        }
+      }, dur + 80);
     }
     layerEl.addEventListener("input", function () { setLayer(layerEl.value); });
     el.querySelectorAll("[data-metric]").forEach(function (bt) {
@@ -6101,20 +6116,15 @@
         points: ["Ähnliche Kontexte führen zu ähnlichen Vektoren.", "Die Richtung trägt Bedeutung.", "Die Tabelle wird im Training gelernt."]
       },
       {
-        id: "transformer", label: "Transformer-Block", short: "Attention + FFN", icon: "A", color: "green",
-        title: "Transformer-Block",
-        body: "Der Transformer-Block zerfällt in zwei große Teile: Attention und FFN. Attention setzt jedes Token in Beziehung zu allen Tokens im bisherigen Kontext und verschiebt es. Das FFN faltet die Tokens in einen höheren Raum, trennt Muster und faltet sie zurück.",
-        points: ["Attention kontextualisiert über alle sichtbaren Tokens.", "Das FFN arbeitet danach pro Token.", "Die Details kommen in den späteren Demos."],
+        id: "transformer", label: "Transformer-Blöcke", short: "Attention → FFN, × N", icon: "A", color: "green",
+        title: "Transformer-Blöcke",
+        body: "Diesen Block macht ein LLM dutzende bis hunderte Male hintereinander. Jeder Block hat zwei Teile. Zuerst Attention: Sie bestimmt für jedes Wort, wie wichtig jedes andere Wort ist, und mischt die Tokens mit diesen Gewichten. Danach das FFN: Es verschiebt jedes Token einzeln, damit am Ende beim Unembedding der richtige Winkel herauskommt.",
+        points: ["Attention: Gewichte zwischen allen Wörtern.", "Mischen: Tokens ziehen Information aus dem Kontext.", "FFN: verschiebt danach jedes Token einzeln.", "Der ganze Block wird viele Male wiederholt."],
+        roadmap: "In den nächsten Tagen gehen wir Attention und FFN nacheinander durch, jeweils so, dass du intuitiv siehst, was der Teil macht und warum.",
         sub: [
-          { title: "Attention", text: "Jedes Token schaut, wie stark es mit jedem anderen Token zusammenhängt, und nimmt Information auf. So bekommt es seine Bedeutung im Kontext." },
-          { title: "FFN", text: "Das Feed-Forward-Netz verschiebt jedes Token einzeln in einen höheren Raum, trennt Muster und projiziert zurück. Das macht die internen Zustände leichter unterscheidbar." }
+          { title: "Attention", text: "Attention bestimmt, wie wichtig jedes Wort für jedes andere Wort ist. Mit diesen Gewichten werden die Tokens gemischt: Jedes Token zieht Information aus den Wörtern, die für es zählen." },
+          { title: "FFN", text: "Das FFN kommt danach und arbeitet pro Token. Beispiel: „new“ allein heißt eher „neu“ wie in Neuwagen, „york“ allein ist ein Ort in England. Direkt hintereinander bedeutet „new york“ die Großstadt in den USA. Das FFN verschiebt die Token so, dass am Ende beim Unembedding der richtige Winkel herauskommt." }
         ]
-      },
-      {
-        id: "repeat", label: "Wiederholen", short: "viele Blöcke", icon: "↻", color: "gold",
-        title: "Wiederholen",
-        body: "Attention und FFN werden viele Male hintereinander ausgeführt, teilweise bis hunderte Male. Jeder Block liest denselben laufenden Vektor und schreibt ein Update zurück; nichts wird überschrieben.",
-        points: ["Jeder Block hat eigene Gewichte.", "Die Struktur ist gleich, die Parameter nicht.", "Der Kontext wird mit jeder Schicht weiter verfeinert."]
       },
       {
         id: "unembed", label: "Unembedding", short: "Vektor → Verteilung", icon: "U", color: "lilac",
@@ -6136,20 +6146,15 @@
         points: ["Similar contexts produce similar vectors.", "Direction carries meaning.", "The table is learned during training."]
       },
       {
-        id: "transformer", label: "Transformer block", short: "attention + FFN", icon: "A", color: "green",
-        title: "Transformer block",
-        body: "The transformer block splits into two large parts: attention and FFN. Attention relates each token to all tokens in the context so far and shifts it. The FFN folds the tokens into a higher space, separates patterns, and folds them back.",
-        points: ["Attention contextualises over all visible tokens.", "The FFN then works per token.", "The details come in the later demos."],
+        id: "transformer", label: "Transformer blocks", short: "attention → FFN, × N", icon: "A", color: "green",
+        title: "Transformer blocks",
+        body: "An LLM runs this block dozens to hundreds of times in a row. Each block has two parts. First attention: it determines how important every word is for every other word, then mixes the tokens with those weights. Then the FFN: it shifts each token individually so that the unembedding gets the right angle at the end.",
+        points: ["Attention: weights between all words.", "Mixing: tokens take information from the context.", "FFN: then shifts each token individually.", "The whole block repeats many times."],
+        roadmap: "Over the next days we will go through attention and FFN one after the other, each explained so that you intuitively see what it does and why.",
         sub: [
-          { title: "Attention", text: "Each token checks how strongly it relates to every other token and takes in information. That is how it gets its meaning in context." },
-          { title: "FFN", text: "The feed-forward network shifts each token individually into a higher space, separates patterns, and projects back. That makes the internal states easier to distinguish." }
+          { title: "Attention", text: "Attention determines how important every word is for every other word. Those weights mix the tokens: each token takes information from the words that matter to it." },
+          { title: "FFN", text: "The FFN comes afterwards and works per token. Example: “new” alone means “not old”, while “york” alone is a place in England. Directly together, “new york” is the US metropolis. The FFN shifts the tokens so that the unembedding gets the right angle at the end." }
         ]
-      },
-      {
-        id: "repeat", label: "Repeat", short: "many blocks", icon: "↻", color: "gold",
-        title: "Repeat",
-        body: "Attention and FFN run many times in a row, sometimes hundreds of times. Each block reads the same running vector and writes an update back; nothing is overwritten.",
-        points: ["Each block has its own weights.", "The structure is shared, the parameters are not.", "The context is refined with every layer."]
       },
       {
         id: "unembed", label: "Unembedding", short: "vector → distribution", icon: "U", color: "lilac",
@@ -6188,41 +6193,42 @@
       list.innerHTML = "";
       list.appendChild(stationButton(0));
       list.appendChild(stationButton(1));
-      var layers = document.createElement("div");
-      layers.className = "ls-block-layers";
-      for (var k = 0; k < 7; k++) {
-        var row = document.createElement("div");
-        row.className = "ls-layer-row";
-        var num = document.createElement("span");
-        num.className = "ls-layer-num";
-        num.textContent = String(k + 1);
-        row.appendChild(num);
-        var attn = document.createElement("button");
-        attn.type = "button";
-        attn.className = "ls-layer-pill ls-layer-attn";
-        attn.setAttribute("data-index", "2");
-        attn.style.setProperty("--block-color", color("green"));
-        attn.innerHTML = '<b>A</b><span>' + (DE ? "Attention" : "Attention") + '</span>';
-        attn.addEventListener("click", function () { setIndex(2); });
-        var ffn = document.createElement("button");
-        ffn.type = "button";
-        ffn.className = "ls-layer-pill ls-layer-ffn";
-        ffn.setAttribute("data-index", "2");
-        ffn.style.setProperty("--block-color", color("lime"));
-        ffn.innerHTML = '<b>FFN</b><span>' + (DE ? "Feed-forward" : "Feed-forward") + '</span>';
-        ffn.addEventListener("click", function () { setIndex(2); });
-        layerButtons.push(attn, ffn);
-        row.appendChild(attn);
-        row.appendChild(ffn);
-        layers.appendChild(row);
-      }
-      var more = document.createElement("div");
-      more.className = "ls-layer-more";
-      more.innerHTML = '<span>⋮</span><b>× 80</b><small>' + (DE ? "viele weitere Blöcke" : "many more blocks") + '</small>';
-      layers.appendChild(more);
-      list.appendChild(layers);
+      var group = document.createElement("div");
+      group.className = "ls-block-repeat";
+      var head = document.createElement("button");
+      head.type = "button";
+      head.className = "ls-block-group-head";
+      head.setAttribute("data-index", "2");
+      head.style.setProperty("--block-color", color("green"));
+      head.innerHTML = '<b>' + (DE ? "Transformer-Blöcke" : "Transformer blocks") + '</b><span>× N · ' + (DE ? "diese n mal" : "these n times") + '</span>';
+      head.addEventListener("click", function () { setIndex(2); });
+      group.appendChild(head);
+      var brace = document.createElement("div");
+      brace.className = "ls-block-brace";
+      brace.setAttribute("aria-hidden", "true");
+      var items = document.createElement("div");
+      items.className = "ls-block-repeat-items";
+      var attn = document.createElement("button");
+      attn.type = "button";
+      attn.className = "ls-layer-pill ls-layer-attn";
+      attn.setAttribute("data-index", "2");
+      attn.style.setProperty("--block-color", color("green"));
+      attn.innerHTML = '<b>A</b><span>' + (DE ? "Attention" : "Attention") + '</span>';
+      attn.addEventListener("click", function () { setIndex(2); });
+      var ffn = document.createElement("button");
+      ffn.type = "button";
+      ffn.className = "ls-layer-pill ls-layer-ffn";
+      ffn.setAttribute("data-index", "2");
+      ffn.style.setProperty("--block-color", color("lime"));
+      ffn.innerHTML = '<b>FFN</b><span>' + (DE ? "Feed-forward" : "Feed-forward") + '</span>';
+      ffn.addEventListener("click", function () { setIndex(2); });
+      layerButtons.push(attn, ffn);
+      items.appendChild(attn);
+      items.appendChild(ffn);
+      group.appendChild(brace);
+      group.appendChild(items);
+      list.appendChild(group);
       list.appendChild(stationButton(3));
-      list.appendChild(stationButton(4));
     }
     function fitMini(canvas) {
       if (!canvas) return null;
@@ -6311,7 +6317,8 @@
       var html = '<div class="ls-blocks-kicker">' + (DE ? "Station " : "Station ") + (index + 1) + ' / ' + blocks.length + '</div>' +
         '<h3 class="ls-blocks-title">' + api.esc(b.title) + '</h3>' +
         '<p class="ls-blocks-body">' + api.esc(b.body) + '</p>' +
-        '<ul class="ls-blocks-points">' + b.points.map(function (p) { return '<li>' + api.esc(p) + '</li>'; }).join("") + '</ul>';
+        '<ul class="ls-blocks-points">' + b.points.map(function (p) { return '<li>' + api.esc(p) + '</li>'; }).join("") + '</ul>' +
+        (b.roadmap ? '<p class="ls-block-roadmap">' + api.esc(b.roadmap) + '</p>' : '');
       if (b.sub) {
         html += '<div class="ls-block-subgrid">' + b.sub.map(function (s, i) {
           return '<div class="ls-block-sub"><b>' + api.esc(s.title) + '</b><canvas class="ls-block-subcan" data-mini="' + (i === 0 ? "attention" : "ffn") + '"></canvas><p>' + api.esc(s.text) + '</p></div>';

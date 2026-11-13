@@ -1,9 +1,9 @@
 # Deep fact audit
 
 - lessons: 100
-- claims: 7377
-- statements: 17519
-- relations: 52840
+- claims: 7390
+- statements: 17531
+- relations: 52862
 - uncovered years: 72
 - uncovered quantities: 11
 - uncited specific claims: 312
@@ -51,7 +51,7 @@
 | geometry_iii | 51 | 129 | 345 | 0 | 0 |
 | global_ai_ecosystem | 30 | 41 | 184 | 0 | 0 |
 | hallucinations | 25 | 151 | 472 | 2 | 0 |
-| history | 1416 | 1188 | 3522 | 0 | 0 |
+| history | 1429 | 1200 | 3544 | 0 | 0 |
 | human_mind | 45 | 498 | 1085 | 5 | 0 |
 | hyperparameters | 25 | 55 | 175 | 0 | 0 |
 | inceptionism | 14 | 44 | 137 | 0 | 0 |
