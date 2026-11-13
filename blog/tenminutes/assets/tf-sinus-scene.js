@@ -126,19 +126,21 @@
       lossCtx.clearRect(0, 0, w, h);
       lossCtx.fillStyle = C.paper; lossCtx.fillRect(0, 0, w, h);
       if (!lossHistory.length) return;
-      var max = Math.max.apply(null, lossHistory.concat([1e-6]));
+      var logs = lossHistory.map(function (v) { return Math.log10(Math.max(1e-8, v)); });
+      var min = Math.min.apply(null, logs), max = Math.max.apply(null, logs);
+      if (max - min < 1e-6) { max += 0.5; min -= 0.5; }
       lossCtx.strokeStyle = C.line; lossCtx.lineWidth = 1;
       lossCtx.beginPath(); lossCtx.moveTo(8, h - 8); lossCtx.lineTo(w - 8, h - 8); lossCtx.stroke();
       lossCtx.strokeStyle = C.gold; lossCtx.lineWidth = 1.8;
       lossCtx.beginPath();
-      lossHistory.forEach(function (v, i) {
-        var x = 8 + i / Math.max(1, lossHistory.length - 1) * (w - 16);
-        var y = h - 8 - (v / max) * (h - 16);
+      logs.forEach(function (v, i) {
+        var x = 8 + i / Math.max(1, logs.length - 1) * (w - 16);
+        var y = h - 8 - (v - min) / (max - min) * (h - 16);
         if (i === 0) lossCtx.moveTo(x, y); else lossCtx.lineTo(x, y);
       });
       lossCtx.stroke();
       lossCtx.fillStyle = C.muted; lossCtx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; lossCtx.textAlign = "left";
-      lossCtx.fillText("Loss", 8, 12);
+      lossCtx.fillText("Loss (log)", 8, 12);
     }
     function updateReadout() {
       lossEl.textContent = "Loss " + (trainLoss || 0).toFixed(4);
@@ -220,6 +222,10 @@
     if (window.tf) initTf(); else setTimeout(initTf, 300);
     return {
       update: function () {},
+      next: function () {
+        if (!training) { resumeTraining(); return true; }
+        return false;
+      },
       resize: resize,
       pause: pauseTraining,
       resume: function () { visible = true; if (training && !timer) trainTick(); },

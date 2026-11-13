@@ -66,3 +66,11 @@ Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still
 ## Final gate (do only when everything is done)
 - [ ] Bilingual EN/DE audit, height test, page test, `check_all.py --fast`.
 - [ ] Commit and push.
+
+## New requests (latest)
+- [ ] Rework the whole system again, then generalise the tools it needs (shared scene/nav/lesson utilities).
+- [ ] Make “Verstehen heißt komprimieren” much more mouthwateringly gorgeous and visual; use category-theory/Yoneda intuition internally, but do not mention it in the page.
+- [x] “Ein kleines Netz lernt den Sinus”: “Weiter” starts training.
+- [x] Sinus loss chart switched to log scale so the curve is visible.
+- [x] “Weiche Kurven, ein Knick”: activation functions shown one after another via Weiter/Zurück.
+- [ ] Still verify the activation sequence and sinus loss chart in the browser at the end.

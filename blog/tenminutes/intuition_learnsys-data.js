@@ -639,7 +639,7 @@
     {
       kicker: "04 / Neuronale Netze",
       title: "Ein kleines Netz lernt den Sinus",
-      body: "Ein echtes kleines Netz: x → 32 → 32 → 32 → 1, Dense plus ReLU. Jeder Punkt ist ein Paar (x, y) = (input, output). Starte das Training selbst und beobachte den Loss. Ziehe Punkte, pausiere oder starte neu. Die grüne Kurve passt innen; links und rechts außerhalb extrapoliert sie.",
+      body: "Ein echtes kleines Netz: x → 32 → 32 → 32 → 1, Dense plus ReLU. Jeder Punkt ist ein Paar (x, y) = (input, output). Starte das Training mit „Weiter“ oder dem Button und beobachte den Loss. Ziehe Punkte, pausiere oder starte neu. Die grüne Kurve passt innen; links und rechts außerhalb extrapoliert sie.",
       watch: "Starte das Training. Wie reagiert die grüne Kurve auf einen gezogenen Punkt?",
       demoState: { scene: "model", view: "plot" },
       context: "Der Loss wird nur auf den Trainingspunkten berechnet. Außerhalb gibt es keine Daten; die Kurve ist eine Extrapolation.",
@@ -678,7 +678,7 @@
     {
       kicker: "04 / Neural networks",
       title: "A small network learns the sine",
-      body: "A real small network: x → 32 → 32 → 32 → 1, dense with ReLU. Every point is a pair (x, y) = (input, output). Start training yourself and watch the loss. Drag points, pause, or restart. The green curve fits inside; left and right outside it extrapolates.",
+      body: "A real small network: x → 32 → 32 → 32 → 1, dense with ReLU. Every point is a pair (x, y) = (input, output). Start training with “Next” or the button and watch the loss. Drag points, pause, or restart. The green curve fits inside; left and right outside it extrapolates.",
       watch: "Start training. How does the green curve react to a dragged point?",
       demoState: { scene: "model", view: "plot" },
       context: "The loss is computed only on the training points. Outside there is no data; the curve is an extrapolation.",
