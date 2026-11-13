@@ -1595,3 +1595,49 @@ h1,h2,h3,h4{
   .ls-gauss-fig{flex:1 1 50%;min-width:150px}
   .ls-gauss-fig img{height:96px}
 }
+
+/* Long-form prose: justified, hyphenated, last line left. */
+.ls-body p,.ls-context p,.ls-deep p,.ls-watch,.ls-noise-explain-text,.ls-gauss-note,.ls-vr-note,.ls-bs-body,.ls-bs-sub p,.ls-blocks-body{text-align:justify;hyphens:auto;text-align-last:left}
+
+/* Shared scene baseline: zero-specificity so each demo keeps its own layout. */
+:where(.ls-scene-host){
+  --ls-scene-surface:var(--ls-paper);
+  --ls-scene-card:#fff;
+  --ls-scene-line:var(--ls-line);
+  --ls-scene-ink:var(--ls-ink);
+  --ls-scene-muted:var(--ls-muted);
+  --ls-scene-accent:var(--ls-petrol);
+}
+:where(.ls-scene-host) :where([class$="-readout"]){
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:baseline;
+  font:var(--ls-fs-micro)/1.5 "Open Sans",sans-serif;
+  color:var(--ls-scene-muted);
+  min-height:2.2em;
+}
+:where(.ls-scene-host) :where([class$="-readout"] b){color:var(--ls-scene-ink);font-weight:600}
+:where(.ls-scene-host) :where([class$="-controls"],[class$="-nav"]){
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap;
+}
+:where(.ls-scene-host) :where([class$="-progress"]){
+  font:600 var(--ls-fs-micro) "Open Sans",sans-serif;
+  color:var(--ls-scene-muted);
+  font-variant-numeric:tabular-nums;
+}
+:where(.ls-scene-host) :where(output){
+  font-variant-numeric:tabular-nums;
+  color:var(--ls-scene-accent);
+}
+:where(.ls-scene-host) :where(.ls-range){
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font:600 var(--ls-fs-micro) "Open Sans",sans-serif;
+  color:var(--ls-scene-muted);
+}
+:where(.ls-scene-host) :where(canvas){max-width:100%}

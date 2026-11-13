@@ -316,3 +316,37 @@ Personas and behaviours exercised by the browser suite:
 Both must pass before a demo migration is considered finished. The browser
 test serves `blog/` locally and drives `learnsystest.html` with headless
 Chromium.
+
+## Shared scene tools (2026-11-13)
+
+The demos stay individual, but the shared layer now carries the parts they
+were repeating.
+
+- `assets/learnsys-visuals.js` (`window.LearnSysVisuals`) provides palette
+  mixing, arrows, labels, grids, 2D/3D projection, heatmaps, and token chips.
+  Use it through `api.visual` or `window.LearnSysVisuals`.
+- `assets/learnsys-scene-kit.js` (`window.LearnSysSceneKit`) provides
+  `canvas`, `nav`, `readout`, `range`, and `chips`. `canvas` centralises DPR
+  sizing, resize, `tm:theme`, visibility, and reduced motion; `nav` and
+  `range` centralise the common DOM. New demos should use the kit. Existing
+  demos do not have to be rewritten.
+- `api.colors()` now returns **one shared mutable palette**. On `tm:theme`
+  the engine updates that object in place and calls the active demo's
+  `resize()`. Scenes that cached `C = api.colors()` therefore see the new
+  colours without re-reading CSS, and scenes do not need their own theme
+  listeners (they can keep them; the redraw is idempotent).
+- `api.visual`, `api.kit`, and `api.reducedMotion` are part of the demo API.
+- `assets/learnsys-visuals.js` and `assets/learnsys-scene-kit.js` load before
+  `learnsys.js`. Scene files load after the engine and before the data file.
+- `learnsys.css` ends with a zero-specificity scene baseline
+  (`:where(.ls-scene-host) …`) for readouts, controls, nav rows, progress
+  labels, `output`, ranges, and canvases. Specific scene rules always win.
+- Scene layers carry `data-scene="<name>"`; use it for debugging or for
+  future shared CSS.
+- Long-form prose in the text panel is justified with `hyphens: auto` and
+  `text-align-last: left`.
+
+New scene files in this pass: `assets/learnsys-unembed-scene.js` and
+`assets/learnsys-gauss-scene.js`. The Gauss scene uses the coloured
+Flammarion engraving from the blog root and a Dawn image of Ceres, both with
+visible credits and links to their Wikimedia Commons sources.

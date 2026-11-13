@@ -69,6 +69,7 @@
   function setLang(lang) {
     LANG = lang === "en" ? "en" : "de";
     S = STRINGS[LANG];
+    if (typeof document !== "undefined") document.documentElement.lang = LANG;
   }
   function t(key, vars) {
     var out = (S && S[key]) || STRINGS.de[key] || key;
@@ -81,6 +82,7 @@
   var cfg = null;
   var state = { track: "all", depth: "standard", font: 1, day: 0, step: 0 };
   var demo = null;
+  var palette = null;
   var currentDemoDay = null;
   var lastDemoDay = null;
   var lastDemoStep = null;
@@ -840,6 +842,9 @@
       motion: LS.motion,
       scene: LS.scene,
       util: LS.util,
+      visual: window.LearnSysVisuals || null,
+      kit: window.LearnSysSceneKit || null,
+      reducedMotion: !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches),
       onHint: function (text) { els.stageHint.textContent = text; },
       go: go,
       goStep: function (step) { go(state.day, step); },
@@ -1483,7 +1488,7 @@
   function colors() {
     var css = getComputedStyle(document.documentElement);
     function v(n, f) { var x = css.getPropertyValue(n); return (x || f).trim(); }
-    return {
+    var next = {
       ink: v("--tm-ink", "#000"),
       soft: v("--tm-ink-soft", "#2c464d"),
       muted: v("--tm-muted", "#627476"),
@@ -1499,6 +1504,14 @@
       lilac: v("--tm-coral", "#9185be"),
       sky: v("--tm-sky", "#5c9baf")
     };
+    if (!palette) palette = {};
+    Object.keys(next).forEach(function (k) { palette[k] = next[k]; });
+    return palette;
+  }
+
+  function refreshTheme() {
+    colors();
+    if (demo && demo.resize) { try { demo.resize(); } catch (e) {} }
   }
 
   function fitCanvas(canvas, host) {
@@ -3578,6 +3591,9 @@
     buildUI();
     bind();
     renderAll();
+    LS.visual = window.LearnSysVisuals || null;
+    LS.kit = window.LearnSysSceneKit || null;
+    window.addEventListener("tm:theme", refreshTheme);
   };
   LS.state = function () { return state; };
   LS.setTrack = setTrack;

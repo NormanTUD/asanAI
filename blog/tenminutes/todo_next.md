@@ -747,3 +747,159 @@ readout, and a smooth transition. The Ceres/Gauss demo especially should be
 stunning: a quiet astronomical plate, a true orbit, a cloud of noisy
 measurements, a Gaussian error curve, and a telescope slider that visibly
 narrows the uncertainty while the fitted curve stays near the truth.
+
+## Final state after the second implementation pass (2026-11-13)
+
+This section supersedes the earlier “partial” and “open work” lists. The page
+is now functionally complete for the current request; the only remaining
+items are a human visual review and an explicit commit/push decision.
+
+### Final slide order (35 steps)
+
+0. Was ist ein LLM? Chat und Code
+1. Verstehen heißt komprimieren
+2. Die Bausteine eines LLM (stays exactly here)
+3. **Gauß, Ceres und die Methode der kleinsten Quadrate** (new)
+4. **Dieselbe Schleife, viele Sprachen** (moved early; data situation clear)
+5. Text wird zu IDs (tokenizer; shorter example + real BPE merges)
+6. Bedeutung wird eine Zahl (embedding 1D)
+7. Bedeutung bekommt eine zweite Achse (embedding 2D)
+8. Drei Dimensionen, ein Schatten (embedding 3D)
+9. **Tausende Dimensionen** (new high-dimensional excerpt)
+10. Von Beziehungen zur Übersetzung (rotation + translation + hover + find)
+11. Jeder Platz bekommt einen Fingerabdruck
+12. Kontext zieht die Bank an seinen Platz
+13. Attention verschiebt Bedeutungen in Kontexte
+14. Attention reduziert Rauschen (inline LaTeX + New York cluster)
+15. Die kausale Matrix und die Heads
+16. Ein Muster passt, ein Wert wird geschrieben
+17. Jede Schicht schreibt in denselben Stream
+18. Token-Trajektorien durch GPT-2
+19. Weiche Kurven, ein Knick (before the neural-network section)
+20. Was sind neuronale Netze? · 1 Neuron
+21. Was sind neuronale Netze? · Loss-Landschaft (`w`/`b`, flipped surface)
+22. Was sind neuronale Netze? · Großes Netz
+23. Was sind neuronale Netze? · Raum biegen (MLP merged into the section)
+24. Die Karte der Wörter
+25. Aus einem Vektor wird ein Wort (unembedding)
+26. Von Logits zu einer Verteilung (real GPT-2 softmax)
+27. Ein Wort nach dem anderen (loop)
+28. Die Verteilung ist nicht die Antwort
+29. Vom Basismodell zum Assistenten
+30. Wie gut ist das Modell?
+31. Der KV-Cache wächst mit dem Kontext
+32. Suchen, lesen, einsetzen
+33. Geschichte in zehn Schritten
+34. Du bist das Chinesische Zimmer
+
+### What is implemented
+
+- **Gauss/Ceres slide (new).** `assets/learnsys-gauss-scene.js` draws a true
+  Ceres orbit, 18 noisy observations, a least-squares fitted closed curve,
+  residual lines, a glowing Sun, a Ceres marker, and a Gaussian error curve.
+  The telescope slider moves σ from 0.22 to 0.04; the cloud visibly tightens
+  and the fit error falls. “Neue Messungen” resamples the standardized
+  Gaussian errors. The side column shows the Dawn image of Ceres and the
+  **coloured** Flammarion engraving copied from `blog/flammarion.jpg` (source
+  from `literature.js`: `Flammarion_Woodcut_1888_Color_2.jpg`, public domain)
+  and resized to 900 px. The Ceres image is the existing credited
+  `blog/ceres.jpg` (cropped Dawn image, public domain). Both have visible
+  captions with author, licence, and a Wikimedia Commons link. The slide
+  cites Stigler (1981), says explicitly that the data are synthetic, and
+  connects least squares back to modern training.
+- **Data/language slide (moved to step 4).** Adds the zettabyte era since
+  about 2016 (10²¹ bytes), curation, Wikipedia vs peer-reviewed papers,
+  human errors, measurement errors, lies, and the Nile/Egypt vs
+  Nile/Paraguay averaging argument. The scene now has a KB → … → ZB data
+  scale strip with 2016 highlighted, the GPT-3 mix bars, and six language
+  samples. Source: Cisco (2016), Brown et al. (2020), Petrov et al. (2023),
+  Lee et al. (2021).
+- **Tokenizer (step 5).** The long sentence was replaced by “Sprachmodell
+  liest Text” (EN “Models read text”). The BPE section has a dedicated BPE
+  chip, a large merge equation (`e + s → es 9×`), highlighted pairs, live
+  token-count and vocabulary meters, and the top pair counts. BPE is now
+  visibly a learned compression, not a note.
+- **Embeddings + highdim.** 1D directly after the tokenizer, then 2D, 3D,
+  and the explicit “Tausende Dimensionen” table (16 of 4096 dimensions).
+- **Transformer block.** Position, all four attention steps, FFN, residual,
+  token trajectories, then activation before the neural-network section.
+- **Neural-network section.** 1 Neuron → Loss-Landschaft → Großes Netz →
+  Raum biegen. The loss landscape now uses `w` and `b`, the surface is
+  flipped so low loss is at the bottom, the axes are labelled `w`/`b`, and
+  the Temml formula shows `ŷ = w x + b`, `L(w,b)`, and live values. The large
+  network says explicitly that it has too many directions to draw but the
+  principle is the same. The MLP slide is merged conceptually into the same
+  section: networks can fit lines *and* fold space.
+- **Manifold translation.** Radius removed. Two sliders: rotation and
+  translation. “Übersetzung finden” (and “Weiter”) animates the Japanese
+  cloud onto the English one, reaching 100 % alignment. Hovering any of the
+  49 points shows its English and Japanese word; all 49 pairs were extracted
+  and checked. The clouds use slightly different jitter and edge sets, so
+  they are not a trivial copy, but they visibly align. The correspondence
+  line shows the pair; five anchors keep their labels.
+- **Noise/ambiguity slide.** The `\text{new}`, `\text{york}`, and
+  `\text{new york}` rows are now inline flex rows with a 5 px gap, not
+  separate blocks. The city anchor is at width ≈ 0.40 with the label
+  “Stadt · New York”; the Empire State Building and the Statue of Liberty
+  sit just above/right of the city, with the Statue higher up. The ambiguous
+  car/England alternatives still fade with context.
+- **Shared system.** `assets/learnsys-visuals.js` (palette, arrows, labels,
+  grids, projection, heatmaps, chips), `assets/learnsys-scene-kit.js`
+  (canvas, nav, readout, range, chips), a live shared palette in
+  `learnsys.js`, one central `tm:theme` refresh that calls the active demo’s
+  `resize()`, `api.visual` / `api.kit` / `api.reducedMotion`, `data-scene`
+  on every scene layer, a zero-specificity scene baseline in `learnsys.css`,
+  and justified long-form prose. `LEARN_SYSTEM.md` documents the system.
+- **Theme and navigation.** The fixed bottom arrows keep their reserved safe
+  area; navigation controls and the language switch are excluded from the
+  height test. Kicker numbers were removed from every step so the old
+  thematic numbering cannot contradict the new order.
+- **Images and credits.** The Gauss scene uses local `assets/img/ceres.jpg`
+  and `assets/img/flammarion.jpg`. The Flammarion is the coloured parent
+  image, resized; the Ceres is the existing parent image. Both have visible
+  author/licence/source captions and are recorded in the slide sources.
+
+### Verification (all observed, not inferred)
+
+- `uv run blog/tests/tenminutes_pages_test.py --pages
+  intuition_learnsys.php --langs en,de` → **10/10 checks passed, 0 failed**.
+- `uv run blog/tests/tenminutes_height_test.py --pages
+  intuition_learnsys.php --langs en,de --viewports desktop,mobile --monkey 4`
+  → **48 interactions, 0 height changes**.
+- `uv run blog/tests/php_validator.py blog/` → **209 files, 0 issues**.
+- `python3 blog/tools/check_all.py --fast` → **all 33 stages passed**.
+- `node --check` on every changed JS file, `php -l
+  intuition_learnsys.php`, `git diff --check -- blog/tenminutes` → clean.
+- Targeted headless checks: all 35 slides render; no severe console errors;
+  no horizontal overflow; all math typeset; Gauss images load; telescope
+  slider changes σ/readout; 49 manifold hover pairs verified; BPE merge
+  equation and meters update; neural phase/loss/large-net flow and
+  `Next`-while-training work; theme toggle redraws and changes the palette.
+
+### Still open
+
+- [ ] **Human visual review.** The automated checks prove layout and
+  behaviour, not beauty. The page should be opened at 1280–1400 px and at
+  390 px in both languages. Pay special attention to the Gauss side column,
+  the coloured Flammarion crop, the manifold labels when aligned, and the
+  BPE meters.
+- [ ] **Commit and push.** Not done. The repository rule says commit only
+  on explicit request. The working tree contains all changes above; ask
+  before committing.
+- [ ] Optional later polish: refine the exact Gauss wording or add more
+  residue points, and tune the noise-cluster positions if the visual review
+  finds the Statue of Liberty too high/low.
+
+### Caveats
+
+- The Gauss observations are synthetic, not Piazzi’s original measurements.
+  The fit is a Fourier least-squares closed curve, not a reconstruction of
+  Gauss’s actual orbit computation; the slide says both.
+- The Ceres image is the existing parent `blog/ceres.jpg` (cropped Dawn
+  image). The Flammarion is the coloured parent `blog/flammarion.jpg`,
+  resized to 900 px.
+- The manifold translation is a 3D rotation plus horizontal translation of a
+  synthetic point cloud, not a measured cross-lingual embedding. The slide
+  says it is a didactic simplification.
+- The “year 2016 / zettabyte era” is sourced to Cisco (2016), “The
+  Zettabyte Era Officially Begins”; 10²¹ bytes is the definition used there.

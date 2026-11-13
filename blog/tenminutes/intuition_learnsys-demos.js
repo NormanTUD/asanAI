@@ -8383,6 +8383,7 @@
     meadow: meadowScene,
     softmax: softmaxScene,
     manifold: manifoldScene,
+    gauss: function (root, api) { return window.GaussScene(root, api); },
     unembed: function (root, api) { return window.UnembedScene(root, api); },
     animals: animalScene,
     model: function (root, api) { return window.TfSinusScene(root, api); },
@@ -8411,6 +8412,7 @@
     function makeLayer(next) {
       var layer = document.createElement("div");
       layer.className = "ls-scene-layer";
+      layer.setAttribute("data-scene", next);
       layer.hidden = true;
       host.appendChild(layer);
       var inst = SCENES[next] ? SCENES[next](layer, api) : null;
