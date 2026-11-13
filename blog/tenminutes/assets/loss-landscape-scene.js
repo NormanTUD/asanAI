@@ -234,7 +234,8 @@
       worker.postMessage({ cmd: "train", lr: parseFloat(lrEl.value) || 0.06, seed: Date.now() });
     }
     function playLoop() {
-      if (!data || !data.trajectory.length) return;
+      var tr = currentTrajectory();
+      if (!data || !tr.length) return;
       playing = true; playBtn.textContent = DE ? "Pause" : "Pause";
       function tick(now) {
         if (!playing) { raf = 0; return; }
@@ -242,7 +243,8 @@
         if (now - (tick.last || 0) < 120) return;
         tick.last = now;
         ball++;
-        if (ball >= data.trajectory.length - 1) { ball = data.trajectory.length - 1; playing = false; playBtn.textContent = DE ? "Nochmal" : "Again"; }
+        var cur = currentTrajectory();
+        if (ball >= cur.length - 1) { ball = cur.length - 1; playing = false; playBtn.textContent = DE ? "Nochmal" : "Again"; }
         draw();
       }
       raf = requestAnimationFrame(tick);
@@ -262,10 +264,10 @@
     playBtn.addEventListener("click", function () {
       if (!data) return;
       if (playing) { pause(); playBtn.textContent = DE ? "Abspielen" : "Play"; return; }
-      if (ball >= data.trajectory.length - 1) ball = 0;
+      if (ball >= currentTrajectory().length - 1) ball = 0;
       playLoop();
     });
-    stepBtn.addEventListener("click", function () { if (!data) return; pause(); ball = Math.min(data.trajectory.length - 1, ball + 1); draw(); });
+    stepBtn.addEventListener("click", function () { if (!data) return; pause(); ball = Math.min(currentTrajectory().length - 1, ball + 1); draw(); });
     resetBtn.addEventListener("click", function () { if (!data) return; pause(); ball = 0; draw(); });
     lrEl.addEventListener("input", function () { lrOut.textContent = (parseFloat(lrEl.value) || 0.06).toFixed(2); });
     canvas.addEventListener("pointerdown", function (e) { drag = { x: e.clientX, y: e.clientY }; });

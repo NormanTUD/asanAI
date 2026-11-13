@@ -85,3 +85,14 @@ Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still
 7. [ ] **Whole system generalisation (large).** Rework the system and generalise shared scene/nav/tool utilities.
 8. [ ] **MLP real formula/loss (medium, after loss landscape).** Real one-layer formula and real loss values from the verified reference.
 9. [ ] **Final gate.** Bilingual audit, height test, page test, `check_all.py --fast`, syntax/diff checks; commit and push only then.
+
+## Progress after implementation pass
+- [x] Causal mask is on by default; checkbox is visible at the left of the attention demo, explanatory text is in the left context, `v_Punkt` replaces `vSatzzeichen`, and the self-loop is drawn.
+- [~] Token trajectories: scene already exposes `next`/`prev` and advances the layer; still needs the end-to-end browser click check.
+- [x] Position demos: the 3D fingerprint curve now uses the real sinusoidal dimensions, and the relative-distance plot computes Sinus/ALiBi/RoPE from their formulas instead of schematic curves.
+- [x] Manifold demo: two point clouds with Vietoris–Rips edges on a canvas, matching label links, drag/zoom; no Plotly or heavy surfaces.
+- [x] Loss landscape: real 1→4→1 worker, SGD/Adam/Momentum trajectories, live Temml formula with α/β/L, optimizer sequence on Weiter, optional saddle-point box with sources.
+- [x] Compression: denser visual language, fibres through the hierarchy, glow/rings, universal hub and unseen-case arrow; category/Yoneda not named.
+- [x] MLP: added a live logistic-loss formula computed over the actual point cloud.
+- [ ] Whole-system/general shared-tools pass.
+- [ ] Final browser audit and test gate.
