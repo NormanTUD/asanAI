@@ -120,3 +120,11 @@ Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still
 - [~] Token trajectories: visual ghost segment and layer readout added; browser click check still open.
 - [ ] Whole-system generalisation.
 - [ ] Final gate.
+
+
+## Regression fix
+- [x] Restored the scene functions accidentally removed by the blocks-scene rewrite: media, book, compress, stack, animal, activation, langdata, chineseroom, history, posttrain, eval, gradient, kvcache.
+- [x] `SCENES` now has no undefined function references; “Demo nicht gefunden: intuition” should be gone.
+- [~] Token trajectories still need the end-to-end click check.
+- [ ] Whole-system generalisation.
+- [ ] Final gate.
