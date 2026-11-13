@@ -3829,14 +3829,13 @@
         '<div class="ls-position-panel"><canvas class="ls-position-heat"></canvas><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
         '<div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div>' +
       '</div>' +
-      '<div class="ls-position-compare"><div class="ls-compare-head">' + (DE ? "Relativer Abstand im selben Satz" : "Relative distance in the same sentence") + '</div><div class="ls-compare-plot"><canvas class="ls-position-methods"></canvas></div><p class="ls-compare-note">' + (DE ? "Sinus, ALiBi, RoPE · aus den Formeln berechnet." : "Sinus, ALiBi, RoPE · computed from the formulas.") + '</p></div>' +
+      '<p class="ls-position-note">' + (DE ? "Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position." : "Positions are added as waves on circular orbits in different dimensions. Each dimension has a different frequency; together they form the position fingerprint.") + '</p>' +
       '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-pos-context" min="16" max="128" step="8" value="64"><output>64</output></label><label class="ls-range">' + (DE ? "Dimensionen" : "Dimensions") + ' <input type="range" class="ls-pos-dims" min="2" max="64" step="2" value="24"><output>24</output></label><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="10000" step="1" value="7"><output>7</output></label></div>' +
       '<div class="ls-scene-row ls-position-metric"><button type="button" class="ls-chip" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button><button type="button" class="ls-chip is-on" data-metric="angle">' + (DE ? "Winkel / Großkreis" : "Angle / great circle") + '</button><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
       '<div class="ls-position-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var heat = el.querySelector(".ls-position-heat");
     var curve = el.querySelector(".ls-position-curve");
-    var methodsCanvas = el.querySelector(".ls-position-methods");
     var contextEl = el.querySelector(".ls-pos-context");
     var dimsEl = el.querySelector(".ls-pos-dims");
     var posEl = el.querySelector(".ls-pos-pos");
@@ -3844,7 +3843,7 @@
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var context = 64, dims = 24, pos = 7, metric = "angle", rotate = !reducedMotion;
     var posAnim = pos;
-    var heatSize = null, curveSize = null, methodsSize = null, yaw = -0.6, pitch = 0.5, drag = null, raf = 0, last = 0;
+    var heatSize = null, curveSize = null, yaw = -0.6, pitch = 0.5, drag = null, raf = 0, last = 0;
     var C = api.colors();
     var clamp = api.util.clamp;
     function pe(p, d, i) {
@@ -3949,6 +3948,10 @@
       axisLabel([0, 0, 1.28], "z", Cc.gold);
       var maxT = Math.max(1.6, posAnim);
       var steps = Math.max(260, Math.min(2200, Math.ceil(maxT * 2)));
+      var startVec = curvePoint(0);
+      var curVec = curvePoint(posAnim);
+      var startP = metric === "angle" ? unit3(startVec) : startVec;
+      var curP = metric === "angle" ? unit3(curVec) : curVec;
       var prev = null;
       for (k = 0; k <= steps; k++) {
         var t = maxT * k / steps;
@@ -3964,123 +3967,50 @@
         prev = q;
       }
       ctx.globalAlpha = 1;
-      var o = P([0, 0, 0]);
-      var g = ctx.createRadialGradient(o.x - 2, o.y - 2, 1, o.x, o.y, 11);
-      g.addColorStop(0, "rgba(255,255,255,.95)");
-      g.addColorStop(0.45, Cc.blue);
-      g.addColorStop(1, "rgba(18,117,172,.15)");
-      ctx.beginPath(); ctx.arc(o.x, o.y, 10, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
-      ctx.fillStyle = Cc.soft; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "center";
-      ctx.fillText(DE ? "Wort" : "word", o.x, o.y + 22);
-      var cur = curvePoint(posAnim);
-      if (metric === "angle") cur = unit3(cur);
-      var cp = P(cur);
-      var chord = P([0, 0, 0]);
-      var theta = 0, vlen = Math.hypot(cur[0], cur[1], cur[2]);
+      var sp = P(startP), cp = P(curP);
+      var dot = Math.max(-1, Math.min(1, startP[0] * curP[0] + startP[1] * curP[1] + startP[2] * curP[2]));
+      var theta = Math.acos(dot);
       if (metric === "euclid") {
         ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.6;
-        ctx.beginPath(); ctx.moveTo(chord.x, chord.y); ctx.lineTo(cp.x, cp.y); ctx.stroke(); ctx.restore();
+        ctx.beginPath(); ctx.moveTo(sp.x, sp.y); ctx.lineTo(cp.x, cp.y); ctx.stroke(); ctx.restore();
       } else {
-        var a0 = [1, 0, 0];
-        var b0 = unit3(cur);
-        var dot = Math.max(-1, Math.min(1, a0[0] * b0[0] + a0[1] * b0[1] + a0[2] * b0[2]));
-        theta = Math.acos(dot);
         ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.6;
         ctx.beginPath();
-        for (k = 0; k <= 40; k++) {
-          var tt = k / 40;
-          var s0 = theta === 0 ? 1 : Math.sin((1 - tt) * theta) / Math.sin(theta);
-          var s1 = theta === 0 ? 0 : Math.sin(tt * theta) / Math.sin(theta);
-          var vv = [a0[0] * s0 + b0[0] * s1, a0[1] * s0 + b0[1] * s1, a0[2] * s0 + b0[2] * s1];
+        for (k = 0; k <= 48; k++) {
+          var tt = k / 48;
+          var s0 = theta < 1e-6 ? 1 : Math.sin((1 - tt) * theta) / Math.sin(theta);
+          var s1 = theta < 1e-6 ? 0 : Math.sin(tt * theta) / Math.sin(theta);
+          var vv = [startP[0] * s0 + curP[0] * s1, startP[1] * s0 + curP[1] * s1, startP[2] * s0 + curP[2] * s1];
           var pp = P(vv);
           if (k === 0) ctx.moveTo(pp.x, pp.y); else ctx.lineTo(pp.x, pp.y);
         }
         ctx.stroke(); ctx.restore();
-        var wp = P(a0);
-        ctx.beginPath(); ctx.arc(wp.x, wp.y, 3, 0, Math.PI * 2); ctx.fillStyle = Cc.blue; ctx.fill();
       }
+      ctx.beginPath(); ctx.arc(sp.x, sp.y, 4, 0, Math.PI * 2); ctx.fillStyle = Cc.blue; ctx.fill();
+      ctx.fillStyle = Cc.blue; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
+      ctx.fillText(DE ? "Start" : "start", sp.x + 7, sp.y - 5);
       ctx.save();
-      ctx.shadowColor = "rgba(99,164,75,.55)";
-      ctx.shadowBlur = 14;
+      ctx.shadowColor = "rgba(99,164,75,.55)"; ctx.shadowBlur = 14;
       ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.fillStyle = Cc.green; ctx.fill();
       ctx.restore();
       ctx.beginPath(); ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2); ctx.strokeStyle = Cc.paper; ctx.lineWidth = 2; ctx.stroke();
-      curve.__lsPosition = { pos: pos, maxT: maxT, steps: steps, metric: metric };
+      var chordLen = Math.hypot(curVec[0] - startVec[0], curVec[1] - startVec[1], curVec[2] - startVec[2]);
+      var geoLen = metric === "angle" ? theta : chordLen;
+      var angleDeg = theta * 180 / Math.PI;
+      curve.__lsPosition = { pos: pos, maxT: maxT, steps: steps, metric: metric, start: startVec, current: curVec, distance: geoLen, angle: theta };
       ctx.fillStyle = Cc.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
       ctx.fillText((DE ? "Position " : "position ") + pos, 12, 18);
       ctx.textAlign = "right";
-      ctx.fillText(metric === "euclid"
-        ? (DE ? "Gerade im Raum" : "straight line in space")
-        : (DE ? "Länge im Plot = Großkreis" : "length in plot = great circle"), w - 12, 18);
+      ctx.fillText(metric === "euclid" ? (DE ? "Euklidischer Abstand" : "Euclidean distance") : (DE ? "Großkreiswinkel" : "great-circle angle"), w - 12, 18);
       ctx.textAlign = "left";
-      ctx.fillText(metric === "euclid" ? (DE ? "Länge" : "length") : (DE ? "Großkreis" : "great circle"), cp.x + 10, cp.y + 3);
-      var chordLen = Math.hypot(cur[0], cur[1], cur[2]);
-      var geoLen = metric === "angle" ? theta : chordLen;
-      var angleDeg = (metric === "angle" ? theta : Math.acos(Math.max(-1, Math.min(1, cur[0] / (chordLen || 1))))) * 180 / Math.PI;
-      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + pos + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + cur.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (metric === "angle" ? (DE ? "Distanz (Großkreis)" : "distance (great circle)") : (DE ? "Länge" : "length")) + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span>';
-    }
-    function drawMethods() {
-      if (!methodsSize) return;
-      var ctx = methodsSize.ctx, w = methodsSize.w, h = methodsSize.h;
-      var Cc = api.colors();
-      ctx.clearRect(0, 0, w, h);
-      var padL = 28, padR = 12, padT = 22, padB = 20;
-      var plotW = Math.max(10, w - padL - padR), plotH = Math.max(10, h - padT - padB);
-      ctx.strokeStyle = Cc.line; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + plotH); ctx.lineTo(padL + plotW, padT + plotH); ctx.stroke();
-      var md = Math.min(24, Math.max(2, dims));
-      function pvec(p) {
-        var out = [];
-        for (var i = 0; i < md; i++) out.push(pe(p, md, i));
-        return out;
-      }
-      function pdist(a, b) {
-        var sum = 0;
-        for (var i = 0; i < a.length; i++) sum += (a[i] - b[i]) * (a[i] - b[i]);
-        return Math.sqrt(sum / a.length);
-      }
-      var base = pvec(0);
-      var series = [
-        { name: "Sinus", color: Cc.blue, f: function (d) { return Math.min(1, pdist(base, pvec(d))); } },
-        { name: "ALiBi", color: Cc.gold, f: function (d) { return 1 - d / 32; } },
-        { name: "RoPE", color: Cc.green, f: function (d) {
-          var sum = 0, pairs = Math.max(1, Math.floor(md / 2));
-          for (var i = 0; i < pairs; i++) {
-            var theta = 1 / Math.pow(10000, (2 * i) / md);
-            sum += Math.cos(theta * d);
-          }
-          return 0.5 + 0.5 * sum / pairs;
-        } }
-      ];
-      series.forEach(function (ser) {
-        ctx.strokeStyle = ser.color; ctx.lineWidth = 2; ctx.beginPath();
-        for (var d = 0; d <= 32; d++) {
-          var x = padL + d / 32 * plotW;
-          var y = padT + (1 - Math.max(0, Math.min(1, ser.f(d)))) * plotH;
-          if (d === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-      });
-      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.textAlign = "left"; ctx.textBaseline = "middle";
-      var lx = padL;
-      series.forEach(function (ser) {
-        ctx.strokeStyle = ser.color; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(lx, 11); ctx.lineTo(lx + 12, 11); ctx.stroke();
-        ctx.fillStyle = Cc.soft; ctx.fillText(ser.name, lx + 16, 11);
-        lx += 16 + ctx.measureText(ser.name).width + 12;
-      });
-      ctx.fillStyle = Cc.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
-      ctx.fillText(DE ? "relativer Abstand" : "relative distance", padL + plotW / 2, h - 4);
+      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + pos + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + curVec.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (metric === "angle" ? (DE ? "Bogenlänge" : "arc length") : (DE ? "Distanz" : "distance")) + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span>';
     }
     function draw() {
-      drawHeat(); drawCurve(); drawMethods();
+      drawHeat(); drawCurve();
     }
     function resizeHeat() { heatSize = api.fit(heat, heat); drawHeat(); }
     function resizeCurve() { curveSize = api.fit(curve, curve); drawCurve(); }
-    function resizeMethods() { methodsSize = api.fit(methodsCanvas, methodsCanvas.parentNode); drawMethods(); }
-    function resize() { resizeHeat(); resizeCurve(); resizeMethods(); draw(); }
+    function resize() { resizeHeat(); resizeCurve(); draw(); }
     function loop(now) {
       raf = requestAnimationFrame(loop);
       if (now - last < 40) return;
@@ -4112,7 +4042,7 @@
     });
     window.addEventListener("pointerup", function () { drag = null; });
     contextEl.addEventListener("input", function () { context = parseInt(contextEl.value, 10); contextEl.nextElementSibling.textContent = String(context); drawHeat(); });
-    dimsEl.addEventListener("input", function () { dims = parseInt(dimsEl.value, 10); dimsEl.nextElementSibling.textContent = String(dims); drawHeat(); drawCurve(); drawMethods(); });
+    dimsEl.addEventListener("input", function () { dims = parseInt(dimsEl.value, 10); dimsEl.nextElementSibling.textContent = String(dims); drawHeat(); drawCurve(); });
     posEl.addEventListener("input", function () { pos = parseInt(posEl.value, 10); posEl.nextElementSibling.textContent = String(pos); draw(); });
     el.querySelectorAll("[data-metric]").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -4143,15 +4073,16 @@
     el.className = "ls-noise-scene";
     el.innerHTML =
       '<div class="ls-noise-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
-      '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-noise-layer" min="0" max="5" step="1" value="0"><output>0</output></label></div>' +
+      '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Nachbarschaft" : "Neighbourhood") + ' <input type="range" class="ls-noise-layer" min="0" max="5" step="1" value="0"><output>0</output></label></div>' +
       '<div class="ls-noise-readout" aria-live="polite"></div>' +
       '<div class="ls-noise-explain">' +
-        '<div class="ls-noise-explain-head">' + (DE ? "Wörter allein sind mehrdeutig" : "Words alone are ambiguous") + '</div>' +
-        '<div class="ls-noise-explain-row"><span>new</span><p>' + (DE ? "„neu“, aber auch der Anfang von „New York“." : "“new”, but also the start of “New York”.") + '</p></div>' +
-        '<div class="ls-noise-explain-row"><span>york</span><p>' + (DE ? "ein Ortsname, allein ohne klaren Bezug." : "a place name, without a clear reference on its own.") + '</p></div>' +
-        '<div class="ls-noise-explain-row"><span>new york</span><p>' + (DE ? "zusammen die Stadt. Der Kontext entscheidet, welche Nachbarschaft zählt." : "together, the city. The context decides which neighbourhood counts.") + '</p></div>' +
+        '<div class="ls-noise-explain-head">' + (DE ? "Wörter sind neutral; Nachbarschaften tragen Bedeutung" : "Words are neutral; neighbourhoods carry meaning") + '</div>' +
+        '<div class="ls-noise-explain-row"><span data-tex="\\text{new}" data-tex-display="false">new</span><p>' + (DE ? "steht zwischen Auto, Zukunft, Neubeginn, Neujahr und Neugier." : "sits between car, future, new beginning, New Year, and curiosity.") + '</p></div>' +
+        '<div class="ls-noise-explain-row"><span data-tex="\\text{york}" data-tex-display="false">york</span><p>' + (DE ? "steht zwischen York (Western Australia), York (England) und York Chocolate, einer Katzenrasse." : "sits between York (Western Australia), York (England), and York Chocolate, a cat breed.") + '</p></div>' +
+        '<div class="ls-noise-explain-row"><span data-tex="\\text{new york}" data-tex-display="false">new york</span><p>' + (DE ? "zusammen in der Nähe von Empire State Building, Freiheitsstatue und der US-Großstadt." : "together near the Empire State Building, the Statue of Liberty, and the US metropolis.") + '</p></div>' +
       '</div>';
     root.appendChild(el);
+    if (api.typeset) { try { api.typeset(el); } catch (err) {} }
     var stage = el.querySelector(".ls-noise-stage");
     var canvas = el.querySelector("canvas");
     var slider = el.querySelector(".ls-noise-layer");
@@ -4209,6 +4140,9 @@
         ctx.fillText(label, px(p.x), py(p.y) - 10);
       }
       anchors.forEach(function (a) { point(a, a.color, a.label, 4.5); });
+      ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
+      ctx.fillText(DE ? "Empire State Building" : "Empire State Building", px(0.38), py(0.20));
+      ctx.fillText(DE ? "Freiheitsstatue" : "Statue of Liberty", px(0.38), py(0.10));
       point(newPos, C.petrol, "new", 6);
       point(yorkPos, C.petrol, "york", 6);
       ctx.fillStyle = C.muted;
@@ -4303,6 +4237,7 @@
       '<details class="ls-att-mask" open><summary>' + (DE ? "Causal Mask" : "Causal mask") + '</summary>' +
         '<label><input type="checkbox" class="ls-att-causal" checked> ' + (DE ? "nur vergangene Tokens beachten" : "attend only to past tokens") + '</label>' +
         '<p>' + (DE ? "Das obere Dreieck in der Matrix ist die kausale Maske. Sie sorgt dafür, dass Tokens nur die Vergangenheit sehen können, damit sie lernen, Sätze zu vervollständigen, deren Ende sie noch nicht kennen." : "The upper triangle in the matrix is the causal mask. It makes tokens see only the past, so they learn to complete sentences whose end they do not yet know.") + '</p>' +
+        '<p>' + (DE ? "Generative Modelle brauchen sie. Modelle, die fertigen Text bewerten, brauchen sie nicht und dürfen in beide Richtungen schauen." : "Generative models need it. Models that score finished text do not, and may look in both directions.") + '</p>' +
       '</details>' +
       '<div class="ls-att-readout" aria-live="polite"></div>';
     root.appendChild(el);

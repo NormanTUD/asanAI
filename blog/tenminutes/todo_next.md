@@ -203,3 +203,24 @@ Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still
 - [ ] Mini-demo visual polish and fixed navigation check.
 - [ ] Linear-network slide restructure (one neuron, errors, linear limit, then sine; live/hidden matrices).
 - [ ] Whole-system pass and final test gate.
+
+## Correction batch — position, credit, causal mask, ambiguity
+### “Jeder Platz bekommt einen Fingerabdruck”
+- [x] Re-derived both views: Euclidean uses ||p(t)-p(0)||; angle uses arccos(p(0)·p(t)) on unit vectors.
+- [x] Removed the “Relativer Abstand im selben Satz” graphic entirely.
+- [x] Added the circular-orbit / different-frequency explanation.
+- [x] Re-checked the plot logic; removed “Gerade im Raum”.
+- [x] Bilingual copy updated.
+
+### Page chrome
+- [x] Removed the demo credit.
+
+### Causal mask
+- [x] Added evaluation-vs-generation distinction to context and mask details.
+
+### “Wörter allein sind mehrdeutig”
+- [x] Inline LaTeX rendering for new/york/new york added.
+- [x] Slider/heading/copy renamed to neighbourhood/neutral words.
+- [x] Neutral-neighbourhood examples added.
+- [x] New York landmark labels added.
+- [x] Bilingual copy updated.

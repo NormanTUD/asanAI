@@ -1451,3 +1451,5 @@ h1,h2,h3,h4{
 .ls-loss-table small{color:var(--ls-muted);font-size:.88em;white-space:nowrap}
 .ls-loss-data-wrap{height:72px}
 .ls-loss-status{min-height:2.4em}
+
+.ls-position-note{margin:0;padding:7px 9px;border-left:3px solid var(--ls-gold);background:rgba(159,151,0,.06);font:600 var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-ink)}

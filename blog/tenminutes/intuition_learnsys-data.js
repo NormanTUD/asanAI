@@ -267,9 +267,9 @@
       kicker: "05 / Position",
       title: "Jeder Platz bekommt einen Fingerabdruck",
       body: "Ein Token allein weiß nicht, wo es steht: „Hund“ kann an jeder Stelle im Satz auftreten. Damit die Reihenfolge zählt, kodieren wir die Position in den Token-Vektor. Dafür gibt es viele Methoden; die Demo zeigt eine sinusförmige Variante. Viele moderne Modelle wie Llama nutzen RoPE, das die Richtung des Vektors mit der Position dreht. Wichtig ist: Die Position wird Teil des Tokens, und alle folgenden Schichten sehen diese Version.",
-      watch: "Bewege den Positionsregler. Wie verändert sich der Vektor, wie die Distanz im Plot?",
+      watch: "Bewege den Positionsregler. Wie verändert sich der Vektor, und wie wächst der Abstand auf der Kreisbahn?",
       demoState: { scene: "position" },
-      context: "Die Position wird zum Token-Vektor addiert; bei RoPE wird stattdessen die Query-/Key-Richtung gedreht. Ab dann rechnet das Netz nur noch mit der positionsbehafteten Version.",
+      context: "Die Position wird als Summe von Wellen auf Kreisbahnen kodiert: Jede Dimension hat eine andere Frequenz. Euklidisch misst du den Abstand zwischen zwei Positionsvektoren; im Winkelbild den Großkreis zwischen ihren Richtungen. Beides zeigt denselben Fingerabdruck aus verschiedenen Blickwinkeln.",
       deep: "Die Demo zeigt nur die ersten drei Dimensionen. In einem echten Modell sind es Tausende; die Großkreis-Metrik macht Richtungen vergleichbar, und schnelle und langsame Rotationen bilden zusammen ein Positionsmuster, das das Modell lernen kann.",
       boxes: [
         box("pos-1", "Methoden", "Welche Positionsverfahren gibt es?", "Gelernte absolute Embeddings (GPT-2, BERT), sinusförmige Kodierung (Vaswani et al. 2017), relative Position Bias (T5) und ALiBi (Press et al. 2021). RoPE (Su et al. 2021) dreht Query und Key; viele moderne Modelle wie Llama nutzen es."),
@@ -323,7 +323,7 @@
       body: "Woher weiß ein Wort, welche Nachbarn wichtig sind? Self-Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen. So bewegt sich „Bank“ in Richtung Geld oder Park. Klicke ein beliebiges Wort an, um seine Zeile zu sehen. Ein echter Layer hat viele Heads; die Demo zeigt einen.",
       watch: "Klicke ein Wort an. Welche Nachbarn bekommen Aufmerksamkeit?",
       demoState: { scene: "attention", context: "none" },
-      context: "Ohne eindeutigen Kontext bleibt die Bank in der Mitte, mehrdeutig. Mit Geld oder Park verschiebt sich der Vektor. Das obere Dreieck in der Matrix ist die kausale Maske: Jedes Token sieht nur die Vergangenheit, damit das Modell lernt, Sätze zu vervollständigen, deren Ende es noch nicht kennt.",
+      context: "Ohne eindeutigen Kontext bleibt die Bank in der Mitte, mehrdeutig. Mit Geld oder Park verschiebt sich der Vektor. Das obere Dreieck in der Matrix ist die kausale Maske: Jedes Token sieht nur die Vergangenheit, damit das Modell lernt, Sätze zu vervollständigen, deren Ende es noch nicht kennt. Das gilt für generative Modelle. Modelle, die fertigen Text bewerten, brauchen keine kausale Maske und dürfen beide Richtungen sehen.",
       deep: "Ein echter Head berechnet Query-, Key- und Value-Vektoren, macht aus den Skalarprodukten mit Softmax Gewichte und summiert die Values. Die Demo zeigt die Bewegung, nicht die volle Rechnung.",
       boxes: [
         box("att-1", "Technik", "Warum drei Vektoren?", "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen."),
@@ -354,14 +354,14 @@
     {
       kicker: "06c / Rauschen",
       title: "Attention reduziert Rauschen",
-      body: "Wörter allein sind mehrdeutig. „new“ kann in der Nähe von „car“ und von „Stadt“ liegen; „york“ allein sagt wenig. Zusammen mit „york“ wird aus „new“ die Stadt New York. Attention gewichtet die Nachbarn: Der Kontext zieht „new“ und „york“ in Richtung „Stadt“ und schwächt „car“ und „England“ ab. Die Mehrdeutigkeit wird zum Signal, das die KI mit dem Kontext auflöst.",
+      body: "Wörter allein sind mehrdeutig. „new“ kann in der Nähe von „car“ und von „Stadt“ liegen; „york“ allein sagt wenig. Zusammen mit „york“ wird aus „new“ die Stadt New York. Attention gewichtet die Nachbarn: Die Nachbarschaft zieht „new“ und „york“ in Richtung „Stadt“ und schwächt „car“ und „England“ ab. Die Mehrdeutigkeit wird zum Signal, das die KI mit dem Kontext auflöst.",
       watch: "Schiebe den Kontext-Regler. Wann gewinnt Stadt gegen car?",
       demoState: { scene: "noise", layer: 0 },
-      context: "Attention verschiebt nicht die Wörter selbst, sondern ihre gelesene Bedeutung. Der Kontext entscheidet, welche Nachbarschaft zählt; die frühen Layer richten den Vektor an der Bedeutung aus.",
+      context: "Attention verschiebt nicht die Wörter selbst, sondern ihre gelesene Bedeutung. Die Nachbarschaft entscheidet, welche Bedeutung zählt; die frühen Layer richten den Vektor daran aus.",
       deep: "Das ist eine didaktische Vereinfachung. Ein echter Head addiert Value-Vektoren mit gelernten Gewichten; die Winkel und Positionen sind von Hand gewählt. Die Quelle deckt die frühe sprachliche Verarbeitung, nicht die konkreten Demo-Positionen.",
       boxes: [
         box("noise-1", "Beispiel", "Was heißt new allein?", "„new“ bedeutet „neu“, kann aber auch der Anfang von „New York“ sein. Erst das zweite Wort entscheidet, welche Lesart gilt."),
-        box("noise-2", "Technik", "Was macht der Kontext?", "Der Kontext gewichtet die Nachbarschaften: „york“ macht die Stadt Lesart stärker, „car“ und „England“ verlieren an Gewicht. So reduziert Attention die Mehrdeutigkeit, statt sie zu verstärken.")
+        box("noise-2", "Technik", "Wie wirkt die Nachbarschaft?", "Die Nachbarschaft gewichtet die Umgebung: „york“ macht die Stadt Lesart stärker, „car“ und „England“ verlieren an Gewicht. So reduziert Attention die Mehrdeutigkeit, statt sie zu verstärken.")
       ],
       sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "BERT-Schichten zeigen eine linguistische Pipeline.", en: "BERT layers reveal a linguistic pipeline." } }]
     },
@@ -387,7 +387,7 @@
       body: "How does a word know which neighbours matter? Self-attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the money or park reading. Click any word to see its row. A real layer has many heads; the demo shows one.",
       watch: "Click a word. Which neighbours receive attention?",
       demoState: { scene: "attention", context: "none" },
-      context: "With no unambiguous context, the bank stays in the middle, ambiguous. With money or park, the vector shifts. The upper triangle in the matrix is the causal mask: each token sees only the past, so the model learns to complete sentences whose end it does not yet know.",
+      context: "With no unambiguous context, the bank stays in the middle, ambiguous. With money or park, the vector shifts. The upper triangle in the matrix is the causal mask: each token sees only the past, so the model learns to complete sentences whose end it does not yet know. That applies to generative models. Models that score finished text need no causal mask and may look in both directions.",
       deep: "A real head computes query, key, and value vectors, turns their dot products into weights with softmax, and sums the values. The demo shows the movement, not the full arithmetic.",
       boxes: [
         box("att-1", "Technique", "Why three vectors?", "Because searching and describing are two different roles. A pronoun can look for a noun without itself looking like a noun."),
@@ -418,14 +418,14 @@
     {
       kicker: "06c / Noise",
       title: "Attention reduces noise",
-      body: "Words alone are ambiguous. “new” can sit near “car” and near “city”; “york” alone says little. Together with “york”, “new” becomes New York. Attention weights the neighbours: the context pulls “new” and “york” toward “city” and weakens “car” and “England”. The ambiguity becomes a signal that the model resolves with context.",
+      body: "Words alone are ambiguous. “new” can sit near “car” and near “city”; “york” alone says little. Together with “york”, “new” becomes New York. Attention weights the neighbours: the neighbourhood pulls “new” and “york” toward “city” and weakens “car” and “England”. The ambiguity becomes a signal that the model resolves with context.",
       watch: "Move the context slider. When does city win against car?",
       demoState: { scene: "noise", layer: 0 },
-      context: "Attention does not move the words themselves; it moves their read meaning. The context decides which neighbourhood counts; early layers align the vector with meaning.",
+      context: "Attention does not move the words themselves; it moves their read meaning. The neighbourhood decides which meaning counts; early layers align the vector with it.",
       deep: "This is a didactic simplification. A real head adds value vectors with learned weights; the angles and positions are chosen by hand. The source covers early linguistic processing, not the concrete demo positions.",
       boxes: [
         box("noise-1", "Example", "What does new mean alone?", "“new” means “not old”, but it can also be the first half of “New York”. Only the second word decides which reading applies."),
-        box("noise-2", "Technique", "What does context do?", "The context weights the neighbourhoods: “york” strengthens the city reading, while “car” and “England” lose weight. Attention reduces the ambiguity instead of amplifying it.")
+        box("noise-2", "Technique", "How does the neighbourhood work?", "The neighbourhood weights the surroundings: “york” strengthens the city reading, while “car” and “England” lose weight. Attention reduces the ambiguity instead of amplifying it.")
       ],
       sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "BERT-Schichten zeigen eine linguistische Pipeline.", en: "BERT layers reveal a linguistic pipeline." } }]
     },
@@ -1213,7 +1213,6 @@
     kicker: DE ? "Im Transformer · Bedeutung wird Geometrie" : "Inside the transformer · Meaning becomes geometry",
     title: DE ? "Ein Wort nach dem anderen" : "One word after another",
     demo: "intuition",
-    credit: DE ? "Interaktive Demo · Ten Minutes" : "Interactive demo · Ten Minutes",
     steps: steps,
     boxes: [
       box("emb-day", DE ? "Mathematik" : "Mathematics",
