@@ -1211,7 +1211,7 @@
     var serp = el.querySelector("#ia-serp");
     var SATZ = DE ? "warum ist der himmel blau?" : "why is the sky blue?";
     var CHAT_Q = DE ? "Was passiert, wenn ich bei Google eine Zusammenfassung bekomme?" : "What happens when I get a summary in Google Search?";
-    var CHAT_A = DE ? "Dieselbe Technik steckt in beiden: Ein Sprachmodell sagt Token für Token voraus. Die Suche zeigt zusätzlich Links und einen Index; der Chat führt ein Gespräch. Die Oberfläche unterscheidet sich, die Schleife dahinter ist dieselbe." : "The same technology sits behind both: a language model predicts token by token. Search adds links and an index; the chat holds a conversation. The surface differs, the loop behind it is the same.";
+    var CHAT_A = DE ? "Hinter der Zusammenfassung steckt ein Sprachmodell, ein sehr ähnliches wie das in diesem Chat. Es liest die Frage und schreibt die Antwort Token für Token. Die Suche zeigt zusätzlich Links; ich bin auch ein LLM, nur im Dialog." : "A language model sits behind the summary, very similar to the one in this chat. It reads the question and writes the answer token by token. Search adds links; I am also an LLM, just in a dialogue.";
     var AI = DE ? [
       { t: "Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm): " },
       { t: "Rayleigh-Streuung", c: "b" },
