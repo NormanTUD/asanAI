@@ -1213,7 +1213,7 @@
     var serp = el.querySelector("#ia-serp");
     var SATZ = DE ? "warum ist der himmel blau?" : "why is the sky blue?";
     var CHAT_Q = DE ? "Was passiert, wenn ich bei Google eine Zusammenfassung bekomme?" : "What happens when I get a summary in Google Search?";
-    var CHAT_A = DE ? "Hinter der Zusammenfassung steckt ein Sprachmodell, ein sehr ähnliches wie das in diesem Chat. Es liest die Frage und schreibt die Antwort Token für Token; die Suche zeigt zusätzlich Links. Ich bin auch ein LLM, nur im Dialog: Ich bekomme deinen Text als Kontext und sage das nächste Token voraus. So entsteht die Antwort Schritt für Schritt." : "A language model sits behind the summary, very similar to the one in this chat. It reads the question and writes the answer token by token; Search adds links. I am also an LLM, just in a dialogue: I receive your text as context and predict the next token. That is how the answer grows step by step.";
+    var CHAT_A = DE ? "Hinter der Zusammenfassung steckt ein Sprachmodell, ein sehr ähnliches wie das in diesem Chat. Es liest die Frage und schreibt die Antwort Token für Token; die Suche zeigt zusätzlich Links. Ich bin auch ein LLM, nur im Dialog: Ich bekomme deinen Text als Kontext und sage das nächste Token voraus. Dieses Wort wird an den bisherigen Text gehängt, und der ganze Text geht wieder als Kontext ins Modell. So entsteht die Antwort Schritt für Schritt." : "A language model sits behind the summary, very similar to the one in this chat. It reads the question and writes the answer token by token; Search adds links. I am also an LLM, just in a dialogue: I receive your text as context and predict the next token. That word is appended to the text so far, and the whole text goes back into the model as context. That is how the answer grows step by step.";
     var AI = DE ? [
       { t: "Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm): " },
       { t: "Rayleigh-Streuung", c: "b" },
@@ -1341,7 +1341,7 @@
         if (sequenceDone) later(function () { sequenceDone(); }, 900);
         return;
       }
-      typeChat(chatInputEl, CHAT_Q, 12, function () {
+      typeChat(chatInputEl, CHAT_Q, 24, function () {
         if (chatInputEl) chatInputEl.textContent = "";
         if (chatQuestionEl) chatQuestionEl.textContent = CHAT_Q;
         if (chatScreen) { chatScreen.classList.remove("is-composing"); chatScreen.classList.add("is-sent"); }
@@ -1490,7 +1490,7 @@
       '<div class="ls-code-frame"><div class="ls-code-screen">' +
         '<div class="ls-code-desktop" style="background-image:url(\'opera.jpg\')">' +
           '<div class="ls-code-window ls-code-window--agent">' +
-            '<div class="ls-code-bar"><i></i><i></i><i></i><span>Agent</span><div class="ls-code-winctl"><button type="button" data-winctl="min" data-win="agent" aria-label="Minimieren">−</button><button type="button" data-winctl="max" data-win="agent" aria-label="Maximieren">□</button></div></div>' +
+            '<div class="ls-code-bar"><i></i><i></i><i></i><span>Agent</span></div>' +
             '<div class="ls-code-chat">' +
               '<div class="ls-code-msg is-agent"><span class="ls-code-agent-text"></span><span class="ls-code-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
               '<div class="ls-code-msg is-agent ls-code-run-msg" hidden>' + (DE ? "Ich führe himmel.py im Terminal aus." : "I'll run sky.py in the terminal.") + '</div>' +
@@ -1500,7 +1500,7 @@
             '<div class="ls-code-agent-prompt"><b>$</b><span></span></div>' +
           '</div>' +
           '<div class="ls-code-window ls-code-window--run" hidden>' +
-            '<div class="ls-code-bar"><i></i><i></i><i></i><span>Terminal</span><div class="ls-code-winctl"><button type="button" data-winctl="min" data-win="run" aria-label="Minimieren">−</button><button type="button" data-winctl="max" data-win="run" aria-label="Maximieren">□</button></div></div>' +
+            '<div class="ls-code-bar"><i></i><i></i><i></i><span>Terminal</span></div>' +
             '<div class="ls-code-term"><b class="ls-code-command"></b><span></span></div>' +
           '</div>' +
           '<div class="ls-code-startmenu" hidden><button type="button" data-start="agent">Agent</button><button type="button" data-start="run">Terminal</button><div class="ls-code-startjoke">' + (DE ? "Keine Updates verfügbar. Alles läuft lokal." : "No updates available. Everything runs locally.") + '</div></div>' +
@@ -1523,7 +1523,6 @@
     var startBtn = el.querySelector(".ls-code-start");
     var startMenu = el.querySelector(".ls-code-startmenu");
     var startItems = el.querySelectorAll("[data-start]");
-    var winCtl = el.querySelectorAll("[data-winctl]");
     var clockEl = el.querySelector(".ls-code-clock");
     if (clockEl) {
       try { clockEl.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); } catch (e) {}
@@ -1680,15 +1679,11 @@
         b.classList.toggle("is-on", win && !win.hidden);
       });
     }
-    function toggleWindow(win) {
-      if (!win) return;
-      if (win.hidden) show(win, true);
-      else win.hidden = true;
-      syncTasks();
-    }
     taskButtons.forEach(function (b) {
       b.addEventListener("click", function () {
-        toggleWindow(b.getAttribute("data-task") === "agent" ? agentWin : runWin);
+        var win = b.getAttribute("data-task") === "agent" ? agentWin : runWin;
+        show(win, true);
+        syncTasks();
       });
     });
     if (startBtn && startMenu) {
@@ -1702,16 +1697,7 @@
         if (startBtn) startBtn.classList.remove("is-open");
       });
     });
-    winCtl.forEach(function (b) {
-      b.addEventListener("click", function (e) {
-        e.stopPropagation();
-        var win = b.getAttribute("data-win") === "agent" ? agentWin : runWin;
-        if (!win) return;
-        if (b.getAttribute("data-winctl") === "min") { win.hidden = true; win.classList.remove("is-max"); }
-        else { win.hidden = false; win.classList.toggle("is-max"); }
-        syncTasks();
-      });
-    });
+
     replayBtn.addEventListener("click", function () {
       if (phase === "ready") runProgram();
       else if (phase === "done") reset();

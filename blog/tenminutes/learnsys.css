@@ -1380,10 +1380,6 @@ h1,h2,h3,h4{
 .ls-code-window--agent:not(.is-coding) .ls-code-filehead,
 .ls-code-window--agent:not(.is-coding) .ls-code-body{display:none}
 .ls-code-window--agent:not(.is-coding) .ls-code-chat{flex:1 1 auto;max-height:none}
-.ls-code-winctl{margin-left:auto;display:flex;gap:2px}
-.ls-code-winctl button{width:18px;height:16px;border:1px solid rgba(238,247,244,.18);background:rgba(255,255,255,.05);color:rgba(238,247,244,.75);font:600 10px/1 "Open Sans",sans-serif;cursor:pointer;padding:0}
-.ls-code-winctl button:hover{background:rgba(99,164,75,.35);color:#fff}
-.ls-code-window.is-max{left:10px!important;top:10px!important;width:calc(100% - 20px)!important;height:calc(100% - 52px)!important;z-index:5}
 .ls-code-startmenu{position:absolute;left:8px;bottom:30px;z-index:8;width:180px;display:grid;gap:3px;padding:6px;background:rgba(7,26,34,.97);border:1px solid rgba(238,247,244,.22);box-shadow:0 12px 30px rgba(0,0,0,.4)}
 .ls-code-startmenu[hidden]{display:none}
 .ls-code-startmenu button{text-align:left;border:1px solid rgba(238,247,244,.14);background:rgba(255,255,255,.05);color:#eef7f4;font:600 10px/1 "Open Sans",sans-serif;padding:6px 8px;cursor:pointer}
@@ -1392,3 +1388,6 @@ h1,h2,h3,h4{
 .ls-code-start.is-open{color:#fff;background:rgba(99,164,75,.35);border-color:var(--ls-green)}
 .ls-code-task.is-on{animation:lsTaskPop .28s ease}
 @keyframes lsTaskPop{50%{transform:translateY(-2px)}}
+
+.ia-chat-compose{align-items:flex-end}
+.ia-chat-input{flex:1;min-width:0;color:#202124;font:var(--ls-fs-ui-sm)/1.35 "Open Sans",sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;max-height:4.5em;overflow-y:auto}
