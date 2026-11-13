@@ -5934,6 +5934,14 @@
       return true;
     }
     function prevInternal() { return false; }
+    canvas.__lsManifold = {
+      pairs: WORDS,
+      point: function (side, i) { var pts = side === "jp" ? targetPoints() : source; var q = project(pts[i]); return { x: q.x, y: q.y }; },
+      score: score,
+      get hover() { return hover; },
+      get angle() { return angle; },
+      get shift() { return shift; }
+    };
     updateButton();
     resize();
     return {
