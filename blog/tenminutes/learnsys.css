@@ -841,7 +841,7 @@ h1,h2,h3,h4{
 .ls-att-formula{grid-column:1/-1;grid-row:4;height:112px;max-height:112px;overflow:auto;border:1px solid rgba(0,75,111,.08);padding:6px 8px;background:rgba(255,255,255,.55)}
 .ls-att-formula .ls-math{margin:0;overflow-x:auto;overflow-y:hidden}
 .ls-att-formula .ls-tex-source{display:none}
-.ls-att-mask{grid-column:1/-1;grid-row:5;border:1px solid rgba(0,75,111,.08);padding:4px 8px;background:rgba(255,255,255,.55);font-size:var(--ls-fs-ui-sm);color:var(--ls-soft)}
+.ls-att-mask{grid-column:1;grid-row:5;align-self:start;border:1px solid rgba(0,75,111,.08);padding:4px 8px;background:rgba(255,255,255,.55);font-size:var(--ls-fs-ui-sm);color:var(--ls-soft)}
 .ls-att-mask summary{cursor:pointer;font-weight:600;color:var(--ls-muted);font-size:var(--ls-fs-micro);text-transform:uppercase;letter-spacing:.07em;list-style:none}
 .ls-att-mask summary::-webkit-details-marker{display:none}
 .ls-att-mask summary:before{content:"+ ";color:var(--ls-green);font-weight:700}
@@ -936,6 +936,8 @@ h1,h2,h3,h4{
 .ls-dual-manifolds .plot-container{opacity:0;transition:opacity .45s ease}
 .ls-dual-manifolds.is-ready .plot-container{opacity:1}
 .ls-dual-manifolds .plot-container,.ls-dual-manifolds .svg-container,.ls-dual-manifolds .gl-container{background:transparent !important}
+.ls-dual-manifolds canvas{position:absolute;inset:0;width:100%;height:100%}
+.ls-vr-note{margin:0;font-size:var(--ls-fs-micro);line-height:1.4;color:var(--ls-muted);max-width:76ch}
 .ls-dual-controls{min-height:36px;overflow:auto}
 .ls-mlp-scene{height:100%;min-height:0;overflow:hidden}
 .ls-mlp-scene .ism-panel{height:100%;display:flex;flex-direction:column;border:0;background:transparent;box-shadow:none;margin:0;padding:0}
@@ -1284,7 +1286,7 @@ h1,h2,h3,h4{
 
 .ls-media-scene .ia-phone-switch{display:none}
 
-.ls-loss-scene{height:100%;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 220px;grid-template-rows:minmax(220px,1fr) auto auto;gap:8px;padding:2px;overflow-y:auto}
+.ls-loss-scene{height:100%;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 220px;grid-template-rows:minmax(220px,1fr) auto auto auto;gap:8px;padding:2px;overflow-y:auto}
 .ls-loss-stage{position:relative;min-height:220px;border:1px solid rgba(0,75,111,.08);background:#fff;overflow:hidden}
 .ls-loss-stage canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
 .ls-loss-side{display:flex;flex-direction:column;gap:6px;min-height:0;border:1px solid rgba(0,75,111,.08);background:#fff;padding:8px}
@@ -1293,10 +1295,11 @@ h1,h2,h3,h4{
 .ls-loss-net svg{display:block;width:100%;height:auto;max-height:160px}
 .ls-loss-net-meta{font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-loss-status{font:600 var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-petrol);margin-top:auto}
-.ls-loss-controls{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.ls-loss-readout{grid-column:1/-1;display:flex;gap:12px;flex-wrap:wrap;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted);min-height:2.6em}
+.ls-loss-controls{grid-column:1/-1;grid-row:3;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ls-loss-opts{display:flex;gap:4px;flex-wrap:wrap}
+.ls-loss-readout{grid-column:1/-1;grid-row:4;display:flex;gap:12px;flex-wrap:wrap;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted);min-height:2.6em}
 .ls-loss-readout b{color:var(--ls-ink);font-weight:600}
-@media (max-width:720px){.ls-loss-scene{grid-template-columns:1fr;grid-template-rows:minmax(250px,1fr) auto auto auto}.ls-loss-side{flex-direction:row;align-items:center}.ls-loss-net{flex:1}.ls-loss-net svg{max-height:110px}.ls-loss-status{margin-top:0}}
+@media (max-width:720px){.ls-loss-scene{grid-template-columns:1fr;grid-template-rows:minmax(250px,1fr) auto auto auto auto}.ls-loss-side{flex-direction:row;align-items:center}.ls-loss-net{flex:1}.ls-loss-net svg{max-height:110px}.ls-loss-status{margin-top:0}}
 
 .ia-chat-compose{opacity:0;transform:translateY(8px);transition:opacity .28s ease,transform .28s cubic-bezier(.22,1,.36,1);pointer-events:none}
 .ia-chat-screen.is-answering .ia-chat-compose{opacity:1;transform:none;pointer-events:auto}
@@ -1398,5 +1401,5 @@ h1,h2,h3,h4{
 
 .ls-loss-data-wrap{position:relative;height:54px;border:1px solid var(--ls-line);background:#fff;overflow:hidden}
 .ls-loss-data-wrap canvas{display:block;width:100%;height:100%}
-.ls-loss-formula{max-height:88px;overflow:auto;font-size:var(--ls-fs-micro);color:var(--ls-soft)}
+.ls-loss-formula{grid-column:1/-1;grid-row:2;max-height:104px;min-height:58px;overflow:auto;padding:4px 6px;border:1px solid rgba(0,75,111,.08);background:rgba(255,255,255,.6);font-size:var(--ls-fs-micro);color:var(--ls-soft)}
 .ls-loss-formula .ls-math{font-size:var(--ls-fs-micro)}

@@ -7,10 +7,16 @@
     el.className = "ls-loss-scene";
     el.innerHTML =
       '<div class="ls-loss-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
-      '<div class="ls-loss-side"><div class="ls-loss-net"></div><div class="ls-loss-data-wrap"><canvas class="ls-loss-data"></canvas></div><div class="ls-loss-formula"></div><div class="ls-loss-status" aria-live="polite"></div></div>' +
+      '<div class="ls-loss-side"><div class="ls-loss-net"></div><div class="ls-loss-data-wrap"><canvas class="ls-loss-data"></canvas></div><div class="ls-loss-status" aria-live="polite"></div></div>' +
+      '<div class="ls-loss-formula"></div>' +
       '<div class="ls-loss-controls">' +
+        '<div class="ls-loss-opts" role="group" aria-label="' + (DE ? "Optimierer" : "Optimizer") + '">' +
+          '<button type="button" class="ls-chip is-on" data-opt="sgd">SGD</button>' +
+          '<button type="button" class="ls-chip" data-opt="adam">Adam</button>' +
+          '<button type="button" class="ls-chip" data-opt="momentum">' + (DE ? "Momentum" : "Momentum") + '</button>' +
+        '</div>' +
         '<label class="ls-range">' + (DE ? "Lernrate" : "Learning rate") + ' <input type="range" class="ls-loss-lr" min="0.01" max="0.25" step="0.01" value="0.06"><output>0.06</output></label>' +
-        '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loss-train">' + (DE ? "Im Worker trainieren" : "Train in worker") + '</button>' +
+        '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loss-train">' + (DE ? "Neu trainieren" : "Train again") + '</button>' +
         '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loss-play">' + (DE ? "Abspielen" : "Play") + '</button>' +
         '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loss-step">' + (DE ? "Schritt" : "Step") + '</button>' +
         '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loss-reset">' + (DE ? "Zurücksetzen" : "Reset") + '</button>' +
@@ -33,7 +39,9 @@
     var C = api.colors();
     var size = null, ctx = null, data = null, worker = null;
     var yaw = -0.72, pitch = 0.86, drag = null, ball = 0, playing = false, raf = 0;
-    var minL = 0, maxL = 1;
+    var minL = 0, maxL = 1, optimizer = "sgd", formulaKey = "";
+    var optOrder = ["sgd", "adam", "momentum"];
+    var optEls = el.querySelectorAll("[data-opt]");
 
     function mix(a, b, t) {
       function rgb(h) { h = h.replace("#", ""); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
@@ -43,6 +51,13 @@
     function lossColor(t) {
       t = Math.max(0, Math.min(1, t));
       return t < 0.55 ? mix(C.green, C.gold, t / 0.55) : mix(C.gold, C.lilac, (t - 0.55) / 0.45);
+    }
+    function optColor(name) {
+      return name === "adam" ? C.gold : name === "momentum" ? C.lime : C.blue;
+    }
+    function currentTrajectory() {
+      if (!data) return [];
+      return (data.trajectories && data.trajectories[optimizer]) || data.trajectory || [];
     }
     function project(a, b, L) {
       var range = data.range || 2.4;
@@ -96,10 +111,16 @@
       c.fillStyle = C.muted; c.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       c.fillText(DE ? "Daten (x, y)" : "data (x, y)", 8, 12);
     }
-    function renderFormula() {
+    function renderFormula(cur) {
       if (!formulaEl) return;
-      var tex = '\\underbrace{\\hat y}_{\\text{' + (DE ? 'Ausgabe' : 'output') + '}} = \\underbrace{\\sum_j v_j\\tanh(w_j x+b_j)+c}_{\\text{' + (DE ? '1 \\to 4 \\to 1' : '1 \\to 4 \\to 1') + '}} \\qquad \\underbrace{L}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_i(\\hat y_i-y_i)^2}_{\\text{MSE}}';
-      formulaEl.innerHTML = '<div class="ls-math" data-tex="' + tex + '" data-tex-display="true"><code class="ls-tex-source">' + api.esc(tex) + '</code></div>';
+      var a = cur ? cur.a : 0, b = cur ? cur.b : 0, loss = cur ? cur.loss : 0;
+      var key = optimizer + "|" + ball + "|" + a.toFixed(3) + "|" + b.toFixed(3) + "|" + loss.toFixed(5);
+      if (key === formulaKey) return;
+      formulaKey = key;
+      var tex = '\\underbrace{\\theta_{\\text{jetzt}}}_{\\text{' + (DE ? ' aktueller Parameter ' : ' current parameter ') + '}} = ' +
+        '\\underbrace{\\theta_*}_{\\text{' + (DE ? 'Optimum' : 'optimum') + '}} + ' + a.toFixed(2) + '\\,\\underbrace{d_1}_{\\text{' + (DE ? 'Richtung 1' : 'direction 1') + '}} + ' + b.toFixed(2) + '\\,\\underbrace{d_2}_{\\text{' + (DE ? 'Richtung 2' : 'direction 2') + '}} ' +
+        '\\qquad \\underbrace{L(\\theta_{\\text{jetzt}})}_{\\text{' + (DE ? 'Loss hier' : 'loss here') + '}} = ' + loss.toFixed(4);
+      formulaEl.innerHTML = '<div class="ls-math" data-tex="' + api.esc(tex) + '" data-tex-display="true"><code class="ls-tex-source">' + api.esc(tex) + '</code></div>';
       if (api.typeset) { try { api.typeset(formulaEl); } catch (e) {} }
     }
     function draw() {
@@ -135,22 +156,41 @@
         ctx.globalAlpha = .16; ctx.strokeStyle = C.paper; ctx.lineWidth = .6; ctx.stroke();
       });
       ctx.globalAlpha = 1;
-      var tr = data.trajectory || [];
+      var tr = currentTrajectory();
+      // ghost paths for the other optimizers, so the difference is visible
+      optOrder.forEach(function (name) {
+        if (name === optimizer) return;
+        var other = (data.trajectories && data.trajectories[name]) || [];
+        if (other.length < 2) return;
+        ctx.beginPath();
+        other.forEach(function (p, k) {
+          var q = project(p.a, p.b, p.loss);
+          if (k === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
+        });
+        ctx.strokeStyle = optColor(name);
+        ctx.globalAlpha = 0.16;
+        ctx.lineWidth = 1.4;
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      });
+      ctx.globalAlpha = 1;
       if (tr.length > 1) {
         ctx.beginPath();
         for (var k = 0; k <= Math.min(ball, tr.length - 1); k++) {
           var q = project(tr[k].a, tr[k].b, tr[k].loss);
           if (k === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
         }
-        ctx.strokeStyle = C.green; ctx.lineWidth = 2.4; ctx.stroke();
+        ctx.strokeStyle = optColor(optimizer); ctx.lineWidth = 2.8; ctx.stroke();
       }
       if (tr.length) {
         var cur = tr[Math.min(ball, tr.length - 1)];
         var bp = project(cur.a, cur.b, cur.loss);
         ctx.beginPath(); ctx.arc(bp.x, bp.y + 5, 10, 0, Math.PI * 2); ctx.fillStyle = "rgba(0,0,0,.16)"; ctx.fill();
-        ctx.beginPath(); ctx.arc(bp.x, bp.y, 8, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
+        ctx.beginPath(); ctx.arc(bp.x, bp.y, 8, 0, Math.PI * 2); ctx.fillStyle = optColor(optimizer); ctx.fill(); ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
         ctx.fillStyle = C.ink; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
-        ctx.fillText("Loss " + cur.loss.toFixed(4), bp.x + 12, bp.y - 10);
+        ctx.fillText(optimizer.toUpperCase() + " · Loss " + cur.loss.toFixed(4), bp.x + 12, bp.y - 10);
+        renderFormula(cur);
       }
       var o = project(-data.range, -data.range, minL), ea = project(data.range, -data.range, minL), eb = project(-data.range, data.range, minL);
       ctx.strokeStyle = C.petrol; ctx.globalAlpha = .7; ctx.lineWidth = 1.2;
@@ -167,13 +207,15 @@
     }
     function updateReadout() {
       if (!data) { readout.innerHTML = '<span>' + (DE ? "Worker trainiert …" : "Worker is training …") + '</span>'; return; }
-      var cur = data.trajectory && data.trajectory[Math.min(ball, data.trajectory.length - 1)];
-      readout.innerHTML = '<span><b>Loss</b> ' + (cur ? cur.loss.toFixed(4) : data.loss.toFixed(4)) + '</span><span><b>' + (DE ? "Modell" : "model") + '</b> 1 → 4 → 1</span><span><b>' + (DE ? "Parameter" : "parameters") + '</b> ' + data.params + '</span><span><b>' + (DE ? "Schritt" : "step") + '</b> ' + ball + ' / ' + Math.max(0, data.trajectory.length - 1) + '</span>';
+      var tr = currentTrajectory();
+      var cur = tr[Math.min(ball, tr.length - 1)];
+      readout.innerHTML = '<span><b>Loss</b> ' + (cur ? cur.loss.toFixed(4) : data.loss.toFixed(4)) + '</span><span><b>' + (DE ? "Optimierer" : "optimizer") + '</b> ' + optimizer.toUpperCase() + '</span><span><b>' + (DE ? "Modell" : "model") + '</b> 1 → 4 → 1</span><span><b>' + (DE ? "Parameter" : "parameters") + '</b> ' + data.params + '</span><span><b>' + (DE ? "Schritt" : "step") + '</b> ' + ball + ' / ' + Math.max(0, tr.length - 1) + '</span>';
     }
     function updateStatus(text) { statusEl.textContent = text; }
     function startWorker() {
       if (worker) { worker.terminate(); worker = null; }
-      data = null; ball = 0; playing = false; playBtn.textContent = DE ? "Abspielen" : "Play";
+      data = null; ball = 0; optimizer = "sgd"; formulaKey = ""; playing = false; playBtn.textContent = DE ? "Abspielen" : "Play";
+      optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === optimizer); });
       updateStatus(DE ? "Trainiere im Worker …" : "Training in worker …");
       readout.innerHTML = '<span>' + (DE ? "Die Fläche wird im Hintergrund berechnet." : "The surface is computed in the background.") + '</span>';
       worker = new Worker("assets/loss-landscape-worker.js");
@@ -183,7 +225,6 @@
         updateStatus(DE ? "Fertig · Modell trainiert" : "Done · model trained");
         drawNet();
         drawData();
-        renderFormula();
         draw();
       };
       worker.onerror = function () {
@@ -207,6 +248,16 @@
       raf = requestAnimationFrame(tick);
     }
     function pause() { playing = false; if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+    optEls.forEach(function (b) {
+      b.addEventListener("click", function () {
+        if (!data) return;
+        pause();
+        optimizer = b.getAttribute("data-opt");
+        ball = 0;
+        optEls.forEach(function (x) { x.classList.toggle("is-on", x === b); });
+        draw();
+      });
+    });
     trainBtn.addEventListener("click", startWorker);
     playBtn.addEventListener("click", function () {
       if (!data) return;
@@ -234,20 +285,35 @@
       update: function () {},
       next: function () {
         if (!data) { startWorker(); return true; }
-        if (!data.trajectory.length) return false;
-        if (ball >= data.trajectory.length - 1) return false;
+        var tr = currentTrajectory();
+        if (!tr.length) return false;
         pause();
-        ball++;
-        draw();
-        return true;
+        if (ball < tr.length - 1) { ball++; draw(); return true; }
+        var oi = optOrder.indexOf(optimizer);
+        if (oi < optOrder.length - 1) {
+          optimizer = optOrder[oi + 1];
+          ball = 0;
+          optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === optimizer); });
+          draw();
+          return true;
+        }
+        return false;
       },
       prev: function () {
-        if (!data || !data.trajectory.length) return false;
-        if (ball <= 0) return false;
+        if (!data) return false;
+        var tr = currentTrajectory();
+        if (!tr.length) return false;
         pause();
-        ball--;
-        draw();
-        return true;
+        if (ball > 0) { ball--; draw(); return true; }
+        var oi = optOrder.indexOf(optimizer);
+        if (oi > 0) {
+          optimizer = optOrder[oi - 1];
+          ball = currentTrajectory().length - 1;
+          optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === optimizer); });
+          draw();
+          return true;
+        }
+        return false;
       },
       resize: resize,
       pause: pause,

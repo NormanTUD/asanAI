@@ -106,24 +106,38 @@ function sample(flat, d1, d2, data, n, range) {
   }
   return z;
 }
-function trajectory(flat, d1, d2, data, lr) {
+function trajectoryFor(opt, flat, d1, d2, data, lr) {
   var f = weightsAt(flat, d1, d2, 1.8, -1.55);
   var vel = f.map(function () { return 0; });
+  var m = f.map(function () { return 0; });
+  var v = f.map(function () { return 0; });
   var out = [];
-  for (var step = 0; step < 28; step++) {
-    var p = f.map(function (v, i) { return v - flat[i]; });
-    out.push({ a: dot(p, d1), b: dot(p, d2), loss: lossOf(unpack(f), data) });
+  for (var step = 0; step < 32; step++) {
+    var p = f.map(function (val, i) { return val - flat[i]; });
+    out.push({ a: dot(p, d1), b: dot(p, d2), loss: lossOf(unpack(f), data), w: f.slice() });
     var g = grads(unpack(f), data);
     for (var i = 0; i < f.length; i++) {
-      vel[i] = 0.85 * vel[i] - lr * 1.6 * g[i];
-      f[i] += vel[i];
+      if (opt === "sgd") {
+        f[i] -= lr * g[i];
+      } else if (opt === "momentum") {
+        vel[i] = 0.9 * vel[i] - lr * g[i];
+        f[i] += vel[i];
+      } else {
+        m[i] = 0.9 * m[i] + 0.1 * g[i];
+        v[i] = 0.999 * v[i] + 0.001 * g[i] * g[i];
+        var mh = m[i] / (1 - Math.pow(0.9, step + 1));
+        var vh = v[i] / (1 - Math.pow(0.999, step + 1));
+        f[i] -= lr * 1.6 * mh / (Math.sqrt(vh) + 1e-8);
+      }
     }
   }
-  var p = f.map(function (v, i) { return v - flat[i]; });
-  out.push({ a: dot(p, d1), b: dot(p, d2), loss: lossOf(unpack(f), data) });
+  var p = f.map(function (val, i) { return val - flat[i]; });
+  out.push({ a: dot(p, d1), b: dot(p, d2), loss: lossOf(unpack(f), data), w: f.slice() });
   return out;
 }
-
+function trajectory(flat, d1, d2, data, lr) {
+  return trajectoryFor("sgd", flat, d1, d2, data, lr);
+}
 self.onmessage = function (e) {
   if (!e.data || e.data.cmd !== "train") return;
   var data = makeData();
@@ -135,8 +149,10 @@ self.onmessage = function (e) {
   var d2 = normalize(flat.map(function () { return rand() * 2 - 1; }));
   var proj = dot(d2, d1);
   d2 = normalize(d2.map(function (v, i) { return v - proj * d1[i]; }));
-  var z = sample(flat, d1, d2, data, 21, 2.4);
-  var traj = trajectory(flat, d1, d2, data, lr);
+  var z = sample(flat, d1, d2, data, 21, 2.8);
+  var sgd = trajectoryFor("sgd", flat, d1, d2, data, lr);
+  var adam = trajectoryFor("adam", flat, d1, d2, data, lr);
+  var momentum = trajectoryFor("momentum", flat, d1, d2, data, lr);
   var best = Infinity, bestRow = 0, bestCol = 0;
   for (var i = 0; i < z.length; i++) for (var j = 0; j < z[i].length; j++) {
     if (z[i][j] < best) { best = z[i][j]; bestRow = i; bestCol = j; }
@@ -148,9 +164,10 @@ self.onmessage = function (e) {
     params: flat.length,
     loss: lossOf(o, data),
     z: z,
-    range: 2.4,
+    range: 2.8,
     best: { i: bestRow, j: bestCol, loss: best },
-    trajectory: traj,
+    trajectory: sgd,
+    trajectories: { sgd: sgd, adam: adam, momentum: momentum },
     net: o,
     xs: data.xs,
     ys: data.ys

@@ -3833,7 +3833,7 @@
         '<div class="ls-position-panel"><canvas class="ls-position-heat"></canvas><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
         '<div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div>' +
       '</div>' +
-      '<div class="ls-position-compare"><div class="ls-compare-head">' + (DE ? "Relativer Abstand im selben Satz" : "Relative distance in the same sentence") + '</div><div class="ls-compare-plot"><canvas class="ls-position-methods"></canvas></div><p class="ls-compare-note">' + (DE ? "Sinus, gelernt, ALiBi, RoPE · schematisch, keine gelernten Gewichte." : "Sinus, learned, ALiBi, RoPE · schematic, not learned weights.") + '</p></div>' +
+      '<div class="ls-position-compare"><div class="ls-compare-head">' + (DE ? "Relativer Abstand im selben Satz" : "Relative distance in the same sentence") + '</div><div class="ls-compare-plot"><canvas class="ls-position-methods"></canvas></div><p class="ls-compare-note">' + (DE ? "Sinus, ALiBi, RoPE · aus den Formeln berechnet." : "Sinus, ALiBi, RoPE · computed from the formulas.") + '</p></div>' +
       '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-pos-context" min="16" max="128" step="8" value="64"><output>64</output></label><label class="ls-range">' + (DE ? "Dimensionen" : "Dimensions") + ' <input type="range" class="ls-pos-dims" min="2" max="64" step="2" value="24"><output>24</output></label><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="10000" step="1" value="7"><output>7</output></label></div>' +
       '<div class="ls-scene-row ls-position-metric"><button type="button" class="ls-chip" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button><button type="button" class="ls-chip is-on" data-metric="angle">' + (DE ? "Winkel / Großkreis" : "Angle / great circle") + '</button><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
       '<div class="ls-position-readout" aria-live="polite"></div>';
@@ -3890,7 +3890,8 @@
       return { x: curveSize.w / 2 + x1 * s, y: curveSize.h / 2 - y2 * s, z: z2 };
     }
     function curvePoint(t) {
-      return [Math.sin(t), Math.cos(t), Math.sin(t / Math.pow(10000, 2 / 3))];
+      var d = Math.max(2, dims);
+      return [pe(t, d, 0), pe(t, d, 1), pe(t, d, Math.min(2, d - 1))];
     }
     function unit3(v) {
       var n = Math.hypot(v[0], v[1], v[2]) || 1;
@@ -3950,7 +3951,7 @@
       axisLabel([1.28, 0, 0], "x", Cc.blue);
       axisLabel([0, 1.28, 0], "y", Cc.green);
       axisLabel([0, 0, 1.28], "z", Cc.gold);
-      var maxT = Math.max(1.6, posAnim * 0.14);
+      var maxT = Math.max(1.6, posAnim);
       var steps = Math.max(260, Math.min(2200, Math.ceil(maxT * 2)));
       var prev = null;
       for (k = 0; k <= steps; k++) {
@@ -3975,7 +3976,7 @@
       ctx.beginPath(); ctx.arc(o.x, o.y, 10, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
       ctx.fillStyle = Cc.soft; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "center";
       ctx.fillText(DE ? "Wort" : "word", o.x, o.y + 22);
-      var cur = curvePoint(posAnim * 0.14);
+      var cur = curvePoint(posAnim);
       if (metric === "angle") cur = unit3(cur);
       var cp = P(cur);
       var chord = P([0, 0, 0]);
@@ -4031,11 +4032,29 @@
       var plotW = Math.max(10, w - padL - padR), plotH = Math.max(10, h - padT - padB);
       ctx.strokeStyle = Cc.line; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + plotH); ctx.lineTo(padL + plotW, padT + plotH); ctx.stroke();
+      var md = Math.min(24, Math.max(2, dims));
+      function pvec(p) {
+        var out = [];
+        for (var i = 0; i < md; i++) out.push(pe(p, md, i));
+        return out;
+      }
+      function pdist(a, b) {
+        var sum = 0;
+        for (var i = 0; i < a.length; i++) sum += (a[i] - b[i]) * (a[i] - b[i]);
+        return Math.sqrt(sum / a.length);
+      }
+      var base = pvec(0);
       var series = [
-        { name: "Sinus", color: Cc.blue, f: function (d) { return 0.5 + 0.5 * Math.cos(2 * Math.PI * d / 16); } },
-        { name: DE ? "gelernt" : "learned", color: Cc.lime, f: function (d) { return Math.exp(-d / 10); } },
+        { name: "Sinus", color: Cc.blue, f: function (d) { return Math.min(1, pdist(base, pvec(d))); } },
         { name: "ALiBi", color: Cc.gold, f: function (d) { return 1 - d / 32; } },
-        { name: "RoPE", color: Cc.green, f: function (d) { return 0.5 + 0.25 * Math.cos(2 * Math.PI * d / 32) + 0.25 * Math.cos(2 * Math.PI * d / 16); } }
+        { name: "RoPE", color: Cc.green, f: function (d) {
+          var sum = 0, pairs = Math.max(1, Math.floor(md / 2));
+          for (var i = 0; i < pairs; i++) {
+            var theta = 1 / Math.pow(10000, (2 * i) / md);
+            sum += Math.cos(theta * d);
+          }
+          return 0.5 + 0.5 * sum / pairs;
+        } }
       ];
       series.forEach(function (ser) {
         ctx.strokeStyle = ser.color; ctx.lineWidth = 2; ctx.beginPath();
@@ -4097,7 +4116,7 @@
     });
     window.addEventListener("pointerup", function () { drag = null; });
     contextEl.addEventListener("input", function () { context = parseInt(contextEl.value, 10); contextEl.nextElementSibling.textContent = String(context); drawHeat(); });
-    dimsEl.addEventListener("input", function () { dims = parseInt(dimsEl.value, 10); dimsEl.nextElementSibling.textContent = String(dims); drawHeat(); drawCurve(); });
+    dimsEl.addEventListener("input", function () { dims = parseInt(dimsEl.value, 10); dimsEl.nextElementSibling.textContent = String(dims); drawHeat(); drawCurve(); drawMethods(); });
     posEl.addEventListener("input", function () { pos = parseInt(posEl.value, 10); posEl.nextElementSibling.textContent = String(pos); draw(); });
     el.querySelectorAll("[data-metric]").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -4276,7 +4295,7 @@
     };
     var context = "none";
     var selected = contexts[0].bank;
-    var causal = false;
+    var causal = true;
     var el = document.createElement("div");
     el.className = "ls-att-scene";
     el.innerHTML =
@@ -4285,9 +4304,9 @@
       '<div class="ls-att-vector"><canvas class="ls-att-vector-canvas" role="img"></canvas></div>' +
       '<div class="ls-att-matrix" aria-live="polite"></div>' +
       '<div class="ls-att-formula" aria-live="polite"></div>' +
-      '<details class="ls-att-mask"><summary>' + (DE ? "Causal Mask" : "Causal mask") + '</summary>' +
-        '<label><input type="checkbox" class="ls-att-causal"> ' + (DE ? "nur vergangene Tokens beachten" : "attend only to past tokens") + '</label>' +
-        '<p>' + (DE ? "Wähle ein früheres Wort in der Tabelle, um den Unterschied zu sehen. Beim letzten Token ändert die Maske nichts." : "Select an earlier word in the table to see the difference. On the last token the mask changes nothing.") + '</p>' +
+      '<details class="ls-att-mask" open><summary>' + (DE ? "Causal Mask" : "Causal mask") + '</summary>' +
+        '<label><input type="checkbox" class="ls-att-causal" checked> ' + (DE ? "nur vergangene Tokens beachten" : "attend only to past tokens") + '</label>' +
+        '<p>' + (DE ? "Das obere Dreieck in der Matrix ist die kausale Maske. Sie sorgt dafür, dass Tokens nur die Vergangenheit sehen können, damit sie lernen, Sätze zu vervollständigen, deren Ende sie noch nicht kennen." : "The upper triangle in the matrix is the causal mask. It makes tokens see only the past, so they learn to complete sentences whose end they do not yet know.") + '</p>' +
       '</details>' +
       '<div class="ls-att-readout" aria-live="polite"></div>';
     root.appendChild(el);
@@ -4299,6 +4318,7 @@
     var matrixEl = el.querySelector(".ls-att-matrix");
     var formulaEl = el.querySelector(".ls-att-formula");
     var causalEl = el.querySelector(".ls-att-causal");
+    causalEl.checked = true;
     var readout = el.querySelector(".ls-att-readout");
     var C = api.colors();
     var graphSize = null, vectorSize = null, graphHits = [];
@@ -4366,7 +4386,7 @@
     function formulaLabel(tok) {
       if (DE && tok === "Fluss+Geld") return "Fluss + Geld";
       if (!DE && tok === "money+river") return "money + river";
-      if (tok === ".") return DE ? "Satzzeichen" : "period";
+      if (tok === ".") return "v_Punkt";
       return tok;
     }
     function escAttr(value) {
@@ -4436,7 +4456,18 @@
       ctx.fillText(DE ? "Zeile = Frage, Spalte = Antwort" : "row = query, column = key", w - pad, 16);
       var selX = px[selected], y0 = y - 15;
       row.forEach(function (wt, j) {
-        if (j === selected || wt < 0.005) return;
+        if (wt < 0.005) return;
+        if (j === selected) {
+          var lr = 9 + 16 * wt;
+          ctx.strokeStyle = C.blue;
+          ctx.globalAlpha = 0.24 + Math.min(0.62, wt);
+          ctx.lineWidth = 1.8 + wt * 6;
+          ctx.beginPath();
+          ctx.arc(selX, y0 - 7, lr, Math.PI * 1.08, Math.PI * 1.92);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+          return;
+        }
         var x1 = px[j];
         var mid = (selX + x1) / 2;
         var cy = Math.max(30, y - 38 - 115 * wt);
@@ -5612,49 +5643,139 @@
     var DE = api.lang === "de";
     var el = document.createElement("div");
     el.className = "ls-manifold-scene";
-    el.innerHTML = '<div id="ls-dual-manifolds" class="ls-dual-manifolds"><div class="tm-manifold-loading"><span class="tm-spinner" aria-hidden="true"></span><span>' + (DE ? "Lade die Mannigfaltigkeiten …" : "Loading the manifolds …") + '</span></div></div><div id="ls-dual-controls" class="ls-dual-controls"></div>';
+    el.innerHTML = '<div class="ls-dual-manifolds"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<p class="ls-vr-note">' + (DE ? "Vietoris–Rips: zwei Punkte sind verbunden, wenn ihr Abstand unter der Schwelle liegt. Die Form entsteht aus den Punkten, nicht aus einer Fläche." : "Vietoris–Rips: two points are connected when their distance is below the threshold. The shape comes from the points, not from a surface.") + '</p>';
     root.appendChild(el);
-    var next = document.createElement("div");
-    next.className = "ls-scene-row";
-    var nextBtn = document.createElement("button");
-    nextBtn.type = "button";
-    nextBtn.className = "ls-btn ls-btn--primary ls-btn--tiny";
-    nextBtn.textContent = DE ? "Weiter →" : "Next →";
-    nextBtn.addEventListener("click", function () {
-      if (!window.LearnSys) return;
-      var st = LearnSys.state();
-      LearnSys.go(st.day, st.step + 1);
-    });
-    next.appendChild(nextBtn);
-    el.appendChild(next);
-    var drawn = false;
-    function draw() {
-      if (drawn) return;
-      if (!window.ManifoldScenes) { setTimeout(draw, 120); return; }
-      if (!window.Plotly) {
-        if (!window.__tmPlotlyLoading) {
-          window.__tmPlotlyLoading = true;
-          var script = document.createElement("script");
-          script.src = "../plotly-2.24.1.min.js";
-          script.onload = function () { window.__tmPlotlyLoading = false; draw(); };
-          script.onerror = function () { window.__tmPlotlyLoading = false; };
-          document.head.appendChild(script);
-        } else {
-          setTimeout(draw, 120);
-        }
-        return;
-      }
-      drawn = true;
-      try { window.ManifoldScenes.renderDualPlotly("ls-dual-manifolds", "ls-dual-controls"); } catch (e) {}
+    var stage = el.querySelector(".ls-dual-manifolds");
+    var canvas = el.querySelector("canvas");
+    var C = api.colors();
+    var size = null, yaw = -0.58, pitch = 0.42, zoom = 1, drag = null;
+    var radius = 0.62;
+    function rng(seed) {
+      return function () {
+        seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+        var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
     }
-    setTimeout(draw, 30);
+    function cloud(seed, cx, flip) {
+      var r = rng(seed), pts = [];
+      for (var i = 0; i < 26; i++) {
+        var u = r() * 2 - 1, v = r() * 2 - 1;
+        if (u * u + v * v > 1) { i--; continue; }
+        var z = 0.22 * Math.sin(2.2 * u + 0.7) + 0.16 * Math.cos(2.4 * v - 0.5);
+        if (flip) z = -z * 0.9 + 0.16 * u * v;
+        pts.push({ p: [cx + u * 1.18, v * 0.72, z], u: u, v: v });
+      }
+      return pts;
+    }
+    var en = cloud(11, -0.84, false);
+    var jp = cloud(29, 0.84, true);
+    var labels = [
+      { a: 4, b: 3, ea: "bank", eb: "銀行" },
+      { a: 11, b: 9, ea: "river", eb: "川" },
+      { a: 18, b: 17, ea: "money", eb: "お金" }
+    ];
+    function project(p) {
+      var x = p[0], y = p[1], z = p[2];
+      var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+      var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
+      var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
+      var s = Math.min(size.w * 0.44, size.h * 0.46) / (1 + z2 * 0.22) * zoom;
+      return { x: size.w / 2 + x1 * s, y: size.h / 2 - y2 * s, z: z2 };
+    }
+    function edgeSet(pts) {
+      var out = [];
+      for (var i = 0; i < pts.length; i++) {
+        for (var j = i + 1; j < pts.length; j++) {
+          var a = pts[i].p, b = pts[j].p;
+          if (Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) <= radius) out.push({ a: a, b: b, z: (a[2] + b[2]) / 2 });
+        }
+      }
+      return out;
+    }
+    function drawCloud(ctx, pts, edges, col) {
+      edges.sort(function (a, b) { return a.z - b.z; });
+      edges.forEach(function (e) {
+        var a = project(e.a), b = project(e.b);
+        ctx.strokeStyle = col;
+        ctx.globalAlpha = 0.10 + 0.26 * (1 - (e.z + 1) / 2);
+        ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+      var ps = pts.map(function (q) { return { p: q.p, q: project(q.p) }; }).sort(function (a, b) { return a.q.z - b.q.z; });
+      ps.forEach(function (o) {
+        ctx.beginPath(); ctx.arc(o.q.x, o.q.y, 3.1, 0, Math.PI * 2);
+        ctx.fillStyle = col; ctx.fill();
+        ctx.strokeStyle = C.paper; ctx.lineWidth = 1; ctx.stroke();
+      });
+      return pts.map(function (q) { return project(q.p); });
+    }
+    function drawLabels(ctx) {
+      labels.forEach(function (l) {
+        var pe = en[l.a], pj = jp[l.b];
+        if (!pe || !pj) return;
+        var a = project(pe.p), b = project(pj.p);
+        ctx.save();
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = C.gold;
+        ctx.globalAlpha = 0.72;
+        ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        ctx.restore();
+        ctx.fillStyle = C.ink;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(l.ea, a.x, a.y - 8);
+        ctx.fillText(l.eb, b.x, b.y - 8);
+      });
+    }
+    function draw() {
+      if (!size) return;
+      var ctx = size.ctx, w = size.w, h = size.h;
+      ctx.clearRect(0, 0, w, h);
+      var bg = ctx.createRadialGradient(w * 0.5, h * 0.42, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.7);
+      bg.addColorStop(0, "rgba(247,250,249,.92)");
+      bg.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+      var enE = edgeSet(en), jpE = edgeSet(jp);
+      drawCloud(ctx, en, enE, C.blue);
+      drawCloud(ctx, jp, jpE, C.green);
+      drawLabels(ctx);
+      ctx.fillStyle = C.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left"; ctx.fillText(DE ? "Englisch" : "English", 12, 18);
+      ctx.textAlign = "right"; ctx.fillStyle = C.muted; ctx.fillText(DE ? "Japanisch" : "Japanese", w - 12, 18);
+      canvas.setAttribute("aria-label", DE
+        ? "Zwei Punktwolken mit Vietoris–Rips-Kanten: englische Wörter links, japanische rechts, Korrespondenzen als gestrichelte Linien."
+        : "Two point clouds with Vietoris–Rips edges: English words left, Japanese right, correspondences as dashed lines.");
+    }
+    function resize() {
+      size = api.fit(canvas, stage);
+      draw();
+    }
+    canvas.addEventListener("pointerdown", function (e) { drag = { x: e.clientX, y: e.clientY }; canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId); });
+    canvas.addEventListener("pointermove", function (e) {
+      if (!drag) return;
+      yaw += (e.clientX - drag.x) * 0.008;
+      pitch = Math.max(-1.2, Math.min(1.2, pitch + (e.clientY - drag.y) * 0.006));
+      drag = { x: e.clientX, y: e.clientY };
+      draw();
+    });
+    canvas.addEventListener("pointerup", function () { drag = null; });
+    canvas.addEventListener("wheel", function (e) {
+      e.preventDefault();
+      zoom = Math.max(0.6, Math.min(2.1, zoom * (e.deltaY > 0 ? 0.94 : 1.06)));
+      draw();
+    }, { passive: false });
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    resize();
     return {
       update: function () {},
-      resize: function () {
-        var d = document.getElementById("ls-dual-manifolds");
-        if (d && window.Plotly && d.data) { try { Plotly.Plots.resize(d); } catch (e) {} }
-      },
-      destroy: function () { el.remove(); }
+      resize: resize,
+      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
     };
   }
 
@@ -8039,11 +8160,23 @@
       if (!size) return;
       ctx = size.ctx;
       var w = size.w, h = size.h;
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
       var pad = 28;
       function X(n) { return pad + n.x * (w - pad * 2); }
       function Y(n) { return pad + n.y * (h - pad * 2); }
+      ctx.clearRect(0, 0, w, h);
+      var bg = ctx.createRadialGradient(w * 0.5, h * 0.48, 10, w * 0.5, h * 0.5, Math.max(w, h) * 0.75);
+      bg.addColorStop(0, "rgba(252,253,252,1)");
+      bg.addColorStop(0.62, "rgba(247,250,249,.96)");
+      bg.addColorStop(1, "rgba(255,255,255,.72)");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = C.line;
+      for (var gx = pad; gx < w - pad; gx += 26) {
+        for (var gy = pad; gy < h - pad; gy += 26) {
+          ctx.globalAlpha = 0.22;
+          ctx.fillRect(gx, gy, 1.1, 1.1);
+        }
+      }
+      ctx.globalAlpha = 1;
       var tt = t;
       var a0 = clamp01(1 - Math.abs(tt - 0));
       var a1 = clamp01(1 - Math.abs(tt - 1));
@@ -8054,55 +8187,124 @@
       var u1 = clamp01(tt - 1);
       var u2 = clamp01(tt - 2);
       var u3 = clamp01(tt - 3);
+      function glow(x, y, r, col, alpha) {
+        ctx.save();
+        ctx.shadowColor = col;
+        ctx.shadowBlur = r * 2.6;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = col; ctx.globalAlpha = alpha; ctx.fill();
+        ctx.restore();
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(255,255,255,.9)"; ctx.lineWidth = 1; ctx.globalAlpha = alpha; ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+      function ring(x, y, r, col, alpha) {
+        ctx.save();
+        ctx.strokeStyle = col; ctx.globalAlpha = alpha; ctx.lineWidth = 1.1;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      }
+      // fibres: the same structure survives every compression level
+      nodes.forEach(function (n) {
+        var x0 = X({ x: n.x0 }), y0 = Y({ y: n.y0 });
+        var cc = clusterCenters[n.c];
+        var sc = superCenters[Math.floor(n.c / 3)];
+        var x1 = X(cc), y1 = Y(cc), x2 = X(sc), y2 = Y(sc), x3 = X(center), y3 = Y(center);
+        ctx.strokeStyle = n.col;
+        ctx.globalAlpha = 0.045 + 0.035 * (1 - Math.min(1, tt / 4));
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);
+        ctx.quadraticCurveTo((x0 + x1) / 2, (y0 + y1) / 2 - 6, x1, y1);
+        ctx.quadraticCurveTo((x1 + x2) / 2, (y1 + y2) / 2 - 8, x2, y2);
+        ctx.quadraticCurveTo((x2 + x3) / 2, (y2 + y3) / 2 - 6, x3, y3);
+        ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
       if (tt < 1.4) {
-        var crossAlpha = Math.max(0, 0.24 * (1 - tt));
+        var crossAlpha = Math.max(0, 0.28 * (1 - tt));
         edges.forEach(function (e) {
           var a = nodes[e.a], b = nodes[e.b];
           var ax = lerp(a.x0, clusterCenters[a.c].x, u0), ay = lerp(a.y0, clusterCenters[a.c].y, u0);
           var bx = lerp(b.x0, clusterCenters[b.c].x, u0), by = lerp(b.y0, clusterCenters[b.c].y, u0);
+          var pa = { x: X({x:ax}), y: Y({y:ay}) }, pb = { x: X({x:bx}), y: Y({y:by}) };
           ctx.strokeStyle = e.same ? a.col : C.muted;
-          ctx.globalAlpha = e.same ? 0.22 * a0 : crossAlpha;
-          ctx.lineWidth = e.same ? 0.9 : 0.55;
-          ctx.beginPath(); ctx.moveTo(X({x:ax}), Y({y:ay})); ctx.lineTo(X({x:bx}), Y({y:by})); ctx.stroke();
+          ctx.globalAlpha = e.same ? 0.26 * a0 : crossAlpha;
+          ctx.lineWidth = e.same ? 1 : 0.55;
+          ctx.beginPath();
+          ctx.moveTo(pa.x, pa.y);
+          ctx.quadraticCurveTo((pa.x + pb.x) / 2 + (e.same ? 0 : 5), (pa.y + pb.y) / 2 - 4, pb.x, pb.y);
+          ctx.stroke();
         });
         ctx.globalAlpha = 1;
         if (a0 > 0.01) nodes.forEach(function (n) {
           var x = lerp(n.x0, clusterCenters[n.c].x, u0), y = lerp(n.y0, clusterCenters[n.c].y, u0);
-          point(X({x:x}), Y({y:y}), 2.4, n.col, a0 * 0.9);
+          glow(X({x:x}), Y({y:y}), 2.4, n.col, a0 * 0.9);
         });
       }
       if (a1 > 0.01) {
         clusterCenters.forEach(function (cc, i) {
           var x = lerp(cc.x, superCenters[Math.floor(i / 3)].x, u1);
           var y = lerp(cc.y, superCenters[Math.floor(i / 3)].y, u1);
-          point(X({x:x}), Y({y:y}), 5.2, palette[i % palette.length], a1);
+          ring(X({x:x}), Y({y:y}), 8, palette[i % palette.length], a1 * 0.6);
+          glow(X({x:x}), Y({y:y}), 5.2, palette[i % palette.length], a1);
         });
       }
       if (a2 > 0.01) {
         superCenters.forEach(function (sp) {
           var x = lerp(sp.x, center.x, u2), y = lerp(sp.y, center.y, u2);
-          point(X({x:x}), Y({y:y}), 7.5, C.petrol, a2);
+          ring(X({x:x}), Y({y:y}), 12, C.petrol, a2 * 0.55);
+          glow(X({x:x}), Y({y:y}), 7.5, C.petrol, a2);
         });
       }
-      if (a3 > 0.01) point(X(center), Y(center), 10, C.green, a3);
+      if (a3 > 0.01) {
+        var cx0 = X(center), cy0 = Y(center);
+        ring(cx0, cy0, 17, C.gold, a3 * 0.62);
+        ring(cx0, cy0, 24, C.gold, a3 * 0.26);
+        glow(cx0, cy0, 10, C.green, a3);
+      }
       if (a4 > 0.01) {
+        var cx = X(center), cy = Y(center);
+        ring(cx, cy, 20, C.gold, a4 * 0.55);
+        ring(cx, cy, 31, C.gold, a4 * 0.28);
+        ctx.save();
+        ctx.strokeStyle = C.gold; ctx.globalAlpha = a4 * 0.52; ctx.lineWidth = 1.3;
+        ctx.setLineDash([4, 4]);
         outer.forEach(function (op) {
-          ctx.strokeStyle = C.gold;
-          ctx.globalAlpha = a4 * 0.5;
-          ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.moveTo(X(center), Y(center)); ctx.lineTo(X(op), Y(op)); ctx.stroke();
-          point(X(op), Y(op), 4.2, C.gold, a4);
+          var ox = X(op), oy = Y(op);
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.quadraticCurveTo((cx + ox) / 2, (cy + oy) / 2 - 10, ox, oy); ctx.stroke();
         });
+        ctx.restore();
+        outer.forEach(function (op) { glow(X(op), Y(op), 4.2, C.gold, a4); });
+        // one unseen case: the compressed rule reaches a point that was never stored
+        var nw = { x: center.x + 0.30, y: center.y + 0.24 };
+        var nx = X(nw), ny = Y(nw);
+        ctx.save();
+        ctx.strokeStyle = C.green; ctx.globalAlpha = a4 * 0.8; ctx.lineWidth = 1.6;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.quadraticCurveTo((cx + nx) / 2, (cy + ny) / 2 - 14, nx, ny); ctx.stroke();
+        ctx.restore();
+        glow(nx, ny, 6, C.green, a4);
+        ctx.fillStyle = C.green; ctx.globalAlpha = a4;
+        ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(DE ? "neuer Fall" : "new case", nx, ny + 22);
         ctx.globalAlpha = 1;
-        point(X(center), Y(center), 10, C.green, a4);
+        ctx.fillStyle = C.muted;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(DE ? "eine Regel, viele Fälle" : "one rule, many cases", cx, cy + 46);
       }
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left";
-      var label = tt < 0.5 ? (DE ? "144 Knoten · dichtes Netz" : "144 nodes · dense graph") : tt < 1.5 ? (DE ? "12 Subcluster" : "12 subclusters") : tt < 2.5 ? (DE ? "4 Gruppen" : "4 groups") : tt < 3.5 ? (DE ? "1 Punkt" : "1 point") : (DE ? "wieder Punkte, wieder verbunden" : "points again, connected");
+      var label = tt < 0.5 ? (DE ? "144 Knoten · dichtes Netz" : "144 nodes · dense graph") : tt < 1.5 ? (DE ? "12 Subcluster" : "12 subclusters") : tt < 2.5 ? (DE ? "4 Gruppen" : "4 groups") : tt < 3.5 ? (DE ? "1 Punkt" : "1 point") : (DE ? "eine universelle Regel" : "one universal rule");
       ctx.fillText(label, pad, 18);
       ctx.textAlign = "right";
       ctx.fillText(DE ? "Weiter = verdichten" : "next = compress", w - pad, 18);
+      ctx.textAlign = "left";
+      ctx.fillStyle = C.petrol;
+      ctx.fillText(DE ? "Struktur bleibt · Details fallen" : "structure stays · details fall", pad, h - 8);
       updateReadout();
     }
     function updateReadout() {

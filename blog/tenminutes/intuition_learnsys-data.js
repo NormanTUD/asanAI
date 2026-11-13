@@ -276,7 +276,7 @@
         box("pos-4", "Geometrie", "Was zeigt der Plot?", "Die Demo nutzt die Großkreis-Metrik: Richtungen zählen, nicht Längen. Die Länge im Plot ist der Großkreis zwischen Wort und Positionsvektor. Im hochdimensionalen Raum entstehen daraus Muster, die das Modell lernen kann, um so etwas wie „Drache an Position 5“ oder „Drache an Position 22“ zu kodieren."),
         box("pos-5", "Grenze", "Was ist vereinfacht?", "Die Demo zeigt nur wenige Dimensionen und eine sinusförmige Kodierung. RoPE rotiert Query/Key statt des Token-Vektors. Die gezeigten Muster sind eine Intuition, nicht die exakte Implementierung."),
         box("pos-6", "Detail", "Was passiert mit der Position danach?", "Ab dem Moment, in dem die Position zum Token gehört, bekommt jede folgende Schicht nur noch diese Version. Sie wird nicht mehr herausgeworfen. Das Token ist dann nicht mehr nur „Drache“, sondern „Drache an dieser Position“; die Varianten werden für das Netz unterscheidbar."),
-        box("pos-7", "Vergleich", "Sinus, gelernt, ALiBi, RoPE", "Sinus nutzt feste Wellen; gelernte absolute Positionen sind flexibel, aber an Trainingspositionen gebunden; ALiBi bestraft Distanz linear; RoPE dreht Query/Key und macht relative Abstände als Rotation sichtbar. Das Diagramm ist schematisch, keine Messung eines bestimmten Modells.")
+        box("pos-7", "Vergleich", "Sinus, ALiBi, RoPE", "Sinus nutzt feste Wellen; ALiBi bestraft Distanz linear; RoPE dreht Query/Key und macht relative Abstände als Rotation sichtbar. Das Diagramm berechnet die drei Kurven direkt aus ihren Formeln. Gelernte absolute Positionen fehlen, weil dafür die Gewichte eines konkreten Modells nötig wären.")
       ],
       sources: [
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
@@ -302,7 +302,7 @@
         box("pos-4", "Geometry", "What does the plot show?", "The demo uses the great-circle metric: directions matter, not lengths. The length in the plot is the great circle between the word and the position vector. In high-dimensional space this creates patterns the model can learn, to encode something like “dragon at position 5” or “dragon at position 22”."),
         box("pos-5", "Limit", "What is simplified?", "The demo shows only a few dimensions and a sinusoidal encoding. RoPE rotates query/key instead of the token vector. The patterns shown are an intuition, not the exact implementation."),
         box("pos-6", "Detail", "What happens to the position afterwards?", "From the moment the position belongs to the token, every following layer receives only that version. It is never thrown away again. The token is no longer just “dragon”; it is “dragon at this position”, and the variants become distinguishable to the network."),
-        box("pos-7", "Comparison", "Sinus, learned, ALiBi, RoPE", "Sinus uses fixed waves; learned absolute positions are flexible but tied to training positions; ALiBi penalises distance linearly; RoPE rotates query/key and makes relative distances visible as rotation. The chart is schematic, not a measurement of a specific model.")
+        box("pos-7", "Comparison", "Sinus, ALiBi, RoPE", "Sinus uses fixed waves; ALiBi penalises distance linearly; RoPE rotates query/key and makes relative distances visible as rotation. The chart computes the three curves directly from their formulas. Learned absolute positions are omitted because they need the weights of a specific model.")
       ],
       sources: [
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
@@ -321,7 +321,7 @@
       body: "Woher weiß ein Wort, welche Nachbarn wichtig sind? Self-Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen. So bewegt sich „Bank“ in Richtung Geld oder Park. Klicke ein beliebiges Wort an, um seine Zeile zu sehen. Ein echter Layer hat viele Heads; die Demo zeigt einen.",
       watch: "Klicke ein Wort an. Welche Nachbarn bekommen Aufmerksamkeit?",
       demoState: { scene: "attention", context: "none" },
-      context: "Ohne eindeutigen Kontext bleibt die Bank in der Mitte, mehrdeutig. Mit Geld oder Park verschiebt sich der Vektor.",
+      context: "Ohne eindeutigen Kontext bleibt die Bank in der Mitte, mehrdeutig. Mit Geld oder Park verschiebt sich der Vektor. Das obere Dreieck in der Matrix ist die kausale Maske: Jedes Token sieht nur die Vergangenheit, damit das Modell lernt, Sätze zu vervollständigen, deren Ende es noch nicht kennt.",
       deep: "Ein echter Head berechnet Query-, Key- und Value-Vektoren, macht aus den Skalarprodukten mit Softmax Gewichte und summiert die Values. Die Demo zeigt die Bewegung, nicht die volle Rechnung.",
       boxes: [
         box("att-1", "Technik", "Warum drei Vektoren?", "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen."),
@@ -385,7 +385,7 @@
       body: "How does a word know which neighbours matter? Self-attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the money or park reading. Click any word to see its row. A real layer has many heads; the demo shows one.",
       watch: "Click a word. Which neighbours receive attention?",
       demoState: { scene: "attention", context: "none" },
-      context: "With no unambiguous context, the bank stays in the middle, ambiguous. With money or park, the vector shifts.",
+      context: "With no unambiguous context, the bank stays in the middle, ambiguous. With money or park, the vector shifts. The upper triangle in the matrix is the causal mask: each token sees only the past, so the model learns to complete sentences whose end it does not yet know.",
       deep: "A real head computes query, key, and value vectors, turns their dot products into weights with softmax, and sums the values. The demo shows the movement, not the full arithmetic.",
       boxes: [
         box("att-1", "Technique", "Why three vectors?", "Because searching and describing are two different roles. A pronoun can look for a noun without itself looking like a noun."),
@@ -719,16 +719,16 @@
     {
       kicker: "07 / Die Übertragung",
       title: "Von Beziehungen zur Übersetzung",
-      body: "Beziehungen untereinander können Bedeutung enthalten. Im vereinfachten Token-Raum liegen englische und japanische Wörter so ähnlich zueinander, dass man die eine Fläche durch Drehen und Verschieben in die andere überführen kann. So kann man sich Maschinenübersetzung grob vorstellen: Eine Bedeutungsfläche wird auf eine andere abgebildet. In einem echten Modell sind diese Flächen abstrakt und viel komplexer.",
-      watch: "Drehe und verschiebe die Flächen. Welche Wörter bleiben in Korrespondenz?",
+      body: "Beziehungen untereinander können Bedeutung enthalten. Im vereinfachten Token-Raum liegen englische und japanische Wörter so ähnlich zueinander, dass man die eine Punktwolke in die andere überführen kann. Die Form entsteht aus den Punkten: Zwei Punkte werden verbunden, wenn ihr Abstand unter einer Schwelle liegt (Vietoris–Rips). So kann man sich Maschinenübersetzung grob vorstellen: Eine Bedeutungsform wird auf eine andere abgebildet. In einem echten Modell sind diese Formen abstrakt und viel komplexer.",
+      watch: "Drehe die Punktwolke. Welche Punkte sind verbunden, welche Wörter bleiben in Korrespondenz?",
       demoState: { scene: "manifold" },
-      context: "Die Demo ist stark vereinfacht: zwei glatte Flächen, wenige Wörter, saubere Linien. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen.",
+      context: "Die Demo ist stark vereinfacht: zwei Punktwolken, wenige Wörter, saubere Kanten. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen; der Vietoris–Rips-Komplex macht nur die Nachbarschaften sichtbar.",
       deep: "Eine Mannigfaltigkeit ist lokal flach und global gekrümmt: In kleinen Ausschnitten sieht sie aus wie eine Ebene, als Ganzes kann sie sich biegen. Die Übersetzung entspricht einer Abbildung zwischen zwei solchen Flächen.",
       boxes: [
-        box("man-1", "Technik", "Was zeigt die Demo?", "Zwei gekrümmte Flächen für Englisch und Japanisch, Korrespondenzlinien zwischen Wörtern und Übersetzungspfade. Die Kontrollen drehen, trennen und richten die Flächen aus."),
-        box("man-2", "Grenze", "Was ist vereinfacht?", "Die Flächen sind glatt und die Wörter sauber platziert. Ein echtes Embedding hat Tausende Dimensionen und viele überlappende Beziehungen."),
-        box("man-3", "Grenze", "Wie echt ist die Übersetzung?", "Die Demo zeigt eine Idee, keine Messung. Ein echtes Modell lernt die Abbildung aus Text; die Flächen sind abstrakt und für Menschen schwer zu sehen."),
-        box("man-4", "Mathematik", "Was ist eine Mannigfaltigkeit?", "Eine Mannigfaltigkeit ist ein Raum, der lokal wie R^n aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im R^n abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus.")
+        box("man-1", "Technik", "Was zeigt die Demo?", "Zwei Punktwolken für Englisch und Japanisch. Innerhalb jeder Wolke sind Punkte verbunden, wenn ihr Abstand unter der Schwelle liegt; gestrichelte Linien markieren Wortkorrespondenzen. Du kannst die Ansicht drehen und zoomen."),
+        box("man-2", "Grenze", "Was ist vereinfacht?", "Die Punktwolken sind klein und die Wörter sauber platziert. Ein echtes Embedding hat Tausende Dimensionen und viele überlappende Beziehungen; die Kanten zeigen nur eine Nachbarschaft, nicht die ganze Geometrie."),
+        box("man-3", "Grenze", "Wie echt ist die Übersetzung?", "Die Demo zeigt eine Idee, keine Messung. Ein echtes Modell lernt die Abbildung aus Text; die Formen sind abstrakt und für Menschen schwer zu sehen."),
+        box("man-4", "Mathematik", "Was ist eine Mannigfaltigkeit?", "Eine Mannigfaltigkeit ist ein Raum, der lokal wie R^n aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im R^n abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus. Der Vietoris–Rips-Komplex ist eine diskrete Näherung: Er verbindet Punkte bis zu einem Radius und macht so Nachbarschaften sichtbar.")
       ],
       sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }, { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087", why: { de: "Übertragung zwischen Worträumen ohne parallele Daten.", en: "Transport between word spaces without parallel data." } }, { label: "Morris (2007), Topology Without Tears", url: "https://archive.org/details/topbook", why: { de: "Topologische Grundlage für Mannigfaltigkeiten.", en: "Topological background for manifolds." } }]
     }
@@ -736,16 +736,16 @@
     {
       kicker: "07 / Transport",
       title: "From relations to translation",
-      body: "Relations among each other can carry meaning. In the simplified token space, English and Japanese words sit so similarly that one surface can be turned and shifted into the other. That is a rough picture of machine translation: a meaning surface is mapped onto another. In a real model these surfaces are abstract and much more complex.",
-      watch: "Rotate and shift the surfaces. Which words stay in correspondence?",
+      body: "Relations among each other can carry meaning. In the simplified token space, English and Japanese words sit so similarly that one point cloud can be carried into the other. The shape comes from the points: two points are connected when their distance is below a threshold (Vietoris–Rips). That is a rough picture of machine translation: one meaning shape is mapped onto another. In a real model these shapes are abstract and much more complex.",
+      watch: "Rotate the point cloud. Which points are connected, and which words stay in correspondence?",
       demoState: { scene: "manifold" },
-      context: "The demo is strongly simplified: two smooth surfaces, few words, clean lines. The real geometry has thousands of dimensions and overlapping relations.",
+      context: "The demo is strongly simplified: two point clouds, few words, clean edges. The real geometry has thousands of dimensions and overlapping relations; the Vietoris–Rips complex only makes neighbourhoods visible.",
       deep: "A manifold is locally flat and globally curved: in small patches it looks like a plane, as a whole it can bend. Translation corresponds to a map between two such surfaces.",
       boxes: [
-        box("man-1", "Technique", "What does the demo show?", "Two curved surfaces for English and Japanese, correspondence lines between words, and translation paths. The controls rotate, separate, and align the surfaces."),
-        box("man-2", "Limit", "What is simplified?", "The surfaces are smooth and the words are neatly placed. A real embedding has thousands of dimensions and many overlapping relations."),
-        box("man-3", "Limit", "How real is the translation?", "The demo shows an idea, not a measurement. A real model learns the map from text; the surfaces are abstract and hard for humans to see."),
-        box("man-4", "Mathematics", "What is a manifold?", "A manifold is a space that locally looks like R^n: every point has a chart that maps a neighbourhood onto an open set in R^n, and the charts change smoothly. Globally the space can be curved, for example a sphere or a torus.")
+        box("man-1", "Technique", "What does the demo show?", "Two point clouds for English and Japanese. Inside each cloud, points are connected when their distance is below the threshold; dashed lines mark word correspondences. You can rotate and zoom the view."),
+        box("man-2", "Limit", "What is simplified?", "The point clouds are small and the words are neatly placed. A real embedding has thousands of dimensions and many overlapping relations; the edges show one neighbourhood, not the whole geometry."),
+        box("man-3", "Limit", "How real is the translation?", "The demo shows an idea, not a measurement. A real model learns the map from text; the shapes are abstract and hard for humans to see."),
+        box("man-4", "Mathematics", "What is a manifold?", "A manifold is a space that locally looks like R^n: every point has a chart that maps a neighbourhood onto an open set in R^n, and the charts change smoothly. Globally the space can be curved, for example a sphere or a torus. The Vietoris–Rips complex is a discrete approximation: it connects points up to a radius and makes neighbourhoods visible.")
       ],
       sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }, { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087", why: { de: "Übertragung zwischen Worträumen ohne parallele Daten.", en: "Transport between word spaces without parallel data." } }, { label: "Morris (2007), Topology Without Tears", url: "https://archive.org/details/topbook", why: { de: "Topologische Grundlage für Mannigfaltigkeiten.", en: "Topological background for manifolds." } }]
     }
@@ -985,42 +985,50 @@
     {
       kicker: "17 / Training",
       title: "Die Parameter leben auf einer Loss-Landschaft",
-      body: "Hier ist ein echtes kleines Netz: ein Eingang, vier versteckte tanh-Neuronen, ein Ausgang, 13 Parameter. Der Worker trainiert es und tastet die Loss-Fläche entlang zweier Richtungen ab. Der grüne Ball folgt der Trainings-Trajektorie. Ziehe die Fläche, spiele die Schritte ab und ändere die Lernrate.",
+      body: "Hier ist ein echtes kleines Netz: ein Eingang, vier versteckte tanh-Neuronen, ein Ausgang, 13 Parameter. Der Worker trainiert es und tastet die Loss-Fläche entlang zweier Richtungen ab. Der Ball folgt der echten Trainings-Trajektorie. „Weiter“ geht durch SGD, Adam und Momentum; die Formel darunter zeigt live, wo der aktuelle Punkt liegt. Ziehe die Fläche, spiele die Schritte ab und ändere die Lernrate.",
       watch: "Spiele die Trajektorie ab. Wo rollt der Ball hin? Was passiert bei großer Lernrate?",
       demoState: { scene: "gradient" },
-      context: "Die Fläche ist ein zweidimensionaler Schnitt durch eine viel höherdimensionale Landschaft: θ = θ* + α d₁ + β d₂. Der Worker berechnet jeden Punkt und die Trajektorie im Hintergrund.",
+      context: "Die Fläche ist ein zweidimensionaler Schnitt durch eine viel höherdimensionale Landschaft: θ = θ* + α d₁ + β d₂. Der Worker berechnet jeden Punkt und die Trajektorie im Hintergrund. Die Formel darunter setzt die aktuellen Werte von α, β und L ein.",
       deep: "Der Gradient ist die Steigung des Loss. Der Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite. In einem LLM gibt es Milliarden solcher Parameter; die Landschaft ist nicht mehr sichtbar, die Regel bleibt dieselbe.",
       boxes: [
         box("grad-1", "Mathematik", "Das echte Modell", "Ein Eingang, vier tanh-Neuronen, ein Ausgang: h_j = tanh(w_j x + b_j), ŷ = Σ_j v_j h_j + c. Das sind 13 Parameter.", "\\underbrace{h_j}_{\\text{versteckt}} = \\underbrace{\\tanh(w_j x + b_j)}_{\\text{Neuron }j} \\qquad \\underbrace{\\hat y}_{\\text{Ausgang}} = \\underbrace{\\sum_j v_j h_j + c}_{\\text{lineare Ausgabe}}"),
         box("grad-2", "Mathematik", "Die Loss-Fläche", "L(θ) = 1/n Σ (ŷ_i − y_i)². Die Fläche zeigt einen Schnitt: θ = θ* + α d₁ + β d₂.", "\\underbrace{L(\\theta)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_i (\\hat y_i-y_i)^2}_{\\text{mittlerer Fehler}}"),
         box("grad-3", "Technik", "Der Schritt", "θ ← θ − η ∇L. Der Gradient zeigt bergauf; der Ball geht bergab. Der Worker führt die Schritte aus und schickt die Projektion zurück.", "\\underbrace{\\theta_{t+1}}_{\\text{neu}} = \\underbrace{\\theta_t}_{\\text{alt}} - \\underbrace{\\eta}_{\\text{Lernrate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{Gradient}}"),
-        box("grad-4", "Grenze", "Warum ist das nicht das ganze LLM?", "Echte Netze haben Milliarden Dimensionen. Die zwei Richtungen sind ein lesbarer Schnitt, keine vollständige Landschaft.")
+        box("grad-4", "Grenze", "Warum ist das nicht das ganze LLM?", "Echte Netze haben Milliarden Dimensionen. Die zwei Richtungen sind ein lesbarer Schnitt, keine vollständige Landschaft."),
+        box("grad-opt", "Technik", "SGD, Adam, Momentum", "SGD folgt dem Gradienten direkt. Momentum sammelt Geschwindigkeit und schießt über kleine Täler hinaus. Adam führt ein Gedächtnis für Gradient und Gradientenquadrat: häufig aktualisierte Parameter werden gedämpft, selten aktualisierte stärker gewichtet. Die Demo zeigt alle drei Pfade auf derselben Fläche."),
+        box("grad-saddle", "Optional", "Sattelpunkte statt Minima", "In hohen Dimensionen sehen lokale Minima oft wie Sackgassen aus. Viele kritische Punkte sind aber Sattelpunkte: Es gibt fast immer eine Richtung, in der der Loss wieder fällt. Deshalb helfen Momentum und Adam, aus solchen Plateaus herauszukommen. Ein lokales Minimum ist im hochdimensionalen Raum meist nicht das eigentliche Hindernis.")
       ],
       sources: [
         { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } },
         { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten für mehrschichtige Netze.", en: "Gradients for multilayer networks." } },
-        { label: "Li et al. (2018), Visualizing the Loss Landscape", url: "https://arxiv.org/abs/1712.09913", why: { de: "Zweidimensionale Schnitte durch Loss-Landschaften.", en: "Two-dimensional slices through loss landscapes." } }
+        { label: "Li et al. (2018), Visualizing the Loss Landscape", url: "https://arxiv.org/abs/1712.09913", why: { de: "Zweidimensionale Schnitte durch Loss-Landschaften.", en: "Two-dimensional slices through loss landscapes." } },
+        { label: "Dauphin et al. (2014), Saddle Point Problem", url: "https://arxiv.org/abs/1406.2572", why: { de: "Sattelpunkte als Hindernis in hochdimensionaler Optimierung.", en: "Saddle points as an obstacle in high-dimensional optimization." } },
+        { label: "Choromanska et al. (2015), Loss Surfaces of Multilayer Networks", url: "https://arxiv.org/abs/1412.0233", why: { de: "Kritische Punkte und lokale Minima in tiefen Netzen.", en: "Critical points and local minima in deep networks." } }
       ]
     }
   ] : [
     {
       kicker: "17 / Training",
       title: "Parameters live on a loss landscape",
-      body: "This is a real small network: one input, four hidden tanh neurons, one output, 13 parameters. The worker trains it and samples the loss surface along two directions. The green ball follows the training trajectory. Drag the surface, play the steps, and change the learning rate.",
+      body: "This is a real small network: one input, four hidden tanh neurons, one output, 13 parameters. The worker trains it and samples the loss surface along two directions. The ball follows the real training trajectory. “Next” walks through SGD, Adam, and Momentum; the formula below shows live where the current point sits. Drag the surface, play the steps, and change the learning rate.",
       watch: "Play the trajectory. Where does the ball roll? What happens with a large learning rate?",
       demoState: { scene: "gradient" },
-      context: "The surface is a two-dimensional slice through a much higher-dimensional landscape: θ = θ* + α d₁ + β d₂. The worker computes every point and the trajectory in the background.",
+      context: "The surface is a two-dimensional slice through a much higher-dimensional landscape: θ = θ* + α d₁ + β d₂. The worker computes every point and the trajectory in the background. The formula below substitutes the current values of α, β, and L.",
       deep: "The gradient is the slope of the loss. The optimiser moves in the opposite direction. The learning rate sets the step size. In an LLM there are billions of such parameters; the landscape is no longer visible, but the rule stays the same.",
       boxes: [
         box("grad-1", "Mathematics", "The real model", "One input, four tanh neurons, one output: h_j = tanh(w_j x + b_j), ŷ = Σ_j v_j h_j + c. That is 13 parameters.", "\\underbrace{h_j}_{\\text{hidden}} = \\underbrace{\\tanh(w_j x + b_j)}_{\\text{neuron }j} \\qquad \\underbrace{\\hat y}_{\\text{output}} = \\underbrace{\\sum_j v_j h_j + c}_{\\text{linear output}}"),
         box("grad-2", "Mathematics", "The loss surface", "L(θ) = 1/n Σ (ŷ_i − y_i)². The surface shows a slice: θ = θ* + α d₁ + β d₂.", "\\underbrace{L(\\theta)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_i (\\hat y_i-y_i)^2}_{\\text{mean error}}"),
         box("grad-3", "Technique", "The step", "θ ← θ − η ∇L. The gradient points uphill; the ball goes downhill. The worker runs the steps and sends the projection back.", "\\underbrace{\\theta_{t+1}}_{\\text{new}} = \\underbrace{\\theta_t}_{\\text{old}} - \\underbrace{\\eta}_{\\text{learning rate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{gradient}}"),
-        box("grad-4", "Limit", "Why is this not the whole LLM?", "Real networks have billions of dimensions. The two directions are a readable slice, not the full landscape.")
+        box("grad-4", "Limit", "Why is this not the whole LLM?", "Real networks have billions of dimensions. The two directions are a readable slice, not the full landscape."),
+        box("grad-opt", "Technique", "SGD, Adam, Momentum", "SGD follows the gradient directly. Momentum accumulates velocity and overshoots small valleys. Adam keeps a memory of the gradient and its square: frequently updated parameters are damped, rarely updated ones get more weight. The demo shows all three paths on the same surface."),
+        box("grad-saddle", "Optional", "Saddle points rather than minima", "In high dimensions a local minimum often looks like a dead end. Many critical points are saddle points: there is almost always a direction in which the loss falls again. Momentum and Adam help escape such plateaus. A local minimum is usually not the main obstacle in a high-dimensional space.")
       ],
       sources: [
         { label: "Cauchy (1847), Méthode générale", url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item", why: { de: "Frühe Beschreibung des steilsten Abstiegs.", en: "Early description of steepest descent." } },
         { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten für mehrschichtige Netze.", en: "Gradients for multilayer networks." } },
-        { label: "Li et al. (2018), Visualizing the Loss Landscape", url: "https://arxiv.org/abs/1712.09913", why: { de: "Zweidimensionale Schnitte durch Loss-Landschaften.", en: "Two-dimensional slices through loss landscapes." } }
+        { label: "Li et al. (2018), Visualizing the Loss Landscape", url: "https://arxiv.org/abs/1712.09913", why: { de: "Zweidimensionale Schnitte durch Loss-Landschaften.", en: "Two-dimensional slices through loss landscapes." } },
+        { label: "Dauphin et al. (2014), Saddle Point Problem", url: "https://arxiv.org/abs/1406.2572", why: { de: "Sattelpunkte als Hindernis in hochdimensionaler Optimierung.", en: "Saddle points as an obstacle in high-dimensional optimization." } },
+        { label: "Choromanska et al. (2015), Loss Surfaces of Multilayer Networks", url: "https://arxiv.org/abs/1412.0233", why: { de: "Kritische Punkte und lokale Minima in tiefen Netzen.", en: "Critical points and local minima in deep networks." } }
       ]
     }
   ];

@@ -332,6 +332,17 @@
 		separator: { neurons: 8, scale: 1.4, bias: -0.84, activation: "relu", seed: 7, w2Scale: 8, b2: -0.2 }
 	};
 
+	function denseLoss() {
+		if (!denseWeights) buildDenseWeights();
+		let sum = 0;
+		PTS.forEach(function (p) {
+			const y = p.c === 1 ? 1 : -1;
+			const z = -y * denseHeight(p.x, p.y);
+			sum += z > 30 ? z : Math.log1p(Math.exp(z));
+		});
+		return sum / PTS.length;
+	}
+
 	function denseFormulas() {
 		if (!denseWeights) buildDenseWeights();
 		const n = denseWeights.W1.length;
@@ -341,7 +352,8 @@
 			? "\\underbrace{\\begin{aligned} a &= \\underbrace{W_1 " + xvec + " + b_1}_{\\text{Schicht 1}} \\\\ h &= \\underbrace{" + act + "(a)}_{\\text{Aktivierung}} \\\\ z &= \\underbrace{W_2 h + b_2}_{\\text{Schicht 2, eine Dimension}} \\end{aligned}}_{\\text{das MLP macht aus einem Punkt eine Höhe}}"
 			: "\\underbrace{\\begin{aligned} a &= \\underbrace{W_1 " + xvec + " + b_1}_{\\text{layer 1}} \\\\ h &= \\underbrace{" + act + "(a)}_{\\text{activation}} \\\\ z &= \\underbrace{W_2 h + b_2}_{\\text{layer 2, one dimension}} \\end{aligned}}_{\\text{the MLP maps a point to one height}}";
 		const back = "\\underbrace{s(x,y) = b_2 + \\sum_{i=1}^{" + n + "} \\underbrace{W_{2i}\\,\\," + act + "\\!\\left(W_{1i,1}\\,x + W_{1i,2}\\,y + b_{1i}\\right)}_{\\text{" + (DE ? "Einheit" : "unit") + " } i}}_{\\text{" + (DE ? "Rückprojektion auf einen Score" : "back-projection to one score") + "}}";
-		return [layer, back];
+		const loss = "\\underbrace{L}_{\\text{" + (DE ? "logistischer Loss" : "logistic loss") + "}} = \\underbrace{\\frac{1}{N}\\sum_i \\log\\!\\left(1+e^{-y_i s_i}\\right)}_{\\text{" + (DE ? "Mittel über " : "mean over ") + PTS.length + (DE ? " Punkte" : " points") + "}} = " + denseLoss().toFixed(4);
+		return [layer, back, loss];
 	}
 
 	function weightInput(kind, i, j, value, label) {
@@ -431,6 +443,7 @@
 		editor.innerHTML = weightEditorHtml();
 		host.appendChild(editor);
 		addFormula(formulas[1]);
+		addFormula(formulas[2]);
 		bindWeightEditor(editor);
 		if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(host);
 		updateSeparationBox();
