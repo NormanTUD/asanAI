@@ -96,3 +96,9 @@ Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still
 - [x] MLP: added a live logistic-loss formula computed over the actual point cloud.
 - [ ] Whole-system/general shared-tools pass.
 - [ ] Final browser audit and test gate.
+
+## Temporary camera capture (Ein Wort nach dem anderen)
+- [x] Red “Kamera erfassen (temporär)” button under the loop demo.
+- [x] Button writes a copyable `camera: { yaw, pitch, zoom }` line from the current rotated view.
+- [x] `loopScene` accepts `demoState.camera` so the captured values can be installed as the default later.
+- [ ] Wait for the user’s captured camera line, then set it as the default for the “Ein Wort nach dem anderen” slide.

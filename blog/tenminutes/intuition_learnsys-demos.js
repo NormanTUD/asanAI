@@ -1811,7 +1811,8 @@
         '<div class="ls-loop-modes" role="group" aria-label="' + (DE ? "Auswahlmodus" : "Decoding mode") + '"></div>' +
         '<div class="ls-loop-actions"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-back" aria-label="' + (DE ? "Letztes Token zurücknehmen" : "Take back the last token") + '">' + (DE ? "← Zurück" : "← Back") + '</button><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-loop-next">' + (DE ? "Weiter →" : "Next →") + '</button><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-loop-reset">' + (DE ? "Neu" : "Reset") + '</button><label class="ls-range">T <input type="range" class="ls-loop-temp" min="0.05" max="1.8" step="0.05" value="0.8"><output>0.80</output></label></div>' +
         '<div class="ls-loop-readout" aria-live="polite"></div>' +
-      '</div>';
+      '</div>' +
+      '<div class="ls-camera-capture"><button type="button" class="ls-btn ls-btn--tiny ls-camera-btn">' + (DE ? "Kamera erfassen (temporär)" : "Capture camera (temporary)") + '</button><textarea class="ls-camera-out" readonly hidden aria-label="' + (DE ? "Aktuelle Kameraposition" : "Current camera position") + '" placeholder="' + (DE ? "Drehe die Szene und klicke auf den roten Button." : "Rotate the scene and click the red button.") + '"></textarea></div>';
     root.appendChild(el);
     var sentenceEl = el.querySelector(".ls-loop-sentence");
     var treeEl = el.querySelector(".ls-loop-tree");
@@ -1821,6 +1822,9 @@
     var tempOut = el.querySelector(".ls-loop-actions output");
     var nextBtn = el.querySelector(".ls-loop-next");
     var backBtn = el.querySelector(".ls-loop-back");
+    var cameraRow = el.querySelector(".ls-camera-capture");
+    var cameraBtn = el.querySelector(".ls-camera-btn");
+    var cameraOut = el.querySelector(".ls-camera-out");
     var landEl = el.querySelector(".ls-loop-landscape");
     var landCanvas = landEl.querySelector("canvas");
     var landTip = landEl.querySelector(".ls-land-tip");
@@ -3083,6 +3087,19 @@
     });
     el.querySelector(".ls-loop-next").addEventListener("click", sample);
     if (backBtn) backBtn.addEventListener("click", function () { undo(); });
+    if (cameraBtn) cameraBtn.addEventListener("click", function () {
+      var yaw = Number(landYaw.toFixed(3));
+      var pitch = Number(landPitch.toFixed(3));
+      var zoom = Number(landZoom.toFixed(3));
+      var text = 'camera: { yaw: ' + yaw + ', pitch: ' + pitch + ', zoom: ' + zoom + ' }';
+      cameraOut.value = text;
+      cameraOut.hidden = false;
+      cameraOut.focus();
+      cameraOut.select();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(function () {});
+      }
+    });
     el.querySelector(".ls-loop-reset").addEventListener("click", reset);
     tempEl.addEventListener("input", function () {
       temp = parseFloat(tempEl.value) || 0.8;
@@ -3120,7 +3137,11 @@
         if (meta && meta.dir < 0) undo();
         else if (meta && meta.dir > 0) redo();
         if (!s) return;
-        if (s.view === "top") tweenCamera(1.50, -0.62, 1);
+        if (cameraRow) cameraRow.hidden = s.view === "top";
+        if (s.camera) {
+          var cp = Number(s.camera.pitch), cy = Number(s.camera.yaw), cz = Number(s.camera.zoom);
+          tweenCamera(isFinite(cp) ? cp : 1.4, isFinite(cy) ? cy : -0.62, isFinite(cz) ? cz : 1);
+        } else if (s.view === "top") tweenCamera(1.50, -0.62, 1);
         else if (s.view === "default") tweenCamera(1.40, -0.62, 1);
         if (s.mode) setMode(s.mode);
         if (typeof s.temp === "number") {
@@ -6009,7 +6030,7 @@
       var cand = layerTarget === data.layers.length - 1
         ? '<span>' + (DE ? "Kandidaten" : "Candidates") + '</span>' + data.top.slice(0, 5).map(function (t) { return '<span><b>' + api.esc(tokenLabel(t.token)) + '</b> ' + (t.p * 100).toFixed(1) + '%</span>'; }).join("")
         : '<span>' + (DE ? "Kandidaten erscheinen in der letzten Schicht." : "Candidates appear at the final layer.") + '</span>';
-      readout.innerHTML = '<span>' + (DE ? "Satz" : "Sentence") + ' <b>' + api.esc(data.sentence) + '</b></span>' + cand;
+      readout.innerHTML = '<span>' + (DE ? "Satz" : "Sentence") + ' <b>' + api.esc(data.sentence) + '</b></span><span>' + (DE ? "Schicht" : "Layer") + ' <b>' + Math.round(displayLayer) + ' / ' + (data.layers.length - 1) + '</b></span>' + cand;
       layerOut.textContent = data.layers[layerTarget] || "";
     }
     function resize() { size = api.fit(canvas, stage); draw(); }

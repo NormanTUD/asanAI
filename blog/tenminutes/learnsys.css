@@ -1233,8 +1233,11 @@ h1,h2,h3,h4{
 .ls-gradient-readout b,.ls-kv-readout b{color:var(--ls-ink);font-weight:600}
 .ls-kv-readout b{color:var(--ls-petrol)}
 
-.ls-loop-scene{grid-template-rows:auto auto minmax(0,1fr) auto}
+.ls-loop-scene{grid-template-rows:auto auto minmax(0,1fr) auto auto}
 .ls-loop-bottom{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 10px;align-items:center}
+.ls-camera-capture{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.ls-camera-btn{background:#c0392b !important;border-color:#c0392b !important;color:#fff !important}
+.ls-camera-out{flex:1;min-width:240px;min-height:2.5em;padding:4px 6px;border:1px solid #c0392b;background:#fff;color:var(--ls-ink);font:600 var(--ls-fs-micro)/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical}
 .ls-loop-modes{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 .ls-loop-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
 .ls-loop-readout{grid-column:1/-1}
@@ -1261,7 +1264,7 @@ h1,h2,h3,h4{
   .ls-history-title{font-size:18px}
   .ls-loop-bottom{grid-template-columns:1fr;gap:4px}
   .ls-loop-actions{justify-content:flex-start}
-  .ls-loop-scene{grid-template-rows:auto auto minmax(220px,1fr) auto}
+  .ls-loop-scene{grid-template-rows:auto auto minmax(220px,1fr) auto auto}
 }
 
 .ls-text-toggle,.ls-text-mobile-head{display:none}
