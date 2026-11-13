@@ -586,7 +586,7 @@
 
   var bookSteps = DE ? [
     {
-      kicker: "02a / Kompression",
+      kicker: "02c / Kompression",
       title: "Verstehen heißt komprimieren",
       body: "Ein Modell, das alles speichert, kann nicht verallgemeinern. Kompression behält die Struktur und wirft Details weg. Ziehe den Regler: Aus vielen Einzelheiten werden Muster; der Fehler steigt, aber das Modell kann neue Fälle einordnen.",
       watch: "Ziehe die Kompression. Was gewinnt, was verliert?",
@@ -607,7 +607,7 @@
     }
   ] : [
     {
-      kicker: "02a / Compression",
+      kicker: "02c / Compression",
       title: "Understanding is compression",
       body: "A model that stores everything cannot generalise. Compression keeps structure and throws details away. Drag the slider: many individual details become patterns; the error rises, but the model can place new cases.",
       watch: "Drag the compression. What is gained, what is lost?",
@@ -1186,7 +1186,7 @@
     }
   ];
 
-  var steps = introSteps.slice(0, 2).concat(bookSteps, introSteps.slice(2), insideSteps.slice(0, 1), activationSteps, mlpSteps, gradientSteps, insideSteps.slice(1, 2), tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, languageSteps, posttrainSteps, evalSteps, kvcacheSteps, ragSteps, historySteps, philosophySteps);
+  var steps = introSteps.slice(0, 2).concat(introSteps.slice(2), bookSteps, insideSteps.slice(0, 1), activationSteps, mlpSteps, gradientSteps, insideSteps.slice(1, 2), tokenizeSteps, embedSteps, manifoldSteps, positionSteps, attentionSteps, ffnSteps, residualSteps, trajectorySteps, meadowSteps, softmaxSteps, languageSteps, posttrainSteps, evalSteps, kvcacheSteps, ragSteps, historySteps, philosophySteps);
 
   var day = {
     id: "intuition",
