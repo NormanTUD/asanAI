@@ -827,7 +827,7 @@
     lastDemoDay = state.day;
     lastDemoStep = state.step;
     if (demo && currentDemoDay === d.id) {
-      if (demo.update) demo.update(s.demoState || {}, meta);
+      try { if (demo.update) demo.update(s.demoState || {}, meta); } catch (err) {}
       preloadNextScene(d);
       return;
     }
@@ -842,7 +842,7 @@
       els.demo.innerHTML = '<div class="ls-empty">' + esc(t("demoNotFound")) + esc(d.demo) + '</div>';
       return;
     }
-    demo = fn(els.demo, {
+    var demoConfig = {
       lang: LANG,
       colors: colors,
       esc: esc,
@@ -875,8 +875,9 @@
           go(state.day - 1, prevDay.steps.length - 1);
         }
       }
-    });
-    if (demo && demo.update) demo.update(s.demoState || {}, meta);
+    };
+    try { demo = fn(els.demo, demoConfig); } catch (err) { demo = null; els.demo.innerHTML = '<div class="ls-empty">' + esc(t("demoNotFound")) + '</div>'; return; }
+    try { if (demo && demo.update) demo.update(s.demoState || {}, meta); } catch (err) {}
     preloadNextScene(d);
   }
 
