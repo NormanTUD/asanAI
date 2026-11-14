@@ -1179,7 +1179,7 @@
     var chatAnswerEl = el.querySelector(".ia-chat-answer");
     var chatInputEl = el.querySelector(".ia-chat-input");
     var chatComposeEl = el.querySelector(".ia-chat-compose");
-    var view = "search", chatStarted = false, sequenceDone = null;
+    var view = "search", chatStarted = false, sequenceDone = null, advance = null;
     var modeBtns = el.querySelectorAll("[data-phone]");
     function setPhone(which) {
       var isChat = which === "chat";
@@ -1394,7 +1394,11 @@
     if (window.ResizeObserver) { ro = new ResizeObserver(fit); ro.observe(stage); }
     window.addEventListener("resize", fit);
     [searchPhone, chatPhone].forEach(function (p) {
-      if (p) p.addEventListener("click", function () { started = true; play(); });
+      if (p) p.addEventListener("click", function () {
+        started = true;
+        if (advance) { advance(); return; }
+        play();
+      });
     });
     modeBtns.forEach(function (b) {
       b.addEventListener("click", function () {
@@ -1423,6 +1427,7 @@
       },
       start: function () { started = true; shownOnce = true; play(); },
       onSequenceDone: function (fn) { sequenceDone = fn; },
+      onAdvance: function (fn) { advance = fn; },
       pause: clearTimers,
       resume: function () { if (shownOnce && started) play(); shownOnce = true; fit(); },
       resize: fit,
@@ -1541,8 +1546,8 @@
     var timers = [], phase = "idle";
     var codePre = el.querySelector(".ls-code-body");
     function fitCode() {
-      if (!codePre) return;
-      var sizes = [14, 12, 10, 8, 7, 6];
+      if (!codePre || !agentWin || !agentWin.classList.contains("is-coding")) return;
+      var sizes = [14, 12, 11, 10, 9, 8, 7, 6];
       for (var i = 0; i < sizes.length; i++) {
         codePre.style.fontSize = sizes[i] + "px";
         codePre.style.lineHeight = "1.35";
@@ -1596,10 +1601,12 @@
     }
     function typeCode() {
       if (agentWin) agentWin.classList.add("is-coding");
+      fitCode();
       var i = 0;
       function typeNext() {
         if (i >= spans.length) {
           phase = "ready";
+          fitCode();
           setButton(DE ? "Weiter" : "Next", false);
           later(function () { if (phase === "ready") runProgram(); }, 300);
           return;
@@ -8140,6 +8147,7 @@
       if (prevInternal()) return;
       api.goPrev();
     }
+    phoneApi.onAdvance(nextStep);
     tabs.forEach(function (b) {
       b.addEventListener("click", function () { show(b.getAttribute("data-media")); });
     });

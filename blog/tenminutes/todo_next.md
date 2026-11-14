@@ -1241,5 +1241,8 @@ Marked as todo; work through carefully, one block at a time.
 - Gremlins 50 monkeys and a full control stress found and fixed the hidden
   trajectory layer crash (`prevRaw` out of range). All base steps pass the
   stress run.
+- Phone click on the first slide now advances Search → Chat → Code → next slide.
+- Agent code area measures only after it is visible, shrinks to fit, and falls
+  back to scroll; the code is fully shown on desktop and mobile.
 - Tests: tenminutes pages 10/10, height 38/0, php_validator 0 issues,
   check_all --fast all green.
