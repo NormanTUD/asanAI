@@ -1319,3 +1319,11 @@ Marked as todo; work through carefully, one block at a time.
 - [ ] Whole-deck coherence: what is missing, what is redundant, what should be reordered; keep it quick to grasp but technically solid.
 - [ ] Smoothness and beauty pass across all demos, minimal but no important content removed.
 - [ ] Re-run pages, height, PHP/JS validators, check_all --fast.
+
+## Generalize and test the demo codebase (last)
+
+- [ ] Read the whole Ten Minutes demo codebase again (all `assets/*scene*.js`, `intuition_learnsys-demos.js`, `learnsys.js`, shared visual helpers).
+- [ ] Generalize repeated scene patterns without removing any functionality: DOM shell creation, canvas fit/resize, theme redraw, arrow-key navigation, tab bars, status/readout helpers, caption/controls layout.
+- [ ] Deduplicate code; keep each scene self-contained and easy to modify.
+- [ ] Write tests for every Ten Minutes page and a smoke path for every slide/demo: initial render, forward/back, controls, no console errors, no overflow, no height jump.
+- [ ] Keep the existing validators green and add the new tests to the documented check list.
