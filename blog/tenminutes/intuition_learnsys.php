@@ -1,3 +1,23 @@
+<?php
+$simRaw = $_GET['date'] ?? $_GET['datum'] ?? null;
+$today = new DateTimeImmutable('today');
+if (is_string($simRaw) && trim($simRaw) !== '') {
+	foreach (['!j.n.Y', '!j.n.y', '!Y-m-d', '!d.m.Y', '!d/m/Y', '!Y/m/d'] as $format) {
+		$date = DateTimeImmutable::createFromFormat($format, trim($simRaw));
+		if ($date instanceof DateTimeImmutable) {
+			$errors = DateTimeImmutable::getLastErrors();
+			if ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0)) {
+				$today = $date;
+				break;
+			}
+		}
+	}
+}
+$monthDay = $today->format('m-d');
+$showSnow = $monthDay === '12-24';
+$showFireworks = in_array($monthDay, ['12-31', '01-01'], true);
+$showSeasonal = $showSnow || $showFireworks;
+?>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -16,6 +36,8 @@
 </head>
 <body data-page="lesson" data-lesson="intuition" data-no-full-article data-tm-reload-lang="1">
 	<div id="learnsys" data-no-i18n></div>
+	<?php if ($showSnow): ?><canvas class="season-layer" id="season-snow" aria-hidden="true"></canvas><?php endif; ?>
+	<?php if ($showFireworks): ?><canvas class="season-layer" id="season-fireworks" aria-hidden="true"></canvas><?php endif; ?>
 	<script src="../temml.min.js"></script>
 	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
 	<script src="assets/learnsys-visuals.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-visuals.js'); ?>"></script>
@@ -33,5 +55,6 @@
 	<script src="assets/learnsys-gauss-scene.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-gauss-scene.js'); ?>"></script>
 	<script src="intuition_learnsys-demos.js?v=<?php echo filemtime(__DIR__.'/intuition_learnsys-demos.js'); ?>"></script>
 	<script src="intuition_learnsys-data.js?v=<?php echo filemtime(__DIR__.'/intuition_learnsys-data.js'); ?>"></script>
+	<?php if ($showSeasonal): ?><script src="assets/seasonal.js?v=<?php echo filemtime(__DIR__.'/assets/seasonal.js'); ?>"></script><?php endif; ?>
 </body>
 </html>

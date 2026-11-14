@@ -221,27 +221,28 @@
 		if (!denseWeights) buildDenseWeights();
 		const scored = PTS.map(function (p) { return { v: denseHeight(p.x, p.y), c: p.c }; })
 			.sort(function (a, b) { return a.v - b.v; });
-		const first = scored[0].c;
-		const last = scored[scored.length - 1].c;
-		let split = 0;
-		while (split < scored.length && scored[split].c === first) split++;
-		const monotone = first !== last && scored.slice(split).every(function (o) { return o.c === last; });
 		let best = -1, bestThreshold = 0;
 		for (let i = 1; i < scored.length; i++) {
 			const threshold = (scored[i - 1].v + scored[i].v) / 2;
-			let correct = 0;
-			scored.forEach(function (o) {
-				const predicted = o.v <= threshold ? first : last;
-				if (predicted === o.c) correct++;
-			});
-			if (correct > best) { best = correct; bestThreshold = threshold; }
+			for (let left = 0; left < 2; left++) {
+				let correct = 0;
+				scored.forEach(function (o) {
+					const predicted = o.v <= threshold ? left : 1 - left;
+					if (predicted === o.c) correct++;
+				});
+				if (correct > best) { best = correct; bestThreshold = threshold; }
+			}
 		}
-		const threshold = monotone && split > 0 ? (scored[split - 1].v + scored[split].v) / 2 : bestThreshold;
+		const core = scored.filter(function (o) { return o.c === 1; });
+		const coreMin = core.length ? core[0].v : 0;
+		const coreMax = core.length ? core[core.length - 1].v : 0;
 		return {
-			separated: monotone && split > 0,
-			threshold: threshold,
-			wrong: scored.length - best,
-			total: scored.length
+			separated: best === scored.length,
+			threshold: bestThreshold,
+			wrong: best < 0 ? scored.length : scored.length - best,
+			total: scored.length,
+			coreMin: coreMin,
+			coreMax: coreMax
 		};
 	}
 
@@ -250,27 +251,22 @@
 		const threshold = info.threshold.toFixed(2);
 		if (info.separated) {
 			return DE
-				? ["Linear trennbar: ja (s = " + threshold + ")."]
-				: ["Linearly separable: yes (s = " + threshold + ")."];
+				? ["Eine Schwelle trennt: s = " + threshold + "."]
+				: ["One threshold separates: s = " + threshold + "."];
 		}
 		return DE
-			? ["Noch nicht linear trennbar: " + info.wrong + "/" + info.total + " falsch.", "Spiele mit den Reglern."]
-			: ["Not linearly separable yet: " + info.wrong + "/" + info.total + " wrong.", "Play with the controls."];
+			? ["Noch nicht trennbar: " + info.wrong + "/" + info.total + " falsch.", "Spiele mit den Reglern."]
+			: ["Not separable yet: " + info.wrong + "/" + info.total + " wrong.", "Play with the controls."];
 	}
 
 	function updateSeparationBox() {
 		const info = separationInfo();
 		const lines = separationStatusLines();
 		const fallback = info.separated
-			? (DE ? "Linear trennbar: ja." : "Linearly separable: yes.")
-			: (DE ? "Noch nicht linear trennbar." : "Not linearly separable yet.");
+			? (DE ? "Eine Schwelle trennt." : "One threshold separates.")
+			: (DE ? "Noch nicht trennbar." : "Not separable yet.");
 		const body = lines && lines.length ? lines.join(" ") : fallback;
 		const text = (info.separated ? "✓ " : "") + body;
-		const el = document.getElementById("ism-separation-box");
-		if (el) {
-			el.textContent = text;
-			el.classList.toggle("is-ok", info.separated);
-		}
 		let overlay = document.getElementById("ism-canvas-status");
 		if (!overlay && wrap) {
 			overlay = document.createElement("div");
@@ -297,7 +293,7 @@
 		nextBtn.disabled = blocked;
 		nextBtn.setAttribute("aria-disabled", String(blocked));
 		if (cur === 7 && !separationInfo().separated) {
-			nextBtn.title = DE ? "Erst wenn linear trennbar" : "Only when linearly separable";
+			nextBtn.title = DE ? "Erst wenn eine Schwelle trennt" : "Only when one threshold separates";
 			nextBtn.textContent = DE ? "Weiter →" : "Next →";
 		} else if (cur === SCENES.length - 1) {
 			nextBtn.removeAttribute("title");
@@ -332,16 +328,7 @@
 		separator: { neurons: 8, scale: 1.4, bias: -0.84, activation: "relu", seed: 7, w2Scale: 8, b2: -0.2 }
 	};
 
-	function denseLoss() {
-		if (!denseWeights) buildDenseWeights();
-		let sum = 0;
-		PTS.forEach(function (p) {
-			const y = p.c === 1 ? 1 : -1;
-			const z = -y * denseHeight(p.x, p.y);
-			sum += z > 30 ? z : Math.log1p(Math.exp(z));
-		});
-		return sum / PTS.length;
-	}
+
 
 	function denseFormulas() {
 		if (!denseWeights) buildDenseWeights();
@@ -351,9 +338,7 @@
 		const layer = DE
 			? "\\underbrace{\\begin{aligned} a &= \\underbrace{W_1 " + xvec + " + b_1}_{\\text{Schicht 1}} \\\\ h &= \\underbrace{" + act + "(a)}_{\\text{Aktivierung}} \\\\ z &= \\underbrace{W_2 h + b_2}_{\\text{Schicht 2, eine Dimension}} \\end{aligned}}_{\\text{das MLP macht aus einem Punkt eine Höhe}}"
 			: "\\underbrace{\\begin{aligned} a &= \\underbrace{W_1 " + xvec + " + b_1}_{\\text{layer 1}} \\\\ h &= \\underbrace{" + act + "(a)}_{\\text{activation}} \\\\ z &= \\underbrace{W_2 h + b_2}_{\\text{layer 2, one dimension}} \\end{aligned}}_{\\text{the MLP maps a point to one height}}";
-		const back = "\\underbrace{s(x,y) = b_2 + \\sum_{i=1}^{" + n + "} \\underbrace{W_{2i}\\,\\," + act + "\\!\\left(W_{1i,1}\\,x + W_{1i,2}\\,y + b_{1i}\\right)}_{\\text{" + (DE ? "Einheit" : "unit") + " } i}}_{\\text{" + (DE ? "Rückprojektion auf einen Score" : "back-projection to one score") + "}}";
-		const loss = "\\underbrace{L}_{\\text{" + (DE ? "logistischer Loss" : "logistic loss") + "}} = \\underbrace{\\frac{1}{N}\\sum_i \\log\\!\\left(1+e^{-y_i s_i}\\right)}_{\\text{" + (DE ? "Mittel über " : "mean over ") + PTS.length + (DE ? " Punkte" : " points") + "}} = " + denseLoss().toFixed(4);
-		return [layer, back, loss];
+		return [layer];
 	}
 
 	function weightInput(kind, i, j, value, label) {
@@ -361,8 +346,8 @@
 		const aria = DE ? ("Gewicht " + label) : label;
 		const sliderValue = Math.max(-5, Math.min(5, value)).toFixed(2);
 		return '<span class="ism-weight-cell">' +
-			'<input class="ism-weight-input" type="number" step="0.0001" ' + data +
-			'" value="' + value.toFixed(4) + '" aria-label="' + aria + '">' +
+			'<input class="ism-weight-input" type="number" step="0.001" ' + data +
+			'" value="' + value.toFixed(3) + '" aria-label="' + aria + '">' +
 			'<input class="ism-weight-slider" type="range" min="-5" max="5" step="0.01" ' + data +
 			'" value="' + sliderValue + '" aria-label="' + aria + '">' +
 			'</span>';
@@ -407,7 +392,7 @@
 				const number = cell ? cell.querySelector(".ism-weight-input") : null;
 				const slider = cell ? cell.querySelector(".ism-weight-slider") : null;
 				if (input === number && slider) slider.value = String(Math.max(-5, Math.min(5, value)));
-				if (input === slider && number) number.value = value.toFixed(4);
+				if (input === slider && number) number.value = value.toFixed(3);
 				const preset = document.getElementById("ism-dense-preset");
 				if (preset) preset.value = "custom";
 				updateSeparationBox();
@@ -434,16 +419,10 @@
 			host.appendChild(el);
 		};
 		addFormula(formulas[0]);
-		const status = document.createElement("p");
-		status.className = "ism-separation-box";
-		status.id = "ism-separation-box";
-		host.appendChild(status);
 		const editor = document.createElement("div");
 		editor.className = "ism-weight-editor";
 		editor.innerHTML = weightEditorHtml();
 		host.appendChild(editor);
-		addFormula(formulas[1]);
-		addFormula(formulas[2]);
 		bindWeightEditor(editor);
 		if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(host);
 		updateSeparationBox();
@@ -520,6 +499,7 @@
 
 		const copy = copyEl("ism-copy");
 		if (copy) {
+			copy.hidden = cur >= 7;
 			copy.querySelectorAll(".ism-scene").forEach(function (el, i) {
 				el.classList.toggle("is-active", i === cur);
 			});
@@ -606,7 +586,7 @@
 		const y2 = -y * Math.sin(B) + p.z * Math.cos(B);
 		const z2 = y * Math.cos(B) + p.z * Math.sin(B);
 		const d = 4.6;
-		const k = persp < 0.02 ? 1 : d / (d + z2 * 0.80 * persp);
+		const k = persp < 0.02 ? 1 : d / Math.max(0.55, d + z2 * 0.80 * persp);
 		return { X: W / 2 + x * scale * k, Y: H / 2 - y2 * scale * k + YOFF, d: z2, k: k };
 	}
 
@@ -808,13 +788,13 @@
 		ctx.globalAlpha = 1;
 	}
 
-	function planeRows(plane, squash) {
+	function planeRows(plane, squash, z) {
 		const E = 0.92, M = 7, rows = [];
 		for (let i = 0; i <= M; i++) {
 			const yv = (-E + 2 * E * i / M) * (1 - squash);
 			const row = [];
 			for (let j = 0; j <= M; j++) {
-				row.push(proj({ x: -E + 2 * E * j / M, y: yv, z: PLANE_Z }));
+				row.push(proj({ x: -E + 2 * E * j / M, y: yv, z: z == null ? PLANE_Z : z }));
 			}
 			rows.push(row);
 		}
@@ -861,9 +841,9 @@
 		ctx.globalAlpha = 1;
 	}
 
-	function drawClassLabels(alpha, C) {
+	function drawClassLabels(alpha, C, z) {
 		if (alpha < 0.01) return;
-		const c0 = proj({ x: 0, y: 0, z: PLANE_Z });
+		const c0 = proj({ x: 0, y: 0, z: z == null ? PLANE_Z : z });
 		const LX = W - 18;
 		ctx.globalAlpha = alpha;
 		ctx.textAlign = "right";
@@ -899,6 +879,7 @@
 		YOFF = lerp(0, H * 0.10, flat);
 
 		const planeAlpha = lerp(a.plane, b.plane, u);
+		const planeZ = (b.dense || b.denseProject) ? separationInfo().threshold : PLANE_Z;
 		const squash = lerp(a.squash, b.squash, u);
 		const fail = lerp(a.fail, b.fail, u);
 		const labels = lerp(a.labels, b.labels, u);
@@ -940,8 +921,8 @@
 		if (planeAlpha > 0.01) {
 			items.push({
 				type: "plane",
-				depth: PLANE_Z,
-				rows: planeRows(planeAlpha, squash),
+				depth: planeZ,
+				rows: planeRows(planeAlpha, squash, planeZ),
 				a: planeAlpha,
 				squash: squash
 			});
@@ -953,7 +934,7 @@
 				drawPlane(item, C);
 				return;
 			}
-			const r = (2.8 + 0.7 * item.at.k) * item.at.k;
+			const r = Math.max(0.6, (2.8 + 0.7 * item.at.k) * item.at.k);
 			ctx.beginPath();
 			ctx.arc(item.at.X, item.at.Y, r, 0, TAU);
 			ctx.fillStyle = item.c ? C.outer : C.inner;
@@ -962,7 +943,7 @@
 			ctx.globalAlpha = 1;
 		});
 
-		drawClassLabels(labels, C);
+		drawClassLabels(labels, C, planeZ);
 		drawDenseContour(C, project, clamp(denseMix, 0, 1));
 		updateCanvasStatusAttributes();
 	}
@@ -1144,9 +1125,6 @@
 		buildDots();
 		buildSceneStack();
 		buildDenseControls();
-		const panel = document.querySelector(".ism-panel");
-		const denseBox = document.getElementById("ism-dense-controls");
-		if (panel && denseBox && denseBox.parentNode !== panel) panel.appendChild(denseBox);
 		renderCopy();
 		fitCopyHeight();
 		bindDrag();

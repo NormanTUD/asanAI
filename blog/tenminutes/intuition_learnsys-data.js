@@ -336,7 +336,7 @@
     {
       kicker: "Der Kontext",
       title: "Attention verschiebt Bedeutungen in Kontexte",
-      body: "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz und ein Wort. Die Matrix zeigt, wohin die Bank schaut; die Formel zeigt dieselben Gewichte. Drücke Weiter: Die nächste Unterfolie zeigt, wie dieselbe Bedeutung in Code-Oberflächen aussieht.",
+      body: "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz und ein Wort. Die Matrix zeigt, wohin die Bank schaut; die Formel zeigt dieselben Gewichte. Drücke Weiter: Die nächste Folie zeigt, wie dieselbe Bedeutung in Code-Oberflächen aussieht.",
       watch: "Klicke die drei Sätze. Welches Wort zieht die Bank? Drücke danach Weiter.",
       demoState: { scene: "attention", context: "money" },
       context: "Der Kontext verschiebt den Vektor, nicht das Wort. Die Bank bleibt dasselbe Token; ihre Nachbarn ändern ihre Bedeutung.",
@@ -404,7 +404,7 @@
     {
       kicker: "The context",
       title: "Attention shifts meaning into context",
-      body: "Three sentences, one word: a bank without context, a bank for money, a bank in the park. Click a sentence and a word. The matrix shows where the bank looks; the formula shows the same weights. Press Next: the next sub-slide shows how the same meaning appears in code surfaces.",
+      body: "Three sentences, one word: a bank without context, a bank for money, a bank in the park. Click a sentence and a word. The matrix shows where the bank looks; the formula shows the same weights. Press Next: the next slide shows how the same meaning appears in code surfaces.",
       watch: "Click the three sentences. Which word pulls the bank? Then press Next.",
       demoState: { scene: "attention", context: "money" },
       context: "The context shifts the vector, not the word. The bank stays the same token; its neighbours change what it means.",
@@ -501,8 +501,8 @@
       kicker: "Residual",
       title: "Jede Schicht schreibt in denselben Stream",
       body: "Jede Schicht liest denselben laufenden Vektor, berechnet ein Update und addiert es zurück. Nichts wird überschrieben. Frühere Notizen bleiben lesbar; spätere Schichten lesen sie und schreiben mehr.",
-      watch: "Klicke die Schichten durch. Wann ändert sich der Stream am stärksten?",
-      demoState: { scene: "residual", layer: 0 },
+      watch: "Drücke Weiter. Wann ändert sich der Stream am stärksten?",
+      demoState: { scene: "residual", phase: "stream" },
       context: "Die Addition gibt dem Gradienten einen kurzen Pfad zurück. Ohne Residualverbindung müsste jede Schicht die gesamte Information neu schreiben.",
       deep: "Der Stream ist das gemeinsame Notizbuch. Attention und FFN schreiben Updates hinein; die Identität bleibt erhalten. Deshalb lassen sich tiefe Stapel trainieren.",
       boxes: [
@@ -515,8 +515,8 @@
       kicker: "Residual",
       title: "Every layer writes into the same stream",
       body: "Every layer reads the same running vector, computes an update, and adds it back. Nothing is overwritten. Earlier notes stay readable; later layers read them and add more.",
-      watch: "Click through the layers. When does the stream change most?",
-      demoState: { scene: "residual", layer: 0 },
+      watch: "Press Next. When does the stream change most?",
+      demoState: { scene: "residual", phase: "stream" },
       context: "The addition gives gradients a short path back. Without a residual connection, every layer would have to rewrite all information.",
       deep: "The stream is the shared notebook. Attention and the FFN write updates into it; the identity survives. That is why deep stacks can be trained.",
       boxes: [
@@ -525,6 +525,34 @@
       ]
     }
   ];
+
+  var residualNotebookStep = DE ? {
+    kicker: "Notizbuch",
+    title: "Das gemeinsame Notizbuch",
+    body: "Stell dir den Residual Stream als gemeinsames Notizbuch vor: Jede Schicht ist eine Reihe von Experten, die lesen und ihre Erkenntnisse dazuschreiben; nichts wird gelöscht. Drücke Weiter: Schicht für Schicht kommen Markierungen dazu. Am Ende steht das Wissen aller Schichten.",
+    watch: "Drücke Weiter. Was schreibt jede Schicht dazu?",
+    demoState: { scene: "residual", phase: "notebook" },
+    context: "Die Analogie: Ein Notizbuch wird weitergereicht und ergänzt. Jede Schicht liest den aktuellen Stand und addiert ihre Notiz. Am Ende steht das Wissen aller Schichten.",
+    deep: "Mathematisch: x₁ = x₀ + Layer(x₀). Die Identität bleibt; die Schicht lernt nur die Änderung. Deshalb lassen sich tiefe Stapel trainieren.",
+    boxes: [
+      box("res-nb-1", "Mathematik", "Das Notizbuch", "x₁ = x₀ + Layer(x₀). Die Identität bleibt; jede Schicht addiert nur ihre Änderung. Gelesen wird immer der aktuelle Stand.", "\\underbrace{x_1}_{\\text{neu}} = \\underbrace{x_0}_{\\text{alt}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{Notiz der Schicht}}"),
+      box("res-nb-2", "Grenze", "Was ist das nicht?", "Kein Datenbankspeicher. Der Stream ist ein Vektor pro Token, der durch die Schichten getragen wird; Attention und FFN schreiben Updates hinein.")
+    ],
+    sources: []
+  } : {
+    kicker: "Notebook",
+    title: "The shared notebook",
+    body: "Think of the residual stream as a shared notebook: every layer is a row of experts who read it and write their insights into it; nothing is erased. Press Next: layer by layer, more marks appear. At the end the notebook holds the knowledge of all layers.",
+    watch: "Press Next. What does each layer add?",
+    demoState: { scene: "residual", phase: "notebook" },
+    context: "The analogy: a notebook is passed on and extended. Every layer reads the current state and adds its note. At the end it holds the knowledge of all layers.",
+    deep: "Mathematically: x₁ = x₀ + Layer(x₀). The identity stays; the layer learns only the change. That is why deep stacks can be trained.",
+    boxes: [
+      box("res-nb-1", "Mathematics", "The notebook", "x₁ = x₀ + Layer(x₀). The identity stays; every layer adds only its change. Each layer reads the current state.", "\\underbrace{x_1}_{\\text{new}} = \\underbrace{x_0}_{\\text{old}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{layer's note}}"),
+      box("res-nb-2", "Limit", "What is this not?", "Not a database. The stream is one vector per token carried through the layers; attention and the FFN write updates into it.")
+    ],
+    sources: []
+  };
 
   var meadowSteps = DE ? [
     {
@@ -672,7 +700,7 @@
     {
       kicker: "Die Bausteine",
       title: "Die Bausteine eines LLM",
-      body: "Ein neuronales Netz ist der gelernte Teil eines modernen LLM. Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Gehe die vier Ebenen mit „Weiter“ durch: Tokenizer, Embedding, Transformer-Blöcke und Unembedding. Die Transformer-Blöcke werden dutzende bis hunderte Male wiederholt; links siehst du die Ebene, rechts, was sie tut. Später gehen wir die einzelnen Bestandteile genauer durch.",
+      body: "Ein neuronales Netz ist der gelernte Teil eines modernen LLM. Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Gehe die vier Ebenen mit „Weiter“ durch: Tokenizer, Embedding, Transformer-Blöcke und Unembedding. Die Transformer-Blöcke werden dutzende bis hunderte Male wiederholt; links siehst du die Ebene, rechts, was sie tut. Der Tokenizer oben zeigt schon den Text, den wir später zerlegen. Später gehen wir die einzelnen Bestandteile genauer durch.",
       watch: "Gehe die Ebenen mit „Weiter“ oder der Pfeiltaste durch. Was macht jede Ebene?",
       demoState: { scene: "blocks" },
       context: "Die Reihenfolge ist die Architektur: Text → Tokens → Vektoren → Transformer-Blöcke → Verteilung. Jeder Schritt verändert die Darstellung, bis am Ende ein Token gezogen wird.",
@@ -712,7 +740,7 @@
     {
       kicker: "The building blocks",
       title: "The building blocks of an LLM",
-      body: "A neural network is the learned part of a modern LLM. An LLM is a chain of levels, not a single magic formula. Walk through the four levels with “Next”: tokenizer, embedding, transformer blocks, and unembedding. The transformer blocks repeat dozens to hundreds of times; the level is on the left, what it does on the right. Later we go through the individual components in more detail.",
+      body: "A neural network is the learned part of a modern LLM. An LLM is a chain of levels, not a single magic formula. Walk through the four levels with “Next”: tokenizer, embedding, transformer blocks, and unembedding. The transformer blocks repeat dozens to hundreds of times; the level is on the left, what it does on the right. The tokenizer at the top already shows the text we will split later. Later we go through the individual components in more detail.",
       watch: "Walk through the levels with “Next” or the arrow key. What does each level do?",
       demoState: { scene: "blocks" },
       context: "The order is the architecture: text → tokens → vectors → transformer blocks → distribution. Each step changes the representation until a token is drawn.",
@@ -769,8 +797,7 @@
     {
       kicker: "Raum biegen",
       title: "Was sind neuronale Netze?",
-      body: "Neuronale Netze können mehr als Geraden. Dasselbe Prinzip kann den Raum falten: Eine Schicht hebt die Punkte in eine höhere Dimension, eine Aktivierung biegt sie, und eine flache Ebene trennt die Klassen. Im LLM macht das FFN pro Token genau diese Art von Biegung. Klicke dich durch die neun Folien: Wo biegt sich der Raum, wo erscheint der Schnitt?",
-      watch: "Klicke dich durch die neun Folien. Wo biegt sich der Raum, wo erscheint der Schnitt?",
+      body: "Neuronale Netze können mehr als Geraden. Dasselbe Prinzip kann den Raum falten: Eine Schicht hebt die Punkte in eine höhere Dimension, eine Aktivierung biegt sie, und eine flache Ebene trennt die Klassen. Im LLM macht das FFN pro Token genau diese Art von Biegung.",
       demoState: { scene: "mlp" },
       context: "Die Biegung ist eine Dense-Schicht: Sie hebt die Punkte in eine zusätzliche Dimension, bis ein flacher Schnitt reicht.",
       deep: "Das ist keine Animation über den Daten, sondern eine Animation der Daten selbst: Jeder Punkt behält seine Nachbarschaft, während der Raum sich krümmt. Die Form hängt von Gewichten, Bias und Aktivierung ab.",
@@ -784,8 +811,7 @@
     {
       kicker: "Bending space",
       title: "What are neural networks?",
-      body: "Neural networks can do more than straight lines. The same principle can fold space: a layer lifts the points into a higher dimension, an activation bends them, and a flat plane separates the classes. In an LLM the FFN performs exactly this kind of bend per token. Click through the nine slides: where does the space bend, where does the cut appear?",
-      watch: "Click through the nine slides. Where does the space bend, where does the cut appear?",
+      body: "Neural networks can do more than straight lines. The same principle can fold space: a layer lifts the points into a higher dimension, an activation bends them, and a flat plane separates the classes. In an LLM the FFN performs exactly this kind of bend per token.",
       demoState: { scene: "mlp" },
       context: "The bend is a dense layer: it lifts the points into an extra dimension until a flat cut is enough.",
       deep: "This is not an animation over the data; it is an animation of the data itself. Every point keeps its neighbourhood while the space bends. The shape depends on weights, bias, and activation.",
@@ -876,7 +902,7 @@
   var languageSteps = DE ? [
     {
       kicker: "Daten",
-      title: "Gauß, Ceres und die Daten",
+      title: "Woher kommen die Daten?",
       body: "Daten sind nicht exakt: Menschen beschreiben dieselbe Situation unterschiedlich, manchmal widersprüchlich. Über viele Beschreibungen hofft man, dass das reale Ergebnis durchscheint, wie bei Gauß. Ein Modell bekommt keine Sprachmodule. Es bekommt Text: viele Sprachen, viele Schriften, viel Unsinn, und davon enorm viel. Erst seit etwa 2016, dem Beginn der Zettabyte-Ära, standen zum ersten Mal mehr als ein Zettabyte digitale Daten zur Verfügung, also 10²¹ Byte. Diesen Text kuratiert man im besten Fall: Wikipedia ist schon gut gepflegt, peer-reviewte wissenschaftliche Paper sind noch besser. Auch sie können falsch sein, nur seltener. Menschen irren sich, Messungen haben Fehler, Menschen lügen. Die Idee ist, dass man über die Masse im Schnitt an die realen Daten herankommt: „Nil“ und „Ägypten“ liest man häufiger zusammen als „Nil“ und „Paraguay“, auch wenn im Internet jemand das Gegenteil behauptet. Klicke die Sprachen und vergleiche.",
       watch: "Klicke die Sprachen. Was bleibt gleich, was ändert sich?",
       demoState: { scene: "langdata" },
@@ -901,7 +927,7 @@
   ] : [
     {
       kicker: "Data",
-      title: "Gauss, Ceres, and the data",
+      title: "Where does the data come from?",
       body: "Data are not exact: people describe the same situation differently, sometimes contradictorily. Across many descriptions one hopes that the real result shines through, as with Gauss. A model does not get language modules. It gets text: many languages, many scripts, plenty of nonsense, and an enormous amount of it. Only since about 2016, the beginning of the zettabyte era, has more than a zettabyte of digital data been available, that is 10²¹ bytes. In the best case this text is curated: Wikipedia is already well maintained, peer-reviewed scientific papers are even better. They can be wrong too, only less often. People make mistakes, measurements have errors, people lie. The idea is that through sheer mass the model approaches the real data on average: “Nile” and “Egypt” occur together more often than “Nile” and “Paraguay”, even if someone on the internet claims otherwise. Click the languages and compare.",
       watch: "Click the languages. What stays the same, what changes?",
       demoState: { scene: "langdata" },
@@ -1009,16 +1035,17 @@
     {
       kicker: "Loss-Landschaft",
       title: "Was sind neuronale Netze?",
-      body: "Jetzt wird der Fehler zur Landschaft. Für das 1-Neuron-Modell gibt es nur zwei Parameter: w und b. Die Fläche zeigt den Loss über w und b; die Beispiele in der Seitenleiste sind dieselben 18 Sinus-Punkte wie im 1-Neuron- und im großen Netz. Das Training startet automatisch, sobald die Folie sichtbar ist; mit Pause hältst du es an, mit „Weiter“ verlässt du die Folie erst, wenn SGD, Adam und Momentum durch sind. Die Formel darunter setzt die aktuellen Werte ein.",
+      body: "Jetzt wird der Fehler zur Landschaft. Für das 1-Neuron-Modell gibt es nur zwei Parameter: w und b. Die Fläche zeigt den Loss über w und b; die Beispiele in der Seitenleiste sind dieselben 18 Sinus-Punkte wie im 1-Neuron- und im großen Netz. Das Training startet nicht von selbst: Drücke „Weiter“ oder den Startknopf. Mit Pause hältst du es an; „Weiter“ stoppt das Training und geht zur nächsten Folie. SGD, Adam und Momentum laufen nacheinander. Der Loss ist der mittlere quadratische Fehler (MSE), die Zahl, an der das Modell gemessen wird. Die Formel darunter setzt die aktuellen Werte ein.",
       watch: "Beobachte das Training. Wie verändern sich w und b, und wo im Tal endet der Punkt?",
       demoState: { scene: "gradient" },
       context: "Die Fläche ist diesmal kein Schnitt durch Hunderte Dimensionen: w und b sind die beiden echten Parameter. Jedes dieser 18 Beispiele (x, y) erzeugt einen Fehler; der Loss ist der Mittelwert dieser quadratischen Fehler. Die Formel darunter zeigt das Modell und den aktuellen Loss.",
       deep: "Der Gradient zeigt, wie der Loss auf eine Änderung von w und b reagiert. Der Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite. In einem LLM gibt es Milliarden solcher Parameter; die Landschaft ist nicht mehr sichtbar, die Regel bleibt dieselbe.",
       boxes: [
         box("grad-1", "Mathematik", "Das echte Modell", "Ein lineares Modell mit zwei Parametern: ŷ = w·x + b. w ist die Steigung, b der y-Achsenabschnitt. Mehr nicht.", "\\underbrace{\\hat y}_{\\text{Ausgabe}} = \\underbrace{w x + b}_{\\text{zwei Parameter}}"),
-        box("grad-2", "Mathematik", "Die Loss-Fläche", "L(w,b) = 1/n Σ (w·x_i + b − y_i)². Die beiden Achsen sind w und b, nicht zwei beliebige Richtungen.", "\\underbrace{L(w,b)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mittlerer Fehler}}"),
+        box("grad-2", "Mathematik", "Die Loss-Fläche (MSE)", "L(w,b) = 1/n Σ (w·x_i + b − y_i)². Die beiden Achsen sind w und b, nicht zwei beliebige Richtungen.", "\\underbrace{L(w,b)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mittlerer Fehler}}"),
         box("grad-3", "Technik", "Der Schritt", "θ ← θ − η ∇L. Der Gradient zeigt bergauf; der Ball geht bergab. Der Worker führt die Schritte aus und schickt die Projektion zurück.", "\\underbrace{\\theta_{t+1}}_{\\text{neu}} = \\underbrace{\\theta_t}_{\\text{alt}} - \\underbrace{\\eta}_{\\text{Lernrate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{Gradient}}"),
         box("grad-4", "Grenze", "Warum ist das nicht das ganze LLM?", "Echte Netze haben Milliarden Dimensionen. Die zwei Richtungen sind ein lesbarer Schnitt, keine vollständige Landschaft."),
+        box("grad-loss", "Optional", "Andere Loss-Funktionen", "MSE passt zu Regression. Für Klassen und Tokens nimmt man Cross-Entropy; für robuste Regression MAE oder Huber. Die Loss-Funktion sagt, was das Modell optimiert, nicht ob es die Aufgabe versteht."),
         box("grad-opt", "Technik", "SGD, Adam, Momentum", "SGD folgt dem Gradienten direkt. Momentum sammelt Geschwindigkeit und schießt über kleine Täler hinaus. Adam führt ein Gedächtnis für Gradient und Gradientenquadrat: häufig aktualisierte Parameter werden gedämpft, selten aktualisierte stärker gewichtet. Die Demo zeigt alle drei Pfade auf derselben Fläche."),
         box("grad-saddle", "Optional", "Sattelpunkte statt Minima", "In hohen Dimensionen sehen lokale Minima oft wie Sackgassen aus. Viele kritische Punkte sind aber Sattelpunkte: Es gibt fast immer eine Richtung, in der der Loss wieder fällt. Deshalb helfen Momentum und Adam, aus solchen Plateaus herauszukommen. Ein lokales Minimum ist im hochdimensionalen Raum meist nicht das eigentliche Hindernis.")
       ],
@@ -1027,23 +1054,26 @@
         { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten für mehrschichtige Netze.", en: "Gradients for multilayer networks." } },
         { label: "Li et al. (2018), Visualizing the Loss Landscape", url: "https://arxiv.org/abs/1712.09913", why: { de: "Zweidimensionale Schnitte durch Loss-Landschaften.", en: "Two-dimensional slices through loss landscapes." } },
         { label: "Dauphin et al. (2014), Saddle Point Problem", url: "https://arxiv.org/abs/1406.2572", why: { de: "Sattelpunkte als Hindernis in hochdimensionaler Optimierung.", en: "Saddle points as an obstacle in high-dimensional optimization." } },
-        { label: "Choromanska et al. (2015), Loss Surfaces of Multilayer Networks", url: "https://arxiv.org/abs/1412.0233", why: { de: "Kritische Punkte und lokale Minima in tiefen Netzen.", en: "Critical points and local minima in deep networks." } }
+        { label: "Choromanska et al. (2015), Loss Surfaces of Multilayer Networks", url: "https://arxiv.org/abs/1412.0233", why: { de: "Kritische Punkte und lokale Minima in tiefen Netzen.", en: "Critical points and local minima in deep networks." } },
+        { label: "Goodfellow, Bengio & Courville (2016), Deep Learning", url: "https://www.deeplearningbook.org/", why: { de: "Loss-Funktionen für Regression und Klassifikation.", en: "Loss functions for regression and classification." } },
+        { label: "PyTorch, CrossEntropyLoss", url: "https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html", why: { de: "Cross-Entropy für Klassifikation.", en: "Cross-entropy for classification." } }
       ]
     }
   ] : [
     {
       kicker: "Loss landscape",
       title: "What are neural networks?",
-      body: "Now the error becomes a landscape. The one-neuron model has only two parameters: w and b. The surface shows the loss over w and b; the examples in the side panel are the same 18 sine points as in the one-neuron and larger networks. Training starts automatically as soon as the slide is visible; Pause stops it, and “Next” leaves the slide only after SGD, Adam, and Momentum have finished. The formula below substitutes the current values.",
+      body: "Now the error becomes a landscape. The one-neuron model has only two parameters: w and b. The surface shows the loss over w and b; the examples in the side panel are the same 18 sine points as in the one-neuron and larger networks. Training does not start by itself: press “Next” or the Start button. Pause stops it; “Next” stops training and moves to the next slide. SGD, Adam, and Momentum run one after another. The loss is the mean squared error (MSE), the number by which the model is judged. The formula below substitutes the current values.",
       watch: "Watch the training. How do w and b change, and where in the valley does the point end?",
       demoState: { scene: "gradient" },
       context: "This surface is not a slice through hundreds of dimensions: w and b are the two real parameters. Each of these 18 examples (x, y) produces an error; the loss is the mean squared error. The formula below shows the model and the current loss.",
       deep: "The gradient shows how the loss reacts to a change in w and b. The optimiser moves in the opposite direction. The learning rate sets the step size. In an LLM there are billions of such parameters; the landscape is no longer visible, but the rule stays the same.",
       boxes: [
         box("grad-1", "Mathematics", "The real model", "A linear model with two parameters: ŷ = w·x + b. w is the slope, b is the intercept. Nothing else.", "\\underbrace{\\hat y}_{\\text{output}} = \\underbrace{w x + b}_{\\text{two parameters}}"),
-        box("grad-2", "Mathematics", "The loss surface", "L(w,b) = 1/n Σ (w·x_i + b − y_i)². The two axes are w and b, not two arbitrary directions.", "\\underbrace{L(w,b)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mean error}}"),
+        box("grad-2", "Mathematics", "The loss surface (MSE)", "L(w,b) = 1/n Σ (w·x_i + b − y_i)². The two axes are w and b, not two arbitrary directions.", "\\underbrace{L(w,b)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mean error}}"),
         box("grad-3", "Technique", "The step", "θ ← θ − η ∇L. The gradient points uphill; the ball goes downhill. The worker runs the steps and sends the projection back.", "\\underbrace{\\theta_{t+1}}_{\\text{new}} = \\underbrace{\\theta_t}_{\\text{old}} - \\underbrace{\\eta}_{\\text{learning rate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{gradient}}"),
         box("grad-4", "Limit", "Why is this not the whole LLM?", "Real networks have billions of dimensions. The two directions are a readable slice, not the full landscape."),
+        box("grad-loss", "Optional", "Other loss functions", "MSE fits regression. Classes and tokens use cross-entropy; robust regression uses MAE or Huber. The loss says what the model optimises, not whether it understands the task."),
         box("grad-opt", "Technique", "SGD, Adam, Momentum", "SGD follows the gradient directly. Momentum accumulates velocity and overshoots small valleys. Adam keeps a memory of the gradient and its square: frequently updated parameters are damped, rarely updated ones get more weight. The demo shows all three paths on the same surface."),
         box("grad-saddle", "Optional", "Saddle points rather than minima", "In high dimensions a local minimum often looks like a dead end. Many critical points are saddle points: there is almost always a direction in which the loss falls again. Momentum and Adam help escape such plateaus. A local minimum is usually not the main obstacle in a high-dimensional space.")
       ],
@@ -1052,7 +1082,9 @@
         { label: "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Gradienten für mehrschichtige Netze.", en: "Gradients for multilayer networks." } },
         { label: "Li et al. (2018), Visualizing the Loss Landscape", url: "https://arxiv.org/abs/1712.09913", why: { de: "Zweidimensionale Schnitte durch Loss-Landschaften.", en: "Two-dimensional slices through loss landscapes." } },
         { label: "Dauphin et al. (2014), Saddle Point Problem", url: "https://arxiv.org/abs/1406.2572", why: { de: "Sattelpunkte als Hindernis in hochdimensionaler Optimierung.", en: "Saddle points as an obstacle in high-dimensional optimization." } },
-        { label: "Choromanska et al. (2015), Loss Surfaces of Multilayer Networks", url: "https://arxiv.org/abs/1412.0233", why: { de: "Kritische Punkte und lokale Minima in tiefen Netzen.", en: "Critical points and local minima in deep networks." } }
+        { label: "Choromanska et al. (2015), Loss Surfaces of Multilayer Networks", url: "https://arxiv.org/abs/1412.0233", why: { de: "Kritische Punkte und lokale Minima in tiefen Netzen.", en: "Critical points and local minima in deep networks." } },
+        { label: "Goodfellow, Bengio & Courville (2016), Deep Learning", url: "https://www.deeplearningbook.org/", why: { de: "Loss-Funktionen für Regression und Klassifikation.", en: "Loss functions for regression and classification." } },
+        { label: "PyTorch, CrossEntropyLoss", url: "https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html", why: { de: "Cross-Entropy für Klassifikation.", en: "Cross-entropy for classification." } }
       ]
     }
   ];
@@ -1227,49 +1259,41 @@
   var unembedSteps = DE ? [
     {
       kicker: "Unembedding",
-      title: "Aus einem Vektor wird ein Wort",
-      body: "Am Ende bleibt ein einziger Vektor h. Wie wird daraus ein Wort? Das Modell vergleicht h mit den gelernten Richtungen aller Tokens. Jede Zeile von W_U ist eine solche Richtung. Das Skalarprodukt multipliziert die Koordinaten paarweise und summiert sie: Es misst, wie gut h zu einer Richtung passt. Aus den Logits macht Softmax eine Verteilung, dann wird ein Token gezogen. Drehe den Winkel und klicke dich bis zur Tokenwahl.",
-      watch: "Drehe den Winkel. Beobachte Dot-Produkt, Cosinus und Logits. Klicke Weiter bis zur Tokenwahl.",
+      title: "Ähnliche Worte finden",
+      body: "Welches Wort liegt neben „König“? W_U hat eine Zeile pro Token. Jede Zeile ist eine gelernte Richtung. Am Ende vergleicht das Modell den Vektor h mit diesen Richtungen: Das Skalarprodukt misst, wie ähnlich sie zeigen. Das ist die Umkehrung des Embeddings: aus einem Vektor werden wieder Wörter. Wähle ein Wort und sieh die nächsten Nachbarn. Schalte zwischen Winkel und euklidischem Abstand um: Der Winkel ignoriert die Länge, der Abstand nicht. Die Prozentwerte sind Ähnlichkeiten, keine Wahrscheinlichkeiten.",
+      watch: "Wähle ein Wort. Welche Nachbarn bleiben bei Winkel, welche bei euklidischem Abstand?",
       demoState: { scene: "unembed" },
-      context: "Winkel statt Abstand: In hohen Dimensionen liegen fast alle Punkte ähnlich weit auseinander. Richtungen unterscheiden besser. Das Skalarprodukt ist genau die Operation, die auch eine GPU beim Shading millionenfach ausführt.",
-      deep: "W_U ist eine gelernte Matrix mit einer Zeile pro Token. logits = W_U h. Softmax: p_i = exp(z_i/T) / Σ exp(z_j/T). Der absolute Offset der Logits ist willkürlich, nur Unterschiede zählen. Danach wird ein Token gezogen, an den Kontext gehängt, und die Schleife beginnt von vorn.",
+      context: "Die 2D-Karte ist eine Projektion der gelernten Richtungen. Die Prozentwerte vergleichen Richtungen; erst Softmax macht daraus eine Verteilung. Ähnliche Wörter liegen nahe beieinander, weil das Training sie in ähnlichen Kontexten sieht.",
+      deep: "W_U ist gelernt. Wörter, die in ähnlichen Kontexten vorkommen, bekommen ähnliche Richtungen; das Skalarprodukt misst die Nähe. In hohen Dimensionen verliert der euklidische Abstand an Kontrast, deshalb ist der Winkel oft informativer. Die Karte ist eine Projektion, keine vollständige Geometrie.",
       boxes: [
-        box("un-1", "Mathematik", "Das Skalarprodukt", "Jede Koordinate wird multipliziert, dann wird summiert. Das ist eine Multiply-Accumulate-Kette: genau das, was eine GPU parallel für Millionen Pixel rechnet.", "\\underbrace{u\\cdot v}_{\\text{Skalarprodukt}} = \\underbrace{\\sum_i \\underbrace{u_i v_i}_{\\text{paarweise Produkte}}}_{\\text{Summe}}"),
-        box("un-2", "Mathematik", "Logits und Softmax", "Jede Zeile von W_U erzeugt einen Logit. Softmax macht daraus eine Verteilung; ein Token wird gezogen.", "\\underbrace{p_i}_{\\text{Wahrscheinlichkeit}} = \\underbrace{\\frac{\\exp(z_i/T)}{\\sum_j \\exp(z_j/T)}}_{\\text{Softmax der Logits}}"),
-        box("un-3", "Technik", "Warum Winkel?", "In hohen Dimensionen verliert der euklidische Abstand an Kontrast; die meisten Punkte sind ähnlich weit entfernt. Der Winkel bleibt informativer, deshalb vergleicht das Unembedding Richtungen."),
-        box("un-4", "Geschichte", "GPU-Herkunft", "3D-Gaming brauchte Massen von Matrix- und Vektoroperationen: 4×4-Transformationen, Beleuchtung per Dot-Produkt, Shader. GeForce 256 (1999) brachte Transform and Lighting in Hardware; programmierbare Shader, CUDA (2007), SIMT und Tensor Cores (Volta, 2017) machten dieselbe Hardware für Transformer nutzbar."),
-        box("un-5", "Grenze", "Was ist vereinfacht?", "Die Demo ist klein und zweidimensional. W_U ist gelernt; die Zahlen sind didaktisch. Die echte Matrix hat Tausende Dimensionen und Zehntausende Zeilen.")
+        box("un-1", "Mathematik", "Die Matrix W_U", "Jede Zeile von W_U ist die gelernte Richtung eines Tokens. Das Skalarprodukt mit h ergibt einen Logit. Ähnliche Richtungen ergeben hohe Werte; Softmax macht daraus eine Verteilung.", "\\underbrace{z_i}_{\\text{Logit}} = \\underbrace{w_i \\cdot h}_{\\text{Richtung mal Vektor}}"),
+        box("un-2", "Metrik", "Winkel oder Abstand?", "Der Cosinus ignoriert die Länge und misst nur die Richtung. Der euklidische Abstand zählt die Länge mit. In hohen Dimensionen liegen fast alle Punkte ähnlich weit auseinander; der Winkel bleibt informativer. Deshalb vergleicht das Unembedding Richtungen.", "\\underbrace{\\cos\\theta}_{\\text{Ähnlichkeit}} = \\underbrace{\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}}_{\\text{nur Richtung}}"),
+        box("un-3", "Grenze", "Was ist das nicht?", "Kein Wörterbuch und keine Definition. Die Karte zeigt gelernte Nachbarschaften, keine Bedeutung an sich. Ähnliche Wörter können auch Gegensätze sein, wenn sie in ähnlichen Kontexten auftreten; die Prozentwerte sind keine Wahrscheinlichkeiten.")
       ],
       sources: [
-        { label: "Aggarwal et al. (2001), On the Surprising Behavior of Distance Metrics in High Dimensional Space", url: "https://doi.org/10.1007/3-540-44503-X_27", why: { de: "Distanzen verlieren in hohen Dimensionen an Kontrast; Winkel bleiben informativ.", en: "Distances lose contrast in high dimensions; angles stay informative." } },
-        { label: "NVIDIA, CUDA", url: "https://developer.nvidia.com/cuda", why: { de: "CUDA macht die parallele Rechenleistung der GPU für allgemeine Mathematik nutzbar.", en: "CUDA exposes GPU parallelism for general mathematics." } },
-        { label: "NVIDIA, Tensor Cores", url: "https://www.nvidia.com/en-us/data-center/tensor-cores/", why: { de: "Tensor Cores beschleunigen Matrix-Multiply-Accumulate.", en: "Tensor Cores accelerate matrix multiply-accumulate." } },
-        { label: "NVIDIA, CUDA C Programming Guide", url: "https://docs.nvidia.com/cuda/cuda-programming-guide/index.html", why: { de: "SIMT-Ausführung: derselbe Befehl über viele Threads.", en: "SIMT execution: the same instruction across many threads." } },
-        { label: "GeForce 256 (Wikipedia)", url: "https://en.wikipedia.org/wiki/GeForce_256", why: { de: "Dokumentiert die erste GPU mit Hardware-Transform-and-Lighting (1999); die NVIDIA-Originalseite ist nicht mehr erreichbar.", en: "Documents the first GPU with hardware transform and lighting (1999); the original NVIDIA page is no longer reachable." } }
+        { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "Gelernte Wortvektoren und Ähnlichkeit über Richtungen.", en: "Learned word vectors and similarity through directions." } },
+        { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "Globale Kookkurrenz als Wortvektoren.", en: "Global co-occurrence as word vectors." } },
+        { label: "Aggarwal et al. (2001), On the Surprising Behavior of Distance Metrics in High Dimensional Space", url: "https://doi.org/10.1007/3-540-44503-X_27", why: { de: "Distanzen verlieren in hohen Dimensionen an Kontrast; Winkel bleiben informativ.", en: "Distances lose contrast in high dimensions; angles stay informative." } }
       ]
     }
   ] : [
     {
       kicker: "Unembedding",
-      title: "From a vector to a word",
-      body: "In the end one vector remains: h. How does it become a word? The model compares h with the learned directions of all tokens. Every row of W_U is such a direction. The dot product multiplies the coordinates pairwise and sums them: it measures how well h fits a direction. Softmax turns the logits into a distribution, then one token is drawn. Turn the angle and click through to the token choice.",
-      watch: "Turn the angle. Watch the dot product, cosine, and logits. Click Next until the token is drawn.",
+      title: "Finding similar words",
+      body: "Which word lies next to “king”? W_U has one row per token. Every row is a learned direction. At the end the model compares the vector h with these directions: the dot product measures how similarly they point. This is the reverse of embedding: a vector becomes words again. Choose a word and see its nearest neighbours. Switch between angle and Euclidean distance: the angle ignores length, the distance does not. The percentages are similarities, not probabilities.",
+      watch: "Choose a word. Which neighbours stay under angle, which under Euclidean distance?",
       demoState: { scene: "unembed" },
-      context: "Angle instead of distance: in high dimensions almost all points lie at similar distances. Directions distinguish better. The dot product is exactly the operation a GPU performs millions of times while shading.",
-      deep: "W_U is a learned matrix with one row per token. logits = W_U h. Softmax: p_i = exp(z_i/T) / Σ exp(z_j/T). The absolute offset of the logits is arbitrary; only differences matter. Then one token is drawn, appended to the context, and the loop starts again.",
+      context: "The 2D map is a projection of the learned directions. The percentages compare directions; only softmax turns them into a distribution. Similar words lie close together because training sees them in similar contexts.",
+      deep: "W_U is learned. Words that occur in similar contexts get similar directions; the dot product measures the closeness. In high dimensions Euclidean distance loses contrast, so the angle is often more informative. The map is a projection, not the full geometry.",
       boxes: [
-        box("un-1", "Mathematics", "The dot product", "Each coordinate is multiplied, then summed. That is a multiply-accumulate chain: exactly what a GPU computes in parallel for millions of pixels.", "\\underbrace{u\\cdot v}_{\\text{dot product}} = \\underbrace{\\sum_i \\underbrace{u_i v_i}_{\\text{pairwise products}}}_{\\text{sum}}"),
-        box("un-2", "Mathematics", "Logits and softmax", "Every row of W_U produces one logit. Softmax turns the logits into a distribution; one token is drawn.", "\\underbrace{p_i}_{\\text{probability}} = \\underbrace{\\frac{\\exp(z_i/T)}{\\sum_j \\exp(z_j/T)}}_{\\text{softmax of the logits}}"),
-        box("un-3", "Technique", "Why angles?", "In high dimensions Euclidean distance loses contrast; most points are similarly far apart. Angles stay informative, which is why the unembedding compares directions."),
-        box("un-4", "History", "GPU lineage", "3D gaming needed masses of matrix and vector operations: 4×4 transforms, lighting by dot product, shaders. GeForce 256 (1999) brought transform and lighting into hardware; programmable shaders, CUDA (2007), SIMT, and Tensor Cores (Volta, 2017) made the same hardware usable for transformers."),
-        box("un-5", "Limit", "What is simplified?", "The demo is small and two-dimensional. W_U is learned; the numbers are didactic. The real matrix has thousands of dimensions and tens of thousands of rows.")
+        box("un-1", "Mathematics", "The matrix W_U", "Every row of W_U is the learned direction of a token. The dot product with h gives a logit. Similar directions give high values; softmax turns them into a distribution.", "\\underbrace{z_i}_{\\text{logit}} = \\underbrace{w_i \\cdot h}_{\\text{direction times vector}}"),
+        box("un-2", "Metric", "Angle or distance?", "The cosine ignores length and measures only direction. Euclidean distance includes length. In high dimensions almost all points are similarly far apart; the angle stays more informative. That is why the unembedding compares directions.", "\\underbrace{\\cos\\theta}_{\\text{similarity}} = \\underbrace{\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}}_{\\text{direction only}}"),
+        box("un-3", "Limit", "What is this not?", "Not a dictionary and not a definition. The map shows learned neighbourhoods, not meaning itself. Similar words can even be opposites if they occur in similar contexts; the percentages are not probabilities.")
       ],
       sources: [
-        { label: "Aggarwal et al. (2001), On the Surprising Behavior of Distance Metrics in High Dimensional Space", url: "https://doi.org/10.1007/3-540-44503-X_27", why: { de: "Distanzen verlieren in hohen Dimensionen an Kontrast; Winkel bleiben informativ.", en: "Distances lose contrast in high dimensions; angles stay informative." } },
-        { label: "NVIDIA, CUDA", url: "https://developer.nvidia.com/cuda", why: { de: "CUDA macht die parallele Rechenleistung der GPU für allgemeine Mathematik nutzbar.", en: "CUDA exposes GPU parallelism for general mathematics." } },
-        { label: "NVIDIA, Tensor Cores", url: "https://www.nvidia.com/en-us/data-center/tensor-cores/", why: { de: "Tensor Cores beschleunigen Matrix-Multiply-Accumulate.", en: "Tensor Cores accelerate matrix multiply-accumulate." } },
-        { label: "NVIDIA, CUDA C Programming Guide", url: "https://docs.nvidia.com/cuda/cuda-programming-guide/index.html", why: { de: "SIMT-Ausführung: derselbe Befehl über viele Threads.", en: "SIMT execution: the same instruction across many threads." } },
-        { label: "GeForce 256 (Wikipedia)", url: "https://en.wikipedia.org/wiki/GeForce_256", why: { de: "Dokumentiert die erste GPU mit Hardware-Transform-and-Lighting (1999); die NVIDIA-Originalseite ist nicht mehr erreichbar.", en: "Documents the first GPU with hardware transform and lighting (1999); the original NVIDIA page is no longer reachable." } }
+        { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "Gelernte Wortvektoren und Ähnlichkeit über Richtungen.", en: "Learned word vectors and similarity through directions." } },
+        { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "Globale Kookkurrenz als Wortvektoren.", en: "Global co-occurrence as word vectors." } },
+        { label: "Aggarwal et al. (2001), On the Surprising Behavior of Distance Metrics in High Dimensional Space", url: "https://doi.org/10.1007/3-540-44503-X_27", why: { de: "Distanzen verlieren in hohen Dimensionen an Kontrast; Winkel bleiben informativ.", en: "Distances lose contrast in high dimensions; angles stay informative." } }
       ]
     }
   ];
@@ -1352,14 +1376,14 @@
     {
       kicker: "Ceres",
       title: "Gauß, Ceres und die Daten",
-      body: "Am 1. Januar 1801 entdeckte Giuseppe Piazzi Ceres, den ersten Asteroiden, und verlor ihn nach 41 Tagen Beobachtung hinter der Sonne. Carl Friedrich Gauß behandelte die verrauschten Positionen als ein Ganzes und nahm an, dass die wahre Bahn in der Mitte der Fehler liegt. Seine Methode der kleinsten Quadrate minimierte den quadrierten Abstand zwischen Beobachtungen und Bahn und sagte voraus, wo Ceres wieder auftauchen würde (Stigler, 1981). Drehe am Teleskop: Je besser die Messung, desto enger die Glockenkurve. Der Ausgleich glaubt keiner einzelnen Messung; er wählt die Kurve, die allen zugleich am nächsten bleibt. Dieselbe Regel trainiert noch moderne Modelle.",
+      body: "Am 1. Januar 1801 entdeckte Giuseppe Piazzi Ceres, den ersten Asteroiden, und verlor ihn nach 41 Tagen Beobachtung hinter der Sonne. Carl Friedrich Gauß behandelte die verrauschten Positionen als ein Ganzes und nahm an, dass die wahre Bahn in der Mitte der Fehler liegt. Seine Methode der kleinsten Quadrate minimierte den quadrierten Abstand zwischen Beobachtungen und Bahn, also den mittleren quadratischen Fehler (MSE), und sagte voraus, wo Ceres wieder auftauchen würde (Stigler, 1981). Drehe am Teleskop: Je besser die Messung, desto enger die Glockenkurve. Der Ausgleich glaubt keiner einzelnen Messung; er wählt die Kurve, die allen zugleich am nächsten bleibt. Dieselbe Regel trainiert noch moderne Modelle.",
       watch: "Bewege den Teleskop-Regler. Wie verändert sich die Wolke, und wie eng wird die Glockenkurve?",
       demoState: { scene: "gauss" },
       context: "Die Beobachtungen sind synthetisch, nicht Piazzis originale Messungen. Der Plot zeigt das Prinzip: eine wahre Bahn (grün), eine Wolke verrauschter Messungen (blau) und die Glockenkurve ihrer Fehler. Die Methode der kleinsten Quadrate sucht die Bahn, die allen Beobachtungen zugleich am nächsten liegt.",
       deep: "Gauß veröffentlichte die Methode 1809. Sie wählt die Parameter, die die Summe der quadrierten Abstände minimieren. Ein einzelner Ausreißer zählt quadriert, aber viele kleine Fehler mitteln sich. Dieselbe Arithmetik erscheint in jedem trainierten Netz: Ein Modell ist eine Kurve, die Daten sind verrauschte Punkte, und das Training wählt die Gewichte, deren Vorhersagen im Durchschnitt am nächsten an den Beobachtungen liegen.",
       boxes: [
         box("gauss-1", "Geschichte", "Ceres und Piazzi", "Piazzi entdeckte Ceres am 1. Januar 1801 und verlor sie nach 41 Tagen hinter der Sonne. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981)."),
-        box("gauss-2", "Mathematik", "Was macht die Methode?", "Sie minimiert die Summe der quadrierten Abstände zwischen Beobachtungen und Modell. Der quadratische Fehler bestraft große Abweichungen stärker als kleine.", "\\underbrace{\\min_{\\theta}\\underbrace{\\sum_i (y_i - f_\\theta(x_i))^2}_{\\text{quadratische Fehler}}}_{\\text{kleinste Summe}}"),
+        box("gauss-2", "Mathematik", "Was macht die Methode?", "Sie minimiert die Summe der quadrierten Abstände zwischen Beobachtungen und Modell, den mittleren quadratischen Fehler (MSE). Große Abweichungen zählen quadratisch, kleine kaum.", "\\underbrace{\\min_{\\theta}\\underbrace{\\sum_i (y_i - f_\\theta(x_i))^2}_{\\text{quadratische Fehler}}}_{\\text{kleinste Summe}}"),
         box("gauss-3", "Daten", "Warum im Schnitt richtig?", "Einzelne Messungen können falsch sein: Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über viele Messungen mitteln sich zufällige Fehler; die Anpassung landet in der Mitte. Systematische Fehler bleiben, deshalb ist Kuration wichtig."),
         box("gauss-4", "Geschichte", "Die Rückkehr in die KI", "Die Methode kam aus der Astronomie und fand in das maschinelle Lernen, weil dasselbe Problem wiederkehrte: eine einfache Kurve durch unvollkommene Messungen legen. Dieselbe Regel trainiert noch moderne Netze.")
       ],
@@ -1373,14 +1397,14 @@
     {
       kicker: "Ceres",
       title: "Gauss, Ceres, and the data",
-      body: "On 1 January 1801 Giuseppe Piazzi discovered Ceres, the first asteroid, and lost it behind the Sun after 41 days of observation. Carl Friedrich Gauss treated the noisy positions as a whole and assumed that the true orbit lies in the middle of the errors. His method of least squares minimised the squared distance between observations and orbit and predicted where Ceres would reappear (Stigler, 1981). Turn the telescope: the better the measurement, the narrower the bell curve. The fit believes no single measurement; it chooses the curve that stays closest to all of them at once. The same rule still trains modern models.",
+      body: "On 1 January 1801 Giuseppe Piazzi discovered Ceres, the first asteroid, and lost it behind the Sun after 41 days of observation. Carl Friedrich Gauss treated the noisy positions as a whole and assumed that the true orbit lies in the middle of the errors. His method of least squares minimised the squared distance between observations and orbit, the mean squared error (MSE), and predicted where Ceres would reappear (Stigler, 1981). Turn the telescope: the better the measurement, the narrower the bell curve. The fit believes no single measurement; it chooses the curve that stays closest to all of them at once. The same rule still trains modern models.",
       watch: "Move the telescope slider. How does the cloud change, and how narrow does the bell curve become?",
       demoState: { scene: "gauss" },
       context: "The observations are synthetic, not Piazzi's original measurements. The plot shows the principle: a true orbit (green), a cloud of noisy measurements (blue), and the bell curve of their errors. The method of least squares looks for the orbit that stays closest to all observations at once.",
       deep: "Gauss published the method in 1809. It chooses the parameters that minimise the sum of squared distances. A single outlier counts squared, but many small errors average out. The same arithmetic appears in every trained network: a model is a curve, the data are noisy points, and training chooses the weights whose predictions are closest to the observations on average.",
       boxes: [
         box("gauss-1", "History", "Ceres and Piazzi", "Piazzi discovered Ceres on 1 January 1801 and lost it behind the Sun after 41 days. Gauss predicted with least squares where it would reappear (Stigler, 1981)."),
-        box("gauss-2", "Mathematics", "What does the method do?", "It minimises the sum of squared distances between observations and model. The squared error punishes large deviations more than small ones.", "\\underbrace{\\min_{\\theta}\\underbrace{\\sum_i (y_i - f_\\theta(x_i))^2}_{\\text{squared errors}}}_{\\text{smallest sum}}"),
+        box("gauss-2", "Mathematics", "What does the method do?", "It minimises the sum of squared distances between observations and model, the mean squared error (MSE). Large deviations count squared, small ones barely.", "\\underbrace{\\min_{\\theta}\\underbrace{\\sum_i (y_i - f_\\theta(x_i))^2}_{\\text{squared errors}}}_{\\text{smallest sum}}"),
         box("gauss-3", "Data", "Why right on average?", "Individual measurements can be wrong: people make mistakes, measurements have errors, people lie. Over many measurements random errors average out; the fit lands in the middle. Systematic errors remain, which is why curation matters."),
         box("gauss-4", "History", "The return to AI", "The method came from astronomy and entered machine learning because the same problem returned: putting a simple curve through imperfect measurements. The same rule still trains modern networks.")
       ],
@@ -1392,9 +1416,9 @@
     }
   ];
 
-  var gaussDataStep = {
-    title: "Gauß, Ceres und die Daten",
-    kicker: "Ceres → Daten",
+  var gaussDataStep = DE ? {
+    title: "Gauß und die verrauschten Daten",
+    kicker: "Ceres",
     substeps: [
       {
         kicker: "Die Bilder",
@@ -1425,22 +1449,70 @@
         watch: "Drücke Weiter. Wie schmal wird die Glockenkurve?",
         demoState: { scene: "gauss", phase: "demo", sigma: 1 },
         context: "Je kleiner die Streuung, desto enger liegt die Glockenkurve um die wahre Bahn. Die Beobachtungen bleiben fehlerhaft, aber der Ausgleich wird stabiler.",
-        deep: "Die Methode der kleinsten Quadrate minimiert die Summe der quadrierten Abstände. Viele kleine Fehler mitteln sich; ein einzelner Ausreißer zählt quadriert.",
+        deep: "Die Methode der kleinsten Quadrate minimiert die Summe der quadrierten Abstände, also den mittleren quadratischen Fehler (MSE). Viele kleine Fehler mitteln sich; ein einzelner Ausreißer zählt quadriert.",
         boxes: gaussSteps[0].boxes,
         sources: gaussSteps[0].sources
       },
       {
         kicker: "Ausgleich",
         title: "Gauß, Ceres und die Daten",
-        body: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Dieselbe Regel trainiert noch moderne Modelle. Drücke Weiter zu den Daten.",
+        body: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Das ist der mittlere quadratische Fehler (MSE), und dieselbe Regel trainiert noch moderne Modelle. Drücke Weiter zu den Daten.",
         watch: "Drücke Weiter. Was passiert, wenn die Beobachtungen nicht mehr exakt sind?",
         demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
-        context: "Die Glockenkurve ist eng; die wahre Bahn liegt in der Mitte. Der Ausgleich glaubt keiner einzelnen Messung, sondern wählt die Kurve, die allen zugleich am nächsten bleibt.",
+        context: "Die Glockenkurve ist eng; die wahre Bahn liegt in der Mitte. Der Ausgleich glaubt keiner einzelnen Messung, sondern wählt die Kurve, die allen zugleich am nächsten bleibt; minimiert wird der mittlere quadratische Fehler (MSE).",
         deep: "Dieselbe Arithmetik erscheint in jedem trainierten Netz: Ein Modell ist eine Kurve, die Daten sind verrauschte Punkte, und das Training wählt die Gewichte, deren Vorhersagen im Durchschnitt am nächsten an den Beobachtungen liegen.",
         boxes: gaussSteps[0].boxes,
         sources: gaussSteps[0].sources
+      }
+    ]
+  } : {
+    title: "Gauss and the noisy data",
+    kicker: "Ceres",
+    substeps: [
+      {
+        kicker: "The images",
+        title: "Gauss, Ceres, and the data",
+        body: "On 1 January 1801 Giuseppe Piazzi discovered Ceres, the first asteroid, and lost it behind the Sun after 41 days of observation. The left image shows Ceres, taken by NASA's Dawn spacecraft; on the right is the Flammarion engraving from 1888, an image for looking beyond the known sky. Carl Friedrich Gauss treated the noisy positions as a whole and assumed that the true orbit lies in the middle of the errors. Press Next: first come the observations, then the telescope improves step by step.",
+        watch: "Press Next. First come the observations, then the telescope improves.",
+        demoState: { scene: "gauss", phase: "intro" },
+        context: "The images are an invitation: Ceres was a real body, and Gauss's method was a real way of handling uncertain data. The demo shows the principle with synthetic data.",
+        deep: "Piazzi lost Ceres in the sunlight after 41 days. Gauss predicted with least squares where it would reappear (Stigler, 1981).",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
       },
-      languageSteps[0]
+      {
+        kicker: "Noisy observations",
+        title: "Gauss, Ceres, and the data",
+        body: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is wide. A single point would be useless as an orbit. Press Next: the telescope improves.",
+        watch: "Press Next and watch the cloud tighten.",
+        demoState: { scene: "gauss", phase: "demo", sigma: 2 },
+        context: "The green line is the true orbit; the blue points are observations; the bell curve on the right shows the error distribution. The data are synthetic, not Piazzi's original measurements.",
+        deep: "Without fitting, one would have to put an orbit through a single point. Gauss used all observations together.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Better telescopes",
+        title: "Gauss, Ceres, and the data",
+        body: "The telescope is better: the cloud contracts, the bell curve narrows. The true orbit stays in the middle of the errors. Press Next for the best telescope.",
+        watch: "Press Next. How narrow does the bell curve become?",
+        demoState: { scene: "gauss", phase: "demo", sigma: 1 },
+        context: "The smaller the spread, the tighter the bell curve around the true orbit. The observations remain noisy, but the fit becomes more stable.",
+        deep: "Least squares minimises the sum of squared distances, the mean squared error (MSE). Many small errors average out; a single outlier counts squared.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Fitting",
+        title: "Gauss, Ceres, and the data",
+        body: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted. That is the mean squared error (MSE), and the same rule still trains modern models. Press Next to the data.",
+        watch: "Press Next. What happens when the observations are no longer exact?",
+        demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
+        context: "The bell curve is narrow; the true orbit lies in the middle. The fit trusts no single measurement and chooses the curve closest to all of them at once; it minimises the mean squared error (MSE).",
+        deep: "The same arithmetic appears in every trained network: a model is a curve, the data are noisy points, and training chooses the weights whose predictions are closest to the observations on average.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      }
     ]
   };
 
@@ -1470,8 +1542,18 @@
     kicker: "Aktivierung → Raum",
     substeps: [activationSteps[0], insideSteps[0], gradientSteps[0], neuralLargeSteps[0], mlpSteps[0]]
   };
+  var neuralStepA = {
+    title: DE ? "Was sind neuronale Netze?" : "What are neural networks?",
+    kicker: DE ? "Aktivierung · 1 Neuron" : "Activation · 1 neuron",
+    substeps: [activationSteps[0], insideSteps[0]]
+  };
+  var neuralStepB = {
+    title: DE ? "Was sind neuronale Netze?" : "What are neural networks?",
+    kicker: DE ? "Loss · großes Netz · Raum" : "Loss · large net · space",
+    substeps: [gradientSteps[0], neuralLargeSteps[0], mlpSteps[0]]
+  };
 
-  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, tokenizeSteps[0], embedSteps[0], embedSteps[1], embedSteps[2], highdimSteps[0], manifoldSteps[0], positionSteps[0], attentionSteps[0], attentionContextStep, neuralStep, ffnSteps[0], residualSteps[0], trajectorySteps[0], meadowSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], introSteps[2], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
+  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, languageSteps[0], tokenizeSteps[0], embedSteps[0], embedSteps[1], embedSteps[2], highdimSteps[0], manifoldSteps[0], positionSteps[0], attentionSteps[0], attentionSteps[1], codeAttentionSubstep, neuralStepA, neuralStepB, ffnSteps[0], residualNotebookStep, residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], trajectorySteps[0], meadowSteps[0], introSteps[2], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
 
   var day = {
     id: "intuition",

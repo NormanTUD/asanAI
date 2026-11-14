@@ -28,7 +28,7 @@ function tm_parse_sim_date(?string $raw): ?DateTimeImmutable {
 $simRaw = $_GET['date'] ?? $_GET['datum'] ?? null;
 $today = tm_parse_sim_date($simRaw) ?? new DateTimeImmutable('today');
 $monthDay = $today->format('m-d');
-$showSnow = ((int) $today->format('n') === 12) || ((int) $today->format('n') === 1 && (int) $today->format('j') <= 6);
+$showSnow = $monthDay === '12-24';
 $showSanta = $monthDay === '12-24';
 $showFireworks = in_array($monthDay, ['12-31', '01-01'], true);
 $showSeasonal = $showSnow || $showSanta || $showFireworks;

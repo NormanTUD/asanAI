@@ -1741,3 +1741,32 @@ h1,h2,h3,h4{
 
 .ls-sinus-matrix-grid figure[hidden]{display:none}
 .ls-sinus-matrices-note{margin:0;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
+
+.ls-mlp-scene .ism-copy[hidden]{display:none}
+.ls-mlp-scene .ism-weight-input{width:5.2em;min-width:5.2em;font-size:.62rem;padding:1px 3px}
+.ls-mlp-scene .ism-weight-cell{width:5.2em}
+.ls-mlp-scene .ism-weight-slider{width:5.2em !important;min-width:0}
+.ls-mlp-scene .ism-dense-controls{margin-top:6px;margin-bottom:2px}
+
+.ls-mlp-scene .ism-weight-input{width:4em;min-width:4em;font-size:.6rem;padding:1px 2px}
+.ls-mlp-scene .ism-weight-cell{width:4em}
+.ls-mlp-scene .ism-weight-slider{width:4em !important}
+
+.ls-mlp-scene .ism-weight-input{width:4.5em;min-width:4.5em;font-size:.55rem;padding:1px 2px}
+.ls-mlp-scene .ism-weight-cell{width:4.5em}
+.ls-mlp-scene .ism-weight-slider{width:4.5em !important}
+
+.ls-res-scene{grid-template-rows:minmax(0,1fr) auto auto auto}
+.ls-res-stage{min-height:240px}
+.ls-res-caption{margin:0;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-res-layers .ls-chip.is-done{border-color:rgba(99,164,75,.32);color:var(--ls-ink)}
+
+.ls-sim-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto auto;gap:7px;padding:2px}
+.ls-sim-stage{position:relative;min-height:250px;border:1px solid rgba(0,75,111,.08);background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(247,249,248,.3))}
+.ls-sim-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.ls-sim-controls{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.ls-sim-pick{display:flex;align-items:center;gap:6px;font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-sim-select{font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-ink);background:var(--ls-paper-2);border:1px solid var(--ls-line);padding:3px 7px;min-height:30px;max-width:180px}
+.ls-sim-readout{display:flex;gap:12px;flex-wrap:wrap;min-height:2.6em;font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.ls-sim-readout b{color:var(--ls-ink);font-weight:600;text-transform:none;letter-spacing:0}
+.ls-sim-caption{margin:0;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}

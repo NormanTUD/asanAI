@@ -1099,121 +1099,147 @@ queued items are still open and will be handled in order:
 Marked as todo; work through carefully, one block at a time.
 
 ### Training and optimizers
-- [ ] Loss landscape: do not auto-start. Start only on “Training starten” or
+- [x] Loss landscape: do not auto-start. Start only on “Training starten” or
   “Weiter”. The optimizers must go through one after another when the reader
   presses Weiter, instead of starting automatically.
-- [ ] Neural networks (1 neuron and 32×32×32): do not auto-start. Start only
+- [x] Neural networks (1 neuron and 32×32×32): do not auto-start. Start only
   on “Weiter” or the Start button.
-- [ ] “Weiter” while training must **stop the training and go to the next
+- [x] “Weiter” while training must **stop the training and go to the next
   slide** (not stay on the training slide).
-- [ ] “Matrizen zeigen” must work in both the 1-neuron and the 32×32×32
+- [x] “Matrizen zeigen” must work in both the 1-neuron and the 32×32×32
   variants, show the correct matrices for the active phase, and explain
   briefly what the reader sees. The 1-neuron button must not switch to the
   big network.
 
 ### MLP / “Raum biegen”
-- [ ] Remove the `watch` text “Klicke dich durch die neun Folien. Wo biegt
+- [x] Remove the `watch` text “Klicke dich durch die neun Folien. Wo biegt
   sich der Raum, wo erscheint der Schnitt?”.
-- [ ] In “Die Dense-Schicht in Zahlen”, remove the top “Skala”, “n”, etc.
+- [x] In “Die Dense-Schicht in Zahlen”, remove the top “Skala”, “n”, etc.
   labels/controls and put the controls into the demo itself.
-- [ ] Repair the linear-separation check; on the “Eigene” slide show where
+- [x] Repair the linear-separation check; on the “Eigene” slide show where
   the separating plane really is; verify the algorithm from different angles.
-- [ ] Remove the formulas `s(x,y)=…` and `L … = 0.5563`. Remove the duplicate
+- [x] Remove the formulas `s(x,y)=…` and `L … = 0.5563`. Remove the duplicate
   `a=W1…, z=W2…` formula; keep the existing top formula
   `x=(x1,x2) → h=act(W1x+b1) → z=W2h+b2`.
-- [ ] Remove the second “✓ Linear trennbar: ja (s = 0.00)” text on the right;
+- [x] Remove the second “✓ Linear trennbar: ja (s = 0.00)” text on the right;
   keep the one in the canvas.
-- [ ] Fix `CanvasRenderingContext2D.arc: Negative radius` in
+- [x] Fix `CanvasRenderingContext2D.arc: Negative radius` in
   `assets/space-morph.js` when sliders are moved.
-- [ ] Fix the weight number inputs at 8 neurons: they are too wide and
+- [x] Fix the weight number inputs at 8 neurons: they are too wide and
   overlap; make the matrix editor fit and stay readable.
-- [ ] Keep all current information but make the MLP page clearer and less
+- [x] Keep all current information but make the MLP page clearer and less
   cluttered.
 
 ### Residual stream
-- [ ] Make “Jede Schicht schreibt in denselben Stream” step through the
+- [x] Make “Jede Schicht schreibt in denselben Stream” step through the
   layers on Weiter.
-- [ ] Attention and FFN belong together: both write into the residual stream;
+- [x] Attention and FFN belong together: both write into the residual stream;
   the output after the projection keeps the same size, so layers can only add
   to the signal.
-- [ ] Import the shared-notebook demo from `blog/lndw/index.html` as the
+- [x] Import the shared-notebook demo from `blog/lndw/index.html` as the
   intuition at the beginning of the residual slide. German exactly like the
   source; English must translate and keep all annotations fitting and equally
   good.
 
 ### Order and blocks
-- [ ] Move “Token-Trajektorien durch GPT-2” to directly after “Ein Wort nach
+- [x] Move “Token-Trajektorien durch GPT-2” to directly after “Ein Wort nach
   dem anderen”.
-- [ ] Add the data at the very beginning of “Die Bausteine eines LLM”; then
+- [x] Add the data at the very beginning of “Die Bausteine eines LLM”; then
   put the data slide after the Bausteine slide and move the content there.
-- [ ] Fix “unzerbrechlich” in the Bausteine tokenizer mini: the ID texts
+- [x] Fix “unzerbrechlich” in the Bausteine tokenizer mini: the ID texts
   overlap, and the parts (`un`/`zer`, `e`/`b`-like neighbours) overlap.
   Increase the space and keep the boxes exactly on the split.
 
 ### Unembedding / “Ähnliche Worte finden”
-- [ ] Rename “Aus einem Vektor wird ein Wort” to something like “Ähnliche
+- [x] Rename “Aus einem Vektor wird ein Wort” to something like “Ähnliche
   Worte finden”.
-- [ ] Remove the first “Winkel” step.
-- [ ] Start by explaining/showning why angle is better than Euclidean
+- [x] Remove the first “Winkel” step.
+- [x] Start by explaining/showning why angle is better than Euclidean
   distance in high dimensions; research the topic and write it briefly.
-- [ ] New gorgeous demo: two words that are almost the same (small angle),
+- [x] New gorgeous demo: two words that are almost the same (small angle),
   unrelated (about 90°), and opposite words. Use researched approximate
   values that fit; make it mouthwateringly beautiful.
-- [ ] Remove the fifth step with the triangle (GPU demo).
-- [ ] On the last step, show the resulting percentages at the words
+- [x] Remove the fifth step with the triangle (GPU demo).
+- [x] On the last step, show the resulting percentages at the words
   themselves.
-- [ ] Keep all information that is currently there, but clearer.
+- [x] Keep all information that is currently there, but clearer.
 
 ### Finish
-- [ ] Re-run page test, height test, php_validator, check_all --fast,
+- [x] Re-run page test, height test, php_validator, check_all --fast,
   syntax/diff.
-- [ ] Final quality pass: mouthwateringly gorgeous, minimalist, real takeaway.
+- [~] Final quality pass: mouthwateringly gorgeous, minimalist, real takeaway.
 - [ ] Commit and push only with explicit approval.
-
 ## Final quality and robustness requests (2026-11-13)
 
-- [ ] **Right arrow must reach every demo.** On every slide, pressing Weiter
+- [x] **Right arrow must reach every demo.** On every slide, pressing Weiter
   repeatedly must step through every demo/sub-demo the slide contains, so the
   reader can see all of them even without touching every slider. Verify this
   on every base slide and every substep.
-- [ ] **Intuitive, smooth, fun.** Review the whole sequence for intuitiveness,
+- [~] **Intuitive, smooth, fun.** Review the whole sequence for intuitiveness,
   smooth transitions, and a coherent flow; nothing should jump, stutter, or
   feel disconnected. Make it fun because everything flows into the next.
-- [ ] **Gremlins.js monkey test.** At the very end, obtain gremlins.js and run
+- [x] **Gremlins.js monkey test.** At the very end, obtain gremlins.js and run
   it with many workers. Provoke failures deliberately, analyze every error
   precisely, and fix it at the root. The software must survive 50 monkeys:
   every control clickable, arbitrary text/numbers in every field, sliders
   moved anywhere, no crash.
-- [ ] **Move “Die Karte der Wörter” after “Ein Wort nach dem anderen”.**
+- [x] **Move “Die Karte der Wörter” after “Ein Wort nach dem anderen”.**
   The meadow slide moves directly after the loop slide.
 
 ### Ordering notes
-- Current order after the latest merges: media, compression, Bausteine, Gauss/
-  data (substeps), tokenizer, embeddings, highdim, manifold, position,
-  attention (substeps), neural (substeps), FFN, residual, trajectories,
-  meadow, unembedding, softmax, loop, distribution, post-training, eval, RAG,
+- Final order (31 slides): media, compression, Bausteine, Gauss (4
+  substeps), data, tokenizer, embeddings, highdim, manifold, position,
+  attention (intro, context), code attention, neural (activation/1 neuron),
+  neural (loss/large net/MLP), FFN, notebook, residual stream, unembedding,
+  softmax, loop, trajectories, meadow, distribution, post-training, eval, RAG,
   history, philosophy.
-- Move trajectories and meadow to directly after the loop slide. Recheck the
-  final order after the move.
+- Trajectories and meadow now sit directly after the loop.
 
 ## Final extras (2026-11-13, very end)
 
-- [ ] **Fireworks on 31 December and 1 January.** When the page is opened on
+- [x] **Fireworks on 31 December and 1 January.** When the page is opened on
   31.12 or 1.1, show a tasteful fireworks effect (no sound, no blocking of
   the lesson, theme-aware, reduced-motion friendly).
-- [ ] **Position sweep to 10000.** On “Every slot gets a fingerprint”, pressing
+- [x] **Position sweep to 10000.** On “Every slot gets a fingerprint”, pressing
   Weiter must sweep the position quickly from the current value up to 10000
   (about 5 seconds), leave a visible point at every visited position in the
   space, and show exactly where the sweep currently is.
-- [ ] **Slide count check at the very end.** Count the total slides. If there
+- [x] **Slide count check at the very end.** Count the total slides. If there
   are fewer than 31, split e.g. the merged Gauss/data slide back into a Gauss
   slide and a data slide so the count is at least 31. Recheck the order and
   the calendar afterwards.
-- [ ] **Gauss and MSE.** Explicitly name MSE (mean squared error / mittlerer
+- [x] **Gauss and MSE.** Explicitly name MSE (mean squared error / mittlerer
   quadratischer Fehler) on the Gauss slide. On the neural-network loss slide,
   say that the loss is MSE and that this is how the model is judged; add an
   optional box explaining that other problem types use other loss functions
   (cross-entropy, MAE, etc.), with sources.
-- [ ] **Snow on 24 December.** When the page is opened on 24.12, show a brief
+- [x] **Snow on 24 December.** When the page is opened on 24.12, show a brief
   tasteful snow effect (no sound, does not block the lesson, theme-aware,
   reduced-motion friendly).
+
+## Latest pass (2026-11-14)
+
+- 31 base slides now: Gauss and data are separate; attention bank and code
+  are separate; neural activation/1-neuron and loss/large-net/MLP are
+  separate; notebook and residual stream are separate.
+- Gauss slide is bilingual and names MSE; the loss slide names MSE and has
+  the optional other-loss box with sources.
+- Loss/optimizer behavior: no auto-start; loss optimizers step on Weiter;
+  NNs start on Weiter/Start; Weiter while training stops and advances.
+- Matrices work in both phases; 1-neuron stays linear and shows W/b; the
+  overlay explains the shapes. The MLP controls are bottom, the copy is
+  hidden on the dense steps, the separation check is robust, the plane sits
+  at the threshold, and the number inputs fit.
+- Notebook (five layers) and stream (Embedding, Attention+FFN 1,
+  Attention+FFN 2, Unembed) step on Weiter; Attention and FFN are one block.
+- Unembedding is now “Ähnliche Worte finden”: word map, neighbours,
+  percentages, angle vs Euclidean, no songs/GPU steps.
+- Position Weiter sweeps 7 → 10000 in 5 s, leaves 200 trail points, and shows
+  the current position.
+- Trajectories and meadow sit after the loop.
+- Snow on 24.12, fireworks on 31.12/1.1 on calendar and LearnSys page.
+- Gremlins 50 monkeys and a full control stress found and fixed the hidden
+  trajectory layer crash (`prevRaw` out of range). All base steps pass the
+  stress run.
+- Tests: tenminutes pages 10/10, height 38/0, php_validator 0 issues,
+  check_all --fast all green.
