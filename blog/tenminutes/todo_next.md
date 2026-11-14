@@ -61,6 +61,24 @@ This file therefore no longer claims that every historical line was done.
 - [x] Historical backlog archived as superseded by later requests; it was not resurrected line by line. Push was not requested/performed.
 - [x] Final commits: `72d086454` (3D trajectories + FFN shape pipeline), `105b2b79c` and preceding `fix` commits, test `262d02376`, status `741271f3d`/`afe5393bc`; working tree clean after the final status commit.
 
+## Backprop slide: forward pass, backward layer, cat image (pending)
+
+- [ ] Make “Der Fehler läuft zurück” genuinely small-step: separate the forward
+      pass from the backward pass, one layer at a time.
+- [ ] Start with a cat image as the input. Show the image, the input values, the
+      forward activations through all five layers, the prediction ŷ and the
+      target y. Use a real, licensed cat photo with author/licence/source in the
+      caption and in the image-credit record; do not invent a credit.
+- [ ] Show why the updated values matter: after the last layer is corrected,
+      the layer before it receives the new delta and can itself be corrected.
+      Animate that hand-off explicitly (“diese Schicht ist jetzt die letzte”)
+      with the actual numbers changing.
+- [ ] Add controls for Forward, one layer back, one layer forward, reset and
+      layer selection. Keep the canvas and readout heights fixed, bilingual
+      EN/DE, keyboard and mobile.
+- [ ] Verify the new flow in the full deck and as a standalone preview, with no
+      console errors or height jumps.
+
 ## Historical note
 Earlier unchecked lines belong to superseded request rounds. They are archived
 in git history, not active work, and not proof that every historical request
@@ -86,36 +104,30 @@ state; the “Still open” section is the remaining work.
 - [x] Verification: **78/78** standalone scene checks, **30/30** full-deck
       checks, **34/0** height interactions; EN/DE, desktop/mobile.
 
-## New closing slide: “Mit Worten steuern” (pending)
+## New closing slide: “Mit Worten steuern” (implemented)
 
-- [ ] Decide the final order: philosophy stays as the penultimate slide, the new
-      semantic-steering slide becomes the last slide. Update the deck from 32 to
-      33 slides, the rail labels, the page test and the height test.
-- [ ] Build one “semantic navigator” scene: a luminous 3D semantic cloud with a
-      single glowing query point, a target ring, a motion trail and a live
-      nearest-word readout. The point is steered by word directions, not by a
-      generic slider.
-- [ ] Show the steering tricks explicitly, each as a clickable word chip or
-      direction arrow:
-      * analogy: `König − Mann + Frau` moves along the gender and rank axes;
-      * axis composition: `Frau` + `Macht` + `Rang`;
-      * context pull: `Bank` + `Geld` or `Bank` + `Fluss` moves through attention;
-      * negation: `nicht` flips the direction, with a visible ghost of the old
-        point;
-      * intensity: `sehr`, `mehr`, `weniger` scales the step;
-      * layer/scale: a “Schicht 12” control moves the point in the residual
-        stream and shows how the same word can mean different things.
-- [ ] Add a “sweet spot” and an “oversteer” state: the point can be pushed too
-      far, the nearest words become nonsense, and a reset returns to the stable
-      region. This is the actual lesson: operating the vector means choosing the
-      right direction and stopping at the right distance.
-- [ ] Reuse the existing embedding WORDS, `V.trajBounds`/`V.trajProject`, the
-      unembedding probability bars and the attention context. Do not build a
-      parallel semantic model.
-- [ ] Make it mouthwateringly gorgeous: deep petrol 3D inset, thin teal/green/
-      gold orbit lines, soft glow, slow trails, a calm camera, no clutter, no
-      emoji. Use only the ScaDS palette. Keep the paper shell readable.
-- [ ] Bilingual EN/DE, informal du, all chips/readouts/aria labels, mobile touch,
-      keyboard access, reduced motion, and no height jumps.
-- [ ] Add the new scene to the standalone preview selector and test it alone in
-      both languages, desktop/mobile, light/dark, plus the full 33-slide deck.
+- [x] Final order: philosophy is penultimate; “Mit Worten steuern” is slide 33.
+      The rail, page test and height test now expect 33.
+- [x] Built the semantic navigator: a projected 3D semantic terrain with a
+      glowing query point, target ring, dashed remaining-distance line, motion
+      trail and a live nearest-word panel.
+- [x] Steering is done with word chips: `Frau`, `Macht`, `Rang`, `nicht`,
+      `sehr`, `weniger`, `Geld`, `Fluss`, `gestern`, plus the analogy preset
+      `König − Mann + Frau`. Hovering a chip previews its direction arrow.
+- [x] Added the sweet-spot and oversteer lesson: correct direction plus stopping
+      distance reaches Queen; three exaggerated power steps show the point
+      leaving the target zone; reset always returns to Man.
+- [x] Reused `V.trajBounds` and the shared projection, and modelled the nearest-
+      word bars on the unembedding readout. The semantic points are a didactic
+      3D projection, clearly labelled as such.
+- [x] Replaced the dark inset with a white semantic-energy terrain so it belongs
+      visually to the energy-landscape slide: green/gold/lilac surface cells,
+      white mesh, soft glow, thin axes, ScaDS palette only, no emoji.
+- [x] Bilingual EN/DE, informal du, all chips, readouts, axes and aria labels;
+      mobile touch, reduced motion, keyboard path through the host; no height
+      jumps.
+- [x] Added `demos/steering.js` to the standalone preview and tested it alone in
+      both languages, desktop/mobile, plus the full deck.
+
+Verification: **80/80** standalone preview checks, **30/30** full-deck checks,
+**38/0** height interactions, `check_all.py --fast` fully green.
