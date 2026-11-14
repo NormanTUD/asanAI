@@ -1869,3 +1869,15 @@ h1,h2,h3,h4{
 .ls-bp-readout{display:flex;gap:12px;flex-wrap:wrap;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted);font-variant-numeric:tabular-nums;min-height:2.4em}
 .ls-bp-readout b{color:var(--ls-ink);font-weight:600}
 .ls-bp-caption{margin:0;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}
+
+
+.ls-gauss-intro-title{display:none;grid-column:1/-1;align-items:baseline;gap:8px;padding:2px 2px 0;font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol)}
+.ls-gauss-intro-title small{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);letter-spacing:.06em;text-transform:uppercase}
+.ls-gauss-scene.is-intro .ls-gauss-intro-title{display:flex}
+.ls-gauss-scene.is-intro .ls-gauss-side{animation:lsGaussIn .4s cubic-bezier(.22,.8,.2,1)}
+.ls-gauss-scene:not(.is-intro) .ls-gauss-plots{animation:lsGaussIn .4s cubic-bezier(.22,.8,.2,1)}
+@keyframes lsGaussIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.ls-gauss-scene.is-intro{grid-template-rows:auto minmax(0,1fr) auto}
+.ls-gauss-scene.is-intro .ls-gauss-side{grid-row:2}
+.ls-gauss-scene.is-intro .ls-gauss-note{grid-row:3}

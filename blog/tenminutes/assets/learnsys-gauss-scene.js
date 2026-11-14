@@ -7,6 +7,7 @@
     var el = document.createElement("div");
     el.className = "ls-gauss-scene";
     el.innerHTML =
+      '<div class="ls-gauss-intro-title"><span>' + (DE ? "Verrauschte Beobachtungen" : "Noisy observations") + '</span><small>' + (DE ? "Ceres, 1801" : "Ceres, 1801") + '</small></div>' +
       '<div class="ls-gauss-plots">' +
         '<div class="ls-gauss-plot-title">' + (DE ? "Ceres: Wahrheit gegen verrauschte Beobachtungen" : "Ceres: truth vs. noisy observations") + '</div>' +
         '<div class="ls-gauss-panel ls-gauss-panel--scatter"><canvas class="ls-gauss-canvas" role="img"></canvas></div>' +

@@ -1485,7 +1485,7 @@
   var dataLanguagesStep = DE ? {
     kicker: "Sprachen",
     title: "Eine Wahrheit, viele Sprachen",
-    body: "„Sonnenblumen sind die besten Blumen“ ist derselbe Gedanke in vielen Sprachen. Die Schrift und die Tokens ändern sich, der Sachverhalt bleibt. Genau solche parallelen Beschreibungen machen mehrsprachige Daten wertvoll: Das Modell sieht denselben Inhalt in verschiedenen Oberflächen.",
+    body: "„Sonnenblumen sind die besten Blumen“ ist derselbe Gedanke in vielen Sprachen. Die Schrift und die Tokens ändern sich, der Sachverhalt bleibt. LLMs lernen, ähnliche Sätze unabhängig von der Sprache nach Bedeutung zu bewerten, nicht nach den konkreten Zeichen. Attention und FFN tragen diese Bedeutung durch die Schichten. Genau solche parallelen Beschreibungen machen mehrsprachige Daten wertvoll.",
     watch: "Lies die sechs Sätze. Wo ist der Inhalt gleich, wo ändert sich nur die Schrift?",
     demoState: { scene: "langdata", mode: "languages" },
     context: "Die Sätze sind ein kleines Beispiel, kein Übersetzungskorpus. In echten Daten sind Übersetzungen selten eins zu eins; manche Sprachen brauchen mehr Tokens für denselben Inhalt (Petrov et al., 2023).",
@@ -1500,7 +1500,7 @@
   } : {
     kicker: "Languages",
     title: "One truth, many languages",
-    body: "“Sunflowers are the best flowers” is the same thought in many languages. The script and the tokens change; the situation stays. Such parallel descriptions make multilingual data valuable: the model sees the same content through different surfaces.",
+    body: "“Sunflowers are the best flowers” is the same thought in many languages. The script and the tokens change; the situation stays. LLMs learn to judge similar sentences by meaning, independent of the script, not by the concrete characters. Attention and FFN carry that meaning through the layers. Such parallel descriptions make multilingual data valuable.",
     watch: "Read the six sentences. Where is the content the same, where does only the script change?",
     demoState: { scene: "langdata", mode: "languages" },
     context: "The sentences are a small example, not a translation corpus. Real translations are rarely one-to-one; some languages need more tokens for the same content (Petrov et al., 2023).",

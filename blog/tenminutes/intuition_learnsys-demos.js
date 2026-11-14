@@ -6989,7 +6989,8 @@
         mini: "transformer",
         sub: [
           { title: "Attention", text: "Jedes Token bewertet, wie wichtig jedes andere sichtbare Token ist, und zieht Information aus den wichtigen." },
-          { title: "FFN", text: "Das FFN arbeitet pro Token. „new“ allein heißt „neu“, „york“ allein ist ein Ort. Zusammen ergibt sich New York." }
+          { title: "FFN", text: "Das FFN arbeitet pro Token. „new“ allein heißt „neu“, „york“ allein ist ein Ort. Zusammen ergibt sich New York." },
+          { title: "Token-Trajektorien", text: "Echte GPT-2-small-Zustände: Jeder Block verschiebt die Tokens im Raum. 768 Dimensionen sind für das Bild mit PCA auf wenige Achsen reduziert; das ist eine starke Vereinfachung." }
         ]
       },
       {
@@ -7031,7 +7032,8 @@
         mini: "transformer",
         sub: [
           { title: "Attention", text: "Every token scores how important every other visible token is, then pulls information from the important ones." },
-          { title: "FFN", text: "The FFN works per token. “new” alone means “not old”, “york” alone is a place. Together they give New York." }
+          { title: "FFN", text: "The FFN works per token. “new” alone means “not old”, “york” alone is a place. Together they give New York." },
+          { title: "Token trajectories", text: "Real GPT-2 small states: every block shifts the tokens in space. 768 dimensions are reduced to a few axes with PCA for the picture; that is a strong simplification." }
         ]
       },
       {
@@ -7270,6 +7272,34 @@
       });
       V.heading(ctx, "h · W_U → logits", 12, 16, C.petrol, 10, 1);
     }
+    function miniTrajectories(ctx, w, h) {
+      var data = window.TM_GPT2_DATA;
+      V.heading(ctx, DE ? "GPT-2 · 768 → 3 (PCA)" : "GPT-2 · 768 → 3 (PCA)", 12, 16, C.petrol, 9, 1);
+      if (!data || !data.points || !data.tokens) {
+        V.label(ctx, DE ? "GPT-2-Daten fehlen" : "GPT-2 data missing", w / 2, h / 2, { align: "center", color: C.muted, bg: false });
+        return;
+      }
+      var min = [Infinity, Infinity], max = [-Infinity, -Infinity];
+      data.points.forEach(function (tok) { tok.forEach(function (p) { min[0] = Math.min(min[0], p[0]); max[0] = Math.max(max[0], p[0]); min[1] = Math.min(min[1], p[1]); max[1] = Math.max(max[1], p[1]); }); });
+      var spanX = Math.max(1e-6, max[0] - min[0]), spanY = Math.max(1e-6, max[1] - min[1]);
+      var pad = 18, cols = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55"];
+      function px(p) { return pad + (p[0] - min[0]) / spanX * (w - pad * 2); }
+      function py(p) { return h - pad - (p[1] - min[1]) / spanY * (h - pad * 2); }
+      ctx.strokeStyle = V.alpha(C.line, 0.55); ctx.lineWidth = 0.8;
+      ctx.beginPath(); ctx.moveTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.moveTo(pad, h - pad); ctx.lineTo(pad, pad); ctx.stroke();
+      data.points.forEach(function (tok, i) {
+        if (!tok || !tok.length) return;
+        ctx.strokeStyle = cols[i % cols.length]; ctx.globalAlpha = 0.75; ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        tok.forEach(function (p, j) { if (j === 0) ctx.moveTo(px(p), py(p)); else ctx.lineTo(px(p), py(p)); });
+        ctx.stroke(); ctx.globalAlpha = 1;
+        var last = tok[tok.length - 1];
+        if (last) {
+          ctx.beginPath(); ctx.arc(px(last), py(last), 2.8, 0, Math.PI * 2); ctx.fillStyle = cols[i % cols.length]; ctx.fill();
+          if (data.tokens[i]) { ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.fillText(data.tokens[i].trim(), px(last) + 3, py(last) - 3); }
+        }
+      });
+    }
     function drawMini(canvas, kind) {
       var f = fitMini(canvas);
       if (!f) return;
@@ -7281,6 +7311,7 @@
       else if (kind === "attention") miniAttention(ctx, w, h);
       else if (kind === "ffn") miniFFN(ctx, w, h);
       else if (kind === "unembed") miniUnembed(ctx, w, h);
+      else if (kind === "trajectories") miniTrajectories(ctx, w, h);
     }
     function drawMinis() {
       detail.querySelectorAll("canvas[data-mini]").forEach(function (cv) { drawMini(cv, cv.getAttribute("data-mini")); });
@@ -7315,7 +7346,7 @@
           '<p class="ls-bs-html-note">' + (DE ? "Die echte Seite ist über ein Megabyte groß. Das Modell sieht nicht „den Artikel“, sondern eine sehr lange Folge von Zeichen, Tags und Text. Zwischen dem HTML und dem Buch liegt eine Auslassung: Der Korpus enthält beides." : "The real page is over a megabyte. The model does not see “the article”, but a very long sequence of characters, tags, and text. Between the HTML and the book sits an omission: the corpus contains both.") + '</p>';
       } else if (b.sub) {
         html += '<div class="ls-bs-subgrid">' + b.sub.map(function (s, i) {
-          return '<div class="ls-bs-sub"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + (i === 0 ? "attention" : "ffn") + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
+          return '<div class="ls-bs-sub"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + (["attention", "ffn", "trajectories"][i] || "ffn") + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
         }).join("") + '</div>';
       } else {
         html += '<div class="ls-bs-canvas-wrap"><canvas data-mini="' + b.mini + '"></canvas></div>';
@@ -7801,7 +7832,7 @@
         { t: "Die Spree fließt durch Berlin.", d: 0.14, ok: true },
         { t: "Der Fluss, der durch Berlin läuft, ist die Spree.", d: 0.24, ok: true },
         { t: "Berlin wird von der Spree durchflossen.", d: 0.32, ok: true },
-        { t: "Berlin liegt an der Elbe.", d: 1.02, ok: false }
+        { t: "Berlin liegt an der Elbe.", d: 1.25, ok: false }
       ]
     } : {
       title: "Many sentences, one truth",
@@ -7812,7 +7843,7 @@
         { t: "Egypt lies on the Nile.", d: 0.14, ok: true },
         { t: "The river that runs through Egypt is the Nile.", d: 0.24, ok: true },
         { t: "The Nile is the river of Egypt.", d: 0.32, ok: true },
-        { t: "The Nile flows through Brazil.", d: 1.02, ok: false }
+        { t: "The Nile flows through Brazil.", d: 1.25, ok: false }
       ]
     };
     var el = document.createElement("div");
@@ -7902,7 +7933,7 @@
       var isLang = mode === "languages";
       var isScale = mode === "scale";
       if (sampleEl) sampleEl.hidden = isTruth || isScale;
-      if (tabs) tabs.hidden = !isLang;
+      if (tabs) tabs.hidden = true;
       if (truthEl) truthEl.hidden = !isTruth;
       if (mixEl) mixEl.hidden = !isScale;
       if (caveatEl) caveatEl.hidden = isTruth;
@@ -7924,7 +7955,7 @@
       ctx.fillRect(0, 0, w, h);
       V.grid(ctx, w, h, C, 24, 0.12);
       var padL = 38, padR = 14, padT = 22, padB = 30;
-      var yMax = 1.16;
+      var yMax = 1.42;
       function X(i) { return padL + (i / (TRUTH.items.length - 1)) * (w - padL - padR); }
       function Y(d) { return h - padB - (d / yMax) * (h - padT - padB); }
       function truthCurve(x) { return 0.10 + 0.06 * Math.sin(x * Math.PI * 1.7); }
