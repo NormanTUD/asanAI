@@ -1399,3 +1399,12 @@ Marked as todo; work through carefully, one block at a time.
 - [ ] Final `tenminutes_pages_test`, `tenminutes_height_test`, `php_validator`, `js_validator`, `check_all.py --fast`, `git diff --check`.
 - [ ] 10-minute random monkey regression with arbitrary fields/sliders/canvas inputs: 0 errors.
 - [ ] Read the whole demo codebase; generalize/deduplicate without removing functionality; keep tests updated.
+
+## Final audit, fact-check and unification (very last)
+
+- [ ] Go through every slide again for errors, broken controls, overflow, console errors, and visual jumps.
+- [ ] Fact-check every empirical claim, number, date, model spec, formula and source link; check that each is plausible, correct and used in the right context. Remove or qualify anything unsupported.
+- [ ] Check the thematic and content arc: every slide's prerequisites are answered by earlier slides; every new term is introduced before use; each section has a payoff and a bridge.
+- [ ] Unify the demo code: extract shared scene helpers (canvas fit/resize, theme redraw, read-only arrows, labels, readouts, tab bars, nav/busy/finish) and use them everywhere without losing any functionality. Each demo behaviour should have one source of truth so fixes are central.
+- [ ] Add defensive guards for undefined/NaN/out-of-range values in every shared and scene-specific render path.
+- [ ] Final regression: every page, every slide, both languages, desktop/mobile, keyboard/arrow navigation, monkey test, validators.
