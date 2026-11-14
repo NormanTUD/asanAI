@@ -8575,6 +8575,7 @@
     var mix = api.util.hexMix;
     var seed = 19;
     function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    var GROUP = [0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 3, 3];
     var nodes = [], edges = [];
     (function build() {
       var per = 12, clusters = 12;
@@ -8608,8 +8609,11 @@
       }
       superCenters = [];
       for (var sg = 0; sg < 4; sg++) {
-        var sc = clusterCenters.slice(sg * 3, sg * 3 + 3);
-        superCenters.push({ x: (sc[0].x + sc[1].x + sc[2].x) / 3, y: (sc[0].y + sc[1].y + sc[2].y) / 3 });
+        var members = clusterCenters.filter(function (c, ci) { return GROUP[ci] === sg; });
+        superCenters.push({
+          x: members.reduce(function (a, p) { return a + p.x; }, 0) / Math.max(1, members.length),
+          y: members.reduce(function (a, p) { return a + p.y; }, 0) / Math.max(1, members.length)
+        });
       }
       center = { x: superCenters.reduce(function (a, p) { return a + p.x; }, 0) / 4, y: superCenters.reduce(function (a, p) { return a + p.y; }, 0) / 4 };
       outer = [];
@@ -8636,17 +8640,17 @@
       "plants", "fungi", "objects", "mathematics", "thoughts", "dreams"
     ];
     var nodeNames = DE ? [
-      ["Hauskatze", "Löwe", "Tiger"], ["Schimpanse", "Mensch", "Gorilla"], ["Pferd", "Hund", "Wal"],
+      ["Hauskatze", "Löwe", "Tiger"], ["Schimpanse", "Bonobo", "Gorilla"], ["Pferd", "Hund", "Wal"],
       ["Amsel", "Meise", "Adler"], ["Lachs", "Hai"], ["Biene", "Käfer"],
       ["Eiche", "Rose"], ["Steinpilz", "Hefe"],
       ["Stuhl", "Stein"], ["Zahl 7", "Primzahl"], ["Idee", "Satz"], ["Traum", "Albtraum"]
     ] : [
-      ["house cat", "lion", "tiger"], ["chimpanzee", "human", "gorilla"], ["horse", "dog", "whale"],
+      ["house cat", "lion", "tiger"], ["chimpanzee", "bonobo", "gorilla"], ["horse", "dog", "whale"],
       ["blackbird", "tit", "eagle"], ["salmon", "shark"], ["bee", "beetle"],
       ["oak", "rose"], ["mushroom", "yeast"],
       ["chair", "stone"], ["number 7", "prime"], ["idea", "sentence"], ["dream", "nightmare"]
     ];
-    var superNames = DE ? ["Wirbeltiere", "Wirbellose", "Pflanzen & Pilze", "Nicht-Leben"] : ["vertebrates", "invertebrates", "plants & fungi", "non-living"];
+    var superNames = DE ? ["Säugetiere", "andere Tiere", "Pflanzen & Pilze", "Nicht-Leben"] : ["mammals", "other animals", "plants & fungi", "non-living"];
     var phaseLabels = DE ? [
       "Einzelfälle · schon in lokalen Gruppen",
       "8 lebende Gruppen · Katzenartige, Menschenaffen, Säugetiere, Vögel, Fische, Insekten …",
@@ -8748,7 +8752,7 @@
       nodes.forEach(function (n) {
         var x0 = X({ x: n.x0 }), y0 = Y({ y: n.y0 });
         var cc = clusterCenters[n.c];
-        var sc = superCenters[Math.floor(n.c / 3)];
+        var sc = superCenters[GROUP[n.c]];
         var x1 = X(cc), y1 = Y(cc), x2 = X(sc), y2 = Y(sc), x3 = X(center), y3 = Y(center);
         ctx.strokeStyle = n.col;
         ctx.globalAlpha = 0.045 + 0.035 * (1 - Math.min(1, tt / 4));
@@ -8784,8 +8788,8 @@
       }
       if (a1 > 0.01) {
         clusterCenters.forEach(function (cc, i) {
-          var x = lerp(cc.x, superCenters[Math.floor(i / 3)].x, u1);
-          var y = lerp(cc.y, superCenters[Math.floor(i / 3)].y, u1);
+          var x = lerp(cc.x, superCenters[GROUP[i]].x, u1);
+          var y = lerp(cc.y, superCenters[GROUP[i]].y, u1);
           ring(X({x:x}), Y({y:y}), 8, palette[i % palette.length], a1 * 0.6);
           glow(X({x:x}), Y({y:y}), 5.2, palette[i % palette.length], a1);
         });
@@ -8817,8 +8821,8 @@
       var clusterAlpha = clamp01(Math.min(tt - 0.45, 2.35 - tt));
       if (clusterAlpha > 0.01) {
         clusterCenters.forEach(function (cc, i) {
-          var x = lerp(cc.x, superCenters[Math.floor(i / 3)].x, u1);
-          var y = lerp(cc.y, superCenters[Math.floor(i / 3)].y, u1);
+          var x = lerp(cc.x, superCenters[GROUP[i]].x, u1);
+          var y = lerp(cc.y, superCenters[GROUP[i]].y, u1);
           labelCat(clusterNames[i], X({x:x}), Y({y:y}) - 10, palette[i % palette.length], clusterAlpha);
         });
       }
