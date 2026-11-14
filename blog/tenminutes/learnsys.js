@@ -1129,6 +1129,10 @@
     }
   }
   function next() {
+    if (demo && typeof demo.busy === "function" && demo.busy()) {
+      if (typeof demo.finish === "function") demo.finish();
+      return;
+    }
     if (demo && typeof demo.next === "function" && demo.next()) return;
     var d = activeDay();
     var base = d.steps[state.step];

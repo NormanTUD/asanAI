@@ -1709,9 +1709,27 @@
       else if (phase === "done") reset();
     });
     reset();
+    function busy() { return phase === "typing" || phase === "thinking" || phase === "running"; }
+    function finish() {
+      clearTimers();
+      if (userTextEl) userTextEl.textContent = userText;
+      if (userMsgEl) userMsgEl.hidden = false;
+      if (userPromptEl) userPromptEl.textContent = "";
+      if (promptRow) promptRow.classList.add("is-sent");
+      if (agentBubbleEl) agentBubbleEl.hidden = false;
+      if (agentMsgEl) agentMsgEl.textContent = agentText;
+      if (thinkingEl) thinkingEl.classList.remove("on");
+      if (agentWin) agentWin.classList.add("is-coding");
+      spans.forEach(function (sp) { sp.classList.add("is-visible"); });
+      phase = "ready";
+      setButton(DE ? "Weiter" : "Next", false);
+      fitCode();
+    }
     return {
       update: function () {},
       start: function () { reset(); },
+      busy: busy,
+      finish: finish,
       pause: function () {
         clearTimers();
         if (phase !== "ready" && phase !== "done") phase = "paused";
@@ -4112,8 +4130,17 @@
     window.addEventListener("tm:theme", onTheme);
     resize();
     raf = requestAnimationFrame(loop);
+    function finishSweep() {
+      if (!sweep) return;
+      sweep = null;
+      pos = 10000; posAnim = 10000;
+      trail = [];
+      for (var tv = 0; tv <= 10000; tv += 12) trail.push(tv);
+      if (posEl) { posEl.value = "10000"; posEl.nextElementSibling.textContent = "10000"; }
+      draw();
+    }
     function next() {
-      if (sweep) return true;
+      if (sweep) { finishSweep(); return true; }
       if (pos >= 10000) return false;
       trail = [pos];
       sweep = { from: pos, to: 10000, start: performance.now(), duration: 5000 };
@@ -4126,6 +4153,8 @@
     }
     return {
       update: function () {},
+      busy: function () { return !!sweep; },
+      finish: finishSweep,
       next: next,
       prev: prev,
       onKey: function (e) { return api.util.arrowKey(e, next, prev); },
@@ -7080,7 +7109,7 @@
           '<div class="ls-bs-book">' +
           '<div class="ls-bs-book-head">' + (DE ? "… danach: ein Buchtext aus dem Korpus" : "… then: a book text from the corpus") + '</div>' +
           '<p class="ls-bs-book-title">' + (DE ? "Also sprach Zarathustra. Ein Buch für Alle und Keinen." : "Thus Spoke Zarathustra. A Book for All and None.") + '</p>' +
-          '<p class="ls-bs-book-quote">' + (DE ? "„Ich lehre euch den Übermenschen. Der Mensch ist Etwas, das überwunden werden soll.“" : "“I teach you the overman. Man is something that shall be overcome.”") + '</p>' +
+          '<p class="ls-bs-book-quote">' + (DE ? "„Man muss noch Chaos in sich tragen, um einen tanzenden Stern gebären zu können.“" : "“One must still have chaos in oneself to be able to give birth to a dancing star.”") + '</p>' +
           '<p class="ls-bs-book-src">' + (DE ? "Friedrich Nietzsche, 1883 · " : "Friedrich Nietzsche, 1883 · ") + '<a href="' + (DE ? "https://www.gutenberg.org/ebooks/7205" : "https://www.gutenberg.org/ebooks/1998") + '" target="_blank" rel="noopener">Project Gutenberg</a></p>' +
           '</div>' +
           '<p class="ls-bs-html-note">' + (DE ? "Die echte Seite ist über ein Megabyte groß. Das Modell sieht nicht „den Artikel“, sondern eine sehr lange Folge von Zeichen, Tags und Text. Zwischen dem HTML und dem Buch liegt eine Auslassung: Der Korpus enthält beides." : "The real page is over a megabyte. The model does not see “the article”, but a very long sequence of characters, tags, and text. Between the HTML and the book sits an omission: the corpus contains both.") + '</p>';
@@ -7698,16 +7727,31 @@
       var yMax = 1.16;
       function X(i) { return padL + (i / (TRUTH.items.length - 1)) * (w - padL - padR); }
       function Y(d) { return h - padB - (d / yMax) * (h - padT - padB); }
-      var y0 = Y(0);
-      ctx.fillStyle = V.alpha(C.green, 0.10);
-      ctx.fillRect(padL, Y(0.5), w - padL - padR, y0 - Y(0.5));
-      ctx.strokeStyle = C.green;
-      ctx.lineWidth = 2.6;
-      ctx.beginPath(); ctx.moveTo(padL, y0); ctx.lineTo(w - padR, y0); ctx.stroke();
+      function truthCurve(x) { return 0.10 + 0.06 * Math.sin(x * Math.PI * 1.7); }
+      function curveY(x) { return Y(truthCurve(x)); }
+      // green band around the truth curve, like the true orbit in the Gauss plot
+      ctx.beginPath();
+      for (var ci = 0; ci <= 80; ci++) {
+        var cx0 = ci / 80;
+        var px0 = padL + cx0 * (w - padL - padR);
+        if (ci === 0) ctx.moveTo(px0, curveY(cx0) - 9); else ctx.lineTo(px0, curveY(cx0) - 9);
+      }
+      for (var ci2 = 80; ci2 >= 0; ci2--) {
+        var cx1 = ci2 / 80;
+        ctx.lineTo(padL + cx1 * (w - padL - padR), curveY(cx1) + 9);
+      }
+      ctx.closePath(); ctx.fillStyle = V.alpha(C.green, 0.10); ctx.fill();
+      ctx.strokeStyle = C.green; ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      for (var ci3 = 0; ci3 <= 80; ci3++) {
+        var tx = ci3 / 80, tpx = padL + tx * (w - padL - padR);
+        if (ci3 === 0) ctx.moveTo(tpx, curveY(tx)); else ctx.lineTo(tpx, curveY(tx));
+      }
+      ctx.stroke();
       ctx.fillStyle = C.green;
       ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "bottom";
-      ctx.fillText(DE ? "Wahrheit" : "truth", padL + 4, y0 - 5);
+      ctx.fillText(DE ? "Wahrheit" : "truth", padL + 4, curveY(0) - 12);
       ctx.strokeStyle = C.line;
       ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, h - padB); ctx.lineTo(w - padR, h - padB); ctx.stroke();
@@ -7722,7 +7766,7 @@
       ctx.fillText(DE ? "Nähe zur Wahrheit" : "distance from truth", 0, 0);
       ctx.restore();
       TRUTH.items.forEach(function (item, i) {
-        var x = X(i), y = Y(item.d);
+        var x = X(i), y = Y(truthCurve(i / (TRUTH.items.length - 1)) + item.d);
         if (item.ok) {
           ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2);
           ctx.fillStyle = C.blue; ctx.fill();
@@ -7763,7 +7807,7 @@
     navPrev.addEventListener("click", prevStep);
     navNext.addEventListener("click", nextStep);
     return {
-      update: function (s) { if (s && s.mode) { mode = s.mode; applyMode(); } },
+      update: function (s) { if (s && s.mode) { mode = s.mode; applyMode(); requestAnimationFrame(drawTruth); } },
       next: function () { return false; },
       prev: function () { return false; },
       onKey: function () { return false; },
@@ -8427,6 +8471,13 @@
       },
       next: nextInternal,
       prev: prevInternal,
+      busy: function () {
+        if (step !== 2) return false;
+        if (codeApi && codeApi.busy && codeApi.busy()) return true;
+        var toks = el.querySelectorAll('.ls-code-token');
+        return toks.length > 0 && !Array.prototype.every.call(toks, function (t) { return t.classList.contains('is-visible'); });
+      },
+      finish: function () { if (step === 2 && codeApi && codeApi.finish) codeApi.finish(); },
       onKey: function (e) {
         return api.util.arrowKey(e, nextInternal, prevInternal);
       },
@@ -8629,7 +8680,7 @@
     var clusterCenters = [], superCenters = [
       { x: 0.30, y: 0.30 }, { x: 0.70, y: 0.30 }, { x: 0.30, y: 0.70 }, { x: 0.70, y: 0.70 }
     ];
-    for (var c = 0; c < 12; c++) clusterCenters.push({ x: 0.18 + (c % 4) * 0.22, y: 0.22 + Math.floor(c / 4) * 0.28 });
+    for (var c = 0; c < 13; c++) clusterCenters.push(c === 12 ? { x: 0.84, y: 0.78 } : { x: 0.18 + (c % 4) * 0.22, y: 0.22 + Math.floor(c / 4) * 0.28 });
     var center = { x: 0.5, y: 0.5 };
     var outer = [];
     for (var o = 0; o < 8; o++) {

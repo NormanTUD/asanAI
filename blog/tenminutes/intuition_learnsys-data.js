@@ -1423,26 +1423,26 @@
   var dataTruthStep = DE ? {
     kicker: "Wahrheit",
     title: "Viele Sätze, eine Wahrheit",
-    body: "Eine Wahrheit ist eine Linie, viele Beschreibungen liegen darum. Je näher ein Satz an der Linie liegt, desto wahrer ist er in diesem Beispiel. Die meisten Beschreibungen liegen nahe; ein falscher Satz liegt weit weg. Genau diese Form hat Gauß bei Ceres gesehen: Viele verrauschte Beobachtungen, eine wahre Bahn in der Mitte.",
+    body: "Eine Wahrheit ist eine Kurve, viele Beschreibungen liegen darum. Je näher ein Satz an der Kurve liegt, desto wahrer ist er in diesem Beispiel. Die meisten Beschreibungen liegen nahe; ein falscher Satz liegt weit weg. Genau diese Form hat Gauß bei Ceres gesehen: Viele verrauschte Beobachtungen, eine wahre Bahn in der Mitte.",
     watch: "Schau auf die Punkte. Welche Sätze liegen nah an der Wahrheit, welcher ist falsch?",
     demoState: { scene: "langdata", mode: "truth" },
-    context: "Die Sätze sind eine Illustration, keine Messung. Die Linie steht symbolisch für die Wahrheit; der Abstand ist ein didaktisches Maß. In echten Daten gibt es nicht immer eine so klare Linie, und Wahrheit ist oft umstritten.",
+    context: "Die Sätze sind eine Illustration, keine Messung. Die Kurve steht symbolisch für die Wahrheit; der Abstand ist ein didaktisches Maß. In echten Daten gibt es nicht immer eine so klare Linie, und Wahrheit ist oft umstritten.",
     deep: "Daten sind viele Beschreibungen desselben Sachverhalts. Einzelne Sätze können irren; über viele Beschreibungen hofft man, dass die tragfähige Struktur durchscheint. Das ist keine Garantie, sondern eine statistische Hoffnung.",
     boxes: [
-      box("data-t-1", "Idee", "Die Linie", "Die Linie ist die Wahrheit. Punkte darüber und darunter sind Beschreibungen; ihr Abstand zeigt, wie weit sie in diesem Beispiel von der Wahrheit entfernt sind."),
+      box("data-t-1", "Idee", "Die Kurve", "Die Kurve ist die Wahrheit. Punkte darüber und darunter sind Beschreibungen; ihr Abstand zeigt, wie weit sie in diesem Beispiel von der Wahrheit entfernt sind."),
       box("data-t-2", "Grenze", "Was ist das nicht?", "Keine automatische Wahrheitsmaschine. Der Plot ist eine Illustration. Die Sätze sind Beispiele; die Abstände sind didaktisch, nicht gemessen.")
     ],
     sources: []
   } : {
     kicker: "Truth",
     title: "Many sentences, one truth",
-    body: "A truth is a line; many descriptions sit around it. The closer a sentence is to the line, the truer it is in this example. Most descriptions sit near; one false sentence lies far away. This is the shape Gauss saw with Ceres: many noisy observations, one true orbit in the middle.",
+    body: "A truth is a curve; many descriptions sit around it. The closer a sentence is to the curve, the truer it is in this example. Most descriptions sit near; one false sentence lies far away. This is the shape Gauss saw with Ceres: many noisy observations, one true orbit in the middle.",
     watch: "Look at the points. Which sentences lie near the truth, and which one is false?",
     demoState: { scene: "langdata", mode: "truth" },
-    context: "The sentences are an illustration, not a measurement. The line stands symbolically for truth; the distance is a didactic measure. Real data does not always have such a clear line, and truth is often disputed.",
+    context: "The sentences are an illustration, not a measurement. The curve stands symbolically for truth; the distance is a didactic measure. Real data does not always have such a clear line, and truth is often disputed.",
     deep: "Data are many descriptions of the same situation. Individual sentences can be wrong; over many descriptions one hopes the robust structure shines through. That is not a guarantee, but a statistical hope.",
     boxes: [
-      box("data-t-1", "Idea", "The line", "The line is the truth. Points above and below are descriptions; their distance shows how far they are from the truth in this example."),
+      box("data-t-1", "Idea", "The curve", "The curve is the truth. Points above and below are descriptions; their distance shows how far they are from the truth in this example."),
       box("data-t-2", "Limit", "What is this not?", "Not an automatic truth machine. The plot is an illustration. The sentences are examples; the distances are didactic, not measured.")
     ],
     sources: []
