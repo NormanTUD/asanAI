@@ -1820,3 +1820,12 @@ h1,h2,h3,h4{
 .ls-sim-controls[hidden]{display:none}
 .ls-sim-angle-controls,.ls-sim-scale-controls{gap:12px}
 .ls-sim-angle-controls input[type=range],.ls-sim-scale-controls input[type=range]{width:min(230px,50vw)}
+
+.ls-lang-sample[hidden],.ls-lang-truth[hidden],.ls-lang-mix[hidden],.ls-lang-caveat[hidden],.ls-lang-tabs[hidden],.ls-lang-nav[hidden],.ls-lang-all[hidden]{display:none}
+.ls-lang-all{display:grid;gap:3px;min-height:0;overflow:auto}
+.ls-lang-all-row{display:grid;grid-template-columns:82px minmax(0,1fr);gap:8px;align-items:baseline;margin:0;padding:3px 0;border-bottom:1px solid var(--ls-line);font:var(--ls-fs-ui-sm)/1.35 "Open Sans",sans-serif;color:var(--ls-ink)}
+.ls-lang-all-row b{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.06em}
+.ls-lang-all-row span{overflow-wrap:anywhere}
+
+.ls-rag-space{position:relative;min-height:150px;border:1px solid var(--ls-line);background:#fff;overflow:hidden}
+.ls-rag-space canvas{position:absolute;inset:0;width:100%;height:100%}

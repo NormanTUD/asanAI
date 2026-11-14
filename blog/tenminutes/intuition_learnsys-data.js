@@ -1420,6 +1420,104 @@
     }
   ];
 
+  var dataTruthStep = DE ? {
+    kicker: "Wahrheit",
+    title: "Viele Sätze, eine Wahrheit",
+    body: "Eine Wahrheit ist eine Linie, viele Beschreibungen liegen darum. Je näher ein Satz an der Linie liegt, desto wahrer ist er in diesem Beispiel. Die meisten Beschreibungen liegen nahe; ein falscher Satz liegt weit weg. Genau diese Form hat Gauß bei Ceres gesehen: Viele verrauschte Beobachtungen, eine wahre Bahn in der Mitte.",
+    watch: "Schau auf die Punkte. Welche Sätze liegen nah an der Wahrheit, welcher ist falsch?",
+    demoState: { scene: "langdata", mode: "truth" },
+    context: "Die Sätze sind eine Illustration, keine Messung. Die Linie steht symbolisch für die Wahrheit; der Abstand ist ein didaktisches Maß. In echten Daten gibt es nicht immer eine so klare Linie, und Wahrheit ist oft umstritten.",
+    deep: "Daten sind viele Beschreibungen desselben Sachverhalts. Einzelne Sätze können irren; über viele Beschreibungen hofft man, dass die tragfähige Struktur durchscheint. Das ist keine Garantie, sondern eine statistische Hoffnung.",
+    boxes: [
+      box("data-t-1", "Idee", "Die Linie", "Die Linie ist die Wahrheit. Punkte darüber und darunter sind Beschreibungen; ihr Abstand zeigt, wie weit sie in diesem Beispiel von der Wahrheit entfernt sind."),
+      box("data-t-2", "Grenze", "Was ist das nicht?", "Keine automatische Wahrheitsmaschine. Der Plot ist eine Illustration. Die Sätze sind Beispiele; die Abstände sind didaktisch, nicht gemessen.")
+    ],
+    sources: []
+  } : {
+    kicker: "Truth",
+    title: "Many sentences, one truth",
+    body: "A truth is a line; many descriptions sit around it. The closer a sentence is to the line, the truer it is in this example. Most descriptions sit near; one false sentence lies far away. This is the shape Gauss saw with Ceres: many noisy observations, one true orbit in the middle.",
+    watch: "Look at the points. Which sentences lie near the truth, and which one is false?",
+    demoState: { scene: "langdata", mode: "truth" },
+    context: "The sentences are an illustration, not a measurement. The line stands symbolically for truth; the distance is a didactic measure. Real data does not always have such a clear line, and truth is often disputed.",
+    deep: "Data are many descriptions of the same situation. Individual sentences can be wrong; over many descriptions one hopes the robust structure shines through. That is not a guarantee, but a statistical hope.",
+    boxes: [
+      box("data-t-1", "Idea", "The line", "The line is the truth. Points above and below are descriptions; their distance shows how far they are from the truth in this example."),
+      box("data-t-2", "Limit", "What is this not?", "Not an automatic truth machine. The plot is an illustration. The sentences are examples; the distances are didactic, not measured.")
+    ],
+    sources: []
+  };
+
+  var dataLanguagesStep = DE ? {
+    kicker: "Sprachen",
+    title: "Eine Wahrheit, viele Sprachen",
+    body: "„Sonnenblumen sind die besten Blumen“ ist derselbe Gedanke in vielen Sprachen. Die Schrift und die Tokens ändern sich, der Sachverhalt bleibt. Genau solche parallelen Beschreibungen machen mehrsprachige Daten wertvoll: Das Modell sieht denselben Inhalt in verschiedenen Oberflächen.",
+    watch: "Lies die sechs Sätze. Wo ist der Inhalt gleich, wo ändert sich nur die Schrift?",
+    demoState: { scene: "langdata", mode: "languages" },
+    context: "Die Sätze sind ein kleines Beispiel, kein Übersetzungskorpus. In echten Daten sind Übersetzungen selten eins zu eins; manche Sprachen brauchen mehr Tokens für denselben Inhalt (Petrov et al., 2023).",
+    deep: "Mehrsprachige Daten helfen, gemeinsame Muster zu teilen. Sie sind kein Ersatz für saubere Daten: Seltene Sprachen und seltene Themen bleiben benachteiligt, wenn sie im Korpus selten sind.",
+    boxes: [
+      box("data-l-1", "Beispiel", "Gleicher Inhalt", "Deutsch, Englisch, Französisch, Japanisch, Arabisch und Chinesisch beschreiben hier denselben Satz. Die Zeichen unterscheiden sich; der gemeinte Sachverhalt bleibt."),
+      box("data-l-2", "Grenze", "Was ist vereinfacht?", "Die Beispiele sind kurze, saubere Sätze. Ein echtes Korpus enthält Übersetzungen, Fehler, Varianten und Widersprüche; die Mehrsprachigkeit ist ein Signal, kein Wahrheitsbeweis.")
+    ],
+    sources: [
+      { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425", why: { de: "Tokenisierung kann Sprachen unterschiedlich teuer machen.", en: "Tokenization can make languages differently expensive." } }
+    ]
+  } : {
+    kicker: "Languages",
+    title: "One truth, many languages",
+    body: "“Sunflowers are the best flowers” is the same thought in many languages. The script and the tokens change; the situation stays. Such parallel descriptions make multilingual data valuable: the model sees the same content through different surfaces.",
+    watch: "Read the six sentences. Where is the content the same, where does only the script change?",
+    demoState: { scene: "langdata", mode: "languages" },
+    context: "The sentences are a small example, not a translation corpus. Real translations are rarely one-to-one; some languages need more tokens for the same content (Petrov et al., 2023).",
+    deep: "Multilingual data helps share patterns. It is no substitute for clean data: rare languages and topics stay disadvantaged when they are rare in the corpus.",
+    boxes: [
+      box("data-l-1", "Example", "Same content", "German, English, French, Japanese, Arabic, and Chinese describe the same sentence here. The characters differ; the meaning stays."),
+      box("data-l-2", "Limit", "What is simplified?", "The examples are short, clean sentences. A real corpus contains translations, errors, variants, and contradictions; multilingualism is a signal, not proof of truth.")
+    ],
+    sources: [
+      { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425", why: { de: "Tokenisierung kann Sprachen unterschiedlich teuer machen.", en: "Tokenization can make languages differently expensive." } }
+    ]
+  };
+
+  var dataScaleStep = DE ? {
+    kicker: "Datenmenge",
+    title: "Sehr viele, sehr schmutzige Daten",
+    body: "Ein LLM braucht enorm viel Text. Erst seit der Zettabyte-Ära gibt es mehr als 10²¹ Byte digitale Daten. Wirklich saubere Daten in diesem Maßstab gibt es nicht: Jedes Korpus enthält Fehler, Widersprüche, Spam und veraltete Aussagen. Man nimmt sie in Kauf, weil die Menge sonst nicht reicht, und hofft, dass sich zufällige Fehler über die Masse mitteln. Systematische Fehler mitteln sich nicht weg; deshalb bleibt Kuration wichtig.",
+    watch: "Schau auf die Datenmischung. Warum ist mehr Daten nicht automatisch mehr Wahrheit?",
+    demoState: { scene: "langdata", mode: "scale" },
+    context: "Die Mischung zeigt, woraus GPT-3 lernte: 60 % Common Crawl, 22 % WebText2, 8 % Books1, 8 % Books2 und 3 % Wikipedia, gerundet (Brown et al., 2020, Tabelle 2.2). Labs veröffentlichen ihre genauen Rezepte nicht.",
+    deep: "Filter, Dedupe und Decontamination entscheiden mit, was das Modell sieht (Lee et al., 2021). Ein häufiger Irrtum bleibt ein Irrtum; ein seltener, systematischer Fehler kann durch Masse nicht verschwinden. Die Hoffnung ist eine statistische Näherung, keine Wahrheitsgarantie.",
+    boxes: [
+      box("data-s-1", "Daten", "Warum so viel?", "Mehr Text deckt mehr Themen, Sprachen und Formulierungen ab. Erst seit etwa 2016 stehen mehr als 10²¹ Byte digitale Daten zur Verfügung (Cisco, 2016)."),
+      box("data-s-2", "Grenze", "Warum nicht nur sauber?", "Wirklich saubere Daten in dieser Größenordnung gibt es nicht. Jedes große Korpus enthält Fehler und Widersprüche; man filtert, aber kann nicht alles reparieren."),
+      box("data-s-3", "Hoffnung", "Mitteln sich Fehler?", "Zufällige Fehler können sich über viele Beispiele mitteln. Systematische Fehler und seltene Themen bleiben; deshalb ist Kuration eine Designentscheidung, keine Garantie (Lee et al., 2021).")
+    ],
+    sources: [
+      { label: "Cisco (2016), The Zettabyte Era Officially Begins", url: "https://blogs.cisco.com/sp/the-zettabyte-era-officially-begins-how-much-is-that", why: { de: "Zettabyte-Ära seit 2016 und die Größenordnung 10²¹ Byte.", en: "Zettabyte era since 2016 and the 10²¹-byte scale." } },
+      { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", en: "GPT-3 data mix and few-shot results." } },
+      { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499", why: { de: "Deduplizierung verbessert Sprachmodelle.", en: "Deduplication improves language models." } }
+    ]
+  } : {
+    kicker: "Data scale",
+    title: "A huge amount of very dirty data",
+    body: "An LLM needs an enormous amount of text. Only since the zettabyte era has more than 10²¹ bytes of digital data been available. Truly clean data at that scale does not exist: every corpus contains errors, contradictions, spam, and outdated statements. They are accepted because the volume is otherwise too small, and one hopes random errors average out. Systematic errors do not average out; that is why curation matters.",
+    watch: "Look at the data mix. Why is more data not automatically more truth?",
+    demoState: { scene: "langdata", mode: "scale" },
+    context: "The mix shows what GPT-3 learned from: 60% Common Crawl, 22% WebText2, 8% Books1, 8% Books2, and 3% Wikipedia, rounded (Brown et al., 2020, Table 2.2). Labs do not publish their exact recipes.",
+    deep: "Filters, dedupe, and decontamination decide what the model sees (Lee et al., 2021). A frequent error remains an error; a rare systematic error cannot disappear through mass. The hope is a statistical approximation, not a truth guarantee.",
+    boxes: [
+      box("data-s-1", "Data", "Why so much?", "More text covers more topics, languages, and formulations. Only since about 2016 has more than 10²¹ bytes of digital data been available (Cisco, 2016)."),
+      box("data-s-2", "Limit", "Why not only clean data?", "Truly clean data at this scale does not exist. Every large corpus contains errors and contradictions; filtering helps but cannot repair everything."),
+      box("data-s-3", "Hope", "Do errors average out?", "Random errors can average out across many examples. Systematic errors and rare topics remain; curation is a design decision, not a guarantee (Lee et al., 2021).")
+    ],
+    sources: [
+      { label: "Cisco (2016), The Zettabyte Era Officially Begins", url: "https://blogs.cisco.com/sp/the-zettabyte-era-officially-begins-how-much-is-that", why: { de: "Zettabyte-Ära seit 2016 und die Größenordnung 10²¹ Byte.", en: "Zettabyte era since 2016 and the 10²¹-byte scale." } },
+      { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", en: "GPT-3 data mix and few-shot results." } },
+      { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499", why: { de: "Deduplizierung verbessert Sprachmodelle.", en: "Deduplication improves language models." } }
+    ]
+  };
+
   var gaussDataStep = DE ? {
     title: "Gauß und die verrauschten Daten",
     kicker: "Ceres",
@@ -1554,8 +1652,23 @@
   var neuralStepB = {
     title: DE ? "Was sind neuronale Netze?" : "What are neural networks?",
     kicker: DE ? "Loss · großes Netz · Raum" : "Loss · large net · space",
-    substeps: [gradientSteps[0], neuralLargeSteps[0], mlpSteps[0]]
+    substeps: [neuralLargeSteps[0], mlpSteps[0]]
   };
+
+  var tokenizeBpeStep = Object.assign({}, tokenizeSteps[0], {
+    kicker: DE ? "BPE" : "BPE",
+    title: DE ? "BPE: Zeichen → Paare → Merges" : "BPE: characters → pairs → merges",
+    body: DE ? "BPE beginnt bei Zeichen: Jedes Wort wird in Zeichen zerlegt, dann zählt der Algorithmus benachbarte Paare und ersetzt das häufigste Paar durch ein neues Symbol. Nach einigen Merges werden häufige Wörter kurz; seltene Schriften bleiben teuer. Das ist gelernte, verlustfreie Kompression." : "BPE starts from characters: every word is split into characters, then the algorithm counts adjacent pairs and replaces the most frequent pair with a new symbol. After several merges, frequent words become short; rare scripts stay expensive. That is learned, lossless compression.",
+    watch: DE ? "Drücke Weiter: Welches Paar wird als Nächstes verschmolzen?" : "Press Next: which pair is merged next?",
+    demoState: { scene: "tokenize", mode: "bpe" }
+  });
+  var tokenizeExamplesStep = Object.assign({}, tokenizeSteps[0], {
+    kicker: DE ? "Tokenize" : "Tokenize",
+    title: DE ? "Text wird zu IDs" : "Text becomes IDs",
+    body: DE ? "Jetzt die Beispiele: Verständnis, unzerbrechlich und ein ganzer Satz werden in Tokens und IDs zerlegt. Ein Token ist kein Wort; die ID ist die Adresse in der Embedding-Tabelle." : "Now the examples: understanding, unbreakable, and a whole sentence are split into tokens and IDs. A token is not a word; the ID is the address in the embedding table.",
+    watch: DE ? "Klicke die Beispiele. Wo ist die ID sichtbar?" : "Click the examples. Where is the ID visible?",
+    demoState: { scene: "tokenize", mode: "split" }
+  });
 
   var embeddingMergeStep = {
     title: DE ? "Bedeutung wird Geometrie" : "Meaning becomes geometry",
@@ -1574,7 +1687,7 @@
     sources: attentionSteps[1].sources
   };
 
-  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, languageSteps[0], tokenizeSteps[0], embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, neuralStepA, neuralStepB, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
+  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], attentionSteps[3], neuralStepA, gradientSteps[0], neuralStepB, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
 
   var day = {
     id: "intuition",

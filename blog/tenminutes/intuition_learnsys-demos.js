@@ -3858,7 +3858,9 @@
     navNext.addEventListener("click", nextStep);
     render();
     return {
-      update: function () {},
+      update: function (s) {
+        if (s && s.mode && s.mode !== mode) { mode = s.mode === "split" ? "split" : "bpe"; step = 0; render(); }
+      },
       next: nextInternal,
       prev: prevInternal,
       onKey: function (e) {
@@ -7383,7 +7385,7 @@
     var canvas = el.querySelector("canvas");
     var chips = el.querySelector(".ls-act-chips");
     var readout = el.querySelector(".ls-act-readout");
-    var ctx = null, size = null, active = "relu", hits = [];
+    var ctx = null, size = null, active = window.__lsActLast || "relu", hits = [];
     var C = api.colors();
     function f(id, x) {
       if (id === "relu") return Math.max(0, x);
@@ -7441,6 +7443,7 @@
       b.textContent = fn.label;
       b.addEventListener("click", function () {
         active = fn.id;
+        window.__lsActLast = active;
         chips.querySelectorAll(".ls-chip").forEach(function (x) { x.classList.toggle("is-on", x === b); });
         draw();
       });
@@ -7455,6 +7458,7 @@
       var idx = fns.map(function (fn) { return fn.id; }).indexOf(active) + delta;
       if (idx < 0 || idx >= fns.length) return false;
       active = fns[idx].id;
+      window.__lsActLast = active;
       chips.querySelectorAll(".ls-chip").forEach(function (x, i) { x.classList.toggle("is-on", i === idx); });
       draw();
       return true;
@@ -7522,6 +7526,7 @@
         '<span class="ls-lang-tag"></span>' +
         '<p class="ls-lang-text" lang="de"></p>' +
         '<p class="ls-lang-gloss"></p>' +
+        '<div class="ls-lang-all" hidden></div>' +
       '</div>' +
       '<div class="ls-lang-truth">' +
         '<div class="ls-lang-truth-head"></div>' +
@@ -7539,6 +7544,13 @@
       '<div class="ls-tokenize-nav ls-lang-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-lang-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-lang-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-lang-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
     var tabs = el.querySelector(".ls-lang-tabs");
+    var sampleEl = el.querySelector(".ls-lang-sample");
+    var truthEl = el.querySelector(".ls-lang-truth");
+    var mixEl = el.querySelector(".ls-lang-mix");
+    var caveatEl = el.querySelector(".ls-lang-caveat");
+    var navEl = el.querySelector(".ls-lang-nav");
+    var allEl = el.querySelector(".ls-lang-all");
+    var mode = "all";
     var tag = el.querySelector(".ls-lang-tag");
     var text = el.querySelector(".ls-lang-text");
     var gloss = el.querySelector(".ls-lang-gloss");
@@ -7585,6 +7597,22 @@
         '<span class="ls-lang-bar-track"><i style="width:' + m.pct + '%;background:' + m.color + '"></i></span>' +
         '<span class="ls-lang-bar-val">' + m.pct + '%</span></div>';
     }).join("");
+    if (allEl) allEl.innerHTML = langs.map(function (l) {
+      return '<p class="ls-lang-all-row"><b>' + api.esc(l.label) + '</b><span lang="' + l.id + '" dir="' + (l.rtl ? "rtl" : "ltr") + '">' + api.esc(l.text) + '</span></p>';
+    }).join("");
+    function applyMode() {
+      var isTruth = mode === "truth";
+      var isLang = mode === "languages";
+      var isScale = mode === "scale";
+      if (sampleEl) sampleEl.hidden = isTruth || isScale;
+      if (tabs) tabs.hidden = !isLang;
+      if (truthEl) truthEl.hidden = !isTruth;
+      if (mixEl) mixEl.hidden = !isScale;
+      if (caveatEl) caveatEl.hidden = isTruth;
+      if (navEl) navEl.hidden = true;
+      if (allEl) allEl.hidden = !isLang;
+      if (sampleEl) sampleEl.querySelectorAll(":scope > .ls-lang-tag, :scope > .ls-lang-text, :scope > .ls-lang-gloss").forEach(function (x) { x.hidden = isLang; });
+    }
     if (truthHead) truthHead.textContent = TRUTH.title;
     if (truthNote) truthNote.textContent = TRUTH.note;
     if (truthList) truthList.innerHTML = TRUTH.items.map(function (item, i) {
@@ -7645,6 +7673,7 @@
     function resize() { drawTruth(); }
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); drawTruth(); });
+    applyMode();
     drawTruth();
     show(active);
     function stepLanguage(dir) {
@@ -7666,15 +7695,10 @@
     navPrev.addEventListener("click", prevStep);
     navNext.addEventListener("click", nextStep);
     return {
-      update: function () {},
-      next: function () { return stepLanguage(1); },
-      prev: function () { return stepLanguage(-1); },
-      onKey: function (e) {
-        if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
-        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return stepLanguage(1);
-        if (e.key === "ArrowLeft" || e.key === "PageUp") return stepLanguage(-1);
-        return false;
-      },
+      update: function (s) { if (s && s.mode) { mode = s.mode; applyMode(); } },
+      next: function () { return false; },
+      prev: function () { return false; },
+      onKey: function () { return false; },
       resize: function () { drawTruth(); },
       destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
     };
@@ -8498,6 +8522,12 @@
           nodes.push({ c: c, x0: cx + Math.cos(a) * r * 0.75, y0: cy + Math.sin(a) * r * 0.55, cx: cx, cy: cy, col: palette[c % palette.length] });
         }
       }
+      nodes.forEach(function (n) {
+        if (n.c < 8) return;
+        var idx = n.c - 8;
+        n.y0 = 0.94 + idx * 0.025 + (rnd() - 0.5) * 0.015;
+        n.x0 = 0.18 + idx * 0.22 + (rnd() - 0.5) * 0.05;
+      });
       for (var i = 0; i < nodes.length; i++) {
         for (var j = i + 1; j < nodes.length; j++) {
           var same = nodes[i].c === nodes[j].c;
@@ -8651,7 +8681,6 @@
       }
       // fibres: the same structure survives every compression level
       nodes.forEach(function (n) {
-        if (n.c >= 8 && tt < 3.15) return;
         var x0 = X({ x: n.x0 }), y0 = Y({ y: n.y0 });
         var cc = clusterCenters[n.c];
         var sc = superCenters[Math.floor(n.c / 3)];
@@ -8671,7 +8700,6 @@
         var crossAlpha = Math.max(0, 0.28 * (1 - tt));
         edges.forEach(function (e) {
           var a = nodes[e.a], b = nodes[e.b];
-          if ((a.c >= 8 || b.c >= 8) && tt < 3.15) return;
           var ax = lerp(a.x0, clusterCenters[a.c].x, u0), ay = lerp(a.y0, clusterCenters[a.c].y, u0);
           var bx = lerp(b.x0, clusterCenters[b.c].x, u0), by = lerp(b.y0, clusterCenters[b.c].y, u0);
           var pa = { x: X({x:ax}), y: Y({y:ay}) }, pb = { x: X({x:bx}), y: Y({y:by}) };
@@ -8685,14 +8713,12 @@
         });
         ctx.globalAlpha = 1;
         if (a0 > 0.01) nodes.forEach(function (n) {
-          if (n.c >= 8) return;
           var x = lerp(n.x0, clusterCenters[n.c].x, u0), y = lerp(n.y0, clusterCenters[n.c].y, u0);
           glow(X({x:x}), Y({y:y}), 2.4, n.col, a0 * 0.9);
         });
       }
       if (a1 > 0.01) {
         clusterCenters.forEach(function (cc, i) {
-          if (i >= 8 && tt < 3.15) return;
           var x = lerp(cc.x, superCenters[Math.floor(i / 3)].x, u1);
           var y = lerp(cc.y, superCenters[Math.floor(i / 3)].y, u1);
           ring(X({x:x}), Y({y:y}), 8, palette[i % palette.length], a1 * 0.6);
@@ -8717,7 +8743,6 @@
       var nodeAlpha = clamp01(0.82 - tt * 1.15);
       if (nodeAlpha > 0.01) {
         nodes.forEach(function (n, idx) {
-          if (n.c >= 8) return;
           var local = idx - n.c * 12;
           if (local > 1) return;
           var x = lerp(n.x0, clusterCenters[n.c].x, u0), y = lerp(n.y0, clusterCenters[n.c].y, u0);
@@ -8727,7 +8752,6 @@
       var clusterAlpha = clamp01(Math.min(tt - 0.45, 2.35 - tt));
       if (clusterAlpha > 0.01) {
         clusterCenters.forEach(function (cc, i) {
-          if (i >= 8 && tt < 3.15) return;
           var x = lerp(cc.x, superCenters[Math.floor(i / 3)].x, u1);
           var y = lerp(cc.y, superCenters[Math.floor(i / 3)].y, u1);
           labelCat(clusterNames[i], X({x:x}), Y({y:y}) - 10, palette[i % palette.length], clusterAlpha);

@@ -1310,3 +1310,12 @@ Marked as todo; work through carefully, one block at a time.
 - [ ] **Data:** replace the weak multilingual block with sunflower sentences in several languages pointing to the same fact.
 - [ ] **Data:** explain that an LLM needs enormous amounts of data, that clean data at that scale is practically impossible, so noisy/wrong examples are included; the hope is that the errors average out.
 - [ ] Re-run everything.
+
+## Big finishing pass (2026-11-14, very last)
+
+- [ ] At the very end run a **10-minute random monkey test on every slide**: click every control, fill every field with arbitrary values, drag every slider, exercise selects and canvases; capture crashes, fix at the root, and re-run.
+- [ ] Measure interaction and transition times; optimize slow paths without losing functionality.
+- [ ] Bring the deck to **31 slides**. Propose the remaining pages; inspect `..` and `../../` for eye-opening demos that can be adapted; make them beautiful, minimal, smooth and informative.
+- [ ] Whole-deck coherence: what is missing, what is redundant, what should be reordered; keep it quick to grasp but technically solid.
+- [ ] Smoothness and beauty pass across all demos, minimal but no important content removed.
+- [ ] Re-run pages, height, PHP/JS validators, check_all --fast.
