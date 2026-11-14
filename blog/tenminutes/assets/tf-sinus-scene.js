@@ -277,7 +277,7 @@
           color: C.petrol, alpha: 1
         });
         if (a.epochs > 18) {
-          var msg = DE ? "Eine Gerade kann den Sinus nicht biegen." : "A line cannot bend the sine.";
+          var msg = DE ? "Eine Gerade kann den Sinus nur grob annähern, nicht biegen." : "A line can only approximate the sine, not bend it.";
           V.label(ctx, msg, size.w * 0.5, 42, {
             font: '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Barlow", sans-serif',
             color: C.gold, align: "center", alpha: 1

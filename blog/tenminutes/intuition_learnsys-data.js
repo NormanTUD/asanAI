@@ -458,7 +458,7 @@
     {
       kicker: "Feed-forward",
       title: "Ein Muster passt, ein Wert wird geschrieben",
-      body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Es hebt den Vektor in einen höheren Raum, trennt die Muster und projiziert zurück. Attention mischt Tokens; das FFN trennt die verworrenen Strukturen innerhalb eines Tokens. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.",
+      body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Die Punkte unten sind symbolisch; im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen höheren Raum, trennt die Cluster und projiziert zurück. So kann es Kontexte gezielt trennen und die abstrakte Repräsentation weiterreichen. Attention mischt Tokens; das FFN trennt die verworrenen Strukturen innerhalb eines Tokens. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.",
       watch: "Klicke die Kontexte. Welche Muster feuern? Biege den Raum, bis die Ebene trennt.",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "Das FFN ist ein MLP: Dense, Aktivierung, Dense. Es arbeitet auf jedem Token einzeln. Seine Rolle im LLM: verworrene Muster trennbar machen.",
@@ -478,7 +478,7 @@
     {
       kicker: "Feed-forward",
       title: "A pattern matches, a value is written",
-      body: "The FFN is a small MLP per token: dense, activation, dense. It lifts the vector into a higher space, separates the patterns, and projects back. Attention mixes tokens; the FFN separates the entangled structures inside one token. Click the two contexts and bend the space until a plane separates them.",
+      body: "The FFN is a small MLP per token: dense, activation, dense. The points below are symbolic; in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, separates the clusters, and projects back. That is how it separates contexts and passes the abstract representation on. Attention mixes tokens; the FFN separates the entangled structures inside one token. Click the two contexts and bend the space until a plane separates them.",
       watch: "Click the contexts. Which patterns fire? Bend the space until the plane separates them.",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "The FFN is an MLP: dense, activation, dense. It works on each token separately. Its role in the LLM: make entangled patterns separable.",
@@ -681,7 +681,7 @@
     {
       kicker: "1 Neuron",
       title: "Was sind neuronale Netze?",
-      body: "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein Neuron: ŷ = w·x + b. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nicht biegen. Die vertikalen Striche sind die Fehler. Im nächsten Schritt wird aus diesen Fehlern eine Loss-Landschaft.",
+      body: "Ein neuronales Netz ist zuerst eine parametrisierte Funktion. Das kleinste Beispiel ist ein Neuron: ŷ = w·x + b. Es hat zwei Parameter und kann nur eine Gerade zeichnen. Die Demo zeigt genau das: Die Gerade passt sich an die Punkte an, aber sie kann den Sinus nur grob annähern, nicht biegen. Die vertikalen Striche sind die Fehler. Im nächsten Schritt wird aus diesen Fehlern eine Loss-Landschaft.",
       watch: "Starte das Training. Wie reagiert die Gerade? Warum bleiben die Fehler groß?",
       demoState: { scene: "model", phase: "linear" },
       context: "Der Loss wird nur auf den Trainingspunkten berechnet. Außerhalb gibt es keine Daten; die Kurve ist eine Extrapolation.",
@@ -689,7 +689,7 @@
       boxes: [
         box("mod-0", "Idee", "Was ist ein Modell?", "Ein Modell ist eine parametrisierte Funktion, die aus Eingaben Ausgaben schätzt. Beim Training werden die Parameter so angepasst, dass die Ausgaben zu den Daten passen."),
         box("mod-layer", "Mathematik", "Das Neuron", "Ein Input, ein Neuron: z = w x + b; a = activation(z); Ausgabe = v a + c. w, b, v und c sind Parameter. Mehr Neuronen und Schichten komponieren solche Funktionen.", "\\underbrace{z}_{\\text{Input des Neurons}} = \\underbrace{w x + b}_{\\text{lineare Schicht}} \\qquad \\underbrace{a}_{\\text{Aktivierung}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{Knick oder Kurve}}"),
-        box("mod-line", "Grenze", "Warum reicht eine Gerade nicht?", "Ein einzelnes Neuron ist eine lineare Funktion. Es kann den Sinus nicht biegen, egal wie lange es trainiert. Erst die Aktivierung zwischen mehreren Schichten erzeugt Knicke und Kurven."),
+        box("mod-line", "Grenze", "Warum reicht eine Gerade nicht?", "Ein einzelnes Neuron ist eine lineare Funktion. Es kann den Sinus nur grob annähern, egal wie lange es trainiert. Erst die Aktivierung zwischen mehreren Schichten erzeugt Knicke und Kurven."),
         box("mod-loss", "Mathematik", "Was ist der Loss?", "Der Loss misst den Abstand zwischen Modell und Daten. Beim quadratischen Fehler wird jeder Abstand quadriert, gemittelt und minimiert. Training sucht Parameter, die diesen Wert senken.", "\\underbrace{L(\\theta)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mittlerer quadratischer Fehler}}"),
         box("mod-train", "Technik", "Wie wird trainiert?", "Der Gradient zeigt, wie der Loss auf jede Parameteränderung reagiert. Ein Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite."),
         box("mod-extra", "Grenze", "Warum außerhalb falsch?", "Im Trainingsbereich gibt es Daten. Außerhalb extrapoliert das Netz. Ein kleiner Trainings-Loss garantiert keine gute Extrapolation.")
@@ -729,7 +729,7 @@
       boxes: [
         box("mod-0", "Idea", "What is a model?", "A model is a parameterised function that estimates outputs from inputs. Training adjusts the parameters so that the outputs fit the data."),
         box("mod-layer", "Mathematics", "The neuron", "One input, one neuron: z = w x + b; a = activation(z); output = v a + c. w, b, v, and c are parameters. More neurons and layers compose such functions.", "\\underbrace{z}_{\\text{input to the neuron}} = \\underbrace{w x + b}_{\\text{linear layer}} \\qquad \\underbrace{a}_{\\text{activation}} = \\underbrace{\\operatorname{activation}(z)}_{\\text{bend or curve}}"),
-        box("mod-line", "Limit", "Why is a line not enough?", "A single neuron is a linear function. It cannot bend the sine, no matter how long it trains. Only the activation between several layers creates bends and curves."),
+        box("mod-line", "Limit", "Why is a line not enough?", "A single neuron is a linear function. It can only approximate the sine, no matter how long it trains. Only the activation between several layers creates bends and curves."),
         box("mod-loss", "Mathematics", "What is the loss?", "The loss measures the distance between model and data. With squared error, every gap is squared, averaged, and minimised. Training looks for parameters that lower this value.", "\\underbrace{L(\\theta)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_{i=1}^{n}(\\hat y_i - y_i)^2}_{\\text{mean squared error}}"),
         box("mod-train", "Technique", "How is it trained?", "The gradient shows how the loss reacts to every parameter change. An optimiser moves in the opposite direction. The learning rate sets the step size."),
         box("mod-extra", "Limit", "Why wrong outside?", "Inside the training range there is data. Outside the network extrapolates. A small training loss does not guarantee good extrapolation.")
@@ -1655,6 +1655,38 @@
     substeps: [neuralLargeSteps[0], mlpSteps[0]]
   };
 
+  var dataMixStep = DE ? {
+    kicker: "Mischung",
+    title: "Die Mischung macht den Korpus",
+    body: "Große Modelle lernen nicht aus einer einzigen Quelle. GPT-3 nannte 60 % Common Crawl, 22 % WebText2, 8 % Books1, 8 % Books2 und 3 % Wikipedia, gerundet. Jede Quelle bringt andere Sprache, andere Qualität und andere Fehler mit. Die Mischung ist eine Designentscheidung, keine neutrale Stichprobe.",
+    watch: "Schau auf die Balken. Welche Quelle dominiert, und was fehlt dadurch?",
+    demoState: { scene: "langdata", mode: "scale" },
+    context: "Die Werte sind gerundet (Brown et al., 2020, Tabelle 2.2). Labs veröffentlichen ihre genauen Rezepte nicht. More data is not automatically better data: source, filtering, and dedupe matter.",
+    deep: "Common Crawl ist groß und laut; Bücher und Wikipedia sind kleiner, aber oft sauberer. Eine gute Mischung deckt viele Formulierungen ab, ohne nur eine Quelle zu spiegeln. Die genaue Mischung ist ein Designentscheid, kein Naturgesetz.",
+    boxes: [
+      box("data-mix-1", "Daten", "Die Quellen", "GPT-3: 60 % Common Crawl, 22 % WebText2, 8 % Books1, 8 % Books2, 3 % Wikipedia (gerundet)."),
+      box("data-mix-2", "Grenze", "Was die Mischung nicht zeigt", "Sie zeigt nicht, wie sauber eine Quelle ist, wie gut sie kuratiert wurde oder wie oft sie sich wiederholt. Menge und Qualität sind verschieden.")
+    ],
+    sources: [
+      { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", en: "GPT-3 data mix and few-shot results." } }
+    ]
+  } : {
+    kicker: "Mix",
+    title: "The mix makes the corpus",
+    body: "Large models do not learn from a single source. GPT-3 reported 60% Common Crawl, 22% WebText2, 8% Books1, 8% Books2, and 3% Wikipedia, rounded. Every source brings different language, quality, and errors. The mix is a design decision, not a neutral sample.",
+    watch: "Look at the bars. Which source dominates, and what is missing because of it?",
+    demoState: { scene: "langdata", mode: "scale" },
+    context: "The values are rounded (Brown et al., 2020, Table 2.2). Labs do not publish their exact recipes. More data is not automatically better data: source, filtering, and dedupe matter.",
+    deep: "Common Crawl is large and noisy; books and Wikipedia are smaller but often cleaner. A good mix covers many formulations without mirroring one source. The exact mix is a design decision, not a law of nature.",
+    boxes: [
+      box("data-mix-1", "Data", "The sources", "GPT-3: 60% Common Crawl, 22% WebText2, 8% Books1, 8% Books2, 3% Wikipedia (rounded)."),
+      box("data-mix-2", "Limit", "What the mix does not show", "It does not show how clean a source is, how well it was curated, or how often it repeats. Quantity and quality are different.")
+    ],
+    sources: [
+      { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", en: "GPT-3 data mix and few-shot results." } }
+    ]
+  };
+
   var tokenizeBpeStep = Object.assign({}, tokenizeSteps[0], {
     kicker: DE ? "BPE" : "BPE",
     title: DE ? "BPE: Zeichen → Paare → Merges" : "BPE: characters → pairs → merges",
@@ -1675,9 +1707,9 @@
     kicker: DE ? "1D · 2D · 3D · Tabelle" : "1D · 2D · 3D · table",
     substeps: [embedSteps[0], embedSteps[1], embedSteps[2]]
   };
-  var attentionMergeStep = {
-    title: DE ? "Kontext zieht die Bank an seinen Platz" : "Context pulls the bank into place",
+  var attentionMerged = {
     kicker: DE ? "Attention" : "Attention",
+    title: DE ? "Kontext zieht die Bank an seinen Platz" : "Context pulls the bank into place",
     body: DE ? "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz oder drücke Weiter; die Matrix zeigt, wohin die Bank schaut. Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen." : "Three sentences, one word: a bank without context, a bank for money, a bank in the park. Click a sentence or press Next; the matrix shows where the bank looks. Attention lets each token read the others, decide which matter, and pull their information into its vector.",
     watch: DE ? "Klicke die drei Sätze oder drücke Weiter. Welches Wort zieht die Bank?" : "Click the three sentences or press Next. Which word pulls the bank?",
     demoState: { scene: "attention" },
@@ -1686,8 +1718,13 @@
     boxes: attentionSteps[1].boxes.concat(attentionSteps[0].boxes),
     sources: attentionSteps[1].sources
   };
+  var attentionMergeStep = {
+    title: DE ? "Attention: Kontext und Matrix" : "Attention: context and matrix",
+    kicker: DE ? "Attention" : "Attention",
+    substeps: [attentionMerged, attentionSteps[3]]
+  };
 
-  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], attentionSteps[3], neuralStepA, gradientSteps[0], neuralStepB, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
+  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
 
   var day = {
     id: "intuition",

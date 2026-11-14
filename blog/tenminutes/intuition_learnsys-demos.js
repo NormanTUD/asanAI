@@ -4142,10 +4142,10 @@
     el.className = "ls-noise-scene";
     el.innerHTML =
       '<div class="ls-noise-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
-      '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Nachbarschaft" : "Neighbourhood") + ' <input type="range" class="ls-noise-layer" min="0" max="5" step="1" value="0"><output>0</output></label></div>' +
+      '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-noise-layer" min="0" max="5" step="1" value="0"><output>0</output></label></div>' +
       '<div class="ls-noise-readout" aria-live="polite"></div>' +
       '<div class="ls-noise-explain">' +
-        '<div class="ls-noise-explain-head">' + (DE ? "Wörter sind neutral; Nachbarschaften tragen Bedeutung" : "Words are neutral; neighbourhoods carry meaning") + '</div>' +
+        '<div class="ls-noise-explain-head">' + (DE ? "Wörter sind neutral; der Kontext trägt Bedeutung" : "Words are neutral; the context carries meaning") + '</div>' +
         '<p class="ls-noise-explain-row"><span data-tex="\\text{new}" data-tex-display="false">new</span><span class="ls-noise-explain-text">' + (DE ? "steht zwischen Auto, Zukunft, Neubeginn, Neujahr und Neugier." : "sits between car, future, new beginning, New Year, and curiosity.") + '</span></p>' +
         '<p class="ls-noise-explain-row"><span data-tex="\\text{york}" data-tex-display="false">york</span><span class="ls-noise-explain-text">' + (DE ? "steht zwischen York (Western Australia), York (England) und York Chocolate, einer Katzenrasse." : "sits between York (Western Australia), York (England), and York Chocolate, a cat breed.") + '</span></p>' +
         '<p class="ls-noise-explain-row"><span data-tex="\\text{new york}" data-tex-display="false">new york</span><span class="ls-noise-explain-text">' + (DE ? "zusammen in der Nähe von Empire State Building, Freiheitsstatue und der US-Großstadt." : "together near the Empire State Building, the Statue of Liberty, and the US metropolis.") + '</span></p>' +
@@ -4178,6 +4178,9 @@
       var anchors = [
         { id: "car", x: -0.82, y: 0.32, label: DE ? "Auto" : "car", color: C.muted },
         { id: "england", x: -0.78, y: -0.44, label: "England", color: C.muted },
+        { id: "future", x: -0.88, y: 0.78, label: DE ? "Zukunft" : "future", color: C.gold },
+        { id: "newyear", x: -0.88, y: 0.60, label: DE ? "Neujahr" : "New Year", color: C.gold },
+        { id: "curiosity", x: -0.88, y: 0.10, label: DE ? "Neugier" : "curiosity", color: C.gold },
         { id: "city", x: 0.40, y: 0.02, label: DE ? "Stadt · New York" : "city · New York", color: C.green }
       ];
       var newPos = { x: lerp(-0.58, 0.40, easeT), y: lerp(0.46, 0.16, easeT) };
@@ -4195,6 +4198,7 @@
       // The ambiguous alternatives fade as the context arrives.
       line(newPos, anchors[0], C.gold, 0.15 + 0.45 * alt, 1.2 + alt * 1.4, [3, 4]);
       line(yorkPos, anchors[1], C.gold, 0.12 + 0.38 * alt, 1.2 + alt * 1.2, [3, 4]);
+      [2, 3, 4].forEach(function (ai) { line(newPos, anchors[ai], C.gold, 0.10 + 0.34 * alt, 1.0 + alt * 1.1, [3, 4]); });
       // "new" and "york" become one phrase; both point to the city.
       line(newPos, yorkPos, C.petrol, 0.18 + 0.55 * easeT, 1.4 + 2.4 * easeT);
       line(newPos, anchors[2], C.green, 0.18 + 0.72 * easeT, 1.3 + 4.2 * easeT);
@@ -4211,7 +4215,7 @@
         ctx.fillText(label, px(p.x) + dx, py(p.y) + (o.dy || -10));
       }
       anchors.forEach(function (a, i) {
-        point(a, a.color, a.label, 4.5, i === 2 ? { align: "left", dy: 4 } : null);
+        point(a, a.color, a.label, 4.5, a.id === "city" ? { align: "left", dy: 4 } : null);
       });
       var landmarks = [
         { x: 0.58, y: 0.26, label: "Empire State Building" },
@@ -4262,6 +4266,19 @@
         }
       },
       resize: resize,
+      next: function () {
+        if (layer >= 5) return false;
+        layer++; slider.value = String(layer); out.textContent = String(layer); draw(); return true;
+      },
+      prev: function () {
+        if (layer <= 0) return false;
+        layer--; slider.value = String(layer); out.textContent = String(layer); draw(); return true;
+      },
+      onKey: function (e) {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { if (layer >= 5) return false; layer++; slider.value = String(layer); out.textContent = String(layer); draw(); return true; }
+        if (e.key === "ArrowLeft" || e.key === "PageUp") { if (layer <= 0) return false; layer--; slider.value = String(layer); out.textContent = String(layer); draw(); return true; }
+        return false;
+      },
       destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
     };
   }
@@ -4768,12 +4785,12 @@
         '<div class="ls-ffn-bend-legend"><span><i class="is-core"></i>' + labels.core + '</span><span><i class="is-ring"></i>' + labels.ring + '</span></div>' +
         '<div class="ls-ffn-bend-stage"><canvas class="ls-ffn-bend-canvas" role="img"></canvas></div>' +
         '<div class="ls-ffn-bend-bar">' +
-          '<label class="ls-range">' + labels.bend + ' <input type="range" class="ls-ffn-bend-range" min="0" max="1" step="0.01" value="0.65"><output>0.65</output></label>' +
+          '<label class="ls-range">' + labels.bend + ' <input type="range" class="ls-ffn-bend-range" min="0" max="1" step="0.01" value="0"><output>0.00</output></label>' +
           '<button type="button" class="ls-btn ls-btn--tiny ls-ffn-bend-toggle">' + labels.bendButton + '</button>' +
           '<span class="ls-ffn-bend-readout" aria-live="polite"></span>' +
         '</div>' +
       '</div>' +
-      '<p class="ls-ffn-caveat">' + (DE ? "Das FFN ist ein kleines MLP pro Token. Im LLM trennt es verworrene Strukturen, damit die nächste Schicht sie leichter lesen kann. Die Beschriftungen sind eine didaktische Hilfe; die Muster sind gelernte Richtungen in W₁." : "The FFN is a small MLP per token. In the LLM it separates entangled structures so the next layer can read them more easily. The labels are a teaching aid; the patterns are learned directions in W₁.") + '</p>';
+      '<p class="ls-ffn-caveat">' + (DE ? "Die Punkte sind symbolisch: Im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen noch höheren Raum, trennt die Cluster und projiziert zurück. So kann es Kontexte gezielt trennen und die abstrakte Repräsentation weiterreichen. Die Beschriftungen sind eine didaktische Hilfe; die Muster sind gelernte Richtungen in W₁." : "The points are symbolic: in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, separates the clusters, and projects back. That is how it separates contexts and passes the abstract representation on. The labels are a teaching aid; the patterns are learned directions in W₁.") + '</p>';
     root.appendChild(el);
     var contextsEl = el.querySelector(".ls-ffn-contexts");
     var stepperEl = el.querySelector(".ls-ffn-stepper");
@@ -4786,7 +4803,7 @@
     var bendOut = el.querySelector(".ls-ffn-bend-bar output");
     var bendReadout = el.querySelector(".ls-ffn-bend-readout");
     var bendToggle = el.querySelector(".ls-ffn-bend-toggle");
-    var bend = 0.65, bendRaf = 0, size = null, ctx = null;
+    var bend = 0, bendRaf = 0, size = null, ctx = null;
     var modeOrder = ["fruit", "tech"];
     var activeMode = "fruit";
     function pill(item, withState) {
@@ -6371,6 +6388,18 @@
   }
 
   function mlpScene(root, api) {
+    if (window.__lsMlpEl) {
+      root.appendChild(window.__lsMlpEl);
+      if (window.IntuitionSpaceMorph && window.IntuitionSpaceMorph.resize) setTimeout(function () { window.IntuitionSpaceMorph.resize(); }, 40);
+      return window.__lsMlpApi || {
+        update: function () {},
+        next: function () { return false; },
+        prev: function () { return false; },
+        resize: function () {},
+        onKey: function () { return false; },
+        destroy: function () {}
+      };
+    }
     var DE = api.lang === "de";
     var el = document.createElement("div");
     el.className = "ls-mlp-scene";
@@ -6386,6 +6415,7 @@
         '<div class="ism-controls"><button type="button" id="ism-prev" class="ism-btn ism-btn--nav">← ' + (DE ? "Zurück" : "Back") + '</button><button type="button" id="ism-next" class="ism-btn ism-btn--nav" disabled>' + (DE ? "Weiter" : "Next") + ' →</button><button type="button" id="ism-reset-camera" class="ism-btn" aria-label="' + (DE ? "Ansicht zurücksetzen" : "Reset view") + '" title="' + (DE ? "Ansicht zurücksetzen" : "Reset view") + '">⟲</button><div id="ism-dots" class="ism-dots" role="group" aria-label="' + (DE ? "Folien" : "Slides") + '"></div><span id="ism-counter" class="ism-counter">1 / 9</span></div>' +
       '</div>';
     root.appendChild(el);
+    window.__lsMlpEl = el;
     var started = false;
     function init() {
       if (started) return;
@@ -6394,7 +6424,7 @@
       try { window.IntuitionSpaceMorph.init(); } catch (e) {}
     }
     setTimeout(init, 30);
-    return {
+    var apiObj = {
       update: function () {},
       next: function () {
         var st = window.IntuitionSpaceMorph && window.IntuitionSpaceMorph.state ? window.IntuitionSpaceMorph.state() : null;
@@ -6424,6 +6454,8 @@
       },
       destroy: function () { el.remove(); }
     };
+    window.__lsMlpApi = apiObj;
+    return apiObj;
   }
 
   function trajectoriesScene(root, api) {
