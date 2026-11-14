@@ -1,7 +1,9 @@
-# LearnSys — completed status (2026-11-14)
+# LearnSys — current status (2026-11-14)
 
-All active work is complete. This file is the consolidated final checklist;
-the older request-by-request log remains in git history.
+**Honest status:** the implemented feature set and the automated test gate are
+complete. The full editorial audit is **not** fully worked through. The older
+request-by-request log was archived as superseded, not individually executed.
+This file therefore no longer claims that every historical line was done.
 
 ## Deck and story
 - [x] 32 slides with a coherent arc: media/agent → compression → building blocks → Gauss/data (truth, languages, scale, mix) → BPE/tokenization → embeddings → manifold → position → attention/context/matrix/code/noise → activation/1-neuron → loss → large net → MLP → backprop → FFN → residual → unembedding → softmax → loop → meadow → GPT-2 trajectories → post-training → evaluation → RAG/agents → history → philosophy.
@@ -49,7 +51,18 @@ the older request-by-request log remains in git history.
 - [x] `php -l`, `js_validator`, `git diff --check` clean.
 - [x] Committed: functional work in `105b2b79c` and preceding `fix` commits; test commit `262d02376`; todo/status commit `741271f3d`; working tree clean.
 
+## Still open (not fully worked)
+
+- [ ] Full prose rewrite of every slide in DE/EN, not only the changed slides.
+- [ ] Complete claim-by-claim fact-check of every number, date, model spec, formula and source. The 69-URL link pass is not the same as reading and verifying each claim.
+- [ ] Full semantic prerequisite audit: prove that every term and every slide question is answered by earlier slides; the test only checks that prose/title exist.
+- [ ] Complete shared-helper unification: movement, nav/busy/finish, readouts, tabs and canvas setup still have per-scene implementations. Only arrows/labels and the test harness are shared.
+- [ ] Human visual/thematic review with screenshots at desktop/mobile and both themes; automated overflow/height/console tests are not a visual review.
+- [ ] Historical backlog: the old request log was archived because later requests superseded many entries. It was not individually implemented or verified line by line. Push was not performed.
+- [ ] Final commit after the above is genuinely complete (the existing commits cover the implemented code, not this remaining audit).
+
 ## Historical note
-Earlier unchecked lines belong to superseded request rounds. They are closed
-by the final design above, not active work. The consolidated status is the
-single current source of truth.
+Earlier unchecked lines belong to superseded request rounds. They are archived
+in git history, not active work, and not proof that every historical request
+was executed. The completed feature list above is the verified implementation
+state; the “Still open” section is the remaining work.
