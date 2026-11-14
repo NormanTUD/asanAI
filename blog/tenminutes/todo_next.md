@@ -1440,3 +1440,5 @@ Marked as todo; work through carefully, one block at a time.
 
 - [x] Compression auto-play now finishes on global Next; agent, position, unembedding and compression have busy/finish.
 - [x] Final page test 26/26; height 34/0; check_all --fast all green after the latest changes.
+
+- [ ] Bausteine “Transformer-Blöcke”: show the token trajectories in **3D**, like the dedicated trajectory slide, inside the transformer detail (full-width, real GPT-2 768→3 PCA, smooth and readable).

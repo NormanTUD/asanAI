@@ -6987,10 +6987,10 @@
         points: ["Attention: wer liest wen?", "FFN: Muster trennen"],
         roadmap: "Wir werden jeden dieser Schritte in den nächsten Tagen durchgehen und so erklären, dass man es wirklich versteht.",
         mini: "transformer",
+        traj: true,
         sub: [
           { title: "Attention", text: "Jedes Token bewertet, wie wichtig jedes andere sichtbare Token ist, und zieht Information aus den wichtigen." },
-          { title: "FFN", text: "Das FFN arbeitet pro Token. „new“ allein heißt „neu“, „york“ allein ist ein Ort. Zusammen ergibt sich New York." },
-          { title: "Token-Trajektorien", text: "Echte GPT-2-small-Zustände: Jeder Block verschiebt die Tokens im Raum. 768 Dimensionen sind für das Bild mit PCA auf wenige Achsen reduziert; das ist eine starke Vereinfachung." }
+          { title: "FFN", text: "Das FFN arbeitet pro Token. „new“ allein heißt „neu“, „york“ allein ist ein Ort. Zusammen ergibt sich New York." }
         ]
       },
       {
@@ -7032,8 +7032,7 @@
         mini: "transformer",
         sub: [
           { title: "Attention", text: "Every token scores how important every other visible token is, then pulls information from the important ones." },
-          { title: "FFN", text: "The FFN works per token. “new” alone means “not old”, “york” alone is a place. Together they give New York." },
-          { title: "Token trajectories", text: "Real GPT-2 small states: every block shifts the tokens in space. 768 dimensions are reduced to a few axes with PCA for the picture; that is a strong simplification." }
+          { title: "FFN", text: "The FFN works per token. “new” alone means “not old”, “york” alone is a place. Together they give New York." }
         ]
       },
       {
@@ -7274,32 +7273,48 @@
     }
     function miniTrajectories(ctx, w, h) {
       var data = window.TM_GPT2_DATA;
-      V.heading(ctx, DE ? "GPT-2 · 768 → 3 (PCA)" : "GPT-2 · 768 → 3 (PCA)", 12, 16, C.petrol, 9, 1);
+      V.heading(ctx, DE ? "GPT-2 · 768 → 3 (PCA) · echte Zustände" : "GPT-2 · 768 → 3 (PCA) · real states", 12, 16, C.petrol, 9, 1);
       if (!data || !data.points || !data.tokens) {
         V.label(ctx, DE ? "GPT-2-Daten fehlen" : "GPT-2 data missing", w / 2, h / 2, { align: "center", color: C.muted, bg: false });
         return;
       }
-      var min = [Infinity, Infinity], max = [-Infinity, -Infinity];
-      data.points.forEach(function (tok) { tok.forEach(function (p) { min[0] = Math.min(min[0], p[0]); max[0] = Math.max(max[0], p[0]); min[1] = Math.min(min[1], p[1]); max[1] = Math.max(max[1], p[1]); }); });
-      var spanX = Math.max(1e-6, max[0] - min[0]), spanY = Math.max(1e-6, max[1] - min[1]);
-      var pad = 18, cols = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55"];
-      function px(p) { return pad + (p[0] - min[0]) / spanX * (w - pad * 2); }
-      function py(p) { return h - pad - (p[1] - min[1]) / spanY * (h - pad * 2); }
-      ctx.strokeStyle = V.alpha(C.line, 0.55); ctx.lineWidth = 0.8;
-      ctx.beginPath(); ctx.moveTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.moveTo(pad, h - pad); ctx.lineTo(pad, pad); ctx.stroke();
+      var min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
+      data.points.forEach(function (tok) { tok.forEach(function (p) { for (var d = 0; d < 3; d++) { min[d] = Math.min(min[d], p[d]); max[d] = Math.max(max[d], p[d]); } }); });
+      var center = [(min[0] + max[0]) / 2, (min[1] + max[1]) / 2, (min[2] + max[2]) / 2];
+      var ext = Math.max(max[0] - min[0], max[1] - min[1], max[2] - min[2], 0.001);
+      var yaw = -0.62, pitch = 0.36, zoom = 0.92;
+      function P(p) {
+        var x = (p[0] - center[0]) / ext, y = (p[1] - center[1]) / ext, z = (p[2] - center[2]) / ext;
+        var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+        var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
+        var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
+        var sc = Math.min(w * 0.42, h * 0.42) * zoom / (1 + z2 * 0.20);
+        return { x: w * 0.50 + x1 * sc, y: h * 0.54 - y2 * sc, z: z2 };
+      }
+      var axes = [{ v: [1.1, 0, 0], c: C.blue, l: "PC1" }, { v: [0, 1.1, 0], c: C.green, l: "PC2" }, { v: [0, 0, 1.1], c: C.gold, l: "PC3" }];
+      var o = P([0, 0, 0]);
+      axes.forEach(function (a) {
+        var p = P(a.v);
+        ctx.strokeStyle = a.c; ctx.globalAlpha = 0.24; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(p.x, p.y); ctx.stroke(); ctx.globalAlpha = 1;
+        ctx.fillStyle = a.c; ctx.font = '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.fillText(a.l, p.x + 3, p.y - 3);
+      });
+      var cols = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55"];
       data.points.forEach(function (tok, i) {
         if (!tok || !tok.length) return;
-        ctx.strokeStyle = cols[i % cols.length]; ctx.globalAlpha = 0.75; ctx.lineWidth = 1.3;
-        ctx.beginPath();
-        tok.forEach(function (p, j) { if (j === 0) ctx.moveTo(px(p), py(p)); else ctx.lineTo(px(p), py(p)); });
-        ctx.stroke(); ctx.globalAlpha = 1;
-        var last = tok[tok.length - 1];
+        var path = tok.map(function (p) { return P(p); });
+        ctx.strokeStyle = cols[i % cols.length]; ctx.globalAlpha = 0.78; ctx.lineWidth = 1.4; ctx.lineJoin = "round";
+        ctx.beginPath(); path.forEach(function (p, j) { if (j === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); }); ctx.stroke(); ctx.globalAlpha = 1;
+        var last = path[path.length - 1];
         if (last) {
-          ctx.beginPath(); ctx.arc(px(last), py(last), 2.8, 0, Math.PI * 2); ctx.fillStyle = cols[i % cols.length]; ctx.fill();
-          if (data.tokens[i]) { ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.fillText(data.tokens[i].trim(), px(last) + 3, py(last) - 3); }
+          ctx.save(); ctx.shadowColor = cols[i % cols.length]; ctx.shadowBlur = 5; ctx.beginPath(); ctx.arc(last.x, last.y, 2.8, 0, Math.PI * 2); ctx.fillStyle = cols[i % cols.length]; ctx.fill(); ctx.restore();
+          if (data.tokens[i] && i % 2 === 0) { ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.fillText(data.tokens[i].trim(), last.x + 3, last.y - 3); }
         }
       });
+      ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif'; ctx.textAlign = "right";
+      ctx.fillText(DE ? "PCA-Projektion · 768 Dimensionen → 3" : "PCA projection · 768 dimensions → 3", w - 12, h - 8);
     }
+
     function drawMini(canvas, kind) {
       var f = fitMini(canvas);
       if (!f) return;
@@ -7346,8 +7361,11 @@
           '<p class="ls-bs-html-note">' + (DE ? "Die echte Seite ist über ein Megabyte groß. Das Modell sieht nicht „den Artikel“, sondern eine sehr lange Folge von Zeichen, Tags und Text. Zwischen dem HTML und dem Buch liegt eine Auslassung: Der Korpus enthält beides." : "The real page is over a megabyte. The model does not see “the article”, but a very long sequence of characters, tags, and text. Between the HTML and the book sits an omission: the corpus contains both.") + '</p>';
       } else if (b.sub) {
         html += '<div class="ls-bs-subgrid">' + b.sub.map(function (s, i) {
-          return '<div class="ls-bs-sub"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + (["attention", "ffn", "trajectories"][i] || "ffn") + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
+          return '<div class="ls-bs-sub"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + (["attention", "ffn"][i] || "ffn") + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
         }).join("") + '</div>';
+        if (b.traj) {
+          html += '<div class="ls-bs-traj"><canvas data-mini="trajectories"></canvas><p class="ls-bs-traj-caption">' + (DE ? "Echte GPT-2-small-Zustände: Jeder Block verschiebt die Tokens im Raum. Die 768 Dimensionen sind mit PCA auf drei Achsen reduziert; das ist eine starke Vereinfachung, aber die Bewegung ist echt." : "Real GPT-2 small states: every block shifts the tokens in space. The 768 dimensions are reduced to three axes with PCA; this is a strong simplification, but the movement is real.") + '</p></div>';
+        }
       } else {
         html += '<div class="ls-bs-canvas-wrap"><canvas data-mini="' + b.mini + '"></canvas></div>';
       }
