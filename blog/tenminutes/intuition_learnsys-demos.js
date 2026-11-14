@@ -1198,26 +1198,24 @@
     var aiText = el.querySelector("#ia-ai-text");
     var thinking = el.querySelector("#ia-ai-thinking");
     var serp = el.querySelector("#ia-serp");
-    var SATZ = DE ? "warum ist der himmel blau?" : "why is the sky blue?";
-    var CHAT_Q = DE ? "Was passiert, wenn ich bei Google eine Zusammenfassung bekomme?" : "What happens when I get a summary in Google Search?";
-    var CHAT_A = DE ? "Hinter der Zusammenfassung steckt ein Sprachmodell, ein sehr ähnliches wie das in diesem Chat. Es liest die Frage und schreibt die Antwort Token für Token; die Suche zeigt zusätzlich Links. Ich bin auch ein LLM, nur im Dialog: Ich bekomme deinen Text als Kontext und sage das nächste Token voraus. Dieses Wort wird an den bisherigen Text gehängt, und der ganze Text geht wieder als Kontext ins Modell. So entsteht die Antwort Schritt für Schritt." : "A language model sits behind the summary, very similar to the one in this chat. It reads the question and writes the answer token by token; Search adds links. I am also an LLM, just in a dialogue: I receive your text as context and predict the next token. That word is appended to the text so far, and the whole text goes back into the model as context. That is how the answer grows step by step.";
+    var SATZ = DE ? "wie funktionieren llms?" : "how do llms work?";
+    var CHAT_Q = DE ? "Wie funktionieren LLMs?" : "How do LLMs work?";
+    var CHAT_A = DE ? "Ein LLM ist ein neuronales Netz, das aus sehr viel Text lernt, das jeweils nächste Token vorherzusagen. Es zerlegt deinen Text in Tokens, wandelt sie in Vektoren um, verarbeitet sie in vielen Schichten mit Attention und FFN und berechnet am Ende eine Verteilung über das nächste Token. Dieses Token wird an den Text gehängt, und der Prozess wiederholt sich. So entsteht die Antwort Schritt für Schritt. Das Modell versteht nicht wie ein Mensch; es nutzt Muster und Wahrscheinlichkeiten aus dem Trainingstext." : "An LLM is a neural network trained on a huge amount of text to predict the next token. It splits your text into tokens, turns them into vectors, processes them through many layers with attention and FFN, and produces a distribution over the next token. That token is appended to the text, and the process repeats. That is how the answer grows step by step. The model does not understand like a human; it uses patterns and probabilities from the training text.";
     var AI = DE ? [
-      { t: "Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm): " },
-      { t: "Rayleigh-Streuung", c: "b" },
-      { t: "." }
+      { t: "Ein LLM sagt das nächste Token voraus: Text wird in Tokens zerlegt, in Vektoren übersetzt, durch Attention und FFN geschickt, und am Ende entsteht eine Wahrscheinlichkeitsverteilung. " },
+      { t: "Das nächste Token wird angehängt, dann beginnt die Schleife von vorn.", c: "b" }
     ] : [
-      { t: "The sky is blue because air molecules scatter short-wavelength light more strongly than long-wavelength light. Blue (450 nm) is scattered about 4× more than red (650 nm): " },
-      { t: "Rayleigh scattering", c: "b" },
-      { t: "." }
+      { t: "An LLM predicts the next token: text is split into tokens, turned into vectors, passed through attention and FFN, and a probability distribution comes out. " },
+      { t: "The next token is appended, then the loop starts again.", c: "b" }
     ];
     var RESULTS = DE ? [
-      { name: "Wikipedia", url: "de.wikipedia.org › Rayleigh-Jeans-Gesetz", title: "Rayleigh-Jeans-Gesetz", snippet: "Das Plancksche Strahlungsgesetz ist eine Interpolationsformel der beiden anderen Gesetze.", icon: "assets/favicon_wikipedia.ico" },
-      { name: "Wikipedia", url: "de.wikipedia.org › Rayleigh-Streuung", title: "Rayleigh-Streuung", snippet: "Die Streuung von Licht an Teilchen, die kleiner sind als seine Wellenlänge.", icon: "assets/favicon_wikipedia.ico" },
-      { name: "Leifi Physik", url: "www.leifiphysik.de › optik › streuung", title: "Warum ist der Himmel blau?", snippet: "Kurzwelliges blaues Licht wird stärker gestreut als langwelliges rotes Licht.", icon: "assets/favicon_leifiphysik.ico" }
+      { name: "Wikipedia", url: "de.wikipedia.org › Large language model", title: "Large language model", snippet: "Ein Sprachmodell, das das nächste Token aus dem bisherigen Text vorhersagt.", icon: "assets/favicon_wikipedia.ico" },
+      { name: "Wikipedia", url: "de.wikipedia.org › Transformer (Maschinelles Lernen)", title: "Transformer", snippet: "Die Architektur mit Self-Attention und FFN, auf der moderne LLMs aufbauen.", icon: "assets/favicon_wikipedia.ico" },
+      { name: "arXiv", url: "arxiv.org › 1706.03762", title: "Attention Is All You Need", snippet: "Der Transformer: Attention, FFN, Residualverbindungen, Schichten.", icon: "assets/favicon_wikipedia.ico" }
     ] : [
-      { name: "Wikipedia", url: "en.wikipedia.org › Rayleigh–Jeans law", title: "Rayleigh–Jeans law", snippet: "The Planck law interpolates between the Rayleigh–Jeans law and Wien's law.", icon: "assets/favicon_wikipedia.ico" },
-      { name: "Wikipedia", url: "en.wikipedia.org › Rayleigh scattering", title: "Rayleigh scattering", snippet: "Scattering of light by particles smaller than its wavelength.", icon: "assets/favicon_wikipedia.ico" },
-      { name: "Wikipedia", url: "en.wikipedia.org › Diffuse sky radiation", title: "Diffuse sky radiation", snippet: "Short-wavelength blue light is scattered more strongly than long-wavelength red light.", icon: "assets/favicon_wikipedia.ico" }
+      { name: "Wikipedia", url: "en.wikipedia.org › Large language model", title: "Large language model", snippet: "A language model that predicts the next token from the preceding text.", icon: "assets/favicon_wikipedia.ico" },
+      { name: "Wikipedia", url: "en.wikipedia.org › Transformer (deep learning architecture)", title: "Transformer", snippet: "The architecture with self-attention and FFN behind modern LLMs.", icon: "assets/favicon_wikipedia.ico" },
+      { name: "arXiv", url: "arxiv.org › 1706.03762", title: "Attention Is All You Need", snippet: "The transformer: attention, FFN, residual connections, layers.", icon: "assets/favicon_wikipedia.ico" }
     ];
     var timers = [];
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;

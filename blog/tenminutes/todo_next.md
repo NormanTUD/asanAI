@@ -1,5 +1,8 @@
 # LearnSys — status after the latest pass
 
+> **Self-reminder:** keep this file and the opencode todo list synchronized after every pass; mark completed items only after verification. Add every new request to both lists first.
+
+
 Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still todo.
 
 ## Structure, mobile, centralisation
