@@ -142,18 +142,22 @@ def check_learnsys_deck(driver, page, lang, results):
         count = 0
     results.check(page, lang, "deck has 32 slides", count == 32, f"{count} slides")
     mounted = 0
+    with_text = 0
     for i in range(count):
         try:
             driver.execute_script("window.LearnSys.go(0, arguments[0])", i)
             time.sleep(0.12)
-            ok = driver.execute_script(
-                "return !!(document.querySelector('#ls-kicker')?.textContent && document.querySelector('#ls-demo')?.children.length)"
+            state = driver.execute_script(
+                "return {mounted: !!(document.querySelector('#ls-kicker')?.textContent && document.querySelector('#ls-demo')?.children.length), text: (document.querySelector('#ls-body')?.innerText || '').trim().length, title: (document.querySelector('#ls-title')?.innerText || '').trim()}"
             )
-            if ok:
+            if state.get("mounted"):
                 mounted += 1
+            if state.get("text", 0) > 40 and state.get("title"):
+                with_text += 1
         except Exception:
             pass
     results.check(page, lang, "every slide mounts", mounted == count, f"{mounted}/{count}")
+    results.check(page, lang, "every slide has prose and title", with_text == count, f"{with_text}/{count}")
     try:
         driver.execute_script("window.LearnSys.go(0, 21)")
         time.sleep(0.2)
