@@ -9275,6 +9275,8 @@
     }
     return {
       update: function () {},
+      busy: function () { return playing || autoTimers.length > 0; },
+      finish: function () { stopAuto(); playing = false; if (raf) cancelAnimationFrame(raf); raf = 0; t = 4; range.value = "4"; out.textContent = "4.00"; draw(); },
       next: nextInternal,
       prev: prevInternal,
       onKey: function (e) {
@@ -9282,7 +9284,7 @@
       },
       resize: resize,
       pause: function () { playing = false; if (raf) cancelAnimationFrame(raf); raf = 0; },
-      destroy: function () { if (raf) cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); }
+      destroy: function () { stopAuto(); if (raf) cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); }
     };
   }
 

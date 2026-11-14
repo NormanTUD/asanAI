@@ -1437,3 +1437,6 @@ Marked as todo; work through carefully, one block at a time.
 - [ ] Final 32-slide 10-minute monkey regression.
 - [ ] Read this file completely, mirror all open items into the opencode list, and work through them.
 - [ ] Only when everything is verified: `git commit` with a concise message.
+
+- [x] Compression auto-play now finishes on global Next; agent, position, unembedding and compression have busy/finish.
+- [x] Final page test 26/26; height 34/0; check_all --fast all green after the latest changes.
