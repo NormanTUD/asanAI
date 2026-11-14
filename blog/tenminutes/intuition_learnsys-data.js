@@ -1270,7 +1270,8 @@
       boxes: [
         box("un-1", "Mathematik", "Die Matrix W_U", "Jede Zeile von W_U ist die gelernte Richtung eines Tokens. Das Skalarprodukt mit h ergibt einen Logit. Ähnliche Richtungen ergeben hohe Werte; Softmax macht daraus eine Verteilung.", "\\underbrace{z_i}_{\\text{Logit}} = \\underbrace{w_i \\cdot h}_{\\text{Richtung mal Vektor}}"),
         box("un-2", "Metrik", "Winkel oder Abstand?", "Der Cosinus ignoriert die Länge und misst nur die Richtung. Der euklidische Abstand zählt die Länge mit. In hohen Dimensionen liegen fast alle Punkte ähnlich weit auseinander; der Winkel bleibt informativer. Deshalb vergleicht das Unembedding Richtungen.", "\\underbrace{\\cos\\theta}_{\\text{Ähnlichkeit}} = \\underbrace{\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}}_{\\text{nur Richtung}}"),
-        box("un-3", "Grenze", "Was ist das nicht?", "Kein Wörterbuch und keine Definition. Die Karte zeigt gelernte Nachbarschaften, keine Bedeutung an sich. Ähnliche Wörter können auch Gegensätze sein, wenn sie in ähnlichen Kontexten auftreten; die Prozentwerte sind keine Wahrscheinlichkeiten.")
+        box("un-3", "Grenze", "Was ist das nicht?", "Kein Wörterbuch und keine Definition. Die Karte zeigt gelernte Nachbarschaften, keine Bedeutung an sich. Ähnliche Wörter können auch Gegensätze sein, wenn sie in ähnlichen Kontexten auftreten; die Prozentwerte sind keine Wahrscheinlichkeiten."),
+        box("un-4", "Metrik", "Scale Invariance: Direction Is Often the Useful Signal", "Die Länge eines Vektors ändert den euklidischen Abstand, aber nicht den Cosinus. Deshalb kann das Netz Längen ignorieren und hat mehr Freiheit bei der Richtung. Ob die Richtung semantisch dasselbe bedeutet, ist eine Eigenschaft des gelernten Raums, keine Folge des Cosinus.")
       ],
       sources: [
         { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "Gelernte Wortvektoren und Ähnlichkeit über Richtungen.", en: "Learned word vectors and similarity through directions." } },
@@ -1290,7 +1291,8 @@
       boxes: [
         box("un-1", "Mathematics", "The matrix W_U", "Every row of W_U is the learned direction of a token. The dot product with h gives a logit. Similar directions give high values; softmax turns them into a distribution.", "\\underbrace{z_i}_{\\text{logit}} = \\underbrace{w_i \\cdot h}_{\\text{direction times vector}}"),
         box("un-2", "Metric", "Angle or distance?", "The cosine ignores length and measures only direction. Euclidean distance includes length. In high dimensions almost all points are similarly far apart; the angle stays more informative. That is why the unembedding compares directions.", "\\underbrace{\\cos\\theta}_{\\text{similarity}} = \\underbrace{\\frac{u\\cdot v}{\\lVert u\\rVert\\,\\lVert v\\rVert}}_{\\text{direction only}}"),
-        box("un-3", "Limit", "What is this not?", "Not a dictionary and not a definition. The map shows learned neighbourhoods, not meaning itself. Similar words can even be opposites if they occur in similar contexts; the percentages are not probabilities.")
+        box("un-3", "Limit", "What is this not?", "Not a dictionary and not a definition. The map shows learned neighbourhoods, not meaning itself. Similar words can even be opposites if they occur in similar contexts; the percentages are not probabilities."),
+        box("un-4", "Metric", "Scale Invariance: Direction Is Often the Useful Signal", "A vector's length changes Euclidean distance but not cosine. That is why the network can ignore lengths and has more freedom in direction. Whether that direction means the same thing is a property of the learned space, not a consequence of cosine.")
       ],
       sources: [
         { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "Gelernte Wortvektoren und Ähnlichkeit über Richtungen.", en: "Learned word vectors and similarity through directions." } },

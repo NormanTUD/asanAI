@@ -1811,3 +1811,12 @@ h1,h2,h3,h4{
 .ls-sinus-matrix-grid .ls-matrix-tex code{font-size:8px;white-space:pre}
 .ls-sinus-matrix-grid figure{min-width:0}
 .ls-sinus-matrix-legend{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
+
+.ls-sim-scene{grid-template-rows:auto minmax(0,1fr) auto auto auto}
+.ls-sim-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.ls-sim-tab{border:1px solid var(--ls-line-strong);background:#fff;padding:5px 9px;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-soft);cursor:pointer;min-height:28px}
+.ls-sim-tab:hover{border-color:var(--ls-blue);color:var(--ls-petrol)}
+.ls-sim-tab.is-on{background:var(--ls-petrol);border-color:var(--ls-petrol);color:#fff}
+.ls-sim-controls[hidden]{display:none}
+.ls-sim-angle-controls,.ls-sim-scale-controls{gap:12px}
+.ls-sim-angle-controls input[type=range],.ls-sim-scale-controls input[type=range]{width:min(230px,50vw)}

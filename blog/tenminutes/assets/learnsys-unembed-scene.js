@@ -3,6 +3,7 @@
 
   window.UnembedScene = function (root, api) {
     var DE = api.lang === "de";
+    var V = window.LearnSysVisuals;
     var el = document.createElement("div");
     el.className = "ls-sim-scene";
     el.innerHTML =
@@ -18,7 +19,7 @@
         '<button type="button" class="ls-chip ls-sim-metric" data-metric="euclid" aria-pressed="false">' + (DE ? "Euklidisch" : "Euclidean") + '</button>' +
       '</div>' +
       '<div class="ls-sim-controls ls-sim-angle-controls" hidden>' +
-        '<label class="ls-range">' + (DE ? "Vektor A" : "Vector A") + ' <input type="range" class="ls-sim-angle-a" min="0" max="360" step="1" value="45"><output>45°</output></label>' +
+        '<label class="ls-range">' + (DE ? "Vektor A" : "Vector A") + ' <input type="range" class="ls-sim-angle-a" min="0" max="360" step="1" value="360"><output>360°</output></label>' +
         '<label class="ls-range">' + (DE ? "Vektor B" : "Vector B") + ' <input type="range" class="ls-sim-angle-b" min="0" max="360" step="1" value="90"><output>90°</output></label>' +
       '</div>' +
       '<div class="ls-sim-controls ls-sim-scale-controls" hidden>' +
@@ -47,7 +48,7 @@
     var selected = 0;
     var metric = "angle";
     var mode = "map";
-    var angleA = 45, angleB = 90, scaleMag = 1.6;
+    var angleA = 360, angleB = 90, scaleMag = 1.6;
     var hits = [];
     var C = api.colors();
     var clamp = api.util.clamp;
@@ -282,7 +283,7 @@
       ctx.fillStyle = C.blue; ctx.textAlign = "left"; ctx.textBaseline = "bottom"; ctx.fillText("A", ax + 6, ay - 3);
       ctx.fillStyle = C.green; ctx.fillText("B", bx + 6, by - 3);
       ctx.fillStyle = C.petrol; ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif'; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillText("Scale Invariance", 18, 28);
-      var euc = Math.abs(scaleMag - 1) * 0.70 * r;
+      var euc = Math.abs(scaleMag - 1) * 0.70;
       readout.innerHTML = '<span>|A| <b>0.70</b></span><span>|B| <b>' + (0.70 * scaleMag).toFixed(2) + '</b></span><span>Cos <b>1.000</b> ' + (DE ? "konstant" : "constant") + '</span><span>Euclidean <b>' + euc.toFixed(2) + '</b> ' + (DE ? "ändert sich" : "changes") + '</span>';
       caption.textContent = DE ? "Scale Invariance: Direction Is Often the Useful Signal. Die Länge von B ändert den euklidischen Abstand, aber nicht den Cosinus. Das Netz kann Längen ignorieren und hat mehr Freiheit bei der Richtung." : "Scale Invariance: Direction Is Often the Useful Signal. The magnitude of B changes Euclidean distance but not cosine. The network can ignore lengths and has more freedom in direction.";
     }
@@ -307,6 +308,15 @@
       select.value = String(selected);
       draw();
     }
+    tabBtns.forEach(function (b) {
+      b.addEventListener("click", function () { setMode(b.getAttribute("data-mode")); });
+    });
+    if (angleAInput) angleAInput.addEventListener("input", function () { angleA = parseFloat(angleAInput.value) || 0; if (angleAOut) angleAOut.textContent = Math.round(angleA) + "°"; draw(); });
+    if (angleBInput) angleBInput.addEventListener("input", function () { angleB = parseFloat(angleBInput.value) || 0; if (angleBOut) angleBOut.textContent = Math.round(angleB) + "°"; draw(); });
+    if (scaleInput) scaleInput.addEventListener("input", function () { scaleMag = parseFloat(scaleInput.value) || 1; if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×"; draw(); });
+    if (angleAOut) angleAOut.textContent = Math.round(angleA) + "°";
+    if (angleBOut) angleBOut.textContent = Math.round(angleB) + "°";
+    if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×";
     select.addEventListener("change", function () { choose(parseInt(select.value, 10)); });
     canvas.addEventListener("pointerup", function (e) {
       var r = canvas.getBoundingClientRect();
@@ -332,6 +342,7 @@
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", draw);
     choose(0);
+    setMode("map");
     resize();
     return {
       update: function () {},

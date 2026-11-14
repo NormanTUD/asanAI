@@ -1294,3 +1294,19 @@ Marked as todo; work through carefully, one block at a time.
 - [ ] **Similarity demo:** in “Ähnliche Worte finden”, add the embeddinglab-style angle/dot-product interpretation demo (Vector A/B, dot product, neutral/related/opposite).
 - [ ] **Scale invariance:** add “Scale Invariance: Direction Is Often the Useful Signal” with a magnitude slider; cosine stays constant while Euclidean distance changes.
 - [ ] Retest everything.
+
+## Newest request (2026-11-14, after similarity/scale request)
+
+- [ ] **Unembedding:** finish the angle/dot-product tab and the Scale Invariance tab; verify both in DE/EN and with keyboard/arrow navigation.
+- [ ] **Position:** verify only the start/current endpoints remain (no trail).
+- [ ] **Attention:** verify all three bank sentences are reachable with Next and Prev.
+- [ ] **Forward/backward parity:** same experience in both directions; activation back; complex demos reset.
+- [ ] **Neural order:** verify 1 neuron → loss landscape → 32×32×32.
+- [ ] **Live matrices:** verify the numeric matrices are rendered with Temml in both phases.
+- [ ] **Neural→next hang:** test and fix the pause when leaving “Was sind neuronale Netze?”.
+- [ ] **RAG:** show a real chunk-vector demo: chunks → embeddings → compare the query with chunks → insert the best chunks into the context.
+- [ ] **Compression:** the last step must not pop mathematics/objects/dreams out of nowhere; they emerge from the surroundings and from below after “Lebewesen” is summarized.
+- [ ] **Data:** move “Viele Sätze, eine Wahrheit” to its own first substep of “Woher kommen die Daten?” and animate sentences near/far from the truth line.
+- [ ] **Data:** replace the weak multilingual block with sunflower sentences in several languages pointing to the same fact.
+- [ ] **Data:** explain that an LLM needs enormous amounts of data, that clean data at that scale is practically impossible, so noisy/wrong examples are included; the hope is that the errors average out.
+- [ ] Re-run everything.
