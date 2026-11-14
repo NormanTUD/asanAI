@@ -101,7 +101,8 @@
       var key = optimizer + "|" + step + "|" + cur.a.toFixed(4) + "|" + cur.b.toFixed(4);
       if (key === formulaKey) return;
       formulaKey = key;
-      var tex = '\\underbrace{\\hat y}_{\\text{' + (DE ? 'Ausgabe' : 'output') + '}} = \\underbrace{w x + b}_{\\text{' + (DE ? 'lineares Modell' : 'linear model') + '}},\\quad w=' + cur.a.toFixed(3) + ',\\ b=' + cur.b.toFixed(3) +
+      var wLabel = cur.a.toFixed(3), bLabel = cur.b.toFixed(3);
+      var tex = '\\underbrace{\\hat y}_{\\text{' + (DE ? 'Ausgabe' : 'output') + '}} = \\underbrace{' + wLabel + 'x + ' + bLabel + '}_{\\text{' + (DE ? 'lineares Modell' : 'linear model') + '}}' +
         '\\qquad \\underbrace{L(w,b)}_{\\text{' + (DE ? 'Fehler' : 'loss') + '}} = \\underbrace{\\frac{1}{n}\\sum_i(\\hat y_i-y_i)^2}_{\\text{MSE}} = ' + cur.loss.toFixed(4);
       formulaEl.innerHTML = '<div class="ls-math" data-tex="' + api.esc(tex) + '" data-tex-display="true"><code class="ls-tex-source">' + api.esc(tex) + '</code></div>';
       if (api.typeset) { try { api.typeset(formulaEl); } catch (e) {} }
@@ -173,7 +174,8 @@
       optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === name); });
       formulaKey = ""; draw();
     }
-    function startWorker() {
+    function startWorker(keepOptimizer) {
+      var keep = keepOptimizer ? optimizer : "sgd";
       if (worker) { worker.terminate(); worker = null; }
       data = null; step = 0; playing = false; finished = false; started = false; clearTimeout(timer); timer = 0;
       setStatus(DE ? "Berechne die Loss-Fläche …" : "Computing the loss surface …");
@@ -183,8 +185,8 @@
         data = e.data;
         started = false;
         finished = false;
-        setStatus(DE ? "Bereit · Weiter startet SGD." : "Ready · Next starts SGD.");
-        setOpt("sgd");
+        setStatus(DE ? "Bereit · Weiter startet " + keep.toUpperCase() + "." : "Ready · Next starts " + keep.toUpperCase() + ".");
+        setOpt(keep);
         draw();
       };
       worker.onerror = function () { setStatus(DE ? "Worker-Fehler" : "Worker error"); };
@@ -227,10 +229,10 @@
     }
     function reset() {
       playing = false; finished = false; started = false; clearTimeout(timer); timer = 0;
-      step = 0; optimizer = "sgd"; formulaKey = "";
-      optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === "sgd"); });
+      step = 0; formulaKey = "";
+      optEls.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-opt") === optimizer); });
       pauseBtn.textContent = DE ? "Pause" : "Pause";
-      setStatus(DE ? "Bereit · Weiter startet SGD." : "Ready · Next starts SGD.");
+      setStatus(DE ? "Bereit · " + optimizer.toUpperCase() + " zurückgesetzt." : "Ready · " + optimizer.toUpperCase() + " reset.");
       if (data) draw();
     }
     trainBtn.addEventListener("click", startTraining);
@@ -244,7 +246,12 @@
     });
     resetBtn.addEventListener("click", reset);
     optEls.forEach(function (b) { b.addEventListener("click", function () { if (!data) return; pause(); setOpt(b.getAttribute("data-opt")); }); });
-    lrEl.addEventListener("input", function () { lrOut.textContent = (parseFloat(lrEl.value) || 0.08).toFixed(2); });
+    var lrTimer = 0;
+    lrEl.addEventListener("input", function () {
+      lrOut.textContent = (parseFloat(lrEl.value) || 0.08).toFixed(2);
+      clearTimeout(lrTimer);
+      lrTimer = setTimeout(function () { startWorker(true); }, 260);
+    });
     canvas.addEventListener("pointerdown", function (e) { drag = { x: e.clientX, y: e.clientY }; });
     window.addEventListener("pointermove", function (e) {
       if (!drag) return;

@@ -218,8 +218,8 @@
     {
       kicker: "Tokenize",
       title: "Text wird zu IDs",
-      body: "Ein Token ist kein Wort. Auf derselben Folie siehst du zwei Teile. Teil 1 zeigt die Trennung: Verständnis, unzerbrechlich und ein ganzer Satz werden in Tokens zerlegt. Teil 2 zeigt BPE: Der Algorithmus startet bei Zeichen und verschmilzt in mehreren Stufen das häufigste Paar. Aus häufigen Folgen werden längere Tokens; seltene Schriften bleiben teuer.",
-      watch: "Gehe mit „Weiter“ von den Beispielen zu BPE. Welches Paar wird als Nächstes verschmolzen?",
+      body: "BPE beginnt bei Zeichen: Jedes Wort wird in Zeichen zerlegt, dann zählt der Algorithmus benachbarte Paare und ersetzt das häufigste Paar durch ein neues Symbol. Nach einigen Merges werden häufige Wörter kurz; seltene Schriften bleiben teuer. Das ist gelernte, verlustfreie Kompression. Die Beispiele zeigen danach, wie ein Text in Tokens und IDs zerfällt.",
+      watch: "Drücke Weiter: Welches Paar wird als Nächstes verschmolzen?",
       demoState: { scene: "tokenize" },
       centerTitle: true,
       context: "Teil 1: Text wird in Tokens geteilt, jede ID ist eine Adresse in der Embedding-Tabelle. Teil 2: BPE beginnt bei Zeichen und baut das Vokabular durch Merges auf. Jeder Merge ist ein neues Vokabelstück.",
@@ -241,8 +241,8 @@
     {
       kicker: "Tokenize",
       title: "Text becomes IDs",
-      body: "A token is not a word. This slide has two parts. Part 1 shows the split: understanding, unbreakable, and a whole sentence are broken into tokens. Part 2 shows BPE: the algorithm starts from characters and merges the most frequent pair in several stages. Frequent sequences become longer tokens; rare scripts stay expensive.",
-      watch: "Use “Next” to go from the examples to BPE. Which pair is merged next?",
+      body: "BPE starts from characters: every word is split into characters, then the algorithm counts adjacent pairs and replaces the most frequent pair with a new symbol. After several merges, frequent words become short; rare scripts stay expensive. That is learned, lossless compression. The examples then show how text breaks into tokens and IDs.",
+      watch: "Press Next: which pair is merged next?",
       demoState: { scene: "tokenize" },
       centerTitle: true,
       context: "Part 1: text is split into tokens, and each ID is an address in the embedding table. Part 2: BPE starts from characters and builds the vocabulary through merges. Each merge is a new vocabulary item.",
@@ -499,29 +499,31 @@
   var residualSteps = DE ? [
     {
       kicker: "Residual",
-      title: "Jede Schicht schreibt in denselben Stream",
-      body: "Jede Schicht liest denselben laufenden Vektor, berechnet ein Update und addiert es zurück. Nichts wird überschrieben. Frühere Notizen bleiben lesbar; spätere Schichten lesen sie und schreiben mehr.",
-      watch: "Drücke Weiter. Wann ändert sich der Stream am stärksten?",
-      demoState: { scene: "residual", phase: "stream" },
-      context: "Die Addition gibt dem Gradienten einen kurzen Pfad zurück. Ohne Residualverbindung müsste jede Schicht die gesamte Information neu schreiben.",
-      deep: "Der Stream ist das gemeinsame Notizbuch. Attention und FFN schreiben Updates hinein; die Identität bleibt erhalten. Deshalb lassen sich tiefe Stapel trainieren.",
+      title: "Das gemeinsame Notizbuch wird zum Stream",
+      body: "Das ist eine stark vereinfachte, vermenschlichte Sichtweise. Stell dir den Residual Stream als Notizbuch vor: Jede Schicht liest den aktuellen Stand und schreibt ihre Beobachtung dazu; nichts wird gelöscht. Drücke Weiter: Erst füllt sich das Notizbuch, dann wächst aus denselben Updates der Stream. Attention und FFN lesen den Stream und addieren ihr Update; die Dimension bleibt gleich.",
+      watch: "Drücke Weiter: erst füllt sich das Notizbuch, dann wächst der Stream.",
+      demoState: { scene: "residual" },
+      context: "Die Notizbuch-Analogie ist eine stark vereinfachte, vermenschlichte Sichtweise. Mathematisch ist der Stream ein Vektor pro Token; jede Schicht addiert ein Update: x ← x + Layer(x). Frühere Notizen bleiben lesbar, weil addiert und nicht überschrieben wird.",
+      deep: "Die Addition gibt dem Gradienten einen kurzen Pfad zurück. Ohne Residualverbindung müsste jede Schicht die gesamte Information neu schreiben. Der Stream ist das gemeinsame Notizbuch; Attention und FFN schreiben Updates hinein; die Identität bleibt erhalten.",
       boxes: [
+        box("res-nb", "Mathematik", "Das Notizbuch", "x₁ = x₀ + Layer(x₀). Die Identität bleibt; jede Schicht addiert nur ihre Änderung. Gelesen wird immer der aktuelle Stand.", "\\underbrace{x_1}_{\\text{neu}} = \\underbrace{x_0}_{\\text{alt}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{Notiz der Schicht}}"),
         box("res-1", "Mathematik", "Warum Addition?", "x ← x + f(x). Die Identität bleibt erhalten; die Schicht lernt nur die Änderung. Das macht tiefe Stapel trainierbar."),
-        box("res-2", "Grenze", "Was ist das nicht?", "Kein Speicher im Sinne einer Datenbank. Der Stream ist ein Vektor pro Token, der durch die Schichten getragen wird.")
+        box("res-2", "Grenze", "Was ist das nicht?", "Kein Speicher im Sinne einer Datenbank und keine wörtliche Expertenrunde. Der Stream ist ein Vektor pro Token, der durch die Schichten getragen wird.")
       ]
     }
   ] : [
     {
       kicker: "Residual",
-      title: "Every layer writes into the same stream",
-      body: "Every layer reads the same running vector, computes an update, and adds it back. Nothing is overwritten. Earlier notes stay readable; later layers read them and add more.",
-      watch: "Press Next. When does the stream change most?",
-      demoState: { scene: "residual", phase: "stream" },
-      context: "The addition gives gradients a short path back. Without a residual connection, every layer would have to rewrite all information.",
-      deep: "The stream is the shared notebook. Attention and the FFN write updates into it; the identity survives. That is why deep stacks can be trained.",
+      title: "The shared notebook becomes the stream",
+      body: "This is a strongly simplified, humanised view. Think of the residual stream as a notebook: every layer reads the current state and writes its observation into it; nothing is erased. Press Next: first the notebook fills, then the stream grows from the same updates. Attention and the FFN read the stream and add their update; the dimension stays the same.",
+      watch: "Press Next: first the notebook fills, then the stream grows.",
+      demoState: { scene: "residual" },
+      context: "The notebook analogy is a strongly simplified, humanised view. Mathematically the stream is one vector per token; every layer adds an update: x ← x + Layer(x). Earlier notes stay readable because the layer adds instead of overwriting.",
+      deep: "The addition gives gradients a short path back. Without a residual connection, every layer would have to rewrite all information. The stream is the shared notebook; attention and the FFN write updates into it; the identity survives.",
       boxes: [
+        box("res-nb", "Mathematics", "The notebook", "x₁ = x₀ + Layer(x₀). The identity stays; every layer adds only its change. Each layer reads the current state.", "\\underbrace{x_1}_{\\text{new}} = \\underbrace{x_0}_{\\text{old}} + \\underbrace{\\operatorname{Layer}(x_0)}_{\\text{layer's note}}"),
         box("res-1", "Mathematics", "Why addition?", "x ← x + f(x). The identity stays; the layer learns only the change. That makes deep stacks trainable."),
-        box("res-2", "Limit", "What is it not?", "Not a database. The stream is one vector per token carried through the layers.")
+        box("res-2", "Limit", "What is it not?", "Not a database and not a literal panel of experts. The stream is one vector per token carried through the layers.")
       ]
     }
   ];
@@ -700,13 +702,13 @@
     {
       kicker: "Die Bausteine",
       title: "Die Bausteine eines LLM",
-      body: "Ein neuronales Netz ist der gelernte Teil eines modernen LLM. Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Gehe die vier Ebenen mit „Weiter“ durch: Tokenizer, Embedding, Transformer-Blöcke und Unembedding. Die Transformer-Blöcke werden dutzende bis hunderte Male wiederholt; links siehst du die Ebene, rechts, was sie tut. Der Tokenizer oben zeigt schon den Text, den wir später zerlegen. Später gehen wir die einzelnen Bestandteile genauer durch.",
+      body: "Ein neuronales Netz ist der gelernte Teil eines modernen LLM. Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Gehe die fünf Ebenen mit „Weiter“ durch: Daten, Tokenizer, Embedding, Transformer-Blöcke und Unembedding. Die Transformer-Blöcke werden dutzende bis hunderte Male wiederholt; links siehst du die Ebene, rechts, was sie tut. Die Daten stehen am Anfang; der Tokenizer zerlegt sie. Später gehen wir die einzelnen Bestandteile genauer durch.",
       watch: "Gehe die Ebenen mit „Weiter“ oder der Pfeiltaste durch. Was macht jede Ebene?",
       demoState: { scene: "blocks" },
       context: "Die Reihenfolge ist die Architektur: Text → Tokens → Vektoren → Transformer-Blöcke → Verteilung. Jeder Schritt verändert die Darstellung, bis am Ende ein Token gezogen wird.",
       deep: "Jeder Block ist selbst ein gelerntes Stück Funktion. Zusammen approximieren sie die viel zu komplizierte Funktion „nächstes Token aus Kontext“.",
       boxes: [
-        box("mod-1", "Technik", "Die vier Ebenen", "Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Transformer-Blöcke: erst Attention, dann FFN, dutzende bis hunderte Male wiederholt. Unembedding: Vektor → Scores und Softmax."),
+        box("mod-1", "Technik", "Die fünf Ebenen", "Daten: Text und Mischung. Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Transformer-Blöcke: erst Attention, dann FFN, dutzende bis hunderte Male wiederholt. Unembedding: Vektor → Scores und Softmax."),
         box("mod-dense", "Optional", "Dense = alle mit allen", "Eine Dense-Schicht verbindet jede Eingabe mit jeder Ausgabe. Die Gewichte sind die Kanten eines vollständigen gewichteten Graphen. In der Matrix W steht W_ij für die Kante von Eingang j zu Ausgang i. Daher kommen die üblichen Netzdiagramme.", "\\underbrace{y_i}_{\\text{Ausgang }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{alle Eingänge}}"),
         box("mod-norm", "Technik", "LayerNorm und andere Blöcke", "Ein echter Transformer-Block enthält zusätzlich LayerNorm, Residualverbindungen und mehrere Attention-Heads. Es gibt auch andere Architekturen und Details wie Mixture-of-Experts, Multi-Query-Attention und verschiedene Positionsverfahren. Wir lassen sie hier weg, um bei der Intuition zu bleiben."),
         box("mod-angle", "Mathematik", "Warum Winkel?", "Am Ende werden Richtungen verglichen, nicht Längen. Der Winkel zwischen zwei Vektoren ändert sich in hohen Dimensionen weniger stark als ihre Länge. Deshalb ist die Großkreis-Metrik hier nützlich; für den Einstieg reicht die Intuition."),
@@ -740,13 +742,13 @@
     {
       kicker: "The building blocks",
       title: "The building blocks of an LLM",
-      body: "A neural network is the learned part of a modern LLM. An LLM is a chain of levels, not a single magic formula. Walk through the four levels with “Next”: tokenizer, embedding, transformer blocks, and unembedding. The transformer blocks repeat dozens to hundreds of times; the level is on the left, what it does on the right. The tokenizer at the top already shows the text we will split later. Later we go through the individual components in more detail.",
+      body: "A neural network is the learned part of a modern LLM. An LLM is a chain of levels, not a single magic formula. Walk through the five levels with “Next”: data, tokenizer, embedding, transformer blocks, and unembedding. The transformer blocks repeat dozens to hundreds of times; the level is on the left, what it does on the right. The data come first; the tokenizer splits them. Later we go through the individual components in more detail.",
       watch: "Walk through the levels with “Next” or the arrow key. What does each level do?",
       demoState: { scene: "blocks" },
       context: "The order is the architecture: text → tokens → vectors → transformer blocks → distribution. Each step changes the representation until a token is drawn.",
       deep: "Each block is itself a learned piece of function. Together they approximate the far too complicated function “next token from context”.",
       boxes: [
-        box("mod-1", "Technique", "The four levels", "Tokenizer: text → tokens. Embedding: tokens → vectors. Transformer blocks: attention first, then FFN, repeated dozens to hundreds of times. Unembedding: vector → scores and softmax."),
+        box("mod-1", "Technique", "The five levels", "Data: text and mix. Tokenizer: text → tokens. Embedding: tokens → vectors. Transformer blocks: attention first, then FFN, repeated dozens to hundreds of times. Unembedding: vector → scores and softmax."),
         box("mod-dense", "Optional", "Dense = all to all", "A dense layer connects every input to every output. The weights are the edges of a complete weighted graph. In the matrix W, W_ij is the edge from input j to output i. That is where the usual network diagrams come from.", "\\underbrace{y_i}_{\\text{output }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{all inputs}}"),
         box("mod-norm", "Technique", "LayerNorm and other blocks", "A real transformer block also contains LayerNorm, residual connections, and several attention heads. There are further architectures and details such as mixture-of-experts, multi-query attention, and different positional schemes. We leave them out here to keep the intuition in focus."),
         box("mod-angle", "Mathematics", "Why angles?", "At the end, directions are compared, not lengths. The angle between two vectors changes less in high dimensions than their length. That is why the great-circle metric is useful here; for a first pass the intuition is enough."),
@@ -903,7 +905,7 @@
     {
       kicker: "Daten",
       title: "Woher kommen die Daten?",
-      body: "Daten sind nicht exakt: Menschen beschreiben dieselbe Situation unterschiedlich, manchmal widersprüchlich. Über viele Beschreibungen hofft man, dass das reale Ergebnis durchscheint, wie bei Gauß. Ein Modell bekommt keine Sprachmodule. Es bekommt Text: viele Sprachen, viele Schriften, viel Unsinn, und davon enorm viel. Erst seit etwa 2016, dem Beginn der Zettabyte-Ära, standen zum ersten Mal mehr als ein Zettabyte digitale Daten zur Verfügung, also 10²¹ Byte. Diesen Text kuratiert man im besten Fall: Wikipedia ist schon gut gepflegt, peer-reviewte wissenschaftliche Paper sind noch besser. Auch sie können falsch sein, nur seltener. Menschen irren sich, Messungen haben Fehler, Menschen lügen. Die Idee ist, dass man über die Masse im Schnitt an die realen Daten herankommt: „Nil“ und „Ägypten“ liest man häufiger zusammen als „Nil“ und „Paraguay“, auch wenn im Internet jemand das Gegenteil behauptet. Klicke die Sprachen und vergleiche.",
+      body: "Daten sind nicht exakt: Menschen beschreiben dieselbe Situation unterschiedlich, manchmal widersprüchlich. Über viele Beschreibungen hofft man, dass das reale Ergebnis durchscheint, wie bei Gauß. Ein Modell bekommt keine Sprachmodule. Es bekommt Text: viele Sprachen, viele Schriften, viel Unsinn, und davon enorm viel. Erst seit etwa 2016, dem Beginn der Zettabyte-Ära, standen zum ersten Mal mehr als ein Zettabyte digitale Daten zur Verfügung, also 10²¹ Byte. Diesen Text kuratiert man im besten Fall: Wikipedia ist schon gut gepflegt, peer-reviewte wissenschaftliche Paper sind noch besser. Auch sie können falsch sein, nur seltener. Menschen irren sich, Messungen haben Fehler, Menschen lügen. Die Idee ist, dass man über die Masse im Schnitt an die realen Daten herankommt: „Nil“ und „Ägypten“ liest man häufiger zusammen als „Nil“ und „Paraguay“, auch wenn im Internet jemand das Gegenteil behauptet. Im Plot unten liegen viele Beschreibungen um dieselbe Wahrheit; die meisten sind nah, ein falscher Satz ist weit weg. Klicke die Sprachen und vergleiche.",
       watch: "Klicke die Sprachen. Was bleibt gleich, was ändert sich?",
       demoState: { scene: "langdata" },
       context: "Die Schrift ändert die Tokens, nicht die Aufgabe. Manche Sprachen brauchen für denselben Inhalt mehr Tokens; der Tokenizer kann sie teurer machen (Petrov et al., 2023). Die Datenmischung von GPT-3 war 60 % Common Crawl, 22 % WebText2, 8 % Books1, 8 % Books2 und 3 % Wikipedia; die Werte sind gerundet (Brown et al., 2020, Tabelle 2.2).",
@@ -928,7 +930,7 @@
     {
       kicker: "Data",
       title: "Where does the data come from?",
-      body: "Data are not exact: people describe the same situation differently, sometimes contradictorily. Across many descriptions one hopes that the real result shines through, as with Gauss. A model does not get language modules. It gets text: many languages, many scripts, plenty of nonsense, and an enormous amount of it. Only since about 2016, the beginning of the zettabyte era, has more than a zettabyte of digital data been available, that is 10²¹ bytes. In the best case this text is curated: Wikipedia is already well maintained, peer-reviewed scientific papers are even better. They can be wrong too, only less often. People make mistakes, measurements have errors, people lie. The idea is that through sheer mass the model approaches the real data on average: “Nile” and “Egypt” occur together more often than “Nile” and “Paraguay”, even if someone on the internet claims otherwise. Click the languages and compare.",
+      body: "Data are not exact: people describe the same situation differently, sometimes contradictorily. Across many descriptions one hopes that the real result shines through, as with Gauss. A model does not get language modules. It gets text: many languages, many scripts, plenty of nonsense, and an enormous amount of it. Only since about 2016, the beginning of the zettabyte era, has more than a zettabyte of digital data been available, that is 10²¹ bytes. In the best case this text is curated: Wikipedia is already well maintained, peer-reviewed scientific papers are even better. They can be wrong too, only less often. People make mistakes, measurements have errors, people lie. The idea is that through sheer mass the model approaches the real data on average: “Nile” and “Egypt” occur together more often than “Nile” and “Paraguay”, even if someone on the internet claims otherwise. In the plot below, many descriptions sit around the same truth; most are near, one false sentence is far away. Click the languages and compare.",
       watch: "Click the languages. What stays the same, what changes?",
       demoState: { scene: "langdata" },
       context: "The script changes the tokens, not the task. Some languages need more tokens for the same content; the tokenizer can make them more expensive (Petrov et al., 2023). GPT-3 reported 60% Common Crawl, 22% WebText2, 8% Books1, 8% Books2, and 3% Wikipedia; the values are rounded (Brown et al., 2020, Table 2.2).",
@@ -1035,7 +1037,7 @@
     {
       kicker: "Loss-Landschaft",
       title: "Was sind neuronale Netze?",
-      body: "Jetzt wird der Fehler zur Landschaft. Für das 1-Neuron-Modell gibt es nur zwei Parameter: w und b. Die Fläche zeigt den Loss über w und b; die Beispiele in der Seitenleiste sind dieselben 18 Sinus-Punkte wie im 1-Neuron- und im großen Netz. Das Training startet nicht von selbst: Drücke „Weiter“ oder den Startknopf. Mit Pause hältst du es an; „Weiter“ stoppt das Training und geht zur nächsten Folie. SGD, Adam und Momentum laufen nacheinander. Der Loss ist der mittlere quadratische Fehler (MSE), die Zahl, an der das Modell gemessen wird. Die Formel darunter setzt die aktuellen Werte ein.",
+      body: "Jetzt wird der Fehler zur Landschaft. Die Gerade ist ŷ = w x + b; für das 1-Neuron-Modell gibt es nur zwei Parameter: w und b. Die Fläche zeigt den Loss über w und b; die Beispiele in der Seitenleiste sind dieselben 18 Sinus-Punkte wie im 1-Neuron- und im großen Netz. Das Training startet nicht von selbst: Drücke „Weiter“ oder den Startknopf. Mit Pause hältst du es an; „Weiter“ stoppt das Training und geht zur nächsten Folie. SGD, Adam und Momentum laufen nacheinander. Der Loss ist der mittlere quadratische Fehler (MSE), die Zahl, an der das Modell gemessen wird. Die Formel darunter setzt die aktuellen Werte ein.",
       watch: "Beobachte das Training. Wie verändern sich w und b, und wo im Tal endet der Punkt?",
       demoState: { scene: "gradient" },
       context: "Die Fläche ist diesmal kein Schnitt durch Hunderte Dimensionen: w und b sind die beiden echten Parameter. Jedes dieser 18 Beispiele (x, y) erzeugt einen Fehler; der Loss ist der Mittelwert dieser quadratischen Fehler. Die Formel darunter zeigt das Modell und den aktuellen Loss.",
@@ -1063,7 +1065,7 @@
     {
       kicker: "Loss landscape",
       title: "What are neural networks?",
-      body: "Now the error becomes a landscape. The one-neuron model has only two parameters: w and b. The surface shows the loss over w and b; the examples in the side panel are the same 18 sine points as in the one-neuron and larger networks. Training does not start by itself: press “Next” or the Start button. Pause stops it; “Next” stops training and moves to the next slide. SGD, Adam, and Momentum run one after another. The loss is the mean squared error (MSE), the number by which the model is judged. The formula below substitutes the current values.",
+      body: "Now the error becomes a landscape. The line is ŷ = w x + b; the one-neuron model has only two parameters: w and b. The surface shows the loss over w and b; the examples in the side panel are the same 18 sine points as in the one-neuron and larger networks. Training does not start by itself: press “Next” or the Start button. Pause stops it; “Next” stops training and moves to the next slide. SGD, Adam, and Momentum run one after another. The loss is the mean squared error (MSE), the number by which the model is judged. The formula below substitutes the current values.",
       watch: "Watch the training. How do w and b change, and where in the valley does the point end?",
       demoState: { scene: "gradient" },
       context: "This surface is not a slice through hundreds of dimensions: w and b are the two real parameters. Each of these 18 examples (x, y) produces an error; the loss is the mean squared error. The formula below shows the model and the current loss.",
@@ -1553,7 +1555,18 @@
     substeps: [gradientSteps[0], neuralLargeSteps[0], mlpSteps[0]]
   };
 
-  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, languageSteps[0], tokenizeSteps[0], embedSteps[0], embedSteps[1], embedSteps[2], highdimSteps[0], manifoldSteps[0], positionSteps[0], attentionSteps[0], attentionSteps[1], codeAttentionSubstep, neuralStepA, neuralStepB, ffnSteps[0], residualNotebookStep, residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], trajectorySteps[0], meadowSteps[0], introSteps[2], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
+  var embeddingMergeStep = {
+    title: DE ? "Bedeutung wird Geometrie" : "Meaning becomes geometry",
+    kicker: DE ? "1D · 2D · 3D · Tabelle" : "1D · 2D · 3D · table",
+    substeps: [embedSteps[0], embedSteps[1], embedSteps[2]]
+  };
+  var attentionMergeStep = {
+    title: DE ? "Kontext zieht die Bank an seinen Platz" : "Context pulls the bank into place",
+    kicker: DE ? "Attention" : "Attention",
+    substeps: [attentionSteps[0], attentionSteps[1]]
+  };
+
+  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, languageSteps[0], tokenizeSteps[0], embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, neuralStepA, neuralStepB, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
 
   var day = {
     id: "intuition",

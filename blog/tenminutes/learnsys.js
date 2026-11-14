@@ -377,7 +377,7 @@
       var posStep = cfg.singleDay && posDay && posDay.steps[pi];
       var posLabel = posStep && posStep.title ? posStep.title : t("positionOf", { n: pi + 1, total: Math.max(1, posCount) });
       var posAria = posStep && posStep.title ? t("step") + " " + (pi + 1) + ": " + posStep.title : posLabel;
-      posHtml += '<button type="button" data-pos="' + pi + '" data-no-height-test="1" title="' + esc(posLabel) + '" aria-label="' + esc(posAria) + '">' + pi + '</button>';
+      posHtml += '<button type="button" data-pos="' + pi + '" data-no-height-test="1" title="' + esc(posLabel) + '" aria-label="' + esc(posAria) + '">' + (pi + 1) + '</button>';
     }
     var helpRows = [
       ['<kbd>←</kbd><kbd>→</kbd>', t("helpStep")],

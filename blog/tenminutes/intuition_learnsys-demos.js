@@ -3648,7 +3648,7 @@
         '<div class="ls-bpe-stage" aria-live="polite"></div>' +
         '<div class="ls-bpe-meters" aria-live="polite"></div>' +
         '<div class="ls-bpe-counts" aria-live="polite"></div>' +
-        '<p class="ls-bpe-note">' + (DE ? "Jeder Merge ersetzt ein häufiges Paar durch ein neues Symbol. Das Wort bleibt aus seinen Symbolen zusammensetzbar; der Text ist verlustfrei rekonstruierbar." : "Each merge replaces a frequent pair with a new symbol. The word remains reconstructable from its symbols; the text is lossless.") + '</p>' +
+        '<p class="ls-bpe-note">' + (DE ? "Jeder Merge ersetzt ein häufiges Paar durch ein neues Symbol. Gezählt werden benachbarte Paare, gewichtet mit der Häufigkeit der Wörter. Das Wort bleibt aus seinen Symbolen zusammensetzbar; der Text ist verlustfrei rekonstruierbar. Genau das ist der Kompressionsgedanke." : "Each merge replaces a frequent pair with a new symbol. Adjacent pairs are counted and weighted by word frequency. The word remains reconstructable from its symbols; the text is lossless. That is the compression idea.") + '</p>' +
       '</div>' +
       '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-tokenize-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-tokenize-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
@@ -3666,7 +3666,7 @@
     var navNext = el.querySelector(".ls-tokenize-next");
     var navProgress = el.querySelector(".ls-tokenize-progress");
     var sampleKeys = ["understanding", "unbreakable", "sentence"];
-    var mode = "split";
+    var mode = "bpe";
     var step = 0;
     var sampleIndex = 0;
     var bpeChip = null;
@@ -3852,7 +3852,7 @@
     bpeChip.type = "button";
     bpeChip.className = "ls-chip ls-chip--bpe";
     bpeChip.textContent = "BPE";
-    bpeChip.addEventListener("click", function () { mode = "bpe"; step = 1; render(); });
+    bpeChip.addEventListener("click", function () { mode = "bpe"; step = 0; render(); });
     samples.appendChild(bpeChip);
     navPrev.addEventListener("click", prevStep);
     navNext.addEventListener("click", nextStep);
@@ -3998,11 +3998,18 @@
       axisLabel([1.28, 0, 0], "x", Cc.blue);
       axisLabel([0, 1.28, 0], "y", Cc.green);
       axisLabel([0, 0, 1.28], "z", Cc.gold);
+      if (trail.length > 1) {
+        ctx.beginPath();
+        trail.forEach(function (p, ti) {
+          var pp = P(unit3(curvePoint(p)));
+          if (ti === 0) ctx.moveTo(pp.x, pp.y); else ctx.lineTo(pp.x, pp.y);
+        });
+        ctx.strokeStyle = Cc.green; ctx.globalAlpha = 0.22; ctx.lineWidth = 1.6; ctx.stroke();
+      }
       trail.forEach(function (p) {
-        var q = unit3(curvePoint(p));
-        var pp = P(q);
-        ctx.beginPath(); ctx.arc(pp.x, pp.y, 1.4, 0, Math.PI * 2);
-        ctx.fillStyle = Cc.green; ctx.globalAlpha = 0.30; ctx.fill();
+        var pp = P(unit3(curvePoint(p)));
+        ctx.beginPath(); ctx.arc(pp.x, pp.y, 2.3, 0, Math.PI * 2);
+        ctx.fillStyle = Cc.green; ctx.globalAlpha = 0.72; ctx.fill();
       });
       ctx.globalAlpha = 1;
       var startVec = curvePoint(0);
@@ -4039,7 +4046,7 @@
       ctx.textAlign = "right";
       ctx.fillText(DE ? "Großkreiswinkel" : "great-circle angle", w - 12, 18);
       ctx.textAlign = "left";
-      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(posAnim) + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + curVec.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span>';
+      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(posAnim) + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + curVec.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span><span>' + (DE ? "Spur" : "trail") + ' <b>' + trail.length + '</b></span>';
     }
     function draw() {
       drawHeat(); drawCurve();
@@ -5052,16 +5059,14 @@
       }
     ];
     var STREAM_LAYERS = [
-      DE ? "Embedding" : "Embedding",
+      DE ? "Start" : "Start",
       DE ? "Attention + FFN 1" : "Attention + FFN 1",
-      DE ? "Attention + FFN 2" : "Attention + FFN 2",
-      DE ? "Unembed" : "Unembed"
+      DE ? "Attention + FFN 2" : "Attention + FFN 2"
     ];
     var UPDATES = [
       [0.8, 0.3, 0.2, 0.5, 0.1, 0.4],
-      [0.2, -0.4, 0.3, 0.1, 0.5, -0.2],
-      [-0.1, 0.2, 0.4, -0.3, 0.2, 0.3],
-      [0.3, 0.1, -0.2, 0.4, -0.1, 0.2]
+      [0.4, 0.5, 0.3, 0.4, 0.6, 0.2],
+      [0.3, 0.2, 0.5, 0.3, 0.4, 0.3]
     ];
     var el = document.createElement("div");
     el.className = "ls-res-scene";
@@ -5077,6 +5082,11 @@
     var layer = 0;
     var streamLayer = 0;
     var separate = false;
+    var streamShown = [0, 0, 0, 0, 0, 0];
+    var streamFrom = streamShown.slice();
+    var streamTarget = streamShown.slice();
+    var streamStart = 0;
+    var streamRaf = 0;
     var clamp = api.util.clamp;
 
     function pal() {
@@ -5222,7 +5232,7 @@
       g.fillStyle = C.ink; g.font = '600 ' + fs + 'px Georgia, serif';
       var rects = wordRects(g, w, h, C, fs);
       rects.forEach(function (q) { g.fillText(q.word, q.x, q.y); });
-      for (var i = 0; i < layer; i++) NOTE_LAYERS[i].draw(g, rects, [C.green, C.blue, C.teal, C.coral, C.gold][i], C, fs);
+      for (var i = 0; i < layer; i++) NOTE_LAYERS[i].draw(g, rects, [C.green, C.blue, C.gold, C.coral, C.teal][i], C, fs);
       if (!layer) {
         g.fillStyle = C.muted; g.font = 'italic ' + Math.max(10, fs * 0.5) + 'px "Open Sans", sans-serif';
         g.fillText(DE ? "Noch leer. Drücke Weiter, und die erste Schicht schreibt." : "Still empty. Press Next and the first layer writes.", pad, h - 22);
@@ -5234,7 +5244,7 @@
       return v;
     }
     function drawStream(C, w, h, g) {
-      var stream = streamAt(streamLayer);
+      var stream = streamShown.slice();
       var update = UPDATES[streamLayer];
       var pad = 24;
       var wide = h > 260;
@@ -5286,17 +5296,30 @@
           var yy = 84 + i * 26;
           g.fillStyle = on ? C.petrol : C.paper; g.strokeStyle = on ? C.petrol : C.lineStrong;
           g.fillRect(pad, yy - 13, 128, 22); g.strokeRect(pad, yy - 13, 128, 22);
-          g.fillStyle = on ? "#fff" : C.soft; g.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+          g.fillStyle = on ? "#fff" : C.ink; g.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
           g.textAlign = "left"; g.fillText(STREAM_LAYERS[i], pad + 6, yy + 2);
         } else {
           var lw = (w - pad * 2) / STREAM_LAYERS.length;
           var lx = pad + i * lw;
           g.fillStyle = on ? C.petrol : C.paper; g.strokeStyle = on ? C.petrol : C.lineStrong;
           g.fillRect(lx + 1, 6, lw - 3, 18); g.strokeRect(lx + 1, 6, lw - 3, 18);
-          g.fillStyle = on ? "#fff" : C.soft; g.font = '600 ' + Math.max(8, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif';
+          g.fillStyle = on ? "#fff" : C.ink; g.font = '600 ' + Math.max(8, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif';
           g.textAlign = "center"; g.fillText(STREAM_LAYERS[i].replace("Attention + FFN", "A+FFN"), lx + lw / 2, 18);
         }
       }
+    }
+    function streamStep(now) {
+      var t = Math.min(1, (now - streamStart) / 320);
+      var e = t * t * (3 - 2 * t);
+      for (var j = 0; j < 6; j++) streamShown[j] = streamFrom[j] + (streamTarget[j] - streamFrom[j]) * e;
+      draw();
+      if (t < 1) streamRaf = requestAnimationFrame(streamStep); else streamRaf = 0;
+    }
+    function animateStream(target) {
+      streamFrom = streamShown.slice();
+      streamTarget = target.slice();
+      streamStart = performance.now();
+      if (!streamRaf) streamRaf = requestAnimationFrame(streamStep);
     }
     function draw() {
       if (!size) return;
@@ -5307,13 +5330,17 @@
       else drawStream(C, size.w, size.h, g);
     }
     function sync() {
+      var C = pal();
       layerRow.innerHTML = "";
       if (phase === "notebook") {
+        var noteColors = [C.green, C.blue, C.gold, C.coral, C.teal];
         NOTE_LAYERS.forEach(function (l, i) {
           var b = document.createElement("button");
           b.type = "button";
           b.className = "ls-chip" + (i + 1 === layer ? " is-on" : i + 1 < layer ? " is-done" : "");
           b.textContent = l.name;
+          b.style.borderLeft = "3px solid " + noteColors[i];
+          b.style.borderLeftColor = noteColors[i];
           b.addEventListener("click", function () { layer = i + 1; phase = "notebook"; sync(); draw(); });
           layerRow.appendChild(b);
         });
@@ -5326,7 +5353,7 @@
           b.type = "button";
           b.className = "ls-chip" + (i === streamLayer ? " is-on" : i < streamLayer ? " is-done" : "");
           b.textContent = l;
-          b.addEventListener("click", function () { streamLayer = i; phase = "stream"; sync(); draw(); });
+          b.addEventListener("click", function () { streamLayer = i; phase = "stream"; sync(); draw(); animateStream(streamAt(i)); });
           layerRow.appendChild(b);
         });
         var stream = streamAt(streamLayer);
@@ -5338,9 +5365,9 @@
       if (phase === "notebook") {
         if (layer < NOTE_LAYERS.length) { layer++; sync(); draw(); return true; }
         if (separate) return false;
-        phase = "stream"; streamLayer = 0; sync(); draw(); return true;
+        phase = "stream"; streamLayer = 0; streamShown = [0, 0, 0, 0, 0, 0]; sync(); draw(); animateStream(streamAt(0)); return true;
       }
-      if (streamLayer < STREAM_LAYERS.length - 1) { streamLayer++; sync(); draw(); return true; }
+      if (streamLayer < STREAM_LAYERS.length - 1) { streamLayer++; sync(); draw(); animateStream(streamAt(streamLayer)); return true; }
       return false;
     }
     function prev() {
@@ -5365,7 +5392,7 @@
       resize: resize,
       pause: function () {},
       resume: function () { draw(); },
-      destroy: function () { window.removeEventListener("resize", resize); window.removeEventListener("tm:theme", draw); el.remove(); }
+      destroy: function () { if (streamRaf) cancelAnimationFrame(streamRaf); window.removeEventListener("resize", resize); window.removeEventListener("tm:theme", draw); el.remove(); }
     };
   }
 
@@ -6333,6 +6360,7 @@
     el.innerHTML =
       '<div class="ism-panel">' +
         '<div id="ism-copy" class="ism-copy" aria-live="polite"><div id="ism-title" class="ism-title"></div><div id="ism-body" class="ism-body"></div></div>' +
+        '<div id="ism-dense-presets" class="ism-dense-presets" hidden></div>' +
         '<div class="ism-stage" id="ism-stage"><div id="ism-wrap" class="ism-wrap">' +
           '<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="' + (DE ? "Eine Punktwolke: ein Kern in einem Ring wird angehoben, bis eine flache Ebene trennt" : "A point cloud: a core inside a ring is lifted until a flat plane separates them") + '"></canvas>' +
           '<div id="ism-canvas-status" class="ism-canvas-status" aria-live="polite" hidden></div>' +
@@ -7441,6 +7469,7 @@
 
   function langdataScene(root, api) {
     var DE = api.lang === "de";
+    var V = window.LearnSysVisuals;
     var langs = [
       { id: "de", label: DE ? "Deutsch" : "German", text: "Sonnenblumen sind die besten Blumen.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
       { id: "en", label: DE ? "Englisch" : "English", text: "Sunflowers are the best flowers.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
@@ -7457,6 +7486,30 @@
       { label: "Wikipedia", pct: 3, color: "#9185be" }
     ];
     var active = DE ? "de" : "en";
+    var C = api.colors();
+    var TRUTH = DE ? {
+      title: "Viele Sätze, eine Wahrheit",
+      headline: "Berlin liegt an der Spree.",
+      note: "Illustration: Die Sätze sind Beispiele, keine Messung. Die meisten Beschreibungen liegen nahe an der Wahrheit; ein falscher Satz liegt weit daneben.",
+      items: [
+        { t: "Berlin liegt an der Spree.", d: 0.06, ok: true },
+        { t: "Die Spree fließt durch Berlin.", d: 0.14, ok: true },
+        { t: "Der Fluss, der durch Berlin läuft, ist die Spree.", d: 0.24, ok: true },
+        { t: "Berlin wird von der Spree durchflossen.", d: 0.32, ok: true },
+        { t: "Berlin liegt an der Elbe.", d: 1.02, ok: false }
+      ]
+    } : {
+      title: "Many sentences, one truth",
+      headline: "The Nile flows through Egypt.",
+      note: "Illustration: the sentences are examples, not a measurement. Most descriptions sit near the truth; a false sentence lies far away.",
+      items: [
+        { t: "The Nile flows through Egypt.", d: 0.06, ok: true },
+        { t: "Egypt lies on the Nile.", d: 0.14, ok: true },
+        { t: "The river that runs through Egypt is the Nile.", d: 0.24, ok: true },
+        { t: "The Nile is the river of Egypt.", d: 0.32, ok: true },
+        { t: "The Nile flows through Brazil.", d: 1.02, ok: false }
+      ]
+    };
     var el = document.createElement("div");
     el.className = "ls-lang-scene";
     el.innerHTML =
@@ -7465,6 +7518,11 @@
         '<span class="ls-lang-tag"></span>' +
         '<p class="ls-lang-text" lang="de"></p>' +
         '<p class="ls-lang-gloss"></p>' +
+      '</div>' +
+      '<div class="ls-lang-truth">' +
+        '<div class="ls-lang-truth-head"></div>' +
+        '<div class="ls-lang-truth-grid"><div class="ls-lang-truth-plot"><canvas class="ls-lang-truth-canvas" role="img"></canvas></div><ol class="ls-lang-truth-list"></ol></div>' +
+        '<p class="ls-lang-truth-note"></p>' +
       '</div>' +
       '<div class="ls-lang-mix">' +
         '<div class="ls-lang-mix-head">' + (DE ? "Woraus GPT-3 lernte" : "What GPT-3 learned from") + '</div>' +
@@ -7481,6 +7539,11 @@
     var text = el.querySelector(".ls-lang-text");
     var gloss = el.querySelector(".ls-lang-gloss");
     var bars = el.querySelector(".ls-lang-bars");
+    var truthHead = el.querySelector(".ls-lang-truth-head");
+    var truthCanvas = el.querySelector(".ls-lang-truth-canvas");
+    var truthList = el.querySelector(".ls-lang-truth-list");
+    var truthNote = el.querySelector(".ls-lang-truth-note");
+    var truthSize = null;
     var navPrev = el.querySelector(".ls-lang-prev");
     var navNext = el.querySelector(".ls-lang-next");
     var navProgress = el.querySelector(".ls-lang-progress");
@@ -7518,6 +7581,67 @@
         '<span class="ls-lang-bar-track"><i style="width:' + m.pct + '%;background:' + m.color + '"></i></span>' +
         '<span class="ls-lang-bar-val">' + m.pct + '%</span></div>';
     }).join("");
+    if (truthHead) truthHead.textContent = TRUTH.title;
+    if (truthNote) truthNote.textContent = TRUTH.note;
+    if (truthList) truthList.innerHTML = TRUTH.items.map(function (item, i) {
+      return '<li class="' + (item.ok ? "is-near" : "is-false") + '"><span class="ls-lang-truth-dot">' + (i + 1) + '</span><span>' + api.esc(item.t) + '</span><b>' + (item.ok ? (DE ? "nah" : "near") : (DE ? "falsch" : "false")) + '</b></li>';
+    }).join("");
+    function drawTruth() {
+      if (!truthCanvas) return;
+      truthSize = api.fit(truthCanvas, truthCanvas.parentNode);
+      var ctx = truthSize.ctx, w = truthSize.w, h = truthSize.h;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = C.paper;
+      ctx.fillRect(0, 0, w, h);
+      V.grid(ctx, w, h, C, 24, 0.12);
+      var padL = 38, padR = 14, padT = 22, padB = 30;
+      var yMax = 1.16;
+      function X(i) { return padL + (i / (TRUTH.items.length - 1)) * (w - padL - padR); }
+      function Y(d) { return h - padB - (d / yMax) * (h - padT - padB); }
+      var y0 = Y(0);
+      ctx.fillStyle = V.alpha(C.green, 0.10);
+      ctx.fillRect(padL, Y(0.5), w - padL - padR, y0 - Y(0.5));
+      ctx.strokeStyle = C.green;
+      ctx.lineWidth = 2.6;
+      ctx.beginPath(); ctx.moveTo(padL, y0); ctx.lineTo(w - padR, y0); ctx.stroke();
+      ctx.fillStyle = C.green;
+      ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+      ctx.fillText(DE ? "Wahrheit" : "truth", padL + 4, y0 - 5);
+      ctx.strokeStyle = C.line;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, h - padB); ctx.lineTo(w - padR, h - padB); ctx.stroke();
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillText(DE ? "Sätze" : "sentences", (w + padL) / 2, h - 14);
+      ctx.save();
+      ctx.translate(12, (h + padT) / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.textBaseline = "top";
+      ctx.fillText(DE ? "Nähe zur Wahrheit" : "distance from truth", 0, 0);
+      ctx.restore();
+      TRUTH.items.forEach(function (item, i) {
+        var x = X(i), y = Y(item.d);
+        if (item.ok) {
+          ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = C.blue; ctx.fill();
+          ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
+        } else {
+          ctx.strokeStyle = C.coral; ctx.lineWidth = 2.8;
+          ctx.beginPath(); ctx.moveTo(x - 6, y - 6); ctx.lineTo(x + 6, y + 6); ctx.moveTo(x + 6, y - 6); ctx.lineTo(x - 6, y + 6); ctx.stroke();
+        }
+        ctx.fillStyle = item.ok ? C.ink : C.coral;
+        ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+        ctx.fillText(String(i + 1), x, y - 9);
+      });
+      truthCanvas.setAttribute("aria-label", TRUTH.title + ": " + TRUTH.items.map(function (item) { return item.t; }).join("; "));
+    }
+    function resize() { drawTruth(); }
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); drawTruth(); });
+    drawTruth();
     show(active);
     function stepLanguage(dir) {
       var idx = -1;
@@ -7547,8 +7671,8 @@
         if (e.key === "ArrowLeft" || e.key === "PageUp") return stepLanguage(-1);
         return false;
       },
-      resize: function () {},
-      destroy: function () { el.remove(); }
+      resize: function () { drawTruth(); },
+      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
     };
   }
 

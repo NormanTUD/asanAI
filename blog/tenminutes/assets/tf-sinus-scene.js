@@ -10,6 +10,7 @@
       '<div class="ls-sinus-tabs" role="tablist">' +
         '<button type="button" class="ls-sinus-tab is-on" data-phase="linear">' + (DE ? "1 Neuron" : "1 neuron") + '</button>' +
         '<button type="button" class="ls-sinus-tab" data-phase="net">' + (DE ? "32 × 32 × 32" : "32 × 32 × 32") + '</button>' +
+        '<button type="button" class="ls-sinus-tab" data-phase="loss">' + (DE ? "Loss-Landschaft" : "Loss landscape") + '</button>' +
       '</div>' +
       '<div class="ls-sinus-stage">' +
         '<canvas class="ls-sinus-canvas" role="img"></canvas>' +
@@ -32,7 +33,8 @@
         '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-sinus-matrix-btn">' + (DE ? "Matrizen zeigen" : "Show matrices") + '</button>' +
         '<span class="ls-sinus-loss" aria-live="polite"></span>' +
       '</div>' +
-      '<div class="ls-sinus-readout" aria-live="polite"></div>';
+      '<div class="ls-sinus-readout" aria-live="polite"></div>' +
+      '<div class="ls-sinus-loss-panel" hidden></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-sinus-stage");
     var canvas = el.querySelector(".ls-sinus-canvas");
@@ -49,6 +51,9 @@
     var lossCtx = null, lossSize = null;
     var lossEl = el.querySelector(".ls-sinus-loss");
     var readout = el.querySelector(".ls-sinus-readout");
+    var lossPanel = el.querySelector(".ls-sinus-loss-panel");
+    var lossApi = null;
+    var lossView = false;
     var C = api.colors();
     var size = null, ctx = null;
     var xsTensor = null, ysTensor = null;
@@ -57,7 +62,7 @@
     var training = false, visible = true, timer = 0;
     var drag = null, fitReady = false, userStarted = false;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    var TRAIN_END = 0.70, X_MIN = -0.20, X_MAX = 1.20, Y_MIN = -0.45, Y_MAX = 1.15;
+    var TRAIN_START = 0.10, TRAIN_END = 0.70, X_MIN = -1.00, X_MAX = 1.00, Y_MIN = -0.45, Y_MAX = 1.15;
     var TARGET_EPOCHS = 180;
     var gen = 0;
     var data = {
@@ -149,7 +154,7 @@
       if (!c.length) return 0;
       var s = 0, n = 0;
       c.forEach(function (p) {
-        if (p.x > 0.10 && p.x < TRAIN_END) return;
+        if (p.x > TRAIN_START && p.x < TRAIN_END) return;
         var d = p.y - truth(p.x);
         s += d * d; n++;
       });
@@ -189,14 +194,16 @@
       });
     }
     function draw() {
-      if (!size) return;
+      if (!size || lossView) return;
       ctx = size.ctx;
       ctx.clearRect(0, 0, size.w, size.h);
       ctx.fillStyle = C.paper;
       ctx.fillRect(0, 0, size.w, size.h);
-      ctx.fillStyle = V.alpha(C.gold, 0.055);
-      ctx.fillRect(34, 26, px(0.10) - 34, size.h - 68);
+      ctx.fillStyle = V.alpha(C.coral, 0.11);
+      ctx.fillRect(34, 26, px(TRAIN_START) - 34, size.h - 68);
       ctx.fillRect(px(TRAIN_END), 26, size.w - 20 - px(TRAIN_END), size.h - 68);
+      ctx.fillStyle = V.alpha(C.green, 0.09);
+      ctx.fillRect(px(TRAIN_START), 26, px(TRAIN_END) - px(TRAIN_START), size.h - 68);
       ctx.strokeStyle = C.line;
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -205,6 +212,18 @@
       ctx.moveTo(34, 22);
       ctx.lineTo(34, size.h - 40);
       ctx.stroke();
+      var ticks = [-1, -0.5, 0, 0.5, 1];
+      var tickLabels = ["−2π", "−π", "0", "π", "2π"];
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ticks.forEach(function (t, ti) { ctx.fillText(tickLabels[ti], px(t), size.h - 34); });
+      ctx.fillStyle = V.alpha(C.green, 0.85);
+      ctx.fillText(DE ? "Daten" : "data", (px(TRAIN_START) + px(TRAIN_END)) / 2, 30);
+      ctx.fillStyle = V.alpha(C.coral, 0.9);
+      ctx.textAlign = "left";
+      ctx.fillText(DE ? "Approximation" : "extrapolation", px(TRAIN_END) + 3, 30);
       ctx.save();
       ctx.setLineDash([5, 5]);
       ctx.strokeStyle = C.muted;
@@ -253,7 +272,7 @@
       V.heading(ctx, phase === "linear" ? "1 Neuron · ŷ = w x + b" : "1 → 32 → 32 → 32 → 1", size.w - 20, 18, C.petrol, 10, 1);
       if (phase === "linear") {
         var wv = linearParams();
-        V.label(ctx, "w = " + V.fmt(wv.w) + "    b = " + V.fmt(wv.b), 44, size.h - 58, {
+        V.label(ctx, (DE ? "ŷ = " : "ŷ = ") + V.fmt(wv.w) + "x + " + V.fmt(wv.b), 44, size.h - 58, {
           font: '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif',
           color: C.petrol, alpha: 1
         });
@@ -431,8 +450,34 @@
         trainBtn.textContent = DE ? "Training starten" : "Start training";
       }, 140);
     }
+    function ensureLoss() {
+      if (lossApi || !window.LossLandscapeScene || !lossPanel) return;
+      lossApi = window.LossLandscapeScene(lossPanel, api);
+    }
+    function setLossMode(on) {
+      lossView = !!on;
+      el.classList.toggle("is-loss", lossView);
+      tabs.forEach(function (b) {
+        var key = b.getAttribute("data-phase");
+        b.classList.toggle("is-on", lossView ? key === "loss" : key === phase);
+      });
+      if (lossView) {
+        pauseTraining();
+        ensureLoss();
+        if (lossPanel) lossPanel.hidden = false;
+        if (lossApi) { lossApi.resize(); lossApi.resume(); }
+      } else {
+        if (lossPanel) lossPanel.hidden = true;
+        if (lossApi) lossApi.pause();
+      }
+    }
     function switchPhase(next) {
-      if (next === phase) return;
+      if (next === "loss") { setLossMode(true); return; }
+      if (lossView) setLossMode(false);
+      if (next === phase) {
+        tabs.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-phase") === phase); });
+        return;
+      }
       userStarted = false;
       pauseTraining();
       phase = next;
@@ -509,7 +554,7 @@
       matrixOverlay.hidden = true;
       matrixBtn.textContent = DE ? "Matrizen zeigen" : "Show matrices";
     });
-    function resize() { size = api.fit(canvas, stage); draw(); updateMatrixCanvases(); }
+    function resize() { size = api.fit(canvas, stage); if (lossView) { if (lossApi) lossApi.resize(); } else { draw(); updateMatrixCanvases(); } }
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (entries) {
         visible = entries.some(function (en) { return en.isIntersecting; });
@@ -517,6 +562,7 @@
       }, { threshold: 0.05 }).observe(stage);
     }
     function nextInternal() {
+      if (lossView) return lossApi ? lossApi.next() : false;
       var a = active();
       if (training) {
         pauseTraining();
@@ -527,6 +573,7 @@
       return false;
     }
     function prevInternal() {
+      if (lossView) return lossApi ? lossApi.prev() : false;
       return false;
     }
     window.addEventListener("resize", resize);
@@ -535,19 +582,23 @@
     if (window.tf) initTf(); else setTimeout(initTf, 300);
     return {
       update: function (s) {
-        if (s && s.phase && s.phase !== phase) switchPhase(s.phase);
+        if (!s || !s.phase) return;
+        if (s.phase === "loss") { setLossMode(true); return; }
+        if (lossView) setLossMode(false);
+        if (s.phase !== phase) switchPhase(s.phase);
       },
       next: nextInternal,
       prev: prevInternal,
       onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
       resize: resize,
-      pause: pauseTraining,
-      resume: function () { visible = true; if (training && !timer) trainTick(); },
+      pause: function () { pauseTraining(); if (lossView && lossApi) lossApi.pause(); },
+      resume: function () { visible = true; if (lossView) { if (lossApi) lossApi.resume(); return; } if (training && !timer) trainTick(); },
       destroy: function () {
         training = false;
         if (timer) clearTimeout(timer);
         timer = 0;
         gen++;
+        if (lossApi) { try { lossApi.destroy(); } catch (e) {} lossApi = null; }
         if (data.linear.model) data.linear.model.stopTraining = true;
         if (data.net.model) data.net.model.stopTraining = true;
         var lm = data.linear.model, nm = data.net.model, xs = xsTensor, ys = ysTensor;

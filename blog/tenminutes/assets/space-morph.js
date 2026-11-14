@@ -1125,6 +1125,10 @@
 		buildDots();
 		buildSceneStack();
 		buildDenseControls();
+		var presetHost = document.getElementById("ism-dense-presets");
+		var denseBox = document.getElementById("ism-dense-controls");
+		var presetLabel = denseBox ? denseBox.querySelector("label") : null;
+		if (presetHost && presetLabel) presetHost.appendChild(presetLabel);
 		renderCopy();
 		fitCopyHeight();
 		bindDrag();
