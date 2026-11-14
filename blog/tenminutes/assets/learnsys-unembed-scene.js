@@ -224,17 +224,7 @@
         ? "W_U hat eine Zeile pro Token. Das Skalarprodukt misst, wie ähnlich die Richtungen sind: Winkel ignorieren die Länge, der euklidische Abstand nicht. Klicke ein Wort oder wähle es unten."
         : "W_U has one row per token. The dot product measures how similar the directions are: angles ignore length, Euclidean distance does not. Click a word or choose one below.";
     }
-    function arrow(g, x1, y1, x2, y2, col, width) {
-      g.strokeStyle = col; g.fillStyle = col; g.lineWidth = width || 3; g.lineCap = "round";
-      g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke();
-      var ang = Math.atan2(y2 - y1, x2 - x1);
-      var a = Math.max(7, (width || 3) * 3.4);
-      g.beginPath();
-      g.moveTo(x2, y2);
-      g.lineTo(x2 - a * Math.cos(ang - 0.42), y2 - a * Math.sin(ang - 0.42));
-      g.lineTo(x2 - a * Math.cos(ang + 0.42), y2 - a * Math.sin(ang + 0.42));
-      g.closePath(); g.fill();
-    }
+
     function circleScene() {
       var ctx = size.ctx, w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
@@ -256,8 +246,8 @@
       ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r * 0.38, a, a + diff, diff < 0); ctx.closePath();
       ctx.fillStyle = V.alpha(C.gold, 0.18); ctx.fill();
       ctx.strokeStyle = C.gold; ctx.lineWidth = 1.5; ctx.stroke();
-      arrow(ctx, cx, cy, ax, ay, C.blue, 3);
-      arrow(ctx, cx, cy, bx, by, C.green, 3);
+      V.arrow(ctx, cx, cy, ax, ay, C.blue, 3);
+      V.arrow(ctx, cx, cy, bx, by, C.green, 3);
       var mid = a + diff / 2;
       var lx = cx + Math.cos(mid) * r * 0.46, ly = cy - Math.sin(mid) * r * 0.46;
       ctx.fillStyle = C.gold; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
@@ -277,8 +267,8 @@
       var ax = cx + Math.cos(a) * lenA, ay = cy - Math.sin(a) * lenA;
       var bx = cx + Math.cos(a) * lenB, by = cy - Math.sin(a) * lenB;
       ctx.strokeStyle = V.alpha(C.blue, 0.18); ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * r * 0.95, cy - Math.sin(a) * r * 0.95); ctx.stroke();
-      arrow(ctx, cx, cy, ax, ay, C.blue, 3);
-      arrow(ctx, cx, cy, bx, by, C.green, 3);
+      V.arrow(ctx, cx, cy, ax, ay, C.blue, 3);
+      V.arrow(ctx, cx, cy, bx, by, C.green, 3);
       ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = C.coral; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); ctx.restore();
       ctx.fillStyle = C.blue; ctx.textAlign = "left"; ctx.textBaseline = "bottom"; ctx.fillText("A", ax + 6, ay - 3);
       ctx.fillStyle = C.green; ctx.fillText("B", bx + 6, by - 3);

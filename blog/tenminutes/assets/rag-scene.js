@@ -2,6 +2,7 @@
   "use strict";
   window.RagScene = function (root, api) {
     var DE = api.lang === "de";
+    var V = window.LearnSysVisuals;
     var el = document.createElement("div");
     el.className = "ls-rag-scene";
     el.innerHTML = '<div class="ls-rag-query"><span>' + (DE ? "Frage" : "Query") + '</span><b>' + (DE ? "Warum ist der Himmel blau?" : "Why is the sky blue?") + '</b></div>' +
@@ -52,20 +53,14 @@
       ctx.globalAlpha = 1;
       var qv = [0.96, 0.12];
       function P(v) { return { x: cx + v[0] * s, y: cy - v[1] * s }; }
-      function arrow(v, col, width) {
-        var p = P(v);
-        ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = width;
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(p.x, p.y); ctx.stroke();
-        var a = Math.atan2(p.y - cy, p.x - cx), ah = 6;
-        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - ah * Math.cos(a - 0.4), p.y - ah * Math.sin(a - 0.4)); ctx.lineTo(p.x - ah * Math.cos(a + 0.4), p.y - ah * Math.sin(a + 0.4)); ctx.closePath(); ctx.fill();
-      }
+
       var qp = P(qv);
       ctx.strokeStyle = C.gold; ctx.lineWidth = 2.4; ctx.globalAlpha = 0.9;
       ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(qp.x, qp.y); ctx.stroke(); ctx.globalAlpha = 1;
       ctx.fillStyle = C.gold; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.fillText(DE ? "Query" : "query", qp.x + 5, qp.y - 4);
       chunks.forEach(function (c) {
         var p = P(c.v), on = selected[c.id];
-        arrow(c.v, on ? C.green : C.blue, on ? 3 : 1.8);
+        var cp = P(c.v); V.arrow(ctx, cx, cy, cp.x, cp.y, on ? C.green : C.blue, on ? 3 : 1.8);
         ctx.strokeStyle = on ? C.green : C.muted; ctx.globalAlpha = on ? 0.65 : 0.25;
         ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(qp.x, qp.y); ctx.lineTo(p.x, p.y); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
         ctx.fillStyle = on ? C.green : C.ink; ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(c.id + " · " + Math.round(c.score * 100) + "%", p.x, p.y - 7);

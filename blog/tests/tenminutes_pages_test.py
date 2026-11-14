@@ -126,6 +126,60 @@ class Results:
             print(f"  FAIL  {page} [{lang}] {name}" + (f" — {detail}" if detail else ""))
 
 
+def check_learnsys_deck(driver, page, lang, results):
+    """Visit every slide of the LearnSys deck and the interactive tabs."""
+    end = time.time() + 8
+    while time.time() < end:
+        try:
+            if driver.execute_script("return !!(window.LearnSys && document.querySelector('#ls-stage-title'))"):
+                break
+        except Exception:
+            pass
+        time.sleep(0.2)
+    try:
+        count = driver.execute_script("return document.querySelectorAll('#ls-steps .ls-dot').length")
+    except Exception:
+        count = 0
+    results.check(page, lang, "deck has 31 slides", count == 31, f"{count} slides")
+    mounted = 0
+    for i in range(count):
+        try:
+            driver.execute_script("window.LearnSys.go(0, arguments[0])", i)
+            time.sleep(0.12)
+            ok = driver.execute_script(
+                "return !!(document.querySelector('#ls-kicker')?.textContent && document.querySelector('#ls-demo')?.children.length)"
+            )
+            if ok:
+                mounted += 1
+        except Exception:
+            pass
+    results.check(page, lang, "every slide mounts", mounted == count, f"{mounted}/{count}")
+    try:
+        driver.execute_script("window.LearnSys.go(0, 21)")
+        time.sleep(0.2)
+        tabs = driver.execute_script("return Array.from(document.querySelectorAll('.ls-sim-tab')).map(b=>b.getAttribute('data-mode'))")
+        results.check(page, lang, "unembedding tabs present", tabs == ["map", "angle", "scale"], str(tabs))
+        for mode in ("angle", "scale", "map"):
+            driver.execute_script("document.querySelector('.ls-sim-tab[data-mode=' + arguments[0] + ']').click()", mode)
+            time.sleep(0.15)
+            ro = driver.execute_script("return (document.querySelector('.ls-sim-readout')?.innerText || '').trim()")
+            results.check(page, lang, f"unembedding {mode} readout", bool(ro), ro[:80])
+    except Exception as exc:
+        results.check(page, lang, "unembedding tabs", False, str(exc)[:120])
+    errors = []
+    try:
+        for entry in driver.get_log("browser"):
+            if entry.get("level") != "SEVERE":
+                continue
+            msg = entry.get("message", "")
+            if any(token in msg for token in BENIGN):
+                continue
+            errors.append(msg[:180])
+    except Exception:
+        pass
+    results.check(page, lang, "deck no console errors", not errors, " | ".join(errors)[:240])
+
+
 def check_page(driver, base, page, lang, results, settle):
     url = f"{base}/{page}?lang={lang}"
     try:
@@ -167,6 +221,8 @@ return {
     except Exception:
         pass
     results.check(page, lang, "no console errors", not errors, " | ".join(errors)[:240])
+    if page == "intuition_learnsys.php":
+        check_learnsys_deck(driver, page, lang, results)
 
 
 def main():

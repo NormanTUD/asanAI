@@ -380,9 +380,9 @@
 				const kind = input.dataset.w;
 				const i = parseInt(input.dataset.i, 10) || 0;
 				const j = parseInt(input.dataset.j, 10) || 0;
-				if (kind === "W1") denseWeights.W1[i][j] = value;
-				else if (kind === "b1") denseWeights.b1[i] = value;
-				else if (kind === "W2") denseWeights.W2[i] = value;
+				if (kind === "W1") { if (denseWeights.W1[i]) denseWeights.W1[i][j] = value; }
+				else if (kind === "b1") { if (denseWeights.b1[i] !== undefined) denseWeights.b1[i] = value; }
+				else if (kind === "W2") { if (denseWeights.W2[i] !== undefined) denseWeights.W2[i] = value; }
 				else if (kind === "b2") denseWeights.b2 = value;
 				const cell = input.closest(".ism-weight-cell");
 				const number = cell ? cell.querySelector(".ism-weight-input") : null;
