@@ -1345,3 +1345,5 @@ Marked as todo; work through carefully, one block at a time.
 - [ ] Re-test everything.
 
 - [ ] Mobile: many demos leave a lot of empty space at the bottom, so they render smaller than necessary. Make every demo fill the available stage height without breaking controls or overflow.
+
+- [ ] Remove the remaining demo-local “Weiter”/“Zurück” navigation rows and use only the global next/previous controls (keep direct dots/context chips where they are not a next button).

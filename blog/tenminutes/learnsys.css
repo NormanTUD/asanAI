@@ -1850,3 +1850,7 @@ h1,h2,h3,h4{
 
 .ls-demo{display:flex;flex-direction:column}
 .ls-demo > *{flex:1 1 auto;min-height:0;height:100%}
+
+.ls-tokenize-nav,.ls-bs-nav{display:none !important}
+#ism-prev,#ism-next{display:none !important}
+.ls-traj-next{display:none !important}
