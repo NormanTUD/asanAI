@@ -1805,3 +1805,9 @@ h1,h2,h3,h4{
 .ls-mlp-scene .ism-dense-presets[hidden]{display:none}
 .ls-mlp-scene .ism-dense-presets label{display:flex;align-items:center;gap:6px;white-space:nowrap}
 .ls-mlp-scene .ism-dense-presets select{font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-ink);background:var(--ls-paper-2);border:1px solid var(--ls-line);padding:4px 7px;min-height:30px;max-width:190px}
+
+.ls-sinus-matrix-grid .ls-matrix-tex{position:relative;min-height:72px;max-height:170px;overflow:auto;border:1px solid var(--ls-line);background:#fff;padding:5px 6px;font-size:8px;line-height:1.15}
+.ls-sinus-matrix-grid .ls-matrix-tex .math{font-size:8px}
+.ls-sinus-matrix-grid .ls-matrix-tex code{font-size:8px;white-space:pre}
+.ls-sinus-matrix-grid figure{min-width:0}
+.ls-sinus-matrix-legend{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}

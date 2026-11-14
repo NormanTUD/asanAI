@@ -3998,20 +3998,6 @@
       axisLabel([1.28, 0, 0], "x", Cc.blue);
       axisLabel([0, 1.28, 0], "y", Cc.green);
       axisLabel([0, 0, 1.28], "z", Cc.gold);
-      if (trail.length > 1) {
-        ctx.beginPath();
-        trail.forEach(function (p, ti) {
-          var pp = P(unit3(curvePoint(p)));
-          if (ti === 0) ctx.moveTo(pp.x, pp.y); else ctx.lineTo(pp.x, pp.y);
-        });
-        ctx.strokeStyle = Cc.green; ctx.globalAlpha = 0.22; ctx.lineWidth = 1.6; ctx.stroke();
-      }
-      trail.forEach(function (p) {
-        var pp = P(unit3(curvePoint(p)));
-        ctx.beginPath(); ctx.arc(pp.x, pp.y, 2.3, 0, Math.PI * 2);
-        ctx.fillStyle = Cc.green; ctx.globalAlpha = 0.72; ctx.fill();
-      });
-      ctx.globalAlpha = 1;
       var startVec = curvePoint(0);
       var curVec = curvePoint(posAnim);
       var startP = unit3(startVec);
@@ -4046,7 +4032,7 @@
       ctx.textAlign = "right";
       ctx.fillText(DE ? "Großkreiswinkel" : "great-circle angle", w - 12, 18);
       ctx.textAlign = "left";
-      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(posAnim) + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + curVec.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span><span>' + (DE ? "Spur" : "trail") + ' <b>' + trail.length + '</b></span>';
+      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(posAnim) + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + curVec.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span>';
     }
     function draw() {
       drawHeat(); drawCurve();
@@ -4676,6 +4662,24 @@
         if (name === "causal") { causal = !!value; draw(); return true; }
         return false;
       },
+      next: function () {
+        var idx = contexts.map(function (c) { return c.id; }).indexOf(context);
+        if (idx >= contexts.length - 1) return false;
+        setContext(contexts[idx + 1].id);
+        return true;
+      },
+      prev: function () {
+        var idx = contexts.map(function (c) { return c.id; }).indexOf(context);
+        if (idx <= 0) return false;
+        setContext(contexts[idx - 1].id);
+        return true;
+      },
+      onKey: function (e) {
+        var idx = contexts.map(function (c) { return c.id; }).indexOf(context);
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") return idx < contexts.length - 1 ? (setContext(contexts[++idx].id), true) : false;
+        if (e.key === "ArrowLeft" || e.key === "PageUp") return idx > 0 ? (setContext(contexts[--idx].id), true) : false;
+        return false;
+      },
       resize: resize,
       destroy: function () { if (animRaf) cancelAnimationFrame(animRaf); window.removeEventListener("resize", resize); el.remove(); }
     };
@@ -5232,7 +5236,7 @@
       g.fillStyle = C.ink; g.font = '600 ' + fs + 'px Georgia, serif';
       var rects = wordRects(g, w, h, C, fs);
       rects.forEach(function (q) { g.fillText(q.word, q.x, q.y); });
-      for (var i = 0; i < layer; i++) NOTE_LAYERS[i].draw(g, rects, [C.green, C.blue, C.gold, C.coral, C.teal][i], C, fs);
+      for (var i = 0; i < layer; i++) NOTE_LAYERS[i].draw(g, rects, ["#63a44b", "#1275ac", "#9f9700", "#9185be", "#5c9baf"][i], C, fs);
       if (!layer) {
         g.fillStyle = C.muted; g.font = 'italic ' + Math.max(10, fs * 0.5) + 'px "Open Sans", sans-serif';
         g.fillText(DE ? "Noch leer. Drücke Weiter, und die erste Schicht schreibt." : "Still empty. Press Next and the first layer writes.", pad, h - 22);
@@ -5333,7 +5337,7 @@
       var C = pal();
       layerRow.innerHTML = "";
       if (phase === "notebook") {
-        var noteColors = [C.green, C.blue, C.gold, C.coral, C.teal];
+        var noteColors = ["#63a44b", "#1275ac", "#9f9700", "#9185be", "#5c9baf"];
         NOTE_LAYERS.forEach(function (l, i) {
           var b = document.createElement("button");
           b.type = "button";

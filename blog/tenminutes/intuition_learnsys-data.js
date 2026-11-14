@@ -1563,7 +1563,13 @@
   var attentionMergeStep = {
     title: DE ? "Kontext zieht die Bank an seinen Platz" : "Context pulls the bank into place",
     kicker: DE ? "Attention" : "Attention",
-    substeps: [attentionSteps[0], attentionSteps[1]]
+    body: DE ? "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz oder drücke Weiter; die Matrix zeigt, wohin die Bank schaut. Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen." : "Three sentences, one word: a bank without context, a bank for money, a bank in the park. Click a sentence or press Next; the matrix shows where the bank looks. Attention lets each token read the others, decide which matter, and pull their information into its vector.",
+    watch: DE ? "Klicke die drei Sätze oder drücke Weiter. Welches Wort zieht die Bank?" : "Click the three sentences or press Next. Which word pulls the bank?",
+    demoState: { scene: "attention", context: "none" },
+    context: attentionSteps[1].context,
+    deep: attentionSteps[1].deep,
+    boxes: attentionSteps[1].boxes.concat(attentionSteps[0].boxes),
+    sources: attentionSteps[1].sources
   };
 
   var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, languageSteps[0], tokenizeSteps[0], embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, neuralStepA, neuralStepB, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];

@@ -9,8 +9,8 @@
     el.innerHTML =
       '<div class="ls-sinus-tabs" role="tablist">' +
         '<button type="button" class="ls-sinus-tab is-on" data-phase="linear">' + (DE ? "1 Neuron" : "1 neuron") + '</button>' +
-        '<button type="button" class="ls-sinus-tab" data-phase="net">' + (DE ? "32 × 32 × 32" : "32 × 32 × 32") + '</button>' +
         '<button type="button" class="ls-sinus-tab" data-phase="loss">' + (DE ? "Loss-Landschaft" : "Loss landscape") + '</button>' +
+        '<button type="button" class="ls-sinus-tab" data-phase="net">' + (DE ? "32 × 32 × 32" : "32 × 32 × 32") + '</button>' +
       '</div>' +
       '<div class="ls-sinus-stage">' +
         '<canvas class="ls-sinus-canvas" role="img"></canvas>' +
@@ -18,12 +18,12 @@
           '<div class="ls-sinus-matrices-head"><b>' + (DE ? "Gewichte live" : "Live weights") + '</b><span>' + (DE ? "live" : "live") + '</span><button type="button" class="ls-btn ls-btn--tiny ls-sinus-matrices-close" aria-label="' + (DE ? "Schließen" : "Close") + '">×</button></div>' +
           '<p class="ls-sinus-matrices-note"></p>' +
           '<div class="ls-sinus-matrix-grid">' +
-            '<figure><canvas data-matrix="0"></canvas><figcaption>W₁ · 1×32</figcaption></figure>' +
-            '<figure><canvas data-matrix="1"></canvas><figcaption>W₂ · 32×32</figcaption></figure>' +
-            '<figure><canvas data-matrix="2"></canvas><figcaption>W₃ · 32×32</figcaption></figure>' +
-            '<figure><canvas data-matrix="3"></canvas><figcaption>W₄ · 32×1</figcaption></figure>' +
+            '<figure><div class="ls-matrix-tex" data-matrix="0"></div><figcaption>W₁ und b₁</figcaption></figure>' +
+            '<figure><div class="ls-matrix-tex" data-matrix="1"></div><figcaption>W₂ und b₂</figcaption></figure>' +
+            '<figure><div class="ls-matrix-tex" data-matrix="2"></div><figcaption>W₃ und b₃</figcaption></figure>' +
+            '<figure><div class="ls-matrix-tex" data-matrix="3"></div><figcaption>W₄ und b₄</figcaption></figure>' +
           '</div>' +
-          '<div class="ls-sinus-matrix-legend"><span>−</span><span>0</span><span>+</span></div>' +
+          '<div class="ls-sinus-matrix-legend"><span>' + (DE ? "Zahlen live" : "live numbers") + '</span><span>' + (DE ? "scrollen" : "scroll") + '</span></div>' +
         '</div>' +
       '</div>' +
       '<div class="ls-sinus-losschart"><canvas class="ls-sinus-loss-canvas" aria-label="Loss curve"></canvas></div>' +
@@ -43,7 +43,7 @@
     var matrixBtn = el.querySelector(".ls-sinus-matrix-btn");
     var matrixClose = el.querySelector(".ls-sinus-matrices-close");
     var matrixOverlay = el.querySelector(".ls-sinus-matrices");
-    var matrixCanvases = Array.prototype.slice.call(el.querySelectorAll("[data-matrix]"));
+    var matrixNodes = Array.prototype.slice.call(el.querySelectorAll("[data-matrix]"));
     var matrixFigures = Array.prototype.slice.call(el.querySelectorAll(".ls-sinus-matrix-grid figure"));
     var matrixNote = el.querySelector(".ls-sinus-matrices-note");
     var tabs = Array.prototype.slice.call(el.querySelectorAll("[data-phase]"));
@@ -354,57 +354,64 @@
         (params ? '<span><b>w</b> ' + V.fmt(params.w) + '</span><span><b>b</b> ' + V.fmt(params.b) + '</span>' : '') +
         '<span><b>(x, y)</b> ' + (DE ? "input, output" : "input, output") + '</span>';
     }
-    function drawMatrixCell(cv, value) {
-      var fit = fitSmall(cv, cv);
-      if (!fit) return;
-      fit.ctx.clearRect(0, 0, fit.w, fit.h);
-      fit.ctx.fillStyle = C.paper;
-      fit.ctx.fillRect(0, 0, fit.w, fit.h);
-      V.matrix(fit.ctx, [value], 1, 1, 6, 6, fit.w - 12, fit.h - 12, C);
-      fit.ctx.fillStyle = C.ink;
-      fit.ctx.font = '700 ' + Math.max(11, api.font("canvas") * 0.9) + 'px "Barlow", sans-serif';
-      fit.ctx.textAlign = "center";
-      fit.ctx.textBaseline = "middle";
-      fit.ctx.fillText(value.toFixed(3), fit.w / 2, fit.h / 2);
+    var matrixLast = 0;
+    function matrixTex(rows, cols, vals) {
+      var out = [];
+      for (var r = 0; r < rows; r++) {
+        var line = [];
+        for (var c = 0; c < cols; c++) line.push(Number(vals[r * cols + c]).toFixed(2));
+        out.push(line.join(" & "));
+      }
+      return "\\begin{bmatrix}" + out.join(" \\\\ ") + "\\end{bmatrix}";
     }
-    function updateMatrixCanvases() {
+    function biasTex(vals) {
+      return "\\begin{bmatrix}" + Array.prototype.map.call(vals, function (v) { return Number(v).toFixed(2); }).join(" \\\\ ") + "\\end{bmatrix}";
+    }
+    function updateMatrixCanvases(force) {
       if (matrixOverlay.hidden) return;
+      var now = performance.now();
+      if (!force && now - matrixLast < 220) return;
+      matrixLast = now;
       var isLinear = phase === "linear";
-      matrixFigures.forEach(function (fig, i) { fig.hidden = isLinear ? i > 1 : false; });
+      matrixFigures.forEach(function (fig, i) { fig.hidden = isLinear ? i > 0 : false; });
       if (matrixNote) {
         matrixNote.textContent = isLinear
-          ? (DE ? "1 Neuron: W ist 1×1, b ein Skalar. Die Gerade ist ŷ = w·x + b." : "1 neuron: W is 1×1, b is a scalar. The line is ŷ = w·x + b.")
-          : (DE ? "Drei versteckte Schichten: W1 1×32, W2 32×32, W3 32×32, W4 32×1. Jede Zelle ist ein Gewicht; grün positiv, blau negativ, weiß null. Ohne Bias." : "Three hidden layers: W1 1×32, W2 32×32, W3 32×32, W4 32×1. Each cell is a weight; green positive, blue negative, white zero. Without bias.");
+          ? (DE ? "1 Neuron: W ist 1×1, b ein Skalar. Die Gerade ist ŷ = w·x + b; die Zahlen aktualisieren sich live." : "1 neuron: W is 1×1, b is a scalar. The line is ŷ = w·x + b; the numbers update live.")
+          : (DE ? "Drei versteckte Schichten: W1 1×32, W2 32×32, W3 32×32, W4 32×1, jeweils mit Bias. Jede Zahl ist ein Gewicht; die Matrizen scrollen, damit alle Zahlen sichtbar werden." : "Three hidden layers: W1 1×32, W2 32×32, W3 32×32, W4 32×1, each with its bias. Every number is a weight; the matrices scroll so all numbers stay readable.");
       }
+      var texs = [];
       if (isLinear) {
         if (!data.linear.model) return;
         var p = linearParams();
-        drawMatrixCell(matrixCanvases[0], p.w);
-        drawMatrixCell(matrixCanvases[1], p.b);
-        if (matrixFigures[0]) matrixFigures[0].querySelector("figcaption").textContent = "W · 1×1";
+        texs[0] = "W = " + matrixTex(1, 1, [p.w]) + " \\qquad b = " + biasTex([p.b]);
+        texs[1] = "";
+        if (matrixFigures[0]) matrixFigures[0].querySelector("figcaption").textContent = "W · 1×1 und b";
         if (matrixFigures[1]) matrixFigures[1].querySelector("figcaption").textContent = "b · 1";
-        return;
+      } else {
+        if (!data.net.model) return;
+        for (var li = 0; li < 4; li++) {
+          var layer = data.net.model.layers[li];
+          if (!layer) { texs[li] = ""; continue; }
+          var ws = layer.getWeights();
+          if (!ws || !ws[0]) { texs[li] = ""; continue; }
+          var kernel = ws[0], shape = kernel.shape, vals = kernel.dataSync();
+          var bias = ws[1] ? ws[1].dataSync() : [];
+          texs[li] = "W_{" + (li + 1) + "} = " + matrixTex(shape[0], shape[1], vals) + (bias.length ? " \\qquad b_{" + (li + 1) + "} = " + biasTex(bias) : "");
+        }
+        var labels = ["W₁ · 1×32", "W₂ · 32×32", "W₃ · 32×32", "W₄ · 32×1"];
+        matrixFigures.forEach(function (fig, i) { if (fig) fig.querySelector("figcaption").textContent = labels[i]; });
       }
-      if (!data.net.model) return;
-      matrixCanvases.forEach(function (cv, li) {
-        var layer = data.net.model.layers[li];
-        if (!layer) return;
-        var ws = layer.getWeights();
-        if (!ws || !ws[0]) return;
-        var kernel = ws[0];
-        var shape = kernel.shape;
-        var vals = kernel.dataSync();
-        var rows = shape[0], cols = shape[1];
-        var fit = fitSmall(cv, cv);
-        if (!fit) return;
-        fit.ctx.clearRect(0, 0, fit.w, fit.h);
-        fit.ctx.fillStyle = C.paper;
-        fit.ctx.fillRect(0, 0, fit.w, fit.h);
-        V.matrix(fit.ctx, Array.prototype.slice.call(vals), rows, cols, 4, 4, fit.w - 8, fit.h - 8, C);
+      matrixNodes.forEach(function (node, i) {
+        if (!node) return;
+        node.setAttribute("data-tex", texs[i] || "");
+        node.removeAttribute("data-tex-rendered");
+        node.innerHTML = '<code class="ls-tex-source">' + api.esc(texs[i] || "") + '</code>';
       });
-      var labels = ["W₁ · 1×32", "W₂ · 32×32", "W₃ · 32×32", "W₄ · 32×1"];
-      matrixFigures.forEach(function (fig, i) { if (fig) fig.querySelector("figcaption").textContent = labels[i]; });
+      if (window.TM && typeof TM.typesetMath === "function") {
+        try { TM.typesetMath(matrixOverlay); } catch (e) {}
+      }
     }
+
     function trainTick() {
       var a = active();
       if (!userStarted || !visible || !training || !a.model) { timer = 0; return; }
@@ -548,7 +555,7 @@
     matrixBtn.addEventListener("click", function () {
       matrixOverlay.hidden = !matrixOverlay.hidden;
       matrixBtn.textContent = matrixOverlay.hidden ? (DE ? "Matrizen zeigen" : "Show matrices") : (DE ? "Matrizen schließen" : "Hide matrices");
-      updateMatrixCanvases();
+      updateMatrixCanvases(true);
     });
     matrixClose.addEventListener("click", function () {
       matrixOverlay.hidden = true;

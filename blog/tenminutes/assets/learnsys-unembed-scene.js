@@ -6,11 +6,23 @@
     var el = document.createElement("div");
     el.className = "ls-sim-scene";
     el.innerHTML =
+      '<div class="ls-sim-tabs" role="tablist">' +
+        '<button type="button" class="ls-sim-tab is-on" data-mode="map" role="tab" aria-selected="true">' + (DE ? "Wortkarte" : "Word map") + '</button>' +
+        '<button type="button" class="ls-sim-tab" data-mode="angle" role="tab" aria-selected="false">' + (DE ? "Winkel" : "Angle") + '</button>' +
+        '<button type="button" class="ls-sim-tab" data-mode="scale" role="tab" aria-selected="false">Scale Invariance</button>' +
+      '</div>' +
       '<div class="ls-sim-stage"><canvas class="ls-sim-canvas" role="img"></canvas></div>' +
-      '<div class="ls-sim-controls">' +
+      '<div class="ls-sim-controls ls-sim-map-controls">' +
         '<label class="ls-sim-pick">' + (DE ? "Wort" : "Word") + ' <select class="ls-sim-select"></select></label>' +
         '<button type="button" class="ls-chip ls-sim-metric is-on" data-metric="angle" aria-pressed="true">' + (DE ? "Winkel" : "angle") + '</button>' +
         '<button type="button" class="ls-chip ls-sim-metric" data-metric="euclid" aria-pressed="false">' + (DE ? "Euklidisch" : "Euclidean") + '</button>' +
+      '</div>' +
+      '<div class="ls-sim-controls ls-sim-angle-controls" hidden>' +
+        '<label class="ls-range">' + (DE ? "Vektor A" : "Vector A") + ' <input type="range" class="ls-sim-angle-a" min="0" max="360" step="1" value="45"><output>45°</output></label>' +
+        '<label class="ls-range">' + (DE ? "Vektor B" : "Vector B") + ' <input type="range" class="ls-sim-angle-b" min="0" max="360" step="1" value="90"><output>90°</output></label>' +
+      '</div>' +
+      '<div class="ls-sim-controls ls-sim-scale-controls" hidden>' +
+        '<label class="ls-range">' + (DE ? "Länge von B" : "Magnitude of B") + ' <input type="range" class="ls-sim-scale" min="0.3" max="3" step="0.05" value="1.6"><output>1.60×</output></label>' +
       '</div>' +
       '<div class="ls-sim-readout" aria-live="polite"></div>' +
       '<p class="ls-sim-caption"></p>';
@@ -19,11 +31,23 @@
     var canvas = el.querySelector("canvas");
     var select = el.querySelector(".ls-sim-select");
     var metricBtns = Array.prototype.slice.call(el.querySelectorAll(".ls-sim-metric"));
+    var tabBtns = Array.prototype.slice.call(el.querySelectorAll(".ls-sim-tab"));
+    var mapControls = el.querySelector(".ls-sim-map-controls");
+    var angleControls = el.querySelector(".ls-sim-angle-controls");
+    var scaleControls = el.querySelector(".ls-sim-scale-controls");
+    var angleAInput = el.querySelector(".ls-sim-angle-a");
+    var angleBInput = el.querySelector(".ls-sim-angle-b");
+    var angleAOut = angleAInput ? angleAInput.nextElementSibling : null;
+    var angleBOut = angleBInput ? angleBInput.nextElementSibling : null;
+    var scaleInput = el.querySelector(".ls-sim-scale");
+    var scaleOut = scaleInput ? scaleInput.nextElementSibling : null;
     var readout = el.querySelector(".ls-sim-readout");
     var caption = el.querySelector(".ls-sim-caption");
     var size = null;
     var selected = 0;
     var metric = "angle";
+    var mode = "map";
+    var angleA = 45, angleB = 90, scaleMag = 1.6;
     var hits = [];
     var C = api.colors();
     var clamp = api.util.clamp;
@@ -114,7 +138,7 @@
         y: h - pad - ((y + 1) / 2) * (h - pad * 2)
       };
     }
-    function draw() {
+    function drawMap() {
       if (!size) return;
       C = api.colors();
       var ctx = size.ctx, w = size.w, h = size.h;
@@ -198,6 +222,84 @@
       caption.textContent = DE
         ? "W_U hat eine Zeile pro Token. Das Skalarprodukt misst, wie ähnlich die Richtungen sind: Winkel ignorieren die Länge, der euklidische Abstand nicht. Klicke ein Wort oder wähle es unten."
         : "W_U has one row per token. The dot product measures how similar the directions are: angles ignore length, Euclidean distance does not. Click a word or choose one below.";
+    }
+    function arrow(g, x1, y1, x2, y2, col, width) {
+      g.strokeStyle = col; g.fillStyle = col; g.lineWidth = width || 3; g.lineCap = "round";
+      g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke();
+      var ang = Math.atan2(y2 - y1, x2 - x1);
+      var a = Math.max(7, (width || 3) * 3.4);
+      g.beginPath();
+      g.moveTo(x2, y2);
+      g.lineTo(x2 - a * Math.cos(ang - 0.42), y2 - a * Math.sin(ang - 0.42));
+      g.lineTo(x2 - a * Math.cos(ang + 0.42), y2 - a * Math.sin(ang + 0.42));
+      g.closePath(); g.fill();
+    }
+    function circleScene() {
+      var ctx = size.ctx, w = size.w, h = size.h;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.strokeRect(8, 8, w - 16, h - 16);
+      var cx = w / 2, cy = h / 2, r = Math.min(w, h) * 0.33;
+      ctx.strokeStyle = C.line; ctx.globalAlpha = 0.8; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+      ctx.globalAlpha = 0.45; ctx.beginPath(); ctx.moveTo(cx - r * 1.15, cy); ctx.lineTo(cx + r * 1.15, cy); ctx.moveTo(cx, cy - r * 1.15); ctx.lineTo(cx, cy + r * 1.15); ctx.stroke(); ctx.globalAlpha = 1;
+      return { ctx: ctx, w: w, h: h, cx: cx, cy: cy, r: r };
+    }
+    function drawAngle() {
+      var s = circleScene(), ctx = s.ctx, cx = s.cx, cy = s.cy, r = s.r;
+      var a = angleA * Math.PI / 180, b = angleB * Math.PI / 180;
+      var ax = cx + Math.cos(a) * r, ay = cy - Math.sin(a) * r;
+      var bx = cx + Math.cos(b) * r, by = cy - Math.sin(b) * r;
+      var diff = b - a;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r * 0.38, a, a + diff, diff < 0); ctx.closePath();
+      ctx.fillStyle = V.alpha(C.gold, 0.18); ctx.fill();
+      ctx.strokeStyle = C.gold; ctx.lineWidth = 1.5; ctx.stroke();
+      arrow(ctx, cx, cy, ax, ay, C.blue, 3);
+      arrow(ctx, cx, cy, bx, by, C.green, 3);
+      var mid = a + diff / 2;
+      var lx = cx + Math.cos(mid) * r * 0.46, ly = cy - Math.sin(mid) * r * 0.46;
+      ctx.fillStyle = C.gold; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(Math.round(Math.abs(diff) * 180 / Math.PI) + "°", lx, ly);
+      ctx.fillStyle = C.blue; ctx.textAlign = "left"; ctx.textBaseline = "bottom"; ctx.fillText("A", ax + 6, ay - 3);
+      ctx.fillStyle = C.green; ctx.fillText("B", bx + 6, by - 3);
+      ctx.fillStyle = C.petrol; ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif'; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillText(DE ? "Winkel als Ähnlichkeit" : "Angle as similarity", 18, 28);
+      var dotv = Math.cos(a - b);
+      var stat = dotv > 0.9 ? (DE ? "sehr ähnlich" : "very similar") : dotv > 0.1 ? (DE ? "verwandt" : "related") : dotv > -0.1 ? (DE ? "neutral" : "neutral") : (DE ? "entgegengesetzt" : "opposite");
+      readout.innerHTML = '<span>Vector A <b>[' + Math.cos(a).toFixed(2) + ', ' + Math.sin(a).toFixed(2) + ']</b></span><span>Vector B <b>[' + Math.cos(b).toFixed(2) + ', ' + Math.sin(b).toFixed(2) + ']</b></span><span>Dot <b>' + dotv.toFixed(3) + '</b></span><span><b>' + stat + '</b></span>';
+      caption.textContent = DE ? "Der Winkel ist die Ähnlichkeit der Richtungen. Dot nahe 1: ähnlich; nahe 0: neutral; negativ: entgegengesetzt. Das ist eine Interpretation der gelernten Richtungen, kein Wahrheitsbeweis." : "The angle is the similarity of directions. Dot near 1: similar; near 0: neutral; negative: opposite. This is an interpretation of learned directions, not a proof of truth.";
+    }
+    function drawScale() {
+      var s = circleScene(), ctx = s.ctx, cx = s.cx, cy = s.cy, r = s.r;
+      var a = 30 * Math.PI / 180;
+      var lenA = r * 0.70, lenB = r * 0.70 * scaleMag;
+      var ax = cx + Math.cos(a) * lenA, ay = cy - Math.sin(a) * lenA;
+      var bx = cx + Math.cos(a) * lenB, by = cy - Math.sin(a) * lenB;
+      ctx.strokeStyle = V.alpha(C.blue, 0.18); ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * r * 0.95, cy - Math.sin(a) * r * 0.95); ctx.stroke();
+      arrow(ctx, cx, cy, ax, ay, C.blue, 3);
+      arrow(ctx, cx, cy, bx, by, C.green, 3);
+      ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = C.coral; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); ctx.restore();
+      ctx.fillStyle = C.blue; ctx.textAlign = "left"; ctx.textBaseline = "bottom"; ctx.fillText("A", ax + 6, ay - 3);
+      ctx.fillStyle = C.green; ctx.fillText("B", bx + 6, by - 3);
+      ctx.fillStyle = C.petrol; ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif'; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillText("Scale Invariance", 18, 28);
+      var euc = Math.abs(scaleMag - 1) * 0.70 * r;
+      readout.innerHTML = '<span>|A| <b>0.70</b></span><span>|B| <b>' + (0.70 * scaleMag).toFixed(2) + '</b></span><span>Cos <b>1.000</b> ' + (DE ? "konstant" : "constant") + '</span><span>Euclidean <b>' + euc.toFixed(2) + '</b> ' + (DE ? "ändert sich" : "changes") + '</span>';
+      caption.textContent = DE ? "Scale Invariance: Direction Is Often the Useful Signal. Die Länge von B ändert den euklidischen Abstand, aber nicht den Cosinus. Das Netz kann Längen ignorieren und hat mehr Freiheit bei der Richtung." : "Scale Invariance: Direction Is Often the Useful Signal. The magnitude of B changes Euclidean distance but not cosine. The network can ignore lengths and has more freedom in direction.";
+    }
+    function draw() {
+      if (!size) return;
+      C = api.colors();
+      if (mode === "angle") { hits = []; drawAngle(); }
+      else if (mode === "scale") { hits = []; drawScale(); }
+      else drawMap();
+    }
+    function setMode(next) {
+      mode = next;
+      tabBtns.forEach(function (b) { var on = b.getAttribute("data-mode") === mode; b.classList.toggle("is-on", on); b.setAttribute("aria-selected", String(on)); });
+      if (mapControls) mapControls.hidden = mode !== "map";
+      if (angleControls) angleControls.hidden = mode !== "angle";
+      if (scaleControls) scaleControls.hidden = mode !== "scale";
+      draw();
     }
     function resize() { size = api.fit(canvas, stage); draw(); }
     function choose(i) {

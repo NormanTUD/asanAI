@@ -1249,19 +1249,48 @@ Marked as todo; work through carefully, one block at a time.
 
 ## Newest request (2026-11-14, after phone/code fix)
 
-- [ ] **Bausteine:** add **Daten** as a fifth building block; update stack, body, and mini.
-- [ ] **Tokenizer mini:** remove the heading above “unzerbrechlich”; show labels and IDs only below the word; fix all overlaps.
-- [ ] **Gauss:** on the second substep hide both images at the bottom and show only the demo at the top.
-- [ ] **Data slide:** add more; add a truth-line plot with paraphrases around the truth and a red X for a false sentence (DE: Berlin/Spree/Elbe; EN: Nile/Egypt, known false sentence).
-- [ ] **Tokenizer slide:** start with BPE, explain characters → adjacent pairs → merge most frequent pair, mention compression; fix “Start: Jedes Wort besteht aus Zeichen.” height jump.
-- [ ] **Embeddings:** merge 1D, 2D, 3D, and high-dimensional slides into one slide with a very smooth transition.
-- [ ] **Position:** make the great-circle trail/traces visible, not only the current point.
-- [ ] **Attention:** merge “Kontext zieht die Bank an seinen Platz” with “Attention verschiebt Bedeutungen in Kontexte”.
-- [ ] **Neural:** substitute the current w/b directly in wx+b; mention wx+b in the left prose; fix the learning-rate control; reset only the active optimizer; enlarge the formula; add a small loss-landscape tab.
-- [ ] **32×32×32:** extend to -2π..2π, shade the data region green and the approximation margins red.
-- [ ] **MLP:** move the preset bar back above the demo.
-- [ ] **Notebook/stream:** make the notebook as colourful as `../lndw`, state clearly that it is a strongly simplified, humanised view; merge notebook and stream slides; fix inactive box text; show only additions; remove Unembed from the residual stream.
-- [ ] **Remove** “Die Verteilung ist nicht die Antwort”.
-- [ ] **Meadow:** put “Die Karte der Wörter” directly after “Ein Wort nach dem anderen”.
-- [ ] **Navigation:** count slides 1..N instead of 0..N-1.
-- [ ] Re-run pages, height, PHP/JS validators, `check_all.py --fast`.
+- [x] **Bausteine:** add **Daten** as a fifth building block; update stack, body, and mini.
+- [x] **Tokenizer mini:** remove the heading above “unzerbrechlich”; show labels and IDs only below the word; fix all overlaps.
+- [x] **Gauss:** on the second substep hide both images at the bottom and show only the demo at the top.
+- [x] **Data slide:** add more; add a truth-line plot with paraphrases around the truth and a red X for a false sentence (DE: Berlin/Spree/Elbe; EN: Nile/Egypt, known false sentence).
+- [x] **Tokenizer slide:** start with BPE, explain characters → adjacent pairs → merge most frequent pair, mention compression; fix “Start: Jedes Wort besteht aus Zeichen.” height jump.
+- [x] **Embeddings:** merge 1D, 2D, 3D, and high-dimensional slides into one slide with a very smooth transition.
+- [x] **Position:** make the great-circle trail/traces visible, not only the current point.
+- [x] **Attention:** merge “Kontext zieht die Bank an seinen Platz” with “Attention verschiebt Bedeutungen in Kontexte”.
+- [x] **Neural:** substitute the current w/b directly in wx+b; mention wx+b in the left prose; fix the learning-rate control; reset only the active optimizer; enlarge the formula; add a small loss-landscape tab.
+- [x] **32×32×32:** extend to -2π..2π, shade the data region green and the approximation margins red.
+- [x] **MLP:** move the preset bar back above the demo.
+- [x] **Notebook/stream:** make the notebook as colourful as `../lndw`, state clearly that it is a strongly simplified, humanised view; merge notebook and stream slides; fix inactive box text; show only additions; remove Unembed from the residual stream.
+- [x] **Remove** “Die Verteilung ist nicht die Antwort”.
+- [x] **Meadow:** put “Die Karte der Wörter” directly after “Ein Wort nach dem anderen”.
+- [x] **Navigation:** count slides 1..N instead of 0..N-1.
+- [~] Re-run pages, height, PHP/JS validators, `check_all.py --fast`.
+
+### Result of the newest request
+
+- The deck is now **25 base slides** because the requested merges remove six
+  base slides (embedding 4→1, attention 2→1, notebook+stream 2→1, and the
+  distribution slide is gone). The navigation rail now counts **1..25**, not
+  0..24; the old “1..31” label no longer matches the merged deck.
+- The data slide has the language sample, GPT-3 mix, and the new sentence
+  truth plot: DE Berlin/Spree with “Berlin liegt an der Elbe” as the false X;
+  EN Nile/Egypt with “The Nile flows through Brazil” as the false X.
+- BPE starts the tokenizer slide; the Start block is height-reserved.
+- The loss tab, direct `w x + b` values, working learning rate, per-optimizer
+  reset, larger formula, shaded -2π..2π margins, and top preset bar are in.
+- Notebook + stream are one slide; the stream has Start + Attention/FFN 1 + 2,
+  no Unembed, only positive additions, smooth bar tweens, and readable inactive
+  labels. The notebook is colourful and explicitly marked as a simplified,
+  humanised analogy.
+
+## Newest request (2026-11-14, after the 25-slide merge)
+
+- [ ] **Position:** show only the endpoints where the current point points, not the whole trail.
+- [ ] **Attention:** “Kontext zieht die Bank an seinen Platz” must go through all three bank examples before advancing.
+- [ ] **Forward/backward parity:** the same experience in both directions through every slide; activation must go back; complex demos such as the loss landscape may reset. Keep transitions smooth and everything visible.
+- [ ] **Neural order:** 1 neuron → loss landscape → 32×32×32.
+- [ ] **Live matrices:** in both “Matrizen zeigen” views show all numbers as live matrices rendered with Temml.
+- [ ] **Neural→next hang:** find and fix the pause when leaving “Was sind neuronale Netze?”.
+- [ ] **Similarity demo:** in “Ähnliche Worte finden”, add the embeddinglab-style angle/dot-product interpretation demo (Vector A/B, dot product, neutral/related/opposite).
+- [ ] **Scale invariance:** add “Scale Invariance: Direction Is Often the Useful Signal” with a magnitude slider; cosine stays constant while Euclidean distance changes.
+- [ ] Retest everything.

@@ -506,6 +506,8 @@
 		}
 		const denseControls = document.getElementById("ism-dense-controls");
 		if (denseControls) denseControls.hidden = cur !== 7 && cur !== 8;
+		const presets = document.getElementById("ism-dense-presets");
+		if (presets) presets.hidden = cur !== 7 && cur !== 8;
 		const stage = document.getElementById("ism-stage");
 		if (stage) stage.classList.toggle("is-dense", cur === 7 || cur === 8);
 		if (cur === 7) renderDenseFormulas();
