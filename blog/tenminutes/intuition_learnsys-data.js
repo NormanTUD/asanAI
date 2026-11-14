@@ -454,6 +454,40 @@
     }
   ];
 
+  var backpropStep = DE ? {
+    kicker: "Backprop",
+    title: "Der Fehler läuft zurück",
+    body: "Fünf Schichten: Input, drei verborgene Schichten, Output. Der Forward-Pass schickt die Werte nach rechts; am Ende steht ŷ. Vergleiche ŷ mit dem Soll y: Die Differenz ist der Fehler. Wäre der erste Wert etwas kleiner und der zweite etwas größer, wäre das Ergebnis besser. Backpropagation korrigiert zuerst die letzte Schicht, dann wird die Schicht davor zur neuen letzten Schicht: Sie bekommt die Werte der Schicht danach und passt ihre Gewichte an. So läuft der Fehler Schicht für Schicht nach links. Der Optimizer nimmt die Gradienten, also die gesammelten Unterschiede zwischen Soll und Ist, und aktualisiert alle Gewichte.",
+    watch: "Drücke Weiter. Sieh zu, wie der Fehler von rechts nach links läuft und die Ausgabe näher an das Ziel kommt.",
+    demoState: { scene: "backprop" },
+    context: "Der Forward-Pass berechnet die Aktivierungen von links nach rechts. Der Fehler wird von rechts nach links durch die Kettenregel getragen. Ein Gradient ist hier die Richtung und Größe, in der ein Gewicht den Fehler verändert.",
+    deep: "In echten Netzen rechnet Backpropagation die Gradienten für alle Gewichte in einem Durchlauf; der Optimizer (SGD, Adam, Momentum) macht daraus einen Schritt. Die Demo zeigt nur fünf Schichten und wenige Neuronen. Die Zahlen sind didaktisch, nicht ein trainiertes Modell.",
+    boxes: [
+      box("bp-1", "Mathematik", "Der Fehler", "ŷ ist die Ausgabe, y das Ziel. Der Fehler ist die Differenz; der Loss macht daraus eine Zahl, die das Training minimiert."),
+      box("bp-2", "Backprop", "Warum rückwärts?", "Die letzte Schicht kennt den Fehler direkt. Die Schicht davor erfährt über ihre Verbindungen, wie stark sie zum Fehler beigetragen hat. So kann jede Schicht ihre Gewichte anpassen."),
+      box("bp-3", "Optimizer", "Was macht der Optimizer?", "Er nimmt die Gradienten und aktualisiert die Gewichte in die entgegengesetzte Richtung. Die Lernrate bestimmt die Schrittgröße.")
+    ],
+    sources: [
+      { label: "Rumelhart, Hinton & Williams (1986), Learning Representations by Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Backpropagation für mehrschichtige Netze.", en: "Backpropagation for multilayer networks." } }
+    ]
+  } : {
+    kicker: "Backprop",
+    title: "The error travels back",
+    body: "Five layers: input, three hidden layers, output. The forward pass sends values to the right; at the end stands ŷ. Compare ŷ with the target y: the difference is the error. The result would be better if the first value were a little smaller and the second a little larger. Backpropagation corrects the last layer first, then the layer before it becomes the new last layer: it receives the values from the layer after it and adjusts its weights. That is how the error travels left, layer by layer. The optimizer takes the gradients, the collected differences between target and output, and updates all weights.",
+    watch: "Press Next. Watch the error travel from right to left and the output move closer to the target.",
+    demoState: { scene: "backprop" },
+    context: "The forward pass computes activations from left to right. The error is carried right to left by the chain rule. A gradient is the direction and size in which a weight changes the error.",
+    deep: "In real networks backpropagation computes gradients for all weights in one pass; the optimizer (SGD, Adam, Momentum) takes a step. The demo shows only five layers and a few neurons. The numbers are didactic, not a trained model.",
+    boxes: [
+      box("bp-1", "Mathematics", "The error", "ŷ is the output, y the target. The error is the difference; the loss turns it into a number that training minimises."),
+      box("bp-2", "Backprop", "Why backwards?", "The last layer knows the error directly. The layer before it learns through its connections how much it contributed. That is how every layer can adjust its weights."),
+      box("bp-3", "Optimizer", "What does the optimizer do?", "It takes the gradients and updates the weights in the opposite direction. The learning rate sets the step size.")
+    ],
+    sources: [
+      { label: "Rumelhart, Hinton & Williams (1986), Learning Representations by Back-Propagating Errors", url: "https://doi.org/10.1038/323533a0", why: { de: "Backpropagation für mehrschichtige Netze.", en: "Backpropagation for multilayer networks." } }
+    ]
+  };
+
   var ffnSteps = DE ? [
     {
       kicker: "Feed-forward",
@@ -1724,7 +1758,7 @@
     substeps: [attentionMerged, attentionSteps[3]]
   };
 
-  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
+  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
 
   var day = {
     id: "intuition",

@@ -1371,3 +1371,31 @@ Marked as todo; work through carefully, one block at a time.
 - [ ] **Bausteine:** in the transformer-block detail show the GPT-2 token trajectories: the blocks repeatedly shift tokens in space. Use the real GPT-2 small data but state clearly that 768 dimensions are projected to 3, which loses a lot but makes it drawable; animate/step the layers.
 - [ ] Global Next must finish running demos before advancing; check every animated demo (the agent demo is the first confirmed failure).
 - [ ] Keep the Zarathustra quote “Man muss noch Chaos in sich tragen …” (done).
+
+## Comprehensive final checklist (read this before declaring done)
+
+### Content and prerequisites
+- [ ] Every slide's question is answered by the previous slides; each slide states what the reader must already know.
+- [ ] The story arc is coherent: idea → compression/data → tokens/embeddings → position/attention → neurons/loss/MLP/backprop → FFN/residual → unembedding/sampling → loop → meadow/trajectories → post-training/eval/RAG → history/philosophy.
+- [ ] Backprop slide after 32×32×32: five-layer fcnn, forward output vs target, difference, last layer corrected, previous layer becomes the new output, repeat; optimizer takes the gradients and updates weights. Make the “better if the first value were smaller and the second larger” moment visible.
+- [ ] Bausteine transformer detail: GPT-2 token trajectories; say 768 dims projected to 3 with PCA; repeated block shifts; losses acknowledged.
+- [ ] Compression taxonomy is plausible: cats are mammals; more apes; archaea included with the living group; math/thoughts/dreams have readable labels and do not silently collapse.
+- [ ] Actual Wikipedia HTML beginning + Zarathustra quote (Chaos/tanzender Stern) after the ellipsis; source links.
+- [ ] Position points persist at every visited position; no “Großkreiswinkel”.
+- [ ] Attention noise really shows Neujahr/Zukunft/Neugier; arrow keys move “Kontext”; context+bank+matrix merged into sub-slides.
+- [ ] Unembedding: map/angle/scale/unembed tabs; all-token angle→sort→probability animation.
+- [ ] First slide agent stays empty while typing; window enlarged; code fits without scroll.
+
+### Visual and interaction
+- [ ] No horizontal overflow at 390 px; no height jumps; canvases fill their stage; free bottom space gone on mobile.
+- [ ] Contrast contract holds in both themes; no white-on-white/lime-on-white readouts.
+- [ ] Global Next finishes a running demo before advancing; verify every animated demo.
+- [ ] Local demo Weiter/Zurück rows are gone; global controls and direct chips/sliders remain.
+- [ ] Smooth transitions, no flicker, no duplicate labels/overlapping labels; minimalist and readable.
+
+### Technical
+- [ ] Final count 32 if the backprop slide is added; otherwise keep 31 and state why; navigation counts 1..N.
+- [ ] Tests for every page and every slide/demo; page test visits all slides, unembedding tabs, no console errors.
+- [ ] Final `tenminutes_pages_test`, `tenminutes_height_test`, `php_validator`, `js_validator`, `check_all.py --fast`, `git diff --check`.
+- [ ] 10-minute random monkey regression with arbitrary fields/sliders/canvas inputs: 0 errors.
+- [ ] Read the whole demo codebase; generalize/deduplicate without removing functionality; keep tests updated.

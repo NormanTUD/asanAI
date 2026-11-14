@@ -140,7 +140,7 @@ def check_learnsys_deck(driver, page, lang, results):
         count = driver.execute_script("return document.querySelectorAll('#ls-steps .ls-dot').length")
     except Exception:
         count = 0
-    results.check(page, lang, "deck has 31 slides", count == 31, f"{count} slides")
+    results.check(page, lang, "deck has 32 slides", count == 32, f"{count} slides")
     mounted = 0
     for i in range(count):
         try:
