@@ -6568,7 +6568,11 @@
       if (!size) return;
       var ctx = size.ctx, w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
+      var bg = ctx.createRadialGradient(w * 0.43, h * 0.48, 12, w * 0.48, h * 0.5, Math.max(w, h) * 0.75);
+      bg.addColorStop(0, V.alpha(C.paper2, 0.95));
+      bg.addColorStop(0.58, V.alpha(C.paper, 0.55));
+      bg.addColorStop(1, V.alpha(C.paper, 0.98));
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
       V.grid(ctx, w, h, C, 26, 0.13);
       var padL = 26, padR = 230, top = 44, bottom = 34;
       var netW = w - padL - padR;
@@ -6606,8 +6610,11 @@
         ctx.fillText(ll === 0 ? (DE ? "Input" : "input") : ll === LAYERS.length - 1 ? (DE ? "Output" : "output") : (DE ? "Hidden " + ll : "hidden " + ll), lx(ll), 16);
         for (var n = 0; n < LAYERS[ll]; n++) {
           var a = acts[ll][n], x = lx(ll), y = ny(ll, n);
+          ctx.save();
+          ctx.shadowColor = a > 0.5 ? C.green : C.blue; ctx.shadowBlur = 8;
           ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI * 2);
           ctx.fillStyle = V.alpha(a > 0.5 ? C.green : C.blue, 0.25 + a * 0.6); ctx.fill();
+          ctx.restore();
           ctx.strokeStyle = ll === Math.max(0, step) ? C.gold : C.lineStrong; ctx.lineWidth = ll === Math.max(0, step) ? 2.2 : 1; ctx.stroke();
           ctx.fillStyle = C.ink; ctx.font = '700 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.textBaseline = "middle";
           ctx.fillText(a.toFixed(2), x, y + 18);
@@ -6617,7 +6624,7 @@
       var bx = w - padR + 14, by = top + 6, bw = padR - 28;
       var yhat = output(), err = target - yhat;
       ctx.fillStyle = "rgba(255,255,255,.78)"; ctx.strokeStyle = C.line; ctx.lineWidth = 1;
-      ctx.fillRect(bx, by, bw, 96); ctx.strokeRect(bx, by, bw, 96);
+      ctx.fillRect(bx, by, bw, 136); ctx.strokeRect(bx, by, bw, 136);
       ctx.textAlign = "left"; ctx.textBaseline = "top";
       ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
       ctx.fillText(DE ? "Soll y" : "target y", bx + 10, by + 10);
@@ -6629,9 +6636,9 @@
       ctx.fillText(yhat.toFixed(3), bx + 10, by + 64);
       ctx.fillStyle = err >= 0 ? C.blue : C.coral; ctx.font = '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
       ctx.fillText((DE ? "Differenz " : "difference ") + err.toFixed(3), bx + 10, by + 88);
-      ctx.fillStyle = C.line; ctx.fillRect(bx + 10, by + 106, bw - 20, 6);
+      ctx.fillStyle = C.line; ctx.fillRect(bx + 10, by + 112, bw - 20, 6);
       ctx.fillStyle = Math.abs(err) < 0.08 ? C.green : C.coral;
-      ctx.fillRect(bx + 10, by + 106, (bw - 20) * Math.min(1, Math.abs(err)), 6);
+      ctx.fillRect(bx + 10, by + 112, (bw - 20) * Math.min(1, Math.abs(err)), 6);
       if (step === 1) {
         ctx.fillStyle = C.gold; ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
         ctx.textAlign = "left"; ctx.textBaseline = "bottom";
@@ -6643,7 +6650,7 @@
       }
       ctx.fillStyle = C.petrol; ctx.font = '700 ' + Math.max(10, api.font("canvas-sm")) + 'px "Barlow", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "top";
-      ctx.fillText(stepLabel(), 18, 16);
+      ctx.fillText(stepLabel(), 18, 34);
       readout.innerHTML = '<span><b>' + (DE ? "Schritt" : "step") + '</b> ' + (step + 1) + ' / 6</span><span><b>ŷ</b> ' + yhat.toFixed(3) + '</span><span><b>y</b> ' + target.toFixed(2) + '</span><span><b>' + (DE ? "Differenz" : "difference") + '</b> ' + err.toFixed(3) + '</span>';
       caption.textContent = DE
         ? "Vorwärts läuft der Input durch fünf Schichten. Der Fehler sagt, wie weit die Ausgabe vom Ziel entfernt ist. Backpropagation nimmt diesen Fehler, korrigiert zuerst die letzte Schicht, dann die Schicht davor, und wiederholt das bis zum Input. Der Optimizer nimmt die Gradienten, also die gesammelten Unterschiede, und aktualisiert die Gewichte. So wird das Netz Schritt für Schritt besser."
@@ -6655,6 +6662,7 @@
       step++;
       if (step === 5) { for (var l = 0; l < weights.length; l++) applyLayer(l); }
       draw();
+      if (canvas.animate) { try { canvas.animate([{ opacity: 0.35 }, { opacity: 1 }], { duration: 320, easing: "ease-out" }); } catch (e) {} }
       return true;
     }
     function prev() {
@@ -6662,6 +6670,7 @@
       step--;
       forward();
       draw();
+      if (canvas.animate) { try { canvas.animate([{ opacity: 0.35 }, { opacity: 1 }], { duration: 280, easing: "ease-out" }); } catch (e) {} }
       return true;
     }
     function resize() { size = api.fit(canvas, stage); draw(); }
