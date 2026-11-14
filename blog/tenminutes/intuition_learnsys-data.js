@@ -1760,7 +1760,43 @@
     substeps: [attentionMerged, attentionSteps[3]]
   };
 
-  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
+  var steeringStep = DE ? {
+    kicker: "Schluss · Semantik",
+    title: "Mit Worten steuern",
+    body: "Ein Punkt im Raum, ein Ziel: Königin. Jede Wortrichtung verschiebt den Punkt: Frau, Macht, Rang. Drei Schritte reichen. Dann probierst du nicht, sehr, Geld oder gestern: Der Punkt verlässt die Zielzone. Die Kunst ist, die richtige Richtung zu wählen und im richtigen Moment zu stoppen. So wird aus einem Vektor eine Steuerung, die du mit Worten bedienst.",
+    watch: "Klicke Frau, Macht und Rang. Dann teste nicht, sehr, Geld und Übersteuern. Wann wird der Punkt zur Königin, wann wird er Unsinn?",
+    demoState: { scene: "steering" },
+    context: "Ein Embedding ist ein Punkt. Eine Wortrichtung ist ein Vektor. Die Demo projiziert beides in drei Dimensionen, damit du die Bewegung sehen kannst; ein echtes Modell rechnet mit hunderten Dimensionen.",
+    deep: "Word2vec zeigt, dass Richtungen zwischen Wortvektoren regelmäßige Bedeutungsunterschiede tragen (Mikolov et al., 2013). Activation Engineering verschiebt die Aktivierungen eines Modells gezielt in eine Richtung (Turner et al., 2023). Die Demo ist eine didaktische Projektion, kein trainiertes Modell.",
+    boxes: [
+      box("stg-1", "Mathematik", "Die Richtung", "Ein Wortchip addiert einen Vektor: e_neu = e_alt + α · d_Wort. α steuert die Stärke; ein negatives α dreht die Richtung."),
+      box("stg-2", "Steuerung", "Der Sweet Spot", "Zu wenig Bewegung lässt den Punkt im Alten. Zu viel schiebt ihn über das Ziel hinaus. Gute Steuerung wählt Richtung und Distanz."),
+      box("stg-3", "Grenze", "Die Projektion", "Die 3D-Karte ist eine didaktische Hilfe. Im echten Modell sind die Achsen gelernte Richtungen, und dieselbe Wortrichtung wirkt je nach Kontext und Schicht anders.")
+    ],
+    sources: [
+      { label: "Mikolov et al. (2013), Linguistic Regularities in Continuous Space Word Representations", url: "https://arxiv.org/abs/1301.3781", why: { de: "Wortvektoren und regelmäßige Bedeutungsrichtungen.", en: "Word vectors and regular directions of meaning." } },
+      { label: "Turner et al. (2023), Steering Language Models With Activation Engineering", url: "https://arxiv.org/abs/2308.10248", why: { de: "Gezielte Verschiebung von Aktivierungen.", en: "Deliberate steering of activations." } }
+    ]
+  } : {
+    kicker: "Closing · Semantics",
+    title: "Steering with words",
+    body: "A point in space, a target: Queen. Each word direction moves the point: Woman, Power, Rank. Three steps are enough. Then try not, very, Money or yesterday: the point leaves the target zone. The skill is choosing the right direction and stopping at the right moment. That is how a vector becomes a control you operate with words.",
+    watch: "Click Woman, Power and Rank. Then try not, very, Money and Oversteer. When does the point become Queen, when does it become nonsense?",
+    demoState: { scene: "steering" },
+    context: "An embedding is a point. A word direction is a vector. The demo projects both into three dimensions so you can see the movement; a real model works with hundreds of dimensions.",
+    deep: "Word2vec shows that directions between word vectors carry regular differences in meaning (Mikolov et al., 2013). Activation engineering shifts a model's activations deliberately along a direction (Turner et al., 2023). The demo is a teaching projection, not a trained model.",
+    boxes: [
+      box("stg-1", "Mathematics", "The direction", "A word chip adds a vector: e_new = e_old + α · d_word. α controls the strength; a negative α flips the direction."),
+      box("stg-2", "Steering", "The sweet spot", "Too little movement leaves the point where it was. Too much pushes it past the target. Good steering chooses both direction and distance."),
+      box("stg-3", "Limit", "The projection", "The 3D map is a teaching aid. In a real model the axes are learned directions, and the same word direction acts differently by context and layer.")
+    ],
+    sources: [
+      { label: "Mikolov et al. (2013), Linguistic Regularities in Continuous Space Word Representations", url: "https://arxiv.org/abs/1301.3781", why: { de: "Wortvektoren und regelmäßige Bedeutungsrichtungen.", en: "Word vectors and regular directions of meaning." } },
+      { label: "Turner et al. (2023), Steering Language Models With Activation Engineering", url: "https://arxiv.org/abs/2308.10248", why: { de: "Gezielte Verschiebung von Aktivierungen.", en: "Deliberate steering of activations." } }
+    ]
+  };
+
+  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep];
 
   var day = {
     id: "intuition",

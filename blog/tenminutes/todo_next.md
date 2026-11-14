@@ -69,3 +69,53 @@ state; the “Still open” section is the remaining work.
 
 - [x] FFN/transformation slide: input `d_model` → hidden `d_ff` → output `d_model` shape strip added, with widening/narrowing bars and `W₁/Aktivierung → W₂` arrows.
 - [x] Bausteine transformer detail: full-width 3D GPT-2 trajectories, shared projection helpers, 768→3 PCA warning.
+
+## Demo file split (done in this pass)
+
+- [x] `demos/_core.js` now owns the shared constants, helpers and scene registry.
+- [x] Every scene lives in its own `demos/<scene>.js` file and registers itself;
+      `intuition_learnsys-demos.js` is now only the shell that mounts a scene.
+- [x] `intuition_learnsys.php` includes the core, all scene files and the shell
+      through one generated script list. The deck still mounts all 32 slides.
+- [x] `intuition_learnsys-demo.php?scene=<name>&lang=en|de` is a standalone
+      viewer with a scene selector, language switch and the same CSS/shell.
+- [x] Cross-scene dependencies are explicit: `media` loads `phone` and `code`,
+      `attentionlab` loads `attention` and `codenoise`.
+- [x] Fixed the standalone `trajectories` scene by giving it the missing local
+      `V = window.LearnSysVisuals`; the adapter no longer relies on a leaked global.
+- [x] Verification: **78/78** standalone scene checks, **30/30** full-deck
+      checks, **34/0** height interactions; EN/DE, desktop/mobile.
+
+## New closing slide: “Mit Worten steuern” (pending)
+
+- [ ] Decide the final order: philosophy stays as the penultimate slide, the new
+      semantic-steering slide becomes the last slide. Update the deck from 32 to
+      33 slides, the rail labels, the page test and the height test.
+- [ ] Build one “semantic navigator” scene: a luminous 3D semantic cloud with a
+      single glowing query point, a target ring, a motion trail and a live
+      nearest-word readout. The point is steered by word directions, not by a
+      generic slider.
+- [ ] Show the steering tricks explicitly, each as a clickable word chip or
+      direction arrow:
+      * analogy: `König − Mann + Frau` moves along the gender and rank axes;
+      * axis composition: `Frau` + `Macht` + `Rang`;
+      * context pull: `Bank` + `Geld` or `Bank` + `Fluss` moves through attention;
+      * negation: `nicht` flips the direction, with a visible ghost of the old
+        point;
+      * intensity: `sehr`, `mehr`, `weniger` scales the step;
+      * layer/scale: a “Schicht 12” control moves the point in the residual
+        stream and shows how the same word can mean different things.
+- [ ] Add a “sweet spot” and an “oversteer” state: the point can be pushed too
+      far, the nearest words become nonsense, and a reset returns to the stable
+      region. This is the actual lesson: operating the vector means choosing the
+      right direction and stopping at the right distance.
+- [ ] Reuse the existing embedding WORDS, `V.trajBounds`/`V.trajProject`, the
+      unembedding probability bars and the attention context. Do not build a
+      parallel semantic model.
+- [ ] Make it mouthwateringly gorgeous: deep petrol 3D inset, thin teal/green/
+      gold orbit lines, soft glow, slow trails, a calm camera, no clutter, no
+      emoji. Use only the ScaDS palette. Keep the paper shell readable.
+- [ ] Bilingual EN/DE, informal du, all chips/readouts/aria labels, mobile touch,
+      keyboard access, reduced motion, and no height jumps.
+- [ ] Add the new scene to the standalone preview selector and test it alone in
+      both languages, desktop/mobile, light/dark, plus the full 33-slide deck.

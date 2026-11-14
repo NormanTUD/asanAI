@@ -1,0 +1,252 @@
+(function () {
+  "use strict";
+  var core = window.LearnSysDemoCore;
+  if (!core) return;
+  var SHARED = core.SHARED, TEMP = core.TEMP, WORDS = core.WORDS, WORD_IDS = core.WORD_IDS, EXAMPLES = core.EXAMPLES, PAIRS = core.PAIRS;
+  var esc = core.esc, clamp = core.clamp, lerp = core.lerp, ease = core.ease;
+  function langdataScene(root, api) {
+    var DE = api.lang === "de";
+    var V = window.LearnSysVisuals;
+    var langs = [
+      { id: "de", label: DE ? "Deutsch" : "German", text: "Sonnenblumen sind die besten Blumen.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "en", label: DE ? "Englisch" : "English", text: "Sunflowers are the best flowers.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "fr", label: DE ? "Französisch" : "French", text: "Les tournesols sont les meilleures fleurs.", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "ja", label: DE ? "Japanisch" : "Japanese", text: "ひまわりは最高の花です。", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." },
+      { id: "ar", label: DE ? "Arabisch" : "Arabic", text: "زهور عباد الشمس هي الأفضل.", gloss: DE ? "Derselbe Inhalt, von rechts nach links." : "The same content, written right to left.", rtl: true },
+      { id: "zh", label: DE ? "Chinesisch" : "Chinese", text: "向日葵是最好的花。", gloss: DE ? "Derselbe Inhalt, andere Schrift." : "The same content, a different script." }
+    ];
+    var mix = [
+      { label: "Common Crawl", pct: 60, color: "#63a44b" },
+      { label: "WebText2", pct: 22, color: "#5c9baf" },
+      { label: "Books1", pct: 8, color: "#9f9700" },
+      { label: "Books2", pct: 8, color: "#869b55" },
+      { label: "Wikipedia", pct: 3, color: "#9185be" }
+    ];
+    var active = DE ? "de" : "en";
+    var C = api.colors();
+    var TRUTH = DE ? {
+      title: "Viele Sätze, eine Wahrheit",
+      headline: "Berlin liegt an der Spree.",
+      note: "Illustration: Die Sätze sind Beispiele, keine Messung. Die meisten Beschreibungen liegen nahe an der Wahrheit; ein falscher Satz liegt weit daneben.",
+      items: [
+        { t: "Berlin liegt an der Spree.", d: 0.06, ok: true },
+        { t: "Die Spree fließt durch Berlin.", d: 0.14, ok: true },
+        { t: "Der Fluss, der durch Berlin läuft, ist die Spree.", d: 0.24, ok: true },
+        { t: "Berlin wird von der Spree durchflossen.", d: 0.32, ok: true },
+        { t: "Berlin liegt an der Elbe.", d: 1.25, ok: false }
+      ]
+    } : {
+      title: "Many sentences, one truth",
+      headline: "The Nile flows through Egypt.",
+      note: "Illustration: the sentences are examples, not a measurement. Most descriptions sit near the truth; a false sentence lies far away.",
+      items: [
+        { t: "The Nile flows through Egypt.", d: 0.06, ok: true },
+        { t: "Egypt lies on the Nile.", d: 0.14, ok: true },
+        { t: "The river that runs through Egypt is the Nile.", d: 0.24, ok: true },
+        { t: "The Nile is the river of Egypt.", d: 0.32, ok: true },
+        { t: "The Nile flows through Brazil.", d: 1.25, ok: false }
+      ]
+    };
+    var el = document.createElement("div");
+    el.className = "ls-lang-scene";
+    el.innerHTML =
+      '<div class="ls-lang-tabs" role="group" aria-label="' + (DE ? "Sprachen" : "Languages") + '"></div>' +
+      '<div class="ls-lang-sample">' +
+        '<span class="ls-lang-tag"></span>' +
+        '<p class="ls-lang-text" lang="de"></p>' +
+        '<p class="ls-lang-gloss"></p>' +
+        '<div class="ls-lang-all" hidden></div>' +
+      '</div>' +
+      '<div class="ls-lang-truth">' +
+        '<div class="ls-lang-truth-head"></div>' +
+        '<div class="ls-lang-truth-grid"><div class="ls-lang-truth-plot"><canvas class="ls-lang-truth-canvas" role="img"></canvas></div><ol class="ls-lang-truth-list"></ol></div>' +
+        '<p class="ls-lang-truth-note"></p>' +
+      '</div>' +
+      '<div class="ls-lang-mix">' +
+        '<div class="ls-lang-mix-head">' + (DE ? "Woraus GPT-3 lernte" : "What GPT-3 learned from") + '</div>' +
+        '<div class="ls-lang-scale"><span class="ls-lang-scale-label">' + (DE ? "Datenmenge" : "data scale") + '</span><span class="ls-lang-scale-unit">KB</span><span class="ls-lang-scale-unit">MB</span><span class="ls-lang-scale-unit">GB</span><span class="ls-lang-scale-unit">TB</span><span class="ls-lang-scale-unit">PB</span><span class="ls-lang-scale-unit">EB</span><span class="ls-lang-scale-unit is-on">ZB</span><span class="ls-lang-scale-year">2016</span></div>' +
+        '<div class="ls-lang-scale-note">' + (DE ? "1 ZB = 10²¹ Byte. Erst seit der Zettabyte-Ära gibt es genug Text für diese Modelle." : "1 ZB = 10²¹ bytes. Only since the zettabyte era has there been enough text for these models.") + '</div>' +
+        '<div class="ls-lang-bars"></div>' +
+        '<p class="ls-lang-note">' + (DE ? "GPT-3-Mix nach Brown et al. (2020), Tabelle 2.2, gerundet. Labs veröffentlichen ihre genauen Rezepte nicht." : "GPT-3 mix from Brown et al. (2020), Table 2.2, rounded. Labs do not publish their exact recipes.") + '</p>' +
+      '</div>' +
+      '<p class="ls-lang-caveat">' + (DE ? "Dieselbe Schleife, dieselben Gewichte: Die Schrift ändert die Tokens, nicht die Aufgabe. Manche Sprachen brauchen für denselben Inhalt mehr Tokens; der Tokenizer kann sie dadurch teurer machen (Petrov et al., 2023)." : "The same loop, the same weights: the script changes the tokens, not the task. Some languages need more tokens for the same content, so the tokenizer can make them more expensive (Petrov et al., 2023).") + '</p>' +
+      '<div class="ls-tokenize-nav ls-lang-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-lang-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-lang-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-lang-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
+    root.appendChild(el);
+    var tabs = el.querySelector(".ls-lang-tabs");
+    var sampleEl = el.querySelector(".ls-lang-sample");
+    var truthEl = el.querySelector(".ls-lang-truth");
+    var mixEl = el.querySelector(".ls-lang-mix");
+    var caveatEl = el.querySelector(".ls-lang-caveat");
+    var navEl = el.querySelector(".ls-lang-nav");
+    var allEl = el.querySelector(".ls-lang-all");
+    var mode = "all";
+    var tag = el.querySelector(".ls-lang-tag");
+    var text = el.querySelector(".ls-lang-text");
+    var gloss = el.querySelector(".ls-lang-gloss");
+    var bars = el.querySelector(".ls-lang-bars");
+    var truthHead = el.querySelector(".ls-lang-truth-head");
+    var truthCanvas = el.querySelector(".ls-lang-truth-canvas");
+    var truthList = el.querySelector(".ls-lang-truth-list");
+    var truthNote = el.querySelector(".ls-lang-truth-note");
+    var truthSize = null;
+    var navPrev = el.querySelector(".ls-lang-prev");
+    var navNext = el.querySelector(".ls-lang-next");
+    var navProgress = el.querySelector(".ls-lang-progress");
+    function updateNav() {
+      var idx = 0;
+      langs.forEach(function (l, i) { if (l.id === active) idx = i; });
+      navProgress.textContent = (idx + 1) + ' / ' + langs.length;
+      navPrev.disabled = idx === 0;
+      navNext.textContent = idx === langs.length - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
+    }
+    function show(id) {
+      var item = langs.filter(function (l) { return l.id === id; })[0] || langs[0];
+      active = item.id;
+      Array.prototype.forEach.call(tabs.querySelectorAll("button"), function (b) {
+        b.classList.toggle("is-on", b.getAttribute("data-lang") === item.id);
+      });
+      tag.textContent = item.label;
+      text.textContent = item.text;
+      text.setAttribute("lang", item.id);
+      text.setAttribute("dir", item.rtl ? "rtl" : "ltr");
+      gloss.textContent = item.gloss;
+      updateNav();
+    }
+    langs.forEach(function (l) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "ls-chip" + (l.id === active ? " is-on" : "");
+      b.setAttribute("data-lang", l.id);
+      b.textContent = l.label;
+      b.addEventListener("click", function () { show(l.id); });
+      tabs.appendChild(b);
+    });
+    bars.innerHTML = mix.map(function (m) {
+      return '<div class="ls-lang-bar"><span class="ls-lang-bar-label">' + api.esc(m.label) + '</span>' +
+        '<span class="ls-lang-bar-track"><i style="width:' + m.pct + '%;background:' + m.color + '"></i></span>' +
+        '<span class="ls-lang-bar-val">' + m.pct + '%</span></div>';
+    }).join("");
+    if (allEl) allEl.innerHTML = langs.map(function (l) {
+      return '<p class="ls-lang-all-row"><b>' + api.esc(l.label) + '</b><span lang="' + l.id + '" dir="' + (l.rtl ? "rtl" : "ltr") + '">' + api.esc(l.text) + '</span></p>';
+    }).join("");
+    function applyMode() {
+      var isTruth = mode === "truth";
+      var isLang = mode === "languages";
+      var isScale = mode === "scale";
+      if (sampleEl) sampleEl.hidden = isTruth || isScale;
+      if (tabs) tabs.hidden = true;
+      if (truthEl) truthEl.hidden = !isTruth;
+      if (mixEl) mixEl.hidden = !isScale;
+      if (caveatEl) caveatEl.hidden = isTruth;
+      if (navEl) navEl.hidden = true;
+      if (allEl) allEl.hidden = !isLang;
+      if (sampleEl) sampleEl.querySelectorAll(":scope > .ls-lang-tag, :scope > .ls-lang-text, :scope > .ls-lang-gloss").forEach(function (x) { x.hidden = isLang; });
+    }
+    if (truthHead) truthHead.textContent = TRUTH.title;
+    if (truthNote) truthNote.textContent = TRUTH.note;
+    if (truthList) truthList.innerHTML = TRUTH.items.map(function (item, i) {
+      return '<li class="' + (item.ok ? "is-near" : "is-false") + '"><span class="ls-lang-truth-dot">' + (i + 1) + '</span><span>' + api.esc(item.t) + '</span><b>' + (item.ok ? (DE ? "nah" : "near") : (DE ? "falsch" : "false")) + '</b></li>';
+    }).join("");
+    function drawTruth() {
+      if (!truthCanvas) return;
+      truthSize = api.fit(truthCanvas, truthCanvas.parentNode);
+      var ctx = truthSize.ctx, w = truthSize.w, h = truthSize.h;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = C.paper;
+      ctx.fillRect(0, 0, w, h);
+      V.grid(ctx, w, h, C, 24, 0.12);
+      var padL = 38, padR = 14, padT = 22, padB = 30;
+      var yMax = 1.42;
+      function X(i) { return padL + (i / (TRUTH.items.length - 1)) * (w - padL - padR); }
+      function Y(d) { return h - padB - (d / yMax) * (h - padT - padB); }
+      function truthCurve(x) { return 0.10 + 0.06 * Math.sin(x * Math.PI * 1.7); }
+      function curveY(x) { return Y(truthCurve(x)); }
+      // green band around the truth curve, like the true orbit in the Gauss plot
+      ctx.beginPath();
+      for (var ci = 0; ci <= 80; ci++) {
+        var cx0 = ci / 80;
+        var px0 = padL + cx0 * (w - padL - padR);
+        if (ci === 0) ctx.moveTo(px0, curveY(cx0) - 9); else ctx.lineTo(px0, curveY(cx0) - 9);
+      }
+      for (var ci2 = 80; ci2 >= 0; ci2--) {
+        var cx1 = ci2 / 80;
+        ctx.lineTo(padL + cx1 * (w - padL - padR), curveY(cx1) + 9);
+      }
+      ctx.closePath(); ctx.fillStyle = V.alpha(C.green, 0.10); ctx.fill();
+      ctx.strokeStyle = C.green; ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      for (var ci3 = 0; ci3 <= 80; ci3++) {
+        var tx = ci3 / 80, tpx = padL + tx * (w - padL - padR);
+        if (ci3 === 0) ctx.moveTo(tpx, curveY(tx)); else ctx.lineTo(tpx, curveY(tx));
+      }
+      ctx.stroke();
+      ctx.fillStyle = C.green;
+      ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+      ctx.fillText(DE ? "Wahrheit" : "truth", padL + 4, curveY(0) - 12);
+      ctx.strokeStyle = C.line;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, h - padB); ctx.lineTo(w - padR, h - padB); ctx.stroke();
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillText(DE ? "Sätze" : "sentences", (w + padL) / 2, h - 14);
+      ctx.save();
+      ctx.translate(12, (h + padT) / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.textBaseline = "top";
+      ctx.fillText(DE ? "Nähe zur Wahrheit" : "distance from truth", 0, 0);
+      ctx.restore();
+      TRUTH.items.forEach(function (item, i) {
+        var x = X(i), y = Y(truthCurve(i / (TRUTH.items.length - 1)) + item.d);
+        if (item.ok) {
+          ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = C.blue; ctx.fill();
+          ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
+        } else {
+          ctx.strokeStyle = C.coral; ctx.lineWidth = 2.8;
+          ctx.beginPath(); ctx.moveTo(x - 6, y - 6); ctx.lineTo(x + 6, y + 6); ctx.moveTo(x + 6, y - 6); ctx.lineTo(x - 6, y + 6); ctx.stroke();
+        }
+        ctx.fillStyle = item.ok ? C.ink : C.coral;
+        ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+        ctx.fillText(String(i + 1), x, y - 9);
+      });
+      truthCanvas.setAttribute("aria-label", TRUTH.title + ": " + TRUTH.items.map(function (item) { return item.t; }).join("; "));
+    }
+    function resize() { drawTruth(); }
+    window.addEventListener("resize", resize);
+    window.addEventListener("tm:theme", function () { C = api.colors(); drawTruth(); });
+    applyMode();
+    drawTruth();
+    show(active);
+    function stepLanguage(dir) {
+      var idx = -1;
+      langs.forEach(function (l, i) { if (l.id === active) idx = i; });
+      var next = idx + dir;
+      if (next < 0 || next >= langs.length) return false;
+      show(langs[next].id);
+      return true;
+    }
+    function nextStep() {
+      if (stepLanguage(1)) return;
+      api.goNext();
+    }
+    function prevStep() {
+      if (stepLanguage(-1)) return;
+      api.goPrev();
+    }
+    navPrev.addEventListener("click", prevStep);
+    navNext.addEventListener("click", nextStep);
+    return {
+      update: function (s) { if (s && s.mode) { mode = s.mode; applyMode(); requestAnimationFrame(drawTruth); } },
+      next: function () { return false; },
+      prev: function () { return false; },
+      onKey: function () { return false; },
+      resize: function () { drawTruth(); },
+      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
+    };
+  }
+
+  core.register("langdata", langdataScene);
+})();

@@ -1,0 +1,53 @@
+(function () {
+  "use strict";
+  var SHARED = {
+    loop: null
+  };
+
+  var TEMP = [
+    { id: "freezing", value: -30, color: "sky", label: ["Gefrierpunkt", "Freezing"] },
+    { id: "icecold", value: -10, color: "lilac", label: ["Eiskalt", "Ice cold"] },
+    { id: "cold", value: 5, color: "blue", label: ["Kalt", "Cold"] },
+    { id: "cool", value: 18, color: "petrol", label: ["Kühl", "Cool"] },
+    { id: "lukewarm", value: 30, color: "green", label: ["Lauwarm", "Lukewarm"] },
+    { id: "warm", value: 55, color: "lime", label: ["Warm", "Warm"] },
+    { id: "hot", value: 100, color: "gold", label: ["Heiß", "Hot"] }
+  ];
+
+  var WORDS = {
+    male: { v: [0, -20], z: -0.6, label: ["Männlich", "Male"], group: "gender" },
+    female: { v: [0, 20], z: -0.6, label: ["Weiblich", "Female"], group: "gender" },
+    man: { v: [5, -10], z: 0, label: ["Mann", "Man"], group: "power" },
+    woman: { v: [5, 10], z: 0, label: ["Frau", "Woman"], group: "power" },
+    prince: { v: [15, -10], z: 0.45, label: ["Prinz", "Prince"], group: "rank" },
+    princess: { v: [15, 10], z: 0.45, label: ["Prinzessin", "Princess"], group: "rank" },
+    king: { v: [25, -10], z: 0.85, label: ["König", "King"], group: "rank" },
+    queen: { v: [25, 10], z: 0.85, label: ["Königin", "Queen"], group: "rank" },
+    power: { v: [10, 0], z: 0.25, label: ["Macht", "Power"], group: "power" }
+  };
+  var WORD_IDS = Object.keys(WORDS);
+
+  var EXAMPLES = [
+    { id: "king-man-woman", expr: "King - Man + Woman", label: ["König − Mann + Frau", "King − Man + Woman"] },
+    { id: "man-power", expr: "Man + 2 * Power", label: ["Mann + 2 · Macht", "Man + 2 · Power"] },
+    { id: "prince-power", expr: "Prince + Power", label: ["Prinz + Macht", "Prince + Power"] },
+    { id: "gender", label: ["Geschlecht", "Gender"] },
+    { id: "power-dir", label: ["Machtrichtung", "Power direction"] },
+    { id: "directions", label: ["Alle Richtungen", "All directions"] }
+  ];
+
+  var PAIRS = [
+    ["cold", "warm"], ["cold", "hot"], ["freezing", "hot"], ["freezing", "warm"]
+  ];
+
+  function esc(s) { return String(s == null ? "" : s); }
+  function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function ease(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+
+
+  var scenes = {};
+  function register(name, factory) { if (typeof name === "string" && typeof factory === "function") scenes[name] = factory; }
+  function get(name) { return scenes[name] || null; }
+  window.LearnSysDemoCore = { SHARED: SHARED, TEMP: TEMP, WORDS: WORDS, WORD_IDS: WORD_IDS, EXAMPLES: EXAMPLES, PAIRS: PAIRS, esc: esc, clamp: clamp, lerp: lerp, ease: ease, register: register, get: get, scenes: scenes };
+})();

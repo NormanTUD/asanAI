@@ -53,6 +53,10 @@ $showSeasonal = $showSnow || $showFireworks;
 	<script src="assets/tf-sinus-scene.js?v=<?php echo filemtime(__DIR__.'/assets/tf-sinus-scene.js'); ?>"></script>
 	<script src="assets/learnsys-unembed-scene.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-unembed-scene.js'); ?>"></script>
 	<script src="assets/learnsys-gauss-scene.js?v=<?php echo filemtime(__DIR__.'/assets/learnsys-gauss-scene.js'); ?>"></script>
+	<script src="demos/_core.js?v=<?php echo filemtime(__DIR__.'/demos/_core.js'); ?>"></script>
+	<?php foreach (glob(__DIR__.'/demos/*.js') as $demoFile): $demoName = basename($demoFile); if ($demoName[0] === '_') continue; ?>
+	<script src="demos/<?php echo $demoName; ?>?v=<?php echo filemtime($demoFile); ?>"></script>
+	<?php endforeach; ?>
 	<script src="intuition_learnsys-demos.js?v=<?php echo filemtime(__DIR__.'/intuition_learnsys-demos.js'); ?>"></script>
 	<script src="intuition_learnsys-data.js?v=<?php echo filemtime(__DIR__.'/intuition_learnsys-data.js'); ?>"></script>
 	<?php if ($showSeasonal): ?><script src="assets/seasonal.js?v=<?php echo filemtime(__DIR__.'/assets/seasonal.js'); ?>"></script><?php endif; ?>

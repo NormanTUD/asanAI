@@ -1,0 +1,314 @@
+(function () {
+  "use strict";
+  var core = window.LearnSysDemoCore;
+  if (!core) return;
+  var SHARED = core.SHARED, TEMP = core.TEMP, WORDS = core.WORDS, WORD_IDS = core.WORD_IDS, EXAMPLES = core.EXAMPLES, PAIRS = core.PAIRS;
+  var esc = core.esc, clamp = core.clamp, lerp = core.lerp, ease = core.ease;
+  function phoneScene(root, api) {
+    var DE = api.lang === "de";
+    var el = document.createElement("div");
+    el.className = "ls-phone-scene";
+    el.innerHTML =
+      '<div class="ia-stage">' +
+        '<div class="ia-phone-switch" role="tablist" aria-label="' + (DE ? "Suche oder Chat" : "Search or chat") + '">' +
+          '<button type="button" class="is-on" data-phone="search" role="tab" aria-selected="true">' + (DE ? "Suche" : "Search") + '</button>' +
+          '<button type="button" data-phone="chat" role="tab" aria-selected="false">' + (DE ? "Chat" : "Chat") + '</button>' +
+        '</div>' +
+        '<div class="ia-phones">' +
+          '<div class="ia-phone">' +
+            '<div class="ia-phone-frame"></div>' +
+            '<div class="ia-phone-notch"></div>' +
+            '<div class="ia-phone-screen ia-screen-layer ia-search-screen is-active" id="ia-phone">' +
+              '<div class="ia-app-logo" id="ia-logo" aria-hidden="true"></div>' +
+              '<div class="ia-search-bar" id="ia-search-bar">' +
+                '<div class="ia-search-icon" aria-hidden="true"></div>' +
+                '<div class="ia-search-text" id="ia-search-text"></div>' +
+              '</div>' +
+              '<div class="ia-ai-card" id="ia-ai-card">' +
+                '<div class="ia-ai-text" id="ia-ai-text"></div>' +
+                '<div class="ia-ai-thinking" id="ia-ai-thinking" aria-hidden="true"><span></span><span></span><span></span></div>' +
+              '</div>' +
+              '<div class="ia-serp" id="ia-serp"></div>' +
+            '</div>' +
+            '<div class="ia-phone-screen ia-screen-layer ia-phone--chat ia-chat-screen" id="ia-chat-phone">' +
+              '<div class="ia-chat-appbar"><span>' + (DE ? "KI-Chat" : "AI chat") + '</span><i class="ia-chat-live" aria-hidden="true"></i></div>' +
+              '<div class="ia-chat-thread" aria-live="polite">' +
+                '<div class="ia-chat-msg is-user"><span class="ia-chat-role">' + (DE ? "Du" : "You") + '</span><span class="ia-chat-bubble ia-chat-question"></span></div>' +
+                '<div class="ia-chat-msg is-ai"><span class="ia-chat-role">LLM</span><span class="ia-chat-bubble ia-chat-answer"></span><span class="ia-chat-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
+              '</div>' +
+              '<div class="ia-chat-compose"><span class="ia-chat-placeholder">' + (DE ? "Nachricht" : "Message") + '</span><span class="ia-chat-input"></span><i class="ia-chat-send" aria-hidden="true"></i></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    root.appendChild(el);
+    var stage = el.querySelector(".ia-stage");
+    var phonesWrap = el.querySelector(".ia-phones");
+    var chatPhone = el.querySelector("#ia-chat-phone");
+    var chatScreen = el.querySelector(".ia-chat-screen");
+    var searchPhone = el.querySelector("#ia-phone");
+    var chatQuestionEl = el.querySelector(".ia-chat-question");
+    var chatAnswerEl = el.querySelector(".ia-chat-answer");
+    var chatInputEl = el.querySelector(".ia-chat-input");
+    var chatComposeEl = el.querySelector(".ia-chat-compose");
+    var view = "search", chatStarted = false, sequenceDone = null, advance = null;
+    var modeBtns = el.querySelectorAll("[data-phone]");
+    function setPhone(which) {
+      var isChat = which === "chat";
+      if (searchPhone) searchPhone.classList.toggle("is-active", !isChat);
+      if (chatPhone) chatPhone.classList.toggle("is-active", isChat);
+      modeBtns.forEach(function (b) {
+        var on = b.getAttribute("data-phone") === (isChat ? "chat" : "search");
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-selected", on ? "true" : "false");
+      });
+    }
+    var logo = el.querySelector("#ia-logo");
+    var searchBar = el.querySelector("#ia-search-bar");
+    var searchText = el.querySelector("#ia-search-text");
+    var card = el.querySelector("#ia-ai-card");
+    var aiText = el.querySelector("#ia-ai-text");
+    var thinking = el.querySelector("#ia-ai-thinking");
+    var serp = el.querySelector("#ia-serp");
+    var SATZ = DE ? "wie funktionieren llms?" : "how do llms work?";
+    var CHAT_Q = DE ? "Wie funktionieren LLMs?" : "How do LLMs work?";
+    var CHAT_A = DE ? "Ein LLM ist ein neuronales Netz, das aus sehr viel Text lernt, das jeweils nächste Token vorherzusagen. Es zerlegt deinen Text in Tokens, wandelt sie in Vektoren um, verarbeitet sie in vielen Schichten mit Attention und FFN und berechnet am Ende eine Verteilung über das nächste Token. Dieses Token wird an den Text gehängt, und der Prozess wiederholt sich. So entsteht die Antwort Schritt für Schritt. Das Modell versteht nicht wie ein Mensch; es nutzt Muster und Wahrscheinlichkeiten aus dem Trainingstext." : "An LLM is a neural network trained on a huge amount of text to predict the next token. It splits your text into tokens, turns them into vectors, processes them through many layers with attention and FFN, and produces a distribution over the next token. That token is appended to the text, and the process repeats. That is how the answer grows step by step. The model does not understand like a human; it uses patterns and probabilities from the training text.";
+    var AI = DE ? [
+      { t: "Ein LLM sagt das nächste Token voraus: Text wird in Tokens zerlegt, in Vektoren übersetzt, durch Attention und FFN geschickt, und am Ende entsteht eine Wahrscheinlichkeitsverteilung. " },
+      { t: "Das nächste Token wird angehängt, dann beginnt die Schleife von vorn.", c: "b" }
+    ] : [
+      { t: "An LLM predicts the next token: text is split into tokens, turned into vectors, passed through attention and FFN, and a probability distribution comes out. " },
+      { t: "The next token is appended, then the loop starts again.", c: "b" }
+    ];
+    var RESULTS = DE ? [
+      { name: "Wikipedia", url: "de.wikipedia.org › Large language model", title: "Large language model", snippet: "Ein Sprachmodell, das das nächste Token aus dem bisherigen Text vorhersagt.", icon: "assets/favicon_wikipedia.ico" },
+      { name: "Wikipedia", url: "de.wikipedia.org › Transformer (Maschinelles Lernen)", title: "Transformer", snippet: "Die Architektur mit Self-Attention und FFN, auf der moderne LLMs aufbauen.", icon: "assets/favicon_wikipedia.ico" },
+      { name: "arXiv", url: "arxiv.org › 1706.03762", title: "Attention Is All You Need", snippet: "Der Transformer: Attention, FFN, Residualverbindungen, Schichten.", icon: "assets/favicon_wikipedia.ico" }
+    ] : [
+      { name: "Wikipedia", url: "en.wikipedia.org › Large language model", title: "Large language model", snippet: "A language model that predicts the next token from the preceding text.", icon: "assets/favicon_wikipedia.ico" },
+      { name: "Wikipedia", url: "en.wikipedia.org › Transformer (deep learning architecture)", title: "Transformer", snippet: "The architecture with self-attention and FFN behind modern LLMs.", icon: "assets/favicon_wikipedia.ico" },
+      { name: "arXiv", url: "arxiv.org › 1706.03762", title: "Attention Is All You Need", snippet: "The transformer: attention, FFN, residual connections, layers.", icon: "assets/favicon_wikipedia.ico" }
+    ];
+    var timers = [];
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function later(fn, ms) { var id = setTimeout(fn, ms); timers.push(id); return id; }
+    function clearTimers() { timers.forEach(function (id) { clearTimeout(id); clearInterval(id); }); timers = []; }
+    function buildLogo() {
+      var letters = (DE ? "Suchmaschine" : "Search Engine").split("");
+      var palette = ["#63a44b", "#1275ac", "#9f9700", "#9185be", "#5c9baf", "#004b6f"];
+      logo.removeAttribute("aria-hidden");
+      logo.setAttribute("role", "img");
+      logo.setAttribute("aria-label", DE ? "Suchmaschine" : "Search Engine");
+      logo.innerHTML = letters.map(function (ch, i) {
+        return '<span style="color:' + palette[i % palette.length] + '">' + (ch === " " ? "&nbsp;" : ch) + "</span>";
+      }).join("");
+    }
+    function buildSerp() {
+      serp.innerHTML = RESULTS.map(function (r, i) {
+        return '<div class="ia-result r' + (i + 1) + '">' +
+          '<div class="ia-res-head"><img class="ia-res-fav" src="' + r.icon + '" alt=""><div class="ia-res-lines"><span class="ia-res-name">' + r.name + '</span><span class="ia-res-url">' + r.url + '</span></div></div>' +
+          '<div class="ia-res-title">' + r.title + '</div><div class="ia-res-snippet">' + r.snippet + '</div></div>';
+      }).join("");
+    }
+    function setCentered(on) { searchBar.classList.toggle("centered", !!on); }
+    function reset() {
+      clearTimers();
+      setCentered(true);
+      searchText.textContent = "";
+      searchText.classList.remove("typing");
+      card.classList.remove("on");
+      aiText.innerHTML = "";
+      thinking.classList.remove("on");
+      serp.classList.remove("on");
+      if (chatPhone) chatPhone.classList.remove("is-thinking", "is-answered");
+      if (chatScreen) chatScreen.classList.remove("is-answering", "is-composing", "is-sent");
+      if (chatQuestionEl) chatQuestionEl.textContent = "";
+      if (chatAnswerEl) chatAnswerEl.textContent = "";
+      if (chatInputEl) chatInputEl.textContent = "";
+      chatStarted = false;
+      setPhone(view);
+    }
+    function typeChat(el, text, speed, done) {
+      if (reduce) { el.textContent = text; if (done) done(); return; }
+      var i = 0;
+      var timer = setInterval(function () {
+        if (i < text.length) { i += 1; el.textContent = text.slice(0, i); }
+        else { clearInterval(timer); if (done) done(); }
+      }, speed);
+      timers.push(timer);
+    }
+    function typeSearch(text, done) {
+      if (reduce) { searchText.textContent = text; done(); return; }
+      searchText.classList.add("typing");
+      searchText.innerHTML = '<span class="ia-caret"></span>';
+      var i = 0;
+      var timer = setInterval(function () {
+        if (i < text.length) {
+          i += 1;
+          searchText.innerHTML = text.slice(0, i) + '<span class="ia-caret"></span>';
+        } else {
+          clearInterval(timer);
+          searchText.classList.remove("typing");
+          searchText.textContent = text;
+          later(done, 120);
+        }
+      }, 13);
+      timers.push(timer);
+    }
+    function typeAnswer() {
+      var spans = AI.map(function (seg) {
+        var span = document.createElement("span");
+        if (seg.c) span.className = "ia-" + seg.c;
+        aiText.appendChild(span);
+        return span;
+      });
+      if (reduce) { spans.forEach(function (span, i) { span.textContent = AI[i].t; }); return; }
+      var si = 0, ci = 0;
+      function tick() {
+        var remaining = 8;
+        while (remaining > 0 && si < spans.length) {
+          var seg = AI[si];
+          var take = Math.min(remaining, seg.t.length - ci);
+          ci += take;
+          remaining -= take;
+          spans[si].textContent = seg.t.slice(0, ci);
+          if (ci >= seg.t.length) { si += 1; ci = 0; }
+        }
+        if (si < spans.length) later(tick, 16);
+      }
+      tick();
+    }
+    function startChat() {
+      if (chatStarted) return;
+      chatStarted = true;
+      if (chatPhone) chatPhone.classList.remove("is-thinking", "is-answered");
+      if (chatScreen) chatScreen.classList.remove("is-answering", "is-sent");
+      if (chatQuestionEl) chatQuestionEl.textContent = "";
+      if (chatAnswerEl) chatAnswerEl.textContent = "";
+      if (chatInputEl) chatInputEl.textContent = "";
+      if (chatScreen) chatScreen.classList.add("is-composing");
+      if (reduce) {
+        if (chatQuestionEl) chatQuestionEl.textContent = CHAT_Q;
+        if (chatAnswerEl) chatAnswerEl.textContent = CHAT_A;
+        if (chatPhone) chatPhone.classList.add("is-answered");
+        if (chatScreen) chatScreen.classList.remove("is-composing");
+        if (chatScreen) chatScreen.classList.add("is-sent", "is-answering");
+        if (sequenceDone) later(function () { sequenceDone(); }, 900);
+        return;
+      }
+      typeChat(chatInputEl, CHAT_Q, 24, function () {
+        if (chatInputEl) chatInputEl.textContent = "";
+        if (chatQuestionEl) chatQuestionEl.textContent = CHAT_Q;
+        if (chatScreen) { chatScreen.classList.remove("is-composing"); chatScreen.classList.add("is-sent"); }
+        later(function () {
+          if (chatPhone) chatPhone.classList.add("is-thinking");
+          later(function () {
+            if (chatPhone) chatPhone.classList.remove("is-thinking");
+            if (chatPhone) chatPhone.classList.add("is-answered");
+            if (chatScreen) chatScreen.classList.add("is-answering");
+            typeChat(chatAnswerEl, CHAT_A, 5, function () { if (sequenceDone) sequenceDone(); });
+          }, 360);
+        }, 260);
+      });
+    }
+    function play() {
+      reset();
+      buildLogo();
+      buildSerp();
+      if (view === "chat") { startChat(); return; }
+      if (reduce) {
+        searchText.textContent = SATZ;
+        setCentered(false);
+        card.classList.add("on");
+        typeAnswer();
+        serp.classList.add("on");
+        if (view === "chat") startChat();
+        if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1200);
+        return;
+      }
+      typeSearch(SATZ, function () {
+        searchText.textContent = SATZ;
+        setCentered(false);
+        later(function () {
+          card.classList.add("on");
+          thinking.classList.add("on");
+          later(function () {
+            thinking.classList.remove("on");
+            typeAnswer();
+            serp.classList.add("on");
+            if (view === "sequence") later(function () { setPhone("chat"); startChat(); }, 1500);
+          }, 240);
+        }, 320);
+      });
+    }
+    function fit() {
+      var r = stage.getBoundingClientRect();
+      var scale = Math.min((r.width - 50) / 360, (r.height - 90) / 600);
+      if (phonesWrap) phonesWrap.style.transform = "translate(-50%, -50%) scale(" + Math.max(0.24, scale).toFixed(3) + ")";
+    }
+    buildLogo();
+    buildSerp();
+    reset();
+    var started = false, shownOnce = false;
+    function startOnce() { if (started) return; started = true; play(); }
+    if (reduce) startOnce();
+    else if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) return;
+        io.disconnect();
+        requestAnimationFrame(function () { requestAnimationFrame(function () { later(startOnce, 180); }); });
+      }, { threshold: 0.2 });
+      io.observe(stage);
+    } else startOnce();
+    var ro = null;
+    if (window.ResizeObserver) { ro = new ResizeObserver(fit); ro.observe(stage); }
+    window.addEventListener("resize", fit);
+    [searchPhone, chatPhone].forEach(function (p) {
+      if (p) p.addEventListener("click", function () {
+        started = true;
+        if (advance) { advance(); return; }
+        play();
+      });
+    });
+    modeBtns.forEach(function (b) {
+      b.addEventListener("click", function () {
+        clearTimers();
+        started = true;
+        view = b.getAttribute("data-phone");
+        reset();
+        setPhone(view);
+        if (view === "chat") startChat();
+        else play();
+      });
+    });
+    fit();
+    return {
+      update: function (s) {
+        if (s && s.view) {
+          view = s.view;
+          if (view === "sequence") {
+            setPhone("search");
+            if (started) play();
+            return;
+          }
+          setPhone(view);
+          if (view === "chat") startChat();
+        }
+      },
+      start: function () { started = true; shownOnce = true; play(); },
+      onSequenceDone: function (fn) { sequenceDone = fn; },
+      onAdvance: function (fn) { advance = fn; },
+      pause: clearTimers,
+      resume: function () { if (shownOnce && started) play(); shownOnce = true; fit(); },
+      resize: fit,
+      destroy: function () {
+        clearTimers();
+        if (ro) ro.disconnect();
+        window.removeEventListener("resize", fit);
+        el.remove();
+      }
+    };
+  }
+
+  core.register("phone", phoneScene);
+})();
