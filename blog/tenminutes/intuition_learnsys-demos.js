@@ -4743,6 +4743,8 @@
   }
   function ffnScene(root, api) {
     var DE = api.lang === "de";
+    var V = window.LearnSysVisuals;
+    var C = api.colors();
     var data = DE ? {
       fruit: {
         keys: [{ label: "Mechanik · Tür · öffnen", on: false }, { label: "Burg · Turm · König", on: true }, { label: "alt · prächtig · Garten", on: true }],
@@ -4817,6 +4819,7 @@
           '<span class="ls-ffn-bend-readout" aria-live="polite"></span>' +
         '</div>' +
       '</div>' +
+      '<div class="ls-ffn-dims"><canvas class="ls-ffn-dims-canvas" role="img"></canvas><p class="ls-ffn-dims-caption">' + (DE ? "Input und Output bleiben d_model; das FFN dehnt den Vektor auf d_ff und projiziert ihn zurück. Es arbeitet pro Token." : "Input and output stay at d_model; the FFN expands the vector to d_ff and projects it back. It works per token.") + '</p></div>' +
       '<p class="ls-ffn-caveat">' + (DE ? "Die Punkte sind symbolisch: Im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen noch höheren Raum, trennt die Cluster und projiziert zurück. So kann es Kontexte gezielt trennen und die abstrakte Repräsentation weiterreichen. Die Beschriftungen sind eine didaktische Hilfe; die Muster sind gelernte Richtungen in W₁." : "The points are symbolic: in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, separates the clusters, and projects back. That is how it separates contexts and passes the abstract representation on. The labels are a teaching aid; the patterns are learned directions in W₁.") + '</p>';
     root.appendChild(el);
     var contextsEl = el.querySelector(".ls-ffn-contexts");
@@ -4830,6 +4833,8 @@
     var bendOut = el.querySelector(".ls-ffn-bend-bar output");
     var bendReadout = el.querySelector(".ls-ffn-bend-readout");
     var bendToggle = el.querySelector(".ls-ffn-bend-toggle");
+    var dimsCanvas = el.querySelector(".ls-ffn-dims-canvas");
+    var dimsSize = null;
     var bend = 0, bendRaf = 0, size = null, ctx = null;
     var modeOrder = ["fruit", "tech"];
     var activeMode = "fruit";
@@ -5018,13 +5023,45 @@
     }
     bendRange.addEventListener("input", function () { setBend(parseFloat(bendRange.value) || 0); });
     bendToggle.addEventListener("click", function () { animateBend(bend > 0.5 ? 0 : 1); });
+    function drawDims() {
+      if (!dimsCanvas || !dimsCanvas.parentNode) return;
+      dimsSize = api.fit(dimsCanvas, dimsCanvas.parentNode);
+      var g = dimsSize.ctx, w = dimsSize.w, h = dimsSize.h;
+      g.clearRect(0, 0, w, h);
+      g.fillStyle = C.paper; g.fillRect(0, 0, w, h);
+      var groups = [
+        { x: w * 0.16, n: 8, color: C.blue, label: "Input · d_model" },
+        { x: w * 0.50, n: 24, color: C.gold, label: "Hidden · d_ff" },
+        { x: w * 0.84, n: 8, color: C.green, label: "Output · d_model" }
+      ];
+      var base = h - 20, top = 24, maxH = h - 48;
+      groups.forEach(function (grp, gi) {
+        var bw = Math.max(2, Math.min(12, (w * 0.16) / grp.n));
+        for (var i = 0; i < grp.n; i++) {
+          var bh = (0.28 + 0.60 * Math.abs(Math.sin(i * 0.82 + gi * 1.7 + 0.4))) * maxH;
+          g.fillStyle = grp.color; g.globalAlpha = 0.45 + 0.45 * (i / grp.n);
+          g.fillRect(grp.x - (grp.n * bw) / 2 + i * bw, base - bh, Math.max(1, bw - 1), bh);
+        }
+        g.globalAlpha = 1; g.fillStyle = grp.color;
+        g.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Barlow", sans-serif'; g.textAlign = "center";
+        g.fillText(grp.label, grp.x, top - 7);
+      });
+      g.strokeStyle = C.petrol; g.lineWidth = 1.2; g.fillStyle = C.petrol;
+      [[0.28, 0.42, "W₁ · Aktivierung"], [0.62, 0.76, "W₂"]].forEach(function (a) {
+        V.arrow(g, w * a[0], h * 0.50, w * a[1], h * 0.50, C.petrol, 1.5, 6);
+        g.font = '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif'; g.textAlign = "center";
+        g.fillText(a[2], w * ((a[0] + a[1]) / 2), h * 0.50 - 6);
+      });
+      dimsCanvas.setAttribute("aria-label", DE ? "Input d_model, verborgenes d_ff und Output d_model als Balken." : "Input d_model, hidden d_ff and output d_model as bars.");
+    }
     function resize() {
       size = api.fit(bendCanvas, bendStage);
       drawBend();
+      drawDims();
     }
     var ro = null;
     if (window.ResizeObserver) { ro = new ResizeObserver(resize); ro.observe(bendStage); }
-    function onTheme() { drawBend(); }
+    function onTheme() { drawBend(); drawDims(); }
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", onTheme);
     updateBendReadout();
@@ -6728,23 +6765,8 @@
         return { word: l.word, p: l.p, value: [l.value[0] / len, l.value[1] / len, l.value[2] / len] };
       });
     }
-    function fitBounds(pts) {
-      var min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
-      function add(v) { for (var i = 0; i < 3; i++) { if (v[i] < min[i]) min[i] = v[i]; if (v[i] > max[i]) max[i] = v[i]; } }
-      pts.forEach(function (tok) { tok.forEach(add); });
-      landmarks().forEach(function (l) { add(l.value); });
-      var c = [(min[0] + max[0]) / 2, (min[1] + max[1]) / 2, (min[2] + max[2]) / 2];
-      var ext = Math.max(max[0] - min[0], max[1] - min[1], max[2] - min[2], 0.001);
-      return { c: c, ext: ext };
-    }
-    function project(v, b) {
-      var x = (v[0] - b.c[0]) / b.ext, y = (v[1] - b.c[1]) / b.ext, z = (v[2] - b.c[2]) / b.ext;
-      var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
-      var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
-      var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
-      var s = Math.min(size.w * 0.40, size.h * 0.40) / (1 + z2 * 0.22) * zoom;
-      return { x: size.w / 2 + x1 * s, y: size.h / 2 - y2 * s, z: z2 };
-    }
+    function fitBounds(pts) { return V.trajBounds(pts, landmarks().map(function (l) { return l.value; })); }
+    function project(v, b) { return V.trajProject(v, b, yaw, pitch, zoom, size); }
     function drawLabel(x, y, text, col, align) {
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       var tw = ctx.measureText(text).width;
@@ -7278,18 +7300,13 @@
         V.label(ctx, DE ? "GPT-2-Daten fehlen" : "GPT-2 data missing", w / 2, h / 2, { align: "center", color: C.muted, bg: false });
         return;
       }
-      var min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
-      data.points.forEach(function (tok) { tok.forEach(function (p) { for (var d = 0; d < 3; d++) { min[d] = Math.min(min[d], p[d]); max[d] = Math.max(max[d], p[d]); } }); });
-      var center = [(min[0] + max[0]) / 2, (min[1] + max[1]) / 2, (min[2] + max[2]) / 2];
-      var ext = Math.max(max[0] - min[0], max[1] - min[1], max[2] - min[2], 0.001);
+      var flat = [];
+      data.points.forEach(function (tok) { tok.forEach(function (p) { flat.push(p); }); });
+      var b = V.trajBounds(flat);
       var yaw = -0.62, pitch = 0.36, zoom = 0.92;
       function P(p) {
-        var x = (p[0] - center[0]) / ext, y = (p[1] - center[1]) / ext, z = (p[2] - center[2]) / ext;
-        var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
-        var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
-        var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
-        var sc = Math.min(w * 0.42, h * 0.42) * zoom / (1 + z2 * 0.20);
-        return { x: w * 0.50 + x1 * sc, y: h * 0.54 - y2 * sc, z: z2 };
+        var q = V.trajProject(p, b, yaw, pitch, zoom, { w: w, h: h });
+        return { x: q.x, y: q.y, z: q.z };
       }
       var axes = [{ v: [1.1, 0, 0], c: C.blue, l: "PC1" }, { v: [0, 1.1, 0], c: C.green, l: "PC2" }, { v: [0, 0, 1.1], c: C.gold, l: "PC3" }];
       var o = P([0, 0, 0]);

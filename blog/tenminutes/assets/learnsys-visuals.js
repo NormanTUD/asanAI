@@ -214,5 +214,24 @@
     return w;
   };
 
+  V.trajBounds = function (points, marks) {
+    var min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
+    function add(v) { for (var i = 0; i < 3; i++) { if (v[i] < min[i]) min[i] = v[i]; if (v[i] > max[i]) max[i] = v[i]; } }
+    (points || []).forEach(add);
+    (marks || []).forEach(add);
+    if (!isFinite(min[0])) return { c: [0, 0, 0], ext: 1 };
+    var c = [(min[0] + max[0]) / 2, (min[1] + max[1]) / 2, (min[2] + max[2]) / 2];
+    return { c: c, ext: Math.max(max[0] - min[0], max[1] - min[1], max[2] - min[2], 0.001) };
+  };
+
+  V.trajProject = function (v, b, yaw, pitch, zoom, size) {
+    var x = (v[0] - b.c[0]) / b.ext, y = (v[1] - b.c[1]) / b.ext, z = (v[2] - b.c[2]) / b.ext;
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
+    var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
+    var s = Math.min(size.w * 0.40, size.h * 0.40) / (1 + z2 * 0.22) * (zoom || 1);
+    return { x: size.w / 2 + x1 * s, y: size.h / 2 - y2 * s, z: z2 };
+  };
+
   window.LearnSysVisuals = V;
 })();
