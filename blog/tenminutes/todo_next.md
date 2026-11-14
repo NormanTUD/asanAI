@@ -1411,3 +1411,29 @@ Marked as todo; work through carefully, one block at a time.
 - [ ] Unify the demo code: extract shared scene helpers (canvas fit/resize, theme redraw, read-only arrows, labels, readouts, tab bars, nav/busy/finish) and use them everywhere without losing any functionality. Each demo behaviour should have one source of truth so fixes are central.
 - [ ] Add defensive guards for undefined/NaN/out-of-range values in every shared and scene-specific render path.
 - [ ] Final regression: every page, every slide, both languages, desktop/mobile, keyboard/arrow navigation, monkey test, validators.
+
+## Final synchronization and commit (explicitly requested)
+
+- [ ] When the current work is done, read **todo_next.md completely** again, collect every still-open item, add all of them to the opencode todo list, and work through them one by one. Do not drop anything.
+- [ ] Keep both lists synchronized after every pass.
+- [ ] Only when every item is verified done: `git commit` the complete Ten Minutes work with a concise, accurate message. Do not commit before that.
+
+## Latest synchronized status (2026-11-14)
+
+- [x] Backprop slide added after the neural section (five layers, forward, error, layer-by-layer corrections, optimizer, smooth fade). The Difference/bar are inside the box; step/optimizer labels no longer overlap the layer labels.
+- [x] First slide asks “Wie funktionieren LLMs?” and shows a short realistic answer.
+- [x] Gauss intro has “Verrauschte Beobachtungen”, smooth fade between images and demo.
+- [x] Truth demo: green truth curve/band, sentence points, false red/lilac X further outside.
+- [x] Languages: six sentences at once, language buttons hidden, meaning-over-characters + attention/FFN text.
+- [x] Bausteine transformer detail: GPT-2 trajectory mini with 768→3 PCA warning.
+- [x] Global Next finishes the agent demo (verified); position and unembedding have finish/busy.
+- [x] 32 slides, 1..32 navigation; page test 26/26; height 34/0; check_all --fast all green.
+- [ ] Prose rewrite (clarity, concision, DE/EN parity).
+- [ ] Smoothness pass for every transition.
+- [ ] Defensive guards everywhere.
+- [ ] Content/prerequisite audit and fact-check of every claim/source.
+- [ ] Shared demo helpers / single source of truth / deduplication.
+- [ ] Visual/thematic audit.
+- [ ] Final 32-slide 10-minute monkey regression.
+- [ ] Read this file completely, mirror all open items into the opencode list, and work through them.
+- [ ] Only when everything is verified: `git commit` with a concise message.
