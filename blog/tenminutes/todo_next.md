@@ -1343,3 +1343,5 @@ Marked as todo; work through carefully, one block at a time.
 - [ ] FFN: start with the bend at 0; explain the points are symbolic, live nonlinearly in high dimensions, and that the MLP lifts them higher and projects back to separate clusters; show how that lets the model represent contexts and continue to the next word.
 - [ ] “Ähnliche Worte finden”: rework fundamentally with the angle/similarity demos from `../embeddinglab.php`.
 - [ ] Re-test everything.
+
+- [ ] Mobile: many demos leave a lot of empty space at the bottom, so they render smaller than necessary. Make every demo fill the available stage height without breaking controls or overflow.

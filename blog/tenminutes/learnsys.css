@@ -1847,3 +1847,6 @@ h1,h2,h3,h4{
 .ls-bs-source a{color:var(--ls-petrol);text-decoration:underline}
 
 .ls-sim-unembed-controls{gap:6px}
+
+.ls-demo{display:flex;flex-direction:column}
+.ls-demo > *{flex:1 1 auto;min-height:0;height:100%}
