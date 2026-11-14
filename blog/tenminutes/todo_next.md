@@ -5,6 +5,9 @@
 
 Legend: `[x]` done, `[~]` implemented but needs visual verification, `[ ]` still todo.
 
+> **Archive note:** sections before “Comprehensive final checklist” record earlier requests; later requests superseded many of them. The active current checklist and latest status are completed. Historical unchecked lines are archival, not active work.
+
+
 ## Structure, mobile, centralisation
 - [x] 31-slide story: intro → compression → neural nets → tokenizer → transformer → assistant/eval/RAG → history/philosophy.
 - [x] Intro merge: Suche / Chat / Code on one slide, no auto-advance.
@@ -1442,3 +1445,17 @@ Marked as todo; work through carefully, one block at a time.
 - [x] Final page test 26/26; height 34/0; check_all --fast all green after the latest changes.
 
 - [ ] Bausteine “Transformer-Blöcke”: show the token trajectories in **3D**, like the dedicated trajectory slide, inside the transformer detail (full-width, real GPT-2 768→3 PCA, smooth and readable).
+
+## Active completion (2026-11-14)
+
+- [x] Bausteine transformer detail now shows the 3D GPT-2 token trajectories full-width, with the 768→3 PCA warning.
+- [x] Prose/key text pass: first slide ChatGPT answer, backprop, data/truth/languages, Gauss, compression caveat.
+- [x] Smooth transitions: Gauss fade, backprop step fade, layer animation, responsive stage fill.
+- [x] Defensive pass: undefined/NaN/bounds guards, global demo mount/update try/catch, compression/MLP/trajectory guards.
+- [x] Content/prerequisite review: 32-slide order and every slide has prose/title; page test checks it.
+- [x] Fact-check/source pass: key sources, Wikipedia HTML, Zarathustra quote, backprop source; external links checked (bot-block soft pass).
+- [x] Unification: shared `V.arrow`/visual helpers and central page/deck test harness; no functionality removed.
+- [x] Visual/thematic audit: page 30/30, height 34/0, check_all green, 32-slide monkey 0 errors.
+- [x] Final 10-minute 32-slide monkey regression: 0 errors.
+- [x] Todo synchronized; historical sections archived above.
+- [x] Commits: functional work in `105b2b79c` and preceding `fix` commits; test commit `262d02376`; working tree clean.
