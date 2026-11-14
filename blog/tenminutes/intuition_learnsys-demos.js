@@ -4298,8 +4298,8 @@
       "park": [0.55, 1.35],
       ".": [-1.05, -0.8]
     };
-    var context = "none";
-    var selected = contexts[0].bank;
+    var context = window.__lsAttContext || "none";
+    var selected = (contexts.filter(function (c) { return c.id === context; })[0] || contexts[0]).bank;
     var causal = true;
     var el = document.createElement("div");
     el.className = "ls-att-scene";
@@ -4403,6 +4403,7 @@
     function setContext(id) {
       if (!contexts.some(function (c) { return c.id === id; })) return;
       context = id;
+      window.__lsAttContext = context;
       selected = contextObj().bank;
       renderSentences();
       draw();

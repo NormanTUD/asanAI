@@ -289,13 +289,9 @@
 	function updateNextButtonGate() {
 		const nextBtn = copyEl("ism-next");
 		if (!nextBtn) return;
-		const blocked = (cur === 7 && !separationInfo().separated);
-		nextBtn.disabled = blocked;
-		nextBtn.setAttribute("aria-disabled", String(blocked));
-		if (cur === 7 && !separationInfo().separated) {
-			nextBtn.title = DE ? "Erst wenn eine Schwelle trennt" : "Only when one threshold separates";
-			nextBtn.textContent = DE ? "Weiter →" : "Next →";
-		} else if (cur === SCENES.length - 1) {
+		nextBtn.disabled = false;
+		nextBtn.setAttribute("aria-disabled", "false");
+		if (cur === SCENES.length - 1) {
 			nextBtn.removeAttribute("title");
 			nextBtn.textContent = DE ? "Nächste Folie →" : "Next slide →";
 		} else {
@@ -533,19 +529,6 @@
 	}
 
 	function next() {
-		if (cur === 7 || cur === 8) {
-			const presetEl = document.getElementById("ism-dense-preset");
-			if (presetEl) {
-				const at = PRESET_ORDER.indexOf(presetEl.value);
-				const nextPreset = at < 0 ? "separator" : PRESET_ORDER[at + 1];
-				if (nextPreset) {
-					presetEl.value = nextPreset;
-					presetEl.dispatchEvent(new Event("change", { bubbles: true }));
-					return;
-				}
-			}
-		}
-		if (cur === 7 && !separationInfo().separated) return;
 		if (cur === SCENES.length - 1) {
 			if (window.LearnSys && window.LearnSys.state && window.LearnSys.go) {
 				const st = window.LearnSys.state();

@@ -322,7 +322,7 @@
       title: "Kontext zieht die Bank an seinen Platz",
       body: "Woher weiß ein Wort, welche Nachbarn wichtig sind? Self-Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen. So bewegt sich „Bank“ in Richtung Geld oder Park. Klicke ein beliebiges Wort an, um seine Zeile zu sehen. Ein echter Layer hat viele Heads; die Demo zeigt einen.",
       watch: "Klicke ein Wort an. Welche Nachbarn bekommen Aufmerksamkeit?",
-      demoState: { scene: "attention", context: "none" },
+      demoState: { scene: "attention" },
       context: "Ohne eindeutigen Kontext bleibt die Bank in der Mitte, mehrdeutig. Mit Geld oder Park verschiebt sich der Vektor. Das obere Dreieck in der Matrix ist die kausale Maske: Jedes Token sieht nur die Vergangenheit, damit das Modell lernt, Sätze zu vervollständigen, deren Ende es noch nicht kennt. Das gilt für generative Modelle. Modelle, die fertigen Text bewerten, brauchen keine kausale Maske und dürfen beide Richtungen sehen.",
       deep: "Ein echter Head berechnet Query-, Key- und Value-Vektoren, macht aus den Skalarprodukten mit Softmax Gewichte und summiert die Values. Die Demo zeigt die Bewegung, nicht die volle Rechnung.",
       boxes: [
@@ -390,7 +390,7 @@
       title: "Context pulls the bank into place",
       body: "How does a word know which neighbours matter? Self-attention lets each token look at the others, decide which matter, and pull their information into its vector. That is how “bank” moves toward the money or park reading. Click any word to see its row. A real layer has many heads; the demo shows one.",
       watch: "Click a word. Which neighbours receive attention?",
-      demoState: { scene: "attention", context: "none" },
+      demoState: { scene: "attention" },
       context: "With no unambiguous context, the bank stays in the middle, ambiguous. With money or park, the vector shifts. The upper triangle in the matrix is the causal mask: each token sees only the past, so the model learns to complete sentences whose end it does not yet know. That applies to generative models. Models that score finished text need no causal mask and may look in both directions.",
       deep: "A real head computes query, key, and value vectors, turns their dot products into weights with softmax, and sums the values. The demo shows the movement, not the full arithmetic.",
       boxes: [
@@ -1680,7 +1680,7 @@
     kicker: DE ? "Attention" : "Attention",
     body: DE ? "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz oder drücke Weiter; die Matrix zeigt, wohin die Bank schaut. Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen." : "Three sentences, one word: a bank without context, a bank for money, a bank in the park. Click a sentence or press Next; the matrix shows where the bank looks. Attention lets each token read the others, decide which matter, and pull their information into its vector.",
     watch: DE ? "Klicke die drei Sätze oder drücke Weiter. Welches Wort zieht die Bank?" : "Click the three sentences or press Next. Which word pulls the bank?",
-    demoState: { scene: "attention", context: "none" },
+    demoState: { scene: "attention" },
     context: attentionSteps[1].context,
     deep: attentionSteps[1].deep,
     boxes: attentionSteps[1].boxes.concat(attentionSteps[0].boxes),
