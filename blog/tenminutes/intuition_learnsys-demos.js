@@ -9533,6 +9533,8 @@
       setControl: function (name, value) { return scene && scene.setControl ? scene.setControl(name, value) : false; },
       pause: function () { if (scene && scene.pause) scene.pause(); },
       resume: function () { if (scene && scene.resume) scene.resume(); },
+      busy: function () { return scene && scene.busy ? scene.busy() : false; },
+      finish: function () { if (scene && scene.finish) scene.finish(); },
       next: function () { return scene && scene.next ? scene.next() : false; },
       prev: function () { return scene && scene.prev ? scene.prev() : false; },
       onKey: function (e) { return scene && scene.onKey ? scene.onKey(e) : false; },

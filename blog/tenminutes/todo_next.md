@@ -1364,3 +1364,10 @@ Marked as todo; work through carefully, one block at a time.
 - [x] Page test 26/26 (every slide, unembedding tabs), height 34/0, check_all --fast all green.
 - [~] Timings: the only noticeable slow path is the deliberately heavy 32×32 live-matrix/Temml + systematic monkey pass; actual user controls are responsive.
 - [~] Overall coherence/smoothness/refactor: shared arrow helper and test harness added; more generalisation remains possible.
+
+## Newest requests (2026-11-14, final additions)
+
+- [ ] **Backprop slide** after the 32×32×32/MLP section in “Was sind neuronale Netze?”: a five-layer fcnn-style network; forward pass shows output vs target; compute the difference; adjust the last layer so “the result would be better if the first value were a little smaller and the second a little larger”; then make the previous layer the new output and repeat with the next layer's outputs; show gradients as the amount of difference and the optimizer applying them; gorgeous, interactive, stepwise.
+- [ ] **Bausteine:** in the transformer-block detail show the GPT-2 token trajectories: the blocks repeatedly shift tokens in space. Use the real GPT-2 small data but state clearly that 768 dimensions are projected to 3, which loses a lot but makes it drawable; animate/step the layers.
+- [ ] Global Next must finish running demos before advancing; check every animated demo (the agent demo is the first confirmed failure).
+- [ ] Keep the Zarathustra quote “Man muss noch Chaos in sich tragen …” (done).
