@@ -1854,3 +1854,11 @@ h1,h2,h3,h4{
 .ls-tokenize-nav,.ls-bs-nav{display:none !important}
 #ism-prev,#ism-next{display:none !important}
 .ls-traj-next{display:none !important}
+
+.ls-bs-book{border:1px solid var(--ls-line);background:rgba(255,255,255,.72);padding:8px 10px;margin-top:6px}
+.ls-bs-book-head{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.08em}
+.ls-bs-book-title{margin:4px 0 2px;font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol)}
+.ls-bs-book-quote{margin:0;padding-left:10px;border-left:3px solid var(--ls-green);font:italic var(--ls-fs-ui-sm)/1.5 Georgia,serif;color:var(--ls-ink)}
+.ls-bs-book-src{margin:3px 0 0;font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-bs-book-src a{color:var(--ls-petrol);text-decoration:underline}
+.ls-syn-comment{color:#7f9b93;font-style:italic}

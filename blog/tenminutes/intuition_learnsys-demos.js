@@ -6732,8 +6732,8 @@
       {
         id: "data", label: "Daten", short: "Text → Muster", icon: "D", color: "gold",
         title: "Daten",
-        body: "Das ist der Anfang des HTML-Codes des Wikipedia-Artikels „Large language model“, stark gekürzt und nur angedeutet. Es ist einer von sehr vielen Dokumenten. Der Code enthält Navigation, Stil und Rauschen, aber auch den Text und die Fakten. Das Modell lernt aus beidem: HTML-Struktur und Inhalt. Davon braucht es extrem viel.",
-        points: ["HTML ist Struktur und Rauschen", "der Text trägt die Fakten", "einer von sehr vielen Dokumenten"],
+        body: "Das ist der Anfang des HTML-Codes des Wikipedia-Artikels „Large language model“, stark gekürzt. Danach folgt eine Auslassung und ein Buchtext aus dem Korpus, hier Nietzsche. Der Code enthält Navigation, Stil und Rauschen, aber auch Text und Fakten. Das Modell lernt aus beidem: HTML-Struktur und Inhalt. Davon braucht es extrem viel.",
+        points: ["HTML ist Struktur und Rauschen", "der Text trägt die Fakten", "auch Bücher gehören zum Korpus"],
         mini: "data",
         source: { label: "Wikipedia: Large language model", url: "https://en.wikipedia.org/wiki/Large_language_model" }
       },
@@ -6774,8 +6774,8 @@
       {
         id: "data", label: "Data", short: "text → patterns", icon: "D", color: "gold",
         title: "Data",
-        body: "This is the beginning of the HTML of the Wikipedia article “Large language model”, heavily shortened and only suggested. It is one of very many documents. The code contains navigation, style, and noise, but also the text and the facts. The model learns from both: HTML structure and content. It needs an enormous amount of this.",
-        points: ["HTML is structure and noise", "the text carries the facts", "one of very many documents"],
+        body: "This is the beginning of the HTML of the Wikipedia article “Large language model”, heavily shortened. Then comes an omission and a book text from the corpus, here Nietzsche. The code contains navigation, style, and noise, but also text and facts. The model learns from both: HTML structure and content. It needs an enormous amount of this.",
+        points: ["HTML is structure and noise", "the text carries the facts", "books are part of the corpus too"],
         mini: "data",
         source: { label: "Wikipedia: Large language model", url: "https://en.wikipedia.org/wiki/Large_language_model" }
       },
@@ -7067,20 +7067,23 @@
           '<div class="ls-bs-html-head">' + (DE ? "Anfang des HTML-Codes · gekürzt" : "Beginning of the HTML · shortened") + '</div>' +
           '<pre><code>' +
           '<span class="ls-syn-tag">&lt;!DOCTYPE html&gt;</span>\n' +
-          '<span class="ls-syn-tag">&lt;html</span> <span class="ls-syn-attr">class</span>=<span class="ls-syn-str">"client-nojs"</span> <span class="ls-syn-attr">lang</span>=<span class="ls-syn-str">"en"</span> <span class="ls-syn-attr">dir</span>=<span class="ls-syn-str">"ltr"</span><span class="ls-syn-tag">&gt;</span>\n' +
+          '<span class="ls-syn-tag">&lt;html</span> <span class="ls-syn-attr">class</span>=<span class="ls-syn-str">"client-nojs vector-feature-…"</span> <span class="ls-syn-attr">lang</span>=<span class="ls-syn-str">"en"</span> <span class="ls-syn-attr">dir</span>=<span class="ls-syn-str">"ltr"</span><span class="ls-syn-tag">&gt;</span>\n' +
           '<span class="ls-syn-tag">&lt;head&gt;</span>\n' +
           '  <span class="ls-syn-tag">&lt;meta</span> <span class="ls-syn-attr">charset</span>=<span class="ls-syn-str">"UTF-8"</span><span class="ls-syn-tag">&gt;</span>\n' +
           '  <span class="ls-syn-tag">&lt;title&gt;</span>Large language model - Wikipedia<span class="ls-syn-tag">&lt;/title&gt;</span>\n' +
-          '  <span class="ls-syn-tag">&lt;link</span> <span class="ls-syn-attr">rel</span>=<span class="ls-syn-str">"stylesheet"</span> <span class="ls-syn-attr">href</span>=<span class="ls-syn-str">"/w/load.php?..."</span><span class="ls-syn-tag">&gt;</span>\n' +
+          '  <span class="ls-syn-tag">&lt;meta</span> <span class="ls-syn-attr">name</span>=<span class="ls-syn-str">"generator"</span> <span class="ls-syn-attr">content</span>=<span class="ls-syn-str">"MediaWiki 1.48.0-wmf.4"</span><span class="ls-syn-tag">&gt;</span>\n' +
+          '  <span class="ls-syn-tag">&lt;meta</span> <span class="ls-syn-attr">name</span>=<span class="ls-syn-str">"referrer"</span> <span class="ls-syn-attr">content</span>=<span class="ls-syn-str">"origin"</span><span class="ls-syn-tag">&gt;</span>\n' +
+          '  <span class="ls-syn-tag">&lt;link</span> <span class="ls-syn-attr">rel</span>=<span class="ls-syn-str">"stylesheet"</span> <span class="ls-syn-attr">href</span>=<span class="ls-syn-str">"/w/load.php?lang=en&amp;modules=…"</span><span class="ls-syn-tag">&gt;</span>\n' +
           '<span class="ls-syn-tag">&lt;/head&gt;</span>\n' +
-          '<span class="ls-syn-tag">&lt;body</span> <span class="ls-syn-attr">class</span>=<span class="ls-syn-str">"skin-vector"</span><span class="ls-syn-tag">&gt;</span>\n' +
-          '  <span class="ls-syn-tag">&lt;div</span> <span class="ls-syn-attr">id</span>=<span class="ls-syn-str">"mw-content-text"</span><span class="ls-syn-tag">&gt;</span>\n' +
-          '    <span class="ls-syn-tag">&lt;p&gt;</span>A <span class="ls-syn-tag">&lt;b&gt;</span>large language model<span class="ls-syn-tag">&lt;/b&gt;</span> (<span class="ls-syn-tag">&lt;b&gt;</span>LLM<span class="ls-syn-tag">&lt;/b&gt;</span>) is a ...<span class="ls-syn-tag">&lt;/p&gt;</span>\n' +
-          '  <span class="ls-syn-tag">&lt;/div&gt;</span>\n' +
-          '<span class="ls-syn-tag">&lt;/body&gt;</span>\n' +
-          '<span class="ls-syn-tag">&lt;/html&gt;</span>' +
+          '<span class="ls-syn-comment">&lt;!-- … 1 062 378 Bytes HTML … --&gt;</span>' +
           '</code></pre></div>' +
-          '<p class="ls-bs-html-note">' + (DE ? "Die echte Seite ist viele Megabyte groß. Das Modell sieht nicht „den Artikel“, sondern eine sehr lange Folge von Zeichen und Tags." : "The real page is many megabytes. The model does not see “the article”, but a very long sequence of characters and tags.") + '</p>';
+          '<div class="ls-bs-book">' +
+          '<div class="ls-bs-book-head">' + (DE ? "… danach: ein Buchtext aus dem Korpus" : "… then: a book text from the corpus") + '</div>' +
+          '<p class="ls-bs-book-title">' + (DE ? "Also sprach Zarathustra. Ein Buch für Alle und Keinen." : "Thus Spoke Zarathustra. A Book for All and None.") + '</p>' +
+          '<p class="ls-bs-book-quote">' + (DE ? "„Ich lehre euch den Übermenschen. Der Mensch ist Etwas, das überwunden werden soll.“" : "“I teach you the overman. Man is something that shall be overcome.”") + '</p>' +
+          '<p class="ls-bs-book-src">' + (DE ? "Friedrich Nietzsche, 1883 · " : "Friedrich Nietzsche, 1883 · ") + '<a href="' + (DE ? "https://www.gutenberg.org/ebooks/7205" : "https://www.gutenberg.org/ebooks/1998") + '" target="_blank" rel="noopener">Project Gutenberg</a></p>' +
+          '</div>' +
+          '<p class="ls-bs-html-note">' + (DE ? "Die echte Seite ist über ein Megabyte groß. Das Modell sieht nicht „den Artikel“, sondern eine sehr lange Folge von Zeichen, Tags und Text. Zwischen dem HTML und dem Buch liegt eine Auslassung: Der Korpus enthält beides." : "The real page is over a megabyte. The model does not see “the article”, but a very long sequence of characters, tags, and text. Between the HTML and the book sits an omission: the corpus contains both.") + '</p>';
       } else if (b.sub) {
         html += '<div class="ls-bs-subgrid">' + b.sub.map(function (s, i) {
           return '<div class="ls-bs-sub"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + (i === 0 ? "attention" : "ffn") + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
@@ -8575,13 +8578,14 @@
     var mix = api.util.hexMix;
     var seed = 19;
     function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
-    var GROUP = [0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 3, 3];
+    var GROUP = [0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 3, 3, 2];
     var nodes = [], edges = [];
     (function build() {
-      var per = 12, clusters = 12;
+      var per = 12, clusters = 13;
       for (var c = 0; c < clusters; c++) {
         var cx = (c % 4 + 0.5) / 4;
         var cy = (Math.floor(c / 4) + 0.5) / 3;
+        if (c === 12) { cx = 0.84; cy = 0.78; }
         for (var k = 0; k < per; k++) {
           var a = k / per * Math.PI * 2 + rnd() * 0.5;
           var r = 0.05 + rnd() * 0.09;
@@ -8589,7 +8593,7 @@
         }
       }
       nodes.forEach(function (n) {
-        if (n.c < 8) return;
+        if (n.c < 8 || n.c === 12) return;
         var idx = n.c - 8;
         n.y0 = 0.94 + idx * 0.025 + (rnd() - 0.5) * 0.015;
         n.x0 = 0.18 + idx * 0.22 + (rnd() - 0.5) * 0.05;
@@ -8601,7 +8605,7 @@
         }
       }
       clusterCenters = [];
-      for (var cc = 0; cc < 12; cc++) {
+      for (var cc = 0; cc < 13; cc++) {
         var group = nodes.filter(function (n) { return n.c === cc; });
         var sx = 0, sy = 0;
         group.forEach(function (n) { sx += n.x0; sy += n.y0; });
@@ -8634,32 +8638,34 @@
     }
     var clusterNames = DE ? [
       "Katzenartige", "Menschenaffen", "andere Säugetiere", "Vögel", "Fische", "Insekten",
-      "Pflanzen", "Pilze", "Gegenstände", "Mathematik", "Gedanken", "Träume"
+      "Pflanzen", "Pilze", "Gegenstände", "Mathematik", "Gedanken", "Träume", "Archaea"
     ] : [
       "cats", "great apes", "other mammals", "birds", "fish", "insects",
-      "plants", "fungi", "objects", "mathematics", "thoughts", "dreams"
+      "plants", "fungi", "objects", "mathematics", "thoughts", "dreams", "archaea"
     ];
     var nodeNames = DE ? [
       ["Hauskatze", "Löwe", "Tiger"], ["Schimpanse", "Bonobo", "Gorilla"], ["Pferd", "Hund", "Wal"],
       ["Amsel", "Meise", "Adler"], ["Lachs", "Hai"], ["Biene", "Käfer"],
       ["Eiche", "Rose"], ["Steinpilz", "Hefe"],
-      ["Stuhl", "Stein"], ["Zahl 7", "Primzahl"], ["Idee", "Satz"], ["Traum", "Albtraum"]
+      ["Stuhl", "Stein"], ["Zahl 7", "Primzahl"], ["Idee", "Satz"], ["Traum", "Albtraum"],
+      ["Methanobakterien", "Halobakterien"]
     ] : [
       ["house cat", "lion", "tiger"], ["chimpanzee", "bonobo", "gorilla"], ["horse", "dog", "whale"],
       ["blackbird", "tit", "eagle"], ["salmon", "shark"], ["bee", "beetle"],
       ["oak", "rose"], ["mushroom", "yeast"],
-      ["chair", "stone"], ["number 7", "prime"], ["idea", "sentence"], ["dream", "nightmare"]
+      ["chair", "stone"], ["number 7", "prime"], ["idea", "sentence"], ["dream", "nightmare"],
+      ["methanogens", "halophiles"]
     ];
-    var superNames = DE ? ["Säugetiere", "andere Tiere", "Pflanzen & Pilze", "Nicht-Leben"] : ["mammals", "other animals", "plants & fungi", "non-living"];
+    var superNames = DE ? ["Säugetiere", "andere Tiere", "Pflanzen, Pilze & Archaeen", "Nicht-Leben"] : ["mammals", "other animals", "plants, fungi & archaea", "non-living"];
     var phaseLabels = DE ? [
       "Einzelfälle · schon in lokalen Gruppen",
-      "8 lebende Gruppen · Katzenartige, Menschenaffen, Säugetiere, Vögel, Fische, Insekten …",
+      "9 lebende Gruppen · Katzenartige, Menschenaffen, Säugetiere, Vögel, Fische, Insekten, Pflanzen, Pilze, Archaea",
       "3 Gruppen · Wirbeltiere, Wirbellose, Pflanzen & Pilze",
       "Lebewesen · Bilaterien, Eukaryoten",
       "Seiendes · Lebewesen, Gegenstände, Mathematik, Gedanken, Träume"
     ] : [
       "individual cases · already in local groups",
-      "8 living groups · cats, great apes, mammals, birds, fish, insects …",
+      "9 living groups · cats, great apes, mammals, birds, fish, insects, plants, fungi, archaea",
       "3 groups · vertebrates, invertebrates, plants & fungi",
       "living things · bilaterians, eukaryotes",
       "what exists · living things, objects, mathematics, thoughts, dreams"
@@ -8846,19 +8852,19 @@
         var appear = clamp01((tt - 3.15) / 0.85);
         if (appear > 0.01) {
           nodes.forEach(function (n) {
-            if (n.c < 8) return;
+            if (n.c < 8 || n.c === 12) return;
             var u = clamp01((tt - 3.15) / 0.85);
             var x = lerp(n.x0, center.x, u), y = lerp(n.y0, center.y, u);
             glow(X({x:x}), Y({y:y}), 2.8, n.col, appear * 0.9);
           });
           clusterCenters.forEach(function (cc, i) {
-            if (i < 8) return;
+            if (i < 8 || i === 12) return;
             var u = clamp01((tt - 3.15) / 0.85);
             var x = lerp(cc.x, center.x, u), y = lerp(cc.y, center.y, u);
             labelCat(clusterNames[i], X({x:x}), Y({y:y}) - 10, palette[i % palette.length], clamp01((3.92 - tt) / 0.6) * appear);
           });
           nodes.forEach(function (n) {
-            if (n.c < 8 || tt > 3.75) return;
+            if (n.c < 8 || n.c === 12 || tt > 3.75) return;
             var local = nodes.indexOf(n) - n.c * 12;
             if (local > 1) return;
             var u = clamp01((tt - 3.15) / 0.85);

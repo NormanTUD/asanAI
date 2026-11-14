@@ -1347,3 +1347,20 @@ Marked as todo; work through carefully, one block at a time.
 - [ ] Mobile: many demos leave a lot of empty space at the bottom, so they render smaller than necessary. Make every demo fill the available stage height without breaking controls or overflow.
 
 - [ ] Remove the remaining demo-local “Weiter”/“Zurück” navigation rows and use only the global next/previous controls (keep direct dots/context chips where they are not a next button).
+
+## Final status (2026-11-14)
+
+- [x] First slide: agent window has no green bubble above while the user types; window enlarged; code fits.
+- [x] Bausteine data block: actual beginning of the Wikipedia “Large language model” HTML via curl, syntax-highlighted; after an ellipsis a clean Zarathustra book excerpt with Gutenberg link.
+- [x] Compression: grouping fixed to mammals/other animals/plants & fungi/non-living; cats are mammals; more apes; labels no longer collapse silently.
+- [x] Position: a point remains at every visited great-circle position; “Großkreiswinkel” removed.
+- [x] Attention noise: Neujahr/Zukunft/Neugier visible; context slider and arrow keys; label “Kontext”.
+- [x] Attention: context, bank and causal matrix merged into one slide with sub-slides.
+- [x] Neural: line approximates, not bends; MLP cached across forward/back; FFN starts at bend 0 with symbolic high-dimensional explanation.
+- [x] Unembedding: map + angle + scale invariance + all-token angle/sort/probability animation.
+- [x] 31 slides; 1..31 navigation.
+- [x] Mobile demos fill the stage; local demo nav rows removed in favour of global controls.
+- [x] 10-minute random monkey run (10 s per slide, every control/field/canvas): 0 errors; final quick regression 0 errors.
+- [x] Page test 26/26 (every slide, unembedding tabs), height 34/0, check_all --fast all green.
+- [~] Timings: the only noticeable slow path is the deliberately heavy 32×32 live-matrix/Temml + systematic monkey pass; actual user controls are responsive.
+- [~] Overall coherence/smoothness/refactor: shared arrow helper and test harness added; more generalisation remains possible.
