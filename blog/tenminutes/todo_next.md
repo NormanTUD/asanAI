@@ -1327,3 +1327,19 @@ Marked as todo; work through carefully, one block at a time.
 - [ ] Deduplicate code; keep each scene self-contained and easy to modify.
 - [ ] Write tests for every Ten Minutes page and a smoke path for every slide/demo: initial render, forward/back, controls, no console errors, no overflow, no height jump.
 - [ ] Keep the existing validators green and add the new tests to the documented check list.
+
+## Newest request (2026-11-14, after the long monkey run)
+
+- [ ] First slide “Was ist ein LLM? Chat und Code”: while the user prompt is typed below, the agent window above must stay empty (no green bar). Make the window ~10% larger so everything fits without scrolling.
+- [ ] Compression: name more early species/apes, not only human/chimp; fix the taxonomy grouping so “Katzenartige”, “Säugetiere” and the rest are plausible; cats are mammals. Mathematics, thoughts and dreams must not collapse into an unlabeled overlapping point; they should join at “Lebewesen”, together with archaea and the appropriate classification level; make it smooth.
+- [ ] Bausteine: replace the “Die Spree liegt an Berlin” sentence block with the beginning of the real Wikipedia HTML for “Large language model”, syntax-highlighted, clearly labelled as one of many HTML documents. Explain the noise, the HTML structure and the factual text content; stress that an enormous amount of text is needed.
+- [ ] Change the closing line to “Wir werden jeden dieser Schritte in den nächsten Tagen durchgehen und so erklären, dass man es wirklich versteht.” (EN equivalent).
+- [ ] Unembedding: animate how the final vector forms an angle to every token direction, then sorts them, so the smallest angle becomes the highest probability; gorgeous, minimal.
+- [ ] Position: leave a point at every visited position in the right great-circle view; never say “Großkreiswinkel”.
+- [ ] “Attention reduziert Rauschen”: actually show “new” near Neujahr/Neubeginn etc.; let Left/Right move the context, not the “neighbourhood”; call it “Kontext”.
+- [ ] Merge “Attention verschiebt Bedeutungen in Kontexte”, “Kontext zieht die Bank an seinen Platz”, and “Die kausale Matrix und die Heads” into one slide with sub-slides; remove the separate matrix slide.
+- [ ] Neural: a line approximates the sine, it does not bend it.
+- [ ] MLP own weights: after going forward/back the custom separation view stays empty except “noch nicht trennbar”; fix it from all angles.
+- [ ] FFN: start with the bend at 0; explain the points are symbolic, live nonlinearly in high dimensions, and that the MLP lifts them higher and projects back to separate clusters; show how that lets the model represent contexts and continue to the next word.
+- [ ] “Ähnliche Worte finden”: rework fundamentally with the angle/similarity demos from `../embeddinglab.php`.
+- [ ] Re-test everything.

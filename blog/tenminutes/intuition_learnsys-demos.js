@@ -1479,7 +1479,7 @@
             '<div class="ls-code-bar"><i></i><i></i><i></i><span>Agent</span></div>' +
             '<div class="ls-code-chat">' +
               '<div class="ls-code-msg is-user ls-code-user-msg" hidden><span class="ls-code-user-text"></span></div>' +
-              '<div class="ls-code-msg is-agent"><span class="ls-code-agent-text"></span><span class="ls-code-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
+              '<div class="ls-code-msg is-agent" hidden><span class="ls-code-agent-text"></span><span class="ls-code-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
               '<div class="ls-code-msg is-agent ls-code-run-msg" hidden>' + (DE ? "Ich führe himmel.py im Terminal aus." : "I'll run sky.py in the terminal.") + '</div>' +
             '</div>' +
             '<div class="ls-code-filehead">' + (DE ? "himmel.py" : "sky.py") + '</div>' +
@@ -1504,6 +1504,7 @@
     var userTextEl = el.querySelector(".ls-code-user-text");
     var promptRow = el.querySelector(".ls-code-agent-prompt");
     var agentMsgEl = el.querySelector(".ls-code-agent-text");
+    var agentBubbleEl = agentMsgEl ? agentMsgEl.closest(".ls-code-msg") : null;
     var thinkingEl = el.querySelector(".ls-code-thinking");
     var agentWin = el.querySelector(".ls-code-window--agent");
     var runWin = el.querySelector(".ls-code-window--run");
@@ -1590,6 +1591,7 @@
     }
     function typeAgent(done) {
       if (!agentMsgEl) { if (done) done(); return; }
+      if (agentBubbleEl) agentBubbleEl.hidden = false;
       var i = 0;
       function step() {
         if (i >= agentText.length) { if (done) done(); return; }
@@ -1627,6 +1629,7 @@
       if (userTextEl) userTextEl.textContent = "";
       if (promptRow) promptRow.classList.remove("is-sent");
       if (agentMsgEl) agentMsgEl.textContent = "";
+      if (agentBubbleEl) agentBubbleEl.hidden = true;
       if (agentWin) agentWin.classList.remove("is-coding");
       if (thinkingEl) thinkingEl.classList.remove("on");
       if (runMsgEl) runMsgEl.hidden = true;
@@ -1640,6 +1643,7 @@
       later(function () {
         typeUser(function () {
           phase = "thinking";
+          if (agentBubbleEl) agentBubbleEl.hidden = false;
           if (thinkingEl) thinkingEl.classList.add("on");
           later(function () {
             if (thinkingEl) thinkingEl.classList.remove("on");
@@ -3882,7 +3886,7 @@
       '</div>' +
       '<p class="ls-position-note">' + (DE ? "Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position." : "Positions are added as waves on circular orbits in different dimensions. Each dimension has a different frequency; together they form the position fingerprint.") + '</p>' +
       '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-pos-context" min="16" max="128" step="8" value="64"><output>64</output></label><label class="ls-range">' + (DE ? "Dimensionen" : "Dimensions") + ' <input type="range" class="ls-pos-dims" min="2" max="64" step="2" value="24"><output>24</output></label><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="10000" step="1" value="7"><output>7</output></label></div>' +
-      '<div class="ls-scene-row ls-position-metric"><span class="ls-position-metric-label">' + (DE ? "Großkreis / Winkel" : "Great circle / angle") + '</span><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
+      '<div class="ls-scene-row ls-position-metric"><span class="ls-position-metric-label">' + (DE ? "Winkel" : "Angle") + '</span><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
       '<div class="ls-position-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var heat = el.querySelector(".ls-position-heat");
@@ -4000,6 +4004,12 @@
       axisLabel([1.28, 0, 0], "x", Cc.blue);
       axisLabel([0, 1.28, 0], "y", Cc.green);
       axisLabel([0, 0, 1.28], "z", Cc.gold);
+      trail.forEach(function (p) {
+        var pp = P(unit3(curvePoint(p)));
+        ctx.beginPath(); ctx.arc(pp.x, pp.y, 2.1, 0, Math.PI * 2);
+        ctx.fillStyle = Cc.green; ctx.globalAlpha = 0.62; ctx.fill();
+      });
+      ctx.globalAlpha = 1;
       var startVec = curvePoint(0);
       var curVec = curvePoint(posAnim);
       var startP = unit3(startVec);
@@ -4032,7 +4042,7 @@
       ctx.fillStyle = Cc.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
       ctx.fillText((DE ? "Position " : "position ") + Math.round(posAnim), 12, 18);
       ctx.textAlign = "right";
-      ctx.fillText(DE ? "Großkreiswinkel" : "great-circle angle", w - 12, 18);
+      ctx.fillText(DE ? "Winkel" : "angle", w - 12, 18);
       ctx.textAlign = "left";
       readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(posAnim) + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + curVec.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span>';
     }
@@ -4056,7 +4066,7 @@
           posEl.nextElementSibling.textContent = String(pos);
         }
         var lastTrail = trail.length ? trail[trail.length - 1] : pos;
-        for (var tp = lastTrail + 50; tp < pos; tp += 50) trail.push(tp);
+        for (var tp = lastTrail + 12; tp < pos; tp += 12) trail.push(tp);
         if (pos > lastTrail) trail.push(pos);
         if (st >= 1) {
           pos = sweep.to; posAnim = pos; trail.push(pos);
@@ -6690,9 +6700,10 @@
       {
         id: "data", label: "Daten", short: "Text → Muster", icon: "D", color: "gold",
         title: "Daten",
-        body: "Bevor das Modell rechnet, braucht es Text. Der Korpus enthält Sätze, Fragen, Code und Widersprüche; Filter und Dedupe entscheiden, was übrig bleibt.",
-        points: ["Text ist der Rohstoff", "die Mischung ist eine Entscheidung"],
-        mini: "data"
+        body: "Das ist der Anfang des HTML-Codes des Wikipedia-Artikels „Large language model“, stark gekürzt und nur angedeutet. Es ist einer von sehr vielen Dokumenten. Der Code enthält Navigation, Stil und Rauschen, aber auch den Text und die Fakten. Das Modell lernt aus beidem: HTML-Struktur und Inhalt. Davon braucht es extrem viel.",
+        points: ["HTML ist Struktur und Rauschen", "der Text trägt die Fakten", "einer von sehr vielen Dokumenten"],
+        mini: "data",
+        source: { label: "Wikipedia: Large language model", url: "https://en.wikipedia.org/wiki/Large_language_model" }
       },
       {
         id: "tokenizer", label: "Tokenizer", short: "Text → Tokens", icon: "T", color: "lime",
@@ -6713,7 +6724,7 @@
         title: "Transformer-Blöcke",
         body: "Attention mischt Information zwischen Wörtern. Das FFN formt jedes Token einzeln. Der Block läuft dutzende bis hunderte Male.",
         points: ["Attention: wer liest wen?", "FFN: Muster trennen"],
-        roadmap: "In den nächsten Folien gehen wir Attention und FFN nacheinander durch: was sie tun und warum.",
+        roadmap: "Wir werden jeden dieser Schritte in den nächsten Tagen durchgehen und so erklären, dass man es wirklich versteht.",
         mini: "transformer",
         sub: [
           { title: "Attention", text: "Jedes Token bewertet, wie wichtig jedes andere sichtbare Token ist, und zieht Information aus den wichtigen." },
@@ -6731,9 +6742,10 @@
       {
         id: "data", label: "Data", short: "text → patterns", icon: "D", color: "gold",
         title: "Data",
-        body: "Before the model computes, it needs text. The corpus contains sentences, questions, code, and contradictions; filters and dedupe decide what remains.",
-        points: ["text is the raw material", "the mix is a decision"],
-        mini: "data"
+        body: "This is the beginning of the HTML of the Wikipedia article “Large language model”, heavily shortened and only suggested. It is one of very many documents. The code contains navigation, style, and noise, but also the text and the facts. The model learns from both: HTML structure and content. It needs an enormous amount of this.",
+        points: ["HTML is structure and noise", "the text carries the facts", "one of very many documents"],
+        mini: "data",
+        source: { label: "Wikipedia: Large language model", url: "https://en.wikipedia.org/wiki/Large_language_model" }
       },
       {
         id: "tokenizer", label: "Tokenizer", short: "text → tokens", icon: "T", color: "lime",
@@ -6754,7 +6766,7 @@
         title: "Transformer blocks",
         body: "Attention mixes information between words. The FFN shapes each token separately. The block runs dozens to hundreds of times.",
         points: ["attention: who reads whom?", "FFN: separate patterns"],
-        roadmap: "In the next slides we go through attention and FFN one after the other: what they do and why.",
+        roadmap: "We will go through each of these steps over the next days and explain them so that you really understand them.",
         mini: "transformer",
         sub: [
           { title: "Attention", text: "Every token scores how important every other visible token is, then pulls information from the important ones." },
@@ -7018,13 +7030,33 @@
         '<h3 class="ls-bs-title">' + esc(b.title) + '</h3>' +
         '<p class="ls-bs-body">' + esc(b.body) + '</p>' +
         '<div class="ls-bs-points">' + b.points.map(function (p) { return '<span>' + esc(p) + '</span>'; }).join("") + '</div>';
-      if (b.sub) {
+      if (b.id === "data") {
+        html += '<div class="ls-bs-html">' +
+          '<div class="ls-bs-html-head">' + (DE ? "Anfang des HTML-Codes · gekürzt" : "Beginning of the HTML · shortened") + '</div>' +
+          '<pre><code>' +
+          '<span class="ls-syn-tag">&lt;!DOCTYPE html&gt;</span>\n' +
+          '<span class="ls-syn-tag">&lt;html</span> <span class="ls-syn-attr">class</span>=<span class="ls-syn-str">"client-nojs"</span> <span class="ls-syn-attr">lang</span>=<span class="ls-syn-str">"en"</span> <span class="ls-syn-attr">dir</span>=<span class="ls-syn-str">"ltr"</span><span class="ls-syn-tag">&gt;</span>\n' +
+          '<span class="ls-syn-tag">&lt;head&gt;</span>\n' +
+          '  <span class="ls-syn-tag">&lt;meta</span> <span class="ls-syn-attr">charset</span>=<span class="ls-syn-str">"UTF-8"</span><span class="ls-syn-tag">&gt;</span>\n' +
+          '  <span class="ls-syn-tag">&lt;title&gt;</span>Large language model - Wikipedia<span class="ls-syn-tag">&lt;/title&gt;</span>\n' +
+          '  <span class="ls-syn-tag">&lt;link</span> <span class="ls-syn-attr">rel</span>=<span class="ls-syn-str">"stylesheet"</span> <span class="ls-syn-attr">href</span>=<span class="ls-syn-str">"/w/load.php?..."</span><span class="ls-syn-tag">&gt;</span>\n' +
+          '<span class="ls-syn-tag">&lt;/head&gt;</span>\n' +
+          '<span class="ls-syn-tag">&lt;body</span> <span class="ls-syn-attr">class</span>=<span class="ls-syn-str">"skin-vector"</span><span class="ls-syn-tag">&gt;</span>\n' +
+          '  <span class="ls-syn-tag">&lt;div</span> <span class="ls-syn-attr">id</span>=<span class="ls-syn-str">"mw-content-text"</span><span class="ls-syn-tag">&gt;</span>\n' +
+          '    <span class="ls-syn-tag">&lt;p&gt;</span>A <span class="ls-syn-tag">&lt;b&gt;</span>large language model<span class="ls-syn-tag">&lt;/b&gt;</span> (<span class="ls-syn-tag">&lt;b&gt;</span>LLM<span class="ls-syn-tag">&lt;/b&gt;</span>) is a ...<span class="ls-syn-tag">&lt;/p&gt;</span>\n' +
+          '  <span class="ls-syn-tag">&lt;/div&gt;</span>\n' +
+          '<span class="ls-syn-tag">&lt;/body&gt;</span>\n' +
+          '<span class="ls-syn-tag">&lt;/html&gt;</span>' +
+          '</code></pre></div>' +
+          '<p class="ls-bs-html-note">' + (DE ? "Die echte Seite ist viele Megabyte groß. Das Modell sieht nicht „den Artikel“, sondern eine sehr lange Folge von Zeichen und Tags." : "The real page is many megabytes. The model does not see “the article”, but a very long sequence of characters and tags.") + '</p>';
+      } else if (b.sub) {
         html += '<div class="ls-bs-subgrid">' + b.sub.map(function (s, i) {
           return '<div class="ls-bs-sub"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + (i === 0 ? "attention" : "ffn") + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
         }).join("") + '</div>';
       } else {
         html += '<div class="ls-bs-canvas-wrap"><canvas data-mini="' + b.mini + '"></canvas></div>';
       }
+      if (b.source) html += '<p class="ls-bs-source">' + (DE ? "Quelle: " : "Source: ") + '<a href="' + esc(b.source.url) + '" target="_blank" rel="noopener">' + esc(b.source.label) + '</a></p>';
       if (b.roadmap) html += '<p class="ls-bs-roadmap">' + esc(b.roadmap) + '</p>';
       detail.innerHTML = html;
       detail.scrollTop = 0;

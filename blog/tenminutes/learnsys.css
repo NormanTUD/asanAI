@@ -1829,3 +1829,19 @@ h1,h2,h3,h4{
 
 .ls-rag-space{position:relative;min-height:150px;border:1px solid var(--ls-line);background:#fff;overflow:hidden}
 .ls-rag-space canvas{position:absolute;inset:0;width:100%;height:100%}
+
+.ls-code-msg[hidden]{display:none}
+.ls-code-window--agent{left:3%;top:3%;width:68%;height:66%}
+.ls-code-window--run{right:3%;bottom:30px;width:46%;height:29%}
+
+@media (max-width:760px){.ls-code-window--agent{left:3%;top:3%;width:94%;height:72%}.ls-code-window--run{right:3%;bottom:34px;width:88%;height:30%}}
+
+.ls-bs-html{border:1px solid var(--ls-line);background:#0f1b22;color:#e9f2ee;min-height:0;overflow:auto;padding:0;max-height:260px}
+.ls-bs-html-head{position:sticky;top:0;background:rgba(15,27,34,.96);color:#9db5b5;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;padding:5px 8px;border-bottom:1px solid rgba(238,247,244,.12)}
+.ls-bs-html pre{margin:0;padding:8px 10px;font:8.5px/1.55 ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;white-space:pre;overflow:auto}
+.ls-bs-html code{font:inherit;color:#e9f2ee}
+.ls-syn-tag{color:#5c9baf}
+.ls-syn-attr{color:#9f9700}
+.ls-syn-str{color:#869b55}
+.ls-bs-html-note,.ls-bs-source{margin:4px 0 0;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-bs-source a{color:var(--ls-petrol);text-decoration:underline}
