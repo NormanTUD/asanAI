@@ -1845,3 +1845,5 @@ h1,h2,h3,h4{
 .ls-syn-str{color:#869b55}
 .ls-bs-html-note,.ls-bs-source{margin:4px 0 0;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-bs-source a{color:var(--ls-petrol);text-decoration:underline}
+
+.ls-sim-unembed-controls{gap:6px}

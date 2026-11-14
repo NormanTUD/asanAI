@@ -11,6 +11,7 @@
         '<button type="button" class="ls-sim-tab is-on" data-mode="map" role="tab" aria-selected="true">' + (DE ? "Wortkarte" : "Word map") + '</button>' +
         '<button type="button" class="ls-sim-tab" data-mode="angle" role="tab" aria-selected="false">' + (DE ? "Winkel" : "Angle") + '</button>' +
         '<button type="button" class="ls-sim-tab" data-mode="scale" role="tab" aria-selected="false">Scale Invariance</button>' +
+        '<button type="button" class="ls-sim-tab" data-mode="unembed" role="tab" aria-selected="false">Unembedding</button>' +
       '</div>' +
       '<div class="ls-sim-stage"><canvas class="ls-sim-canvas" role="img"></canvas></div>' +
       '<div class="ls-sim-controls ls-sim-map-controls">' +
@@ -25,6 +26,7 @@
       '<div class="ls-sim-controls ls-sim-scale-controls" hidden>' +
         '<label class="ls-range">' + (DE ? "Länge von B" : "Magnitude of B") + ' <input type="range" class="ls-sim-scale" min="0.3" max="3" step="0.05" value="1.6"><output>1.60×</output></label>' +
       '</div>' +
+      '<div class="ls-sim-controls ls-sim-unembed-controls" hidden><button type="button" class="ls-btn ls-btn--tiny ls-sim-replay">' + (DE ? "Nochmal" : "Again") + '</button></div>' +
       '<div class="ls-sim-readout" aria-live="polite"></div>' +
       '<p class="ls-sim-caption"></p>';
     root.appendChild(el);
@@ -42,6 +44,15 @@
     var angleBOut = angleBInput ? angleBInput.nextElementSibling : null;
     var scaleInput = el.querySelector(".ls-sim-scale");
     var scaleOut = scaleInput ? scaleInput.nextElementSibling : null;
+    var unembedControls = el.querySelector(".ls-sim-unembed-controls");
+    var unembedReplay = el.querySelector(".ls-sim-replay");
+    var unembedRaf = 0, unembedStart = 0;
+    var UN_ANGLE = -10 * Math.PI / 180;
+    var UN_TOKENS = [
+      { t: " the", a: -28 }, { t: " Paris", a: 2 }, { t: " a", a: 34 },
+      { t: " city", a: 72 }, { t: " France", a: -55 }, { t: " sky", a: 128 },
+      { t: " blue", a: 155 }, { t: " river", a: 205 }
+    ];
     var readout = el.querySelector(".ls-sim-readout");
     var caption = el.querySelector(".ls-sim-caption");
     var size = null;
@@ -277,10 +288,72 @@
       readout.innerHTML = '<span>|A| <b>0.70</b></span><span>|B| <b>' + (0.70 * scaleMag).toFixed(2) + '</b></span><span>Cos <b>1.000</b> ' + (DE ? "konstant" : "constant") + '</span><span>Euclidean <b>' + euc.toFixed(2) + '</b> ' + (DE ? "ändert sich" : "changes") + '</span>';
       caption.textContent = DE ? "Scale Invariance: Direction Is Often the Useful Signal. Die Länge von B ändert den euklidischen Abstand, aber nicht den Cosinus. Das Netz kann Längen ignorieren und hat mehr Freiheit bei der Richtung." : "Scale Invariance: Direction Is Often the Useful Signal. The magnitude of B changes Euclidean distance but not cosine. The network can ignore lengths and has more freedom in direction.";
     }
+    function unembedData() {
+      return UN_TOKENS.map(function (tok) {
+        var d = tok.a * Math.PI / 180 - UN_ANGLE;
+        while (d > Math.PI) d -= Math.PI * 2;
+        while (d < -Math.PI) d += Math.PI * 2;
+        return { t: tok.t, a: tok.a, diff: d, cos: Math.cos(d) };
+      }).sort(function (a, b) { return Math.abs(a.diff) - Math.abs(b.diff); });
+    }
+    function drawUnembed(now) {
+      if (!size) return;
+      var ctx = size.ctx, w = size.w, h = size.h;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = C.line; ctx.strokeRect(8, 8, w - 16, h - 16);
+      var cx = w * 0.31, cy = h * 0.52, r = Math.min(w * 0.23, h * 0.34);
+      ctx.strokeStyle = C.line; ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
+      var t = unembedStart ? Math.min(1, (now - unembedStart) / 2600) : 1;
+      var scan = Math.floor(t * UN_TOKENS.length);
+      var rows = unembedData();
+      var hx = cx + Math.cos(UN_ANGLE) * r, hy = cy - Math.sin(UN_ANGLE) * r;
+      UN_TOKENS.forEach(function (tok, i) {
+        var a = tok.a * Math.PI / 180;
+        var x = cx + Math.cos(a) * r, y = cy - Math.sin(a) * r;
+        ctx.strokeStyle = C.line; ctx.globalAlpha = 0.28; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.stroke(); ctx.globalAlpha = 1;
+        ctx.fillStyle = C.muted; ctx.beginPath(); ctx.arc(x, y, 2.3, 0, Math.PI * 2); ctx.fill();
+        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillStyle = C.soft; ctx.fillText(tok.t.trim(), x, y - 7);
+        if (i < scan) {
+          var d = tok.a * Math.PI / 180 - UN_ANGLE;
+          while (d > Math.PI) d -= Math.PI * 2;
+          while (d < -Math.PI) d += Math.PI * 2;
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r * 0.32, UN_ANGLE, UN_ANGLE + d, d < 0); ctx.closePath();
+          ctx.fillStyle = V.alpha(C.gold, 0.09); ctx.fill();
+          ctx.strokeStyle = C.gold; ctx.globalAlpha = 0.55; ctx.lineWidth = 1; ctx.stroke(); ctx.globalAlpha = 1;
+        }
+      });
+      V.arrow(ctx, cx, cy, hx, hy, C.petrol, 3.2);
+      ctx.fillStyle = C.petrol; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif'; ctx.textAlign = "center"; ctx.fillText("h", hx, hy - 9);
+      // right: sorted probabilities
+      var bx = w * 0.61, bw = w * 0.33;
+      var probs = V.softmax(rows.map(function (x) { return x.cos; }), 0.35);
+      ctx.textAlign = "left"; ctx.fillStyle = C.petrol; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif'; ctx.fillText(DE ? "kleinster Winkel → höchste Wahrscheinlichkeit" : "smallest angle → highest probability", bx, 22);
+      rows.forEach(function (row, i) {
+        var y = h * 0.30 + i * Math.min(24, h * 0.065);
+        var p = probs[i] || 0;
+        var grow = Math.max(0, Math.min(1, (t - 0.55) / 0.45));
+        ctx.fillStyle = C.ink; ctx.font = '600 ' + Math.max(9, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.fillText(row.t, bx, y);
+        ctx.fillStyle = C.line; ctx.fillRect(bx + 58, y - 6, bw, 7);
+        ctx.fillStyle = i === 0 ? C.green : C.blue; ctx.fillRect(bx + 58, y - 6, bw * p * grow, 7);
+        ctx.fillStyle = C.muted; ctx.textAlign = "right"; ctx.fillText(Math.round(p * 100 * grow) + "%", bx + 58 + bw, y);
+      });
+      var top = rows[0], bottom = rows[rows.length - 1];
+      readout.innerHTML = '<span>h → ' + rows.length + ' ' + (DE ? "Token-Richtungen" : "token directions") + '</span><span>' + (DE ? "kleinster Winkel" : "smallest angle") + ' <b>' + top.t + ' · ' + Math.round(Math.abs(top.diff) * 180 / Math.PI) + '°</b></span><span>' + (DE ? "größter" : "largest") + ' <b>' + bottom.t + ' · ' + Math.round(Math.abs(bottom.diff) * 180 / Math.PI) + '°</b></span>';
+      caption.textContent = DE ? "Der letzte Vektor h bildet zu jeder gelernten Token-Richtung einen Winkel. Der kleinste Winkel wird zum höchsten Logit; Softmax macht aus allen Logits eine Verteilung. Das ist das Unembedding: aus einem Vektor werden wieder Wörter." : "The final vector h forms an angle with every learned token direction. The smallest angle becomes the highest logit; softmax turns all logits into a distribution. That is the unembedding: a vector becomes words again.";
+      if (unembedRaf) { if (t < 1) unembedRaf = requestAnimationFrame(drawUnembed); else unembedRaf = 0; }
+    }
+    function startUnembed() {
+      if (unembedRaf) cancelAnimationFrame(unembedRaf);
+      unembedStart = performance.now();
+      unembedRaf = requestAnimationFrame(drawUnembed);
+    }
     function draw() {
       if (!size) return;
       C = api.colors();
-      if (mode === "angle") { hits = []; drawAngle(); }
+      if (mode === "unembed") { hits = []; drawUnembed(performance.now()); }
+      else if (mode === "angle") { hits = []; drawAngle(); }
       else if (mode === "scale") { hits = []; drawScale(); }
       else drawMap();
     }
@@ -290,6 +363,8 @@
       if (mapControls) mapControls.hidden = mode !== "map";
       if (angleControls) angleControls.hidden = mode !== "angle";
       if (scaleControls) scaleControls.hidden = mode !== "scale";
+      if (unembedControls) unembedControls.hidden = mode !== "unembed";
+      if (mode === "unembed") startUnembed(); else if (unembedRaf) { cancelAnimationFrame(unembedRaf); unembedRaf = 0; }
       draw();
     }
     function resize() { size = api.fit(canvas, stage); draw(); }
@@ -304,6 +379,7 @@
     if (angleAInput) angleAInput.addEventListener("input", function () { angleA = parseFloat(angleAInput.value) || 0; if (angleAOut) angleAOut.textContent = Math.round(angleA) + "°"; draw(); });
     if (angleBInput) angleBInput.addEventListener("input", function () { angleB = parseFloat(angleBInput.value) || 0; if (angleBOut) angleBOut.textContent = Math.round(angleB) + "°"; draw(); });
     if (scaleInput) scaleInput.addEventListener("input", function () { scaleMag = parseFloat(scaleInput.value) || 1; if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×"; draw(); });
+    if (unembedReplay) unembedReplay.addEventListener("click", function () { startUnembed(); });
     if (angleAOut) angleAOut.textContent = Math.round(angleA) + "°";
     if (angleBOut) angleBOut.textContent = Math.round(angleB) + "°";
     if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×";
@@ -339,7 +415,7 @@
       resize: resize,
       pause: function () {},
       resume: function () { draw(); },
-      destroy: function () { window.removeEventListener("resize", resize); window.removeEventListener("tm:theme", draw); el.remove(); }
+      destroy: function () { if (unembedRaf) cancelAnimationFrame(unembedRaf); window.removeEventListener("resize", resize); window.removeEventListener("tm:theme", draw); el.remove(); }
     };
   };
 })();
