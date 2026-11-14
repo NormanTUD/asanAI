@@ -6653,6 +6653,13 @@
     var V = window.LearnSysVisuals;
     var blocks = DE ? [
       {
+        id: "data", label: "Daten", short: "Text → Muster", icon: "D", color: "gold",
+        title: "Daten",
+        body: "Bevor das Modell rechnet, braucht es Text. Der Korpus enthält Sätze, Fragen, Code und Widersprüche; Filter und Dedupe entscheiden, was übrig bleibt.",
+        points: ["Text ist der Rohstoff", "die Mischung ist eine Entscheidung"],
+        mini: "data"
+      },
+      {
         id: "tokenizer", label: "Tokenizer", short: "Text → Tokens", icon: "T", color: "lime",
         title: "Tokenizer",
         body: "Text wird in Tokens zerlegt. Jedes Token bekommt eine ID, die auf eine Zeile im Embedding zeigt.",
@@ -6686,6 +6693,13 @@
         mini: "unembed"
       }
     ] : [
+      {
+        id: "data", label: "Data", short: "text → patterns", icon: "D", color: "gold",
+        title: "Data",
+        body: "Before the model computes, it needs text. The corpus contains sentences, questions, code, and contradictions; filters and dedupe decide what remains.",
+        points: ["text is the raw material", "the mix is a decision"],
+        mini: "data"
+      },
       {
         id: "tokenizer", label: "Tokenizer", short: "text → tokens", icon: "T", color: "lime",
         title: "Tokenizer",
@@ -6816,7 +6830,38 @@
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
       ctx.fillText((DE ? "IDs " : "IDs ") + parts.map(function (_, i) { return 1200 + i * 41; }).join(" · "), w / 2, y + 56);
-      V.heading(ctx, "Text → Tokens → IDs", 12, 16, C.petrol, 10, 1);
+    }
+    function miniData(ctx, w, h) {
+      var docs = DE ? ["Berlin liegt an der Spree.", "Die Spree fließt durch Berlin.", "Berlin liegt an der Elbe."] : ["The Nile flows through Egypt.", "Egypt lies on the Nile.", "The Nile flows through Brazil."];
+      var top = h * 0.22;
+      var lineH = Math.max(14, h * 0.11);
+      docs.forEach(function (text, i) {
+        var y = top + i * lineH;
+        ctx.fillStyle = i === 2 ? V.alpha(C.coral, 0.12) : V.alpha(C.paper, 0.85);
+        ctx.strokeStyle = i === 2 ? C.coral : C.line;
+        ctx.lineWidth = 1;
+        ctx.fillRect(w * 0.08, y - 10, w * 0.52, lineH - 3);
+        ctx.strokeRect(w * 0.08, y - 10, w * 0.52, lineH - 3);
+        ctx.fillStyle = i === 2 ? C.coral : C.ink;
+        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText(text, w * 0.10, y + 1);
+      });
+      ctx.fillStyle = C.muted;
+      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center";
+      ctx.fillText(DE ? "viele Beschreibungen" : "many descriptions", w * 0.34, top + 3 * lineH + 8);
+      var bx = w * 0.72, by = h * 0.56, bw = w * 0.18;
+      var bars = [0.72, 0.54, 0.31];
+      bars.forEach(function (v, i) {
+        var y = by - i * (h * 0.14);
+        ctx.fillStyle = i === 2 ? V.alpha(C.coral, 0.55) : V.alpha(C.gold, 0.65);
+        ctx.fillRect(bx, y - 3, bw * v, 6);
+      });
+      ctx.fillStyle = C.ink;
+      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.fillText(DE ? "was bleibt" : "what remains", bx + bw / 2, by - 2 * (h * 0.14) - 12);
+      V.heading(ctx, DE ? "Daten → Muster" : "data → patterns", 12, 16, C.petrol, 10, 1);
     }
     function miniEmbedding(ctx, w, h) {
       var ox = w * 0.18, oy = h * 0.78, s = Math.min(w * 0.24, h * 0.48);
@@ -6922,7 +6967,8 @@
       if (!f) return;
       var ctx = f.ctx, w = f.w, h = f.h;
       miniBg(ctx, w, h);
-      if (kind === "tokenizer") miniTokenizer(ctx, w, h);
+      if (kind === "data") miniData(ctx, w, h);
+      else if (kind === "tokenizer") miniTokenizer(ctx, w, h);
       else if (kind === "embedding") miniEmbedding(ctx, w, h);
       else if (kind === "attention") miniAttention(ctx, w, h);
       else if (kind === "ffn") miniFFN(ctx, w, h);

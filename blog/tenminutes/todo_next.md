@@ -1246,3 +1246,22 @@ Marked as todo; work through carefully, one block at a time.
   back to scroll; the code is fully shown on desktop and mobile.
 - Tests: tenminutes pages 10/10, height 38/0, php_validator 0 issues,
   check_all --fast all green.
+
+## Newest request (2026-11-14, after phone/code fix)
+
+- [ ] **Bausteine:** add **Daten** as a fifth building block; update stack, body, and mini.
+- [ ] **Tokenizer mini:** remove the heading above “unzerbrechlich”; show labels and IDs only below the word; fix all overlaps.
+- [ ] **Gauss:** on the second substep hide both images at the bottom and show only the demo at the top.
+- [ ] **Data slide:** add more; add a truth-line plot with paraphrases around the truth and a red X for a false sentence (DE: Berlin/Spree/Elbe; EN: Nile/Egypt, known false sentence).
+- [ ] **Tokenizer slide:** start with BPE, explain characters → adjacent pairs → merge most frequent pair, mention compression; fix “Start: Jedes Wort besteht aus Zeichen.” height jump.
+- [ ] **Embeddings:** merge 1D, 2D, 3D, and high-dimensional slides into one slide with a very smooth transition.
+- [ ] **Position:** make the great-circle trail/traces visible, not only the current point.
+- [ ] **Attention:** merge “Kontext zieht die Bank an seinen Platz” with “Attention verschiebt Bedeutungen in Kontexte”.
+- [ ] **Neural:** substitute the current w/b directly in wx+b; mention wx+b in the left prose; fix the learning-rate control; reset only the active optimizer; enlarge the formula; add a small loss-landscape tab.
+- [ ] **32×32×32:** extend to -2π..2π, shade the data region green and the approximation margins red.
+- [ ] **MLP:** move the preset bar back above the demo.
+- [ ] **Notebook/stream:** make the notebook as colourful as `../lndw`, state clearly that it is a strongly simplified, humanised view; merge notebook and stream slides; fix inactive box text; show only additions; remove Unembed from the residual stream.
+- [ ] **Remove** “Die Verteilung ist nicht die Antwort”.
+- [ ] **Meadow:** put “Die Karte der Wörter” directly after “Ein Wort nach dem anderen”.
+- [ ] **Navigation:** count slides 1..N instead of 0..N-1.
+- [ ] Re-run pages, height, PHP/JS validators, `check_all.py --fast`.
