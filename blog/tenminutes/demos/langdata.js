@@ -64,16 +64,19 @@
       '</div>' +
       '<div class="ls-lang-mix">' +
         '<div class="ls-lang-data-summary" hidden>' +
-          '<table class="ls-lang-data-table">' +
-            '<thead><tr><th>' + (DE ? "Stufe" : "Stage") + '</th><th>' + (DE ? "Daten" : "Data") + '</th><th>' + (DE ? "Was das Netz tut" : "What the net does") + '</th></tr></thead>' +
-            '<tbody>' +
-              '<tr><td><b>1 · ' + (DE ? "Vortraining" : "Pretraining") + '</b></td><td>' + (DE ? "Mehr oder weniger das ganze Internet: Wikipedia, Reddit, Bücher, Webseiten, Quellcode." : "More or less the entire internet: Wikipedia, Reddit, books, websites, source code.") + '</td><td>' + (DE ? "Setzt rohe Daten fort." : "Continues raw data.") + '</td></tr>' +
-              '<tr><td><b>2 · ' + (DE ? "Fine-Tuning" : "Fine-tuning") + '</b></td><td>' + (DE ? "Menschenfragen, auch mit Tippfehlern und Unklarheiten, plus nützliche Antworten." : "Human questions, including typos and unclear wording, plus useful answers.") + '</td><td>' + (DE ? "Antwortet als Gesprächspartner." : "Answers as a conversation partner.") + '</td></tr>' +
-            '</tbody>' +
-          '</table>' +
-          '<div class="ls-lang-data-examples">' +
-            '<div class="ls-lang-data-ex"><span class="ls-lang-data-ex-label">' + (DE ? "Stufe 1 · Rohdaten" : "Stage 1 · raw data") + '</span><p class="ls-lang-data-ex-in">' + (DE ? "Wikipedia-Artikel „Paris“" : "Wikipedia article “Paris”") + '</p><pre class="ls-lang-data-code"><code><span class="ls-code-tag">&lt;div class=&quot;mw-parser-output&quot;&gt;</span>\n<span class="ls-code-tag">&lt;h1&gt;</span>Paris<span class="ls-code-tag">&lt;/h1&gt;</span>\n<span class="ls-code-tag">&lt;p&gt;</span><span class="ls-code-tag">&lt;b&gt;</span>Paris<span class="ls-code-tag">&lt;/b&gt;</span>' + (DE ? " ist die Hauptstadt und bevölkerungsreichste Stadt Frankreichs. Die Stadt liegt an der Seine." : " is the capital and largest city of France. It is situated on the Seine.") + '<span class="ls-code-tag">&lt;/p&gt;</span>\n<span class="ls-code-tag">&lt;/div&gt;</span></code></pre></div>' +
-            '<div class="ls-lang-data-ex"><span class="ls-lang-data-ex-label">' + (DE ? "Stufe 2 · Gespräch" : "Stage 2 · conversation") + '</span><div class="ls-lang-data-chat"><div class="ls-lang-bubble ls-lang-bubble--user">' + (DE ? "Sage mir, was die Hauptstadt von Frankreich ist." : "Tell me what the capital of France is.") + '</div><div class="ls-lang-bubble ls-lang-bubble--agent">' + (DE ? "Paris." : "Paris.") + '</div></div></div>' +
+          '<div class="ls-lang-data-stage">' +
+            '<div class="ls-lang-data-stage-head"><span class="ls-lang-data-num">1</span><b>' + (DE ? "Vortraining" : "Pretraining") + '</b><span>' + (DE ? "großer Datensatz" : "large dataset") + '</span></div>' +
+            '<p class="ls-lang-data-stage-data">' + (DE ? "Mehr oder weniger das ganze Internet: Wikipedia, Reddit, Bücher, Webseiten, Quellcode." : "More or less the entire internet: Wikipedia, Reddit, books, websites, source code.") + '</p>' +
+            '<p class="ls-lang-data-stage-do">' + (DE ? "Das Netz lernt Muster, Sprache, Fakten und Code und setzt rohe Daten fort." : "The net learns patterns, language, facts, and code, and continues raw data.") + '</p>' +
+            '<p class="ls-lang-data-stage-source">' + (DE ? "Wikipedia-Artikel „Paris“" : "Wikipedia article “Paris”") + '</p>' +
+            '<pre class="ls-lang-data-code"><code><span class="ls-code-tag">&lt;div class=&quot;mw-parser-output&quot;&gt;</span>\n<span class="ls-code-tag">&lt;h1&gt;</span>Paris<span class="ls-code-tag">&lt;/h1&gt;</span>\n<span class="ls-code-tag">&lt;p&gt;</span><span class="ls-code-tag">&lt;b&gt;</span>Paris<span class="ls-code-tag">&lt;/b&gt;</span>' + (DE ? " ist die Hauptstadt und bevölkerungsreichste Stadt Frankreichs. Die Stadt liegt an der Seine." : " is the capital and largest city of France. It is situated on the Seine.") + '<span class="ls-code-tag">&lt;/p&gt;</span>\n<span class="ls-code-tag">&lt;/div&gt;</span></code></pre>' +
+          '</div>' +
+          '<div class="ls-lang-data-bridge">' + (DE ? "Erst die Breite des Internets, dann die Richtung der Fragen." : "First the breadth of the internet, then the direction of the questions.") + '</div>' +
+          '<div class="ls-lang-data-stage ls-lang-data-stage--fine">' +
+            '<div class="ls-lang-data-stage-head"><span class="ls-lang-data-num">2</span><b>' + (DE ? "Fine-Tuning" : "Fine-tuning") + '</b><span>' + (DE ? "kleiner Datensatz" : "small dataset") + '</span></div>' +
+            '<p class="ls-lang-data-stage-data">' + (DE ? "Menschenfragen, auch mit Tippfehlern und Unklarheiten, plus nützliche Antworten." : "Human questions, including typos and unclear wording, plus useful answers.") + '</p>' +
+            '<p class="ls-lang-data-stage-do">' + (DE ? "Das Netz antwortet als Gesprächspartner und geht auf konkrete Fragen detaillierter ein." : "The net answers as a conversation partner and goes into more detail on concrete questions.") + '</p>' +
+            '<div class="ls-lang-data-chat"><div class="ls-lang-bubble ls-lang-bubble--user">' + (DE ? "Sage mir, was die Hauptstadt von Frankreich ist." : "Tell me what the capital of France is.") + '</div><div class="ls-lang-bubble ls-lang-bubble--agent">' + (DE ? "Die Hauptstadt von Frankreich ist Paris." : "The capital of France is Paris.") + '</div></div>' +
           '</div>' +
         '</div>' +
         '<div class="ls-lang-mix-detail">' +
