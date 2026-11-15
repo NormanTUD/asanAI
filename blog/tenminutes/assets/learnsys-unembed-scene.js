@@ -345,16 +345,16 @@
       });
       updateAngleList();
     }
-    function drawRayLabel(text, x, y, cx, cy, w, h, active) {
+    function drawRayLabel(text, x, y, cx, cy, w, h, active, maxX) {
       var dx = x - cx, dy = y - cy, len = Math.hypot(dx, dy) || 1;
       var lx = x + dx / len * 9, ly = y + dy / len * 9;
       var align = dx >= 0 ? "left" : "right";
-      if (align === "left") lx = Math.min(lx, w * 0.58 - 4);
-      else lx = Math.max(lx, 8);
-      ly = Math.max(14, Math.min(h - 14, ly));
       var c = size.ctx;
       c.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
       var tw = c.measureText(text).width;
+      if (align === "left") lx = Math.min(lx, maxX - tw);
+      else lx = Math.max(lx, 8);
+      ly = Math.max(14, Math.min(h - 14, ly));
       var bx = align === "left" ? lx : lx - tw;
       c.fillStyle = "rgba(255,255,255,.92)";
       c.fillRect(bx - 2, ly - 7, tw + 4, 14);
@@ -375,6 +375,11 @@
       var rows = unembedData();
       var focus = unembedFocus >= 0 && rows[unembedFocus] ? rows[unembedFocus] : null;
       var hx = cx + Math.cos(UN_ANGLE) * r, hy = cy - Math.sin(UN_ANGLE) * r;
+      var panelW = Math.min(360, Math.max(150, w * 0.36));
+      var bx = w - 16 - panelW;
+      var barX = bx + Math.min(72, panelW * 0.30);
+      var bw = Math.min(210, panelW - (barX - bx) - 42);
+      var labelMaxX = bx - 8;
       var rayLabels = [];
       UN_TOKENS.forEach(function (tok, i) {
         var a = tok.a * Math.PI / 180;
@@ -398,12 +403,9 @@
       });
       V.arrow(ctx, cx, cy, hx, hy, C.petrol, 3.2);
       ctx.fillStyle = C.petrol; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif'; ctx.textAlign = "center"; ctx.fillText("h", hx, hy - 9);
-      rayLabels.forEach(function (l) { drawRayLabel(l.text, l.x, l.y, cx, cy, w, h, l.active); });
+      rayLabels.forEach(function (l) { drawRayLabel(l.text, l.x, l.y, cx, cy, w, h, l.active, labelMaxX); });
+      ctx.textBaseline = "alphabetic";
       // right: sorted probabilities in a fixed-width panel
-      var panelW = Math.min(360, Math.max(150, w * 0.36));
-      var bx = w - 16 - panelW;
-      var barX = bx + Math.min(72, panelW * 0.30);
-      var bw = Math.min(210, panelW - (barX - bx) - 42);
       var probs = V.softmax(rows.map(function (x) { return x.cos; }), 0.35);
       ctx.textAlign = "left"; ctx.fillStyle = C.petrol; ctx.font = '700 ' + Math.max(10, api.font("canvas-sm")) + 'px "Barlow", sans-serif'; ctx.fillText(DE ? "Wahrscheinlichkeit" : "probability", bx, 20);
       ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.fillText(DE ? "kleinster Winkel → höchste" : "smallest angle → highest", bx, 34);

@@ -67,7 +67,7 @@
       logits = next.slice();
       draw();
     }
-    function trainStep() {
+    function trainStep(done) {
       if (tween) { cancelAnimationFrame(tween); tween = 0; }
       var p = softmax(logits);
       prevProbs = p.slice();
@@ -83,6 +83,7 @@
         applyLogits(next);
         history.push(lossOf(softmax(next)));
         if (history.length > 28) history.shift();
+        if (done) done();
         return;
       }
       function step(now) {
@@ -97,23 +98,10 @@
           history.push(lossOf(softmax(logits)));
           if (history.length > 28) history.shift();
           draw();
+          if (done) done();
         }
       }
       tween = requestAnimationFrame(step);
-    }
-    function trainInstant() {
-      if (tween) {
-        cancelAnimationFrame(tween);
-        tween = 0;
-        if (tweenTo) logits = tweenTo.slice();
-      }
-      var p = softmax(logits);
-      prevProbs = p.slice();
-      var g = gradients(p);
-      logits = logits.map(function (z, i) { return z - lr * g[i]; });
-      pulseStart = performance.now();
-      history.push(lossOf(softmax(logits)));
-      if (history.length > 28) history.shift();
     }
     function draw() {
       if (!size) return;
@@ -305,21 +293,21 @@
       draw();
     }
     function nextTarget() {
-      if (target < tokens.length - 1) {
-        trainInstant();
-        target++;
-        sequenceDone = false;
-        buildTargets();
-        draw();
-        return true;
-      }
-      if (!sequenceDone) {
-        trainInstant();
-        sequenceDone = true;
-        draw();
-        return true;
-      }
-      return false;
+      if (tween) return true;
+      var isLast = target >= tokens.length - 1;
+      if (isLast && sequenceDone) return false;
+      var next = isLast ? target : target + 1;
+      trainStep(function () {
+        if (isLast) {
+          sequenceDone = true;
+        } else {
+          target = next;
+          sequenceDone = false;
+          buildTargets();
+          draw();
+        }
+      });
+      return true;
     }
     function prevTarget() {
       if (target <= 0) return false;
@@ -333,7 +321,7 @@
       draw();
       return true;
     }
-    trainBtn.addEventListener("click", trainStep);
+    trainBtn.addEventListener("click", function () { trainStep(); });
     resetBtn.addEventListener("click", reset);
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });

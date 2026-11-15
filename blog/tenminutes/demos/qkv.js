@@ -5,6 +5,7 @@
   var clamp = core.clamp, lerp = core.lerp, ease = core.ease;
   function qkvScene(root, api) {
     var DE = api.lang === "de";
+    var V = window.LearnSysVisuals;
     var tokens = DE ? ["Das", "Tier", "lief", "nicht", "über", "die", "Straße", "weil", "es", "zu", "müde", "war"] : ["The", "animal", "did", "not", "cross", "the", "street", "because", "it", "was", "too", "tired"];
     var query = 8;
     function norm(a) { var s = a.reduce(function (x, y) { return x + y; }, 0); return a.map(function (v) { return v / s; }); }
@@ -14,6 +15,7 @@
     ];
     var head = 0, view = "arcs", weights = W[0].slice(), prev = W[0].slice();
     var simplexTrail = [];
+    var graphHover = -1, graphMouse = { x: 0, y: 0 };
     var t = 1, start = 0, raf = 0, loopRaf = 0, running = true;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var el = document.createElement("div");
@@ -22,10 +24,10 @@
       '<div class="ls-qkv-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
       '<div class="ls-qkv-vectors" aria-hidden="true"></div>' +
       '<div class="ls-qkv-controls">' +
-        '<span class="ls-qkv-view"><button type="button" class="ls-chip is-on" data-view="arcs">' + (DE ? "Bögen" : "Arcs") + '</button><button type="button" class="ls-chip" data-view="simplex">Simplex</button></span>' +
-        '<span class="ls-qkv-query">' + (DE ? "Query" : "query") + ' <b>' + (DE ? "es" : "it") + '</b></span>' +
         '<button type="button" class="ls-chip is-on" data-head="0">' + (DE ? "Head 1 · Wer?" : "Head 1 · who?") + '</button>' +
         '<button type="button" class="ls-chip" data-head="1">' + (DE ? "Head 2 · Wo?" : "Head 2 · where?") + '</button>' +
+        '<span class="ls-qkv-view"><button type="button" class="ls-chip is-on" data-view="arcs">' + (DE ? "Bögen" : "Arcs") + '</button><button type="button" class="ls-chip" data-view="simplex">Simplex</button><button type="button" class="ls-chip" data-view="graph">' + (DE ? "Graph" : "Graph") + '</button></span>' +
+        '<span class="ls-qkv-query">' + (DE ? "Query" : "query") + ' <b>' + (DE ? "es" : "it") + '</b></span>' +
       '</div>' +
       '<div class="ls-qkv-percent"></div>' +
       '<div class="ls-qkv-readout" aria-live="polite"></div>';
@@ -324,14 +326,159 @@
       }).join("") + '<span><b>Σ</b> 100%</span>');
       canvas.setAttribute("aria-label", DE ? "Attention als gewichtete Mischung: Die drei Ecken sind die gelernten Value-Vektoren der Tokens Tier, Straße und es; der Ausgabepunkt liegt in ihrem Dreieck." : "Attention as a weighted mixture: the three corners are the learned value vectors of the tokens animal, street, and it; the output point lies inside their triangle.");
     }
+    function graphLayout(w, h) {
+      var n = tokens.length, cx = w / 2, cy = h / 2 + 4, R = Math.min(w, h) * 0.36;
+      return tokens.map(function (tok, i) {
+        var a = -Math.PI / 2 + (i - query) * Math.PI * 2 / n;
+        return { x: cx + Math.cos(a) * R, y: cy + Math.sin(a) * R, a: a, i: i };
+      });
+    }
+    function segDist(px, py, ax, ay, bx, by) {
+      var dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy;
+      var t = L ? clamp(((px - ax) * dx + (py - ay) * dy) / L, 0, 1) : 0;
+      return Math.hypot(px - (ax + dx * t), py - (ay + dy * t));
+    }
+    function graphLabel(ctx, text, x, y, align, color, w, h) {
+      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      var tw = ctx.measureText(text).width;
+      var lx = clamp(x, tw / 2 + 4, w - tw / 2 - 4);
+      var ly = clamp(y, 12, h - 12);
+      ctx.fillStyle = "rgba(255,255,255,.90)";
+      ctx.fillRect(lx - tw / 2 - 3, ly - 7, tw + 6, 14);
+      ctx.fillStyle = color;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, lx, ly);
+    }
+    function drawGraph(now) {
+      if (!size) return;
+      now = now || performance.now();
+      ctx = size.ctx;
+      var w = size.w, h = size.h;
+      ctx.clearRect(0, 0, w, h);
+      var bg = ctx.createRadialGradient(w * 0.5, h * 0.45, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.78);
+      bg.addColorStop(0, "rgba(247,250,249,.98)");
+      bg.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+      V.grid(ctx, w, h, C, 30, 0.10);
+      var nodes = graphLayout(w, h);
+      var q = nodes[query];
+      var col = head === 0 ? C.green : C.blue;
+      // complete topology, very faint: every pair is connected
+      ctx.lineWidth = 0.6;
+      for (var i = 0; i < nodes.length; i++) {
+        for (var j = i + 1; j < nodes.length; j++) {
+          ctx.strokeStyle = "rgba(0,75,111,.045)";
+          ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
+        }
+      }
+      ctx.strokeStyle = V.alpha(C.petrol, 0.18);
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(w / 2, h / 2 + 4, Math.min(w, h) * 0.36, 0, Math.PI * 2); ctx.stroke();
+      // query edges, strength = softmax weight
+      nodes.forEach(function (node) {
+        if (node.i === query) return;
+        var a = weights[node.i];
+        var hot = graphHover === node.i;
+        ctx.strokeStyle = V.alpha(hot ? C.gold : col, 0.06 + 0.30 * a + (hot ? 0.22 : 0));
+        ctx.lineWidth = 5 + 18 * a + (hot ? 4 : 0);
+        ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(node.x, node.y); ctx.stroke();
+        ctx.strokeStyle = V.alpha(hot ? C.gold : col, 0.15 + 0.80 * a);
+        ctx.lineWidth = 0.7 + 8 * a + (hot ? 1.4 : 0);
+        ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(node.x, node.y); ctx.stroke();
+        var dx = node.x - q.x, dy = node.y - q.y, len = Math.hypot(dx, dy) || 1;
+        if (a > 0.10) {
+          var ux = dx / len, uy = dy / len;
+          var tipX = node.x - ux * 13, tipY = node.y - uy * 13;
+          ctx.fillStyle = hot ? C.gold : V.alpha(col, 0.55 + 0.35 * a);
+          ctx.beginPath();
+          ctx.moveTo(tipX, tipY);
+          ctx.lineTo(tipX - ux * 7 - uy * 4, tipY - uy * 7 + ux * 4);
+          ctx.lineTo(tipX - ux * 7 + uy * 4, tipY - uy * 7 - ux * 4);
+          ctx.closePath(); ctx.fill();
+        }
+        if (!reduced && a > 0.08) {
+          for (var k = 0; k < 2; k++) {
+            var u = ((now / 1150) + node.i * 0.17 + k * 0.5) % 1;
+            ctx.globalAlpha = 0.10 + 0.55 * (1 - u);
+            ctx.fillStyle = hot ? C.gold : col;
+            ctx.beginPath(); ctx.arc(q.x + dx * u, q.y + dy * u, 1.8 + a * 2, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+        }
+      });
+      // nodes and weight rings
+      nodes.forEach(function (node) {
+        var isQ = node.i === query;
+        var a = isQ ? 1 : weights[node.i];
+        if (!isQ) {
+          ctx.strokeStyle = V.alpha(col, 0.30 + 0.55 * a);
+          ctx.lineWidth = 2.2;
+          ctx.beginPath(); ctx.arc(node.x, node.y, 12, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * a); ctx.stroke();
+        }
+        if (isQ) {
+          ctx.save();
+          ctx.shadowColor = V.alpha(C.green, 0.55); ctx.shadowBlur = 18;
+          ctx.beginPath(); ctx.arc(node.x, node.y, 14, 0, Math.PI * 2); ctx.fillStyle = V.alpha(C.green, 0.18); ctx.fill();
+          ctx.restore();
+        }
+        ctx.beginPath(); ctx.arc(node.x, node.y, isQ ? 9 : 7, 0, Math.PI * 2);
+        ctx.fillStyle = isQ ? C.green : C.paper;
+        ctx.fill();
+        ctx.strokeStyle = isQ ? C.paper : C.petrol;
+        ctx.lineWidth = isQ ? 2 : 1.3;
+        ctx.stroke();
+        var label = tokens[node.i] + (isQ ? (DE ? " · Q" : " · Q") : "");
+        var lx = node.x + Math.cos(node.a) * 25;
+        var ly = node.y + Math.sin(node.a) * 25;
+        graphLabel(ctx, label, lx, ly, Math.cos(node.a) > 0.25 ? "left" : Math.cos(node.a) < -0.25 ? "right" : "center", isQ ? C.green : C.ink, w, h);
+      });
+      // hover overlay
+      if (graphHover >= 0) {
+        var tIdx = graphHover;
+        var text = tIdx === query
+          ? (DE ? "Query es · verteilt 100% auf alle Tokens" : "query it · distributes 100% over all tokens")
+          : (DE ? tokens[query] + " → " + tokens[tIdx] + "  " + (weights[tIdx] * 100).toFixed(1) + "%" : tokens[query] + " → " + tokens[tIdx] + "  " + (weights[tIdx] * 100).toFixed(1) + "%");
+        ctx.font = '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
+        var tw = ctx.measureText(text).width;
+        var bx = clamp(graphMouse.x + 14, 6, w - tw - 24);
+        var by = clamp(graphMouse.y + 14, 6, h - 30);
+        ctx.save();
+        ctx.shadowColor = "rgba(0,75,111,.18)"; ctx.shadowBlur = 12;
+        ctx.fillStyle = "rgba(255,255,255,.96)";
+        ctx.fillRect(bx, by, tw + 18, 26);
+        ctx.restore();
+        ctx.strokeStyle = tIdx === query ? C.green : C.gold;
+        ctx.lineWidth = 1.4;
+        ctx.strokeRect(bx + 0.5, by + 0.5, tw + 17, 25);
+        ctx.fillStyle = C.petrol;
+        ctx.textAlign = "left"; ctx.textBaseline = "middle";
+        ctx.fillText(text, bx + 9, by + 13);
+      }
+      // headings and legend
+      ctx.fillStyle = C.petrol;
+      ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif';
+      ctx.textAlign = "left"; ctx.textBaseline = "top";
+      ctx.fillText(DE ? "Attention als Graph" : "Attention as a graph", 12, 7);
+      ctx.textAlign = "right";
+      ctx.fillStyle = col;
+      ctx.font = '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Barlow", sans-serif';
+      ctx.fillText(head === 0 ? (DE ? "Head 1 · Wer?" : "Head 1 · who?") : (DE ? "Head 2 · Wo?" : "Head 2 · where?"), w - 12, 7);
+      setPercent('<span class="ls-qkv-percent-lead">' + (DE ? "Vollverbunden:" : "Fully connected:") + '</span><span>' + (DE ? "jedes Token kann auf jedes andere schauen." : "every token can attend to every other token.") + '</span><span><b>' + tokens.length + '</b> ' + (DE ? "Knoten" : "nodes") + '</span>');
+      var top = tokens.map(function (tok, i) { return { tok: tok, w: i === query ? -1 : weights[i] }; }).sort(function (a, b) { return b.w - a.w; }).slice(0, 3);
+      setReadout('<span><b>Query</b> ' + (DE ? "es" : "it") + '</span><span><b>' + (DE ? "verbunden" : "connected") + '</b> ' + tokens.length + '/' + tokens.length + '</span>' + top.map(function (x) { return '<span><b>' + api.esc(x.tok) + '</b> ' + (x.w * 100).toFixed(1) + '%</span>'; }).join(""));
+      canvas.setAttribute("aria-label", DE ? "Attention als vollverbundener Graph: alle Token im Kreis, Kanten von der Query es zu jedem Token mit unterschiedlicher Stärke. Fahre über eine Kante, um Verbindung und Prozentwert zu sehen." : "Attention as a fully connected graph: all tokens in a circle, edges from the query it to every token with different strength. Hover an edge to see the connection and percentage.");
+    }
     function draw() {
       if (!size) return;
       if (view === "simplex") drawSimplex();
+      else if (view === "graph") drawGraph(performance.now());
       else drawArcs();
     }
     function setView(v) {
-      if (v !== "arcs" && v !== "simplex") return;
+      if (v !== "arcs" && v !== "simplex" && v !== "graph") return;
       view = v;
+      graphHover = -1;
       el.querySelectorAll("[data-view]").forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-view") === view); });
       draw();
     }
@@ -347,6 +494,27 @@
     el.querySelectorAll("[data-view]").forEach(function (b) {
       b.addEventListener("click", function () { setView(b.getAttribute("data-view")); });
     });
+    canvas.addEventListener("pointermove", function (e) {
+      if (view !== "graph" || !size) return;
+      var r = canvas.getBoundingClientRect();
+      graphMouse = { x: e.clientX - r.left, y: e.clientY - r.top };
+      var nodes = graphLayout(size.w, size.h);
+      var best = -1, bestD = 1e9;
+      nodes.forEach(function (node) {
+        var d = Math.hypot(graphMouse.x - node.x, graphMouse.y - node.y);
+        if (d < 15 && d < bestD) { bestD = d; best = node.i; }
+      });
+      if (best < 0) {
+        nodes.forEach(function (node) {
+          if (node.i === query) return;
+          var d = segDist(graphMouse.x, graphMouse.y, nodes[query].x, nodes[query].y, node.x, node.y);
+          if (d < 8 && d < bestD) { bestD = d; best = node.i; }
+        });
+      }
+      graphHover = best;
+      draw();
+    });
+    canvas.addEventListener("pointerleave", function () { graphHover = -1; draw(); });
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
     renderVectors();

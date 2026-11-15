@@ -1917,10 +1917,32 @@
     boxes: qkvSimplex.boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-h2" }); })
   });
 
+  var qkvGraph = Object.assign({}, qkvArcs, {
+    kicker: DE ? "Graph" : "Graph",
+    title: DE ? "Attention ist ein vollverbundener Graph" : "Attention is a fully connected graph",
+    body: DE
+      ? "Jedes Token kann auf jedes andere schauen: Die Attention-Matrix hat keine fehlenden Einträge. Im Kreis siehst du alle Token; die Kanten von der Query „es“ zu jedem anderen Token sind die Softmax-Gewichte. Dick und hell heißt viel, dünn und blass heißt wenig. Fahre mit der Maus über eine Kante oder ein Token: Die Demo zeigt die Verbindung und den Prozentwert. Gezeigt ist eine Query-Zeile; für jede Query gibt es eine eigene Verteilung."
+      : "Every token can attend to every other token: the attention matrix has no missing entries. You see all tokens in a circle; the edges from the query “it” to every other token are the softmax weights. Thick and bright means a lot, thin and pale means little. Hover over an edge or a token: the demo shows the connection and the percentage. This is one query row; every query has its own distribution.",
+    watch: DE ? "Fahre über die Kanten. Welche Verbindung ist am stärksten? Vergleiche Head 1 und Head 2." : "Hover over the edges. Which connection is strongest? Compare head 1 and head 2.",
+    demoState: { scene: "qkv", head: 0, view: "graph" },
+    context: DE ? "Die Matrix ist voll besetzt: Jede Query bekommt zu jedem Key einen Score, auch wenn viele Scores klein sind. Softmax macht daraus Gewichte. Die blassen Linien zeigen die vollständige Topologie; die farbigen Kanten zeigen die Gewichte dieser Query." : "The matrix is fully populated: every query gets a score for every key, even if many scores are small. Softmax turns them into weights. The faint lines show the complete topology; the coloured edges show the weights for this query.",
+    deep: DE ? "Ein Head ist ein Graph. Viele Heads sind viele Graphen mit eigenen Kantengewichten; die Ausgaben werden konkateniert und projiziert. Deshalb kann ein Head auf Syntax achten, ein anderer auf Position oder Bedeutung." : "One head is one graph. Many heads are many graphs with their own edge weights; the outputs are concatenated and projected. That is why one head can attend to syntax, another to position or meaning.",
+    boxes: DE ? [
+      box("qkv-g1", "Graph", "Vollverbunden", "Jedes Token ist mit jedem anderen verbunden. Die Attention-Matrix hat keine fehlenden Einträge; viele Gewichte sind nur sehr klein."),
+      box("qkv-g2", "Graph", "Kantenstärke", "Die Linienbreite und Helligkeit sind das Softmax-Gewicht. Eine dicke Kante bedeutet: Diese Query liest viel von diesem Token."),
+      box("qkv-g3", "Graph", "Pro Query", "Gezeigt ist eine Zeile der Matrix, nämlich die Query „es“. Jede andere Query hat ihre eigene Verteilung und damit ihre eigenen Kantengewichte.")
+    ] : [
+      box("qkv-g1", "Graph", "Fully connected", "Every token is connected to every other token. The attention matrix has no missing entries; many weights are just very small."),
+      box("qkv-g2", "Graph", "Edge strength", "Line width and brightness are the softmax weight. A thick edge means this query reads a lot from that token."),
+      box("qkv-g3", "Graph", "Per query", "This shows one row of the matrix, the query “it”. Every other query has its own distribution and therefore its own edge weights.")
+    ],
+    sources: qkvArcs.sources
+  });
+
   var qkvStep = {
     title: DE ? "Wie Attention rechnet" : "How attention computes",
     kicker: DE ? "Q · K · V" : "Q · K · V",
-    substeps: [qkvArcs, qkvArcs2, qkvSimplex, qkvSimplex2]
+    substeps: [qkvArcs, qkvArcs2, qkvSimplex, qkvSimplex2, qkvGraph]
   };
 
   var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep];
@@ -1949,7 +1971,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-15-attention-4",
+    overlayRevision: "2026-11-15-attention-5",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.

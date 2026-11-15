@@ -3008,6 +3008,12 @@
     }
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") {
+        if (state.edit) {
+          e.preventDefault();
+          toggleEdit(false);
+          if (els.app && els.app.classList.contains("is-text-open")) setTextOpen(false);
+          return;
+        }
         if (els.app && els.app.classList.contains("is-text-open")) { setTextOpen(false); return; }
         resetPositionBuffer(); hideTip(); toggleHelp(false); return;
       }

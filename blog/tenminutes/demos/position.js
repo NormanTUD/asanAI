@@ -27,7 +27,13 @@
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var context = 64, dims = 24, pos = 7, rotate = !reducedMotion;
     var posAnim = pos;
-    var trail = [pos];
+    function trailSeed(p) {
+      var out = [], step = Math.max(1, Math.round(p / 4));
+      for (var i = 0; i < p; i += step) out.push(i);
+      out.push(p);
+      return out;
+    }
+    var trail = trailSeed(pos);
     var sweep = null;
     var heatSize = null, curveSize = null, yaw = -0.6, pitch = 0.5, drag = null, raf = 0, last = 0;
     var C = api.colors();
@@ -151,6 +157,7 @@
         ctx.fillText(label, lx, ly);
       });
       ctx.globalAlpha = 1;
+      ctx.textBaseline = "alphabetic";
       var startVec = curvePoint(0);
       var curVec = curvePoint(posAnim);
       var startP = unit3(startVec);
@@ -265,7 +272,7 @@
     window.addEventListener("pointerup", function () { drag = null; });
     contextEl.addEventListener("input", function () { context = parseInt(contextEl.value, 10); contextEl.nextElementSibling.textContent = String(context); drawHeat(); });
     dimsEl.addEventListener("input", function () { dims = parseInt(dimsEl.value, 10); dimsEl.nextElementSibling.textContent = String(dims); drawHeat(); drawCurve(); });
-    posEl.addEventListener("input", function () { sweep = null; pos = parseInt(posEl.value, 10); posAnim = pos; trail = [pos]; posEl.nextElementSibling.textContent = String(pos); draw(); });
+    posEl.addEventListener("input", function () { sweep = null; pos = parseInt(posEl.value, 10); posAnim = pos; trail = trailSeed(pos); posEl.nextElementSibling.textContent = String(pos); draw(); });
     var rot = el.querySelector("[data-rotate]");
     rot.addEventListener("click", function () { rotate = !rotate; rot.classList.toggle("is-on", rotate); });
     window.addEventListener("resize", resize);

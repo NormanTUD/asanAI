@@ -321,3 +321,21 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   beiden Mini-Demos zu Attention und FFN; der Text verweist nicht mehr auf
   „Linien, die mit jeder Schicht wachsen“. Die separate Folie
   „Token-Trajektorien durch GPT-2“ bleibt unverändert.
+- [done] Unembedding: h erklärt (letzter Vektor nach allen Transformer-Blöcken,
+  Kontext über viele Heads/Schichten eingemischt), eigene Box und Readout.
+  Die Token-Richtungen werden jetzt nach den Winkelsektoren gezeichnet und
+  an der Panelkante geklemmt; die rechte Liste beginnt höher und passt alle
+  Zeilen ein, sodass „city“ nicht mehr unten herausfällt.
+- [done] „Jeder Platz bekommt einen Fingerabdruck“: Jeder grüne Punkt trägt
+  jetzt ein Label `Hund@Position`; links steht der Hinweis auf den
+  hochdimensionalen Raum und die Hyperkugel (3D = Projektion). Text, Kontext
+  und Box pos-4 nennen die Hyperkugel ausdrücklich.
+- [done] „Wie Attention rechnet“: Head 1/Head 2 stehen links vor Bögen/Simplex;
+  die Unterstufen sind Head 1 Bögen, Head 2 Bögen, Head 1 Simplex,
+  Head 2 Simplex. Neue fünfte Stufe „Attention ist ein vollverbundener Graph“:
+  alle Token im Kreis, blasses vollständiges Netz, farbige Query-Kanten mit
+  Gewicht, animierte Partikel, Knotenringe, Hover-Tooltip mit Verbindung und
+  Prozentwert.
+- [done] Positionsdemo startet mit mehreren grünen Trail-Punkten (Hund@0,
+  Hund@2, …), damit sofort sichtbar ist: Jeder Punkt ist dasselbe Wort an einer
+  anderen Position.

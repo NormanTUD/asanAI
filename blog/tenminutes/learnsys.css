@@ -873,7 +873,7 @@ h1,h2,h3,h4{
 .ls-position-grid{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:8px;min-height:220px}
 .ls-position-panel{position:relative;min-height:0;border:1px solid rgba(0,75,111,.08);background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(247,249,248,.3));overflow:hidden}
 .ls-position-panel canvas{position:absolute;inset:0;width:100%;height:100%}
-.ls-position-space-note{position:absolute;left:6px;top:5px;z-index:2;max-width:calc(100% - 12px);padding:3px 5px;background:rgba(255,255,255,.84);border-left:2px solid var(--ls-lilac);font:600 8px/1.35 "Open Sans",sans-serif;color:var(--ls-muted);pointer-events:none}
+.ls-position-space-note{position:absolute;left:6px;top:5px;z-index:2;max-width:calc(100% - 12px);padding:3px 5px;background:rgba(255,255,255,.84);border-left:2px solid var(--ls-petrol);font:600 8px/1.35 "Open Sans",sans-serif;color:var(--ls-muted);pointer-events:none}
 .ls-position-legend{position:absolute;right:6px;bottom:4px;display:flex;align-items:center;gap:4px;font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-position-legend i{width:38px;height:6px;background:linear-gradient(90deg,var(--ls-sky),#fff,var(--ls-gold))}
 .ls-position-readout,.ls-att-readout,.ls-res-readout,.ls-meadow-readout,.ls-sm-readout{display:flex;gap:12px;flex-wrap:wrap;font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.06em}
@@ -1857,7 +1857,7 @@ h1,h2,h3,h4{
 .ls-res-layers .ls-chip.is-done{border-color:rgba(99,164,75,.32);color:var(--ls-ink)}
 
 .ls-sim-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto auto;gap:7px;padding:2px}
-.ls-sim-stage{position:relative;min-height:320px;border:0;background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(247,249,248,.3))}
+.ls-sim-stage{position:relative;min-height:260px;border:0;background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(247,249,248,.3))}
 .ls-sim-stage canvas{position:absolute;inset:0;width:100%;height:100%}
 .ls-sim-controls{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
 .ls-sim-pick{display:flex;align-items:center;gap:6px;font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
