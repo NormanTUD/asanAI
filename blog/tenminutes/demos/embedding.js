@@ -91,7 +91,7 @@
       highdimEl.innerHTML =
         '<div class="ls-highdim-note">' + (DE ? "Ausschnitt: 16 von 4096 Dimensionen. Jede Zeile ist ein Vektor, jede Spalte eine Dimension." : "Slice: 16 of 4096 dimensions. Each row is a vector, each column a dimension.") + '</div>' +
         '<div class="ls-highdim-scroll"><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>' +
-        '<p class="ls-highdim-foot">' + (DE ? "Auch wenn wir uns 4096 Dimensionen nicht mehr vorstellen können: Es gelten dieselben Regeln. Mittelpunkt, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter. Nur die Zahl der Koordinaten wächst, und hier passen viel mehr unabhängige Beziehungen hinein als in zwei oder drei Dimensionen." : "Even though we cannot picture 4096 dimensions, the same rules apply. Midpoint, angle, and matrix multiplication still work coordinate by coordinate. Only the number of coordinates grows, and there is room for many more independent relations than in two or three dimensions.") + '</p>';
+        '<p class="ls-highdim-foot">' + (DE ? "Auch wenn wir uns 4096 Dimensionen nicht mehr vorstellen können: Es gelten dieselben Regeln. Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter. Nur die Zahl der Koordinaten wächst, und hier passen viel mehr unabhängige Beziehungen hinein als in zwei oder drei Dimensionen." : "Even though we cannot picture 4096 dimensions, the same rules apply. Difference, angle, and matrix multiplication still work coordinate by coordinate. Only the number of coordinates grows, and there is room for many more independent relations than in two or three dimensions.") + '</p>';
     }
     function tempById(id) {
       for (var i = 0; i < TEMP.length; i++) if (TEMP[i].id === id) return TEMP[i];
@@ -337,9 +337,12 @@
       ctx.moveTo(ax, my);
       ctx.lineTo(bx, my);
       ctx.stroke();
-      var avg = (a.value + b.value) / 2;
-      var mx = tempX(avg);
-      var near = nearestTemp(avg);
+      var lo = Math.min(a.value, b.value);
+      var hi = Math.max(a.value, b.value);
+      var diff = hi - lo;
+      var near = nearestTemp(diff);
+      var err = Math.abs(diff - near.value);
+      var mx = tempX(near.value);
       ctx.beginPath();
       ctx.moveTo(mx, my - 7);
       ctx.lineTo(mx + 7, my);
@@ -378,11 +381,13 @@
       });
       drawLabel(DE ? "TEMPERATUR" : "TEMPERATURE", 24, 26, C.muted, "left", 9);
       drawLabel(DE ? "Klicke zwei Punkte" : "Click two points", size.w - 24, 26, C.muted, "right", 9);
-      var sym = Math.abs(avg - near.value) < 0.5 ? "=" : "≈";
-      drawLabel(a.value + " + " + b.value + " = " + (a.value + b.value) + "  ·  " + avg.toFixed(1) + " " + sym + " " + text(near.label) + "  ·  " + (DE ? "Fehler " : "error ") + Math.abs(avg - near.value).toFixed(1), size.w / 2, size.h - 22, C.soft, "center", 11);
+      var sym = err < 0.5 ? "=" : "≈";
+      var label = hi + " − " + lo + " = " + diff + "  ·  " + diff.toFixed(1) + " " + sym + " " + text(near.label);
+      if (err >= 0.5) label += "  ·  " + (DE ? "Fehler " : "error ") + err.toFixed(1);
+      drawLabel(label, size.w / 2, size.h - 22, C.soft, "center", 11);
       canvas.setAttribute("aria-label", DE
-        ? "Temperaturlinie. " + text(a.label) + " und " + text(b.label) + ", Mittelpunkt " + avg.toFixed(1) + ", nahe " + text(near.label) + "."
-        : "Temperature line. " + text(a.label) + " and " + text(b.label) + ", midpoint " + avg.toFixed(1) + ", near " + text(near.label) + ".");
+        ? "Temperaturlinie. Differenz zwischen " + text(a.label) + " und " + text(b.label) + ": " + diff + ", am nächsten bei " + text(near.label) + (err >= 0.5 ? ", Abweichung " + err.toFixed(1) : "") + "."
+        : "Temperature line. Difference between " + text(a.label) + " and " + text(b.label) + ": " + diff + ", closest to " + text(near.label) + (err >= 0.5 ? ", error " + err.toFixed(1) : "") + ".");
       updateReadout();
     }
     function drawLine3D(a, b, alpha) {
@@ -704,12 +709,19 @@
     function updateReadout() {
       if (st.mode === "temperature") {
         var a = tempById(st.pair[0]), b = tempById(st.pair[1]);
-        var avg = (a.value + b.value) / 2;
-        var near = nearestTemp(avg);
-        var sym = Math.abs(avg - near.value) < 0.5 ? "=" : "≈";
-        readout.innerHTML = '<b>' + esc(a.value) + '</b> + <b>' + esc(b.value) + '</b> = <b>' + esc(a.value + b.value) + '</b> · ' +
-          esc(avg.toFixed(1)) + ' ' + esc(sym) + ' <b>' + esc(text(near.label)) + '</b> · ' + esc(DE ? 'Fehler' : 'error') + ' ' + esc(Math.abs(avg - near.value).toFixed(1));
-        setTex("\\underbrace{" + a.value + "}_{\\text{" + text(a.label) + "}} + \\underbrace{" + b.value + "}_{\\text{" + text(b.label) + "}} = \\underbrace{" + (a.value + b.value) + "}_{\\text{" + (DE ? "Summe" : "sum") + "}} \\qquad \\underbrace{" + avg.toFixed(1) + "}_{\\text{" + (DE ? "Mittelwert" : "midpoint") + "}} " + sym + " \\underbrace{" + near.value + "}_{\\text{" + text(near.label) + "}}\\;\\text{(" + (DE ? "Abweichung" : "error") + " " + Math.abs(avg - near.value).toFixed(1) + ")}");
+        var lo = Math.min(a.value, b.value);
+        var hi = Math.max(a.value, b.value);
+        var loLabel = a.value === lo ? text(a.label) : text(b.label);
+        var hiLabel = a.value === hi ? text(a.label) : text(b.label);
+        var diff = hi - lo;
+        var near = nearestTemp(diff);
+        var err = Math.abs(diff - near.value);
+        var sym = err < 0.5 ? "=" : "≈";
+        var html = '<b>' + esc(hi) + '</b> − <b>' + esc(lo) + '</b> = <b>' + esc(diff) + '</b> · ' +
+          esc(diff.toFixed(1)) + ' ' + esc(sym) + ' <b>' + esc(text(near.label)) + '</b>';
+        if (err >= 0.5) html += ' · ' + esc(DE ? 'Fehler' : 'error') + ' ' + esc(err.toFixed(1));
+        readout.innerHTML = html;
+        setTex("\\underbrace{\\underbrace{" + hi + "}_{\\text{" + hiLabel + "}} - \\underbrace{" + lo + "}_{\\text{" + loLabel + "}}}_{\\text{" + (DE ? "Differenz" : "difference") + "}} = " + diff + " \\qquad " + diff.toFixed(1) + " " + sym + " \\underbrace{" + near.value + "}_{\\text{" + text(near.label) + "}}" + (err >= 0.5 ? "\\;\\text{(" + (DE ? "Abweichung" : "error") + " " + err.toFixed(1) + ")}" : ""));
         return;
       }
       var cr = currentResult();
@@ -829,7 +841,10 @@
       row2.className = "ls-scene-row";
       if (st.mode === "temperature") {
         PAIRS.forEach(function (pair) {
-          var label = text(tempById(pair[0]).label) + " + " + text(tempById(pair[1]).label);
+          var p0 = tempById(pair[0]), p1 = tempById(pair[1]);
+          var hi = p1.value > p0.value ? p1 : p0;
+          var lo = p1.value > p0.value ? p0 : p1;
+          var label = text(hi.label) + " − " + text(lo.label);
           row2.appendChild(makeChip(label, st.pair[0] === pair[0] && st.pair[1] === pair[1], function () {
             st.pair = pair.slice(); syncControls(); draw();
           }));

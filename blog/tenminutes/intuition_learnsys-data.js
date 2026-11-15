@@ -120,17 +120,14 @@
     {
       kicker: "Die Linie",
       title: "Bedeutung wird eine Zahl",
-      body: "Wir ordnen Wörtern Zahlen zu. Auf einer Linie liegt jedes Wort an einer Stelle; der Abstand sagt, wie ähnlich zwei Wörter in dieser Eigenschaft sind. Klicke zwei Punkte: Der Mittelpunkt ist ihr Durchschnitt. Kalt (5) und warm (55) ergeben 30; kalt und heiß ergeben 52,5. Das liegt nahe bei warm, aber nicht exakt. Bedeutung ist oft eine Nähe, kein exakter Wert.",
-      watch: "Klicke zwei Punkte. Wann ist der Mittelpunkt exakt, wann ungefähr? Drücke Weiter oder →: Die Demo geht die vier Wortpaare nacheinander durch.",
+      body: "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen. Die Differenz zwischen heiß und warm ist 100 − 55 = 45, und 45 liegt am nächsten bei warm. Zieht man also von heiß warm ab, bleibt ungefähr warm.\n\nDas ist ein stark vereinfachtes Beispiel: Auf einer Achse lässt sich nur eine Eigenschaft darstellen. Deshalb nutzt man in LLMs viel höherdimensionale Räume. Klicke zwei Punkte: Die Demo zeigt die Differenz und das nächste Wort auf der Linie.",
+      watch: "",
       demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
-      context: "Eine Achse ist die einfachste Form eines Vektorraums: eine Koordinate pro Wort. Der Mittelpunkt (a + b) / 2 funktioniert in jeder Dimension gleich.",
-      deep: "Die Positionen sind hier von Hand gewählt, damit du die Rechnung siehst. In einem Modell werden sie aus vielen Beispielen gelernt. Die Abweichung ist der Abstand zwischen Mittelwert und nächstem Wort; bei kalt + heiß sind das 2,5 Grad.",
+      deep: "Die Positionen sind hier von Hand gewählt, damit die Rechnungen stimmen. In einem Modell werden sie aus vielen Beispielen gelernt.",
+      deepTitle: "Was ist hier vereinfacht?",
       boxes: [
-        box("emb-1", "Mathematik", "Was ist ein Vektor?", "Ein Vektor ist ein Element eines Vektorraums. In der Praxis ist er eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt. Die Richtung ist oft wichtiger als die Länge."),
+        box("emb-1", "Mathematik", "Was ist ein Vektor?", "Ein Vektor ist ein Element eines Vektorraums. In der Praxis ist er eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt. Bei LLMs ist die Richtung oft wichtiger als die Länge."),
         box("emb-2", "Geschichte", "Woher kommt die Idee?", "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert. Wörter, die in ähnlichen Kontexten auftreten, bekommen ähnliche Vektoren."),
-        box("emb-4", "Mathematik", "Warum funktioniert der Mittelpunkt?", "Weil Vektoren koordinatenweise addiert werden. Der Mittelpunkt (a + b) / 2 liegt auf der Verbindungslinie. In höheren Dimensionen gilt dieselbe Rechnung; du siehst nur eine Projektion."),
-        box("emb-5", "Grenze", "Ist der Mittelpunkt ein Wort?", "Nein. Er ist eine Position im Raum. Dass sie nahe an einem Wort liegt, ist eine Eigenschaft der gelernten Geometrie, keine Definition."),
-        box("emb-approx", "Grenze", "Was heißt „ungefähr“?", "Der Mittelwert 52,5 liegt 2,5 Grad von warm entfernt. Es gibt kein Wort exakt bei 52,5. Die Nähe reicht, weil das Modell mit Winkeln und Nachbarn arbeitet, nicht mit einer Wortliste."),
         box("emb-clean", "Optional", "Sind echte Embeddings so sauber?", "Nein. Die Demo trennt Temperatur, Macht und Geschlecht sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung.")
       ],
       sources: sources.slice(0, 4)
@@ -172,17 +169,14 @@
     {
       kicker: "The line",
       title: "Meaning becomes a number",
-      body: "We assign numbers to words. On a line every word sits at one position; the distance says how similar two words are in this property. Click two points: the midpoint is their average. Cold (5) and warm (55) give 30; cold and hot give 52.5. That is close to warm, but not exact. Meaning is often closeness, not an exact value.",
-      watch: "Click two points. When is the midpoint exact, when approximate? Press Next or →: the demo walks through the four word pairs in order.",
+      body: "When you assign numbers to words, you can do arithmetic with them. The difference between hot and warm is 100 − 55 = 45, and 45 is closest to warm. So if you subtract warm from hot, roughly warm remains.\n\nThis is a very simplified example: one axis can show only one property. That is why LLMs use much higher-dimensional spaces. Click two points: the demo shows the difference and the nearest word on the line.",
+      watch: "",
       demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
-      context: "One axis is the simplest form of a vector space: one coordinate per word. The midpoint (a + b) / 2 works the same in every dimension.",
-      deep: "The positions are chosen by hand here so you can see the arithmetic. In a model they are learned from many examples. The error is the distance between the midpoint and the nearest word; for cold + hot it is 2.5 degrees.",
+      deep: "The positions are chosen by hand so the arithmetic works out. In a model they are learned from many examples.",
+      deepTitle: "What is simplified here?",
       boxes: [
-        box("emb-1", "Mathematics", "What is a vector?", "A vector is an element of a vector space. In practice it is an ordered list of numbers that describes a point or a direction. Direction often matters more than length."),
+        box("emb-1", "Mathematics", "What is a vector?", "A vector is an element of a vector space. In practice it is an ordered list of numbers that describes a point or a direction. In LLMs, direction often matters more than length."),
         box("emb-2", "History", "Where does the idea come from?", "Firth (1957): “You shall know a word by the company it keeps.” Harris (1954) formulated the distributional idea earlier. Words that appear in similar contexts receive similar vectors."),
-        box("emb-4", "Mathematics", "Why does the midpoint work?", "Because vectors are added coordinate by coordinate. The midpoint (a + b) / 2 lies on the line between them. The same arithmetic works in higher dimensions; you only see a projection."),
-        box("emb-5", "Limit", "Is the midpoint a word?", "No. It is a position in the space. That it lands near a word is a property of the learned geometry, not a definition."),
-        box("emb-approx", "Limit", "What does “approximate” mean?", "The midpoint 52.5 is 2.5 degrees away from warm. No word sits exactly at 52.5. Closeness is enough because the model works with angles and neighbours, not with a word list."),
         box("emb-clean", "Optional", "Are real embeddings this clean?", "No. The demo separates temperature, power, and gender cleanly because the axes are chosen by hand. In real models, axes are learned directions, not named properties. Temperature, style, topic, and language overlap; clusters overlap, words lie askew in space, and the same direction can carry several meanings (superposition). The straight line is a didactic projection, not a measurement.")
       ],
       sources: sources.slice(0, 4)
@@ -700,7 +694,7 @@
     teaser: DE
       ? "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste sinnvolle Wort vorherzusagen."
       : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next sensible word.",
-    watch: DE ? "Sequenzielles Machine Learning geschieht in Schichten. Die erste Schicht wendet man direkt auf die Daten an, die zweite auf die Ergebnisse der ersten, und so weiter; dadurch verschachteln sich Funktionen: $\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Daten}\\right)\\right)\\right)$ Die erste Schicht sucht nach Mustern im Text, die zweite nach Mustern im Ergebnis der ersten Schicht, und so weiter. Mit dem Residual Stream kann jede Schicht auch Muster im Text <i>und</i> in den Ergebnissen der vorherigen Schichten finden." : "Sequential machine learning happens in layers. The first layer is applied directly to the data, the second to the results of the first, and so on; this nests functions: $\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Data}\\right)\\right)\\right)$ The first layer looks for patterns in the text, the second for patterns in the result of the first layer, and so on. With the residual stream, each layer can also find patterns in the text <i>and</i> in the results of the previous layers.",
+    watch: DE ? "Sequenzielles Machine Learning geschieht in Schichten. Die erste Schicht wendet man direkt auf die Daten an, die zweite auf die Ergebnisse der ersten, und so weiter; dadurch verschachteln sich Funktionen:\n\n$$\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Daten}\\right)\\right)\\right)$$\n\nDie erste Schicht sucht nach Mustern im Text, die zweite nach Mustern im Ergebnis der ersten Schicht, und so weiter. Mit dem Residual Stream kann jede Schicht auch Muster im Text <i>und</i> in den Ergebnissen der vorherigen Schichten finden." : "Sequential machine learning happens in layers. The first layer is applied directly to the data, the second to the results of the first, and so on; this nests functions:\n\n$$\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Data}\\right)\\right)\\right)$$\n\nThe first layer looks for patterns in the text, the second for patterns in the result of the first layer, and so on. With the residual stream, each layer can also find patterns in the text <i>and</i> in the results of the previous layers.",
     demoState: { scene: "blocks", resetKey: "architecture", start: 0 },
     inherit: false,
     questionGroups: [
@@ -740,7 +734,7 @@
     {
       kicker: "Mannigfaltigkeiten",
       title: "Von Beziehungen zur Übersetzung",
-      body: "Hat man Punkte in diesem hochabstrakten Raum, deren Beziehungen untereinander die Bedeutung tragen, wird Übersetzung zu Translation, Rotation, Verzerrung, Skalierung und Scherung. Die Struktur, die die Punkte im hochdimensionalen Raum bilden, nennen Mathematiker <b>Mannigfaltigkeit</b>.\n\nFindet man eine Kombination, die die eine Wolke in die andere überführt, hat man eine Übersetzung gefunden: Die Bedeutung steht in anderen Sprachen in denselben Relationen zueinander, auch wenn die konkreten Tokens andere sind.",
+      body: "Hat man Punkte in diesem hochabstrakten Raum, deren Beziehungen untereinander die Bedeutung tragen, wird Übersetzung zu Translation, Rotation, Verzerrung, Skalierung und Scherung. Die Struktur, die sich aus den Punkten im hochdimensionalen Raum bildet, nennen Mathematiker <b>Mannigfaltigkeit</b>.\n\nFindet man eine Kombination, die die eine Wolke in die andere überführt, hat man eine Übersetzung gefunden, weil die Bedeutung in anderen Sprachen in denselben Relationen zueinander steht, auch wenn die konkreten Tokens andere sind.",
       watch: "Drehe, rotiere und verschiebe die japanische Wolke. Fahre über die Punkte, um die Wörter zu sehen. Klicke „Übersetzung finden“ oder „Weiter“.",
       demoState: { scene: "manifold" },
       context: "Die Demo ist stark vereinfacht: zwei Punktwolken, viele Wörter, saubere Kanten. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen; der Vietoris–Rips-Komplex macht nur die Nachbarschaften sichtbar.",
@@ -1589,9 +1583,23 @@
   var tokenizeExamplesStep = Object.assign({}, tokenizeSteps[0], {
     kicker: DE ? "Tokenize" : "Tokenize",
     title: DE ? "Text wird zu IDs" : "Text becomes IDs",
-    body: DE ? "Jetzt die Beispiele: Verständnis und ein ganzer Satz werden in Tokens und IDs zerlegt. Ein Token ist kein Wort; die ID ist die Adresse in der Embedding-Tabelle." : "Now the examples: understanding and a whole sentence are split into tokens and IDs. A token is not a word; the ID is the address in the embedding table.",
-    watch: DE ? "Klicke die Beispiele. Wo ist die ID sichtbar?" : "Click the examples. Where is the ID visible?",
-    demoState: { scene: "tokenize", mode: "split" }
+    body: DE ? "Der Tokenizer trennt Wörter in Bestandteile. Welche Trennungen er wählt, lernt er mit einem Algorithmus, zum Beispiel <b>B</b>yte <b>P</b>air <b>E</b>ncoding (<b>BPE</b>). Dahinter stehen zwei Ideen. Erstens Kompression: möglichst viel Text mit möglichst wenigen Tokens darstellen. Zweitens Offenheit: Das Netz kann auch Wörter verarbeiten, die es nie als Ganzes gesehen hat, weil es ihre Bestandteile kennt und lernt, wie sie zusammenwirken." : "The tokenizer splits words into pieces. It learns which splits to choose with an algorithm, for example <b>B</b>yte <b>P</b>air <b>E</b>ncoding (<b>BPE</b>). Two ideas sit behind it. First, compression: represent as much text as possible with as few tokens as possible. Second, openness: the network can process words it never saw as a whole because it knows their pieces and learns how they fit together.",
+    watch: "",
+    demoState: { scene: "tokenize", mode: "split" },
+    context: "",
+    boxes: DE ? [
+      box("tok-1", "Technik", "Was passiert mit unbekannten Zeichen?", "Bei UTF-8 kann ein Zeichen mehrere Bytes lang sein. Was passiert mit einem Zeichen, das nie im Trainingskorpus vorkam, etwa einem neuen Emoji? Emojis bestehen oft aus mehreren Bestandteilen: 🐈‍⬛ setzt sich aus 🐈, dem unsichtbaren Zero Width Joiner (ZWJ) und ⬛ zusammen. Der Tokenizer sieht die Bytefolge, nicht das fertige Bild. Deshalb bekommt er alle 256 möglichen Bytewerte als Grundbausteine. So kann er auch unbekannte Zeichen aus bekannten Bytes zusammensetzen; die gelernten Vektoren legen ähnliche Bytefolgen in ähnliche Richtungen, etwa in die Nähe anderer Emoji-Tokens."),
+      box("tok-2", "Mathematik", "Was ist eine ID?", "Eine ID ist ein Integer, der auf eine Zeile in der Embedding-Matrix zeigt. Die ID selbst hat keine Bedeutung; erst der gelernte Vektor gibt dem Token eine Position im Raum."),
+      box("tok-3", "Technik", "BPE = Kompression", "Byte Pair Encoding beginnt mit Zeichen oder Bytes und ersetzt wiederholt das häufigste Paar durch ein neues Symbol. Nach vielen Merges wird aus häufigen Zeichenfolgen ein einzelner Token. Das ist Datenkompression, gelernt aus dem Trainingskorpus."),
+      box("tok-bpe-data", "Daten", "Warum ist die Tokenisierung datenabhängig?", "Ein Tokenizer wird so optimiert, dass er möglichst viel Text mit möglichst wenigen Tokens abdeckt, ohne Information zu verlieren: Jedes Wort muss aus seinen Tokens wieder zusammensetzbar sein. Deshalb ist die exakte Zerlegung eine Folge der Trainingsdaten und des Vokabularziels, keine feste Wortliste. Seltene Schriften bleiben teurer, weil sie im Korpus seltener sind."),
+      box("tok-4", "Grenze", "Warum brauchen englische Texte oft weniger Token?", "Weil der Trainingskorpus überwiegend englisch ist. Häufige englische Wörter bekommen lange Merges; Schriften mit wenig Text im Korpus bleiben auf Byte-Ebene. Die Demo zeigt das illustrativ, nicht als exakte Messung.")
+    ] : [
+      box("tok-1", "Technique", "What happens to unknown characters?", "With UTF-8, one character can span several bytes. What happens to a character that never appears in the training corpus, such as a new emoji? Emojis are often built from several parts: 🐈‍⬛ combines 🐈, an invisible zero width joiner (ZWJ), and ⬛. The tokenizer sees the byte sequence, not the finished picture. That is why it gets all 256 possible byte values as building blocks. It can then assemble unknown characters from known bytes; the learned vectors place similar byte sequences in similar directions, for example near other emoji tokens."),
+      box("tok-2", "Mathematics", "What is an ID?", "An ID is an integer that points to a row in the embedding matrix. The ID itself has no meaning; the learned vector gives the token a position in the space."),
+      box("tok-3", "Technique", "BPE = compression", "Byte Pair Encoding starts from characters or bytes and repeatedly replaces the most frequent pair with a new symbol. After many merges, a frequent sequence of characters becomes a single token. That is data compression, learned from the training corpus."),
+      box("tok-bpe-data", "Data", "Why does tokenization depend on the data?", "A tokenizer is optimised to cover as much text as possible with as few tokens as possible without losing information: every word must be reconstructable from its tokens. The exact split is therefore a consequence of the training data and the vocabulary target, not a fixed word list. Rare scripts stay more expensive because they are rarer in the corpus."),
+      box("tok-4", "Limit", "Why do English texts often need fewer tokens?", "Because the training corpus is mostly English. Frequent English words receive long merges; scripts with little text in the corpus stay at the byte level. The demo shows this illustratively, not as an exact measurement.")
+    ]
   });
 
   var embeddingMergeStep = {
