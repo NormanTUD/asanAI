@@ -14,8 +14,8 @@
         '<div class="ls-gauss-panel ls-gauss-panel--hist"><canvas class="ls-gauss-error-canvas" aria-label="' + (DE ? "Fehlerverteilung und Glockenkurve" : "Error distribution and bell curve") + '"></canvas></div>' +
       '</div>' +
       '<aside class="ls-gauss-side">' +
-        '<figure class="ls-gauss-fig"><img src="assets/img/ceres.jpg" alt="' + (DE ? "Ceres, aufgenommen von der NASA-Sonde Dawn" : "Ceres, photographed by NASA's Dawn spacecraft") + '"><figcaption>' + (DE ? "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), Bild: Justin Cowart, Public Domain, " : "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), image: Justin Cowart, public domain, ") + '<a href="https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg" target="_blank" rel="noopener">Wikimedia Commons</a></figcaption></figure>' +
-        '<figure class="ls-gauss-fig"><img src="assets/img/flammarion.jpg" alt="' + (DE ? "Der Flammarion-Holzschnitt: ein Wanderer am Rand der Welt blickt in den Sternenhimmel" : "The Flammarion engraving: a traveller at the edge of the world looks into the starry sky") + '"><figcaption>' + (DE ? "The Flammarion Engraving (1888), Unknown Artist, Public Domain, " : "The Flammarion Engraving (1888), Unknown Artist, public domain, ") + '<a href="https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></figcaption></figure>' +
+        '<figure class="ls-gauss-fig is-loading"><span class="ls-img-spinner" aria-hidden="true"></span><img src="assets/img/ceres.jpg" alt="' + (DE ? "Ceres, aufgenommen von der NASA-Sonde Dawn" : "Ceres, photographed by NASA's Dawn spacecraft") + '"><figcaption>' + (DE ? "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), Bild: Justin Cowart, Public Domain, " : "Ceres, Dawn (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA), image: Justin Cowart, public domain, ") + '<a href="https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg" target="_blank" rel="noopener">Wikimedia Commons</a></figcaption></figure>' +
+        '<figure class="ls-gauss-fig is-loading"><span class="ls-img-spinner" aria-hidden="true"></span><img src="assets/img/flammarion.jpg" alt="' + (DE ? "Der Flammarion-Holzschnitt: ein Wanderer am Rand der Welt blickt in den Sternenhimmel" : "The Flammarion engraving: a traveller at the edge of the world looks into the starry sky") + '"><figcaption>' + (DE ? "The Flammarion Engraving (1888), Unknown Artist, Public Domain, " : "The Flammarion Engraving (1888), Unknown Artist, public domain, ") + '<a href="https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></figcaption></figure>' +
       '</aside>' +
       '<div class="ls-gauss-controls">' +
         '<div class="ls-gauss-telescope">' +
@@ -30,6 +30,19 @@
       '<div class="ls-gauss-readout" aria-live="polite"></div>' +
       '<p class="ls-gauss-note">' + (DE ? "Synthetische Daten, nicht Piazzis Messungen. Der Plot ist nur zur Veranschaulichung da." : "Synthetic data, not Piazzi's measurements. The plot is only here to show the idea.") + '</p>';
     root.appendChild(el);
+    el.querySelectorAll(".ls-gauss-fig").forEach(function (fig) {
+      var img = fig.querySelector("img");
+      if (!img) return;
+      function loaded() {
+        fig.classList.remove("is-loading");
+        fig.classList.add("is-loaded");
+      }
+      if (img.complete && img.naturalWidth) loaded();
+      else {
+        img.addEventListener("load", loaded);
+        img.addEventListener("error", loaded);
+      }
+    });
     var plotCanvas = el.querySelector(".ls-gauss-canvas");
     var errorCanvas = el.querySelector(".ls-gauss-error-canvas");
     var qualityEl = el.querySelector(".ls-gauss-quality");

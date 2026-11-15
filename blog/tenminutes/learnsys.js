@@ -120,6 +120,7 @@
   };
   var TEXT_KEY = "tm_learnsys_text_v1";
   var LAYOUT_KEY = "tm_learnsys_layout_v1";
+  var REV_KEY = "tm_learnsys_data_rev_v1";
   var textOverlay = { de: {}, en: {} };
   var layoutOverlay = {};
   var editorDoc = null;
@@ -689,6 +690,17 @@
       });
     }
     return { head: parts.head, rest: parts.rest, sentences: parts.sentences, groups: groups };
+  }
+  function syncOverlayRevision() {
+    if (!cfg || !cfg.overlayRevision) return;
+    var stored = null;
+    try { stored = localStorage.getItem(REV_KEY); } catch (e) {}
+    if (stored === cfg.overlayRevision) return;
+    try {
+      localStorage.removeItem(TEXT_KEY);
+      localStorage.removeItem(LAYOUT_KEY);
+      localStorage.setItem(REV_KEY, cfg.overlayRevision);
+    } catch (e) {}
   }
   function loadTextOverlay() {
     try {
@@ -1626,7 +1638,7 @@
       });
       if (Object.keys(out).length) texts[lang] = out;
     });
-    var data = { version: 1, generated_at: new Date().toISOString(), texts: texts };
+    var data = { version: 1, generated_at: new Date().toISOString(), overlay_revision: cfg && cfg.overlayRevision || "", texts: texts };
     if (Object.keys(layoutOverlay).length) data.layout = cloneData(layoutOverlay);
     return data;
   }
@@ -5012,6 +5024,7 @@
     cfg = config;
     setLang(cfg.lang);
     load();
+    syncOverlayRevision();
     loadTextOverlay();
     loadLayout();
     if (!cfg.tracks) cfg.tracks = [];

@@ -123,6 +123,12 @@ stores a per-language overlay in `localStorage` under `tm_learnsys_text_v1`.
 The source data stays untouched, so "Zurücksetzen" restores the placeholder and
 the data file remains the recoverable original.
 
+Overlay keys follow the visible slide index, so a reordered data file makes an
+old overlay land on the wrong slide. `mount()` therefore takes an
+`overlayRevision`; when it changes, the text and layout overlays are cleared
+once and the new revision is stored. Bump it whenever the step order or the
+substep structure changes, and treat old JSON exports as stale.
+
 - The toolbar shows the sentence count and warns when the teaser exceeds five
   sentences; on save the extra sentences move to "Mehr erfahren".
 - Groups, questions and sub-questions can be added or removed. A source group
