@@ -1037,11 +1037,21 @@
       return n + countQuestions(g.questions);
     }, 0);
   }
+  function sourceHasContent(src) {
+    return !!(src && (String(src.label || "").trim() || String(src.url || "").trim()));
+  }
+  function groupHasContent(g) {
+    if (!g) return false;
+    if (g.sources) return g.sources.some(sourceHasContent);
+    return countQuestions(g.questions) > 0;
+  }
   function questionId(q, path) {
     return (q && q.id) ? q.id : "q-" + String(path || "0").replace(/\./g, "-");
   }
   function renderSources(sources) {
-    return '<ul class="ls-sources">' + sources.map(function (src) {
+    var visible = (sources || []).filter(sourceHasContent);
+    if (!visible.length) return "";
+    return '<ul class="ls-sources">' + visible.map(function (src) {
       var why = src.why && typeof src.why === "object" ? src.why[LANG] : src.why;
       return '<li><a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.label) + '</a>' +
         (why ? '<span class="ls-src-why">' + esc(why) + '</span>' : '') + '</li>';
@@ -1070,6 +1080,7 @@
     return html + '</details>';
   }
   function depthTree(groups) {
+    groups = groups.filter(groupHasContent);
     if (!groups.length) return "";
     var count = questionCount(groups);
     var rootOpen = state.depth === "standard" || state.depth === "deep" ? " open" : "";
@@ -1405,9 +1416,13 @@
         '<span class="ls-edit-help">' + esc(t("shortTextHint")) + '</span>' +
         '<textarea id="ls-edit-body" class="ls-edit-textarea ls-edit-body">' + esc(editorDoc.body || "") + '</textarea>' +
       '</label>';
+    var hasSources = (editorDoc.groups || []).some(function (g) { return !!g.sources; });
     els.extras.innerHTML =
       '<div class="ls-edit-groups-head"><b>' + esc(t("questionGroups")) + '</b>' +
-        '<button type="button" class="ls-btn ls-btn--tiny" data-edit-add-group="1">+ ' + esc(t("addGroup")) + '</button>' +
+        '<span class="ls-edit-group-add">' +
+          '<button type="button" class="ls-btn ls-btn--tiny" data-edit-add-group="1">+ ' + esc(t("addGroup")) + '</button>' +
+          '<button type="button" class="ls-btn ls-btn--tiny" data-edit-add-source-group="1">+ ' + esc(hasSources ? t("addSource") : t("sources")) + '</button>' +
+        '</span>' +
       '</div>' + renderEditorGroups();
     els.extras.hidden = false;
     els.watch.innerHTML = "";
@@ -1453,6 +1468,9 @@
       btn.addEventListener("click", function () {
         addEditorQuestion(btn.getAttribute("data-edit-add-question"));
       });
+    });
+    els.extras.querySelectorAll("[data-edit-add-source-group]").forEach(function (btn) {
+      btn.addEventListener("click", addEditorSourceGroup);
     });
     els.extras.querySelectorAll("[data-edit-remove-group]").forEach(function (btn) {
       btn.addEventListener("click", function (e) {
@@ -1533,6 +1551,20 @@
     });
     saveEditorDoc();
     renderEditor();
+  }
+  function addEditorSourceGroup() {
+    for (var i = 0; i < editorDoc.groups.length; i++) {
+      if (editorDoc.groups[i].sources) { addEditorSource(i); return; }
+    }
+    editorDoc.groups.push({
+      id: "g-sources-" + Date.now(),
+      title: t("sources"),
+      sources: [{ label: t("newSource"), url: "", why: "" }]
+    });
+    saveEditorDoc();
+    renderEditor();
+    var input = els.extras.querySelector('[data-field="source-label"]');
+    if (input) { try { input.focus(); } catch (e) {} }
   }
   function addEditorSource(gi) {
     var group = editorDoc.groups[gi];

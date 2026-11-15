@@ -377,6 +377,7 @@ button{color:inherit}
 .ls-edit-tex{min-height:64px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:var(--ls-fs-ui-sm)}
 .ls-edit-groups-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:16px 0 8px;padding-top:10px;border-top:1px solid rgba(0,75,111,.10)}
 .ls-edit-groups-head b{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol)}
+.ls-edit-group-add{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px}
 .ls-edit-group{border:1px solid var(--ls-line);background:#fff;margin:0 0 8px;padding:0}
 .ls-edit-group>summary{display:flex;align-items:center;gap:6px;padding:6px 8px;cursor:pointer;list-style:none;background:var(--ls-paper-2)}
 .ls-edit-group>summary::-webkit-details-marker{display:none}

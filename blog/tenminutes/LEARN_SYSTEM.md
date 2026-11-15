@@ -127,8 +127,12 @@ the data file remains the recoverable original.
   sentences; on save the extra sentences move to "Mehr erfahren".
 - Groups, questions and sub-questions can be added or removed. A source group
   is editable too: title, source label, URL and the per-language "why" note,
-  plus add and remove for individual sources. Source edits live in the same
-  per-language overlay as the rest of the text.
+  plus add and remove for individual sources. If a slide has no source group,
+  the "+ Quellen" button in the editor creates one. Source edits live in the
+  same per-language overlay as the rest of the text.
+- Empty groups are hidden in reading mode: a source group with no filled-in
+  source and a question group with no question do not render, so "Quellen 0"
+  never appears. They remain visible in the editor so they can be filled in.
 - Each question has a `Frage` / `Trivia` selector.
 - The JSON button opens a copy-paste modal with the complete export. "Kopieren"
   copies the JSON; "Herunterladen" saves it as a file. "JSON ↑" imports a file.
