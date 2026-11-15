@@ -39,7 +39,7 @@
       depthQuestions: "{n} Fragen", depthQuestion: "{n} Frage", questionIndex: "Fragen", questionContext: "Was ist der Kontext?", questionDeep: "Warum ist das so?",
       textSize: "Textgröße", mixLabel: "Mix",
       calendar: "Alle Folien", calendarTitle: "Folienübersicht", close: "Schließen",
-      moreKnowledge: "Mehr erfahren", continueAsking: "Weiterfragen",
+      moreKnowledge: "Mehr erfahren",
       moreIntro: "Der Kurztext oben ist der Einstieg. Hier kannst du weiterfragen, musst es aber nicht.",
       continuation: "Fortsetzung", originalText: "Bisheriger Text",
       edit: "Text bearbeiten", editing: "Text bearbeiten", exitEdit: "Fertig",
@@ -82,7 +82,7 @@
       depthQuestions: "{n} questions", depthQuestion: "{n} question", questionIndex: "Questions", questionContext: "What is the context?", questionDeep: "Why is that so?",
       textSize: "Text size", mixLabel: "Mix",
       calendar: "All slides", calendarTitle: "Slide overview", close: "Close",
-      moreKnowledge: "Learn more", continueAsking: "Keep asking",
+      moreKnowledge: "Learn more",
       moreIntro: "The short text above is the entry point. Here you can ask further, but you do not have to.",
       continuation: "Continuation", originalText: "Previous text",
       edit: "Edit text", editing: "Edit text", exitEdit: "Done",
@@ -380,13 +380,20 @@
       '</span>';
     }).join("");
   }
+  function richText(text) {
+    return String(text).split(/(<\/?b>)/i).map(function (part) {
+      if (/^<b>$/i.test(part)) return "<strong>";
+      if (/^<\/b>$/i.test(part)) return "</strong>";
+      return termHTML(part);
+    }).join("");
+  }
   function proseBlock(text) {
     return '<p>' + String(text == null ? "" : text).split(/(\$[^$]+\$)/g).map(function (part) {
       if (part.length > 1 && part.charAt(0) === "$" && part.charAt(part.length - 1) === "$") {
         var tex = part.slice(1, -1);
         return '<span class="ls-math ls-math--inline" data-tex="' + esc(tex) + '" data-tex-display="false"><code class="ls-tex-source">' + esc(tex) + '</code></span>';
       }
-      return termHTML(part);
+      return richText(part);
     }).join("") + '</p>';
   }
 
@@ -632,7 +639,7 @@
       if (b !== s) mergeQuestionGroups(groups, normalizeQuestionGroups(b.questionGroups, "step"));
     }
     mergeQuestionGroups(groups, normalizeQuestionGroups(s.questionGroups, "view"));
-    if (cfg && cfg.textDraft && s.body) {
+    if (cfg && cfg.textDraft && s.body && !s.teaser) {
       groups.push({ id: "g-original", title: t("originalText"), questions: [makeQuestion("q-original", t("originalText"), s.body, "", "trivia")] });
     }
     return groups;
@@ -665,8 +672,9 @@
         groups: Array.isArray(saved.groups) ? cloneData(saved.groups) : buildQuestionGroups(s, d, base)
       };
     }
+    var fallbackBody = cfg && cfg.textDraft ? draftBody() : (s.body || "");
     return {
-      body: cfg && cfg.textDraft ? draftBody() : (s.teaser || s.body || ""),
+      body: s.teaser || fallbackBody,
       title: s.title || "",
       kicker: s.kicker || "",
       watch: s.watch || "",
@@ -1026,25 +1034,11 @@
   }
   function questionCount(groups) {
     return groups.reduce(function (n, g) {
-      return n + (g.sources ? 1 : countQuestions(g.questions));
+      return n + countQuestions(g.questions);
     }, 0);
   }
   function questionId(q, path) {
     return (q && q.id) ? q.id : "q-" + String(path || "0").replace(/\./g, "-");
-  }
-  function renderQuestionIndex(groups) {
-    var items = groups.map(function (g) {
-      var n = g.sources ? g.sources.length : countQuestions(g.questions);
-      return '<button type="button" data-qid="' + esc(g.id) + '" data-no-height-test="1" aria-label="' + esc(g.title || t("moreKnowledge")) + '">' +
-        '<span>' + esc(g.title || t("moreKnowledge")) + '</span>' +
-        (n ? '<span class="ls-qi-count">' + n + '</span>' : '') +
-        '</button>';
-    });
-    if (!items.length) return "";
-    return '<div class="ls-more-head">' +
-      '<span class="ls-more-kicker">' + esc(t("continueAsking")) + '</span>' +
-      '<div class="ls-question-index">' + items.join("") + '</div>' +
-    '</div>';
   }
   function renderSources(sources) {
     return '<ul class="ls-sources">' + sources.map(function (src) {
@@ -1076,17 +1070,25 @@
     return html + '</details>';
   }
   function depthTree(groups) {
+    if (!groups.length) return "";
     var count = questionCount(groups);
-    if (!count) return "";
     var rootOpen = state.depth === "standard" || state.depth === "deep" ? " open" : "";
     var firstGroupOpen = " open";
     var firstQuestionOpen = state.depth === "deep" ? " open" : "";
     var html = '<div class="ls-depth-tree">' +
-      renderQuestionIndex(groups) +
       '<details class="ls-deepbox ls-deepbox--root"' + rootOpen + '>' +
-        '<summary>' + esc(t("moreKnowledge")) + ' <span class="ls-depth-count">' + esc(t(count === 1 ? "depthQuestion" : "depthQuestions", { n: count })) + '</span></summary>' +
+        '<summary>' + esc(t("moreKnowledge")) +
+          (count ? ' <span class="ls-depth-count">' + esc(t(count === 1 ? "depthQuestion" : "depthQuestions", { n: count })) + '</span>' : '') +
+        '</summary>' +
         '<p class="ls-more-intro">' + esc(t("moreIntro")) + '</p>';
     groups.forEach(function (g, gi) {
+      var questions = g.questions || [];
+      var flatSingle = !g.sources && countQuestions(questions) === 1 &&
+        (g.id === "g-basics" || g.title === t("oneLevel"));
+      if (flatSingle) {
+        html += renderQuestionNode(questions[0], gi + ".0", 1, firstQuestionOpen);
+        return;
+      }
       html += '<details class="ls-deepbox ls-qgroup" data-qid="' + esc(g.id) + '"' + (gi === 0 ? firstGroupOpen : "") + '>' +
         '<summary>' + esc(g.title || t("moreKnowledge")) +
           (g.sources ? ' <span class="ls-depth-count">' + g.sources.length + '</span>' : '') +
@@ -1095,7 +1097,7 @@
       if (g.sources) {
         html += renderSources(g.sources);
       } else {
-        (g.questions || []).forEach(function (q, qi) {
+        questions.forEach(function (q, qi) {
           html += renderQuestionNode(q, gi + "." + qi, 1, gi === 0 && qi === 0 ? firstQuestionOpen : "");
         });
       }
@@ -1221,29 +1223,6 @@
     typesetTimer = setTimeout(typesetText, 300);
   }
 
-  function bindQuestionIndex() {
-    if (!els.extras) return;
-    els.extras.querySelectorAll(".ls-question-index button").forEach(function (b) {
-      b.addEventListener("click", function () {
-        var rootBox = els.extras.querySelector(".ls-deepbox--root");
-        if (rootBox) rootBox.open = true;
-        var target = els.extras.querySelector('[data-qid="' + b.getAttribute("data-qid") + '"]');
-        if (!target) return;
-        target.open = true;
-        var p = target.parentElement;
-        while (p) {
-          if (p.tagName === "DETAILS") p.open = true;
-          p = p.parentElement;
-        }
-        setTimeout(function () {
-          var host = els.textScroll || els.extras;
-          var top = target.getBoundingClientRect().top - host.getBoundingClientRect().top;
-          host.scrollTo({ top: host.scrollTop + top - 12, behavior: "smooth" });
-          try { target.setAttribute("tabindex", "-1"); target.focus({ preventScroll: true }); } catch (e) {}
-        }, 40);
-      });
-    });
-  }
   function renderText() {
     var d = activeDay();
     var base = activeStep();
@@ -1285,7 +1264,6 @@
     });
     var openBtn = els.extras.querySelector("[data-open-depth]");
     if (openBtn) openBtn.addEventListener("click", openDepth);
-    bindQuestionIndex();
     scheduleTypeset();
   }
 

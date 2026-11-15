@@ -332,10 +332,6 @@ button{color:inherit}
 .ls-bar-track{background:rgba(0,75,111,.07)}
 .ls-bar-fill{background:linear-gradient(90deg,rgba(99,164,75,.95),rgba(92,155,175,.95));box-shadow:0 0 8px rgba(99,164,75,.18)}
 .ls-term{border-bottom-color:rgba(18,117,172,.45)}
-.ls-question-index{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0 4px}
-.ls-question-index button{border:1px solid var(--ls-line-strong);background:rgba(255,255,255,.72);color:var(--ls-petrol);font:600 var(--ls-fs-ui-sm)/1.25 "Open Sans",sans-serif;padding:5px 8px;cursor:pointer;text-align:left;min-height:30px}
-.ls-question-index button:hover{border-color:var(--ls-petrol);color:var(--ls-petrol)}
-.ls-question-index button:active{background:var(--ls-petrol);border-color:var(--ls-petrol);color:#fff}
 .ls-depth-tree{margin:14px 0 0;border-top:1px solid rgba(0,75,111,.10)}
 .ls-deepbox{border:0;background:transparent;margin:0;padding:0}
 .ls-deepbox>summary{cursor:pointer;list-style:none;padding:5px 0;font-family:"Barlow",sans-serif;font-weight:700;font-size:var(--ls-fs-ui-sm);color:var(--ls-soft);border-bottom:1px solid rgba(0,75,111,.07)}
@@ -349,11 +345,7 @@ button{color:inherit}
 .ls-depth-count{font-family:"Open Sans",sans-serif;font-weight:400;font-size:var(--ls-fs-micro);color:var(--ls-muted);margin-left:6px;text-transform:uppercase;letter-spacing:.08em}
 .ls-depth-hint{font-size:var(--ls-fs-micro);color:var(--ls-muted);letter-spacing:.02em;margin-top:14px}
 .ls-depth-hint button{border:0;background:none;color:var(--ls-petrol);font:inherit;font-weight:600;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px}
-.ls-more-head{display:flex;flex-direction:column;gap:6px;margin:0 0 4px}
-.ls-more-kicker{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.12em;color:var(--ls-green)}
 .ls-more-intro{font-size:var(--ls-fs-ui-sm);line-height:1.55;color:var(--ls-muted);margin:0;padding:2px 0 8px;max-width:62ch}
-.ls-question-index button{display:inline-flex;align-items:center;gap:6px}
-.ls-qi-count{font-size:var(--ls-fs-micro);color:var(--ls-muted);font-weight:400}
 .ls-qgroup{border-bottom:1px solid rgba(0,75,111,.07);background:transparent;margin:0;padding:0}
 .ls-qgroup>summary{padding:8px 0;color:var(--ls-petrol);font-size:var(--ls-fs-ui-sm);border-bottom:0;background:transparent}
 .ls-qgroup>summary:before{content:"▸ ";color:var(--ls-green);font-weight:700}

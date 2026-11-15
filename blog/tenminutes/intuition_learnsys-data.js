@@ -13,21 +13,31 @@
   var introSteps = DE ? [
     {
       kicker: "Chat und Code",
-      title: "Was ist ein LLM? Chat und Code",
-      body: "Drei Unterfolien, eine Schleife: Suche, Chat und Code. Jede zeigt eine andere Oberfläche; das Modell schreibt Token für Token. Klicke Suche, Chat oder Code.",
+      title: "Wie funktionieren Sprachmodelle?",
+      body: "Sprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von modernen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist.",
+      teaser: "Sprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von modernen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist.",
       demoState: { scene: "media", step: 0 },
-      context: "Suche, Chat und Code sind drei Oberflächen für dasselbe Modell. Jede Antwort ist eine Sequenz von Tokens; Code wird zusätzlich ausgeführt.",
-      deep: "Die Suche ergänzt Index und Links; der Chat führt einen Dialog; der Code wird von Python ausgeführt. Der generative Kern ist bei allen ein LLM. Deshalb kann Code plausibel aussehen und trotzdem falsch sein.",
-      boxes: [
-        box("in-1", "Die Schleife", "Was ist ein Token?", "Ein Token ist ein Stück Text: ein Wort, ein Wortteil, ein Satzzeichen oder ein Byte. Das Modell liest eine ID, keine Buchstaben. Aus IDs werden Vektoren, und am Ende steht wieder Text."),
-        box("in-2", "Die Idee", "Warum eine Schleife?", "Weil ein Satz länger ist als ein Token. Das Modell sagt ein Token voraus, hängt es an die Eingabe, und beginnt von vorn. Auto steht für die eigene Ausgabe, regressiv für die Vorhersage aus der bisherigen Sequenz."),
-        box("chat-1", "Gleiche Technik", "Was haben Chat und Code gemeinsam?", "Die Chat-Antwort und das Programm werden von einem Sprachmodell Token für Token geschrieben. Beide nutzen dieselbe Schleife."),
-        box("in-3", "Code", "Warum funktioniert Code?", "Code hat eine strenge Syntax und viele wiederkehrende Muster. Beides ist für ein nächstes-Token-Modell leichter zu lernen als freie Prosa. Ein Programm ist eine Sequenz mit einer klaren lokalen Struktur."),
-        box("in-4", "Grenze", "Was garantiert der Code nicht?", "Dass er das Richtige tut. Das Modell optimiert auf Plausibilität, nicht auf Korrektheit. Die Ausführung zeigt, ob er passend ist.")
-      ],
-      sources: [
-        { label: "Google Search Help (2024), AI Overviews", url: "https://support.google.com/websearch/answer/14901683?hl=en", why: { de: "Google beschreibt die generierten Zusammenfassungen in der Suche.", en: "Google describes the generated summaries in Search." } },
-        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Grundlage moderner Sprachmodelle.", en: "The transformer as the basis of modern language models." } }
+      inherit: false,
+      questionGroups: [
+        {
+          id: "g-basics",
+          title: "Eine Ebene tiefer",
+          questions: [
+            { id: "q-edit-1794746257458-0", title: "Die gleichen Prinzipien", body: "Textzusammenfassungen, Chatbots, Agents: alle arbeiten nach dem gleichen Prinzip. Wir werden hier speziell generative LLM untersuchen, aber die Modelle funktionieren meist nach sehr ähnlichen Prinzipien.", tex: "", kind: "trivia" }
+          ]
+        },
+        {
+          id: "g-sources",
+          title: "Quellen",
+          sources: [
+            { label: "Google Search Help (2024), AI Overviews", url: "https://support.google.com/websearch/answer/14901683?hl=en", why: { de: "Google beschreibt die generierten Zusammenfassungen in der Suche.", en: "Google describes the generated summaries in Search." } },
+            { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Grundlage moderner Sprachmodelle.", en: "The transformer as the basis of modern language models." } },
+            { label: "Harris (1954), Distributional Structure", url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf", why: { de: "Begründet Bedeutung aus dem sprachlichen Kontext.", en: "Grounds meaning in linguistic context." } },
+            { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt", why: { de: "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.", en: "Classic formula: meaning shows in a word's company." } },
+            { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
+            { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }
+          ]
+        }
       ]
     },
     {
@@ -62,21 +72,31 @@
   ] : [
     {
       kicker: "Chat and code",
-      title: "What is an LLM? Chat and code",
-      body: "Three sub-slides, one loop: Search, chat, and code. Each shows a different surface; the model writes token by token. Click Search, Chat, or Code.",
+      title: "How do language models work?",
+      body: "Language models can handle many very different tasks, but how do they work? Every day we will look at one part of the technology behind modern <b>L</b>arge <b>L</b>anguage <b>M</b>odels and build an intuition for how they work, one you can understand and that stays close to the technology.",
+      teaser: "Language models can handle many very different tasks, but how do they work? Every day we will look at one part of the technology behind modern <b>L</b>arge <b>L</b>anguage <b>M</b>odels and build an intuition for how they work, one you can understand and that stays close to the technology.",
       demoState: { scene: "media", step: 0 },
-      context: "Search, chat, and code are three surfaces for the same model. Every answer is a sequence of tokens; code is also executed.",
-      deep: "Search adds an index and links; the chat holds a dialogue; the code is run by Python. The generative core is an LLM in all three. That is why code can look plausible and still be wrong.",
-      boxes: [
-        box("in-1", "The loop", "What is a token?", "A token is a piece of text: a word, a word piece, a punctuation mark, or a byte. The model reads an ID, not letters. IDs become vectors, and at the end there is text again."),
-        box("in-2", "The idea", "Why a loop?", "Because a sentence is longer than one token. The model predicts one token, appends it to the input, and starts again. Auto stands for its own output, regressive for predicting from the sequence so far."),
-        box("chat-1", "Same technology", "What do chat and code share?", "The chat answer and the program are written by a language model token by token. Both use the same loop."),
-        box("in-3", "Code", "Why does code work?", "Code has strict syntax and many repeating patterns. Both are easier for a next-token model to learn than free prose. A program is a sequence with clear local structure."),
-        box("in-4", "Limit", "What does code not guarantee?", "That it does the right thing. The model optimises for plausibility, not correctness. Execution shows whether it fits.")
-      ],
-      sources: [
-        { label: "Google Search Help (2024), AI Overviews", url: "https://support.google.com/websearch/answer/14901683?hl=en", why: { de: "Google beschreibt die generierten Zusammenfassungen in der Suche.", en: "Google describes the generated summaries in Search." } },
-        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Grundlage moderner Sprachmodelle.", en: "The transformer as the basis of modern language models." } }
+      inherit: false,
+      questionGroups: [
+        {
+          id: "g-basics",
+          title: "One level deeper",
+          questions: [
+            { id: "q-edit-1794746257458-0", title: "The same principles", body: "Summaries, chatbots, agents: they all work on the same principle. Here we look specifically at generative LLMs, but most models work in very similar ways.", tex: "", kind: "trivia" }
+          ]
+        },
+        {
+          id: "g-sources",
+          title: "Sources",
+          sources: [
+            { label: "Google Search Help (2024), AI Overviews", url: "https://support.google.com/websearch/answer/14901683?hl=en", why: { de: "Google beschreibt die generierten Zusammenfassungen in der Suche.", en: "Google describes the generated summaries in Search." } },
+            { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Grundlage moderner Sprachmodelle.", en: "The transformer as the basis of modern language models." } },
+            { label: "Harris (1954), Distributional Structure", url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf", why: { de: "Begründet Bedeutung aus dem sprachlichen Kontext.", en: "Grounds meaning in linguistic context." } },
+            { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt", why: { de: "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.", en: "Classic formula: meaning shows in a word's company." } },
+            { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
+            { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }
+          ]
+        }
       ]
     },
     {
