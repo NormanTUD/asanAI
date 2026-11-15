@@ -358,6 +358,8 @@ button{color:inherit}
 .ls-qnested--3>summary,.ls-qnested--4>summary{color:var(--ls-muted);font-weight:600}
 .ls-qkind{display:inline-block;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--ls-petrol);border:1px solid var(--ls-line);padding:0 4px;margin-right:4px;vertical-align:1px}
 .ls-qkind--trivia{color:var(--ls-gold);border-color:rgba(159,151,0,.35)}
+#ls-title,#ls-kicker,#ls-body,#ls-watch,.ls-qbody,.ls-qtex{cursor:text}
+#ls-title:hover,#ls-kicker:hover,#ls-body:hover,#ls-watch:hover,.ls-qbody:hover,.ls-qtex:hover{background:rgba(99,164,75,.045)}
 .ls-math--inline{display:inline-block;max-width:100%;vertical-align:baseline;overflow-x:auto;overflow-y:hidden}
 .ls-math--inline[data-tex-rendered="1"] .ls-tex-source{display:none}
 .ls-math--inline math{font-size:1.02em}

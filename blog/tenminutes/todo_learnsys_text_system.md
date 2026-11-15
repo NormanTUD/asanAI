@@ -215,6 +215,7 @@ Ein „Link kopieren“-Button liefert die aktuelle URL.
 
 - [x] Text-Overlay speichert zusätzlich `title`, `kicker` und `watch`.
 - [x] Editor-Felder für Überschrift, Kicker und Beobachte-Hinweis.
+- [x] Direktes Anklicken von Titel, Kicker, Kurztext, Beobachte, Frage oder Formel öffnet den Editor am passenden Feld.
 - [x] Linke Spalte und Bühnenkopf reagieren live auf die Eingabe.
 - [x] Folienleiste, Kalender und Layout-Panel zeigen den bearbeiteten Titel.
 - [x] Export/Import enthalten die kopierten Überschriften.
@@ -286,10 +287,10 @@ git diff --check
   JSON-Modal mit Copy-Paste, Import und Download ist da; Folien lassen sich
   verschieben, ausblenden und in Unterfolien aufteilen; Deep-Links per Hash;
   Überschrift/Kicker/Beobachte sind editierbar; jede Frage ist Frage oder
-  Trivia. Neue Tests: `learnsys_global_text_browser_test.py` (59 Checks).
+  Trivia. Neue Tests: `learnsys_global_text_browser_test.py` (62 Checks).
 - 2026-11-14: Verifikation: `learnsys_browser_test` 87/0,
   `learnsys_text_edit_browser_test` 27/0, `learnsys_global_text_browser_test`
-  59/0, `learnsys_loop_landscape_test` 15/0, `learnsys_unit_test` 20/0,
+  62/0, `learnsys_loop_landscape_test` 15/0, `learnsys_unit_test` 20/0,
   Seiten-Test 30/30, Height-Test 34/0, `check_all.py --fast` 33/33 Stages PASS,
   `js_validator` 0 Fehler, `php_validator` 0 Issues, `git diff --check` sauber.
 

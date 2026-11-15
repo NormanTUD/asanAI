@@ -115,8 +115,10 @@ into a generated `Fortsetzung` group inside the door.
 
 ## Edit mode and headings
 
-`E` or the "Text bearbeiten" button opens the inline editor. It edits the
-heading, kicker, watch hint, teaser, every group and every nested question, and
+Click directly on the heading, kicker, watch hint, teaser, a question body or a
+formula to open the editor at exactly that field. `E` and the "Text bearbeiten"
+button still work as fallbacks. The editor edits the heading, kicker, watch
+hint, teaser, every group and every nested question, and
 stores a per-language overlay in `localStorage` under `tm_learnsys_text_v1`.
 The source data stays untouched, so "Zurücksetzen" restores the placeholder and
 the data file remains the recoverable original.

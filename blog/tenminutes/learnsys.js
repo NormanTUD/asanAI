@@ -1057,8 +1057,8 @@
         esc(q.title || t("question")) +
         (children ? ' <span class="ls-depth-count">' + children + '</span>' : '') +
       '</summary>' +
-      (q.body ? proseBlock(q.body) : '') +
-      (q.tex ? mathBlock(q.tex) : '') +
+      (q.body ? '<div class="ls-qbody" data-edit-question-path="' + esc(path) + '" data-edit-question-field="body">' + proseBlock(q.body) + '</div>' : '') +
+      (q.tex ? '<div class="ls-qtex" data-edit-question-path="' + esc(path) + '" data-edit-question-field="tex">' + mathBlock(q.tex) + '</div>' : '') +
       (q.control ? '<label class="ls-box-control"><input type="checkbox" data-control="' + esc(q.control) + '" checked> ' + esc(q.controlLabel || "") + '</label>' : '');
     if (q.questions && q.questions.length) {
       html += '<div class="ls-qchildren">' +
@@ -1676,7 +1676,23 @@
       toggleEdit(false);
     }
   }
-  function toggleEdit(force) {
+  function focusEditorTarget(target) {
+    if (!target) return;
+    var el = null;
+    if (target.kind === "question") {
+      el = els.extras.querySelector('[data-field="' + (target.field || "body") + '"][data-path="' + target.path + '"]');
+    } else {
+      el = els.body.querySelector("#ls-edit-" + target.kind);
+    }
+    if (!el) return;
+    try { el.focus({ preventScroll: true }); } catch (e) {}
+    if (el.scrollIntoView) el.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
+  function editFocus(target) {
+    if (state.edit) focusEditorTarget(target);
+    else toggleEdit(true, target);
+  }
+  function toggleEdit(force, target) {
     var next = typeof force === "boolean" ? force : !state.edit;
     if (state.edit && !next) saveEditorDoc();
     state.edit = next;
@@ -1689,9 +1705,13 @@
     }
     renderText();
     if (state.edit) {
-      if (els.textScroll) els.textScroll.scrollTo({ top: 0, behavior: "smooth" });
-      var ta = els.body.querySelector("#ls-edit-body");
-      if (ta) { try { ta.focus({ preventScroll: true }); } catch (e) {} }
+      if (target) {
+        focusEditorTarget(target);
+      } else {
+        if (els.textScroll) els.textScroll.scrollTo({ top: 0, behavior: "smooth" });
+        var ta = els.body.querySelector("#ls-edit-body");
+        if (ta) { try { ta.focus({ preventScroll: true }); } catch (e) {} }
+      }
     }
   }
 
@@ -2648,6 +2668,24 @@
         cuesArmed = true;
         setupCues();
       }, { passive: true });
+      els.textScroll.addEventListener("click", function (e) {
+        if (state.edit) return;
+        if (e.target.closest("a, button, input, textarea, select, .ls-term, summary")) return;
+        if (window.getSelection && String(window.getSelection()).trim()) return;
+        var q = e.target.closest("[data-edit-question-path]");
+        if (q) {
+          editFocus({
+            kind: "question",
+            path: q.getAttribute("data-edit-question-path"),
+            field: q.getAttribute("data-edit-question-field") || "body"
+          });
+          return;
+        }
+        if (e.target.closest("#ls-title")) { editFocus({ kind: "title" }); return; }
+        if (e.target.closest("#ls-kicker")) { editFocus({ kind: "kicker" }); return; }
+        if (e.target.closest("#ls-body")) { editFocus({ kind: "body" }); return; }
+        if (e.target.closest("#ls-watch")) { editFocus({ kind: "watch" }); return; }
+      });
     }
     var swipeStart = null;
     function swipeExcluded(t) {

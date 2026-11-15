@@ -166,6 +166,23 @@ def main() -> int:
         driver = make_driver()
         reset_page(driver, base + "?lang=de")
 
+        # 0. Click directly on the text to edit it.
+        js(driver, "document.querySelector('#ls-body').click()")
+        time.sleep(0.3)
+        check(js(driver, "LearnSys.state().edit") and js(driver, "document.activeElement.id") == "ls-edit-body", "clicking the body opens the editor")
+        js(driver, "document.querySelector('[data-edit-action=\"exit\"]').click()")
+        time.sleep(0.2)
+        js(driver, "document.querySelector('#ls-title').click()")
+        time.sleep(0.25)
+        check(js(driver, "document.activeElement.id") == "ls-edit-title", "clicking the heading edits the heading")
+        js(driver, "document.querySelector('[data-edit-action=\"exit\"]').click()")
+        time.sleep(0.2)
+        js(driver, "return (function(){var q=document.querySelector('.ls-qbody');if(!q)return false;q.click();return true;})()")
+        time.sleep(0.3)
+        check(js(driver, "LearnSys.state().edit") and js(driver, "document.activeElement && document.activeElement.getAttribute('data-field')") == "body", "clicking a question body edits that question")
+        js(driver, "document.querySelector('[data-edit-action=\"exit\"]').click()")
+        time.sleep(0.2)
+
         # 1. Sub-frames have their own text, demo and storage key.
         js(driver, "LearnSys.goView(0, 10, 0)")
         time.sleep(0.5)
