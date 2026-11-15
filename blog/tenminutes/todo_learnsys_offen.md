@@ -114,3 +114,9 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   Webseiten und Quellcode sowie „extrem viele Daten“, damit klar wird, was das
   Modell wie vorhersagen lernt. Die GPT-3-spezifische Mischung ist durch eine
   allgemeine Beschreibung ersetzt.
+- [done] Transformer-Station: Trajektorien zeichnen nur bis zur aktuellen
+  Schicht, sodass die Linien mit den Layern wachsen; das gesamte Konstrukt
+  bleibt im Bild. Metrik-Umschalter „Winkel/Großkreis“ und „Euklid“ entfernt;
+  kurzer Hinweis auf die Großkreis-Metrik im Text darunter.
+- [done] Roadmap-Sätze aus den Blocks-Stationen entfernt; der Ausblick steht
+  auf der eigenen dritten Unterfolie nach dem Unembedding.
