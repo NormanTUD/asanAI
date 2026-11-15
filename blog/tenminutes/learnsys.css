@@ -2120,7 +2120,7 @@ h1,h2,h3,h4{
 .ls-qkv-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .ls-qkv-query{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.08em}
 .ls-qkv-view{display:flex;gap:4px;flex-wrap:wrap}
-.ls-qkv-percent{display:flex;gap:6px 12px;flex-wrap:wrap;align-items:baseline;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-soft);min-height:1.4em}
+.ls-qkv-percent{display:flex;gap:6px 12px;flex-wrap:wrap;align-items:baseline;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-soft);min-height:3.2em}
 .ls-qkv-percent-lead{font-weight:600;color:var(--ls-petrol)}
 .ls-qkv-percent b{font-weight:700;color:var(--ls-ink)}
 .ls-qkv-percent i{font-style:normal;color:var(--ls-muted)}
