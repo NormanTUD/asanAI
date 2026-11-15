@@ -234,17 +234,27 @@
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
     resize();
+    var lastPhase = null;
     return {
       update: function (s) {
         if (!s) return;
-        if (s.phase === "intro") { el.classList.add("is-intro"); return; }
+        if (s.phase === "intro") {
+          if (lastPhase !== "intro") {
+            el.classList.add("is-intro");
+            lastPhase = "intro";
+          }
+          return;
+        }
+        var nextSigma = typeof s.sigma === "number" ? Math.max(0.1, Math.min(2, s.sigma)) : sigma;
+        var changed = lastPhase !== "demo" || nextSigma !== sigma;
+        lastPhase = "demo";
         el.classList.remove("is-intro");
         if (typeof s.sigma === "number") {
-          sigma = Math.max(0.1, Math.min(2, s.sigma));
+          sigma = nextSigma;
           qualityEl.value = String(sigma);
           qualityOut.textContent = "σ " + sigma.toFixed(1);
         }
-        resize();
+        if (changed) resize();
       },
       resize: resize,
       pause: function () {},

@@ -1,89 +1,15 @@
 {
   "version": 1,
-  "generated_at": "2026-11-15T12:43:17.679Z",
+  "generated_at": "2026-11-15T13:51:01.204Z",
+  "overlay_revision": "2026-11-15-schichten",
   "texts": {
     "de": {
       "intuition": {
-        "0.0": {
-          "body": "Sprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von moderen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist.",
-          "title": "Wie funktionieren Sprachmodelle?",
-          "kicker": "Chat und Code",
-          "watch": "",
-          "groups": [
-            {
-              "id": "g-basics",
-              "title": "Eine Ebene tiefer",
-              "questions": [
-                {
-                  "id": "q-edit-1794746257458-0",
-                  "title": "Die gleichen Prinzipien",
-                  "body": "Textzusammenfassungen, Chatbots, Agents: alle arbeiten nach dem gleichen Prinzip. Wir werden hier speziell generative LLM untersuchen, aber die Modelle funktionieren meist nach sehr ähnlichen Prinzipien.",
-                  "tex": "",
-                  "kind": "question"
-                }
-              ]
-            },
-            {
-              "id": "g-sources",
-              "title": "Quellen",
-              "sources": [
-                {
-                  "label": "Google Search Help (2024), AI Overviews",
-                  "url": "https://support.google.com/websearch/answer/14901683?hl=en",
-                  "why": {
-                    "de": "Google beschreibt die generierten Zusammenfassungen in der Suche.",
-                    "en": "Google describes the generated summaries in Search."
-                  }
-                },
-                {
-                  "label": "Vaswani et al. (2017), Attention Is All You Need",
-                  "url": "https://arxiv.org/abs/1706.03762",
-                  "why": {
-                    "de": "Der Transformer als Grundlage moderner Sprachmodelle.",
-                    "en": "The transformer as the basis of modern language models."
-                  }
-                },
-                {
-                  "label": "Harris (1954), Distributional Structure",
-                  "url": "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf",
-                  "why": {
-                    "de": "Begründet Bedeutung aus dem sprachlichen Kontext.",
-                    "en": "Grounds meaning in linguistic context."
-                  }
-                },
-                {
-                  "label": "Firth (1957), A Synopsis of Linguistic Theory",
-                  "url": "https://archive.org/details/papersinlinguist0000firt",
-                  "why": {
-                    "de": "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.",
-                    "en": "Classic formula: meaning shows in a word's company."
-                  }
-                },
-                {
-                  "label": "Mikolov et al. (2013), word2vec",
-                  "url": "https://arxiv.org/abs/1301.3781",
-                  "why": {
-                    "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
-                    "en": "word2vec: learned word vectors and vector arithmetic."
-                  }
-                },
-                {
-                  "label": "Pennington et al. (2014), GloVe",
-                  "url": "https://aclanthology.org/D14-1162/",
-                  "why": {
-                    "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
-                    "en": "GloVe: global co-occurrence as word vectors."
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        "1.0": {
+        "11.0": {
           "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ein abstraktes Beispiel: $f\\colon X \\to Y$. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
-          "title": "Verstehen heißt komprimieren",
-          "kicker": "Kompression",
-          "watch": "Ziehe die Kompression. Ab wann werden aus Einzelfällen Gruppen, und wann verschwindet der Unterschied zwischen Tier, Pflanze und Gegenstand?",
+          "title": "Jeder Platz bekommt einen Fingerabdruck",
+          "kicker": "Position",
+          "watch": "Bewege den Positionsregler. Wie verändert sich der Vektor, und wie wächst der Abstand auf der Kreisbahn?",
           "groups": [
             {
               "id": "g-basics",
@@ -92,66 +18,66 @@
                 {
                   "id": "q-context",
                   "title": "Was ist der Kontext?",
-                  "body": "Abstraktion ist verlustbehaftete Kompression. Die Namen an den Knoten zeigen, was auf jeder Stufe übrig bleibt: Katzenartige, Menschenaffen und Säugetiere werden zu Wirbeltieren, dann zu Lebewesen. Erst am Ende erscheinen Gegenstände und Träume und werden mit allem zu Seiendes. Gleichzeitig verschwinden die Details, die die einzelnen Fälle unterschieden haben. Im Schnitt ist ein realistisches Weltmodell die beste Kompression: Es erlaubt Vorhersagen über viele Fälle, nicht nur über die Trainingspunkte.",
+                  "body": "Die Position wird als Summe von Wellen auf Kreisbahnen kodiert: Jede Dimension hat eine andere Frequenz. Gemessen wird der Großkreis zwischen den Richtungen, nicht der euklidische Abstand: Längen zählen nicht, nur der Winkel. So zeigt der Fingerabdruck, wie nah zwei Positionen in ihrer Richtung liegen.",
                   "tex": "",
                   "kind": "question"
                 },
                 {
                   "id": "q-deep",
                   "title": "Warum ist das so?",
-                  "body": "Lindsey et al. (2025) finden Planung im Modell: Vor dem Reimwort sind mehrere Kandidaten aktiv, und der Satz wird auf einen von ihnen hin gebaut. Othello-GPT entwickelt aus Zugfolgen ein inneres Brettmodell. Ein gutes inneres Modell ist die einfachste Art, gut vorherzusagen.",
+                  "body": "Die Demo zeigt nur die ersten drei Dimensionen. In einem echten Modell sind es Tausende; die Großkreis-Metrik macht Richtungen vergleichbar, und schnelle und langsame Rotationen bilden zusammen ein Positionsmuster, das das Modell lernen kann.",
                   "tex": "",
                   "kind": "question"
                 }
               ]
             },
             {
-              "id": "g-lens-geschichte",
-              "title": "Geschichte",
+              "id": "g-lens-methoden",
+              "title": "Methoden",
               "questions": [
                 {
-                  "id": "q-box-book-borges",
-                  "title": "Borges' Funes",
-                  "body": "Funes erinnert sich an jeden Stein, jede Wolke, jede Münze. Weil er nichts vergisst, kann er nicht abstrahieren; Borges schreibt, Denken heiße Unterschiede vergessen, verallgemeinern, abstrahieren.",
-                  "tex": "",
-                  "kind": "trivia"
-                }
-              ]
-            },
-            {
-              "id": "g-lens-idee",
-              "title": "Idee",
-              "questions": [
-                {
-                  "id": "q-box-book-1",
-                  "title": "Warum komprimieren?",
-                  "body": "Ein Modell, das jeden Einzelfall speichert, kann nicht verallgemeinern. Kompression behält die Unterschiede, die für viele Fälle zählen.",
+                  "id": "q-box-pos-1",
+                  "title": "Welche Positionsverfahren gibt es?",
+                  "body": "Gelernte absolute Embeddings (GPT-2, BERT), sinusförmige Kodierung (Vaswani et al. 2017), relative Position Bias (T5) und ALiBi (Press et al. 2021). RoPE (Su et al. 2021) dreht Query und Key; viele moderne Modelle wie Llama nutzen es.",
                   "tex": "",
                   "kind": "question"
                 }
               ]
             },
             {
-              "id": "g-lens-planung",
-              "title": "Planung",
+              "id": "g-lens-rope",
+              "title": "RoPE",
               "questions": [
                 {
-                  "id": "q-box-book-2",
-                  "title": "Plant ein LLM?",
-                  "body": "Lindsey et al. (2025) finden Kandidaten für das Reimwort, bevor die Zeile beginnt. Das Modell hält mehrere Möglichkeiten und baut den Satz auf eine zu.",
+                  "id": "q-box-pos-2",
+                  "title": "Wie funktioniert RoPE?",
+                  "body": "RoPE dreht Query- und Key-Vektoren um einen Winkel, der von der Position abhängt. Das Skalarprodukt zweier gedrehter Vektoren hängt dann von ihrer relativen Position ab: Absolute Position wird als Rotation kodiert, relative Abstände werden sichtbar.",
                   "tex": "",
                   "kind": "question"
                 }
               ]
             },
             {
-              "id": "g-lens-weltmodell",
-              "title": "Weltmodell",
+              "id": "g-lens-stellenwertsystem",
+              "title": "Stellenwertsystem",
               "questions": [
                 {
-                  "id": "q-box-book-3",
-                  "title": "Was zeigt Othello-GPT?",
-                  "body": "Ein Modell, das nur Zugfolgen sieht, entwickelt eine innere Repräsentation des Bretts. Vorhersage kann ein Weltmodell erzwingen.",
+                  "id": "q-box-pos-3",
+                  "title": "Warum schnelle und langsame Rotationen?",
+                  "body": "Verschiedene Dimensionen drehen unterschiedlich schnell. Schnelle Rotationen unterscheiden nahe Positionen, langsame unterscheiden weit entfernte. Zusammen wirkt das wie ein Stellenwertsystem aus Einern, Zehnern und Hundertern für Positionen.",
+                  "tex": "",
+                  "kind": "question"
+                }
+              ]
+            },
+            {
+              "id": "g-lens-geometrie",
+              "title": "Geometrie",
+              "questions": [
+                {
+                  "id": "q-box-pos-4",
+                  "title": "Was zeigt der Plot?",
+                  "body": "Die Demo nutzt die Großkreis-Metrik: Richtungen zählen, nicht Längen. Die Länge im Plot ist der Großkreis zwischen Wort und Positionsvektor. Im hochdimensionalen Raum entstehen daraus Muster, die das Modell lernen kann, um so etwas wie „Drache an Position 5“ oder „Drache an Position 22“ zu kodieren.",
                   "tex": "",
                   "kind": "question"
                 }
@@ -162,188 +88,37 @@
               "title": "Grenze",
               "questions": [
                 {
-                  "id": "q-box-book-lossless",
-                  "title": "Verlustfrei oder verlustbehaftet?",
-                  "body": "Tokenization ist verlustfrei: Text → Tokens → Text. Der Transformer ist verlustbehaftet: Er behält ein statistisches Modell, nicht den Text selbst.",
-                  "tex": "",
-                  "kind": "question"
-                },
-                {
-                  "id": "q-box-book-taxonomy-caveat",
-                  "title": "Vereinfachte Gruppen",
-                  "body": "Diese Gruppen sind didaktisch, keine strenge Phylogenie. „Pflanzen, Pilze & Archaeen“ fasst sehr verschiedene Lebewesen zusammen; Archaeen sind näher mit Eukaryoten verwandt als mit Bakterien. Die Demo zeigt das Prinzip der Kompression, nicht einen Stammbaum.",
-                  "tex": "",
-                  "kind": "trivia"
-                }
-              ]
-            },
-            {
-              "id": "g-lens-training",
-              "title": "Training",
-              "questions": [
-                {
-                  "id": "q-box-book-world",
-                  "title": "Warum ein Weltmodell?",
-                  "body": "Training sieht unvollständige und widersprüchliche Daten. Das beste, was ein Modell im Schnitt tun kann, ist ein realistisches Weltmodell, das viele Fälle abdeckt und Vorhersagen erlaubt.",
+                  "id": "q-box-pos-5",
+                  "title": "Was ist vereinfacht?",
+                  "body": "Die Demo zeigt nur wenige Dimensionen und eine sinusförmige Kodierung. RoPE rotiert Query/Key statt des Token-Vektors. Die gezeigten Muster sind eine Intuition, nicht die exakte Implementierung.",
                   "tex": "",
                   "kind": "question"
                 }
               ]
             },
             {
-              "id": "g-lens-beispiel",
-              "title": "Beispiel",
+              "id": "g-lens-detail",
+              "title": "Detail",
               "questions": [
                 {
-                  "id": "q-box-book-gravity",
-                  "title": "Schwerkraft verstehen",
-                  "body": "Ein Neugeborenes merkt: Dinge fallen. Ein Erwachsener komprimiert das zu: Dinge fallen, egal welches Objekt. Eine physikalische Theorie komprimiert weiter: Fallen ist Beschleunigung im gekrümmten Raum. Jede Stufe deckt mehr Fälle mit besseren Vorhersagen ab.",
-                  "tex": "",
-                  "kind": "trivia"
-                },
-                {
-                  "id": "q-box-book-taxonomy",
-                  "title": "Taxonomie als Kompression",
-                  "body": "Hauskatze und Löwe werden zu Katzenartige, dann zu Säugetiere, Wirbeltiere, Bilaterien, Tiere, Eukaryoten, Lebewesen. Auf jeder Stufe bleiben weniger Unterschiede übrig, aber die Gruppe deckt mehr Fälle ab. Ganz oben steht Seiendes: Erst dort tauchen auch Gegenstände, die Zahl 7, mathematische Tatsachen, Gedanken und Träume auf.",
-                  "tex": "",
-                  "kind": "trivia"
-                }
-              ]
-            },
-            {
-              "id": "g-sources",
-              "title": "Quellen",
-              "sources": [
-                {
-                  "label": "Borges (1942), Funes el memorioso",
-                  "url": "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf",
-                  "why": {
-                    "de": "Funes als Bild für Erinnern ohne Abstraktion.",
-                    "en": "Funes as an image of memory without abstraction."
-                  }
-                },
-                {
-                  "label": "Lindsey et al. (2025), On the Biology of a Large Language Model",
-                  "url": "https://transformer-circuits.pub/2025/attribution-graphs/biology.html",
-                  "why": {
-                    "de": "Planung und innere Zwischenschritte im Modell.",
-                    "en": "Planning and internal intermediate steps in the model."
-                  }
-                },
-                {
-                  "label": "Li et al. (2022), Othello-GPT",
-                  "url": "https://arxiv.org/abs/2210.13382",
-                  "why": {
-                    "de": "Ein Weltmodell aus reinen Zugfolgen.",
-                    "en": "A world model learned from move sequences alone."
-                  }
-                }
-              ]
-            },
-            {
-              "id": "g-original",
-              "title": "Bisheriger Text",
-              "questions": [
-                {
-                  "id": "q-original",
-                  "title": "Bisheriger Text",
-                  "body": "Ein Modell, das alles speichert, kann nicht verallgemeinern. Kompression behält die Struktur und wirft Details weg. Es gibt verlustfreie und verlustbehaftete Kompression: Tokenization ist verlustfrei, der Transformer als Ganzes ist verlustbehaftet. Ziehe den Regler: Aus 144 Einzelfällen werden erst 12 Gruppen, dann 4, dann 2, dann 1. Die Taxonomie macht das sichtbar: Hauskatze → Katzenartige → Säugetiere → Wirbeltiere → Bilaterien → Tiere → Eukaryoten → Lebewesen → Etwas. Am Ende sind alle Lebewesen unter Lebewesen subsumiert; erst dann tauchen Gegenstände, die Zahl 7 und Träume auf und fallen mit allem anderen unter Seiendes.",
-                  "tex": "",
-                  "kind": "trivia"
-                }
-              ]
-            }
-          ]
-        },
-        "2.0": {
-          "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ein abstraktes Beispiel: $f\\colon X \\to Y$. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
-          "title": "Die Bausteine eines LLM",
-          "kicker": "Die Bausteine",
-          "watch": "Gehe die Ebenen mit „Weiter“ oder der Pfeiltaste durch. Was macht jede Ebene?",
-          "groups": [
-            {
-              "id": "g-basics",
-              "title": "Eine Ebene tiefer",
-              "questions": [
-                {
-                  "id": "q-context",
-                  "title": "Was ist der Kontext?",
-                  "body": "Die Reihenfolge ist die Architektur: Text → Tokens → Vektoren → Transformer-Blöcke → Verteilung. Jeder Schritt verändert die Darstellung, bis am Ende ein Token gezogen wird.",
-                  "tex": "",
-                  "kind": "question"
-                },
-                {
-                  "id": "q-deep",
-                  "title": "Warum ist das so?",
-                  "body": "Jeder Block ist selbst ein gelerntes Stück Funktion. Zusammen approximieren sie die viel zu komplizierte Funktion „nächstes Token aus Kontext“.",
+                  "id": "q-box-pos-6",
+                  "title": "Was passiert mit der Position danach?",
+                  "body": "Ab dem Moment, in dem die Position zum Token gehört, bekommt jede folgende Schicht nur noch diese Version. Sie wird nicht mehr herausgeworfen. Das Token ist dann nicht mehr nur „Drache“, sondern „Drache an dieser Position“; die Varianten werden für das Netz unterscheidbar.",
                   "tex": "",
                   "kind": "question"
                 }
               ]
             },
             {
-              "id": "g-lens-technik",
-              "title": "Technik",
+              "id": "g-lens-vergleich",
+              "title": "Vergleich",
               "questions": [
                 {
-                  "id": "q-box-mod-1",
-                  "title": "Die fünf Ebenen",
-                  "body": "Daten: Text und Mischung. Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Transformer-Blöcke: erst Attention, dann FFN, dutzende bis hunderte Male wiederholt. Unembedding: Vektor → Scores und Softmax.",
+                  "id": "q-box-pos-7",
+                  "title": "Sinus, ALiBi, RoPE",
+                  "body": "Sinus nutzt feste Wellen; ALiBi bestraft Distanz linear; RoPE dreht Query/Key und macht relative Abstände als Rotation sichtbar. Das Diagramm berechnet die drei Kurven direkt aus ihren Formeln. Gelernte absolute Positionen fehlen, weil dafür die Gewichte eines konkreten Modells nötig wären.",
                   "tex": "",
                   "kind": "trivia"
-                },
-                {
-                  "id": "q-box-mod-norm",
-                  "title": "LayerNorm und andere Blöcke",
-                  "body": "Ein echter Transformer-Block enthält zusätzlich LayerNorm, Residualverbindungen und mehrere Attention-Heads. Es gibt auch andere Architekturen und Details wie Mixture-of-Experts, Multi-Query-Attention und verschiedene Positionsverfahren. Wir lassen sie hier weg, um bei der Intuition zu bleiben.",
-                  "tex": "",
-                  "kind": "trivia"
-                }
-              ]
-            },
-            {
-              "id": "g-lens-optional",
-              "title": "Optional",
-              "questions": [
-                {
-                  "id": "q-box-mod-dense",
-                  "title": "Dense = alle mit allen",
-                  "body": "Eine Dense-Schicht verbindet jede Eingabe mit jeder Ausgabe. Die Gewichte sind die Kanten eines vollständigen gewichteten Graphen. In der Matrix W steht W_ij für die Kante von Eingang j zu Ausgang i. Daher kommen die üblichen Netzdiagramme.",
-                  "tex": "\\underbrace{y_i}_{\\text{Ausgang }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{alle Eingänge}}",
-                  "kind": "trivia"
-                }
-              ]
-            },
-            {
-              "id": "g-lens-mathematik",
-              "title": "Mathematik",
-              "questions": [
-                {
-                  "id": "q-box-mod-angle",
-                  "title": "Warum Winkel?",
-                  "body": "Am Ende werden Richtungen verglichen, nicht Längen. Der Winkel zwischen zwei Vektoren ändert sich in hohen Dimensionen weniger stark als ihre Länge. Deshalb ist die Großkreis-Metrik hier nützlich; für den Einstieg reicht die Intuition.",
-                  "tex": "",
-                  "kind": "question"
-                }
-              ]
-            },
-            {
-              "id": "g-lens-grenze",
-              "title": "Grenze",
-              "questions": [
-                {
-                  "id": "q-box-in-13",
-                  "title": "Was heißt plausibel?",
-                  "body": "Plausibel heißt: Die Fortsetzung kam im Trainingstext vor. Es heißt nicht, dass das Modell eine eigene Vorstellung von Wahrheit hat.",
-                  "tex": "",
-                  "kind": "question"
-                },
-                {
-                  "id": "q-box-mod-extra",
-                  "title": "Was fehlt hier?",
-                  "body": "Es gibt weitere Architekturen und Details, die wir hier nicht besprechen: Mixture-of-Experts, andere Normalisierungen, Multi-Query-Attention, verschiedene Positionsverfahren und viele Trainingstricks. Hier geht es nur um die Intuition.",
-                  "tex": "",
-                  "kind": "question"
                 }
               ]
             },
@@ -358,6 +133,38 @@
                     "de": "Führt Self-Attention und den Transformer-Block ein.",
                     "en": "Introduces self-attention and the transformer block."
                   }
+                },
+                {
+                  "label": "Su et al. (2021), RoFormer: Enhanced Transformer with Rotary Position Embedding",
+                  "url": "https://arxiv.org/abs/2104.09864",
+                  "why": {
+                    "de": "RoPE: Positionskodierung als Rotation von Query und Key.",
+                    "en": "RoPE: position encoding as a rotation of query and key."
+                  }
+                },
+                {
+                  "label": "Touvron et al. (2023), Llama 2",
+                  "url": "https://arxiv.org/abs/2307.09288",
+                  "why": {
+                    "de": "Llama 2 nutzt RoPE; Beispiel für ein modernes Modell.",
+                    "en": "Llama 2 uses RoPE; an example of a modern model."
+                  }
+                },
+                {
+                  "label": "Press et al. (2021), Attention with Linear Biases (ALiBi)",
+                  "url": "https://arxiv.org/abs/2108.12409",
+                  "why": {
+                    "de": "ALiBi: linearer Distanz-Bias statt Positions-Embedding.",
+                    "en": "ALiBi: a linear distance bias instead of position embeddings."
+                  }
+                },
+                {
+                  "label": "Raffel et al. (2020), T5",
+                  "url": "https://arxiv.org/abs/1910.10683",
+                  "why": {
+                    "de": "T5: relative Position Bias als Alternative.",
+                    "en": "T5: relative position bias as an alternative."
+                  }
                 }
               ]
             },
@@ -368,7 +175,7 @@
                 {
                   "id": "q-original",
                   "title": "Bisheriger Text",
-                  "body": "Ein neuronales Netz ist der gelernte Teil eines modernen LLM. Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Gehe die fünf Ebenen mit „Weiter“ durch: Daten, Tokenizer, Embedding, Transformer-Blöcke und Unembedding. Die Transformer-Blöcke werden dutzende bis hunderte Male wiederholt; links siehst du die Ebene, rechts, was sie tut. Die Daten stehen am Anfang; der Tokenizer zerlegt sie. Später gehen wir die einzelnen Bestandteile genauer durch.",
+                  "body": "Ein Token allein weiß nicht, wo es steht: „Hund“ kann an jeder Stelle im Satz auftreten. Damit die Reihenfolge zählt, kodieren wir die Position in den Token-Vektor. Dafür gibt es viele Methoden; die Demo zeigt eine sinusförmige Variante. Viele moderne Modelle wie Llama nutzen RoPE, das die Richtung des Vektors mit der Position dreht. Wichtig ist: Die Position wird Teil des Tokens, und alle folgenden Schichten sehen diese Version.",
                   "tex": "",
                   "kind": "trivia"
                 }
@@ -376,11 +183,93 @@
             }
           ]
         },
-        "3.0": {
-          "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ein abstraktes Beispiel: $f\\colon X \\to Y$. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. Platzhalter für Unterfolie 1 von 4.",
+        "0.0": {
+          "body": "Sprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von modernen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist.",
+          "title": "Wie funktionieren Sprachmodelle?",
+          "kicker": "Chat und Code",
+          "watch": "",
+          "groups": [
+            {
+              "id": "g-basics",
+              "title": "Eine Ebene tiefer",
+              "questions": [
+                {
+                  "id": "q-edit-1794746257458-0",
+                  "title": "Die gleichen Prinzipien",
+                  "body": "Textzusammenfassungen, Chatbots, Agents: alle arbeiten nach dem gleichen Prinzip. Wir werden hier speziell generative LLM untersuchen, aber die Modelle funktionieren meist nach sehr ähnlichen Prinzipien.",
+                  "tex": "",
+                  "kind": "trivia"
+                }
+              ]
+            },
+            {
+              "id": "g-sources",
+              "title": "Quellen",
+              "sources": []
+            }
+          ]
+        },
+        "1.0": {
+          "body": "LLM sind ein Machine-Learning-Verfahren, das heißt, statt dem Computer per hand Schritt-für-Schritt zu sagen was es zu tun hat, geben wir nur die grobe Architektur vor, und geben dem Computer viele große Datenmengen, damit er selbst lernt, die Aufgabe zu erfüllen. Bei LLM ist die Aufgabe, das nächste sinnvolle Wort zu finden.",
+          "title": "Die Architektur von LLMs",
+          "kicker": "Architektur",
+          "watch": "Seqentielles Machine Learning geschieht in Schichten. Die erste Schicht wendet man direkt auf die Daten an, die zweite auf die Ergebnisse der Ersten usw., so dass sich Funktionen verschachteln:\n\n$$\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Daten}\\right)\\right)\\right)$$\n\nDie erste Schicht sucht nach Mustern im Text, die zweite nach Mustern im Ergebnis der ersten Schicht usw. \n\nMit dem Residual Stream kann jede Schicht auch muster im Text <i>und</i> den Ergebnissen der vorherigen Schichten finden.",
+          "groups": [
+            {
+              "id": "g-basics",
+              "title": "Eine Ebene tiefer",
+              "questions": [
+                {
+                  "id": "q-context",
+                  "title": "Wie werden die Modelle trainiert?",
+                  "body": "Wir gehen an einem späteren Tag noch auf das Training ein, aber die Idee ist, dass man anhand von Trainingsdaten (also Beispielen) wiederholt überprüft, wie gut das Netz ist, und es immer wieder leicht verändert, damit man es in die Richtung pusht, dass es besser wird. Besser heißt hier: gegeben einen Text kann es das nächste Wort aus dem Text richtig vorhersagen.",
+                  "tex": "",
+                  "kind": "question"
+                }
+              ]
+            },
+            {
+              "id": "g-sources",
+              "title": "Quellen",
+              "sources": [
+                {
+                  "label": "Vaswani et al. (2017), Attention Is All You Need",
+                  "url": "https://arxiv.org/abs/1706.03762",
+                  "why": {
+                    "de": "Transformer-Blöcke, Residualverbindungen und Layer-Normalisierung.",
+                    "en": "Transformer blocks, residual connections, and layer normalisation."
+                  }
+                },
+                {
+                  "label": "He et al. (2016), Deep Residual Learning",
+                  "url": "https://arxiv.org/abs/1512.03385",
+                  "why": {
+                    "de": "Residualverbindungen: Updates werden addiert, nicht überschrieben.",
+                    "en": "Residual connections: updates are added, not overwritten."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "g-original",
+              "title": "Bisheriger Text",
+              "questions": [
+                {
+                  "id": "q-original",
+                  "title": "Bisheriger Text",
+                  "body": "Moderne KI-Systeme schalten Funktionen hintereinander: Jede verarbeitet die Daten in einer festgelegten Reihenfolge und gibt ihren Output an die nächste Funktion weiter. So entsteht aus Daten ein Ergebnis: $\\text{Ergebnis} = \\text{layer}_3(\\text{layer}_2(\\text{layer}_1(\\text{Daten})))$. Die ersten Layer bearbeiten die Daten direkt, die nächsten bekommen deren Output; mit jeder Schicht wird die Repräsentation abstrakter. Unterschiedliche Schichttypen übernehmen unterschiedliche Aufgaben: Bilderkennung braucht andere Layer als Textgenerierung.",
+                  "tex": "",
+                  "kind": "trivia"
+                }
+              ]
+            }
+          ]
+        },
+        "2.0": {
+          "body": "Giuseppe Piazzi entdecke 1801 den Zwergplanete <i>Ceres</b>. Er verschwand nach kurzer Beobachtungszeit hinter der Sonne und man wusste nicht mehr, wo man suchen sollte, weil die Messungen so ungenau waren, dass sein exakter Pfad nicht bekannt war. <b>Gauß</b> hat realisiert, dass Messungenauigkeiten sich Clustern: es gibt einige die sehr weit weg sind und andere die nah dran sind, aber im Schnitt liegen die Ergebnisse richtig. Das war die Geburt der Normalverteilung, und des <b>M</b>ean <b>S</b>quared <b>E</b>rrors, <b>MSE</b>, die man heute noch zum Training neuronaler Netze benutzt.",
           "title": "Gauß, Ceres und die Daten",
           "kicker": "Die Bilder",
-          "watch": "Drücke Weiter. Zuerst kommen die Beobachtungen, dann wird das Teleskop besser.",
+          "watch": "Ziehe den Slider oder klicke weiter und sehe, wie mit besseren Teleskopen die Daten genauer werden. Reale Daten liegen genauso um eine Wahrheit herum. Texte zum Beispiel können komplett richtig sein, teilweise richtig oder komplett falsch.",
           "groups": [
             {
               "id": "g-basics",
@@ -392,33 +281,6 @@
                   "body": "Die Bilder sind eine Einladung: Ceres war ein realer Himmelskörper, und Gauß' Methode war ein realer Umgang mit unsicheren Daten. Die Demo zeigt das Prinzip mit synthetischen Daten.",
                   "tex": "",
                   "kind": "question"
-                },
-                {
-                  "id": "q-deep",
-                  "title": "Warum ist das so?",
-                  "body": "Piazzi verlor Ceres nach 41 Tagen im Sonnenlicht. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981).",
-                  "tex": "",
-                  "kind": "question"
-                }
-              ]
-            },
-            {
-              "id": "g-lens-geschichte",
-              "title": "Geschichte",
-              "questions": [
-                {
-                  "id": "q-box-gauss-1",
-                  "title": "Ceres und Piazzi",
-                  "body": "Piazzi entdeckte Ceres am 1. Januar 1801 und verlor sie nach 41 Tagen hinter der Sonne. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981).",
-                  "tex": "",
-                  "kind": "trivia"
-                },
-                {
-                  "id": "q-box-gauss-4",
-                  "title": "Die Rückkehr in die KI",
-                  "body": "Die Methode kam aus der Astronomie und fand in das maschinelle Lernen, weil dasselbe Problem wiederkehrte: eine einfache Kurve durch unvollkommene Messungen legen. Dieselbe Regel trainiert noch moderne Netze.",
-                  "tex": "",
-                  "kind": "trivia"
                 }
               ]
             },

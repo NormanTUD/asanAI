@@ -21,11 +21,17 @@ Im Transformer werden Updates über Residualverbindungen addiert, nicht einfach
 
 ## Aktueller Stand
 
-- [in work] Neue Unterfolie „Jede Schicht baut auf der vorherigen auf“ in
-  `intuition_learnsys-data.js` vor den sechs Stationen der Bausteine-Folie.
-  Demo: `stack` mit `mode: "pipeline"`.
-- [pending] Prüfen, ob die Demo die Verkettung wirklich zeigt oder ob eine
-  eigene, ruhigere Schichten-Visualisierung nötig ist.
+- [done] Die separate Unterfolie „Jede Schicht baut auf der vorherigen auf“
+  wurde wieder entfernt. Der Schichten-Inhalt steht jetzt in „Eine Kette von
+  Funktionen“: Kurztext, Beobachte-Text mit Formel und Residual-Stream-Hinweis
+  sowie eine Daten-Box.
+- [done] Der Beobachte-Text rendert `$$…$$` mit Temml und `<i>…</i>` als
+  Kursivtext.
+- [done] „Eine Kette von Funktionen“ sagt ausdrücklich, dass die Daten keine
+  Schicht der Architektur sind, sondern eine eigene Unterseite davor, die zum
+  Training verwendet wird.
+- [pending] Prüfen, ob der Kurztext die Verkettung ohne eigene Visualisierung
+  klar genug zeigt.
 - [pending] Die sechs Stationen danach als konkrete Ausprägung derselben Idee
   anschließen.
 - [pending] EN- und DE-Fassung gemeinsam prüfen; keine Englisch-Reste auf der

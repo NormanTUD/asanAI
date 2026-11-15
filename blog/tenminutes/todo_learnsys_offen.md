@@ -22,13 +22,9 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 
 ## 2. Bausteine und Schichten
 
-- [done] „Die Bausteine eines LLM“ bekommt vor den sechs Stationen eine
-  zweite innere Unterfolie „Jede Schicht baut auf der vorherigen auf“.
-  Inhalt: erste Schicht arbeitet direkt auf den Daten, zweite auf dem Ergebnis
-  der ersten, usw.; unterschiedliche Aufgaben nacheinander; jede Schicht nutzt
-  die Ergebnisse der vorherigen. Demo: `stack` mit `mode: "pipeline"`.
-- [done] Neue Unterfolie in EN und DE visuell prüfen, inklusive Demo,
-  Quellen und Höhe.
+- [done] Die zwischenzeitliche Unterfolie „Jede Schicht baut auf der
+  vorherigen auf“ wurde wieder entfernt. Der Inhalt steht jetzt in „Eine Kette
+  von Funktionen“ (Kurztext, Beobachte-Text, Daten-Box).
 - [done] `todo_schichten.md` als eigene Konzept-/Arbeitsliste angelegt
   (Schichten, Stream, Residual, Aufgabenverteilung).
 
@@ -58,3 +54,22 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [pending] `uv run blog/tests/tenminutes_height_test.py --pages
   intuition_learnsys.php --langs en,de --viewports desktop,mobile --monkey 4`.
 - [pending] `git diff --check` und Sichtprüfung der geänderten Folien.
+
+## 5. Neue Wünsche aus dem Chat
+
+- [done] Code-Demo: Terminalfenster vergrößern, sodass die vollständige
+  Antwort hineinpasst. Prüfen, ob die englische Fassung sauber übersetzt ist
+  und in beiden Sprachfenstern ein jeweils passendes Modell verwendet wird.
+- [done] „Eine Kette von Funktionen“: klarer machen, dass die Daten eine
+  eigene Unterseite sind. Die Daten sind keine Schicht der Architektur; sie
+  stehen davor und werden zum Training der Architektur verwendet.
+- [done] „Beobachte“ auf derselben Folie: `$$…$$` mit Temml rendern und
+  `<i>…</i>` als Kursivtext ausgeben. Der Text mit den Schichten und dem
+  Residual Stream darf nicht als Rohtext erscheinen.
+- [done] Unterfolie „Jede Schicht baut auf der vorherigen auf“ wieder
+  entfernt. Den Schichten-Inhalt in „Eine Kette von Funktionen“ integrieren.
+- [done] „Gauß, Ceres und die Daten“: beim Weiterblättern links nichts neu
+  rendern, wenn sich der Inhalt nicht geändert hat.
+- [pending] Tests erst ausführen, wenn der Nutzer es ausdrücklich sagt.
+  Bekannt: `learnsys_browser_test.py` meldet derzeit „day morph finishes“.
+

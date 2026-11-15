@@ -380,17 +380,40 @@
     }).join("");
   }
   function richText(text) {
-    return String(text).split(/(<\/?b>)/i).map(function (part) {
+    return String(text).split(/(<\/?[bi]>)/i).map(function (part) {
       if (/^<b>$/i.test(part)) return "<strong>";
       if (/^<\/b>$/i.test(part)) return "</strong>";
+      if (/^<i>$/i.test(part)) return "<em>";
+      if (/^<\/i>$/i.test(part)) return "</em>";
       return termHTML(part);
     }).join("");
+  }
+  function inlineMath(tex) {
+    return '<span class="ls-math ls-math--inline" data-tex="' + esc(tex) + '" data-tex-display="false"><code class="ls-tex-source">' + esc(tex) + '</code></span>';
+  }
+  function watchHTML(text) {
+    return String(text == null ? "" : text).split(/(\$\$[\s\S]*?\$\$|\$[^$]+\$)/g).map(function (part) {
+      if (part.length > 4 && part.slice(0, 2) === "$$" && part.slice(-2) === "$$") {
+        return mathBlock(part.slice(2, -2), true);
+      }
+      if (part.length > 2 && part.charAt(0) === "$" && part.charAt(part.length - 1) === "$") {
+        return inlineMath(part.slice(1, -1));
+      }
+      return richText(part);
+    }).join("");
+  }
+  function plainWatch(text) {
+    return String(text == null ? "" : text)
+      .replace(/\$\$[\s\S]*?\$\$/g, " ")
+      .replace(/\$[^$]+\$/g, " ")
+      .replace(/<[^>]+>/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
   }
   function proseBlock(text) {
     return '<p>' + String(text == null ? "" : text).split(/(\$[^$]+\$)/g).map(function (part) {
       if (part.length > 1 && part.charAt(0) === "$" && part.charAt(part.length - 1) === "$") {
-        var tex = part.slice(1, -1);
-        return '<span class="ls-math ls-math--inline" data-tex="' + esc(tex) + '" data-tex-display="false"><code class="ls-tex-source">' + esc(tex) + '</code></span>';
+        return inlineMath(part.slice(1, -1));
       }
       return richText(part);
     }).join("") + '</p>';
@@ -1183,17 +1206,17 @@
     els.cues.querySelectorAll(".ls-cue").forEach(function (el) { cueObserver.observe(el); });
   }
   function renderCues(s) {
-    if (cueObserver) { cueObserver.disconnect(); cueObserver = null; }
     var cues = (s && s.cues) || [];
     if (!els.cues) return;
     if (!cues.length) {
-      els.cues.innerHTML = "";
+      if (cueObserver) { cueObserver.disconnect(); cueObserver = null; }
+      if (els.cues.innerHTML !== "") els.cues.innerHTML = "";
       els.cues.hidden = true;
       return;
     }
     els.cues.hidden = false;
     var reset = JSON.stringify(s.demoState || {});
-    els.cues.innerHTML = '<div class="ls-cue ls-cue--reset" data-cue="' + esc(reset) + '" aria-hidden="true"></div>' +
+    var html = '<div class="ls-cue ls-cue--reset" data-cue="' + esc(reset) + '" aria-hidden="true"></div>' +
       cues.map(function (c) {
         return '<div class="ls-cue" role="button" tabindex="0" aria-label="' + esc(c.title || c.label || "") + '" data-cue="' + esc(JSON.stringify(c.state || {})) + '">' +
           '<div class="ls-cue-kicker">' + esc(c.label || t("depth")) + '</div>' +
@@ -1201,22 +1224,26 @@
           '<p>' + termHTML(c.text || "") + '</p>' +
         '</div>';
       }).join("");
-    bindTerms(els.cues);
-    els.cues.querySelectorAll(".ls-cue:not(.ls-cue--reset)").forEach(function (card) {
-      function activate() {
-        var cue = null;
-        try { cue = JSON.parse(card.getAttribute("data-cue") || "{}"); } catch (e) {}
-        if (!cue) return;
-        els.cues.querySelectorAll(".ls-cue").forEach(function (x) { x.classList.toggle("is-active", x === card); });
-        if (demo && demo.update) demo.update(cue);
-        if (els.demo) els.demo.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-      card.addEventListener("click", activate);
-      card.addEventListener("keydown", function (ev) {
-        if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); activate(); }
+    if (els.cues.innerHTML !== html) {
+      if (cueObserver) { cueObserver.disconnect(); cueObserver = null; }
+      els.cues.innerHTML = html;
+      bindTerms(els.cues);
+      els.cues.querySelectorAll(".ls-cue:not(.ls-cue--reset)").forEach(function (card) {
+        function activate() {
+          var cue = null;
+          try { cue = JSON.parse(card.getAttribute("data-cue") || "{}"); } catch (e) {}
+          if (!cue) return;
+          els.cues.querySelectorAll(".ls-cue").forEach(function (x) { x.classList.toggle("is-active", x === card); });
+          if (demo && demo.update) demo.update(cue);
+          if (els.demo) els.demo.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        card.addEventListener("click", activate);
+        card.addEventListener("keydown", function (ev) {
+          if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); activate(); }
+        });
       });
-    });
-    setupCues();
+      setupCues();
+    }
   }
 
   function typesetScope(scope) {
@@ -1259,23 +1286,31 @@
       return;
     }
     var view = composeText(doc);
-    els.body.innerHTML = view.head ? proseBlock(view.head) : "";
+    var bodyHTML = view.head ? proseBlock(view.head) : "";
+    if (els.body.innerHTML !== bodyHTML) {
+      els.body.innerHTML = bodyHTML;
+      bindTerms(els.body);
+    }
     renderCues(s);
     var depth = depthTree(view.groups);
-    els.extras.innerHTML = depth;
-    els.extras.hidden = !depth;
-    els.watch.innerHTML = doc.watch ? '<b>' + esc(t("watch")) + '</b> ' + termHTML(doc.watch) : "";
-    els.watch.hidden = !doc.watch;
-    bindTerms(els.body);
-    bindTerms(els.watch);
-    bindTerms(els.extras);
-    els.extras.querySelectorAll("[data-control]").forEach(function (input) {
-      input.addEventListener("change", function () {
-        if (LS.control) LS.control(input.getAttribute("data-control"), input.checked);
+    if (els.extras.innerHTML !== depth) {
+      els.extras.innerHTML = depth;
+      bindTerms(els.extras);
+      els.extras.querySelectorAll("[data-control]").forEach(function (input) {
+        input.addEventListener("change", function () {
+          if (LS.control) LS.control(input.getAttribute("data-control"), input.checked);
+        });
       });
-    });
-    var openBtn = els.extras.querySelector("[data-open-depth]");
-    if (openBtn) openBtn.addEventListener("click", openDepth);
+      var openBtn = els.extras.querySelector("[data-open-depth]");
+      if (openBtn) openBtn.addEventListener("click", openDepth);
+    }
+    els.extras.hidden = !depth;
+    var watchHTMLStr = doc.watch ? '<b>' + esc(t("watch")) + '</b> ' + watchHTML(doc.watch) : "";
+    if (els.watch.innerHTML !== watchHTMLStr) {
+      els.watch.innerHTML = watchHTMLStr;
+      bindTerms(els.watch);
+    }
+    els.watch.hidden = !doc.watch;
     scheduleTypeset();
   }
 
@@ -1804,7 +1839,7 @@
     var doc = state.edit && editorDoc ? editorDoc : currentTextDoc();
     els.stageKicker.textContent = doc.kicker || (base && base.substeps ? s.kicker : d.kicker);
     els.stageTitle.textContent = doc.title || s.title;
-    els.stageHint.textContent = doc.watch || s.watch || t("defaultHint");
+    els.stageHint.textContent = plainWatch(doc.watch || s.watch || t("defaultHint"));
     els.credit.textContent = d.credit || "";
     mountDemo(d, s);
   }
