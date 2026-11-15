@@ -803,7 +803,7 @@
 
   var bausteineData = {
     kicker: DE ? "Daten" : "Data",
-    title: DE ? "Daten: der erste Schritt, aber extern" : "Data: the first step, but external",
+    title: DE ? "Daten" : "Data",
     body: DE
       ? "Bevor die Architektur beginnt, stehen die Daten. Man gibt dem Computer extrem viele Daten aus Wikipedia, Reddit, Büchern, Webseiten und Quellcode, damit er lernt, was er wie vorhersagen muss. Aus diesen Beispielen verändert er die vorgefertigten Bausteine so, dass sie möglichst gut das nächste Wort vorhersagen. Die Daten sind der erste Schritt, technisch aber nicht Teil des LLM: Das Modell ist die Kette der Schichten. Die Daten kommen von außen und werden zum Training verwendet; ohne sie gäbe es nichts zu lernen."
       : "Before the architecture begins, there is data. We give the computer an extreme amount of data from Wikipedia, Reddit, books, websites, and source code so that it learns what to predict and how. From these examples it changes the prefabricated building blocks so that they predict the next word as well as possible. The data is the first step, but technically not part of the LLM: the model is the chain of layers. The data comes from outside and is used for training; without it there would be nothing to learn.",
