@@ -37,7 +37,7 @@
   ];
 
   var PAIRS = [
-    ["cold", "warm"], ["cold", "hot"], ["freezing", "hot"], ["freezing", "warm"]
+    ["cold", "warm"], ["hot", "warm"], ["cold", "hot"], ["freezing", "hot"], ["freezing", "warm"]
   ];
 
   function esc(s) { return String(s == null ? "" : s); }
