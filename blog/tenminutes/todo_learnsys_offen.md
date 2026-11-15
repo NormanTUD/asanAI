@@ -381,3 +381,16 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   Darstellung.
 - [done] Token-Trajektorien: Projektion etwas kleiner und mit mehr Rand, damit
   das ganze Bild sichtbar bleibt.
+- [done] Token-Trajektorien: Ursache der Beschnittung gefunden. `fitBounds`
+  bekam verschachtelte Token-Listen statt flacher Punkte; dadurch war die
+  Projektion falsch skaliert und spätere Layer flogen aus dem Bild. Jetzt werden
+  alle Punkte flach übergeben, mit Rand und etwas größerem Zoom. Per
+  Canvas-Pixelprüfung: kein Inhalt mehr an den Rändern.
+- [done] Rückwärtsnavigation über Foliengrenzen: `prev()` springt jetzt auf
+  die letzte Unterstufe der vorherigen Folie und läuft dann rückwärts durch
+  alle Unterstufen. Damit landet man nach „Gauß, Ceres und die Daten“ wieder
+  auf der Stelle, an der man vorwärts gegangen ist.
+- [done] „Drei Dimensionen, ein Schatten“: Die Formel unter dem Plot rechnet
+  jetzt mit drei Komponenten, wenn die 3D-Ansicht aktiv ist; auch Nearest-Word,
+  Readout und Zwischenschritte nutzen z. Aus `Prinz + Macht = (25.0, −10.0)`
+  wird `(25.0, −10.0, 0.70)`.

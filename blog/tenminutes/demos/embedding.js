@@ -108,7 +108,8 @@
       var best = null, bd = Infinity;
       WORD_IDS.forEach(function (id) {
         var w = WORDS[id];
-        var d = Math.hypot(v[0] - w.v[0], v[1] - w.v[1]);
+        var dz = v.length > 2 ? (v[2] - w.z) : 0;
+        var d = Math.hypot(v[0] - w.v[0], v[1] - w.v[1], dz);
         if (d < bd) { bd = d; best = id; }
       });
       return { id: best, dist: bd };
@@ -136,10 +137,10 @@
       if (st.arithmetic) {
         EXAMPLES.forEach(function (e) { if (e.id === st.arithmetic && e.expr) example = e; });
         if (example) {
-          var ev = evalExpr(example.expr);
+          var ev = evalExpr(example.expr, st.dim === 2);
           if (ev && ev.kind === "vec") {
             result = { v: ev.v, near: nearestWord(ev.v).id };
-            steps = exprSteps(example.expr).steps;
+            steps = exprSteps(example.expr, st.dim === 2).steps;
           }
         } else if (st.arithmetic === "gender" || st.arithmetic === "power-dir" || st.arithmetic === "directions") {
           dirMode = st.arithmetic;
@@ -147,7 +148,7 @@
       }
       return { result: result, steps: steps, dirMode: dirMode, example: example };
     }
-    function evalExpr(expr) {
+    function evalExpr(expr, withZ) {
       var toks = expr.match(/[A-Za-z]+|\d+|[+\-*()/]/g) || [];
       var i = 0;
       function factor() {
@@ -159,7 +160,9 @@
           if (WORDS[id].label[0].toLowerCase() === t.toLowerCase() || WORDS[id].label[1].toLowerCase() === t.toLowerCase() || id.toLowerCase() === t.toLowerCase()) found = id;
         });
         if (!found) return { kind: "num", n: 0 };
-        return { kind: "vec", v: WORDS[found].v.slice() };
+        var vv = WORDS[found].v.slice();
+        if (withZ) vv.push(WORDS[found].z);
+        return { kind: "vec", v: vv };
       }
       function term() {
         var left = factor();
@@ -192,7 +195,7 @@
             else right.v = right.v.map(function (x) { return -x; });
           }
           if (left.kind === "num" && right.kind === "num") left.n += right.n;
-          else if (left.kind === "vec" && right.kind === "vec") left.v = [left.v[0] + right.v[0], left.v[1] + right.v[1]];
+          else if (left.kind === "vec" && right.kind === "vec") left.v = left.v.map(function (x, k) { return x + (right.v[k] || 0); });
           else if (left.kind === "vec" && right.kind === "num") left.v = left.v.map(function (x) { return x + right.n; });
           else if (left.kind === "num" && right.kind === "vec") left = { kind: "vec", v: right.v.map(function (x) { return x + left.n; }) };
         }
@@ -200,7 +203,7 @@
       }
       return expression();
     }
-    function exprSteps(expr) {
+    function exprSteps(expr, withZ) {
       var toks = expr.match(/[A-Za-z]+|\d+|[+\-*()/]/g) || [];
       var pos = null, sign = 1, mult = 1, steps = [];
       toks.forEach(function (t) {
@@ -213,10 +216,11 @@
           if (WORDS[id].label[0].toLowerCase() === t.toLowerCase() || WORDS[id].label[1].toLowerCase() === t.toLowerCase() || id.toLowerCase() === t.toLowerCase()) found = id;
         });
         if (!found) return;
-        var v = WORDS[found].v;
+        var v = WORDS[found].v.slice();
+        if (withZ) v.push(WORDS[found].z);
         var next = pos
-          ? [pos[0] + sign * mult * v[0], pos[1] + sign * mult * v[1]]
-          : [sign * mult * v[0], sign * mult * v[1]];
+          ? pos.map(function (x, k) { return x + sign * mult * v[k]; })
+          : v.map(function (x) { return sign * mult * x; });
         if (pos) steps.push({ from: pos.slice(), to: next.slice(), label: (sign > 0 ? "+ " : "− ") + wordLabel(found) });
         pos = next;
         sign = 1;
@@ -225,7 +229,7 @@
       return { pos: pos, steps: steps };
     }
     function normPoint(v) {
-      return { x: (v[0] - 12.5) / 15, y: v[1] / 22, z: 0 };
+      return { x: (v[0] - 12.5) / 15, y: v[1] / 22, z: v.length > 2 ? v[2] : 0 };
     }
     function project(x, y, z) {
       var yMix = smoothstep(0, 1, dimMix);
@@ -573,8 +577,8 @@
       if (steps.length) {
         steps.forEach(function (step) {
           var a = normPoint(step.from), b = normPoint(step.to);
-          var pa = project(a.x, a.y, WORDS.power.z);
-          var pb = project(b.x, b.y, WORDS.power.z);
+          var pa = project(a.x, a.y, a.z);
+          var pb = project(b.x, b.y, b.z);
           ctx.save();
           ctx.setLineDash([4, 4]);
           ctx.strokeStyle = C.blue;
@@ -726,9 +730,9 @@
         return;
       }
       if (result) {
-        readout.innerHTML = '<b>' + esc(example ? text(example.label) : "") + '</b> · (' + esc(result.v[0].toFixed(1)) + ', ' + esc(result.v[1].toFixed(1)) + ') · ' +
+        readout.innerHTML = '<b>' + esc(example ? text(example.label) : "") + '</b> · (' + result.v.map(function (x) { return esc(x.toFixed(1)); }).join(', ') + ') · ' +
           (DE ? "nächstes Wort" : "nearest word") + ': <b>' + esc(wordLabel(result.near)) + '</b>';
-        setTex("\\underbrace{\\text{" + (example ? text(example.label) : "") + "}}_{\\text{" + (DE ? "Vektoren addieren" : "add the vectors") + "}} = \\begin{pmatrix}" + result.v[0].toFixed(1) + "\\\\" + result.v[1].toFixed(1) + "\\end{pmatrix} \\approx \\underbrace{\\text{" + wordLabel(result.near) + "}}_{\\text{" + (DE ? "Ergebnis" : "result") + "}}");
+        setTex("\\underbrace{\\text{" + (example ? text(example.label) : "") + "}}_{\\text{" + (DE ? "Vektoren addieren" : "add the vectors") + "}} = \\begin{pmatrix}" + result.v.map(function (x) { return x.toFixed(1); }).join("\\\\") + "\\end{pmatrix} \\approx \\underbrace{\\text{" + wordLabel(result.near) + "}}_{\\text{" + (DE ? "Ergebnis" : "result") + "}}");
         return;
       }
       var groupIds = st.group;
@@ -744,8 +748,9 @@
       }
       if (st.selected) {
         var w = WORDS[st.selected];
-        readout.innerHTML = '<b>' + esc(wordLabel(st.selected)) + '</b> · (' + esc(w.v[0]) + ', ' + esc(w.v[1]) + ')';
-        setTex("\\underbrace{\\vec{x}_{\\text{" + wordLabel(st.selected) + "}}}_{\\text{" + (DE ? "gelerntes Wort" : "learned word") + "}} = \\begin{pmatrix}" + w.v[0] + "\\\\" + w.v[1] + "\\end{pmatrix}");
+        var wv = st.dim === 2 ? [w.v[0], w.v[1], w.z] : [w.v[0], w.v[1]];
+        readout.innerHTML = '<b>' + esc(wordLabel(st.selected)) + '</b> · (' + wv.map(function (x) { return esc(x); }).join(', ') + ')';
+        setTex("\\underbrace{\\vec{x}_{\\text{" + wordLabel(st.selected) + "}}}_{\\text{" + (DE ? "gelerntes Wort" : "learned word") + "}} = \\begin{pmatrix}" + wv.join("\\\\") + "\\end{pmatrix}");
         return;
       }
       readout.textContent = DE ? "Klicke ein Wort im Raum." : "Click a word in the space.";

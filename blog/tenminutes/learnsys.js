@@ -2606,6 +2606,10 @@
       if (pos >= 0 && pos < list.length - 1) go(pos + 1, 0);
     }
   }
+  function lastSubstepFor(day, stepIndex) {
+    var b = stepAt(day, stepIndex);
+    return b && b.substeps ? Math.max(0, b.substeps.length - 1) : 0;
+  }
   function prev() {
     if (demo && typeof demo.prev === "function" && demo.prev()) return;
     var d = activeDay();
@@ -2618,13 +2622,16 @@
       writeHash();
       return;
     }
-    if (state.step > 0) go(state.day, state.step - 1);
-    else {
+    if (state.step > 0) {
+      var prevStep = state.step - 1;
+      go(state.day, prevStep, lastSubstepFor(d, prevStep));
+    } else {
       var list = cfg.days;
       var pos = list.indexOf(d);
       if (pos > 0) {
         var p = list[pos - 1];
-        go(pos - 1, visibleCount(p) - 1);
+        var lastStep = visibleCount(p) - 1;
+        go(pos - 1, lastStep, lastSubstepFor(p, lastStep));
       }
     }
   }
