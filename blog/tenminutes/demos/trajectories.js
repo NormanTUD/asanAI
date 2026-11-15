@@ -23,7 +23,7 @@
     var playBtn = el.querySelector(".ls-traj-play");
     var maxLayer = data && data.points && data.points[0] ? data.points[0].length - 1 : 12;
     layerEl.max = String(maxLayer);
-    var layer = 0, layerTarget = 0, displayLayer = 0, layerTween = 0, yaw = -0.62, pitch = 0.36, zoom = 1, drag = null;
+    var layer = 0, layerTarget = 0, displayLayer = 0, layerTween = 0, yaw = -0.62, pitch = 0.36, zoom = 0.95, drag = null;
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var playing = !reducedMotion, playTimer = 0;
     var size = null, ctx = null;

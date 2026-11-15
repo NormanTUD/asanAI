@@ -882,7 +882,24 @@
       }
       return -1;
     }
+    function currentPairIndex() {
+      for (var i = 0; i < PAIRS.length; i++) {
+        if ((PAIRS[i][0] === st.pair[0] && PAIRS[i][1] === st.pair[1]) ||
+            (PAIRS[i][0] === st.pair[1] && PAIRS[i][1] === st.pair[0])) return i;
+      }
+      return -1;
+    }
     function nextExample() {
+      if (st.mode === "temperature") {
+        var pi = currentPairIndex();
+        if (pi < 0) pi = -1;
+        if (pi >= PAIRS.length - 1) return false;
+        st.pair = PAIRS[pi + 1].slice();
+        syncControls();
+        draw();
+        ensureLoop();
+        return true;
+      }
       if (st.mode !== "space" || st.dim !== 2) return false;
       var idx = currentExampleIndex();
       if (idx < 0) idx = -1;
@@ -894,6 +911,15 @@
       return true;
     }
     function prevExample() {
+      if (st.mode === "temperature") {
+        var pi = currentPairIndex();
+        if (pi <= 0) return false;
+        st.pair = PAIRS[pi - 1].slice();
+        syncControls();
+        draw();
+        ensureLoop();
+        return true;
+      }
       if (st.mode !== "space" || st.dim !== 2) return false;
       var idx = currentExampleIndex();
       if (idx <= 0) return false;

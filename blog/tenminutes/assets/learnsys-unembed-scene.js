@@ -255,7 +255,7 @@
       var diff = b - a;
       while (diff > Math.PI) diff -= Math.PI * 2;
       while (diff < -Math.PI) diff += Math.PI * 2;
-      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r * 0.38, a, a + diff, diff < 0); ctx.closePath();
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r * 0.38, -a, -b, diff > 0); ctx.closePath();
       ctx.fillStyle = V.alpha(C.gold, 0.18); ctx.fill();
       ctx.strokeStyle = C.gold; ctx.lineWidth = 1.5; ctx.stroke();
       V.arrow(ctx, cx, cy, ax, ay, C.blue, 3);
@@ -274,30 +274,32 @@
     }
     function drawScale() {
       var s = circleScene(), ctx = s.ctx, cx = s.cx, cy = s.cy, r = s.r;
-      var a = 30 * Math.PI / 180;
-      var magA = 0.62, magB = 0.62 * scaleMag;
+      var a = 35 * Math.PI / 180, b = 105 * Math.PI / 180;
+      var magA = 0.56, magB = 0.56 * scaleMag;
       var lenA = r * magA, lenB = r * magB;
-      var off = Math.min(30, r * 0.22);
-      var bx0 = cx + Math.sin(a) * off, by0 = cy + Math.cos(a) * off;
       var ax = cx + Math.cos(a) * lenA, ay = cy - Math.sin(a) * lenA;
-      var bx = bx0 + Math.cos(a) * lenB, by = by0 - Math.sin(a) * lenB;
-      ctx.strokeStyle = V.alpha(C.petrol, 0.16); ctx.lineWidth = 1.4; ctx.setLineDash([4, 5]);
-      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * r * 1.02, cy - Math.sin(a) * r * 1.02); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.strokeStyle = V.alpha(C.blue, 0.16); ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * r * 0.95, cy - Math.sin(a) * r * 0.95); ctx.stroke();
-      ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = V.alpha(C.lilac, 0.75); ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(bx0, by0); ctx.stroke(); ctx.restore();
+      var bx = cx + Math.cos(b) * lenB, by = cy - Math.sin(b) * lenB;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r * 0.30, -a, -b, true); ctx.closePath();
+      ctx.fillStyle = V.alpha(C.gold, 0.16); ctx.fill();
+      ctx.strokeStyle = C.gold; ctx.lineWidth = 1.3; ctx.stroke();
+      var mid = (a + b) / 2;
+      ctx.fillStyle = C.gold; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText("70°", cx + Math.cos(mid) * r * 0.37, cy - Math.sin(mid) * r * 0.37);
+      ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = V.alpha(C.lilac, 0.75); ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); ctx.restore();
       V.arrow(ctx, cx, cy, ax, ay, C.blue, 3);
-      V.arrow(ctx, bx0, by0, bx, by, C.green, 3);
-      ctx.fillStyle = C.lilac; ctx.beginPath(); ctx.arc(bx0, by0, 3.2, 0, Math.PI * 2); ctx.fill();
+      V.arrow(ctx, cx, cy, bx, by, C.green, 3);
       ctx.fillStyle = C.blue; ctx.textAlign = "left"; ctx.textBaseline = "bottom"; ctx.fillText("A", ax + 6, ay - 3);
       ctx.fillStyle = C.green; ctx.fillText("B", bx + 6, by - 3);
       ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
       ctx.fillStyle = C.blue; ctx.fillText("|A| = " + magA.toFixed(2), ax + 6, ay + 14);
       ctx.fillStyle = C.green; ctx.fillText("|B| = " + magB.toFixed(2), bx + 6, by + 14);
       ctx.fillStyle = C.petrol; ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif'; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillText("Scale Invariance", 18, 28);
-      var euc = Math.abs(magB - magA);
-      readout.innerHTML = '<span>|A| <b>' + magA.toFixed(2) + '</b></span><span>|B| <b>' + magB.toFixed(2) + '</b></span><span>Cos <b>1.000</b> ' + (DE ? "konstant" : "constant") + '</span><span>Euclidean <b>' + euc.toFixed(2) + '</b> ' + (DE ? "ändert sich" : "changes") + '</span>';
-      caption.textContent = DE ? "Zwei verschiedene Vektoren, dieselbe Richtung: A und B haben unterschiedliche Längen. Der Cosinus bleibt 1, der euklidische Abstand ändert sich. Das Netz kann Längen ignorieren und hat mehr Freiheit bei der Richtung." : "Two different vectors, the same direction: A and B have different lengths. The cosine stays 1, Euclidean distance changes. The network can ignore lengths and has more freedom in direction.";
+      var cosv = Math.cos(b - a);
+      var euc = Math.hypot(magA * Math.cos(a) - magB * Math.cos(b), magA * Math.sin(a) - magB * Math.sin(b));
+      readout.innerHTML = '<span>|A| <b>' + magA.toFixed(2) + '</b></span><span>|B| <b>' + magB.toFixed(2) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>70.0°</b></span><span>Cos <b>' + cosv.toFixed(3) + '</b> ' + (DE ? "konstant" : "constant") + '</span><span>Euclidean <b>' + euc.toFixed(2) + '</b> ' + (DE ? "ändert sich" : "changes") + '</span>';
+      caption.textContent = DE ? "A und B starten am selben Punkt, zeigen aber in verschiedene Richtungen. Der Cosinus hängt nur vom Winkel ab und bleibt beim Skalieren von B gleich. Der euklidische Abstand zwischen den Spitzen ändert sich mit der Länge." : "A and B start at the same point but point in different directions. The cosine depends only on the angle and stays the same when B is scaled. The Euclidean distance between the tips changes with length.";
     }
     function unembedData() {
       return UN_TOKENS.map(function (tok) {
@@ -370,7 +372,7 @@
       ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
       var cx = w * 0.28, cy = h * 0.50, r = Math.min(w * 0.24, h * 0.38);
       ctx.strokeStyle = C.line; ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
-      var t = unembedStart ? Math.min(1, (now - unembedStart) / 2600) : 1;
+      var t = unembedStart ? Math.min(1, (now - unembedStart) / 650) : 1;
       var scan = Math.floor(t * UN_TOKENS.length);
       var rows = unembedData();
       var focus = unembedFocus >= 0 && rows[unembedFocus] ? rows[unembedFocus] : null;
@@ -442,6 +444,7 @@
     }
     function setMode(next) {
       mode = next;
+      el.classList.toggle("is-unembed", mode === "unembed");
       tabBtns.forEach(function (b) { var on = b.getAttribute("data-mode") === mode; b.classList.toggle("is-on", on); b.setAttribute("aria-selected", String(on)); });
       if (mapControls) mapControls.hidden = mode !== "map";
       if (angleControls) angleControls.hidden = mode !== "angle";

@@ -34,6 +34,7 @@
       return out;
     }
     var trail = trailSeed(pos);
+    var trailPoints = [], hoverTrail = -1;
     var sweep = null;
     var heatSize = null, curveSize = null, yaw = -0.6, pitch = 0.5, drag = null, raf = 0, last = 0;
     var C = api.colors();
@@ -139,23 +140,31 @@
       axisLabel([1.28, 0, 0], "x", Cc.blue);
       axisLabel([0, 1.28, 0], "y", Cc.green);
       axisLabel([0, 0, 1.28], "z", Cc.gold);
+      trailPoints = [];
       trail.forEach(function (p) {
         var pp = P(unit3(curvePoint(p)));
         ctx.beginPath(); ctx.arc(pp.x, pp.y, 2.1, 0, Math.PI * 2);
         ctx.fillStyle = Cc.green; ctx.globalAlpha = 0.62; ctx.fill();
         ctx.globalAlpha = 1;
-        var label = (DE ? "Hund@" : "dog@") + p;
-        ctx.font = '600 ' + Math.max(7, api.font("canvas-sm") - 3) + 'px "Open Sans", sans-serif';
-        var tw = ctx.measureText(label).width;
-        var lx = Math.max(20, Math.min(w - 20, pp.x));
-        var ly = Math.max(12, Math.min(h - 12, pp.y - 10));
-        ctx.fillStyle = "rgba(255,255,255,.9)";
-        ctx.fillRect(lx - tw / 2 - 2, ly - 6, tw + 4, 11);
-        ctx.fillStyle = Cc.green;
+        trailPoints.push({ value: p, x: pp.x, y: pp.y });
+      });
+      if (hoverTrail >= 0 && !trailPoints[hoverTrail]) hoverTrail = -1;
+      if (hoverTrail >= 0) {
+        var hp = trailPoints[hoverTrail];
+        ctx.beginPath(); ctx.arc(hp.x, hp.y, 7, 0, Math.PI * 2);
+        ctx.strokeStyle = Cc.gold; ctx.lineWidth = 2; ctx.stroke();
+        var hlabel = (DE ? "Hund · Position " : "dog · position ") + hp.value;
+        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif';
+        var htw = ctx.measureText(hlabel).width;
+        var hlx = Math.max(htw / 2 + 6, Math.min(w - htw / 2 - 6, hp.x));
+        var hly = Math.max(12, Math.min(h - 12, hp.y - 12));
+        ctx.fillStyle = "rgba(255,255,255,.94)";
+        ctx.fillRect(hlx - htw / 2 - 3, hly - 7, htw + 6, 14);
+        ctx.fillStyle = Cc.petrol;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(label, lx, ly);
-      });
+        ctx.fillText(hlabel, hlx, hly);
+      }
       ctx.globalAlpha = 1;
       ctx.textBaseline = "alphabetic";
       var startVec = curvePoint(0);
@@ -212,7 +221,16 @@
       ctx.textAlign = "right";
       ctx.fillText(DE ? "Winkel" : "angle", w - 12, 18);
       ctx.textAlign = "left";
-      readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(posAnim) + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + curVec.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + geoLen.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + angleDeg.toFixed(1) + '°</b></span>';
+      if (hoverTrail >= 0 && trailPoints[hoverTrail]) {
+        var hpv = trailPoints[hoverTrail].value;
+        var hv = curvePoint(hpv);
+        var hu = unit3(hv);
+        var hdot = Math.max(-1, Math.min(1, startP[0] * hu[0] + startP[1] * hu[1] + startP[2] * hu[2]));
+        var htheta = Math.acos(hdot);
+        readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(hpv) + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + hv.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + htheta.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + (htheta * 180 / Math.PI).toFixed(1) + '°</b></span>';
+      } else {
+        readout.innerHTML = '<span>' + (DE ? "Fahre über einen grünen Punkt, um Position, Vektor, Bogenlänge und Winkel zu sehen." : "Hover a green point to see position, vector, arc length, and angle.") + '</span>';
+      }
     }
     function draw() {
       drawHeat(); drawCurve();
@@ -229,6 +247,7 @@
         var eased = st * st * (3 - 2 * st);
         pos = Math.round(sweep.from + (sweep.to - sweep.from) * eased);
         posAnim = pos;
+        hoverTrail = -1;
         if (posEl) {
           posEl.value = String(pos);
           posEl.nextElementSibling.textContent = String(pos);
@@ -263,6 +282,20 @@
       draw();
     });
     curve.addEventListener("pointerdown", function (e) { drag = { x: e.clientX, y: e.clientY }; });
+    curve.addEventListener("pointermove", function (e) {
+      if (drag) return;
+      var r = curve.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      var best = -1, bd = 16;
+      trailPoints.forEach(function (tp, i) {
+        var d = Math.hypot(tp.x - x, tp.y - y);
+        if (d < bd) { bd = d; best = i; }
+      });
+      if (best !== hoverTrail) { hoverTrail = best; drawCurve(); }
+    });
+    curve.addEventListener("pointerleave", function () {
+      if (hoverTrail !== -1) { hoverTrail = -1; drawCurve(); }
+    });
     window.addEventListener("pointermove", function (e) {
       if (!drag) return;
       yaw += (e.clientX - drag.x) * 0.008;
@@ -272,7 +305,7 @@
     window.addEventListener("pointerup", function () { drag = null; });
     contextEl.addEventListener("input", function () { context = parseInt(contextEl.value, 10); contextEl.nextElementSibling.textContent = String(context); drawHeat(); });
     dimsEl.addEventListener("input", function () { dims = parseInt(dimsEl.value, 10); dimsEl.nextElementSibling.textContent = String(dims); drawHeat(); drawCurve(); });
-    posEl.addEventListener("input", function () { sweep = null; pos = parseInt(posEl.value, 10); posAnim = pos; trail = trailSeed(pos); posEl.nextElementSibling.textContent = String(pos); draw(); });
+    posEl.addEventListener("input", function () { sweep = null; hoverTrail = -1; pos = parseInt(posEl.value, 10); posAnim = pos; trail = trailSeed(pos); posEl.nextElementSibling.textContent = String(pos); draw(); });
     var rot = el.querySelector("[data-rotate]");
     rot.addEventListener("click", function () { rotate = !rotate; rot.classList.toggle("is-on", rotate); });
     window.addEventListener("resize", resize);

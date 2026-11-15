@@ -121,8 +121,8 @@
       kicker: "Die Linie",
       title: "Bedeutung wird eine Zahl",
       body: "Wir ordnen Wörtern Zahlen zu. Auf einer Linie liegt jedes Wort an einer Stelle; der Abstand sagt, wie ähnlich zwei Wörter in dieser Eigenschaft sind. Klicke zwei Punkte: Der Mittelpunkt ist ihr Durchschnitt. Kalt (5) und warm (55) ergeben 30; kalt und heiß ergeben 52,5. Das liegt nahe bei warm, aber nicht exakt. Bedeutung ist oft eine Nähe, kein exakter Wert.",
-      watch: "Klicke zwei Punkte. Wann ist der Mittelpunkt exakt, wann ungefähr?",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "hot"] },
+      watch: "Klicke zwei Punkte. Wann ist der Mittelpunkt exakt, wann ungefähr? Drücke Weiter oder →: Die Demo geht die vier Wortpaare nacheinander durch.",
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
       context: "Eine Achse ist die einfachste Form eines Vektorraums: eine Koordinate pro Wort. Der Mittelpunkt (a + b) / 2 funktioniert in jeder Dimension gleich.",
       deep: "Die Positionen sind hier von Hand gewählt, damit du die Rechnung siehst. In einem Modell werden sie aus vielen Beispielen gelernt. Die Abweichung ist der Abstand zwischen Mittelwert und nächstem Wort; bei kalt + heiß sind das 2,5 Grad.",
       boxes: [
@@ -130,7 +130,8 @@
         box("emb-2", "Geschichte", "Woher kommt die Idee?", "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert. Wörter, die in ähnlichen Kontexten auftreten, bekommen ähnliche Vektoren."),
         box("emb-4", "Mathematik", "Warum funktioniert der Mittelpunkt?", "Weil Vektoren koordinatenweise addiert werden. Der Mittelpunkt (a + b) / 2 liegt auf der Verbindungslinie. In höheren Dimensionen gilt dieselbe Rechnung; du siehst nur eine Projektion."),
         box("emb-5", "Grenze", "Ist der Mittelpunkt ein Wort?", "Nein. Er ist eine Position im Raum. Dass sie nahe an einem Wort liegt, ist eine Eigenschaft der gelernten Geometrie, keine Definition."),
-        box("emb-approx", "Grenze", "Was heißt „ungefähr“?", "Der Mittelwert 52,5 liegt 2,5 Grad von warm entfernt. Es gibt kein Wort exakt bei 52,5. Die Nähe reicht, weil das Modell mit Winkeln und Nachbarn arbeitet, nicht mit einer Wortliste.")
+        box("emb-approx", "Grenze", "Was heißt „ungefähr“?", "Der Mittelwert 52,5 liegt 2,5 Grad von warm entfernt. Es gibt kein Wort exakt bei 52,5. Die Nähe reicht, weil das Modell mit Winkeln und Nachbarn arbeitet, nicht mit einer Wortliste."),
+        box("emb-clean", "Optional", "Sind echte Embeddings so sauber?", "Nein. Die Demo trennt Temperatur, Macht und Geschlecht sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung.")
       ],
       sources: sources.slice(0, 4)
     },
@@ -172,8 +173,8 @@
       kicker: "The line",
       title: "Meaning becomes a number",
       body: "We assign numbers to words. On a line every word sits at one position; the distance says how similar two words are in this property. Click two points: the midpoint is their average. Cold (5) and warm (55) give 30; cold and hot give 52.5. That is close to warm, but not exact. Meaning is often closeness, not an exact value.",
-      watch: "Click two points. When is the midpoint exact, when approximate?",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "hot"] },
+      watch: "Click two points. When is the midpoint exact, when approximate? Press Next or →: the demo walks through the four word pairs in order.",
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
       context: "One axis is the simplest form of a vector space: one coordinate per word. The midpoint (a + b) / 2 works the same in every dimension.",
       deep: "The positions are chosen by hand here so you can see the arithmetic. In a model they are learned from many examples. The error is the distance between the midpoint and the nearest word; for cold + hot it is 2.5 degrees.",
       boxes: [
@@ -181,7 +182,8 @@
         box("emb-2", "History", "Where does the idea come from?", "Firth (1957): “You shall know a word by the company it keeps.” Harris (1954) formulated the distributional idea earlier. Words that appear in similar contexts receive similar vectors."),
         box("emb-4", "Mathematics", "Why does the midpoint work?", "Because vectors are added coordinate by coordinate. The midpoint (a + b) / 2 lies on the line between them. The same arithmetic works in higher dimensions; you only see a projection."),
         box("emb-5", "Limit", "Is the midpoint a word?", "No. It is a position in the space. That it lands near a word is a property of the learned geometry, not a definition."),
-        box("emb-approx", "Limit", "What does “approximate” mean?", "The midpoint 52.5 is 2.5 degrees away from warm. No word sits exactly at 52.5. Closeness is enough because the model works with angles and neighbours, not with a word list.")
+        box("emb-approx", "Limit", "What does “approximate” mean?", "The midpoint 52.5 is 2.5 degrees away from warm. No word sits exactly at 52.5. Closeness is enough because the model works with angles and neighbours, not with a word list."),
+        box("emb-clean", "Optional", "Are real embeddings this clean?", "No. The demo separates temperature, power, and gender cleanly because the axes are chosen by hand. In real models, axes are learned directions, not named properties. Temperature, style, topic, and language overlap; clusters overlap, words lie askew in space, and the same direction can carry several meanings (superposition). The straight line is a didactic projection, not a measurement.")
       ],
       sources: sources.slice(0, 4)
     },
@@ -1217,12 +1219,12 @@
 
   var unembedScaleStep = Object.assign({}, unembedSteps[0], {
     kicker: DE ? "Skaleninvarianz" : "Scale invariance",
-    title: DE ? "Zwei Vektoren, eine Richtung" : "Two vectors, one direction",
+    title: DE ? "Länge vs. Winkel" : "Length vs. angle",
     body: DE
-      ? "A und B sind verschiedene Vektoren: Sie haben unterschiedliche Längen, zeigen aber in dieselbe Richtung. Der Cosinus bleibt 1; der euklidische Abstand ändert sich. Deshalb kann das Unembedding Längen ignorieren und Richtungen vergleichen."
-      : "A and B are different vectors: they have different lengths but point in the same direction. The cosine stays 1; Euclidean distance changes. That is why the unembedding can ignore lengths and compare directions.",
-    watch: DE ? "Ziehe die Länge von B. Was bleibt gleich, was ändert sich?" : "Drag the length of B. What stays the same, what changes?",
-    context: DE ? "Skaleninvarianz heißt: derselbe Winkel, andere Länge. Der Cosinus bleibt gleich, der euklidische Abstand nicht." : "Scale invariance means the same angle, a different length. The cosine stays the same, Euclidean distance does not.",
+      ? "A und B starten am selben Punkt, zeigen aber in verschiedene Richtungen. Ziehe die Länge von B: Der Winkel und der Cosinus bleiben gleich, der euklidische Abstand zwischen den Spitzen ändert sich. So siehst du, was die Länge für Cosinus und euklidischen Abstand bedeutet."
+      : "A and B start at the same point but point in different directions. Drag the length of B: the angle and the cosine stay the same, while the Euclidean distance between the tips changes. That is what length does to cosine and Euclidean distance.",
+    watch: DE ? "Ziehe die Länge von B. Was bleibt gleich (Winkel, Cos), was ändert sich (Euclidean)?" : "Drag the length of B. What stays the same (angle, cosine), what changes (Euclidean)?",
+    context: DE ? "Skaleninvarianz heißt: Eine positive Skalierung ändert die Richtung nicht. Der Cosinus bleibt gleich; der euklidische Abstand zählt die Länge mit." : "Scale invariance means a positive scaling does not change the direction. The cosine stays the same; Euclidean distance includes the length.",
     demoState: { scene: "unembed", mode: "scale" },
     boxes: unembedSteps[0].boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-scale" }); })
   });
