@@ -33,9 +33,8 @@
       {
         id: "transformer", label: "Transformer-Blöcke", short: "Attention → FFN, × N", icon: "×N", color: "green",
         title: "Transformer-Blöcke",
-        body: "Attention mischt Information zwischen Wörtern. Das FFN formt jedes Token einzeln. Der Block läuft dutzende bis hunderte Male.",
+        body: "Attention mischt Information zwischen Wörtern. Das FFN formt jedes Token einzeln. Der Block läuft dutzende bis hunderte Male. Die Demo zeigt die Token Schicht für Schicht; die Linien wachsen mit jeder Schicht.",
         points: ["Attention: wer liest wen?", "FFN: erkennen, trennen, neu ordnen"],
-        roadmap: "Wir werden jeden dieser Schritte in den nächsten Tagen durchgehen und so erklären, dass man es wirklich versteht.",
         mini: "transformer",
         traj: true,
         sub: [
@@ -49,7 +48,6 @@
         body: "Der letzte Vektor wird mit den gelernten Richtungen aller Tokens verglichen. Der Winkel wird zum Logit, Softmax macht daraus eine Verteilung.",
         points: ["Richtung statt Länge", "ein Token wird gezogen"],
         mini: "unembed",
-        roadmap: "Damit sind die Bausteine einmal durch. In den nächsten Tagen gehen wir sie einen nach dem anderen durch: was jeder macht, wie sie zusammenspielen und wie daraus in einer Schleife die Vorhersage des nächsten Wortes entsteht."
       }
     ] : [
       {
@@ -77,9 +75,8 @@
       {
         id: "transformer", label: "Transformer blocks", short: "attention → FFN, × N", icon: "×N", color: "green",
         title: "Transformer blocks",
-        body: "Attention mixes information between words. The FFN shapes each token separately. The block runs dozens to hundreds of times.",
+        body: "Attention mixes information between words. The FFN shapes each token separately. The block runs dozens to hundreds of times. The demo shows the tokens layer by layer; the lines grow with each layer.",
         points: ["attention: who reads whom?", "FFN: recognise, separate, reorder"],
-        roadmap: "We will go through each of these steps over the next days and explain them so that you really understand them.",
         mini: "transformer",
         sub: [
           { title: "Attention", text: "Attention scores, for each individual token, how important all other tokens are under a certain aspect, and shifts the token so that it contains the overall context under those aspects. There are many attention blocks; they can attend to specific kinds of structures, isolate them, and look into the entire text so far to see where something stands in the overall context." },
@@ -92,7 +89,6 @@
         body: "The last vector is compared with the learned directions of all tokens. The angle becomes a logit, softmax turns it into a distribution.",
         points: ["direction, not length", "one token is drawn"],
         mini: "unembed",
-        roadmap: "That is the full set of building blocks. Over the next days we will go through them one by one: what each does, how they work together, and how the loop predicts the next word."
       }
     ];
     var index = 0;
@@ -371,13 +367,12 @@
         }).join("") + '</div>';
         if (b.traj) {
           html += '<div class="ls-bs-traj-full" data-traj-host></div>' +
-            '<p class="ls-bs-traj-caption">' + (DE ? "Demo: echte GPT-2-small-Zustände, 768 → 3 mit PCA, Winkel/Großkreis. Die Layer bewegen sich; das ist eine Demo, keine vollständige Rekonstruktion. Details folgen später." : "Demo: real GPT-2 small states, 768 → 3 with PCA, angle/great circle. The layers move; this is a demo, not a full reconstruction. Details follow later.") + '</p>';
+            '<p class="ls-bs-traj-caption">' + (DE ? "Demo: echte GPT-2-small-Zustände, 768 → 3 mit PCA und Großkreis-Metrik. Die Linien wachsen mit jeder Schicht; das ist eine Demo, keine vollständige Rekonstruktion." : "Demo: real GPT-2 small states, 768 → 3 with PCA and the great-circle metric. The lines grow with each layer; this is a demo, not a full reconstruction.") + '</p>';
         }
       } else {
         html += '<div class="ls-bs-canvas-wrap"><canvas data-mini="' + b.mini + '"></canvas></div>';
       }
       if (b.source) html += '<p class="ls-bs-source">' + (DE ? "Quelle: " : "Source: ") + '<a href="' + esc(b.source.url) + '" target="_blank" rel="noopener">' + esc(b.source.label) + '</a></p>';
-      if (b.roadmap) html += '<p class="ls-bs-roadmap">' + esc(b.roadmap) + '</p>';
       if (trajDemo) { try { trajDemo.destroy(); } catch (e) {} trajDemo = null; }
       if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; }
       detail.innerHTML = html;

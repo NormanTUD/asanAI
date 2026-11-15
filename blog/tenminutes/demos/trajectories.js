@@ -11,9 +11,9 @@
     var el = document.createElement("div");
     el.className = "ls-traj-scene";
     el.innerHTML = '<div class="ls-traj-plot" role="img"><canvas class="ls-canvas"></canvas></div>' +
-      '<div class="ls-scene-row"><label class="ls-range">Layer <input type="range" class="ls-traj-layer" min="0" max="12" step="1" value="0"><output>Embedding</output></label><button type="button" class="ls-btn ls-btn--tiny ls-traj-play">' + (DE ? "Bewegung ▶" : "Motion ▶") + '</button><div class="ls-scene-row ls-traj-metric"><button type="button" class="ls-chip is-on" data-metric="angular">' + (DE ? "Winkel / Großkreis" : "Angle / great circle") + '</button><button type="button" class="ls-chip" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button></div><button type="button" class="ls-btn ls-btn--tiny ls-traj-next">' + (DE ? "Nächste Schicht →" : "Next layer →") + '</button></div>' +
+      '<div class="ls-scene-row"><label class="ls-range">Layer <input type="range" class="ls-traj-layer" min="0" max="12" step="1" value="0"><output>Embedding</output></label><button type="button" class="ls-btn ls-btn--tiny ls-traj-play">' + (DE ? "Bewegung ▶" : "Motion ▶") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-traj-next">' + (DE ? "Nächste Schicht →" : "Next layer →") + '</button></div>' +
       '<div class="ls-traj-readout" aria-live="polite"></div>' +
-      '<p class="ls-traj-note">' + (DE ? "Standard hier: Winkel / Großkreis. Das ist eine andere Metrik als der gewohnte euklidische Abstand: Das Netz vergleicht am Ende Richtungen, nicht Längen. Deshalb ist der Großkreis hier relevant." : "Default here: angle / great circle. This is a different metric from the usual Euclidean distance: at the end the network compares directions, not lengths. That is why the great circle is relevant here.") + '</p>';
+      '<p class="ls-traj-note">' + (DE ? "Die Demo nutzt den Großkreis: Richtungen zählen, nicht Längen. Die Linien wachsen mit jeder Schicht." : "The demo uses the great circle: directions count, not lengths. The lines grow with each layer.") + '</p>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-traj-plot");
     var canvas = el.querySelector("canvas");
@@ -23,7 +23,7 @@
     var playBtn = el.querySelector(".ls-traj-play");
     var maxLayer = data && data.points && data.points[0] ? data.points[0].length - 1 : 12;
     layerEl.max = String(maxLayer);
-    var layer = 0, layerTarget = 0, displayLayer = 0, layerTween = 0, metric = "angular", yaw = -0.62, pitch = 0.36, zoom = 1, drag = null;
+    var layer = 0, layerTarget = 0, displayLayer = 0, layerTween = 0, yaw = -0.62, pitch = 0.36, zoom = 1, drag = null;
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var playing = !reducedMotion, playTimer = 0;
     var size = null, ctx = null;
@@ -32,9 +32,7 @@
     function tokenLabel(t) { return t.replace(/^ /, "␣"); }
     function color(i) { return C[colors[i % colors.length]] || C.petrol; }
     function positions() {
-      var pts = data.points;
-      if (metric === "euclid") return pts;
-      return pts.map(function (token) {
+      return data.points.map(function (token) {
         return token.map(function (p) {
           var len = Math.hypot(p[0], p[1], p[2]) || 1;
           return [p[0] / len, p[1] / len, p[2] / len];
@@ -42,7 +40,6 @@
       });
     }
     function landmarks() {
-      if (metric === "euclid") return data.landmarks;
       return data.landmarks.map(function (l) {
         var len = Math.hypot(l.value[0], l.value[1], l.value[2]) || 1;
         return { word: l.word, p: l.p, value: [l.value[0] / len, l.value[1] / len, l.value[2] / len] };
@@ -90,7 +87,16 @@
       // trajectories
       data.tokens.forEach(function (tok, i) {
         var col = color(i);
-        var path = pts[i].map(function (p) { return project(p, b); });
+        var full = pts[i].map(function (p) { return project(p, b); });
+        var upto = Math.min(full.length, Math.max(1, Math.floor(displayLayer) + 1));
+        var path = full.slice(0, upto);
+        var frac = displayLayer - Math.floor(displayLayer);
+        if (frac > 0 && upto < full.length) {
+          path.push({
+            x: full[upto - 1].x + (full[upto].x - full[upto - 1].x) * frac,
+            y: full[upto - 1].y + (full[upto].y - full[upto - 1].y) * frac
+          });
+        }
         ctx.save();
         ctx.strokeStyle = col;
         ctx.globalAlpha = 0.72;
@@ -176,12 +182,10 @@
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
       ctx.fillText((DE ? "GPT-2 · echte Zustände · Schicht: " : "GPT-2 · real states · layer: ") + (data.layers[Math.round(displayLayer)] || ""), 12, 18);
-      ctx.textAlign = "right";
-      ctx.fillText(metric === "angular" ? (DE ? "Winkel / Großkreis" : "angle / great circle") : (DE ? "Euklid" : "Euclidean"), size.w - 12, 18);
       canvas.setAttribute("aria-label", DE
-        ? "3D-Token-Trajektorien durch GPT-2. Schicht " + (data.layers[Math.round(displayLayer)] || "") + ", Metrik " + (metric === "angular" ? "Winkel" : "Euklid") + "."
-        : "3D token trajectories through GPT-2. Layer " + (data.layers[Math.round(displayLayer)] || "") + ", metric " + (metric === "angular" ? "angle" : "Euclid") + ".");
-      canvas.__lsTraj = { displayLayer: displayLayer, layerTarget: layerTarget, metric: metric };
+        ? "3D-Token-Trajektorien durch GPT-2. Schicht " + (data.layers[Math.round(displayLayer)] || "") + ", Großkreis-Metrik."
+        : "3D token trajectories through GPT-2. Layer " + (data.layers[Math.round(displayLayer)] || "") + ", great-circle metric.");
+      canvas.__lsTraj = { displayLayer: displayLayer, layerTarget: layerTarget };
     }
     function updateReadout() {
       var cand = layerTarget === data.layers.length - 1
@@ -245,15 +249,6 @@
     }
     layerEl.addEventListener("input", function () { stopAuto(); setLayer(layerEl.value); });
     if (playBtn) playBtn.addEventListener("click", toggleAuto);
-    el.querySelectorAll("[data-metric]").forEach(function (bt) {
-      bt.addEventListener("click", function () {
-        metric = bt.getAttribute("data-metric");
-        el.querySelectorAll("[data-metric]").forEach(function (x) { x.classList.toggle("is-on", x === bt); });
-        if (layerTween) { cancelAnimationFrame(layerTween); layerTween = 0; }
-        displayLayer = layerTarget;
-        updateReadout(); draw();
-      });
-    });
     el.querySelector(".ls-traj-next").addEventListener("click", function () { setLayer(layerTarget + 1); });
     canvas.addEventListener("pointerdown", function (e) { drag = pointer(e); });
     function onPointerMove(e) {
