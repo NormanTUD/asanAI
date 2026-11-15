@@ -11,7 +11,7 @@
     var el = document.createElement("div");
     el.className = "ls-traj-scene";
     el.innerHTML = '<div class="ls-traj-plot" role="img"><canvas class="ls-canvas"></canvas></div>' +
-      '<div class="ls-scene-row"><label class="ls-range">Layer <input type="range" class="ls-traj-layer" min="0" max="12" step="1" value="0"><output>Embedding</output></label><div class="ls-scene-row ls-traj-metric"><button type="button" class="ls-chip is-on" data-metric="angular">' + (DE ? "Winkel / Großkreis" : "Angle / great circle") + '</button><button type="button" class="ls-chip" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button></div><button type="button" class="ls-btn ls-btn--tiny ls-traj-next">' + (DE ? "Nächste Schicht →" : "Next layer →") + '</button></div>' +
+      '<div class="ls-scene-row"><label class="ls-range">Layer <input type="range" class="ls-traj-layer" min="0" max="12" step="1" value="0"><output>Embedding</output></label><button type="button" class="ls-btn ls-btn--tiny ls-traj-play">' + (DE ? "Bewegung ▶" : "Motion ▶") + '</button><div class="ls-scene-row ls-traj-metric"><button type="button" class="ls-chip is-on" data-metric="angular">' + (DE ? "Winkel / Großkreis" : "Angle / great circle") + '</button><button type="button" class="ls-chip" data-metric="euclid">' + (DE ? "Euklid" : "Euclidean") + '</button></div><button type="button" class="ls-btn ls-btn--tiny ls-traj-next">' + (DE ? "Nächste Schicht →" : "Next layer →") + '</button></div>' +
       '<div class="ls-traj-readout" aria-live="polite"></div>' +
       '<p class="ls-traj-note">' + (DE ? "Standard hier: Winkel / Großkreis. Das ist eine andere Metrik als der gewohnte euklidische Abstand: Das Netz vergleicht am Ende Richtungen, nicht Längen. Deshalb ist der Großkreis hier relevant." : "Default here: angle / great circle. This is a different metric from the usual Euclidean distance: at the end the network compares directions, not lengths. That is why the great circle is relevant here.") + '</p>';
     root.appendChild(el);
@@ -20,10 +20,12 @@
     var layerEl = el.querySelector(".ls-traj-layer");
     var layerOut = el.querySelector("output");
     var readout = el.querySelector(".ls-traj-readout");
+    var playBtn = el.querySelector(".ls-traj-play");
     var maxLayer = data && data.points && data.points[0] ? data.points[0].length - 1 : 12;
     layerEl.max = String(maxLayer);
     var layer = 0, layerTarget = 0, displayLayer = 0, layerTween = 0, metric = "angular", yaw = -0.62, pitch = 0.36, zoom = 1, drag = null;
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    var playing = !reducedMotion, playTimer = 0;
     var size = null, ctx = null;
     var C = api.colors();
     var colors = ["green", "sky", "gold", "lilac", "lime"];
@@ -173,7 +175,7 @@
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
-      ctx.fillText((DE ? "Schicht: " : "Layer: ") + (data.layers[Math.round(displayLayer)] || ""), 12, 18);
+      ctx.fillText((DE ? "GPT-2 · echte Zustände · Schicht: " : "GPT-2 · real states · layer: ") + (data.layers[Math.round(displayLayer)] || ""), 12, 18);
       ctx.textAlign = "right";
       ctx.fillText(metric === "angular" ? (DE ? "Winkel / Großkreis" : "angle / great circle") : (DE ? "Euklid" : "Euclidean"), size.w - 12, 18);
       canvas.setAttribute("aria-label", DE
@@ -187,6 +189,29 @@
         : '<span>' + (DE ? "Kandidaten erscheinen in der letzten Schicht." : "Candidates appear at the final layer.") + '</span>';
       readout.innerHTML = '<span>' + (DE ? "Satz" : "Sentence") + ' <b>' + api.esc(data.sentence) + '</b></span><span>' + (DE ? "Schicht" : "Layer") + ' <b>' + Math.round(displayLayer) + ' / ' + maxLayer + '</b></span>' + cand;
       layerOut.textContent = data.layers[layerTarget] || "";
+    }
+    function updatePlayButton() {
+      if (!playBtn) return;
+      playBtn.textContent = playing ? (DE ? "Pause ⏸" : "Pause ⏸") : (DE ? "Bewegung ▶" : "Motion ▶");
+      playBtn.setAttribute("aria-pressed", String(playing));
+    }
+    function stopAuto() {
+      playing = false;
+      if (playTimer) { clearInterval(playTimer); playTimer = 0; }
+      updatePlayButton();
+    }
+    function startAuto() {
+      if (playTimer) clearInterval(playTimer);
+      if (!playing || reducedMotion) { if (reducedMotion) playing = false; playTimer = 0; updatePlayButton(); return; }
+      playTimer = setInterval(function () {
+        if (!playing) return;
+        setLayer((layerTarget + 1) % (maxLayer + 1));
+      }, 1400);
+      updatePlayButton();
+    }
+    function toggleAuto() {
+      if (playing) stopAuto();
+      else { playing = true; startAuto(); }
     }
     function resize() { size = api.fit(canvas, stage); draw(); }
     function pointer(e) {
@@ -218,7 +243,8 @@
         }
       }, dur + 80);
     }
-    layerEl.addEventListener("input", function () { setLayer(layerEl.value); });
+    layerEl.addEventListener("input", function () { stopAuto(); setLayer(layerEl.value); });
+    if (playBtn) playBtn.addEventListener("click", toggleAuto);
     el.querySelectorAll("[data-metric]").forEach(function (bt) {
       bt.addEventListener("click", function () {
         metric = bt.getAttribute("data-metric");
@@ -230,30 +256,40 @@
     });
     el.querySelector(".ls-traj-next").addEventListener("click", function () { setLayer(layerTarget + 1); });
     canvas.addEventListener("pointerdown", function (e) { drag = pointer(e); });
-    window.addEventListener("pointermove", function (e) {
+    function onPointerMove(e) {
       if (!drag) return;
       var p = pointer(e);
       yaw += (p.x - drag.x) * 0.008;
       pitch = Math.min(1.25, Math.max(-1.25, pitch + (p.y - drag.y) * 0.006));
       drag = p;
       draw();
-    });
-    window.addEventListener("pointerup", function () { drag = null; });
+    }
+    function onPointerUp() { drag = null; }
+    function onTheme() { C = api.colors(); draw(); }
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
     canvas.addEventListener("wheel", function (e) {
       e.preventDefault();
       zoom = Math.min(2.2, Math.max(0.55, zoom * (e.deltaY > 0 ? 0.94 : 1.06)));
       draw();
     }, { passive: false });
     window.addEventListener("resize", resize);
-    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    window.addEventListener("tm:theme", onTheme);
     updateReadout();
     resize();
+    updatePlayButton();
+    startAuto();
     return {
       update: function () {},
-      next: function () { if (layerTarget >= maxLayer) return false; setLayer(layerTarget + 1); return true; },
-      prev: function () { if (layerTarget <= 0) return false; setLayer(layerTarget - 1); return true; },
+      setLayer: setLayer,
+      maxLayer: maxLayer,
+      play: function () { playing = true; startAuto(); },
+      pause: stopAuto,
+      isPlaying: function () { return playing; },
+      next: function () { stopAuto(); if (layerTarget >= maxLayer) return false; setLayer(layerTarget + 1); return true; },
+      prev: function () { stopAuto(); if (layerTarget <= 0) return false; setLayer(layerTarget - 1); return true; },
       resize: resize,
-      destroy: function () { if (layerTween) cancelAnimationFrame(layerTween); window.removeEventListener("resize", resize); el.remove(); }
+      destroy: function () { stopAuto(); if (layerTween) cancelAnimationFrame(layerTween); window.removeEventListener("resize", resize); window.removeEventListener("pointermove", onPointerMove); window.removeEventListener("pointerup", onPointerUp); window.removeEventListener("tm:theme", onTheme); el.remove(); }
     };
   }
 

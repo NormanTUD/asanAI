@@ -87,6 +87,7 @@
     var base = DE ? ["Es", "war", "einmal", "ein"] : ["Once", "upon", "a", "time", "there", "was", "a"];
     var generated = [];
     var loopHistory = [];
+    var rewindPoints = {};
     var temp = 0.8;
     var decodeMode = "sample";
     var el = document.createElement("div");
@@ -1166,14 +1167,19 @@
       var all = base.map(function (tok, i) {
         if (DE && i === base.length - 1 && generated.length) tok = "ein";
         return { tok: tok, cls: "given" };
-      }).concat(generated.map(function (tok) { return { tok: tok, cls: tok === EOS ? "eos" : "pred" }; }));
+      }).concat(generated.map(function (tok, i) {
+        return { tok: tok, cls: tok === EOS ? "eos" : "pred", idx: i };
+      }));
       all.forEach(function (item, i) {
         var noSpace = /^[.,!?;:)\]]|^…/.test(item.tok);
         if (DE && i === base.length + 1) html += ",";
         if (i && !noSpace) html += " ";
-        html += '<span class="' + item.cls + '">' + api.esc(item.tok) + "</span>";
+        html += '<span class="' + item.cls + '"' +
+          (item.idx != null ? ' data-rewind="' + item.idx + '" role="button" tabindex="0" title="' + (DE ? "Hierher zurück" : "Go back here") + '"' : '') +
+          '>' + api.esc(item.tok) + "</span>";
       });
       sentenceEl.innerHTML = html;
+      bindRewind(sentenceEl);
     }
     function renderTree() {
       var words = base.slice();
@@ -1181,7 +1187,7 @@
       var path = ['<span class="ls-loop-base">' + api.esc(words.join(" ")) + '</span>'];
       generated.forEach(function (tok, i) {
         path.push('<span class="ls-loop-arrow">→</span>');
-        path.push('<span class="ls-loop-node">' + api.esc(tok) + (DE && i === 0 ? "," : "") + '</span>');
+        path.push('<span class="ls-loop-node" data-rewind="' + i + '" role="button" tabindex="0" title="' + (DE ? "Hierher zurück" : "Go back here") + '">' + api.esc(tok) + (DE && i === 0 ? "," : "") + '</span>');
       });
       var opts = choicesFor();
       var next = opts.length
@@ -1190,8 +1196,33 @@
           }).join('<span class="ls-loop-sep">·</span>')
         : '<span class="ls-loop-end">' + (DE ? "Satzende" : "end of sentence") + '</span>';
       treeEl.innerHTML = '<div class="ls-loop-line">' + path.join(" ") + '</div><div class="ls-loop-line">' + next + '</div>';
+      bindRewind(treeEl);
       treeEl.querySelectorAll("[data-choice]").forEach(function (b) {
         b.addEventListener("click", function () { choose(b.getAttribute("data-choice")); });
+      });
+    }
+    function rewindTo(index) {
+      var entry = null;
+      for (var i = loopHistory.length - 1; i >= 0; i--) {
+        var h = loopHistory[i];
+        var end = h.end != null ? h.end : (h.index + 1);
+        if (index >= h.index && index < end) { entry = h; break; }
+      }
+      if (!entry) return false;
+      var snap = rewindPoints[entry.index];
+      if (!snap) return false;
+      navFuture = [];
+      navPast.push(snapshotState());
+      restoreState(snap);
+      return true;
+    }
+    function bindRewind(scope) {
+      scope.querySelectorAll("[data-rewind]").forEach(function (node) {
+        function go() { rewindTo(parseInt(node.getAttribute("data-rewind"), 10)); }
+        node.addEventListener("click", go);
+        node.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+        });
       });
     }
     function renderBars() {
@@ -1314,11 +1345,14 @@
       opts.forEach(function (o, i) { if (o.t === token) pick = i; });
       var pickP = pick >= 0 ? probs[pick] : null;
       var prev = generated.length ? generated[generated.length - 1] : null;
-      loopHistory.push({
-        index: generated.length,
+      var start = generated.length;
+      var entry = {
+        index: start,
         chosen: token,
+        end: start,
         alternatives: alts.filter(function (a) { return a.token !== token; })
-      });
+      };
+      loopHistory.push(entry);
       token.split(" ").forEach(function (piece) {
         revealSegment(prev, piece);
         prev = piece;
@@ -1329,6 +1363,8 @@
         generated.push(piece);
       });
       if (generated.length > MAX_STEPS) generated = generated.slice(0, MAX_STEPS);
+      entry.end = generated.length;
+      rewindPoints[start] = snapshotState();
       renderSentence(); renderTree(); renderBars();
     }
     function sample() {
@@ -1357,7 +1393,7 @@
       renderBars();
     }
     function reset() {
-      generated = []; loopHistory = []; revealed = []; knownProbs = {};
+      generated = []; loopHistory = []; revealed = []; knownProbs = {}; rewindPoints = {};
       pathWells = []; pathProb = []; navPast = []; navFuture = [];
       landBall.init = false; landTrail = [];
       tempShown = temp;

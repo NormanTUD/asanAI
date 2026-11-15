@@ -11,8 +11,8 @@
       {
         id: "data", label: "Daten", short: "Text → Muster", icon: "D", color: "gold",
         title: "Daten",
-        body: "Das ist der Anfang des HTML-Codes des Wikipedia-Artikels „Large language model“, stark gekürzt. Danach folgt eine Auslassung und ein Buchtext aus dem Korpus, hier Nietzsche. Der Code enthält Navigation, Stil und Rauschen, aber auch Text und Fakten. Das Modell lernt aus beidem: HTML-Struktur und Inhalt. Davon braucht es extrem viel.",
-        points: ["HTML ist Struktur und Rauschen", "der Text trägt die Fakten", "auch Bücher gehören zum Korpus"],
+        body: "Das ist der Anfang des HTML-Codes des Wikipedia-Artikels „Large language model“, stark gekürzt. Danach folgt eine Auslassung und ein Buchtext aus dem Korpus, hier Nietzsche. Der Code enthält Navigation, Stil und Rauschen, aber auch Text und Fakten. Das Modell lernt aus beidem: HTML-Struktur und Inhalt. Man nimmt sehr viele, sehr verschiedene Texte: Reddit-Artikel, Wikipedia, Bücher, die man online findet, Webseiten, Quellcode von Programmen und vieles mehr. Diese Texte sind die Trainingsdaten. Das Modell wird damit gefüttert und lernt Muster daraus: wie man codet, wie menschliche Sprache aussieht, welche Fakten es gibt. In den nächsten Tagen gehen wir diese Sachen alle durch.",
+        points: ["Reddit, Wikipedia, Bücher, Webseiten, Code", "Trainingsdaten: Muster lernen", "HTML ist Struktur und Rauschen"],
         mini: "data",
         source: { label: "Wikipedia: Large language model", url: "https://en.wikipedia.org/wiki/Large_language_model" }
       },
@@ -54,8 +54,8 @@
       {
         id: "data", label: "Data", short: "text → patterns", icon: "D", color: "gold",
         title: "Data",
-        body: "This is the beginning of the HTML of the Wikipedia article “Large language model”, heavily shortened. Then comes an omission and a book text from the corpus, here Nietzsche. The code contains navigation, style, and noise, but also text and facts. The model learns from both: HTML structure and content. It needs an enormous amount of this.",
-        points: ["HTML is structure and noise", "the text carries the facts", "books are part of the corpus too"],
+        body: "This is the beginning of the HTML of the Wikipedia article “Large language model”, heavily shortened. Then comes an omission and a book text from the corpus, here Nietzsche. The code contains navigation, style, and noise, but also text and facts. The model learns from both: HTML structure and content. People take very many, very different texts: Reddit articles, Wikipedia, books found online, websites, source code of programs, and much more. These texts are the training data. The model is fed with them and learns patterns from them: how to code, what human language looks like, what facts exist. Over the next days we will go through all of these things.",
+        points: ["Reddit, Wikipedia, books, websites, code", "training data: learn patterns", "HTML is structure and noise"],
         mini: "data",
         source: { label: "Wikipedia: Large language model", url: "https://en.wikipedia.org/wiki/Large_language_model" }
       },
@@ -94,6 +94,7 @@
       }
     ];
     var index = 0;
+    var trajDemo = null;
     var el = document.createElement("div");
     el.className = "ls-blocks-scene";
     el.innerHTML = '<div class="ls-bs-stack" role="list"></div>' +
@@ -155,7 +156,6 @@
       V.grid(ctx, w, h, C, 26, 0.16);
     }
     function miniTokenizer(ctx, w, h) {
-      var word = DE ? "unzerbrechlich" : "unbreakable";
       var parts = DE ? ["un", "zer", "brech", "lich"] : ["un", "break", "able"];
       var cols = [C.lime, C.sky, C.gold, C.green];
       var wordSize = Math.max(18, api.font("canvas") * 1.15);
@@ -179,10 +179,6 @@
           ctx.lineTo(x, y + 16);
           ctx.stroke();
         }
-        ctx.textAlign = "center";
-        ctx.font = '600 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif';
-        ctx.fillStyle = cols[i % cols.length];
-        ctx.fillText(part, x + widths[i] / 2, y + 30);
         x += widths[i];
       });
       ctx.textAlign = "center";
@@ -321,45 +317,6 @@
       });
       V.heading(ctx, "h · W_U → logits", 12, 16, C.petrol, 10, 1);
     }
-    function miniTrajectories(ctx, w, h) {
-      var data = window.TM_GPT2_DATA;
-      V.heading(ctx, DE ? "GPT-2 · 768 → 3 (PCA) · echte Zustände" : "GPT-2 · 768 → 3 (PCA) · real states", 12, 16, C.petrol, 9, 1);
-      if (!data || !data.points || !data.tokens) {
-        V.label(ctx, DE ? "GPT-2-Daten fehlen" : "GPT-2 data missing", w / 2, h / 2, { align: "center", color: C.muted, bg: false });
-        return;
-      }
-      var flat = [];
-      data.points.forEach(function (tok) { tok.forEach(function (p) { flat.push(p); }); });
-      var b = V.trajBounds(flat);
-      var yaw = -0.62, pitch = 0.36, zoom = 0.92;
-      function P(p) {
-        var q = V.trajProject(p, b, yaw, pitch, zoom, { w: w, h: h });
-        return { x: q.x, y: q.y, z: q.z };
-      }
-      var axes = [{ v: [1.1, 0, 0], c: C.blue, l: "PC1" }, { v: [0, 1.1, 0], c: C.green, l: "PC2" }, { v: [0, 0, 1.1], c: C.gold, l: "PC3" }];
-      var o = P([0, 0, 0]);
-      axes.forEach(function (a) {
-        var p = P(a.v);
-        ctx.strokeStyle = a.c; ctx.globalAlpha = 0.24; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(p.x, p.y); ctx.stroke(); ctx.globalAlpha = 1;
-        ctx.fillStyle = a.c; ctx.font = '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.fillText(a.l, p.x + 3, p.y - 3);
-      });
-      var cols = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55"];
-      data.points.forEach(function (tok, i) {
-        if (!tok || !tok.length) return;
-        var path = tok.map(function (p) { return P(p); });
-        ctx.strokeStyle = cols[i % cols.length]; ctx.globalAlpha = 0.78; ctx.lineWidth = 1.4; ctx.lineJoin = "round";
-        ctx.beginPath(); path.forEach(function (p, j) { if (j === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); }); ctx.stroke(); ctx.globalAlpha = 1;
-        var last = path[path.length - 1];
-        if (last) {
-          ctx.save(); ctx.shadowColor = cols[i % cols.length]; ctx.shadowBlur = 5; ctx.beginPath(); ctx.arc(last.x, last.y, 2.8, 0, Math.PI * 2); ctx.fillStyle = cols[i % cols.length]; ctx.fill(); ctx.restore();
-          if (data.tokens[i] && i % 2 === 0) { ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.fillText(data.tokens[i].trim(), last.x + 3, last.y - 3); }
-        }
-      });
-      ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(7, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif'; ctx.textAlign = "right";
-      ctx.fillText(DE ? "PCA-Projektion · 768 Dimensionen → 3" : "PCA projection · 768 dimensions → 3", w - 12, h - 8);
-    }
-
     function drawMini(canvas, kind) {
       var f = fitMini(canvas);
       if (!f) return;
@@ -371,7 +328,6 @@
       else if (kind === "attention") miniAttention(ctx, w, h);
       else if (kind === "ffn") miniFFN(ctx, w, h);
       else if (kind === "unembed") miniUnembed(ctx, w, h);
-      else if (kind === "trajectories") miniTrajectories(ctx, w, h);
     }
     function drawMinis() {
       detail.querySelectorAll("canvas[data-mini]").forEach(function (cv) { drawMini(cv, cv.getAttribute("data-mini")); });
@@ -409,14 +365,32 @@
           return '<div class="ls-bs-sub"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + (["attention", "ffn"][i] || "ffn") + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
         }).join("") + '</div>';
         if (b.traj) {
-          html += '<div class="ls-bs-traj"><canvas data-mini="trajectories"></canvas><p class="ls-bs-traj-caption">' + (DE ? "Echte GPT-2-small-Zustände: Jeder Block verschiebt die Tokens im Raum. Die 768 Dimensionen sind mit PCA auf drei Achsen reduziert; das ist eine starke Vereinfachung, aber die Bewegung ist echt." : "Real GPT-2 small states: every block shifts the tokens in space. The 768 dimensions are reduced to three axes with PCA; this is a strong simplification, but the movement is real.") + '</p></div>';
+          html += '<div class="ls-bs-traj-full" data-traj-host></div>' +
+            '<p class="ls-bs-traj-caption">' + (DE ? "Demo: echte GPT-2-small-Zustände, 768 → 3 mit PCA, Winkel/Großkreis. Die Layer bewegen sich; das ist eine Demo, keine vollständige Rekonstruktion. Details folgen später." : "Demo: real GPT-2 small states, 768 → 3 with PCA, angle/great circle. The layers move; this is a demo, not a full reconstruction. Details follow later.") + '</p>';
         }
       } else {
         html += '<div class="ls-bs-canvas-wrap"><canvas data-mini="' + b.mini + '"></canvas></div>';
       }
       if (b.source) html += '<p class="ls-bs-source">' + (DE ? "Quelle: " : "Source: ") + '<a href="' + esc(b.source.url) + '" target="_blank" rel="noopener">' + esc(b.source.label) + '</a></p>';
       if (b.roadmap) html += '<p class="ls-bs-roadmap">' + esc(b.roadmap) + '</p>';
+      if (trajDemo) { try { trajDemo.destroy(); } catch (e) {} trajDemo = null; }
       detail.innerHTML = html;
+      if (b.traj) {
+        var trajHost = detail.querySelector("[data-traj-host]");
+        var trajFactory = core.get("trajectories");
+        if (trajHost && trajFactory) {
+          trajDemo = trajFactory(trajHost, {
+            lang: api.lang,
+            colors: api.colors,
+            font: api.font,
+            fit: api.fit,
+            motion: api.motion,
+            esc: api.esc,
+            util: api.util,
+            visual: api.visual
+          });
+        }
+      }
       detail.scrollTop = 0;
       progress.textContent = (index + 1) + ' / ' + blocks.length;
       prevBtn.disabled = index === 0;
@@ -450,7 +424,7 @@
       prev: prevInternal,
       onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
       resize: function () { drawMinis(); },
-      destroy: function () { window.removeEventListener("resize", drawMinis); el.remove(); }
+      destroy: function () { if (trajDemo) { try { trajDemo.destroy(); } catch (e) {} trajDemo = null; } window.removeEventListener("resize", drawMinis); el.remove(); }
     };
   }
 

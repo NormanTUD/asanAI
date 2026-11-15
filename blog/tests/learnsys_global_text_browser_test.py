@@ -165,6 +165,14 @@ def main() -> int:
         base = f"http://127.0.0.1:{port}/tenminutes/intuition_learnsys.php"
         driver = make_driver()
         reset_page(driver, base + "?lang=de")
+        emb_idx = js(driver, """
+            return (function(){
+              var dots=[...document.querySelectorAll('#ls-steps .ls-dot')];
+              for(var i=0;i<dots.length;i++){ if((dots[i].getAttribute('title')||'').indexOf('Bedeutung wird Geometrie')>=0) return i; }
+              return -1;
+            })();
+            """)
+        check(emb_idx >= 0, "embedding step found", str(emb_idx))
 
         # 0. Click directly on the text to edit it.
         js(driver, "document.querySelector('#ls-body').click()")
@@ -184,12 +192,12 @@ def main() -> int:
         time.sleep(0.2)
 
         # 1. Sub-frames have their own text, demo and storage key.
-        js(driver, "LearnSys.goView(0, 10, 0)")
+        js(driver, f"LearnSys.goView(0, {emb_idx}, 0)")
         time.sleep(0.5)
         key0 = js(driver, "LearnSys.text.viewKey()")
         body0 = js(driver, "document.querySelector('#ls-body').innerText")
         demo0 = js(driver, "!!document.querySelector('#ls-demo canvas,.ls-iframe,.ls-hist,.ls-act')")
-        js(driver, "LearnSys.goView(0, 10, 1)")
+        js(driver, f"LearnSys.goView(0, {emb_idx}, 1)")
         time.sleep(0.5)
         key1 = js(driver, "LearnSys.text.viewKey()")
         body1 = js(driver, "document.querySelector('#ls-body').innerText")
@@ -200,7 +208,7 @@ def main() -> int:
         check(demo0 and demo1, "both sub-frames mount a demo")
 
         # Separate editing per sub-frame.
-        js(driver, "LearnSys.goView(0, 10, 0)")
+        js(driver, f"LearnSys.goView(0, {emb_idx}, 0)")
         time.sleep(0.3)
         js(driver, "document.querySelector('#ls-edit-btn').click()")
         time.sleep(0.25)
@@ -212,7 +220,7 @@ def main() -> int:
         js(driver, "document.querySelector('[data-edit-action=\"save\"]').click()")
         js(driver, "document.querySelector('[data-edit-action=\"exit\"]').click()")
         time.sleep(0.3)
-        js(driver, "LearnSys.goView(0, 10, 1)")
+        js(driver, f"LearnSys.goView(0, {emb_idx}, 1)")
         time.sleep(0.3)
         check( "Sub eins" not in js(driver, "document.querySelector('#ls-body').innerText"),"editing sub-frame 1 does not leak into sub-frame 2")
         js(driver, "document.querySelector('#ls-edit-btn').click()")
@@ -225,10 +233,10 @@ def main() -> int:
         js(driver, "document.querySelector('[data-edit-action=\"save\"]').click()")
         js(driver, "document.querySelector('[data-edit-action=\"exit\"]').click()")
         time.sleep(0.3)
-        js(driver, "LearnSys.goView(0, 10, 0)")
+        js(driver, f"LearnSys.goView(0, {emb_idx}, 0)")
         time.sleep(0.3)
         check( "Sub eins" in js(driver, "document.querySelector('#ls-body').innerText"),"sub-frame 1 keeps its own text")
-        js(driver, "LearnSys.goView(0, 10, 1)")
+        js(driver, f"LearnSys.goView(0, {emb_idx}, 1)")
         time.sleep(0.3)
         check( "Sub zwei" in js(driver, "document.querySelector('#ls-body').innerText"),"sub-frame 2 keeps its own text")
 
@@ -352,7 +360,7 @@ def main() -> int:
         time.sleep(0.3)
         shown = js(driver, "LearnSys.layout.entries()")
         check( len(shown) == 33 and "1" in shown,"show slide", str(len(shown)))
-        js(driver, "LearnSys.goView(0, 10, 1)")
+        js(driver, f"LearnSys.goView(0, {emb_idx}, 1)")
         time.sleep(0.3)
         js(driver, "document.querySelector('#ls-edit-btn').click()")
         time.sleep(0.25)
@@ -361,23 +369,23 @@ def main() -> int:
         js(driver, "document.querySelector('[data-edit-action=\"save\"]').click()")
         js(driver, "document.querySelector('[data-edit-action=\"exit\"]').click()")
         time.sleep(0.3)
-        js(driver, "LearnSys.layout.promote(10)")
+        js(driver, f"LearnSys.layout.promote({emb_idx})")
         time.sleep(0.4)
         promoted = js(driver, "LearnSys.layout.entries()")
         check(
-            "10.0" in promoted and "10.1" in promoted and "10.2" in promoted and "10" not in promoted,
+            f"{emb_idx}.0" in promoted and f"{emb_idx}.1" in promoted and f"{emb_idx}.2" in promoted and str(emb_idx) not in promoted,
             "promote sub-slides to slides",
-            str([e for e in promoted if e.startswith("10")]),
+            str([e for e in promoted if e.startswith(str(emb_idx))]),
         )
         check( len(promoted) == 35,"promoted slide count grows", str(len(promoted)))
-        idx = promoted.index("10.1")
+        idx = promoted.index(f"{emb_idx}.1")
         js(driver, f"LearnSys.go(0, {idx})")
         time.sleep(0.5)
         check( js(driver, "!!document.querySelector('#ls-demo canvas,.ls-iframe,.ls-hist,.ls-act')"),"promoted slide mounts a demo")
         check("Promoted text" in js(driver, "document.querySelector('#ls-body').innerText"), "promoted slide keeps the edited substep text")
         check(js(driver, "document.querySelector('#ls-title').textContent") == "Promoted Heading", "promoted slide keeps the edited heading")
         check("Promoted Heading" in js(driver, f"document.querySelector('.ls-dot[data-step=\"{idx}\"]').getAttribute('title')"), "promoted slide title reaches the rail")
-        check(js(driver, "LearnSys.text.viewKey()") == "10.1", "promoted slide keeps the substep text key", js(driver, "LearnSys.text.viewKey()"))
+        check(js(driver, "LearnSys.text.viewKey()") == f"{emb_idx}.1", "promoted slide keeps the substep text key", js(driver, "LearnSys.text.viewKey()"))
         bad = []
         for i in range(len(promoted)):
             js(driver, f"LearnSys.go(0, {i})")
@@ -391,10 +399,10 @@ def main() -> int:
             if not state["title"].strip() or len(state["body"].strip()) < 20 or not state["demo"]:
                 bad.append((i, state["title"]))
         check( not bad,"every promoted/deck slide keeps its demo and text", str(bad[:3]))
-        js(driver, "LearnSys.layout.unpromote(10)")
+        js(driver, f"LearnSys.layout.unpromote({emb_idx})")
         time.sleep(0.3)
         restored = js(driver, "LearnSys.layout.entries()")
-        check( len(restored) == 33 and "10" in restored,"unpromote restores the parent slide", str(len(restored)))
+        check( len(restored) == 33 and str(emb_idx) in restored,"unpromote restores the parent slide", str(len(restored)))
         js(driver, "LearnSys.layout.reset()")
         time.sleep(0.3)
 
@@ -413,20 +421,92 @@ def main() -> int:
         check( js(driver, "document.querySelector('#ls-layout').hidden"),"layout panel closes")
 
         # 6. Deep links.
-        js(driver, "LearnSys.goView(0, 3, 1)")
+        js(driver, f"LearnSys.goView(0, {emb_idx}, 1)")
         time.sleep(0.4)
-        check( js(driver, "location.hash").endswith("/intuition/3/1"),"hash points to the view", js(driver, "location.hash"))
-        check( "/intuition/3/1" in js(driver, "LearnSys.link()"),"link returns the current URL")
+        check( js(driver, "location.hash").endswith(f"/intuition/{emb_idx}/1"),"hash points to the view", js(driver, "location.hash"))
+        check( f"/intuition/{emb_idx}/1" in js(driver, "LearnSys.link()"),"link returns the current URL")
         hash_url = js(driver, "location.href")
         driver.get(hash_url)
         wait_until(driver, "return !!(window.LearnSys && document.querySelector('#ls-body'));")
         time.sleep(0.5)
-        check( js(driver, "LearnSys.state().step") == 3,"hash opens the same step", str(js(driver, "LearnSys.state()")))
+        check( js(driver, "LearnSys.state().step") == emb_idx,"hash opens the same step", str(js(driver, "LearnSys.state()")))
         check( js(driver, "LearnSys.state().substep") == 1,"hash opens the same sub-step", str(js(driver, "LearnSys.state()")))
         driver.get(base + "?lang=de#3")
         wait_until(driver, "return !!(window.LearnSys && document.querySelector('#ls-body'));")
         time.sleep(0.5)
         check( js(driver, "LearnSys.state().step") == 3,"short hash opens a step", str(js(driver, "LearnSys.state()")))
+
+        # 6b. Clicking an earlier loop word rewinds to it.
+        loop_idx = js(driver, """
+            return (function(){
+              var dots=[...document.querySelectorAll('#ls-steps .ls-dot')];
+              for(var i=0;i<dots.length;i++){ if((dots[i].getAttribute('title')||'').indexOf('Ein Wort nach dem anderen')>=0) return i; }
+              return -1;
+            })();
+            """)
+        check(loop_idx >= 0, "loop step found", str(loop_idx))
+        js(driver, f"LearnSys.go(0, {loop_idx})")
+        time.sleep(0.5)
+        for _ in range(3):
+            js(driver, "document.querySelector('.ls-loop-next').click()")
+            time.sleep(0.2)
+        before_words = js(driver, "document.querySelectorAll('.ls-loop-sentence .pred').length")
+        check(before_words >= 2, "loop has generated words", str(before_words))
+        js(driver, "document.querySelector('.ls-loop-sentence .pred').click()")
+        time.sleep(0.35)
+        after_words = js(driver, "document.querySelectorAll('.ls-loop-sentence .pred').length")
+        check(after_words < before_words, "clicking a previous word rewinds the loop", f"{before_words} -> {after_words}")
+        check(js(driver, "document.querySelectorAll('.ls-loop-sentence [data-rewind]').length") >= 1, "remaining loop words are clickable")
+
+        # 6c. Transformer blocks show the moving GPT-2 trajectory.
+        blocks_idx = js(driver, """
+            return (function(){
+              var dots=[...document.querySelectorAll('#ls-steps .ls-dot')];
+              for(var i=0;i<dots.length;i++){ if((dots[i].getAttribute('title')||'').indexOf('Die Bausteine eines LLM')>=0) return i; }
+              return -1;
+            })();
+            """)
+        unembed_idx = js(driver, """
+            return (function(){
+              var dots=[...document.querySelectorAll('#ls-steps .ls-dot')];
+              for(var i=0;i<dots.length;i++){ if((dots[i].getAttribute('title')||'').indexOf('Ähnliche Worte finden')>=0) return i; }
+              return -1;
+            })();
+            """)
+        check(blocks_idx >= 0 and unembed_idx >= 0, "blocks and unembedding steps found", f"{blocks_idx} / {unembed_idx}")
+        js(driver, f"LearnSys.go(0, {blocks_idx})")
+        time.sleep(0.5)
+        js(driver, "document.querySelector('.ls-bs-card[data-index=\"3\"]').click()")
+        time.sleep(0.6)
+        check(bool(js(driver, "document.querySelector('.ls-bs-traj-full .ls-traj-scene canvas')")), "transformer station mounts the GPT-2 trajectory")
+        reduced = js(driver, "!!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)")
+        if reduced:
+            check(True, "trajectory autoplay respects reduced motion")
+        else:
+            check("Pause" in js(driver, "document.querySelector('.ls-bs-traj-full .ls-traj-play').textContent"), "trajectory autoplay is on")
+            layer_before = js(driver, "document.querySelector('.ls-bs-traj-full .ls-traj-layer').value")
+            time.sleep(1.7)
+            layer_after = js(driver, "document.querySelector('.ls-bs-traj-full .ls-traj-layer').value")
+            check(layer_before != layer_after, "trajectory moves through layers", f"{layer_before} -> {layer_after}")
+        check("Demo" in js(driver, "document.querySelector('.ls-bs-traj-caption').textContent"), "trajectory caption marks it as a demo")
+
+        # 6d. Unembedding angle suggestions are hoverable/clickable.
+        js(driver, f"LearnSys.go(0, {unembed_idx})")
+        time.sleep(0.5)
+        js(driver, "document.querySelector('.ls-sim-tab[data-mode=\"unembed\"]').click()")
+        time.sleep(0.5)
+        check(js(driver, "document.querySelectorAll('.ls-un-angle').length") >= 3, "angle suggestions are visible")
+        js(driver, "document.querySelector('.ls-un-angle').click()")
+        time.sleep(0.2)
+        check(bool(js(driver, "document.querySelector('.ls-un-angle.is-on')")), "clicking an angle suggestion highlights it")
+        check("Winkel" in js(driver, "document.querySelector('.ls-sim-readout').textContent"), "angle readout is visible")
+        js(driver, "document.querySelector('.ls-sim-next-angle').click()")
+        time.sleep(0.2)
+        first_angle = js(driver, "document.querySelector('.ls-un-angle.is-on').textContent")
+        js(driver, "document.querySelector('.ls-sim-next-angle').click()")
+        time.sleep(0.2)
+        second_angle = js(driver, "document.querySelector('.ls-un-angle.is-on').textContent")
+        check(first_angle != second_angle, "next angle steps through suggestions", f"{first_angle} / {second_angle}")
 
         # 7. Smooth repeated navigation.
         for _ in range(5):

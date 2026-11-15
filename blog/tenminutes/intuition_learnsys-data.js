@@ -34,7 +34,7 @@
       kicker: "Die Schleife",
       title: "Ein Wort nach dem anderen",
       body: "Jetzt schließt sich der Kreis. Der letzte Vektor h wird über W_U zu Logits, Softmax macht daraus eine Verteilung, und ein Token wird gezogen. Dann hängst du es an den Kontext, und Attention, FFN und Unembedding laufen von vorn. Vervollständige „Es war einmal ein …“ Wort für Wort: Bei jedem Schritt zieht die Demo das nächste Token aus der Verteilung. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Am Ende steht <|endoftext|>; sobald das Modell es zieht, endet die Schleife. Die Landschaft ist eine vereinfachte Demo.",
-      watch: "Vervollständige „Es war einmal ein …“ Wort für Wort, bis <|endoftext|> kommt. Die Landschaft ist nur ein vereinfachtes Bild.",
+      watch: "Vervollständige „Es war einmal ein …“ Wort für Wort, bis <|endoftext|> kommt. Klicke ein früheres Wort an, um dorthin zurückzuspringen. Die Landschaft ist nur ein vereinfachtes Bild.",
       demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true, view: "default", camera: { yaw: -0.86, pitch: 0.918, zoom: 1 } },
       context: "Das Modell hat kein anderes Arbeitsgedächtnis als den Kontext. Jedes neue Token verändert, was als Nächstes wahrscheinlich ist.",
       deep: "Eine hohe Wahrscheinlichkeit ist keine Garantie für Wahrheit. Sie ist eine Aussage über den Trainingskorpus. Sampling macht die Verteilung sichtbar; Greedy nimmt immer den wahrscheinlichsten Pfad. Jedes neue Token läuft wieder durch alle Blöcke. Der KV-Cache spart nur die Neuberechnung der Keys und Values, nicht die Schleife.",
@@ -83,7 +83,7 @@
       kicker: "The loop",
       title: "One word after another",
       body: "Now the circle closes. The last vector h becomes logits through W_U, softmax turns them into a distribution, and one token is drawn. Then you append it to the context, and attention, FFN, and unembedding run again. Complete “Once upon a time there was …” word by word: at each step the demo draws the next token from the distribution. Greedy, sampling, and top-p read the same probabilities differently. At the end comes <|endoftext|>; as soon as the model draws it, the loop stops. The landscape is a simplified demo.",
-      watch: "Complete “Once upon a time there was …” word by word until <|endoftext|> appears. The landscape is only a simplified picture.",
+      watch: "Complete “Once upon a time there was …” word by word until <|endoftext|> appears. Click an earlier word to jump back to it. The landscape is only a simplified picture.",
       demoState: { scene: "loop", mode: "sample", temp: 0.8, landscape: true, view: "default", camera: { yaw: -0.86, pitch: 0.918, zoom: 1 } },
       context: "The model has no working memory other than the context. Every new token changes what is likely next.",
       deep: "A high probability is not a guarantee of truth. It is a statement about the training corpus. Sampling makes the distribution visible; greedy always takes the most likely path. Every new token runs through all blocks again. The KV cache only saves recomputing keys and values, not the loop.",
@@ -738,7 +738,7 @@
     {
       kicker: "Die Bausteine",
       title: "Die Bausteine eines LLM",
-      body: "Ein neuronales Netz ist der gelernte Teil eines modernen LLM. Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Gehe die fünf Ebenen mit „Weiter“ durch: Daten, Tokenizer, Embedding, Transformer-Blöcke und Unembedding. Die Transformer-Blöcke werden dutzende bis hunderte Male wiederholt; links siehst du die Ebene, rechts, was sie tut. Die Daten stehen am Anfang; der Tokenizer zerlegt sie. Später gehen wir die einzelnen Bestandteile genauer durch.",
+      body: "Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Ganz am Anfang stehen sehr viele, sehr verschiedene Texte: Reddit-Artikel, Wikipedia, Bücher, Webseiten, Quellcode von Programmen. Daraus lernt das Modell Muster: wie man codet, wie menschliche Sprache aussieht, welche Fakten es gibt. Gehe die fünf Ebenen mit „Weiter“ durch: Daten, Tokenizer, Embedding, Transformer-Blöcke und Unembedding. In den nächsten Tagen gehen wir alle diese Sachen durch.",
       watch: "Gehe die Ebenen mit „Weiter“ oder der Pfeiltaste durch. Was macht jede Ebene?",
       demoState: { scene: "blocks" },
       context: "Die Reihenfolge ist die Architektur: Text → Tokens → Vektoren → Transformer-Blöcke → Verteilung. Jeder Schritt verändert die Darstellung, bis am Ende ein Token gezogen wird.",
@@ -778,7 +778,7 @@
     {
       kicker: "The building blocks",
       title: "The building blocks of an LLM",
-      body: "A neural network is the learned part of a modern LLM. An LLM is a chain of levels, not a single magic formula. Walk through the five levels with “Next”: data, tokenizer, embedding, transformer blocks, and unembedding. The transformer blocks repeat dozens to hundreds of times; the level is on the left, what it does on the right. The data come first; the tokenizer splits them. Later we go through the individual components in more detail.",
+      body: "An LLM is a chain of levels, not a single magic formula. At the very start are very many, very different texts: Reddit articles, Wikipedia, books, websites, source code of programs. From them the model learns patterns: how to code, what human language looks like, what facts exist. Walk through the five levels with “Next”: data, tokenizer, embedding, transformer blocks, and unembedding. Over the next days we will go through all of these things.",
       watch: "Walk through the levels with “Next” or the arrow key. What does each level do?",
       demoState: { scene: "blocks" },
       context: "The order is the architecture: text → tokens → vectors → transformer blocks → distribution. Each step changes the representation until a token is drawn.",
@@ -1726,14 +1726,14 @@
   var tokenizeBpeStep = Object.assign({}, tokenizeSteps[0], {
     kicker: DE ? "BPE" : "BPE",
     title: DE ? "BPE: Zeichen → Paare → Merges" : "BPE: characters → pairs → merges",
-    body: DE ? "BPE beginnt bei Zeichen: Jedes Wort wird in Zeichen zerlegt, dann zählt der Algorithmus benachbarte Paare und ersetzt das häufigste Paar durch ein neues Symbol. Nach einigen Merges werden häufige Wörter kurz; seltene Schriften bleiben teuer. Das ist gelernte, verlustfreie Kompression." : "BPE starts from characters: every word is split into characters, then the algorithm counts adjacent pairs and replaces the most frequent pair with a new symbol. After several merges, frequent words become short; rare scripts stay expensive. That is learned, lossless compression.",
+    body: DE ? "BPE beginnt bei Zeichen: Jedes Wort wird in Zeichen zerlegt, dann zählt der Algorithmus benachbarte Paare und ersetzt das häufigste Paar durch ein neues Symbol. Die Trennungen kommen aus den Trainingsdaten: Der Algorithmus wählt sie so, dass möglichst viel Text mit möglichst wenigen Tokens dargestellt wird. Nach einigen Merges werden häufige Wörter kurz; seltene Schriften bleiben teuer. Das ist gelernte, verlustfreie Kompression." : "BPE starts from characters: every word is split into characters, then the algorithm counts adjacent pairs and replaces the most frequent pair with a new symbol. The splits come from the training data: the algorithm chooses them so that as much text as possible is represented with as few tokens as possible. After several merges, frequent words become short; rare scripts stay expensive. That is learned, lossless compression.",
     watch: DE ? "Drücke Weiter: Welches Paar wird als Nächstes verschmolzen?" : "Press Next: which pair is merged next?",
     demoState: { scene: "tokenize", mode: "bpe" }
   });
   var tokenizeExamplesStep = Object.assign({}, tokenizeSteps[0], {
     kicker: DE ? "Tokenize" : "Tokenize",
     title: DE ? "Text wird zu IDs" : "Text becomes IDs",
-    body: DE ? "Jetzt die Beispiele: Verständnis, unzerbrechlich und ein ganzer Satz werden in Tokens und IDs zerlegt. Ein Token ist kein Wort; die ID ist die Adresse in der Embedding-Tabelle." : "Now the examples: understanding, unbreakable, and a whole sentence are split into tokens and IDs. A token is not a word; the ID is the address in the embedding table.",
+    body: DE ? "Jetzt die Beispiele: Verständnis und ein ganzer Satz werden in Tokens und IDs zerlegt. Ein Token ist kein Wort; die ID ist die Adresse in der Embedding-Tabelle." : "Now the examples: understanding and a whole sentence are split into tokens and IDs. A token is not a word; the ID is the address in the embedding table.",
     watch: DE ? "Klicke die Beispiele. Wo ist die ID sichtbar?" : "Click the examples. Where is the ID visible?",
     demoState: { scene: "tokenize", mode: "split" }
   });
@@ -1796,7 +1796,7 @@
     ]
   };
 
-  var steps = [introSteps[0], bookSteps[0], insideSteps[1], gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep];
+  var steps = [introSteps[0], insideSteps[1], gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep, bookSteps[0]];
 
   var day = {
     id: "intuition",

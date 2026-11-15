@@ -26,7 +26,7 @@
       '<div class="ls-sim-controls ls-sim-scale-controls" hidden>' +
         '<label class="ls-range">' + (DE ? "Länge von B" : "Magnitude of B") + ' <input type="range" class="ls-sim-scale" min="0.3" max="3" step="0.05" value="1.6"><output>1.60×</output></label>' +
       '</div>' +
-      '<div class="ls-sim-controls ls-sim-unembed-controls" hidden><button type="button" class="ls-btn ls-btn--tiny ls-sim-replay">' + (DE ? "Nochmal" : "Again") + '</button></div>' +
+      '<div class="ls-sim-controls ls-sim-unembed-controls" hidden><button type="button" class="ls-btn ls-btn--tiny ls-sim-replay">' + (DE ? "Nochmal" : "Again") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-sim-next-angle">' + (DE ? "Nächster Winkel" : "Next angle") + '</button><div class="ls-sim-unembed-list" hidden></div></div>' +
       '<div class="ls-sim-readout" aria-live="polite"></div>' +
       '<p class="ls-sim-caption"></p>';
     root.appendChild(el);
@@ -46,7 +46,10 @@
     var scaleOut = scaleInput ? scaleInput.nextElementSibling : null;
     var unembedControls = el.querySelector(".ls-sim-unembed-controls");
     var unembedReplay = el.querySelector(".ls-sim-replay");
+    var unembedList = el.querySelector(".ls-sim-unembed-list");
+    var nextAngleBtn = el.querySelector(".ls-sim-next-angle");
     var unembedRaf = 0, unembedStart = 0;
+    var unembedFocus = -1, unembedPinned = -1, unembedStep = -1;
     var UN_ANGLE = -10 * Math.PI / 180;
     var UN_TOKENS = [
       { t: " the", a: -28 }, { t: " Paris", a: 2 }, { t: " a", a: 34 },
@@ -296,6 +299,44 @@
         return { t: tok.t, a: tok.a, diff: d, cos: Math.cos(d) };
       }).sort(function (a, b) { return Math.abs(a.diff) - Math.abs(b.diff); });
     }
+    function updateAngleList() {
+      if (!unembedList) return;
+      unembedList.querySelectorAll("[data-angle-i]").forEach(function (btn) {
+        var i = parseInt(btn.getAttribute("data-angle-i"), 10);
+        btn.classList.toggle("is-on", i === unembedFocus);
+        btn.setAttribute("aria-pressed", String(i === unembedPinned));
+      });
+    }
+    function settleUnembed() {
+      if (unembedRaf) { cancelAnimationFrame(unembedRaf); unembedRaf = 0; }
+      unembedStart = performance.now() - 4000;
+    }
+    function setUnembedFocus(i) {
+      unembedFocus = i;
+      settleUnembed();
+      updateAngleList();
+      drawUnembed(performance.now());
+    }
+    function renderUnembedList() {
+      if (!unembedList) return;
+      var rows = unembedData();
+      unembedList.innerHTML = rows.map(function (row, i) {
+        var deg = Math.round(Math.abs(row.diff) * 180 / Math.PI);
+        return '<button type="button" class="ls-un-angle" data-angle-i="' + i + '"><b>' + api.esc(row.t.trim()) + '</b><span>' + deg + '°</span></button>';
+      }).join("");
+      unembedList.querySelectorAll("[data-angle-i]").forEach(function (btn) {
+        var i = parseInt(btn.getAttribute("data-angle-i"), 10);
+        btn.addEventListener("mouseenter", function () { if (unembedPinned < 0) setUnembedFocus(i); });
+        btn.addEventListener("focus", function () { if (unembedPinned < 0) setUnembedFocus(i); });
+        btn.addEventListener("mouseleave", function () { if (unembedPinned < 0) setUnembedFocus(-1); });
+        btn.addEventListener("blur", function () { if (unembedPinned < 0) setUnembedFocus(-1); });
+        btn.addEventListener("click", function () {
+          unembedPinned = unembedPinned === i ? -1 : i;
+          setUnembedFocus(unembedPinned);
+        });
+      });
+      updateAngleList();
+    }
     function drawUnembed(now) {
       if (!size) return;
       var ctx = size.ctx, w = size.w, h = size.h;
@@ -307,6 +348,7 @@
       var t = unembedStart ? Math.min(1, (now - unembedStart) / 2600) : 1;
       var scan = Math.floor(t * UN_TOKENS.length);
       var rows = unembedData();
+      var focus = unembedFocus >= 0 && rows[unembedFocus] ? rows[unembedFocus] : null;
       var hx = cx + Math.cos(UN_ANGLE) * r, hy = cy - Math.sin(UN_ANGLE) * r;
       UN_TOKENS.forEach(function (tok, i) {
         var a = tok.a * Math.PI / 180;
@@ -315,13 +357,18 @@
         ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.stroke(); ctx.globalAlpha = 1;
         ctx.fillStyle = C.muted; ctx.beginPath(); ctx.arc(x, y, 2.3, 0, Math.PI * 2); ctx.fill();
         ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillStyle = C.soft; ctx.fillText(tok.t.trim(), x, y - 7);
-        if (i < scan) {
+        if (i < scan || (focus && tok.t === focus.t)) {
           var d = tok.a * Math.PI / 180 - UN_ANGLE;
           while (d > Math.PI) d -= Math.PI * 2;
           while (d < -Math.PI) d += Math.PI * 2;
-          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r * 0.32, UN_ANGLE, UN_ANGLE + d, d < 0); ctx.closePath();
-          ctx.fillStyle = V.alpha(C.gold, 0.09); ctx.fill();
-          ctx.strokeStyle = C.gold; ctx.globalAlpha = 0.55; ctx.lineWidth = 1; ctx.stroke(); ctx.globalAlpha = 1;
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, focus && tok.t === focus.t ? r * 0.42 : r * 0.32, UN_ANGLE, UN_ANGLE + d, d < 0); ctx.closePath();
+          ctx.fillStyle = V.alpha(focus && tok.t === focus.t ? C.green : C.gold, 0.14); ctx.fill();
+          ctx.strokeStyle = focus && tok.t === focus.t ? C.green : C.gold; ctx.globalAlpha = focus && tok.t === focus.t ? 1 : 0.55; ctx.lineWidth = focus && tok.t === focus.t ? 2.4 : 1; ctx.stroke(); ctx.globalAlpha = 1;
+        }
+        if (focus && tok.t === focus.t) {
+          ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill();
+          ctx.strokeStyle = C.paper; ctx.lineWidth = 1.4; ctx.stroke();
+          ctx.fillStyle = C.green; ctx.font = '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(tok.t.trim(), x, y - 10);
         }
       });
       V.arrow(ctx, cx, cy, hx, hy, C.petrol, 3.2);
@@ -334,14 +381,16 @@
         var y = h * 0.30 + i * Math.min(24, h * 0.065);
         var p = probs[i] || 0;
         var grow = Math.max(0, Math.min(1, (t - 0.55) / 0.45));
+        if (focus && row.t === focus.t) { ctx.fillStyle = C.green; ctx.fillRect(bx - 4, y - 9, 3, 13); }
         ctx.fillStyle = C.ink; ctx.font = '600 ' + Math.max(9, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.fillText(row.t, bx, y);
         ctx.fillStyle = C.line; ctx.fillRect(bx + 58, y - 6, bw, 7);
         ctx.fillStyle = i === 0 ? C.green : C.blue; ctx.fillRect(bx + 58, y - 6, bw * p * grow, 7);
         ctx.fillStyle = C.muted; ctx.textAlign = "right"; ctx.fillText(Math.round(p * 100 * grow) + "%", bx + 58 + bw, y);
       });
       var top = rows[0], bottom = rows[rows.length - 1];
-      readout.innerHTML = '<span>h → ' + rows.length + ' ' + (DE ? "Token-Richtungen" : "token directions") + '</span><span>' + (DE ? "kleinster Winkel" : "smallest angle") + ' <b>' + top.t + ' · ' + Math.round(Math.abs(top.diff) * 180 / Math.PI) + '°</b></span><span>' + (DE ? "größter" : "largest") + ' <b>' + bottom.t + ' · ' + Math.round(Math.abs(bottom.diff) * 180 / Math.PI) + '°</b></span>';
-      caption.textContent = DE ? "Der letzte Vektor h bildet zu jeder gelernten Token-Richtung einen Winkel. Der kleinste Winkel wird zum höchsten Logit; Softmax macht aus allen Logits eine Verteilung. Das ist das Unembedding: aus einem Vektor werden wieder Wörter." : "The final vector h forms an angle with every learned token direction. The smallest angle becomes the highest logit; softmax turns all logits into a distribution. That is the unembedding: a vector becomes words again.";
+      var focusTxt = focus ? '<span>' + (DE ? "Winkel" : "angle") + ' <b>' + focus.t + ' · ' + Math.round(Math.abs(focus.diff) * 180 / Math.PI) + '°</b></span>' : '';
+      readout.innerHTML = '<span>h → ' + rows.length + ' ' + (DE ? "Token-Richtungen" : "token directions") + '</span><span>' + (DE ? "kleinster Winkel" : "smallest angle") + ' <b>' + top.t + ' · ' + Math.round(Math.abs(top.diff) * 180 / Math.PI) + '°</b></span><span>' + (DE ? "größter" : "largest") + ' <b>' + bottom.t + ' · ' + Math.round(Math.abs(bottom.diff) * 180 / Math.PI) + '°</b></span>' + focusTxt;
+      caption.textContent = DE ? "Der letzte Vektor h bildet zu jeder gelernten Token-Richtung einen Winkel. Der kleinste Winkel wird zum höchsten Logit; Softmax macht aus allen Logits eine Verteilung. Fahre über einen Vorschlag oder klicke ihn an: Der Winkel wird hervorgehoben. „Nächster Winkel“ geht die Kandidaten der Reihe nach durch." : "The final vector h forms an angle with every learned token direction. The smallest angle becomes the highest logit; softmax turns all logits into a distribution. Hover or click a suggestion to highlight its angle. “Next angle” steps through the candidates in order.";
       if (unembedRaf) { if (t < 1) unembedRaf = requestAnimationFrame(drawUnembed); else unembedRaf = 0; }
     }
     function startUnembed() {
@@ -364,6 +413,10 @@
       if (angleControls) angleControls.hidden = mode !== "angle";
       if (scaleControls) scaleControls.hidden = mode !== "scale";
       if (unembedControls) unembedControls.hidden = mode !== "unembed";
+      if (unembedList) {
+        unembedList.hidden = mode !== "unembed";
+        if (mode === "unembed") renderUnembedList();
+      }
       if (mode === "unembed") startUnembed(); else if (unembedRaf) { cancelAnimationFrame(unembedRaf); unembedRaf = 0; }
       draw();
     }
@@ -379,7 +432,18 @@
     if (angleAInput) angleAInput.addEventListener("input", function () { angleA = parseFloat(angleAInput.value) || 0; if (angleAOut) angleAOut.textContent = Math.round(angleA) + "°"; draw(); });
     if (angleBInput) angleBInput.addEventListener("input", function () { angleB = parseFloat(angleBInput.value) || 0; if (angleBOut) angleBOut.textContent = Math.round(angleB) + "°"; draw(); });
     if (scaleInput) scaleInput.addEventListener("input", function () { scaleMag = parseFloat(scaleInput.value) || 1; if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×"; draw(); });
-    if (unembedReplay) unembedReplay.addEventListener("click", function () { startUnembed(); });
+    if (unembedReplay) unembedReplay.addEventListener("click", function () {
+      unembedFocus = -1; unembedPinned = -1; unembedStep = -1;
+      updateAngleList();
+      startUnembed();
+    });
+    if (nextAngleBtn) nextAngleBtn.addEventListener("click", function () {
+      var rows = unembedData();
+      if (!rows.length) return;
+      unembedStep = (unembedStep + 1) % rows.length;
+      unembedPinned = unembedStep;
+      setUnembedFocus(unembedStep);
+    });
     if (angleAOut) angleAOut.textContent = Math.round(angleA) + "°";
     if (angleBOut) angleBOut.textContent = Math.round(angleB) + "°";
     if (scaleOut) scaleOut.textContent = scaleMag.toFixed(2) + "×";

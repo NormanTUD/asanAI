@@ -61,7 +61,7 @@
         '<div class="ls-bpe-stage" aria-live="polite"></div>' +
         '<div class="ls-bpe-meters" aria-live="polite"></div>' +
         '<div class="ls-bpe-counts" aria-live="polite"></div>' +
-        '<p class="ls-bpe-note">' + (DE ? "Jeder Merge ersetzt ein häufiges Paar durch ein neues Symbol. Gezählt werden benachbarte Paare, gewichtet mit der Häufigkeit der Wörter. Das Wort bleibt aus seinen Symbolen zusammensetzbar; der Text ist verlustfrei rekonstruierbar. Genau das ist der Kompressionsgedanke." : "Each merge replaces a frequent pair with a new symbol. Adjacent pairs are counted and weighted by word frequency. The word remains reconstructable from its symbols; the text is lossless. That is the compression idea.") + '</p>' +
+        '<p class="ls-bpe-note">' + (DE ? "Jeder Merge ersetzt ein häufiges Paar durch ein neues Symbol. Gezählt werden benachbarte Paare, gewichtet mit der Häufigkeit der Wörter. Die Trennungen werden aus den Trainingsdaten gelernt: möglichst viel Text mit möglichst wenigen Tokens. Das Wort bleibt aus seinen Symbolen zusammensetzbar; der Text ist verlustfrei rekonstruierbar. Genau das ist der Kompressionsgedanke." : "Each merge replaces a frequent pair with a new symbol. Adjacent pairs are counted and weighted by word frequency. The splits are learned from the training data: as much text as possible with as few tokens as possible. The word remains reconstructable from its symbols; the text is lossless. That is the compression idea.") + '</p>' +
       '</div>' +
       '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-tokenize-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-tokenize-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
@@ -78,7 +78,7 @@
     var navPrev = el.querySelector(".ls-tokenize-prev");
     var navNext = el.querySelector(".ls-tokenize-next");
     var navProgress = el.querySelector(".ls-tokenize-progress");
-    var sampleKeys = ["understanding", "unbreakable", "sentence"];
+    var sampleKeys = ["understanding", "sentence"];
     var mode = "bpe";
     var step = 0;
     var sampleIndex = 0;
@@ -222,8 +222,8 @@
       splitEl.hidden = !splitMode;
       bpeEl.hidden = splitMode;
       if (splitMode) renderSplit(); else renderBpe();
-      var total = 3 + stages.length;
-      var pos = splitMode ? step : 3 + step;
+      var total = sampleKeys.length + stages.length;
+      var pos = splitMode ? step : sampleKeys.length + step;
       navProgress.textContent = (pos + 1) + ' / ' + total;
       navPrev.disabled = pos === 0;
       navNext.textContent = pos === total - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
