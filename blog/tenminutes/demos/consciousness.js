@@ -86,6 +86,16 @@
       var v = 1 - u;
       return { x: v * v * p1.x + 2 * v * u * c.x + u * u * p2.x, y: v * v * p1.y + 2 * v * u * c.y + u * u * p2.y };
     }
+    function particles(w, h, now) {
+      for (var i = 0; i < 30; i++) {
+        var x = ((i * 67 + now / (32 + i % 4)) % w + w) % w;
+        var y = ((i * 43 + Math.sin(now / 1000 + i) * 22 + h * 0.18) % h + h) % h;
+        ctx.globalAlpha = 0.035 + (i % 4) * 0.016;
+        ctx.fillStyle = i % 2 ? C.blue : C.green;
+        ctx.beginPath(); ctx.arc(x, y, 1 + (i % 3) * 0.7, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
     function draw() {
       if (!size) return;
       ctx = size.ctx;
@@ -102,6 +112,23 @@
       var rg = ctx.createRadialGradient(w * 0.73, h * 0.4, 4, w * 0.73, h * 0.4, w * 0.34);
       rg.addColorStop(0, "rgba(99,164,75,.12)"); rg.addColorStop(1, "rgba(99,164,75,0)");
       ctx.fillStyle = rg; ctx.fillRect(0, 0, w, h);
+      particles(w, h, performance.now());
+      var ab = activeBranch();
+      if (ab === "access") {
+        var ag = ctx.createRadialGradient(w * 0.27, h * 0.4, 4, w * 0.27, h * 0.4, w * 0.38);
+        ag.addColorStop(0, "rgba(18,117,172,.10)"); ag.addColorStop(1, "rgba(18,117,172,0)");
+        ctx.fillStyle = ag; ctx.fillRect(0, 0, w, h);
+      } else if (ab === "experience") {
+        var eg = ctx.createRadialGradient(w * 0.73, h * 0.4, 4, w * 0.73, h * 0.4, w * 0.38);
+        eg.addColorStop(0, "rgba(99,164,75,.10)"); eg.addColorStop(1, "rgba(99,164,75,0)");
+        ctx.fillStyle = eg; ctx.fillRect(0, 0, w, h);
+      }
+      // rotating outer ring
+      ctx.save();
+      ctx.strokeStyle = C.petrol; ctx.globalAlpha = 0.10; ctx.lineWidth = 1;
+      ctx.setLineDash([2, 8]);
+      ctx.beginPath(); ctx.arc(w * 0.5, h * 0.5, Math.min(w, h) * 0.47, performance.now() / 3000, performance.now() / 3000 + Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]); ctx.restore();
       // open boundary
       ctx.strokeStyle = C.line; ctx.setLineDash([5, 6]); ctx.lineWidth = 1;
       ctx.beginPath(); ctx.ellipse(w * 0.5, h * 0.52, w * 0.44, h * 0.42, 0, 0, Math.PI * 2); ctx.stroke();
@@ -155,6 +182,15 @@
         ctx.globalAlpha = 1;
         hits.push({ id: n.id, x: p.x, y: p.y, r: Math.max(n.r + 6, 14) });
       });
+      // core rings
+      var cc = pos(byId("center"));
+      [18, 26, 36].forEach(function (rr, idx) {
+        ctx.strokeStyle = C.petrol;
+        ctx.globalAlpha = 0.08 - idx * 0.015;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(cc.x, cc.y, rr + Math.sin(now / 500 + idx) * 1.5, 0, Math.PI * 2); ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
       // legend
       var ly2 = h - 12;
       ctx.fillStyle = C.blue; ctx.beginPath(); ctx.arc(w * 0.28 - 30, ly2, 3.2, 0, Math.PI * 2); ctx.fill();

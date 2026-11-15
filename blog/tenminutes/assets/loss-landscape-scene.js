@@ -34,7 +34,7 @@
     var optEls = el.querySelectorAll("[data-opt]");
     var C = api.colors();
     var optOrder = ["sgd", "adam", "momentum"];
-    var data = null, worker = null;
+    var data = null, worker = null, workerFailed = false;
     var optimizer = "sgd", step = 0, playing = false, finished = false, visible = true, started = false, timer = 0, formulaKey = "";
     var yaw = -0.72, pitch = 0.86, zoom = 1, drag = null;
     var size = null, minL = 0, maxL = 1;
@@ -178,7 +178,7 @@
     function startWorker(keepOptimizer) {
       var keep = keepOptimizer ? optimizer : "sgd";
       if (worker) { worker.terminate(); worker = null; }
-      data = null; step = 0; playing = false; finished = false; started = false; clearTimeout(timer); timer = 0;
+      data = null; workerFailed = false; step = 0; playing = false; finished = false; started = false; clearTimeout(timer); timer = 0;
       if (loaderEl) loaderEl.hidden = false;
       setStatus(DE ? "Berechne die Loss-Fläche …" : "Computing the loss surface …");
       readout.innerHTML = '<span>' + (DE ? "Die Fläche wird im Hintergrund berechnet." : "The surface is computed in the background.") + '</span>';
@@ -192,7 +192,7 @@
         setOpt(keep);
         draw();
       };
-      worker.onerror = function () { if (loaderEl) loaderEl.hidden = true; setStatus(DE ? "Worker-Fehler" : "Worker error"); };
+      worker.onerror = function () { workerFailed = true; if (loaderEl) loaderEl.hidden = true; setStatus(DE ? "Worker-Fehler" : "Worker error"); };
       worker.postMessage({
         cmd: "train",
         lr: parseFloat(lrEl.value) || 0.08,
@@ -276,7 +276,7 @@
     resize(); startWorker();
     return {
       update: function () {},
-      busy: function () { return !data; },
+      busy: function () { return !data && !workerFailed; },
       finish: function () { if (!data) { /* loading: keep the reader here */ } },
       next: function () {
         if (!data) { startWorker(); return true; }

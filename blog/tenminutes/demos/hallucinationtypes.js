@@ -100,6 +100,28 @@
       ctx.strokeRect(x - s, y + s * 0.3, s * 0.7, s * 0.7);
       ctx.setLineDash([3, 3]); ctx.strokeRect(x + s * 0.3, y + s * 0.3, s * 0.7, s * 0.7); ctx.setLineDash([]);
     }
+    function particles(w, h, now, color) {
+      for (var i = 0; i < 26; i++) {
+        var x = ((i * 73 + now / (28 + i % 5)) % w + w) % w;
+        var y = ((i * 41 + Math.sin(now / 900 + i) * 24 + h * 0.16) % h + h) % h;
+        ctx.globalAlpha = 0.04 + (i % 4) * 0.018;
+        ctx.fillStyle = color;
+        ctx.beginPath(); ctx.arc(x, y, 1 + (i % 3) * 0.7, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+    function orbitRing(w, h, now, color) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.globalAlpha = 0.10;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 7]);
+      ctx.beginPath();
+      ctx.arc(w * 0.5, h * 0.5, Math.min(w, h) * 0.43, now / 3200, now / 3200 + Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
     function iconNot(x, y, s, color) {
       ctx.strokeStyle = color; ctx.lineWidth = 2.4;
       ctx.beginPath(); ctx.moveTo(x - s, y + s); ctx.lineTo(x + s, y + s); ctx.stroke();
@@ -154,7 +176,11 @@
       ctx.fillStyle = C.gold; ctx.beginPath(); ctx.arc(r * 1.02, 0, 3.2, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
       glowDot(cx, cy, 6, C.gold);
-      iconDie(w * 0.62, h * 0.26, 18, C.gold);
+      ctx.save();
+      ctx.translate(w * 0.62, h * 0.26);
+      ctx.rotate(Math.sin((now - t0) / 260) * 0.25);
+      iconDie(0, 0, 18, C.gold);
+      ctx.restore();
       text(DE ? "Zufall wählt" : "random draw", w * 0.62, h * 0.26 + 34, '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif', C.petrol, "center");
       card(w * 0.52, h * 0.64, w * 0.42, 54, "#fff", C.lineStrong, C.gold);
       text(DE ? "Berlin liegt an der Elbe." : "Berlin lies on the Elbe.", w * 0.52 + 14, h * 0.64 + 20, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.ink);
@@ -204,6 +230,10 @@
       text(DE ? "keine saubere Umkehrung" : "not a clean reversal", w * 0.10 + 20, h * 0.16 + 14, '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif', C.petrol);
       var near = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
       var far = Math.hypot(pts[1].x - pts[2].x, pts[1].y - pts[2].y);
+      ctx.beginPath();
+      pts.forEach(function (p, i) { if (i === 0) ctx.moveTo(X(p.x), Y(p.y)); else ctx.lineTo(X(p.x), Y(p.y)); });
+      ctx.closePath();
+      ctx.fillStyle = "rgba(99,164,75,.055)"; ctx.fill();
       ctx.setLineDash([5, 4]); ctx.strokeStyle = C.blue; ctx.lineWidth = 1.8;
       ctx.beginPath(); ctx.moveTo(X(pts[0].x), Y(pts[0].y)); ctx.lineTo(X(pts[1].x), Y(pts[1].y)); ctx.stroke();
       ctx.strokeStyle = C.lilac;
@@ -232,6 +262,17 @@
       ctx.clearRect(0, 0, w, h);
       var accent = mode === "false" ? "#9185be" : (mode === "sampling" ? "#9f9700" : (mode === "gap" ? "#5c9baf" : "#63a44b"));
       bg(w, h, accent);
+      particles(w, h, now, accent);
+      orbitRing(w, h, now, accent);
+      var age = now - t0;
+      if (age < 900) {
+        var pr = clamp(age / 900, 0, 1);
+        ctx.globalAlpha = 0.20 * (1 - pr);
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(w * 0.5, h * 0.5, 18 + pr * Math.min(w, h) * 0.48, 0, Math.PI * 2); ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
       if (mode === "false") drawFalse(w, h, now);
       else if (mode === "sampling") drawSampling(w, h, now);
       else if (mode === "gap") drawGap(w, h, now);

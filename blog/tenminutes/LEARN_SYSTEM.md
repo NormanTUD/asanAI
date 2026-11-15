@@ -143,6 +143,15 @@ substep structure changes, and treat old JSON exports as stale.
 - The JSON button opens a copy-paste modal with the complete export. "Kopieren"
   copies the JSON; "Herunterladen" saves it as a file. "JSON ↑" imports a file.
   Only entries stored in the overlay (i.e. edited ones) are exported.
+- Export format v2 (`kind: "learnsys-changes"`) is built for handing changes to
+  the source editor. Each `changes[]` entry is self-describing:
+  `lang`, `translate_to`, `apply_to`, `data_file`, `page`, `day_title`, `track`,
+  `step`, `substep`, `substep_count`, `text_key`, `slide_title`,
+  `slide_kicker`, `changed_fields`, `source` (the original text) and `edit`
+  (the edited text and full group tree). Use `step`/`substep` plus
+  `text_key` and `slide_title` to place it in `intuition_learnsys-data.js`;
+  `translate_to` names the other language to fill in. The old v1
+  `texts.de/en` format is still accepted by "JSON ↑".
 - The export also contains the layout (order, hidden, promoted).
 
 Public helpers: `LearnSys.text.splitSentences(text)`,

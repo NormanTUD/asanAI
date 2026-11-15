@@ -1633,18 +1633,88 @@
     saveEditorDoc();
     renderEditor();
   }
+  function sourceDocFor(lang, day, key) {
+    var dayIndex = cfg.days.indexOf(day);
+    var oldDay = state.day, oldStep = state.step, oldSub = state.substep;
+    var store = textOverlay[lang] && textOverlay[lang][day.id];
+    var saved = store ? store[key] : null;
+    if (store) delete store[key];
+    var parts = String(key).split(".");
+    state.day = dayIndex >= 0 ? dayIndex : oldDay;
+    state.step = parseInt(parts[0], 10) || 0;
+    state.substep = parts.length > 1 ? (parseInt(parts[1], 10) || 0) : 0;
+    var doc;
+    try {
+      doc = currentTextDoc();
+    } finally {
+      state.day = oldDay; state.step = oldStep; state.substep = oldSub;
+      if (store && saved) store[key] = saved;
+    }
+    return doc;
+  }
+  function changeFor(lang, day, key, entry) {
+    if (!day || !entry) return null;
+    var source = sourceDocFor(lang, day, key);
+    var edit = {
+      body: typeof entry.body === "string" ? entry.body : "",
+      title: typeof entry.title === "string" ? entry.title : "",
+      kicker: typeof entry.kicker === "string" ? entry.kicker : "",
+      watch: typeof entry.watch === "string" ? entry.watch : "",
+      groups: Array.isArray(entry.groups) ? cloneData(entry.groups) : []
+    };
+    var changed = [];
+    ["title", "kicker", "watch", "body"].forEach(function (field) {
+      if ((edit[field] || "") !== (source[field] || "")) changed.push(field);
+    });
+    if (JSON.stringify(edit.groups) !== JSON.stringify(source.groups || [])) changed.push("groups");
+    if (!changed.length) return null;
+    var parts = String(key).split(".");
+    var stepIndex = parseInt(parts[0], 10) || 0;
+    var subIndex = parts.length > 1 ? (parseInt(parts[1], 10) || 0) : 0;
+    var parent = day.steps[stepIndex];
+    var substepCount = parent && parent.substeps ? parent.substeps.length : 1;
+    var sourceOut = {
+      title: source.title || "",
+      kicker: source.kicker || "",
+      watch: source.watch || "",
+      body: source.body || ""
+    };
+    if (changed.indexOf("groups") >= 0) sourceOut.groups = cloneData(source.groups || []);
+    return {
+      id: lang + ":" + day.id + ":" + key,
+      lang: lang,
+      translate_to: lang === "de" ? "en" : "de",
+      apply_to: ["de", "en"],
+      data_file: "intuition_learnsys-data.js",
+      page: day.id,
+      day_title: day.title || "",
+      track: day.track || "",
+      step: stepIndex,
+      substep: subIndex,
+      substep_count: substepCount,
+      text_key: String(key),
+      slide_title: edit.title || source.title || "",
+      slide_kicker: edit.kicker || source.kicker || "",
+      changed_fields: changed,
+      source: sourceOut,
+      edit: edit
+    };
+  }
   function copyEditorPayload() {
     saveEditorDoc();
-    var payload = {};
-    payload[LANG] = cloneData(textOverlay[LANG] || {});
-    var dayId = activeDay().id;
-    if (!payload[LANG][dayId]) payload[LANG][dayId] = {};
-    payload[LANG][dayId][textStepKey()] = {
-      body: editorDoc.body || "",
-      title: editorDoc.title || "",
-      kicker: editorDoc.kicker || "",
-      watch: editorDoc.watch || "",
-      groups: cloneData(editorDoc.groups || [])
+    var day = activeDay();
+    var key = textStepKey();
+    var store = textOverlay[LANG] && textOverlay[LANG][day.id];
+    var entry = store ? store[key] : null;
+    var change = changeFor(LANG, day, key, entry);
+    var payload = {
+      version: 2,
+      schema: "learnsys-changes/v2",
+      kind: "learnsys-changes",
+      data_file: "intuition_learnsys-data.js",
+      generated_at: new Date().toISOString(),
+      overlay_revision: cfg && cfg.overlayRevision || "",
+      changes: change ? [change] : []
     };
     copyText(JSON.stringify(payload, null, 2), function () {
       setEditorStatus(t("copied"));
@@ -1657,17 +1727,36 @@
     setTimeout(function () { btn.textContent = old; }, 1400);
   }
   function exportTextData() {
-    var texts = {};
+    var changes = [];
     ["de", "en"].forEach(function (lang) {
       var store = textOverlay[lang] || {};
-      var out = {};
       Object.keys(store).forEach(function (dayId) {
+        var day = null;
+        for (var i = 0; i < cfg.days.length; i++) if (cfg.days[i].id === dayId) { day = cfg.days[i]; break; }
+        if (!day) return;
         var steps = store[dayId] || {};
-        if (Object.keys(steps).length) out[dayId] = steps;
+        Object.keys(steps).forEach(function (key) {
+          var change = changeFor(lang, day, key, steps[key]);
+          if (change) changes.push(change);
+        });
       });
-      if (Object.keys(out).length) texts[lang] = out;
     });
-    var data = { version: 1, generated_at: new Date().toISOString(), overlay_revision: cfg && cfg.overlayRevision || "", texts: texts };
+    changes.sort(function (a, b) {
+      var ka = a.lang + "|" + a.page + "|" + a.text_key;
+      var kb = b.lang + "|" + b.page + "|" + b.text_key;
+      return ka < kb ? -1 : (ka > kb ? 1 : 0);
+    });
+    var data = {
+      version: 2,
+      schema: "learnsys-changes/v2",
+      kind: "learnsys-changes",
+      data_file: "intuition_learnsys-data.js",
+      generated_at: new Date().toISOString(),
+      overlay_revision: cfg && cfg.overlayRevision || "",
+      pages: cfg.days.map(function (d) { return d.id; }),
+      apply_to: ["de", "en"],
+      changes: changes
+    };
     if (Object.keys(layoutOverlay).length) data.layout = cloneData(layoutOverlay);
     return data;
   }
@@ -1701,8 +1790,25 @@
   }
   function importTextData(obj) {
     if (!obj || typeof obj !== "object") throw new Error("invalid json");
-    var incoming = obj.texts && typeof obj.texts === "object" ? obj.texts : obj;
     var found = false;
+    if (obj.kind === "learnsys-changes" && Array.isArray(obj.changes)) {
+      obj.changes.forEach(function (ch) {
+        if (!ch || !ch.lang || !ch.page || !ch.text_key || !ch.edit) return;
+        var lang = ch.lang === "en" ? "en" : "de";
+        if (!textOverlay[lang]) textOverlay[lang] = {};
+        if (!textOverlay[lang][ch.page]) textOverlay[lang][ch.page] = {};
+        var e = ch.edit;
+        textOverlay[lang][ch.page][String(ch.text_key)] = {
+          body: typeof e.body === "string" ? e.body : "",
+          title: typeof e.title === "string" ? e.title : "",
+          kicker: typeof e.kicker === "string" ? e.kicker : "",
+          watch: typeof e.watch === "string" ? e.watch : "",
+          groups: Array.isArray(e.groups) ? e.groups : []
+        };
+        found = true;
+      });
+    }
+    var incoming = obj.texts && typeof obj.texts === "object" ? obj.texts : obj;
     ["de", "en"].forEach(function (lang) {
       if (!incoming[lang] || typeof incoming[lang] !== "object") return;
       found = true;

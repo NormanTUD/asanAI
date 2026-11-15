@@ -251,3 +251,12 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   Roulette-Sampling, Wissenslücken-Grid, Negations-Abstandsdiagramm und
   Partikel; die Bewusstseinskarte hat zwei Felder (Zugang/Erfahrung), gekrümmte
   Kanten, Partikel, offene Grenze, Legende und Branch-Dimming.
+- [done] Weitere visuelle Politur: Partikelfelder, rotierende Ringe,
+  Modus-Reveal-Ringe, tumbling Die, Negationsdreieck, Branch-Spotlight und
+  Kernringe in den Halluzinations- und Bewusstseinsdemos; Loss-Spinner fällt
+  bei Worker-Fehler nicht in eine Endlossperre.
+- [done] JSON-Export v2 (`learnsys-changes/v2`): nur echte Overlay-Änderungen,
+  pro Change mit `lang`, `translate_to`, `apply_to`, `data_file`, `page`,
+  `day_title`, `track`, `step`, `substep`, `substep_count`, `text_key`,
+  `slide_title`, `slide_kicker`, `changed_fields`, `source` und `edit`.
+  Import akzeptiert v2 und das alte v1-Format.
