@@ -288,7 +288,7 @@
         ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center"; ctx.textBaseline = "bottom";
         var above = v.y < cy;
-        ctx.fillText(tokens[ids[i]], v.x, above ? v.y - 10 : v.y + 18);
+        ctx.fillText("v(" + tokens[ids[i]] + ")", v.x, above ? v.y - 10 : v.y + 18);
         ctx.fillStyle = cols[i];
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif';
         ctx.fillText((ws[i] * 100).toFixed(0) + "%", v.x, above ? v.y + 14 : v.y - 10);
@@ -302,14 +302,14 @@
       ctx.fillStyle = C.petrol;
       ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "top";
-      ctx.fillText(DE ? "3 Values → Ausgabe" : "3 values → output", 12, 8);
+      ctx.fillText(DE ? "3 Value-Vektoren → Ausgabe" : "3 value vectors → output", 12, 8);
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "right";
       ctx.fillText(DE ? "2-Simplex (Dreieck)" : "2-simplex (triangle)", w - 12, 8);
       ctx.textAlign = "center"; ctx.textBaseline = "bottom";
       ctx.fillStyle = C.muted;
-      ctx.fillText(DE ? "Die Ausgabe bleibt im Dreieck." : "The output stays inside the triangle.", w / 2, h - 8);
+      ctx.fillText(DE ? "Ecken = gelernte Value-Vektoren · Ausgabe bleibt im Dreieck." : "corners = learned value vectors · output stays inside the triangle", w / 2, h - 8);
       function fmt2(v) { return v.toFixed(2).replace(".", DE ? "," : "."); }
       var rawTxt = raw.map(fmt2).join(" · ");
       var normTxt = ws.map(fmt2).join(" · ");
@@ -319,9 +319,9 @@
         '<span><b>÷ Σ</b> ' + normTxt + ' <i>Σ ' + (DE ? "1,00" : "1.00") + '</i></span>' +
         '<span><b>× 100</b> ' + pctTxt + ' <i>Σ 100%</i></span>');
       setReadout(ids.map(function (id, i) {
-        return '<span><b>' + api.esc(tokens[id]) + '</b> ' + (ws[i] * 100).toFixed(1) + '%</span>';
+        return '<span><b>v(' + api.esc(tokens[id]) + ')</b> ' + (ws[i] * 100).toFixed(1) + '%</span>';
       }).join("") + '<span><b>Σ</b> 100%</span>');
-      canvas.setAttribute("aria-label", DE ? "Attention als gewichtete Mischung: der Ausgabepunkt liegt im Dreieck der drei Values." : "Attention as a weighted mixture: the output point lies inside the triangle of the three values.");
+      canvas.setAttribute("aria-label", DE ? "Attention als gewichtete Mischung: Die drei Ecken sind die gelernten Value-Vektoren der Tokens Tier, Straße und es; der Ausgabepunkt liegt in ihrem Dreieck." : "Attention as a weighted mixture: the three corners are the learned value vectors of the tokens animal, street, and it; the output point lies inside their triangle.");
     }
     function draw() {
       if (!size) return;

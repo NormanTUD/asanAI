@@ -1487,9 +1487,7 @@
           {
             id: "g-basics",
             title: "Eine Ebene tiefer",
-            questions: [
-              { id: "q-context", title: "Was ist der Kontext?", body: "Die Bilder sind eine Einladung: Ceres war ein realer Himmelskörper, und Gauß' Methode war ein realer Umgang mit unsicheren Daten. Die Demo zeigt das Prinzip mit synthetischen Daten.", tex: "", kind: "question" }
-            ]
+            questions: []
           },
           {
             id: "g-lens-mathematik",
@@ -1577,9 +1575,7 @@
           {
             id: "g-basics",
             title: "One level deeper",
-            questions: [
-              { id: "q-context", title: "What is the context?", body: "The images are an invitation: Ceres was a real body, and Gauss's method was a real way of handling uncertain data. The demo shows the principle with synthetic data.", tex: "", kind: "question" }
-            ]
+            questions: []
           },
           {
             id: "g-lens-mathematik",
@@ -1873,21 +1869,21 @@
     kicker: DE ? "Mischung" : "Mixture",
     title: DE ? "Attention als gewichtete Mischung" : "Attention as a weighted mixture",
     body: DE
-      ? "Attention gibt nicht einfach ein Wort zurück. Die Ausgabe ist eine gewichtete Mischung der Value-Vektoren: Jedes Gewicht ist nicht negativ, und alle Gewichte summieren zu 1. Nimm drei Values als Punkte im Raum, dann liegt die Ausgabe immer im Dreieck, das diese drei Punkte aufspannen. Wechsle den Head: Die Gewichte verschieben sich, der Punkt wandert im Dreieck, aber nie darüber hinaus. Die Anzeige rechnet die Rohgewichte auf Prozent um. Das ist eine konvexe Kombination, ein 2-Simplex."
-      : "Attention does not simply return a word. The output is a weighted mixture of the value vectors: every weight is non-negative, and all weights sum to 1. Take three values as points in space; the output always lies in the triangle those three points span. Switch the head: the weights shift, the point moves inside the triangle, never outside it. The display converts the raw weights into percentages. That is a convex combination, a 2-simplex.",
+      ? "Attention gibt nicht einfach ein Wort zurück. Die drei Ecken sind keine Tokens, sondern die gelernten Value-Vektoren von drei Tokens: Tier, Straße und es. Die Ausgabe ist eine gewichtete Mischung dieser Values: Jedes Gewicht ist nicht negativ, und alle summieren zu 1. Deshalb liegt die Ausgabe immer im Dreieck, das die drei Value-Vektoren aufspannen. Die drei freien Zahlen im Simplex sind die Gewichte α, nicht die Tokens. Wechsle den Head: Die Gewichte verschieben sich, der Punkt wandert, aber nie aus dem Dreieck. Die Anzeige rechnet die Rohgewichte auf Prozent um."
+      : "Attention does not simply return a word. The three corners are not tokens; they are the learned value vectors of three tokens: animal, street, and it. The output is a weighted mixture of these values: every weight is non-negative, and all sum to 1. Therefore the output always lies in the triangle those three value vectors span. The three free numbers in the simplex are the weights α, not the tokens. Switch the head: the weights shift, the point moves, but never outside the triangle. The display converts the raw weights into percentages.",
     watch: DE ? "Wechsle die Heads. Wie wandert der Ausgabepunkt im Dreieck?" : "Switch the heads. How does the output point move inside the triangle?",
     demoState: { scene: "qkv", head: 0, view: "simplex" },
-    context: DE ? "Softmax macht aus den Scores Gewichte α_ij ≥ 0 mit Σ_j α_ij = 1. Die Ausgabe Σ_j α_ij v_j ist daher eine konvexe Kombination der Values. Die Demo zeigt nur drei Values; die echten Gewichte werden auf diese drei normiert und dann mit 100 multipliziert. Die echte Ausgabe nutzt alle Values und liegt in deren konvexer Hülle." : "Softmax turns the scores into weights α_ij ≥ 0 with Σ_j α_ij = 1. The output Σ_j α_ij v_j is therefore a convex combination of the values. The demo shows only three values; the real weights are normalised onto these three and then multiplied by 100. The real output uses all values and lies in their convex hull.",
-    deep: DE ? "Bei drei Values ist die Hülle ein Dreieck (2-Simplex). In hohen Dimensionen ist sie ein Polytop. Die Aussage gilt für jeden Head; die Gewichte unterscheiden sich, die Konvexität bleibt." : "With three values the hull is a triangle (2-simplex). In high dimensions it is a polytope. The statement holds for every head; the weights differ, the convexity stays.",
+    context: DE ? "Die Ecken sind v_j = W_V x_j, also gelernte Value-Vektoren, keine Token-IDs. Die Gewichte α_ij sind die baryzentrischen Koordinaten; sie sind ≥ 0 und summieren zu 1. Bei drei Values ist die konvexe Hülle ein 2-Simplex. Die echte Ausgabe nutzt alle Values und liegt in deren konvexer Hülle." : "The corners are v_j = W_V x_j, learned value vectors, not token IDs. The weights α_ij are barycentric coordinates; they are ≥ 0 and sum to 1. With three values the convex hull is a 2-simplex. The real output uses all values and lies in their convex hull.",
+    deep: DE ? "Bei drei Values ist die Hülle ein Dreieck (2-Simplex). In hohen Dimensionen ist sie ein Polytop. Die Ecken sind gelernt, aber der Simplex ist keine eigene gelernte Größe: Er ist die konvexe Hülle der Value-Vektoren. Die Aussage gilt für jeden Head; die Gewichte unterscheiden sich, die Konvexität bleibt." : "With three values the hull is a triangle (2-simplex). In high dimensions it is a polytope. The corners are learned, but the simplex is not a separate learned object: it is the convex hull of the value vectors. The statement holds for every head; the weights differ, the convexity stays.",
     boxes: DE ? [
-      box("qkv-s1", "Geometrie", "Warum ein Dreieck?", "Drei Punkte, die nicht auf einer Linie liegen, spannen ein Dreieck auf. Jede konvexe Kombination liegt darin."),
+      box("qkv-s1", "Geometrie", "Die Ecken sind Values", "Die drei Punkte sind keine Tokens, sondern die gelernten Value-Vektoren von drei Tokens. Jeder Token trägt über W_V einen Vektor bei."),
       box("qkv-s2", "Mathematik", "Was ist ein Simplex?", "Ein Simplex ist die einfachste konvexe Hülle: ein Punkt ist ein 0-Simplex, zwei Punkte eine Strecke, drei Punkte ein Dreieck."),
-      box("qkv-s3", "Grenze", "Gilt das immer?", "Ja, pro Query: Softmax-Gewichte sind nicht negativ und summieren zu 1. Die Ausgabe ist eine konvexe Kombination aller Values."),
+      box("qkv-s3", "Mathematik", "Die Variablen", "Die drei freien Zahlen sind die Gewichte α. Sie sind nicht negativ und summieren zu 1; die Tokens selbst sind nicht die Koordinaten des Simplex."),
       box("qkv-s4", "Mathematik", "Die Formel", "Gewichtete Summe mit nicht-negativen Gewichten, die zu 1 summieren.", "\\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\ge 0,\\ \\sum_j \\alpha_{ij}=1} v_j}_{\\text{konvexe Kombination der Values}}")
     ] : [
-      box("qkv-s1", "Geometry", "Why a triangle?", "Three points that are not on one line span a triangle. Every convex combination lies inside it."),
+      box("qkv-s1", "Geometry", "The corners are values", "The three points are not tokens; they are the learned value vectors of three tokens. Each token contributes a vector through W_V."),
       box("qkv-s2", "Mathematics", "What is a simplex?", "A simplex is the simplest convex hull: one point is a 0-simplex, two points a segment, three points a triangle."),
-      box("qkv-s3", "Limit", "Does this always hold?", "Yes, per query: softmax weights are non-negative and sum to 1. The output is a convex combination of all values."),
+      box("qkv-s3", "Mathematics", "The variables", "The three free numbers are the weights α. They are non-negative and sum to 1; the tokens themselves are not the coordinates of the simplex."),
       box("qkv-s4", "Mathematics", "The formula", "Weighted sum with non-negative weights that sum to 1.", "\\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\ge 0,\\ \\sum_j \\alpha_{ij}=1} v_j}_{\\text{convex combination of the values}}")
     ],
     sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Attention als gewichtete Summe der Values mit Softmax-Gewichten.", en: "Attention as a weighted sum of values with softmax weights." } }]
@@ -1906,8 +1902,8 @@
   var qkvSimplex2 = Object.assign({}, qkvSimplex, {
     title: DE ? "Head 2 als Mischung" : "Head 2 as a mixture",
     body: DE
-      ? "Dieselben drei Values, andere Gewichte. Weil Head 2 nach dem Ort fragt, bekommt „Straße“ mehr Gewicht; der Ausgabepunkt wandert zur Straße. Die Prozentwerte entstehen wieder aus den Rohgewichten: erst durch ihre Summe teilen, dann mit 100 multiplizieren. Das Dreieck bleibt die Grenze."
-      : "The same three values, different weights. Because head 2 asks for the location, “street” gets more weight; the output point moves toward the street. The percentages again come from the raw weights: divide by their sum, then multiply by 100. The triangle remains the boundary.",
+      ? "Dieselben drei Value-Vektoren, andere Gewichte. Weil Head 2 nach dem Ort fragt, bekommt der Value von „Straße“ mehr Gewicht; der Ausgabepunkt wandert zur Straße. Die Prozentwerte entstehen wieder aus den Rohgewichten: erst durch ihre Summe teilen, dann mit 100 multiplizieren. Das Dreieck bleibt die Grenze."
+      : "The same three value vectors, different weights. Because head 2 asks for the location, the value of “street” gets more weight; the output point moves toward the street. The percentages again come from the raw weights: divide by their sum, then multiply by 100. The triangle remains the boundary.",
     watch: DE ? "Head 2: Der Punkt wandert zur Straße. Warum bleibt er im Dreieck?" : "Head 2: the point moves toward the street. Why does it stay inside the triangle?",
     demoState: { scene: "qkv", head: 1, view: "simplex" },
     boxes: qkvSimplex.boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-h2" }); })
