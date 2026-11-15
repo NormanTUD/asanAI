@@ -164,3 +164,10 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] „Mit Worten steuern“ und „Verstehen heißt komprimieren“ aus der
   Folienliste entfernt; ihre Definitionen liegen in
   `intuition_learnsys_removed.js` und werden nicht geladen.
+- [done] Daten-Demo: Stufe-1-Beispiel ist jetzt ein HTML-Codeblock mit mehr
+  Wikipedia-Kontext (`<div class="mw-parser-output">`, `<h1>`, `<p>`, `<b>`).
+- [done] Daten-Demo: Die Frageblase in Stufe 2 beginnt nur ca. 1 cm rechts
+  vom Antwortblock statt am rechten Rand.
+- [done] Tokenizer-Beispiele: alle drei Beispiele (Verständnis, unzerbrechlich,
+  Sprachmodell liest Text) sind in der Pfeiltasten-Reihenfolge; die Token-Chips
+  umbrechen, sodass auch das letzte Token sichtbar ist.

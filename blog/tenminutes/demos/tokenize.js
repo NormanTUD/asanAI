@@ -80,7 +80,7 @@
     var navPrev = el.querySelector(".ls-tokenize-prev");
     var navNext = el.querySelector(".ls-tokenize-next");
     var navProgress = el.querySelector(".ls-tokenize-progress");
-    var sampleKeys = ["understanding", "sentence"];
+    var sampleKeys = ["understanding", "unbreakable", "sentence"];
     var mode = "split";
     var step = 0;
     var sampleIndex = 0;
