@@ -73,3 +73,17 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [pending] Tests erst ausführen, wenn der Nutzer es ausdrücklich sagt.
   Bekannt: `learnsys_browser_test.py` meldet derzeit „day morph finishes“.
 
+## 6. Ceres-Bilder, neue Texte und Wahrheitsplot
+
+- [done] Flammarion-Holzschnitt und Ceres-Bild tauschen: links Flammarion,
+  rechts Ceres.
+- [done] Hinweis „Synthetische Daten, nicht Piazzis Messungen …“ erst zeigen,
+  wenn der Plot sichtbar ist (nicht in der Intro-Bildansicht).
+- [done] Neue Texte aus `new_texts.json` für die ersten Folien übernehmen:
+  `0.0`, `1.0` (Architektur) und `2.0` (Gauß, Ceres und die Daten).
+- [done] Wahrheitsplot „Viele Sätze, eine Wahrheit“: Satz 2 knapp unter die
+  Kurve, Satz 4 als unsichere, aber wahre Aussage, Satz 5 weiter weg mit rotem
+  X.
+- [pending] Nach der Übernahme prüfen, ob die Gruppen und Teasers in EN/DE
+  konsistent sind; Tests erst auf Anweisung.
+

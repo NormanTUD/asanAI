@@ -1807,7 +1807,7 @@ h1,h2,h3,h4{
 .ls-gauss-scene.is-intro .ls-gauss-side .ls-gauss-fig{height:100%;min-height:0}
 .ls-gauss-scene.is-intro .ls-gauss-side .ls-gauss-fig img{width:100%;height:calc(100% - 44px);min-height:140px;object-fit:contain;background:#fff}
 .ls-gauss-scene.is-intro .ls-gauss-controls,.ls-gauss-scene.is-intro .ls-gauss-readout{display:none}
-.ls-gauss-scene.is-intro .ls-gauss-note{grid-row:2}
+.ls-gauss-scene.is-intro .ls-gauss-note{display:none}
 @media (max-width:760px){
   .ls-gauss-scene.is-intro .ls-gauss-side{grid-template-columns:1fr 1fr;gap:6px}
   .ls-gauss-scene.is-intro .ls-gauss-side .ls-gauss-fig img{height:calc(100% - 52px);min-height:120px}

@@ -30,10 +30,10 @@
       note: "Illustration: Die Sätze sind Beispiele, keine Messung. Die meisten Beschreibungen liegen nahe an der Wahrheit; ein falscher Satz liegt weit daneben.",
       items: [
         { t: "Berlin liegt an der Spree.", d: 0.06, ok: true },
-        { t: "Die Spree fließt durch Berlin.", d: 0.14, ok: true },
+        { t: "Die Spree fließt durch Berlin.", d: -0.02, ok: true },
         { t: "Der Fluss, der durch Berlin läuft, ist die Spree.", d: 0.24, ok: true },
-        { t: "Berlin wird von der Spree durchflossen.", d: 0.32, ok: true },
-        { t: "Berlin liegt an der Elbe.", d: 1.25, ok: false }
+        { t: "Kann schon sein, dass Berlin an der Spree liegt.", d: 0.05, ok: true },
+        { t: "Berlin liegt an der Elbe.", d: 1.45, ok: false }
       ]
     } : {
       title: "Many sentences, one truth",
@@ -41,10 +41,10 @@
       note: "Illustration: the sentences are examples, not a measurement. Most descriptions sit near the truth; a false sentence lies far away.",
       items: [
         { t: "The Nile flows through Egypt.", d: 0.06, ok: true },
-        { t: "Egypt lies on the Nile.", d: 0.14, ok: true },
+        { t: "Egypt lies on the Nile.", d: -0.02, ok: true },
         { t: "The river that runs through Egypt is the Nile.", d: 0.24, ok: true },
-        { t: "The Nile is the river of Egypt.", d: 0.32, ok: true },
-        { t: "The Nile flows through Brazil.", d: 1.25, ok: false }
+        { t: "It may well be that Egypt lies on the Nile.", d: 0.05, ok: true },
+        { t: "The Nile flows through Brazil.", d: 1.45, ok: false }
       ]
     };
     var el = document.createElement("div");
@@ -156,7 +156,7 @@
       ctx.fillRect(0, 0, w, h);
       V.grid(ctx, w, h, C, 24, 0.12);
       var padL = 38, padR = 14, padT = 22, padB = 30;
-      var yMax = 1.42;
+      var yMax = 1.55;
       function X(i) { return padL + (i / (TRUTH.items.length - 1)) * (w - padL - padR); }
       function Y(d) { return h - padB - (d / yMax) * (h - padT - padB); }
       function truthCurve(x) { return 0.10 + 0.06 * Math.sin(x * Math.PI * 1.7); }

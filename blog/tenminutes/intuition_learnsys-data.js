@@ -29,14 +29,7 @@
         {
           id: "g-sources",
           title: "Quellen",
-          sources: [
-            { label: "Google Search Help (2024), AI Overviews", url: "https://support.google.com/websearch/answer/14901683?hl=en", why: { de: "Google beschreibt die generierten Zusammenfassungen in der Suche.", en: "Google describes the generated summaries in Search." } },
-            { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Grundlage moderner Sprachmodelle.", en: "The transformer as the basis of modern language models." } },
-            { label: "Harris (1954), Distributional Structure", url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf", why: { de: "Begründet Bedeutung aus dem sprachlichen Kontext.", en: "Grounds meaning in linguistic context." } },
-            { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt", why: { de: "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.", en: "Classic formula: meaning shows in a word's company." } },
-            { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
-            { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }
-          ]
+          sources: []
         }
       ]
     },
@@ -88,14 +81,7 @@
         {
           id: "g-sources",
           title: "Sources",
-          sources: [
-            { label: "Google Search Help (2024), AI Overviews", url: "https://support.google.com/websearch/answer/14901683?hl=en", why: { de: "Google beschreibt die generierten Zusammenfassungen in der Suche.", en: "Google describes the generated summaries in Search." } },
-            { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als Grundlage moderner Sprachmodelle.", en: "The transformer as the basis of modern language models." } },
-            { label: "Harris (1954), Distributional Structure", url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf", why: { de: "Begründet Bedeutung aus dem sprachlichen Kontext.", en: "Grounds meaning in linguistic context." } },
-            { label: "Firth (1957), A Synopsis of Linguistic Theory", url: "https://archive.org/details/papersinlinguist0000firt", why: { de: "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.", en: "Classic formula: meaning shows in a word's company." } },
-            { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
-            { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }
-          ]
+          sources: []
         }
       ]
     },
@@ -817,24 +803,33 @@
 
   var bausteineIntro = {
     kicker: DE ? "Architektur" : "Architecture",
-    title: DE ? "Eine Kette von Funktionen" : "A chain of functions",
+    title: DE ? "Die Architektur von LLMs" : "The architecture of LLMs",
     body: DE
-      ? "Moderne KI-Systeme schalten Funktionen hintereinander: Jede verarbeitet die Eingabe in einer festgelegten Reihenfolge und gibt ihren Output an die nächste Funktion weiter. Die erste Schicht arbeitet direkt auf den Daten, die zweite auf dem Ergebnis der ersten, die dritte auf dem Ergebnis der zweiten, und so weiter. So entsteht aus Daten ein Ergebnis: $\\text{Ergebnis} = \\text{layer}_3(\\text{layer}_2(\\text{layer}_1(\\text{Daten})))$. Unterschiedliche Schichttypen übernehmen unterschiedliche Aufgaben nacheinander: Manche erkennen einfache Muster, andere verknüpfen weiter entfernte Informationen, wieder andere bereiten die Ausgabe vor. Die Daten selbst sind keine Schicht der Architektur: Sie sind eine eigene Unterseite, stehen vor der Architektur und werden zum Training der Kette verwendet."
-      : "Modern AI systems chain functions: each one processes the input in a fixed order and passes its output to the next function. The first layer works directly on the data, the second on the result of the first, the third on the result of the second, and so on. Data becomes a result: $\\text{Result} = \\text{layer}_3(\\text{layer}_2(\\text{layer}_1(\\text{Data})))$. Different layer types take on different tasks one after another: some recognise simple patterns, others connect information from farther away, and others prepare the output. The data itself is not a layer of the architecture: it is its own subpage, stands before the architecture, and is used to train the chain.",
+      ? "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste sinnvolle Wort vorherzusagen. Die Daten sind dabei keine Schicht der Architektur: Sie sind eine eigene Unterseite, stehen davor und werden zum Training der Kette verwendet."
+      : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next sensible word. The data is not a layer of the architecture: it is its own subpage, stands before it, and is used to train the chain.",
+    teaser: DE
+      ? "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste sinnvolle Wort vorherzusagen. Die Daten sind dabei keine Schicht der Architektur: Sie sind eine eigene Unterseite, stehen davor und werden zum Training der Kette verwendet."
+      : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next sensible word. The data is not a layer of the architecture: it is its own subpage, stands before it, and is used to train the chain.",
     watch: DE ? "Sequenzielles Machine Learning geschieht in Schichten. Die erste Schicht wendet man direkt auf die Daten an, die zweite auf die Ergebnisse der ersten, und so weiter; dadurch verschachteln sich Funktionen: $$\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Daten}\\right)\\right)\\right)$$ Die erste Schicht sucht nach Mustern im Text, die zweite nach Mustern im Ergebnis der ersten Schicht, und so weiter. Mit dem Residual Stream kann jede Schicht auch Muster im Text <i>und</i> in den Ergebnissen der vorherigen Schichten finden." : "Sequential machine learning happens in layers. The first layer is applied directly to the data, the second to the results of the first, and so on; this nests functions: $$\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Data}\\right)\\right)\\right)$$ The first layer looks for patterns in the text, the second for patterns in the result of the first layer, and so on. With the residual stream, each layer can also find patterns in the text <i>and</i> in the results of the previous layers.",
     demoState: { scene: "blocks" },
-    context: DE ? "Die Reihenfolge ist Teil des Designs. Jede Schicht sieht den Output der vorherigen; die ganze Kette ist die Funktion. Die Daten sind der eigene Abschnitt davor, keine Schicht der Kette. Das ist eine Vereinfachung: Residual Streams und Normalisierung kommen später." : "The order is part of the design. Each layer sees the output of the previous one; the whole chain is the function. The data is the separate section before it, not a layer of the chain. This is a simplification: residual streams and normalisation come later.",
-    deep: DE ? "Die Kette ist keine feste physikalische Regel, sondern eine Architekturentscheidung. Man kann Schichten austauschen, wiederholen oder überspringen; die Reihenfolge bestimmt, welche Information wann verfügbar ist. Die Daten gehören nicht dazu: Sie werden vor der Architektur kuratiert und mit ihr zusammen zum Training verwendet." : "The chain is not a fixed physical law but an architecture decision. Layers can be swapped, repeated, or skipped; the order determines which information is available when. The data is not part of it: it is curated before the architecture and used together with it for training.",
-    boxes: [
-      box("arch-data", DE ? "Daten" : "Data", DE ? "Sind die Daten eine Schicht?" : "Is the data a layer?",
-        DE ? "Nein. Die Daten sind eine eigene Unterseite vor der Architektur. Sie werden zum Training der Kette verwendet, gehören aber nicht zu ihren Layern." : "No. The data is its own subpage before the architecture. It is used to train the chain but is not one of its layers."),
-      box("arch-residual", DE ? "Vereinfachung" : "Simplification", DE ? "Residual Streams" : "Residual streams",
-        DE ? "Das ist eine Vereinfachung. Im Transformer wird der Output nicht einfach ersetzt, sondern über Residualverbindungen addiert: $x_2 = x_0 + \\text{Layer}_1(x_0) + \\text{Layer}_2(x_1)$. Das kommt später im Detail." : "This is a simplification. In a transformer the output is not simply replaced; residual connections add it: $x_2 = x_0 + \\text{Layer}_1(x_0) + \\text{Layer}_2(x_1)$. We will come back to this in detail later.",
-        DE ? "\\underbrace{\\underbrace{x_2}_{\\text{nach zwei Schichten}} = \\underbrace{x_0}_{\\text{Eingang}} + \\underbrace{\\text{Layer}_1(x_0)}_{\\text{Update 1}} + \\underbrace{\\text{Layer}_2(x_1)}_{\\text{Update 2}}}_{\\text{so addieren Residualverbindungen Updates}}" : "\\underbrace{\\underbrace{x_2}_{\\text{after two layers}} = \\underbrace{x_0}_{\\text{input}} + \\underbrace{\\text{Layer}_1(x_0)}_{\\text{update 1}} + \\underbrace{\\text{Layer}_2(x_1)}_{\\text{update 2}}}_{\\text{this is how residual connections add updates}}")
-    ],
-    sources: [
-      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Transformer-Blöcke, Residualverbindungen und Layer-Normalisierung.", en: "Transformer blocks, residual connections, and layer normalisation." } },
-      { label: "He et al. (2016), Deep Residual Learning", url: "https://arxiv.org/abs/1512.03385", why: { de: "Residualverbindungen: Updates werden addiert, nicht überschrieben.", en: "Residual connections: updates are added, not overwritten." } }
+    inherit: false,
+    questionGroups: [
+      {
+        id: "g-basics",
+        title: DE ? "Eine Ebene tiefer" : "One level deeper",
+        questions: [
+          { id: "q-training", title: DE ? "Wie werden die Modelle trainiert?" : "How are the models trained?", body: DE ? "Wir gehen an einem späteren Tag noch auf das Training ein. Die Idee: Anhand von Trainingsdaten, also Beispielen, prüft man wiederholt, wie gut das Netz ist, und verändert es leicht in die Richtung, in der es besser wird. Besser heißt hier: Gegeben einen Text sagt es das nächste Wort aus dem Text richtig voraus." : "We will look at training in more detail on a later day. The idea: with training data, that is examples, you repeatedly check how good the network is and change it slightly in the direction that makes it better. Better here means: given a text, it predicts the next word from the text correctly.", tex: "", kind: "question" },
+          { id: "q-data-layer", title: DE ? "Sind die Daten eine Schicht?" : "Is the data a layer?", body: DE ? "Nein. Die Daten sind eine eigene Unterseite vor der Architektur. Sie werden zum Training der Kette verwendet, gehören aber nicht zu ihren Layern." : "No. The data is its own subpage before the architecture. It is used to train the chain but is not one of its layers.", tex: "", kind: "question" }
+        ]
+      },
+      {
+        id: "g-sources",
+        title: DE ? "Quellen" : "Sources",
+        sources: [
+          { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Transformer-Blöcke, Residualverbindungen und Layer-Normalisierung.", en: "Transformer blocks, residual connections, and layer normalisation." } },
+          { label: "He et al. (2016), Deep Residual Learning", url: "https://arxiv.org/abs/1512.03385", why: { de: "Residualverbindungen: Updates werden addiert, nicht überschrieben.", en: "Residual connections: updates are added, not overwritten." } }
+        ]
+      }
     ]
   };
   var bausteineOverview = Object.assign({}, insideSteps[1], {
@@ -1612,18 +1607,45 @@
       {
         kicker: "Die Bilder",
         title: "Gauß, Ceres und die Daten",
-        body: "Am 1. Januar 1801 entdeckte Giuseppe Piazzi Ceres, den ersten Asteroiden, und verlor ihn nach 41 Tagen Beobachtung hinter der Sonne. Das linke Bild zeigt Ceres, aufgenommen von der NASA-Sonde Dawn; rechts steht der Flammarion-Holzschnitt von 1888, ein Bild für den Blick über den bekannten Himmel hinaus. Carl Friedrich Gauß behandelte die verrauschten Positionen als ein Ganzes und nahm an, dass die wahre Bahn in der Mitte der Fehler liegt. Drücke Weiter: Zuerst kommen die Beobachtungen, dann wird das Teleskop Schritt für Schritt besser.",
-        watch: "Drücke Weiter. Zuerst kommen die Beobachtungen, dann wird das Teleskop besser.",
+        body: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <i>Ceres</i>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Daraus entstanden die Methode der kleinsten Quadrate und der mittlere quadratische Fehler (MSE), mit dem man noch heute neuronale Netze trainiert.",
+        teaser: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <i>Ceres</i>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Daraus entstanden die Methode der kleinsten Quadrate und der mittlere quadratische Fehler (MSE), mit dem man noch heute neuronale Netze trainiert.",
+        watch: "Ziehe den Slider oder klicke weiter und sieh, wie mit besseren Teleskopen die Daten genauer werden. Reale Daten liegen genauso um eine Wahrheit herum. Texte zum Beispiel können komplett richtig, teilweise richtig oder komplett falsch sein.",
         demoState: { scene: "gauss", phase: "intro" },
-        context: "Die Bilder sind eine Einladung: Ceres war ein realer Himmelskörper, und Gauß' Methode war ein realer Umgang mit unsicheren Daten. Die Demo zeigt das Prinzip mit synthetischen Daten.",
-        deep: "Piazzi verlor Ceres nach 41 Tagen im Sonnenlicht. Gauß sagte mit der Methode der kleinsten Quadrate voraus, wo sie wieder auftauchen würde (Stigler, 1981).",
-        boxes: gaussSteps[0].boxes,
-        sources: gaussSteps[0].sources
+        inherit: false,
+        questionGroups: [
+          {
+            id: "g-basics",
+            title: "Eine Ebene tiefer",
+            questions: [
+              { id: "q-context", title: "Was ist der Kontext?", body: "Die Bilder sind eine Einladung: Ceres war ein realer Himmelskörper, und Gauß' Methode war ein realer Umgang mit unsicheren Daten. Die Demo zeigt das Prinzip mit synthetischen Daten.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-lens-mathematik",
+            title: "Mathematik",
+            questions: [
+              { id: "q-box-gauss-2", title: "Was macht die Methode?", body: "Sie minimiert die Summe der quadrierten Abstände zwischen Beobachtungen und Modell, den mittleren quadratischen Fehler (MSE). Große Abweichungen zählen quadratisch, kleine kaum.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-lens-daten",
+            title: "Daten",
+            questions: [
+              { id: "q-box-gauss-3", title: "Warum im Schnitt richtig?", body: "Einzelne Messungen können falsch sein: Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über viele Messungen mitteln sich zufällige Fehler; die Anpassung landet in der Mitte. Systematische Fehler bleiben, deshalb ist Kuration wichtig.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-sources",
+            title: "Quellen",
+            sources: gaussSteps[0].sources
+          }
+        ]
       },
       {
         kicker: "Verrauschte Beobachtungen",
         title: "Gauß, Ceres und die Daten",
         body: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
+        teaser: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
         watch: "Drücke Weiter und beobachte, wie die Wolke enger wird.",
         demoState: { scene: "gauss", phase: "demo", sigma: 2 },
         context: "Die grüne Linie ist die wahre Bahn; die blauen Punkte sind Beobachtungen; die Glockenkurve rechts zeigt die Fehlerverteilung. Die Daten sind synthetisch, nicht Piazzis originale Messungen.",
@@ -1635,6 +1657,7 @@
         kicker: "Bessere Teleskope",
         title: "Gauß, Ceres und die Daten",
         body: "Das Teleskop ist besser: Die Wolke zieht sich zusammen, die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte der Fehler. Drücke Weiter für das beste Teleskop.",
+        teaser: "Das Teleskop ist besser: Die Wolke zieht sich zusammen, die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte der Fehler. Drücke Weiter für das beste Teleskop.",
         watch: "Drücke Weiter. Wie schmal wird die Glockenkurve?",
         demoState: { scene: "gauss", phase: "demo", sigma: 1 },
         context: "Je kleiner die Streuung, desto enger liegt die Glockenkurve um die wahre Bahn. Die Beobachtungen bleiben fehlerhaft, aber der Ausgleich wird stabiler.",
@@ -1646,6 +1669,7 @@
         kicker: "Ausgleich",
         title: "Gauß, Ceres und die Daten",
         body: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Das ist der mittlere quadratische Fehler (MSE), und dieselbe Regel trainiert noch moderne Modelle. Drücke Weiter zu den Daten.",
+        teaser: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Das ist der mittlere quadratische Fehler (MSE), und dieselbe Regel trainiert noch moderne Modelle. Drücke Weiter zu den Daten.",
         watch: "Drücke Weiter. Was passiert, wenn die Beobachtungen nicht mehr exakt sind?",
         demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
         context: "Die Glockenkurve ist eng; die wahre Bahn liegt in der Mitte. Der Ausgleich glaubt keiner einzelnen Messung, sondern wählt die Kurve, die allen zugleich am nächsten bleibt; minimiert wird der mittlere quadratische Fehler (MSE).",
@@ -1661,18 +1685,45 @@
       {
         kicker: "The images",
         title: "Gauss, Ceres, and the data",
-        body: "On 1 January 1801 Giuseppe Piazzi discovered Ceres, the first asteroid, and lost it behind the Sun after 41 days of observation. The left image shows Ceres, taken by NASA's Dawn spacecraft; on the right is the Flammarion engraving from 1888, an image for looking beyond the known sky. Carl Friedrich Gauss treated the noisy positions as a whole and assumed that the true orbit lies in the middle of the errors. Press Next: first come the observations, then the telescope improves step by step.",
-        watch: "Press Next. First come the observations, then the telescope improves.",
+        body: "Giuseppe Piazzi discovered the dwarf planet <i>Ceres</i> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. This gave rise to least squares and the mean squared error (MSE), which is still used to train neural networks today.",
+        teaser: "Giuseppe Piazzi discovered the dwarf planet <i>Ceres</i> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. This gave rise to least squares and the mean squared error (MSE), which is still used to train neural networks today.",
+        watch: "Drag the slider or click through and watch the data become more precise with better telescopes. Real data sits around a truth in the same way. Sentences, for example, can be completely right, partly right, or completely wrong.",
         demoState: { scene: "gauss", phase: "intro" },
-        context: "The images are an invitation: Ceres was a real body, and Gauss's method was a real way of handling uncertain data. The demo shows the principle with synthetic data.",
-        deep: "Piazzi lost Ceres in the sunlight after 41 days. Gauss predicted with least squares where it would reappear (Stigler, 1981).",
-        boxes: gaussSteps[0].boxes,
-        sources: gaussSteps[0].sources
+        inherit: false,
+        questionGroups: [
+          {
+            id: "g-basics",
+            title: "One level deeper",
+            questions: [
+              { id: "q-context", title: "What is the context?", body: "The images are an invitation: Ceres was a real body, and Gauss's method was a real way of handling uncertain data. The demo shows the principle with synthetic data.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-lens-mathematik",
+            title: "Mathematics",
+            questions: [
+              { id: "q-box-gauss-2", title: "What does the method do?", body: "It minimises the sum of squared distances between observations and model, the mean squared error (MSE). Large deviations count squared, small ones barely.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-lens-daten",
+            title: "Data",
+            questions: [
+              { id: "q-box-gauss-3", title: "Why right on average?", body: "Individual measurements can be wrong: people make mistakes, measurements have errors, people lie. Over many measurements random errors average out; the fit lands in the middle. Systematic errors remain, which is why curation matters.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-sources",
+            title: "Sources",
+            sources: gaussSteps[0].sources
+          }
+        ]
       },
       {
         kicker: "Noisy observations",
         title: "Gauss, Ceres, and the data",
         body: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is wide. A single point would be useless as an orbit. Press Next: the telescope improves.",
+        teaser: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is wide. A single point would be useless as an orbit. Press Next: the telescope improves.",
         watch: "Press Next and watch the cloud tighten.",
         demoState: { scene: "gauss", phase: "demo", sigma: 2 },
         context: "The green line is the true orbit; the blue points are observations; the bell curve on the right shows the error distribution. The data are synthetic, not Piazzi's original measurements.",
@@ -1684,6 +1735,7 @@
         kicker: "Better telescopes",
         title: "Gauss, Ceres, and the data",
         body: "The telescope is better: the cloud contracts, the bell curve narrows. The true orbit stays in the middle of the errors. Press Next for the best telescope.",
+        teaser: "The telescope is better: the cloud contracts, the bell curve narrows. The true orbit stays in the middle of the errors. Press Next for the best telescope.",
         watch: "Press Next. How narrow does the bell curve become?",
         demoState: { scene: "gauss", phase: "demo", sigma: 1 },
         context: "The smaller the spread, the tighter the bell curve around the true orbit. The observations remain noisy, but the fit becomes more stable.",
@@ -1695,6 +1747,7 @@
         kicker: "Fitting",
         title: "Gauss, Ceres, and the data",
         body: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted. That is the mean squared error (MSE), and the same rule still trains modern models. Press Next to the data.",
+        teaser: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted. That is the mean squared error (MSE), and the same rule still trains modern models. Press Next to the data.",
         watch: "Press Next. What happens when the observations are no longer exact?",
         demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
         context: "The bell curve is narrow; the true orbit lies in the middle. The fit trusts no single measurement and chooses the curve closest to all of them at once; it minimises the mean squared error (MSE).",
