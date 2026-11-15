@@ -83,6 +83,8 @@ button{color:inherit}
 .ls-btn:hover{border-color:var(--ls-petrol);color:var(--ls-petrol)}
 .ls-btn--primary{background:var(--ls-petrol);border-color:var(--ls-petrol);color:#fff}
 .ls-btn--primary:hover{background:#003a56;color:#fff}
+.ls-btn--green{background:var(--ls-green);border-color:var(--ls-green);color:#fff}
+.ls-btn--green:hover{background:#558c3f;border-color:#558c3f;color:#fff}
 .ls-btn--ghost{background:transparent}
 .ls-btn--tiny{padding:5px 8px;font-size:var(--ls-fs-ui-sm);min-height:28px}
 .ls-main{display:grid;grid-template-columns:minmax(330px,37%) minmax(0,1fr);min-height:0}
@@ -101,6 +103,7 @@ button{color:inherit}
 .ls-watch{border-top:1px solid var(--ls-line);margin-top:20px;padding-top:12px;font-size:var(--ls-fs-ui-sm);line-height:1.55;color:var(--ls-soft)}
 .ls-watch b{display:block;font-size:var(--ls-fs-micro);text-transform:uppercase;letter-spacing:.12em;color:var(--ls-green);margin-bottom:3px}
 .ls-actions{display:flex;gap:8px;align-items:center;margin-top:20px;flex-wrap:wrap}
+.ls-actions .ls-btn--nav{min-width:118px;font-weight:600}
 .ls-term{display:inline;border:0;border-bottom:1px dotted var(--ls-blue);background:none;padding:0;margin:0;color:var(--ls-petrol);font:inherit;font-weight:600;cursor:help;text-align:left}
 .ls-term:hover,.ls-term:focus-visible{color:var(--ls-blue);border-bottom-color:var(--ls-blue);outline:none}
 .ls-stage{position:relative;min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--ls-paper-2);overflow:hidden}
@@ -345,7 +348,6 @@ button{color:inherit}
 .ls-depth-count{font-family:"Open Sans",sans-serif;font-weight:400;font-size:var(--ls-fs-micro);color:var(--ls-muted);margin-left:6px;text-transform:uppercase;letter-spacing:.08em}
 .ls-depth-hint{font-size:var(--ls-fs-micro);color:var(--ls-muted);letter-spacing:.02em;margin-top:14px}
 .ls-depth-hint button{border:0;background:none;color:var(--ls-petrol);font:inherit;font-weight:600;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px}
-.ls-more-intro{font-size:var(--ls-fs-ui-sm);line-height:1.55;color:var(--ls-muted);margin:0;padding:2px 0 8px;max-width:62ch}
 .ls-qgroup{border-bottom:1px solid rgba(0,75,111,.07);background:transparent;margin:0;padding:0}
 .ls-qgroup>summary{padding:8px 0;color:var(--ls-petrol);font-size:var(--ls-fs-ui-sm);border-bottom:0;background:transparent}
 .ls-qgroup>summary:before{content:"▸ ";color:var(--ls-green);font-weight:700}
@@ -1371,10 +1373,6 @@ h1,h2,h3,h4{
 .ia-chat-compose{opacity:0;transform:translateY(8px);transition:opacity .28s ease,transform .28s cubic-bezier(.22,1,.36,1);pointer-events:none}
 .ia-chat-screen.is-answering .ia-chat-compose{opacity:1;transform:none;pointer-events:auto}
 
-.ls-global-nav{position:fixed;left:12px;right:12px;bottom:10px;z-index:60;display:flex;justify-content:space-between;pointer-events:none}
-.ls-global-nav button{pointer-events:auto;width:42px;height:42px;border:1px solid var(--ls-line-strong);background:rgba(255,255,255,.92);color:var(--ls-petrol);font:700 22px/1 "Open Sans",sans-serif;cursor:pointer;box-shadow:0 3px 12px rgba(0,20,30,.08);transition:background .15s ease,color .15s ease}
-.ls-global-nav button:hover{background:var(--ls-green);border-color:var(--ls-green);color:#fff}
-@media (max-width:720px){.ls-global-nav{bottom:8px;left:8px;right:8px}.ls-global-nav button{width:38px;height:38px}}
 
 .ls-mlp-scene .ism-controls{display:none !important}
 .ls-mlp-scene .ism-weight-slider{width:50% !important}

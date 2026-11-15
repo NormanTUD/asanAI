@@ -427,9 +427,9 @@ def check_focus_and_inline(driver, results):
     js(driver, "LearnSys.setDepth('short')")
     time.sleep(0.3)
     results.check("depth root is compact in short mode", not js(driver, "document.querySelector('.ls-deepbox--root').open"))
-    js(driver, "document.querySelector('#ls-depth-btn').click()")
+    js(driver, "document.querySelector('.ls-deepbox--root > summary').click()")
     time.sleep(0.3)
-    results.check("depth button opens root", js(driver, "document.querySelector('.ls-deepbox--root').open"))
+    results.check("root summary opens depth", js(driver, "document.querySelector('.ls-deepbox--root').open"))
 
 
 def check_prefs(driver, results):

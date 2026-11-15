@@ -40,8 +40,7 @@
       textSize: "Textgröße", mixLabel: "Mix",
       calendar: "Alle Folien", calendarTitle: "Folienübersicht", close: "Schließen",
       moreKnowledge: "Mehr erfahren",
-      moreIntro: "Der Kurztext oben ist der Einstieg. Hier kannst du weiterfragen, musst es aber nicht.",
-      continuation: "Fortsetzung", originalText: "Bisheriger Text",
+            continuation: "Fortsetzung", originalText: "Bisheriger Text",
       edit: "Text bearbeiten", editing: "Text bearbeiten", exitEdit: "Fertig",
       save: "Speichern", saved: "Gespeichert", copy: "Kopieren", copied: "Kopiert",
       reset: "Zurücksetzen", resetDone: "Zurückgesetzt",
@@ -83,8 +82,7 @@
       textSize: "Text size", mixLabel: "Mix",
       calendar: "All slides", calendarTitle: "Slide overview", close: "Close",
       moreKnowledge: "Learn more",
-      moreIntro: "The short text above is the entry point. Here you can ask further, but you do not have to.",
-      continuation: "Continuation", originalText: "Previous text",
+            continuation: "Continuation", originalText: "Previous text",
       edit: "Edit text", editing: "Edit text", exitEdit: "Done",
       save: "Save", saved: "Saved", copy: "Copy", copied: "Copied",
       reset: "Reset", resetDone: "Reset",
@@ -831,9 +829,8 @@
               '<div class="ls-cues" id="ls-cues"></div>' +
               '<div class="ls-extras" id="ls-extras"></div>' +
               '<div class="ls-actions">' +
-                '<button type="button" class="ls-btn" id="ls-prev" data-no-height-test="1" aria-label="' + esc(t("prevStep")) + '">←</button>' +
-                '<button type="button" class="ls-btn ls-btn--primary" id="ls-next" data-no-height-test="1">' + esc(t("forward")) + ' →</button>' +
-                '<button type="button" class="ls-btn ls-btn--ghost" id="ls-depth-btn">' + esc(t("depth")) + '</button>' +
+                '<button type="button" class="ls-btn ls-btn--green ls-btn--nav" id="ls-prev" data-no-height-test="1">' + esc(t("back")) + '</button>' +
+                '<button type="button" class="ls-btn ls-btn--green ls-btn--nav" id="ls-next" data-no-height-test="1">' + esc(t("forward")) + '</button>' +
                 '<button type="button" class="ls-btn ls-btn--ghost" id="ls-edit-btn" data-no-height-test="1">' + esc(t("edit")) + '</button>' +
               '</div>' +
             '</div>' +
@@ -844,7 +841,6 @@
             '<div class="ls-stage-foot"><span id="ls-stage-hint"></span><span class="ls-credit" id="ls-credit"></span></div>' +
           '</section>' +
         '</main>' +
-        '<div class="ls-global-nav"><button type="button" class="ls-global-prev" id="ls-global-prev" data-no-height-test="1" aria-label="' + (LANG === "de" ? "Zurück" : "Back") + '">←</button><button type="button" class="ls-global-next" id="ls-global-next" data-no-height-test="1" aria-label="' + (LANG === "de" ? "Weiter" : "Next") + '">→</button></div>' +
         '<div class="ls-cal-overlay" id="ls-calendar" hidden><div class="ls-cal-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("calendarTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("calendarTitle")) + '</b><button type="button" class="ls-btn ls-btn--tiny" id="ls-calendar-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></div><div class="ls-cal-grid" id="ls-calendar-grid"></div></div></div>' +
         '<div class="ls-cal-overlay" id="ls-layout" hidden><div class="ls-cal-panel ls-layout-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("layoutTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("layoutTitle")) + '</b><button type="button" class="ls-btn ls-btn--tiny" id="ls-layout-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></div><p class="ls-layout-hint">' + esc(t("layoutHint")) + '</p><div class="ls-layout-list" id="ls-layout-list"></div><div class="ls-layout-foot"><a class="ls-btn ls-btn--tiny" data-ls-solo target="_blank" rel="noopener">' + esc(t("soloDemo")) + '</a><button type="button" class="ls-btn ls-btn--tiny" data-layout-action="reset">' + esc(t("resetLayout")) + '</button></div></div></div>' +
         '<div class="ls-cal-overlay" id="ls-json-modal" hidden><div class="ls-cal-panel ls-json-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("jsonTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("jsonTitle")) + '</b><button type="button" class="ls-btn ls-btn--tiny" id="ls-json-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></div><p class="ls-layout-hint">' + esc(t("jsonHint")) + '</p><textarea class="ls-json-text" id="ls-json-text" readonly spellcheck="false"></textarea><div class="ls-layout-foot"><button type="button" class="ls-btn ls-btn--tiny" id="ls-json-copy">' + esc(t("copy")) + '</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-json-download">' + esc(t("download")) + '</button></div></div></div>' +
@@ -872,8 +868,6 @@
     els.focus = root.querySelector("#ls-focus");
     els.textToggle = root.querySelector("#ls-text-toggle");
     els.textClose = root.querySelector("#ls-text-close");
-    els.globalPrev = root.querySelector("#ls-global-prev");
-    els.globalNext = root.querySelector("#ls-global-next");
     els.kicker = root.querySelector("#ls-kicker");
     els.title = root.querySelector("#ls-title");
     els.body = root.querySelector("#ls-body");
@@ -882,7 +876,6 @@
     els.extras = root.querySelector("#ls-extras");
     els.prev = root.querySelector("#ls-prev");
     els.next = root.querySelector("#ls-next");
-    els.depthBtn = root.querySelector("#ls-depth-btn");
     els.editBtn = root.querySelector("#ls-edit-btn");
     els.stageKicker = root.querySelector("#ls-stage-kicker");
     els.stageTitle = root.querySelector("#ls-stage-title");
@@ -1085,13 +1078,12 @@
     var count = questionCount(groups);
     var rootOpen = state.depth === "standard" || state.depth === "deep" ? " open" : "";
     var firstGroupOpen = " open";
-    var firstQuestionOpen = state.depth === "deep" ? " open" : "";
+    var firstQuestionOpen = count === 1 || state.depth === "deep" ? " open" : "";
     var html = '<div class="ls-depth-tree">' +
       '<details class="ls-deepbox ls-deepbox--root"' + rootOpen + '>' +
         '<summary>' + esc(t("moreKnowledge")) +
           (count ? ' <span class="ls-depth-count">' + esc(t(count === 1 ? "depthQuestion" : "depthQuestions", { n: count })) + '</span>' : '') +
-        '</summary>' +
-        '<p class="ls-more-intro">' + esc(t("moreIntro")) + '</p>';
+        '</summary>';
     groups.forEach(function (g, gi) {
       var questions = g.questions || [];
       var flatSingle = !g.sources && countQuestions(questions) === 1 &&
@@ -2760,7 +2752,6 @@
       openAllDepth();
     });
     if (els.openDepth) els.openDepth.addEventListener("click", openDepth);
-    els.depthBtn.addEventListener("click", openDepth);
     if (els.editBtn) els.editBtn.addEventListener("click", function () { toggleEdit(); });
     bindJSONControls();
     bindLayoutPanel();
@@ -2775,8 +2766,6 @@
     if (els.fontMinus) els.fontMinus.addEventListener("click", function () { setFont(state.font - 1); });
     if (els.fontPlus) els.fontPlus.addEventListener("click", function () { setFont(state.font + 1); });
     if (els.focus) els.focus.addEventListener("click", toggleFocus);
-    if (els.globalPrev) els.globalPrev.addEventListener("click", prev);
-    if (els.globalNext) els.globalNext.addEventListener("click", next);
     if (els.calBtn) els.calBtn.addEventListener("click", openCalendar);
     if (els.calClose) els.calClose.addEventListener("click", closeCalendar);
     if (els.calOverlay) els.calOverlay.addEventListener("click", function (e) { if (e.target === els.calOverlay) closeCalendar(); });

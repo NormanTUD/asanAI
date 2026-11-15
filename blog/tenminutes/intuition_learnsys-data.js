@@ -835,13 +835,38 @@
       { label: "He et al. (2016), Deep Residual Learning", url: "https://arxiv.org/abs/1512.03385", why: { de: "Residualverbindungen: Updates werden addiert, nicht überschrieben.", en: "Residual connections: updates are added, not overwritten." } }
     ]
   };
+  var bausteineLayers = {
+    kicker: DE ? "Schichten" : "Layers",
+    title: DE ? "Jede Schicht baut auf der vorherigen auf" : "Each layer builds on the previous one",
+    body: DE
+      ? "Ein LLM rechnet nicht in einem Schritt. Die erste Schicht arbeitet direkt auf den Daten, die zweite auf dem Ergebnis der ersten, die dritte auf dem Ergebnis der zweiten, und so weiter. Die Schichten übernehmen unterschiedliche Aufgaben nacheinander: Manche erkennen einfache Muster, andere verknüpfen weiter entfernte Informationen, wieder andere bereiten die Ausgabe vor. Jede Schicht nutzt die Ergebnisse der vorherigen, statt von vorn zu beginnen; deshalb wird die Darstellung mit jeder Stufe reicher."
+      : "An LLM does not compute in a single step. The first layer works directly on the data, the second on the result of the first, the third on the result of the second, and so on. The layers take on different tasks one after another: some recognise simple patterns, others connect information from farther away, and others prepare the output. Each layer uses the results of the previous one instead of starting over, which is why the representation becomes richer at every stage.",
+    teaser: DE
+      ? "Ein LLM rechnet nicht in einem Schritt. Die erste Schicht arbeitet direkt auf den Daten, die zweite auf dem Ergebnis der ersten, die dritte auf dem Ergebnis der zweiten, und so weiter. Die Schichten übernehmen unterschiedliche Aufgaben nacheinander: Manche erkennen einfache Muster, andere verknüpfen weiter entfernte Informationen, wieder andere bereiten die Ausgabe vor. Jede Schicht nutzt die Ergebnisse der vorherigen, statt von vorn zu beginnen; deshalb wird die Darstellung mit jeder Stufe reicher."
+      : "An LLM does not compute in a single step. The first layer works directly on the data, the second on the result of the first, the third on the result of the second, and so on. The layers take on different tasks one after another: some recognise simple patterns, others connect information from farther away, and others prepare the output. Each layer uses the results of the previous one instead of starting over, which is why the representation becomes richer at every stage.",
+    watch: DE ? "Klicke die Stufen durch. Was bekommt jede Stufe von der vorherigen?" : "Click through the stages. What does each stage receive from the previous one?",
+    demoState: { scene: "stack", mode: "pipeline" },
+    context: DE
+      ? "Die Reihenfolge ist eine Architekturentscheidung, keine feste physikalische Regel. Man kann Schichten austauschen, wiederholen oder überspringen; die Reihenfolge bestimmt, welche Information wann verfügbar ist."
+      : "The order is an architecture decision, not a fixed law of nature. Layers can be swapped, repeated, or skipped; the order determines which information is available when.",
+    deep: DE
+      ? "Im Transformer wird der Output nicht einfach ersetzt, sondern über Residualverbindungen addiert: Jede Schicht liest den aktuellen Stand und schreibt ihn fort. Das kommt später im Detail."
+      : "In a transformer the output is not simply replaced; residual connections add it: each layer reads the current state and writes it forward. We will come back to this in detail later.",
+    boxes: [
+      box("layers-1", DE ? "Idee" : "Idea", DE ? "Warum Schichten?" : "Why layers?",
+        DE ? "Eine einzelne Funktion kann nur einen Schritt tun. Viele Schichten hintereinander bilden schrittweise abstraktere Merkmale: erst Zeichen, dann Wörter, dann Beziehungen, dann Bedeutung." : "A single function can do only one step. Many layers in sequence build progressively more abstract features: first characters, then words, then relations, then meaning."),
+      box("layers-2", DE ? "Grenze" : "Limit", DE ? "Sind die Schichten fest?" : "Are the layers fixed?",
+        DE ? "Nein. Reihenfolge und Aufgaben sind Designentscheidungen. Ein Bildmodell stapelt andere Schichten als ein Sprachmodell; im Transformer wiederholen sich Attention und FFN viele Male." : "No. Order and tasks are design decisions. An image model stacks different layers than a language model; in a transformer, attention and FFN repeat many times.")
+    ],
+    sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Der Transformer als gestapelte Schichten aus Attention und FFN.", en: "The transformer as stacked layers of attention and FFN." } }]
+  };
   var bausteineOverview = Object.assign({}, insideSteps[1], {
     title: DE ? "Die Bausteine im Überblick" : "The building blocks at a glance"
   });
   var bausteineStep = {
     kicker: DE ? "Architektur" : "Architecture",
     title: DE ? "Bausteine eines LLM" : "Building blocks of an LLM",
-    substeps: [bausteineIntro, bausteineOverview]
+    substeps: [bausteineIntro, bausteineLayers, bausteineOverview]
   };
 
   var manifoldSteps = DE ? [
