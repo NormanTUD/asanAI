@@ -754,7 +754,7 @@
     {
       kicker: "Manifolds",
       title: "From relations to translation",
-      body: "If you have points in this highly abstract space whose relations to one another carry meaning, translation becomes a matter of translation, rotation, distortion, scaling, and shear. The structure that forms from the points in high-dimensional space is what mathematicians call a <b>manifold</b>.\n\nIf you find a combination that maps one cloud onto the other, you have found a translation, because meaning stands in the same relations across languages, even when the concrete tokens differ.",
+      body: "If you have points in this highly abstract space whose relations to one another carry meaning, the task becomes one of translation, rotation, distortion, scaling, and shear. The structure that forms from the points in high-dimensional space is what mathematicians call a <b>manifold</b>.\n\nIf you find a combination that maps one cloud onto the other, you have found a translation, because meaning stands in the same relations across languages, even when the concrete tokens differ.",
       watch: "Rotate, roll, and translate the Japanese cloud. Hover the points to see the words. Click “Find translation” or “Next”.",
       demoState: { scene: "manifold" },
       context: "The demo is strongly simplified: two point clouds, many words, clean edges. The real geometry has thousands of dimensions and overlapping relations; the Vietoris–Rips complex only makes neighbourhoods visible.",
