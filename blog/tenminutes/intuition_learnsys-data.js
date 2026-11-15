@@ -747,36 +747,36 @@
     kicker: DE ? "Daten" : "Data",
     title: DE ? "Daten" : "Data",
     body: DE
-      ? "Bevor die Architektur beginnt, stehen die Daten. Man gibt dem Computer extrem viele Daten aus Wikipedia, Reddit, Büchern, Webseiten und Quellcode, damit er lernt, was er wie vorhersagen muss. Aus diesen Beispielen verändert er die vorgefertigten Bausteine so, dass sie möglichst gut das nächste Wort vorhersagen. Die Daten sind der erste Schritt, technisch aber nicht Teil des LLM: Das Modell ist die Kette der Schichten. Die Daten kommen von außen und werden zum Training verwendet; ohne sie gäbe es nichts zu lernen."
-      : "Before the architecture begins, there is data. We give the computer an extreme amount of data from Wikipedia, Reddit, books, websites, and source code so that it learns what to predict and how. From these examples it changes the prefabricated building blocks so that they predict the next word as well as possible. The data is the first step, but technically not part of the LLM: the model is the chain of layers. The data comes from outside and is used for training; without it there would be nothing to learn.",
+      ? "Daten sind der erste Schritt, technisch aber nicht Teil des LLM: Das Modell ist die Kette der Schichten, die Daten kommen von außen. Man nutzt zwei Datensätze. Der erste ist mehr oder weniger das gesamte Internet: Wikipedia, Reddit, Bücher, Webseiten und Quellcode. Der zweite besteht aus zielgerichteten Menschenfragen, auch mit Tippfehlern und unklaren Formulierungen, und den passenden nützlichen Antworten. Zuerst trainiert man auf dem großen Datensatz, dann folgt Fine-Tuning auf dem kleinen, damit sich das Netz für Menschen nützlich verhält."
+      : "Data is the first step, but technically not part of the LLM: the model is the chain of layers, and the data comes from outside. There are two datasets. The first is more or less the entire internet: Wikipedia, Reddit, books, websites, and source code. The second consists of targeted human questions, including typos and unclear wording, together with useful answers. First you train on the large dataset, then fine-tune on the small one so that the network behaves usefully for people.",
     teaser: DE
-      ? "Bevor die Architektur beginnt, stehen die Daten. Man gibt dem Computer extrem viele Daten aus Wikipedia, Reddit, Büchern, Webseiten und Quellcode, damit er lernt, was er wie vorhersagen muss. Aus diesen Beispielen verändert er die vorgefertigten Bausteine so, dass sie möglichst gut das nächste Wort vorhersagen. Die Daten sind der erste Schritt, technisch aber nicht Teil des LLM: Das Modell ist die Kette der Schichten. Die Daten kommen von außen und werden zum Training verwendet; ohne sie gäbe es nichts zu lernen."
-      : "Before the architecture begins, there is data. We give the computer an extreme amount of data from Wikipedia, Reddit, books, websites, and source code so that it learns what to predict and how. From these examples it changes the prefabricated building blocks so that they predict the next word as well as possible. The data is the first step, but technically not part of the LLM: the model is the chain of layers. The data comes from outside and is used for training; without it there would be nothing to learn.",
+      ? "Daten sind der erste Schritt, technisch aber nicht Teil des LLM: Das Modell ist die Kette der Schichten, die Daten kommen von außen. Man nutzt zwei Datensätze. Der erste ist mehr oder weniger das gesamte Internet: Wikipedia, Reddit, Bücher, Webseiten und Quellcode. Der zweite besteht aus zielgerichteten Menschenfragen, auch mit Tippfehlern und unklaren Formulierungen, und den passenden nützlichen Antworten. Zuerst trainiert man auf dem großen Datensatz, dann folgt Fine-Tuning auf dem kleinen, damit sich das Netz für Menschen nützlich verhält."
+      : "Data is the first step, but technically not part of the LLM: the model is the chain of layers, and the data comes from outside. There are two datasets. The first is more or less the entire internet: Wikipedia, Reddit, books, websites, and source code. The second consists of targeted human questions, including typos and unclear wording, together with useful answers. First you train on the large dataset, then fine-tune on the small one so that the network behaves usefully for people.",
     watch: DE ? "Die Daten sind die Beispiele, aus denen das Modell lernt. Sie gehören zum Training, nicht zur Architektur." : "The data are the examples the model learns from. They belong to training, not to the architecture.",
     demoState: { scene: "langdata", mode: "scale" },
     cues: [
       {
-        label: DE ? "Trainingskorpus" : "Training corpus",
-        title: DE ? "Was steht im Trainingstext?" : "What is in the training text?",
+        label: DE ? "Der große Datensatz" : "The large dataset",
+        title: DE ? "Mehr oder weniger das ganze Internet" : "More or less the entire internet",
         text: DE
-          ? "Das ist der Anfang des HTML-Codes des Wikipedia-Artikels „Large language model“, stark gekürzt. Danach folgt eine Auslassung und ein Buchtext aus dem Korpus, hier Nietzsche. Der Code enthält Navigation, Stil und Rauschen, aber auch Text und Fakten. Das Modell lernt aus beidem: HTML-Struktur und Inhalt. Man nimmt sehr viele, sehr verschiedene Texte: Reddit-Artikel, Wikipedia, Bücher, die man online findet, Webseiten, Quellcode von Programmen und vieles mehr. Diese Texte sind die Trainingsdaten. Das Modell wird damit gefüttert und lernt Muster daraus: wie man codet, wie menschliche Sprache aussieht, welche Fakten es gibt. In den nächsten Tagen gehen wir diese Sachen alle durch."
-          : "This is the beginning of the HTML of the Wikipedia article “Large language model”, heavily shortened. Then comes an omission and a book text from the corpus, here Nietzsche. The code contains navigation, style, and noise, but also text and facts. The model learns from both: HTML structure and content. People take very many, very different texts: Reddit articles, Wikipedia, books found online, websites, source code of programs, and much more. These texts are the training data. The model is fed with them and learns patterns from them: how to code, what human language looks like, what facts exist. Over the next days we will go through all of these things.",
-        state: {}
+          ? "Der erste Datensatz ist mehr oder weniger das gesamte Internet: Wikipedia, Reddit, Bücher, Webseiten, Quellcode und mehr. Er ist riesig, breit und unordentlich. Das Modell lernt daraus Muster, Sprache, Fakten und Code. Zum Beispiel steht darin der Anfang des HTML-Codes eines Wikipedia-Artikels, danach eine Auslassung und ein Buchtext von Nietzsche. Der Code enthält Navigation, Stil und Rauschen, aber auch Text und Fakten. Das Modell lernt aus beidem. Die Daten sind nicht Teil des Modells; sie kommen von außen und werden zum Training verwendet."
+          : "The first dataset is more or less the entire internet: Wikipedia, Reddit, books, websites, source code, and more. It is huge, broad, and messy. The model learns patterns, language, facts, and code from it. For example, it contains the beginning of the HTML of a Wikipedia article, then an omission and a book text by Nietzsche. The code contains navigation, style, and noise, but also text and facts. The model learns from both. The data is not part of the model; it comes from outside and is used for training.",
+        state: { mode: "scale" }
       },
       {
-        label: DE ? "Datenmenge" : "Data scale",
-        title: DE ? "Wie groß ist der Korpus?" : "How large is the corpus?",
+        label: DE ? "Der kleine Datensatz" : "The small dataset",
+        title: DE ? "Menschenfragen und nützliche Antworten" : "Human questions and useful answers",
         text: DE
-          ? "Ein LLM braucht enorm viel Text. Erst seit der Zettabyte-Ära gibt es mehr als 10²¹ Byte digitale Daten. Wirklich saubere Daten in diesem Maßstab gibt es nicht: Jedes Korpus enthält Fehler, Widersprüche, Spam und veraltete Aussagen. Man nimmt sie in Kauf, weil die Menge sonst nicht reicht, und hofft, dass sich zufällige Fehler über die Masse mitteln. Systematische Fehler mitteln sich nicht weg; deshalb bleibt Kuration wichtig. Die genaue Mischung unterscheidet sich von Modell zu Modell; entscheidend ist die Breite: Webseiten, Bücher, Code, Fragen und mehr."
-          : "An LLM needs an enormous amount of text. Only since the zettabyte era has more than 10²¹ bytes of digital data been available. Truly clean data at that scale does not exist: every corpus contains errors, contradictions, spam, and outdated statements. They are accepted because the volume is otherwise too small, and one hopes random errors average out. Systematic errors do not average out; that is why curation matters. The exact mix differs from model to model; what matters is the breadth: websites, books, code, questions, and more.",
-        state: {}
+          ? "Der zweite Datensatz ist klein und gezielt: Menschenfragen, auch mit Tippfehlern, unklaren Formulierungen oder falschen Annahmen, und die passenden nützlichen Antworten. Hier lernt das Modell nicht nur Fakten, sondern auch, wie man auf eine Frage antwortet, die ein Mensch wirklich stellt. Aus Wikipedia lernt es, dass Paris die Hauptstadt von Frankreich ist. Dass auf „Was ist die Hauptstadt von Frankreich?“ die Antwort „Paris“ folgt, lernt es aus diesen Frage-Antwort-Daten."
+          : "The second dataset is small and targeted: human questions, including typos, unclear wording, or wrong assumptions, together with useful answers. Here the model learns not only facts but also how to answer a question a person actually asks. From Wikipedia it learns that Paris is the capital of France. That “What is the capital of France?” is answered with “Paris” is learned from this question-answer data.",
+        state: { mode: "truth" }
       },
       {
-        label: DE ? "Menschenfragen" : "Human questions",
-        title: DE ? "Lernt das Modell auch aus Fragen?" : "Does the model also learn from questions?",
+        label: DE ? "Erst groß, dann klein" : "First large, then small",
+        title: DE ? "Vortraining und Fine-Tuning" : "Pretraining and fine-tuning",
         text: DE
-          ? "Im Korpus stecken auch Menschenfragen, aber prozentual viel weniger als Webseiten, Bücher und Code. Aus Wikipedia lernt das Modell, dass Paris die Hauptstadt von Frankreich ist. Dass auf „Was ist die Hauptstadt von Frankreich?“ die Antwort „Paris“ folgt, lernt es in dieser Phase aus Frage-Antwort-Daten. Dabei gilt: Zuerst trainiert man auf dem großen Datensatz, dann auf einem kleinen, damit das Modell menschlich interagieren lernt."
-          : "The corpus also contains human questions, but a much smaller percentage than websites, books, and code. From Wikipedia the model learns that Paris is the capital of France. That “What is the capital of France?” is answered with “Paris” is learned in this phase from question-answer data. The order is: first train on the large dataset, then on a small one so that the model learns to interact with people.",
+          ? "Zuerst trainiert man auf dem großen Datensatz. Das Modell lernt, das nächste Wort vorherzusagen. Danach folgt Fine-Tuning auf dem kleinen Datensatz: Das Netz soll sich für Menschen nützlich verhalten, also Fragen beantworten, Anweisungen befolgen und brauchbare Antworten liefern. Der große Datensatz gibt die Breite; der kleine gibt die Richtung."
+          : "First you train on the large dataset. The model learns to predict the next word. Then comes fine-tuning on the small dataset: the network should behave usefully for people, answering questions, following instructions, and giving usable answers. The large dataset provides breadth; the small one provides direction.",
         state: {}
       },
       {
@@ -1922,7 +1922,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-15-bausteine-3",
+    overlayRevision: "2026-11-15-bausteine-4",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.

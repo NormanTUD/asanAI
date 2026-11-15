@@ -110,10 +110,11 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] Beim Revisionswechsel wird auch der gespeicherte Folienstand
   zurückgesetzt, damit die neue Daten-Unterfolie nach dem Laden als 1/2
   sichtbar ist und nicht die alte Architektur-Position stehen bleibt.
-- [done] Daten-Unterfolie nennt jetzt ausdrücklich Wikipedia, Reddit, Bücher,
-  Webseiten und Quellcode sowie „extrem viele Daten“, damit klar wird, was das
-  Modell wie vorhersagen lernt. Die GPT-3-spezifische Mischung ist durch eine
-  allgemeine Beschreibung ersetzt.
+- [done] Daten-Unterfolie heißt nur noch „Daten“ und erklärt zwei Datensätze:
+  das riesige Internet (Wikipedia, Reddit, Bücher, Webseiten, Code) und kleine,
+  gezielte Menschenfragen mit Tippfehlern/unklaren Formulierungen plus
+  nützlichen Antworten. Danach: erst Vortraining auf dem großen Datensatz,
+  dann Fine-Tuning auf dem kleinen, damit das Netz für Menschen nützlich ist.
 - [done] Transformer-Station: Trajektorien zeichnen nur bis zur aktuellen
   Schicht, sodass die Linien mit den Layern wachsen; das gesamte Konstrukt
   bleibt im Bild. Metrik-Umschalter „Winkel/Großkreis“ und „Euklid“ entfernt;
