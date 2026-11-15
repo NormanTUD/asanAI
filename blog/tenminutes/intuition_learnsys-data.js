@@ -361,35 +361,6 @@
         { label: "Attention als Graph (interaktive Zusatzseite)", url: "../test/attention_as_graph.html", why: { de: "Interaktive Zusatzseite zur Attention-Grafik.", en: "Interactive companion page for the attention graph." } }
       ]
     },
-    {
-      kicker: "Rauschen",
-      title: "Attention reduziert Rauschen",
-      body: "Wörter allein sind mehrdeutig. „new“ kann in der Nähe von „car“ und von „Stadt“ liegen; „york“ allein sagt wenig. Zusammen mit „york“ wird aus „new“ die Stadt New York. Attention gewichtet die Nachbarn: Die Nachbarschaft zieht „new“ und „york“ in Richtung „Stadt“ und schwächt „car“ und „England“ ab. Die Mehrdeutigkeit wird zum Signal, das die KI mit dem Kontext auflöst.",
-      watch: "Schiebe den Kontext-Regler. Wann gewinnt Stadt gegen car?",
-      demoState: { scene: "noise", layer: 0 },
-      context: "Attention verschiebt nicht die Wörter selbst, sondern ihre gelesene Bedeutung. Die Nachbarschaft entscheidet, welche Bedeutung zählt; die frühen Layer richten den Vektor daran aus.",
-      deep: "Das ist eine didaktische Vereinfachung. Ein echter Head addiert Value-Vektoren mit gelernten Gewichten; die Winkel und Positionen sind von Hand gewählt. Die Quelle deckt die frühe sprachliche Verarbeitung, nicht die konkreten Demo-Positionen.",
-      boxes: [
-        box("noise-1", "Beispiel", "Was heißt new allein?", "„new“ bedeutet „neu“, kann aber auch der Anfang von „New York“ sein. Erst das zweite Wort entscheidet, welche Lesart gilt."),
-        box("noise-2", "Technik", "Wie wirkt die Nachbarschaft?", "Die Nachbarschaft gewichtet die Umgebung: „york“ macht die Stadt Lesart stärker, „car“ und „England“ verlieren an Gewicht. So reduziert Attention die Mehrdeutigkeit, statt sie zu verstärken.")
-      ],
-      sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "BERT-Schichten zeigen eine linguistische Pipeline.", en: "BERT layers reveal a linguistic pipeline." } }]
-    },
-    {
-      kicker: "Die Matrix",
-      title: "Die kausale Matrix und die Heads",
-      body: "In einer Schicht schaut Self-Attention auf den ganzen Kontext. Für jedes Token bewertet sie, wie viel es von jedem anderen sichtbaren Token übernehmen soll. Die Scores bilden eine Token-für-Token-Matrix: eine Zeile für das fragende Token, eine Spalte für das antwortende. Die Kausalmaske verbirgt die Zukunft.",
-      watch: "Klicke die Matrix an. Welche Zellen sind maskiert?",
-      demoState: { scene: "stack", mode: "layer" },
-      context: "Jede Zeile summiert zu 1. Ein Token kann auf sich und frühere Tokens achten, nie auf spätere. Das obere Dreieck ist maskiert.",
-      deep: "Attention wählt seine Gewichte nicht aus einer festen Liste. Es lernt aus dem Loss, welche Aspekte der sichtbaren Tokens helfen. Jeder Head kann dieselben Tokens aus einer anderen Perspektive sehen: Pronomen, Verb, Thema.",
-      boxes: [
-        box("st-5", "Geschichte", "Borges, Funes", "„Denken heißt Unterschiede vergessen, verallgemeinern, abstrahieren.“ Funes erinnert sich an alles und kann deshalb nicht denken. Ein LLM macht dasselbe auf zwei Ebenen: Das Modell speichert nicht jeden Fakt, und ein Head muss nicht alles auf einmal repräsentieren."),
-        box("st-6", "Technik", "Lokale Bedeutung, dann Kontext", "Frühe Schichten lernen lokale Muster. Spätere Schichten kombinieren sie mit einem breiteren Kontext. Jede Schicht hat eigene Gewichte; die Struktur ist geteilt, die Parameter nicht."),
-        box("st-7", "Mathematik", "Unembedding", "p(next | context) = softmax(W_U h_last). Der letzte Vektor zeigt auf eine Region von Token-Richtungen, dann wird eines gezogen.")
-      ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf", why: { de: "Funes als Bild für Vergessen, Abstraktion und Denken.", en: "Funes as an image of forgetting, abstraction, and thought." } }]
-    }
   ] : [
     {
       kicker: "Attend",
@@ -429,35 +400,6 @@
         { label: "Attention as a graph (interactive companion page)", url: "../test/attention_as_graph.html", why: { de: "Interaktive Zusatzseite zur Attention-Grafik.", en: "Interactive companion page for the attention graph." } }
       ]
     },
-    {
-      kicker: "Noise",
-      title: "Attention reduces noise",
-      body: "Words alone are ambiguous. “new” can sit near “car” and near “city”; “york” alone says little. Together with “york”, “new” becomes New York. Attention weights the neighbours: the neighbourhood pulls “new” and “york” toward “city” and weakens “car” and “England”. The ambiguity becomes a signal that the model resolves with context.",
-      watch: "Move the context slider. When does city win against car?",
-      demoState: { scene: "noise", layer: 0 },
-      context: "Attention does not move the words themselves; it moves their read meaning. The neighbourhood decides which meaning counts; early layers align the vector with it.",
-      deep: "This is a didactic simplification. A real head adds value vectors with learned weights; the angles and positions are chosen by hand. The source covers early linguistic processing, not the concrete demo positions.",
-      boxes: [
-        box("noise-1", "Example", "What does new mean alone?", "“new” means “not old”, but it can also be the first half of “New York”. Only the second word decides which reading applies."),
-        box("noise-2", "Technique", "How does the neighbourhood work?", "The neighbourhood weights the surroundings: “york” strengthens the city reading, while “car” and “England” lose weight. Attention reduces the ambiguity instead of amplifying it.")
-      ],
-      sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "BERT-Schichten zeigen eine linguistische Pipeline.", en: "BERT layers reveal a linguistic pipeline." } }]
-    },
-    {
-      kicker: "The matrix",
-      title: "The causal matrix and the heads",
-      body: "Inside a layer, self-attention looks at the whole context. For every token, it scores how much that token should take from every other visible token. The scores form a token-by-token matrix: one row for the token asking, one column for the token answering. The causal mask hides the future.",
-      watch: "Click the matrix. Which cells are masked?",
-      demoState: { scene: "stack", mode: "layer" },
-      context: "Every row sums to one. A token can attend to itself and earlier tokens, never to later ones. The upper triangle is masked.",
-      deep: "Attention does not choose its weights from a fixed list. It learns from the loss which aspects of the visible tokens help. Each head can look at the same tokens from a different perspective: pronoun, verb, topic.",
-      boxes: [
-        box("st-5", "History", "Borges, Funes", "“To think is to forget a difference, to generalize, to abstract.” Funes remembers everything and therefore cannot think. An LLM does the same at two scales: the model does not store every fact, and a head does not need to represent everything at once."),
-        box("st-6", "Technique", "Local meaning, then context", "Early layers learn local patterns. Later layers combine them with a wider context. Each layer has its own weights; the structure is shared, the parameters are not."),
-        box("st-7", "Mathematics", "Unembedding", "p(next | context) = softmax(W_U h_last). The last vector points to a region of token directions, then one is drawn.")
-      ],
-      sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Borges (1942), Funes el memorioso", url: "https://bvpadreseijas.files.wordpress.com/2013/05/funeselmemorioso.pdf", why: { de: "Funes als Bild für Vergessen, Abstraktion und Denken.", en: "Funes as an image of forgetting, abstraction, and thought." } }]
-    }
   ];
 
   var backpropStep = DE ? {
@@ -1915,7 +1857,7 @@
   var attentionMergeStep = {
     title: DE ? "Attention: Kontext und Matrix" : "Attention: context and matrix",
     kicker: DE ? "Attention" : "Attention",
-    substeps: [attentionMerged, attentionSteps[3]]
+    substeps: [attentionMerged]
   };
 
   var steeringStep = DE ? {
@@ -1954,7 +1896,7 @@
     ]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, dataTruthStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep, bookSteps[0]];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, dataTruthStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep, bookSteps[0]];
 
   var day = {
     id: "intuition",

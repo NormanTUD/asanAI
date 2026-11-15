@@ -131,3 +131,7 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] „Eine Wahrheit, viele Sprachen“ als vierte Karte in die Daten-Unterfolie
   übernommen; die separate Folie ist entfernt. Die Karte zeigt, dass die
   Sprachen auf denselben Sachverhalt zeigen.
+- [done] Folie „Die kausale Matrix und die Heads“ entfernt und aus der
+  Attention-Merge-Unterfolie genommen.
+- [done] Folie „Attention reduziert Rauschen“ entfernt und aus der
+  Folienliste gestrichen.
