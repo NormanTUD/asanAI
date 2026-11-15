@@ -316,3 +316,8 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   Quellen Vaswani/Weng/Elhage, Hinweis auf das FFN.
 - [done] „Viele Sätze, eine Wahrheit“ vertikal zentriert.
 - [done] JSON-Änderung übernommen: q-context entfernt, g-basics leer.
+- [done] Transformer-Blöcke in „Die Architektur von LLMs“: Die GPT-2-Zustands-
+  Trajektorie und ihre Beschriftung sind entfernt. Die Folie zeigt nur noch die
+  beiden Mini-Demos zu Attention und FFN; der Text verweist nicht mehr auf
+  „Linien, die mit jeder Schicht wachsen“. Die separate Folie
+  „Token-Trajektorien durch GPT-2“ bleibt unverändert.

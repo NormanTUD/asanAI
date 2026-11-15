@@ -33,10 +33,9 @@
       {
         id: "transformer", label: "Transformer-Blöcke", short: "Attention → FFN, × N", icon: "×N", color: "green",
         title: "Transformer-Blöcke",
-        body: "Attention mischt Information zwischen Wörtern. Das FFN formt jedes Token einzeln. Der Block läuft dutzende bis hunderte Male. Die Demo zeigt die Token Schicht für Schicht; die Linien wachsen mit jeder Schicht.",
+        body: "Attention mischt Information zwischen Wörtern. Das FFN formt jedes Token einzeln. Der Block läuft dutzende bis hunderte Male. Die beiden Mini-Demos zeigen die Rollen von Attention und FFN.",
         points: ["Attention: wer liest wen?", "FFN: erkennen, trennen, neu ordnen"],
         mini: "transformer",
-        traj: true,
         sub: [
           { title: "Attention", text: "Attention bewertet für jedes einzelne Token, wie wichtig alle anderen Tokens unter einem gewissen Aspekt sind, und verschiebt das Token so, dass es den Gesamtkontext unter diesen Gesichtspunkten beinhaltet. Es gibt viele Attention-Blöcke; sie können auf bestimmte Arten von Strukturen achten, diese isolieren und in den gesamten bisherigen Text schauen, um zu sehen, wo etwas im Gesamtkontext steht." },
           { title: "Feed-Forward-Netzwerk (FFN)", text: "Das FFN erkennt Muster und trennt sie sauberer in einzelne Bestandteile; so werden Bedeutungen isoliert und im Kontext verschoben. Es kann „denken“, indem es trennt, aber auch wieder zusammenfügt und neu ordnet." }
@@ -75,7 +74,7 @@
       {
         id: "transformer", label: "Transformer blocks", short: "attention → FFN, × N", icon: "×N", color: "green",
         title: "Transformer blocks",
-        body: "Attention mixes information between words. The FFN shapes each token separately. The block runs dozens to hundreds of times. The demo shows the tokens layer by layer; the lines grow with each layer.",
+        body: "Attention mixes information between words. The FFN shapes each token separately. The block runs dozens to hundreds of times. The two mini demos show the roles of attention and FFN.",
         points: ["attention: who reads whom?", "FFN: recognise, separate, reorder"],
         mini: "transformer",
         sub: [
@@ -93,7 +92,6 @@
     ];
     var index = 0;
     var resetKey = null;
-    var trajDemo = null;
     var positionDemo = null;
     var el = document.createElement("div");
     el.className = "ls-blocks-scene";
@@ -368,33 +366,12 @@
         html += '<div class="ls-bs-subgrid">' + b.sub.map(function (s, i) {
           return '<div class="ls-bs-sub"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + (["attention", "ffn"][i] || "ffn") + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
         }).join("") + '</div>';
-        if (b.traj) {
-          html += '<div class="ls-bs-traj-full" data-traj-host></div>' +
-            '<p class="ls-bs-traj-caption">' + (DE ? "Demo: GPT-2-small-Zustände, 768 → 3 mit PCA und Großkreis-Metrik. Die Linien wachsen mit jeder Schicht; das ist eine Demo, keine vollständige Rekonstruktion." : "Demo: GPT-2 small states, 768 → 3 with PCA and the great-circle metric. The lines grow with each layer; this is a demo, not a full reconstruction.") + '</p>';
-        }
       } else {
         html += '<div class="ls-bs-canvas-wrap"><canvas data-mini="' + b.mini + '"></canvas></div>';
       }
       if (b.source) html += '<p class="ls-bs-source">' + (DE ? "Quelle: " : "Source: ") + '<a href="' + esc(b.source.url) + '" target="_blank" rel="noopener">' + esc(b.source.label) + '</a></p>';
-      if (trajDemo) { try { trajDemo.destroy(); } catch (e) {} trajDemo = null; }
       if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; }
       detail.innerHTML = html;
-      if (b.traj) {
-        var trajHost = detail.querySelector("[data-traj-host]");
-        var trajFactory = core.get("trajectories");
-        if (trajHost && trajFactory) {
-          trajDemo = trajFactory(trajHost, {
-            lang: api.lang,
-            colors: api.colors,
-            font: api.font,
-            fit: api.fit,
-            motion: api.motion,
-            esc: api.esc,
-            util: api.util,
-            visual: api.visual
-          });
-        }
-      }
       if (b.position) {
         var posHost = detail.querySelector("[data-position-host]");
         var posFactory = core.get("position");
@@ -449,7 +426,7 @@
       prev: prevInternal,
       onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
       resize: function () { drawMinis(); },
-      destroy: function () { if (trajDemo) { try { trajDemo.destroy(); } catch (e) {} trajDemo = null; } if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } window.removeEventListener("resize", drawMinis); el.remove(); }
+      destroy: function () { if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } window.removeEventListener("resize", drawMinis); el.remove(); }
     };
   }
 
