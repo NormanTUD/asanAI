@@ -364,3 +364,20 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] Schutz-Demo mit RAG, schrittweiser Prüfung und Gegenprüfung:
   Schalter zeigen, wann die Antwort gedeckt ist und wann sie „keine Quelle“
   sagt. Quellen: Lewis, Wei, Dhuliawala.
+- [done] „Bedeutung wird eine Zahl“: Weiter/→ geht die vier Wortpaare
+  nacheinander durch; der Start ist kalt+warm. Optional-Box ergänzt: echte
+  Embeddings sind nicht so sauber getrennt, Achsen sind gelernte Richtungen,
+  Cluster überlappen, Wörter liegen schief, Superposition.
+- [done] „Jeder Platz bekommt einen Fingerabdruck“: keine permanenten
+  Hund@n-Labels und keine Dauer-Zahlen mehr. Nur beim Mouseover über einen
+  grünen Punkt erscheinen Position, Vektor, Bogenlänge und Winkel.
+- [done] „Winkel statt Abstand“: Der Winkelbogen liegt jetzt auf der richtigen
+  Seite (Canvas-Winkel negiert).
+- [done] Skaleninvarianz: A und B starten am selben Punkt, zeigen in
+  verschiedene Richtungen. Der Regler skaliert B; Cosinus bleibt, euklidischer
+  Abstand ändert sich. Titel/Text als „Länge vs. Winkel“ präzisiert.
+- [done] Unembedding: Winkel/Scale/Unembedding per Pfeiltaste/Weiter,
+  kürzere Aufbauanimation (650 ms), maximale Bühnenbreite gegen die verzerrte
+  Darstellung.
+- [done] Token-Trajektorien: Projektion etwas kleiner und mit mehr Rand, damit
+  das ganze Bild sichtbar bleibt.
