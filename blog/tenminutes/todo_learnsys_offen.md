@@ -171,3 +171,8 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] Tokenizer-Beispiele: alle drei Beispiele (Verständnis, unzerbrechlich,
   Sprachmodell liest Text) sind in der Pfeiltasten-Reihenfolge; die Token-Chips
   umbrechen, sodass auch das letzte Token sichtbar ist.
+- [done] Neuronale Netze: Die vier Folien heißen jetzt alle „Was sind neuronale
+  Netze?“ und haben keinen Kicker mehr. Die Tabs „1 Neuron“, „Loss-Landschaft“
+  und „32×32×32“ sind aus der Demo entfernt.
+- [done] „Matrizen zeigen“: größere Schrift und `pmatrix` (runde Klammern)
+  statt `bmatrix`.

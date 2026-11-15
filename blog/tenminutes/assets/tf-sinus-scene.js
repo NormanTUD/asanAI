@@ -7,11 +7,6 @@
     var el = document.createElement("div");
     el.className = "ls-sinus-scene";
     el.innerHTML =
-      '<div class="ls-sinus-tabs" role="tablist">' +
-        '<button type="button" class="ls-sinus-tab is-on" data-phase="linear">' + (DE ? "1 Neuron" : "1 neuron") + '</button>' +
-        '<button type="button" class="ls-sinus-tab" data-phase="loss">' + (DE ? "Loss-Landschaft" : "Loss landscape") + '</button>' +
-        '<button type="button" class="ls-sinus-tab" data-phase="net">' + (DE ? "32 × 32 × 32" : "32 × 32 × 32") + '</button>' +
-      '</div>' +
       '<div class="ls-sinus-stage">' +
         '<canvas class="ls-sinus-canvas" role="img"></canvas>' +
         '<div class="ls-sinus-matrices" hidden>' +
@@ -46,7 +41,6 @@
     var matrixNodes = Array.prototype.slice.call(el.querySelectorAll("[data-matrix]"));
     var matrixFigures = Array.prototype.slice.call(el.querySelectorAll(".ls-sinus-matrix-grid figure"));
     var matrixNote = el.querySelector(".ls-sinus-matrices-note");
-    var tabs = Array.prototype.slice.call(el.querySelectorAll("[data-phase]"));
     var lossCanvas = el.querySelector(".ls-sinus-loss-canvas");
     var lossCtx = null, lossSize = null;
     var lossEl = el.querySelector(".ls-sinus-loss");
@@ -362,10 +356,10 @@
         for (var c = 0; c < cols; c++) line.push(Number(vals[r * cols + c]).toFixed(2));
         out.push(line.join(" & "));
       }
-      return "\\begin{bmatrix}" + out.join(" \\\\ ") + "\\end{bmatrix}";
+      return "\\begin{pmatrix}" + out.join(" \\\\ ") + "\\end{pmatrix}";
     }
     function biasTex(vals) {
-      return "\\begin{bmatrix}" + Array.prototype.map.call(vals, function (v) { return Number(v).toFixed(2); }).join(" \\\\ ") + "\\end{bmatrix}";
+      return "\\begin{pmatrix}" + Array.prototype.map.call(vals, function (v) { return Number(v).toFixed(2); }).join(" \\\\ ") + "\\end{pmatrix}";
     }
     function updateMatrixCanvases(force) {
       if (matrixOverlay.hidden) return;
@@ -464,10 +458,6 @@
     function setLossMode(on) {
       lossView = !!on;
       el.classList.toggle("is-loss", lossView);
-      tabs.forEach(function (b) {
-        var key = b.getAttribute("data-phase");
-        b.classList.toggle("is-on", lossView ? key === "loss" : key === phase);
-      });
       if (lossView) {
         pauseTraining();
         ensureLoss();
@@ -481,14 +471,10 @@
     function switchPhase(next) {
       if (next === "loss") { setLossMode(true); return; }
       if (lossView) setLossMode(false);
-      if (next === phase) {
-        tabs.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-phase") === phase); });
-        return;
-      }
+      if (next === phase) return;
       userStarted = false;
       pauseTraining();
       phase = next;
-      tabs.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-phase") === phase); });
       if (!active().model) {
         if (phase === "linear") buildLinear(); else buildNet();
       }
@@ -547,9 +533,6 @@
     });
     canvas.addEventListener("pointerup", function () { drag = null; });
     canvas.addEventListener("pointercancel", function () { drag = null; });
-    tabs.forEach(function (b) {
-      b.addEventListener("click", function () { switchPhase(b.getAttribute("data-phase")); });
-    });
     trainBtn.addEventListener("click", function () { if (training) pauseTraining(); else resumeTraining(); });
     resetBtn.addEventListener("click", resetActive);
     matrixBtn.addEventListener("click", function () {

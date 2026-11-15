@@ -1426,10 +1426,6 @@ h1,h2,h3,h4{
 @media (max-width:640px){.ls-mlp-scene .ism-copy{height:108px;min-height:108px !important;max-height:108px}}
 
 .ls-sinus-scene{height:100%;min-height:0;display:grid;grid-template-rows:auto minmax(220px,1fr) 54px auto auto;gap:8px;padding:2px;overflow-y:auto}
-.ls-sinus-tabs{display:flex;gap:5px;flex-wrap:wrap}
-.ls-sinus-tab{border:1px solid var(--ls-line-strong);background:#fff;padding:5px 10px;font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-soft);cursor:pointer}
-.ls-sinus-tab:hover{border-color:var(--ls-blue);color:var(--ls-petrol)}
-.ls-sinus-tab.is-on{background:var(--ls-petrol);border-color:var(--ls-petrol);color:#fff}
 .ls-sinus-stage{position:relative;min-height:220px;border:1px solid var(--ls-line);background:#fff;overflow:hidden}
 .ls-sinus-stage canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
 .ls-sinus-matrices{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;gap:6px;padding:9px 10px 8px;background:rgba(255,255,255,.97);overflow:auto}
@@ -1890,9 +1886,9 @@ h1,h2,h3,h4{
 .ls-mlp-scene .ism-dense-presets label{display:flex;align-items:center;gap:6px;white-space:nowrap}
 .ls-mlp-scene .ism-dense-presets select{font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-ink);background:var(--ls-paper-2);border:1px solid var(--ls-line);padding:4px 7px;min-height:30px;max-width:190px}
 
-.ls-sinus-matrix-grid .ls-matrix-tex{position:relative;min-height:72px;max-height:170px;overflow:auto;border:1px solid var(--ls-line);background:#fff;padding:5px 6px;font-size:8px;line-height:1.15}
-.ls-sinus-matrix-grid .ls-matrix-tex .math{font-size:8px}
-.ls-sinus-matrix-grid .ls-matrix-tex code{font-size:8px;white-space:pre}
+.ls-sinus-matrix-grid .ls-matrix-tex{position:relative;min-height:90px;max-height:220px;overflow:auto;border:1px solid var(--ls-line);background:#fff;padding:6px 7px;font-size:12px;line-height:1.2}
+.ls-sinus-matrix-grid .ls-matrix-tex .math{font-size:12px}
+.ls-sinus-matrix-grid .ls-matrix-tex code{font-size:12px;white-space:pre}
 .ls-sinus-matrix-grid figure{min-width:0}
 .ls-sinus-matrix-legend{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
 

@@ -1692,16 +1692,20 @@
   };
 
   var neuralNeuronStep = Object.assign({}, insideSteps[0], {
-    title: DE ? "Ein Neuron" : "One neuron"
+    title: DE ? "Was sind neuronale Netze?" : "What are neural networks?",
+    kicker: ""
   });
   var neuralLossStep = Object.assign({}, gradientSteps[0], {
-    title: DE ? "Die Loss-Landschaft" : "The loss landscape"
+    title: DE ? "Was sind neuronale Netze?" : "What are neural networks?",
+    kicker: ""
   });
   var neuralActivationStep = Object.assign({}, activationSteps[0], {
-    title: DE ? "Aktivierungsfunktionen" : "Activation functions"
+    title: DE ? "Was sind neuronale Netze?" : "What are neural networks?",
+    kicker: ""
   });
   var neuralLargeStep = Object.assign({}, neuralLargeSteps[0], {
-    title: DE ? "Drei Schichten, 32×32×32" : "Three layers, 32×32×32"
+    title: DE ? "Was sind neuronale Netze?" : "What are neural networks?",
+    kicker: ""
   });
   var neuralMlpStep = Object.assign({}, mlpSteps[0], {
     title: DE ? "Der Raum biegt sich" : "Space bends"
