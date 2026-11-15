@@ -84,6 +84,8 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] Wahrheitsplot „Viele Sätze, eine Wahrheit“: Satz 2 knapp unter die
   Kurve, Satz 4 als unsichere, aber wahre Aussage, Satz 5 weiter weg mit rotem
   X.
+- [done] Schichtenformel im Beobachte-Text von `$$…$$` auf `$…$` umgestellt.
+- [done] „Ceres“ im Ceres-Text fett statt kursiv; nur das Wort ist hervorgehoben.
 - [pending] Nach der Übernahme prüfen, ob die Gruppen und Teasers in EN/DE
   konsistent sind; Tests erst auf Anweisung.
 

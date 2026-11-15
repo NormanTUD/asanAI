@@ -1865,9 +1865,9 @@ h1,h2,h3,h4{
 .ls-lang-truth-list{list-style:none;margin:0;padding:0;display:grid;gap:3px;align-content:start;font:var(--ls-fs-micro)/1.35 "Open Sans",sans-serif;color:var(--ls-soft);min-height:0;overflow:auto}
 .ls-lang-truth-list li{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:5px;align-items:baseline;border-bottom:1px solid var(--ls-line);padding:2px 0}
 .ls-lang-truth-list b{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-green);white-space:nowrap}
-.ls-lang-truth-list .is-false b{color:var(--ls-lilac)}
+.ls-lang-truth-list .is-false b{color:#c62828}
 .ls-lang-truth-dot{display:grid;place-items:center;width:15px;height:15px;border:1px solid var(--ls-line);background:#fff;font:700 8px/1 "Open Sans",sans-serif;color:var(--ls-muted)}
-.ls-lang-truth-list .is-false .ls-lang-truth-dot{border-color:var(--ls-lilac);color:var(--ls-lilac)}
+.ls-lang-truth-list .is-false .ls-lang-truth-dot{border-color:#c62828;color:#c62828}
 .ls-lang-truth-note{margin:0;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
 @media (max-width:760px){.ls-lang-truth-grid{grid-template-columns:1fr}.ls-lang-truth-plot{min-height:170px}}
 

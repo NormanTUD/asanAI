@@ -31,8 +31,8 @@
       items: [
         { t: "Berlin liegt an der Spree.", d: 0.06, ok: true },
         { t: "Die Spree fließt durch Berlin.", d: -0.02, ok: true },
-        { t: "Der Fluss, der durch Berlin läuft, ist die Spree.", d: 0.24, ok: true },
-        { t: "Kann schon sein, dass Berlin an der Spree liegt.", d: 0.05, ok: true },
+        { t: "Der Fluss, der durch Berlin läuft, ist die Spree.", d: 0.14, ok: true },
+        { t: "Kann schon sein, dass Berlin an der Spree liegt.", d: 0.24, ok: true },
         { t: "Berlin liegt an der Elbe.", d: 1.45, ok: false }
       ]
     } : {
@@ -42,8 +42,8 @@
       items: [
         { t: "The Nile flows through Egypt.", d: 0.06, ok: true },
         { t: "Egypt lies on the Nile.", d: -0.02, ok: true },
-        { t: "The river that runs through Egypt is the Nile.", d: 0.24, ok: true },
-        { t: "It may well be that Egypt lies on the Nile.", d: 0.05, ok: true },
+        { t: "The river that runs through Egypt is the Nile.", d: 0.14, ok: true },
+        { t: "It may well be that Egypt lies on the Nile.", d: 0.24, ok: true },
         { t: "The Nile flows through Brazil.", d: 1.45, ok: false }
       ]
     };
@@ -161,18 +161,22 @@
       function Y(d) { return h - padB - (d / yMax) * (h - padT - padB); }
       function truthCurve(x) { return 0.10 + 0.06 * Math.sin(x * Math.PI * 1.7); }
       function curveY(x) { return Y(truthCurve(x)); }
-      // green band around the truth curve, like the true orbit in the Gauss plot
-      ctx.beginPath();
-      for (var ci = 0; ci <= 80; ci++) {
-        var cx0 = ci / 80;
-        var px0 = padL + cx0 * (w - padL - padR);
-        if (ci === 0) ctx.moveTo(px0, curveY(cx0) - 9); else ctx.lineTo(px0, curveY(cx0) - 9);
+      // Truth band: green on the line, fading through red at the edges.
+      var red = "#c62828";
+      var bandOuter = 24;
+      var bandStep = 2;
+      for (var bx = padL; bx <= w - padR; bx += bandStep) {
+        var bt = (bx - padL) / Math.max(1, w - padL - padR);
+        var by = curveY(bt);
+        var bg = ctx.createLinearGradient(0, by - bandOuter, 0, by + bandOuter);
+        bg.addColorStop(0, "rgba(198,40,40,0)");
+        bg.addColorStop(0.22, "rgba(198,40,40,0.10)");
+        bg.addColorStop(0.5, "rgba(99,164,75,0.16)");
+        bg.addColorStop(0.78, "rgba(198,40,40,0.10)");
+        bg.addColorStop(1, "rgba(198,40,40,0)");
+        ctx.fillStyle = bg;
+        ctx.fillRect(bx, by - bandOuter, bandStep + 1, bandOuter * 2);
       }
-      for (var ci2 = 80; ci2 >= 0; ci2--) {
-        var cx1 = ci2 / 80;
-        ctx.lineTo(padL + cx1 * (w - padL - padR), curveY(cx1) + 9);
-      }
-      ctx.closePath(); ctx.fillStyle = V.alpha(C.green, 0.10); ctx.fill();
       ctx.strokeStyle = C.green; ctx.lineWidth = 2.6;
       ctx.beginPath();
       for (var ci3 = 0; ci3 <= 80; ci3++) {
@@ -204,10 +208,10 @@
           ctx.fillStyle = C.blue; ctx.fill();
           ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
         } else {
-          ctx.strokeStyle = C.coral; ctx.lineWidth = 2.8;
+          ctx.strokeStyle = red; ctx.lineWidth = 2.8;
           ctx.beginPath(); ctx.moveTo(x - 6, y - 6); ctx.lineTo(x + 6, y + 6); ctx.moveTo(x + 6, y - 6); ctx.lineTo(x - 6, y + 6); ctx.stroke();
         }
-        ctx.fillStyle = item.ok ? C.ink : C.coral;
+        ctx.fillStyle = item.ok ? C.ink : red;
         ctx.font = '700 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
         ctx.textAlign = "center"; ctx.textBaseline = "bottom";
         ctx.fillText(String(i + 1), x, y - 9);
