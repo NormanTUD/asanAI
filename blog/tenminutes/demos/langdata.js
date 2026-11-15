@@ -104,8 +104,6 @@
     var mode = "all";
     var showSummary = false;
     var summaryStep = 0;
-    var summaryStages = [];
-    var summaryBridge = null;
     var tag = el.querySelector(".ls-lang-tag");
     var text = el.querySelector(".ls-lang-text");
     var gloss = el.querySelector(".ls-lang-gloss");

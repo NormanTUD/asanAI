@@ -215,7 +215,9 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   zu 30 %/50 %.
 - [done] Daten-Demo: Stufe 1 erscheint beim Laden; Fine-Tuning (Stufe 2)
   erscheint erst nach dem nächsten „Weiter“. Ein weiterer „Weiter“-Klick geht
-  zur nächsten Folie; „Zurück“ blendet Stufe 2 wieder aus.
+  zur nächsten Folie; „Zurück“ blendet Stufe 2 wieder aus. Ursache für die
+  unsichtbaren Stufen war eine doppelte `summaryStages`/`summaryBridge`-
+  Deklaration, die die DOM-Referenzen überschrieben hat; entfernt.
 - [done] Scrollbar-Flackern links analysiert: die `mask-image` auf dem
   Scroll-Container und ein nicht reservierter Scrollbar-Platz waren die
   Ursache. Maske entfernt, `scrollbar-gutter: stable`, `overflow-x: hidden`
@@ -224,3 +226,11 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   3D reicht nicht, 1D hat auch nicht gereicht; die Tabelle zeigt 64 von 4096
   Dimensionen, Auslassungspunkte rechts und unten, klickbare Token-Zeilen und
   eine Positionsanzeige. Demo `highdim` überarbeitet.
+- [done] „Drei Dimensionen, ein Schatten“: Weiter/Pfeiltaste geht jetzt durch
+  alle EXAMPLES (König−Mann+Frau, Mann+Macht, Prinz+Macht, Geschlecht,
+  Machtrichtung, alle Richtungen); danach kommt die Highdim-Unterfolie.
+- [done] Q/K/V-Demo: deutsche Tokens („Das Tier lief nicht über die Straße,
+  weil es zu müde war“) mit denselben Head-Rollen; Layout nach unten zentriert,
+  damit die Aufmerksamkeitsbögen nicht oben abgeschnitten werden.
+- [done] Code-Attention heißt jetzt „Attention verschiebt Punkte und vergisst
+  Oberflächen“ und ist DE/EN vollständig übersetzt.

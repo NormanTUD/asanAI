@@ -876,6 +876,34 @@
       ensureLoop();
     }
 
+    function currentExampleIndex() {
+      for (var i = 0; i < EXAMPLES.length; i++) {
+        if (EXAMPLES[i].id === st.arithmetic) return i;
+      }
+      return -1;
+    }
+    function nextExample() {
+      if (st.mode !== "space" || st.dim !== 2) return false;
+      var idx = currentExampleIndex();
+      if (idx < 0) idx = -1;
+      if (idx >= EXAMPLES.length - 1) return false;
+      st.arithmetic = EXAMPLES[idx + 1].id;
+      syncControls();
+      draw();
+      ensureLoop();
+      return true;
+    }
+    function prevExample() {
+      if (st.mode !== "space" || st.dim !== 2) return false;
+      var idx = currentExampleIndex();
+      if (idx <= 0) return false;
+      st.arithmetic = EXAMPLES[idx - 1].id;
+      syncControls();
+      draw();
+      ensureLoop();
+      return true;
+    }
+
     function hitAt(x, y) {
       var best = null, bd = 22;
       hits.forEach(function (h) {
@@ -1075,6 +1103,8 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleReserve);
     return {
       update: function (s) { applyState(s || {}); },
+      next: nextExample,
+      prev: prevExample,
       pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } },
       resume: function () { ensureLoop(); },
       resize: resize,

@@ -156,7 +156,7 @@
       title: "Drei Dimensionen, ein Schatten",
       body: "Eine dritte Achse hebt die Ebene in einen Raum. Jetzt können dieselben Punkte neben Macht und Geschlecht auch Rang tragen. Jede Ansicht ist eine Projektion: Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Jedes Wort ist ein Pfeil vom Ursprung: Die Richtung trägt die Bedeutung, die Länge ist Nebensache. Ziehe die Ansicht und beobachte, welche Richtung stabil bleibt. Die Tabelle zeigt zuerst die drei Dimensionen, die du siehst; ein Klick auf „4096 Dimensionen“ wechselt direkt zur vollen Rechner-Tabelle.",
       watch: "Ziehe die Ansicht. Welche Richtung bleibt stabil? Öffne am Ende die Tabelle der drei Dimensionen und danach die 4096-Dimensionen-Tabelle.",
-      demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "directions", tables: true },
+      demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "king-man-woman", tables: true },
       context: "Ein echtes Modell arbeitet in Tausenden Dimensionen. Die drei Achsen sind eine Projektion, kein vollständiges Bild. Die Perspektive kann Relationen zeigen, die in der Projektion verdeckt sind. Mehr Dimensionen tragen mehr unabhängige Beziehungen: Temperatur, Geschlecht, Macht, Thema, Sprache, Stil. Zwei oder drei Achsen kollidieren zu schnell.",
       deep: "Superposition und Polysemantik erklären, warum ein Neuron mehrere Bedeutungen tragen kann. Die Karte ist nützlich, aber sie ist statistisch. Sie zeigt, was im Training häufig war, nicht was wahr ist. Die Zahlen der 4096-Tabelle sind ein Ausschnitt, keine echten GPT-Gewichte. Ein echtes Modell lernt jede Koordinate aus Text; keine einzelne Spalte hat für sich eine Bedeutung. Die Geometrie entsteht im Zusammenspiel.",
       boxes: [
@@ -1642,16 +1642,22 @@
   };
   var codeAttentionSubstep = {
     kicker: "Attention",
-    title: "Attention verschiebt Bedeutungen in Kontexte",
-    body: "„def quick_sort“ und „function quickSort“ sehen verschieden aus, meinen aber dasselbe: einen abstrakten Funktionsaufruf, der auf einen abstrakten Quicksort-Knoten zeigt. Die Unterschiede sind Oberflächenrauschen: Sprache, Schreibweise, Satzzeichen. Attention liest den Kontext, erkennt, was relevant ist, und verschiebt die Tokens auf die gemeinsame abstrakte Repräsentation. Klicke Beide, Python oder JavaScript.",
-    watch: "Klicke die drei Modi. Landen def und function auf demselben Knoten?",
+    title: DE ? "Attention verschiebt Punkte und vergisst Oberflächen" : "Attention moves points and forgets surface forms",
+    body: DE
+      ? "„def quick_sort“ und „function quickSort“ sehen verschieden aus, meinen aber dasselbe: einen abstrakten Funktionsaufruf, der auf einen abstrakten Quicksort-Knoten zeigt. Die Unterschiede sind Oberflächenrauschen: Sprache, Schreibweise, Satzzeichen. Attention liest den Kontext, erkennt, was relevant ist, und verschiebt die Tokens auf die gemeinsame abstrakte Repräsentation. Klicke Beide, Python oder JavaScript."
+      : "“def quick_sort” and “function quickSort” look different but mean the same thing: an abstract function call pointing to an abstract quicksort node. The differences are surface noise: language, spelling, punctuation. Attention reads the context, recognises what matters, and moves the tokens onto the shared abstract representation. Click Both, Python, or JavaScript.",
+    watch: DE ? "Klicke die drei Modi. Landen def und function auf demselben Knoten?" : "Click the three modes. Do def and function land on the same node?",
     demoState: { scene: "codesemantic", semMode: "both" },
-    context: "Die linke Seite ist die Oberfläche: verschiedene Schreibweisen. Die rechte Seite ist die abstrakte Bedeutung: Funktionsaufruf → Quicksort. Attention entfernt nicht die Wörter, sondern verschiebt ihre Repräsentation.",
-    deep: "Dasselbe Muster gilt für andere Paare: class/struct, return/yield, if/when. Die Oberfläche variiert mit Sprache und Stil; die abstrakte Rolle bleibt. In einem echten Modell sind diese Richtungen gelernt und viel komplexer.",
-    boxes: [
+    context: DE ? "Die linke Seite ist die Oberfläche: verschiedene Schreibweisen. Die rechte Seite ist die abstrakte Bedeutung: Funktionsaufruf → Quicksort. Attention entfernt nicht die Wörter, sondern verschiebt ihre Repräsentation." : "The left side is the surface: different spellings. The right side is the abstract meaning: function call → quicksort. Attention does not delete the words; it moves their representation.",
+    deep: DE ? "Dasselbe Muster gilt für andere Paare: class/struct, return/yield, if/when. Die Oberfläche variiert mit Sprache und Stil; die abstrakte Rolle bleibt. In einem echten Modell sind diese Richtungen gelernt und viel komplexer." : "The same pattern holds for other pairs: class/struct, return/yield, if/when. The surface varies with language and style; the abstract role stays. In a real model these directions are learned and far more complex.",
+    boxes: DE ? [
       box("sem-1", "Technik", "Oberfläche und Bedeutung", "def und function sind verschiedene Oberflächen für dieselbe Rolle: eine Funktionsdefinition. quick_sort und quickSort sind verschiedene Oberflächen für dieselbe Rolle: Quicksort. Attention gewichtet den Kontext und verschiebt die Tokens auf gemeinsame Richtungen."),
       box("sem-2", "Beispiel", "Andere Paare", "class/struct, return/yield, if/when: Die Schreibweise ändert sich, die abstrakte Rolle nicht. Das Modell lernt diese gemeinsamen Richtungen aus vielen Kontexten."),
       box("sem-3", "Grenze", "Was ist vereinfacht?", "Die Demo zeigt wenige Wörter und zwei abstrakte Knoten. Ein echtes Modell hat Tausende Dimensionen und viele überlappende Rollen. Die Pfeile sind eine didaktische Vereinfachung, keine Messung.")
+    ] : [
+      box("sem-1", "Technique", "Surface and meaning", "def and function are different surfaces for the same role: a function definition. quick_sort and quickSort are different surfaces for the same role: quicksort. Attention weights the context and moves the tokens onto shared directions."),
+      box("sem-2", "Example", "Other pairs", "class/struct, return/yield, if/when: the spelling changes, the abstract role does not. The model learns these shared directions from many contexts."),
+      box("sem-3", "Limit", "What is simplified?", "The demo shows a few words and two abstract nodes. A real model has thousands of dimensions and many overlapping roles. The arrows are a didactic simplification, not a measurement.")
     ],
     sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "Schichten bilden linguistische Rollen heraus.", en: "Layers develop linguistic roles." } }]
   };
@@ -1709,7 +1715,7 @@
     body: DE
       ? "Jedes Token erzeugt drei Vektoren: Query, Key und Value. Der Query fragt, der Key antwortet, der Value trägt die Information. Attention vergleicht Query und Key, macht aus den Scores mit Softmax Gewichte und mischt die Values. Mehrere Heads tun das parallel mit eigenen Gewichten: Ein Head kann nach dem Subjekt fragen, ein anderer nach dem Ort."
       : "Every token produces three vectors: query, key, and value. The query asks, the key answers, and the value carries the information. Attention compares query and key, turns the scores into weights with softmax, and mixes the values. Multiple heads do this in parallel with their own weights: one head can ask for the subject, another for the location.",
-    watch: DE ? "Wechsle die Heads: Head 1 zeigt auf „animal“ (Subjekt), Head 2 auf „street“ (Ort)." : "Switch the heads: head 1 points to “animal” (the subject), head 2 to “street” (the location).",
+    watch: DE ? "Wechsle die Heads: Head 1 zeigt auf „Tier“ (Subjekt), Head 2 auf „Straße“ (Ort)." : "Switch the heads: head 1 points to “animal” (the subject), head 2 to “street” (the location).",
     demoState: { scene: "qkv", head: 0 },
     context: DE ? "Die Scores werden durch sqrt(d_k) geteilt, damit sie in hohen Dimensionen nicht zu groß werden. Jede Query-Zeile summiert nach Softmax zu 1." : "The scores are divided by sqrt(d_k) so they do not grow too large in high dimensions. Each query row sums to 1 after softmax.",
     deep: DE ? "Die Heads sind nicht von Hand programmiert; sie spezialisieren sich im Training. Die zwei Muster in der Demo sind didaktisch: Head 1 fragt nach dem Subjekt, Head 2 nach dem Ort." : "The heads are not hand-programmed; they specialise during training. The two patterns in the demo are didactic: head 1 asks for the subject, head 2 for the location.",

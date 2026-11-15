@@ -5,7 +5,7 @@
   var clamp = core.clamp, lerp = core.lerp, ease = core.ease;
   function qkvScene(root, api) {
     var DE = api.lang === "de";
-    var tokens = ["The", "animal", "did", "not", "cross", "the", "street", "because", "it", "was", "too", "tired"];
+    var tokens = DE ? ["Das", "Tier", "lief", "nicht", "über", "die", "Straße", "weil", "es", "zu", "müde", "war"] : ["The", "animal", "did", "not", "cross", "the", "street", "because", "it", "was", "too", "tired"];
     var query = 8;
     function norm(a) { var s = a.reduce(function (x, y) { return x + y; }, 0); return a.map(function (v) { return v / s; }); }
     var W = [
@@ -21,7 +21,7 @@
       '<div class="ls-qkv-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
       '<div class="ls-qkv-vectors" aria-hidden="true"></div>' +
       '<div class="ls-qkv-controls">' +
-        '<span class="ls-qkv-query">' + (DE ? "Query" : "query") + ' <b>it</b></span>' +
+        '<span class="ls-qkv-query">' + (DE ? "Query" : "query") + ' <b>' + (DE ? "es" : "it") + '</b></span>' +
         '<button type="button" class="ls-chip is-on" data-head="0">' + (DE ? "Head 1 · Wer?" : "Head 1 · who?") + '</button>' +
         '<button type="button" class="ls-chip" data-head="1">' + (DE ? "Head 2 · Wo?" : "Head 2 · where?") + '</button>' +
       '</div>' +
@@ -71,7 +71,7 @@
       var w = size.w, h = size.h, pad = 12, gap = 4;
       var bw = (w - pad * 2 - gap * (tokens.length - 1)) / tokens.length;
       var bh = Math.min(30, Math.max(22, h * 0.09));
-      var y = 30;
+      var y = Math.max(64, Math.min(104, h * 0.36));
       return { w: w, h: h, pad: pad, gap: gap, bw: bw, bh: bh, y: y };
     }
     function draw() {
@@ -93,7 +93,7 @@
         var a = weights[i];
         var x = centers[i];
         var mx = (qx + x) / 2;
-        var lift = Math.min(72, 28 + Math.abs(qx - x) * 0.22);
+        var lift = Math.min(60, 20 + Math.abs(qx - x) * 0.18, Math.max(8, y - 18));
         ctx.strokeStyle = color;
         ctx.globalAlpha = 0.10 + Math.min(0.78, a * 5.5);
         ctx.lineWidth = 0.7 + Math.min(9, a * 26);
@@ -114,7 +114,7 @@
           if (i === query || weights[i] < 0.10) return;
           var x = centers[i];
           var mx = (qx + x) / 2;
-          var lift = Math.min(72, 28 + Math.abs(qx - x) * 0.22);
+          var lift = Math.min(60, 20 + Math.abs(qx - x) * 0.18, Math.max(8, y - 18));
           for (var k = 0; k < 2; k++) {
             var u = ((now / 1100) + i * 0.13 + k * 0.5) % 1;
             var px = (1 - u) * (1 - u) * x + 2 * (1 - u) * u * mx + u * u * qx;
@@ -153,7 +153,7 @@
         ctx.fillText(tok, x + bw / 2, y + bh / 2 + 0.5);
       });
       // weight bars
-      var base = y + bh + 82;
+      var base = y + bh + 70;
       var maxBar = Math.max(34, h - base - 26);
       tokens.forEach(function (tok, i) {
         var a = weights[i];
