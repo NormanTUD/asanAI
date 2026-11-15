@@ -2082,3 +2082,13 @@ h1,h2,h3,h4{
 .ls-lang-bubble{max-width:94%;padding:6px 8px;border:1px solid var(--ls-line);font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-ink)}
 .ls-lang-bubble--user{align-self:flex-start;margin-left:36px;max-width:calc(94% - 36px);background:rgba(18,117,172,.10);border-color:rgba(18,117,172,.28)}
 .ls-lang-bubble--agent{align-self:flex-start;background:rgba(99,164,75,.12);border-left:3px solid var(--ls-green)}
+
+/* Cross-entropy: probabilities, loss gauge, gradient and training step */
+.ls-ce-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto;gap:6px;padding:2px}
+.ls-ce-stage{position:relative;min-height:220px;border:1px solid var(--ls-line);background:var(--ls-paper-2);overflow:hidden}
+.ls-ce-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.ls-ce-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ls-ce-control-label{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.08em}
+.ls-ce-targets{display:flex;gap:4px;flex-wrap:wrap}
+.ls-ce-readout{font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted);min-height:1.4em;display:flex;gap:12px;flex-wrap:wrap}
+.ls-ce-readout b{color:var(--ls-ink);font-weight:600}
