@@ -32,7 +32,7 @@
         { t: "Berlin liegt an der Spree.", d: 0.06, ok: true },
         { t: "Die Spree fließt durch Berlin.", d: -0.02, ok: true },
         { t: "Der Fluss, der durch Berlin läuft, ist die Spree.", d: 0.14, ok: true },
-        { t: "Kann schon sein, dass Berlin an der Spree liegt.", d: 0.24, ok: true },
+        { t: "Kann schon sein, dass Berlin an der Spree liegt.", d: 0.30, ok: true, label: "relativ nah" },
         { t: "Berlin liegt an der Elbe.", d: 1.45, ok: false }
       ]
     } : {
@@ -43,7 +43,7 @@
         { t: "The Nile flows through Egypt.", d: 0.06, ok: true },
         { t: "Egypt lies on the Nile.", d: -0.02, ok: true },
         { t: "The river that runs through Egypt is the Nile.", d: 0.14, ok: true },
-        { t: "It may well be that Egypt lies on the Nile.", d: 0.24, ok: true },
+        { t: "It may well be that Egypt lies on the Nile.", d: 0.30, ok: true, label: "relatively near" },
         { t: "The Nile flows through Brazil.", d: 1.45, ok: false }
       ]
     };
@@ -145,7 +145,7 @@
     if (truthHead) truthHead.textContent = TRUTH.title;
     if (truthNote) truthNote.textContent = TRUTH.note;
     if (truthList) truthList.innerHTML = TRUTH.items.map(function (item, i) {
-      return '<li class="' + (item.ok ? "is-near" : "is-false") + '"><span class="ls-lang-truth-dot">' + (i + 1) + '</span><span>' + api.esc(item.t) + '</span><b>' + (item.ok ? (DE ? "nah" : "near") : (DE ? "falsch" : "false")) + '</b></li>';
+      return '<li class="' + (item.ok ? "is-near" : "is-false") + '"><span class="ls-lang-truth-dot">' + (i + 1) + '</span><span>' + api.esc(item.t) + '</span><b>' + (item.label || (item.ok ? (DE ? "nah" : "near") : (DE ? "falsch" : "false"))) + '</b></li>';
     }).join("");
     function drawTruth() {
       if (!truthCanvas) return;
@@ -163,16 +163,17 @@
       function curveY(x) { return Y(truthCurve(x)); }
       // Truth band: green on the line, fading through red at the edges.
       var red = "#c62828";
-      var bandOuter = 24;
+      var bandOuter = 32;
       var bandStep = 2;
       for (var bx = padL; bx <= w - padR; bx += bandStep) {
         var bt = (bx - padL) / Math.max(1, w - padL - padR);
         var by = curveY(bt);
         var bg = ctx.createLinearGradient(0, by - bandOuter, 0, by + bandOuter);
         bg.addColorStop(0, "rgba(198,40,40,0)");
-        bg.addColorStop(0.22, "rgba(198,40,40,0.10)");
-        bg.addColorStop(0.5, "rgba(99,164,75,0.16)");
-        bg.addColorStop(0.78, "rgba(198,40,40,0.10)");
+        bg.addColorStop(0.15, "rgba(198,40,40,0.03)");
+        bg.addColorStop(0.28, "rgba(99,164,75,0.16)");
+        bg.addColorStop(0.72, "rgba(99,164,75,0.16)");
+        bg.addColorStop(0.88, "rgba(198,40,40,0.06)");
         bg.addColorStop(1, "rgba(198,40,40,0)");
         ctx.fillStyle = bg;
         ctx.fillRect(bx, by - bandOuter, bandStep + 1, bandOuter * 2);

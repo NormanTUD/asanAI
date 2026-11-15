@@ -836,6 +836,14 @@
           ? "Im Korpus stecken auch Menschenfragen, aber prozentual viel weniger als Webseiten, Bücher und Code. Aus Wikipedia lernt das Modell, dass Paris die Hauptstadt von Frankreich ist. Dass auf „Was ist die Hauptstadt von Frankreich?“ die Antwort „Paris“ folgt, lernt es in dieser Phase aus Frage-Antwort-Daten. Dabei gilt: Zuerst trainiert man auf dem großen Datensatz, dann auf einem kleinen, damit das Modell menschlich interagieren lernt."
           : "The corpus also contains human questions, but a much smaller percentage than websites, books, and code. From Wikipedia the model learns that Paris is the capital of France. That “What is the capital of France?” is answered with “Paris” is learned in this phase from question-answer data. The order is: first train on the large dataset, then on a small one so that the model learns to interact with people.",
         state: {}
+      },
+      {
+        label: DE ? "Eine Wahrheit, viele Sprachen" : "One truth, many languages",
+        title: DE ? "Zeigen alle auf denselben Sachverhalt?" : "Do they all point to the same fact?",
+        text: DE
+          ? "Derselbe Sachverhalt in vielen Sprachen: „Sonnenblumen sind die besten Blumen“ heißt in jeder Sprache anders, meint aber dasselbe. Die Zeichen und Tokens ändern sich, der Inhalt bleibt. Ein Modell soll solche Sätze nach Bedeutung beurteilen, nicht nach den konkreten Zeichen. Deshalb helfen mehrsprachige Daten: Wikipedia, Reddit, Bücher und Fragen beschreiben denselben Sachverhalt oft in verschiedenen Formen."
+          : "The same fact in many languages: “Sunflowers are the best flowers” looks different in every language but means the same thing. The characters and tokens change; the content stays. A model should judge such sentences by meaning, not by the concrete characters. That is why multilingual data helps: Wikipedia, Reddit, books, and questions often describe the same fact in different forms.",
+        state: { mode: "languages" }
       }
     ],
     inherit: false,
@@ -871,7 +879,7 @@
       ? "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste sinnvolle Wort vorherzusagen."
       : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next sensible word.",
     watch: DE ? "Sequenzielles Machine Learning geschieht in Schichten. Die erste Schicht wendet man direkt auf die Daten an, die zweite auf die Ergebnisse der ersten, und so weiter; dadurch verschachteln sich Funktionen: $\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Daten}\\right)\\right)\\right)$ Die erste Schicht sucht nach Mustern im Text, die zweite nach Mustern im Ergebnis der ersten Schicht, und so weiter. Mit dem Residual Stream kann jede Schicht auch Muster im Text <i>und</i> in den Ergebnissen der vorherigen Schichten finden." : "Sequential machine learning happens in layers. The first layer is applied directly to the data, the second to the results of the first, and so on; this nests functions: $\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Data}\\right)\\right)\\right)$ The first layer looks for patterns in the text, the second for patterns in the result of the first layer, and so on. With the residual stream, each layer can also find patterns in the text <i>and</i> in the results of the previous layers.",
-    demoState: { scene: "blocks" },
+    demoState: { scene: "blocks", resetKey: "architecture", start: 0 },
     inherit: false,
     questionGroups: [
       {
@@ -901,7 +909,7 @@
       ? "Damit sind die Bausteine einmal durch. In den nächsten Tagen gehen wir sie einen nach dem anderen durch: was jeder macht, wie sie zusammenspielen und wie daraus in einer Schleife die Vorhersage des nächsten Wortes entsteht. Die Übersicht ist der Fahrplan, nicht die Prüfung; du musst dir noch nicht alles merken. Wir zoomen in den nächsten Folien in jeden Schritt hinein und bauen ihn dort in Ruhe auf. Zuerst kommt der Tokenizer, dann Embedding und Position, dann Attention und FFN, am Ende die Vorhersage."
       : "That completes the building blocks for now. Over the next days we will go through them one by one: what each one does, how they work together, and how the loop turns them into a prediction of the next word. The overview is a roadmap, not a test; you do not need to remember everything yet. In the next slides we zoom into each step and build it up calmly. First comes the tokenizer, then embedding and position, then attention and FFN, and finally the prediction.",
     watch: DE ? "Gehe die fünf Ebenen noch einmal durch. Welche willst du zuerst verstehen?" : "Walk through the five levels again. Which one do you want to understand first?",
-    demoState: { scene: "blocks" },
+    demoState: { scene: "blocks", resetKey: "roadmap", start: 0 },
     inherit: false,
     questionGroups: [
       {
@@ -1608,38 +1616,6 @@
     sources: []
   };
 
-  var dataLanguagesStep = DE ? {
-    kicker: "Sprachen",
-    title: "Eine Wahrheit, viele Sprachen",
-    body: "„Sonnenblumen sind die besten Blumen“ ist derselbe Gedanke in vielen Sprachen. Die Schrift und die Tokens ändern sich, der Sachverhalt bleibt. LLMs lernen, ähnliche Sätze unabhängig von der Sprache nach Bedeutung zu bewerten, nicht nach den konkreten Zeichen. Attention und FFN tragen diese Bedeutung durch die Schichten. Genau solche parallelen Beschreibungen machen mehrsprachige Daten wertvoll.",
-    watch: "Lies die sechs Sätze. Wo ist der Inhalt gleich, wo ändert sich nur die Schrift?",
-    demoState: { scene: "langdata", mode: "languages" },
-    context: "Die Sätze sind ein kleines Beispiel, kein Übersetzungskorpus. In echten Daten sind Übersetzungen selten eins zu eins; manche Sprachen brauchen mehr Tokens für denselben Inhalt (Petrov et al., 2023).",
-    deep: "Mehrsprachige Daten helfen, gemeinsame Muster zu teilen. Sie sind kein Ersatz für saubere Daten: Seltene Sprachen und seltene Themen bleiben benachteiligt, wenn sie im Korpus selten sind.",
-    boxes: [
-      box("data-l-1", "Beispiel", "Gleicher Inhalt", "Deutsch, Englisch, Französisch, Japanisch, Arabisch und Chinesisch beschreiben hier denselben Satz. Die Zeichen unterscheiden sich; der gemeinte Sachverhalt bleibt."),
-      box("data-l-2", "Grenze", "Was ist vereinfacht?", "Die Beispiele sind kurze, saubere Sätze. Ein echtes Korpus enthält Übersetzungen, Fehler, Varianten und Widersprüche; die Mehrsprachigkeit ist ein Signal, kein Wahrheitsbeweis.")
-    ],
-    sources: [
-      { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425", why: { de: "Tokenisierung kann Sprachen unterschiedlich teuer machen.", en: "Tokenization can make languages differently expensive." } }
-    ]
-  } : {
-    kicker: "Languages",
-    title: "One truth, many languages",
-    body: "“Sunflowers are the best flowers” is the same thought in many languages. The script and the tokens change; the situation stays. LLMs learn to judge similar sentences by meaning, independent of the script, not by the concrete characters. Attention and FFN carry that meaning through the layers. Such parallel descriptions make multilingual data valuable.",
-    watch: "Read the six sentences. Where is the content the same, where does only the script change?",
-    demoState: { scene: "langdata", mode: "languages" },
-    context: "The sentences are a small example, not a translation corpus. Real translations are rarely one-to-one; some languages need more tokens for the same content (Petrov et al., 2023).",
-    deep: "Multilingual data helps share patterns. It is no substitute for clean data: rare languages and topics stay disadvantaged when they are rare in the corpus.",
-    boxes: [
-      box("data-l-1", "Example", "Same content", "German, English, French, Japanese, Arabic, and Chinese describe the same sentence here. The characters differ; the meaning stays."),
-      box("data-l-2", "Limit", "What is simplified?", "The examples are short, clean sentences. A real corpus contains translations, errors, variants, and contradictions; multilingualism is a signal, not proof of truth.")
-    ],
-    sources: [
-      { label: "Petrov et al. (2023), Language Model Tokenizers Introduce Unfairness Between Languages", url: "https://arxiv.org/abs/2305.15425", why: { de: "Tokenisierung kann Sprachen unterschiedlich teuer machen.", en: "Tokenization can make languages differently expensive." } }
-    ]
-  };
-
   var dataScaleStep = DE ? {
     kicker: "Datenmenge",
     title: "Sehr viele, sehr schmutzige Daten",
@@ -1687,7 +1663,7 @@
         title: "Gauß, Ceres und die Daten",
         body: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Daraus entstanden die Methode der kleinsten Quadrate und der mittlere quadratische Fehler (MSE), mit dem man noch heute neuronale Netze trainiert.",
         teaser: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Daraus entstanden die Methode der kleinsten Quadrate und der mittlere quadratische Fehler (MSE), mit dem man noch heute neuronale Netze trainiert.",
-        watch: "Ziehe den Slider oder klicke weiter und sieh, wie mit besseren Teleskopen die Daten genauer werden. Reale Daten liegen genauso um eine Wahrheit herum. Texte zum Beispiel können komplett richtig, teilweise richtig oder komplett falsch sein.",
+        watch: "Schau dir die beiden Bilder an. Danach wird das Teleskop Schritt für Schritt besser.",
         demoState: { scene: "gauss", phase: "intro" },
         inherit: false,
         questionGroups: [
@@ -1724,7 +1700,7 @@
         title: "Gauß, Ceres und die Daten",
         body: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
         teaser: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
-        watch: "Drücke Weiter und beobachte, wie die Wolke enger wird.",
+        watch: "Ziehe den Slider oder klicke weiter und sieh, wie mit besseren Teleskopen die Daten genauer werden. Reale Daten liegen genauso um eine Wahrheit herum. Texte zum Beispiel können komplett richtig, teilweise richtig oder komplett falsch sein.",
         demoState: { scene: "gauss", phase: "demo", sigma: 2 },
         context: "Die grüne Linie ist die wahre Bahn; die blauen Punkte sind Beobachtungen; die Glockenkurve rechts zeigt die Fehlerverteilung. Die Daten sind synthetisch, nicht Piazzis originale Messungen.",
         deep: "Ohne Ausgleich müsste man eine Bahn durch einen einzelnen Punkt legen. Gauß nutzte alle Beobachtungen zusammen.",
@@ -1978,7 +1954,7 @@
     ]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep, bookSteps[0]];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, dataTruthStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep, bookSteps[0]];
 
   var day = {
     id: "intuition",

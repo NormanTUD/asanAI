@@ -92,6 +92,7 @@
       }
     ];
     var index = 0;
+    var resetKey = null;
     var trajDemo = null;
     var positionDemo = null;
     var el = document.createElement("div");
@@ -437,7 +438,11 @@
     window.addEventListener("resize", drawMinis);
     window.addEventListener("tm:theme", function () { C = api.colors(); renderDetail(); });
     return {
-      update: function () {},
+      update: function (s) {
+        if (!s || s.resetKey === undefined || s.resetKey === resetKey) return;
+        resetKey = s.resetKey;
+        setIndex(typeof s.start === "number" ? s.start : 0);
+      },
       next: nextInternal,
       prev: prevInternal,
       onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },

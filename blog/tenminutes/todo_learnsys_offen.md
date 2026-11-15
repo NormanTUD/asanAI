@@ -120,3 +120,14 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   kurzer Hinweis auf die Großkreis-Metrik im Text darunter.
 - [done] Roadmap-Sätze aus den Blocks-Stationen entfernt; der Ausblick steht
   auf der eigenen dritten Unterfolie nach dem Unembedding.
+- [done] Ceres-/Flammarion-Bilder: globalen `figure img`-Rahmen mit `border:0`
+  entfernt; nur die abgerundeten Bilder bleiben.
+- [done] Slider-Hinweis in „Gauß, Ceres und die Daten“ steht jetzt auf der
+  Unterfolie mit den Teleskop-Slidern, nicht auf der Bild-Introfolie.
+- [done] „Die nächsten Tage“ setzt die Blocks-Demo auf Station 1 zurück, statt
+  die Unembedding-Station der vorherigen Unterfolie weiterzuzeigen.
+- [done] Wahrheitsplot: Satz 4 „relativ nah“ und etwas höher; Grünbereich
+  größer, Rot weiter außen.
+- [done] „Eine Wahrheit, viele Sprachen“ als vierte Karte in die Daten-Unterfolie
+  übernommen; die separate Folie ist entfernt. Die Karte zeigt, dass die
+  Sprachen auf denselben Sachverhalt zeigen.
