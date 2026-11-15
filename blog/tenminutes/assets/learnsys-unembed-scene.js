@@ -511,8 +511,6 @@
       update: function (s) { if (s && s.mode) setMode(s.mode); },
       next: function () { return false; },
       prev: function () { return false; },
-      busy: function () { return mode === "unembed" && !!unembedRaf; },
-      finish: function () { if (unembedRaf) cancelAnimationFrame(unembedRaf); unembedRaf = 0; unembedStart = performance.now() - 4000; drawUnembed(performance.now()); },
       resize: resize,
       pause: function () {},
       resume: function () { draw(); },
