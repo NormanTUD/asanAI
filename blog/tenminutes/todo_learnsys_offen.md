@@ -394,3 +394,8 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   jetzt mit drei Komponenten, wenn die 3D-Ansicht aktiv ist; auch Nearest-Word,
   Readout und Zwischenschritte nutzen z. Aus `Prinz + Macht = (25.0, −10.0)`
   wird `(25.0, −10.0, 0.70)`.
+- [done] LearnSys-Changes-V2 für „Von Beziehungen zur Übersetzung“ eingepflegt:
+  neuer Kicker „Mannigfaltigkeiten“, neuer zweiparagraphiger Body, q-box-man-1
+  und Morris-Quelle entfernt, q-box-man-3/4 aktualisiert. `proseBlock`
+  unterstützt jetzt Absätze durch Leerzeilen, damit der Body wirklich zweigeteilt
+  rendert; inline `$R^n$` in Boxen bleibt erhalten.

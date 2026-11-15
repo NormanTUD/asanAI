@@ -738,37 +738,43 @@
 
   var manifoldSteps = DE ? [
     {
-      kicker: "Die Übertragung",
+      kicker: "Mannigfaltigkeiten",
       title: "Von Beziehungen zur Übersetzung",
-      body: "Beziehungen untereinander können Bedeutung enthalten. Zwei Punktwolken zeigen dieselben Wörter in Englisch und Japanisch. Die Form entsteht aus den Punkten: Zwei Punkte werden verbunden, wenn ihr Abstand unter einer Schwelle liegt (Vietoris–Rips). Drehe, rotiere und verschiebe die japanische Wolke, bis sie auf der englischen liegt: Dann sitzt jedes Wort auf seiner Übersetzung, allein durch seine Position. Einige Ankerwörter sind in beiden Sprachen beschriftet; über jeden Punkt kannst du mit der Maus fahren, um mehr zu sehen. Klicke „Übersetzung finden“ oder „Weiter“, um die Translation und Rotation zu finden.",
+      body: "Hat man Punkte in diesem hochabstrakten Raum, deren Beziehungen untereinander die Bedeutung tragen, wird Übersetzung zu Translation, Rotation, Verzerrung, Skalierung und Scherung. Die Struktur, die die Punkte im hochdimensionalen Raum bilden, nennen Mathematiker <b>Mannigfaltigkeit</b>.\n\nFindet man eine Kombination, die die eine Wolke in die andere überführt, hat man eine Übersetzung gefunden: Die Bedeutung steht in anderen Sprachen in denselben Relationen zueinander, auch wenn die konkreten Tokens andere sind.",
       watch: "Drehe, rotiere und verschiebe die japanische Wolke. Fahre über die Punkte, um die Wörter zu sehen. Klicke „Übersetzung finden“ oder „Weiter“.",
       demoState: { scene: "manifold" },
       context: "Die Demo ist stark vereinfacht: zwei Punktwolken, viele Wörter, saubere Kanten. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen; der Vietoris–Rips-Komplex macht nur die Nachbarschaften sichtbar.",
       deep: "Eine Mannigfaltigkeit ist lokal flach und global gekrümmt. Die Übersetzung entspricht einer Abbildung zwischen zwei solchen Flächen. Hier ist die Abbildung eine Kombination aus Drehung, Rotation und Translation: Wenn beide Wolken zur Deckung kommen, liegen die Wörter ihrer Bedeutung nach übereinander.",
       boxes: [
-        box("man-1", "Technik", "Was zeigt die Demo?", "Zwei Punktwolken für Englisch und Japanisch. Innerhalb jeder Wolke sind Punkte verbunden, wenn ihr Abstand unter der Schwelle liegt; gestrichelte Linien markieren Wortkorrespondenzen. Du kannst die Ansicht drehen und zoomen, die japanische Wolke drehen, rotieren und verschieben und mit der Maus über jeden Punkt fahren."),
         box("man-2", "Grenze", "Was ist vereinfacht?", "Die Punktwolken sind klein und die Wörter sauber platziert. Ein echtes Embedding hat Tausende Dimensionen und viele überlappende Beziehungen; die Kanten zeigen nur eine Nachbarschaft, nicht die ganze Geometrie."),
-        box("man-3", "Grenze", "Wie echt ist die Übersetzung?", "Die Demo zeigt eine Idee, keine Messung. Ein echtes Modell lernt die Abbildung aus Text; die Formen sind abstrakt und für Menschen schwer zu sehen."),
-        box("man-4", "Mathematik", "Was ist eine Mannigfaltigkeit?", "Eine Mannigfaltigkeit ist ein Raum, der lokal wie R^n aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im R^n abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus. Der Vietoris–Rips-Komplex ist eine diskrete Näherung: Er verbindet Punkte bis zu einem Radius und macht so Nachbarschaften sichtbar.")
+        box("man-3", "Grenze", "Wie echt ist die Übersetzung?", "Die Demo zeigt eine Idee, keine Messung. Ein echtes Modell lernt die Abbildung aus Text; die Formen sind abstrakt, extrem hochdimensional und für Menschen schwer zu sehen."),
+        box("man-4", "Mathematik", "Was ist eine Mannigfaltigkeit?", "Eine Mannigfaltigkeit ist ein Raum, der lokal wie $R^n$, also den gewohnten, euklidischen Raum, aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im $R^n$ abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus.")
       ],
-      sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }, { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087", why: { de: "Übertragung zwischen Worträumen ohne parallele Daten.", en: "Transport between word spaces without parallel data." } }, { label: "Morris (2007), Topology Without Tears", url: "https://archive.org/details/topbook", why: { de: "Topologische Grundlage für Mannigfaltigkeiten.", en: "Topological background for manifolds." } }]
+      sources: [
+        { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
+        { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } },
+        { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087", why: { de: "Übertragung zwischen Worträumen ohne parallele Daten.", en: "Transport between word spaces without parallel data." } }
+      ]
     }
   ] : [
     {
-      kicker: "Transport",
+      kicker: "Manifolds",
       title: "From relations to translation",
-      body: "Relations among each other can carry meaning. Two point clouds show the same words in English and Japanese. The shape comes from the points: two points are connected when their distance is below a threshold (Vietoris–Rips). Rotate, roll, and translate the Japanese cloud until it sits on the English one: then every word sits on its translation, from position alone. A few anchor words are labelled in both languages; hover over any point to see more. Click “Find translation” or “Next” to find the rotation and translation.",
+      body: "If you have points in this highly abstract space whose relations to one another carry meaning, translating becomes a matter of translation, rotation, distortion, scaling, and shear. The structure the points form in high-dimensional space is what mathematicians call a <b>manifold</b>.\n\nIf you find a combination that maps one cloud onto the other, you have found a translation: meaning stands in the same relations across languages, even when the concrete tokens differ.",
       watch: "Rotate, roll, and translate the Japanese cloud. Hover the points to see the words. Click “Find translation” or “Next”.",
       demoState: { scene: "manifold" },
       context: "The demo is strongly simplified: two point clouds, many words, clean edges. The real geometry has thousands of dimensions and overlapping relations; the Vietoris–Rips complex only makes neighbourhoods visible.",
       deep: "A manifold is locally flat and globally curved. Translation corresponds to a map between two such surfaces. Here the map combines yaw, roll, and translation: when the clouds coincide, words of the same meaning lie on top of each other.",
       boxes: [
-        box("man-1", "Technique", "What does the demo show?", "Two point clouds for English and Japanese. Inside each cloud, points are connected when their distance is below the threshold; dashed lines mark word correspondences. You can rotate and zoom the view, yaw, roll, and translate the Japanese cloud, and hover over every point."),
         box("man-2", "Limit", "What is simplified?", "The point clouds are small and the words are neatly placed. A real embedding has thousands of dimensions and many overlapping relations; the edges show one neighbourhood, not the whole geometry."),
-        box("man-3", "Limit", "How real is the translation?", "The demo shows an idea, not a measurement. A real model learns the map from text; the shapes are abstract and hard for humans to see."),
-        box("man-4", "Mathematics", "What is a manifold?", "A manifold is a space that locally looks like R^n: every point has a chart that maps a neighbourhood onto an open set in R^n, and the charts change smoothly. Globally the space can be curved, for example a sphere or a torus. The Vietoris–Rips complex is a discrete approximation: it connects points up to a radius and makes neighbourhoods visible.")
+        box("man-3", "Limit", "How real is the translation?", "The demo shows an idea, not a measurement. A real model learns the map from text; the shapes are abstract, extremely high-dimensional, and hard for humans to see."),
+        box("man-4", "Mathematics", "What is a manifold?", "A manifold is a space that locally looks like $R^n$, the familiar Euclidean space: every point has a chart that maps a neighbourhood onto an open set in $R^n$, and the charts change smoothly. Globally the space can be curved, for example a sphere or a torus.")
       ],
-      sources: [{ label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } }, { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } }, { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087", why: { de: "Übertragung zwischen Worträumen ohne parallele Daten.", en: "Transport between word spaces without parallel data." } }, { label: "Morris (2007), Topology Without Tears", url: "https://archive.org/details/topbook", why: { de: "Topologische Grundlage für Mannigfaltigkeiten.", en: "Topological background for manifolds." } }]
+      sources: [
+        { label: "Mikolov et al. (2013), word2vec", url: "https://arxiv.org/abs/1301.3781", why: { de: "word2vec: gelernte Wortvektoren und Vektorarithmetik.", en: "word2vec: learned word vectors and vector arithmetic." } },
+        { label: "Pennington et al. (2014), GloVe", url: "https://aclanthology.org/D14-1162/", why: { de: "GloVe: globale Kookkurrenz als Wortvektoren.", en: "GloVe: global co-occurrence as word vectors." } },
+        { label: "Conneau et al. (2018), Word Translation Without Parallel Data", url: "https://arxiv.org/abs/1710.04087", why: { de: "Übertragung zwischen Worträumen ohne parallele Daten.", en: "Transport between word spaces without parallel data." } }
+      ]
     }
   ];
 

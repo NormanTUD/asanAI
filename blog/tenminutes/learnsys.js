@@ -411,12 +411,14 @@
       .trim();
   }
   function proseBlock(text) {
-    return '<p>' + String(text == null ? "" : text).split(/(\$[^$]+\$)/g).map(function (part) {
-      if (part.length > 1 && part.charAt(0) === "$" && part.charAt(part.length - 1) === "$") {
-        return inlineMath(part.slice(1, -1));
-      }
-      return richText(part);
-    }).join("") + '</p>';
+    return String(text == null ? "" : text).split(/\n{2,}/).map(function (block) {
+      return '<p>' + block.split(/(\$[^$]+\$)/g).map(function (part) {
+        if (part.length > 1 && part.charAt(0) === "$" && part.charAt(part.length - 1) === "$") {
+          return inlineMath(part.slice(1, -1));
+        }
+        return richText(part);
+      }).join("") + '</p>';
+    }).join("");
   }
 
   function activeDay() {
