@@ -342,7 +342,7 @@
     {
       kicker: "Der Kontext",
       title: "Attention verschiebt Bedeutungen in Kontexte",
-      body: "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz und ein Wort. Die Matrix zeigt, wohin die Bank schaut; die Formel zeigt dieselben Gewichte. Drücke Weiter: Die nächste Folie zeigt, wie dieselbe Bedeutung in Code-Oberflächen aussieht.",
+      body: "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz und ein Wort. Die Matrix zeigt, wohin die Bank schaut; die Formel zeigt dieselben Gewichte. Drücke Weiter: Die nächste Folie zeigt, wie Attention Oberflächenrauschen in Code ignoriert.",
       watch: "Klicke die drei Sätze. Welches Wort zieht die Bank? Drücke danach Weiter.",
       demoState: { scene: "attention", context: "money" },
       context: "Der Kontext verschiebt den Vektor, nicht das Wort. Die Bank bleibt dasselbe Token; ihre Nachbarn ändern ihre Bedeutung.",
@@ -1642,24 +1642,29 @@
   };
   var codeAttentionSubstep = {
     kicker: "Attention",
-    title: DE ? "Attention verschiebt Punkte und vergisst Oberflächen" : "Attention moves points and forgets surface forms",
+    title: DE ? "Attention hilft, Rauschen zu ignorieren" : "Attention helps ignore noise",
     body: DE
-      ? "„def quick_sort“ und „function quickSort“ sehen verschieden aus, meinen aber dasselbe: einen abstrakten Funktionsaufruf, der auf einen abstrakten Quicksort-Knoten zeigt. Die Unterschiede sind Oberflächenrauschen: Sprache, Schreibweise, Satzzeichen. Attention liest den Kontext, erkennt, was relevant ist, und verschiebt die Tokens auf die gemeinsame abstrakte Repräsentation. Klicke Beide, Python oder JavaScript."
-      : "“def quick_sort” and “function quickSort” look different but mean the same thing: an abstract function call pointing to an abstract quicksort node. The differences are surface noise: language, spelling, punctuation. Attention reads the context, recognises what matters, and moves the tokens onto the shared abstract representation. Click Both, Python, or JavaScript.",
-    watch: DE ? "Klicke die drei Modi. Landen def und function auf demselben Knoten?" : "Click the three modes. Do def and function land on the same node?",
+      ? "Zwei Codeblöcke, ein Sinn: „def quickSort“ und „function quick_sort“ sehen verschieden aus, meinen aber dieselbe abstrakte Funktion. Die Unterschiede sind Oberflächenrauschen: def gegen function, der Unterstrich, die Schreibweise. Attention verschiebt beide Codeblöcke auf denselben abstrakten Punkt und blendet das Rauschen aus. Klicke Beide, Python oder JavaScript. Und das ist nur ein Head: Ein Transformer hat viele davon parallel, und jeder kann auf etwas völlig anderes achten."
+      : "Two code blocks, one meaning: “def quickSort” and “function quick_sort” look different but mean the same abstract function. The differences are surface noise: def versus function, the underscore, the spelling. Attention moves both code blocks onto the same abstract point and fades out the noise. Click Both, Python, or JavaScript. And this is only one head: a transformer has many of them in parallel, and each can attend to something completely different.",
+    watch: DE ? "Klicke die drei Modi. Landen beide Codeblöcke auf demselben Punkt? Welche Tokens sind Rauschen?" : "Click the three modes. Do both code blocks land on the same point? Which tokens are noise?",
     demoState: { scene: "codesemantic", semMode: "both" },
-    context: DE ? "Die linke Seite ist die Oberfläche: verschiedene Schreibweisen. Die rechte Seite ist die abstrakte Bedeutung: Funktionsaufruf → Quicksort. Attention entfernt nicht die Wörter, sondern verschiebt ihre Repräsentation." : "The left side is the surface: different spellings. The right side is the abstract meaning: function call → quicksort. Attention does not delete the words; it moves their representation.",
-    deep: DE ? "Dasselbe Muster gilt für andere Paare: class/struct, return/yield, if/when. Die Oberfläche variiert mit Sprache und Stil; die abstrakte Rolle bleibt. In einem echten Modell sind diese Richtungen gelernt und viel komplexer." : "The same pattern holds for other pairs: class/struct, return/yield, if/when. The surface varies with language and style; the abstract role stays. In a real model these directions are learned and far more complex.",
+    context: DE ? "Die linke Seite ist die Oberfläche: zwei Codeblöcke mit verschiedenen Schreibweisen. Die rechte Seite ist die abstrakte Bedeutung: eine Quicksort-Funktion. Attention löscht die Wörter nicht; sie verschiebt ihre Repräsentation und lässt die Rauschanteile fallen." : "The left side is the surface: two code blocks with different spellings. The right side is the abstract meaning: a quicksort function. Attention does not delete the words; it moves their representation and lets the noise parts drop.",
+    deep: DE ? "Dasselbe Muster gilt für andere Paare: class/struct, return/yield, if/when. Die Oberfläche variiert mit Sprache und Stil; die abstrakte Rolle bleibt. In einem echten Modell sind diese Richtungen gelernt und viel komplexer. Und weil viele Heads parallel laufen, kann ein anderer Head gleichzeitig auf Syntax, ein dritter auf Position und ein vierter auf etwas ganz anderes achten." : "The same pattern holds for other pairs: class/struct, return/yield, if/when. The surface varies with language and style; the abstract role stays. In a real model these directions are learned and far more complex. And because many heads run in parallel, another head can attend to syntax, a third to position, and a fourth to something else entirely.",
     boxes: DE ? [
       box("sem-1", "Technik", "Oberfläche und Bedeutung", "def und function sind verschiedene Oberflächen für dieselbe Rolle: eine Funktionsdefinition. quick_sort und quickSort sind verschiedene Oberflächen für dieselbe Rolle: Quicksort. Attention gewichtet den Kontext und verschiebt die Tokens auf gemeinsame Richtungen."),
       box("sem-2", "Beispiel", "Andere Paare", "class/struct, return/yield, if/when: Die Schreibweise ändert sich, die abstrakte Rolle nicht. Das Modell lernt diese gemeinsamen Richtungen aus vielen Kontexten."),
-      box("sem-3", "Grenze", "Was ist vereinfacht?", "Die Demo zeigt wenige Wörter und zwei abstrakte Knoten. Ein echtes Modell hat Tausende Dimensionen und viele überlappende Rollen. Die Pfeile sind eine didaktische Vereinfachung, keine Messung.")
+      box("sem-3", "Grenze", "Was ist vereinfacht?", "Die Demo zeigt zwei Codeblöcke und einen abstrakten Punkt. Ein echtes Modell hat Tausende Dimensionen und viele überlappende Rollen. Die Pfade sind eine didaktische Vereinfachung, keine Messung."),
+      box("sem-4", "Technik", "Viele Heads parallel", "Ein Head ist eine Perspektive. Ein Transformer hat viele Heads gleichzeitig; sie können auf Syntax, Bedeutung, Position, Code oder völlig andere Muster achten. Die Ausgaben werden danach zusammengeführt.")
     ] : [
       box("sem-1", "Technique", "Surface and meaning", "def and function are different surfaces for the same role: a function definition. quick_sort and quickSort are different surfaces for the same role: quicksort. Attention weights the context and moves the tokens onto shared directions."),
       box("sem-2", "Example", "Other pairs", "class/struct, return/yield, if/when: the spelling changes, the abstract role does not. The model learns these shared directions from many contexts."),
-      box("sem-3", "Limit", "What is simplified?", "The demo shows a few words and two abstract nodes. A real model has thousands of dimensions and many overlapping roles. The arrows are a didactic simplification, not a measurement.")
+      box("sem-3", "Limit", "What is simplified?", "The demo shows two code blocks and one abstract point. A real model has thousands of dimensions and many overlapping roles. The paths are a didactic simplification, not a measurement."),
+      box("sem-4", "Technique", "Many heads in parallel", "A head is one perspective. A transformer has many heads at once; they can attend to syntax, meaning, position, code, or completely different patterns. Their outputs are combined afterwards.")
     ],
-    sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "Schichten bilden linguistische Rollen heraus.", en: "Layers develop linguistic roles." } }]
+    sources: [
+      { label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "Schichten bilden linguistische Rollen heraus.", en: "Layers develop linguistic roles." } },
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Multi-Head-Attention: viele Heads parallel.", en: "Multi-head attention: many heads in parallel." } }
+    ]
   };
   var attentionMergeStep = {
     title: DE ? "Attention: Kontext und Matrix" : "Attention: context and matrix",
