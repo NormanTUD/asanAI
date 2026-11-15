@@ -7,33 +7,23 @@
   function codeScene(root, api) {
     var DE = api.lang === "de";
     var codeText = DE ? [
-      "# Rayleigh-Streuung",
-      "k_B = 1.380649e-23",
-      "def scattering(wl, p, T):",
-      "    return p / (k_B * T) / wl**4",
-      "blue = scattering(450e-9, 1e5, 293)",
-      "red  = scattering(650e-9, 1e5, 293)",
-      "ratio = blue / red",
-      'print(f"Blau wird {round(ratio, 2)}× stärker gestreut als Rot.")'
+      "from transformers import pipeline",
+      'model = "distilbert-base-uncased-finetuned-sst-2-english"',
+      'classifier = pipeline("sentiment-analysis", model=model)',
+      'text = "The lecture was clear and useful."',
+      "result = classifier(text)[0]",
+      "print(f\"{result['label']}: {result['score']:.3f}\")"
     ] : [
-      "# Rayleigh scattering",
-      "k_B = 1.380649e-23",
-      "def scattering(wl, p, T):",
-      "    return p / (k_B * T) / wl**4",
-      "blue = scattering(450e-9, 1e5, 293)",
-      "red  = scattering(650e-9, 1e5, 293)",
-      "ratio = blue / red",
-      'print(f"Blue is {round(ratio, 2)}x more strongly scattered than red.")'
+      "from transformers import pipeline",
+      'model = "distilbert-base-uncased-finetuned-sst-2-english"',
+      'classifier = pipeline("sentiment-analysis", model=model)',
+      'text = "The lecture was clear and useful."',
+      "result = classifier(text)[0]",
+      "print(f\"{result['label']}: {result['score']:.3f}\")"
     ];
-    var kB = 1.380649e-23, pressure = 1e5, temp = 293;
-    var blue = (pressure / (kB * temp)) / Math.pow(450e-9, 4);
-    var red = (pressure / (kB * temp)) / Math.pow(650e-9, 4);
-    var ratio = blue / red;
-    var outText = DE
-      ? "Blau wird " + ratio.toFixed(2) + "× stärker gestreut als Rot."
-      : "Blue is " + ratio.toFixed(2) + "x more strongly scattered than red.";
-    var agentText = DE ? "Ich denke kurz nach … Fertig. Ich schreibe himmel.py." : "Thinking briefly … done. I'll write sky.py.";
-    var userText = DE ? "Schreibe ein Python-Programm, das die Rayleigh-Streuung berechnet." : "Write a Python program that computes Rayleigh scattering.";
+    var outText = "POSITIVE: 0.999";
+    var agentText = DE ? "Ich lade ein kleines Transformer-Modell und bewerte einen Text." : "I'll load a small transformer model and score a text.";
+    var userText = DE ? "Schreibe ein Python-Programm, das ein Transformer-Modell lädt und einen Text bewertet." : "Write a Python program that loads a transformer model and scores a text.";
     var el = document.createElement("div");
     el.className = "ls-code-monitor";
     el.innerHTML =
@@ -44,9 +34,9 @@
             '<div class="ls-code-chat">' +
               '<div class="ls-code-msg is-user ls-code-user-msg" hidden><span class="ls-code-user-text"></span></div>' +
               '<div class="ls-code-msg is-agent" hidden><span class="ls-code-agent-text"></span><span class="ls-code-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
-              '<div class="ls-code-msg is-agent ls-code-run-msg" hidden>' + (DE ? "Ich führe himmel.py im Terminal aus." : "I'll run sky.py in the terminal.") + '</div>' +
+              '<div class="ls-code-msg is-agent ls-code-run-msg" hidden>' + (DE ? "Ich führe bewerte_text.py im Terminal aus." : "I'll run score_text.py in the terminal.") + '</div>' +
             '</div>' +
-            '<div class="ls-code-filehead">' + (DE ? "himmel.py" : "sky.py") + '</div>' +
+            '<div class="ls-code-filehead">' + (DE ? "bewerte_text.py" : "score_text.py") + '</div>' +
             '<pre class="ls-code-body"><code></code></pre>' +
             '<div class="ls-code-agent-prompt"><b>$</b><span></span></div>' +
           '</div>' +
@@ -225,7 +215,7 @@
       syncTasks();
       if (commandEl) commandEl.textContent = "";
       if (term) term.textContent = "";
-      var cmd = "$ " + (DE ? "python3 himmel.py" : "python3 sky.py");
+      var cmd = "$ " + (DE ? "python3 bewerte_text.py" : "python3 score_text.py");
       var stepMs = 300 / Math.max(1, cmd.length);
       var j = 0;
       function typeCommand() {

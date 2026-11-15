@@ -476,7 +476,7 @@ def main() -> int:
         blocks_idx = js(driver, """
             return (function(){
               var dots=[...document.querySelectorAll('#ls-steps .ls-dot')];
-              for(var i=0;i<dots.length;i++){ if((dots[i].getAttribute('title')||'').indexOf('Die Bausteine eines LLM')>=0) return i; }
+              for(var i=0;i<dots.length;i++){ if((dots[i].getAttribute('title')||'').indexOf('Bausteine eines LLM')>=0) return i; }
               return -1;
             })();
             """)
@@ -488,7 +488,7 @@ def main() -> int:
             })();
             """)
         check(blocks_idx >= 0 and unembed_idx >= 0, "blocks and unembedding steps found", f"{blocks_idx} / {unembed_idx}")
-        js(driver, f"LearnSys.go(0, {blocks_idx})")
+        js(driver, f"LearnSys.goView(0, {blocks_idx}, 1)")
         time.sleep(0.5)
         js(driver, "document.querySelector('.ls-bs-card[data-index=\"3\"]').click()")
         time.sleep(0.5)

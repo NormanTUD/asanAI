@@ -738,13 +738,13 @@
     {
       kicker: "Die Bausteine",
       title: "Die Bausteine eines LLM",
-      body: "Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Ganz am Anfang stehen sehr viele, sehr verschiedene Texte: Reddit-Artikel, Wikipedia, Bücher, Webseiten, Quellcode von Programmen. Daraus lernt das Modell Muster: wie man codet, wie menschliche Sprache aussieht, welche Fakten es gibt. Gehe die fünf Ebenen mit „Weiter“ durch: Daten, Tokenizer, Embedding, Transformer-Blöcke und Unembedding. In den nächsten Tagen gehen wir alle diese Sachen durch.",
-      watch: "Gehe die Ebenen mit „Weiter“ oder der Pfeiltaste durch. Was macht jede Ebene?",
+      body: "Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Ganz am Anfang stehen sehr viele, sehr verschiedene Texte: Reddit-Artikel, Wikipedia, Bücher, Webseiten, Quellcode von Programmen. Daraus lernt das Modell Muster: wie man codet, wie menschliche Sprache aussieht, welche Fakten es gibt. Gehe die sechs Ebenen mit „Weiter“ durch: Daten, Tokenizer, Embedding, Positional Embedding, Transformer-Blöcke und Unembedding. In den nächsten Tagen gehen wir alle diese Sachen durch.",
+      watch: "Gehe die sechs Ebenen mit „Weiter“ oder der Pfeiltaste durch. Was macht jede Ebene?",
       demoState: { scene: "blocks" },
-      context: "Die Reihenfolge ist die Architektur: Text → Tokens → Vektoren → Transformer-Blöcke → Verteilung. Jeder Schritt verändert die Darstellung, bis am Ende ein Token gezogen wird.",
+      context: "Die Reihenfolge ist die Architektur: Text → Tokens → Vektoren → Position → Transformer-Blöcke → Verteilung. Jeder Schritt verändert die Darstellung, bis am Ende ein Token gezogen wird.",
       deep: "Jeder Block ist selbst ein gelerntes Stück Funktion. Zusammen approximieren sie die viel zu komplizierte Funktion „nächstes Token aus Kontext“.",
       boxes: [
-        box("mod-1", "Technik", "Die fünf Ebenen", "Daten: Text und Mischung. Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Transformer-Blöcke: erst Attention, dann FFN, dutzende bis hunderte Male wiederholt. Unembedding: Vektor → Scores und Softmax."),
+        box("mod-1", "Technik", "Die sechs Ebenen", "Daten: Text und Mischung. Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Positional Embedding: Position → Vektor. Transformer-Blöcke: erst Attention, dann FFN, dutzende bis hunderte Male wiederholt. Unembedding: Vektor → Scores und Softmax."),
         box("mod-dense", "Optional", "Dense = alle mit allen", "Eine Dense-Schicht verbindet jede Eingabe mit jeder Ausgabe. Die Gewichte sind die Kanten eines vollständigen gewichteten Graphen. In der Matrix W steht W_ij für die Kante von Eingang j zu Ausgang i. Daher kommen die üblichen Netzdiagramme.", "\\underbrace{y_i}_{\\text{Ausgang }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{alle Eingänge}}"),
         box("mod-norm", "Technik", "LayerNorm und andere Blöcke", "Ein echter Transformer-Block enthält zusätzlich LayerNorm, Residualverbindungen und mehrere Attention-Heads. Es gibt auch andere Architekturen und Details wie Mixture-of-Experts, Multi-Query-Attention und verschiedene Positionsverfahren. Wir lassen sie hier weg, um bei der Intuition zu bleiben."),
         box("mod-angle", "Mathematik", "Warum Winkel?", "Am Ende werden Richtungen verglichen, nicht Längen. Der Winkel zwischen zwei Vektoren ändert sich in hohen Dimensionen weniger stark als ihre Länge. Deshalb ist die Großkreis-Metrik hier nützlich; für den Einstieg reicht die Intuition."),
@@ -778,13 +778,13 @@
     {
       kicker: "The building blocks",
       title: "The building blocks of an LLM",
-      body: "An LLM is a chain of levels, not a single magic formula. At the very start are very many, very different texts: Reddit articles, Wikipedia, books, websites, source code of programs. From them the model learns patterns: how to code, what human language looks like, what facts exist. Walk through the five levels with “Next”: data, tokenizer, embedding, transformer blocks, and unembedding. Over the next days we will go through all of these things.",
-      watch: "Walk through the levels with “Next” or the arrow key. What does each level do?",
+      body: "An LLM is a chain of levels, not a single magic formula. At the very start are very many, very different texts: Reddit articles, Wikipedia, books, websites, source code of programs. From them the model learns patterns: how to code, what human language looks like, what facts exist. Walk through the six levels with “Next”: data, tokenizer, embedding, positional embedding, transformer blocks, and unembedding. Over the next days we will go through all of these things.",
+      watch: "Walk through the six levels with “Next” or the arrow key. What does each level do?",
       demoState: { scene: "blocks" },
-      context: "The order is the architecture: text → tokens → vectors → transformer blocks → distribution. Each step changes the representation until a token is drawn.",
+      context: "The order is the architecture: text → tokens → vectors → position → transformer blocks → distribution. Each step changes the representation until a token is drawn.",
       deep: "Each block is itself a learned piece of function. Together they approximate the far too complicated function “next token from context”.",
       boxes: [
-        box("mod-1", "Technique", "The five levels", "Data: text and mix. Tokenizer: text → tokens. Embedding: tokens → vectors. Transformer blocks: attention first, then FFN, repeated dozens to hundreds of times. Unembedding: vector → scores and softmax."),
+        box("mod-1", "Technique", "The six levels", "Data: text and mix. Tokenizer: text → tokens. Embedding: tokens → vectors. Positional embedding: position → vector. Transformer blocks: attention first, then FFN, repeated dozens to hundreds of times. Unembedding: vector → scores and softmax."),
         box("mod-dense", "Optional", "Dense = all to all", "A dense layer connects every input to every output. The weights are the edges of a complete weighted graph. In the matrix W, W_ij is the edge from input j to output i. That is where the usual network diagrams come from.", "\\underbrace{y_i}_{\\text{output }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{all inputs}}"),
         box("mod-norm", "Technique", "LayerNorm and other blocks", "A real transformer block also contains LayerNorm, residual connections, and several attention heads. There are further architectures and details such as mixture-of-experts, multi-query attention, and different positional schemes. We leave them out here to keep the intuition in focus."),
         box("mod-angle", "Mathematics", "Why angles?", "At the end, directions are compared, not lengths. The angle between two vectors changes less in high dimensions than their length. That is why the great-circle metric is useful here; for a first pass the intuition is enough."),
@@ -794,6 +794,35 @@
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }]
     }
   ];
+
+  var bausteineIntro = {
+    kicker: DE ? "Architektur" : "Architecture",
+    title: DE ? "Eine Kette von Funktionen" : "A chain of functions",
+    body: DE
+      ? "Moderne KI-Systeme schalten Funktionen hintereinander: Jede verarbeitet die Daten in einer festgelegten Reihenfolge und gibt ihren Output an die nächste Funktion weiter. So entsteht aus Daten ein Ergebnis: $\\text{Ergebnis} = \\text{layer}_3(\\text{layer}_2(\\text{layer}_1(\\text{Daten})))$. Die ersten Layer bearbeiten die Daten direkt, die nächsten bekommen deren Output; mit jeder Schicht wird die Repräsentation abstrakter. Unterschiedliche Schichttypen übernehmen unterschiedliche Aufgaben: Bilderkennung braucht andere Layer als Textgenerierung."
+      : "Modern AI systems chain functions: each one processes the data in a fixed order and passes its output to the next function. Data becomes a result: $\\text{Result} = \\text{layer}_3(\\text{layer}_2(\\text{layer}_1(\\text{Data})))$. The first layers process the data directly, the next ones receive their output; each layer produces a more abstract representation. Different layer types do different jobs: image recognition needs different layers than text generation.",
+    watch: DE ? "Gehe die Kette mit „Weiter“ durch. Welche Funktion bekommt den Output der vorherigen?" : "Walk the chain with “Next”. Which function receives the output of the previous one?",
+    demoState: { scene: "blocks" },
+    context: DE ? "Die Reihenfolge ist Teil des Designs. Jede Schicht sieht den Output der vorherigen; die ganze Kette ist die Funktion. Das ist eine Vereinfachung: Residual Streams und Normalisierung kommen später." : "The order is part of the design. Each layer sees the output of the previous one; the whole chain is the function. This is a simplification: residual streams and normalisation come later.",
+    deep: DE ? "Die Kette ist keine feste physikalische Regel, sondern eine Architekturentscheidung. Man kann Schichten austauschen, wiederholen oder überspringen; die Reihenfolge bestimmt, welche Information wann verfügbar ist." : "The chain is not a fixed physical law but an architecture decision. Layers can be swapped, repeated, or skipped; the order determines which information is available when.",
+    boxes: [
+      box("arch-residual", DE ? "Vereinfachung" : "Simplification", DE ? "Residual Streams" : "Residual streams",
+        DE ? "Das ist eine Vereinfachung. Im Transformer wird der Output nicht einfach ersetzt, sondern über Residualverbindungen addiert: $x_2 = x_0 + \\text{Layer}_1(x_0) + \\text{Layer}_2(x_1)$. Das kommt später im Detail." : "This is a simplification. In a transformer the output is not simply replaced; residual connections add it: $x_2 = x_0 + \\text{Layer}_1(x_0) + \\text{Layer}_2(x_1)$. We will come back to this in detail later.",
+        DE ? "\\underbrace{\\underbrace{x_2}_{\\text{nach zwei Schichten}} = \\underbrace{x_0}_{\\text{Eingang}} + \\underbrace{\\text{Layer}_1(x_0)}_{\\text{Update 1}} + \\underbrace{\\text{Layer}_2(x_1)}_{\\text{Update 2}}}_{\\text{so addieren Residualverbindungen Updates}}" : "\\underbrace{\\underbrace{x_2}_{\\text{after two layers}} = \\underbrace{x_0}_{\\text{input}} + \\underbrace{\\text{Layer}_1(x_0)}_{\\text{update 1}} + \\underbrace{\\text{Layer}_2(x_1)}_{\\text{update 2}}}_{\\text{this is how residual connections add updates}}")
+    ],
+    sources: [
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Transformer-Blöcke, Residualverbindungen und Layer-Normalisierung.", en: "Transformer blocks, residual connections, and layer normalisation." } },
+      { label: "He et al. (2016), Deep Residual Learning", url: "https://arxiv.org/abs/1512.03385", why: { de: "Residualverbindungen: Updates werden addiert, nicht überschrieben.", en: "Residual connections: updates are added, not overwritten." } }
+    ]
+  };
+  var bausteineOverview = Object.assign({}, insideSteps[1], {
+    title: DE ? "Die Bausteine im Überblick" : "The building blocks at a glance"
+  });
+  var bausteineStep = {
+    kicker: DE ? "Architektur" : "Architecture",
+    title: DE ? "Bausteine eines LLM" : "Building blocks of an LLM",
+    substeps: [bausteineIntro, bausteineOverview]
+  };
 
   var manifoldSteps = DE ? [
     {
@@ -1796,7 +1825,7 @@
     ]
   };
 
-  var steps = [introSteps[0], insideSteps[1], gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep, bookSteps[0]];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep, bookSteps[0]];
 
   var day = {
     id: "intuition",

@@ -56,7 +56,8 @@
         title: "Unembedding",
         body: "Der letzte Vektor wird mit den gelernten Richtungen aller Tokens verglichen. Der Winkel wird zum Logit, Softmax macht daraus eine Verteilung.",
         points: ["Richtung statt Länge", "ein Token wird gezogen"],
-        mini: "unembed"
+        mini: "unembed",
+        roadmap: "Damit sind die Bausteine einmal durch. In den nächsten Tagen gehen wir sie einen nach dem anderen durch: was jeder macht, wie sie zusammenspielen und wie daraus in einer Schleife die Vorhersage des nächsten Wortes entsteht."
       }
     ] : [
       {
@@ -106,7 +107,8 @@
         title: "Unembedding",
         body: "The last vector is compared with the learned directions of all tokens. The angle becomes a logit, softmax turns it into a distribution.",
         points: ["direction, not length", "one token is drawn"],
-        mini: "unembed"
+        mini: "unembed",
+        roadmap: "That is the full set of building blocks. Over the next days we will go through them one by one: what each does, how they work together, and how the loop predicts the next word."
       }
     ];
     var index = 0;
