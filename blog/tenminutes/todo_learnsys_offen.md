@@ -88,4 +88,7 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] „Ceres“ im Ceres-Text fett statt kursiv; nur das Wort ist hervorgehoben.
 - [pending] Nach der Übernahme prüfen, ob die Gruppen und Teasers in EN/DE
   konsistent sind; Tests erst auf Anweisung.
-
+- [done] Daten als eigene Unterfolie vor der Architektur innerhalb derselben
+  Bausteine-Folie: „Daten: der erste Schritt, aber extern“, danach
+  „Die Architektur von LLMs“, danach die Übersicht. Daten sind ausdrücklich
+  nicht Teil des LLM, sondern Input für das Training.

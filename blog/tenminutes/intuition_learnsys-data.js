@@ -801,15 +801,37 @@
     }
   ];
 
+  var bausteineData = {
+    kicker: DE ? "Daten" : "Data",
+    title: DE ? "Daten: der erste Schritt, aber extern" : "Data: the first step, but external",
+    body: DE
+      ? "Bevor die Architektur beginnt, stehen die Daten. Sie sind der erste Schritt, technisch gesehen aber nicht Teil des LLM: Das Modell ist die Kette der Schichten. Die Daten kommen von außen und werden zum Training verwendet. Ohne Daten gäbe es nichts zu lernen, aber die Daten sind keine Schicht des Modells."
+      : "Before the architecture begins, there is data. It is the first step, but technically not part of the LLM: the model is the chain of layers. The data comes from outside and is used for training. Without data there would be nothing to learn, but the data is not a layer of the model.",
+    teaser: DE
+      ? "Bevor die Architektur beginnt, stehen die Daten. Sie sind der erste Schritt, technisch gesehen aber nicht Teil des LLM: Das Modell ist die Kette der Schichten. Die Daten kommen von außen und werden zum Training verwendet. Ohne Daten gäbe es nichts zu lernen, aber die Daten sind keine Schicht des Modells."
+      : "Before the architecture begins, there is data. It is the first step, but technically not part of the LLM: the model is the chain of layers. The data comes from outside and is used for training. Without data there would be nothing to learn, but the data is not a layer of the model.",
+    watch: DE ? "Die Daten sind die Beispiele, aus denen das Modell lernt. Sie gehören zum Training, nicht zur Architektur." : "The data are the examples the model learns from. They belong to training, not to the architecture.",
+    demoState: { scene: "langdata", mode: "scale" },
+    inherit: false,
+    questionGroups: [
+      {
+        id: "g-basics",
+        title: DE ? "Eine Ebene tiefer" : "One level deeper",
+        questions: [
+          { id: "q-data-external", title: DE ? "Sind die Daten Teil des LLM?" : "Are the data part of the LLM?", body: DE ? "Nein. Die Daten sind der erste Schritt, stehen aber außerhalb des Modells. Das LLM ist die Architektur; die Daten werden zum Training verwendet." : "No. The data is the first step but stands outside the model. The LLM is the architecture; the data is used for training.", tex: "", kind: "question" }
+        ]
+      }
+    ]
+  };
   var bausteineIntro = {
     kicker: DE ? "Architektur" : "Architecture",
     title: DE ? "Die Architektur von LLMs" : "The architecture of LLMs",
     body: DE
-      ? "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste sinnvolle Wort vorherzusagen. Die Daten sind dabei keine Schicht der Architektur: Sie sind eine eigene Unterseite, stehen davor und werden zum Training der Kette verwendet."
-      : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next sensible word. The data is not a layer of the architecture: it is its own subpage, stands before it, and is used to train the chain.",
+      ? "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste sinnvolle Wort vorherzusagen."
+      : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next sensible word.",
     teaser: DE
-      ? "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste sinnvolle Wort vorherzusagen. Die Daten sind dabei keine Schicht der Architektur: Sie sind eine eigene Unterseite, stehen davor und werden zum Training der Kette verwendet."
-      : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next sensible word. The data is not a layer of the architecture: it is its own subpage, stands before it, and is used to train the chain.",
+      ? "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste sinnvolle Wort vorherzusagen."
+      : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next sensible word.",
     watch: DE ? "Sequenzielles Machine Learning geschieht in Schichten. Die erste Schicht wendet man direkt auf die Daten an, die zweite auf die Ergebnisse der ersten, und so weiter; dadurch verschachteln sich Funktionen: $\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Daten}\\right)\\right)\\right)$ Die erste Schicht sucht nach Mustern im Text, die zweite nach Mustern im Ergebnis der ersten Schicht, und so weiter. Mit dem Residual Stream kann jede Schicht auch Muster im Text <i>und</i> in den Ergebnissen der vorherigen Schichten finden." : "Sequential machine learning happens in layers. The first layer is applied directly to the data, the second to the results of the first, and so on; this nests functions: $\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Data}\\right)\\right)\\right)$ The first layer looks for patterns in the text, the second for patterns in the result of the first layer, and so on. With the residual stream, each layer can also find patterns in the text <i>and</i> in the results of the previous layers.",
     demoState: { scene: "blocks" },
     inherit: false,
@@ -819,7 +841,6 @@
         title: DE ? "Eine Ebene tiefer" : "One level deeper",
         questions: [
           { id: "q-training", title: DE ? "Wie werden die Modelle trainiert?" : "How are the models trained?", body: DE ? "Wir gehen an einem späteren Tag noch auf das Training ein. Die Idee: Anhand von Trainingsdaten, also Beispielen, prüft man wiederholt, wie gut das Netz ist, und verändert es leicht in die Richtung, in der es besser wird. Besser heißt hier: Gegeben einen Text sagt es das nächste Wort aus dem Text richtig voraus." : "We will look at training in more detail on a later day. The idea: with training data, that is examples, you repeatedly check how good the network is and change it slightly in the direction that makes it better. Better here means: given a text, it predicts the next word from the text correctly.", tex: "", kind: "question" },
-          { id: "q-data-layer", title: DE ? "Sind die Daten eine Schicht?" : "Is the data a layer?", body: DE ? "Nein. Die Daten sind eine eigene Unterseite vor der Architektur. Sie werden zum Training der Kette verwendet, gehören aber nicht zu ihren Layern." : "No. The data is its own subpage before the architecture. It is used to train the chain but is not one of its layers.", tex: "", kind: "question" }
         ]
       },
       {
@@ -838,7 +859,7 @@
   var bausteineStep = {
     kicker: DE ? "Architektur" : "Architecture",
     title: DE ? "Bausteine eines LLM" : "Building blocks of an LLM",
-    substeps: [bausteineIntro, bausteineOverview]
+    substeps: [bausteineData, bausteineIntro, bausteineOverview]
   };
 
   var manifoldSteps = DE ? [

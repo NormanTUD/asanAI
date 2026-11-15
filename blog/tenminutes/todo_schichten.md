@@ -27,9 +27,9 @@ Im Transformer werden Updates über Residualverbindungen addiert, nicht einfach
   sowie eine Daten-Box.
 - [done] Der Beobachte-Text rendert `$$…$$` mit Temml und `<i>…</i>` als
   Kursivtext.
-- [done] „Eine Kette von Funktionen“ sagt ausdrücklich, dass die Daten keine
-  Schicht der Architektur sind, sondern eine eigene Unterseite davor, die zum
-  Training verwendet wird.
+- [done] Die Daten haben jetzt eine eigene Unterfolie vor der Architektur
+  („Daten: der erste Schritt, aber extern“) und sind ausdrücklich nicht Teil
+  des LLM, sondern Input für das Training.
 - [pending] Prüfen, ob der Kurztext die Verkettung ohne eigene Visualisierung
   klar genug zeigt.
 - [pending] Die sechs Stationen danach als konkrete Ausprägung derselben Idee
