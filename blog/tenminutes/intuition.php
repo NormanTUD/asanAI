@@ -423,7 +423,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">From one axis to two <span>· demo</span></p>
-									<p class="demo-sub">One axis orders words by temperature. Pick two words and see where their midpoint lands; the embedding demo below adds a second direction, so the same words can carry more relations.</p>
+									<p class="demo-sub">One axis orders words by temperature. Pick two words and see the difference on the line; the embedding demo below adds a second direction, so the same words can carry more relations.</p>
 								</div>
 							</div>
 							<div class="demo-body">
@@ -4659,17 +4659,19 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 		}
 		function apply(example, button) {
 			var a = byKey(example.a), b = byKey(example.b);
-			var avg = (a.value + b.value) / 2;
-			var near = nearest(avg);
-			var sym = Math.abs(avg - near.value) < 0.5 ? "=" : "≈";
+			var lo = a.value <= b.value ? a : b;
+			var hi = a.value <= b.value ? b : a;
+			var diff = hi.value - lo.value;
+			var near = nearest(diff);
+			var err = Math.abs(diff - near.value);
+			var sym = err < 0.5 ? "=" : "≈";
 			if (lineApi && lineApi.setHighlight) {
-				lineApi.setHighlight({ value: avg, label: near.label, color: near.color });
+				lineApi.setHighlight({ value: near.value, label: near.label, color: near.color });
 			}
 			var formulaEl = document.getElementById("oned-formula");
 			if (formulaEl && window.TM && TM.typesetMath) {
-				var sum = a.value + b.value;
-				var tex = "\\underbrace{" + a.value + "}_{\\text{" + a.label + "}} + \\underbrace{" + b.value + "}_{\\text{" + b.label + "}} = \\underbrace{" + sum.toFixed(1) + "}_{\\text{" + (de ? "Summe" : "sum") + "}} \\qquad \\underbrace{" + avg.toFixed(1) + "}_{\\text{" + (de ? "Mittelwert" : "midpoint") + "}}";
-				tex += sym === "=" ? " = \\underbrace{" + near.value + "}_{\\text{" + near.label + "}}" : " \\approx \\underbrace{" + near.value + "}_{\\text{" + near.label + "}}";
+				var tex = "\\underbrace{\\underbrace{" + hi.value + "}_{\\text{" + hi.label + "}} - \\underbrace{" + lo.value + "}_{\\text{" + lo.label + "}}}_{\\text{" + (de ? "Differenz" : "difference") + "}} = " + diff + " \\qquad " + diff + " " + sym + " \\underbrace{" + near.value + "}_{\\text{" + near.label + "}}";
+				if (err >= 0.5) tex += "\\;\\text{(" + (de ? "Abweichung" : "error") + " " + err.toFixed(1) + ")}";
 				formulaEl.setAttribute("data-tex", tex);
 				formulaEl.removeAttribute("data-tex-rendered");
 				TM.typesetMath(formulaEl.parentNode);

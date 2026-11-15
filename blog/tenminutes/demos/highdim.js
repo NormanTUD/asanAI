@@ -31,7 +31,7 @@
         (DE ? "Ausschnitt: 64 von 4096 Dimensionen; rechts und unten geht es weiter." : "Slice: 64 of 4096 dimensions; it continues to the right and below.") + '</div>' +
       '<div class="ls-highdim-selected" aria-live="polite"></div>' +
       '<div class="ls-highdim-scroll"><table><thead>' + head + '</thead><tbody>' + body + more + '</tbody></table></div>' +
-      '<p class="ls-highdim-foot">' + (DE ? "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Auch mit 4096 Dimensionen gelten dieselben Regeln; Mittelpunkt, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter." : "3D is not enough, just as 1D was not enough: some differences need their own directions. Even with 4096 dimensions the same rules apply; midpoint, angle, and matrix multiplication still work coordinate by coordinate.") + '</p>';
+      '<p class="ls-highdim-foot">' + (DE ? "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Auch mit 4096 Dimensionen gelten dieselben Regeln; Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter." : "3D is not enough, just as 1D was not enough: some differences need their own directions. Even with 4096 dimensions the same rules apply; difference, angle, and matrix multiplication still work coordinate by coordinate.") + '</p>';
     root.appendChild(el);
     var selectedEl = el.querySelector(".ls-highdim-selected");
     function showSelected(ti) {
