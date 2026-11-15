@@ -53,7 +53,7 @@
       newSource: "Neue Quelle", removeSource: "Quelle entfernen", editHint: "E bearbeiten",
       copyHint: "Kopiere die Bearbeitung und schicke sie weiter.", exportEmpty: "Noch nichts bearbeitet.",
       exportJSON: "JSON ↓", importJSON: "JSON ↑", exportTitle: "Geänderte Texte als JSON speichern", importTitle: "JSON laden", exportOk: "JSON gespeichert", importOk: "JSON geladen", importError: "JSON konnte nicht gelesen werden",
-      kindQuestion: "Frage", kindTrivia: "Trivia", soloDemo: "Demo solo", jsonTitle: "Alle Änderungen", jsonHint: "Nur geänderte Texte und das Layout. Kopiere den JSON-Text oder lade ihn herunter.", download: "Herunterladen", layoutSlides: "Folien", copyLink: "Link", linkCopied: "Link kopiert", layoutTitle: "Folien anordnen", layoutHint: "Verschieben, ausblenden, Unterfolien zu Folien machen.", splitSubsteps: "Aufteilen", mergeSubsteps: "Zusammenführen", hiddenSlides: "Ausgeblendet", resetLayout: "Layout zurücksetzen", promoted: "Unterfolie", moveUp: "Nach oben", moveDown: "Nach unten", hideSlide: "Ausblenden", showSlide: "Einblenden"
+      soloDemo: "Demo solo", jsonTitle: "Alle Änderungen", jsonHint: "Nur geänderte Texte und das Layout. Kopiere den JSON-Text oder lade ihn herunter.", download: "Herunterladen", layoutSlides: "Folien", copyLink: "Link", linkCopied: "Link kopiert", layoutTitle: "Folien anordnen", layoutHint: "Verschieben, ausblenden, Unterfolien zu Folien machen.", splitSubsteps: "Aufteilen", mergeSubsteps: "Zusammenführen", hiddenSlides: "Ausgeblendet", resetLayout: "Layout zurücksetzen", promoted: "Unterfolie", moveUp: "Nach oben", moveDown: "Nach unten", hideSlide: "Ausblenden", showSlide: "Einblenden"
     },
     en: {
       position: "Position", positionOf: "Position {n} of {total}",
@@ -95,7 +95,7 @@
       newSource: "New source", removeSource: "Remove source", editHint: "E to edit",
       copyHint: "Copy the edit and pass it on.", exportEmpty: "Nothing edited yet.",
       exportJSON: "JSON ↓", importJSON: "JSON ↑", exportTitle: "Save changed texts as JSON", importTitle: "Load JSON", exportOk: "JSON saved", importOk: "JSON loaded", importError: "Could not read JSON",
-      kindQuestion: "Question", kindTrivia: "Trivia", soloDemo: "Demo solo", jsonTitle: "All changes", jsonHint: "Only changed texts and the layout. Copy the JSON or download it.", download: "Download", layoutSlides: "Slides", copyLink: "Link", linkCopied: "Link copied", layoutTitle: "Arrange slides", layoutHint: "Move, hide, and turn sub-slides into slides.", splitSubsteps: "Split", mergeSubsteps: "Merge", hiddenSlides: "Hidden", resetLayout: "Reset layout", promoted: "Sub-slide", moveUp: "Move up", moveDown: "Move down", hideSlide: "Hide", showSlide: "Show"
+      soloDemo: "Demo solo", jsonTitle: "All changes", jsonHint: "Only changed texts and the layout. Copy the JSON or download it.", download: "Download", layoutSlides: "Slides", copyLink: "Link", linkCopied: "Link copied", layoutTitle: "Arrange slides", layoutHint: "Move, hide, and turn sub-slides into slides.", splitSubsteps: "Split", mergeSubsteps: "Merge", hiddenSlides: "Hidden", resetLayout: "Reset layout", promoted: "Sub-slide", moveUp: "Move up", moveDown: "Move down", hideSlide: "Hide", showSlide: "Show"
     }
   };
   function setLang(lang) {
@@ -841,8 +841,6 @@
               '<div class="ls-cues" id="ls-cues"></div>' +
               '<div class="ls-extras" id="ls-extras"></div>' +
               '<div class="ls-actions">' +
-                '<button type="button" class="ls-btn ls-btn--green ls-btn--nav" id="ls-prev" data-no-height-test="1">' + esc(t("back")) + '</button>' +
-                '<button type="button" class="ls-btn ls-btn--green ls-btn--nav" id="ls-next" data-no-height-test="1">' + esc(t("forward")) + '</button>' +
                 '<button type="button" class="ls-btn ls-btn--ghost" id="ls-edit-btn" data-no-height-test="1">' + esc(t("edit")) + '</button>' +
               '</div>' +
             '</div>' +
@@ -853,6 +851,7 @@
             '<div class="ls-stage-foot"><span id="ls-stage-hint"></span><span class="ls-credit" id="ls-credit"></span></div>' +
           '</section>' +
         '</main>' +
+        '<div class="ls-bottom-nav"><button type="button" class="ls-btn ls-btn--green ls-btn--nav" id="ls-prev" data-no-height-test="1">' + esc(t("back")) + '</button><button type="button" class="ls-btn ls-btn--green ls-btn--nav" id="ls-next" data-no-height-test="1">' + esc(t("forward")) + '</button></div>' +
         '<div class="ls-cal-overlay" id="ls-calendar" hidden><div class="ls-cal-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("calendarTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("calendarTitle")) + '</b><button type="button" class="ls-btn ls-btn--tiny" id="ls-calendar-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></div><div class="ls-cal-grid" id="ls-calendar-grid"></div></div></div>' +
         '<div class="ls-cal-overlay" id="ls-layout" hidden><div class="ls-cal-panel ls-layout-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("layoutTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("layoutTitle")) + '</b><button type="button" class="ls-btn ls-btn--tiny" id="ls-layout-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></div><p class="ls-layout-hint">' + esc(t("layoutHint")) + '</p><div class="ls-layout-list" id="ls-layout-list"></div><div class="ls-layout-foot"><a class="ls-btn ls-btn--tiny" data-ls-solo target="_blank" rel="noopener">' + esc(t("soloDemo")) + '</a><button type="button" class="ls-btn ls-btn--tiny" data-layout-action="reset">' + esc(t("resetLayout")) + '</button></div></div></div>' +
         '<div class="ls-cal-overlay" id="ls-json-modal" hidden><div class="ls-cal-panel ls-json-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("jsonTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("jsonTitle")) + '</b><button type="button" class="ls-btn ls-btn--tiny" id="ls-json-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></div><p class="ls-layout-hint">' + esc(t("jsonHint")) + '</p><textarea class="ls-json-text" id="ls-json-text" readonly spellcheck="false"></textarea><div class="ls-layout-foot"><button type="button" class="ls-btn ls-btn--tiny" id="ls-json-copy">' + esc(t("copy")) + '</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-json-download">' + esc(t("download")) + '</button></div></div></div>' +
@@ -1065,10 +1064,8 @@
   function renderQuestionNode(q, path, depth, open) {
     var id = questionId(q, path);
     var children = countQuestions(q.questions);
-    var kind = q.kind === "trivia" ? "trivia" : "question";
     var html = '<details class="ls-deepbox ls-qnested ls-qnested--' + depth + '" data-qid="' + esc(id) + '"' + (open ? " open" : "") + '>' +
       '<summary>' +
-        '<span class="ls-qkind ls-qkind--' + kind + '">' + esc(t(kind === "trivia" ? "kindTrivia" : "kindQuestion")) + '</span> ' +
         esc(q.title || t("question")) +
         (children ? ' <span class="ls-depth-count">' + children + '</span>' : '') +
       '</summary>' +
@@ -1326,10 +1323,6 @@
     }).join("");
     return '<div class="ls-edit-question" data-path="' + esc(path) + '">' +
       '<div class="ls-edit-row">' +
-        '<select class="ls-edit-select" data-field="kind" data-path="' + esc(path) + '" aria-label="' + esc(t("kindQuestion")) + '">' +
-          '<option value="question"' + (q.kind === "trivia" ? "" : " selected") + '>' + esc(t("kindQuestion")) + '</option>' +
-          '<option value="trivia"' + (q.kind === "trivia" ? " selected" : "") + '>' + esc(t("kindTrivia")) + '</option>' +
-        '</select>' +
         '<input class="ls-edit-input" data-field="title" data-path="' + esc(path) + '" value="' + esc(q.title || "") + '" aria-label="' + esc(t("questionTitle")) + '">' +
         '<button type="button" class="ls-btn ls-btn--tiny ls-edit-remove" data-edit-remove-question="' + esc(path) + '">×</button>' +
       '</div>' +
@@ -1534,7 +1527,7 @@
         var q = questionAt(field.getAttribute("data-path"));
         if (!q) return;
         var key = field.getAttribute("data-field");
-        if (key === "title" || key === "body" || key === "tex" || key === "kind") q[key] = field.value;
+        if (key === "title" || key === "body" || key === "tex") q[key] = field.value;
         scheduleEditorSave();
       }
       field.addEventListener("input", sync);
