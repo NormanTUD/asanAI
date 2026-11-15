@@ -225,7 +225,32 @@
       statusEl.textContent = DE ? "Gauß glaubt keiner einzelnen Messung." : "Gauss believes no single measurement.";
     }
     function resize() { draw(); }
+    var sigmaAnim = 0, lastSigmaTarget = null;
+    function setSigma(target, animate) {
+      if (sigmaAnim) { cancelAnimationFrame(sigmaAnim); sigmaAnim = 0; }
+      var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+      if (!animate || reduced) {
+        sigma = target;
+        qualityEl.value = String(sigma);
+        qualityOut.textContent = "σ " + sigma.toFixed(1);
+        draw();
+        return;
+      }
+      var from = sigma, start = performance.now(), dur = 760;
+      function step(now) {
+        var t = Math.min(1, (now - start) / dur);
+        var e = t * t * (3 - 2 * t);
+        sigma = from + (target - from) * e;
+        qualityEl.value = String(sigma);
+        qualityOut.textContent = "σ " + sigma.toFixed(1);
+        draw();
+        sigmaAnim = t < 1 ? requestAnimationFrame(step) : 0;
+      }
+      sigmaAnim = requestAnimationFrame(step);
+    }
     qualityEl.addEventListener("input", function () {
+      if (sigmaAnim) { cancelAnimationFrame(sigmaAnim); sigmaAnim = 0; }
+      lastSigmaTarget = null;
       sigma = parseFloat(qualityEl.value) || 2;
       qualityOut.textContent = "σ " + sigma.toFixed(1);
       draw();
@@ -246,20 +271,21 @@
           return;
         }
         var nextSigma = typeof s.sigma === "number" ? Math.max(0.1, Math.min(2, s.sigma)) : sigma;
-        var changed = lastPhase !== "demo" || nextSigma !== sigma;
         lastPhase = "demo";
         el.classList.remove("is-intro");
-        if (typeof s.sigma === "number") {
-          sigma = nextSigma;
-          qualityEl.value = String(sigma);
-          qualityOut.textContent = "σ " + sigma.toFixed(1);
+        if (typeof s.sigma === "number" && nextSigma !== lastSigmaTarget) {
+          lastSigmaTarget = nextSigma;
+          setSigma(nextSigma, true);
         }
-        if (changed) resize();
       },
       resize: resize,
       pause: function () {},
       resume: function () { draw(); },
-      destroy: function () { window.removeEventListener("resize", resize); el.remove(); }
+      destroy: function () {
+        if (sigmaAnim) cancelAnimationFrame(sigmaAnim);
+        window.removeEventListener("resize", resize);
+        el.remove();
+      }
     };
   };
 })();

@@ -145,3 +145,11 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   Ultrakurzfassung der zwei Datensätze und des Fine-Tunings steht jetzt als
   Zusammenfassung in der Demo rechts. Die langen Cues sind entfernt, die
   GPT-3-Balken erscheinen dort nicht mehr.
+- [done] Ceres-Folie: Kicker ist auf allen Unterfolien „Daten“ (EN „Data“),
+  damit oben nichts springt. Der Teleskop-Slider animiert σ weich zwischen den
+  Schritten.
+- [done] „Viele Sätze, eine Wahrheit“ als fünfte Unterfolie an das Ende von
+  „Gauß, Ceres und die Daten“ gemerged; der Text vergleicht Textdaten mit den
+  Ceres-Messungen.
+- [done] „Sehr viele, sehr schmutzige Daten“ und „Die Mischung macht den
+  Korpus“ aus der Folienliste entfernt; die Inhalte liegen in der Datenfolie.
