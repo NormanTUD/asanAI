@@ -349,3 +349,18 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] Escape beendet den Bearbeiten-Modus (und schließt das Textpanel),
   auch wenn er durch Klick auf den Text oder den Bearbeiten-Button geöffnet
   wurde.
+- [done] Post-Training- und Evaluationsfolie entfernt (Daten, Ablauf, Demo-Dateien
+  und Demo-Label). Stattdessen eine Agents-Folie: dasselbe Modell, Tool-Loop,
+  Terminal, Screenshot, Bildtokens im Kontext; opencode/Claude Code/Cursor
+  als Beispiele.
+- [done] Attention-Box „Auch für Bilder“ ergänzt: Vision Transformer zerlegt
+  Bilder in Patches und nutzt dieselbe Self-Attention (Dosovitskiy et al., 2021).
+- [done] Kalibrierungsfolie „Konfidenz und Trefferquote“ entfernt; die
+  Halluzinationsgruppe besteht jetzt aus Typen und Schutz.
+- [done] Halluzinationsarten als inhaltsreiche Karten-Demo mit neun Typen
+  (falsche Fakten, erfundene Quellen, intrinsic/extrinsic, Kontext ignoriert,
+  veraltet, Entitätsvertauschung, Negation, Sampling), Beispielen,
+  Erkennungsmerkmalen, Gegenmitteln und Papers (Ji, Maynez, Huang, Rawte).
+- [done] Schutz-Demo mit RAG, schrittweiser Prüfung und Gegenprüfung:
+  Schalter zeigen, wann die Antwort gedeckt ist und wann sie „keine Quelle“
+  sagt. Quellen: Lewis, Wei, Dhuliawala.

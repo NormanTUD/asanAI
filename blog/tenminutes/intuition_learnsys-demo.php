@@ -23,9 +23,10 @@ $labels = [
 	'manifold' => 'Manifold', 'gauss' => 'Gauss', 'unembed' => 'Unembedding', 'animals' => 'Tiere',
 	'model' => 'Modell', 'blocks' => 'Bausteine', 'highdim' => 'Hochdimensional', 'mlp' => 'MLP',
 	'backprop' => 'Backprop', 'trajectories' => 'Trajektorien', 'stack' => 'Stack',
-	'activation' => 'Aktivierung', 'langdata' => 'Sprachdaten', 'posttrain' => 'Post-Training',
-	'eval' => 'Evaluation', 'gradient' => 'Gradient', 'kvcache' => 'KV-Cache', 'rag' => 'RAG',
+	'activation' => 'Aktivierung', 'langdata' => 'Sprachdaten', 'agents' => 'Agent',
+	'gradient' => 'Gradient', 'kvcache' => 'KV-Cache', 'rag' => 'RAG',
 	'history' => 'Geschichte', 'chineseroom' => 'Chinese Room', 'codenoise' => 'Code-Rauschen',
+	'hallucinationtypes' => 'Halluzinationsarten', 'hallucinationguard' => 'Halluzinationsschutz',
 ];
 function h($s) { return htmlspecialchars((string) $s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
 ?>

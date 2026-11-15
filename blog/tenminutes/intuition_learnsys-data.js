@@ -928,86 +928,6 @@
     }
   ];
 
-  var posttrainSteps = DE ? [
-    {
-      kicker: "Post-Training",
-      title: "Vom Basismodell zum Assistenten",
-      body: "Ein Basismodell setzt Text fort. Eine Anweisung beantwortet es nicht zuverlässig. SFT zeigt ihm gute Antworten; RLHF lernt aus menschlichen Vergleichen. Aus der Vorhersage wird ein Assistent. Klicke die drei Stufen und wähle eine Antwort.",
-      watch: "Klicke Basismodell, SFT und RLHF. Welche Antwort würdest du wählen?",
-      demoState: { scene: "posttrain", step: 0 },
-      context: "Pretraining lernt aus Text. SFT lernt aus Beispielantworten. RLHF lernt aus Präferenzen: Menschen vergleichen zwei Antworten, ein Reward-Modell lernt daraus.",
-      deep: "RLHF ist kein Verstehen. Es verschiebt die Verteilung in Richtung Antworten, die Menschen bevorzugen. Deshalb kann ein Modell hilfreicher und gleichzeitig falsch sein. Die Präferenzdaten sind ein Designentscheid.",
-      boxes: [
-        box("post-1", "Technik", "Was ist SFT?", "Supervised Fine-Tuning: Das Modell lernt auf Paaren aus Anweisung und guter Antwort. Es übernimmt Format und Stil, nicht automatisch neue Fakten."),
-        box("post-2", "Technik", "Was ist RLHF?", "Menschen vergleichen Antworten; ein Reward-Modell lernt die Präferenz; die Policy wird so optimiert, dass sie höhere Belohnung bekommt."),
-        box("post-3", "Grenze", "Was garantiert RLHF?", "Nicht Wahrheit. Es optimiert auf menschliche Präferenzen. Ein plausibler, selbstsicherer Ton kann belohnt werden, auch wenn der Inhalt falsch ist.")
-      ],
-      sources: [
-        { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155", why: { de: "Instruction-Tuning und RLHF für Sprachmodelle.", en: "Instruction tuning and RLHF for language models." } },
-        { label: "Christiano et al. (2017), Deep RL from Human Preferences", url: "https://arxiv.org/abs/1706.03741", why: { de: "Präferenzen als Trainingssignal.", en: "Preferences as a training signal." } }
-      ]
-    }
-  ] : [
-    {
-      kicker: "Post-training",
-      title: "From base model to assistant",
-      body: "A base model continues text. It does not reliably answer an instruction. SFT shows it good answers; RLHF learns from human comparisons. Prediction becomes an assistant. Click the three stages and choose an answer.",
-      watch: "Click base model, SFT, and RLHF. Which answer would you choose?",
-      demoState: { scene: "posttrain", step: 0 },
-      context: "Pretraining learns from text. SFT learns from example answers. RLHF learns from preferences: humans compare two answers, and a reward model learns from that.",
-      deep: "RLHF is not understanding. It shifts the distribution toward answers people prefer. That is why a model can be more helpful and still wrong. Preference data is a design decision.",
-      boxes: [
-        box("post-1", "Technique", "What is SFT?", "Supervised fine-tuning: the model learns from instruction-answer pairs. It picks up format and style, not automatically new facts."),
-        box("post-2", "Technique", "What is RLHF?", "Humans compare answers; a reward model learns the preference; the policy is optimised to receive a higher reward."),
-        box("post-3", "Limit", "What does RLHF guarantee?", "Not truth. It optimises for human preferences. A plausible, confident tone can be rewarded even when the content is wrong.")
-      ],
-      sources: [
-        { label: "Ouyang et al. (2022), InstructGPT", url: "https://arxiv.org/abs/2203.02155", why: { de: "Instruction-Tuning und RLHF für Sprachmodelle.", en: "Instruction tuning and RLHF for language models." } },
-        { label: "Christiano et al. (2017), Deep RL from Human Preferences", url: "https://arxiv.org/abs/1706.03741", why: { de: "Präferenzen als Trainingssignal.", en: "Preferences as a training signal." } }
-      ]
-    }
-  ];
-
-  var evalSteps = DE ? [
-    {
-      kicker: "Evaluation",
-      title: "Wie gut ist das Modell?",
-      body: "Ein Loss sagt, wie gut das nächste Token passt. Ein Benchmark sagt, ob das Modell Aufgaben löst. Beides ist messbar, aber nicht dasselbe. Klicke eine Aufgabe und schalte die Kontamination um.",
-      watch: "Klicke MMLU, HumanEval und GSM8K. Was misst der Score, was nicht?",
-      demoState: { scene: "eval", task: 0 },
-      context: "Ein hoher Score kann bedeuten, dass das Modell die Aufgabe versteht, oder dass der Test im Training war. Prüfe die Daten, nicht nur die Zahl.",
-      deep: "Loss und Perplexity messen die Wahrscheinlichkeit von Testtext. Benchmarks messen Aufgaben. Kontamination, Formatierung und Auswertungsregeln können den Score verändern. Ein Benchmark ist ein Messinstrument, keine Definition von Intelligenz.",
-      boxes: [
-        box("eval-1", "Technik", "Was ist MMLU?", "Ein Multiple-Choice-Benchmark über viele Fächer. Er misst Faktenwissen und Schlussfolgern, nicht Alltagskönnen."),
-        box("eval-2", "Technik", "Was ist HumanEval?", "Ein Code-Benchmark: Funktionen aus Docstrings schreiben; Unit-Tests prüfen die Ausführung."),
-        box("eval-3", "Grenze", "Was ist Kontamination?", "Wenn Testaufgaben im Training waren, misst der Score teilweise Erinnerung statt Lösung. Ein hoher Score ist dann kein Beweis für Generalisierung.")
-      ],
-      sources: [
-        { label: "Hendrycks et al. (2021), MMLU", url: "https://arxiv.org/abs/2009.03300", why: { de: "MMLU als Multi-Task-Benchmark.", en: "MMLU as a multi-task benchmark." } },
-        { label: "Chen et al. (2021), HumanEval", url: "https://arxiv.org/abs/2107.03374", why: { de: "HumanEval prüft Code mit Unit-Tests.", en: "HumanEval checks code with unit tests." } }
-      ]
-    }
-  ] : [
-    {
-      kicker: "Evaluation",
-      title: "How good is the model?",
-      body: "A loss says how well the next token fits. A benchmark says whether the model solves tasks. Both are measurable, but they are not the same. Click a task and toggle contamination.",
-      watch: "Click MMLU, HumanEval, and GSM8K. What does the score measure, and what does it not?",
-      demoState: { scene: "eval", task: 0 },
-      context: "A high score can mean the model understands the task, or that the test was in training. Check the data, not only the number.",
-      deep: "Loss and perplexity measure the probability of test text. Benchmarks measure tasks. Contamination, formatting, and scoring rules can change the score. A benchmark is a measuring instrument, not a definition of intelligence.",
-      boxes: [
-        box("eval-1", "Technique", "What is MMLU?", "A multiple-choice benchmark across many subjects. It measures factual knowledge and reasoning, not everyday skill."),
-        box("eval-2", "Technique", "What is HumanEval?", "A code benchmark: write functions from docstrings; unit tests check execution."),
-        box("eval-3", "Limit", "What is contamination?", "If test items were in training, the score partly measures memory instead of solving. A high score is then no proof of generalisation.")
-      ],
-      sources: [
-        { label: "Hendrycks et al. (2021), MMLU", url: "https://arxiv.org/abs/2009.03300", why: { de: "MMLU als Multi-Task-Benchmark.", en: "MMLU as a multi-task benchmark." } },
-        { label: "Chen et al. (2021), HumanEval", url: "https://arxiv.org/abs/2107.03374", why: { de: "HumanEval prüft Code mit Unit-Tests.", en: "HumanEval checks code with unit tests." } }
-      ]
-    }
-  ];
-
   var gradientSteps = DE ? [
     {
       kicker: "Loss-Landschaft",
@@ -1774,68 +1694,80 @@
       box("qkv-1", DE ? "Technik" : "Technique", "Q, K, V", DE ? "Query: wonach fragt das Token? Key: was bietet es an? Value: welche Information wird weitergegeben?" : "Query: what does the token ask for? Key: what does it offer? Value: which information is passed on?"),
       box("qkv-2", DE ? "Mathematik" : "Mathematics", "Softmax", DE ? "Macht aus den Scores eine Verteilung. Jede Query-Zeile summiert zu 1; mehr Gewicht für einen Key heißt weniger für alle anderen." : "Turns scores into a distribution. Every query row sums to 1; more weight for one key means less for all others."),
       box("qkv-3", DE ? "Technik" : "Technique", DE ? "Mehrere Heads" : "Multiple heads", DE ? "Jeder Head hat eigene Q/K/V-Projektionen. Die Ausgaben werden konkateniert und projiziert." : "Every head has its own Q/K/V projections. The outputs are concatenated and projected."),
-      box("qkv-4", DE ? "Mathematik" : "Mathematics", DE ? "Die Formel" : "The formula", DE ? "Attention als gewichtete Mischung der Values." : "Attention as a weighted mixture of the values.", DE ? "\\underbrace{\\underbrace{\\operatorname{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)}_{\\alpha}V}_{\\text{gewichtete Mischung der Values}}" : "\\underbrace{\\underbrace{\\operatorname{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)}_{\\alpha}V}_{\\text{weighted mixture of the values}}")
+      box("qkv-4", DE ? "Mathematik" : "Mathematics", DE ? "Die Formel" : "The formula", DE ? "Attention als gewichtete Mischung der Values." : "Attention as a weighted mixture of the values.", DE ? "\\underbrace{\\underbrace{\\operatorname{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)}_{\\alpha}V}_{\\text{gewichtete Mischung der Values}}" : "\\underbrace{\\underbrace{\\operatorname{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)}_{\\alpha}V}_{\\text{weighted mixture of the values}}"),
+      box("qkv-5", DE ? "Technik" : "Technique", DE ? "Auch für Bilder" : "Images too", DE ? "Ein Vision Transformer zerlegt ein Bild in Patches und behandelt die Patches wie Tokens. Dieselbe Self-Attention lässt sie aufeinander schauen; das ist die Technik aus der Sprachverarbeitung (Dosovitskiy et al., 2021)." : "A vision transformer splits an image into patches and treats the patches like tokens. The same self-attention lets them attend to each other; this is the technique from language processing (Dosovitskiy et al., 2021).")
     ],
     sources: [
-      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Q/K/V, Multi-Head-Attention und Softmax-Gewichte.", en: "Q/K/V, multi-head attention, and softmax weights." } }
-    ]
-  };
-
-  var hallucinationCalibration = {
-    kicker: DE ? "Kalibrierung" : "Calibration",
-    title: DE ? "Konfidenz und Trefferquote" : "Confidence and accuracy",
-    body: DE
-      ? "Ein Sprachmodell optimiert die Wahrscheinlichkeit des nächsten Tokens, nicht Wahrheit. Eine Antwort kann flüssig, detailliert und falsch sein: Das ist eine Halluzination. Kalibrierung fragt, ob die Konfidenz zur Trefferquote passt; ein überconfidentes Modell sagt oft mit 95 % etwas, das nur in 70 % der Fälle stimmt. Temperatur-Skalierung kann die Konfidenz besser kalibrieren, aber sie macht falsche Aussagen nicht wahr."
-      : "A language model optimises the probability of the next token, not truth. An answer can be fluent, detailed, and false: that is a hallucination. Calibration asks whether confidence matches accuracy; an overconfident model often says with 95% something that is true only 70% of the time. Temperature scaling can improve calibration, but it does not make false statements true.",
-    watch: DE ? "Ziehe die Temperatur. Wandert die Kurve näher an die Diagonale? Bleiben die falschen Aussagen falsch?" : "Drag the temperature. Does the curve move closer to the diagonal? Do the false statements stay false?",
-    demoState: { scene: "calibration" },
-    context: DE ? "Kalibrierung ist nicht Wahrheit. Ein kalibriertes Modell kann immer noch halluzinieren; es weiß dann nur besser, wie unsicher es sein sollte." : "Calibration is not truth. A calibrated model can still hallucinate; it just knows better how uncertain it should be.",
-    deep: DE ? "Halluzinationen entstehen aus dem nächsten-Token-Ziel, lückenhaften Daten und fehlender Erdung. Quellenprüfung und Retrieval reduzieren das Risiko, beseitigen es nicht." : "Hallucinations arise from the next-token objective, incomplete data, and missing grounding. Source checks and retrieval reduce the risk; they do not remove it.",
-    boxes: [
-      box("hal-1", DE ? "Grenze" : "Limit", DE ? "Was ist eine Halluzination?" : "What is a hallucination?", DE ? "Eine flüssige, plausible, aber falsche Aussage. Sie klingt wie Wissen, ist aber keine gedeckte Tatsache." : "A fluent, plausible, but false statement. It sounds like knowledge, but it is not a supported fact."),
-      box("hal-2", DE ? "Mathematik" : "Mathematics", DE ? "Was ist Kalibrierung?" : "What is calibration?", DE ? "Konfidenz und Trefferquote stimmen überein: Was mit 80 % angekündigt wird, stimmt in etwa 80 % der Fälle." : "Confidence and accuracy agree: what is announced with 80% is true in about 80% of cases."),
-      box("hal-3", DE ? "Grenze" : "Limit", DE ? "Hilft Temperatur?" : "Does temperature help?", DE ? "Temperatur-Skalierung verschiebt Konfidenzen, nicht die Wahrheit. Sie kann Überconfidenz dämpfen, aber keine falschen Fakten reparieren." : "Temperature scaling shifts confidences, not truth. It can soften overconfidence but cannot repair false facts.")
-    ],
-    sources: [
-      { label: "Ji et al. (2023), Survey of Hallucination in Natural Language Generation", url: "https://arxiv.org/abs/2202.03629", why: { de: "Überblick über Halluzinationen in der Sprachgenerierung.", en: "Overview of hallucination in natural language generation." } },
-      { label: "Guo et al. (2017), On Calibration of Modern Neural Networks", url: "https://arxiv.org/abs/1706.04599", why: { de: "Kalibrierung und Temperatur-Skalierung.", en: "Calibration and temperature scaling." } },
-      { label: "Kadavath et al. (2022), Language Models (Mostly) Know What They Know", url: "https://arxiv.org/abs/2207.05221", why: { de: "Selbsteinschätzung und Kalibrierung von Sprachmodellen.", en: "Self-evaluation and calibration of language models." } },
-      { label: "Lin et al. (2022), TruthfulQA", url: "https://arxiv.org/abs/2109.07958", why: { de: "Benchmark für wahre und falsche Antworten.", en: "Benchmark for truthful and false answers." } }
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Q/K/V, Multi-Head-Attention und Softmax-Gewichte.", en: "Q/K/V, multi-head attention, and softmax weights." } },
+      { label: "Dosovitskiy et al. (2021), An Image is Worth 16x16 Words", url: "https://arxiv.org/abs/2010.11929", why: { de: "Vision Transformer: Bild-Patches mit Self-Attention.", en: "Vision transformer: image patches with self-attention." } }
     ]
   };
 
   var hallucinationCauses = {
-    kicker: DE ? "Ursachen" : "Causes",
+    kicker: DE ? "Typen" : "Types",
     title: DE ? "Arten von Halluzinationen" : "Types of hallucination",
     body: DE
-      ? "Halluzinationen haben verschiedene Ursachen. Falsche Daten im Korpus werden ruhig wiederholt. Zufälliges Sampling kann einen plausiblen, aber falschen Pfad wählen. Fehlt Wissen, füllt das Modell die Lücke mit einer Erfindung. Auch Negation ist keine saubere Umkehrung: „nicht glücklich“ bleibt näher an „glücklich“ als an „traurig“."
-      : "Hallucinations have different causes. False data in the corpus is repeated calmly. Random sampling can pick a plausible but false path. When knowledge is missing, the model fills the gap with an invention. Negation is not a clean reversal either: “not happy” stays closer to “happy” than to “sad”.",
-    watch: DE ? "Klicke die Ursachen durch: falsche Daten, Sampling, Lücken, Negation." : "Click through the causes: false data, sampling, gaps, negation.",
+      ? "Halluzinationen sind nicht ein einziger Fehler. Die Forschung unterscheidet unter anderem falsche Fakten, erfundene Quellen, intrinsische und extrinsische Halluzinationen, Kontextkonflikte, veraltetes Wissen, Entitätsvertauschungen und Negationsfehler. Jeder Typ hat ein Beispiel und ein Gegenmittel. Klicke die Typen durch."
+      : "Hallucinations are not one single failure. Research distinguishes false facts, fabricated citations, intrinsic and extrinsic hallucinations, context conflicts, outdated knowledge, entity swaps, and negation errors. Every type has an example and a countermeasure. Click through the types.",
+    watch: DE ? "Klicke die Typen. Welches Beispiel erkennst du wieder? Welches Gegenmittel passt?" : "Click the types. Which example do you recognise? Which countermeasure fits?",
     demoState: { scene: "hallucinationtypes" },
-    context: DE ? "Die vier Bilder sind didaktische Beispiele, keine Messungen. Sie zeigen typische Wege in eine falsche, aber plausible Antwort." : "The four pictures are didactic examples, not measurements. They show typical paths to a false but plausible answer.",
-    deep: DE ? "Falsche Daten und Lücken sind Datenprobleme; Sampling ist ein Decoding-Problem; Negation ist ein Repräsentationsproblem. Kalibrierung sagt, wie sicher sich das Modell fühlen sollte, nicht ob es recht hat." : "False data and gaps are data problems; sampling is a decoding problem; negation is a representation problem. Calibration says how confident the model should feel, not whether it is right.",
+    context: DE ? "Intrinsic heißt: Die Antwort widerspricht der Quelle. Extrinsic heißt: Sie fügt Information hinzu, die die Quelle nicht deckt (Maynez et al., 2020; Ji et al., 2023)." : "Intrinsic means the answer contradicts the source. Extrinsic means it adds information the source does not support (Maynez et al., 2020; Ji et al., 2023).",
+    deep: DE ? "Die Typen überschneiden sich. Wichtig ist die Unterscheidung nach Ursache: Datenproblem, Decoding-Problem, Repräsentationsproblem oder fehlende Erdung. Daraus folgt, welches Gegenmittel sinnvoll ist." : "The types overlap. What matters is the cause: data problem, decoding problem, representation problem, or missing grounding. That decides which countermeasure is useful.",
     boxes: DE ? [
-      box("hct-1", "Daten", "Falsche Daten", "Eine falsche Aussage im Korpus kann als Muster wiederkommen. Das Modell hat keine eingebaute Quelle, die sie korrigiert."),
-      box("hct-2", "Sampling", "Zufall beim Erzeugen", "Sampling wählt manchmal ein unwahrscheinliches Token. Danach ist der Kontext falsch, und das Modell baut plausibel darauf weiter."),
-      box("hct-3", "Daten", "Lücken", "Fehlt ein Bereich im Training, erfindet das Modell eine Antwort, die zur Form der Frage passt."),
-      box("hct-4", "Sprache", "Negation", "„Nicht glücklich“ ist nicht automatisch „traurig“. Im gelernten Raum bleibt es oft näher an „glücklich“; die Bedeutung ist keine saubere Umkehrung.")
+      box("hct-1", "Daten", "Falsche Fakten", "Das Modell wiederholt eine falsche Aussage mit ruhiger Stimme. Gegenmittel: Quelle prüfen, RAG, Zitat verlangen."),
+      box("hct-2", "Quelle", "Erfundene Quellen", "Eine DOI, ein Autor oder ein Paper klingt echt, existiert aber nicht. Gegenmittel: Link prüfen, nur bereitgestellte Quellen zitieren."),
+      box("hct-3", "Quelle", "Intrinsic vs. extrinsic", "Intrinsic widerspricht der Quelle; extrinsic ergänzt Unbelegtes. Gegenmittel: Faithfulness-Check und Attribution."),
+      box("hct-4", "Kontext", "Konflikt und Zeit", "Die Antwort ignoriert den gegebenen Kontext oder nutzt veraltetes Wissen. Gegenmittel: Kontext zitieren, Datum prüfen, Retrieval."),
+      box("hct-5", "Sprache", "Entität und Negation", "Namen oder Zahlen werden vertauscht; „nicht glücklich“ rutscht Richtung „traurig“. Gegenmittel: Entitäten und logische Schritte separat prüfen."),
+      box("hct-6", "Decoding", "Sampling", "Zufall wählt einen plausiblen, aber falschen Pfad. Gegenmittel: Temperatur senken, mehrere Antworten vergleichen, Selbstkonsistenz.")
     ] : [
-      box("hct-1", "Data", "False data", "A false statement in the corpus can return as a pattern. The model has no built-in source that corrects it."),
-      box("hct-2", "Sampling", "Randomness in generation", "Sampling sometimes picks an unlikely token. After that the context is wrong, and the model builds plausibly on it."),
-      box("hct-3", "Data", "Gaps", "When a region is missing from training, the model invents an answer that fits the shape of the question."),
-      box("hct-4", "Language", "Negation", "“Not happy” is not automatically “sad”. In the learned space it often stays closer to “happy”; meaning is not a clean reversal.")
+      box("hct-1", "Data", "False facts", "The model repeats a false statement in a calm voice. Countermeasure: check the source, use RAG, require a citation."),
+      box("hct-2", "Source", "Fabricated citations", "A DOI, author, or paper sounds real but does not exist. Countermeasure: check the link, cite only provided sources."),
+      box("hct-3", "Source", "Intrinsic vs. extrinsic", "Intrinsic contradicts the source; extrinsic adds unsupported content. Countermeasure: faithfulness check and attribution."),
+      box("hct-4", "Context", "Conflict and time", "The answer ignores the given context or uses outdated knowledge. Countermeasure: quote the context, check the date, use retrieval."),
+      box("hct-5", "Language", "Entity and negation", "Names or numbers get swapped; “not happy” drifts toward “sad”. Countermeasure: check entities and logical steps separately."),
+      box("hct-6", "Decoding", "Sampling", "Randomness picks a plausible but false path. Countermeasure: lower temperature, compare several answers, use self-consistency.")
     ],
     sources: [
-      { label: "Ji et al. (2023), Survey of Hallucination in Natural Language Generation", url: "https://arxiv.org/abs/2202.03629", why: { de: "Überblick über Halluzinationsursachen.", en: "Overview of hallucination causes." } },
-      { label: "Kadavath et al. (2022), Language Models (Mostly) Know What They Know", url: "https://arxiv.org/abs/2207.05221", why: { de: "Selbsteinschätzung und Kalibrierung.", en: "Self-evaluation and calibration." } },
-      { label: "Lin et al. (2022), TruthfulQA", url: "https://arxiv.org/abs/2109.07958", why: { de: "Benchmark für wahre und falsche Antworten.", en: "Benchmark for truthful and false answers." } }
+      { label: "Ji et al. (2023), Survey of Hallucination in Natural Language Generation", url: "https://arxiv.org/abs/2202.03629", why: { de: "Überblick über Halluzinationsarten und -ursachen.", en: "Overview of hallucination types and causes." } },
+      { label: "Maynez et al. (2020), On Faithfulness and Factuality in Abstractive Summarization", url: "https://arxiv.org/abs/2005.00661", why: { de: "Intrinsic und extrinsic Halluzinationen in Zusammenfassungen.", en: "Intrinsic and extrinsic hallucinations in summarization." } },
+      { label: "Huang et al. (2023), A Survey on Hallucination in Large Language Models", url: "https://arxiv.org/abs/2311.05232", why: { de: "Taxonomie und offene Fragen zu LLM-Halluzinationen.", en: "Taxonomy and open questions on LLM hallucinations." } },
+      { label: "Rawte et al. (2023), A Survey of Hallucination in Large Foundation Models", url: "https://arxiv.org/abs/2309.05922", why: { de: "Überblick über Halluzinationen in großen Foundation-Modellen.", en: "Overview of hallucinations in large foundation models." } }
+    ]
+  };
+
+  var hallucinationGuard = {
+    kicker: DE ? "Schutz" : "Defence",
+    title: DE ? "So werden Halluzinationen seltener" : "How to make hallucinations rarer",
+    body: DE
+      ? "Drei Hebel: vertrauenswürdige Quellen in den Kontext legen (RAG), schrittweise prüfen (CoT und Verifikation) und die Antwort mit einem Zitat oder einem Eingeständnis absichern. Klicke die Schalter: Ohne Quelle bleibt die Antwort eine Vermutung; mit Quelle und Gegenprüfung wird sie gedeckt."
+      : "Three levers: put trusted sources into the context (RAG), check step by step (CoT and verification), and secure the answer with a citation or an admission. Click the toggles: without a source the answer stays a guess; with a source and a cross-check it becomes grounded.",
+    watch: DE ? "Schalte Quellen, Schrittweise und Gegenprüfung. Wann ist die Antwort gedeckt, wann sagt das Modell „keine Quelle“?" : "Toggle sources, step-by-step, and verification. When is the answer grounded, and when does the model say “no source”?",
+    demoState: { scene: "hallucinationguard" },
+    context: DE ? "RAG holt Dokumente und legt sie in den Kontext (Lewis et al., 2020). CoT macht Zwischenschritte sichtbar (Wei et al., 2022); Chain-of-Verification prüft die Antwort mit unabhängigen Fragen (Dhuliawala et al., 2023)." : "RAG retrieves documents and puts them into the context (Lewis et al., 2020). CoT makes intermediate steps visible (Wei et al., 2022); chain-of-verification checks the answer with independent questions (Dhuliawala et al., 2023).",
+    deep: DE ? "Keine Methode garantiert Wahrheit. RAG hilft nur, wenn die Quelle gut ist; CoT kann plausibel, aber falsch schlussfolgern; Verifikation braucht eine unabhängige Quelle. Am robustesten ist die Kombination: Quelle, Zitat und ein Eingeständnis, wenn die Deckung fehlt." : "No method guarantees truth. RAG helps only if the source is good; CoT can reason plausibly but wrongly; verification needs an independent source. The most robust combination is source, citation, and an admission when support is missing.",
+    boxes: DE ? [
+      box("hg-1", "RAG", "Quellen in den Kontext", "Retrieval holt vertrauenswürdige Dokumente und legt sie in den Kontext. Das Modell soll daraus antworten und die Quelle nennen, nicht aus dem Gedächtnis raten."),
+      box("hg-2", "CoT", "Schrittweise prüfen", "Die Antwort wird in Schritte zerlegt: Frage, Quelle, Schluss. So werden übersprungene Schritte und selbst gefüllte Lücken sichtbar."),
+      box("hg-3", "Verifikation", "Gegenprüfung", "Chain-of-Verification stellt unabhängige Prüffragen und revidiert die Antwort. Ohne Deckung lautet die Antwort „keine Quelle“ statt einer Erfindung."),
+      box("hg-4", "Grenze", "Was bleibt?", "RAG ist nur so gut wie die Quelle; CoT kann falsch reasoning; Verifikation braucht Unabhängigkeit. Keine Methode macht Wahrheit garantiert.")
+    ] : [
+      box("hg-1", "RAG", "Sources in the context", "Retrieval pulls trusted documents into the context. The model should answer from them and name the source instead of guessing from memory."),
+      box("hg-2", "CoT", "Check step by step", "Break the answer into steps: question, source, conclusion. That makes skipped steps and self-filled gaps visible."),
+      box("hg-3", "Verification", "Cross-check", "Chain-of-verification asks independent checking questions and revises the answer. Without support the answer is “no source” instead of an invention."),
+      box("hg-4", "Limit", "What remains?", "RAG is only as good as the source; CoT can reason wrongly; verification needs independence. No method guarantees truth.")
+    ],
+    sources: [
+      { label: "Lewis et al. (2020), Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks", url: "https://arxiv.org/abs/2005.11401", why: { de: "RAG: Retrieval und Generierung verbinden.", en: "RAG: combine retrieval and generation." } },
+      { label: "Wei et al. (2022), Chain-of-Thought Prompting", url: "https://arxiv.org/abs/2201.11903", why: { de: "Schrittweises Reasoning als Prompt-Muster.", en: "Step-by-step reasoning as a prompting pattern." } },
+      { label: "Dhuliawala et al. (2023), Chain-of-Verification Reduces Hallucination", url: "https://arxiv.org/abs/2309.11495", why: { de: "Antworten mit unabhängigen Prüffragen verifizieren.", en: "Verify answers with independent checking questions." } }
     ]
   };
 
   var hallucinationStep = {
     title: DE ? "Warum Modelle halluzinieren" : "Why models hallucinate",
     kicker: DE ? "Grenze" : "Limit",
-    substeps: [hallucinationCalibration, hallucinationCauses]
+    substeps: [hallucinationCauses, hallucinationGuard]
   };
 
   var consciousnessStep = {
@@ -1949,7 +1881,35 @@
     substeps: [qkvArcs, qkvArcs2, qkvSimplex, qkvSimplex2, qkvGraph]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep];
+  var agentsStep = {
+    kicker: DE ? "Agent" : "Agent",
+    title: DE ? "Ein Agent ist dasselbe Modell mit Werkzeugen" : "An agent is the same model with tools",
+    body: DE
+      ? "Ein Agent ist kein neues Modell. Es sind dieselben Gewichte wie im Browser. Der Unterschied ist der Loop: Das Modell sagt „führe das als Programm aus“, die Runtime tut es, und der Output kommt in den Kontext. So arbeiten opencode, Claude Code und Cursor: Sie lesen Dateien, führen Befehle aus und sehen die Ergebnisse. Multimodale Modelle bekommen zusätzlich Screenshots und können darauf sehen, was auf dem Bildschirm ist."
+      : "An agent is not a new model. It uses the same weights as the browser. The difference is the loop: the model says “run this as a program”, the runtime does it, and the output goes into the context. That is how opencode, Claude Code, and Cursor work: they read files, run commands, and see the results. Multimodal models also receive screenshots and can see what is on the screen.",
+    watch: DE ? "Drücke Weiter. Verfolge, wie Tool-Call, Ausführung und Ergebnis in den Kontext wandern." : "Press Next. Follow how the tool call, the execution, and the result move into the context.",
+    demoState: { scene: "agents" },
+    context: DE ? "Der Kontext ist das Arbeitsgedächtnis. Jeder Tool-Output wächst hinein. Das Modell entscheidet auf dieser Grundlage den nächsten Schritt; die Runtime liegt außerhalb des Modells." : "The context is the working memory. Every tool output grows into it. The model decides the next step on that basis; the runtime sits outside the model.",
+    deep: DE ? "ReAct und Toolformer beschreiben diesen Loop; OSWorld und WebArena testen Computer-Use. Das Modell bleibt ein Nächstes-Token-Vorhersager; die Werkzeuge machen daraus einen Akteur. Grenzen: falsche Tool-Calls, Berechtigungen, Prompt Injection und Kosten." : "ReAct and Toolformer describe this loop; OSWorld and WebArena test computer use. The model remains a next-token predictor; the tools turn it into an actor. Limits: wrong tool calls, permissions, prompt injection, and cost.",
+    boxes: DE ? [
+      box("ag-1", "Technik", "Was ist ein Tool?", "Ein Programm außerhalb des Modells: Terminal, Datei, Browser, API. Das Modell ruft es über eine strukturierte Nachricht auf."),
+      box("ag-2", "Multimodal", "Screenshot und Bild", "Die Runtime macht einen Screenshot. Ein multimodales Modell kodiert das Bild und legt die Tokens in den Kontext; so kann es UI-Elemente lesen."),
+      box("ag-3", "Gleiches Modell?", "Ja, dieselben Gewichte", "Der Agent ist ein Loop um dasselbe LLM. Nicht die Gewichte ändern sich, sondern der Kontext und die verfügbaren Werkzeuge."),
+      box("ag-4", "Grenze", "Was kann schiefgehen?", "Falsche Tool-Calls, zu weitreichende Berechtigungen, Prompt Injection in Webseiten oder Dateien und hohe Kosten durch viele Schritte.")
+    ] : [
+      box("ag-1", "Technique", "What is a tool?", "A program outside the model: terminal, file, browser, API. The model calls it through a structured message."),
+      box("ag-2", "Multimodal", "Screenshot and image", "The runtime takes a screenshot. A multimodal model encodes the image and puts the tokens into the context; that is how it reads UI elements."),
+      box("ag-3", "Same model?", "Yes, same weights", "The agent is a loop around the same LLM. The weights do not change; the context and the available tools do."),
+      box("ag-4", "Limit", "What can go wrong?", "Wrong tool calls, excessive permissions, prompt injection in websites or files, and high cost from many steps.")
+    ],
+    sources: [
+      { label: "Yao et al. (2022), ReAct: Synergizing Reasoning and Acting in Language Models", url: "https://arxiv.org/abs/2210.03629", why: { de: "Reasoning und Tool-Aktionen im Wechsel.", en: "Interleaving reasoning and tool actions." } },
+      { label: "Schick et al. (2023), Toolformer", url: "https://arxiv.org/abs/2302.04761", why: { de: "Sprachmodelle lernen, Werkzeuge aufzurufen.", en: "Language models learn to call tools." } },
+      { label: "Xie et al. (2024), OSWorld", url: "https://arxiv.org/abs/2404.07972", why: { de: "Benchmark für Computer-Use-Agenten mit Screenshots.", en: "Benchmark for computer-use agents with screenshots." } }
+    ]
+  };
+
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep];
 
   var day = {
     id: "intuition",
