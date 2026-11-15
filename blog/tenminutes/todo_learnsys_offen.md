@@ -158,3 +158,9 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   als eigene Unterfolie. Der BPE-Chip in den Beispielen ist entfernt; die
   Demo-Weiter-Taste wechselt nicht mehr intern in den BPE-Modus.
 - [done] Beispiele und BPE sind in der Tokenizer-Demo vertikal zentriert.
+- [done] Neuronale-Netze-Folie in einzelne Folien aufgeteilt: 1 Neuron,
+  Loss-Landschaft, Aktivierungsfunktionen, drei Schichten 32×32×32; danach
+  bleibt die MLP-Raumbiege-Folie separat.
+- [done] „Mit Worten steuern“ und „Verstehen heißt komprimieren“ aus der
+  Folienliste entfernt; ihre Definitionen liegen in
+  `intuition_learnsys_removed.js` und werden nicht geladen.
