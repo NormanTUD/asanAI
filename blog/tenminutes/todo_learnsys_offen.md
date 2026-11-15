@@ -234,3 +234,16 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   damit die Aufmerksamkeitsbögen nicht oben abgeschnitten werden.
 - [done] Code-Attention heißt jetzt „Attention verschiebt Punkte und vergisst
   Oberflächen“ und ist DE/EN vollständig übersetzt.
+- [done] Loss-Landschaft: Spinner über der Bühne, `busy()` blockiert
+  „Weiter“, bis die Fläche berechnet ist.
+- [done] Cross-Entropy-Demo zeigt den Loss jetzt zusätzlich als DOM-Readout
+  (Loss, p(Ziel), Gradient).
+- [done] „Warum Modelle halluzinieren“ ist eine Gruppe mit Kalibrierung und
+  einer neuen Ursachen-Folie: falsche Daten, Sampling, Lücken, Negation.
+  Die Demo `hallucinationtypes` zeigt die vier Ursachen visuell; „nicht
+  glücklich“ liegt näher an „glücklich“ als an „traurig“.
+- [done] Neue letzte Folie „Bewusstsein: viele Karten, eine offene Frage“ mit
+  klickbarer Theorienkarte: Zugang/Erfahrung, Global Workspace, J-space,
+  IIT/Phi, Qualia, Predictive Processing, Illusionismus, Panpsychismus.
+  Quellen: Mashour 2020, Tononi 2016, Block 1995, Nagel 1974, Anthropic 2026,
+  SEP.

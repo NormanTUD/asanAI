@@ -245,6 +245,12 @@
         }
         ctx.globalAlpha = 1;
       }
+      // explicit loss readout
+      if (readout) {
+        readout.innerHTML = '<span><b>Loss</b> ' + loss.toFixed(4) + '</span>' +
+          '<span><b>p(' + tokens[target] + ')</b> ' + (p[target] * 100).toFixed(1) + '%</span>' +
+          '<span><b>∇ ' + tokens[target] + '</b> ' + (g[target] >= 0 ? "+" : "") + g[target].toFixed(3) + '</span>';
+      }
       // sparkline
       var sx = gcx - gr * 0.95, sy = gcy + gr + 16, sw = gr * 1.9, sh = 26;
       ctx.strokeStyle = "rgba(0,75,111,.12)";

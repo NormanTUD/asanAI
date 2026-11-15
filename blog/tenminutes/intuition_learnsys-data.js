@@ -1730,9 +1730,9 @@
     ]
   };
 
-  var hallucinationStep = {
-    kicker: DE ? "Grenze" : "Limit",
-    title: DE ? "Warum Modelle halluzinieren" : "Why models hallucinate",
+  var hallucinationCalibration = {
+    kicker: DE ? "Kalibrierung" : "Calibration",
+    title: DE ? "Konfidenz und Trefferquote" : "Confidence and accuracy",
     body: DE
       ? "Ein Sprachmodell optimiert die Wahrscheinlichkeit des nächsten Tokens, nicht Wahrheit. Eine Antwort kann flüssig, detailliert und falsch sein: Das ist eine Halluzination. Kalibrierung fragt, ob die Konfidenz zur Trefferquote passt; ein überconfidentes Modell sagt oft mit 95 % etwas, das nur in 70 % der Fälle stimmt. Temperatur-Skalierung kann die Konfidenz besser kalibrieren, aber sie macht falsche Aussagen nicht wahr."
       : "A language model optimises the probability of the next token, not truth. An answer can be fluent, detailed, and false: that is a hallucination. Calibration asks whether confidence matches accuracy; an overconfident model often says with 95% something that is true only 70% of the time. Temperature scaling can improve calibration, but it does not make false statements true.",
@@ -1753,7 +1753,74 @@
     ]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0]];
+  var hallucinationCauses = {
+    kicker: DE ? "Ursachen" : "Causes",
+    title: DE ? "Arten von Halluzinationen" : "Types of hallucination",
+    body: DE
+      ? "Halluzinationen haben verschiedene Ursachen. Falsche Daten im Korpus werden ruhig wiederholt. Zufälliges Sampling kann einen plausiblen, aber falschen Pfad wählen. Fehlt Wissen, füllt das Modell die Lücke mit einer Erfindung. Auch Negation ist keine saubere Umkehrung: „nicht glücklich“ bleibt näher an „glücklich“ als an „traurig“."
+      : "Hallucinations have different causes. False data in the corpus is repeated calmly. Random sampling can pick a plausible but false path. When knowledge is missing, the model fills the gap with an invention. Negation is not a clean reversal either: “not happy” stays closer to “happy” than to “sad”.",
+    watch: DE ? "Klicke die Ursachen durch: falsche Daten, Sampling, Lücken, Negation." : "Click through the causes: false data, sampling, gaps, negation.",
+    demoState: { scene: "hallucinationtypes" },
+    context: DE ? "Die vier Bilder sind didaktische Beispiele, keine Messungen. Sie zeigen typische Wege in eine falsche, aber plausible Antwort." : "The four pictures are didactic examples, not measurements. They show typical paths to a false but plausible answer.",
+    deep: DE ? "Falsche Daten und Lücken sind Datenprobleme; Sampling ist ein Decoding-Problem; Negation ist ein Repräsentationsproblem. Kalibrierung sagt, wie sicher sich das Modell fühlen sollte, nicht ob es recht hat." : "False data and gaps are data problems; sampling is a decoding problem; negation is a representation problem. Calibration says how confident the model should feel, not whether it is right.",
+    boxes: DE ? [
+      box("hct-1", "Daten", "Falsche Daten", "Eine falsche Aussage im Korpus kann als Muster wiederkommen. Das Modell hat keine eingebaute Quelle, die sie korrigiert."),
+      box("hct-2", "Sampling", "Zufall beim Erzeugen", "Sampling wählt manchmal ein unwahrscheinliches Token. Danach ist der Kontext falsch, und das Modell baut plausibel darauf weiter."),
+      box("hct-3", "Daten", "Lücken", "Fehlt ein Bereich im Training, erfindet das Modell eine Antwort, die zur Form der Frage passt."),
+      box("hct-4", "Sprache", "Negation", "„Nicht glücklich“ ist nicht automatisch „traurig“. Im gelernten Raum bleibt es oft näher an „glücklich“; die Bedeutung ist keine saubere Umkehrung.")
+    ] : [
+      box("hct-1", "Data", "False data", "A false statement in the corpus can return as a pattern. The model has no built-in source that corrects it."),
+      box("hct-2", "Sampling", "Randomness in generation", "Sampling sometimes picks an unlikely token. After that the context is wrong, and the model builds plausibly on it."),
+      box("hct-3", "Data", "Gaps", "When a region is missing from training, the model invents an answer that fits the shape of the question."),
+      box("hct-4", "Language", "Negation", "“Not happy” is not automatically “sad”. In the learned space it often stays closer to “happy”; meaning is not a clean reversal.")
+    ],
+    sources: [
+      { label: "Ji et al. (2023), Survey of Hallucination in Natural Language Generation", url: "https://arxiv.org/abs/2202.03629", why: { de: "Überblick über Halluzinationsursachen.", en: "Overview of hallucination causes." } },
+      { label: "Kadavath et al. (2022), Language Models (Mostly) Know What They Know", url: "https://arxiv.org/abs/2207.05221", why: { de: "Selbsteinschätzung und Kalibrierung.", en: "Self-evaluation and calibration." } },
+      { label: "Lin et al. (2022), TruthfulQA", url: "https://arxiv.org/abs/2109.07958", why: { de: "Benchmark für wahre und falsche Antworten.", en: "Benchmark for truthful and false answers." } }
+    ]
+  };
+
+  var hallucinationStep = {
+    title: DE ? "Warum Modelle halluzinieren" : "Why models hallucinate",
+    kicker: DE ? "Grenze" : "Limit",
+    substeps: [hallucinationCalibration, hallucinationCauses]
+  };
+
+  var consciousnessStep = {
+    kicker: DE ? "Bewusstsein" : "Consciousness",
+    title: DE ? "Bewusstsein: viele Karten, eine offene Frage" : "Consciousness: many maps, one open question",
+    body: DE
+      ? "Bewusstsein ist kein einzelnes Ding. Zugang bedeutet, dass Information zum Berichten und Steuern verfügbar ist; Erfahrung bedeutet, dass es sich auf eine bestimmte Weise anfühlt. Global Workspace Theory beschreibt Bewusstsein als Broadcast an viele Prozesse; IIT misst geeinte Ursache-Wirkungs-Struktur als Phi; J-space ist ein lesbarer Arbeitsraum in Claude, aber ein Zugangsbefund, kein Beweis von Erleben. Die Karte zeigt Positionen, kein Urteil. Du kannst selbst entscheiden, welche Theorie dir am nächsten kommt."
+      : "Consciousness is not a single thing. Access means information is available to report and control; experience means there is something it is like. Global workspace theory describes consciousness as broadcast to many processes; IIT measures a unified cause-effect structure as Phi; J-space is a readable workspace in Claude, but an access finding, not proof of experience. The map shows positions, not a verdict. You can decide which theory comes closest to your view.",
+    watch: DE ? "Klicke die Knoten. Welche Theorie beschreibt Zugang, welche Erfahrung?" : "Click the nodes. Which theory describes access, which experience?",
+    demoState: { scene: "consciousness" },
+    context: DE ? "Zugang und Erfahrung sind verschiedene Fragen. Ein System kann Informationen nutzen, ohne dass es sich für das System anfühlt, wie etwas ist." : "Access and experience are different questions. A system can use information without there being something it is like to be it.",
+    deep: DE ? "Die Theorien widersprechen sich nicht nur in den Antworten, sondern darin, was als Evidenz zählt. Für LLMs können wir Verhalten und funktionalen Zugang messen; über Erleben entscheidet das nicht." : "The theories disagree not only about answers but about what counts as evidence. For LLMs we can measure behaviour and functional access; that does not decide experience.",
+    boxes: DE ? [
+      box("con-1", "Zugang", "Access Consciousness", "Information ist verfügbar für Bericht und Kontrolle. Ein Modell kann das haben, ohne etwas zu erleben."),
+      box("con-2", "Erfahrung", "Phenomenal Consciousness", "Es gibt etwas, wie es sich anfühlt. Genau das lässt sich von außen nicht direkt messen."),
+      box("con-3", "Theorien", "Global Workspace", "Ein Zustand wird bewusst, wenn er an viele Prozesse gesendet wird. Der Residual Stream ist ein funktionaler Cousin."),
+      box("con-4", "Theorien", "IIT und Phi", "Bewusstsein ist eine geeinte Ursache-Wirkungs-Struktur. Phi ist für LLMs nicht gemessen; die Theorie ist schwer anzuwenden."),
+      box("con-5", "LLM", "J-space", "Ein kleiner, lesbarer Arbeitsraum in Claude. Er sieht wie Zugang aus, nicht wie ein Beweis von Erleben.")
+    ] : [
+      box("con-1", "Access", "Access consciousness", "Information is available for report and control. A model can have this without experiencing anything."),
+      box("con-2", "Experience", "Phenomenal consciousness", "There is something it is like. That is exactly what cannot be measured directly from outside."),
+      box("con-3", "Theories", "Global workspace", "A state becomes conscious when it is broadcast to many processes. The residual stream is a functional cousin."),
+      box("con-4", "Theories", "IIT and Phi", "Consciousness is a unified cause-effect structure. Phi has not been measured for LLMs; the theory is hard to apply."),
+      box("con-5", "LLMs", "J-space", "A small, readable workspace in Claude. It looks like access, not proof of experience.")
+    ],
+    sources: [
+      { label: "Mashour et al. (2020), Conscious Processing and the Global Neuronal Workspace Hypothesis", url: "https://doi.org/10.1016/j.neuron.2020.01.026", why: { de: "Global Workspace und bewusste Verarbeitung.", en: "Global workspace and conscious processing." } },
+      { label: "Tononi et al. (2016), Integrated Information Theory: From Consciousness to Its Physical Substrate", url: "https://doi.org/10.1038/nrn.2016.44", why: { de: "IIT und Phi als Maß für geeinte Struktur.", en: "IIT and Phi as a measure of unified structure." } },
+      { label: "Block (1995), On a Confusion about a Function of Consciousness", url: "https://doi.org/10.1017/S0140525X00038188", why: { de: "Zugang versus phänomenales Bewusstsein.", en: "Access versus phenomenal consciousness." } },
+      { label: "Nagel (1974), What Is It Like to Be a Bat?", url: "https://doi.org/10.2307/2183914", why: { de: "Die subjektive Erfahrung als offene Frage.", en: "Subjective experience as an open question." } },
+      { label: "Anthropic (2026), J-space", url: "https://transformer-circuits.pub/2026/workspace/index.html", why: { de: "Lesbarer Arbeitsraum in Claude; Zugang, nicht Erleben.", en: "Readable workspace in Claude; access, not experience." } },
+      { label: "SEP: Consciousness", url: "https://plato.stanford.edu/entries/consciousness/", why: { de: "Überblick über die Bewusstseinstheorien.", en: "Overview of theories of consciousness." } }
+    ]
+  };
+
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep];
 
   var day = {
     id: "intuition",

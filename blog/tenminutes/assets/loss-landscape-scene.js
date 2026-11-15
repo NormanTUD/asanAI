@@ -6,7 +6,7 @@
     var el = document.createElement("div");
     el.className = "ls-loss-scene";
     el.innerHTML =
-      '<div class="ls-loss-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-loss-stage"><canvas class="ls-canvas" role="img"></canvas><div class="ls-loss-loader" role="status"><span class="ls-spinner" aria-hidden="true"></span><span>' + (DE ? "Loss-Fläche wird berechnet …" : "Computing the loss surface …") + '</span></div></div>' +
       '<div class="ls-loss-side"><div class="ls-loss-examples"><div class="ls-loss-side-title">' + (DE ? "Beispiele" : "Examples") + '</div><div class="ls-loss-table" aria-live="polite"></div></div><div class="ls-loss-data-wrap"><canvas class="ls-loss-data"></canvas></div><div class="ls-loss-status" aria-live="polite"></div></div>' +
       '<div class="ls-loss-formula"></div>' +
       '<div class="ls-loss-controls">' +
@@ -19,6 +19,7 @@
       '<div class="ls-loss-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-loss-stage");
+    var loaderEl = el.querySelector(".ls-loss-loader");
     var canvas = el.querySelector("canvas");
     var dataCanvas = el.querySelector(".ls-loss-data");
     var tableEl = el.querySelector(".ls-loss-table");
@@ -178,6 +179,7 @@
       var keep = keepOptimizer ? optimizer : "sgd";
       if (worker) { worker.terminate(); worker = null; }
       data = null; step = 0; playing = false; finished = false; started = false; clearTimeout(timer); timer = 0;
+      if (loaderEl) loaderEl.hidden = false;
       setStatus(DE ? "Berechne die Loss-Fläche …" : "Computing the loss surface …");
       readout.innerHTML = '<span>' + (DE ? "Die Fläche wird im Hintergrund berechnet." : "The surface is computed in the background.") + '</span>';
       worker = new Worker("assets/loss-landscape-worker.js?v=4");
@@ -185,11 +187,12 @@
         data = e.data;
         started = false;
         finished = false;
+        if (loaderEl) loaderEl.hidden = true;
         setStatus(DE ? "Bereit · Weiter startet " + keep.toUpperCase() + "." : "Ready · Next starts " + keep.toUpperCase() + ".");
         setOpt(keep);
         draw();
       };
-      worker.onerror = function () { setStatus(DE ? "Worker-Fehler" : "Worker error"); };
+      worker.onerror = function () { if (loaderEl) loaderEl.hidden = true; setStatus(DE ? "Worker-Fehler" : "Worker error"); };
       worker.postMessage({
         cmd: "train",
         lr: parseFloat(lrEl.value) || 0.08,
@@ -273,6 +276,8 @@
     resize(); startWorker();
     return {
       update: function () {},
+      busy: function () { return !data; },
+      finish: function () { if (!data) { /* loading: keep the reader here */ } },
       next: function () {
         if (!data) { startWorker(); return true; }
         if (playing) {

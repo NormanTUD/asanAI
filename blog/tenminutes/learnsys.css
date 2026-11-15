@@ -2136,3 +2136,18 @@ h1,h2,h3,h4{
 .ls-cal-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .ls-cal-readout{font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted);min-height:1.4em;display:flex;gap:12px;flex-wrap:wrap}
 .ls-cal-readout b{color:var(--ls-ink);font-weight:600}
+.ls-loss-loader{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(255,255,255,.88);font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-petrol)}
+.ls-loss-loader[hidden]{display:none}
+
+/* Hallucination types: false data, sampling, gaps, negation */
+.ls-ht-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto;gap:6px;padding:2px}
+.ls-ht-stage{position:relative;min-height:260px;border:1px solid var(--ls-line);background:var(--ls-paper-2);overflow:hidden}
+.ls-ht-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.ls-ht-controls{display:flex;gap:5px;flex-wrap:wrap}
+.ls-ht-readout{font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted);min-height:1.4em}
+
+/* Consciousness: a clickable map of theories */
+.ls-consc-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:6px;padding:2px}
+.ls-consc-stage{position:relative;min-height:280px;border:1px solid var(--ls-line);background:var(--ls-paper-2);overflow:hidden}
+.ls-consc-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.ls-consc-readout{font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted);min-height:1.4em}
