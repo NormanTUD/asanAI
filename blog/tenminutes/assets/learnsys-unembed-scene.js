@@ -147,7 +147,7 @@
       return rows;
     }
     function map(w, h, x, y) {
-      var pad = 34;
+      var pad = 24;
       return {
         x: pad + ((x + 1) / 2) * (w - pad * 2),
         y: h - pad - ((y + 1) / 2) * (h - pad * 2)
@@ -162,7 +162,6 @@
       ctx.fillRect(0, 0, w, h);
       ctx.strokeStyle = C.line;
       ctx.lineWidth = 1;
-      ctx.strokeRect(8, 8, w - 16, h - 16);
       ctx.globalAlpha = 0.24;
       for (var gx = 0; gx <= 8; gx++) {
         var xx = 8 + (w - 16) * gx / 8;
@@ -243,8 +242,7 @@
       var ctx = size.ctx, w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
-      ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.strokeRect(8, 8, w - 16, h - 16);
-      var cx = w / 2, cy = h / 2, r = Math.min(w, h) * 0.33;
+      var cx = w / 2, cy = h / 2, r = Math.min(w, h) * 0.35;
       ctx.strokeStyle = C.line; ctx.globalAlpha = 0.8; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
       ctx.globalAlpha = 0.45; ctx.beginPath(); ctx.moveTo(cx - r * 1.15, cy); ctx.lineTo(cx + r * 1.15, cy); ctx.moveTo(cx, cy - r * 1.15); ctx.lineTo(cx, cy + r * 1.15); ctx.stroke(); ctx.globalAlpha = 1;
       return { ctx: ctx, w: w, h: h, cx: cx, cy: cy, r: r };
@@ -337,13 +335,30 @@
       });
       updateAngleList();
     }
+    function drawRayLabel(text, x, y, cx, cy, w, h, active) {
+      var dx = x - cx, dy = y - cy, len = Math.hypot(dx, dy) || 1;
+      var lx = x + dx / len * 9, ly = y + dy / len * 9;
+      var align = dx >= 0 ? "left" : "right";
+      if (align === "left") lx = Math.min(lx, w * 0.58 - 4);
+      else lx = Math.max(lx, 8);
+      ly = Math.max(14, Math.min(h - 14, ly));
+      var c = size.ctx;
+      c.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      var tw = c.measureText(text).width;
+      var bx = align === "left" ? lx : lx - tw;
+      c.fillStyle = "rgba(255,255,255,.92)";
+      c.fillRect(bx - 2, ly - 7, tw + 4, 14);
+      c.fillStyle = active ? C.green : C.soft;
+      c.textAlign = align;
+      c.textBaseline = "middle";
+      c.fillText(text, lx, ly);
+    }
     function drawUnembed(now) {
       if (!size) return;
       var ctx = size.ctx, w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
-      ctx.strokeStyle = C.line; ctx.strokeRect(8, 8, w - 16, h - 16);
-      var cx = w * 0.31, cy = h * 0.52, r = Math.min(w * 0.23, h * 0.34);
+      var cx = w * 0.30, cy = h * 0.50, r = Math.min(w * 0.27, h * 0.38);
       ctx.strokeStyle = C.line; ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
       var t = unembedStart ? Math.min(1, (now - unembedStart) / 2600) : 1;
       var scan = Math.floor(t * UN_TOKENS.length);
@@ -356,7 +371,7 @@
         ctx.strokeStyle = C.line; ctx.globalAlpha = 0.28; ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.stroke(); ctx.globalAlpha = 1;
         ctx.fillStyle = C.muted; ctx.beginPath(); ctx.arc(x, y, 2.3, 0, Math.PI * 2); ctx.fill();
-        ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillStyle = C.soft; ctx.fillText(tok.t.trim(), x, y - 7);
+        drawRayLabel(tok.t.trim(), x, y, cx, cy, w, h, focus && tok.t === focus.t);
         if (i < scan || (focus && tok.t === focus.t)) {
           var d = tok.a * Math.PI / 180 - UN_ANGLE;
           while (d > Math.PI) d -= Math.PI * 2;
@@ -368,7 +383,6 @@
         if (focus && tok.t === focus.t) {
           ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill();
           ctx.strokeStyle = C.paper; ctx.lineWidth = 1.4; ctx.stroke();
-          ctx.fillStyle = C.green; ctx.font = '700 ' + Math.max(9, api.font("canvas-sm")) + 'px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.fillText(tok.t.trim(), x, y - 10);
         }
       });
       V.arrow(ctx, cx, cy, hx, hy, C.petrol, 3.2);

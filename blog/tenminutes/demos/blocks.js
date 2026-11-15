@@ -39,7 +39,7 @@
         traj: true,
         sub: [
           { title: "Attention", text: "Attention bewertet für jedes einzelne Token, wie wichtig alle anderen Tokens unter einem gewissen Aspekt sind, und verschiebt das Token so, dass es den Gesamtkontext unter diesen Gesichtspunkten beinhaltet. Es gibt viele Attention-Blöcke; sie können auf bestimmte Arten von Strukturen achten, diese isolieren und in den gesamten bisherigen Text schauen, um zu sehen, wo etwas im Gesamtkontext steht." },
-          { title: "Feed-Forward-Netzwerk (FFN)", text: "Das FFN erkennt Muster und zerlegt sie sauber in einzelne Bestandteile, sodass Bedeutung anhand des Kontextes im Raum verschoben werden kann. So kann es „denken“, indem es isoliert, trennt, aber auch wieder zusammenfügt und neu ordnet." }
+          { title: "Feed-Forward-Netzwerk (FFN)", text: "Das FFN erkennt Muster und trennt sie sauberer in einzelne Bestandteile; so werden Bedeutungen isoliert und im Kontext verschoben. Es kann „denken“, indem es trennt, aber auch wieder zusammenfügt und neu ordnet." }
         ]
       },
       {
@@ -80,7 +80,7 @@
         mini: "transformer",
         sub: [
           { title: "Attention", text: "Attention scores, for each individual token, how important all other tokens are under a certain aspect, and shifts the token so that it contains the overall context under those aspects. There are many attention blocks; they can attend to specific kinds of structures, isolate them, and look into the entire text so far to see where something stands in the overall context." },
-          { title: "Feed-forward network (FFN)", text: "The FFN recognises patterns and cleanly decomposes them into individual components, so that meaning can be shifted in space according to the context. That is how it can “think”: by isolating, separating, but also reassembling and reordering." }
+          { title: "Feed-forward network (FFN)", text: "The FFN recognises patterns and separates them more cleanly into individual components; that isolates meanings and shifts them in context. It can “think” by separating, but also by reassembling and reordering." }
         ]
       },
       {
@@ -277,23 +277,25 @@
       V.heading(ctx, "Attention: wer liest wen?", 12, 16, C.petrol, 10, 1);
     }
     function miniFFN(ctx, w, h) {
-      var left = [{ x: w * 0.12, y: h * 0.40 }, { x: w * 0.12, y: h * 0.60 }];
-      var mid = [{ x: w * 0.38, y: h * 0.28 }, { x: w * 0.38, y: h * 0.43 }, { x: w * 0.38, y: h * 0.58 }, { x: w * 0.38, y: h * 0.73 }];
-      var right = [{ x: w * 0.64, y: h * 0.40 }, { x: w * 0.64, y: h * 0.60 }];
+      var top = 42, bottom = h - 22;
+      function FY(t) { return top + t * (bottom - top); }
+      var left = [{ x: w * 0.12, y: FY(0.34) }, { x: w * 0.12, y: FY(0.66) }];
+      var mid = [{ x: w * 0.38, y: FY(0.12) }, { x: w * 0.38, y: FY(0.37) }, { x: w * 0.38, y: FY(0.63) }, { x: w * 0.38, y: FY(0.88) }];
+      var right = [{ x: w * 0.64, y: FY(0.34) }, { x: w * 0.64, y: FY(0.66) }];
       ctx.save();
       ctx.strokeStyle = V.alpha(C.line, 0.95);
       ctx.lineWidth = 1;
       left.forEach(function (a) { mid.forEach(function (b) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }); });
       mid.forEach(function (a) { right.forEach(function (b) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }); });
       ctx.restore();
-      left.forEach(function (p, i) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.sky; ctx.fill(); });
-      mid.forEach(function (p, i) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill(); });
-      right.forEach(function (p, i) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.gold; ctx.fill(); });
-      V.tokenChip(ctx, DE ? "Muster" : "pattern", w * 0.05, h * 0.16, C.blue, C, { size: 9 });
-      V.tokenChip(ctx, DE ? "Bestandteile" : "components", w * 0.05, h * 0.16 + 22, C.blue, C, { size: 9 });
-      V.tokenChip(ctx, DE ? "neu geordnet" : "reordered", w * 0.74, h * 0.16, C.green, C, { size: 9 });
-      V.heading(ctx, DE ? "FFN: erkennen · trennen · neu ordnen" : "FFN: recognise · separate · reorder", 12, 16, C.petrol, 10, 1);
-      V.label(ctx, DE ? "pro Token" : "per token", w * 0.50, h * 0.88, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
+      left.forEach(function (p) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.sky; ctx.fill(); });
+      mid.forEach(function (p) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill(); });
+      right.forEach(function (p) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.gold; ctx.fill(); });
+      V.tokenChip(ctx, DE ? "Muster" : "pattern", w * 0.03, 30, C.blue, C, { size: 8 });
+      V.tokenChip(ctx, DE ? "Bestandteile" : "components", w * 0.34, 30, C.blue, C, { size: 8 });
+      V.tokenChip(ctx, DE ? "neu geordnet" : "reordered", w * 0.68, 30, C.green, C, { size: 8 });
+      V.heading(ctx, DE ? "FFN: erkennen · trennen · neu ordnen" : "FFN: recognise · separate · reorder", 12, 14, C.petrol, 10, 1);
+      V.label(ctx, DE ? "pro Token" : "per token", w * 0.50, h - 8, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
     }
     function miniUnembed(ctx, w, h) {
       var ox = w * 0.16, oy = h * 0.70, s = Math.min(w * 0.22, h * 0.40);
@@ -368,7 +370,7 @@
         }).join("") + '</div>';
         if (b.traj) {
           html += '<div class="ls-bs-traj-full" data-traj-host></div>' +
-            '<p class="ls-bs-traj-caption">' + (DE ? "Demo: echte GPT-2-small-Zustände, 768 → 3 mit PCA und Großkreis-Metrik. Die Linien wachsen mit jeder Schicht; das ist eine Demo, keine vollständige Rekonstruktion." : "Demo: real GPT-2 small states, 768 → 3 with PCA and the great-circle metric. The lines grow with each layer; this is a demo, not a full reconstruction.") + '</p>';
+            '<p class="ls-bs-traj-caption">' + (DE ? "Demo: GPT-2-small-Zustände, 768 → 3 mit PCA und Großkreis-Metrik. Die Linien wachsen mit jeder Schicht; das ist eine Demo, keine vollständige Rekonstruktion." : "Demo: GPT-2 small states, 768 → 3 with PCA and the great-circle metric. The lines grow with each layer; this is a demo, not a full reconstruction.") + '</p>';
         }
       } else {
         html += '<div class="ls-bs-canvas-wrap"><canvas data-mini="' + b.mini + '"></canvas></div>';

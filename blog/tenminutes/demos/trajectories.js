@@ -181,7 +181,7 @@
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
-      ctx.fillText((DE ? "GPT-2 · echte Zustände · Schicht: " : "GPT-2 · real states · layer: ") + (data.layers[Math.round(displayLayer)] || ""), 12, 18);
+      ctx.fillText((DE ? "GPT-2 · Zustände · Schicht: " : "GPT-2 · states · layer: ") + (data.layers[Math.round(displayLayer)] || ""), 12, 18);
       canvas.setAttribute("aria-label", DE
         ? "3D-Token-Trajektorien durch GPT-2. Schicht " + (data.layers[Math.round(displayLayer)] || "") + ", Großkreis-Metrik."
         : "3D token trajectories through GPT-2. Layer " + (data.layers[Math.round(displayLayer)] || "") + ", great-circle metric.");

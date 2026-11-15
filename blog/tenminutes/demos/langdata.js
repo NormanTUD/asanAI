@@ -174,6 +174,7 @@
     }
     function applyMode() {
       var isTruth = mode === "truth";
+      el.classList.toggle("is-truth", isTruth);
       var isLang = mode === "languages";
       var isScale = mode === "scale";
       var showSummaryNow = isScale && showSummary;
