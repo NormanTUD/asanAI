@@ -1629,7 +1629,7 @@
   };
 
   var gaussDataStep = DE ? {
-    title: "Gauß und die verrauschten Daten",
+    title: "Gauß, Ceres und die Daten",
     kicker: "Ceres",
     substeps: [
       {
@@ -1678,7 +1678,7 @@
       }
     ]
   } : {
-    title: "Gauss and the noisy data",
+    title: "Gauss, Ceres, and the data",
     kicker: "Ceres",
     substeps: [
       {
