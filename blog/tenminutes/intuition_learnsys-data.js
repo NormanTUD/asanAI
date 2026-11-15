@@ -1867,13 +1867,13 @@
 
   var qkvSimplex = {
     kicker: DE ? "Mischung" : "Mixture",
-    title: DE ? "Attention als gewichtete Mischung" : "Attention as a weighted mixture",
+    title: DE ? "Attention als Mischung der Value-Vektoren" : "Attention as a mixture of value vectors",
     body: DE
       ? "Attention gibt nicht einfach ein Wort zurück. Die drei Ecken sind keine Tokens, sondern die gelernten Value-Vektoren von drei Tokens: Tier, Straße und es. Die Ausgabe ist eine gewichtete Mischung dieser Values: Jedes Gewicht ist nicht negativ, und alle summieren zu 1. Deshalb liegt die Ausgabe immer im Dreieck, das die drei Value-Vektoren aufspannen. Die drei freien Zahlen im Simplex sind die Gewichte α, nicht die Tokens. Wechsle den Head: Die Gewichte verschieben sich, der Punkt wandert, aber nie aus dem Dreieck. Die Anzeige rechnet die Rohgewichte auf Prozent um."
       : "Attention does not simply return a word. The three corners are not tokens; they are the learned value vectors of three tokens: animal, street, and it. The output is a weighted mixture of these values: every weight is non-negative, and all sum to 1. Therefore the output always lies in the triangle those three value vectors span. The three free numbers in the simplex are the weights α, not the tokens. Switch the head: the weights shift, the point moves, but never outside the triangle. The display converts the raw weights into percentages.",
     watch: DE ? "Wechsle die Heads. Wie wandert der Ausgabepunkt im Dreieck?" : "Switch the heads. How does the output point move inside the triangle?",
     demoState: { scene: "qkv", head: 0, view: "simplex" },
-    context: DE ? "Die Ecken sind v_j = W_V x_j, also gelernte Value-Vektoren, keine Token-IDs. Die Gewichte α_ij sind die baryzentrischen Koordinaten; sie sind ≥ 0 und summieren zu 1. Bei drei Values ist die konvexe Hülle ein 2-Simplex. Die echte Ausgabe nutzt alle Values und liegt in deren konvexer Hülle." : "The corners are v_j = W_V x_j, learned value vectors, not token IDs. The weights α_ij are barycentric coordinates; they are ≥ 0 and sum to 1. With three values the convex hull is a 2-simplex. The real output uses all values and lies in their convex hull.",
+    context: DE ? "Vaswani et al. (2017, §3.2) sagen es direkt: „The output is computed as a weighted sum of the values“. Die Ecken sind v_j = W_V x_j, also gelernte Value-Vektoren, keine Token-IDs. Die Gewichte α_ij sind die baryzentrischen Koordinaten; sie sind ≥ 0 und summieren zu 1. Bei drei Values ist die konvexe Hülle ein 2-Simplex. Die echte Ausgabe nutzt alle Values und liegt in deren konvexer Hülle." : "Vaswani et al. (2017, §3.2) put it directly: “The output is computed as a weighted sum of the values.” The corners are v_j = W_V x_j, learned value vectors, not token IDs. The weights α_ij are barycentric coordinates; they are ≥ 0 and sum to 1. With three values the convex hull is a 2-simplex. The real output uses all values and lies in their convex hull.",
     deep: DE ? "Bei drei Values ist die Hülle ein Dreieck (2-Simplex). In hohen Dimensionen ist sie ein Polytop. Die Ecken sind gelernt, aber der Simplex ist keine eigene gelernte Größe: Er ist die konvexe Hülle der Value-Vektoren. Die Aussage gilt für jeden Head; die Gewichte unterscheiden sich, die Konvexität bleibt." : "With three values the hull is a triangle (2-simplex). In high dimensions it is a polytope. The corners are learned, but the simplex is not a separate learned object: it is the convex hull of the value vectors. The statement holds for every head; the weights differ, the convexity stays.",
     boxes: DE ? [
       box("qkv-s1", "Geometrie", "Die Ecken sind Values", "Die drei Punkte sind keine Tokens, sondern die gelernten Value-Vektoren von drei Tokens. Jeder Token trägt über W_V einen Vektor bei."),
@@ -1886,7 +1886,11 @@
       box("qkv-s3", "Mathematics", "The variables", "The three free numbers are the weights α. They are non-negative and sum to 1; the tokens themselves are not the coordinates of the simplex."),
       box("qkv-s4", "Mathematics", "The formula", "Weighted sum with non-negative weights that sum to 1.", "\\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\ge 0,\\ \\sum_j \\alpha_{ij}=1} v_j}_{\\text{convex combination of the values}}")
     ],
-    sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Attention als gewichtete Summe der Values mit Softmax-Gewichten.", en: "Attention as a weighted sum of values with softmax weights." } }]
+    sources: [
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Attention als gewichtete Summe der Values mit Softmax-Gewichten.", en: "Attention as a weighted sum of values with softmax weights." } },
+      { label: "Weng (2018), Attention? Attention!", url: "https://lilianweng.github.io/posts/2018-06-24-attention/", why: { de: "Die Ausgabe ist eine gewichtete Summe der Values; die Gewichte kommen aus Query-Key-Scores.", en: "The output is a weighted sum of values; the weights come from query-key scores." } },
+      { label: "Elhage et al. (2021), A Mathematical Framework for Transformer Circuits", url: "https://transformer-circuits.pub/2021/framework/index.html", why: { de: "Attention-Heads als Mischungen von Values; das Residual Stream trägt die Information weiter.", en: "Attention heads as mixtures of values; the residual stream carries information onward." } }
+    ]
   };
 
   var qkvArcs2 = Object.assign({}, qkvArcs, {
@@ -1900,7 +1904,7 @@
   });
 
   var qkvSimplex2 = Object.assign({}, qkvSimplex, {
-    title: DE ? "Head 2 als Mischung" : "Head 2 as a mixture",
+    title: DE ? "Head 2 als Value-Mischung" : "Head 2 as a value mixture",
     body: DE
       ? "Dieselben drei Value-Vektoren, andere Gewichte. Weil Head 2 nach dem Ort fragt, bekommt der Value von „Straße“ mehr Gewicht; der Ausgabepunkt wandert zur Straße. Die Prozentwerte entstehen wieder aus den Rohgewichten: erst durch ihre Summe teilen, dann mit 100 multiplizieren. Das Dreieck bleibt die Grenze."
       : "The same three value vectors, different weights. Because head 2 asks for the location, the value of “street” gets more weight; the output point moves toward the street. The percentages again come from the raw weights: divide by their sum, then multiply by 100. The triangle remains the boundary.",

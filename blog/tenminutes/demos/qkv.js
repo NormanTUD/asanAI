@@ -309,13 +309,14 @@
       ctx.fillText(DE ? "2-Simplex (Dreieck)" : "2-simplex (triangle)", w - 12, 8);
       ctx.textAlign = "center"; ctx.textBaseline = "bottom";
       ctx.fillStyle = C.muted;
-      ctx.fillText(DE ? "Ecken = gelernte Value-Vektoren · Ausgabe bleibt im Dreieck." : "corners = learned value vectors · output stays inside the triangle", w / 2, h - 8);
+      ctx.fillText(DE ? "Ecken: v_j = W_V x_j (gelernt) · Variablen: α_j" : "corners: v_j = W_V x_j (learned) · variables: α_j", w / 2, h - 22);
+      ctx.fillText(DE ? "Ausgabe = Σ α_j v_j bleibt im Dreieck." : "output = Σ α_j v_j stays inside the triangle", w / 2, h - 8);
       function fmt2(v) { return v.toFixed(2).replace(".", DE ? "," : "."); }
       var rawTxt = raw.map(fmt2).join(" · ");
       var normTxt = ws.map(fmt2).join(" · ");
       var pctTxt = ws.map(function (v) { return (v * 100).toFixed(0) + "%"; }).join(" · ");
-      setPercent('<span class="ls-qkv-percent-lead">' + (DE ? "So werden daraus Prozente:" : "How this becomes percentages:") + '</span>' +
-        '<span><b>' + (DE ? "Roh" : "raw") + '</b> ' + rawTxt + ' <i>Σ ' + fmt2(sum) + '</i></span>' +
+      setPercent('<span class="ls-qkv-percent-lead">' + (DE ? "So werden aus den Gewichten α Prozente:" : "How the weights α become percentages:") + '</span>' +
+        '<span><b>' + (DE ? "α roh" : "raw α") + '</b> ' + rawTxt + ' <i>Σ ' + fmt2(sum) + '</i></span>' +
         '<span><b>÷ Σ</b> ' + normTxt + ' <i>Σ ' + (DE ? "1,00" : "1.00") + '</i></span>' +
         '<span><b>× 100</b> ' + pctTxt + ' <i>Σ 100%</i></span>');
       setReadout(ids.map(function (id, i) {
