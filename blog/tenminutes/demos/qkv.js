@@ -27,13 +27,24 @@
         '<button type="button" class="ls-chip is-on" data-head="0">' + (DE ? "Head 1 · Wer?" : "Head 1 · who?") + '</button>' +
         '<button type="button" class="ls-chip" data-head="1">' + (DE ? "Head 2 · Wo?" : "Head 2 · where?") + '</button>' +
       '</div>' +
-      '<div class="ls-qkv-percent" aria-live="polite"></div>' +
+      '<div class="ls-qkv-percent"></div>' +
       '<div class="ls-qkv-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-qkv-stage");
     var canvas = el.querySelector("canvas");
     var readout = el.querySelector(".ls-qkv-readout");
     var percentEl = el.querySelector(".ls-qkv-percent");
+    var lastPercent = "", lastReadout = "";
+    function setPercent(html) {
+      if (html === lastPercent) return;
+      lastPercent = html;
+      percentEl.innerHTML = html;
+    }
+    function setReadout(html) {
+      if (html === lastReadout) return;
+      lastReadout = html;
+      readout.innerHTML = html;
+    }
     var vectorsEl = el.querySelector(".ls-qkv-vectors");
     var size = null, ctx = null;
     var C = api.colors();
@@ -192,16 +203,14 @@
       ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "top";
       ctx.fillText(DE ? (head === 0 ? "Head 1 · Wer ist gemeint?" : "Head 2 · Wo ist es?") : (head === 0 ? "Head 1 · who is meant?" : "Head 2 · where is it?"), pad, 6);
-      if (percentEl) {
-        percentEl.innerHTML = '<span class="ls-qkv-percent-lead">' + (DE ? "Softmax macht aus den Scores Gewichte:" : "Softmax turns scores into weights:") + '</span><span><b>Σ</b> = ' + (DE ? "1,00" : "1.00") + ' → 100%</span>';
-      }
+      setPercent('<span class="ls-qkv-percent-lead">' + (DE ? "Softmax macht aus den Scores Gewichte:" : "Softmax turns scores into weights:") + '</span><span><b>Σ</b> = ' + (DE ? "1,00" : "1.00") + ' → 100%</span>');
       // readout top weights
       var top = tokens.map(function (tok, i) { return { tok: tok, w: weights[i] }; })
         .filter(function (x, i) { return i !== query; })
         .sort(function (a, b) { return b.w - a.w; }).slice(0, 3);
-      readout.innerHTML = top.map(function (x) {
+      setReadout(top.map(function (x) {
         return '<span><b>' + api.esc(x.tok) + '</b> ' + (x.w * 100).toFixed(1) + '%</span>';
-      }).join("");
+      }).join(""));
       canvas.setAttribute("aria-label", DE
         ? "Attention-Gewichte von „it“ zu den Tokens. " + top.map(function (x) { return x.tok + ": " + (x.w * 100).toFixed(1) + "%"; }).join(", ")
         : "Attention weights from “it” to the tokens. " + top.map(function (x) { return x.tok + ": " + (x.w * 100).toFixed(1) + "%"; }).join(", "));
@@ -305,13 +314,13 @@
       var rawTxt = raw.map(fmt2).join(" · ");
       var normTxt = ws.map(fmt2).join(" · ");
       var pctTxt = ws.map(function (v) { return (v * 100).toFixed(0) + "%"; }).join(" · ");
-      percentEl.innerHTML = '<span class="ls-qkv-percent-lead">' + (DE ? "So werden daraus Prozente:" : "How this becomes percentages:") + '</span>' +
+      setPercent('<span class="ls-qkv-percent-lead">' + (DE ? "So werden daraus Prozente:" : "How this becomes percentages:") + '</span>' +
         '<span><b>' + (DE ? "Roh" : "raw") + '</b> ' + rawTxt + ' <i>Σ ' + fmt2(sum) + '</i></span>' +
         '<span><b>÷ Σ</b> ' + normTxt + ' <i>Σ ' + (DE ? "1,00" : "1.00") + '</i></span>' +
-        '<span><b>× 100</b> ' + pctTxt + ' <i>Σ 100%</i></span>';
-      readout.innerHTML = ids.map(function (id, i) {
+        '<span><b>× 100</b> ' + pctTxt + ' <i>Σ 100%</i></span>');
+      setReadout(ids.map(function (id, i) {
         return '<span><b>' + api.esc(tokens[id]) + '</b> ' + (ws[i] * 100).toFixed(1) + '%</span>';
-      }).join("") + '<span><b>Σ</b> 100%</span>';
+      }).join("") + '<span><b>Σ</b> 100%</span>');
       canvas.setAttribute("aria-label", DE ? "Attention als gewichtete Mischung: der Ausgabepunkt liegt im Dreieck der drei Values." : "Attention as a weighted mixture: the output point lies inside the triangle of the three values.");
     }
     function draw() {

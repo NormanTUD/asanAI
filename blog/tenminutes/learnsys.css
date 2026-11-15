@@ -1869,7 +1869,7 @@ h1,h2,h3,h4{
 .ls-gauss-scene:not(.is-intro) .ls-gauss-side{display:none}
 
 .ls-lang-scene{grid-template-rows:auto auto auto minmax(0,1fr) auto auto}
-.ls-lang-scene.is-truth{align-items:center}
+.ls-lang-scene.is-truth{justify-items:center}
 .ls-lang-scene.is-truth .ls-lang-truth{width:min(100%,1040px);margin:0 auto}
 .ls-lang-truth{display:grid;gap:5px;border:1px solid rgba(0,75,111,.10);background:rgba(255,255,255,.55);padding:8px 10px;min-height:0}
 .ls-lang-truth-head{font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-ink)}

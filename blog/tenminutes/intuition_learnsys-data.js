@@ -406,7 +406,7 @@
     {
       kicker: "Feed-Forward-Netzwerk (FFN)",
       title: "Die Rolle von neuronalen Netzen im Transformer",
-      body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Die Punkte unten sind symbolisch; im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen höheren Raum, trennt die Cluster und projiziert zurück. So kann es Kontexte gezielt trennen und die abstrakte Repräsentation weiterreichen. Attention mischt Tokens; das FFN trennt die verworrenen Strukturen innerhalb eines Tokens. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.",
+      body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Die Punkte unten sind symbolisch; im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen höheren Raum, macht die Cluster trennbarer und projiziert zurück. So isoliert es Bedeutungen und reicht eine abstraktere Repräsentation weiter. Attention mischt Tokens; das FFN macht die verworrenen Strukturen innerhalb eines Tokens trennbarer. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.",
       watch: "Klicke die Kontexte. Welche Muster feuern? Biege den Raum, bis die Ebene trennt.",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "Das FFN ist ein MLP: Dense, Aktivierung, Dense. Es arbeitet auf jedem Token einzeln. Seine Rolle im LLM: verworrene Muster trennbar machen.",
@@ -426,7 +426,7 @@
     {
       kicker: "Feed-forward network (FFN)",
       title: "The role of neural networks in the transformer",
-      body: "The FFN is a small MLP per token: dense, activation, dense. The points below are symbolic; in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, separates the clusters, and projects back. That is how it separates contexts and passes the abstract representation on. Attention mixes tokens; the FFN separates the entangled structures inside one token. Click the two contexts and bend the space until a plane separates them.",
+      body: "The FFN is a small MLP per token: dense, activation, dense. The points below are symbolic; in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, makes the clusters more separable, and projects back. That is how it isolates meanings and passes on a more abstract representation. Attention mixes tokens; the FFN makes the entangled structures inside one token more separable. Click the two contexts and bend the space until a plane separates them.",
       watch: "Click the contexts. Which patterns fire? Bend the space until the plane separates them.",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "The FFN is an MLP: dense, activation, dense. It works on each token separately. Its role in the LLM: make entangled patterns separable.",
@@ -1824,11 +1824,11 @@
     kicker: DE ? "Mischung" : "Mixture",
     title: DE ? "Attention als gewichtete Mischung" : "Attention as a weighted mixture",
     body: DE
-      ? "Attention gibt nicht einfach ein Wort zurück. Die Ausgabe ist eine gewichtete Mischung der Value-Vektoren: Jedes Gewicht ist nicht negativ, und alle Gewichte summieren zu 1. Nimm drei Values als Punkte im Raum, dann liegt die Ausgabe immer im Dreieck, das diese drei Punkte aufspannen. Veränderst du die Gewichte, wandert der Punkt im Dreieck, aber nie darüber hinaus. Das ist eine konvexe Kombination, ein 2-Simplex."
-      : "Attention does not simply return a word. The output is a weighted mixture of the value vectors: every weight is non-negative, and all weights sum to 1. Take three values as points in space; the output always lies in the triangle those three points span. Change the weights and the point moves inside the triangle, never outside it. That is a convex combination, a 2-simplex.",
+      ? "Attention gibt nicht einfach ein Wort zurück. Die Ausgabe ist eine gewichtete Mischung der Value-Vektoren: Jedes Gewicht ist nicht negativ, und alle Gewichte summieren zu 1. Nimm drei Values als Punkte im Raum, dann liegt die Ausgabe immer im Dreieck, das diese drei Punkte aufspannen. Wechsle den Head: Die Gewichte verschieben sich, der Punkt wandert im Dreieck, aber nie darüber hinaus. Die Anzeige rechnet die Rohgewichte auf Prozent um. Das ist eine konvexe Kombination, ein 2-Simplex."
+      : "Attention does not simply return a word. The output is a weighted mixture of the value vectors: every weight is non-negative, and all weights sum to 1. Take three values as points in space; the output always lies in the triangle those three points span. Switch the head: the weights shift, the point moves inside the triangle, never outside it. The display converts the raw weights into percentages. That is a convex combination, a 2-simplex.",
     watch: DE ? "Wechsle die Heads. Wie wandert der Ausgabepunkt im Dreieck?" : "Switch the heads. How does the output point move inside the triangle?",
     demoState: { scene: "qkv", head: 0, view: "simplex" },
-    context: DE ? "Softmax macht aus den Scores Gewichte α_ij ≥ 0 mit Σ_j α_ij = 1. Die Ausgabe Σ_j α_ij v_j ist daher eine konvexe Kombination der Values. Die Demo zeigt nur drei Values; die echten Gewichte werden auf diese drei normiert. Die echte Ausgabe nutzt alle Values und liegt in deren konvexer Hülle." : "Softmax turns the scores into weights α_ij ≥ 0 with Σ_j α_ij = 1. The output Σ_j α_ij v_j is therefore a convex combination of the values. The demo shows only three values; the real weights are normalised onto these three. The real output uses all values and lies in their convex hull.",
+    context: DE ? "Softmax macht aus den Scores Gewichte α_ij ≥ 0 mit Σ_j α_ij = 1. Die Ausgabe Σ_j α_ij v_j ist daher eine konvexe Kombination der Values. Die Demo zeigt nur drei Values; die echten Gewichte werden auf diese drei normiert und dann mit 100 multipliziert. Die echte Ausgabe nutzt alle Values und liegt in deren konvexer Hülle." : "Softmax turns the scores into weights α_ij ≥ 0 with Σ_j α_ij = 1. The output Σ_j α_ij v_j is therefore a convex combination of the values. The demo shows only three values; the real weights are normalised onto these three and then multiplied by 100. The real output uses all values and lies in their convex hull.",
     deep: DE ? "Bei drei Values ist die Hülle ein Dreieck (2-Simplex). In hohen Dimensionen ist sie ein Polytop. Die Aussage gilt für jeden Head; die Gewichte unterscheiden sich, die Konvexität bleibt." : "With three values the hull is a triangle (2-simplex). In high dimensions it is a polytope. The statement holds for every head; the weights differ, the convexity stays.",
     boxes: DE ? [
       box("qkv-s1", "Geometrie", "Warum ein Dreieck?", "Drei Punkte, die nicht auf einer Linie liegen, spannen ein Dreieck auf. Jede konvexe Kombination liegt darin."),
@@ -1844,10 +1844,30 @@
     sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Attention als gewichtete Summe der Values mit Softmax-Gewichten.", en: "Attention as a weighted sum of values with softmax weights." } }]
   };
 
+  var qkvArcs2 = Object.assign({}, qkvArcs, {
+    title: DE ? "Head 2: Wo ist es?" : "Head 2: where is it?",
+    body: DE
+      ? "Head 2 fragt nach dem Ort. Die Query von „es“ trifft jetzt die Keys von „Straße“ und „Tier“; die Gewichte kippen. Wieder gilt: Die Prozentwerte sind Softmax-Gewichte, keine Wahrscheinlichkeiten für Wahrheit."
+      : "Head 2 asks for the location. The query from “it” now meets the keys of “street” and “animal”; the weights flip. Again, the percentages are softmax weights, not probabilities of truth.",
+    watch: DE ? "Head 2: Der Ort gewinnt. Vergleiche die Bögen mit Head 1." : "Head 2: the location wins. Compare the arcs with head 1.",
+    demoState: { scene: "qkv", head: 1, view: "arcs" },
+    boxes: qkvArcs.boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-h2" }); })
+  });
+
+  var qkvSimplex2 = Object.assign({}, qkvSimplex, {
+    title: DE ? "Head 2 als Mischung" : "Head 2 as a mixture",
+    body: DE
+      ? "Dieselben drei Values, andere Gewichte. Weil Head 2 nach dem Ort fragt, bekommt „Straße“ mehr Gewicht; der Ausgabepunkt wandert zur Straße. Die Prozentwerte entstehen wieder aus den Rohgewichten: erst durch ihre Summe teilen, dann mit 100 multiplizieren. Das Dreieck bleibt die Grenze."
+      : "The same three values, different weights. Because head 2 asks for the location, “street” gets more weight; the output point moves toward the street. The percentages again come from the raw weights: divide by their sum, then multiply by 100. The triangle remains the boundary.",
+    watch: DE ? "Head 2: Der Punkt wandert zur Straße. Warum bleibt er im Dreieck?" : "Head 2: the point moves toward the street. Why does it stay inside the triangle?",
+    demoState: { scene: "qkv", head: 1, view: "simplex" },
+    boxes: qkvSimplex.boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-h2" }); })
+  });
+
   var qkvStep = {
     title: DE ? "Wie Attention rechnet" : "How attention computes",
     kicker: DE ? "Q · K · V" : "Q · K · V",
-    substeps: [qkvArcs, qkvSimplex]
+    substeps: [qkvArcs, qkvArcs2, qkvSimplex, qkvSimplex2]
   };
 
   var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep];
@@ -1876,7 +1896,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-15-attention-2",
+    overlayRevision: "2026-11-15-attention-3",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.

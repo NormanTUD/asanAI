@@ -272,3 +272,18 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   Softmax-Gewichte sind ≥ 0 und summieren zu 1, also ist die Ausgabe eine
   konvexe Kombination der Values; bei drei Values ein 2-Simplex. Die echte
   Ausgabe nutzt alle Values und liegt in deren konvexer Hülle.
+- [done] „Viele Sätze, eine Wahrheit“ horizontal zentriert (max. 1040 px,
+  Plot und Satzliste als Block). GPT-2-Trajektorien sagen nur noch „Zustände“
+  statt „echte Zustände“.
+- [done] FFN-Miniplot im Transformer-Block nach unten gerückt: Chips
+  (Muster/Bestandteile/neu geordnet) stehen in einer Zeile unter der
+  Überschrift, das Netz beginnt darunter. Text sagt jetzt „trennt sauberer“
+  und „isoliert Bedeutungen“, nicht „zerlegt sauber“.
+- [done] Unembedding: Plot ohne Outline, größere Bühne, mehr Innenfläche,
+  alle Token-Richtungen mit Namensschildern (weißer Hintergrund, an den Rand
+  geklemmt), damit kein Name aus dem Bild läuft.
+- [done] „Attention als gewichtete Mischung“ zeigt die Umrechnung der
+  Rohgewichte in Prozente: Rohsumme → ÷ Σ → × 100, jeweils mit Summe.
+- [done] Q/K/V-Gruppe hat vier Unterstufen: Head 1 Bögen, Head 2 Bögen,
+  Head 1 Simplex, Head 2 Simplex. Jede Stufe zeigt die passenden Gewichte und
+  die Prozentumrechnung. Overlay-Revision auf attention-3 erhöht.
