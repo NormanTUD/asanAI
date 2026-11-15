@@ -10,7 +10,7 @@
     var logits = initial.slice();
     var target = 0, lr = 0.9;
     var history = [];
-    var tween = 0, tweenFrom = null, tweenTo = null, tweenStart = 0, tweenDur = 560;
+    var tween = 0, tweenFrom = null, tweenTo = null, tweenStart = 0, tweenDur = 560, pulseStart = 0;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var el = document.createElement("div");
     el.className = "ls-ce-scene";
@@ -71,6 +71,7 @@
       tweenFrom = logits.slice();
       tweenTo = next;
       tweenStart = performance.now();
+      pulseStart = tweenStart;
       history.push(lossOf(p));
       if (history.length > 28) history.shift();
       if (reduced) {
@@ -137,6 +138,26 @@
         ctx.fillText((p[i] * 100).toFixed(1) + "%", barX + barMax + 8, y + 10);
         ctx.fillStyle = i === target ? C.green : C.muted;
         ctx.fillText((DE ? "∇ " : "grad ") + (g[i] >= 0 ? "+" : "") + g[i].toFixed(2), barX + 4, y + 28);
+        if (isTarget) {
+          ctx.fillStyle = C.gold;
+          ctx.beginPath();
+          for (var k = 0; k < 10; k++) {
+            var ang = -Math.PI / 2 + k * Math.PI / 5;
+            var rad = k % 2 === 0 ? 5.5 : 2.5;
+            var px = barX + 2 + Math.cos(ang) * rad;
+            var py = y + 8 + Math.sin(ang) * rad;
+            if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+          }
+          ctx.closePath(); ctx.fill();
+          var age = performance.now() - pulseStart;
+          if (age >= 0 && age < 760) {
+            ctx.strokeStyle = C.gold;
+            ctx.globalAlpha = 0.55 * (1 - age / 760);
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.arc(barX + 2, y + 8, 10 + age * 0.045, 0, Math.PI * 2); ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
       });
       // loss gauge
       var cx = w - pad - gaugeW / 2;

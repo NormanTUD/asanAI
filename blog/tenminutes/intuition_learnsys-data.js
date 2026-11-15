@@ -1677,7 +1677,73 @@
     title: DE ? "Der Raum biegt sich" : "Space bends"
   });
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0]];
+  var crossEntropyStep = {
+    kicker: DE ? "Loss" : "Loss",
+    title: DE ? "Vom Softmax zum Trainingssignal" : "From softmax to a training signal",
+    body: DE
+      ? "Das Modell gibt für jedes mögliche nächste Token eine Wahrscheinlichkeit aus. Der Loss bestraft die Wahrscheinlichkeit des richtigen Tokens: Cross-Entropy ist −log p(Ziel). Ist das Ziel unwahrscheinlich, wird der Loss groß; ist es wahrscheinlich, wird er klein. Der Gradient der Cross-Entropy nach den Logits ist p − y: Er sagt jedem Token, ob sein Logit steigen oder fallen soll. Genau dieses Signal trainiert die Gewichte."
+      : "The model outputs a probability for every possible next token. The loss punishes the probability of the correct token: cross-entropy is −log p(target). If the target is unlikely, the loss is large; if it is likely, the loss is small. The gradient of cross-entropy with respect to the logits is p − y: it tells every token whether its logit should rise or fall. That is the signal that trains the weights.",
+    watch: DE ? "Wähle ein Ziel-Token und klicke „Trainingsschritt“. Was passiert mit Loss, Wahrscheinlichkeit und Gradient?" : "Choose a target token and click “Training step”. What happens to loss, probability, and gradient?",
+    demoState: { scene: "crossentropy" },
+    context: DE ? "y ist ein One-Hot-Vektor: 1 am richtigen Token, sonst 0. p ist die Softmax-Verteilung. Für eine Sequenz mittelt man den Loss über alle Positionen." : "y is a one-hot vector: 1 at the correct token, 0 elsewhere. p is the softmax distribution. For a sequence, the loss is averaged over all positions.",
+    deep: DE ? "Cross-Entropy ist die negative Log-Likelihood. Der Gradient p−y ist der Grund, warum Softmax und Cross-Entropy zusammen so sauber funktionieren. Ein Trainingsschritt verschiebt die Logits in die Gegenrichtung des Gradienten." : "Cross-entropy is negative log-likelihood. The gradient p−y is why softmax and cross-entropy work together so cleanly. A training step moves the logits against the gradient.",
+    boxes: [
+      box("ce-1", DE ? "Mathematik" : "Mathematics", DE ? "Warum −log?" : "Why −log?", DE ? "p = 1 ergibt Loss 0; ein kleines p ergibt einen großen Loss. Der Logarithmus bestraft Sicherheit auf dem falschen Token." : "p = 1 gives loss 0; a small p gives a large loss. The logarithm punishes confidence in the wrong token."),
+      box("ce-2", DE ? "Daten" : "Data", DE ? "Was ist y?" : "What is y?", DE ? "Ein One-Hot-Vektor mit 1 am Ziel-Token und 0 sonst. Das Modell sieht nur diesen einen richtigen nächsten Token pro Position." : "A one-hot vector with 1 at the target token and 0 elsewhere. The model sees only this one correct next token per position."),
+      box("ce-3", DE ? "Training" : "Training", DE ? "Was macht der Gradient?" : "What does the gradient do?", DE ? "p−y: Das Ziel-Token bekommt einen negativen Gradienten (Logit steigt), alle anderen einen positiven (Logit fällt)." : "p−y: the target token gets a negative gradient (its logit rises), all others a positive one (their logits fall)."),
+      box("ce-4", DE ? "Mathematik" : "Mathematics", DE ? "Die Formel" : "The formula", DE ? "Cross-Entropy für ein Token und ihr Gradient nach den Logits." : "Cross-entropy for one token and its gradient with respect to the logits.", DE ? "\\underbrace{-\\log \\underbrace{p_\\theta(y\\mid x)}_{\\substack{\\text{Wahrscheinlichkeit}\\\\ \\text{des Ziels}}}}_{\\text{Loss des richtigen Tokens}} \\qquad \\underbrace{\\frac{\\partial L}{\\partial z_i} = \\underbrace{p_i - y_i}_{\\text{Gradient pro Logit}}}_{\\text{was der Trainingsschritt benutzt}}" : "\\underbrace{-\\log \\underbrace{p_\\theta(y\\mid x)}_{\\substack{\\text{probability}\\\\ \\text{of the target}}}}_{\\text{loss of the correct token}} \\qquad \\underbrace{\\frac{\\partial L}{\\partial z_i} = \\underbrace{p_i - y_i}_{\\text{gradient per logit}}}_{\\text{what the training step uses}}")
+    ],
+    sources: [
+      { label: "Bengio et al. (2003), A Neural Probabilistic Language Model", url: "https://www.jmlr.org/papers/v3/bengio03a.html", why: { de: "Neuronale Sprachmodelle und Next-Token-Wahrscheinlichkeiten.", en: "Neural language models and next-token probabilities." } },
+      { label: "Goodfellow, Bengio & Courville (2016), Deep Learning", url: "https://www.deeplearningbook.org/", why: { de: "Softmax, Cross-Entropy und Gradienten.", en: "Softmax, cross-entropy, and gradients." } }
+    ]
+  };
+
+  var qkvStep = {
+    kicker: DE ? "Q · K · V" : "Q · K · V",
+    title: DE ? "Wie Attention rechnet" : "How attention computes",
+    body: DE
+      ? "Jedes Token erzeugt drei Vektoren: Query, Key und Value. Der Query fragt, der Key antwortet, der Value trägt die Information. Attention vergleicht Query und Key, macht aus den Scores mit Softmax Gewichte und mischt die Values. Mehrere Heads tun das parallel mit eigenen Gewichten: Ein Head kann nach dem Subjekt fragen, ein anderer nach dem Ort."
+      : "Every token produces three vectors: query, key, and value. The query asks, the key answers, and the value carries the information. Attention compares query and key, turns the scores into weights with softmax, and mixes the values. Multiple heads do this in parallel with their own weights: one head can ask for the subject, another for the location.",
+    watch: DE ? "Wechsle die Heads. Welche Tokens bekommen Gewicht, wenn „it“ fragt?" : "Switch the heads. Which tokens get weight when “it” asks?",
+    demoState: { scene: "qkv", head: 0 },
+    context: DE ? "Die Scores werden durch sqrt(d_k) geteilt, damit sie in hohen Dimensionen nicht zu groß werden. Jede Query-Zeile summiert nach Softmax zu 1." : "The scores are divided by sqrt(d_k) so they do not grow too large in high dimensions. Each query row sums to 1 after softmax.",
+    deep: DE ? "Die Heads sind nicht von Hand programmiert; sie spezialisieren sich im Training. Die zwei Muster in der Demo sind didaktisch: Head 1 fragt nach dem Subjekt, Head 2 nach dem Ort." : "The heads are not hand-programmed; they specialise during training. The two patterns in the demo are didactic: head 1 asks for the subject, head 2 for the location.",
+    boxes: [
+      box("qkv-1", DE ? "Technik" : "Technique", "Q, K, V", DE ? "Query: wonach fragt das Token? Key: was bietet es an? Value: welche Information wird weitergegeben?" : "Query: what does the token ask for? Key: what does it offer? Value: which information is passed on?"),
+      box("qkv-2", DE ? "Mathematik" : "Mathematics", "Softmax", DE ? "Macht aus den Scores eine Verteilung. Jede Query-Zeile summiert zu 1; mehr Gewicht für einen Key heißt weniger für alle anderen." : "Turns scores into a distribution. Every query row sums to 1; more weight for one key means less for all others."),
+      box("qkv-3", DE ? "Technik" : "Technique", DE ? "Mehrere Heads" : "Multiple heads", DE ? "Jeder Head hat eigene Q/K/V-Projektionen. Die Ausgaben werden konkateniert und projiziert." : "Every head has its own Q/K/V projections. The outputs are concatenated and projected."),
+      box("qkv-4", DE ? "Mathematik" : "Mathematics", DE ? "Die Formel" : "The formula", DE ? "Attention als gewichtete Mischung der Values." : "Attention as a weighted mixture of the values.", DE ? "\\underbrace{\\underbrace{\\operatorname{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)}_{\\alpha}V}_{\\text{gewichtete Mischung der Values}}" : "\\underbrace{\\underbrace{\\operatorname{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)}_{\\alpha}V}_{\\text{weighted mixture of the values}}")
+    ],
+    sources: [
+      { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Q/K/V, Multi-Head-Attention und Softmax-Gewichte.", en: "Q/K/V, multi-head attention, and softmax weights." } }
+    ]
+  };
+
+  var hallucinationStep = {
+    kicker: DE ? "Grenze" : "Limit",
+    title: DE ? "Warum Modelle halluzinieren" : "Why models hallucinate",
+    body: DE
+      ? "Ein Sprachmodell optimiert die Wahrscheinlichkeit des nächsten Tokens, nicht Wahrheit. Eine Antwort kann flüssig, detailliert und falsch sein: Das ist eine Halluzination. Kalibrierung fragt, ob die Konfidenz zur Trefferquote passt; ein überconfidentes Modell sagt oft mit 95 % etwas, das nur in 70 % der Fälle stimmt. Temperatur-Skalierung kann die Konfidenz besser kalibrieren, aber sie macht falsche Aussagen nicht wahr."
+      : "A language model optimises the probability of the next token, not truth. An answer can be fluent, detailed, and false: that is a hallucination. Calibration asks whether confidence matches accuracy; an overconfident model often says with 95% something that is true only 70% of the time. Temperature scaling can improve calibration, but it does not make false statements true.",
+    watch: DE ? "Ziehe die Temperatur. Wandert die Kurve näher an die Diagonale? Bleiben die falschen Aussagen falsch?" : "Drag the temperature. Does the curve move closer to the diagonal? Do the false statements stay false?",
+    demoState: { scene: "calibration" },
+    context: DE ? "Kalibrierung ist nicht Wahrheit. Ein kalibriertes Modell kann immer noch halluzinieren; es weiß dann nur besser, wie unsicher es sein sollte." : "Calibration is not truth. A calibrated model can still hallucinate; it just knows better how uncertain it should be.",
+    deep: DE ? "Halluzinationen entstehen aus dem nächsten-Token-Ziel, lückenhaften Daten und fehlender Erdung. Quellenprüfung und Retrieval reduzieren das Risiko, beseitigen es nicht." : "Hallucinations arise from the next-token objective, incomplete data, and missing grounding. Source checks and retrieval reduce the risk; they do not remove it.",
+    boxes: [
+      box("hal-1", DE ? "Grenze" : "Limit", DE ? "Was ist eine Halluzination?" : "What is a hallucination?", DE ? "Eine flüssige, plausible, aber falsche Aussage. Sie klingt wie Wissen, ist aber keine gedeckte Tatsache." : "A fluent, plausible, but false statement. It sounds like knowledge, but it is not a supported fact."),
+      box("hal-2", DE ? "Mathematik" : "Mathematics", DE ? "Was ist Kalibrierung?" : "What is calibration?", DE ? "Konfidenz und Trefferquote stimmen überein: Was mit 80 % angekündigt wird, stimmt in etwa 80 % der Fälle." : "Confidence and accuracy agree: what is announced with 80% is true in about 80% of cases."),
+      box("hal-3", DE ? "Grenze" : "Limit", DE ? "Hilft Temperatur?" : "Does temperature help?", DE ? "Temperatur-Skalierung verschiebt Konfidenzen, nicht die Wahrheit. Sie kann Überconfidenz dämpfen, aber keine falschen Fakten reparieren." : "Temperature scaling shifts confidences, not truth. It can soften overconfidence but cannot repair false facts.")
+    ],
+    sources: [
+      { label: "Ji et al. (2023), Survey of Hallucination in Natural Language Generation", url: "https://arxiv.org/abs/2202.03629", why: { de: "Überblick über Halluzinationen in der Sprachgenerierung.", en: "Overview of hallucination in natural language generation." } },
+      { label: "Guo et al. (2017), On Calibration of Modern Neural Networks", url: "https://arxiv.org/abs/1706.04599", why: { de: "Kalibrierung und Temperatur-Skalierung.", en: "Calibration and temperature scaling." } },
+      { label: "Kadavath et al. (2022), Language Models (Mostly) Know What They Know", url: "https://arxiv.org/abs/2207.05221", why: { de: "Selbsteinschätzung und Kalibrierung von Sprachmodellen.", en: "Self-evaluation and calibration of language models." } },
+      { label: "Lin et al. (2022), TruthfulQA", url: "https://arxiv.org/abs/2109.07958", why: { de: "Benchmark für wahre und falsche Antworten.", en: "Benchmark for truthful and false answers." } }
+    ]
+  };
+
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0]];
 
   var day = {
     id: "intuition",

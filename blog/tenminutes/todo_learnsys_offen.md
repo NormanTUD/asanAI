@@ -176,3 +176,16 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   und „32×32×32“ sind aus der Demo entfernt.
 - [done] „Matrizen zeigen“: größere Schrift und `pmatrix` (runde Klammern)
   statt `bmatrix`.
+- [done] Neue Folie „Vom Softmax zum Trainingssignal“ + Demo `crossentropy`:
+  Ziel-Token, Softmax-Balken, Loss-Gauge, Gradient p−y, Trainingsschritt und
+  Loss-Sparkline.
+- [done] Neue Folie „Wie Attention rechnet“ + Demo `qkv`: Query/Key/Value,
+  gewichtete Bögen, Weight-Bars, zwei Heads und Partikel, die von Key zu Query
+  wandern.
+- [done] Neue Folie „Warum Modelle halluzinieren“ + Demo `calibration`:
+  Konfidenz/Trefferquote, Temperatur-Skalierung, Ghost-Kurve und
+  High-Confidence-Band.
+- [done] Alle drei Demos sind DE/EN, theme-reaktiv, mit Quellen zu Bengio 2003,
+  Goodfellow 2016, Vaswani 2017, Ji 2023, Guo 2017, Kadavath 2022 und Lin 2022.
+- [pending] Die visuelle Sprache auf die bestehenden Demos ausrollen; die drei
+  neuen Demos sind der Maßstab.

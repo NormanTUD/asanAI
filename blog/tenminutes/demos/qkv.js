@@ -13,7 +13,7 @@
       norm([0.02, 0.08, 0.01, 0.01, 0.04, 0.02, 0.55, 0.03, 0.10, 0.04, 0.02, 0.08])
     ];
     var head = 0, weights = W[0].slice(), prev = W[0].slice();
-    var t = 1, start = 0, raf = 0;
+    var t = 1, start = 0, raf = 0, loopRaf = 0, running = true;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var el = document.createElement("div");
     el.className = "ls-qkv-scene";
@@ -91,7 +91,36 @@
           ctx.beginPath(); ctx.arc(x, y - 3, 2.6, 0, Math.PI * 2); ctx.fill();
         }
       });
-      ctx.globalAlpha = 1;
+      // value particles travel from key to query
+      if (!reduced) {
+        var now = performance.now();
+        tokens.forEach(function (tok, i) {
+          if (i === query || weights[i] < 0.10) return;
+          var x = centers[i];
+          var mx = (qx + x) / 2;
+          var lift = Math.min(72, 28 + Math.abs(qx - x) * 0.22);
+          for (var k = 0; k < 2; k++) {
+            var u = ((now / 1100) + i * 0.13 + k * 0.5) % 1;
+            var px = (1 - u) * (1 - u) * x + 2 * (1 - u) * u * mx + u * u * qx;
+            var py = (1 - u) * (1 - u) * (y - 2) + 2 * (1 - u) * u * (y - lift) + u * u * (qy - 2);
+            ctx.globalAlpha = 0.15 + 0.55 * (1 - u);
+            ctx.fillStyle = C.gold;
+            ctx.beginPath(); ctx.arc(px, py, 2.4, 0, Math.PI * 2); ctx.fill();
+          }
+        });
+        ctx.globalAlpha = 1;
+      }
+      // Q/K/V legend
+      var lx = w - pad - 4, ly = 7;
+      [["Q", C.green], ["K", C.sky], ["V", C.gold]].forEach(function (item) {
+        ctx.fillStyle = item[1];
+        ctx.beginPath(); ctx.arc(lx - 14, ly + 8, 3.2, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = C.ink;
+        ctx.font = '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "right"; ctx.textBaseline = "top";
+        ctx.fillText(item[0], lx, ly);
+        lx -= 34;
+      });
       // tokens
       tokens.forEach(function (tok, i) {
         var x = pad + i * (bw + gap);
@@ -130,10 +159,6 @@
       ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "top";
       ctx.fillText(DE ? (head === 0 ? "Head 1 · Wer ist gemeint?" : "Head 2 · Wo ist es?") : (head === 0 ? "Head 1 · who is meant?" : "Head 2 · where is it?"), pad, 6);
-      ctx.fillStyle = C.muted;
-      ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-      ctx.textAlign = "right";
-      ctx.fillText(DE ? "Q · K → Softmax → V" : "Q · K → softmax → V", w - pad, 6);
       // readout top weights
       var top = tokens.map(function (tok, i) { return { tok: tok, w: weights[i] }; })
         .filter(function (x, i) { return i !== query; })
@@ -145,6 +170,11 @@
         ? "Attention-Gewichte von „it“ zu den Tokens. " + top.map(function (x) { return x.tok + ": " + (x.w * 100).toFixed(1) + "%"; }).join(", ")
         : "Attention weights from “it” to the tokens. " + top.map(function (x) { return x.tok + ": " + (x.w * 100).toFixed(1) + "%"; }).join(", "));
     }
+    function loop() {
+      if (!running) return;
+      draw();
+      loopRaf = requestAnimationFrame(loop);
+    }
     function resize() { size = api.fit(canvas, stage); draw(); }
     el.querySelectorAll("[data-head]").forEach(function (b) {
       b.addEventListener("click", function () { setHead(parseInt(b.getAttribute("data-head"), 10)); });
@@ -152,10 +182,19 @@
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
     resize();
+    if (!reduced) loopRaf = requestAnimationFrame(loop);
     return {
       update: function (s) { if (s && typeof s.head === "number") setHead(s.head ? 1 : 0); },
       resize: resize,
-      destroy: function () { if (raf) cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); }
+      pause: function () { running = false; if (loopRaf) cancelAnimationFrame(loopRaf); loopRaf = 0; },
+      resume: function () { if (!running && !reduced) { running = true; loopRaf = requestAnimationFrame(loop); } else running = true; },
+      destroy: function () {
+        running = false;
+        if (raf) cancelAnimationFrame(raf);
+        if (loopRaf) cancelAnimationFrame(loopRaf);
+        window.removeEventListener("resize", resize);
+        el.remove();
+      }
     };
   }
   core.register("qkv", qkvScene);
