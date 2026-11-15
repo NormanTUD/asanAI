@@ -536,6 +536,16 @@ def main() -> int:
         check( len(js(driver, "document.querySelector('#ls-body').innerText").strip()) > 20,"repeated navigation keeps a body")
         errors = console_errors(driver)
         check( not errors,"no severe console errors", " | ".join(errors[:2]))
+
+        # 8. The agent code demo loads a transformer model and scores a text.
+        preview = base.replace("intuition_learnsys.php", "intuition_learnsys-demo.php") + "?scene=code&lang=de"
+        driver.get(preview)
+        wait_until(driver, "return !!(document.querySelector('.ls-code-body code'));")
+        time.sleep(0.5)
+        code = js(driver, "document.querySelector('.ls-code-body code').textContent")
+        check("from transformers" in code and "pipeline" in code and "sentiment-analysis" in code, "agent demo loads a transformer model", code[:120])
+        agent_errors = console_errors(driver)
+        check(not agent_errors, "agent demo has no severe console errors", " | ".join(agent_errors[:2]))
     finally:
         if driver:
             driver.quit()

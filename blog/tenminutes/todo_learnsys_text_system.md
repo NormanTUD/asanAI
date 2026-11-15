@@ -241,10 +241,10 @@ Ein „Link kopieren“-Button liefert die aktuelle URL.
 
 ## Offene Inhalts- und Demo-Todos (2026-11-14)
 
-- [ ] **Agent-Demo umbauen.** Statt Rayleigh-Streuung soll der Agent im Code
-  ein Transformer-Modell laden und damit einen Text bewerten, wenn man ihn in
-  der Konsole ausführt.
-- [ ] **„Bausteine eines LLM“ neu strukturieren.**
+- [x] **Agent-Demo umbauen.** Der Agent lädt jetzt im Code ein kleines
+  Transformer-Modell (`distilbert-base-uncased-finetuned-sst-2-english`) und
+  bewertet einen Text; die Konsole zeigt `POSITIVE: 0.999`. Rayleigh ist raus.
+- [x] **„Bausteine eines LLM“ neu strukturieren.**
   - Erste Unterfolie: moderne KI-Systeme schalten Funktionen in einer
     festgelegten Reihenfolge hintereinander; jede bekommt den Output der
     vorherigen. Formel:
@@ -261,8 +261,9 @@ Ein „Link kopieren“-Button liefert die aktuelle URL.
   - Nach dem Unembedding: Schlusstext, dass wir die Bausteine nun Tag für Tag
     durchgehen, um zu sehen, wie sie funktionieren und in einer Schleife das
     nächste Wort vorhersagen.
-  - „Verstehen heißt komprimieren“ ist viel später und fliegt vermutlich
-    später raus; die Kompressions-Demo nicht in die neue Einführung ziehen.
+  - „Verstehen heißt komprimieren“ bleibt vorerst ganz am Ende und fliegt
+    vermutlich später raus; die Kompressions-Demo wurde nicht in die neue
+    Einführung gezogen.
 - [x] **Attention-Text** in der Transformer-Station: bewertet für jedes Token,
   wie wichtig alle anderen unter einem Aspekt sind, verschiebt das Token in
   den Gesamtkontext; viele Attention-Blöcke für verschiedene Strukturen.
@@ -326,7 +327,7 @@ git diff --check
   JSON-Modal mit Copy-Paste, Import und Download ist da; Folien lassen sich
   verschieben, ausblenden und in Unterfolien aufteilen; Deep-Links per Hash;
   Überschrift/Kicker/Beobachte sind editierbar; jede Frage ist Frage oder
-  Trivia. Neue Tests: `learnsys_global_text_browser_test.py` (81 Checks).
+  Trivia. Neue Tests: `learnsys_global_text_browser_test.py` (83 Checks).
 - 2026-11-14: Inhalts- und Demo-Pass: „Verstehen heißt komprimieren“ ans Ende
   verschoben; „Bausteine“ nennt Reddit, Wikipedia, Bücher, Webseiten und Code
   als Trainingsdaten und den Ausblick auf die nächsten Tage; Tokenizer erklärt
@@ -339,9 +340,15 @@ git diff --check
   GPT-2-Trajektorie mit Auto-Play, klickbare Loop-Wörter, Unembedding-
   Winkelvorschläge, Positional-Embedding-Station mit 3D-Kugel,
   Attention-/FFN-Texte, „kausale Maske“ entfernt. Offene Todos siehe oben.
+- 2026-11-14: Agent- und Bausteine-Pass: Agent lädt ein Transformer-Modell
+  und bewertet einen Text; „Bausteine eines LLM“ hat jetzt zwei Unterfolien
+  (Layer-Kette mit Formel und Residual-Optionalbox, dann die bestehende
+  Übersicht mit sechs Stationen inkl. Positional Embedding). Der Schlusstext
+  nach dem Unembedding ist ergänzt. „Verstehen heißt komprimieren“ bleibt am
+  Ende.
 - 2026-11-14: Verifikation: `learnsys_browser_test` 87/0,
   `learnsys_text_edit_browser_test` 27/0, `learnsys_global_text_browser_test`
-  81/0, `learnsys_loop_landscape_test` 15/0, `learnsys_unit_test` 20/0,
+  83/0, `learnsys_loop_landscape_test` 15/0, `learnsys_unit_test` 20/0,
   Seiten-Test 30/30, Height-Test 34/0, `check_all.py --fast` 33/33 Stages PASS,
   `js_validator` 0 Fehler, `php_validator` 0 Issues, `git diff --check` sauber.
 
