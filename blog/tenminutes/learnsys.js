@@ -2271,9 +2271,10 @@
       }
       ctx.globalAlpha = 1;
     }
-    var t0 = performance.now();
+    var t0 = 0;
     var dur = 180;
     function frame(now) {
+      if (!t0) t0 = now;
       var t = clamp((now - t0) / dur, 0, 1);
       var e = ease(t);
       ctx.clearRect(0, 0, w, h);
