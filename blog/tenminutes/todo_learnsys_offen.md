@@ -101,8 +101,8 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   die Architektur-Unterfolie beginnt beim Tokenizer.
 - [done] Unterfolie „Die Bausteine im Überblick“ (3/3) entfernt; die Bausteine-Folie
   hat jetzt nur noch Daten und Architektur (2/2).
-- [done] Der Ausblick „Die nächsten Tage“ ist jetzt eine Karte auf der
-  Architektur-Unterfolie; die separate Folie wurde entfernt.
+- [done] Der Ausblick „Die nächsten Tage“ ist jetzt eine eigene dritte
+  Unterfolie nach der Architektur (nach dem Unembedding).
 - [done] Ceres-/Flammarion-Bilder ohne weißen Rahmen und ohne Boxen: nur die
   Bilder mit abgerundeten Ecken auf dem Hintergrund, Quellen als schlichter
   Text darunter.
@@ -110,3 +110,7 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] Beim Revisionswechsel wird auch der gespeicherte Folienstand
   zurückgesetzt, damit die neue Daten-Unterfolie nach dem Laden als 1/2
   sichtbar ist und nicht die alte Architektur-Position stehen bleibt.
+- [done] Daten-Unterfolie nennt jetzt ausdrücklich Wikipedia, Reddit, Bücher,
+  Webseiten und Quellcode sowie „extrem viele Daten“, damit klar wird, was das
+  Modell wie vorhersagen lernt. Die GPT-3-spezifische Mischung ist durch eine
+  allgemeine Beschreibung ersetzt.

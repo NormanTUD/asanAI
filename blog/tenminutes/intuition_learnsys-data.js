@@ -805,11 +805,11 @@
     kicker: DE ? "Daten" : "Data",
     title: DE ? "Daten: der erste Schritt, aber extern" : "Data: the first step, but external",
     body: DE
-      ? "Bevor die Architektur beginnt, stehen die Daten. Man gibt dem Computer sehr viele Beispiele und er soll daraus lernen, die vorgefertigten Bausteine so zu verändern, dass sie möglichst gut darin sind, das nächste Wort vorherzusagen. Die Daten sind der erste Schritt, technisch gesehen aber nicht Teil des LLM: Das Modell ist die Kette der Schichten. Die Daten kommen von außen und werden zum Training verwendet. Ohne Daten gäbe es nichts zu lernen, aber die Daten sind keine Schicht des Modells."
-      : "Before the architecture begins, there is data. We give the computer very many examples, and it should learn from them to change the prefabricated building blocks so that they become as good as possible at predicting the next word. The data is the first step, but technically not part of the LLM: the model is the chain of layers. The data comes from outside and is used for training. Without data there would be nothing to learn, but the data is not a layer of the model.",
+      ? "Bevor die Architektur beginnt, stehen die Daten. Man gibt dem Computer extrem viele Daten aus Wikipedia, Reddit, Büchern, Webseiten und Quellcode, damit er lernt, was er wie vorhersagen muss. Aus diesen Beispielen verändert er die vorgefertigten Bausteine so, dass sie möglichst gut das nächste Wort vorhersagen. Die Daten sind der erste Schritt, technisch aber nicht Teil des LLM: Das Modell ist die Kette der Schichten. Die Daten kommen von außen und werden zum Training verwendet; ohne sie gäbe es nichts zu lernen."
+      : "Before the architecture begins, there is data. We give the computer an extreme amount of data from Wikipedia, Reddit, books, websites, and source code so that it learns what to predict and how. From these examples it changes the prefabricated building blocks so that they predict the next word as well as possible. The data is the first step, but technically not part of the LLM: the model is the chain of layers. The data comes from outside and is used for training; without it there would be nothing to learn.",
     teaser: DE
-      ? "Bevor die Architektur beginnt, stehen die Daten. Man gibt dem Computer sehr viele Beispiele und er soll daraus lernen, die vorgefertigten Bausteine so zu verändern, dass sie möglichst gut darin sind, das nächste Wort vorherzusagen. Die Daten sind der erste Schritt, technisch gesehen aber nicht Teil des LLM: Das Modell ist die Kette der Schichten. Die Daten kommen von außen und werden zum Training verwendet. Ohne Daten gäbe es nichts zu lernen, aber die Daten sind keine Schicht des Modells."
-      : "Before the architecture begins, there is data. We give the computer very many examples, and it should learn from them to change the prefabricated building blocks so that they become as good as possible at predicting the next word. The data is the first step, but technically not part of the LLM: the model is the chain of layers. The data comes from outside and is used for training. Without data there would be nothing to learn, but the data is not a layer of the model.",
+      ? "Bevor die Architektur beginnt, stehen die Daten. Man gibt dem Computer extrem viele Daten aus Wikipedia, Reddit, Büchern, Webseiten und Quellcode, damit er lernt, was er wie vorhersagen muss. Aus diesen Beispielen verändert er die vorgefertigten Bausteine so, dass sie möglichst gut das nächste Wort vorhersagen. Die Daten sind der erste Schritt, technisch aber nicht Teil des LLM: Das Modell ist die Kette der Schichten. Die Daten kommen von außen und werden zum Training verwendet; ohne sie gäbe es nichts zu lernen."
+      : "Before the architecture begins, there is data. We give the computer an extreme amount of data from Wikipedia, Reddit, books, websites, and source code so that it learns what to predict and how. From these examples it changes the prefabricated building blocks so that they predict the next word as well as possible. The data is the first step, but technically not part of the LLM: the model is the chain of layers. The data comes from outside and is used for training; without it there would be nothing to learn.",
     watch: DE ? "Die Daten sind die Beispiele, aus denen das Modell lernt. Sie gehören zum Training, nicht zur Architektur." : "The data are the examples the model learns from. They belong to training, not to the architecture.",
     demoState: { scene: "langdata", mode: "scale" },
     cues: [
@@ -825,8 +825,8 @@
         label: DE ? "Datenmenge" : "Data scale",
         title: DE ? "Wie groß ist der Korpus?" : "How large is the corpus?",
         text: DE
-          ? "Ein LLM braucht enorm viel Text. Erst seit der Zettabyte-Ära gibt es mehr als 10²¹ Byte digitale Daten. Wirklich saubere Daten in diesem Maßstab gibt es nicht: Jedes Korpus enthält Fehler, Widersprüche, Spam und veraltete Aussagen. Man nimmt sie in Kauf, weil die Menge sonst nicht reicht, und hofft, dass sich zufällige Fehler über die Masse mitteln. Systematische Fehler mitteln sich nicht weg; deshalb bleibt Kuration wichtig. Die Mischung zeigt, woraus GPT-3 lernte: 60 % Common Crawl, 22 % WebText2, 8 % Books1, 8 % Books2 und 3 % Wikipedia, gerundet."
-          : "An LLM needs an enormous amount of text. Only since the zettabyte era has more than 10²¹ bytes of digital data been available. Truly clean data at that scale does not exist: every corpus contains errors, contradictions, spam, and outdated statements. They are accepted because the volume is otherwise too small, and one hopes random errors average out. Systematic errors do not average out; that is why curation matters. The mix shows what GPT-3 learned from: 60% Common Crawl, 22% WebText2, 8% Books1, 8% Books2, and 3% Wikipedia, rounded.",
+          ? "Ein LLM braucht enorm viel Text. Erst seit der Zettabyte-Ära gibt es mehr als 10²¹ Byte digitale Daten. Wirklich saubere Daten in diesem Maßstab gibt es nicht: Jedes Korpus enthält Fehler, Widersprüche, Spam und veraltete Aussagen. Man nimmt sie in Kauf, weil die Menge sonst nicht reicht, und hofft, dass sich zufällige Fehler über die Masse mitteln. Systematische Fehler mitteln sich nicht weg; deshalb bleibt Kuration wichtig. Die genaue Mischung unterscheidet sich von Modell zu Modell; entscheidend ist die Breite: Webseiten, Bücher, Code, Fragen und mehr."
+          : "An LLM needs an enormous amount of text. Only since the zettabyte era has more than 10²¹ bytes of digital data been available. Truly clean data at that scale does not exist: every corpus contains errors, contradictions, spam, and outdated statements. They are accepted because the volume is otherwise too small, and one hopes random errors average out. Systematic errors do not average out; that is why curation matters. The exact mix differs from model to model; what matters is the breadth: websites, books, code, questions, and more.",
         state: {}
       },
       {
@@ -872,16 +872,6 @@
       : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next sensible word.",
     watch: DE ? "Sequenzielles Machine Learning geschieht in Schichten. Die erste Schicht wendet man direkt auf die Daten an, die zweite auf die Ergebnisse der ersten, und so weiter; dadurch verschachteln sich Funktionen: $\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Daten}\\right)\\right)\\right)$ Die erste Schicht sucht nach Mustern im Text, die zweite nach Mustern im Ergebnis der ersten Schicht, und so weiter. Mit dem Residual Stream kann jede Schicht auch Muster im Text <i>und</i> in den Ergebnissen der vorherigen Schichten finden." : "Sequential machine learning happens in layers. The first layer is applied directly to the data, the second to the results of the first, and so on; this nests functions: $\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Data}\\right)\\right)\\right)$ The first layer looks for patterns in the text, the second for patterns in the result of the first layer, and so on. With the residual stream, each layer can also find patterns in the text <i>and</i> in the results of the previous layers.",
     demoState: { scene: "blocks" },
-    cues: [
-      {
-        label: DE ? "Ausblick" : "What comes next",
-        title: DE ? "Die nächsten Tage" : "The next days",
-        text: DE
-          ? "Damit sind die Bausteine einmal durch. In den nächsten Tagen gehen wir sie einen nach dem anderen durch: was jeder macht, wie sie zusammenspielen und wie daraus in einer Schleife die Vorhersage des nächsten Wortes entsteht. Die Übersicht ist der Fahrplan, nicht die Prüfung; du musst dir noch nicht alles merken. Wir zoomen in den nächsten Folien in jeden Schritt hinein und bauen ihn dort in Ruhe auf. Zuerst kommt der Tokenizer, dann Embedding und Position, dann Attention und FFN, am Ende die Vorhersage."
-          : "That completes the building blocks for now. Over the next days we will go through them one by one: what each one does, how they work together, and how the loop turns them into a prediction of the next word. The overview is a roadmap, not a test; you do not need to remember everything yet. In the next slides we zoom into each step and build it up calmly. First comes the tokenizer, then embedding and position, then attention and FFN, and finally the prediction.",
-        state: {}
-      }
-    ],
     inherit: false,
     questionGroups: [
       {
@@ -901,10 +891,32 @@
       }
     ]
   };
+  var bausteineOutro = {
+    kicker: DE ? "Ausblick" : "What comes next",
+    title: DE ? "Die nächsten Tage" : "The next days",
+    body: DE
+      ? "Damit sind die Bausteine einmal durch. In den nächsten Tagen gehen wir sie einen nach dem anderen durch: was jeder macht, wie sie zusammenspielen und wie daraus in einer Schleife die Vorhersage des nächsten Wortes entsteht. Die Übersicht ist der Fahrplan, nicht die Prüfung; du musst dir noch nicht alles merken. Wir zoomen in den nächsten Folien in jeden Schritt hinein und bauen ihn dort in Ruhe auf. Zuerst kommt der Tokenizer, dann Embedding und Position, dann Attention und FFN, am Ende die Vorhersage."
+      : "That completes the building blocks for now. Over the next days we will go through them one by one: what each one does, how they work together, and how the loop turns them into a prediction of the next word. The overview is a roadmap, not a test; you do not need to remember everything yet. In the next slides we zoom into each step and build it up calmly. First comes the tokenizer, then embedding and position, then attention and FFN, and finally the prediction.",
+    teaser: DE
+      ? "Damit sind die Bausteine einmal durch. In den nächsten Tagen gehen wir sie einen nach dem anderen durch: was jeder macht, wie sie zusammenspielen und wie daraus in einer Schleife die Vorhersage des nächsten Wortes entsteht. Die Übersicht ist der Fahrplan, nicht die Prüfung; du musst dir noch nicht alles merken. Wir zoomen in den nächsten Folien in jeden Schritt hinein und bauen ihn dort in Ruhe auf. Zuerst kommt der Tokenizer, dann Embedding und Position, dann Attention und FFN, am Ende die Vorhersage."
+      : "That completes the building blocks for now. Over the next days we will go through them one by one: what each one does, how they work together, and how the loop turns them into a prediction of the next word. The overview is a roadmap, not a test; you do not need to remember everything yet. In the next slides we zoom into each step and build it up calmly. First comes the tokenizer, then embedding and position, then attention and FFN, and finally the prediction.",
+    watch: DE ? "Gehe die fünf Ebenen noch einmal durch. Welche willst du zuerst verstehen?" : "Walk through the five levels again. Which one do you want to understand first?",
+    demoState: { scene: "blocks" },
+    inherit: false,
+    questionGroups: [
+      {
+        id: "g-basics",
+        title: DE ? "Eine Ebene tiefer" : "One level deeper",
+        questions: [
+          { id: "q-roadmap", title: DE ? "Was kommt zuerst?" : "What comes first?", body: DE ? "Zuerst der Tokenizer, dann Embedding und Position, dann Attention und FFN, am Ende die Vorhersage. Jeder Schritt bekommt eine eigene Folie." : "First the tokenizer, then embedding and position, then attention and FFN, and finally the prediction. Each step gets its own slide.", tex: "", kind: "question" }
+        ]
+      }
+    ]
+  };
   var bausteineStep = {
     kicker: DE ? "Architektur" : "Architecture",
     title: DE ? "Bausteine eines LLM" : "Building blocks of an LLM",
-    substeps: [bausteineData, bausteineIntro]
+    substeps: [bausteineData, bausteineIntro, bausteineOutro]
   };
 
   var manifoldSteps = DE ? [
@@ -1992,7 +2004,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-15-bausteine-2",
+    overlayRevision: "2026-11-15-bausteine-3",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.
