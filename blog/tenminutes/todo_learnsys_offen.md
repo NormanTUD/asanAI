@@ -154,3 +154,7 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   Ceres-Messungen.
 - [done] „Sehr viele, sehr schmutzige Daten“ und „Die Mischung macht den
   Korpus“ aus der Folienliste entfernt; die Inhalte liegen in der Datenfolie.
+- [done] Tokenizer-Reihenfolge: erst „Text wird zu IDs“ (Beispiele), dann BPE
+  als eigene Unterfolie. Der BPE-Chip in den Beispielen ist entfernt; die
+  Demo-Weiter-Taste wechselt nicht mehr intern in den BPE-Modus.
+- [done] Beispiele und BPE sind in der Tokenizer-Demo vertikal zentriert.

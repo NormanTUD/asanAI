@@ -796,7 +796,9 @@ h1,h2,h3,h4{
     0 0 28px rgba(92,155,175,.16),
     inset 0 0 0 1px rgba(255,255,255,.06);
 }
-.ls-tokenize-scene{height:100%;min-height:0;display:grid;grid-template-rows:auto auto auto auto auto auto;align-content:start;gap:9px;padding:6px 4px;overflow-y:auto}
+.ls-tokenize-scene{height:100%;min-height:0;display:flex;flex-direction:column;gap:9px;padding:6px 4px;overflow-y:auto}
+.ls-tokenize-content{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:9px}
+.ls-tokenize-split{display:grid;gap:9px;align-content:center}
 .ls-tokenize-samples{gap:9px;align-items:center;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
 .ls-tokenize-label{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.12em;color:var(--ls-muted)}
 .ls-tokenize-samples .ls-chip{font-size:var(--ls-fs-ui);padding:10px 16px;font-weight:600;min-height:42px;touch-action:manipulation}

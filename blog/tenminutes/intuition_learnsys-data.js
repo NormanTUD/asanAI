@@ -1792,7 +1792,13 @@
     substeps: [neuralLargeSteps[0], mlpSteps[0]]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep, bookSteps[0]];
+  var tokenizeStep = {
+    title: DE ? "Text wird zu IDs" : "Text becomes IDs",
+    kicker: DE ? "Tokenizer" : "Tokenizer",
+    substeps: [tokenizeExamplesStep, tokenizeBpeStep]
+  };
+
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep, bookSteps[0]];
 
   var day = {
     id: "intuition",

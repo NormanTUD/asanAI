@@ -47,6 +47,7 @@
     var el = document.createElement("div");
     el.className = "ls-tokenize-scene";
     el.innerHTML =
+      '<div class="ls-tokenize-content">' +
       '<div class="ls-tokenize-split">' +
         '<div class="ls-scene-row ls-tokenize-samples"><span class="ls-tokenize-label">' + (DE ? "Beispiele" : "Samples") + '</span></div>' +
         '<div class="ls-tokenize-chips" aria-live="polite"></div>' +
@@ -62,6 +63,7 @@
         '<div class="ls-bpe-meters" aria-live="polite"></div>' +
         '<div class="ls-bpe-counts" aria-live="polite"></div>' +
         '<p class="ls-bpe-note">' + (DE ? "Jeder Merge ersetzt ein häufiges Paar durch ein neues Symbol. Gezählt werden benachbarte Paare, gewichtet mit der Häufigkeit der Wörter. Die Trennungen werden aus den Trainingsdaten gelernt: möglichst viel Text mit möglichst wenigen Tokens. Das Wort bleibt aus seinen Symbolen zusammensetzbar; der Text ist verlustfrei rekonstruierbar. Genau das ist der Kompressionsgedanke." : "Each merge replaces a frequent pair with a new symbol. Adjacent pairs are counted and weighted by word frequency. The splits are learned from the training data: as much text as possible with as few tokens as possible. The word remains reconstructable from its symbols; the text is lossless. That is the compression idea.") + '</p>' +
+      '</div>' +
       '</div>' +
       '<div class="ls-tokenize-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-tokenize-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-tokenize-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
     root.appendChild(el);
@@ -79,10 +81,9 @@
     var navNext = el.querySelector(".ls-tokenize-next");
     var navProgress = el.querySelector(".ls-tokenize-progress");
     var sampleKeys = ["understanding", "sentence"];
-    var mode = "bpe";
+    var mode = "split";
     var step = 0;
     var sampleIndex = 0;
-    var bpeChip = null;
 
     function cloneWords(words) {
       return words.map(function (w) { return { word: w.word, count: w.count, symbols: w.symbols.slice() }; });
@@ -170,7 +171,6 @@
       var subs = tokens.filter(function (t) { return t.sub; }).length;
       stats.innerHTML = '<span><b>' + tokens.length + '</b> ' + (DE ? "Tokens" : "tokens") + '</span><span><b>' + (tokens.length - spaces) + '</b> ' + (DE ? "Teile" : "pieces") + '</span><span><b>' + subs + '</b> ' + (DE ? "Subword-Splits" : "subword splits") + '</span><span><b>' + spaces + '</b> ' + (DE ? "Leerzeichen" : "whitespace") + '</span>';
       samples.querySelectorAll("[data-sample]").forEach(function (b, i) { b.classList.toggle("is-on", i === sampleIndex); });
-      if (bpeChip) bpeChip.classList.remove("is-on");
     }
     function renderBpe() {
       var st = stages[step];
@@ -215,15 +215,14 @@
         return '<span class="ls-bpe-pair"><b>' + api.esc(p.a) + '+' + api.esc(p.b) + '</b> ' + p.count + '×</span>';
       }).join("");
       samples.querySelectorAll("[data-sample]").forEach(function (b) { b.classList.remove("is-on"); });
-      if (bpeChip) bpeChip.classList.add("is-on");
     }
     function render() {
       var splitMode = mode === "split";
       splitEl.hidden = !splitMode;
       bpeEl.hidden = splitMode;
       if (splitMode) renderSplit(); else renderBpe();
-      var total = sampleKeys.length + stages.length;
-      var pos = splitMode ? step : sampleKeys.length + step;
+      var total = splitMode ? sampleKeys.length : stages.length;
+      var pos = step;
       navProgress.textContent = (pos + 1) + ' / ' + total;
       navPrev.disabled = pos === 0;
       navNext.textContent = pos === total - 1 ? (DE ? "Nächste Folie →" : "Next slide →") : (DE ? "Weiter →" : "Next →");
@@ -231,7 +230,7 @@
     function nextInternal() {
       if (mode === "split") {
         if (step < sampleKeys.length - 1) { step++; render(); return true; }
-        mode = "bpe"; step = 0; render(); return true;
+        return false;
       }
       if (step < stages.length - 1) { step++; render(); return true; }
       return false;
@@ -239,7 +238,7 @@
     function prevInternal() {
       if (mode === "bpe") {
         if (step > 0) { step--; render(); return true; }
-        mode = "split"; step = sampleKeys.length - 1; render(); return true;
+        return false;
       }
       if (step > 0) { step--; render(); return true; }
       return false;
@@ -261,12 +260,6 @@
       b.addEventListener("click", function () { mode = "split"; step = sampleKeys.indexOf(key); sampleIndex = step; render(); });
       samples.appendChild(b);
     });
-    bpeChip = document.createElement("button");
-    bpeChip.type = "button";
-    bpeChip.className = "ls-chip ls-chip--bpe";
-    bpeChip.textContent = "BPE";
-    bpeChip.addEventListener("click", function () { mode = "bpe"; step = 0; render(); });
-    samples.appendChild(bpeChip);
     navPrev.addEventListener("click", prevStep);
     navNext.addEventListener("click", nextStep);
     render();
