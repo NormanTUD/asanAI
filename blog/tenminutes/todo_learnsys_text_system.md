@@ -239,6 +239,45 @@ Ein „Link kopieren“-Button liefert die aktuelle URL.
 - [x] `tenminutes_pages_test.py` und `tenminutes_height_test.py`.
 - [x] `js_validator` (keine kritischen Fehler), `php_validator`, `git diff --check`.
 
+## Offene Inhalts- und Demo-Todos (2026-11-14)
+
+- [ ] **Agent-Demo umbauen.** Statt Rayleigh-Streuung soll der Agent im Code
+  ein Transformer-Modell laden und damit einen Text bewerten, wenn man ihn in
+  der Konsole ausführt.
+- [ ] **„Bausteine eines LLM“ neu strukturieren.**
+  - Erste Unterfolie: moderne KI-Systeme schalten Funktionen in einer
+    festgelegten Reihenfolge hintereinander; jede bekommt den Output der
+    vorherigen. Formel:
+    `Ergebnis = layer_3(layer_2(layer_1(Daten)))` (mit `\text{}`).
+  - Erklären: Die ersten Layer bearbeiten die Daten direkt, die nächsten
+    bekommen deren Output; jede Schicht erzeugt eine abstraktere
+    Repräsentation. Unterschiedliche Schichttypen übernehmen unterschiedliche
+    Aufgaben (Bilderkennung vs. Textgenerierung).
+  - Das ist eine Vereinfachung. Residual Streams und die Formel
+    `x_2 = x_0 + \text{Layer}_1(x_0) + \text{Layer}_2(x_1)` gehören in eine
+    optionale Box, nicht in den Haupttext.
+  - Die bestehende Bausteine-Folie (fünf Stationen) wird die **zweite**
+    Unterfolie. Sie wird Schritt für Schritt durchgegangen.
+  - Nach dem Unembedding: Schlusstext, dass wir die Bausteine nun Tag für Tag
+    durchgehen, um zu sehen, wie sie funktionieren und in einer Schleife das
+    nächste Wort vorhersagen.
+  - „Verstehen heißt komprimieren“ ist viel später und fliegt vermutlich
+    später raus; die Kompressions-Demo nicht in die neue Einführung ziehen.
+- [x] **Attention-Text** in der Transformer-Station: bewertet für jedes Token,
+  wie wichtig alle anderen unter einem Aspekt sind, verschiebt das Token in
+  den Gesamtkontext; viele Attention-Blöcke für verschiedene Strukturen.
+- [x] **FFN-Text** in der Transformer-Station: Titel
+  „Feed-Forward-Netzwerk (FFN)“; Muster erkennen, in Bestandteile zerlegen,
+  isolieren, trennen, wieder zusammenfügen und neu ordnen. „Muster trennen“
+  als Beispiel entfernt.
+- [x] **Positional Embedding** als eigene Station in „Bausteine eines LLM“:
+  Token mit 3D-Kugel der Positionskodierungen; gleiche Tokens in anderer
+  Reihenfolge (Hund/Mann) unterscheidbar.
+- [x] **„kausale Maske“** aus der Attention-Grafik entfernt.
+- [x] **Einheitlicher Demo-Spinner** vor jedem Demo-Laden; verschwindet nach
+  dem Laden (mind. 220 ms sichtbar, respektiert reduzierte Bewegung). Der
+  Morph-Übergang und der Test wurden stabilisiert.
+
 ## Probleme, Risiken, offene Fragen
 
 1. **`state.step` Bedeutung.** Wechsel von „Originalindex“ zu „sichtbarer
@@ -287,7 +326,7 @@ git diff --check
   JSON-Modal mit Copy-Paste, Import und Download ist da; Folien lassen sich
   verschieben, ausblenden und in Unterfolien aufteilen; Deep-Links per Hash;
   Überschrift/Kicker/Beobachte sind editierbar; jede Frage ist Frage oder
-  Trivia. Neue Tests: `learnsys_global_text_browser_test.py` (76 Checks).
+  Trivia. Neue Tests: `learnsys_global_text_browser_test.py` (81 Checks).
 - 2026-11-14: Inhalts- und Demo-Pass: „Verstehen heißt komprimieren“ ans Ende
   verschoben; „Bausteine“ nennt Reddit, Wikipedia, Bücher, Webseiten und Code
   als Trainingsdaten und den Ausblick auf die nächsten Tage; Tokenizer erklärt
@@ -296,9 +335,13 @@ git diff --check
   mit Winkel/Großkreis und Auto-Play; Unembedding zeigt klickbare Winkel-
   Vorschläge und „Nächster Winkel“; im Loop lassen sich frühere Wörter
   anklicken, um dorthin zurückzuspringen.
+- 2026-11-14: Spinner- und Demo-Pass: einheitlicher Demo-Spinner, bewegte
+  GPT-2-Trajektorie mit Auto-Play, klickbare Loop-Wörter, Unembedding-
+  Winkelvorschläge, Positional-Embedding-Station mit 3D-Kugel,
+  Attention-/FFN-Texte, „kausale Maske“ entfernt. Offene Todos siehe oben.
 - 2026-11-14: Verifikation: `learnsys_browser_test` 87/0,
   `learnsys_text_edit_browser_test` 27/0, `learnsys_global_text_browser_test`
-  76/0, `learnsys_loop_landscape_test` 15/0, `learnsys_unit_test` 20/0,
+  81/0, `learnsys_loop_landscape_test` 15/0, `learnsys_unit_test` 20/0,
   Seiten-Test 30/30, Height-Test 34/0, `check_all.py --fast` 33/33 Stages PASS,
   `js_validator` 0 Fehler, `php_validator` 0 Issues, `git diff --check` sauber.
 

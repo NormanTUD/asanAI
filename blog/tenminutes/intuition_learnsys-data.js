@@ -490,7 +490,7 @@
 
   var ffnSteps = DE ? [
     {
-      kicker: "Feed-forward",
+      kicker: "Feed-Forward-Netzwerk (FFN)",
       title: "Ein Muster passt, ein Wert wird geschrieben",
       body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Die Punkte unten sind symbolisch; im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen höheren Raum, trennt die Cluster und projiziert zurück. So kann es Kontexte gezielt trennen und die abstrakte Repräsentation weiterreichen. Attention mischt Tokens; das FFN trennt die verworrenen Strukturen innerhalb eines Tokens. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.",
       watch: "Klicke die Kontexte. Welche Muster feuern? Biege den Raum, bis die Ebene trennt.",
@@ -510,7 +510,7 @@
     }
   ] : [
     {
-      kicker: "Feed-forward",
+      kicker: "Feed-forward network (FFN)",
       title: "A pattern matches, a value is written",
       body: "The FFN is a small MLP per token: dense, activation, dense. The points below are symbolic; in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, separates the clusters, and projects back. That is how it separates contexts and passes the abstract representation on. Attention mixes tokens; the FFN separates the entangled structures inside one token. Click the two contexts and bend the space until a plane separates them.",
       watch: "Click the contexts. Which patterns fire? Bend the space until the plane separates them.",

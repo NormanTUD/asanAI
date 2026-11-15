@@ -408,9 +408,8 @@ def check_transitions(driver, results):
     time.sleep(0.5)
     results.check("dynamic canvas visible after step", js(driver, "getComputedStyle(document.querySelector('.ls-canvas--dynamic') || document.querySelector('.ls-canvas')).opacity") == "1")
 
-    js(driver, "LearnSys.goDay('sampling')")
-    time.sleep(0.1)
-    results.check("day change has morph overlay", js(driver, "!!document.querySelector('.ls-morph-overlay')"))
+    morph_created = js(driver, "(function(){ LearnSys.goDay('sampling'); return !!document.querySelector('.ls-morph-overlay'); })()")
+    results.check("day change has morph overlay", morph_created)
     time.sleep(0.8)
     results.check("day morph finishes", not js(driver, "!!document.querySelector('.ls-morph-overlay')"))
     results.check("canvas visible after day change", js(driver, "getComputedStyle(document.querySelector('.ls-canvas')).opacity") == "1")

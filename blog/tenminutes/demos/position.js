@@ -144,6 +144,26 @@
       var startP = unit3(startVec);
       var curP = unit3(curVec);
       var sp = P(startP), cp = P(curP);
+      var origin = P([0, 0, 0]);
+      ctx.save();
+      ctx.setLineDash([3, 4]);
+      ctx.strokeStyle = Cc.petrol;
+      ctx.globalAlpha = 0.32;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(origin.x, origin.y);
+      ctx.lineTo(cp.x, cp.y);
+      ctx.stroke();
+      ctx.restore();
+      if (api.visual && api.visual.tokenChip) {
+        api.visual.tokenChip(ctx, DE ? "Hund" : "dog", origin.x, origin.y - 16, Cc.petrol, Cc, { size: api.font("canvas-sm") });
+        ctx.fillStyle = Cc.muted;
+        ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(DE ? "Token" : "token", origin.x, origin.y + 20);
+        ctx.textBaseline = "alphabetic";
+      }
       var dot = Math.max(-1, Math.min(1, startP[0] * curP[0] + startP[1] * curP[1] + startP[2] * curP[2]));
       var theta = Math.acos(dot);
       ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = Cc.gold; ctx.lineWidth = 1.8;

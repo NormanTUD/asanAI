@@ -31,16 +31,24 @@
         mini: "embedding"
       },
       {
+        id: "position", label: "Positional Embedding", short: "Position → Vektor", icon: "P", color: "blue",
+        title: "Positional Embedding",
+        body: "Ein Token allein weiß nicht, ob es an erster oder dritter Stelle steht. Deshalb wird seine Position als spezielle Kodierung in den Token-Vektor hineingegeben. Die Demo zeigt die Positionskodierung als Punkt auf einer Kugel: Jede Position ergibt eine andere Richtung. So kann das Modell „der Hund beißt den Mann“ und „der Mann beißt den Hund“ unterscheiden, obwohl beide dieselben Tokens enthalten.",
+        points: ["gleiche Tokens, andere Reihenfolge", "Position steckt im Vektor", "Kugel = alle Positionen"],
+        mini: "position",
+        position: true
+      },
+      {
         id: "transformer", label: "Transformer-Blöcke", short: "Attention → FFN, × N", icon: "×N", color: "green",
         title: "Transformer-Blöcke",
         body: "Attention mischt Information zwischen Wörtern. Das FFN formt jedes Token einzeln. Der Block läuft dutzende bis hunderte Male.",
-        points: ["Attention: wer liest wen?", "FFN: Muster trennen"],
+        points: ["Attention: wer liest wen?", "FFN: erkennen, trennen, neu ordnen"],
         roadmap: "Wir werden jeden dieser Schritte in den nächsten Tagen durchgehen und so erklären, dass man es wirklich versteht.",
         mini: "transformer",
         traj: true,
         sub: [
-          { title: "Attention", text: "Jedes Token bewertet, wie wichtig jedes andere sichtbare Token ist, und zieht Information aus den wichtigen." },
-          { title: "FFN", text: "Das FFN arbeitet pro Token. „new“ allein heißt „neu“, „york“ allein ist ein Ort. Zusammen ergibt sich New York." }
+          { title: "Attention", text: "Attention bewertet für jedes einzelne Token, wie wichtig alle anderen Tokens unter einem gewissen Aspekt sind, und verschiebt das Token so, dass es den Gesamtkontext unter diesen Gesichtspunkten beinhaltet. Es gibt viele Attention-Blöcke; sie können auf bestimmte Arten von Strukturen achten, diese isolieren und in den gesamten bisherigen Text schauen, um zu sehen, wo etwas im Gesamtkontext steht." },
+          { title: "Feed-Forward-Netzwerk (FFN)", text: "Das FFN erkennt Muster und zerlegt sie sauber in einzelne Bestandteile, sodass Bedeutung anhand des Kontextes im Raum verschoben werden kann. So kann es „denken“, indem es isoliert, trennt, aber auch wieder zusammenfügt und neu ordnet." }
         ]
       },
       {
@@ -74,15 +82,23 @@
         mini: "embedding"
       },
       {
+        id: "position", label: "Positional Embedding", short: "position → vector", icon: "P", color: "blue",
+        title: "Positional Embedding",
+        body: "A token alone does not know whether it stands first or third. That is why its position is put into the token vector as a special encoding. The demo shows the position encoding as a point on a sphere: every position gives a different direction. That is how the model can distinguish “the dog bites the man” from “the man bites the dog”, even though both contain the same tokens.",
+        points: ["same tokens, different order", "position is inside the vector", "sphere = all positions"],
+        mini: "position",
+        position: true
+      },
+      {
         id: "transformer", label: "Transformer blocks", short: "attention → FFN, × N", icon: "×N", color: "green",
         title: "Transformer blocks",
         body: "Attention mixes information between words. The FFN shapes each token separately. The block runs dozens to hundreds of times.",
-        points: ["attention: who reads whom?", "FFN: separate patterns"],
+        points: ["attention: who reads whom?", "FFN: recognise, separate, reorder"],
         roadmap: "We will go through each of these steps over the next days and explain them so that you really understand them.",
         mini: "transformer",
         sub: [
-          { title: "Attention", text: "Every token scores how important every other visible token is, then pulls information from the important ones." },
-          { title: "FFN", text: "The FFN works per token. “new” alone means “not old”, “york” alone is a place. Together they give New York." }
+          { title: "Attention", text: "Attention scores, for each individual token, how important all other tokens are under a certain aspect, and shifts the token so that it contains the overall context under those aspects. There are many attention blocks; they can attend to specific kinds of structures, isolate them, and look into the entire text so far to see where something stands in the overall context." },
+          { title: "Feed-forward network (FFN)", text: "The FFN recognises patterns and cleanly decomposes them into individual components, so that meaning can be shifted in space according to the context. That is how it can “think”: by isolating, separating, but also reassembling and reordering." }
         ]
       },
       {
@@ -95,6 +111,7 @@
     ];
     var index = 0;
     var trajDemo = null;
+    var positionDemo = null;
     var el = document.createElement("div");
     el.className = "ls-blocks-scene";
     el.innerHTML = '<div class="ls-bs-stack" role="list"></div>' +
@@ -289,10 +306,10 @@
       left.forEach(function (p, i) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.sky; ctx.fill(); });
       mid.forEach(function (p, i) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.green; ctx.fill(); });
       right.forEach(function (p, i) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = C.gold; ctx.fill(); });
-      V.tokenChip(ctx, "new", w * 0.05, h * 0.16, C.blue, C, { size: 9 });
-      V.tokenChip(ctx, "york", w * 0.05, h * 0.16 + 22, C.blue, C, { size: 9 });
-      V.tokenChip(ctx, DE ? "New York" : "New York", w * 0.82, h * 0.16, C.green, C, { size: 9 });
-      V.heading(ctx, "FFN: Muster trennen", 12, 16, C.petrol, 10, 1);
+      V.tokenChip(ctx, DE ? "Muster" : "pattern", w * 0.05, h * 0.16, C.blue, C, { size: 9 });
+      V.tokenChip(ctx, DE ? "Bestandteile" : "components", w * 0.05, h * 0.16 + 22, C.blue, C, { size: 9 });
+      V.tokenChip(ctx, DE ? "neu geordnet" : "reordered", w * 0.74, h * 0.16, C.green, C, { size: 9 });
+      V.heading(ctx, DE ? "FFN: erkennen · trennen · neu ordnen" : "FFN: recognise · separate · reorder", 12, 16, C.petrol, 10, 1);
       V.label(ctx, DE ? "pro Token" : "per token", w * 0.50, h * 0.88, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
     }
     function miniUnembed(ctx, w, h) {
@@ -359,6 +376,9 @@
           '<p class="ls-bs-book-src">' + (DE ? "Friedrich Nietzsche, 1883 · " : "Friedrich Nietzsche, 1883 · ") + '<a href="' + (DE ? "https://www.gutenberg.org/ebooks/7205" : "https://www.gutenberg.org/ebooks/1998") + '" target="_blank" rel="noopener">Project Gutenberg</a></p>' +
           '</div>' +
           '<p class="ls-bs-html-note">' + (DE ? "Die echte Seite ist über ein Megabyte groß. Das Modell sieht nicht „den Artikel“, sondern eine sehr lange Folge von Zeichen, Tags und Text. Zwischen dem HTML und dem Buch liegt eine Auslassung: Der Korpus enthält beides." : "The real page is over a megabyte. The model does not see “the article”, but a very long sequence of characters, tags, and text. Between the HTML and the book sits an omission: the corpus contains both.") + '</p>';
+      } else if (b.position) {
+        html += '<div class="ls-bs-position-full" data-position-host></div>' +
+          '<p class="ls-bs-traj-caption">' + (DE ? "Die Kugel zeigt mögliche Positionskodierungen. Bewege die Position und drehe die Ansicht; der Punkt wandert auf der Kugel." : "The sphere shows possible position encodings. Move the position and rotate the view; the point moves on the sphere.") + '</p>';
       } else if (b.sub) {
         html += '<div class="ls-bs-subgrid">' + b.sub.map(function (s, i) {
           return '<div class="ls-bs-sub"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + (["attention", "ffn"][i] || "ffn") + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
@@ -373,6 +393,7 @@
       if (b.source) html += '<p class="ls-bs-source">' + (DE ? "Quelle: " : "Source: ") + '<a href="' + esc(b.source.url) + '" target="_blank" rel="noopener">' + esc(b.source.label) + '</a></p>';
       if (b.roadmap) html += '<p class="ls-bs-roadmap">' + esc(b.roadmap) + '</p>';
       if (trajDemo) { try { trajDemo.destroy(); } catch (e) {} trajDemo = null; }
+      if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; }
       detail.innerHTML = html;
       if (b.traj) {
         var trajHost = detail.querySelector("[data-traj-host]");
@@ -383,6 +404,23 @@
             colors: api.colors,
             font: api.font,
             fit: api.fit,
+            motion: api.motion,
+            esc: api.esc,
+            util: api.util,
+            visual: api.visual
+          });
+        }
+      }
+      if (b.position) {
+        var posHost = detail.querySelector("[data-position-host]");
+        var posFactory = core.get("position");
+        if (posHost && posFactory) {
+          positionDemo = posFactory(posHost, {
+            lang: api.lang,
+            colors: api.colors,
+            font: api.font,
+            fit: api.fit,
+            fitPair: api.fitPair,
             motion: api.motion,
             esc: api.esc,
             util: api.util,
@@ -423,7 +461,7 @@
       prev: prevInternal,
       onKey: function (e) { return api.util.arrowKey(e, nextInternal, prevInternal); },
       resize: function () { drawMinis(); },
-      destroy: function () { if (trajDemo) { try { trajDemo.destroy(); } catch (e) {} trajDemo = null; } window.removeEventListener("resize", drawMinis); el.remove(); }
+      destroy: function () { if (trajDemo) { try { trajDemo.destroy(); } catch (e) {} trajDemo = null; } if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; } window.removeEventListener("resize", drawMinis); el.remove(); }
     };
   }
 
