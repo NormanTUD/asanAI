@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "generated_at": "2026-11-15T12:41:34.522Z",
+  "generated_at": "2026-11-15T12:43:17.679Z",
   "texts": {
     "de": {
       "intuition": {
         "0.0": {
-          "body": "Sprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von moderen *L*arge *L*anguage *M*odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist.",
+          "body": "Sprachmodelle können sehr viele sehr verschiedene Aufgaben bearbeiten, aber wie funktionieren sie? Jeden Tag werden wir einen Teil der Technik von moderen <b>L</b>arge <b>L</b>anguage <b>M</b>odels betrachten, und eine Intuition liefern, wie diese funktionieren, die man versteht, aber die gleichzeitig auch techniknah ist.",
           "title": "Wie funktionieren Sprachmodelle?",
           "kicker": "Chat und Code",
           "watch": "",
