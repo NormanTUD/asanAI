@@ -229,7 +229,7 @@
     var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
     var x1 = x * cy - y * sy, y1 = x * sy + y * cy;
     var y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;
-    var s = Math.min(size.w * 0.36, size.h * 0.36) / (1 + z2 * 0.22) * (zoom || 1);
+    var s = Math.min(size.w * 0.52, size.h * 0.52) / (1 + z2 * 0.22) * (zoom || 1);
     return { x: size.w / 2 + x1 * s, y: size.h / 2 - y2 * s, z: z2 };
   };
 

@@ -23,12 +23,13 @@
     var playBtn = el.querySelector(".ls-traj-play");
     var maxLayer = data && data.points && data.points[0] ? data.points[0].length - 1 : 12;
     layerEl.max = String(maxLayer);
-    var layer = 0, layerTarget = 0, displayLayer = 0, layerTween = 0, yaw = -0.62, pitch = 0.36, zoom = 0.95, drag = null;
+    var layer = 0, layerTarget = 0, displayLayer = 0, layerTween = 0, yaw = -0.62, pitch = 0.36, zoom = 1.35, drag = null;
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var playing = !reducedMotion, playTimer = 0;
     var size = null, ctx = null;
     var C = api.colors();
     var colors = ["green", "sky", "gold", "lilac", "lime"];
+    var PAD_X = 26, PAD_Y = 26;
     function tokenLabel(t) { return t.replace(/^ /, "␣"); }
     function color(i) { return C[colors[i % colors.length]] || C.petrol; }
     function positions() {
@@ -45,14 +46,24 @@
         return { word: l.word, p: l.p, value: [l.value[0] / len, l.value[1] / len, l.value[2] / len] };
       });
     }
-    function fitBounds(pts) { return V.trajBounds(pts, landmarks().map(function (l) { return l.value; })); }
-    function project(v, b) { return V.trajProject(v, b, yaw, pitch, zoom, size); }
+    function fitBounds(pts) {
+      var flat = [];
+      pts.forEach(function (tok) { tok.forEach(function (p) { flat.push(p); }); });
+      return V.trajBounds(flat, landmarks().map(function (l) { return l.value; }));
+    }
+    function project(v, b) {
+      var view = { w: Math.max(80, size.w - PAD_X * 2), h: Math.max(80, size.h - PAD_Y * 2) };
+      var p = V.trajProject(v, b, yaw, pitch, zoom, view);
+      return { x: p.x + PAD_X, y: p.y + PAD_Y, z: p.z };
+    }
     function drawLabel(x, y, text, col, align) {
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       var tw = ctx.measureText(text).width;
       var pad = 4, h = 15;
       var bx = align === "right" ? x - tw - pad * 2 : x;
       var by = y - h / 2;
+      bx = Math.max(PAD_X, Math.min(size.w - PAD_X - tw - pad * 2, bx));
+      by = Math.max(PAD_Y, Math.min(size.h - PAD_Y - h, by));
       ctx.fillStyle = "rgba(255,255,255,.85)";
       ctx.fillRect(bx, by, tw + pad * 2, h);
       ctx.fillStyle = col;
@@ -78,11 +89,14 @@
       ];
       axes.forEach(function (ax) {
         var o = project([0, 0, 0], b), p = project(ax.v, b);
+        var px = Math.max(PAD_X + 18, Math.min(size.w - PAD_X - 40, p.x));
+        var py = Math.max(PAD_Y + 14, Math.min(size.h - PAD_Y - 16, p.y));
         ctx.strokeStyle = ax.col; ctx.globalAlpha = 0.22; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(px, py); ctx.stroke();
         ctx.globalAlpha = 1;
         ctx.fillStyle = ax.col; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
-        ctx.textAlign = "left"; ctx.fillText(ax.label, p.x + 4, p.y - 4);
+        ctx.textAlign = "left";
+        ctx.fillText(ax.label, Math.max(PAD_X, px + 4), Math.max(PAD_Y + 10, py - 4));
       });
       // trajectories
       data.tokens.forEach(function (tok, i) {
@@ -149,7 +163,7 @@
           var bx = p.x + offsets[oi][0] - (offsets[oi][0] < 0 ? tw : 0);
           var by = p.y + offsets[oi][1];
           var cand = { x: bx, y: by, w: tw, h: 15 };
-          var free = bx >= 3 && by >= 3 && bx + tw <= size.w - 3 && by + 15 <= size.h - 3;
+          var free = bx >= PAD_X && by >= PAD_Y && bx + tw <= size.w - PAD_X && by + 15 <= size.h - PAD_Y;
           if (free) {
             for (var lbi = 0; lbi < labelBoxes.length; lbi++) {
               var lb = labelBoxes[lbi];
@@ -158,7 +172,7 @@
           }
           if (free) { chosen = cand; break; }
         }
-        if (!chosen) chosen = { x: Math.max(3, Math.min(size.w - tw - 3, p.x - tw / 2)), y: Math.max(3, Math.min(size.h - 18, p.y - 20)), w: tw, h: 15 };
+        if (!chosen) chosen = { x: Math.max(PAD_X, Math.min(size.w - PAD_X - tw, p.x - tw / 2)), y: Math.max(PAD_Y, Math.min(size.h - PAD_Y - 18, p.y - 20)), w: tw, h: 15 };
         labelBoxes.push(chosen);
         ctx.fillStyle = "rgba(255,255,255,.88)";
         ctx.fillRect(chosen.x, chosen.y, chosen.w, chosen.h);
