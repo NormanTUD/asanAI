@@ -399,8 +399,6 @@
       V.arrow(ctx, cx, cy, hx, hy, C.petrol, 3.2);
       ctx.fillStyle = C.petrol; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif'; ctx.textAlign = "center"; ctx.fillText("h", hx, hy - 9);
       rayLabels.forEach(function (l) { drawRayLabel(l.text, l.x, l.y, cx, cy, w, h, l.active); });
-      ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.textBaseline = "top";
-      ctx.fillText(DE ? "h = letzter Vektor nach allen Transformer-Blöcken" : "h = final vector after all transformer blocks", 14, 14);
       // right: sorted probabilities in a fixed-width panel
       var panelW = Math.min(360, Math.max(150, w * 0.36));
       var bx = w - 16 - panelW;
@@ -423,7 +421,7 @@
       });
       var top = rows[0], bottom = rows[rows.length - 1];
       var focusTxt = focus ? '<span>' + (DE ? "Winkel" : "angle") + ' <b>' + focus.t + ' · ' + Math.round(Math.abs(focus.diff) * 180 / Math.PI) + '°</b></span>' : '';
-      readout.innerHTML = '<span>h → ' + rows.length + ' ' + (DE ? "Token-Richtungen" : "token directions") + '</span><span>' + (DE ? "kleinster Winkel" : "smallest angle") + ' <b>' + top.t + ' · ' + Math.round(Math.abs(top.diff) * 180 / Math.PI) + '°</b></span><span>' + (DE ? "größter" : "largest") + ' <b>' + bottom.t + ' · ' + Math.round(Math.abs(bottom.diff) * 180 / Math.PI) + '°</b></span>' + focusTxt;
+      readout.innerHTML = '<span><b>h</b> ' + (DE ? "letzter Vektor nach allen Transformer-Blöcken" : "final vector after all transformer blocks") + '</span><span>h → ' + rows.length + ' ' + (DE ? "Token-Richtungen" : "token directions") + '</span><span>' + (DE ? "kleinster Winkel" : "smallest angle") + ' <b>' + top.t + ' · ' + Math.round(Math.abs(top.diff) * 180 / Math.PI) + '°</b></span><span>' + (DE ? "größter" : "largest") + ' <b>' + bottom.t + ' · ' + Math.round(Math.abs(bottom.diff) * 180 / Math.PI) + '°</b></span>' + focusTxt;
       caption.textContent = DE ? "h ist der letzte Vektor, der aus den Transformer-Blöcken kommt. In ihn ist der gesamte Kontext wieder und wieder unter verschiedenen Heads eingemischt worden. W_U vergleicht h mit jeder Token-Richtung; der kleinste Winkel wird zum höchsten Logit, Softmax macht daraus eine Verteilung. Fahre über einen Vorschlag oder klicke ihn an: Der Winkel wird hervorgehoben." : "h is the final vector coming out of the transformer blocks. The entire context has been mixed into it again and again under different heads. W_U compares h with every token direction; the smallest angle becomes the highest logit, and softmax turns that into a distribution. Hover or click a suggestion to highlight its angle.";
       if (unembedRaf) { if (t < 1) unembedRaf = requestAnimationFrame(drawUnembed); else unembedRaf = 0; }
     }
