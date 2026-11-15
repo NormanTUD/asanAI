@@ -1633,14 +1633,14 @@ h1,h2,h3,h4{
 /* Gauss, Ceres, and least squares */
 .ls-gauss-scene{height:100%;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 228px;grid-template-rows:minmax(0,1fr) auto auto auto;gap:8px;padding:2px;overflow-y:auto}
 .ls-gauss-side{display:flex;flex-direction:column;gap:8px;min-height:0;overflow:auto}
-.ls-gauss-fig{position:relative;margin:0;border:1px solid var(--ls-line);background:#fff;display:flex;flex-direction:column;min-height:0}
-.ls-gauss-fig img{display:block;width:100%;height:116px;object-fit:cover;opacity:0;transition:opacity .18s ease}
+.ls-gauss-fig{position:relative;margin:0;border:0;background:transparent;display:flex;flex-direction:column;min-height:0}
+.ls-gauss-fig img{display:block;width:100%;height:116px;object-fit:cover;opacity:0;border-radius:12px;background:transparent;transition:opacity .18s ease}
 .ls-gauss-fig.is-loaded img{opacity:1}
-.ls-img-spinner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.ls-img-spinner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;border-radius:12px}
 .ls-img-spinner:before{content:"";width:22px;height:22px;border:2px solid var(--ls-line);border-top-color:var(--ls-green);border-radius:50%;animation:ls-spin .8s linear infinite}
 .ls-gauss-fig.is-loaded .ls-img-spinner{display:none}
 @media (prefers-reduced-motion: reduce){.ls-img-spinner:before{animation:none}}
-.ls-gauss-fig figcaption{padding:5px 6px 6px;font:var(--ls-fs-micro)/1.35 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-gauss-fig figcaption{padding:6px 0 0;font:var(--ls-fs-micro)/1.35 "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-gauss-fig figcaption a{color:var(--ls-petrol);text-decoration:underline}
 .ls-gauss-controls{grid-column:1/-1;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .ls-gauss-status{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-green)}
@@ -1805,7 +1805,7 @@ h1,h2,h3,h4{
 .ls-gauss-scene.is-intro .ls-gauss-plots{display:none}
 .ls-gauss-scene.is-intro .ls-gauss-side{grid-row:1;display:grid;grid-template-columns:1fr 1fr;gap:10px;overflow:visible;align-items:stretch}
 .ls-gauss-scene.is-intro .ls-gauss-side .ls-gauss-fig{height:100%;min-height:0}
-.ls-gauss-scene.is-intro .ls-gauss-side .ls-gauss-fig img{width:100%;height:calc(100% - 44px);min-height:140px;object-fit:contain;background:#fff}
+.ls-gauss-scene.is-intro .ls-gauss-side .ls-gauss-fig img{width:100%;height:calc(100% - 44px);min-height:140px;object-fit:contain;background:transparent}
 .ls-gauss-scene.is-intro .ls-gauss-controls,.ls-gauss-scene.is-intro .ls-gauss-readout{display:none}
 .ls-gauss-scene.is-intro .ls-gauss-note{display:none}
 @media (max-width:760px){

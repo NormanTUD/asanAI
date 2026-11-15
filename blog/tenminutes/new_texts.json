@@ -266,7 +266,7 @@
           ]
         },
         "2.0": {
-          "body": "Giuseppe Piazzi entdecke 1801 den Zwergplanete <i>Ceres</b>. Er verschwand nach kurzer Beobachtungszeit hinter der Sonne und man wusste nicht mehr, wo man suchen sollte, weil die Messungen so ungenau waren, dass sein exakter Pfad nicht bekannt war. <b>Gauß</b> hat realisiert, dass Messungenauigkeiten sich Clustern: es gibt einige die sehr weit weg sind und andere die nah dran sind, aber im Schnitt liegen die Ergebnisse richtig. Das war die Geburt der Normalverteilung, und des <b>M</b>ean <b>S</b>quared <b>E</b>rrors, <b>MSE</b>, die man heute noch zum Training neuronaler Netze benutzt.",
+          "body": "Giuseppe Piazzi entdecke 1801 den Zwergplanete <b>Ceres</b>. Er verschwand nach kurzer Beobachtungszeit hinter der Sonne und man wusste nicht mehr, wo man suchen sollte, weil die Messungen so ungenau waren, dass sein exakter Pfad nicht bekannt war. <b>Gauß</b> hat realisiert, dass Messungenauigkeiten sich Clustern: es gibt einige die sehr weit weg sind und andere die nah dran sind, aber im Schnitt liegen die Ergebnisse richtig. Das war die Geburt der Normalverteilung, und des <b>M</b>ean <b>S</b>quared <b>E</b>rrors, <b>MSE</b>, die man heute noch zum Training neuronaler Netze benutzt.",
           "title": "Gauß, Ceres und die Daten",
           "kicker": "Die Bilder",
           "watch": "Ziehe den Slider oder klicke weiter und sehe, wie mit besseren Teleskopen die Daten genauer werden. Reale Daten liegen genauso um eine Wahrheit herum. Texte zum Beispiel können komplett richtig sein, teilweise richtig oder komplett falsch.",

@@ -33,8 +33,8 @@ Im Transformer werden Updates über Residualverbindungen addiert, nicht einfach
 - [done] Daten-Unterfolie zeigt Training, Korpus, Datenmenge und
   Menschenfragen; die Architektur-Unterfolie beginnt beim Tokenizer und zeigt
   fünf Schritte ohne Datenstation.
-- [pending] Die sechs Stationen danach als konkrete Ausprägung derselben Idee
-  anschließen.
+- [done] Die Bausteine-Folie endet nach Daten und Architektur; eine eigene
+  Folie „Die nächsten Tage“ zeigt den Fahrplan und die fünf Ebenen als Ausblick.
 - [pending] EN- und DE-Fassung gemeinsam prüfen; keine Englisch-Reste auf der
   deutschen Seite.
 - [pending] Quellen und Begriffe mit der restlichen Transformer-Folge
