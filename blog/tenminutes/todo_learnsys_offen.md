@@ -304,3 +304,15 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] Loss-Demo: Weiter/→ geht Paris, London, Berlin, the nacheinander
   durch und macht für jedes Zielwort einen Trainingsschritt; Zurück/← geht
   rückwärts, der Reset startet die Folge neu.
+- [done] Geometrie der Attention nachrecherchiert: Vaswani et al. (2017, §3.2)
+  definieren die Ausgabe als „weighted sum of the values“; Lilian Weng (2018)
+  und Elhage et al. (2021) bestätigen die Mischung der Values. Die Ecken sind
+  input-abhängige Value-Vektoren v_j = W_V x_j, nicht Tokens. Die drei Gewichte
+  α sind die Variablen (zwei Freiheitsgrade wegen Σ = 1). Der Simplex ist die
+  konvexe Hülle der Values, keine eigene gelernte Größe. Attention allein bleibt
+  darin; das FFN danach kann die Hülle verlassen.
+- [done] Simplex-Folie entsprechend präzisiert: Titel „Attention als Mischung
+  der Value-Vektoren“, Ecken als v(Tier) usw., Formel v_j = W_V x_j, α-Umrechnung,
+  Quellen Vaswani/Weng/Elhage, Hinweis auf das FFN.
+- [done] „Viele Sätze, eine Wahrheit“ vertikal zentriert.
+- [done] JSON-Änderung übernommen: q-context entfernt, g-basics leer.
