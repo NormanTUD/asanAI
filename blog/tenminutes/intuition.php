@@ -4688,7 +4688,7 @@ red  = <span class="cd-fn">scattering</span>(<span class="cd-num">650e-9</span>,
 				button.type = "button";
 				button.className = "chip" + (i === 0 ? " is-on" : "");
 				button.setAttribute("aria-pressed", i === 0 ? "true" : "false");
-				button.textContent = a.label + " + " + b.label;
+				button.textContent = (a.value >= b.value ? a.label + " − " + b.label : b.label + " − " + a.label);
 				button.addEventListener("click", function () { apply(example, button); });
 				row.appendChild(button);
 				if (i === 0) apply(example, button);
