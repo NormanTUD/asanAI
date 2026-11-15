@@ -1283,8 +1283,9 @@
     {
       kicker: "Der Raum",
       title: "Tausende Dimensionen",
-      body: "Die 3D-Bilder sind nur ein Schatten. Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt: 16 von 4096 Dimensionen. Jede Zeile ist ein Wort, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Mittelpunkt, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
-      watch: "Scrolle durch die Tabelle. Jede Spalte ist eine Dimension; die Zahlen sind ein Ausschnitt, keine echten GPT-Gewichte.",
+      body: "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt: 64 von 4096 Dimensionen. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Mittelpunkt, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
+      teaser: "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt: 64 von 4096 Dimensionen. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Mittelpunkt, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
+      watch: "Scrolle durch die Tabelle. Klicke ein Wort: Jede Zeile ist seine Position, jede Spalte eine Dimension.",
       demoState: { scene: "highdim" },
       context: "Mehr Dimensionen erlauben mehr unabhängige Unterschiede. Die 3D-Demos sind Projektionen; die Tabelle ist die ehrliche Darstellung für den Rechner.",
       deep: "Die Zahlen sind didaktisch, keine echten GPT-Gewichte. In einem echten Modell wird jede Koordinate aus Text gelernt; keine einzelne Spalte hat für sich eine Bedeutung. Die Geometrie entsteht im Zusammenspiel.",
@@ -1298,8 +1299,9 @@
     {
       kicker: "The space",
       title: "Thousands of dimensions",
-      body: "The 3D pictures are only a shadow. A real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice: 16 of 4096 dimensions. Each row is a word, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: midpoint, angle, and matrix multiplication work coordinate by coordinate.",
-      watch: "Scroll through the table. Each column is a dimension; the numbers are a slice, not real GPT weights.",
+      body: "3D is not enough, just as 1D was not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice: 64 of 4096 dimensions. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: midpoint, angle, and matrix multiplication work coordinate by coordinate.",
+      teaser: "3D is not enough, just as 1D was not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice: 64 of 4096 dimensions. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: midpoint, angle, and matrix multiplication work coordinate by coordinate.",
+      watch: "Scroll through the table. Click a word: each row is its position, each column a dimension.",
       demoState: { scene: "highdim" },
       context: "More dimensions allow more independent differences. The 3D demos are projections; the table is the honest view for the computer.",
       deep: "The numbers are didactic, not real GPT weights. In a real model every coordinate is learned from text; no single column means anything on its own. The geometry comes from the interaction.",
@@ -1625,7 +1627,7 @@
   var embeddingMergeStep = {
     title: DE ? "Bedeutung wird Geometrie" : "Meaning becomes geometry",
     kicker: DE ? "1D · 2D · 3D · Tabelle" : "1D · 2D · 3D · table",
-    substeps: [embedSteps[0], embedSteps[1], embedSteps[2]]
+    substeps: [embedSteps[0], embedSteps[1], embedSteps[2], highdimSteps[0]]
   };
   var attentionMerged = {
     kicker: DE ? "Attention" : "Attention",

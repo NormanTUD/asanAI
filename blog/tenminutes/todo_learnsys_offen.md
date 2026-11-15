@@ -220,3 +220,7 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   Scroll-Container und ein nicht reservierter Scrollbar-Platz waren die
   Ursache. Maske entfernt, `scrollbar-gutter: stable`, `overflow-x: hidden`
   und Quellen-Links umbrechen jetzt.
+- [done] Embedding-Gruppe um eine vierte Unterfolie „Tausende Dimensionen“ erweitert:
+  3D reicht nicht, 1D hat auch nicht gereicht; die Tabelle zeigt 64 von 4096
+  Dimensionen, Auslassungspunkte rechts und unten, klickbare Token-Zeilen und
+  eine Positionsanzeige. Demo `highdim` überarbeitet.
