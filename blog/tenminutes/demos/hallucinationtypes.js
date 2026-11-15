@@ -2,7 +2,7 @@
   "use strict";
   var core = window.LearnSysDemoCore;
   if (!core) return;
-  var clamp = core.clamp;
+  var clamp = core.clamp, ease = core.ease;
   function hallucinationTypesScene(root, api) {
     var DE = api.lang === "de";
     var modes = ["false", "sampling", "gap", "negation"];
@@ -47,14 +47,22 @@
       readout.textContent = captions[mode];
       draw();
     }
-    function bg(w, h) {
-      var g = ctx.createRadialGradient(w * 0.5, h * 0.35, 10, w * 0.5, h * 0.5, Math.max(w, h) * 0.72);
-      g.addColorStop(0, "rgba(247,250,249,.96)");
+    function bg(w, h, accent) {
+      var g = ctx.createRadialGradient(w * 0.5, h * 0.38, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.72);
+      g.addColorStop(0, "rgba(247,250,249,.98)");
+      g.addColorStop(0.42, accent + "10");
       g.addColorStop(1, "rgba(255,255,255,0)");
       ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = "rgba(0,75,111,.045)";
+      ctx.lineWidth = 1;
+      for (var y = 40; y < h; y += 40) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
     }
-    function card(x, y, w, h, fill, stroke) {
+    function card(x, y, w, h, fill, stroke, glow) {
+      if (glow) { ctx.shadowColor = glow; ctx.shadowBlur = 18; }
       ctx.fillStyle = fill; ctx.fillRect(x, y, w, h);
+      ctx.shadowBlur = 0;
       ctx.strokeStyle = stroke; ctx.lineWidth = 1.2; ctx.strokeRect(x, y, w, h);
     }
     function text(str, x, y, font, color, align, baseline) {
@@ -66,120 +74,173 @@
       ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - h * Math.cos(a - 0.42), y2 - h * Math.sin(a - 0.42)); ctx.lineTo(x2 - h * Math.cos(a + 0.42), y2 - h * Math.sin(a + 0.42)); ctx.closePath(); ctx.fill();
     }
-    function drawFalse(w, h) {
-      var pad = 20, cw = Math.min(220, w * 0.36), bh = 82;
-      var lx = pad, rx = w - pad - cw, y = h * 0.30;
-      card(lx, y, cw, bh, "#fff", C.lineStrong);
-      text(DE ? "Trainingsdaten" : "training data", lx + 12, y + 18, '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif', C.petrol);
-      text(DE ? "Berlin liegt an der Elbe." : "Berlin lies on the Elbe.", lx + 12, y + 46, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.lilac);
-      card(rx, y, cw, bh, "#fff", C.lineStrong);
-      text(DE ? "Modell" : "model", rx + 12, y + 18, '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif', C.petrol);
-      text(DE ? "Berlin liegt an der Elbe." : "Berlin lies on the Elbe.", rx + 12, y + 46, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.ink);
-      arrow(lx + cw + 6, y + bh / 2, rx - 6, y + bh / 2, C.lilac, 2);
-      var pulse = 0.5 + 0.5 * Math.sin((performance.now() - t0) / 500);
-      ctx.globalAlpha = 0.25 + pulse * 0.35;
-      card(lx + 6, y + 36, cw - 12, 20, "rgba(145,133,190,.20)", C.lilac);
-      ctx.globalAlpha = 1;
-      text(DE ? "falsche Quelle" : "false source", lx + 12, y + bh + 18, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.lilac);
+    function glowDot(x, y, r, color) {
+      ctx.shadowColor = color; ctx.shadowBlur = 18;
+      ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0;
     }
-    function drawSampling(w, h) {
-      var pad = 24, n = 5, base = h - 44, maxH = h * 0.46;
-      var names = DE ? ["Spree", "Elbe", "Stadt", "Fluss", "Berlin"] : ["Spree", "Elbe", "city", "river", "Berlin"];
-      var probs = [0.52, 0.22, 0.12, 0.09, 0.05];
-      var bw = Math.min(54, (w - pad * 2) / n - 10);
-      var start = w / 2 - (n * bw + (n - 1) * 10) / 2;
-      var picked = 1;
-      names.forEach(function (name, i) {
-        var x = start + i * (bw + 10);
-        var bh = probs[i] * maxH;
-        var on = i === picked;
-        ctx.fillStyle = on ? C.lilac : C.sky;
-        ctx.globalAlpha = on ? 0.9 : 0.55;
-        ctx.fillRect(x, base - bh, bw, bh);
-        ctx.globalAlpha = 1;
-        text((probs[i] * 100).toFixed(0) + "%", x + bw / 2, base - bh - 7, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', on ? C.lilac : C.muted, "center");
-        text(name, x + bw / 2, base + 14, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', on ? C.lilac : C.ink, "center");
+    function iconDatabase(x, y, s, color) {
+      ctx.strokeStyle = color; ctx.fillStyle = "rgba(255,255,255,.8)"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.ellipse(x, y, s, s * 0.35, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(x, y + s * 0.7, s, s * 0.35, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x - s, y); ctx.lineTo(x - s, y + s * 0.7); ctx.moveTo(x + s, y); ctx.lineTo(x + s, y + s * 0.7); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(x, y + s * 0.35, s, s * 0.35, 0, 0, Math.PI); ctx.stroke();
+    }
+    function iconDie(x, y, s, color) {
+      ctx.strokeStyle = color; ctx.fillStyle = "#fff"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.rect(x - s, y - s, s * 2, s * 2); ctx.fill(); ctx.stroke();
+      [[-0.45, -0.45], [0.45, 0.45], [0, 0]].forEach(function (p) {
+        ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x + p[0] * s, y + p[1] * s, 2.4, 0, Math.PI * 2); ctx.fill();
       });
-      var t = ((performance.now() - t0) / 1400) % 1;
-      var x = start + (bw + 10) * (picked + 0.5);
-      var y = base - probs[picked] * maxH - 26;
-      ctx.fillStyle = C.gold;
-      ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
-      text(DE ? "Zufall wählt" : "random draw", w / 2, 22, '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif', C.petrol, "center");
-      text(DE ? "Berlin liegt an der Elbe." : "Berlin lies on the Elbe.", w / 2, h - 16, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.ink, "center");
     }
-    function drawGap(w, h) {
-      var cols = 4, rows = 3, pad = 30;
-      var cell = Math.min((w - pad * 2) / cols, (h - 84) / rows) - 6;
-      var startX = w / 2 - (cols * (cell + 6) - 6) / 2, startY = 54;
+    function iconGap(x, y, s, color) {
+      ctx.strokeStyle = color; ctx.lineWidth = 2;
+      ctx.strokeRect(x - s, y - s, s * 0.7, s * 0.7);
+      ctx.strokeRect(x + s * 0.3, y - s, s * 0.7, s * 0.7);
+      ctx.strokeRect(x - s, y + s * 0.3, s * 0.7, s * 0.7);
+      ctx.setLineDash([3, 3]); ctx.strokeRect(x + s * 0.3, y + s * 0.3, s * 0.7, s * 0.7); ctx.setLineDash([]);
+    }
+    function iconNot(x, y, s, color) {
+      ctx.strokeStyle = color; ctx.lineWidth = 2.4;
+      ctx.beginPath(); ctx.moveTo(x - s, y + s); ctx.lineTo(x + s, y + s); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x + s, y + s); ctx.lineTo(x + s * 1.4, y + s * 0.3); ctx.stroke();
+    }
+    function drawFalse(w, h, now) {
+      var pad = 18, cw = Math.min(230, w * 0.38), bh = 88;
+      var lx = pad, rx = w - pad - cw, y = h * 0.26;
+      var pulse = 0.5 + 0.5 * Math.sin((now - t0) / 420);
+      iconDatabase(lx + 30, y + 26, 15, C.lilac);
+      card(lx, y, cw, bh, "#fff", C.lineStrong, pulse > 0.5 ? C.lilac : null);
+      text(DE ? "Trainingsdaten" : "training data", lx + 56, y + 18, '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif', C.petrol);
+      text(DE ? "Berlin liegt an der Elbe." : "Berlin lies on the Elbe.", lx + 14, y + 52, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.lilac);
+      ctx.globalAlpha = 0.22 + pulse * 0.3;
+      card(lx + 6, y + 40, cw - 12, 22, "rgba(145,133,190,.28)", C.lilac, C.lilac);
+      ctx.globalAlpha = 1;
+      card(rx, y, cw, bh, "#fff", C.lineStrong, C.lilac);
+      text(DE ? "Modell" : "model", rx + 14, y + 18, '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif', C.petrol);
+      text(DE ? "Berlin liegt an der Elbe." : "Berlin lies on the Elbe.", rx + 14, y + 52, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.ink);
+      text("95%", rx + cw - 16, y + 18, '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif', C.lilac, "right");
+      var ax1 = lx + cw + 6, ax2 = rx - 6, ay = y + bh / 2;
+      arrow(ax1, ay, ax2, ay, C.lilac, 2);
+      for (var i = 0; i < 5; i++) {
+        var u = ((now / 1100) + i / 5) % 1;
+        glowDot(ax1 + (ax2 - ax1) * u, ay + Math.sin(u * Math.PI * 2) * 4, 2.2, C.lilac);
+      }
+      text(DE ? "falsche Quelle" : "false source", lx + 14, y + bh + 18, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.lilac);
+      text(DE ? "wird ruhig wiederholt" : "repeated calmly", rx + 14, y + bh + 18, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.muted);
+    }
+    function drawSampling(w, h, now) {
+      var cx = w * 0.34, cy = h * 0.48, r = Math.min(78, h * 0.26);
+      var names = DE ? ["Spree", "Elbe", "Stadt", "Fluss", "Berlin"] : ["Spree", "Elbe", "city", "river", "Berlin"];
+      var ang0 = (now - t0) / 700;
+      var picked = 1;
+      ctx.save();
+      ctx.translate(cx, cy);
+      for (var i = 0; i < names.length; i++) {
+        var a1 = ang0 + i * Math.PI * 2 / names.length;
+        var a2 = a1 + Math.PI * 2 / names.length;
+        var on = i === picked;
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, r, a1, a2); ctx.closePath();
+        ctx.fillStyle = on ? "rgba(159,151,0,.30)" : (i % 2 ? "rgba(92,155,175,.12)" : "rgba(99,164,75,.10)");
+        ctx.fill();
+        ctx.strokeStyle = on ? C.gold : C.line; ctx.lineWidth = on ? 2 : 1; ctx.stroke();
+        ctx.save(); ctx.rotate((a1 + a2) / 2); ctx.translate(r * 0.55, 0);
+        ctx.fillStyle = on ? C.petrol : C.muted; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText(names[i], 0, 0); ctx.restore();
+      }
+      ctx.rotate(ang0 * 2.2);
+      ctx.strokeStyle = C.gold; ctx.lineWidth = 2.4;
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(r * 1.02, 0); ctx.stroke();
+      ctx.fillStyle = C.gold; ctx.beginPath(); ctx.arc(r * 1.02, 0, 3.2, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      glowDot(cx, cy, 6, C.gold);
+      iconDie(w * 0.62, h * 0.26, 18, C.gold);
+      text(DE ? "Zufall wählt" : "random draw", w * 0.62, h * 0.26 + 34, '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif', C.petrol, "center");
+      card(w * 0.52, h * 0.64, w * 0.42, 54, "#fff", C.lineStrong, C.gold);
+      text(DE ? "Berlin liegt an der Elbe." : "Berlin lies on the Elbe.", w * 0.52 + 14, h * 0.64 + 20, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.ink);
+      text(DE ? "gewählt: Elbe" : "chosen: Elbe", w * 0.52 + 14, h * 0.64 + 40, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.gold);
+      text(DE ? "ein unwahrscheinliches Token" : "an unlikely token", cx, cy + r + 18, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.muted, "center");
+    }
+    function drawGap(w, h, now) {
+      var pad = 26, cols = 5, rows = 3, cell = Math.min((w - pad * 2) / cols, (h - 100) / rows) - 8;
+      var sx = w * 0.32 - (cols * (cell + 8) - 8) / 2, sy = 54;
+      var hole = { r: 1, c: 3 };
       for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) {
-        var x = startX + c * (cell + 6), y = startY + r * (cell + 6);
-        var hole = r === 1 && c === 2;
-        card(x, y, cell, cell, hole ? "rgba(145,133,190,.08)" : "#fff", hole ? C.lilac : C.line);
-        if (hole) {
-          var pulse = 0.5 + 0.5 * Math.sin((performance.now() - t0) / 420);
-          ctx.globalAlpha = 0.35 + pulse * 0.4;
-          ctx.setLineDash([4, 4]); ctx.strokeStyle = C.lilac; ctx.strokeRect(x + 4, y + 4, cell - 8, cell - 8); ctx.setLineDash([]); ctx.globalAlpha = 1;
-          text("?", x + cell / 2, y + cell / 2, '700 ' + api.font("canvas") + 'px "Barlow", sans-serif', C.lilac, "center");
-        } else {
-          text(String.fromCharCode(65 + r * cols + c), x + cell / 2, y + cell / 2, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.muted, "center");
+        var x = sx + c * (cell + 8), y = sy + r * (cell + 8);
+        var isHole = r === hole.r && c === hole.c;
+        card(x, y, cell, cell, isHole ? "rgba(92,155,175,.10)" : "#fff", isHole ? C.sky : C.line);
+        if (isHole) {
+          var pulse = 0.5 + 0.5 * Math.sin((now - t0) / 380);
+          ctx.globalAlpha = 0.35 + pulse * 0.45;
+          ctx.setLineDash([4, 4]); ctx.strokeStyle = C.sky; ctx.strokeRect(x + 4, y + 4, cell - 8, cell - 8); ctx.setLineDash([]); ctx.globalAlpha = 1;
+          text("?", x + cell / 2, y + cell / 2, '700 ' + api.font("canvas") + 'px "Barlow", sans-serif', C.sky, "center");
         }
       }
-      arrow(w / 2, startY + cell * 1.5 + 12, w / 2, startY + cell * 1.5 + 34, C.lilac, 2);
-      text(DE ? "Das Modell erfindet eine Antwort." : "The model invents an answer.", w / 2, h - 18, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.ink, "center");
+      iconGap(w * 0.78, h * 0.28, 20, C.sky);
+      text(DE ? "Wissenslücke" : "knowledge gap", w * 0.78, h * 0.28 + 36, '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif', C.petrol, "center");
+      var hx = sx + hole.c * (cell + 8) + cell / 2, hy = sy + hole.r * (cell + 8) + cell / 2;
+      var mx = w * 0.78, my = h * 0.28;
+      ctx.setLineDash([4, 4]); arrow(mx, my + 28, hx, hy, C.sky, 1.6); ctx.setLineDash([]);
+      for (var i = 0; i < 4; i++) { var u = ((now / 1000) + i / 4) % 1; glowDot(mx + (hx - mx) * u, my + 28 + (hy - my - 28) * u, 2, C.sky); }
+      text(DE ? "Modell erfindet" : "model invents", (mx + hx) / 2, Math.min(my + 28, hy) - 10, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.sky, "center");
+      card(w * 0.50, h - 62, w * 0.42, 44, "#fff", C.lineStrong, C.sky);
+      text(DE ? "Eine plausible, falsche Antwort" : "A plausible, false answer", w * 0.50 + 12, h - 40, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.ink);
     }
-    function drawNegation(w, h) {
+    function drawNegation(w, h, now) {
       var pts = DE ? [
-        { id: "happy", label: "glücklich", x: 0.22, y: 0.42, c: C.green },
+        { id: "happy", label: "glücklich", x: 0.20, y: 0.46, c: C.green },
         { id: "not", label: "nicht glücklich", x: 0.36, y: 0.46, c: C.blue },
-        { id: "sad", label: "traurig", x: 0.80, y: 0.78, c: C.lilac },
+        { id: "sad", label: "traurig", x: 0.82, y: 0.76, c: C.lilac },
         { id: "unhappy", label: "unglücklich", x: 0.72, y: 0.70, c: C.lilac }
       ] : [
-        { id: "happy", label: "happy", x: 0.22, y: 0.42, c: C.green },
+        { id: "happy", label: "happy", x: 0.20, y: 0.46, c: C.green },
         { id: "not", label: "not happy", x: 0.36, y: 0.46, c: C.blue },
-        { id: "sad", label: "sad", x: 0.80, y: 0.78, c: C.lilac },
+        { id: "sad", label: "sad", x: 0.82, y: 0.76, c: C.lilac },
         { id: "unhappy", label: "unhappy", x: 0.72, y: 0.70, c: C.lilac }
       ];
-      function X(v) { return 36 + v * (w - 72); }
-      function Y(v) { return h - 42 - v * (h - 92); }
-      pts.forEach(function (p) {
-        ctx.fillStyle = p.c;
-        ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), 5.5, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = C.ink;
-        text(p.label, X(p.x) + 9, Y(p.y), '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.ink, "left");
-      });
+      function X(v) { return 38 + v * (w - 76); }
+      function Y(v) { return h - 56 - v * (h - 106); }
+      iconNot(w * 0.10, h * 0.16, 12, C.blue);
+      text(DE ? "keine saubere Umkehrung" : "not a clean reversal", w * 0.10 + 20, h * 0.16 + 14, '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif', C.petrol);
       var near = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
       var far = Math.hypot(pts[1].x - pts[2].x, pts[1].y - pts[2].y);
-      ctx.setLineDash([4, 4]); ctx.strokeStyle = C.blue; ctx.lineWidth = 1.6;
+      ctx.setLineDash([5, 4]); ctx.strokeStyle = C.blue; ctx.lineWidth = 1.8;
       ctx.beginPath(); ctx.moveTo(X(pts[0].x), Y(pts[0].y)); ctx.lineTo(X(pts[1].x), Y(pts[1].y)); ctx.stroke();
       ctx.strokeStyle = C.lilac;
       ctx.beginPath(); ctx.moveTo(X(pts[1].x), Y(pts[1].y)); ctx.lineTo(X(pts[2].x), Y(pts[2].y)); ctx.stroke();
       ctx.setLineDash([]);
-      text(DE ? "nah" : "near", (X(pts[0].x) + X(pts[1].x)) / 2, Math.min(Y(pts[0].y), Y(pts[1].y)) - 8, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.blue, "center");
-      text(DE ? "weit" : "far", (X(pts[1].x) + X(pts[2].x)) / 2, Math.min(Y(pts[1].y), Y(pts[2].y)) - 8, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.lilac, "center");
-      text(DE ? "„nicht glücklich“ liegt näher an „glücklich“ als an „traurig“." : "“not happy” is closer to “happy” than to “sad”.", w / 2, h - 16, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.ink, "center");
+      pts.forEach(function (p) {
+        glowDot(X(p.x), Y(p.y), 6, p.c);
+        text(p.label, X(p.x) + 10, Y(p.y), '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.ink, "left");
+      });
+      text(DE ? "nah" : "near", (X(pts[0].x) + X(pts[1].x)) / 2, Math.min(Y(pts[0].y), Y(pts[1].y)) - 9, '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.blue, "center");
+      text(DE ? "weit" : "far", (X(pts[1].x) + X(pts[2].x)) / 2, Math.min(Y(pts[1].y), Y(pts[2].y)) - 9, '700 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.lilac, "center");
+      var barsX = w * 0.46, barsY = h - 54, maxW = w * 0.42;
+      var norm = Math.max(near, far);
+      text(DE ? "Abstand zu glücklich" : "distance to happy", barsX, barsY - 18, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.blue);
+      ctx.fillStyle = "rgba(18,117,172,.12)"; ctx.fillRect(barsX, barsY - 10, maxW, 8);
+      ctx.fillStyle = C.blue; ctx.fillRect(barsX, barsY - 10, maxW * near / norm, 8);
+      text(DE ? "Abstand zu traurig" : "distance to sad", barsX, barsY + 14, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.lilac);
+      ctx.fillStyle = "rgba(145,133,190,.12)"; ctx.fillRect(barsX, barsY + 22, maxW, 8);
+      ctx.fillStyle = C.lilac; ctx.fillRect(barsX, barsY + 22, maxW * far / norm, 8);
+      text(DE ? "„nicht glücklich“ liegt näher an „glücklich“." : "“not happy” is closer to “happy”.", w / 2, h - 12, '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif', C.ink, "center");
     }
     function draw() {
       if (!size) return;
       ctx = size.ctx;
-      var w = size.w, h = size.h;
+      var w = size.w, h = size.h, now = performance.now();
       ctx.clearRect(0, 0, w, h);
-      bg(w, h);
-      if (mode === "false") drawFalse(w, h);
-      else if (mode === "sampling") drawSampling(w, h);
-      else if (mode === "gap") drawGap(w, h);
-      else drawNegation(w, h);
+      var accent = mode === "false" ? "#9185be" : (mode === "sampling" ? "#9f9700" : (mode === "gap" ? "#5c9baf" : "#63a44b"));
+      bg(w, h, accent);
+      if (mode === "false") drawFalse(w, h, now);
+      else if (mode === "sampling") drawSampling(w, h, now);
+      else if (mode === "gap") drawGap(w, h, now);
+      else drawNegation(w, h, now);
       canvas.setAttribute("aria-label", captions[mode]);
     }
-    function loop() {
-      if (!running) return;
-      draw();
-      loopRaf = requestAnimationFrame(loop);
-    }
+    function loop() { if (!running) return; draw(); loopRaf = requestAnimationFrame(loop); }
     function resize() { size = api.fit(canvas, stage); draw(); }
-    el.querySelectorAll("[data-mode]").forEach(function (b) {
-      b.addEventListener("click", function () { setMode(b.getAttribute("data-mode")); });
-    });
+    el.querySelectorAll("[data-mode]").forEach(function (b) { b.addEventListener("click", function () { setMode(b.getAttribute("data-mode")); }); });
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
     readout.textContent = captions[mode];

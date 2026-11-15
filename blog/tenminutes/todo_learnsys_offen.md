@@ -247,3 +247,7 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   IIT/Phi, Qualia, Predictive Processing, Illusionismus, Panpsychismus.
   Quellen: Mashour 2020, Tononi 2016, Block 1995, Nagel 1974, Anthropic 2026,
   SEP.
+- [done] Visuelle Politur: Halluzinationsursachen haben jetzt Icons,
+  Roulette-Sampling, Wissenslücken-Grid, Negations-Abstandsdiagramm und
+  Partikel; die Bewusstseinskarte hat zwei Felder (Zugang/Erfahrung), gekrümmte
+  Kanten, Partikel, offene Grenze, Legende und Branch-Dimming.
