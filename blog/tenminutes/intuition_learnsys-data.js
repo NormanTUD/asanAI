@@ -754,7 +754,7 @@
     {
       kicker: "Manifolds",
       title: "From relations to translation",
-      body: "If you have points in this highly abstract space whose relations to one another carry meaning, translating becomes a matter of translation, rotation, distortion, scaling, and shear. The structure the points form in high-dimensional space is what mathematicians call a <b>manifold</b>.\n\nIf you find a combination that maps one cloud onto the other, you have found a translation: meaning stands in the same relations across languages, even when the concrete tokens differ.",
+      body: "If you have points in this highly abstract space whose relations to one another carry meaning, translation becomes a matter of translation, rotation, distortion, scaling, and shear. The structure that forms from the points in high-dimensional space is what mathematicians call a <b>manifold</b>.\n\nIf you find a combination that maps one cloud onto the other, you have found a translation, because meaning stands in the same relations across languages, even when the concrete tokens differ.",
       watch: "Rotate, roll, and translate the Japanese cloud. Hover the points to see the words. Click “Find translation” or “Next”.",
       demoState: { scene: "manifold" },
       context: "The demo is strongly simplified: two point clouds, many words, clean edges. The real geometry has thousands of dimensions and overlapping relations; the Vietoris–Rips complex only makes neighbourhoods visible.",
@@ -1251,8 +1251,8 @@
     {
       kicker: "Der Raum",
       title: "Tausende Dimensionen",
-      body: "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt: 64 von 4096 Dimensionen. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Mittelpunkt, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
-      teaser: "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt: 64 von 4096 Dimensionen. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Mittelpunkt, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
+      body: "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt: 64 von 4096 Dimensionen. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
+      teaser: "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Deshalb skaliert man hoch: Ein echtes Embedding hat Tausende Dimensionen; GPT-2 small nutzt 768, große Modelle noch mehr. Die Tabelle zeigt einen Ausschnitt: 64 von 4096 Dimensionen. Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension. Du kannst dir das nicht mehr vorstellen, aber die Rechnung bleibt dieselbe: Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter.",
       watch: "Scrolle durch die Tabelle. Klicke ein Wort: Jede Zeile ist seine Position, jede Spalte eine Dimension.",
       demoState: { scene: "highdim" },
       context: "Mehr Dimensionen erlauben mehr unabhängige Unterschiede. Die 3D-Demos sind Projektionen; die Tabelle ist die ehrliche Darstellung für den Rechner.",
@@ -1267,8 +1267,8 @@
     {
       kicker: "The space",
       title: "Thousands of dimensions",
-      body: "3D is not enough, just as 1D was not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice: 64 of 4096 dimensions. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: midpoint, angle, and matrix multiplication work coordinate by coordinate.",
-      teaser: "3D is not enough, just as 1D was not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice: 64 of 4096 dimensions. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: midpoint, angle, and matrix multiplication work coordinate by coordinate.",
+      body: "3D is not enough, just as 1D was not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice: 64 of 4096 dimensions. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: difference, angle, and matrix multiplication work coordinate by coordinate.",
+      teaser: "3D is not enough, just as 1D was not enough: some differences need their own directions. So the space is scaled up: a real embedding has thousands of dimensions; GPT-2 small uses 768, larger models even more. The table shows a slice: 64 of 4096 dimensions. Each row is a token position, each column a dimension. You cannot picture this anymore, but the arithmetic stays the same: difference, angle, and matrix multiplication work coordinate by coordinate.",
       watch: "Scroll through the table. Click a word: each row is its position, each column a dimension.",
       demoState: { scene: "highdim" },
       context: "More dimensions allow more independent differences. The 3D demos are projections; the table is the honest view for the computer.",
@@ -1955,7 +1955,7 @@
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.
-    textDraft: true,
+    textDraft: false,
     demoPreview: "intuition_learnsys-demo.php",
     typeset: function (scope) {
       if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(scope);
