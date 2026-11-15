@@ -92,3 +92,10 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   Bausteine-Folie: „Daten: der erste Schritt, aber extern“, danach
   „Die Architektur von LLMs“, danach die Übersicht. Daten sind ausdrücklich
   nicht Teil des LLM, sondern Input für das Training.
+- [done] Daten-Unterfolie: Training mit vielen Beispielen erklärt; langer
+  HTML-/Nietzsche-Korpus, Datenmenge und Menschenfragen als sichtbare
+  Beobachte-/Scroll-Karten (Cues) ergänzt. Menschenfragen sind prozentual kleiner; Wikipedia liefert Fakten,
+  Frage-Antwort-Daten liefern das Antwortformat; erst großes, dann kleines
+  Training.
+- [done] Bausteine-Demo zeigt jetzt fünf Architektur-Schritte ohne Datenstation;
+  die Architektur-Unterfolie beginnt beim Tokenizer.

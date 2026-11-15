@@ -9,14 +9,6 @@
     var V = window.LearnSysVisuals;
     var blocks = DE ? [
       {
-        id: "data", label: "Daten", short: "Text → Muster", icon: "D", color: "gold",
-        title: "Daten",
-        body: "Das ist der Anfang des HTML-Codes des Wikipedia-Artikels „Large language model“, stark gekürzt. Danach folgt eine Auslassung und ein Buchtext aus dem Korpus, hier Nietzsche. Der Code enthält Navigation, Stil und Rauschen, aber auch Text und Fakten. Das Modell lernt aus beidem: HTML-Struktur und Inhalt. Man nimmt sehr viele, sehr verschiedene Texte: Reddit-Artikel, Wikipedia, Bücher, die man online findet, Webseiten, Quellcode von Programmen und vieles mehr. Diese Texte sind die Trainingsdaten. Das Modell wird damit gefüttert und lernt Muster daraus: wie man codet, wie menschliche Sprache aussieht, welche Fakten es gibt. In den nächsten Tagen gehen wir diese Sachen alle durch.",
-        points: ["Reddit, Wikipedia, Bücher, Webseiten, Code", "Trainingsdaten: Muster lernen", "HTML ist Struktur und Rauschen"],
-        mini: "data",
-        source: { label: "Wikipedia: Large language model", url: "https://en.wikipedia.org/wiki/Large_language_model" }
-      },
-      {
         id: "tokenizer", label: "Tokenizer", short: "Text → Tokens", icon: "T", color: "lime",
         title: "Tokenizer",
         body: "Text wird in Tokens zerlegt. Jedes Token bekommt eine ID, die auf eine Zeile im Embedding zeigt.",
@@ -60,14 +52,6 @@
         roadmap: "Damit sind die Bausteine einmal durch. In den nächsten Tagen gehen wir sie einen nach dem anderen durch: was jeder macht, wie sie zusammenspielen und wie daraus in einer Schleife die Vorhersage des nächsten Wortes entsteht."
       }
     ] : [
-      {
-        id: "data", label: "Data", short: "text → patterns", icon: "D", color: "gold",
-        title: "Data",
-        body: "This is the beginning of the HTML of the Wikipedia article “Large language model”, heavily shortened. Then comes an omission and a book text from the corpus, here Nietzsche. The code contains navigation, style, and noise, but also text and facts. The model learns from both: HTML structure and content. People take very many, very different texts: Reddit articles, Wikipedia, books found online, websites, source code of programs, and much more. These texts are the training data. The model is fed with them and learns patterns from them: how to code, what human language looks like, what facts exist. Over the next days we will go through all of these things.",
-        points: ["Reddit, Wikipedia, books, websites, code", "training data: learn patterns", "HTML is structure and noise"],
-        mini: "data",
-        source: { label: "Wikipedia: Large language model", url: "https://en.wikipedia.org/wiki/Large_language_model" }
-      },
       {
         id: "tokenizer", label: "Tokenizer", short: "text → tokens", icon: "T", color: "lime",
         title: "Tokenizer",

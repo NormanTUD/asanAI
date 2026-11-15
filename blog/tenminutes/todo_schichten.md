@@ -30,8 +30,9 @@ Im Transformer werden Updates über Residualverbindungen addiert, nicht einfach
 - [done] Die Daten haben jetzt eine eigene Unterfolie vor der Architektur
   („Daten: der erste Schritt, aber extern“) und sind ausdrücklich nicht Teil
   des LLM, sondern Input für das Training.
-- [pending] Prüfen, ob der Kurztext die Verkettung ohne eigene Visualisierung
-  klar genug zeigt.
+- [done] Daten-Unterfolie zeigt Training, Korpus, Datenmenge und
+  Menschenfragen; die Architektur-Unterfolie beginnt beim Tokenizer und zeigt
+  fünf Schritte ohne Datenstation.
 - [pending] Die sechs Stationen danach als konkrete Ausprägung derselben Idee
   anschließen.
 - [pending] EN- und DE-Fassung gemeinsam prüfen; keine Englisch-Reste auf der

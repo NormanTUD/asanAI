@@ -744,13 +744,13 @@
     {
       kicker: "Die Bausteine",
       title: "Die Bausteine eines LLM",
-      body: "Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Ganz am Anfang stehen sehr viele, sehr verschiedene Texte: Reddit-Artikel, Wikipedia, Bücher, Webseiten, Quellcode von Programmen. Daraus lernt das Modell Muster: wie man codet, wie menschliche Sprache aussieht, welche Fakten es gibt. Gehe die sechs Ebenen mit „Weiter“ durch: Daten, Tokenizer, Embedding, Positional Embedding, Transformer-Blöcke und Unembedding. In den nächsten Tagen gehen wir alle diese Sachen durch.",
-      watch: "Gehe die sechs Ebenen mit „Weiter“ oder der Pfeiltaste durch. Was macht jede Ebene?",
+      body: "Ein LLM ist eine Kette von Ebenen, keine einzelne Zauberformel. Die Daten stehen davor und werden zum Training verwendet; die Architektur beginnt mit dem Tokenizer. Gehe die fünf Ebenen mit „Weiter“ durch: Tokenizer, Embedding, Positional Embedding, Transformer-Blöcke und Unembedding. In den nächsten Tagen gehen wir alle diese Sachen durch.",
+      watch: "Gehe die fünf Ebenen mit „Weiter“ oder der Pfeiltaste durch. Was macht jede Ebene?",
       demoState: { scene: "blocks" },
-      context: "Die Reihenfolge ist die Architektur: Text → Tokens → Vektoren → Position → Transformer-Blöcke → Verteilung. Jeder Schritt verändert die Darstellung, bis am Ende ein Token gezogen wird.",
+      context: "Die Reihenfolge ist die Architektur: Tokens → Vektoren → Position → Transformer-Blöcke → Verteilung. Jeder Schritt verändert die Darstellung, bis am Ende ein Token gezogen wird.",
       deep: "Jeder Block ist selbst ein gelerntes Stück Funktion. Zusammen approximieren sie die viel zu komplizierte Funktion „nächstes Token aus Kontext“.",
       boxes: [
-        box("mod-1", "Technik", "Die sechs Ebenen", "Daten: Text und Mischung. Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Positional Embedding: Position → Vektor. Transformer-Blöcke: erst Attention, dann FFN, dutzende bis hunderte Male wiederholt. Unembedding: Vektor → Scores und Softmax."),
+        box("mod-1", "Technik", "Die fünf Ebenen", "Tokenizer: Text → Tokens. Embedding: Tokens → Vektoren. Positional Embedding: Position → Vektor. Transformer-Blöcke: erst Attention, dann FFN, dutzende bis hunderte Male wiederholt. Unembedding: Vektor → Scores und Softmax."),
         box("mod-dense", "Optional", "Dense = alle mit allen", "Eine Dense-Schicht verbindet jede Eingabe mit jeder Ausgabe. Die Gewichte sind die Kanten eines vollständigen gewichteten Graphen. In der Matrix W steht W_ij für die Kante von Eingang j zu Ausgang i. Daher kommen die üblichen Netzdiagramme.", "\\underbrace{y_i}_{\\text{Ausgang }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{alle Eingänge}}"),
         box("mod-norm", "Technik", "LayerNorm und andere Blöcke", "Ein echter Transformer-Block enthält zusätzlich LayerNorm, Residualverbindungen und mehrere Attention-Heads. Es gibt auch andere Architekturen und Details wie Mixture-of-Experts, Multi-Query-Attention und verschiedene Positionsverfahren. Wir lassen sie hier weg, um bei der Intuition zu bleiben."),
         box("mod-angle", "Mathematik", "Warum Winkel?", "Am Ende werden Richtungen verglichen, nicht Längen. Der Winkel zwischen zwei Vektoren ändert sich in hohen Dimensionen weniger stark als ihre Länge. Deshalb ist die Großkreis-Metrik hier nützlich; für den Einstieg reicht die Intuition."),
@@ -784,13 +784,13 @@
     {
       kicker: "The building blocks",
       title: "The building blocks of an LLM",
-      body: "An LLM is a chain of levels, not a single magic formula. At the very start are very many, very different texts: Reddit articles, Wikipedia, books, websites, source code of programs. From them the model learns patterns: how to code, what human language looks like, what facts exist. Walk through the six levels with “Next”: data, tokenizer, embedding, positional embedding, transformer blocks, and unembedding. Over the next days we will go through all of these things.",
-      watch: "Walk through the six levels with “Next” or the arrow key. What does each level do?",
+      body: "An LLM is a chain of levels, not a single magic formula. The data stands before it and is used for training; the architecture begins with the tokenizer. Walk through the five levels with “Next”: tokenizer, embedding, positional embedding, transformer blocks, and unembedding. Over the next days we will go through all of these things.",
+      watch: "Walk through the five levels with “Next” or the arrow key. What does each level do?",
       demoState: { scene: "blocks" },
-      context: "The order is the architecture: text → tokens → vectors → position → transformer blocks → distribution. Each step changes the representation until a token is drawn.",
+      context: "The order is the architecture: tokens → vectors → position → transformer blocks → distribution. Each step changes the representation until a token is drawn.",
       deep: "Each block is itself a learned piece of function. Together they approximate the far too complicated function “next token from context”.",
       boxes: [
-        box("mod-1", "Technique", "The six levels", "Data: text and mix. Tokenizer: text → tokens. Embedding: tokens → vectors. Positional embedding: position → vector. Transformer blocks: attention first, then FFN, repeated dozens to hundreds of times. Unembedding: vector → scores and softmax."),
+        box("mod-1", "Technique", "The five levels", "Tokenizer: text → tokens. Embedding: tokens → vectors. Positional embedding: position → vector. Transformer blocks: attention first, then FFN, repeated dozens to hundreds of times. Unembedding: vector → scores and softmax."),
         box("mod-dense", "Optional", "Dense = all to all", "A dense layer connects every input to every output. The weights are the edges of a complete weighted graph. In the matrix W, W_ij is the edge from input j to output i. That is where the usual network diagrams come from.", "\\underbrace{y_i}_{\\text{output }i} = \\underbrace{\\sum_j W_{ij} x_j + b_i}_{\\text{all inputs}}"),
         box("mod-norm", "Technique", "LayerNorm and other blocks", "A real transformer block also contains LayerNorm, residual connections, and several attention heads. There are further architectures and details such as mixture-of-experts, multi-query attention, and different positional schemes. We leave them out here to keep the intuition in focus."),
         box("mod-angle", "Mathematics", "Why angles?", "At the end, directions are compared, not lengths. The angle between two vectors changes less in high dimensions than their length. That is why the great-circle metric is useful here; for a first pass the intuition is enough."),
@@ -805,20 +805,58 @@
     kicker: DE ? "Daten" : "Data",
     title: DE ? "Daten: der erste Schritt, aber extern" : "Data: the first step, but external",
     body: DE
-      ? "Bevor die Architektur beginnt, stehen die Daten. Sie sind der erste Schritt, technisch gesehen aber nicht Teil des LLM: Das Modell ist die Kette der Schichten. Die Daten kommen von außen und werden zum Training verwendet. Ohne Daten gäbe es nichts zu lernen, aber die Daten sind keine Schicht des Modells."
-      : "Before the architecture begins, there is data. It is the first step, but technically not part of the LLM: the model is the chain of layers. The data comes from outside and is used for training. Without data there would be nothing to learn, but the data is not a layer of the model.",
+      ? "Bevor die Architektur beginnt, stehen die Daten. Man gibt dem Computer sehr viele Beispiele und er soll daraus lernen, die vorgefertigten Bausteine so zu verändern, dass sie möglichst gut darin sind, das nächste Wort vorherzusagen. Die Daten sind der erste Schritt, technisch gesehen aber nicht Teil des LLM: Das Modell ist die Kette der Schichten. Die Daten kommen von außen und werden zum Training verwendet. Ohne Daten gäbe es nichts zu lernen, aber die Daten sind keine Schicht des Modells."
+      : "Before the architecture begins, there is data. We give the computer very many examples, and it should learn from them to change the prefabricated building blocks so that they become as good as possible at predicting the next word. The data is the first step, but technically not part of the LLM: the model is the chain of layers. The data comes from outside and is used for training. Without data there would be nothing to learn, but the data is not a layer of the model.",
     teaser: DE
-      ? "Bevor die Architektur beginnt, stehen die Daten. Sie sind der erste Schritt, technisch gesehen aber nicht Teil des LLM: Das Modell ist die Kette der Schichten. Die Daten kommen von außen und werden zum Training verwendet. Ohne Daten gäbe es nichts zu lernen, aber die Daten sind keine Schicht des Modells."
-      : "Before the architecture begins, there is data. It is the first step, but technically not part of the LLM: the model is the chain of layers. The data comes from outside and is used for training. Without data there would be nothing to learn, but the data is not a layer of the model.",
+      ? "Bevor die Architektur beginnt, stehen die Daten. Man gibt dem Computer sehr viele Beispiele und er soll daraus lernen, die vorgefertigten Bausteine so zu verändern, dass sie möglichst gut darin sind, das nächste Wort vorherzusagen. Die Daten sind der erste Schritt, technisch gesehen aber nicht Teil des LLM: Das Modell ist die Kette der Schichten. Die Daten kommen von außen und werden zum Training verwendet. Ohne Daten gäbe es nichts zu lernen, aber die Daten sind keine Schicht des Modells."
+      : "Before the architecture begins, there is data. We give the computer very many examples, and it should learn from them to change the prefabricated building blocks so that they become as good as possible at predicting the next word. The data is the first step, but technically not part of the LLM: the model is the chain of layers. The data comes from outside and is used for training. Without data there would be nothing to learn, but the data is not a layer of the model.",
     watch: DE ? "Die Daten sind die Beispiele, aus denen das Modell lernt. Sie gehören zum Training, nicht zur Architektur." : "The data are the examples the model learns from. They belong to training, not to the architecture.",
     demoState: { scene: "langdata", mode: "scale" },
+    cues: [
+      {
+        label: DE ? "Trainingskorpus" : "Training corpus",
+        title: DE ? "Was steht im Trainingstext?" : "What is in the training text?",
+        text: DE
+          ? "Das ist der Anfang des HTML-Codes des Wikipedia-Artikels „Large language model“, stark gekürzt. Danach folgt eine Auslassung und ein Buchtext aus dem Korpus, hier Nietzsche. Der Code enthält Navigation, Stil und Rauschen, aber auch Text und Fakten. Das Modell lernt aus beidem: HTML-Struktur und Inhalt. Man nimmt sehr viele, sehr verschiedene Texte: Reddit-Artikel, Wikipedia, Bücher, die man online findet, Webseiten, Quellcode von Programmen und vieles mehr. Diese Texte sind die Trainingsdaten. Das Modell wird damit gefüttert und lernt Muster daraus: wie man codet, wie menschliche Sprache aussieht, welche Fakten es gibt. In den nächsten Tagen gehen wir diese Sachen alle durch."
+          : "This is the beginning of the HTML of the Wikipedia article “Large language model”, heavily shortened. Then comes an omission and a book text from the corpus, here Nietzsche. The code contains navigation, style, and noise, but also text and facts. The model learns from both: HTML structure and content. People take very many, very different texts: Reddit articles, Wikipedia, books found online, websites, source code of programs, and much more. These texts are the training data. The model is fed with them and learns patterns from them: how to code, what human language looks like, what facts exist. Over the next days we will go through all of these things.",
+        state: {}
+      },
+      {
+        label: DE ? "Datenmenge" : "Data scale",
+        title: DE ? "Wie groß ist der Korpus?" : "How large is the corpus?",
+        text: DE
+          ? "Ein LLM braucht enorm viel Text. Erst seit der Zettabyte-Ära gibt es mehr als 10²¹ Byte digitale Daten. Wirklich saubere Daten in diesem Maßstab gibt es nicht: Jedes Korpus enthält Fehler, Widersprüche, Spam und veraltete Aussagen. Man nimmt sie in Kauf, weil die Menge sonst nicht reicht, und hofft, dass sich zufällige Fehler über die Masse mitteln. Systematische Fehler mitteln sich nicht weg; deshalb bleibt Kuration wichtig. Die Mischung zeigt, woraus GPT-3 lernte: 60 % Common Crawl, 22 % WebText2, 8 % Books1, 8 % Books2 und 3 % Wikipedia, gerundet."
+          : "An LLM needs an enormous amount of text. Only since the zettabyte era has more than 10²¹ bytes of digital data been available. Truly clean data at that scale does not exist: every corpus contains errors, contradictions, spam, and outdated statements. They are accepted because the volume is otherwise too small, and one hopes random errors average out. Systematic errors do not average out; that is why curation matters. The mix shows what GPT-3 learned from: 60% Common Crawl, 22% WebText2, 8% Books1, 8% Books2, and 3% Wikipedia, rounded.",
+        state: {}
+      },
+      {
+        label: DE ? "Menschenfragen" : "Human questions",
+        title: DE ? "Lernt das Modell auch aus Fragen?" : "Does the model also learn from questions?",
+        text: DE
+          ? "Im Korpus stecken auch Menschenfragen, aber prozentual viel weniger als Webseiten, Bücher und Code. Aus Wikipedia lernt das Modell, dass Paris die Hauptstadt von Frankreich ist. Dass auf „Was ist die Hauptstadt von Frankreich?“ die Antwort „Paris“ folgt, lernt es in dieser Phase aus Frage-Antwort-Daten. Dabei gilt: Zuerst trainiert man auf dem großen Datensatz, dann auf einem kleinen, damit das Modell menschlich interagieren lernt."
+          : "The corpus also contains human questions, but a much smaller percentage than websites, books, and code. From Wikipedia the model learns that Paris is the capital of France. That “What is the capital of France?” is answered with “Paris” is learned in this phase from question-answer data. The order is: first train on the large dataset, then on a small one so that the model learns to interact with people.",
+        state: {}
+      }
+    ],
     inherit: false,
     questionGroups: [
       {
         id: "g-basics",
         title: DE ? "Eine Ebene tiefer" : "One level deeper",
         questions: [
-          { id: "q-data-external", title: DE ? "Sind die Daten Teil des LLM?" : "Are the data part of the LLM?", body: DE ? "Nein. Die Daten sind der erste Schritt, stehen aber außerhalb des Modells. Das LLM ist die Architektur; die Daten werden zum Training verwendet." : "No. The data is the first step but stands outside the model. The LLM is the architecture; the data is used for training.", tex: "", kind: "question" }
+          { id: "q-data-external", title: DE ? "Sind die Daten Teil des LLM?" : "Are the data part of the LLM?", body: DE ? "Nein. Die Daten sind der erste Schritt, stehen aber außerhalb des Modells. Das LLM ist die Architektur; die Daten werden zum Training verwendet." : "No. The data is the first step but stands outside the model. The LLM is the architecture; the data is used for training.", tex: "", kind: "question" },
+          { id: "q-data-training", title: DE ? "Wie lernt das Modell aus den Daten?" : "How does the model learn from data?", body: DE ? "Der Computer bekommt sehr viele Beispiele. Aus ihnen lernt er, die vorgefertigten Bausteine so zu verändern, dass sie das nächste Wort möglichst gut vorhersagen. Die Bausteine sind die Architektur; die Daten sagen, wofür sie optimiert werden." : "The computer receives very many examples. From them it learns to change the prefabricated building blocks so that they predict the next word as well as possible. The blocks are the architecture; the data defines what they are optimised for.", tex: "", kind: "question" }
+        ]
+      },
+      {
+        id: "g-sources",
+        title: DE ? "Quellen" : "Sources",
+        sources: [
+          { label: "Wikipedia: Large language model", url: "https://en.wikipedia.org/wiki/Large_language_model", why: { de: "Beispiel für einen Trainingsauszug aus Wikipedia.", en: "Example of a training excerpt from Wikipedia." } },
+          { label: "Cisco (2016), The Zettabyte Era Officially Begins", url: "https://blogs.cisco.com/sp/the-zettabyte-era-officially-begins-how-much-is-that", why: { de: "Zettabyte-Ära seit 2016 und die Größenordnung 10²¹ Byte.", en: "Zettabyte era since 2016 and the 10²¹-byte scale." } },
+          { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", en: "GPT-3 data mix and few-shot results." } },
+          { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499", why: { de: "Deduplizierung verbessert Sprachmodelle.", en: "Deduplication improves language models." } },
+          { label: "Ouyang et al. (2022), Training language models to follow instructions with human feedback", url: "https://arxiv.org/abs/2203.02155", why: { de: "Instruction-Tuning mit menschlichem Feedback nach dem Vortraining.", en: "Instruction tuning with human feedback after pretraining." } }
         ]
       }
     ]
