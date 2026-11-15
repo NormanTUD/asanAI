@@ -10,7 +10,7 @@
       '<div class="ls-sim-tabs" role="tablist">' +
         '<button type="button" class="ls-sim-tab is-on" data-mode="map" role="tab" aria-selected="true">' + (DE ? "Wortkarte" : "Word map") + '</button>' +
         '<button type="button" class="ls-sim-tab" data-mode="angle" role="tab" aria-selected="false">' + (DE ? "Winkel" : "Angle") + '</button>' +
-        '<button type="button" class="ls-sim-tab" data-mode="scale" role="tab" aria-selected="false">Scale Invariance</button>' +
+        '<button type="button" class="ls-sim-tab" data-mode="scale" role="tab" aria-selected="false">' + (DE ? "Skaleninvarianz" : "Scale invariance") + '</button>' +
         '<button type="button" class="ls-sim-tab" data-mode="unembed" role="tab" aria-selected="false">Unembedding</button>' +
       '</div>' +
       '<div class="ls-sim-stage"><canvas class="ls-sim-canvas" role="img"></canvas></div>' +
@@ -474,8 +474,19 @@
     choose(0);
     setMode("map");
     resize();
+    var MODES = ["map", "angle", "scale", "unembed"];
     return {
       update: function () {},
+      next: function () {
+        var i = MODES.indexOf(mode);
+        if (i >= 0 && i < MODES.length - 1) { setMode(MODES[i + 1]); return true; }
+        return false;
+      },
+      prev: function () {
+        var i = MODES.indexOf(mode);
+        if (i > 0) { setMode(MODES[i - 1]); return true; }
+        return false;
+      },
       busy: function () { return mode === "unembed" && !!unembedRaf; },
       finish: function () { if (unembedRaf) cancelAnimationFrame(unembedRaf); unembedRaf = 0; unembedStart = performance.now() - 4000; drawUnembed(performance.now()); },
       resize: resize,

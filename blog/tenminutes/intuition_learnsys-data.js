@@ -405,7 +405,7 @@
   var ffnSteps = DE ? [
     {
       kicker: "Feed-Forward-Netzwerk (FFN)",
-      title: "Ein Muster passt, ein Wert wird geschrieben",
+      title: "Die Rolle von neuronalen Netzen im Transformer",
       body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Die Punkte unten sind symbolisch; im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen höheren Raum, trennt die Cluster und projiziert zurück. So kann es Kontexte gezielt trennen und die abstrakte Repräsentation weiterreichen. Attention mischt Tokens; das FFN trennt die verworrenen Strukturen innerhalb eines Tokens. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.",
       watch: "Klicke die Kontexte. Welche Muster feuern? Biege den Raum, bis die Ebene trennt.",
       demoState: { scene: "ffn", mode: "fruit" },
@@ -425,7 +425,7 @@
   ] : [
     {
       kicker: "Feed-forward network (FFN)",
-      title: "A pattern matches, a value is written",
+      title: "The role of neural networks in the transformer",
       body: "The FFN is a small MLP per token: dense, activation, dense. The points below are symbolic; in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, separates the clusters, and projects back. That is how it separates contexts and passes the abstract representation on. Attention mixes tokens; the FFN separates the entangled structures inside one token. Click the two contexts and bend the space until a plane separates them.",
       watch: "Click the contexts. Which patterns fire? Bend the space until the plane separates them.",
       demoState: { scene: "ffn", mode: "fruit" },
@@ -542,7 +542,7 @@
     {
       kicker: "Softmax",
       title: "Von Logits zu einer Verteilung",
-      body: "Echte GPT-2-small-Scores für zwei Prompts. Links steht der rohe Logit aus dem Skalarprodukt, rechts das, was Softmax daraus macht. Wechsle den Kontext und beobachte, wie sich die ganze Verteilung verschiebt. Die Temperatur entscheidet, wie scharf der Gewinner bevorzugt wird.",
+      body: "Illustrative Scores für zwei Prompts. Links steht der rohe Logit, rechts das, was Softmax daraus macht. Wechsle den Kontext und beobachte, wie sich die ganze Verteilung verschiebt. Die Temperatur entscheidet, wie scharf der Gewinner bevorzugt wird.",
       watch: "Fahre über ein Token und ändere die Temperatur. Was ändert sich, was bleibt?",
       demoState: { scene: "softmax" },
       context: "Softmax erzeugt nicht die Reihenfolge; die Skalarprodukte tun das. Es macht aus Scores eine Verteilung, die zu eins summiert.",
@@ -552,13 +552,13 @@
         box("sm-2", "Temperatur", "Was macht T?", "p_i ∝ exp(z_i / T). T < 1 schärft, T > 1 flacht ab. Die Rangfolge bleibt, die Masse verschiebt sich."),
         box("sm-mis", "Grenze", "Erzeugt Softmax das Ranking?", "Nein. Die Reihenfolge kommt aus den Logits. Softmax macht aus Scores eine positive Verteilung, die zu 1 summiert; Temperatur ändert die Schärfe, nicht die Reihenfolge.")
       ],
-      sources: [{ label: "Transformer Explainer (Polo Club, Georgia Tech)", url: "https://poloclub.github.io/transformer-explainer/", why: { de: "Interaktive Quelle für die GPT-2-Logits und Softmax-Demo.", en: "Interactive source for the GPT-2 logits and softmax demo." } }]
+      sources: [{ label: "Goodfellow, Bengio & Courville (2016), Deep Learning", url: "https://www.deeplearningbook.org/", why: { de: "Softmax, Logits und Temperatur.", en: "Softmax, logits, and temperature." } }]
     }
   ] : [
     {
       kicker: "Softmax",
       title: "From logits to a distribution",
-      body: "Real GPT-2 small scores for two prompts. The left side is the raw logit from the dot product, the right side is what softmax makes of it. Switch the context and watch the whole distribution shift. Temperature decides how sharply the winner is favoured.",
+      body: "Illustrative scores for two prompts. The left side is the raw logit, the right side is what softmax makes of it. Switch the context and watch the whole distribution shift. Temperature decides how sharply the winner is favoured.",
       watch: "Hover a token and change the temperature. What changes, what stays?",
       demoState: { scene: "softmax" },
       context: "Softmax does not create the ranking; the dot products do. It turns scores into a distribution that sums to one.",
@@ -1021,6 +1021,7 @@
         box("grad-1", "Mathematik", "Das echte Modell", "Ein lineares Modell mit zwei Parametern: ŷ = w·x + b. w ist die Steigung, b der y-Achsenabschnitt. Mehr nicht.", "\\underbrace{\\hat y}_{\\text{Ausgabe}} = \\underbrace{w x + b}_{\\text{zwei Parameter}}"),
         box("grad-2", "Mathematik", "Die Loss-Fläche (MSE)", "L(w,b) = 1/n Σ (w·x_i + b − y_i)². Die beiden Achsen sind w und b, nicht zwei beliebige Richtungen.", "\\underbrace{L(w,b)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mittlerer Fehler}}"),
         box("grad-3", "Technik", "Der Schritt", "θ ← θ − η ∇L. Der Gradient zeigt bergauf; der Ball geht bergab. Der Worker führt die Schritte aus und schickt die Projektion zurück.", "\\underbrace{\\theta_{t+1}}_{\\text{neu}} = \\underbrace{\\theta_t}_{\\text{alt}} - \\underbrace{\\eta}_{\\text{Lernrate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{Gradient}}"),
+        box("grad-todo", "TODO", "Automatisches Ableiten", "<b>TODO:</b> Details zu automatischem Ableiten (Autograd, Berechnung der Gradienten) hier ergänzen."),
         box("grad-4", "Grenze", "Warum ist das nicht das ganze LLM?", "Echte Netze haben Milliarden Dimensionen. Die zwei Richtungen sind ein lesbarer Schnitt, keine vollständige Landschaft."),
         box("grad-loss", "Optional", "Andere Loss-Funktionen", "MSE passt zu Regression. Für Klassen und Tokens nimmt man Cross-Entropy; für robuste Regression MAE oder Huber. Die Loss-Funktion sagt, was das Modell optimiert, nicht ob es die Aufgabe versteht."),
         box("grad-opt", "Technik", "SGD, Adam, Momentum", "SGD folgt dem Gradienten direkt. Momentum sammelt Geschwindigkeit und schießt über kleine Täler hinaus. Adam führt ein Gedächtnis für Gradient und Gradientenquadrat: häufig aktualisierte Parameter werden gedämpft, selten aktualisierte stärker gewichtet. Die Demo zeigt alle drei Pfade auf derselben Fläche."),
@@ -1049,6 +1050,7 @@
         box("grad-1", "Mathematics", "The real model", "A linear model with two parameters: ŷ = w·x + b. w is the slope, b is the intercept. Nothing else.", "\\underbrace{\\hat y}_{\\text{output}} = \\underbrace{w x + b}_{\\text{two parameters}}"),
         box("grad-2", "Mathematics", "The loss surface (MSE)", "L(w,b) = 1/n Σ (w·x_i + b − y_i)². The two axes are w and b, not two arbitrary directions.", "\\underbrace{L(w,b)}_{\\text{loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mean error}}"),
         box("grad-3", "Technique", "The step", "θ ← θ − η ∇L. The gradient points uphill; the ball goes downhill. The worker runs the steps and sends the projection back.", "\\underbrace{\\theta_{t+1}}_{\\text{new}} = \\underbrace{\\theta_t}_{\\text{old}} - \\underbrace{\\eta}_{\\text{learning rate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{gradient}}"),
+        box("grad-todo", "TODO", "Automatic differentiation", "<b>TODO:</b> add the details on automatic differentiation (autograd, how gradients are computed) here."),
         box("grad-4", "Limit", "Why is this not the whole LLM?", "Real networks have billions of dimensions. The two directions are a readable slice, not the full landscape."),
         box("grad-loss", "Optional", "Other loss functions", "MSE fits regression. Classes and tokens use cross-entropy; robust regression uses MAE or Huber. The loss says what the model optimises, not whether it understands the task."),
         box("grad-opt", "Technique", "SGD, Adam, Momentum", "SGD follows the gradient directly. Momentum accumulates velocity and overshoots small valleys. Adam keeps a memory of the gradient and its square: frequently updated parameters are damped, rarely updated ones get more weight. The demo shows all three paths on the same surface."),
@@ -1637,7 +1639,7 @@
     sources: attentionSteps[1].sources
   };
   var codeAttentionSubstep = {
-    kicker: "Code",
+    kicker: "Attention",
     title: "Attention verschiebt Bedeutungen in Kontexte",
     body: "„def quick_sort“ und „function quickSort“ sehen verschieden aus, meinen aber dasselbe: einen abstrakten Funktionsaufruf, der auf einen abstrakten Quicksort-Knoten zeigt. Die Unterschiede sind Oberflächenrauschen: Sprache, Schreibweise, Satzzeichen. Attention liest den Kontext, erkennt, was relevant ist, und verschiebt die Tokens auf die gemeinsame abstrakte Repräsentation. Klicke Beide, Python oder JavaScript.",
     watch: "Klicke die drei Modi. Landen def und function auf demselben Knoten?",
@@ -1769,7 +1771,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-15-bausteine-5",
+    overlayRevision: "2026-11-15-attention-2",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.

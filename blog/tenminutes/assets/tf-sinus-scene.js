@@ -22,6 +22,7 @@
         '</div>' +
       '</div>' +
       '<div class="ls-sinus-losschart"><canvas class="ls-sinus-loss-canvas" aria-label="Loss curve"></canvas></div>' +
+      '<div class="ls-sinus-formula" hidden></div>' +
       '<div class="ls-sinus-controls">' +
         '<button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-sinus-train">' + (DE ? "Training pausieren" : "Pause training") + '</button>' +
         '<button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-sinus-reset">' + (DE ? "Zurücksetzen" : "Reset") + '</button>' +
@@ -42,6 +43,8 @@
     var matrixFigures = Array.prototype.slice.call(el.querySelectorAll(".ls-sinus-matrix-grid figure"));
     var matrixNote = el.querySelector(".ls-sinus-matrices-note");
     var lossCanvas = el.querySelector(".ls-sinus-loss-canvas");
+    var formulaEl = el.querySelector(".ls-sinus-formula");
+    var formulaKey = "";
     var lossCtx = null, lossSize = null;
     var lossEl = el.querySelector(".ls-sinus-loss");
     var readout = el.querySelector(".ls-sinus-readout");
@@ -336,6 +339,25 @@
         color: C.muted, align: "right", bg: false, alpha: 1
       });
     }
+    function renderLiveFormula() {
+      if (!formulaEl) return;
+      if (phase !== "linear" || lossView) {
+        formulaEl.hidden = true;
+        formulaEl.innerHTML = "";
+        formulaKey = "";
+        return;
+      }
+      var p = linearParams();
+      var key = p.w.toFixed(4) + "|" + p.b.toFixed(4);
+      if (key === formulaKey) { formulaEl.hidden = false; return; }
+      formulaKey = key;
+      var tex = DE
+        ? "\\underbrace{\\hat y = \\underbrace{w}_{\\text{Gewicht}} x + \\underbrace{b}_{\\text{Bias}}}_{\\text{live lineares Modell}} = " + p.w.toFixed(3) + "x + " + p.b.toFixed(3)
+        : "\\underbrace{\\hat y = \\underbrace{w}_{\\text{weight}} x + \\underbrace{b}_{\\text{bias}}}_{\\text{live linear model}} = " + p.w.toFixed(3) + "x + " + p.b.toFixed(3);
+      formulaEl.hidden = false;
+      formulaEl.innerHTML = '<div class="ls-math" data-tex="' + api.esc(tex) + '" data-tex-display="true"><code class="ls-tex-source">' + api.esc(tex) + '</code></div>';
+      if (api.typeset) { try { api.typeset(formulaEl); } catch (e) {} }
+    }
     function updateReadout() {
       var a = active();
       lossEl.textContent = "Loss " + V.fmt(a.loss, 4);
@@ -347,6 +369,7 @@
         '<span><b>' + (DE ? "außen" : "outside") + '</b> ' + V.fmt(outsideError(), 3) + '</span>' +
         (params ? '<span><b>w</b> ' + V.fmt(params.w) + '</span><span><b>b</b> ' + V.fmt(params.b) + '</span>' : '') +
         '<span><b>(x, y)</b> ' + (DE ? "input, output" : "input, output") + '</span>';
+      renderLiveFormula();
     }
     var matrixLast = 0;
     function matrixTex(rows, cols, vals) {
@@ -458,6 +481,7 @@
     function setLossMode(on) {
       lossView = !!on;
       el.classList.toggle("is-loss", lossView);
+      if (formulaEl) formulaEl.hidden = lossView || phase !== "linear";
       if (lossView) {
         pauseTraining();
         ensureLoss();
@@ -475,6 +499,8 @@
       userStarted = false;
       pauseTraining();
       phase = next;
+      el.classList.toggle("is-net", phase === "net");
+      if (formulaEl) { formulaEl.hidden = phase !== "linear"; }
       if (!active().model) {
         if (phase === "linear") buildLinear(); else buildNet();
       }

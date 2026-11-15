@@ -6,7 +6,28 @@
   var esc = core.esc, clamp = core.clamp, lerp = core.lerp, ease = core.ease;
   function softmaxScene(root, api) {
     var DE = api.lang === "de";
-    var PROMPTS = {
+    var PROMPTS = DE ? {
+      spaceship: {
+        text: "„Als das Raumschiff sich <b>der</b>",
+        rows: [
+          { token: "Erde", logit: -92.8636474609375 }, { token: "Station", logit: -94.18270874023438 },
+          { token: "Oberfläche", logit: -94.41707611083984 }, { token: "Mond", logit: -94.45668029785156 },
+          { token: "Atmosphäre", logit: -94.46949005126953 }, { token: "Basis", logit: -94.54924774169922 },
+          { token: "Sonne", logit: -94.74138641357422 }, { token: "Kugel", logit: -94.87800598144531 },
+          { token: "Planet", logit: -94.9022216796875 }, { token: "Grenze", logit: -94.97351837158203 }
+        ]
+      },
+      planet: {
+        text: "„Auf dem verlassenen Planeten entdeckten sie <b>eine</b>",
+        rows: [
+          { token: "seltsame", logit: -89.01858520507812 }, { token: "geheimnisvolle", logit: -89.26126861572266 },
+          { token: "alte", logit: -89.26339721679688 }, { token: "große", logit: -89.2662124633789 },
+          { token: "kleine", logit: -89.29888916015625 }, { token: "neue", logit: -89.4354476928711 },
+          { token: "fremde", logit: -89.59513092041016 }, { token: "weite", logit: -89.6324462890625 },
+          { token: "riesige", logit: -89.85299682617188 }, { token: "leuchtende", logit: -90.060302734375 }
+        ]
+      }
+    } : {
       spaceship: {
         text: "“As the spaceship was approaching <b>the</b>”",
         rows: [
@@ -30,7 +51,7 @@
     };
     var el = document.createElement("div");
     el.className = "ls-softmax-scene";
-    el.innerHTML = '<div class="ls-scene-row ls-softmax-prompts"></div><p class="softmax-context"><span class="softmax-context-label">' + (DE ? "Kontext · echte GPT-2-Logits (englisch)" : "context · real GPT-2 logits (English)") + '</span> <span class="ls-softmax-context"></span></p><div class="softmax-stage"><div class="softmax-col softmax-col--logits"><div class="softmax-col-head"><span>Token</span><span>Logit</span></div><div data-logits></div></div><svg class="softmax-ribbons" data-ribbons aria-hidden="true"><defs><linearGradient id="softmax-ribbon-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#63a44b"></stop><stop offset="100%" stop-color="#009299"></stop></linearGradient></defs></svg><div class="softmax-col softmax-col--probs"><div class="softmax-col-head"><span>' + (DE ? "Wahrscheinlichkeit" : "probability") + '</span><span>Softmax</span></div><div data-probs></div></div></div><div class="ls-scene-row"><label class="ls-range">T <input type="range" class="ls-sm-temp" min="0.2" max="2" step="0.05" value="1"><output>1.00</output></label></div><div class="ls-sm-readout" aria-live="polite"></div>';
+    el.innerHTML = '<div class="ls-scene-row ls-softmax-prompts"></div><p class="softmax-context"><span class="softmax-context-label">' + (DE ? "Kontext · illustrative Logits" : "context · illustrative logits") + '</span> <span class="ls-softmax-context"></span></p><div class="softmax-stage"><div class="softmax-col softmax-col--logits"><div class="softmax-col-head"><span>Token</span><span>Logit</span></div><div data-logits></div></div><svg class="softmax-ribbons" data-ribbons aria-hidden="true"><defs><linearGradient id="softmax-ribbon-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#63a44b"></stop><stop offset="100%" stop-color="#009299"></stop></linearGradient></defs></svg><div class="softmax-col softmax-col--probs"><div class="softmax-col-head"><span>' + (DE ? "Wahrscheinlichkeit" : "probability") + '</span><span>Softmax</span></div><div data-probs></div></div></div><div class="ls-scene-row"><label class="ls-range">T <input type="range" class="ls-sm-temp" min="0.2" max="2" step="0.05" value="1"><output>1.00</output></label></div><div class="ls-sm-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var prompts = el.querySelector(".ls-softmax-prompts");
     var contextEl = el.querySelector(".ls-softmax-context");
