@@ -274,7 +274,6 @@
         ctx.fillStyle = on ? V.alpha(C.blue, 0.14 + 0.16 * ((i + j) % 3)) : V.alpha(C.line, 0.35);
         ctx.fillRect(mx + j * cell, my + i * cell, cell - 1, cell - 1);
       }
-      V.heading(ctx, "kausale Maske", mx, my - 8, C.petrol, 9, 1);
       V.heading(ctx, "Attention: wer liest wen?", 12, 16, C.petrol, 10, 1);
     }
     function miniFFN(ctx, w, h) {
