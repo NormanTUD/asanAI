@@ -1,0 +1,828 @@
+{
+  "version": 2,
+  "schema": "learnsys-changes/v2",
+  "kind": "learnsys-changes",
+  "data_file": "intuition_learnsys-data.js",
+  "generated_at": "2026-11-15T19:36:12.205Z",
+  "overlay_revision": "2026-11-15-attention-5",
+  "pages": [
+    "intuition"
+  ],
+  "apply_to": [
+    "de",
+    "en"
+  ],
+  "changes": [
+    {
+      "id": "de:intuition:1.1",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 1,
+      "substep": 1,
+      "substep_count": 3,
+      "text_key": "1.1",
+      "slide_title": "Die Architektur von LLMs",
+      "slide_kicker": "Architektur",
+      "changed_fields": [
+        "watch"
+      ],
+      "source": {
+        "title": "Die Architektur von LLMs",
+        "kicker": "Architektur",
+        "watch": "Sequenzielles Machine Learning geschieht in Schichten. Die erste Schicht wendet man direkt auf die Daten an, die zweite auf die Ergebnisse der ersten, und so weiter; dadurch verschachteln sich Funktionen: $\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Daten}\\right)\\right)\\right)$ Die erste Schicht sucht nach Mustern im Text, die zweite nach Mustern im Ergebnis der ersten Schicht, und so weiter. Mit dem Residual Stream kann jede Schicht auch Muster im Text <i>und</i> in den Ergebnissen der vorherigen Schichten finden.",
+        "body": "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste sinnvolle Wort vorherzusagen."
+      },
+      "edit": {
+        "body": "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste sinnvolle Wort vorherzusagen.",
+        "title": "Die Architektur von LLMs",
+        "kicker": "Architektur",
+        "watch": "Sequenzielles Machine Learning geschieht in Schichten. Die erste Schicht wendet man direkt auf die Daten an, die zweite auf die Ergebnisse der ersten, und so weiter; dadurch verschachteln sich Funktionen: $$\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Daten}\\right)\\right)\\right)$$. \n\nDie erste Schicht sucht nach Mustern im Text, die zweite nach Mustern im Ergebnis der ersten Schicht, und so weiter. Mit dem Residual Stream kann jede Schicht auch Muster im Text <i>und</i> in den Ergebnissen der vorherigen Schichten finden.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-training",
+                "title": "Wie werden die Modelle trainiert?",
+                "body": "Wir gehen an einem späteren Tag noch auf das Training ein. Die Idee: Anhand von Trainingsdaten, also Beispielen, prüft man wiederholt, wie gut das Netz ist, und verändert es leicht in die Richtung, in der es besser wird. Besser heißt hier: Gegeben einen Text sagt es das nächste Wort aus dem Text richtig voraus.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Transformer-Blöcke, Residualverbindungen und Layer-Normalisierung.",
+                  "en": "Transformer blocks, residual connections, and layer normalisation."
+                }
+              },
+              {
+                "label": "He et al. (2016), Deep Residual Learning",
+                "url": "https://arxiv.org/abs/1512.03385",
+                "why": {
+                  "de": "Residualverbindungen: Updates werden addiert, nicht überschrieben.",
+                  "en": "Residual connections: updates are added, not overwritten."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:3.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 3,
+      "substep": 0,
+      "substep_count": 1,
+      "text_key": "3.0",
+      "slide_title": "Text wird zu IDs",
+      "slide_kicker": "Tokenize",
+      "changed_fields": [
+        "watch",
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Text wird zu IDs",
+        "kicker": "Tokenize",
+        "watch": "Klicke die Beispiele. Wo ist die ID sichtbar?",
+        "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ein abstraktes Beispiel: $f\\colon X \\to Y$. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Teil 1: Text wird in Tokens geteilt, jede ID ist eine Adresse in der Embedding-Tabelle. Teil 2: BPE beginnt bei Zeichen und baut das Vokabular durch Merges auf. Jeder Merge ist ein neues Vokabelstück.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "BPE ist eine gelernte Kompression: Es zählt benachbarte Paare im Trainingskorpus und ersetzt das häufigste Paar durch ein neues Symbol. Nach mehreren Merges werden häufige Wörter kurz. Die genaue Tokenisierung hängt an den Daten und am Vokabularziel; die Demo zeigt einen kleinen Korpus, keine Messung eines bestimmten Modells.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-technik",
+            "title": "Technik",
+            "questions": [
+              {
+                "id": "q-box-tok-1",
+                "title": "Warum Subwords?",
+                "body": "Ein festes Wort-Vokabular müsste jedes unbekannte Wort als Sonderzeichen behandeln. Subwords erlauben es, neue Wörter aus bekannten Teilen zusammenzusetzen. Gleichzeitig bleibt das Vokabular endlich.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-box-tok-3",
+                "title": "BPE = Kompression",
+                "body": "Byte Pair Encoding beginnt mit Zeichen oder Bytes und ersetzt wiederholt das häufigste Paar durch ein neues Symbol. Nach vielen Merges wird aus häufigen Zeichenfolgen ein einzelner Token. Das ist Datenkompression, gelernt aus dem Trainingskorpus.",
+                "tex": "",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-box-tok-utf8",
+                "title": "UTF-8 und Joins",
+                "body": "UTF-8 kodiert Zeichen als Bytes. Ein sichtbares Emoji kann aus mehreren Codepoints bestehen: 🐈‍⬛ kombiniert 🐈, einen unsichtbaren Zero Width Joiner (ZWJ) und ⬛. Der Tokenizer sieht die Bytefolge, nicht das fertige Bild. Deshalb ist die schwarze Katze hier zwei Emoji-Bausteine und mehrere Byte-Tokens.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-tok-2",
+                "title": "Was ist eine ID?",
+                "body": "Eine ID ist ein Integer, der auf eine Zeile in der Embedding-Matrix zeigt. Die ID selbst hat keine Bedeutung; erst der gelernte Vektor gibt dem Token eine Position im Raum.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-daten",
+            "title": "Daten",
+            "questions": [
+              {
+                "id": "q-box-tok-bpe-data",
+                "title": "Warum ist die Tokenisierung datenabhängig?",
+                "body": "Ein Tokenizer wird so optimiert, dass er möglichst viel Text mit möglichst wenigen Tokens abdeckt, ohne Information zu verlieren: Jedes Wort muss aus seinen Tokens wieder zusammensetzbar sein. Deshalb ist die exakte Zerlegung eine Folge der Trainingsdaten und des Vokabularziels, keine feste Wortliste. Seltene Schriften bleiben teurer, weil sie im Korpus seltener sind.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-grenze",
+            "title": "Grenze",
+            "questions": [
+              {
+                "id": "q-box-tok-4",
+                "title": "Warum ist Englisch kürzer?",
+                "body": "Weil der Trainingskorpus überwiegend englisch ist. Häufige englische Wörter bekommen lange Merges; Schriften mit wenig Text im Korpus bleiben auf Byte-Ebene. Die Demo zeigt das illustrativ, nicht als exakte Messung.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units",
+                "url": "https://arxiv.org/abs/1508.07909",
+                "why": {
+                  "de": "BPE als Subword-Kompression für seltene Wörter.",
+                  "en": "BPE as subword compression for rare words."
+                }
+              },
+              {
+                "label": "Radford et al. (2019), GPT-2",
+                "url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+                "why": {
+                  "de": "GPT-2: byte-level BPE und die hier gezeigten Hidden States.",
+                  "en": "GPT-2: byte-level BPE and the hidden states shown here."
+                }
+              }
+            ]
+          },
+          {
+            "id": "g-original",
+            "title": "Bisheriger Text",
+            "questions": [
+              {
+                "id": "q-original",
+                "title": "Bisheriger Text",
+                "body": "Jetzt die Beispiele: Verständnis und ein ganzer Satz werden in Tokens und IDs zerlegt. Ein Token ist kein Wort; die ID ist die Adresse in der Embedding-Tabelle.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Der Tokenizer trennt Worte in einzelne Bestandteile. Diese werden mit einem Algorithmus, zum Beispiel <b>B</b>yte <b>P</b>air <b>E</b>ncoding (<b>BPE</b>) getrennt. Das basiert auf zwei Gedanken: der erste ist Kompression: es sollen so wenig wie möglich Tokens benutzt werden müssen, um so viel wie möglich zu sagen. Der zweite ist, dass das Netzwerk so auch Worte bearbeiten kann, die es vorher nie gesehen hat, indem es sie in Bestandteile trennt und lernt, wie man Worte aus ihren Bestandteilen heraus versteht, auch wenn man das konkrete Wort vielleicht nie gesehen hat.",
+        "title": "Text wird zu IDs",
+        "kicker": "Tokenize",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "BPE ist eine gelernte Kompression: Es zählt benachbarte Paare im Trainingskorpus und ersetzt das häufigste Paar durch ein neues Symbol. Nach mehreren Merges werden häufige Wörter kurz. Die genaue Tokenisierung hängt an den Daten und am Vokabularziel; die Demo zeigt einen kleinen Korpus, keine Messung eines bestimmten Modells.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-technik",
+            "title": "Technik",
+            "questions": [
+              {
+                "id": "q-box-tok-1",
+                "title": "Wie geht es mit unbekannten Zeichen um?",
+                "body": "Bei Encodings wie UTF8 kann ein Zeichen mehrere Byte lang sein. Was, wenn ein Zeichen nicht ein einziges Mal im Kontext war, wie zum Beispiel die neuen Emojis? Die sind aufgebaut aus zwei oder mehr Bestandteilen, so besteht 🐈‍⬛ aus 🐈, dem \"zero-width-joiner\"-Charakter und danach dem ⬛. Stehen die drei hintereinander, wird es als 🐈‍⬛ angezeigt. Man sagt dem Tokenizer nun auch alle 256 Möglichkeiten, die 8 Bit haben können. Damit kann es unbekannte Charakter trotzdem klassifizieren und nach Kontext in gewisse Richtungen schieben, so zum Beispiel die Richtung für \"Emoji\", wo unter Anderem auch 🐈 bereits ist.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-box-tok-3",
+                "title": "BPE = Kompression",
+                "body": "Byte Pair Encoding beginnt mit Zeichen oder Bytes und ersetzt wiederholt das häufigste Paar durch ein neues Symbol. Nach vielen Merges wird aus häufigen Zeichenfolgen ein einzelner Token. Das ist Datenkompression, gelernt aus dem Trainingskorpus.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-tok-2",
+                "title": "Was ist eine ID?",
+                "body": "Eine ID ist ein Integer, der auf eine Zeile in der Embedding-Matrix zeigt. Die ID selbst hat keine Bedeutung; erst der gelernte Vektor gibt dem Token eine Position im Raum.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-daten",
+            "title": "Daten",
+            "questions": [
+              {
+                "id": "q-box-tok-bpe-data",
+                "title": "Warum ist die Tokenisierung datenabhängig?",
+                "body": "Ein Tokenizer wird so optimiert, dass er möglichst viel Text mit möglichst wenigen Tokens abdeckt, ohne Information zu verlieren: Jedes Wort muss aus seinen Tokens wieder zusammensetzbar sein. Deshalb ist die exakte Zerlegung eine Folge der Trainingsdaten und des Vokabularziels, keine feste Wortliste. Seltene Schriften bleiben teurer, weil sie im Korpus seltener sind.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-grenze",
+            "title": "Grenze",
+            "questions": [
+              {
+                "id": "q-box-tok-4",
+                "title": "Warum brauchen englische Texte oft weniger Token?",
+                "body": "Weil der Trainingskorpus überwiegend englisch ist. Häufige englische Wörter bekommen lange Merges; Schriften mit wenig Text im Korpus bleiben auf Byte-Ebene. Die Demo zeigt das illustrativ, nicht als exakte Messung.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units",
+                "url": "https://arxiv.org/abs/1508.07909",
+                "why": {
+                  "de": "BPE als Subword-Kompression für seltene Wörter.",
+                  "en": "BPE as subword compression for rare words."
+                }
+              },
+              {
+                "label": "Radford et al. (2019), GPT-2",
+                "url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+                "why": {
+                  "de": "GPT-2: byte-level BPE und die hier gezeigten Hidden States.",
+                  "en": "GPT-2: byte-level BPE and the hidden states shown here."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:5.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 5,
+      "substep": 0,
+      "substep_count": 4,
+      "text_key": "5.0",
+      "slide_title": "Bedeutung wird eine Zahl",
+      "slide_kicker": "Die Linie",
+      "changed_fields": [
+        "watch",
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Bedeutung wird eine Zahl",
+        "kicker": "Die Linie",
+        "watch": "Klicke zwei Punkte. Wann ist der Mittelpunkt exakt, wann ungefähr? Drücke Weiter oder →: Die Demo geht die vier Wortpaare nacheinander durch.",
+        "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ein abstraktes Beispiel: $f\\colon X \\to Y$. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. Platzhalter für Unterfolie 1 von 4.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Eine Achse ist die einfachste Form eines Vektorraums: eine Koordinate pro Wort. Der Mittelpunkt (a + b) / 2 funktioniert in jeder Dimension gleich.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Die Positionen sind hier von Hand gewählt, damit du die Rechnung siehst. In einem Modell werden sie aus vielen Beispielen gelernt. Die Abweichung ist der Abstand zwischen Mittelwert und nächstem Wort; bei kalt + heiß sind das 2,5 Grad.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-emb-1",
+                "title": "Was ist ein Vektor?",
+                "body": "Ein Vektor ist ein Element eines Vektorraums. In der Praxis ist er eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt. Die Richtung ist oft wichtiger als die Länge.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-box-emb-4",
+                "title": "Warum funktioniert der Mittelpunkt?",
+                "body": "Weil Vektoren koordinatenweise addiert werden. Der Mittelpunkt (a + b) / 2 liegt auf der Verbindungslinie. In höheren Dimensionen gilt dieselbe Rechnung; du siehst nur eine Projektion.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-geschichte",
+            "title": "Geschichte",
+            "questions": [
+              {
+                "id": "q-box-emb-2",
+                "title": "Woher kommt die Idee?",
+                "body": "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert. Wörter, die in ähnlichen Kontexten auftreten, bekommen ähnliche Vektoren.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-grenze",
+            "title": "Grenze",
+            "questions": [
+              {
+                "id": "q-box-emb-5",
+                "title": "Ist der Mittelpunkt ein Wort?",
+                "body": "Nein. Er ist eine Position im Raum. Dass sie nahe an einem Wort liegt, ist eine Eigenschaft der gelernten Geometrie, keine Definition.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-box-emb-approx",
+                "title": "Was heißt „ungefähr“?",
+                "body": "Der Mittelwert 52,5 liegt 2,5 Grad von warm entfernt. Es gibt kein Wort exakt bei 52,5. Die Nähe reicht, weil das Modell mit Winkeln und Nachbarn arbeitet, nicht mit einer Wortliste.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-optional",
+            "title": "Optional",
+            "questions": [
+              {
+                "id": "q-box-emb-clean",
+                "title": "Sind echte Embeddings so sauber?",
+                "body": "Nein. Die Demo trennt Temperatur, Macht und Geschlecht sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Harris (1954), Distributional Structure",
+                "url": "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf",
+                "why": {
+                  "de": "Begründet Bedeutung aus dem sprachlichen Kontext.",
+                  "en": "Grounds meaning in linguistic context."
+                }
+              },
+              {
+                "label": "Firth (1957), A Synopsis of Linguistic Theory",
+                "url": "https://archive.org/details/papersinlinguist0000firt",
+                "why": {
+                  "de": "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.",
+                  "en": "Classic formula: meaning shows in a word's company."
+                }
+              },
+              {
+                "label": "Mikolov et al. (2013), word2vec",
+                "url": "https://arxiv.org/abs/1301.3781",
+                "why": {
+                  "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
+                  "en": "word2vec: learned word vectors and vector arithmetic."
+                }
+              },
+              {
+                "label": "Pennington et al. (2014), GloVe",
+                "url": "https://aclanthology.org/D14-1162/",
+                "why": {
+                  "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
+                  "en": "GloVe: global co-occurrence as word vectors."
+                }
+              }
+            ]
+          },
+          {
+            "id": "g-original",
+            "title": "Bisheriger Text",
+            "questions": [
+              {
+                "id": "q-original",
+                "title": "Bisheriger Text",
+                "body": "Wir ordnen Wörtern Zahlen zu. Auf einer Linie liegt jedes Wort an einer Stelle; der Abstand sagt, wie ähnlich zwei Wörter in dieser Eigenschaft sind. Klicke zwei Punkte: Der Mittelpunkt ist ihr Durchschnitt. Kalt (5) und warm (55) ergeben 30; kalt und heiß ergeben 52,5. Das liegt nahe bei warm, aber nicht exakt. Bedeutung ist oft eine Nähe, kein exakter Wert.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Wenn man Worten Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Man kann dann sagen, dass heiß - warm = 100 - 55 = 55 ist, und 55 ist warm. Zieht man also von heiß warm ab, erhält man nur noch warm.\n\nDas ist natürlich ein sehr vereinfachtes Beispiel, hier kann man genau eine Korrelation darstellen. Daher nutzt man man viel höherdimensionale Räume. ",
+        "title": "Bedeutung wird eine Zahl",
+        "kicker": "Die Linie",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-deep",
+                "title": "Einschränkungen hier",
+                "body": "Die Positionen sind hier von Hand gewählt, damit die Rechnungen stimmen. In einem Modell werden sie aus vielen Beispielen gelernt.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-emb-1",
+                "title": "Was ist ein Vektor?",
+                "body": "Ein Vektor ist ein Element eines Vektorraums. In der Praxis ist er eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt. Die Richtung ist in LLM oft wichtiger als die Länge.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-geschichte",
+            "title": "Geschichte",
+            "questions": [
+              {
+                "id": "q-box-emb-2",
+                "title": "Woher kommt die Idee?",
+                "body": "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert. Wörter, die in ähnlichen Kontexten auftreten, bekommen ähnliche Vektoren.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-optional",
+            "title": "Optional",
+            "questions": [
+              {
+                "id": "q-box-emb-clean",
+                "title": "Sind echte Embeddings so sauber?",
+                "body": "Nein. Die Demo trennt Temperatur, Macht und Geschlecht sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Harris (1954), Distributional Structure",
+                "url": "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf",
+                "why": {
+                  "de": "Begründet Bedeutung aus dem sprachlichen Kontext.",
+                  "en": "Grounds meaning in linguistic context."
+                }
+              },
+              {
+                "label": "Firth (1957), A Synopsis of Linguistic Theory",
+                "url": "https://archive.org/details/papersinlinguist0000firt",
+                "why": {
+                  "de": "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.",
+                  "en": "Classic formula: meaning shows in a word's company."
+                }
+              },
+              {
+                "label": "Mikolov et al. (2013), word2vec",
+                "url": "https://arxiv.org/abs/1301.3781",
+                "why": {
+                  "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
+                  "en": "word2vec: learned word vectors and vector arithmetic."
+                }
+              },
+              {
+                "label": "Pennington et al. (2014), GloVe",
+                "url": "https://aclanthology.org/D14-1162/",
+                "why": {
+                  "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
+                  "en": "GloVe: global co-occurrence as word vectors."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:6.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 6,
+      "substep": 0,
+      "substep_count": 1,
+      "text_key": "6.0",
+      "slide_title": "Von Beziehungen zur Übersetzung",
+      "slide_kicker": "Mannigfaltigkeiten",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Von Beziehungen zur Übersetzung",
+        "kicker": "Mannigfaltigkeiten",
+        "watch": "Drehe, rotiere und verschiebe die japanische Wolke. Fahre über die Punkte, um die Wörter zu sehen. Klicke „Übersetzung finden“ oder „Weiter“.",
+        "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ein abstraktes Beispiel: $f\\colon X \\to Y$. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Die Demo ist stark vereinfacht: zwei Punktwolken, viele Wörter, saubere Kanten. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen; der Vietoris–Rips-Komplex macht nur die Nachbarschaften sichtbar.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Eine Mannigfaltigkeit ist lokal flach und global gekrümmt. Die Übersetzung entspricht einer Abbildung zwischen zwei solchen Flächen. Hier ist die Abbildung eine Kombination aus Drehung, Rotation und Translation: Wenn beide Wolken zur Deckung kommen, liegen die Wörter ihrer Bedeutung nach übereinander.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-grenze",
+            "title": "Grenze",
+            "questions": [
+              {
+                "id": "q-box-man-2",
+                "title": "Was ist vereinfacht?",
+                "body": "Die Punktwolken sind klein und die Wörter sauber platziert. Ein echtes Embedding hat Tausende Dimensionen und viele überlappende Beziehungen; die Kanten zeigen nur eine Nachbarschaft, nicht die ganze Geometrie.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-box-man-3",
+                "title": "Wie echt ist die Übersetzung?",
+                "body": "Die Demo zeigt eine Idee, keine Messung. Ein echtes Modell lernt die Abbildung aus Text; die Formen sind abstrakt, extrem hochdimensional und für Menschen schwer zu sehen.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-man-4",
+                "title": "Was ist eine Mannigfaltigkeit?",
+                "body": "Eine Mannigfaltigkeit ist ein Raum, der lokal wie $R^n$, also den gewohnten, euklidischen Raum, aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im $R^n$ abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Mikolov et al. (2013), word2vec",
+                "url": "https://arxiv.org/abs/1301.3781",
+                "why": {
+                  "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
+                  "en": "word2vec: learned word vectors and vector arithmetic."
+                }
+              },
+              {
+                "label": "Pennington et al. (2014), GloVe",
+                "url": "https://aclanthology.org/D14-1162/",
+                "why": {
+                  "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
+                  "en": "GloVe: global co-occurrence as word vectors."
+                }
+              },
+              {
+                "label": "Conneau et al. (2018), Word Translation Without Parallel Data",
+                "url": "https://arxiv.org/abs/1710.04087",
+                "why": {
+                  "de": "Übertragung zwischen Worträumen ohne parallele Daten.",
+                  "en": "Transport between word spaces without parallel data."
+                }
+              }
+            ]
+          },
+          {
+            "id": "g-original",
+            "title": "Bisheriger Text",
+            "questions": [
+              {
+                "id": "q-original",
+                "title": "Bisheriger Text",
+                "body": "Hat man Punkte in diesem hochabstrakten Raum, deren Beziehungen untereinander die Bedeutung tragen, wird Übersetzung zu Translation, Rotation, Verzerrung, Skalierung und Scherung. Die Struktur, die die Punkte im hochdimensionalen Raum bilden, nennen Mathematiker <b>Mannigfaltigkeit</b>.\n\nFindet man eine Kombination, die die eine Wolke in die andere überführt, hat man eine Übersetzung gefunden: Die Bedeutung steht in anderen Sprachen in denselben Relationen zueinander, auch wenn die konkreten Tokens andere sind.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Hat man Punkte in diesem hochabstraktem Raum, deren Beziehung untereinander die Bedeutung enthält, wird Übersetzung zu Translation, Rotation, Verzerrung, Skalierung und Scherung. Die Struktur, die sich aus den Punkten im hochdimensionalen Raum bildet, nennen Mathematiker <b>Mannigfaltigkeit</b>.\n\nFindet man eine Kombination, die das eine zum Anderen transformiert, hat man eine Übersetzung gefunden, weil die Bedeutung in anderen Sprachen in gleicher Relation zueinander steht, wenn auch mit anderen konkreten Tokens.",
+        "title": "Von Beziehungen zur Übersetzung",
+        "kicker": "Mannigfaltigkeiten",
+        "watch": "Drehe, rotiere und verschiebe die japanische Wolke. Fahre über die Punkte, um die Wörter zu sehen. Klicke „Übersetzung finden“ oder „Weiter“.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Die Demo ist stark vereinfacht: zwei Punktwolken, viele Wörter, saubere Kanten. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen; der Vietoris–Rips-Komplex macht nur die Nachbarschaften sichtbar.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Eine Mannigfaltigkeit ist lokal flach und global gekrümmt. Die Übersetzung entspricht einer Abbildung zwischen zwei solchen Flächen. Hier ist die Abbildung eine Kombination aus Drehung, Rotation und Translation: Wenn beide Wolken zur Deckung kommen, liegen die Wörter ihrer Bedeutung nach übereinander.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-grenze",
+            "title": "Grenze",
+            "questions": [
+              {
+                "id": "q-box-man-2",
+                "title": "Was ist vereinfacht?",
+                "body": "Die Punktwolken sind klein und die Wörter sauber platziert. Ein echtes Embedding hat Tausende Dimensionen und viele überlappende Beziehungen; die Kanten zeigen nur eine Nachbarschaft, nicht die ganze Geometrie.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-box-man-3",
+                "title": "Wie echt ist die Übersetzung?",
+                "body": "Die Demo zeigt eine Idee, keine Messung. Ein echtes Modell lernt die Abbildung aus Text; die Formen sind abstrakt, extrem hochdimensional und für Menschen schwer zu sehen.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-man-4",
+                "title": "Was ist eine Mannigfaltigkeit?",
+                "body": "Eine Mannigfaltigkeit ist ein Raum, der lokal wie $R^n$, also den gewohnten, euklidischen Raum, aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im $R^n$ abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Mikolov et al. (2013), word2vec",
+                "url": "https://arxiv.org/abs/1301.3781",
+                "why": {
+                  "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
+                  "en": "word2vec: learned word vectors and vector arithmetic."
+                }
+              },
+              {
+                "label": "Pennington et al. (2014), GloVe",
+                "url": "https://aclanthology.org/D14-1162/",
+                "why": {
+                  "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
+                  "en": "GloVe: global co-occurrence as word vectors."
+                }
+              },
+              {
+                "label": "Conneau et al. (2018), Word Translation Without Parallel Data",
+                "url": "https://arxiv.org/abs/1710.04087",
+                "why": {
+                  "de": "Übertragung zwischen Worträumen ohne parallele Daten.",
+                  "en": "Transport between word spaces without parallel data."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
