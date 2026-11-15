@@ -19,6 +19,7 @@
     el.className = "ls-qkv-scene";
     el.innerHTML =
       '<div class="ls-qkv-stage"><canvas class="ls-canvas" role="img"></canvas></div>' +
+      '<div class="ls-qkv-vectors" aria-hidden="true"></div>' +
       '<div class="ls-qkv-controls">' +
         '<span class="ls-qkv-query">' + (DE ? "Query" : "query") + ' <b>it</b></span>' +
         '<button type="button" class="ls-chip is-on" data-head="0">' + (DE ? "Head 1 · Wer?" : "Head 1 · who?") + '</button>' +
@@ -29,8 +30,22 @@
     var stage = el.querySelector(".ls-qkv-stage");
     var canvas = el.querySelector("canvas");
     var readout = el.querySelector(".ls-qkv-readout");
+    var vectorsEl = el.querySelector(".ls-qkv-vectors");
     var size = null, ctx = null;
     var C = api.colors();
+    var VECTOR_DATA = [
+      { q: [0.8, 0.3, 0.6, 0.2, 0.9], k: [0.9, 0.2, 0.7, 0.1, 0.8], v: [0.2, 0.8, 0.4, 0.9, 0.3] },
+      { q: [0.7, 0.4, 0.5, 0.3, 0.8], k: [0.3, 0.9, 0.2, 0.8, 0.4], v: [0.9, 0.2, 0.7, 0.1, 0.6] }
+    ];
+    function renderVectors() {
+      var vd = VECTOR_DATA[head];
+      var rows = [["q", vd.q, "green"], ["k", vd.k, "sky"], ["v", vd.v, "gold"]];
+      vectorsEl.innerHTML = rows.map(function (row) {
+        return '<div class="ls-qkv-vec ls-qkv-vec--' + row[2] + '"><span>' + row[0] + '</span><span class="ls-qkv-vbars">' +
+          row[1].map(function (v) { return '<i style="--v:' + v.toFixed(2) + '"></i>'; }).join("") +
+        '</span></div>';
+      }).join("");
+    }
     function setHead(h) {
       if (h === head) return;
       prev = weights.slice();
@@ -40,6 +55,7 @@
       el.querySelectorAll("[data-head]").forEach(function (b) {
         b.classList.toggle("is-on", parseInt(b.getAttribute("data-head"), 10) === head);
       });
+      renderVectors();
       if (reduced) { weights = W[head].slice(); t = 1; draw(); return; }
       if (raf) cancelAnimationFrame(raf);
       function step(now) {
@@ -181,6 +197,7 @@
     });
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
+    renderVectors();
     resize();
     if (!reduced) loopRaf = requestAnimationFrame(loop);
     return {

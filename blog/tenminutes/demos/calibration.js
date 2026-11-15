@@ -67,6 +67,18 @@
       var plotW = Math.max(70, w - padL - padR), plotH = Math.max(70, h - padT - padB);
       function X(v) { return padL + v * plotW; }
       function Y(v) { return h - padB - v * plotH; }
+      // over/under-confidence fields
+      ctx.fillStyle = "rgba(145,133,190,.055)";
+      ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(1), Y(0)); ctx.lineTo(X(1), Y(1)); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = "rgba(159,151,0,.045)";
+      ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(0), Y(1)); ctx.lineTo(X(1), Y(1)); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = C.lilac;
+      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+      ctx.fillText(DE ? "zu sicher" : "too confident", X(0.96), Y(0.16));
+      ctx.fillStyle = C.gold;
+      ctx.textAlign = "left"; ctx.textBaseline = "top";
+      ctx.fillText(DE ? "zu unsicher" : "too unsure", X(0.08), Y(0.90));
       // grid
       ctx.strokeStyle = "rgba(0,75,111,.08)";
       ctx.lineWidth = 1;
@@ -75,6 +87,10 @@
         ctx.beginPath(); ctx.moveTo(X(0), Y(g / 4)); ctx.lineTo(X(1), Y(g / 4)); ctx.stroke();
       }
       // diagonal
+      ctx.strokeStyle = C.green;
+      ctx.globalAlpha = 0.18; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(1), Y(1)); ctx.stroke();
+      ctx.globalAlpha = 1; ctx.lineWidth = 1;
       ctx.strokeStyle = C.muted;
       ctx.setLineDash([5, 5]);
       ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(1), Y(1)); ctx.stroke();
@@ -86,6 +102,11 @@
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "center"; ctx.textBaseline = "top";
       ctx.fillText(DE ? "Konfidenz des Modells" : "model confidence", (padL + w - padR) / 2, h - 15);
+      ctx.font = '600 9px "Open Sans", sans-serif';
+      ctx.textBaseline = "top";
+      [0, 0.5, 1].forEach(function (v) { ctx.fillText(Math.round(v * 100) + "%", X(v), h - padB + 4); });
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      [0, 0.5, 1].forEach(function (v) { ctx.fillText(Math.round(v * 100) + "%", padL - 5, Y(v)); });
       ctx.save();
       ctx.translate(12, (padT + h - padB) / 2);
       ctx.rotate(-Math.PI / 2);

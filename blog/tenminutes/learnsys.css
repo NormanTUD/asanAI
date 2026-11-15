@@ -484,7 +484,10 @@ h1,h2,h3,h4{
   content:"";position:absolute;inset:7% 5% 9% 5%;z-index:0;pointer-events:none;
   background:radial-gradient(circle at 52% 46%,rgba(99,164,75,.07),rgba(18,117,172,.045) 42%,transparent 72%);
   filter:blur(24px);
+  animation:lsStageBreathe 9s ease-in-out infinite alternate;
 }
+@keyframes lsStageBreathe{from{opacity:.55}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){.ls-stage:after{animation:none}}
 .ls-stage-head{
   position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;
   gap:12px;min-height:52px;padding:10px 22px 9px;border-bottom:1px solid rgba(0,75,111,.08);
@@ -2094,12 +2097,20 @@ h1,h2,h3,h4{
 .ls-ce-readout b{color:var(--ls-ink);font-weight:600}
 
 /* Q/K/V: attention arcs, weight bars and two heads */
-.ls-qkv-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto;gap:6px;padding:2px}
+.ls-qkv-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto auto;gap:6px;padding:2px}
 .ls-qkv-stage{position:relative;min-height:240px;border:1px solid var(--ls-line);background:var(--ls-paper-2);overflow:hidden}
 .ls-qkv-stage canvas{position:absolute;inset:0;width:100%;height:100%}
 .ls-qkv-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .ls-qkv-query{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.08em}
 .ls-qkv-query b{color:var(--ls-petrol);font-weight:700;text-transform:none;letter-spacing:0}
+.ls-qkv-vectors{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;min-height:30px}
+.ls-qkv-vec{display:flex;align-items:flex-end;gap:4px;font:600 10px/1 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-qkv-vec>span:first-child{width:10px;color:var(--ls-petrol);text-transform:lowercase}
+.ls-qkv-vbars{display:flex;align-items:flex-end;gap:2px;height:28px}
+.ls-qkv-vbars i{display:block;width:4px;min-height:2px;height:calc(var(--v, .2) * 100%);background:var(--ls-sky);transition:height .35s ease}
+.ls-qkv-vec--green i{background:var(--ls-green)}
+.ls-qkv-vec--sky i{background:var(--ls-sky)}
+.ls-qkv-vec--gold i{background:var(--ls-gold)}
 .ls-qkv-readout{font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted);min-height:1.4em;display:flex;gap:12px;flex-wrap:wrap}
 .ls-qkv-readout b{color:var(--ls-ink);font-weight:600}
 
