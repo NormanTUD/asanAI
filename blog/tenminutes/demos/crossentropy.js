@@ -181,6 +181,10 @@
         ctx.fillStyle = isTarget ? C.gold : "rgba(255,255,255,.7)";
         ctx.fillRect(x + tw / 2 - 5, ohY, 10, 10);
         ctx.strokeRect(x + tw / 2 - 5, ohY, 10, 10);
+        ctx.fillStyle = isTarget ? C.paper : C.muted;
+        ctx.font = '700 7px "Open Sans", sans-serif';
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText(isTarget ? "1" : "0", x + tw / 2, ohY + 5.5);
         // gradient chip
         var up = g[i] >= 0;
         ctx.fillStyle = up ? C.blue : C.muted;

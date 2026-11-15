@@ -260,3 +260,15 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   `day_title`, `track`, `step`, `substep`, `substep_count`, `text_key`,
   `slide_title`, `slide_kicker`, `changed_fields`, `source` und `edit`.
   Import akzeptiert v2 und das alte v1-Format.
+- [done] Weitere Politur: Halluzinationsdemo mit Glyphen-Fragmenten, HUD-Icon
+  und Einflug-Reveal; Bewusstseinskarte mit schwebenden Knoten, Halos,
+  Licht-Sweep, Hover-Glow, Klick-Ripple und pulsierender offener Grenze;
+  Cross-Entropy mit 1/0-One-Hot-Labels; Q/K/V mit Prozent-Chips auf den
+  Aufmerksamkeitsbögen.
+- [done] Q/K/V-Folie ist jetzt eine Gruppe: „Wie Attention rechnet“ (Bögen) und
+  „Attention als gewichtete Mischung“ (Simplex). Die Simplex-Demo zeigt drei
+  Value-Punkte als Dreieck, den gewichteten Ausgabepunkt, Baryzentrik-Grid,
+  Partikel von den Vertices zur Ausgabe und eine Spur. Mathematik geprüft:
+  Softmax-Gewichte sind ≥ 0 und summieren zu 1, also ist die Ausgabe eine
+  konvexe Kombination der Values; bei drei Values ein 2-Simplex. Die echte
+  Ausgabe nutzt alle Values und liegt in deren konvexer Hülle.

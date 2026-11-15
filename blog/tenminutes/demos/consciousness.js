@@ -60,9 +60,17 @@
       pan: "Experience is a fundamental property."
     };
     var selected = "center";
+    var hovered = null;
+    var selectTime = 0;
     var hits = [];
     function byId(id) { for (var i = 0; i < nodes.length; i++) if (nodes[i].id === id) return nodes[i]; return null; }
-    function pos(n) { return { x: 24 + n.x * (size.w - 48), y: 24 + n.y * (size.h - 92) }; }
+    function pos(n) {
+      var idx = nodes.indexOf(n);
+      var now = performance.now();
+      var ox = Math.sin(now / 1500 + idx * 1.7) * 2.2;
+      var oy = Math.cos(now / 1700 + idx * 1.3) * 2.2;
+      return { x: 24 + n.x * (size.w - 48) + ox, y: 24 + n.y * (size.h - 92) + oy };
+    }
     function branchOf(id) { var n = byId(id); return n ? n.branch : "center"; }
     function activeBranch() {
       var b = branchOf(selected);
@@ -112,6 +120,12 @@
       var rg = ctx.createRadialGradient(w * 0.73, h * 0.4, 4, w * 0.73, h * 0.4, w * 0.34);
       rg.addColorStop(0, "rgba(99,164,75,.12)"); rg.addColorStop(1, "rgba(99,164,75,0)");
       ctx.fillStyle = rg; ctx.fillRect(0, 0, w, h);
+      var sweepX = (((performance.now() / 6500) % 1.5) - 0.25) * w;
+      var sg = ctx.createLinearGradient(sweepX - 90, 0, sweepX + 90, w * 0.25);
+      sg.addColorStop(0, "rgba(255,255,255,0)");
+      sg.addColorStop(0.5, "rgba(255,255,255,.10)");
+      sg.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = sg; ctx.fillRect(0, 0, w, h);
       particles(w, h, performance.now());
       var ab = activeBranch();
       if (ab === "access") {
@@ -130,9 +144,9 @@
       ctx.beginPath(); ctx.arc(w * 0.5, h * 0.5, Math.min(w, h) * 0.47, performance.now() / 3000, performance.now() / 3000 + Math.PI * 2); ctx.stroke();
       ctx.setLineDash([]); ctx.restore();
       // open boundary
-      ctx.strokeStyle = C.line; ctx.setLineDash([5, 6]); ctx.lineWidth = 1;
+      ctx.strokeStyle = C.line; ctx.globalAlpha = 0.55 + 0.35 * Math.sin(performance.now() / 1200); ctx.setLineDash([5, 6]); ctx.lineWidth = 1;
       ctx.beginPath(); ctx.ellipse(w * 0.5, h * 0.52, w * 0.44, h * 0.42, 0, 0, Math.PI * 2); ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.setLineDash([]); ctx.globalAlpha = 1;
       ctx.fillStyle = C.muted; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.textBaseline = "bottom";
       ctx.fillText(DE ? "offen" : "open", w * 0.5, h * 0.52 - h * 0.42 - 4);
       var now = performance.now();
@@ -158,9 +172,15 @@
         var p = pos(n);
         var col = C[n.c] || C.petrol;
         var on = n.id === selected;
+        var hot = n.id === hovered;
         var alpha = alphaFor(n.branch);
+        var halo = ctx.createRadialGradient(p.x, p.y, 1, p.x, p.y, n.r * 3.2);
+        halo.addColorStop(0, col + "33");
+        halo.addColorStop(1, col + "00");
         ctx.globalAlpha = alpha;
-        if (on) { ctx.shadowColor = col; ctx.shadowBlur = 20; }
+        ctx.fillStyle = halo;
+        ctx.beginPath(); ctx.arc(p.x, p.y, n.r * 3.2, 0, Math.PI * 2); ctx.fill();
+        if (on || hot) { ctx.shadowColor = col; ctx.shadowBlur = 22; }
         ctx.fillStyle = col;
         ctx.beginPath(); ctx.arc(p.x, p.y, on ? n.r + 3 : n.r, 0, Math.PI * 2); ctx.fill();
         ctx.shadowBlur = 0;
@@ -168,6 +188,12 @@
         if (on) {
           ctx.strokeStyle = col; ctx.globalAlpha = 0.35 * alpha; ctx.lineWidth = 2;
           ctx.beginPath(); ctx.arc(p.x, p.y, n.r + 8 + Math.sin(now / 400) * 2, 0, Math.PI * 2); ctx.stroke();
+          var age = now - selectTime;
+          if (age >= 0 && age < 700) {
+            ctx.globalAlpha = 0.35 * (1 - age / 700);
+            ctx.beginPath(); ctx.arc(p.x, p.y, n.r + 10 + age * 0.06, 0, Math.PI * 2); ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
         }
         ctx.globalAlpha = alpha;
         ctx.font = (on ? '700 ' : '600 ') + Math.max(8, Math.min(10, api.font("canvas-sm"))) + 'px "Open Sans", sans-serif';
@@ -204,7 +230,7 @@
     function selectAt(x, y) {
       for (var i = 0; i < hits.length; i++) {
         var h = hits[i];
-        if (Math.hypot(h.x - x, h.y - y) <= h.r) { selected = h.id; readout.textContent = descriptions[selected]; draw(); return true; }
+        if (Math.hypot(h.x - x, h.y - y) <= h.r) { selected = h.id; selectTime = performance.now(); readout.textContent = descriptions[selected]; draw(); return true; }
       }
       return false;
     }
@@ -215,8 +241,9 @@
     canvas.addEventListener("pointermove", function (e) {
       var r = canvas.getBoundingClientRect();
       var x = e.clientX - r.left, y = e.clientY - r.top;
-      var hot = false;
-      for (var i = 0; i < hits.length; i++) { if (Math.hypot(hits[i].x - x, hits[i].y - y) <= hits[i].r) { hot = true; break; } }
+      var hot = false, hitId = null;
+      for (var i = 0; i < hits.length; i++) { if (Math.hypot(hits[i].x - x, hits[i].y - y) <= hits[i].r) { hot = true; hitId = hits[i].id; break; } }
+      hovered = hitId;
       canvas.style.cursor = hot ? "pointer" : "default";
     });
     function resize() { size = api.fit(canvas, stage); draw(); }

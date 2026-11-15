@@ -110,6 +110,28 @@
       }
       ctx.globalAlpha = 1;
     }
+    function fragments(w, h, now, color) {
+      var glyphs = mode === "false" ? ["0", "1"] : (mode === "sampling" ? ["1", "2", "3", "4", "5", "6"] : (mode === "gap" ? ["?"] : ["¬"]));
+      ctx.font = '600 11px "Open Sans", sans-serif';
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      for (var i = 0; i < 18; i++) {
+        var x = ((i * 97 + now / (40 + i % 4)) % w + w) % w;
+        var y = ((i * 61 + Math.cos(now / 1100 + i) * 26 + h * 0.22) % h + h) % h;
+        ctx.globalAlpha = 0.035 + (i % 4) * 0.015;
+        ctx.fillStyle = color;
+        ctx.fillText(glyphs[i % glyphs.length], x, y);
+      }
+      ctx.globalAlpha = 1;
+    }
+    function hudIcon(w, h, color) {
+      ctx.fillStyle = color; ctx.globalAlpha = 0.10;
+      ctx.beginPath(); ctx.arc(34, 34, 21, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+      if (mode === "false") iconDatabase(34, 31, 9, color);
+      else if (mode === "sampling") iconDie(34, 34, 8, color);
+      else if (mode === "gap") iconGap(34, 34, 9, color);
+      else iconNot(34, 32, 8, color);
+    }
     function orbitRing(w, h, now, color) {
       ctx.save();
       ctx.strokeStyle = color;
@@ -263,8 +285,11 @@
       var accent = mode === "false" ? "#9185be" : (mode === "sampling" ? "#9f9700" : (mode === "gap" ? "#5c9baf" : "#63a44b"));
       bg(w, h, accent);
       particles(w, h, now, accent);
+      fragments(w, h, now, accent);
       orbitRing(w, h, now, accent);
+      hudIcon(w, h, accent);
       var age = now - t0;
+      var reveal = ease(clamp(age / 620, 0, 1));
       if (age < 900) {
         var pr = clamp(age / 900, 0, 1);
         ctx.globalAlpha = 0.20 * (1 - pr);
@@ -273,10 +298,13 @@
         ctx.beginPath(); ctx.arc(w * 0.5, h * 0.5, 18 + pr * Math.min(w, h) * 0.48, 0, Math.PI * 2); ctx.stroke();
         ctx.globalAlpha = 1;
       }
+      ctx.save();
+      ctx.translate(0, (1 - reveal) * 14);
       if (mode === "false") drawFalse(w, h, now);
       else if (mode === "sampling") drawSampling(w, h, now);
       else if (mode === "gap") drawGap(w, h, now);
       else drawNegation(w, h, now);
+      ctx.restore();
       canvas.setAttribute("aria-label", captions[mode]);
     }
     function loop() { if (!running) return; draw(); loopRaf = requestAnimationFrame(loop); }

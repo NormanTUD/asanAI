@@ -1709,14 +1709,14 @@
     ]
   };
 
-  var qkvStep = {
+  var qkvArcs = {
     kicker: DE ? "Q · K · V" : "Q · K · V",
     title: DE ? "Wie Attention rechnet" : "How attention computes",
     body: DE
       ? "Jedes Token erzeugt drei Vektoren: Query, Key und Value. Der Query fragt, der Key antwortet, der Value trägt die Information. Attention vergleicht Query und Key, macht aus den Scores mit Softmax Gewichte und mischt die Values. Mehrere Heads tun das parallel mit eigenen Gewichten: Ein Head kann nach dem Subjekt fragen, ein anderer nach dem Ort."
       : "Every token produces three vectors: query, key, and value. The query asks, the key answers, and the value carries the information. Attention compares query and key, turns the scores into weights with softmax, and mixes the values. Multiple heads do this in parallel with their own weights: one head can ask for the subject, another for the location.",
     watch: DE ? "Wechsle die Heads: Head 1 zeigt auf „Tier“ (Subjekt), Head 2 auf „Straße“ (Ort)." : "Switch the heads: head 1 points to “animal” (the subject), head 2 to “street” (the location).",
-    demoState: { scene: "qkv", head: 0 },
+    demoState: { scene: "qkv", head: 0, view: "arcs" },
     context: DE ? "Die Scores werden durch sqrt(d_k) geteilt, damit sie in hohen Dimensionen nicht zu groß werden. Jede Query-Zeile summiert nach Softmax zu 1." : "The scores are divided by sqrt(d_k) so they do not grow too large in high dimensions. Each query row sums to 1 after softmax.",
     deep: DE ? "Die Heads sind nicht von Hand programmiert; sie spezialisieren sich im Training. Die zwei Muster in der Demo sind didaktisch: Head 1 fragt nach dem Subjekt, Head 2 nach dem Ort." : "The heads are not hand-programmed; they specialise during training. The two patterns in the demo are didactic: head 1 asks for the subject, head 2 for the location.",
     boxes: [
@@ -1818,6 +1818,36 @@
       { label: "Anthropic (2026), J-space", url: "https://transformer-circuits.pub/2026/workspace/index.html", why: { de: "Lesbarer Arbeitsraum in Claude; Zugang, nicht Erleben.", en: "Readable workspace in Claude; access, not experience." } },
       { label: "SEP: Consciousness", url: "https://plato.stanford.edu/entries/consciousness/", why: { de: "Überblick über die Bewusstseinstheorien.", en: "Overview of theories of consciousness." } }
     ]
+  };
+
+  var qkvSimplex = {
+    kicker: DE ? "Mischung" : "Mixture",
+    title: DE ? "Attention als gewichtete Mischung" : "Attention as a weighted mixture",
+    body: DE
+      ? "Attention gibt nicht einfach ein Wort zurück. Die Ausgabe ist eine gewichtete Mischung der Value-Vektoren: Jedes Gewicht ist nicht negativ, und alle Gewichte summieren zu 1. Nimm drei Values als Punkte im Raum, dann liegt die Ausgabe immer im Dreieck, das diese drei Punkte aufspannen. Veränderst du die Gewichte, wandert der Punkt im Dreieck, aber nie darüber hinaus. Das ist eine konvexe Kombination, ein 2-Simplex."
+      : "Attention does not simply return a word. The output is a weighted mixture of the value vectors: every weight is non-negative, and all weights sum to 1. Take three values as points in space; the output always lies in the triangle those three points span. Change the weights and the point moves inside the triangle, never outside it. That is a convex combination, a 2-simplex.",
+    watch: DE ? "Wechsle die Heads. Wie wandert der Ausgabepunkt im Dreieck?" : "Switch the heads. How does the output point move inside the triangle?",
+    demoState: { scene: "qkv", head: 0, view: "simplex" },
+    context: DE ? "Softmax macht aus den Scores Gewichte α_ij ≥ 0 mit Σ_j α_ij = 1. Die Ausgabe Σ_j α_ij v_j ist daher eine konvexe Kombination der Values. Die Demo zeigt nur drei Values; die echten Gewichte werden auf diese drei normiert. Die echte Ausgabe nutzt alle Values und liegt in deren konvexer Hülle." : "Softmax turns the scores into weights α_ij ≥ 0 with Σ_j α_ij = 1. The output Σ_j α_ij v_j is therefore a convex combination of the values. The demo shows only three values; the real weights are normalised onto these three. The real output uses all values and lies in their convex hull.",
+    deep: DE ? "Bei drei Values ist die Hülle ein Dreieck (2-Simplex). In hohen Dimensionen ist sie ein Polytop. Die Aussage gilt für jeden Head; die Gewichte unterscheiden sich, die Konvexität bleibt." : "With three values the hull is a triangle (2-simplex). In high dimensions it is a polytope. The statement holds for every head; the weights differ, the convexity stays.",
+    boxes: DE ? [
+      box("qkv-s1", "Geometrie", "Warum ein Dreieck?", "Drei Punkte, die nicht auf einer Linie liegen, spannen ein Dreieck auf. Jede konvexe Kombination liegt darin."),
+      box("qkv-s2", "Mathematik", "Was ist ein Simplex?", "Ein Simplex ist die einfachste konvexe Hülle: ein Punkt ist ein 0-Simplex, zwei Punkte eine Strecke, drei Punkte ein Dreieck."),
+      box("qkv-s3", "Grenze", "Gilt das immer?", "Ja, pro Query: Softmax-Gewichte sind nicht negativ und summieren zu 1. Die Ausgabe ist eine konvexe Kombination aller Values."),
+      box("qkv-s4", "Mathematik", "Die Formel", "Gewichtete Summe mit nicht-negativen Gewichten, die zu 1 summieren.", "\\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\ge 0,\\ \\sum_j \\alpha_{ij}=1} v_j}_{\\text{konvexe Kombination der Values}}")
+    ] : [
+      box("qkv-s1", "Geometry", "Why a triangle?", "Three points that are not on one line span a triangle. Every convex combination lies inside it."),
+      box("qkv-s2", "Mathematics", "What is a simplex?", "A simplex is the simplest convex hull: one point is a 0-simplex, two points a segment, three points a triangle."),
+      box("qkv-s3", "Limit", "Does this always hold?", "Yes, per query: softmax weights are non-negative and sum to 1. The output is a convex combination of all values."),
+      box("qkv-s4", "Mathematics", "The formula", "Weighted sum with non-negative weights that sum to 1.", "\\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\ge 0,\\ \\sum_j \\alpha_{ij}=1} v_j}_{\\text{convex combination of the values}}")
+    ],
+    sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Attention als gewichtete Summe der Values mit Softmax-Gewichten.", en: "Attention as a weighted sum of values with softmax weights." } }]
+  };
+
+  var qkvStep = {
+    title: DE ? "Wie Attention rechnet" : "How attention computes",
+    kicker: DE ? "Q · K · V" : "Q · K · V",
+    substeps: [qkvArcs, qkvSimplex]
   };
 
   var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep];

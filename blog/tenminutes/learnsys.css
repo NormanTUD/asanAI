@@ -2117,6 +2117,7 @@ h1,h2,h3,h4{
 .ls-qkv-stage canvas{position:absolute;inset:0;width:100%;height:100%}
 .ls-qkv-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .ls-qkv-query{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.08em}
+.ls-qkv-view{display:flex;gap:4px;flex-wrap:wrap}
 .ls-qkv-query b{color:var(--ls-petrol);font-weight:700;text-transform:none;letter-spacing:0}
 .ls-qkv-vectors{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;min-height:30px}
 .ls-qkv-vec{display:flex;align-items:flex-end;gap:4px;font:600 10px/1 "Open Sans",sans-serif;color:var(--ls-muted)}
