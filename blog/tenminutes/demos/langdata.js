@@ -101,6 +101,8 @@
     var allEl = el.querySelector(".ls-lang-all");
     var mode = "all";
     var showSummary = false;
+    var summaryTimers = [];
+    var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var tag = el.querySelector(".ls-lang-tag");
     var text = el.querySelector(".ls-lang-text");
     var gloss = el.querySelector(".ls-lang-gloss");
@@ -150,17 +152,36 @@
     if (allEl) allEl.innerHTML = langs.map(function (l) {
       return '<p class="ls-lang-all-row"><b>' + api.esc(l.label) + '</b><span lang="' + l.id + '" dir="' + (l.rtl ? "rtl" : "ltr") + '">' + api.esc(l.text) + '</span></p>';
     }).join("");
+    function revealStages() {
+      if (!summaryEl) return;
+      summaryTimers.forEach(clearTimeout);
+      summaryTimers = [];
+      var stages = summaryEl.querySelectorAll(".ls-lang-data-stage");
+      stages.forEach(function (el) { el.classList.remove("is-in"); });
+      if (reducedMotion) {
+        stages.forEach(function (el) { el.classList.add("is-in"); });
+        return;
+      }
+      stages.forEach(function (el, i) {
+        summaryTimers.push(setTimeout(function () { el.classList.add("is-in"); }, 90 + i * 460));
+      });
+    }
     function applyMode() {
       var isTruth = mode === "truth";
       var isLang = mode === "languages";
       var isScale = mode === "scale";
+      var showSummaryNow = isScale && showSummary;
       if (sampleEl) sampleEl.hidden = isTruth || isScale;
       if (tabs) tabs.hidden = true;
       if (truthEl) truthEl.hidden = !isTruth;
       if (mixEl) mixEl.hidden = !isScale;
-      if (summaryEl) summaryEl.hidden = !(isScale && showSummary);
-      if (detailEl) detailEl.hidden = isScale && showSummary;
-      if (caveatEl) caveatEl.hidden = isTruth;
+      if (summaryEl) {
+        var wasHidden = summaryEl.hidden;
+        summaryEl.hidden = !showSummaryNow;
+        if (showSummaryNow && wasHidden) revealStages();
+      }
+      if (detailEl) detailEl.hidden = showSummaryNow;
+      if (caveatEl) caveatEl.hidden = isTruth || showSummary;
       if (navEl) navEl.hidden = true;
       if (allEl) allEl.hidden = !isLang;
       if (sampleEl) sampleEl.querySelectorAll(":scope > .ls-lang-tag, :scope > .ls-lang-text, :scope > .ls-lang-gloss").forEach(function (x) { x.hidden = isLang; });

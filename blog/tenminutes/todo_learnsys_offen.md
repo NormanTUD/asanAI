@@ -189,3 +189,10 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   Goodfellow 2016, Vaswani 2017, Ji 2023, Guo 2017, Kadavath 2022 und Lin 2022.
 - [pending] Die visuelle Sprache auf die bestehenden Demos ausrollen; die drei
   neuen Demos sind der Maßstab.
+- [done] Daten-Demo: Tabelle aufgelöst. Stufe 1 (Vortraining) und Stufe 2
+  (Fine-Tuning) stehen jetzt untereinander, erscheinen nacheinander und zeigen
+  ihre eigenen Daten und Beispiele. Stufe 2 antwortet mit „Die Hauptstadt von
+  Frankreich ist Paris.“
+- [done] Der Petrov-/Mehr-Tokens-Caveat ist auf der Datenfolie ausgeblendet.
+- [done] Der Kurztext sagt klarer, dass das Netz zuerst die Internetbreite für
+  Muster braucht und danach per Fine-Tuning detaillierter auf Fragen antwortet.
