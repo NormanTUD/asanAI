@@ -1511,6 +1511,188 @@
     sources: []
   };
 
+  var gaussDataStep = DE ? {
+    title: "Gauß, Ceres und die Daten",
+    kicker: "Ceres",
+    substeps: [
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Daraus entstanden die Methode der kleinsten Quadrate und der mittlere quadratische Fehler (MSE), mit dem man noch heute neuronale Netze trainiert.",
+        teaser: "Giuseppe Piazzi entdeckte 1801 den Zwergplaneten <b>Ceres</b>. Nach kurzer Beobachtungszeit verschwand er hinter der Sonne, und niemand wusste mehr, wo man suchen sollte, weil die Messungen zu ungenau waren. <b>Gauß</b> erkannte, dass sich Messfehler um die wahre Bahn verteilen: Einige liegen weit daneben, andere ganz nah, aber im Mittel stimmen sie. Daraus entstanden die Methode der kleinsten Quadrate und der mittlere quadratische Fehler (MSE), mit dem man noch heute neuronale Netze trainiert.",
+        watch: "Schau dir die beiden Bilder an. Danach wird das Teleskop Schritt für Schritt besser.",
+        demoState: { scene: "gauss", phase: "intro" },
+        inherit: false,
+        questionGroups: [
+          {
+            id: "g-basics",
+            title: "Eine Ebene tiefer",
+            questions: [
+              { id: "q-context", title: "Was ist der Kontext?", body: "Die Bilder sind eine Einladung: Ceres war ein realer Himmelskörper, und Gauß' Methode war ein realer Umgang mit unsicheren Daten. Die Demo zeigt das Prinzip mit synthetischen Daten.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-lens-mathematik",
+            title: "Mathematik",
+            questions: [
+              { id: "q-box-gauss-2", title: "Was macht die Methode?", body: "Sie minimiert die Summe der quadrierten Abstände zwischen Beobachtungen und Modell, den mittleren quadratischen Fehler (MSE). Große Abweichungen zählen quadratisch, kleine kaum.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-lens-daten",
+            title: "Daten",
+            questions: [
+              { id: "q-box-gauss-3", title: "Warum im Schnitt richtig?", body: "Einzelne Messungen können falsch sein: Menschen irren sich, Messungen haben Fehler, Menschen lügen. Über viele Messungen mitteln sich zufällige Fehler; die Anpassung landet in der Mitte. Systematische Fehler bleiben, deshalb ist Kuration wichtig.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-sources",
+            title: "Quellen",
+            sources: gaussSteps[0].sources
+          }
+        ]
+      },
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
+        teaser: "Die Beobachtungen sind verrauscht: Jeder Punkt liegt neben der wahren Bahn, und die Glockenkurve der Fehler ist breit. Ein einzelner Punkt wäre als Bahn unbrauchbar. Drücke Weiter: Das Teleskop wird besser.",
+        watch: "Ziehe den Slider oder klicke weiter und sieh, wie mit besseren Teleskopen die Daten genauer werden. Reale Daten liegen genauso um eine Wahrheit herum. Texte zum Beispiel können komplett richtig, teilweise richtig oder komplett falsch sein.",
+        demoState: { scene: "gauss", phase: "demo", sigma: 2 },
+        context: "Die grüne Linie ist die wahre Bahn; die blauen Punkte sind Beobachtungen; die Glockenkurve rechts zeigt die Fehlerverteilung. Die Daten sind synthetisch, nicht Piazzis originale Messungen.",
+        deep: "Ohne Ausgleich müsste man eine Bahn durch einen einzelnen Punkt legen. Gauß nutzte alle Beobachtungen zusammen.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Das Teleskop ist besser: Die Wolke zieht sich zusammen, die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte der Fehler. Drücke Weiter für das beste Teleskop.",
+        teaser: "Das Teleskop ist besser: Die Wolke zieht sich zusammen, die Glockenkurve wird schmaler. Die wahre Bahn bleibt in der Mitte der Fehler. Drücke Weiter für das beste Teleskop.",
+        watch: "Drücke Weiter. Wie schmal wird die Glockenkurve?",
+        demoState: { scene: "gauss", phase: "demo", sigma: 1 },
+        context: "Je kleiner die Streuung, desto enger liegt die Glockenkurve um die wahre Bahn. Die Beobachtungen bleiben fehlerhaft, aber der Ausgleich wird stabiler.",
+        deep: "Die Methode der kleinsten Quadrate minimiert die Summe der quadrierten Abstände, also den mittleren quadratischen Fehler (MSE). Viele kleine Fehler mitteln sich; ein einzelner Ausreißer zählt quadriert.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Das ist der mittlere quadratische Fehler (MSE), und dieselbe Regel trainiert noch moderne Modelle. Drücke Weiter zu den Daten.",
+        teaser: "Jetzt liegt die Wolke eng um die Bahn. Gauß' Methode der kleinsten Quadrate wählt die Bahn, die allen Beobachtungen zugleich am nächsten liegt; keine einzelne Messung wird geglaubt. Das ist der mittlere quadratische Fehler (MSE), und dieselbe Regel trainiert noch moderne Modelle. Drücke Weiter zu den Daten.",
+        watch: "Drücke Weiter. Was passiert, wenn die Beobachtungen nicht mehr exakt sind?",
+        demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
+        context: "Die Glockenkurve ist eng; die wahre Bahn liegt in der Mitte. Der Ausgleich glaubt keiner einzelnen Messung, sondern wählt die Kurve, die allen zugleich am nächsten bleibt; minimiert wird der mittlere quadratische Fehler (MSE).",
+        deep: "Dieselbe Arithmetik erscheint in jedem trainierten Netz: Ein Modell ist eine Kurve, die Daten sind verrauschte Punkte, und das Training wählt die Gewichte, deren Vorhersagen im Durchschnitt am nächsten an den Beobachtungen liegen.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Daten",
+        title: "Gauß, Ceres und die Daten",
+        body: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. " + dataTruthStep.body,
+        teaser: "Texte verhalten sich ähnlich wie Gauß' Messungen: Manche Sätze sind ganz richtig, manche weniger falsch, manche falsch, aber im Schnitt liegen sie um eine Wahrheit. " + dataTruthStep.body,
+        watch: dataTruthStep.watch,
+        demoState: dataTruthStep.demoState,
+        context: dataTruthStep.context,
+        deep: dataTruthStep.deep,
+        boxes: dataTruthStep.boxes,
+        sources: dataTruthStep.sources
+      }
+    ]
+  } : {
+    title: "Gauss, Ceres, and the data",
+    kicker: "Ceres",
+    substeps: [
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "Giuseppe Piazzi discovered the dwarf planet <b>Ceres</b> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. This gave rise to least squares and the mean squared error (MSE), which is still used to train neural networks today.",
+        teaser: "Giuseppe Piazzi discovered the dwarf planet <b>Ceres</b> in 1801. After a short observing period it disappeared behind the Sun, and no one knew where to look because the measurements were too imprecise. <b>Gauss</b> realised that measurement errors scatter around the true orbit: some lie far off, others very close, but on average they agree. This gave rise to least squares and the mean squared error (MSE), which is still used to train neural networks today.",
+        watch: "Look at the two images. Then the telescope gets better step by step.",
+        demoState: { scene: "gauss", phase: "intro" },
+        inherit: false,
+        questionGroups: [
+          {
+            id: "g-basics",
+            title: "One level deeper",
+            questions: [
+              { id: "q-context", title: "What is the context?", body: "The images are an invitation: Ceres was a real body, and Gauss's method was a real way of handling uncertain data. The demo shows the principle with synthetic data.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-lens-mathematik",
+            title: "Mathematics",
+            questions: [
+              { id: "q-box-gauss-2", title: "What does the method do?", body: "It minimises the sum of squared distances between observations and model, the mean squared error (MSE). Large deviations count squared, small ones barely.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-lens-daten",
+            title: "Data",
+            questions: [
+              { id: "q-box-gauss-3", title: "Why right on average?", body: "Individual measurements can be wrong: people make mistakes, measurements have errors, people lie. Over many measurements random errors average out; the fit lands in the middle. Systematic errors remain, which is why curation matters.", tex: "", kind: "question" }
+            ]
+          },
+          {
+            id: "g-sources",
+            title: "Sources",
+            sources: gaussSteps[0].sources
+          }
+        ]
+      },
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is wide. A single point would be useless as an orbit. Press Next: the telescope improves.",
+        teaser: "The observations are noisy: every point lies beside the true orbit, and the bell curve of errors is wide. A single point would be useless as an orbit. Press Next: the telescope improves.",
+        watch: "Drag the slider or click through and watch the data become more precise with better telescopes. Real data sits around a truth in the same way. Sentences, for example, can be completely right, partly right, or completely wrong.",
+        demoState: { scene: "gauss", phase: "demo", sigma: 2 },
+        context: "The green line is the true orbit; the blue points are observations; the bell curve on the right shows the error distribution. The data are synthetic, not Piazzi's original measurements.",
+        deep: "Without fitting, one would have to put an orbit through a single point. Gauss used all observations together.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "The telescope is better: the cloud contracts, the bell curve narrows. The true orbit stays in the middle of the errors. Press Next for the best telescope.",
+        teaser: "The telescope is better: the cloud contracts, the bell curve narrows. The true orbit stays in the middle of the errors. Press Next for the best telescope.",
+        watch: "Press Next. How narrow does the bell curve become?",
+        demoState: { scene: "gauss", phase: "demo", sigma: 1 },
+        context: "The smaller the spread, the tighter the bell curve around the true orbit. The observations remain noisy, but the fit becomes more stable.",
+        deep: "Least squares minimises the sum of squared distances, the mean squared error (MSE). Many small errors average out; a single outlier counts squared.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted. That is the mean squared error (MSE), and the same rule still trains modern models. Press Next to the data.",
+        teaser: "Now the cloud lies tightly around the orbit. Gauss's least squares chooses the orbit closest to all observations at once; no single measurement is trusted. That is the mean squared error (MSE), and the same rule still trains modern models. Press Next to the data.",
+        watch: "Press Next. What happens when the observations are no longer exact?",
+        demoState: { scene: "gauss", phase: "demo", sigma: 0.3 },
+        context: "The bell curve is narrow; the true orbit lies in the middle. The fit trusts no single measurement and chooses the curve closest to all of them at once; it minimises the mean squared error (MSE).",
+        deep: "The same arithmetic appears in every trained network: a model is a curve, the data are noisy points, and training chooses the weights whose predictions are closest to the observations on average.",
+        boxes: gaussSteps[0].boxes,
+        sources: gaussSteps[0].sources
+      },
+      {
+        kicker: "Data",
+        title: "Gauss, Ceres, and the data",
+        body: "Text data behaves similarly to Gauss's measurements: some sentences are completely right, some less wrong, some wrong, but on average they sit around a truth. " + dataTruthStep.body,
+        teaser: "Text data behaves similarly to Gauss's measurements: some sentences are completely right, some less wrong, some wrong, but on average they sit around a truth. " + dataTruthStep.body,
+        watch: dataTruthStep.watch,
+        demoState: dataTruthStep.demoState,
+        context: dataTruthStep.context,
+        deep: dataTruthStep.deep,
+        boxes: dataTruthStep.boxes,
+        sources: dataTruthStep.sources
+      }
+    ]
+  };
+
   var tokenizeBpeStep = Object.assign({}, tokenizeSteps[0], {
     kicker: DE ? "BPE" : "BPE",
     title: DE ? "BPE: Zeichen → Paare → Merges" : "BPE: characters → pairs → merges",
@@ -1541,6 +1723,21 @@
     deep: attentionSteps[1].deep,
     boxes: attentionSteps[1].boxes.concat(attentionSteps[0].boxes),
     sources: attentionSteps[1].sources
+  };
+  var codeAttentionSubstep = {
+    kicker: "Code",
+    title: "Attention verschiebt Bedeutungen in Kontexte",
+    body: "„def quick_sort“ und „function quickSort“ sehen verschieden aus, meinen aber dasselbe: einen abstrakten Funktionsaufruf, der auf einen abstrakten Quicksort-Knoten zeigt. Die Unterschiede sind Oberflächenrauschen: Sprache, Schreibweise, Satzzeichen. Attention liest den Kontext, erkennt, was relevant ist, und verschiebt die Tokens auf die gemeinsame abstrakte Repräsentation. Klicke Beide, Python oder JavaScript.",
+    watch: "Klicke die drei Modi. Landen def und function auf demselben Knoten?",
+    demoState: { scene: "codesemantic", semMode: "both" },
+    context: "Die linke Seite ist die Oberfläche: verschiedene Schreibweisen. Die rechte Seite ist die abstrakte Bedeutung: Funktionsaufruf → Quicksort. Attention entfernt nicht die Wörter, sondern verschiebt ihre Repräsentation.",
+    deep: "Dasselbe Muster gilt für andere Paare: class/struct, return/yield, if/when. Die Oberfläche variiert mit Sprache und Stil; die abstrakte Rolle bleibt. In einem echten Modell sind diese Richtungen gelernt und viel komplexer.",
+    boxes: [
+      box("sem-1", "Technik", "Oberfläche und Bedeutung", "def und function sind verschiedene Oberflächen für dieselbe Rolle: eine Funktionsdefinition. quick_sort und quickSort sind verschiedene Oberflächen für dieselbe Rolle: Quicksort. Attention gewichtet den Kontext und verschiebt die Tokens auf gemeinsame Richtungen."),
+      box("sem-2", "Beispiel", "Andere Paare", "class/struct, return/yield, if/when: Die Schreibweise ändert sich, die abstrakte Rolle nicht. Das Modell lernt diese gemeinsamen Richtungen aus vielen Kontexten."),
+      box("sem-3", "Grenze", "Was ist vereinfacht?", "Die Demo zeigt wenige Wörter und zwei abstrakte Knoten. Ein echtes Modell hat Tausende Dimensionen und viele überlappende Rollen. Die Pfeile sind eine didaktische Vereinfachung, keine Messung.")
+    ],
+    sources: [{ label: "Tenney et al. (2019), BERT Rediscovers the Classical NLP Pipeline", url: "https://aclanthology.org/P19-1356/", why: { de: "Schichten bilden linguistische Rollen heraus.", en: "Layers develop linguistic roles." } }]
   };
   var attentionMergeStep = {
     title: DE ? "Attention: Kontext und Matrix" : "Attention: context and matrix",
@@ -1582,6 +1779,17 @@
       { label: "Mikolov et al. (2013), Linguistic Regularities in Continuous Space Word Representations", url: "https://arxiv.org/abs/1301.3781", why: { de: "Wortvektoren und regelmäßige Bedeutungsrichtungen.", en: "Word vectors and regular directions of meaning." } },
       { label: "Turner et al. (2023), Steering Language Models With Activation Engineering", url: "https://arxiv.org/abs/2308.10248", why: { de: "Gezielte Verschiebung von Aktivierungen.", en: "Deliberate steering of activations." } }
     ]
+  };
+
+  var neuralStepA = {
+    title: DE ? "Was sind neuronale Netze?" : "What are neural networks?",
+    kicker: DE ? "Aktivierung · 1 Neuron" : "Activation · 1 neuron",
+    substeps: [activationSteps[0], insideSteps[0]]
+  };
+  var neuralStepB = {
+    title: DE ? "Was sind neuronale Netze?" : "What are neural networks?",
+    kicker: DE ? "Loss · großes Netz · Raum" : "Loss · large net · space",
+    substeps: [neuralLargeSteps[0], mlpSteps[0]]
   };
 
   var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep, bookSteps[0]];
