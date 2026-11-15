@@ -2079,3 +2079,10 @@ h1,h2,h3,h4{
 .ls-lang-data-ex p{margin:2px 0;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif}
 .ls-lang-data-ex-in{color:var(--ls-muted)}
 .ls-lang-data-ex-out{color:var(--ls-ink);font-weight:600;overflow-wrap:anywhere}
+.ls-lang-data-code{margin:0;padding:7px 8px;border:1px solid #0d2a35;background:#071a22;color:#eef7f4;font:var(--ls-fs-micro)/1.45 ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.ls-lang-data-code code{font:inherit;color:inherit}
+.ls-lang-data-code .ls-code-tag{color:#5c9baf;font-weight:700}
+.ls-lang-data-chat{display:flex;flex-direction:column;gap:5px;margin-top:2px}
+.ls-lang-bubble{max-width:94%;padding:6px 8px;border:1px solid var(--ls-line);font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-ink)}
+.ls-lang-bubble--user{align-self:flex-end;background:rgba(18,117,172,.10);border-color:rgba(18,117,172,.28)}
+.ls-lang-bubble--agent{align-self:flex-start;background:rgba(99,164,75,.12);border-left:3px solid var(--ls-green)}

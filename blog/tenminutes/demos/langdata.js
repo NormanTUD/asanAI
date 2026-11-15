@@ -72,8 +72,8 @@
             '</tbody>' +
           '</table>' +
           '<div class="ls-lang-data-examples">' +
-            '<div class="ls-lang-data-ex"><span class="ls-lang-data-ex-label">' + (DE ? "Stufe 1 · Rohdaten" : "Stage 1 · raw data") + '</span><p class="ls-lang-data-ex-in">' + (DE ? "Wikipedia-Artikel „Paris“" : "Wikipedia article “Paris”") + '</p><p class="ls-lang-data-ex-out">' + (DE ? "&lt;p&gt;Paris ist die Hauptstadt und bevölkerungsreichste Stadt Frankreichs. Die Stadt liegt an der Seine.&lt;/p&gt;" : "&lt;p&gt;Paris is the capital and largest city of France. It is situated on the Seine.&lt;/p&gt;") + '</p></div>' +
-            '<div class="ls-lang-data-ex"><span class="ls-lang-data-ex-label">' + (DE ? "Stufe 2 · Gespräch" : "Stage 2 · conversation") + '</span><p class="ls-lang-data-ex-in">' + (DE ? "Sage mir, was die Hauptstadt von Frankreich ist." : "Tell me what the capital of France is.") + '</p><p class="ls-lang-data-ex-out">' + (DE ? "Paris." : "Paris.") + '</p></div>' +
+            '<div class="ls-lang-data-ex"><span class="ls-lang-data-ex-label">' + (DE ? "Stufe 1 · Rohdaten" : "Stage 1 · raw data") + '</span><p class="ls-lang-data-ex-in">' + (DE ? "Wikipedia-Artikel „Paris“" : "Wikipedia article “Paris”") + '</p><pre class="ls-lang-data-code"><code><span class="ls-code-tag">&lt;p&gt;</span>' + (DE ? "Paris ist die Hauptstadt und bevölkerungsreichste Stadt Frankreichs. Die Stadt liegt an der Seine." : "Paris is the capital and largest city of France. It is situated on the Seine.") + '<span class="ls-code-tag">&lt;/p&gt;</span></code></pre></div>' +
+            '<div class="ls-lang-data-ex"><span class="ls-lang-data-ex-label">' + (DE ? "Stufe 2 · Gespräch" : "Stage 2 · conversation") + '</span><div class="ls-lang-data-chat"><div class="ls-lang-bubble ls-lang-bubble--user">' + (DE ? "Sage mir, was die Hauptstadt von Frankreich ist." : "Tell me what the capital of France is.") + '</div><div class="ls-lang-bubble ls-lang-bubble--agent">' + (DE ? "Paris." : "Paris.") + '</div></div></div>' +
           '</div>' +
         '</div>' +
         '<div class="ls-lang-mix-detail">' +
