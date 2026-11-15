@@ -196,3 +196,27 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] Der Petrov-/Mehr-Tokens-Caveat ist auf der Datenfolie ausgeblendet.
 - [done] Der Kurztext sagt klarer, dass das Netz zuerst die Internetbreite für
   Muster braucht und danach per Fine-Tuning detaillierter auf Fragen antwortet.
+- [done] Q/K/V-Folie: falscher Titel kam vom alten indexbasierten Text-Overlay;
+  Overlay-Revision erhöht. Der Watch-Text nennt jetzt Head 1 → animal und
+  Head 2 → street.
+- [done] „Code“-Kicker der Code-Attention-Unterfolie ist jetzt „Attention“.
+- [done] Loss-Landschaft: Graph größer, Formelbereich kleiner; fette
+  TODO-Box „Automatisches Ableiten“ ergänzt.
+- [done] 1-Neuron-Folie: Live-Formel `ŷ = w x + b` unter der Demo, ohne
+  „Matrizen zeigen“.
+- [done] 32×32×32-Folie: Formel und Loss-Chart standardmäßig aus, Stage groß.
+- [done] FFN-Folie heißt jetzt „Die Rolle von neuronalen Netzen im Transformer“.
+- [done] Unembedding-Folie: „Weiter“ geht durch Wortkarte, Winkel,
+  Skaleninvarianz und Unembedding; „Scale Invariance“ ist lokalisiert.
+- [done] Softmax-Demo: DE nutzt deutsche Prompts/Tokens, EN englische;
+  Beschriftung ist „illustrative Logits“, nicht echte GPT-2-Messung.
+- [done] Cross-Entropy-Folie klarer: konkretes Paris/London-Beispiel,
+  −log(0.30) ≈ 1.20, Gradient p−y und Trainingsschritt; Demo-Logits passen
+  zu 30 %/50 %.
+- [done] Daten-Demo: Stufe 1 erscheint beim Laden; Fine-Tuning (Stufe 2)
+  erscheint erst nach dem nächsten „Weiter“. Ein weiterer „Weiter“-Klick geht
+  zur nächsten Folie; „Zurück“ blendet Stufe 2 wieder aus.
+- [done] Scrollbar-Flackern links analysiert: die `mask-image` auf dem
+  Scroll-Container und ein nicht reservierter Scrollbar-Platz waren die
+  Ursache. Maske entfernt, `scrollbar-gutter: stable`, `overflow-x: hidden`
+  und Quellen-Links umbrechen jetzt.

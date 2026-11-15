@@ -95,14 +95,17 @@
     var truthEl = el.querySelector(".ls-lang-truth");
     var mixEl = el.querySelector(".ls-lang-mix");
     var summaryEl = el.querySelector(".ls-lang-data-summary");
+    var summaryStages = summaryEl ? Array.prototype.slice.call(summaryEl.querySelectorAll(".ls-lang-data-stage")) : [];
+    var summaryBridge = summaryEl ? summaryEl.querySelector(".ls-lang-data-bridge") : null;
     var detailEl = el.querySelector(".ls-lang-mix-detail");
     var caveatEl = el.querySelector(".ls-lang-caveat");
     var navEl = el.querySelector(".ls-lang-nav");
     var allEl = el.querySelector(".ls-lang-all");
     var mode = "all";
     var showSummary = false;
-    var summaryTimers = [];
-    var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    var summaryStep = 0;
+    var summaryStages = [];
+    var summaryBridge = null;
     var tag = el.querySelector(".ls-lang-tag");
     var text = el.querySelector(".ls-lang-text");
     var gloss = el.querySelector(".ls-lang-gloss");
@@ -152,18 +155,23 @@
     if (allEl) allEl.innerHTML = langs.map(function (l) {
       return '<p class="ls-lang-all-row"><b>' + api.esc(l.label) + '</b><span lang="' + l.id + '" dir="' + (l.rtl ? "rtl" : "ltr") + '">' + api.esc(l.text) + '</span></p>';
     }).join("");
-    function revealStages() {
-      if (!summaryEl) return;
-      summaryTimers.forEach(clearTimeout);
-      summaryTimers = [];
-      var stages = summaryEl.querySelectorAll(".ls-lang-data-stage");
-      stages.forEach(function (el) { el.classList.remove("is-in"); });
-      if (reducedMotion) {
-        stages.forEach(function (el) { el.classList.add("is-in"); });
-        return;
-      }
-      stages.forEach(function (el, i) {
-        summaryTimers.push(setTimeout(function () { el.classList.add("is-in"); }, 90 + i * 460));
+    function setSummaryStep(step) {
+      summaryStep = step ? 1 : 0;
+      if (summaryBridge) summaryBridge.hidden = summaryStep < 1;
+      summaryStages.forEach(function (stage, i) {
+        if (i === 0) {
+          stage.hidden = false;
+          stage.classList.remove("is-in");
+          requestAnimationFrame(function () { stage.classList.add("is-in"); });
+        } else if (summaryStep >= 1) {
+          stage.hidden = false;
+          stage.classList.remove("is-in");
+          void stage.offsetWidth;
+          stage.classList.add("is-in");
+        } else {
+          stage.hidden = true;
+          stage.classList.remove("is-in");
+        }
       });
     }
     function applyMode() {
@@ -178,7 +186,7 @@
       if (summaryEl) {
         var wasHidden = summaryEl.hidden;
         summaryEl.hidden = !showSummaryNow;
-        if (showSummaryNow && wasHidden) revealStages();
+        if (showSummaryNow && wasHidden) setSummaryStep(0);
       }
       if (detailEl) detailEl.hidden = showSummaryNow;
       if (caveatEl) caveatEl.hidden = isTruth || showSummary;
@@ -295,8 +303,20 @@
         applyMode();
         requestAnimationFrame(drawTruth);
       },
-      next: function () { return false; },
-      prev: function () { return false; },
+      next: function () {
+        if (showSummary && mode === "scale" && summaryStep < 1) {
+          setSummaryStep(1);
+          return true;
+        }
+        return false;
+      },
+      prev: function () {
+        if (showSummary && mode === "scale" && summaryStep > 0) {
+          setSummaryStep(0);
+          return true;
+        }
+        return false;
+      },
       onKey: function () { return false; },
       resize: function () { drawTruth(); },
       destroy: function () { window.removeEventListener("resize", resize); el.remove(); }

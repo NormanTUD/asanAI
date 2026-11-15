@@ -6,7 +6,7 @@
   function crossEntropyScene(root, api) {
     var DE = api.lang === "de";
     var tokens = ["Paris", "London", "Berlin", "the"];
-    var initial = [1.0, 2.2, 0.6, 0.2];
+    var initial = [1.69, 2.2, 0.77, 0.37];
     var logits = initial.slice();
     var target = 0, lr = 0.9;
     var history = [];
