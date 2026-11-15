@@ -141,10 +141,11 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] „Die nächsten Tage“ zeigt keine Stationen mehr. In der Demo steht die
   kurze Botschaft „Die nächsten Tage werden wir diese Bausteine genauer
   anschauen.“; der linke Text ist nur noch ein kurzer Ausblick.
-- [done] Daten-Unterfolie: linke Spalte auf drei Sätze gekürzt; die
-  Ultrakurzfassung der zwei Datensätze und des Fine-Tunings steht jetzt als
-  Zusammenfassung in der Demo rechts. Die langen Cues sind entfernt, die
-  GPT-3-Balken erscheinen dort nicht mehr.
+- [done] Daten-Unterfolie: linke Spalte auf drei Sätze gekürzt. In der Demo
+  rechts steht jetzt eine Tabelle mit den zwei Trainingsstufen und
+  Beispielvervollständigungen: Stufe 1 setzt den Paris-Wikipedia-HTML-Text fort,
+  Stufe 2 antwortet auf die Frankreich-Frage mit „Paris“. Die langen Cues und
+  die GPT-3-Balken erscheinen dort nicht mehr.
 - [done] Ceres-Folie: Kicker ist auf allen Unterfolien „Daten“ (EN „Data“),
   damit oben nichts springt. Der Teleskop-Slider animiert σ weich zwischen den
   Schritten.

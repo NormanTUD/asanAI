@@ -2066,3 +2066,14 @@ h1,h2,h3,h4{
 .ls-roadmap-card p{margin:0;font:var(--ls-fs-body)/1.55 "Open Sans",sans-serif;color:var(--ls-soft);text-align:center}
 .ls-roadmap-sub{display:block;margin-top:12px;font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-lang-mix-detail[hidden]{display:none}
+.ls-lang-data-summary{display:grid;gap:6px}
+.ls-lang-data-table{width:100%;border-collapse:collapse;font:var(--ls-fs-micro)/1.35 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-lang-data-table th{text-align:left;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.08em;padding:3px 5px;border-bottom:1px solid var(--ls-line)}
+.ls-lang-data-table td{padding:4px 5px;border-bottom:1px solid var(--ls-line);vertical-align:top}
+.ls-lang-data-table td b{color:var(--ls-petrol);font-weight:600}
+.ls-lang-data-examples{display:grid;gap:5px;margin-top:2px}
+.ls-lang-data-ex{border:1px solid var(--ls-line);background:#fff;padding:5px 7px}
+.ls-lang-data-ex-label{display:block;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-green);margin-bottom:2px}
+.ls-lang-data-ex p{margin:2px 0;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif}
+.ls-lang-data-ex-in{color:var(--ls-muted)}
+.ls-lang-data-ex-out{color:var(--ls-ink);font-weight:600;overflow-wrap:anywhere}

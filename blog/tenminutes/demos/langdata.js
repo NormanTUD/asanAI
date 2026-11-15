@@ -64,9 +64,17 @@
       '</div>' +
       '<div class="ls-lang-mix">' +
         '<div class="ls-lang-data-summary" hidden>' +
-          '<div class="ls-lang-data-row"><b>' + (DE ? "Großer Datensatz" : "Large dataset") + '</b><span>' + (DE ? "Mehr oder weniger das Internet: Wikipedia, Reddit, Bücher, Webseiten, Quellcode." : "More or less the internet: Wikipedia, Reddit, books, websites, source code.") + '</span></div>' +
-          '<div class="ls-lang-data-row"><b>' + (DE ? "Kleiner Datensatz" : "Small dataset") + '</b><span>' + (DE ? "Menschenfragen, auch mit Tippfehlern und Unklarheiten, plus nützliche Antworten." : "Human questions, including typos and unclear wording, plus useful answers.") + '</span></div>' +
-          '<div class="ls-lang-data-row"><b>' + (DE ? "Training" : "Training") + '</b><span>' + (DE ? "Erst Vortraining auf dem großen Datensatz, dann Fine-Tuning auf dem kleinen." : "First pretraining on the large dataset, then fine-tuning on the small one.") + '</span></div>' +
+          '<table class="ls-lang-data-table">' +
+            '<thead><tr><th>' + (DE ? "Stufe" : "Stage") + '</th><th>' + (DE ? "Daten" : "Data") + '</th><th>' + (DE ? "Was das Netz tut" : "What the net does") + '</th></tr></thead>' +
+            '<tbody>' +
+              '<tr><td><b>1 · ' + (DE ? "Vortraining" : "Pretraining") + '</b></td><td>' + (DE ? "Mehr oder weniger das ganze Internet: Wikipedia, Reddit, Bücher, Webseiten, Quellcode." : "More or less the entire internet: Wikipedia, Reddit, books, websites, source code.") + '</td><td>' + (DE ? "Setzt rohe Daten fort." : "Continues raw data.") + '</td></tr>' +
+              '<tr><td><b>2 · ' + (DE ? "Fine-Tuning" : "Fine-tuning") + '</b></td><td>' + (DE ? "Menschenfragen, auch mit Tippfehlern und Unklarheiten, plus nützliche Antworten." : "Human questions, including typos and unclear wording, plus useful answers.") + '</td><td>' + (DE ? "Antwortet als Gesprächspartner." : "Answers as a conversation partner.") + '</td></tr>' +
+            '</tbody>' +
+          '</table>' +
+          '<div class="ls-lang-data-examples">' +
+            '<div class="ls-lang-data-ex"><span class="ls-lang-data-ex-label">' + (DE ? "Stufe 1 · Rohdaten" : "Stage 1 · raw data") + '</span><p class="ls-lang-data-ex-in">' + (DE ? "Wikipedia-Artikel „Paris“" : "Wikipedia article “Paris”") + '</p><p class="ls-lang-data-ex-out">' + (DE ? "&lt;p&gt;Paris ist die Hauptstadt und bevölkerungsreichste Stadt Frankreichs. Die Stadt liegt an der Seine.&lt;/p&gt;" : "&lt;p&gt;Paris is the capital and largest city of France. It is situated on the Seine.&lt;/p&gt;") + '</p></div>' +
+            '<div class="ls-lang-data-ex"><span class="ls-lang-data-ex-label">' + (DE ? "Stufe 2 · Gespräch" : "Stage 2 · conversation") + '</span><p class="ls-lang-data-ex-in">' + (DE ? "Sage mir, was die Hauptstadt von Frankreich ist." : "Tell me what the capital of France is.") + '</p><p class="ls-lang-data-ex-out">' + (DE ? "Paris." : "Paris.") + '</p></div>' +
+          '</div>' +
         '</div>' +
         '<div class="ls-lang-mix-detail">' +
         '<div class="ls-lang-mix-head">' + (DE ? "Die Datenmischung" : "The data mix") + '</div>' +
