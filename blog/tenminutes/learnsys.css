@@ -109,6 +109,13 @@ button{color:inherit}
 .ls-stage-head span{font-size:var(--ls-fs-micro);text-transform:uppercase;letter-spacing:.1em;color:var(--ls-muted)}
 .ls-stage-head b{font-size:var(--ls-fs-ui)}
 .ls-demo{position:relative;z-index:1;flex:1;min-height:0;padding:12px 16px 8px}
+.ls-demo-body{position:relative;flex:1;min-height:0;display:flex}
+.ls-demo-body>.ls-demo{flex:1;min-height:0}
+.ls-demo-loader{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;background:var(--ls-paper-2);pointer-events:none}
+.ls-demo-loader[hidden]{display:none}
+.ls-spinner{width:24px;height:24px;border:2px solid var(--ls-line);border-top-color:var(--ls-green);border-radius:50%;animation:ls-spin .8s linear infinite}
+@keyframes ls-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.ls-spinner{animation:none;border-top-color:var(--ls-green)}}
 .ls-stage-foot{position:relative;z-index:2;display:flex;justify-content:space-between;gap:14px;padding:8px 22px 12px;border-top:1px solid var(--ls-line);font-size:var(--ls-fs-micro);color:var(--ls-muted);background:rgba(247,249,248,.86)}
 .ls-credit{text-align:right;white-space:nowrap}
 .ls-day-row{display:flex;align-items:center;gap:4px;min-width:0;min-height:0}

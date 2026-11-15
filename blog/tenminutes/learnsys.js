@@ -131,6 +131,9 @@
   var currentDemoDay = null;
   var lastDemoDay = null;
   var lastDemoStep = null;
+  var lastMountedScene = null;
+  var demoLoaderShownAt = 0;
+  var demoLoaderTimer = 0;
   var els = {};
   var tipTimer = 0;
   var tipTerm = null;
@@ -827,7 +830,7 @@
           '</section>' +
           '<section class="ls-stage" id="ls-stage" aria-label="' + esc(t("interactiveDemo")) + '">' +
             '<div class="ls-stage-head"><span id="ls-stage-kicker"></span><b id="ls-stage-title"></b><button type="button" class="ls-btn ls-btn--tiny ls-text-toggle" id="ls-text-toggle" aria-expanded="false">' + (LANG === "de" ? "Text" : "Text") + '</button><button type="button" class="ls-btn ls-btn--tiny ls-focus-btn" id="ls-focus" aria-pressed="false">' + esc(t("demoLarge")) + '</button></div>' +
-            '<div class="ls-demo" id="ls-demo"></div>' +
+            '<div class="ls-demo-body"><div class="ls-demo" id="ls-demo"></div><div class="ls-demo-loader" id="ls-demo-loader" hidden role="status" aria-live="polite"><span class="ls-spinner" aria-hidden="true"></span><span class="ls-sr-only">' + (LANG === "de" ? "Demo lädt …" : "Loading demo …") + '</span></div></div>' +
             '<div class="ls-stage-foot"><span id="ls-stage-hint"></span><span class="ls-credit" id="ls-credit"></span></div>' +
           '</section>' +
         '</main>' +
@@ -874,6 +877,7 @@
     els.stageKicker = root.querySelector("#ls-stage-kicker");
     els.stageTitle = root.querySelector("#ls-stage-title");
     els.demo = root.querySelector("#ls-demo");
+    els.demoLoader = root.querySelector("#ls-demo-loader");
     els.stageHint = root.querySelector("#ls-stage-hint");
     els.credit = root.querySelector("#ls-credit");
     els.days = root.querySelector("#ls-days");
@@ -1742,6 +1746,43 @@
     if (window.requestIdleCallback) requestIdleCallback(run, { timeout: 1200 });
     else setTimeout(run, 400);
   }
+  function showDemoLoader() {
+    if (!els.demoLoader) return;
+    clearTimeout(demoLoaderTimer);
+    demoLoaderShownAt = performance.now();
+    els.demoLoader.hidden = false;
+  }
+  function hideDemoLoader() {
+    if (!els.demoLoader) return;
+    clearTimeout(demoLoaderTimer);
+    els.demoLoader.hidden = true;
+  }
+  function hideDemoLoaderWhenReady() {
+    if (!els.demoLoader) return;
+    var wait = Math.max(0, 220 - (performance.now() - demoLoaderShownAt));
+    clearTimeout(demoLoaderTimer);
+    var iframe = els.demo ? els.demo.querySelector("iframe") : null;
+    function finish() {
+      demoLoaderTimer = setTimeout(function () { if (els.demoLoader) els.demoLoader.hidden = true; }, wait);
+    }
+    if (iframe) {
+      var loaded = false;
+      function onLoad() {
+        if (loaded) return;
+        loaded = true;
+        finish();
+      }
+      try {
+        if (iframe.contentDocument && iframe.contentDocument.readyState === "complete") onLoad();
+        else iframe.addEventListener("load", onLoad, { once: true });
+      } catch (e) {
+        iframe.addEventListener("load", onLoad, { once: true });
+      }
+      setTimeout(onLoad, 3000);
+      return;
+    }
+    requestAnimationFrame(function () { requestAnimationFrame(finish); });
+  }
   function mountDemo(d, s) {
     if (morphHiddenEl) { morphHiddenEl.style.opacity = ""; morphHiddenEl = null; }
     var meta = { step: state.step, dir: 0 };
@@ -1750,9 +1791,16 @@
     }
     lastDemoDay = state.day;
     lastDemoStep = state.step;
+    var nextScene = s && s.demoState && s.demoState.scene ? s.demoState.scene : null;
+    var sceneChanged = !!nextScene && nextScene !== lastMountedScene;
+    var needsLoader = sceneChanged || !demo || currentDemoDay !== d.id;
+    if (needsLoader) showDemoLoader();
     if (demo && currentDemoDay === d.id) {
       try { if (demo.update) demo.update(s.demoState || {}, meta); } catch (err) {}
+      if (nextScene) lastMountedScene = nextScene;
       preloadNextScene(d);
+      if (sceneChanged) hideDemoLoaderWhenReady();
+      else if (needsLoader) hideDemoLoader();
       return;
     }
     if (demo && demo.destroy) {
@@ -1764,6 +1812,7 @@
     var fn = DEMOS[d.demo];
     if (!fn) {
       els.demo.innerHTML = '<div class="ls-empty">' + esc(t("demoNotFound")) + esc(d.demo) + '</div>';
+      hideDemoLoader();
       return;
     }
     var demoConfig = {
@@ -1800,9 +1849,11 @@
         }
       }
     };
-    try { demo = fn(els.demo, demoConfig); } catch (err) { demo = null; els.demo.innerHTML = '<div class="ls-empty">' + esc(t("demoNotFound")) + '</div>'; return; }
+    try { demo = fn(els.demo, demoConfig); } catch (err) { demo = null; els.demo.innerHTML = '<div class="ls-empty">' + esc(t("demoNotFound")) + '</div>'; hideDemoLoader(); return; }
     try { if (demo && demo.update) demo.update(s.demoState || {}, meta); } catch (err) {}
+    if (nextScene) lastMountedScene = nextScene;
     preloadNextScene(d);
+    if (needsLoader) hideDemoLoaderWhenReady();
   }
 
   function renderCalendar() {

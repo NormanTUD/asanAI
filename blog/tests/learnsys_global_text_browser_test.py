@@ -174,6 +174,20 @@ def main() -> int:
             """)
         check(emb_idx >= 0, "embedding step found", str(emb_idx))
 
+        # Spinner: appears on a scene change and disappears after load.
+        check(js(driver, "!!document.querySelector('#ls-demo-loader .ls-spinner')"), "unified demo spinner exists")
+        spinner_shown = js(driver, """
+            return (function(){
+              LearnSys.go(0, 0);
+              LearnSys.go(0, 1);
+              return !document.querySelector('#ls-demo-loader').hidden;
+            })();
+            """)
+        time.sleep(0.6)
+        spinner_hidden = js(driver, "document.querySelector('#ls-demo-loader').hidden")
+        check(spinner_shown, "demo spinner appears while a scene loads")
+        check(spinner_hidden, "demo spinner disappears after the scene is loaded")
+
         # 0. Click directly on the text to edit it.
         js(driver, "document.querySelector('#ls-body').click()")
         time.sleep(0.3)

@@ -155,6 +155,22 @@ Public helpers: `LearnSys.text.splitSentences(text)`,
   current URL and the "Link" button copies it.
 - `cfg.demoPreview` adds a "Demo solo" link to the standalone demo page.
 
+## Demo interaction notes (2026-11-14)
+
+- **Loop / "Ein Wort nach dem anderen"**: generated words in the sentence and
+  in the tree are clickable. Clicking one restores the state after that word,
+  so the reader can branch again. Hover/focus shows a pointer and a title.
+- **Transformer blocks**: the transformer station mounts the full
+  `trajectories` scene (GPT-2 small, 768 → 3 PCA, angle/great circle). It
+  auto-plays through the layers; the play button pauses it, and the layer
+  slider takes over. The caption says it is a demo and details follow.
+- **Unembedding**: the `Unembedding` tab lists the sorted angle candidates.
+  Hover or click a candidate to highlight its angle; "Nächster Winkel" steps
+  through them in order.
+- **Tokenizer**: the split samples are "Verständnis" and a whole sentence; the
+  "unzerbrechlich" sample was removed. BPE explains that the splits are
+  learned from the training data.
+
 A step can carry `cues`:
 
 ```js
