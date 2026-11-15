@@ -308,7 +308,7 @@ def check_depth_personas(driver, results):
             checked += 1
             if len(snap["body"].strip()) < 25 or snap["count"] < 3:
                 bad.append(f"{day}/{step}")
-            if "Kontext" not in snap["summaries"] or not any("Eine Ebene tiefer" in x for x in snap["summaries"]):
+            if not any("Kontext" in x for x in snap["summaries"]) or not any("Eine Ebene tiefer" in x for x in snap["summaries"]):
                 bad.append(f"{day}/{step}:context")
             if "Lorem ipsum" in snap["text"]:
                 bad.append(f"{day}/{step}:lorem")

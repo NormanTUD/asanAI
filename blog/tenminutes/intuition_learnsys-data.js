@@ -1822,6 +1822,10 @@
     mix: true,
     singleDay: true,
     startDay: 0,
+    // Draft scaffold: the visible short text is lorem; every old body stays
+    // recoverable in the "Bisheriger Text" group. Set to false to use bodies.
+    textDraft: true,
+    demoPreview: "intuition_learnsys-demo.php",
     typeset: function (scope) {
       if (window.TM && typeof TM.typesetMath === "function") TM.typesetMath(scope);
     }

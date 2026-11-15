@@ -76,13 +76,82 @@ LearnSys.prefs.normalize(raw)
   days: [{
     id, track, label, kicker, title, demo, credit,
     steps: [{
-      kicker, title, body, watch, demoState,
-      context, deep, boxes, cues
+      kicker, title, teaser, body, watch, demoState,
+      context, deep, boxes, cues, questionGroups
     }],
     boxes: []
-  }]
+  }],
+  textDraft: false
 }
 ```
+
+## Short text and "Mehr erfahren"
+
+The left column shows a **teaser** of at most five sentences. Everything else
+lives inside one "Mehr erfahren" door. The engine enforces the split, so a
+longer `body` is not lost: the first five sentences stay visible, the rest moves
+into a generated `Fortsetzung` group inside the door.
+
+- `step.teaser` is the visible short text. It falls back to `step.body`.
+- `step.questionGroups` is the optional explicit grouping:
+  `[{ id, title, questions: [{ id, title, body, tex, kind, questions }] }]`.
+- `kind` is `"question"` or `"trivia"`; the reader sees a small tag in the
+  summary. Derived context/deep entries are questions; a box with `?` is a
+  question, otherwise trivia. Sources stay a source group.
+- `questions` is recursive: a question can contain more questions at any depth.
+- Without `questionGroups`, the engine builds groups from `context`, `deep`,
+  `boxes` (grouped by `lens`), and `sources`. Existing data therefore works
+  without migration.
+- Shared questions can be declared on the day, the step, or the substep:
+  `day.questionGroups`, `step.questionGroups`, `substep.questionGroups`. The
+  engine merges derived, day, step and view groups (later ids win). A view with
+  `inherit: false` keeps only its own explicit groups.
+- `textDraft: true` replaces the visible teaser with the lorem placeholder and
+  keeps the original `body` as a collapsed `Bisheriger Text` group. The source
+  data is never deleted.
+- A visible question index at the top of the door lists the groups, so the
+  reader can continue asking without opening everything.
+- Inline formulas in the teaser use `$...$` and are rendered with Temml.
+
+## Edit mode and headings
+
+`E` or the "Text bearbeiten" button opens the inline editor. It edits the
+heading, kicker, watch hint, teaser, every group and every nested question, and
+stores a per-language overlay in `localStorage` under `tm_learnsys_text_v1`.
+The source data stays untouched, so "Zurücksetzen" restores the placeholder and
+the data file remains the recoverable original.
+
+- The toolbar shows the sentence count and warns when the teaser exceeds five
+  sentences; on save the extra sentences move to "Mehr erfahren".
+- Groups, questions and sub-questions can be added or removed. Source groups are
+  read-only.
+- Each question has a `Frage` / `Trivia` selector.
+- The JSON button opens a copy-paste modal with the complete export. "Kopieren"
+  copies the JSON; "Herunterladen" saves it as a file. "JSON ↑" imports a file.
+  Only entries stored in the overlay (i.e. edited ones) are exported.
+- The export also contains the layout (order, hidden, promoted).
+
+Public helpers: `LearnSys.text.splitSentences(text)`,
+`LearnSys.text.teaser(text)`, `LearnSys.text.groupsFor(step, day, base)`,
+`LearnSys.text.current()`, `LearnSys.text.overlay(lang)`,
+`LearnSys.text.setOverlay(obj, lang)`, `LearnSys.text.exportData()`,
+`LearnSys.text.importData(obj)`, `LearnSys.text.toggleEdit(force)`.
+
+## Slide layout, sub-slides and deep links
+
+- `tm_learnsys_layout_v1` stores per day: `order`, `hidden`, `promoted`.
+  `visibleEntries(day)` is the single source for the visible slide list; the
+  navigation, rails, calendar and preload all use it.
+- The "Folien" panel moves slides up/down, hides/shows them, and can split a
+  multi-substep slide into full slides. Splitting hides the parent and keeps it
+  in the data; merging restores it. Demos are never deleted.
+- A promoted substep is a normal slide whose step object is the substep itself.
+  Its text key stays the substep key (`10.1`), so edited text and headings
+  survive splitting and merging.
+- The URL hash points at the current view:
+  `#/<dayId>/<step>/<sub>`. `#3` opens step 3. `LearnSys.link()` returns the
+  current URL and the "Link" button copies it.
+- `cfg.demoPreview` adds a "Demo solo" link to the standalone demo page.
 
 A step can carry `cues`:
 

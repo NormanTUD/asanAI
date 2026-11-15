@@ -111,19 +111,24 @@ def canvas_hash(driver: webdriver.Chrome) -> str:
 
 
 def go_to_distribution_step(driver: webdriver.Chrome) -> bool:
-    for _ in range(40):
-        title = driver.execute_script(
-            "return (document.getElementById('ls-stage-title') || {}).textContent || '';"
-        ) or ""
-        if "Verteilung" in title or "distribution" in title.lower():
-            return True
-        clicked = driver.execute_script(
-            "const b=document.getElementById('ls-nav-next'); if (b) { b.click(); return true; } return false;"
-        )
-        if not clicked:
-            return False
-        time.sleep(0.25)
-    return False
+    index = driver.execute_script(
+        """
+        const dots = Array.from(document.querySelectorAll('#ls-steps .ls-dot'));
+        for (let i = 0; i < dots.length; i++) {
+            const title = (dots[i].getAttribute('title') || '').toLowerCase();
+            if (title.indexOf('ein wort nach dem anderen') >= 0 || title.indexOf('one word after another') >= 0) return i;
+        }
+        return -1;
+        """
+    )
+    if index is None or int(index) < 0:
+        return False
+    driver.execute_script("LearnSys.go(0, arguments[0])", int(index))
+    time.sleep(0.7)
+    title = driver.execute_script(
+        "return (document.getElementById('ls-stage-title') || {}).textContent || '';"
+    ) or ""
+    return "Ein Wort nach dem anderen" in title or "one word after another" in title.lower()
 
 
 def main() -> int:
@@ -147,11 +152,10 @@ def main() -> int:
         time.sleep(0.4)
 
         state = loop_state(driver)
-        lang = driver.execute_script("return window.LearnSys.lang();")
-        expected = ["Später", "Niemand", "Ein"] if lang == "de" else ["Later", "Nobody", "A"]
+        expected = ["<|endoftext|>"]
         names = {item["t"] for item in state.get("catalog", [])}
         check(all(token in names for token in expected),
-              "the whole catalog contains the end-of-sentence tokens", str(expected))
+              "the whole catalog contains the end-of-sentence token", str(sorted(names)[:8]))
         check(len(state.get("catalog", [])) >= 30,
               "the map contains the full token catalog", str(len(state.get("catalog", []))))
 
@@ -172,15 +176,17 @@ def main() -> int:
         check(both["barsVisible"], "bars stay visible next to the landscape", json.dumps(both))
         check(both["landVisible"] and both["canvas"], "landscape is rendered", json.dumps(both))
 
+        driver.execute_script("document.querySelector('.ls-loop-modes [data-mode=\"greedy\"]').click();")
+        time.sleep(0.2)
         before = loop_state(driver)
         before_hash = canvas_hash(driver)
         driver.execute_script("document.querySelector('.ls-loop-next').click();")
         time.sleep(0.5)
         after = loop_state(driver)
         after_hash = canvas_hash(driver)
-        check(after.get("generated", 0) == before.get("generated", 0) + 1,
+        check(len(after.get("generated", [])) == len(before.get("generated", [])) + 1,
               "the demo advances one token", str(after.get("generated")))
-        check(len(after.get("path", [])) == after.get("generated", 0),
+        check(len(after.get("path", [])) == len(after.get("generated", [])),
               "the drawn path follows every chosen token", str(after.get("path")))
         check(json.dumps(before.get("catalog")) == json.dumps(after.get("catalog")),
               "token positions stay fixed between steps")

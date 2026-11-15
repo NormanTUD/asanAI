@@ -235,6 +235,41 @@ test("prefs.normalize is the same normalizer", function () {
   assert.strictEqual(LS.prefs.key, "tm_learnsys_pref_v1");
 });
 
+test("text.splitSentences keeps abbreviations and decimals", function () {
+  const s = LS.text.splitSentences("Das ist eins. Das ist z. B. zwei! Und drei? Der Wert ist 3.14.");
+  assert.strictEqual(s.length, 4);
+  assert.strictEqual(s[1], "Das ist z. B. zwei!");
+  assert.strictEqual(s[3], "Der Wert ist 3.14.");
+});
+
+test("text.teaser caps the visible body at five sentences", function () {
+  const text = "A eins. B zwei. C drei. D vier. E fünf. F sechs. G sieben.";
+  const t = LS.text.teaser(text);
+  assert.strictEqual(LS.text.maxSentences, 5);
+  assert.strictEqual(t.sentences.length, 7);
+  assert.strictEqual(t.head, "A eins. B zwei. C drei. D vier. E fünf.");
+  assert.strictEqual(t.rest, "F sechs. G sieben.");
+});
+
+test("text.compose puts the rest into the first more-knowledge group", function () {
+  const doc = {
+    body: "A eins. B zwei. C drei. D vier. E fünf. F sechs.",
+    groups: [{ id: "g1", title: "Gruppe", questions: [{ id: "q1", title: "Frage", body: "Antwort" }] }]
+  };
+  const out = LS.text.compose(doc);
+  assert.strictEqual(out.head, "A eins. B zwei. C drei. D vier. E fünf.");
+  assert.strictEqual(out.groups[0].id, "g-continuation");
+  assert.strictEqual(out.groups[0].questions[0].body, "F sechs.");
+  assert.strictEqual(out.groups[1].id, "g1");
+});
+
+test("text.overlay starts empty and can be replaced", function () {
+  assert.deepStrictEqual(LS.text.overlay("de"), {});
+  LS.text.setOverlay({ day: { "0.0": { body: "x", groups: [] } } }, "de");
+  assert.strictEqual(LS.text.overlay("de").day["0.0"].body, "x");
+  LS.text.setOverlay({}, "de");
+});
+
 console.log("");
 console.log(passed + " passed, " + failed + " failed");
 process.exit(failed ? 1 : 0);

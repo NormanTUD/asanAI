@@ -23,7 +23,7 @@
       path: "Weg", allPaths: "Alle Wege", text: "Text",
       textSmaller: "Text kleiner", textLarger: "Text größer",
       demoLarge: "Demo groß", showText: "Text zeigen",
-      day: "Tag", days: "Tage", noDays: "Noch keine Tage.",
+      day: "Tag", days: "Tage", noDays: "Noch keine Tage.", noSteps: "Keine Folien sichtbar.",
       demoNotFound: "Demo nicht gefunden: ",
       deepDive: "Tiefer eintauchen", question: "Frage", questions: "Fragen",
       context: "Kontext", oneLevel: "Eine Ebene tiefer", sources: "Quellen",
@@ -38,7 +38,22 @@
       interactiveDemo: "Interaktive Demo", stepRail: "Schrittleiste",
       depthQuestions: "{n} Fragen", depthQuestion: "{n} Frage", questionIndex: "Fragen", questionContext: "Was ist der Kontext?", questionDeep: "Warum ist das so?",
       textSize: "Textgröße", mixLabel: "Mix",
-      calendar: "Alle Folien", calendarTitle: "Folienübersicht", close: "Schließen"
+      calendar: "Alle Folien", calendarTitle: "Folienübersicht", close: "Schließen",
+      moreKnowledge: "Mehr erfahren", continueAsking: "Weiterfragen",
+      moreIntro: "Der Kurztext oben ist der Einstieg. Hier kannst du weiterfragen, musst es aber nicht.",
+      continuation: "Fortsetzung", originalText: "Bisheriger Text",
+      edit: "Text bearbeiten", editing: "Text bearbeiten", exitEdit: "Fertig",
+      save: "Speichern", saved: "Gespeichert", copy: "Kopieren", copied: "Kopiert",
+      reset: "Zurücksetzen", resetDone: "Zurückgesetzt",
+      sentenceCount: "{n} Sätze", sentenceOver: "max. {n} sichtbar, der Rest wandert nach „Mehr erfahren“",
+      shortTextLabel: "Kurztext", headingLabel: "Überschrift", kickerLabel: "Kicker", watchLabel: "Beobachte", shortTextHint: "Drei bis fünf Sätze. Alles Weitere gehört in „Mehr erfahren“.",
+      questionGroups: "Fragegruppen", addGroup: "Fragegruppe", addQuestion: "Frage", addChildQuestion: "Unterfrage",
+      newGroup: "Neue Fragegruppe", newQuestion: "Neue Frage",
+      questionTitle: "Frage", questionBody: "Antwort", formula: "Formel (LaTeX)",
+      sourcesReadonly: "Quellen bleiben unverändert.", editHint: "E bearbeiten",
+      copyHint: "Kopiere die Bearbeitung und schicke sie weiter.", exportEmpty: "Noch nichts bearbeitet.",
+      exportJSON: "JSON ↓", importJSON: "JSON ↑", exportTitle: "Geänderte Texte als JSON speichern", importTitle: "JSON laden", exportOk: "JSON gespeichert", importOk: "JSON geladen", importError: "JSON konnte nicht gelesen werden",
+      kindQuestion: "Frage", kindTrivia: "Trivia", soloDemo: "Demo solo", jsonTitle: "Alle Änderungen", jsonHint: "Nur geänderte Texte und das Layout. Kopiere den JSON-Text oder lade ihn herunter.", download: "Herunterladen", layoutSlides: "Folien", copyLink: "Link", linkCopied: "Link kopiert", layoutTitle: "Folien anordnen", layoutHint: "Verschieben, ausblenden, Unterfolien zu Folien machen.", splitSubsteps: "Aufteilen", mergeSubsteps: "Zusammenführen", hiddenSlides: "Ausgeblendet", resetLayout: "Layout zurücksetzen", promoted: "Unterfolie", moveUp: "Nach oben", moveDown: "Nach unten", hideSlide: "Ausblenden", showSlide: "Einblenden"
     },
     en: {
       position: "Position", positionOf: "Position {n} of {total}",
@@ -50,7 +65,7 @@
       path: "Path", allPaths: "All paths", text: "Text",
       textSmaller: "Smaller text", textLarger: "Larger text",
       demoLarge: "Large demo", showText: "Show text",
-      day: "Day", days: "Days", noDays: "No days yet.",
+      day: "Day", days: "Days", noDays: "No days yet.", noSteps: "No visible slides.",
       demoNotFound: "Demo not found: ",
       deepDive: "Go deeper", question: "question", questions: "questions",
       context: "Context", oneLevel: "One level deeper", sources: "Sources",
@@ -65,7 +80,22 @@
       interactiveDemo: "Interactive demo", stepRail: "Step rail",
       depthQuestions: "{n} questions", depthQuestion: "{n} question", questionIndex: "Questions", questionContext: "What is the context?", questionDeep: "Why is that so?",
       textSize: "Text size", mixLabel: "Mix",
-      calendar: "All slides", calendarTitle: "Slide overview", close: "Close"
+      calendar: "All slides", calendarTitle: "Slide overview", close: "Close",
+      moreKnowledge: "Learn more", continueAsking: "Keep asking",
+      moreIntro: "The short text above is the entry point. Here you can ask further, but you do not have to.",
+      continuation: "Continuation", originalText: "Previous text",
+      edit: "Edit text", editing: "Edit text", exitEdit: "Done",
+      save: "Save", saved: "Saved", copy: "Copy", copied: "Copied",
+      reset: "Reset", resetDone: "Reset",
+      sentenceCount: "{n} sentences", sentenceOver: "max. {n} visible, the rest moves to “Learn more”",
+      shortTextLabel: "Short text", headingLabel: "Heading", kickerLabel: "Kicker", watchLabel: "Watch", shortTextHint: "Three to five sentences. Everything else belongs in “Learn more”.",
+      questionGroups: "Question groups", addGroup: "Question group", addQuestion: "Question", addChildQuestion: "Sub-question",
+      newGroup: "New question group", newQuestion: "New question",
+      questionTitle: "Question", questionBody: "Answer", formula: "Formula (LaTeX)",
+      sourcesReadonly: "Sources stay unchanged.", editHint: "E to edit",
+      copyHint: "Copy the edit and pass it on.", exportEmpty: "Nothing edited yet.",
+      exportJSON: "JSON ↓", importJSON: "JSON ↑", exportTitle: "Save changed texts as JSON", importTitle: "Load JSON", exportOk: "JSON saved", importOk: "JSON loaded", importError: "Could not read JSON",
+      kindQuestion: "Question", kindTrivia: "Trivia", soloDemo: "Demo solo", jsonTitle: "All changes", jsonHint: "Only changed texts and the layout. Copy the JSON or download it.", download: "Download", layoutSlides: "Slides", copyLink: "Link", linkCopied: "Link copied", layoutTitle: "Arrange slides", layoutHint: "Move, hide, and turn sub-slides into slides.", splitSubsteps: "Split", mergeSubsteps: "Merge", hiddenSlides: "Hidden", resetLayout: "Reset layout", promoted: "Sub-slide", moveUp: "Move up", moveDown: "Move down", hideSlide: "Hide", showSlide: "Show"
     }
   };
   function setLang(lang) {
@@ -82,7 +112,20 @@
   }
   var root = null;
   var cfg = null;
-  var state = { track: "all", depth: "standard", font: 1, day: 0, step: 0, substep: 0 };
+  var state = { track: "all", depth: "standard", font: 1, day: 0, step: 0, substep: 0, edit: false };
+  var MAX_TEASER_SENTENCES = 5;
+  var LOREM = {
+    de: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ein abstraktes Beispiel: $f\\colon X \\to Y$. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+    en: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. An abstract example: $f\\colon X \\to Y$. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."
+  };
+  var TEXT_KEY = "tm_learnsys_text_v1";
+  var LAYOUT_KEY = "tm_learnsys_layout_v1";
+  var textOverlay = { de: {}, en: {} };
+  var layoutOverlay = {};
+  var editorDoc = null;
+  var editorCtx = null;
+  var editorSaveTimer = 0;
+  var typesetTimer = 0;
   var demo = null;
   var palette = null;
   var currentDemoDay = null;
@@ -97,8 +140,11 @@
   var ignoreScroll = false;
   var scrollNavAt = 0;
   var posCount = 10;
+  var lastPosCount = -1;
   var posBuffer = "";
   var posTimer = 0;
+  var suppressHash = false;
+  var hashBound = false;
 
   var FONT_LEVELS = [
     { id: "s", label: "Klein", body: 15, title: 24, small: 11 },
@@ -329,20 +375,360 @@
       '</span>';
     }).join("");
   }
-  function proseBlock(text) { return '<p>' + termHTML(text) + '</p>'; }
+  function proseBlock(text) {
+    return '<p>' + String(text == null ? "" : text).split(/(\$[^$]+\$)/g).map(function (part) {
+      if (part.length > 1 && part.charAt(0) === "$" && part.charAt(part.length - 1) === "$") {
+        var tex = part.slice(1, -1);
+        return '<span class="ls-math ls-math--inline" data-tex="' + esc(tex) + '" data-tex-display="false"><code class="ls-tex-source">' + esc(tex) + '</code></span>';
+      }
+      return termHTML(part);
+    }).join("") + '</p>';
+  }
 
   function activeDay() {
     return cfg.days[state.day] || cfg.days[0];
   }
   function activeStep() {
     var d = activeDay();
-    return d.steps[clamp(state.step, 0, d.steps.length - 1)];
+    return stepAt(d, state.step) || (d.steps && d.steps[0]) || null;
   }
   function activeView() {
     var base = activeStep();
     if (base && base.substeps && base.substeps[state.substep]) return base.substeps[state.substep];
     return base;
   }
+  function layoutEntry(day, entry) {
+    if (typeof entry === "number") entry = String(entry);
+    entry = String(entry == null ? "" : entry);
+    if (/^\d+$/.test(entry)) {
+      var n = parseInt(entry, 10);
+      return n >= 0 && n < day.steps.length ? String(n) : null;
+    }
+    var match = entry.match(/^(\d+)\.(\d+)$/);
+    if (!match) return null;
+    var step = parseInt(match[1], 10);
+    var sub = parseInt(match[2], 10);
+    var base = day.steps[step];
+    if (!base || !base.substeps || !base.substeps[sub]) return null;
+    return step + "." + sub;
+  }
+  function layoutFor(day) {
+    var total = day && day.steps ? day.steps.length : 0;
+    var id = day && day.id;
+    var raw = id && layoutOverlay ? layoutOverlay[id] : null;
+    var orderRaw = raw && Array.isArray(raw.order) ? raw.order : [];
+    var order = [];
+    var seen = {};
+    orderRaw.forEach(function (e) {
+      var key = layoutEntry(day, e);
+      if (key != null && !seen[key]) { seen[key] = 1; order.push(key); }
+    });
+    for (var i = 0; i < total; i++) {
+      var key = String(i);
+      if (!seen[key]) { seen[key] = 1; order.push(key); }
+    }
+    var hidden = [];
+    if (raw && Array.isArray(raw.hidden)) {
+      raw.hidden.forEach(function (e) {
+        var key = layoutEntry(day, e);
+        if (key != null && hidden.indexOf(key) < 0) hidden.push(key);
+      });
+    }
+    var promoted = [];
+    if (raw && Array.isArray(raw.promoted)) {
+      raw.promoted.forEach(function (e) {
+        var key = layoutEntry(day, e);
+        if (key != null && key.indexOf(".") >= 0 && promoted.indexOf(key) < 0) promoted.push(key);
+      });
+    }
+    promoted.forEach(function (key) {
+      if (seen[key]) return;
+      var parent = key.split(".")[0];
+      var at = order.indexOf(parent);
+      order.splice(at >= 0 ? at + 1 : order.length, 0, key);
+      seen[key] = 1;
+    });
+    if (order.length && !order.some(function (e) { return hidden.indexOf(e) < 0; })) hidden = [];
+    return { order: order, hidden: hidden, promoted: promoted };
+  }
+  function visibleEntries(day) {
+    var l = layoutFor(day);
+    return l.order.filter(function (e) { return l.hidden.indexOf(e) < 0; });
+  }
+  function visibleIndexes(day) { return visibleEntries(day); }
+  function visibleCount(day) { return visibleEntries(day).length; }
+  function entryStep(day, entry) {
+    entry = String(entry);
+    if (/^\d+$/.test(entry)) return day.steps[parseInt(entry, 10)] || null;
+    var parts = entry.split(".");
+    var base = day.steps[parseInt(parts[0], 10)];
+    return base && base.substeps ? (base.substeps[parseInt(parts[1], 10)] || null) : null;
+  }
+  function visibleSteps(day) { return visibleEntries(day).map(function (e) { return entryStep(day, e); }); }
+  function entryAt(day, visibleIndex) {
+    var list = visibleEntries(day);
+    if (!list.length) return null;
+    return list[clamp(visibleIndex, 0, list.length - 1)];
+  }
+  function stepAt(day, visibleIndex) {
+    var entry = entryAt(day, visibleIndex);
+    return entry == null ? null : entryStep(day, entry);
+  }
+  function visibleIndexOfEntry(day, entry) {
+    return visibleEntries(day).indexOf(String(entry));
+  }
+  function textKeyForEntry(day, entry) {
+    var step = entry == null ? null : entryStep(day, entry);
+    if (entry != null && String(entry).indexOf(".") >= 0 && !(step && step.substeps)) return String(entry);
+    return String(entry == null ? "" : entry) + ".0";
+  }
+  function displayStepTitle(day, entry, step) {
+    var store = (textOverlay[LANG] || {})[day.id] || {};
+    var doc = store[textKeyForEntry(day, entry)];
+    return (doc && doc.title) || (step && step.title) || "";
+  }
+
+  function cloneData(value) {
+    try { return JSON.parse(JSON.stringify(value)); } catch (e) { return value; }
+  }
+  function slugify(value) {
+    return String(value == null ? "" : value).toLowerCase()
+      .replace(/[äöüß]/g, function (c) { return { "ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss" }[c]; })
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "group";
+  }
+  function splitSentences(text) {
+    var s = normSpace(text || "");
+    if (!s) return [];
+    var out = [];
+    var start = 0;
+    for (var i = 0; i < s.length; i++) {
+      var ch = s.charAt(i);
+      if (ch !== "." && ch !== "!" && ch !== "?") continue;
+      var next = s.charAt(i + 1);
+      if (next && !/\s/.test(next)) continue;
+      if (ch === ".") {
+        var prev = s.charAt(i - 1);
+        if (/[0-9]/.test(prev)) continue;
+        var word = (s.slice(Math.max(0, i - 5), i).match(/[A-Za-zÄÖÜäöüß]+$/) || [""])[0].toLowerCase();
+        if (["z", "b", "d", "u", "a", "sog", "bzw", "ca", "etc", "vgl", "nr", "dr", "prof", "st", "abs", "min", "max", "evtl", "ggf", "inkl", "exkl", "mrd", "mio", "bspw"].indexOf(word) >= 0) continue;
+      }
+      out.push(s.slice(start, i + 1).trim());
+      start = i + 1;
+    }
+    var tail = s.slice(start).trim();
+    if (tail) out.push(tail);
+    return out.filter(Boolean);
+  }
+  function teaserParts(text) {
+    var sentences = splitSentences(text);
+    return {
+      sentences: sentences,
+      head: sentences.slice(0, MAX_TEASER_SENTENCES).join(" "),
+      rest: sentences.slice(MAX_TEASER_SENTENCES).join(" ")
+    };
+  }
+  function substepLabel() {
+    var base = activeStep();
+    var total = base && base.substeps ? base.substeps.length : 1;
+    if (total > 1) {
+      return LANG === "de"
+        ? " Platzhalter für Unterfolie " + (state.substep + 1) + " von " + total + "."
+        : " Placeholder for sub-slide " + (state.substep + 1) + " of " + total + ".";
+    }
+    var entry = entryAt(activeDay(), state.step);
+    if (entry && entry.indexOf(".") >= 0) {
+      return LANG === "de" ? " Platzhalter für Unterfolie." : " Placeholder for sub-slide.";
+    }
+    return "";
+  }
+  function draftBody() {
+    return (LOREM[LANG] || LOREM.de) + substepLabel();
+  }
+  function makeQuestion(id, title, body, tex, kind) {
+    return {
+      id: id, title: title || "", body: body || "", tex: tex || "",
+      kind: kind === "trivia" ? "trivia" : "question"
+    };
+  }
+  function normalizeQuestionTree(q, fallbackId) {
+    var out = {
+      id: q.id || fallbackId,
+      title: q.title || t("question"),
+      body: q.body || "",
+      tex: q.tex || "",
+      kind: q.kind === "trivia" ? "trivia" : "question"
+    };
+    if (q.control) { out.control = q.control; out.controlLabel = q.controlLabel || ""; }
+    if (q.questions && q.questions.length) {
+      out.questions = q.questions.map(function (child, i) {
+        return normalizeQuestionTree(child, fallbackId + "." + i);
+      });
+    }
+    return out;
+  }
+  function normalizeQuestionGroups(groups, prefix) {
+    return (groups || []).map(function (g, gi) {
+      var id = g.id || (prefix + "-g-" + gi);
+      if (g.sources) return { id: id, title: g.title || t("sources"), sources: cloneData(g.sources) };
+      return {
+        id: id,
+        title: g.title || t("moreKnowledge"),
+        questions: (g.questions || []).map(function (q, qi) {
+          return normalizeQuestionTree(q, id + "." + qi);
+        })
+      };
+    });
+  }
+  function mergeQuestionGroups(target, incoming) {
+    (incoming || []).forEach(function (g) {
+      var at = -1;
+      for (var i = 0; i < target.length; i++) if (target[i].id === g.id) { at = i; break; }
+      if (at >= 0) target[at] = g;
+      else target.push(g);
+    });
+    return target;
+  }
+  function derivedQuestionGroups(view, day) {
+    var s = view || {};
+    var d = day || {};
+    var groups = [];
+    var basics = [];
+    if (s.context || s.contextTex) basics.push(makeQuestion("q-context", s.contextTitle || t("questionContext"), s.context, s.contextTex, "question"));
+    if (s.deep || s.deepTex) basics.push(makeQuestion("q-deep", s.deepTitle || t("questionDeep"), s.deep, s.deepTex, "question"));
+    if (basics.length) groups.push({ id: "g-basics", title: t("oneLevel"), questions: basics });
+    var boxes = (s.boxes || []).concat(state.step === 0 ? (d.boxes || []) : []);
+    var byLens = {};
+    var lensOrder = [];
+    boxes.forEach(function (b) {
+      var lens = b.lens || t("moreKnowledge");
+      var key = slugify(lens);
+      if (!byLens[key]) {
+        byLens[key] = { id: "g-lens-" + key, title: lens, questions: [] };
+        lensOrder.push(key);
+      }
+      var q = makeQuestion("q-box-" + b.id, b.title || t("question"), b.body, b.tex, b.kind || (/\?/.test(b.title || "") ? "question" : "trivia"));
+      if (b.control) { q.control = b.control; q.controlLabel = b.controlLabel || ""; }
+      byLens[key].questions.push(q);
+    });
+    lensOrder.forEach(function (key) { groups.push(byLens[key]); });
+    var sources = (s.sources || []).concat(state.step === 0 ? (d.sources || []) : []);
+    if (sources.length) groups.push({ id: "g-sources", title: t("sources"), sources: sources });
+    return groups;
+  }
+  function buildQuestionGroups(view, day, base) {
+    var s = view || {};
+    var d = day || {};
+    var b = base || s;
+    var groups = [];
+    var inherit = !(s.inherit === false || (b && b.inherit === false));
+    if (inherit) {
+      mergeQuestionGroups(groups, derivedQuestionGroups(s, d));
+      mergeQuestionGroups(groups, normalizeQuestionGroups(d.questionGroups, "day"));
+      if (b !== s) mergeQuestionGroups(groups, normalizeQuestionGroups(b.questionGroups, "step"));
+    }
+    mergeQuestionGroups(groups, normalizeQuestionGroups(s.questionGroups, "view"));
+    if (cfg && cfg.textDraft && s.body) {
+      groups.push({ id: "g-original", title: t("originalText"), questions: [makeQuestion("q-original", t("originalText"), s.body, "", "trivia")] });
+    }
+    return groups;
+  }
+  function textStepKey() {
+    var entry = entryAt(activeDay(), state.step);
+    var base = activeStep();
+    if (entry != null && String(entry).indexOf(".") >= 0 && !(base && base.substeps)) return String(entry);
+    return (entry == null ? String(state.step) : String(entry)) + "." + state.substep;
+  }
+  function textStore() {
+    if (!textOverlay[LANG]) textOverlay[LANG] = {};
+    var d = activeDay();
+    if (!textOverlay[LANG][d.id]) textOverlay[LANG][d.id] = {};
+    return textOverlay[LANG][d.id];
+  }
+  function currentTextDoc() {
+    var d = activeDay();
+    var s = activeView();
+    var base = activeStep();
+    var store = textStore();
+    var key = textStepKey();
+    var saved = store[key];
+    if (saved && typeof saved === "object") {
+      return {
+        body: typeof saved.body === "string" ? saved.body : "",
+        title: typeof saved.title === "string" ? saved.title : (s.title || ""),
+        kicker: typeof saved.kicker === "string" ? saved.kicker : (s.kicker || ""),
+        watch: typeof saved.watch === "string" ? saved.watch : (s.watch || ""),
+        groups: Array.isArray(saved.groups) ? cloneData(saved.groups) : buildQuestionGroups(s, d, base)
+      };
+    }
+    return {
+      body: cfg && cfg.textDraft ? draftBody() : (s.teaser || s.body || ""),
+      title: s.title || "",
+      kicker: s.kicker || "",
+      watch: s.watch || "",
+      groups: buildQuestionGroups(s, d, base)
+    };
+  }
+  function composeText(doc) {
+    var parts = teaserParts(doc.body);
+    var groups = cloneData(doc.groups || []);
+    if (parts.rest) {
+      groups.unshift({
+        id: "g-continuation", title: t("continuation"),
+        questions: [makeQuestion("q-continuation", t("continuation"), parts.rest, "", "trivia")]
+      });
+    }
+    return { head: parts.head, rest: parts.rest, sentences: parts.sentences, groups: groups };
+  }
+  function loadTextOverlay() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(TEXT_KEY) || "{}");
+      textOverlay = {
+        de: raw && raw.de && typeof raw.de === "object" ? raw.de : {},
+        en: raw && raw.en && typeof raw.en === "object" ? raw.en : {}
+      };
+    } catch (e) {
+      textOverlay = { de: {}, en: {} };
+    }
+  }
+  function persistTextOverlay() {
+    try { localStorage.setItem(TEXT_KEY, JSON.stringify(textOverlay)); } catch (e) {}
+  }
+  function loadLayout() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(LAYOUT_KEY) || "{}");
+      layoutOverlay = raw && typeof raw === "object" ? raw : {};
+    } catch (e) {
+      layoutOverlay = {};
+    }
+  }
+  function persistLayout() {
+    try { localStorage.setItem(LAYOUT_KEY, JSON.stringify(layoutOverlay)); } catch (e) {}
+  }
+  function editorContext() {
+    return { lang: LANG, day: activeDay().id, key: textStepKey() };
+  }
+  function sameEditorContext(a, b) {
+    return !!a && !!b && a.lang === b.lang && a.day === b.day && a.key === b.key;
+  }
+  function saveEditorDoc() {
+    if (!editorDoc || !editorCtx) return;
+    clearTimeout(editorSaveTimer);
+    if (!textOverlay[editorCtx.lang]) textOverlay[editorCtx.lang] = {};
+    if (!textOverlay[editorCtx.lang][editorCtx.day]) textOverlay[editorCtx.lang][editorCtx.day] = {};
+    textOverlay[editorCtx.lang][editorCtx.day][editorCtx.key] = {
+      body: editorDoc.body || "",
+      title: editorDoc.title || "",
+      kicker: editorDoc.kicker || "",
+      watch: editorDoc.watch || "",
+      groups: cloneData(editorDoc.groups || [])
+    };
+    persistTextOverlay();
+  }
+  function scheduleEditorSave() {
+    clearTimeout(editorSaveTimer);
+    editorSaveTimer = setTimeout(saveEditorDoc, 250);
+  }
+
 
   function save() {
     try {
@@ -367,14 +753,13 @@
     var tickTotal = 10;
     if (cfg.singleDay) {
       var sd = activeDay();
-      var stepCount = sd ? sd.steps.length : 1;
-      tickTotal = stepCount;
+      tickTotal = sd ? Math.max(1, visibleCount(sd)) : 1;
     }
     posCount = tickTotal;
     var posDay = activeDay();
     var posHtml = "";
     for (var pi = 0; pi < posCount; pi++) {
-      var posStep = cfg.singleDay && posDay && posDay.steps[pi];
+      var posStep = cfg.singleDay && posDay ? stepAt(posDay, pi) : null;
       var posLabel = posStep && posStep.title ? posStep.title : t("positionOf", { n: pi + 1, total: Math.max(1, posCount) });
       var posAria = posStep && posStep.title ? t("step") + " " + (pi + 1) + ": " + posStep.title : posLabel;
       posHtml += '<button type="button" data-pos="' + pi + '" data-no-height-test="1" title="' + esc(posLabel) + '" aria-label="' + esc(posAria) + '">' + (pi + 1) + '</button>';
@@ -390,6 +775,7 @@
       ['<kbd>↓</kbd>', t("helpDown")],
       ['<span class="ls-help-scroll">↕</span>', t("helpScroll")],
       ['<kbd>F</kbd>', t("helpFocus")],
+      ['<kbd>E</kbd>', t("editHint")],
       ['<kbd>+</kbd> / <kbd>−</kbd>', t("helpFont")],
       ['<kbd>?</kbd> / <kbd>Esc</kbd>', t("helpHelp")]
     ].map(function (row) {
@@ -409,6 +795,10 @@
               '</div></div>' +
               '<div class="ls-field ls-font" aria-label="' + esc(t("textSize")) + '"><span>' + esc(t("text")) + '</span><button type="button" class="ls-btn ls-btn--tiny" data-font-step="-1" id="ls-font-minus" aria-label="' + esc(t("textSmaller")) + '">A−</button><output id="ls-font-out" aria-live="polite">100%</output><button type="button" class="ls-btn ls-btn--tiny" data-font-step="1" id="ls-font-plus" aria-label="' + esc(t("textLarger")) + '">A+</button></div>' +
               '<button type="button" class="ls-btn ls-btn--ghost" id="ls-all">' + esc(t("all")) + '</button>' +
+              '<button type="button" class="ls-btn ls-btn--ghost" data-ls-export title="' + esc(t("exportTitle")) + '">' + esc(t("exportJSON")) + '</button>' +
+              '<button type="button" class="ls-btn ls-btn--ghost" data-ls-import title="' + esc(t("importTitle")) + '">' + esc(t("importJSON")) + '</button>' +
+              '<button type="button" class="ls-btn ls-btn--ghost" data-ls-layout title="' + esc(t("layoutTitle")) + '">' + esc(t("layoutSlides")) + '</button>' +
+              '<button type="button" class="ls-btn ls-btn--ghost" data-ls-link title="' + esc(t("copyLink")) + '">' + esc(t("copyLink")) + '</button>' +
             '</div>' +
           '</div>' +
           '<div class="ls-top-nav">' +
@@ -420,7 +810,7 @@
           '<section class="ls-text" aria-live="polite">' +
             '<div class="ls-text-mobile-head"><button type="button" class="ls-btn ls-btn--tiny ls-text-close" id="ls-text-close" aria-label="' + (LANG === "de" ? "Zur Demo" : "Back to demo") + '">← Demo</button></div>' +
             '<div class="ls-text-scroll">' +
-              (cfg.mix ? '<div class="ls-navbar" id="ls-navbar"><button type="button" class="ls-btn ls-btn--tiny ls-cal-open" id="ls-calendar-btn" data-no-height-test="1" title="' + esc(t("calendarTitle")) + '" aria-label="' + esc(t("calendarTitle")) + '"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="10" fill="none" stroke="currentColor" stroke-width="1.2"></rect><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3" fill="none" stroke="currentColor" stroke-width="1.2"></path></svg></button><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-prev" data-no-height-test="1" title="' + esc(t("prevStep")) + '" aria-label="' + esc(t("prevStep")) + '">←</button><div class="ls-nav-pos ls-mix-pos" id="ls-mix-pos" aria-label="' + esc(cfg.singleDay ? t("stepRail") : t("position") + " 0 … " + (posCount - 1)) + '">' + posHtml + '</div><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-next" data-no-height-test="1" title="' + esc(t("nextStep")) + '" aria-label="' + esc(t("nextStep")) + '">→</button></div>' : '') +
+              (cfg.mix ? '<div class="ls-navbar" id="ls-navbar"><button type="button" class="ls-btn ls-btn--tiny ls-cal-open" id="ls-calendar-btn" data-no-height-test="1" title="' + esc(t("calendarTitle")) + '" aria-label="' + esc(t("calendarTitle")) + '"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="10" fill="none" stroke="currentColor" stroke-width="1.2"></rect><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3" fill="none" stroke="currentColor" stroke-width="1.2"></path></svg></button>' + '<button type="button" class="ls-btn ls-btn--tiny" data-ls-export data-no-height-test="1" title="' + esc(t("exportTitle")) + '" aria-label="' + esc(t("exportTitle")) + '">' + esc(t("exportJSON")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" data-ls-import data-no-height-test="1" title="' + esc(t("importTitle")) + '" aria-label="' + esc(t("importTitle")) + '">' + esc(t("importJSON")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" data-ls-layout data-no-height-test="1" title="' + esc(t("layoutTitle")) + '" aria-label="' + esc(t("layoutTitle")) + '">' + esc(t("layoutSlides")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" data-ls-link data-no-height-test="1" title="' + esc(t("copyLink")) + '" aria-label="' + esc(t("copyLink")) + '">' + esc(t("copyLink")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-prev" data-no-height-test="1" title="' + esc(t("prevStep")) + '" aria-label="' + esc(t("prevStep")) + '">←</button><div class="ls-nav-pos ls-mix-pos" id="ls-mix-pos" aria-label="' + esc(cfg.singleDay ? t("stepRail") : t("position") + " 0 … " + (posCount - 1)) + '">' + posHtml + '</div><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-next" data-no-height-test="1" title="' + esc(t("nextStep")) + '" aria-label="' + esc(t("nextStep")) + '">→</button></div>' : '') +
               '<div class="ls-kicker" id="ls-kicker"></div>' +
               '<h1 class="ls-title" id="ls-title"></h1>' +
               '<div class="ls-body" id="ls-body"></div>' +
@@ -431,6 +821,7 @@
                 '<button type="button" class="ls-btn" id="ls-prev" data-no-height-test="1" aria-label="' + esc(t("prevStep")) + '">←</button>' +
                 '<button type="button" class="ls-btn ls-btn--primary" id="ls-next" data-no-height-test="1">' + esc(t("forward")) + ' →</button>' +
                 '<button type="button" class="ls-btn ls-btn--ghost" id="ls-depth-btn">' + esc(t("depth")) + '</button>' +
+                '<button type="button" class="ls-btn ls-btn--ghost" id="ls-edit-btn" data-no-height-test="1">' + esc(t("edit")) + '</button>' +
               '</div>' +
             '</div>' +
           '</section>' +
@@ -442,6 +833,9 @@
         '</main>' +
         '<div class="ls-global-nav"><button type="button" class="ls-global-prev" id="ls-global-prev" data-no-height-test="1" aria-label="' + (LANG === "de" ? "Zurück" : "Back") + '">←</button><button type="button" class="ls-global-next" id="ls-global-next" data-no-height-test="1" aria-label="' + (LANG === "de" ? "Weiter" : "Next") + '">→</button></div>' +
         '<div class="ls-cal-overlay" id="ls-calendar" hidden><div class="ls-cal-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("calendarTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("calendarTitle")) + '</b><button type="button" class="ls-btn ls-btn--tiny" id="ls-calendar-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></div><div class="ls-cal-grid" id="ls-calendar-grid"></div></div></div>' +
+        '<div class="ls-cal-overlay" id="ls-layout" hidden><div class="ls-cal-panel ls-layout-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("layoutTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("layoutTitle")) + '</b><button type="button" class="ls-btn ls-btn--tiny" id="ls-layout-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></div><p class="ls-layout-hint">' + esc(t("layoutHint")) + '</p><div class="ls-layout-list" id="ls-layout-list"></div><div class="ls-layout-foot"><a class="ls-btn ls-btn--tiny" data-ls-solo target="_blank" rel="noopener">' + esc(t("soloDemo")) + '</a><button type="button" class="ls-btn ls-btn--tiny" data-layout-action="reset">' + esc(t("resetLayout")) + '</button></div></div></div>' +
+        '<div class="ls-cal-overlay" id="ls-json-modal" hidden><div class="ls-cal-panel ls-json-panel" role="dialog" aria-modal="true" aria-label="' + esc(t("jsonTitle")) + '"><div class="ls-cal-head"><b>' + esc(t("jsonTitle")) + '</b><button type="button" class="ls-btn ls-btn--tiny" id="ls-json-close" data-no-height-test="1" aria-label="' + esc(t("close")) + '">×</button></div><p class="ls-layout-hint">' + esc(t("jsonHint")) + '</p><textarea class="ls-json-text" id="ls-json-text" readonly spellcheck="false"></textarea><div class="ls-layout-foot"><button type="button" class="ls-btn ls-btn--tiny" id="ls-json-copy">' + esc(t("copy")) + '</button><button type="button" class="ls-btn ls-btn--tiny" id="ls-json-download">' + esc(t("download")) + '</button></div></div></div>' +
+        '<input type="file" id="ls-json-file" accept="application/json,.json" hidden>' +
         '<div class="ls-tip" id="ls-tip" role="tooltip" hidden></div>' +
         '<div class="ls-help" id="ls-help" hidden><b>' + esc(t("helpTitle")) + '</b><div class="ls-help-grid">' + helpRows + '</div></div>' +
       '</div>';
@@ -476,6 +870,7 @@
     els.prev = root.querySelector("#ls-prev");
     els.next = root.querySelector("#ls-next");
     els.depthBtn = root.querySelector("#ls-depth-btn");
+    els.editBtn = root.querySelector("#ls-edit-btn");
     els.stageKicker = root.querySelector("#ls-stage-kicker");
     els.stageTitle = root.querySelector("#ls-stage-title");
     els.demo = root.querySelector("#ls-demo");
@@ -490,6 +885,15 @@
     els.calOverlay = root.querySelector("#ls-calendar");
     els.calGrid = root.querySelector("#ls-calendar-grid");
     els.calClose = root.querySelector("#ls-calendar-close");
+    els.jsonFile = root.querySelector("#ls-json-file");
+    els.layoutOverlay = root.querySelector("#ls-layout");
+    els.layoutList = root.querySelector("#ls-layout-list");
+    els.layoutClose = root.querySelector("#ls-layout-close");
+    els.jsonModal = root.querySelector("#ls-json-modal");
+    els.jsonText = root.querySelector("#ls-json-text");
+    els.jsonClose = root.querySelector("#ls-json-close");
+    els.jsonCopy = root.querySelector("#ls-json-copy");
+    els.jsonDownload = root.querySelector("#ls-json-download");
 
     els.track.innerHTML = '<option value="all">' + esc(t("allPaths")) + '</option>' + cfg.tracks.map(function (tr) {
       return '<option value="' + esc(tr.id) + '">' + esc(tr.label) + ' · ' + esc(t("day")) + ' ' + esc(tr.days) + '</option>';
@@ -572,64 +976,125 @@
   }
   function renderSteps() {
     var d = activeDay();
-    els.steps.innerHTML = d.steps.map(function (s, i) {
+    var list = visibleIndexes(d);
+    if (state.step >= list.length) state.step = Math.max(0, list.length - 1);
+    els.steps.innerHTML = list.map(function (entry, i) {
+      var s = entryStep(d, entry);
       var stepLabel = t("step") + " " + (i + 1);
-      var stepTitle = s.title || stepLabel;
+      var stepTitle = displayStepTitle(d, entry, s) || stepLabel;
       return '<button type="button" class="ls-dot' + (i === state.step ? " is-on" : "") + '" data-no-height-test="1" data-step="' + i + '" title="' + esc(stepTitle) + '" aria-label="' + esc(stepLabel + ": " + stepTitle) + '">' + (i + 1) + '</button>';
     }).join("");
-    els.progress.style.width = ((state.step + 1) / d.steps.length * 100).toFixed(1) + "%";
-    if (els.stepCount) els.stepCount.textContent = t("stepOf", { n: state.step + 1, total: d.steps.length });
+    var total = list.length;
+    els.progress.style.width = total ? ((state.step + 1) / total * 100).toFixed(1) + "%" : "0%";
+    if (els.stepCount) els.stepCount.textContent = total ? t("stepOf", { n: state.step + 1, total: total }) : t("noSteps");
+  }
+
+  function renderPosRail(force) {
+    if (!els.mixPos || !els.mixPos.length) return;
+    var rail = els.mixPos[0].parentNode;
+    if (!rail) return;
+    var day = activeDay();
+    var count = cfg.singleDay ? Math.max(1, visibleCount(day)) : 10;
+    if (!force && count === lastPosCount) return;
+    lastPosCount = count;
+    posCount = count;
+    var html = "";
+    for (var i = 0; i < count; i++) {
+      var s = cfg.singleDay ? stepAt(day, i) : null;
+      var entry = cfg.singleDay ? entryAt(day, i) : null;
+      var label = cfg.singleDay ? (displayStepTitle(day, entry, s) || t("positionOf", { n: i + 1, total: count })) : t("positionOf", { n: i + 1, total: count });
+      var aria = cfg.singleDay && displayStepTitle(day, entry, s) ? t("step") + " " + (i + 1) + ": " + displayStepTitle(day, entry, s) : label;
+      html += '<button type="button" data-pos="' + i + '" data-no-height-test="1" title="' + esc(label) + '" aria-label="' + esc(aria) + '">' + (i + 1) + '</button>';
+    }
+    rail.innerHTML = html;
+    els.mixPos = rail.querySelectorAll("[data-pos]");
   }
 
   function mathBlock(tex, display) {
     return '<div class="ls-math" data-tex="' + esc(tex) + '" data-tex-display="' + (display === false ? "false" : "true") + '"><code class="ls-tex-source">' + esc(tex) + '</code></div>';
   }
-  function depthTree(s, d) {
-    var ctx = s.context || "";
-    var ctxTex = s.contextTex || "";
-    var deep = s.deep || "";
-    var deepTex = s.deepTex || "";
-    var boxes = (s.boxes || []).concat(state.step === 0 ? (d.boxes || []) : []);
-    var sources = (s.sources || []).concat(state.step === 0 ? (d.sources || []) : []);
-    var count = (ctx || ctxTex ? 1 : 0) + (deep || deepTex ? 1 : 0) + boxes.length + (sources.length ? 1 : 0);
+  function countQuestions(questions) {
+    return (questions || []).reduce(function (n, q) {
+      return n + 1 + countQuestions(q && q.questions);
+    }, 0);
+  }
+  function questionCount(groups) {
+    return groups.reduce(function (n, g) {
+      return n + (g.sources ? 1 : countQuestions(g.questions));
+    }, 0);
+  }
+  function questionId(q, path) {
+    return (q && q.id) ? q.id : "q-" + String(path || "0").replace(/\./g, "-");
+  }
+  function renderQuestionIndex(groups) {
+    var items = groups.map(function (g) {
+      var n = g.sources ? g.sources.length : countQuestions(g.questions);
+      return '<button type="button" data-qid="' + esc(g.id) + '" data-no-height-test="1" aria-label="' + esc(g.title || t("moreKnowledge")) + '">' +
+        '<span>' + esc(g.title || t("moreKnowledge")) + '</span>' +
+        (n ? '<span class="ls-qi-count">' + n + '</span>' : '') +
+        '</button>';
+    });
+    if (!items.length) return "";
+    return '<div class="ls-more-head">' +
+      '<span class="ls-more-kicker">' + esc(t("continueAsking")) + '</span>' +
+      '<div class="ls-question-index">' + items.join("") + '</div>' +
+    '</div>';
+  }
+  function renderSources(sources) {
+    return '<ul class="ls-sources">' + sources.map(function (src) {
+      var why = src.why && typeof src.why === "object" ? src.why[LANG] : src.why;
+      return '<li><a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.label) + '</a>' +
+        (why ? '<span class="ls-src-why">' + esc(why) + '</span>' : '') + '</li>';
+    }).join("") + '</ul>';
+  }
+  function renderQuestionNode(q, path, depth, open) {
+    var id = questionId(q, path);
+    var children = countQuestions(q.questions);
+    var kind = q.kind === "trivia" ? "trivia" : "question";
+    var html = '<details class="ls-deepbox ls-qnested ls-qnested--' + depth + '" data-qid="' + esc(id) + '"' + (open ? " open" : "") + '>' +
+      '<summary>' +
+        '<span class="ls-qkind ls-qkind--' + kind + '">' + esc(t(kind === "trivia" ? "kindTrivia" : "kindQuestion")) + '</span> ' +
+        esc(q.title || t("question")) +
+        (children ? ' <span class="ls-depth-count">' + children + '</span>' : '') +
+      '</summary>' +
+      (q.body ? proseBlock(q.body) : '') +
+      (q.tex ? mathBlock(q.tex) : '') +
+      (q.control ? '<label class="ls-box-control"><input type="checkbox" data-control="' + esc(q.control) + '" checked> ' + esc(q.controlLabel || "") + '</label>' : '');
+    if (q.questions && q.questions.length) {
+      html += '<div class="ls-qchildren">' +
+        q.questions.map(function (child, i) {
+          return renderQuestionNode(child, path + "." + i, depth + 1, false);
+        }).join("") +
+      '</div>';
+    }
+    return html + '</details>';
+  }
+  function depthTree(groups) {
+    var count = questionCount(groups);
     if (!count) return "";
     var rootOpen = state.depth === "standard" || state.depth === "deep" ? " open" : "";
-    var firstOpen = state.depth === "deep" ? " open" : "";
-    var contextQ = s.contextTitle || t("questionContext");
-    var deepQ = s.deepTitle || t("questionDeep");
+    var firstGroupOpen = " open";
+    var firstQuestionOpen = state.depth === "deep" ? " open" : "";
     var html = '<div class="ls-depth-tree">' +
+      renderQuestionIndex(groups) +
       '<details class="ls-deepbox ls-deepbox--root"' + rootOpen + '>' +
-        '<summary>' + esc(t("deepDive")) + ' <span class="ls-depth-count">' + esc(t(count === 1 ? "depthQuestion" : "depthQuestions", { n: count })) + '</span></summary>';
-    if (ctx || ctxTex) {
-      html += '<details class="ls-deepbox" data-qid="q-context"' + firstOpen + '>' +
-        '<summary>' + esc(contextQ) + '</summary>' +
-        (ctx ? '<p>' + termHTML(ctx) + '</p>' : '') +
-        (ctxTex ? mathBlock(ctxTex) : '') +
-        '</details>';
-    }
-    if (deep || deepTex) {
-      html += '<details class="ls-deepbox" data-qid="q-deep">' +
-        '<summary>' + esc(deepQ) + '</summary>' +
-        (deep ? '<p>' + termHTML(deep) + '</p>' : '') +
-        (deepTex ? mathBlock(deepTex) : '') +
-        '</details>';
-    }
-    boxes.forEach(function (b) {
-      html += '<details class="ls-deepbox" data-qid="q-box-' + esc(b.id) + '">' +
-        '<summary>' + esc(b.lens ? b.lens + " · " : "") + esc(b.title || "Detail") + '</summary>' +
-        (b.body ? '<p>' + termHTML(b.body || "") + '</p>' : '') +
-        (b.tex ? mathBlock(b.tex) : '') +
-        (b.control ? '<label class="ls-box-control"><input type="checkbox" data-control="' + esc(b.control) + '" checked> ' + esc(b.controlLabel || "") + '</label>' : '') +
-        '</details>';
+        '<summary>' + esc(t("moreKnowledge")) + ' <span class="ls-depth-count">' + esc(t(count === 1 ? "depthQuestion" : "depthQuestions", { n: count })) + '</span></summary>' +
+        '<p class="ls-more-intro">' + esc(t("moreIntro")) + '</p>';
+    groups.forEach(function (g, gi) {
+      html += '<details class="ls-deepbox ls-qgroup" data-qid="' + esc(g.id) + '"' + (gi === 0 ? firstGroupOpen : "") + '>' +
+        '<summary>' + esc(g.title || t("moreKnowledge")) +
+          (g.sources ? ' <span class="ls-depth-count">' + g.sources.length + '</span>' : '') +
+        '</summary>' +
+        '<div class="ls-qgroup-body">';
+      if (g.sources) {
+        html += renderSources(g.sources);
+      } else {
+        (g.questions || []).forEach(function (q, qi) {
+          html += renderQuestionNode(q, gi + "." + qi, 1, gi === 0 && qi === 0 ? firstQuestionOpen : "");
+        });
+      }
+      html += '</div></details>';
     });
-    if (sources.length) {
-      html += '<details class="ls-deepbox"><summary>' + esc(t("sources")) + '</summary><ul class="ls-sources">' +
-        sources.map(function (src) {
-          var why = src.why && typeof src.why === "object" ? src.why[LANG] : src.why;
-          return '<li><a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.label) + '</a>' +
-            (why ? '<span class="ls-src-why">' + esc(why) + '</span>' : '') + '</li>';
-        }).join("") + '</ul></details>';
-    }
     return html + '</details></div>';
   }
   function openDepth() {
@@ -745,25 +1210,65 @@
     }
   }
   function typesetText() { typesetScope(els.textScroll); }
+  function scheduleTypeset() {
+    clearTimeout(typesetTimer);
+    typesetTimer = setTimeout(typesetText, 220);
+  }
 
+  function bindQuestionIndex() {
+    if (!els.extras) return;
+    els.extras.querySelectorAll(".ls-question-index button").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var rootBox = els.extras.querySelector(".ls-deepbox--root");
+        if (rootBox) rootBox.open = true;
+        var target = els.extras.querySelector('[data-qid="' + b.getAttribute("data-qid") + '"]');
+        if (!target) return;
+        target.open = true;
+        var p = target.parentElement;
+        while (p) {
+          if (p.tagName === "DETAILS") p.open = true;
+          p = p.parentElement;
+        }
+        setTimeout(function () {
+          var host = els.textScroll || els.extras;
+          var top = target.getBoundingClientRect().top - host.getBoundingClientRect().top;
+          host.scrollTo({ top: host.scrollTop + top - 12, behavior: "smooth" });
+          try { target.setAttribute("tabindex", "-1"); target.focus({ preventScroll: true }); } catch (e) {}
+        }, 40);
+      });
+    });
+  }
   function renderText() {
     var d = activeDay();
     var base = activeStep();
     var s = activeView();
+    if (state.edit) ensureEditorDoc();
+    var doc = state.edit ? editorDoc : currentTextDoc();
+    var displayTitle = doc.title || s.title || "";
+    var displayKicker = doc.kicker || s.kicker || d.kicker;
     if (els.nowKicker) els.nowKicker.textContent = d.label + " · " + (TRACK_LABEL[d.track] ? TRACK_LABEL[d.track].label : d.track);
     if (els.nowTitle) els.nowTitle.textContent = d.title;
     updatePosRail();
-    els.kicker.textContent = (s.kicker || d.kicker) + (base.substeps ? " · " + (state.substep + 1) + " / " + base.substeps.length : "");
-    els.title.textContent = s.title;
+    els.kicker.textContent = displayKicker + (base.substeps ? " · " + (state.substep + 1) + " / " + base.substeps.length : "");
+    els.title.textContent = displayTitle;
     els.kicker.classList.toggle("is-centered", !!s.centerTitle);
     els.title.classList.toggle("is-centered", !!s.centerTitle);
-    els.body.innerHTML = proseBlock(s.body || "");
+    if (els.editBtn) {
+      els.editBtn.classList.toggle("is-on", state.edit);
+      els.editBtn.textContent = state.edit ? t("exitEdit") : t("edit");
+    }
+    if (state.edit) {
+      renderEditor();
+      return;
+    }
+    var view = composeText(doc);
+    els.body.innerHTML = view.head ? proseBlock(view.head) : "";
     renderCues(s);
-    var depth = depthTree(s, d);
+    var depth = depthTree(view.groups);
     els.extras.innerHTML = depth;
     els.extras.hidden = !depth;
-    els.watch.innerHTML = s.watch ? '<b>' + esc(t("watch")) + '</b> ' + termHTML(s.watch) : "";
-    els.watch.hidden = !s.watch;
+    els.watch.innerHTML = doc.watch ? '<b>' + esc(t("watch")) + '</b> ' + termHTML(doc.watch) : "";
+    els.watch.hidden = !doc.watch;
     bindTerms(els.body);
     bindTerms(els.watch);
     bindTerms(els.extras);
@@ -774,39 +1279,438 @@
     });
     var openBtn = els.extras.querySelector("[data-open-depth]");
     if (openBtn) openBtn.addEventListener("click", openDepth);
-    els.extras.querySelectorAll(".ls-question-index button").forEach(function (b) {
-      b.addEventListener("click", function () {
-        var rootBox = els.extras.querySelector(".ls-deepbox--root");
-        if (rootBox) rootBox.open = true;
-        var target = els.extras.querySelector('[data-qid="' + b.getAttribute("data-qid") + '"]');
-        if (!target) return;
-        target.open = true;
-        setTimeout(function () {
-          var host = els.textScroll || els.extras;
-          var top = target.getBoundingClientRect().top - host.getBoundingClientRect().top;
-          host.scrollTo({ top: host.scrollTop + top - 12, behavior: "smooth" });
-          try { target.setAttribute("tabindex", "-1"); target.focus({ preventScroll: true }); } catch (e) {}
-        }, 40);
+    bindQuestionIndex();
+    scheduleTypeset();
+  }
+
+  function updateEditorCount() {
+    var ta = els.body && els.body.querySelector("#ls-edit-body");
+    var out = els.body && els.body.querySelector("#ls-edit-count");
+    if (!ta || !out) return;
+    var n = splitSentences(ta.value).length;
+    out.textContent = t("sentenceCount", { n: n }) +
+      (n > MAX_TEASER_SENTENCES ? " · " + t("sentenceOver", { n: MAX_TEASER_SENTENCES }) : "");
+    out.classList.toggle("is-over", n > MAX_TEASER_SENTENCES);
+  }
+  function setEditorStatus(text) {
+    var el = els.body && els.body.querySelector("#ls-edit-status");
+    if (el) el.textContent = text || "";
+  }
+  function questionAt(path) {
+    var parts = String(path).split(".").map(Number);
+    var g = editorDoc.groups[parts[0]];
+    if (!g) return null;
+    var q = null;
+    for (var i = 1; i < parts.length; i++) {
+      var list = (i === 1 ? g.questions : (q && q.questions)) || [];
+      q = list[parts[i]];
+      if (!q) return null;
+    }
+    return q;
+  }
+  function questionListAt(path) {
+    var parts = String(path).split(".").map(Number);
+    if (parts.length === 1) {
+      var g = editorDoc.groups[parts[0]];
+      if (!g) return null;
+      if (!g.questions) g.questions = [];
+      return g.questions;
+    }
+    var parent = questionAt(parts.slice(0, -1).join("."));
+    if (!parent) return null;
+    if (!parent.questions) parent.questions = [];
+    return parent.questions;
+  }
+  function renderQuestionEditor(q, path) {
+    var children = (q.questions || []).map(function (child, i) {
+      return renderQuestionEditor(child, path + "." + i);
+    }).join("");
+    return '<div class="ls-edit-question" data-path="' + esc(path) + '">' +
+      '<div class="ls-edit-row">' +
+        '<select class="ls-edit-select" data-field="kind" data-path="' + esc(path) + '" aria-label="' + esc(t("kindQuestion")) + '">' +
+          '<option value="question"' + (q.kind === "trivia" ? "" : " selected") + '>' + esc(t("kindQuestion")) + '</option>' +
+          '<option value="trivia"' + (q.kind === "trivia" ? " selected" : "") + '>' + esc(t("kindTrivia")) + '</option>' +
+        '</select>' +
+        '<input class="ls-edit-input" data-field="title" data-path="' + esc(path) + '" value="' + esc(q.title || "") + '" aria-label="' + esc(t("questionTitle")) + '">' +
+        '<button type="button" class="ls-btn ls-btn--tiny ls-edit-remove" data-edit-remove-question="' + esc(path) + '">×</button>' +
+      '</div>' +
+      '<textarea class="ls-edit-textarea" data-field="body" data-path="' + esc(path) + '" aria-label="' + esc(t("questionBody")) + '">' + esc(q.body || "") + '</textarea>' +
+      '<textarea class="ls-edit-textarea ls-edit-tex" data-field="tex" data-path="' + esc(path) + '" aria-label="' + esc(t("formula")) + '">' + esc(q.tex || "") + '</textarea>' +
+      '<div class="ls-edit-children">' + children +
+        '<button type="button" class="ls-btn ls-btn--tiny" data-edit-add-question="' + esc(path) + '">+ ' + esc(t("addChildQuestion")) + '</button>' +
+      '</div>' +
+    '</div>';
+  }
+  function renderEditorGroups() {
+    return (editorDoc.groups || []).map(function (g, gi) {
+      if (g.sources) {
+        return '<details class="ls-edit-group" open>' +
+          '<summary><span class="ls-edit-group-name">' + esc(g.title || t("sources")) + '</span></summary>' +
+          '<div class="ls-edit-note">' + esc(t("sourcesReadonly")) + '</div>' +
+        '</details>';
+      }
+      var questions = (g.questions || []).map(function (q, qi) {
+        return renderQuestionEditor(q, gi + "." + qi);
+      }).join("");
+      return '<details class="ls-edit-group" data-g="' + gi + '" open>' +
+        '<summary>' +
+          '<input class="ls-edit-input ls-edit-group-name" data-field="group-title" data-g="' + gi + '" value="' + esc(g.title || "") + '" aria-label="' + esc(t("questionGroups")) + '">' +
+          '<button type="button" class="ls-btn ls-btn--tiny ls-edit-remove" data-edit-remove-group="' + gi + '">×</button>' +
+        '</summary>' +
+        '<div class="ls-edit-questions">' + questions +
+          '<button type="button" class="ls-btn ls-btn--tiny" data-edit-add-question="' + gi + '">+ ' + esc(t("addQuestion")) + '</button>' +
+        '</div>' +
+      '</details>';
+    }).join("");
+  }
+  function ensureEditorDoc() {
+    var ctx = editorContext();
+    if (!sameEditorContext(editorCtx, ctx)) {
+      if (editorDoc) saveEditorDoc();
+      editorCtx = ctx;
+      editorDoc = currentTextDoc();
+    }
+    if (!editorDoc) editorDoc = currentTextDoc();
+  }
+  function renderEditor() {
+    ensureEditorDoc();
+    els.body.innerHTML =
+      '<div class="ls-edit-bar">' +
+        '<span class="ls-edit-kicker">' + esc(t("editing")) + '</span>' +
+        '<span class="ls-edit-count" id="ls-edit-count"></span>' +
+        '<span class="ls-edit-status" id="ls-edit-status" aria-live="polite"></span>' +
+        '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="save">' + esc(t("save")) + '</button>' +
+        '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="copy">' + esc(t("copy")) + '</button>' +
+        '<button type="button" class="ls-btn ls-btn--tiny" data-edit-action="reset">' + esc(t("reset")) + '</button>' +
+        '<button type="button" class="ls-btn ls-btn--tiny ls-btn--primary" data-edit-action="exit">' + esc(t("exitEdit")) + '</button>' +
+      '</div>' +
+      '<div class="ls-edit-meta">' +
+        '<label class="ls-edit-field"><span class="ls-edit-label">' + esc(t("headingLabel")) + '</span>' +
+          '<input id="ls-edit-title" class="ls-edit-input" value="' + esc(editorDoc.title || "") + '" aria-label="' + esc(t("headingLabel")) + '">' +
+        '</label>' +
+        '<label class="ls-edit-field"><span class="ls-edit-label">' + esc(t("kickerLabel")) + '</span>' +
+          '<input id="ls-edit-kicker" class="ls-edit-input" value="' + esc(editorDoc.kicker || "") + '" aria-label="' + esc(t("kickerLabel")) + '">' +
+        '</label>' +
+      '</div>' +
+      '<label class="ls-edit-field"><span class="ls-edit-label">' + esc(t("watchLabel")) + '</span>' +
+        '<textarea id="ls-edit-watch" class="ls-edit-textarea ls-edit-watch">' + esc(editorDoc.watch || "") + '</textarea>' +
+      '</label>' +
+      '<label class="ls-edit-field"><span class="ls-edit-label">' + esc(t("shortTextLabel")) + '</span>' +
+        '<span class="ls-edit-help">' + esc(t("shortTextHint")) + '</span>' +
+        '<textarea id="ls-edit-body" class="ls-edit-textarea ls-edit-body">' + esc(editorDoc.body || "") + '</textarea>' +
+      '</label>';
+    els.extras.innerHTML =
+      '<div class="ls-edit-groups-head"><b>' + esc(t("questionGroups")) + '</b>' +
+        '<button type="button" class="ls-btn ls-btn--tiny" data-edit-add-group="1">+ ' + esc(t("addGroup")) + '</button>' +
+      '</div>' + renderEditorGroups();
+    els.extras.hidden = false;
+    els.watch.innerHTML = "";
+    els.watch.hidden = true;
+    els.cues.innerHTML = "";
+    els.cues.hidden = true;
+    bindEditor();
+    updateEditorCount();
+  }
+  function bindEditor() {
+    var body = els.body.querySelector("#ls-edit-body");
+    if (body) body.addEventListener("input", function () {
+      editorDoc.body = body.value;
+      updateEditorCount();
+      setEditorStatus("");
+      scheduleEditorSave();
+    });
+    var titleInput = els.body.querySelector("#ls-edit-title");
+    if (titleInput) titleInput.addEventListener("input", function () {
+      editorDoc.title = titleInput.value;
+      els.title.textContent = titleInput.value;
+      scheduleEditorSave();
+    });
+    var kickerInput = els.body.querySelector("#ls-edit-kicker");
+    if (kickerInput) kickerInput.addEventListener("input", function () {
+      editorDoc.kicker = kickerInput.value;
+      var base = activeStep();
+      els.kicker.textContent = kickerInput.value + (base && base.substeps ? " · " + (state.substep + 1) + " / " + base.substeps.length : "");
+      scheduleEditorSave();
+    });
+    var watchInput = els.body.querySelector("#ls-edit-watch");
+    if (watchInput) watchInput.addEventListener("input", function () {
+      editorDoc.watch = watchInput.value;
+      scheduleEditorSave();
+    });
+    els.body.querySelectorAll("[data-edit-action]").forEach(function (btn) {
+      btn.addEventListener("click", function () { editorAction(btn.getAttribute("data-edit-action")); });
+    });
+    els.extras.querySelectorAll("[data-edit-add-group]").forEach(function (btn) {
+      btn.addEventListener("click", addEditorGroup);
+    });
+    els.extras.querySelectorAll("[data-edit-add-question]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        addEditorQuestion(btn.getAttribute("data-edit-add-question"));
       });
     });
-    typesetText();
+    els.extras.querySelectorAll("[data-edit-remove-group]").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var gi = parseInt(btn.getAttribute("data-edit-remove-group"), 10);
+        editorDoc.groups.splice(gi, 1);
+        saveEditorDoc();
+        renderEditor();
+      });
+    });
+    els.extras.querySelectorAll("[data-edit-remove-question]").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        removeEditorQuestion(btn.getAttribute("data-edit-remove-question"));
+      });
+    });
+    els.extras.querySelectorAll('[data-field="group-title"][data-g]').forEach(function (field) {
+      field.addEventListener("input", function () {
+        var gi = parseInt(field.getAttribute("data-g"), 10);
+        if (editorDoc.groups[gi]) editorDoc.groups[gi].title = field.value;
+        scheduleEditorSave();
+      });
+    });
+    els.extras.querySelectorAll("[data-field][data-path]").forEach(function (field) {
+      function sync() {
+        var q = questionAt(field.getAttribute("data-path"));
+        if (!q) return;
+        var key = field.getAttribute("data-field");
+        if (key === "title" || key === "body" || key === "tex" || key === "kind") q[key] = field.value;
+        scheduleEditorSave();
+      }
+      field.addEventListener("input", sync);
+      field.addEventListener("change", sync);
+    });
+    els.extras.querySelectorAll(".ls-edit-group").forEach(function (groupEl) {
+      groupEl.querySelectorAll("summary input, summary button").forEach(function (el) {
+        el.addEventListener("click", function (e) { e.stopPropagation(); });
+      });
+    });
+  }
+  function addEditorGroup() {
+    var stamp = Date.now();
+    editorDoc.groups.push({
+      id: "g-edit-" + stamp,
+      title: t("newGroup"),
+      questions: [makeQuestion("q-edit-" + stamp, t("newQuestion"), "")]
+    });
+    saveEditorDoc();
+    renderEditor();
+  }
+  function addEditorQuestion(path) {
+    var list = questionListAt(path);
+    if (!list) return;
+    list.push(makeQuestion("q-edit-" + Date.now() + "-" + list.length, t("newQuestion"), ""));
+    saveEditorDoc();
+    renderEditor();
+  }
+  function removeEditorQuestion(path) {
+    var parts = String(path).split(".").map(Number);
+    var index = parts.pop();
+    var list = questionListAt(parts.join("."));
+    if (!list || isNaN(index)) return;
+    list.splice(index, 1);
+    saveEditorDoc();
+    renderEditor();
+  }
+  function copyEditorPayload() {
+    saveEditorDoc();
+    var payload = {};
+    payload[LANG] = cloneData(textOverlay[LANG] || {});
+    var dayId = activeDay().id;
+    if (!payload[LANG][dayId]) payload[LANG][dayId] = {};
+    payload[LANG][dayId][textStepKey()] = {
+      body: editorDoc.body || "",
+      title: editorDoc.title || "",
+      kicker: editorDoc.kicker || "",
+      watch: editorDoc.watch || "",
+      groups: cloneData(editorDoc.groups || [])
+    };
+    copyText(JSON.stringify(payload, null, 2), function () {
+      setEditorStatus(t("copied"));
+    });
+  }
+  function flashButton(btn, text) {
+    if (!btn) return;
+    var old = btn.textContent;
+    btn.textContent = text;
+    setTimeout(function () { btn.textContent = old; }, 1400);
+  }
+  function exportTextData() {
+    var texts = {};
+    ["de", "en"].forEach(function (lang) {
+      var store = textOverlay[lang] || {};
+      var out = {};
+      Object.keys(store).forEach(function (dayId) {
+        var steps = store[dayId] || {};
+        if (Object.keys(steps).length) out[dayId] = steps;
+      });
+      if (Object.keys(out).length) texts[lang] = out;
+    });
+    var data = { version: 1, generated_at: new Date().toISOString(), texts: texts };
+    if (Object.keys(layoutOverlay).length) data.layout = cloneData(layoutOverlay);
+    return data;
+  }
+  function downloadJSON(data, name) {
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+  function openJSONModal() {
+    if (!els.jsonModal) return;
+    var data = exportTextData();
+    if (els.jsonText) els.jsonText.value = JSON.stringify(data, null, 2);
+    els.jsonModal.hidden = false;
+    if (els.jsonText) setTimeout(function () {
+      try { els.jsonText.focus(); els.jsonText.select(); } catch (e) {}
+    }, 40);
+  }
+  function closeJSONModal() {
+    if (els.jsonModal) els.jsonModal.hidden = true;
+  }
+  function downloadCurrentJSON() {
+    var stamp = new Date().toISOString().slice(0, 10);
+    downloadJSON(exportTextData(), "learnsys-texts-" + stamp + ".json");
+  }
+  function importTextData(obj) {
+    if (!obj || typeof obj !== "object") throw new Error("invalid json");
+    var incoming = obj.texts && typeof obj.texts === "object" ? obj.texts : obj;
+    var found = false;
+    ["de", "en"].forEach(function (lang) {
+      if (!incoming[lang] || typeof incoming[lang] !== "object") return;
+      found = true;
+      if (!textOverlay[lang]) textOverlay[lang] = {};
+      Object.keys(incoming[lang]).forEach(function (dayId) {
+        var srcDay = incoming[lang][dayId];
+        if (!srcDay || typeof srcDay !== "object") return;
+        if (!textOverlay[lang][dayId]) textOverlay[lang][dayId] = {};
+        Object.keys(srcDay).forEach(function (key) {
+          var entry = srcDay[key];
+          if (!entry || typeof entry !== "object") return;
+          textOverlay[lang][dayId][key] = {
+            body: typeof entry.body === "string" ? entry.body : "",
+            title: typeof entry.title === "string" ? entry.title : "",
+            kicker: typeof entry.kicker === "string" ? entry.kicker : "",
+            watch: typeof entry.watch === "string" ? entry.watch : "",
+            groups: Array.isArray(entry.groups) ? entry.groups : []
+          };
+        });
+      });
+    });
+    if (!found) throw new Error("no texts");
+    if (obj.layout && typeof obj.layout === "object") {
+      layoutOverlay = cloneData(obj.layout);
+      persistLayout();
+      lastPosCount = -1;
+    }
+    persistTextOverlay();
+    renderAll();
+    writeHash();
+  }
+  function doImportFile(file, btn) {
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        importTextData(JSON.parse(String(reader.result || "")));
+        flashButton(btn, "✓");
+      } catch (e) {
+        flashButton(btn, "!");
+      }
+    };
+    reader.onerror = function () { flashButton(btn, "!"); };
+    reader.readAsText(file);
+  }
+  function bindJSONControls() {
+    var importBtn = null;
+    root.querySelectorAll("[data-ls-export]").forEach(function (btn) {
+      btn.addEventListener("click", openJSONModal);
+    });
+    root.querySelectorAll("[data-ls-import]").forEach(function (btn) {
+      importBtn = importBtn || btn;
+      btn.addEventListener("click", function () {
+        if (els.jsonFile) {
+          els.jsonFile.value = "";
+          els.jsonFile.click();
+        }
+      });
+    });
+    if (els.jsonFile) els.jsonFile.addEventListener("change", function () {
+      doImportFile(els.jsonFile.files && els.jsonFile.files[0], importBtn);
+    });
+    if (els.jsonClose) els.jsonClose.addEventListener("click", closeJSONModal);
+    if (els.jsonModal) els.jsonModal.addEventListener("click", function (e) {
+      if (e.target === els.jsonModal) closeJSONModal();
+    });
+    if (els.jsonCopy) els.jsonCopy.addEventListener("click", function () {
+      if (!els.jsonText) return;
+      copyText(els.jsonText.value, function () { flashButton(els.jsonCopy, "✓"); });
+    });
+    if (els.jsonDownload) els.jsonDownload.addEventListener("click", downloadCurrentJSON);
+  }
+  function editorAction(action) {
+    if (action === "save") {
+      saveEditorDoc();
+      setEditorStatus(t("saved"));
+      updateEditorCount();
+    } else if (action === "copy") {
+      copyEditorPayload();
+    } else if (action === "reset") {
+      var store = textStore();
+      delete store[textStepKey()];
+      persistTextOverlay();
+      editorCtx = editorContext();
+      editorDoc = currentTextDoc();
+      renderEditor();
+      setEditorStatus(t("resetDone"));
+    } else if (action === "exit") {
+      toggleEdit(false);
+    }
+  }
+  function toggleEdit(force) {
+    var next = typeof force === "boolean" ? force : !state.edit;
+    if (state.edit && !next) saveEditorDoc();
+    state.edit = next;
+    if (state.edit) {
+      editorCtx = editorContext();
+      editorDoc = currentTextDoc();
+    } else {
+      editorDoc = null;
+      editorCtx = null;
+    }
+    renderText();
+    if (state.edit) {
+      if (els.textScroll) els.textScroll.scrollTo({ top: 0, behavior: "smooth" });
+      var ta = els.body.querySelector("#ls-edit-body");
+      if (ta) { try { ta.focus({ preventScroll: true }); } catch (e) {} }
+    }
   }
 
   function renderStage() {
     var d = activeDay();
     var base = activeStep();
     var s = activeView();
-    els.stageKicker.textContent = base.substeps ? s.kicker : d.kicker;
-    els.stageTitle.textContent = s.title;
-    els.stageHint.textContent = s.watch || t("defaultHint");
+    var doc = state.edit && editorDoc ? editorDoc : currentTextDoc();
+    els.stageKicker.textContent = doc.kicker || (base && base.substeps ? s.kicker : d.kicker);
+    els.stageTitle.textContent = doc.title || s.title;
+    els.stageHint.textContent = doc.watch || s.watch || t("defaultHint");
     els.credit.textContent = d.credit || "";
     mountDemo(d, s);
   }
 
   function preloadNextScene(d) {
     if (!demo || !demo.preload || !d || !d.steps) return;
-    var base = d.steps[state.step];
-    var nextStep = base && base.substeps ? base.substeps[state.substep + 1] : d.steps[state.step + 1];
+    var base = stepAt(d, state.step);
+    var nextStep = base && base.substeps ? base.substeps[state.substep + 1] : stepAt(d, state.step + 1);
     if (!nextStep || !nextStep.demoState || !nextStep.demoState.scene) return;
     var sceneName = nextStep.demoState.scene;
     var preloadDemo = demo, preloadDay = d.id;
@@ -884,22 +1788,23 @@
   function renderCalendar() {
     if (!els.calGrid) return;
     var d = activeDay();
-    function card(i, s, compact) {
-      var stepTitle = s.title || t("step") + " " + (i + 1);
+    function card(i, s, compact, title) {
+      var stepTitle = title || s.title || t("step") + " " + (i + 1);
       var kicker = s.kicker || "";
       return '<button type="button" class="ls-cal-card' + (compact ? ' ls-cal-card--sub' : '') + (i === state.step ? ' is-on' : '') + '" data-step="' + i + '" data-no-height-test="1"><span class="ls-cal-num">' + (i + 1) + '</span><span class="ls-cal-kicker">' + esc(compact ? t("step") + " " + (i + 1) : kicker) + '</span><b>' + esc(compact ? (kicker || stepTitle) : stepTitle) + '</b></button>';
     }
     var groups = [];
-    d.steps.forEach(function (s, i) {
-      var title = s.title || t("step") + " " + (i + 1);
+    visibleIndexes(d).forEach(function (entry, i) {
+      var s = entryStep(d, entry);
+      var title = displayStepTitle(d, entry, s) || t("step") + " " + (i + 1);
       var last = groups[groups.length - 1];
-      if (last && last.title === title) last.items.push({ s: s, i: i });
-      else groups.push({ title: title, items: [{ s: s, i: i }] });
+      if (last && last.title === title) last.items.push({ s: s, i: i, title: title });
+      else groups.push({ title: title, items: [{ s: s, i: i, title: title }] });
     });
     els.calGrid.innerHTML = groups.map(function (g) {
-      if (g.items.length === 1) return card(g.items[0].i, g.items[0].s, false);
+      if (g.items.length === 1) return card(g.items[0].i, g.items[0].s, false, g.items[0].title);
       return '<div class="ls-cal-group"><div class="ls-cal-group-title">' + esc(g.title) + '</div><div class="ls-cal-group-cards">' +
-        g.items.map(function (x) { return card(x.i, x.s, true); }).join("") +
+        g.items.map(function (x) { return card(x.i, x.s, true, x.title); }).join("") +
         '</div></div>';
     }).join("");
     els.calGrid.querySelectorAll("[data-step]").forEach(function (b) {
@@ -919,15 +1824,266 @@
     if (els.calOverlay) els.calOverlay.hidden = true;
   }
 
+  function currentLayoutEntry() {
+    return entryAt(activeDay(), state.step);
+  }
+  function runLayoutChange(fn) {
+    var day = activeDay();
+    if (!day) return;
+    var current = currentLayoutEntry();
+    fn(day);
+    persistLayout();
+    var idx = current == null ? 0 : visibleIndexOfEntry(day, current);
+    if (idx < 0) idx = Math.min(state.step, Math.max(0, visibleCount(day) - 1));
+    state.step = Math.max(0, idx);
+    lastPosCount = -1;
+    renderAll();
+    writeHash();
+    renderLayoutPanel();
+  }
+  function promoteStep(day, stepIndex) {
+    var base = day.steps[stepIndex];
+    if (!base || !base.substeps || base.substeps.length < 2) return false;
+    var l = layoutFor(day);
+    var parent = String(stepIndex);
+    var order = l.order.filter(function (e) { return e.indexOf(parent + ".") !== 0; });
+    var promoted = l.promoted.filter(function (e) { return e.indexOf(parent + ".") !== 0; });
+    var hidden = l.hidden.slice();
+    var insertAt = order.indexOf(parent);
+    if (insertAt < 0) insertAt = order.length - 1;
+    var keys = base.substeps.map(function (_, sub) {
+      var key = parent + "." + sub;
+      promoted.push(key);
+      return key;
+    });
+    order.splice.apply(order, [insertAt + 1, 0].concat(keys));
+    if (hidden.indexOf(parent) < 0) hidden.push(parent);
+    layoutOverlay[day.id] = { order: order, hidden: hidden, promoted: promoted };
+    return true;
+  }
+  function unpromoteStep(day, stepIndex) {
+    var parent = String(stepIndex);
+    var l = layoutFor(day);
+    var order = l.order.filter(function (e) { return e.indexOf(parent + ".") !== 0; });
+    var promoted = l.promoted.filter(function (e) { return e.indexOf(parent + ".") !== 0; });
+    var hidden = l.hidden.filter(function (e) { return e !== parent && e.indexOf(parent + ".") !== 0; });
+    layoutOverlay[day.id] = { order: order, hidden: hidden, promoted: promoted };
+    return true;
+  }
+  function moveEntry(day, entry, dir) {
+    var l = layoutFor(day);
+    var order = l.order.slice();
+    var at = order.indexOf(String(entry));
+    if (at < 0) return false;
+    var to = at + (dir < 0 ? -1 : 1);
+    if (to < 0 || to >= order.length) return false;
+    var tmp = order[at];
+    order[at] = order[to];
+    order[to] = tmp;
+    layoutOverlay[day.id] = { order: order, hidden: l.hidden.slice(), promoted: l.promoted.slice() };
+    return true;
+  }
+  function hideEntry(day, entry) {
+    if (visibleCount(day) <= 1) return false;
+    var l = layoutFor(day);
+    var key = String(entry);
+    var hidden = l.hidden.slice();
+    if (hidden.indexOf(key) < 0) hidden.push(key);
+    layoutOverlay[day.id] = { order: l.order.slice(), hidden: hidden, promoted: l.promoted.slice() };
+    return true;
+  }
+  function showEntry(day, entry) {
+    var l = layoutFor(day);
+    var key = String(entry);
+    var hidden = l.hidden.filter(function (e) { return e !== key; });
+    layoutOverlay[day.id] = { order: l.order.slice(), hidden: hidden, promoted: l.promoted.slice() };
+    return true;
+  }
+  function resetLayout(day) {
+    if (layoutOverlay[day.id]) delete layoutOverlay[day.id];
+    persistLayout();
+  }
+  function renderLayoutPanel() {
+    if (!els.layoutList) return;
+    var day = activeDay();
+    if (!day) {
+      els.layoutList.innerHTML = "";
+      return;
+    }
+    var l = layoutFor(day);
+    var rows = visibleEntries(day).map(function (entry, i) {
+      var s = entryStep(day, entry) || {};
+      var isPromoted = entry.indexOf(".") >= 0;
+      var parentIndex = parseInt(entry.split(".")[0], 10);
+      var parent = day.steps[parentIndex];
+      var hasPromoted = l.promoted.some(function (p) { return p.indexOf(entry + ".") === 0; });
+      var canPromote = !isPromoted && parent && parent.substeps && parent.substeps.length > 1 && !hasPromoted;
+      return '<div class="ls-layout-row' + (i === state.step ? " is-on" : "") + '" data-entry="' + esc(entry) + '">' +
+        '<span class="ls-layout-num">' + (i + 1) + '</span>' +
+        '<span class="ls-layout-title">' + esc(displayStepTitle(day, entry, s) || (t("step") + " " + (i + 1))) +
+          (isPromoted ? ' <span class="ls-layout-tag">' + esc(t("promoted")) + '</span>' : '') +
+        '</span>' +
+        '<span class="ls-layout-actions">' +
+          '<button type="button" class="ls-layout-btn" data-layout-action="up" data-entry="' + esc(entry) + '" title="' + esc(t("moveUp")) + '" aria-label="' + esc(t("moveUp")) + '">▲</button>' +
+          '<button type="button" class="ls-layout-btn" data-layout-action="down" data-entry="' + esc(entry) + '" title="' + esc(t("moveDown")) + '" aria-label="' + esc(t("moveDown")) + '">▼</button>' +
+          '<button type="button" class="ls-layout-btn" data-layout-action="hide" data-entry="' + esc(entry) + '" title="' + esc(t("hideSlide")) + '" aria-label="' + esc(t("hideSlide")) + '">−</button>' +
+          (canPromote ? '<button type="button" class="ls-layout-btn" data-layout-action="promote" data-step="' + parentIndex + '">' + esc(t("splitSubsteps")) + '</button>' : '') +
+          (hasPromoted ? '<button type="button" class="ls-layout-btn" data-layout-action="unpromote" data-step="' + parentIndex + '">' + esc(t("mergeSubsteps")) + '</button>' : '') +
+        '</span>' +
+      '</div>';
+    });
+    var hiddenRows = l.order.filter(function (e) { return l.hidden.indexOf(e) >= 0; }).map(function (entry) {
+      var s = entryStep(day, entry) || {};
+      var parentIndex = parseInt(entry.split(".")[0], 10);
+      var parent = day.steps[parentIndex];
+      var hasPromoted = l.promoted.some(function (p) { return p.indexOf(entry + ".") === 0; });
+      var canPromote = entry.indexOf(".") < 0 && parent && parent.substeps && parent.substeps.length > 1 && !hasPromoted;
+      return '<div class="ls-layout-row is-hidden" data-entry="' + esc(entry) + '">' +
+        '<span class="ls-layout-num">×</span>' +
+        '<span class="ls-layout-title">' + esc(displayStepTitle(day, entry, s) || (t("step") + " " + (parentIndex + 1))) + '</span>' +
+        '<span class="ls-layout-actions">' +
+          '<button type="button" class="ls-layout-btn" data-layout-action="show" data-entry="' + esc(entry) + '" title="' + esc(t("showSlide")) + '" aria-label="' + esc(t("showSlide")) + '">+</button>' +
+          (canPromote ? '<button type="button" class="ls-layout-btn" data-layout-action="promote" data-step="' + parentIndex + '">' + esc(t("splitSubsteps")) + '</button>' : '') +
+          (hasPromoted ? '<button type="button" class="ls-layout-btn" data-layout-action="unpromote" data-step="' + parentIndex + '">' + esc(t("mergeSubsteps")) + '</button>' : '') +
+        '</span>' +
+      '</div>';
+    });
+    els.layoutList.innerHTML = rows.join("") +
+      (hiddenRows.length ? '<div class="ls-layout-sub">' + esc(t("hiddenSlides")) + '</div>' + hiddenRows.join("") : "");
+  }
+  function openLayout() {
+    if (!els.layoutOverlay) return;
+    renderLayoutPanel();
+    var solo = els.layoutOverlay.querySelector('[data-ls-solo]');
+    if (solo) {
+      if (cfg.demoPreview) {
+        solo.href = cfg.demoPreview + '?scene=' + encodeURIComponent(activeDay().demo) + '&lang=' + LANG;
+        solo.hidden = false;
+      } else {
+        solo.hidden = true;
+      }
+    }
+    els.layoutOverlay.hidden = false;
+    if (els.layoutClose) setTimeout(function () { try { els.layoutClose.focus({ preventScroll: true }); } catch (e) {} }, 40);
+  }
+  function closeLayout() {
+    if (els.layoutOverlay) els.layoutOverlay.hidden = true;
+  }
+  function bindLayoutPanel() {
+    if (els.layoutOverlay) {
+      els.layoutOverlay.addEventListener("click", function (e) {
+        if (e.target === els.layoutOverlay) { closeLayout(); return; }
+        var btn = e.target.closest("[data-layout-action]");
+        if (!btn) return;
+        var action = btn.getAttribute("data-layout-action");
+        var entry = btn.getAttribute("data-entry");
+        var step = parseInt(btn.getAttribute("data-step"), 10);
+        if (action === "reset") runLayoutChange(function (day) { resetLayout(day); });
+        else if (action === "up" || action === "down") runLayoutChange(function (day) { moveEntry(day, entry, action === "up" ? -1 : 1); });
+        else if (action === "hide") runLayoutChange(function (day) { hideEntry(day, entry); });
+        else if (action === "show") runLayoutChange(function (day) { showEntry(day, entry); });
+        else if (action === "promote") runLayoutChange(function (day) { promoteStep(day, step); });
+        else if (action === "unpromote") runLayoutChange(function (day) { unpromoteStep(day, step); });
+      });
+    }
+    if (els.layoutClose) els.layoutClose.addEventListener("click", closeLayout);
+    root.querySelectorAll("[data-ls-layout]").forEach(function (btn) {
+      btn.addEventListener("click", openLayout);
+    });
+  }
+
   function renderAll() {
     hideTip();
+    var day = activeDay();
+    var count = day ? visibleCount(day) : 0;
+    if (count && state.step >= count) state.step = count - 1;
     renderTop();
     renderDays();
     renderSteps();
+    renderPosRail();
     renderText();
     renderStage();
-    renderCalendar();
+    if (els.calOverlay && !els.calOverlay.hidden) renderCalendar();
     save();
+  }
+
+  function parseHash() {
+    var raw = String(location.hash || "").replace(/^#/, "");
+    if (!raw) return null;
+    if (raw.charAt(0) === "/") {
+      var parts = raw.slice(1).split("/").filter(Boolean);
+      return { day: decodeURIComponent(parts[0] || ""), step: parts[1], sub: parts[2] };
+    }
+    if (raw.indexOf("=") >= 0) {
+      var out = {};
+      raw.split("&").forEach(function (pair) {
+        var at = pair.indexOf("=");
+        var key = decodeURIComponent(at >= 0 ? pair.slice(0, at) : pair);
+        out[key] = decodeURIComponent(at >= 0 ? pair.slice(at + 1) : "");
+      });
+      return { day: out.day, step: out.step, sub: out.sub };
+    }
+    if (/^\d+$/.test(raw)) return { step: raw };
+    return null;
+  }
+  function writeHash() {
+    if (suppressHash) return;
+    var day = activeDay();
+    if (!day) return;
+    var hash = "#/" + encodeURIComponent(day.id) + "/" + state.step + "/" + state.substep;
+    if (location.hash === hash) return;
+    try {
+      history.replaceState(null, "", location.pathname + location.search + hash);
+    } catch (e) {
+      location.hash = hash;
+    }
+  }
+  function applyHash() {
+    var h = parseHash();
+    if (!h) return false;
+    var dayIndex = state.day;
+    if (h.day) {
+      var found = -1;
+      cfg.days.forEach(function (d, i) { if (d.id === h.day) found = i; });
+      if (found >= 0) dayIndex = found;
+      else if (/^\d+$/.test(h.day)) dayIndex = clamp(parseInt(h.day, 10), 0, cfg.days.length - 1);
+    }
+    var step = parseInt(h.step, 10);
+    var sub = parseInt(h.sub, 10);
+    if (!isFinite(step)) step = 0;
+    if (!isFinite(sub)) sub = 0;
+    suppressHash = true;
+    go(dayIndex, step, sub);
+    suppressHash = false;
+    writeHash();
+    return true;
+  }
+  function copyText(text, done) {
+    function fallback() {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "readonly");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { if (done) done(); }, function () { fallback(); if (done) done(); });
+    } else {
+      fallback();
+      if (done) done();
+    }
+  }
+  function bindLinkControls() {
+    root.querySelectorAll("[data-ls-link]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        writeHash();
+        copyText(location.href, function () { flashButton(btn, t("linkCopied")); });
+      });
+    });
   }
 
 
@@ -1097,7 +2253,7 @@
     }
     fn();
   }
-  function go(day, step) {
+  function go(day, step, substep) {
     hideTip();
     var oldDay = state.day;
     var oldStep = state.step;
@@ -1105,11 +2261,16 @@
     state.day = clamp(day, 0, cfg.days.length - 1);
     var d = cfg.days[state.day];
     if (state.track !== "all" && d.track !== state.track) state.track = d.track;
-    state.step = clamp(step, 0, d.steps.length - 1);
+    state.step = clamp(step, 0, Math.max(0, visibleCount(d) - 1));
     var dayChanged = oldDay !== state.day;
     var demoChanged = oldDemo !== d.demo;
     var stepChanged = oldStep !== state.step;
     if (dayChanged || stepChanged) state.substep = 0;
+    if (typeof substep === "number" && isFinite(substep)) {
+      var viewBase = stepAt(d, state.step);
+      var viewMax = viewBase && viewBase.substeps ? viewBase.substeps.length - 1 : 0;
+      state.substep = clamp(substep, 0, viewMax);
+    }
     var changed = dayChanged || demoChanged || stepChanged;
     var elementStep = stepChanged && !dayChanged && !demoChanged && ELEMENT_ANIM[d.demo];
     var canvasMorph = changed && CANVAS_DEMOS[oldDemo] && CANVAS_DEMOS[d.demo] && (dayChanged || demoChanged || FLOW_ON_STEP[d.demo]);
@@ -1128,6 +2289,7 @@
       els.app.classList.add("is-day-" + dir);
       setTimeout(function () { els.app.classList.remove("is-day-next", "is-day-prev"); }, 260);
     }
+    writeHash();
   }
   function next() {
     if (demo && typeof demo.busy === "function" && demo.busy()) {
@@ -1136,15 +2298,16 @@
     }
     if (demo && typeof demo.next === "function" && demo.next()) return;
     var d = activeDay();
-    var base = d.steps[state.step];
+    var base = activeStep();
     if (base && base.substeps && state.substep < base.substeps.length - 1) {
       state.substep++;
       cueSuppressUntil = performance.now() + 500;
       if (els.textScroll) { els.textScroll.scrollTop = 0; }
       renderAll();
+      writeHash();
       return;
     }
-    if (state.step < d.steps.length - 1) go(state.day, state.step + 1);
+    if (state.step < visibleCount(d) - 1) go(state.day, state.step + 1);
     else {
       var list = cfg.days;
       var pos = list.indexOf(d);
@@ -1154,12 +2317,13 @@
   function prev() {
     if (demo && typeof demo.prev === "function" && demo.prev()) return;
     var d = activeDay();
-    var base = d.steps[state.step];
+    var base = activeStep();
     if (base && base.substeps && state.substep > 0) {
       state.substep--;
       cueSuppressUntil = performance.now() + 500;
       if (els.textScroll) { els.textScroll.scrollTop = 0; }
       renderAll();
+      writeHash();
       return;
     }
     if (state.step > 0) go(state.day, state.step - 1);
@@ -1168,7 +2332,7 @@
       var pos = list.indexOf(d);
       if (pos > 0) {
         var p = list[pos - 1];
-        go(pos - 1, p.steps.length - 1);
+        go(pos - 1, visibleCount(p) - 1);
       }
     }
   }
@@ -1177,8 +2341,9 @@
     if (!cfg.days.length) return;
     if (cfg.singleDay) {
       var sd = activeDay();
-      var pick = sd.steps.length > 1 ? Math.floor(Math.random() * sd.steps.length) : 0;
-      if (pick === state.step) pick = (pick + 1) % sd.steps.length;
+      var count = visibleCount(sd);
+      var pick = count > 1 ? Math.floor(Math.random() * count) : 0;
+      if (pick === state.step) pick = (pick + 1) % count;
       go(state.day, pick);
       return;
     }
@@ -1191,7 +2356,7 @@
   function prevDay() {
     if (cfg.singleDay) {
       var sd = activeDay();
-      go(state.day, clamp(state.step - 5, 0, sd.steps.length - 1));
+      go(state.day, clamp(state.step - 5, 0, visibleCount(sd) - 1));
       return;
     }
     if (state.day > 0) go(state.day - 1, 0);
@@ -1199,7 +2364,7 @@
   function nextDay() {
     if (cfg.singleDay) {
       var sd = activeDay();
-      go(state.day, clamp(state.step + 5, 0, sd.steps.length - 1));
+      go(state.day, clamp(state.step + 5, 0, visibleCount(sd) - 1));
       return;
     }
     if (state.day < cfg.days.length - 1) go(state.day + 1, 0);
@@ -1209,10 +2374,10 @@
     n = Math.max(0, parseInt(n, 10) || 0);
     if (cfg.singleDay) {
       var d = activeDay();
-      var lastStep = d.steps.length - 1;
+      var lastStep = visibleCount(d) - 1;
       var step;
       if (n >= posCount) step = n;
-      else if (posCount === d.steps.length) step = n;
+      else if (posCount === visibleCount(d)) step = n;
       else step = posCount > 1 ? Math.round(n / (posCount - 1) * lastStep) : 0;
       go(state.day, clamp(step, 0, lastStep));
       return;
@@ -1234,7 +2399,7 @@
     if (!els.mixPos || !els.mixPos.length) return;
     var total, pos;
     if (cfg.singleDay) {
-      total = activeDay().steps.length;
+      total = visibleCount(activeDay());
       if (posCount === total) pos = state.step;
       else pos = total > 1 ? Math.round(state.step / (total - 1) * (posCount - 1)) : 0;
     } else {
@@ -1443,10 +2608,16 @@
     });
     if (els.openDepth) els.openDepth.addEventListener("click", openDepth);
     els.depthBtn.addEventListener("click", openDepth);
+    if (els.editBtn) els.editBtn.addEventListener("click", function () { toggleEdit(); });
+    bindJSONControls();
+    bindLayoutPanel();
+    bindLinkControls();
     if (els.navPrev) els.navPrev.addEventListener("click", prev);
     if (els.navNext) els.navNext.addEventListener("click", next);
-    els.mixPos.forEach(function (b) {
-      b.addEventListener("click", function () { goPosition(parseInt(b.getAttribute("data-pos"), 10)); });
+    var mixPosHost = root.querySelector("#ls-mix-pos");
+    if (mixPosHost) mixPosHost.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-pos]");
+      if (b) goPosition(parseInt(b.getAttribute("data-pos"), 10));
     });
     if (els.fontMinus) els.fontMinus.addEventListener("click", function () { setFont(state.font - 1); });
     if (els.fontPlus) els.fontPlus.addEventListener("click", function () { setFont(state.font + 1); });
@@ -1458,6 +2629,8 @@
     if (els.calOverlay) els.calOverlay.addEventListener("click", function (e) { if (e.target === els.calOverlay) closeCalendar(); });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && els.calOverlay && !els.calOverlay.hidden) { closeCalendar(); e.preventDefault(); }
+      if (e.key === "Escape" && els.layoutOverlay && !els.layoutOverlay.hidden) { closeLayout(); e.preventDefault(); }
+      if (e.key === "Escape" && els.jsonModal && !els.jsonModal.hidden) { closeJSONModal(); e.preventDefault(); }
     });
     if (els.textToggle) els.textToggle.addEventListener("click", function () { setTextOpen(true); });
     if (els.textClose) els.textClose.addEventListener("click", function () { setTextOpen(false); });
@@ -1547,10 +2720,11 @@
       else if (e.key === "End") {
         e.preventDefault();
         var endDay = cfg.singleDay ? activeDay() : cfg.days[cfg.days.length - 1];
-        go(cfg.singleDay ? state.day : cfg.days.length - 1, (endDay && endDay.steps.length ? endDay.steps.length - 1 : 0));
+        go(cfg.singleDay ? state.day : cfg.days.length - 1, (endDay ? Math.max(0, visibleCount(endDay) - 1) : 0));
       }
       else if (e.key === "r" || e.key === "R") { e.preventDefault(); shuffle(); }
       else if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFocus(); }
+      else if (e.key === "e" || e.key === "E") { e.preventDefault(); toggleEdit(); }
       else if (e.key === "d" || e.key === "D") { e.preventDefault(); openDepth(); }
       else if (e.altKey && e.key === "0") { e.preventDefault(); setFont(1); }
       else if (e.key === "+" || e.key === "=") { e.preventDefault(); setFont(state.font + 1); }
@@ -3643,12 +4817,43 @@
   LS.defineDemo = defineDemo;
   LS.getDemoMeta = function (name) { return DEMO_META[name] || {}; };
   LS.prefs = { normalize: normalizePrefs, key: KEY };
+  LS.text = {
+    maxSentences: MAX_TEASER_SENTENCES,
+    key: TEXT_KEY,
+    splitSentences: splitSentences,
+    teaser: teaserParts,
+    compose: composeText,
+    groupsFor: function (step, day, base) { return buildQuestionGroups(step || activeView(), day || activeDay(), base || activeStep()); },
+    countQuestions: countQuestions,
+    mergeGroups: mergeQuestionGroups,
+    current: currentTextDoc,
+    viewKey: textStepKey,
+    overlay: function (lang) { return textOverlay[lang || LANG] || {}; },
+    setOverlay: function (obj, lang) { textOverlay[lang || LANG] = obj || {}; persistTextOverlay(); },
+    exportData: exportTextData,
+    importData: importTextData,
+    layout: function () { return cloneData(layoutOverlay); },
+    toggleEdit: toggleEdit
+  };
+  LS.layout = {
+    entries: function () { return visibleEntries(activeDay()).slice(); },
+    visible: function () { return visibleSteps(activeDay()).map(function (s) { return s && s.title; }); },
+    move: function (entry, dir) { runLayoutChange(function (day) { moveEntry(day, entry, dir); }); },
+    hide: function (entry) { runLayoutChange(function (day) { hideEntry(day, entry); }); },
+    show: function (entry) { runLayoutChange(function (day) { showEntry(day, entry); }); },
+    promote: function (step) { runLayoutChange(function (day) { promoteStep(day, step); }); },
+    unpromote: function (step) { runLayoutChange(function (day) { unpromoteStep(day, step); }); },
+    reset: function () { runLayoutChange(function (day) { resetLayout(day); }); },
+    read: function () { return cloneData(layoutOverlay); }
+  };
 
   LS.mount = function (el, config) {
     root = el;
     cfg = config;
     setLang(cfg.lang);
     load();
+    loadTextOverlay();
+    loadLayout();
     if (!cfg.tracks) cfg.tracks = [];
     cfg.tracks.forEach(function (t) { TRACK_LABEL[t.id] = t; });
     if (state.track !== "all" && !TRACK_LABEL[state.track]) state.track = "all";
@@ -3659,7 +4864,7 @@
       if (cfg.singleDay) state.day = typeof cfg.startDay === "number" ? clamp(cfg.startDay, 0, cfg.days.length - 1) : 0;
       state.step = 0;
     }
-    if (cfg.singleDay && cfg.days.length === 1 && state.step >= cfg.days[0].steps.length) state.step = 0;
+    if (cfg.singleDay && cfg.days.length === 1 && state.step >= visibleCount(cfg.days[0])) state.step = 0;
     if (state.track !== "all") {
       var trackDays = cfg.days.filter(function (d) { return d.track === state.track; });
       if (trackDays.length && trackDays.indexOf(cfg.days[state.day]) === -1) {
@@ -3670,6 +4875,11 @@
     buildUI();
     bind();
     renderAll();
+    if (!applyHash()) writeHash();
+    if (!hashBound) {
+      hashBound = true;
+      window.addEventListener("hashchange", function () { applyHash(); });
+    }
     LS.visual = window.LearnSysVisuals || null;
     LS.kit = window.LearnSysSceneKit || null;
     window.addEventListener("tm:theme", refreshTheme);
@@ -3684,12 +4894,17 @@
   };
   LS.openAll = openAllDepth;
   LS.go = go;
+  LS.next = next;
+  LS.prev = prev;
+  LS.goView = function (day, step, substep) { go(day, step, substep); };
+  LS.link = function () { writeHash(); return location.href; };
+  LS.hash = { parse: parseHash, apply: applyHash, write: writeHash };
   LS.goDay = goDay;
   LS.shuffle = shuffle;
   LS.goPosition = goPosition;
   LS.prevDay = prevDay;
   LS.nextDay = nextDay;
-  LS.days = function () { return cfg.days.map(function (d) { return { id: d.id, label: d.label, title: d.title, track: d.track, demo: d.demo, steps: d.steps.length }; }); };
+  LS.days = function () { return cfg.days.map(function (d) { return { id: d.id, label: d.label, title: d.title, track: d.track, demo: d.demo, steps: visibleCount(d) }; }); };
   function addDebugFps() {
     if (document.getElementById("ls-fps")) return;
     var badge = document.createElement("div");
