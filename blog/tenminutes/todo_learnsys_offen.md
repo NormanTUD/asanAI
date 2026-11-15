@@ -136,3 +136,12 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   Attention-Merge-Unterfolie genommen.
 - [done] Folie „Attention reduziert Rauschen“ entfernt und aus der
   Folienliste gestrichen.
+- [done] Code-Folie: „Weiter“ vor dem Terminal beendet jetzt zuerst den
+  Code-Lauf und zeigt das Terminal; erst der nächste Klick blättert weiter.
+- [done] „Die nächsten Tage“ zeigt keine Stationen mehr. In der Demo steht die
+  kurze Botschaft „Die nächsten Tage werden wir diese Bausteine genauer
+  anschauen.“; der linke Text ist nur noch ein kurzer Ausblick.
+- [done] Daten-Unterfolie: linke Spalte auf drei Sätze gekürzt; die
+  Ultrakurzfassung der zwei Datensätze und des Fine-Tunings steht jetzt als
+  Zusammenfassung in der Demo rechts. Die langen Cues sind entfernt, die
+  GPT-3-Balken erscheinen dort nicht mehr.

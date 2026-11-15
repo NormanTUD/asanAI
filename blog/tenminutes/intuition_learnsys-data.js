@@ -747,55 +747,21 @@
     kicker: DE ? "Daten" : "Data",
     title: DE ? "Daten" : "Data",
     body: DE
-      ? "Daten sind der erste Schritt, technisch aber nicht Teil des LLM: Das Modell ist die Kette der Schichten, die Daten kommen von außen. Man nutzt zwei Datensätze. Der erste ist mehr oder weniger das gesamte Internet: Wikipedia, Reddit, Bücher, Webseiten und Quellcode. Der zweite besteht aus zielgerichteten Menschenfragen, auch mit Tippfehlern und unklaren Formulierungen, und den passenden nützlichen Antworten. Zuerst trainiert man auf dem großen Datensatz, dann folgt Fine-Tuning auf dem kleinen, damit sich das Netz für Menschen nützlich verhält."
-      : "Data is the first step, but technically not part of the LLM: the model is the chain of layers, and the data comes from outside. There are two datasets. The first is more or less the entire internet: Wikipedia, Reddit, books, websites, and source code. The second consists of targeted human questions, including typos and unclear wording, together with useful answers. First you train on the large dataset, then fine-tune on the small one so that the network behaves usefully for people.",
+      ? "Daten sind der erste Schritt, aber technisch nicht Teil des LLM. Man nutzt zwei Datensätze: das riesige Internet und kleine, gezielte Menschenfragen mit nützlichen Antworten. Erst trainiert man auf dem großen Datensatz, dann folgt Fine-Tuning auf dem kleinen, damit sich das Netz für Menschen nützlich verhält."
+      : "Data is the first step, but technically not part of the LLM. There are two datasets: the huge internet and small, targeted human questions with useful answers. First you train on the large dataset, then fine-tune on the small one so that the network behaves usefully for people.",
     teaser: DE
-      ? "Daten sind der erste Schritt, technisch aber nicht Teil des LLM: Das Modell ist die Kette der Schichten, die Daten kommen von außen. Man nutzt zwei Datensätze. Der erste ist mehr oder weniger das gesamte Internet: Wikipedia, Reddit, Bücher, Webseiten und Quellcode. Der zweite besteht aus zielgerichteten Menschenfragen, auch mit Tippfehlern und unklaren Formulierungen, und den passenden nützlichen Antworten. Zuerst trainiert man auf dem großen Datensatz, dann folgt Fine-Tuning auf dem kleinen, damit sich das Netz für Menschen nützlich verhält."
-      : "Data is the first step, but technically not part of the LLM: the model is the chain of layers, and the data comes from outside. There are two datasets. The first is more or less the entire internet: Wikipedia, Reddit, books, websites, and source code. The second consists of targeted human questions, including typos and unclear wording, together with useful answers. First you train on the large dataset, then fine-tune on the small one so that the network behaves usefully for people.",
-    watch: DE ? "Die Daten sind die Beispiele, aus denen das Modell lernt. Sie gehören zum Training, nicht zur Architektur." : "The data are the examples the model learns from. They belong to training, not to the architecture.",
-    demoState: { scene: "langdata", mode: "scale" },
-    cues: [
-      {
-        label: DE ? "Der große Datensatz" : "The large dataset",
-        title: DE ? "Mehr oder weniger das ganze Internet" : "More or less the entire internet",
-        text: DE
-          ? "Der erste Datensatz ist mehr oder weniger das gesamte Internet: Wikipedia, Reddit, Bücher, Webseiten, Quellcode und mehr. Er ist riesig, breit und unordentlich. Das Modell lernt daraus Muster, Sprache, Fakten und Code. Zum Beispiel steht darin der Anfang des HTML-Codes eines Wikipedia-Artikels, danach eine Auslassung und ein Buchtext von Nietzsche. Der Code enthält Navigation, Stil und Rauschen, aber auch Text und Fakten. Das Modell lernt aus beidem. Die Daten sind nicht Teil des Modells; sie kommen von außen und werden zum Training verwendet."
-          : "The first dataset is more or less the entire internet: Wikipedia, Reddit, books, websites, source code, and more. It is huge, broad, and messy. The model learns patterns, language, facts, and code from it. For example, it contains the beginning of the HTML of a Wikipedia article, then an omission and a book text by Nietzsche. The code contains navigation, style, and noise, but also text and facts. The model learns from both. The data is not part of the model; it comes from outside and is used for training.",
-        state: { mode: "scale" }
-      },
-      {
-        label: DE ? "Der kleine Datensatz" : "The small dataset",
-        title: DE ? "Menschenfragen und nützliche Antworten" : "Human questions and useful answers",
-        text: DE
-          ? "Der zweite Datensatz ist klein und gezielt: Menschenfragen, auch mit Tippfehlern, unklaren Formulierungen oder falschen Annahmen, und die passenden nützlichen Antworten. Hier lernt das Modell nicht nur Fakten, sondern auch, wie man auf eine Frage antwortet, die ein Mensch wirklich stellt. Aus Wikipedia lernt es, dass Paris die Hauptstadt von Frankreich ist. Dass auf „Was ist die Hauptstadt von Frankreich?“ die Antwort „Paris“ folgt, lernt es aus diesen Frage-Antwort-Daten."
-          : "The second dataset is small and targeted: human questions, including typos, unclear wording, or wrong assumptions, together with useful answers. Here the model learns not only facts but also how to answer a question a person actually asks. From Wikipedia it learns that Paris is the capital of France. That “What is the capital of France?” is answered with “Paris” is learned from this question-answer data.",
-        state: { mode: "truth" }
-      },
-      {
-        label: DE ? "Erst groß, dann klein" : "First large, then small",
-        title: DE ? "Vortraining und Fine-Tuning" : "Pretraining and fine-tuning",
-        text: DE
-          ? "Zuerst trainiert man auf dem großen Datensatz. Das Modell lernt, das nächste Wort vorherzusagen. Danach folgt Fine-Tuning auf dem kleinen Datensatz: Das Netz soll sich für Menschen nützlich verhalten, also Fragen beantworten, Anweisungen befolgen und brauchbare Antworten liefern. Der große Datensatz gibt die Breite; der kleine gibt die Richtung."
-          : "First you train on the large dataset. The model learns to predict the next word. Then comes fine-tuning on the small dataset: the network should behave usefully for people, answering questions, following instructions, and giving usable answers. The large dataset provides breadth; the small one provides direction.",
-        state: {}
-      },
-      {
-        label: DE ? "Eine Wahrheit, viele Sprachen" : "One truth, many languages",
-        title: DE ? "Zeigen alle auf denselben Sachverhalt?" : "Do they all point to the same fact?",
-        text: DE
-          ? "Derselbe Sachverhalt in vielen Sprachen: „Sonnenblumen sind die besten Blumen“ heißt in jeder Sprache anders, meint aber dasselbe. Die Zeichen und Tokens ändern sich, der Inhalt bleibt. Ein Modell soll solche Sätze nach Bedeutung beurteilen, nicht nach den konkreten Zeichen. Deshalb helfen mehrsprachige Daten: Wikipedia, Reddit, Bücher und Fragen beschreiben denselben Sachverhalt oft in verschiedenen Formen."
-          : "The same fact in many languages: “Sunflowers are the best flowers” looks different in every language but means the same thing. The characters and tokens change; the content stays. A model should judge such sentences by meaning, not by the concrete characters. That is why multilingual data helps: Wikipedia, Reddit, books, and questions often describe the same fact in different forms.",
-        state: { mode: "languages" }
-      }
-    ],
+      ? "Daten sind der erste Schritt, aber technisch nicht Teil des LLM. Man nutzt zwei Datensätze: das riesige Internet und kleine, gezielte Menschenfragen mit nützlichen Antworten. Erst trainiert man auf dem großen Datensatz, dann folgt Fine-Tuning auf dem kleinen, damit sich das Netz für Menschen nützlich verhält."
+      : "Data is the first step, but technically not part of the LLM. There are two datasets: the huge internet and small, targeted human questions with useful answers. First you train on the large dataset, then fine-tune on the small one so that the network behaves usefully for people.",
+    watch: DE ? "Die Demo rechts zeigt die zwei Datensätze und die Reihenfolge des Trainings." : "The demo on the right shows the two datasets and the order of training.",
+    demoState: { scene: "langdata", mode: "scale", summary: true },
     inherit: false,
     questionGroups: [
       {
         id: "g-basics",
         title: DE ? "Eine Ebene tiefer" : "One level deeper",
         questions: [
-          { id: "q-data-external", title: DE ? "Sind die Daten Teil des LLM?" : "Are the data part of the LLM?", body: DE ? "Nein. Die Daten sind der erste Schritt, stehen aber außerhalb des Modells. Das LLM ist die Architektur; die Daten werden zum Training verwendet." : "No. The data is the first step but stands outside the model. The LLM is the architecture; the data is used for training.", tex: "", kind: "question" },
-          { id: "q-data-training", title: DE ? "Wie lernt das Modell aus den Daten?" : "How does the model learn from data?", body: DE ? "Der Computer bekommt sehr viele Beispiele. Aus ihnen lernt er, die vorgefertigten Bausteine so zu verändern, dass sie das nächste Wort möglichst gut vorhersagen. Die Bausteine sind die Architektur; die Daten sagen, wofür sie optimiert werden." : "The computer receives very many examples. From them it learns to change the prefabricated building blocks so that they predict the next word as well as possible. The blocks are the architecture; the data defines what they are optimised for.", tex: "", kind: "question" }
+          { id: "q-data-external", title: DE ? "Sind die Daten Teil des LLM?" : "Are the data part of the LLM?", body: DE ? "Nein. Sie stehen außerhalb des Modells und werden zum Training verwendet." : "No. They stand outside the model and are used for training.", tex: "", kind: "question" },
+          { id: "q-data-finetune", title: DE ? "Was ist Fine-Tuning?" : "What is fine-tuning?", body: DE ? "Ein zweites Training auf kleinen, gezielten Frage-Antwort-Daten, damit das Modell für Menschen nützlich antwortet." : "A second training run on small, targeted question-answer data so the model answers usefully for people.", tex: "", kind: "question" }
         ]
       },
       {
@@ -844,24 +810,11 @@
   var bausteineOutro = {
     kicker: DE ? "Ausblick" : "What comes next",
     title: DE ? "Die nächsten Tage" : "The next days",
-    body: DE
-      ? "Damit sind die Bausteine einmal durch. In den nächsten Tagen gehen wir sie einen nach dem anderen durch: was jeder macht, wie sie zusammenspielen und wie daraus in einer Schleife die Vorhersage des nächsten Wortes entsteht. Die Übersicht ist der Fahrplan, nicht die Prüfung; du musst dir noch nicht alles merken. Wir zoomen in den nächsten Folien in jeden Schritt hinein und bauen ihn dort in Ruhe auf. Zuerst kommt der Tokenizer, dann Embedding und Position, dann Attention und FFN, am Ende die Vorhersage."
-      : "That completes the building blocks for now. Over the next days we will go through them one by one: what each one does, how they work together, and how the loop turns them into a prediction of the next word. The overview is a roadmap, not a test; you do not need to remember everything yet. In the next slides we zoom into each step and build it up calmly. First comes the tokenizer, then embedding and position, then attention and FFN, and finally the prediction.",
-    teaser: DE
-      ? "Damit sind die Bausteine einmal durch. In den nächsten Tagen gehen wir sie einen nach dem anderen durch: was jeder macht, wie sie zusammenspielen und wie daraus in einer Schleife die Vorhersage des nächsten Wortes entsteht. Die Übersicht ist der Fahrplan, nicht die Prüfung; du musst dir noch nicht alles merken. Wir zoomen in den nächsten Folien in jeden Schritt hinein und bauen ihn dort in Ruhe auf. Zuerst kommt der Tokenizer, dann Embedding und Position, dann Attention und FFN, am Ende die Vorhersage."
-      : "That completes the building blocks for now. Over the next days we will go through them one by one: what each one does, how they work together, and how the loop turns them into a prediction of the next word. The overview is a roadmap, not a test; you do not need to remember everything yet. In the next slides we zoom into each step and build it up calmly. First comes the tokenizer, then embedding and position, then attention and FFN, and finally the prediction.",
-    watch: DE ? "Gehe die fünf Ebenen noch einmal durch. Welche willst du zuerst verstehen?" : "Walk through the five levels again. Which one do you want to understand first?",
-    demoState: { scene: "blocks", resetKey: "roadmap", start: 0 },
-    inherit: false,
-    questionGroups: [
-      {
-        id: "g-basics",
-        title: DE ? "Eine Ebene tiefer" : "One level deeper",
-        questions: [
-          { id: "q-roadmap", title: DE ? "Was kommt zuerst?" : "What comes first?", body: DE ? "Zuerst der Tokenizer, dann Embedding und Position, dann Attention und FFN, am Ende die Vorhersage. Jeder Schritt bekommt eine eigene Folie." : "First the tokenizer, then embedding and position, then attention and FFN, and finally the prediction. Each step gets its own slide.", tex: "", kind: "question" }
-        ]
-      }
-    ]
+    body: DE ? "Ein kurzer Ausblick auf die nächsten Folien." : "A short look at the next slides.",
+    teaser: DE ? "Ein kurzer Ausblick auf die nächsten Folien." : "A short look at the next slides.",
+    watch: DE ? "Die Demo zeigt, was als Nächstes kommt." : "The demo shows what comes next.",
+    demoState: { scene: "roadmap" },
+    inherit: false
   };
   var bausteineStep = {
     kicker: DE ? "Architektur" : "Architecture",
@@ -1922,7 +1875,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-15-bausteine-4",
+    overlayRevision: "2026-11-15-bausteine-5",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.

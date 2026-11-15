@@ -62,6 +62,7 @@
       return false;
     }
     function nextStep() {
+      if (step === 2 && codeApi && codeApi.busy && codeApi.busy()) { codeApi.finish(); return; }
       if (nextInternal()) return;
       api.goNext();
     }

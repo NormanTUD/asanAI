@@ -275,8 +275,19 @@
       else if (phase === "done") reset();
     });
     reset();
-    function busy() { return phase === "typing" || phase === "thinking" || phase === "running"; }
+    function busy() { return phase === "typing" || phase === "thinking" || phase === "running" || phase === "ready"; }
+    function showRunComplete() {
+      if (runMsgEl) runMsgEl.hidden = false;
+      show(runWin, true);
+      syncTasks();
+      if (commandEl) commandEl.textContent = commandText;
+      if (term) term.textContent = outLines.join("\n");
+      phase = "done";
+      setButton(DE ? "Nochmal" : "Replay", false);
+      fitCode();
+    }
     function finish() {
+      if (phase === "done") return;
       clearTimers();
       if (userTextEl) userTextEl.textContent = userText;
       if (userMsgEl) userMsgEl.hidden = false;
@@ -287,13 +298,7 @@
       if (thinkingEl) thinkingEl.classList.remove("on");
       if (agentWin) agentWin.classList.add("is-coding");
       spans.forEach(function (sp) { sp.classList.add("is-visible"); });
-      if (runWin && !runWin.hidden) {
-        if (commandEl) commandEl.textContent = commandText;
-        if (term) term.textContent = outLines.join("\n");
-      }
-      phase = "ready";
-      setButton(DE ? "Weiter" : "Next", false);
-      fitCode();
+      showRunComplete();
     }
     return {
       update: function () {},

@@ -63,11 +63,18 @@
         '<p class="ls-lang-truth-note"></p>' +
       '</div>' +
       '<div class="ls-lang-mix">' +
-        '<div class="ls-lang-mix-head">' + (DE ? "Woraus GPT-3 lernte" : "What GPT-3 learned from") + '</div>' +
+        '<div class="ls-lang-data-summary" hidden>' +
+          '<div class="ls-lang-data-row"><b>' + (DE ? "Großer Datensatz" : "Large dataset") + '</b><span>' + (DE ? "Mehr oder weniger das Internet: Wikipedia, Reddit, Bücher, Webseiten, Quellcode." : "More or less the internet: Wikipedia, Reddit, books, websites, source code.") + '</span></div>' +
+          '<div class="ls-lang-data-row"><b>' + (DE ? "Kleiner Datensatz" : "Small dataset") + '</b><span>' + (DE ? "Menschenfragen, auch mit Tippfehlern und Unklarheiten, plus nützliche Antworten." : "Human questions, including typos and unclear wording, plus useful answers.") + '</span></div>' +
+          '<div class="ls-lang-data-row"><b>' + (DE ? "Training" : "Training") + '</b><span>' + (DE ? "Erst Vortraining auf dem großen Datensatz, dann Fine-Tuning auf dem kleinen." : "First pretraining on the large dataset, then fine-tuning on the small one.") + '</span></div>' +
+        '</div>' +
+        '<div class="ls-lang-mix-detail">' +
+        '<div class="ls-lang-mix-head">' + (DE ? "Die Datenmischung" : "The data mix") + '</div>' +
         '<div class="ls-lang-scale"><span class="ls-lang-scale-label">' + (DE ? "Datenmenge" : "data scale") + '</span><span class="ls-lang-scale-unit">KB</span><span class="ls-lang-scale-unit">MB</span><span class="ls-lang-scale-unit">GB</span><span class="ls-lang-scale-unit">TB</span><span class="ls-lang-scale-unit">PB</span><span class="ls-lang-scale-unit">EB</span><span class="ls-lang-scale-unit is-on">ZB</span><span class="ls-lang-scale-year">2016</span></div>' +
         '<div class="ls-lang-scale-note">' + (DE ? "1 ZB = 10²¹ Byte. Erst seit der Zettabyte-Ära gibt es genug Text für diese Modelle." : "1 ZB = 10²¹ bytes. Only since the zettabyte era has there been enough text for these models.") + '</div>' +
         '<div class="ls-lang-bars"></div>' +
         '<p class="ls-lang-note">' + (DE ? "GPT-3-Mix nach Brown et al. (2020), Tabelle 2.2, gerundet. Labs veröffentlichen ihre genauen Rezepte nicht." : "GPT-3 mix from Brown et al. (2020), Table 2.2, rounded. Labs do not publish their exact recipes.") + '</p>' +
+        '</div>' +
       '</div>' +
       '<p class="ls-lang-caveat">' + (DE ? "Dieselbe Schleife, dieselben Gewichte: Die Schrift ändert die Tokens, nicht die Aufgabe. Manche Sprachen brauchen für denselben Inhalt mehr Tokens; der Tokenizer kann sie dadurch teurer machen (Petrov et al., 2023)." : "The same loop, the same weights: the script changes the tokens, not the task. Some languages need more tokens for the same content, so the tokenizer can make them more expensive (Petrov et al., 2023).") + '</p>' +
       '<div class="ls-tokenize-nav ls-lang-nav"><button type="button" class="ls-btn ls-btn--ghost ls-btn--tiny ls-lang-prev">← ' + (DE ? "Zurück" : "Back") + '</button><span class="ls-tokenize-progress ls-lang-progress"></span><button type="button" class="ls-btn ls-btn--primary ls-btn--tiny ls-lang-next">' + (DE ? "Weiter →" : "Next →") + '</button></div>';
@@ -76,10 +83,13 @@
     var sampleEl = el.querySelector(".ls-lang-sample");
     var truthEl = el.querySelector(".ls-lang-truth");
     var mixEl = el.querySelector(".ls-lang-mix");
+    var summaryEl = el.querySelector(".ls-lang-data-summary");
+    var detailEl = el.querySelector(".ls-lang-mix-detail");
     var caveatEl = el.querySelector(".ls-lang-caveat");
     var navEl = el.querySelector(".ls-lang-nav");
     var allEl = el.querySelector(".ls-lang-all");
     var mode = "all";
+    var showSummary = false;
     var tag = el.querySelector(".ls-lang-tag");
     var text = el.querySelector(".ls-lang-text");
     var gloss = el.querySelector(".ls-lang-gloss");
@@ -137,6 +147,8 @@
       if (tabs) tabs.hidden = true;
       if (truthEl) truthEl.hidden = !isTruth;
       if (mixEl) mixEl.hidden = !isScale;
+      if (summaryEl) summaryEl.hidden = !(isScale && showSummary);
+      if (detailEl) detailEl.hidden = isScale && showSummary;
       if (caveatEl) caveatEl.hidden = isTruth;
       if (navEl) navEl.hidden = true;
       if (allEl) allEl.hidden = !isLang;
@@ -244,7 +256,13 @@
     navPrev.addEventListener("click", prevStep);
     navNext.addEventListener("click", nextStep);
     return {
-      update: function (s) { if (s && s.mode) { mode = s.mode; applyMode(); requestAnimationFrame(drawTruth); } },
+      update: function (s) {
+        if (!s) return;
+        if (s.summary !== undefined) showSummary = !!s.summary;
+        if (s.mode) mode = s.mode;
+        applyMode();
+        requestAnimationFrame(drawTruth);
+      },
       next: function () { return false; },
       prev: function () { return false; },
       onKey: function () { return false; },
