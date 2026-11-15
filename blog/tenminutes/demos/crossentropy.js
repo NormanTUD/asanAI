@@ -10,6 +10,7 @@
     var logits = initial.slice();
     var target = 0, lr = 0.9;
     var history = [];
+    var sequenceDone = false;
     var tween = 0, tweenFrom = null, tweenTo = null, tweenStart = 0, tweenDur = 560, pulseStart = 0, prevProbs = null;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var el = document.createElement("div");
@@ -52,6 +53,7 @@
         b.textContent = tok;
         b.addEventListener("click", function () {
           target = i;
+          sequenceDone = false;
           prevProbs = null;
           pulseStart = 0;
           history = [lossOf(softmax(logits))];
@@ -98,6 +100,20 @@
         }
       }
       tween = requestAnimationFrame(step);
+    }
+    function trainInstant() {
+      if (tween) {
+        cancelAnimationFrame(tween);
+        tween = 0;
+        if (tweenTo) logits = tweenTo.slice();
+      }
+      var p = softmax(logits);
+      prevProbs = p.slice();
+      var g = gradients(p);
+      logits = logits.map(function (z, i) { return z - lr * g[i]; });
+      pulseStart = performance.now();
+      history.push(lossOf(softmax(logits)));
+      if (history.length > 28) history.shift();
     }
     function draw() {
       if (!size) return;
@@ -251,7 +267,8 @@
       }
       // explicit loss readout
       if (readout) {
-        readout.innerHTML = '<span><b>Loss</b> ' + loss.toFixed(4) + '</span>' +
+        readout.innerHTML = '<span><b>' + (DE ? "Ziel" : "target") + ' ' + (target + 1) + '/' + tokens.length + ' · ' + tokens[target] + '</b></span>' +
+          '<span><b>Loss</b> ' + loss.toFixed(4) + '</span>' +
           '<span><b>p(' + tokens[target] + ')</b> ' + (p[target] * 100).toFixed(1) + '%</span>' +
           '<span><b>∇ ' + tokens[target] + '</b> ' + (g[target] >= 0 ? "+" : "") + g[target].toFixed(3) + '</span>';
       }
@@ -279,20 +296,53 @@
     function reset() {
       if (tween) { cancelAnimationFrame(tween); tween = 0; }
       logits = initial.slice();
+      target = 0;
+      sequenceDone = false;
       prevProbs = null;
       pulseStart = 0;
       history = [lossOf(softmax(logits))];
+      buildTargets();
       draw();
+    }
+    function nextTarget() {
+      if (target < tokens.length - 1) {
+        trainInstant();
+        target++;
+        sequenceDone = false;
+        buildTargets();
+        draw();
+        return true;
+      }
+      if (!sequenceDone) {
+        trainInstant();
+        sequenceDone = true;
+        draw();
+        return true;
+      }
+      return false;
+    }
+    function prevTarget() {
+      if (target <= 0) return false;
+      if (tween) { cancelAnimationFrame(tween); tween = 0; if (tweenTo) logits = tweenTo.slice(); }
+      target--;
+      sequenceDone = false;
+      prevProbs = null;
+      pulseStart = 0;
+      history = [lossOf(softmax(logits))];
+      buildTargets();
+      draw();
+      return true;
     }
     trainBtn.addEventListener("click", trainStep);
     resetBtn.addEventListener("click", reset);
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
-    buildTargets();
     reset();
     resize();
     return {
       update: function () {},
+      next: nextTarget,
+      prev: prevTarget,
       resize: resize,
       destroy: function () {
         if (tween) cancelAnimationFrame(tween);

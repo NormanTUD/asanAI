@@ -287,3 +287,20 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] Q/K/V-Gruppe hat vier Unterstufen: Head 1 Bögen, Head 2 Bögen,
   Head 1 Simplex, Head 2 Simplex. Jede Stufe zeigt die passenden Gewichte und
   die Prozentumrechnung. Overlay-Revision auf attention-3 erhöht.
+- [done] „Attention verschiebt Punkte und vergisst Oberflächen“ heißt jetzt
+  „Attention hilft, Rauschen zu ignorieren“. Die Demo zeigt zwei Codeblöcke
+  (`def quickSort`, `function quick_sort`), markiert `def`, `function` und `_`
+  als lilafarbenes Rauschen, lässt die Rauschpfade vor dem Filter enden und
+  führt die Bedeutungs-Tokens beider Blöcke auf denselben abstrakten
+  Quicksort-Punkt. Danach wird erwähnt: viele Heads laufen parallel und achten
+  auf ganz verschiedene Dinge.
+- [done] „Ähnliche Worte finden“ ist eine Gruppe mit vier Unterstufen
+  (Wortkarte, Winkel, Skaleninvarianz, Unembedding). Weiter und Pfeiltasten
+  gehen mit weichem Moduswechsel durch alle vier. Skaleninvarianz zeigt zwei
+  sichtbar verschiedene, parallele Vektoren A und B mit Längenlabels.
+- [done] Das rechte Panel „Wahrscheinlichkeit / kleinster Winkel → höchste“
+  hat jetzt eine feste Breite und eine zweizeilige Überschrift; die Balken
+  werden nicht mehr über die ganze Browserbreite gestreckt.
+- [done] Loss-Demo: Weiter/→ geht Paris, London, Berlin, the nacheinander
+  durch und macht für jedes Zielwort einen Trainingsschritt; Zurück/← geht
+  rückwärts, der Reset startet die Folge neu.

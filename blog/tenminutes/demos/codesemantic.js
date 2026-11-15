@@ -20,7 +20,7 @@
     var readout = el.querySelector(".ls-codesem-readout");
     var modeBtns = Array.prototype.slice.call(el.querySelectorAll("[data-sem-mode]"));
     var C = api.colors();
-    var size = null, mode = "both", raf = 0, running = true;
+    var size = null, mode = "both", raf = 0, running = true, lastReadout = "";
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var CARDS = [
       {
@@ -241,12 +241,17 @@
       updateReadout();
     }
     function updateReadout() {
+      var html;
       if (mode === "py") {
-        readout.innerHTML = '<span><b>Python-Stil</b> def + quick + Sort</span><span><b>' + (DE ? "Rauschen" : "noise") + '</b> def</span><span><b>' + (DE ? "abstrakt" : "abstract") + '</b> Quicksort-Funktion</span>';
+        html = '<span><b>Python-Stil</b> def + quick + Sort</span><span><b>' + (DE ? "Rauschen" : "noise") + '</b> def</span><span><b>' + (DE ? "abstrakt" : "abstract") + '</b> Quicksort-Funktion</span>';
       } else if (mode === "js") {
-        readout.innerHTML = '<span><b>JavaScript-Stil</b> function + quick + _ + sort</span><span><b>' + (DE ? "Rauschen" : "noise") + '</b> function, _</span><span><b>' + (DE ? "abstrakt" : "abstract") + '</b> Quicksort-Funktion</span>';
+        html = '<span><b>JavaScript-Stil</b> function + quick + _ + sort</span><span><b>' + (DE ? "Rauschen" : "noise") + '</b> function, _</span><span><b>' + (DE ? "abstrakt" : "abstract") + '</b> Quicksort-Funktion</span>';
       } else {
-        readout.innerHTML = '<span><b>' + (DE ? "Beide" : "Both") + '</b> def quickSort / function quick_sort</span><span><b>' + (DE ? "Rauschen" : "noise") + '</b> def, function, _</span><span><b>' + (DE ? "ein Punkt" : "one point") + '</b> Quicksort-Funktion</span>';
+        html = '<span><b>' + (DE ? "Beide" : "Both") + '</b> def quickSort / function quick_sort</span><span><b>' + (DE ? "Rauschen" : "noise") + '</b> def, function, _</span><span><b>' + (DE ? "ein Punkt" : "one point") + '</b> Quicksort-Funktion</span>';
+      }
+      if (html !== lastReadout) {
+        lastReadout = html;
+        readout.innerHTML = html;
       }
     }
     function setMode(next) {

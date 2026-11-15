@@ -1239,8 +1239,8 @@
     {
       kicker: "Unembedding",
       title: "Ähnliche Worte finden",
-      body: "Welches Wort liegt neben „König“? W_U hat eine Zeile pro Token. Jede Zeile ist eine gelernte Richtung. Am Ende vergleicht das Modell den Vektor h mit diesen Richtungen: Das Skalarprodukt misst, wie ähnlich sie zeigen. Das ist die Umkehrung des Embeddings: aus einem Vektor werden wieder Wörter. Wähle ein Wort und sieh die nächsten Nachbarn. Schalte zwischen Winkel und euklidischem Abstand um: Der Winkel ignoriert die Länge, der Abstand nicht. Drücke Weiter für Winkel, Skaleninvarianz und Unembedding. Die Prozentwerte sind Ähnlichkeiten, keine Wahrscheinlichkeiten.",
-      watch: "Wähle ein Wort. Drücke Weiter: Winkel, Skaleninvarianz, Unembedding.",
+      body: "Welches Wort liegt neben „König“? W_U hat eine Zeile pro Token. Jede Zeile ist eine gelernte Richtung. Am Ende vergleicht das Modell den Vektor h mit diesen Richtungen: Das Skalarprodukt misst, wie ähnlich sie zeigen. Das ist die Umkehrung des Embeddings: aus einem Vektor werden wieder Wörter. Wähle ein Wort und sieh die nächsten Nachbarn. Schalte zwischen Winkel und euklidischem Abstand um: Der Winkel ignoriert die Länge, der Abstand nicht. Drücke Weiter oder → für Winkel, Skaleninvarianz und Unembedding. Die Prozentwerte sind Ähnlichkeiten, keine Wahrscheinlichkeiten.",
+      watch: "Wähle ein Wort. Drücke Weiter oder →: Winkel, Skaleninvarianz, Unembedding.",
       demoState: { scene: "unembed" },
       context: "Die 2D-Karte ist eine Projektion der gelernten Richtungen. Die Prozentwerte vergleichen Richtungen; erst Softmax macht daraus eine Verteilung. Ähnliche Wörter liegen nahe beieinander, weil das Training sie in ähnlichen Kontexten sieht.",
       deep: "W_U ist gelernt. Wörter, die in ähnlichen Kontexten vorkommen, bekommen ähnliche Richtungen; das Skalarprodukt misst die Nähe. In hohen Dimensionen verliert der euklidische Abstand an Kontrast, deshalb ist der Winkel oft informativer. Die Karte ist eine Projektion, keine vollständige Geometrie.",
@@ -1260,8 +1260,8 @@
     {
       kicker: "Unembedding",
       title: "Finding similar words",
-      body: "Which word lies next to “king”? W_U has one row per token. Every row is a learned direction. At the end the model compares the vector h with these directions: the dot product measures how similarly they point. This is the reverse of embedding: a vector becomes words again. Choose a word and see its nearest neighbours. Switch between angle and Euclidean distance: the angle ignores length, the distance does not. Press Next for angle, scale invariance, and unembedding. The percentages are similarities, not probabilities.",
-      watch: "Choose a word. Press Next: angle, scale invariance, unembedding.",
+      body: "Which word lies next to “king”? W_U has one row per token. Every row is a learned direction. At the end the model compares the vector h with these directions: the dot product measures how similarly they point. This is the reverse of embedding: a vector becomes words again. Choose a word and see its nearest neighbours. Switch between angle and Euclidean distance: the angle ignores length, the distance does not. Press Next or → for angle, scale invariance, and unembedding. The percentages are similarities, not probabilities.",
+      watch: "Choose a word. Press Next or →: angle, scale invariance, unembedding.",
       demoState: { scene: "unembed" },
       context: "The 2D map is a projection of the learned directions. The percentages compare directions; only softmax turns them into a distribution. Similar words lie close together because training sees them in similar contexts.",
       deep: "W_U is learned. Words that occur in similar contexts get similar directions; the dot product measures the closeness. In high dimensions Euclidean distance loses contrast, so the angle is often more informative. The map is a projection, not the full geometry.",
@@ -1278,6 +1278,50 @@
       ]
     }
   ];
+
+  unembedSteps[0].demoState = { scene: "unembed", mode: "map" };
+
+  var unembedAngleStep = Object.assign({}, unembedSteps[0], {
+    kicker: DE ? "Winkel" : "Angle",
+    title: DE ? "Winkel statt Abstand" : "Angle instead of distance",
+    body: DE
+      ? "Jetzt zählt nur die Richtung. Der Winkel zwischen h und einer Token-Richtung wird zum Cosinus; die Länge fällt heraus. Ziehe die beiden Vektoren und sieh, wann der Winkel klein wird. Kleiner Winkel heißt ähnliche Richtung."
+      : "Now only the direction counts. The angle between h and a token direction becomes the cosine; the length drops out. Drag the two vectors and see when the angle gets small. A small angle means a similar direction.",
+    watch: DE ? "Ziehe A und B. Wann ist der Winkel klein, wann groß?" : "Drag A and B. When is the angle small, when large?",
+    context: DE ? "Der Cosinus misst den Winkel zwischen zwei Richtungen; die Länge kürzt sich heraus. Ein kleiner Winkel bedeutet eine ähnliche Richtung." : "The cosine measures the angle between two directions; the length cancels out. A small angle means a similar direction.",
+    demoState: { scene: "unembed", mode: "angle" },
+    boxes: unembedSteps[0].boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-angle" }); })
+  });
+
+  var unembedScaleStep = Object.assign({}, unembedSteps[0], {
+    kicker: DE ? "Skaleninvarianz" : "Scale invariance",
+    title: DE ? "Zwei Vektoren, eine Richtung" : "Two vectors, one direction",
+    body: DE
+      ? "A und B sind verschiedene Vektoren: Sie haben unterschiedliche Längen, zeigen aber in dieselbe Richtung. Der Cosinus bleibt 1; der euklidische Abstand ändert sich. Deshalb kann das Unembedding Längen ignorieren und Richtungen vergleichen."
+      : "A and B are different vectors: they have different lengths but point in the same direction. The cosine stays 1; Euclidean distance changes. That is why the unembedding can ignore lengths and compare directions.",
+    watch: DE ? "Ziehe die Länge von B. Was bleibt gleich, was ändert sich?" : "Drag the length of B. What stays the same, what changes?",
+    context: DE ? "Skaleninvarianz heißt: derselbe Winkel, andere Länge. Der Cosinus bleibt gleich, der euklidische Abstand nicht." : "Scale invariance means the same angle, a different length. The cosine stays the same, Euclidean distance does not.",
+    demoState: { scene: "unembed", mode: "scale" },
+    boxes: unembedSteps[0].boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-scale" }); })
+  });
+
+  var unembedUnembedStep = Object.assign({}, unembedSteps[0], {
+    kicker: DE ? "Unembedding" : "Unembedding",
+    title: DE ? "Vom Vektor zur Verteilung" : "From vector to distribution",
+    body: DE
+      ? "Der letzte Vektor h wird mit jeder Zeile von W_U verglichen. Der kleinste Winkel ergibt den höchsten Logit; Softmax macht aus allen Logits eine Verteilung. Klicke einen Vorschlag oder nutze „Nächster Winkel“: Der Winkel wird hervorgehoben."
+      : "The final vector h is compared with every row of W_U. The smallest angle gives the highest logit; softmax turns all logits into a distribution. Click a suggestion or use “Next angle”: the angle is highlighted.",
+    watch: DE ? "Klicke die Vorschläge. Welcher Winkel wird zur höchsten Wahrscheinlichkeit?" : "Click the suggestions. Which angle becomes the highest probability?",
+    context: DE ? "Der Logit ist das Skalarprodukt aus h und einer Token-Zeile; Softmax macht aus allen Logits eine Verteilung. Der kleinste Winkel liefert den höchsten Wert." : "The logit is the dot product of h and a token row; softmax turns all logits into a distribution. The smallest angle gives the highest value.",
+    demoState: { scene: "unembed", mode: "unembed" },
+    boxes: unembedSteps[0].boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-unembed" }); })
+  });
+
+  var unembedStep = {
+    title: DE ? "Ähnliche Worte finden" : "Finding similar words",
+    kicker: "Unembedding",
+    substeps: [unembedSteps[0], unembedAngleStep, unembedScaleStep, unembedUnembedStep]
+  };
 
   var highdimSteps = DE ? [
     {
@@ -1696,9 +1740,9 @@
     kicker: DE ? "Loss" : "Loss",
     title: DE ? "Der Loss: Was das Modell optimiert" : "The loss: what the model optimises",
     body: DE
-      ? "Das Modell sagt für das nächste Token Wahrscheinlichkeiten voraus. Richtig ist „Paris“, aber das Modell gibt „London“ 50 % und „Paris“ 30 %. Der Loss bestraft die Wahrscheinlichkeit des richtigen Tokens: −log(0.30) ≈ 1.20. Der Gradient p − y sagt dann: Paris-Logit rauf, London-Logit runter. Ein Trainingsschritt verschiebt die Logits genau so; nach vielen Schritten wird Paris wahrscheinlicher und der Loss kleiner."
-      : "The model predicts probabilities for the next token. The correct token is “Paris”, but the model gives “London” 50% and “Paris” 30%. The loss punishes the probability of the correct token: −log(0.30) ≈ 1.20. The gradient p − y then says: raise the Paris logit, lower the London logit. A training step moves the logits exactly like that; after many steps Paris becomes more likely and the loss gets smaller.",
-    watch: DE ? "Wähle Paris als Ziel und klicke „Trainingsschritt“. Beobachte: Paris wächst, der Loss sinkt, der Gradient wird kleiner." : "Choose Paris as the target and click “Training step”. Watch: Paris grows, the loss falls, the gradient shrinks.",
+      ? "Das Modell sagt für das nächste Token Wahrscheinlichkeiten voraus. Richtig ist „Paris“, aber das Modell gibt „London“ 50 % und „Paris“ 30 %. Der Loss bestraft die Wahrscheinlichkeit des richtigen Tokens: −log(0.30) ≈ 1.20. Der Gradient p − y sagt dann: Paris-Logit rauf, London-Logit runter. Ein Trainingsschritt verschiebt die Logits genau so; nach vielen Schritten wird Paris wahrscheinlicher und der Loss kleiner. Drücke Weiter oder →: Die Demo geht die vier Zielwörter nacheinander durch und macht für jedes einen Trainingsschritt."
+      : "The model predicts probabilities for the next token. The correct token is “Paris”, but the model gives “London” 50% and “Paris” 30%. The loss punishes the probability of the correct token: −log(0.30) ≈ 1.20. The gradient p − y then says: raise the Paris logit, lower the London logit. A training step moves the logits exactly like that; after many steps Paris becomes more likely and the loss gets smaller. Press Next or →: the demo moves through the four target words in order and makes one training step for each.",
+    watch: DE ? "Drücke Weiter oder →: Paris, London, Berlin, the. Jedes Wort bekommt einen Trainingsschritt; beobachte Loss und p." : "Press Next or →: Paris, London, Berlin, the. Each word gets one training step; watch the loss and p.",
     demoState: { scene: "crossentropy" },
     context: DE ? "y ist ein One-Hot-Vektor: 1 für Paris, 0 sonst. p ist die Softmax-Verteilung. Der Loss ist die negative Log-Likelihood des Ziels." : "y is a one-hot vector: 1 for Paris, 0 elsewhere. p is the softmax distribution. The loss is the negative log-likelihood of the target.",
     deep: DE ? "Der Gradient p−y ist der Grund, warum Softmax und Cross-Entropy zusammen so sauber funktionieren. Ein Schritt lautet z ← z − η(p−y): Das Ziel-Logit steigt, alle anderen fallen." : "The gradient p−y is why softmax and cross-entropy work together so cleanly. A step is z ← z − η(p−y): the target logit rises, all others fall.",
@@ -1875,7 +1919,7 @@
     substeps: [qkvArcs, qkvArcs2, qkvSimplex, qkvSimplex2]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep];
 
   var day = {
     id: "intuition",
@@ -1901,7 +1945,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-15-attention-3",
+    overlayRevision: "2026-11-15-attention-4",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.

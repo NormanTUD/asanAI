@@ -275,19 +275,29 @@
     function drawScale() {
       var s = circleScene(), ctx = s.ctx, cx = s.cx, cy = s.cy, r = s.r;
       var a = 30 * Math.PI / 180;
-      var lenA = r * 0.70, lenB = r * 0.70 * scaleMag;
+      var magA = 0.62, magB = 0.62 * scaleMag;
+      var lenA = r * magA, lenB = r * magB;
+      var off = Math.min(30, r * 0.22);
+      var bx0 = cx + Math.sin(a) * off, by0 = cy + Math.cos(a) * off;
       var ax = cx + Math.cos(a) * lenA, ay = cy - Math.sin(a) * lenA;
-      var bx = cx + Math.cos(a) * lenB, by = cy - Math.sin(a) * lenB;
-      ctx.strokeStyle = V.alpha(C.blue, 0.18); ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * r * 0.95, cy - Math.sin(a) * r * 0.95); ctx.stroke();
+      var bx = bx0 + Math.cos(a) * lenB, by = by0 - Math.sin(a) * lenB;
+      ctx.strokeStyle = V.alpha(C.petrol, 0.16); ctx.lineWidth = 1.4; ctx.setLineDash([4, 5]);
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * r * 1.02, cy - Math.sin(a) * r * 1.02); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.strokeStyle = V.alpha(C.blue, 0.16); ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * r * 0.95, cy - Math.sin(a) * r * 0.95); ctx.stroke();
+      ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = V.alpha(C.lilac, 0.75); ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(bx0, by0); ctx.stroke(); ctx.restore();
       V.arrow(ctx, cx, cy, ax, ay, C.blue, 3);
-      V.arrow(ctx, cx, cy, bx, by, C.green, 3);
-      ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = C.coral; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); ctx.restore();
+      V.arrow(ctx, bx0, by0, bx, by, C.green, 3);
+      ctx.fillStyle = C.lilac; ctx.beginPath(); ctx.arc(bx0, by0, 3.2, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = C.blue; ctx.textAlign = "left"; ctx.textBaseline = "bottom"; ctx.fillText("A", ax + 6, ay - 3);
       ctx.fillStyle = C.green; ctx.fillText("B", bx + 6, by - 3);
+      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.fillStyle = C.blue; ctx.fillText("|A| = " + magA.toFixed(2), ax + 6, ay + 14);
+      ctx.fillStyle = C.green; ctx.fillText("|B| = " + magB.toFixed(2), bx + 6, by + 14);
       ctx.fillStyle = C.petrol; ctx.font = '700 ' + api.font("canvas") + 'px "Barlow", sans-serif'; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillText("Scale Invariance", 18, 28);
-      var euc = Math.abs(scaleMag - 1) * 0.70;
-      readout.innerHTML = '<span>|A| <b>0.70</b></span><span>|B| <b>' + (0.70 * scaleMag).toFixed(2) + '</b></span><span>Cos <b>1.000</b> ' + (DE ? "konstant" : "constant") + '</span><span>Euclidean <b>' + euc.toFixed(2) + '</b> ' + (DE ? "ändert sich" : "changes") + '</span>';
-      caption.textContent = DE ? "Scale Invariance: Direction Is Often the Useful Signal. Die Länge von B ändert den euklidischen Abstand, aber nicht den Cosinus. Das Netz kann Längen ignorieren und hat mehr Freiheit bei der Richtung." : "Scale Invariance: Direction Is Often the Useful Signal. The magnitude of B changes Euclidean distance but not cosine. The network can ignore lengths and has more freedom in direction.";
+      var euc = Math.abs(magB - magA);
+      readout.innerHTML = '<span>|A| <b>' + magA.toFixed(2) + '</b></span><span>|B| <b>' + magB.toFixed(2) + '</b></span><span>Cos <b>1.000</b> ' + (DE ? "konstant" : "constant") + '</span><span>Euclidean <b>' + euc.toFixed(2) + '</b> ' + (DE ? "ändert sich" : "changes") + '</span>';
+      caption.textContent = DE ? "Zwei verschiedene Vektoren, dieselbe Richtung: A und B haben unterschiedliche Längen. Der Cosinus bleibt 1, der euklidische Abstand ändert sich. Das Netz kann Längen ignorieren und hat mehr Freiheit bei der Richtung." : "Two different vectors, the same direction: A and B have different lengths. The cosine stays 1, Euclidean distance changes. The network can ignore lengths and has more freedom in direction.";
     }
     function unembedData() {
       return UN_TOKENS.map(function (tok) {
@@ -358,7 +368,7 @@
       var ctx = size.ctx, w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = C.paper; ctx.fillRect(0, 0, w, h);
-      var cx = w * 0.30, cy = h * 0.50, r = Math.min(w * 0.27, h * 0.38);
+      var cx = w * 0.28, cy = h * 0.50, r = Math.min(w * 0.24, h * 0.38);
       ctx.strokeStyle = C.line; ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
       var t = unembedStart ? Math.min(1, (now - unembedStart) / 2600) : 1;
       var scan = Math.floor(t * UN_TOKENS.length);
@@ -387,19 +397,25 @@
       });
       V.arrow(ctx, cx, cy, hx, hy, C.petrol, 3.2);
       ctx.fillStyle = C.petrol; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif'; ctx.textAlign = "center"; ctx.fillText("h", hx, hy - 9);
-      // right: sorted probabilities
-      var bx = w * 0.61, bw = w * 0.33;
+      // right: sorted probabilities in a fixed-width panel
+      var panelW = Math.min(360, Math.max(150, w * 0.36));
+      var bx = w - 16 - panelW;
+      var barX = bx + Math.min(72, panelW * 0.30);
+      var bw = Math.min(210, panelW - (barX - bx) - 42);
       var probs = V.softmax(rows.map(function (x) { return x.cos; }), 0.35);
-      ctx.textAlign = "left"; ctx.fillStyle = C.petrol; ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif'; ctx.fillText(DE ? "kleinster Winkel → höchste Wahrscheinlichkeit" : "smallest angle → highest probability", bx, 22);
+      ctx.textAlign = "left"; ctx.fillStyle = C.petrol; ctx.font = '700 ' + Math.max(10, api.font("canvas-sm")) + 'px "Barlow", sans-serif'; ctx.fillText(DE ? "Wahrscheinlichkeit" : "probability", bx, 20);
+      ctx.fillStyle = C.muted; ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.fillText(DE ? "kleinster Winkel → höchste" : "smallest angle → highest", bx, 34);
+      var rowStep = Math.min(24, (h - 58) / Math.max(1, rows.length));
+      var listTop = Math.max(54, h * 0.22);
       rows.forEach(function (row, i) {
-        var y = h * 0.30 + i * Math.min(24, h * 0.065);
+        var y = listTop + i * rowStep;
         var p = probs[i] || 0;
         var grow = Math.max(0, Math.min(1, (t - 0.55) / 0.45));
         if (focus && row.t === focus.t) { ctx.fillStyle = C.green; ctx.fillRect(bx - 4, y - 9, 3, 13); }
         ctx.fillStyle = C.ink; ctx.font = '600 ' + Math.max(9, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.fillText(row.t, bx, y);
-        ctx.fillStyle = C.line; ctx.fillRect(bx + 58, y - 6, bw, 7);
-        ctx.fillStyle = i === 0 ? C.green : C.blue; ctx.fillRect(bx + 58, y - 6, bw * p * grow, 7);
-        ctx.fillStyle = C.muted; ctx.textAlign = "right"; ctx.fillText(Math.round(p * 100 * grow) + "%", bx + 58 + bw, y);
+        ctx.fillStyle = C.line; ctx.fillRect(barX, y - 6, bw, 7);
+        ctx.fillStyle = i === 0 ? C.green : C.blue; ctx.fillRect(barX, y - 6, bw * p * grow, 7);
+        ctx.fillStyle = C.muted; ctx.textAlign = "right"; ctx.fillText(Math.round(p * 100 * grow) + "%", barX + bw, y);
       });
       var top = rows[0], bottom = rows[rows.length - 1];
       var focusTxt = focus ? '<span>' + (DE ? "Winkel" : "angle") + ' <b>' + focus.t + ' · ' + Math.round(Math.abs(focus.diff) * 180 / Math.PI) + '°</b></span>' : '';
@@ -432,6 +448,9 @@
         if (mode === "unembed") renderUnembedList();
       }
       if (mode === "unembed") startUnembed(); else if (unembedRaf) { cancelAnimationFrame(unembedRaf); unembedRaf = 0; }
+      if (canvas.animate) {
+        try { canvas.animate([{ opacity: 0.55 }, { opacity: 1 }], { duration: 220, easing: "ease-out" }); } catch (e) {}
+      }
       draw();
     }
     function resize() { size = api.fit(canvas, stage); draw(); }
@@ -488,19 +507,10 @@
     choose(0);
     setMode("map");
     resize();
-    var MODES = ["map", "angle", "scale", "unembed"];
     return {
-      update: function () {},
-      next: function () {
-        var i = MODES.indexOf(mode);
-        if (i >= 0 && i < MODES.length - 1) { setMode(MODES[i + 1]); return true; }
-        return false;
-      },
-      prev: function () {
-        var i = MODES.indexOf(mode);
-        if (i > 0) { setMode(MODES[i - 1]); return true; }
-        return false;
-      },
+      update: function (s) { if (s && s.mode) setMode(s.mode); },
+      next: function () { return false; },
+      prev: function () { return false; },
       busy: function () { return mode === "unembed" && !!unembedRaf; },
       finish: function () { if (unembedRaf) cancelAnimationFrame(unembedRaf); unembedRaf = 0; unembedStart = performance.now() - 4000; drawUnembed(performance.now()); },
       resize: resize,
