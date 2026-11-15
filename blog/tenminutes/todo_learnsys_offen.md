@@ -339,3 +339,13 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
 - [done] Positionsdemo startet mit mehreren grünen Trail-Punkten (Hund@0,
   Hund@2, …), damit sofort sichtbar ist: Jeder Punkt ist dasselbe Wort an einer
   anderen Position.
+- [done] „Attention hilft, Rauschen zu ignorieren“ hat jetzt einen
+  Sprache/Code-Umschalter. Sprache zeigt drei Sätze in drei Sprachen mit
+  Tippfehlern (Hundt/dgo/chienn, Strasse), die auf denselben
+  sprachunabhängigen Bedeutungs-Knoten zeigen. Text und Quellen (XLM-R, mBERT)
+  erklären die gelernte Annäherung, nicht eine eingebaute Universalschicht.
+- [done] Loss-Demo: Weiter/→ trainiert jetzt das aktuelle Zielwort animiert
+  und geht danach zum nächsten; alle vier Wörter bekommen ihren Schritt.
+- [done] Escape beendet den Bearbeiten-Modus (und schließt das Textpanel),
+  auch wenn er durch Klick auf den Text oder den Bearbeiten-Button geöffnet
+  wurde.
