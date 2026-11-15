@@ -720,6 +720,7 @@
     try { stored = localStorage.getItem(REV_KEY); } catch (e) {}
     if (stored === cfg.overlayRevision) return;
     try {
+      localStorage.removeItem(KEY);
       localStorage.removeItem(TEXT_KEY);
       localStorage.removeItem(LAYOUT_KEY);
       localStorage.setItem(REV_KEY, cfg.overlayRevision);
@@ -5051,8 +5052,8 @@
     root = el;
     cfg = config;
     setLang(cfg.lang);
-    load();
     syncOverlayRevision();
+    load();
     loadTextOverlay();
     loadLayout();
     if (!cfg.tracks) cfg.tracks = [];

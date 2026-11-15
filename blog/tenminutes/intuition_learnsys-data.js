@@ -872,6 +872,16 @@
       : "LLMs are a machine-learning method: instead of telling the computer step by step what to do, we specify only the rough architecture and train it on large amounts of data so that it learns the task itself. For LLMs, the task is to predict the next sensible word.",
     watch: DE ? "Sequenzielles Machine Learning geschieht in Schichten. Die erste Schicht wendet man direkt auf die Daten an, die zweite auf die Ergebnisse der ersten, und so weiter; dadurch verschachteln sich Funktionen: $\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Daten}\\right)\\right)\\right)$ Die erste Schicht sucht nach Mustern im Text, die zweite nach Mustern im Ergebnis der ersten Schicht, und so weiter. Mit dem Residual Stream kann jede Schicht auch Muster im Text <i>und</i> in den Ergebnissen der vorherigen Schichten finden." : "Sequential machine learning happens in layers. The first layer is applied directly to the data, the second to the results of the first, and so on; this nests functions: $\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Data}\\right)\\right)\\right)$ The first layer looks for patterns in the text, the second for patterns in the result of the first layer, and so on. With the residual stream, each layer can also find patterns in the text <i>and</i> in the results of the previous layers.",
     demoState: { scene: "blocks" },
+    cues: [
+      {
+        label: DE ? "Ausblick" : "What comes next",
+        title: DE ? "Die nächsten Tage" : "The next days",
+        text: DE
+          ? "Damit sind die Bausteine einmal durch. In den nächsten Tagen gehen wir sie einen nach dem anderen durch: was jeder macht, wie sie zusammenspielen und wie daraus in einer Schleife die Vorhersage des nächsten Wortes entsteht. Die Übersicht ist der Fahrplan, nicht die Prüfung; du musst dir noch nicht alles merken. Wir zoomen in den nächsten Folien in jeden Schritt hinein und bauen ihn dort in Ruhe auf. Zuerst kommt der Tokenizer, dann Embedding und Position, dann Attention und FFN, am Ende die Vorhersage."
+          : "That completes the building blocks for now. Over the next days we will go through them one by one: what each one does, how they work together, and how the loop turns them into a prediction of the next word. The overview is a roadmap, not a test; you do not need to remember everything yet. In the next slides we zoom into each step and build it up calmly. First comes the tokenizer, then embedding and position, then attention and FFN, and finally the prediction.",
+        state: {}
+      }
+    ],
     inherit: false,
     questionGroups: [
       {
@@ -896,20 +906,6 @@
     title: DE ? "Bausteine eines LLM" : "Building blocks of an LLM",
     substeps: [bausteineData, bausteineIntro]
   };
-
-  var bausteineOutroStep = Object.assign({}, insideSteps[1], {
-    kicker: DE ? "Ausblick" : "What comes next",
-    title: DE ? "Die nächsten Tage" : "The next days",
-    body: DE
-      ? "Damit sind die Bausteine einmal durch. In den nächsten Tagen gehen wir sie einen nach dem anderen durch: was jeder macht, wie sie zusammenspielen und wie daraus in einer Schleife die Vorhersage des nächsten Wortes entsteht. Die Übersicht ist der Fahrplan, nicht die Prüfung; du musst dir noch nicht alles merken. Wir zoomen in den nächsten Folien in jeden Schritt hinein und bauen ihn dort in Ruhe auf. Zuerst kommt der Tokenizer, dann Embedding und Position, dann Attention und FFN, am Ende die Vorhersage."
-      : "That completes the building blocks for now. Over the next days we will go through them one by one: what each one does, how they work together, and how the loop turns them into a prediction of the next word. The overview is a roadmap, not a test; you do not need to remember everything yet. In the next slides we zoom into each step and build it up calmly. First comes the tokenizer, then embedding and position, then attention and FFN, and finally the prediction.",
-    teaser: DE
-      ? "Damit sind die Bausteine einmal durch. In den nächsten Tagen gehen wir sie einen nach dem anderen durch: was jeder macht, wie sie zusammenspielen und wie daraus in einer Schleife die Vorhersage des nächsten Wortes entsteht. Die Übersicht ist der Fahrplan, nicht die Prüfung; du musst dir noch nicht alles merken. Wir zoomen in den nächsten Folien in jeden Schritt hinein und bauen ihn dort in Ruhe auf. Zuerst kommt der Tokenizer, dann Embedding und Position, dann Attention und FFN, am Ende die Vorhersage."
-      : "That completes the building blocks for now. Over the next days we will go through them one by one: what each one does, how they work together, and how the loop turns them into a prediction of the next word. The overview is a roadmap, not a test; you do not need to remember everything yet. In the next slides we zoom into each step and build it up calmly. First comes the tokenizer, then embedding and position, then attention and FFN, and finally the prediction.",
-    watch: DE ? "Gehe die fünf Ebenen noch einmal durch. Welche willst du zuerst verstehen?" : "Walk through the five levels again. Which one do you want to understand first?",
-    context: DE ? "Die Reihenfolge ist der Fahrplan: Tokenizer, Embedding, Position, Transformer-Blöcke, Unembedding. Jeder Schritt bekommt später eine eigene Folie." : "The order is the roadmap: tokenizer, embedding, position, transformer blocks, unembedding. Each step gets its own slide later.",
-    deep: DE ? "Die Blöcke sind eine Landkarte, keine einmalige Erklärung. Wir kehren zu jedem Punkt zurück und zoomen hinein; nichts davon musst du jetzt schon können." : "The blocks are a map, not a one-time explanation. We will return to each point and zoom in; you do not need to master any of it yet."
-  });
 
   var manifoldSteps = DE ? [
     {
@@ -1970,7 +1966,7 @@
     ]
   };
 
-  var steps = [introSteps[0], bausteineStep, bausteineOutroStep, gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep, bookSteps[0]];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, dataTruthStep, dataLanguagesStep, dataScaleStep, dataMixStep, tokenizeBpeStep, tokenizeExamplesStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, codeAttentionSubstep, attentionSteps[2], neuralStepA, gradientSteps[0], neuralStepB, backpropStep, ffnSteps[0], residualSteps[0], unembedSteps[0], softmaxSteps[0], introSteps[1], meadowSteps[0], trajectorySteps[0], posttrainSteps[0], evalSteps[0], ragSteps[0], historySteps[0], philosophySteps[0], steeringStep, bookSteps[0]];
 
   var day = {
     id: "intuition",
@@ -1996,7 +1992,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-15-schichten",
+    overlayRevision: "2026-11-15-bausteine-2",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.

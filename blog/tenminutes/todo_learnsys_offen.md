@@ -101,10 +101,12 @@ Diese Liste sammelt alles aus dem laufenden Chat, damit nichts verloren geht.
   die Architektur-Unterfolie beginnt beim Tokenizer.
 - [done] Unterfolie „Die Bausteine im Überblick“ (3/3) entfernt; die Bausteine-Folie
   hat jetzt nur noch Daten und Architektur (2/2).
-- [done] Neue Folie „Die nächsten Tage“ nach der Bausteine-Folie: Ausblick,
-  Fahrplan, fünf Ebenen und der Hinweis, dass die Details Schritt für Schritt
-  kommen.
+- [done] Der Ausblick „Die nächsten Tage“ ist jetzt eine Karte auf der
+  Architektur-Unterfolie; die separate Folie wurde entfernt.
 - [done] Ceres-/Flammarion-Bilder ohne weißen Rahmen und ohne Boxen: nur die
   Bilder mit abgerundeten Ecken auf dem Hintergrund, Quellen als schlichter
   Text darunter.
 - [done] `<i>Ceres</b>` in `new_texts.json` zu `<b>Ceres</b>` korrigiert.
+- [done] Beim Revisionswechsel wird auch der gespeicherte Folienstand
+  zurückgesetzt, damit die neue Daten-Unterfolie nach dem Laden als 1/2
+  sichtbar ist und nicht die alte Architektur-Position stehen bleibt.
