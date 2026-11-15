@@ -390,6 +390,7 @@ button{color:inherit}
 .ls-edit-group>summary::-webkit-details-marker{display:none}
 .ls-edit-group-name{flex:1 1 auto;min-width:0;font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol);border:0;background:transparent;padding:2px 0}
 .ls-edit-question{padding:8px;border-top:1px solid var(--ls-line)}
+.ls-edit-source>.ls-edit-input{display:block;width:100%;margin-top:4px}
 .ls-edit-question .ls-edit-textarea{min-height:80px}
 .ls-edit-row{display:flex;gap:6px;align-items:center;margin-bottom:4px}
 .ls-edit-input{flex:1 1 auto;min-width:0;border:1px solid var(--ls-line);background:#fff;color:var(--ls-ink);padding:5px 7px;font:600 var(--ls-fs-ui-sm) "Open Sans",sans-serif;border-radius:0}
@@ -667,7 +668,7 @@ h1,h2,h3,h4{
 .ls-code-token.is-visible{opacity:1}
 .ls-code-term{padding:10px;font:var(--ls-fs-ui)/1.55 ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;color:#e9f2ee;display:grid;gap:6px;flex:1;min-height:0;overflow:auto}
 .ls-code-term b{display:block;min-height:1.2em;color:var(--ls-green);font-weight:600}
-.ls-code-term span{color:#eef7f4;min-height:1.2em}
+.ls-code-term span{color:#eef7f4;min-height:1.2em;white-space:pre-wrap}
 .ls-code-replay{justify-self:center;background:transparent;border-color:rgba(0,75,111,.16);color:var(--ls-muted);min-height:26px;padding:2px 8px;font-size:var(--ls-fs-micro);letter-spacing:.04em}
 .ls-code-replay:disabled{opacity:.42;cursor:default;border-color:rgba(0,75,111,.10)}
 .ls-code-replay:not(:disabled):hover{border-color:var(--ls-green);color:var(--ls-green)}

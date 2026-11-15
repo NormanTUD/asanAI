@@ -6,22 +6,27 @@
   var esc = core.esc, clamp = core.clamp, lerp = core.lerp, ease = core.ease;
   function codeScene(root, api) {
     var DE = api.lang === "de";
-    var codeText = DE ? [
+    var program = DE ? "bewerte_text.py" : "score_text.py";
+    var sample = DE ? "Ich mag LLM." : "The lecture was clear and useful.";
+    var modelName = DE ? "oliverguhr/german-sentiment-bert" : "distilbert-base-uncased-finetuned-sst-2-english";
+    var codeText = [
+      "import sys",
       "from transformers import pipeline",
-      'model = "distilbert-base-uncased-finetuned-sst-2-english"',
+      "",
+      'model = "' + modelName + '"',
       'classifier = pipeline("sentiment-analysis", model=model)',
-      'text = "The lecture was clear and useful."',
-      "result = classifier(text)[0]",
-      "print(f\"{result['label']}: {result['score']:.3f}\")"
-    ] : [
-      "from transformers import pipeline",
-      'model = "distilbert-base-uncased-finetuned-sst-2-english"',
-      'classifier = pipeline("sentiment-analysis", model=model)',
-      'text = "The lecture was clear and useful."',
-      "result = classifier(text)[0]",
-      "print(f\"{result['label']}: {result['score']:.3f}\")"
+      "",
+      "text = sys.argv[1]",
+      "for result in classifier(text, top_k=None):",
+      "    print(f\"{result['label']}: {result['score']:.4f}\")"
     ];
-    var outText = "POSITIVE: 0.999";
+    var scores = DE
+      ? [["negative", "0.0021"], ["neutral", "0.0064"], ["positive", "0.9915"]]
+      : [["NEGATIVE", "0.0007"], ["POSITIVE", "0.9993"]];
+    var outLines = [(DE ? "Lade " : "Loading ") + modelName + " ..."].concat(scores.map(function (pair) {
+      return pair[0] + ": " + pair[1];
+    }));
+    var commandText = "$ python3 " + program + ' "' + sample + '"';
     var agentText = DE ? "Ich lade ein kleines Transformer-Modell und bewerte einen Text." : "I'll load a small transformer model and score a text.";
     var userText = DE ? "Schreibe ein Python-Programm, das ein Transformer-Modell lädt und einen Text bewertet." : "Write a Python program that loads a transformer model and scores a text.";
     var el = document.createElement("div");
@@ -34,9 +39,9 @@
             '<div class="ls-code-chat">' +
               '<div class="ls-code-msg is-user ls-code-user-msg" hidden><span class="ls-code-user-text"></span></div>' +
               '<div class="ls-code-msg is-agent" hidden><span class="ls-code-agent-text"></span><span class="ls-code-thinking" aria-hidden="true"><i></i><i></i><i></i></span></div>' +
-              '<div class="ls-code-msg is-agent ls-code-run-msg" hidden>' + (DE ? "Ich führe bewerte_text.py im Terminal aus." : "I'll run score_text.py in the terminal.") + '</div>' +
+              '<div class="ls-code-msg is-agent ls-code-run-msg" hidden>' + (DE ? "Ich führe " + program + " im Terminal aus." : "I'll run " + program + " in the terminal.") + '</div>' +
             '</div>' +
-            '<div class="ls-code-filehead">' + (DE ? "bewerte_text.py" : "score_text.py") + '</div>' +
+            '<div class="ls-code-filehead">' + program + '</div>' +
             '<pre class="ls-code-body"><code></code></pre>' +
             '<div class="ls-code-agent-prompt"><b>$</b><span></span></div>' +
           '</div>' +
@@ -215,20 +220,27 @@
       syncTasks();
       if (commandEl) commandEl.textContent = "";
       if (term) term.textContent = "";
-      var cmd = "$ " + (DE ? "python3 bewerte_text.py" : "python3 score_text.py");
-      var stepMs = 300 / Math.max(1, cmd.length);
+      var stepMs = 300 / Math.max(1, commandText.length);
       var j = 0;
-      function typeCommand() {
-        if (j >= cmd.length) {
-          later(function () { if (term) term.textContent = outText; }, 260);
+      function showOutput(index) {
+        if (!term) return;
+        term.textContent = outLines.slice(0, index + 1).join("\n");
+        if (index + 1 < outLines.length) {
+          later(function () { showOutput(index + 1); }, 260);
+        } else {
           later(function () {
             phase = "done";
             setButton(DE ? "Nochmal" : "Replay", false);
-          }, 620);
+          }, 480);
+        }
+      }
+      function typeCommand() {
+        if (j >= commandText.length) {
+          later(function () { showOutput(0); }, 260);
           return;
         }
         j++;
-        if (commandEl) commandEl.textContent = cmd.slice(0, j);
+        if (commandEl) commandEl.textContent = commandText.slice(0, j);
         later(typeCommand, stepMs * (0.7 + Math.random() * 0.6));
       }
       typeCommand();
@@ -275,6 +287,10 @@
       if (thinkingEl) thinkingEl.classList.remove("on");
       if (agentWin) agentWin.classList.add("is-coding");
       spans.forEach(function (sp) { sp.classList.add("is-visible"); });
+      if (runWin && !runWin.hidden) {
+        if (commandEl) commandEl.textContent = commandText;
+        if (term) term.textContent = outLines.join("\n");
+      }
       phase = "ready";
       setButton(DE ? "Weiter" : "Next", false);
       fitCode();

@@ -50,7 +50,8 @@
       questionGroups: "Fragegruppen", addGroup: "Fragegruppe", addQuestion: "Frage", addChildQuestion: "Unterfrage",
       newGroup: "Neue Fragegruppe", newQuestion: "Neue Frage",
       questionTitle: "Frage", questionBody: "Antwort", formula: "Formel (LaTeX)",
-      sourcesReadonly: "Quellen bleiben unverändert.", editHint: "E bearbeiten",
+      addSource: "Quelle", sourceLabel: "Titel", sourceUrl: "URL", sourceWhy: "Begründung",
+      newSource: "Neue Quelle", removeSource: "Quelle entfernen", editHint: "E bearbeiten",
       copyHint: "Kopiere die Bearbeitung und schicke sie weiter.", exportEmpty: "Noch nichts bearbeitet.",
       exportJSON: "JSON ↓", importJSON: "JSON ↑", exportTitle: "Geänderte Texte als JSON speichern", importTitle: "JSON laden", exportOk: "JSON gespeichert", importOk: "JSON geladen", importError: "JSON konnte nicht gelesen werden",
       kindQuestion: "Frage", kindTrivia: "Trivia", soloDemo: "Demo solo", jsonTitle: "Alle Änderungen", jsonHint: "Nur geänderte Texte und das Layout. Kopiere den JSON-Text oder lade ihn herunter.", download: "Herunterladen", layoutSlides: "Folien", copyLink: "Link", linkCopied: "Link kopiert", layoutTitle: "Folien anordnen", layoutHint: "Verschieben, ausblenden, Unterfolien zu Folien machen.", splitSubsteps: "Aufteilen", mergeSubsteps: "Zusammenführen", hiddenSlides: "Ausgeblendet", resetLayout: "Layout zurücksetzen", promoted: "Unterfolie", moveUp: "Nach oben", moveDown: "Nach unten", hideSlide: "Ausblenden", showSlide: "Einblenden"
@@ -92,7 +93,8 @@
       questionGroups: "Question groups", addGroup: "Question group", addQuestion: "Question", addChildQuestion: "Sub-question",
       newGroup: "New question group", newQuestion: "New question",
       questionTitle: "Question", questionBody: "Answer", formula: "Formula (LaTeX)",
-      sourcesReadonly: "Sources stay unchanged.", editHint: "E to edit",
+      addSource: "Source", sourceLabel: "Title", sourceUrl: "URL", sourceWhy: "Why it matters",
+      newSource: "New source", removeSource: "Remove source", editHint: "E to edit",
       copyHint: "Copy the edit and pass it on.", exportEmpty: "Nothing edited yet.",
       exportJSON: "JSON ↓", importJSON: "JSON ↑", exportTitle: "Save changed texts as JSON", importTitle: "Load JSON", exportOk: "JSON saved", importOk: "JSON loaded", importError: "Could not read JSON",
       kindQuestion: "Question", kindTrivia: "Trivia", soloDemo: "Demo solo", jsonTitle: "All changes", jsonHint: "Only changed texts and the layout. Copy the JSON or download it.", download: "Download", layoutSlides: "Slides", copyLink: "Link", linkCopied: "Link copied", layoutTitle: "Arrange slides", layoutHint: "Move, hide, and turn sub-slides into slides.", splitSubsteps: "Split", mergeSubsteps: "Merge", hiddenSlides: "Hidden", resetLayout: "Reset layout", promoted: "Sub-slide", moveUp: "Move up", moveDown: "Move down", hideSlide: "Hide", showSlide: "Show"
@@ -615,7 +617,7 @@
     });
     lensOrder.forEach(function (key) { groups.push(byLens[key]); });
     var sources = (s.sources || []).concat(state.step === 0 ? (d.sources || []) : []);
-    if (sources.length) groups.push({ id: "g-sources", title: t("sources"), sources: sources });
+    if (sources.length) groups.push({ id: "g-sources", title: t("sources"), sources: cloneData(sources) });
     return groups;
   }
   function buildQuestionGroups(view, day, base) {
@@ -1345,12 +1347,34 @@
       '</div>' +
     '</div>';
   }
+  function sourceWhy(src) {
+    if (src.why && typeof src.why === "object") return src.why[LANG] || src.why.de || src.why.en || "";
+    return src.why || "";
+  }
+  function renderSourceEditor(src, gi, si) {
+    var path = gi + "." + si;
+    return '<div class="ls-edit-question ls-edit-source" data-source-path="' + esc(path) + '">' +
+      '<div class="ls-edit-row">' +
+        '<input class="ls-edit-input" data-field="source-label" data-g="' + gi + '" data-s="' + si + '" value="' + esc(src.label || "") + '" aria-label="' + esc(t("sourceLabel")) + '" placeholder="' + esc(t("sourceLabel")) + '">' +
+        '<button type="button" class="ls-btn ls-btn--tiny ls-edit-remove" data-edit-remove-source="' + esc(path) + '" aria-label="' + esc(t("removeSource")) + '">×</button>' +
+      '</div>' +
+      '<input class="ls-edit-input" data-field="source-url" data-g="' + gi + '" data-s="' + si + '" value="' + esc(src.url || "") + '" aria-label="' + esc(t("sourceUrl")) + '" placeholder="https://...">' +
+      '<input class="ls-edit-input" data-field="source-why" data-g="' + gi + '" data-s="' + si + '" value="' + esc(sourceWhy(src)) + '" aria-label="' + esc(t("sourceWhy")) + '" placeholder="' + esc(t("sourceWhy")) + '">' +
+    '</div>';
+  }
   function renderEditorGroups() {
     return (editorDoc.groups || []).map(function (g, gi) {
       if (g.sources) {
-        return '<details class="ls-edit-group" open>' +
-          '<summary><span class="ls-edit-group-name">' + esc(g.title || t("sources")) + '</span></summary>' +
-          '<div class="ls-edit-note">' + esc(t("sourcesReadonly")) + '</div>' +
+        var sources = (g.sources || []).map(function (src, si) {
+          return renderSourceEditor(src, gi, si);
+        }).join("");
+        return '<details class="ls-edit-group ls-edit-group--sources" data-g="' + gi + '" open>' +
+          '<summary>' +
+            '<input class="ls-edit-input ls-edit-group-name" data-field="group-title" data-g="' + gi + '" value="' + esc(g.title || t("sources")) + '" aria-label="' + esc(t("sources")) + '">' +
+          '</summary>' +
+          '<div class="ls-edit-questions">' + sources +
+            '<button type="button" class="ls-btn ls-btn--tiny" data-edit-add-source="' + gi + '">+ ' + esc(t("addSource")) + '</button>' +
+          '</div>' +
         '</details>';
       }
       var questions = (g.questions || []).map(function (q, qi) {
@@ -1469,6 +1493,35 @@
         removeEditorQuestion(btn.getAttribute("data-edit-remove-question"));
       });
     });
+    els.extras.querySelectorAll("[data-edit-add-source]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        addEditorSource(parseInt(btn.getAttribute("data-edit-add-source"), 10));
+      });
+    });
+    els.extras.querySelectorAll("[data-edit-remove-source]").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        removeEditorSource(btn.getAttribute("data-edit-remove-source"));
+      });
+    });
+    els.extras.querySelectorAll('[data-field^="source-"][data-g][data-s]').forEach(function (field) {
+      field.addEventListener("input", function () {
+        var gi = parseInt(field.getAttribute("data-g"), 10);
+        var si = parseInt(field.getAttribute("data-s"), 10);
+        var group = editorDoc.groups[gi];
+        var src = group && group.sources && group.sources[si];
+        if (!src) return;
+        var key = field.getAttribute("data-field");
+        if (key === "source-label") src.label = field.value;
+        else if (key === "source-url") src.url = field.value;
+        else if (key === "source-why") {
+          if (src.why && typeof src.why === "object") src.why[LANG] = field.value;
+          else src.why = field.value;
+        }
+        scheduleEditorSave();
+      });
+    });
     els.extras.querySelectorAll('[data-field="group-title"][data-g]').forEach(function (field) {
       field.addEventListener("input", function () {
         var gi = parseInt(field.getAttribute("data-g"), 10);
@@ -1500,6 +1553,24 @@
       title: t("newGroup"),
       questions: [makeQuestion("q-edit-" + stamp, t("newQuestion"), "")]
     });
+    saveEditorDoc();
+    renderEditor();
+  }
+  function addEditorSource(gi) {
+    var group = editorDoc.groups[gi];
+    if (!group || !group.sources) return;
+    group.sources.push({ label: t("newSource"), url: "", why: "" });
+    saveEditorDoc();
+    renderEditor();
+    var input = els.extras.querySelector('[data-field="source-label"][data-g="' + gi + '"][data-s="' + (group.sources.length - 1) + '"]');
+    if (input) { try { input.focus(); } catch (e) {} }
+  }
+  function removeEditorSource(path) {
+    var parts = String(path).split(".").map(Number);
+    var si = parts.pop();
+    var group = editorDoc.groups[parts[0]];
+    if (!group || !group.sources || isNaN(si)) return;
+    group.sources.splice(si, 1);
     saveEditorDoc();
     renderEditor();
   }

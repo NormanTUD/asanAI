@@ -125,8 +125,10 @@ the data file remains the recoverable original.
 
 - The toolbar shows the sentence count and warns when the teaser exceeds five
   sentences; on save the extra sentences move to "Mehr erfahren".
-- Groups, questions and sub-questions can be added or removed. Source groups are
-  read-only.
+- Groups, questions and sub-questions can be added or removed. A source group
+  is editable too: title, source label, URL and the per-language "why" note,
+  plus add and remove for individual sources. Source edits live in the same
+  per-language overlay as the rest of the text.
 - Each question has a `Frage` / `Trivia` selector.
 - The JSON button opens a copy-paste modal with the complete export. "Kopieren"
   copies the JSON; "Herunterladen" saves it as a file. "JSON ↑" imports a file.
