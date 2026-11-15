@@ -873,6 +873,7 @@ h1,h2,h3,h4{
 .ls-position-grid{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:8px;min-height:220px}
 .ls-position-panel{position:relative;min-height:0;border:1px solid rgba(0,75,111,.08);background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(247,249,248,.3));overflow:hidden}
 .ls-position-panel canvas{position:absolute;inset:0;width:100%;height:100%}
+.ls-position-space-note{position:absolute;left:6px;top:5px;z-index:2;max-width:calc(100% - 12px);padding:3px 5px;background:rgba(255,255,255,.84);border-left:2px solid var(--ls-lilac);font:600 8px/1.35 "Open Sans",sans-serif;color:var(--ls-muted);pointer-events:none}
 .ls-position-legend{position:absolute;right:6px;bottom:4px;display:flex;align-items:center;gap:4px;font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
 .ls-position-legend i{width:38px;height:6px;background:linear-gradient(90deg,var(--ls-sky),#fff,var(--ls-gold))}
 .ls-position-readout,.ls-att-readout,.ls-res-readout,.ls-meadow-readout,.ls-sm-readout{display:flex;gap:12px;flex-wrap:wrap;font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.06em}

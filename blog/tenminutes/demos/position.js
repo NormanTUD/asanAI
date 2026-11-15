@@ -10,10 +10,10 @@
     el.className = "ls-position-scene";
     el.innerHTML =
       '<div class="ls-position-grid">' +
-        '<div class="ls-position-panel"><canvas class="ls-position-heat"></canvas><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
+        '<div class="ls-position-panel"><div class="ls-position-space-note">' + (DE ? "Hochdimensionaler Raum · Richtungen auf der Hyperkugel · 3D = Projektion" : "High-dimensional space · directions on the hypersphere · 3D = projection") + '</div><canvas class="ls-position-heat"></canvas><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
         '<div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div>' +
       '</div>' +
-      '<p class="ls-position-note">' + (DE ? "Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position." : "Positions are added as waves on circular orbits in different dimensions. Each dimension has a different frequency; together they form the position fingerprint.") + '</p>' +
+      '<p class="ls-position-note">' + (DE ? "Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position. Jeder grüne Punkt ist dasselbe Wort (Hund) an einer anderen Position." : "Positions are added as waves on circular orbits in different dimensions. Each dimension has a different frequency; together they form the position fingerprint. Every green point is the same word (dog) at a different position.") + '</p>' +
       '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-pos-context" min="16" max="128" step="8" value="64"><output>64</output></label><label class="ls-range">' + (DE ? "Dimensionen" : "Dimensions") + ' <input type="range" class="ls-pos-dims" min="2" max="64" step="2" value="24"><output>24</output></label><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="10000" step="1" value="7"><output>7</output></label></div>' +
       '<div class="ls-scene-row ls-position-metric"><span class="ls-position-metric-label">' + (DE ? "Winkel" : "Angle") + '</span><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
       '<div class="ls-position-readout" aria-live="polite"></div>';
@@ -137,6 +137,18 @@
         var pp = P(unit3(curvePoint(p)));
         ctx.beginPath(); ctx.arc(pp.x, pp.y, 2.1, 0, Math.PI * 2);
         ctx.fillStyle = Cc.green; ctx.globalAlpha = 0.62; ctx.fill();
+        ctx.globalAlpha = 1;
+        var label = (DE ? "Hund@" : "dog@") + p;
+        ctx.font = '600 ' + Math.max(7, api.font("canvas-sm") - 3) + 'px "Open Sans", sans-serif';
+        var tw = ctx.measureText(label).width;
+        var lx = Math.max(20, Math.min(w - 20, pp.x));
+        var ly = Math.max(12, Math.min(h - 12, pp.y - 10));
+        ctx.fillStyle = "rgba(255,255,255,.9)";
+        ctx.fillRect(lx - tw / 2 - 2, ly - 6, tw + 4, 11);
+        ctx.fillStyle = Cc.green;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(label, lx, ly);
       });
       ctx.globalAlpha = 1;
       var startVec = curvePoint(0);
