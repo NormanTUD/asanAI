@@ -491,6 +491,18 @@ def main() -> None:
                     types: [...new Set(d.map(s => s.type))]
                 };
             }""")
+            page.evaluate("""() => {
+                const s=document.getElementById('transformer-dimension-model');
+                s.value='10'; s.dispatchEvent(new Event('input',{bubbles:true}));
+            }""")
+            page.wait_for_function(
+                "() => { const l=document.getElementById('sticky-highdim-label'); return l && getComputedStyle(l).display !== 'none'; }",
+                timeout=10000)
+            hd = page.evaluate("""() => {
+                const sel=document.getElementById('sticky-highdim-select');
+                const label=sel ? sel.closest('label') : null;
+                return sel ? {display: label ? getComputedStyle(label).display : null, value: sel.value} : null;
+            }""")
             check("high-dim view switch appears and defaults to PCA",
                   bool(hd) and hd["display"] != "none" and hd["value"] == "pca", str(hd))
             page.evaluate("""() => {
