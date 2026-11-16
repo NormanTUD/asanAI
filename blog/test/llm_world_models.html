@@ -901,7 +901,7 @@
       starsCtx.fill();
     }
     starsCtx.globalAlpha = 1;
-    starsCtx.globalCompositeOperation = "lighter";
+    starsCtx.globalCompositeOperation = "source-over";
     for (let i = meteors.length - 1; i >= 0; i--) {
       const m = meteors[i];
       m.x += m.vx * 2.2;
@@ -972,7 +972,7 @@
       g2.addColorStop(1, "rgba(167,139,250,0)");
       ctx.fillStyle = g2;
       ctx.fillRect(0, 0, this.w, this.h);
-      ctx.globalCompositeOperation = "lighter";
+      ctx.globalCompositeOperation = "source-over";
       for (const p of this.dust) {
         const x = ((p.x + t * p.vx) % 1 + 1) % 1 * this.w;
         const y = ((p.y + t * p.vy) % 1 + 1) % 1 * this.h;
@@ -1021,7 +1021,7 @@
       g.addColorStop(1, "rgba(3,4,10,0)");
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
-      ctx.globalCompositeOperation = "lighter";
+      ctx.globalCompositeOperation = "source-over";
       for (let k = 0; k < 5; k++) {
         const phase = t * .22 + k * .62;
         ctx.beginPath();
@@ -1095,7 +1095,7 @@
       label(ctx, words[6], lastX, top - 20, C.cyan, .95, 12, "center");
       glowLine(ctx, lastX, top, lastX, bottom, C.cyan, 2.4, .78);
       label(ctx, "residual stream", lastX + 18, top + 16, C.cyan, .72, 9, "left");
-      ctx.globalCompositeOperation = "lighter";
+      ctx.globalCompositeOperation = "source-over";
       for (const a of arcs) {
         const y0 = top + a.l * rowH + rowH * .5;
         const x0 = left + a.i * colW;
@@ -1549,7 +1549,7 @@
       }
       const proj = points.map((p) => ({ ...P(p.x, p.y, p.z), p }));
       proj.sort((a, b) => b.z - a.z);
-      ctx.globalCompositeOperation = "lighter";
+      ctx.globalCompositeOperation = "source-over";
       for (const q of proj) {
         const a = .10 + .34 * (1 - q.z * .45);
         glow(ctx, C.violet, q.x, q.y, 7, a * .28);

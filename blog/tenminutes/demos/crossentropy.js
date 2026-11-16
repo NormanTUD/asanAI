@@ -12,6 +12,9 @@
     var history = [];
     var sequenceDone = false;
     var tween = 0, tweenFrom = null, tweenTo = null, tweenStart = 0, tweenDur = 560, pulseStart = 0, prevProbs = null;
+    var BATCH_STEPS = 5;
+    var BATCH_STEP_MS = 220;
+    var batchToken = 0, batchLeft = 0, batchTotal = 0, batchDone = 0;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var el = document.createElement("div");
     el.className = "ls-ce-scene";
@@ -67,8 +70,9 @@
       logits = next.slice();
       draw();
     }
-    function trainStep(done) {
+    function trainStep(done, duration) {
       if (tween) { cancelAnimationFrame(tween); tween = 0; }
+      var dur = typeof duration === "number" ? duration : tweenDur;
       var p = softmax(logits);
       prevProbs = p.slice();
       var g = gradients(p);
@@ -87,7 +91,7 @@
         return;
       }
       function step(now) {
-        var t = Math.min(1, (now - tweenStart) / tweenDur);
+        var t = Math.min(1, (now - tweenStart) / dur);
         var e = ease(t);
         logits = tweenFrom.map(function (z, i) { return lerp(z, tweenTo[i], e); });
         draw();
@@ -102,6 +106,50 @@
         }
       }
       tween = requestAnimationFrame(step);
+    }
+    function cancelBatch(snap) {
+      batchToken++;
+      batchLeft = 0;
+      batchTotal = 0;
+      batchDone = 0;
+      if (tween) {
+        cancelAnimationFrame(tween);
+        tween = 0;
+        if (snap && tweenTo) {
+          logits = tweenTo.slice();
+          draw();
+        }
+      }
+    }
+    function runBatch(count, done) {
+      cancelBatch(false);
+      var token = batchToken;
+      batchLeft = count;
+      batchTotal = count;
+      batchDone = 0;
+      function nextStep() {
+        if (token !== batchToken) return;
+        if (batchLeft <= 0) {
+          batchTotal = 0;
+          batchDone = 0;
+          if (done) done();
+          return;
+        }
+        batchLeft--;
+        trainStep(function () {
+          if (token !== batchToken) return;
+          batchDone++;
+          draw();
+          if (batchLeft > 0) {
+            nextStep();
+          } else {
+            batchTotal = 0;
+            batchDone = 0;
+            if (done) done();
+          }
+        }, BATCH_STEP_MS);
+      }
+      nextStep();
     }
     function draw() {
       if (!size) return;
@@ -255,10 +303,13 @@
       }
       // explicit loss readout
       if (readout) {
+        var batchInfo = batchTotal > 0
+          ? '<span><b>' + (DE ? "Schritte" : "steps") + '</b> ' + Math.min(batchTotal, batchDone + 1) + ' / ' + batchTotal + '</span>'
+          : '';
         readout.innerHTML = '<span><b>' + (DE ? "Ziel" : "target") + ' ' + (target + 1) + '/' + tokens.length + ' · ' + tokens[target] + '</b></span>' +
           '<span><b>Loss</b> ' + loss.toFixed(4) + '</span>' +
           '<span><b>p(' + tokens[target] + ')</b> ' + (p[target] * 100).toFixed(1) + '%</span>' +
-          '<span><b>∇ ' + tokens[target] + '</b> ' + (g[target] >= 0 ? "+" : "") + g[target].toFixed(3) + '</span>';
+          '<span><b>∇ ' + tokens[target] + '</b> ' + (g[target] >= 0 ? "+" : "") + g[target].toFixed(3) + '</span>' + batchInfo;
       }
       // sparkline
       var sx = gcx - gr * 0.95, sy = gcy + gr + 16, sw = gr * 1.9, sh = 26;
@@ -282,7 +333,7 @@
       draw();
     }
     function reset() {
-      if (tween) { cancelAnimationFrame(tween); tween = 0; }
+      cancelBatch(false);
       logits = initial.slice();
       target = 0;
       sequenceDone = false;
@@ -293,11 +344,11 @@
       draw();
     }
     function nextTarget() {
-      if (tween) return true;
+      if (tween || batchLeft > 0) return true;
       var isLast = target >= tokens.length - 1;
       if (isLast && sequenceDone) return false;
       var next = isLast ? target : target + 1;
-      trainStep(function () {
+      runBatch(BATCH_STEPS, function () {
         if (isLast) {
           sequenceDone = true;
         } else {
@@ -310,8 +361,8 @@
       return true;
     }
     function prevTarget() {
-      if (target <= 0) return false;
-      if (tween) { cancelAnimationFrame(tween); tween = 0; if (tweenTo) logits = tweenTo.slice(); }
+      if (target <= 0) { cancelBatch(true); return false; }
+      cancelBatch(true);
       target--;
       sequenceDone = false;
       prevProbs = null;
@@ -321,7 +372,7 @@
       draw();
       return true;
     }
-    trainBtn.addEventListener("click", function () { trainStep(); });
+    trainBtn.addEventListener("click", function () { cancelBatch(false); trainStep(); });
     resetBtn.addEventListener("click", reset);
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
