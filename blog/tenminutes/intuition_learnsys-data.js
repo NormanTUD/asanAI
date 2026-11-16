@@ -2178,10 +2178,20 @@
     sources: qkvArcs.sources
   });
 
+  var qkvGraph2 = Object.assign({}, qkvGraph, {
+    title: DE ? "Head 2 als Graph" : "Head 2 as a graph",
+    body: DE
+      ? "Derselbe vollverbundene Graph, andere Kantengewichte. Head 2 fragt nach dem Ort, deshalb wird die Kante von „es“ zu „Straße“ dick und hell; die Kante zu „Tier“ wird dünner. Die Topologie bleibt vollständig: Jedes Token kann auf jedes andere schauen, nur die Stärke der Verbindung ändert sich."
+      : "The same fully connected graph, different edge weights. Head 2 asks for the location, so the edge from “it” to “street” becomes thick and bright; the edge to “animal” gets thinner. The topology stays complete: every token can attend to every other token, only the strength of the connection changes.",
+    watch: DE ? "Vergleiche die Kanten mit Head 1. Welche Verbindung gewinnt jetzt?" : "Compare the edges with head 1. Which connection wins now?",
+    demoState: { scene: "qkv", head: 1, view: "graph" },
+    boxes: qkvGraph.boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-h2" }); })
+  });
+
   var qkvStep = {
     title: DE ? "Wie Attention rechnet" : "How attention computes",
     kicker: DE ? "Q · K · V" : "Q · K · V",
-    substeps: [qkvArcs, qkvArcs2, qkvSimplex, qkvSimplex2, qkvGraph]
+    substeps: [qkvArcs, qkvGraph, qkvSimplex, qkvArcs2, qkvGraph2, qkvSimplex2]
   };
 
   var agentsStep = {

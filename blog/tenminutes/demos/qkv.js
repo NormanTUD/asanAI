@@ -26,7 +26,7 @@
       '<div class="ls-qkv-controls">' +
         '<button type="button" class="ls-chip is-on" data-head="0">' + (DE ? "Head 1 · Wer?" : "Head 1 · who?") + '</button>' +
         '<button type="button" class="ls-chip" data-head="1">' + (DE ? "Head 2 · Wo?" : "Head 2 · where?") + '</button>' +
-        '<span class="ls-qkv-view"><button type="button" class="ls-chip is-on" data-view="arcs">' + (DE ? "Bögen" : "Arcs") + '</button><button type="button" class="ls-chip" data-view="simplex">Simplex</button><button type="button" class="ls-chip" data-view="graph">' + (DE ? "Graph" : "Graph") + '</button></span>' +
+        '<span class="ls-qkv-view"><button type="button" class="ls-chip is-on" data-view="arcs">' + (DE ? "Bögen" : "Arcs") + '</button><button type="button" class="ls-chip" data-view="graph">' + (DE ? "Graph" : "Graph") + '</button><button type="button" class="ls-chip" data-view="simplex">Simplex</button></span>' +
         '<span class="ls-qkv-query">' + (DE ? "Query" : "query") + ' <b>' + (DE ? "es" : "it") + '</b></span>' +
       '</div>' +
       '<div class="ls-qkv-percent"></div>' +
