@@ -11,15 +11,13 @@
       '<div class="ls-codesem-modes" role="group" aria-label="' + (DE ? "Art des Rauschens" : "Kind of noise") + '">' +
         '<button type="button" class="ls-chip is-on" data-sem-kind="language">' + (DE ? "Sprache" : "Language") + '</button>' +
         '<button type="button" class="ls-chip" data-sem-kind="code">Code</button>' +
-      '</div>' +
-      '<div class="ls-codesem-readout" aria-live="polite"></div>';
+      '</div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-codesem-stage");
     var canvas = el.querySelector(".ls-codesem-canvas");
-    var readout = el.querySelector(".ls-codesem-readout");
     var kindBtns = Array.prototype.slice.call(el.querySelectorAll("[data-sem-kind]"));
     var C = api.colors();
-    var size = null, kind = "language", raf = 0, running = true, lastReadout = "";
+    var size = null, kind = "language", raf = 0, running = true;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var CARDS = [
       {
@@ -215,8 +213,8 @@
       V.grid(ctx, w, h, C, 28, 0.12);
       var isLang = kind === "language";
       var list = isLang ? LANG_CARDS : CARDS;
-      var cardW = Math.min(w * 0.40, 330);
-      var cardX = 16;
+      var cardW = Math.min(w * 0.34, 300);
+      var cardX = 14;
       var gap = isLang ? Math.max(5, h * 0.02) : Math.max(10, h * 0.045);
       var cardH, starts = [];
       if (isLang) {
@@ -234,61 +232,106 @@
         }
         starts = [yA, yB];
       }
-      var nodeR = Math.min(44, w * 0.075, h * 0.14);
-      var nodeX = w - Math.max(70, w * 0.15);
-      var nodeY = h * 0.50;
-      var filterX = nodeX - nodeR - Math.max(42, w * 0.085);
+      var spaceX = cardX + cardW + Math.max(18, w * 0.03);
+      var spaceRight = w - 14;
+      var spaceTop = Math.max(44, h * 0.11);
+      var spaceBottom = h - Math.max(24, h * 0.075);
+      var spaceW = Math.max(90, spaceRight - spaceX);
+      var spaceH = Math.max(84, spaceBottom - spaceTop);
+      var nodeR = Math.min(42, w * 0.07, h * 0.13);
+      var nodeX = spaceX + spaceW * 0.74;
+      var nodeY = spaceTop + spaceH * 0.52;
+      var filterX = spaceX - Math.max(8, w * 0.012);
       var positions = list.map(function (card, idx) {
         return isLang
           ? drawLangCard(ctx, card, cardX, starts[idx], cardW, cardH, true)
           : drawCard(ctx, card, cardX, starts[idx], cardW, cardH, true);
       });
       ctx.save();
+      ctx.fillStyle = V.alpha(C.paper2, 0.45);
+      ctx.fillRect(spaceX, spaceTop, spaceW, spaceH);
+      ctx.strokeStyle = V.alpha(C.line, 0.8);
+      ctx.lineWidth = 1;
+      ctx.strokeRect(spaceX + 0.5, spaceTop + 0.5, spaceW - 1, spaceH - 1);
+      var axisX = spaceX + 16;
+      var axisY = spaceTop + spaceH - 16;
+      V.arrow(ctx, axisX, axisY, spaceX + spaceW - 12, axisY, V.alpha(C.line, 0.9), 1, 5);
+      V.arrow(ctx, axisX, axisY, axisX, spaceTop + 10, V.alpha(C.line, 0.9), 1, 5);
+      V.label(ctx, DE ? "Dim 1" : "dim 1", spaceX + spaceW - 14, axisY - 8, { font: '600 ' + fontPx(0.78, 7) + 'px "Open Sans", sans-serif', color: C.muted, align: "right", bg: false });
+      V.label(ctx, DE ? "Dim 2" : "dim 2", axisX + 6, spaceTop + 16, { font: '600 ' + fontPx(0.78, 7) + 'px "Open Sans", sans-serif', color: C.muted, align: "left", bg: false });
+      ctx.restore();
+      ctx.save();
       ctx.setLineDash([4, 5]);
       ctx.strokeStyle = V.alpha(C.lilac, 0.45);
       ctx.lineWidth = 1.2;
       ctx.beginPath();
-      ctx.moveTo(filterX, h * 0.13);
-      ctx.lineTo(filterX, h * 0.87);
+      ctx.moveTo(filterX, spaceTop);
+      ctx.lineTo(filterX, spaceBottom);
       ctx.stroke();
       ctx.restore();
-      V.label(ctx, DE ? "Rauschfilter" : "noise filter", filterX, h * 0.105, { font: '700 ' + fontPx(0.95, 9) + 'px "Barlow", sans-serif', color: C.lilac, align: "center" });
-      function drawTokenPaths(positions, card) {
-        var col = cardColor(card);
-        positions.forEach(function (pos) {
-          if (pos.noise) {
-            var end = { x: filterX - 7, y: pos.y + (nodeY - pos.y) * 0.32 };
-            drawPath(ctx, pos, end, C.lilac, 0.42, true);
-            ctx.save();
-            ctx.strokeStyle = C.lilac;
-            ctx.globalAlpha = 0.7;
-            ctx.lineWidth = 1.3;
-            ctx.beginPath();
-            ctx.moveTo(end.x - 4, end.y - 4);
-            ctx.lineTo(end.x + 4, end.y + 4);
-            ctx.moveTo(end.x + 4, end.y - 4);
-            ctx.lineTo(end.x - 4, end.y + 4);
-            ctx.stroke();
-            ctx.restore();
-            return;
-          }
-          var target = { x: nodeX - nodeR * 0.35, y: nodeY };
-          var mid = drawPath(ctx, pos, target, col, 0.62, false);
-          if (!reduced) {
-            for (var k = 0; k < 2; k++) {
-              var u = ((now / 1250) + pos.i * 0.19 + k * 0.5) % 1;
-              var p = pathPoint(pos, target, mid.mx, mid.my, u);
-              ctx.globalAlpha = 0.16 + 0.62 * (1 - u);
-              ctx.fillStyle = col;
-              ctx.beginPath();
-              ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-              ctx.fill();
-            }
-            ctx.globalAlpha = 1;
-          }
+      V.label(ctx, DE ? "Rauschfilter" : "noise filter", filterX, spaceTop - 9, { font: '700 ' + fontPx(0.9, 8) + 'px "Barlow", sans-serif', color: C.lilac, align: "center" });
+      function drawNoisePaths(tokenPositions, card) {
+        tokenPositions.forEach(function (pos) {
+          if (!pos.noise) return;
+          var end = { x: filterX - 6, y: pos.y + (nodeY - pos.y) * 0.22 };
+          drawPath(ctx, pos, end, C.lilac, 0.42, true);
+          ctx.save();
+          ctx.strokeStyle = C.lilac;
+          ctx.globalAlpha = 0.7;
+          ctx.lineWidth = 1.3;
+          ctx.beginPath();
+          ctx.moveTo(end.x - 4, end.y - 4);
+          ctx.lineTo(end.x + 4, end.y + 4);
+          ctx.moveTo(end.x + 4, end.y - 4);
+          ctx.lineTo(end.x - 4, end.y + 4);
+          ctx.stroke();
+          ctx.restore();
         });
       }
-      list.forEach(function (card, idx) { drawTokenPaths(positions[idx], card); });
+      var startPoints = list.map(function (card, idx) {
+        return {
+          x: spaceX + spaceW * (0.16 + 0.07 * (idx / Math.max(1, list.length - 1))),
+          y: spaceTop + spaceH * ((idx + 1) / (list.length + 1))
+        };
+      });
+      function drawSemanticLink(start, card, idx) {
+        var col = cardColor(card);
+        var dx = nodeX - start.x, dy = nodeY - start.y;
+        var len = Math.hypot(dx, dy) || 1;
+        var ex = nodeX - dx / len * (nodeR + 4);
+        var ey = nodeY - dy / len * (nodeR + 4);
+        V.arrow(ctx, start.x, start.y, ex, ey, V.alpha(col, 0.58), 1.6, 7);
+        if (!reduced) {
+          var u = ((now / 1600) + idx * 0.22) % 1;
+          var px = start.x + (ex - start.x) * u;
+          var py = start.y + (ey - start.y) * u;
+          ctx.save();
+          ctx.globalAlpha = 0.18 + 0.72 * (1 - u);
+          ctx.fillStyle = col;
+          ctx.beginPath();
+          ctx.arc(px, py, 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+      function drawStartPoint(start, card) {
+        var col = cardColor(card);
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(start.x, start.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = V.alpha(col, 0.18);
+        ctx.fill();
+        ctx.strokeStyle = col;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.restore();
+        V.label(ctx, card.key.toUpperCase(), start.x, start.y - 11, { font: '700 ' + fontPx(0.78, 7) + 'px "Open Sans", sans-serif', color: col, align: "center", bg: false });
+      }
+      list.forEach(function (card, idx) { drawNoisePaths(positions[idx], card); });
+      startPoints.forEach(function (start, idx) {
+        drawSemanticLink(start, list[idx], idx);
+        drawStartPoint(start, list[idx]);
+      });
       var nodeMain = isLang ? (DE ? "Bedeutung" : "meaning") : "Quicksort";
       var nodeSub = isLang ? (DE ? "Hund läuft Straße" : "dog runs street") : (DE ? "Funktion" : "function");
       var nodeAbove = isLang ? (DE ? "sprachunabhängig" : "language-independent") : (DE ? "abstrakte Bedeutung" : "abstract meaning");
@@ -327,23 +370,10 @@
       V.label(ctx, nodeBelow, nodeX, nodeY + nodeR + 20, { font: '600 ' + fontPx(0.82, 8) + 'px "Open Sans", sans-serif', color: C.petrol, align: "center" });
       V.label(ctx, DE ? "lila = Rauschen" : "lilac = noise", w - 14, h - 12, { font: '600 ' + fontPx(0.8, 8) + 'px "Open Sans", sans-serif', color: C.lilac, align: "right", bg: false });
       V.heading(ctx, isLang ? (DE ? "Drei Sprachen, eine Bedeutung" : "Three languages, one meaning") : (DE ? "Verschiedene Oberflächen, ein Punkt" : "Different surfaces, one point"), 14, 16, C.petrol, 10, 1);
-      V.heading(ctx, isLang ? (DE ? "Sprache" : "Language") : "Code", w - 14, 16, C.muted, 10, 1);
+      V.heading(ctx, DE ? "Fiktiver Embedding-Raum" : "Fictional embedding space", w - 14, 16, C.muted, 10, 1);
       canvas.setAttribute("aria-label", isLang
         ? (DE ? "Drei Sätze in drei Sprachen, mit Tippfehlern, zeigen auf denselben sprachunabhängigen Bedeutungs-Knoten. Tippfehler, Schreibweise und Sprache sind Rauschen; die Bedeutung landet auf demselben Punkt." : "Three sentences in three languages, with typos, point to the same language-independent meaning node. Typos, spelling, and language are noise; the meaning lands on the same point.")
         : (DE ? "Zwei Codeblöcke, def quickSort und function quick_sort, zeigen auf denselben abstrakten Quicksort-Knoten. def und function sind Rauschen; die Bedeutung landet auf demselben Punkt." : "Two code blocks, def quickSort and function quick_sort, point to the same abstract quicksort node. def and function are noise; the meaning lands on the same point."));
-      updateReadout();
-    }
-    function updateReadout() {
-      var html;
-      if (kind === "language") {
-        html = '<span><b>Deutsch / English / Français</b> → ' + (DE ? "Hund läuft Straße" : "dog runs street") + '</span><span><b>' + (DE ? "Rauschen" : "noise") + '</b> ' + (DE ? "Tippfehler, Schreibweise, Sprache" : "typos, spelling, language") + '</span><span><b>' + (DE ? "ein Punkt" : "one point") + '</b> ' + (DE ? "sprachunabhängige Bedeutung" : "language-independent meaning") + '</span>';
-      } else {
-        html = '<span><b>' + (DE ? "Beide" : "Both") + '</b> def quickSort / function quick_sort</span><span><b>' + (DE ? "Rauschen" : "noise") + '</b> def, function, _</span><span><b>' + (DE ? "ein Punkt" : "one point") + '</b> Quicksort-Funktion</span>';
-      }
-      if (html !== lastReadout) {
-        lastReadout = html;
-        readout.innerHTML = html;
-      }
     }
     function setKind(next) {
       kind = next === "code" ? "code" : "language";

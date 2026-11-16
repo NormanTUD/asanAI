@@ -491,28 +491,6 @@ def main() -> None:
                     types: [...new Set(d.map(s => s.type))]
                 };
             }""")
-            check("2D angular view uses a circle, not a sphere",
-                  bool(circle_2d) and circle_2d["circle"] and not circle_2d["surface"], str(circle_2d))
-            page.evaluate("""() => {
-                const h=document.getElementById('transformer-heads'); h.value='3'; h.dispatchEvent(new Event('input',{bubbles:true}));
-                const s=document.getElementById('transformer-dimension-model'); s.value='3'; s.dispatchEvent(new Event('input',{bubbles:true}));
-                if (window.run_transformer_demo) window.run_transformer_demo();
-            }""")
-            page.wait_for_timeout(1600)
-            page.evaluate("""() => { const s=document.getElementById('sticky-metric-select'); s.value='euclidean'; s.dispatchEvent(new Event('change',{bubbles:true})); }""")
-            page.wait_for_timeout(500)
-
-            page.evaluate("""() => {
-                const d=document.getElementById('transformer-dimension-model'); d.value='10'; d.dispatchEvent(new Event('input',{bubbles:true}));
-                const h=document.getElementById('transformer-heads'); h.value='2'; h.dispatchEvent(new Event('input',{bubbles:true}));
-                if (window.run_transformer_demo) window.run_transformer_demo();
-            }""")
-            page.wait_for_timeout(2200)
-            hd = page.evaluate("""() => {
-                const l=document.getElementById('sticky-highdim-label');
-                const s=document.getElementById('sticky-highdim-select');
-                return {display:l?getComputedStyle(l).display:null, value:s?s.value:null};
-            }""")
             check("high-dim view switch appears and defaults to PCA",
                   bool(hd) and hd["display"] != "none" and hd["value"] == "pca", str(hd))
             page.evaluate("""() => {

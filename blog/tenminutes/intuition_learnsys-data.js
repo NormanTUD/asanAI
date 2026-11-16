@@ -1787,7 +1787,7 @@
     body: DE
       ? "Sprache selbst ist Rauschen: „Der Hundt läuft die Strasse“, „The dgo runs the street“ und „Le chienn court la rue“ sind verschiedene Sprachen, Grammatiken und Tippfehler für denselben Gedanken. Dasselbe gilt für Code: „def quickSort“ und „function quick_sort“ sind Oberflächen für dieselbe Funktion. Attention versucht, eine innere, sprachunabhängige Repräsentation zu finden, die diese Unterschiede ignoriert. Klicke Sprache oder Code. Und das ist nur ein Head: Ein Transformer hat viele davon parallel, und jeder kann auf etwas völlig anderes achten."
       : "Language itself is noise: “Der Hundt läuft die Strasse”, “The dgo runs the street”, and “Le chienn court la rue” are different languages, grammars, and typos for the same thought. The same holds for code: “def quickSort” and “function quick_sort” are surfaces for the same function. Attention tries to find an inner, language-independent representation that ignores these differences. Click Language or Code. And this is only one head: a transformer has many of them in parallel, and each can attend to something completely different.",
-    watch: DE ? "Klicke Sprache und Code. Landen die drei Sätze und die zwei Codeblöcke auf demselben Punkt? Was ist Rauschen?" : "Click Language and Code. Do the three sentences and the two code blocks land on the same point? What is noise?",
+    watch: "",
     demoState: { scene: "codesemantic", kind: "language" },
     context: DE ? "Die linke Seite ist die Oberfläche: Sprachen, Grammatiken, Tippfehler, Schreibweisen. Die rechte Seite ist die Bedeutung: „Hund läuft Straße“. Attention löscht die Wörter nicht; sie verschiebt ihre Repräsentation und lässt die Rauschanteile fallen. Ein echtes Modell hat keine ausdrücklich sprachunabhängige Ebene; es lernt Annäherungen aus geteiltem Kontext." : "The left side is the surface: languages, grammars, typos, spellings. The right side is the meaning: “dog runs street”. Attention does not delete the words; it moves their representation and lets the noise parts drop. A real model has no explicitly language-independent layer; it learns approximations from shared context.",
     deep: DE ? "Mehrsprachige Modelle wie XLM-R und mBERT bilden ähnliche Repräsentationen für verwandte Bedeutungen über Sprachen hinweg (Conneau et al., 2020; Pires et al., 2019). Das ist gelernt und nicht garantiert: Bedeutung kann mehrdeutig sein, und seltene Sprachen bleiben benachteiligt. Und weil viele Heads parallel laufen, kann ein anderer Head gleichzeitig auf Syntax, ein dritter auf Position und ein vierter auf etwas ganz anderes achten." : "Multilingual models such as XLM-R and mBERT form similar representations for related meanings across languages (Conneau et al., 2020; Pires et al., 2019). This is learned and not guaranteed: meaning can be ambiguous, and low-resource languages remain disadvantaged. And because many heads run in parallel, another head can attend to syntax, a third to position, and a fourth to something else entirely.",
@@ -1810,6 +1810,14 @@
       { label: "Conneau et al. (2020), Unsupervised Cross-lingual Representation Learning at Scale", url: "https://arxiv.org/abs/1911.02116", why: { de: "XLM-R: mehrsprachige Repräsentationen über Sprachen hinweg.", en: "XLM-R: multilingual representations across languages." } },
       { label: "Pires et al. (2019), How Multilingual is Multilingual BERT?", url: "https://arxiv.org/abs/1906.01502", why: { de: "mBERT: gemeinsame Repräsentationen trotz verschiedener Sprachen.", en: "mBERT: shared representations despite different languages." } }
     ]
+  };
+  var codeAttentionCodeSubstep = Object.assign({}, codeAttentionSubstep, {
+    demoState: { scene: "codesemantic", kind: "code" }
+  });
+  var codeAttentionStep = {
+    title: codeAttentionSubstep.title,
+    kicker: codeAttentionSubstep.kicker,
+    substeps: [codeAttentionSubstep, codeAttentionCodeSubstep]
   };
   var attentionMergeStep = {
     title: DE ? "Attention: Kontext und Matrix" : "Attention: context and matrix",
@@ -2243,7 +2251,7 @@
     ]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep];
 
   var day = {
     id: "intuition",
