@@ -14,7 +14,6 @@
       norm([0.02, 0.08, 0.01, 0.01, 0.04, 0.02, 0.55, 0.03, 0.10, 0.04, 0.02, 0.08])
     ];
     var head = 0, view = "arcs", weights = W[0].slice(), prev = W[0].slice();
-    var simplexTrail = [];
     var simplexGeom = null, simplexDrag = false, simplexCorner = -1, simplexVerts = null;
     var graphHover = -1, graphMouse = { x: 0, y: 0 };
     var t = 1, start = 0, raf = 0, loopRaf = 0, running = true;
@@ -263,10 +262,49 @@
       simplexCorner = -1;
       canvas.style.cursor = "default";
     }
+    function drawGhostSimplex(ids, w, h, cx, cy, R) {
+      var others = [];
+      for (var i = 0; i < tokens.length; i++) if (ids.indexOf(i) < 0) others.push(i);
+      var rx = Math.min(w * 0.40, R * 2.25);
+      var ry = Math.min(h * 0.40, R * 1.95);
+      ctx.save();
+      ctx.setLineDash([2, 7]);
+      ctx.strokeStyle = "rgba(0,75,111,.10)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (var a = 0; a <= 72; a++) {
+        var t = a / 72 * Math.PI * 2;
+        var ex = cx + Math.cos(t) * rx, ey = cy + Math.sin(t) * ry;
+        if (a === 0) ctx.moveTo(ex, ey); else ctx.lineTo(ex, ey);
+      }
+      ctx.stroke();
+      ctx.restore();
+      var start = -Math.PI / 2 + 0.35;
+      others.forEach(function (id, k) {
+        var ang = start + k * Math.PI * 2 / others.length;
+        var x = cx + Math.cos(ang) * rx, y = cy + Math.sin(ang) * ry;
+        ctx.beginPath(); ctx.arc(x, y, 2.3, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(98,116,118,.34)"; ctx.fill();
+        if (w > 560) {
+          var lx = cx + Math.cos(ang) * (rx + 12);
+          var ly = cy + Math.sin(ang) * (ry + 12);
+          ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 2) + 'px "Open Sans", sans-serif';
+          ctx.fillStyle = "rgba(98,116,118,.48)";
+          ctx.textAlign = Math.cos(ang) > 0.25 ? "left" : Math.cos(ang) < -0.25 ? "right" : "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(tokens[id], lx, ly);
+        }
+      });
+      ctx.fillStyle = "rgba(98,116,118,.60)";
+      ctx.font = '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif';
+      ctx.textAlign = "left";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText(DE ? others.length + " weitere Tokens · voller " + (tokens.length - 1) + "-Simplex" : others.length + " more tokens · full " + (tokens.length - 1) + "-simplex", 12, h - 44);
+    }
     function drawSimplex() {
       if (!size) return;
       ctx = size.ctx;
-      var w = size.w, h = size.h, now = performance.now();
+      var w = size.w, h = size.h;
       ctx.clearRect(0, 0, w, h);
       var bg = ctx.createRadialGradient(w * 0.5, h * 0.38, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.72);
       bg.addColorStop(0, "rgba(247,250,249,.98)");
@@ -287,6 +325,7 @@
       var verts = simplexVerts;
       var cols = [C.green, C.sky, C.gold];
       simplexGeom = { verts: verts, ids: ids, ox: 0, oy: 0 };
+      drawGhostSimplex(ids, w, h, cx, cy, R);
       // triangle
       ctx.beginPath(); verts.forEach(function (v, i) { if (i === 0) ctx.moveTo(v.x, v.y); else ctx.lineTo(v.x, v.y); }); ctx.closePath();
       var tg = ctx.createLinearGradient(cx, cy - R, cx, cy + R);
@@ -310,30 +349,10 @@
       var oy = ws[0] * verts[0].y + ws[1] * verts[1].y + ws[2] * verts[2].y;
       simplexGeom.ox = ox;
       simplexGeom.oy = oy;
-      if (!simplexTrail.length || Math.hypot(ox - simplexTrail[simplexTrail.length - 1].x, oy - simplexTrail[simplexTrail.length - 1].y) > 1.2) {
-        simplexTrail.push({ x: ox, y: oy, t: now });
-        if (simplexTrail.length > 26) simplexTrail.shift();
-      }
-      simplexTrail.forEach(function (p, i) {
-        var age = now - p.t;
-        if (age > 2200) return;
-        ctx.globalAlpha = 0.18 * (1 - i / simplexTrail.length);
-        ctx.fillStyle = C.gold;
-        ctx.beginPath(); ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2); ctx.fill();
-      });
-      ctx.globalAlpha = 1;
       verts.forEach(function (v, i) {
         ctx.strokeStyle = cols[i]; ctx.globalAlpha = 0.40; ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(v.x, v.y); ctx.lineTo(ox, oy); ctx.stroke();
         ctx.setLineDash([]); ctx.globalAlpha = 1;
-        for (var k = 0; k < 2; k++) {
-          var u = ((now / 950) + i * 0.27 + k * 0.5) % 1;
-          var px = v.x + (ox - v.x) * u, py = v.y + (oy - v.y) * u;
-          ctx.globalAlpha = 0.18 + 0.55 * (1 - u);
-          ctx.fillStyle = cols[i];
-          ctx.beginPath(); ctx.arc(px, py, 2.1, 0, Math.PI * 2); ctx.fill();
-        }
-        ctx.globalAlpha = 1;
         ctx.shadowColor = cols[i]; ctx.shadowBlur = 12;
         ctx.fillStyle = cols[i];
         ctx.beginPath(); ctx.arc(v.x, v.y, 6, 0, Math.PI * 2); ctx.fill();
@@ -347,13 +366,17 @@
         ctx.font = '600 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif';
         ctx.fillText((ws[i] * 100).toFixed(0) + "%", v.x, above ? v.y + 14 : v.y - 10);
       });
-      var pulse = 0.5 + 0.5 * Math.sin(now / 420);
-      ctx.shadowColor = C.gold; ctx.shadowBlur = 18 + pulse * 8;
+      var glow = ctx.createRadialGradient(ox, oy, 0, ox, oy, 24);
+      glow.addColorStop(0, V.alpha(C.gold, .26));
+      glow.addColorStop(1, V.alpha(C.gold, 0));
+      ctx.fillStyle = glow;
+      ctx.fillRect(ox - 24, oy - 24, 48, 48);
+      ctx.shadowColor = C.gold; ctx.shadowBlur = 16;
       ctx.fillStyle = C.gold;
       ctx.beginPath(); ctx.arc(ox, oy, 7, 0, Math.PI * 2); ctx.fill();
       ctx.shadowBlur = 0;
       ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
-      ctx.beginPath(); ctx.arc(ox, oy, 12 + pulse * 2, 0, Math.PI * 2);
+      ctx.beginPath(); ctx.arc(ox, oy, 12, 0, Math.PI * 2);
       ctx.strokeStyle = C.gold; ctx.globalAlpha = 0.28; ctx.lineWidth = 1; ctx.stroke(); ctx.globalAlpha = 1;
       ctx.fillStyle = C.petrol;
       ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif';
@@ -362,7 +385,7 @@
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "right";
-      ctx.fillText(DE ? "2-Simplex (Dreieck)" : "2-simplex (triangle)", w - 12, 8);
+      ctx.fillText(DE ? (w > 560 ? "2-Simplex · Ausschnitt aus " + (tokens.length - 1) + "-Simplex" : "2-Simplex · " + (tokens.length - 1) + "D") : (w > 560 ? "2-simplex · slice of " + (tokens.length - 1) + "-simplex" : "2-simplex · " + (tokens.length - 1) + "D"), w - 12, 8);
       ctx.textAlign = "center"; ctx.textBaseline = "bottom";
       ctx.fillStyle = C.muted;
       var cornerNames = ids.map(function (id) { return tokens[id]; }).join(", ");
@@ -378,7 +401,7 @@
         '<span><b>× 100</b> ' + pctTxt + ' <i>Σ 100%</i></span>');
       setReadout(ids.map(function (id, i) {
         return '<span><b>v(' + api.esc(tokens[id]) + ')</b> ' + (ws[i] * 100).toFixed(1) + '%</span>';
-      }).join("") + '<span><b>Σ</b> 100% · 3/' + tokens.length + '</span><span><b>r</b> = Σ α_j v_j</span>' + '<span class="ls-qkv-note">' + (DE ? "α hier direkt gezogen; im echten Head aus Q,K · W_O nach der Mischung · Zahlen illustrativ" : "α dragged directly here; in a real head from Q,K · W_O after the mixture · numbers illustrative") + '</span>');
+      }).join("") + '<span><b>Σ</b> 100% · 3/' + tokens.length + '</span><span><b>r_i</b> ' + (DE ? "Mischung" : "mixture") + '</span>' + '<span class="ls-qkv-note">' + (DE ? "α hier direkt gezogen; im echten Head aus Q,K · W_O nach der Mischung · Zahlen illustrativ" : "α dragged directly here; in a real head from Q,K · W_O after the mixture · numbers illustrative") + '</span>');
       canvas.setAttribute("aria-label", DE ? "Attention als gewichtete Mischung: Die drei Ecken sind die gelernten Value-Vektoren v_j = W_V x_j von Tier, Straße und es; der Mischungspunkt r_i = Σ α_j v_j liegt in ihrem Dreieck. Die Gewichte α kommen aus Q und K; W_O bildet r_i danach auf die Head-Ausgabe ab." : "Attention as a weighted mixture: the three corners are the learned value vectors v_j = W_V x_j of animal, street, and it; the mixture point r_i = Σ α_j v_j lies inside their triangle. The weights α come from Q and K; W_O maps r_i to the head output afterwards.");
     }
     function graphLayout(w, h) {
@@ -548,7 +571,7 @@
     }
     function loop() {
       if (!running) return;
-      draw();
+      if (view !== "simplex") draw();
       loopRaf = requestAnimationFrame(loop);
     }
     function resize() { size = api.fit(canvas, stage); simplexVerts = null; simplexCorner = -1; simplexDrag = false; draw(); }
