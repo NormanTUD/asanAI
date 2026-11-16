@@ -120,9 +120,9 @@
     {
       kicker: "Die Linie",
       title: "Bedeutung wird eine Zahl",
-      body: "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen. Die Differenz zwischen heiß und warm ist 100 − 55 = 45, und 45 liegt am nächsten bei warm. Zieht man also warm von heiß ab, bleibt ungefähr warm.\n\nDas ist ein stark vereinfachtes Beispiel: Auf einer Achse lässt sich nur eine Eigenschaft darstellen. Deshalb nutzt man in LLMs viel höherdimensionale Räume. Klicke zwei Punkte: Die Demo zeigt die Differenz und das nächste Wort auf der Linie.",
+      body: "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen. Die Differenz zwischen warm und kalt ist 55 − 5 = 50, und 50 liegt am nächsten bei warm. Zieht man also kalt von warm ab, bleibt ungefähr warm.\n\nDas ist ein stark vereinfachtes Beispiel: Auf einer Achse lässt sich nur eine Eigenschaft darstellen. Deshalb nutzt man in LLMs viel höherdimensionale Räume. Klicke zwei Punkte: Die Demo zeigt die Differenz und das nächste Wort auf der Linie.",
       watch: "",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["hot", "warm"] },
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
       deep: "Die Positionen sind hier von Hand gewählt, damit die Rechnungen stimmen. In einem Modell werden sie aus vielen Beispielen gelernt.",
       deepTitle: "Was ist hier vereinfacht?",
       boxes: [
@@ -169,9 +169,9 @@
     {
       kicker: "The line",
       title: "Meaning becomes a number",
-      body: "When you assign numbers to words, you can do arithmetic with them. The difference between hot and warm is 100 − 55 = 45, and 45 is closest to warm. So if you subtract warm from hot, roughly warm is left.\n\nThis is a very simplified example: one axis can show only one property. That is why LLMs use much higher-dimensional spaces. Click two points: the demo shows the difference and the nearest word on the line.",
+      body: "When you assign numbers to words, you can do arithmetic with them. The difference between warm and cold is 55 − 5 = 50, and 50 is closest to warm. So if you subtract cold from warm, roughly warm is left.\n\nThis is a very simplified example: one axis can show only one property. That is why LLMs use much higher-dimensional spaces. Click two points: the demo shows the difference and the nearest word on the line.",
       watch: "",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["hot", "warm"] },
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
       deep: "The positions are chosen by hand so the arithmetic works out. In a model they are learned from many examples.",
       deepTitle: "What is simplified here?",
       boxes: [

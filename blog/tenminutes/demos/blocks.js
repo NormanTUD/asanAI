@@ -226,14 +226,23 @@
       ctx.moveTo(ox, oy);
       ctx.lineTo(ox, oy - s * 1.3);
       ctx.stroke();
-      var pts = [{ p: [0.55, 0.55], t: DE ? "Bank" : "bank", c: C.blue }, { p: [0.95, 0.85], t: DE ? "Geld" : "money", c: C.green }, { p: [1.18, 0.35], t: DE ? "Fluss" : "river", c: C.sky }];
+      var pts = DE ? [
+        { p: [0.45, 0.55], t: "un", c: C.blue },
+        { p: [0.9, 0.86], t: "zer", c: C.green },
+        { p: [1.35, 0.5], t: "brech", c: C.sky },
+        { p: [0.75, 0.18], t: "lich", c: C.gold, dy: 10 }
+      ] : [
+        { p: [0.5, 0.55], t: "un", c: C.blue },
+        { p: [1.0, 0.86], t: "break", c: C.green },
+        { p: [1.35, 0.35], t: "able", c: C.sky }
+      ];
       pts.forEach(function (q) {
         var tip = { x: ox + q.p[0] * s, y: oy - q.p[1] * s };
         V.arrow(ctx, ox, oy, tip.x, tip.y, q.c, 2.2, 6);
-        V.tokenChip(ctx, q.t, tip.x + 6, tip.y - 8, q.c, C, { size: 9 });
+        V.tokenChip(ctx, q.t, tip.x + 6, tip.y + (q.dy || -8), q.c, C, { size: 9 });
       });
       V.heading(ctx, "ID → Vektor", 12, 16, C.petrol, 10, 1);
-      V.label(ctx, (DE ? "Bank" : "bank") + " → [0.2, −0.4, 0.7, …]", w * 0.62, h * 0.82, {
+      V.label(ctx, (DE ? "brech" : "break") + " → [0.2, −0.4, 0.7, …]", w * 0.62, h * 0.82, {
         font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif',
         color: C.soft, align: "center"
       });

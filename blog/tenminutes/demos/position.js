@@ -11,21 +11,18 @@
     el.innerHTML =
       '<div class="ls-position-grid">' +
         '<div class="ls-position-panel"><div class="ls-position-space-note">' + (DE ? "Hochdimensionaler Raum · Richtungen auf der Hyperkugel · 3D = Projektion" : "High-dimensional space · directions on the hypersphere · 3D = projection") + '</div><canvas class="ls-position-heat"></canvas><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
-        '<div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div>' +
+        '<div class="ls-position-right"><div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="10000" step="1" value="7"><output>7</output></label></div>' +
       '</div>' +
       '<p class="ls-position-note">' + (DE ? "Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position. Jeder grüne Punkt ist dasselbe Wort (Hund) an einer anderen Position." : "Positions are added as waves on circular orbits in different dimensions. Each dimension has a different frequency; together they form the position fingerprint. Every green point is the same word (dog) at a different position.") + '</p>' +
-      '<div class="ls-scene-row"><label class="ls-range">' + (DE ? "Kontext" : "Context") + ' <input type="range" class="ls-pos-context" min="16" max="128" step="8" value="64"><output>64</output></label><label class="ls-range">' + (DE ? "Dimensionen" : "Dimensions") + ' <input type="range" class="ls-pos-dims" min="2" max="64" step="2" value="24"><output>24</output></label><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="10000" step="1" value="7"><output>7</output></label></div>' +
-      '<div class="ls-scene-row ls-position-metric"><span class="ls-position-metric-label">' + (DE ? "Winkel" : "Angle") + '</span><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
+      '<div class="ls-scene-row ls-position-metric"><span class="ls-position-metric-label">' + (DE ? "Ansicht" : "View") + '</span><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
       '<div class="ls-position-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var heat = el.querySelector(".ls-position-heat");
     var curve = el.querySelector(".ls-position-curve");
-    var contextEl = el.querySelector(".ls-pos-context");
-    var dimsEl = el.querySelector(".ls-pos-dims");
     var posEl = el.querySelector(".ls-pos-pos");
     var readout = el.querySelector(".ls-position-readout");
     var reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    var context = 64, dims = 24, pos = 7, rotate = !reducedMotion;
+    var context = 128, dims = 64, pos = 7, rotate = !reducedMotion;
     var posAnim = pos;
     function trailSeed(p) {
       var out = [], step = Math.max(1, Math.round(p / 4));
@@ -218,8 +215,6 @@
       curve.__lsPosition = { pos: pos, trail: trail.slice(), sweeping: !!sweep, metric: "angle", start: startVec, current: curVec, distance: geoLen, angle: theta };
       ctx.fillStyle = Cc.muted; ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif'; ctx.textAlign = "left";
       ctx.fillText((DE ? "Position " : "position ") + Math.round(posAnim), 12, 18);
-      ctx.textAlign = "right";
-      ctx.fillText(DE ? "Winkel" : "angle", w - 12, 18);
       ctx.textAlign = "left";
       if (hoverTrail >= 0 && trailPoints[hoverTrail]) {
         var hpv = trailPoints[hoverTrail].value;
@@ -303,8 +298,6 @@
       drag.x = e.clientX; drag.y = e.clientY; drawCurve();
     });
     window.addEventListener("pointerup", function () { drag = null; });
-    contextEl.addEventListener("input", function () { context = parseInt(contextEl.value, 10); contextEl.nextElementSibling.textContent = String(context); drawHeat(); });
-    dimsEl.addEventListener("input", function () { dims = parseInt(dimsEl.value, 10); dimsEl.nextElementSibling.textContent = String(dims); drawHeat(); drawCurve(); });
     posEl.addEventListener("input", function () { sweep = null; hoverTrail = -1; pos = parseInt(posEl.value, 10); posAnim = pos; trail = trailSeed(pos); posEl.nextElementSibling.textContent = String(pos); draw(); });
     var rot = el.querySelector("[data-rotate]");
     rot.addEventListener("click", function () { rotate = !rotate; rot.classList.toggle("is-on", rotate); });

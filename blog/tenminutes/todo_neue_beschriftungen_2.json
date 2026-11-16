@@ -1,0 +1,1433 @@
+{
+  "version": 2,
+  "schema": "learnsys-changes/v2",
+  "kind": "learnsys-changes",
+  "data_file": "intuition_learnsys-data.js",
+  "generated_at": "2026-11-16T06:32:54.990Z",
+  "overlay_revision": "2026-11-15-attention-5",
+  "pages": [
+    "intuition"
+  ],
+  "apply_to": [
+    "de",
+    "en"
+  ],
+  "changes": [
+    {
+      "id": "de:intuition:1.1",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 1,
+      "substep": 1,
+      "substep_count": 3,
+      "text_key": "1.1",
+      "slide_title": "Die Architektur von LLMs",
+      "slide_kicker": "Architektur",
+      "changed_fields": [
+        "watch"
+      ],
+      "source": {
+        "title": "Die Architektur von LLMs",
+        "kicker": "Architektur",
+        "watch": "Sequenzielles Machine Learning geschieht in Schichten. Die erste Schicht wendet man direkt auf die Daten an, die zweite auf die Ergebnisse der ersten, und so weiter; dadurch verschachteln sich Funktionen:\n\n$$\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Daten}\\right)\\right)\\right)$$\n\nDie erste Schicht sucht nach Mustern im Text, die zweite nach Mustern im Ergebnis der ersten Schicht, und so weiter. Mit dem Residual Stream kann jede Schicht auch Muster im Text <i>und</i> in den Ergebnissen der vorherigen Schichten finden.",
+        "body": "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste sinnvolle Wort vorherzusagen."
+      },
+      "edit": {
+        "body": "LLM sind ein Machine-Learning-Verfahren: Statt dem Computer Schritt für Schritt vorzugeben, was er tun soll, geben wir nur die grobe Architektur vor und trainieren ihn mit vielen großen Datenmengen, damit er die Aufgabe selbst lernt. Bei LLMs ist die Aufgabe, das nächste sinnvolle Wort vorherzusagen.",
+        "title": "Die Architektur von LLMs",
+        "kicker": "Architektur",
+        "watch": "Sequenzielles Machine Learning geschieht in Schichten. Die erste Schicht wendet man direkt auf die Daten an, die zweite auf die Ergebnisse der ersten, und so weiter; dadurch verschachteln sich Funktionen: $$\\text{layer}_3\\left(\\text{layer}_2\\left(\\text{layer}_1\\left(\\text{Daten}\\right)\\right)\\right)$$. \n\nDie erste Schicht sucht nach Mustern im Text, die zweite nach Mustern im Ergebnis der ersten Schicht, und so weiter. Mit dem Residual Stream kann jede Schicht auch Muster im Text <i>und</i> in den Ergebnissen der vorherigen Schichten finden.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-training",
+                "title": "Wie werden die Modelle trainiert?",
+                "body": "Wir gehen an einem späteren Tag noch auf das Training ein. Die Idee: Anhand von Trainingsdaten, also Beispielen, prüft man wiederholt, wie gut das Netz ist, und verändert es leicht in die Richtung, in der es besser wird. Besser heißt hier: Gegeben einen Text sagt es das nächste Wort aus dem Text richtig voraus.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Vaswani et al. (2017), Attention Is All You Need",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "why": {
+                  "de": "Transformer-Blöcke, Residualverbindungen und Layer-Normalisierung.",
+                  "en": "Transformer blocks, residual connections, and layer normalisation."
+                }
+              },
+              {
+                "label": "He et al. (2016), Deep Residual Learning",
+                "url": "https://arxiv.org/abs/1512.03385",
+                "why": {
+                  "de": "Residualverbindungen: Updates werden addiert, nicht überschrieben.",
+                  "en": "Residual connections: updates are added, not overwritten."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:12.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 12,
+      "substep": 0,
+      "substep_count": 1,
+      "text_key": "12.0",
+      "slide_title": "Wie findet man gute Punkte?",
+      "slide_kicker": "Optimizer",
+      "changed_fields": [
+        "title",
+        "kicker",
+        "watch",
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Was sind neuronale Netze?",
+        "kicker": "",
+        "watch": "Beobachte das Training. Wie verändern sich w und b, und wo im Tal endet der Punkt?",
+        "body": "Jetzt wird der Fehler zur Landschaft. Die Gerade ist ŷ = w x + b; für das 1-Neuron-Modell gibt es nur zwei Parameter: w und b. Die Fläche zeigt den Loss über w und b; die Beispiele in der Seitenleiste sind dieselben 18 Sinus-Punkte wie im 1-Neuron- und im großen Netz. Das Training startet nicht von selbst: Drücke „Weiter“ oder den Startknopf. Mit Pause hältst du es an; „Weiter“ stoppt das Training und geht zur nächsten Folie. SGD, Adam und Momentum laufen nacheinander. Der Loss ist der mittlere quadratische Fehler (MSE), die Zahl, an der das Modell gemessen wird. Die Formel darunter setzt die aktuellen Werte ein.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Die Fläche ist diesmal kein Schnitt durch Hunderte Dimensionen: w und b sind die beiden echten Parameter. Jedes dieser 18 Beispiele (x, y) erzeugt einen Fehler; der Loss ist der Mittelwert dieser quadratischen Fehler. Die Formel darunter zeigt das Modell und den aktuellen Loss.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Der Gradient zeigt, wie der Loss auf eine Änderung von w und b reagiert. Der Optimierer geht in die Gegenrichtung. Die Lernrate bestimmt die Schrittweite. In einem LLM gibt es Milliarden solcher Parameter; die Landschaft ist nicht mehr sichtbar, die Regel bleibt dieselbe.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-grad-1",
+                "title": "Das echte Modell",
+                "body": "Ein lineares Modell mit zwei Parametern: ŷ = w·x + b. w ist die Steigung, b der y-Achsenabschnitt. Mehr nicht.",
+                "tex": "\\underbrace{\\hat y}_{\\text{Ausgabe}} = \\underbrace{w x + b}_{\\text{zwei Parameter}}",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-box-grad-2",
+                "title": "Die Loss-Fläche (MSE)",
+                "body": "L(w,b) = 1/n Σ (w·x_i + b − y_i)². Die beiden Achsen sind w und b, nicht zwei beliebige Richtungen.",
+                "tex": "\\underbrace{L(w,b)}_{\\text{Loss}} = \\underbrace{\\frac{1}{n}\\sum_i (w x_i+b-y_i)^2}_{\\text{mittlerer Fehler}}",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-technik",
+            "title": "Technik",
+            "questions": [
+              {
+                "id": "q-box-grad-3",
+                "title": "Der Schritt",
+                "body": "θ ← θ − η ∇L. Der Gradient zeigt bergauf; der Ball geht bergab. Der Worker führt die Schritte aus und schickt die Projektion zurück.",
+                "tex": "\\underbrace{\\theta_{t+1}}_{\\text{neu}} = \\underbrace{\\theta_t}_{\\text{alt}} - \\underbrace{\\eta}_{\\text{Lernrate}} \\underbrace{\\nabla L(\\theta_t)}_{\\text{Gradient}}",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-box-grad-opt",
+                "title": "SGD, Adam, Momentum",
+                "body": "SGD folgt dem Gradienten direkt. Momentum sammelt Geschwindigkeit und schießt über kleine Täler hinaus. Adam führt ein Gedächtnis für Gradient und Gradientenquadrat: häufig aktualisierte Parameter werden gedämpft, selten aktualisierte stärker gewichtet. Die Demo zeigt alle drei Pfade auf derselben Fläche.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-todo",
+            "title": "TODO",
+            "questions": [
+              {
+                "id": "q-box-grad-todo",
+                "title": "Automatisches Ableiten",
+                "body": "<b>TODO:</b> Details zu automatischem Ableiten (Autograd, Berechnung der Gradienten) hier ergänzen.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-grenze",
+            "title": "Grenze",
+            "questions": [
+              {
+                "id": "q-box-grad-4",
+                "title": "Warum ist das nicht das ganze LLM?",
+                "body": "Echte Netze haben Milliarden Dimensionen. Die zwei Richtungen sind ein lesbarer Schnitt, keine vollständige Landschaft.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-optional",
+            "title": "Optional",
+            "questions": [
+              {
+                "id": "q-box-grad-loss",
+                "title": "Andere Loss-Funktionen",
+                "body": "MSE passt zu Regression. Für Klassen und Tokens nimmt man Cross-Entropy; für robuste Regression MAE oder Huber. Die Loss-Funktion sagt, was das Modell optimiert, nicht ob es die Aufgabe versteht.",
+                "tex": "",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-box-grad-saddle",
+                "title": "Sattelpunkte statt Minima",
+                "body": "In hohen Dimensionen sehen lokale Minima oft wie Sackgassen aus. Viele kritische Punkte sind aber Sattelpunkte: Es gibt fast immer eine Richtung, in der der Loss wieder fällt. Deshalb helfen Momentum und Adam, aus solchen Plateaus herauszukommen. Ein lokales Minimum ist im hochdimensionalen Raum meist nicht das eigentliche Hindernis.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Cauchy (1847), Méthode générale",
+                "url": "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item",
+                "why": {
+                  "de": "Frühe Beschreibung des steilsten Abstiegs.",
+                  "en": "Early description of steepest descent."
+                }
+              },
+              {
+                "label": "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors",
+                "url": "https://doi.org/10.1038/323533a0",
+                "why": {
+                  "de": "Gradienten für mehrschichtige Netze.",
+                  "en": "Gradients for multilayer networks."
+                }
+              },
+              {
+                "label": "Li et al. (2018), Visualizing the Loss Landscape",
+                "url": "https://arxiv.org/abs/1712.09913",
+                "why": {
+                  "de": "Zweidimensionale Schnitte durch Loss-Landschaften.",
+                  "en": "Two-dimensional slices through loss landscapes."
+                }
+              },
+              {
+                "label": "Dauphin et al. (2014), Saddle Point Problem",
+                "url": "https://arxiv.org/abs/1406.2572",
+                "why": {
+                  "de": "Sattelpunkte als Hindernis in hochdimensionaler Optimierung.",
+                  "en": "Saddle points as an obstacle in high-dimensional optimization."
+                }
+              },
+              {
+                "label": "Choromanska et al. (2015), Loss Surfaces of Multilayer Networks",
+                "url": "https://arxiv.org/abs/1412.0233",
+                "why": {
+                  "de": "Kritische Punkte und lokale Minima in tiefen Netzen.",
+                  "en": "Critical points and local minima in deep networks."
+                }
+              },
+              {
+                "label": "Goodfellow, Bengio & Courville (2016), Deep Learning",
+                "url": "https://www.deeplearningbook.org/",
+                "why": {
+                  "de": "Loss-Funktionen für Regression und Klassifikation.",
+                  "en": "Loss functions for regression and classification."
+                }
+              },
+              {
+                "label": "PyTorch, CrossEntropyLoss",
+                "url": "https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html",
+                "why": {
+                  "de": "Cross-Entropy für Klassifikation.",
+                  "en": "Cross-entropy for classification."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Wir sehen hier ein kleines reales Netzwerk beim Training. Es hat nur zwei Parameter, $f(x) = w\\cdot x + b$. Der Plot hat 3 Achsen: $w$, $b$ und $Loss$. Für jeden Parameterpunkt in diesem Raum gibt es einen Loss, das heißt einen Wert, wie gut das Netzwerk mit diesen Werten wäre. Training heißt: der Computer guckt sich an, wie gut der aktuelle Punkt ist, und in welche Richtungen er den Punkt verschieben muss, damit das Ergebnis besser wird. Dann verschiebt er den Punkt und schaut erneut.\n\nHier sind es zwei Parameter und damit zwei Dimensionen. Ein großes Sprachmodell hat Milliarden davon, zu viele, um es sich vorzustellen, aber die Idee ist die gleiche.",
+        "title": "Wie findet man gute Punkte?",
+        "kicker": "Optimizer",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-deep",
+                "title": "Wie wird der Loss bestimmt?",
+                "body": "Der Loss wird über die Trainingsdaten bestimmt: sie werden einmal komplett durchgetestet und für jedes gespeichert, was aus dem Netz rauskommt, und was rauskommen sollte. ",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-grad-1",
+                "title": "Wie wird bestimmt, in welche Richtung gegangen werden muss?",
+                "body": "Durch tape-basiertes Ableiten. Neuronale Netze sind verschachtelte Funktionen, was bedeutet, dass man beim testen (\"Forward-Pass\") der Daten speichern kann, welche Operationen ausgeführt werden, und dann für jede diese Operationen ihre Ableitungen definiert und sie beim Rückrechnen der Gewichte (\"Backward-Pass\") mit ihrer Ableitung ersetzen kann. Dann kriegt man für jeden Parameter die Steigung an der Stelle, mit der man die Richtung bestimmen kann, in welcher der Fehler niedriger wird.",
+                "tex": "\\underbrace{\\hat y}_{\\text{Ausgabe}} = \\underbrace{w x + b}_{\\text{zwei Parameter}}",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-optional",
+            "title": "Optional",
+            "questions": [
+              {
+                "id": "q-box-grad-loss",
+                "title": "Andere Loss-Funktionen",
+                "body": "Dieses Modell nutzt <b>MSE</b>, um den Fehler zu bestimmen. Andere Lossfunktionen wie <b>C</b>ategorical <b>Cross</b> <b>E</ntropy> (<b>CCE</b>) sind besser geeignet für zum Beispiel kategorielle Klassifikationen, funktionieren im Loss etwas anders, aber der Optimizer zieht nicht, wie der Loss zustande kam, sondern nur ihr Ergebnis.",
+                "tex": "",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-box-grad-saddle",
+                "title": "Sattelpunkte statt Minima",
+                "body": "In hohen Dimensionen sehen lokale Minima oft wie Sackgassen aus. Viele kritische Punkte sind aber Sattelpunkte: Es gibt fast immer eine Richtung, in der der Loss wieder fällt. Deshalb helfen Momentum und Adam, aus solchen Plateaus herauszukommen. Ein lokales Minimum ist im hochdimensionalen Raum meist nicht das eigentliche Hindernis.",
+                "tex": "",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-edit-1794810324364-2",
+                "title": "Wie funktioniert Backpropagation?",
+                "body": "Man wusste lange nicht, wie man die Gewichte der inneren Layer trainieren soll. Sagen wir wir haben $\\text{Output} = \\text{layer}_3(\\text{layer}_2(\\text{layer}_1(\\text{Daten})))$. Dann können wir sagen, wie groß die Differenz ist zwischen dem Output und den Daten, die wir wollen, aber wie kommt man an die Differenz zwischen dem, was aus Layer 2 und 1 rauskommt und dem was wir wollen? \n\nWir bestimmen dafür die Differenz zwischen Output und Trainingsziel, und berechnen die Gewichte des letzten Layers, indem wir sagen \"es wäre gut, wenn dieser Wert etwas größer gewesen wäre, und dieser etwas kleiner\". Dann sagen wir, dass der letzte Layer nun der \"Output\"-Layer ist. Damit kriegen wir genau die gleiche Struktur wie vorher: wir können Output und Differenz usw. betrachten und berechnen, dann definieren wir den Layer als Letzten und sagen, dass wir die Differenz berechnen usw. So können wir uns Layer für Layer durch das Netzwerk hangeln, und immer wieder die Änderungen des vorherigen nehmen und als letzten Layer definieren, und so den davor anpassen. Das ist die Idee von Backpropagation.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Cauchy (1847), Méthode générale",
+                "url": "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item",
+                "why": {
+                  "de": "Frühe Beschreibung des steilsten Abstiegs.",
+                  "en": "Early description of steepest descent."
+                }
+              },
+              {
+                "label": "Rumelhart, Hinton & Williams (1986), Back-Propagating Errors",
+                "url": "https://doi.org/10.1038/323533a0",
+                "why": {
+                  "de": "Gradienten für mehrschichtige Netze.",
+                  "en": "Gradients for multilayer networks."
+                }
+              },
+              {
+                "label": "Li et al. (2018), Visualizing the Loss Landscape",
+                "url": "https://arxiv.org/abs/1712.09913",
+                "why": {
+                  "de": "Zweidimensionale Schnitte durch Loss-Landschaften.",
+                  "en": "Two-dimensional slices through loss landscapes."
+                }
+              },
+              {
+                "label": "Dauphin et al. (2014), Saddle Point Problem",
+                "url": "https://arxiv.org/abs/1406.2572",
+                "why": {
+                  "de": "Sattelpunkte als Hindernis in hochdimensionaler Optimierung.",
+                  "en": "Saddle points as an obstacle in high-dimensional optimization."
+                }
+              },
+              {
+                "label": "Choromanska et al. (2015), Loss Surfaces of Multilayer Networks",
+                "url": "https://arxiv.org/abs/1412.0233",
+                "why": {
+                  "de": "Kritische Punkte und lokale Minima in tiefen Netzen.",
+                  "en": "Critical points and local minima in deep networks."
+                }
+              },
+              {
+                "label": "Goodfellow, Bengio & Courville (2016), Deep Learning",
+                "url": "https://www.deeplearningbook.org/",
+                "why": {
+                  "de": "Loss-Funktionen für Regression und Klassifikation.",
+                  "en": "Loss functions for regression and classification."
+                }
+              },
+              {
+                "label": "PyTorch, CrossEntropyLoss",
+                "url": "https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html",
+                "why": {
+                  "de": "Cross-Entropy für Klassifikation.",
+                  "en": "Cross-entropy for classification."
+                }
+              },
+              {
+                "label": "Seppo Linnainmaa (1970), The representation of the cumulative rounding error of an algorithm as a Taylor expansion of the local rounding errors",
+                "url": "",
+                "why": "Tapebasiertes Ableiten"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:21.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 21,
+      "substep": 0,
+      "substep_count": 1,
+      "text_key": "21.0",
+      "slide_title": "Ein Wort nach dem anderen",
+      "slide_kicker": "Die Schleife",
+      "changed_fields": [
+        "watch",
+        "body"
+      ],
+      "source": {
+        "title": "Ein Wort nach dem anderen",
+        "kicker": "Die Schleife",
+        "watch": "Vervollständige „Es war einmal ein …“ Wort für Wort, bis <|endoftext|> kommt. Klicke ein früheres Wort an, um dorthin zurückzuspringen. Die Landschaft ist nur ein vereinfachtes Bild.",
+        "body": "Jetzt schließt sich der Kreis. Der letzte Vektor h wird über W_U zu Logits, Softmax macht daraus eine Verteilung, und ein Token wird gezogen. Dann hängst du es an den Kontext, und Attention, FFN und Unembedding laufen von vorn. Vervollständige „Es war einmal ein …“ Wort für Wort: Bei jedem Schritt zieht die Demo das nächste Token aus der Verteilung. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Am Ende steht <|endoftext|>; sobald das Modell es zieht, endet die Schleife. Die Landschaft ist eine vereinfachte Demo."
+      },
+      "edit": {
+        "body": "Jetzt schließt sich der Kreis. Der letzte Vektor $h$ wird über $W_U$ zu Logits, Softmax macht daraus eine Verteilung, und ein Token wird gezogen. Dann hängst du es an den Kontext, und Attention, FFN und Unembedding laufen von vorn. Vervollständige „Es war einmal ein …“ Wort für Wort: Bei jedem Schritt zieht die Demo das nächste Token aus der Verteilung. Greedy, Sampling und Top-p lesen dieselben Wahrscheinlichkeiten unterschiedlich. Am Ende steht <|endoftext|>; sobald das Modell es zieht, endet die Schleife. Die Landschaft ist eine vereinfachte Demo.",
+        "title": "Ein Wort nach dem anderen",
+        "kicker": "Die Schleife",
+        "watch": "Vervollständige „Es war einmal ein …“ Wort für Wort, bis <b><|endoftext|></b> kommt. Klicke ein früheres Wort an, um dorthin zurückzuspringen. Die Landschaft ist nur ein vereinfachtes Bild.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Das Modell hat kein anderes Arbeitsgedächtnis als den Kontext. Jedes neue Token verändert, was als Nächstes wahrscheinlich ist.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Eine hohe Wahrscheinlichkeit ist keine Garantie für Wahrheit. Sie ist eine Aussage über den Trainingskorpus. Sampling macht die Verteilung sichtbar; Greedy nimmt immer den wahrscheinlichsten Pfad. Jedes neue Token läuft wieder durch alle Blöcke. Der KV-Cache spart nur die Neuberechnung der Keys und Values, nicht die Schleife.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-in-5",
+                "title": "Was macht Temperatur?",
+                "body": "Temperatur teilt die Logits vor dem Softmax: p_i ∝ exp(z_i / T). T < 1 schärft, T > 1 flacht ab. Bei T → 0 wird daraus Greedy; exakt null wird als Top-Token behandelt.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-technik",
+            "title": "Technik",
+            "questions": [
+              {
+                "id": "q-box-in-6",
+                "title": "Warum nicht immer Greedy?",
+                "body": "Greedy ist deterministisch und kann in Schleifen laufen. Sampling ist vielfältiger, aber auch inkohärenter. Top-p behält die kleinste Menge, deren kumulierte Wahrscheinlichkeit p erreicht.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:29.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 29,
+      "substep": 0,
+      "substep_count": 1,
+      "text_key": "29.0",
+      "slide_title": "Bewusstsein: viele Karten, eine offene Frage",
+      "slide_kicker": "Bewusstsein",
+      "changed_fields": [
+        "watch",
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Bewusstsein: viele Karten, eine offene Frage",
+        "kicker": "Bewusstsein",
+        "watch": "Wähle eine Antwort und lies die Lesart. Blättere dann zur nächsten Karte.",
+        "body": "Bewusstsein ist kein einzelnes Ding. Zugang bedeutet, dass Information zum Berichten und Steuern verfügbar ist; Erfahrung bedeutet, dass es sich auf eine bestimmte Weise anfühlt. Global Workspace Theory beschreibt Bewusstsein als Broadcast an viele Prozesse; IIT misst geeinte Ursache-Wirkungs-Struktur als Phi; J-space ist ein lesbarer Arbeitsraum in Claude, aber ein Zugangsbefund, kein Beweis von Erleben. Die Karten stellen sechs Fragen zu diesen Befunden. Jede Antwort zeigt, welche Theorie sie stützt und wo die Frage offen bleibt. Ein Urteil fällen sie nicht.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Zugang und Erfahrung sind verschiedene Fragen. Ein System kann Informationen nutzen, ohne dass es sich für das System anfühlt, wie etwas ist.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Die Karten prüfen Behauptungen, nicht Köpfe. Ein Bericht oder ein lesbarer Arbeitsraum stützt Zugang; über Erfahrung entscheidet das nicht. Die Theorien widersprechen sich darin, was als Evidenz zählt. Schwitzgebel nennt die soziale Folge: Bleibt die Theorie offen, entscheiden Interessen mit.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-zugang",
+            "title": "Zugang",
+            "questions": [
+              {
+                "id": "q-box-con-1",
+                "title": "Access Consciousness",
+                "body": "Information ist verfügbar für Bericht und Kontrolle. Ein Modell kann das haben, ohne etwas zu erleben.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-erfahrung",
+            "title": "Erfahrung",
+            "questions": [
+              {
+                "id": "q-box-con-2",
+                "title": "Phenomenal Consciousness",
+                "body": "Es gibt etwas, wie es sich anfühlt. Genau das lässt sich von außen nicht direkt messen.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-theorien",
+            "title": "Theorien",
+            "questions": [
+              {
+                "id": "q-box-con-3",
+                "title": "Global Workspace",
+                "body": "Ein Zustand wird bewusst, wenn er an viele Prozesse gesendet wird. Der Residual Stream ist ein funktionaler Cousin.",
+                "tex": "",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-box-con-4",
+                "title": "IIT und Phi",
+                "body": "Bewusstsein ist eine geeinte Ursache-Wirkungs-Struktur. Phi ist für LLMs nicht gemessen; die Theorie ist schwer anzuwenden.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-llm",
+            "title": "LLM",
+            "questions": [
+              {
+                "id": "q-box-con-5",
+                "title": "J-space",
+                "body": "Ein kleiner, lesbarer Arbeitsraum in Claude. Er sieht wie Zugang aus, nicht wie ein Beweis von Erleben.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-methode",
+            "title": "Methode",
+            "questions": [
+              {
+                "id": "q-box-con-6",
+                "title": "Sechs Karten",
+                "body": "Jede Karte stellt einen Befund neben mehrere Lesarten. Die Karte zeigt, was der Befund trägt und was offen bleibt.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Mashour et al. (2020), Conscious Processing and the Global Neuronal Workspace Hypothesis",
+                "url": "https://doi.org/10.1016/j.neuron.2020.01.026",
+                "why": {
+                  "de": "Global Workspace und bewusste Verarbeitung.",
+                  "en": "Global workspace and conscious processing."
+                }
+              },
+              {
+                "label": "Tononi et al. (2016), Integrated Information Theory: From Consciousness to Its Physical Substrate",
+                "url": "https://doi.org/10.1038/nrn.2016.44",
+                "why": {
+                  "de": "IIT und Phi als Maß für geeinte Struktur.",
+                  "en": "IIT and Phi as a measure of unified structure."
+                }
+              },
+              {
+                "label": "Block (1995), On a Confusion about a Function of Consciousness",
+                "url": "https://doi.org/10.1017/S0140525X00038188",
+                "why": {
+                  "de": "Zugang versus phänomenales Bewusstsein.",
+                  "en": "Access versus phenomenal consciousness."
+                }
+              },
+              {
+                "label": "Nagel (1974), What Is It Like to Be a Bat?",
+                "url": "https://doi.org/10.2307/2183914",
+                "why": {
+                  "de": "Die subjektive Erfahrung als offene Frage.",
+                  "en": "Subjective experience as an open question."
+                }
+              },
+              {
+                "label": "Anthropic (2026), J-space",
+                "url": "https://transformer-circuits.pub/2026/workspace/index.html",
+                "why": {
+                  "de": "Lesbarer Arbeitsraum in Claude; Zugang, nicht Erleben.",
+                  "en": "Readable workspace in Claude; access, not experience."
+                }
+              },
+              {
+                "label": "SEP: Consciousness",
+                "url": "https://plato.stanford.edu/entries/consciousness/",
+                "why": {
+                  "de": "Überblick über die Bewusstseinstheorien.",
+                  "en": "Overview of theories of consciousness."
+                }
+              },
+              {
+                "label": "Chalmers (1995), Facing Up to the Problem of Consciousness",
+                "url": "https://consc.net/papers/facing.pdf",
+                "why": {
+                  "de": "Die harten und leichten Probleme des Bewusstseins.",
+                  "en": "The hard and easy problems of consciousness."
+                }
+              },
+              {
+                "label": "SEP: Functionalism",
+                "url": "https://plato.stanford.edu/entries/functionalism/",
+                "why": {
+                  "de": "Mentale Zustände über ihre funktionale Rolle.",
+                  "en": "Mental states defined by their functional role."
+                }
+              },
+              {
+                "label": "SEP: Qualia",
+                "url": "https://plato.stanford.edu/entries/qualia/",
+                "why": {
+                  "de": "Qualia und Mary's Room.",
+                  "en": "Qualia and Mary's Room."
+                }
+              },
+              {
+                "label": "Jackson (1982), Epiphenomenal Qualia",
+                "url": "https://doi.org/10.2307/2960077",
+                "why": {
+                  "de": "Das Knowledge Argument und Mary's Room.",
+                  "en": "The knowledge argument and Mary's Room."
+                }
+              },
+              {
+                "label": "Searle (1980), Minds, Brains, and Programs",
+                "url": "https://doi.org/10.1017/S0140525X00005756",
+                "why": {
+                  "de": "Biologischer Naturalismus und das Chinese Room Argument.",
+                  "en": "Biological naturalism and the Chinese Room argument."
+                }
+              },
+              {
+                "label": "Schwitzgebel (2026), AI and Consciousness: A Skeptical Overview",
+                "url": "https://arxiv.org/abs/2510.09858",
+                "why": {
+                  "de": "Theorienabhängigkeit, Mimikry und die Social Semi-Solution.",
+                  "en": "Theory dependence, mimicry, and the social semi-solution."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Bewusstsein ist kein einzelnes Ding. Zugang bedeutet, dass Information zum Berichten und Steuern verfügbar ist; Erfahrung bedeutet, dass es sich auf eine bestimmte Weise anfühlt. Global Workspace Theory beschreibt Bewusstsein als Broadcast an viele Prozesse; IIT misst geeinte Ursache-Wirkungs-Struktur als Phi; J-space ist ein lesbarer Arbeitsraum in Claude, aber ein Zugangsbefund, kein Beweis von Erleben. Die Karte zeigt Positionen, kein Urteil. Du kannst selbst entscheiden, welche Theorie dir am nächsten kommt.",
+        "title": "Bewusstsein: viele Karten, eine offene Frage",
+        "kicker": "Bewusstsein",
+        "watch": "Klicke die Knoten. Welche Theorie beschreibt Zugang, welche Erfahrung?",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Zugang und Erfahrung sind verschiedene Fragen. Ein System kann Informationen nutzen, ohne dass es sich für das System anfühlt, wie etwas ist.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Die Theorien widersprechen sich nicht nur in den Antworten, sondern darin, was als Evidenz zählt. Für LLMs können wir Verhalten und funktionalen Zugang messen; über Erleben entscheidet das nicht.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-zugang",
+            "title": "Zugang",
+            "questions": [
+              {
+                "id": "q-box-con-1",
+                "title": "Access Consciousness",
+                "body": "Information ist verfügbar für Bericht und Kontrolle. Ein Modell kann das haben, ohne etwas zu erleben.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-erfahrung",
+            "title": "Erfahrung",
+            "questions": [
+              {
+                "id": "q-box-con-2",
+                "title": "Phenomenal Consciousness",
+                "body": "Es gibt etwas, wie es sich anfühlt. Genau das lässt sich von außen nicht direkt messen.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-theorien",
+            "title": "Theorien",
+            "questions": [
+              {
+                "id": "q-box-con-3",
+                "title": "Global Workspace",
+                "body": "Ein Zustand wird bewusst, wenn er an viele Prozesse gesendet wird. Der Residual Stream ist ein funktionaler Cousin.",
+                "tex": "",
+                "kind": "trivia"
+              },
+              {
+                "id": "q-box-con-4",
+                "title": "IIT und Phi",
+                "body": "Bewusstsein ist eine geeinte Ursache-Wirkungs-Struktur. Phi ist für LLMs nicht gemessen; die Theorie ist schwer anzuwenden.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-llm",
+            "title": "LLM",
+            "questions": [
+              {
+                "id": "q-box-con-5",
+                "title": "J-space",
+                "body": "Ein kleiner, lesbarer Arbeitsraum in Claude. Er sieht wie Zugang aus, nicht wie ein Beweis von Erleben.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Mashour et al. (2020), Conscious Processing and the Global Neuronal Workspace Hypothesis",
+                "url": "https://doi.org/10.1016/j.neuron.2020.01.026",
+                "why": {
+                  "de": "Global Workspace und bewusste Verarbeitung.",
+                  "en": "Global workspace and conscious processing."
+                }
+              },
+              {
+                "label": "Tononi et al. (2016), Integrated Information Theory: From Consciousness to Its Physical Substrate",
+                "url": "https://doi.org/10.1038/nrn.2016.44",
+                "why": {
+                  "de": "IIT und Phi als Maß für geeinte Struktur.",
+                  "en": "IIT and Phi as a measure of unified structure."
+                }
+              },
+              {
+                "label": "Block (1995), On a Confusion about a Function of Consciousness",
+                "url": "https://doi.org/10.1017/S0140525X00038188",
+                "why": {
+                  "de": "Zugang versus phänomenales Bewusstsein.",
+                  "en": "Access versus phenomenal consciousness."
+                }
+              },
+              {
+                "label": "Nagel (1974), What Is It Like to Be a Bat?",
+                "url": "https://doi.org/10.2307/2183914",
+                "why": {
+                  "de": "Die subjektive Erfahrung als offene Frage.",
+                  "en": "Subjective experience as an open question."
+                }
+              },
+              {
+                "label": "Anthropic (2026), J-space",
+                "url": "https://transformer-circuits.pub/2026/workspace/index.html",
+                "why": {
+                  "de": "Lesbarer Arbeitsraum in Claude; Zugang, nicht Erleben.",
+                  "en": "Readable workspace in Claude; access, not experience."
+                }
+              },
+              {
+                "label": "SEP: Consciousness",
+                "url": "https://plato.stanford.edu/entries/consciousness/",
+                "why": {
+                  "de": "Überblick über die Bewusstseinstheorien.",
+                  "en": "Overview of theories of consciousness."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:3.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 3,
+      "substep": 0,
+      "substep_count": 1,
+      "text_key": "3.0",
+      "slide_title": "Text wird zu IDs",
+      "slide_kicker": "Tokenize",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Text wird zu IDs",
+        "kicker": "Tokenize",
+        "watch": "",
+        "body": "Der Tokenizer trennt Wörter in Bestandteile. Welche Trennungen er wählt, lernt er mit einem Algorithmus, zum Beispiel <b>B</b>yte <b>P</b>air <b>E</b>ncoding (<b>BPE</b>). Dahinter stehen zwei Ideen. Erstens Kompression: möglichst viel Text mit möglichst wenigen Tokens darstellen. Zweitens Offenheit: Das Netz kann auch Wörter verarbeiten, die es nie als Ganzes gesehen hat, weil es ihre Bestandteile kennt und lernt, wie sie zusammenwirken.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "BPE ist eine gelernte Kompression: Es zählt benachbarte Paare im Trainingskorpus und ersetzt das häufigste Paar durch ein neues Symbol. Nach mehreren Merges werden häufige Wörter kurz. Die genaue Tokenisierung hängt an den Daten und am Vokabularziel; die Demo zeigt einen kleinen Korpus, keine Messung eines bestimmten Modells.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-technik",
+            "title": "Technik",
+            "questions": [
+              {
+                "id": "q-box-tok-1",
+                "title": "Was passiert mit unbekannten Zeichen?",
+                "body": "Bei UTF-8 kann ein Zeichen mehrere Bytes lang sein. Was passiert mit einem Zeichen, das nie im Trainingskorpus vorkam, etwa einem neuen Emoji? Emojis bestehen oft aus mehreren Bestandteilen: 🐈‍⬛ setzt sich aus 🐈, dem unsichtbaren Zero Width Joiner (ZWJ) und ⬛ zusammen. Der Tokenizer sieht die Bytefolge, nicht das fertige Bild. Deshalb bekommt er alle 256 möglichen Bytewerte als Grundbausteine. So kann er auch unbekannte Zeichen aus bekannten Bytes zusammensetzen; die gelernten Vektoren legen ähnliche Bytefolgen in ähnliche Richtungen, etwa in die Nähe anderer Emoji-Tokens.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-box-tok-3",
+                "title": "BPE = Kompression",
+                "body": "Byte Pair Encoding beginnt mit Zeichen oder Bytes und ersetzt wiederholt das häufigste Paar durch ein neues Symbol. Nach vielen Merges wird aus häufigen Zeichenfolgen ein einzelner Token. Das ist Datenkompression, gelernt aus dem Trainingskorpus.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-tok-2",
+                "title": "Was ist eine ID?",
+                "body": "Eine ID ist ein Integer, der auf eine Zeile in der Embedding-Matrix zeigt. Die ID selbst hat keine Bedeutung; erst der gelernte Vektor gibt dem Token eine Position im Raum.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-daten",
+            "title": "Daten",
+            "questions": [
+              {
+                "id": "q-box-tok-bpe-data",
+                "title": "Warum ist die Tokenisierung datenabhängig?",
+                "body": "Ein Tokenizer wird so optimiert, dass er möglichst viel Text mit möglichst wenigen Tokens abdeckt, ohne Information zu verlieren: Jedes Wort muss aus seinen Tokens wieder zusammensetzbar sein. Deshalb ist die exakte Zerlegung eine Folge der Trainingsdaten und des Vokabularziels, keine feste Wortliste. Seltene Schriften bleiben teurer, weil sie im Korpus seltener sind.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-grenze",
+            "title": "Grenze",
+            "questions": [
+              {
+                "id": "q-box-tok-4",
+                "title": "Warum brauchen englische Texte oft weniger Token?",
+                "body": "Weil der Trainingskorpus überwiegend englisch ist. Häufige englische Wörter bekommen lange Merges; Schriften mit wenig Text im Korpus bleiben auf Byte-Ebene. Die Demo zeigt das illustrativ, nicht als exakte Messung.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units",
+                "url": "https://arxiv.org/abs/1508.07909",
+                "why": {
+                  "de": "BPE als Subword-Kompression für seltene Wörter.",
+                  "en": "BPE as subword compression for rare words."
+                }
+              },
+              {
+                "label": "Radford et al. (2019), GPT-2",
+                "url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+                "why": {
+                  "de": "GPT-2: byte-level BPE und die hier gezeigten Hidden States.",
+                  "en": "GPT-2: byte-level BPE and the hidden states shown here."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Der Tokenizer trennt Worte in einzelne Bestandteile. Diese werden mit einem Algorithmus, zum Beispiel <b>B</b>yte <b>P</b>air <b>E</b>ncoding (<b>BPE</b>) getrennt. Das basiert auf zwei Gedanken: der erste ist Kompression: es sollen so wenig wie möglich Tokens benutzt werden müssen, um so viel wie möglich zu sagen. Der zweite ist, dass das Netzwerk so auch Worte bearbeiten kann, die es vorher nie gesehen hat, indem es sie in Bestandteile trennt und lernt, wie man Worte aus ihren Bestandteilen heraus versteht, auch wenn man das konkrete Wort vielleicht nie gesehen hat.",
+        "title": "Text wird zu IDs",
+        "kicker": "Tokenize",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "BPE ist eine gelernte Kompression: Es zählt benachbarte Paare im Trainingskorpus und ersetzt das häufigste Paar durch ein neues Symbol. Nach mehreren Merges werden häufige Wörter kurz. Die genaue Tokenisierung hängt an den Daten und am Vokabularziel; die Demo zeigt einen kleinen Korpus, keine Messung eines bestimmten Modells.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-technik",
+            "title": "Technik",
+            "questions": [
+              {
+                "id": "q-box-tok-1",
+                "title": "Wie geht es mit unbekannten Zeichen um?",
+                "body": "Bei Encodings wie UTF8 kann ein Zeichen mehrere Byte lang sein. Was, wenn ein Zeichen nicht ein einziges Mal im Kontext war, wie zum Beispiel die neuen Emojis? Die sind aufgebaut aus zwei oder mehr Bestandteilen, so besteht 🐈‍⬛ aus 🐈, dem \"zero-width-joiner\"-Charakter und danach dem ⬛. Stehen die drei hintereinander, wird es als 🐈‍⬛ angezeigt. Man sagt dem Tokenizer nun auch alle 256 Möglichkeiten, die 8 Bit haben können. Damit kann es unbekannte Charakter trotzdem klassifizieren und nach Kontext in gewisse Richtungen schieben, so zum Beispiel die Richtung für \"Emoji\", wo unter Anderem auch 🐈 bereits ist.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-box-tok-3",
+                "title": "BPE = Kompression",
+                "body": "Byte Pair Encoding beginnt mit Zeichen oder Bytes und ersetzt wiederholt das häufigste Paar durch ein neues Symbol. Nach vielen Merges wird aus häufigen Zeichenfolgen ein einzelner Token. Das ist Datenkompression, gelernt aus dem Trainingskorpus.",
+                "tex": "",
+                "kind": "trivia"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-tok-2",
+                "title": "Was ist eine ID?",
+                "body": "Eine ID ist ein Integer, der auf eine Zeile in der Embedding-Matrix zeigt. Die ID selbst hat keine Bedeutung; erst der gelernte Vektor gibt dem Token eine Position im Raum.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-daten",
+            "title": "Daten",
+            "questions": [
+              {
+                "id": "q-box-tok-bpe-data",
+                "title": "Warum ist die Tokenisierung datenabhängig?",
+                "body": "Ein Tokenizer wird so optimiert, dass er möglichst viel Text mit möglichst wenigen Tokens abdeckt, ohne Information zu verlieren: Jedes Wort muss aus seinen Tokens wieder zusammensetzbar sein. Deshalb ist die exakte Zerlegung eine Folge der Trainingsdaten und des Vokabularziels, keine feste Wortliste. Seltene Schriften bleiben teurer, weil sie im Korpus seltener sind.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-grenze",
+            "title": "Grenze",
+            "questions": [
+              {
+                "id": "q-box-tok-4",
+                "title": "Warum brauchen englische Texte oft weniger Token?",
+                "body": "Weil der Trainingskorpus überwiegend englisch ist. Häufige englische Wörter bekommen lange Merges; Schriften mit wenig Text im Korpus bleiben auf Byte-Ebene. Die Demo zeigt das illustrativ, nicht als exakte Messung.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Sennrich et al. (2016), Neural Machine Translation of Rare Words with Subword Units",
+                "url": "https://arxiv.org/abs/1508.07909",
+                "why": {
+                  "de": "BPE als Subword-Kompression für seltene Wörter.",
+                  "en": "BPE as subword compression for rare words."
+                }
+              },
+              {
+                "label": "Radford et al. (2019), GPT-2",
+                "url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+                "why": {
+                  "de": "GPT-2: byte-level BPE und die hier gezeigten Hidden States.",
+                  "en": "GPT-2: byte-level BPE and the hidden states shown here."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:5.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 5,
+      "substep": 0,
+      "substep_count": 4,
+      "text_key": "5.0",
+      "slide_title": "Bedeutung wird eine Zahl",
+      "slide_kicker": "Die Linie",
+      "changed_fields": [
+        "body",
+        "groups"
+      ],
+      "source": {
+        "title": "Bedeutung wird eine Zahl",
+        "kicker": "Die Linie",
+        "watch": "",
+        "body": "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen. Die Differenz zwischen heiß und warm ist 100 − 55 = 45, und 45 liegt am nächsten bei warm. Zieht man also warm von heiß ab, bleibt ungefähr warm.\n\nDas ist ein stark vereinfachtes Beispiel: Auf einer Achse lässt sich nur eine Eigenschaft darstellen. Deshalb nutzt man in LLMs viel höherdimensionale Räume. Klicke zwei Punkte: Die Demo zeigt die Differenz und das nächste Wort auf der Linie.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-deep",
+                "title": "Was ist hier vereinfacht?",
+                "body": "Die Positionen sind hier von Hand gewählt, damit die Rechnungen stimmen. In einem Modell werden sie aus vielen Beispielen gelernt.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-emb-1",
+                "title": "Was ist ein Vektor?",
+                "body": "Ein Vektor ist ein Element eines Vektorraums. In der Praxis ist er eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt. Bei LLMs ist die Richtung oft wichtiger als die Länge.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-geschichte",
+            "title": "Geschichte",
+            "questions": [
+              {
+                "id": "q-box-emb-2",
+                "title": "Woher kommt die Idee?",
+                "body": "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert. Wörter, die in ähnlichen Kontexten auftreten, bekommen ähnliche Vektoren.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-optional",
+            "title": "Optional",
+            "questions": [
+              {
+                "id": "q-box-emb-clean",
+                "title": "Sind echte Embeddings so sauber?",
+                "body": "Nein. Die Demo trennt Temperatur, Macht und Geschlecht sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Harris (1954), Distributional Structure",
+                "url": "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf",
+                "why": {
+                  "de": "Begründet Bedeutung aus dem sprachlichen Kontext.",
+                  "en": "Grounds meaning in linguistic context."
+                }
+              },
+              {
+                "label": "Firth (1957), A Synopsis of Linguistic Theory",
+                "url": "https://archive.org/details/papersinlinguist0000firt",
+                "why": {
+                  "de": "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.",
+                  "en": "Classic formula: meaning shows in a word's company."
+                }
+              },
+              {
+                "label": "Mikolov et al. (2013), word2vec",
+                "url": "https://arxiv.org/abs/1301.3781",
+                "why": {
+                  "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
+                  "en": "word2vec: learned word vectors and vector arithmetic."
+                }
+              },
+              {
+                "label": "Pennington et al. (2014), GloVe",
+                "url": "https://aclanthology.org/D14-1162/",
+                "why": {
+                  "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
+                  "en": "GloVe: global co-occurrence as word vectors."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "edit": {
+        "body": "Wenn man Worten Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Man kann dann sagen, dass heiß - warm = 100 - 55 = 55 ist, und 55 ist warm. Zieht man also von heiß warm ab, erhält man nur noch warm.\n\nDas ist natürlich ein sehr vereinfachtes Beispiel, hier kann man genau eine Korrelation darstellen. Daher nutzt man man viel höherdimensionale Räume. ",
+        "title": "Bedeutung wird eine Zahl",
+        "kicker": "Die Linie",
+        "watch": "",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-deep",
+                "title": "Einschränkungen hier",
+                "body": "Die Positionen sind hier von Hand gewählt, damit die Rechnungen stimmen. In einem Modell werden sie aus vielen Beispielen gelernt.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-emb-1",
+                "title": "Was ist ein Vektor?",
+                "body": "Ein Vektor ist ein Element eines Vektorraums. In der Praxis ist er eine geordnete Liste von Zahlen, die einen Punkt oder eine Richtung beschreibt. Die Richtung ist in LLM oft wichtiger als die Länge.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-geschichte",
+            "title": "Geschichte",
+            "questions": [
+              {
+                "id": "q-box-emb-2",
+                "title": "Woher kommt die Idee?",
+                "body": "Firth (1957): „You shall know a word by the company it keeps.“ Harris (1954) hatte die distributionelle Idee vorher formuliert. Wörter, die in ähnlichen Kontexten auftreten, bekommen ähnliche Vektoren.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-optional",
+            "title": "Optional",
+            "questions": [
+              {
+                "id": "q-box-emb-clean",
+                "title": "Sind echte Embeddings so sauber?",
+                "body": "Nein. Die Demo trennt Temperatur, Macht und Geschlecht sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Harris (1954), Distributional Structure",
+                "url": "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf",
+                "why": {
+                  "de": "Begründet Bedeutung aus dem sprachlichen Kontext.",
+                  "en": "Grounds meaning in linguistic context."
+                }
+              },
+              {
+                "label": "Firth (1957), A Synopsis of Linguistic Theory",
+                "url": "https://archive.org/details/papersinlinguist0000firt",
+                "why": {
+                  "de": "Klassische Formel: Bedeutung zeigt sich im sprachlichen Umfeld.",
+                  "en": "Classic formula: meaning shows in a word's company."
+                }
+              },
+              {
+                "label": "Mikolov et al. (2013), word2vec",
+                "url": "https://arxiv.org/abs/1301.3781",
+                "why": {
+                  "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
+                  "en": "word2vec: learned word vectors and vector arithmetic."
+                }
+              },
+              {
+                "label": "Pennington et al. (2014), GloVe",
+                "url": "https://aclanthology.org/D14-1162/",
+                "why": {
+                  "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
+                  "en": "GloVe: global co-occurrence as word vectors."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "de:intuition:6.0",
+      "lang": "de",
+      "translate_to": "en",
+      "apply_to": [
+        "de",
+        "en"
+      ],
+      "data_file": "intuition_learnsys-data.js",
+      "page": "intuition",
+      "day_title": "Ein Wort nach dem anderen",
+      "track": "transformer",
+      "step": 6,
+      "substep": 0,
+      "substep_count": 1,
+      "text_key": "6.0",
+      "slide_title": "Von Beziehungen zur Übersetzung",
+      "slide_kicker": "Mannigfaltigkeiten",
+      "changed_fields": [
+        "body"
+      ],
+      "source": {
+        "title": "Von Beziehungen zur Übersetzung",
+        "kicker": "Mannigfaltigkeiten",
+        "watch": "Drehe, rotiere und verschiebe die japanische Wolke. Fahre über die Punkte, um die Wörter zu sehen. Klicke „Übersetzung finden“ oder „Weiter“.",
+        "body": "Hat man Punkte in diesem hochabstrakten Raum, deren Beziehungen untereinander die Bedeutung tragen, wird Übersetzung zu Translation, Rotation, Verzerrung, Skalierung und Scherung. Die Struktur, die sich aus den Punkten im hochdimensionalen Raum bildet, nennen Mathematiker <b>Mannigfaltigkeit</b>.\n\nFindet man eine Kombination, die die eine Wolke in die andere überführt, hat man eine Übersetzung gefunden, weil die Bedeutung in anderen Sprachen in denselben Relationen zueinander steht, auch wenn die konkreten Tokens andere sind."
+      },
+      "edit": {
+        "body": "Hat man Punkte in diesem hochabstraktem Raum, deren Beziehung untereinander die Bedeutung enthält, wird Übersetzung zu Translation, Rotation, Verzerrung, Skalierung und Scherung. Die Struktur, die sich aus den Punkten im hochdimensionalen Raum bildet, nennen Mathematiker <b>Mannigfaltigkeit</b>.\n\nFindet man eine Kombination, die das eine zum Anderen transformiert, hat man eine Übersetzung gefunden, weil die Bedeutung in anderen Sprachen in gleicher Relation zueinander steht, wenn auch mit anderen konkreten Tokens.",
+        "title": "Von Beziehungen zur Übersetzung",
+        "kicker": "Mannigfaltigkeiten",
+        "watch": "Drehe, rotiere und verschiebe die japanische Wolke. Fahre über die Punkte, um die Wörter zu sehen. Klicke „Übersetzung finden“ oder „Weiter“.",
+        "groups": [
+          {
+            "id": "g-basics",
+            "title": "Eine Ebene tiefer",
+            "questions": [
+              {
+                "id": "q-context",
+                "title": "Was ist der Kontext?",
+                "body": "Die Demo ist stark vereinfacht: zwei Punktwolken, viele Wörter, saubere Kanten. Die echte Geometrie hat Tausende Dimensionen und überlappende Beziehungen; der Vietoris–Rips-Komplex macht nur die Nachbarschaften sichtbar.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-deep",
+                "title": "Warum ist das so?",
+                "body": "Eine Mannigfaltigkeit ist lokal flach und global gekrümmt. Die Übersetzung entspricht einer Abbildung zwischen zwei solchen Flächen. Hier ist die Abbildung eine Kombination aus Drehung, Rotation und Translation: Wenn beide Wolken zur Deckung kommen, liegen die Wörter ihrer Bedeutung nach übereinander.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-grenze",
+            "title": "Grenze",
+            "questions": [
+              {
+                "id": "q-box-man-2",
+                "title": "Was ist vereinfacht?",
+                "body": "Die Punktwolken sind klein und die Wörter sauber platziert. Ein echtes Embedding hat Tausende Dimensionen und viele überlappende Beziehungen; die Kanten zeigen nur eine Nachbarschaft, nicht die ganze Geometrie.",
+                "tex": "",
+                "kind": "question"
+              },
+              {
+                "id": "q-box-man-3",
+                "title": "Wie echt ist die Übersetzung?",
+                "body": "Die Demo zeigt eine Idee, keine Messung. Ein echtes Modell lernt die Abbildung aus Text; die Formen sind abstrakt, extrem hochdimensional und für Menschen schwer zu sehen.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-lens-mathematik",
+            "title": "Mathematik",
+            "questions": [
+              {
+                "id": "q-box-man-4",
+                "title": "Was ist eine Mannigfaltigkeit?",
+                "body": "Eine Mannigfaltigkeit ist ein Raum, der lokal wie $R^n$, also den gewohnten, euklidischen Raum, aussieht: Jeder Punkt hat eine Karte, die eine Umgebung auf eine offene Menge im $R^n$ abbildet, und die Karten wechseln glatt. Global kann der Raum gekrümmt sein, zum Beispiel eine Kugel oder ein Torus.",
+                "tex": "",
+                "kind": "question"
+              }
+            ]
+          },
+          {
+            "id": "g-sources",
+            "title": "Quellen",
+            "sources": [
+              {
+                "label": "Mikolov et al. (2013), word2vec",
+                "url": "https://arxiv.org/abs/1301.3781",
+                "why": {
+                  "de": "word2vec: gelernte Wortvektoren und Vektorarithmetik.",
+                  "en": "word2vec: learned word vectors and vector arithmetic."
+                }
+              },
+              {
+                "label": "Pennington et al. (2014), GloVe",
+                "url": "https://aclanthology.org/D14-1162/",
+                "why": {
+                  "de": "GloVe: globale Kookkurrenz als Wortvektoren.",
+                  "en": "GloVe: global co-occurrence as word vectors."
+                }
+              },
+              {
+                "label": "Conneau et al. (2018), Word Translation Without Parallel Data",
+                "url": "https://arxiv.org/abs/1710.04087",
+                "why": {
+                  "de": "Übertragung zwischen Worträumen ohne parallele Daten.",
+                  "en": "Transport between word spaces without parallel data."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
