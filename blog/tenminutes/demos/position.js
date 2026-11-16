@@ -11,7 +11,7 @@
     el.innerHTML =
       '<div class="ls-position-grid">' +
         '<div class="ls-position-panel"><div class="ls-position-space-note">' + (DE ? "Hochdimensionaler Raum · Richtungen auf der Hyperkugel · 3D = Projektion" : "High-dimensional space · directions on the hypersphere · 3D = projection") + '</div><canvas class="ls-position-heat"></canvas><div class="ls-position-legend"><span>−1</span><i></i><span>+1</span></div></div>' +
-        '<div class="ls-position-right"><div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="10000" step="1" value="7"><output>7</output></label></div>' +
+        '<div class="ls-position-right"><div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="100000" step="1" value="7"><output>7</output></label></div>' +
       '</div>' +
       '<p class="ls-position-note">' + (DE ? "Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position. Jeder grüne Punkt ist dasselbe Wort (Hund) an einer anderen Position." : "Positions are added as waves on circular orbits in different dimensions. Each dimension has a different frequency; together they form the position fingerprint. Every green point is the same word (dog) at a different position.") + '</p>' +
       '<div class="ls-scene-row ls-position-metric"><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
@@ -31,7 +31,7 @@
       return out;
     }
     function addTrailTo(target) {
-      target = clamp(Math.round(target || 0), 0, 10000);
+      target = clamp(Math.round(target || 0), 0, 100000);
       trail = trail.filter(function (v) { return v <= target; });
       if (target <= 2000) {
         var set = Object.create(null);
@@ -40,7 +40,7 @@
         trail = Object.keys(set).map(Number).sort(function (a, b) { return a - b; });
         return;
       }
-      var step = 12;
+      var step = Math.max(12, Math.ceil(target / 1200));
       var last = trail.length ? trail[trail.length - 1] : -1;
       for (var u = last + step; u < target; u += step) trail.push(u);
       if (trail[trail.length - 1] !== target) trail.push(target);
@@ -324,16 +324,18 @@
     function finishSweep() {
       if (!sweep) return;
       sweep = null;
-      pos = 10000; posAnim = 10000;
+      pos = 100000; posAnim = 100000;
       trail = [];
-      for (var tv = 0; tv <= 10000; tv += 12) trail.push(tv);
-      if (posEl) { posEl.value = "10000"; posEl.nextElementSibling.textContent = "10000"; }
+      var step = Math.max(12, Math.ceil(100000 / 1200));
+      for (var tv = 0; tv <= 100000; tv += step) trail.push(tv);
+      if (trail[trail.length - 1] !== 100000) trail.push(100000);
+      if (posEl) { posEl.value = "100000"; posEl.nextElementSibling.textContent = "100000"; }
       draw();
     }
     function next() {
       if (sweep) { finishSweep(); return true; }
-      if (pos >= 10000) return false;
-      sweep = { from: pos, to: 10000, start: performance.now(), duration: 5000 };
+      if (pos >= 100000) return false;
+      sweep = { from: pos, to: 100000, start: performance.now(), duration: 5000 };
       return true;
     }
     function prev() {
