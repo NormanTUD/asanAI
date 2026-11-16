@@ -397,7 +397,6 @@
         box("att-1", "Technik", "Warum drei Vektoren?", "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen."),
         box("att-2", "Mathematik", "Warum Softmax?", "Softmax macht aus Scores eine Verteilung: positiv, summiert zu 1, Reihenfolge bleibt. Deshalb ist Attention ein endliches Budget."),
         box("att-3", "Budget", "Ein Head, ein Budget", "Jede Zeile hat genau 1,00 zu vergeben. Mehr für ein Token heißt weniger für alle anderen. Viele Heads haben getrennte Budgets."),
-        box("att-budget-period", "Budget", "Warum hat der Punkt fast 60 %? Kodiert er nicht die gesamte Bedeutung?", "Ja, für dieses eine Wort. Aber jedes Wort wird eigenständig kodiert. Der Punkt bleibt deshalb größtenteils „Punkt“; das heißt aber nicht, dass alle nur auf diesen Punkt schauen, weil jedes Token ein eigenes Token bleibt."),
         box("att-mis", "Grenze", "Ist Attention eine Datenbank?", "Nein. Attention schlägt keine Fakten nach. Es berechnet Gewichte über Value-Vektoren und mischt sie zu einer neuen Repräsentation. Das Ergebnis ist keine gespeicherte Zeile, sondern eine kontextabhängige Mischung.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } }]
@@ -437,7 +436,6 @@
         box("att-1", "Technique", "Why three vectors?", "Because searching and describing are two different roles. A pronoun can look for a noun without itself looking like a noun."),
         box("att-2", "Mathematics", "Why softmax?", "Softmax turns scores into a distribution: positive, sum to one, order preserved. That is why attention is a finite budget."),
         box("att-3", "Budget", "One head, one budget", "Every row has exactly 1.00 to give. More for one token means less for the others. Many heads have separate budgets."),
-        box("att-budget-period", "Budget", "Why does the period get almost 60%? Doesn't it encode the entire meaning?", "Yes, for this one word. But each word is encoded independently. The period therefore stays mostly “period”; that does not mean everything only attends to this period, because each token remains its own token."),
         box("att-mis", "Limit", "Is attention a database?", "No. Attention does not look up facts. It computes weights over value vectors and mixes them into a new representation. The result is not a stored row but a context-dependent mixture.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } }]
@@ -1708,15 +1706,106 @@
     kicker: DE ? "1D · 2D · 3D · Tabelle" : "1D · 2D · 3D · table",
     substeps: [embedSteps[0], embedSteps[1], embedSteps[2], highdimSteps[0]]
   };
+  var attentionMergedGroups = DE ? [
+    {
+      id: "g-basics",
+      title: "Eine Ebene tiefer",
+      questions: []
+    },
+    {
+      id: "g-lens-grenze",
+      title: "Grenze",
+      questions: [
+        { id: "q-box-att-mis", title: "Ist Attention eine Datenbank?", body: "Nein. Attention schlägt keine Fakten nach. Es berechnet Gewichte über Value-Vektoren und mischt sie zu einer neuen Repräsentation. Das Ergebnis ist keine gespeicherte Zeile, sondern eine kontextabhängige Mischung.", tex: "", kind: "question" },
+        { id: "q-edit-1794820087219-1", title: "Wird das für jedes Token einzeln berechnet?", body: "Ja, es wird für jedes Token einzeln berechnet. Wenn man autoregressive Modelle wie Chatbots hat, fügt man noch eine Causal Mask hinzu, die dafür sorgt, dass kein Token von sich aus in die Zukunft schauen kann.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-mathematik",
+      title: "Mathematik",
+      questions: [
+        { id: "q-box-att-5", title: "Die Formel", body: "Attention bildet aus Query, Key und Value eine gewichtete Summe. Die Softmax-Zeile summiert zu 100 %.", tex: "\\underbrace{x'}_{\\substack{\\text{neuer Vektor}\\\\ \\text{für } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{Gewicht von } j\\\\ \\text{für } i}} \\underbrace{v_j}_{\\text{Value von } j}}_{\\substack{\\text{gewichtete Summe}\\\\ \\sum_j \\alpha_{ij}=100\\%}}", kind: "trivia" },
+        { id: "q-box-att-2", title: "Warum Softmax?", body: "Softmax macht aus Scores eine Verteilung: positiv, summiert zu 1, Reihenfolge bleibt. Deshalb ist Attention ein endliches Budget.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-technik",
+      title: "Technik",
+      questions: [
+        { id: "q-box-att-1", title: "Warum drei Vektoren?", body: "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-optional",
+      title: "Optional",
+      questions: [
+        { id: "q-box-att-kv", title: "KV-Cache", body: "Beim Generieren muss das Modell die Keys und Values der bisherigen Tokens nicht neu berechnen, wenn es sie im KV-Cache behält. Es berechnet nur die neuen Keys/Values und lässt das neue Query gegen die gespeicherten Keys laufen. Die wiederholte K/V-Projektion wächst ohne Cache quadratisch mit der Sequenz und mit Cache nur linear; die Attention-Scores selbst bleiben quadratisch (Shazeer, 2019).", tex: "", kind: "trivia" }
+      ]
+    },
+    {
+      id: "g-lens-budget",
+      title: "Budget",
+      questions: [
+        { id: "q-box-att-3", title: "Ein Head, ein Budget", body: "Jede Zeile hat genau 1,00 Attention zu vergeben. Mehr für ein Token heißt weniger für alle anderen. Jeder Head hat ein getrenntes Budget.", tex: "", kind: "trivia" },
+        { id: "q-edit-1794817884757-1", title: "Warum hat der Punkt fast 60 %? Kodiert er nicht die gesamte Bedeutung?", body: "Ja, für dieses eine Wort. Aber jedes Wort wird eigenständig kodiert. Der Punkt bleibt deshalb größtenteils „Punkt“; das heißt aber nicht, dass alle nur auf diesen Punkt schauen, weil jedes Token ein eigenes Token bleibt.", tex: "", kind: "question" }
+      ]
+    }
+  ] : [
+    {
+      id: "g-basics",
+      title: "One level deeper",
+      questions: []
+    },
+    {
+      id: "g-lens-limit",
+      title: "Limit",
+      questions: [
+        { id: "q-box-att-mis", title: "Is attention a database?", body: "No. Attention does not look up facts. It computes weights over value vectors and mixes them into a new representation. The result is not a stored row but a context-dependent mixture.", tex: "", kind: "question" },
+        { id: "q-edit-1794820087219-1", title: "Is this computed separately for each token?", body: "Yes, it is computed separately for each token. For autoregressive models such as chatbots, you also add a causal mask, which prevents any token from looking into the future.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-mathematics",
+      title: "Mathematics",
+      questions: [
+        { id: "q-box-att-5", title: "The formula", body: "Attention builds a weighted sum from query, key, and value. The softmax row sums to 100%.", tex: "\\underbrace{x'}_{\\substack{\\text{new vector}\\\\ \\text{for } i}} = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\substack{\\text{weight of } j\\\\ \\text{for } i}} \\underbrace{v_j}_{\\text{value of } j}}_{\\substack{\\text{weighted sum}\\\\ \\sum_j \\alpha_{ij}=100\\%}}", kind: "trivia" },
+        { id: "q-box-att-2", title: "Why softmax?", body: "Softmax turns scores into a distribution: positive, sum to one, order preserved. That is why attention is a finite budget.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-technique",
+      title: "Technique",
+      questions: [
+        { id: "q-box-att-1", title: "Why three vectors?", body: "Because searching and describing are two different roles. A pronoun can look for a noun without itself looking like a noun.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-optional",
+      title: "Optional",
+      questions: [
+        { id: "q-box-att-kv", title: "KV cache", body: "During generation the model does not have to recompute the keys and values of earlier tokens if it keeps them in the KV cache. It computes only the new keys/values and lets the new query run against the cached keys. Without the cache the repeated K/V projection grows quadratically with the sequence; with the cache it grows linearly. The attention scores themselves stay quadratic (Shazeer, 2019).", tex: "", kind: "trivia" }
+      ]
+    },
+    {
+      id: "g-lens-budget",
+      title: "Budget",
+      questions: [
+        { id: "q-box-att-3", title: "One head, one budget", body: "Every row has exactly 1.00 attention to give. More for one token means less for the others. Each head has a separate budget.", tex: "", kind: "trivia" },
+        { id: "q-edit-1794817884757-1", title: "Why does the period get almost 60 %? Doesn't it encode the entire meaning?", body: "Yes, for this one word. But each word is encoded independently. The period therefore stays mostly “period”; that does not mean everything only attends to this period, because each token remains its own token.", tex: "", kind: "question" }
+      ]
+    }
+  ];
+
   var attentionMerged = {
     kicker: DE ? "Attention" : "Attention",
-    title: DE ? "Kontext zieht die Bank an seinen Platz" : "Context pulls the bank into place",
-    body: DE ? "Drei Sätze, dasselbe Wort: Bank ohne Kontext, Bank für Geld, Bank im Park. Klicke einen Satz oder drücke Weiter; die Matrix zeigt, wohin die Bank schaut. Attention lässt jedes Token die anderen lesen, entscheiden, welche zählen, und ihre Information in den eigenen Vektor ziehen." : "Three sentences, one word: a bank without context, a bank for money, a bank in the park. Click a sentence or press Next; the matrix shows where the bank looks. Attention lets each token read the others, decide which matter, and pull their information into its vector.",
-    watch: DE ? "Klicke die drei Sätze oder drücke Weiter. Welches Wort zieht die Bank?" : "Click the three sentences or press Next. Which word pulls the bank?",
+    title: DE ? "Attention bewegt Punkte anhand des Kontextes" : "Attention moves points based on context",
+    body: DE ? "Attention erlaubt es zu schauen, wie sehr jedes Token im Kontext von jedem anderen Token abhängt. Kontext ist alles, was bisher gesagt worden ist in dem Chat bzw. der gesamte Text. Jedes Token hat 100% Attention zur Verfügung, die es auf gelernte Weise auf andere Tokens verteilen kann. Wenn es sagt \"das zweite Token kriegt 80% Attention\", bleiben für alle anderen nur noch 20% übrig. Diese Prozentwerte werden dann genommen, um alle Vektoren gewichtet zu addieren, um einen neuen Vektor zu bekommen, der die Bedeutung (unter einem gewissen Kontext) repräsentiert. Es erlaubt, Antworten in Richtungen zu schieben, ohne sich festzulegen. Attention erlaubt es, sich relativ stark festzulegen, ohne die Flexibilität zu verlieren, die ein konkretes hundertprozentiges Festlegen bedeuten würde. Die Antwort bleibt flexibel. Reale Modelle nutzen nicht nur eine Attention, sondern viele, die lernen, auf verschiedene Kontexte zu achten." : "Attention lets you see how strongly each token in the context depends on every other token. Context is everything said so far in the chat, or the entire text. Each token has 100% attention to distribute over other tokens in a learned way. If it says “the second token gets 80% attention”, only 20% remains for all the others. These percentages are then used to add all vectors with weights, producing a new vector that represents meaning under a certain context. It lets answers be pushed in directions without committing. Attention lets a model commit relatively strongly without losing the flexibility that a concrete 100% commitment would mean. The answer stays flexible. Real models use not just one attention but many, which learn to attend to different contexts.",
+    watch: "",
     demoState: { scene: "attention" },
     context: attentionSteps[1].context,
     deep: attentionSteps[1].deep,
     boxes: attentionSteps[1].boxes.concat(attentionSteps[0].boxes),
+    questionGroups: attentionMergedGroups,
     sources: attentionSteps[1].sources
   };
   var codeAttentionSubstep = {
