@@ -1057,46 +1057,6 @@
     }
   ];
 
-  var kvcacheSteps = DE ? [
-    {
-      kicker: "Inferenz",
-      title: "Der KV-Cache wächst mit dem Kontext",
-      body: "Beim Generieren speichert das Modell Key und Value für jedes Token. Der KV-Cache wächst mit Kontextlänge, Schichten, Heads und Kopfdimension. Deshalb kostet ein langer Chat Speicher, obwohl das Modell nicht neu trainiert wird.",
-      watch: "Ziehe den Kontext nach oben. Wann passt der Cache nicht mehr in 24 GB?",
-      demoState: { scene: "kvcache" },
-      context: "Der Cache vermeidet, K und V für alte Tokens neu zu berechnen. Er wächst linear mit der Kontextlänge.",
-      deep: "Die Rechnung ist eine Näherung: 2 Bytes pro Wert (FP16), K und V, alle Schichten und Heads. Echte Systeme nutzen weitere Tricks wie Paging oder Quantisierung.",
-      boxes: [
-        box("kv-1", "Prototyp", "Was ist der KV-Cache?", "Beim Generieren werden Key- und Value-Vektoren aller bisherigen Tokens gespeichert. So muss das Modell sie nicht bei jedem neuen Token neu berechnen."),
-        box("kv-2", "Rechnung", "Wie groß wird er?", "2 Bytes pro Wert, K und V, mal Schichten, Heads, Kopfdimension und Tokens. Die Demo zeigt eine Näherung für FP16."),
-        box("kv-3", "Grenze", "Was fehlt in der Rechnung?", "Aktivierungen, temporäre Puffer, Fragmentierung und den Modellgraph. Die echte Speichernutzung kann höher liegen.")
-      ],
-      sources: [
-        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Key- und Value-Vektoren der Attention.", en: "Key and value vectors in attention." } },
-        { label: "Dao et al. (2022), FlashAttention", url: "https://arxiv.org/abs/2205.14135", why: { de: "Speichereffiziente Attention.", en: "Memory-efficient attention." } }
-      ]
-    }
-  ] : [
-    {
-      kicker: "Inference",
-      title: "The KV cache grows with context",
-      body: "During generation the model stores keys and values for every token. The KV cache grows with context length, layers, heads, and head dimension. That is why a long chat costs memory even though the model is not retrained.",
-      watch: "Drag the context up. When does the cache no longer fit in 24 GB?",
-      demoState: { scene: "kvcache" },
-      context: "The cache avoids recomputing K and V for old tokens. It grows linearly with context length.",
-      deep: "The calculation is an approximation: 2 bytes per value (FP16), K and V, all layers and heads. Real systems use further tricks such as paging or quantisation.",
-      boxes: [
-        box("kv-1", "Prototype", "What is the KV cache?", "During generation, key and value vectors for all previous tokens are stored. The model does not have to recompute them for every new token."),
-        box("kv-2", "Calculation", "How large does it get?", "2 bytes per value, K and V, times layers, heads, head dimension, and tokens. The demo shows an FP16 approximation."),
-        box("kv-3", "Limit", "What is missing?", "Activations, temporary buffers, fragmentation, and the model graph. Real memory use can be higher.")
-      ],
-      sources: [
-        { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Key- und Value-Vektoren der Attention.", en: "Key and value vectors in attention." } },
-        { label: "Dao et al. (2022), FlashAttention", url: "https://arxiv.org/abs/2205.14135", why: { de: "Speichereffiziente Attention.", en: "Memory-efficient attention." } }
-      ]
-    }
-  ];
-
   var ragSteps = DE ? [
     {
       kicker: "RAG und Agents",
@@ -2147,7 +2107,7 @@
     ]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep, kvcacheSteps[0]];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep];
 
   var day = {
     id: "intuition",
