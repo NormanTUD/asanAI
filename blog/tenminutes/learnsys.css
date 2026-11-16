@@ -2276,3 +2276,22 @@ h1,h2,h3,h4{
   .ls-app.is-text-only .ls-text-scroll{max-width:none;height:100%;padding:44px 16px 16px;overflow:auto}
   .ls-app.is-text-only .ls-text-mobile-head{display:none}
 }
+
+/* Consciousness: static text notes, no quiz cards. */
+.ls-con-notes{height:100%;min-height:0;display:flex;flex-direction:column;gap:10px;padding:4px 2px;overflow:auto}
+.ls-con-head{display:flex;flex-direction:column;gap:2px}
+.ls-con-head>span{font:700 9px "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.12em;color:var(--ls-petrol)}
+.ls-con-head>b{font:700 var(--ls-fs-h3) "Barlow",sans-serif;color:var(--ls-ink)}
+.ls-con-sub{margin:0;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-con-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ls-con-card{display:flex;flex-direction:column;gap:5px;border:1px solid var(--ls-line);background:var(--ls-paper-2);padding:10px 12px;min-width:0}
+.ls-con-card--hard{border-left:3px solid var(--ls-gold)}
+.ls-con-card--theory{border-left:3px solid var(--ls-sky)}
+.ls-con-card--myst{border-left:3px solid var(--ls-lilac)}
+.ls-con-card--easy{border-left:3px solid var(--ls-green)}
+.ls-con-tag{font:700 9px "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol)}
+.ls-con-card p{margin:0;font:var(--ls-fs-ui-sm)/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-con-card ul{margin:0;padding-left:15px;font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-con-link{align-self:flex-start;margin-top:auto;font:700 var(--ls-fs-ui-sm) "Open Sans",sans-serif;color:var(--ls-petrol);text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:1px}
+.ls-con-link:hover{color:var(--ls-blue)}
+@media (max-width:1120px){.ls-con-grid{grid-template-columns:1fr}}
