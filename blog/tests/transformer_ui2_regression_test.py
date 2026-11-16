@@ -498,6 +498,9 @@ def main() -> None:
             page.wait_for_function(
                 "() => { const l=document.getElementById('sticky-highdim-label'); return l && getComputedStyle(l).display !== 'none'; }",
                 timeout=10000)
+            page.wait_for_function(
+                "() => { const sp=window.persistentEmbeddingSpace; const k=sp&&Object.keys(sp)[0]; const c=window.tlab_trajectory_collector; return !!k && sp[k].length===10 && !!c && c.d_model===10 && Object.keys(c.steps||{}).length>=3; }",
+                timeout=20000)
             hd = page.evaluate("""() => {
                 const sel=document.getElementById('sticky-highdim-select');
                 const label=sel ? sel.closest('label') : null;
