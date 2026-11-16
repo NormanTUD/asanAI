@@ -835,11 +835,14 @@
   const starsCtx = starsCanvas.getContext("2d");
   let SW = 0, SH = 0, SDPR = 1;
   let starData = [];
+  let twinkleData = [];
   let meteors = [];
+  const starStatic = document.createElement("canvas");
+  const starStaticCtx = starStatic.getContext("2d");
 
   function makeStars() {
     const r = rnd(19);
-    starData = Array.from({ length: 460 }, () => {
+    starData = Array.from({ length: 260 }, () => {
       const roll = r();
       return {
         x: r() * SW,
@@ -851,15 +854,28 @@
         c: roll > .92 ? "#cfe1ff" : roll > .78 ? "#d9c8ff" : "#ffffff"
       };
     });
+    twinkleData = starData.slice(0, 46);
   }
   function resizeStars() {
-    SDPR = Math.min(window.devicePixelRatio || 1, 2);
+    SDPR = Math.min(window.devicePixelRatio || 1, 1.5);
     SW = window.innerWidth;
     SH = window.innerHeight;
     starsCanvas.width = Math.round(SW * SDPR);
     starsCanvas.height = Math.round(SH * SDPR);
     starsCtx.setTransform(SDPR, 0, 0, SDPR, 0, 0);
     makeStars();
+    starStatic.width = starsCanvas.width;
+    starStatic.height = starsCanvas.height;
+    starStaticCtx.setTransform(SDPR, 0, 0, SDPR, 0, 0);
+    starStaticCtx.clearRect(0, 0, SW, SH);
+    for (const s of starData) {
+      starStaticCtx.globalAlpha = s.a;
+      starStaticCtx.fillStyle = s.c;
+      starStaticCtx.beginPath();
+      starStaticCtx.arc(s.x, s.y, s.r, 0, TAU);
+      starStaticCtx.fill();
+    }
+    starStaticCtx.globalAlpha = 1;
     drawStars(0);
   }
   function spawnMeteor() {
@@ -875,8 +891,9 @@
   }
   function drawStars(t) {
     starsCtx.clearRect(0, 0, SW, SH);
-    for (const s of starData) {
-      const a = s.a * (.65 + .35 * Math.sin(t * s.tw + s.ph));
+    starsCtx.drawImage(starStatic, 0, 0, SW, SH);
+    for (const s of twinkleData) {
+      const a = s.a * (.35 + .65 * Math.sin(t * s.tw + s.ph));
       starsCtx.globalAlpha = a;
       starsCtx.fillStyle = s.c;
       starsCtx.beginPath();
@@ -927,14 +944,14 @@
     }
     resize() {
       const rect = this.canvas.parentElement.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       this.w = Math.max(1, rect.width);
       this.h = Math.max(1, rect.height);
       this.canvas.width = Math.round(this.w * dpr);
       this.canvas.height = Math.round(this.h * dpr);
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const r = rnd(303);
-      this.dust = Array.from({ length: 34 }, () => ({
+      this.dust = Array.from({ length: 20 }, () => ({
         x: r(), y: r(), vx: (r() - .5) * .006, vy: -.004 - r() * .010,
         s: .4 + r() * 1.4, a: .04 + r() * .12, ph: r() * TAU,
         c: r() > .7 ? C.violet : r() > .4 ? C.cyan : C.white
@@ -969,9 +986,11 @@
       ctx.globalCompositeOperation = "source-over";
     }
     render(t, dt) {
+      const t0 = performance.now();
       this.ctx.clearRect(0, 0, this.w, this.h);
       this.ambient(t);
       this.drawFn(this.ctx, t, dt, this);
+      this.lastRenderMs = performance.now() - t0;
     }
     frame(dt) {
       this.t += dt;
@@ -2576,6 +2595,9 @@
 
   resizeStars();
   if (reduced) drawStars(0);
+  window.__wmDrawStars = drawStars;
+  window.__wmActive = () => activeStage;
+  window.__wmStages = stages;
   requestAnimationFrame(tick);
 })();
 </script>
