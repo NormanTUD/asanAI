@@ -1,0 +1,2583 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Inside the World Model</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg0: #03040a;
+    --bg1: #070a16;
+    --ink: #f2f5ff;
+    --muted: #96a0c8;
+    --dim: #5b648c;
+    --line: rgba(160, 178, 255, .14);
+    --cyan: #6ee7ff;
+    --violet: #a78bfa;
+    --coral: #ff7a90;
+    --gold: #ffd166;
+    --mint: #5ef2b0;
+    --accent: var(--cyan);
+    --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, ui-serif, serif;
+    --mono: "SFMono-Regular", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, ui-monospace, monospace;
+    --sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --ease: cubic-bezier(.2, .7, .2, 1);
+  }
+
+  * { box-sizing: border-box; }
+  html {
+    background: var(--bg0);
+    scroll-snap-type: y proximity;
+    scrollbar-color: rgba(110, 231, 255, .25) transparent;
+  }
+  body {
+    margin: 0;
+    min-height: 100%;
+    color: var(--ink);
+    background:
+      radial-gradient(ellipse 80% 55% at 50% -10%, rgba(84, 106, 255, .10), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 40%, rgba(167, 139, 250, .05), transparent 60%),
+      var(--bg0);
+    font-family: var(--sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: rgba(110, 231, 255, .25); color: #fff; }
+  a { color: inherit; }
+  button { font: inherit; }
+
+  .bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  #starfield {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .8;
+  }
+  .bg::before,
+  .bg::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: .55;
+    will-change: transform;
+  }
+  .bg::before {
+    width: 76vmax;
+    height: 76vmax;
+    left: -18vmax;
+    top: -28vmax;
+    background: radial-gradient(circle, rgba(110, 231, 255, .13), transparent 64%);
+    animation: driftA 34s ease-in-out infinite alternate;
+  }
+  .bg::after {
+    width: 64vmax;
+    height: 64vmax;
+    right: -20vmax;
+    bottom: -26vmax;
+    background: radial-gradient(circle, rgba(167, 139, 250, .12), transparent 64%);
+    animation: driftB 42s ease-in-out infinite alternate;
+  }
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    opacity: .028;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+  }
+  .vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 50%, transparent 52%, rgba(0, 0, 0, .46) 100%);
+  }
+  .cursor-glow {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+    width: 520px;
+    height: 520px;
+    margin: -260px 0 0 -260px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(110, 231, 255, .10), rgba(167, 139, 250, .05) 38%, transparent 68%);
+    filter: blur(10px);
+    mix-blend-mode: screen;
+    opacity: 0;
+    transition: opacity .6s ease;
+    will-change: transform;
+  }
+  body.has-pointer .cursor-glow { opacity: .85; }
+
+  .progress {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 45;
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--cyan), var(--violet), var(--gold));
+    box-shadow: 0 0 14px rgba(110, 231, 255, .5);
+  }
+  .chrome {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 44;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px clamp(18px, 4vw, 52px);
+    pointer-events: none;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .chrome .mark {
+    color: var(--ink);
+    letter-spacing: .28em;
+    opacity: .86;
+  }
+  .chrome .mark b { color: var(--accent); font-weight: 500; }
+  .chrome .count { transition: color .6s ease; white-space: nowrap; }
+  .chrome .count strong { color: var(--accent); font-weight: 500; }
+
+  .rail {
+    position: fixed;
+    left: clamp(12px, 2vw, 28px);
+    top: 50%;
+    z-index: 44;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    transform: translateY(-50%);
+  }
+  .rail button {
+    position: relative;
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    border: 1px solid rgba(220, 230, 255, .26);
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    transition: transform .45s var(--ease), background .45s ease, border-color .45s ease, box-shadow .45s ease;
+  }
+  .rail button.is-active {
+    transform: scale(1.45);
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 16px var(--accent);
+  }
+  .rail button span {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease, transform .3s var(--ease);
+  }
+  .rail button:hover span,
+  .rail button:focus-visible span {
+    opacity: 1;
+    transform: translate(4px, -50%);
+  }
+
+  main { position: relative; z-index: 10; }
+
+  .slide {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 100svh;
+    padding: clamp(66px, 7.4vh, 104px) clamp(20px, 5vw, 72px) clamp(32px, 4.2vh, 58px);
+    scroll-snap-align: start;
+  }
+  .slide-inner {
+    width: min(1240px, 100%);
+    display: grid;
+    gap: clamp(13px, 2vh, 26px);
+  }
+  .copy { position: relative; z-index: 2; max-width: 1040px; }
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .kicker::before {
+    content: "";
+    width: 34px;
+    height: 1px;
+    background: currentColor;
+    opacity: .55;
+    box-shadow: 0 0 10px currentColor;
+  }
+  h1, h2 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 400;
+    letter-spacing: -.038em;
+    line-height: .97;
+    text-wrap: balance;
+  }
+  h1 { font-size: clamp(3.2rem, 10.5vw, 9.6rem); }
+  h2 { font-size: clamp(2.35rem, 5.7vw, 5.2rem); }
+  .sub {
+    margin: 12px 0 0;
+    max-width: 58ch;
+    font-size: clamp(1rem, 1.32vw, 1.18rem);
+    line-height: 1.48;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .sub em { color: var(--ink); font-style: normal; }
+  .source {
+    margin: 8px 0 0;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+    max-width: 70ch;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    line-height: 1.7;
+    letter-spacing: .03em;
+    color: var(--dim);
+  }
+  .source a {
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, .12);
+    transition: color .3s ease, border-color .3s ease;
+  }
+  .source a:hover { color: var(--cyan); border-color: rgba(110, 231, 255, .6); }
+
+  .stage {
+    position: relative;
+    width: 100%;
+    height: clamp(300px, 46svh, 520px);
+    border-radius: 20px;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 50% 42%, rgba(30, 44, 92, .58), rgba(6, 8, 18, .2) 68%),
+      linear-gradient(180deg, rgba(16, 24, 52, .36), rgba(4, 5, 12, .24)),
+      repeating-linear-gradient(90deg, rgba(110, 231, 255, .018) 0 1px, transparent 1px 62px),
+      repeating-linear-gradient(0deg, rgba(110, 231, 255, .018) 0 1px, transparent 1px 62px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .06),
+      inset 0 0 0 1px rgba(160, 178, 255, .10),
+      inset 0 0 70px rgba(4, 6, 16, .38),
+      0 34px 90px rgba(0, 0, 0, .38);
+    isolation: isolate;
+  }
+  .stage.tall { height: clamp(380px, 54svh, 600px); }
+  .stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 48%, transparent 56%, rgba(3, 4, 10, .52) 100%);
+  }
+  .stage canvas {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero {
+    padding: 0;
+    overflow: hidden;
+  }
+  .hero-stage {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .hero-stage::after {
+    background:
+      radial-gradient(ellipse at 50% 48%, transparent 30%, rgba(3, 4, 10, .22) 68%, rgba(3, 4, 10, .72) 100%),
+      linear-gradient(180deg, rgba(3, 4, 10, .25), transparent 28%, transparent 70%, rgba(3, 4, 10, .6));
+  }
+  .hero .slide-inner {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    min-height: 100svh;
+  }
+  .hero .copy {
+    max-width: 1120px;
+    padding: 110px clamp(20px, 6vw, 84px) 90px;
+  }
+  .hero h1 {
+    background: linear-gradient(180deg, #ffffff 4%, #dce5ff 42%, #8feaff 78%, #a78bfa 118%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 44px rgba(110, 231, 255, .10));
+  }
+  .hero .sub { max-width: 48ch; font-size: clamp(1.02rem, 1.5vw, 1.28rem); }
+  .hero .kicker { color: var(--cyan); }
+  .scroll-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 38px;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: var(--dim);
+    transition: opacity .6s ease;
+  }
+  .scroll-hint span {
+    display: inline-block;
+    width: 1px;
+    height: 30px;
+    background: linear-gradient(180deg, transparent, var(--cyan), transparent);
+    animation: hint 2.4s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(110, 231, 255, .5);
+  }
+  body.scrolled .scroll-hint { opacity: 0; }
+
+  .copy > * {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(8px);
+  }
+  .slide.is-active .copy > * {
+    animation: rise 1.05s var(--ease) both;
+  }
+  .slide.is-active .copy > *:nth-child(1) { animation-delay: .04s; }
+  .slide.is-active .copy > *:nth-child(2) { animation-delay: .12s; }
+  .slide.is-active .copy > *:nth-child(3) { animation-delay: .2s; }
+  .slide.is-active .copy > *:nth-child(4) { animation-delay: .28s; }
+  .slide.is-active .copy > *:nth-child(5) { animation-delay: .36s; }
+  .hero .copy > * { opacity: 1; transform: none; filter: none; animation: none !important; }
+
+  .stage {
+    opacity: 0;
+    transform: translateY(22px) scale(.985);
+    transition: opacity 1s ease .16s, transform 1.2s var(--ease) .12s;
+  }
+  .slide.is-active .stage { opacity: 1; transform: none; }
+
+  .refs {
+    margin: 26px 0 0;
+    padding: 0;
+    list-style: none;
+    columns: 2;
+    column-gap: clamp(28px, 5vw, 64px);
+  }
+  .refs li {
+    break-inside: avoid;
+    margin: 0 0 15px;
+    font-size: .83rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .refs li b {
+    display: block;
+    color: var(--ink);
+    font-weight: 500;
+    font-size: .87rem;
+  }
+  .refs li span { color: var(--dim); }
+  .refs a {
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, .12);
+    transition: color .3s ease, border-color .3s ease;
+  }
+  .refs a:hover { color: var(--cyan); border-color: rgba(110, 231, 255, .55); }
+  .closing {
+    margin-top: 34px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .closing a {
+    text-decoration: none;
+    color: var(--muted);
+    border-bottom: 1px solid rgba(255, 255, 255, .14);
+  }
+  .closing a:hover { color: var(--cyan); }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(26px); filter: blur(8px); }
+    to { opacity: 1; transform: none; filter: blur(0); }
+  }
+  @keyframes hint {
+    0%, 100% { transform: scaleY(.45); opacity: .35; }
+    50% { transform: scaleY(1); opacity: 1; }
+  }
+  @keyframes driftA {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to { transform: translate3d(8vmax, 6vmax, 0) scale(1.12); }
+  }
+  @keyframes driftB {
+    from { transform: translate3d(0, 0, 0) scale(1.08); }
+    to { transform: translate3d(-7vmax, -8vmax, 0) scale(.96); }
+  }
+
+  @media (max-width: 980px) {
+    .rail { display: none; }
+    .refs { columns: 1; }
+  }
+  @media (max-width: 720px) {
+    .slide { padding: 74px 18px 54px; }
+    .stage { height: clamp(280px, 42svh, 390px); border-radius: 16px; }
+    .stage.tall { height: clamp(370px, 55svh, 540px); }
+    .hero .copy { padding: 92px 20px 70px; }
+    h1 { font-size: clamp(2.9rem, 14vw, 5.6rem); }
+    h2 { font-size: clamp(2.1rem, 9.4vw, 3.4rem); }
+    .sub { font-size: .98rem; }
+    .chrome { padding: 16px 18px; }
+    .chrome .mark { letter-spacing: .2em; }
+    .source { font-size: 8.6px; }
+  }
+  @media (hover: none) {
+    .cursor-glow { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .001ms !important;
+      scroll-behavior: auto !important;
+    }
+    .copy > *, .stage { opacity: 1 !important; transform: none !important; filter: none !important; }
+    html { scroll-snap-type: none; }
+  }
+</style>
+</head>
+<body id="top">
+<div class="bg" aria-hidden="true">
+  <canvas id="starfield"></canvas>
+</div>
+<div class="cursor-glow" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<header class="chrome">
+  <div class="mark">ASANAI <b>·</b> WORLD MODELS</div>
+  <div class="count" id="scene-count">00 / 10</div>
+</header>
+
+<nav class="rail" id="rail" aria-label="Scenes"></nav>
+
+<main>
+  <section class="slide hero is-active" data-title="Prologue" data-step="00" data-accent="#6ee7ff">
+    <div class="stage hero-stage" data-scene="hero"><canvas aria-hidden="true"></canvas></div>
+    <div class="slide-inner">
+      <div class="copy">
+        <div class="kicker">A visual essay</div>
+        <h1>The World<br>Inside the Model</h1>
+        <p class="sub">How next-token prediction builds a map of the world, and how attention and MLPs read it.</p>
+        <div class="scroll-hint"><span></span>Scroll to begin</div>
+      </div>
+    </div>
+    <p class="sr-only">A dark, animated visual essay about world models inside large language models.</p>
+  </section>
+
+  <section class="slide" data-title="The river" data-step="01" data-accent="#6ee7ff">
+    <div class="slide-inner">
+      <div class="copy">
+        <div class="kicker">01 · The substrate</div>
+        <h2>A river of meaning</h2>
+        <p class="sub">One stream per token. Attention moves information between streams; MLPs transform it in place.</p>
+      </div>
+      <div class="stage" data-scene="river"><canvas aria-hidden="true"></canvas></div>
+      <p class="source">After <a href="https://transformer-circuits.pub/2021/framework/index.html" target="_blank" rel="noopener">Elhage et al., A Mathematical Framework for Transformer Circuits</a>, 2021.</p>
+    </div>
+    <p class="sr-only">Animation: token columns connected by attention arcs, feeding a central residual stream where MLP nodes add vectors.</p>
+  </section>
+
+  <section class="slide" data-title="Two dreams" data-step="02" data-accent="#ffd166">
+    <div class="slide-inner">
+      <div class="copy">
+        <div class="kicker">02 · Two kinds of dream</div>
+        <h2>One plans. One predicts.</h2>
+        <p class="sub">MuZero builds a model to imagine. An LLM builds one as a side effect of next-token prediction.</p>
+      </div>
+      <div class="stage" data-scene="two-worlds"><canvas aria-hidden="true"></canvas></div>
+      <p class="source"><a href="https://arxiv.org/abs/1803.10122" target="_blank" rel="noopener">Ha &amp; Schmidhuber, World Models</a>, 2018 · <a href="https://arxiv.org/abs/1911.08265" target="_blank" rel="noopener">Schrittwieser et al., MuZero</a>, 2020.</p>
+    </div>
+    <p class="sr-only">Split animation: left, a learned model rolling out imagined futures; right, a transformer stack where a world state emerges from token prediction.</p>
+  </section>
+
+  <section class="slide" data-title="The board" data-step="03" data-accent="#5ef2b0">
+    <div class="slide-inner">
+      <div class="copy">
+        <div class="kicker">03 · The board appears</div>
+        <h2>It never saw a board.</h2>
+        <p class="sub">Only moves. Yet the board state appears in the activations.</p>
+      </div>
+      <div class="stage tall" data-scene="othello"><canvas aria-hidden="true"></canvas></div>
+      <p class="source"><a href="https://arxiv.org/abs/2210.13382" target="_blank" rel="noopener">Li et al., Emergent World Representations</a>, ICLR 2023 · <a href="https://www.neelnanda.io/mechanistic-interpretability/othello" target="_blank" rel="noopener">Nanda, Othello-GPT is linear</a>, 2023.</p>
+    </div>
+    <p class="sr-only">Animation: a stream of Othello moves on the left; on the right, discs appear and flip on a board; a probe lens sweeps over the board, revealing a heat map of the model's internal board state.</p>
+  </section>
+
+  <section class="slide" data-title="The direction" data-step="04" data-accent="#a78bfa">
+    <div class="slide-inner">
+      <div class="copy">
+        <div class="kicker">04 · The representation</div>
+        <h2>A direction, not a table.</h2>
+        <p class="sub">Each square is a coordinate: <em>mine ↔ theirs</em>.</p>
+      </div>
+      <div class="stage" data-scene="linear"><canvas aria-hidden="true"></canvas></div>
+      <p class="source"><a href="https://arxiv.org/abs/2309.00941" target="_blank" rel="noopener">Nanda, Lee &amp; Wattenberg, Emergent Linear Representations</a>, 2023 · <a href="https://arxiv.org/abs/2311.03658" target="_blank" rel="noopener">Park et al., The Linear Representation Hypothesis</a>, 2024.</p>
+    </div>
+    <p class="sr-only">Animation: a three-dimensional point cloud of activation directions, with one highlighted vector projected onto a glowing mine-versus-theirs axis; a tile card cycles between empty, mine and theirs.</p>
+  </section>
+
+  <section class="slide" data-title="The intervention" data-step="05" data-accent="#6ee7ff">
+    <div class="slide-inner">
+      <div class="copy">
+        <div class="kicker">05 · The intervention</div>
+        <h2>Change the map. Change the move.</h2>
+        <p class="sub">Edit the internal state, and the model plays a different board.</p>
+      </div>
+      <div class="stage tall" data-scene="intervention"><canvas aria-hidden="true"></canvas></div>
+      <p class="source"><a href="https://arxiv.org/abs/2210.13382" target="_blank" rel="noopener">Li et al.</a>, 2023 · <a href="https://arxiv.org/abs/2309.00941" target="_blank" rel="noopener">Nanda et al.</a>, 2023 · <a href="https://arxiv.org/abs/2106.02997" target="_blank" rel="noopener">Geiger et al., Causal Abstractions</a>, 2021.</p>
+    </div>
+    <p class="sr-only">Animation: a board with legal moves, a latent activation pushed along the mine-theirs direction, and a bar chart of next-move probabilities morphing after the internal board is edited.</p>
+  </section>
+
+  <section class="slide" data-title="The player" data-step="06" data-accent="#ffd166">
+    <div class="slide-inner">
+      <div class="copy">
+        <div class="kicker">06 · The hidden variable</div>
+        <h2>It learns the board. And the player.</h2>
+        <p class="sub">Chess forces a second latent: how strong the game is.</p>
+      </div>
+      <div class="stage tall" data-scene="chess"><canvas aria-hidden="true"></canvas></div>
+      <p class="source"><a href="https://arxiv.org/abs/2403.15498" target="_blank" rel="noopener">Karvonen, Emergent World Models and Latent Variable Estimation in Chess-Playing Language Models</a>, COLM 2024.</p>
+    </div>
+    <p class="sr-only">Animation: a chessboard where an internal pawn is deleted, a skill gauge rises, and a win-rate bar grows from 16.7 to 43.2 percent.</p>
+  </section>
+
+  <section class="slide" data-title="Space & time" data-step="07" data-accent="#6ee7ff">
+    <div class="slide-inner">
+      <div class="copy">
+        <div class="kicker">07 · The world map</div>
+        <h2>A map of the world, written in activations.</h2>
+        <p class="sub">Latitude, longitude, and time are linear directions.</p>
+      </div>
+      <div class="stage tall" data-scene="spacetime"><canvas aria-hidden="true"></canvas></div>
+      <p class="source"><a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">Gurnee &amp; Tegmark, Language Models Represent Space and Time</a>, ICLR 2024.</p>
+    </div>
+    <p class="sr-only">Animation: a rotating holographic globe with city lights, beside a linear timeline of historical events; a probe scan travels through time.</p>
+  </section>
+
+  <section class="slide" data-title="Geometry" data-step="08" data-accent="#ff7a90">
+    <div class="slide-inner">
+      <div class="copy">
+        <div class="kicker">08 · The geometry</div>
+        <h2>Truth is a line. Weeks are a circle.</h2>
+        <p class="sub">Some concepts are directions. Some need a whole subspace.</p>
+      </div>
+      <div class="stage tall" data-scene="geometry"><canvas aria-hidden="true"></canvas></div>
+      <p class="source"><a href="https://arxiv.org/abs/2310.06824" target="_blank" rel="noopener">Marks &amp; Tegmark, The Geometry of Truth</a>, 2024 · <a href="https://arxiv.org/abs/2405.14860" target="_blank" rel="noopener">Engels et al., Not All Features Are One-Dimensionally Linear</a>, 2025.</p>
+    </div>
+    <p class="sr-only">Animation: true and false statements separate along a glowing line; beside it, concentric circles for days of the week and months of the year compute modular arithmetic.</p>
+  </section>
+
+  <section class="slide" data-title="Circuits" data-step="09" data-accent="#a78bfa">
+    <div class="slide-inner">
+      <div class="copy">
+        <div class="kicker">09 · The readout</div>
+        <h2>The map is read by circuits.</h2>
+        <p class="sub">Attention routes. MLPs remember. The residual stream carries.</p>
+      </div>
+      <div class="stage tall" data-scene="circuits"><canvas aria-hidden="true"></canvas></div>
+      <p class="source"><a href="https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html" target="_blank" rel="noopener">Olsson et al., In-context Learning and Induction Heads</a>, 2022 · <a href="https://arxiv.org/abs/2012.14913" target="_blank" rel="noopener">Geva et al., FFN Layers Are Key-Value Memories</a>, 2021 · <a href="https://arxiv.org/abs/2202.05262" target="_blank" rel="noopener">Meng et al., ROME</a>, 2022.</p>
+    </div>
+    <p class="sr-only">Split animation: left, an induction-head circuit copying a pattern across a token sequence; right, an MLP key-value memory recalling Seattle and being edited to Paris.</p>
+  </section>
+
+  <section class="slide" data-title="The territory" data-step="10" data-accent="#6ee7ff">
+    <div class="slide-inner">
+      <div class="copy">
+        <div class="kicker">10 · The synthesis</div>
+        <h2>A map, not the territory.</h2>
+        <p class="sub">Compressed, editable, plural, and sometimes wrong.</p>
+      </div>
+      <div class="stage" data-scene="synthesis"><canvas aria-hidden="true"></canvas></div>
+      <p class="source"><a href="https://www.neelnanda.io/mechanistic-interpretability/othello" target="_blank" rel="noopener">Nanda</a>, 2023 · <a href="https://arxiv.org/abs/2209.10652" target="_blank" rel="noopener">Elhage et al., Toy Models of Superposition</a>, 2022 · <a href="https://arxiv.org/abs/2405.14860" target="_blank" rel="noopener">Engels et al.</a>, 2025.</p>
+    </div>
+    <p class="sr-only">Animation: a floating holographic map above a dark mountain landscape; some tiles flicker and one beam reveals only a small patch of the terrain.</p>
+  </section>
+
+  <section class="slide" data-title="Sources" data-step="—" data-accent="#6ee7ff">
+    <div class="slide-inner">
+      <div class="copy">
+        <div class="kicker">Sources</div>
+        <h2>Read the primary work.</h2>
+        <p class="sub">The diagrams are schematic. The numbers come from the papers.</p>
+        <ol class="refs">
+          <li><b>Li, Hopkins, Bau, Viégas, Pfister &amp; Wattenberg</b> <span>“Emergent World Representations.” ICLR 2023.</span> <a href="https://arxiv.org/abs/2210.13382" target="_blank" rel="noopener">arXiv:2210.13382</a></li>
+          <li><b>Nanda, Lee &amp; Wattenberg</b> <span>“Emergent Linear Representations in World Models.” 2023.</span> <a href="https://arxiv.org/abs/2309.00941" target="_blank" rel="noopener">arXiv:2309.00941</a></li>
+          <li><b>Karvonen</b> <span>“Emergent World Models and Latent Variable Estimation in Chess-Playing Language Models.” COLM 2024.</span> <a href="https://arxiv.org/abs/2403.15498" target="_blank" rel="noopener">arXiv:2403.15498</a></li>
+          <li><b>Gurnee &amp; Tegmark</b> <span>“Language Models Represent Space and Time.” ICLR 2024.</span> <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">arXiv:2310.02207</a></li>
+          <li><b>Marks &amp; Tegmark</b> <span>“The Geometry of Truth.” 2024.</span> <a href="https://arxiv.org/abs/2310.06824" target="_blank" rel="noopener">arXiv:2310.06824</a></li>
+          <li><b>Park, Choe &amp; Veitch</b> <span>“The Linear Representation Hypothesis and the Geometry of LLMs.” ICML 2024.</span> <a href="https://arxiv.org/abs/2311.03658" target="_blank" rel="noopener">arXiv:2311.03658</a></li>
+          <li><b>Engels, Michaud, Liao, Gurnee &amp; Tegmark</b> <span>“Not All Language Model Features Are One-Dimensionally Linear.” 2025.</span> <a href="https://arxiv.org/abs/2405.14860" target="_blank" rel="noopener">arXiv:2405.14860</a></li>
+          <li><b>Elhage et al.</b> <span>“Toy Models of Superposition.” Transformer Circuits Thread, 2022.</span> <a href="https://transformer-circuits.pub/2022/toy_model/index.html" target="_blank" rel="noopener">transformer-circuits.pub</a></li>
+          <li><b>Olsson et al.</b> <span>“In-context Learning and Induction Heads.” Transformer Circuits Thread, 2022.</span> <a href="https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html" target="_blank" rel="noopener">transformer-circuits.pub</a></li>
+          <li><b>Geva, Schuster, Berant &amp; Levy</b> <span>“Transformer Feed-Forward Layers Are Key-Value Memories.” EMNLP 2021.</span> <a href="https://arxiv.org/abs/2012.14913" target="_blank" rel="noopener">arXiv:2012.14913</a></li>
+          <li><b>Meng, Bau, Andonian &amp; Belinkov</b> <span>“Locating and Editing Factual Associations in GPT.” NeurIPS 2022.</span> <a href="https://arxiv.org/abs/2202.05262" target="_blank" rel="noopener">arXiv:2202.05262</a></li>
+          <li><b>Geiger, Lu, Icard &amp; Potts</b> <span>“Causal Abstractions of Neural Networks.” NeurIPS 2021.</span> <a href="https://arxiv.org/abs/2106.02997" target="_blank" rel="noopener">arXiv:2106.02997</a></li>
+          <li><b>Wang, Variengien, Conmy, Shlegeris &amp; Steinhardt</b> <span>“A Circuit for Indirect Object Identification in GPT-2 small.” ICLR 2023.</span> <a href="https://arxiv.org/abs/2211.00593" target="_blank" rel="noopener">arXiv:2211.00593</a></li>
+          <li><b>Ha &amp; Schmidhuber</b> <span>“World Models.” 2018.</span> <a href="https://arxiv.org/abs/1803.10122" target="_blank" rel="noopener">arXiv:1803.10122</a></li>
+          <li><b>Schrittwieser et al.</b> <span>“Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model.” Nature 2020.</span> <a href="https://arxiv.org/abs/1911.08265" target="_blank" rel="noopener">arXiv:1911.08265</a></li>
+          <li><b>Bricken et al.</b> <span>“Towards Monosemanticity.” Transformer Circuits Thread, 2023.</span> <a href="https://transformer-circuits.pub/2023/monosemantic-features/index.html" target="_blank" rel="noopener">transformer-circuits.pub</a></li>
+        </ol>
+        <div class="closing">
+          <span>Next-token prediction builds a world, one gradient at a time.</span>
+          <a href="#top">Back to the beginning ↑</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(() => {
+  "use strict";
+
+  const TAU = Math.PI * 2;
+  const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const fract = (x) => x - Math.floor(x);
+  const smooth = (t) => {
+    t = clamp(t, 0, 1);
+    return t * t * (3 - 2 * t);
+  };
+  const easeInOut = (t) => {
+    t = clamp(t, 0, 1);
+    return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+  };
+  const rnd = (seed) => {
+    let s = seed >>> 0;
+    return () => {
+      s = (s * 1664525 + 1013904223) >>> 0;
+      return s / 4294967296;
+    };
+  };
+  const hexRgb = (hex) => {
+    const h = hex.replace("#", "");
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+  };
+  const rgba = (hex, a) => {
+    const [r, g, b] = hexRgb(hex);
+    return `rgba(${r},${g},${b},${clamp(a, 0, 1)})`;
+  };
+  const colorMix = (a, b, t) => {
+    const A = hexRgb(a), B = hexRgb(b);
+    return `rgb(${Math.round(lerp(A[0], B[0], t))},${Math.round(lerp(A[1], B[1], t))},${Math.round(lerp(A[2], B[2], t))})`;
+  };
+
+  const C = {
+    cyan: "#6ee7ff",
+    violet: "#a78bfa",
+    coral: "#ff7a90",
+    gold: "#ffd166",
+    mint: "#5ef2b0",
+    white: "#f2f5ff",
+    muted: "#96a0c8",
+    dim: "#5b648c"
+  };
+
+  const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+  const SERIF = "Iowan Old Style, Palatino Linotype, Palatino, Georgia, serif";
+
+  const glowCache = new Map();
+  function glowSprite(color) {
+    let c = glowCache.get(color);
+    if (c) return c;
+    c = document.createElement("canvas");
+    c.width = c.height = 128;
+    const g = c.getContext("2d");
+    const grad = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    grad.addColorStop(0, rgba(color, 1));
+    grad.addColorStop(.16, rgba(color, .62));
+    grad.addColorStop(.46, rgba(color, .17));
+    grad.addColorStop(1, rgba(color, 0));
+    g.fillStyle = grad;
+    g.fillRect(0, 0, 128, 128);
+    glowCache.set(color, c);
+    return c;
+  }
+  function glow(ctx, color, x, y, r, a = 1) {
+    if (r <= 0 || a <= 0) return;
+    ctx.globalAlpha = clamp(a, 0, 1);
+    ctx.drawImage(glowSprite(color), x - r, y - r, r * 2, r * 2);
+    ctx.globalAlpha = 1;
+  }
+  function line(ctx, x1, y1, x2, y2, color, width = 1, alpha = 1) {
+    ctx.strokeStyle = rgba(color, alpha);
+    ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+  function glowLine(ctx, x1, y1, x2, y2, color, width = 1, alpha = 1) {
+    ctx.strokeStyle = rgba(color, alpha * .16);
+    ctx.lineWidth = width * 5;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.strokeStyle = rgba(color, alpha);
+    ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+  function roundRect(ctx, x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function label(ctx, text, x, y, color, alpha = 1, size = 10, align = "left", weight = 500) {
+    ctx.font = `${weight} ${size}px ${MONO}`;
+    ctx.fillStyle = rgba(color, alpha);
+    ctx.textAlign = align;
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  }
+  function serifLabel(ctx, text, x, y, color, alpha = 1, size = 12, align = "center") {
+    ctx.font = `400 ${size}px ${SERIF}`;
+    ctx.fillStyle = rgba(color, alpha);
+    ctx.textAlign = align;
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  }
+  function quadPoint(x0, y0, cx, cy, x1, y1, t) {
+    const u = 1 - t;
+    return {
+      x: u * u * x0 + 2 * u * t * cx + t * t * x1,
+      y: u * u * y0 + 2 * u * t * cy + t * t * y1
+    };
+  }
+  function project3(x, y, z, ry, rx, cx, cy, scale) {
+    const cyw = Math.cos(ry), syw = Math.sin(ry);
+    const x1 = x * cyw - z * syw;
+    const z1 = x * syw + z * cyw;
+    const cxr = Math.cos(rx), sxr = Math.sin(rx);
+    const y1 = y * cxr - z1 * sxr;
+    const z2 = y * sxr + z1 * cxr;
+    const p = 1 / (1 + z2 * .16);
+    return { x: cx + x1 * scale * p, y: cy - y1 * scale * p, z: z2, s: p };
+  }
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const starsCanvas = document.getElementById("starfield");
+  const starsCtx = starsCanvas.getContext("2d");
+  let SW = 0, SH = 0, SDPR = 1;
+  let starData = [];
+  let meteors = [];
+
+  function makeStars() {
+    const r = rnd(19);
+    starData = Array.from({ length: 460 }, () => {
+      const roll = r();
+      return {
+        x: r() * SW,
+        y: r() * SH,
+        r: .25 + r() * 1.25,
+        a: .12 + r() * .62,
+        tw: .15 + r() * 1.6,
+        ph: r() * TAU,
+        c: roll > .92 ? "#cfe1ff" : roll > .78 ? "#d9c8ff" : "#ffffff"
+      };
+    });
+  }
+  function resizeStars() {
+    SDPR = Math.min(window.devicePixelRatio || 1, 2);
+    SW = window.innerWidth;
+    SH = window.innerHeight;
+    starsCanvas.width = Math.round(SW * SDPR);
+    starsCanvas.height = Math.round(SH * SDPR);
+    starsCtx.setTransform(SDPR, 0, 0, SDPR, 0, 0);
+    makeStars();
+    drawStars(0);
+  }
+  function spawnMeteor() {
+    const dir = Math.random() > .5 ? 1 : -1;
+    meteors.push({
+      x: SW * (.2 + Math.random() * .6),
+      y: -40 - Math.random() * 80,
+      vx: dir * (1.2 + Math.random() * 2.2),
+      vy: 5 + Math.random() * 4,
+      life: 1,
+      decay: .55 + Math.random() * .35
+    });
+  }
+  function drawStars(t) {
+    starsCtx.clearRect(0, 0, SW, SH);
+    for (const s of starData) {
+      const a = s.a * (.65 + .35 * Math.sin(t * s.tw + s.ph));
+      starsCtx.globalAlpha = a;
+      starsCtx.fillStyle = s.c;
+      starsCtx.beginPath();
+      starsCtx.arc(s.x, s.y, s.r, 0, TAU);
+      starsCtx.fill();
+    }
+    starsCtx.globalAlpha = 1;
+    starsCtx.globalCompositeOperation = "lighter";
+    for (let i = meteors.length - 1; i >= 0; i--) {
+      const m = meteors[i];
+      m.x += m.vx * 2.2;
+      m.y += m.vy * 2.2;
+      m.life -= m.decay * .016;
+      if (m.life <= 0) {
+        meteors.splice(i, 1);
+        continue;
+      }
+      const len = 70 + 90 * m.life;
+      const nx = m.x - m.vx * 7;
+      const ny = m.y - m.vy * 7;
+      const grad = starsCtx.createLinearGradient(m.x, m.y, nx, ny);
+      grad.addColorStop(0, rgba(C.cyan, .55 * m.life));
+      grad.addColorStop(1, rgba(C.cyan, 0));
+      starsCtx.strokeStyle = grad;
+      starsCtx.lineWidth = 1.4;
+      starsCtx.beginPath();
+      starsCtx.moveTo(m.x, m.y);
+      starsCtx.lineTo(nx, ny);
+      starsCtx.stroke();
+      glow(starsCtx, C.cyan, m.x, m.y, len * .16, .5 * m.life);
+    }
+    starsCtx.globalCompositeOperation = "source-over";
+  }
+
+  class Stage {
+    constructor(canvas, drawFn, resizeFn) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext("2d");
+      this.drawFn = drawFn;
+      this.resizeFn = resizeFn;
+      this.w = 0;
+      this.h = 0;
+      this.t = 0;
+      this.dust = [];
+      this.ro = new ResizeObserver(() => this.resize());
+      this.ro.observe(canvas.parentElement);
+      this.resize();
+    }
+    resize() {
+      const rect = this.canvas.parentElement.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      this.w = Math.max(1, rect.width);
+      this.h = Math.max(1, rect.height);
+      this.canvas.width = Math.round(this.w * dpr);
+      this.canvas.height = Math.round(this.h * dpr);
+      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const r = rnd(303);
+      this.dust = Array.from({ length: 34 }, () => ({
+        x: r(), y: r(), vx: (r() - .5) * .006, vy: -.004 - r() * .010,
+        s: .4 + r() * 1.4, a: .04 + r() * .12, ph: r() * TAU,
+        c: r() > .7 ? C.violet : r() > .4 ? C.cyan : C.white
+      }));
+      if (this.resizeFn) this.resizeFn(this.w, this.h);
+      this.render(this.t, 0);
+    }
+    ambient(t) {
+      const ctx = this.ctx;
+      const g = ctx.createRadialGradient(this.w * .5, this.h * .38, 0, this.w * .5, this.h * .38, Math.max(this.w, this.h) * .55);
+      g.addColorStop(0, "rgba(70,110,255,.055)");
+      g.addColorStop(.55, "rgba(70,110,255,.015)");
+      g.addColorStop(1, "rgba(70,110,255,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, this.w, this.h);
+      const g2 = ctx.createRadialGradient(this.w * .82, this.h * .72, 0, this.w * .82, this.h * .72, Math.max(this.w, this.h) * .42);
+      g2.addColorStop(0, "rgba(167,139,250,.04)");
+      g2.addColorStop(1, "rgba(167,139,250,0)");
+      ctx.fillStyle = g2;
+      ctx.fillRect(0, 0, this.w, this.h);
+      ctx.globalCompositeOperation = "lighter";
+      for (const p of this.dust) {
+        const x = ((p.x + t * p.vx) % 1 + 1) % 1 * this.w;
+        const y = ((p.y + t * p.vy) % 1 + 1) % 1 * this.h;
+        const a = p.a * (.55 + .45 * Math.sin(t * .8 + p.ph));
+        glow(ctx, p.c, x, y, p.s * 5, a);
+        ctx.fillStyle = rgba(p.c, a);
+        ctx.beginPath();
+        ctx.arc(x, y, p.s, 0, TAU);
+        ctx.fill();
+      }
+      ctx.globalCompositeOperation = "source-over";
+    }
+    render(t, dt) {
+      this.ctx.clearRect(0, 0, this.w, this.h);
+      this.ambient(t);
+      this.drawFn(this.ctx, t, dt, this);
+    }
+    frame(dt) {
+      this.t += dt;
+      this.render(this.t, dt);
+    }
+  }
+  function heroScene() {
+    let W = 0, H = 0, pts = [];
+    function resize(w, h) {
+      W = w; H = h;
+      const r = rnd(41);
+      pts = Array.from({ length: 130 }, () => ({
+        a: r() * TAU,
+        rr: .06 + r() * .46,
+        y: r(),
+        sp: .018 + r() * .07,
+        size: .5 + r() * 1.7,
+        ph: r() * TAU,
+        c: r() > .72 ? C.violet : r() > .4 ? C.cyan : "#e6edff"
+      }));
+    }
+    function draw(ctx, t) {
+      const cx = W * .5, cy = H * .5;
+      const R = Math.min(W * .36, H * .46);
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.8);
+      g.addColorStop(0, "rgba(110,231,255,.10)");
+      g.addColorStop(.38, "rgba(167,139,250,.055)");
+      g.addColorStop(1, "rgba(3,4,10,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalCompositeOperation = "lighter";
+      for (let k = 0; k < 5; k++) {
+        const phase = t * .22 + k * .62;
+        ctx.beginPath();
+        for (let y = -30; y <= H + 30; y += 9) {
+          const u = y / H;
+          const x = cx + Math.sin(u * TAU * 1.15 + phase) * R * .10 + Math.sin(u * TAU * 2.7 - phase * .8) * R * .032;
+          if (y === -30) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = rgba(k === 0 ? C.cyan : C.violet, .045 + .018 * k);
+        ctx.lineWidth = 16 - k * 2.6;
+        ctx.stroke();
+      }
+      for (const p of pts) {
+        const u = fract(p.y + t * p.sp);
+        const y = H * .06 + u * H * .88;
+        const x = cx + Math.cos(p.a + t * .18) * R * p.rr + Math.sin(u * TAU * 1.5 + p.ph) * R * .055;
+        const a = .12 + .52 * Math.sin(u * Math.PI) * (.55 + .45 * Math.sin(t * 1.1 + p.ph));
+        glow(ctx, p.c, x, y, p.size * 6, a * .45);
+        ctx.fillStyle = rgba(p.c, a);
+        ctx.beginPath();
+        ctx.arc(x, y, p.size, 0, TAU);
+        ctx.fill();
+      }
+      for (let i = 1; i <= 3; i++) {
+        ctx.strokeStyle = rgba(C.cyan, .032);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, R * (.55 + i * .22) + Math.sin(t * .4 + i) * 7, 0, TAU);
+        ctx.stroke();
+      }
+      ctx.globalCompositeOperation = "source-over";
+    }
+    return { resize, draw };
+  }
+
+  function riverScene() {
+    let W = 0, H = 0, arcs = [];
+    const words = ["The", "city", "of", "Paris", "is", "in", "→"];
+    function resize(w, h) {
+      W = w; H = h;
+      const r = rnd(12);
+      arcs = [];
+      for (let l = 0; l < 8; l++) {
+        for (let i = 0; i < 6; i++) {
+          if (r() > .58) continue;
+          arcs.push({ l, i, ph: r() * TAU, sp: .12 + r() * .24 });
+        }
+      }
+    }
+    function draw(ctx, t) {
+      const left = W * .10, right = W * .92;
+      const top = H * .17, bottom = H * .82;
+      const colW = (right - left) / 6;
+      const lastX = right - colW * .08;
+      const rowH = (bottom - top) / 8;
+      const glowR = ctx.createRadialGradient(lastX, H * .5, 0, lastX, H * .5, H * .55);
+      glowR.addColorStop(0, "rgba(110,231,255,.09)");
+      glowR.addColorStop(1, "rgba(110,231,255,0)");
+      ctx.fillStyle = glowR;
+      ctx.fillRect(lastX - H * .4, 0, H * .8, H);
+      for (let l = 0; l <= 8; l++) {
+        const y = top + l * rowH;
+        line(ctx, left, y, right, y, C.cyan, 1, l === 0 || l === 8 ? .12 : .045);
+        label(ctx, "L" + (l + 1), left - 14, y + rowH * .5, C.muted, .48, 8.5, "right");
+      }
+      for (let i = 0; i < 6; i++) {
+        const x = left + i * colW;
+        line(ctx, x, top, x, bottom, C.violet, 1, .06);
+        label(ctx, words[i], x, top - 20, C.muted, .78, 10.5, "center");
+      }
+      label(ctx, words[6], lastX, top - 20, C.cyan, .95, 12, "center");
+      glowLine(ctx, lastX, top, lastX, bottom, C.cyan, 2.4, .78);
+      label(ctx, "residual stream", lastX + 18, top + 16, C.cyan, .72, 9, "left");
+      ctx.globalCompositeOperation = "lighter";
+      for (const a of arcs) {
+        const y0 = top + a.l * rowH + rowH * .5;
+        const x0 = left + a.i * colW;
+        const cx = (x0 + lastX) / 2;
+        const cy = y0 - rowH * (1.15 + a.i * .1);
+        const u = fract(t * a.sp + a.ph);
+        const p = quadPoint(x0, y0, cx, cy, lastX, y0, u);
+        ctx.strokeStyle = rgba(C.cyan, .075);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);
+        ctx.quadraticCurveTo(cx, cy, lastX, y0);
+        ctx.stroke();
+        glow(ctx, C.cyan, p.x, p.y, 7.5, .55);
+      }
+      for (let l = 0; l < 8; l++) {
+        const y = top + (l + .5) * rowH;
+        const pulse = .5 + .5 * Math.sin(t * 1.7 - l * .58);
+        const size = 6.5 + 3 * pulse;
+        glow(ctx, C.violet, lastX, y, 19, .18 + .18 * pulse);
+        ctx.strokeStyle = rgba(C.violet, .68);
+        ctx.lineWidth = 1.15;
+        ctx.beginPath();
+        for (let k = 0; k < 6; k++) {
+          const ang = -Math.PI / 2 + k * TAU / 6;
+          const px = lastX + Math.cos(ang) * size;
+          const py = y + Math.sin(ang) * size;
+          if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.stroke();
+        const ay = y - rowH * .34;
+        line(ctx, lastX, y - size, lastX, ay, C.violet, 1, .3);
+        ctx.fillStyle = rgba(C.violet, .8);
+        ctx.beginPath();
+        ctx.moveTo(lastX, ay - 4);
+        ctx.lineTo(lastX - 3, ay + 2);
+        ctx.lineTo(lastX + 3, ay + 2);
+        ctx.closePath();
+        ctx.fill();
+        if (H > 420) label(ctx, "MLP", lastX + 27, y, C.violet, .38, 8, "left");
+      }
+      for (let k = 0; k < 20; k++) {
+        const u = fract(t * .115 + k / 20);
+        const y = top + u * (bottom - top);
+        glow(ctx, C.cyan, lastX, y, 9, .3);
+      }
+      ctx.globalCompositeOperation = "source-over";
+      label(ctx, "tokens", left, top - 44, C.muted, .5, 8.5, "left");
+      label(ctx, "layers", left - 14, top - 44, C.muted, .5, 8.5, "right");
+      label(ctx, "attention", lastX - 130, top + rowH * .5, C.cyan, .62, 8.5, "right");
+    }
+    return { resize, draw };
+  }
+
+  function twoWorldsScene() {
+    let W = 0, H = 0;
+    function resize(w, h) { W = w; H = h; }
+    function drawExplicit(ctx, cx, cy, s, t) {
+      const wmW = s * 2.0, wmH = s * 1.14;
+      const x = cx - wmW / 2, y = cy - wmH * .06;
+      const g = ctx.createRadialGradient(cx, y + wmH * .5, 0, cx, y + wmH * .5, s * 1.5);
+      g.addColorStop(0, "rgba(255,209,102,.08)");
+      g.addColorStop(1, "rgba(255,209,102,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(cx - s * 1.5, y - s * 1.4, s * 3, s * 3);
+      roundRect(ctx, x, y, wmW, wmH, 14);
+      ctx.fillStyle = "rgba(255,209,102,.035)";
+      ctx.fill();
+      ctx.strokeStyle = rgba(C.gold, .18);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      for (let i = 0; i <= 4; i++) {
+        line(ctx, x + wmW * .1 + i * wmW * .2, y + wmH * .2, x + wmW * .1 + i * wmW * .2, y + wmH * .86, C.gold, 1, .065);
+        line(ctx, x + wmW * .1, y + wmH * .2 + i * wmH * .165, x + wmW * .9, y + wmH * .2 + i * wmH * .165, C.gold, 1, .065);
+      }
+      const path = [[0, 4], [1, 4], [1, 3], [2, 3], [3, 3], [3, 2], [4, 2]];
+      ctx.beginPath();
+      path.forEach(([i, j], k) => {
+        const px = x + wmW * (.1 + i * .2);
+        const py = y + wmH * (.2 + j * .165);
+        if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      });
+      ctx.strokeStyle = rgba(C.gold, .46);
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      const u = fract(t * .16);
+      const seg = Math.min(path.length - 2, Math.floor(u * (path.length - 1)));
+      const v = u * (path.length - 1) - seg;
+      const a0 = path[seg], a1 = path[seg + 1];
+      const ax = x + wmW * (.1 + lerp(a0[0], a1[0], v) * .2);
+      const ay = y + wmH * (.2 + lerp(a0[1], a1[1], v) * .165);
+      glow(ctx, C.gold, ax, ay, 17, .7);
+      ctx.fillStyle = "#fff4c9";
+      ctx.beginPath();
+      ctx.arc(ax, ay, 3.2, 0, TAU);
+      ctx.fill();
+      label(ctx, "learned model", cx, y + wmH + 18, C.gold, .62, 9, "center");
+      const rootY = y - 20;
+      const rootX = cx;
+      const leaves = [
+        { x: cx - s * .62, y: y - s * .62, ph: .2 },
+        { x: cx, y: y - s * .78, ph: .55 },
+        { x: cx + s * .62, y: y - s * .62, ph: .85 }
+      ];
+      for (const leaf of leaves) {
+        const u2 = fract(t * .2 + leaf.ph);
+        glowLine(ctx, rootX, rootY, leaf.x, leaf.y, C.gold, 1, .28);
+        glow(ctx, C.gold, leaf.x, leaf.y, 14, .38);
+        ctx.fillStyle = rgba(C.gold, .7);
+        ctx.beginPath();
+        ctx.arc(leaf.x, leaf.y, 2.6, 0, TAU);
+        ctx.fill();
+        const p = quadPoint(rootX, rootY, (rootX + leaf.x) / 2, (rootY + leaf.y) / 2 - 20, leaf.x, leaf.y, u2);
+        glow(ctx, "#fff4c9", p.x, p.y, 6, .65);
+      }
+      glow(ctx, C.gold, rootX, rootY, 12, .7);
+      label(ctx, "imagine", rootX, rootY - 22, C.gold, .55, 8.5, "center");
+    }
+    function drawImplicit(ctx, cx, cy, s, t) {
+      const w = s * 2.0, h = s * .32;
+      const x = cx - w / 2, y = cy - s * .48;
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, s * 1.5);
+      g.addColorStop(0, "rgba(110,231,255,.075)");
+      g.addColorStop(1, "rgba(110,231,255,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(cx - s * 1.5, cy - s * 1.4, s * 3, s * 3);
+      for (let l = 0; l < 3; l++) {
+        const yy = y + l * (h + 8);
+        roundRect(ctx, x, yy, w, h, 10);
+        ctx.fillStyle = rgba(C.cyan, .03 + .008 * l);
+        ctx.fill();
+        ctx.strokeStyle = rgba(C.cyan, .14);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        for (let i = 0; i < 5; i++) {
+          const tw = (w - 34) / 5 - 6;
+          const tx = x + 17 + i * ((w - 34) / 5);
+          roundRect(ctx, tx, yy + h * .3, tw, h * .4, 5);
+          ctx.fillStyle = rgba(C.cyan, .035 + .012 * l);
+          ctx.fill();
+          label(ctx, ["The", "city", "of", "Paris", "…"][i], tx + tw / 2, yy + h * .5, C.muted, .48, 7.5, "center");
+        }
+      }
+      const sx = cx + w / 2 + 12;
+      glowLine(ctx, sx, y - 8, sx, y + 3 * (h + 8) - 6, C.cyan, 2, .65);
+      const u = smooth(clamp((t % 9) / 3, 0, 1));
+      const bx = cx, by = y + 3 * (h + 8) + 42;
+      ctx.globalAlpha = u;
+      glow(ctx, C.cyan, bx, by, 48, .24);
+      ctx.strokeStyle = rgba(C.cyan, .42);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(bx, by, 27, 0, TAU);
+      ctx.stroke();
+      for (let i = 0; i < 4; i++) {
+        const ang = i * TAU / 4 + t * .18;
+        ctx.fillStyle = rgba(C.cyan, .45);
+        ctx.beginPath();
+        ctx.arc(bx + Math.cos(ang) * 16, by + Math.sin(ang) * 16, 1.7, 0, TAU);
+        ctx.fill();
+      }
+      ctx.strokeStyle = rgba(C.cyan, .22);
+      ctx.beginPath();
+      ctx.ellipse(bx, by, 27, 10, 0, 0, TAU);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(bx, by, 10, 27, 0, 0, TAU);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      label(ctx, "world state", bx, by + 44, C.cyan, .62, 9, "center");
+      label(ctx, "next token", sx + 10, y + 10, C.cyan, .55, 8.5, "left");
+      label(ctx, "residual stream", sx + 10, y + 3 * (h + 8) - 22, C.cyan, .4, 8, "left");
+    }
+    function draw(ctx, t) {
+      const mid = W * .5;
+      const sky = ctx.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0, "rgba(6,8,18,0)");
+      sky.addColorStop(1, "rgba(6,8,18,.28)");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, W, H);
+      line(ctx, mid, H * .12, mid, H * .88, C.muted, 1, .10);
+      glow(ctx, C.white, mid, H * .5, 26, .08);
+      label(ctx, "EXPLICIT", W * .24, H * .1, C.gold, .75, 9.5, "center");
+      label(ctx, "IMPLICIT", W * .76, H * .1, C.cyan, .75, 9.5, "center");
+      label(ctx, "built to plan", W * .24, H * .135, C.dim, .7, 8, "center");
+      label(ctx, "born from prediction", W * .76, H * .135, C.dim, .7, 8, "center");
+      const s = Math.min(W * .28, H * .34);
+      drawExplicit(ctx, W * .25, H * .53, s, t);
+      drawImplicit(ctx, W * .75, H * .51, s, t);
+    }
+    return { resize, draw };
+  }
+  const DIRS = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+  function initialBoard() {
+    const b = Array.from({ length: 8 }, () => Array(8).fill(0));
+    b[3][3] = 1;
+    b[3][4] = -1;
+    b[4][3] = -1;
+    b[4][4] = 1;
+    return b;
+  }
+  function cloneBoard(b) { return b.map((r) => r.slice()); }
+  function flipsFor(b, r, c, player) {
+    if (b[r][c] !== 0) return [];
+    const flips = [];
+    for (const [dr, dc] of DIRS) {
+      let rr = r + dr, cc = c + dc;
+      const path = [];
+      while (rr >= 0 && rr < 8 && cc >= 0 && cc < 8 && b[rr][cc] === -player) {
+        path.push([rr, cc]);
+        rr += dr;
+        cc += dc;
+      }
+      if (path.length && rr >= 0 && rr < 8 && cc >= 0 && cc < 8 && b[rr][cc] === player) {
+        flips.push(...path);
+      }
+    }
+    return flips;
+  }
+  function legalMoves(b, player) {
+    const out = [];
+    for (let r = 0; r < 8; r++) {
+      for (let c = 0; c < 8; c++) {
+        const f = flipsFor(b, r, c, player);
+        if (f.length) out.push({ r, c, flips: f });
+      }
+    }
+    return out;
+  }
+  function applyMove(b, move, player) {
+    b[move.r][move.c] = player;
+    for (const [r, c] of move.flips) b[r][c] = player;
+  }
+  function buildGame(seed, maxMoves) {
+    const r = rnd(seed);
+    let b = initialBoard();
+    let player = 1;
+    const frames = [{ board: cloneBoard(b), move: null, flips: [], mover: 0, next: 1 }];
+    for (let i = 0; i < maxMoves; i++) {
+      let legal = legalMoves(b, player);
+      if (!legal.length) {
+        player = -player;
+        legal = legalMoves(b, player);
+        if (!legal.length) break;
+      }
+      const m = legal[Math.floor(r() * legal.length)];
+      applyMove(b, m, player);
+      frames.push({ board: cloneBoard(b), move: m, flips: m.flips, mover: player, next: -player });
+      player = -player;
+    }
+    return frames;
+  }
+  function makeGame(seed, n) {
+    for (let s = seed; s < seed + 30; s++) {
+      const g = buildGame(s, n);
+      if (g.length >= 18) return g;
+    }
+    return buildGame(seed, n);
+  }
+  function moveLabel(r, c) {
+    return String.fromCharCode(65 + c) + (8 - r);
+  }
+  function drawOthelloGrid(ctx, bx, by, cell, alpha = .08) {
+    for (let r = 0; r < 8; r++) {
+      for (let c = 0; c < 8; c++) {
+        ctx.strokeStyle = rgba(C.cyan, alpha);
+        ctx.lineWidth = 1;
+        ctx.strokeRect(bx + c * cell, by + r * cell, cell, cell);
+      }
+    }
+  }
+  function drawDisc(ctx, x, y, r, v, alpha = 1, scaleX = 1) {
+    if (r <= .2) return;
+    const mine = v === 1;
+    const rim = mine ? C.cyan : C.gold;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(x, y);
+    ctx.scale(scaleX, 1);
+    glow(ctx, rim, 0, 0, r * 1.9, .22);
+    ctx.fillStyle = mine ? "#0a1024" : "#fff6de";
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = rgba(rim, .82);
+    ctx.lineWidth = 1.25;
+    ctx.stroke();
+    ctx.fillStyle = mine ? "rgba(110,231,255,.11)" : "rgba(255,255,255,.42)";
+    ctx.beginPath();
+    ctx.arc(-r * .24, -r * .24, r * .42, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
+  function drawLegalDots(ctx, board, player, bx, by, cell, color, alpha = .8) {
+    for (const m of legalMoves(board, player)) {
+      const x = bx + m.c * cell + cell / 2;
+      const y = by + m.r * cell + cell / 2;
+      glow(ctx, color, x, y, cell * .26, .2 * alpha);
+      ctx.strokeStyle = rgba(color, .7 * alpha);
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.arc(x, y, cell * .115, 0, TAU);
+      ctx.stroke();
+    }
+  }
+  function drawHeat(ctx, board, player, bx, by, cell, alpha) {
+    for (let r = 0; r < 8; r++) {
+      for (let c = 0; c < 8; c++) {
+        const v = board[r][c];
+        if (v === 0) continue;
+        const col = v === player ? C.cyan : C.coral;
+        ctx.fillStyle = rgba(col, alpha);
+        ctx.fillRect(bx + c * cell + 2, by + r * cell + 2, cell - 4, cell - 4);
+      }
+    }
+  }
+
+  function othelloScene() {
+    let W = 0, H = 0, game = null, bx = 0, by = 0, cell = 0, narrow = false;
+    const moveDur = .55;
+    function resize(w, h) {
+      W = w; H = h;
+      game = makeGame(19, 28);
+      narrow = w < 760;
+      const size = narrow ? Math.min(w * .86, h * .62) : Math.min(w * .58, h * .80);
+      cell = size / 8;
+      bx = narrow ? w * .5 - size / 2 : w * .58 - size / 2;
+      by = narrow ? h * .56 - size / 2 : h * .5 - size / 2;
+    }
+    function draw(ctx, t) {
+      const n = game.length;
+      const idx = (Math.floor(t / moveDur) + 10) % n;
+      const local = fract(t / moveDur);
+      const frame = game[idx];
+      const prev = idx > 0 ? game[idx - 1] : frame;
+      const cx = bx + cell * 4, cy = by + cell * 4;
+      glow(ctx, C.cyan, cx, cy, cell * 6, .05);
+      roundRect(ctx, bx - 9, by - 9, cell * 8 + 18, cell * 8 + 18, 12);
+      ctx.fillStyle = "rgba(10,18,42,.80)";
+      ctx.fill();
+      ctx.strokeStyle = rgba(C.cyan, .34);
+      ctx.lineWidth = 1.1;
+      ctx.stroke();
+      const felt = ctx.createRadialGradient(cx, cy, 0, cx, cy, cell * 6.2);
+      felt.addColorStop(0, "rgba(24,92,94,.20)");
+      felt.addColorStop(.55, "rgba(18,48,72,.08)");
+      felt.addColorStop(1, "rgba(8,18,40,0)");
+      ctx.fillStyle = felt;
+      ctx.fillRect(bx, by, cell * 8, cell * 8);
+      drawOthelloGrid(ctx, bx, by, cell, .13);
+      drawHeat(ctx, frame.board, frame.next, bx, by, cell, .10);
+      for (let i = 0; i < 8; i++) {
+        label(ctx, String.fromCharCode(65 + i), bx + i * cell + cell / 2, by - 19, C.muted, .42, 7, "center");
+        label(ctx, String(8 - i), bx - 15, by + i * cell + cell / 2, C.muted, .42, 7, "right");
+      }
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          let v = frame.board[r][c];
+          let scale = 1;
+          const isFlip = frame.flips.some(([fr, fc]) => fr === r && fc === c);
+          if (isFlip) {
+            const oldV = prev.board[r][c];
+            if (local < .5) v = oldV;
+            scale = Math.abs(Math.cos(local * Math.PI));
+          }
+          if (v === 0) continue;
+          drawDisc(ctx, bx + c * cell + cell / 2, by + r * cell + cell / 2, cell * .36, v, 1, scale);
+        }
+      }
+      drawLegalDots(ctx, frame.board, frame.next, bx, by, cell, C.mint, 1);
+      const probeT = clamp(((t % 16) - 9.5) / 4.5, 0, 1);
+      if (probeT > 0) {
+        const lx = bx - cell * 1.4 + (cell * 10.8) * easeInOut(probeT);
+        const ly = by + cell * 4;
+        const rad = cell * 2.15;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(lx, ly, rad, 0, TAU);
+        ctx.clip();
+        drawHeat(ctx, frame.board, frame.next, bx, by, cell, .17);
+        ctx.restore();
+        glow(ctx, C.cyan, lx, ly, rad * 1.35, .16);
+        ctx.strokeStyle = rgba(C.cyan, .66);
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(lx, ly, rad, 0, TAU);
+        ctx.stroke();
+        label(ctx, "probe", lx, ly - rad - 11, C.cyan, .78, 8.5, "center");
+      }
+      if (!narrow) {
+        label(ctx, "moves", W * .05, H * .20, C.muted, .5, 8.5, "left");
+        for (let k = 0; k < 8; k++) {
+          const j = idx - 7 + k;
+          if (j < 0) continue;
+          const mv = game[j].move;
+          const yy = H * .27 + k * 27;
+          const current = j === idx;
+          if (current) glow(ctx, C.cyan, W * .085, yy, 34, .1);
+          label(ctx, mv ? moveLabel(mv.r, mv.c) : "—", W * .08, yy, current ? C.cyan : C.muted, current ? .95 : .28 + .04 * k, 10.5, "left");
+        }
+        line(ctx, W * .065, H * .23, W * .065, H * .53, C.cyan, 1, .12);
+        label(ctx, "8 layers · 512 dims · 60 move tokens", W * .05, H * .88, C.muted, .45, 8.5, "left");
+      }
+      label(ctx, "board state", bx + cell * 4, by + cell * 8 + 28, C.muted, .7, 8.5, "center");
+      label(ctx, "legal", bx + cell * 4, by + cell * 8 + 44, C.mint, .65, 8, "center");
+    }
+    return { resize, draw };
+  }
+
+  function linearScene() {
+    let W = 0, H = 0, points = [], edges = [], selected = null, vx = .08;
+    function resize(w, h) {
+      W = w; H = h;
+      const r = rnd(29);
+      points = Array.from({ length: 64 }, (_, i) => {
+        const rr = Math.floor(i / 8), cc = i % 8;
+        return {
+          x: (cc - 3.5) / 4 + (r() - .5) * .14,
+          y: (3.5 - rr) / 4 + (r() - .5) * .14,
+          z: (r() - .5) * .95,
+          i, rr, cc
+        };
+      });
+      edges = [];
+      for (const p of points) {
+        if (p.cc < 7) edges.push([p, points[p.i + 1]]);
+        if (p.rr < 7) edges.push([p, points[p.i + 8]]);
+      }
+      selected = points[3 * 8 + 5];
+      vx = .08;
+    }
+    function draw(ctx, t, dt) {
+      const cx = W * .60, cy = H * .5;
+      const scale = Math.min(W * .23, H * .33);
+      const ry = -.55 + Math.sin(t * .16) * .12;
+      const rx = .28;
+      const state = Math.floor(t / 2.5) % 3;
+      const target = state === 1 ? .82 : state === 2 ? -.82 : .08;
+      vx += (target - vx) * Math.min(1, dt * 2.4);
+      const P = (x, y, z) => project3(x, y, z, ry, rx, cx, cy, scale);
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, scale * 1.5);
+      g.addColorStop(0, "rgba(167,139,250,.09)");
+      g.addColorStop(1, "rgba(167,139,250,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(cx - scale * 1.6, cy - scale * 1.6, scale * 3.2, scale * 3.2);
+      for (const [a, b] of edges) {
+        const pa = P(a.x, a.y, a.z);
+        const pb = P(b.x, b.y, b.z);
+        line(ctx, pa.x, pa.y, pb.x, pb.y, C.violet, 1, .045);
+      }
+      const proj = points.map((p) => ({ ...P(p.x, p.y, p.z), p }));
+      proj.sort((a, b) => b.z - a.z);
+      ctx.globalCompositeOperation = "lighter";
+      for (const q of proj) {
+        const a = .10 + .34 * (1 - q.z * .45);
+        glow(ctx, C.violet, q.x, q.y, 7, a * .28);
+        ctx.fillStyle = rgba(C.violet, a);
+        ctx.beginPath();
+        ctx.arc(q.x, q.y, 1.45, 0, TAU);
+        ctx.fill();
+      }
+      const a0 = P(-1.65, 0, 0), a1 = P(1.65, 0, 0);
+      const o = P(0, 0, 0);
+      glowLine(ctx, a0.x, a0.y, a1.x, a1.y, C.cyan, 1.8, .72);
+      label(ctx, "theirs", a0.x - 9, a0.y, C.coral, vx < 0 ? .95 : .4, 9.5, "right");
+      label(ctx, "mine", a1.x + 9, a1.y, C.cyan, vx > 0 ? .95 : .4, 9.5, "left");
+      const v = P(vx, selected.y * .55, selected.z * .55);
+      const pv = P(vx, 0, 0);
+      glowLine(ctx, o.x, o.y, v.x, v.y, C.gold, 2, .88);
+      ctx.setLineDash([4, 5]);
+      line(ctx, v.x, v.y, pv.x, pv.y, C.gold, 1, .35);
+      ctx.setLineDash([]);
+      glow(ctx, C.gold, v.x, v.y, 26, .8);
+      ctx.fillStyle = "#fff3c4";
+      ctx.beginPath();
+      ctx.arc(v.x, v.y, 3.6, 0, TAU);
+      ctx.fill();
+      glow(ctx, C.gold, pv.x, pv.y, 17, .7);
+      const dir = vx >= 0 ? 1 : -1;
+      glowLine(ctx, o.x, o.y, pv.x, pv.y, dir > 0 ? C.cyan : C.coral, 3, .5);
+      const cardX = W * .07, cardY = H * .60, cw = Math.min(96, W * .2), ch = cw;
+      roundRect(ctx, cardX, cardY, cw, ch, 14);
+      ctx.fillStyle = "rgba(12,18,40,.55)";
+      ctx.fill();
+      ctx.strokeStyle = rgba(state === 1 ? C.cyan : state === 2 ? C.coral : C.muted, .38);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      const ccx = cardX + cw / 2, ccy = cardY + ch / 2;
+      if (state === 0) {
+        ctx.strokeStyle = rgba(C.muted, .3);
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath();
+        ctx.arc(ccx, ccy, cw * .27, 0, TAU);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      } else {
+        drawDisc(ctx, ccx, ccy, cw * .27, state === 1 ? 1 : -1, 1, 1);
+      }
+      label(ctx, "F5", ccx, cardY - 14, C.muted, .8, 9, "center");
+      label(ctx, state === 0 ? "empty" : state === 1 ? "mine" : "theirs", ccx, cardY + ch + 17, state === 1 ? C.cyan : state === 2 ? C.coral : C.muted, .8, 9, "center");
+      label(ctx, "latent space", W * .07, H * .30, C.muted, .55, 8.5, "left");
+      label(ctx, "w · x", W * .07, H * .34, C.gold, .8, 11, "left");
+      label(ctx, `${vx >= 0 ? "+" : "−"}${Math.abs(vx).toFixed(2)}`, W * .07, H * .38, vx >= 0 ? C.cyan : C.coral, .95, 13, "left");
+      label(ctx, "projection on the mine/theirs axis", W * .07, H * .42, C.dim, .65, 8, "left");
+      ctx.globalCompositeOperation = "source-over";
+    }
+    return { resize, draw };
+  }
+  function chooseIntervention(frames) {
+    for (let idx = Math.min(13, frames.length - 1); idx > 2; idx--) {
+      const f = frames[idx];
+      const player = f.next;
+      const base = f.board;
+      const l0 = legalMoves(base, player);
+      if (l0.length < 3) continue;
+      const s0 = new Set(l0.map((m) => m.r * 8 + m.c));
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          if (base[r][c] !== 0) continue;
+          if (l0.some((m) => m.r === r && m.c === c)) continue;
+          for (const v of [player, -player]) {
+            const alt = cloneBoard(base);
+            alt[r][c] = v;
+            const l1 = legalMoves(alt, player);
+            const s1 = new Set(l1.map((m) => m.r * 8 + m.c));
+            if (s1.size !== s0.size || [...s1].some((x) => !s0.has(x))) {
+              return { base, alt, player, tile: { r, c, v }, l0, l1 };
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+  function moveDist(board, player, salt) {
+    const legal = legalMoves(board, player);
+    const scores = legal.map((m, i) => Math.exp(1.1 * Math.sin(i * 2.1 + salt) + .45 * Math.cos(i * .9 - salt)));
+    const sum = scores.reduce((a, b) => a + b, 0) || 1;
+    return legal.map((m, i) => ({ m, p: scores[i] / sum }));
+  }
+
+  function interventionScene() {
+    let W = 0, H = 0, data = null, narrow = false, bx = 0, by = 0, cell = 0;
+    function resize(w, h) {
+      W = w; H = h;
+      narrow = w < 780;
+      const frames = makeGame(23, 26);
+      data = chooseIntervention(frames);
+      if (!data) data = { base: initialBoard(), alt: initialBoard(), player: 1, tile: { r: 4, c: 2, v: 1 }, l0: [], l1: [] };
+      const size = narrow ? Math.min(w * .56, h * .40) : Math.min(w * .38, h * .62);
+      cell = size / 8;
+      bx = narrow ? w * .5 - size / 2 : w * .06;
+      by = narrow ? h * .08 : h * .18;
+    }
+    function draw(ctx, t, dt) {
+      const u = smooth(clamp((t - 3.5) / 2.2, 0, 1));
+      const board = u < .5 ? data.base : data.alt;
+      const cx = bx + cell * 4, cy = by + cell * 4;
+      glow(ctx, u < .5 ? C.cyan : C.gold, cx, cy, cell * 5.5, .05);
+      roundRect(ctx, bx - 8, by - 8, cell * 8 + 16, cell * 8 + 16, 11);
+      ctx.fillStyle = "rgba(10,18,42,.80)";
+      ctx.fill();
+      ctx.strokeStyle = rgba(C.cyan, .32);
+      ctx.lineWidth = 1.1;
+      ctx.stroke();
+      const felt = ctx.createRadialGradient(cx, cy, 0, cx, cy, cell * 6.2);
+      felt.addColorStop(0, "rgba(24,92,94,.18)");
+      felt.addColorStop(1, "rgba(8,18,40,0)");
+      ctx.fillStyle = felt;
+      ctx.fillRect(bx, by, cell * 8, cell * 8);
+      drawOthelloGrid(ctx, bx, by, cell, .12);
+      drawHeat(ctx, board, data.player, bx, by, cell, .09);
+      for (let i = 0; i < 8; i++) {
+        label(ctx, String.fromCharCode(65 + i), bx + i * cell + cell / 2, by - 17, C.muted, .38, 7, "center");
+        label(ctx, String(8 - i), bx - 14, by + i * cell + cell / 2, C.muted, .38, 7, "right");
+      }
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          const v = board[r][c];
+          if (v !== 0) drawDisc(ctx, bx + c * cell + cell / 2, by + r * cell + cell / 2, cell * .35, v, 1, 1);
+        }
+      }
+      const tx = bx + data.tile.c * cell, ty = by + data.tile.r * cell;
+      glow(ctx, u > .5 ? C.gold : C.violet, tx + cell / 2, ty + cell / 2, cell * .75, .22);
+      ctx.strokeStyle = rgba(u > .5 ? C.gold : C.violet, .8);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(tx + cell / 2, ty + cell / 2, cell * .42, 0, TAU);
+      ctx.stroke();
+      if (u > .5) drawDisc(ctx, tx + cell / 2, ty + cell / 2, cell * .35, data.tile.v, 1, 1);
+      drawLegalDots(ctx, data.base, data.player, bx, by, cell, C.mint, .7 * (1 - u));
+      drawLegalDots(ctx, data.alt, data.player, bx, by, cell, C.gold, .9 * u);
+      label(ctx, "before", bx, by - 12, C.mint, .65, 8, "left");
+      label(ctx, "after", bx + cell * 8, by - 12, C.gold, .75, 8, "right");
+      const panelX = narrow ? W * .08 : W * .50;
+      const panelY = narrow ? H * .54 : H * .23;
+      const panelW = narrow ? W * .84 : W * .20;
+      const panelH = narrow ? H * .12 : H * .22;
+      label(ctx, "activation", panelX, panelY - 14, C.muted, .55, 8.5, "left");
+      const ax = panelX + 10, ay = panelY + panelH * .5;
+      const aw = panelW - 20;
+      glowLine(ctx, ax, ay, ax + aw, ay, C.cyan, 1.4, .6);
+      label(ctx, "theirs", ax, ay + 18, C.coral, .55, 8, "left");
+      label(ctx, "mine", ax + aw, ay + 18, C.cyan, .55, 8, "right");
+      const dotX = lerp(ax + aw * .25, ax + aw * .76, u);
+      glow(ctx, C.gold, dotX, ay, 18, .8);
+      ctx.fillStyle = "#fff3c4";
+      ctx.beginPath();
+      ctx.arc(dotX, ay, 3.2, 0, TAU);
+      ctx.fill();
+      label(ctx, u < .5 ? "x" : "x′ = x + αd", panelX, panelY + panelH + 14, u < .5 ? C.muted : C.gold, .85, 8.5, "left");
+      const beamA = Math.sin(u * Math.PI);
+      if (beamA > 0) {
+        const startX = tx + cell / 2, startY = ty + cell / 2;
+        const endX = dotX, endY = ay;
+        glowLine(ctx, startX, startY, endX, endY, C.gold, 1, .3 * beamA);
+        const bp = quadPoint(startX, startY, (startX + endX) / 2, Math.min(startY, endY) - 30, endX, endY, fract(t * .8));
+        glow(ctx, C.gold, bp.x, bp.y, 8, .7 * beamA);
+        label(ctx, "edit", startX + cell * .6, startY - cell * .6, C.gold, .7 * beamA, 8, "left");
+      }
+      const barsX = narrow ? W * .08 : W * .74;
+      const barsY = narrow ? H * .72 : H * .27;
+      const barsW = narrow ? W * .84 : W * .22;
+      label(ctx, "next-move probability", barsX, barsY - 14, C.muted, .55, 8.5, "left");
+      const d0 = moveDist(data.base, data.player, 1.7);
+      const d1 = moveDist(data.alt, data.player, 2.3);
+      const keys = new Map();
+      for (const d of d0) keys.set(d.m.r + "-" + d.m.c, { m: d.m, p0: d.p, p1: 0 });
+      for (const d of d1) {
+        const k = d.m.r + "-" + d.m.c;
+        if (!keys.has(k)) keys.set(k, { m: d.m, p0: 0, p1: d.p });
+        else keys.get(k).p1 = d.p;
+      }
+      const rows = [...keys.values()].sort((a, b) => Math.max(b.p0, b.p1) - Math.max(a.p0, a.p1)).slice(0, 5);
+      const maxP = Math.max(.01, ...rows.map((r) => Math.max(r.p0, r.p1)));
+      const rowH = narrow ? 18 : 24;
+      rows.forEach((row, i) => {
+        const yy = barsY + i * rowH;
+        const w0 = barsW * (row.p0 / maxP) * .82;
+        const w1 = barsW * (row.p1 / maxP) * .82;
+        ctx.fillStyle = rgba(C.muted, .13);
+        ctx.fillRect(barsX + 34, yy, Math.max(1, w0), rowH * .42);
+        ctx.fillStyle = rgba(C.gold, .14);
+        ctx.fillRect(barsX + 34, yy + rowH * .45, Math.max(1, w1), rowH * .42);
+        label(ctx, moveLabel(row.m.r, row.m.c), barsX, yy + rowH * .42, C.muted, .75, 8, "left");
+        label(ctx, (lerp(row.p0, row.p1, u) * 100).toFixed(0) + "%", barsX + 38 + Math.max(w0, w1), yy + rowH * .42, C.gold, .75, 7.5, "left");
+      });
+    }
+    return { resize, draw };
+  }
+
+  const CHESS = [
+    ["r", "n", "b", "q", "k", "b", "n", "r"],
+    ["p", "p", "p", "p", "p", "p", "p", "p"],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["P", "P", "P", "P", "P", "P", "P", "P"],
+    ["R", "N", "B", "Q", "K", "B", "N", "R"]
+  ];
+  const GLYPH = {
+    K: "♔", Q: "♕", R: "♖", B: "♗", N: "♘", P: "♙",
+    k: "♚", q: "♛", r: "♜", b: "♝", n: "♞", p: "♟"
+  };
+  function chessScene() {
+    let W = 0, H = 0, narrow = false, bx = 0, by = 0, cell = 0;
+    function resize(w, h) {
+      W = w; H = h;
+      narrow = w < 820;
+      const size = narrow ? Math.min(w * .86, h * .40) : Math.min(w * .46, h * .62);
+      cell = size / 8;
+      bx = narrow ? w * .5 - size / 2 : w * .06;
+      by = narrow ? h * .06 : h * .18;
+    }
+    function draw(ctx, t) {
+      const skill = .14 + .72 * smooth((t - 4.6) / 3.8);
+      const win = lerp(16.7, 43.2, smooth((t - 5.4) / 3.6));
+      const fade = smooth((t - 2.4) / 1.8);
+      const boardX = bx, boardY = by;
+      glow(ctx, C.gold, boardX + cell * 4, boardY + cell * 4, cell * 6.4, .07);
+      roundRect(ctx, boardX - 8, boardY - 8, cell * 8 + 16, cell * 8 + 16, 11);
+      ctx.fillStyle = "rgba(10,16,36,.82)";
+      ctx.fill();
+      ctx.strokeStyle = rgba(C.gold, .32);
+      ctx.lineWidth = 1.1;
+      ctx.stroke();
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          ctx.fillStyle = (r + c) % 2 === 0 ? "rgba(130,155,235,.17)" : "rgba(4,8,20,.72)";
+          ctx.fillRect(boardX + c * cell, boardY + r * cell, cell, cell);
+        }
+      }
+      for (let i = 0; i < 8; i++) {
+        label(ctx, String.fromCharCode(65 + i), boardX + i * cell + cell / 2, boardY - 18, C.muted, .38, 7, "center");
+        label(ctx, String(8 - i), boardX - 14, boardY + i * cell + cell / 2, C.muted, .38, 7, "right");
+      }
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = `${cell * .62}px "Segoe UI Symbol", "Noto Sans Symbols 2", "DejaVu Sans", serif`;
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          const p = CHESS[r][c];
+          if (!p) continue;
+          const isWhite = p === p.toUpperCase();
+          const isTarget = r === 6 && c === 2;
+          const alpha = isTarget ? 1 - .82 * fade : 1;
+          if (isTarget && fade > .1) {
+            ctx.strokeStyle = rgba(C.coral, .55 * fade);
+            ctx.setLineDash([4, 4]);
+            ctx.strokeRect(boardX + c * cell + 3, boardY + r * cell + 3, cell - 6, cell - 6);
+            ctx.setLineDash([]);
+          }
+          ctx.globalAlpha = alpha;
+          glow(ctx, isWhite ? C.gold : C.cyan, boardX + c * cell + cell / 2, boardY + r * cell + cell / 2, cell * .42, .24 * alpha);
+          ctx.fillStyle = isWhite ? "#fff8e6" : "#9fe0ff";
+          ctx.fillText(GLYPH[p], boardX + c * cell + cell / 2, boardY + r * cell + cell / 2);
+          ctx.globalAlpha = 1;
+        }
+      }
+      if (fade > .1 && fade < .95) {
+        label(ctx, "internal piece deleted", boardX + cell * 3, boardY + cell * 6 + cell * .5, C.coral, .55 * fade, 8, "left");
+      }
+      const gx = narrow ? W * .10 : W * .60;
+      const gy = narrow ? H * .54 : H * .22;
+      const gh = narrow ? H * .16 : H * .50;
+      const gw = narrow ? W * .14 : W * .045;
+      label(ctx, "SKILL", gx + gw / 2, gy - 16, C.muted, .55, 8, "center");
+      roundRect(ctx, gx, gy, gw, gh, gw / 2);
+      ctx.fillStyle = "rgba(120,140,220,.12)";
+      ctx.fill();
+      ctx.strokeStyle = rgba(C.gold, .30);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      const fillH = gh * skill;
+      const grad = ctx.createLinearGradient(0, gy + gh, 0, gy);
+      grad.addColorStop(0, rgba(C.cyan, .24));
+      grad.addColorStop(.7, rgba(C.gold, .68));
+      grad.addColorStop(1, rgba(C.gold, .92));
+      ctx.fillStyle = grad;
+      roundRect(ctx, gx + 2, gy + gh - fillH, gw - 4, fillH, Math.max(2, (gw - 4) / 2));
+      ctx.fill();
+      const needleY = gy + gh - fillH;
+      glow(ctx, C.gold, gx + gw / 2, needleY, gw * 1.6, .35);
+      label(ctx, "low", gx - 8, gy + gh, C.dim, .55, 7.5, "right");
+      label(ctx, "high", gx - 8, gy, C.dim, .55, 7.5, "right");
+      if (!narrow) label(ctx, "Elo", gx + gw / 2, gy + gh + 18, C.gold, .55, 8, "center");
+      glowLine(ctx, boardX + cell * 8 + 10, boardY + cell * 4, gx - 12, gy + gh * .5, C.gold, 1, .28 * smooth((t - 4) / 2));
+      const barsX = narrow ? W * .42 : W * .74;
+      const barsY = narrow ? H * .57 : H * .54;
+      const barsW = narrow ? W * .50 : W * .22;
+      label(ctx, "win rate vs Stockfish", barsX, barsY - 16, C.muted, .55, 8, "left");
+      const vals = [5.9, 16.7, win];
+      const names = ["−", "none", "+"];
+      const maxV = 50;
+      vals.forEach((v, i) => {
+        const yy = barsY + i * (narrow ? 24 : 32);
+        const w = Math.max(2, barsW * (v / maxV));
+        ctx.fillStyle = "rgba(120,140,220,.16)";
+        ctx.fillRect(barsX + 30, yy, barsW, 8);
+        ctx.fillStyle = i === 2 ? rgba(C.gold, .92) : i === 1 ? rgba(C.muted, .62) : rgba(C.coral, .68);
+        ctx.fillRect(barsX + 30, yy, w, 8);
+        label(ctx, names[i], barsX, yy + 4, i === 2 ? C.gold : C.muted, .75, 9, "left");
+        label(ctx, v.toFixed(1) + "%", barsX + 36 + w, yy + 4, i === 2 ? C.gold : C.muted, .7, 8, "left");
+      });
+      if (win > 30) {
+        glow(ctx, C.gold, barsX + 30 + barsW * (win / maxV), barsY + 2 * (narrow ? 24 : 32) + 4, 22, .25);
+        label(ctx, "2.6×", barsX + barsW + 38, barsY + 2 * (narrow ? 24 : 32) + 4, C.gold, .9, 10, "left");
+      }
+      label(ctx, "latent skill vector", barsX, barsY + 3 * (narrow ? 24 : 32) + 12, C.dim, .55, 8, "left");
+    }
+    return { resize, draw };
+  }
+  function spacetimeScene() {
+    let W = 0, H = 0, narrow = false, gcx = 0, gcy = 0, gr = 0, tx0 = 0, tx1 = 0, ty = 0;
+    const cities = [
+      { name: "Paris", lat: 48.86, lon: 2.35 },
+      { name: "Tokyo", lat: 35.68, lon: 139.65 },
+      { name: "New York", lat: 40.71, lon: -74.01 },
+      { name: "Nairobi", lat: -1.29, lon: 36.82 },
+      { name: "Buenos Aires", lat: -34.60, lon: -58.38 },
+      { name: "Sydney", lat: -33.87, lon: 151.21 },
+      { name: "Mumbai", lat: 19.08, lon: 72.88 },
+      { name: "Reykjavik", lat: 64.15, lon: -21.94 }
+    ];
+    const events = [
+      { year: -30, label: "Cleopatra" },
+      { year: 1321, label: "Dante" },
+      { year: 1975, label: "Bohemian Rhapsody" },
+      { year: 2010, label: "Headline" },
+      { year: 2020, label: "2020" }
+    ];
+    function resize(w, h) {
+      W = w; H = h;
+      narrow = w < 820;
+      if (narrow) {
+        gcx = W * .5; gcy = H * .30; gr = Math.min(W * .30, H * .18);
+        tx0 = W * .08; tx1 = W * .92; ty = H * .78;
+      } else {
+        gcx = W * .29; gcy = H * .50; gr = Math.min(W * .20, H * .32);
+        tx0 = W * .55; tx1 = W * .95; ty = H * .52;
+      }
+    }
+    function ortho(lat, lon, rot) {
+      const la = lat * Math.PI / 180;
+      const lo = (lon + rot) * Math.PI / 180;
+      const x = Math.cos(la) * Math.sin(lo);
+      const y = Math.sin(la);
+      const z = Math.cos(la) * Math.cos(lo);
+      return { x: gcx + x * gr, y: gcy - y * gr, z };
+    }
+    function yearToX(y) {
+      return tx0 + (clamp(y, -1000, 2020) + 1000) / 3020 * (tx1 - tx0);
+    }
+    function draw(ctx, t) {
+      const rot = t * 12;
+      const g = ctx.createRadialGradient(gcx - gr * .35, gcy - gr * .35, 0, gcx, gcy, gr * 1.15);
+      g.addColorStop(0, "rgba(34,76,150,.48)");
+      g.addColorStop(.68, "rgba(10,24,58,.30)");
+      g.addColorStop(1, "rgba(8,18,44,0)");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(gcx, gcy, gr * 1.15, 0, TAU);
+      ctx.fill();
+      glow(ctx, C.cyan, gcx, gcy, gr * 1.6, .12);
+      ctx.strokeStyle = rgba(C.cyan, .36);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(gcx, gcy, gr, 0, TAU);
+      ctx.stroke();
+      ctx.strokeStyle = rgba(C.violet, .16);
+      ctx.beginPath();
+      ctx.ellipse(gcx, gcy, gr * 1.34, gr * .34, -.28, 0, TAU);
+      ctx.stroke();
+      ctx.strokeStyle = rgba(C.cyan, .10);
+      ctx.beginPath();
+      ctx.arc(gcx, gcy, gr * 1.16, 0, TAU);
+      ctx.stroke();
+      for (let lat = -60; lat <= 60; lat += 30) {
+        let prev = null;
+        for (let lon = 0; lon <= 360; lon += 6) {
+          const p = ortho(lat, lon, rot);
+          if (p.z > 0) {
+            if (prev) line(ctx, prev.x, prev.y, p.x, p.y, C.cyan, 1, lat === 0 ? .20 : .11);
+            prev = p;
+          } else {
+            prev = null;
+          }
+        }
+      }
+      for (let lon = 0; lon < 360; lon += 30) {
+        let prev = null;
+        for (let lat = -84; lat <= 84; lat += 6) {
+          const p = ortho(lat, lon, rot);
+          if (p.z > 0) {
+            if (prev) line(ctx, prev.x, prev.y, p.x, p.y, C.violet, 1, .095);
+            prev = p;
+          } else {
+            prev = null;
+          }
+        }
+      }
+      for (const city of cities) {
+        const p = ortho(city.lat, city.lon, rot);
+        if (p.z <= 0) continue;
+        const a = .25 + .65 * p.z;
+        glow(ctx, C.cyan, p.x, p.y, 12 + 10 * p.z, .55 * a);
+        ctx.fillStyle = rgba(C.cyan, Math.min(1, a + .15));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2 + 1.7 * p.z, 0, TAU);
+        ctx.fill();
+        if (p.z > .55) label(ctx, city.name, p.x + 8, p.y - 8, C.cyan, .72 * a, 7.5, "left");
+      }
+      label(ctx, "space", gcx, gcy + gr + 28, C.cyan, .75, 8.5, "center");
+      glowLine(ctx, gcx + gr + 14, gcy, tx0 - 14, ty, C.cyan, 1, .26);
+      const scan = -1000 + fract(t / 12) * 3020;
+      const sx = yearToX(scan);
+      const tlGlow = ctx.createLinearGradient(tx0, 0, tx1, 0);
+      tlGlow.addColorStop(0, "rgba(255,209,102,0)");
+      tlGlow.addColorStop(.5, "rgba(255,209,102,.10)");
+      tlGlow.addColorStop(1, "rgba(255,209,102,0)");
+      ctx.fillStyle = tlGlow;
+      ctx.fillRect(tx0, ty - 22, tx1 - tx0, 44);
+      glowLine(ctx, tx0, ty, tx1, ty, C.gold, 1.6, .82);
+      for (let y = -1000; y <= 2000; y += 500) {
+        const x = yearToX(y);
+        line(ctx, x, ty - 6, x, ty + 6, C.gold, 1, .45);
+        label(ctx, y < 0 ? Math.abs(y) + " BC" : y === 0 ? "0" : String(y), x, ty + 18, C.muted, .7, 7.5, "center");
+      }
+      for (const ev of events) {
+        const x = yearToX(ev.year);
+        const hot = Math.abs(scan - ev.year) < 80;
+        glow(ctx, hot ? C.gold : C.muted, x, ty, hot ? 15 : 8, hot ? .75 : .30);
+        ctx.fillStyle = hot ? C.gold : rgba(C.muted, .7);
+        ctx.beginPath();
+        ctx.arc(x, ty, hot ? 2.8 : 2, 0, TAU);
+        ctx.fill();
+        if (hot) label(ctx, ev.label, x, ty - 14, C.gold, .8, 7.5, "center");
+      }
+      glow(ctx, C.gold, sx, ty, 26, .3);
+      line(ctx, sx, ty - 18, sx, ty + 18, C.gold, 1, .5);
+      label(ctx, "time", tx0, ty - 26, C.gold, .78, 8.5, "left");
+      label(ctx, "linear readout", (tx0 + tx1) / 2, ty - 26, C.dim, .7, 7.5, "center");
+      label(ctx, "lat / long", gcx - gr, gcy - gr - 18, C.dim, .7, 8, "center");
+    }
+    return { resize, draw };
+  }
+
+  function geometryScene() {
+    let W = 0, H = 0, narrow = false, truth = [], chosen = null;
+    function gauss(r) {
+      return (r() + r() + r() - 1.5) / 1.5;
+    }
+    function resize(w, h) {
+      W = w; H = h;
+      narrow = w < 820;
+      const r = rnd(53);
+      truth = [];
+      for (let i = 0; i < 110; i++) {
+        const isTrue = i % 2 === 0;
+        const cx = isTrue ? .42 : -.42;
+        const cy = isTrue ? .42 : -.42;
+        truth.push({
+          x: clamp(cx + gauss(r) * .30, -1, 1),
+          y: clamp(cy + gauss(r) * .30, -1, 1),
+          isTrue,
+          ph: r() * TAU
+        });
+      }
+      chosen = truth.find((p) => !p.isTrue && p.x > -.2 && p.x < .3 && p.y > -.2 && p.y < .3) || truth.find((p) => !p.isTrue);
+    }
+    function drawTruth(ctx, x, y, w, h, t) {
+      roundRect(ctx, x, y, w, h, 12);
+      ctx.fillStyle = "rgba(10,16,40,.54)";
+      ctx.fill();
+      ctx.strokeStyle = rgba(C.coral, .20);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      const cx = x + w / 2, cy = y + h / 2;
+      const sc = Math.min(w, h) * .40;
+      for (let i = -2; i <= 2; i++) {
+        line(ctx, cx + i * sc * .5, y + 16, cx + i * sc * .5, y + h - 16, C.muted, 1, .055);
+        line(ctx, x + 16, cy + i * sc * .5, x + w - 16, cy + i * sc * .5, C.muted, 1, .055);
+      }
+      const lineA = smooth((t - 1) / 1.5);
+      ctx.strokeStyle = rgba(C.white, .50 * lineA);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(cx - sc * 1.02, cy + sc * 1.02);
+      ctx.lineTo(cx + sc * 1.02, cy - sc * 1.02);
+      ctx.stroke();
+      glow(ctx, C.white, cx, cy, 22, .28 * lineA);
+      const u = smooth((t - 5) / 2.2);
+      for (const p of truth) {
+        const isChosen = p === chosen;
+        let px = p.x, py = p.y;
+        if (isChosen && u > 0) {
+          px = lerp(p.x, .58, u);
+          py = lerp(p.y, .58, u);
+        }
+        const sx = cx + px * sc;
+        const sy = cy - py * sc;
+        const col = isChosen && u > .5 ? C.gold : p.isTrue ? C.gold : C.coral;
+        const a = isChosen ? 1 : .58;
+        glow(ctx, col, sx, sy, isChosen ? 10 : 5, a * .30);
+        ctx.fillStyle = rgba(col, a);
+        ctx.beginPath();
+        ctx.arc(sx, sy, isChosen ? 3.5 : 2.1, 0, TAU);
+        ctx.fill();
+        if (isChosen && u > 0 && u < 1) {
+          const trail = 12;
+          for (let k = 0; k < trail; k++) {
+            const q = k / trail;
+            const tx = cx + lerp(p.x, .58, Math.max(0, u - q * .18)) * sc;
+            const ty2 = cy - lerp(p.y, .58, Math.max(0, u - q * .18)) * sc;
+            glow(ctx, C.gold, tx, ty2, 4, .15 * (1 - q));
+          }
+        }
+      }
+      if (chosen && u > .6) {
+        const sx = cx + .58 * sc, sy = cy - .58 * sc;
+        glow(ctx, C.gold, sx, sy, 20, .35);
+        label(ctx, "edit", sx + 10, sy - 12, C.gold, .8, 8, "left");
+      }
+      label(ctx, "TRUE", cx + sc * .76, cy - sc * .76, C.gold, .78, 8, "center");
+      label(ctx, "FALSE", cx - sc * .76, cy + sc * .76, C.coral, .78, 8, "center");
+      label(ctx, "probe direction", cx - sc * .9, cy - sc * .2, C.muted, .7, 7.5, "left");
+    }
+    function drawCircles(ctx, x, y, w, h, t) {
+      roundRect(ctx, x, y, w, h, 12);
+      ctx.fillStyle = "rgba(10,16,40,.54)";
+      ctx.fill();
+      ctx.strokeStyle = rgba(C.cyan, .20);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      const cx = x + w / 2, cy = y + h / 2;
+      const r1 = Math.min(w, h) * .18;
+      const r2 = Math.min(w, h) * .32;
+      const days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      for (let k = 0; k < 36; k++) {
+        const a = k * TAU / 36;
+        line(ctx, cx + Math.cos(a) * r1, cy + Math.sin(a) * r1, cx + Math.cos(a) * r2, cy + Math.sin(a) * r2, C.muted, 1, .040);
+      }
+      ctx.strokeStyle = rgba(C.cyan, .36);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r1, 0, TAU);
+      ctx.stroke();
+      ctx.strokeStyle = rgba(C.violet, .28);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r2, 0, TAU);
+      ctx.stroke();
+      for (let i = 0; i < 7; i++) {
+        const a = -Math.PI / 2 + i * TAU / 7;
+        const px = cx + Math.cos(a) * r1;
+        const py = cy + Math.sin(a) * r1;
+        const hot = i === 2 || i === 6;
+        glow(ctx, hot ? C.cyan : C.muted, px, py, hot ? 12 : 6, hot ? .55 : .22);
+        ctx.fillStyle = hot ? C.cyan : rgba(C.muted, .7);
+        ctx.beginPath();
+        ctx.arc(px, py, hot ? 2.9 : 2, 0, TAU);
+        ctx.fill();
+        label(ctx, days[i], cx + Math.cos(a) * (r1 + 17), cy + Math.sin(a) * (r1 + 17), hot ? C.cyan : C.muted, hot ? .95 : .72, 7.5, "center");
+      }
+      for (let i = 0; i < 12; i++) {
+        const a = -Math.PI / 2 + i * TAU / 12;
+        label(ctx, months[i], cx + Math.cos(a) * (r2 + 16), cy + Math.sin(a) * (r2 + 16), C.violet, .62, 6.8, "center");
+      }
+      const u1 = smooth(clamp((t % 8) / 4, 0, 1));
+      const a0 = -Math.PI / 2 + 2 * TAU / 7;
+      const a1 = -Math.PI / 2 + 6 * TAU / 7;
+      const aNow = lerp(a0, a1, u1);
+      ctx.strokeStyle = rgba(C.cyan, .5);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r1, a0, aNow);
+      ctx.stroke();
+      glowLine(ctx, cx, cy, cx + Math.cos(aNow) * r1, cy + Math.sin(aNow) * r1, C.cyan, 1.4, .8);
+      glow(ctx, C.cyan, cx + Math.cos(aNow) * r1, cy + Math.sin(aNow) * r1, 18, .5);
+      const u2 = smooth(clamp((t % 10) / 5, 0, 1));
+      const b0 = -Math.PI / 2;
+      const b1 = -Math.PI / 2 + 4 * TAU / 12;
+      const bNow = lerp(b0, b1, u2);
+      ctx.strokeStyle = rgba(C.violet, .38);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r2, b0, bNow);
+      ctx.stroke();
+      glowLine(ctx, cx, cy, cx + Math.cos(bNow) * r2, cy + Math.sin(bNow) * r2, C.violet, 1.2, .65);
+      glow(ctx, C.violet, cx + Math.cos(bNow) * r2, cy + Math.sin(bNow) * r2, 15, .4);
+      label(ctx, "Wed + 4 → Sun", cx, cy - 7, C.cyan, .96, 9, "center");
+      label(ctx, "Jan + 4 → May", cx, cy + 13, C.violet, .9, 8, "center");
+      label(ctx, "7 days", cx, y + h - 14, C.muted, .68, 7.5, "center");
+      label(ctx, "12 months", cx, y + 14, C.muted, .68, 7.5, "center");
+    }
+    function draw(ctx, t) {
+      if (narrow) {
+        drawTruth(ctx, W * .05, H * .05, W * .90, H * .43, t);
+        drawCircles(ctx, W * .05, H * .52, W * .90, H * .43, t);
+      } else {
+        drawTruth(ctx, W * .035, H * .12, W * .44, H * .76, t);
+        drawCircles(ctx, W * .525, H * .12, W * .44, H * .76, t);
+      }
+    }
+    return { resize, draw };
+  }
+
+  function circuitsScene() {
+    let W = 0, H = 0, narrow = false;
+    const tokens = ["the", "cat", "sat", "on", "the", "mat", "the", "?"];
+    function resize(w, h) {
+      W = w; H = h;
+      narrow = w < 820;
+    }
+    function panelBox(ctx, x, y, w, h, color) {
+      roundRect(ctx, x, y, w, h, 12);
+      ctx.fillStyle = "rgba(10,16,40,.54)";
+      ctx.fill();
+      ctx.strokeStyle = rgba(color, .20);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    function inductionPanel(ctx, x, y, w, h, t) {
+      panelBox(ctx, x, y, w, h, C.cyan);
+      label(ctx, "INDUCTION", x + 16, y + 17, C.cyan, .65, 8, "left");
+      const n = tokens.length;
+      const gap = Math.max(4, w * .008);
+      const chipW = (w - 32 - gap * (n - 1)) / n;
+      const chipH = Math.min(30, h * .085);
+      const chipY = y + h * .58;
+      const centers = [];
+      for (let i = 0; i < n; i++) {
+        const cx = x + 16 + i * (chipW + gap) + chipW / 2;
+        centers.push(cx);
+        const repeated = i === 0 || i === 4 || i === 6;
+        const current = i === 6;
+        roundRect(ctx, cx - chipW / 2, chipY - chipH / 2, chipW, chipH, 5);
+        ctx.fillStyle = current ? "rgba(110,231,255,.19)" : repeated ? "rgba(110,231,255,.095)" : "rgba(120,140,220,.06)";
+        ctx.fill();
+        ctx.strokeStyle = current ? rgba(C.cyan, .95) : repeated ? rgba(C.cyan, .46) : rgba(C.muted, .20);
+        ctx.lineWidth = current ? 1.4 : 1;
+        ctx.stroke();
+        label(ctx, tokens[i], cx, chipY + .5, current ? C.cyan : repeated ? C.white : C.muted, current ? 1 : .78, Math.max(7, Math.min(9.5, chipW * .34)), "center");
+      }
+      for (let i = 1; i < n; i++) {
+        const x0 = centers[i - 1], x1 = centers[i];
+        const cy = chipY + chipH * .5 + 16;
+        ctx.strokeStyle = rgba(C.violet, .30);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x0, chipY + chipH * .5);
+        ctx.quadraticCurveTo((x0 + x1) / 2, cy, x1, chipY + chipH * .5);
+        ctx.stroke();
+        const u = fract(t * .35 + i * .13);
+        const p = quadPoint(x0, chipY + chipH * .5, (x0 + x1) / 2, cy, x1, chipY + chipH * .5, u);
+        glow(ctx, C.violet, p.x, p.y, 6, .7);
+      }
+      const u = smooth(clamp((t % 10) / 3, 0, 1));
+      const x0 = centers[6], x1 = centers[4];
+      const ctrlY = chipY - chipH * .5 - 46;
+      ctx.strokeStyle = rgba(C.cyan, .46);
+      ctx.lineWidth = 1.3;
+      ctx.beginPath();
+      ctx.moveTo(x0, chipY - chipH * .5);
+      ctx.quadraticCurveTo((x0 + x1) / 2, ctrlY, x1, chipY - chipH * .5);
+      ctx.stroke();
+      const p = quadPoint(x0, chipY - chipH * .5, (x0 + x1) / 2, ctrlY, x1, chipY - chipH * .5, u);
+      glow(ctx, C.cyan, p.x, p.y, 11, .9);
+      glowLine(ctx, centers[4], chipY - chipH * .5 - 4, centers[5], chipY - chipH * .5 - 4, C.cyan, 1.8, .7 * u);
+      glow(ctx, C.cyan, centers[5], chipY - chipH * .5 - 4, 9, .8 * u);
+      label(ctx, "copy", (centers[4] + centers[5]) / 2, chipY - chipH * .5 - 18, C.cyan, .55 * u, 7.5, "center");
+      label(ctx, "prev-token head", x + 16, y + h - 28, C.violet, .5, 7.5, "left");
+      label(ctx, "induction head", x + 16, y + 38, C.cyan, .55, 7.5, "left");
+      const bx = x + w - 78, by = y + h * .16, bw = 12, bh = h * .20;
+      label(ctx, "next", bx + 18, by - 12, C.muted, .5, 7.5, "left");
+      const bars = [
+        { name: "mat", v: .08 + .64 * u, col: C.cyan },
+        { name: "dog", v: .08, col: C.muted },
+        { name: "the", v: .05, col: C.muted }
+      ];
+      bars.forEach((b, i) => {
+        const xx = bx + i * (bw + 14);
+        ctx.fillStyle = "rgba(120,140,220,.17)";
+        ctx.fillRect(xx, by, bw, bh);
+        ctx.fillStyle = rgba(b.col, b.col === C.cyan ? .9 : .45);
+        ctx.fillRect(xx, by + bh * (1 - b.v), bw, bh * b.v);
+        label(ctx, b.name, xx + bw / 2, by + bh + 12, b.col, b.col === C.cyan ? 1 : .7, 7, "center");
+      });
+      label(ctx, "probability", bx - 2, by + bh + 26, C.dim, .5, 7, "left");
+    }
+    function memoryPanel(ctx, x, y, w, h, t) {
+      panelBox(ctx, x, y, w, h, C.gold);
+      label(ctx, "KEY–VALUE MEMORY", x + 16, y + 17, C.gold, .65, 8, "left");
+      const promptW = Math.min(w - 32, 220);
+      roundRect(ctx, x + 16, y + 32, promptW, 28, 6);
+      ctx.fillStyle = "rgba(255,209,102,.09)";
+      ctx.fill();
+      ctx.strokeStyle = rgba(C.gold, .38);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      label(ctx, "The Space Needle is in", x + 16 + promptW / 2, y + 46, C.white, .95, 8, "center");
+      const rows = [
+        { key: .92, value: "Seattle", target: "Paris" },
+        { key: .38, value: "France" },
+        { key: .24, value: "1969" },
+        { key: .18, value: "gold" },
+        { key: .10, value: "…" }
+      ];
+      const rowTop = y + 82;
+      const rowH = Math.min(38, (h - 112) / 5);
+      label(ctx, "key", x + 30, rowTop - 12, C.muted, .7, 7, "left");
+      label(ctx, "value", x + w * .38, rowTop - 12, C.muted, .7, 7, "left");
+      const edit = smooth(clamp((t - 6) / 1.8, 0, 1));
+      rows.forEach((row, i) => {
+        const yy = rowTop + i * rowH;
+        const hot = i === 0;
+        const kw = w * .16;
+        roundRect(ctx, x + 26, yy + rowH * .28, kw, rowH * .34, 4);
+        ctx.fillStyle = hot ? rgba(C.gold, .44) : rgba(C.muted, .18);
+        ctx.fill();
+        ctx.strokeStyle = hot ? rgba(C.gold, .72) : rgba(C.muted, .18);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        if (hot) glow(ctx, C.gold, x + 26 + kw, yy + rowH * .45, 18, .22);
+        serifLabel(ctx, row.value, x + w * .38, yy + rowH * .45, hot ? C.gold : C.muted, hot ? 1 : .68, 11, "left");
+        if (hot) {
+          ctx.globalAlpha = edit;
+          serifLabel(ctx, row.target, x + w * .38, yy + rowH * .45, C.cyan, .95, 11, "left");
+          ctx.globalAlpha = 1;
+          ctx.globalAlpha = 1 - edit;
+          serifLabel(ctx, row.value, x + w * .38, yy + rowH * .45, C.gold, .95, 11, "left");
+          ctx.globalAlpha = 1;
+          if (edit > 0) {
+            glowLine(ctx, x + 26, yy + rowH * .45, x + w - 26, yy + rowH * .45, C.cyan, 1, .5 * Math.sin(edit * Math.PI));
+            label(ctx, "rank-one edit", x + w - 26, yy + rowH * .45 - 12, C.cyan, .65 * Math.sin(edit * Math.PI), 7.5, "right");
+          }
+        }
+      });
+      ctx.strokeStyle = rgba(C.gold, .3);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x + 16 + promptW / 2, y + 60);
+      ctx.quadraticCurveTo(x + 16 + promptW / 2, rowTop + 4, x + 26 + w * .08, rowTop + 4);
+      ctx.stroke();
+      label(ctx, "W k = v", x + 16, y + h - 18, C.muted, .78, 8, "left");
+      label(ctx, "rank-one memory", x + w - 16, y + h - 18, C.muted, .65, 7.5, "right");
+    }
+    function draw(ctx, t) {
+      if (narrow) {
+        inductionPanel(ctx, W * .04, H * .04, W * .92, H * .44, t);
+        memoryPanel(ctx, W * .04, H * .52, W * .92, H * .44, t);
+      } else {
+        inductionPanel(ctx, W * .03, H * .10, W * .44, H * .80, t);
+        memoryPanel(ctx, W * .53, H * .10, W * .44, H * .80, t);
+      }
+    }
+    return { resize, draw };
+  }
+
+  function synthesisScene() {
+    let W = 0, H = 0, stars = [], nodes = [];
+    function resize(w, h) {
+      W = w; H = h;
+      const r = rnd(77);
+      stars = Array.from({ length: 90 }, () => ({
+        x: r() * w,
+        y: r() * h * .62,
+        rr: .3 + r() * 1.2,
+        a: .16 + r() * .5,
+        ph: r() * TAU
+      }));
+      nodes = [];
+      for (let i = 0; i <= 8; i++) {
+        for (let j = 0; j <= 6; j++) {
+          nodes.push({ i, j, gone: r() < .10, pulse: r() * TAU, kind: r() });
+        }
+      }
+    }
+    function mountain(ctx, baseY, amp, color, phase) {
+      ctx.beginPath();
+      ctx.moveTo(-20, H);
+      for (let x = -20; x <= W + 20; x += 14) {
+        const y = baseY
+          + Math.sin(x * .008 + phase) * amp
+          + Math.sin(x * .023 - phase * 1.4) * amp * .38
+          + Math.sin(x * .055 + phase * 2.1) * amp * .10;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W + 20, H);
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.strokeStyle = "rgba(110,231,255,.055)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    function holoMap(ctx, cx, cy, mw, mh, t) {
+      const P = (i, j) => ({
+        x: cx + (i / 8 - .5) * mw + (j / 6 - .5) * mw * .10,
+        y: cy + (j / 6 - .5) * mh - (i / 8 - .5) * mh * .20
+      });
+      for (let i = 0; i <= 8; i++) {
+        ctx.beginPath();
+        for (let j = 0; j <= 6; j++) {
+          const p = P(i, j);
+          if (j === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        }
+        ctx.strokeStyle = rgba(C.cyan, .17);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      for (let j = 0; j <= 6; j++) {
+        ctx.beginPath();
+        for (let i = 0; i <= 8; i++) {
+          const p = P(i, j);
+          if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        }
+        ctx.strokeStyle = rgba(C.cyan, .17);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      for (const n of nodes) {
+        if (n.gone) continue;
+        const p = P(n.i, n.j);
+        const a = .34 + .55 * (.5 + .5 * Math.sin(t * 1.4 + n.pulse));
+        const col = n.kind > .82 ? C.coral : n.kind > .55 ? C.gold : C.cyan;
+        glow(ctx, col, p.x, p.y, 10, a * .36);
+        ctx.fillStyle = rgba(col, a);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.9, 0, TAU);
+        ctx.fill();
+      }
+      const scan = fract(t * .12);
+      const py = cy - mh * .5 + scan * mh;
+      const g = ctx.createLinearGradient(cx - mw / 2, py, cx + mw / 2, py);
+      g.addColorStop(0, rgba(C.cyan, 0));
+      g.addColorStop(.5, rgba(C.cyan, .28));
+      g.addColorStop(1, rgba(C.cyan, 0));
+      ctx.strokeStyle = g;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx - mw / 2, py);
+      ctx.lineTo(cx + mw / 2, py);
+      ctx.stroke();
+      ctx.strokeStyle = rgba(C.cyan, .30);
+      ctx.lineWidth = 1;
+      roundRect(ctx, cx - mw / 2 - 8, cy - mh / 2 - 8, mw + 16, mh + 16, 10);
+      ctx.stroke();
+      label(ctx, "WORLD MODEL", cx, cy - mh * .5 - 22, C.cyan, .5, 8, "center");
+    }
+    function draw(ctx, t) {
+      const sky = ctx.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0, "rgba(4,6,16,0)");
+      sky.addColorStop(.55, "rgba(10,16,36,.18)");
+      sky.addColorStop(1, "rgba(2,3,8,.9)");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, W, H);
+      for (const s of stars) {
+        const a = s.a * (.6 + .4 * Math.sin(t * .8 + s.ph));
+        ctx.fillStyle = rgba(C.white, a);
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.rr, 0, TAU);
+        ctx.fill();
+      }
+      glow(ctx, C.violet, W * .18, H * .25, W * .22, .10);
+      glow(ctx, C.cyan, W * .82, H * .30, W * .20, .09);
+      const aurora = ctx.createLinearGradient(0, 0, W, H * .6);
+      aurora.addColorStop(0, "rgba(110,231,255,0)");
+      aurora.addColorStop(.34, "rgba(110,231,255,.045)");
+      aurora.addColorStop(.56, "rgba(167,139,250,.06)");
+      aurora.addColorStop(.78, "rgba(255,122,144,.025)");
+      aurora.addColorStop(1, "rgba(110,231,255,0)");
+      ctx.fillStyle = aurora;
+      ctx.fillRect(0, 0, W, H * .62);
+      mountain(ctx, H * .70, 18, "#070a16", t * .18);
+      mountain(ctx, H * .78, 26, "#05070f", t * .28);
+      mountain(ctx, H * .87, 34, "#03040a", t * .40);
+      const cx = W * .5;
+      const cy = H * .40 + Math.sin(t * .55) * 4;
+      holoMap(ctx, cx, cy, W * .52, H * .30, t);
+      const beamX = cx + Math.sin(t * .22) * W * .18;
+      const beamY = cy + H * .15;
+      glowLine(ctx, beamX, beamY, beamX - 24, H * .82, C.cyan, 1, .18 + .08 * Math.sin(t * 1.2));
+      glow(ctx, C.cyan, beamX - 24, H * .82, 60, .08);
+      ctx.strokeStyle = rgba(C.cyan, .12);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(beamX - 24, H * .82, 46, 12, 0, 0, TAU);
+      ctx.stroke();
+      for (let i = 0; i < 14; i++) {
+        const x = (i * 97.3 + t * 4) % W;
+        const y = H * .55 + Math.sin(i * 1.7 + t * .3) * H * .16;
+        glow(ctx, C.cyan, x, y, 2.5, .12);
+      }
+      label(ctx, "the map is not the territory", cx, H * .94, C.dim, .5, 8, "center");
+    }
+    return { resize, draw };
+  }
+
+  const sceneFactories = {
+    hero: heroScene,
+    river: riverScene,
+    "two-worlds": twoWorldsScene,
+    othello: othelloScene,
+    linear: linearScene,
+    intervention: interventionScene,
+    chess: chessScene,
+    spacetime: spacetimeScene,
+    geometry: geometryScene,
+    circuits: circuitsScene,
+    synthesis: synthesisScene
+  };
+
+  const slides = [...document.querySelectorAll(".slide")];
+  const stageEls = [...document.querySelectorAll(".stage[data-scene]")];
+  const sceneCount = document.getElementById("scene-count");
+  const progress = document.getElementById("progress");
+  const rail = document.getElementById("rail");
+  const cursorGlow = document.querySelector(".cursor-glow");
+
+  const stages = new Map();
+  for (const el of stageEls) {
+    const canvas = el.querySelector("canvas");
+    const factory = sceneFactories[el.dataset.scene];
+    if (!canvas || !factory) continue;
+    const scene = factory();
+    const stage = new Stage(canvas, scene.draw, scene.resize);
+    stage.el = el;
+    el.__stage = stage;
+    stages.set(el, stage);
+  }
+
+  const railButtons = slides.map((slide, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("aria-label", slide.dataset.title || "Scene");
+    const s = document.createElement("span");
+    s.textContent = slide.dataset.title || "Scene";
+    b.appendChild(s);
+    b.addEventListener("click", () => {
+      slide.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    });
+    rail.appendChild(b);
+    return b;
+  });
+
+  let activeSlide = null;
+  let activeStage = null;
+  const visible = new Map();
+
+  function activate(slide) {
+    if (!slide || slide === activeSlide) return;
+    if (activeSlide) activeSlide.classList.remove("is-active");
+    activeSlide = slide;
+    slide.classList.add("is-active");
+    const stage = slide.querySelector(".stage")?.__stage;
+    if (stage) {
+      activeStage = stage;
+      stage.t = reduced ? 4 : 0;
+      if (reduced) stage.render(stage.t, 0);
+    }
+    const accent = slide.dataset.accent || "#6ee7ff";
+    document.documentElement.style.setProperty("--accent", accent);
+    const step = slide.dataset.step;
+    sceneCount.textContent = step === "—" ? "SOURCES" : `${step} / 10`;
+    const idx = slides.indexOf(slide);
+    railButtons.forEach((b, i) => b.classList.toggle("is-active", i === idx));
+    spawnMeteor();
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) visible.set(e.target, e.intersectionRatio);
+      else visible.delete(e.target);
+    }
+    let best = null;
+    let bestRatio = 0;
+    for (const [el, ratio] of visible) {
+      if (ratio > bestRatio) {
+        best = el;
+        bestRatio = ratio;
+      }
+    }
+    if (best) activate(best);
+  }, { threshold: [0, .25, .45, .65, .85, 1] });
+
+  slides.forEach((s) => io.observe(s));
+
+  const heroSlide = document.querySelector(".hero");
+  const heroStage = heroSlide?.querySelector(".stage")?.__stage;
+  if (heroSlide && heroStage) {
+    activeSlide = heroSlide;
+    activeStage = heroStage;
+    heroStage.t = reduced ? 4 : 0;
+    if (reduced) heroStage.render(heroStage.t, 0);
+    activate(heroSlide);
+  }
+
+  let px = window.innerWidth / 2;
+  let py = window.innerHeight / 2;
+  let gx = px;
+  let gy = py;
+
+  if (window.matchMedia("(hover: hover)").matches) {
+    document.body.classList.add("has-pointer");
+    window.addEventListener("pointermove", (e) => {
+      px = e.clientX;
+      py = e.clientY;
+    }, { passive: true });
+  }
+
+  function updateScroll() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const p = max > 0 ? clamp(window.scrollY / max, 0, 1) : 0;
+    progress.style.width = (p * 100).toFixed(3) + "%";
+    document.body.classList.toggle("scrolled", window.scrollY > 40);
+  }
+  window.addEventListener("scroll", updateScroll, { passive: true });
+  window.addEventListener("resize", resizeStars);
+  updateScroll();
+
+  let last = performance.now();
+  function tick(now) {
+    const dt = Math.min(.05, (now - last) / 1000);
+    last = now;
+    if (!reduced) {
+      drawStars(now / 1000);
+      if (activeStage) activeStage.frame(dt);
+      gx += (px - gx) * .075;
+      gy += (py - gy) * .075;
+      cursorGlow.style.transform = `translate3d(${gx}px,${gy}px,0)`;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  resizeStars();
+  if (reduced) drawStars(0);
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
