@@ -1989,6 +1989,23 @@
     ],
   };
 
+  var tunnelStep = {
+    kicker: DE ? "Bonus · Wahrscheinlichkeit" : "Bonus · probability",
+    title: DE ? "Der Wahrscheinlichkeitstunnel" : "The probability tunnel",
+    body: DE
+      ? "Der Wahrscheinlichkeitstunnel zeigt dieselbe Idee als Landschaft. Jede Kante ist ein mögliches nächstes Token; die Tiefe des Tals ist seine Wahrscheinlichkeit. Mit jedem gewählten Token wird der Kontext länger, die Täler verschieben sich, und viele Nebenwege schließen sich. Drehe die Szene und wähle einen alternativen Weg: Du siehst, dass das Modell nicht einen richtigen Weg kennt, sondern bei jedem Schritt eine Verteilung formt."
+      : "The probability tunnel shows the same idea as a landscape. Each edge is a possible next token; the depth of the valley is its probability. With every chosen token the context grows, the valleys shift, and many side paths close. Rotate the scene and choose an alternative path: you see that the model does not know one correct path; at every step it shapes a distribution.",
+    watch: DE ? "Drehe die Szene. Wähle einen alternativen Weg und beobachte, wie sich die Täler mit dem Kontext verschieben. Erhöhe T: Die Landschaft wird flacher." : "Rotate the scene. Choose an alternative path and watch the valleys shift with the context. Raise T: the landscape flattens.",
+    demoState: { scene: "tunnel" },
+    context: DE ? "Die Landschaft ist didaktisch: Täler sind Wahrscheinlichkeiten, keine Wahrheiten. Ein echtes Modell arbeitet in Tausenden Dimensionen; die Szene projiziert das auf drei." : "The landscape is didactic: valleys are probabilities, not truths. A real model works in thousands of dimensions; the scene projects that onto three.",
+    deep: DE ? "Temperatur skaliert die Logits vor dem Softmax. Hohe Temperatur flacht die Täler ab, niedrige schärft sie. Der goldene Pfad ist nur eine mögliche Route; die blauen Nebenwege sind Alternativen, die im Kontext noch plausibel sind." : "Temperature scales the logits before softmax. High temperature flattens the valleys, low temperature sharpens them. The gold path is only one possible route; the blue side paths are alternatives that are still plausible in context.",
+    boxes: [
+      box("tun-1", DE ? "Geometrie" : "Geometry", DE ? "Was zeigt die Tiefe?" : "What does depth show?", DE ? "Die Tiefe ist die Wahrscheinlichkeit des nächsten Tokens unter dem aktuellen Kontext. Ein tiefes Tal ist wahrscheinlich, ein flacher Nebenweg bleibt möglich. Die Form ist ein Bild, keine Messung des echten Token-Raums." : "Depth is the probability of the next token under the current context. A deep valley is likely; a shallow side path stays possible. The shape is a picture, not a measurement of the real token space."),
+      box("tun-2", DE ? "Kontext" : "Context", DE ? "Warum schließen sich Wege?" : "Why do paths close?", DE ? "Jedes gewählte Token verändert den Kontext. Das Modell berechnet die Verteilung neu, und Alternativen, die vorher plausibel waren, verlieren an Wahrscheinlichkeit. Der Tunnel wird enger, weil der Satz eindeutiger wird." : "Every chosen token changes the context. The model recomputes the distribution, and alternatives that were plausible before lose probability. The tunnel narrows because the sentence becomes more specific."),
+      box("tun-3", DE ? "Grenze" : "Limit", DE ? "Was ist die Kugel?" : "What is the ball?", DE ? "Die Kugel ist der aktuelle Zustand. Jede Wahl gibt ihr Richtung und Schwung; sie rollt in das Tal der gewählten Fortsetzung. Die Bewegung ist ein didaktisches Bild für die wiederholte Neuberechnung, kein realer Pfad im Modell." : "The ball is the current state. Each choice gives it direction and momentum; it rolls into the valley of the chosen continuation. The motion is a didactic picture of the repeated recomputation, not a real path in the model.")
+    ]
+  };
+
   var qkvSimplex = {
     kicker: DE ? "Mischung" : "Mixture",
     title: DE ? "Attention als Mischung der Value-Vektoren" : "Attention as a mixture of value vectors",
@@ -2095,7 +2112,7 @@
     ]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep, kvcacheSteps[0], tunnelStep];
 
   var day = {
     id: "intuition",
