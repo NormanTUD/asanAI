@@ -31,12 +31,22 @@
         '<span class="ls-qkv-query">' + (DE ? "Query" : "query") + ' <b>' + (DE ? "es" : "it") + '</b></span>' +
       '</div>' +
       '<div class="ls-qkv-percent"></div>' +
-      '<div class="ls-qkv-readout" aria-live="polite"></div>';
+      '<div class="ls-qkv-readout" aria-live="polite"></div>' +
+      '<div class="ls-scene-formula ls-qkv-formula"><div class="ls-math"></div></div>';
     root.appendChild(el);
     var stage = el.querySelector(".ls-qkv-stage");
     var canvas = el.querySelector("canvas");
     var readout = el.querySelector(".ls-qkv-readout");
     var percentEl = el.querySelector(".ls-qkv-percent");
+    var formulaEl = el.querySelector(".ls-qkv-formula .ls-math");
+    var pipelineTex = DE
+      ? "\\begin{aligned}&\\underbrace{\\underbrace{q_i=W_Qx_i,\\quad k_j=W_Kx_j}_{\\text{Q,K gelernt}}\\;\\rightarrow\\;\\underbrace{\\alpha_{ij}=\\operatorname{softmax}_j\\!\\left(\\frac{q_i^\\top k_j}{\\sqrt{d_k}}\\right)}_{\\text{Gewichte }\\alpha}}_{\\text{bestimmt den Punkt im Gewichts-Simplex}}\\\\&\\underbrace{v_j=W_Vx_j}_{\\text{V gelernt}}\\;\\rightarrow\\;\\underbrace{r_i=\\sum_j\\alpha_{ij}v_j}_{\\text{Mischung}}\\;\\rightarrow\\;\\underbrace{y_i=W_Or_i}_{\\text{Head-Ausgabe}}\\end{aligned}"
+      : "\\begin{aligned}&\\underbrace{\\underbrace{q_i=W_Qx_i,\\quad k_j=W_Kx_j}_{\\text{Q,K learned}}\\;\\rightarrow\\;\\underbrace{\\alpha_{ij}=\\operatorname{softmax}_j\\!\\left(\\frac{q_i^\\top k_j}{\\sqrt{d_k}}\\right)}_{\\text{weights }\\alpha}}_{\\text{sets the point in the weight simplex}}\\\\&\\underbrace{v_j=W_Vx_j}_{\\text{V learned}}\\;\\rightarrow\\;\\underbrace{r_i=\\sum_j\\alpha_{ij}v_j}_{\\text{mixture}}\\;\\rightarrow\\;\\underbrace{y_i=W_Or_i}_{\\text{head output}}\\end{aligned}";
+    if (formulaEl) {
+      formulaEl.setAttribute("data-tex", pipelineTex);
+      formulaEl.removeAttribute("data-tex-rendered");
+      if (api.typeset) api.typeset(el.querySelector(".ls-qkv-formula"));
+    }
     var lastPercent = "", lastReadout = "";
     function setPercent(html) {
       if (html === lastPercent) return;
@@ -348,7 +358,7 @@
       ctx.fillStyle = C.petrol;
       ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "top";
-      ctx.fillText(DE ? "3 von " + tokens.length + " Value-Vektoren → Ausgabe" : "3 of " + tokens.length + " value vectors → output", 12, 8);
+      ctx.fillText(DE ? "3 von " + tokens.length + " Value-Vektoren → Mischung r" : "3 of " + tokens.length + " value vectors → mixture r", 12, 8);
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "right";
@@ -368,8 +378,8 @@
         '<span><b>× 100</b> ' + pctTxt + ' <i>Σ 100%</i></span>');
       setReadout(ids.map(function (id, i) {
         return '<span><b>v(' + api.esc(tokens[id]) + ')</b> ' + (ws[i] * 100).toFixed(1) + '%</span>';
-      }).join("") + '<span><b>Σ</b> 100% · 3/' + tokens.length + '</span>');
-      canvas.setAttribute("aria-label", DE ? "Attention als gewichtete Mischung: Die drei Ecken sind die gelernten Value-Vektoren der Tokens Tier, Straße und es; der Ausgabepunkt liegt in ihrem Dreieck." : "Attention as a weighted mixture: the three corners are the learned value vectors of the tokens animal, street, and it; the output point lies inside their triangle.");
+      }).join("") + '<span><b>Σ</b> 100% · 3/' + tokens.length + '</span><span><b>r</b> = Σ α_j v_j</span>');
+      canvas.setAttribute("aria-label", DE ? "Attention als gewichtete Mischung: Die drei Ecken sind die gelernten Value-Vektoren v_j = W_V x_j von Tier, Straße und es; der Mischungspunkt r_i = Σ α_j v_j liegt in ihrem Dreieck. Die Gewichte α kommen aus Q und K; W_O bildet r_i danach auf die Head-Ausgabe ab." : "Attention as a weighted mixture: the three corners are the learned value vectors v_j = W_V x_j of animal, street, and it; the mixture point r_i = Σ α_j v_j lies inside their triangle. The weights α come from Q and K; W_O maps r_i to the head output afterwards.");
     }
     function graphLayout(w, h) {
       var n = tokens.length, cx = w / 2, cy = h / 2 + 4, R = Math.min(w, h) * 0.36;
