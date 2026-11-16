@@ -1675,6 +1675,14 @@
       questions: []
     },
     {
+      id: "g-lens-grenze",
+      title: "Grenze",
+      questions: [
+        { id: "q-box-att-mis", title: "Ist Attention eine Datenbank?", body: "Nein. Attention schlägt keine Fakten nach. Es berechnet Gewichte über Value-Vektoren und mischt sie zu einer neuen Repräsentation. Das Ergebnis ist keine gespeicherte Zeile, sondern eine kontextabhängige Mischung.", tex: "", kind: "question" },
+        { id: "q-edit-1794820087219-1", title: "Wird das für jedes Token einzeln berechnet?", body: "Ja, es wird für jedes Token einzeln berechnet. Wenn man autoregressive Modelle wie Chatbots hat, fügt man noch eine Causal Mask hinzu, die dafür sorgt, dass kein Token von sich aus in die Zukunft schauen kann.", tex: "", kind: "question" }
+      ]
+    },
+    {
       id: "g-lens-mathematik",
       title: "Mathematik",
       questions: [
@@ -1686,8 +1694,13 @@
       id: "g-lens-technik",
       title: "Technik",
       questions: [
-        { id: "q-box-att-1", title: "Warum drei Vektoren?", body: "Query, Key und Value haben drei verschiedene Rollen: Der Query fragt, wonach dieses Token sucht; der Key beschreibt, was ein anderes Token zum Vergleich anbietet; der Value ist die Information, die bei einem guten Match weitergegeben wird. Query und Key bestimmen die Gewichte, der Value den Inhalt.", tex: "", kind: "question" },
-        { id: "q-edit-1794820087219-1", title: "Wird das für jedes Token einzeln berechnet?", body: "Ja, es wird für jedes Token einzeln berechnet. Bei autoregressiven Modellen wie Chatbots kommt eine Causal Mask hinzu, damit kein Token in die Zukunft schauen kann.", tex: "", kind: "question" },
+        { id: "q-box-att-1", title: "Warum drei Vektoren?", body: "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-optional",
+      title: "Optional",
+      questions: [
         { id: "q-box-att-kv", title: "KV-Cache", body: "Beim Generieren muss das Modell die Keys und Values der bisherigen Tokens nicht neu berechnen, wenn es sie im KV-Cache behält. Es berechnet nur die neuen Keys/Values und lässt das neue Query gegen die gespeicherten Keys laufen. Die wiederholte K/V-Projektion wächst ohne Cache quadratisch mit der Sequenz und mit Cache nur linear; die Attention-Scores selbst bleiben quadratisch (Shazeer, 2019).", tex: "", kind: "trivia" }
       ]
     },
@@ -1696,7 +1709,7 @@
       title: "Budget",
       questions: [
         { id: "q-box-att-3", title: "Ein Head, ein Budget", body: "Jede Zeile hat genau 1,00 Attention zu vergeben. Mehr für ein Token heißt weniger für alle anderen. Jeder Head hat ein getrenntes Budget.", tex: "", kind: "trivia" },
-        { id: "q-edit-1794817884757-1", title: "Warum hat der Punkt in „Ich gehe zur Bank.“ fast 60 %? Kodiert er nicht die gesamte Bedeutung?", body: "Im Satz „Ich gehe zur Bank.“ ist der Punkt die Query, und sein eigener Key passt am besten: Deshalb bekommt er einen großen Teil seiner Aufmerksamkeit von sich selbst. Das heißt nicht, dass er die Bedeutung des ganzen Satzes trägt. Jedes Token wird eigenständig kodiert und behält seine eigene Repräsentation; die Prozentzahl beschreibt nur diese eine Query-Zeile.", tex: "", kind: "question" }
+        { id: "q-edit-1794817884757-1", title: "Warum hat der Punkt fast 60 %? Kodiert er nicht die gesamte Bedeutung?", body: "Ja, für dieses eine Wort. Aber jedes Wort wird eigenständig kodiert. Der Punkt bleibt deshalb größtenteils „Punkt“; das heißt aber nicht, dass alle nur auf diesen Punkt schauen, weil jedes Token ein eigenes Token bleibt.", tex: "", kind: "question" }
       ]
     },
     {
@@ -1711,6 +1724,14 @@
       questions: []
     },
     {
+      id: "g-lens-limit",
+      title: "Limit",
+      questions: [
+        { id: "q-box-att-mis", title: "Is attention a database?", body: "No. Attention does not look up facts. It computes weights over value vectors and mixes them into a new representation. The result is not a stored row but a context-dependent mixture.", tex: "", kind: "question" },
+        { id: "q-edit-1794820087219-1", title: "Is this computed separately for each token?", body: "Yes, it is computed separately for each token. For autoregressive models such as chatbots, you also add a causal mask, which prevents any token from looking into the future.", tex: "", kind: "question" }
+      ]
+    },
+    {
       id: "g-lens-mathematics",
       title: "Mathematics",
       questions: [
@@ -1722,8 +1743,13 @@
       id: "g-lens-technique",
       title: "Technique",
       questions: [
-        { id: "q-box-att-1", title: "Why three vectors?", body: "Query, key, and value have three different roles: the query asks what this token is looking for; the key describes what another token offers for comparison; the value is the information passed on when the match is good. So query and key determine the weights, and value determines the content.", tex: "", kind: "question" },
-        { id: "q-edit-1794820087219-1", title: "Is this computed separately for each token?", body: "Yes, it is computed separately for each token. For autoregressive models such as chatbots, a causal mask is added so that no token can look into the future.", tex: "", kind: "question" },
+        { id: "q-box-att-1", title: "Why three vectors?", body: "Because searching and describing are two different roles. A pronoun can look for a noun without itself looking like a noun.", tex: "", kind: "question" }
+      ]
+    },
+    {
+      id: "g-lens-optional",
+      title: "Optional",
+      questions: [
         { id: "q-box-att-kv", title: "KV cache", body: "During generation the model does not have to recompute the keys and values of earlier tokens if it keeps them in the KV cache. It computes only the new keys/values and lets the new query run against the cached keys. Without the cache the repeated K/V projection grows quadratically with the sequence; with the cache it grows linearly. The attention scores themselves stay quadratic (Shazeer, 2019).", tex: "", kind: "trivia" }
       ]
     },
@@ -1732,7 +1758,7 @@
       title: "Budget",
       questions: [
         { id: "q-box-att-3", title: "One head, one budget", body: "Every row has exactly 1.00 attention to give. More for one token means less for the others. Each head has a separate budget.", tex: "", kind: "trivia" },
-        { id: "q-edit-1794817884757-1", title: "Why does the period in “I walk to the bank.” get almost 60%? Doesn't it encode the entire meaning?", body: "In “I walk to the bank.” the period is the query, and its own key matches best: that is why it gives a large share of its attention to itself. That does not mean it carries the meaning of the whole sentence. Every token is encoded independently and keeps its own representation; the percentage describes only this one query row.", tex: "", kind: "question" }
+        { id: "q-edit-1794817884757-1", title: "Why does the period get almost 60 %? Doesn't it encode the entire meaning?", body: "Yes, for this one word. But each word is encoded independently. The period therefore stays mostly “period”; that does not mean everything only attends to this period, because each token remains its own token.", tex: "", kind: "question" }
       ]
     },
     {
@@ -1746,7 +1772,7 @@
   var attentionMerged = {
     kicker: DE ? "Attention" : "Attention",
     title: DE ? "Attention bewegt Punkte anhand des Kontextes" : "Attention moves points based on context",
-    body: DE ? "Kontext ist alles, was bisher im Chat oder Text steht; Attention lässt jedes Token seine 100 % Aufmerksamkeit auf gelernte Weise darauf verteilen: 80 % auf eines heißt 20 % für alle anderen. Diese Gewichte addieren die Value-Vektoren zu einem neuen Vektor, der die Bedeutung im Kontext verschiebt, ohne sie endgültig festzulegen. So kann das Modell eine Antwort stark in eine Richtung schieben und bleibt trotzdem flexibel. Reale Modelle nutzen viele solche Attention-Heads, die auf verschiedene Kontexte achten." : "Context is everything said so far in the chat or text; attention lets each token distribute its 100% attention over it in a learned way: 80% on one token means 20% for all the others. These weights add the value vectors into a new vector that shifts meaning in context without fixing it for good. That lets the model push an answer strongly in one direction and still stay flexible. Real models use many such attention heads, which attend to different contexts.",
+    body: DE ? "Attention erlaubt es zu schauen, wie sehr jedes Token im Kontext von jedem anderen Token abhängt. Kontext ist alles, was bisher gesagt worden ist in dem Chat bzw. der gesamte Text. Jedes Token hat 100% Attention zur Verfügung, die es auf gelernte Weise auf andere Tokens verteilen kann. Wenn es sagt \"das zweite Token kriegt 80% Attention\", bleiben für alle anderen nur noch 20% übrig. Diese Prozentwerte werden dann genommen, um alle Vektoren gewichtet zu addieren, um einen neuen Vektor zu bekommen, der die Bedeutung (unter einem gewissen Kontext) repräsentiert. Es erlaubt, Antworten in Richtungen zu schieben, ohne sich festzulegen. Attention erlaubt es, sich relativ stark festzulegen, ohne die Flexibilität zu verlieren, die ein konkretes hundertprozentiges Festlegen bedeuten würde. Die Antwort bleibt flexibel. Reale Modelle nutzen nicht nur eine Attention, sondern viele, die lernen, auf verschiedene Kontexte zu achten." : "Attention lets you see how strongly each token in the context depends on every other token. Context is everything said so far in the chat, or the entire text. Each token has 100% attention to distribute over other tokens in a learned way. If it says “the second token gets 80% attention”, only 20% remains for all the others. These percentages are then used to add all vectors with weights, producing a new vector that represents meaning under a certain context. It lets answers be pushed in directions without committing. Attention lets a model commit relatively strongly without losing the flexibility that a concrete 100% commitment would mean. The answer stays flexible. Real models use not just one attention but many, which learn to attend to different contexts.",
     watch: "",
     demoState: { scene: "attention" },
     context: attentionSteps[1].context,
@@ -2140,9 +2166,15 @@
     body: DE
       ? "Dieselben drei Value-Vektoren, andere Gewichte. Weil Head 2 nach dem Ort fragt, bekommt der Value von „Straße“ mehr Gewicht; der Ausgabepunkt wandert zur Straße. Die Prozentwerte entstehen wieder aus den Rohgewichten: erst durch ihre Summe teilen, dann mit 100 multiplizieren. Das Dreieck bleibt die Grenze."
       : "The same three value vectors, different weights. Because head 2 asks for the location, the value of “street” gets more weight; the output point moves toward the street. The percentages again come from the raw weights: divide by their sum, then multiply by 100. The triangle remains the boundary.",
-    watch: DE ? "Head 2: Der Punkt wandert zur Straße. Warum bleibt er im Dreieck?" : "Head 2: the point moves toward the street. Why does it stay inside the triangle?",
+    watch: "",
     demoState: { scene: "qkv", head: 1, view: "simplex" },
-    boxes: qkvSimplex.boxes.map(function (b) { return Object.assign({}, b, { id: b.id + "-h2" }); })
+    boxes: qkvSimplex.boxes.map(function (b) {
+      var copy = Object.assign({}, b, { id: b.id + "-h2" });
+      if (b.id === "qkv-s2") {
+        copy.body = DE ? "Ein Simplex ist die einfachste Weise aus Punkten eine Fläche zu machen: ein Punkt ist ein 0-Simplex, zwei Punkte eine Strecke, drei Punkte ein Dreieck. Attention arbeitet mit einem Wahrscheinlichkeitssimplex, den man sich vorstellen kann wie eine Landkarte, die es erlaubt, alle mathematisch gültigen Wege zu zeigen, zu 100% zu kommen. Ein eindimensionaler Wahrscheinlichkeitssimplex wäre eine Linie zwischen zwei Punkten: wählt man dort einen Punkt so dass er bei 70% der Strecke ist, dann wäre für den Rest noch 30% übrig. Es gilt: für $a, b, c \\geq 0 \\wedge \\leq 1, a + b + c = 1$." : "A simplex is the simplest way to make a surface from points: one point is a 0-simplex, two points a segment, three points a triangle. Attention works with a probability simplex, which you can picture as a map that shows all mathematically valid ways to reach 100%. A one-dimensional probability simplex would be a line between two points: if you choose a point at 70% of the way, 30% remains for the rest. It holds that $a, b, c \\geq 0 \\wedge \\leq 1, a + b + c = 1$.";
+      }
+      return copy;
+    })
   });
 
   var qkvGraph = Object.assign({}, qkvArcs, {
