@@ -378,7 +378,7 @@
         '<span><b>× 100</b> ' + pctTxt + ' <i>Σ 100%</i></span>');
       setReadout(ids.map(function (id, i) {
         return '<span><b>v(' + api.esc(tokens[id]) + ')</b> ' + (ws[i] * 100).toFixed(1) + '%</span>';
-      }).join("") + '<span><b>Σ</b> 100% · 3/' + tokens.length + '</span><span><b>r</b> = Σ α_j v_j</span>');
+      }).join("") + '<span><b>Σ</b> 100% · 3/' + tokens.length + '</span><span><b>r</b> = Σ α_j v_j</span>' + '<span class="ls-qkv-note">' + (DE ? "α hier direkt gezogen; im echten Head aus Q,K · W_O nach der Mischung · Zahlen illustrativ" : "α dragged directly here; in a real head from Q,K · W_O after the mixture · numbers illustrative") + '</span>');
       canvas.setAttribute("aria-label", DE ? "Attention als gewichtete Mischung: Die drei Ecken sind die gelernten Value-Vektoren v_j = W_V x_j von Tier, Straße und es; der Mischungspunkt r_i = Σ α_j v_j liegt in ihrem Dreieck. Die Gewichte α kommen aus Q und K; W_O bildet r_i danach auf die Head-Ausgabe ab." : "Attention as a weighted mixture: the three corners are the learned value vectors v_j = W_V x_j of animal, street, and it; the mixture point r_i = Σ α_j v_j lies inside their triangle. The weights α come from Q and K; W_O maps r_i to the head output afterwards.");
     }
     function graphLayout(w, h) {

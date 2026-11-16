@@ -1716,6 +1716,7 @@
   function arithmeticScene() {
     let W = 0, H = 0, narrow = false;
     let terms = [], top = [], sum = 0, pos = 0, neg = 0, logits = [0, 0, 0], probs = [0, 0, 0];
+    let xImg = null, wImg = null, pImg = null;
     function resize(w, h) {
       W = w; H = h;
       narrow = w < 860;
@@ -1735,6 +1736,21 @@
         return s;
       });
       probs = softmax3(logits[0], logits[1], logits[2], 1);
+      const xq = new Int8Array(512), wq = new Int8Array(512), pq = new Int8Array(512);
+      let mx = 1e-9, mw = 1e-9, mp = 1e-9;
+      for (const t of terms) {
+        mx = Math.max(mx, Math.abs(t.x));
+        mw = Math.max(mw, Math.abs(t.w));
+        mp = Math.max(mp, Math.abs(t.p));
+      }
+      for (const t of terms) {
+        xq[t.d] = Math.round(t.x / mx * 127);
+        wq[t.d] = Math.round(t.w / mw * 127);
+        pq[t.d] = Math.round(t.p / mp * 127);
+      }
+      xImg = makeHeatmap(xq, 512, 1, false);
+      wImg = makeHeatmap(wq, 512, 1, false);
+      pImg = makeHeatmap(pq, 512, 1, false);
     }
     function table(ctx, x, y, w, h, rows, alpha) {
       const cols = [0, .08, .34, .62, 1];
@@ -1746,6 +1762,7 @@
       label(ctx, header[1], x + cols[1] * w, y, C.cyan, .7, 6.5, "left");
       label(ctx, header[2], x + cols[2] * w, y, C.violet, .7, 6.5, "left");
       label(ctx, header[3], x + cols[3] * w, y, C.gold, .7, 6.5, "left");
+      label(ctx, "top 8 by |x·w|", x + w, y, C.dim, .55, 6.5, "right");
       line(ctx, x, y + 8, x + w, y + 8, C.white, 1, .10);
       rows.forEach((row, i) => {
         const yy = y + 16 + i * rowH;
@@ -1764,6 +1781,7 @@
       label(ctx, "Σ over all 512 dims", x, sy + 12, C.white, .75, 7, "left");
       label(ctx, (sum >= 0 ? "+" : "−") + Math.abs(sum).toFixed(3), x + w, sy + 12, C.gold, .95, 9, "right");
       label(ctx, pos + " positive · " + neg + " negative", x, sy + 25, C.dim, .6, 6.5, "left");
+      label(ctx, "= logit_white", x + w, sy + 25, C.gold, .8, 6.5, "right");
       ctx.restore();
     }
     function scoreBars(ctx, x, y, w, h, alpha) {
@@ -1824,6 +1842,22 @@
       ctx.restore();
       return rows;
     }
+    function strips(ctx, x, y, w, t, alpha) {
+      const h = 6, gap = 3;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      drawHeatImage(ctx, xImg, x, y, w, h, false);
+      drawHeatImage(ctx, wImg, x, y + h + gap, w, h, false);
+      drawHeatImage(ctx, pImg, x, y + 2 * (h + gap), w, h, false);
+      label(ctx, "x", x - 7, y + h / 2, C.cyan, .8, 6.5, "right");
+      label(ctx, "w", x - 7, y + h + gap + h / 2, C.violet, .8, 6.5, "right");
+      label(ctx, "x·w", x - 7, y + 2 * (h + gap) + h / 2, C.gold, .8, 6.5, "right");
+      const sx = x + fract(t * .14) * w;
+      line(ctx, sx, y - 2, sx, y + 3 * h + 2 * gap + 2, C.cyan, 1, .55);
+      glow(ctx, C.cyan, sx, y + 3 * (h + gap), 10, .3);
+      label(ctx, "all 512 terms", x + w / 2, y + 3 * (h + gap) + 9, C.muted, .6, 6.5, "center");
+      ctx.restore();
+    }
     function draw(ctx, t) {
       const reveal = smooth((t - 1) / 2);
       const g = ctx.createRadialGradient(W * .5, H * .4, 0, W * .5, H * .4, W * .55);
@@ -1833,14 +1867,16 @@
       ctx.fillRect(0, 0, W, H);
       label(ctx, "the projection, line by line", W * .5, H * .06, C.white, .7, 9, "center");
       if (narrow) {
-        label(ctx, "E4 · white direction", W * .05, H * .11, C.gold, .8, 8, "left");
-        table(ctx, W * .05, H * .14, W * .90, H * .34, top.slice(0, 6), reveal);
-        scoreBars(ctx, W * .05, H * .51, W * .90, H * .16, reveal);
-        squareTable(ctx, W * .05, H * .70, W * .90, H * .24, reveal);
+        label(ctx, "E4 · white direction", W * .05, H * .10, C.gold, .8, 8, "left");
+        strips(ctx, W * .05, H * .13, W * .90, t, reveal);
+        table(ctx, W * .05, H * .20, W * .90, H * .30, top.slice(0, 6), reveal);
+        scoreBars(ctx, W * .05, H * .54, W * .90, H * .15, reveal);
+        squareTable(ctx, W * .05, H * .72, W * .90, H * .22, reveal);
         label(ctx, "same x · different W rows · one argmax per square", W * .5, H * .97, C.muted, .62, 6.5, "center");
       } else {
-        label(ctx, "E4 · white direction", W * .04, H * .11, C.gold, .85, 8.5, "left");
-        table(ctx, W * .04, H * .14, W * .42, H * .40, top.slice(0, 8), reveal);
+        label(ctx, "E4 · white direction", W * .04, H * .10, C.gold, .85, 8.5, "left");
+        strips(ctx, W * .04, H * .13, W * .42, t, reveal);
+        table(ctx, W * .04, H * .20, W * .42, H * .34, top.slice(0, 8), reveal);
         scoreBars(ctx, W * .52, H * .14, W * .44, H * .24, reveal);
         const rows = squareTable(ctx, W * .52, H * .46, W * .44, H * .22, reveal);
         drawMiniBoard(ctx, REAL_BOARD_A, W * .52, H * .73, Math.min(W * .10, H * .20), reveal);
@@ -1854,16 +1890,14 @@
           ctx.lineWidth = 1;
           ctx.beginPath(); ctx.arc(cx, cy, cell * .35, 0, TAU); ctx.stroke();
         }
-        label(ctx, "same x for all 64 squares; only W changes", W * .5, H * .47, C.muted, .7, 7, "center");
-        label(ctx, "logit[s,o] = Σd W[s,o,d] · x[d]", W * .04, H * .60, C.gold, .85, 8, "left");
-        label(ctx, "P(s,o) = softmax over 3 states", W * .04, H * .65, C.muted, .7, 7, "left");
-        label(ctx, "state(s) = argmax over 3 states", W * .04, H * .70, C.muted, .7, 7, "left");
-        label(ctx, "the model's weights produce x; the probe rows read it", W * .04, H * .77, C.white, .7, 7.5, "left");
-        label(ctx, "64 / 64 squares correct on this real activation", W * .04, H * .82, C.mint, .8, 7.5, "left");
-        label(ctx, "the 128 board directions explain " + Math.round(REAL_A.r2 * 100) + "% of x's variance", W * .04, H * .87, C.gold, .8, 7.5, "left");
+        label(ctx, "same x for all 64 squares; only W changes", W * .52 + W * .22, H * .43, C.muted, .7, 7, "center");
+        label(ctx, "logit[s,o] = Σd W[s,o,d] · x[d]", W * .04, H * .58, C.gold, .85, 8, "left");
+        label(ctx, "P(s,o) = softmax over 3 states", W * .04, H * .63, C.muted, .7, 7, "left");
+        label(ctx, "state(s) = argmax over 3 states", W * .04, H * .68, C.muted, .7, 7, "left");
+        label(ctx, "the model's weights produce x; the probe rows read it", W * .04, H * .75, C.white, .7, 7.5, "left");
+        label(ctx, "64 / 64 squares correct on this real activation", W * .04, H * .80, C.mint, .8, 7.5, "left");
+        label(ctx, "the 128 board directions explain " + Math.round(REAL_A.r2 * 100) + "% of x's variance", W * .04, H * .85, C.gold, .8, 7.5, "left");
       }
-      const sx = (narrow ? W * .05 : W * .04) + fract(t * .14) * (narrow ? W * .90 : W * .42);
-      label(ctx, "scan", sx, (narrow ? H * .14 : H * .14) - 6, C.cyan, .5, 6, "center");
     }
     return { resize, draw };
   }
