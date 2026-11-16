@@ -1790,24 +1790,26 @@
     kicker: DE ? "Bewusstsein" : "Consciousness",
     title: DE ? "Bewusstsein: viele Karten, eine offene Frage" : "Consciousness: many maps, one open question",
     body: DE
-      ? "Bewusstsein ist kein einzelnes Ding. Zugang bedeutet, dass Information zum Berichten und Steuern verfügbar ist; Erfahrung bedeutet, dass es sich auf eine bestimmte Weise anfühlt. Global Workspace Theory beschreibt Bewusstsein als Broadcast an viele Prozesse; IIT misst geeinte Ursache-Wirkungs-Struktur als Phi; J-space ist ein lesbarer Arbeitsraum in Claude, aber ein Zugangsbefund, kein Beweis von Erleben. Die Karte zeigt Positionen, kein Urteil. Du kannst selbst entscheiden, welche Theorie dir am nächsten kommt."
-      : "Consciousness is not a single thing. Access means information is available to report and control; experience means there is something it is like. Global workspace theory describes consciousness as broadcast to many processes; IIT measures a unified cause-effect structure as Phi; J-space is a readable workspace in Claude, but an access finding, not proof of experience. The map shows positions, not a verdict. You can decide which theory comes closest to your view.",
-    watch: DE ? "Klicke die Knoten. Welche Theorie beschreibt Zugang, welche Erfahrung?" : "Click the nodes. Which theory describes access, which experience?",
+      ? "Bewusstsein ist kein einzelnes Ding. Zugang bedeutet, dass Information zum Berichten und Steuern verfügbar ist; Erfahrung bedeutet, dass es sich auf eine bestimmte Weise anfühlt. Global Workspace Theory beschreibt Bewusstsein als Broadcast an viele Prozesse; IIT misst geeinte Ursache-Wirkungs-Struktur als Phi; J-space ist ein lesbarer Arbeitsraum in Claude, aber ein Zugangsbefund, kein Beweis von Erleben. Die Karten stellen sechs Fragen zu diesen Befunden. Jede Antwort zeigt, welche Theorie sie stützt und wo die Frage offen bleibt. Ein Urteil fällen sie nicht."
+      : "Consciousness is not a single thing. Access means information is available to report and control; experience means there is something it is like. Global workspace theory describes consciousness as broadcast to many processes; IIT measures a unified cause-effect structure as Phi; J-space is a readable workspace in Claude, but an access finding, not proof of experience. The cards ask six questions about these findings. Each answer shows which theory it supports and where the question stays open. They do not deliver a verdict.",
+    watch: DE ? "Wähle eine Antwort und lies die Lesart. Blättere dann zur nächsten Karte." : "Choose an answer and read the reading. Then move to the next card.",
     demoState: { scene: "consciousness" },
     context: DE ? "Zugang und Erfahrung sind verschiedene Fragen. Ein System kann Informationen nutzen, ohne dass es sich für das System anfühlt, wie etwas ist." : "Access and experience are different questions. A system can use information without there being something it is like to be it.",
-    deep: DE ? "Die Theorien widersprechen sich nicht nur in den Antworten, sondern darin, was als Evidenz zählt. Für LLMs können wir Verhalten und funktionalen Zugang messen; über Erleben entscheidet das nicht." : "The theories disagree not only about answers but about what counts as evidence. For LLMs we can measure behaviour and functional access; that does not decide experience.",
+    deep: DE ? "Die Karten prüfen Behauptungen, nicht Köpfe. Ein Bericht oder ein lesbarer Arbeitsraum stützt Zugang; über Erfahrung entscheidet das nicht. Die Theorien widersprechen sich darin, was als Evidenz zählt. Schwitzgebel nennt die soziale Folge: Bleibt die Theorie offen, entscheiden Interessen mit." : "The cards test claims, not minds. A report or a readable workspace supports access; that does not decide experience. The theories disagree about what counts as evidence. Schwitzgebel names the social consequence: if the theory stays open, interests decide too.",
     boxes: DE ? [
       box("con-1", "Zugang", "Access Consciousness", "Information ist verfügbar für Bericht und Kontrolle. Ein Modell kann das haben, ohne etwas zu erleben."),
       box("con-2", "Erfahrung", "Phenomenal Consciousness", "Es gibt etwas, wie es sich anfühlt. Genau das lässt sich von außen nicht direkt messen."),
       box("con-3", "Theorien", "Global Workspace", "Ein Zustand wird bewusst, wenn er an viele Prozesse gesendet wird. Der Residual Stream ist ein funktionaler Cousin."),
       box("con-4", "Theorien", "IIT und Phi", "Bewusstsein ist eine geeinte Ursache-Wirkungs-Struktur. Phi ist für LLMs nicht gemessen; die Theorie ist schwer anzuwenden."),
-      box("con-5", "LLM", "J-space", "Ein kleiner, lesbarer Arbeitsraum in Claude. Er sieht wie Zugang aus, nicht wie ein Beweis von Erleben.")
+      box("con-5", "LLM", "J-space", "Ein kleiner, lesbarer Arbeitsraum in Claude. Er sieht wie Zugang aus, nicht wie ein Beweis von Erleben."),
+      box("con-6", "Methode", "Sechs Karten", "Jede Karte stellt einen Befund neben mehrere Lesarten. Die Karte zeigt, was der Befund trägt und was offen bleibt.")
     ] : [
       box("con-1", "Access", "Access consciousness", "Information is available for report and control. A model can have this without experiencing anything."),
       box("con-2", "Experience", "Phenomenal consciousness", "There is something it is like. That is exactly what cannot be measured directly from outside."),
       box("con-3", "Theories", "Global workspace", "A state becomes conscious when it is broadcast to many processes. The residual stream is a functional cousin."),
       box("con-4", "Theories", "IIT and Phi", "Consciousness is a unified cause-effect structure. Phi has not been measured for LLMs; the theory is hard to apply."),
-      box("con-5", "LLMs", "J-space", "A small, readable workspace in Claude. It looks like access, not proof of experience.")
+      box("con-5", "LLMs", "J-space", "A small, readable workspace in Claude. It looks like access, not proof of experience."),
+      box("con-6", "Method", "Six cards", "Each card places a finding beside several readings. The card shows what the finding supports and what stays open.")
     ],
     sources: [
       { label: "Mashour et al. (2020), Conscious Processing and the Global Neuronal Workspace Hypothesis", url: "https://doi.org/10.1016/j.neuron.2020.01.026", why: { de: "Global Workspace und bewusste Verarbeitung.", en: "Global workspace and conscious processing." } },
@@ -1815,7 +1817,13 @@
       { label: "Block (1995), On a Confusion about a Function of Consciousness", url: "https://doi.org/10.1017/S0140525X00038188", why: { de: "Zugang versus phänomenales Bewusstsein.", en: "Access versus phenomenal consciousness." } },
       { label: "Nagel (1974), What Is It Like to Be a Bat?", url: "https://doi.org/10.2307/2183914", why: { de: "Die subjektive Erfahrung als offene Frage.", en: "Subjective experience as an open question." } },
       { label: "Anthropic (2026), J-space", url: "https://transformer-circuits.pub/2026/workspace/index.html", why: { de: "Lesbarer Arbeitsraum in Claude; Zugang, nicht Erleben.", en: "Readable workspace in Claude; access, not experience." } },
-      { label: "SEP: Consciousness", url: "https://plato.stanford.edu/entries/consciousness/", why: { de: "Überblick über die Bewusstseinstheorien.", en: "Overview of theories of consciousness." } }
+      { label: "SEP: Consciousness", url: "https://plato.stanford.edu/entries/consciousness/", why: { de: "Überblick über die Bewusstseinstheorien.", en: "Overview of theories of consciousness." } },
+      { label: "Chalmers (1995), Facing Up to the Problem of Consciousness", url: "https://consc.net/papers/facing.pdf", why: { de: "Die harten und leichten Probleme des Bewusstseins.", en: "The hard and easy problems of consciousness." } },
+      { label: "SEP: Functionalism", url: "https://plato.stanford.edu/entries/functionalism/", why: { de: "Mentale Zustände über ihre funktionale Rolle.", en: "Mental states defined by their functional role." } },
+      { label: "SEP: Qualia", url: "https://plato.stanford.edu/entries/qualia/", why: { de: "Qualia und Mary's Room.", en: "Qualia and Mary's Room." } },
+      { label: "Jackson (1982), Epiphenomenal Qualia", url: "https://doi.org/10.2307/2960077", why: { de: "Das Knowledge Argument und Mary's Room.", en: "The knowledge argument and Mary's Room." } },
+      { label: "Searle (1980), Minds, Brains, and Programs", url: "https://doi.org/10.1017/S0140525X00005756", why: { de: "Biologischer Naturalismus und das Chinese Room Argument.", en: "Biological naturalism and the Chinese Room argument." } },
+      { label: "Schwitzgebel (2026), AI and Consciousness: A Skeptical Overview", url: "https://arxiv.org/abs/2510.09858", why: { de: "Theorienabhängigkeit, Mimikry und die Social Semi-Solution.", en: "Theory dependence, mimicry, and the social semi-solution." } }
     ]
   };
 

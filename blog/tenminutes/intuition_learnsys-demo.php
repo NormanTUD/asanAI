@@ -26,6 +26,7 @@ $labels = [
 	'activation' => 'Aktivierung', 'langdata' => 'Sprachdaten', 'agents' => 'Agent',
 	'gradient' => 'Gradient', 'kvcache' => 'KV-Cache', 'rag' => 'RAG',
 	'history' => 'Geschichte', 'chineseroom' => 'Chinese Room', 'codenoise' => 'Code-Rauschen',
+	'consciousness' => 'Bewusstsein',
 	'hallucinationtypes' => 'Halluzinationsarten', 'hallucinationguard' => 'Halluzinationsschutz',
 ];
 function h($s) { return htmlspecialchars((string) $s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }

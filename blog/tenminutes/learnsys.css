@@ -2121,11 +2121,48 @@ h1,h2,h3,h4{
 
 /* Hallucination types: false data, sampling, gaps, negation */
 
-/* Consciousness: a clickable map of theories */
-.ls-consc-scene{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:6px;padding:2px}
-.ls-consc-stage{position:relative;min-height:280px;border:1px solid var(--ls-line);background:var(--ls-paper-2);overflow:hidden}
-.ls-consc-stage canvas{position:absolute;inset:0;width:100%;height:100%}
-.ls-consc-readout{font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted);min-height:1.4em}
+/* Consciousness: a deck of questions about machine consciousness */
+.ls-consc-scene{height:100%;min-height:0;display:flex;flex-direction:column;gap:7px;padding:2px;overflow-y:auto;width:100%;max-width:780px;margin:0 auto}
+.ls-consc-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:0 0 auto}
+.ls-consc-progress{font:700 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ls-petrol);font-variant-numeric:tabular-nums}
+.ls-consc-open{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);border-bottom:1px dashed var(--ls-line-strong);padding-bottom:1px}
+.ls-consc-card{flex:0 0 auto;display:grid;gap:7px;padding:11px 13px 12px;border:1px solid var(--ls-line);border-top:4px solid var(--ls-petrol);background:#fff;box-shadow:0 2px 12px rgba(0,20,30,.035)}
+.ls-consc-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ls-consc-tag{font:700 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.09em;color:var(--ls-green)}
+.ls-consc-count{font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);font-variant-numeric:tabular-nums}
+.ls-consc-question{margin:0;font:600 clamp(16px,1.45vw,20px)/1.35 "Open Sans",sans-serif;color:var(--ls-ink)}
+.ls-consc-prompt{margin:0;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.055em;color:var(--ls-muted)}
+.ls-consc-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.ls-consc-option{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px;align-items:start;text-align:left;border:1px solid var(--ls-line);background:#fff;padding:8px 9px;min-height:104px;cursor:pointer;color:var(--ls-soft);font:var(--ls-fs-ui-sm)/1.4 "Open Sans",sans-serif;transition:background .14s ease,border-color .14s ease,box-shadow .14s ease}
+.ls-consc-option:hover{border-color:var(--ls-blue);background:rgba(18,117,172,.04);box-shadow:0 2px 8px rgba(0,20,30,.05)}
+.ls-consc-option:focus-visible{outline:2px solid var(--ls-green);outline-offset:2px}
+.ls-consc-option b{display:grid;place-items:center;width:20px;height:20px;background:var(--ls-petrol);color:#fff;font:700 10px/1 "Open Sans",sans-serif}
+.ls-consc-option span{display:block;min-width:0}
+.ls-consc-option.is-on{border-color:var(--ls-green);background:rgba(99,164,75,.07);box-shadow:inset 0 0 0 1px var(--ls-green)}
+.ls-consc-option.is-on b{background:var(--ls-green)}
+.ls-consc-feedback{flex:0 0 auto;min-height:150px;display:grid;gap:4px;align-content:start;padding:9px 11px;border:1px solid var(--ls-line);border-left:3px solid var(--ls-line);background:var(--ls-paper-2);overflow:auto}
+.ls-consc-feedback.is-empty{border-left-color:var(--ls-line-strong)}
+.ls-consc-feedback.is-ready{border-left-color:var(--ls-green);background:rgba(99,164,75,.05)}
+.ls-consc-feedback.is-summary{border-left-color:var(--ls-petrol);background:#fff}
+.ls-consc-feedback-k{font:700 var(--ls-fs-micro) "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ls-muted)}
+.ls-consc-empty{margin:0;font:var(--ls-fs-ui-sm)/1.5 "Open Sans",sans-serif;color:var(--ls-muted)}
+.ls-consc-result{margin:0;font:600 var(--ls-fs-ui-sm)/1.45 "Open Sans",sans-serif;color:var(--ls-ink)}
+.ls-consc-take{margin:0;font:var(--ls-fs-ui-sm)/1.5 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-consc-take b{color:var(--ls-petrol)}
+.ls-consc-theory{margin:0;font:700 var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;text-transform:uppercase;letter-spacing:.055em;color:var(--ls-green)}
+.ls-consc-points{display:grid;gap:5px;margin:0;padding:0;list-style:none}
+.ls-consc-points li{position:relative;padding-left:14px;font:var(--ls-fs-ui-sm)/1.45 "Open Sans",sans-serif;color:var(--ls-soft)}
+.ls-consc-points li:before{content:"";position:absolute;left:0;top:.55em;width:5px;height:5px;background:var(--ls-green)}
+.ls-consc-controls{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:0 0 auto;margin-top:auto}
+.ls-consc-foot{flex:1;text-align:center;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);font-variant-numeric:tabular-nums}
+.ls-consc-prev:disabled,.ls-consc-next:disabled{opacity:.45;cursor:not-allowed}
+.ls-consc-prev:disabled:hover,.ls-consc-next:disabled:hover{border-color:var(--ls-line-strong);color:var(--ls-ink)}
+@media (max-width:760px){
+  .ls-consc-options{grid-template-columns:1fr}
+  .ls-consc-option{min-height:0}
+  .ls-consc-feedback{min-height:176px}
+  .ls-consc-scene{max-width:none}
+}
 /* Agents: same model, tools outside, context loop */
 .ls-agents-scene{height:100%;min-height:0;display:flex;flex-direction:column;gap:7px;padding:2px;overflow-y:auto}
 .ls-agents-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}

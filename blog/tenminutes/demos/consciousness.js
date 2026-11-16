@@ -2,263 +2,434 @@
   "use strict";
   var core = window.LearnSysDemoCore;
   if (!core) return;
+
   function consciousnessScene(root, api) {
     var DE = api.lang === "de";
+    var CARDS = DE ? [
+      {
+        tag: "Bericht",
+        question: "Ein Modell schreibt: „Ich habe Angst.“ Es passt die Wortwahl an den Kontext an und beschreibt eine bedrohliche Lage. Was folgt daraus?",
+        prompt: "Wähle die Lesart, die der Befund am besten trägt.",
+        hint: "Der Satz ist ein Bericht. Die Frage ist, was ein Bericht zeigt.",
+        options: [
+          {
+            text: "Das Modell kann Informationen über einen Zustand berichten. Das stützt Zugang.",
+            result: "Ein Bericht zeigt, dass Information zum Berichten und Steuern verfügbar ist. Ob dabei etwas erlebt wird, bleibt offen.",
+            theory: "Access consciousness · Block (1995)"
+          },
+          {
+            text: "Das Modell fühlt Angst, weil die Worte zum Kontext passen.",
+            result: "Die Passung zum Kontext zeigt Sprachkompetenz. Sie ist kein Beleg für ein Erleben.",
+            theory: "Mimikry · Schwitzgebel (2026)"
+          },
+          {
+            text: "Das Modell hat keine internen Zustände, weil es nur Text verarbeitet.",
+            result: "Ein Textsystem kann interne Zustände haben, die es berichtet. „Nur Text“ ist zu stark.",
+            theory: "Funktionalismus · SEP"
+          }
+        ],
+        after: "Ein Bericht stützt Zugang, nicht Erfahrung. Die Wortwahl allein entscheidet nicht, ob es sich wie etwas anfühlt."
+      },
+      {
+        tag: "J-space",
+        question: "Forschende lesen in Claude einen kleinen Arbeitsraum, das J-space, und können Inhalte darin teilweise sehen und steuern. Was stützt dieser Befund?",
+        prompt: "Trenne den Befund von der Deutung.",
+        hint: "Lesbarkeit ist ein Befund über Funktion. Sie ist kein Blick in ein Erleben.",
+        options: [
+          {
+            text: "Erfahrung: Ein lesbarer Arbeitsraum ist ein Erlebnis.",
+            result: "Lesbarkeit zeigt, dass Inhalte verfügbar sind. Sie zeigt nicht, wie sich der Arbeitsraum für das System anfühlt.",
+            theory: "Erfahrung · Nagel (1974)"
+          },
+          {
+            text: "Zugang: Inhalte sind verfügbar, lesbar und teilweise steuerbar.",
+            result: "Der Arbeitsraum ist ein Zugangsbefund. Er zeigt Funktion, nicht Erleben.",
+            theory: "Access consciousness · Block (1995)"
+          },
+          {
+            text: "Weder noch: Lesbarkeit sagt nichts über Funktion.",
+            result: "Lesbarkeit sagt etwas über Funktion und Zugang. „Nichts“ ist zu stark.",
+            theory: "J-space · Anthropic (2026)"
+          }
+        ],
+        after: "J-space ist ein Zugangsbefund. Er macht einen Arbeitsraum sichtbar, nicht eine Erfahrung."
+      },
+      {
+        tag: "Theorie",
+        question: "Ein Transformer ohne wiederkehrende Verbindungen und ohne dauerhaftes Selbstmodell beschreibt einen Sonnenuntergang. Global Workspace Theory und IIT nennen Bedingungen, die er womöglich nicht erfüllt. Was ist die beste Schlussfolgerung?",
+        prompt: "Achte darauf, was die Daten und was die Theorie liefert.",
+        hint: "Die Architektur ist messbar. Die Bedingung für Bewusstsein kommt aus einer Theorie.",
+        options: [
+          {
+            text: "Er ist bewusst, weil die Beschreibung überzeugt.",
+            result: "Eine überzeugende Beschreibung ist Verhalten. Verhalten ist kein direkter Zugang zu Erleben.",
+            theory: "Mimikry · Schwitzgebel (2026)"
+          },
+          {
+            text: "Er ist nicht bewusst, weil eine Theorie es so sagt.",
+            result: "Das folgt nur, wenn die Theorie stimmt, die diese Bedingung setzt. Der Theoriestreit bleibt.",
+            theory: "IIT · Tononi (2016)"
+          },
+          {
+            text: "Die Antwort hängt von der Theorie ab. Die Daten entscheiden den Theoriestreit nicht.",
+            result: "GWT und IIT nennen unterschiedliche Bedingungen. Welche Theorie recht hat, entscheiden die Daten nicht.",
+            theory: "Theorienabhängigkeit · SEP"
+          }
+        ],
+        after: "Die Architektur liefert Befunde. Ob sie Bewusstsein ausschließen, hängt an einer Theorie, die selbst umstritten ist."
+      },
+      {
+        tag: "Gedankenexperiment",
+        question: "Angenommen, ein System kopiert die funktionale Organisation eines Gehirns bis auf die Synapsen. Würde es erleben?",
+        prompt: "Welche Antwort ist eine Position, welche eine Messung?",
+        hint: "Das Experiment liefert keine Messung. Es trennt die Positionen.",
+        options: [
+          {
+            text: "Ja, wenn Funktionalismus stimmt: gleiche Organisation, gleicher mentaler Zustand, egal aus welchem Material.",
+            result: "Das ist die funktionalistische Position. Sie setzt ihre Theorie voraus und ist keine Messung.",
+            theory: "Funktionalismus · Putnam (1967); SEP"
+          },
+          {
+            text: "Nein, weil Erleben an biologische Materie gebunden ist.",
+            result: "Das ist der biologische Naturalismus. Auch er setzt eine Theorie voraus.",
+            theory: "Biologischer Naturalismus · Searle (1980)"
+          },
+          {
+            text: "Die Frage ist mit den heutigen Daten nicht entschieden.",
+            result: "Das Gedankenexperiment liefert keine Messung. Es trennt die Positionen, entscheidet sie aber nicht.",
+            theory: "Hard Problem · Chalmers (1995)"
+          }
+        ],
+        after: "Das Kopie-Argument zeigt, wie stark die Antwort von der Theorie abhängt. Es ist kein Experiment, das Erleben nachweist."
+      },
+      {
+        tag: "Qualia",
+        question: "Ein Modell kennt alle physikalischen Fakten über Rot und beschreibt sie fehlerfrei. Lernt es dadurch, wie Rot sich anfühlt?",
+        prompt: "Mary's Room, auf eine Maschine übertragen.",
+        hint: "Fakten über eine Farbe sind nicht dasselbe wie die Erfahrung der Farbe.",
+        options: [
+          {
+            text: "Ja. Wissen über alle Fakten ist Wissen über die Erfahrung.",
+            result: "Die Beschreibung enthält die physikalischen Fakten. Ob sie die Erfahrung enthält, ist genau die offene Frage.",
+            theory: "Physikalismus · Chalmers (1995)"
+          },
+          {
+            text: "Nein. Die Beschreibung ersetzt die Erfahrung nicht.",
+            result: "Das ist die Pointe von Mary's Room: Alles über Rot zu wissen kann etwas auslassen.",
+            theory: "Knowledge Argument · Jackson (1982)"
+          },
+          {
+            text: "Das lässt sich von außen nicht entscheiden.",
+            result: "Der Befund zeigt Wissen und Sprache. Er zeigt nicht, ob damit ein Erleben einhergeht.",
+            theory: "Problem of Other Minds · Nagel (1974)"
+          }
+        ],
+        after: "Mary's Room verschiebt die Frage: Das Modell kann alle Fakten haben und trotzdem nichts erleben. Der Besitz von Fakten entscheidet es nicht."
+      },
+      {
+        tag: "Gesellschaft",
+        question: "Die Forschung bleibt uneinig, aber Firmen bauen Systeme, die wie Personen sprechen. Was folgt laut Schwitzgebel daraus?",
+        prompt: "Die soziale Frage kommt vor der wissenschaftlichen Antwort.",
+        hint: "Wenn die Theorie offen bleibt, entscheiden auch Interessen mit.",
+        options: [
+          {
+            text: "Die Wissenschaft entscheidet zuerst, dann folgt die Gesellschaft.",
+            result: "Schwitzgebel dreht die Reihenfolge um: Die soziale Entscheidung kommt, bevor die Theorie entschieden ist.",
+            theory: "Social Semi-Solution · Schwitzgebel (2026)"
+          },
+          {
+            text: "Interessen und Märkte beeinflussen, welche Theorie sich durchsetzt.",
+            result: "Das ist die Social Semi-Solution: Wer von einer Lesart profitiert, findet eher eine Theorie, die sie stützt.",
+            theory: "Social Semi-Solution · Schwitzgebel (2026)"
+          },
+          {
+            text: "Das Modell entscheidet selbst über seinen Status.",
+            result: "Ein Modell kann über seinen Status sprechen. Ob seine Aussage zählt, ist eine soziale und theoretische Frage.",
+            theory: "Mimikry · Schwitzgebel (2026)"
+          }
+        ],
+        after: "Bleibt die Theorie offen, entscheiden Interessen mit. Die verantwortungsvolle Antwort trennt Befund, Deutung und sozialen Druck."
+      }
+    ] : [
+      {
+        tag: "Report",
+        question: "A model writes: “I am afraid.” It adapts the wording to the context and describes a threatening situation. What follows?",
+        prompt: "Choose the reading the evidence supports best.",
+        hint: "The sentence is a report. The question is what a report shows.",
+        options: [
+          {
+            text: "The model can report information about a state. That supports access.",
+            result: "A report shows that information is available for reporting and control. Whether anything is experienced remains open.",
+            theory: "Access consciousness · Block (1995)"
+          },
+          {
+            text: "The model feels fear because the words fit the context.",
+            result: "Fit to context shows language competence. It is not evidence of experience.",
+            theory: "Mimicry · Schwitzgebel (2026)"
+          },
+          {
+            text: "The model has no internal states because it only processes text.",
+            result: "A text system can have internal states that it reports. “Only text” is too strong.",
+            theory: "Functionalism · SEP"
+          }
+        ],
+        after: "A report supports access, not experience. The wording alone does not decide whether there is something it is like."
+      },
+      {
+        tag: "J-space",
+        question: "Researchers read a small workspace in Claude, the J-space, and can partly see and steer its contents. What does this finding support?",
+        prompt: "Separate the finding from the interpretation.",
+        hint: "Readability is a finding about function. It is not a look inside experience.",
+        options: [
+          {
+            text: "Experience: a readable workspace is an experience.",
+            result: "Readability shows that contents are available. It does not show what the workspace feels like to the system.",
+            theory: "Experience · Nagel (1974)"
+          },
+          {
+            text: "Access: contents are available, readable, and partly steerable.",
+            result: "The workspace is an access finding. It shows function, not experience.",
+            theory: "Access consciousness · Block (1995)"
+          },
+          {
+            text: "Neither: readability says nothing about function.",
+            result: "Readability says something about function and access. “Nothing” is too strong.",
+            theory: "J-space · Anthropic (2026)"
+          }
+        ],
+        after: "J-space is an access finding. It makes a workspace visible, not an experience."
+      },
+      {
+        tag: "Theory",
+        question: "A transformer without recurrent connections and without a persistent self-model describes a sunset. Global workspace theory and IIT name conditions it may not meet. What is the best conclusion?",
+        prompt: "Notice what the data provide and what the theory provides.",
+        hint: "The architecture is measurable. The condition for consciousness comes from a theory.",
+        options: [
+          {
+            text: "It is conscious because the description is convincing.",
+            result: "A convincing description is behaviour. Behaviour is not direct access to experience.",
+            theory: "Mimicry · Schwitzgebel (2026)"
+          },
+          {
+            text: "It is not conscious because a theory says so.",
+            result: "That follows only if the theory that sets the condition is right. The theoretical dispute remains.",
+            theory: "IIT · Tononi (2016)"
+          },
+          {
+            text: "The answer depends on the theory. The data do not settle the theoretical dispute.",
+            result: "GWT and IIT name different conditions. The data do not decide which theory is right.",
+            theory: "Theory dependence · SEP"
+          }
+        ],
+        after: "The architecture provides findings. Whether it rules out consciousness depends on a theory that is itself contested."
+      },
+      {
+        tag: "Thought experiment",
+        question: "Suppose a system copies the functional organisation of a brain, synapse for synapse. Would it experience?",
+        prompt: "Which answer is a position, and which is a measurement?",
+        hint: "The experiment provides no measurement. It separates the positions.",
+        options: [
+          {
+            text: "Yes, if functionalism is right: same organisation, same mental state, whatever the material.",
+            result: "This is the functionalist position. It presupposes its theory and is not a measurement.",
+            theory: "Functionalism · Putnam (1967); SEP"
+          },
+          {
+            text: "No, because experience is tied to biological matter.",
+            result: "This is biological naturalism. It also presupposes a theory.",
+            theory: "Biological naturalism · Searle (1980)"
+          },
+          {
+            text: "The question is not settled by today's data.",
+            result: "The thought experiment provides no measurement. It separates the positions but does not decide them.",
+            theory: "Hard problem · Chalmers (1995)"
+          }
+        ],
+        after: "The copy argument shows how strongly the answer depends on the theory. It is not an experiment that demonstrates experience."
+      },
+      {
+        tag: "Qualia",
+        question: "A model knows every physical fact about red and describes it flawlessly. Does it thereby learn what red feels like?",
+        prompt: "Mary's Room, transferred to a machine.",
+        hint: "Facts about a colour are not the same as the experience of the colour.",
+        options: [
+          {
+            text: "Yes. Knowledge of all the facts is knowledge of the experience.",
+            result: "The description contains the physical facts. Whether it contains the experience is exactly the open question.",
+            theory: "Physicalism · Chalmers (1995)"
+          },
+          {
+            text: "No. The description does not replace the experience.",
+            result: "That is the point of Mary's Room: knowing everything about red can leave something out.",
+            theory: "Knowledge argument · Jackson (1982)"
+          },
+          {
+            text: "That cannot be decided from the outside.",
+            result: "The finding shows knowledge and language. It does not show whether an experience comes with them.",
+            theory: "Problem of other minds · Nagel (1974)"
+          }
+        ],
+        after: "Mary's Room shifts the question: the model can have all the facts and still experience nothing. Possessing facts does not decide it."
+      },
+      {
+        tag: "Society",
+        question: "Research remains divided, but companies build systems that talk like people. What follows for Schwitzgebel?",
+        prompt: "The social question arrives before the scientific answer.",
+        hint: "If the theory remains open, interests decide too.",
+        options: [
+          {
+            text: "Science decides first, then society follows.",
+            result: "Schwitzgebel reverses the order: the social decision arrives before the theory is settled.",
+            theory: "Social semi-solution · Schwitzgebel (2026)"
+          },
+          {
+            text: "Interests and markets influence which theory wins.",
+            result: "This is the social semi-solution: whoever benefits from a reading is more likely to find a theory that supports it.",
+            theory: "Social semi-solution · Schwitzgebel (2026)"
+          },
+          {
+            text: "The model decides its own status.",
+            result: "A model can speak about its status. Whether its statement counts is a social and theoretical question.",
+            theory: "Mimicry · Schwitzgebel (2026)"
+          }
+        ],
+        after: "If the theory remains open, interests decide too. A responsible answer separates finding, interpretation, and social pressure."
+      }
+    ];
+    var SUMMARY = DE ? {
+      title: "Was die Karten zeigen",
+      body: "Sechs Fragen, keine Prüfung. Die Karten haben Behauptungen geprüft, nicht Köpfe.",
+      points: [
+        "Bericht und Lesbarkeit stützen Zugang. Über Erfahrung entscheiden sie nicht.",
+        "Die Theorien nennen verschiedene Bedingungen. Die Daten entscheiden den Streit nicht.",
+        "Bleibt die Frage offen, wird sie sozial beantwortet. Beschreibe Befunde und markiere Deutungen."
+      ],
+      foot: "Die offene Frage bleibt offen."
+    } : {
+      title: "What the cards show",
+      body: "Six questions, no exam. The cards tested claims, not minds.",
+      points: [
+        "Report and readability support access. They do not decide experience.",
+        "The theories name different conditions. The data do not settle the dispute.",
+        "If the question stays open, it is answered socially. Describe findings and mark interpretations."
+      ],
+      foot: "The open question stays open."
+    };
+    var NEXT = DE ? "Nächste Karte" : "Next card";
+    var index = 0;
+    var choice = null;
     var el = document.createElement("div");
     el.className = "ls-consc-scene";
-    el.innerHTML = '<div class="ls-consc-stage"><canvas class="ls-canvas" role="img"></canvas></div><div class="ls-consc-readout" aria-live="polite"></div>';
+    el.setAttribute("role", "group");
+    el.setAttribute("aria-label", DE ? "Fragenkarten zu Maschinenbewusstsein" : "Question cards about machine consciousness");
+    el.innerHTML =
+      '<div class="ls-consc-head"><span class="ls-consc-progress"></span><span class="ls-consc-open">' +
+      api.esc(DE ? "offene Frage" : "open question") +
+      '</span></div>' +
+      '<div class="ls-consc-card">' +
+      '<div class="ls-consc-card-head"><span class="ls-consc-tag"></span><span class="ls-consc-count"></span></div>' +
+      '<p class="ls-consc-question"></p>' +
+      '<p class="ls-consc-prompt"></p>' +
+      '<div class="ls-consc-options" role="group"></div>' +
+      '</div>' +
+      '<div class="ls-consc-feedback" aria-live="polite"></div>' +
+      '<div class="ls-consc-controls">' +
+      '<button class="ls-btn ls-btn--ghost ls-btn--tiny ls-consc-prev" type="button"></button>' +
+      '<span class="ls-consc-foot"></span>' +
+      '<button class="ls-btn ls-btn--primary ls-btn--tiny ls-consc-next" type="button"></button>' +
+      '</div>';
     root.appendChild(el);
-    var stage = el.querySelector(".ls-consc-stage");
-    var canvas = el.querySelector("canvas");
-    var readout = el.querySelector(".ls-consc-readout");
-    var size = null, ctx = null, C = api.colors();
-    var running = true, raf = 0;
-    var nodes = [
-      { id: "center", label: DE ? "Bewusstsein" : "consciousness", x: 0.5, y: 0.52, c: "petrol", r: 10, branch: "center" },
-      { id: "access", label: DE ? "Zugang" : "access", x: 0.27, y: 0.36, c: "blue", r: 8, branch: "access" },
-      { id: "phenomenal", label: DE ? "Erfahrung" : "experience", x: 0.73, y: 0.36, c: "green", r: 8, branch: "experience" },
-      { id: "gwt", label: "Global Workspace", x: 0.13, y: 0.18, c: "blue", r: 5, branch: "access" },
-      { id: "jspace", label: "J-space", x: 0.31, y: 0.13, c: "blue", r: 5, branch: "access" },
-      { id: "higher", label: DE ? "Höhere Ordnung" : "higher order", x: 0.10, y: 0.47, c: "blue", r: 5, branch: "access" },
-      { id: "schema", label: DE ? "Attention Schema" : "attention schema", x: 0.30, y: 0.61, c: "blue", r: 5, branch: "access" },
-      { id: "iit", label: "IIT / Φ", x: 0.88, y: 0.16, c: "green", r: 5, branch: "experience" },
-      { id: "qualia", label: "Qualia", x: 0.91, y: 0.43, c: "green", r: 5, branch: "experience" },
-      { id: "predictive", label: DE ? "Predictive Processing" : "predictive processing", x: 0.71, y: 0.13, c: "green", r: 5, branch: "experience" },
-      { id: "illusion", label: DE ? "Illusionismus" : "illusionism", x: 0.71, y: 0.62, c: "lilac", r: 5, branch: "experience" },
-      { id: "pan", label: DE ? "Panpsychismus" : "panpsychism", x: 0.89, y: 0.62, c: "gold", r: 5, branch: "experience" }
-    ];
-    var edges = [
-      ["center", "access"], ["center", "phenomenal"],
-      ["access", "gwt"], ["access", "jspace"], ["access", "higher"], ["access", "schema"],
-      ["phenomenal", "iit"], ["phenomenal", "qualia"], ["phenomenal", "predictive"], ["phenomenal", "illusion"], ["phenomenal", "pan"]
-    ];
-    var descriptions = DE ? {
-      center: "Der Überblick: viele Theorien, eine offene Frage.",
-      access: "Information ist verfügbar zum Berichten und Steuern.",
-      phenomenal: "Es gibt etwas, wie es sich anfühlt.",
-      gwt: "Ein Zustand wird bewusst, wenn er an viele Prozesse gesendet wird.",
-      jspace: "Lesbarer Arbeitsraum in Claude: Zugang, kein Beweis von Erleben.",
-      higher: "Ein Zustand wird bewusst, wenn eine höhere Repräsentation auf ihn zeigt.",
-      schema: "Das System modelliert seine eigene Aufmerksamkeit.",
-      iit: "Bewusstsein ist geeinte Ursache-Wirkungs-Struktur, gemessen als Φ.",
-      qualia: "Die gefühlten Eigenschaften von Erfahrung.",
-      predictive: "Wahrnehmung ist kontrollierte Vorhersage.",
-      illusion: "Phänomenales Bewusstsein ist eine Introspektions-Illusion.",
-      pan: "Erfahrung ist eine fundamentale Eigenschaft."
-    } : {
-      center: "The overview: many theories, one open question.",
-      access: "Information is available to report and control.",
-      phenomenal: "There is something it is like.",
-      gwt: "A state is conscious when it is broadcast to many processes.",
-      jspace: "A readable workspace in Claude: access, not proof of experience.",
-      higher: "A state is conscious when a higher representation points at it.",
-      schema: "The system models its own attention.",
-      iit: "Consciousness is a unified cause-effect structure, measured as Φ.",
-      qualia: "The felt properties of experience.",
-      predictive: "Perception is controlled prediction.",
-      illusion: "Phenomenal consciousness is an introspection illusion.",
-      pan: "Experience is a fundamental property."
-    };
-    var selected = "center";
-    var hovered = null;
-    var selectTime = 0;
-    var hits = [];
-    function byId(id) { for (var i = 0; i < nodes.length; i++) if (nodes[i].id === id) return nodes[i]; return null; }
-    function pos(n) {
-      var idx = nodes.indexOf(n);
-      var now = performance.now();
-      var ox = Math.sin(now / 1500 + idx * 1.7) * 2.2;
-      var oy = Math.cos(now / 1700 + idx * 1.3) * 2.2;
-      return { x: 24 + n.x * (size.w - 48) + ox, y: 24 + n.y * (size.h - 92) + oy };
+    var progress = el.querySelector(".ls-consc-progress");
+    var tag = el.querySelector(".ls-consc-tag");
+    var count = el.querySelector(".ls-consc-count");
+    var question = el.querySelector(".ls-consc-question");
+    var prompt = el.querySelector(".ls-consc-prompt");
+    var options = el.querySelector(".ls-consc-options");
+    var feedback = el.querySelector(".ls-consc-feedback");
+    var foot = el.querySelector(".ls-consc-foot");
+    var prev = el.querySelector(".ls-consc-prev");
+    var next = el.querySelector(".ls-consc-next");
+
+    function optionHTML(text, i, on) {
+      return '<button type="button" class="ls-consc-option' + (on ? " is-on" : "") + '" data-opt="' + i + '" aria-pressed="' + (on ? "true" : "false") + '">' +
+        '<b>' + String.fromCharCode(65 + i) + '</b><span>' + api.esc(text) + '</span></button>';
     }
-    function branchOf(id) { var n = byId(id); return n ? n.branch : "center"; }
-    function activeBranch() {
-      var b = branchOf(selected);
-      return b === "center" ? null : b;
+    function renderSummary() {
+      progress.textContent = DE ? "Abschluss" : "Summary";
+      tag.textContent = DE ? "Die offene Frage" : "The open question";
+      count.textContent = "";
+      question.textContent = SUMMARY.title;
+      prompt.textContent = SUMMARY.body;
+      options.innerHTML = "";
+      feedback.className = "ls-consc-feedback is-summary";
+      feedback.innerHTML = '<ul class="ls-consc-points">' + SUMMARY.points.map(function (p) {
+        return '<li>' + api.esc(p) + '</li>';
+      }).join("") + '</ul>';
+      foot.textContent = SUMMARY.foot;
+      prev.disabled = false;
+      next.disabled = false;
+      next.textContent = DE ? "Nochmal" : "Restart";
     }
-    function alphaFor(branch) {
-      var a = activeBranch();
-      if (!a || b === "center" || b === a) return 1;
-      return 0.22;
-    }
-    function controlPoint(a, b) {
-      var p1 = pos(a), p2 = pos(b);
-      var mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
-      var dx = p2.x - p1.x, dy = p2.y - p1.y;
-      var len = Math.max(1, Math.hypot(dx, dy));
-      var off = len * 0.16;
-      return { x: mx - dy / len * off, y: my + dx / len * off };
-    }
-    function curvePoint(a, b, u) {
-      var p1 = pos(a), p2 = pos(b), c = controlPoint(a, b);
-      var v = 1 - u;
-      return { x: v * v * p1.x + 2 * v * u * c.x + u * u * p2.x, y: v * v * p1.y + 2 * v * u * c.y + u * u * p2.y };
-    }
-    function particles(w, h, now) {
-      for (var i = 0; i < 30; i++) {
-        var x = ((i * 67 + now / (32 + i % 4)) % w + w) % w;
-        var y = ((i * 43 + Math.sin(now / 1000 + i) * 22 + h * 0.18) % h + h) % h;
-        ctx.globalAlpha = 0.035 + (i % 4) * 0.016;
-        ctx.fillStyle = i % 2 ? C.blue : C.green;
-        ctx.beginPath(); ctx.arc(x, y, 1 + (i % 3) * 0.7, 0, Math.PI * 2); ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-    }
-    function draw() {
-      if (!size) return;
-      ctx = size.ctx;
-      var w = size.w, h = size.h;
-      ctx.clearRect(0, 0, w, h);
-      var bg = ctx.createRadialGradient(w * 0.5, h * 0.42, 8, w * 0.5, h * 0.5, Math.max(w, h) * 0.72);
-      bg.addColorStop(0, "rgba(247,250,249,.98)");
-      bg.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
-      // two fields: access (blue) / experience (green)
-      var lg = ctx.createRadialGradient(w * 0.27, h * 0.4, 4, w * 0.27, h * 0.4, w * 0.34);
-      lg.addColorStop(0, "rgba(18,117,172,.13)"); lg.addColorStop(1, "rgba(18,117,172,0)");
-      ctx.fillStyle = lg; ctx.fillRect(0, 0, w, h);
-      var rg = ctx.createRadialGradient(w * 0.73, h * 0.4, 4, w * 0.73, h * 0.4, w * 0.34);
-      rg.addColorStop(0, "rgba(99,164,75,.12)"); rg.addColorStop(1, "rgba(99,164,75,0)");
-      ctx.fillStyle = rg; ctx.fillRect(0, 0, w, h);
-      var sweepX = (((performance.now() / 6500) % 1.5) - 0.25) * w;
-      var sg = ctx.createLinearGradient(sweepX - 90, 0, sweepX + 90, w * 0.25);
-      sg.addColorStop(0, "rgba(255,255,255,0)");
-      sg.addColorStop(0.5, "rgba(255,255,255,.10)");
-      sg.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = sg; ctx.fillRect(0, 0, w, h);
-      particles(w, h, performance.now());
-      var ab = activeBranch();
-      if (ab === "access") {
-        var ag = ctx.createRadialGradient(w * 0.27, h * 0.4, 4, w * 0.27, h * 0.4, w * 0.38);
-        ag.addColorStop(0, "rgba(18,117,172,.10)"); ag.addColorStop(1, "rgba(18,117,172,0)");
-        ctx.fillStyle = ag; ctx.fillRect(0, 0, w, h);
-      } else if (ab === "experience") {
-        var eg = ctx.createRadialGradient(w * 0.73, h * 0.4, 4, w * 0.73, h * 0.4, w * 0.38);
-        eg.addColorStop(0, "rgba(99,164,75,.10)"); eg.addColorStop(1, "rgba(99,164,75,0)");
-        ctx.fillStyle = eg; ctx.fillRect(0, 0, w, h);
-      }
-      // rotating outer ring
-      ctx.save();
-      ctx.strokeStyle = C.petrol; ctx.globalAlpha = 0.10; ctx.lineWidth = 1;
-      ctx.setLineDash([2, 8]);
-      ctx.beginPath(); ctx.arc(w * 0.5, h * 0.5, Math.min(w, h) * 0.47, performance.now() / 3000, performance.now() / 3000 + Math.PI * 2); ctx.stroke();
-      ctx.setLineDash([]); ctx.restore();
-      // open boundary
-      ctx.strokeStyle = C.line; ctx.globalAlpha = 0.55 + 0.35 * Math.sin(performance.now() / 1200); ctx.setLineDash([5, 6]); ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.ellipse(w * 0.5, h * 0.52, w * 0.44, h * 0.42, 0, 0, Math.PI * 2); ctx.stroke();
-      ctx.setLineDash([]); ctx.globalAlpha = 1;
-      ctx.fillStyle = C.muted; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "center"; ctx.textBaseline = "bottom";
-      ctx.fillText(DE ? "offen" : "open", w * 0.5, h * 0.52 - h * 0.42 - 4);
-      var now = performance.now();
-      edges.forEach(function (e, i) {
-        var a = byId(e[0]), b = byId(e[1]);
-        if (!a || !b) return;
-        var alpha = alphaFor(b.branch);
-        var p1 = pos(a), c = controlPoint(a, b), p2 = pos(b);
-        var col = b.branch === "access" ? C.blue : C.green;
-        ctx.strokeStyle = col;
-        ctx.globalAlpha = 0.18 * alpha;
-        ctx.lineWidth = 1.2;
-        ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.quadraticCurveTo(c.x, c.y, p2.x, p2.y); ctx.stroke();
-        ctx.globalAlpha = 0.8 * alpha;
-        var u = ((now / 1700) + i * 0.12) % 1;
-        var pt = curvePoint(a, b, u);
-        ctx.fillStyle = col;
-        ctx.beginPath(); ctx.arc(pt.x, pt.y, 2, 0, Math.PI * 2); ctx.fill();
+    function render() {
+      if (index >= CARDS.length) { renderSummary(); return; }
+      var card = CARDS[index];
+      progress.textContent = (DE ? "Karte " : "Card ") + (index + 1) + " / " + CARDS.length;
+      tag.textContent = card.tag;
+      count.textContent = (DE ? "Frage " : "Question ") + (index + 1);
+      question.textContent = card.question;
+      prompt.textContent = card.prompt;
+      options.innerHTML = card.options.map(function (o, i) {
+        return optionHTML(o.text, i, choice === i);
+      }).join("");
+      options.querySelectorAll("[data-opt]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          choice = Number(b.dataset.opt);
+          render();
+        });
       });
-      ctx.globalAlpha = 1;
-      hits = [];
-      nodes.forEach(function (n) {
-        var p = pos(n);
-        var col = C[n.c] || C.petrol;
-        var on = n.id === selected;
-        var hot = n.id === hovered;
-        var alpha = alphaFor(n.branch);
-        var halo = ctx.createRadialGradient(p.x, p.y, 1, p.x, p.y, n.r * 3.2);
-        halo.addColorStop(0, col + "33");
-        halo.addColorStop(1, col + "00");
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = halo;
-        ctx.beginPath(); ctx.arc(p.x, p.y, n.r * 3.2, 0, Math.PI * 2); ctx.fill();
-        if (on || hot) { ctx.shadowColor = col; ctx.shadowBlur = 22; }
-        ctx.fillStyle = col;
-        ctx.beginPath(); ctx.arc(p.x, p.y, on ? n.r + 3 : n.r, 0, Math.PI * 2); ctx.fill();
-        ctx.shadowBlur = 0;
-        ctx.strokeStyle = C.paper; ctx.lineWidth = 1.6; ctx.stroke();
-        if (on) {
-          ctx.strokeStyle = col; ctx.globalAlpha = 0.35 * alpha; ctx.lineWidth = 2;
-          ctx.beginPath(); ctx.arc(p.x, p.y, n.r + 8 + Math.sin(now / 400) * 2, 0, Math.PI * 2); ctx.stroke();
-          var age = now - selectTime;
-          if (age >= 0 && age < 700) {
-            ctx.globalAlpha = 0.35 * (1 - age / 700);
-            ctx.beginPath(); ctx.arc(p.x, p.y, n.r + 10 + age * 0.06, 0, Math.PI * 2); ctx.stroke();
-            ctx.globalAlpha = 1;
-          }
-        }
-        ctx.globalAlpha = alpha;
-        ctx.font = (on ? '700 ' : '600 ') + Math.max(8, Math.min(10, api.font("canvas-sm"))) + 'px "Open Sans", sans-serif';
-        var tw = ctx.measureText(n.label).width;
-        var lx = Math.max(4, Math.min(w - tw - 4, p.x - tw / 2));
-        var ly = p.y + n.r + 5;
-        ctx.fillStyle = "rgba(255,255,255,.82)";
-        ctx.fillRect(lx - 3, ly - 1, tw + 6, 12);
-        ctx.fillStyle = on ? C.ink : C.muted;
-        ctx.textAlign = "left"; ctx.textBaseline = "top";
-        ctx.fillText(n.label, lx, ly);
-        ctx.globalAlpha = 1;
-        hits.push({ id: n.id, x: p.x, y: p.y, r: Math.max(n.r + 6, 14) });
-      });
-      // core rings
-      var cc = pos(byId("center"));
-      [18, 26, 36].forEach(function (rr, idx) {
-        ctx.strokeStyle = C.petrol;
-        ctx.globalAlpha = 0.08 - idx * 0.015;
-        ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.arc(cc.x, cc.y, rr + Math.sin(now / 500 + idx) * 1.5, 0, Math.PI * 2); ctx.stroke();
-      });
-      ctx.globalAlpha = 1;
-      // legend
-      var ly2 = h - 12;
-      ctx.fillStyle = C.blue; ctx.beginPath(); ctx.arc(w * 0.28 - 30, ly2, 3.2, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = C.muted; ctx.font = '600 9px "Open Sans", sans-serif'; ctx.textAlign = "left"; ctx.textBaseline = "middle";
-      ctx.fillText(DE ? "Zugang" : "access", w * 0.28 - 22, ly2);
-      ctx.fillStyle = C.green; ctx.beginPath(); ctx.arc(w * 0.72 - 30, ly2, 3.2, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = C.muted; ctx.fillText(DE ? "Erfahrung" : "experience", w * 0.72 - 22, ly2);
-      canvas.setAttribute("aria-label", DE ? "Theorienkarte des Bewusstseins. " + descriptions[selected] : "Map of consciousness theories. " + descriptions[selected]);
-    }
-    function loop() { if (!running) return; draw(); raf = requestAnimationFrame(loop); }
-    function selectAt(x, y) {
-      for (var i = 0; i < hits.length; i++) {
-        var h = hits[i];
-        if (Math.hypot(h.x - x, h.y - y) <= h.r) { selected = h.id; selectTime = performance.now(); readout.textContent = descriptions[selected]; draw(); return true; }
+      if (choice == null) {
+        feedback.className = "ls-consc-feedback is-empty";
+        feedback.innerHTML = '<p class="ls-consc-empty">' + api.esc(card.hint) + '</p>';
+      } else {
+        var picked = card.options[choice];
+        feedback.className = "ls-consc-feedback is-ready";
+        feedback.innerHTML =
+          '<span class="ls-consc-feedback-k">' + api.esc(DE ? "Deine Lesart" : "Your reading") + '</span>' +
+          '<p class="ls-consc-result">' + api.esc(picked.result) + '</p>' +
+          '<p class="ls-consc-take"><b>' + api.esc(DE ? "Was die Karte zeigt:" : "What the card shows:") + '</b> ' + api.esc(card.after) + '</p>' +
+          '<p class="ls-consc-theory">' + api.esc(picked.theory) + '</p>';
       }
-      return false;
+      prev.disabled = index === 0;
+      prev.textContent = DE ? "Zurück" : "Back";
+      next.disabled = choice == null;
+      next.textContent = index === CARDS.length - 1 ? (DE ? "Abschluss" : "Summary") : NEXT;
+      foot.textContent = (DE ? "Karte " : "Card ") + (index + 1) + " / " + CARDS.length;
     }
-    canvas.addEventListener("click", function (e) {
-      var r = canvas.getBoundingClientRect();
-      selectAt(e.clientX - r.left, e.clientY - r.top);
+    prev.addEventListener("click", function () {
+      if (index === 0) return;
+      if (index >= CARDS.length) index = CARDS.length - 1;
+      else index -= 1;
+      choice = null;
+      render();
     });
-    canvas.addEventListener("pointermove", function (e) {
-      var r = canvas.getBoundingClientRect();
-      var x = e.clientX - r.left, y = e.clientY - r.top;
-      var hot = false, hitId = null;
-      for (var i = 0; i < hits.length; i++) { if (Math.hypot(hits[i].x - x, hits[i].y - y) <= hits[i].r) { hot = true; hitId = hits[i].id; break; } }
-      hovered = hitId;
-      canvas.style.cursor = hot ? "pointer" : "default";
+    next.addEventListener("click", function () {
+      if (index >= CARDS.length) {
+        index = 0;
+        choice = null;
+        render();
+        return;
+      }
+      if (choice == null) return;
+      index += 1;
+      choice = null;
+      render();
     });
-    function resize() { size = api.fit(canvas, stage); draw(); }
-    window.addEventListener("resize", resize);
-    window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
-    readout.textContent = descriptions[selected];
-    resize();
-    raf = requestAnimationFrame(loop);
+    render();
     return {
       update: function () {},
-      pause: function () { running = false; if (raf) cancelAnimationFrame(raf); raf = 0; },
-      resume: function () { if (!running) { running = true; raf = requestAnimationFrame(loop); } },
-      resize: resize,
-      destroy: function () { running = false; if (raf) cancelAnimationFrame(raf); window.removeEventListener("resize", resize); el.remove(); }
+      destroy: function () { el.remove(); }
     };
   }
+
   core.register("consciousness", consciousnessScene);
 })();
