@@ -15,6 +15,7 @@
     ];
     var head = 0, view = "arcs", weights = W[0].slice(), prev = W[0].slice();
     var simplexTrail = [];
+    var simplexGeom = null, simplexDrag = false;
     var graphHover = -1, graphMouse = { x: 0, y: 0 };
     var t = 1, start = 0, raf = 0, loopRaf = 0, running = true;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -65,6 +66,7 @@
     }
     function setHead(h) {
       if (h === head) return;
+      endSimplexDrag();
       prev = weights.slice();
       head = h;
       start = performance.now();
@@ -198,6 +200,47 @@
         ? "Attention-Gewichte von „it“ zu den Tokens. " + top.map(function (x) { return x.tok + ": " + (x.w * 100).toFixed(1) + "%"; }).join(", ")
         : "Attention weights from “it” to the tokens. " + top.map(function (x) { return x.tok + ": " + (x.w * 100).toFixed(1) + "%"; }).join(", "));
     }
+    function barycentric(px, py, verts) {
+      var ax = verts[0].x, ay = verts[0].y;
+      var bx = verts[1].x, by = verts[1].y;
+      var cx = verts[2].x, cy = verts[2].y;
+      var v0x = bx - ax, v0y = by - ay;
+      var v1x = cx - ax, v1y = cy - ay;
+      var v2x = px - ax, v2y = py - ay;
+      var d00 = v0x * v0x + v0y * v0y;
+      var d01 = v0x * v1x + v0y * v1y;
+      var d11 = v1x * v1x + v1y * v1y;
+      var d20 = v2x * v0x + v2y * v0y;
+      var d21 = v2x * v1x + v2y * v1y;
+      var denom = d00 * d11 - d01 * d01 || 1e-9;
+      var v = (d11 * d20 - d01 * d21) / denom;
+      var w = (d00 * d21 - d01 * d20) / denom;
+      return [1 - v - w, v, w];
+    }
+    function simplexInside(px, py) {
+      if (!simplexGeom) return false;
+      var b = barycentric(px, py, simplexGeom.verts);
+      return b[0] >= -0.02 && b[1] >= -0.02 && b[2] >= -0.02;
+    }
+    function setSimplexFromPoint(px, py) {
+      if (!simplexGeom) return;
+      var b = barycentric(px, py, simplexGeom.verts).map(function (x) { return Math.max(0, x); });
+      var sum = b[0] + b[1] + b[2];
+      if (sum <= 1e-9) return;
+      b = b.map(function (x) { return x / sum; });
+      var ids = simplexGeom.ids;
+      var mass = weights[ids[0]] + weights[ids[1]] + weights[ids[2]];
+      if (mass <= 1e-9) mass = 1;
+      ids.forEach(function (id, i) { weights[id] = b[i] * mass; });
+      var total = weights.reduce(function (a, c) { return a + c; }, 0) || 1;
+      weights = weights.map(function (w) { return w / total; });
+      draw();
+    }
+    function endSimplexDrag() {
+      if (!simplexDrag) return;
+      simplexDrag = false;
+      canvas.style.cursor = "default";
+    }
     function drawSimplex() {
       if (!size) return;
       ctx = size.ctx;
@@ -218,6 +261,7 @@
         { x: cx + R * 0.94, y: cy + R * 0.62 }
       ];
       var cols = [C.green, C.sky, C.gold];
+      simplexGeom = { verts: verts, ids: ids, ox: 0, oy: 0 };
       // triangle
       ctx.beginPath(); verts.forEach(function (v, i) { if (i === 0) ctx.moveTo(v.x, v.y); else ctx.lineTo(v.x, v.y); }); ctx.closePath();
       var tg = ctx.createLinearGradient(cx, cy - R, cx, cy + R);
@@ -239,6 +283,8 @@
       // output point
       var ox = ws[0] * verts[0].x + ws[1] * verts[1].x + ws[2] * verts[2].x;
       var oy = ws[0] * verts[0].y + ws[1] * verts[1].y + ws[2] * verts[2].y;
+      simplexGeom.ox = ox;
+      simplexGeom.oy = oy;
       if (!simplexTrail.length || Math.hypot(ox - simplexTrail[simplexTrail.length - 1].x, oy - simplexTrail[simplexTrail.length - 1].y) > 1.2) {
         simplexTrail.push({ x: ox, y: oy, t: now });
         if (simplexTrail.length > 26) simplexTrail.shift();
@@ -282,6 +328,8 @@
       ctx.beginPath(); ctx.arc(ox, oy, 7, 0, Math.PI * 2); ctx.fill();
       ctx.shadowBlur = 0;
       ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(ox, oy, 12 + pulse * 2, 0, Math.PI * 2);
+      ctx.strokeStyle = C.gold; ctx.globalAlpha = 0.28; ctx.lineWidth = 1; ctx.stroke(); ctx.globalAlpha = 1;
       ctx.fillStyle = C.petrol;
       ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "top";
@@ -292,8 +340,9 @@
       ctx.fillText(DE ? "2-Simplex (Dreieck)" : "2-simplex (triangle)", w - 12, 8);
       ctx.textAlign = "center"; ctx.textBaseline = "bottom";
       ctx.fillStyle = C.muted;
-      ctx.fillText(DE ? "Ecken: v_j = W_V x_j (gelernt) · Variablen: α_j" : "corners: v_j = W_V x_j (learned) · variables: α_j", w / 2, h - 22);
-      ctx.fillText(DE ? "Ausgabe = Σ α_j v_j bleibt im Dreieck." : "output = Σ α_j v_j stays inside the triangle", w / 2, h - 8);
+      var cornerNames = ids.map(function (id) { return tokens[id]; }).join(", ");
+      ctx.fillText(DE ? "Ecken: Value-Vektoren von " + cornerNames + " · die übrigen Tokens sind ausgeblendet" : "corners: value vectors of " + cornerNames + " · the other tokens are hidden", w / 2, h - 22);
+      ctx.fillText(DE ? "Punkt ziehen: α_j ändern, Σ α_j = 1 bleibt." : "drag the point: change α_j, Σ α_j = 1 stays fixed", w / 2, h - 8);
       function fmt2(v) { return v.toFixed(2).replace(".", DE ? "," : "."); }
       var rawTxt = raw.map(fmt2).join(" · ");
       var normTxt = ws.map(fmt2).join(" · ");
@@ -455,6 +504,7 @@
       if (view === "simplex") drawSimplex();
       else if (view === "graph") drawGraph(performance.now());
       else drawArcs();
+      canvas.__lsQkv = { view: view, head: head, weights: weights.slice(), simplex: simplexGeom ? { ids: simplexGeom.ids.slice(), ox: simplexGeom.ox, oy: simplexGeom.oy } : null };
     }
     function setView(v) {
       if (v !== "arcs" && v !== "simplex" && v !== "graph") return;
@@ -462,6 +512,7 @@
       var order = { arcs: 0, graph: 1, simplex: 2 };
       var dir = order[v] < order[view] ? -1 : 1;
       function apply() {
+        if (v !== "simplex") endSimplexDrag();
         view = v;
         graphHover = -1;
         el.querySelectorAll("[data-view]").forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-view") === view); });
@@ -502,7 +553,34 @@
       graphHover = best;
       draw();
     });
-    canvas.addEventListener("pointerleave", function () { graphHover = -1; draw(); });
+    canvas.addEventListener("pointerleave", function () {
+      graphHover = -1;
+      if (!simplexDrag) canvas.style.cursor = "default";
+      draw();
+    });
+    canvas.addEventListener("pointerdown", function (e) {
+      if (view !== "simplex" || !size) return;
+      var r = canvas.getBoundingClientRect();
+      var px = e.clientX - r.left, py = e.clientY - r.top;
+      if (!simplexInside(px, py)) return;
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      simplexDrag = true;
+      canvas.style.cursor = "grabbing";
+      if (canvas.setPointerCapture) { try { canvas.setPointerCapture(e.pointerId); } catch (err) {} }
+      setSimplexFromPoint(px, py);
+    });
+    canvas.addEventListener("pointermove", function (e) {
+      if (view !== "simplex" || !size) return;
+      var r = canvas.getBoundingClientRect();
+      var px = e.clientX - r.left, py = e.clientY - r.top;
+      if (simplexDrag) {
+        setSimplexFromPoint(px, py);
+      } else {
+        canvas.style.cursor = simplexInside(px, py) ? "grab" : "default";
+      }
+    });
+    canvas.addEventListener("pointerup", endSimplexDrag);
+    canvas.addEventListener("pointercancel", endSimplexDrag);
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
     renderVectors();

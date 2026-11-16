@@ -5,7 +5,18 @@
   var esc = core.esc, clamp = core.clamp, lerp = core.lerp, ease = core.ease;
   function crossEntropyScene(root, api) {
     var DE = api.lang === "de";
-    var tokens = ["Paris", "London", "Berlin", "the"];
+    var tokens = ["Paris", "London", "Berlin", "Rome"];
+    var sentences = DE ? [
+      "Die Hauptstadt von Frankreich ist ___",
+      "Die Hauptstadt des Vereinigten Königreichs ist ___",
+      "Die Hauptstadt von Deutschland ist ___",
+      "Die Hauptstadt von Italien ist ___"
+    ] : [
+      "The capital of France is ___",
+      "The capital of the UK is ___",
+      "The capital of Germany is ___",
+      "The capital of Italy is ___"
+    ];
     var initial = [1.69, 2.2, 0.77, 0.37];
     var logits = initial.slice();
     var target = 0, lr = 0.9;
@@ -15,6 +26,7 @@
     var BATCH_STEPS = 5;
     var BATCH_STEP_MS = 220;
     var batchToken = 0, batchLeft = 0, batchTotal = 0, batchDone = 0;
+    var barGeom = null, dragBar = -1;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var el = document.createElement("div");
     el.className = "ls-ce-scene";
@@ -151,6 +163,44 @@
       }
       nextStep();
     }
+    function setProb(index, value) {
+      var p = softmax(logits);
+      var targetP = clamp(value, 0, 1);
+      var rest = 1 - targetP;
+      var sumOther = 0;
+      for (var i = 0; i < p.length; i++) {
+        if (i !== index) sumOther += p[i];
+      }
+      var next = p.map(function (v, i) {
+        if (i === index) return targetP;
+        return sumOther > 1e-9 ? v / sumOther * rest : rest / (p.length - 1);
+      });
+      logits = next.map(function (v) { return Math.log(Math.max(1e-9, v)); });
+      return next;
+    }
+    function barAt(x, y) {
+      if (!barGeom) return -1;
+      if (y < barGeom.topY - 12 || y > barGeom.baseY + 8) return -1;
+      for (var i = 0; i < barGeom.n; i++) {
+        var bx = barGeom.startX + i * (barGeom.tw + barGeom.gap);
+        if (x >= bx - 2 && x <= bx + barGeom.tw + 2) return i;
+      }
+      return -1;
+    }
+    function setBarFromY(index, y) {
+      if (!barGeom) return;
+      var value = clamp((barGeom.baseY - y) / barGeom.maxH, 0, 1);
+      setProb(index, value);
+      history.push(lossOf(softmax(logits)));
+      if (history.length > 28) history.shift();
+      draw();
+    }
+    function endBarDrag() {
+      if (dragBar < 0) return;
+      dragBar = -1;
+      canvas.style.cursor = "default";
+      draw();
+    }
     function draw() {
       if (!size) return;
       ctx = size.ctx;
@@ -166,7 +216,7 @@
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "top";
-      ctx.fillText(DE ? "Die Hauptstadt von Frankreich ist ___" : "The capital of France is ___", pad, 6);
+      ctx.fillText(sentences[target] || "", pad, 6);
       var gaugeW = Math.min(190, w * 0.30);
       var towersW = w - gaugeW - pad * 2;
       var topY = 40, baseY = h - 58;
@@ -176,6 +226,7 @@
       var tw = Math.min(58, (towersW - gap * (n - 1)) / n);
       var startX = pad + Math.max(0, (towersW - (tw * n + gap * (n - 1))) / 2);
       var centers = tokens.map(function (_, i) { return startX + i * (tw + gap) + tw / 2; });
+      barGeom = { topY: topY, baseY: baseY, maxH: maxH, startX: startX, tw: tw, gap: gap, n: n };
       // soft horizontal guide lines
       ctx.strokeStyle = "rgba(0,75,111,.05)";
       ctx.lineWidth = 1;
@@ -327,13 +378,14 @@
         });
         ctx.stroke();
       }
-      canvas.__lsCE = { target: target, history: history.slice(), batchTotal: batchTotal, batchDone: batchDone };
+      canvas.__lsCE = { target: target, history: history.slice(), batchTotal: batchTotal, batchDone: batchDone, probs: p.slice(), geom: barGeom };
     }
     function resize() {
       size = api.fit(canvas, stage);
       draw();
     }
     function reset() {
+      endBarDrag();
       cancelBatch(false);
       logits = initial.slice();
       target = 0;
@@ -345,6 +397,7 @@
       draw();
     }
     function nextTarget() {
+      if (dragBar >= 0) return true;
       if (tween || batchLeft > 0) return true;
       var isLast = target >= tokens.length - 1;
       if (isLast && sequenceDone) return false;
@@ -365,6 +418,7 @@
       return true;
     }
     function prevTarget() {
+      endBarDrag();
       if (target <= 0) { cancelBatch(true); return false; }
       cancelBatch(true);
       target--;
@@ -376,6 +430,33 @@
       draw();
       return true;
     }
+    canvas.addEventListener("pointerdown", function (e) {
+      if (!size || !barGeom) return;
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      var i = barAt(x, y);
+      if (i < 0) return;
+      cancelBatch(false);
+      dragBar = i;
+      prevProbs = softmax(logits).slice();
+      history = [lossOf(softmax(logits))];
+      pulseStart = 0;
+      canvas.style.cursor = "ns-resize";
+      if (canvas.setPointerCapture) { try { canvas.setPointerCapture(e.pointerId); } catch (err) {} }
+      setBarFromY(i, y);
+    });
+    canvas.addEventListener("pointermove", function (e) {
+      if (!size || !barGeom) return;
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      if (dragBar >= 0) {
+        setBarFromY(dragBar, y);
+      } else {
+        canvas.style.cursor = barAt(x, y) >= 0 ? "ns-resize" : "default";
+      }
+    });
+    canvas.addEventListener("pointerup", endBarDrag);
+    canvas.addEventListener("pointercancel", endBarDrag);
     trainBtn.addEventListener("click", function () { cancelBatch(false); trainStep(); });
     resetBtn.addEventListener("click", reset);
     window.addEventListener("resize", resize);
