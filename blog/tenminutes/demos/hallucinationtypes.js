@@ -17,9 +17,9 @@
       {
         id: "citation", label: "Erfundene Quellen", color: "gold",
         question: "Nenne eine Quelle für diese Behauptung.",
-        answer: "Smith et al. (2018), DOI 10.9999/fake.123.",
-        why: "Die Form stimmt: Autor, Jahr, DOI. Die Quelle existiert aber nicht. Das Modell hat eine Zitationsform gelernt, keine Bibliothek.",
-        check: "DOI oder Link auflösen; Autor, Titel und Jahr gegenprüfen.",
+        answer: "Smith & Weber (2018), Journal of Memory and Language 102, 44–61. DOI 10.12345/jml.2018.044.",
+        why: "Die Form stimmt: Autoren, Jahr, Journal, Seiten, DOI. Die Quelle existiert aber nicht. Das Modell hat eine Zitationsform gelernt, keine Bibliothek.",
+        check: "DOI auflösen; Titel suchen und Autoren, Journal und Jahr gegenprüfen.",
         fix: "Nur bereitgestellte Quellen zitieren; Link-Check erzwingen.",
         source: "Ji et al. (2023)"
       },
@@ -99,9 +99,9 @@
       {
         id: "citation", label: "Fabricated citations", color: "gold",
         question: "Give a source for this claim.",
-        answer: "Smith et al. (2018), DOI 10.9999/fake.123.",
-        why: "The form is right: author, year, DOI. The source does not exist. The model learned the shape of a citation, not a library.",
-        check: "Resolve the DOI or link; check author, title, and year.",
+        answer: "Smith & Weber (2018), Journal of Memory and Language 102, 44–61. DOI 10.12345/jml.2018.044.",
+        why: "The form is right: authors, year, journal, pages, DOI. The source does not exist. The model learned the shape of a citation, not a library.",
+        check: "Resolve the DOI; search the title and check authors, journal, and year.",
         fix: "Cite only provided sources; enforce link checks.",
         source: "Ji et al. (2023)"
       },
