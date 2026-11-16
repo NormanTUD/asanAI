@@ -816,7 +816,7 @@ h1,h2,h3,h4{
 .ls-tokenize-stats b{color:var(--ls-ink);font-size:var(--ls-fs-readout);font-family:"Barlow",sans-serif;margin-right:2px}
 .ls-title.is-centered,.ls-kicker.is-centered{justify-content:center;text-align:center;width:100%;max-width:none}
 .ls-tokenize-scroll-note{margin:-3px 0 0;font:var(--ls-fs-micro)/1.35 "Open Sans",sans-serif;color:var(--ls-muted)}
-.ls-bpe{border:1px solid rgba(0,75,111,.12);background:rgba(255,255,255,.62);padding:8px 10px;display:grid;gap:6px}
+.ls-bpe{border:1px solid rgba(0,75,111,.12);background:rgba(255,255,255,.62);padding:8px 10px;display:grid;gap:6px;width:100%;max-width:700px;margin:0 auto}
 .ls-bpe-head{display:flex;align-items:center;justify-content:space-between}
 .ls-bpe-title{font:700 var(--ls-fs-ui-sm) "Barlow",sans-serif;color:var(--ls-petrol)}
 .ls-bpe-hint{font:var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted)}
