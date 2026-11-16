@@ -38,7 +38,7 @@
         b.setAttribute("aria-pressed", String(on));
       });
       sourceEl.innerHTML = rag
-        ? '<article class="ls-hg-doc"><div class="ls-hg-doc-head"><b>S1</b><span>' + (DE ? "vertrauenswürdig" : "trusted") + '</span></div><p><b>Aurora Robotics</b> · ' + (DE ? "offizielle Firmengeschichte" : "official company history") + '</p><p>' + (DE ? "Gegründet 2019 in Dresden." : "Founded in 2019 in Dresden.") + '</p></article>'
+        ? '<article class="ls-hg-doc"><div class="ls-hg-doc-head"><b>S1</b><span>' + (DE ? "vertrauenswürdig" : "trusted") + '</span></div><p><b>Wikipedia</b> · ' + (DE ? "Eiffelturm" : "Eiffel Tower") + '</p><p>' + (DE ? "Der Eiffelturm ist mit Antenne 330 Meter hoch." : "The Eiffel Tower is 330 metres tall including its antenna.") + '</p></article>'
         : '<div class="ls-hg-empty">' + (DE ? "Keine Quelle im Kontext. Das Modell antwortet aus dem Gedächtnis." : "No source in the context. The model answers from memory.") + '</div>';
       var answer, cite, risk, htmlSteps = "";
       if (verify && !rag) {
@@ -47,7 +47,7 @@
         risk = 12;
       } else if (rag) {
         answer = DE ? "Der Eiffelturm ist mit Antenne 330 m hoch. [S1]" : "The Eiffel Tower is 330 m tall with its antenna. [S1]";
-        cite = "S1 · " + (DE ? "offizielle Angaben, 2022" : "official figures, 2022");
+        cite = "S1 · " + (DE ? "Wikipedia: Eiffelturm" : "Wikipedia: Eiffel Tower");
         risk = 18;
       } else {
         answer = DE ? "Der Eiffelturm ist 300 m hoch." : "The Eiffel Tower is 300 m tall.";
