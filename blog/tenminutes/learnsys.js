@@ -353,6 +353,9 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
+  function textHTML(s) {
+    return esc(s).replace(/\n/g, "<br>");
+  }
   function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
   function lerp(a, b, t) { return a + (b - a) * t; }
   function ease(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
@@ -371,11 +374,11 @@
         return '<a href="' + esc(href) + '"' + (external ? ' target="_blank" rel="noopener"' : '') + '>' + esc(lm[1]) + '</a>';
       }
       var m = part.match(/^\[\[([^\]]+)\]\]$/);
-      if (!m) return esc(part);
+      if (!m) return textHTML(part);
       var id = termId(m[1]);
       var label = m[1];
       var g = glossary(id);
-      if (!g) return esc(label);
+      if (!g) return textHTML(label);
       return '<span class="ls-term-wrap">' +
         '<button type="button" class="ls-term" data-term="' + esc(id) + '">' + esc(label) + '</button>' +
         '<span class="ls-term-note" hidden>' +

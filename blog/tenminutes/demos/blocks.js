@@ -44,7 +44,7 @@
       {
         id: "unembed", label: "Unembedding", short: "Vektor → Verteilung", icon: "U", color: "lilac",
         title: "Unembedding",
-        body: "Der letzte Vektor h kommt aus den Transformer-Blöcken. In ihm ist der gesamte Kontext über viele Schichten und Heads eingemischt. h wird mit den gelernten Richtungen aller Tokens verglichen; der Winkel wird zum Logit, Softmax macht daraus eine Verteilung.",
+        body: "Der letzte Vektor h ist der Output-Vektor des LLM. Er kommt aus den Transformer-Blöcken; in ihm ist der gesamte Kontext über viele Schichten und Heads eingemischt. h wird mit den gelernten Richtungen aller Tokens verglichen; der Winkel wird zum Logit, Softmax macht daraus eine Verteilung.",
         points: ["Richtung statt Länge", "ein Token wird gezogen"],
         mini: "unembed",
       }
@@ -85,7 +85,7 @@
       {
         id: "unembed", label: "Unembedding", short: "vector → distribution", icon: "U", color: "lilac",
         title: "Unembedding",
-        body: "The final vector h comes out of the transformer blocks. The entire context has been mixed into it through many layers and heads. h is compared with the learned directions of all tokens; the angle becomes a logit, and softmax turns that into a distribution.",
+        body: "The final vector h is the output vector of the LLM. It comes out of the transformer blocks; the entire context has been mixed into it through many layers and heads. h is compared with the learned directions of all tokens; the angle becomes a logit, and softmax turns that into a distribution.",
         points: ["direction, not length", "one token is drawn"],
         mini: "unembed",
       }
@@ -305,7 +305,7 @@
       V.label(ctx, DE ? "pro Token" : "per token", w * 0.50, h - 8, { font: '600 ' + Math.max(8, api.font("canvas-sm") - 1) + 'px "Open Sans", sans-serif', color: C.muted, align: "center" });
     }
     function miniUnembed(ctx, w, h) {
-      var ox = w * 0.16, oy = h * 0.70, s = Math.min(w * 0.22, h * 0.40);
+      var ox = w * 0.16, oy = h * 0.60, s = Math.min(w * 0.20, h * 0.32);
       var H = [0.90, 0.35];
       var rows = [{ t: " the", w: [0.86, 0.50], c: C.green }, { t: " Paris", w: [0.98, 0.08], c: C.blue }, { t: " a", w: [0.20, 0.98], c: C.sky }, { t: " city", w: [0.58, -0.82], c: C.gold }];
       rows.forEach(function (row, i) {
@@ -379,10 +379,10 @@
           return '<div class="ls-bs-sub"><b>' + esc(s.title) + '</b><div class="ls-bs-subcanvas"><canvas data-mini="' + (["attention", "ffn"][i] || "ffn") + '"></canvas></div><p>' + esc(s.text) + '</p></div>';
         }).join("") + '</div>';
       } else {
-        html += '<div class="ls-bs-canvas-wrap"><canvas data-mini="' + b.mini + '"></canvas></div>';
+        html += '<div class="ls-bs-canvas-wrap' + (b.mini === "unembed" ? " ls-bs-canvas-wrap--unembed" : "") + '"><canvas data-mini="' + b.mini + '"></canvas></div>';
       }
       if (b.mini === "unembed") {
-        html += '<p class="ls-bs-traj-caption">' + (DE ? "h = letzter Vektor aus den Transformer-Blöcken. Der gesamte Kontext ist über viele Schichten und Heads hineingemischt. Die Pfeile sind gelernte Token-Richtungen aus W_U; der Winkel zu h entscheidet über den Logit." : "h = final vector from the transformer blocks. The entire context has been mixed into it through many layers and heads. The arrows are learned token directions from W_U; the angle to h decides the logit.") + '</p>';
+        html += '<p class="ls-bs-traj-caption">' + (DE ? "h = Output-Vektor des LLM: der letzte Vektor aus den Transformer-Blöcken. Der gesamte Kontext ist über viele Schichten und Heads hineingemischt. Die Pfeile sind gelernte Token-Richtungen aus W_U; der Winkel zu h entscheidet über den Logit." : "h = output vector of the LLM: the final vector from the transformer blocks. The entire context has been mixed into it through many layers and heads. The arrows are learned token directions from W_U; the angle to h decides the logit.") + '</p>';
       }
       if (b.source) html += '<p class="ls-bs-source">' + (DE ? "Quelle: " : "Source: ") + '<a href="' + esc(b.source.url) + '" target="_blank" rel="noopener">' + esc(b.source.label) + '</a></p>';
       if (positionDemo) { try { positionDemo.destroy(); } catch (e) {} positionDemo = null; }

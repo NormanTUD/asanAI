@@ -177,16 +177,18 @@
       var next = stages[step + 1];
       corpusEl.innerHTML = st.words.map(function (w) {
         var sign = "";
-        w.symbols.forEach(function (sym) {
-          var hi = false;
-          if (next && next.merge) {
-            for (var i = 0; i < w.symbols.length - 1; i++) {
-              if (w.symbols[i] === next.merge.a && w.symbols[i + 1] === next.merge.b) {
-                if (sym === next.merge.a || sym === next.merge.b) hi = true;
-              }
+        var hi = [];
+        if (next && next.merge) {
+          for (var i = 0; i < w.symbols.length - 1; i++) {
+            if (w.symbols[i] === next.merge.a && w.symbols[i + 1] === next.merge.b) {
+              hi[i] = true;
+              hi[i + 1] = true;
+              i++;
             }
           }
-          sign += '<span class="ls-bpe-symbol' + (hi ? " is-pair" : "") + '">' + api.esc(sym) + '</span>';
+        }
+        w.symbols.forEach(function (sym, idx) {
+          sign += '<span class="ls-bpe-symbol' + (hi[idx] ? " is-pair" : "") + '">' + api.esc(sym) + '</span>';
         });
         return '<div class="ls-bpe-word"><span class="ls-bpe-word-label">' + api.esc(w.word) + '</span><span class="ls-bpe-word-count">×' + w.count + '</span><span class="ls-bpe-symbols">' + sign + '</span></div>';
       }).join("");

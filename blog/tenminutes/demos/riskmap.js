@@ -11,10 +11,10 @@
         title: "Vier Felder, vier Gegenmittel",
         sub: "Gegenwart und Zukunft, Absicht und Unfall. Klicke ein Feld für Details.",
         items: [
-          { tag: "Heute · Absicht", title: "Missbrauch", short: "Betrug, Cyber, Desinformation", body: "Ein Modell macht Phishing, Schadcode und überzeugende Fälschungen billiger. Die Verteidigung muss schneller werden als der Angriff.", cite: "International AI Safety Report 2025", severity: 80 },
-          { tag: "Heute · Unfall", title: "Bias und Fehler", short: "Gesichter, Gesundheit, Kredit", body: "Gesichtserkennung war bei dunkler Haut und Frauen schlechter. Ein Gesundheitsalgorithmus unterschätzte den Pflegebedarf Schwarzer Patient:innen.", cite: "Buolamwini & Gebru (2018); Obermeyer et al. (2019)", severity: 65 },
-          { tag: "Zukunft · Absicht", title: "Machtkonzentration", short: "Compute, Daten, Talente", body: "Wer Rechenleistung, Daten und Modelle kontrolliert, kann Märkte und Politik prägen. Die Kontrolle ist ungleich verteilt.", cite: "Sastry et al. (2024)", severity: 75 },
-          { tag: "Zukunft · Unfall", title: "Kontrolle verlieren", short: "Ziele, Agenten, Skalierung", body: "Ein System kann Ziele verfolgen, die wir nicht mehr korrigieren können. Das ist kein Roboteraufstand, sondern ein Alignment-Problem.", cite: "Amodei et al. (2016); Bostrom (2014)", severity: 90 }
+          { tag: "Heute · Absicht", title: "Missbrauch", short: "Betrug, Cyber, Desinformation", body: "Ein Modell macht Phishing, Schadcode und überzeugende Fälschungen billiger. Die Verteidigung muss schneller werden als der Angriff.", mechanism: "Ein Allzweckmodell senkt die Kosten für Text, Code und Bilder in großem Maßstab. Der Angreifer braucht keine Spezialausbildung; die Verteilung von Fähigkeit und Zugang entscheidet über die Reichweite.", examples: "Phishing-Mails, Voice-Cloning, Desinformationskampagnen.", countermeasure: "Provenienzsignaturen, Abuse-Monitoring, Zugriffsbeschränkungen, Strafverfolgung.", cite: "International AI Safety Report 2025" },
+          { tag: "Heute · Unfall", title: "Bias und Fehler", short: "Gesichter, Gesundheit, Kredit", body: "Gesichtserkennung war bei dunkler Haut und Frauen schlechter. Ein Gesundheitsalgorithmus unterschätzte den Pflegebedarf Schwarzer Patient:innen.", mechanism: "Das Modell lernt die Verteilung der Trainingsdaten. Historische Ungleichheit wird zur Vorhersage, wenn die Zielfunktion sie nicht korrigiert; Fehler treffen Gruppen unterschiedlich, weil Daten, Labels und Schwellenwerte ungleich sind.", examples: "Gender Shades: höhere Fehlerraten bei dunkler Haut und Frauen. Gesundheitskosten als Proxy für Pflegebedarf.", countermeasure: "Datenaudits, faire Metriken, gruppenspezifische Schwellenwerte, menschliche Kontrolle.", cite: "Buolamwini & Gebru (2018); Obermeyer et al. (2019)" },
+          { tag: "Zukunft · Absicht", title: "Machtkonzentration", short: "Compute, Daten, Talente", body: "Wer Rechenleistung, Daten und Modelle kontrolliert, kann Märkte und Politik prägen. Die Kontrolle ist ungleich verteilt.", mechanism: "Frontier-Training braucht viel Compute, Daten und Talent. Wer diese Ressourcen kontrolliert, bestimmt Preise, Zugang und Regeln; der Markt konzentriert sich.", examples: "Wenige Labore und Cloud-Anbieter; staatliche Compute-Cluster.", countermeasure: "Compute-Governance, öffentliche Alternativen, Wettbewerbsrecht, Transparenz.", cite: "Sastry et al. (2024)" },
+          { tag: "Zukunft · Unfall", title: "Kontrolle verlieren", short: "Ziele, Agenten, Skalierung", body: "Ein System kann Ziele verfolgen, die wir nicht mehr korrigieren können. Das ist kein Roboteraufstand, sondern ein Alignment-Problem.", mechanism: "Ein optimierendes System kann Ziele auf Wegen verfolgen, die wir nicht intendiert haben. Mit mehr Fähigkeiten und Autonomie wächst die Wirkung; Alignment muss mit der Fähigkeit skalieren.", examples: "Spezifikationsfehler, Belohnungs-Hacking, unerwünschte Selbsterhaltung.", countermeasure: "Alignment-Forschung, Evaluations, Kill-Switches, Rechtebegrenzung, internationale Regeln.", cite: "Amodei et al. (2016); Bostrom (2014)" }
         ]
       },
       safety: {
@@ -58,10 +58,10 @@
         title: "Four fields, four countermeasures",
         sub: "Present and future, intent and accident. Click a field for details.",
         items: [
-          { tag: "Today · intent", title: "Misuse", short: "Fraud, cyber, disinformation", body: "A model makes phishing, malware, and convincing fakes cheaper. Defence has to move faster than offence.", cite: "International AI Safety Report 2025", severity: 80 },
-          { tag: "Today · accident", title: "Bias and errors", short: "Faces, health, credit", body: "Face recognition was worse for darker skin and women. A health algorithm underestimated the care needs of Black patients.", cite: "Buolamwini & Gebru (2018); Obermeyer et al. (2019)", severity: 65 },
-          { tag: "Future · intent", title: "Power concentration", short: "Compute, data, talent", body: "Whoever controls compute, data, and models can shape markets and politics. Control is unevenly distributed.", cite: "Sastry et al. (2024)", severity: 75 },
-          { tag: "Future · accident", title: "Losing control", short: "Goals, agents, scale", body: "A system can pursue goals we can no longer correct. This is not a robot uprising; it is an alignment problem.", cite: "Amodei et al. (2016); Bostrom (2014)", severity: 90 }
+          { tag: "Today · intent", title: "Misuse", short: "Fraud, cyber, disinformation", body: "A model makes phishing, malware, and convincing fakes cheaper. Defence has to move faster than offence.", mechanism: "A general-purpose model lowers the cost of text, code, and images at scale. The attacker needs no specialist training; the distribution of capability and access determines reach.", examples: "Phishing emails, voice cloning, disinformation campaigns.", countermeasure: "Provenance signatures, abuse monitoring, access limits, law enforcement.", cite: "International AI Safety Report 2025" },
+          { tag: "Today · accident", title: "Bias and errors", short: "Faces, health, credit", body: "Face recognition was worse for darker skin and women. A health algorithm underestimated the care needs of Black patients.", mechanism: "The model learns the training distribution. Historical inequality becomes prediction when the objective does not correct it; errors hit groups differently because data, labels, and thresholds are uneven.", examples: "Gender Shades: higher error rates for darker skin and women. Health cost as a proxy for care needs.", countermeasure: "Data audits, fair metrics, group-specific thresholds, human oversight.", cite: "Buolamwini & Gebru (2018); Obermeyer et al. (2019)" },
+          { tag: "Future · intent", title: "Power concentration", short: "Compute, data, talent", body: "Whoever controls compute, data, and models can shape markets and politics. Control is unevenly distributed.", mechanism: "Frontier training needs a lot of compute, data, and talent. Whoever controls these resources sets prices, access, and rules; the market concentrates.", examples: "A few labs and cloud providers; state compute clusters.", countermeasure: "Compute governance, public alternatives, competition law, transparency.", cite: "Sastry et al. (2024)" },
+          { tag: "Future · accident", title: "Losing control", short: "Goals, agents, scale", body: "A system can pursue goals we can no longer correct. This is not a robot uprising; it is an alignment problem.", mechanism: "An optimising system can pursue goals on paths we did not intend. With more capability and autonomy, the impact grows; alignment has to scale with capability.", examples: "Specification errors, reward hacking, unwanted self-preservation.", countermeasure: "Alignment research, evaluations, kill switches, permission limits, international rules.", cite: "Amodei et al. (2016); Bostrom (2014)" }
         ]
       },
       safety: {
@@ -110,17 +110,41 @@
       if (key === "risky") return DE ? "riskant" : "risky";
       return DE ? "brüchig" : "brittle";
     }
+    function header(d) {
+      return '<div class="ls-rm-head"><span class="ls-rm-kicker">' + esc(d.kicker) + '</span><b>' + esc(d.title) + '</b><p>' + esc(d.sub) + '</p></div>';
+    }
+    function renderRisks(d) {
+      var active = Math.min(state.active, d.items.length - 1);
+      state.active = active;
+      var item = d.items[active];
+      var cards = d.items.map(function (it, idx) {
+        return '<button type="button" class="ls-rm-card ls-rm-card--risk' + (idx === state.active ? ' is-active' : '') + '" data-item="' + idx + '">' +
+          '<span class="ls-rm-tag">' + esc(it.tag) + '</span>' +
+          '<b>' + esc(it.title) + '</b>' +
+          '<span class="ls-rm-short">' + esc(it.short) + '</span>' +
+        '</button>';
+      }).join("");
+      var detail = '<div class="ls-rm-detail ls-rm-detail--risk">' +
+        '<div class="ls-rm-detail-head"><span class="ls-rm-detail-tag">' + esc(item.tag) + '</span><b>' + esc(item.title) + '</b></div>' +
+        '<p class="ls-rm-block"><b>' + (DE ? "Gefahr" : "Danger") + ':</b> ' + esc(item.body) + '</p>' +
+        '<p class="ls-rm-block"><b>' + (DE ? "Warum" : "Why") + ':</b> ' + esc(item.mechanism) + '</p>' +
+        '<p class="ls-rm-block"><b>' + (DE ? "Beispiel" : "Example") + ':</b> ' + esc(item.examples) + '</p>' +
+        '<div class="ls-rm-fix"><b>' + (DE ? "So wird man sie los" : "How to get rid of it") + ':</b> ' + esc(item.countermeasure) + '</div>' +
+        '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + esc(item.cite) + '</span>' +
+      '</div>';
+      el.innerHTML = header(d) + '<div class="ls-rm-grid ls-rm-grid--risks">' + cards + '</div>' + detail;
+    }
     function render() {
       var d = modeData();
+      el.className = "ls-rm ls-rm--" + state.mode;
+      if (state.mode === "risks") { renderRisks(d); return; }
       var active = Math.min(state.active, d.items.length - 1);
       var gridClass = state.mode === "safety" ? " ls-rm-grid--stack" : (state.mode === "limits" ? " ls-rm-grid--limits" : "");
-      el.className = "ls-rm ls-rm--" + state.mode;
       el.innerHTML =
-        '<div class="ls-rm-head"><span class="ls-rm-kicker">' + esc(d.kicker) + '</span><b>' + esc(d.title) + '</b><p>' + esc(d.sub) + '</p></div>' +
+        header(d) +
         '<div class="ls-rm-grid' + gridClass + '">' + d.items.map(function (item, idx) {
           var extra = "";
-          if (item.severity != null) extra = '<span class="ls-rm-meter"><i style="width:' + item.severity + '%"></i></span>';
-          else if (item.level) extra = '<span class="ls-rm-level">' + esc(item.level) + '</span>';
+          if (item.level) extra = '<span class="ls-rm-level">' + esc(item.level) + '</span>';
           else if (item.status) extra = '<span class="ls-rm-status is-' + item.status + '">' + esc(statusLabel(item.status)) + '</span>';
           return '<button type="button" class="ls-rm-card' + (idx === active ? ' is-active' : '') + '" data-item="' + idx + '">' +
             '<span class="ls-rm-tag">' + esc(item.tag) + '</span>' +
