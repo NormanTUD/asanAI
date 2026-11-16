@@ -1675,11 +1675,6 @@
       questions: []
     },
     {
-      id: "g-lens-grenze",
-      title: "Grenze",
-      questions: []
-    },
-    {
       id: "g-lens-mathematik",
       title: "Mathematik",
       questions: [
@@ -1697,27 +1692,22 @@
       ]
     },
     {
-      id: "g-lens-optional",
-      title: "Optional",
-      questions: []
-    },
-    {
       id: "g-lens-budget",
       title: "Budget",
       questions: [
         { id: "q-box-att-3", title: "Ein Head, ein Budget", body: "Jede Zeile hat genau 1,00 Attention zu vergeben. Mehr für ein Token heißt weniger für alle anderen. Jeder Head hat ein getrenntes Budget.", tex: "", kind: "trivia" },
         { id: "q-edit-1794817884757-1", title: "Warum hat der Punkt in „Ich gehe zur Bank.“ fast 60 %? Kodiert er nicht die gesamte Bedeutung?", body: "Im Satz „Ich gehe zur Bank.“ ist der Punkt die Query, und sein eigener Key passt am besten: Deshalb bekommt er einen großen Teil seiner Aufmerksamkeit von sich selbst. Das heißt nicht, dass er die Bedeutung des ganzen Satzes trägt. Jedes Token wird eigenständig kodiert und behält seine eigene Repräsentation; die Prozentzahl beschreibt nur diese eine Query-Zeile.", tex: "", kind: "question" }
       ]
+    },
+    {
+      id: "g-sources",
+      title: "Quellen",
+      sources: attentionSteps[1].sources
     }
   ] : [
     {
       id: "g-basics",
       title: "One level deeper",
-      questions: []
-    },
-    {
-      id: "g-lens-limit",
-      title: "Limit",
       questions: []
     },
     {
@@ -1738,17 +1728,17 @@
       ]
     },
     {
-      id: "g-lens-optional",
-      title: "Optional",
-      questions: []
-    },
-    {
       id: "g-lens-budget",
       title: "Budget",
       questions: [
         { id: "q-box-att-3", title: "One head, one budget", body: "Every row has exactly 1.00 attention to give. More for one token means less for the others. Each head has a separate budget.", tex: "", kind: "trivia" },
         { id: "q-edit-1794817884757-1", title: "Why does the period in “I walk to the bank.” get almost 60%? Doesn't it encode the entire meaning?", body: "In “I walk to the bank.” the period is the query, and its own key matches best: that is why it gives a large share of its attention to itself. That does not mean it carries the meaning of the whole sentence. Every token is encoded independently and keeps its own representation; the percentage describes only this one query row.", tex: "", kind: "question" }
       ]
+    },
+    {
+      id: "g-sources",
+      title: "Sources",
+      sources: attentionSteps[1].sources
     }
   ];
 
@@ -1761,9 +1751,9 @@
     demoState: { scene: "attention" },
     context: attentionSteps[1].context,
     deep: attentionSteps[1].deep,
-    boxes: attentionSteps[1].boxes.concat(attentionSteps[0].boxes),
+    boxes: [],
     questionGroups: attentionMergedGroups,
-    sources: attentionSteps[1].sources
+    sources: []
   };
   var codeAttentionSubstep = {
     kicker: "Attention",
