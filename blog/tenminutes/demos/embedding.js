@@ -55,6 +55,12 @@
     function wordIdsForDim(withZ) {
       return withZ ? WORD_IDS.concat(WORD_IDS_3D) : WORD_IDS;
     }
+    function tokenAlphaFor(mix) {
+      if (mix <= 0 || mix >= 1) return 1;
+      if (mix < 0.22) return 1 - smoothstep(0, 0.22, mix);
+      if (mix < 0.80) return 0;
+      return smoothstep(0.80, 1, mix);
+    }
     function buildMiniTable() {
       if (!miniTable) return;
       var ids = ["man", "woman", "prince", "princess", "king", "queen", "power", "maleDog", "femaleDog", "wizard", "sorceress"];
@@ -246,7 +252,7 @@
       return { x: (v[0] - 12.5) / 15, y: v[1] / 22, z: v.length > 2 ? v[2] : 0 };
     }
     function project(x, y, z) {
-      var yMix = smoothstep(0, 1, dimMix);
+      var yMix = smoothstep(0.22, 0.80, dimMix);
       var zMix = smoothstep(1, 2, dimMix);
       var planeTilt = 0.18 * yMix;
       var yaw = st.yaw * (planeTilt + (1 - planeTilt) * zMix);
@@ -442,13 +448,7 @@
       var yMix = smoothstep(0, 1, dimMix);
       var zMix = smoothstep(1, 2, dimMix);
       if (zMix > 0.02) drawRoomGrid(zMix);
-      if (zMix > 0.02) {
-        var q1 = project(-1.02, -1.02, 0);
-        ctx.globalAlpha = smoothstep(1.45, 2, dimMix) * 0.85;
-        drawLabel(DE ? "2D-Ebene · z = 0" : "2D plane · z = 0", q1.x + 6, q1.y + 15, C.muted, "left", 9);
-        ctx.globalAlpha = 1;
-      }
-      var planeAlpha = smoothstep(0.02, 0.72, yMix) * (1 - zMix);
+      var planeAlpha = smoothstep(0.22, 0.80, dimMix) * (1 - zMix);
       if (planeAlpha > 0.01) {
         ctx.globalAlpha = planeAlpha;
         drawPlaneGrid();
@@ -483,8 +483,10 @@
 
       var cr = currentResult();
       var result = cr.result, steps = cr.steps, dirMode = cr.dirMode;
-      var groupAlpha = 1 - smoothstep(0, 0.5, dimMix);
-      var individualAlpha = smoothstep(0, 0.5, dimMix);
+      var tokenAlpha = tokenAlphaFor(dimMix);
+      canvas.__lsTokenAlpha = tokenAlpha;
+      var groupAlpha = (1 - smoothstep(0, 0.5, dimMix)) * tokenAlpha;
+      var individualAlpha = smoothstep(0, 0.5, dimMix) * tokenAlpha;
       var threeDAlpha = smoothstep(1.15, 1.95, dimMix);
 
       var drawList = WORD_IDS.map(function (id) {
@@ -558,7 +560,7 @@
         ctx.fillText(DE ? "1D: kein freier Weg zwischen ihnen" : "1D: no free path between them", size.w / 2, size.h - 16);
         ctx.globalAlpha = 1;
       }
-      var pathAlpha = smoothstep(0.55, 1, dimMix);
+      var pathAlpha = smoothstep(0.55, 1, dimMix) * tokenAlpha;
       if (pathAlpha > 0.01 && !dirMode) {
         function freePath(fromId, toId) {
           var wa = WORDS[fromId], wb = WORDS[toId];
@@ -605,11 +607,12 @@
         pairArrow("wizard", "sorceress", C.lime);
         ctx.globalAlpha = 1;
         if (threeDAlpha > 0.5) {
-          drawLabel(DE ? "3D zusätzlich: Tiere · Figuren" : "3D adds: animals · fiction", 24, size.h - 38, C.muted, "left", 9);
+          drawLabel(DE ? "3D zusätzlich: Tiere · Figuren" : "3D adds: animals · fiction", 24, 44, C.muted, "left", 9);
         }
       }
 
       if (dirMode) {
+        ctx.globalAlpha = individualAlpha;
         function arrowWord(from, to, col, dash) {
           var a = project((WORDS[from].v[0] - 12.5) / 15, WORDS[from].v[1] / 22, WORDS[from].z);
           var b = project((WORDS[to].v[0] - 12.5) / 15, WORDS[to].v[1] / 22, WORDS[to].z);
@@ -635,6 +638,7 @@
           arrowWord("woman", "princess", C.gold, [4, 3]);
           arrowWord("princess", "queen", C.gold, [4, 3]);
         }
+        ctx.globalAlpha = 1;
       }
 
       if (steps.length) {
@@ -645,7 +649,7 @@
           ctx.save();
           ctx.setLineDash([4, 4]);
           ctx.strokeStyle = C.blue;
-          ctx.globalAlpha = 0.55;
+          ctx.globalAlpha = individualAlpha * 0.55;
           ctx.lineWidth = 1.5;
           ctx.beginPath(); ctx.moveTo(pa.x, pa.y); ctx.lineTo(pb.x, pb.y); ctx.stroke();
           ctx.restore();
