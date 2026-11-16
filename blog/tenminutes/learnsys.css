@@ -890,7 +890,7 @@ h1,h2,h3,h4{
 .ls-noise-code-row span{flex:0 0 auto;font:600 var(--ls-fs-micro) "Open Sans",sans-serif;color:var(--ls-muted);text-transform:uppercase;letter-spacing:.06em}
 .ls-noise-code-row code{font:inherit;white-space:pre-wrap}
 .ls-noise-code p{margin:2px 0 0;font:var(--ls-fs-ui-sm)/1.45 "Open Sans",sans-serif;color:var(--ls-muted)}
-.ls-att-scene{height:100%;min-height:0;display:grid;grid-template-columns:minmax(0,1.22fr) minmax(0,.78fr);grid-template-rows:auto minmax(190px,250px) 250px auto auto auto;gap:7px;padding:2px;overflow-y:auto}
+.ls-att-scene{height:100%;min-height:0;display:grid;grid-template-columns:minmax(0,1.22fr) minmax(0,.78fr);grid-template-rows:auto minmax(190px,240px) 250px auto auto auto;gap:7px;padding:2px;overflow-y:auto}
 .ls-att-sentences{grid-column:1/-1;grid-row:1;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start}
 .ls-att-sentence{border:1px solid rgba(99,164,75,.38);background:rgba(246,250,245,.9);color:var(--ls-green);font:600 var(--ls-fs-ui-sm)/1.35 "Open Sans",sans-serif;padding:5px 8px;text-align:left;cursor:pointer;min-height:30px}
 .ls-att-sentence:hover{border-color:var(--ls-green);color:var(--ls-petrol)}
@@ -914,7 +914,7 @@ h1,h2,h3,h4{
 .ls-att-term.is-self{border-color:var(--ls-green);background:rgba(246,250,245,.9)}
 .ls-att-plus{color:var(--ls-muted)}
 .ls-att-budget{display:block;flex-basis:100%;font-size:var(--ls-fs-micro);color:var(--ls-muted);text-transform:uppercase;letter-spacing:.06em}
-.ls-att-formula{grid-column:1/-1;grid-row:4;height:112px;max-height:112px;overflow:auto;border:1px solid rgba(0,75,111,.08);padding:6px 8px;background:rgba(255,255,255,.55)}
+.ls-att-formula{grid-column:1/-1;grid-row:4;height:122px;max-height:122px;overflow-x:auto;overflow-y:hidden;scrollbar-gutter:stable;border:1px solid rgba(0,75,111,.08);padding:6px 8px;background:rgba(255,255,255,.55)}
 .ls-att-formula .ls-math{margin:0;overflow-x:auto;overflow-y:hidden}
 .ls-att-formula .ls-tex-source{display:none}
 .ls-att-mask{grid-column:1;grid-row:5;align-self:start;border:1px solid rgba(0,75,111,.08);padding:4px 8px;background:rgba(255,255,255,.55);font-size:var(--ls-fs-ui-sm);color:var(--ls-soft)}
@@ -1066,6 +1066,7 @@ h1,h2,h3,h4{
 .ls-tunnel-info{min-height:2.6em}
 .ls-tunnel-alts{max-height:2.6em;overflow:auto;overflow-x:hidden}
 .ls-att-readout,.ls-res-readout,.ls-meadow-readout,.ls-sm-readout,.ls-position-readout,.ls-traj-readout,.ls-stack-readout{min-height:2.6em}
+.ls-att-readout{flex-wrap:nowrap;overflow-x:auto;scrollbar-gutter:stable}
 .ls-loop-sentence{min-height:3.2em;max-height:3.2em;overflow:auto;overflow-x:hidden}
 .ls-loop-tree{min-height:5.2em;max-height:5.2em;overflow:auto;overflow-x:hidden}
 .ls-loop-readout{min-height:2.4em}
