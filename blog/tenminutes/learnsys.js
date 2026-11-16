@@ -28,7 +28,7 @@
       deepDive: "Tiefer eintauchen", question: "Frage", questions: "Fragen",
       context: "Kontext", oneLevel: "Eine Ebene tiefer", sources: "Quellen",
       moreInLesson: "Mehr in der Lektion →", clickExample: "Klicken für ein Beispiel",
-      watch: "Beobachte", defaultHint: "Klicken, ziehen, beobachten.",
+      watch: "Beobachte", defaultHint: "",
       helpTitle: "Tastatur und Position", helpStep: "Schritt zurück / vor",
       helpDay: "Tag zurück / vor", helpJump: "Fünf Schritte zurück / vor", helpUndo: "Letztes Token zurücknehmen (Demo)",
       helpPos: "Position, auch mehrstellig (z. B. 1 1)",
@@ -70,7 +70,7 @@
       deepDive: "Go deeper", question: "question", questions: "questions",
       context: "Context", oneLevel: "One level deeper", sources: "Sources",
       moreInLesson: "More in the lesson →", clickExample: "Click for an example",
-      watch: "Watch", defaultHint: "Click, drag, observe.",
+      watch: "Watch", defaultHint: "",
       helpTitle: "Keyboard and position", helpStep: "Step back / forward",
       helpDay: "Day back / forward", helpJump: "Five steps back / forward", helpUndo: "Undo the last token (demo)",
       helpPos: "Position, multi-digit (e.g. 1 1)",
@@ -1969,7 +1969,7 @@
     var doc = state.edit && editorDoc ? editorDoc : currentTextDoc();
     els.stageKicker.textContent = doc.kicker || (base && base.substeps ? s.kicker : d.kicker);
     els.stageTitle.textContent = doc.title || s.title;
-    els.stageHint.textContent = plainWatch(doc.watch || s.watch || t("defaultHint"));
+    els.stageHint.textContent = plainWatch(doc.watch || s.watch || "");
     els.credit.textContent = d.credit || "";
     mountDemo(d, s);
   }
