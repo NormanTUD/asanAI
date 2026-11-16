@@ -14,7 +14,7 @@
         '<div class="ls-position-right"><div class="ls-position-panel"><canvas class="ls-position-curve"></canvas></div><label class="ls-range">Position <input type="range" class="ls-pos-pos" min="0" max="10000" step="1" value="7"><output>7</output></label></div>' +
       '</div>' +
       '<p class="ls-position-note">' + (DE ? "Auf Kreisbahnen in verschiedenen Dimensionen werden verschiedene Wellen addiert. Jede Dimension hat eine andere Frequenz; zusammen ergibt das den Fingerabdruck der Position. Jeder grüne Punkt ist dasselbe Wort (Hund) an einer anderen Position." : "Positions are added as waves on circular orbits in different dimensions. Each dimension has a different frequency; together they form the position fingerprint. Every green point is the same word (dog) at a different position.") + '</p>' +
-      '<div class="ls-scene-row ls-position-metric"><span class="ls-position-metric-label">' + (DE ? "Ansicht" : "View") + '</span><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
+      '<div class="ls-scene-row ls-position-metric"><button type="button" class="ls-chip' + (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? '' : ' is-on') + '" data-rotate="1">' + (DE ? "Drehen" : "Rotate") + '</button></div>' +
       '<div class="ls-position-readout" aria-live="polite"></div>';
     root.appendChild(el);
     var heat = el.querySelector(".ls-position-heat");
@@ -224,7 +224,7 @@
         var htheta = Math.acos(hdot);
         readout.innerHTML = '<span>' + (DE ? "Position" : "Position") + ' <b>' + Math.round(hpv) + '</b></span><span>' + (DE ? "Vektor" : "vector") + ' <b>(' + hv.map(function (x) { return x.toFixed(2); }).join(", ") + ')</b></span><span>' + (DE ? "Bogenlänge" : "arc length") + ' <b>' + htheta.toFixed(3) + '</b></span><span>' + (DE ? "Winkel" : "angle") + ' <b>' + (htheta * 180 / Math.PI).toFixed(1) + '°</b></span>';
       } else {
-        readout.innerHTML = '<span>' + (DE ? "Fahre über einen grünen Punkt, um Position, Vektor, Bogenlänge und Winkel zu sehen." : "Hover a green point to see position, vector, arc length, and angle.") + '</span>';
+        readout.innerHTML = "";
       }
     }
     function draw() {

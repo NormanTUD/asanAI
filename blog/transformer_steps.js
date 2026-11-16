@@ -4056,12 +4056,12 @@
 			if (!body) return;
 			if (!card.getAttribute("data-tm-opened-default")) {
 				card.setAttribute("data-tm-opened-default", "1");
-				body.hidden = true;
+				var open = !body.hidden;
 				var headBtn = card.querySelector(".tm-layer-head");
-				if (headBtn) headBtn.setAttribute("aria-expanded", "false");
+				if (headBtn) headBtn.setAttribute("aria-expanded", String(open));
 				var previewBtn = card.querySelector(".tm-layer-preview");
-				if (previewBtn) previewBtn.setAttribute("aria-expanded", "false");
-				card.classList.remove("is-open");
+				if (previewBtn) previewBtn.setAttribute("aria-expanded", String(open));
+				card.classList.toggle("is-open", open);
 			}
 			var isDe = DE();
 			var prefix = "unified-layer-" + idx;

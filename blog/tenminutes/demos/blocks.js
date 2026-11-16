@@ -11,8 +11,8 @@
       {
         id: "tokenizer", label: "Tokenizer", short: "Text → Tokens", icon: "T", color: "lime",
         title: "Tokenizer",
-        body: "Text wird in Tokens zerlegt. Jedes Token bekommt eine ID, die auf eine Zeile im Embedding zeigt.",
-        points: ["Token ist nicht Wort", "ID ist eine Adresse"],
+        body: "Texte werden in Bestandteile getrennt, sogenannte Tokens. Ein Token muss kein ganzes Wort sein: Es kann ein Wortteil, ein einzelnes Zeichen oder ein Leerzeichen sein. Jedes Token bekommt eine ID, die auf seine Zeile in der Embedding-Tabelle zeigt.",
+        points: [],
         mini: "tokenizer"
       },
       {
@@ -52,8 +52,8 @@
       {
         id: "tokenizer", label: "Tokenizer", short: "text → tokens", icon: "T", color: "lime",
         title: "Tokenizer",
-        body: "Text is split into tokens. Every token gets an ID that points to a row in the embedding.",
-        points: ["token is not word", "ID is an address"],
+        body: "Texts are split into pieces called tokens. A token does not have to be a whole word: it can be part of a word, a single character, or a space. Every token gets an ID that points to its row in the embedding table.",
+        points: [],
         mini: "tokenizer"
       },
       {

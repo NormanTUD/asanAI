@@ -8835,7 +8835,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	<p class="tm-layer-minimal-text">${isDe ? 'Diese Schicht verschiebt jedes Token so, dass es im Kontext steht; danach wählt ein kleines neuronales Netz die Richtung des nächsten Schritts im Raum.' : 'This layer moves every token into its context; a small neural network then chooses the direction of the next step in the space.'}</p>`;
 	card.appendChild(preview);
 
-	const migration = layerIndex > 0 ? `
+	const migration = `
 	<details class="tm-layer-subbox" data-sub="migration">
 		<summary>${isDe ? 'Wohin die Punkte wandern' : 'Where the points move'}</summary>
 		<div class="tm-layer-subbox-body">
@@ -8845,7 +8845,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 				<p class="migration-parallel-note">${isDe ? 'Parallele Koordinaten: Jede Linie ist ein Token, jede senkrechte Achse eine Dimension. Der Weg der Linie zeigt, wie sich der Vektor des Tokens von Schicht zu Schicht verändert; so siehst du alle Dimensionen auf einmal, ohne sie auf zwei Achsen zu projizieren.' : 'Parallel coordinates: each line is one token, each vertical axis is one dimension. The path shows how the token vector changes from layer to layer, so you can see all dimensions at once without projecting them onto two axes.'}</p>
 			</div>
 		</div>
-	</details>` : '';
+	</details>`;
 
 	const body = document.createElement('div');
 	body.className = 'tm-layer-body';
