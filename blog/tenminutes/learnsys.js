@@ -563,11 +563,22 @@
     return out.filter(Boolean);
   }
   function teaserParts(text) {
-    var sentences = splitSentences(text);
+    var paragraphTexts = String(text == null ? "" : text).split(/\n{2,}/).map(normSpace).filter(Boolean);
+    var sentences = [];
+    paragraphTexts.forEach(function (p) { sentences = sentences.concat(splitSentences(p)); });
+    var headParas = [], restParas = [], used = 0;
+    paragraphTexts.forEach(function (p) {
+      var parts = splitSentences(p);
+      if (used >= MAX_TEASER_SENTENCES) { restParas.push(p); return; }
+      var take = parts.slice(0, Math.max(0, MAX_TEASER_SENTENCES - used));
+      if (take.length) headParas.push(take.join(" "));
+      used += take.length;
+      if (take.length < parts.length) restParas.push(parts.slice(take.length).join(" "));
+    });
     return {
       sentences: sentences,
-      head: sentences.slice(0, MAX_TEASER_SENTENCES).join(" "),
-      rest: sentences.slice(MAX_TEASER_SENTENCES).join(" ")
+      head: headParas.join("\n\n"),
+      rest: restParas.join("\n\n")
     };
   }
   function substepLabel() {
