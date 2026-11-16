@@ -16,7 +16,7 @@ $deps = [
 $load = array_values(array_unique(array_merge([$scene], $deps[$scene] ?? [])));
 $labels = [
 	'embedding' => 'Embedding', 'phone' => 'Telefon', 'code' => 'Code', 'media' => 'Medien',
-	'book' => 'Buch', 'compress' => 'Komprimierung', 'loop' => 'Schleife', 'tunnel' => 'Tunnel',
+	'book' => 'Buch', 'compress' => 'Komprimierung', 'loop' => 'Schleife',
 	'tokenize' => 'Tokenize', 'position' => 'Position', 'attention' => 'Attention',
 	'attentionlab' => 'Attention-Lab', 'codesemantic' => 'Code + Semantik', 'noise' => 'Rauschen',
 	'ffn' => 'FFN', 'residual' => 'Residual', 'meadow' => 'Wiese', 'softmax' => 'Softmax',

@@ -2264,3 +2264,15 @@ h1,h2,h3,h4{
 .ls-hg-bar i{display:block;height:100%;background:var(--ls-lilac);transition:width .25s ease,background .25s ease}
 .ls-hg-readout{margin:0;font:var(--ls-fs-micro)/1.45 "Open Sans",sans-serif;color:var(--ls-muted);min-height:2.4em}
 @media (max-width:640px){.ls-htl-grid,.ls-hg-grid{grid-template-columns:1fr}}
+
+/* Text-only slides: hide the demo column and let the prose use the stage. */
+.ls-app.is-text-only .ls-main{grid-template-columns:minmax(0,1fr)}
+.ls-app.is-text-only .ls-stage{display:none}
+.ls-app.is-text-only .ls-text{border-right:0}
+.ls-app.is-text-only .ls-text-scroll{max-width:820px;margin:0 auto}
+@media (max-width:900px){
+  .ls-app.is-text-only .ls-main{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr)}
+  .ls-app.is-text-only .ls-text{display:block;border:0}
+  .ls-app.is-text-only .ls-text-scroll{max-width:none;height:100%;padding:44px 16px 16px;overflow:auto}
+  .ls-app.is-text-only .ls-text-mobile-head{display:none}
+}

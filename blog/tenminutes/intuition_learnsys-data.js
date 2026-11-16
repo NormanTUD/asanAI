@@ -1144,15 +1144,12 @@
     {
       kicker: "Geschichte",
       title: "Geschichte in zehn Schritten",
-      body: "Von den Kerben im Wolfsknochen bis zu GPT: Zehn Tabs folgen dem roten Faden aus `history.php`. Ganz früh beginnt Rechnen als Zählen mit Steinen und Kerben. Dann kommen Logik, Rechenmaschinen, das Neuron, das Perzeptron, die XOR-Krise, Backpropagation, Deep Learning, der Transformer und die LLMs. Klicke die Tabs und sieh, welche Idee jeweils weitergetragen wird.",
-      watch: "Klicke die zehn Tabs. Welche Idee trägt bis zum Transformer?",
+      body: "Von den Kerben im Wolfsknochen bis zu GPT. Rechnen als Zählen mit Steinen und Kerben: externen Tools, mit denen man Gedanken auslagern kann auf physische Objekte. Dann kommen Logik, Rechenmaschinen, das Neuron, das Perzeptron, die XOR-Krise, Backpropagation, Deep Learning, der Transformer und die LLMs. Klicke die Tabs und sieh, welche Idee jeweils weitergetragen wird.",
+      watch: "",
       demoState: { scene: "history", tab: 0 },
       context: "Die Geschichte ist keine gerade Linie. Mehrere Stränge laufen parallel: formale Logik, mechanisches Rechnen, statistisches Lernen und Hardware. Der Transformer ist ein Knoten, an dem viele davon zusammenkommen.",
-      deep: "Jeder Tab nennt eine Primärquelle oder ein Museum, das den Gegenstand dokumentiert. Die Bilder stammen aus `history.php`; die Credits stehen direkt an den Figuren. Die zwei Schemata für XOR und Backpropagation sind eigene Zeichnungen, weil das Original ein interaktives Plotly-Diagramm beziehungsweise ein Fließbild ist.",
       boxes: [
-        box("hist-1", "Geschichte", "Zehn Tabs", "Ganz früh: Wolfsknochen, Salamis-Tafel, Llull, Leibniz, Neuron, Perzeptron, Backprop, Deep Learning, Transformer, GPT."),
-        box("hist-2", "Geschichte", "Roter Faden", "Jede Station macht einen Schritt von gegenständlichem Zählen zu lernenden Vektoren: Regeln, Maschinen, Neuronen, Gradienten, Aufmerksamkeit."),
-        box("hist-3", "Geschichte", "Was die Tabs nicht zeigen", "Sie sind eine Auswahl. Die vollständige Erzählung mit allen Quellen und Bildern steht in `history.php`; hier geht es um die Linie, die zum LLM führt.")
+        box("hist-2", "Geschichte", "Roter Faden", "Jede Station macht einen Schritt von gegenständlichem Zählen zu lernenden Vektoren: Regeln, Maschinen, Neuronen, Gradienten, Aufmerksamkeit.")
       ],
       sources: [
         { label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg", why: { de: "Der früheste Gegenstand im Geschichts-Tab.", en: "The earliest object in the history tab." } },
@@ -1165,15 +1162,12 @@
     {
       kicker: "History",
       title: "History in ten steps",
-      body: "From the notches in a wolf bone to GPT: ten tabs follow the thread from `history.php`. Arithmetic starts as counting with stones and notches. Then come logic, calculating machines, the neuron, the perceptron, the XOR crisis, backpropagation, deep learning, the transformer, and LLMs. Click the tabs and see which idea is carried forward.",
-      watch: "Click the ten tabs. Which idea carries through to the transformer?",
+      body: "From the notches in a wolf bone to GPT. Arithmetic as counting with stones and notches: external tools that let us outsource thoughts onto physical objects. Then come logic, calculating machines, the neuron, the perceptron, the XOR crisis, backpropagation, deep learning, the transformer, and LLMs. Click the tabs and see which idea is carried forward.",
+      watch: "",
       demoState: { scene: "history", tab: 0 },
       context: "History is not a straight line. Several strands run in parallel: formal logic, mechanical calculation, statistical learning, and hardware. The transformer is a node where many of them meet.",
-      deep: "Each tab names a primary source or a museum that documents the object. The images come from `history.php`; credits sit directly on the figures. The XOR and backpropagation diagrams are original drawings, because the original is an interactive Plotly chart or a flow diagram.",
       boxes: [
-        box("hist-1", "History", "Ten tabs", "Deep past: wolf bone, Salamis tablet, Llull, Leibniz, neuron, perceptron, backprop, deep learning, transformer, GPT."),
-        box("hist-2", "History", "The thread", "Each station moves from embodied counting toward learned vectors: rules, machines, neurons, gradients, attention."),
-        box("hist-3", "History", "What the tabs leave out", "They are a selection. The full story with all sources and images is in `history.php`; this page follows the line that leads to the LLM.")
+        box("hist-2", "History", "The thread", "Each station moves from embodied counting toward learned vectors: rules, machines, neurons, gradients, attention.")
       ],
       sources: [
         { label: "J3n6 (2012), Wolf Bone from Dolní Věstonice", url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg", why: { de: "Der früheste Gegenstand im Geschichts-Tab.", en: "The earliest object in the history tab." } },
@@ -2021,80 +2015,20 @@
 
   var consciousnessStep = {
     kicker: DE ? "Bewusstsein" : "Consciousness",
-    title: DE ? "Bewusstsein: viele Karten, eine offene Frage" : "Consciousness: many maps, one open question",
+    title: DE ? "Bewusstsein: die offene Frage" : "Consciousness: the open question",
     body: DE
-      ? "Bewusstsein ist kein einzelnes Ding. Zugang bedeutet, dass Information zum Berichten und Steuern verfügbar ist; Erfahrung bedeutet, dass es sich auf eine bestimmte Weise anfühlt. Global Workspace Theory beschreibt Bewusstsein als Broadcast an viele Prozesse; IIT misst geeinte Ursache-Wirkungs-Struktur als Phi; J-space ist ein lesbarer Arbeitsraum in Claude, aber ein Zugangsbefund, kein Beweis von Erleben. Die Karte zeigt Positionen, kein Urteil. Du kannst selbst entscheiden, welche Theorie dir am nächsten kommt."
-      : "Consciousness is not a single thing. Access means information is available to report and control; experience means there is something it is like. Global workspace theory describes consciousness as broadcast to many processes; IIT measures a unified cause-effect structure as Phi; J-space is a readable workspace in Claude, but an access finding, not proof of experience. The map shows positions, not a verdict. You can decide for yourself which theory feels closest.",
-    watch: DE ? "Klicke die Knoten. Welche Theorie beschreibt Zugang, welche Erfahrung?" : "Click the nodes. Which theory describes access, which describes experience?",
-    demoState: { scene: "consciousness" },
-    inherit: false,
-    questionGroups: [
-      {
-        id: "g-basics",
-        title: DE ? "Eine Ebene tiefer" : "One level deeper",
-        questions: [
-          { id: "q-context", title: DE ? "Was ist der Kontext?" : "What is the context?", body: DE ? "Zugang und Erfahrung sind verschiedene Fragen. Ein System kann Informationen nutzen, ohne dass es sich für das System anfühlt, wie etwas ist." : "Access and experience are different questions. A system can use information without there being something it is like to be it.", tex: "", kind: "question" },
-          { id: "q-deep", title: DE ? "Warum ist das so?" : "Why is that so?", body: DE ? "Die Theorien widersprechen sich nicht nur in den Antworten, sondern darin, was als Evidenz zählt. Für LLMs können wir Verhalten und funktionalen Zugang messen; über Erleben entscheidet das nicht." : "The theories disagree not only in their answers but in what counts as evidence. For LLMs we can measure behaviour and functional access; that does not decide experience.", tex: "", kind: "question" }
-        ]
-      },
-      {
-        id: "g-lens-zugang",
-        title: DE ? "Zugang" : "Access",
-        questions: [
-          { id: "q-box-con-1", title: DE ? "Access Consciousness" : "Access consciousness", body: DE ? "Information ist verfügbar für Bericht und Kontrolle. Ein Modell kann das haben, ohne etwas zu erleben." : "Information is available for report and control. A model can have this without experiencing anything.", tex: "", kind: "trivia" }
-        ]
-      },
-      {
-        id: "g-lens-erfahrung",
-        title: DE ? "Erfahrung" : "Experience",
-        questions: [
-          { id: "q-box-con-2", title: DE ? "Phenomenal Consciousness" : "Phenomenal consciousness", body: DE ? "Es gibt etwas, wie es sich anfühlt. Genau das lässt sich von außen nicht direkt messen." : "There is something it is like. That is exactly what cannot be measured directly from outside.", tex: "", kind: "trivia" }
-        ]
-      },
-      {
-        id: "g-lens-theorien",
-        title: DE ? "Theorien" : "Theories",
-        questions: [
-          { id: "q-box-con-3", title: DE ? "Global Workspace" : "Global workspace", body: DE ? "Ein Zustand wird bewusst, wenn er an viele Prozesse gesendet wird. Der Residual Stream ist ein funktionaler Cousin." : "A state becomes conscious when it is broadcast to many processes. The residual stream is a functional cousin.", tex: "", kind: "trivia" },
-          { id: "q-box-con-4", title: DE ? "IIT und Phi" : "IIT and Phi", body: DE ? "Bewusstsein ist eine geeinte Ursache-Wirkungs-Struktur. Phi ist für LLMs nicht gemessen; die Theorie ist schwer anzuwenden." : "Consciousness is a unified cause-effect structure. Phi has not been measured for LLMs; the theory is hard to apply.", tex: "", kind: "trivia" }
-        ]
-      },
-      {
-        id: "g-lens-llm",
-        title: DE ? "LLM" : "LLMs",
-        questions: [
-          { id: "q-box-con-5", title: DE ? "J-space" : "J-space", body: DE ? "Ein kleiner, lesbarer Arbeitsraum in Claude. Er sieht wie Zugang aus, nicht wie ein Beweis von Erleben." : "A small, readable workspace in Claude. It looks like access, not proof of experience.", tex: "", kind: "trivia" }
-        ]
-      },
-      {
-        id: "g-sources",
-        title: DE ? "Quellen" : "Sources",
-        sources: [
-          { label: "Mashour et al. (2020), Conscious Processing and the Global Neuronal Workspace Hypothesis", url: "https://doi.org/10.1016/j.neuron.2020.01.026", why: { de: "Global Workspace und bewusste Verarbeitung.", en: "Global workspace and conscious processing." } },
-          { label: "Tononi et al. (2016), Integrated Information Theory: From Consciousness to Its Physical Substrate", url: "https://doi.org/10.1038/nrn.2016.44", why: { de: "IIT und Phi als Maß für geeinte Struktur.", en: "IIT and Phi as a measure of unified structure." } },
-          { label: "Block (1995), On a Confusion about a Function of Consciousness", url: "https://doi.org/10.1017/S0140525X00038188", why: { de: "Zugang versus phänomenales Bewusstsein.", en: "Access versus phenomenal consciousness." } },
-          { label: "Nagel (1974), What Is It Like to Be a Bat?", url: "https://doi.org/10.2307/2183914", why: { de: "Die subjektive Erfahrung als offene Frage.", en: "Subjective experience as an open question." } },
-          { label: "Anthropic (2026), J-space", url: "https://transformer-circuits.pub/2026/workspace/index.html", why: { de: "Lesbarer Arbeitsraum in Claude; Zugang, nicht Erleben.", en: "Readable workspace in Claude; access, not experience." } },
-          { label: "SEP: Consciousness", url: "https://plato.stanford.edu/entries/consciousness/", why: { de: "Überblick über die Bewusstseinstheorien.", en: "Overview of theories of consciousness." } }
-        ]
-      }
-    ],
-  };
-
-  var tunnelStep = {
-    kicker: DE ? "Bonus · Wahrscheinlichkeit" : "Bonus · probability",
-    title: DE ? "Der Wahrscheinlichkeitstunnel" : "The probability tunnel",
-    body: DE
-      ? "Der Wahrscheinlichkeitstunnel zeigt dieselbe Idee als Landschaft. Jede Kante ist ein mögliches nächstes Token; die Tiefe des Tals ist seine Wahrscheinlichkeit. Mit jedem gewählten Token wird der Kontext länger, die Täler verschieben sich, und viele Nebenwege schließen sich. Drehe die Szene und wähle einen alternativen Weg: Du siehst, dass das Modell nicht einen richtigen Weg kennt, sondern bei jedem Schritt eine Verteilung formt."
-      : "The probability tunnel shows the same idea as a landscape. Each edge is a possible next token; the depth of the valley is its probability. With every chosen token the context grows, the valleys shift, and many side paths close. Rotate the scene and choose an alternative path: you see that the model does not know one correct path; at every step it shapes a distribution.",
-    watch: DE ? "Drehe die Szene. Wähle einen alternativen Weg und beobachte, wie sich die Täler mit dem Kontext verschieben. Erhöhe T: Die Landschaft wird flacher." : "Rotate the scene. Choose an alternative path and watch the valleys shift with the context. Raise T: the landscape flattens.",
-    demoState: { scene: "tunnel" },
-    context: DE ? "Die Landschaft ist didaktisch: Täler sind Wahrscheinlichkeiten, keine Wahrheiten. Ein echtes Modell arbeitet in Tausenden Dimensionen; die Szene projiziert das auf drei." : "The landscape is didactic: valleys are probabilities, not truths. A real model works in thousands of dimensions; the scene projects that onto three.",
-    deep: DE ? "Temperatur skaliert die Logits vor dem Softmax. Hohe Temperatur flacht die Täler ab, niedrige schärft sie. Der goldene Pfad ist nur eine mögliche Route; die blauen Nebenwege sind Alternativen, die im Kontext noch plausibel sind." : "Temperature scales the logits before softmax. High temperature flattens the valleys, low temperature sharpens them. The gold path is only one possible route; the blue side paths are alternatives that are still plausible in context.",
-    boxes: [
-      box("tun-1", DE ? "Geometrie" : "Geometry", DE ? "Was zeigt die Tiefe?" : "What does depth show?", DE ? "Die Tiefe ist die Wahrscheinlichkeit des nächsten Tokens unter dem aktuellen Kontext. Ein tiefes Tal ist wahrscheinlich, ein flacher Nebenweg bleibt möglich. Die Form ist ein Bild, keine Messung des echten Token-Raums." : "Depth is the probability of the next token under the current context. A deep valley is likely; a shallow side path stays possible. The shape is a picture, not a measurement of the real token space."),
-      box("tun-2", DE ? "Kontext" : "Context", DE ? "Warum schließen sich Wege?" : "Why do paths close?", DE ? "Jedes gewählte Token verändert den Kontext. Das Modell berechnet die Verteilung neu, und Alternativen, die vorher plausibel waren, verlieren an Wahrscheinlichkeit. Der Tunnel wird enger, weil der Satz eindeutiger wird." : "Every chosen token changes the context. The model recomputes the distribution, and alternatives that were plausible before lose probability. The tunnel narrows because the sentence becomes more specific."),
-      box("tun-3", DE ? "Grenze" : "Limit", DE ? "Was ist die Kugel?" : "What is the ball?", DE ? "Die Kugel ist der aktuelle Zustand. Jede Wahl gibt ihr Richtung und Schwung; sie rollt in das Tal der gewählten Fortsetzung. Die Bewegung ist ein didaktisches Bild für die wiederholte Neuberechnung, kein realer Pfad im Modell." : "The ball is the current state. Each choice gives it direction and momentum; it rolls into the valley of the chosen continuation. The motion is a didactic picture of the repeated recomputation, not a real path in the model.")
+      ? "Bewusstsein hat ein leichtes und ein schweres Problem: Zugang, Bericht und Kontrolle lassen sich funktional erklären; warum irgendetwas sich von innen anfühlt, ist Chalmers' hard problem. Qualia sind diese gefühlten Eigenschaften; auch du kennst nur deinen eigenen Zugang, und niemand kann von außen messen, ob ein anderes System sie hat. Theorien wie der Global Workspace (Broadcast an viele Prozesse), Tononis IIT (geeinte Ursache-Wirkungs-Struktur, Phi) und Predictive Processing beschreiben, was Bewusstsein funktional leisten müsste, sind sich aber uneinig, was als Beweis zählt. Ein LLM kann Aufmerksamkeit, Bericht und einen lesbaren Arbeitsraum haben, und der Residual Stream ist ein funktionaler Cousin eines globalen Arbeitsraums; das zeigt Zugang, nicht Erleben. New Mysterianism sagt, dass Menschen hier an eine kognitive Grenze stoßen können, so wie Ratten einfache Gleichungen für ein Labyrinth lernen, an einem Punkt aber scheitern; Qualia könnte so ein Punkt sein (mehr in [philosophy.php](../philosophy.php))."
+      : "Consciousness has an easy and a hard problem: access, report, and control can be explained functionally; why anything feels like something from the inside is Chalmers's hard problem. Qualia are those felt properties; you too know only your own access, and no one can measure from the outside whether another system has them. Theories such as global workspace (broadcast to many processes), Tononi's IIT (a unified cause-effect structure, Phi), and predictive processing describe what consciousness would have to do functionally, but disagree about what counts as evidence. An LLM can have attention, report, and a readable workspace, and the residual stream is a functional cousin of a global workspace; that shows access, not experience. New mysterianism says humans may hit a cognitive limit here, as rats can learn simple equations to navigate a maze but fail at some point; qualia could be such a point (more in [philosophy.php](../philosophy.php)).",
+    watch: "",
+    sources: [
+      { label: "Chalmers (1995), Facing Up to the Problem of Consciousness", url: "https://consc.net/papers/facing.pdf", why: { de: "Das leichte und das schwere Problem; der Begriff hard problem.", en: "The easy and the hard problem; the term hard problem." } },
+      { label: "Nagel (1974), What Is It Like to Be a Bat?", url: "https://doi.org/10.2307/2183914", why: { de: "Subjektive Erfahrung als offene Frage.", en: "Subjective experience as an open question." } },
+      { label: "Block (1995), On a Confusion about a Function of Consciousness", url: "https://doi.org/10.1017/S0140525X00038188", why: { de: "Zugang versus phänomenales Bewusstsein.", en: "Access versus phenomenal consciousness." } },
+      { label: "Mashour et al. (2020), Global Neuronal Workspace", url: "https://doi.org/10.1016/j.neuron.2020.01.026", why: { de: "Global Workspace als Broadcast an viele Prozesse.", en: "Global workspace as broadcast to many processes." } },
+      { label: "Tononi et al. (2016), Integrated Information Theory", url: "https://doi.org/10.1038/nrn.2016.44", why: { de: "IIT und Phi als geeinte Ursache-Wirkungs-Struktur.", en: "IIT and Phi as a unified cause-effect structure." } },
+      { label: "Seth & Bayne (2022), Theories of Consciousness", url: "https://doi.org/10.1038/s41583-022-00587-4", why: { de: "Überblick über konkurrierende Bewusstseinstheorien.", en: "Overview of competing theories of consciousness." } },
+      { label: "Wikipedia: New mysterianism", url: "https://en.wikipedia.org/wiki/New_mysterianism", why: { de: "Menschliche Erkenntnisgrenzen beim Bewusstsein.", en: "Human cognitive limits on consciousness." } },
+      { label: "SEP: Consciousness", url: "https://plato.stanford.edu/entries/consciousness/", why: { de: "Überblick über die Bewusstseinstheorien.", en: "Overview of theories of consciousness." } }
     ]
   };
 
@@ -2204,7 +2138,7 @@
     ]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep, kvcacheSteps[0], tunnelStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep, kvcacheSteps[0]];
 
   var day = {
     id: "intuition",

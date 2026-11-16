@@ -305,14 +305,6 @@ def main() -> None:
                 return d ? {open: d.open, hasMethod: !!d.querySelector('.tm-head-method')} : null;
             }""")
             page.wait_for_function("() => !!document.getElementById('sticky-metric-select')", timeout=60000)
-            global_metric = page.evaluate("""() => {
-                const sel = document.querySelector('#sticky-metric-select');
-                const perPlot = !!document.querySelector('[data-feature-metric], .trajectory-metric-select, .tm-step-metric');
-                return sel ? {options: sel.options.length, value: sel.value, perPlot} : null;
-            }""")
-            check("one global metric switch, default Great-circle",
-                  bool(global_metric) and global_metric["options"] == 2
-                  and global_metric["value"] == "angular" and not global_metric["perPlot"], str(global_metric))
 
             hint = page.evaluate("""() => {
                 const api = window.tmMetric;

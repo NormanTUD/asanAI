@@ -362,7 +362,14 @@
     return GLOSSARY_ALIASES[k] || k.replace(/[^a-z0-9]+/g, "-");
   }
   function termHTML(text) {
-    return String(text).split(/(\[\[[^\]]+\]\])/g).map(function (part) {
+    return String(text).split(/(\[\[[^\]]+\]\]|\[[^\]]+\]\([^)]+\))/g).map(function (part) {
+      var lm = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (lm) {
+        var href = lm[2];
+        if (!/^(https?:\/\/|\.{0,2}\/|#|[A-Za-z0-9_-]+\.php)/.test(href)) return esc(lm[1]);
+        var external = /^https?:\/\//.test(href);
+        return '<a href="' + esc(href) + '"' + (external ? ' target="_blank" rel="noopener"' : '') + '>' + esc(lm[1]) + '</a>';
+      }
       var m = part.match(/^\[\[([^\]]+)\]\]$/);
       if (!m) return esc(part);
       var id = termId(m[1]);
@@ -2014,6 +2021,22 @@
     lastDemoDay = state.day;
     lastDemoStep = state.step;
     var nextScene = s && s.demoState && s.demoState.scene ? s.demoState.scene : null;
+    if (!nextScene) {
+      els.app.classList.add("is-text-only");
+      els.app.classList.remove("is-demo-focus");
+      if (els.focus) {
+        els.focus.setAttribute("aria-pressed", "false");
+        els.focus.textContent = t("demoLarge");
+      }
+      if (demo && demo.destroy) { try { demo.destroy(); } catch (e) {} }
+      demo = null;
+      currentDemoDay = null;
+      lastMountedScene = null;
+      els.demo.innerHTML = "";
+      hideDemoLoader();
+      return;
+    }
+    els.app.classList.remove("is-text-only");
     var sceneChanged = !!nextScene && nextScene !== lastMountedScene;
     var needsLoader = sceneChanged || !demo || currentDemoDay !== d.id;
     if (needsLoader) showDemoLoader();
