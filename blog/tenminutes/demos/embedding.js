@@ -25,7 +25,7 @@
     var mathEl = formula.querySelector(".ls-math");
     var ctx = null, size = null, raf = 0, last = 0, reserveTimer = 0, reserveIdle = 0;
     var hits = [], hover = null, drag = null, suppressClick = false;
-    var dimMix = 0, dimTarget = 0;
+    var dimMix = 0, dimTarget = 0, dimAnim = null, dimFallbackTimer = 0;
     var VIEW_PRESETS = [
       { yaw: -0.55, pitch: 0.78, zoom: 1 },
       { yaw: 0.00, pitch: 1.08, zoom: 1 },
@@ -49,6 +49,12 @@
     function text(loc) { return DE ? loc[0] : loc[1]; }
     var smoothstep = api.util.smoothstep;
     function wordLabel(id) { return text(WORDS[id].label); }
+    function examplesForDim() {
+      return EXAMPLES.filter(function (ex) { return !ex.only3d || st.dim === 2; });
+    }
+    function wordIdsForDim(withZ) {
+      return withZ ? WORD_IDS.concat(WORD_IDS_3D) : WORD_IDS;
+    }
     function buildMiniTable() {
       if (!miniTable) return;
       var ids = ["man", "woman", "prince", "princess", "king", "queen", "power", "maleDog", "femaleDog", "wizard", "sorceress"];
@@ -114,7 +120,7 @@
     }
     function nearestWord(v) {
       var best = null, bd = Infinity;
-      WORD_IDS.forEach(function (id) {
+      wordIdsForDim(v.length > 2).forEach(function (id) {
         var w = WORDS[id];
         var dz = v.length > 2 ? (v[2] - w.z) : 0;
         var d = Math.hypot(v[0] - w.v[0], v[1] - w.v[1], dz);
@@ -150,7 +156,7 @@
             result = { v: ev.v, near: nearestWord(ev.v).id };
             steps = exprSteps(example.expr, st.dim === 2).steps;
           }
-        } else if (st.arithmetic === "gender" || st.arithmetic === "power-dir" || st.arithmetic === "directions") {
+        } else if (st.arithmetic === "gender" || st.arithmetic === "power-dir" || st.arithmetic === "directions" || st.arithmetic === "layers") {
           dirMode = st.arithmetic;
         }
       }
@@ -164,7 +170,7 @@
         if (t === "(") { var v = expression(); if (toks[i] === ")") i++; return v; }
         if (/^\d+$/.test(t)) return { kind: "num", n: parseInt(t, 10) };
         var found = null;
-        WORD_IDS.forEach(function (id) {
+        wordIdsForDim(withZ).forEach(function (id) {
           if (WORDS[id].label[0].toLowerCase() === t.toLowerCase() || WORDS[id].label[1].toLowerCase() === t.toLowerCase() || id.toLowerCase() === t.toLowerCase()) found = id;
         });
         if (!found) return { kind: "num", n: 0 };
@@ -220,7 +226,7 @@
         if (t === "*") return;
         if (/^\d+$/.test(t)) { mult = parseInt(t, 10); return; }
         var found = null;
-        WORD_IDS.forEach(function (id) {
+        wordIdsForDim(withZ).forEach(function (id) {
           if (WORDS[id].label[0].toLowerCase() === t.toLowerCase() || WORDS[id].label[1].toLowerCase() === t.toLowerCase() || id.toLowerCase() === t.toLowerCase()) found = id;
         });
         if (!found) return;
@@ -436,6 +442,12 @@
       var yMix = smoothstep(0, 1, dimMix);
       var zMix = smoothstep(1, 2, dimMix);
       if (zMix > 0.02) drawRoomGrid(zMix);
+      if (zMix > 0.02) {
+        var q1 = project(-1.02, -1.02, 0);
+        ctx.globalAlpha = smoothstep(1.45, 2, dimMix) * 0.85;
+        drawLabel(DE ? "2D-Ebene · z = 0" : "2D plane · z = 0", q1.x + 6, q1.y + 15, C.muted, "left", 9);
+        ctx.globalAlpha = 1;
+      }
       var planeAlpha = smoothstep(0.02, 0.72, yMix) * (1 - zMix);
       if (planeAlpha > 0.01) {
         ctx.globalAlpha = planeAlpha;
@@ -606,6 +618,16 @@
         if (individualAlpha > 0.5 && (dirMode === "gender" || dirMode === "directions")) {
           arrowWord("man", "woman", C.green, [4, 3]);
           arrowWord("king", "queen", C.green, [4, 3]);
+          if (st.dim === 2) {
+            arrowWord("maleDog", "femaleDog", C.sky, [4, 3]);
+            arrowWord("wizard", "sorceress", C.lime, [4, 3]);
+          }
+        }
+        if (dirMode === "layers" && st.dim === 2) {
+          arrowWord("man", "maleDog", C.sky, [4, 3]);
+          arrowWord("man", "wizard", C.lime, [4, 3]);
+          arrowWord("woman", "femaleDog", C.sky, [4, 3]);
+          arrowWord("woman", "sorceress", C.lime, [4, 3]);
         }
         if (dirMode === "power-dir" || dirMode === "directions") {
           arrowWord("man", "prince", C.gold, [4, 3]);
@@ -743,6 +765,7 @@
       else drawSpace();
       canvas.__lsHits = hits;
       canvas.__lsState = st;
+      canvas.__lsDimMix = dimMix;
       syncMiniSelection();
     }
 
@@ -771,13 +794,17 @@
           ? (DE ? "Eine gelernte Richtung verbindet Mann und Frau sowie König und Königin." : "One learned direction connects man and woman, and king and queen.")
           : dirMode === "power-dir"
             ? (DE ? "Eine andere gelernte Richtung führt von Mann zu Prinz zu König." : "Another learned direction moves from man to prince to king.")
-            : (DE ? "Zwei gelernte Richtungen: Geschlecht und Macht." : "Two learned directions: gender and power.");
+            : dirMode === "layers"
+              ? (DE ? "Dieselbe Geschlechtsrichtung erscheint in der Tier- und Figurenebene; die dritte Achse verschiebt die Punkte nach unten oder oben." : "The same gender direction appears in the animal and fiction layers; the third axis moves the points down or up.")
+              : (DE ? "Zwei gelernte Richtungen: Geschlecht und Macht." : "Two learned directions: gender and power.");
         readout.innerHTML = esc(desc);
         var tex = dirMode === "gender"
           ? "\\underbrace{\\vec{x}_{\\text{" + wordLabel("woman") + "}} - \\vec{x}_{\\text{" + wordLabel("man") + "}}}_{\\text{" + (DE ? "Geschlechtsschritt" : "gender step") + "}} = \\underbrace{\\vec{x}_{\\text{" + wordLabel("queen") + "}} - \\vec{x}_{\\text{" + wordLabel("king") + "}}}_{\\text{" + (DE ? "derselbe Schritt" : "the same step") + "}}"
           : dirMode === "power-dir"
             ? "\\underbrace{\\vec{x}_{\\text{" + wordLabel("prince") + "}} - \\vec{x}_{\\text{" + wordLabel("man") + "}}}_{\\text{" + (DE ? "Machtschritt" : "power step") + "}} = \\underbrace{\\vec{x}_{\\text{" + wordLabel("king") + "}} - \\vec{x}_{\\text{" + wordLabel("prince") + "}}}_{\\text{" + (DE ? "noch ein Schritt" : "another step") + "}}"
-            : "\\begin{aligned}\\underbrace{\\vec{x}_{\\text{" + wordLabel("woman") + "}} - \\vec{x}_{\\text{" + wordLabel("man") + "}}}_{\\text{" + (DE ? "Geschlecht" : "gender") + "}} &= \\underbrace{\\vec{x}_{\\text{" + wordLabel("queen") + "}} - \\vec{x}_{\\text{" + wordLabel("king") + "}}}_{\\text{" + (DE ? "dieselbe Richtung" : "same direction") + "}} \\\\ \\underbrace{\\vec{x}_{\\text{" + wordLabel("prince") + "}} - \\vec{x}_{\\text{" + wordLabel("man") + "}}}_{\\text{" + (DE ? "Macht" : "power") + "}} &= \\underbrace{\\vec{x}_{\\text{" + wordLabel("king") + "}} - \\vec{x}_{\\text{" + wordLabel("prince") + "}}}_{\\text{" + (DE ? "dieselbe Richtung" : "same direction") + "}}\\end{aligned}";
+            : dirMode === "layers"
+              ? "\\begin{aligned}\\underbrace{\\vec{x}_{\\text{" + wordLabel("femaleDog") + "}} - \\vec{x}_{\\text{" + wordLabel("maleDog") + "}}}_{\\text{" + (DE ? "Geschlecht, Tierebene" : "gender, animal layer") + "}} &= \\underbrace{\\vec{x}_{\\text{" + wordLabel("woman") + "}} - \\vec{x}_{\\text{" + wordLabel("man") + "}}}_{\\text{" + (DE ? "Geschlecht, Menschenebene" : "gender, human layer") + "}} \\\\ \\underbrace{\\vec{x}_{\\text{" + wordLabel("sorceress") + "}} - \\vec{x}_{\\text{" + wordLabel("wizard") + "}}}_{\\text{" + (DE ? "Geschlecht, Figurenebene" : "gender, fiction layer") + "}} &= \\underbrace{\\vec{x}_{\\text{" + wordLabel("queen") + "}} - \\vec{x}_{\\text{" + wordLabel("king") + "}}}_{\\text{" + (DE ? "dieselbe Richtung" : "same direction") + "}}\\end{aligned}"
+              : "\\begin{aligned}\\underbrace{\\vec{x}_{\\text{" + wordLabel("woman") + "}} - \\vec{x}_{\\text{" + wordLabel("man") + "}}}_{\\text{" + (DE ? "Geschlecht" : "gender") + "}} &= \\underbrace{\\vec{x}_{\\text{" + wordLabel("queen") + "}} - \\vec{x}_{\\text{" + wordLabel("king") + "}}}_{\\text{" + (DE ? "dieselbe Richtung" : "same direction") + "}} \\\\ \\underbrace{\\vec{x}_{\\text{" + wordLabel("prince") + "}} - \\vec{x}_{\\text{" + wordLabel("man") + "}}}_{\\text{" + (DE ? "Macht" : "power") + "}} &= \\underbrace{\\vec{x}_{\\text{" + wordLabel("king") + "}} - \\vec{x}_{\\text{" + wordLabel("prince") + "}}}_{\\text{" + (DE ? "dieselbe Richtung" : "same direction") + "}}\\end{aligned}";
         setTex(tex);
         return;
       }
@@ -849,8 +876,12 @@
       if (st.mode === "space") {
         ["1D", "2D", "3D"].forEach(function (label, i) {
           row1.appendChild(makeChip(label, st.dim === i, function () {
-            st.dim = i; dimTarget = i; st.group = null;
+            st.dim = i; animateDimTo(i); st.group = null;
             if (i !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
+            if (i !== 2 && st.arithmetic) {
+              var curEx = EXAMPLES.filter(function (e) { return e.id === st.arithmetic; })[0];
+              if (curEx && curEx.only3d) st.arithmetic = null;
+            }
             if (i !== 2) st.showHighdim = false;
             syncControls(); ensureLoop();
           }));
@@ -898,7 +929,7 @@
           }));
         });
       } else {
-        EXAMPLES.forEach(function (ex) {
+        examplesForDim().forEach(function (ex) {
           row2.appendChild(makeChip(text(ex.label), st.arithmetic === ex.id, function () {
             st.arithmetic = st.arithmetic === ex.id ? null : ex.id; syncControls(); draw();
           }));
@@ -929,13 +960,38 @@
     }
     function syncControls() { renderControls(); }
 
+    function animateDimTo(target) {
+      target = clamp(target, 0, 2);
+      if (target === dimTarget && !dimAnim) return;
+      dimAnim = { from: dimMix, to: target, start: performance.now(), duration: 950 };
+      dimTarget = target;
+      clearTimeout(dimFallbackTimer);
+      // If RAF is throttled or the demo is paused, finish the morph silently.
+      dimFallbackTimer = setTimeout(function () {
+        if (!dimAnim) return;
+        dimMix = dimAnim.to;
+        dimTarget = dimMix;
+        dimAnim = null;
+        draw();
+      }, 1600);
+      ensureLoop();
+    }
     function applyState(s) {
       if (!s) return;
       if (s.mode) st.mode = s.mode;
-      if (typeof s.dim === "number") { st.dim = s.dim; dimTarget = s.dim; }
+      if (typeof s.dim === "number") {
+        var nextDim = clamp(s.dim, 0, 2);
+        if (nextDim !== st.dim) animateDimTo(nextDim);
+        else dimTarget = nextDim;
+        st.dim = nextDim;
+      }
       if (s.selected) st.selected = s.selected;
       if (st.dim !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
       if (s.arithmetic !== undefined) st.arithmetic = s.arithmetic;
+      if (st.dim !== 2 && st.arithmetic) {
+        var curEx = EXAMPLES.filter(function (e) { return e.id === st.arithmetic; })[0];
+        if (curEx && curEx.only3d) st.arithmetic = null;
+      }
       if (s.pair) st.pair = s.pair.slice();
       st.group = s.group ? s.group.slice() : null;
       st.tables = !!s.tables;
@@ -947,8 +1003,9 @@
     }
 
     function currentExampleIndex() {
-      for (var i = 0; i < EXAMPLES.length; i++) {
-        if (EXAMPLES[i].id === st.arithmetic) return i;
+      var list = examplesForDim();
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === st.arithmetic) return i;
       }
       return -1;
     }
@@ -970,11 +1027,12 @@
         ensureLoop();
         return true;
       }
-      if (st.mode !== "space" || st.dim !== 2) return false;
+      if (st.mode !== "space" || st.dim < 1) return false;
+      var list = examplesForDim();
       var idx = currentExampleIndex();
       if (idx < 0) idx = -1;
-      if (idx >= EXAMPLES.length - 1) return false;
-      st.arithmetic = EXAMPLES[idx + 1].id;
+      if (idx >= list.length - 1) return false;
+      st.arithmetic = list[idx + 1].id;
       syncControls();
       draw();
       ensureLoop();
@@ -990,10 +1048,11 @@
         ensureLoop();
         return true;
       }
-      if (st.mode !== "space" || st.dim !== 2) return false;
+      if (st.mode !== "space" || st.dim < 1) return false;
+      var list = examplesForDim();
       var idx = currentExampleIndex();
       if (idx <= 0) return false;
-      st.arithmetic = EXAMPLES[idx - 1].id;
+      st.arithmetic = list[idx - 1].id;
       syncControls();
       draw();
       ensureLoop();
@@ -1158,9 +1217,15 @@
       if (now - last < 33) { ensureLoop(); return; }
       last = now;
       var changed = false;
-      if (Math.abs(dimMix - dimTarget) > 0.002) {
-        dimMix += (dimTarget - dimMix) * 0.13;
-        if (Math.abs(dimMix - dimTarget) < 0.002) dimMix = dimTarget;
+      if (dimAnim) {
+        var t = Math.min(1, (now - dimAnim.start) / dimAnim.duration);
+        dimMix = lerp(dimAnim.from, dimAnim.to, ease(t));
+        if (t >= 1) {
+          dimMix = dimAnim.to;
+          dimTarget = dimMix;
+          dimAnim = null;
+          clearTimeout(dimFallbackTimer);
+        }
         changed = true;
       }
       if (camTarget) {
@@ -1218,7 +1283,6 @@
     return {
       update: function (s) {
         applyState(s || {});
-        if (Math.abs(dimMix - dimTarget) > 0.002) { dimMix = dimTarget; draw(); }
       },
       next: nextExample,
       prev: prevExample,
@@ -1228,6 +1292,7 @@
       destroy: function () {
         if (raf) cancelAnimationFrame(raf);
         clearTimeout(reserveTimer);
+        clearTimeout(dimFallbackTimer);
         if (reserveIdle && window.cancelIdleCallback) { try { window.cancelIdleCallback(reserveIdle); } catch (e) {} }
         if (ro) ro.disconnect();
         window.removeEventListener("resize", resize);

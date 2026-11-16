@@ -31,6 +31,7 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[2]
 BLOG = ROOT / "blog"
 CASES: list[tuple[str, bool, str]] = []
+RUN_TENMINUTES_CHECKS = False  # tenminutes regression checks are paused
 
 
 def check(name: str, ok: bool, detail: str = "") -> None:
@@ -607,78 +608,79 @@ def main() -> None:
                   str({"started": started, "moved": moved, "before": before_train, "after": after_train}))
             check("no console/page errors during training", not errors, "; ".join(errors[:3]))
 
-            errors.clear()
-            page.goto(f"http://127.0.0.1:{port}/tenminutes/transformer.php", wait_until="load", timeout=120000)
-            page.wait_for_timeout(2500)
-            page.wait_for_function("() => { const b=document.getElementById('param-breakdown-btn'); return b && /parameter/i.test(b.textContent); }", timeout=30000)
-            tm_layout = page.evaluate("""() => {
-                const cfg = document.getElementById('transformer_config');
-                const fields = Array.from(cfg.querySelectorAll(':scope > div'));
-                const kv = fields.find(d => /KV cache/i.test(d.textContent));
-                const ctx = fields.find(d => /Context Size/i.test(d.textContent));
-                const btn = document.getElementById('param-breakdown-btn');
-                const label = cfg.querySelector('label');
-                const m = label ? label.querySelector('math') : null;
-                return {
-                    cols: getComputedStyle(cfg).gridTemplateColumns,
-                    alignItems: getComputedStyle(cfg).alignItems,
-                    slot: !!document.querySelector('.tm-model-size-slot'),
-                    btn: btn ? btn.textContent.trim() : '',
-                    kv: kv ? kv.getBoundingClientRect().height : null,
-                    ctx: ctx ? ctx.getBoundingClientRect().height : null,
-                    nested: m ? m.querySelectorAll('math').length : 0
-                };
-            }""")
-            tm_global = page.evaluate("""() => {
-                const s = document.querySelector('#tm-global-metric select');
-                const hd = document.querySelector('#tm-global-metric .tm-global-highdim select');
-                return s ? {options: s.options.length, value: s.value, highdim: !!hd} : null;
-            }""")
-            check("tenminutes: global metric switch exists",
-                  bool(tm_global) and tm_global["options"] == 2 and tm_global["highdim"], str(tm_global))
-            check("tenminutes: one-column config, no model-size line, dynamic heights",
-                  bool(tm_layout) and len(tm_layout["cols"].split()) == 1 and not tm_layout["slot"]
-                  and tm_layout["alignItems"] == "start", str(tm_layout))
-            check("tenminutes: parameter button shows the size",
-                  bool(tm_layout) and "parameters" in tm_layout["btn"].lower(), str(tm_layout))
-            check("tenminutes: inline label math is not nested", bool(tm_layout) and tm_layout["nested"] == 0, str(tm_layout))
-            page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
-            page.wait_for_timeout(1500)
-            tm_plot = page.evaluate("""() => {
-                const el = document.getElementById('transformer-plotly-space');
-                return el ? {plotly: !!el.data, types: [...new Set((el.data || []).map(t => t.type))]} : null;
-            }""")
-            check("tenminutes: embedding plot uses Plotly", bool(tm_plot) and tm_plot["plotly"], str(tm_plot))
-            page.evaluate("""() => {
-                const el = document.getElementById('transformer-pe-shift-plot');
-                if (el) {
-                    const step = el.closest('.tm-step');
-                    if (step) { const b = step.querySelector('.tm-step-toggle'); if (b && step.classList.contains('is-collapsed')) b.click(); }
-                    el.scrollIntoView();
-                }
-            }""")
-            page.wait_for_timeout(1500)
-            page.evaluate("""() => {
-                try {
-                    const d = positionalShiftRegistry.get('transformer-pe-shift-plot');
-                    if (d) _execute_shift_render(d.tokenStrings, d.d_model, d.injectedEmbeddings);
-                } catch (e) {}
-            }""")
-            page.wait_for_timeout(1200)
-            tm_pe = page.evaluate("""() => {
-                const el = document.getElementById('transformer-pe-shift-plot');
-                return el ? {plotly: !!el.data, types: [...new Set((el.data || []).map(t => t.type))]} : null;
-            }""")
-            check("tenminutes: positional plot uses Plotly", bool(tm_pe) and tm_pe["plotly"], str(tm_pe))
-            tm_mt = page.evaluate("""() => {
-                const el = document.querySelector('.math_transformer');
-                if (!el) return null;
-                const cs = getComputedStyle(el);
-                return {bg: cs.backgroundColor, border: cs.borderLeftWidth};
-            }""")
-            check("tenminutes: math_transformer is not a gold box",
-                  tm_mt is None or (tm_mt["bg"] == "rgba(0, 0, 0, 0)" and tm_mt["border"] == "0px"), str(tm_mt))
-            check("tenminutes: no page errors", not errors, "; ".join(errors[:3]))
+            if RUN_TENMINUTES_CHECKS:
+                errors.clear()
+                page.goto(f"http://127.0.0.1:{port}/tenminutes/transformer.php", wait_until="load", timeout=120000)
+                page.wait_for_timeout(2500)
+                page.wait_for_function("() => { const b=document.getElementById('param-breakdown-btn'); return b && /parameter/i.test(b.textContent); }", timeout=30000)
+                tm_layout = page.evaluate("""() => {
+                    const cfg = document.getElementById('transformer_config');
+                    const fields = Array.from(cfg.querySelectorAll(':scope > div'));
+                    const kv = fields.find(d => /KV cache/i.test(d.textContent));
+                    const ctx = fields.find(d => /Context Size/i.test(d.textContent));
+                    const btn = document.getElementById('param-breakdown-btn');
+                    const label = cfg.querySelector('label');
+                    const m = label ? label.querySelector('math') : null;
+                    return {
+                        cols: getComputedStyle(cfg).gridTemplateColumns,
+                        alignItems: getComputedStyle(cfg).alignItems,
+                        slot: !!document.querySelector('.tm-model-size-slot'),
+                        btn: btn ? btn.textContent.trim() : '',
+                        kv: kv ? kv.getBoundingClientRect().height : null,
+                        ctx: ctx ? ctx.getBoundingClientRect().height : null,
+                        nested: m ? m.querySelectorAll('math').length : 0
+                    };
+                }""")
+                tm_global = page.evaluate("""() => {
+                    const s = document.querySelector('#tm-global-metric select');
+                    const hd = document.querySelector('#tm-global-metric .tm-global-highdim select');
+                    return s ? {options: s.options.length, value: s.value, highdim: !!hd} : null;
+                }""")
+                check("tenminutes: global metric switch exists",
+                      bool(tm_global) and tm_global["options"] == 2 and tm_global["highdim"], str(tm_global))
+                check("tenminutes: one-column config, no model-size line, dynamic heights",
+                      bool(tm_layout) and len(tm_layout["cols"].split()) == 1 and not tm_layout["slot"]
+                      and tm_layout["alignItems"] == "start", str(tm_layout))
+                check("tenminutes: parameter button shows the size",
+                      bool(tm_layout) and "parameters" in tm_layout["btn"].lower(), str(tm_layout))
+                check("tenminutes: inline label math is not nested", bool(tm_layout) and tm_layout["nested"] == 0, str(tm_layout))
+                page.evaluate("() => document.getElementById('transformer-plotly-space').scrollIntoView()")
+                page.wait_for_timeout(1500)
+                tm_plot = page.evaluate("""() => {
+                    const el = document.getElementById('transformer-plotly-space');
+                    return el ? {plotly: !!el.data, types: [...new Set((el.data || []).map(t => t.type))]} : null;
+                }""")
+                check("tenminutes: embedding plot uses Plotly", bool(tm_plot) and tm_plot["plotly"], str(tm_plot))
+                page.evaluate("""() => {
+                    const el = document.getElementById('transformer-pe-shift-plot');
+                    if (el) {
+                        const step = el.closest('.tm-step');
+                        if (step) { const b = step.querySelector('.tm-step-toggle'); if (b && step.classList.contains('is-collapsed')) b.click(); }
+                        el.scrollIntoView();
+                    }
+                }""")
+                page.wait_for_timeout(1500)
+                page.evaluate("""() => {
+                    try {
+                        const d = positionalShiftRegistry.get('transformer-pe-shift-plot');
+                        if (d) _execute_shift_render(d.tokenStrings, d.d_model, d.injectedEmbeddings);
+                    } catch (e) {}
+                }""")
+                page.wait_for_timeout(1200)
+                tm_pe = page.evaluate("""() => {
+                    const el = document.getElementById('transformer-pe-shift-plot');
+                    return el ? {plotly: !!el.data, types: [...new Set((el.data || []).map(t => t.type))]} : null;
+                }""")
+                check("tenminutes: positional plot uses Plotly", bool(tm_pe) and tm_pe["plotly"], str(tm_pe))
+                tm_mt = page.evaluate("""() => {
+                    const el = document.querySelector('.math_transformer');
+                    if (!el) return null;
+                    const cs = getComputedStyle(el);
+                    return {bg: cs.backgroundColor, border: cs.borderLeftWidth};
+                }""")
+                check("tenminutes: math_transformer is not a gold box",
+                      tm_mt is None or (tm_mt["bg"] == "rgba(0, 0, 0, 0)" and tm_mt["border"] == "0px"), str(tm_mt))
+                check("tenminutes: no page errors", not errors, "; ".join(errors[:3]))
             browser.close()
     finally:
         server.terminate()

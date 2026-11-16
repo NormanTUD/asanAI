@@ -3553,8 +3553,16 @@
 		var rect = arrowsEl.getBoundingClientRect();
 		if (rect.width < 2 || rect.height < 2) {
 			arrowsEl._tmFeatureDirty = true;
+			var tries = arrowsEl._tmSizeRetries || 0;
+			if (tries < 3) {
+				arrowsEl._tmSizeRetries = tries + 1;
+				setTimeout(function () {
+					if (arrowsEl.isConnected) renderLayerFeaturePlots(layerIdx);
+				}, 80);
+			}
 			return;
 		}
+		arrowsEl._tmSizeRetries = 0;
 		var proj = featureProjection(data, layerIdx);
 		if (note) {
 			var movement = featureMovementSummary(data);
