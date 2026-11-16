@@ -327,6 +327,7 @@
         });
         ctx.stroke();
       }
+      canvas.__lsCE = { target: target, history: history.slice(), batchTotal: batchTotal, batchDone: batchDone };
     }
     function resize() {
       size = api.fit(canvas, stage);
@@ -354,6 +355,9 @@
         } else {
           target = next;
           sequenceDone = false;
+          prevProbs = null;
+          pulseStart = 0;
+          history = [lossOf(softmax(logits))];
           buildTargets();
           draw();
         }
