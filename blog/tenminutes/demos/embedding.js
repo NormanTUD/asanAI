@@ -25,7 +25,7 @@
     var mathEl = formula.querySelector(".ls-math");
     var ctx = null, size = null, raf = 0, last = 0, reserveTimer = 0, reserveIdle = 0;
     var hits = [], hover = null, drag = null, suppressClick = false;
-    var dimMix = 0, dimTarget = 0, dimAnim = null, dimFallbackTimer = 0;
+    var dimMix = 0, dimTarget = 0, dimAnim = null;
     var VIEW_PRESETS = [
       { yaw: -0.55, pitch: 0.78, zoom: 1 },
       { yaw: 0.00, pitch: 1.08, zoom: 1 },
@@ -57,9 +57,9 @@
     }
     function tokenAlphaFor(mix) {
       if (mix <= 0 || mix >= 1) return 1;
-      if (mix < 0.22) return 1 - smoothstep(0, 0.22, mix);
-      if (mix < 0.80) return 0;
-      return smoothstep(0.80, 1, mix);
+      if (mix < 0.24) return 1 - smoothstep(0, 0.24, mix);
+      if (mix < 0.68) return 0;
+      return smoothstep(0.68, 1, mix);
     }
     function buildMiniTable() {
       if (!miniTable) return;
@@ -252,7 +252,7 @@
       return { x: (v[0] - 12.5) / 15, y: v[1] / 22, z: v.length > 2 ? v[2] : 0 };
     }
     function project(x, y, z) {
-      var yMix = smoothstep(0.22, 0.80, dimMix);
+      var yMix = smoothstep(0.18, 0.86, dimMix);
       var zMix = smoothstep(1, 2, dimMix);
       var planeTilt = 0.18 * yMix;
       var yaw = st.yaw * (planeTilt + (1 - planeTilt) * zMix);
@@ -448,7 +448,7 @@
       var yMix = smoothstep(0, 1, dimMix);
       var zMix = smoothstep(1, 2, dimMix);
       if (zMix > 0.02) drawRoomGrid(zMix);
-      var planeAlpha = smoothstep(0.22, 0.80, dimMix) * (1 - zMix);
+      var planeAlpha = smoothstep(0.18, 0.86, dimMix) * (1 - zMix);
       if (planeAlpha > 0.01) {
         ctx.globalAlpha = planeAlpha;
         drawPlaneGrid();
@@ -967,17 +967,8 @@
     function animateDimTo(target) {
       target = clamp(target, 0, 2);
       if (target === dimTarget && !dimAnim) return;
-      dimAnim = { from: dimMix, to: target, start: performance.now(), duration: 950 };
+      dimAnim = { from: dimMix, to: target, elapsed: 0, last: 0, duration: 1400 };
       dimTarget = target;
-      clearTimeout(dimFallbackTimer);
-      // If RAF is throttled or the demo is paused, finish the morph silently.
-      dimFallbackTimer = setTimeout(function () {
-        if (!dimAnim) return;
-        dimMix = dimAnim.to;
-        dimTarget = dimMix;
-        dimAnim = null;
-        draw();
-      }, 1600);
       ensureLoop();
     }
     function applyState(s) {
@@ -1222,13 +1213,17 @@
       last = now;
       var changed = false;
       if (dimAnim) {
-        var t = Math.min(1, (now - dimAnim.start) / dimAnim.duration);
-        dimMix = lerp(dimAnim.from, dimAnim.to, ease(t));
-        if (t >= 1) {
+        if (!dimAnim.last) dimAnim.last = now;
+        // Clamp dt so a paused/throttled tab resumes smoothly instead of jumping.
+        var dt = Math.min(50, Math.max(0, now - dimAnim.last));
+        dimAnim.last = now;
+        dimAnim.elapsed = Math.min(dimAnim.duration, dimAnim.elapsed + dt);
+        var p = dimAnim.elapsed / dimAnim.duration;
+        dimMix = lerp(dimAnim.from, dimAnim.to, ease(p));
+        if (p >= 1) {
           dimMix = dimAnim.to;
           dimTarget = dimMix;
           dimAnim = null;
-          clearTimeout(dimFallbackTimer);
         }
         changed = true;
       }
@@ -1296,7 +1291,6 @@
       destroy: function () {
         if (raf) cancelAnimationFrame(raf);
         clearTimeout(reserveTimer);
-        clearTimeout(dimFallbackTimer);
         if (reserveIdle && window.cancelIdleCallback) { try { window.cancelIdleCallback(reserveIdle); } catch (e) {} }
         if (ro) ro.disconnect();
         window.removeEventListener("resize", resize);
