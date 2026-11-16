@@ -2119,7 +2119,7 @@ h1,h2,h3,h4{
 .ls-qkv-vec--gold i{background:var(--ls-gold)}
 .ls-qkv-readout{font:var(--ls-fs-micro)/1.4 "Open Sans",sans-serif;color:var(--ls-muted);min-height:1.4em;display:flex;gap:12px;flex-wrap:wrap}
 .ls-qkv-readout b{color:var(--ls-ink);font-weight:600}
-.ls-qkv-formula{min-height:58px;max-height:112px;font-size:.92rem}
+.ls-qkv-formula{min-height:58px;max-height:170px;font-size:.92rem}
 .ls-qkv-formula .ls-math{font-size:clamp(.72rem,1.02vw,.92rem)}
 
 /* Calibration: confidence vs accuracy, temperature scaling and hallucinations */
