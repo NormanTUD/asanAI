@@ -1677,10 +1677,7 @@
     {
       id: "g-lens-grenze",
       title: "Grenze",
-      questions: [
-        { id: "q-box-att-mis", title: "Ist Attention eine Datenbank?", body: "Nein. Attention schlägt keine Fakten nach. Es berechnet Gewichte über Value-Vektoren und mischt sie zu einer neuen Repräsentation. Das Ergebnis ist keine gespeicherte Zeile, sondern eine kontextabhängige Mischung.", tex: "", kind: "question" },
-        { id: "q-edit-1794820087219-1", title: "Wird das für jedes Token einzeln berechnet?", body: "Ja, es wird für jedes Token einzeln berechnet. Wenn man autoregressive Modelle wie Chatbots hat, fügt man noch eine Causal Mask hinzu, die dafür sorgt, dass kein Token von sich aus in die Zukunft schauen kann.", tex: "", kind: "question" }
-      ]
+      questions: []
     },
     {
       id: "g-lens-mathematik",
@@ -1694,22 +1691,22 @@
       id: "g-lens-technik",
       title: "Technik",
       questions: [
-        { id: "q-box-att-1", title: "Warum drei Vektoren?", body: "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen.", tex: "", kind: "question" }
+        { id: "q-box-att-1", title: "Warum drei Vektoren?", body: "Query, Key und Value haben drei verschiedene Rollen: Der Query fragt, wonach dieses Token sucht; der Key beschreibt, was ein anderes Token zum Vergleich anbietet; der Value ist die Information, die bei einem guten Match weitergegeben wird. Query und Key bestimmen die Gewichte, der Value den Inhalt.", tex: "", kind: "question" },
+        { id: "q-edit-1794820087219-1", title: "Wird das für jedes Token einzeln berechnet?", body: "Ja, es wird für jedes Token einzeln berechnet. Bei autoregressiven Modellen wie Chatbots kommt eine Causal Mask hinzu, damit kein Token in die Zukunft schauen kann.", tex: "", kind: "question" },
+        { id: "q-box-att-kv", title: "KV-Cache", body: "Beim Generieren muss das Modell die Keys und Values der bisherigen Tokens nicht neu berechnen, wenn es sie im KV-Cache behält. Es berechnet nur die neuen Keys/Values und lässt das neue Query gegen die gespeicherten Keys laufen. Die wiederholte K/V-Projektion wächst ohne Cache quadratisch mit der Sequenz und mit Cache nur linear; die Attention-Scores selbst bleiben quadratisch (Shazeer, 2019).", tex: "", kind: "trivia" }
       ]
     },
     {
       id: "g-lens-optional",
       title: "Optional",
-      questions: [
-        { id: "q-box-att-kv", title: "KV-Cache", body: "Beim Generieren muss das Modell die Keys und Values der bisherigen Tokens nicht neu berechnen, wenn es sie im KV-Cache behält. Es berechnet nur die neuen Keys/Values und lässt das neue Query gegen die gespeicherten Keys laufen. Die wiederholte K/V-Projektion wächst ohne Cache quadratisch mit der Sequenz und mit Cache nur linear; die Attention-Scores selbst bleiben quadratisch (Shazeer, 2019).", tex: "", kind: "trivia" }
-      ]
+      questions: []
     },
     {
       id: "g-lens-budget",
       title: "Budget",
       questions: [
         { id: "q-box-att-3", title: "Ein Head, ein Budget", body: "Jede Zeile hat genau 1,00 Attention zu vergeben. Mehr für ein Token heißt weniger für alle anderen. Jeder Head hat ein getrenntes Budget.", tex: "", kind: "trivia" },
-        { id: "q-edit-1794817884757-1", title: "Warum hat der Punkt fast 60 %? Kodiert er nicht die gesamte Bedeutung?", body: "Ja, für dieses eine Wort. Aber jedes Wort wird eigenständig kodiert. Der Punkt bleibt deshalb größtenteils „Punkt“; das heißt aber nicht, dass alle nur auf diesen Punkt schauen, weil jedes Token ein eigenes Token bleibt.", tex: "", kind: "question" }
+        { id: "q-edit-1794817884757-1", title: "Warum hat der Punkt in „Ich gehe zur Bank.“ fast 60 %? Kodiert er nicht die gesamte Bedeutung?", body: "Im Satz „Ich gehe zur Bank.“ ist der Punkt die Query, und sein eigener Key passt am besten: Deshalb bekommt er einen großen Teil seiner Aufmerksamkeit von sich selbst. Das heißt nicht, dass er die Bedeutung des ganzen Satzes trägt. Jedes Token wird eigenständig kodiert und behält seine eigene Repräsentation; die Prozentzahl beschreibt nur diese eine Query-Zeile.", tex: "", kind: "question" }
       ]
     }
   ] : [
@@ -1721,10 +1718,7 @@
     {
       id: "g-lens-limit",
       title: "Limit",
-      questions: [
-        { id: "q-box-att-mis", title: "Is attention a database?", body: "No. Attention does not look up facts. It computes weights over value vectors and mixes them into a new representation. The result is not a stored row but a context-dependent mixture.", tex: "", kind: "question" },
-        { id: "q-edit-1794820087219-1", title: "Is this computed separately for each token?", body: "Yes, it is computed separately for each token. For autoregressive models such as chatbots, you also add a causal mask, which prevents any token from looking into the future.", tex: "", kind: "question" }
-      ]
+      questions: []
     },
     {
       id: "g-lens-mathematics",
@@ -1738,25 +1732,26 @@
       id: "g-lens-technique",
       title: "Technique",
       questions: [
-        { id: "q-box-att-1", title: "Why three vectors?", body: "Because searching and describing are two different roles. A pronoun can look for a noun without itself looking like a noun.", tex: "", kind: "question" }
+        { id: "q-box-att-1", title: "Why three vectors?", body: "Query, key, and value have three different roles: the query asks what this token is looking for; the key describes what another token offers for comparison; the value is the information passed on when the match is good. So query and key determine the weights, and value determines the content.", tex: "", kind: "question" },
+        { id: "q-edit-1794820087219-1", title: "Is this computed separately for each token?", body: "Yes, it is computed separately for each token. For autoregressive models such as chatbots, a causal mask is added so that no token can look into the future.", tex: "", kind: "question" },
+        { id: "q-box-att-kv", title: "KV cache", body: "During generation the model does not have to recompute the keys and values of earlier tokens if it keeps them in the KV cache. It computes only the new keys/values and lets the new query run against the cached keys. Without the cache the repeated K/V projection grows quadratically with the sequence; with the cache it grows linearly. The attention scores themselves stay quadratic (Shazeer, 2019).", tex: "", kind: "trivia" }
       ]
     },
     {
       id: "g-lens-optional",
       title: "Optional",
-      questions: [
-        { id: "q-box-att-kv", title: "KV cache", body: "During generation the model does not have to recompute the keys and values of earlier tokens if it keeps them in the KV cache. It computes only the new keys/values and lets the new query run against the cached keys. Without the cache the repeated K/V projection grows quadratically with the sequence; with the cache it grows linearly. The attention scores themselves stay quadratic (Shazeer, 2019).", tex: "", kind: "trivia" }
-      ]
+      questions: []
     },
     {
       id: "g-lens-budget",
       title: "Budget",
       questions: [
         { id: "q-box-att-3", title: "One head, one budget", body: "Every row has exactly 1.00 attention to give. More for one token means less for the others. Each head has a separate budget.", tex: "", kind: "trivia" },
-        { id: "q-edit-1794817884757-1", title: "Why does the period get almost 60 %? Doesn't it encode the entire meaning?", body: "Yes, for this one word. But each word is encoded independently. The period therefore stays mostly “period”; that does not mean everything only attends to this period, because each token remains its own token.", tex: "", kind: "question" }
+        { id: "q-edit-1794817884757-1", title: "Why does the period in “I walk to the bank.” get almost 60%? Doesn't it encode the entire meaning?", body: "In “I walk to the bank.” the period is the query, and its own key matches best: that is why it gives a large share of its attention to itself. That does not mean it carries the meaning of the whole sentence. Every token is encoded independently and keeps its own representation; the percentage describes only this one query row.", tex: "", kind: "question" }
       ]
     }
   ];
+
 
   var attentionMerged = {
     kicker: DE ? "Attention" : "Attention",
