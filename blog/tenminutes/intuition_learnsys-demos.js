@@ -61,6 +61,13 @@
       setTimeout(function () {
         entry.layer.classList.remove("is-entering-next", "is-entering-prev");
       }, reduced ? 0 : 300);
+      if (!reduced) {
+        setTimeout(function () {
+          if (!entry.layer.classList.contains("is-active")) return;
+          entry.layer.classList.add("is-settled");
+          setTimeout(function () { entry.layer.classList.remove("is-settled"); }, 40);
+        }, 700);
+      }
       if (entry.api && entry.api.resume) { try { entry.api.resume(); } catch (e) {} }
       if (entry.api && entry.api.resize) entry.api.resize();
       name = next;

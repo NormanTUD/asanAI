@@ -252,24 +252,30 @@
     var dir = o.dir || 0;
     var distance = typeof o.distance === "number" ? o.distance : 7;
     var dx = dir < 0 ? distance : -distance;
-    var endTransform = "translate3d(" + dx + "px," + (o.dy || 0) + "px,0) scale(" + (o.scale || 1.008) + ")";
+    var dy = o.dy || 0;
+    var scale = (o.scale || 1.008) - 1;
     ghost.style.opacity = "1";
-    ghost.style.transform = "translate3d(0,0,0) scale(1)";
-    ghost.style.transition = "opacity " + dur + "ms cubic-bezier(.4,0,.2,1), transform " + dur + "ms cubic-bezier(.4,0,.2,1)";
     draw();
     canvas.parentNode.appendChild(ghost);
-    void ghost.offsetWidth;
-    var started = false;
-    function start() {
-      if (started) return;
-      started = true;
-      ghost.style.opacity = "0";
-      ghost.style.transform = endTransform;
-    }
-    requestAnimationFrame(start);
-    setTimeout(start, 40);
+    var done = false;
     function remove() { if (ghost.parentNode) ghost.parentNode.removeChild(ghost); }
-    setTimeout(remove, dur + 120);
+    function frame(now) {
+      if (done) return;
+      if (!ghost.parentNode) { done = true; return; }
+      if (!frame.t0) frame.t0 = now;
+      var p = Math.min(1, (now - frame.t0) / dur);
+      var e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      ghost.style.opacity = (1 - e).toFixed(3);
+      ghost.style.transform = "translate3d(" + (dx * e).toFixed(2) + "px," + (dy * e).toFixed(2) + "px,0) scale(" + (1 + scale * e).toFixed(4) + ")";
+      if (p < 1) requestAnimationFrame(frame);
+      else { done = true; remove(); }
+    }
+    requestAnimationFrame(frame);
+    setTimeout(function () {
+      if (done) return;
+      done = true;
+      remove();
+    }, dur + 1200);
   };
 
   window.LearnSysVisuals = V;

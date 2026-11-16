@@ -152,6 +152,7 @@
   var hashBound = false;
   var booted = false;
   var substepAnims = [];
+  var substepSafetyTimer = 0;
   var activeTextGhost = null;
 
   var FONT_LEVELS = [
@@ -2612,6 +2613,8 @@
     }
   }
   function cancelTransitions() {
+    clearTimeout(substepSafetyTimer);
+    substepSafetyTimer = 0;
     substepAnims.slice().forEach(function (anim) {
       try { anim.cancel(); } catch (e) {}
     });
@@ -2646,14 +2649,16 @@
     var outEase = "cubic-bezier(.4,0,.2,1)";
     var inEase = "cubic-bezier(.22,1,.36,1)";
     if (ghost) {
-      playTransition(ghost, [
+      function dropGhost() {
+        if (ghost.parentNode) ghost.parentNode.removeChild(ghost);
+        if (activeTextGhost === ghost) activeTextGhost = null;
+      }
+      var leaveAnim = playTransition(ghost, [
         { opacity: 1, transform: "translate3d(0,0,0)" },
         { opacity: 0, transform: "translate3d(0," + (-shift * 0.6) + "px,0)" }
       ], { duration: 260, easing: outEase, fill: "both" });
-      setTimeout(function () {
-        if (ghost.parentNode) ghost.parentNode.removeChild(ghost);
-        if (activeTextGhost === ghost) activeTextGhost = null;
-      }, 360);
+      if (leaveAnim) leaveAnim.addEventListener("finish", dropGhost);
+      setTimeout(dropGhost, 1600);
     }
     [
       [els.kicker, 0, shift * 0.5],
@@ -2676,6 +2681,8 @@
         { opacity: 1, transform: "translate3d(0,0,0)" }
       ], { duration: 300, delay: 28 + i * 22, easing: inEase, fill: "both" });
     });
+    clearTimeout(substepSafetyTimer);
+    substepSafetyTimer = setTimeout(cancelTransitions, 700);
   }
   function renderSubstep(dir) {
     cancelTransitions();
