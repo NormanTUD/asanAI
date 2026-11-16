@@ -1812,7 +1812,7 @@
       const cw = w / cols, ch = h / 64;
       for (let i = 0; i < 64; i++) {
         for (let o = 0; o < 3; o++) {
-          const v = LOGITS1[Math.floor(i / 8)][i % 8][o];
+          const v = PROBE.logits1[i][o];
           const [r, g, b] = signedColor(v * 180);
           ctx.fillStyle = `rgb(${r},${g},${b})`;
           ctx.fillRect(x + o * cw, y + i * ch, cw, ch);
@@ -3154,7 +3154,9 @@
   }
   function goToSlide(i) {
     const idx = clamp(i, 0, slides.length - 1);
-    slides[idx].scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    const current = nearestSlideIndex();
+    const behavior = reduced || Math.abs(idx - current) > 2 ? "auto" : "smooth";
+    slides[idx].scrollIntoView({ behavior, block: "start" });
   }
   const nextKeys = new Set(["ArrowDown", "ArrowRight", "PageDown", " "]);
   const prevKeys = new Set(["ArrowUp", "ArrowLeft", "PageUp"]);

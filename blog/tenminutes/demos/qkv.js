@@ -333,7 +333,7 @@
       ctx.fillStyle = C.petrol;
       ctx.font = '700 ' + api.font("canvas-sm") + 'px "Barlow", sans-serif';
       ctx.textAlign = "left"; ctx.textBaseline = "top";
-      ctx.fillText(DE ? "3 Value-Vektoren → Ausgabe" : "3 value vectors → output", 12, 8);
+      ctx.fillText(DE ? "3 von " + tokens.length + " Value-Vektoren → Ausgabe" : "3 of " + tokens.length + " value vectors → output", 12, 8);
       ctx.fillStyle = C.muted;
       ctx.font = '600 ' + api.font("canvas-sm") + 'px "Open Sans", sans-serif';
       ctx.textAlign = "right";
@@ -341,19 +341,19 @@
       ctx.textAlign = "center"; ctx.textBaseline = "bottom";
       ctx.fillStyle = C.muted;
       var cornerNames = ids.map(function (id) { return tokens[id]; }).join(", ");
-      ctx.fillText(DE ? "Ecken: Value-Vektoren von " + cornerNames + " · die übrigen Tokens sind ausgeblendet" : "corners: value vectors of " + cornerNames + " · the other tokens are hidden", w / 2, h - 22);
+      ctx.fillText(DE ? "3 von " + tokens.length + " Value-Vektoren: " + cornerNames + " · die übrigen Tokens sind ausgeblendet" : "3 of " + tokens.length + " value vectors: " + cornerNames + " · the other tokens are hidden", w / 2, h - 22);
       ctx.fillText(DE ? "Punkt ziehen: α_j ändern, Σ α_j = 1 bleibt." : "drag the point: change α_j, Σ α_j = 1 stays fixed", w / 2, h - 8);
       function fmt2(v) { return v.toFixed(2).replace(".", DE ? "," : "."); }
       var rawTxt = raw.map(fmt2).join(" · ");
       var normTxt = ws.map(fmt2).join(" · ");
       var pctTxt = ws.map(function (v) { return (v * 100).toFixed(0) + "%"; }).join(" · ");
-      setPercent('<span class="ls-qkv-percent-lead">' + (DE ? "So werden aus den Gewichten α Prozente:" : "How the weights α become percentages:") + '</span>' +
+      setPercent('<span class="ls-qkv-percent-lead">' + (DE ? "Drei von " + tokens.length + " Gewichten α, auf 100 % normiert:" : "Three of " + tokens.length + " weights α, normalised to 100%:") + '</span>' +
         '<span><b>' + (DE ? "α roh" : "raw α") + '</b> ' + rawTxt + ' <i>Σ ' + fmt2(sum) + '</i></span>' +
         '<span><b>÷ Σ</b> ' + normTxt + ' <i>Σ ' + (DE ? "1,00" : "1.00") + '</i></span>' +
         '<span><b>× 100</b> ' + pctTxt + ' <i>Σ 100%</i></span>');
       setReadout(ids.map(function (id, i) {
         return '<span><b>v(' + api.esc(tokens[id]) + ')</b> ' + (ws[i] * 100).toFixed(1) + '%</span>';
-      }).join("") + '<span><b>Σ</b> 100%</span>');
+      }).join("") + '<span><b>Σ</b> 100% · 3/' + tokens.length + '</span>');
       canvas.setAttribute("aria-label", DE ? "Attention als gewichtete Mischung: Die drei Ecken sind die gelernten Value-Vektoren der Tokens Tier, Straße und es; der Ausgabepunkt liegt in ihrem Dreieck." : "Attention as a weighted mixture: the three corners are the learned value vectors of the tokens animal, street, and it; the output point lies inside their triangle.");
     }
     function graphLayout(w, h) {
