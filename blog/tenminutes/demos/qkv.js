@@ -137,25 +137,6 @@
           ctx.fillText(label, ax, ay);
         }
       });
-      // value particles travel from key to query
-      if (!reduced) {
-        var now = performance.now();
-        tokens.forEach(function (tok, i) {
-          if (i === query || weights[i] < 0.10) return;
-          var x = centers[i];
-          var mx = (qx + x) / 2;
-          var lift = Math.min(60, 20 + Math.abs(qx - x) * 0.18, Math.max(8, y - 18));
-          for (var k = 0; k < 2; k++) {
-            var u = ((now / 1100) + i * 0.13 + k * 0.5) % 1;
-            var px = (1 - u) * (1 - u) * x + 2 * (1 - u) * u * mx + u * u * qx;
-            var py = (1 - u) * (1 - u) * (y - 2) + 2 * (1 - u) * u * (y - lift) + u * u * (qy - 2);
-            ctx.globalAlpha = 0.15 + 0.55 * (1 - u);
-            ctx.fillStyle = C.gold;
-            ctx.beginPath(); ctx.arc(px, py, 2.4, 0, Math.PI * 2); ctx.fill();
-          }
-        });
-        ctx.globalAlpha = 1;
-      }
       // Q/K/V legend
       var lx = w - pad - 4, ly = 7;
       [["Q", C.green], ["K", C.sky], ["V", C.gold]].forEach(function (item) {
