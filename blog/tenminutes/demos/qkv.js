@@ -15,7 +15,7 @@
     ];
     var head = 0, view = "arcs", weights = W[0].slice(), prev = W[0].slice();
     var simplexTrail = [];
-    var simplexGeom = null, simplexDrag = false;
+    var simplexGeom = null, simplexDrag = false, simplexCorner = -1, simplexVerts = null;
     var graphHover = -1, graphMouse = { x: 0, y: 0 };
     var t = 1, start = 0, raf = 0, loopRaf = 0, running = true;
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -217,6 +217,17 @@
       var w = (d00 * d21 - d01 * d20) / denom;
       return [1 - v - w, v, w];
     }
+    function triangleArea(a, b, c) {
+      return Math.abs((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)) / 2;
+    }
+    function nearCorner(px, py) {
+      if (!simplexGeom) return -1;
+      for (var i = 0; i < simplexGeom.verts.length; i++) {
+        var v = simplexGeom.verts[i];
+        if (Math.hypot(px - v.x, py - v.y) < 18) return i;
+      }
+      return -1;
+    }
     function simplexInside(px, py) {
       if (!simplexGeom) return false;
       var b = barycentric(px, py, simplexGeom.verts);
@@ -237,8 +248,9 @@
       draw();
     }
     function endSimplexDrag() {
-      if (!simplexDrag) return;
+      if (!simplexDrag && simplexCorner < 0) return;
       simplexDrag = false;
+      simplexCorner = -1;
       canvas.style.cursor = "default";
     }
     function drawSimplex() {
@@ -255,11 +267,14 @@
       var sum = raw.reduce(function (a, b) { return a + b; }, 0);
       var ws = raw.map(function (v) { return v / sum; });
       var cx = w / 2, cy = h * 0.47, R = Math.min(w, h) * 0.30;
-      var verts = [
-        { x: cx, y: cy - R },
-        { x: cx - R * 0.94, y: cy + R * 0.62 },
-        { x: cx + R * 0.94, y: cy + R * 0.62 }
-      ];
+      if (!simplexVerts) {
+        simplexVerts = [
+          { x: cx, y: cy - R },
+          { x: cx - R * 0.94, y: cy + R * 0.62 },
+          { x: cx + R * 0.94, y: cy + R * 0.62 }
+        ];
+      }
+      var verts = simplexVerts;
       var cols = [C.green, C.sky, C.gold];
       simplexGeom = { verts: verts, ids: ids, ox: 0, oy: 0 };
       // triangle
@@ -341,13 +356,13 @@
       ctx.textAlign = "center"; ctx.textBaseline = "bottom";
       ctx.fillStyle = C.muted;
       var cornerNames = ids.map(function (id) { return tokens[id]; }).join(", ");
-      ctx.fillText(DE ? "3 von " + tokens.length + " Value-Vektoren: " + cornerNames + " · die übrigen Tokens sind ausgeblendet" : "3 of " + tokens.length + " value vectors: " + cornerNames + " · the other tokens are hidden", w / 2, h - 22);
-      ctx.fillText(DE ? "Punkt ziehen: α_j ändern, Σ α_j = 1 bleibt." : "drag the point: change α_j, Σ α_j = 1 stays fixed", w / 2, h - 8);
+      ctx.fillText(DE ? "Ecken: v_j = W_V x_j von " + cornerNames + " · 3 von " + tokens.length : "corners: v_j = W_V x_j of " + cornerNames + " · 3 of " + tokens.length, w / 2, h - 22);
+      ctx.fillText(DE ? "Punkt ziehen = α aus Q,K · Ecken ziehen = V · Σ α_j = 1" : "drag point = α from Q,K · drag corners = V · Σ α_j = 1", w / 2, h - 8);
       function fmt2(v) { return v.toFixed(2).replace(".", DE ? "," : "."); }
       var rawTxt = raw.map(fmt2).join(" · ");
       var normTxt = ws.map(fmt2).join(" · ");
       var pctTxt = ws.map(function (v) { return (v * 100).toFixed(0) + "%"; }).join(" · ");
-      setPercent('<span class="ls-qkv-percent-lead">' + (DE ? "Drei von " + tokens.length + " Gewichten α, auf 100 % normiert:" : "Three of " + tokens.length + " weights α, normalised to 100%:") + '</span>' +
+      setPercent('<span class="ls-qkv-percent-lead">' + (DE ? "Drei von " + tokens.length + " Gewichten α aus Q,K, auf 100 % normiert:" : "Three of " + tokens.length + " weights α from Q,K, normalised to 100%:") + '</span>' +
         '<span><b>' + (DE ? "α roh" : "raw α") + '</b> ' + rawTxt + ' <i>Σ ' + fmt2(sum) + '</i></span>' +
         '<span><b>÷ Σ</b> ' + normTxt + ' <i>Σ ' + (DE ? "1,00" : "1.00") + '</i></span>' +
         '<span><b>× 100</b> ' + pctTxt + ' <i>Σ 100%</i></span>');
@@ -504,7 +519,7 @@
       if (view === "simplex") drawSimplex();
       else if (view === "graph") drawGraph(performance.now());
       else drawArcs();
-      canvas.__lsQkv = { view: view, head: head, weights: weights.slice(), simplex: simplexGeom ? { ids: simplexGeom.ids.slice(), ox: simplexGeom.ox, oy: simplexGeom.oy } : null };
+      canvas.__lsQkv = { view: view, head: head, weights: weights.slice(), simplex: simplexGeom ? { ids: simplexGeom.ids.slice(), ox: simplexGeom.ox, oy: simplexGeom.oy, verts: simplexGeom.verts.map(function (v) { return { x: v.x, y: v.y }; }) } : null };
     }
     function setView(v) {
       if (v !== "arcs" && v !== "simplex" && v !== "graph") return;
@@ -526,7 +541,7 @@
       draw();
       loopRaf = requestAnimationFrame(loop);
     }
-    function resize() { size = api.fit(canvas, stage); draw(); }
+    function resize() { size = api.fit(canvas, stage); simplexVerts = null; simplexCorner = -1; simplexDrag = false; draw(); }
     el.querySelectorAll("[data-head]").forEach(function (b) {
       b.addEventListener("click", function () { setHead(parseInt(b.getAttribute("data-head"), 10)); });
     });
@@ -562,8 +577,17 @@
       if (view !== "simplex" || !size) return;
       var r = canvas.getBoundingClientRect();
       var px = e.clientX - r.left, py = e.clientY - r.top;
-      if (!simplexInside(px, py)) return;
       if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      var corner = nearCorner(px, py);
+      if (corner >= 0) {
+        simplexCorner = corner;
+        simplexDrag = false;
+        canvas.style.cursor = "move";
+        if (canvas.setPointerCapture) { try { canvas.setPointerCapture(e.pointerId); } catch (err) {} }
+        return;
+      }
+      if (!simplexInside(px, py)) return;
+      simplexCorner = -1;
       simplexDrag = true;
       canvas.style.cursor = "grabbing";
       if (canvas.setPointerCapture) { try { canvas.setPointerCapture(e.pointerId); } catch (err) {} }
@@ -573,10 +597,18 @@
       if (view !== "simplex" || !size) return;
       var r = canvas.getBoundingClientRect();
       var px = e.clientX - r.left, py = e.clientY - r.top;
-      if (simplexDrag) {
+      if (simplexCorner >= 0 && simplexGeom) {
+        var test = simplexGeom.verts.map(function (v) { return { x: v.x, y: v.y }; });
+        test[simplexCorner] = { x: clamp(px, 26, size.w - 26), y: clamp(py, 26, size.h - 26) };
+        if (triangleArea(test[0], test[1], test[2]) > 1800) {
+          simplexGeom.verts[simplexCorner].x = test[simplexCorner].x;
+          simplexGeom.verts[simplexCorner].y = test[simplexCorner].y;
+          draw();
+        }
+      } else if (simplexDrag) {
         setSimplexFromPoint(px, py);
       } else {
-        canvas.style.cursor = simplexInside(px, py) ? "grab" : "default";
+        canvas.style.cursor = nearCorner(px, py) >= 0 ? "move" : (simplexInside(px, py) ? "grab" : "default");
       }
     });
     canvas.addEventListener("pointerup", endSimplexDrag);
