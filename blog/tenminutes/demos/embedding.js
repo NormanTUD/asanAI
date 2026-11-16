@@ -252,8 +252,10 @@
       var z1 = z * zMix;
       var y2 = y1 * cp - z1 * sp;
       var z2 = y1 * sp + z1 * cp;
-      var s = Math.min(size.w, size.h) * 0.34 * st.zoom / (1 + z2 * 0.3);
-      return { x: size.w * 0.5 + x1 * s, y: size.h * 0.52 - y2 * s, z: z2, s: s };
+      var scale = 0.34 - 0.02 * zMix;
+      var centerY = 0.52 + 0.03 * zMix;
+      var s = Math.min(size.w, size.h) * scale * st.zoom / (1 + z2 * 0.3);
+      return { x: size.w * 0.5 + x1 * s, y: size.h * centerY - y2 * s, z: z2, s: s };
     }
     function tempX(value) {
       var pad = Math.min(52, size.w * 0.08);
@@ -591,7 +593,7 @@
         pairArrow("wizard", "sorceress", C.lime);
         ctx.globalAlpha = 1;
         if (threeDAlpha > 0.5) {
-          drawLabel(DE ? "3D zusätzlich: Tiere (unten) · Figuren (oben)" : "3D adds: animals (below) · fiction (above)", 24, size.h - 38, C.muted, "left", 9);
+          drawLabel(DE ? "3D zusätzlich: Tiere · Figuren" : "3D adds: animals · fiction", 24, size.h - 38, C.muted, "left", 9);
         }
       }
 
@@ -1214,7 +1216,10 @@
     scheduleReserve();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleReserve);
     return {
-      update: function (s) { applyState(s || {}); },
+      update: function (s) {
+        applyState(s || {});
+        if (Math.abs(dimMix - dimTarget) > 0.002) { dimMix = dimTarget; draw(); }
+      },
       next: nextExample,
       prev: prevExample,
       pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } },
