@@ -5,12 +5,12 @@
   };
 
   var TEMP = [
-    { id: "freezing", value: -30, color: "sky", label: ["Gefrierpunkt", "Freezing"] },
-    { id: "icecold", value: -10, color: "lilac", label: ["Eiskalt", "Ice cold"] },
-    { id: "cold", value: 5, color: "blue", label: ["Kalt", "Cold"] },
-    { id: "cool", value: 18, color: "petrol", label: ["Kühl", "Cool"] },
-    { id: "lukewarm", value: 30, color: "green", label: ["Lauwarm", "Lukewarm"] },
-    { id: "warm", value: 55, color: "lime", label: ["Warm", "Warm"] },
+    { id: "freezing", value: 0, color: "sky", label: ["Gefrierpunkt", "Freezing"] },
+    { id: "icecold", value: 5, color: "lilac", label: ["Eiskalt", "Ice cold"] },
+    { id: "cold", value: 15, color: "blue", label: ["Kalt", "Cold"] },
+    { id: "cool", value: 30, color: "petrol", label: ["Kühl", "Cool"] },
+    { id: "lukewarm", value: 45, color: "green", label: ["Lauwarm", "Lukewarm"] },
+    { id: "warm", value: 60, color: "lime", label: ["Warm", "Warm"] },
     { id: "hot", value: 100, color: "gold", label: ["Heiß", "Hot"] }
   ];
 
