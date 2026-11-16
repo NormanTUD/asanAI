@@ -66,7 +66,9 @@
       stepsEl.hidden = !cot && !verify;
       answerEl.textContent = answer;
       citeEl.textContent = cite;
-      riskVal.textContent = risk + "%";
+      riskVal.textContent = "";
+      riskVal.hidden = true;
+      riskEl.setAttribute("aria-label", (DE ? "Halluzinationsrisiko: " : "Hallucination risk: ") + (risk < 30 ? (DE ? "niedrig" : "low") : risk < 60 ? (DE ? "mittel" : "medium") : (DE ? "hoch" : "high")));
       riskBar.style.width = risk + "%";
       riskBar.style.background = risk < 30 ? "var(--ls-green)" : risk < 60 ? "var(--ls-gold)" : "var(--ls-lilac)";
       riskEl.className = "ls-hg-risk " + (risk < 30 ? "is-low" : risk < 60 ? "is-mid" : "is-high");

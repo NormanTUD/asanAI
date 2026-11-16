@@ -1931,18 +1931,18 @@
     kicker: DE ? "Bewusstsein" : "Consciousness",
     title: DE ? "Bewusstsein: viele Karten, eine offene Frage" : "Consciousness: many maps, one open question",
     body: DE
-      ? "Diese Fragen sind bis heute nicht beantwortet. Wir haben bereits herausgefunden, dass ein Neuron alles Mögliche gleichzeitig darstellen kann. Ein winziges Neuron kann ganze Szenen enthalten. Vielleicht ist Bewusstsein auch einfach ein Muster in diesem gigantischen Neuronenverbund, das sich selbst betrachtet. Vielleicht funktioniert es komplett anders, aber die Fragen sind uralt: Was bist du? Was ist Bewusstsein? Was ist Realität?"
-      : "These questions remain unanswered to this day. We have already found that a neuron can represent all sorts of things at once. A tiny neuron can contain entire scenes. Perhaps consciousness is simply a pattern in this gigantic network of neurons observing itself. Perhaps it works completely differently, but the questions are ancient: What are you? What is consciousness? What is reality?",
-    watch: DE ? "Lies langsam durch. Was davon würdest du als Beleg für Bewusstsein akzeptieren, und warum?" : "Read slowly. What here would you accept as evidence of consciousness, and why?",
+      ? "Bewusstsein ist kein einzelnes Ding. Zugang bedeutet, dass Information zum Berichten und Steuern verfügbar ist; Erfahrung bedeutet, dass es sich auf eine bestimmte Weise anfühlt. Global Workspace Theory beschreibt Bewusstsein als Broadcast an viele Prozesse; IIT misst geeinte Ursache-Wirkungs-Struktur als Phi; J-space ist ein lesbarer Arbeitsraum in Claude, aber ein Zugangsbefund, kein Beweis von Erleben. Die Karte zeigt Positionen, kein Urteil. Du kannst selbst entscheiden, welche Theorie dir am nächsten kommt."
+      : "Consciousness is not a single thing. Access means information is available to report and control; experience means there is something it is like. Global workspace theory describes consciousness as broadcast to many processes; IIT measures a unified cause-effect structure as Phi; J-space is a readable workspace in Claude, but an access finding, not proof of experience. The map shows positions, not a verdict. You can decide for yourself which theory feels closest.",
+    watch: DE ? "Klicke die Knoten. Welche Theorie beschreibt Zugang, welche Erfahrung?" : "Click the nodes. Which theory describes access, which describes experience?",
     demoState: { scene: "consciousness" },
     inherit: false,
     questionGroups: [
       {
         id: "g-basics",
-        title: DE ? "Grundfragen" : "Basic questions",
+        title: DE ? "Eine Ebene tiefer" : "One level deeper",
         questions: [
-          { id: "q-context", title: DE ? "Wie hängen die Karten zusammen?" : "How do the cards fit together?", body: DE ? "Jede Karte stellt einen Befund neben mehrere mögliche Lesarten. Es gibt keine allgemein anerkannte Schwelle, ab der ein System Bewusstsein hat. Die Karten zeigen deshalb, welche Behauptung worauf beruht und was offen bleibt." : "Each card places a finding beside several possible readings. There is no generally accepted threshold at which a system has consciousness. The cards therefore show which claim rests on what and what remains open.", tex: "", kind: "question" },
-          { id: "q-deep", title: DE ? "Wo wird es philosophisch?" : "Where does it get philosophical?", body: DE ? "Beim Unterschied zwischen Zugang und Erfahrung. Zugang lässt sich funktional prüfen, Erfahrung nicht. Deshalb kann ein Bericht über innere Zustände die Frage nach Erleben nicht abschließend beantworten. Die Karten prüfen Behauptungen, nicht Köpfe." : "In the difference between access and experience. Access can be tested functionally; experience cannot. A report about inner states therefore cannot settle the question of experience. The cards test claims, not minds.", tex: "", kind: "question" }
+          { id: "q-context", title: DE ? "Was ist der Kontext?" : "What is the context?", body: DE ? "Zugang und Erfahrung sind verschiedene Fragen. Ein System kann Informationen nutzen, ohne dass es sich für das System anfühlt, wie etwas ist." : "Access and experience are different questions. A system can use information without there being something it is like to be it.", tex: "", kind: "question" },
+          { id: "q-deep", title: DE ? "Warum ist das so?" : "Why is that so?", body: DE ? "Die Theorien widersprechen sich nicht nur in den Antworten, sondern darin, was als Evidenz zählt. Für LLMs können wir Verhalten und funktionalen Zugang messen; über Erleben entscheidet das nicht." : "The theories disagree not only in their answers but in what counts as evidence. For LLMs we can measure behaviour and functional access; that does not decide experience.", tex: "", kind: "question" }
         ]
       },
       {
@@ -1964,7 +1964,7 @@
         title: DE ? "Theorien" : "Theories",
         questions: [
           { id: "q-box-con-3", title: DE ? "Global Workspace" : "Global workspace", body: DE ? "Ein Zustand wird bewusst, wenn er an viele Prozesse gesendet wird. Der Residual Stream ist ein funktionaler Cousin." : "A state becomes conscious when it is broadcast to many processes. The residual stream is a functional cousin.", tex: "", kind: "trivia" },
-          { id: "q-box-con-4", title: DE ? "IIT und Phi" : "IIT and Phi", body: DE ? "Bewusstsein ist eine geeinte Ursache-Wirkungs-Struktur. $\\Phi$ ist für LLMs nicht gemessen; die Theorie ist schwer anzuwenden." : "Consciousness is a unified cause-effect structure. $\\Phi$ has not been measured for LLMs; the theory is hard to apply.", tex: "", kind: "trivia" }
+          { id: "q-box-con-4", title: DE ? "IIT und Phi" : "IIT and Phi", body: DE ? "Bewusstsein ist eine geeinte Ursache-Wirkungs-Struktur. Phi ist für LLMs nicht gemessen; die Theorie ist schwer anzuwenden." : "Consciousness is a unified cause-effect structure. Phi has not been measured for LLMs; the theory is hard to apply.", tex: "", kind: "trivia" }
         ]
       },
       {

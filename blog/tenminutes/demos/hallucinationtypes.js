@@ -210,6 +210,14 @@
     render();
     return {
       update: function () {},
+      next: function () {
+        if (selected < TYPES.length - 1) { selected++; render(); return true; }
+        return false;
+      },
+      prev: function () {
+        if (selected > 0) { selected--; render(); return true; }
+        return false;
+      },
       resize: function () {},
       destroy: function () { el.remove(); }
     };
