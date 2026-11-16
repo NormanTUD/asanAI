@@ -31,12 +31,19 @@
       return out;
     }
     function addTrailTo(target) {
-      if (!trail.length) trail.push(0);
-      var last = trail[trail.length - 1];
-      if (target > last) {
-        for (var t = last + 12; t < target; t += 12) trail.push(t);
+      target = clamp(Math.round(target || 0), 0, 10000);
+      trail = trail.filter(function (v) { return v <= target; });
+      if (target <= 2000) {
+        var set = Object.create(null);
+        trail.forEach(function (v) { set[v] = 1; });
+        for (var t = 0; t <= target; t++) set[t] = 1;
+        trail = Object.keys(set).map(Number).sort(function (a, b) { return a - b; });
+        return;
       }
-      if (trail.indexOf(target) < 0) trail.push(target);
+      var step = 12;
+      var last = trail.length ? trail[trail.length - 1] : -1;
+      for (var u = last + step; u < target; u += step) trail.push(u);
+      if (trail[trail.length - 1] !== target) trail.push(target);
       trail.sort(function (a, b) { return a - b; });
     }
     var trail = trailSeed(pos);
