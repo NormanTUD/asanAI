@@ -23,9 +23,14 @@
     princess: { v: [15, 10], z: 0.45, label: ["Prinzessin", "Princess"], group: "rank" },
     king: { v: [25, -10], z: 0.85, label: ["König", "King"], group: "rank" },
     queen: { v: [25, 10], z: 0.85, label: ["Königin", "Queen"], group: "rank" },
-    power: { v: [10, 0], z: 0.25, label: ["Macht", "Power"], group: "power" }
+    power: { v: [10, 0], z: 0.25, label: ["Macht", "Power"], group: "power" },
+    maleDog: { v: [5, -10], z: -1.25, label: ["Rüde", "Male dog"], group: "animal", only3d: true },
+    femaleDog: { v: [5, 10], z: -1.25, label: ["Hündin", "Female dog"], group: "animal", only3d: true },
+    wizard: { v: [15, -10], z: 1.40, label: ["Zauberer", "Wizard"], group: "fiction", only3d: true },
+    sorceress: { v: [15, 10], z: 1.40, label: ["Zauberin", "Sorceress"], group: "fiction", only3d: true }
   };
-  var WORD_IDS = Object.keys(WORDS);
+  var WORD_IDS = Object.keys(WORDS).filter(function (id) { return !WORDS[id].only3d; });
+  var WORD_IDS_3D = Object.keys(WORDS).filter(function (id) { return WORDS[id].only3d; });
 
   var EXAMPLES = [
     { id: "king-man-woman", expr: "King - Man + Woman", label: ["König − Mann + Frau", "King − Man + Woman"] },
@@ -49,5 +54,5 @@
   var scenes = {};
   function register(name, factory) { if (typeof name === "string" && typeof factory === "function") scenes[name] = factory; }
   function get(name) { return scenes[name] || null; }
-  window.LearnSysDemoCore = { SHARED: SHARED, TEMP: TEMP, WORDS: WORDS, WORD_IDS: WORD_IDS, EXAMPLES: EXAMPLES, PAIRS: PAIRS, esc: esc, clamp: clamp, lerp: lerp, ease: ease, register: register, get: get, scenes: scenes };
+  window.LearnSysDemoCore = { SHARED: SHARED, TEMP: TEMP, WORDS: WORDS, WORD_IDS: WORD_IDS, WORD_IDS_3D: WORD_IDS_3D, EXAMPLES: EXAMPLES, PAIRS: PAIRS, esc: esc, clamp: clamp, lerp: lerp, ease: ease, register: register, get: get, scenes: scenes };
 })();

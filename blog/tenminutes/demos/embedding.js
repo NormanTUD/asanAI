@@ -2,7 +2,7 @@
   "use strict";
   var core = window.LearnSysDemoCore;
   if (!core) return;
-  var SHARED = core.SHARED, TEMP = core.TEMP, WORDS = core.WORDS, WORD_IDS = core.WORD_IDS, EXAMPLES = core.EXAMPLES, PAIRS = core.PAIRS;
+  var SHARED = core.SHARED, TEMP = core.TEMP, WORDS = core.WORDS, WORD_IDS = core.WORD_IDS, WORD_IDS_3D = core.WORD_IDS_3D, EXAMPLES = core.EXAMPLES, PAIRS = core.PAIRS;
   var esc = core.esc, clamp = core.clamp, lerp = core.lerp, ease = core.ease;
   function embeddingScene(root, api) {
     var DE = api.lang === "de";
@@ -26,6 +26,12 @@
     var ctx = null, size = null, raf = 0, last = 0, reserveTimer = 0, reserveIdle = 0;
     var hits = [], hover = null, drag = null, suppressClick = false;
     var dimMix = 0, dimTarget = 0;
+    var VIEW_PRESETS = [
+      { yaw: -0.55, pitch: 0.78, zoom: 1 },
+      { yaw: 0.00, pitch: 1.08, zoom: 1 },
+      { yaw: 0.82, pitch: 0.38, zoom: 1 }
+    ];
+    var viewPreset = 0, camTarget = null;
     var st = {
       mode: "space", dim: 1, selected: "king", arithmetic: "King - Man + Woman",
       pair: ["cold", "warm"], group: null, yaw: -0.55, pitch: 0.78, zoom: 1, tables: false
@@ -36,6 +42,8 @@
       if (g === "gender") return color("green");
       if (g === "power") return color("gold");
       if (g === "rank") return color("lilac");
+      if (g === "animal") return color("sky");
+      if (g === "fiction") return color("lime");
       return color("muted");
     }
     function text(loc) { return DE ? loc[0] : loc[1]; }
@@ -43,8 +51,8 @@
     function wordLabel(id) { return text(WORDS[id].label); }
     function buildMiniTable() {
       if (!miniTable) return;
-      var ids = ["man", "woman", "prince", "princess", "king", "queen", "power"];
-      var head = '<tr><th></th><th>' + (DE ? "Macht" : "Power") + '</th><th>' + (DE ? "Geschlecht" : "Gender") + '</th><th>' + (DE ? "Rang" : "Rank") + '</th></tr>';
+      var ids = ["man", "woman", "prince", "princess", "king", "queen", "power", "maleDog", "femaleDog", "wizard", "sorceress"];
+      var head = '<tr><th></th><th>' + (DE ? "Macht" : "Power") + '</th><th>' + (DE ? "Geschlecht" : "Gender") + '</th><th>' + (DE ? "Rang · Welt" : "Rank · world") + '</th></tr>';
       var body = ids.map(function (id) {
         var w = WORDS[id];
         var x = ((w.v[0] - 12.5) / 15).toFixed(2);
@@ -405,7 +413,7 @@
       }
     }
     function drawRoomGrid(zMix) {
-      var x0 = -1.15, x1 = 1.15, y0 = -1.15, y1 = 1.15, z0 = -0.95, z1 = 1.0;
+      var x0 = -1.15, x1 = 1.15, y0 = -1.15, y1 = 1.15, z0 = -1.45, z1 = 1.65;
       var step = 0.25;
       ctx.globalAlpha = zMix;
       for (var g = x0; g <= x1 + 0.001; g += step) drawLine3D(project(g, y0, z0), project(g, y1, z0), .060);
@@ -452,10 +460,10 @@
         ctx.globalAlpha = 1;
       }
       if (zMix > 0.05) {
-        var zEnd = project(0, 0, 1.0);
+        var zEnd = project(0, 0, 1.7);
         drawArrow(origin.x, origin.y, zEnd.x, zEnd.y, "rgba(0,75,111,.24)", 1.2);
         ctx.globalAlpha = zMix;
-        drawLabel(DE ? "RANG" : "RANK", zEnd.x + 6, zEnd.y, C.muted, "left", 9);
+        drawLabel(DE ? "RANG · WELT" : "RANK · WORLD", zEnd.x + 6, zEnd.y, C.muted, "left", 9);
         ctx.globalAlpha = 1;
       }
 
@@ -463,12 +471,20 @@
       var result = cr.result, steps = cr.steps, dirMode = cr.dirMode;
       var groupAlpha = 1 - smoothstep(0, 0.5, dimMix);
       var individualAlpha = smoothstep(0, 0.5, dimMix);
+      var threeDAlpha = smoothstep(1.15, 1.95, dimMix);
 
       var drawList = WORD_IDS.map(function (id) {
         var w = WORDS[id];
         var p = project((w.v[0] - 12.5) / 15, w.v[1] / 22, w.z);
-        return { id: id, p: p };
+        return { id: id, p: p, threeD: false };
       });
+      if (threeDAlpha > 0.01) {
+        WORD_IDS_3D.forEach(function (id) {
+          var w = WORDS[id];
+          var p = project((w.v[0] - 12.5) / 15, w.v[1] / 22, w.z);
+          drawList.push({ id: id, p: p, threeD: true });
+        });
+      }
       drawList.sort(function (a, b) { return a.p.z - b.p.z; });
 
       if (individualAlpha > 0.05 && dimMix > 0.5) {
@@ -478,11 +494,13 @@
         ctx.globalAlpha = individualAlpha * 0.18;
         drawList.forEach(function (item) {
           if (item.id === st.selected) return;
+          ctx.globalAlpha = individualAlpha * (item.threeD ? threeDAlpha : 1) * 0.18;
           ctx.beginPath();
           ctx.moveTo(origin.x, origin.y);
           ctx.lineTo(item.p.x, item.p.y);
           ctx.stroke();
         });
+        ctx.globalAlpha = individualAlpha * 0.18;
         if (st.selected && WORDS[st.selected]) {
           var selectedWord = WORDS[st.selected];
           var selectedPoint = project((selectedWord.v[0] - 12.5) / 15, selectedWord.v[1] / 22, selectedWord.z);
@@ -559,6 +577,22 @@
         ctx.textAlign = "center";
         ctx.fillText(DE ? "Jedes Wort ist eine Richtung vom Ursprung" : "Every word is a direction from the origin", size.w / 2, size.h - 16);
         ctx.globalAlpha = 1;
+      }
+
+      if (threeDAlpha > 0.01) {
+        function pairArrow(from, to, col) {
+          var a = project((WORDS[from].v[0] - 12.5) / 15, WORDS[from].v[1] / 22, WORDS[from].z);
+          var b = project((WORDS[to].v[0] - 12.5) / 15, WORDS[to].v[1] / 22, WORDS[to].z);
+          drawArrow(a.x, a.y, b.x, b.y, col, 1.3, [4, 3]);
+        }
+        ctx.globalAlpha = threeDAlpha * 0.5;
+        pairArrow("man", "woman", C.blue);
+        pairArrow("maleDog", "femaleDog", C.sky);
+        pairArrow("wizard", "sorceress", C.lime);
+        ctx.globalAlpha = 1;
+        if (threeDAlpha > 0.5) {
+          drawLabel(DE ? "3D zusätzlich: Tiere (unten) · Figuren (oben)" : "3D adds: animals (below) · fiction (above)", 24, size.h - 38, C.muted, "left", 9);
+        }
       }
 
       if (dirMode) {
@@ -654,19 +688,23 @@
       }
 
       if (individualAlpha > 0.01) {
-        ctx.globalAlpha = individualAlpha;
         drawList.forEach(function (item) {
           var id = item.id, p = item.p;
+          var itemAlpha = individualAlpha * (item.threeD ? threeDAlpha : 1);
+          if (itemAlpha < 0.01) return;
+          ctx.globalAlpha = itemAlpha;
           var selected = id === st.selected;
           var hovered = id === hover;
           var hit = drawPoint(p.x, p.y, id, selected, hovered);
-          if (individualAlpha > 0.5) hits.push({ id: id, x: hit.x, y: hit.y, r: hit.r + 10, kind: "word" });
+          if (itemAlpha > 0.5) hits.push({ id: id, x: hit.x, y: hit.y, r: hit.r + 10, kind: "word" });
           var labelY = p.y - 12;
           if (id === "power") labelY = p.y + 20;
           drawLabel(wordLabel(id), p.x, labelY, selected ? groupColor(WORDS[id].group) : C.soft, "center", 11);
           if (hovered) {
-            drawLabel("(" + WORDS[id].v[0] + ", " + WORDS[id].v[1] + ")", p.x, p.y + 18, C.muted, "center", 9);
+            var extra = item.threeD ? ", " + WORDS[id].z.toFixed(2) : "";
+            drawLabel("(" + WORDS[id].v[0] + ", " + WORDS[id].v[1] + extra + ")", p.x, p.y + 18, C.muted, "center", 9);
           }
+          ctx.globalAlpha = 1;
         });
         if (result && individualAlpha > 0.5) {
           var rp = normPoint(result.v);
@@ -810,6 +848,7 @@
         ["1D", "2D", "3D"].forEach(function (label, i) {
           row1.appendChild(makeChip(label, st.dim === i, function () {
             st.dim = i; dimTarget = i; st.group = null;
+            if (i !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
             if (i !== 2) st.showHighdim = false;
             syncControls(); ensureLoop();
           }));
@@ -818,7 +857,14 @@
         reset.type = "button";
         reset.className = "ls-btn ls-btn--ghost ls-btn--tiny";
         reset.textContent = DE ? "Ansicht" : "View";
-        reset.addEventListener("click", function () { st.yaw = -0.55; st.pitch = 0.78; st.zoom = 1; draw(); });
+        reset.title = DE ? "Nächste Ansicht" : "Next view";
+        reset.setAttribute("aria-label", DE ? "Nächste Ansicht" : "Next view");
+        reset.addEventListener("click", function () {
+          viewPreset = (viewPreset + 1) % VIEW_PRESETS.length;
+          camTarget = VIEW_PRESETS[viewPreset];
+          if (api.onHint) api.onHint((DE ? "Ansicht " : "View ") + (viewPreset + 1) + " / " + VIEW_PRESETS.length);
+          ensureLoop();
+        });
         row1.appendChild(reset);
         if (st.dim === 2) {
           var tableBtn = document.createElement("button");
@@ -862,7 +908,8 @@
         opt0.value = "";
         opt0.textContent = DE ? "Wort …" : "Word …";
         select.appendChild(opt0);
-        WORD_IDS.forEach(function (id) {
+        var selectIds = st.dim === 2 ? WORD_IDS.concat(WORD_IDS_3D) : WORD_IDS;
+        selectIds.forEach(function (id) {
           var opt = document.createElement("option");
           opt.value = id;
           opt.textContent = wordLabel(id);
@@ -885,6 +932,7 @@
       if (s.mode) st.mode = s.mode;
       if (typeof s.dim === "number") { st.dim = s.dim; dimTarget = s.dim; }
       if (s.selected) st.selected = s.selected;
+      if (st.dim !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
       if (s.arithmetic !== undefined) st.arithmetic = s.arithmetic;
       if (s.pair) st.pair = s.pair.slice();
       st.group = s.group ? s.group.slice() : null;
@@ -965,6 +1013,8 @@
     function onMove(e) {
       var p = pointerPos(e);
       if (drag) {
+        camTarget = null;
+        viewPreset = -1;
         st.yaw += (e.clientX - drag.x) * 0.008;
         st.pitch = clamp(st.pitch + (e.clientY - drag.y) * 0.006, 0.15, 1.35);
         drag.x = e.clientX;
@@ -1026,6 +1076,8 @@
     function onWheel(e) {
       if (st.mode !== "space" || dimTarget < 2) return;
       e.preventDefault();
+      camTarget = null;
+      viewPreset = -1;
       st.zoom = clamp(st.zoom * (e.deltaY > 0 ? 0.94 : 1.06), 0.55, 2.2);
       draw();
     }
@@ -1107,6 +1159,20 @@
       if (Math.abs(dimMix - dimTarget) > 0.002) {
         dimMix += (dimTarget - dimMix) * 0.13;
         if (Math.abs(dimMix - dimTarget) < 0.002) dimMix = dimTarget;
+        changed = true;
+      }
+      if (camTarget) {
+        st.yaw += (camTarget.yaw - st.yaw) * 0.18;
+        st.pitch += (camTarget.pitch - st.pitch) * 0.18;
+        st.zoom += (camTarget.zoom - st.zoom) * 0.18;
+        if (Math.abs(camTarget.yaw - st.yaw) < 0.002 &&
+            Math.abs(camTarget.pitch - st.pitch) < 0.002 &&
+            Math.abs(camTarget.zoom - st.zoom) < 0.002) {
+          st.yaw = camTarget.yaw;
+          st.pitch = camTarget.pitch;
+          st.zoom = camTarget.zoom;
+          camTarget = null;
+        }
         changed = true;
       }
       if (changed) draw();

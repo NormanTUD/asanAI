@@ -122,7 +122,7 @@
       title: "Bedeutung wird eine Zahl",
       body: "Wenn man Worten Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Man kann dann sagen, dass heiß - warm = 100 - 55 = 45 ist, und 45 liegt näher an warm als an kalt. Zieht man also von heiß warm ab, landet man wieder bei warm.\n\nDas ist natürlich ein sehr vereinfachtes Beispiel, hier kann man genau eine Korrelation darstellen. Daher nutzt man viel höherdimensionale Räume.",
       watch: "",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["hot", "warm"] },
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
       inherit: false,
       questionGroups: [
         {
@@ -185,8 +185,8 @@
     {
       kicker: "Der Raum",
       title: "Drei Dimensionen, ein Schatten",
-      body: "Eine dritte Achse hebt die Ebene in einen Raum. Jetzt können dieselben Punkte neben Macht und Geschlecht auch Rang tragen. Jede Ansicht ist eine Projektion: Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Jedes Wort ist ein Pfeil vom Ursprung: Die Richtung trägt die Bedeutung, die Länge ist Nebensache. Ziehe die Ansicht und beobachte, welche Richtung stabil bleibt. Die Tabelle zeigt zuerst die drei Dimensionen, die du siehst; ein Klick auf „4096 Dimensionen“ wechselt direkt zur vollen Rechner-Tabelle.",
-      watch: "Ziehe die Ansicht. Welche Richtung bleibt stabil? Öffne am Ende die Tabelle der drei Dimensionen und danach die 4096-Dimensionen-Tabelle.",
+      body: "Eine dritte Achse hebt die Ebene in einen Raum. Jetzt können dieselben Punkte neben Macht und Geschlecht auch Rang tragen. Zusätzlich erscheinen Punkte, die es in 2D noch nicht gab: unten Tiere wie Rüde und Hündin, oben Figuren aus Geschichten wie Zauberer und Zauberin. Sie liegen in denselben Verhältnissen; das Geschlecht ist überall dieselbe Richtung. Jede Ansicht ist eine Projektion: Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Jedes Wort ist ein Pfeil vom Ursprung: Die Richtung trägt die Bedeutung, die Länge ist Nebensache. Ziehe die Ansicht und beobachte, welche Richtung stabil bleibt. Die Tabelle zeigt zuerst die drei Dimensionen, die du siehst; ein Klick auf „4096 Dimensionen“ wechselt direkt zur vollen Rechner-Tabelle.",
+      watch: "Drehe die Ansicht. Welche Richtung bleibt für alle Paare gleich? Öffne am Ende die Tabelle der drei Dimensionen und danach die 4096-Dimensionen-Tabelle.",
       demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "king-man-woman", tables: true },
       context: "Ein echtes Modell arbeitet in Tausenden Dimensionen. Die drei Achsen sind eine Projektion, kein vollständiges Bild. Die Perspektive kann Relationen zeigen, die in der Projektion verdeckt sind. Mehr Dimensionen tragen mehr unabhängige Beziehungen: Temperatur, Geschlecht, Macht, Thema, Sprache, Stil. Zwei oder drei Achsen kollidieren zu schnell.",
       deep: "Superposition und Polysemantik erklären, warum ein Neuron mehrere Bedeutungen tragen kann. Die Karte ist nützlich, aber sie ist statistisch. Sie zeigt, was im Training häufig war, nicht was wahr ist. Die Zahlen der 4096-Tabelle sind ein Ausschnitt, keine echten GPT-Gewichte. Ein echtes Modell lernt jede Koordinate aus Text; keine einzelne Spalte hat für sich eine Bedeutung. Die Geometrie entsteht im Zusammenspiel.",
@@ -204,7 +204,7 @@
       title: "Meaning becomes a number",
       body: "When you assign numbers to words, you can do arithmetic with them as with numbers. You can then say that hot − warm = 100 − 55 = 45, and 45 is closer to warm than to cold. So if you subtract warm from hot, you land near warm again.\n\nThis is of course a very simplified example; here you can show exactly one correlation. That is why much higher-dimensional spaces are used.",
       watch: "",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["hot", "warm"] },
+      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
       inherit: false,
       questionGroups: [
         {
@@ -267,8 +267,8 @@
     {
       kicker: "The space",
       title: "Three dimensions, one shadow",
-      body: "A third axis lifts the plane into a space. Now the same points can carry rank as well as power and gender. Every view is a projection: lines that cross on screen need not touch in the full space. Every word is an arrow from the origin: the direction carries the meaning, the length is secondary. Drag the view and watch which direction stays stable. The table first shows the three dimensions you see; one click on “4096 dimensions” switches straight to the full table for the computer.",
-      watch: "Drag the view. Which direction stays stable? At the end, open the table of the three dimensions and then the 4096-dimension table.",
+      body: "A third axis lifts the plane into a space. Now the same points can carry rank as well as power and gender. Additional points appear that did not exist in 2D: animals such as a male dog and a female dog below, fictional figures such as a wizard and a sorceress above. They sit in the same relations; gender is the same direction everywhere. Every view is a projection: lines that cross on screen need not touch in the full space. Every word is an arrow from the origin: the direction carries the meaning, the length is secondary. Drag the view and watch which direction stays stable. The table first shows the three dimensions you see; one click on “4096 dimensions” switches straight to the full table for the computer.",
+      watch: "Rotate the view. Which direction stays the same for all pairs? At the end, open the table of the three dimensions and then the 4096-dimension table.",
       demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "directions", tables: true },
       context: "A real model works in thousands of dimensions. The three axes are a projection, not a complete picture. Perspective can show relations that the projection hides. More dimensions can carry more independent relations: temperature, gender, power, topic, language, style. Two or three axes collide too quickly.",
       deep: "Superposition and polysemy explain why a neuron can carry several meanings. The map is useful, but it is statistical. It shows what was frequent in training, not what is true. The numbers in the 4096 table are a slice, not real GPT weights. A real model learns every coordinate from text; no single column means anything on its own. The geometry comes from the interaction.",
@@ -397,6 +397,7 @@
         box("att-1", "Technik", "Warum drei Vektoren?", "Weil Suchen und Beschreiben zwei verschiedene Rollen sind. Ein Pronomen kann nach einem Nomen suchen, ohne selbst wie ein Nomen auszusehen."),
         box("att-2", "Mathematik", "Warum Softmax?", "Softmax macht aus Scores eine Verteilung: positiv, summiert zu 1, Reihenfolge bleibt. Deshalb ist Attention ein endliches Budget."),
         box("att-3", "Budget", "Ein Head, ein Budget", "Jede Zeile hat genau 1,00 zu vergeben. Mehr für ein Token heißt weniger für alle anderen. Viele Heads haben getrennte Budgets."),
+        box("att-budget-period", "Budget", "Warum hat der Punkt fast 60 %? Kodiert er nicht die gesamte Bedeutung?", "Ja, für dieses eine Wort. Aber jedes Wort wird eigenständig kodiert. Der Punkt bleibt deshalb größtenteils „Punkt“; das heißt aber nicht, dass alle nur auf diesen Punkt schauen, weil jedes Token ein eigenes Token bleibt."),
         box("att-mis", "Grenze", "Ist Attention eine Datenbank?", "Nein. Attention schlägt keine Fakten nach. Es berechnet Gewichte über Value-Vektoren und mischt sie zu einer neuen Repräsentation. Das Ergebnis ist keine gespeicherte Zeile, sondern eine kontextabhängige Mischung.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } }]
@@ -436,6 +437,7 @@
         box("att-1", "Technique", "Why three vectors?", "Because searching and describing are two different roles. A pronoun can look for a noun without itself looking like a noun."),
         box("att-2", "Mathematics", "Why softmax?", "Softmax turns scores into a distribution: positive, sum to one, order preserved. That is why attention is a finite budget."),
         box("att-3", "Budget", "One head, one budget", "Every row has exactly 1.00 to give. More for one token means less for the others. Many heads have separate budgets."),
+        box("att-budget-period", "Budget", "Why does the period get almost 60%? Doesn't it encode the entire meaning?", "Yes, for this one word. But each word is encoded independently. The period therefore stays mostly “period”; that does not mean everything only attends to this period, because each token remains its own token."),
         box("att-mis", "Limit", "Is attention a database?", "No. Attention does not look up facts. It computes weights over value vectors and mixes them into a new representation. The result is not a stored row but a context-dependent mixture.")
       ],
       sources: [{ label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } }, { label: "Bahdanau et al. (2014), Neural Machine Translation", url: "https://arxiv.org/abs/1409.0473", why: { de: "Attention in der neuronalen Übersetzung vor dem Transformer.", en: "Attention in neural translation before the transformer." } }]
@@ -605,7 +607,7 @@
       kicker: "Softmax",
       title: "Von Logits zu einer Verteilung",
       body: "Illustrative Scores für zwei Prompts. Links steht der rohe Logit, rechts das, was Softmax daraus macht. Wechsle den Kontext und beobachte, wie sich die ganze Verteilung verschiebt. Die Temperatur entscheidet, wie scharf der Gewinner bevorzugt wird.",
-      watch: "Fahre über ein Token und ändere die Temperatur. Was ändert sich, was bleibt?",
+      watch: "Drücke Weiter für den zweiten Prompt. Fahre über ein Token und ändere die Temperatur. Was ändert sich, was bleibt?",
       demoState: { scene: "softmax" },
       context: "Softmax erzeugt nicht die Reihenfolge; die Skalarprodukte tun das. Es macht aus Scores eine Verteilung, die zu eins summiert.",
       deep: "Warum exp und nicht Logit durch Summe? Logits können negativ sein. Die Exponentialfunktion macht jeden Wert positiv und erhält die Reihenfolge; die Division durch die Summe ergibt Wahrscheinlichkeiten. Der absolute Offset ist willkürlich; Softmax hängt nur von Unterschieden ab.",
@@ -621,7 +623,7 @@
       kicker: "Softmax",
       title: "From logits to a distribution",
       body: "Illustrative scores for two prompts. The left side is the raw logit, the right side is what softmax makes of it. Switch the context and watch the whole distribution shift. Temperature decides how sharply the winner is favoured.",
-      watch: "Hover a token and change the temperature. What changes, what stays?",
+      watch: "Press Next for the second prompt. Hover a token and change the temperature. What changes, what stays?",
       demoState: { scene: "softmax" },
       context: "Softmax does not create the ranking; the dot products do. It turns scores into a distribution that sums to one.",
       deep: "Why exp and not logit divided by the sum? Logits can be negative. The exponential makes every value positive and preserves the order; dividing by the sum gives probabilities. The absolute offset is arbitrary; softmax depends only on differences.",

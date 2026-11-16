@@ -61,6 +61,7 @@
     var tempEl = el.querySelector(".ls-sm-temp");
     var readout = el.querySelector(".ls-sm-readout");
     var state = { key: "spaceship", temp: 1, hovered: 0 };
+    var promptButtons = {};
     var pathEls = [];
     function calc() {
       var rows = PROMPTS[state.key].rows;
@@ -129,18 +130,36 @@
         pathEls[i] = path;
       });
     }
+    function selectPrompt(key) {
+      state.key = key;
+      Object.keys(promptButtons).forEach(function (id) {
+        promptButtons[id].classList.toggle("is-on", id === key);
+      });
+      build();
+    }
     Object.keys(PROMPTS).forEach(function (key) {
       var b = document.createElement("button");
       b.type = "button";
       b.className = "ls-chip" + (key === state.key ? " is-on" : "");
       b.textContent = key === "spaceship" ? (DE ? "Raumschiff" : "spaceship") : (DE ? "verlassener Planet" : "deserted planet");
-      b.addEventListener("click", function () {
-        state.key = key;
-        prompts.querySelectorAll(".ls-chip").forEach(function (x) { x.classList.toggle("is-on", x === b); });
-        build();
-      });
+      b.addEventListener("click", function () { selectPrompt(key); });
+      promptButtons[key] = b;
       prompts.appendChild(b);
     });
+    function nextPrompt() {
+      var keys = Object.keys(PROMPTS);
+      var at = keys.indexOf(state.key);
+      if (at < 0 || at >= keys.length - 1) return false;
+      selectPrompt(keys[at + 1]);
+      return true;
+    }
+    function prevPrompt() {
+      var keys = Object.keys(PROMPTS);
+      var at = keys.indexOf(state.key);
+      if (at <= 0) return false;
+      selectPrompt(keys[at - 1]);
+      return true;
+    }
     tempEl.addEventListener("input", function () {
       state.temp = parseFloat(tempEl.value) || 1;
       tempEl.nextElementSibling.textContent = state.temp.toFixed(2);
@@ -148,7 +167,7 @@
     });
     window.addEventListener("resize", updateRibbons);
     build();
-    return { update: function () {}, resize: updateRibbons, destroy: function () { window.removeEventListener("resize", updateRibbons); el.remove(); } };
+    return { update: function () {}, next: nextPrompt, prev: prevPrompt, resize: updateRibbons, destroy: function () { window.removeEventListener("resize", updateRibbons); el.remove(); } };
   }
 
   core.register("softmax", softmaxScene);
