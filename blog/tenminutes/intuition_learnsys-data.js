@@ -1973,6 +1973,106 @@
     substeps: [hallucinationCauses, hallucinationGuard]
   };
 
+  var aiRiskSub = {
+    kicker: DE ? "Risiken" : "Risks",
+    title: DE ? "Die Gefahren sind nicht eine Sache" : "The dangers are not one thing",
+    body: DE
+      ? "Gefahren sind kein einzelnes Ding. Heute stehen Missbrauch (Betrug, Cyber, Desinformation) und Bias im Vordergrund: Gesichtserkennung war bei dunkler Haut und Frauen schlechter (Buolamwini & Gebru, 2018), ein Gesundheitsalgorithmus unterschätzte den Pflegebedarf Schwarzer Patient:innen (Obermeyer et al., 2019). Dazu kommt Machtkonzentration, weil Rechenleistung, Daten und Talente bei wenigen liegen (Sastry et al., 2024). Das langfristige Risiko ist Kontrollverlust: ein System, dessen Ziele wir nicht mehr korrigieren können (Amodei et al., 2016; Bostrom, 2014)."
+      : "Dangers are not one thing. Today the focus is misuse (fraud, cyber, disinformation) and bias: face recognition was worse for darker skin and women (Buolamwini & Gebru, 2018), and a health algorithm underestimated the care needs of Black patients (Obermeyer et al., 2019). Add power concentration: compute, data, and talent sit with a few actors (Sastry et al., 2024). The long-term risk is loss of control: a system whose goals we can no longer correct (Amodei et al., 2016; Bostrom, 2014).",
+    watch: DE ? "Klicke die vier Felder. Welches Risiko ist heute am größten?" : "Click the four fields. Which risk is largest today?",
+    demoState: { scene: "riskmap", mode: "risks" },
+    context: DE ? "Risiko ist nicht nur „die KI dreht durch“. Es gibt Gegenwart und Zukunft, Absicht und Unfall." : "Risk is not only “the AI goes rogue”. There is present and future, intent and accident.",
+    deep: DE ? "Die vier Felder überlappen: Ein Modell, das Desinformation billiger macht, ist Missbrauch; ein Modell, das Menschen diskriminiert, ist ein Unfall. Die Einordnung hilft, Gegenmittel zu wählen." : "The four fields overlap: a model that makes disinformation cheaper is misuse; a model that discriminates is an accident. The classification helps choose countermeasures.",
+    boxes: [
+      box("risk-align", DE ? "Grenze" : "Limit", DE ? "Was heißt Alignment?" : "What is alignment?", DE ? "Ein System verfolgt die Ziele, die wir intendieren, auch wenn es skaliert oder neue Situationen sieht. Alignment ist kein einmaliger Test, sondern ein laufender Prozess." : "A system pursues the goals we intend, even when it scales or meets new situations. Alignment is not a one-off test but an ongoing process."),
+      box("risk-power", DE ? "Gesellschaft" : "Society", DE ? "Warum Machtkonzentration?" : "Why power concentration?", DE ? "Compute ist teuer und knapp; Daten und Talente sind ungleich verteilt. Wer sie kontrolliert, kann Märkte und Regeln mitgestalten." : "Compute is expensive and scarce; data and talent are unevenly distributed. Whoever controls them can shape markets and rules.")
+    ],
+    sources: [
+      { label: "International AI Safety Report (2025)", url: "https://arxiv.org/abs/2501.17805", why: { de: "Überblick über gegenwärtige und zukünftige KI-Risiken.", en: "Overview of current and future AI risks." } },
+      { label: "Buolamwini & Gebru (2018), Gender Shades", url: "https://proceedings.mlr.press/v81/buolamwini18a.html", why: { de: "Gesichtserkennung mit höheren Fehlerraten bei dunkler Haut und Frauen.", en: "Face recognition with higher error rates for darker skin and women." } },
+      { label: "Obermeyer et al. (2019), Dissecting racial bias in an algorithm", url: "https://doi.org/10.1126/science.aax2342", why: { de: "Gesundheitsalgorithmus unterschätzt Pflegebedarf Schwarzer Patient:innen.", en: "Health algorithm underestimates care needs of Black patients." } },
+      { label: "Sastry et al. (2024), Computing Power and the Governance of AI", url: "https://arxiv.org/abs/2402.08797", why: { de: "Rechenleistung als Machtfaktor und Governance-Problem.", en: "Compute as a factor of power and a governance problem." } },
+      { label: "Amodei et al. (2016), Concrete Problems in AI Safety", url: "https://arxiv.org/abs/1606.06565", why: { de: "Unfallrisiken und Alignment als technische Probleme.", en: "Accident risks and alignment as technical problems." } },
+      { label: "Bostrom (2014), Superintelligence", url: "https://global.oup.com/academic/product/superintelligence-9780199678112", why: { de: "Langfristige Kontroll- und Zielprobleme.", en: "Long-term control and goal problems." } }
+    ]
+  };
+
+  var aiSafetySub = {
+    kicker: DE ? "Sicherheit" : "Safety",
+    title: DE ? "Sicherheit ist ein Stapel, kein Schalter" : "Safety is a stack, not a switch",
+    body: DE
+      ? "Sicherheit ist ein Stapel, kein Schalter. Auf Modellebene helfen Datenfilter, RLHF (Ouyang et al., 2022) und Constitutional AI (Bai et al., 2022). Auf Systemebene begrenzen Guardrails, Tool-Rechte, Sandboxing und Monitoring den Schaden; Red-Teaming und Evals (Perez et al., 2022) suchen vor dem Deployment nach Umgehungen. Auf Institutionenebene sollen Audits, Haftung und Regeln wie der EU AI Act und das NIST AI RMF greifen. Keine Ebene ist vollständig: Evals sind Stichproben, Guardrails sind umgehbar, und Regeln hinken der Technik hinterher."
+      : "Safety is a stack, not a switch. At the model level, data filters, RLHF (Ouyang et al., 2022), and Constitutional AI (Bai et al., 2022) help. At the system level, guardrails, tool permissions, sandboxing, and monitoring limit damage; red-teaming and evals (Perez et al., 2022) look for bypasses before deployment. At the institutional level, audits, liability, and rules such as the EU AI Act and the NIST AI RMF are meant to bite. No layer is complete: evals are samples, guardrails can be bypassed, and rules lag behind the technology.",
+    watch: DE ? "Klicke die Ebenen. Wo endet die Kontrolle?" : "Click the layers. Where does control end?",
+    demoState: { scene: "riskmap", mode: "safety" },
+    context: DE ? "Sicherheit entsteht aus vielen Schichten. Eine perfekte Schicht gibt es nicht; jede hat Fehler und Umgehungen." : "Safety comes from many layers. There is no perfect layer; each has errors and bypasses.",
+    deep: DE ? "Defense in depth heißt: Ein Fehler auf einer Ebene soll nicht sofort zum Schaden führen. Deshalb braucht es technische, organisatorische und politische Gegenmittel gleichzeitig." : "Defense in depth means one failure on one layer should not immediately cause harm. That is why technical, organisational, and political countermeasures are needed at the same time.",
+    boxes: [
+      box("safe-red", DE ? "Technik" : "Technique", DE ? "Was ist Red-Teaming?" : "What is red-teaming?", DE ? "Ein Team greift das System absichtlich an, bevor es Nutzer tun. Es findet Fehler, beweist aber keine Sicherheit." : "A team attacks the system on purpose before users do. It finds failures but does not prove safety."),
+      box("safe-eval", DE ? "Grenze" : "Limit", DE ? "Warum reichen Evals nicht?" : "Why are evals not enough?", DE ? "Evals testen eine Stichprobe von Fähigkeiten und Angriffen. Ein Modell kann außerhalb der Testverteilung anders handeln; fehlende Evidenz ist kein Beweis von Sicherheit." : "Evals test a sample of capabilities and attacks. A model can behave differently outside the test distribution; absence of evidence is not proof of safety.")
+    ],
+    sources: [
+      { label: "Ouyang et al. (2022), Training language models to follow instructions with human feedback", url: "https://arxiv.org/abs/2203.02155", why: { de: "RLHF: menschliche Präferenzen als Trainingssignal.", en: "RLHF: human preferences as a training signal." } },
+      { label: "Bai et al. (2022), Constitutional AI", url: "https://arxiv.org/abs/2212.08073", why: { de: "Regeln und Selbstkritik statt nur menschlicher Labels.", en: "Rules and self-critique instead of only human labels." } },
+      { label: "Perez et al. (2022), Red Teaming Language Models with Language Models", url: "https://arxiv.org/abs/2202.03286", why: { de: "Automatisiertes Red-Teaming für Sprachmodelle.", en: "Automated red-teaming for language models." } },
+      { label: "NIST AI Risk Management Framework (2023)", url: "https://www.nist.gov/itl/ai-risk-management-framework", why: { de: "Risikomanagement-Standard für KI-Systeme.", en: "Risk-management standard for AI systems." } },
+      { label: "EU AI Act (2024)", url: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj", why: { de: "Europäische Regeln nach Risikoklassen.", en: "European rules by risk class." } }
+    ]
+  };
+
+  var aiLimitsSub = {
+    kicker: DE ? "Grenzen" : "Limits",
+    title: DE ? "Was ein LLM strukturell nicht kann" : "What an LLM structurally cannot do",
+    body: DE
+      ? "Ein LLM sagt das nächste Token voraus; daraus folgt nicht automatisch ein Weltmodell. Sprache allein erdet Bedeutung nicht (Bender & Koller, 2020; Bisk et al., 2020), das Gedächtnis endet am Kontext, und Informationen in der Mitte langer Kontexte gehen unter (Liu et al., 2023). Kompositionelles Denken ist brüchig (Dziri et al., 2023), Halluzinationen sind Folge des Ziels „plausibler Text“ (Ji et al., 2023). Ein Agent kann Werkzeuge nutzen, aber Zuverlässigkeit und Selbstkontrolle sind nicht garantiert (Amodei et al., 2016)."
+      : "An LLM predicts the next token; that does not automatically give it a world model. Language alone does not ground meaning (Bender & Koller, 2020; Bisk et al., 2020), memory ends at the context, and information in the middle of long contexts gets lost (Liu et al., 2023). Compositional reasoning is brittle (Dziri et al., 2023), and hallucinations follow from the goal of “plausible text” (Ji et al., 2023). An agent can use tools, but reliability and self-control are not guaranteed (Amodei et al., 2016).",
+    watch: DE ? "Klicke eine Fähigkeit. Was fehlt strukturell?" : "Click a capability. What is structurally missing?",
+    demoState: { scene: "riskmap", mode: "limits" },
+    context: DE ? "Die Grenzen sind nicht alle gleich: Manche sind heute brüchig, andere fehlen strukturell. Ein größeres Modell verschiebt die Grenze, hebt sie aber nicht automatisch auf." : "The limits are not all the same: some are brittle today, others are structurally missing. A larger model moves the boundary but does not automatically remove it.",
+    deep: DE ? "Ein Weltmodell ist eine innere Simulation, die Vorhersagen und Handlungen stabil trägt. Ein LLM kann Teile davon lernen, garantiert sie aber nicht. Grounding braucht Wahrnehmung, Handlung und Feedback, nicht nur Text." : "A world model is an inner simulation that carries predictions and actions stably. An LLM can learn parts of it but does not guarantee it. Grounding needs perception, action, and feedback, not just text.",
+    boxes: [
+      box("lim-ground", DE ? "Grenze" : "Limit", DE ? "Was ist Grounding?" : "What is grounding?", DE ? "Die Verbindung zwischen Zeichen und Welt: Wahrnehmung, Handlung, Feedback. Ohne sie bleibt Bedeutung eine statistische Nähe." : "The link between symbols and the world: perception, action, feedback. Without it, meaning stays statistical proximity."),
+      box("lim-agent", DE ? "Technik" : "Technique", DE ? "Warum ist Agency riskant?" : "Why is agency risky?", DE ? "Ein Agent kann planen und Werkzeuge nutzen. Damit wächst die Wirkung, aber auch die Möglichkeit, dass ein Fehler reale Konsequenzen hat." : "An agent can plan and use tools. That increases impact, but also the chance that a mistake has real consequences.")
+    ],
+    sources: [
+      { label: "Bender & Koller (2020), Climbing towards NLU", url: "https://aclanthology.org/2020.acl-main.463/", why: { de: "Form ohne Bedeutung: Warum Text allein nicht reicht.", en: "Form without meaning: why text alone is not enough." } },
+      { label: "Bisk et al. (2020), Experience Grounds Language", url: "https://arxiv.org/abs/2004.10151", why: { de: "Sprache braucht Erfahrung und Weltbezug.", en: "Language needs experience and contact with the world." } },
+      { label: "Liu et al. (2023), Lost in the Middle", url: "https://arxiv.org/abs/2307.03172", why: { de: "Lange Kontexte nutzen Informationen in der Mitte schlechter.", en: "Long contexts use information in the middle less well." } },
+      { label: "Dziri et al. (2023), Faith and Fate", url: "https://arxiv.org/abs/2305.18654", why: { de: "Grenzen der Kompositionalität bei Transformer-Modellen.", en: "Limits of compositionality in transformer models." } },
+      { label: "Ji et al. (2023), Survey of Hallucination in NLG", url: "https://arxiv.org/abs/2202.03629", why: { de: "Halluzination als systematisches Problem generativer Modelle.", en: "Hallucination as a systematic problem of generative models." } },
+      { label: "Amodei et al. (2016), Concrete Problems in AI Safety", url: "https://arxiv.org/abs/1606.06565", why: { de: "Sicherheitsprobleme bei lernenden Agenten.", en: "Safety problems in learning agents." } }
+    ]
+  };
+
+  var aiSocietySub = {
+    kicker: DE ? "Gesellschaft" : "Society",
+    title: DE ? "KI verteilt Macht neu" : "AI redistributes power",
+    body: DE
+      ? "KI verteilt Macht neu. Automatisierung ersetzt Aufgaben und schafft neue (Acemoglu & Restrepo, 2019); ob der Gewinn bei vielen ankommt, ist eine politische Frage. Falsche Nachrichten verbreiten sich online schneller als wahre (Vosoughi et al., 2018), und generative Modelle machen Fälschungen billig. Urheberrecht, Datenschutz und demokratische Kontrolle sind offen; wer Rechenleistung, Daten und Modelle besitzt, hat einen strukturellen Vorsprung (Sastry et al., 2024). Die Frage ist nicht, ob KI die Gesellschaft verändert, sondern wer die Regeln schreibt."
+      : "AI redistributes power. Automation replaces tasks and creates new ones (Acemoglu & Restrepo, 2019); whether the gains reach many people is a political question. False news spreads online faster than true news (Vosoughi et al., 2018), and generative models make convincing fakes cheap. Copyright, privacy, and democratic control are open; whoever owns compute, data, and models has a structural advantage (Sastry et al., 2024). The question is not whether AI changes society, but who writes the rules.",
+    watch: DE ? "Klicke die vier Felder. Wer gewinnt, wer trägt das Risiko?" : "Click the four fields. Who wins, who carries the risk?",
+    demoState: { scene: "riskmap", mode: "society" },
+    context: DE ? "Technik entscheidet nicht allein. Institutionen, Eigentumsrechte und Politik bestimmen, ob KI Macht teilt oder konzentriert." : "Technology does not decide alone. Institutions, property rights, and politics determine whether AI shares or concentrates power.",
+    deep: DE ? "Die vier Felder hängen zusammen: Wer Compute kontrolliert, kann Märkte, Medien und Regeln beeinflussen. Deshalb sind Transparenz, Wettbewerb und öffentliche Kontrolle Teil der KI-Frage, nicht ein Anhang." : "The four fields are linked: whoever controls compute can shape markets, media, and rules. Transparency, competition, and public oversight are therefore part of the AI question, not an appendix.",
+    boxes: [
+      box("soc-power", DE ? "Gesellschaft" : "Society", DE ? "Was heißt Macht hier?" : "What does power mean here?", DE ? "Die Fähigkeit, Bedingungen zu setzen: Zugang zu Compute, Daten, Modellen und Märkten. Sie ist nicht automatisch böse, aber sie braucht Kontrolle." : "The ability to set conditions: access to compute, data, models, and markets. It is not automatically evil, but it needs oversight."),
+      box("soc-copyright", DE ? "Recht" : "Law", DE ? "Warum Urheberrecht?" : "Why copyright?", DE ? "Modelle lernen aus Werken und können Stile nachahmen. Wer was darf und wie vergütet wird, ist offen und national verschieden." : "Models learn from works and can imitate styles. Who may do what and how it is paid for is open and differs by country.")
+    ],
+    sources: [
+      { label: "Acemoglu & Restrepo (2019), Automation and New Tasks", url: "https://doi.org/10.1257/jep.33.2.3", why: { de: "Automatisierung ersetzt Aufgaben und schafft neue.", en: "Automation replaces tasks and creates new ones." } },
+      { label: "Vosoughi, Roy & Aral (2018), The spread of true and false news online", url: "https://doi.org/10.1126/science.aap9559", why: { de: "Falsche Nachrichten verbreiten sich schneller als wahre.", en: "False news spreads faster than true news." } },
+      { label: "Sastry et al. (2024), Computing Power and the Governance of AI", url: "https://arxiv.org/abs/2402.08797", why: { de: "Compute-Konzentration als Macht- und Governance-Frage.", en: "Compute concentration as a question of power and governance." } },
+      { label: "US Copyright Office (2025), Copyright and Artificial Intelligence", url: "https://www.copyright.gov/ai/", why: { de: "Offizielle Einordnung zu Training, Urheberrecht und KI.", en: "Official discussion of training, copyright, and AI." } },
+      { label: "EU AI Act (2024)", url: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj", why: { de: "Regeln nach Risikoklassen und Transparenzpflichten.", en: "Rules by risk class and transparency duties." } }
+    ]
+  };
+
+  var aiSocietyStep = {
+    kicker: DE ? "KI und Gesellschaft" : "AI and society",
+    title: DE ? "Was KI mit uns macht" : "What AI does to us",
+    substeps: [aiRiskSub, aiSafetySub, aiLimitsSub, aiSocietySub]
+  };
+
   var consciousnessStep = {
     kicker: DE ? "Bewusstsein" : "Consciousness",
     title: DE ? "Bewusstsein: die offene Frage" : "Consciousness: the open question",
@@ -2107,7 +2207,7 @@
     ]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], consciousnessStep];
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionSubstep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep];
 
   var day = {
     id: "intuition",

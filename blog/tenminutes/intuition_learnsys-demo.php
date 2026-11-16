@@ -24,7 +24,7 @@ $labels = [
 	'model' => 'Modell', 'blocks' => 'Bausteine', 'highdim' => 'Hochdimensional', 'mlp' => 'MLP',
 	'backprop' => 'Backprop', 'trajectories' => 'Trajektorien', 'stack' => 'Stack',
 	'activation' => 'Aktivierung', 'langdata' => 'Sprachdaten', 'agents' => 'Agent',
-	'gradient' => 'Gradient', 'rag' => 'RAG',
+	'gradient' => 'Gradient', 'rag' => 'RAG', 'riskmap' => 'AI and society',
 	'history' => 'Geschichte', 'chineseroom' => 'Chinese Room', 'codenoise' => 'Code-Rauschen',
 	'consciousness' => 'Bewusstsein',
 	'hallucinationtypes' => 'Halluzinationsarten', 'hallucinationguard' => 'Halluzinationsschutz',
