@@ -2,12 +2,11 @@
   "use strict";
   var core = window.LearnSysDemoCore;
   if (!core) return;
-  var SHARED = core.SHARED, TEMP = core.TEMP, WORDS = core.WORDS, WORD_IDS = core.WORD_IDS, WORD_IDS_3D = core.WORD_IDS_3D, EXAMPLES = core.EXAMPLES, PAIRS = core.PAIRS;
+  var SHARED = core.SHARED, WORDS = core.WORDS, WORD_IDS = core.WORD_IDS, WORD_IDS_3D = core.WORD_IDS_3D, EXAMPLES = core.EXAMPLES;
   var esc = core.esc, clamp = core.clamp, lerp = core.lerp, ease = core.ease;
   function embeddingScene(root, api) {
     var DE = api.lang === "de";
     var C = api.colors();
-    var V = window.LearnSysVisuals;
     var scene = document.createElement("div");
     scene.className = "ls-embed-scene";
     scene.innerHTML =
@@ -26,7 +25,7 @@
     var mathEl = formula.querySelector(".ls-math");
     var ctx = null, size = null, raf = 0, last = 0, reserveTimer = 0, reserveIdle = 0;
     var hits = [], hover = null, drag = null, suppressClick = false;
-    var dimMix = 0, dimTarget = 0, dimAnim = null, stateApplied = false;
+    var dimMix = 0, dimTarget = 0, dimAnim = null, hasState = false;
     var VIEW_PRESETS = [
       { yaw: -0.55, pitch: 0.78, zoom: 1 },
       { yaw: 0.00, pitch: 1.08, zoom: 1 },
@@ -34,8 +33,8 @@
     ];
     var viewPreset = 0, camTarget = null;
     var st = {
-      mode: "space", dim: 1, selected: "king", arithmetic: "King - Man + Woman",
-      pair: ["cold", "warm"], group: null, yaw: -0.55, pitch: 0.78, zoom: 1, tables: false
+      dim: 0, selected: null, arithmetic: "prince-power",
+      group: null, yaw: -0.55, pitch: 0.78, zoom: 1, tables: false
     };
 
     function color(name) { return C[name] || C.ink; }
@@ -113,17 +112,6 @@
         '<div class="ls-highdim-note">' + (DE ? "Ausschnitt: 16 von 4096 Dimensionen. Jede Zeile ist ein Vektor, jede Spalte eine Dimension." : "Slice: 16 of 4096 dimensions. Each row is a vector, each column a dimension.") + '</div>' +
         '<div class="ls-highdim-scroll"><table><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>' +
         '<p class="ls-highdim-foot">' + (DE ? "Auch wenn wir uns 4096 Dimensionen nicht mehr vorstellen können: Es gelten dieselben Regeln. Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter. Nur die Zahl der Koordinaten wächst, und hier passen viel mehr unabhängige Beziehungen hinein als in zwei oder drei Dimensionen." : "Even though we cannot picture 4096 dimensions, the same rules apply. Difference, angle, and matrix multiplication still work coordinate by coordinate. Only the number of coordinates grows, and there is room for many more independent relations than in two or three dimensions.") + '</p>';
-    }
-    function tempById(id) {
-      for (var i = 0; i < TEMP.length; i++) if (TEMP[i].id === id) return TEMP[i];
-      return TEMP[0];
-    }
-    function nearestTemp(value) {
-      var best = TEMP[0];
-      for (var i = 1; i < TEMP.length; i++) {
-        if (Math.abs(TEMP[i].value - value) < Math.abs(best.value - value)) best = TEMP[i];
-      }
-      return best;
     }
     function nearestWord(v) {
       var best = null, bd = Infinity;
@@ -270,10 +258,6 @@
       var s = Math.min(size.w, size.h) * scale * st.zoom / (1 + z2 * 0.3);
       return { x: size.w * 0.5 + x1 * s, y: size.h * centerY - y2 * s, z: z2, s: s };
     }
-    function tempX(value) {
-      var pad = Math.min(52, size.w * 0.08);
-      return pad + (value + 40) / 150 * (size.w - pad * 2);
-    }
 
     function setFont(sizePx, weight, family) {
       ctx.font = (weight || 600) + " " + sizePx + "px " + (family || '"Open Sans", sans-serif');
@@ -332,86 +316,6 @@
         ctx.stroke();
       }
       return { x: x, y: y, r: r };
-    }
-    function drawGrid1D() {
-      ctx.strokeStyle = "rgba(0,75,111,.14)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(24, size.h * 0.58);
-      ctx.lineTo(size.w - 24, size.h * 0.58);
-      ctx.stroke();
-      for (var i = 0; i < TEMP.length; i++) {
-        var x = tempX(TEMP[i].value);
-        ctx.beginPath();
-        ctx.moveTo(x, size.h * 0.58 - 5);
-        ctx.lineTo(x, size.h * 0.58 + 5);
-        ctx.stroke();
-      }
-    }
-    function drawTemperature() {
-      hits = [];
-      drawGrid1D();
-      var a = tempById(st.pair[0]), b = tempById(st.pair[1]);
-      var ax = tempX(a.value), bx = tempX(b.value);
-      var my = size.h * 0.58;
-      ctx.strokeStyle = C.petrol;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(ax, my);
-      ctx.lineTo(bx, my);
-      ctx.stroke();
-      var lo = Math.min(a.value, b.value);
-      var hi = Math.max(a.value, b.value);
-      var diff = hi - lo;
-      var near = nearestTemp(diff);
-      var err = Math.abs(diff - near.value);
-      var mx = tempX(near.value);
-      ctx.beginPath();
-      ctx.moveTo(mx, my - 7);
-      ctx.lineTo(mx + 7, my);
-      ctx.lineTo(mx, my + 7);
-      ctx.lineTo(mx - 7, my);
-      ctx.closePath();
-      ctx.fillStyle = C.gold;
-      ctx.fill();
-      ctx.strokeStyle = C.paper;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      TEMP.forEach(function (t, i) {
-        var x = tempX(t.value);
-        var on = t.id === a.id || t.id === b.id;
-        var hot = hover === t.id;
-        ctx.beginPath();
-        ctx.arc(x, my, on ? 7 : (hot ? 6 : 4.5), 0, Math.PI * 2);
-        ctx.fillStyle = color(t.color);
-        ctx.fill();
-        ctx.strokeStyle = C.paper;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        if (on || hot) {
-          ctx.beginPath();
-          ctx.arc(x, my, on ? 11 : 9, 0, Math.PI * 2);
-          ctx.strokeStyle = on ? C.green : C.blue;
-          ctx.globalAlpha = 0.55;
-          ctx.lineWidth = 1;
-          ctx.stroke();
-          ctx.globalAlpha = 1;
-        }
-        var above = i % 2 === 0;
-        drawLabel(text(t.label), x, above ? my - 18 : my + 26, on ? C.ink : C.muted, "center", 10);
-        drawLabel(String(t.value), x, above ? my - 32 : my + 40, C.muted, "center", 9);
-        hits.push({ id: t.id, x: x, y: my, r: 16, kind: "temp" });
-      });
-      drawLabel(DE ? "TEMPERATUR" : "TEMPERATURE", 24, 26, C.muted, "left", 9);
-      drawLabel(DE ? "Klicke zwei Punkte" : "Click two points", size.w - 24, 26, C.muted, "right", 9);
-      var sym = err < 0.5 ? "=" : "≈";
-      var label = hi + " − " + lo + " = " + diff + "  ·  " + diff.toFixed(1) + " " + sym + " " + text(near.label);
-      if (err >= 0.5) label += "  ·  " + (DE ? "Fehler " : "error ") + err.toFixed(1);
-      drawLabel(label, size.w / 2, size.h - 22, C.soft, "center", 11);
-      canvas.setAttribute("aria-label", DE
-        ? "Temperaturlinie. Differenz zwischen " + text(a.label) + " und " + text(b.label) + ": " + diff + ", am nächsten bei " + text(near.label) + (err >= 0.5 ? ", Abweichung " + err.toFixed(1) : "") + "."
-        : "Temperature line. Difference between " + text(a.label) + " and " + text(b.label) + ": " + diff + ", closest to " + text(near.label) + (err >= 0.5 ? ", error " + err.toFixed(1) : "") + ".");
-      updateReadout();
     }
     function drawLine3D(a, b, alpha) {
       ctx.strokeStyle = "rgba(0,75,111," + alpha + ")";
@@ -766,8 +670,7 @@
       if (!size) resize();
       if (!size || !ctx) return;
       ctx.clearRect(0, 0, size.w, size.h);
-      if (st.mode === "temperature") drawTemperature();
-      else drawSpace();
+      drawSpace();
       canvas.__lsHits = hits;
       canvas.__lsState = st;
       canvas.__lsDimMix = dimMix;
@@ -775,23 +678,6 @@
     }
 
     function updateReadout() {
-      if (st.mode === "temperature") {
-        var a = tempById(st.pair[0]), b = tempById(st.pair[1]);
-        var lo = Math.min(a.value, b.value);
-        var hi = Math.max(a.value, b.value);
-        var loLabel = a.value === lo ? text(a.label) : text(b.label);
-        var hiLabel = a.value === hi ? text(a.label) : text(b.label);
-        var diff = hi - lo;
-        var near = nearestTemp(diff);
-        var err = Math.abs(diff - near.value);
-        var sym = err < 0.5 ? "=" : "≈";
-        var html = '<b>' + esc(hi) + '</b> − <b>' + esc(lo) + '</b> = <b>' + esc(diff) + '</b> · ' +
-          esc(diff.toFixed(1)) + ' ' + esc(sym) + ' <b>' + esc(text(near.label)) + '</b>';
-        if (err >= 0.5) html += ' · ' + esc(DE ? 'Fehler' : 'error') + ' ' + esc(err.toFixed(1));
-        readout.innerHTML = html;
-        setTex("\\underbrace{\\underbrace{" + hi + "}_{\\text{" + hiLabel + "}} - \\underbrace{" + lo + "}_{\\text{" + loLabel + "}}}_{\\text{" + (DE ? "Differenz" : "difference") + "}} = " + diff + " \\qquad " + diff.toFixed(1) + " " + sym + " \\underbrace{" + near.value + "}_{\\text{" + text(near.label) + "}}" + (err >= 0.5 ? "\\;\\text{(" + (DE ? "Abweichung" : "error") + " " + err.toFixed(1) + ")}" : ""));
-        return;
-      }
       var cr = currentResult();
       var result = cr.result, dirMode = cr.dirMode, example = cr.example;
       if (dirMode) {
@@ -814,9 +700,17 @@
         return;
       }
       if (result) {
-        readout.innerHTML = '<b>' + esc(example ? text(example.label) : "") + '</b> · (' + result.v.map(function (x) { return esc(x.toFixed(1)); }).join(', ') + ') · ' +
+        var exampleLabel = example ? text(example.label) : "";
+        if (st.dim === 0) {
+          var scalar = result.v[0];
+          readout.innerHTML = '<b>' + esc(exampleLabel) + '</b> · <b>' + esc(scalar.toFixed(1)) + '</b> · ' +
+            (DE ? "nächstes Wort" : "nearest word") + ': <b>' + esc(wordLabel(result.near)) + '</b>';
+          setTex("\\underbrace{\\underbrace{\\text{" + exampleLabel + "}}_{\\text{" + (DE ? "Zahlen addieren" : "add the numbers") + "}} = " + scalar.toFixed(1) + "}_{\\text{" + (DE ? "Ergebnis auf der Achse" : "result on the axis") + "}} \\approx \\underbrace{\\text{" + wordLabel(result.near) + "}}_{\\text{" + (DE ? "nächstes Wort" : "nearest word") + "}}");
+          return;
+        }
+        readout.innerHTML = '<b>' + esc(exampleLabel) + '</b> · (' + result.v.map(function (x) { return esc(x.toFixed(1)); }).join(', ') + ') · ' +
           (DE ? "nächstes Wort" : "nearest word") + ': <b>' + esc(wordLabel(result.near)) + '</b>';
-        setTex("\\underbrace{\\text{" + (example ? text(example.label) : "") + "}}_{\\text{" + (DE ? "Vektoren addieren" : "add the vectors") + "}} = \\begin{pmatrix}" + result.v.map(function (x) { return x.toFixed(1); }).join("\\\\") + "\\end{pmatrix} \\approx \\underbrace{\\text{" + wordLabel(result.near) + "}}_{\\text{" + (DE ? "Ergebnis" : "result") + "}}");
+        setTex("\\underbrace{\\text{" + exampleLabel + "}}_{\\text{" + (DE ? "Vektoren addieren" : "add the vectors") + "}} = \\begin{pmatrix}" + result.v.map(function (x) { return x.toFixed(1); }).join("\\\\") + "\\end{pmatrix} \\approx \\underbrace{\\text{" + wordLabel(result.near) + "}}_{\\text{" + (DE ? "Ergebnis" : "result") + "}}");
         return;
       }
       var groupIds = st.group;
@@ -863,8 +757,8 @@
       return b;
     }
     function syncTableVisibility() {
-      var showHigh = st.mode === "space" && st.dim === 2 && !!st.showHighdim;
-      if (miniTable) miniTable.hidden = !(st.mode === "space" && st.dim === 2 && st.tables && !showHigh);
+      var showHigh = st.dim === 2 && !!st.showHighdim;
+      if (miniTable) miniTable.hidden = !(st.dim === 2 && st.tables && !showHigh);
       if (highdimEl) highdimEl.hidden = !showHigh;
       if (stage) stage.classList.toggle("is-highdim", showHigh);
     }
@@ -872,25 +766,19 @@
       controls.innerHTML = "";
       var row1 = document.createElement("div");
       row1.className = "ls-scene-row";
-      row1.appendChild(makeChip(DE ? "Temperatur" : "Temperature", st.mode === "temperature", function () {
-        st.mode = "temperature"; st.group = null; st.showHighdim = false; syncControls(); draw(); ensureLoop();
-      }));
-      row1.appendChild(makeChip(DE ? "Bedeutung" : "Meaning", st.mode === "space", function () {
-        st.mode = "space"; syncControls(); draw(); ensureLoop();
-      }));
-      if (st.mode === "space") {
-        ["1D", "2D", "3D"].forEach(function (label, i) {
-          row1.appendChild(makeChip(label, st.dim === i, function () {
-            st.dim = i; animateDimTo(i); st.group = null;
-            if (i !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
-            if (i !== 2 && st.arithmetic) {
-              var curEx = EXAMPLES.filter(function (e) { return e.id === st.arithmetic; })[0];
-              if (curEx && curEx.only3d) st.arithmetic = null;
-            }
-            if (i !== 2) st.showHighdim = false;
-            syncControls(); ensureLoop();
-          }));
-        });
+      ["1D", "2D", "3D"].forEach(function (label, i) {
+        row1.appendChild(makeChip(label, st.dim === i, function () {
+          st.dim = i; animateDimTo(i); st.group = null;
+          if (i !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
+          if (i !== 2 && st.arithmetic) {
+            var curEx = EXAMPLES.filter(function (e) { return e.id === st.arithmetic; })[0];
+            if (curEx && curEx.only3d) st.arithmetic = null;
+          }
+          if (i !== 2) st.showHighdim = false;
+          syncControls(); ensureLoop();
+        }));
+      });
+      if (st.dim > 0) {
         var reset = document.createElement("button");
         reset.type = "button";
         reset.className = "ls-btn ls-btn--ghost ls-btn--tiny";
@@ -904,63 +792,53 @@
           ensureLoop();
         });
         row1.appendChild(reset);
-        if (st.dim === 2) {
-          var tableBtn = document.createElement("button");
-          tableBtn.type = "button";
-          tableBtn.className = "ls-btn ls-btn--ghost ls-btn--tiny";
-          tableBtn.textContent = st.showHighdim ? (DE ? "← 3D" : "← 3D") : (DE ? "4096 Dimensionen" : "4096 dimensions");
-          tableBtn.addEventListener("click", function () {
-            st.showHighdim = !st.showHighdim;
-            if (st.showHighdim) buildHighdimTable();
-            syncControls();
-            draw();
-          });
-          row1.appendChild(tableBtn);
-        }
+      }
+      if (st.dim === 2) {
+        var tableBtn = document.createElement("button");
+        tableBtn.type = "button";
+        tableBtn.className = "ls-btn ls-btn--ghost ls-btn--tiny";
+        tableBtn.textContent = st.showHighdim ? (DE ? "← 3D" : "← 3D") : (DE ? "4096 Dimensionen" : "4096 dimensions");
+        tableBtn.addEventListener("click", function () {
+          st.showHighdim = !st.showHighdim;
+          if (st.showHighdim) buildHighdimTable();
+          syncControls();
+          draw();
+        });
+        row1.appendChild(tableBtn);
       }
       syncTableVisibility();
       controls.appendChild(row1);
 
       var row2 = document.createElement("div");
       row2.className = "ls-scene-row";
-      if (st.mode === "temperature") {
-        PAIRS.forEach(function (pair) {
-          var p0 = tempById(pair[0]), p1 = tempById(pair[1]);
-          var hi = p1.value > p0.value ? p1 : p0;
-          var lo = p1.value > p0.value ? p0 : p1;
-          var label = text(hi.label) + " − " + text(lo.label);
-          row2.appendChild(makeChip(label, st.pair[0] === pair[0] && st.pair[1] === pair[1], function () {
-            st.pair = pair.slice(); syncControls(); draw();
-          }));
-        });
-      } else {
-        examplesForDim().forEach(function (ex) {
-          row2.appendChild(makeChip(text(ex.label), st.arithmetic === ex.id, function () {
-            st.arithmetic = st.arithmetic === ex.id ? null : ex.id; syncControls(); draw();
-          }));
-        });
-        var select = document.createElement("select");
-        select.className = "ls-word-select";
-        select.setAttribute("aria-label", DE ? "Wort auswählen" : "Select a word");
-        var opt0 = document.createElement("option");
-        opt0.value = "";
-        opt0.textContent = DE ? "Wort …" : "Word …";
-        select.appendChild(opt0);
-        var selectIds = st.dim === 2 ? WORD_IDS.concat(WORD_IDS_3D) : WORD_IDS;
-        selectIds.forEach(function (id) {
-          var opt = document.createElement("option");
-          opt.value = id;
-          opt.textContent = wordLabel(id);
-          select.appendChild(opt);
-        });
-        select.value = st.selected || "";
-        select.addEventListener("change", function () {
-          st.selected = select.value || null;
-          st.group = null;
-          draw();
-        });
-        row2.appendChild(select);
-      }
+      var examples = examplesForDim();
+      if (st.dim === 0) examples = examples.filter(function (ex) { return !!ex.expr && ex.expr.indexOf("-") < 0; });
+      examples.forEach(function (ex) {
+        row2.appendChild(makeChip(text(ex.label), st.arithmetic === ex.id, function () {
+          st.arithmetic = st.arithmetic === ex.id ? null : ex.id; syncControls(); draw();
+        }));
+      });
+      var select = document.createElement("select");
+      select.className = "ls-word-select";
+      select.setAttribute("aria-label", DE ? "Wort auswählen" : "Select a word");
+      var opt0 = document.createElement("option");
+      opt0.value = "";
+      opt0.textContent = DE ? "Wort …" : "Word …";
+      select.appendChild(opt0);
+      var selectIds = st.dim === 2 ? WORD_IDS.concat(WORD_IDS_3D) : WORD_IDS;
+      selectIds.forEach(function (id) {
+        var opt = document.createElement("option");
+        opt.value = id;
+        opt.textContent = wordLabel(id);
+        select.appendChild(opt);
+      });
+      select.value = st.selected || "";
+      select.addEventListener("change", function () {
+        st.selected = select.value || null;
+        st.group = null;
+        draw();
+      });
+      row2.appendChild(select);
       controls.appendChild(row2);
     }
     function syncControls() { renderControls(); }
@@ -974,13 +852,19 @@
     }
     function applyState(s) {
       if (!s) return;
-      var modeChanged = !!(s.mode && s.mode !== st.mode);
-      if (s.mode) st.mode = s.mode;
+      var first = !hasState;
       if (typeof s.dim === "number") {
         var nextDim = clamp(s.dim, 0, 2);
-        if (nextDim !== st.dim) animateDimTo(nextDim);
-        else dimTarget = nextDim;
-        st.dim = nextDim;
+        if (first) {
+          st.dim = nextDim;
+          dimMix = nextDim;
+          dimTarget = nextDim;
+          dimAnim = null;
+        } else {
+          if (nextDim !== st.dim) animateDimTo(nextDim);
+          else dimTarget = nextDim;
+          st.dim = nextDim;
+        }
       }
       if (s.selected) st.selected = s.selected;
       if (st.dim !== 2 && st.selected && WORDS[st.selected] && WORDS[st.selected].only3d) st.selected = "king";
@@ -989,27 +873,14 @@
         var curEx = EXAMPLES.filter(function (e) { return e.id === st.arithmetic; })[0];
         if (curEx && curEx.only3d) st.arithmetic = null;
       }
-      if (s.pair) st.pair = s.pair.slice();
       st.group = s.group ? s.group.slice() : null;
       st.tables = !!s.tables;
       st.showHighdim = !!s.showHighdim;
       if (st.dim !== 2) st.showHighdim = false;
       syncControls();
-      function paint() { draw(); ensureLoop(); }
-      if (modeChanged && stateApplied && V && V.crossfadeCanvas) {
-        V.crossfadeCanvas(canvas, paint, { dir: st.mode === "space" ? 1 : -1, duration: 300 });
-        if (controls && controls.animate && !api.reducedMotion) {
-          try {
-            controls.animate([
-              { opacity: 0, transform: "translateY(4px)" },
-              { opacity: 1, transform: "none" }
-            ], { duration: 240, delay: 30, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
-          } catch (e) {}
-        }
-      } else {
-        paint();
-      }
-      stateApplied = true;
+      draw();
+      ensureLoop();
+      hasState = true;
     }
 
     function currentExampleIndex() {
@@ -1019,25 +890,8 @@
       }
       return -1;
     }
-    function currentPairIndex() {
-      for (var i = 0; i < PAIRS.length; i++) {
-        if ((PAIRS[i][0] === st.pair[0] && PAIRS[i][1] === st.pair[1]) ||
-            (PAIRS[i][0] === st.pair[1] && PAIRS[i][1] === st.pair[0])) return i;
-      }
-      return -1;
-    }
     function nextExample() {
-      if (st.mode === "temperature") {
-        var pi = currentPairIndex();
-        if (pi < 0) pi = -1;
-        if (pi >= PAIRS.length - 1) return false;
-        st.pair = PAIRS[pi + 1].slice();
-        syncControls();
-        draw();
-        ensureLoop();
-        return true;
-      }
-      if (st.mode !== "space" || st.dim < 1) return false;
+      if (st.dim < 1) return false;
       var list = examplesForDim();
       var idx = currentExampleIndex();
       if (idx < 0) idx = -1;
@@ -1049,16 +903,7 @@
       return true;
     }
     function prevExample() {
-      if (st.mode === "temperature") {
-        var pi = currentPairIndex();
-        if (pi <= 0) return false;
-        st.pair = PAIRS[pi - 1].slice();
-        syncControls();
-        draw();
-        ensureLoop();
-        return true;
-      }
-      if (st.mode !== "space" || st.dim < 1) return false;
+      if (st.dim < 1) return false;
       var list = examplesForDim();
       var idx = currentExampleIndex();
       if (idx <= 0) return false;
@@ -1098,7 +943,7 @@
       var next = hit ? hit.id : null;
       if (next !== hover) {
         hover = next;
-        canvas.style.cursor = next ? "pointer" : (st.mode === "space" && dimTarget > 1 ? "grab" : "default");
+        canvas.style.cursor = next ? "pointer" : (dimTarget > 1 ? "grab" : "default");
         draw();
       }
     }
@@ -1110,7 +955,7 @@
         drag = null;
         return;
       }
-      if (st.mode === "space" && dimTarget > 1) {
+      if (dimTarget > 1) {
         drag = { x: e.clientX, y: e.clientY };
         suppressClick = false;
         canvas.style.cursor = "grabbing";
@@ -1127,13 +972,7 @@
       var p = pointerPos(e);
       var hit = hitAt(p.x, p.y);
       if (!hit) return;
-      if (hit.kind === "temp") {
-        var id = hit.id;
-        if (st.pair[0] === id) st.pair = [st.pair[1], st.pair[0]];
-        else st.pair = [st.pair[0], id];
-        syncControls();
-        draw();
-      } else if (hit.kind === "group") {
+      if (hit.kind === "group") {
         st.group = hit.ids.slice();
         st.selected = hit.ids[0];
         syncControls();
@@ -1145,7 +984,7 @@
       }
     }
     function onWheel(e) {
-      if (st.mode !== "space" || dimTarget < 2) return;
+      if (dimTarget < 2) return;
       e.preventDefault();
       camTarget = null;
       viewPreset = -1;
@@ -1154,37 +993,33 @@
     }
     function reserveHeights() {
       var saved = {
-        mode: st.mode, dim: st.dim, selected: st.selected, arithmetic: st.arithmetic,
-        pair: st.pair.slice(), group: st.group ? st.group.slice() : null
+        dim: st.dim, selected: st.selected, arithmetic: st.arithmetic,
+        group: st.group ? st.group.slice() : null
       };
       var maxControls = 0, maxFormula = 0;
       function measure(state) {
-        st.mode = state.mode;
         st.dim = state.dim;
         st.selected = state.selected;
         st.arithmetic = state.arithmetic;
-        st.pair = state.pair || ["cold", "warm"];
         st.group = state.group || null;
         renderControls();
         updateReadout();
         maxControls = Math.max(maxControls, controls.scrollHeight);
         maxFormula = Math.max(maxFormula, formula.scrollHeight);
       }
-      measure({ mode: "temperature", dim: 0, selected: null, arithmetic: null, pair: ["cold", "warm"] });
-      measure({ mode: "temperature", dim: 0, selected: null, arithmetic: null, pair: ["freezing", "hot"] });
-      measure({ mode: "space", dim: 0, selected: "king", arithmetic: null });
-      measure({ mode: "space", dim: 0, selected: "male", arithmetic: null, group: ["male", "female"] });
-      measure({ mode: "space", dim: 1, selected: "king", arithmetic: null });
-      measure({ mode: "space", dim: 2, selected: "king", arithmetic: null });
+      measure({ dim: 0, selected: null, arithmetic: "prince-power" });
+      measure({ dim: 0, selected: null, arithmetic: "man-power" });
+      measure({ dim: 0, selected: "king", arithmetic: null });
+      measure({ dim: 0, selected: "male", arithmetic: null, group: ["male", "female"] });
+      measure({ dim: 1, selected: "king", arithmetic: null });
+      measure({ dim: 2, selected: "king", arithmetic: null });
       EXAMPLES.forEach(function (ex) {
-        measure({ mode: "space", dim: 1, selected: null, arithmetic: ex.id });
-        measure({ mode: "space", dim: 2, selected: null, arithmetic: ex.id });
+        measure({ dim: 1, selected: null, arithmetic: ex.id });
+        measure({ dim: 2, selected: null, arithmetic: ex.id });
       });
-      st.mode = saved.mode;
       st.dim = saved.dim;
       st.selected = saved.selected;
       st.arithmetic = saved.arithmetic;
-      st.pair = saved.pair;
       st.group = saved.group;
       renderControls();
       draw();

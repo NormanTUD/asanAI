@@ -120,9 +120,9 @@
     {
       kicker: "Die Linie",
       title: "Bedeutung wird eine Zahl",
-      body: "Wenn man Worten Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Man kann dann sagen, dass heiß - warm = 100 - 55 = 45 ist, und 45 liegt näher an warm als an kalt. Zieht man also von heiß warm ab, landet man wieder bei warm.\n\nDas ist natürlich ein sehr vereinfachtes Beispiel, hier kann man genau eine Korrelation darstellen. Daher nutzt man viel höherdimensionale Räume.",
+      body: "Wenn man Wörtern Zahlen zuweist, kann man mit ihnen rechnen wie mit Zahlen. Auf der Macht-Achse liegt Prinz bei 15 und Macht bei 10. Addiert man beide Zahlen, landet man bei 25. Dort liegt König, zusammen mit Königin: Prinz + Macht = König.\n\nDas ist ein sehr vereinfachtes Beispiel. Eine Achse kann nur eine Eigenschaft darstellen, und Mann und Frau liegen auf derselben Zahl. Deshalb nutzt man höherdimensionale Räume.",
       watch: "",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
+      demoState: { scene: "embedding", dim: 0, arithmetic: "prince-power" },
       inherit: false,
       questionGroups: [
         {
@@ -150,7 +150,7 @@
           id: "g-lens-optional",
           title: DE ? "Optional" : "Optional",
           questions: [
-            { id: "q-box-emb-clean", title: DE ? "Sind echte Embeddings so sauber?" : "Are real embeddings this clean?", body: DE ? "Nein. Die Demo trennt Temperatur, Macht und Geschlecht sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung." : "No. The demo separates temperature, power, and gender cleanly because the axes are chosen by hand. In real models, axes are learned directions, not named properties. Temperature, style, topic, and language overlap; clusters overlap, words lie askew in space, and the same direction can carry several meanings (superposition). The straight line is a didactic projection, not a measurement.", tex: "", kind: "question" }
+            { id: "q-box-emb-clean", title: DE ? "Sind echte Embeddings so sauber?" : "Are real embeddings this clean?", body: DE ? "Nein. Die Demo trennt Macht, Geschlecht und Rang sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Rang, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung." : "No. The demo separates power, gender, and rank cleanly because the axes are chosen by hand. In real models, axes are learned directions, not named properties. Rank, style, topic, and language overlap; clusters overlap, words lie askew in space, and the same direction can carry several meanings (superposition). The straight line is a didactic projection, not a measurement.", tex: "", kind: "question" }
           ]
         },
         {
@@ -170,7 +170,7 @@
       title: "Bedeutung bekommt eine zweite Achse",
       body: "Eine Achse kann Wörter nach einer einzigen Eigenschaft ordnen. Mann und Frau teilen die Machtposition und fallen deshalb auf derselben Stelle zusammen. Eine zweite Achse schafft freie Wege: Jetzt liegen sie nebeneinander, ohne die Machtposition zu verlieren. Derselbe Richtungsschritt erscheint zwischen König und Königin: König − Mann + Frau liegt nahe bei Königin. Die Beziehung ist eine Richtung, keine benannte Regel.",
       watch: "Vergleiche 1D und 2D. Welche Richtung wird wiederverwendet?",
-      demoState: { scene: "embedding", mode: "space", dim: 1, selected: null, arithmetic: "king-man-woman" },
+      demoState: { scene: "embedding", dim: 1, selected: null, arithmetic: "king-man-woman" },
       context: "In 1D ist die Strecke belegt; mehrere Wörter teilen sich eine Position. In 2D bekommt jede zusätzliche Eigenschaft eine eigene Richtung. Die Analogie ist eine Approximation, keine exakte Regel.",
       deep: "Freie Wege sind der Kern: Bedeutung braucht Platz für mehrere unabhängige Unterschiede. Jede zusätzliche Achse kann eine weitere Beziehung tragen, ohne eine andere zu überschreiben. Die Nachbarschaft ist ein statistisches Signal, keine Definition.",
       boxes: [
@@ -187,8 +187,8 @@
       title: "Drei Dimensionen, ein Schatten",
       body: "Eine dritte Achse hebt die Ebene in einen Raum. Jetzt können dieselben Punkte neben Macht und Geschlecht auch Rang tragen. Zusätzlich erscheinen Punkte, die es in 2D noch nicht gab: auf einer unteren Ebene Tiere wie Rüde und Hündin, auf einer oberen Ebene Figuren aus Geschichten wie Zauberer und Zauberin. Sie liegen in denselben Verhältnissen; das Geschlecht ist überall dieselbe Richtung. Jede Ansicht ist eine Projektion: Linien, die sich auf dem Bildschirm kreuzen, müssen sich im vollen Raum nicht berühren. Jedes Wort ist ein Pfeil vom Ursprung: Die Richtung trägt die Bedeutung, die Länge ist Nebensache. Ziehe die Ansicht und beobachte, welche Richtung stabil bleibt. Die Tabelle zeigt zuerst die drei Dimensionen, die du siehst; ein Klick auf „4096 Dimensionen“ wechselt direkt zur vollen Rechner-Tabelle.",
       watch: "Drehe die Ansicht. Welche Richtung bleibt für alle Paare gleich? Öffne am Ende die Tabelle der drei Dimensionen und danach die 4096-Dimensionen-Tabelle.",
-      demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "king-man-woman", tables: true },
-      context: "Ein echtes Modell arbeitet in Tausenden Dimensionen. Die drei Achsen sind eine Projektion, kein vollständiges Bild. Die 2D-Ebene liegt bei z = 0; darunter liegen die Tiere, darüber die Figuren. Die Beispiele zeigen, dass dieselbe Geschlechtsrichtung in jeder Ebene wiederverwendet wird. Mehr Dimensionen tragen mehr unabhängige Beziehungen: Temperatur, Geschlecht, Macht, Thema, Sprache, Stil. Zwei oder drei Achsen kollidieren zu schnell.",
+      demoState: { scene: "embedding", dim: 2, selected: "king", arithmetic: "king-man-woman", tables: true },
+      context: "Ein echtes Modell arbeitet in Tausenden Dimensionen. Die drei Achsen sind eine Projektion, kein vollständiges Bild. Die 2D-Ebene liegt bei z = 0; darunter liegen die Tiere, darüber die Figuren. Die Beispiele zeigen, dass dieselbe Geschlechtsrichtung in jeder Ebene wiederverwendet wird. Mehr Dimensionen tragen mehr unabhängige Beziehungen: Rang, Geschlecht, Macht, Thema, Sprache, Stil. Zwei oder drei Achsen kollidieren zu schnell.",
       deep: "Superposition und Polysemantik erklären, warum ein Neuron mehrere Bedeutungen tragen kann. Die Karte ist nützlich, aber sie ist statistisch. Sie zeigt, was im Training häufig war, nicht was wahr ist. Die Zahlen der 4096-Tabelle sind ein Ausschnitt, keine echten GPT-Gewichte. Ein echtes Modell lernt jede Koordinate aus Text; keine einzelne Spalte hat für sich eine Bedeutung. Die Geometrie entsteht im Zusammenspiel.",
       boxes: [
         box("emb-10", "Technik", "Warum sieht man das im LLM nicht?", "Weil die Räume zu hochdimensional sind. Die Demo ist eine Projektion auf drei Achsen. Eine Kreuzung auf dem Bildschirm bedeutet nicht, dass die Punkte im vollen Raum zusammenfallen."),
@@ -202,9 +202,9 @@
     {
       kicker: "The line",
       title: "Meaning becomes a number",
-      body: "When you assign numbers to words, you can do arithmetic with them as with numbers. You can then say that hot − warm = 100 − 55 = 45, and 45 is closer to warm than to cold. So if you subtract warm from hot, you land near warm again.\n\nThis is of course a very simplified example; here you can show exactly one correlation. That is why much higher-dimensional spaces are used.",
+      body: "When you assign numbers to words, you can do arithmetic with them as with numbers. On the power axis, prince sits at 15 and power at 10. Add the two numbers and you land at 25. There sits king, together with queen: prince + power = king.\n\nThis is a very simplified example. One axis can show only one property, and man and woman sit at the same number. That is why higher-dimensional spaces are used.",
       watch: "",
-      demoState: { scene: "embedding", mode: "temperature", dim: 0, pair: ["cold", "warm"] },
+      demoState: { scene: "embedding", dim: 0, arithmetic: "prince-power" },
       inherit: false,
       questionGroups: [
         {
@@ -232,7 +232,7 @@
           id: "g-lens-optional",
           title: DE ? "Optional" : "Optional",
           questions: [
-            { id: "q-box-emb-clean", title: DE ? "Sind echte Embeddings so sauber?" : "Are real embeddings this clean?", body: DE ? "Nein. Die Demo trennt Temperatur, Macht und Geschlecht sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Temperatur, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung." : "No. The demo separates temperature, power, and gender cleanly because the axes are chosen by hand. In real models, axes are learned directions, not named properties. Temperature, style, topic, and language overlap; clusters overlap, words lie askew in space, and the same direction can carry several meanings (superposition). The straight line is a didactic projection, not a measurement.", tex: "", kind: "question" }
+            { id: "q-box-emb-clean", title: DE ? "Sind echte Embeddings so sauber?" : "Are real embeddings this clean?", body: DE ? "Nein. Die Demo trennt Macht, Geschlecht und Rang sauber, weil die Achsen von Hand gewählt sind. In echten Modellen sind Achsen gelernte Richtungen, keine benannten Eigenschaften. Rang, Stil, Thema und Sprache überlagern sich; Cluster überlappen, Wörter liegen schief im Raum, und dieselbe Richtung kann mehrere Bedeutungen tragen (Superposition). Die gerade Linie ist eine didaktische Projektion, keine Messung." : "No. The demo separates power, gender, and rank cleanly because the axes are chosen by hand. In real models, axes are learned directions, not named properties. Rank, style, topic, and language overlap; clusters overlap, words lie askew in space, and the same direction can carry several meanings (superposition). The straight line is a didactic projection, not a measurement.", tex: "", kind: "question" }
           ]
         },
         {
@@ -252,7 +252,7 @@
       title: "Meaning gets a second axis",
       body: "One axis can order words by a single property. Man and woman share the power position, so they collapse onto the same point. A second axis creates free paths: they now sit side by side without losing the power position. The same direction step appears between king and queen: king − man + woman is near queen. The relation is a direction, not a named rule.",
       watch: "Compare 1D and 2D. Which direction is reused?",
-      demoState: { scene: "embedding", mode: "space", dim: 1, selected: null, arithmetic: "king-man-woman" },
+      demoState: { scene: "embedding", dim: 1, selected: null, arithmetic: "king-man-woman" },
       context: "In 1D the line is occupied; several words share one position. In 2D every extra property gets its own direction. The analogy is an approximation, not an exact rule.",
       deep: "Free paths are the point: meaning needs room for several independent differences. Every extra axis can carry another relation without overwriting one. Neighbourhood is a statistical signal, not a definition.",
       boxes: [
@@ -269,8 +269,8 @@
       title: "Three dimensions, one shadow",
       body: "A third axis lifts the plane into a space. Now the same points can carry rank as well as power and gender. Additional points appear that did not exist in 2D: animals such as a male dog and a female dog on a lower level, fictional figures such as a wizard and a sorceress on an upper level. They sit in the same relations; gender is the same direction everywhere. Every view is a projection: lines that cross on screen need not touch in the full space. Every word is an arrow from the origin: the direction carries the meaning, the length is secondary. Drag the view and watch which direction stays stable. The table first shows the three dimensions you see; one click on “4096 dimensions” switches straight to the full table for the computer.",
       watch: "Rotate the view. Which direction stays the same for all pairs? At the end, open the table of the three dimensions and then the 4096-dimension table.",
-      demoState: { scene: "embedding", mode: "space", dim: 2, selected: "king", arithmetic: "directions", tables: true },
-      context: "A real model works in thousands of dimensions. The three axes are a projection, not a complete picture. The 2D plane sits at z = 0; animals lie below it, fictional figures above. The examples show that the same gender direction is reused in every layer. More dimensions can carry more independent relations: temperature, gender, power, topic, language, style. Two or three axes collide too quickly.",
+      demoState: { scene: "embedding", dim: 2, selected: "king", arithmetic: "directions", tables: true },
+      context: "A real model works in thousands of dimensions. The three axes are a projection, not a complete picture. The 2D plane sits at z = 0; animals lie below it, fictional figures above. The examples show that the same gender direction is reused in every layer. More dimensions can carry more independent relations: rank, gender, power, topic, language, style. Two or three axes collide too quickly.",
       deep: "Superposition and polysemy explain why a neuron can carry several meanings. The map is useful, but it is statistical. It shows what was frequent in training, not what is true. The numbers in the 4096 table are a slice, not real GPT weights. A real model learns every coordinate from text; no single column means anything on its own. The geometry comes from the interaction.",
       boxes: [
         box("emb-10", "Technique", "Why don't we see this in an LLM?", "Because the spaces are too high-dimensional. The demo is a projection onto three axes. A crossing on screen does not mean the points coincide in the full space."),
