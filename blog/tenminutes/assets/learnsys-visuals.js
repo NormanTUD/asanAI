@@ -249,28 +249,27 @@
     var gctx = ghost.getContext("2d");
     try { gctx.drawImage(canvas, 0, 0); } catch (e) { draw(); return; }
     ghost.className = "ls-canvas-crossfade";
-    draw();
-    canvas.parentNode.appendChild(ghost);
     var dir = o.dir || 0;
     var distance = typeof o.distance === "number" ? o.distance : 7;
     var dx = dir < 0 ? distance : -distance;
-    var frames = [
-      { opacity: 1, transform: "translate3d(0,0,0) scale(1)" },
-      { opacity: 0, transform: "translate3d(" + dx + "px," + (o.dy || 0) + "px,0) scale(" + (o.scale || 1.008) + ")" }
-    ];
-    var anim = null;
-    if (ghost.animate) {
-      anim = ghost.animate(frames, { duration: dur, easing: "cubic-bezier(.4,0,.2,1)", fill: "both" });
-    } else {
-      ghost.style.transition = "opacity " + dur + "ms ease, transform " + dur + "ms ease";
-      requestAnimationFrame(function () {
-        ghost.style.opacity = "0";
-        ghost.style.transform = frames[1].transform;
-      });
+    var endTransform = "translate3d(" + dx + "px," + (o.dy || 0) + "px,0) scale(" + (o.scale || 1.008) + ")";
+    ghost.style.opacity = "1";
+    ghost.style.transform = "translate3d(0,0,0) scale(1)";
+    ghost.style.transition = "opacity " + dur + "ms cubic-bezier(.4,0,.2,1), transform " + dur + "ms cubic-bezier(.4,0,.2,1)";
+    draw();
+    canvas.parentNode.appendChild(ghost);
+    void ghost.offsetWidth;
+    var started = false;
+    function start() {
+      if (started) return;
+      started = true;
+      ghost.style.opacity = "0";
+      ghost.style.transform = endTransform;
     }
+    requestAnimationFrame(start);
+    setTimeout(start, 40);
     function remove() { if (ghost.parentNode) ghost.parentNode.removeChild(ghost); }
-    if (anim) anim.onfinish = remove;
-    setTimeout(remove, dur + 80);
+    setTimeout(remove, dur + 120);
   };
 
   window.LearnSysVisuals = V;

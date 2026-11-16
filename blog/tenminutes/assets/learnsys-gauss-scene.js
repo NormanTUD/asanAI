@@ -260,15 +260,14 @@
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
     resize();
     var lastPhase = null;
-    var introAnim = null;
+    var introTimer = 0;
     var introToken = 0;
     var reduced = !!api.reducedMotion;
+    var nextSigmaValue = null;
     function cancelIntroAnim() {
       introToken++;
-      if (introAnim) {
-        try { introAnim.cancel(); } catch (e) {}
-        introAnim = null;
-      }
+      clearTimeout(introTimer);
+      el.style.transition = "";
       el.style.opacity = "";
     }
     function showDemo() {
@@ -278,7 +277,6 @@
         setSigma(nextSigmaValue, true);
       }
     }
-    var nextSigmaValue = null;
     return {
       update: function (s) {
         if (!s) return;
@@ -296,32 +294,31 @@
           showDemo();
           return;
         }
-        if (reduced || !el.animate) {
+        if (reduced) {
           cancelIntroAnim();
           showDemo();
           return;
         }
         cancelIntroAnim();
         var token = ++introToken;
-        var leave = el.animate([{ opacity: 1 }, { opacity: 0.35 }], {
-          duration: 110, easing: "ease-in", fill: "both"
-        });
-        introAnim = leave;
-        leave.onfinish = function () {
+        el.style.transition = "opacity 110ms ease-in";
+        el.style.opacity = "1";
+        void el.offsetWidth;
+        el.style.opacity = "0.35";
+        introTimer = setTimeout(function () {
           if (token !== introToken) return;
           showDemo();
-          var enter = el.animate([{ opacity: 0.35 }, { opacity: 1 }], {
-            duration: 230, easing: "cubic-bezier(.22,1,.36,1)", fill: "both"
-          });
-          introAnim = enter;
-          try { leave.cancel(); } catch (e) {}
-          enter.onfinish = function () {
+          requestAnimationFrame(function () {
             if (token !== introToken) return;
-            try { enter.cancel(); } catch (e) {}
-            el.style.opacity = "";
-            introAnim = null;
-          };
-        };
+            el.style.transition = "opacity 230ms cubic-bezier(.22,1,.36,1)";
+            el.style.opacity = "1";
+            introTimer = setTimeout(function () {
+              if (token !== introToken) return;
+              el.style.transition = "";
+              el.style.opacity = "";
+            }, 260);
+          });
+        }, 110);
       },
       resize: resize,
       pause: function () {},
