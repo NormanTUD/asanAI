@@ -465,6 +465,18 @@ function tmPreparePlotlyFrame(container, kind) {
 	return reused;
 }
 window.tmPreparePlotlyFrame = tmPreparePlotlyFrame;
+function tmPlotlyReactSafe(el, traces, layout, config) {
+	try {
+		return Plotly.react(el, traces, layout, config);
+	} catch (e) {
+		if (e && /reading 'gl'/.test(String(e.message))) {
+			if (el) el._tmPlotNeedsRetry = true;
+			return null;
+		}
+		throw e;
+	}
+}
+window.tmPlotlyReactSafe = tmPlotlyReactSafe;
 
 /* Plotly has no 3D transition. For arrow plots that change every epoch we
    interpolate the numeric geometry over a few frames instead of snapping to
@@ -478,11 +490,22 @@ window.tmAnimatePlotlyTraces = function (el, traces, layout, config, options) {
 		cancelAnimationFrame(el._tmGeoAnim.raf);
 		el._tmGeoAnim = null;
 	}
+	function safeReact(next) {
+		try {
+			return Plotly.react(el, next, layout, config);
+		} catch (e) {
+			// A WebGL scene can briefly lose its gl context while the page is
+			// scrolled or a layer card is closed. Skip this frame; the next
+			// training tick or visibility change renders the plot again.
+			if (e && /reading 'gl'/.test(String(e.message))) { el._tmGeoAnim = null; return null; }
+			throw e;
+		}
+	}
 	var duration = Number(options.duration) || 0;
 	var animate = duration > 0 && !!window.isTraining && !window.__tmPlotDragging &&
 		Array.isArray(el.data) && el.data.length === traces.length;
 	if (!animate) {
-		Plotly.react(el, traces, layout, config);
+		safeReact(traces);
 		return;
 	}
 
@@ -504,7 +527,7 @@ window.tmAnimatePlotlyTraces = function (el, traces, layout, config, options) {
 		});
 	});
 	if (!valid) {
-		Plotly.react(el, traces, layout, config);
+		safeReact(traces);
 		return;
 	}
 
@@ -522,7 +545,7 @@ window.tmAnimatePlotlyTraces = function (el, traces, layout, config, options) {
 		lastPaint = now;
 		if (t >= 1) {
 			el._tmGeoAnim = null;
-			Plotly.react(el, traces, layout, config);
+			safeReact(traces);
 			return;
 		}
 		var e = ease(t);
@@ -541,7 +564,7 @@ window.tmAnimatePlotlyTraces = function (el, traces, layout, config, options) {
 			return next;
 		});
 		el._tmGeoAnim = { raf: requestAnimationFrame(frame) };
-		Plotly.react(el, mixed, layout, config);
+		safeReact(mixed);
 	};
 	el._tmGeoAnim = { raf: requestAnimationFrame(frame) };
 };
@@ -557,7 +580,7 @@ window.tmScheduleHeavyRender = (function () {
 				pumping = false;
 				const job = queue.shift();
 				if (job) {
-					try { job(); } catch (err) { console.error("[transformer] deferred plot render failed", err); }
+					try { job(); } catch (err) { console.warn("[transformer] deferred plot render deferred", err && err.message); }
 				}
 				if (queue.length) pump();
 			}, 0);
@@ -4016,7 +4039,7 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 	const layout = dimensions === 3 ? window.tmPlotly.layout3D(title, ['Dim 0', 'Dim 1', 'Dim 2']) : window.tmPlotly.layout2D(title, ['Dim 0', 'Dim 1']);
 	if (dimensions === 3) window.tmPlotly.equalize3D(layout, traces);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
-	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
+	tmPlotlyReactSafe(container, traces, layout, { responsive: true, displayModeBar: false });
 }
 
 function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
@@ -4089,7 +4112,7 @@ function _embedding_render_highdim_pca(container, tokens, dimensions, highlightP
 	const layout = window.tmPlotly.layout3D(_tmMetricTitle('Embedding Space · PCA (d→3)'), ['PC 1', 'PC 2', 'PC 3']);
 	window.tmPlotly.equalize3D(layout, traces);
 	if (window.echarts) { const oldChart = echarts.getInstanceByDom(container); if (oldChart) oldChart.dispose(); }
-	Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
+	tmPlotlyReactSafe(container, traces, layout, { responsive: true, displayModeBar: false });
 }
 
 function _execute_embedding_render(dimensions, highlightPos = null, steps = []) {

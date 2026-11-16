@@ -71,7 +71,7 @@
 			setTimeout(function () {
 				tmQueueHeavy._running = false;
 				var job = tmQueueHeavy._q.shift();
-				try { if (job) job(); } catch (e) { console.error("[transformer_steps] deferred plot render failed", e); }
+				try { if (job) job(); } catch (e) { console.warn("[transformer_steps] deferred plot render deferred", e && e.message); }
 				if (tmQueueHeavy._q.length) tmQueueHeavy._pump();
 			}, 0);
 		});
@@ -94,7 +94,7 @@
 			setTimeout(function () {
 				tmQueueFeature._running = false;
 				var job = tmQueueFeature._q.shift();
-				try { if (job) job(); } catch (e) { console.error("[transformer_steps] feature plot render failed", e); }
+				try { if (job) job(); } catch (e) { console.warn("[transformer_steps] feature plot render deferred", e && e.message); }
 				if (tmQueueFeature._q.length) tmQueueFeature._pump();
 			}, 0);
 		});
@@ -3550,6 +3550,11 @@
 		var arrowsEl = document.getElementById(prefix + "-feature-arrows");
 		var note = document.getElementById(prefix + "-feature-projection");
 		if (!data || !arrowsEl) return;
+		var rect = arrowsEl.getBoundingClientRect();
+		if (rect.width < 2 || rect.height < 2) {
+			arrowsEl._tmFeatureDirty = true;
+			return;
+		}
 		var proj = featureProjection(data, layerIdx);
 		if (note) {
 			var movement = featureMovementSummary(data);
@@ -3611,7 +3616,7 @@
 			arrowsEl._tmFeatureSig = currentSignature;
 		};
 		if (window.isTraining) {
-			try { run(); } catch (e) { console.error("[transformer_steps] live feature plot render failed", e); }
+			try { run(); } catch (e) { console.warn("[transformer_steps] live feature plot render deferred", e && e.message); }
 			return;
 		}
 		tmQueueFeature(run);
@@ -5168,7 +5173,10 @@
 
 	function resizeCharts() {
 		if (window.Plotly && Plotly.Plots) {
-			document.querySelectorAll(".js-plotly-plot").forEach(function (el) { Plotly.Plots.resize(el); });
+			document.querySelectorAll(".js-plotly-plot").forEach(function (el) {
+				if (!el.getClientRects().length) return;
+				try { Plotly.Plots.resize(el); } catch (e) { /* hidden or lost WebGL context */ }
+			});
 		}
 		if (window.echarts) {
 			document.querySelectorAll("[id$='-plot'], [id$='-space']").forEach(function (el) {
