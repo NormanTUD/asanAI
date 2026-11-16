@@ -47,6 +47,13 @@
         { t: "The Nile flows through Brazil.", d: 1.45, ok: false }
       ]
     };
+    var wikiHtml = DE
+      ? '<span class="ls-code-ellipsis">…</span>\n' +
+        '<span class="ls-code-tag">&lt;p&gt;</span><span class="ls-code-tag">&lt;b&gt;</span>Paris<span class="ls-code-tag">&lt;/b&gt;</span> (deutsch: [paˈʁiːs]; französisch: [paʁi]) ist die <span class="ls-code-tag">&lt;a href=&quot;/wiki/Hauptstadt&quot; title=&quot;Hauptstadt&quot;&gt;</span>Hauptstadt<span class="ls-code-tag">&lt;/a&gt;</span> der <span class="ls-code-tag">&lt;a href=&quot;/wiki/Frankreich&quot; title=&quot;Frankreich&quot;&gt;</span>Französischen Republik<span class="ls-code-tag">&lt;/a&gt;</span> und Hauptort der <span class="ls-code-tag">&lt;a href=&quot;/wiki/Region_(Frankreich)&quot; title=&quot;Region (Frankreich)&quot;&gt;</span>Region<span class="ls-code-tag">&lt;/a&gt;</span> <span class="ls-code-tag">&lt;a href=&quot;/wiki/%C3%8Ele-de-France&quot; title=&quot;Île-de-France&quot;&gt;</span>Île-de-France<span class="ls-code-tag">&lt;/a&gt;</span>.<span class="ls-code-tag">&lt;/p&gt;</span>\n' +
+        '<span class="ls-code-ellipsis">…</span>'
+      : '<span class="ls-code-ellipsis">…</span>\n' +
+        '<span class="ls-code-tag">&lt;p&gt;</span><span class="ls-code-tag">&lt;b&gt;</span>Paris<span class="ls-code-tag">&lt;/b&gt;</span> is the <span class="ls-code-tag">&lt;a href=&quot;/wiki/Capital_city&quot; title=&quot;Capital city&quot;&gt;</span>capital<span class="ls-code-tag">&lt;/a&gt;</span> and <span class="ls-code-tag">&lt;a href=&quot;/wiki/List_of_communes_in_France_with_over_20,000_inhabitants&quot; title=&quot;List of communes in France with over 20,000 inhabitants&quot;&gt;</span>largest city<span class="ls-code-tag">&lt;/a&gt;</span> of <span class="ls-code-tag">&lt;a href=&quot;/wiki/France&quot; title=&quot;France&quot;&gt;</span>France<span class="ls-code-tag">&lt;/a&gt;</span>, with an estimated city population of 2.04 million in an area of 105.4 km<span class="ls-code-tag">&lt;sup&gt;</span>2<span class="ls-code-tag">&lt;/sup&gt;</span> (40.7 sq mi).<span class="ls-code-tag">&lt;/p&gt;</span>\n' +
+        '<span class="ls-code-ellipsis">…</span>';
     var el = document.createElement("div");
     el.className = "ls-lang-scene";
     el.innerHTML =
@@ -69,7 +76,7 @@
             '<p class="ls-lang-data-stage-data">' + (DE ? "Mehr oder weniger das ganze Internet: Wikipedia, Reddit, Bücher, Webseiten, Quellcode." : "More or less the entire internet: Wikipedia, Reddit, books, websites, source code.") + '</p>' +
             '<p class="ls-lang-data-stage-do">' + (DE ? "Das Netz lernt Muster, Sprache, Fakten und Code und setzt rohe Daten fort." : "The net learns patterns, language, facts, and code, and continues raw data.") + '</p>' +
             '<p class="ls-lang-data-stage-source">' + (DE ? "Wikipedia-Artikel „Paris“" : "Wikipedia article “Paris”") + '</p>' +
-            '<pre class="ls-lang-data-code"><code><span class="ls-code-ellipsis">...</span>\n<span class="ls-code-tag">&lt;div class=&quot;mw-parser-output&quot;&gt;</span>\n<span class="ls-code-tag">&lt;h1&gt;</span>Paris<span class="ls-code-tag">&lt;/h1&gt;</span>\n<span class="ls-code-tag">&lt;p&gt;</span><span class="ls-code-tag">&lt;b&gt;</span>Paris<span class="ls-code-tag">&lt;/b&gt;</span>' + (DE ? " ist die Hauptstadt und bevölkerungsreichste Stadt Frankreichs. Die Stadt liegt an der Seine." : " is the capital and largest city of France. It is situated on the Seine.") + '<span class="ls-code-tag">&lt;/p&gt;</span>\n<span class="ls-code-tag">&lt;/div&gt;</span>\n<span class="ls-code-ellipsis">...</span></code></pre>' +
+            '<pre class="ls-lang-data-code"><code>' + wikiHtml + '</code></pre>' +
           '</div>' +
           '<div class="ls-lang-data-bridge">' + (DE ? "Erst die Breite des Internets, dann die Richtung der Fragen." : "First the breadth of the internet, then the direction of the questions.") + '</div>' +
           '<div class="ls-lang-data-stage ls-lang-data-stage--fine">' +

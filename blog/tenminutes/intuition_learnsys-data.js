@@ -726,7 +726,7 @@
     teaser: DE
       ? "Daten sind der erste Schritt, aber technisch nicht Teil des LLM. Man trainiert in zwei Stufen auf zwei Datensätzen: zuerst auf mehr oder weniger dem ganzen Internet, damit das Netz Muster, Sprache und Fakten erkennt; danach per Fine-Tuning auf gezielten Menschenfragen mit nützlichen Antworten. Das große Internet-Dataset gibt die Breite, das kleine gibt die Richtung. Erst danach kann das Netz auf konkrete Fragen detaillierter antworten."
       : "Data is the first step, but technically not part of the LLM. Training happens in two stages on two datasets: first on more or less the entire internet so the net recognises patterns, language, and facts; then fine-tuning on targeted human questions with useful answers. The large internet dataset provides breadth; the small one provides direction. Only after that can the net answer concrete questions in more detail.",
-    watch: DE ? "Die Demo zeigt die zwei Stufen nacheinander: erst Internetdaten, dann Menschenfragen." : "The demo shows the two stages one after another: first internet data, then human questions.",
+    watch: "",
     demoState: { scene: "langdata", mode: "scale", summary: true },
     inherit: false,
     questionGroups: [
@@ -743,6 +743,7 @@
         title: DE ? "Quellen" : "Sources",
         sources: [
           { label: "Wikipedia: Large language model", url: "https://en.wikipedia.org/wiki/Large_language_model", why: { de: "Beispiel für einen Trainingsauszug aus Wikipedia.", en: "Example of a training excerpt from Wikipedia." } },
+          { label: "Wikipedia: Paris", url: "https://de.wikipedia.org/wiki/Paris", why: { de: "Erster Absatz des Artikels; die Demo zeigt den HTML-Ausschnitt.", en: "First paragraph of the article; the demo shows the HTML excerpt." } },
           { label: "Cisco (2016), The Zettabyte Era Officially Begins", url: "https://blogs.cisco.com/sp/the-zettabyte-era-officially-begins-how-much-is-that", why: { de: "Zettabyte-Ära seit 2016 und die Größenordnung 10²¹ Byte.", en: "Zettabyte era since 2016 and the 10²¹-byte scale." } },
           { label: "Brown et al. (2020), Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165", why: { de: "GPT-3-Datenmischung und Few-Shot-Ergebnisse.", en: "GPT-3 data mix and few-shot results." } },
           { label: "Lee et al. (2021), Deduplicating Training Data Makes Language Models Better", url: "https://arxiv.org/abs/2107.06499", why: { de: "Deduplizierung verbessert Sprachmodelle.", en: "Deduplication improves language models." } },
