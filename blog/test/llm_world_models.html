@@ -553,7 +553,7 @@
 
 <header class="chrome">
   <div class="mark">ASANAI <b>·</b> WORLD MODELS</div>
-  <div class="count" id="scene-count">00 / 13</div>
+  <div class="count" id="scene-count">00 / 14</div>
 </header>
 
 <nav class="rail" id="rail" aria-label="Scenes"></nav>
@@ -611,49 +611,62 @@
     <p class="sr-only">Animation: a stream of Othello moves on the left; on the right, discs appear and flip on a board; a probe lens sweeps over the board, revealing a heat map of the model's internal board state.</p>
   </section>
 
-  <section class="slide" data-title="Where is the board?" data-step="04" data-accent="#5ef2b0">
+  <section class="slide" data-title="Training sample" data-step="04" data-accent="#ffd166">
     <div class="slide-inner">
       <div class="copy">
-        <div class="kicker">04 · Where is the board?</div>
+        <div class="kicker">04 · The training sample</div>
+        <h2>It saw moves. It predicted moves.</h2>
+        <p class="sub">A real synthetic game. The target is the next move; the model's top five predictions are all legal.</p>
+      </div>
+      <div class="stage tall" data-scene="training"><canvas aria-hidden="true"></canvas></div>
+      <p class="source">Real forward pass through the public Othello-GPT checkpoint, trained only on next-move prediction.</p>
+    </div>
+    <p class="sr-only">A real Othello game is shown as input, followed by the model's top eight next-move predictions; the dataset's next move is highlighted in gold. A board shows the true position and legal moves.</p>
+  </section>
+
+  <section class="slide" data-title="Where is the board?" data-step="05" data-accent="#5ef2b0">
+    <div class="slide-inner">
+      <div class="copy">
+        <div class="kicker">05 · Where is the board?</div>
         <h2>The board is not in the weights.</h2>
         <p class="sub">The weights are the machine. The activation is this game’s state. The probe is a separate lens.</p>
       </div>
       <div class="stage tall" data-scene="residual"><canvas aria-hidden="true"></canvas></div>
-      <p class="source"><a href="https://arxiv.org/abs/2210.13382" target="_blank" rel="noopener">Li et al.</a>, 2023 · <a href="https://arxiv.org/abs/2309.00941" target="_blank" rel="noopener">Nanda et al.</a>, 2023. Visualization uses the public Othello-GPT linear-probe weights; the residual is an illustrative activation built from those directions.</p>
+      <p class="source"><a href="https://arxiv.org/abs/2210.13382" target="_blank" rel="noopener">Li et al.</a>, 2023 · <a href="https://arxiv.org/abs/2309.00941" target="_blank" rel="noopener">Nanda et al.</a>, 2023. Real forward pass through the public Othello-GPT checkpoint. Real linear-probe weights from Nanda et al. The board is the probe readout.</p>
     </div>
     <p class="sr-only">Three columns: the fixed model weights, the 512-dimensional activation for the current game, and the fixed probe matrix. The activation changes between two games; the probe reads out a different board.</p>
   </section>
 
-  <section class="slide" data-title="The probe" data-step="05" data-accent="#ffd166">
+  <section class="slide" data-title="The probe" data-step="06" data-accent="#ffd166">
     <div class="slide-inner">
       <div class="copy">
-        <div class="kicker">05 · The probe</div>
+        <div class="kicker">06 · The probe</div>
         <h2>64 × 3 numbers become a board.</h2>
         <p class="sub">Project the activation onto 64 squares × 3 states, then reshape the logits.</p>
       </div>
       <div class="stage tall" data-scene="probe"><canvas aria-hidden="true"></canvas></div>
-      <p class="source"><a href="https://arxiv.org/abs/2210.13382" target="_blank" rel="noopener">Li et al.</a>, 2023 · <a href="https://arxiv.org/abs/2309.00941" target="_blank" rel="noopener">Nanda et al.</a>, 2023. Real probe directions; the activation is illustrative.</p>
+      <p class="source"><a href="https://arxiv.org/abs/2210.13382" target="_blank" rel="noopener">Li et al.</a>, 2023 · <a href="https://arxiv.org/abs/2309.00941" target="_blank" rel="noopener">Nanda et al.</a>, 2023. Real activation, real probe, real board.</p>
     </div>
     <p class="sr-only">A 64 by 512 probe matrix multiplies a 512-dimensional activation to produce 64 by 3 logits. The logits are reshaped into three 8 by 8 heatmaps and the argmax board.</p>
   </section>
 
-  <section class="slide" data-title="One square" data-step="06" data-accent="#a78bfa">
+  <section class="slide" data-title="One square" data-step="07" data-accent="#a78bfa">
     <div class="slide-inner">
       <div class="copy">
-        <div class="kicker">06 · One square</div>
+        <div class="kicker">07 · One square</div>
         <h2>One square is a direction.</h2>
         <p class="sub">E4 has a 512-dimensional weight vector. The probe is a dot product: empty, white, black.</p>
       </div>
       <div class="stage tall" data-scene="one-square"><canvas aria-hidden="true"></canvas></div>
-      <p class="source"><a href="https://arxiv.org/abs/2309.00941" target="_blank" rel="noopener">Nanda et al.</a>, 2023 · <a href="https://arxiv.org/abs/2311.03658" target="_blank" rel="noopener">Park et al.</a>, 2024. Real E4 directions from the public probe.</p>
+      <p class="source"><a href="https://arxiv.org/abs/2309.00941" target="_blank" rel="noopener">Nanda et al.</a>, 2023 · <a href="https://arxiv.org/abs/2311.03658" target="_blank" rel="noopener">Park et al.</a>, 2024. Real activation and real E4 directions from the public probe.</p>
     </div>
     <p class="sr-only">The E4 probe has three 512-dimensional directions. The activation is multiplied elementwise with the mine direction and summed. The three logits become probabilities and a tile state. A bar shows that 128 of 512 dimensions are used by the board.</p>
   </section>
 
-  <section class="slide" data-title="Probe geometry" data-step="07" data-accent="#6ee7ff">
+  <section class="slide" data-title="Probe geometry" data-step="08" data-accent="#6ee7ff">
     <div class="slide-inner">
       <div class="copy">
-        <div class="kicker">07 · The geometry</div>
+        <div class="kicker">08 · The geometry</div>
         <h2>A constellation, not a picture.</h2>
         <p class="sub">64 squares × 2 directions = 128 of 512 dimensions. The board is a coordinate system.</p>
       </div>
@@ -663,10 +676,10 @@
     <p class="sr-only">The 64 real probe directions projected to two dimensions form a spread-out constellation, not a board picture. A cosine-similarity heatmap shows most pairs are nearly orthogonal.</p>
   </section>
 
-  <section class="slide" data-title="The intervention" data-step="08" data-accent="#6ee7ff">
+  <section class="slide" data-title="The intervention" data-step="09" data-accent="#6ee7ff">
     <div class="slide-inner">
       <div class="copy">
-        <div class="kicker">08 · The intervention</div>
+        <div class="kicker">09 · The intervention</div>
         <h2>Change the map. Change the move.</h2>
         <p class="sub">Edit the internal state, and the model plays a different board.</p>
       </div>
@@ -676,10 +689,10 @@
     <p class="sr-only">Animation: a board with legal moves, a latent activation pushed along the mine-theirs direction, and a bar chart of next-move probabilities morphing after the internal board is edited.</p>
   </section>
 
-  <section class="slide" data-title="The player" data-step="09" data-accent="#ffd166">
+  <section class="slide" data-title="The player" data-step="10" data-accent="#ffd166">
     <div class="slide-inner">
       <div class="copy">
-        <div class="kicker">09 · The hidden variable</div>
+        <div class="kicker">10 · The hidden variable</div>
         <h2>It learns the board. And the player.</h2>
         <p class="sub">Chess forces a second latent: how strong the game is.</p>
       </div>
@@ -689,10 +702,10 @@
     <p class="sr-only">Animation: a chessboard where an internal pawn is deleted, a skill gauge rises, and a win-rate bar grows from 16.7 to 43.2 percent.</p>
   </section>
 
-  <section class="slide" data-title="Space & time" data-step="10" data-accent="#6ee7ff">
+  <section class="slide" data-title="Space & time" data-step="11" data-accent="#6ee7ff">
     <div class="slide-inner">
       <div class="copy">
-        <div class="kicker">10 · The world map</div>
+        <div class="kicker">11 · The world map</div>
         <h2>A map of the world, written in activations.</h2>
         <p class="sub">Latitude, longitude, and time are linear directions.</p>
       </div>
@@ -702,10 +715,10 @@
     <p class="sr-only">Animation: a rotating holographic globe with city lights, beside a linear timeline of historical events; a probe scan travels through time.</p>
   </section>
 
-  <section class="slide" data-title="Concepts" data-step="11" data-accent="#ff7a90">
+  <section class="slide" data-title="Concepts" data-step="12" data-accent="#ff7a90">
     <div class="slide-inner">
       <div class="copy">
-        <div class="kicker">11 · The geometry of concepts</div>
+        <div class="kicker">12 · The geometry of concepts</div>
         <h2>Truth is a line. Weeks are a circle.</h2>
         <p class="sub">Some concepts are directions. Some need a whole subspace.</p>
       </div>
@@ -715,10 +728,10 @@
     <p class="sr-only">Animation: true and false statements separate along a glowing line; beside it, concentric circles for days of the week and months of the year compute modular arithmetic.</p>
   </section>
 
-  <section class="slide" data-title="Circuits" data-step="12" data-accent="#a78bfa">
+  <section class="slide" data-title="Circuits" data-step="13" data-accent="#a78bfa">
     <div class="slide-inner">
       <div class="copy">
-        <div class="kicker">12 · The readout</div>
+        <div class="kicker">13 · The readout</div>
         <h2>The map is read by circuits.</h2>
         <p class="sub">Attention routes. MLPs remember. The residual stream carries.</p>
       </div>
@@ -728,10 +741,10 @@
     <p class="sr-only">Split animation: left, an induction-head circuit copying a pattern across a token sequence; right, an MLP key-value memory recalling Seattle and being edited to Paris.</p>
   </section>
 
-  <section class="slide" data-title="The territory" data-step="13" data-accent="#6ee7ff">
+  <section class="slide" data-title="The territory" data-step="14" data-accent="#6ee7ff">
     <div class="slide-inner">
       <div class="copy">
-        <div class="kicker">13 · The synthesis</div>
+        <div class="kicker">14 · The synthesis</div>
         <h2>A map, not the territory.</h2>
         <p class="sub">Compressed, editable, plural, and sometimes wrong.</p>
       </div>
@@ -837,9 +850,7 @@
     return new Int8Array(bytes.buffer);
   }
   const PROBE_D = decodeI8(PROBE.D);
-  const PROBE_X1 = decodeI8(PROBE.x1);
-  const PROBE_X2 = decodeI8(PROBE.x2);
-    const PROBE_COS = decodeI8(PROBE.cos);
+  const PROBE_COS = decodeI8(PROBE.cos);
   const PROBE_E4 = decodeI8(window.__PROBE_E4.q);
   const PROBE_E4S = window.__PROBE_E4.s;
   const REAL = window.__REAL.map((r) => Object.assign({}, r, { x: decodeI8(r.x) }));
@@ -857,26 +868,6 @@
   const REAL_BOARD_A = flatBoard(REAL_A.board);
   const REAL_BOARD_B = flatBoard(REAL_B.board);
   const REAL_LOGP_A = logitsToProbe(REAL_A.logits);
-  const REAL_LOGP_B = logitsToProbe(REAL_B.logits);
-
-  function displayBoard(a) {
-    const out = Array.from({ length: 8 }, () => Array(8).fill(0));
-    for (let pr = 0; pr < 8; pr++) {
-      for (let pc = 0; pc < 8; pc++) out[7 - pc][pr] = a[pr * 8 + pc];
-    }
-    return out;
-  }
-  function displayLogits(a) {
-    const out = Array.from({ length: 8 }, () => Array.from({ length: 8 }, () => [0, 0, 0]));
-    for (let pr = 0; pr < 8; pr++) {
-      for (let pc = 0; pc < 8; pc++) out[7 - pc][pr] = a[pr * 8 + pc];
-    }
-    return out;
-  }
-  const BOARD1 = displayBoard(PROBE.board1);
-  const BOARD2 = displayBoard(PROBE.board2);
-  const LOGITS1 = displayLogits(PROBE.logits1);
-  const LOGITS2 = displayLogits(PROBE.logits2);
 
   function signedColor(v) {
     const t = clamp(Math.abs(v), 0, 1);
@@ -1777,7 +1768,6 @@
       ctx.restore();
     }
     function draw(ctx, t) {
-      const phase = Math.floor(t / 8) % 2;
       const u = smooth(clamp((t % 8) / 1.2, 0, 1));
       const game = u < .5 ? REAL_A : REAL_B;
       const g = ctx.createRadialGradient(W * .5, H * .4, 0, W * .5, H * .4, W * .55);
@@ -1918,6 +1908,7 @@
         label(ctx, "apply probe", (W * .575 + W * .625) / 2, H * .39, C.cyan, .6, 6.5, "center");
         drawMiniBoard(ctx, b, W * .70, H * .64, Math.min(W * .13, H * .24), 1);
         label(ctx, "board = argmax(W · x)", W * .5, H * .95, C.gold, .85, 9, "center");
+        label(ctx, "probe: " + Math.round(REAL_A.acc * 100) + "% of squares correct", W * .5, H * .91, C.mint, .7, 7, "center");
         label(ctx, "same weights. same probe. different activation. different board.", W * .5, H * .08, C.white, .65, 9, "center");
       }
       label(ctx, "WEIGHTS — the machine", W * .03 + W * .095, H * .20, C.gold, .7, 7.5, "center");
@@ -1964,7 +1955,7 @@
       for (let r = 0; r < 8; r++) {
         for (let c = 0; c < 8; c++) {
           const [a, b, cc] = logits[r][c];
-          const p = softmax3(a, b, cc, .018)[opt];
+          const p = softmax3(a, b, cc, 1)[opt];
           const [rr, gg, bb] = rampColor(p);
           ctx.fillStyle = `rgba(${rr},${gg},${bb},${alpha})`;
           ctx.fillRect(x + c * cell, y + r * cell, cell, cell);
@@ -1990,6 +1981,8 @@
       const matY = narrow ? H * .30 : H * .31;
       const actH = 18;
       drawHeatImage(ctx, actStrip, matX, matY - 28, matW, actH, false);
+      label(ctx, "input: " + REAL_A.moves.slice(0, 5).join(" ") + " … " + REAL_A.moves.slice(-4).join(" ") + "  →  ?", matX, matY - 54, C.muted, .65, 7, "left");
+      label(ctx, "last token after " + REAL_A.moves.length + " moves", matX + matW, matY - 54, C.muted, .6, 6.5, "right");
       roundRect(ctx, matX, matY - 28, matW, actH, 2);
       ctx.strokeStyle = rgba(C.cyan, .3);
       ctx.lineWidth = 1;
@@ -2022,6 +2015,7 @@
         label(ctx, "black", W * .05 + hs * 2.5 + 20, hy2 + hs + 10, C.gold, .7, 6.5, "center");
         drawMiniBoard(ctx, REAL_BOARD_A, W * .70, H * .62, Math.min(W * .24, H * .22), .3 + .7 * reveal);
         label(ctx, "argmax → board", W * .82, H * .88, C.gold, .75, 7, "center");
+        label(ctx, "probe accuracy: " + Math.round(REAL_A.acc * 100) + "%", W * .82, H * .91, C.mint, .78, 6.5, "center");
         label(ctx, "reshape 8 × 8 × 3", W * .05, H * .48, C.cyan, .7, 7, "left");
       } else {
         const lx = matX + matW + 18, ly = matY, lw = 58, lh = matH;
@@ -2043,6 +2037,7 @@
         label(ctx, "reshape 8 × 8 × 3", hx + (3 * hs + 28) / 2, hy2 + hs + 16, C.cyan, .7, 7.5, "center");
         drawMiniBoard(ctx, REAL_BOARD_A, W * .74, H * .58, Math.min(W * .14, H * .27), .3 + .7 * reveal);
         label(ctx, "argmax → board", W * .81, H * .88, C.gold, .8, 7.5, "center");
+        label(ctx, "probe accuracy: " + Math.round(REAL_A.acc * 100) + "%", W * .81, H * .91, C.mint, .78, 6.5, "center");
         label(ctx, "logit[s,o] = Σd W[s,o,d] · x[d]", W * .40, H * .93, C.gold, .8, 8, "center");
         label(ctx, "softmax over 3 states, then argmax", W * .40, H * .97, C.muted, .6, 7, "center");
       }
@@ -2082,9 +2077,9 @@
         mineQ[i] = Math.round(mine[i] / maxMine * 127);
         prodQ[i] = Math.round(prod[i] / maxProd * 127);
       }
-      proj = REAL_A.logits[4][4][2] - REAL_A.logits[4][4][1];
+      proj = (REAL_A.logits[4][4][2] - REAL_A.logits[4][4][1]) / 10;
       f5Rows = [0, 1, 2].map((o) => makeHeatmap(PROBE_E4.subarray(o * 512, (o + 1) * 512), 512, 1, false));
-      xImg = makeHeatmap(PROBE_X1, 512, 1, false);
+      xImg = makeHeatmap(REAL_A.x, 512, 1, false);
       mineImg = makeHeatmap(mineQ, 512, 1, false);
       prodImg = makeHeatmap(prodQ, 512, 1, false);
     }
@@ -2096,7 +2091,7 @@
       ctx.stroke();
     }
     function drawBars(ctx, logits, x, y, w, h) {
-      const probs = softmax3(logits[0], logits[1], logits[2], .018);
+      const probs = softmax3(logits[0], logits[1], logits[2], 1);
       const names = ["empty", "white", "black"];
       const cols = [C.cyan, C.muted, C.gold];
       const maxP = Math.max(...probs);
@@ -2170,14 +2165,14 @@
         label(ctx, "argmax: " + (state === 1 ? "mine" : state === -1 ? "theirs" : "empty"), cardX + cs / 2, cardY + cs + 14, state === 1 ? C.gold : state === -1 ? C.coral : C.muted, .85, 8, "center");
         const ax = W * .52, ay = H * .86, aw = W * .42;
         line(ctx, ax, ay, ax + aw, ay, C.muted, 1, .25);
-        const tproj = clamp((proj + .06) / .12, 0, 1);
+        const tproj = clamp((proj + 1) / 2, 0, 1);
         glow(ctx, C.gold, ax + tproj * aw, ay, 16, .5);
         ctx.fillStyle = C.gold;
         ctx.beginPath(); ctx.arc(ax + tproj * aw, ay, 3.2, 0, TAU); ctx.fill();
         label(ctx, "theirs", ax, ay + 16, C.coral, .7, 7, "left");
         label(ctx, "mine", ax + aw, ay + 16, C.gold, .7, 7, "right");
         label(ctx, "projection on the mine/theirs axis", ax + aw / 2, ay - 12, C.muted, .65, 7, "center");
-        label(ctx, "128 of 512 dimensions used by the board", W * .5, H * .95, C.dim, .65, 7, "center");
+        label(ctx, "128 / 512 dimensions · " + Math.round(REAL_A.r2 * 100) + "% of this activation's variance", W * .5, H * .95, C.gold, .78, 7, "center");
       } else {
         drawBars(ctx, f5, W * .68, H * .26, W * .26, H * .30);
         const cardX = W * .70, cardY = H * .62, cs = Math.min(W * .13, H * .23);
@@ -2197,22 +2192,23 @@
         label(ctx, "argmax: " + (state === 1 ? "mine" : state === -1 ? "theirs" : "empty"), cardX + cs / 2, cardY + cs + 14, state === 1 ? C.gold : state === -1 ? C.coral : C.muted, .85, 8, "center");
         const ax = W * .06, ay = H * .86, aw = W * .32;
         line(ctx, ax, ay, ax + aw, ay, C.muted, 1, .3);
-        const tproj = clamp((proj + .06) / .12, 0, 1);
+        const tproj = clamp((proj + 1) / 2, 0, 1);
         glow(ctx, C.gold, ax + tproj * aw, ay, 18, .55);
         ctx.fillStyle = C.gold;
         ctx.beginPath(); ctx.arc(ax + tproj * aw, ay, 3.4, 0, TAU); ctx.fill();
         label(ctx, "theirs", ax, ay + 16, C.coral, .75, 7, "left");
         label(ctx, "mine", ax + aw, ay + 16, C.gold, .75, 7, "right");
         label(ctx, "projection on the mine/theirs axis", ax + aw / 2, ay - 12, C.muted, .65, 7, "center");
-        const bx = W * .44, by = H * .95, bw = W * .50;
+        const bx = W * .44, by = H * .90, bw = W * .50;
         for (let i = 0; i < 512; i++) {
           const lit = i < 128;
           ctx.fillStyle = lit ? rgba(i % 2 ? C.gold : C.cyan, .55) : rgba(C.muted, .10);
           ctx.fillRect(bx + i / 512 * bw, by, Math.max(1, bw / 512), 8);
         }
         label(ctx, "128 / 512 dimensions = 25%", bx + bw / 2, by - 10, C.gold, .8, 7.5, "center");
-        label(ctx, "the board's directions", bx, by + 18, C.dim, .6, 7, "left");
-        label(ctx, "the rest of the stream", bx + bw, by + 18, C.dim, .6, 7, "right");
+        label(ctx, "the board's directions", bx, by + 16, C.dim, .6, 7, "left");
+        label(ctx, "these 128 directions explain " + Math.round(REAL_A.r2 * 100) + "% of this activation's variance", bx + bw / 2, by + 30, C.gold, .82, 7, "center");
+        label(ctx, "the rest of the stream", bx + bw, by + 16, C.dim, .6, 7, "right");
       }
       label(ctx, "one square = one 512-dim direction; the probe is a dot product", W * .5, H * .06, C.white, .7, 9, "center");
     }
@@ -3169,6 +3165,7 @@
     river: riverScene,
     "two-worlds": twoWorldsScene,
     othello: othelloScene,
+    training: trainingScene,
     residual: residualScene,
     probe: probeScene,
     "one-square": oneSquareScene,
@@ -3232,7 +3229,7 @@
     const accent = slide.dataset.accent || "#6ee7ff";
     document.documentElement.style.setProperty("--accent", accent);
     const step = slide.dataset.step;
-    sceneCount.textContent = step === "—" ? "SOURCES" : `${step} / 13`;
+    sceneCount.textContent = step === "—" ? "SOURCES" : `${step} / 14`;
     const idx = slides.indexOf(slide);
     railButtons.forEach((b, i) => b.classList.toggle("is-active", i === idx));
   }
