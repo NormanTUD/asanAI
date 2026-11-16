@@ -468,16 +468,47 @@
     {
       kicker: "Feed-Forward-Netzwerk (FFN)",
       title: "Die Rolle von neuronalen Netzen im Transformer",
-      body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Die Punkte unten sind symbolisch; im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen höheren Raum, macht die Cluster trennbarer und projiziert zurück. So isoliert es Bedeutungen und reicht eine abstraktere Repräsentation weiter. Attention mischt Tokens; das FFN macht die verworrenen Strukturen innerhalb eines Tokens trennbarer. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.",
-      watch: "Klicke die Kontexte. Welche Muster feuern? Biege den Raum, bis die Ebene trennt.",
+      body: "Das FFN ist ein kleines MLP pro Token: Dense, Aktivierung, Dense. Die Punkte unten sind symbolisch; im echten Modell liegen die Muster nichtlinear in einem hochdimensionalen Raum. Das MLP hebt sie in einen höheren Raum, macht die Cluster trennbarer und projiziert zurück. So isoliert es Bedeutungen und reicht eine abstraktere Repräsentation weiter. Attention mischt Tokens; das FFN macht die verworrenen Strukturen innerhalb eines Tokens trennbarer. Klicke die beiden Kontexte und biege den Raum, bis eine Ebene trennt.\n\nJedes Token wird nach jedem Attention durch das gleiche Neuronale Netz getan, dass dann die kontextualisierten Tokens unabhängig voneinander verschiebt. Die Rolle im LLM: verworrene Muster trennbar machen.",
+      watch: "",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "Das FFN ist ein MLP: Dense, Aktivierung, Dense. Es arbeitet auf jedem Token einzeln. Seine Rolle im LLM: verworrene Muster trennbar machen.",
       deep: "Ein echtes FFN hat keine beschrifteten Keys. Die Muster sind gelernte Richtungen in W₁; der Pull ist eine gelernte Richtung in W₂. Die Demo zeigt die Idee, nicht die exakten Gewichte.",
       boxes: [
-        box("ffn-1", "Mathematik", "Die Dense-Einheit", "dense(x) = activation(Wx + b). Das FFN ist dense₂(activation(dense₁(x))). Die Aktivierung bringt die Nichtlinearität."),
+        box("ffn-1", "Mathematik", "Wie sind FFN mathematisch aufgebaut?", "Die Layer sind so aufgebaut:\n\n$$\\text{dense}(x) = \\text{Aktivierung}\\left( \\underbrace{W}_{\\text{Gewichte}} \\cdot \\underbrace{x}_{\\text{Eingabe}} + \\underbrace{b}_{\\text{Bias}} \\right)$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{Aktivierung}(\\underbrace{\\text{dense}_1(x)}_{\\text{Erste Schicht}})\\right)$$"),
         box("ffn-2", "Technik", "Warum das FFN?", "Attention bewegt Information zwischen Tokens. Das FFN ist ein MLP pro Token und trennt Muster, die sonst verworren bleiben. Beide zusammen bilden einen Block."),
-        box("ffn-3", "Verbindung", "Ist das ein MLP?", "Ja. Das FFN ist dense₂(activation(dense₁(x))). Es arbeitet auf jedem Token einzeln und macht verworrene Strukturen trennbar. Attention liefert den Kontext; das FFN formt ihn."),
-        box("ffn-4", "Geometrie", "Ist der reichere Vektor hochdimensional?", "Ja. Jeder Punkt in diesen Demos steht für einen Vektor mit Tausenden Dimensionen. Die zwei oder drei Achsen sind nur eine Projektion für uns; das FFN rechnet im vollen Raum. Die Muster in W₁ und der Pull in W₂ sind Richtungen in diesem hochdimensionalen Raum.")
+        box("ffn-4", "Geometrie", "Ist der reichere Vektor hochdimensional?", "Ja. Jeder Punkt hier steht für einen Vektor mit Tausenden Dimensionen. Die zwei oder drei Achsen sind nur eine Projektion für uns; das FFN rechnet im vollen Raum. Die Muster in $W_1$ und der Pull in $W_2$ sind Richtungen in diesem hochdimensionalen Raum.")
+      ],
+      questionGroups: [
+        { id: "g-basics", title: "Eine Ebene tiefer", questions: [] },
+        {
+          id: "g-lens-mathematik",
+          title: "Mathematik",
+          questions: [
+            { id: "q-box-ffn-1", title: "Wie sind FFN mathematisch aufgebaut?", body: "Die Layer sind so aufgebaut:\n\n$$\\text{dense}(x) = \\text{Aktivierung}\\left( \\underbrace{W}_{\\text{Gewichte}} \\cdot \\underbrace{x}_{\\text{Eingabe}} + \\underbrace{b}_{\\text{Bias}} \\right)$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{Aktivierung}(\\underbrace{\\text{dense}_1(x)}_{\\text{Erste Schicht}})\\right)$$", tex: "", kind: "trivia" }
+          ]
+        },
+        {
+          id: "g-lens-technik",
+          title: "Technik",
+          questions: [
+            { id: "q-box-ffn-2", title: "Warum das FFN?", body: "Attention bewegt Information zwischen Tokens. Das FFN ist ein MLP pro Token und trennt Muster, die sonst verworren bleiben. Beide zusammen bilden einen Block.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-lens-geometrie",
+          title: "Geometrie",
+          questions: [
+            { id: "q-box-ffn-4", title: "Ist der reichere Vektor hochdimensional?", body: "Ja. Jeder Punkt hier steht für einen Vektor mit Tausenden Dimensionen. Die zwei oder drei Achsen sind nur eine Projektion für uns; das FFN rechnet im vollen Raum. Die Muster in $W_1$ und der Pull in $W_2$ sind Richtungen in diesem hochdimensionalen Raum.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-sources",
+          title: "Quellen",
+          sources: [
+            { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+            { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2010.01019", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
+          ]
+        }
       ],
       sources: [
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
@@ -488,16 +519,47 @@
     {
       kicker: "Feed-forward network (FFN)",
       title: "The role of neural networks in the transformer",
-      body: "The FFN is a small MLP per token: dense, activation, dense. The points below are symbolic; in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, makes the clusters more separable, and projects back. That is how it isolates meanings and passes on a more abstract representation. Attention mixes tokens; the FFN makes the entangled structures inside one token more separable. Click the two contexts and bend the space until a plane separates them.",
-      watch: "Click the contexts. Which patterns fire? Bend the space until the plane separates them.",
+      body: "The FFN is a small MLP per token: dense, activation, dense. The points below are symbolic; in a real model the patterns lie nonlinearly in a high-dimensional space. The MLP lifts them into a higher space, makes the clusters more separable, and projects back. That is how it isolates meanings and passes on a more abstract representation. Attention mixes tokens; the FFN makes the entangled structures inside one token more separable. Click the two contexts and bend the space until a plane separates them.\n\nAfter every attention step, each token is passed through the same neural network, which then shifts the contextualised tokens independently of one another. The role in the LLM: make entangled patterns separable.",
+      watch: "",
       demoState: { scene: "ffn", mode: "fruit" },
       context: "The FFN is an MLP: dense, activation, dense. It works on each token separately. Its role in the LLM: make entangled patterns separable.",
       deep: "A real FFN has no labelled keys. The patterns are learned directions in W₁; the pull is a learned direction in W₂. The demo shows the idea, not the exact weights.",
       boxes: [
-        box("ffn-1", "Mathematics", "The dense unit", "dense(x) = activation(Wx + b). The FFN is dense₂(activation(dense₁(x))). The activation supplies the nonlinearity."),
+        box("ffn-1", "Mathematics", "How is the FFN built mathematically?", "The layers are built like this:\n\n$$\\text{dense}(x) = \\text{activation}\\left( \\underbrace{W}_{\\text{weights}} \\cdot \\underbrace{x}_{\\text{input}} + \\underbrace{b}_{\\text{bias}} \\right)$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{activation}(\\underbrace{\\text{dense}_1(x)}_{\\text{first layer}})\\right)$$"),
         box("ffn-2", "Technique", "Why the FFN?", "Attention moves information between tokens. The FFN is an MLP per token and separates patterns that would otherwise stay entangled. Together they form one block."),
-        box("ffn-3", "Connection", "Is this an MLP?", "Yes. The FFN is dense₂(activation(dense₁(x))). It works on each token separately and makes entangled structures separable. Attention supplies the context; the FFN shapes it."),
-        box("ffn-4", "Geometry", "Is the richer vector high-dimensional?", "Yes. Every point in these demos stands for a vector with thousands of dimensions. The two or three axes are only a projection for us; the FFN computes in the full space. The patterns in W₁ and the pull in W₂ are directions in that high-dimensional space.")
+        box("ffn-4", "Geometry", "Is the richer vector high-dimensional?", "Yes. Every point here stands for a vector with thousands of dimensions. The two or three axes are only a projection for us; the FFN computes in the full space. The patterns in $W_1$ and the pull in $W_2$ are directions in that high-dimensional space.")
+      ],
+      questionGroups: [
+        { id: "g-basics", title: "One level deeper", questions: [] },
+        {
+          id: "g-lens-mathematics",
+          title: "Mathematics",
+          questions: [
+            { id: "q-box-ffn-1", title: "How is the FFN built mathematically?", body: "The layers are built like this:\n\n$$\\text{dense}(x) = \\text{activation}\\left( \\underbrace{W}_{\\text{weights}} \\cdot \\underbrace{x}_{\\text{input}} + \\underbrace{b}_{\\text{bias}} \\right)$$\n\n$$\\text{FFN}(x) = \\text{dense}_2\\left(\\text{activation}(\\underbrace{\\text{dense}_1(x)}_{\\text{first layer}})\\right)$$", tex: "", kind: "trivia" }
+          ]
+        },
+        {
+          id: "g-lens-technique",
+          title: "Technique",
+          questions: [
+            { id: "q-box-ffn-2", title: "Why the FFN?", body: "Attention moves information between tokens. The FFN is an MLP per token and separates patterns that would otherwise stay entangled. Together they form one block.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-lens-geometry",
+          title: "Geometry",
+          questions: [
+            { id: "q-box-ffn-4", title: "Is the richer vector high-dimensional?", body: "Yes. Every point here stands for a vector with thousands of dimensions. The two or three axes are only a projection for us; the FFN computes in the full space. The patterns in $W_1$ and the pull in $W_2$ are directions in that high-dimensional space.", tex: "", kind: "question" }
+          ]
+        },
+        {
+          id: "g-sources",
+          title: "Sources",
+          sources: [
+            { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
+            { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2010.01019", why: { de: "FFN-Schichten als Key-Value-Gedächtnis.", en: "FFN layers as key-value memory." } }
+          ]
+        }
       ],
       sources: [
         { label: "Vaswani et al. (2017), Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", why: { de: "Führt Self-Attention und den Transformer-Block ein.", en: "Introduces self-attention and the transformer block." } },
@@ -2277,7 +2339,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-16-codesem-five-code",
+    overlayRevision: "2026-11-16-ffn-math",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.
