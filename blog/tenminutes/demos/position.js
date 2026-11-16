@@ -30,6 +30,15 @@
       out.push(p);
       return out;
     }
+    function addTrailTo(target) {
+      if (!trail.length) trail.push(0);
+      var last = trail[trail.length - 1];
+      if (target > last) {
+        for (var t = last + 12; t < target; t += 12) trail.push(t);
+      }
+      if (trail.indexOf(target) < 0) trail.push(target);
+      trail.sort(function (a, b) { return a - b; });
+    }
     var trail = trailSeed(pos);
     var trailPoints = [], hoverTrail = -1;
     var sweep = null;
@@ -247,11 +256,9 @@
           posEl.value = String(pos);
           posEl.nextElementSibling.textContent = String(pos);
         }
-        var lastTrail = trail.length ? trail[trail.length - 1] : pos;
-        for (var tp = lastTrail + 12; tp < pos; tp += 12) trail.push(tp);
-        if (pos > lastTrail) trail.push(pos);
+        addTrailTo(pos);
         if (st >= 1) {
-          pos = sweep.to; posAnim = pos; trail.push(pos);
+          pos = sweep.to; posAnim = pos; addTrailTo(pos);
           sweep = null;
           if (posEl) { posEl.value = String(pos); posEl.nextElementSibling.textContent = String(pos); }
         }
@@ -274,6 +281,7 @@
       var y = (e.clientY - r.top - padT) / (r.height - padT - padB);
       pos = Math.round(clamp(y, 0, 1) * (Math.min(context, 128) - 1));
       posEl.value = String(pos); posEl.nextElementSibling.textContent = String(pos);
+      addTrailTo(pos);
       draw();
     });
     curve.addEventListener("pointerdown", function (e) { drag = { x: e.clientX, y: e.clientY }; });
@@ -298,7 +306,7 @@
       drag.x = e.clientX; drag.y = e.clientY; drawCurve();
     });
     window.addEventListener("pointerup", function () { drag = null; });
-    posEl.addEventListener("input", function () { sweep = null; hoverTrail = -1; pos = parseInt(posEl.value, 10); posAnim = pos; trail = trailSeed(pos); posEl.nextElementSibling.textContent = String(pos); draw(); });
+    posEl.addEventListener("input", function () { sweep = null; hoverTrail = -1; pos = parseInt(posEl.value, 10); posAnim = pos; addTrailTo(pos); posEl.nextElementSibling.textContent = String(pos); draw(); });
     var rot = el.querySelector("[data-rotate]");
     rot.addEventListener("click", function () { rotate = !rotate; rot.classList.toggle("is-on", rotate); });
     window.addEventListener("resize", resize);
@@ -318,13 +326,12 @@
     function next() {
       if (sweep) { finishSweep(); return true; }
       if (pos >= 10000) return false;
-      trail = [pos];
       sweep = { from: pos, to: 10000, start: performance.now(), duration: 5000 };
       return true;
     }
     function prev() {
       if (sweep) { sweep = null; return true; }
-      if (trail.length > 1 || pos > 0) { pos = 0; posAnim = 0; trail = [0]; if (posEl) { posEl.value = "0"; posEl.nextElementSibling.textContent = "0"; } draw(); return true; }
+      if (pos > 0) { pos = 0; posAnim = 0; addTrailTo(0); if (posEl) { posEl.value = "0"; posEl.nextElementSibling.textContent = "0"; } draw(); return true; }
       return false;
     }
     return {

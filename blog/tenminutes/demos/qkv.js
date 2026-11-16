@@ -183,8 +183,8 @@
         ctx.fillText(tok, x + bw / 2, y + bh / 2 + 0.5);
       });
       // weight bars
-      var base = y + bh + 70;
-      var maxBar = Math.max(34, h - base - 26);
+      var base = h - 28;
+      var maxBar = Math.max(34, base - (y + bh) - 28);
       tokens.forEach(function (tok, i) {
         var a = weights[i];
         var x = centers[i];
