@@ -632,7 +632,7 @@
         <p class="sub">Project the activation onto 64 squares × 3 states, then reshape the logits.</p>
       </div>
       <div class="stage tall" data-scene="probe"><canvas aria-hidden="true"></canvas></div>
-      <p class="source"><a href="https://arxiv.org/abs/2210.13382" target="_blank" rel="noopener">Li et al.</a>, 2023 · <a href="https://arxiv.org/abs/2309.00941" target="_blank" rel="noopener">Nanda et al.</a>, 2023. Real probe matrix; the activation is illustrative.</p>
+      <p class="source"><a href="https://arxiv.org/abs/2210.13382" target="_blank" rel="noopener">Li et al.</a>, 2023 · <a href="https://arxiv.org/abs/2309.00941" target="_blank" rel="noopener">Nanda et al.</a>, 2023. Real probe directions; the activation is illustrative.</p>
     </div>
     <p class="sr-only">A 64 by 512 probe matrix multiplies a 512-dimensional activation to produce 64 by 3 logits. The logits are reshaped into three 8 by 8 heatmaps and the argmax board.</p>
   </section>
@@ -810,11 +810,6 @@
     const [r, g, b] = hexRgb(hex);
     return `rgba(${r},${g},${b},${clamp(a, 0, 1)})`;
   };
-  const colorMix = (a, b, t) => {
-    const A = hexRgb(a), B = hexRgb(b);
-    return `rgb(${Math.round(lerp(A[0], B[0], t))},${Math.round(lerp(A[1], B[1], t))},${Math.round(lerp(A[2], B[2], t))})`;
-  };
-
   const C = {
     cyan: "#6ee7ff",
     violet: "#a78bfa",
@@ -1022,7 +1017,6 @@
   let SW = 0, SH = 0, SDPR = 1;
   let starData = [];
   let twinkleData = [];
-  let meteors = [];
   const starStatic = document.createElement("canvas");
   const starStaticCtx = starStatic.getContext("2d");
 
@@ -1064,17 +1058,6 @@
     starStaticCtx.globalAlpha = 1;
     drawStars(0);
   }
-  function spawnMeteor() {
-    const dir = Math.random() > .5 ? 1 : -1;
-    meteors.push({
-      x: SW * (.2 + Math.random() * .6),
-      y: -40 - Math.random() * 80,
-      vx: dir * (1.2 + Math.random() * 2.2),
-      vy: 5 + Math.random() * 4,
-      life: 1,
-      decay: .55 + Math.random() * .35
-    });
-  }
   function drawStars(t) {
     starsCtx.clearRect(0, 0, SW, SH);
     starsCtx.drawImage(starStatic, 0, 0, SW, SH);
@@ -1087,31 +1070,6 @@
       starsCtx.fill();
     }
     starsCtx.globalAlpha = 1;
-    starsCtx.globalCompositeOperation = "source-over";
-    for (let i = meteors.length - 1; i >= 0; i--) {
-      const m = meteors[i];
-      m.x += m.vx * 2.2;
-      m.y += m.vy * 2.2;
-      m.life -= m.decay * .016;
-      if (m.life <= 0) {
-        meteors.splice(i, 1);
-        continue;
-      }
-      const len = 70 + 90 * m.life;
-      const nx = m.x - m.vx * 7;
-      const ny = m.y - m.vy * 7;
-      const grad = starsCtx.createLinearGradient(m.x, m.y, nx, ny);
-      grad.addColorStop(0, rgba(C.cyan, .55 * m.life));
-      grad.addColorStop(1, rgba(C.cyan, 0));
-      starsCtx.strokeStyle = grad;
-      starsCtx.lineWidth = 1.4;
-      starsCtx.beginPath();
-      starsCtx.moveTo(m.x, m.y);
-      starsCtx.lineTo(nx, ny);
-      starsCtx.stroke();
-      glow(starsCtx, C.cyan, m.x, m.y, len * .16, .5 * m.life);
-    }
-    starsCtx.globalCompositeOperation = "source-over";
   }
 
   class Stage {
@@ -1173,11 +1131,9 @@
       ctx.globalCompositeOperation = "source-over";
     }
     render(t, dt) {
-      const t0 = performance.now();
       this.ctx.clearRect(0, 0, this.w, this.h);
       this.ambient(t);
       this.drawFn(this.ctx, t, dt, this);
-      this.lastRenderMs = performance.now() - t0;
     }
     frame(dt) {
       this.t += dt;
@@ -1798,11 +1754,10 @@
       label(ctx, "A1", x - 8, y + 5, C.muted, .55, 6.5, "right");
       label(ctx, "H8", x - 8, y + ph - 5, C.muted, .55, 6.5, "right");
       label(ctx, "512 residual dimensions", x + pw / 2, y + ph + 14, C.muted, .7, 7.5, "center");
-      label(ctx, "64 squares × 512 dims", x + pw / 2, y - 12, C.violet, .75, 8, "center");
+      label(ctx, "64 squares × 512 dims (mine slice)", x + pw / 2, y - 12, C.violet, .75, 8, "center");
       return { pw, ph };
     }
     function draw(ctx, t) {
-      const phase = Math.floor(t / 6) % 2;
       const u = smooth(clamp((t % 6) / 1.1, 0, 1));
       const b = u < .5 ? BOARD1 : BOARD2;
       const g = ctx.createRadialGradient(W * .5, H * .4, 0, W * .5, H * .4, W * .55);
@@ -1913,7 +1868,7 @@
       glow(ctx, C.gold, matX + matW * .5, hy, 20, .28);
       line(ctx, matX, hy, matX + matW, hy, C.gold, 1, .8);
       label(ctx, probeSquareLabel(row), matX - 9, hy, C.gold, .9, 7, "right");
-      label(ctx, "W — 64 squares × 512 dims", matX + matW / 2, matY + matH + 13, C.violet, .75, 7.5, "center");
+      label(ctx, "W — one 512-dim slice per square (mine)", matX + matW / 2, matY + matH + 13, C.violet, .75, 7.5, "center");
       label(ctx, "512 dims", matX + matW, matY - 8, C.muted, .55, 6.5, "right");
       label(ctx, "A1", matX - 9, matY + 4, C.muted, .5, 6, "right");
       label(ctx, "H8", matX - 9, matY + matH - 4, C.muted, .5, 6, "right");
@@ -1956,7 +1911,6 @@
         label(ctx, "softmax over 3 states, then argmax", W * .40, H * .97, C.muted, .6, 7, "center");
       }
       label(ctx, "64 × 3 logits  →  8 × 8 × 3  →  board", W * .5, H * .08, C.white, .7, 9, "center");
-      const gy = narrow ? H * .45 : H * .50;
       if (narrow) {
         label(ctx, "the board is the reshape, not a picture in x", W * .5, H * .96, C.dim, .6, 7, "center");
       } else {
@@ -2028,7 +1982,6 @@
     function draw(ctx, t) {
       const f5 = LOGITS1[4][4];
       const state = BOARD1[4][4];
-      const win = f5[2] > f5[1] && f5[2] > f5[0] ? 2 : f5[1] > f5[0] ? 1 : 0;
       const sweep = fract(t * .18);
       const g = ctx.createRadialGradient(W * .5, H * .4, 0, W * .5, H * .4, W * .55);
       g.addColorStop(0, "rgba(167,139,250,.06)");
@@ -3146,7 +3099,6 @@
     sceneCount.textContent = step === "—" ? "SOURCES" : `${step} / 13`;
     const idx = slides.indexOf(slide);
     railButtons.forEach((b, i) => b.classList.toggle("is-active", i === idx));
-    spawnMeteor();
   }
 
   const io = new IntersectionObserver((entries) => {
@@ -3246,9 +3198,6 @@
 
   resizeStars();
   if (reduced) drawStars(0);
-  window.__wmDrawStars = drawStars;
-  window.__wmActive = () => activeStage;
-  window.__wmStages = stages;
   requestAnimationFrame(tick);
 })();
 </script>
