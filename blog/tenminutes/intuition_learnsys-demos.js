@@ -27,7 +27,8 @@
       var inst = SCENES[next] ? SCENES[next](layer, api) : null;
       return { layer: layer, api: inst };
     }
-    function mount(next) {
+    var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    function mount(next, dir) {
       if (visited[next] && scenes[next] && next !== "manifold") {
         var old = scenes[next];
         if (old.api && old.api.destroy) { try { old.api.destroy(); } catch (e) {} }
@@ -35,21 +36,31 @@
         delete scenes[next];
       }
       if (!scenes[next]) scenes[next] = makeLayer(next);
+      var stepDir = dir < 0 ? "prev" : "next";
       Object.keys(scenes).forEach(function (key) {
         if (key === next) return;
         var other = scenes[key];
         if (!other.layer.hidden) {
-          other.layer.classList.remove("is-active");
+          other.layer.classList.remove("is-active", "is-entering-next", "is-entering-prev");
+          other.layer.classList.add("is-leaving-" + stepDir);
           if (other.api && other.api.pause) { try { other.api.pause(); } catch (e) {} }
           setTimeout(function () {
-            if (!other.layer.classList.contains("is-active")) other.layer.hidden = true;
-          }, 250);
+            if (!other.layer.classList.contains("is-active")) {
+              other.layer.hidden = true;
+              other.layer.classList.remove("is-leaving-next", "is-leaving-prev");
+            }
+          }, reduced ? 0 : 380);
         }
       });
       var entry = scenes[next];
       entry.layer.hidden = false;
+      entry.layer.classList.remove("is-leaving-next", "is-leaving-prev");
+      entry.layer.classList.add("is-entering-" + stepDir);
       void entry.layer.offsetWidth;
       entry.layer.classList.add("is-active");
+      setTimeout(function () {
+        entry.layer.classList.remove("is-entering-next", "is-entering-prev");
+      }, reduced ? 0 : 300);
       if (entry.api && entry.api.resume) { try { entry.api.resume(); } catch (e) {} }
       if (entry.api && entry.api.resize) entry.api.resize();
       name = next;
@@ -62,7 +73,10 @@
     return {
       update: function (s, meta) {
         var next = (s && s.scene) || "embedding";
-        if (next !== name) mount(next);
+        if (next !== name) {
+          var dir = meta && (meta.subDir || meta.dir) ? (meta.subDir || meta.dir) : 1;
+          mount(next, dir);
+        }
         if (scene && scene.update) scene.update(s || {}, meta);
       },
       preload: function (nextName) {

@@ -458,10 +458,17 @@
     }
     function setView(v) {
       if (v !== "arcs" && v !== "simplex" && v !== "graph") return;
-      view = v;
-      graphHover = -1;
-      el.querySelectorAll("[data-view]").forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-view") === view); });
-      draw();
+      if (v === view) return;
+      var order = { arcs: 0, graph: 1, simplex: 2 };
+      var dir = order[v] < order[view] ? -1 : 1;
+      function apply() {
+        view = v;
+        graphHover = -1;
+        el.querySelectorAll("[data-view]").forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-view") === view); });
+        draw();
+      }
+      if (V && V.crossfadeCanvas) V.crossfadeCanvas(canvas, apply, { dir: dir, duration: 280 });
+      else apply();
     }
     function loop() {
       if (!running) return;

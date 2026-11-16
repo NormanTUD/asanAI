@@ -7,6 +7,7 @@
   function embeddingScene(root, api) {
     var DE = api.lang === "de";
     var C = api.colors();
+    var V = window.LearnSysVisuals;
     var scene = document.createElement("div");
     scene.className = "ls-embed-scene";
     scene.innerHTML =
@@ -25,7 +26,7 @@
     var mathEl = formula.querySelector(".ls-math");
     var ctx = null, size = null, raf = 0, last = 0, reserveTimer = 0, reserveIdle = 0;
     var hits = [], hover = null, drag = null, suppressClick = false;
-    var dimMix = 0, dimTarget = 0, dimAnim = null;
+    var dimMix = 0, dimTarget = 0, dimAnim = null, stateApplied = false;
     var VIEW_PRESETS = [
       { yaw: -0.55, pitch: 0.78, zoom: 1 },
       { yaw: 0.00, pitch: 1.08, zoom: 1 },
@@ -973,6 +974,7 @@
     }
     function applyState(s) {
       if (!s) return;
+      var modeChanged = !!(s.mode && s.mode !== st.mode);
       if (s.mode) st.mode = s.mode;
       if (typeof s.dim === "number") {
         var nextDim = clamp(s.dim, 0, 2);
@@ -993,8 +995,21 @@
       st.showHighdim = !!s.showHighdim;
       if (st.dim !== 2) st.showHighdim = false;
       syncControls();
-      draw();
-      ensureLoop();
+      function paint() { draw(); ensureLoop(); }
+      if (modeChanged && stateApplied && V && V.crossfadeCanvas) {
+        V.crossfadeCanvas(canvas, paint, { dir: st.mode === "space" ? 1 : -1, duration: 300 });
+        if (controls && controls.animate && !api.reducedMotion) {
+          try {
+            controls.animate([
+              { opacity: 0, transform: "translateY(4px)" },
+              { opacity: 1, transform: "none" }
+            ], { duration: 240, delay: 30, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
+          } catch (e) {}
+        }
+      } else {
+        paint();
+      }
+      stateApplied = true;
     }
 
     function currentExampleIndex() {

@@ -233,5 +233,45 @@
     return { x: size.w / 2 + x1 * s, y: size.h / 2 - y2 * s, z: z2 };
   };
 
+  V.reducedMotion = function () {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  };
+
+  V.crossfadeCanvas = function (canvas, draw, opt) {
+    if (typeof draw !== "function") return;
+    if (!canvas || !canvas.parentNode || !canvas.width || !canvas.height) { draw(); return; }
+    var o = opt || {};
+    var dur = typeof o.duration === "number" ? o.duration : 260;
+    if (V.reducedMotion()) { draw(); return; }
+    var ghost = document.createElement("canvas");
+    ghost.width = canvas.width;
+    ghost.height = canvas.height;
+    var gctx = ghost.getContext("2d");
+    try { gctx.drawImage(canvas, 0, 0); } catch (e) { draw(); return; }
+    ghost.className = "ls-canvas-crossfade";
+    draw();
+    canvas.parentNode.appendChild(ghost);
+    var dir = o.dir || 0;
+    var distance = typeof o.distance === "number" ? o.distance : 7;
+    var dx = dir < 0 ? distance : -distance;
+    var frames = [
+      { opacity: 1, transform: "translate3d(0,0,0) scale(1)" },
+      { opacity: 0, transform: "translate3d(" + dx + "px," + (o.dy || 0) + "px,0) scale(" + (o.scale || 1.008) + ")" }
+    ];
+    var anim = null;
+    if (ghost.animate) {
+      anim = ghost.animate(frames, { duration: dur, easing: "cubic-bezier(.4,0,.2,1)", fill: "both" });
+    } else {
+      ghost.style.transition = "opacity " + dur + "ms ease, transform " + dur + "ms ease";
+      requestAnimationFrame(function () {
+        ghost.style.opacity = "0";
+        ghost.style.transform = frames[1].transform;
+      });
+    }
+    function remove() { if (ghost.parentNode) ghost.parentNode.removeChild(ghost); }
+    if (anim) anim.onfinish = remove;
+    setTimeout(remove, dur + 80);
+  };
+
   window.LearnSysVisuals = V;
 })();

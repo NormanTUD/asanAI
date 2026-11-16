@@ -5,6 +5,7 @@
   function riskmapScene(root, api) {
     var DE = api.lang === "de";
     var esc = api.esc;
+    var reduced = !!api.reducedMotion;
     var DATA = DE ? {
       risks: {
         kicker: "Risiko-Raum",
@@ -159,20 +160,50 @@
           '<span class="ls-rm-cite"><b>' + (DE ? "Quelle" : "Source") + ':</b> ' + esc(d.items[active].cite) + '</span>' +
         '</div>';
     }
+    function animatePart(node, delay, dir) {
+      if (!node || !node.animate || reduced) return;
+      try {
+        node.animate([
+          { opacity: 0, transform: "translate3d(" + (dir < 0 ? -8 : 8) + "px,4px,0)" },
+          { opacity: 1, transform: "none" }
+        ], { duration: 300, delay: delay || 0, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
+      } catch (e) {}
+    }
+    function animateDetail() {
+      animatePart(el.querySelector(".ls-rm-detail"), 0, 1);
+      var active = el.querySelector(".ls-rm-card.is-active");
+      if (active && active.animate && !reduced) {
+        try {
+          active.animate([{ transform: "translateY(1px)" }, { transform: "none" }], { duration: 220, easing: "ease-out" });
+        } catch (e) {}
+      }
+    }
+    function animateMode(dir) {
+      if (reduced) return;
+      animatePart(el.querySelector(".ls-rm-head"), 0, dir);
+      Array.prototype.forEach.call(el.querySelectorAll(".ls-rm-card"), function (card, i) {
+        animatePart(card, 36 + i * 20, dir);
+      });
+      animatePart(el.querySelector(".ls-rm-detail"), 92, dir);
+    }
     function onClick(event) {
       var card = event.target.closest ? event.target.closest("[data-item]") : null;
       if (!card || !el.contains(card)) return;
       state.active = parseInt(card.getAttribute("data-item"), 10) || 0;
       render();
+      animateDetail();
     }
     el.addEventListener("click", onClick);
     render();
     return {
       update: function (s) {
-        if (s && s.mode && DATA[s.mode]) {
+        if (s && s.mode && DATA[s.mode] && s.mode !== state.mode) {
+          var order = { risks: 0, safety: 1, limits: 2, society: 3 };
+          var dir = order[s.mode] < order[state.mode] ? -1 : 1;
           state.mode = s.mode;
           state.active = 0;
           render();
+          animateMode(dir);
         }
       },
       resize: function () {},

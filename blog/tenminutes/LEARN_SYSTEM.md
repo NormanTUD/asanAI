@@ -298,6 +298,8 @@ requires Tier 2; migration is incremental.
 | Text fade | 70 ms |
 | Enter / exit | 160 / 120 ms |
 | Stagger | 40 ms |
+| Sub-slide text | 300 ms, 260 ms ghost |
+| Sub-slide scene | 220 ms in / 360 ms out |
 
 Rules:
 
@@ -306,6 +308,26 @@ Rules:
 - Day changes may use the dynamic-layer mesh morph. Static layers stay fixed.
 - Text may fade/blur for the short window; it must not block the demo.
 - `prefers-reduced-motion` switches to instant state changes.
+
+### Sub-slide transitions
+
+A sub-slide change is a step that keeps the same day and step. The engine
+captures the current text column as an opaque ghost, renders the new sub-slide,
+then crossfades the ghost out while the new kicker, title, body, watch hint,
+depth tree, and stage heading slide in with a short stagger. The ghost is
+removed after 360 ms and old ghosts or animations are cancelled when the reader
+moves faster than the transition.
+
+Scene changes inside one sub-slide use the same direction as the sub-slide.
+`LearnSys.mount` hands `meta.subDir` (and `meta.dir` for step changes) to the
+demo; the `intuition` wrapper turns it into `is-entering-next/prev` and
+`is-leaving-next/prev` classes on the scene layers. Scenes that stay mounted
+animate their own state: `gauss` interpolates sigma, `embedding` interpolates
+the dimension, and `qkv` interpolates head weights. Canvas view, mode, or kind
+changes use `api.visual.crossfadeCanvas(canvas, draw, {dir, duration})`, which
+keeps the previous frame as a fading overlay instead of letting the new frame
+pop. A scene change during a sub-slide never shows the demo loader; the loader
+is reserved for a fresh demo mount or a step change.
 
 ## Font size and persistence
 
@@ -431,8 +453,10 @@ The demos stay individual, but the shared layer now carries the parts they
 were repeating.
 
 - `assets/learnsys-visuals.js` (`window.LearnSysVisuals`) provides palette
-  mixing, arrows, labels, grids, 2D/3D projection, heatmaps, and token chips.
-  Use it through `api.visual` or `window.LearnSysVisuals`.
+  mixing, arrows, labels, grids, 2D/3D projection, heatmaps, token chips, and
+  `crossfadeCanvas(canvas, draw, opts)`. Use it through `api.visual` or
+  `window.LearnSysVisuals`; crossfade for a view, mode, or kind switch that
+  redraws the same canvas.
 - `assets/learnsys-scene-kit.js` (`window.LearnSysSceneKit`) provides
   `canvas`, `nav`, `readout`, `range`, and `chips`. `canvas` centralises DPR
   sizing, resize, `tm:theme`, visibility, and reduced motion; `nav` and

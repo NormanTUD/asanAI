@@ -260,23 +260,68 @@
     window.addEventListener("tm:theme", function () { C = api.colors(); draw(); });
     resize();
     var lastPhase = null;
+    var introAnim = null;
+    var introToken = 0;
+    var reduced = !!api.reducedMotion;
+    function cancelIntroAnim() {
+      introToken++;
+      if (introAnim) {
+        try { introAnim.cancel(); } catch (e) {}
+        introAnim = null;
+      }
+      el.style.opacity = "";
+    }
+    function showDemo() {
+      el.classList.remove("is-intro");
+      if (typeof nextSigmaValue === "number" && nextSigmaValue !== lastSigmaTarget) {
+        lastSigmaTarget = nextSigmaValue;
+        setSigma(nextSigmaValue, true);
+      }
+    }
+    var nextSigmaValue = null;
     return {
       update: function (s) {
         if (!s) return;
         if (s.phase === "intro") {
+          cancelIntroAnim();
           if (lastPhase !== "intro") {
             el.classList.add("is-intro");
             lastPhase = "intro";
           }
           return;
         }
-        var nextSigma = typeof s.sigma === "number" ? Math.max(0.1, Math.min(2, s.sigma)) : sigma;
+        nextSigmaValue = typeof s.sigma === "number" ? Math.max(0.1, Math.min(2, s.sigma)) : sigma;
         lastPhase = "demo";
-        el.classList.remove("is-intro");
-        if (typeof s.sigma === "number" && nextSigma !== lastSigmaTarget) {
-          lastSigmaTarget = nextSigma;
-          setSigma(nextSigma, true);
+        if (!el.classList.contains("is-intro")) {
+          showDemo();
+          return;
         }
+        if (reduced || !el.animate) {
+          cancelIntroAnim();
+          showDemo();
+          return;
+        }
+        cancelIntroAnim();
+        var token = ++introToken;
+        var leave = el.animate([{ opacity: 1 }, { opacity: 0.35 }], {
+          duration: 110, easing: "ease-in", fill: "both"
+        });
+        introAnim = leave;
+        leave.onfinish = function () {
+          if (token !== introToken) return;
+          showDemo();
+          var enter = el.animate([{ opacity: 0.35 }, { opacity: 1 }], {
+            duration: 230, easing: "cubic-bezier(.22,1,.36,1)", fill: "both"
+          });
+          introAnim = enter;
+          try { leave.cancel(); } catch (e) {}
+          enter.onfinish = function () {
+            if (token !== introToken) return;
+            try { enter.cancel(); } catch (e) {}
+            el.style.opacity = "";
+            introAnim = null;
+          };
+        };
       },
       resize: resize,
       pause: function () {},

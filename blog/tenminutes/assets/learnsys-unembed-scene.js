@@ -442,7 +442,19 @@
       else if (mode === "scale") { hits = []; drawScale(); }
       else drawMap();
     }
+    function reveal(el, delay) {
+      if (!el || el.hidden || !el.animate || api.reducedMotion) return;
+      try {
+        el.animate([
+          { opacity: 0, transform: "translateY(5px)" },
+          { opacity: 1, transform: "none" }
+        ], { duration: 240, delay: delay || 0, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
+      } catch (e) {}
+    }
     function setMode(next) {
+      var order = { map: 0, angle: 1, scale: 2, unembed: 3 };
+      var modeChanged = next !== mode;
+      var dir = order[next] < order[mode] ? -1 : 1;
       mode = next;
       el.classList.toggle("is-unembed", mode === "unembed");
       tabBtns.forEach(function (b) { var on = b.getAttribute("data-mode") === mode; b.classList.toggle("is-on", on); b.setAttribute("aria-selected", String(on)); });
@@ -455,10 +467,17 @@
         if (mode === "unembed") renderUnembedList();
       }
       if (mode === "unembed") startUnembed(); else if (unembedRaf) { cancelAnimationFrame(unembedRaf); unembedRaf = 0; }
-      if (canvas.animate) {
-        try { canvas.animate([{ opacity: 0.55 }, { opacity: 1 }], { duration: 220, easing: "ease-out" }); } catch (e) {}
+      function apply() { draw(); }
+      if (modeChanged && size && V && V.crossfadeCanvas) V.crossfadeCanvas(canvas, apply, { dir: dir, duration: 280 });
+      else apply();
+      if (modeChanged) {
+        reveal(mapControls, 0);
+        reveal(angleControls, 0);
+        reveal(scaleControls, 0);
+        reveal(unembedControls, 0);
+        reveal(readout, 30);
+        reveal(caption, 60);
       }
-      draw();
     }
     function resize() { size = api.fit(canvas, stage); draw(); }
     function choose(i) {

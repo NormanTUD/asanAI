@@ -403,11 +403,15 @@
         : (DE ? "Fünf Codeblöcke in Python, JavaScript, Java, Rust und Go zeigen auf denselben abstrakten Quicksort-Knoten. def, function, void, fn und func sind Rauschen; die Bedeutung landet auf demselben Punkt." : "Five code blocks in Python, JavaScript, Java, Rust, and Go point to the same abstract quicksort node. def, function, void, fn, and func are noise; the meaning lands on the same point."));
     }
     function setKind(next) {
-      kind = next === "code" ? "code" : "language";
-      if (canvas.animate) {
-        try { canvas.animate([{ opacity: 0.55 }, { opacity: 1 }], { duration: 220, easing: "ease-out" }); } catch (e) {}
+      var value = next === "code" ? "code" : "language";
+      if (value === kind) return;
+      var dir = value === "code" ? 1 : -1;
+      function apply() {
+        kind = value;
+        draw();
       }
-      draw();
+      if (V && V.crossfadeCanvas) V.crossfadeCanvas(canvas, apply, { dir: dir, duration: 260 });
+      else apply();
     }
     function loop() {
       if (!running) return;

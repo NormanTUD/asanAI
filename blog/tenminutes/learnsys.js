@@ -132,6 +132,7 @@
   var currentDemoDay = null;
   var lastDemoDay = null;
   var lastDemoStep = null;
+  var lastDemoSub = null;
   var lastMountedScene = null;
   var demoLoaderShownAt = 0;
   var demoLoaderTimer = 0;
@@ -149,6 +150,9 @@
   var posTimer = 0;
   var suppressHash = false;
   var hashBound = false;
+  var booted = false;
+  var substepAnims = [];
+  var activeTextGhost = null;
 
   var FONT_LEVELS = [
     { id: "s", label: "Klein", body: 15, title: 24, small: 11 },
@@ -2028,12 +2032,15 @@
   }
   function mountDemo(d, s) {
     if (morphHiddenEl) { morphHiddenEl.style.opacity = ""; morphHiddenEl = null; }
-    var meta = { step: state.step, dir: 0 };
+    var sameSlide = lastDemoDay === state.day && lastDemoStep === state.step;
+    var meta = { step: state.step, dir: 0, substep: state.substep, subDir: 0 };
     if (lastDemoDay === state.day && lastDemoStep != null) {
       meta.dir = state.step - lastDemoStep;
+      if (sameSlide && lastDemoSub != null) meta.subDir = state.substep - lastDemoSub;
     }
     lastDemoDay = state.day;
     lastDemoStep = state.step;
+    lastDemoSub = state.substep;
     var nextScene = s && s.demoState && s.demoState.scene ? s.demoState.scene : null;
     if (!nextScene) {
       els.app.classList.add("is-text-only");
@@ -2052,7 +2059,7 @@
     }
     els.app.classList.remove("is-text-only");
     var sceneChanged = !!nextScene && nextScene !== lastMountedScene;
-    var needsLoader = sceneChanged || !demo || currentDemoDay !== d.id;
+    var needsLoader = !demo || currentDemoDay !== d.id || (sceneChanged && !sameSlide);
     if (needsLoader) showDemoLoader();
     if (demo && currentDemoDay === d.id) {
       try { if (demo.update) demo.update(s.demoState || {}, meta); } catch (err) {}
@@ -2584,10 +2591,104 @@
     }
     fn();
   }
+
+  function reducedMotion() {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+  function playTransition(el, frames, opts) {
+    if (!el || !el.animate) return null;
+    try {
+      var anim = el.animate(frames, opts);
+      substepAnims.push(anim);
+      function forget() {
+        var i = substepAnims.indexOf(anim);
+        if (i >= 0) substepAnims.splice(i, 1);
+      }
+      anim.addEventListener("finish", forget);
+      anim.addEventListener("cancel", forget);
+      return anim;
+    } catch (e) {
+      return null;
+    }
+  }
+  function cancelTransitions() {
+    substepAnims.slice().forEach(function (anim) {
+      try { anim.cancel(); } catch (e) {}
+    });
+    substepAnims = [];
+    if (activeTextGhost && activeTextGhost.parentNode) activeTextGhost.parentNode.removeChild(activeTextGhost);
+    activeTextGhost = null;
+  }
+  function textGhost() {
+    if (!els.textScroll || !els.textScroll.parentNode) return null;
+    if (activeTextGhost && activeTextGhost.parentNode) activeTextGhost.parentNode.removeChild(activeTextGhost);
+    var ghost = els.textScroll.cloneNode(true);
+    ghost.removeAttribute("id");
+    ghost.querySelectorAll("[id]").forEach(function (node) { node.removeAttribute("id"); });
+    ghost.querySelectorAll("[aria-live]").forEach(function (node) { node.removeAttribute("aria-live"); });
+    ghost.classList.add("ls-text-ghost");
+    ghost.setAttribute("aria-hidden", "true");
+    try { ghost.inert = true; } catch (e) {}
+    ghost.style.width = els.textScroll.offsetWidth + "px";
+    ghost.style.height = els.textScroll.offsetHeight + "px";
+    ghost.scrollTop = els.textScroll.scrollTop;
+    els.textScroll.parentNode.appendChild(ghost);
+    activeTextGhost = ghost;
+    return ghost;
+  }
+  function animateSubstep(dir, ghost) {
+    if (reducedMotion()) {
+      if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
+      if (activeTextGhost === ghost) activeTextGhost = null;
+      return;
+    }
+    var shift = dir < 0 ? -10 : 10;
+    var outEase = "cubic-bezier(.4,0,.2,1)";
+    var inEase = "cubic-bezier(.22,1,.36,1)";
+    if (ghost) {
+      playTransition(ghost, [
+        { opacity: 1, transform: "translate3d(0,0,0)" },
+        { opacity: 0, transform: "translate3d(0," + (-shift * 0.6) + "px,0)" }
+      ], { duration: 260, easing: outEase, fill: "both" });
+      setTimeout(function () {
+        if (ghost.parentNode) ghost.parentNode.removeChild(ghost);
+        if (activeTextGhost === ghost) activeTextGhost = null;
+      }, 360);
+    }
+    [
+      [els.kicker, 0, shift * 0.5],
+      [els.title, 22, shift],
+      [els.body, 52, shift * 1.4],
+      [els.watch, 88, shift * 1.1],
+      [els.extras, 112, shift * 0.8]
+    ].forEach(function (row) {
+      var el = row[0];
+      if (!el || el.hidden) return;
+      playTransition(el, [
+        { opacity: 0, transform: "translate3d(0," + row[2] + "px,0)" },
+        { opacity: 1, transform: "translate3d(0,0,0)" }
+      ], { duration: 300, delay: row[1], easing: inEase, fill: "both" });
+    });
+    [els.stageKicker, els.stageTitle].forEach(function (el, i) {
+      if (!el) return;
+      playTransition(el, [
+        { opacity: 0, transform: "translate3d(" + shift + "px,0,0)" },
+        { opacity: 1, transform: "translate3d(0,0,0)" }
+      ], { duration: 300, delay: 28 + i * 22, easing: inEase, fill: "both" });
+    });
+  }
+  function renderSubstep(dir) {
+    cancelTransitions();
+    var ghost = reducedMotion() ? null : textGhost();
+    renderAll();
+    if (els.textScroll) els.textScroll.scrollTop = 0;
+    animateSubstep(dir, ghost);
+  }
   function go(day, step, substep) {
     hideTip();
     var oldDay = state.day;
     var oldStep = state.step;
+    var oldSub = state.substep;
     var oldDemo = cfg.days[oldDay] ? cfg.days[oldDay].demo : null;
     state.day = clamp(day, 0, cfg.days.length - 1);
     var d = cfg.days[state.day];
@@ -2603,6 +2704,10 @@
       state.substep = clamp(substep, 0, viewMax);
     }
     var changed = dayChanged || demoChanged || stepChanged;
+    var substepChanged = !changed && oldSub !== state.substep;
+    var substepDir = state.substep > oldSub ? 1 : -1;
+    if (substepChanged) cancelTransitions();
+    var ghost = substepChanged && booted && !reducedMotion() ? textGhost() : null;
     var elementStep = stepChanged && !dayChanged && !demoChanged && ELEMENT_ANIM[d.demo];
     var canvasMorph = changed && CANVAS_DEMOS[oldDemo] && CANVAS_DEMOS[d.demo] && (dayChanged || demoChanged || FLOW_ON_STEP[d.demo]);
     if (els.textScroll) {
@@ -2613,6 +2718,7 @@
     }
     cueSuppressUntil = performance.now() + 500;
     swap(renderAll, changed && !INTERNAL_MORPH[d.demo] && !elementStep, canvasMorph);
+    if (substepChanged && booted) animateSubstep(substepDir, ghost);
     if (dayChanged && els.app) {
       var dir = state.day > oldDay ? "next" : "prev";
       els.app.classList.remove("is-day-next", "is-day-prev");
@@ -2633,8 +2739,7 @@
     if (base && base.substeps && state.substep < base.substeps.length - 1) {
       state.substep++;
       cueSuppressUntil = performance.now() + 500;
-      if (els.textScroll) { els.textScroll.scrollTop = 0; }
-      renderAll();
+      renderSubstep(1);
       writeHash();
       return;
     }
@@ -2656,8 +2761,7 @@
     if (base && base.substeps && state.substep > 0) {
       state.substep--;
       cueSuppressUntil = performance.now() + 500;
-      if (els.textScroll) { els.textScroll.scrollTop = 0; }
-      renderAll();
+      renderSubstep(-1);
       writeHash();
       return;
     }
@@ -5148,7 +5252,7 @@
   LS.version = "2.0";
   LS.lang = function () { return LANG; };
   LS.t = t;
-  LS.motion = { step: 180, day: 180, camera: 240, text: 70, enter: 160, exit: 120, stagger: 40 };
+  LS.motion = { step: 180, day: 180, camera: 240, text: 70, enter: 160, exit: 120, stagger: 40, substep: 300, subStagger: 24, scene: 280 };
   function smoothstep(a, b, x) {
     var t = clamp((x - a) / (b - a), 0, 1);
     return t * t * (3 - 2 * t);
@@ -5236,6 +5340,7 @@
     bind();
     renderAll();
     if (!applyHash()) writeHash();
+    booted = true;
     if (!hashBound) {
       hashBound = true;
       window.addEventListener("hashchange", function () { applyHash(); });
