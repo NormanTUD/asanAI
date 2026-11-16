@@ -44,11 +44,8 @@
     var el = document.createElement("div");
     el.className = "ls-highdim-scene";
     el.innerHTML =
-      '<div class="ls-highdim-note"><b>' + (DE ? "Jede Zeile ist die Position eines Tokens, jede Spalte eine Dimension." : "Each row is a token's position, each column a dimension.") + '</b> ' +
-        (DE ? "Reale GPT-2-Tokens und IDs, inklusive Leerzeichen-Token (id 220). Ausschnitt: 14 von 4096 Dimensionen; rechts und unten geht es weiter." : "Real GPT-2 tokens and IDs, including the space token (id 220). Slice: 14 of 4096 dimensions; it continues to the right and below.") + '</div>' +
       '<div class="ls-highdim-selected" aria-live="polite"></div>' +
-      '<div class="ls-highdim-scroll"><table>' + colgroup + '<thead>' + head + '</thead><tbody>' + body + more + '</tbody></table></div>' +
-      '<p class="ls-highdim-foot">' + (DE ? "3D reicht nicht, so wie 1D nicht gereicht hat: Manche Unterschiede brauchen eigene Richtungen. Auch mit 4096 Dimensionen gelten dieselben Regeln; Differenz, Winkel und Matrixmultiplikation funktionieren koordinatenweise weiter." : "3D is not enough, just as 1D was not enough: some differences need their own directions. Even with 4096 dimensions the same rules apply; difference, angle, and matrix multiplication still work coordinate by coordinate.") + '</p>';
+      '<div class="ls-highdim-scroll"><table>' + colgroup + '<thead>' + head + '</thead><tbody>' + body + more + '</tbody></table></div>';
     root.appendChild(el);
     var selectedEl = el.querySelector(".ls-highdim-selected");
     function showSelected(ti) {
