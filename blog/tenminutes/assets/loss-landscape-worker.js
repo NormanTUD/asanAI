@@ -87,7 +87,7 @@ self.onmessage = function (e) {
     };
   }
   var lr = Math.max(0.01, Math.min(0.3, Number(e.data.lr) || 0.08));
-  var startA = -1.55, startB = 1.62, steps = 38;
+  var startA = -2.10, startB = -2.10, steps = 38;
   var sgd = trajectory("sgd", lr, startA, startB, steps);
   var adam = trajectory("adam", lr, startA, startB, steps);
   var momentum = trajectory("momentum", lr, startA, startB, steps);

@@ -1785,8 +1785,8 @@
     kicker: "Attention",
     title: DE ? "Attention hilft, Rauschen zu ignorieren" : "Attention helps ignore noise",
     body: DE
-      ? "Sprache selbst ist Rauschen: „Der Hundt läuft die Strasse“, „The dgo runs the street“ und „Le chienn court la rue“ sind verschiedene Sprachen, Grammatiken und Tippfehler für denselben Gedanken. Dasselbe gilt für Code: „def quickSort“ und „function quick_sort“ sind Oberflächen für dieselbe Funktion. Attention versucht, eine innere, sprachunabhängige Repräsentation zu finden, die diese Unterschiede ignoriert. Und das ist nur ein Head: Ein Transformer hat viele davon parallel, und jeder kann auf etwas völlig anderes achten."
-      : "Language itself is noise: “Der Hundt läuft die Strasse”, “The dgo runs the street”, and “Le chienn court la rue” are different languages, grammars, and typos for the same thought. The same holds for code: “def quickSort” and “function quick_sort” are surfaces for the same function. Attention tries to find an inner, language-independent representation that ignores these differences. And this is only one head: a transformer has many of them in parallel, and each can attend to something completely different.",
+      ? "Sprache selbst ist Rauschen: „Der Hundt läuft die Strasse“, „The dgo runs the street“ und „Le chienn court la rue“ sind verschiedene Sprachen, Grammatiken und Tippfehler für denselben Gedanken. Dasselbe gilt für Code: Python, JavaScript, Java, Rust und Go schreiben dieselbe Funktion jeweils anders. Attention versucht, eine innere, sprachunabhängige Repräsentation zu finden, die diese Unterschiede ignoriert. Und das ist nur ein Head: Ein Transformer hat viele davon parallel, und jeder kann auf etwas völlig anderes achten."
+      : "Language itself is noise: “Der Hundt läuft die Strasse”, “The dgo runs the street”, and “Le chienn court la rue” are different languages, grammars, and typos for the same thought. The same holds for code: Python, JavaScript, Java, Rust, and Go each write the same function differently. Attention tries to find an inner, language-independent representation that ignores these differences. And this is only one head: a transformer has many of them in parallel, and each can attend to something completely different.",
     watch: "",
     demoState: { scene: "codesemantic", kind: "language" },
     context: DE ? "Die linke Seite ist die Oberfläche: Sprachen, Grammatiken, Tippfehler, Schreibweisen. Die rechte Seite ist die Bedeutung: „Hund läuft Straße“. Attention löscht die Wörter nicht; sie verschiebt ihre Repräsentation und lässt die Rauschanteile fallen. Ein echtes Modell hat keine ausdrücklich sprachunabhängige Ebene; es lernt Annäherungen aus geteiltem Kontext." : "The left side is the surface: languages, grammars, typos, spellings. The right side is the meaning: “dog runs street”. Attention does not delete the words; it moves their representation and lets the noise parts drop. A real model has no explicitly language-independent layer; it learns approximations from shared context.",
@@ -2277,7 +2277,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-16-codesem-clean",
+    overlayRevision: "2026-11-16-codesem-five-code",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.

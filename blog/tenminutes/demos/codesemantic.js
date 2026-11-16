@@ -20,16 +20,35 @@
         title: DE ? "Python-Stil" : "Python style",
         code: "def quickSort",
         color: "green",
-        noise: ["def"],
-        tokens: [{ t: "def", noise: true }, { t: "quick" }, { t: "Sort" }]
+        noise: ["def"]
       },
       {
         key: "js",
         title: DE ? "JavaScript-Stil" : "JavaScript style",
         code: "function quick_sort",
         color: "blue",
-        noise: ["function", "_"],
-        tokens: [{ t: "function", noise: true }, { t: "quick" }, { t: "_", noise: true }, { t: "sort" }]
+        noise: ["function", "_"]
+      },
+      {
+        key: "java",
+        title: DE ? "Java-Stil" : "Java style",
+        code: "void quickSort",
+        color: "gold",
+        noise: ["void"]
+      },
+      {
+        key: "rust",
+        title: DE ? "Rust-Stil" : "Rust style",
+        code: "fn quick_sort",
+        color: "sky",
+        noise: ["fn", "_"]
+      },
+      {
+        key: "go",
+        title: DE ? "Go-Stil" : "Go style",
+        code: "func quickSort",
+        color: "lime",
+        noise: ["func"]
       }
     ];
     var LANG_CARDS = [
@@ -72,7 +91,10 @@
     }
     function drawCard(ctx, card, x, y, cw, ch, active) {
       var col = cardColor(card);
-      var tokenPositions = [];
+      var noisePoints = [];
+      var titleFont = Math.max(11, Math.min(14, cw * 0.05));
+      var headerH = Math.max(22, Math.min(28, ch * 0.22));
+      var pad = Math.max(8, Math.min(12, cw * 0.04));
       ctx.save();
       ctx.fillStyle = C.paper;
       ctx.strokeStyle = active ? V.alpha(col, 0.72) : V.alpha(C.line, 0.9);
@@ -80,49 +102,29 @@
       ctx.fillRect(x, y, cw, ch);
       ctx.strokeRect(x + 0.5, y + 0.5, cw - 1, ch - 1);
       ctx.fillStyle = V.alpha(col, active ? 0.10 : 0.04);
-      ctx.fillRect(x, y, cw, 22);
+      ctx.fillRect(x, y, cw, headerH);
       ctx.fillStyle = active ? col : C.muted;
-      ctx.font = '700 ' + Math.max(11, Math.min(14, cw * 0.05)) + 'px "Barlow", sans-serif';
+      ctx.font = '700 ' + titleFont + 'px "Barlow", sans-serif';
       ctx.textAlign = "left";
       ctx.textBaseline = "middle";
-      ctx.fillText(card.title, x + 9, y + 12);
-      var codeFont = Math.max(11, Math.min(15, cw * 0.055));
+      ctx.fillText(card.title, x + pad, y + headerH / 2 + 1);
+      var codeFont = Math.min(15, Math.max(8, (cw - 22) / 11.6));
       ctx.font = '700 ' + codeFont + 'px ui-monospace,"Cascadia Code",Menlo,Consolas,monospace';
-      var codeY = y + Math.max(32, Math.min(40, ch * 0.34));
-      var codeX = x + 10;
+      var codeY = y + headerH + (ch - headerH) * 0.55;
+      var codeX = x + pad;
       card.noise.forEach(function (noiseText) {
         var idx = card.code.indexOf(noiseText);
         if (idx < 0) return;
-        var pre = card.code.slice(0, idx);
-        var nx = codeX + ctx.measureText(pre).width;
+        var nx = codeX + ctx.measureText(card.code.slice(0, idx)).width;
         var nw = ctx.measureText(noiseText).width;
-        ctx.fillStyle = V.alpha(C.lilac, 0.20);
-        ctx.fillRect(nx - 2, codeY - 9, nw + 4, 16);
+        ctx.fillStyle = V.alpha(C.lilac, 0.22);
+        ctx.fillRect(nx - 2, codeY - codeFont * 0.8, nw + 4, codeFont * 1.15);
+        noisePoints.push({ x: nx + nw / 2, y: codeY, noise: true, color: col, i: noisePoints.length });
       });
       ctx.fillStyle = C.ink;
       ctx.fillText(card.code, codeX, codeY);
-      var chipY = y + ch - Math.max(14, Math.min(22, ch * 0.19));
-      var tx = x + 10;
-      var chipFont = Math.max(6, Math.min(10, cw * 0.034));
-      card.tokens.forEach(function (tok) {
-        ctx.font = '700 ' + chipFont + 'px "Open Sans", sans-serif';
-        var tw = ctx.measureText(tok.t).width;
-        var w = tw + 10, h = chipFont + 10;
-        var noise = !!tok.noise;
-        ctx.fillStyle = noise ? V.alpha(C.lilac, 0.10) : V.alpha(col, active ? 0.08 : 0.03);
-        ctx.fillRect(tx, chipY - h / 2, w, h);
-        ctx.strokeStyle = noise ? V.alpha(C.lilac, 0.65) : V.alpha(col, active ? 0.55 : 0.22);
-        ctx.lineWidth = 1;
-        ctx.strokeRect(tx + 0.5, chipY - h / 2 + 0.5, w - 1, h - 1);
-        ctx.fillStyle = noise ? C.lilac : (active ? C.ink : C.muted);
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(tok.t, tx + w / 2, chipY + 0.5);
-        tokenPositions.push({ x: tx + w / 2, y: chipY, noise: noise, color: col, i: tokenPositions.length });
-        tx += w + 4;
-      });
       ctx.restore();
-      return tokenPositions;
+      return noisePoints;
     }
     function wrapWords(ctx, text, maxWidth) {
       var words = String(text || "").split(/\s+/).filter(Boolean);
@@ -221,7 +223,7 @@
       var list = isLang ? LANG_CARDS : CARDS;
       var cardW = Math.min(w * 0.38, 330);
       var cardX = 14;
-      var gap = isLang ? Math.max(6, h * 0.018) : Math.max(10, h * 0.045);
+      var gap = isLang ? Math.max(6, h * 0.018) : Math.max(6, h * 0.015);
       var cardH, starts = [];
       if (isLang) {
         var y0 = Math.max(28, h * 0.07);
@@ -229,14 +231,13 @@
         if (y0 + cardH * 3 + gap * 2 > h - 8) cardH = Math.max(76, (h - y0 - gap * 2 - 8) / 3);
         for (var ci = 0; ci < 3; ci++) starts.push(y0 + ci * (cardH + gap));
       } else {
-        cardH = Math.min(h * 0.36, 124);
-        var yA = Math.max(36, h * 0.12);
-        var yB = yA + cardH + gap;
-        if (yB + cardH > h - 10) {
-          cardH = Math.max(62, (h - yA - gap - 16) / 2);
-          yB = yA + cardH + gap;
+        var codeCount = list.length;
+        var yA = Math.max(30, h * 0.06);
+        cardH = Math.min(h * 0.22, 124);
+        if (yA + cardH * codeCount + gap * (codeCount - 1) > h - 8) {
+          cardH = Math.max(48, (h - yA - gap * (codeCount - 1) - 8) / codeCount);
         }
-        starts = [yA, yB];
+        for (var cj = 0; cj < codeCount; cj++) starts.push(yA + cj * (cardH + gap));
       }
       var spaceX = cardX + cardW + Math.max(18, w * 0.03);
       var spaceRight = w - 14;
@@ -399,7 +400,7 @@
       V.label(ctx, spaceTitle, w - 14, 16, { font: '700 ' + headingSize + 'px "Barlow", sans-serif', color: C.muted, align: "right", alpha: 1 });
       canvas.setAttribute("aria-label", isLang
         ? (DE ? "Neun Sätze in drei Sprachen, jeweils mit und ohne Tippfehler, zeigen auf denselben sprachunabhängigen Bedeutungs-Knoten. Tippfehler, Schreibweise und Sprache sind Rauschen; die Bedeutung landet auf demselben Punkt." : "Nine sentences in three languages, with and without typos, point to the same language-independent meaning node. Typos, spelling, and language are noise; the meaning lands on the same point.")
-        : (DE ? "Zwei Codeblöcke, def quickSort und function quick_sort, zeigen auf denselben abstrakten Quicksort-Knoten. def und function sind Rauschen; die Bedeutung landet auf demselben Punkt." : "Two code blocks, def quickSort and function quick_sort, point to the same abstract quicksort node. def and function are noise; the meaning lands on the same point."));
+        : (DE ? "Fünf Codeblöcke in Python, JavaScript, Java, Rust und Go zeigen auf denselben abstrakten Quicksort-Knoten. def, function, void, fn und func sind Rauschen; die Bedeutung landet auf demselben Punkt." : "Five code blocks in Python, JavaScript, Java, Rust, and Go point to the same abstract quicksort node. def, function, void, fn, and func are noise; the meaning lands on the same point."));
     }
     function setKind(next) {
       kind = next === "code" ? "code" : "language";

@@ -182,7 +182,7 @@
       if (loaderEl) loaderEl.hidden = false;
       setStatus(DE ? "Berechne die Loss-Fläche …" : "Computing the loss surface …");
       readout.innerHTML = '<span>' + (DE ? "Die Fläche wird im Hintergrund berechnet." : "The surface is computed in the background.") + '</span>';
-      worker = new Worker("assets/loss-landscape-worker.js?v=4");
+      worker = new Worker("assets/loss-landscape-worker.js?v=5");
       worker.onmessage = function (e) {
         data = e.data;
         started = false;
