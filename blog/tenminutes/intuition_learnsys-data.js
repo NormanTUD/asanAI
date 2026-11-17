@@ -2332,7 +2332,7 @@
       ? "Othello heißt auch Reversi. Auf dem 8×8-Brett setzt ein Zug eine Scheibe und dreht alle eingeschlossenen gegnerischen Scheiben um. Das Modell sieht nie das Brett, nur die Zugfolge."
       : "Othello is also called Reversi. On the 8×8 board, a move places one disc and flips every enclosed opposing disc. The model never sees the board, only the move sequence.",
     body: DE
-      ? "Die Welt ist ein Zustand aus 64 Feldern: leer, schwarz oder weiß. Ein Zug kann viele Felder gleichzeitig ändern. Genau diesen Zustand muss das Modell aus den Zügen rekonstruieren. Die Demo zeigt einen echten Spielverlauf; die letzte Bewegung dreht die eingeschlossenen Scheiben."
+      ? "Die Welt ist ein Zustand aus 64 Feldern: leer, schwarz oder weiß. Ein Zug kann viele Felder gleichzeitig ändern. Genau diesen Zustand muss das Modell aus den Zügen rekonstruieren. Die Demo zeigt einen echten Spielverlauf; der letzte Zug dreht die eingeschlossenen Scheiben."
       : "The world is a state of 64 squares: empty, black, or white. A move can change many squares at once. The model has to reconstruct exactly this state from the moves. The demo shows a real game; the latest move flips the enclosed discs.",
     watch: DE ? "Drücke Weiter. Sieh, wie ein Zug Scheiben umdreht." : "Press Next. Watch a move flip discs.",
     demoState: { scene: "worldmodel", step: 0 },
@@ -2344,12 +2344,12 @@
     kicker: DE ? "Die Maschine" : "The machine",
     title: DE ? "Aus Zügen wird ein Zustand" : "Moves become a state",
     teaser: DE
-      ? "Das Modell liest eine Sequenz von Zug-Tokens, ein Token pro Feld wie C4. Acht Schichten aus Attention und MLP schreiben in einen 512-dimensionalen Residualstrom. Ab Schicht vier ist das Brett daraus linear lesbar."
-      : "The model reads a sequence of move tokens, one token per square such as C4. Eight layers of attention and MLP write into a 512-dimensional residual stream. By layer four the board is linearly readable from it.",
+      ? "Das Modell liest eine Sequenz von Zug-Tokens, ein Token pro Feld wie C4. Acht Schichten aus Attention und MLP schreiben in einen 512-dimensionalen Residualstrom. Ab Schicht fünf ist das Brett vollständig; auf L8 fällt der Probe auf 90.6 Prozent."
+      : "The model reads a sequence of move tokens, one token per square such as C4. Eight layers of attention and MLP write into a 512-dimensional residual stream. By layer five the board is complete; on L8 the probe drops to 90.6 percent.",
     body: DE
-      ? "Attention schaut auf frühere Züge; MLPs erkennen Muster wie Linien und Flips. Es gibt keinen Brett-Puffer. Der Zustand entsteht verteilt im Residualstrom. Der Layer-6-Probe liest auf L1 bis L8: 82.8, 84.4, 95.3, 96.9, 100, 100, 100, 90.6 Prozent. Wichtig: Das ist derselbe L6-Probe, transferiert auf die anderen Layer, nicht pro Layer neu trainiert."
-      : "Attention looks at earlier moves; MLPs detect patterns such as lines and flips. There is no board buffer. The state emerges distributed in the residual stream. The layer-6 probe reads L1 to L8: 82.8, 84.4, 95.3, 96.9, 100, 100, 100, 90.6 percent. Important: this is the same L6 probe transferred to the other layers, not retrained per layer.",
-    watch: DE ? "Drücke Weiter. Verfolge die Schichten; ab L4 ist das Brett vollständig." : "Press Next. Follow the layers; by L4 the board is complete.",
+      ? "Attention schaut auf frühere Züge; MLPs erkennen Muster wie Linien und Flips. Es gibt keinen Brett-Puffer. Der Zustand entsteht verteilt im Residualstrom. Der Layer-6-Probe, auf L1 bis L8 transferiert, liest: 82.8, 84.4, 95.3, 96.9, 100, 100, 100, 90.6 Prozent. Wichtig: Das ist derselbe L6-Probe, nicht pro Layer neu trainiert."
+      : "Attention looks at earlier moves; MLPs detect patterns such as lines and flips. There is no board buffer. The state emerges distributed in the residual stream. The layer-6 probe, transferred to L1 through L8, reads: 82.8, 84.4, 95.3, 96.9, 100, 100, 100, 90.6 percent. Important: this is the same L6 probe, not retrained per layer.",
+    watch: DE ? "Drücke Weiter. Verfolge die Schichten; ab L5 ist das Brett vollständig." : "Press Next. Follow the layers; by L5 the board is complete.",
     demoState: { scene: "worldmodel", step: 1 },
     context: DE ? "Acht Heads pro Layer; Attention ist ein Softmax über frühere Positionen; das MLP ist ein Key-Value-Musterdetektor; Residualverbindungen addieren Updates. Die genaue Schaltung ist gelernt, nicht handcodiert." : "Eight heads per layer; attention is a softmax over earlier positions; the MLP is a key-value pattern detector; residual connections add updates. The exact circuit is learned, not hand-coded.",
     deep: DE ? "Die Layer-6-Probe ist ein Readout, kein Beweis für eine menschenähnliche Karte. Sie zeigt: Der Zustand ist linear decodierbar und kausal benutzt. Die Zahlen sind eine eigene Messung am öffentlichen Checkpoint." : "The layer-6 probe is a readout, not proof of a human-like map. It shows that the state is linearly decodable and causally used. The numbers are our own measurement on the public checkpoint."
@@ -2393,11 +2393,15 @@
     ]
   };
 
+  wmBoard.sources = [wmSources[0], wmSources[7]];
+  wmMachine.sources = [wmSources[0], wmSources[1], wmSources[5], wmSources[6]];
+  wmProbe.sources = [wmSources[1], wmSources[2], wmSources[7]];
+  wmGeometry.sources = [wmSources[2], wmSources[3], wmSources[4]];
+
   var worldModelStep = {
     kicker: DE ? "Weltmodelle" : "World models",
     title: DE ? "Wie LLM Weltmodelle bauen" : "How LLMs build world models",
-    substeps: [wmBoard, wmMachine, wmProbe, wmGeometry],
-    sources: wmSources
+    substeps: [wmBoard, wmMachine, wmProbe, wmGeometry]
   };
 
   var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, worldModelStep];
