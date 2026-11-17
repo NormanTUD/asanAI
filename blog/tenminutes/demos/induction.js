@@ -24,6 +24,8 @@
     var ctx = canvas.getContext("2d");
     var W = 1, H = 1;
     var mode = "sequence";
+    var current = 6;
+    var seqGeo = { xs: [], chipW: 0, chipH: 0, cy: 0 };
     var ARIA = {
       sequence: DE
         ? "Token-Reihe A B C A B C A; das letzte A beachtet das frühere B und sagt B voraus."
@@ -145,9 +147,15 @@
       var pad = Math.max(16, Math.min(28, W * 0.04));
       var small = W < 560;
       head(c, DE ? "Induktion" : "Induction", pad, 30, { size: small ? 18 : 22 });
-      txt(c, DE ? "Ein Muster setzt sich fort." : "A pattern continues.", pad, 50, { size: 10.5, color: C.muted });
+      txt(c, DE ? "Ein Muster setzt sich fort. Klicke ein Token." : "A pattern continues. Click a token.", pad, 50, { size: 10.5, color: C.muted });
       accent(c, pad, 64, 38);
       var tokens = ["A", "B", "C", "A", "B", "C", "A"];
+      var tok = tokens[current];
+      var prev = -1;
+      for (var q = current - 1; q >= 0; q--) {
+        if (tokens[q] === tok) { prev = q; break; }
+      }
+      var source = prev >= 0 ? prev + 1 : -1;
       var gap = Math.max(5, Math.min(12, W * 0.015));
       var chipW = Math.min(46, (W - 2 * pad - 6 * gap) / 7);
       chipW = Math.max(26, chipW);
@@ -159,37 +167,40 @@
       for (var i = 0; i < tokens.length; i++) {
         var cx = start + i * (chipW + gap) + chipW / 2;
         xs.push(cx);
-        var filled = i === 6 || i === 4;
-        var color = i === 6 ? C.gold : i === 4 ? C.sky : C.lineStrong;
+        var filled = i === current || i === source;
+        var color = i === current ? C.gold : i === source ? C.sky : C.lineStrong;
         chipBox(c, tokens[i], cx, cy, chipW, chipH, color, filled);
       }
+      seqGeo = { xs: xs, chipW: chipW, chipH: chipH, cy: cy };
       var yTop = cy - chipH / 2;
-      var a0x = xs[6], a1x = xs[4], ay0 = yTop - 2, ay1 = yTop - 4;
-      c.save();
-      c.strokeStyle = V.alpha(C.gold, 0.16);
-      c.lineWidth = 6;
-      c.lineCap = "round";
-      c.beginPath();
-      c.moveTo(a0x, ay0);
-      c.bezierCurveTo(a0x, ay0 - 42, a1x, ay1 - 42, a1x, ay1);
-      c.stroke();
-      c.restore();
-      c.save();
-      c.strokeStyle = C.gold;
-      c.lineWidth = 1.8;
-      c.lineCap = "round";
-      c.beginPath();
-      c.moveTo(a0x, ay0);
-      c.bezierCurveTo(a0x, ay0 - 42, a1x, ay1 - 42, a1x, ay1);
-      c.stroke();
-      c.restore();
-      arrowHead(c, a1x, ay1, 0, 1, 7, C.gold);
-      c.save();
-      c.fillStyle = C.gold;
-      c.beginPath();
-      c.arc(a0x, ay0, 2.3, 0, Math.PI * 2);
-      c.fill();
-      c.restore();
+      var a0x = xs[current], a1x = source >= 0 ? xs[source] : xs[current], ay0 = yTop - 2, ay1 = yTop - 4;
+      if (source >= 0 && source !== current) {
+        c.save();
+        c.strokeStyle = V.alpha(C.gold, 0.16);
+        c.lineWidth = 6;
+        c.lineCap = "round";
+        c.beginPath();
+        c.moveTo(a0x, ay0);
+        c.bezierCurveTo(a0x, ay0 - 42, a1x, ay1 - 42, a1x, ay1);
+        c.stroke();
+        c.restore();
+        c.save();
+        c.strokeStyle = C.gold;
+        c.lineWidth = 1.8;
+        c.lineCap = "round";
+        c.beginPath();
+        c.moveTo(a0x, ay0);
+        c.bezierCurveTo(a0x, ay0 - 42, a1x, ay1 - 42, a1x, ay1);
+        c.stroke();
+        c.restore();
+        arrowHead(c, a1x, ay1, 0, 1, 7, C.gold);
+        c.save();
+        c.fillStyle = C.gold;
+        c.beginPath();
+        c.arc(a0x, ay0, 2.3, 0, Math.PI * 2);
+        c.fill();
+        c.restore();
+      }
 
       var py = cy + chipH / 2 + (small ? 52 : 64);
       var panelW = Math.min(W - 2 * pad, 430);
@@ -204,11 +215,11 @@
         size: 8.5,
         color: C.muted
       });
-      var probs = [
-        { t: "A", p: 0.10, col: C.lineStrong },
-        { t: "B", p: 0.74, col: C.gold },
-        { t: "C", p: 0.16, col: C.sky }
-      ];
+      var target = source >= 0 ? tokens[source] : "";
+      var probs = ["A", "B", "C"].map(function (t) {
+        if (!target) return { t: t, p: 1 / 3, col: C.lineStrong };
+        return { t: t, p: t === target ? 0.74 : 0.13, col: t === target ? C.gold : C.sky };
+      });
       var rowH = small ? 22 : 26;
       var trackX = px + 24;
       var trackW = panelW - 62;
@@ -232,6 +243,10 @@
           color: item.col === C.gold ? C.gold : C.muted
         });
       }
+      var note = source >= 0
+        ? (DE ? "Token " + tok + " → " + target + " (nach dem früheren " + tok + ")" : "token " + tok + " → " + target + " (after the earlier " + tok + ")")
+        : (DE ? "Kein früheres " + tok + " → keine Induktion" : "no earlier " + tok + " → no induction");
+      txt(c, note, px, py + probs.length * rowH + 14, { size: 9.5, color: C.ink });
     }
 
     function drawCircuit(c) {
@@ -581,6 +596,32 @@
       ro.observe(host);
     }
     setAria();
+    canvas.addEventListener("click", function (e) {
+      if (mode !== "sequence" || !seqGeo.xs.length) return;
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      if (Math.abs(y - seqGeo.cy) > seqGeo.chipH * 0.7) return;
+      var best = -1, bestD = 1e9;
+      for (var i = 0; i < seqGeo.xs.length; i++) {
+        var d = Math.abs(seqGeo.xs[i] - x);
+        if (d < bestD) { bestD = d; best = i; }
+      }
+      if (best >= 0 && bestD <= seqGeo.chipW * 0.8) {
+        current = best;
+        draw();
+      }
+    });
+    canvas.addEventListener("pointermove", function (e) {
+      if (mode !== "sequence" || !seqGeo.xs.length) { canvas.style.cursor = ""; return; }
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      var hit = Math.abs(y - seqGeo.cy) <= seqGeo.chipH * 0.7;
+      if (hit) {
+        hit = false;
+        for (var i = 0; i < seqGeo.xs.length; i++) if (Math.abs(seqGeo.xs[i] - x) <= seqGeo.chipW * 0.8) { hit = true; break; }
+      }
+      canvas.style.cursor = hit ? "pointer" : "";
+    });
     fit();
 
     return {

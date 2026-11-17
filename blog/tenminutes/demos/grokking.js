@@ -24,6 +24,8 @@
     var W = 1, H = 1;
     var mode = "loss";
     var EPOCH_MAX = 14000;
+    var scrubEpoch = 10800;
+    var scrubbing = false;
     var MAX_LOSS = 3.1;
     var ARIA = {
       loss: DE
@@ -80,6 +82,76 @@
 
     function logFrac(e) {
       return Math.log(1 + e) / Math.log(1 + EPOCH_MAX);
+    }
+
+    function fmtEpoch(e) {
+      return e >= 1000 ? (e / 1000).toFixed(1).replace(".", ",") + "k" : String(Math.round(e));
+    }
+
+    function phaseAt(e) {
+      var phases = phaseData();
+      for (var i = 0; i < phases.length; i++) {
+        if (e >= phases[i].start && e < phases[i].end) return phases[i];
+      }
+      return phases[phases.length - 1];
+    }
+
+    function drawScrubber(c, x0, x1, y) {
+      var f = logFrac(scrubEpoch);
+      var sx = x0 + f * (x1 - x0);
+      c.save();
+      c.strokeStyle = V.alpha(C.lineStrong, 0.9);
+      c.lineWidth = 2;
+      c.beginPath();
+      c.moveTo(x0, y);
+      c.lineTo(x1, y);
+      c.stroke();
+      c.strokeStyle = V.alpha(C.gold, 0.45);
+      c.lineWidth = 4;
+      c.beginPath();
+      c.moveTo(x0, y);
+      c.lineTo(sx, y);
+      c.stroke();
+      c.fillStyle = C.gold;
+      c.beginPath();
+      c.arc(sx, y, 6, 0, Math.PI * 2);
+      c.fill();
+      c.strokeStyle = C.paper;
+      c.lineWidth = 1.5;
+      c.stroke();
+      c.restore();
+      var ph = phaseAt(scrubEpoch);
+      txt(c, (DE ? "Epoche " : "epoch ") + fmtEpoch(scrubEpoch) + " · " + ph.name, x0, y - 14, {
+        size: 9.5,
+        color: C.ink,
+        font: '600 9.5px "Open Sans", sans-serif'
+      });
+      txt(c, DE ? "ziehe" : "drag", x1, y - 14, {
+        align: "right",
+        size: 8.5,
+        color: C.muted
+      });
+    }
+
+    function scrubAt(e) {
+      var r = canvas.getBoundingClientRect();
+      var x = e.clientX - r.left;
+      var y = e.clientY - r.top;
+      if (y < H - 98 || y > H - 48) return false;
+      var pad = Math.max(18, Math.min(30, W * 0.04));
+      var x0, x1;
+      if (mode === "measures") {
+        x0 = pad + (W < 620 ? 88 : 118);
+        x1 = W - pad;
+      } else {
+        x0 = pad + (W < 620 ? 42 : 52);
+        x1 = W - pad - 10;
+      }
+      if (x < x0 - 8 || x > x1 + 8) return false;
+      var f = V.clamp((x - x0) / (x1 - x0), 0, 1);
+      scrubEpoch = Math.pow(1 + EPOCH_MAX, f) - 1;
+      draw();
+      return true;
     }
 
     function phaseData() {
@@ -300,6 +372,26 @@
         bg: C.paper,
         bgAlpha: 0.92
       });
+
+      var sx = x0 + logFrac(scrubEpoch) * pw;
+      c.save();
+      c.strokeStyle = V.alpha(C.gold, 0.55);
+      c.lineWidth = 1.2;
+      c.setLineDash([3, 4]);
+      c.beginPath();
+      c.moveTo(sx, y0);
+      c.lineTo(sx, y1);
+      c.stroke();
+      c.restore();
+      c.fillStyle = C.gold;
+      c.beginPath();
+      c.arc(sx, yOf(testLoss(scrubEpoch)), 3.4, 0, Math.PI * 2);
+      c.fill();
+      c.strokeStyle = C.paper;
+      c.lineWidth = 1.3;
+      c.stroke();
+
+      drawScrubber(c, x0, x1, H - 72);
 
       var ly = H - 50;
       var lx = pad;
@@ -599,6 +691,26 @@
         });
       }
 
+      var sy = x0 + logFrac(scrubEpoch) * (x1 - x0);
+      c.save();
+      c.strokeStyle = V.alpha(C.gold, 0.55);
+      c.lineWidth = 1.2;
+      c.setLineDash([3, 4]);
+      c.beginPath();
+      c.moveTo(sy, y0);
+      c.lineTo(sy, y1);
+      c.stroke();
+      c.restore();
+      for (var sr = 0; sr < rows.length; sr++) {
+        var ry = y0 + sr * (rowH + gap) + rowH;
+        var py2 = ry - 4 - V.clamp(rows[sr].fn(scrubEpoch), 0, 1) * (rowH - 8);
+        c.fillStyle = rows[sr].color;
+        c.beginPath();
+        c.arc(sy, py2, 2.8, 0, Math.PI * 2);
+        c.fill();
+      }
+
+      drawScrubber(c, x0, x1, H - 72);
       drawTicks(c, x0, x1, y1, small);
 
       txt(c, DE
@@ -645,6 +757,25 @@
       ro.observe(host);
     }
     canvas.setAttribute("aria-label", ARIA[mode]);
+    canvas.addEventListener("pointerdown", function (e) {
+      if (mode === "fourier") return;
+      if (scrubAt(e)) {
+        scrubbing = true;
+        e.preventDefault();
+        try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+    });
+    canvas.addEventListener("pointermove", function (e) {
+      if (!scrubbing) return;
+      scrubAt(e);
+      e.preventDefault();
+    });
+    function endScrub(e) {
+      scrubbing = false;
+      try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+    }
+    canvas.addEventListener("pointerup", endScrub);
+    canvas.addEventListener("pointercancel", endScrub);
     fit();
 
     return {

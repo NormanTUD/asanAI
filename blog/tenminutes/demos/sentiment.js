@@ -247,7 +247,7 @@
       drawAxis(c, map);
       drawClouds(c, map);
 
-      var ax = 0.8;
+      var ax = clamp(alpha, -1.2, 1.2);
       var px = map.sx(ax);
       var py = map.sy(0.52);
       var axisY = map.sy(0);
@@ -621,13 +621,33 @@
         controls.appendChild(makeChip("α = 15", null));
         controls.appendChild(makeChip("LLaMA-7B", null));
       } else {
+        var lab = document.createElement("span");
+        lab.className = "ls-sent-label";
+        lab.textContent = DE ? "Aktivierung" : "activation";
+        var range = document.createElement("input");
+        range.type = "range";
+        range.className = "ls-sent-range";
+        range.min = "-1.2";
+        range.max = "1.2";
+        range.step = "0.05";
+        range.value = String(alpha);
+        range.setAttribute("aria-label", DE ? "Position der Aktivierung" : "position of the activation");
+        var out = document.createElement("output");
+        out.className = "ls-sent-out";
+        out.textContent = formatAlpha(alpha);
+        range.addEventListener("input", function () {
+          alpha = clamp(parseFloat(range.value) || 0, -1.2, 1.2);
+          out.textContent = formatAlpha(alpha);
+          syncReadout();
+          draw();
+        });
+        sliderEl = range;
+        controls.appendChild(lab);
+        controls.appendChild(range);
+        controls.appendChild(out);
         controls.appendChild(makeChip(DE ? "negativ" : "negative", C.lilac));
         controls.appendChild(makeChip(DE ? "positiv" : "positive", C.green));
         controls.appendChild(makeChip("w", C.gold));
-        var hint = document.createElement("span");
-        hint.className = "ls-sent-label";
-        hint.textContent = DE ? "Projektion der Aktivierung" : "projection of the activation";
-        controls.appendChild(hint);
       }
     }
 

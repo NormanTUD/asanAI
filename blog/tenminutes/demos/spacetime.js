@@ -349,7 +349,7 @@
       var top = header(
         c,
         DE ? "Welches Jahr steckt in x?" : "Which year is in x?",
-        DE ? "Wahres Jahr gegen die Vorhersage aus x." : "True year against the prediction from x."
+        DE ? "Wahres Jahr vs. x · Klicke eine Person." : "true year vs. x · click a person."
       );
       var MINY = 1500, MAXY = 2020;
       var availW = W - 2 * pad;
@@ -436,10 +436,21 @@
         c.moveTo(x, ty(fig.year));
         c.lineTo(x, y);
         c.stroke();
-        if (fig.label) {
-          c.fillStyle = V.alpha(C.gold, 0.16);
+        var isSelFig = i === sel.figure;
+        hits.push({ x: x, y: y, kind: "figure", i: i, r: 13 });
+        if (isSelFig) {
+          c.fillStyle = V.alpha(C.gold, 0.18);
           c.beginPath();
-          c.arc(x, y, 6.5, 0, Math.PI * 2);
+          c.arc(x, y, 11, 0, Math.PI * 2);
+          c.fill();
+          c.strokeStyle = C.gold;
+          c.lineWidth = 1.6;
+          c.stroke();
+        }
+        if (fig.label || isSelFig) {
+          c.fillStyle = isSelFig ? C.gold : V.alpha(C.gold, 0.16);
+          c.beginPath();
+          c.arc(x, y, isSelFig ? 5.2 : 6.5, 0, Math.PI * 2);
           c.fill();
           c.fillStyle = C.gold;
           c.beginPath();
@@ -454,18 +465,19 @@
         c.strokeStyle = V.alpha(C.paper, 0.92);
         c.lineWidth = 1.1;
         c.beginPath();
-        c.arc(x, y, fig.label ? 3.8 : 3.1, 0, Math.PI * 2);
+        c.arc(x, y, (fig.label || isSelFig) ? 3.8 : 3.1, 0, Math.PI * 2);
         c.stroke();
       }
 
       for (var j = 0; j < FIGURES.length; j++) {
         var mark = FIGURES[j];
-        if (!mark.label) continue;
-        txt(c, mark.name, tx(mark.year) + mark.label[0], ty(mark.pred) + mark.label[1], {
-          size: W < 620 ? 8.4 : 9.2,
-          font: '600 ' + (W < 620 ? 8.4 : 9.2) + 'px "Open Sans", sans-serif',
-          color: C.ink,
-          align: mark.label[2]
+        var isSelMark = j === sel.figure;
+        if (!mark.label && !isSelMark) continue;
+        txt(c, mark.name, tx(mark.year) + (mark.label ? mark.label[0] : 8), ty(mark.pred) + (mark.label ? mark.label[1] : -8), {
+          size: isSelMark ? 9.6 : (W < 620 ? 8.4 : 9.2),
+          font: (isSelMark ? '700 ' : '600 ') + (isSelMark ? 9.6 : (W < 620 ? 8.4 : 9.2)) + 'px "Open Sans", sans-serif',
+          color: isSelMark ? C.gold : C.ink,
+          align: mark.label ? mark.label[2] : "left"
         });
       }
 
@@ -479,7 +491,7 @@
       var cardW = Math.min(250, W - pad - cardX);
       if (wide && cardW > 160) {
         var cardY = y0 + 8;
-        var cardH = 156;
+        var cardH = 188;
         c.fillStyle = V.alpha(PAPER2, 0.55);
         c.fillRect(cardX, cardY, cardW, cardH);
         c.strokeStyle = V.alpha(C.line, 0.9);
@@ -490,8 +502,17 @@
         accent(c, cardX + 14, cardY + 58, 28);
         head(c, "R² = 0.835", cardX + 14, cardY + 88, { size: 27, color: C.petrol });
         txt(c, DE ? "linearer Ridge-Probe" : "linear ridge probe", cardX + 14, cardY + 108, { size: 9, color: C.muted });
-        txt(c, "Gurnee & Tegmark (2023)", cardX + 14, cardY + 125, { size: 8.2, color: C.muted });
-        txt(c, DE ? "schematisch" : "schematic", cardX + 14, cardY + 141, { size: 8, color: C.muted });
+        if (sel.figure >= 0) {
+          var chosenFig = FIGURES[sel.figure];
+          txt(c, chosenFig.name, cardX + 14, cardY + 128, { size: 9.5, color: C.ink, font: '600 9.5px "Open Sans", sans-serif' });
+          txt(c, (DE ? "wahr " : "true ") + chosenFig.year + " · " + (DE ? "Probe " : "probe ") + chosenFig.pred, cardX + 14, cardY + 144, { size: 8.5, color: C.muted });
+          txt(c, "Δ " + Math.abs(chosenFig.year - chosenFig.pred) + " " + (DE ? "Jahre" : "years"), cardX + 14, cardY + 158, { size: 8.5, color: C.gold });
+          txt(c, "Gurnee & Tegmark (2023)", cardX + 14, cardY + 175, { size: 8.2, color: C.muted });
+        } else {
+          txt(c, "Gurnee & Tegmark (2023)", cardX + 14, cardY + 128, { size: 8.2, color: C.muted });
+          txt(c, DE ? "Klicke eine Person." : "Click a person.", cardX + 14, cardY + 144, { size: 8, color: C.muted });
+          txt(c, DE ? "schematisch" : "schematic", cardX + 14, cardY + 160, { size: 8, color: C.muted });
+        }
       } else {
         txt(c, DE ? "Llama-2-70B · R² = 0.835 · historische Personen" : "Llama-2-70B · R² = 0.835 · historical figures", W / 2, H - 28, {
           align: "center",
@@ -499,6 +520,14 @@
           color: C.ink,
           font: '600 ' + (W < 620 ? 9.4 : 10.2) + 'px "Open Sans", sans-serif'
         });
+        if (sel.figure >= 0) {
+          var fNarrow = FIGURES[sel.figure];
+          txt(c, fNarrow.name + " · " + fNarrow.year + " → " + fNarrow.pred + " (Δ" + Math.abs(fNarrow.year - fNarrow.pred) + ")", W / 2, H - 44, {
+            align: "center", size: 9, color: C.gold
+          });
+        } else {
+          txt(c, DE ? "Klicke eine Person." : "Click a person.", W / 2, H - 44, { align: "center", size: 9, color: C.muted });
+        }
       }
       footer(c);
     }
@@ -508,7 +537,7 @@
       var top = header(
         c,
         DE ? "Eine Richtung für alle?" : "One direction for all?",
-        DE ? "Raum- und Zeit-Neuronen neben der Probe-Richtung." : "Space and time neurons next to the probe direction."
+        DE ? "Raum/Zeit-Neuronen · Klicke eine Zeile." : "space/time neurons · click a row."
       );
       var cols = DE ? ["Städte", "Landmarken", "Personen", "Kunst", "Schlagzeilen"] : ["Cities", "Landmarks", "People", "Art", "Headlines"];
       var availW = W - 2 * pad;
@@ -536,10 +565,12 @@
       for (var r = 0; r < NEURONS.length; r++) {
         var row = NEURONS[r];
         var rowColor = row.color === "green" ? C.green : C.gold;
+        var isSelRow = r === sel.neuron;
+        hits.push({ x: gx, y: gy + r * cellH, w: cellW * cols.length, h: cellH, kind: "neuron", i: r, rect: true });
         txt(c, DE ? row.label[0] : row.label[1], gx - 8, gy + cellH * (r + 0.5), {
           align: "right",
           size: W < 620 ? 8 : 8.8,
-          color: C.muted
+          color: isSelRow ? C.gold : C.muted
         });
         var maxCol = 0;
         for (var m = 1; m < row.values.length; m++) {
@@ -557,6 +588,11 @@
             c.lineWidth = 1.4;
             c.strokeRect(gx + col * cellW + 1, gy + r * cellH + 1, cellW - 2, cellH - 2);
           }
+        }
+        if (isSelRow) {
+          c.strokeStyle = C.gold;
+          c.lineWidth = 2;
+          c.strokeRect(gx - 1, gy + r * cellH - 1, cellW * cols.length + 2, cellH + 2);
         }
       }
 
@@ -678,6 +714,35 @@
     window.addEventListener("resize", fit);
     window.addEventListener("tm:theme", onTheme);
     canvas.setAttribute("aria-label", ARIA[mode]);
+
+    function hitAt(x, y) {
+      var best = null, bestD = 1e9;
+      for (var i = 0; i < hits.length; i++) {
+        var h = hits[i];
+        if (h.rect) {
+          if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) return h;
+        } else {
+          var d = Math.hypot(h.x - x, h.y - y);
+          if (d < bestD) { bestD = d; best = h; }
+        }
+      }
+      if (best && bestD <= (best.r || 14)) return best;
+      return null;
+    }
+
+    canvas.addEventListener("click", function (e) {
+      var r = canvas.getBoundingClientRect();
+      var h = hitAt(e.clientX - r.left, e.clientY - r.top);
+      if (!h) return;
+      sel[h.kind] = sel[h.kind] === h.i ? -1 : h.i;
+      draw();
+    });
+
+    canvas.addEventListener("pointermove", function (e) {
+      var r = canvas.getBoundingClientRect();
+      canvas.style.cursor = hitAt(e.clientX - r.left, e.clientY - r.top) ? "pointer" : "";
+    });
+
     fit();
     loadWorld(function () { if (alive) draw(); });
 
