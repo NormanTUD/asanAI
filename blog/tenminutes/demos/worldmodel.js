@@ -21,6 +21,19 @@
     host.appendChild(canvas);
     root.appendChild(host);
     var ctx = canvas.getContext("2d");
+    var ARIA = DE ? [
+      "Othello-Brett mit Zugfolge und umgedrehten Scheiben",
+      "Acht Schichten mit Attention, MLP und Probe-Readout",
+      "Linearer Probe projiziert eine 512-dimensionale Aktivierung auf ein Brett",
+      "Eine Richtung für mein/dein und ein Kreis für Wochentage"
+    ] : [
+      "Othello board with move history and flipped discs",
+      "Eight layers with attention, MLP and probe readout",
+      "Linear probe projects a 512-dimensional activation onto a board",
+      "One direction for mine/yours and a circle for weekdays"
+    ];
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", ARIA[0]);
     var W = 1, H = 1;
     var state = { step: 0, t: 0, running: false, raf: 0, last: 0 };
     var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -91,7 +104,7 @@
     function buildFrames() {
       var b = copyBoard(INIT), player = 1, frames = [{ board: copyBoard(b), move: null, player: player, next: 1 }];
       DATA.moves.forEach(function (m) {
-        var r = 8 - parseInt(m[1], 10), c = m.charCodeAt(0) - 65;
+        var r = 8 - parseInt(m[1], 10), c = m.toUpperCase().charCodeAt(0) - 65;
         var moves = legal(b, player);
         var mv = null;
         for (var i = 0; i < moves.length; i++) if (moves[i].r === r && moves[i].c === c) mv = moves[i];
@@ -150,7 +163,7 @@
           if (v === 0) continue;
           var scale = 1;
           if (o.pulse && o.pulse.some(function (f) { return f[0] === r2 && f[1] === c2; })) {
-            scale = .72 + .28 * Math.abs(Math.cos((o.local || 0) * Math.PI));
+            scale = .10 + .90 * Math.abs(Math.cos((o.local || 0) * Math.PI));
           }
           disc(c, x + c2 * cell + cell / 2, y + r2 * cell + cell / 2, cell * .34, v, scale);
         }
@@ -224,7 +237,6 @@
         var mv = FRAMES[i].move;
         chip(c, mv ? mv.label : "·", 18 + (i - start) * 38, H - 30, 32, 18, i === idx);
       }
-      T(c, DE ? "Züge" : "moves", 18, H - 42, { size: 9, color: C.muted });
     }
 
     function drawStep1(c) {
@@ -266,7 +278,7 @@
       for (var r2 = 0; r2 < 8; r2++) b.push(DATA.boards[layer].slice(r2 * 8, r2 * 8 + 8));
       var wrong = wrongCells(b, truth);
       board(c, b, bx, by, S, { wrong: wrong, highlight: [4, 4] });
-      T(c, "L" + (layer + 1) + " · " + (DATA.acc[layer] * 100).toFixed(1) + "%", bx + S / 2, by + S + 18, { align: "center", size: 11, color: layer >= 4 ? C.green : C.gold, bg: C.paper, bgAlpha: .9 });
+      T(c, "L" + (layer + 1) + " · " + (DATA.acc[layer] * 100).toFixed(1) + "%", bx + S / 2, by + S + 18, { align: "center", size: 11, color: DATA.acc[layer] >= .95 ? C.green : C.gold, bg: C.paper, bgAlpha: .9 });
       T(c, DE ? "Probe-Readout (L6 transferiert)" : "probe readout (L6 transferred)", bx + S / 2, by + S + 35, { align: "center", size: 9, color: C.muted });
       var aw = W * .36, ah = Math.min(H * .20, 110), ax = W * .58, ay = 68;
       T(c, DE ? "Attention L6 (echt)" : "attention L6 (real)", ax, ay - 10, { size: 10, color: C.ink });
@@ -306,17 +318,18 @@
       }
       T(c, "W[s, o, d]", tx + tw / 2, ty + th / 2, { align: "center", size: 13, color: C.ink });
       T(c, DE ? "für jedes Feld s, Zustand o" : "for every square s, state o", tx + tw / 2, ty + th / 2 + 18, { align: "center", size: 9, color: C.muted });
-      var lx = W * .58, ly = H * .30, lw = W * .35, lh = Math.min(H * .42, 230);
-      T(c, DE ? "64 × 3 Logits" : "64 × 3 logits", lx, ly - 10, { size: 9, color: C.muted });
+      var lx = W * .58, ly = H * .30, lw = W * .35, lh = Math.min(H * .34, 200);
+      T(c, DE ? "64 × 3 Softmax" : "64 × 3 softmax", lx, ly - 10, { size: 9, color: C.muted });
+      if (lw > 210) T(c, DE ? "Farbe = Softmax; Argmax = Brett" : "color = softmax; argmax = board", lx + lw, ly - 10, { align: "right", size: 8, color: C.muted });
       var cell = Math.min(lw / 8, lh / 8);
       for (var r = 0; r < 8; r++) {
         for (var col = 0; col < 8; col++) {
-          var lg = DATA.logits[r][col];
-          var max = Math.max(Math.abs(lg[0]), Math.abs(lg[1]), Math.abs(lg[2]), 1);
+          var p = V.softmax(DATA.logits[r][col]);
+          var maxP = Math.max(p[0], p[1], p[2], 1e-6);
           for (var o = 0; o < 3; o++) {
-            var v2 = lg[o] / max;
+            var v2 = p[o] / maxP;
             var colr = o === 0 ? C.blue : o === 1 ? C.gold : C.ink;
-            c.fillStyle = V.mix(C.paper2, colr, Math.min(1, Math.abs(v2)));
+            c.fillStyle = V.mix(C.paper2, colr, Math.min(1, v2));
             c.fillRect(lx + col * cell + o * (cell / 3), ly + r * cell, cell / 3 - .8, cell - .8);
           }
           if (r === 4 && col === 4) {
@@ -328,12 +341,11 @@
       }
       T(c, DE ? "leer · weiß · schwarz" : "empty · white · black", lx, ly + lh + 12, { size: 8, color: C.muted });
       var S = Math.min(W * .24, H * .30);
-      var bx = W * .58, by = H * .72 - S / 2;
+      var bx = W * .58, by = H * .76 - S / 2;
       var truth = [];
       for (var r2 = 0; r2 < 8; r2++) truth.push(DATA.truth.slice(r2 * 8, r2 * 8 + 8));
       board(c, truth, bx, by, S, { highlight: [4, 4] });
       T(c, "E4: −20.4 / +4.2 / −2.6 → " + (DE ? "weiß" : "white"), bx + S / 2, by + S + 16, { align: "center", size: 9.5, color: C.ink, bg: C.paper, bgAlpha: .9 });
-      T(c, DE ? "Softmax → Argmax → Feld" : "softmax → argmax → square", bx + S / 2, by - 14, { align: "center", size: 9, color: C.muted });
       T(c, "logit[s,o] = Σ W[s,o,d] · x[d]", 18, H - 18, { size: 10, color: C.ink });
       T(c, DE ? "192 Dot-Products, 64 Argmaxes" : "192 dot products, 64 argmaxes", W * .58, H - 18, { size: 10, color: C.gold });
     }
@@ -349,14 +361,14 @@
       T(c, DE ? "dein" : "yours", ax, ay + 16, { size: 9, color: C.lilac });
       T(c, DE ? "mein" : "mine", ax + aw, ay + 16, { align: "right", size: 9, color: C.green });
       var proj = DATA.e4[2] - DATA.e4[1];
-      var px = ax + aw * .5 - (proj / 10) * aw * .45;
+      var px = ax + aw * .5 + (proj / 10) * aw * .45;
       c.strokeStyle = C.gold;
       c.lineWidth = 4;
       c.beginPath(); c.moveTo(ax + aw * .5, ay); c.lineTo(px, ay); c.stroke();
       c.beginPath(); c.arc(px, ay, 6, 0, Math.PI * 2); c.fillStyle = C.gold; c.fill();
       T(c, "E4", px, ay - 14, { align: "center", size: 9, color: C.ink, bg: C.paper, bgAlpha: .9 });
       var cx = W * .72, cy = H * .34, R = Math.min(W * .16, H * .22);
-      T(c, DE ? "ein Unterraum: Wochentage" : "a subspace: weekdays", cx, cy - R - 20, { align: "center", size: 9, color: C.ink });
+      T(c, DE ? "ein Kreis: Wochentage" : "a circle: weekdays", cx, cy - R - 20, { align: "center", size: 9, color: C.ink });
       c.strokeStyle = C.line;
       c.lineWidth = 1;
       c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.stroke();
@@ -433,8 +445,9 @@
         var next = (s && typeof s.step === "number") ? s.step : 0;
         if (next !== state.step) {
           state.step = next;
-          state.t = 0;
+          state.t = reduced ? (next === 0 ? 2.2 : next === 1 ? .5 : 0) : 0;
           state.last = 0;
+          canvas.setAttribute("aria-label", ARIA[Math.max(0, Math.min(3, next))]);
           draw();
         }
         start();
