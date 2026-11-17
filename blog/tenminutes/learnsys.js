@@ -41,7 +41,7 @@
       calendar: "Alle Folien", calendarTitle: "Folienübersicht", close: "Schließen",
       moreKnowledge: "Mehr erfahren",
             continuation: "Fortsetzung", originalText: "Bisheriger Text",
-      edit: "Text bearbeiten", editing: "Text bearbeiten", exitEdit: "Fertig",
+      edit: "Text bearbeiten", editing: "Text bearbeiten", exitEdit: "Fertig", openAllBoxes: "Alle Boxen öffnen",
       save: "Speichern", saved: "Gespeichert", copy: "Kopieren", copied: "Kopiert",
       reset: "Zurücksetzen", resetDone: "Zurückgesetzt",
       sentenceCount: "{n} Sätze", sentenceOver: "max. {n} sichtbar, der Rest wandert nach „Mehr erfahren“",
@@ -83,7 +83,7 @@
       calendar: "All slides", calendarTitle: "Slide overview", close: "Close",
       moreKnowledge: "Learn more",
             continuation: "Continuation", originalText: "Previous text",
-      edit: "Edit text", editing: "Edit text", exitEdit: "Done",
+      edit: "Edit text", editing: "Edit text", exitEdit: "Done", openAllBoxes: "Open all boxes",
       save: "Save", saved: "Saved", copy: "Copy", copied: "Copied",
       reset: "Reset", resetDone: "Reset",
       sentenceCount: "{n} sentences", sentenceOver: "max. {n} visible, the rest moves to “Learn more”",
@@ -113,6 +113,8 @@
   var root = null;
   var cfg = null;
   var state = { track: "all", depth: "standard", font: 1, day: 0, step: 0, substep: 0, edit: false };
+  var LOCAL_EDITOR = false;
+  var HIDE_EXPAND_ALL = false;
   var stepMemory = {};
   var MAX_TEASER_SENTENCES = 5;
   var LOREM = {
@@ -871,8 +873,8 @@
               '</div></div>' +
               '<div class="ls-field ls-font" aria-label="' + esc(t("textSize")) + '"><span>' + esc(t("text")) + '</span><button type="button" class="ls-btn ls-btn--tiny" data-font-step="-1" id="ls-font-minus" aria-label="' + esc(t("textSmaller")) + '">A−</button><output id="ls-font-out" aria-live="polite">100%</output><button type="button" class="ls-btn ls-btn--tiny" data-font-step="1" id="ls-font-plus" aria-label="' + esc(t("textLarger")) + '">A+</button></div>' +
               '<button type="button" class="ls-btn ls-btn--ghost" id="ls-all">' + esc(t("all")) + '</button>' +
-              '<button type="button" class="ls-btn ls-btn--ghost" data-ls-export title="' + esc(t("exportTitle")) + '">' + esc(t("exportJSON")) + '</button>' +
-              '<button type="button" class="ls-btn ls-btn--ghost" data-ls-import title="' + esc(t("importTitle")) + '">' + esc(t("importJSON")) + '</button>' +
+              '<button type="button" class="ls-btn ls-btn--ghost ls-local-only" data-ls-export title="' + esc(t("exportTitle")) + '">' + esc(t("exportJSON")) + '</button>' +
+              '<button type="button" class="ls-btn ls-btn--ghost ls-local-only" data-ls-import title="' + esc(t("importTitle")) + '">' + esc(t("importJSON")) + '</button>' +
               '<button type="button" class="ls-btn ls-btn--ghost" data-ls-layout title="' + esc(t("layoutTitle")) + '">' + esc(t("layoutSlides")) + '</button>' +
               '<button type="button" class="ls-btn ls-btn--ghost" data-ls-link title="' + esc(t("copyLink")) + '">' + esc(t("copyLink")) + '</button>' +
             '</div>' +
@@ -886,7 +888,7 @@
           '<section class="ls-text" aria-live="polite">' +
             '<div class="ls-text-mobile-head"><button type="button" class="ls-btn ls-btn--tiny ls-text-close" id="ls-text-close" aria-label="' + (LANG === "de" ? "Zur Demo" : "Back to demo") + '">← Demo</button></div>' +
             '<div class="ls-text-scroll">' +
-              (cfg.mix ? '<div class="ls-navbar" id="ls-navbar"><button type="button" class="ls-btn ls-btn--tiny ls-cal-open" id="ls-calendar-btn" data-no-height-test="1" title="' + esc(t("calendarTitle")) + '" aria-label="' + esc(t("calendarTitle")) + '"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="10" fill="none" stroke="currentColor" stroke-width="1.2"></rect><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3" fill="none" stroke="currentColor" stroke-width="1.2"></path></svg></button>' + '<button type="button" class="ls-btn ls-btn--tiny" data-ls-export data-no-height-test="1" title="' + esc(t("exportTitle")) + '" aria-label="' + esc(t("exportTitle")) + '">' + esc(t("exportJSON")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" data-ls-import data-no-height-test="1" title="' + esc(t("importTitle")) + '" aria-label="' + esc(t("importTitle")) + '">' + esc(t("importJSON")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" data-ls-layout data-no-height-test="1" title="' + esc(t("layoutTitle")) + '" aria-label="' + esc(t("layoutTitle")) + '">' + esc(t("layoutSlides")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" data-ls-link data-no-height-test="1" title="' + esc(t("copyLink")) + '" aria-label="' + esc(t("copyLink")) + '">' + esc(t("copyLink")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-prev" data-no-height-test="1" title="' + esc(t("prevStep")) + '" aria-label="' + esc(t("prevStep")) + '">←</button><div class="ls-nav-pos ls-mix-pos" id="ls-mix-pos" aria-label="' + esc(cfg.singleDay ? t("stepRail") : t("position") + " 0 … " + (posCount - 1)) + '">' + posHtml + '</div><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-next" data-no-height-test="1" title="' + esc(t("nextStep")) + '" aria-label="' + esc(t("nextStep")) + '">→</button></div>' : '') +
+              (cfg.mix ? '<div class="ls-navbar" id="ls-navbar"><button type="button" class="ls-btn ls-btn--tiny ls-cal-open" id="ls-calendar-btn" data-no-height-test="1" title="' + esc(t("calendarTitle")) + '" aria-label="' + esc(t("calendarTitle")) + '"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="10" fill="none" stroke="currentColor" stroke-width="1.2"></rect><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3" fill="none" stroke="currentColor" stroke-width="1.2"></path></svg></button>' + '<button type="button" class="ls-btn ls-btn--tiny ls-local-only" data-ls-export data-no-height-test="1" title="' + esc(t("exportTitle")) + '" aria-label="' + esc(t("exportTitle")) + '">' + esc(t("exportJSON")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny ls-local-only" data-ls-import data-no-height-test="1" title="' + esc(t("importTitle")) + '" aria-label="' + esc(t("importTitle")) + '">' + esc(t("importJSON")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" data-ls-layout data-no-height-test="1" title="' + esc(t("layoutTitle")) + '" aria-label="' + esc(t("layoutTitle")) + '">' + esc(t("layoutSlides")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" data-ls-link data-no-height-test="1" title="' + esc(t("copyLink")) + '" aria-label="' + esc(t("copyLink")) + '">' + esc(t("copyLink")) + '</button>' + '<button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-prev" data-no-height-test="1" title="' + esc(t("prevStep")) + '" aria-label="' + esc(t("prevStep")) + '">←</button><div class="ls-nav-pos ls-mix-pos" id="ls-mix-pos" aria-label="' + esc(cfg.singleDay ? t("stepRail") : t("position") + " 0 … " + (posCount - 1)) + '">' + posHtml + '</div><button type="button" class="ls-btn ls-btn--tiny" id="ls-nav-next" data-no-height-test="1" title="' + esc(t("nextStep")) + '" aria-label="' + esc(t("nextStep")) + '">→</button></div>' : '') +
               '<div class="ls-kicker" id="ls-kicker"></div>' +
               '<h1 class="ls-title" id="ls-title"></h1>' +
               '<div class="ls-body" id="ls-body"></div>' +
@@ -894,7 +896,8 @@
               '<div class="ls-cues" id="ls-cues"></div>' +
               '<div class="ls-extras" id="ls-extras"></div>' +
               '<div class="ls-actions">' +
-                '<button type="button" class="ls-btn ls-btn--ghost" id="ls-edit-btn" data-no-height-test="1">' + esc(t("edit")) + '</button>' +
+                '<button type="button" class="ls-btn ls-btn--ghost ls-local-only" id="ls-edit-btn" data-no-height-test="1">' + esc(t("edit")) + '</button>' +
+                (HIDE_EXPAND_ALL ? '' : '<button type="button" class="ls-btn ls-btn--ghost ls-local-only" id="ls-open-all-boxes" data-no-height-test="1">' + esc(t("openAllBoxes")) + '</button>') +
               '</div>' +
             '</div>' +
           '</section>' +
@@ -941,6 +944,7 @@
     els.prev = root.querySelector("#ls-prev");
     els.next = root.querySelector("#ls-next");
     els.editBtn = root.querySelector("#ls-edit-btn");
+    els.openAllBoxes = root.querySelector("#ls-open-all-boxes");
     els.stageKicker = root.querySelector("#ls-stage-kicker");
     els.stageTitle = root.querySelector("#ls-stage-title");
     els.demo = root.querySelector("#ls-demo");
@@ -1946,6 +1950,7 @@
     else toggleEdit(true, target);
   }
   function toggleEdit(force, target) {
+    if (!LOCAL_EDITOR) return;
     var next = typeof force === "boolean" ? force : !state.edit;
     if (state.edit && !next) saveEditorDoc();
     state.edit = next;
@@ -3083,6 +3088,7 @@
       openAllDepth();
     });
     if (els.openDepth) els.openDepth.addEventListener("click", openDepth);
+    if (els.openAllBoxes) els.openAllBoxes.addEventListener("click", openAllDepth);
     if (els.editBtn) els.editBtn.addEventListener("click", function () { toggleEdit(); });
     bindJSONControls();
     bindLayoutPanel();
@@ -5370,6 +5376,9 @@
         state.step = 0;
       }
     }
+    LOCAL_EDITOR = window.TM_LOCAL_EDITOR === true;
+    HIDE_EXPAND_ALL = window.TM_HIDE_EXPAND_ALL === true;
+    root.classList.toggle("ls-no-editor", !LOCAL_EDITOR);
     buildUI();
     bind();
     renderAll();

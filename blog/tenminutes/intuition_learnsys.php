@@ -17,6 +17,8 @@ $monthDay = $today->format('m-d');
 $showSnow = $monthDay === '12-24';
 $showFireworks = in_array($monthDay, ['12-31', '01-01'], true);
 $showSeasonal = $showSnow || $showFireworks;
+$localEditor = is_file(__DIR__ . '/.local-editor');
+$hideExpandAll = is_file(__DIR__ . '/.hide-expand-all');
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -26,6 +28,10 @@ $showSeasonal = $showSnow || $showFireworks;
 	<meta name="description" content="A ten-minute interactive introduction to next-token prediction, the loop behind large language models.">
 	<meta name="theme-color" content="#ffffff">
 	<title>One Word at a Time | Ten Minutes</title>
+	<script>
+		window.TM_LOCAL_EDITOR = <?php echo $localEditor ? 'true' : 'false'; ?>;
+		window.TM_HIDE_EXPAND_ALL = <?php echo $hideExpandAll ? 'true' : 'false'; ?>;
+	</script>
 	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 	<link rel="stylesheet" href="learnsys.css?v=<?php echo filemtime(__DIR__.'/learnsys.css'); ?>">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
