@@ -357,7 +357,7 @@
         color: C.ink
       });
       var gy = Math.min(cy + 58, H - 20);
-      txt(c, DE ? "Ein Brett, das niemand dem Modell zeigt." : "A board the model is never shown.", pad, gy, { size: 11, color: o8 === 1 ? C.gold : o8 === 2 ? C.ink : C.muted });
+      txt(c, DE ? "Ein Brett, das niemand dem Modell zeigt." : "A board the model is never shown.", pad, gy, { size: 11, color: C.soft });
       if (narrow) {
         var seenN = Math.min(idx, DATA.moves.length);
         var tail = DATA.moves.slice(Math.max(0, seenN - 4), seenN).join(" · ");
