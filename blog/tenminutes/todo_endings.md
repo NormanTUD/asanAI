@@ -112,3 +112,14 @@ Working checklist. Keep this file in sync with the opencode todo list.
 - [x] Remember the last substep per slide; Next/Prev, the step rail and step dots restore it.
 - [x] Verified with Selenium: unembed 18.2 → 19 → 18 restores “Länge vs. Richtung”; sentiment 32.2 survives Next/Prev.
 - [x] The merged worldmodel slide also remembers its internal phase when you leave and return.
+
+## Paper figure, interactivity, reader roles
+
+- [x] Checked the Gurnee & Tegmark figure licence: arXiv page says CC BY 4.0. Used Figure 10 with author, licence and source in the visible caption.
+- [x] Copied the figure to `blog/gurnee-tegmark-world.png`; added `assets/image-credits.json` entry; served a resized version through `image.php`.
+- [x] Space/time is clickable: cities, historical figures and neuron rows update a readout.
+- [x] Induction is clickable: click any token; the arc, next-token bars and note update.
+- [x] Grokking has an epoch scrubber: drag to see phase, vertical marker and measure dots.
+- [x] Sentiment direction mode has a projection slider; steering and ITI remain interactive.
+- [x] Wrote `todo_readers.md`: 20 questions per new slide, tagged by reader role, with visual/text/gap status.
+- [x] Re-ran page test (32/32), height test (0 jumps), image-credit test, and `check_all.py --fast` after the final changes.
