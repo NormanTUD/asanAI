@@ -2314,7 +2314,93 @@
     ]
   };
 
-  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep];
+  var wmSources = [
+    { label: "Li et al. (2023), Emergent World Representations", url: "https://arxiv.org/abs/2210.13382", why: { de: "Othello-GPT: ein Brettzustand entsteht aus reiner Zugvorhersage.", en: "Othello-GPT: a board state emerges from next-move prediction alone." } },
+    { label: "Nanda, Lee & Wattenberg (2023), Emergent Linear Representations in World Models", url: "https://arxiv.org/abs/2309.00941", why: { de: "Der Brettzustand ist linear aus dem Residualstrom lesbar; lineare Probes und Interventionen.", en: "The board state is linearly readable from the residual stream; linear probes and interventions." } },
+    { label: "Park, Choe & Veitch (2024), The Linear Representation Hypothesis", url: "https://arxiv.org/abs/2311.03658", why: { de: "Konzepte als Richtungen; Messung und Intervention als lineare Operationen.", en: "Concepts as directions; measurement and intervention as linear operations." } },
+    { label: "Elhage et al. (2022), Toy Models of Superposition", url: "https://transformer-circuits.pub/2022/toy_model/index.html", why: { de: "Mehr Features als Dimensionen; Features können sich überlagern.", en: "More features than dimensions; features can overlap." } },
+    { label: "Engels et al. (2025), Not All Language Model Features Are One-Dimensionally Linear", url: "https://arxiv.org/abs/2405.14860", why: { de: "Manche Features sind mehrdimensional, zum Beispiel Kreise für Wochentage.", en: "Some features are multi-dimensional, for example circles for weekdays." } },
+    { label: "Olsson et al. (2022), In-context Learning and Induction Heads", url: "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html", why: { de: "Attention-Heads können gelernte Algorithmen tragen.", en: "Attention heads can carry learned algorithms." } },
+    { label: "Geva et al. (2021), Transformer Feed-Forward Layers Are Key-Value Memories", url: "https://arxiv.org/abs/2012.14913", why: { de: "FFN-Schichten als Key-Value-Musterdetektoren.", en: "FFN layers as key-value pattern detectors." } },
+    { label: "Othello-GPT code and probe weights", url: "https://github.com/likenneth/othello_world", why: { de: "Öffentlicher Checkpoint und lineare Probe für die echten Bilder.", en: "Public checkpoint and linear probe used for the real figures." } }
+  ];
+
+  var wmBoard = {
+    kicker: DE ? "Das Brett" : "The board",
+    title: DE ? "Othello, auch Reversi" : "Othello, also called Reversi",
+    teaser: DE
+      ? "Othello heißt auch Reversi. Auf dem 8×8-Brett setzt ein Zug eine Scheibe und dreht alle eingeschlossenen gegnerischen Scheiben um. Das Modell sieht nie das Brett, nur die Zugfolge."
+      : "Othello is also called Reversi. On the 8×8 board, a move places one disc and flips every enclosed opposing disc. The model never sees the board, only the move sequence.",
+    body: DE
+      ? "Die Welt ist ein Zustand aus 64 Feldern: leer, schwarz oder weiß. Ein Zug kann viele Felder gleichzeitig ändern. Genau diesen Zustand muss das Modell aus den Zügen rekonstruieren. Die Demo zeigt einen echten Spielverlauf; die letzte Bewegung dreht die eingeschlossenen Scheiben."
+      : "The world is a state of 64 squares: empty, black, or white. A move can change many squares at once. The model has to reconstruct exactly this state from the moves. The demo shows a real game; the latest move flips the enclosed discs.",
+    watch: DE ? "Drücke Weiter. Sieh, wie ein Zug Scheiben umdreht." : "Press Next. Watch a move flip discs.",
+    demoState: { scene: "worldmodel", step: 0 },
+    context: DE ? "Othello/Reversi: 8×8, Schwarz beginnt, eingeschlossene Linien werden gedreht. Das Brett ist der Weltzustand." : "Othello/Reversi: 8×8, black moves first, enclosed lines are flipped. The board is the world state.",
+    deep: DE ? "Die Regeln sind lokal, aber die Wirkung ist global: Ein Zug kann entlang acht Richtungen viele Scheiben drehen. Deshalb ist der Zustand nicht einfach die Liste der Züge." : "The rules are local, but the effect is global: a move can flip many discs along eight directions. That is why the state is not just the list of moves."
+  };
+
+  var wmMachine = {
+    kicker: DE ? "Die Maschine" : "The machine",
+    title: DE ? "Aus Zügen wird ein Zustand" : "Moves become a state",
+    teaser: DE
+      ? "Das Modell liest eine Sequenz von Zug-Tokens, ein Token pro Feld wie C4. Acht Schichten aus Attention und MLP schreiben in einen 512-dimensionalen Residualstrom. Ab Schicht vier ist das Brett daraus linear lesbar."
+      : "The model reads a sequence of move tokens, one token per square such as C4. Eight layers of attention and MLP write into a 512-dimensional residual stream. By layer four the board is linearly readable from it.",
+    body: DE
+      ? "Attention schaut auf frühere Züge; MLPs erkennen Muster wie Linien und Flips. Es gibt keinen Brett-Puffer. Der Zustand entsteht verteilt im Residualstrom. Der Layer-6-Probe liest auf L1 bis L8: 82.8, 84.4, 95.3, 96.9, 100, 100, 100, 90.6 Prozent. Wichtig: Das ist derselbe L6-Probe, transferiert auf die anderen Layer, nicht pro Layer neu trainiert."
+      : "Attention looks at earlier moves; MLPs detect patterns such as lines and flips. There is no board buffer. The state emerges distributed in the residual stream. The layer-6 probe reads L1 to L8: 82.8, 84.4, 95.3, 96.9, 100, 100, 100, 90.6 percent. Important: this is the same L6 probe transferred to the other layers, not retrained per layer.",
+    watch: DE ? "Drücke Weiter. Verfolge die Schichten; ab L4 ist das Brett vollständig." : "Press Next. Follow the layers; by L4 the board is complete.",
+    demoState: { scene: "worldmodel", step: 1 },
+    context: DE ? "Acht Heads pro Layer; Attention ist ein Softmax über frühere Positionen; das MLP ist ein Key-Value-Musterdetektor; Residualverbindungen addieren Updates. Die genaue Schaltung ist gelernt, nicht handcodiert." : "Eight heads per layer; attention is a softmax over earlier positions; the MLP is a key-value pattern detector; residual connections add updates. The exact circuit is learned, not hand-coded.",
+    deep: DE ? "Die Layer-6-Probe ist ein Readout, kein Beweis für eine menschenähnliche Karte. Sie zeigt: Der Zustand ist linear decodierbar und kausal benutzt. Die Zahlen sind eine eigene Messung am öffentlichen Checkpoint." : "The layer-6 probe is a readout, not proof of a human-like map. It shows that the state is linearly decodable and causally used. The numbers are our own measurement on the public checkpoint."
+  };
+
+  var wmProbe = {
+    kicker: DE ? "Der Probe" : "The probe",
+    title: DE ? "64 × 3 Zahlen werden ein Brett" : "64 × 3 numbers become a board",
+    teaser: DE
+      ? "Der Probe ist ein separates, trainiertes Linearmodell. Er projiziert die 512-dim Aktivierung auf 64 Felder × 3 Zustände: 192 Dot-Products, dann Softmax und Argmax."
+      : "The probe is a separate, trained linear model. It projects the 512-dim activation onto 64 squares × 3 states: 192 dot products, then softmax and argmax.",
+    body: DE
+      ? "Die 64×3 Logits sind nicht die Ausgabe der Heads oder FFNs. Sie entstehen erst durch den Probe. Der Residualstrom x ist die Ausgabe von Attention und MLP; der Probe liest ihn. Auf dieser echten Aktivierung liest der Probe 64 von 64 Feldern richtig. Es gibt keinen festen Nullpunkt: Die Logits sind relative Scores, Softmax und Argmax entscheiden."
+      : "The 64×3 logits are not the output of the heads or FFNs. They only arise through the probe. The residual stream x is the output of attention and MLP; the probe reads it. On this real activation the probe reads 64 of 64 squares correctly. There is no fixed zero point: the logits are relative scores, and softmax and argmax decide.",
+    watch: DE ? "Drücke Weiter. Sieh die 192 Dot-Products und das Brett." : "Press Next. See the 192 dot products and the board.",
+    demoState: { scene: "worldmodel", step: 2 },
+    context: DE ? "Der Probe hat 64×3×512 Gewichte. Für jedes Feld und jeden Zustand ist der Logit das Skalarprodukt aus Aktivierung und Probe-Richtung. Der Probe ist nach dem Modell trainiert; die Modellgewichte bleiben frozen." : "The probe has 64×3×512 weights. For every square and state, the logit is the dot product of the activation and the probe direction. The probe is trained after the model; the model weights stay frozen.",
+    deep: DE ? "Lineare Decodierbarkeit heißt nicht lineares Modell. Die Berechnung im Transformer ist tief und nichtlinear; nur der Readout ist linear. Ein Probe kann irreführen, wenn er nur eine Korrelation liest. Interventionen zeigen, ob die Richtung kausal benutzt wird." : "Linear decodability does not mean a linear model. The computation in the transformer is deep and nonlinear; only the readout is linear. A probe can mislead if it only reads a correlation. Interventions show whether the direction is causally used.",
+    boxes: [
+      box("wm-probe-train", DE ? "Optional" : "Optional", DE ? "Wie trainiert man einen Probe?" : "How is a probe trained?", DE ? "Man sammelt Paare aus Aktivierung x und wahrem Brett. Für jedes der 64 Felder und jeden der 3 Zustände trainiert man einen linearen Klassifikator, meist logistische Regression. Sein 512-dimensionaler Gewichtsvektor ist die Probe-Richtung. Danach friert man den Probe ein. Die Gewichte des Modells werden nie verändert; der Probe liest nur." : "Collect pairs of activation x and the true board. For each of the 64 squares and each of the 3 states, train a linear classifier, usually logistic regression. Its 512-dimensional weight vector is the probe direction. Then freeze the probe. The model weights are never changed; the probe only reads."),
+      box("wm-probe-math", DE ? "Mathematik" : "Mathematics", DE ? "Die Projektion" : "The projection", DE ? "Für jedes Feld s und jeden Zustand o ist der Logit das Skalarprodukt aus x und der Probe-Zeile W[s,o]. 64 × 3 = 192 Dot-Products. Danach Softmax über die 3 Zustände und Argmax pro Feld." : "For every square s and state o, the logit is the dot product of x and the probe row W[s,o]. 64 × 3 = 192 dot products. Then softmax over the 3 states and argmax per square.", "\\underbrace{\\operatorname{logit}[s,o]}_{\\text{Probe-Logit}} = \\underbrace{\\sum_{d=0}^{511} W[s,o,d]\\,x[d]}_{192\\ \\text{Dot-Products}}")
+    ]
+  };
+
+  var wmGeometry = {
+    kicker: DE ? "Geometrie" : "Geometry",
+    title: DE ? "Richtungen reichen hier, aber nicht immer" : "Directions suffice here, but not always",
+    teaser: DE
+      ? "Hier ist jeder Feldzustand eine Richtung: 64 Felder × 2 effektive Richtungen = 128 von 512 Dimensionen. Andere Konzepte brauchen ganze Unterräume, zum Beispiel Kreise für Wochentage."
+      : "Here every square state is a direction: 64 squares × 2 effective directions = 128 of 512 dimensions. Other concepts need whole subspaces, for example circles for weekdays.",
+    body: DE
+      ? "Die 128 Richtungen sind ein Koordinatensystem, kein Bitmap. Auf dieser Aktivierung erklären sie etwa 40 Prozent der Varianz; der Rest sind andere Features. Nicht alle Features sind eindimensional: Manche liegen auf Kreisen oder höherdimensionalen Mannigfaltigkeiten. Die lineare Probe funktioniert hier, weil das Brett linear decodierbar ist; das Modell selbst rechnet nichtlinear."
+      : "The 128 directions are a coordinate system, not a bitmap. On this activation they explain about 40 percent of the variance; the rest are other features. Not all features are one-dimensional: some lie on circles or higher-dimensional manifolds. The linear probe works here because the board is linearly decodable; the model itself computes nonlinearly.",
+    watch: DE ? "Drücke Weiter. Vergleiche eine Linie mit einem Kreis." : "Press Next. Compare a line with a circle.",
+    demoState: { scene: "worldmodel", step: 3 },
+    context: DE ? "Die lineare Probe ist ein Readout. Die 128 Brettrichtungen leben im 512-dim Residualstrom. Andere Features können als Unterraum, Kreis oder Mannigfaltigkeit codiert sein; dann reicht eine einzelne Richtung nicht." : "The linear probe is a readout. The 128 board directions live in the 512-dim residual stream. Other features can be encoded as a subspace, circle, or manifold; then a single direction is not enough.",
+    deep: DE ? "Die Linear Representation Hypothesis beschreibt Features als Richtungen. Superposition packt mehr Features in den Raum als Dimensionen. Engels et al. finden mehrdimensionale Features, etwa Kreise für Wochentage und Monate. Deshalb ist die Weltmodell-Debatte kein Entweder-oder: Manche Zustände sind Richtungen, andere brauchen einen Unterraum." : "The linear representation hypothesis describes features as directions. Superposition packs more features into the space than there are dimensions. Engels et al. find multi-dimensional features, such as circles for weekdays and months. So the world-model debate is not either-or: some states are directions, others need a subspace.",
+    boxes: [
+      box("wm-geo-line", DE ? "Geometrie" : "Geometry", DE ? "Eine Richtung" : "One direction", DE ? "Der Unterschied zwischen „mein“ und „dein“ ist eine Achse: w_black − w_white. Der Logit ist die Projektion auf diese Achse. Ein fester Nullpunkt ist nicht nötig; Softmax vergleicht die drei Logits." : "The difference between “mine” and “yours” is one axis: w_black − w_white. The logit is the projection onto this axis. A fixed zero point is not needed; softmax compares the three logits."),
+      box("wm-geo-sub", DE ? "Grenze" : "Limit", DE ? "Nicht immer eine Richtung" : "Not always one direction", DE ? "Manche Features sind mehrdimensional. Wochentage liegen auf einem Kreis; eine einzelne Gerade kann Montag und Donnerstag nicht sauber trennen. Dann braucht der Readout einen Unterraum, nicht nur eine Richtung." : "Some features are multi-dimensional. Weekdays lie on a circle; a single line cannot separate Monday and Thursday cleanly. Then the readout needs a subspace, not just one direction.")
+    ]
+  };
+
+  var worldModelStep = {
+    kicker: DE ? "Weltmodelle" : "World models",
+    title: DE ? "Wie LLM Weltmodelle bauen" : "How LLMs build world models",
+    substeps: [wmBoard, wmMachine, wmProbe, wmGeometry],
+    sources: wmSources
+  };
+
+  var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, softmaxSteps[0], crossEntropyStep, introSteps[1], meadowSteps[0], trajectorySteps[0], agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, worldModelStep];
 
   var day = {
     id: "intuition",
