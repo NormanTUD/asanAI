@@ -8,7 +8,7 @@
     el.className = "ls-sim-scene";
     el.innerHTML =
       '<div class="ls-sim-tabs" role="tablist">' +
-        '<button type="button" class="ls-sim-tab is-on" data-mode="map" role="tab" aria-selected="true">' + (DE ? "Wortkarte" : "Word map") + '</button>' +
+        '<button type="button" class="ls-sim-tab is-on" data-mode="directions" role="tab" aria-selected="true">' + (DE ? "Richtungen" : "Directions") + '</button>' +
         '<button type="button" class="ls-sim-tab" data-mode="angle" role="tab" aria-selected="false">' + (DE ? "Winkel" : "Angle") + '</button>' +
         '<button type="button" class="ls-sim-tab" data-mode="scale" role="tab" aria-selected="false">' + (DE ? "Skaleninvarianz" : "Scale invariance") + '</button>' +
         '<button type="button" class="ls-sim-tab" data-mode="unembed" role="tab" aria-selected="false">Unembedding</button>' +
@@ -16,8 +16,6 @@
       '<div class="ls-sim-stage"><canvas class="ls-sim-canvas" role="img"></canvas></div>' +
       '<div class="ls-sim-controls ls-sim-map-controls">' +
         '<label class="ls-sim-pick">' + (DE ? "Wort" : "Word") + ' <select class="ls-sim-select"></select></label>' +
-        '<button type="button" class="ls-chip ls-sim-metric is-on" data-metric="angle" aria-pressed="true">' + (DE ? "Winkel" : "angle") + '</button>' +
-        '<button type="button" class="ls-chip ls-sim-metric" data-metric="euclid" aria-pressed="false">' + (DE ? "Euklidisch" : "Euclidean") + '</button>' +
       '</div>' +
       '<div class="ls-sim-controls ls-sim-angle-controls" hidden>' +
         '<label class="ls-range">' + (DE ? "Vektor A" : "Vector A") + ' <input type="range" class="ls-sim-angle-a" min="0" max="360" step="1" value="360"><output>360°</output></label>' +
@@ -33,7 +31,6 @@
     var stage = el.querySelector(".ls-sim-stage");
     var canvas = el.querySelector("canvas");
     var select = el.querySelector(".ls-sim-select");
-    var metricBtns = Array.prototype.slice.call(el.querySelectorAll(".ls-sim-metric"));
     var tabBtns = Array.prototype.slice.call(el.querySelectorAll(".ls-sim-tab"));
     var mapControls = el.querySelector(".ls-sim-map-controls");
     var angleControls = el.querySelector(".ls-sim-angle-controls");
@@ -60,7 +57,6 @@
     var caption = el.querySelector(".ls-sim-caption");
     var size = null;
     var selected = 0;
-    var metric = "angle";
     var mode = "map";
     var angleA = 360, angleB = 90, scaleMag = 1.6;
     var hits = [];
@@ -440,7 +436,7 @@
       if (mode === "unembed") { hits = []; drawUnembed(performance.now()); }
       else if (mode === "angle") { hits = []; drawAngle(); }
       else if (mode === "scale") { hits = []; drawScale(); }
-      else drawMap();
+      else drawDirections();
     }
     function reveal(el, delay) {
       if (!el || el.hidden || !el.animate || api.reducedMotion) return;
@@ -452,13 +448,13 @@
       } catch (e) {}
     }
     function setMode(next) {
-      var order = { map: 0, angle: 1, scale: 2, unembed: 3 };
+      var order = { directions: 0, angle: 1, scale: 2, unembed: 3 };
       var modeChanged = next !== mode;
       var dir = order[next] < order[mode] ? -1 : 1;
       mode = next;
       el.classList.toggle("is-unembed", mode === "unembed");
       tabBtns.forEach(function (b) { var on = b.getAttribute("data-mode") === mode; b.classList.toggle("is-on", on); b.setAttribute("aria-selected", String(on)); });
-      if (mapControls) mapControls.hidden = mode !== "map";
+      if (mapControls) mapControls.hidden = mode !== "directions";
       if (angleControls) angleControls.hidden = mode !== "angle";
       if (scaleControls) scaleControls.hidden = mode !== "scale";
       if (unembedControls) unembedControls.hidden = mode !== "unembed";
@@ -516,17 +512,6 @@
         if (d < bestD) { bestD = d; best = hit; }
       });
       if (best && bestD < 22) choose(best.i);
-    });
-    metricBtns.forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        metric = btn.getAttribute("data-metric");
-        metricBtns.forEach(function (b) {
-          var on = b === btn;
-          b.classList.toggle("is-on", on);
-          b.setAttribute("aria-pressed", String(on));
-        });
-        draw();
-      });
     });
     window.addEventListener("resize", resize);
     window.addEventListener("tm:theme", draw);
