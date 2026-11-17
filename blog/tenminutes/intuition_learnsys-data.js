@@ -2547,37 +2547,22 @@
     kicker: DE ? "Zeit" : "Time",
     title: DE ? "Wann lebte Turing?" : "When did Turing live?",
     teaser: DE
-      ? "$R^2$ ist eine Skala von 0 bis 1. 0 heißt: Die Probe ist nicht besser als der Mittelwert des Jahres; 1 heißt: Sie trifft jedes Jahr exakt. $R^2 = 0{,}835$ heißt: Die lineare Probe erklärt 83,5 % der Streuung der wahren Jahre historischer Personen; 16,5 % bleiben übrig. Die Punkte nahe der Diagonalen sind die guten Vorhersagen. Die Probe wird auf anderen Entitäten getestet, als sie trainiert wurde. Ein hohes $R^2$ ist Evidenz, dass das Jahr linear lesbar ist, nicht dass das Modell die Richtung beim Antworten kausal benutzt.\n\nDie Zeitachse ist über Personen, Kunstwerke und Schlagzeilen lesbar, aber die Auflösung ist grob: Die relative Ordnung ist leichter als absolute Jahre. Die Expertennote erklärt Ridge und den Unterschied zwischen $R^2$ und Spearman."
-      : "$R^2$ is a scale from 0 to 1. 0 means the probe is no better than predicting the average year; 1 means it predicts every year exactly. $R^2 = 0.835$ means the linear probe explains 83.5% of the variance in the true years of historical figures; 16.5% remains. Points near the diagonal are the good predictions. The probe is tested on entities it was not trained on. A high $R^2$ is evidence that the year is linearly readable, not that the model uses that direction causally when it answers a question.\n\nThe time axis is readable across people, artworks, and headlines, but the resolution is coarse: relative order is easier than absolute years. The expert note explains ridge and the difference between $R^2$ and Spearman correlation.",
-    watch: DE ? "Klicke eine Person. Vergleiche wahres Jahr, Probe und Diagonale." : "Click a person. Compare true year, probe, and diagonal.",
+      ? "Das Paper zeigt, dass Sprachmodelle rein durch das Lesen von Texten einen inneren Zeitstrahl entwickeln. Wenn die KI historische Namen, Kunstwerke oder Filme verarbeitet, ordnet sie diese auf einer mathematischen Linie von der Vergangenheit bis zur Gegenwart an, sodass sich Jahreszahlen direkt aus den inneren Signalen ablesen lassen.\n\nZudem fanden die Forscher einzelne Zeit-Neuronen, die gezielt auf bestimmte Epochen reagieren. Manipuliert man diese Neuronen künstlich, verändert die KI ihre Vorhersagen und ordnet Ereignisse plötzlich anderen Zeiträumen zu."
+      : "The paper shows that language models develop an internal timeline purely by reading texts. When the AI processes historical names, artworks, or films, it arranges them on a mathematical line from the past to the present, so that years can be read directly from the internal signals.\n\nIn addition, the researchers found individual time neurons that respond specifically to certain eras. If these neurons are manipulated artificially, the AI changes its predictions and suddenly places events in different periods.",
+    watch: "",
     demoState: { scene: "spacetime", mode: "time" },
-    context: DE ? "Die Diagonale ist der perfekte Readout. Der Abstand eines Punktes zur Diagonalen ist der Fehler der Probe; die vertikalen Linien zeigen ihn. $R^2$ vergleicht diese Fehler mit der Streuung um den Mittelwert." : "The diagonal is the perfect readout. A point's distance from the diagonal is the probe error; the vertical lines show it. $R^2$ compares these errors with the spread around the mean.",
-    deep: DE ? "Ridge-Regression minimiert $\\lVert Y-AW\\rVert^2+\\lambda\\lVert W\\rVert^2$; $\\lambda$ wird per Leave-one-out-Kreuzvalidierung gewählt, $R^2$ auf Testdaten berechnet. $R^2 = 1-\\mathrm{SS}_{\\mathrm{res}}/\\mathrm{SS}_{\\mathrm{tot}}$. Spearman misst nur die Rangordnung und ist deshalb oft höher als $R^2$: Die relative Ordnung ist besser lesbar als der absolute Wert. Ein MLP-Probe verbessert $R^2$ kaum." : "Ridge regression minimises $\\lVert Y-AW\\rVert^2+\\lambda\\lVert W\\rVert^2$; $\\lambda$ is chosen by leave-one-out cross-validation, and $R^2$ is computed on test data. $R^2 = 1-\\mathrm{SS}_{\\mathrm{res}}/\\mathrm{SS}_{\\mathrm{tot}}$. Spearman measures only the rank order and is therefore often higher than $R^2$: relative order is easier to read than the absolute value. An MLP probe barely improves $R^2$.",
+    context: DE ? "Die Diagonale ist der perfekte Readout. Der Abstand eines Punktes zur Diagonalen ist der Fehler der Probe; die vertikalen Linien zeigen ihn." : "The diagonal is the perfect readout. A point's distance from the diagonal is the probe error; the vertical lines show it.",
+    deep: "",
     boxes: [
-      box("st-r2", DE ? "R²" : "R²", DE ? "Die Formel" : "The formula", DE ? "$R^2$ vergleicht die Fehler der Probe mit den Fehlern eines Modells, das immer den Mittelwert vorhersagt. 1 ist perfekt, 0 ist der Mittelwert, negativ ist schlechter als der Mittelwert." : "$R^2$ compares the probe's errors with the errors of a model that always predicts the mean. 1 is perfect, 0 is the mean, negative is worse than the mean.", "\\underbrace{\\underbrace{R^2}_{\\text{erklärte Streuung}} = 1 - \\underbrace{\\frac{\\mathrm{SS}_{\\mathrm{res}}}{\\mathrm{SS}_{\\mathrm{tot}}}}_{\\text{Fehler / Gesamtstreuung}}}_{\\text{Readout-Güte}}"),
-      box("st-limit", DE ? "Grenze" : "Limit", DE ? "Readout, nicht Kausalität" : "Readout, not causation", DE ? "Die Probe zeigt, dass die Information linear lesbar ist. Sie zeigt nicht, dass das Modell diese Richtung benutzt, wenn es eine Frage beantwortet. Dafür braucht es Interventionen." : "The probe shows that the information is linearly readable. It does not show that the model uses this direction when it answers a question. That requires interventions."),
-      box("st-relative", DE ? "Auflösung" : "Resolution", DE ? "Ordnung vor Absolutwert" : "Order before absolute value", DE ? "Die relative Ordnung ist besser lesbar als absolute Jahreszahlen: Spearman ist höher als $R^2$. Die Zeitachse ist also eher ein grober Zeitstrahl als ein Kalender." : "Relative order is easier to read than absolute years: Spearman is higher than $R^2$. The time axis is more a coarse timeline than a calendar.")
+      box("st-limit", DE ? "Grenze" : "Limit", DE ? "Kausalität für das Modell" : "Causality for the model", DE ? "Manipuliert man die Punkte in dieser Richtung und fragt das Modell, verändern sich die Antworten gezielt: Verschiebt man die Aktivierungspunkte entlang der Raum- oder Zeitachse, gibt die KI beispielsweise Städte aus einer anderen Himmelsrichtung aus oder verlegt historische Ereignisse in eine andere Epoche." : "Manipulating the points along this direction and then asking the model changes its answers in a targeted way: shift the activation points along the space or time axis, and the AI outputs cities from a different direction or moves historical events to another era.", "")
     ],
-    sources: spacetimeSpace.sources
-  });
-
-  var spacetimeNeurons = Object.assign({}, spacetimeSpace, {
-    kicker: DE ? "Neuronen" : "Neurons",
-    title: DE ? "Einzelne Raum- und Zeitneuronen" : "Individual space and time neurons",
-    teaser: DE
-      ? "Einzelne Neuronen, deren Gewichte in dieselbe Richtung zeigen, kodieren Koordinaten. Sie reagieren über verschiedene Entitätstypen hinweg. Weil Features in Superposition liegen, sind einzelne Neuronen nur eine untere Schranke. Der überwachte Probe ist die obere Schranke. Zusammen zeigen sie: Raum und Zeit sind linear lesbar, nicht nur als Oberflächenstatistik.\n\nDie Neuronendaten sind korrelativ. Sie zeigen, dass die Richtung auch ohne supervised Probe in einzelnen Einheiten auftaucht; sie beweisen keine kausale Karte."
-      : "Individual neurons whose weights point in the same direction encode coordinates. They respond across different entity types. Because features live in superposition, individual neurons are only a lower bound. The supervised probe is the upper bound. Together they show that space and time are linearly readable, not just surface statistics.\n\nThe neuron data are correlational. They show that the direction also appears in individual units without a supervised probe; they do not prove a causal map.",
-    watch: DE ? "Klicke Weiter. Sieh, welche Neuronen auf Raum und Zeit zeigen." : "Click Next. See which neurons point at space and time.",
-    demoState: { scene: "spacetime", mode: "neurons" },
-    context: DE ? "Die Heatmap zeigt, welche einzelnen Neuronen auf Städte, Landmarken, Personen, Kunst und Schlagzeilen reagieren. Ihre Richtungen passen zur Probe, sind aber nur eine untere Schranke." : "The heatmap shows which individual neurons respond to cities, landmarks, people, art, and headlines. Their directions match the probe, but are only a lower bound.",
-    boxes: [],
     sources: spacetimeSpace.sources
   });
 
   var spacetimeStep = {
     kicker: DE ? "Weltkarte" : "World map",
     title: DE ? "Raum und Zeit im Modell" : "Space and time in the model",
-    substeps: [spacetimeSpace, spacetimeTime, spacetimeNeurons]
+    substeps: [spacetimeSpace, spacetimeTime]
   };
 
   var steps = [introSteps[0], bausteineStep, gaussDataStep, tokenizeExamplesStep, tokenizeBpeStep, embeddingMergeStep, manifoldSteps[0], positionSteps[0], attentionMergeStep, qkvStep, codeAttentionStep, inductionStep, neuralNeuronStep, neuralLossStep, neuralActivationStep, neuralLargeStep, neuralMlpStep, ffnSteps[0], residualSteps[0], unembedStep, crossEntropyStep, introSteps[1], meadowSteps[0], worldModelStep, agentsStep, hallucinationStep, ragSteps[0], historySteps[0], philosophySteps[0], aiSocietyStep, consciousnessStep, sentimentStep, grokkingStep, spacetimeStep];
@@ -2606,7 +2591,7 @@
     mix: true,
     singleDay: true,
     startDay: 0,
-    overlayRevision: "2026-11-17-no-trajectories-6",
+    overlayRevision: "2026-11-17-no-neurons-7",
     // Draft scaffold: steps without a teaser show the lorem placeholder; every
     // old body stays recoverable in the "Bisheriger Text" group. Set to false
     // to use bodies everywhere.
