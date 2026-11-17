@@ -50,8 +50,8 @@
     host.appendChild(canvas);
     var hero = document.createElement("figure");
     hero.className = "ls-st-hero";
-    var paperSrc = "../image.php?f=gurnee-tegmark-world.png&w=1800&q=90&fmt=jpg";
-    var paperBig = "../image.php?f=gurnee-tegmark-world.png&w=2200&q=92&fmt=jpg";
+    var paperSrc = "../image.php?f=gurnee-tegmark-world.png&w=1800&fmt=png";
+    var paperBig = "../image.php?f=gurnee-tegmark-world.png&w=2200&fmt=png";
     var notes = {
       probe: DE ? "Zwei gelernte Richtungen werden aus der Aktivierung gelesen; die Karte ist ihre Projektion." : "Two learned directions are read from the activation; the map is their projection.",
       relative: DE ? "Nachbarschaft stimmt eher als der exakte Ort. R² = 0,911 heißt: 91,1 % der Streuung sind linear erklärt." : "The neighbourhood is more accurate than the exact place. R² = 0.911 means 91.1% of the variance is linearly explained.",

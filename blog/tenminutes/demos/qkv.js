@@ -39,8 +39,8 @@
     var percentEl = el.querySelector(".ls-qkv-percent");
     var formulaEl = el.querySelector(".ls-qkv-formula .ls-math");
     var pipelineTex = DE
-      ? "\\begin{aligned}&\\underbrace{\\underbrace{q_i=W_Qx_i,\\quad k_j=W_Kx_j}_{\\text{Q,K gelernt}}\\;\\rightarrow\\;\\underbrace{\\alpha_{ij}=\\operatorname{softmax}_j\\!\\left(\\frac{q_i^\\top k_j}{\\sqrt{d_k}}\\right)}_{\\text{Gewichte }\\alpha}}_{\\text{bestimmt den Punkt im Gewichts-Simplex}}\\\\&\\underbrace{v_j=W_Vx_j}_{\\text{V gelernt}}\\;\\rightarrow\\;\\underbrace{r_i=\\sum_j\\alpha_{ij}v_j}_{\\text{Mischung}}\\;\\rightarrow\\;\\underbrace{y_i=W_Or_i}_{\\text{Head-Ausgabe}}\\end{aligned}"
-      : "\\begin{aligned}&\\underbrace{\\underbrace{q_i=W_Qx_i,\\quad k_j=W_Kx_j}_{\\text{Q,K learned}}\\;\\rightarrow\\;\\underbrace{\\alpha_{ij}=\\operatorname{softmax}_j\\!\\left(\\frac{q_i^\\top k_j}{\\sqrt{d_k}}\\right)}_{\\text{weights }\\alpha}}_{\\text{sets the point in the weight simplex}}\\\\&\\underbrace{v_j=W_Vx_j}_{\\text{V learned}}\\;\\rightarrow\\;\\underbrace{r_i=\\sum_j\\alpha_{ij}v_j}_{\\text{mixture}}\\;\\rightarrow\\;\\underbrace{y_i=W_Or_i}_{\\text{head output}}\\end{aligned}";
+      ? "\\begin{aligned}&\\underbrace{\\underbrace{q_i=W_Qx_i,\\quad k_j=W_Kx_j}_{\\text{Q,K gelernt}}\\;\\rightarrow\\;\\underbrace{\\alpha_{ij}=\\operatorname{softmax}_j\\!\\left(\\frac{q_i^\\top k_j}{\\sqrt{d_k}}\\right)}_{\\text{Gewichte }\\alpha}}_{\\text{bestimmt den Punkt im Gewichts-Simplex}}\\\\&\\underbrace{v_j=W_Vx_j}_{\\text{V gelernt}}\\;\\rightarrow\\;\\underbrace{r_i=\\sum_j\\underbrace{\\alpha_{ij}}_{\\text{Gewicht}}\\underbrace{v_j}_{\\text{Value}}}_{\\text{gewichtete Mischung der Values}}\\;\\rightarrow\\;\\underbrace{y_i=W_Or_i}_{\\text{Head-Ausgabe}}\\end{aligned}"
+      : "\\begin{aligned}&\\underbrace{\\underbrace{q_i=W_Qx_i,\\quad k_j=W_Kx_j}_{\\text{Q,K learned}}\\;\\rightarrow\\;\\underbrace{\\alpha_{ij}=\\operatorname{softmax}_j\\!\\left(\\frac{q_i^\\top k_j}{\\sqrt{d_k}}\\right)}_{\\text{weights }\\alpha}}_{\\text{sets the point in the weight simplex}}\\\\&\\underbrace{v_j=W_Vx_j}_{\\text{V learned}}\\;\\rightarrow\\;\\underbrace{r_i=\\sum_j\\underbrace{\\alpha_{ij}}_{\\text{weight}}\\underbrace{v_j}_{\\text{value}}}_{\\text{weighted mixture of the values}}\\;\\rightarrow\\;\\underbrace{y_i=W_Or_i}_{\\text{head output}}\\end{aligned}";
     if (formulaEl) {
       formulaEl.setAttribute("data-tex", pipelineTex);
       formulaEl.removeAttribute("data-tex-rendered");
@@ -389,6 +389,7 @@
       ctx.textAlign = "center"; ctx.textBaseline = "bottom";
       ctx.fillStyle = C.muted;
       var cornerNames = ids.map(function (id) { return tokens[id]; }).join(", ");
+      ctx.fillText(DE ? "Der volle Simplex hat " + tokens.length + " Ecken und " + (tokens.length - 1) + " Dimensionen." : "The full simplex has " + tokens.length + " corners and " + (tokens.length - 1) + " dimensions.", w / 2, h - 36);
       ctx.fillText(DE ? "Ecken: v_j = W_V x_j von " + cornerNames + " · 3 von " + tokens.length : "corners: v_j = W_V x_j of " + cornerNames + " · 3 of " + tokens.length, w / 2, h - 22);
       ctx.fillText(DE ? "Punkt ziehen = α aus Q,K · Ecken ziehen = V · Σ α_j = 1" : "drag point = α from Q,K · drag corners = V · Σ α_j = 1", w / 2, h - 8);
       function fmt2(v) { return v.toFixed(2).replace(".", DE ? "," : "."); }
