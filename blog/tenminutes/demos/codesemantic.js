@@ -260,12 +260,6 @@
       ctx.strokeStyle = V.alpha(C.line, 0.8);
       ctx.lineWidth = 1;
       ctx.strokeRect(spaceX + 0.5, spaceTop + 0.5, spaceW - 1, spaceH - 1);
-      var axisX = spaceX + 16;
-      var axisY = spaceTop + spaceH - 16;
-      V.arrow(ctx, axisX, axisY, spaceX + spaceW - 12, axisY, V.alpha(C.line, 0.9), 1, 5);
-      V.arrow(ctx, axisX, axisY, axisX, spaceTop + 10, V.alpha(C.line, 0.9), 1, 5);
-      V.label(ctx, DE ? "Dim 1" : "dim 1", spaceX + spaceW - 14, axisY - 8, { font: '600 ' + fontPx(0.78, 7) + 'px "Open Sans", sans-serif', color: C.muted, align: "right", bg: false });
-      V.label(ctx, DE ? "Dim 2" : "dim 2", axisX + 6, spaceTop + 16, { font: '600 ' + fontPx(0.78, 7) + 'px "Open Sans", sans-serif', color: C.muted, align: "left", bg: false });
       ctx.restore();
       ctx.save();
       ctx.setLineDash([4, 5]);

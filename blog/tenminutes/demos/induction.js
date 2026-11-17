@@ -35,8 +35,8 @@
         ? "Token-Reihe A B C A B C A; das letzte A beachtet das frühere B und sagt B voraus."
         : "Token strip A B C A B C A; the final A attends to the earlier B and predicts B.",
       copy: DE
-        ? "Drei Schritte des Kopierens: Key-Shift, Query-Match und OV-Copy."
-        : "Three copying steps: key shift, query match, and OV copy.",
+        ? "Drei Schritte des Kopierens: Vorgänger merken, Stelle finden, kopieren."
+        : "Three copying steps: remember the predecessor, find the place, copy.",
       circuit: DE
         ? "Schaltkreis aus zwei Köpfen: Previous-Token-Head in Schicht 1, Induction Head in Schicht 2."
         : "Two-head circuit: a previous-token head in layer one, an induction head in layer two.",
@@ -257,6 +257,11 @@
         ? (DE ? "Token " + tok + " → " + target + " (nach dem früheren " + tok + ")" : "token " + tok + " → " + target + " (after the earlier " + tok + ")")
         : (DE ? "Kein früheres " + tok + " → keine Induktion" : "no earlier " + tok + " → no induction");
       txt(c, note, px, py + probs.length * rowH + 14, { size: 9.5, color: C.ink });
+      txt(c, DE ? "Beispiel: „Hund bellt … Hund“ → „bellt“" : "Example: “dog barks … dog” → “barks”", px, py + probs.length * rowH + 30, {
+        size: small ? 8.4 : 9.2,
+        color: C.petrol,
+        font: '600 ' + (small ? 8.4 : 9.2) + 'px "Open Sans", sans-serif'
+      });
     }
 
 
@@ -357,24 +362,24 @@
       var rows = [
         {
           n: "1",
-          title: DE ? "Key-Shift" : "Key shift",
-          body: DE ? "Der Previous-Token-Head schreibt A in den Key der Position nach dem früheren A." : "The previous-token head writes A into the key one step after the earlier A.",
+          title: DE ? "Vorgänger merken" : "Remember predecessor",
+          body: DE ? "Ein Hilfskopf merkt sich: Vor diesem Token kam A." : "A helper head remembers: before this token came A.",
           color: C.green,
           matrix: "W_K",
           from: 3, to: 4
         },
         {
           n: "2",
-          title: DE ? "Query-Match" : "Query match",
-          body: DE ? "Die Query des aktuellen A passt auf diesen Key. Die Attention fällt auf B." : "The current A query matches that key. Attention lands on B.",
+          title: DE ? "Stelle finden" : "Find the place",
+          body: DE ? "Der Induktionskopf findet das frühere A und schaut auf B." : "The induction head finds the earlier A and looks at B.",
           color: C.gold,
           matrix: "W_Q^T W_K",
           from: 6, to: 4
         },
         {
           n: "3",
-          title: "OV-Copy",
-          body: DE ? "Die OV-Matrix kopiert den Value von B an die aktuelle Position. Der Logit von B steigt." : "The OV matrix copies B's value to the current position. B's logit rises.",
+          title: DE ? "Kopieren" : "Copy",
+          body: DE ? "Die OV-Matrix kopiert B an die neue Stelle. Der Logit von B steigt." : "The OV matrix copies B to the new place. B's logit rises.",
           color: C.sky,
           matrix: "W_O W_V",
           mini: ["B", "B"],
@@ -467,7 +472,7 @@
           color: C.gold,
           tokens: ["A", "B", "A"],
           from: 2, to: 1, out: "B",
-          body: DE ? "Der Kopf sucht ein früheres A und attendiert auf das B, das darauf folgte. Die OV-Matrix kopiert B. Das ist ein Sequenzmuster, kein Faktenwissen." : "The head finds an earlier A and attends to the B that followed it. The OV matrix copies B. This is a sequence pattern, not factual knowledge."
+          body: DE ? "Der Kopf sucht ein früheres A und schaut auf das B, das darauf folgte. Die OV-Matrix kopiert B. Das ist ein Sequenzmuster, kein Faktenwissen." : "The head finds an earlier A and looks at the B that followed it. The OV matrix copies B. This is a sequence pattern, not factual knowledge."
         },
         {
           title: DE ? "Duplicate" : "Duplicate",
@@ -475,7 +480,7 @@
           color: C.green,
           tokens: ["A", "B", "A"],
           from: 2, to: 0, out: DE ? "Pos." : "pos.",
-          body: DE ? "Der Kopf attendiert auf ein früheres Vorkommen desselben Tokens und kopiert dessen Position. Im IOI-Schaltkreis signalisiert das, dass ein Name wiederholt wurde." : "The head attends to an earlier occurrence of the same token and copies its position. In the IOI circuit this signals that a name was repeated."
+          body: DE ? "Der Kopf schaut auf ein früheres Vorkommen desselben Tokens und kopiert dessen Position. Im IOI-Schaltkreis signalisiert das, dass ein Name wiederholt wurde." : "The head looks at an earlier occurrence of the same token and copies its position. In the IOI circuit this signals that a name was repeated."
         },
         {
           title: "Successor",
@@ -491,7 +496,7 @@
           color: C.petrol,
           tokens: ["Mary", "John", "Mary"],
           from: 2, to: 0, out: "Mary",
-          body: DE ? "Im IOI-Satz attendiert der Name-Mover-Head auf Mary und kopiert sie in die Antwort. S-Inhibition-Heads unterdrücken den wiederholten John. Das ist faktenbezogenes Kopieren, kein Sequenzmuster." : "In the IOI sentence the name-mover head attends to Mary and copies her into the answer. S-inhibition heads suppress the repeated John. This is fact-like copying, not a sequence pattern."
+          body: DE ? "Im IOI-Satz schaut der Name-Mover-Head auf Mary und kopiert sie in die Antwort. S-Inhibition-Heads unterdrücken den wiederholten John. Das ist faktenbezogenes Kopieren, kein Sequenzmuster." : "In the IOI sentence the name-mover head looks at Mary and copies her into the answer. S-inhibition heads suppress the repeated John. This is fact-like copying, not a sequence pattern."
         }
       ];
       var gap = 10;
