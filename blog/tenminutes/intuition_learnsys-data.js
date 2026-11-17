@@ -2349,7 +2349,7 @@
     title: DE ? "Wie ein LLM sein Weltmodell aufbaut" : "How an LLM builds its world model",
     teaser: wmMachineText,
     body: wmMachineText,
-    watch: DE ? "Klicke auf „Nächster Schritt“. Sieh, wie aus der L6-Aktivierung erst Scores, dann Wahrscheinlichkeiten und am Ende das Brett werden." : "Click “Next step”. Watch the L6 activation become scores, then probabilities, then the board.",
+    watch: DE ? "Drücke → oder klicke auf „Nächster Schritt“. Sieh, wie aus der L6-Aktivierung erst Scores, dann Wahrscheinlichkeiten und am Ende das Brett werden." : "Press → or click “Next step”. Watch the L6 activation become scores, then probabilities, then the board.",
     demoState: { scene: "worldmodel", step: 1 },
     context: DE ? "Eine feste Schicht (L6), ein 512-dimensionaler Residualstrom. Der Probe hat 64×3×512 Gewichte; jedes Skalarprodukt liest ein Feld. Die Modellgewichte bleiben frozen." : "One fixed layer (L6), a 512-dimensional residual stream. The probe has 64×3×512 weights; each dot product reads one square. The model weights stay frozen.",
     deep: DE ? "Die lineare Probe liest das Brett; Interventionen zeigen, dass das Modell diese Richtung kausal benutzt. Die Genauigkeiten im Bild stammen aus Nanda et al. (2023), nicht aus einer eigenen Messung. Ein Probe ist ein Readout, kein Beweis für eine menschenähnliche Karte." : "The linear probe reads the board; interventions show that the model uses this direction causally. The accuracies in the figure come from Nanda et al. (2023), not from our own measurement. A probe is a readout, not proof of a human-like map.",

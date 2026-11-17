@@ -93,7 +93,8 @@
     nextBtn.setAttribute("data-no-height-test", "1");
     nextBtn.style.cssText = "position:absolute;top:10px;right:10px;z-index:5;border:0;padding:7px 11px;background:var(--tm-green,#63a44b);color:#fff;font:600 11px/1 'Open Sans',sans-serif;cursor:pointer;";
     nextBtn.addEventListener("click", function () {
-      state.phase = state.phase >= 5 ? 0 : state.phase + 1;
+      if (state.phase >= 5) { api.goNext(); return; }
+      state.phase++;
       updateBtn();
       draw();
     });
@@ -232,7 +233,7 @@
     function scoresFor(i) {
       var r = Math.floor(i / 8), c = i % 8;
       var v = TRUTH[r][c];
-      var idx = v === 0 ? 0 : v === -1 ? 1 : 2;
+      var idx = v === 0 ? 0 : v === 1 ? 1 : 2;
       var s = [0, 0, 0];
       for (var k = 0; k < 3; k++) s[k] = -1.4 + 2.8 * hash(i + 11, k + 1, 5);
       s[idx] = 2.9 + 2.0 * hash(i + 3, idx + 7, 11);
@@ -245,7 +246,6 @@
       SCORES.push(sc);
       PROBS.push(V.softmax(sc));
     }
-    var probeCanvas = null;
 
     function winIndex(values) {
       var best = 0;
@@ -290,7 +290,7 @@
     function updateBtn() {
       if (!nextBtn) return;
       var last = state.phase >= 5;
-      nextBtn.textContent = DE ? (last ? "Von vorn" : "Nächster Schritt") : (last ? "Start over" : "Next step");
+      nextBtn.textContent = DE ? (last ? "Weiter" : "Nächster Schritt") : (last ? "Next" : "Next step");
       nextBtn.setAttribute("aria-label", nextBtn.textContent);
       nextBtn.style.display = state.step === 1 ? "block" : "none";
     }
@@ -330,72 +330,52 @@
       ];
     }
 
-    function probeWeight(s, d) {
+    function stateName(idx) {
+      return DE ? ["leer", "Spieler 1", "Spieler 2"][idx] : ["empty", "player 1", "player 2"][idx];
+    }
+
+    function probeDir(sq, stateIdx, d) {
+      var s = sq * 3 + stateIdx;
       var base = hash(s + 3, d + 7, 13) * 2 - 1;
-      var band = Math.exp(-Math.pow((d - (s * 8 + 60)) / 38, 2));
+      var band = Math.exp(-Math.pow((d - ((s * 37) % 512)) / 38, 2));
       return base * .55 + band * .95;
     }
 
-    function makeProbeCanvas() {
-      var cv = document.createElement("canvas");
-      cv.width = 512;
-      cv.height = 64;
-      var g = cv.getContext("2d");
-      var img = g.createImageData(512, 64);
-      for (var s = 0; s < 64; s++) {
-        for (var d = 0; d < 512; d++) {
-          var w = probeWeight(s, d);
-          var t = Math.min(1, Math.abs(w));
-          var col = w >= 0
-            ? mixRgb(C.paper2, C.blue, .14 + .62 * t)
-            : mixRgb(C.paper2, C.gold, .10 + .55 * t);
-          var i = (s * 512 + d) * 4;
-          img.data[i] = col[0];
-          img.data[i + 1] = col[1];
-          img.data[i + 2] = col[2];
-          img.data[i + 3] = 255;
-        }
+    function drawStrip(c, values, x, y, w, h, pos, neg) {
+      var n = values.length;
+      var max = 0;
+      for (var i = 0; i < n; i++) max = Math.max(max, Math.abs(values[i]));
+      max = max || 1;
+      for (var k = 0; k < n; k++) {
+        var v = values[k] / max;
+        var col = v >= 0 ? mixRgb(C.paper2, pos, Math.abs(v)) : mixRgb(C.paper2, neg, Math.abs(v));
+        c.fillStyle = "rgb(" + col.join(",") + ")";
+        c.fillRect(x + k * (w / n), y, w / n + .45, h);
       }
-      g.putImageData(img, 0, 0);
-      return cv;
+      c.strokeStyle = V.alpha(C.lineStrong, .5);
+      c.lineWidth = 1;
+      c.strokeRect(x + .5, y + .5, w - 1, h - 1);
     }
 
     function drawActivationStrip(c, x, y, w, h, label) {
       txt(c, label || "x · 512", x, y - 10, { size: 9.5, color: C.muted });
-      var n = 512;
-      var bw = w / n;
-      for (var i = 0; i < n; i++) {
+      drawStrip(c, X, x, y, w, h, C.blue, C.green);
+    }
+
+    function drawActivationGrid(c, x, y, w, h) {
+      var cols = 32, rows = 16;
+      var cw = w / cols, ch = h / rows;
+      for (var i = 0; i < 512; i++) {
         var v = X[i];
-        var t = Math.abs(v);
-        c.fillStyle = v >= 0
-          ? "rgb(" + mixRgb(C.paper2, C.blue, .10 + .55 * t).join(",") + ")"
-          : "rgb(" + mixRgb(C.paper2, C.green, .10 + .45 * t).join(",") + ")";
-        c.fillRect(x + i * bw, y, bw + .45, h);
+        var col = v >= 0
+          ? mixRgb(C.paper2, C.blue, .10 + .55 * Math.abs(v))
+          : mixRgb(C.paper2, C.green, .10 + .45 * Math.abs(v));
+        c.fillStyle = "rgb(" + col.join(",") + ")";
+        c.fillRect(x + (i % cols) * cw, y + Math.floor(i / cols) * ch, cw + .4, ch + .4);
       }
       c.strokeStyle = V.alpha(C.lineStrong, .55);
       c.lineWidth = 1;
       c.strokeRect(x + .5, y + .5, w - 1, h - 1);
-    }
-
-    function drawProbeMatrix(c, x, y, w, h, row) {
-      if (!probeCanvas) probeCanvas = makeProbeCanvas();
-      c.save();
-      c.imageSmoothingEnabled = false;
-      c.drawImage(probeCanvas, x, y, w, h);
-      c.restore();
-      c.strokeStyle = V.alpha(C.lineStrong, .55);
-      c.lineWidth = 1;
-      c.strokeRect(x + .5, y + .5, w - 1, h - 1);
-      var rh = h / 64;
-      var ry = y + (row + .5) * rh;
-      c.strokeStyle = C.gold;
-      c.lineWidth = 1.5;
-      c.beginPath();
-      c.moveTo(x, ry);
-      c.lineTo(x + w, ry);
-      c.stroke();
-      txt(c, DE ? "Probe W · 64 × 512" : "probe W · 64 × 512", x, y - 10, { size: 9.5, color: C.ink });
-      txt(c, (DE ? "Feld " : "square ") + squareLabel(row), x + w, y - 10, { align: "right", size: 9.5, color: C.gold });
     }
 
     function drawLogitsColumn(c, x, y, w, h, row) {
@@ -447,103 +427,222 @@
       }
     }
 
-    function outline(c, x, y, w, h) {
-      c.save();
-      c.shadowColor = V.alpha(C.gold, .30);
-      c.shadowBlur = 10;
-      c.strokeStyle = C.gold;
-      c.lineWidth = 2;
-      c.strokeRect(x - 2.5, y - 2.5, w + 5, h + 5);
-      c.restore();
+    function drawStageDots(c, phase) {
+      var n = 6;
+      var total = n * 9 + (n - 1) * 4;
+      var x = W / 2 - total / 2;
+      for (var i = 0; i < n; i++) {
+        c.fillStyle = i < phase ? V.alpha(C.blue, .60) : i === phase ? C.gold : V.alpha(C.line, .50);
+        c.fillRect(x + i * 13, H - 14, 9, 9);
+      }
+      txt(c, phase >= 5 ? (DE ? "Fertig" : "done") : (DE ? "Schritt " + (phase + 1) + " / 6" : "step " + (phase + 1) + " / 6"), W / 2, H - 27, { align: "center", size: 9, color: C.muted });
     }
 
-    function drawStepProgress(c, x, y, phase, pad) {
-      var labels = DE
-        ? ["1 Aktivierung L6", "2 Dot-Product", "3 64 × 3 Logits", "4 Softmax", "5 Argmax"]
-        : ["1 activation L6", "2 dot product", "3 64 × 3 logits", "4 softmax", "5 argmax"];
-      var text = phase >= 5 ? (DE ? "Fertig" : "done") : labels[phase];
-      txt(c, text, x, y, { size: 10, color: C.ink });
-      var total = 5 * 9 + 4 * 4;
-      var sx = W - pad - total;
-      for (var i = 0; i < 5; i++) {
-        c.fillStyle = i < phase ? V.alpha(C.blue, .60) : i === phase ? C.gold : V.alpha(C.line, .50);
-        c.fillRect(sx + i * 13, y - 4, 9, 9);
+    function drawResultTile(c, x, y, size, stateIdx) {
+      c.fillStyle = C.paper;
+      c.fillRect(x, y, size, size);
+      c.strokeStyle = V.alpha(C.lineStrong, .75);
+      c.lineWidth = 1;
+      c.strokeRect(x + .5, y + .5, size - 1, size - 1);
+      if (stateIdx === 0) {
+        c.strokeStyle = V.alpha(C.muted, .55);
+        c.lineWidth = 1.2;
+        c.setLineDash([4, 4]);
+        c.beginPath();
+        c.arc(x + size / 2, y + size / 2, size * .27, 0, Math.PI * 2);
+        c.stroke();
+        c.setLineDash([]);
+      } else {
+        drawDisc(c, x + size / 2, y + size / 2, size * .30, stateIdx === 1 ? 1 : -1, 1);
       }
+      txt(c, stateName(stateIdx), x + size / 2, y + size + 17, { align: "center", size: 11, color: C.ink });
     }
 
     function drawStep1(c) {
       var pad = Math.max(18, Math.min(26, W * .035));
       var narrow = W < 620;
       var phase = state.phase || 0;
-      var sq = 36;
-      var r = 4, col = 4;
-      var probs = PROBS[sq];
-      var probeA = phase >= 1 ? 1 : .14;
-      var logitsA = phase >= 2 ? 1 : .14;
-      var heatA = phase >= 3 ? 1 : .14;
-      var boardA = phase >= 4 ? 1 : .14;
+      var e4 = 36;
+      var scores = SCORES[e4];
+      var probs = PROBS[e4];
+      var e4State = winIndex(scores);
+      var questions = DE ? [
+        ["Was ist die Aktivierung?", "Der Zustand nach Schicht 6: 512 Zahlen pro Token."],
+        ["Was macht der Probe pro Feld?", "Für jedes Feld und jeden Zustand eine eigene Richtung."],
+        ["Wie entsteht ein Score?", "Skalarprodukt: Zahl für Zahl multiplizieren und summieren."],
+        ["Warum Softmax?", "Drei Scores werden zu drei Wahrscheinlichkeiten; Argmax wählt."],
+        ["Wie wird daraus ein Feld?", "Der Argmax für E4 ergibt den Zustand dieses Feldes."],
+        ["Und das ganze Brett?", "Dasselbe für alle 64 Felder; das Ergebnis ist das Brett."]
+      ] : [
+        ["What is the activation?", "The state after layer 6: 512 numbers per token."],
+        ["What does the probe do per square?", "For every square and state it learns a different direction."],
+        ["How does a score arise?", "Dot product: multiply number by number, then sum."],
+        ["Why softmax?", "Three scores become three probabilities; argmax picks one."],
+        ["How does that become a square?", "The argmax for E4 gives the state of that square."],
+        ["And the whole board?", "The same for all 64 squares; the result is the board."]
+      ];
       head(c, DE ? "Vom Zug zum Brett" : "From move to board", pad, 34, { size: Math.min(28, Math.max(21, W * .036)) });
-      txt(c, DE ? "Feste Schicht L6. Klicke Schritt für Schritt weiter." : "Fixed layer L6. Click through step by step.", pad, 58, { size: 11.5, color: C.muted });
-      drawStepProgress(c, pad, 74, phase, pad);
-      if (narrow) {
-        var top = 96;
-        var matW = 200, matH = 150;
-        c.save(); drawActivationStrip(c, pad, top, W - 2 * pad, 12, DE ? "L6 · Aktivierung x · 512" : "L6 · activation x · 512"); c.restore();
-        c.save(); c.globalAlpha = probeA; drawProbeMatrix(c, pad, 118, matW, matH, sq); c.restore();
-        c.save(); c.globalAlpha = logitsA; drawLogitsColumn(c, 230, 118, 48, matH, sq); c.restore();
-        if (phase >= 2) drawRangeLine(c, pad, 286, W - 2 * pad, 16, probs, { small: true });
-        var hs = 82, gap = 10;
-        var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
-        c.save(); c.globalAlpha = heatA;
+      txt(c, questions[phase][0], pad, 60, { size: narrow ? 13 : 15, font: '700 ' + (narrow ? 13 : 15) + 'px "Barlow", "Open Sans", sans-serif', color: C.ink });
+      txt(c, questions[phase][1], pad, 78, { size: 10.2, color: C.muted });
+      if (phase === 0) {
+        var bx = pad, by = 100;
+        c.fillStyle = C.petrol;
+        c.fillRect(bx, by, 34, 18);
+        txt(c, "L6", bx + 17, by + 9, { align: "center", size: 10, color: "#fff" });
+        drawActivationStrip(c, bx + 44, by, W - 2 * pad - 44, 16, "x · 512");
+        var gw = Math.min(W - 2 * pad, narrow ? 340 : 400);
+        var gh = gw / 2;
+        drawActivationGrid(c, pad, 140, gw, gh);
+        txt(c, "32 × 16 = 512", pad, 140 + gh + 16, { size: 9, color: C.muted });
+        txt(c, "x ∈ ℝ^512", pad, H - 48, { size: 11, color: C.ink });
+      } else if (phase === 1) {
+        drawActivationStrip(c, pad, 100, W - 2 * pad, 12, "x · 512");
+        var dirs = [];
         for (var o = 0; o < 3; o++) {
-          txt(c, labels[o], pad + o * (hs + gap) + hs / 2, 341, { align: "center", size: 9, color: o === 1 ? C.gold : o === 2 ? C.ink : C.muted });
-          drawProbGrid(c, pad + o * (hs + gap), 350, hs, o, sq);
+          var dir = [];
+          for (var d = 0; d < 512; d++) dir.push(probeDir(e4, o, d));
+          dirs.push(dir);
         }
-        c.restore();
-        var bs = 150, bx = (W - bs) / 2, by = 460;
-        c.save(); c.globalAlpha = boardA; drawBoard(c, TRUTH, bx, by, bs, { highlight: [r, col] }); c.restore();
-        txt(c, DE ? "Argmax → Brett" : "argmax → board", bx + bs / 2, by - 12, { align: "center", size: 10, color: C.ink });
-        txt(c, "L6 · " + (DATA.acc[5] * 100).toFixed(1) + "%", bx + bs / 2, by + bs + 17, { align: "center", size: 10.5, color: C.green });
-        if (phase === 0) outline(c, pad, top, W - 2 * pad, 12);
-        else if (phase === 1) outline(c, pad, 118, matW, matH);
-        else if (phase === 2) outline(c, 230, 118, 48, matH);
-        else if (phase === 3) outline(c, pad, 350, 3 * hs + 2 * gap, hs);
-        else if (phase === 4) outline(c, bx, by, bs, bs);
-        txt(c, "logit[s, o] = Σ W[s, o, d] · x[d]", pad, H - 34, { size: 10, color: C.ink });
-        txt(c, DE ? "192 Dot-Products · Softmax · Argmax" : "192 dot products · softmax · argmax", pad, H - 17, { size: 8.5, color: C.gold });
+        if (narrow) {
+          for (var o2 = 0; o2 < 3; o2++) {
+            txt(c, stateName(o2), pad, 132 + o2 * 52, { size: 9, color: o2 === 1 ? C.gold : o2 === 2 ? C.ink : C.muted });
+            drawStrip(c, dirs[o2], pad, 140 + o2 * 52, W - 2 * pad, 14, C.blue, C.gold);
+          }
+          var bs = 150, bx2 = (W - bs) / 2, by2 = 320;
+          drawBoard(c, TRUTH, bx2, by2, bs, { highlight: [4, 4] });
+          txt(c, "Feld E4", bx2 + bs / 2, by2 - 12, { align: "center", size: 10, color: C.ink });
+        } else {
+          for (var o3 = 0; o3 < 3; o3++) {
+            txt(c, stateName(o3), pad, 148 + o3 * 42, { size: 9, color: o3 === 1 ? C.gold : o3 === 2 ? C.ink : C.muted });
+            drawStrip(c, dirs[o3], pad + 80, 140 + o3 * 42, W * .48, 16, C.blue, C.gold);
+          }
+          var bs2 = 180, bx3 = W - pad - bs2, by3 = 140;
+          drawBoard(c, TRUTH, bx3, by3, bs2, { highlight: [4, 4] });
+          txt(c, "Feld E4", bx3 + bs2 / 2, by3 - 12, { align: "center", size: 10, color: C.ink });
+        }
+        txt(c, "W[E4, z] ∈ ℝ^512", pad, H - 48, { size: 11, color: C.ink });
+      } else if (phase === 2) {
+        drawActivationStrip(c, pad, 100, W - 2 * pad, 12, "x · 512");
+        if (narrow) {
+          for (var o4 = 0; o4 < 3; o4++) {
+            var gy = 130 + o4 * 70;
+            var dir4 = [], prod4 = [];
+            for (var d4 = 0; d4 < 512; d4++) {
+              var v4 = probeDir(e4, o4, d4);
+              dir4.push(v4);
+              prod4.push(X[d4] * v4);
+            }
+            txt(c, stateName(o4), pad, gy, { size: 9, color: o4 === 1 ? C.gold : o4 === 2 ? C.ink : C.muted });
+            txt(c, "Σ = " + V.fmt(scores[o4], 1), W - pad, gy, { align: "right", size: 12, font: '700 12px "Barlow", "Open Sans", sans-serif', color: o4 === 1 ? C.gold : o4 === 2 ? C.ink : C.muted });
+            drawStrip(c, dir4, pad, gy + 10, W - 2 * pad, 12, C.blue, C.gold);
+            drawStrip(c, prod4, pad, gy + 26, W - 2 * pad, 12, C.blue, C.green);
+          }
+          var bsP = 140, bxP = (W - bsP) / 2, byP = 330;
+          drawBoard(c, TRUTH, bxP, byP, bsP, { highlight: [4, 4] });
+          txt(c, "Feld E4", bxP + bsP / 2, byP - 12, { align: "center", size: 10, color: C.ink });
+        } else {
+          for (var o5 = 0; o5 < 3; o5++) {
+            var gy2 = 140 + o5 * 60;
+            var dir5 = [], prod5 = [];
+            for (var d5 = 0; d5 < 512; d5++) {
+              var v5 = probeDir(e4, o5, d5);
+              dir5.push(v5);
+              prod5.push(X[d5] * v5);
+            }
+            txt(c, stateName(o5), pad, gy2 + 16, { size: 9, color: o5 === 1 ? C.gold : o5 === 2 ? C.ink : C.muted });
+            drawStrip(c, dir5, pad + 80, gy2, W * .42, 14, C.blue, C.gold);
+            drawStrip(c, prod5, pad + 80, gy2 + 18, W * .42, 14, C.blue, C.green);
+            txt(c, "Σ = " + V.fmt(scores[o5], 1), pad + 80 + W * .42 + 12, gy2 + 16, { size: 12, font: '700 12px "Barlow", "Open Sans", sans-serif', color: o5 === 1 ? C.gold : o5 === 2 ? C.ink : C.muted });
+          }
+          var bs4 = 170, bx4 = W - pad - bs4, by4 = 140;
+          drawBoard(c, TRUTH, bx4, by4, bs4, { highlight: [4, 4] });
+          txt(c, "Feld E4", bx4 + bs4 / 2, by4 - 12, { align: "center", size: 10, color: C.ink });
+        }
+        txt(c, DE ? "oben: W[E4, z] · unten: x · W[E4, z]" : "top: W[E4, z] · bottom: x · W[E4, z]", pad, H - 66, { size: 9, color: C.muted });
+        txt(c, DE ? "logit[E4, z] = Σ_d W[E4, z, d] · x[d]" : "logit[E4, z] = Σ_d W[E4, z, d] · x[d]", pad, H - 48, { size: 10, color: C.ink });
+      } else if (phase === 3) {
+        if (narrow) {
+          var colW = (W - 2 * pad) / 3;
+          for (var o6 = 0; o6 < 3; o6++) {
+            var cx = pad + o6 * colW;
+            var tint = o6 === 1 ? C.gold : o6 === 2 ? C.ink : C.blue;
+            txt(c, stateName(o6), cx + colW / 2, 110, { align: "center", size: 9.5, color: o6 === 1 ? C.gold : o6 === 2 ? C.ink : C.muted });
+            txt(c, V.fmt(scores[o6], 1), cx + colW / 2, 132, { align: "center", size: 18, font: '700 18px "Barlow", "Open Sans", sans-serif', color: C.ink });
+            var barW = 22, barH = 100, barX = cx + colW / 2 - barW / 2, barY = 250;
+            c.fillStyle = V.alpha(C.line, .35);
+            c.fillRect(barX, barY - barH, barW, barH);
+            var fill = barH * probs[o6];
+            c.fillStyle = tint;
+            c.fillRect(barX, barY - fill, barW, fill);
+            txt(c, (probs[o6] * 100).toFixed(0) + "%", cx + colW / 2, barY + 16, { align: "center", size: 10, color: tint });
+          }
+          drawRangeLine(c, pad, 400, W - 2 * pad, 16, probs, { small: true });
+          var bs5 = 140, bx5 = (W - bs5) / 2, by5 = 470;
+          drawBoard(c, TRUTH, bx5, by5, bs5, { highlight: [4, 4] });
+          txt(c, "Feld E4", bx5 + bs5 / 2, by5 - 12, { align: "center", size: 10, color: C.ink });
+        } else {
+          var colW2 = W * .13;
+          for (var o7 = 0; o7 < 3; o7++) {
+            var cx2 = pad + o7 * (colW2 + 22);
+            var tint2 = o7 === 1 ? C.gold : o7 === 2 ? C.ink : C.blue;
+            txt(c, stateName(o7), cx2 + colW2 / 2, 115, { align: "center", size: 10, color: o7 === 1 ? C.gold : o7 === 2 ? C.ink : C.muted });
+            txt(c, V.fmt(scores[o7], 1), cx2 + colW2 / 2, 140, { align: "center", size: 20, font: '700 20px "Barlow", "Open Sans", sans-serif', color: C.ink });
+            var barW2 = 24, barH2 = 110, barX2 = cx2 + colW2 / 2 - barW2 / 2, barY2 = 270;
+            c.fillStyle = V.alpha(C.line, .35);
+            c.fillRect(barX2, barY2 - barH2, barW2, barH2);
+            var fill2 = barH2 * probs[o7];
+            c.fillStyle = tint2;
+            c.fillRect(barX2, barY2 - fill2, barW2, fill2);
+            txt(c, (probs[o7] * 100).toFixed(0) + "%", cx2 + colW2 / 2, barY2 + 16, { align: "center", size: 10, color: tint2 });
+          }
+          drawRangeLine(c, pad, 320, W * .45, 20, probs, {});
+          var bs6 = 180, bx6 = W - pad - bs6, by6 = 120;
+          drawBoard(c, TRUTH, bx6, by6, bs6, { highlight: [4, 4] });
+          txt(c, "Feld E4", bx6 + bs6 / 2, by6 - 12, { align: "center", size: 10, color: C.ink });
+        }
+        txt(c, "p[E4, z] = softmax(logit[E4, ·])", pad, H - 48, { size: 10.5, color: C.ink });
+      } else if (phase === 4) {
+        var stateIdx = e4State;
+        if (narrow) {
+          drawResultTile(c, pad, 110, 150, stateIdx);
+          var bs7 = 190, bx7 = (W - bs7) / 2, by7 = 300;
+          drawBoard(c, TRUTH, bx7, by7, bs7, { highlight: [4, 4] });
+          txt(c, "E4 = " + stateName(stateIdx), bx7 + bs7 / 2, by7 - 12, { align: "center", size: 10, color: C.ink });
+        } else {
+          drawResultTile(c, pad, 120, 180, stateIdx);
+          var bs8 = 220, bx8 = W - pad - bs8, by8 = 110;
+          drawBoard(c, TRUTH, bx8, by8, bs8, { highlight: [4, 4] });
+          txt(c, "E4 = " + stateName(stateIdx), bx8 + bs8 / 2, by8 - 12, { align: "center", size: 10, color: C.ink });
+        }
+        txt(c, "E4 = argmax_z p[E4, z]", pad, H - 48, { size: 10.5, color: C.ink });
       } else {
-        var topW = 96;
-        var mw = W * .34, mh = 190;
-        c.save(); drawActivationStrip(c, pad, topW, mw, 14, DE ? "L6 · Aktivierung x · 512" : "L6 · activation x · 512"); c.restore();
-        c.save(); c.globalAlpha = probeA; drawProbeMatrix(c, pad, topW + 22, mw, mh, sq); c.restore();
-        var lx = pad + mw + 18;
-        c.save(); c.globalAlpha = logitsA; drawLogitsColumn(c, lx, topW + 22, 54, mh, sq); c.restore();
-        var hsize = 80, hgap = 12;
-        var hx = lx + 54 + 28;
-        var hy = topW + 22;
-        var labels2 = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
-        c.save(); c.globalAlpha = heatA;
-        for (var o2 = 0; o2 < 3; o2++) {
-          txt(c, labels2[o2], hx + o2 * (hsize + hgap) + hsize / 2, hy - 10, { align: "center", size: 9, color: o2 === 1 ? C.gold : o2 === 2 ? C.ink : C.muted });
-          drawProbGrid(c, hx + o2 * (hsize + hgap), hy, hsize, o2, sq);
+        if (narrow) {
+          drawLogitsColumn(c, pad, 110, 44, 160, e4);
+          var hs = 80, gap = 8;
+          var labels = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+          for (var o8 = 0; o8 < 3; o8++) {
+            txt(c, labels[o8], pad + 60 + o8 * (hs + gap) + hs / 2, 100, { align: "center", size: 8.5, color: o8 === 1 ? C.gold : o8 === 2 ? C.ink : C.muted });
+            drawProbGrid(c, pad + 60 + o8 * (hs + gap), 110, hs, o8, e4);
+          }
+          var bs9 = 160, bx9 = (W - bs9) / 2, by9 = 300;
+          drawBoard(c, TRUTH, bx9, by9, bs9, { highlight: [4, 4] });
+          txt(c, "64 × 3 → Brett", bx9 + bs9 / 2, by9 - 12, { align: "center", size: 10, color: C.ink });
+        } else {
+          drawLogitsColumn(c, pad, 110, 54, 200, e4);
+          var hs2 = 90, gap2 = 10;
+          var labels2 = DE ? ["leer", "Spieler 1", "Spieler 2"] : ["empty", "player 1", "player 2"];
+          for (var o9 = 0; o9 < 3; o9++) {
+            txt(c, labels2[o9], pad + 80 + o9 * (hs2 + gap2) + hs2 / 2, 100, { align: "center", size: 9, color: o9 === 1 ? C.gold : o9 === 2 ? C.ink : C.muted });
+            drawProbGrid(c, pad + 80 + o9 * (hs2 + gap2), 110, hs2, o9, e4);
+          }
+          var bs10 = 220, bx10 = W - pad - bs10, by10 = 110;
+          drawBoard(c, TRUTH, bx10, by10, bs10, { highlight: [4, 4] });
+          txt(c, "64 × 3 → Brett", bx10 + bs10 / 2, by10 - 12, { align: "center", size: 10, color: C.ink });
         }
-        c.restore();
-        var bs2 = Math.min(W * .22, 170);
-        var bx2 = hx + (3 * hsize + 2 * hgap) / 2 - bs2 / 2;
-        var by2 = hy + hsize + 46;
-        c.save(); c.globalAlpha = boardA; drawBoard(c, TRUTH, bx2, by2, bs2, { highlight: [r, col] }); c.restore();
-        txt(c, DE ? "Argmax → Brett" : "argmax → board", bx2 + bs2 / 2, by2 - 12, { align: "center", size: 10, color: C.ink });
-        txt(c, "L6 · " + (DATA.acc[5] * 100).toFixed(1) + "%", bx2 + bs2 / 2, by2 + bs2 + 18, { align: "center", size: 11, color: C.green });
-        if (phase >= 2) drawRangeLine(c, pad, topW + 22 + mh + 40, mw, 18, probs, {});
-        if (phase === 0) outline(c, pad, topW, mw, 14);
-        else if (phase === 1) outline(c, pad, topW + 22, mw, mh);
-        else if (phase === 2) outline(c, lx, topW + 22, 54, mh);
-        else if (phase === 3) outline(c, hx, hy, 3 * hsize + 2 * hgap, hsize);
-        else if (phase === 4) outline(c, bx2, by2, bs2, bs2);
-        txt(c, "logit[s, o] = Σ W[s, o, d] · x[d]", pad, H - 44, { size: 10.5, color: C.ink });
-        txt(c, DE ? "192 Dot-Products · Softmax · Argmax" : "192 dot products · softmax · argmax", pad, H - 24, { size: 9, color: C.gold });
+        txt(c, DE ? "Brett[s] = argmax_z p[s, z]" : "board[s] = argmax_z p[s, z]", pad, H - 48, { size: 10.5, color: C.ink });
       }
-      txt(c, DE ? "schematisch · Struktur des Readouts" : "schematic · structure of the readout", W - pad, H - 17, { align: "right", size: 8.5, color: C.muted });
+      drawStageDots(c, phase);
+      txt(c, DE ? "schematisch" : "schematic", pad, H - 14, { size: 8.5, color: C.muted });
     }
 
     function drawFlow(c, x1, y1, x2, y2) {
@@ -748,7 +847,6 @@
       W = r.w;
       H = r.h;
       ctx = r.ctx;
-      probeCanvas = null;
       draw();
     }
 
@@ -779,6 +877,25 @@
         }
         updateBtn();
         start();
+      },
+      onKey: function (e) {
+        if (state.step !== 1) return false;
+        if (e.shiftKey || e.metaKey || e.ctrlKey || e.altKey) return false;
+        if (e.key === "ArrowRight") {
+          if (state.phase >= 5) return false;
+          state.phase++;
+          updateBtn();
+          draw();
+          return true;
+        }
+        if (e.key === "ArrowLeft") {
+          if (state.phase <= 0) return false;
+          state.phase--;
+          updateBtn();
+          draw();
+          return true;
+        }
+        return false;
       },
       resize: fit,
       resume: start,
