@@ -376,7 +376,7 @@
         g.fillStyle = layer ? colors[layer - 1] : C.muted;
         g.font = '700 ' + Math.max(8, Math.min(11, cardW * 0.015)) + 'px "Open Sans", sans-serif';
         g.textAlign = "center"; g.textBaseline = "middle";
-        g.fillText((DE ? "Schicht " : "Layer ") + layer + " / 5", badgeX + badgeW / 2, cardY + 28.5);
+        g.fillText(layer ? (DE ? "Schicht " : "Layer ") + layer + " / 5" : (DE ? "Tokens" : "Tokens"), badgeX + badgeW / 2, cardY + 28.5);
       }
       var fs = Math.max(15, Math.min(29, cardW * 0.038));
       g.font = '600 ' + fs + 'px Georgia, serif';
@@ -401,7 +401,7 @@
       g.font = 'italic ' + Math.max(9, fs * 0.45) + 'px "Open Sans", sans-serif';
       g.textAlign = "left"; g.textBaseline = "alphabetic";
       var hint = layer === 0
-        ? (DE ? "Noch leer. Drücke Weiter, und die erste Schicht schreibt." : "Still empty. Press Next and the first layer writes.")
+        ? (DE ? "Die Tokens stehen schon da. Drücke Weiter, und die erste Schicht schreibt." : "The tokens are already here. Press Next and the first layer writes.")
         : layer < NOTE_LAYERS.length
           ? (DE ? "Weiter: Schicht " + (layer + 1) + " schreibt." : "Next: layer " + (layer + 1) + " writes.")
           : (DE ? "Weiter: aus dem Notizbuch wird der Stream." : "Next: the notebook becomes the stream.");
@@ -698,8 +698,8 @@
         var colors = noteColors(C);
         var info = layer ? NOTE_LAYERS[layer - 1] : null;
         readout.innerHTML = '<span class="ls-res-phase-label">' + (DE ? "Notizbuch" : "Notebook") + '</span>' +
-          '<b style="color:' + (info ? colors[layer - 1] : C.muted) + '">' + (info ? (DE ? "Schicht " : "Layer ") + layer + ' / 5' : (DE ? "Noch leer" : "Still empty")) + '</b>' +
-          '<span>' + (info ? info.desc : (DE ? "Drücke Weiter, um die erste Schicht zu öffnen." : "Press Next to open the first layer.")) + '</span>';
+          '<b style="color:' + (info ? colors[layer - 1] : C.muted) + '">' + (info ? (DE ? "Schicht " : "Layer ") + layer + ' / 5' : (DE ? "Tokens stehen" : "Tokens are here")) + '</b>' +
+          '<span>' + (info ? info.desc : (DE ? "Die Tokens stehen im Notizbuch. Drücke Weiter, um die erste Schicht zu öffnen." : "The tokens are in the notebook. Press Next to open the first layer.")) + '</span>';
         caption.textContent = DE ? "Jede Schicht liest das Notizbuch und schreibt ihre Erkenntnis dazu; nichts wird gelöscht." : "Every layer reads the notebook and writes its insight into it; nothing is deleted.";
       } else {
         readout.innerHTML = '<div class="ls-res-eq-row">' + equationHTML(streamLayer) + dimDetailHTML(streamLayer) + '</div>' +
@@ -707,7 +707,7 @@
         caption.textContent = DE ? "Attention und FFN lesen den Stream, berechnen getrennte Updates und addieren beide. Die Dimension bleibt gleich; jede Schicht trägt den alten Stand weiter." : "Attention and the FFN read the stream, compute separate updates, and add both. The dimension stays the same; every layer carries the old state forward.";
       }
       var aria = phase === "notebook"
-        ? (DE ? "Notizbuch mit fünf Schichten. Schicht " + layer + " von 5." : "Notebook with five layers. Layer " + layer + " of 5.")
+        ? (layer ? (DE ? "Notizbuch mit fünf Schichten. Schicht " + layer + " von 5." : "Notebook with five layers. Layer " + layer + " of 5.") : (DE ? "Notizbuch mit den Tokens und fünf Schichten. Noch keine Schicht geöffnet." : "Notebook with the tokens and five layers. No layer opened yet."))
         : (DE ? "Residual Stream x " + streamLayer + " mit sechs Dimensionen: getragen plus Attention plus FFN." : "Residual stream x " + streamLayer + " with six dimensions: carried plus attention plus FFN.");
       canvas.setAttribute("aria-label", aria);
     }

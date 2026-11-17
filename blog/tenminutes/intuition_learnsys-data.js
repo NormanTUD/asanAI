@@ -572,8 +572,8 @@
     {
       kicker: "Residual",
       title: "Das gemeinsame Notizbuch wird zum Stream",
-      body: "Das ist eine stark vereinfachte, vermenschlichte Sichtweise. Stell dir den Residual Stream als Notizbuch vor: Jede Schicht liest den aktuellen Stand und schreibt ihre Beobachtung dazu; nichts wird gelöscht. Drücke Weiter: Erst füllt sich das Notizbuch, dann wächst aus denselben Updates der Stream. Attention und FFN lesen den Stream und addieren ihr Update; die Dimension bleibt gleich.",
-      watch: "Drücke Weiter: erst füllt sich das Notizbuch, dann wächst der Stream.",
+      body: "Das ist eine stark vereinfachte, vermenschlichte Sichtweise. Stell dir den Residual Stream als Notizbuch vor: Die Tokens stehen schon am Anfang darin. Jede Schicht liest den aktuellen Stand und schreibt ihre Beobachtung dazu; nichts wird gelöscht. Drücke Weiter: Die erste Schicht schreibt ihre Notiz, und am Ende wächst aus denselben Updates der Stream. Attention und FFN lesen den Stream und addieren ihr Update; die Dimension bleibt gleich.",
+      watch: "Drücke Weiter: erst schreibt die erste Schicht, dann wächst der Stream.",
       demoState: { scene: "residual" },
       context: "Die Notizbuch-Analogie ist eine stark vereinfachte, vermenschlichte Sichtweise. Mathematisch ist der Stream ein Vektor pro Token; jede Schicht addiert ein Update: x ← x + Layer(x). Frühere Notizen bleiben lesbar, weil addiert und nicht überschrieben wird.",
       deep: "Die Addition gibt dem Gradienten einen kurzen Pfad zurück. Ohne Residualverbindung müsste jede Schicht die gesamte Information neu schreiben. Der Stream ist das gemeinsame Notizbuch; Attention und FFN schreiben Updates hinein; die Identität bleibt erhalten.",
@@ -587,8 +587,8 @@
     {
       kicker: "Residual",
       title: "The shared notebook becomes the stream",
-      body: "This is a strongly simplified, humanised view. Think of the residual stream as a notebook: every layer reads the current state and writes its observation into it; nothing is erased. Press Next: first the notebook fills, then the stream grows from the same updates. Attention and the FFN read the stream and add their update; the dimension stays the same.",
-      watch: "Press Next: first the notebook fills, then the stream grows.",
+      body: "This is a strongly simplified, humanised view. Think of the residual stream as a notebook: the tokens are already in it at the start. Every layer reads the current state and writes its observation into it; nothing is erased. Press Next: the first layer writes its note, and in the end the stream grows from the same updates. Attention and the FFN read the stream and add their update; the dimension stays the same.",
+      watch: "Press Next: first the first layer writes, then the stream grows.",
       demoState: { scene: "residual" },
       context: "The notebook analogy is a strongly simplified, humanised view. Mathematically the stream is one vector per token; every layer adds an update: x ← x + Layer(x). Earlier notes stay readable because the layer adds instead of overwriting.",
       deep: "The addition gives gradients a short path back. Without a residual connection, every layer would have to rewrite all information. The stream is the shared notebook; attention and the FFN write updates into it; the identity survives.",
