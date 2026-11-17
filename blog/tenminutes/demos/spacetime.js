@@ -52,33 +52,14 @@
     hero.className = "ls-st-hero";
     var paperSrc = "../image.php?f=gurnee-tegmark-world.png&w=1800&fmt=png";
     var paperBig = "../image.php?f=gurnee-tegmark-world.png&w=2200&fmt=png";
-    var notes = {
-      probe: DE ? "Zwei gelernte Richtungen werden aus der Aktivierung gelesen; die Karte ist ihre Projektion." : "Two learned directions are read from the activation; the map is their projection.",
-      relative: DE ? "Nachbarschaft stimmt eher als der exakte Ort. R² = 0,911 heißt: 91,1 % der Streuung sind linear erklärt." : "The neighbourhood is more accurate than the exact place. R² = 0.911 means 91.1% of the variance is linearly explained.",
-      limit: DE ? "Die Probe ist ein Readout. Ob das Modell die Richtung kausal benutzt, ist eine separate Frage." : "The probe is a readout. Whether the model uses the direction causally is a separate question."
-    };
     hero.innerHTML =
       '<div class="ls-st-hero-img">' +
         '<a href="' + paperBig + '" target="_blank" rel="noopener"><img src="' + paperSrc + '" alt="' + (DE ? "Weltkarte der aus Llama-2-70B-Aktivierungen gelesenen Koordinaten, Gurnee und Tegmark 2023, Abbildung 10" : "World map of coordinates read from Llama-2-70B activations, Gurnee and Tegmark 2023, Figure 10") + '"></a>' +
-        '<div class="ls-st-callouts">' +
-          '<button type="button" class="ls-st-callout ls-st-callout--probe is-on" data-callout="probe">' + (DE ? "lineare Probe" : "linear probe") + '</button>' +
-          '<button type="button" class="ls-st-callout ls-st-callout--relative" data-callout="relative">' + (DE ? "relative Karte" : "relative map") + '</button>' +
-          '<button type="button" class="ls-st-callout ls-st-callout--limit" data-callout="limit">' + (DE ? "absolute Koordinaten" : "absolute coordinates") + '</button>' +
-          '<div class="ls-st-note" aria-live="polite"><b>' + (DE ? "Was du siehst" : "What to see") + '</b><span data-st-note>' + notes.probe + '</span></div>' +
-        '</div>' +
       '</div>' +
       '<figcaption>' + (DE
         ? 'Gurnee &amp; Tegmark (2023), Abb. 10: Weltkarte aus gelernten Breiten-/Längengrad-Richtungen. Lizenz: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Quelle: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">arXiv:2310.02207</a>.'
         : 'Gurnee &amp; Tegmark (2023), Fig. 10: world map from learned latitude/longitude directions. License: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Source: <a href="https://arxiv.org/abs/2310.02207" target="_blank" rel="noopener">arXiv:2310.02207</a>.') + '</figcaption>';
     host.appendChild(hero);
-    var noteEl = hero.querySelector("[data-st-note]");
-    hero.querySelectorAll("[data-callout]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var key = btn.getAttribute("data-callout");
-        hero.querySelectorAll("[data-callout]").forEach(function (b) { b.classList.toggle("is-on", b === btn); });
-        if (noteEl) noteEl.textContent = notes[key] || notes.probe;
-      });
-    });
     root.appendChild(host);
     var ctx = canvas.getContext("2d");
     var W = 1, H = 1;
